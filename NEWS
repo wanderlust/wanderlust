@@ -7,6 +7,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Save format for the draft folder has been changed. Messages are encoded
    before saved by wl-draft-save.
 
+** elmo-split is newly established.
+
 ** Buffer prefetch works fine now. Messages of the number specified by
    wl-message-buffer-prefetch-depth are loaded into buffer in advance.
 

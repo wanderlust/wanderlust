@@ -7,6 +7,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** ドラフトフォルダへの保存形式が変更されました。wl-draft-save の際には
    エンコードして保存されます。
 
+** elmo-split が新設されました。
+
 ** バッファプリフェッチが実装されました。wl-message-buffer-prefetch-depth
    の数だけ、メッセージをバッファに先読みします。
 
