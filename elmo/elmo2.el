@@ -404,7 +404,7 @@ If optional UNREAD is non-nil, message is keeped as unread."
 	 (length (length overview))
 	 (i 0)
 	 result)
-    (if (elmo-condition-find-key condition "body")
+    (if (not (elmo-condition-in-msgdb-p condition))
 	(elmo-search folder condition number-list)
       (while overview
 	(if (elmo-msgdb-search-internal condition (car overview)

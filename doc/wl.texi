@@ -152,7 +152,7 @@ The main features of Wanderlust:
 
 @section Environment
 
-Wanderlust is supposed to run on following Emacsen: 
+Wanderlust is supposed to run on following Emacsen:
 @c Wanderlust runs even on Nemacs 3.3.2 based on Emacs 18.55, 18.59 (with
 @c limited functionality).
 
@@ -214,58 +214,12 @@ here.
 @cindex MIME modules
 @pindex APEL
 @pindex FLIM
+@pindex CLIME
 @pindex SEMI
 @pindex tm
 
-SEMI or tm must be installed to make Wanderlust work correctly.
-
-SEMI does not run on Emacs 19.28 or earlier
-@footnote{SEMI runs on Emacs 19.34. @*
-@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
-so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
-is needed.)
-
-However, SEMI is recommended because of its wider functionality.
-
-Refer to the documents of each package for detailed installation procedure.
-
-SEMI and tm can be downloaded from these sites:
-
-@example
-@group
-SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
-tm:     http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
-@end group
-@end example
-
-You need packages named APEL and FLIM to use SEMI.
-You can download APEL and FLIM from following URLs:
-
-@example
-@group
-APEL:   ftp://ftp.m17n.org/pub/mule/apel/
-FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
-@end group
-@end example
-
-You have to install APEL, FLIM and SEMI in this order.  Generally,
-@samp{make install} will do the job.  (In XEmacs 21, @samp{make
-install-package}.)
-
-Recommended combination of APEL, FLIM and SEMI are following:
-
-@itemize @minus
-@item APEL 10.3, FLIM 1.14.2 and SEMI 1.14.3
-@end itemize
-
-You can also use many other FLIM/SEMI variants. Combination of the
-latest versions should work.  For example, the following combination are
-confirmed to work.
-
-@itemize @minus
-@item APEL 10.2, Chao 1.14.1, REMI 1.14.2
-@item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
-@end itemize
+SEMI or tm must be installed to make Wanderlust work correctly.  Refer
+to the @file{INSTALL} for detailed installation procedure.
 
 You have to re-install Wanderlust if you upgraded APEL, FLIM, SEMI or
 tm.
@@ -310,8 +264,8 @@ Extract the obtained package to your working directory:
 @pindex OpenSSL
 @pindex starttls
 
-SSL (Secure Socket Layer) can be used for 
-SMTP, IMAP, NNTP and POP connections in Wanderlust.
+SSL (Secure Socket Layer) can be used for SMTP, IMAP, NNTP and POP
+connections in Wanderlust.
 
 There are two ways to use SSL. One is to start SSL negotiation just
 after the connection establishment (generic way). The other one is to
@@ -323,7 +277,7 @@ required to use @file{ssl.el}. You must set @env{PATH} to the directory
 that OpenSSL commands are installed.
 
 To use the latter SSL(STARTTLS), you must install starttls package in
-addition to above. 
+addition to above.
 You can download starttls package from the following site.
 
 @example
@@ -355,9 +309,9 @@ Then, please execute following commands.
 Destination directory is auto-probed if you leave @code{LISPDIR}
 in @file{Makefile} as is. (That is, leave it as @samp{NONE})
 
-If you are using an Emacs variant which does not merge specified directory
-to @code{load-path} (e.g. Mule 2.3 based on Emacs 19.28), 
-then you will see the error message:
+If you are using an Emacs variant which does not merge specified
+directory to @code{load-path} (e.g. Mule 2.3 based on Emacs 19.28), then
+you will see the error message:
 
 @example
 Cannot open load file: mime-setup
@@ -6785,6 +6739,7 @@ valuable advice and many pieces of code they contributed.
       9/12    biff feature with Satata-san & Yamaoka-san.
      10/17    expire-hide by Okada-san.
      11/08    Released 2.4.0 stable.
+2001  7/04    Released 2.6.0 stable.
 @end example
 
 See @file{ChangeLog} for details.
@@ -6847,6 +6802,6 @@ U.S. Billboard magazines in 1980s.
 @contents
 @bye
 
-@c Local Variables: 
+@c Local Variables:
 @c fill-column: 72
 @c End:
