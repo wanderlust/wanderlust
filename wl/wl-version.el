@@ -196,7 +196,7 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 
 (defun wl-extended-emacs-version3 (&optional delimiter with-codename)
   "Stringified Emacs version.
-Separate DELIMITER (default it \" \").  If WITH-CODENAME add XEmacs codename."
+Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
    ((and (boundp 'mule-version)
 	 mule-version
