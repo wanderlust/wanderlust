@@ -100,7 +100,7 @@ If the value is a list, all elements are used as index paths for namazu."
 
 (defun elmo-nmz-msgdb-create-entity (folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
-  (let ((location (elmo-map-message-location folder number))
+  (let ((location (expand-file-name (elmo-map-message-location folder number)))
 	entity uid)
     (setq entity (elmo-msgdb-create-overview-entity-from-file number location))
     (unless (or (> (length (elmo-msgdb-overview-entity-get-to entity)) 0)
@@ -194,14 +194,14 @@ If the value is a list, all elements are used as index paths for namazu."
 					    &optional section unseen)
   (when (file-exists-p location)
     (prog1
-	(insert-file-contents-as-binary location)
+	(insert-file-contents-as-binary (expand-file-name location))
       (unless (or (std11-field-body "To")
 		  (std11-field-body "Cc")
 		  (std11-field-body "Subject"))
 	(let (charset guess uid)
 	  (erase-buffer)
 	  (set-buffer-multibyte t)
-	  (insert-file-contents location)
+	  (insert-file-contents (expand-file-name location))
 	  (setq charset (detect-mime-charset-region (point-min)
 						    (point-max)))
 	  (goto-char (point-min))
