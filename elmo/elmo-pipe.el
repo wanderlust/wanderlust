@@ -93,6 +93,11 @@
   (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
 		      number strategy section outbuf unseen))
 
+(luna-define-method elmo-folder-clear :after ((folder elmo-pipe-folder)
+					      &optional keep-killed)
+  (unless keep-killed
+    (elmo-pipe-folder-copied-list-save folder nil)))
+
 (luna-define-method elmo-folder-delete-messages ((folder elmo-pipe-folder)
 						 numbers)
   (elmo-folder-delete-messages (elmo-pipe-folder-dst-internal folder)
