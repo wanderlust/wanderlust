@@ -72,12 +72,12 @@ use for keymap of representation buffer.")
 					      &optional
 					      original-major-mode
 					      keymap)
-  (mime-display-message entity
-			preview-buffer
-			nil
-			keymap
-			original-major-mode))
-
+  (let ((elmo-message-displaying t))
+    (mime-display-message entity
+			  preview-buffer
+			  nil
+			  keymap
+			  original-major-mode)))
 
 (eval-and-compile
   (luna-define-class mime-elmo-buffer-entity (mime-buffer-entity
