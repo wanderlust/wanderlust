@@ -91,11 +91,6 @@
   :prefix "wl-"
   :group 'wl)
 
-(defgroup wl-setting nil
-  "Wanderlust common settings."
-  :prefix "wl-"
-  :group 'wl)
-
 ;;; Emacsen
 (defconst wl-on-xemacs (featurep 'xemacs))
 
@@ -137,8 +132,7 @@
 		       user-mail-address)
   "*From string used in draft."
   :type 'string
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-user-mail-address-list nil
   "*A list of user's mail addresses.
@@ -146,15 +140,13 @@ This list is used to judge whether an address is user's or not.
 You should set this variable if you use multiple e-mail addresses.
 If you don't have multiple e-mail addresses, you don't have to set this."
   :type '(repeat string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-organization nil
   "Organization name."
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-tmp-dir "~/tmp/"
   "*Default temporary directory to save message, part."
@@ -251,8 +243,7 @@ If file exists and `wl-auto-insert-x-face' is non-nil."
   "*Subscribed mailing list.
 You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
   :type '(repeat string)
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-demo t
   "*Display demo at start time."
@@ -264,8 +255,7 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
 If nil, `wl-from' is used."
   :type '(choice (const :tag "Same as 'From' field." nil)
 		 string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-draft-add-references t
   "*If non-nil, message-id of the cited message is inserted to the
@@ -285,23 +275,20 @@ If nil, default smtp connection type is used."
   "*SMTP authentication user."
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-smtp-posting-server nil
   "*SMTP server name to send mail (wl-draft-send-mail-with-smtp)."
   :type '(choice (const :tag "none" nil)
 		 string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-smtp-posting-port nil
   "*SMTP port number in `wl-smtp-posting-server'.
 If nil, default SMTP port number(25) is used."
   :type '(choice (const :tag "Default (25)" nil)
                  integer)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-smtp-authenticate-type nil
   "*SMTP Authentication type.
@@ -311,34 +298,30 @@ If nil, don't authenticate."
 		 (const :tag "CRAM-MD5" "cram-md5")
 		 (const :tag "LOGIN" "login")
 		 (string :tag "Other"))
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-pop-before-smtp-user nil
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp\)"
+(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-pop-before-smtp-server nil
   "*POP3 server for POP-before-SMTP.
 If nil, `elmo-pop3-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-pop-before-smtp-port nil
   "*POP3 port for POP-before-SMTP.
 If nil, `elmo-pop3-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
@@ -352,31 +335,27 @@ If nil, `elmo-pop3-default-authenticate-type' is used."
   :type '(choice (const :tag "none" nil)
 		 (const :tag "APOP" "apop")
 		 (const :tag "POP3" "user"))
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-nntp-posting-server nil
   "*NNTP server name to post news.
 If nil, `elmo-nntp-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 (defcustom wl-nntp-posting-user nil
   "*NNTP user name to post news for authinfo.
 If nil, `elmo-nntp-default-user' is used.
 If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
                  string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 (defcustom wl-nntp-posting-port nil
   "*NNTP port to post news.
 If nil, `elmo-nntp-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
 If nil, `elmo-nntp-default-stream-type' is used."
@@ -386,8 +365,7 @@ If nil, `elmo-nntp-default-stream-type' is used."
 (defcustom wl-fetch-confirm-threshold 30000
   "*Confirm fetching if message size is larger than this value."
   :type 'integer
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-prefetch-confirm t
   "*Confirm prefetching if message size is larger than `wl-prefetch-threshold'."
@@ -401,8 +379,7 @@ If message size is larger than this value, confirm prefetching
 when `wl-prefetch-confirm' is non-nil."
   :type '(choice (integer :tag "Threshold (bytes)")
 		 (const :tag "No limitation" nil))
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-cache-prefetch-threshold 30000
   "*Quit forward cache prefetching if message size is larger than this value."
@@ -412,8 +389,7 @@ when `wl-prefetch-confirm' is non-nil."
 (defcustom wl-thread-insert-opened nil
   "*Non-nil forces to insert thread as opened in updating."
   :type 'boolean
-  :group 'wl-summary
-  :group 'wl-setting)
+  :group 'wl-summary)
 
 (defcustom wl-thread-open-reading-thread t
   "*Non-nil forces to open reading thread."
@@ -690,36 +666,26 @@ Default is for 'followup-to-me'."
 (defcustom wl-ldap-server "localhost"
   "*LDAP server."
   :type '(string :tag "Server")
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-ldap-port nil
   "*LDAP port."
   :type '(choice (const :tag "Default port" nil)
 		 integer)
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-ldap-base "c=US"
   "*LDAP base."
   :type '(string :tag "Base")
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-ldap-objectclass "person"
   "*LDAP objectclass."
   :type 'string
-  :group 'wl
-  :group 'wl-setting)
+  :group 'wl)
 
 (defcustom wl-use-ldap nil
   "*If non-nil, use LDAP for address completion."
-  :type 'boolean
-  :group 'wl
-  :group 'wl-setting)
-
-(defcustom wl-use-acap nil
-  "*If non-nil, use ACAP for configuration."
   :type 'boolean
   :group 'wl)
 
@@ -943,14 +909,12 @@ ex.
 			(choice (cons (sexp :tag "Field(Variable)")
 				      (sexp :tag "Value"))
 				(sexp :tag "Function")))))
-  :group 'wl-draft
-  :group 'wl-setting)
+  :group 'wl-draft)
 
 (defcustom wl-draft-config-matchone nil
   "*If non-nil, applied only one element of `wl-draft-config-alist'."
   :type 'boolean
-  :group 'wl-draft
-  :group 'wl-setting)
+  :group 'wl-draft)
 
 (defcustom wl-template-alist nil
   "Alist of template."
@@ -960,8 +924,7 @@ ex.
 			(choice (cons (sexp :tag "Field(Variable)")
 				      (sexp :tag "Value"))
 				(sexp :tag "Function")))))
-  :group 'wl-draft
-  :group 'wl-setting)
+  :group 'wl-draft)
 
 (defcustom wl-template-visible-select t
   "*If non-nil, select template with visible."
@@ -1173,24 +1136,22 @@ Set this if (system-name) does not return FQDN."
 
 (defcustom wl-message-sort-field-list '("Return-Path" "Received" "^To" "^Cc"
 					"Newsgroups" "Subject" "^From")
-  "*Sort order of header fields.  Each elements are regexp of field name."
+  "*Sort order of header fields.  Each elements are regexp of field name.
+(Not valid on tm.)"
   :type '(repeat (string :tag "Field Regexp"))
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-message-ignored-field-list nil
   "All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name."
   :type '(repeat (string :tag "Field Regexp"))
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-message-visible-field-list nil
   "All fields that match this list will be displayed in message buffer.
 Each elements are regexp of field-name."
   :type '(repeat (string :tag "Field Regexp"))
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-folder-window-width 20
   "*Width of folder window."
@@ -1528,8 +1489,7 @@ even if the value of this option is set to nil.  Here are some samples:
 (defcustom wl-interactive-send nil
   "*If non-nil, require your confirmation when sending draft message."
   :type 'boolean
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-interactive-exit t
   "*If non-nil, require your confirmation when exiting WL."
@@ -1542,8 +1502,7 @@ If this variable is `unread', precede \"U\", \"!\", \"N\" mark.
 If this variable is `new', precede \"N\" mark."
   :type '(radio (const new)
 		(const unread))
-  :group 'wl-summary
-  :group 'wl-setting)
+  :group 'wl-summary)
 
 (defvar wl-summary-move-direction-downward t)
 
@@ -1557,8 +1516,7 @@ It uses wl-summary-move-direction-downward as a direction flag."
 (defcustom wl-auto-select-first nil
   "*If non-nil, display selected first message when enter summary."
   :type 'boolean
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-auto-select-next nil
   "*If non-nil, offer to go to the next folder from the end of the previous.
@@ -1571,8 +1529,7 @@ See also variable `wl-summary-next-no-unread-command'."
 		(const :tag "on" t)
 		(const unread)
 		(const skip-no-unread))
-  :group 'wl-pref
-  :group 'wl-setting)
+  :group 'wl-pref)
 
 (defcustom wl-cache-prefetch-folder-type-list '(imap4 nntp)
   "*All folder types that match this list prefetch next message,
@@ -1844,8 +1801,7 @@ ex.
 (defcustom wl-interactive-save-folders t
   "*Non-nil require your confirmation when save folders."
   :type 'boolean
-  :group 'wl-folder
-  :group 'wl-setting)
+  :group 'wl-folder)
 
 (defcustom wl-fldmgr-make-backup t
   "*Non-nil make backup file when save folders."
