@@ -4590,8 +4590,6 @@ If ARG, exit virtual folder."
     (let* ((dir (elmo-msgdb-expand-path wl-summary-buffer-folder-name))
 	   (cache (expand-file-name wl-summary-cache-file dir))
 	   (view (expand-file-name wl-summary-view-file dir))
-;;;	   (coding-system-for-write wl-cs-cache)
-;;;	   (output-coding-system wl-cs-cache)
 	   (save-view wl-summary-buffer-view)
 	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
 	   (charset wl-summary-buffer-mime-charset))
@@ -4610,11 +4608,8 @@ If ARG, exit virtual folder."
 		(widen)
 		(encode-mime-charset-region
 		 (point-min) (point-max) charset)
-		(as-binary-output-file
-		 (write-region (point-min)
-			       (point-max) cache nil 'no-msg))
-		(write-region (point-min) (point-max) cache nil
-			      'no-msg)))
+		(write-region-as-binary (point-min)(point-max)
+					cache nil 'no-msg)))
 	    (when (file-writable-p view) ; 'thread or 'sequence
 	      (save-excursion
 		(set-buffer tmp-buffer)
