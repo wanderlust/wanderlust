@@ -6882,7 +6882,7 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
 @menu
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
-* Bsfileter::                   bsfilter
+* Bsfilter::                    bsfilter
 * SpamAssassin::                SpamAssassin
 @end menu
 

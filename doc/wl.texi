@@ -6954,7 +6954,7 @@ Supported spam filtering libraries are following ones.
 @menu
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
-* Bsfileter::                   bsfilter
+* Bsfilter::                    bsfilter
 * SpamAssassin::                SpamAssassin
 @end menu
 
