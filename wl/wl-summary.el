@@ -1026,11 +1026,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (unwind-protect
 	  ;; save summary status
 	  (progn
+	    (wl-summary-save-view)
 	    (if (or force-exit (not sticky))
 		(elmo-folder-close wl-summary-buffer-elmo-folder)
 	      (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	      (elmo-folder-check wl-summary-buffer-elmo-folder))
-	    (wl-summary-save-view)
 	    (if wl-use-scoring (wl-score-save)))
 	;; for sticky summary
 	(wl-delete-all-overlays)

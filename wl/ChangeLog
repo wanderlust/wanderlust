@@ -1,3 +1,10 @@
+2001-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-exit): Changed order of saving summary view
+	and msgdb.
+
+	* wl.el (wl-toggle-plugged): Save summary view.
+
 2001-12-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-open-folder): Bind `elmo-mime-charset'.

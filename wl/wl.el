@@ -1,4 +1,4 @@
-;;; wl.el -- Wanderlust bootstrap.
+;;; wl.el --- Wanderlust bootstrap.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -36,7 +36,7 @@
 
 ;; from x-face.el
 (unless (and (fboundp 'defgroup)
-             (fboundp 'defcustom))
+	     (fboundp 'defcustom))
   (require 'backquote)
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
@@ -50,8 +50,6 @@
        (require 'wl-xmas))
       (wl-on-emacs21
        (require 'wl-e21))
-      (wl-on-nemacs
-       (require 'wl-nemacs))
       (t
        (require 'wl-mule)))
 
@@ -72,11 +70,8 @@
   (require 'cl)
   (require 'smtp)
   (require 'wl-score)
-  (unless wl-on-nemacs
-    (require 'wl-fldmgr))
-  (if wl-use-semi
-      (require 'wl-mime)
-    (require 'tm-wl)))
+  (require 'wl-fldmgr)
+  (require 'wl-mime))
 
 (defun wl-plugged-init (&optional make-alist)
   (setq elmo-plugged wl-plugged)
@@ -99,7 +94,7 @@
       (setq wl-plugged t))
      ((eq arg 'off)
       (setq wl-plugged nil))
-     (t (setq wl-plugged (null wl-plugged))))
+     (t (setq wl-plugged (not wl-plugged))))
     (elmo-set-plugged wl-plugged))
   (setq elmo-plugged wl-plugged
 	wl-modeline-plug-status wl-plugged)
@@ -107,8 +102,8 @@
     (let ((summaries (wl-collect-summary)))
       (while summaries
 	(set-buffer (pop summaries))
-	(elmo-folder-commit wl-summary-buffer-elmo-folder)
-	(wl-summary-set-message-modified))))
+	(wl-summary-save-view)
+	(elmo-folder-commit wl-summary-buffer-elmo-folder))))
   (setq wl-biff-check-folders-running nil)
   (if wl-plugged
       (progn
@@ -169,10 +164,8 @@
   (if wl-on-xemacs
       (defun wl-plugged-setup-mouse ()
 	(define-key wl-plugged-mode-map 'button2 'wl-plugged-click))
-    (if wl-on-nemacs
-	(defun wl-plugged-setup-mouse ())
-      (defun wl-plugged-setup-mouse ()
-	(define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click)))))
+    (defun wl-plugged-setup-mouse ()
+      (define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click))))
 
 (unless wl-plugged-mode-map
   (setq wl-plugged-mode-map (make-sparse-keymap))
@@ -281,10 +274,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
     (while dop-queue
       (when (car dop-queue)
-	(setq ope (cons (elmo-dop-queue-method (car dop-queue))
-			(length 
+	(setq ope (cons (elmo-dop-queue-method-name (car dop-queue))
+			(length
 			 (if (listp
-			      (car 
+			      (car
 			       (elmo-dop-queue-arguments (car dop-queue))))
 			     (car (elmo-dop-queue-arguments
 				   (car dop-queue))))))))
@@ -296,7 +289,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 					   (wl-folder-get-elmo-folder last))))
 	  (setq alist
 		(wl-append-assoc-list
-		 (cons (car server-info) (nth 1 server-info)) ;; server port
+		 server-info
 		 (cons last operation)
 		 alist)))
 	(when (car dop-queue)
@@ -315,12 +308,23 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		 (car folder-ope)
 		 (wl-folder-get-petname (car folder-ope)))
 		"("
-		(mapconcat
-		 '(lambda (ope)
-		    (if (> (cdr ope) 0)
-			(format "%s:%d" (car ope) (cdr ope))
-		      (format "%s" (car ope))))
-		 (cdr folder-ope) ",")
+		(let ((opes (cdr folder-ope))
+		      pair shrinked)
+		  (while opes
+		    (if (setq pair (assoc (car (car opes)) shrinked))
+			(setcdr pair (+ (cdr pair)
+					(max (cdr (car opes)) 1)))
+		      (setq shrinked (cons
+				      (cons (car (car opes))
+					    (max (cdr (car opes)) 1))
+				      shrinked)))
+		    (setq opes (cdr opes)))
+		  (mapconcat
+		   '(lambda (ope)
+		      (if (> (cdr ope) 0)
+			  (format "%s:%d" (car ope) (cdr ope))
+			(format "%s" (car ope))))
+		   (nreverse shrinked) ","))
 		")"))
      operations
      (concat "\n" (wl-set-string-width column "")))))
@@ -329,7 +333,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let ((buffer-read-only nil)
 	(alist plugged-alist)
 	(vars wl-plugged-switch-variables)
-	last server port label plugged time
+	last server port stream-type label plugged time
 	line len qinfo column)
     (erase-buffer)
     (while vars
@@ -351,6 +355,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (while alist
       (setq server (nth 0 (caar alist))
 	    port (nth 1 (caar alist))
+	    stream-type (nth 2 (caar alist))
 	    label (nth 1 (car alist))
 	    plugged (nth 2 (car alist))
 	    time (nth 3 (car alist)))
@@ -386,7 +391,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	       (wl-set-string-width column line)
 	       (wl-plugged-sending-queue-status qinfo))))
        ;; dop queue status
-       ((setq qinfo (assoc (cons server port) wl-plugged-dop-queue-alist))
+       ((setq qinfo (assoc (list server port stream-type)
+			   wl-plugged-dop-queue-alist))
 	(setq line
 	      (concat
 	       (wl-set-string-width column line)
@@ -485,7 +491,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (save-excursion
       (beginning-of-line)
       (cond
-       ;; swtich variable
+       ;; switch variable
        ((bobp)
 	(let (variable switch name)
 	  (goto-char cur-point)
@@ -504,7 +510,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	      (delete-region (match-beginning 2) (match-end 2))
 	      (insert (wl-plugged-string switch))
 	      (set-buffer-modified-p nil)))))
-       ;; swtich plug
+       ;; switch plug
        ((looking-at "^\\( *\\)\\[\\([^]]+\\)\\]\\([^ \n]*\\)")
 	(let* ((indent (length (elmo-match-buffer 1)))
 	       (switch (elmo-match-buffer 2))
@@ -632,7 +638,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (with-current-buffer (car summaries)
 	    (unless keep-summary
 	      (wl-summary-cleanup-temp-marks))
-	    (wl-summary-save-view keep-summary)
+	    (wl-summary-save-view)
 	    (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	    (unless keep-summary
 	      (kill-buffer (car summaries))))
@@ -646,8 +652,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-exit ()
   (interactive)
   (when (or (not wl-interactive-exit)
-	    (y-or-n-p "Quit Wanderlust? "))
+	    (y-or-n-p "Do you really want to quit Wanderlust? "))
     (elmo-quit)
+    (when wl-use-acap (funcall (symbol-function 'wl-acap-exit)))
     (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
@@ -663,26 +670,20 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	     (> (length (visible-frame-list)) 1))
 	(delete-frame))
     (setq wl-init nil)
-    (unless wl-on-nemacs
-      (remove-hook 'kill-emacs-hook 'wl-save-status))
+    (remove-hook 'kill-emacs-hook 'wl-save-status)
     t)
   (message "") ; empty minibuffer.
   )
 
 (defun wl-init ()
   (when (not wl-init)
+    (require 'mime-setup)
     (setq elmo-plugged wl-plugged)
-    (unless wl-on-nemacs
-      (add-hook 'kill-emacs-hook 'wl-save-status))
+    (add-hook 'kill-emacs-hook 'wl-save-status)
     (wl-address-init)
     (wl-draft-setup)
     (wl-refile-alist-setup)
-    (if wl-use-semi
-	(progn
-	  (require 'wl-mime)
-	  (setq elmo-use-semi t))
-      (require 'tm-wl)
-      (setq elmo-use-semi nil))
+    (require 'wl-mime)
     ;; defined above.
     (wl-mime-setup)
     (fset 'wl-summary-from-func-internal
@@ -700,10 +701,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless (featurep 'mime-setup)
-    (require 'mime-setup))
-  (unless wl-from
-    (error "Please set `wl-from'"))
+  (unless wl-from (error "Please set `wl-from'"))
   ;; Message-ID
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain
@@ -753,11 +751,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(unless (elmo-folder-exists-p lost+found-folder)
 	  (elmo-folder-create lost+found-folder)))
       ;; tmp dir
-      (unless (file-exists-p wl-tmp-dir)
+      (unless (file-exists-p wl-temporary-file-directory)
 	(if (y-or-n-p
 	     (format "Temp directory (to save multipart) %s does not exist, create it now? "
-		     wl-tmp-dir))
-	    (make-directory wl-tmp-dir)
+		     wl-temporary-file-directory))
+	    (make-directory wl-temporary-file-directory)
 	  (error "Temp directory is not created"))))))
 
 ;;;###autoload
@@ -766,29 +764,31 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (unless wl-init
-    (wl-load-profile))
-  (elmo-init)
-  (let (demo-buf)
+    (wl-load-profile)
+    (wl-folder-init)
+    (elmo-init))
+  (let (demo-buf check)
     (unless wl-init
-      (if wl-demo (setq demo-buf (wl-demo))))
+      (if wl-demo (setq demo-buf (wl-demo)))
+      (setq check t))
     (wl-init)
-    (unless wl-init
-      (condition-case nil
-	  (progn
-	    (message "Checking environment...")
-	    (wl-check-environment arg)
-	    (message "Checking environment...done"))
-	(error)
-	(quit)))
     (condition-case obj
 	(progn
+	  (if check
+	      (condition-case nil
+		  (progn
+		    (message "Checking environment...")
+		    (wl-check-environment arg)
+		    (message "Checking environment...done"))
+		(error)
+		(quit)))
 	  (wl-plugged-init (wl-folder arg))
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
 	    (run-hooks 'wl-auto-check-folder-hook))
 	  (unless arg (wl-biff-start)))
-      (error 
+      (error
        (if (buffer-live-p demo-buf)
 	   (kill-buffer demo-buf))
        (signal (car obj)(cdr obj)))
@@ -826,6 +826,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       wl-fldmgr-save-folders wl-fldmgr-set-petname wl-fldmgr-sort
       wl-fldmgr-subscribe wl-fldmgr-subscribe-region
       wl-fldmgr-unsubscribe wl-fldmgr-unsubscribe-region wl-fldmgr-yank )
+     ("wl-acap" wl-acap-init)
+     ("wl-acap" :interactive t wl-acap-store)
      ("wl-fldmgr"
       (wl-fldmgr-mode-map keymap)
       wl-fldmgr-add-entity-hashtb)
