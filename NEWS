@@ -2,6 +2,17 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** New hooks
+   wl-draft-reply-hook
+   wl-summary-reply-hook
+   wl-draft-forward-hook
+   wl-summary-forward-hook
+   wl-draft-kill-pre-hook
+   wl-summary-resend-hook
+
+** Abolished hook
+   wl-reply-hook
+
 ** Persistent mark string in summary buffer is changed.
    Default setting indicates cached state by its upper/lower case.
 

@@ -2,6 +2,17 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.10.1 から 2.12.0 への変更点
 
+** 新規 hook
+   wl-draft-reply-hook
+   wl-summary-reply-hook
+   wl-draft-forward-hook
+   wl-summary-forward-hook
+   wl-draft-kill-pre-hook
+   wl-summary-resend-hook
+
+** 廃止された hook
+   wl-reply-hook
+
 ** サマリバッファの永続マークの文字列が変更されました。
    デフォルトの設定ではキャッシュの有無を大文字小文字で示します。
 
