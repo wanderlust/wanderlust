@@ -1,23 +1,9 @@
 ;;; dot.wl -- sample setting file for Wanderlust	-*- emacs-lisp -*-
 
-;; [[ SEMI の設定 ]]
-
-;; HTML パートを表示しない
-;; (require 'mime-setup) より先に記述する必要があります。
-(setq mime-setup-enable-inline-html nil)
-
-;; 大きいメッセージを送信時に分割しない
-(setq mime-edit-split-message nil)
-
-;; 大きいメッセージとみなす行数の設定
-;(setq mime-edit-message-default-max-lines 1000)
-
-
 ;; [[ 動作に必要な設定 ]]
 
 ;; まず、次の設定を ~/.emacs などに書いてください。
 ;; ここから
-(require 'mime-setup)
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 ;; ここまで
@@ -25,6 +11,19 @@
 ;; アイコンを置くディレクトリ (XEmacs, Emacs21 のみ)
 ;; XEmacs の package としてインストールされている場合は必要ありません。
 ;(setq wl-icon-dir "/usr/local/lib/emacs/etc")
+
+
+;; [[ SEMI の設定 ]]
+
+;; HTML パートを表示しない
+;; mime-setup がロードされる前に記述する必要があります。
+(setq mime-setup-enable-inline-html nil)
+
+;; 大きいメッセージを送信時に分割しない
+(setq mime-edit-split-message nil)
+
+;; 大きいメッセージとみなす行数の設定
+;(setq mime-edit-message-default-max-lines 1000)
 
 
 ;;; [[ 個人情報の設定 ]]

@@ -1,23 +1,9 @@
 ;;; dot.wl -- sample setting file for Wanderlust	-*- emacs-lisp -*-
 
-;; [[ SEMI Setting ]]
-
-;; Disable inline display of HTML part.
-;; Put before (require 'mime-setup)
-(setq mime-setup-enable-inline-html nil)
-
-;; Don't split large message.
-(setq mime-edit-split-message nil)
-
-;; If lines of message are larger than this value, treat it as `large'.
-;(setq mime-edit-message-default-max-lines 1000)
-
-
 ;; [[ Requirement Setting ]]
 
 ;; Following must be included in ~/.emacs
 ;; for .emacs begin
-(require 'mime-setup)
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 ;; for .emacs end
@@ -25,6 +11,19 @@
 ;; Icon directory (XEmacs and Emacs21 only)
 ;; (No need if installed as XEmacs package.)
 ;(setq wl-icon-dir "/usr/local/lib/emacs/etc")
+
+
+;; [[ SEMI Setting ]]
+
+;; Disable inline display of HTML part.
+;; Put before load `mime-setup'
+(setq mime-setup-enable-inline-html nil)
+
+;; Don't split large message.
+(setq mime-edit-split-message nil)
+
+;; If lines of message are larger than this value, treat it as `large'.
+;(setq mime-edit-message-default-max-lines 1000)
 
 
 ;;; [[ Private Setting ]]
