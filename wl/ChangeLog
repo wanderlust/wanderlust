@@ -1,3 +1,8 @@
+2001-05-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft): use `wl-summary-write-current-folder'
+	instead of `wl-summary-write-current-newsgroup'.
+
 2001-05-19  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-summary.el (wl-summary-auto-select-msg-p): New function.
