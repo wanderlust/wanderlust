@@ -1,5 +1,8 @@
 2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.4.1.
+	* wl-version.el (wl-version): Changed codename to "Stand By Me-pre".
+
 	* wl-address.el (wl-address-specials-regexp): New constant.
 	(wl-address-quote-specials): Use it.
 
