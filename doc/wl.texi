@@ -3078,8 +3078,8 @@ If the message at current cursor point is your own netnews article,
 a draft for `supersedes message' for the message is prepared.
 (@code{wl-summary-reedit})
 
-@item M-e
-@kindex M-e (Summary)
+@item M-E
+@kindex M-E (Summary)
 @findex wl-summary-resend-bounced-mail
 If the message at current cursor point is a bounced message,
 a draft for re-sending original message is prepared.
