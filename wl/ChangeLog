@@ -1,8 +1,3 @@
-2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-highlight.el (wl-highlight-headers): Remove
-	`wl-highlight-x-face-func' argument (`beg' and `end').
-
 2000-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-important):
