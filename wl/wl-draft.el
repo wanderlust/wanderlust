@@ -1553,10 +1553,9 @@ Derived from `message-save-drafts' in T-gnus."
   "header-alist' sample
 '(function  ;; funcall
   string    ;; insert string
-  (string . function)  ;;  insert string (funcall)
-  (string . string)    ;;  insert string string
-  (string . function)  ;;  insert string (funcall)
-  (string . nil)       ;;  insert nothing
+  (symbol . string)    ;;  insert symbol-value: string
+  (symbol . function)  ;;  insert symbol-value: (funcall)
+  (symbol . nil)       ;;  insert nothing
   (function . (arg1 arg2 ..))  ;; call function with argument
   nil                  ;;  insert nothing
 "
