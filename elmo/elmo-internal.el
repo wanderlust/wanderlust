@@ -38,7 +38,7 @@
 					    name)
   (elmo-internal-folder-initialize folder name))
 
-(defvar elmo-internal-folder-list '(mark cache))
+(defvar elmo-internal-folder-list '(mark cache sendlog))
 
 (defun elmo-internal-folder-initialize (folder name)
   (let ((fsyms elmo-internal-folder-list)

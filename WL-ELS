@@ -20,7 +20,7 @@
    elmo-localdir elmo-localnews elmo-map elmo-maildir
    elmo-multi elmo-filter
    elmo-archive elmo-pipe elmo-cache
-   elmo-internal elmo-mark
+   elmo-internal elmo-mark elmo-sendlog
    elmo-dop elmo-nmz
    ))
 
