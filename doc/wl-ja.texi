@@ -6618,7 +6618,9 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @chapter Spam フィルタ
 @cindex Spam Filter
 
-@code{wl-spam} は、spam フィルタのフロントエンドを提供します。
+@code{wl-spam} は、外部 spam フィルタプログラムへのフロントエンドを提供
+します。Wanderlust 上でのメッセージに対する操作と連携して、フィルタプロ
+グラムへの登録や、spam の判定ができるようになります。
 
 @menu
 * Usage of Spam Filter::        使い方
@@ -6884,7 +6886,8 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
 @menu
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
-@c* Bsfileter::                   bsfilter
+* Bsfileter::                   bsfilter
+* SpamAssassin::                spamassassin
 @end menu
 
 
@@ -6926,7 +6929,7 @@ bogofilter の実行時に実行ファイルに渡される引数を指定します。
 @end table
 
 
-@node spamfilter,  , bogofilter, Spam Filter Processor
+@node spamfilter, Bsfilter, bogofilter, Spam Filter Processor
 @subsection spamfilter.el
 @cindex spamfilter
 
@@ -6954,6 +6957,18 @@ Emacs Lisp で実装された spam フィルタリングライブラリです。
 初期設定は @file{~/.elmo/.spamfilter}。
 コーパスファイルの名前を設定します。
 @end table
+
+@node Bsfilter, SpamAssassin, spamfilter, Spam Filter Processor
+@subsection bsfilter
+@cindex bsfilter
+
+not yet documented...
+
+@node SpamAssassin,  , Bsfilter, Spam Filter Processor
+@subsection spamassassin
+@cindex spamassassin
+
+not yet documented...
 
 
 @node Customization, Terminology, Spam Filter, Top
