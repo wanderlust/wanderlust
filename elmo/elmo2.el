@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/20 13:46:16 teranisi>
+;; Time-stamp: <2000-05-18 17:49:09 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -270,7 +270,7 @@ without cacheing."
 	   (done-msg-num (or done 0))
 	   (tmp-buf (get-buffer-create " *elmo-move-msg*"))
 	   ;elmo-no-cache-flag
-	   ret-val real-fld-num done-copy dir
+	   ret-val real-fld-num done-copy dir pair
 	   mes-string message-id src-cache i percent unseen seen-list)
       (setq i done-msg-num)
       (set-buffer tmp-buf)
@@ -288,7 +288,7 @@ without cacheing."
       (while messages
 	(setq real-fld-num (elmo-get-real-folder-number src-folder
 							(car messages)))
-	(setq message-id (cdr (assq (car messages) number-alist)))
+	(setq message-id (cdr (setq pair (assq (car messages) number-alist))))
 	;; seen-list.
 	(if (and (not (eq dst-folder 'null))
 		 (not (and unread-marks
@@ -310,11 +310,23 @@ without cacheing."
 				  same-number)
 		(error "Copy message to %s failed" dst-folder))
 	    ;; use cache if exists.
-	    (elmo-read-msg src-folder (car messages) tmp-buf msgdb)
+	    ;; if there's other message with same message-id,
+	    ;; don't use cache.
+	    (elmo-read-msg src-folder (car messages)
+			   tmp-buf msgdb
+			   (and (elmo-folder-plugged-p src-folder)
+				(and pair
+				     (or
+				      (rassoc
+				       message-id
+				       (cdr (memq pair number-alist)))
+				      (not (eq pair
+					       (rassoc message-id
+						       number-alist)))))))
 	    (unless (elmo-append-msg dst-folder (buffer-string) message-id
 				     (if same-number (car messages))
 				     ;; null means all unread.
-				     (or (null unread-marks) 
+				     (or (null unread-marks)
 					 unseen))
 	      (error "move: append message to %s failed" dst-folder))))
 	;; delete src cache if it is partial.
