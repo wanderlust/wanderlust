@@ -1,3 +1,7 @@
+2001-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-reply): Call wl-draft with parent folder.
+
 2001-11-19  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-folder.el (wl-folder-get-newsgroups): Fix.

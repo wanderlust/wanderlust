@@ -279,7 +279,9 @@ Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
   (let (r-list
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from to-alist cc-alist decoder)
+	from to-alist cc-alist decoder parent-folder)
+    (set-buffer summary-buf)
+    (setq parent-folder (wl-summary-buffer-folder-name))
     (set-buffer buf)
     (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
     (catch 'done
@@ -405,7 +407,7 @@ Reply to author if WITH-ARG is non-nil."
 			 (mapconcat 'identity references "\n\t")))
     (wl-draft
      to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil nil summary-buf)
+     nil nil nil nil summary-buf nil parent-folder)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
