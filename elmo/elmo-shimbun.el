@@ -409,10 +409,11 @@ update overview when message is fetched."
       (elmo-message-entity-set-field
        entity
        'references
-       (or (elmo-message-entity-field entity 'message-id)
-	   (elmo-get-hash-val
-	    references
-	    (elmo-shimbun-folder-entity-hash folder))
+       (or (elmo-message-entity-field
+	    (elmo-get-hash-val
+	     references
+	     (elmo-shimbun-folder-entity-hash folder))
+	    'message-id)
 	   references)))))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)

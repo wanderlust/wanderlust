@@ -1,3 +1,8 @@
+2003-09-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview): Fixed the last
+	change.
+
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-message-field): Use elmo-message-entity-field.
