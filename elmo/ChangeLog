@@ -1,3 +1,24 @@
+2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-use-killed-list): New variable
+	(Renamed from `elmo-nntp-use-killed-list').
+	(elmo-nntp-use-killed-list): Eliminated.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path):
+	Changed expanding msgdb path for elmo-multi.
+
+	* elmo-archive.el, elmo-cache.el, elmo-database.el, elmo-date.el,
+	elmo-dop.el, elmo-filter.el, elmo-imap4.el, elmo-internal.el,
+	elmo-localdir.el, elmo-localnews.el, elmo-maildir.el, elmo-msgdb.el,
+	elmo-multi.el, elmo-nntp.el, elmo-pipe.el, elmo-pop3.el,
+	elmo-util.el, elmo-vars.el, elmo2.el, mmelmo-1.el, mmelmo-2.el,
+	mmelmo-imap4-1.el, mmelmo-imap4-2.el, mmelmo-imap4.el, mmelmo.el
+	(toplevel): Deleted time-stamp line.
+
+	* elmo2.el (elmo-clear-killed ): Defined as function
+	(Abolished defining as a backend function).
+	All other related modules are changed.
+
 2000-07-14  Hiroshi Tsutsui <tsutsui@easter.kuee.kyoto-u.ac.jp>
 
 	* elmo-cache.el (elmo-cache-clear-killed): Fixed.
