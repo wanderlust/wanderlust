@@ -41,12 +41,7 @@
 (defgroup wl nil
   "Wanderlust, a news and mail reading software."
   :tag "Wanderlust"
-  :link (` (custom-manual
-	    (, (if (and (boundp 'current-language-environment)
-			(string-equal "Japanese"
-				      (symbol-value 'current-language-environment)))
-		   "(wl-ja)Top"
-		 "(wl)Top"))))
+  :link '(custom-manual "(wl-ja)Top")
   :group 'news
   :group 'mail)
 
@@ -728,12 +723,9 @@ Default is for 'followup-to-me'."
   :type '(repeat string)
   :group 'wl-summary)
 
-(defcustom wl-summary-fix-timezone nil
-  "*Time zone of the date string in summary mode. 
-If nil, it is adjust to the default time zone information
-\(system's default time zone or environment variable TZ\)."
-  :type '(choice (const :tag "Default time zone" nil)
-		 string)
+(defcustom wl-summary-fix-timezone "JST"
+  "Non-nil forces to fix timezone of summary date."
+  :type 'string
   :group 'wl-summary)
 
 (defcustom wl-summary-default-score 0
@@ -1161,12 +1153,7 @@ Each elements are regexp of field-name."
   :group 'wl-pref)
 
 (defcustom wl-folder-use-frame nil
-  "*Use dedicated frame for folder mode if non-nil."
-  :type 'boolean
-  :group 'wl-pref)
-
-(defcustom wl-summary-use-frame nil
-  "*Use dedicated frame for each folder summary if non-nil."
+  "*Use dedicated frame for each folder if non-nil."
   :type 'boolean
   :group 'wl-pref)
 

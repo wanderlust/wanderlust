@@ -536,6 +536,18 @@
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
+(defun wl-summary-collect-unread (mark-alist &optional folder)
+  (let (mark ret-val)
+    (while mark-alist
+      (setq mark (cadr (car mark-alist)))
+      (and mark
+	   (or (string= mark wl-summary-new-mark)
+	       (string= mark wl-summary-unread-uncached-mark)
+	       (string= mark wl-summary-unread-cached-mark))
+	   (setq ret-val (cons (car (car mark-alist)) ret-val)))
+      (setq mark-alist (cdr mark-alist)))
+    ret-val))
+
 (defun wl-summary-count-unread (mark-alist &optional folder)
   (let ((new 0)
 	(unread 0)
@@ -1704,7 +1716,7 @@ If ARG is non-nil, checking is omitted."
       (let* ((folder wl-summary-buffer-folder-name)
 	     (cur-buf (current-buffer))
 	     (msgdb wl-summary-buffer-msgdb)
-	     (number-alist (elmo-msgdb-get-number-alist msgdb))
+;;;	     (number-alist (elmo-msgdb-get-number-alist msgdb))
 	     (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	     (malist mark-alist)
 	     (inhibit-read-only t)
@@ -1712,14 +1724,7 @@ If ARG is non-nil, checking is omitted."
 	     (case-fold-search nil)
 	     msg mark)
 	(message "Setting all msgs as read...")
-	(elmo-mark-as-read folder
-			   (elmo-list-folder-unread
-			    folder
-			    number-alist
-			    mark-alist
-			    (list wl-summary-unread-cached-mark
-				  wl-summary-unread-uncached-mark
-				  wl-summary-new-mark))
+	(elmo-mark-as-read folder (wl-summary-collect-unread mark-alist)
 			   msgdb)
 	(save-excursion
 	  (goto-char (point-min))

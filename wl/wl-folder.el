@@ -640,7 +640,7 @@ Optional argument ARG is repeart count."
 			wl-folder-buffer-cur-entity-id)))
       (let ((summary-buf (wl-summary-get-buffer-create fld-name arg))
 	    error-selecting)
-	(if (or wl-stay-folder-window wl-summary-use-frame)
+	(if wl-stay-folder-window
 	    (wl-folder-select-buffer summary-buf)
 	  (if (and summary-buf
 		   (get-buffer-window summary-buf))
@@ -984,7 +984,6 @@ If current line is group folder, check all sub entries."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -1032,7 +1031,6 @@ If current line is group folder, check all subfolders."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -1292,14 +1290,14 @@ If current line is group folder, all subfolders are marked."
     (if gbw
 	(progn (select-window gbw)
 	       (setq exists t))
-      (unless wl-summary-use-frame
+      (unless wl-folder-use-frame
 	(condition-case ()
 	    (unwind-protect
 		(split-window-horizontally wl-folder-window-width)
 	      (other-window 1))
 	  (error nil))))
     (set-buffer buffer)
-    (if wl-summary-use-frame
+    (if wl-folder-use-frame
 	(switch-to-buffer-other-frame buffer)
       (switch-to-buffer buffer))
     exists))
@@ -1436,24 +1434,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder (&optional arg)
   (interactive "P")
-  (let (initialize folder-buf)
-    (if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	(if wl-folder-use-frame
-	    (let (select-frame)
-	      (save-selected-window
-		(dolist (frame (visible-frame-list))
-		  (select-frame frame)
-		  (if (get-buffer-window folder-buf)
-		      (setq select-frame frame))))
-	      (if select-frame
-		  (select-frame select-frame)
-		(switch-to-buffer folder-buf)))
-	  (switch-to-buffer folder-buf))
-      (if wl-folder-use-frame
-	  (switch-to-buffer-other-frame
-	   (get-buffer-create wl-folder-buffer-name))
-	(switch-to-buffer (get-buffer-create wl-folder-buffer-name)))
-      (switch-to-buffer (get-buffer wl-folder-buffer-name))
+  (let (initialize)
+;;; (delete-other-windows)
+    (if (get-buffer wl-folder-buffer-name)
+	(switch-to-buffer  wl-folder-buffer-name)
+      (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
       (wl-folder-mode)
       (wl-folder-init)
       (set-buffer wl-folder-buffer-name)
@@ -2085,8 +2070,6 @@ Use `wl-subscribed-mailing-list'."
 	    (if (eq 'imap4 (elmo-folder-get-type folder))
 		(elmo-imap4-spec-mailbox (elmo-imap4-get-spec folder))
 	      (substring folder 1)))
-      (if (string-match "@" folder)
-	  (setq folder (substring folder 0 (match-beginning 0))))
       (when (string-match "[^\\./]+$" folder) ; last hierarchy
 	(setq key (regexp-quote
 		   (concat (substring folder (match-beginning 0)) "@")))
@@ -2178,7 +2161,7 @@ Use `wl-subscribed-mailing-list'."
 	     (setq id (wl-folder-get-entity-id entity)))
 	(wl-folder-set-current-entity-id id))
     (setq summary-buf (wl-summary-get-buffer-create fld-name sticky))
-    (if (or wl-stay-folder-window wl-summary-use-frame)
+    (if wl-stay-folder-window
 	(wl-folder-select-buffer summary-buf)
       (if (and summary-buf
 	       (get-buffer-window summary-buf))
@@ -2644,7 +2627,6 @@ Use `wl-subscribed-mailing-list'."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -2702,7 +2684,6 @@ If current line is group folder, all subfolders are prefetched."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
