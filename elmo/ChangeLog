@@ -1,3 +1,59 @@
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-append-messages): Fixed logic.
+	(Detected by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>)
+
+2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-get-network-stream-type): Moved to elmo-net.el.
+
+	* elmo-net.el (elmo-get-network-stream-type): Moved from elmo-util.el
+	and re-written.
+
+	* elmo-imap4.el (elmo-folder-initialize): Use
+	elmo-get-network-stream-type.
+
+	* elmo-nntp.el (elmo-folder-initialize): Ditto.
+
+	* elmo-pop3.el (elmo-folder-initialize): Ditto.
+
+2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-encache): Set unread argument for
+	elmo-message-fetch.
+
+	* elmo-shimbun.el (elmo-dop): Require 'elmo-dop.
+
+	* elmo.el (elmo-net-port-info): New method.
+
+	* elmo-shimbun.el (elmo-net-port-info): Define.
+	(elmo-message-encache): Ditto.
+
+	* elmo-net.el (elmo-net-port-info): Define as method.
+
+	* elmo.el (elmo-generic-folder-append-messages): Find cache file in
+	unplugged status when elmo-enable-disconnected-operation is t.
+
+	* elmo-dop.el (elmo-dop-spool-folder-append-buffer): Check existence
+	of spool folder before checking new number.
+
+2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-network-close-session): Removed 3rd argument.
+	(elmo-network-setup-session): Ditto.
+	(elmo-message-fetch-plugged): Ditto.
+	(elmo-pop3-send-command): Don't call elmo-pop3-lock.
+	(elmo-network-initialize-session): Ditto.
+	(elmo-pop3-read-response): Abolish 3rd argument.
+	(elmo-pop3-read-response): Don't call elmo-pop3-unlock.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-read-body): Ditto.
+	(elmo-folder-status): Call elmo-folder-close.
+	(elmo-pop3-lock): Abolish.
+	(elmo-pop3-unlock): Ditto.
+	(elmo-pop3-locked-p): Ditto.
+	(elmo-folder-check): Don't call elmo-pop3-locked-p.
+
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.7.0.
