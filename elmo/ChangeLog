@@ -1,5 +1,8 @@
 2005-01-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-maildir.el (elmo-map-message-fetch): Call
+	`elmo-map-folder-set-flag'.
+
 	* elmo.el (elmo-message-fetch-with-cache-process): Abolish.
 	(elmo-message-fetch): Merge from
 	`elmo-message-fetch-with-cache-process'.

@@ -496,7 +496,10 @@ file name for maildir directories."
 					    &optional section unseen)
   (let ((file (elmo-maildir-message-file-name folder location)))
     (when (file-exists-p file)
-      (insert-file-contents-as-binary file))))
+      (insert-file-contents-as-binary file)
+      (unless unseen
+	(elmo-map-folder-set-flag folder location 'read))
+      t)))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))
