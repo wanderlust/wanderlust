@@ -50,9 +50,6 @@
 ;;
 ;; (acap-close proc)
 ;; => t
-;;
-;; Todo:
-;;  * Send literal data for STORE.
 
 ;;; History:
 ;;
