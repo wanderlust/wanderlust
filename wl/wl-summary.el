@@ -1153,7 +1153,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		     folder))
 	 (range (or force-range (wl-summary-input-range folder)))
 	 mes seen-list killed-list)
-    (cond ((string= range "all")
+    (cond ((or (string= range "all")
+	       (string= range "all-shown"))
 	   ;; initialize buffer local databases.
 	   (unless (elmo-folder-plugged-p folder) ; forbidden
 	     (error "Unplugged"))
@@ -1171,7 +1172,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	   (elmo-clear-killed wl-summary-buffer-folder-name)
 	   (condition-case nil
 	       (setq mes (wl-summary-sync-update3 seen-list unset-cursor
-						  'sync-all))
+						  (string= range "all")))
 	     (quit
 	      ;; Resume killed-list if quit.
 	      (message "") ; clear minibuffer.
@@ -4612,7 +4613,7 @@ If ARG, exit virtual folder."
   "returns update or all or rescan."
   ;; for the case when parts are expanded in the bottom of the folder
   (let ((input-range-list '("update" "all" "rescan" "first:" "last:"
-			    "no-sync" "rescan-noscore"))
+			    "no-sync" "rescan-noscore" "all-shown"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)

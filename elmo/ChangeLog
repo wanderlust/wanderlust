@@ -5,7 +5,6 @@
 2000-02-19  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo2.el (elmo-list-folder): Added optional argument `nohide'.
-	* wl-summary.el (wl-summary-sync-update3): Bind 'nohide as t if sync-all.
 	* elmo-imap4.el (elmo-imap4-list-folder): Added optional argument `nohide'.
 	* elmo-pop3.el (elmo-pop3-list-folder): Ditto.
     	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
