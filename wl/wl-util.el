@@ -575,6 +575,22 @@ that `read' can handle, whenever this is possible."
      (buffer-list))
     result))
 
+(defun wl-collect-draft ()
+  (let ((draft-regexp (concat
+		       "^" (regexp-quote
+			    (elmo-localdir-folder-directory-internal
+			     (wl-folder-get-elmo-folder wl-draft-folder)))))
+	result buf)
+    (mapcar
+     (function (lambda (x)
+		 (if (and
+		      (setq buf (with-current-buffer x
+				  wl-draft-buffer-file-name))
+		      (string-match draft-regexp buf))
+		     (setq result (nconc result (list x))))))
+     (buffer-list))
+    result))
+
 (static-if (fboundp 'read-directory-name)
     (defalias 'wl-read-directory-name 'read-directory-name)
   (defun wl-read-directory-name (prompt dir)

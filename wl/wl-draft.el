@@ -2152,26 +2152,18 @@ Derived from `message-save-drafts' in T-gnus."
   (interactive "P")
   (if arg
       (wl-jump-to-draft-folder)
-    (let ((bufs (buffer-list))
-	  (draft-regexp (concat
-			 "^" (regexp-quote
-			      (elmo-localdir-folder-directory-internal
-			       (wl-folder-get-elmo-folder wl-draft-folder)))))
-	  buf draft-bufs)
-      (while bufs
-	(if (and
-	     (setq buf (with-current-buffer (car bufs)
-			 wl-draft-buffer-file-name))
-	     (string-match draft-regexp buf))
-	    (setq draft-bufs (cons (buffer-name (car bufs)) draft-bufs)))
-	(setq bufs (cdr bufs)))
+    (let ((draft-bufs (wl-collect-draft))
+	  buf)
       (cond
        ((null draft-bufs)
 	(message "No draft buffer exist."))
        (t
 	(setq draft-bufs
-	      (sort draft-bufs (function (lambda (a b) (not (string< a b))))))
-	(if (setq buf (cdr (member (buffer-name) draft-bufs)))
+	      (sort (mapcar 'buffer-name draft-bufs)
+		    (function (lambda (a b)
+				(not (string< a b))))))
+	(if (setq buf (cdr (member (buffer-name)
+				   draft-bufs)))
 	    (setq buf (car buf))
 	  (setq buf (car draft-bufs)))
 	(switch-to-buffer buf))))))
