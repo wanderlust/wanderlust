@@ -34,9 +34,7 @@ elmo-folder-check でオリジナルフォルダの msgdb を sync する。
 
 を設け、filter フォルダで t なら original msgdb を利用する。
 nil なら original は利用しない。
-
 msgdb への操作はなるべく抽象化すること。
-get-number-alist なども generic method にする。
 
 * global mark の管理
 
