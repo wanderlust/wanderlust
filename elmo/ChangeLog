@@ -1,3 +1,18 @@
+2003-11-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bogofilter.el (toplevel): Don't require path-util.
+	(elmo-spam-bogofilter-program): Don't use `exec-installed-p'.
+	(elmo-spam-bogofilter-header): Abolish.
+	(elmo-spam-bogofilter-bogosity-positive-spam-header): Ditto.
+	(elmo-spam-bogofilter-args): New user option.
+	(elsp-bogofilter-call-bogofilter): New internal function.
+	(elmo-spam-buffer-spam-p): Use it.
+	(elsp-bogofilter-register-buffer): Renamed from
+	`elmo-spam-bogofilter-register-buffer';
+	Use `elsp-bogofilter-call-bogofilter'.
+	(elmo-spam-register-spam-buffer): Follow the change above.
+	(elmo-spam-register-good-buffer): Ditto.
+
 2003-11-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (elmo-msgdb-append-entity): If entity or

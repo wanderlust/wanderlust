@@ -30,42 +30,34 @@
 ;;; Code:
 ;;
 (require 'elmo-spam)
-
 (require 'luna)
-(require 'path-util)
 
 (defgroup elmo-spam-bogofilter nil
   "Spam bogofilter configuration."
   :group 'elmo-spam)
 
-(defcustom elmo-spam-bogofilter-program (exec-installed-p "bogofilter")
-  "File path of the Bogofilter executable program."
-  :type '(choice (file :tag "Location of bogofilter")
-		 (const :tag "Bogofilter is not installed"))
+(defcustom elmo-spam-bogofilter-program "bogofilter"
+  "*Program name of the Bogofilter."
+  :type '(string :tag "Program name of the bogofilter")
   :group 'elmo-spam-bogofilter)
 
-(defcustom elmo-spam-bogofilter-header "X-Bogosity"
-  "The header that Bogofilter inserts in messages."
-  :type 'string
+(defcustom elmo-spam-bogofilter-args nil
+  "*Argument list for bogofilter."
+  :type '(repeat string)
   :group 'elmo-spam-bogofilter)
 
 (defcustom elmo-spam-bogofilter-spam-switch "-s"
-  "The switch that Bogofilter uses to register spam messages."
+  "*The switch that Bogofilter uses to register spam messages."
   :type 'string
   :group 'elmo-spam-bogofilter)
 
 (defcustom elmo-spam-bogofilter-good-switch "-n"
-  "The switch that Bogofilter uses to register non spam messages."
+  "*The switch that Bogofilter uses to register non spam messages."
   :type 'string
   :group 'elmo-spam-bogofilter)
 
-(defcustom elmo-spam-bogofilter-bogosity-positive-spam-header "^\\(Yes\\|Spam\\)"
-  "The regexp on `elmo-spam-bogofilter' for positive spam identification."
-  :type 'regexp
-  :group 'elmo-spam-bogofilter)
-
 (defcustom elmo-spam-bogofilter-database-directory nil
-  "Directory path of the Bogofilter databases."
+  "*Directory path of the Bogofilter databases."
   :type '(choice (directory :tag "Location of the Bogofilter database directory")
 		 (const :tag "Use the default"))
   :group 'elmo-spam-bogofilter)
@@ -73,39 +65,41 @@
 (eval-and-compile
   (luna-define-class elsp-bogofilter (elsp-generic)))
 
+(defsubst elsp-bogofilter-call-bogofilter (&rest args)
+  (apply #'call-process-region
+	 (point-min) (point-max)
+	 elmo-spam-bogofilter-program
+	 nil nil nil
+	 (append elmo-spam-bogofilter-args
+		 (delq nil (elmo-flatten args)))))
+
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bogofilter)
 					     buffer &optional register)
-  (let ((args `("-v" "-2"
-		,@(if register (list "-u"))
-		,@(if elmo-spam-bogofilter-database-directory
-		      (list "-d" elmo-spam-bogofilter-database-directory)))))
-    (with-current-buffer buffer
-      (= 0 (apply #'call-process-region
-		  (point-min) (point-max)
-		  elmo-spam-bogofilter-program
-		  nil nil nil args)))))
+  (with-current-buffer buffer
+    (= 0 (elsp-bogofilter-call-bogofilter
+	  "-v" "-2"
+	  (if register "-u")
+	  (if elmo-spam-bogofilter-database-directory
+	      (list "-d" elmo-spam-bogofilter-database-directory))))))
 
-(defsubst elmo-spam-bogofilter-register-buffer (buffer spam restore)
-  (let ((args `("-v"
-		,(if spam
-		     elmo-spam-bogofilter-spam-switch
-		   elmo-spam-bogofilter-good-switch)
-		,@(if restore (list (if spam "-N" "-S")))
-		,@(if elmo-spam-bogofilter-database-directory
-		      (list "-d" elmo-spam-bogofilter-database-directory)))))
-    (with-current-buffer buffer
-      (apply #'call-process-region
-	     (point-min) (point-max)
-	     elmo-spam-bogofilter-program
-	     nil nil nil args))))
+(defsubst elsp-bogofilter-register-buffer (buffer spam restore)
+  (with-current-buffer buffer
+    (elsp-bogofilter-call-bogofilter
+     "-v"
+     (if spam
+	 elmo-spam-bogofilter-spam-switch
+       elmo-spam-bogofilter-good-switch)
+     (if restore (if spam "-N" "-S"))
+     (if elmo-spam-bogofilter-database-directory
+	 (list "-d" elmo-spam-bogofilter-database-directory)))))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bogofilter)
 						    buffer &optional restore)
-  (elmo-spam-bogofilter-register-buffer buffer t restore))
+  (elsp-bogofilter-register-buffer buffer t restore))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-bogofilter)
 						    buffer &optional restore)
-  (elmo-spam-bogofilter-register-buffer buffer nil restore))
+  (elsp-bogofilter-register-buffer buffer nil restore))
 
 (require 'product)
 (product-provide (provide 'elsp-bogofilter) (require 'elmo-version))
