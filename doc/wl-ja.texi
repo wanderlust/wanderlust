@@ -533,9 +533,9 @@ Wanderlust の動作をカスタマイズできます。
 (setq wl-icon-dir "~/work/wl/etc")
 
 ;; @r{メールを送信する SMTP サーバ。 初期設定は @code{nil}。}
-(setq wl-smtp-posting-server "your.smtp.example.com")
+(setq wl-smtp-posting-server "your.smtp.server.com")
 ;; @r{ニュース投稿用の NNTP サーバ。 初期設定は @code{nil}。}
-(setq wl-nntp-posting-server "your.nntp.example.com")
+(setq wl-nntp-posting-server "your.nntp.server.com")
 @end group
 @end lisp
 
@@ -655,14 +655,14 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 %inbox  "受信箱"
 +trash  "ゴミ箱"
 +draft  "草稿"
-%#mh/Backup@@my.imap.example.com "送信済み"
+%#mh/Backup@@my.imap.server.com "送信済み"
 # グループの定義
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
     %#mh/spool/elips         "ELIPS ML"
     %#mh/spool/apel-ja       "APEL (日本語) ML"
     %#mh/spool/xemacs-beta   "XEmacs ベータ"
-    -fj.news.reader.gnus@@other.nntp.example.com
+    -fj.news.reader.gnus@@other.nntp.server.com
     *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj の Emacsen"
 @}
 #
@@ -3727,13 +3727,13 @@ nil なら、mime-view-visible-field-list の値が使われます。
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.example.com$" (system-name))
+      '(((string-match "aaa.ne.jp$" (system-name))
          ;; @r{式がnon-nilなら適用する}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{一時的な変数の設定}
          )
-        ("^To: .*user@@aaa.bbb.example.com"
+        ("^To: .*user@@aaa.bbb.com"
          ;; @r{ドラフトバッファのヘッダにマッチすれば適用する}
          ("Organization" . (format "Go %s" my-webpage)))
                            ;; @r{elisp 式が書ける (eval しているだけ)}
@@ -3861,7 +3861,7 @@ nil なら、mime-view-visible-field-list の値が使われます。
          (body . "  ○○です。\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}
-         ("To" . "jousi@@example.com")
+         ("To" . "jousi@@kaisha.jp")
          ("Subject" . "報告")
          (body-file . "~/work/report.txt")
          )

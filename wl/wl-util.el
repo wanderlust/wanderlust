@@ -878,18 +878,6 @@ This function is imported from Emacs 20.7."
 			notify-minibuf)
 	(setq wl-biff-check-folders-running nil)))))
 
-(if (and (fboundp 'regexp-opt)
-	 (not (featurep 'xemacs)))
-    (defalias 'wl-regexp-opt 'regexp-opt)
-  (defun wl-regexp-opt (strings &optional paren)
-    "Return a regexp to match a string in STRINGS.
-Each string should be unique in STRINGS and should not contain any regexps,
-quoted or not.  If optional PAREN is non-nil, ensure that the returned regexp
-is enclosed by at least one regexp grouping construct."
-    (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
-      (concat open-paren (mapconcat 'regexp-quote strings "\\|")
-	      close-paren))))
-
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 
