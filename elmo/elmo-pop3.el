@@ -425,8 +425,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (if (null (elmo-pop3-read-response process))
 	  (error "POP LIST command failed"))
       (if (null (setq response
-		      (elmo-pop3-read-contents
-		       (current-buffer) process)))
+		      (elmo-pop3-read-contents process)))
 	  (error "POP LIST command failed"))
       ;; POP server always returns a sequence of serial numbers.
       (setq count (elmo-pop3-parse-list-response response))
@@ -438,13 +437,12 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	(elmo-pop3-send-command process "uidl")
 	(unless (elmo-pop3-read-response process)
 	  (error "POP UIDL failed"))
-	(unless (setq response (elmo-pop3-read-contents
-				(current-buffer) process))
+	(unless (setq response (elmo-pop3-read-contents process))
 	  (error "POP UIDL failed"))
 	(elmo-pop3-parse-uidl-response response)))))
 
-(defun elmo-pop3-read-contents (buffer process)
-  (with-current-buffer buffer
+(defun elmo-pop3-read-contents (process)
+  (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  match-end)
       (goto-char elmo-pop3-read-point)
@@ -641,9 +639,9 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
    (t
     nil)))
 
-(defun elmo-pop3-retrieve-headers (buffer tobuffer process articles)
+(defun elmo-pop3-retrieve-headers (process tobuffer articles)
   (save-excursion
-    (set-buffer buffer)
+    (set-buffer (process-buffer process))
     (erase-buffer)
     (let ((number (length articles))
 	  (count 0)
@@ -666,7 +664,6 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	    (accept-process-output process 1))
 	  (discard-input)
 	  (while (progn
-		   (set-buffer buffer)
 		   (goto-char last-point)
 		   ;; Count replies.
 		   (while (elmo-pop3-next-result-arrived-p)
@@ -742,8 +739,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		  (lambda (number)
 		    (elmo-pop3-uidl-to-number (cdr (assq number loc-alist))))
 		  numlist))))
-      (elmo-pop3-retrieve-headers (process-buffer process)
-				  tmp-buffer process numlist)
+      (elmo-pop3-retrieve-headers process tmp-buffer numlist)
       (prog1
 	  (elmo-pop3-msgdb-create-message
 	   folder
