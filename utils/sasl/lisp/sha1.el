@@ -43,7 +43,8 @@
 (require 'hex-util)
 
 (eval-when-compile
-  (defun-maybe sha1-string (a)))
+  (or (fboundp 'sha1-string)
+      (defun sha1-string (a))))
 
 (defvar sha1-dl-module
   (if (and (fboundp 'sha1-string)
