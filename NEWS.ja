@@ -45,6 +45,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** アクセスグループフォルダの改名が出来るようになりました。
 
+** 新規サマリに対するスレッド表示の ON/OFF を指定できるようになりました。
+   wl-summary-default-view, wl-summary-default-view-alist を設定して下さい。
+
 ** スティッキーサマリを q や g で抜ける際に、一時的マークを保持するように
    なりました。
 

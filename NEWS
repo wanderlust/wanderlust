@@ -44,6 +44,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Now you can rename access group folders.
 
+** You can specify ON/OFF of thread view for newly created summary.
+   Set wl-summary-default-view, wl-summary-default-view-alist.
+
 ** Temporary marks are kept when you exit from sticky summary by q or g. 
 
 ** Key bindings concerning the sticky summary have been changed.
