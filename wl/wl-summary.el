@@ -1412,7 +1412,7 @@ If ARG is non-nil, checking is omitted."
 				"??")))))) " ]")
 			size))))
 	      (message ""))		; flush.
-	    (setq mark (elmo-msgdb-get-mark msgdb number))
+	    (setq mark (or (elmo-msgdb-get-mark msgdb number) " "))
 	    (if force-read
 		(save-excursion
 		  (save-match-data
@@ -1427,11 +1427,13 @@ If ARG is non-nil, checking is omitted."
 			  (or (elmo-message-mark wl-summary-buffer-elmo-folder
 						 number)
 			      " "))
-		    (wl-summary-update-modeline)
-		    (wl-folder-update-unread
-		     (wl-summary-buffer-folder-name)
-		     (+ wl-summary-buffer-unread-count
-			wl-summary-buffer-new-count)))
+		    (unless (string= new-mark mark)
+		      (wl-summary-count-unread)
+		      (wl-summary-update-modeline)
+		      (wl-folder-update-unread
+		       (wl-summary-buffer-folder-name)
+		       (+ wl-summary-buffer-unread-count
+			  wl-summary-buffer-new-count))))
 		  new-mark)))))))
 
 (defun wl-summary-prefetch-region (beg end &optional prefetch-marks)
