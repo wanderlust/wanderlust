@@ -249,8 +249,8 @@
       (cond
        ((consp (cdr diff)) ; (new unread all)
 	(setq news    (+ news (nth 0 diff))
-	      unreads (+ unreads (nth 0 diff))
-	      alls    (+ alls (nth 0 diff))))
+	      unreads (+ unreads (nth 1 diff))
+	      alls    (+ alls (nth 2 diff))))
        (t
 	(setq no-unreads t)
 	(setq news    (+ news (car diff))
