@@ -44,8 +44,8 @@
    ))
 
 (if (or (fboundp 'dynamic-link)
-	;; static
-	(fboundp 'open-database))
+        ;; static
+        (fboundp 'open-database))
     (add-to-list 'ELMO-MODULES 'elmo-database))
 
 (if (module-installed-p 'shimbun)
