@@ -6654,6 +6654,56 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 
 @subsection spam の判定
 
+以下の方法で spam の判定を行うことが出来ます。
+
+@enumerate
+@item
+自動リファイルの実行時に判定する。
+
+以下の設定例のように @code{wl-auto-refile-guess-functions} の任意の位置
+に @code{wl-refile-guess-by-spam} を挿入します。
+
+@lisp
+@group
+(setq wl-auto-refile-guess-functions
+      '(wl-refile-guess-by-rule
+        wl-refile-guess-by-spam))
+@end group
+@end lisp
+
+この例の場合、@code{wl-refile-rule-alist} で振り分け先が決まらなかった時
+に spam かどうかを判定するようにしています。
+
+@item
+特定のフォルダのサマリに移動した時に判定する。
+
+@code{wl-spam-auto-check-folder-regexp-list} に自動判定を行いたいフォル
+ダ名の正規表現のリストを設定します。
+
+@lisp
+(setq wl-spam-auto-check-folder-regexp-list '("\\+inbox"))
+@end lisp
+
+この例の場合、フォルダ名に @samp{+inbox} を含むフォルダのサマリに移動し
+た時に判定処理が実行されます。
+
+@item
+@code{elmo-split} によるメッセージの振り分け時に判定する。
+
+@code{elmo-split-rule} の @samp{CONDITION} として指定出来る関数に 
+@code{spam-p} が追加されます。この関数は、対象のメッセージが spam と判定
+された時に真となります。
+
+以下に例を示します。
+
+@lisp
+@group
+(setq elmo-split-rule '(((spam-p) "+spam")
+                        (t "+inbox"))
+@end group
+@end lisp
+@end enumerate
+
 @subsection spam の学習
 
 @subsection キーバインド
