@@ -816,19 +816,20 @@ Optional argument ARG is repeart count."
 
 (defun wl-folder-check-one-entity (entity &optional biff)
   (let* ((folder (wl-folder-get-elmo-folder entity biff))
-	 (nums (condition-case err
+	 (nums ;(condition-case err
 		   (progn
 		     (if biff (elmo-folder-set-biff-internal folder t))
 		     (if (wl-string-match-member entity wl-strict-diff-folders)
 			 (elmo-strict-folder-diff folder)
 		       (elmo-folder-diff folder)))
-		 (error
+		; (error
 		  ;; maybe not exist folder.
-		  (if (and (not (memq 'elmo-open-error
-				      (get (car err) 'error-conditions)))
-			   (not (elmo-folder-exists-p folder)))
-		      (wl-folder-create-subr folder)
-		    (signal (car err) (cdr err))))))
+		;  (if (and (not (memq 'elmo-open-error
+		;		      (get (car err) 'error-conditions)))
+		;	   (not (elmo-folder-exists-p folder)))
+		;      (wl-folder-create-subr folder)
+		;    (signal (car err) (cdr err))))))
+		   )
 	 (new    (elmo-diff-new nums))
 	 (unread (elmo-diff-unread nums))
 	 (all    (elmo-diff-all nums))

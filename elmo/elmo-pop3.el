@@ -677,9 +677,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (copy-to-buffer tobuffer (point-min) (point-max)))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-pop3-folder)
-					      numlist new-mark
-					      already-mark seen-mark
-					      important-mark seen-list)
+					      numlist seen-list)
   (let ((process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
     (with-current-buffer (process-buffer process)
@@ -688,8 +686,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
        (elmo-pop3-msgdb-create-by-header
 	process
 	numlist
-	new-mark already-mark
-	seen-mark seen-list
+	seen-list
 	(if (elmo-pop3-folder-use-uidl-internal folder)
 	    (elmo-pop3-folder-location-alist-internal folder)))))))
 
@@ -727,8 +724,6 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		     elmo-pop3-size-hash))
 
 (defun elmo-pop3-msgdb-create-by-header (process numlist
-						 new-mark already-mark
-						 seen-mark
 						 seen-list
 						 loc-alist)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*")))
@@ -749,14 +744,13 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   process
 	   (length numlist)
 	   numlist
-	   new-mark already-mark seen-mark seen-list loc-alist)
+	   seen-list loc-alist)
 	(kill-buffer tmp-buffer)))))
 
 (defun elmo-pop3-msgdb-create-message (buffer
 				       process
 				       num
-				       numlist new-mark already-mark
-				       seen-mark
+				       numlist
 				       seen-list
 				       loc-alist)
   (save-excursion
@@ -807,11 +801,11 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 				       (elmo-file-cache-get message-id))
 				      (if seen
 					  nil
-					already-mark)
+					elmo-msgdb-unread-cached-mark)
 				    (if seen
 					(if elmo-pop3-use-cache
-					    seen-mark)
-				      new-mark))))
+					    elmo-msgdb-read-uncached-mark)
+				      elmo-msgdb-new-mark))))
 		  (setq mark-alist
 			(elmo-msgdb-mark-append
 			 mark-alist

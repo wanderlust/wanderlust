@@ -607,8 +607,7 @@ TYPE specifies the archiver's symbol."
 	     nil))))))
 
 (luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-archive-folder) src-folder numbers unread-marks
-   &optional same-number)
+  ((folder elmo-archive-folder) src-folder numbers &optional same-number)
   (let ((prefix (elmo-archive-folder-archive-prefix-internal folder)))
     (cond
      ((and same-number
@@ -901,9 +900,7 @@ TYPE specifies the archiver's symbol."
       (elmo-archive-msgdb-create-entity-subr number))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-archive-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark seen-list)
+					      numbers seen-list)
   (when numbers
     (save-excursion ;; 981005
       (if (and elmo-archive-use-izip-agent
@@ -911,17 +908,11 @@ TYPE specifies the archiver's symbol."
 		(elmo-archive-folder-archive-type-internal folder)
 		'cat-headers))
 	  (elmo-archive-msgdb-create-as-numlist-subr2
-	   folder numbers new-mark already-mark seen-mark important-mark
-	   seen-list)
+	   folder numbers seen-list)
 	(elmo-archive-msgdb-create-as-numlist-subr1
-	 folder numbers new-mark already-mark seen-mark important-mark
-	 seen-list)))))
+	 folder numbers seen-list)))))
 
-(defun elmo-archive-msgdb-create-as-numlist-subr1 (folder
-						   numlist new-mark
-						   already-mark seen-mark
-						   important-mark
-						   seen-list)
+(defun elmo-archive-msgdb-create-as-numlist-subr1 (folder numlist seen-list)
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
@@ -954,10 +945,10 @@ TYPE specifies the archiver's symbol."
 			     (elmo-file-cache-get message-id))
 			    (if seen
 				nil
-			      already-mark)
+			      elmo-msgdb-unread-cached-mark)
 			  (if seen
-			      seen-mark
-			    new-mark))))
+			      elmo-msgdb-read-uncached-mark
+			    elmo-msgdb-new-mark))))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist
@@ -975,9 +966,7 @@ TYPE specifies the archiver's symbol."
 
 ;;; info-zip agent
 (defun elmo-archive-msgdb-create-as-numlist-subr2 (folder
-						   numlist new-mark
-						   already-mark seen-mark
-						   important-mark
+						   numlist
 						   seen-list)
   (let* ((delim1 elmo-mmdf-delimiter)		;; MMDF
 	 (delim2 elmo-unixmail-delimiter)	;; UNIX Mail
@@ -1011,10 +1000,7 @@ TYPE specifies the archiver's symbol."
 	(goto-char (point-min))
 	(cond
 	 ((looking-at delim1)	;; MMDF
-	  (setq result (elmo-archive-parse-mmdf msgs
-						new-mark
-						already-mark seen-mark
-						seen-list))
+	  (setq result (elmo-archive-parse-mmdf msgs seen-list))
 	  (setq overview (append overview (nth 0 result)))
 	  (setq number-alist (append number-alist (nth 1 result)))
 	  (setq mark-alist (append mark-alist (nth 2 result))))
@@ -1033,10 +1019,7 @@ TYPE specifies the archiver's symbol."
 	   percent))))
     (list overview number-alist mark-alist)))
 
-(defun elmo-archive-parse-mmdf (msgs new-mark
-				     already-mark
-				     seen-mark
-				     seen-list)
+(defun elmo-archive-parse-mmdf (msgs seen-list)
   (let ((delim elmo-mmdf-delimiter)
 	number sp ep rest entity overview number-alist mark-alist ret-val
 	message-id seen gmark)
@@ -1069,16 +1052,17 @@ TYPE specifies the archiver's symbol."
 			     (elmo-file-cache-get message-id))
 			    (if seen
 				nil
-			      already-mark)
+			      elmo-msgdb-unread-cached-mark)
 			  (if seen
-			      seen-mark
-			    new-mark))))
+			      elmo-msgdb-read-uncached-mark
+			    elmo-msgdb-new-mark))))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark)))
-	  (setq ret-val (append ret-val (list overview number-alist mark-alist)))
+	  (setq ret-val (append ret-val (list overview number-alist
+					      mark-alist)))
 	  (widen)))
       (forward-line 1)
       (setq rest (cdr rest)))

@@ -87,10 +87,7 @@
    (elmo-cache-folder-directory-internal folder)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-cache-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark
-					      seen-list)
+					      numbers seen-list)
   (let ((i 0)
 	(len (length numbers))
 	overview number-alist mark-alist entity message-id
@@ -112,7 +109,8 @@
 				     num
 				     message-id))
 	(if (setq mark (or (elmo-msgdb-global-mark-get message-id)
-			   (if (member message-id seen-list) nil new-mark)))
+			   (if (member message-id seen-list) nil
+			     elmo-msgdb-new-mark)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append
 		   mark-alist
@@ -168,27 +166,6 @@
   t)
 
 (luna-define-method elmo-message-file-p ((folder elmo-cache-folder) number)
-  t)
-
-;;; To override elmo-map-folder methods.
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-cache-folder) unread-marks &optional mark-alist)
-  t)
-
-(luna-define-method elmo-folder-unmark-important ((folder elmo-cache-folder)
-						  numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-cache-folder)
-						   numbers)
-  t)
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-cache-folder)
-					     numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-cache-folder)
-					      numbers)
   t)
 
 (require 'product)

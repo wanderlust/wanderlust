@@ -149,7 +149,6 @@
 					 t
 					 copy
 					 preserve-number
-					 nil
 					 wl-expire-add-seen-list)
 	      (progn
 		(wl-expire-append-log
@@ -205,7 +204,6 @@ If REFILE-LIST includes reserve mark message, so copy."
 					       t
 					       copy-reserve-message
 					       preserve-number
-					       nil
 					       wl-expire-add-seen-list))
 	    (error "Expire: move msgs to %s failed"
 		   (elmo-folder-name-internal dst-folder)))
@@ -813,7 +811,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   (interactive "P")
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (msgdb (or (wl-summary-buffer-msgdb)
-		    (elmo-msgdb-load folder)))
+		    (elmo-folder-msgdb folder)))
 	 (msgs (if (not nolist)
 		   (elmo-folder-list-messages folder)
 		 (mapcar 'car (elmo-msgdb-get-number-alist msgdb))))

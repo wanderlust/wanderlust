@@ -100,7 +100,7 @@
 	msgs-stack children)
     (while msgs
       (setq wl-summary-buffer-number-list (cons (car entity)
-					wl-summary-buffer-number-list))
+						wl-summary-buffer-number-list))
       (setq msgs (cdr msgs))
       (setq children (wl-thread-entity-get-children entity))
       (if children
@@ -362,10 +362,10 @@ ENTITY is returned."
   (interactive)
   (dolist (number (elmo-folder-list-messages-mark-match
 		   wl-summary-buffer-elmo-folder
-		   (wl-regexp-opt (list wl-summary-unread-uncached-mark
-					wl-summary-unread-cached-mark
-					wl-summary-new-mark
-					wl-summary-important-mark))))
+		   (wl-regexp-opt (list elmo-msgdb-unread-uncached-mark
+					elmo-msgdb-unread-cached-mark
+					elmo-msgdb-new-mark
+					elmo-msgdb-important-mark))))
     (wl-thread-entity-force-open (wl-thread-get-entity number))))
 
 (defsubst wl-thread-maybe-get-children-num (msg)
@@ -737,9 +737,9 @@ Message is inserted to the summary buffer."
     (setq cur-mark (elmo-msgdb-get-mark msgdb msg))
     (elmo-msgdb-set-mark msgdb
 			 msg
-			 (if (string= cur-mark wl-summary-important-mark)
+			 (if (string= cur-mark elmo-msgdb-important-mark)
 			     nil
-			   wl-summary-important-mark))
+			   elmo-msgdb-important-mark))
     (wl-summary-set-mark-modified)))
 
 (defun wl-thread-mark-as-read (&optional arg)
@@ -831,7 +831,7 @@ Message is inserted to the summary buffer."
 	(setq cur (1+ cur))
 	(if (or (zerop (% cur 2)) (= cur len))
 	    (elmo-display-progress
-	     'wl-thread-insert-top "Inserting thread..."
+	     'wl-thread-insert-top "Inserting message..."
 	     (/ (* cur 100) len)))))))
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
