@@ -52,8 +52,7 @@
 
 (defvar wl-message-buffer-prefetch-folder-type-list t)
 
-(defvar wl-message-buffer-prefetch-debug
-  t)
+(defvar wl-message-buffer-prefetch-debug t)
 
 (defvar wl-message-buffer nil) ; message buffer.
 
