@@ -751,57 +751,57 @@ return value is diffs '(-new -unread -all)."
 
 (defvar wl-fldmgr-add-completion-hashtb (make-vector 7 0))
 
-;(defun wl-fldmgr-add-completion-all-completions (string)
-;  (let ((table
-;	 (catch 'found
-;	   (mapatoms
-;	    (function
-;	     (lambda (atom)
-;	       (if (string-match (symbol-name atom) string)
-;		   (throw 'found (symbol-value atom)))))
-;	    wl-fldmgr-add-completion-hashtb)))
-;	(pattern
-;	 (if (string-match "\\.$"
-;			   (car (elmo-network-get-spec
-;				 string nil nil nil nil)))
-;	     (substring string 0 (match-beginning 0))
-;	   (concat string nil))))
-;    (or table
-;	(setq table (elmo-folder-list-subfolders (wl-folder-get-elmo-folder
-;						  pattern)))
-;	(and table
-;	     (or (/= (length table) 1)
-;		 (elmo-folder-exists-p (wl-folder-get-elmo-folder
-;					(car table)))))
-;	(setq pattern
-;	      (if (string-match "\\.[^\\.]+$" string)
-;		  (substring string 0 (match-beginning 0))
-;		(char-to-string (aref string 0)))
-;	      table (elmo-folder-list-subfolders
-;		     (wl-folder-get-elmo-folder pattern))))
-;    (setq pattern (concat "^" (regexp-quote pattern)))
-;    (unless (intern-soft pattern wl-fldmgr-add-completion-hashtb)
-;      (set (intern pattern wl-fldmgr-add-completion-hashtb) table))
-;    table))
+(defun wl-fldmgr-add-completion-all-completions (string)
+  (let ((table
+	 (catch 'found
+	   (mapatoms
+	    (function
+	     (lambda (atom)
+	       (if (string-match (symbol-name atom) string)
+		   (throw 'found (symbol-value atom)))))
+	    wl-fldmgr-add-completion-hashtb)))
+	(pattern
+	 (if (string-match "\\.$" 
+			   (elmo-folder-prefix-internal
+			    (wl-folder-get-elmo-folder string)))
+	     (substring string 0 (match-beginning 0))
+	   (concat string nil))))
+    (or table
+	(setq table (elmo-folder-list-subfolders
+		     (wl-folder-get-elmo-folder pattern)))
+	(and table
+	     (or (/= (length table) 1)
+		 (elmo-folder-exists-p (wl-folder-get-elmo-folder
+					(car table)))))
+	(setq pattern
+	      (if (string-match "\\.[^\\.]+$" string)
+		  (substring string 0 (match-beginning 0))
+		(char-to-string (aref string 0)))
+	      table (elmo-folder-list-subfolders
+		     (wl-folder-get-elmo-folder pattern))))
+    (setq pattern (concat "^" (regexp-quote pattern)))
+    (unless (intern-soft pattern wl-fldmgr-add-completion-hashtb)
+      (set (intern pattern wl-fldmgr-add-completion-hashtb) table))
+    table))
 
-;(defun wl-fldmgr-add-completion-subr (string predicate flag)
-;  (let ((table
-;	 (if (string= string "")
-;	     (mapcar (function (lambda (spec)
-;				 (list (char-to-string (car spec)))))
-;		     elmo-spec-alist)
-;	   (when (assq (aref string 0) elmo-spec-alist)
-;	     (delq nil (mapcar
-;			(function list)
-;			(condition-case nil
-;			    (wl-fldmgr-add-completion-all-completions string)
-;			  (error nil))))))))
-;    (if (null flag)
-;	(try-completion string table predicate)
-;      (if (eq flag 'lambda)
-;	  (eq t (try-completion string table predicate))
-;	(if flag
-;	    (all-completions string table predicate))))))
+(defun wl-fldmgr-add-completion-subr (string predicate flag)
+  (let ((table
+	 (if (string= string "")
+	     (mapcar (function (lambda (spec)
+				 (list (char-to-string (car spec)))))
+		     elmo-folder-type-alist)
+	   (when (assq (aref string 0) elmo-folder-type-alist)
+	     (delq nil (mapcar
+			(function list)
+			(condition-case nil
+			    (wl-fldmgr-add-completion-all-completions string)
+			  (error nil))))))))
+    (if (null flag)
+	(try-completion string table predicate)
+      (if (eq flag 'lambda)
+	  (eq t (try-completion string table predicate))
+	(if flag
+	    (all-completions string table predicate))))))
 
 (defun wl-fldmgr-add (&optional name)
   (interactive)

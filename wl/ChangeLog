@@ -1,5 +1,9 @@
 2001-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions): Removed
+	comment out and fixed.
+	(wl-fldmgr-add-completion-subr): Ditto.
+
 	* wl-summary.el (wl-summary-exit): Changed order of saving summary view
 	and msgdb.
 
