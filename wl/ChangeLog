@@ -1,3 +1,8 @@
+2002-07-01  Akihiro MOTOKI  <amotoki@dd.iij4u.or.jp>
+
+	* wl-vars.el (wl-forward-subject-prefix): New variable.
+	* wl-draft.el (wl-draft-forward): Use it.
+
 2002-06-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-message.el (wl-message-prev-page): When it is called without

@@ -4713,6 +4713,12 @@ The initial setting is @samp{Re: }.
 In the @samp{Subject:} of the reply draft, this string is prepended to
 the @samp{Subject:} of being replied.
 
+@item wl-forward-subject-prefix
+@vindex wl-forward-subject-prefix
+The initial setting is @samp{Forward: }.
+In the @samp{Subject:} of the forwarding draft, this string is prepended
+to the @samp{Subject:} of being forwarded.
+
 @item wl-draft-reply-use-address-with-full-name
 @vindex wl-draft-reply-use-address-with-full-name
 The initial setting is @code{t}.

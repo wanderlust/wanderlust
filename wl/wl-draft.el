@@ -271,7 +271,7 @@
 			 (mapconcat 'identity references "\n\t"))))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
-			  (concat "Forward: " original-subject))
+			  (concat wl-forward-subject-prefix original-subject))
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (goto-char (point-max))

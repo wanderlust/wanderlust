@@ -1482,6 +1482,12 @@ Each elements are regexp of field-name."
   :group 'wl-draft
   :group 'wl-pref)
 
+(defcustom wl-forward-subject-prefix "Forward: "
+  "*Prefix of the subject of the forwarded message."
+  :type 'string
+  :group 'wl-draft
+  :group 'wl-pref)
+
 (defcustom wl-draft-reply-use-address-with-full-name t
   "*Use address with full-name in the draft of replied message."
   :type 'boolean
