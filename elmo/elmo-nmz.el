@@ -163,19 +163,10 @@
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-nmz-folder)
-					    location strategy &optional
-					    section outbuf unseen)
-  (if outbuf
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(when (file-exists-p location)
-	  (insert-file-contents-as-binary location)
-	  (elmo-delete-cr-buffer)
-	  t))
-    (with-temp-buffer
-      (insert-file-contents-as-binary location)
-      (elmo-delete-cr-buffer)
-      (buffer-string))))
+					    location strategy
+					    &optional section unseen)
+  (when (file-exists-p location)
+    (insert-file-contents-as-binary location)))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-nmz-folder))

@@ -5784,6 +5784,8 @@ OK です。
 ;; @r{自動的に ML フィールドを加える}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
+;; @r{自動収集するフォルダの正規表現}
+(setq bbdb-wl-folder-regexp "^%\\|^-")
 @end group
 @end lisp
 
