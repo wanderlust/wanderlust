@@ -14,6 +14,7 @@
 	(elmo-pop3-read-msg): Ditto.
 	(elmo-pop3-locked-p): Call elmo-pop3-debug.
 	(elmo-pop3-read-body): Call elmo-pop3-unlock.
+	(elmo-network-initialize-session): Call elmo-pop3-lock.
 
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 

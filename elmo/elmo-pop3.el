@@ -217,6 +217,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (let ((process (elmo-network-session-process-internal session))
 	response mechanism)
     (with-current-buffer (process-buffer process)
+      (elmo-pop3-lock)
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))
       ;; Skip garbage output from process before greeting.
