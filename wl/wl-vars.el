@@ -175,7 +175,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type 'function
   :group 'wl-summary)
 
-(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re"
+(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re[\\^[: ]"
   "*If message does not have in-reply-to field nor references field and
  subject matches this regexp, search parent message by subject matching."
   :type 'string
@@ -1103,6 +1103,12 @@ with wl-highlight-folder-many-face."
   :group 'wl-summary
   :group 'wl-pref)
 
+(defcustom wl-subject-length-limit 35
+  "*Subject width in summary."
+  :type 'integer
+  :group 'wl-summary
+  :group 'wl-pref)
+
 (defcustom wl-mime-charset (if wl-on-nemacs
 			       'iso-2022-jp
 			     'x-ctext)
@@ -1893,7 +1899,7 @@ This variable can also be a regex. "
 (defvar wl-thread-space-str                "　"
   "*A string for thread branch line. It should contain one character.")
 
-(defvar wl-highlight-thread-indent-string-regexp "[^\\[]*"
+(defvar wl-highlight-thread-indent-string-regexp "[^[<]*"
   "* A regexp string for thread indent...for highlight.")
 
 ;; folder icons. filename relative to wl-icon-dir
