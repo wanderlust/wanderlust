@@ -1,5 +1,8 @@
 2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-nntp.el (elmo-nntp-list-folder): Set current group after
+	`listgroup'.
+
 	* elmo2.el (elmo-folder-diff-async-callback): New variable.
 	(elmo-folder-diff-async-callback-data): Ditto.
 	(elmo-folder-diff-async): New function.

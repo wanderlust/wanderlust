@@ -481,7 +481,8 @@ Don't cache if nil.")
 		(elmo-nntp-set-listgroup server port nil)
 		(setq use-listgroup nil))
 	    (if (null (setq response (elmo-nntp-read-contents buffer process)))
-		(error "Fetching listgroup failed"))
+		(error "Fetching listgroup failed")
+	      (setcar (cddr connection) folder))
 	    (setq numbers (elmo-string-to-list response))))
 	(unless use-listgroup
 	  (elmo-nntp-send-command buffer
