@@ -14,7 +14,7 @@
    ))
 
 (defconst ELMO-MODULES '(
-   utf7 pldap mmimap
+   utf7 pldap acap slp mmimap
    elmo-date elmo-util elmo-version elmo-vars elmo elmo-msgdb
    elmo-net elmo-imap4 elmo-pop3 elmo-nntp
    elmo-localdir elmo-localnews elmo-map elmo-maildir

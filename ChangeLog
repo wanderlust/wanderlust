@@ -1,3 +1,7 @@
+2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added `acap' and `slp'.
+
 2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-CFG: Removed nemacs setting example.

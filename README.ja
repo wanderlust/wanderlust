@@ -28,9 +28,9 @@ Features:
 
 必要条件:
 
- * Emacs19 〜
- * tm (8.7 以降) or SEMI (1.14.1 以降)
+ * Emacs 19.34 〜
  * APEL (10.2 以降)
+ * SEMI (1.14.1 以降)
 
 Install:
 
