@@ -1,5 +1,8 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+** 前に使っていたものより新しい Wanderlust を起動すると NEWS(.ja) の内容を
+   表示します。
+
 ** wl-draft-reply-*-list の初期値が変更されました。
    以前の設定は、samples/ja/dot.wl を参照して下さい。
 
@@ -9,6 +12,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** ドラフトバッファウィンドウの配置の指定の仕方が変更されました。
    wl-draft-buffer-style と wl-draft-reply-buffer-style に keep,full,split
    のいずれかを指定します。
+
+** non-MIME PGP メッセージの検証、復号化のためのコマンドが追加されました。
+   メッセージバッファにおいて C-c:v, C-c:d でそれぞれ検証、復号化します。
 
 * 2.8.1 から 2.10.0 への変更点
 
