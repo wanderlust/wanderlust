@@ -1172,7 +1172,7 @@ interpreted as cited text.)"
 	      (goto-char start)
 	      (while (and (not body-only)
 			  (not (eobp)))
-		(if (looking-at "^[^ \t\n:]+[ \t]*:")
+		(if (looking-at "^[^ \t\n:]+[ \t]*:[ \t]*")
 		    (progn
 		      (put-text-property (match-beginning 0) (match-end 0)
 					 'face 'wl-highlight-message-headers)

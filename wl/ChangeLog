@@ -1,5 +1,8 @@
 2004-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-highlight.el (wl-highlight-message): Ignore white spaces
+	at the beginning of field body (Thanks to Markus Knittig).
+
 	* wl-draft.el (wl-draft-insert-current-message): Also check
 	summary buffer, remove unnecessary tag.
 
