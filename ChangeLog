@@ -1,6 +1,6 @@
 2001-02-20  Kenichi OKADA  <okada@opaopa.org>
 
-	* WL-ELS (SASL-MODULES): Remove sasl-scram, md4, ntlm,
+	* WL-ELS (SASL-MODULES): Append sasl-scram, md4, ntlm,
 	sasl-ntlm.
 
 	* utils/sasl: Sync up with slim-1_14.
