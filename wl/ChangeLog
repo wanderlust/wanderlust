@@ -1,5 +1,13 @@
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-insert-mail-header-separator): Use
+	`delete-backward-char'
+	(wl-draft-prepare-edit): Check major-mode.
+	(wl-draft-decode-header): Rewrite.
+	(wl-draft): Fix.
+
+2002-01-24  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-message.el (wl-message-buffer-prefetch-subr): Fix.
 
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>

@@ -1408,7 +1408,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (cons "References: " references)))
     (setq header-alist (append header-alist
 			       (wl-draft-default-headers)
-			       (if body (list "\n" body))))
+			       (if body (list "" body))))
     (wl-draft-create-contents header-alist)
     (if edit-again
 	(wl-draft-decode-body
@@ -1508,26 +1508,23 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (setq halist (cdr halist)))))
 
 (defun wl-draft-prepare-edit (&optional hook)
-  (wl-draft-editor-mode)
-  (wl-draft-overload-functions)
-  (wl-highlight-headers 'for-draft)
-  (if hook (run-hooks 'wl-mail-setup-hook))
-  (as-binary-output-file
-   (write-region (point-min)(point-max) wl-draft-buffer-file-name
-		 nil t)))
+  (unless (eq major-mode 'wl-draft-mode)
+    (error "wl-draft-create-header must be use in wl-draft-mode."))
+  (let (change-major-mode-hook)
+    (wl-draft-editor-mode)
+    (wl-draft-overload-functions)
+    (wl-highlight-headers 'for-draft)
+    (if hook (run-hooks 'wl-mail-setup-hook))
+    (as-binary-output-file
+     (write-region (point-min)(point-max) wl-draft-buffer-file-name
+		   nil t))))
+
 
 (defun wl-draft-decode-header ()
   (save-excursion
-    (let (delimline)
-      (goto-char (point-min))
-      (or (search-forward "\n\n" nil t)
-	  (goto-char (point-max)))
-      (setq delimline (point))
-      (save-restriction
-	(narrow-to-region (point-min) delimline)
-	(wl-draft-decode-message-in-buffer)
-	(widen))
-    delimline)))
+    (std11-narrow-to-header)
+    (wl-draft-decode-message-in-buffer)
+    (widen)))
 
 (defun wl-draft-decode-body (&optional content-type content-transfer-encoding)
   (let ((content-type
@@ -1537,29 +1534,25 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 (or content-transfer-encoding
 	     (std11-field-body "content-transfer-encoding")))
 	delimline)
-    (goto-char (point-min))
-    (if (search-forward "\n\n" nil t)
-	(progn
-	  (goto-char (1- (point)))
-	  (delete-char 1))
-      (goto-char (point-max)))
-    (setq delimline (point))
     (save-excursion
-      (wl-draft-delete-field "content-type" delimline)
-      (wl-draft-delete-field "content-transfer-encoding" delimline))
-    (when content-type
-      (insert "Content-type: " content-type "\n"))
-    (when content-transfer-encoding
-      (insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
-    (if (or content-type content-transfer-encoding)
-	(insert "\n"))
-    (save-restriction
+      (std11-narrow-to-header)
+      (wl-draft-delete-field "content-type")
+      (wl-draft-delete-field "content-transfer-encoding")
+      (goto-char (point-max))
+      (setq delimline (point-marker))
+      (widen)
       (narrow-to-region delimline (point-max))
+      (goto-char (point-min))
+      (when content-type
+	(insert "Content-type: " content-type "\n"))
+      (when content-transfer-encoding
+	(insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
       (wl-draft-decode-message-in-buffer)
-      (widen))
-    (goto-char delimline)
-    (insert "\n")
-    delimline))
+      (goto-char (point-min))
+      (unless (re-search-forward "^$" (point-at-eol) t)
+	(insert "\n"))
+      (widen)
+      delimline)))
 
 ;;; subroutine for wl-draft-create-contents
 ;;; must be used in wl-draft-mode
@@ -1611,9 +1604,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(goto-char delimline)
       (goto-char (point-min))
       (if (search-forward "\n\n" nil t)
-	  (progn
-	    (goto-char (1- (point)))
-	    (delete-char 1))
+	  (delete-backward-char 1)
 	(goto-char (point-max))))
     (wl-draft-check-new-line)
     (put-text-property (point)
