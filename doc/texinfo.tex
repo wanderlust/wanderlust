@@ -3,10 +3,10 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2001-02-02.17}
+\def\texinfoversion{2001-03-28.08}
 %
-% Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
-% Free Software Foundation, Inc.
+% Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+%               2000, 01 Free Software Foundation, Inc.
 %
 % This texinfo.tex file is free software; you can redistribute it and/or
 % modify it under the terms of the GNU General Public License as
@@ -932,7 +932,7 @@ where each line of input produces a line of output.}
     \ifnum\pdftexversion < 14 \else
       \pdfrefximage \pdflastximage
     \fi}
-  \def\pdfmkdest#1{\pdfdest name{#1@} xyz}
+  \def\pdfmkdest#1{\pdfdest name{#1} xyz}
   \def\pdfmkpgn#1{#1@}
   \let\linkcolor = \Blue  % was Cyan, but that seems light?
   \def\endlink{\Black\pdfendlink}
@@ -5848,7 +5848,8 @@ width0pt\relax} \fi
     \setbox0 = \hbox{\ignorespaces #2}\ifdim\wd0 > 0pt \epsfxsize=#2\relax \fi
     \setbox0 = \hbox{\ignorespaces #3}\ifdim\wd0 > 0pt \epsfysize=#3\relax \fi
     \begingroup
-      \catcode`\^^M = 5 % in case we're inside an example
+      \catcode`\^^M = 5     % in case we're inside an example
+      \normalturnoffactive  % allow _ et al. in names
       % If the image is by itself, center it.
       \ifvmode
         \nobreak\bigskip

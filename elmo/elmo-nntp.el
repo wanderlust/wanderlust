@@ -957,7 +957,12 @@ Don't cache if nil.")
   "Get nntp header string."
   (save-excursion
     (let ((session (elmo-nntp-get-session
-		    (list 'nntp nil user server port type))))
+		    (luna-make-entity
+		     'elmo-nntp-folder
+		     :user user
+		     :server server
+		     :port port
+		     :stream-type type))))
       (elmo-nntp-send-command session
 			      (format "head %s" msgid))
       (if (elmo-nntp-read-response session)
