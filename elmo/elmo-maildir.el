@@ -45,9 +45,8 @@
 				    (unread ?S 'remove)
 				    (answered ?R)))
 
-;; Decided at compile time.
 (defcustom elmo-maildir-separator
-  (if (memq system-type '(windows-nt)) ?\- ?:)
+  (if (memq system-type '(windows-nt OS/2 emx ms-dos)) ?\- ?:)
   "Character separating the id section from the flags section.
 According to the maildir specification, this should be a colon (?:),
 but some file systems don't support colons in filenames."
