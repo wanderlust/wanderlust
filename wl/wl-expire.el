@@ -749,16 +749,17 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 
 (defun wl-folder-expire-current-entity ()
   (interactive)
-  (let ((entity-name
-	 (or (wl-folder-get-folder-name-by-id
-	      (get-text-property (point) 'wl-folder-entity-id))
-	     (wl-folder-get-entity-from-buffer))))
+  (let ((entity-name (wl-folder-get-entity-from-buffer))
+	(type (if (wl-folder-buffer-group-p)
+		  'group
+		'folder)))
     (when (and entity-name
 	       (or (not (interactive-p))
 		   (y-or-n-p (format "Expire %s? " entity-name))))
       (wl-folder-expire-entity
        (wl-folder-search-entity-by-name entity-name
-					wl-folder-entity))
+					wl-folder-entity
+					type))
       (if (get-buffer wl-summary-buffer-name)
 	  (kill-buffer wl-summary-buffer-name))
       (message "Expiring %s is done" entity-name))))
@@ -767,16 +768,17 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 
 (defun wl-folder-archive-current-entity ()
   (interactive)
-  (let ((entity-name
-	 (or (wl-folder-get-folder-name-by-id
-	      (get-text-property (point) 'wl-folder-entity-id))
-	     (wl-folder-get-entity-from-buffer))))
+  (let ((entity-name (wl-folder-get-entity-from-buffer))
+	(type (if (wl-folder-buffer-group-p)
+		  'group
+		'folder)))
     (when (and entity-name
 	       (or (not (interactive-p))
 		   (y-or-n-p (format "Archive %s? " entity-name))))
       (wl-folder-archive-entity
        (wl-folder-search-entity-by-name entity-name
-					wl-folder-entity))
+					wl-folder-entity
+					type))
       (message "Archiving %s is done" entity-name))))
 
 (defun wl-archive-number1 (folder archive-list &optional dst-folder-arg)

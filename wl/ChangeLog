@@ -1,3 +1,8 @@
+2003-07-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-expire.el (wl-folder-expire-current-entity): Specify folder type.
+	(wl-folder-archive-current-entity): Ditto.
+
 2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-update-mark): Ignore errors while
