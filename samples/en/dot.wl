@@ -193,8 +193,8 @@
 	"x-mail-count" "x-ml-count" "x-sequence"))
 
 ;; ML message displays ML name and ML sequence number in subject.
-(setq wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %] %#%~%s")
-;(setq wl-summary-line-format "%M/%D %h:%m %-4S %[ %17f %] %t%C%#%~%s")
+(setq wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[ %17f %] %#%~%s")
+;(setq wl-summary-line-format "%T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%#%~%s")
 
 ;; imput asynchronously.
 ;; (utils/im-wl.el is needed to be installed.
