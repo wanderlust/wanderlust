@@ -28,13 +28,13 @@ MIME用モジュールの選択
 
   (c) Emacs 20.1〜20.3
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
     のページが参考になります。
@@ -49,7 +49,7 @@ MIME用モジュールのインストール
 
 	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
 	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:
+	CLIME:	ftp://ftp.jpl.org/pub/m17n/
 	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
 
   APEL, FLIM(CLIME), SEMI の順にインストールしてください。基本的にすべて
@@ -64,8 +64,8 @@ MIME用モジュールのインストール
 
   例えば、以下の組合せの動作が確認されています。
 
-	APEL 10.2, Chao 1.14.1, REMI 1.14.2
-	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
+	APEL 10.3, SLIM 1.14.7, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, EMIKO 1.14.1
 
   APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
   トールし直してください。
