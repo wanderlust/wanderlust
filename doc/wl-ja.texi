@@ -6196,7 +6196,8 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 
 @menu
 * imput::                       imput (im-wl.el)
-* BBDB::                        BBDB
+* BBDB::                        The Insidious Big Brother Database
+* LSDB::                        The Lovely Sister Database
 * supercite::                   supercite.el
 * mu-cite::                     mu-cite.el
 * X-Face::                      x-face,bitmap-mule
@@ -6226,7 +6227,7 @@ OK です。
 @end lisp
 
 
-@node BBDB, supercite, imput, Living with other packages
+@node BBDB, LSDB, imput, Living with other packages
 @subsection bbdb.el
 @pindex BBDB
 
@@ -6262,7 +6263,27 @@ OK です。
 アドレスの補完ができます。
 
 
-@node supercite, mu-cite, BBDB, Living with other packages
+@node LSDB, supercite, BBDB, Living with other packages
+@subsection lsdb.el
+@pindex LSDB
+
+以下は、設定の一例です。
+
+@lisp
+@group
+(require 'lsdb)
+(lsdb-wl-insinuate)
+(add-hook 'wl-draft-mode-hook
+          (lambda ()
+             (define-key wl-draft-mode-map "\M-\t" 'lsdb-complete-name)))
+@end group
+@end lisp
+
+この例では LSDB を用いたアドレスの補完を @kbd{M-@key{TAB}} に割り当てて
+います。
+
+
+@node supercite, mu-cite, LSDB, Living with other packages
 @subsection sc.el(supercite), sc-register.el
 @pindex sc
 @pindex supercite

@@ -6285,7 +6285,8 @@ Examples with other packages.
 
 @menu
 * imput::                       imput (im-wl.el)
-* BBDB::                        BBDB
+* BBDB::                        The Insidious Big Brother Database
+* LSDB::                        The Lovely Sister Database
 * supercite::                   supercite.el
 * mu-cite::                     mu-cite.el
 * X-Face::                      x-face,bitmap-mule
@@ -6315,7 +6316,7 @@ If @command{imput} is on the @code{exec-path} at the installation,
 @end lisp
 
 
-@node BBDB, supercite, imput, Living with other packages
+@node BBDB, LSDB, imput, Living with other packages
 @subsection bbdb.el
 @pindex BBDB
 
@@ -6351,7 +6352,27 @@ You can complete address with BBDB by @kbd{M-@key{TAB}}
 in draft buffer.
 
 
-@node supercite, mu-cite, BBDB, Living with other packages
+@node LSDB, supercite, BBDB, Living with other packages
+@subsection lsdb.el
+@pindex LSDB
+
+The following is an example of settings:
+
+@lisp
+@group
+(require 'lsdb)
+(lsdb-wl-insinuate)
+(add-hook 'wl-draft-mode-hook
+          (lambda ()
+             (define-key wl-draft-mode-map "\M-\t" 'lsdb-complete-name)))
+@end group
+@end lisp
+
+In this example, bind @kbd{M-@key{TAB}} to @code{lsdb-complete-name}
+(complete address with LSDB).
+
+
+@node supercite, mu-cite, LSDB, Living with other packages
 @subsection sc.el(supercite), sc-register.el
 @pindex sc
 @pindex supercite
