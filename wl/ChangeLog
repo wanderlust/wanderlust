@@ -1,3 +1,9 @@
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-lang): Set default value according to
+	current-language-environment.
+	(wl-news-append-news): Do nothing when news-list is nil.
+
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-news.el.in (wl-news-mode-map): Add new keybind.

@@ -1,3 +1,8 @@
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (make-wl-news): Don't add wl-news-lang setting into
+	wl-news.el here.
+
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* WL-MK (make-wl-news): Fix coding system.

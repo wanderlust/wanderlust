@@ -40,6 +40,12 @@
 (defvar wl-news-version-file-name "previous-version")
 (defvar wl-news-default-previous-version '(2 0 0))
 
+(defvar wl-news-lang
+  (if (and (boundp 'current-language-environment)
+	   (string-equal "Japanese"
+			 (symbol-value 'current-language-environment)))
+      '("ja" "en") '("en" "ja")))
+
 (defun wl-news-check ()
   (let* ((updated (not (wl-news-already-current-p))))
     (if updated
@@ -101,16 +107,17 @@
   (require 'wl-mime)
   (let ((news-list (cdr (assoc lang wl-news-news-alist)))
 	ret)
-    (if no-mime-tag
-	(insert "--------------\n")
-      (mime-edit-insert-tag "text" "plain" "" ""))
-    (while (< 0
-	      (product-version-compare
-	       (car (car news-list))
-	       previous-version))
-      (setq ret t)
-      (insert (cdr (car news-list)) "\n\n")
-      (setq news-list (cdr news-list)))
+    (when news-list
+      (if no-mime-tag
+	  (insert "--------------\n")
+	(mime-edit-insert-tag "text" "plain" "" ""))
+      (while (< 0
+		(product-version-compare
+		 (car (car news-list))
+		 previous-version))
+	(setq ret t)
+	(insert (cdr (car news-list)) "\n\n")
+	(setq news-list (cdr news-list))))
     ret))
 
 (defun wl-news-check-news (version news-lang)
