@@ -56,6 +56,14 @@
 
 (defvar sasl-mechanisms)
 
+(defcustom elmo-network-session-idle-timeout nil
+  "Idle timeout of the network cache. Specified in seconds.
+If elapsed time since last access is larger than this value,
+cached session is not reused.
+If nil, network cache is reused."
+  :type 'number
+  :group 'elmo)
+
 ;;; Code:
 ;;
 (eval-and-compile
@@ -66,7 +74,8 @@
 					      auth
 					      stream-type
 					      process
-					      greeting))
+					      greeting
+					      last-accessed))
   (luna-define-internal-accessors 'elmo-network-session))
 
 (luna-define-generic elmo-network-initialize-session (session)
@@ -166,16 +175,26 @@ if making session failed, returns nil."
     (setq pair (assoc (setq key (elmo-network-session-cache-key name folder))
 		      elmo-network-session-cache))
     (when (and pair
-	       (not (memq (process-status
-			   (elmo-network-session-process-internal
-			    (cdr pair)))
-			  '(open run))))
+	       (or (not (memq (process-status
+			       (elmo-network-session-process-internal
+				(cdr pair)))
+			      '(open run)))
+		   (and elmo-network-session-idle-timeout
+			(elmo-network-session-last-accessed-internal
+			 (cdr pair))
+			(elmo-time-expire
+			 (elmo-network-session-last-accessed-internal
+			  (cdr pair))
+			 elmo-network-session-idle-timeout))))
       (setq elmo-network-session-cache
 	    (delq pair elmo-network-session-cache))
       (elmo-network-close-session (cdr pair))
       (setq pair nil))
     (if pair
-	(cdr pair)			; connection cache exists.
+	(progn
+	  (elmo-network-session-set-last-accessed-internal
+	   (cdr pair) (current-time))
+	  (cdr pair))			; connection cache exists.
       (unless if-exists
 	(setq session
 	      (elmo-network-open-session
@@ -211,7 +230,9 @@ Returns a process object.  if making session failed, returns nil."
 			   :auth auth
 			   :stream-type stream-type
 			   :process nil
-			   :greeting nil))
+			   :greeting nil
+			   :last-accessed (current-time)
+			   ))
 	(buffer (format " *%s session for %s@%s:%d%s"
 			name
 			user

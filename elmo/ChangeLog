@@ -1,3 +1,10 @@
+2005-01-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-session-idle-timeout): New option.
+	(elmo-network-session): New attribute `last-accessed'.
+	(elmo-network-get-session): Discard network cache if elapsed time
+	since last-accessed is larger than elmo-network-session-idle-timeout.
+
 2005-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-find-fetch-strategy): Removed argument `entity'
