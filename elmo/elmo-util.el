@@ -755,14 +755,8 @@ the directory becomes empty after deletion."
 	  ))))
 
 (defun elmo-list-filter (l1 l2)
-  "L1 is filter."
-  (if (eq l1 t)
-      ;; t means filter all.
-      nil
-    (if l1
-	(elmo-delete-if (lambda (x) (not (memq x l1))) l2)
-      ;; filter is nil
-      l2)))
+  "Rerurn a list from L2 in which each element is a member of L1."
+  (elmo-delete-if (lambda (x) (not (memq x l1))) l2))
 
 (defsubst elmo-list-delete-if-smaller (list number)
   (let ((ret-val (copy-sequence list)))

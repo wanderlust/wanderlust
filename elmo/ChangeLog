@@ -1,5 +1,10 @@
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-multi.el (elmo-folder-search): Use nil for 1st argument of
+	elmo-list-filter.
+
+	* elmo-util.el (elmo-list-filter): Simplify.
+
 	* elmo.el (elmo-generic-folder-commit): Use elmo-folder-list-messages.
 	(elmo-folder-set-info-max-by-numdb): Changed argument to number list.
 	(elmo-generic-folder-diff): Abolish argument.

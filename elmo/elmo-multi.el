@@ -372,10 +372,7 @@
     (while flds
       (setq cur-number (+ cur-number 1))
       (when numlist
-	(setq cur-numlist (car numlist-list))
-	(if (null cur-numlist)
-	    ;; t means filter all.
-	    (setq cur-numlist t)))
+	(setq cur-numlist (car numlist-list)))
       (setq ret-val (append
 		     ret-val
 		     (elmo-list-filter
