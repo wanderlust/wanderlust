@@ -861,24 +861,26 @@
 	      '(wl-highlight-summary-normal-face)
 	    '(wl-highlight-summary-thread-top-face)))))))
 
-(defun wl-highlight-summary-line-flag-folder (number beg end &optional string)
-  ;; help-echo for flag folder.
-  (let (flag-info)
-    (current-buffer)
-    (when (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
-	      'flag)
-      (setq flag-info
-	    (elmo-flag-folder-referrer wl-summary-buffer-elmo-folder
-				       number))
-      (if flag-info
+(autoload 'elmo-flag-folder-referrer "elmo-flag")
+(defun wl-highlight-flag-folder-help-echo (folder number)
+  (let ((referer (elmo-flag-folder-referrer folder number)))
+    (concat "The message exists in "
+	    (mapconcat
+	     (lambda (pair)
+		   (concat (car pair) "/"
+			   (number-to-string
+			    (cdr pair))))
+	     referer ","))))
+
+(defun wl-highlight-summary-line-help-echo (number beg end &optional string)
+  (let ((type (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
+	message handler)
+    (when (setq handler (cadr (assq type wl-highlight-summary-line-help-echo-alist)))
+      (setq message
+	    (funcall handler wl-summary-buffer-elmo-folder number))
+      (if message
 	  (put-text-property beg end 'help-echo
-			     (concat "The message exists in "
-				     (mapconcat
-				      (lambda (pair)
-					(concat (car pair) "/"
-						(number-to-string
-						 (cdr pair))))
-				      flag-info ","))
+			     message
 			     string)))))
 
 (defun wl-highlight-summary-line-string (number line flags temp-mark indent)
@@ -889,8 +891,8 @@
     (put-text-property 0 (length line) 'face fsymbol line))
   (when wl-use-highlight-mouse-line
     (put-text-property 0 (length line) 'mouse-face 'highlight line))
-  (when wl-use-flag-folder-help-echo
-    (wl-highlight-summary-line-flag-folder number 0 (length line) line)))
+  (when wl-highlight-summary-line-help-echo-alist
+    (wl-highlight-summary-line-help-echo number 0 (length line) line)))
 
 (defun wl-highlight-summary-current-line (&optional number flags)
   (interactive)
@@ -924,8 +926,8 @@
 			   'wl-highlight-action-argument-face))
       (when wl-use-highlight-mouse-line
 	(put-text-property bol eol 'mouse-face 'highlight))
-      (when wl-use-flag-folder-help-echo
-	(wl-highlight-summary-line-flag-folder number bol eol))
+      (when wl-highlight-summary-line-help-echo-alist
+	(wl-highlight-summary-line-help-echo number bol eol))
       (when wl-use-dnd
 	(wl-dnd-set-drag-starter bol eol)))))
 
@@ -1255,8 +1257,6 @@ interpreted as cited text.)"
 	 (inhibit-read-only t))
     (put-text-property beg end 'mouse-face 'highlight)))
 
-
-(autoload 'elmo-flag-folder-referrer "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'wl-highlight) (require 'wl-version))

@@ -2715,8 +2715,12 @@ This variable can also be a regex."
   :type 'boolean
   :group 'wl-highlight)
 
-(defcustom wl-use-flag-folder-help-echo nil
-  "*Display help-echo in the flag folder if non-nil."
+(defcustom wl-highlight-summary-line-help-echo-alist
+  '((flag wl-highlight-flag-folder-help-echo)
+    (nmz elmo-message-file-name))
+  "*Alist to display help-echo in summary buffer.
+Each element is (folder-type handler(function)).
+Handler take two arguments elmo-folder and message number and return string."
   :type 'boolean
   :group 'wl-highlight)
 
