@@ -148,13 +148,6 @@ If optional argument NON-PERSISTENT is non-nil, folder is treated as
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
-(defun elmo-create-folder (class name &rest args)
-  (apply
-   'luna-make-entity
-   (intern (concat "elmo-" (symbol-name class) "-folder"))
-   :name name
-   args))
-
 (defmacro elmo-folder-msgdb (folder)
   "Return the msgdb of FOLDER (on-demand loading)."
   (` (or (elmo-folder-msgdb-internal (, folder))
