@@ -154,6 +154,16 @@
      (car pair)
      (elmo-message-entity (car pair) (cdr pair)) ignore-cache)))
 
+(luna-define-method elmo-message-number ((folder elmo-multi-folder)
+					 message-id)
+  (let ((children (elmo-multi-folder-children-internal folder))
+	match)
+    (while children
+      (when (setq match (elmo-message-number (car children) message-id))
+	(setq children nil))
+      (setq children (cdr children)))
+    match))
+
 (luna-define-method elmo-message-entity ((folder elmo-multi-folder) key)
   (cond
    ((numberp key)
@@ -189,6 +199,12 @@
 					number field)
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (elmo-message-field (car pair) (cdr pair) field)))
+
+(luna-define-method elmo-message-flag-available-p ((folder
+						    elmo-multi-folder) number
+						    flag)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-flag-available-p (car pair) (cdr pair) flag)))
 
 (luna-define-method elmo-message-flags ((folder elmo-multi-folder) number
 					&optional msgid)

@@ -67,6 +67,9 @@ Return a list of messages which have duplicated message-id.")
 (luna-define-generic elmo-msgdb-length (msgdb)
   "Return number of messages in the MSGDB")
 
+(luna-define-generic elmo-msgdb-flag-available-p (msgdb flag)
+  "Return non-nil when FLAG is available.")
+
 (luna-define-generic elmo-msgdb-flags (msgdb number)
   "Return a list of flag which corresponds to the message with NUMBER.")
 
@@ -141,11 +144,29 @@ Return non-nil if messages is deleted successfully.")
 PREDICATE is called with two entities and APP-DATA.
 Should return non-nil if the first entity is \"less\" than the second.")
 
+(luna-define-generic elmo-msgdb-message-number (msgdb message-id)
+  "Get message number from MSGDB which corresponds to MESSAGE-ID.")
+
+(luna-define-method elmo-msgdb-message-number ((msgdb modb-generic)
+					       message-id)
+  (elmo-message-entity-number
+   (elmo-msgdb-message-entity msgdb message-id)))
+
 (luna-define-generic elmo-msgdb-message-entity (msgdb key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
 A number is for message number in the MSGDB.
 A string is for message-id of the message.")
+
+(luna-define-generic elmo-msgdb-message-field (msgdb number field)
+  "Get message field value in the MSGDB.
+NUMBER is a number of the message.
+FIELD is a symbol of the field.")
+
+(luna-define-method elmo-msgdb-message-field ((msgdb modb-generic)
+					      number field)
+  (elmo-message-entity-field (elmo-msgdb-message-entity msgdb number)
+			     field))
 
 (luna-define-generic elmo-msgdb-message-entity-handler (msgdb)
   "Get modb entity handler instance which corresponds to the MSGDB.")

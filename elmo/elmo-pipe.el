@@ -332,6 +332,12 @@
 (luna-define-method elmo-folder-length ((folder elmo-pipe-folder))
   (elmo-folder-length (elmo-pipe-folder-dst-internal folder)))
 
+(luna-define-method elmo-message-flag-available-p ((folder elmo-pipe-folder)
+						   number flag)
+  (elmo-message-flag-available-p
+   (elmo-pipe-folder-dst-internal folder)
+   number flag))
+
 (luna-define-method elmo-folder-count-flags ((folder elmo-pipe-folder))
   (elmo-folder-count-flags (elmo-pipe-folder-dst-internal folder)))
 
@@ -357,6 +363,11 @@
 			     (elmo-pipe-folder-dst-internal folder)
 			     (elmo-message-entity-number entity))
 			    ignore-cache))
+
+(luna-define-method elmo-message-number ((folder elmo-pipe-folder)
+					 message-id)
+  (elmo-message-number (elmo-pipe-folder-dst-internal folder)
+		       message-id))
 
 (luna-define-method elmo-message-entity ((folder elmo-pipe-folder) key)
   (elmo-message-entity (elmo-pipe-folder-dst-internal folder) key))

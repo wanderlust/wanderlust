@@ -62,7 +62,7 @@
   :type '(repeat (symbol :tag "flag"))
   :group 'elmo)
 
-(defcustom elmo-preserved-flags '(answered cached new unread)
+(defcustom elmo-preserved-flags '(forwarded answered cached new unread)
   "Reserved flags which are not treated as global."
   :type '(repeat (symbol :tag "flag"))
   :group 'elmo)

@@ -40,7 +40,7 @@
 
 (eval-and-compile
   (luna-define-class elmo-flag-folder (elmo-localdir-folder)
-		     (flag minfo minfo-hash))
+		     (flag minfo minfo-hash max-number))
   (luna-define-internal-accessors 'elmo-flag-folder))
 
 (luna-define-method elmo-folder-initialize ((folder
@@ -69,6 +69,10 @@
 	(elmo-localdir-folder-set-directory-internal
 	 folder
 	 msgdb-path)
+	(if (file-exists-p (expand-file-name "max" msgdb-path))
+	    (elmo-flag-folder-set-max-number-internal
+	     folder
+	     (elmo-object-load (expand-file-name "max" msgdb-path))))
 	(if (file-exists-p (expand-file-name ".minfo" msgdb-path))
 	    (elmo-flag-folder-set-minfo-internal
 	     folder
@@ -101,7 +105,11 @@
 						elmo-flag-folder))
   (elmo-object-save
    (expand-file-name ".minfo" (elmo-folder-msgdb-path folder))
-   (elmo-flag-folder-minfo-internal folder)))
+   (elmo-flag-folder-minfo-internal folder))
+  (if (elmo-flag-folder-max-number-internal folder)
+      (elmo-object-save
+       (expand-file-name "max" (elmo-folder-msgdb-path folder))
+       (elmo-flag-folder-max-number-internal folder))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-flag-folder)
 						 &optional one-level)
@@ -245,11 +253,10 @@ FOLDER is the elmo folder structure.
 FLAG is the symbol of the flag."
   (when (elmo-global-flag-p flag)
     (let ((flag-folder (elmo-flag-get-folder flag))
-	  result entity)
+	  result number)
       (dolist (elem (elmo-flag-folder-minfo-internal flag-folder))
-	(if (setq entity (elmo-message-entity folder (nth 1 elem)))
-	    (setq result (cons (elmo-message-entity-number entity)
-			       result))))
+	(if (setq number (elmo-message-number folder (nth 1 elem)))
+	    (setq result (cons number result))))
       result)))
 
 ;;;
@@ -287,10 +294,17 @@ NUMBER is the message number."
 			       (elmo-flag-folder-minfo-hash-internal
 				flag-folder)))
 	;; Append new element.
+	(elmo-flag-folder-set-max-number-internal
+	 flag-folder
+	 (+ (or (elmo-flag-folder-max-number-internal flag-folder)
+		;; This is the first time.
+		(car (elmo-folder-status flag-folder)))
+	    1))
 	(setq new-file
 	      (expand-file-name
 	       (int-to-string
-		(setq new-number (1+ (car (elmo-folder-status flag-folder)))))
+		(setq new-number
+		      (elmo-flag-folder-max-number-internal flag-folder)))
 	       (elmo-localdir-folder-directory-internal flag-folder)))
 	(with-temp-buffer
 	  (setq cache (and message-id (elmo-file-cache-get message-id)))

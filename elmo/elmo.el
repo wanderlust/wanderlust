@@ -370,6 +370,9 @@ FLAG is a symbol which is one of the following:
   `all'       (remove all flags)
 If optional IS-LOCAL is non-nil, update only local (not server) status.")
 
+(luna-define-generic elmo-message-flag-available-p (folder number flag)
+  "Return non-nil when a message in the FOLDER with NUMBER treats FLAG.")
+
 (luna-define-generic elmo-folder-next-message-number (folder)
   "The next message number that will be assigned to a new message.
 FOLDER is the ELMO folder structure.")
@@ -461,6 +464,10 @@ FOLDER is a ELMO folder structure.
 NUMBER is a number of the message.
 If optional argument MSGID is specified,
 the message with NUMBER checks whether it has MSGID.")
+
+(luna-define-method elmo-message-flag-available-p ((folder elmo-folder) number
+						   flag)
+  (elmo-msgdb-flag-available-p (elmo-folder-msgdb folder) flag))
 
 (luna-define-method elmo-message-flags ((folder elmo-folder) number
 					&optional msgid)
@@ -1150,6 +1157,12 @@ If CACHED is t, message is set as cached.")
   (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
 				  entity))
 
+(luna-define-generic elmo-message-number (folder message-id)
+  "Get message number from MSGDB which corresponds to MESSAGE-ID.")
+
+(luna-define-method elmo-message-number ((folder elmo-folder) message-id)
+  (elmo-msgdb-message-number (elmo-folder-msgdb folder) message-id))
+
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
@@ -1232,7 +1245,7 @@ NUMBER is a number of the message.
 FIELD is a symbol of the field.")
 
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
-  (elmo-message-entity-field (elmo-message-entity folder number) field))
+  (elmo-msgdb-message-field (elmo-folder-msgdb folder) number field))
 
 (luna-define-generic elmo-message-set-field (folder number field value)
   "Set message field value in the msgdb.

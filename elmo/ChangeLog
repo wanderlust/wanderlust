@@ -1,5 +1,52 @@
 2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb.el (elmo-msgdb-flag-available-p): New generic function.
+	(elmo-msgdb-message-number): Ditto.
+	(elmo-msgdb-message-field): Ditto.
+
+	* modb-standard.el (modb-standard-economize-entity-size): New user
+	option.
+	(modb-standard-loaded-message-id): New inline function.
+	(modb-standard-load-entity): Use it.
+	(modb-standard-save-entity-1): If `modb-standard-economize-entity-size',
+	throw message-id string away.
+	(elmo-msgdb-flag-available-p): Define.
+	(elmo-msgdb-message-number): Ditto.
+	(elmo-msgdb-message-field): Ditto.
+
+	* modb-legacy.el (modb-legacy-flag-list): Fix typo
+	(suppoted -> supported).
+	(modb-legacy-supported-flag-p): Ditto.
+	(elmo-msgdb-set-flag): Ditto.
+	(elmo-msgdb-unset-flag): Ditto.
+	(elmo-msgdb-flag-available-p): Define.
+
+	* modb-entity.el (elmo-message-entity-handler): If CAR element of entity
+	is `t', treat it as legacy entity.
+	
+	* elmo.el (elmo-message-flag-available-p): New generic function.
+	(elmo-message-number): Ditto.
+	(elmo-message-field): Use `elmo-msgdb-message-field'.
+
+	* elmo-vars.el (elmo-preserved-flags): Added `forwarded'.
+
+	* elmo-pipe.el (elmo-message-flag-available-p): Define.
+	(elmo-message-number): Ditto.
+
+	* elmo-multi.el (elmo-message-number): Define.
+	(elmo-message-flag-available-p): Ditto.
+
+	* elmo-filter.el (elmo-message-flag-available-p): Define.
+	(elmo-message-number): Ditto.
+
+	* elmo-flag.el (elmo-flag-folder): Added slot `max-number'.
+	(elmo-folder-initialize): Load `max-number'.
+	(elmo-folder-commit): Save it.
+	(elmo-folder-list-global-flag-messages): Use `elmo-message-number'.
+	(elmo-global-flag-set-internal): Set up max-number slot.
+
+2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* elmo-version.el (elmo-version): Up to 2.11.31.
 
 2004-09-09  Yuuichi Teranishi  <teranisi@gohome.org>

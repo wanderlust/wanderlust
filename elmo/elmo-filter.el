@@ -307,6 +307,13 @@
   (elmo-message-file-name (elmo-filter-folder-target-internal folder)
 			  number))
 
+(luna-define-method elmo-message-flag-available-p ((folder
+						    elmo-filter-folder) number
+						    flag)
+  (elmo-message-flag-available-p
+   (elmo-filter-folder-target-internal folder)
+   number flag))
+
 (luna-define-method elmo-message-flags ((folder elmo-filter-folder) number
 					&optional msgid)
   (elmo-message-flags (elmo-filter-folder-target-internal folder)
@@ -316,6 +323,11 @@
 					     number cached)
   (elmo-message-set-cached
    (elmo-filter-folder-target-internal folder) number cached))
+
+(luna-define-method elmo-message-number ((folder elmo-filter-folder)
+					 message-id)
+  (elmo-message-number (elmo-filter-folder-target-internal folder)
+		       message-id))
 
 (luna-define-method elmo-message-entity ((folder elmo-filter-folder) key)
   (elmo-message-entity (elmo-filter-folder-target-internal folder) key))
