@@ -399,6 +399,18 @@ For example, @verb\{|@|\} results in @ and
   (texinfo-parse-arg-discard)
   (insert "#"))
 
+;; @ordf{}	==>	a	Spanish feminine
+(put 'ordf 'texinfo-format 'texinfo-format-ordf)
+(ptexinfmt-defun-if-void texinfo-format-ordf ()
+  (texinfo-parse-arg-discard)
+  (insert "o"))
+
+;; @ordm{}	==>	o	Spanish masculine
+(put 'ordm 'texinfo-format 'texinfo-format-ordm)
+(ptexinfmt-defun-if-void texinfo-format-ordm ()
+  (texinfo-parse-arg-discard)
+  (insert "o"))
+
 ;; @OE{}	==>	OE	French-OE-ligature
 (put 'OE 'texinfo-format 'texinfo-format-French-OE-ligature)
 (ptexinfmt-defun-if-void texinfo-format-French-OE-ligature ()
