@@ -513,21 +513,11 @@ Returns a process object.  if making session failed, returns nil."
 
 (luna-define-method elmo-message-fetch-unplugged
   ((folder elmo-net-folder) number strategy  &optional section outbuf unseen)
-  (if elmo-enable-disconnected-operation
-      (if (< number 0)
-	  (elmo-message-fetch-internal
-	   (elmo-dop-spool-folder folder) (abs number) strategy
-	   section unseen)
-	(elmo-message-fetch
-	 folder number
-	 ;; fetch with entire cache process.
-	 (elmo-make-fetch-strategy 'entire
-				   t nil
-				   (elmo-file-cache-path 
-				    (elmo-file-cache-get
-				     (elmo-message-field folder number
-							 'message-id))))
-	 section outbuf unseen))
+  (if (and elmo-enable-disconnected-operation
+	   (< number 0))
+      (elmo-message-fetch-internal
+       (elmo-dop-spool-folder folder) (abs number) strategy
+       section unseen)
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-check ((folder elmo-net-folder))
