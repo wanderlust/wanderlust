@@ -3,18 +3,31 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.10.1 from 2.10.0
   Version 2.10.1 is a bug fix version of 2.10.0.
 
+** Fixed after message buffer kill, prefetch doesn't work.
+
+** Default value of wl-delete-folder-alist,
+   wl-folder-hierarchy-access-folders are changed.
+
+** Support localdir and pipe folder rename.
+
+** Fixed message and error argument. Use %s for variable.
+
+** Now, response from IMAP server (e.g. \Noselect, \Flagged)
+   parse case-ignore.
+
+** Fixed elmo-msgdb-extra-fields field are case sensitive.
+
+** Fixed IMAP folder included ~, expand to home directory.
+
 ** Fixed the problem that msgdb be destroyed when print-length or
    print-level has Non-nil value.
-
-** wl-summary-pack-number in pipe folder is disabled temporarily
-   since it didn't work. Invoke it in destination folder instead.
 
 ** Fixed a problem that wl-folder-move-cur-folder doesn't work.
 
 ** Fixed a problem that wl-draft-reedit doesn't work properly on Meadow.
 
-** Fixed a problem that wl-summary-pack-number doesn't work on Maildir and
-   shimbun folders.
+** Fixed a problem that wl-summary-pack-number doesn't work on
+   Maildir, shimbun, and pipe folders.
 
 ** Fixed a problem that cache file is not protected even if it is marked
    as important.

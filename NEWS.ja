@@ -23,9 +23,6 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** IMAP フォルダの表記に ~ が含まれる場合に展開されてしまう問題が
    修正されました。
 
-** パイプフォルダで wl-summary-pack-number がうまく動かなかった問
-   題が修正されました。
-
 ** print-length や print-level が Non-nil のときに msgdb が壊れる問題が
    修正されました。
 
@@ -33,8 +30,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
 
-** wl-summary-pack-number が Maildir や shimbun フォルダで動かない
-   問題が修正されました。
+** wl-summary-pack-number Maildir や shimbun ・パイプフォルダで動
+   かない問題が修正されました。
 
 ** 重要マークつきメッセージのキャッシュに対する保護機能が働かない
    不具合が修正されました。
