@@ -43,8 +43,7 @@
 (setq wl-subscribed-mailing-list
       '("wl@lists.airs.net"
 	"apel-ja@m17n.org"
-	"emacs-mime-ja@m17n.org"
-	;; "ml@example.com" ...
+	;;"ml@example.com" ...
 	))
 
 ;; If (system-name) does not return FQDN,
@@ -108,7 +107,6 @@
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
 ;; Thread view
-;(setq wl-thread-indent-level 2)
 ;(setq wl-thread-have-younger-brother-str "+"
 ;      wl-thread-youngest-child-str	 "+"
 ;      wl-thread-vertical-str		 "|"
@@ -151,10 +149,7 @@
 ;; change plug status by server or port at startup.
 ;(add-hook 'wl-make-plugged-hook
 ;	  '(lambda ()
-;	     ;; Add or Change plug status for SERVER and PORT.
 ;	     (elmo-set-plugged plugged(t/nil) server port)
-;	     ;; When omit port, SEVERS all port was changes.
-;	     ;; (Can't add plug status without PORT)
 ;	     (elmo-set-plugged plugged(t/nil) server)
 ;	     ))
 
@@ -193,6 +188,7 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
+;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
@@ -221,8 +217,7 @@
 ;(setq wl-generate-mailer-string-function
 ;      (function
 ;       (lambda ()
-;	 (concat "User-Agent: "
-;		 (wl-generate-user-agent-string-1 nil)))))
+;	 (wl-generate-user-agent-string-1 nil))))
 
 
 ;;; [[ Template ]]
@@ -326,6 +321,9 @@
 ;	 "news.SCORE")
 ;	("^-"
 ;	 "news.SCORE")))
+
+;; directory for storing score files.
+; (setq wl-score-files-directory "~/.elmo/")
 
 ;; rule for auto refile.
 ;(setq wl-refile-rule-alist
