@@ -93,10 +93,7 @@
 (luna-define-method elmo-folder-commit :after ((folder
 						elmo-flag-folder))
   (elmo-object-save
-   (expand-file-name (concat "flag/"
-			     (symbol-name
-			      (elmo-flag-folder-flag-internal folder))
-			     "/.minfo") elmo-msgdb-directory)
+   (expand-file-name ".minfo" (elmo-folder-msgdb-path folder))
    (elmo-flag-folder-minfo-internal folder)))
 
 (defun elmo-flag-folder-delete-message (folder number
