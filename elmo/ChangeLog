@@ -1,3 +1,7 @@
+2003-10-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-util.el (toplevel): Require emu for char-list-to-string.
+
 2003-10-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-get-hash-val): Simplify.
