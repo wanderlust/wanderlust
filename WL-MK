@@ -158,7 +158,8 @@
   (let ((version (mapconcat
 		  'number-to-string
 		  (product-version (product-find 'elmo-version))
-		  ".")))
+		  "."))
+	(coding-system-for-write 'iso-latin-1-unix))
     (princ (concat "Update version number to " version "\n"))
     ;; generate version.tex
     (with-temp-buffer

@@ -1,3 +1,8 @@
+2003-09-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* WL-MK (update-version): Bind `coding-system-for-write' to
+	iso-latin-1-unix.
+
 2003-08-26  Tetsurou Okazaki  <okazaki@be.to>
 
 	* WL-MK (wl-texinfo-info-file, wl-texinfo-texi-file,
