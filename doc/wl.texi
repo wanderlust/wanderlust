@@ -7420,9 +7420,11 @@ For now, you can invoke prefetching new messages in specified folders.
 Specify target folders in @code{wl-batch-prefetch-folder-list} then
 invoke as follows to execute prefetching:
 
+@example
 @group
-emacs -batch -l wl-batch -f wl-batch-prefetch
+% emacs -batch -l wl-batch -f wl-batch-prefetch
 @end group
+@end example
 
 @section Customize Variables
 

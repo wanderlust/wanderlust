@@ -7405,9 +7405,11 @@ overview 情報に含まれないフィールドを検査の対象とする場合、
 @code{wl-batch-prefetch-folder-list} にプリフェッチを行うフォルダを
 指定してコマンドラインから以下のようにするとプリフェッチを行います。
 
+@example
 @group
-emacs -batch -l wl-batch -f wl-batch-prefetch
+% emacs -batch -l wl-batch -f wl-batch-prefetch
 @end group
+@end example
 
 @section カスタマイズ変数
 
