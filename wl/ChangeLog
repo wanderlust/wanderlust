@@ -1,3 +1,8 @@
+2003-07-18  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+
+	* wl-action.el (wl-summary-print-destination): 
+	Do nothing when folder is nil.
+
 2003-07-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-prefetch-region-no-mark): Update
