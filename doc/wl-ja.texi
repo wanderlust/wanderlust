@@ -6468,6 +6468,11 @@ Wanderlust に関する議論はこのメーリングリストで行われます。
      12/20    Modified UTF7 対応。
 2000  3/24    1.1.0 stable リリース。
       4/03    CVS サーバでの開発を開始。
+      5/07    スレッドつなぎ直し機能＆高速化 with 村田さん。
+      6/12    LDAP 対応 with 千葉さん＆後藤さん。
+      7/11    killed message 機能追加。
+      7/18    POP3 を UIDL 対応。
+      9/12    biff 機能 with 嵯峨田さん＆山岡さん。
 @end example
 
 くわしい変遷は @file{ChangeLog} を御覧ください。

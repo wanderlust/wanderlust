@@ -6518,6 +6518,11 @@ valuable advice and many pieces of code they contributed.
      12/20    Support Modified UTF7.
 2000  3/24    Released 1.1.0 stable.
       4/03    CVS development started.
+      5/07    Thread restoration & Its speed up with Murata-san.
+      6/12    Address completion with LDAP with Chiba-san & Goto-san.
+      7/11    killed message feature.
+      7/18    Use UIDL in POP3.
+      9/12    biff feature with Satata-san & Yamaoka-san.
 @end example
 
 See @file{ChangeLog} for details.
