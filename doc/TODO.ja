@@ -1,10 +1,3 @@
-
-オフライン処理の最適化
-パートフェッチが SEMI まかせ
-フォルダとアイコンファイルの対応
-Shimbun の killed-list 対応
-
-NNTP 関連(wl-folder-check-entity-async)
 msgdb 構造の見直しと obarray 化
 重要マークの管理
 IMAP フォルダチェックで RECENT の値を使うようにする。
