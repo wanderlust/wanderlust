@@ -131,14 +131,18 @@
 					       &optional number)
   ;; dir-name is changed according to msgid.
   (unless (elmo-cache-folder-dir-name-internal folder)
-    (let* ((file (elmo-file-cache-get-path (std11-field-body "message-id")))
-	   (dir (directory-file-name (file-name-directory file))))
-      (unless (file-exists-p dir)
-	(elmo-make-directory dir))
-      (when (file-writable-p file)
-	(write-region-as-binary
-	 (point-min) (point-max) file nil 'no-msg))))
-  t)
+    (let ((msgid (std11-field-body "message-id"))
+	  file dir)
+      (when msgid
+	(setq file (elmo-file-cache-get-path msgid))
+	(setq dir (directory-file-name (file-name-directory file)))
+	(unless (file-exists-p dir)
+	  (elmo-make-directory dir))
+	(when (and (file-writable-p file)
+		   (not (file-exists-p file)))
+	  (write-region-as-binary
+	   (point-min) (point-max) file nil 'no-msg)
+	  t)))))
 
 (luna-define-method elmo-map-folder-delete-messages ((folder elmo-cache-folder)
 						     locations)

@@ -224,7 +224,8 @@
 		   folder
 		   (or number
 		       (1+ (car (elmo-folder-status folder)))))))
-    (when (file-writable-p filename)
+    (when (and (file-writable-p filename)
+	       (not (file-exists-p filename)))
       (write-region-as-binary
        (point-min) (point-max) filename nil 'no-msg)
       t)))

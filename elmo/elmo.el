@@ -362,7 +362,8 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the destination folder(ELMO folder structure).
 If UNREAD is non-nil, message is appended as unread.
 If optional argument NUMBER is specified, the new message number is set
-\(if possible\).")
+\(if possible\).
+Return nil on failure.")
 
 (luna-define-generic elmo-folder-append-messages (folder
 						  src-folder
@@ -373,12 +374,13 @@ If optional argument NUMBER is specified, the new message number is set
   "Append messages from folder.
 FOLDER is the ELMO folder structure.
 Caller should make sure FOLDER is `writable'.
-(Can be checked with `elmo-folder-writable-p').
+\(Can be checked with `elmo-folder-writable-p').
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
 UNREAD-MARKS is a list of unread mark string.
 If second optional argument SAME-NUMBER is specified,
-message number is preserved (if possible).")
+message number is preserved \(if possible\).
+Returns a list of message numbers successfully appended.")
 
 (luna-define-generic elmo-folder-pack-numbers (folder)
   "Pack message numbers of FOLDER.")
