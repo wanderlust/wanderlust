@@ -2533,7 +2533,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (unless elmo-inhibit-display-retrieval-progress
       (elmo-display-progress 'elmo-imap4-display-literal-progress
 			     "Retrieving..." 100)  ; remove progress bar.
-      (message "Retrieving...done."))
+      (message "Retrieving...done"))
     (if (setq response (elmo-imap4-response-bodydetail-text
 			(elmo-imap4-response-value-all
 			 response 'fetch)))

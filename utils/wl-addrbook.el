@@ -164,7 +164,7 @@ If nil,  the old 'user' entry remains.")
   (wl-addrbook-make-hashtb)
   (add-hook 'kill-emacs-hook (function wl-addrbook-clean-up))
   (add-hook 'wl-exit-hook (function wl-addrbook-clean-up))
-  (message "Updating addrbook...done."))
+  (message "Updating addrbook...done"))
 
 (defun wl-addrbook-clean-up ()
   (remove-hook 'kill-emacs-hook (function wl-addrbook-clean-up))

@@ -1122,7 +1122,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (elmo-folder-commit wl-summary-buffer-elmo-folder)
   (elmo-folder-check wl-summary-buffer-elmo-folder)
   (if wl-use-scoring (wl-score-save))
-  (if (interactive-p) (message "Saving summary status...done.")))
+  (if (interactive-p) (message "Saving summary status...done")))
 
 (defun wl-summary-force-exit ()
   "Exit current summary.  Buffer is deleted even the buffer is sticky."
@@ -3004,7 +3004,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-exec-region (beg end)
   (interactive "r")
-  (message "Collecting marks ...")
+  (message "Collecting marks...")
   (save-excursion
     (goto-char beg)
     (beginning-of-line)
@@ -3033,7 +3033,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    refile-len
 	    dst-msgs			; loop counter
 	    result)
-	(message "Executing ...")
+	(message "Executing...")
 	(while dels
 	  (when (not (assq (car dels) wl-summary-buffer-refile-list))
 	    (wl-append wl-summary-buffer-refile-list
@@ -3124,7 +3124,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			   wl-message-buffer-cur-number)))
 	  (wl-summary-toggle-disp-msg 'off))
 	(set-buffer-modified-p nil)
-	(message (concat "Executing ... done"
+	(message (concat "Executing...done"
 			 (if (> refile-failures 0)
 			     (format " (%d refiling failed)" refile-failures)
 			   "")
