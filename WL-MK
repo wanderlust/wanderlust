@@ -28,7 +28,7 @@
 (defconst wl-en-info "wl.info")
 (defconst wl-en-texi "wl.texi")
 
-(defvar wl-info-lang "ja"
+(defvar wl-info-lang '("ja" "en")
   "The language of info file (\"ja\" or \"en\").")
 
 ;; for Nemacs (dirty!)

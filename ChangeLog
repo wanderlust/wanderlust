@@ -1,3 +1,8 @@
+2001-10-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-info-lang): Change default value to ("ja" "en").
+	* WL-CFG: Ditto.
+
 2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-MK (config-wl-package-subr): Check smtp.el version.
