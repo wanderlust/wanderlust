@@ -34,12 +34,6 @@
 (require 'mime-play)
 (require 'elmo)
 
-;; avoid compile warnings
-(defvar zmacs-regions)
-(defvar zmacs-region-active-p)
-(defvar transient-mark-mode)
-(defvar mark-active)
-
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -66,12 +60,9 @@ has Non-nil value\)"
 	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction
 	    (widen)
-	      (if (or (and wl-on-xemacs
-			   zmacs-regions zmacs-region-active-p)
-		      (and (not wl-on-xemacs)
-			   transient-mark-mode mark-active))
-		  (wl-mime-preview-follow-current-region)
-		(mime-preview-follow-current-entity)))))))
+	    (if (wl-region-exists-p)
+		(wl-mime-preview-follow-current-region)
+	      (mime-preview-follow-current-entity)))))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
 (defun wl-mime-preview-follow-current-region ()

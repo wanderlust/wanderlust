@@ -1,3 +1,10 @@
+2002-10-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-region-exists-p): New function.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Use it;
+	Remove defvars for byte-compile warnings.
+
 2002-10-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (toplevel): Fixed last change; use defvar instead of

@@ -899,6 +899,12 @@ is enclosed by at least one regexp grouping construct."
 
 (defalias 'wl-expand-newtext 'elmo-expand-newtext)
 
+(defun wl-region-exists-p ()
+  "Return non-nil if a region exists on current buffer."
+  (static-if (featurep 'xemacs)
+      (and zmacs-regions zmacs-region-active-p)
+    (and transient-mark-mode mark-active)))
+
 (defvar wl-line-string)
 (defun wl-line-parse-format (format spec-alist)
   "Make a formatter from FORMAT and SPEC-ALIST."
