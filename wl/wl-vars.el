@@ -191,6 +191,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 	  (if wl-parent-message-entity
 	      (if wl-thr-linked ">>" ">")
 	    "")))
+    (?~ (if (zerop (length wl-line-string)) "" " "))
     (?c (if wl-thr-children-number
 	    (concat "+" (number-to-string wl-thr-children-number) ":")
 	  " "))
@@ -234,6 +235,7 @@ which are replaced by the given information:
    the from: field string of the message are concatenated.
 %s The subject: field string of the message.
 %S The size of the message (if available).
+%~ If the previous spec is not zero-length, replaced with ' '.
 
 If the format string contains the specifiers %( and %), the text between
 them will have the specified number of columns."

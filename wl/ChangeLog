@@ -1,5 +1,9 @@
 2002-05-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-line-format-spec-alist): Added '~'.
+
+	* wl-util.el (wl-line-parse-format): Set up wl-line-string.
+
 	* wl-vars.el (wl-summary-line-format): Addes some description to the
 	docstring.
 

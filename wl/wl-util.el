@@ -930,6 +930,7 @@ is enclosed by at least one regexp grouping construct."
 	(apply (function concat) (nreverse expanded))
       newtext)))
 
+(defvar wl-line-string)
 (defun wl-line-parse-format (format spec-alist)
   "Make a formatter from FORMAT and SPEC-ALIST."
   (let (f spec specs stack)
@@ -983,7 +984,11 @@ is enclosed by at least one regexp grouping construct."
 				     (string-to-number (match-string 1))
 				     spec)))
 		  (replace-match "s" 'fixed)
-		  (setq specs (append specs (list spec))))))))
+		  (setq specs (append specs
+				      (list
+				       (list
+					'setq 'wl-line-string
+					spec)))))))))
 	    (buffer-string)))
     (append (list 'format f) specs)))
 
