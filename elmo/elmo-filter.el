@@ -338,11 +338,7 @@
   (elmo-folder-close-flag-table (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-count-flags ((folder elmo-filter-folder))
-  (let* ((flag-count (elmo-filter-folder-flag-count folder))
-	 (new (or (cdr (assq 'new flag-count)) 0))
-	 (unread (or (cdr (assq 'unread flag-count)) 0))
-	 (answered(or (cdr (assq 'answered flag-count)) 0)))
-    (list new (- unread new) answered)))
+  (elmo-filter-folder-flag-count folder))
 
 (luna-define-method elmo-folder-set-flag ((folder elmo-filter-folder)
 					  numbers
