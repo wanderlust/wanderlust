@@ -293,6 +293,10 @@ Return non-nil if cache is used."
       (save-restriction
 	(std11-narrow-to-header)
 	(run-hooks 'elmo-message-header-inserted-hook))
+      ;; set original major mode for mime-preview-quit
+      (put-text-property (point-min) (point-max)
+			 'mime-view-situation
+			 `((major-mode . ,original-major-mode)))
       (use-local-map
        (or keymap
 	   (if default-keymap-or-function
