@@ -2563,8 +2563,8 @@ If ARG, without confirm."
 (defun wl-summary-insert-thread (entity folder update
 					&optional force-insert)
   (let ((depth 0)
-	this-id	parent-entity parent-number relatives anumber
-	cur number cur-entity linked retval delayed-entity
+	this-id	parent-entity parent-number
+	number cur-entity linked retval delayed-entity
 	update-list entity-stack thread-entity)
     (while entity
       (setq this-id (elmo-message-entity-field entity 'message-id)
@@ -2583,16 +2583,17 @@ If ARG, without confirm."
 	      linked nil))
       (setq parent-number (and parent-entity
 			       (elmo-message-entity-number parent-entity)))
-      (setq cur entity)
       ;; If thread loop detected, set parent as nil.
-      (while cur
-	(when (setq anumber
-		    (elmo-message-entity-number
-		     (setq cur (elmo-message-entity-parent folder cur))))
-	  (if (memq anumber relatives)
-	      (setq parent-number nil
-		    cur nil))
-	  (setq relatives (cons anumber relatives))))
+      (let ((cur entity)
+	    anumber relatives)
+	(while cur
+	  (when (setq anumber
+		      (elmo-message-entity-number
+		       (setq cur (elmo-message-entity-parent folder cur))))
+	    (if (memq anumber relatives)
+		(setq parent-number nil
+		      cur nil))
+	    (setq relatives (cons anumber relatives)))))
       (if (and parent-number
 	       (not (wl-thread-get-entity parent-number))
 	       (not force-insert))
