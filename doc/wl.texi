@@ -1860,6 +1860,11 @@ If non-nil, summary window is appeared on the right side of the folder buffer.
 The initial setting is 20.
 Folder mode's window width when @code{wl-stay-folder-window} is non-nil.
 
+@item wl-folder-use-frame
+@vindex wl-folder-use-frame
+The initial setting is @code{nil}.
+If non-nil, use new frame for the folder window.
+
 @item wl-folder-many-unsync-threshold
 @vindex wl-folder-many-unsync-threshold
 The initial setting is 70.
@@ -3518,6 +3523,11 @@ which is displayed when there's no @samp{Subject:} field in the message.
 @vindex  wl-summary-width
 The initial setting is 80.
 Width of summary line. If @code{nil}, summary line's width is as is.
+
+@item wl-summary-use-frame
+@vindex wl-summary-use-frame
+The initial setting is @code{nil}.
+If non-nil, use new frame for the summary.
 
 @item wl-use-folder-petname
 @vindex  wl-use-folder-petname

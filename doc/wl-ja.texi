@@ -1876,6 +1876,11 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 $B=i4|@_Dj$O(B 20$B!#(B
 @code{wl-stay-folder-window} $B$,(B non-nil $B$N$H$-$K;D$9%U%)%k%@%P%C%U%!$N%&%#%s%I%&$NI}$G$9!#(B
 
+@item wl-folder-use-frame
+@vindex wl-folder-use-frame
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+Non-nil $B$J$i%U%)%k%@0lMwMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
+
 @item wl-folder-many-unsync-threshold
 @vindex wl-folder-many-unsync-threshold
 $B=i4|@_Dj$O(B 70$B!#(B
@@ -3504,6 +3509,11 @@ Non-nil $B$J$i!"(B@samp{^L} $B$G2~%Z!<%8$7$F%a%C%;!<%8$rI=<($7$^$9!#(B
 @vindex  wl-summary-width
 $B=i4|@_Dj$O(B 80$B!#%5%^%j$NI=<(I}$r@_Dj$5$l$?CM$K@Z$j5M$a$^$9!#(B@code{nil} $B$J(B
 $B$iI=<(I}$r@Z$j5M$a$^$;$s!#(B
+
+@item wl-summary-use-frame
+@vindex wl-summary-use-frame
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+Non-nil $B$J$i%5%^%jI=<(MQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
 
 @item wl-use-folder-petname
 @vindex  wl-use-folder-petname
