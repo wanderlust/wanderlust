@@ -82,14 +82,14 @@
       (re-search-forward "^@set VERSION \\([0-9\.]+\\)$")
       (match-string 1)))))
 
-;; wl-refcard.tex
+;; version.tex
 (luna-define-method test-refcard-version ((case test-dist))
   (require 'wl-version)
   (lunit-assert
    (string=
     (product-version-string (product-find 'wl-version))
     (with-temp-buffer
-      (insert-file-contents (expand-file-name "wl-refcard.tex" DOCDIR))
+      (insert-file-contents (expand-file-name "version.tex" DOCDIR))
       (re-search-forward "^\\\\def\\\\versionnumber{\\([0-9\.]+\\)}$")
       (match-string 1)))))
 
