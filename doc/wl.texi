@@ -3437,9 +3437,11 @@ The initial setting is @samp{ja}.  Specify language of the weekday.
 displays Deutsch.
 
 @item wl-summary-fix-timezone
-@vindex  wl-summary-fix-timezone
-The initial setting is @samp{JST}.  Timezone to adjust summary's
-timezone.  If @code{nil}, adjust to GMT.
+@vindex wl-summary-fix-timezone
+The initial setting is @samp{nil}. 
+Time zone of the date string in summary mode is adjusted using this value.
+If @code{nil}, it is adjust to the default time zone information
+(system's default time zone or environment variable @samp{TZ}).
 
 @item wl-use-petname
 @vindex  wl-use-petname
