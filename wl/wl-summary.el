@@ -2423,7 +2423,7 @@ If ARG, without confirm."
 		      '(wl-summary-scored
 			wl-summary-default-score
 			wl-summary-important-above
-			wl-summary-temp-above
+			wl-summary-target-above
 			wl-summary-mark-below
 			wl-summary-expunge-below))
 		 (and (featurep 'wl-score)
