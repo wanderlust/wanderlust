@@ -1387,7 +1387,8 @@ which appear just before @."
 
 (defcustom wl-message-scroll-amount nil
   "*Scroll amount by SPC key."
-  :type 'integer
+  :type '(choice (const :tag "scrolling by screenfuls" nil)
+		 integer)
   :group 'wl-pref)
 
 (defcustom wl-message-window-size '(1 . 4)
