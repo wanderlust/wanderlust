@@ -1,3 +1,12 @@
+2003-11-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-disuse-server-flag-mailbox-regexp): 
+	Revival.
+	(elmo-imap4-session): Removed use-flag slot.
+	(elmo-imap4-session-select-mailbox): Undo last change.
+	(elmo-folder-use-flag-p): Use
+	elmo-imap4-disuse-server-flag-mailbox-regexp.
+
 2003-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-session): Added use-flag slot.
