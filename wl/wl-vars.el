@@ -1815,6 +1815,22 @@ list  : reserved specified permanent marks."
   :type '(repeat (cons regexp face))
   :group 'wl-highlight)
 
+(defcustom wl-highlight-message-header-button-alist
+  `(("^\\(References\\|Message-I[Dd]\\):" "<[^>]+>"
+     0 wl-message-button-refer-article 0)
+    ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
+     1 wl-message-button-refer-article 3))
+  "Alist of headers and regexps to match buttons in message headers."
+  :type '(repeat
+	  (list (regexp :tag "Header")
+		regexp
+		(integer :tag "Button")
+		(function :tag "Callback")
+		(repeat :tag "Data"
+			:inline t
+			(integer :tag "Regexp group"))))
+  :group 'wl-highlight)
+
 (defcustom wl-highlight-citation-prefix-regexp 
   "^[>|:} ]*[>|:}]\\([^ \n>]*>\\)?\\|^[^ <\n>]*>"
   "All lines that match this regexp will be highlighted with

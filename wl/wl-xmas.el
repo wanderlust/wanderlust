@@ -382,7 +382,10 @@
   (local-set-key 'button4 'wl-message-wheel-down)
   (local-set-key 'button5 'wl-message-wheel-up)
   (local-set-key [(shift button4)] 'wl-message-wheel-down)
-  (local-set-key [(shift button5)] 'wl-message-wheel-up))
+  (local-set-key [(shift button5)] 'wl-message-wheel-up)
+  (set-keymap-parent wl-message-button-map (current-local-map))
+  (define-key wl-message-button-map 'button2
+    'wl-message-button-dispatcher))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

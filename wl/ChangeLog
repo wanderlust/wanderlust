@@ -1,5 +1,24 @@
 2000-08-28   Daiki Ueno  <ueno@unixuser.org>
 
+	* wl-xmas.el (wl-message-overload-functions): Initialize
+	`wl-message-button-map'.
+
+	* wl-mule.el (wl-message-overload-functions): Initialize
+	`wl-message-button-map'.
+
+	* wl-vars.el (wl-highlight-message-header-button-alist): New.
+
+	* wl-message.el (wl-message-button-map): New keymap.
+	(wl-message-add-button): New function.
+	(wl-message-button-dispatcher): New function.
+	(wl-message-button-refer-article): New function.
+
+	* wl-highlight.el
+	(wl-highlight-message-add-buttons-to-header): New function.
+	(wl-highlight-headers): Use it.
+
+2000-08-28   Daiki Ueno  <ueno@unixuser.org>
+
 	* wl-summary.el (wl-summary-default-from): Use
 	`wl-address-get-petname-1'.
 	(wl-summary-simple-from): Ditto.

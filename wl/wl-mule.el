@@ -118,7 +118,10 @@ Special commands:
   (local-set-key [mouse-4] 'wl-message-wheel-down)
   (local-set-key [mouse-5] 'wl-message-wheel-up)
   (local-set-key [S-mouse-4] 'wl-message-wheel-down)
-  (local-set-key [S-mouse-5] 'wl-message-wheel-up))
+  (local-set-key [S-mouse-5] 'wl-message-wheel-up)
+  (set-keymap-parent wl-message-button-map (current-local-map))
+  (define-key wl-message-button-map [mouse-2]
+    'wl-message-button-dispatcher))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

@@ -1014,9 +1014,33 @@ interpreted as cited text.)"
 	(end (or (save-excursion (re-search-forward "^$" nil t))
 		 (point-max))))
     (wl-highlight-message beg end nil)
+    (wl-highlight-message-add-buttons-to-header beg end)
     (and wl-highlight-x-face-func
 	 (funcall wl-highlight-x-face-func beg end))
     (run-hooks 'wl-highlight-headers-hook)))
+
+(defun wl-highlight-message-add-buttons-to-header (start end)
+  (save-restriction
+    (narrow-to-region start end)
+    (let ((alist wl-highlight-message-header-button-alist)
+	  entry)
+      (while alist
+	(setq entry (car alist)
+	      alist (cdr alist))
+	(goto-char (point-min))
+	(while (re-search-forward (car entry) nil t)
+	  (setq start (match-beginning 0)
+		end (if (re-search-forward "^[^ \t]" nil t)
+			(match-beginning 0)
+		      (point-max)))
+	  (goto-char start)
+	  (while (re-search-forward (nth 1 entry) end t)
+	    (goto-char (match-end 0))
+	    (wl-message-add-button
+	     (match-beginning (nth 2 entry))
+	     (match-end (nth 2 entry))
+	     (nth 3 entry) (match-string (nth 4 entry))))
+	  (goto-char end))))))
 
 (defun wl-highlight-body-all ()
   (wl-highlight-message (point-min) (point-max) t t))

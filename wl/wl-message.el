@@ -555,6 +555,34 @@
       ret-val
       )))
 
+(defvar wl-message-button-map (make-sparse-keymap))
+
+(defun wl-message-add-button (from to function &optional data)
+  "Create a button between FROM and TO with callback FUNCTION and DATA."
+  (add-text-properties
+   from to
+   (nconc '(mouse-face highlight)
+	  (list 'local-map wl-message-button-map)
+	  (list 'wl-message-button-callback function)
+	  (if data
+	      (list 'wl-message-button-data data)))))
+
+(defun wl-message-button-dispatcher (event)
+  "Select the button under point."
+  (interactive "@e")
+  (mouse-set-point event)
+  (let ((callback (get-text-property (point) 'wl-message-button-callback))
+	(data (get-text-property (point) 'wl-message-button-data)))
+    (if callback
+	(funcall callback data))))
+
+(defun wl-message-button-refer-article (data)
+  "Read article specified by Message-ID DATA at point."
+  (switch-to-buffer-other-window 
+   wl-message-buffer-cur-summary-buffer)
+  (if (wl-summary-jump-to-msg-by-message-id data)
+      (wl-summary-redisplay)))
+
 (defun wl-message-refer-article-or-url (e)
   "Read article specified by message-id around point. If failed,
    attempt to execute button-dispatcher."
