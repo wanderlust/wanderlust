@@ -1,3 +1,9 @@
+2002-03-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-jump-to-next-summary): If the window of
+	summary buffer is present, use it.
+	(wl-folder-jump-to-previous-summary): Ditto.
+
 2002-03-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-create-contents): Fix docstring.

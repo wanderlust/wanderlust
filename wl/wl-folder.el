@@ -2871,11 +2871,15 @@ Call `wl-summary-write-current-folder' with current folder name."
 (defun wl-folder-jump-to-next-summary ()
   (interactive)
   (when (wl-collect-summary)
+    (if (get-buffer-window (car (wl-collect-summary)))
+	(switch-to-buffer-other-window (car (wl-collect-summary))))
     (wl-summary-next-buffer)))
 
 (defun wl-folder-jump-to-previous-summary ()
   (interactive)
   (when (wl-collect-summary)
+    (if (get-buffer-window (car (wl-collect-summary)))
+	(switch-to-buffer-other-window (car (wl-collect-summary))))
     (wl-summary-previous-buffer)))
 
 (require 'product)
