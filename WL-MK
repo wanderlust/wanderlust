@@ -385,8 +385,7 @@
 (defun wl-texinfo-format-file (lang)
   (require 'wl-vars) ;; for 'wl-cs-local
   (or (wl-texinfo-check-newer lang)
-      (let (obuf
-	    (undo-outer-limit (eval '(lsh -1 -1))))
+      (let (obuf)
 	;; Support old texinfmt.el
 	(require 'ptexinfmt (expand-file-name "ptexinfmt.el" UTILSDIR))
 	(find-file (expand-file-name (wl-texinfo-texi-file lang) DOCDIR))
