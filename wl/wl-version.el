@@ -40,7 +40,7 @@
    "Wanderlust" nil
    (eval-when-compile
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
-   "Rio-pre2"))
+   "Rio-pre3"))
 
 ;; set version-string
 (product-version-as-string 'wl-version)
