@@ -2120,8 +2120,6 @@ e.x.
   :type '(choice (const "update")
 		 (const "all")
 		 (const "rescan")
-		 (const "first:")
-		 (const "last:")
 		 (const "no-sync")
 		 (const :tag "none" nil))
   :group 'wl-pref)
