@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 18:29:09 teranisi>
+;; Time-stamp: <00/07/13 10:56:56 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2150,8 +2150,10 @@ If optional argument is non-nil, checking is omitted."
 		  (setq in (read-from-minibuffer "Update number: " 
 						 (int-to-string in))
 			in (string-to-int in))
+		  (if (< len in)
+		      (throw 'end len))
 		  (if (y-or-n-p (format "%d messages are disappeared. OK?" 
-					(- len in)))
+					(max (- len in) 0)))
 		      (throw 'end in))))
 	      (nthcdr (max (- len in) 0) appends))
 	  appends))
@@ -2172,7 +2174,7 @@ If optional argument is non-nil, checking is omitted."
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
-	 diff append-list delete-list
+	 diff initial-append-list append-list delete-list has-nntp
 	 i num result
 	 gc-message
 	 in-folder
@@ -2199,11 +2201,13 @@ If optional argument is non-nil, checking is omitted."
       (wl-summary-set-message-modified)
       (wl-summary-set-mark-modified)
       (erase-buffer))
-;    (setq diff (if (eq (elmo-folder-get-type folder) 'multi)
-;		   (elmo-multi-list-bigger-diff in-folder in-db)
-;		 (elmo-list-bigger-diff in-folder in-db)))
-    (setq diff (elmo-list-diff in-folder in-db))
-    (setq append-list (car diff))
+    (if (and (setq has-nntp (elmo-folder-contains-type folder 'nntp))
+	     (not elmo-nntp-use-killed-list))
+	(setq diff (if (eq (elmo-folder-get-type folder) 'multi)
+		       (elmo-multi-list-bigger-diff in-folder in-db)
+		     (elmo-list-bigger-diff in-folder in-db)))
+      (setq diff (elmo-list-diff in-folder in-db)))
+    (setq initial-append-list (car diff))
     (setq delete-list (cadr diff))
     (message "Checking folder diff...done.")
     ;; Don't delete important-marked msgs other than 'internal.
@@ -2211,16 +2215,15 @@ If optional argument is non-nil, checking is omitted."
       (setq delete-list
 	    (wl-summary-delete-important-msgs-from-list delete-list 
 							mark-alist)))
-    (if (and (elmo-folder-contains-type folder 'nntp)
+    (if (and has-nntp
 	     (elmo-nntp-max-number-precedes-list-active-p))
 	;; XXX this does not work correctly in rare case.
 	(setq delete-list
-	      (wl-summary-delete-canceled-msgs-from-list delete-list
-							 msgdb)))    
+	      (wl-summary-delete-canceled-msgs-from-list delete-list msgdb)))
     (if (or (equal diff '(nil nil))
 	    (equal diff '(nil))
 	    (and (eq (length delete-list) 0)
-		 (eq (length append-list) 0)))
+		 (eq (length initial-append-list) 0)))
 	(progn
 	  ;; For max-number update...
 	  (if (and (elmo-folder-contains-type folder 'nntp)
@@ -2243,7 +2246,13 @@ If optional argument is non-nil, checking is omitted."
        wl-summary-new-mark 
        wl-summary-unread-uncached-mark)
       ;; Confirm appended message number.
-      (setq append-list (wl-summary-confirm-appends append-list))
+      (setq append-list (wl-summary-confirm-appends initial-append-list))
+      (when (and append-list
+		 has-nntp
+		 (not (eq (length initial-append-list)
+			  (length append-list)))
+		 (setq diff (elmo-list-diff initial-append-list append-list)))
+	(elmo-msgdb-append-to-killed-list folder (car diff)))
       (setq num (length append-list))
       (if append-list
 	  (progn

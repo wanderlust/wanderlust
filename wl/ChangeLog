@@ -1,3 +1,11 @@
+2000-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Use `elmo-list-bigger-diff'
+	if elmo-nntp-use-killed-list is nil.
+	Use `elmo-msgdb-append-to-killed-list'.
+	(Append numbers confirmed as disappeared to the killed list.)
+	(wl-summary-confirm-appends): Don't display negative number.
+
 2000-07-07  Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-summary.el (TopLevel): Define-maybe `ps-print-preprint'.
