@@ -1,3 +1,31 @@
+2004-12-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-message.el (wl-message-make-display-type): New function.
+	(wl-message-display-type-property): Ditto.
+	(wl-message-mime-analysys-p): Ditto.
+	(wl-message-display-all-header-p): Ditto.
+	(wl-message-redisplay): Removed argument `as-is', `all-header' and
+	added `display-type'.
+	(wl-message-buffer-display): Likewise.
+	(wl-message-display-internal): Likewise.
+	(wl-message-buffer-display-type): Abolish.
+	(wl-message-buffer-prefetch-subr): Follow the API changed.
+
+	* wl-summary.el (wl-summary-buffer-display-header-mode): Renamed
+	from wl-summary-buffer-display-all-header and changed default value.
+	(wl-summary-message-display-type): New function.
+	(wl-summary-buffer-display-mime-mode): Ditto.
+	(wl-summary-buffer-display-header-mode): Ditto.
+	(wl-summary-toggle-mime): Rewrite with above functions.
+	(wl-summary-toggle-all-header): Ditto.
+	(wl-summary-redisplay): Force redisplay with default mode.
+	(wl-summary-redisplay-internal): Renamed argument from `mode',
+	`all-header' to `mime-mode', `header-mode'.
+	Use `wl-message-make-display-type'.
+
+	* wl-vars.el (wl-summary-mode-line-format): Removed `[%m]'.
+	(wl-message-mode-line-format-spec-alist): Changed definition for `m'.
+
 2004-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-send): Allow parent-folder as "".

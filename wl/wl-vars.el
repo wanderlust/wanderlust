@@ -211,14 +211,14 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-summary-mode-line-format "Wanderlust: %f {%t}(%n/%u/%a)[%m]"
+(defcustom wl-summary-mode-line-format "Wanderlust: %f {%t}(%n/%u/%a)"
   "*A format string for summary mode-line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
 
 %f The folder name.
 %t The thread status of the summary ('T' for thread, 'S' for sequential).
-%m The mime analysis status of the summary ('M' for MIME ON)
+%m The mime analysis status of the summary ('MIME' for MIME ON)
 %n The number of new messages.
 %u The number of unread messages (includes new messages).
 %a The number of all messages."
@@ -1661,8 +1661,9 @@ which appear just before @."
 	    (wl-folder-get-petname wl-message-buffer-cur-folder)
 	  wl-message-buffer-cur-folder))
     (?m (upcase (symbol-name
-		 (get-text-property (point-min)
-				    'wl-message-display-mime-mode))))
+		 (wl-message-display-type-property
+		  wl-message-buffer-cur-display-type
+		  :mime))))
     (?F wl-message-buffer-flag-indicator)
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.

@@ -418,8 +418,31 @@ Returns non-nil if bottom of message."
 	       (nth 3 entry) (match-string (nth 4 entry))))
 	    (goto-char end)))))))
 
-(defun wl-message-redisplay (folder number as-is all-header
-				    &optional force-reload)
+;; display-type object definition.
+(defun wl-message-make-display-type (mime header)
+  (let (symbol)
+    (prog1
+	(setq symbol (intern (format "%s-%s-header" mime header)))
+      (put symbol
+	   'wl-message-display-type
+	   (list :mime mime :header header)))))
+
+(defun wl-message-display-type-property (display-type prop)
+  (plist-get (get display-type 'wl-message-display-type) prop))
+
+(defun wl-message-mime-analysys-p (display-type &optional header-or-body)
+  (let ((mode (wl-message-display-type-property display-type :mime)))
+    (case header-or-body
+      (header
+       (memq mode '(mime header-only)))
+      (t
+       (eq mode 'mime)))))
+
+(defun wl-message-display-all-header-p (display-type)
+  (eq (wl-message-display-type-property display-type :header) 'all))
+
+
+(defun wl-message-redisplay (folder number display-type &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
 	 (buffer-read-only nil)
 	 (summary-buf (current-buffer))
@@ -429,7 +452,7 @@ Returns non-nil if bottom of message."
 	 summary-win delim flags)
     (setq buffer-read-only nil)
     (setq cache-used (wl-message-buffer-display
-		      folder number as-is all-header force-reload))
+		      folder number display-type force-reload))
     (setq wl-message-buffer (car cache-used))
     (setq message-buf wl-message-buffer)
     (wl-message-select-buffer wl-message-buffer)
@@ -486,7 +509,7 @@ Returns non-nil if bottom of message."
       (wl-message-add-buttons-to-header (point-min) (point))
       (wl-message-add-buttons-to-body (point) (point-max)))
     (when (and wl-message-use-header-narrowing
-	       (not all-header))
+	       (not (wl-message-display-all-header-p display-type)))
       (wl-message-header-narrowing))
     (goto-char (point-min))
     (ignore-errors (run-hooks 'wl-message-redisplay-hook))
@@ -499,13 +522,8 @@ Returns non-nil if bottom of message."
 	(select-window summary-win))
     cache-used))
 
-(defun wl-message-buffer-display-type (mode all-header)
-  (let ((type (symbol-name mode)))
-    (when all-header (setq type (concat type "-all-header")))
-    (intern type)))
-
 ;; Use message buffer cache.
-(defun wl-message-buffer-display (folder number mode all-header
+(defun wl-message-buffer-display (folder number display-type
 					 &optional force-reload unread)
   (let* ((msg-id (ignore-errors (elmo-message-field folder number
 						    'message-id)))
@@ -528,8 +546,7 @@ Returns non-nil if bottom of message."
 	    (widen)
 	    (goto-char (point-min))
 	    (ignore-errors (wl-message-narrow-to-page))
-	    (unless (eq wl-message-buffer-cur-display-type
-			(wl-message-buffer-display-type mode all-header))
+	    (unless (eq wl-message-buffer-cur-display-type display-type)
 	      (setq read t))))
       ;; delete tail and add new to the top.
       (setq hit (wl-message-buffer-cache-add (list fname number msg-id)))
@@ -540,10 +557,9 @@ Returns non-nil if bottom of message."
 	      (set-buffer hit)
 	      (setq
 	       cache-used
-	       (wl-message-display-internal folder number mode all-header
+	       (wl-message-display-internal folder number display-type
 					    force-reload unread))
-	      (setq wl-message-buffer-cur-display-type
-		    (wl-message-buffer-display-type mode all-header)))
+	      (setq wl-message-buffer-cur-display-type display-type))
 	  (quit
 	   (wl-message-buffer-cache-delete)
 	   (error "Display message %s/%s is quitted" fname number))
@@ -553,36 +569,35 @@ Returns non-nil if bottom of message."
 	   nil))) ;; will not be used
     (cons hit cache-used)))
 
-(defun wl-message-display-internal (folder number mode all-header
+(defun wl-message-display-internal (folder number display-type
 					   &optional force-reload unread)
   (let ((default-mime-charset wl-mime-charset)
 	(elmo-mime-charset wl-mime-charset))
-    (setq wl-message-buffer-require-all-header all-header)
+    (setq wl-message-buffer-require-all-header
+	  (wl-message-display-all-header-p display-type))
     (prog1
-	(if (or (eq mode 'as-is)
-		(eq mode 'header-only))
-	    (let ((elmo-mime-display-header-analysis (eq mode 'header-only))
-		  (wl-highlight-x-face-function
-		   (unless (eq mode 'as-is) wl-highlight-x-face-function)))
-	      (prog1 (elmo-mime-display-as-is folder number
-					      (current-buffer)
-					      (wl-message-get-original-buffer)
-					      'wl-original-message-mode
-					      force-reload
-					      unread
-					      (wl-message-define-keymap))
-		(let (buffer-read-only)
-		  (wl-highlight-message (point-min) (point-max) t))))
-	  (elmo-mime-message-display folder number
-				     (current-buffer)
-				     (wl-message-get-original-buffer)
-				     'wl-original-message-mode
-				     force-reload
-				     unread
-				     (wl-message-define-keymap)))
-      (let (buffer-read-only)
-	(put-text-property (point-min) (point-max)
-			   'wl-message-display-mime-mode mode))
+	(if (wl-message-mime-analysys-p display-type)
+	    (elmo-mime-message-display folder number
+				       (current-buffer)
+				       (wl-message-get-original-buffer)
+				       'wl-original-message-mode
+				       force-reload
+				       unread
+				       (wl-message-define-keymap))
+	  (let* ((elmo-mime-display-header-analysis
+		  (wl-message-mime-analysys-p display-type 'header))
+		 (wl-highlight-x-face-function
+		  (and elmo-mime-display-header-analysis
+		       wl-highlight-x-face-function)))
+	    (prog1 (elmo-mime-display-as-is folder number
+					    (current-buffer)
+					    (wl-message-get-original-buffer)
+					    'wl-original-message-mode
+					    force-reload
+					    unread
+					    (wl-message-define-keymap))
+	      (let (buffer-read-only)
+		(wl-highlight-message (point-min) (point-max) t)))))
       (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 
@@ -698,6 +713,9 @@ Returns non-nil if bottom of message."
 		   (key (list (elmo-folder-name-internal folder)
 			      number message-id))
 		   (hit (wl-message-buffer-cache-hit key))
+		   (display-type (wl-message-make-display-type
+				  wl-summary-buffer-display-mime-mode
+				  wl-summary-buffer-display-header-mode))
 		   result time1 time2 sec micro)
 	      (when wl-message-buffer-prefetch-debug
 		(message "%d: count %d, hit %s" number count (buffer-name hit)))
@@ -715,7 +733,7 @@ Returns non-nil if bottom of message."
 		  (setq time1 (current-time))
 		  (message "Prefetching %d..." number))
 		(setq result (wl-message-buffer-display
-			      folder number 'mime nil nil 'unread))
+			      folder number display-type nil 'unread))
 		(when wl-message-buffer-prefetch-debug
 		  (setq time2 (current-time))
 		  (setq sec  (- (nth 1 time2)(nth 1 time1)))

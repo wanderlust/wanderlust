@@ -110,7 +110,7 @@
 (defvar wl-summary-buffer-mode-line-formatter nil)
 (defvar wl-summary-buffer-mode-line nil)
 (defvar wl-summary-buffer-display-mime-mode 'mime)
-(defvar wl-summary-buffer-display-all-header nil)
+(defvar wl-summary-buffer-display-header-mode 'partial)
 (defvar wl-summary-buffer-event-handler nil)
 
 (defvar wl-thread-indent-level-internal nil)
@@ -186,7 +186,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-mode-line-formatter)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
 (make-variable-buffer-local 'wl-summary-buffer-display-mime-mode)
-(make-variable-buffer-local 'wl-summary-buffer-display-all-header)
+(make-variable-buffer-local 'wl-summary-buffer-display-header-mode)
 (make-variable-buffer-local 'wl-summary-buffer-event-handler)
 
 (defvar wl-datevec)
@@ -4395,6 +4395,25 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-summary-redisplay)))
     (message "No last message.")))
 
+(defun wl-summary-message-display-type ()
+  (when (and wl-summary-buffer-disp-msg
+	     (buffer-live-p wl-message-buffer)
+	     wl-summary-buffer-current-msg
+	     (wl-summary-message-number)
+	     (= (wl-summary-message-number) wl-summary-buffer-current-msg))
+    (with-current-buffer wl-message-buffer
+      wl-message-buffer-cur-display-type)))
+
+(defun wl-summary-buffer-display-mime-mode ()
+  (or (wl-message-display-type-property (wl-summary-message-display-type)
+					:mime)
+      wl-summary-buffer-display-mime-mode))
+
+(defun wl-summary-buffer-display-header-mode ()
+  (or (wl-message-display-type-property (wl-summary-message-display-type)
+					:header)
+      wl-summary-buffer-display-header-mode))
+
 (defun wl-summary-toggle-mime (&optional arg)
   "Toggle MIME decoding.
 If ARG is non-nil, ask coding-system to display the message in the current
@@ -4405,37 +4424,39 @@ If ARG is numeric number, decode message as following:
 2: Enable MIME analysis only for headers.
 3: Disable MIME analysis."
   (interactive "P")
-  (let ((rest (memq wl-summary-buffer-display-mime-mode
-		    wl-summary-display-mime-mode-list))
+  (let ((mime-mode (wl-summary-buffer-display-mime-mode))
 	(elmo-mime-display-as-is-coding-system
 	 elmo-mime-display-as-is-coding-system))
-    (if (numberp arg)
-	(setq wl-summary-buffer-display-mime-mode
-	      (case arg
-		(1 'mime)
-		(2 'header-only)
-		(3 'as-is)))
-      (if arg
-	  ;; Specify coding-system (doesn't change the MIME mode).
-	  (setq elmo-mime-display-as-is-coding-system
-		(if (and arg (not (eq wl-summary-buffer-display-mime-mode
-				      'mime)))
-		    (or (read-coding-system "Coding system: ")
-			elmo-mime-display-as-is-coding-system)
-		  elmo-mime-display-as-is-coding-system))
+    (if (and (consp arg) (> (prefix-numeric-value arg) 4))
+	(progn
+	  (setq wl-summary-buffer-display-mime-mode mime-mode)
+	  (wl-summary-update-modeline))
+      (cond
+       ((numberp arg)
+	(setq mime-mode (case arg
+			  (1 'mime)
+			  (2 'header-only)
+			  (3 'as-is))))
+       (arg
+	;; Specify coding-system (doesn't change the MIME mode).
+	(setq elmo-mime-display-as-is-coding-system
+	      (if (and arg
+		       (not (wl-message-mime-analysys-p
+			     (wl-summary-message-display-type))))
+		  (or (read-coding-system "Coding system: ")
+		      elmo-mime-display-as-is-coding-system)
+		elmo-mime-display-as-is-coding-system)))
+       (t
 	;; Change the MIME mode.
-	(if (cadr rest)
-	    (setq wl-summary-buffer-display-mime-mode (cadr rest))
-	  (setq wl-summary-buffer-display-mime-mode
-		(car wl-summary-display-mime-mode-list)))))
-    (wl-summary-redisplay arg)
-    (wl-summary-update-modeline)
+	(setq mime-mode (or (cadr (memq mime-mode
+					wl-summary-display-mime-mode-list))
+			    (car wl-summary-display-mime-mode-list)))))
+      (wl-summary-redisplay-internal nil nil arg mime-mode))
     (message "MIME decoding: %s%s"
-	     (upcase (symbol-name wl-summary-buffer-display-mime-mode))
-	     (if (and arg
-		      (not (numberp arg))
-		      (not (eq wl-summary-buffer-display-mime-mode
-			       'mime)))
+	     (upcase (symbol-name mime-mode))
+	     (if (and (not (eq mime-mode 'mime))
+		      (not (eq elmo-mime-display-as-is-coding-system
+			       wl-cs-autoconv)))
 		 (concat " ("
 			 (symbol-name elmo-mime-display-as-is-coding-system)
 			 ")")
@@ -4444,20 +4465,24 @@ If ARG is numeric number, decode message as following:
 (defun wl-summary-redisplay (&optional arg)
   "Redisplay message."
   (interactive "P")
-  (wl-summary-redisplay-internal nil nil arg))
+  (apply #'wl-summary-redisplay-internal nil nil arg
+	 (unless (and (consp arg) (> (prefix-numeric-value arg) 4))
+	   (list wl-summary-buffer-display-mime-mode
+		 wl-summary-buffer-display-header-mode))))
 
 (defun wl-summary-toggle-all-header (&optional arg)
   "Toggle displaying message with all header."
   (interactive "P")
-  (setq wl-summary-buffer-display-all-header
-	(not wl-summary-buffer-display-all-header))
-  (wl-summary-redisplay-internal nil nil arg))
+  (let ((header-mode (wl-summary-buffer-display-header-mode)))
+    (if (and (consp arg) (> (prefix-numeric-value arg) 4))
+	(setq wl-summary-buffer-display-header-mode header-mode)
+      (wl-summary-redisplay-internal
+       nil nil arg nil
+       (if (eq header-mode 'all) 'partial 'all)))))
 
 (defun wl-summary-redisplay-internal (&optional folder number force-reload
-						mode all-header)
+						mime-mode header-mode)
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
-	 (mode (or mode wl-summary-buffer-display-mime-mode))
-	 (all-header (or all-header wl-summary-buffer-display-all-header))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
@@ -4485,13 +4510,16 @@ If ARG is numeric number, decode message as following:
 	  (setq wl-current-summary-buffer (current-buffer))
 	  (setq no-folder-mark
 		;; If cache is used, change folder-mark.
-		(if (wl-message-redisplay folder num
-					  mode all-header
-					  (or
-					   force-reload
-					   (string= (elmo-folder-name-internal
-						     folder)
-						    wl-draft-folder)))
+		(if (wl-message-redisplay
+		     folder num
+		     (wl-message-make-display-type
+		      (or mime-mode
+			  (wl-summary-buffer-display-mime-mode))
+		      (or header-mode
+			  (wl-summary-buffer-display-header-mode)))
+		     (or force-reload
+			 (string= (elmo-folder-name-internal folder)
+				  wl-draft-folder)))
 		    nil
 		  ;; plugged, then leave folder-mark.
 		  (if (and (not (elmo-folder-local-p
