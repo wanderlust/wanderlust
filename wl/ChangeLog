@@ -1,3 +1,8 @@
+2002-05-03  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+
+	* wl-summary.el (wl-summary-prev): Fixed regexp.
+	(wl-summary-next): Ditto.
+
 2002-05-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-line-day-of-week): Ignore error.

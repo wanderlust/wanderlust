@@ -4918,10 +4918,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (if (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
 	(setq regex (format "%s[^%s]"
 			    wl-summary-message-regexp
-			    skip-mark-regexp))
+			    (concat skip-mark-regexp "0-9")))
       (setq regex (format "%s[^%s]\\(%s\\|%s\\| \\)"
 			  wl-summary-message-regexp
-			  skip-mark-regexp
+			  (concat skip-mark-regexp "0-9")
 			  (regexp-quote wl-summary-unread-cached-mark)
 			  (regexp-quote wl-summary-important-mark))))
     (unless (re-search-backward regex nil t)
@@ -4957,10 +4957,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (if (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
 	(setq regex (format "%s[^%s]"
 			    wl-summary-message-regexp
-			    skip-mark-regexp))
+			    (concat skip-mark-regexp "0-9")))
       (setq regex (format "%s[^%s]\\(%s\\|%s\\| \\)"
 			  wl-summary-message-regexp
-			  skip-mark-regexp
+			  (concat skip-mark-regexp "0-9")
 			  (regexp-quote wl-summary-unread-cached-mark)
 			  (regexp-quote wl-summary-important-mark))))
     (unless (re-search-forward regex nil t)
