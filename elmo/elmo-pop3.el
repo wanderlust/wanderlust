@@ -713,6 +713,7 @@
 	(elmo-pop3-send-command process
 				(format "retr %s" number))
 	(setq elmo-pop3-total-size size)
+	(message "Retrieving...")
 	(unwind-protect
 	    (progn
 	      (when (null (setq response (elmo-pop3-read-response
@@ -720,6 +721,7 @@
 		(error "Fetching message failed"))
 	      (setq response (elmo-pop3-read-body process outbuf)))
 	  (setq elmo-pop3-total-size nil))
+	(message "Retrieving...done.")
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)
