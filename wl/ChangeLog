@@ -1,5 +1,12 @@
 2002-12-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-message.el (wl-message-buffer-display): Back to the first page
+	when cache is hit.
+
+	* wl-vars.el (wl-message-buffer-prefetch-depth): Change default value.
+	(wl-message-buffer-prefetch-idle-time): Ditto.
+	(wl-message-buffer-prefetch-folder-type-list): Ditto.
+
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Fix logic
 	for elmo-remove-passwd.
 
