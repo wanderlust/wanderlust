@@ -1,3 +1,9 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS.ja: Fixed indent;
+	Added description about obsolete variable warnings
+	and `elmo-obsolete-variable-show-warnings'.
+
 2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* WL-MK (install-wl-icons): Don't install *.img files for Emacs 21.
