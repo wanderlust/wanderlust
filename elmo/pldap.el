@@ -113,9 +113,7 @@ binary values."
   :group 'ldap)
 
 (defcustom ldap-default-host nil
-  "*Default LDAP server hostname.
-A TCP port number can be appended to that name using a colon as
-a separator."
+  "*Default LDAP server hostname."
   :type '(choice (string :tag "Host name")
 		 (const :tag "Use library default" nil))
   :group 'ldap)

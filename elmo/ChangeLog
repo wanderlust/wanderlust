@@ -4,6 +4,7 @@
 	`ldap-coding-system' is nil.
 	(ldap-encode-string): Ditto.
 	(ldap-search-entries): Encode filter string with `ldap-encode-string'.
+	(ldap-default-host): Fixed docstring.
 
 2002-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
