@@ -7,7 +7,6 @@
 
 	* wl-folder.el (wl-folder-buffer-search-group): Ignore non-group
 	folder.
-	(wl-folder-get-petname): Do not return petname for ordinal group.
 
 	* wl-vars.el (wl-delete-folder-alist): Add shimbun folder to
 	the default value.
