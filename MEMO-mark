@@ -53,6 +53,17 @@ nil なら original は利用しない。
 
 ---- ここまで DONE ----
 
+* Mark & Action
+  一時マークの扱いを整理する．
+  wl-summary-buffer-refile-list
+  wl-summary-buffer-copy-list
+  wl-summary-buffer-delete-list
+  を廃止，新規変数
+  wl-summary-buffer-temp-mark-list
+  で一時マーク情報を一元管理する．
+  wl-summary-mark-action-list でマークと，対応するアクションを
+  定義できるようにする．
+
 * 仮想フォルダの msgdb の扱い
   pipe, filter, multi では、オリジナルフォルダの msgdb を操作する。
   elmo-folder-check でオリジナルを sync する。
