@@ -1,5 +1,10 @@
 2002-03-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-e21.el (wl-draft-overload-menubar): Use define-key-after to
+	add "Preview Message" and "Save Draft and Exit".
+
+2002-03-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* wl-addrmgr.el (wl-addrmgr-quit-yes): Put cursor on draft buffer
 	if addrmgr is called from draft in splitted window.
 
