@@ -1290,14 +1290,14 @@ If current line is group folder, all subfolders are marked."
     (if gbw
 	(progn (select-window gbw)
 	       (setq exists t))
-      (unless wl-folder-use-frame
+      (unless wl-summary-use-frame
 	(condition-case ()
 	    (unwind-protect
 		(split-window-horizontally wl-folder-window-width)
 	      (other-window 1))
 	  (error nil))))
     (set-buffer buffer)
-    (if wl-folder-use-frame
+    (if wl-summary-use-frame
 	(switch-to-buffer-other-frame buffer)
       (switch-to-buffer buffer))
     exists))
@@ -1434,11 +1434,24 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder (&optional arg)
   (interactive "P")
-  (let (initialize)
-;;; (delete-other-windows)
-    (if (get-buffer wl-folder-buffer-name)
-	(switch-to-buffer  wl-folder-buffer-name)
-      (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
+  (let (initialize folder-buf)
+    (if (setq folder-buf (get-buffer wl-folder-buffer-name))
+	(if wl-folder-use-frame
+	    (let (select-frame)
+	      (save-selected-window
+		(dolist (frame (visible-frame-list))
+		  (select-frame frame)
+		  (if (get-buffer-window folder-buf)
+		      (setq select-frame frame))))
+	      (if select-frame
+		  (select-frame select-frame)
+		(switch-to-buffer folder-buf)))
+	  (switch-to-buffer folder-buf))
+      (if wl-folder-use-frame
+	  (switch-to-buffer-other-frame
+	   (get-buffer-create wl-folder-buffer-name))
+	(switch-to-buffer (get-buffer-create wl-folder-buffer-name)))
+      (switch-to-buffer (get-buffer wl-folder-buffer-name))
       (wl-folder-mode)
       (wl-folder-init)
       (set-buffer wl-folder-buffer-name)
