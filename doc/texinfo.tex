@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2001-06-26.08}
+\def\texinfoversion{2001-07-31.06}
 %
 % Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
 %               2000, 01 Free Software Foundation, Inc.
@@ -30,14 +30,17 @@
 % Please try the latest version of texinfo.tex before submitting bug
 % reports; you can get the latest version from:
 %   ftp://ftp.gnu.org/gnu/texinfo.tex
-%   (and all GNU mirrors, see http://www.gnu.org/order/ftp.html)
-%   ftp://texinfo.org/tex/texinfo.tex
-%   ftp://us.ctan.org/macros/texinfo/texinfo.tex
-%   (and all CTAN mirrors, finger ctan@us.ctan.org for a list).
-%   /home/gd/gnu/doc/texinfo.tex on the GNU machines.
+%     (and all GNU mirrors, see http://www.gnu.org/order/ftp.html)
+%   ftp://texinfo.org/texinfo/texinfo.tex
+%   ftp://tug.org/tex/texinfo.tex
+%     (and all CTAN mirrors, see http://www.ctan.org),
+%   and /home/gd/gnu/doc/texinfo.tex on the GNU machines.
+% 
 % The texinfo.tex in any given Texinfo distribution could well be out
 % of date, so if that's what you're using, please check.
-% Texinfo has a small home page at http://texinfo.org/.
+% 
+% Texinfo has a small home page at http://texinfo.org/ and also
+% http://www.gnu.org/software/texinfo.
 %
 % Send bug reports to bug-texinfo@gnu.org.  Please include including a
 % complete document in each bug report with which we can reproduce the
@@ -1614,6 +1617,10 @@ where each line of input produces a line of output.}
    \oldpage
    \endgroup
    %
+   % Need this before the \...aftertitlepage checks so that if they are
+   % in effect the toc pages will come out with page numbers.
+   \HEADINGSon
+   %
    % If they want short, they certainly want long too.
    \ifsetshortcontentsaftertitlepage
      \shortcontents
@@ -1629,8 +1636,6 @@ where each line of input produces a line of output.}
    \fi
    %
    \ifpdf \pdfmakepagedesttrue \fi
-   %
-   \HEADINGSon
 }
 
 \def\finishtitlepage{%
