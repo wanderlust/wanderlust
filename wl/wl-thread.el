@@ -757,37 +757,6 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-mark-as-important-region arg))
 
-(defun wl-thread-copy (&optional arg)
-  (interactive "P")
-  (wl-thread-call-region-func 'wl-summary-copy-region arg))
-
-(defun wl-thread-refile (&optional arg)
-  (interactive "P")
-  (condition-case err
-      (progn
-	(wl-thread-call-region-func 'wl-summary-refile-region arg)
-	(if arg
-	    (wl-summary-goto-top-of-current-thread))
-	(wl-thread-goto-bottom-of-sub-thread))
-    (error
-     (elmo-display-error err t)
-     nil)))
-
-(defun wl-thread-delete (&optional arg)
-  (interactive "P")
-  (wl-thread-call-region-func 'wl-summary-delete-region arg)
-  (if arg
-      (wl-summary-goto-top-of-current-thread))
-  (if (not wl-summary-move-direction-downward)
-      (wl-summary-prev)
-    (wl-thread-goto-bottom-of-sub-thread)
-    (if wl-summary-buffer-disp-msg
-	(wl-summary-redisplay))))
-
-(defun wl-thread-target-mark (&optional arg)
-  (interactive "P")
-  (wl-thread-call-region-func 'wl-summary-target-mark-region arg))
-
 (defun wl-thread-unmark (&optional arg)
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-unmark-region arg))

@@ -1,9 +1,9 @@
 2003-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-summary.el (wl-summary-delete-messages-on-buffer): Don't display
-	buffer line deleting progress.
-	(wl-summary-mode-map): Bind wl-thread-dispose, Changed binding for
-	wl-thread-delete.
+	* w-thread.el (wl-thread-copy): Removed definition.
+	(wl-thread-refile): Ditto.
+	(wl-thread-delete): Ditto.
+	(wl-thread-target-mark): Ditto.
 
 	* wl-action.el (wl-summary-register-target-mark): Fixed argument.
 	(wl-summary-target-mark-set-action): Fixed.
