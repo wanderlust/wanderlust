@@ -1,7 +1,7 @@
 ;;; wl-version.el -- Version information for Wanderlust.
 
-;; Copyright 2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -34,6 +34,7 @@
 (provide 'wl-version)			; have to declare in the top.
 (require 'elmo-version)			; product-version-as-string
 
+;; product-define in the first place
 (product-provide 'wl-version
   (product-define
    "Wanderlust" nil
