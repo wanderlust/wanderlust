@@ -51,6 +51,9 @@
 # Folder definition file
 # This file is generated automatically by %s.
 #
+# If you edit this file by hand, be sure that comment lines
+# will be washed out by wl-fldmgr.
+#
 
 " (product-string-1 'wl-version t)))
 
@@ -1352,7 +1355,7 @@ return value is diffs '(-new -unread -all)."
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))
-    (insert "\n# petname definition (group, folder in access group)\n")
+    (insert "\n# petname definition (access group, folder in access group)\n")
     (wl-fldmgr-insert-petname-buffer save-petname-entities)
     (insert "\n# end of file.\n")
     (if (and wl-fldmgr-make-backup
