@@ -377,19 +377,32 @@
 					     &optional
 					     disable-killed
 					     ignore-msgdb
-					     no-check)
-  (when (elmo-folder-synchronize
-	 (elmo-filter-folder-target-internal folder)
-	 'disable-killed
-	 ignore-msgdb
-	 no-check)
-    (let ((killed-list (elmo-folder-killed-list-internal folder))
-	  (numbers (elmo-folder-list-messages folder (not disable-killed))))
-      (when (and disable-killed ignore-msgdb)
-	(elmo-folder-set-killed-list-internal folder nil))
-      (elmo-filter-folder-set-number-list-internal folder numbers)
-      (elmo-filter-folder-set-flag-count-internal folder nil)
-      0)))
+					     no-check
+					     mask)
+  (let ((killed-list (elmo-folder-killed-list-internal folder))
+	numbers)
+    (unless no-check
+      (when (elmo-filter-folder-require-msgdb-internal folder)
+	(elmo-folder-synchronize (elmo-filter-folder-target-internal folder)
+				 disable-killed
+				 ignore-msgdb
+				 no-check
+				 mask)))
+    (setq numbers (elmo-folder-list-messages folder (not disable-killed)))
+    (when (and numbers
+	       (not (elmo-filter-folder-require-msgdb-internal folder)))
+      (elmo-folder-synchronize (elmo-filter-folder-target-internal folder)
+			       'disable-killed
+			       ignore-msgdb
+			       no-check
+			       (if mask
+				   (elmo-list-filter mask numbers)
+				 numbers)))
+    (when (and disable-killed ignore-msgdb)
+      (elmo-folder-set-killed-list-internal folder nil))
+    (elmo-filter-folder-set-number-list-internal folder numbers)
+    (elmo-filter-folder-set-flag-count-internal folder nil)
+    0))
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
 						 numbers)

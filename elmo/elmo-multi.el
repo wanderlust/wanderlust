@@ -88,9 +88,18 @@
 					     &optional
 					     disable-killed
 					     ignore-msgdb
-					     no-check)
-  (dolist (fld (elmo-multi-folder-children-internal folder))
-    (elmo-folder-synchronize fld disable-killed ignore-msgdb no-check))
+					     no-check
+					     mask)
+  (if mask
+      (dolist (element (elmo-multi-split-numbers folder mask))
+	(when (cdr element)
+	  (elmo-folder-synchronize (car element)
+				   disable-killed
+				   ignore-msgdb
+				   no-check
+				   (cdr element))))
+    (dolist (fld (elmo-multi-folder-children-internal folder))
+      (elmo-folder-synchronize fld disable-killed ignore-msgdb no-check)))
   0)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
@@ -188,12 +197,13 @@
 
 (defun elmo-multi-split-numbers (folder numlist &optional as-is)
   (let ((numbers (sort numlist '<))
+	(folders (elmo-multi-folder-children-internal folder))
 	(divider (elmo-multi-folder-divide-number-internal folder))
 	(cur-number 0)
 	one-list numbers-list)
     (while numbers
+      (setq one-list (list (nth cur-number folders)))
       (setq cur-number (+ cur-number 1))
-      (setq one-list nil)
       (while (and numbers
 		  (eq 0
 		      (/ (- (car numbers)
@@ -222,27 +232,17 @@
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-multi-folder)
 						 numbers)
-  (let ((flds (elmo-multi-folder-children-internal folder))
-	one-list-list
-	(cur-number 0))
-    (setq one-list-list (elmo-multi-split-numbers folder numbers))
-    (while (< cur-number (length flds))
-      (elmo-folder-delete-messages (nth cur-number flds)
-				   (nth cur-number one-list-list))
-      (setq cur-number (+ 1 cur-number)))
-    t))
+  (dolist (element (elmo-multi-split-numbers folder numbers))
+    (when (cdr element)
+      (elmo-folder-delete-messages (car element) (cdr element))))
+  t)
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-multi-folder)
 						 numbers)
-  (let ((flds (elmo-multi-folder-children-internal folder))
-	one-list-list
-	(cur-number 0))
-    (setq one-list-list (elmo-multi-split-numbers folder numbers))
-    (while (< cur-number (length flds))
-      (elmo-folder-detach-messages (nth cur-number flds)
-				   (nth cur-number one-list-list))
-      (setq cur-number (+ 1 cur-number)))
-    t))
+  (dolist (element (elmo-multi-split-numbers folder numbers))
+    (when (cdr element)
+      (elmo-folder-detach-messages (car element) (cdr element))))
+  t)
 
 (luna-define-method elmo-folder-diff ((folder elmo-multi-folder))
   (elmo-multi-folder-diff folder))

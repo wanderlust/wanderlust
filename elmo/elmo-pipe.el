@@ -302,7 +302,8 @@
 					     &optional
 					     disable-killed
 					     ignore-msgdb
-					     no-check)
+					     no-check
+					     mask)
   (let ((src-folder (elmo-pipe-folder-src-internal folder))
 	(dst-folder (elmo-pipe-folder-dst-internal folder)))
     (when (and (elmo-folder-plugged-p src-folder)
@@ -317,7 +318,7 @@
 	(elmo-pipe-drain src-folder dst-folder))))
   (elmo-folder-synchronize
    (elmo-pipe-folder-dst-internal folder)
-   disable-killed ignore-msgdb no-check))
+   disable-killed ignore-msgdb no-check mask))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-pipe-folder)
 					      flag

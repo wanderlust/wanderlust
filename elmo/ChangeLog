@@ -1,3 +1,19 @@
+2004-06-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-synchronize): Add 5th optional argument
+	`mask'.
+
+	* elmo-pipe.el (elmo-folder-synchronize): Follow the API chagne.
+
+	* elmo-multi.el (elmo-folder-synchronize): Likewise.
+	(elmo-multi-split-numbers): Add elmo-folder object into each
+	element of return value at first.
+	(elmo-folder-delete-messages): Follow the above change.
+	(elmo-folder-detach-messages): Ditto.
+
+	* elmo-filter.el (elmo-folder-synchronize): Minimize message
+	number which is synchronized in target folder.
+
 2004-05-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-shimbun.el (elmo-shimbun-update-overview-folder-list):

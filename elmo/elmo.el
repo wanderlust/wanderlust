@@ -1450,7 +1450,8 @@ If Optional LOCAL is non-nil, don't update server flag."
 					      &optional
 					      disable-killed
 					      ignore-msgdb
-					      no-check)
+					      no-check
+					      mask)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 
@@ -1458,6 +1459,8 @@ If optional DISABLE-KILLED is non-nil, killed messages are also synchronized.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 flag status.
 If NO-CHECK is non-nil, rechecking folder is skipped.
+If optional argument MASK is specified and is a list of message numbers,
+synchronize messages only which are contained the list.
 Return amount of cross-posted messages.
 If update process is interrupted, return nil.")
 
@@ -1465,7 +1468,8 @@ If update process is interrupted, return nil.")
 					     &optional
 					     disable-killed
 					     ignore-msgdb
-					     no-check)
+					     no-check
+					     mask)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
 	old-msgdb diff diff-2 delete-list new-list new-msgdb flag
@@ -1486,6 +1490,8 @@ If update process is interrupted, return nil.")
 				      folder
 				      (not disable-killed)
 				      'in-msgdb)))
+	  (when (and mask (car diff))
+	    (setcar diff (elmo-list-filter mask (car diff))))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends (car diff)))
 	  ;; Set killed list as ((1 . MAX-OF-DISAPPEARED))
