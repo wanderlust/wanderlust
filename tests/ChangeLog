@@ -1,9 +1,11 @@
 2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-dist.el (test-codename, test-version-wl-changelog)
+	(test-version-elmo-changelog, test-version-toplevel-changelog)
+	(test-refcard-version): New testcases.
+
 	* check-modules.el (check-modules-apel-version): Update require
 	APEL version.
-
-	* test-dist.el (test-refcard-version): New testcase.
 
 2001-11-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
