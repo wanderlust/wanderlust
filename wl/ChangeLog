@@ -3,6 +3,7 @@
 	* wl-folder.el (wl-folder-empty-trash): Set and show up summary
 	buffer after calling `wl-summary-goto-folder-subr' without the
 	argument `interactive'.
+	(wl-folder-set-current-entity-id): Enclose by save-current-buffer.
 
 2003-01-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
