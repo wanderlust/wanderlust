@@ -1,5 +1,11 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-pop3.el (elmo-pop3-auth-digest-md5): Delete.
+	(elmo-pop3-auth-scram-md5): Ditto.
+	(elmo-pop3-auth-cram-md5): Ditto.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-pop3.el (toplevel): Delete defun-maybe for sasl-*.
 	Delete `elmo-pop3-authenticator-alist'.
 
