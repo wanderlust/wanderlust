@@ -1,0 +1,430 @@
+% Reference Card for Wanderlust
+% The format of this file is adapted from the GNU Emacs reference card
+%
+% You can compile with:
+% tex wl-refcard.tex
+% dvips wl-refcard.dvi -t landscape -o wl-refcard.ps
+% pstops '2:0U(21cm,29.7cm),1' wl-refcard.ps wl-refcard-b.ps
+
+% Reference Card for GNU Emacs version 20 on Unix systems
+%**start of header
+\newcount\columnsperpage
+
+% This file can be printed with 1, 2, or 3 columns per page (see below).
+% Specify how many you want here.  Nothing else needs to be changed.
+
+\columnsperpage=3
+
+% Copyright (c) 1987, 1993, 1996, 1997 Free Software Foundation, Inc.
+
+% This file is part of GNU Emacs.
+
+% GNU Emacs is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2, or (at your option)
+% any later version.
+
+% GNU Emacs is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+
+% You should have received a copy of the GNU General Public License
+% along with GNU Emacs; see the file COPYING.  If not, write to
+% the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+% Boston, MA 02111-1307, USA.
+
+% This file is intended to be processed by plain TeX (TeX82).
+%
+% The final reference card has six columns, three on each side.
+% This file can be used to produce it in any of three ways:
+% 1 column per page
+%    produces six separate pages, each of which needs to be reduced to 80%.
+%    This gives the best resolution.
+% 2 columns per page
+%    produces three already-reduced pages.
+%    You will still need to cut and paste.
+% 3 columns per page
+%    produces two pages which must be printed sideways to make a
+%    ready-to-use 8.5 x 11 inch reference card.
+%    For this you need a dvi device driver that can print sideways.
+% Which mode to use is controlled by setting \columnsperpage above.
+%
+% Author:
+%  Stephen Gildea
+%  Internet: gildea@stop.mail-abuse.org
+%
+% Thanks to Paul Rubin, Bob Chassell, Len Tower, and Richard Mlynarik
+% for their many good ideas.
+
+% If there were room, it would be nice to see a section on Dired.
+
+\def\versionnumber{2.7.6}
+\def\year{2001}
+
+\def\shortcopyrightnotice{\vskip 1ex plus 2 fill
+  \centerline{\small \copyright\ \year\ Yuuichi Teranishi
+  Permissions on back.}}
+
+\def\copyrightnotice{
+\vskip 1ex plus 2 fill\begingroup\small
+\centerline{Copyright \copyright\ \year\  Yuuichi Teranishi}
+\centerline{for Wanderlust \versionnumber}
+
+Permission is granted to make and distribute copies of
+this card provided the copyright notice and this permission notice
+are preserved on all copies.
+
+\endgroup}
+
+% make \bye not \outer so that the \def\bye in the \else clause below
+% can be scanned without complaint.
+\def\bye{\par\vfill\supereject\end}
+
+\newdimen\intercolumnskip	%horizontal space between columns
+\newbox\columna			%boxes to hold columns already built
+\newbox\columnb
+
+\def\ncolumns{\the\columnsperpage}
+
+\message{[\ncolumns\space 
+  column\if 1\ncolumns\else s\fi\space per page]}
+
+\def\scaledmag#1{ scaled \magstep #1}
+
+% This multi-way format was designed by Stephen Gildea October 1986.
+% Note that the 1-column format is fontfamily-independent.
+\if 1\ncolumns			%one-column format uses normal size
+  \hsize 4in
+  \vsize 10in
+  \voffset -.7in
+  \font\titlefont=\fontname\tenbf \scaledmag3
+  \font\headingfont=\fontname\tenbf \scaledmag2
+  \font\smallfont=\fontname\sevenrm
+  \font\smallsy=\fontname\sevensy
+
+  \footline{\hss\folio}
+  \def\makefootline{\baselineskip10pt\hsize6.5in\line{\the\footline}}
+\else				%2 or 3 columns uses prereduced size
+  \hsize 3.2in
+  \vsize 7.95in
+  \hoffset -.75in
+  \voffset -.745in
+  \font\titlefont=cmbx10 \scaledmag2
+  \font\headingfont=cmbx10 \scaledmag1
+  \font\smallfont=cmr6
+  \font\smallsy=cmsy6
+  \font\eightrm=cmr8
+  \font\eightbf=cmbx8
+  \font\eightit=cmti8
+  \font\eighttt=cmtt8
+  \font\eightmi=cmmi8
+  \font\eightsy=cmsy8
+  \textfont0=\eightrm
+  \textfont1=\eightmi
+  \textfont2=\eightsy
+  \def\rm{\eightrm}
+  \def\bf{\eightbf}
+  \def\it{\eightit}
+  \def\tt{\eighttt}
+  \normalbaselineskip=.8\normalbaselineskip
+  \normallineskip=.8\normallineskip
+  \normallineskiplimit=.8\normallineskiplimit
+  \normalbaselines\rm		%make definitions take effect
+
+  \if 2\ncolumns
+    \let\maxcolumn=b
+    \footline{\hss\rm\folio\hss}
+    \def\makefootline{\vskip 2in \hsize=6.86in\line{\the\footline}}
+  \else \if 3\ncolumns
+    \let\maxcolumn=c
+    \nopagenumbers
+  \else
+    \errhelp{You must set \columnsperpage equal to 1, 2, or 3.}
+    \errmessage{Illegal number of columns per page}
+  \fi\fi
+
+  \intercolumnskip=.46in
+  \def\abc{a}
+  \output={%			%see The TeXbook page 257
+      % This next line is useful when designing the layout.
+      %\immediate\write16{Column \folio\abc\space starts with \firstmark}
+      \if \maxcolumn\abc \multicolumnformat \global\def\abc{a}
+      \else\if a\abc
+	\global\setbox\columna\columnbox \global\def\abc{b}
+        %% in case we never use \columnb (two-column mode)
+        \global\setbox\columnb\hbox to -\intercolumnskip{}
+      \else
+	\global\setbox\columnb\columnbox \global\def\abc{c}\fi\fi}
+  \def\multicolumnformat{\shipout\vbox{\makeheadline
+      \hbox{\box\columna\hskip\intercolumnskip
+        \box\columnb\hskip\intercolumnskip\columnbox}
+      \makefootline}\advancepageno}
+  \def\columnbox{\leftline{\pagebody}}
+
+  \def\bye{\par\vfill\supereject
+    \if a\abc \else\null\vfill\eject\fi
+    \if a\abc \else\null\vfill\eject\fi
+    \end}  
+\fi
+
+% we won't be using math mode much, so redefine some of the characters
+% we might want to talk about
+\catcode`\^=12
+\catcode`\_=12
+
+\chardef\\=`\\
+\chardef\{=`\{
+\chardef\}=`\}
+
+\hyphenation{mini-buf-fer}
+
+\parindent 0pt
+\parskip 1ex plus .5ex minus .5ex
+
+\def\small{\smallfont\textfont2=\smallsy\baselineskip=.8\baselineskip}
+
+% newcolumn - force a new column.  Use sparingly, probably only for
+% the first column of a page, which should have a title anyway.
+\outer\def\newcolumn{\vfill\eject}
+
+% title - page title.  Argument is title text.
+\outer\def\title#1{{\titlefont\centerline{#1}}\vskip 1ex plus .5ex}
+
+% section - new major section.  Argument is section name.
+\outer\def\section#1{\par\filbreak
+  \vskip 3ex plus 2ex minus 2ex {\headingfont #1}\mark{#1}%
+  \vskip 2ex plus 1ex minus 1.5ex}
+
+\newdimen\keyindent
+
+% beginindentedkeys...endindentedkeys - key definitions will be
+% indented, but running text, typically used as headings to group
+% definitions, will not.
+\def\beginindentedkeys{\keyindent=1em}
+\def\endindentedkeys{\keyindent=0em}
+\endindentedkeys
+
+% paralign - begin paragraph containing an alignment.
+% If an \halign is entered while in vertical mode, a parskip is never
+% inserted.  Using \paralign instead of \halign solves this problem.
+\def\paralign{\vskip\parskip\halign}
+
+% \<...> - surrounds a variable name in a code example
+\def\<#1>{{\it #1\/}}
+
+% kbd - argument is characters typed literally.  Like the Texinfo command.
+\def\kbd#1{{\tt#1}\null}	%\null so not an abbrev even if period follows
+
+% beginexample...endexample - surrounds literal text, such a code example.
+% typeset in a typewriter font with line breaks preserved
+\def\beginexample{\par\leavevmode\begingroup
+  \obeylines\obeyspaces\parskip0pt\tt}
+{\obeyspaces\global\let =\ }
+\def\endexample{\endgroup}
+
+% key - definition of a key.
+% \key{description of key}{key-name}
+% prints the description left-justified, and the key-name in a \kbd
+% form near the right margin.
+\def\key#1#2{\leavevmode\hbox to \hsize{\vtop
+  {\hsize=.75\hsize\rightskip=1em
+  \hskip\keyindent\relax#1}\kbd{#2}\hfil}}
+
+\newbox\metaxbox
+\setbox\metaxbox\hbox{\kbd{M-x }}
+\newdimen\metaxwidth
+\metaxwidth=\wd\metaxbox
+
+% metax - definition of a M-x command.
+% \metax{description of command}{M-x command-name}
+% Tries to justify the beginning of the command name at the same place
+% as \key starts the key name.  (The "M-x " sticks out to the left.)
+\def\metax#1#2{\leavevmode\hbox to \hsize{\hbox to .75\hsize
+  {\hskip\keyindent\relax#1\hfil}%
+  \hskip -\metaxwidth minus 1fil
+  \kbd{#2}\hfil}}
+
+% threecol - like "key" but with two key names.
+% for example, one for doing the action backward, and one for forward.
+\def\threecol#1#2#3{\hskip\keyindent\relax#1\hfil&\kbd{#2}\hfil\quad
+  &\kbd{#3}\hfil\quad\cr}
+
+%**end of header
+
+
+\title{Wanderlust Reference Card}
+
+\centerline{(for version \versionnumber)}
+
+\section{Starting Wanderlust}
+
+\key{Start Wanderlust}{M-x wl}
+\key{Start composition}{M-x wl-draft}
+
+\section{Folder Mode}
+
+\key{Quit Wanderlust}{q}
+
+\key{Move to next entity}{n}
+\key{Move to previous entity}{p}
+\key{Move to next unread entity}{N}
+\key{Move to previous unread entity}{P}
+
+\key{Go to specified folder}{g}
+\key{Go into current folder}{SPC}
+\key{Open/Close current group}{SPC}
+\key{Rescan folders in current access group}{C-u SPC}
+
+\key{Check new messages for current entity}{s}
+\key{Synchronize current entity}{S}
+\key{Prefetch for current folder/group}{I}
+\key{Set as read all messages in current entity}{c}
+\key{Expire current entity}{e}
+
+\key{Compose message}{w}
+\key{Compose message for current folder}{W}
+\key{Reload address book}{Z}
+
+\key{Empty trash folder}{E}
+
+\section{folder management}
+
+\key{Cut region}{C-k}
+\key{Cut current entity}{C-w}
+\key{Yank}{C-y}
+
+\key{Add folder}{m a}
+\key{Add group}{m g}
+\key{Add access group}{m A}
+
+\section{access group}
+
+\key{Display unscribed folders}{L}
+\key{Hide unsubscribed folders}{l}
+\key{Unsubscribe current entity}{u}
+\key{Unsubscribe region}{U}
+
+\newcolumn
+\section{Summary Mode}
+
+\key{Go back to folder mode}{q}
+\key{Go to specified folder}{g}
+
+\key{Next message}{n}
+\key{Previous message}{p}
+\key{Next unread message}{N}
+\key{Previous unread message}{P}
+\key{First message}{<}
+\key{Last message}{>}
+\key{Jump to previously shown message}{TAB}
+
+\key{View current message}{SPC}
+\key{Force reloading current message}{C-u .}
+\key{Toggle display of message}{v}
+
+\key{Compose message}{w}
+\key{Compose message for current folder}{W}
+\key{Compose reply message}{a}
+\key{Compose reply message with citation}{A}
+\key{Forward current message}{f}
+
+\key{(Re-)Edit current message}{E}
+\key{Jump to message buffer}{j}
+
+\key{Reload address book}{Z}
+
+\section{mark command}
+
+\key{Mark for refiling}{o}
+\key{Mark for copying}{O}
+\key{Mark for deleting}{d}
+\key{Mark as important}{\$}
+
+\key{Mark as target}{*}
+\key{Mark all messages as target}{m a}
+\key{Mark current thread as target}{m t}
+
+\key{Mark target messages for refiling}{m o}
+\key{Mark target messages for deleting}{m d}
+
+\key{Execute refile/delete/copy}{x}
+
+\section{prefix arguments for marking}
+
+\key{Apply command for marked messages}{m}
+\key{Apply command for thread after cursor point}{t}
+\key{Apply command for region}{r}
+
+\section{prefetching}
+
+\key{Prefetch current message}{i}
+\key{Prefetch target messages}{m i}
+\key{Prefetch region}{r i}
+
+\newcolumn
+\section{Message Mode}
+
+\key{Go back to summary buffer}{q}
+
+\key{Scroll up or move to next content}{SPC}
+\key{Scroll down or move to previous content}{DEL}
+
+\key{Move to upper content}{u}
+\key{Move to previous content}{p}
+\key{Decode current content as `play mode'}{v}
+\key{Decode current content as `extract mode'}{e}
+\key{View help of MIME-View}{?}
+
+\section{Draft Mode}
+
+\key{Insert message to cite}{C-c C-y}
+\key{Insert templete}{C-c C-j}
+\key{Insert signature}{C-c C-w}
+
+\key{Preview current draft}{C-c C-p}
+
+\key{Send current draft}{C-c C-c}
+\key{Save current draft}{C-c C-z}
+\key{Discard current draft}{C-c C-k}
+
+\section{compose multipart message}
+
+\key{Insert a text message}{C-c C-x C-t}
+\key{Insert a (binary) file}{C-c C-x TAB}
+\key{Insert a reference to external body}{C-c C-x C-e}
+\key{Insert a new MIME tag}{C-c C-x t}
+\key{View help of MIME-Edit}{C-c C-x ?}
+
+\shortcopyrightnotice
+
+\newcolumn
+\section{Plugged Status}
+
+\key{Toggle plugged status}{M-t}
+\key{Enter/Exit plugged mode}{C-t}
+
+\key{Toggle plugged state for current entity}{SPC}
+
+\section{Address Book Management}
+
+\key{Enter address book manager}{C-c C-a}
+\key{Exit address book manager}{q}
+
+\key{Set as {\tt To:}}{t}
+\key{Set as {\tt Cc:}}{c}
+\key{Set as {\tt Bcc:}}{b}
+\key{Unset}{u}
+\key{Compose message with current mark}{x}
+
+\key{Add new entry}{a}
+\key{Edit current entry}{e}
+\key{Delete current entry}{d}
+
+\copyrightnotice
+
+\bye
+
+% Local variables:
+% compile-command: "tex refcard"
+% End:
