@@ -1,9 +1,5 @@
 2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
 
-	* wl-demo.el (wl-demo-image-type-alist): Use ' instead of `.
-
-2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
-
 	* wl-e21.el (wl-e21-setup-draft-toolbar): Don't refer to
 	`wl-use-toolbar' nor `display-graphic-p'.
 	(wl-e21-setup-message-toolbar): Ditto.
