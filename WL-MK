@@ -104,8 +104,7 @@
     ;; smtp.el version check.
     (require 'smtp)
     (if (not (fboundp 'smtp-send-buffer))
-	(error "Please install FLIM 1.14.0 or later."))
-    (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
+	(error "Please install FLIM 1.14.0 or later."))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."

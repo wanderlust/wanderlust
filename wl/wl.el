@@ -50,8 +50,6 @@
        (require 'wl-xmas))
       (wl-on-emacs21
        (require 'wl-e21))
-      (wl-on-nemacs
-       (require 'wl-nemacs))
       (t
        (require 'wl-mule)))
 
@@ -72,11 +70,8 @@
   (require 'cl)
   (require 'smtp)
   (require 'wl-score)
-  (unless wl-on-nemacs
-    (require 'wl-fldmgr))
-  (if wl-use-semi
-      (require 'wl-mime)
-    (require 'tm-wl)))
+  (require 'wl-fldmgr)
+  (require 'wl-mime))
 
 (defun wl-plugged-init (&optional make-alist)
   (setq elmo-plugged wl-plugged)
@@ -169,10 +164,8 @@
   (if wl-on-xemacs
       (defun wl-plugged-setup-mouse ()
 	(define-key wl-plugged-mode-map 'button2 'wl-plugged-click))
-    (if wl-on-nemacs
-	(defun wl-plugged-setup-mouse ())
-      (defun wl-plugged-setup-mouse ()
-	(define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click)))))
+    (defun wl-plugged-setup-mouse ()
+      (define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click))))
 
 (unless wl-plugged-mode-map
   (setq wl-plugged-mode-map (make-sparse-keymap))
@@ -281,10 +274,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
     (while dop-queue
       (when (car dop-queue)
-	(setq ope (cons (elmo-dop-queue-method (car dop-queue))
-			(length 
+	(setq ope (cons (elmo-dop-queue-method-name (car dop-queue))
+			(length
 			 (if (listp
-			      (car 
+			      (car
 			       (elmo-dop-queue-arguments (car dop-queue))))
 			     (car (elmo-dop-queue-arguments
 				   (car dop-queue))))))))
@@ -665,8 +658,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	     (> (length (visible-frame-list)) 1))
 	(delete-frame))
     (setq wl-init nil)
-    (unless wl-on-nemacs
-      (remove-hook 'kill-emacs-hook 'wl-save-status))
+    (remove-hook 'kill-emacs-hook 'wl-save-status)
     t)
   (message "") ; empty minibuffer.
   )
@@ -676,17 +668,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (unless (featurep 'mime-setup)
       (require 'mime-setup))
     (setq elmo-plugged wl-plugged)
-    (unless wl-on-nemacs
-      (add-hook 'kill-emacs-hook 'wl-save-status))
+    (add-hook 'kill-emacs-hook 'wl-save-status)
     (wl-address-init)
     (wl-draft-setup)
     (wl-refile-alist-setup)
-    (if wl-use-semi
-	(progn
-	  (require 'wl-mime)
-	  (setq elmo-use-semi t))
-      (require 'tm-wl)
-      (setq elmo-use-semi nil))
+    (require 'wl-mime)
     ;; defined above.
     (wl-mime-setup)
     (fset 'wl-summary-from-func-internal

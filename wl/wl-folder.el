@@ -123,14 +123,12 @@
 	'wl-folder-prev-unread)
       (define-key wl-folder-mode-map [(shift button5)]
 	'wl-folder-next-unread))
-  (if wl-on-nemacs
-      (defun wl-folder-setup-mouse ())
-    (defun wl-folder-setup-mouse ()
-      (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
-      (define-key wl-folder-mode-map [mouse-4] 'wl-folder-prev-entity)
-      (define-key wl-folder-mode-map [mouse-5] 'wl-folder-next-entity)
-      (define-key wl-folder-mode-map [S-mouse-4] 'wl-folder-prev-unread)
-      (define-key wl-folder-mode-map [S-mouse-5] 'wl-folder-next-unread))))
+  (defun wl-folder-setup-mouse ()
+    (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
+    (define-key wl-folder-mode-map [mouse-4] 'wl-folder-prev-entity)
+    (define-key wl-folder-mode-map [mouse-5] 'wl-folder-next-entity)
+    (define-key wl-folder-mode-map [S-mouse-4] 'wl-folder-prev-unread)
+    (define-key wl-folder-mode-map [S-mouse-5] 'wl-folder-next-unread)))
 
 (if wl-folder-mode-map
     nil
@@ -147,6 +145,7 @@
   (define-key wl-folder-mode-map "w"    'wl-draft)
   (define-key wl-folder-mode-map "W"    'wl-folder-write-current-folder)
   (define-key wl-folder-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
+  (define-key wl-folder-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-folder-mode-map "rS"   'wl-folder-sync-region)
   (define-key wl-folder-mode-map "S"    'wl-folder-sync-current-entity)
   (define-key wl-folder-mode-map "rs"   'wl-folder-check-region)
@@ -173,8 +172,7 @@
   (define-key wl-folder-mode-map "<"    'beginning-of-buffer)
   (define-key wl-folder-mode-map ">"    'end-of-buffer)
   ;; wl-fldmgr
-  (unless wl-on-nemacs
-    (define-key wl-folder-mode-map "m"    'wl-fldmgr-mode-map))
+  (define-key wl-folder-mode-map "m"    'wl-fldmgr-mode-map)
   (define-key wl-folder-mode-map "*"    'wl-fldmgr-make-multi)
   (define-key wl-folder-mode-map "+"    'wl-fldmgr-make-group)
   (define-key wl-folder-mode-map "|"    'wl-fldmgr-make-filter)
@@ -651,15 +649,10 @@ Optional argument ARG is repeart count."
 ;	  (wl-highlight-folder-current-line)
 	  )))
      ((setq fld-name (wl-folder-entity-name))
-      (if wl-on-nemacs
-	  (progn
-	    (wl-folder-set-current-entity-id
-	     (wl-folder-get-entity-from-buffer))
-	    (setq fld-name (wl-folder-get-realname fld-name)))
-	(wl-folder-set-current-entity-id
-	 (get-text-property (point) 'wl-folder-entity-id))
-	(setq fld-name (wl-folder-get-folder-name-by-id
-			wl-folder-buffer-cur-entity-id)))
+      (wl-folder-set-current-entity-id
+       (get-text-property (point) 'wl-folder-entity-id))
+      (setq fld-name (wl-folder-get-folder-name-by-id
+		      wl-folder-buffer-cur-entity-id))
       (let ((summary-buf (wl-summary-get-buffer-create fld-name arg))
 	    error-selecting)
 	(if (or wl-stay-folder-window wl-summary-use-frame)

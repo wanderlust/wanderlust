@@ -62,6 +62,20 @@ Automatically loaded/saved.")
 				    method arguments)))
     (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
+(defvar elmo-dop-queue-method-name-alist
+  '((elmo-folder-append-buffer-dop-delayed . "Append")
+    (elmo-folder-delete-messages-dop-delayed . "Delete")
+    (elmo-message-encache-dop . "Encache")
+    (elmo-create-folder-dop . "Create")
+    (elmo-folder-mark-as-read-dop . "Read")
+    (elmo-folder-unmark-read-dop . "Unread")
+    (elmo-folder-mark-as-important-dop . "Important")
+    (elmo-folder-unmark-important-dop . "Unimportant")))
+
+(defmacro elmo-dop-queue-method-name (queue)
+  `(cdr (assq (elmo-dop-queue-method ,queue)
+	      elmo-dop-queue-method-name-alist)))
+
 (defun elmo-dop-queue-flush (&optional force)
   "Flush disconnected operations.
 If optional argument FORCE is non-nil, try flushing all operation queues

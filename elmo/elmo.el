@@ -867,7 +867,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 			(eq (elmo-file-cache-status cache) 'entire))
 		   (elmo-make-fetch-strategy
 		    'entire t nil (elmo-file-cache-path cache))
-		 (elmo-make-fetch-strategy 'entire))
+		 (elmo-make-fetch-strategy 'entire t))
 	       nil (current-buffer)
 	       'unread)
 	      (unless (eq (buffer-size) 0)
@@ -1138,16 +1138,16 @@ FIELD is a symbol of the field."
 							   number strategy
 							   &optional
 							   section unread)
-  (let (cache-file)
+  (let (cache-path cache-file)
     (if (and (elmo-fetch-strategy-use-cache strategy)
+	     (setq cache-path (elmo-fetch-strategy-cache-path strategy))
 	     (setq cache-file (elmo-file-cache-expand-path
-			       (elmo-fetch-strategy-cache-path strategy)
+			       cache-path
 			       section))
-	     (file-exists-p cache-file))
-	(if (and (elmo-cache-path-section-p cache-file)
-		 (eq (elmo-fetch-strategy-entireness strategy) 'entire))
-	    (error "Entire message is not cached.")
-	  (insert-file-contents-as-binary cache-file))
+	     (file-exists-p cache-file)
+	     (or (not (elmo-cache-path-section-p cache-file))
+		 (not (eq (elmo-fetch-strategy-entireness strategy) 'entire))))
+	(insert-file-contents-as-binary cache-file)
       (elmo-message-fetch-internal folder number strategy section unread)
       (elmo-delete-cr-buffer)
       (when (and (> (buffer-size) 0)

@@ -363,14 +363,12 @@
       (define-key wl-summary-mode-map [(shift button5)]
 	'wl-summary-down)
       (define-key wl-summary-mode-map 'button2 'wl-summary-click))
-  (if wl-on-nemacs
-      (defun wl-summary-setup-mouse ())
-    (defun wl-summary-setup-mouse ()
-      (define-key wl-summary-mode-map [mouse-4] 'wl-summary-prev)
-      (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
-      (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
-      (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
-      (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click))))
+  (defun wl-summary-setup-mouse ()
+    (define-key wl-summary-mode-map [mouse-4] 'wl-summary-prev)
+    (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
+    (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
+    (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
+    (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click)))
 
 (if wl-summary-mode-map
     ()
@@ -380,8 +378,7 @@
   (define-key wl-summary-mode-map "<"    'wl-summary-display-top)
   (define-key wl-summary-mode-map ">"    'wl-summary-display-bottom)
   (define-key wl-summary-mode-map "\177" 'wl-summary-prev-page)
-  (unless wl-on-nemacs
-    (define-key wl-summary-mode-map [backspace] 'wl-summary-prev-page))
+  (define-key wl-summary-mode-map [backspace] 'wl-summary-prev-page)
   (define-key wl-summary-mode-map "\r"   'wl-summary-next-line-content)
   (define-key wl-summary-mode-map "\C-m" 'wl-summary-next-line-content)
   (define-key wl-summary-mode-map "/"    'wl-thread-open-close)
@@ -413,6 +410,7 @@
 ;;;(define-key wl-summary-mode-map "e"     'wl-draft-open-file)
   (define-key wl-summary-mode-map "e"     'wl-summary-save)
   (define-key wl-summary-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
+  (define-key wl-summary-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-summary-mode-map "H"    'wl-summary-redisplay-all-header)
   (define-key wl-summary-mode-map "M"    'wl-summary-redisplay-no-mime)
   (define-key wl-summary-mode-map "B"    'wl-summary-burst)
@@ -1164,31 +1162,29 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	      (eq char ?\r)
 	      (eq char ? ))
 	  ;; Change Addresses
-	  (wl-address-petname-add-or-change
+	  (wl-address-add-or-change
 	   the-email
-	   (elmo-get-hash-val the-email wl-address-petname-hash)
 	   (wl-address-header-extract-realname
 	    (cdr (assoc
 		  (let ((completion-ignore-case t) comp)
 		    (setq comp
 			  (try-completion the-email wl-address-completion-list))
 		    (if (equal comp t) the-email comp))
-		  wl-address-completion-list))) t)
+		  wl-address-completion-list))))
 	  "edited")
 	 ((eq char ?d)
 	  ;; Delete Addresses
 	  (if (y-or-n-p (format "Delete '%s'? "
 				the-email))
 	      (progn
-		(wl-address-petname-delete the-email)
+		(wl-address-delete the-email)
 		"deleted")
 	    (message "")
 	    nil))
 	 (t (message "")
 	    nil)))
     ;; Add Petname
-    (wl-address-petname-add-or-change
-     the-email name-in-addr name-in-addr)
+    (wl-address-add-or-change the-email name-in-addr)
     "added"))
 
 (defun wl-summary-edit-addresses (&optional addr-str)
@@ -3257,11 +3253,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (wl-highlight-refile-destination-string folder)
       (insert folder)
       (set-buffer-modified-p nil))))
-
-;; override.
-(when wl-on-nemacs
-  (defun wl-summary-print-destination (msg-num &optional folder))
-  (defun wl-summary-remove-destination ()))
 
 (defsubst wl-summary-get-mark (number)
   "Return a temporal mark of message specified by NUMBER."
