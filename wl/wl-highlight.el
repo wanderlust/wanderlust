@@ -1,6 +1,6 @@
 ;;; wl-highlight.el --- Hilight modules for Wanderlust.
 
-;; Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
+;; Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
 ;;  Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
@@ -623,11 +623,11 @@
       (background dark))
      (:foreground "cyan"))
     (((class color)
-      (background dark))
-     (:foreground "SkyBlue"))
-    (((class color)
       (background light))
-     (:foreground "SteelBlue")))
+     (:foreground "SteelBlue" :background "#d9ffd9"))
+    (((class color)
+      (background dark))
+     (:foreground "SkyBlue" :background "#004400")))
   "Face used for displaying demo."
   :group 'wl-faces)
 

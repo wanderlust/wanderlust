@@ -1,7 +1,9 @@
 ;;; wl-demo.el --- Opening demo on Wanderlust
 
-;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>
+;; Copyright (C) 1998,1999,2000,2001,2002,2003,2004
+;;      Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000,2001,2004
+;;      Katsumi Yamaoka <yamaoka@jpl.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Katsumi Yamaoka <yamaoka@jpl.org>
@@ -180,9 +182,12 @@ Return a number of lines that an image occupies in the buffer."
 	  (cond ((featurep 'xemacs)
 		 (setq width (window-pixel-width)
 		       height (window-pixel-height)
-		       image (make-glyph (vector image-type ':data
-						 (wl-demo-image-filter
-						  file image-type))))
+		       image (make-glyph
+			      (if (eq image-type 'xbm)
+				  (vector image-type ':file file)
+				(vector image-type ':data
+					(wl-demo-image-filter
+					 file image-type)))))
 		 (when (eq 'xbm image-type)
 		   (set-glyph-face image 'wl-highlight-logo-face))
 		 (insert-char ?\  (max 0 (/ (+ (* (- width (glyph-width image))
@@ -204,7 +209,7 @@ Return a number of lines that an image occupies in the buffer."
 		       height (cdr width)
 		       width (car width))
 		 (when (eq 'xbm image-type)
-		   (let ((bg (face-background 'wl-highlight-logo-face))
+		   (let ((bg (face-background 'wl-highlight-demo-face))
 			 (fg (face-foreground 'wl-highlight-logo-face)))
 		     (when (stringp bg)
 		       (plist-put (cdr image) ':background bg))
@@ -227,11 +232,20 @@ Return a number of lines that an image occupies in the buffer."
 		 (goto-char (point-max))
 		 (unless (bolp)
 		   (insert "\n"))
-		 (setq width 0)
+
+		 ;; Emacs 21.x may fail on computing the end of the
+		 ;; column if there're bitmap characters.
+		 ;;(setq width 0)
+		 ;;(while (progn
+		 ;;	    (end-of-line 0)
+		 ;;	    (not (bobp)))
+		 ;;  (setq width (max width (current-column))))
+		 (setq width 1024)
 		 (while (progn
 			  (end-of-line 0)
 			  (not (bobp)))
-		   (setq width (max width (current-column))))
+		   (setq width (min width (current-column))))
+
 		 ;; Emacs 21.1 would fail to decode composite chars
 		 ;; if it has been built without fixing coding.c.
 		 (when (and wl-on-emacs21
@@ -253,8 +267,7 @@ Return a number of lines that an image occupies in the buffer."
 		     (setq width (max width (current-column)))))
 		 (indent-rigidly (point-min) (point-max)
 				 (max 0 (/ (1+ (- (window-width) width)) 2)))
-		 (put-text-property (point-min) (point-max)
-				    'face 'wl-highlight-logo-face)
+		 (put-text-property (point-min) (point-max) 'fixed-width t)
 		 (count-lines (point-min) (goto-char (point-max))))
 		((eq 'xbm image-type)
 		 (message "Composing a bitmap image...")
@@ -265,12 +278,10 @@ Return a number of lines that an image occupies in the buffer."
 				 (max 0 (/ (1+ (- (window-width)
 						  (current-column)))
 					   2)))
-		 (put-text-property (point-min) (point-max)
-				    'face 'wl-highlight-logo-face)
+		 (put-text-property (point-min) (point-max) 'fixed-width t)
 		 (message "Composing a bitmap image...done")
 		 (count-lines (point-min) (goto-char (point-max))))))
       (insert wl-logo-ascii)
-      (put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
       (unless (bolp)
 	(insert "\n"))
       (setq width 0)
@@ -280,6 +291,7 @@ Return a number of lines that an image occupies in the buffer."
 	(setq width (max width (current-column))))
       (indent-rigidly (point-min) (point-max)
 		      (max 0 (/ (1+ (- (window-width) width)) 2)))
+      (put-text-property (point-min) (point-max) 'fixed-width t)
       (count-lines (point-min) (goto-char (point-max))))))
 
 (defun wl-demo-setup-properties ()
@@ -292,31 +304,60 @@ Return a number of lines that an image occupies in the buffer."
     (dotimes (i (- (window-height)
 		   (count-lines (point-min) (point))))
       (insert ?\n))
-    (let ((fg (face-foreground 'wl-highlight-demo-face))
-	  (bg (face-background 'wl-highlight-demo-face)))
-      (put-text-property (point-min) (point-max)
-			 'face
-			 (nconc '(variable-pitch :slant oblique)
-				(when (stringp bg)
-				  (list ':background bg))
-				(when (stringp fg)
-				  (list ':foreground fg))))))
+    (let* ((fg (face-foreground 'wl-highlight-demo-face))
+	   (bg (face-background 'wl-highlight-demo-face))
+	   (oblique (nconc '(variable-pitch :slant oblique)
+			   (when (stringp bg)
+			     (list ':background bg))
+			   (when (stringp fg)
+			     (list ':foreground fg))))
+	   (start (text-property-any (point-min) (point-max) 'fixed-width t))
+	   end)
+      (if start
+	  (progn
+	    (put-text-property (point-min) start 'face oblique)
+	    (setq end (or (text-property-not-all start (point-max)
+						 'fixed-width t)
+			  (point-max)))
+	    (put-text-property start end 'face
+			       (nconc '(wl-highlight-logo-face)
+				      (when (stringp bg)
+					(list ':background bg))))
+	    (put-text-property end (point-max) 'face oblique))
+	(put-text-property (point-min) (point-max) 'face oblique))))
    ((and (featurep 'xemacs)
 	 (face-background-name 'wl-highlight-demo-face))
     (set-face-background 'default
 			 (face-background-name 'wl-highlight-demo-face)
-			 (current-buffer)))))
+			 (current-buffer)))
+   (t
+    (goto-char (point-max))
+    (dotimes (i (- (window-height)
+		   (count-lines (point-min) (point))))
+      (insert ?\n))
+    (let ((start (text-property-any (point-min) (point-max) 'fixed-width t))
+	  end)
+      (if start
+	  (progn
+	    (put-text-property (point-min) start 'face 'wl-highlight-demo-face)
+	    (setq end (or (text-property-not-all start (point-max)
+						 'fixed-width t)
+			  (point-max)))
+	    (put-text-property start end 'face 'wl-highlight-logo-face)
+	    (put-text-property end (point-max) 'face 'wl-highlight-demo-face))
+	(put-text-property (point-min) (point-max)
+			   'face 'wl-highlight-demo-face))))))
 
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
 should be a number of lines that an image occupies in the buffer."
   (let* ((height (- (window-height) height 1))
 	 (text (format (cond ((<= height 2)
-			      "version %s - \"%s\"\n%s")
+			      "version %s - \"%s\"\n%s\n")
 			     ((eq height 3)
-			      "version %s - \"%s\"\n\n%s")
+			      "version %s - \"%s\"\n\n%s\n")
 			     (t
-			      "\nversion %s - \"%s\"\n\n%s"))
+			      "\nversion %s - \"%s\"\n\n%s\n"))
 		       (product-version-string (product-find 'wl-version))
 		       (product-code-name (product-find 'wl-version))
 		       wl-demo-copyright-notice))
@@ -325,7 +366,6 @@ should be a number of lines that an image occupies in the buffer."
     (insert-char ?\n (max 0 (/ (- height 4) 2)))
     (setq start (goto-char (point-max)))
     (insert text)
-    (put-text-property start (point) 'face 'wl-highlight-demo-face)
     (let ((fill-column (window-width)))
       (center-region start (point)))))
 

@@ -1,3 +1,18 @@
+2004-12-01  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-insert-image): Use :file instead of :data to
+	make an xbm image on XEmacs; use wl-highlight-demo-face instead of
+	wl-highlight-logo-face to set the bg color of an xbm image; fixed
+	the way to measure the width of a bitmap image; don't put face on
+	ascii and bitmap images; put the mark which should not use the
+	variable-pitch face on ascii and bitmap images.
+	(wl-demo-setup-properties): Don't use the variable-pitch face on
+	ascii and bitmap images; made it work on Emacs 20 and earlier.
+	(wl-demo-insert-text): End with a newline at the bottom; don't put
+	face on text.
+
+	* wl-highlight.el (wl-highlight-logo-face): Specified bg colors.
+
 2004-11-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (toplevel): Don't check existence of `timer-activate'.
