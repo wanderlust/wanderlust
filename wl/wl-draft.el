@@ -1115,7 +1115,7 @@ non-nil."
 (defun wl-draft-send-mail-with-pop-before-smtp ()
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
-  (let ((session
+  (let ((folder
 	 (luna-make-entity
 	  'elmo-pop3-folder
 	  :user   (or wl-pop-before-smtp-user
@@ -1126,16 +1126,17 @@ non-nil."
 		      elmo-pop3-default-port)
 	  :auth   (or wl-pop-before-smtp-authenticate-type
 		      elmo-pop3-default-authenticate-type)
-	  :stream-type (or wl-pop-before-smtp-stream-type
-			   elmo-pop3-default-stream-type))))
+	  :stream-type (elmo-get-network-stream-type
+			(or wl-pop-before-smtp-stream-type
+			    elmo-pop3-default-stream-type))))
+	session)
     (condition-case error
 	(progn
-	  (elmo-pop3-get-session session)
+	  (setq session (elmo-pop3-get-session folder))
 	  (when session (elmo-network-close-session session)))
       (error
-       (elmo-network-close-session session)
        (unless (string= (nth 1 error) "Unplugged")
-	 (signal (car error)(cdr error))))))
+	 (signal (car error) (cdr error))))))
   (wl-draft-send-mail-with-smtp))
 
 (defun wl-draft-insert-required-fields (&optional force-msgid)

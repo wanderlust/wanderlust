@@ -1,3 +1,8 @@
+2004-04-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Fix
+	value of stream-type and session.
+
 2004-04-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.25.
