@@ -3093,7 +3093,7 @@ Return non-nil if the mark is updated"
 		    (funcall wl-summary-from-function
 			     (elmo-message-entity-field
 			      wl-message-entity
-			      'from))))
+			      'from t))))
 
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
