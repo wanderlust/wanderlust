@@ -1424,7 +1424,8 @@ If ARG is non-nil, checking is omitted."
 			(elmo-message-encache
 			 wl-summary-buffer-elmo-folder
 			 number))
-		    (elmo-msgdb-set-cached msgdb number t)
+		    (elmo-message-set-cached wl-summary-buffer-elmo-folder
+					     number t)
 		    (setq new-mark
 			  (or (elmo-message-mark wl-summary-buffer-elmo-folder
 						 number)
@@ -1702,7 +1703,7 @@ If ARG is non-nil, checking is omitted."
 	   (case-fold-search nil)
 	   new-mark mark number unread)
       (setq number (wl-summary-message-number))
-      (elmo-msgdb-set-cached msgdb number nil)
+      (elmo-message-set-cached folder number nil)
       (setq new-mark (elmo-message-mark folder number)
 	    mark (wl-summary-persistent-mark))
       (unless (string= new-mark mark)
@@ -3937,7 +3938,7 @@ If ARG, exit virtual folder."
 	    mark (elmo-message-mark folder number))
       ;; folder mark.
       (elmo-folder-mark-as-read folder (list number) no-folder-mark)
-      (elmo-msgdb-set-cached msgdb number t)
+      (elmo-message-set-cached folder number t)
       (setq new-mark (elmo-message-mark folder number))
       ;;
       ;; elmo-folder-mark-as-read should return unread numbers?
