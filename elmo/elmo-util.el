@@ -94,7 +94,7 @@
   (defalias 'elmo-read 'read))
 
 (defmacro elmo-set-work-buf (&rest body)
-  "Execute BODY on work buffer. Work buffer remains."
+  "Execute BODY on work buffer.  Work buffer remains."
   (` (save-excursion
        (set-buffer (get-buffer-create elmo-work-buf-name))
        (elmo-set-buffer-multibyte default-enable-multibyte-characters)
@@ -102,13 +102,13 @@
        (,@ body))))
 
 (defmacro elmo-match-substring (pos string from)
-  "Substring of POSth matched string of STRING. "
+  "Substring of POSth matched string of STRING."
   (` (substring (, string)
 		(+ (match-beginning (, pos)) (, from))
 		(match-end (, pos)))))
 
 (defmacro elmo-match-string (pos string)
-  "Substring POSth matched string."
+  "Substring POSth matched STRING."
   (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
 
 (defmacro elmo-match-buffer (pos)
@@ -473,7 +473,7 @@ File content is encoded with MIME-CHARSET."
 	  (elmo-match-string 3 folder))))
 
 (defun elmo-folder-get-spec (folder)
-  "return spec of folder"
+  "Return spec of FOLDER."
   (let ((type (elmo-folder-get-type folder)))
     (if type
 	(save-match-data
@@ -486,7 +486,7 @@ File content is encoded with MIME-CHARSET."
 (defconst elmo-condition-atom-regexp "[^/ \")|&]*")
 
 (defun elmo-read-search-condition (default)
-  "Read search condition string interactively"
+  "Read search condition string interactively."
   (elmo-read-search-condition-internal "Search by" default))
 
 (defun elmo-read-search-condition-internal (prompt default)
@@ -567,7 +567,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 ;; primitive    ::= "(" expr ")" /
 ;;                  ["!"] search-key SPACE* ":" SPACE* search-value
 (defun elmo-condition-parse-primitive ()
-  (cond 
+  (cond
    ((looking-at "( *")
     (goto-char (match-end 0))
     (prog1 (elmo-condition-parse)
@@ -844,8 +844,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 ;; from subr.el
 (defun elmo-replace-in-string (str regexp newtext &optional literal)
-  "Replaces all matches in STR for REGEXP with NEWTEXT string,
- and returns the new string.
+  "Replaces all matches in STR for REGEXP with NEWTEXT string.
+And returns the new string.
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
   \\& means substitute original matched text,
@@ -860,29 +860,29 @@ Otherwise treat \\ in NEWTEXT string as special:
 	    start (match-end 0)
 	    rtn-str
 	    (concat
-	      rtn-str
-	      (substring str prev-start match)
-	      (cond (literal newtext)
-		    (t (mapconcat
-			(function
-			 (lambda (c)
-			   (if special
-			       (progn
-				 (setq special nil)
-				 (cond ((eq c ?\\) "\\")
-				       ((eq c ?&)
-					(elmo-match-string 0 str))
-				       ((and (>= c ?0) (<= c ?9))
-					(if (> c (+ ?0 (length
-							(match-data))))
-					; Invalid match num
-					    (error "Invalid match num: %c" c)
-					  (setq c (- c ?0))
-					  (elmo-match-string c str)))
-				       (t (char-to-string c))))
-			     (if (eq c ?\\) (progn (setq special t) nil)
-			       (char-to-string c)))))
-			newtext ""))))))
+	     rtn-str
+	     (substring str prev-start match)
+	     (cond (literal newtext)
+		   (t (mapconcat
+		       (function
+			(lambda (c)
+			  (if special
+			      (progn
+				(setq special nil)
+				(cond ((eq c ?\\) "\\")
+				      ((eq c ?&)
+				       (elmo-match-string 0 str))
+				      ((and (>= c ?0) (<= c ?9))
+				       (if (> c (+ ?0 (length
+						       (match-data))))
+					   ;; Invalid match num
+					   (error "Invalid match num: %c" c)
+					 (setq c (- c ?0))
+					 (elmo-match-string c str)))
+				      (t (char-to-string c))))
+			    (if (eq c ?\\) (progn (setq special t) nil)
+			      (char-to-string c)))))
+		       newtext ""))))))
     (concat rtn-str (substring str start))))
 
 (defun elmo-string-to-list (string)
@@ -1136,7 +1136,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     (list clist1 clist2)))
 
 (defun elmo-list-bigger-diff (list1 list2 &optional mes)
-  "Returns a list (- +). + is bigger than max of LIST1, in LIST2"
+  "Returns a list (- +). + is bigger than max of LIST1, in LIST2."
   (if (null list2)
       (cons list1  nil)
     (let* ((l1 list1)
@@ -1187,7 +1187,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     t))
 
 (defun elmo-folder-identical-system-p (folder1 folder2)
-  "folder1 and folder2 should be real folder (not virtual)."
+  "FOLDER1 and FOLDER2 should be real folder (not virtual)."
   (cond ((eq (elmo-folder-get-type folder1) 'imap4)
 	 (let ((spec1 (elmo-folder-get-spec folder1))
 	       (spec2 (elmo-folder-get-spec folder2)))
@@ -1338,7 +1338,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 			  elmo-hash-maximum-size) 1024) 1024) 0))
 
 (defsubst elmo-mime-string (string)
-  "Normalize MIME encoded string."
+  "Normalize MIME encoded STRING."
     (and string
 	 (let (str)
 	   (elmo-set-work-buf
@@ -1400,7 +1400,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defvar elmo-msgid-replace-chars nil)
 
 (defsubst elmo-replace-msgid-as-filename (msgid)
-  "Replace message-id string as filename."
+  "Replace Message-ID string (MSGID) as filename."
   (setq msgid (elmo-replace-in-string msgid " " "  "))
   (if (null elmo-msgid-replace-chars)
       (setq elmo-msgid-replace-chars
@@ -1418,7 +1418,7 @@ Otherwise treat \\ in NEWTEXT string as special:
   msgid)
 
 (defsubst elmo-recover-msgid-from-filename (filename)
-  "Recover Message-ID from filename."
+  "Recover Message-ID from FILENAME."
   (let (tmp result)
     (while (string-match " " filename)
       (setq tmp (substring filename
@@ -1439,7 +1439,7 @@ Otherwise treat \\ in NEWTEXT string as special:
   (condition-case err
       (elmo-add-name-to-file src dst t)
     (error (copy-file src dst t)
-	   (error "copy file failed"))))
+	   (error "Copy file failed"))))
 
 (defsubst elmo-buffer-exists-p (buffer)
   (if (bufferp buffer)
@@ -1451,7 +1451,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     (kill-buffer buffer)))
 
 (defun elmo-delete-if (pred lst)
-  "Return new list contains items which don't satisfy PRED in LST."
+  "Return new list contain items which don't satisfy PRED in LST."
   (let (result)
     (while lst
       (unless (funcall pred (car lst))
@@ -1470,7 +1470,7 @@ the value of `foo'."
   list2)
 
 (defun elmo-list-member (list1 list2)
-  "If any element of list1 is member of list2, return t."
+  "If any element of LIST1 is member of LIST2, return t."
   (catch 'done
     (while list1
       (if (member (car list1) list2)
@@ -1488,7 +1488,7 @@ the value of `foo'."
 (if (fboundp 'display-error)
     (defalias 'elmo-display-error 'display-error)
   (defun elmo-display-error (error-object stream)
-    "a tiny function to display error-object to the stream."
+    "A tiny function to display ERROR-OBJECT to the STREAM."
     (let ((first t)
 	  (errobj error-object)
 	  err-mes)
@@ -1544,7 +1544,7 @@ the value of `foo'."
   (defalias 'elmo-field-body 'std11-field-body))
 
 (defmacro elmo-string (string)
-  "String without text property"
+  "STRING without text property."
   (` (let ((obj (copy-sequence (, string))))
        (set-text-properties 0 (length obj) nil obj)
        obj)))
