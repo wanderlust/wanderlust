@@ -73,7 +73,8 @@
   (require 'smtp)
   (require 'wl-score)
   (require 'wl-fldmgr)
-  (require 'wl-mime))
+  (require 'wl-mime)
+  (require 'wl-spam))
 
 (defun wl-plugged-init (&optional make-alist)
   (setq elmo-plugged wl-plugged)
@@ -648,6 +649,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
+  (and (featurep 'wl-spam) (wl-spam-save-status))
   (elmo-crosspost-message-alist-save)
   (message "Saving summary and folder status...done"))
 

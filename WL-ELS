@@ -52,6 +52,9 @@
 (if (module-installed-p 'shimbun)
     (add-to-list 'ELMO-MODULES 'elmo-shimbun))
 
+(if (module-installed-p 'spamfilter)
+    (add-to-list 'ELMO-MODULES 'elsp-spamfilter))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; SEMI
 

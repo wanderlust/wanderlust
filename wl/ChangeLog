@@ -1,3 +1,25 @@
+2003-10-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl.el (toplevel): Require wl-spam when compile.
+	(wl-save-status): Call wl-spam-save-status.
+
+	* wl-spam.el (wl-spam-register-spam-messages): New function.
+	(wl-spam-register-good-messages): Ditto.
+	(wl-spam-save-status): Ditto.
+	(wl-summary-mode-map): Bind
+	wl-summary-target-mark-register-as-spam to "ms" and
+	wl-summary-target-mark-register-as-good to "mn".
+	(wl-summary-register-as-spam): Abolish optional argument; Use
+	wl-spam-register-spam-messages.
+	(wl-summary-register-as-spam-all): Use
+	wl-spam-register-spam-messages.
+	(wl-summary-register-as-good): Abolish optional argument; Use
+	wl-spam-register-good-messages.
+	(wl-summary-register-as-good-all): Use
+	wl-spam-register-good-messages.
+	(wl-summary-target-mark-register-as-spam): New funtion.
+	(wl-summary-target-mark-register-as-good): Ditto.
+
 2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el: New file.

@@ -1,3 +1,8 @@
+2003-10-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* WL-ELS (ELMO-MODULES): Added elsp-spamfilter only if spamfilter
+	is installed.
+
 2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* WL-ELS (WL-MODULES): Added wl-spam.

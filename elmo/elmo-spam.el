@@ -62,6 +62,9 @@ PROCESSOR is spam processor structure.")
   "Register contents of BUFFER as non spam.
 PROCESSOR is spam processor structure.")
 
+(luna-define-generic elmo-spam-save-status (processor)
+  "Save status of the PROCESSOR.")
+
 ;; optional method
 (luna-define-generic elmo-spam-message-spam-p (processor folder number)
   "Return non-nil if the message in the FOLDER with NUMBER is spam.

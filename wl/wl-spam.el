@@ -66,7 +66,6 @@
 			       (const :tag "none" nil))))
   :group 'wl-spam)
 
-
 (defun wl-spam-folder-guess-domain (folder-name)
   (cond ((string= folder-name wl-spam-folder-name)
 	 'spam)
@@ -89,6 +88,28 @@
 	(apply function number args)))
     (message "Checking spam...done")))
 
+(defun wl-spam-register-spam-messages (folder numbers)
+  (let ((total (length numbers)))
+    (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	(elmo-spam-register total "Register spam messages...")
+      (elmo-spam-register-spam-messages (elmo-spam-processor)
+					wl-summary-buffer-elmo-folder
+					numbers))
+    (message "Register spam messages...done")))
+
+(defun wl-spam-register-good-messages (folder numbers)
+  (let ((total (length numbers)))
+    (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	(elmo-spam-register total "Register good messages...")
+      (elmo-spam-register-good-messages (elmo-spam-processor)
+					wl-summary-buffer-elmo-folder
+					numbers))
+    (message "Register good messages...done")))
+
+(defun wl-spam-save-status ()
+  (interactive)
+  (elmo-spam-save-status (elmo-spam-processor)))
+
 ;; insinuate into summary mode
 (defvar wl-summary-spam-map nil)
 
@@ -100,8 +121,12 @@
     (define-key map "S" 'wl-summary-register-as-spam-all)
     (define-key map "n" 'wl-summary-register-as-good)
     (define-key map "N" 'wl-summary-register-as-good-all)
-    (setq wl-summary-spam-map map)
-    (define-key wl-summary-mode-map "k" wl-summary-spam-map)))
+    (setq wl-summary-spam-map map)))
+
+(define-key wl-summary-mode-map "k" wl-summary-spam-map)
+
+(define-key wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
+(define-key wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good)
 
 (eval-when-compile
   ;; Avoid compile warnings
@@ -123,31 +148,53 @@
 			     #'wl-summary-refile
 			     wl-spam-folder-name))
 
-(defun wl-summary-register-as-spam (&optional all)
-  (interactive "P")
-  (let ((numbers (if all
-		     wl-summary-buffer-number-list
-		   (list (wl-summary-message-number)))))
-    (elmo-spam-register-spam-messages (elmo-spam-processor)
-				      wl-summary-buffer-elmo-folder
-				      numbers)))
+(defun wl-summary-register-as-spam ()
+  (interactive)
+  (let ((number (wl-summary-message-number)))
+    (when number
+      (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
+				      (list number)))))
 
 (defun wl-summary-register-as-spam-all ()
   (interactive)
-  (wl-summary-register-as-spam 'all))
+  (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
+				  wl-summary-buffer-number-list))
 
-(defun wl-summary-register-as-good (&optional all)
-  (interactive "P")
-  (let ((numbers (if all
-		     wl-summary-buffer-number-list
-		   (list (wl-summary-message-number)))))
-    (elmo-spam-register-good-messages (elmo-spam-processor)
-				      wl-summary-buffer-elmo-folder
-				      numbers)))
+(defun wl-summary-target-mark-register-as-spam ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  wl-summary-buffer-disp-msg)
+      (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
+				      wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
+
+(defun wl-summary-register-as-good ()
+  (interactive)
+  (let ((number (wl-summary-message-number)))
+    (when number
+      (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
+				      (list number)))))
 
 (defun wl-summary-register-as-good-all ()
   (interactive)
-  (wl-summary-register-as-good 'all))
+  (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
+				  wl-summary-buffer-number-list))
+
+(defun wl-summary-target-mark-register-as-good ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  wl-summary-buffer-disp-msg)
+      (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
+				      wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
 
 ;; hook functions and other
 (defun wl-summary-auto-check-spam ()
