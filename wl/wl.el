@@ -714,6 +714,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 					"." wl-local-domain)
 			      (system-name))))
       (error "Please remove `@' from `wl-message-id-domain'"))
+  (if (string= wl-local-domain "localdomain")
+      (error "Please set `wl-local-domain'"))
+  (if (string= wl-message-id-domain "localhost.localdomain")
+      (error "Please set `wl-message-id-domain'"))
   ;; folders
   (when (not no-check-folder)
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))

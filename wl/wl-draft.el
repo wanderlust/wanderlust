@@ -41,10 +41,6 @@
 (defvar x-face-add-x-face-version-header)
 (defvar mail-reply-buffer)
 (defvar mail-from-style)
-(defvar smtp-authenticate-type)
-(defvar smtp-authenticate-user)
-(defvar smtp-authenticate-passphrase)
-(defvar smtp-connection-type)
 
 (eval-when-compile
   (require 'elmo-pop3)
@@ -96,51 +92,32 @@
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 
-;;; SMTP binding by Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
-(defvar wl-smtp-features
-  '(((smtp-authenticate-type
-      (if wl-smtp-authenticate-type
-	  (intern (downcase (format "%s" wl-smtp-authenticate-type)))))
-     ((smtp-authenticate-user wl-smtp-posting-user)
-      ((smtp-authenticate-passphrase
-	(elmo-get-passwd
-	 (format "%s@%s"
-		 smtp-authenticate-user
-		 smtp-server))))))
-    (smtp-connection-type))
-  "Additional SMTP features.")
-
-(eval-when-compile
-  (defun wl-smtp-parse-extension (exts parents)
-    (let (bindings binding feature)
-      (dolist (ext exts)
-	(setq feature (if (listp (car ext)) (caar ext) (car ext))
-	      binding
-	      (` ((, feature)
-		  (or (, (if (listp (car ext))
-			     (cadar ext)
-			   (let ((wl-feature
-				  (intern
-				   (concat "wl-" (symbol-name feature)))))
-			     (if (boundp wl-feature)
-				 wl-feature))))
-		      (and (boundp '(, feature)) (, feature))))))
-	(when parents
-	  (setcdr binding (list (append '(and) parents (cdr binding)))))
-	(setq bindings
-	      (nconc bindings (list binding)
-		     (wl-smtp-parse-extension
-		      (cdr ext) (cons feature parents)))))
-      bindings)))
-
 (defmacro wl-smtp-extension-bind (&rest body)
-  "Return a `let' form that binds all variables of SMTP extension.
-After this is done, BODY will be executed in the scope
-of the `let' form.
-
-The variables bound and their default values are described by
-the `wl-smtp-features' variable."
-  (` (let* (, (wl-smtp-parse-extension wl-smtp-features nil))
+  (` (let* ((smtp-sasl-mechanisms
+	     (if wl-smtp-authenticate-type
+		 (mapcar 'upcase
+			 (if (listp wl-smtp-authenticate-type)
+			     wl-smtp-authenticate-type
+			   (list wl-smtp-authenticate-type)))))
+	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
+	    (smtp-use-starttls wl-smtp-connection-type)
+	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
+       (if (and (string= (car smtp-sasl-mechanisms) "DIGEST-MD5")
+		;; sendmail bug?
+		(string-match "^\\([^@]*\\)@\\([^@]*\\)"
+			      wl-smtp-posting-user))
+	   (setq smtp-sasl-user-name (match-string 1 wl-smtp-posting-user)
+		 smtp-sasl-properties (list 'realm 
+					    (match-string 2 wl-smtp-posting-user)))
+	 (setq smtp-sasl-user-name wl-smtp-posting-user
+	       smtp-sasl-properties nil))
+       (setq sasl-read-passphrase
+	     (function
+	      (lambda (prompt)
+		(elmo-get-passwd
+		 (format "%s@%s"
+			 smtp-sasl-user-name
+			 smtp-server)))))
        (,@ body))))
 
 (defun wl-draft-insert-date-field ()
