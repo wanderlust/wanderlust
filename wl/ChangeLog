@@ -1,5 +1,7 @@
 2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-plugged-dop-queue-status): Shrink queue list.
+
 	* wl-expire.el (wl-folder-expire-entity): Follow the last change on
 	wl-summary-save-view.
 

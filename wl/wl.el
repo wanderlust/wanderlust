@@ -308,12 +308,23 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		 (car folder-ope)
 		 (wl-folder-get-petname (car folder-ope)))
 		"("
-		(mapconcat
-		 '(lambda (ope)
-		    (if (> (cdr ope) 0)
-			(format "%s:%d" (car ope) (cdr ope))
-		      (format "%s" (car ope))))
-		 (cdr folder-ope) ",")
+		(let ((opes (cdr folder-ope))
+		      pair shrinked)
+		  (while opes
+		    (if (setq pair (assoc (car (car opes)) shrinked))
+			(setcdr pair (+ (cdr pair)
+					(max (cdr (car opes)) 1)))
+		      (setq shrinked (cons
+				      (cons (car (car opes))
+					    (max (cdr (car opes)) 1))
+				      shrinked)))
+		    (setq opes (cdr opes)))
+		  (mapconcat
+		   '(lambda (ope)
+		      (if (> (cdr ope) 0)
+			  (format "%s:%d" (car ope) (cdr ope))
+			(format "%s" (car ope))))
+		   (nreverse shrinked) ","))
 		")"))
      operations
      (concat "\n" (wl-set-string-width column "")))))
