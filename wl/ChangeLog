@@ -1,3 +1,7 @@
+2002-07-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-edit-string): Don't set buffer-read-only.
+
 2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.8.1 is released.
