@@ -1,3 +1,7 @@
+2004-05-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-ELS (UTILS-MODULES): Fix the last change, test mail/rfc2368.
+
 2004-04-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* WL-ELS (UTILS-MODULES): If rfc2368 found, not to install it.

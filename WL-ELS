@@ -67,7 +67,7 @@
 ;;; Utils
 (defvar UTILS-MODULES '(im-wl wl-mailto wl-addrbook wl-complete))
 
-(if (not (module-installed-p 'rfc2368))
+(if (not (module-installed-p 'mail/rfc2368))
     (add-to-list 'UTILS-MODULES 'rfc2368))
 
 ;; OpenSSL/SSLeay package is also needed.
