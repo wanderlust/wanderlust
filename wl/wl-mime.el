@@ -182,19 +182,16 @@ By setting following-method as yank-content."
 	 (body-end (mime-buffer-entity-body-end-internal entity))
 	 (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
 	 (number wl-message-buffer-cur-number)
-	 (msgid (elmo-message-field folder number 'message-id)))
+	 (msgid (elmo-message-field folder number 'message-id))
+	 (orig-buf wl-message-buffer-original-buffer))
     (when (and (elmo-folder-writable-p folder)
+	       (buffer-live-p orig-buf)
 	       node-id
 	       (yes-or-no-p
 		(format "Do you really want to delete part %s? "
 			(wl-mime-node-id-to-string node-id))))
       (with-temp-buffer
-	(elmo-message-fetch folder
-			    number
-			    (elmo-make-fetch-strategy 'entire)
-			    nil
-			    (current-buffer)
-			    'unread)
+	(insert-buffer orig-buf)
 	(kill-region header-start body-end)
 	(goto-char header-start)
 	(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
