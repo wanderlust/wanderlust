@@ -552,7 +552,7 @@ that `read' can handle, whenever this is possible."
   (` (save-excursion
        (if (buffer-live-p wl-current-summary-buffer)
            (set-buffer wl-current-summary-buffer))
-       wl-message-buf-name)))
+       wl-message-buffer)))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function
@@ -825,10 +825,11 @@ This function is imported from Emacs 20.7."
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
 	  folder)
       (if (eq (length flist) 1)
-	  (wl-biff-check-folder-async (car flist) (interactive-p))
+	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
+				       (car flist)) (interactive-p))
 	(unwind-protect
 	    (while flist
-	      (setq folder (car flist)
+	      (setq folder (wl-folder-get-elmo-folder (car flist))
 		    flist (cdr flist))
 	      (when (elmo-folder-plugged-p folder)
 		(setq new-mails
@@ -838,19 +839,20 @@ This function is imported from Emacs 20.7."
 	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder (folder)
-  (if (eq (elmo-folder-get-type folder) 'pop3)
+  (if (eq (elmo-folder-type folder) 'pop3)
       ;; pop3 biff should share the session.
       (prog2
-	  (elmo-commit folder) ; Close session.
-	  (wl-folder-check-one-entity folder)
-	(elmo-commit folder))
+	  (elmo-folder-close folder) ; Close session.
+	  (wl-folder-check-one-entity (elmo-folder-name-internal folder))
+	(elmo-folder-close folder))
     (let ((elmo-network-session-name-prefix "BIFF-"))
-      (wl-folder-check-one-entity folder))))
+      (wl-folder-check-one-entity (elmo-folder-name-internal folder)))))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
       (with-current-buffer (nth 1 data)
-	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb (nth 0 data)
+	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb
+				     (nth 0 data)
 				     (list (car diff) 0 (cdr diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)
@@ -860,21 +862,21 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (when (elmo-folder-plugged-p folder)
-    (let ((type (elmo-folder-get-type folder)))
-      (if (and (eq type 'imap4)
-	       (wl-folder-use-server-diff-p folder))
-	  ;; Check asynchronously only when IMAP4 and use server diff.
-	  (progn
-	    (setq elmo-folder-diff-async-callback
-		  'wl-biff-check-folder-async-callback)
-	    (setq elmo-folder-diff-async-callback-data
-		  (list folder (get-buffer wl-folder-buffer-name)
-			notify-minibuf))
-	    (let ((elmo-network-session-name-prefix "BIFF-"))
-	      (elmo-folder-diff-async folder)))
-	(wl-biff-notify (car (wl-biff-check-folder folder))
-			notify-minibuf)
-	(setq wl-biff-check-folders-running nil)))))
+    (if (and (eq (elmo-folder-type-internal folder) 'imap4)
+	     (elmo-folder-use-flag-p folder))
+	;; Check asynchronously only when IMAP4 and use server diff.
+	(progn
+	  (setq elmo-folder-diff-async-callback
+		'wl-biff-check-folder-async-callback)
+	  (setq elmo-folder-diff-async-callback-data
+		(list (elmo-folder-name-internal folder)
+		      (get-buffer wl-folder-buffer-name)
+		      notify-minibuf))
+	  (let ((elmo-network-session-name-prefix "BIFF-"))
+	    (elmo-folder-diff-async folder)))
+      (wl-biff-notify (car (wl-biff-check-folder folder))
+		      notify-minibuf)
+      (setq wl-biff-check-folders-running nil))))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
