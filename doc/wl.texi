@@ -4039,6 +4039,9 @@ In the cdr part of a cons, not only a variable but also an elisp
 expression can be specified as is.  If the car part is a header field
 and the cdr part is @code{nil}, the field will be deleted.
 
+If you want to use name of parent folder, you can refer the buffer local
+variable @code{wl-draft-parent-folder}.
+
 See the next example as well:
 
 @lisp

@@ -6,7 +6,7 @@ Shimbun の killed-list 対応
 NNTP 関連(wl-folder-check-entity-async)
 msgdb 構造の見直しと obarray 化
 重要マークの管理
-サマリフォーマット自由化
+サマリフォーマット自由化(WL:8748)
 プリフェッチ予約マーク
 返事済み、フォワード済みマーク
 virtual 間で msgdb 共有
@@ -14,3 +14,5 @@ MIME Bcc
 wl-summary-other-frame-list
 rfc2192, rfc2193, rfc2221 (imap referral の処理)
 あやしげなコードをへらしたい
+too many arguments for wl-draft(WL:8475)
+パートの削除(受け取ったメイル)
