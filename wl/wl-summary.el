@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-18 11:30:43 teranisi>
+;; Time-stamp: <00/04/21 12:32:28 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1424,7 +1424,7 @@ If optional argument is non-nil, checking is omitted."
 	targets
 	mark length
 	entity msg
-	start-pos)
+	start-pos pos)
     (save-excursion
       (setq start-pos (point))
       (save-restriction
@@ -1471,11 +1471,12 @@ If optional argument is non-nil, checking is omitted."
 	      (message "Prefetching... %d/%d message(s)"
 		       (setq count (+ 1 count)) length))
 	  ;; redisplay!
-	  (if (pos-visible-in-window-p)
-	      (save-excursion
+	  (save-excursion
+	    (setq pos (point))
+	    (goto-char start-pos)
+	    (if (pos-visible-in-window-p pos)
 		(save-restriction
 		  (widen)
-		  (goto-char start-pos)
 		  (sit-for 0))))
 	  (setq targets (cdr targets)))
 	(message "Prefetched %d/%d message(s)" count length)
