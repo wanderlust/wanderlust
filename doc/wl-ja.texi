@@ -4031,6 +4031,11 @@ Non-nil ならウィンドウを表示しながらテンプレートを選択する場合、リターン
 'full なら返事を書くときにフレーム全体を使ったドラフトバッファが
 用意されます。
 
+@item wl-draft-use-frame
+@vindex wl-draft-use-frame
+初期設定は nil。
+Non-nil ならドラフト用に新しいフレームを開きます。
+
 @item wl-from
 @vindex wl-from
 初期設定は変数 @code{user-mail-address} の値。

@@ -4060,6 +4060,11 @@ The initial setting is 'split.
 In the case of 'full, the whole frame will be used for a reply draft
 buffer when it is prepared.
 
+@item wl-draft-use-frame
+@vindex wl-draft-use-frame
+The initial setting is nil.
+If non-nil, use new frame for the draft.
+
 @item wl-from
 @vindex wl-from
 The initial setting is the value of the variable
