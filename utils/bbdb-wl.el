@@ -31,6 +31,7 @@
 
 (defvar bbdb-wl-get-update-record-hook nil)
 (defvar bbdb-wl-folder-regexp nil)
+(defvar bbdb-wl-ignore-folder-regexp nil)
 
 ;;;###autoload
 (defun bbdb-wl-setup ()
@@ -70,15 +71,17 @@
   (bbdb-offer-save))
 
 (defun bbdb-wl-get-update-record ()
-  (if (or (null bbdb-wl-folder-regexp)
-	  (string-match
-	   bbdb-wl-folder-regexp
-	   (with-current-buffer
-	       wl-message-buffer-cur-summary-buffer
-	     (wl-summary-buffer-folder-name))))
-      (with-current-buffer (wl-message-get-original-buffer)
-	(bbdb-wl-update-record)
-	(run-hooks 'bbdb-wl-get-update-record-hook))))
+  (let ((folder-name (with-current-buffer
+			 wl-message-buffer-cur-summary-buffer
+		       (wl-summary-buffer-folder-name))))
+    (if (and (or (null bbdb-wl-folder-regexp)
+		 (string-match bbdb-wl-folder-regexp folder-name))
+	     (not (and bbdb-wl-ignore-folder-regexp
+		       (string-match bbdb-wl-ignore-folder-regexp
+				     folder-name))))
+	(with-current-buffer (wl-message-get-original-buffer)
+	  (bbdb-wl-update-record)
+	  (run-hooks 'bbdb-wl-get-update-record-hook)))))
 
 (defun bbdb-wl-hide-bbdb-buffer ()
   (let (bbdb-buf bbdb-win)
