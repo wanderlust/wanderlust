@@ -88,12 +88,12 @@
 (def-edebug-spec elmo-bind-directory
   (form &rest form))
 
-(defconst elmo-multibypte-buffer-name " *elmo-multibyte-buffer*")
+(defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
 
 (defmacro elmo-with-enable-multibyte (&rest body)
   "Evaluate BODY with `enable-multibyte-character' as non-nil."
   `(let ((default-enable-multibyte-characters t))
-     (with-current-buffer (get-buffer-create elmo-multibypte-buffer-name)
+     (with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
        ,@body)))
 
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
