@@ -1,3 +1,9 @@
+2004-04-29  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-insert-message): When the thread is
+	devided by wl-summary-max-thread-depth, insert line at the end of
+	buffer.
+
 2004-04-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.26.

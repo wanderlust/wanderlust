@@ -651,7 +651,8 @@ Message is inserted to the summary buffer."
 	(incf depth)
 	(setq cur (wl-thread-entity-get-parent-entity cur)))
       (when (> depth wl-summary-max-thread-depth)
-	(setq parent nil)))
+	(setq parent nil
+	      parent-msg nil)))
     (if parent
 	;; insert as children.
 	(wl-thread-entity-insert-as-children
