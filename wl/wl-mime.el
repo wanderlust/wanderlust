@@ -69,7 +69,7 @@ By setting following-method as yank-content."
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
 (defun wl-draft-preview-message ()
-  ""
+  "Preview editing message."
   (interactive)
   (let* (recipients-message
 	 (config-exec-flag wl-draft-config-exec-flag)
@@ -77,7 +77,7 @@ By setting following-method as yank-content."
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 (mime-header-encode-method-alist
 	  (append
-	   '((wl-draft-eword-encode-address-list 
+	   '((wl-draft-eword-encode-address-list
 	      .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
 	   (if (boundp 'mime-header-encode-method-alist)
 	       (symbol-value 'mime-header-encode-method-alist))))
@@ -224,7 +224,7 @@ By setting following-method as yank-content."
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))
     (if (and (file-exists-p filename)
-	     (not (yes-or-no-p (format "File %s exists. Save anyway? " 
+	     (not (yes-or-no-p (format "File %s exists. Save anyway? "
 				       filename))))
 	(message "Not saved")
       (setq wl-mime-save-directory (file-name-directory filename))
