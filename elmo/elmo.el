@@ -157,7 +157,7 @@ If optional argument NON-PERSISTENT is non-nil, folder is treated as
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
 If optional LOAD-MSGDB is non-nil, msgdb is loaded.
-(otherwise, msgdb is loaded on-demand)")
+\(otherwise, msgdb is loaded on-demand)")
 
 (luna-define-generic elmo-folder-open-internal (folder)
   "Open FOLDER (without loading saved folder status).")
