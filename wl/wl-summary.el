@@ -3284,7 +3284,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (wl-summary-refile-subr 'copy (interactive-p) dst number))
 
 (defun wl-summary-refile-subr (copy-or-refile interactive &optional dst number)
-  (interactive)
   (let* ((buffer-num (wl-summary-message-number))
 	 (msg-num (or number buffer-num))
 	 (msgid (and msg-num
