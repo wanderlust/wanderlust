@@ -32,6 +32,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * elmo のバックエンドに依存した変数は "elmo-バックエンド名-*" 
   という名前に変更されました。
+  例えば、 elmo-default-imap4-server が elmo-imap4-default-server に
+  変更されています。
 
 * xxx-func という名前の変数は xxx-function という名前に変更 されました。
 
