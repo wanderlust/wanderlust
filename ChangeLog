@@ -1,3 +1,10 @@
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* samples/en/dot.wl (wl-template-alist): file-bottom -> bottom-file.
+	(Pointed out by Tsuyoshi Kitamoto <tsuyoshi.kitamoto@city.sapporo.jp>)
+
+	* samples/ja/dot.wl (wl-template-alist): Ditto.
+
 2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: Support @letterpaper and @afivepaper.
