@@ -847,7 +847,8 @@ This function is imported from Emacs 20.7."
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
 		    flist (cdr flist))
-	      (when (elmo-folder-plugged-p folder)
+	      (when (and (elmo-folder-plugged-p folder)
+			 (elmo-folder-exists-p folder))
 		(setq new-mails
 		      (+ new-mails
 			 (nth 0 (wl-biff-check-folder folder))))))
@@ -877,23 +878,26 @@ This function is imported from Emacs 20.7."
   (wl-biff-notify (car diff) (nth 2 data)))
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
-  (when (elmo-folder-plugged-p folder)
-    (elmo-folder-set-biff-internal folder t)
-    (if (and (eq (elmo-folder-type-internal folder) 'imap4)
-	     (elmo-folder-use-flag-p folder))
-	;; Check asynchronously only when IMAP4 and use server diff.
-	(progn
-	  (setq elmo-folder-diff-async-callback
-		'wl-biff-check-folder-async-callback)
-	  (setq elmo-folder-diff-async-callback-data
-		(list (elmo-folder-name-internal folder)
-		      (get-buffer wl-folder-buffer-name)
-		      notify-minibuf))
-	  (elmo-folder-diff-async folder))
-      (unwind-protect
-	  (wl-biff-notify (car (wl-biff-check-folder folder))
-			  notify-minibuf)
-	(setq wl-biff-check-folders-running nil)))))
+  (if (and (elmo-folder-plugged-p folder)
+	   (elmo-folder-exists-p folder))
+      (progn
+	(elmo-folder-set-biff-internal folder t)
+	(if (and (eq (elmo-folder-type-internal folder) 'imap4)
+		 (elmo-folder-use-flag-p folder))
+	    ;; Check asynchronously only when IMAP4 and use server diff.
+	    (progn
+	      (setq elmo-folder-diff-async-callback
+		    'wl-biff-check-folder-async-callback)
+	      (setq elmo-folder-diff-async-callback-data
+		    (list (elmo-folder-name-internal folder)
+			  (get-buffer wl-folder-buffer-name)
+			  notify-minibuf))
+	      (elmo-folder-diff-async folder))
+	  (unwind-protect
+	      (wl-biff-notify (car (wl-biff-check-folder folder))
+			      notify-minibuf)
+	    (setq wl-biff-check-folders-running nil))))
+    (setq wl-biff-check-folders-running nil)))
 
 (if (and (fboundp 'regexp-opt)
 	 (not (featurep 'xemacs)))

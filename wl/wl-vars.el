@@ -2081,7 +2081,7 @@ Each elements are regexp of folder name."
 (defcustom wl-biff-check-folder-list nil
   "All folders that match this list are automatically checked
 every intervals specified by wl-biff-check-interval."
-  :type '(repeat (regexp :tag "Folder Regexp"))
+  :type '(repeat (regexp :tag "Folder"))
   :group 'wl-highlight)
 
 (defcustom wl-biff-check-interval 40

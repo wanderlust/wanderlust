@@ -1,3 +1,9 @@
+2004-09-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-biff-check-folders): Ignore non-existent folder.
+	(wl-biff-check-folder-async): Ditto.
+	* wl-vars.el (wl-biff-check-folder-list): Fix tag.
+
 2004-09-08  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-rescan): Implement reverse sorting.
