@@ -142,8 +142,8 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
     (setq original (elmo-string name))
     (if type
 	(progn
-	  (setq prefix (substring name 0 1))
-	  (setq name (substring name 1)))
+	  (setq prefix (elmo-string (substring name 0 1)))
+	  (setq name (elmo-string (substring name 1))))
       (setq type (intern (car (setq split (split-string name ":")))))
       (if (>= (length split) 2)
 	  (setq name (substring name (+ 1 (length (car split)))))
