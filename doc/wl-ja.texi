@@ -1536,7 +1536,7 @@ Wanderlust の内部で保持されたメッセージを閲覧するためのフォルダです。
 
 @example
 @group
-'mark 
+'mark
 @r{もしくは}
 'cache/00〜1F
 @end group

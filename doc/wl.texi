@@ -303,7 +303,6 @@ Mirrored ftp/http sites:
 @example
 @group
 ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
-ftp://daidai.kuis.kyoto-u.ac.jp/pub/mirror/ftp.gohome.org/pub/elisp/wl/
 http://www.jpl.org/elips/wl/
 http://www.ring.gr.jp/archives/text/elisp/wl/
 ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
@@ -1447,7 +1446,7 @@ Advanced example:
 In the current implementation, NNTP folder does not treat date filter and
 field filter.
 In IMAP4 folder, field filter only supports fields which can be 
-passed directly to rfc2060's search command.
+passed directly to RFC2060'S search command.
 (i.e. to,cc,from,subject and body)
 Localdir folder treats arbitrary field name.
 
