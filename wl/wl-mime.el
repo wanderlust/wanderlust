@@ -152,7 +152,7 @@ It calls following-method selected from variable
 	 (mime-header-encode-method-alist
 	  (append
 	   '((wl-draft-eword-encode-address-list
-	      .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+	      .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
 	   (if (boundp 'mime-header-encode-method-alist)
 	       (symbol-value 'mime-header-encode-method-alist))))
 	 mime-view-ignored-field-list	; all header.

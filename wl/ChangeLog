@@ -1,5 +1,9 @@
 2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-send): Remove duplicate "Bcc" and add
+	"From" entry to be treated with wl-draft-eword-encode-address-list.
+	* wl-mime.el (wl-draft-preview-message): Ditto.
+
 	* wl-summary.el (wl-summary-mark-as-read): Take list of numbers.
 	(wl-summary-mark-as-unread): Ditto.
 	(wl-summary-mark-as-read-region): Change accordingly.

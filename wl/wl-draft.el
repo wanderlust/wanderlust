@@ -1274,7 +1274,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (let ((mime-header-encode-method-alist
 		   (append
 		    '((wl-draft-eword-encode-address-list
-		       .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+		       .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
 		    (if (boundp 'mime-header-encode-method-alist)
 			(symbol-value 'mime-header-encode-method-alist)))))
 	      (run-hooks 'mail-send-hook) ; translate buffer
