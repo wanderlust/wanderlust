@@ -1,3 +1,13 @@
+2001-02-26  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed problem that
+	the number of mails in the folder buffer is not updated by wl-biff.
+
+2000-02-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-default-subject-filter): Fix for `Re>'.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): Ditto.
+
 2001-02-25  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-folder.el (wl-folder-sync-entity): Fixed change value of

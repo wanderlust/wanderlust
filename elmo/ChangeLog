@@ -1,3 +1,12 @@
+2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-list-folders): Fixed problem when
+	elmo-default-imap4-authenticate-type is nil
+	(Reported by Bun Mizuhara <mizuhara@acm.org>).
+
+	* elmo-vars.el (elmo-pop3-use-uidl): Moved from `elmo-pop3.el'.
+	(Adviced by Akihiro MOTOKI <mokkun@iname.com>)
+
 2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.5.8.
