@@ -1918,6 +1918,18 @@ IMAP フォルダで直接消した場合だけサーバ上のマークが消えます。)
 ゴミ箱を空にします。
 (@code{wl-folder-empty-trash})
 
+@item F
+@kindex F (Folder)
+@findex wl-folder-flush-queue
+キューにあるメッセージを送信します。
+(@code{wl-folder-flush-queue})
+
+@item V
+@kindex V (Folder)
+@findex wl-folder-virtual
+与えられた条件を持つメッセージのみを持つ仮想フォルダへ移動します。
+(@code{wl-folder-virtual})
+
 @item o
 @kindex o (Folder)
 @findex wl-folder-open-all-unread-folder

@@ -1911,6 +1911,18 @@ Enter summary mode of the first unread folder.
 Empty trash.
 (@code{wl-folder-empty-trash})
 
+@item F
+@kindex F (Folder)
+@findex wl-folder-flush-queue
+Flush queue.
+(@code{wl-folder-flush-queue})
+
+@item V
+@kindex V (Folder)
+@findex wl-folder-virtual
+Move to the virtual folder with the condition specified.
+(@code{wl-folder-virtual})
+
 @item o
 @kindex o (Folder)
 @findex wl-folder-open-all-unread-folder
