@@ -344,19 +344,16 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.")
 
-(luna-define-generic elmo-folder-unmark-read (folder numbers
-						     &optional ignore-flags)
+(luna-define-generic elmo-folder-unmark-read (folder numbers)
   "Un-mark messages as read.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+NUMBERS is a list of message numbers to be processed.")
 
 (luna-define-generic elmo-folder-mark-as-read (folder numbers
 						      &optional ignore-flags)
   "Mark messages as read.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+NUMBERS is a list of message numbers to be processed.")
 
 (luna-define-generic elmo-folder-unmark-answered (folder numbers)
   "Un-mark messages as answered.
@@ -1173,9 +1170,7 @@ FIELD is a symbol of the field."
 			     number
 			     'important))))
 
-(luna-define-method elmo-folder-unmark-read ((folder elmo-folder)
-					     numbers
-					     &optional ignore-flags)
+(luna-define-method elmo-folder-unmark-read ((folder elmo-folder) numbers)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-status (elmo-folder-msgdb folder)

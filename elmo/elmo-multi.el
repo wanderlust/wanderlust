@@ -609,12 +609,10 @@
 
 (luna-define-method elmo-folder-unmark-read :before ((folder
 						      elmo-multi-folder)
-						     numbers
-						     &optional ignore-flag)
+						     numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-read (car folder-numbers)
-			     (cdr folder-numbers)
-			     ignore-flag)))
+			     (cdr folder-numbers))))
 
 (luna-define-method elmo-folder-mark-as-answered :before ((folder
 							   elmo-multi-folder)
