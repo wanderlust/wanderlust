@@ -1,7 +1,7 @@
 2004-06-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-target-mark-set-action): Stop if
-	marked message does not exist.
+	target message does not exist.
 
 2004-06-04  Tsutomu OKADA  <tsutomu.okada@furuno.co.jp>
 

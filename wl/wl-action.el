@@ -124,6 +124,7 @@ Return number if put mark succeed"
 
 (defun wl-summary-target-mark-set-action (action)
   (unless (eq (wl-summary-action-symbol action) 'target-mark)
+    (unless wl-summary-buffer-target-mark-list (error "no target"))
     (save-excursion
       (goto-char (point-min))
       (let ((numlist wl-summary-buffer-number-list)
@@ -135,7 +136,6 @@ Return number if put mark succeed"
 		(setq number (car numlist)
 		      numlist nil))
 	    (setq numlist (cdr numlist)))
-	  (unless number (error "no target"))
 	  (wl-summary-jump-to-msg number)
 	  (setq data (funcall (wl-summary-action-argument-function action)
 			      (wl-summary-action-symbol action) number)))
