@@ -36,7 +36,7 @@ Required environment
   Combination of APEL 10.2 and FLIM 1.12.7 makes following error
   while compiling FLIM 1.12.7.
 
-  'Please install latest APEL 7.3 or later.'
+	Please install latest APEL 7.3 or later.
 
   In this case, please comment out following lines in FLIM-CFG.
 
@@ -69,6 +69,14 @@ Required environment
 	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 
   To get full information, please refer README.en within package.
+
+  tm-8.8 or earlier makes following error while compiling Wanderlust.
+
+	Use tm-8.x with APEL 10.2 or later.
+
+  In this case, please install APEL 10.2 or later.
+
+	APEL:     ftp://ftp.m17n.org/mule/apel/
 
 
 Installation

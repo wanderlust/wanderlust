@@ -32,9 +32,9 @@ MIME用モジュールのインストール
          または、
 	APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
 
-   APEL 10.2 と FLIM 1.12.7 の組合せでは、FLIM 1.12.7 のコンパイル時に
+  APEL 10.2 と FLIM 1.12.7 の組合せでは、FLIM 1.12.7 のコンパイル時に
 
-   'Please install latest APEL 7.3 or later.'
+    Please install latest APEL 7.3 or later.
    
   というエラーが発生する場合があります。この場合、FLIM-CFG の以下の行を
   コメントアウトして下さい。
@@ -71,6 +71,15 @@ MIME用モジュールのインストール
 
   詳しいインストールの方法はパッケージに添付されているドキュメント
   (README.en) を参照してください。
+
+  tm 8.8 以前のバージョンでは、
+
+    Use tm-8.x with APEL 10.2 or later
+
+  というエラーがでることがあります。この場合、APEL 10.2 以降をイ
+  ンストールしてください。
+
+	APEL:     ftp://ftp.m17n.org/mule/apel/
 
 
 通常のインストール

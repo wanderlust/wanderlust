@@ -1,3 +1,8 @@
+2000-10-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL (Installation): Add notify for tm-8 with old APEL user.
+	* INSTALL.ja: Ditto.
+
 2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-MK (config-wl-package-subr): Changed message.
