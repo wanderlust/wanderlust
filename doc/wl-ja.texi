@@ -879,7 +879,7 @@ default $BCM(B:
 @var{$B%f!<%6L>(B}$B$,(B non-nil $B$N>l9g$O(B AUTHINFO $B$K$h$kG'>Z$r9T$J$$$^$9!#(B
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 @samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(B SSL $B%3%M%/%7%g%s$rD%$j$^$9!#(B
-$BJQ?t(B @code{elmo-nntp-default-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
+$BJQ?t(B @code{elmo-nntp-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
 
 $BNc(B:
@@ -1286,7 +1286,7 @@ APOP $B$rMxMQ$9$k$K$O!"(B@file{md5.el} $B$,I,MW$G$9!#(B(XEmacs $B$G$OI,MW$"
 archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
-$BJQ?t(B @code{elmo-pop3-default-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
+$BJQ?t(B @code{elmo-pop3-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
 (SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9$k(B
 $BI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @file{openssl} $B$K%Q%9$,DL$C$F$$$k(B
@@ -4488,7 +4488,7 @@ POP-before-SMTP $B$GG'>Z$r9T$J$&$H$-$N(B POP $B%]!<%HHV9f$G$9!#(B
 $B@_Dj$7$F$$$J$$>l9g$O(B  @code{elmo-pop3-default-port} $B$r;H$$$^$9!#(B
 
 @item wl-pop-before-smtp-stream-type
-Non-nil $B$J$i(B SSL $B$rMxMQ$7$F(B POP $B%3%M%/%7%g%s$rD%$j$^$9!#(B@code{starttls} 
+@code{ssl} $B$J$i(B SSL $B$rMxMQ$7$F(B POP $B%3%M%/%7%g%s$rD%$j$^$9!#(B@code{starttls} 
 $B$J$i(B STARTTLS (RFC2595) $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#@_Dj$7$F$$$J(B
 $B$$>l9g$O(B @code{elmo-pop3-default-stream-type} $B$r;H$$$^$9!#(B
 @end table
@@ -4898,7 +4898,7 @@ SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
 @vindex wl-nntp-posting-stream-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 @code{nil} $B$J$i(B @code{elmo-nntp-default-stream-type} $B$rI>2A$7$^$9!#(B
-Non-nil $B$J$i%K%e!<%9Ej9F;~$K(B SSL $B$rMxMQ$7$^$9!#(B
+@code{ssl} $B$J$i%K%e!<%9Ej9F;~$K(B SSL $B$rMxMQ$7$^$9!#(B
 @code{starttls}$B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 
 @item wl-nntp-posting-function
@@ -4954,6 +4954,7 @@ POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%]!<%HHV9f$G$9!#(B
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B SSL $B$rMxMQ$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B@code{nil} $B$N(B
 $B$^$^$J$i(B @code{elmo-pop3-default-stream-type}$B$rMxMQ$7$^$9!#(B
+@code{ssl} $B$J$i(B SSL $B$rMxMQ$7$^$9!#(B
 @code{starttls}$B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 
 @item wl-draft-queue-save-variables

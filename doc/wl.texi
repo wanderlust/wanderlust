@@ -847,7 +847,7 @@ default:
 
 AUTHINFO is used as authentication method if the @var{username} is
 non-nil.  SSL will be default method if
-@code{elmo-nntp-default-stream-type} is non-nil even if the folder name
+@code{elmo-nntp-default-stream-type} is @code{ssl} even if the folder name
 doesn't end with @samp{!}.  If a folder name ends with @samp{!!},
 STARTTLS connection will be established.  if the value of
 @code{elmo-nntp-default-stream-type} is @code{starttls}, STARTTLS will
@@ -1262,7 +1262,7 @@ To use apop as an @var{authenticate-type}, @file{md5.el} is needed
 
 If the last character of the folder name is @samp{!}, Wanderlust
 connects to the POP server via SSL (Secure Socket Layer).  If you set
-non-nil value to @code{elmo-pop3-default-stream-type}, you don't have to put
+@code{ssl} to @code{elmo-pop3-default-stream-type}, you don't have to put
 @samp{!} in the end of the folder name to use SSL. If a folder name ends
 with @samp{!!}, STARTTLS connection will be established.  if the value
 of @code{elmo-pop3-default-stream-type} is @code{starttls}, STARTTLS will be the
@@ -4502,7 +4502,7 @@ The POP port number for POP-before-SMTP authentication.
 If unset, @code{elmo-pop3-default-port} is used.
 
 @item wl-pop-before-smtp-stream-type
-If non-nil, POP connection is established using SSL.  If
+If @code{ssl}, POP connection is established using SSL.  If
 @code{starttls}, STARTTLS (RFC2595) connection will be established.  If
 unset, @code{elmo-pop3-default-stream-type} is used.
 @end table
@@ -4929,7 +4929,7 @@ If @code{nil}, @code{elmo-nntp-default-server} is used.
 @item wl-nntp-posting-stream-type
 @vindex wl-nntp-posting-stream-type
 The initial setting is @code{nil}.
-If @code{nil}, @code{elmo-nntp-default-stream-type} is evaluated.  If non-nil,
+If @code{nil}, @code{elmo-nntp-default-stream-type} is evaluated.  If @code{ssl},
 SSL is used for news submission.  If @code{starttls}, STARTTLS (RFC2595)
 connection will be established.
 
@@ -4985,8 +4985,9 @@ This is the POP port number for POP-before-SMTP.  If it is @code{nil},
 @vindex wl-pop-before-smtp-stream-type
 The initial setting is @code{nil}.
 This flag controls the use of SSL for POP-before-SMTP.  If it is
-@code{nil}, @code{elmo-pop3-default-stream-type} is used.  If @code{starttls},
-STARTTLS (RFC2595) connection will be established.
+@code{nil}, @code{elmo-pop3-default-stream-type} is used.  If @code{ssl},
+SSL is used.  If @code{starttls}, STARTTLS (RFC2595) connection will be
+established.
 
 @item wl-draft-queue-save-variables
 @vindex wl-draft-queue-save-variables
