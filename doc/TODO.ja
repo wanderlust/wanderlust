@@ -12,7 +12,6 @@
 
 ** wl-folder-check-entity-async のあたりで NNTP が特別扱いになっているのを
    どうにかする
-** MIME Bcc に対応する
 ** wl-summary-other-frame-list のような変数を設け、マッチしたサマリは
    別フレームで開くようにする
 ** パイプフォルダに、新規メールチェック時にダウンロードまでやってしまう

@@ -32,6 +32,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Members of the list wl-folder-hierarchy-access-folders is now some REGEXP
    for access group names instead of exact group names.
 
+** You can send encapsulated blind carbon copies. Its default field name is
+   "Ecc:".
+
 ** You can specify some function in wl-draft-reply-with-argument-list etc.
    for setting the recipients in draft by the return value of it.
 
