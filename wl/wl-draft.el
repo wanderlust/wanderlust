@@ -1672,17 +1672,17 @@ Derived from `message-save-drafts' in T-gnus."
 
 (defsubst wl-draft-default-headers ()
   (list
-   (cons "Mail-Reply-To: " (and wl-insert-mail-reply-to
+   (cons 'Mail-Reply-To (and wl-insert-mail-reply-to
 				(wl-address-header-extract-address
 				 wl-from)))
    (cons "" wl-generate-mailer-string-function)
-   (cons "Reply-To: " mail-default-reply-to)
+   (cons 'Reply-To mail-default-reply-to)
    (cons 'wl-draft-insert-ccs
 	 (list "Bcc: " (or wl-bcc
 			   (and mail-self-blind (user-login-name)))))
    (cons 'wl-draft-insert-ccs
 	 (list "Fcc: " wl-fcc))
-   (cons "Organization: " wl-organization)
+   (cons 'Organization wl-organization)
    (and wl-auto-insert-x-face
 	(file-exists-p wl-x-face-file)
 	'wl-draft-insert-x-face-field-here) ;; allow nil

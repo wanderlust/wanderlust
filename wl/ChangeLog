@@ -1,5 +1,8 @@
 2002-03-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-default-headers): Use cons with symbol car
+	rather than one with string car.
+
 	* wl-vars.el (wl-draft-additional-header-alist): New variable.
 	* wl-draft.el (wl-draft-create-contents): Add it after the default
 	headers.
