@@ -196,11 +196,14 @@ When non-nil, redundunt message-id string are not saved."
 (defun modb-standard-load-entity (modb path &optional section)
   (let ((table (or (modb-standard-entity-map-internal modb)
 		   (elmo-make-hash (elmo-msgdb-length modb))))
+	(entities (elmo-object-load
+		   (expand-file-name
+		    (modb-standard-entity-filename section)
+		    path)))
 	number msgid)
-    (dolist (entity (elmo-object-load
-		     (expand-file-name
-		      (modb-standard-entity-filename section)
-		      path)))
+    (when (symbolp (car entities))
+      (error "Unsupported msgdb structure detected. Please re-create msgdb"))
+    (dolist (entity entities)
       (setq number (elmo-msgdb-message-entity-number
 		    (elmo-message-entity-handler entity)
 		    entity)

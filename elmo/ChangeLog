@@ -1,3 +1,11 @@
+2005-04-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Clear msgdb even when an
+	error occured while updating flag table.
+
+	* modb-standard.el (modb-standard-load-entity): Cause an error when
+	entity format is for 2.15.0 or later.
+
 2005-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.14.0 is released.
