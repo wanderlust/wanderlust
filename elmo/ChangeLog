@@ -1,3 +1,9 @@
+2000-11-05  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-pipe.el (elmo-pipe-drain): When calling `elmo-list-folder',
+	`elmo-pop3-use-uidl' must be bound to nil.
+	(Pointed out by Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>)
+
 2000-11-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-copy-file): Don't cause an error after
