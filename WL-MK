@@ -279,8 +279,8 @@
     (install-wl-icons)
 
     (mapcar '(lambda (x)
-	       (install-elisp-modules (cdr x) (car x) LISPDIR))
-	    modules-alist)
+             (install-elisp-modules (cdr x) (car x) LISPDIR))
+                  modules-alist)
     ;; WL-AUTOLOAD-MODULES
     (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
     ;;
