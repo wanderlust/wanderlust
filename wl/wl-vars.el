@@ -1666,6 +1666,12 @@ It uses wl-summary-move-direction-downward as a direction flag."
   :group 'wl-pref
   :group 'wl-setting)
 
+(defcustom wl-auto-prefetch-first nil
+  "*If non-nil, prefetch selected first message when enter summary."
+  :type 'boolean
+  :group 'wl-pref
+  :group 'wl-setting)
+
 (defcustom wl-auto-select-next nil
   "*If non-nil, offer to go to the next folder from the end of the previous.
 If the value is the symbol `unread', go to the next folder

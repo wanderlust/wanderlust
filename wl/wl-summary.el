@@ -2602,6 +2602,11 @@ If ARG, without confirm."
 		       ;; wl-auto-select-first is non-nil and
 		       ;; unreadp is non-nil but not important
 		       (setq retval 'disp-msg))
+		      ((and wl-auto-prefetch-first
+			    (wl-summary-auto-select-msg-p unreadp))
+		       ;; wl-auto-select-first is non-nil and
+		       ;; unreadp is non-nil but not important
+		       (setq retval 'prefetch-msg))
 		      ((not (wl-summary-auto-select-msg-p unreadp))
 		       ;; unreadp is nil or important
 		       (setq retval 'more-next))))
@@ -2627,6 +2632,13 @@ If ARG, without confirm."
 		(wl-highlight-summary (point-min) (point-max))))
 	  (if (eq retval 'disp-msg)
 	      (wl-summary-redisplay))
+	  (if (eq retval 'prefetch-msg)
+	      (wl-message-buffer-prefetch
+	       folder
+	       (wl-summary-message-number)
+	       wl-message-buffer-prefetch-depth
+	       (current-buffer)
+	       wl-summary-buffer-mime-charset))
 	  (if mes (message "%s" mes))
 	  (if (and interactive wl-summary-recenter)
 	      (recenter (/ (- (window-height) 2) 2))))))

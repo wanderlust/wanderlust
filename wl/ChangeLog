@@ -1,5 +1,17 @@
 2002-01-22  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (wl-message-buffer-prefetch-clear-timer): New function.
+	(wl-message-buffer-prefetch-set-timer): New function.
+	(wl-message-buffer-prefetch-get-next): New function.
+	(wl-message-buffer-prefetch): New function.
+	(wl-message-buffer-prefetch-next): Rewrite.
+	(wl-message-buffer-prefetch-subr): Rewrite.
+	* wl-vars.el (wl-auto-prefetch-first): New variable.
+	* wl-summary.el (wl-summary-goto-folder-subr): Call
+	`wl-message-buffer-prefetch' if `wl-auto-prefetch-first' is non-nil.
+
+2002-01-22  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-score.el (wl-summary-score-update-all-lines): Do not call
 	`wl-summary-unread-message-hook'.
 

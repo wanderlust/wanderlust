@@ -549,96 +549,138 @@ Returns non-nil if bottom of message."
 				wl-message-buffer-prefetch-folder-list))
        (t wl-message-buffer-prefetch-folder-list))))
 
-(defun wl-message-buffer-prefetch-next (folder number &optional
-					       count summary charset)
-  (if (wl-message-buffer-prefetch-p folder)
-      (if (not (fboundp 'run-with-idle-timer))
-	  (when (sit-for wl-message-buffer-prefetch-idle-time)
-	    (wl-message-buffer-prefetch-subr
-	     folder number (or count 1) summary charset))
+(defsubst wl-message-buffer-prefetch-clear-timer ()
 ;;;     cannot use for the bug of fsf-compat package (1.09).
 ;;;	(cancel-function-timers 'wl-message-buffer-prefetch-subr)
-	(if (featurep 'xemacs)
-	    (let ((p itimer-list))
-	      (while (car p)
-		(if (eq 'wl-message-buffer-prefetch-subr
-			(itimer-function (car p)))
-		    (delete-itimer (car p)))
-		(setq p (cdr p))))
-	  ;; FSF Emacs is correct
-	  (cancel-function-timers 'wl-message-buffer-prefetch-subr))
-	(run-with-idle-timer
-	 wl-message-buffer-prefetch-idle-time
-	 nil
-	 'wl-message-buffer-prefetch-subr
-	 folder number (or count 1) summary charset))))
+  (if (fboundp 'run-with-idle-timer)
+      (if (featurep 'xemacs)
+	  (let ((p itimer-list))
+	    (while (car p)
+	      (if (eq 'wl-message-buffer-prefetch-subr
+		      (itimer-function (car p)))
+		  (delete-itimer (car p)))
+	      (setq p (cdr p))))
+	;; FSF Emacs is correct
+	(cancel-function-timers 'wl-message-buffer-prefetch-subr))))
+
+(defsubst wl-message-buffer-prefetch-set-timer (folder number count
+						       summary charset)
+  (if (not (fboundp 'run-with-idle-timer))
+      (when (sit-for wl-message-buffer-prefetch-idle-time)
+	(wl-message-buffer-prefetch-subr
+	 folder number count summary charset))
+    (run-with-idle-timer
+     wl-message-buffer-prefetch-idle-time
+     nil
+     'wl-message-buffer-prefetch-subr
+     folder number count summary charset)))
+
+(defun wl-message-buffer-prefetch-get-next (folder number summary)
+  (if (buffer-live-p summary)
+      (with-current-buffer summary
+	(let ((next (funcall wl-message-buffer-prefetch-get-next-function
+			     number)))
+	  (if next
+	      (if (wl-message-buffer-prefetch-p folder next)
+		  next
+		;; for Multi folder
+		(wl-message-buffer-prefetch-get-next
+		 folder next summary)))))))
+
+(defun wl-message-buffer-prefetch (folder number &optional
+					  count summary charset)
+  (let* ((summary (or summary (get-buffer wl-summary-buffer-name))))
+    (when (wl-message-buffer-prefetch-p folder)
+      (wl-message-buffer-prefetch-clear-timer)
+      (wl-message-buffer-prefetch-set-timer
+       folder
+       number
+       (or count 1)
+       summary
+       charset))))
+
+(defun wl-message-buffer-prefetch-next (folder number &optional
+					       count summary charset)
+  (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
+	 (next (wl-message-buffer-prefetch-get-next folder number summary)))
+    (when (wl-message-buffer-prefetch-p folder)
+      (wl-message-buffer-prefetch-clear-timer)
+      (wl-message-buffer-prefetch-set-timer
+       folder
+       next
+       (or count 1)
+       summary
+       charset))))
 
 (defun wl-message-buffer-prefetch-subr (folder number count summary charset)
   (if (buffer-live-p summary)
       (with-current-buffer summary
-	;(set-buffer summary)
-	(let ((next (funcall wl-message-buffer-prefetch-get-next-function
-			     number)))
-	  (if (and next (not (wl-message-buffer-prefetch-p folder next)))
-	      ;; for Multi folder
-	      (wl-message-buffer-prefetch-subr folder next count summary charset)
-	    (if (and next
-		     (numberp count)
-		     (>= (setq count (- count 1)) 0)
-		     (string= (elmo-folder-name-internal folder)
-			      (wl-summary-buffer-folder-name)))
-		(let* ((wl-mime-charset      charset)
-		       (default-mime-charset charset)
-		       (message-id (elmo-message-field folder next 'message-id))
-		       (key (list (elmo-folder-name-internal folder)
-				  next message-id))
-		       (hit (wl-message-buffer-cache-hit key)))
-		  (when wl-message-buffer-prefetch-debug
-		    (message "%S: count %S, hit %S" next count hit))
-		  (if (and hit (buffer-live-p hit))
-		      (progn
-			(wl-message-buffer-cache-sort
-			 (wl-message-buffer-cache-entry-make key hit))
-			(wl-message-buffer-prefetch-subr folder next count summary charset))
-		    (let* ((size (elmo-message-field folder next 'size))
-			   result time1 time2 sec micro)
-		      (when (or (elmo-message-file-p folder next)
-				(not (and (integerp size)
-					  elmo-message-fetch-threshold
-					  (>= size
-					      elmo-message-fetch-threshold))))
-			(when wl-message-buffer-prefetch-debug
-			  (setq time1 (current-time))
-			  (message "Prefetching %d..." next))
-			(setq result (wl-message-buffer-display folder next
-								'mime nil 'unread))
-			(when wl-message-buffer-prefetch-debug
-			  (setq time2 (current-time))
-			  (setq sec  (- (nth 1 time2)(nth 1 time1)))
-			  (setq micro (- (nth 2 time2)(nth 2 time1)))
-			  (setq micro (+ micro (* 1000000 sec)))
-			  (message "Prefetching %d...done(%f msec)."
-				   next
-				   (/ micro 1000.0))
-			  (sit-for 0))
-			;; set next prefetch
-			(wl-message-buffer-prefetch-next
-			 folder next count summary charset)
-			(sit-for 0)
-			;; success prefetch
-			))))))
-	  ;; finish prefetch
-	  (when wl-message-buffer-prefetch-debug
-	    (message "Buffer Cached Messages: %s"
-		     (mapconcat
-		      '(lambda (cache)
-			 (if (string=
-			      (nth 0 (car cache))
-			      (elmo-folder-name-internal folder))
-			     (format "%d"
-				     (nth 1 (car cache)))
-			   (format "*%d" (nth 1 (car cache)))))
-		      wl-message-buffer-cache " "))) ))))
+	(if (and number
+		 (numberp count)
+		 (>= (setq count (- count 1)) 0)
+		 (string= (elmo-folder-name-internal folder)
+			  (wl-summary-buffer-folder-name)))
+	    (let* ((wl-mime-charset      charset)
+		   (default-mime-charset charset)
+		   (message-id (elmo-message-field folder number 'message-id))
+		   (key (list (elmo-folder-name-internal folder)
+			      number message-id))
+		   (hit (wl-message-buffer-cache-hit key)))
+	      (when wl-message-buffer-prefetch-debug
+		(message "%S: count %S, hit %S" number count hit))
+	      (if (and hit (buffer-live-p hit))
+		  (progn
+		    (wl-message-buffer-cache-sort
+		     (wl-message-buffer-cache-entry-make key hit))
+		    (wl-message-buffer-prefetch-subr
+		     folder
+		     (wl-message-buffer-prefetch-get-next
+		      folder number summary)
+		     count summary charset))
+		(let* ((size (elmo-message-field folder number 'size))
+		       result time1 time2 sec micro)
+		  (when (or (elmo-message-file-p folder number)
+			    (not (and (integerp size)
+				      elmo-message-fetch-threshold
+				      (>= size
+					  elmo-message-fetch-threshold))))
+		    (when wl-message-buffer-prefetch-debug
+		      (setq time1 (current-time))
+		      (message "Prefetching %d..." number))
+		    (setq result (wl-message-buffer-display
+				  folder number 'mime nil 'unread))
+		    (when wl-message-buffer-prefetch-debug
+		      (setq time2 (current-time))
+		      (setq sec  (- (nth 1 time2)(nth 1 time1)))
+		      (setq micro (- (nth 2 time2)(nth 2 time1)))
+		      (setq micro (+ micro (* 1000000 sec)))
+		      (message "Prefetching %d...done(%f msec)."
+			       number
+			       (/ micro 1000.0))
+		      (sit-for 0))
+		    ;; set next prefetch
+		    (wl-message-buffer-prefetch-set-timer
+		     folder
+		     (wl-message-buffer-prefetch-get-next
+		      folder number summary)
+		     count summary charset)
+		    ;(wl-message-buffer-prefetch-next
+		    ;folder next count summary charset)
+		    (sit-for 0)
+		    ;; success prefetch
+		    )))))
+	;; finish prefetch
+	(when wl-message-buffer-prefetch-debug
+	  (message "Buffer Cached Messages: %s"
+		   (mapconcat
+		    '(lambda (cache)
+		       (if (string=
+			    (nth 0 (car cache))
+			    (elmo-folder-name-internal folder))
+			   (format "%d"
+				   (nth 1 (car cache)))
+			 (format "*%d" (nth 1 (car cache)))))
+		    wl-message-buffer-cache " "))) )))
 
 (defvar wl-message-button-map (make-sparse-keymap))
 
