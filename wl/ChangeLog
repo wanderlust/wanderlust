@@ -1,3 +1,7 @@
+2004-11-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.33.
+
 2004-10-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-mode): Set `show-trailing-whitespace'
