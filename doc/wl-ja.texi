@@ -6121,8 +6121,7 @@ mu-cite 8.1以降のバージョンをお使いなら、
 
 @menu
 * x-face-xmas::                       XEmacs の場合
-* x-face-mule::                       Emacs 19.34、20.x の場合
-* x-face-e21::                        Emacs 21.x の場合
+* x-face-mule::                       Emacs の場合
 @end menu
 
 また、エンコード済みの X-Face 文字列を @file{~/.xface}
@@ -6145,8 +6144,8 @@ x-face (@uref{ftp://jpl.org/pub/elisp/}) 1.3.6.13 以降に付属の
 @end group
 @end lisp
 
-@node x-face-mule, x-face-e21, x-face-xmas, X-Face
-@subsubsection x-face-mule (Emacs 19.34、20.x の場合)
+@node x-face-mule,  , x-face-xmas, X-Face
+@subsubsection x-face-mule (Emacs の場合)
 @pindex x-face-mule
 @pindex bitmap-mule
 
@@ -6160,12 +6159,12 @@ bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0以降に
 @end group
 @end lisp
 
-@node x-face-e21,  , x-face-mule, X-Face
 @subsubsection x-face-e21 (Emacs 21.x の場合)
 @pindex x-face-e21
 
-@file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/}) を使う場合は以下の
-ように設定してください。
+Emacs 21.x の場合には、@file{x-face-mule.el} の代わりに @file{x-face-e21.el}
+(@uref{ftp://jpl.org/pub/elisp/}) を使って X-Face を表示することもできます。
+その場合、bitmap-mule は不要です。以下のように設定してください。
 
 @lisp
 @group

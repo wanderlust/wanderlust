@@ -6210,8 +6210,7 @@ If you have installed one of the following, you can decode
 
 @menu
 * x-face-xmas::                       XEmacs case
-* x-face-mule::                       Emacs 19.34, 20.x case
-* x-face-e21::                        Emacs 21.x case
+* x-face-mule::                       Emacs case
 @end menu
 
 If there is an encoded X-Face string in a file @file{~/.xface} (the
@@ -6233,8 +6232,8 @@ If you use @file{x-face-xmas.el} in x-face (@uref{ftp://jpl.org/pub/elisp/})
 @end group
 @end lisp
 
-@node x-face-mule, x-face-e21, x-face-xmas, X-Face
-@subsubsection x-face-mule (for Emacs 19.34, 20.x)
+@node x-face-mule,  , x-face-xmas, X-Face
+@subsubsection x-face-mule (for Emacs)
 @pindex x-face-mule
 @pindex bitmap-mule
 
@@ -6248,12 +6247,13 @@ If you use @file{x-face-mule.el} in bitmap-mule
 @end group
 @end lisp
 
-@node x-face-e21,  , x-face-mule, X-Face
 @subsubsection x-face-e21 (for Emacs 21.x)
 @pindex x-face-e21
 
-If you use @file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/}),
-do the following:
+With Emacs 21.x, you can use @file{x-face-e21.el}
+(@uref{ftp://jpl.org/pub/elisp/}) instead of @file{x-face-mule.el}
+to display X-Face. In this case, bitmap-mule is not required.
+Do as follows:
 
 @lisp
 @group
