@@ -403,14 +403,14 @@ Set `wl-score-cache' nil."
     (message "Scoring...")
 
     ;; Create messages, an alist of the form `(ENTITY . SCORE)'.
-    (elmo-folder-do-each-message-entity (entity folder)
-      (setq num (elmo-message-entity-number entity))
+    (dolist (num (elmo-folder-list-messages folder 'visible 'in-db))
       (when (and (not (assq num wl-summary-scored))
 		 (or (memq num force-msgs)
 		     (member (wl-summary-message-mark folder num)
 			     wl-summary-score-marks)))
 	(setq wl-scores-messages
-	      (cons (cons entity (or wl-summary-default-score 0))
+	      (cons (cons (elmo-message-entity folder num)
+			  (or wl-summary-default-score 0))
 		    wl-scores-messages))))
 
     (save-excursion

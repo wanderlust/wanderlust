@@ -82,12 +82,28 @@
 ;; elmo-folder-get-info-length
 ;; elmo-folder-get-info-unread
 
+(defconst elmo-msgdb-load-priorities '(legacy standard)
+  "Priority list of modb type for load.")
+
 ;;; Helper functions for MSGDB
 ;;
 (defun elmo-load-msgdb (location)
   "Load the MSGDB from PATH."
-  (let ((msgdb (elmo-make-msgdb location)))
-    (elmo-msgdb-load msgdb)
+  (let ((msgdb (elmo-make-msgdb location elmo-msgdb-default-type))
+	priorities loaded temp-modb)
+    (unless (elmo-msgdb-load msgdb)
+      (setq priorities
+	    (delq elmo-msgdb-default-type
+		  (copy-sequence elmo-msgdb-load-priorities)))
+      (while (and priorities
+		  (not loaded))
+	(setq temp-modb (elmo-make-msgdb location (car priorities))
+	      loaded (elmo-msgdb-load temp-modb)
+	      priorities (cdr priorities)))
+      (when loaded
+	(if (eq elmo-msgdb-convert-type 'auto)
+	    (elmo-msgdb-append msgdb temp-modb)
+	  (setq msgdb temp-modb))))
     msgdb))
 
 (defun elmo-make-msgdb (&optional location type)

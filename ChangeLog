@@ -1,3 +1,7 @@
+2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* WL-ELS (ELMO-MODULES): Added modb-standard.
+
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Removed elmo-mark and added elmo-flag.

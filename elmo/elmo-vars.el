@@ -62,7 +62,16 @@
 (defcustom elmo-msgdb-default-type 'legacy
   "*Default type of Message Database for ELMO."
   :type '(radio (const legacy)
+		(const standard)
 		(const :tag "No use" generic))
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-msgdb-convert-type nil
+  "*MODB conversion type."
+  :type '(radio (const sync)
+		(const auto)
+		(const :tag "No convert" nil))
   :group 'elmo
   :group 'elmo-setting)
 

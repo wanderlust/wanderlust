@@ -1478,7 +1478,11 @@ FIELD is a symbol of the field.")
 				       &optional keep-killed)
   (unless keep-killed
     (elmo-folder-set-killed-list-internal folder nil))
-  (elmo-msgdb-clear (elmo-folder-msgdb folder)))
+  (if (eq elmo-msgdb-convert-type 'sync)
+      (elmo-folder-set-msgdb-internal
+       folder
+       (elmo-make-msgdb (elmo-folder-msgdb-path folder)))
+    (elmo-msgdb-clear (elmo-folder-msgdb folder))))
 
 (luna-define-generic elmo-folder-synchronize (folder
 					      &optional

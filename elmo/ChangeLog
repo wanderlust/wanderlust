@@ -1,5 +1,16 @@
 2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb-standard.el: New file.
+
+	* elmo.el (elmo-folder-clear): Reconstruct msgdb if
+	elmo-msgdb-convert-type is `sync'.
+
+	* elmo-vars.el (elmo-msgdb-default-type): Added `standard'.
+	(elmo-msgdb-convert-type): New user option.
+
+	* elmo-msgdb.el (elmo-msgdb-load-priorities): New internal variable.
+	(elmo-load-msgdb): Auto detect saved type.
+
 	* elmo-version.el (elmo-version): Up to 2.11.15.
 
 2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>

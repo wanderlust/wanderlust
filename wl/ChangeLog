@@ -1,5 +1,8 @@
 2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-score.el (wl-score-headers): Don't use
+	elmo-folder-do-each-message-entity.
+
 	* Version number is increased to 2.11.15.
 
 2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
