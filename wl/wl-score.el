@@ -340,7 +340,7 @@ Set `wl-score-cache' nil."
 
 (defun wl-score-get-score-files (score-alist folder)
   (let ((files (wl-get-assoc-list-value
-		score-alist folder
+		score-alist (elmo-folder-name-internal folder)
 		(if (not wl-score-folder-alist-matchone) 'all-list)))
 	fl f)
     (while (setq f (wl-pop files))
@@ -352,11 +352,12 @@ Set `wl-score-cache' nil."
 	      (list f)))))
     fl))
 
-(defun wl-score-get-score-alist (&optional folder)
+(defun wl-score-get-score-alist ()
   (interactive)
-  (let* ((fld (or folder (wl-summary-buffer-folder-name)))
-	 (score-alist (reverse
-		       (wl-score-get-score-files wl-score-folder-alist fld)))
+  (let* ((score-alist (reverse
+		       (wl-score-get-score-files
+			wl-score-folder-alist
+			wl-summary-buffer-elmo-folder)))
 	 alist scores)
     (setq wl-current-score-file nil)
     (unless (and wl-score-default-file
@@ -390,32 +391,29 @@ Set `wl-score-cache' nil."
       (setq score-alist (cdr score-alist)))
     scores))
 
-(defun wl-score-headers (scores &optional msgdb force-msgs not-add)
+(defun wl-score-headers (scores &optional force-msgs not-add)
   (let* ((elmo-mime-charset wl-summary-buffer-mime-charset)
+	 (folder wl-summary-buffer-elmo-folder)
 	 (now (wl-day-number (current-time-string)))
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
-	 (overview (elmo-msgdb-get-overview
-		    (or msgdb (wl-summary-buffer-msgdb))))
-	 (mark-alist (elmo-msgdb-get-mark-alist
-		      (or msgdb (wl-summary-buffer-msgdb))))
 	 (wl-score-stop-add-entry not-add)
 	 entries
 	 news new num entry ov header)
     (setq wl-scores-messages nil)
     (message "Scoring...")
 
-    ;; Create messages, an alist of the form `(OVERVIEW . SCORE)'.
-    (while (setq ov (pop overview))
+    ;; Create messages, an alist of the form `(ENTITY . SCORE)'.
+    (elmo-folder-do-each-message-entity (entity folder)
       (when (and (not (assq
 		       (setq num
-			     (elmo-msgdb-overview-entity-get-number ov))
+			     (elmo-message-entity-number entity))
 		       wl-summary-scored))
 		 (or (memq num force-msgs)
-		     (member (cadr (assq num mark-alist))
+		     (member (elmo-message-mark folder num)
 			     wl-summary-score-marks)))
 	(setq wl-scores-messages
-	      (cons (cons ov (or wl-summary-default-score 0))
+	      (cons (cons entity (or wl-summary-default-score 0))
 		    wl-scores-messages))))
 
     (save-excursion
@@ -786,8 +784,8 @@ Set `wl-score-cache' nil."
 			       (< expire
 				  (setq day
 					(wl-day-number
-					 (elmo-msgdb-overview-entity-get-date
-					  (car art)))))))
+					 (elmo-message-entity-field
+					  (car art) 'date))))))
 		  (when (setq new (wl-score-add-followups
 				   (car art) score all-scores alist thread
 				   day))
@@ -930,8 +928,9 @@ Set `wl-score-cache' nil."
 			      (wl-summary-buffer-msgdb))))
 	 msgs)
     (if (not expire)
-	(mapcar 'car (elmo-msgdb-get-number-alist
-		      (wl-summary-buffer-msgdb))) ;; all messages
+	(elmo-folder-list-messages wl-summary-buffer-elmo-folder
+				   nil t)
+      ;; XXX What's this?
       (catch 'break
 	(while roverview
 	  (if (< (wl-day-number
@@ -939,22 +938,18 @@ Set `wl-score-cache' nil."
 		 expire)
 	      (throw 'break t))
 	  (wl-push (elmo-msgdb-overview-entity-get-number (car roverview))
-		msgs)
+		   msgs)
 	  (setq roverview (cdr roverview))))
       msgs)))
-
-(defsubst wl-score-get-overview ()
-  (let ((num (wl-summary-message-number)))
-    (if num
-	(assoc (cdr (assq num (elmo-msgdb-get-number-alist
-			       (wl-summary-buffer-msgdb))))
-	       (elmo-msgdb-get-overview (wl-summary-buffer-msgdb))))))
 
 (defun wl-score-get-header (header &optional extra)
   (let ((index (nth 2 (assoc header wl-score-header-index)))
 	(decode (nth 3 (assoc header wl-score-header-index))))
     (if index
-	(wl-score-ov-entity-get (wl-score-get-overview) index extra decode))))
+	(wl-score-ov-entity-get
+	 (elmo-message-entity wl-summary-buffer-elmo-folder
+			      (wl-summary-message-number))
+	 index extra decode))))
 
 (defun wl-score-kill-help-buffer ()
   (when (get-buffer "*Score Help*")
@@ -1144,8 +1139,8 @@ Set `wl-score-cache' nil."
     (cond ((string= header "followup")
 	   (if wl-score-auto-make-followup-entry
 	       (let ((wl-score-make-followup t))
-		 (wl-score-headers scores nil (wl-score-get-latest-msgs)))
-	     (wl-score-headers scores nil
+		 (wl-score-headers scores (wl-score-get-latest-msgs)))
+	     (wl-score-headers scores
 			       (if (eq wl-summary-buffer-view 'thread)
 				   (wl-thread-get-children-msgs
 				    (wl-summary-message-number))
@@ -1155,7 +1150,7 @@ Set `wl-score-cache' nil."
 	      "references"
 	      (cdr (assoc "references" (car scores))))))
 	  ((string= header "thread")
-	   (wl-score-headers scores nil
+	   (wl-score-headers scores
 			     (if (eq wl-summary-buffer-view 'thread)
 				 (wl-thread-get-children-msgs
 				  (wl-summary-message-number))
@@ -1165,18 +1160,16 @@ Set `wl-score-cache' nil."
 					    ;; remove parent
 					    (cdr (cdaar scores)))))
 	  (t
-	   (wl-score-headers scores nil
+	   (wl-score-headers scores
 			     (list (wl-summary-message-number)))))
     (wl-summary-score-update-all-lines t)))
 
-(defun wl-summary-rescore-msgs (number-alist)
-  (mapcar
-   'car
-   (nthcdr
-    (max (- (length number-alist)
-	    wl-summary-rescore-partial-threshold)
-	 0)
-    number-alist)))
+(defun wl-summary-rescore-msgs (numbers)
+  (nthcdr
+   (max (- (length numbers)
+	   wl-summary-rescore-partial-threshold)
+	0)
+   numbers))
 
 (defun wl-summary-rescore (&optional arg)
   "Redo the entire scoring process in the current summary."
@@ -1186,8 +1179,7 @@ Set `wl-score-cache' nil."
     (setq wl-score-cache nil)
     (setq wl-summary-scored nil)
     (setq number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
-    (wl-summary-score-headers nil (wl-summary-buffer-msgdb)
-			      (unless arg
+    (wl-summary-score-headers (unless arg
 				(wl-summary-rescore-msgs number-alist)))
     (setq expunged (wl-summary-score-update-all-lines t))
     (if expunged
@@ -1195,12 +1187,11 @@ Set `wl-score-cache' nil."
     (set-buffer-modified-p nil)))
 
 ;; optional argument force-msgs is added by teranisi.
-(defun wl-summary-score-headers (&optional folder msgdb force-msgs not-add)
+(defun wl-summary-score-headers (&optional force-msgs not-add)
   "Do scoring if scoring is required."
-  (let ((scores (wl-score-get-score-alist
-		 (or folder (wl-summary-buffer-folder-name)))))
+  (let ((scores (wl-score-get-score-alist)))
     (when scores
-      (wl-score-headers scores msgdb force-msgs not-add))))
+      (wl-score-headers scores force-msgs not-add))))
 
 (defun wl-summary-score-update-all-lines (&optional update)
   (let* ((alist wl-summary-scored)

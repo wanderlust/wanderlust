@@ -16,5 +16,4 @@
 ** organize optional setting for pipe folders to download messages at once
    when one checks new messages
 ** support for rfc2192, rfc2193, rfc2221 (managing imap referral)
-** improve folder name completion for complex ones (multi,filter,pipe)
 ** putting codes in order

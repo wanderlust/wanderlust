@@ -1,3 +1,45 @@
+2003-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-rescan): Follow the changes in wl-score
+	API.
+	(wl-summary-sync-update): Ditto.
+
+	* wl-score.el (wl-score-get-score-alist): Changed argument.
+	(wl-summary-rescore-msgs): Likewise.
+	(wl-summary-score-headers): Likewise.
+	(wl-score-headers): Likewise;
+	Use elmo-folder-do-each-message-entity, etc.
+	(wl-summary-score-effect): Follow the changes above.
+	(wl-summary-rescore): Ditto.
+	(wl-score-get-latest-msgs): Follow the changes in elmo-msgdb API.
+	(wl-score-get-overview): Abolish.
+
+	* wl-summary.el (wl-summary-default-from): Follow the API change in
+	elmo-msgdb.
+	(wl-summary-count-unread): Ditto.
+	(wl-summary-detect-mark-position): Ditto.
+	(wl-summary-overview-entity-compare-by-date): Ditto.
+	(wl-summary-overview-entity-compare-by-number): Ditto.
+	(wl-summary-overview-entity-compare-by-from): Ditto.
+	(wl-summary-overview-entity-compare-by-subject): Ditto.
+	(wl-summary-get-list-info): Ditto.
+	(wl-summary-rescan): Ditto.
+	(wl-summary-jump-to-msg-by-message-id): Ditto.
+	(wl-summary-sync-update): Ditto; Removed comment.
+	(wl-summary-insert-thread-entity): Renamed to wl-summary-insert-thread.
+	(wl-summary-insert-message): Use wl-summary-insert
+	(wl-summary-insert-sequential): Changed argument msgdb to folder.
+	(wl-summary-insert-headers): Changed argument overview to folder.
+	(wl-summary-search-by-subject): Likewise.
+	(wl-summary-insert-thread): Renamed from 
+	wl-summary-insert-thread-entity and changed argument msgdb to folder.
+
+	* wl-folder.el (wl-folder-check-one-entity): Treat elmo-imap4-bye-error
+	too.
+
+	* wl-fldmgr.el (wl-add-entity-sub): Use elmo-string-member instead of
+	wl-string-member.
+
 2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-do-fcc): Follow the changes in
@@ -21,6 +63,20 @@
 	Don't use elmo-msgdb-set-mark.
 	(wl-summary-redisplay-internal): If msgdb flag is already read,
 	just update the mark on buffer.
+
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-delete): Move confirmation to elmo side,
+	cut visible folder when elmo-folder-delete returns non-nil value.
+
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-confirm): Display more info (advised
+	by Kenichi OKADA <okada@opaopa.org>).
+
+2003-03-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder.el (wl-folder-open-all): Fix to get proper entity.
 
 2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

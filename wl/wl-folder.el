@@ -825,8 +825,10 @@ Optional argument ARG is repeart count."
 		       (elmo-folder-diff folder)))
 		 (error
 		  ;; maybe not exist folder.
-		  (if (and (not (memq 'elmo-open-error
-				      (get (car err) 'error-conditions)))
+		  (if (and (not (or (memq 'elmo-open-error
+					  (get (car err) 'error-conditions))
+				    (memq 'elmo-imap4-bye-error
+					  (get (car err) 'error-conditions))))
 			   (not (elmo-folder-exists-p folder)))
 		      (wl-folder-create-subr folder)
 		    (signal (car err) (cdr err))))))
@@ -2505,7 +2507,7 @@ Use `wl-subscribed-mailing-list'."
       (save-excursion
 	(goto-char (point-min))
 	(while (re-search-forward
-		"^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+\n"
+		"^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+$"
 		nil t)
 	  (setq indent (wl-match-buffer 1))
 	  (setq name (wl-folder-get-entity-from-buffer))
@@ -2514,7 +2516,7 @@ Use `wl-subscribed-mailing-list'."
 			wl-folder-entity))
 	  ;; insert as opened
 	  (setcdr (assoc (car entity) wl-folder-group-alist) t)
-	  (forward-line -1)
+	  (beginning-of-line)
 	  (wl-folder-insert-entity indent entity)
 	  (delete-region (save-excursion (beginning-of-line)
 					 (point))

@@ -218,8 +218,8 @@ See also variable `wl-use-petname'."
 			   (wl-summary-buffer-folder-name))
 	     (wl-address-user-mail-address-p from)
 	     (cond
-	      ((and (setq tos (elmo-msgdb-overview-entity-get-to
-			       wl-message-entity))
+	      ((and (setq tos (elmo-message-entity-field
+			       wl-message-entity 'to t))
 		    (not (string= "" tos)))
 	       (setq retval
 		     (concat "To:"
@@ -237,8 +237,8 @@ See also variable `wl-use-petname'."
 				    to))))
 			      (wl-parse-addresses tos)
 			      ","))))
-	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field
-			 wl-message-entity "newsgroups"))
+	      ((setq ng (elmo-message-entity-field
+			 wl-message-entity 'newsgroups))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
 	  (setq retval (or (funcall wl-summary-get-petname-function from)
@@ -568,7 +568,7 @@ See also variable `wl-use-petname'."
       (wl-summary-redisplay)))
 
 (defun wl-summary-count-unread ()
-  (let ((lst (elmo-msgdb-count-marks (wl-summary-buffer-msgdb))))
+  (let ((lst (elmo-folder-count-flags wl-summary-buffer-elmo-folder)))
     (if (eq major-mode 'wl-summary-mode)
 	(setq wl-summary-buffer-new-count (car lst)
 	      wl-summary-buffer-unread-count (nth 1 lst)
@@ -712,7 +712,7 @@ you."
 	    wl-summary-buffer-line-formatter formatter)
       (insert
        (wl-summary-create-line
-	(elmo-msgdb-make-entity
+	(elmo-msgdb-make-message-entity
 	 :number 10000
 	 :from "foo"
 	 :subject "bar"
@@ -828,74 +828,67 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
 
+;;;
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
   (condition-case nil
       (string<
        (timezone-make-date-sortable
-	(elmo-msgdb-overview-entity-get-date x))
+	(elmo-message-entity-field x 'date))
        (timezone-make-date-sortable
-	(elmo-msgdb-overview-entity-get-date y)))
+	(elmo-message-entity-field y 'date)))
     (error))) ;; ignore error.
 
 (defun wl-summary-overview-entity-compare-by-number (x y)
    "Compare entity X and Y by number."
   (<
-   (elmo-msgdb-overview-entity-get-number x)
-   (elmo-msgdb-overview-entity-get-number y)))
+   (elmo-message-entity-number x)
+   (elmo-message-entity-number y)))
 
 (defun wl-summary-overview-entity-compare-by-from (x y)
   "Compare entity X and Y by from."
   (string<
    (wl-address-header-extract-address
-    (or (elmo-msgdb-overview-entity-get-from-no-decode x)
+    (or (elmo-message-entity-field x 'from)
 	wl-summary-no-from-message))
    (wl-address-header-extract-address
-    (or (elmo-msgdb-overview-entity-get-from-no-decode y)
+    (or (elmo-message-entity-field y 'from)
 	wl-summary-no-from-message))))
 
 (defun wl-summary-overview-entity-compare-by-subject (x y)
   "Compare entity X and Y by subject."
-  (string< (elmo-msgdb-overview-entity-get-subject-no-decode x)
-	   (elmo-msgdb-overview-entity-get-subject-no-decode y)))
+  (string< (elmo-message-entity-field x 'subject)
+	   (elmo-message-entity-field y 'subject)))
 
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
   (let (sequence ml-name ml-count subject return-path delivered-to mailing-list)
-    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-		    entity "x-sequence")
-	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
-		       entity "x-ml-name")
+    (setq sequence (elmo-message-entity-field entity 'x-sequence)
+	  ml-name (or (elmo-message-entity-field entity 'x-ml-name)
 		      (and sequence
 			   (car (split-string sequence " "))))
-	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-mail-count")
-		       (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-ml-count")
+	  ml-count (or (elmo-message-entity-field entity 'x-mail-count)
+		       (elmo-message-entity-field entity 'x-ml-count)
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
-    (and (setq subject (elmo-msgdb-overview-entity-get-subject
-			entity))
+    (and (setq subject (elmo-message-entity-field entity 'subject t))
 	 (setq subject (elmo-delete-char ?\n subject))
 	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
 	 (progn
 	   (or ml-name (setq ml-name (match-string 1 subject)))
 	   (or ml-count (setq ml-count (match-string 2 subject)))))
     (and (setq return-path
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "return-path"))
+	       (elmo-message-entity-field entity 'return-path))
 	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
 	 (progn
 	   (or ml-name (setq ml-name (match-string 1 return-path)))
 	   (or ml-count (setq ml-count (match-string 2 return-path)))))
     (and (setq delivered-to
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "delivered-to"))
+	       (elmo-message-entity-field entity 'delivered-to))
 	 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
 	 (or ml-name (setq ml-name (match-string 1 delivered-to))))
     (and (setq mailing-list
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "mailing-list"))
+	       (elmo-message-entity-field entity 'mailing-list))
 	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)	; *-help@, *-owner@, etc.
 	 (or ml-name (setq ml-name (match-string 2 mailing-list))))
     (cons (and ml-name (car (split-string ml-name " ")))
@@ -932,45 +925,45 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-rescan (&optional sort-by)
   "Rescan current folder without updating."
   (interactive)
-  (let* ((cur-buf (current-buffer))
-	 (msgdb (wl-summary-buffer-msgdb))
-	 (overview (elmo-msgdb-get-overview msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (elmo-mime-charset wl-summary-buffer-mime-charset)
-	 i percent num
-	 gc-message entity
-	 curp
-	 (inhibit-read-only t)
-	 (buffer-read-only nil)
-	 expunged)
+  (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
+	i percent num
+	gc-message entity
+	curp
+	(inhibit-read-only t)
+	(buffer-read-only nil)
+	numbers expunged)
     (erase-buffer)
     (message "Re-scanning...")
     (setq i 0)
-    (setq num (length overview))
+    (setq num (length wl-summary-buffer-number-list))
+    (setq numbers wl-summary-buffer-number-list)
     (when sort-by
       (message "Sorting by %s..." sort-by)
-      (setq overview
-	    (sort overview
-		  (intern (format "wl-summary-overview-entity-compare-by-%s"
-				  sort-by))))
-      (message "Sorting by %s...done" sort-by)
-      (elmo-msgdb-set-overview (wl-summary-buffer-msgdb)
-			       overview))
-    (setq curp overview)
-    (set-buffer cur-buf)
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* (length overview) 2)))
-    (setq wl-thread-entity-list nil)
-    (setq wl-thread-entities nil)
-    (setq wl-summary-buffer-number-list nil)
-    (setq wl-summary-buffer-target-mark-list nil)
-    (setq wl-summary-buffer-refile-list nil)
-    (setq wl-summary-buffer-delete-list nil)
-    (setq wl-summary-delayed-update nil)
+      (setq numbers
+	    (sort wl-summary-buffer-number-list
+		  (lambda (x y)
+		    (funcall
+		     (intern (format "wl-summary-overview-entity-compare-by-%s"
+				     sort-by))
+		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
+		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
+      (message "Sorting by %s...done" sort-by))
+    (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
+	  wl-thread-entity-list nil
+	  wl-thread-entities nil
+	  wl-summary-buffer-number-list nil
+	  wl-summary-buffer-target-mark-list nil
+	  wl-summary-buffer-refile-list nil
+	  wl-summary-buffer-delete-list nil
+	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
-    (while curp
-      (setq entity (car curp))
-      (wl-summary-insert-message entity msgdb nil)
-      (setq curp (cdr curp))
+    (while numbers
+      (setq entity (elmo-message-entity wl-summary-buffer-elmo-folder
+					(car numbers)))
+      (wl-summary-insert-message entity
+				 wl-summary-buffer-elmo-folder
+				 nil)
+      (setq numbers (cdr numbers))
       (when (> num elmo-display-progress-threshold)
 	(setq i (+ i 1))
 	(if (or (zerop (% i 5)) (= i num))
@@ -984,10 +977,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		 (elmo-msgdb-overview-entity-get-number
 		  (cdar wl-summary-delayed-update)))
 	(wl-summary-insert-message
-	 (cdar wl-summary-delayed-update) msgdb nil t)
+	 (cdar wl-summary-delayed-update)
+	 wl-summary-buffer-elmo-folder nil t)
 	(setq wl-summary-delayed-update (cdr wl-summary-delayed-update))))
     (message "Constructing summary structure...done")
-    (set-buffer cur-buf)
     (if (eq wl-summary-buffer-view 'thread)
 	(progn
 	  (message "Inserting thread...")
@@ -995,8 +988,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  (message "Inserting thread...done")))
     (when wl-use-scoring
       (setq wl-summary-scored nil)
-      (wl-summary-score-headers nil msgdb
-				(wl-summary-rescore-msgs number-alist)
+      (wl-summary-score-headers (wl-summary-rescore-msgs
+				 wl-summary-buffer-number-list)
 				t)
       (when (and wl-summary-scored
 		 (setq expunged (wl-summary-score-update-all-lines)))
@@ -1734,6 +1727,7 @@ If ARG is non-nil, checking is omitted."
 	  (msgs2 msgs)
 	  (len (length msgs))
 	  (i 0)
+	  (deleting-info (or deleting-info "Deleting..."))
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
       (while msgs
@@ -1751,8 +1745,7 @@ If ARG is non-nil, checking is omitted."
 		(delete-char 1) ; delete '\n'
 		(setq wl-summary-buffer-number-list
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
-	(when (and deleting-info
-		   (> len elmo-display-progress-threshold))
+	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i len))
 	      (elmo-display-progress
@@ -1760,9 +1753,9 @@ If ARG is non-nil, checking is omitted."
 	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
-	(wl-thread-update-line-msgs (elmo-uniq-list update-list)
-				    (unless deleting-info 'no-msg))
+	(wl-thread-update-line-msgs (elmo-uniq-list update-list))
 	(wl-thread-cleanup-symbols msgs2))
+      (message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (wl-folder-update-unread
@@ -1824,7 +1817,7 @@ If ARG is non-nil, checking is omitted."
 
 (defun wl-summary-insert-message (&rest args)
   (if (eq wl-summary-buffer-view 'thread)
-      (apply 'wl-summary-insert-thread-entity args)
+      (apply 'wl-summary-insert-thread args)
     (apply 'wl-summary-insert-sequential args)))
 
 (defun wl-summary-sort ()
@@ -1924,13 +1917,6 @@ If ARG is non-nil, checking is omitted."
 	      (progn
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
-;    (if (and has-nntp
-;	     (elmo-nntp-max-number-precedes-list-active-p))
-	;; XXX this does not work correctly in rare case.
-;	(setq delete-list
-;	      (wl-summary-delete-canceled-msgs-from-list
-;	       delete-list
-;	       (wl-summary-buffer-msgdb))))
 		(setq diff (elmo-list-diff (elmo-folder-list-messages
 					    folder
 					    'visible-only
@@ -1940,67 +1926,55 @@ If ARG is non-nil, checking is omitted."
 		(setq delete-list (cadr diff))
 		
 		(when delete-list
-		  (wl-summary-delete-messages-on-buffer
-		   delete-list "Deleting...")
-		  (message "Deleting...done"))
+		  (wl-summary-delete-messages-on-buffer delete-list))
 		(wl-summary-update-status-marks)
-		(setq curp append-list)
-		(setq num (length curp))
-		(when append-list
-		  (setq i 0)
-		  
-		  ;; set these value for append-message-func
-		  (setq overview (elmo-msgdb-get-overview
-				  (elmo-folder-msgdb folder)))
-		  (setq number-alist (elmo-msgdb-get-number-alist
-				      (elmo-folder-msgdb folder)))
-
-		  (setq wl-summary-delayed-update nil)
-		  (elmo-kill-buffer wl-summary-search-buf-name)
-		  (while curp
-		    (setq entity (elmo-msgdb-overview-get-entity
-				  (car curp) (elmo-folder-msgdb folder)))
+		(setq num (length append-list))
+		(setq i 0)
+		(setq wl-summary-delayed-update nil)
+		(elmo-kill-buffer wl-summary-search-buf-name)
+		(dolist (number append-list)
+		  (setq entity (elmo-message-entity folder number))
+		  (when (setq update-thread
+			      (wl-summary-insert-message
+			       entity folder
+			       (not sync-all)))
+		    (wl-append update-top-list update-thread))
+		  (if elmo-use-database
+		      (elmo-database-msgid-put
+		       (car entity) (elmo-folder-name-internal folder)
+		       (elmo-msgdb-overview-entity-get-number entity)))
+		  (when (> num elmo-display-progress-threshold)
+		    (setq i (+ i 1))
+		    (if (or (zerop (% i 5)) (= i num))
+			(elmo-display-progress
+			 'wl-summary-sync-update
+			 (if (eq wl-summary-buffer-view 'thread)
+			     "Making thread..."
+			   "Inserting message...")
+			 (/ (* i 100) num)))))
+		(when wl-summary-delayed-update
+		  (while wl-summary-delayed-update
+		    (message "Parent (%d) of message %d is no entity"
+			     (caar wl-summary-delayed-update)
+			     (elmo-msgdb-overview-entity-get-number
+			      (cdar wl-summary-delayed-update)))
 		    (when (setq update-thread
 				(wl-summary-insert-message
-				 entity (elmo-folder-msgdb folder)
-				 (not sync-all)))
+				 (cdar wl-summary-delayed-update)
+				 wl-summary-buffer-elmo-folder
+				 (not sync-all) t))
 		      (wl-append update-top-list update-thread))
-		    (if elmo-use-database
-			(elmo-database-msgid-put
-			 (car entity) (elmo-folder-name-internal folder)
-			 (elmo-msgdb-overview-entity-get-number entity)))
-		    (setq curp (cdr curp))
-		    (when (> num elmo-display-progress-threshold)
-		      (setq i (+ i 1))
-		      (if (or (zerop (% i 5)) (= i num))
-			  (elmo-display-progress
-			   'wl-summary-sync-update
-			   (if (eq wl-summary-buffer-view 'thread)
-			       "Making thread..."
-			     "Inserting message...")
-			   (/ (* i 100) num)))))
-		  (when wl-summary-delayed-update
-		    (while wl-summary-delayed-update
-		      (message "Parent (%d) of message %d is no entity"
-			       (caar wl-summary-delayed-update)
-			       (elmo-msgdb-overview-entity-get-number
-				(cdar wl-summary-delayed-update)))
-		      (when (setq update-thread
-				  (wl-summary-insert-message
-				   (cdar wl-summary-delayed-update)
-				   (elmo-folder-msgdb folder)
-				   (not sync-all) t))
-			(wl-append update-top-list update-thread))
-		      (setq wl-summary-delayed-update
-			    (cdr wl-summary-delayed-update))))
-		  (when (and (eq wl-summary-buffer-view 'thread)
-			     update-top-list)
-		    (wl-thread-update-indent-string-thread
-		     (elmo-uniq-list update-top-list)))
-		  (message (if (eq wl-summary-buffer-view 'thread)
-			       "Making thread...done"
-			     "Inserting message...done")))
-		(wl-summary-set-message-modified)
+		    (setq wl-summary-delayed-update
+			  (cdr wl-summary-delayed-update))))
+		(when (and (eq wl-summary-buffer-view 'thread)
+			   update-top-list)
+		  (wl-thread-update-indent-string-thread
+		   (elmo-uniq-list update-top-list)))
+		(message (if (eq wl-summary-buffer-view 'thread)
+			     "Making thread...done"
+			   "Inserting message...done"))
+		(when (or delete-list append-list)
+		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
 		  (message "Inserting message...")
@@ -2024,8 +1998,7 @@ If ARG is non-nil, checking is omitted."
       ;; scoring
       (when wl-use-scoring
 	(setq wl-summary-scored nil)
-	(wl-summary-score-headers nil (wl-summary-buffer-msgdb)
-				  (and sync-all
+	(wl-summary-score-headers (and sync-all
 				       (wl-summary-rescore-msgs number-alist))
 				  sync-all)
 	(when (and wl-summary-scored
@@ -2574,19 +2547,19 @@ If ARG, without confirm."
   (ignore-errors
     (run-hooks 'wl-summary-line-inserted-hook)))
 
-(defun wl-summary-insert-sequential (entity msgdb &rest args)
+(defun wl-summary-insert-sequential (entity folder &rest args)
   (let ((inhibit-read-only t)
 	buffer-read-only)
     (goto-char (point-max))
     (wl-summary-insert-line
      (wl-summary-create-line entity nil nil
-			     (elmo-msgdb-get-mark
-			      msgdb
-			      (elmo-msgdb-overview-entity-get-number
+			     (elmo-message-mark
+			      folder
+			      (elmo-message-entity-number
 			       entity))))
     (setq wl-summary-buffer-number-list
 	  (wl-append wl-summary-buffer-number-list
-		     (list (elmo-msgdb-overview-entity-get-number entity))))
+		     (list (elmo-message-entity-number entity))))
     nil))
 
 (defun wl-summary-default-subject-filter (subject)
@@ -2608,14 +2581,15 @@ If ARG, without confirm."
   (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
 			wl-summary-alike-hashtb)))
 
-(defun wl-summary-insert-headers (overview func mime-decode)
-  (let (ov this last alike)
+(defun wl-summary-insert-headers (folder func mime-decode)
+  (let ((entities (elmo-folder-list-message-entities folder))
+	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
-    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length overview) 2)))
+    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length entities) 2)))
     (when mime-decode
       (elmo-set-buffer-multibyte default-enable-multibyte-characters))
-    (while (setq ov (pop overview))
+    (while (setq ov (pop entities))
       (setq this (funcall func ov))
       (and this (setq this (std11-unfold-string this)))
       (if (equal last this)
@@ -2635,7 +2609,7 @@ If ARG, without confirm."
 	(eword-decode-region (point-min) (point-max))))
     (run-hooks 'wl-summary-insert-headers-hook)))
 
-(defun wl-summary-search-by-subject (entity overview)
+(defun wl-summary-search-by-subject (entity folder)
   (let ((summary-buf (current-buffer))
 	(buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name (wl-summary-buffer-folder-name))
@@ -2647,15 +2621,16 @@ If ARG, without confirm."
 	  (setq wl-summary-search-buf-folder-name folder-name)
 	  (message "Creating subject cache...")
 	  (wl-summary-insert-headers
-	   overview
+	   folder
 	   (function
 	    (lambda (x)
 	      (funcall wl-summary-subject-filter-function
-		       (elmo-msgdb-overview-entity-get-subject-no-decode x))))
+		       (elmo-message-entity-field x 'subject))))
 	   t)
 	  (message "Creating subject cache...done"))
 	(setq match (funcall wl-summary-subject-filter-function
-			     (elmo-msgdb-overview-entity-get-subject entity)))
+			     (elmo-message-entity-field entity 'subject
+							'decode)))
 	(if (string= match "")
 	    (setq match "\n"))
 	(goto-char (point-max))
@@ -2671,50 +2646,45 @@ If ARG, without confirm."
 		       ;; the first element of found-entity list exists on
 		       ;; thread tree.
 		       (wl-thread-get-entity
-			(elmo-msgdb-overview-entity-get-number
-			 (car founds)))
+			(elmo-message-entity-number (car founds)))
 		       ;; message id is not same as myself.
 		       (not (string=
-			     (elmo-msgdb-overview-entity-get-id entity)
-			     (elmo-msgdb-overview-entity-get-id (car founds))))
+			     (elmo-message-entity-field entity 'message-id)
+			     (elmo-message-entity-field (car founds)
+							'message-id)))
 		       ;; not a descendant.
 		       (not (wl-thread-descendant-p
-			     (elmo-msgdb-overview-entity-get-number entity)
-			     (elmo-msgdb-overview-entity-get-number
-			      (car founds)))))
+			     (elmo-message-entity-number entity)
+			     (elmo-message-entity-number (car founds)))))
 		  (setq result (car founds)
 			founds nil))
 		(setq founds (cdr founds))))))
 	result))))
 
-(defun wl-summary-insert-thread-entity (entity msgdb update
-					       &optional force-insert)
-  (let* ((overview (elmo-msgdb-get-overview msgdb))
-	 this-id
-	 parent-entity
-	 parent-number
-	 (case-fold-search t)
-	 (depth 0) relatives anumber
-	 cur number overview2 cur-entity linked retval delayed-entity
-	 update-list entity-stack)
+(defun wl-summary-insert-thread (entity folder update
+					&optional force-insert)
+  (let ((case-fold-search t)
+	(depth 0)
+	this-id	parent-entity parent-number relatives anumber
+	cur number cur-entity linked retval delayed-entity
+	update-list entity-stack)
     (while entity
-      (setq this-id (elmo-msgdb-overview-entity-get-id entity)
+      (setq this-id (elmo-message-entity-field entity 'message-id)
 	    parent-entity
-	    (elmo-msgdb-get-parent-entity entity msgdb)
-	    parent-number (elmo-msgdb-overview-entity-get-number
-			   parent-entity))
-      (setq number (elmo-msgdb-overview-entity-get-number entity))
+	    (elmo-message-entity-parent folder entity)
+	    parent-number (elmo-message-entity-number parent-entity))
+      (setq number (elmo-message-entity-number entity))
       (setq cur entity)
       ;; If thread loop detected, set parent as nil.
       (while cur
 	(setq anumber
-	      (elmo-msgdb-overview-entity-get-number
-	       (setq cur (elmo-msgdb-get-parent-entity cur msgdb))))
+	      (elmo-message-entity-number
+	       (setq cur (elmo-message-entity-parent folder cur))))
 	(if (memq anumber relatives)
 	    (setq parent-number nil
 		  cur nil))
 	(setq relatives (cons
-			 (elmo-msgdb-overview-entity-get-number cur)
+			 (elmo-message-entity-number cur)
 			 relatives)))
       (if (and parent-number
 	       (not (wl-thread-get-entity parent-number))
@@ -2730,21 +2700,21 @@ If ARG, without confirm."
 		   (string-match
 		    wl-summary-search-parent-by-subject-regexp
 		    (elmo-msgdb-overview-entity-get-subject entity)))
-	  (let ((found (wl-summary-search-by-subject entity overview)))
+	  (let ((found (wl-summary-search-by-subject entity folder)))
 	    (when (and found
 		       (not (member found wl-summary-delayed-update)))
 	      (setq parent-entity found)
 	      (setq parent-number
-		    (elmo-msgdb-overview-entity-get-number parent-entity))
+		    (elmo-message-entity-number parent-entity))
 	      (setq linked t))))
 	;; If subject is change, divide thread.
 	(if (and parent-number
 		 wl-summary-divide-thread-when-subject-changed
 		 (not (wl-summary-subject-equal
-		       (or (elmo-msgdb-overview-entity-get-subject
-			    entity) "")
-		       (or (elmo-msgdb-overview-entity-get-subject
-			    parent-entity) ""))))
+		       (or (elmo-message-entity-field entity
+						      'subject t) "")
+		       (or (elmo-message-entity-field parent-entity
+						      'subject t) ""))))
 	    (setq parent-number nil))
 	(setq retval
 	      (wl-thread-insert-message entity
@@ -3895,7 +3865,6 @@ If ARG, exit virtual folder."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
-	  (msgdb (wl-summary-buffer-msgdb))
 	  (case-fold-search nil)
 	  number-list mark visible new-mark)
       (setq number-list (or (and (numberp number-or-numbers)
@@ -4602,13 +4571,10 @@ Return t if message exists."
   (interactive)
   (let* ((original (wl-summary-message-number))
 	 (msgid (elmo-string (or id (read-from-minibuffer "Message-ID: "))))
-	 (number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
+	 (entity (elmo-message-entity wl-summary-buffer-elmo-folder msgid))
 	 msg otherfld schar
-	 (errmsg
-	  (format "No message with id \"%s\" in the folder." msgid)))
-    (if (setq msg (car (rassoc msgid number-alist)))
-;;;	(wl-summary-jump-to-msg-internal
-;;;	 (wl-summary-buffer-folder-name) msg 'no-sync)
+	 (errmsg (format "No message with id \"%s\" in the folder." msgid)))
+    (if (setq msg (elmo-message-entity-number entity))
 	(progn
 	  (wl-thread-jump-to-msg msg)
 	  t)

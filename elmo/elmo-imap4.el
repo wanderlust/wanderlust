@@ -607,7 +607,7 @@ BUFFER must be a single-byte buffer."
 	(mapcar
 	 (lambda (entry)
 	   (if (and (eq 'list (car entry))
-		    (not (member "\\NoSelect" (nth 1 (nth 1 entry)))))
+		    (not (elmo-string-member-ignore-case "\\Noselect" (nth 1 (nth 1 entry)))))
 	       (car (nth 1 entry))))
 	 response)))
 
@@ -776,11 +776,11 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   (let* ((use-flag (cdr app-data))
 	 (app-data (car app-data))
 	 mark)
-    (if (member "\\Flagged" flags)
+    (if (elmo-string-member-ignore-case "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity)
 				    elmo-msgdb-important-mark))
     (if (setq mark (elmo-msgdb-global-mark-get (car entity)))
-	(unless (member "\\Seen" flags)
+	(unless (elmo-string-member-ignore-case "\\Seen" flags)
 	  (setq elmo-imap4-seen-messages
 		(cons
 		 (elmo-msgdb-overview-entity-get-number entity)
@@ -788,16 +788,18 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (setq mark (or (if (elmo-file-cache-status
 			  (elmo-file-cache-get (car entity)))
 			 ;; cached.
-			 (if (member "\\Answered" flags)
+			 (if (elmo-string-member-ignore-case
+			      "\\Answered" flags)
 			     elmo-msgdb-answered-cached-mark
 			   (if (and use-flag
 				    (member "\\Seen" flags))
 			       nil
 			     elmo-msgdb-unread-cached-mark))
-		       (if (member "\\Answered" flags)
+		       (if (elmo-string-member-ignore-case "\\Answered" flags)
 			   elmo-msgdb-answered-uncached-mark
 			 (if (and use-flag
-				  (member "\\Seen" flags))
+				  (elmo-string-member-ignore-case
+				   "\\Seen" flags))
 			     (if elmo-imap4-use-cache
 				 elmo-msgdb-read-uncached-mark)
 			   elmo-msgdb-new-mark))))))
@@ -1983,18 +1985,25 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
   t)
 
-(luna-define-method elmo-folder-delete :before ((folder elmo-imap4-folder))
-  (let ((session (elmo-imap4-get-session folder))
-	msgs)
-    (when (elmo-imap4-folder-mailbox-internal folder)
-      (when (setq msgs (elmo-folder-list-messages folder))
-	(elmo-folder-delete-messages folder msgs))
-      (elmo-imap4-send-command-wait session "close")
-      (elmo-imap4-send-command-wait
-       session
-       (list "delete "
-	     (elmo-imap4-mailbox
-	      (elmo-imap4-folder-mailbox-internal folder)))))))
+(luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
+  (let ((msgs (and (elmo-folder-exists-p folder)
+		   (elmo-folder-list-messages folder))))
+    (when (yes-or-no-p (format "%sDelete msgdb and substance of \"%s\"? "
+			       (if (> (length msgs) 0)
+				   (format "%d msg(s) exists. " (length msgs))
+				 "")
+			       (elmo-folder-name-internal folder)))
+      (let ((session (elmo-imap4-get-session folder)))
+	(when (elmo-imap4-folder-mailbox-internal folder)
+	  (when msgs (elmo-folder-delete-messages folder msgs))
+	  (elmo-imap4-send-command-wait session "close")
+	  (elmo-imap4-send-command-wait
+	   session
+	   (list "delete "
+		 (elmo-imap4-mailbox
+		  (elmo-imap4-folder-mailbox-internal folder))))))
+      (elmo-msgdb-delete-path folder)
+      t)))
 
 (luna-define-method elmo-folder-rename-internal ((folder elmo-imap4-folder)
 						 new-folder)

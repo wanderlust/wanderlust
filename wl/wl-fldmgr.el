@@ -387,11 +387,11 @@ return value is diffs '(-new -unread -all)."
 	    (cond
 	     ((stringp (car new2)) ;; folder
 	      (cond
-	       ((wl-string-member (car new2) flist)
+	       ((elmo-string-member (car new2) flist)
 		(and errmes (message "%s: already exists" (car new2)))
 		(throw 'success nil))
 	       ((and access
-		     (not (wl-string-member (car new2) unsubscribes)))
+		     (not (elmo-string-member (car new2) unsubscribes)))
 		(and errmes (message "%s: not access group folder" (car new2)))
 		(throw 'success nil))))
 	     (t			   ;; group
@@ -850,15 +850,8 @@ return value is diffs '(-new -unread -all)."
     (let* ((inhibit-read-only t)
 	   (tmp (wl-fldmgr-get-path-from-buffer))
 	   (entity (elmo-string (nth 4 tmp)))
-	   (folder (wl-folder-get-elmo-folder entity))
-	   (msgs (and (elmo-folder-exists-p folder)
-		      (elmo-folder-list-messages folder))))
-      (when (yes-or-no-p (format "%sDo you really want to delete \"%s\"? "
-				 (if (> (length msgs) 0)
-				     (format "%d msg(s) exists. " (length msgs))
-				   "")
-				 entity))
-	(elmo-folder-delete folder)
+	   (folder (wl-folder-get-elmo-folder entity)))
+      (when (elmo-folder-delete folder)
 	(wl-fldmgr-cut tmp nil t)))))
 
 (defun wl-fldmgr-rename ()

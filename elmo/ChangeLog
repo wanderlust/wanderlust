@@ -1,3 +1,28 @@
+2003-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-messages): Redefine as a luna method.
+	(elmo-folder-list-message-entities): New API.
+	(elmo-message-entity): Ditto.
+	(elmo-message-entity-parent): Ditto.
+	(elmo-folder-do-each-message-entity): Ditto.
+	(elmo-message-entity-number): Ditto.
+	(elmo-message-entity-field): Ditto.
+	(elmo-message-entity-set-field): Ditto.
+	(elmo-folder-count-flags): Ditto.
+	(elmo-folder-length): Ditto.
+
+	* elmo-util.el (elmo-get-hash-val): Check whether hashtable is nil or
+	not.
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): New function.
+	(elmo-msgdb-count-marks): Abolish.
+	(elmo-msgdb-make-entity): Ditto.
+	(elmo-msgdb-do-each-entity): Ditto.
+	(elmo-msgdb-message-entity): New inline function.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-make-message-entity): New function.
+
 2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-append-buffer): Changed argument from unread 
@@ -37,6 +62,26 @@
 	(elmo-flag-table-save): Ditto.
 	(elmo-msgdb-get-field-value): Abolish.
 	(elmo-msgdb-overview-get-entity-by-number): Ditto.
+
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-folder-delete): Confirm deletion here, return t if
+	the folder has been deleted successfully.
+	* elmo-imap4.el (elmo-folder-delete): Ditto.
+	* elmo-archive.el (elmo-folder-delete): Ditto.
+	* elmo-localdir.el (elmo-folder-delete): Ditto.
+	* elmo-maildir.el (elmo-folder-delete): Ditto.
+
+2003-03-27  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-util.el (elmo-string-member-ignore-case): New function.
+	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Use it.
+	(elmo-imap4-fetch-callback-1-subr): Likewise.
+
+2003-03-27  Kimura Fuyuki <fuyuki@hadaly.org>
+
+	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Fix
+	the case of the name attribute "\Noselect".
 
 2003-02-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

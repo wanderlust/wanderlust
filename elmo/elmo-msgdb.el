@@ -92,6 +92,9 @@
 ;; elmo-msgdb-delete-msgs MSGDB NUMBERS
 ;; elmo-msgdb-sort-by-date MSGDB
 
+;;;
+;; LIST-OF-NUMBERS elmo-msgdb-list-messages MSGDB
+
 ;; elmo-flag-table-load
 ;; elmo-flag-table-set
 ;; elmo-flag-table-get
@@ -118,6 +121,9 @@
 ;; elmo-msgdb-seen-save DIR OBJ
 ;; elmo-msgdb-overview-save DIR OBJ
 
+;; elmo-msgdb-message-entity MSGDB KEY
+
+;;; Abolish
 ;; elmo-msgdb-overview-entity-get-references ENTITY
 ;; elmo-msgdb-overview-entity-set-references ENTITY
 ;; elmo-msgdb-get-parent-entity ENTITY MSGDB
@@ -177,6 +183,10 @@
   (let ((msgdb (list overview number-alist mark-alist nil path)))
     (elmo-msgdb-make-index msgdb)
     msgdb))
+
+(defun elmo-msgdb-list-messages (msgdb)
+  "List message numbers in the MSGDB."
+  (mapcar 'car (elmo-msgdb-get-number-alist msgdb)))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
@@ -355,20 +365,6 @@ FLAG is a symbol which is one of the following:
 		  elmo-msgdb-unread-uncached-mark
 		  elmo-msgdb-read-uncached-mark))))
 
-(defsubst elmo-msgdb-count-marks (msgdb)
-  (let ((new 0)
-	(unreads 0)
-	(answered 0))
-    (dolist (elem (elmo-msgdb-get-mark-alist msgdb))
-      (cond
-       ((string= (cadr elem) elmo-msgdb-new-mark)
-	(incf new))
-       ((member (cadr elem) (elmo-msgdb-unread-marks))
-	(incf unreads))
-       ((member (cadr elem) (elmo-msgdb-answered-marks))
-	(incf answered))))
-    (list new unreads answered)))
-
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."
   (elmo-msgdb-overview-entity-get-number
@@ -451,19 +447,6 @@ content of MSGDB is changed."
     (setq overview (elmo-msgdb-overview-sort-by-date overview))
     (message "Sorting...done")
     (list overview (nth 1 msgdb)(nth 2 msgdb))))
-
-(defun elmo-msgdb-make-entity (&rest args)
-  "Make an msgdb entity."
-  (cons (plist-get args :message-id)
-	(vector (plist-get args :number)
-		(plist-get args :references)
-		(plist-get args :from)
-		(plist-get args :subject)
-		(plist-get args :date)
-		(plist-get args :to)
-		(plist-get args :cc)
-		(plist-get args :size)
-		(plist-get args :extra))))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -973,6 +956,62 @@ Return CONDITION itself if no entity exists in msgdb."
   (and entity (aset (cdr entity) 8 extra))
   entity)
 
+;;; New APIs
+(defsubst elmo-msgdb-message-entity (msgdb key)
+  (elmo-get-hash-val 
+   (cond ((stringp key) key)
+	 ((numberp key) (format "#%d" key)))
+   (elmo-msgdb-get-entity-hashtb msgdb)))
+
+(defun elmo-msgdb-make-message-entity (&rest args)
+  "Make an message entity."
+  (cons (plist-get args :message-id)
+	(vector (plist-get args :number)
+		(plist-get args :references)
+		(plist-get args :from)
+		(plist-get args :subject)
+		(plist-get args :date)
+		(plist-get args :to)
+		(plist-get args :cc)
+		(plist-get args :size)
+		(plist-get args :extra))))
+
+(defsubst elmo-msgdb-message-entity-field (entity field &optional decode)
+  (and entity
+       (if (not decode)
+	   (case field
+	     (to (aref (cdr entity) 5))
+	     (cc (aref (cdr entity) 6))
+	     (date (aref (cdr entity) 4))
+	     (subject (aref (cdr entity) 3))
+	     (from (aref (cdr entity) 2))
+	     (message-id (car entity))
+	     (references (aref (cdr entity) 1))
+	     (size (aref (cdr entity) 7))
+	     (t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))
+	 (elmo-msgdb-get-decoded-cache
+	  (elmo-msgdb-message-entity-field entity field)))))
+
+(defsubst elmo-msgdb-message-entity-set-field (entity field value)
+  (and entity
+       (case field
+	 (to (aset (cdr entity) 5 value))
+	 (cc (aset (cdr entity) 6 value))
+	 (date (aset (cdr entity) 4 value))
+	 (subject (aset (cdr entity) 3 value))
+	 (from (aset (cdr entity) 2 value))
+	 (message-id (setcar entity value))
+	 (references (aset (cdr entity) 1 value))
+	 (size (aset (cdr entity) 7 value))
+	 (t
+	  (let ((extras (and entity (aref (cdr entity) 8)))
+		extra)
+	    (if (setq extra (assoc field extras))
+		(setcdr extra value)
+	      (aset (cdr entity) 8 (cons (cons (symbol-name field)
+					       value) extras))))))))
+
+;;; 
 (defun elmo-msgdb-overview-get-entity (id msgdb)
   (when id
     (let ((ht (elmo-msgdb-get-entity-hashtb msgdb)))
@@ -1302,13 +1341,6 @@ Return the updated INDEX."
 	  (if (string-match mark-regexp (cadr elem))
 	      (setq matched (cons (car elem) matched))))))
     matched))
-
-(put 'elmo-msgdb-do-each-entity 'lisp-indent-function '1)
-(def-edebug-spec elmo-msgdb-do-each-entity
-  ((symbolp form &rest form) &rest form))
-(defmacro elmo-msgdb-do-each-entity (spec &rest form)
-  `(dolist (,(car spec) (elmo-msgdb-get-overview ,(car (cdr spec))))
-     ,@form))
 
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))

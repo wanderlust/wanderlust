@@ -147,14 +147,15 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
+;; Note that this function is for internal use only.
 (luna-define-generic elmo-folder-msgdb (folder)
-  "Return the msgdb of FOLDER (on-demand loading).")
+  "Return the msgdb of FOLDER (on-demand loading).
+\(For internal use only.\)")
 
 (luna-define-method elmo-folder-msgdb ((folder elmo-folder))
   (or (elmo-folder-msgdb-internal folder)
       (elmo-folder-set-msgdb-internal folder
 				      (elmo-msgdb-load folder))))
-
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
 If optional LOAD-MSGDB is non-nil, msgdb is loaded.
@@ -196,8 +197,8 @@ If optional KEEP-KILLED is non-nil, killed-list is not cleared.")
 If optional NUMBERS is set, it is used as current NUMBERS.
 Otherwise, saved status for folder is used for comparison.
 Return value is cons cell or list:
- - a cons cell (NEWS . MESSAGES)
- - a list (RECENT UNSEEN MESSAGES) ; RECENT means NEWS, UNSEEN means UNREAD.")
+ - a cons cell (new . all)
+ - a list (new unread all)")
 
 (luna-define-generic elmo-folder-status (folder)
   "Returns a cons cell of (MAX-NUMBER . MESSAGES) in the FOLDER.")
@@ -205,10 +206,13 @@ Return value is cons cell or list:
 (luna-define-generic elmo-folder-reserve-status-p (folder)
   "If non-nil, the folder should not close folder after `elmo-folder-status'.")
 
-(defun elmo-folder-list-messages (folder &optional visible-only in-msgdb)
+(luna-define-generic elmo-folder-list-messages (folder &optional visible-only
+						       in-msgdb)
   "Return a list of message numbers contained in FOLDER.
 If optional VISIBLE-ONLY is non-nil, killed messages are not listed.
-If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
+If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
+(luna-define-method elmo-folder-list-messages ((folder elmo-folder)
+					       &optional visible-only in-msgdb)
   (let ((list (if in-msgdb
 		  t
 		(elmo-folder-list-messages-internal folder visible-only))))
@@ -216,9 +220,7 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
      (if (listp list)
 	 list
        ;; Use current list.
-       (mapcar
-	'car
-	(elmo-msgdb-get-number-alist (elmo-folder-msgdb folder))))
+       (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
      (elmo-folder-killed-list-internal folder))))
 
 (luna-define-generic elmo-folder-list-unreads (folder)
@@ -726,7 +728,10 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   nil) ; default is not writable.
 
 (luna-define-method elmo-folder-delete ((folder elmo-folder))
-  (elmo-msgdb-delete-path folder))
+  (when (yes-or-no-p (format "Delete msgdb of \"%s\"? "
+			     (elmo-folder-name-internal folder)))
+    (elmo-msgdb-delete-path folder)
+    t))
 
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
   (let* ((new-folder (elmo-make-folder new-name)))
@@ -738,11 +743,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	(error "Already exists folder: %s" new-name))
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
-
-(luna-define-method elmo-folder-rename-internal ((folder elmo-folder)
-						 new-folder)
-  (error "Cannot rename %s folder"
-	 (symbol-name (elmo-folder-type-internal folder))))
 
 (defsubst elmo-folder-search-fast (folder condition numbers)
   (when (and numbers
@@ -1142,6 +1142,76 @@ If CACHED is t, message is set as cached."
 			       (elmo-message-use-cache-p folder number))
     (elmo-folder-set-mark-modified-internal folder t)))
 
+;;; APIs for message-entity 
+(luna-define-generic elmo-folder-list-message-entities (folder)
+  "Return the all list of message-entity structure of FOLDER.")
+
+(luna-define-method elmo-folder-list-message-entities ((folder elmo-folder))
+  (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
+
+(luna-define-generic elmo-message-entity (folder key)
+  "Return the message-entity structure which matches to the KEY.
+KEY is a number or a string.
+A number is for message number in the FOLDER.
+A string is for message-d of the message.")
+
+(luna-define-method elmo-message-entity ((folder elmo-folder) key)
+  (elmo-msgdb-message-entity (elmo-folder-msgdb folder) key))
+
+(luna-define-generic elmo-message-entity-parent (folder entity)
+  "Return the parent message-entity structure in the FOLDER.
+ENTITY is the message-entity to get the parent.")
+
+(luna-define-method elmo-message-entity-parent ((folder elmo-folder) entity)
+  (elmo-msgdb-get-parent-entity entity (elmo-folder-msgdb folder)))
+
+(put 'elmo-folder-do-each-message-entity 'lisp-indent-function '1)
+(def-edebug-spec elmo-folder-do-each-message-entity
+  ((symbolp form &rest form) &rest form))
+
+(defmacro elmo-folder-do-each-message-entity (spec &rest form)
+  "Iterator for message entity in the folder.
+\(elmo-folder-do-each-message-entity \(entity folder\)
+ ... do the process using entity...
+\)"
+  `(dolist (,(car spec) (elmo-folder-list-message-entities ,(car (cdr spec))))
+     ,@form))
+
+(defmacro elmo-message-entity-number (entity)
+  `(elmo-msgdb-overview-entity-get-number ,entity))
+
+(defun elmo-message-entity-field (entity field &optional decode)
+  "Get message entity field value.
+ENTITY is the message entity structure obtained by `elmo-message-entity'.
+FIELD is the symbol of the field name.
+if optional DECODE is non-nil, returned value is decoded."
+  (elmo-msgdb-message-entity-field entity field decode))
+
+(defun elmo-message-entity-set-field (entity field value)
+  "Set message entity field value.
+ENTITY is the message entity structure.
+FIELD is the symbol of the field name.
+VALUE is the field value (raw)."
+  (elmo-msgdb-message-entity-set-field entity field value))
+
+(luna-define-generic elmo-folder-count-flags (folder)
+  "Count flagged message number in the msgdb of the FOLDER.
+Return a list of numbers (`new' `unread' `answered')")
+
+(luna-define-method elmo-folder-count-flags ((folder elmo-folder))
+  (let ((new 0)
+	(unreads 0)
+	(answered 0))
+    (dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
+      (cond
+       ((string= (cadr elem) elmo-msgdb-new-mark)
+	(incf new))
+       ((member (cadr elem) (elmo-msgdb-unread-marks))
+	(incf unreads))
+       ((member (cadr elem) (elmo-msgdb-answered-marks))
+	(incf answered))))
+    (list new unreads answered)))
+
 (defun elmo-message-set-flag (folder number flag)
   "Set message flag.
 FOLDER is a ELMO folder structure.
@@ -1469,6 +1539,12 @@ If update process is interrupted, return nil."
    (elmo-msgdb-get-number-alist
     (elmo-folder-msgdb folder))))
 
+(luna-define-generic elmo-folder-length (folder)
+  "Return number of messages in the FOLDER.")
+
+(luna-define-method elmo-folder-length ((folder elmo-folder))
+  (elmo-msgdb-length (elmo-folder-msgdb folder)))
+
 (defun elmo-msgdb-load (folder &optional silent)
   (unless silent
     (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))
@@ -1566,6 +1642,11 @@ Return a hashtable for newsgroups."
 	  (dolist (func (luna-class-find-functions class 'elmo-quit))
 	    (funcall func nil)))
       (setq types (cdr types)))))
+
+(luna-define-method elmo-folder-rename-internal ((folder elmo-folder)
+						 new-folder)
+  (error "Cannot rename %s folder"
+	 (symbol-name (elmo-folder-type-internal folder))))
 
 
 ;;; Define folders.
