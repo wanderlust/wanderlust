@@ -80,7 +80,7 @@ you have to add it to `elmo-digest-flags'.
   :group 'elmo
   :group 'elmo-setting)
 
-(defcustom elmo-msgdb-convert-type nil
+(defcustom elmo-msgdb-convert-type 'auto
   "*MODB conversion type."
   :type '(radio (const sync)
 		(const auto)

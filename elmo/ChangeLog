@@ -1,5 +1,8 @@
 2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-vars.el (elmo-msgdb-convert-type): Changed default value to
+	`auto'.
+
 	* modb-standard.el (modb-standard-economize-entity-size): Changed
 	default value to `t'.
 
