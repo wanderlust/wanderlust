@@ -156,7 +156,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	 'elmo-folder-msgdb-create "Creating msgdb..."
 	 percent))
       (setq numlist (cdr numlist)))
-    (message "Creating msgdb...done.")
+    (message "Creating msgdb...done")
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-nmz-folder))
