@@ -4295,13 +4295,15 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (wl-summary-redisplay-no-mime)
     (wl-summary-redisplay-internal nil nil arg)))
 
-(defsubst wl-summary-redisplay-internal (&optional folder number force-reload)
-  (interactive)
+(defun wl-summary-redisplay-internal (&optional folder number force-reload)
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
-	 no-folder-mark fld-buf fld-win thr-entity)
+	 no-folder-mark fld-buf fld-win thr-entity
+	 (elmo-message-fetch-confirm (or elmo-message-fetch-confirm
+					 (and force-reload
+					      elmo-message-fetch-threshold))))
     (if (and wl-thread-open-reading-thread
 	     (eq wl-summary-buffer-view 'thread)
 	     (not (wl-thread-entity-get-opened

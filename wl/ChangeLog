@@ -1,3 +1,9 @@
+2004-07-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-redisplay-internal): Change `defsubst'
+	to `defun', remove interactive form.
+	Set elmo-message-fetch-confirm when force-reload is non-nil.
+
 2004-07-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (toplevel): Removed unnecessary autoload.
