@@ -1261,12 +1261,12 @@ If current line is group folder, all subfolders are marked."
 			(get-text-property 0
 					   'wl-folder-entity-id
 					   (car entity))))
-	  (wl-folder-set-id-name wl-folder-entity-id
-				 (copy-sequence (car entity)) hashtb)
 	  (put-text-property 0 (length (car entity))
 			     'wl-folder-entity-id
 			     wl-folder-entity-id
-			     (car entity)))
+			     (car entity))
+	  (wl-folder-set-id-name wl-folder-entity-id
+				 (car entity) hashtb))
 	(and entities
 	     (wl-push entities entity-stack))
 	(setq entities (nth 2 entity)))
@@ -1275,12 +1275,12 @@ If current line is group folder, all subfolders are marked."
 			(get-text-property 0
 					   'wl-folder-entity-id
 					   entity)))
-	  (wl-folder-set-id-name wl-folder-entity-id
-				 (copy-sequence entity) hashtb)
 	  (put-text-property 0 (length entity)
 			     'wl-folder-entity-id
 			     wl-folder-entity-id
-			     entity))))
+			     entity)
+	  (wl-folder-set-id-name wl-folder-entity-id
+				 entity hashtb))))
       (setq wl-folder-entity-id (+ 1 wl-folder-entity-id))
       (unless entities
 	(setq entities (wl-pop entity-stack))))))

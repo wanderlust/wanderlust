@@ -1,3 +1,7 @@
+2000-09-13  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-folder.el (wl-folder-entity-assign-id): Undo the last change.
+
 2000-09-11  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-e21-highlight-folder-group-icon): New function.
