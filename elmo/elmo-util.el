@@ -1066,7 +1066,7 @@ Emacs 19.28 or earlier does not have `unintern'."
       (setq filename (substring filename (+ (match-end 0) 1))))
     (concat result filename)))
 
-(defsubst elmo-copy-file (src dst &otional ok-if-already-exists)
+(defsubst elmo-copy-file (src dst &optional ok-if-already-exists)
   (condition-case err
       (elmo-add-name-to-file src dst ok-if-already-exists)
     (error (copy-file src dst ok-if-already-exists t))))

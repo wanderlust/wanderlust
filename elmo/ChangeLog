@@ -2,6 +2,7 @@
 
 	* elmo-util.el (elmo-copy-file): Added argument
 	`ok-if-already-exists'.
+	(elmo-copy-file): Fixed typo.
 
 2001-11-21  Kenichi OKADA  <okada@opaopa.org>
 
