@@ -78,14 +78,19 @@
 
 (defun rfc2368-unhexify-string (string)
   "Unhexify STRING -- e.g. 'hello%20there' -> 'hello there'."
-  (with-temp-buffer
-    (insert string)
-    (goto-char (point-min))
-    (while (re-search-forward "%\\([0-9A-F][0-9A-F]\\)" nil t)
-      (replace-match (string (string-to-number (match-string 1)
-					       16))
-		       nil nil))
-    (buffer-string)))
+  (let ((start 0)
+	(buf))
+    (while (string-match "+\\|%\\(0D%0A\\|\\([0-9a-fA-F][0-9a-fA-F]\\)\\)"
+			 string start)
+      (push (substring string start (match-beginning 0)) buf)
+      (push (cond
+	     ((match-beginning 2)
+	      (vector (string-to-number (match-string 2 string) 16)))
+	     ((match-beginning 1) "\n")
+	     (t " "))
+	    buf)
+      (setq start (match-end 0)))  
+    (apply 'concat (nreverse (cons (substring string start) buf)))))
 
 (defun rfc2368-parse-mailto-url (mailto-url)
   "Parse MAILTO-URL, and return an alist of header-name, header-value pairs.
@@ -96,7 +101,14 @@ Note: make sure MAILTO-URL has been 'unhtmlized' (e.g. &amp; -> &), before
 calling this function."
   (let ((case-fold-search t)
 	prequery query headers-alist)
-
+    ;; Remove newline
+    (setq mailto-url
+	  (with-temp-buffer
+	    (insert mailto-url)
+	    (goto-char (point-min))
+	    (while (re-search-forward "\n" nil t)
+	      (replace-match ""))
+	    (buffer-string)))
     (if (string-match rfc2368-mailto-regexp mailto-url)
 	(progn
 
