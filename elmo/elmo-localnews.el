@@ -60,7 +60,7 @@
   (elmo-localnews-as-newsdir
    (elmo-localdir-delete-msgs dir number)))
 
-(defun elmo-localnews-read-msg (spec number outbuf &optional msgdb unread)
+(defun elmo-localnews-read-msg (spec number outbuf)
   (elmo-localnews-as-newsdir
    (elmo-localdir-read-msg spec number outbuf)))
 
