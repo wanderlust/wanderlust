@@ -2944,6 +2944,22 @@ example.
 @end group
 @end lisp
 
+@subsection on the format for sender name
+
+The format string @samp{%f} displays the return value of the function specified
+by @code{wl-summary-from-function}. If you use the function
+@code{wl-summary-default-from} (default), it displays sender name ordinarily,
+while displays the recipient names if the folder name matches with
+@code{wl-summary-showto-folder-regexp} and the sender is yourself.
+If the value of @code{wl-use-petname} is Non-nil, it uses petname to display.
+
+For example, to display recipient names for the message in @samp{+backup} if
+its sender is yourself, set up as follows.
+
+@lisp
+(setq wl-summary-showto-folder-regexp "^\\+backup$")
+@end lisp
+
 
 @node Key Bindings of Summary, Variables of Summary, Summary View, Summary
 @section Key bindings

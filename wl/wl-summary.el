@@ -209,6 +209,12 @@
     subject-string))
 
 (defun wl-summary-default-from (from)
+  "Instance of `wl-summary-from-function'.
+Ordinarily returns the sender name. Returns recipient names if (1)
+summary's folder name matches with `wl-summary-showto-folder-regexp'
+and (2) sender address is yours.
+
+See also variable `wl-use-petname'."
   (let (retval tos ng)
     (unless
 	(and (eq major-mode 'wl-summary-mode)

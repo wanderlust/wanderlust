@@ -2935,6 +2935,22 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 @end group
 @end lisp
 
+@subsection $B:9=P$7?M$NI=<(7A<0$K$D$$$F(B
+
+$B=q<05-9f(B @samp{%f} $B$O!"(B@code{wl-summary-from-function} $B$G;XDj$7$?4X?t$,JV$9CM$r(B
+$BI=<($7$^$9!#4X?t(B @code{wl-summary-default-from} $B$rMQ$$$k>l9g(B($B%G%U%)%k%H(B)$B!"DL>o$O(B
+$B:9=P?M$rI=<($7$^$9$,!"%U%)%k%@L>$,(B @code{wl-summary-showto-folder-regexp}
+$B$K%^%C%A$7!"$+$D:9=P?M$,<+J,$G$"$k%a%C%;!<%8$K$D$$$F$O!"08@h$rI=<($7$^$9!#(B
+$B$^$?!"(B @code{wl-use-petname} $B$,(B Non-nil $B$N>l9g$K$O%Z%C%H%M!<%`$rMQ$$$FI=<($7$^$9!#(B
+
+$BNc$($P!"(B@samp{+backup} $B$G$O<+J,$,=P$7$?%a%C%;!<%8$K$D$$$F$O08@h$rI=<($7$?$$>l9g!"(B
+$B<!$N$h$&$K@_Dj$7$^$9!#(B
+
+@lisp
+(setq wl-summary-showto-folder-regexp "^\\+backup$")
+@end lisp
+
+
 @node Key Bindings of Summary, Variables of Summary, Summary View, Summary
 @section $B%-!<%P%$%s%I(B
 @cindex Keybind, Summary Mode
