@@ -2,77 +2,26 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.10.1 から 2.12.0 への変更点
 
-** メッセージデータベースの構造が改善されました。
-   以下の設定をすれば、フォルダ選択時に自動的に旧来のタイプの msgdb を
-   新しいタイプのものに変換します。
-   (setq elmo-msgdb-default-type 'standard
-         elmo-msgdb-convert-type 'auto)
-   初期値は、上記の通りとなっています。
-
-** 一時マークと、それに対するアクションを自由に定義できるようになりました。
-
-   デフォルトでは以下のマークとアクションを定義しています。
-   従来から引き継がれたマークとアクション
-    "o" refile   (従来のリファイルと同じ)
-    "O" copy     (従来のコピーと同じ)
-    "d" dispose  (旧 delete, D マーク。wl-trash-folder に移動。
-    		  wl-dispose-folder-alist の値により挙動が決まる。)
-   新たに追加されたマークとアクション
-    "D" delete   (いきなり消去)
-    "i" prefetch (プリフェッチ)
-    "~" resend   (再送)
-   サマリで x キーを押すとマークに対応したアクションがすべて実行されます。
-   マークとアクションは、新規変数 wl-summary-mark-action-list によって定義
-   できます。詳しくは同変数の docstring を参照してください。
-
-** スパムフィルタモジュールが新たに追加されました。
-   以下のスパムフィルタに対応しています。
-   bogofilter
-   spamfilter
-   bsfilter
-   SpamAssassin
-   SpamOracle
-   正規表現によるヘッダ検査
-
-** 'mark フォルダは改名され、'flag フォルダになりました。
-   これに関連して、'flag フォルダのサマリで元メッセージがどこにあるかを
-   help-echo として表示するようになりました(これのふるまいは
-   wl-highlight-summary-line-help-echo-alist で制御できます)。
-
-** メッセージに対して任意のユーザ定義のフラグを付けられるようになりました。
-   サマリにおいて "F" でフラグの指定ができます。
-
-** 返信済みマーク A,a が追加されました。
-   サマリにおいて、返信したメッセージに A マーク(キャッシュなしの場合)
-   もしくは a マーク(キャッシュありの場合) が表示されます。
-
-** 転送済みマーク F,f が追加されました。
-   サマリにおいて、転送したメッセージに F マーク(キャッシュなしの場合)
-   もしくは f マーク(キャッシュありの場合) が表示されます。
-
-** フォルダの検索条件に、'フラグ' (メッセージの状態) が追加されました。
-   フラグには、unread(未読), important(重要), answered(返信済み),
-   digest (未読または重要), any (未読または重要または返信済み)があります。
-   例えば、次のフィルタフォルダは、%inbox のうち、未読または重要な
-   メッセージのみが出現します。
-   /flag:digest/%inbox
-
-** ドラフトの保存機能が改善されました。
-   IMAP フォルダや、Maildir フォルダを wl-draft-folder に指定できるように
-   なりました。
-
 ** idle-timer を利用してドラフトバッファの自動保存を実行します。
    変数 `wl-auto-save-drafts-interval' で挙動を変えられます。
 
 ** 'H' キー(ヘッダ全表示) および 'M' キー(MIMEなし表示)がトグルになりました。
    また、'M' で表示したメッセージを引用できるようになりました。
 
-** non-MIME PGP メッセージの検証、復号化のためのコマンドが追加されました。
-   メッセージバッファにおいて C-c:v, C-c:d でそれぞれ検証、復号化します。
-
 ** サマリを並べ替え条件の逆順でソートできるようになりました。
 
 ** メッセージバッファで複数行にわたる長いヘッダを省略表示します。
+
+** 新規 hook
+   wl-draft-reply-hook
+   wl-summary-reply-hook
+   wl-draft-forward-hook
+   wl-summary-forward-hook
+   wl-draft-kill-pre-hook
+   wl-summary-resend-hook
+
+** 廃止された hook
+   wl-reply-hook
 
 ** サマリバッファの永続マークの文字列が変更されました。
    デフォルトの設定ではキャッシュの有無を大文字小文字で示します。
@@ -97,13 +46,80 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** 変数 wl-refile-policy-alist は廃止されました。
 
+** スパムフィルタモジュールが新たに追加されました。
+   以下のスパムフィルタに対応しています。
+   bogofilter
+   spamfilter
+   bsfilter
+   SpamAssassin
+   SpamOracle
+   正規表現によるヘッダ検査
+
 ** バッチ処理用のモジュールが新たに追加されました。
+
+** メッセージデータベースの構造が改善されました。
+   以下の設定をすれば、msgdb 再構築(サマリバッファで s all RET)時に旧来の
+   タイプの msgdb を新しいタイプのものに変換します。
+   (setq elmo-msgdb-default-type 'standard
+         elmo-msgdb-convert-type 'sync)
+
+** ドラフトの保存機能が改善されました。
+   IMAP フォルダや、Maildir フォルダを wl-draft-folder に指定できるように
+   なりました。
+
+** 'mark フォルダは改名され、'flag フォルダになりました。
+   これに関連して、'flag フォルダのサマリで元メッセージがどこにあるかを
+   help-echo として表示するようになりました(これのふるまいは
+   wl-highlight-summary-line-help-echo-alist で制御できます)。
+
+** メッセージに対して任意のユーザ定義のフラグを付けられるようになりました。
+   サマリにおいて "F" でフラグの指定ができます。
+
+** 返信済みマーク A,a が追加されました。
+   サマリにおいて、返信したメッセージに A マーク(キャッシュなしの場合)
+   もしくは a マーク(キャッシュありの場合) が表示されます。
+
+** フォルダの検索条件に、'フラグ' (メッセージの状態) が追加されました。
+   フラグには、unread(未読), important(重要), answered(返信済み),
+   digest (未読または重要), any (未読または重要または返信済み)があります。
+   例えば、次のフィルタフォルダは、%inbox のうち、未読または重要な
+   メッセージのみが出現します。
+   /flag:digest/%inbox
 
 ** マルチフォルダとオリジナルフォルダの状態が同期されるようになりました。
    例えば、+inbox の未読情報が、*+inbox,+outbox にも反映されます。
 
-** 関数 wl-summary-resend-message は廃止されました。
-   その代わりに wl-summary-resend を使えば再送マークを付けることができます。
+** 一時マークと、それに対するアクションを自由に定義できるようになりました。
+
+   デフォルトでは以下のマークとアクションを定義しています。
+   従来から引き継がれたマークとアクション
+    "o" refile   (従来のリファイルと同じ)
+    "O" copy     (従来のコピーと同じ)
+    "d" dispose  (旧 delete, D マーク。wl-trash-folder に移動。
+    		  wl-dispose-folder-alist の値により挙動が決まる。)
+   新たに追加されたマークとアクション
+    "D" delete   (いきなり消去)
+    "i" prefetch (プリフェッチ)
+    "~" resend   (再送)
+   サマリで x キーを押すとマークに対応したアクションがすべて実行されます。
+   マークとアクションは、新規変数 wl-summary-mark-action-list によって定義
+   できます。詳しくは同変数の docstring を参照してください。
+
+** 関数 wl-summary-resend-message は廃止されました。その代わりに
+   wl-summary-resend を使えば再送マークを付けることができます。
+
+** 新規 face
+
+   wl-highlight-summary-disposed-face
+   wl-highlight-summary-prefetch-face
+   wl-highlight-summary-resend-face
+   wl-highlight-summary-answered-face
+   wl-highlight-action-argument-face
+
+** 廃止された face
+
+   wl-highlight-refile-destination-face
+   (wl-highlight-action-argument-face に変名)
 
 ** 変数 wl-delete-folder-alist は wl-dispose-folder-alist に
    名前が変更されました。
@@ -137,29 +153,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    wl-draft-buffer-style と wl-draft-reply-buffer-style に keep,full,split
    のいずれかを指定します。
 
-** 新規 hook
-   wl-draft-reply-hook
-   wl-summary-reply-hook
-   wl-draft-forward-hook
-   wl-summary-forward-hook
-   wl-draft-kill-pre-hook
-   wl-summary-resend-hook
-
-** 廃止された hook
-   wl-reply-hook
-
-** 新規 face
-
-   wl-highlight-summary-disposed-face
-   wl-highlight-summary-prefetch-face
-   wl-highlight-summary-resend-face
-   wl-highlight-summary-answered-face
-   wl-highlight-action-argument-face
-
-** 廃止された face
-
-   wl-highlight-refile-destination-face
-   (wl-highlight-action-argument-face に変名)
+** non-MIME PGP メッセージの検証、復号化のためのコマンドが追加されました。
+   メッセージバッファにおいて C-c:v, C-c:d でそれぞれ検証、復号化します。
 
 * 2.10.0 から 2.10.1 への変更点
   2.10.1 は 2.10.0 のバグ修正版です。

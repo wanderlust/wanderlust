@@ -5218,13 +5218,6 @@ SMTP AUTH による認証を行なうときの認証方式を文字列で指定します。
 などが指定できます。
 @code{nil} なら認証を行いません。
 
-@item wl-smtp-authenticate-realm
-@vindex wl-smtp-authenticate-realm
-初期設定は @code{nil}。
-SMTP AUTH による認証を行なうときのレルム(realm)を文字列で指定します。
-レルムの指定は DIGEST-MD5 等の認証方式で必要な場合があります。
-@code{nil} の場合はレルムの指定を行いません。
-
 @item wl-smtp-connection-type
 @vindex wl-smtp-connection-type
 初期設定は @code{nil}。
