@@ -1962,8 +1962,7 @@ the message is skipped at cursor move."
 (defcustom wl-refile-rule-alist nil
   "Refile rule alist.
 e.x.
-'(
-  (\"From\"
+'((\"From\"
    (\"teranisi@isl.ntt.co.jp\" . \"+teranisi\"))
   (\"x-ml-name\"
    (\"^Wanderlust\"    . \"+wl\")
