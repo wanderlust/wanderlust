@@ -358,16 +358,17 @@ Return number if put mark succeed"
 	  `(lambda (beg end)
 	     ,(wl-summary-action-docstring action)
 	     (interactive "r")
-	     (goto-char beg)
-	     (wl-summary-mark-region-subr
-	      (quote ,(intern (format "wl-summary-%s"
-				      (wl-summary-action-symbol action))))
-	      beg end
-	      (if (quote ,(wl-summary-action-argument-function action))
-		  (funcall (function 
-			    ,(wl-summary-action-argument-function action))
-			   (quote ,(wl-summary-action-symbol action))
-			   (wl-summary-message-number))))))
+	     (save-excursion
+	       (goto-char beg)
+	       (wl-summary-mark-region-subr
+		(quote ,(intern (format "wl-summary-%s"
+					(wl-summary-action-symbol action))))
+		beg end
+		(if (quote ,(wl-summary-action-argument-function action))
+		    (funcall (function
+			      ,(wl-summary-action-argument-function action))
+			     (quote ,(wl-summary-action-symbol action))
+			     (wl-summary-message-number)))))))
     (fset (intern (format "wl-summary-target-mark-%s"
 			  (wl-summary-action-symbol action)))
 	  `(lambda ()

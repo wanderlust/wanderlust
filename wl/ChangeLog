@@ -2,6 +2,8 @@
 
 	* wl-action.el (wl-summary-action-docstring): Add more info.
 	(wl-summary-target-mark-region): Remove duplicate definition.
+	(wl-summary-define-mark-action): Functions wl-summary-*-region
+	keep current position.
 
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
