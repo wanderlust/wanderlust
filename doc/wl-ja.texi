@@ -6806,6 +6806,7 @@ Wanderlust に関する議論はこのメーリングリストで行われます。
      10/17    expire-hide by 岡田さん。
      11/08    2.4.0 stable リリース。
 2001  7/04    2.6.0 stable リリース。
+      8/21    wl-addrmgr by 北本さん。
 @end example
 
 詳しい変遷は @file{ChangeLog} を御覧ください。

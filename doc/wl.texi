@@ -6877,6 +6877,8 @@ valuable advice and many pieces of code they contributed.
       9/12    biff feature with Satata-san & Yamaoka-san.
      10/17    expire-hide by Okada-san.
      11/08    Released 2.4.0 stable.
+2001  7/04    Released 2.6.0 stable.
+      8/21    wl-addrmgr by Kitamoto-san.
 @end example
 
 See @file{ChangeLog} for details.
