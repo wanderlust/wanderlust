@@ -1,3 +1,10 @@
+2000-10-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-fldmgr.el (wl-fldmgr-folders-header): Include version
+	number.
+	(wl-fldmgr-save-folders): Don't use `format' when insert
+	`wl-fldmgr-folders-header'.
+
 2000-10-26  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Don't use `fancy-splash-insert'.

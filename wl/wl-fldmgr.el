@@ -46,12 +46,13 @@
 (defvar wl-fldmgr-group-insert-opened nil)
 
 (defconst wl-fldmgr-folders-header
-  "#
+  (format
+   "#
 # Folder definition file
 # This file is generated automatically by %s.
 #
 
-")
+" (wl-version t)))
 
 ;;; Initial setup
 
@@ -1309,7 +1310,7 @@ return value is diffs '(-new -unread -all)."
     (message "Saving folders...")
     (set-buffer tmp-buf)
     (erase-buffer)
-    (insert (format wl-fldmgr-folders-header (wl-version t)))
+    (insert wl-fldmgr-folders-header)
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))
