@@ -1,3 +1,10 @@
+2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-biff-unnotify-hook): New variable.
+
+	* wl-util.el (wl-biff-notify): Run `wl-biff-unnotify-hook' when
+	biff notification is removed.
+
 2001-03-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-write-current-folder): Support petname.
