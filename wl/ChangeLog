@@ -1,5 +1,7 @@
 2002-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-line-format-spec-alist): Added @.
+
 	* wl.el (wl-check-variables-2): Check whether wl-summary-line-format
 	and wl-folder-summary-line-format-alist contain %T and %P.
 

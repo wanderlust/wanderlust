@@ -229,7 +229,8 @@ which are replaced by the given information:
     (?l (wl-summary-line-list-count))
     (?T (or wl-temp-mark " "))
     (?P (or wl-persistent-mark " "))
-    (?n (wl-summary-line-number)))
+    (?n (wl-summary-line-number))
+    (?@ (wl-summary-line-attached)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
 \(SPEC STRING-EXP\)
