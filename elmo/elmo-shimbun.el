@@ -357,11 +357,11 @@ See `shimbun-headers' for more detail about RANGE."
 
 (luna-define-method elmo-message-encache :around ((folder
 						   elmo-shimbun-folder)
-						  number)
+						  number &optional read)
   (if (elmo-folder-plugged-p folder)
       (luna-call-next-method)
     (if elmo-enable-disconnected-operation
-	(elmo-message-encache-dop folder number)
+	(elmo-message-encache-dop folder number read)
       (error "Unplugged"))))
 
 (luna-define-method elmo-folder-list-messages-internal :around

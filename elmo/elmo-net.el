@@ -496,11 +496,11 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (elmo-folder-unmark-important-dop folder numbers))
 
 (luna-define-method elmo-message-encache :around ((folder elmo-net-folder)
-						  number)
+						  number &optional read)
   (if (elmo-folder-plugged-p folder)
       (luna-call-next-method)
     (if elmo-enable-disconnected-operation
-	(elmo-message-encache-dop folder number)
+	(elmo-message-encache-dop folder number read)
       (error "Unplugged"))))
 
 (luna-define-generic elmo-message-fetch-plugged (folder number strategy

@@ -65,8 +65,8 @@ Automatically loaded/saved.")
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
     (elmo-folder-delete-messages-dop-delayed . "Delete")
-    (elmo-message-encache-dop . "Encache")
-    (elmo-create-folder-dop . "Create")
+    (elmo-message-encache . "Encache")
+    (elmo-create-folder . "Create")
     (elmo-folder-mark-as-read . "Read")
     (elmo-folder-unmark-read . "Unread")
     (elmo-folder-mark-as-important . "Important")
@@ -210,8 +210,8 @@ FOLDER is the folder structure."
 			   numbers)))
   t)
 
-(defsubst elmo-message-encache-dop (folder number)
-  (elmo-dop-queue-append folder 'elmo-message-encache (list number)))
+(defsubst elmo-message-encache-dop (folder number &optional read)
+  (elmo-dop-queue-append folder 'elmo-message-encache (list number read)))
 
 (defsubst elmo-create-folder-dop (folder)
   (elmo-dop-queue-append folder 'elmo-folder-create nil))

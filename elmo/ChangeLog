@@ -1,5 +1,13 @@
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-dop.el (elmo-dop-queue-method-name-alist): Fixed 'Encache' and
+	'Create'.
+	(elmo-message-encache-dop): Added argument `read'.
+
+	* elmo-shimbun.el (elmo-message-encache): Ditto.
+
+	* elmo-net.el (elmo-message-encache): Ditto.
+
 	* elmo-imap4.el (elmo-imap4-seen-messages): New buffer local variable.
 	(elmo-imap4-fetch-callback-1-subr): Save important message numbers to
 	elmo-imap4-seen-messages.
