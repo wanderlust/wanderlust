@@ -27,14 +27,14 @@ Select MIME Module
 
  (c) Emacs 20.1 to 20.3
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
     earlier.
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     Mule based on Emacs 19.34 can also run SEMI.  See the following web
     page to get more information (in Japanese).
