@@ -161,7 +161,7 @@ File content is encoded with MIME-CHARSET."
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
 				   "!Since" "!Before" "!ToCc")
-				 elmo-msgdb-extra-fields))))
+				 elmo-msgdb-extra-fields)) nil t))
 	 value)
     (setq field (if (string= field "")
 		    (setq field default)
@@ -859,25 +859,20 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(setq result (not result)))
     result))
 
-(defun elmo-condition-in-msgdb-p-internal (condition fields)
+(defun elmo-condition-find-key-internal (condition key)
   (cond
    ((vectorp condition)
-    (if (not (member (elmo-filter-key condition) fields))
+    (if (string= (elmo-filter-key condition) key)
 	(throw 'found t)))
    ((or (eq (car condition) 'and)
 	(eq (car condition) 'or))
-    (elmo-condition-in-msgdb-p-internal (nth 1 condition) fields)
-    (elmo-condition-in-msgdb-p-internal (nth 2 condition) fields))))
+    (elmo-condition-find-key-internal (nth 1 condition) key)
+    (elmo-condition-find-key-internal (nth 2 condition) key))))
 
-(defun elmo-condition-in-msgdb-p (condition)
-  (not (catch 'found
-	 (elmo-condition-in-msgdb-p-internal condition
-					     (append
-					      elmo-msgdb-extra-fields
-					      '("last" "first" "from"
-						"subject" "to" "cc" "since"
-						"before"))))))
- 
+(defun elmo-condition-find-key (condition key)
+  (catch 'found
+    (elmo-condition-find-key-internal condition key)))
+
 (defun elmo-buffer-field-condition-match (condition number number-list)
   (cond
    ((vectorp condition)
