@@ -776,6 +776,7 @@ Reply to author if WITH-ARG is non-nil."
 	    (wl-summary-unset-persistent-mark flag number)))
       ;; Parent buffer does not exist.
       (when (setq folder (and wl-draft-parent-folder
+			      (string< "" wl-draft-parent-folder)
 			      (wl-folder-get-elmo-folder
 			       wl-draft-parent-folder)))
 	(elmo-folder-open folder 'load-msgdb)
