@@ -2924,7 +2924,7 @@ If ARG, without confirm."
 
 (defun wl-summary-default-subject-filter (subject)
   (let ((case-fold-search t))
-    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
+    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\):" ""))
     (setq subject (elmo-replace-in-string subject "[ \t]" ""))
     (elmo-replace-in-string subject "^\\[.*\\]" "")))
 
