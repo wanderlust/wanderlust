@@ -114,10 +114,14 @@
 ;(setq wl-auto-select-next t)
 
 ;; 未読がないフォルダは飛ばす(SPCキーだけで読み進める場合は便利)
-;(setq wl-summary-next-no-unread 'skip-no-unread)
+;(setq wl-auto-select-next 'skip-no-unread)
 
 ;; 未読メッセージを優先的に読む
 ;(setq wl-summary-move-order 'unread)
+
+;; 着信通知の設定
+;(setq wl-biff-check-folder-list '("%inbox"))
+;(setq wl-biff-notify-hook '(ding))
 
 
 ;;; [[ ネットワーク ]]
@@ -187,7 +191,6 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
-;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn

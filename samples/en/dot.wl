@@ -75,16 +75,16 @@
 ;; Folder Carbon Copy
 ;(setq wl-fcc "+outbox")
 
-;; Confirm at exit time.
+;; Confirm before exitting Wanderlust.
 (setq wl-interactive-exit t)
 
-;; Confirm at message sending time.
+;; Confirm before sending message.
 (setq wl-interactive-send t)
 
 ;; Create opened thread.
 ;(setq wl-thread-insert-opened t)
 
-;; folder mode and summary mode is displayed at the same time. (3pane)
+;; Keep folder window beside summary. (3 pane)
 ;(setq wl-stay-folder-window t)
 
 ;; Open new frame for draft buffer.
@@ -97,7 +97,7 @@
 ;; Don't split large message.
 ;(setq mime-edit-split-message nil)
 
-;; Thread divide when change subject.
+;; Divide thread by change of subject.
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
 ;; Thread view
@@ -113,11 +113,15 @@
 ;; goto next folder when exit from summary.
 ;(setq wl-auto-select-next t)
 
-;; folder is skipped if there is no unread.
-;(setq wl-summary-next-no-unread 'skip-no-unread)
+;; skip folder if there is no unread message.
+;(setq wl-auto-select-next 'skip-no-unread)
 
 ;; jump to unread message in 'N' or 'P'.
 ;(setq wl-summary-move-order 'unread)
+
+;; notify mail arrival
+;(setq wl-biff-check-folder-list '("%inbox"))
+;(setq wl-biff-notify-hook '(ding))
 
 
 ;;; [[ Network ]]
@@ -182,7 +186,6 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
-;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
