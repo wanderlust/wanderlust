@@ -501,7 +501,8 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
 (defcustom wl-demo-background-color "#d9ffd9"
   "The color name for demo background.
 If nil, the default face background is used."
-  :type '(string :tag "Color name")
+  :type '(choice (const :tag "Default")
+		 (string :tag "Color name"))
   :group 'wl-pref)
 
 (defcustom wl-envelope-from nil
