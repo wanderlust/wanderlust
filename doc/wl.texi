@@ -1175,8 +1175,9 @@ multiple folders virtually.
 Format: @samp{*} @var{folder-1} [@samp{,} @var{folder-2}] @dots{} [@samp{,} @var{folder-N}]
 @end example
 
-After @samp{*} character, specify multiple folders you want to collect 
-separated by ',' like @samp{folder1,folder2,@dots{},folderN}.
+After @samp{*} character, specify multiple folders you want to collect
+separated by ',' like
+@samp{@var{folder-1},@var{folder-2},@dots{},@var{folder-N}}.
 
 Example:
 @example
@@ -1207,10 +1208,10 @@ In the @var{condition} part, you can specify following.
 
 @enumerate
 @item
-Partial filter: @samp{first:@var{NUMBER}}, @samp{last:@var{NUMBER}}
+Partial filter: @samp{first:@var{number}}, @samp{last:@var{number}}
 
-first: @var{NUMBER} messages are picked from top of folder.
-last:  @var{NUMBER} messages are picked from bottom of folder.
+first: @var{number} messages are picked from top of folder.
+last:  @var{number} messages are picked from bottom of folder.
 
 Example:
 @example
@@ -1219,20 +1220,20 @@ Example:
 @end example
 
 @item
-Date filter: @samp{since:@var{DATE}}, @samp{before:@var{DATE}}
+Date filter: @samp{since:@var{date}}, @samp{before:@var{date}}
 
-since: only messages arrived since @var{DATE} are picked.
-before: only messages arrived before @var{DATE} are picked.
+since: only messages arrived since @var{date} are picked.
+before: only messages arrived before @var{date} are picked.
 
-You can specify following as @var{DATE}.
+You can specify following as @var{date}.
 
 @example
 yesterday ->  a day before today.
 lastweek  ->  same day of last week.
 lastmonth ->  same day of last month.
 lastyear  ->  same day of last year.
-@var{NUMBER}daysago -> @var{NUMBER} days ago. (e.x. '3daysago')
-@var{DAY}-@var{MONTH}-@var{YEAR} -> specify date directly (ex. 1-Nov-1998)
+@var{number}daysago -> @var{number} days ago. (e.x. '3daysago')
+@var{day}-@var{month}-@var{year} -> specify date directly (ex. 1-Nov-1998)
 @end example
 
 Example:
@@ -1244,10 +1245,10 @@ Example:
 @end example
 
 @item
-Field filter: @samp{@var{FIELD}=@var{VALUE}}
+Field filter: @samp{@var{field}=@var{value}}
 
-All messages that have @var{FIELD} and its value is @var{VALUE} are picked.
-@var{FIELD} and @var{VALUE} are case insensitive.
+All messages that have @var{field} and its value is @var{value} are picked.
+@var{field} and @var{value} are case insensitive.
 
 Example:
 @example
@@ -1633,7 +1634,7 @@ folder color is changed.
 
 @item wl-folder-desktop-name
 @vindex wl-folder-desktop-name
-The initial setting is "Desktop".
+The initial setting is @samp{Desktop}.
 The name of top folder group.
 
 @item wl-folder-petname-alist
@@ -2061,8 +2062,8 @@ paste(yank) command pastes the folders on one cut or copy command
 by one paste command)
 
 @item
-You cannot cut 'Desktop' group.
-Also, you cannot paste folders at the outside of the 'Desktop'.
+You cannot cut @samp{Desktop} group.
+Also, you cannot paste folders at the outside of the @samp{Desktop}.
 
 @item
 You cannot copy folder group.
@@ -2316,26 +2317,26 @@ refiling is decided by the value of @code{wl-refile-rule-alist}.
 @code{wl-refile-rule-alist} is a list of a rule:
 
 @example
-(@var{FIELD} (@var{REGEXP} . @var{TARGET})
-       (@var{REGEXP} . @var{TARGET})
+(@var{field} (@var{regexp} . @var{target})
+       (@var{regexp} . @var{target})
        @dots{})
 @end example
 
-Each rule means `if @var{FIELD} value matches @var{REGEXP},
-then refile to @var{TARGET} folder'.
+Each rule means `if @var{field} value matches @var{regexp},
+then refile to @var{target} folder'.
 The rule matched first is applied.
 
-@var{FIELD} is a string of field name.  You can specify a list of field name
+@var{field} is a string of field name.  You can specify a list of field name
 string, too. In this case, if one of these fields is matched, then the
 rule is fired (i.e. OR condition).
 
-@var{REGEXP} is a regular expression for field value.  @var{TARGET} is a target
-folder string. You can specify a rule at @var{TARGET} part, too.  In this
+@var{regexp} is a regular expression for field value.  @var{target} is a target
+folder string. You can specify a rule at @var{target} part, too.  In this
 case, If the field value of the rule and the current rule is matched,
 then the current rule is fired (i.e. AND condition).
 
-In @var{TARGET} part, you can refer matched substring of @var{REGEXP}.
-To refer substring, specify following in @var{TARGET}:
+In @var{target} part, you can refer matched substring of @var{regexp}.
+To refer substring, specify following in @var{target}:
 
 @table @samp
 @item \&
@@ -2630,7 +2631,12 @@ Pipe current message's content to the external process.
 Print out current message's content.
 It uses @code{ps-print} module in Emacs 20.x.
 If you don't use color printer, you might want to set
-@code{wl-ps-print-buffer-func} to 'ps-print-buffer.
+@code{wl-ps-print-buffer-func} to @code{ps-print-buffer}.
+
+@lisp
+(setq wl-ps-print-buffer-func 'ps-print-buffer)
+@end lisp
+
 (@code{wl-summary-print-message})
 
 @item q
@@ -3129,7 +3135,7 @@ Specify language of the weekday.
 
 @item wl-summary-fix-timezone
 @vindex  wl-summary-fix-timezone
-The initial setting is "JST".
+The initial setting is @samp{JST}.
 Timezone to adjust summary's timezone.
 If nil, adjust to UTC.
 
@@ -3162,12 +3168,12 @@ If nil, max indent level is unlimited.
 
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
-The initial setting is "nobody@@nowhere?".
+The initial setting is @samp{nobody@@nowhere?}.
 A string which is displayed when there's no From: field in the message.
 
 @item wl-summary-no-subject-message
 @vindex  wl-summary-no-subject-message
-The initial setting is "(WL:No Subject in original.)".
+The initial setting is @samp{(WL:No Subject in original.)}.
 A string which is displayed when there's no Subject: field in the message.
 
 @item wl-summary-width
@@ -4066,7 +4072,7 @@ copied to the specified folders are appended to the folder
 You can create IMAP folders off-line.  The creation of folders are
 reflected in the servers when Wanderlust becomes on-line.  At that time, 
 if folders failed to be created on the servers for any reasons, messages
-re-filed to such folders are appended to the folder "+lost+found".
+re-filed to such folders are appended to the folder @samp{+lost+found}.
 
 @section Marking (IMAP4)
 
@@ -4119,9 +4125,9 @@ simply pressing @kbd{@key{SPC}} or @kbd{@key{RET}} in each labelled
 column modifies the values of these variables.
 
 @example
-"Queuing"               wl-draft-enable-queuing
-"AutoFlushQueue"        wl-auto-flush-queue
-"DisconnectedOperation" elmo-enable-disconnected-operation
+"Queuing"               @code{wl-draft-enable-queuing}
+"AutoFlushQueue"        @code{wl-auto-flush-queue}
+"DisconnectedOperation" @code{elmo-enable-disconnected-operation}
 @end example
 
 where @samp{[ON]} means its value is t, and @samp{[--]} means nil.
@@ -4607,7 +4613,7 @@ variables:
 
 @item wl-expire-archive-folder-name-fmt
 @vindex wl-expire-archive-folder-name-fmt
-The initial setting is "%s-%%05d;%s".
+The initial setting is @samp{%s-%%05d;%s}.
 This is a format string for archiving folders used in
 @code{wl-expire-archive-number1} and @code{wl-expire-archive-number2}.
 Note that you must specify the message number by @samp{%%d}, because it
@@ -4618,12 +4624,12 @@ well.
 
 @item wl-expire-archive-date-folder-name-fmt
 @vindex wl-expire-archive-date-folder-name-fmt
-The initial setting is "%s-%%04d%%02d;%s".
+The initial setting is @samp{%s-%%04d%%02d;%s}.
 This is a format string for archiving folders used in
 @code{wl-expire-archive-date}.
 Note that you must specify the message number by @samp{%%d}, because it
 is parsed twice by @code{format}.
-There should be @code{%%d} twice, one for the year and the other for the
+There should be @samp{%%d} twice, one for the year and the other for the
 month.
 
 If you modify this, adjust
@@ -4660,7 +4666,7 @@ resulting in
 
 @item wl-expire-archive-folder-num-regexp
 @vindex wl-expire-archive-folder-num-regexp
-The initial setting is "-\\([-0-9]+\\);".
+The initial setting is @samp{-\\([-0-9]+\\);}.
 This variable specifies the regular expression to be used for getting
 message numbers from multiple archiving folders specified by
 @code{elmo-list-folders}.
@@ -4668,7 +4674,7 @@ Set it in accordance with @code{wl-expire-archive-folder-name-fmt}.
 
 @item wl-expire-archive-date-folder-num-regexp
 @vindex wl-expire-archive-date-folder-num-regexp
-The initial setting is "-\\([-0-9]+\\);".
+The initial setting is @samp{-\\([-0-9]+\\);}.
 This is the regular expression to be used for getting message numbers
 from multiple archiving folders specified by @code{elmo-list-folders}.
 Set it in accordance with @code{wl-expire-archive-date-folder-name-fmt}.
@@ -5307,6 +5313,7 @@ pop3                      N     E     E     E
 Examples with other packages.
 
 @menu
+* imput::                       imput (im-wl.el)
 * BBDB::                        BBDB
 * supercite::                   supercite.el
 * mu-cite::                     mu-cite.el
@@ -5315,7 +5322,25 @@ Examples with other packages.
 @end menu
 
 
-@node BBDB, supercite, Living with other packages, Living with other packages
+@node imput, BBDB, Living with other packages, Living with other packages
+@subsection imput
+@pindex imput
+@cindex im-wl
+
+Place @file{util/im-wl.el} on the @code{load-path} and do the following
+settings.
+
+If imput is on the @code{exec-path} at the installation, @file{im-wl.el}
+is byte-compiled and installed.
+@xref{Install}.
+
+@lisp
+(autoload 'wl-draft-send-with-imput-async "im-wl")
+(setq wl-draft-send-func 'wl-draft-send-with-imput-async)
+@end lisp
+
+
+@node BBDB, supercite, imput, Living with other packages
 @subsection bbdb.el
 @pindex BBDB
 
@@ -5955,7 +5980,9 @@ The name of the file that contains encoded X-Face strings.
 
 @item wl-demo-display-logo
 @vindex wl-demo-display-logo
-If non-nil, bitmap image is shown on the opening demo.
+If non-nil, bitmap image is shown on the opening demo.  If you set
+@code{xpm} or @code{xbm}, (if possible) display selected image type
+logo.
 
 @item elmo-use-database
 @vindex  elmo-use-database
