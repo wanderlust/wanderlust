@@ -1,27 +1,4 @@
-2001-02-28  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo.el (elmo-folder-have-subfolder-p): New generic function.
-
-	* elmo-mark.el (elmo-folder-have-subfolder-p): Define.
-
-	* elmo-internal.el (elmo-folder-list-subfolders): Rewrite.
-
 2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-maildir.el (elmo-folder-msgdb-create): Fixed.
-
-	* elmo-imap4.el (elmo-folder-initialize): Fixed problem
-	when elmo-imap4-default-authenticate-type is nil.
-	(elmo-folder-list-subfolders): Ditto
-	(According to the reported of Bun Mizuhara <mizuhara@acm.org>)
-	(elmo-imap4-fetch-callback-1-subr): Renamed from
-	`elmo-imap4-fetch-callback-1' and define as inline function.
-	(elmo-imap4-fetch-callback-1):
-	Renamed from `elmo-imap4-fetch-callback'.
-	(elmo-imap4-parse-fetch): Funcall `elmo-imap4-fetch-callback'.
-
-	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Fixed
-	msgdb path (To keep compatibility with main trunk).
 
 	* elmo-vars.el (elmo-inhibit-number-mapping): New variable.
 

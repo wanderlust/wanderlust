@@ -248,9 +248,6 @@ If optional argument ONE-LEVEL is non-nil, only children of FOLDER is returned.
 (a folder which have children is returned as a list)
 Otherwise, all descendent folders are returned.")
 
-(luna-define-generic elmo-folder-have-subfolder-p (folder)
-  "Return non-nil when FOLDER has subfolders.")
-
 (luna-define-generic elmo-folder-exists-p (folder)
   "Returns non-nil when FOLDER exists.")
 
@@ -632,9 +629,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (luna-define-method elmo-folder-local-p ((folder elmo-folder))
   t)   ; default is local.
-
-(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-folder))
-  t)
 
 ;;; Folder info
 ;; Folder info is a message number information cache (hashtable)

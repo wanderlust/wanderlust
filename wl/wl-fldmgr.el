@@ -809,7 +809,7 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil)
 	  (inhibit-read-only t)
-	  (wl-folder-completion-function
+	  (wl-folder-completion-func
 	   (if wl-fldmgr-add-complete-with-current-folder-list
 	       (function wl-fldmgr-add-completion-subr)))
 	  tmp indent path diffs)
@@ -1023,7 +1023,7 @@ return value is diffs '(-new -unread -all)."
 		      (wl-folder-get-realname (wl-match-buffer 3))
 		      wl-folder-entity))
 	(message "Sorting...")
-	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
+	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-func))
 	(setcar (cddr entity) flist)
 	(wl-fldmgr-add-modified-access-list (car entity))
 	(setq wl-fldmgr-modified t)

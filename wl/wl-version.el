@@ -90,7 +90,7 @@
 (defvar mime-editor/codename)
 
 (defun wl-generate-user-agent-string ()
-  "A candidate of `wl-generate-mailer-string-function'.
+  "A candidate of `wl-generate-mailer-string-func'.
 Insert User-Agent field instead of X-Mailer field."
   (concat "User-Agent: "
 	  (wl-generate-user-agent-string-1

@@ -676,11 +676,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    ;; defined above.
 	    (wl-mime-setup)
 	    (fset 'wl-summary-from-func-internal
-		  (symbol-value 'wl-summary-from-function))
+		  (symbol-value 'wl-summary-from-func))
 	    (fset 'wl-summary-subject-func-internal
-		  (symbol-value 'wl-summary-subject-function))
+		  (symbol-value 'wl-summary-subject-func))
 	    (fset 'wl-summary-subject-filter-func-internal
-		  (symbol-value 'wl-summary-subject-filter-function))
+		  (symbol-value 'wl-summary-subject-filter-func))
 	    (setq elmo-no-from wl-summary-no-from-message)
 	    (setq elmo-no-subject wl-summary-no-subject-message)
 	    (setq succeed t)

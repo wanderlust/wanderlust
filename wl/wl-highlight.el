@@ -1034,8 +1034,8 @@ This function is defined for `window-scroll-functions'"
     (wl-highlight-message beg end nil)
     (unless for-draft
       (wl-highlight-message-add-buttons-to-header beg end)
-      (when wl-highlight-x-face-function
-	(funcall wl-highlight-x-face-function beg end)))
+      (when wl-highlight-x-face-func
+	(funcall wl-highlight-x-face-func beg end)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)
@@ -1158,7 +1158,7 @@ interpreted as cited text.)"
 	  (widen)
 	  ;; take off signature
 	  (if (and hack-sig (not too-big))
-	      (setq end (funcall wl-highlight-signature-search-function
+	      (setq end (funcall wl-highlight-signature-search-func
 				 (- end wl-max-signature-size) end)))
 	  (if hack-sig
 	      (put-text-property end (point-max)
