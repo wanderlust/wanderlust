@@ -1,3 +1,10 @@
+2004-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-resend-hook): New hook.
+
+	* wl-action.el (wl-summary-exec-action-resend-subr): Run
+	`wl-summary-resend-hook'.
+
 2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-forward-hook): Setup to put forwarded flag.

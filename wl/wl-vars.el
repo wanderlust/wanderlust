@@ -775,6 +775,9 @@ This hook runs on the summary buffer.")
   "A hook called when `wl-summary-forward' is called.
 This hook runs on the summary buffer.")
 
+(defvar wl-summary-resend-hook nil
+  "A hook runs on the resent message buffer before sending process starts.")
+
 (defvar wl-mail-setup-hook nil
   "A hook called when Draft is prepared.")
 (defvar wl-draft-reedit-hook '(wl-draft-remove-text-plain-tag)

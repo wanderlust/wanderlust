@@ -604,6 +604,7 @@ Return number if put mark succeed"
 	(goto-char beg)
 	(when (looking-at "From ")
 	  (replace-match "X-From-Line: ")))
+      (run-hooks 'wl-summary-resend-hook)
       ;; Send it.
       (wl-draft-dispatch-message)
       (kill-buffer (current-buffer)))
