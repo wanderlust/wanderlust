@@ -641,7 +641,7 @@ Group list contents is not included."
     (with-temp-buffer
       (message "Deleting Address...")
       (insert-file-contents wl-address-file)
-      (delete-matching-lines (concat "^[ \t]*" the-email))
+      (delete-matching-lines (concat "^[ \t]*" the-email "[ \t]+\".*\"[ \t]+\".*\"$"))
       (write-region (point-min) (point-max)
 		    wl-address-file nil 'no-msg)
       ;; Delete entries.
@@ -665,9 +665,16 @@ If already registerd, change it."
 						the-realname)))
     (when change-address
       (setq new-addr (read-from-minibuffer "E-Mail: " address))
-      (if (and (not (string= address new-addr))
-	       (assoc new-addr wl-address-list))
-	  (error "'%s' already exists" new-addr)))
+      (cond
+       ((or (not (stringp new-addr))
+	    (string-match "^[ \t]*$" new-addr))
+	(error "empty address"))
+       ((and (not (string= address new-addr))
+	     (assoc new-addr wl-address-list))
+	(error "'%s' already exists" new-addr))
+       (t
+	;; do nothing
+	)))
     ;; writing to ~/.address
     (let ((output-coding-system
 	   (mime-charset-to-coding-system wl-mime-charset)))

@@ -2352,6 +2352,10 @@ Automatically applied in draft sending time."
 	    (put-text-property (point-min) (point-max) 'face nil)
 	    (wl-highlight-message (point-min) (point-max) t))
 	(set-buffer-modified-p modified))))
+  (static-when (featurep 'xemacs)
+    ;; Cope with one of many XEmacs bugs that `recenter' takes
+    ;; a long time if there are a lot of invisible text lines.
+    (redraw-frame))
   (recenter n))
 
 ;;;; user-agent support by Sen Nagata

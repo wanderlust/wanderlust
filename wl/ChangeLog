@@ -1,3 +1,20 @@
+2004-02-19  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-highlight.el (wl-highlight-signature-search): Don't use
+	re-search-backward for a long word since it is possible to crash
+	XEmacs because of a bug.
+
+2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-highlight-and-recenter): Redraw frame just
+	before calling `recenter' in order to cope with an XEmacs bug.
+
+2004-01-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-address.el (wl-address-delete): Avoid mis-deleting.
+	* wl-address.el (wl-address-add-or-change): Don't add empty
+	address.
+
 2004-04-03  Colin Rafferty  <colin.rafferty@morganstanley.com>
 
 	* wl-highlight.el (wl-highlight-message): Change to strict regexp
