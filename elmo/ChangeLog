@@ -1,4 +1,73 @@
-2001-04-24  Hiroya Murata  <hiroya@use-ebisu.co.jp>
+2001-05-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-synchronize): Don't check important mark in
+	mark folder.
+
+2001-05-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-fetch): Define.
+	(elmo-message-fetch-with-cache-process): New generic method.
+	(elmo-message-fetch-internal): New generic method.
+	(elmo-folder-synchronize): 
+
+	* elmo-archive.el (elmo-message-fetch-internal): Define.
+	(elmo-message-fetch): Eliminated.
+
+	* elmo-localdir.el (elmo-message-fetch-internal): Define.
+	(elmo-message-fetch): Eliminated.
+
+	* elmo-map.el (elmo-map-message-fetch): Eliminated optional
+	argument OUTBUF.
+	(elmo-message-fetch-internal): Define (Renamed from `elmo-message-fetch').
+
+	* elmo-cache.el (elmo-message-fetch-with-cache-process): Define.
+	(elmo-map-message-fetch): Merged with elmo-cache-folder-map-message-fetch.
+
+	* elmo-mark.el (elmo-message-fetch-with-cache-process): Define.
+	(elmo-map-message-fetch): Merged with `elmo-mark-folder-map-message-fetch'.
+
+	* elmo-maildir.el (elmo-map-message-fetch): Rewrite.
+
+	* elmo-nmz.el (elmo-map-message-fetch): Ditto.
+
+	* elmo-shimbun.el (elmo-map-message-fetch): Ditto.
+
+	* elmo-net.el (elmo-message-fetch-plugged): Remove cache process.
+	(elmo-message-fetch-unplugged): New generic method.
+	(elmo-message-fetch-internal): Remove cache process (Renamed from
+	`elmo-message-fetch').
+
+	* elmo-nntp.el (elmo-message-fetch-with-cache-process): Define.
+	(elmo-message-fetch): Eliminated.
+	(elmo-message-fetch-unplugged): Ditto.
+
+	* elmo-imap4.el (elmo-message-fetch-unplugged): Remove cache process.
+
+2001-05-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-multi.el (elmo-multi-folder-append-msgdb): Fixed structure
+	of `to-be-deleted' from number-alist to number-list.
+
+2001-04-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-folder-unmark-important): Fixed typo.
+	(elmo-folder-mark-as-important): Ditto.
+
+2001-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder): Added process-duplicates slot.
+
+	* elmo-pipe.el (elmo-folder-mark-as-read): Define.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-important): Ditto.
+
+	* elmo-multi.el (elmo-multi-folder-append-msgdb): Implemented
+	duplicated message processing.
+
+	* elmo.el (elmo-generic-folder-append-msgdb): Ditto.
+
+2001-04-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-list-subdirectories-1): New function.
 	(elmo-list-subdirectories): Use `elmo-list-subdirectories-1'.
@@ -160,6 +229,11 @@
 	sb-fml.el, sb-lump.el, sb-mew.el, sb-mhonarc.el,
 	sb-netbsd.el, sb-sponichi.el, sb-text.el, sb-wired.el,
 	sb-xemacs.el, sb-yomiuri.el, sb-zdnet.el: New files.
+
+2001-03-27  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-imap4-list-folders): Fixed problem when
+	hierarchy is t.
 
 2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
