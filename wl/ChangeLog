@@ -1,3 +1,7 @@
+2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.13.2.
+
 2005-02-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-news.el.in (wl-news-mode-map): Bind commands of outline-mode
