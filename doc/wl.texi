@@ -2674,8 +2674,8 @@ Your answer is printed in the summary line.
 
 @subsection Persistent Marks
 
-There are five persistent marks, @samp{N}, @samp{?}, @samp{U}, @samp{!},
-@samp{u}, @samp{A}, @samp{&} and @samp{$}.
+There are five persistent marks, @samp{!}, @samp{N}, @samp{n}, @samp{U},
+@samp{u}, @samp{A}, @samp{a} and @samp{$}.
 
 The persistent mark indicates the message's status and it is saved.
 Each persistent mark indicates:
@@ -2683,18 +2683,22 @@ Each persistent mark indicates:
 @table @samp
 @item N
 It is new message.
-@item ?
-It is new but cached message.
+@item n
+It is new message. It differs from @samp{N} that message with @samp{n}
+is already cached.
 @item U
 It is unread message.
-@item !
-It is unread but cached message.
 @item u
-It is read but it is not cached.
+It is unread message. It differs from @samp{U} that message with @samp{u}
+is already cached.
+@item !
+It is message already read. It differs from message without mark that
+message with @samp{!} is not cached yet.
 @item A
 It is already replied message.
-@item &
-It is already replied but cached message.
+@item a
+It is already replied message. It differs from @samp{A} that message
+with @samp{u} is already cached.
 @item $
 It is a message with some global flag.  It is convenient to put this
 mark on the messages to remember (If you want to remember to write a
@@ -2708,7 +2712,7 @@ If the message is read and cached (or local message),there are no
 persistent mark.
 @end table
 
-@samp{N}, @samp{U}, @samp{u}, @samp{A} indicates that the message have
+@samp{N}, @samp{U}, @samp{!}, @samp{A} indicates that the message have
 no cache.  Messages with the marks other than these, you can read them
 in the offline status even they are in the IMAP folder or netnews
 folder.
@@ -4123,6 +4127,11 @@ the thread is divided.
 The initial setting is t.
 If non-nil, cursor point is moved to the center of the summary window.
 
+@item wl-summary-max-thread-depth
+@vindex wl-summary-max-thread-depth
+The initial setting is 30.
+If thread depth is larger than this value, divide it.
+
 @item wl-summary-divide-thread-when-subject-changed
 @vindex wl-summary-divide-thread-when-subject-changed
 The initial setting is @code{nil}.  If non-nil, thread is split if
@@ -5010,6 +5019,14 @@ as an argument.
 @vindex wl-draft-use-frame
 The initial setting is @code{nil}.
 If non-nil, use new frame for the draft.
+
+@item wl-draft-reply-default-position
+@vindex wl-draft-reply-default-position
+The initial setting is @code{body}.
+Specify initial cursor position on draft buffer for reply.
+@code{body} is to move cursor to the top of the message body,
+@code{bottom} to the bottom of the message body, and @code{top} to the
+top of the header.
 
 @item wl-draft-truncate-lines
 @vindex wl-draft-truncate-lines
