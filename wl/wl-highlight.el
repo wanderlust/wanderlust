@@ -994,28 +994,29 @@ Variables used:
       (let ((s start)) (setq start end end s)))
   (let (lines too-big gc-message e p hend i percent)
     (save-excursion
-      (unless wl-summary-lazy-highlight
-	(setq lines (count-lines start end)
-	      too-big (and wl-highlight-max-summary-lines
-			   (> lines wl-highlight-max-summary-lines))))
-      (goto-char start)
-      (setq i 0)
-      (while (and (not (eobp))
-		  (< (point) end))
-	(wl-highlight-summary-current-line nil nil
-					   (or wl-summary-lazy-highlight
-					       wl-summary-scored))
-	(when (and (not wl-summary-lazy-highlight)
-		   (> lines elmo-display-progress-threshold))
-	  (setq i (+ i 1))
-	  (setq percent (/ (* i 100) lines))
-	  (if (or (zerop (% percent 5)) (= i lines))
-	      (elmo-display-progress
-	       'wl-highlight-summary "Highlighting..."
-	       percent)))
-	(forward-line 1))
-      (unless wl-summary-lazy-highlight
-	(message "Highlighting...done")))))
+      (save-match-data
+	(unless wl-summary-lazy-highlight
+	  (setq lines (count-lines start end)
+		too-big (and wl-highlight-max-summary-lines
+			     (> lines wl-highlight-max-summary-lines))))
+	(goto-char start)
+	(setq i 0)
+	(while (and (not (eobp))
+		    (< (point) end))
+	  (wl-highlight-summary-current-line nil nil
+					     (or wl-summary-lazy-highlight
+						 wl-summary-scored))
+	  (when (and (not wl-summary-lazy-highlight)
+		     (> lines elmo-display-progress-threshold))
+	    (setq i (+ i 1))
+	    (setq percent (/ (* i 100) lines))
+	    (if (or (zerop (% percent 5)) (= i lines))
+		(elmo-display-progress
+		 'wl-highlight-summary "Highlighting..."
+		 percent)))
+	  (forward-line 1))
+	(unless wl-summary-lazy-highlight
+	  (message "Highlighting...done"))))))
 
 (defun wl-highlight-summary-window (&optional win beg)
   "Highlight summary window.
