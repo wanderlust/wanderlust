@@ -6693,6 +6693,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @code{elmo-split-rule} の @samp{CONDITION} として指定出来る関数に 
 @code{spam-p} が追加されます。この関数は、対象のメッセージが spam と判定
 された時に真となります。
+@xref{Split messages}
 
 以下に例を示します。
 
@@ -6764,8 +6765,8 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @subsection カスタマイズ変数
 
 @table @code
-@item wl-spam-folder-name
-@vindex wl-spam-folder-name
+@item wl-spam-folder
+@vindex wl-spam-folder
 spam と判定されたメッセージを移動するフォルダ名を設定します。
 初期設定は、@samp{+spam}。
 

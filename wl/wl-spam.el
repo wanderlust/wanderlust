@@ -41,7 +41,7 @@
   "Spam configuration for wanderlust."
   :group 'wl)
 
-(defcustom wl-spam-folder-name "+spam"
+(defcustom wl-spam-folder "+spam"
   "*Spam folder."
   :type 'string
   :group 'wl-spam)
@@ -103,7 +103,7 @@ See `wl-summary-mark-action-list' for the detail of element."
   :group 'wl-spam)
 
 (defun wl-spam-domain (folder-name)
-  (cond ((string= folder-name wl-spam-folder-name)
+  (cond ((string= folder-name wl-spam-folder)
 	 'spam)
 	((wl-string-match-member folder-name
 				 wl-spam-undecided-folder-regexp-list)
@@ -273,7 +273,7 @@ See `wl-summary-mark-action-list' for the detail of element."
 					  (eq domain 'good)))
       (message "Registering spam...done"))
     (wl-summary-move-mark-list-messages mark-list
-					wl-spam-folder-name
+					wl-spam-folder
 					"Refiling spam...")))
 
 (defun wl-summary-exec-action-refile-with-register (mark-list)
@@ -322,7 +322,7 @@ See `wl-summary-mark-action-list' for the detail of element."
   (when (elmo-spam-message-spam-p (elmo-spam-processor)
 				  wl-summary-buffer-elmo-folder
 				  (elmo-message-entity-number entity))
-    wl-spam-folder-name))
+    wl-spam-folder))
 
 (defun wl-spam-setup ()
   (add-hook 'wl-summary-prepared-hook #'wl-summary-auto-check-spam)
