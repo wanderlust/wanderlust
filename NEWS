@@ -6,6 +6,15 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Now Maildir is usable on Windows systems.
    Note that it does not conform to the Maildir standard.
 
+** Fixed the problem of the cache flag inconsistency on the filter folder etc.
+   There was a problem that the summary buffer displays cached messages as
+   uncached in some folders.
+
+** Fixed the bug that the new flag cannot be changed in some cases.
+
+** Fixed the bug that flag are not taken over correctly from Maildir.
+   Only the flag of the first message was taken over in earlier versions.
+
 ** Fixed the problem in display module for IMAP messages.
    Now partially fetched messages are displayed correctly.
    If a message included child messages, their headers were not displayed.
