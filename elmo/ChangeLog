@@ -1,6 +1,6 @@
-2001-12-27  Kenichi OKADA  <okada@opaopa.org>
+2001-12-27  Taiji Can  <Taiji.Can@grd.advantest.co.jp>
 
-	* elmo-nntp.el (elmo-network-initialize-session): Fixed for Response '400'
+	* elmo-nntp.el (elmo-network-initialize-session): Fixed for NNTP response.
 
 2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
