@@ -935,8 +935,7 @@ Set `wl-score-cache' nil."
 		   'date))
 		 expire)
 	      (throw 'break t))
-	  
-	  (wl-push (car rnumbers))
+	  (wl-push (car rnumbers) msgs)
 	  (setq rnumbers (cdr rnumbers))))
       msgs)))
 
