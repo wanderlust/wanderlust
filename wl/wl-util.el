@@ -512,10 +512,10 @@ that `read' can handle, whenever this is possible."
               (setq fld-name nil))
 	  (if (eq (length (setq port
 				(elmo-match-string 2 url))) 0)
-              (setq port (int-to-string elmo-default-nntp-port)))
+              (setq port (int-to-string elmo-nntp-default-port)))
 	  (if (eq (length (setq server
                                 (elmo-match-string 1 url))) 0)
-              (setq server elmo-default-nntp-server))
+              (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
 	  (if (eq (length (setq msg
 				(elmo-match-string 4 url))) 0)

@@ -41,23 +41,7 @@
   :group 'news
   :group 'mail)
 
-;; NNTP
-(defvar elmo-default-nntp-server  "localhost"
-  "*Default NNTP server.")
-(defvar elmo-default-nntp-user nil
-  "*Default User of NNTP.  nil means no user authentication.")
-(defvar elmo-default-nntp-port 119
-  "*Default Port number of NNTP.")
-(defvar elmo-default-nntp-stream-type nil
-  "*Default stream type for NNTP.
-Any symbol value of `elmo-network-stream-type-alist'.")
-(defvar elmo-nntp-stream-type-alist nil
-  "*Stream bindings for NNTP.
-This is taken precedence over `elmo-network-stream-type-alist'.")
-
 ;; Local
-(defvar elmo-localdir-folder-path "~/Mail"
-  "*Local mail folder path.")
 (defvar elmo-localnews-folder-path "~/News"
   "*Local news folder path.")
 (defvar elmo-maildir-folder-path "~/Maildir"
@@ -65,6 +49,9 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 (defvar elmo-maildir-list '("\\+~/Maildir")
   "*All Folders that match this list will be treated as Maildir.
 Each elements are regexp of folder name (This is obsolete).")
+
+(defvar elmo-msgdb-file-header-chop-length 2048
+  "*Number of bytes to get header in one reading from file.")
 
 (defvar elmo-msgdb-dir "~/.elmo"
   "*ELMO Message Database path.")
@@ -133,10 +120,6 @@ For disconnected operations.")
 (defvar elmo-enable-disconnected-operation nil
   "*Enable disconnected operations.")
 
-(defvar elmo-nntp-overview-fetch-chop-length 200
- "*Number of overviews to fetch in one request in nntp.")
-(defvar elmo-localdir-header-chop-length 2048
-  "*Number of bytes to get header in one reading from file.")
 
 (defvar elmo-auto-change-plugged 600
   "*Time to expire change plugged state automatically, as the number of seconds.
@@ -164,13 +147,11 @@ If function, return value of function.")
   "*Path separator.")
 (defvar elmo-plugged t)
 (defvar elmo-use-semi nil)
+
 (defvar elmo-no-subject "(No Subject in original.)"
   "*A string used when no subject field exists.")
 (defvar elmo-no-from "nobody@nowhere?"
   "*A string used when no from field exists.")
-
-(defvar elmo-multi-divide-number 100000
-  "*Multi divider number.")
 
 ;; database dynamic linking
 (defvar elmo-database-dl-module
@@ -224,14 +205,9 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 
 (defvar elmo-cache-expire-default-age 50
   "Cache expiration age (days).")
+
 (defvar elmo-cache-dirname "cache"
   "Directory name for cache storage.")
-
-(defvar elmo-use-buffer-cache t
-  "Use buffer cache.")
-
-(defvar elmo-buffer-cache-size 10
-  "*Number of buffer for message cache.")
 
 (defvar elmo-pack-number-check-strict t
   "Pack number strictly.")
@@ -259,23 +235,6 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
     ("|"  . " p")
     ("/"  . " s")
     ("\\" . " b")))
-
-(defvar elmo-nntp-use-cache t
-  "Use cache in nntp folder.")
-
-(defvar elmo-pop3-use-cache t
-  "Use cache in pop3 folder.")
-
-(defvar elmo-localdir-lockfile-list nil)
-
-(defvar elmo-nntp-max-number-precedes-list-active nil
-  "Non-nil means max number of msgdb is set as the max number of `list active'.
-(Needed for inn 2.3 or later?).")
-
-(defvar elmo-pop3-send-command-synchronously nil
-  "If non-nil, commands are send synchronously.
-If server doesn't accept asynchronous commands, this variable should be
-set as non-nil.")
 
 (defvar elmo-hash-minimum-size 1023
   "Minimum size of hash table.")
