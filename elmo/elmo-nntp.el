@@ -561,8 +561,7 @@ Don't cache if nil.")
      (read (current-buffer)))))
 
 (luna-define-method elmo-folder-list-messages-internal ((folder
-							 elmo-nntp-folder)
-							&optional nohide)
+							 elmo-nntp-folder))
   (let ((session (elmo-nntp-get-session folder))
 	(group   (elmo-nntp-folder-group-internal folder))
 	response numbers use-listgroup)

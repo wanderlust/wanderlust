@@ -109,7 +109,7 @@
    (elmo-filter-folder-target-internal folder) numbers))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-filter-folder) &optional nohide)
+  ((folder elmo-filter-folder))
   (elmo-folder-search (elmo-filter-folder-target-internal folder)
 		      (elmo-filter-folder-condition-internal folder)))
 

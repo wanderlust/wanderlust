@@ -290,41 +290,32 @@ even an operation concerns the unplugged folder."
   (save-match-data
     (elmo-dop-queue-append folder "prefetch-msgs" msgs)))
 
-(defun elmo-dop-list-folder (folder &optional nohide)
-  (if (or (memq (elmo-folder-get-type folder)
-		'(imap4 nntp pop3 filter pipe))
-	  (and (elmo-multi-p folder) (not (elmo-folder-local-p folder))))
-      (if elmo-enable-disconnected-operation
-	  (let* ((path (elmo-msgdb-expand-path folder))
-		 (number-alist (elmo-msgdb-number-load path))
-		 (number-list (mapcar 'car number-alist))
-		 (append-list (elmo-dop-append-list-load folder))
-		 (append-num (length append-list))
-		 (killed (and elmo-use-killed-list
-			      (elmo-msgdb-killed-list-load path)))
-		 alreadies
-		 max-num
-		 (i 0))
-	    (setq killed (nconc (elmo-dop-list-deleted folder number-alist)
-				killed))
-	    (while append-list
-	      (if (rassoc (car append-list) number-alist)
-		  (setq alreadies (append alreadies
-					  (list (car append-list)))))
-	      (setq append-list (cdr append-list)))
-	    (setq append-num (- append-num (length alreadies)))
-	    (setq max-num
-		  (or (nth (max (- (length number-list) 1) 0)
-			   number-list) 0))
-	    (while (< i append-num)
-	      (setq number-list
-		    (append number-list
-			    (list (+ max-num i 1))))
-	      (setq i (+ 1 i)))
-	    (elmo-living-messages number-list killed))
-	(error "Unplugged"))
-    ;; not imap4 folder...list folder
-    (elmo-call-func folder "list-folder")))
+(defun elmo-dop-list-messages (folder)
+  (let* ((path (elmo-msgdb-expand-path folder))
+	 (number-alist (elmo-msgdb-number-load path))
+	 (number-list (mapcar 'car number-alist))
+	 (append-list (elmo-dop-append-list-load folder))
+	 (append-num (length append-list))
+	 alreadies
+	 killed
+	 max-num
+	 (i 0))
+    (setq killed (elmo-dop-list-deleted folder number-alist))
+    (while append-list
+      (if (rassoc (car append-list) number-alist)
+	  (setq alreadies (append alreadies
+				  (list (car append-list)))))
+      (setq append-list (cdr append-list)))
+    (setq append-num (- append-num (length alreadies)))
+    (setq max-num
+	  (or (nth (max (- (length number-list) 1) 0)
+		   number-list) 0))
+    (while (< i append-num)
+      (setq number-list
+	    (append number-list
+		    (list (+ max-num i 1))))
+      (setq i (+ 1 i)))
+    (elmo-living-messages number-list killed)))
 
 (defun elmo-dop-count-appended (folder)
   (length (elmo-dop-append-list-load folder)))

@@ -277,7 +277,7 @@
       (buffer-string))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-localdir-folder) &optional nohide)
+  ((folder elmo-localdir-folder))
   (elmo-localdir-list-subr folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-localdir-folder))

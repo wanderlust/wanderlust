@@ -182,10 +182,9 @@ Return value is a cons cell of NEWS and MESSAGES.")
 (luna-define-generic elmo-folder-status (folder)
   "Returns a cons cell of (MAX-NUMBER . MESSAGES) in the FOLDER.")
 
-(defun elmo-folder-list-messages (folder &optional visible-only)
-  "Return a list of message numbers contained in FOLDER.
-If optional VISIBLE-ONLY is non-nil, killed messages are not listed."
-  (let ((list (elmo-folder-list-messages-internal folder visible-only))
+(defun elmo-folder-list-messages (folder)
+  "Return a list of message numbers contained in FOLDER."
+  (let ((list (elmo-folder-list-messages-internal folder))
 	(killed (elmo-folder-killed-list-internal folder))
 	numbers)
     (setq numbers
@@ -228,8 +227,7 @@ IMPORTANT-MARK is the important mark."
 		    (car x))))
 	     (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))))
 
-(luna-define-generic elmo-folder-list-messages-internal (folder &optional
-								visible-only)
+(luna-define-generic elmo-folder-list-messages-internal (folder)
   ;; Return a list of message numbers contained in FOLDER.
   ;; Return t if the message list is not available.
   )
@@ -1032,8 +1030,7 @@ NEW-MARK, UNREAD-CACHED-MARK, READ-UNCACHED-MARK, and IMPORTANT-MARK
 are mark strings for new messages, unread but cached messages,
 read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
-read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
-are thrown away and synchronized.
+read mark status.
 
 Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
@@ -1060,8 +1057,7 @@ CROSSED is cross-posted message number."
 			    (concat important-mark read-uncached-mark))
 			   seen-list))
 	  ;; Make killed list as nil.
-	  (unless (eq ignore-msgdb 'visible-only)
-	    (elmo-folder-set-killed-list-internal folder nil))
+	  (elmo-folder-set-killed-list-internal folder nil)
 	  (elmo-folder-set-msgdb-internal folder
 					  (elmo-msgdb-clear))))
     (elmo-folder-check folder)
@@ -1070,9 +1066,7 @@ CROSSED is cross-posted message number."
 	  (message "Checking folder diff...")
 	  ;; TODO: killed list is loaded in elmo-folder-open and
 	  ;; list-messages use internal killed-list-folder.
-	  (setq diff (elmo-list-diff (elmo-folder-list-messages
-				      folder
-				      (eq 'visible-only ignore-msgdb))
+	  (setq diff (elmo-list-diff (elmo-folder-list-messages folder)
 				     (unless ignore-msgdb
 				       (sort (mapcar 
 					      'car 

@@ -1846,15 +1846,8 @@ Return nil if no complete line has arrived."
        (elmo-imap4-response-value status 'messages)))))
 
 (luna-define-method elmo-folder-list-messages-plugged ((folder
-							elmo-imap4-folder)
-						       &optional nohide)
-  (elmo-imap4-list folder
-		   (let ((max (elmo-msgdb-max-of-killed
-			       (elmo-folder-killed-list-internal folder))))
-		     (if (or nohide
-			     (null (eq max 0)))
-			 (format "uid %d:*" (1+ max))
-		       "all"))))
+							elmo-imap4-folder))
+  (elmo-imap4-list folder "all"))
 
 (luna-define-method elmo-folder-list-unreads-plugged
   ((folder elmo-imap4-folder))
