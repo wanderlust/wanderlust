@@ -2715,6 +2715,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 
 ;;;; Obsolete variables.
 
+;; 2003-07-15 delete -> dispose
+(elmo-define-obsolete-variable 'wl-delete-folder-alist
+			       'wl-dispose-folder-alist)
+
 ;; 2002-12-25
 (elmo-define-obsolete-variable 'wl-draft-reply-myself-with-argument-list
 			       'wl-draft-reply-with-argument-list)
