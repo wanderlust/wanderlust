@@ -1,3 +1,24 @@
+2000-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address.el (wl-address-ldap-search):
+	Call `ldap-search-entries' with `withdn' argument t.
+	(wl-complete-field-body): Bind completion-ignore-case as t.
+	Clear ldap search hash when it was sole completion.
+	Use elmo-string for pattern string.
+	(wl-ldap-alias-safe-string): Eliminated needless let.
+
+2000-06-16  Shun-ichi GOTO <gotoh@taiyo.co.jp>
+
+	* wl-address.el (wl-ldap-alias-dn-level): New variable.
+	(wl-ldap-alias-sep): New constant.
+	(wl-ldap-search-attribute-type-list): Ditto.
+	(wl-ldap-get-value): New function.
+	(wl-ldap-make-filter): Ditto.
+	(wl-ldap-make-matched-value-list): Ditto.
+	(wl-ldap-alias-safe-string): Ditto.
+	(wl-ldap-register-dn-string): Ditto.
+	(wl-address-ldap-search): Rewrite.
+
 2000-06-17  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-thread.el (wl-thread-delete-msgs): Fixed problem when closed

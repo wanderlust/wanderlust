@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/15 00:38:44 teranisi>
+;; Time-stamp: <2000-06-19 13:03:50 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -45,44 +45,230 @@
 
 (eval-when-compile (require 'pldap))
 
+(defvar wl-ldap-alias-dn-level nil
+"Level of dn data to make alias postfix.
+Valid value is nit, t, 1 or larget integer.
+
+If this value nil, minimum alias postfix is made depends on uniqness
+with other candidates. In this implementation, it's same to 1.  If t,
+always append all dn data. If number, always append spcified level of
+data but maybe appended more uniqness.  If invalid value, treat as
+nil.
+
+For example, following dn data is exsist, alias of each level is shown
+bellow.
+
+Match: Goto
+dn: CN=Shun-ichi GOTO,OU=Mew,OU=Emacs,OU=Lisper,O=Programmers Inc.
+  nil => Goto/Shun-ichi_GOTO
+    1 => Goto/Shun-ichi_GOTO
+    2 => Goto/Shun-ichi_GOTO/Mew
+    3 => Goto/Shun-ichi_GOTO/Mew/Emacs
+    4 => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper
+    5 => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper/Programmers_Inc_
+    6 => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper/Programmers_Inc_
+    t => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper/Programmers_Inc_
+
+If level 3 is required for uniqness with other candidates,
+  nil => Goto/Shun-ichi_GOTO/Mew/Emacs    ... appended more
+    1 => Goto/Shun-ichi_GOTO/Mew/Emacs    ... appended more
+    2 => Goto/Shun-ichi_GOTO/Mew/Emacs    ... appended more
+    3 => Goto/Shun-ichi_GOTO/Mew/Emacs
+    4 => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper
+    (so on...)
+")
+
+(defconst wl-ldap-alias-sep "/")
+
+(defconst wl-ldap-search-attribute-type-list
+  '("sn" "cn" "mail"))
+
+(defun wl-ldap-get-value (type entry)
+  ""
+  (let* ((values (cdr (assoc type entry)))
+	 (ret (car values)))
+    (if (and ret (not ldap-ignore-attribute-codings))
+	(while values
+	  (if (not (string-match "^[\000-\177]*$" (car values)))
+	      (setq ret (car values)
+		    values nil)
+	    (setq values (cdr values)))))
+    ret))
+	  
+(defun wl-ldap-get-value-list (type entry)
+  ""
+  (cdr (assoc type entry)))
+
+(defun wl-ldap-make-filter (pat type-list)
+  "Make RFC1558 quiery filter for PAT from ATTR-LIST.
+Each are \"OR\" combination, and PAT is beginning-match."
+  (concat "(&(objectclass=person)(|"
+	  (mapconcat (lambda (x) (format "(%s=%s*)" x pat)) ; fixed format
+		     type-list
+		     "")
+	  "))"))
+
+(defun wl-ldap-make-matched-value-list (regexp type-list entry)
+  "Correct matching WORD with value of TYPE-LIST in ENTRY.
+Returns matched uniq string list."
+  (let (type val values result)
+    ;; collect matching value
+    (while entry
+      (setq type (car (car entry))
+	    values (mapcar (function wl-ldap-alias-safe-string)
+			   (cdr (car entry)))
+	    entry (cdr entry))
+      (if (string-match "::?$" type)
+	  (setq type (substring type 0 (match-beginning 0))))
+      (if (member type type-list)
+	  (while values
+	    (setq val (car values)
+		  values (cdr values))
+	    (if (and (string-match regexp val)
+		     (not (member val result)))
+		(setq result (cons val result))))))
+    result))
+
+(defun wl-ldap-alias-safe-string (str)
+  "Modify STR for alias.
+Replace space/tab in STR into '_' char.
+And remove domain part of mail addr."
+  (while (string-match "[^_a-zA-Z0-9+@%.!\\-/]+" str)
+    (setq str (concat (substring str 0 (match-beginning 0))
+		      "_"
+		      (substring str (match-end 0)))))
+  (if (string-match "@[^/@]+" str)
+      (setq str (concat (substring str 0 (match-beginning 0))
+			(substring str (match-end 0)))))
+  str)
+
+(defun wl-ldap-register-dn-string (hash dn &optional str dn-list)
+  ""
+  (let (sym dnsym value level)
+    (setq dnsym (intern (upcase dn) hash))
+    (if (and (null str) (boundp dnsym))
+	()					; already processed
+      ;; make dn-list in fisrt time
+      (if (null dn-list)
+	  (let ((case-fold-search t))
+	    (setq dn-list (mapcar (lambda (str)
+				    (if (string-match "[a-z]+=\\(.*\\)" str)
+					(wl-ldap-alias-safe-string
+					 (wl-match-string 1 str))))
+				  (split-string dn ",")))))
+      ;; prepare candidate for uniq str
+      (if str 
+	  (setq str (concat str wl-ldap-alias-sep (car dn-list))
+		dn-list (cdr dn-list))
+	;; first entry, pre-build with given level
+	(cond 
+	 ((null wl-ldap-alias-dn-level) (setq level 1))
+	 ((eq t wl-ldap-alias-dn-level) (setq level 1000)) ; xxx, big enough
+	 ((numberp wl-ldap-alias-dn-level)
+	  (if (< 0 wl-ldap-alias-dn-level)
+	      (setq level  wl-ldap-alias-dn-level)
+	    (setq level 1)))
+	 (t
+	  (setq level 1)))
+	(while (and (< 0 level) dn-list)
+	  (if (null str)
+	      (setq str (car dn-list))
+	    (setq str (concat str wl-ldap-alias-sep (car dn-list))))
+	  (setq level (1- level)
+		dn-list (cdr dn-list))))
+      (setq sym (intern (upcase str) hash))
+      (if (not (boundp sym))
+	  ;; good
+	  (progn (set sym (list dn str dn-list))
+		 (set dnsym str))
+	;; conflict
+	(if (not (eq (setq value (symbol-value sym)) t))
+	    ;; move away deeper
+	    (progn (set sym t)
+		   (apply (function wl-ldap-register-dn-string) hash value)))
+	(wl-ldap-register-dn-string hash dn str dn-list)))))
+
 (defun wl-address-ldap-search (pattern cl)
   "Make address completion-list matched for PATTERN by LDAP search.
 Matched address lists are append to CL."
   (require 'pldap)
   (unless wl-address-ldap-search-hash
-    (setq wl-address-ldap-search-hash (elmo-make-hash)))
-  (let ((hit (catch 'found
-	       (mapatoms (lambda (atom)
-			   (if (string-match 
-				(concat "^" (symbol-name atom) ".*")
-				pattern)
-			       (throw 'found (symbol-value atom))))
-			 wl-address-ldap-search-hash)))
+    (setq wl-address-ldap-search-hash (elmo-make-hash 7)))
+  (let ((pat (if (string-match wl-ldap-alias-sep pattern)
+		 (substring pattern 0 (match-beginning 0))
+	       pattern))
 	(ldap-default-host wl-ldap-server)
 	(ldap-default-port (or wl-ldap-port 389))
 	(ldap-default-base wl-ldap-base)
+	(dnhash (elmo-make-hash))
+	cache len sym tmpl regexp entries ent values dn dnstr alias
 	result cn mails)
-    (if hit
-	(setq result hit)
-      (setq result (ldap-search-entries (concat "mail=" pattern "*")
-					nil '("mail" "cn")))
-      (elmo-set-hash-val pattern result wl-address-ldap-search-hash))
-    (while result
-      (setq mails (cdr (assoc "mail" (car result))))
-      (setq cn nil)
+    ;; check cache
+    (mapatoms (lambda (atom)
+		(if (and (string-match 
+			  (concat "^" (symbol-name atom) ".*") pat)
+			 (or (null cache)
+			     (< (car cache) 
+				(setq len (length (symbol-name atom))))))
+		    (setq cache (cons
+				 (or len (length (symbol-name atom)))
+				 (symbol-value atom)))))
+	      wl-address-ldap-search-hash)
+    ;; get matched entries
+    (if cache
+	(setq entries (cdr cache))
+      (condition-case nil 
+	  (progn
+	    (message "Searching in LDAP...")
+	    (setq entries (ldap-search-entries
+			   (wl-ldap-make-filter 
+			    (concat pat "*")
+			    wl-ldap-search-attribute-type-list)
+			   nil wl-ldap-search-attribute-type-list nil t))
+	    (message "Searching in LDAP...done")
+	    (elmo-set-hash-val pattern entries wl-address-ldap-search-hash))
+	(error (message ""))))			; ignore error: No such object
+    ;;
+    (setq tmpl entries)
+    (while tmpl
+      (wl-ldap-register-dn-string dnhash (car (car tmpl))) ; car is 'dn'.
+      (setq tmpl (cdr tmpl)))
+    ;;
+    (setq regexp (concat "^" pat))
+    (while entries
+      (setq ent (cdar entries)
+	    values (wl-ldap-make-matched-value-list
+		    regexp '("mail" "sn" "cn") ent)
+	    mails (wl-ldap-get-value-list "mail" ent)
+	    cn (wl-ldap-get-value "cn" ent)
+	    dn (car (car entries))
+	    dnstr (elmo-get-hash-val (upcase dn) dnhash))
+      ;; make alias list generated from LDAP data.
+      (while (and mails values)
+	;; make alias like MATCHED/DN-STRING
+	(if (not (string-match (concat "^" (regexp-quote (car values))) dnstr))
+	    (setq alias (concat (car values) wl-ldap-alias-sep dnstr))
+	  ;; use DN-STRING if DN-STRING begin with MATCHED
+	  (setq alias dnstr))
+	;; check uniqness then add to list
+	(setq sym (intern (downcase alias) dnhash))
+	(when (not (boundp sym))
+	  (set sym alias)
+	  (setq result (cons (cons alias
+				   (concat cn " <" (car mails) ">"))
+			     result)))
+	(setq values (cdr values)))
+      ;; make mail addrses list
       (while mails
-	(if (and (null (assoc (car mails) cl)) ; Not already in cl.
-		 (string-match pattern (car mails)))
-	    (setq cl (cons (cons (car mails)
-				 (concat 
-				  (or cn
-				      (setq cn
-					    (cadr (assoc "cn" (car result)))))
-				  " <" (car mails) ">"))
-			   cl)))
+	(if (null (assoc (car mails) cl)); Not already in cl.
+	    ;; (string-match regexp (car mails))
+	    ;; add mail address itself to completion list
+	    (setq result (cons (cons (car mails)
+				     (concat cn " <" (car mails) ">"))
+			       result)))
 	(setq mails (cdr mails)))
-      (setq result (cdr result)))
-    cl))
+      (setq entries (cdr entries)))
+    (append result cl)))
 
 (defun wl-complete-field-to ()
   (interactive)
@@ -207,8 +393,9 @@ Matched address lists are append to CL."
 					   "_a-zA-Z0-9+@%.!\\-/"))
 		  (point)))
 	 (completion)
-	 (pattern (buffer-substring start end))
+	 (pattern (elmo-string (buffer-substring start end)))
 	 (len (length pattern))
+	 (completion-ignore-case t)
 	 (cl completion-list))
     (when use-ldap
       (setq cl (wl-address-ldap-search pattern cl)))
@@ -219,6 +406,7 @@ Matched address lists are append to CL."
 	      (ding)))
       (setq completion (try-completion pattern cl))
       (cond ((eq completion t)
+	     (if use-ldap (setq wl-address-ldap-search-hash nil))
 	     (wl-complete-insert start end pattern cl)
 	     (wl-complete-window-delete)
 	     (message "Sole completion"))
