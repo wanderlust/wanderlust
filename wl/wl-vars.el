@@ -1179,6 +1179,12 @@ Set this if (system-name) does not return FQDN."
 		 string)
   :group 'wl-pref)
 
+(defcustom wl-unique-id-suffix ".wl"
+  "*Specific the string on the right neighbor
+of @ in generated Message-ID."
+  :type 'string
+  :group 'wl-pref)
+
 (defcustom wl-break-pages t
   "*Break Pages at ^L."
   :type 'boolean

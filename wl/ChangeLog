@@ -1,3 +1,8 @@
+2002-01-12  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-unique-id-suffix): Move from `wl-utils.el'
+	* wl-utils.el (wl-unique-id-suffix): Remove.
+
 2002-01-07  Kenichi OKADA  <okada@opaopa.org>
 
 	* Version number is increased to 2.9.4.

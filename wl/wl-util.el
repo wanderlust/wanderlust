@@ -600,7 +600,6 @@ that `read' can handle, whenever this is possible."
 				  (% num 36))))))
 
 (defvar wl-unique-id-char nil)
-(defvar wl-unique-id-suffix ".wl")
 
 (defun wl-unique-id ()
   ;; Don't use microseconds from (current-time), they may be unsupported.
