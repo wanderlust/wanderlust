@@ -1301,21 +1301,19 @@ If current line is group folder, all subfolders are marked."
 
 (defun wl-folder-select-buffer (buffer)
   (let ((gbw (get-buffer-window buffer))
-	exists)
+	ret-val)
     (if gbw
 	(progn (select-window gbw)
-	       (setq exists t))
-      (unless wl-folder-use-frame
-	(condition-case ()
-	    (unwind-protect
-		(split-window-horizontally wl-folder-window-width)
-	      (other-window 1))
-	  (error nil))))
+	       (setq ret-val t))
+      (condition-case ()
+	  (unwind-protect
+	      (split-window-horizontally wl-folder-window-width)
+	    (other-window 1))
+	(error nil)))
     (set-buffer buffer)
-    (if wl-folder-use-frame
-	(switch-to-buffer-other-frame buffer)
-      (switch-to-buffer buffer))
-    exists))
+    (switch-to-buffer buffer)
+    ret-val
+    ))
 
 (defun wl-folder-toggle-disp-summary (&optional arg folder)
   (interactive)
