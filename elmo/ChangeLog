@@ -1,5 +1,7 @@
 2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.9.14.
+
 	* elmo-util.el (elmo-expand-newtext): New function (renamed from
 	wl-expand-newtext).
 

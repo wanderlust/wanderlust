@@ -1,5 +1,7 @@
 2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.9.14.
+
 	* wl.el (wl): Don't set wl-init as nil when error occured while
 	auto-checking folders.
 
