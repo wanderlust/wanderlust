@@ -3721,11 +3721,9 @@ If ARG, exit virtual folder."
 		      number (wl-summary-buffer-msgdb)))
 	(if (null entity)
 	    (error "Cannot %s" copy-or-refile))
-	(funcall function
-		 (setq folder (wl-summary-read-folder
-			       (wl-refile-guess entity)
-			       (format "for %s" copy-or-refile)))
-		 number)
+	(setq folder (wl-summary-read-folder
+		      (wl-refile-guess entity)
+		      (format "for %s" copy-or-refile)))
 	(goto-char (point-min))
 	(while (not (eobp))
 	  (when (string= (wl-summary-temp-mark) "*")
