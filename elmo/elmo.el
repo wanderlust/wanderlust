@@ -886,6 +886,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 					     save-unread)
   (save-excursion
     (let* ((messages msgs)
+	   (elmo-inhibit-display-retrieval-progress t)
 	   (len (length msgs))
 	   (all-msg-num (or all len))
 	   (done-msg-num (or done 0))

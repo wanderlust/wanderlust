@@ -1036,12 +1036,25 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	;; delete message window if displayed.
 	(if (and wl-message-buffer (get-buffer-window wl-message-buffer))
 	    (delete-window (get-buffer-window wl-message-buffer)))
+	(if (and wl-folder-use-frame
+		 (> (length (visible-frame-list)) 1))
+	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if (setq folder-win (get-buffer-window folder-buf))
-		;; folder win is already displayed.
-		(select-window folder-win)
-	      ;; folder win is not displayed.
-	      (switch-to-buffer folder-buf))
+	    (if wl-folder-use-frame
+		(let (select-frame)
+		  (save-selected-window
+		    (dolist (frame (visible-frame-list))
+		      (select-frame frame)
+		      (if (get-buffer-window folder-buf)
+			  (setq select-frame frame))))
+		  (if select-frame
+		      (select-frame select-frame)
+		    (switch-to-buffer folder-buf)))
+	      (if (setq folder-win (get-buffer-window folder-buf))
+		  ;; folder win is already displayed.
+		  (select-window folder-win)
+		;; folder win is not displayed.
+		(switch-to-buffer folder-buf)))
 	  ;; currently no folder buffer
 	  (wl-folder))
 	(and wl-folder-move-cur-folder
@@ -5156,7 +5169,11 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-summary-mark-as-read
 	   nil
 	   ;; not fetched, then change server-mark.
-	   (if (wl-message-redisplay folder num 'mime force-reload)
+	   (if (wl-message-redisplay folder num 'mime
+				     (or force-reload
+					 (string= (elmo-folder-name-internal
+						   folder)
+						  wl-draft-folder)))
 	       nil
 	     ;; plugged, then leave server-mark.
 	     (if (and
@@ -5192,7 +5209,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-last-displayed-msg
 		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-message-redisplay fld num 'as-is)
+	  (wl-message-redisplay fld num 'as-is
+				(string= (elmo-folder-name-internal fld)
+					 wl-draft-folder))
 	  (wl-summary-mark-as-read nil nil t)
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
@@ -5217,7 +5236,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-last-displayed-msg
 		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (if (wl-message-redisplay fld num 'all-header); t if displayed.
+	  (if (wl-message-redisplay fld num 'all-header
+				    (string= (elmo-folder-name-internal fld)
+					     wl-draft-folder))
 	      (wl-summary-mark-as-read nil nil t))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter

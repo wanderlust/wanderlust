@@ -896,13 +896,48 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(elmo-buffer-field-condition-match
 	 (nth 2 condition) number number-list)))))
 
-(defsubst elmo-file-field-condition-match (file condition number number-list)
-  (elmo-set-work-buf
-   (as-binary-input-file (insert-file-contents file))
-   (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-   ;; Should consider charset?
-   (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-   (elmo-buffer-field-condition-match condition number number-list)))
+(defsubst elmo-file-field-primitive-condition-match (file
+						     condition
+						     number
+						     number-list)
+  (let (result)
+    (goto-char (point-min))
+    (cond
+     ((string= (elmo-filter-key condition) "last")
+      (setq result (<= (length (memq number number-list))
+		       (string-to-int (elmo-filter-value condition)))))
+     ((string= (elmo-filter-key condition) "first")
+      (setq result (< (- (length number-list)
+			 (length (memq number number-list)))
+		      (string-to-int (elmo-filter-value condition)))))
+     (t
+      (elmo-set-work-buf
+       (as-binary-input-file (insert-file-contents file))
+       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+       ;; Should consider charset?
+       (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
+       (setq result
+	     (elmo-buffer-field-primitive-condition-match
+	      condition number number-list)))))
+    (if (eq (elmo-filter-type condition) 'unmatch)
+	(setq result (not result)))
+    result))
+
+(defun elmo-file-field-condition-match (file condition number number-list)
+  (cond
+   ((vectorp condition)
+    (elmo-file-field-primitive-condition-match
+     file condition number number-list))
+   ((eq (car condition) 'and)
+    (and (elmo-file-field-condition-match
+	  file (nth 1 condition) number number-list)
+	 (elmo-file-field-condition-match
+	  file (nth 2 condition) number number-list)))
+   ((eq (car condition) 'or)
+    (or (elmo-file-field-condition-match
+	 file (nth 1 condition) number number-list)
+	(elmo-file-field-condition-match
+	 file (nth 2 condition) number number-list)))))
 
 (defmacro elmo-get-hash-val (string hashtable)
   (let ((sym (list 'intern-soft string hashtable)))
