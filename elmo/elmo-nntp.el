@@ -530,20 +530,10 @@ Don't cache if nil.")
 	  (if entry
 	      (progn
 		(setq end-num (nth 2 entry))
-		(when (and killed-list elmo-use-killed-list)
-		  (setq killed-list (nreverse (sort killed-list '<)))
-		  (cond
-		   ;; XXX biggest number in server is killed,
-		   ;; so max number is unknown (treated as no unsync).
-		   ((eq end-num (car killed-list))
-		    (setq end-num nil))
-		   ;; killed number is obsolete.
-		   ((< end-num (car killed-list))
-		    (while killed-list
-		      (when (>= end-num (car killed-list))
-			(elmo-msgdb-killed-list-save dir killed-list)
-			(setq killed-list nil))
-		      (setq killed-list (cdr killed-list))))))
+		(when (and killed-list elmo-use-killed-list
+			   (elmo-number-set-member end-num killed-list))
+		  ;; Max is killed.
+		  (setq end-num nil))
 		(cons end-num (car entry)))
 	    (error "No such newsgroup \"%s\"" fld)))
       (let* ((connection (elmo-nntp-get-connection server user port type))
@@ -566,20 +556,10 @@ Don't cache if nil.")
 			       (elmo-match-string 3 response)))
 		(setq e-num (string-to-int
 			     (elmo-match-string 1 response)))
-		(when (and killed-list elmo-use-killed-list)
-		  (setq killed-list (nreverse (sort killed-list '<)))
-		  (cond
-		   ;; XXX biggest number in server is killed,
-		   ;; so max number is unknown (treated as no unsync).
-		   ((eq end-num (car killed-list))
-		    (setq end-num nil))
-		   ;; killed number is obsolete.
-		   ((< end-num (car killed-list))
-		    (while killed-list
-		      (when (>= end-num (car killed-list))
-			(elmo-msgdb-killed-list-save dir killed-list)
-			(setq killed-list nil))
-		      (setq killed-list (cdr killed-list))))))
+		(when (and killed-list elmo-use-killed-list
+			   (elmo-number-set-member end-num killed-list))
+		  ;; Max is killed.
+		  (setq end-num nil))
 		(cons end-num e-num))
 	    (if (null response)
 		(error "Selecting newsgroup \"%s\" failed" folder)
