@@ -1,6 +1,8 @@
 2004-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-string-partial-p): Removed unused function.
+	(elmo-passwd-alist-clear): Shred password before clear.
+	(elmo-remove-passwd): Remove all mached pair.
 
 2004-02-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

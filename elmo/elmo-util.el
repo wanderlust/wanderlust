@@ -418,6 +418,9 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-clear ()
   "Clear password cache."
   (interactive)
+  (dolist (pair elmo-passwd-alist)
+    (when (stringp (cdr-safe pair))
+      (fillarray (cdr pair) 0)))
   (setq elmo-passwd-alist nil))
 
 (defun elmo-passwd-alist-save ()
@@ -465,12 +468,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-remove-passwd (key)
   "Remove password from password pool (for failure)."
   (let (pass-cons)
-    (if (setq pass-cons (assoc key elmo-passwd-alist))
-	(progn
-	  (unwind-protect
-	      (fillarray (cdr pass-cons) 0))
-	  (setq elmo-passwd-alist
-		(delete pass-cons elmo-passwd-alist))))))
+    (while (setq pass-cons (assoc key elmo-passwd-alist))
+      (unwind-protect
+	  (fillarray (cdr pass-cons) 0)
+	(setq elmo-passwd-alist
+	      (delete pass-cons elmo-passwd-alist))))))
 
 (defmacro elmo-read-char-exclusive ()
   (cond ((featurep 'xemacs)
