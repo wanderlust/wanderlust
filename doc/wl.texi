@@ -5588,6 +5588,7 @@ pop3                      N     E     E     E
 @menu
 * Living with other packages:: Living with other packages
 * Highlights::                 Highlights
+* Biff::                       Notify Mail arrival
 * Advanced Settings::          Advanced Settings
 * Customizable Variables::     Customizable Variables
 * Hooks::                      Hooks
@@ -5778,7 +5779,7 @@ specific, but general-purpose for tm/SEMI).
 @end lisp
 
 
-@node Highlights, Advanced Settings, Living with other packages, Customization
+@node Highlights, Biff, Living with other packages, Customization
 @section Highlights
 
 @subsection Customizable Variables
@@ -6018,7 +6019,33 @@ The face for logo in the demo.
 The face for strings (for example, a version number) in the demo.
 @end table
 
-@node Advanced Settings, Customizable Variables, Highlights, Customization
+
+@node Biff, Advanced Settings, Highlights, Customization
+@section Notify Mail arrival
+
+Following setting is to notify mail arrival of @samp{%inbox}
+by the indicator on the modeline
+
+@lisp
+(setq wl-biff-check-folder-list '("%inbox"))
+@end lisp
+
+@subsection Customizable Variables
+@table @code
+@item wl-biff-check-folder-list
+@vindex wl-biff-check-folder-list
+The initial setting is nil.
+This is the list of folders to check mail arrival.
+If nil, wl doesn't check mail arrival.
+
+@item wl-biff-check-interval
+@vindex wl-biff-check-interval
+The initial setting is 40 (in seconds).
+Check mail arrival in this period. 
+@end table
+
+
+@node Advanced Settings, Customizable Variables, Biff, Customization
 @section Advanced Settings
 
 @menu

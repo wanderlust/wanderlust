@@ -5528,6 +5528,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @menu
 * Living with other packages::  $B%Q%C%1!<%8$N$"$k@83h(B
 * Highlights::                  $B%O%$%i%$%H$N@_Dj(B
+* Biff::                        $B%a!<%k$NCe?.$r$7$i$;$k(B
 * Advanced Settings::           $B%+%9%?%^%$%:!A1~MQJT!A(B
 * Customizable Valiables::      $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
 * Hooks::                       $B%U%C%/(B
@@ -5722,7 +5723,7 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end lisp
 
 
-@node Highlights, Advanced Settings, Living with other packages, Customization
+@node Highlights, Biff, Living with other packages, Customization
 @section $B%O%$%i%$%H$N@_Dj(B
 
 @subsection $B%+%9%?%^%$%:JQ?t(B
@@ -5953,7 +5954,33 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end table
 
 
-@node Advanced Settings, Customizable Valiables, Highlights, Customization
+@node Biff, Advanced Settings, Highlights, Customization
+@section $B%a!<%k$NCe?.$rCN$i$;$k(B
+
+$B0J2<$N$h$&$K@_Dj$7$F$*$/$H(B @samp{%inbox} $B$K%a!<%k$,FO$$$?$H$-$K!"(B
+$B%b!<%I%i%$%s$NI=<($K$h$j%a!<%k$NCe?.$rCN$i$;$F$/$l$^$9!#(B
+
+@lisp
+(setq wl-biff-check-folder-list '("%inbox"))
+@end lisp
+
+@subsection $B%+%9%?%^%$%:JQ?t(B
+
+@table @code
+@item wl-biff-check-folder-list
+@vindex wl-biff-check-folder-list
+$B=i4|@_Dj$O(B nil$B!#(B
+$B%a!<%k$NCe?.$r%A%'%C%/$9$k%U%)%k%@$N%j%9%H!#(B
+nil $B$N>l9g$OCe?.$N%A%'%C%/$r9T$J$$$^$;$s!#(B
+
+@item wl-biff-check-interval
+@vindex wl-biff-check-interval
+$B=i4|@_Dj$O(B 40$B!JC10L!'IC!K!#(B
+$B$3$NCM$4$H$K%a!<%kCe?.$N%A%'%C%/$r9T$J$$$^$9!#(B
+@end table
+
+
+@node Advanced Settings, Customizable Valiables, Biff, Customization
 @section $B%+%9%?%^%$%:!A1~MQJT!A(B
 
 @menu
