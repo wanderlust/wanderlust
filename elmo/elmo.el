@@ -1108,7 +1108,7 @@ NUMBERS is a list of message numbers, messages are searched from the list."
   "Return non-nil if the message is cached.")
 
 (luna-define-method elmo-message-cached-p ((folder elmo-folder) number)
-  (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number))
+  (elmo-message-flagged-p folder number 'cached))
 
 (defun elmo-message-accessible-p (folder number)
   "Get accessibility of the message.
@@ -1125,11 +1125,9 @@ If CACHED is t, message is set as cached.")
 
 (luna-define-method elmo-message-set-cached ((folder elmo-folder)
 					     number cached)
-  (when (elmo-msgdb-set-cached (elmo-folder-msgdb folder)
-			       number
-			       cached
-			       (elmo-message-use-cache-p folder number))
-    (elmo-folder-set-mark-modified-internal folder t)))
+  (if cached
+      (elmo-msgdb-set-flag (elmo-folder-msgdb folder) number 'cached)
+    (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached)))
 
 (defun elmo-message-copy-entity (entity)
   ;; 

@@ -419,101 +419,52 @@ if MARK is nil, mark is removed."
     ;; return value.
     t))
 
-(defun elmo-msgdb-get-cached (msgdb number)
-  "Return non-nil if message is cached."
-  (not (member (elmo-msgdb-get-mark msgdb number)
-	       (elmo-msgdb-uncached-marks))))
-
-(defun elmo-msgdb-set-cached (msgdb number cached use-cache)
-  "Set message cache status.
-If mark is changed, return non-nil."
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (cur-flag (cond
-		      ((string= cur-mark elmo-msgdb-important-mark)
-		       'important)
-		      ((member cur-mark (elmo-msgdb-answered-marks))
-		       'answered)
-		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		       'read)))
-	 (cur-cached (elmo-file-cache-exists-p
-		      (elmo-msgdb-get-field msgdb number 'message-id))))
-    (unless (eq cached cur-cached)
-      (case cur-flag
-	(read
-	 (elmo-msgdb-set-mark msgdb number
-			      (if (and use-cache (not cached))
-				  elmo-msgdb-read-uncached-mark)))
-	(important nil)
-	(answered
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cached
-				  elmo-msgdb-answered-cached-mark
-				elmo-msgdb-answered-uncached-mark)))
-	(t
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cached
-				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark)))))))
-
 (luna-define-method elmo-msgdb-flags ((msgdb elmo-msgdb-legacy) number)
   (elmo-msgdb-mark-to-flags (elmo-msgdb-get-mark msgdb number)))
 
 (luna-define-method elmo-msgdb-set-flag ((msgdb elmo-msgdb-legacy)
 					 number flag)
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (cur-flag (cond
-		    ((string= cur-mark elmo-msgdb-important-mark)
-		     'important)
-		    ((member cur-mark (elmo-msgdb-answered-marks))
-		     'answered)
-		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		     'read)))
-	 (cur-cached (elmo-file-cache-exists-p
-		      (elmo-msgdb-get-field msgdb number 'message-id))))
-    (case flag
-      (read
-       (case cur-flag
-	 ((read important)) ; answered mark is overriden.
-	 (t (elmo-msgdb-set-mark msgdb number
-				 (if (not cur-cached)
-				     elmo-msgdb-read-uncached-mark)))))
-      (important
-       (unless (eq cur-flag 'important)
-	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)))
-      (answered
-       (unless (or (eq cur-flag 'answered) (eq cur-flag 'important))
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cur-cached
-				  elmo-msgdb-answered-cached-mark
-				elmo-msgdb-answered-uncached-mark)))))))
+  (case flag
+    (read
+     (elmo-msgdb-unset-flag msgdb number 'unread))
+    (uncached
+     (elmo-msgdb-unset-flag msgdb number 'cached))
+    (t
+     (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
+	    (flags (elmo-msgdb-mark-to-flags cur-mark))
+	    new-mark)
+       (and (memq 'new flags)
+	    (setq flags (delq 'new flags)))
+       (or (memq flag flags)
+	   (setq flags (cons flag flags)))
+       (when (and (eq flag 'unread)
+		  (memq 'answered flags))
+	 (setq flags (delq 'answered flags)))
+       (setq new-mark (elmo-msgdb-flags-to-mark flags))
+       (unless (string= new-mark cur-mark)
+	 (elmo-msgdb-set-mark msgdb number new-mark))))))
 
 (luna-define-method elmo-msgdb-unset-flag ((msgdb elmo-msgdb-legacy)
 					   number flag)
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (cur-flag (cond
-		    ((string= cur-mark elmo-msgdb-important-mark)
-		     'important)
-		    ((member cur-mark (elmo-msgdb-answered-marks))
-		     'answered)
-		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		     'read)))
-	 (cur-cached (elmo-file-cache-exists-p
-		      (elmo-msgdb-get-field msgdb number 'message-id))))
-    (case flag
-      (read
-       (when (or (eq cur-flag 'read) (eq cur-flag 'answered))
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cur-cached
-				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark))))
-      (important
-       (when (eq cur-flag 'important)
-	 (elmo-msgdb-set-mark msgdb number nil)))
-      (answered
-       (when (eq cur-flag 'answered)
-	 (elmo-msgdb-set-mark msgdb number
-			      (if (not cur-cached)
-				  elmo-msgdb-read-uncached-mark)))))))
+  (case flag
+    (read
+     (elmo-msgdb-set-flag msgdb number 'unread))
+    (uncached
+     (elmo-msgdb-set-flag msgdb number 'cached))
+    (t
+     (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
+	    (flags (elmo-msgdb-mark-to-flags cur-mark))
+	    new-mark)
+       (and (memq 'new flags)
+	    (setq flags (delq 'new flags)))
+       (and (memq flag flags)
+	    (setq flags (delq flag flags)))
+       (when (and (eq flag 'unread)
+		  (memq 'answered flags))
+	 (setq flags (delq 'answered flags)))
+       (setq new-mark (elmo-msgdb-flags-to-mark flags))
+       (unless (string= new-mark cur-mark)
+	 (elmo-msgdb-set-mark msgdb number new-mark))))))
 
 (defvar elmo-msgdb-unread-marks-internal nil)
 (defsubst elmo-msgdb-unread-marks ()

@@ -2441,7 +2441,7 @@ Automatically applied in draft sending time."
 
 (defun wl-draft-previous-history-element (n)
   (interactive "p")
-  (let (bol history)
+  (let (bol history beg end prev new)
     (when (and (not (wl-draft-on-field-p))
 	       (< (point)
 		  (save-excursion
@@ -2503,7 +2503,7 @@ Automatically applied in draft sending time."
 	     (delete-region (match-beginning 1) (match-end 1))
 	     (insert (car history)))
 	    (t
-	     (setq wl-draft-current-history-position nil)))))))
+	     (setq wl-draft-current-history-position nil))))))
 
 (defun wl-draft-next-history-element (n)
   (interactive "p")
