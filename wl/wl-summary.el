@@ -3097,6 +3097,12 @@ If ARG, exit virtual folder."
    number-or-numbers
    no-modeline-update))
 
+(defun wl-summary-mark-as-unanswered (&optional number-or-numbers
+					      no-modeline-update)
+  (wl-summary-mark-as-answered-internal 'inverse
+					number-or-numbers
+					no-modeline-update))
+
 (defun wl-summary-mark-as-important (&optional number
 					       mark
 					       no-server-update)
