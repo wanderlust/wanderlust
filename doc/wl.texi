@@ -796,46 +796,23 @@ Example:
 @pindex ucs-conv
 
 You can use international mailbox names in @var{mailbox} part, if you
-are using Emacs which can treat unicode and
+are using Emacs with UTF-7 support and
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
 value is @code{nil}).
 
-Currently, following Emacsen can treat unicode.
+Currently, Mule-UCS package is required to use UTF-7.
+Mule-UCS works on following Emacsen.
 
 @itemize @bullet
-@item Emacs 20.3 or later + Mule-UCS
+@item Emacs 20.3 or later
+@item XEmacs 21.2.37 or later
+@end itemize
 
-If you installed Mule-UCS package, Emacs can treat unicode.
 You can obtain Mule-UCS package from following URL.
 
 @example
 ftp://ftp.m17n.org/pub/mule/Mule-UCS/
 @end example
-
-@item XEmacs 21.2.13 or later + ucs-conv package
-
-By default, XEmacs 21 cannot treat unicodes, but if you installed
-ucs-conv package, it can.
-You can obtain ucs-conv package from following anonymous CVS.
-
-@example
-@group
-cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root login
-Password: @var{NULL} (Just enter return key)
-cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
-@end group
-@end example
-
-You also need utf7 conversion programs, @command{u7tou8} and
-@command{u8tou7} to use international mailbox name in the current
-XEmacs.  These programs are included in the UTF7 package which can be
-obtained from following URL.
-
-@example
-ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
-@end example
-@end itemize
-
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP Folder
