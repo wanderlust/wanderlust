@@ -1,3 +1,8 @@
+2004-09-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-imap4.el (elmo-folder-delete): Clear current-mailbox after
+	deletion.
+
 2004-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mime.el (elmo-mime-display-as-is-internal): Insert decoded

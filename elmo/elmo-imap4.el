@@ -2085,7 +2085,8 @@ Return nil if no complete line has arrived."
 	   session
 	   (list "delete "
 		 (elmo-imap4-mailbox
-		  (elmo-imap4-folder-mailbox-internal folder))))))
+		  (elmo-imap4-folder-mailbox-internal folder)))))
+	(elmo-imap4-session-set-current-mailbox-internal session nil))
       (elmo-msgdb-delete-path folder)
       t)))
 
