@@ -3179,17 +3179,14 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		  (+ copy-failures (length (cdr (car dst-msgs))))))
 	  (setq copy-executed (+ copy-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
-	;; Hide progress bar.
-	(elmo-display-progress 'elmo-folder-move-messages "" 100)
 	;; end cOpy
 	(wl-summary-folder-info-update)
 	(wl-summary-set-message-modified)
 	(wl-summary-set-mark-modified)
 	(run-hooks 'wl-summary-exec-hook)
-	(unless (and wl-message-buffer
-		     (eq (wl-summary-message-number)
-			 (with-current-buffer wl-message-buffer
-			   wl-message-buffer-cur-number)))
+	(unless (eq (wl-summary-message-number)
+		    (with-current-buffer wl-message-buffer
+		      wl-message-buffer-cur-number))
 	  (wl-summary-toggle-disp-msg 'off))
 	(set-buffer-modified-p nil)
 	(message (concat "Executing ... done"
