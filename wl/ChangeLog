@@ -1,3 +1,7 @@
+2002-09-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-parent-folder): Write description.
+
 2002-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-create-buffer): Set `wl-draft-parent-folder'

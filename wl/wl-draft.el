@@ -73,8 +73,19 @@
 (defvar wl-draft-reedit nil)
 (defvar wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
-(defvar wl-draft-parent-folder nil)
 (defvar wl-draft-doing-mime-bcc nil)
+
+(defvar wl-draft-parent-folder nil
+  "Parent folder name of the current draft.
+This variable is local in each draft buffer.
+You can refer its value in `wl-draft-config-alist'.
+
+e.g.
+(setq wl-draft-config-alist
+      '(((string-match \".*@domain1$\" wl-draft-parent-folder)
+	 (\"From\" . \"user@domain1\"))
+	((string-match \".*@domain2$\" wl-draft-parent-folder)
+	 (\"From\" . \"user@domain2\"))))")
 
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
