@@ -72,31 +72,27 @@ By setting following-method as yank-content."
   ""
   (interactive)
   (let* (recipients-message
-	 (config-exec-flag wl-draft-config-exec-flag)
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 mime-view-ignored-field-list ; all header.
 	 (mime-edit-translate-buffer-hook
 	  (append
 	   '((lambda ()
-	       (let ((wl-draft-config-exec-flag config-exec-flag))
-		 (run-hooks 'wl-draft-send-hook)
-		 (setq recipients-message
-		       (concat "Recipients: "
-			       (mapconcat
-				'identity
-				(wl-draft-deduce-address-list
-				 (current-buffer)
-				 (point-min)
-				 (save-excursion
-				   (goto-char (point-min))
-				   (re-search-forward
-				    (concat
-				     "^"
-				     (regexp-quote mail-header-separator)
-				     "$")
-				    nil t)
-				   (point)))
-				", "))))))
+	       (setq recipients-message
+		     (concat "Recipients: "
+			     (mapconcat
+			      'identity
+			      (wl-draft-deduce-address-list
+			       (current-buffer)
+			       (point-min)
+			       (save-excursion
+				 (re-search-forward
+				  (concat "^"
+					  (regexp-quote mail-header-separator)
+					  "$")
+				  nil t)
+				 (point)))
+			      ", ")))
+	       (run-hooks 'wl-draft-send-hook)))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
