@@ -75,7 +75,6 @@ By setting following-method as yank-content."
 			      (current-buffer)
 			      (point-min)
 			      (save-excursion
-				(goto-char (point-min))
 				(re-search-forward
 				 (concat "^"
 					 (regexp-quote mail-header-separator)
