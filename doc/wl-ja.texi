@@ -7984,6 +7984,13 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 $B=i4|@_Dj$O(B 40 ($BC10L(B:$BIC(B)$B!#(B
 $B$3$NCM$4$H$K%a!<%kCe?.$N%A%'%C%/$r9T$J$$$^$9!#(B
 
+@item wl-biff-use-idle-timer
+@vindex wl-biff-use-idle-timer
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+@code{nil} $B$J$i(B @code{wl-biff-check-interval} $B$G;XDj$7$?;~4V$,7P2a$9$k$H(B
+$B%a!<%kCe?.$N%A%'%C%/$r9T$$$^$9!#(BNon-nil $B$J$i(B @code{wl-biff-check-interval}
+$B$G;XDj$7$?;~4V$@$1%"%$%I%k>uBV$,B3$/$H%a!<%kCe?.$N%A%'%C%/$r9T$$$^$9!#(B
+
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
 $B?7$7$$%a!<%k$,FO$$$?:]$K<B9T$5$l$k%U%C%/!#(B

@@ -8021,6 +8021,13 @@ If @code{nil}, wl doesn't check mail arrival.
 The initial setting is 40 (in seconds).
 Check mail arrival in this period.
 
+@item wl-biff-use-idle-timer
+@vindex wl-biff-use-idle-timer
+The initial setting is @code{nil}.
+If it is @code{nil}, check mail arrival when the time specified by
+@code{wl-biff-check-interval} has passed.  If it is non-nil, check
+mail arrival when idling time exceeds @code{wl-biff-check-interval}.
+
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
 This hook is run at the arrival of new mail.
@@ -8564,7 +8571,7 @@ But there are some restrictions on this type of migrated folder.
 removed by deleting the associated message in @samp{'flag} folder.
 
 @item
-The messsage won't be deleted by removing
+The message won't be deleted by removing
 @samp{important} flag in @samp{'flag} folder.
 
 @item
