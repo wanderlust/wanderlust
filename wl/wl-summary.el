@@ -108,6 +108,7 @@
 (defvar wl-summary-alike-hashtb nil)
 (defvar wl-summary-search-buf-name " *wl-search-subject*")
 (defvar wl-summary-delayed-update nil)
+(defvar wl-summary-last-delayed-update nil)
 
 (defvar wl-summary-message-regexp "^ *\\([0-9]+\\)")
 
@@ -920,6 +921,7 @@ q	Goto folder mode.
     (setq wl-summary-buffer-refile-list nil)
     (setq wl-summary-buffer-delete-list nil)
     (setq wl-summary-delayed-update nil)
+    (setq wl-summary-last-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
     (message "Constructing summary structure..." percent)
     (while curp
@@ -927,13 +929,19 @@ q	Goto folder mode.
       (wl-summary-append-message-func-internal entity overview mark-alist
 					       nil)
       (setq curp (cdr curp))
-      (setq i (+ i 1))
-      (elmo-display-progress
-       'wl-summary-rescan "Constructing summary structure..."
-       (/ (* i 100) num)))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ i 1))
+	(if (or (zerop (% i 5)) (= i num))
+	    (elmo-display-progress
+	     'wl-summary-rescan "Constructing summary structure..."
+	     (/ (* i 100) num)))))
     (when wl-summary-delayed-update
       (message "Constructing summary structure (reversed)...")
       (while wl-summary-delayed-update
+	(if (equal (car wl-summary-delayed-update)
+		   (car wl-summary-last-delayed-update))
+	    (error "Summary is broken, please rescan summary"))
+	(setq wl-summary-last-delayed-update wl-summary-delayed-update)
 	(wl-summary-append-message-func-internal
 	 (car wl-summary-delayed-update)
 	 overview mark-alist nil)))
@@ -948,9 +956,9 @@ q	Goto folder mode.
       (wl-summary-score-headers nil msgdb
 				(wl-summary-rescore-msgs number-alist)
 				t)
-      (setq expunged (wl-summary-score-update-all-lines))
-      (if expunged
-	  (message "%d message(s) are expunged by scoring." (length expunged))))
+      (when (and wl-summary-scored
+		 (setq expunged (wl-summary-score-update-all-lines)))
+	(message "%d message(s) are expunged by scoring." (length expunged))))
     (wl-summary-set-message-modified)
     (wl-summary-count-unread mark-alist)
     (wl-summary-update-modeline)    
@@ -1851,11 +1859,12 @@ If optional argument is non-nil, checking is omitted."
 	      (delete-region (match-beginning 1) (match-end 1))
 	      (insert (or smark " "))))
 	(wl-highlight-summary-current-line smark)
-	(setq i (+ i 1))
-	(setq percent (/ (* i 100) count))
-	(elmo-display-progress
-	 'wl-summary-resume-marks-and-highlight "Resuming all marks..."
-	 percent)
+	(when (> count elmo-display-progress-threshold)
+	  (setq i (+ i 1))
+	  (setq percent (/ (* i 100) count))
+	  (elmo-display-progress
+	   'wl-summary-resume-marks-and-highlight "Resuming all marks..."
+	   percent))
 	(forward-line 1)))
     (message "Resuming all marks...done.")))
 
@@ -1883,11 +1892,12 @@ If optional argument is non-nil, checking is omitted."
 		      (delete-region (match-beginning 1) (match-end 1))
 		      (insert (or (cadr entity)
 				  " ")))))))
-	(setq i (+ i 1))
-	(setq percent (/ (* i 100) count))
-	(elmo-display-progress
-	 'wl-summary-resume-marks "Resuming all marks..."
-	 percent)
+	(when (> count elmo-display-progress-threshold)
+	  (setq i (+ i 1))
+	  (setq percent (/ (* i 100) count))
+	  (elmo-display-progress
+	   'wl-summary-resume-marks "Resuming all marks..."
+	   percent))
 	(setq mark-alist (cdr mark-alist)))
       (message "Resuming all marks...done."))))
 
@@ -1916,18 +1926,17 @@ If optional argument is non-nil, checking is omitted."
 		(delete-region (match-beginning 0) (match-end 0))
 		(delete-char 1) ; delete '\n'
 		)))
-	(when deleting-info
+	(when (and deleting-info
+		   (> len elmo-display-progress-threshold))
 	  (setq i (1+ i))
-	  (and (zerop (% i 10))
-	       (elmo-display-progress
-		'wl-summary-delete-messages-on-buffer "Deleting..."
-		(/ (* i 100) len))))
+	  (if (or (zerop (% i 5)) (= i len))
+	      (elmo-display-progress
+	       'wl-summary-delete-messages-on-buffer "Deleting..."
+	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
-      (when deleting-info
-	(elmo-display-progress
-	 'wl-summary-delete-messages-on-buffer "Deleting..." 100))
       (when (eq wl-summary-buffer-view 'thread)
-	(wl-thread-update-line-msgs (elmo-uniq-list update-list) 'no-msg))
+	(wl-thread-update-line-msgs (elmo-uniq-list update-list)
+				    (unless deleting-info 'no-msg)))
       (wl-thread-cleanup-symbols msgs2)
       (wl-summary-count-unread 
        (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
@@ -2044,9 +2053,10 @@ If optional argument is non-nil, checking is omitted."
   (interactive)
   (let ((plugged (elmo-folder-plugged-p wl-summary-buffer-folder-name))
 	(last-progress 0)
+	(i 0)
 	mark-alist unread-marks msgs mark importants unreads 
 	importants-in-db unreads-in-db has-imap4 diff diffs
-	mes num-ma ma-length progress)
+	mes num-ma progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-get-type 
 		    wl-summary-buffer-folder-name)
@@ -2057,7 +2067,6 @@ If optional argument is non-nil, checking is omitted."
 			       wl-summary-new-mark)
 	    mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
             num-ma (length mark-alist)
-	    ma-length num-ma
 	    importants (elmo-list-folder-important 
 			wl-summary-buffer-folder-name
 			(elmo-msgdb-get-overview wl-summary-buffer-msgdb))
@@ -2068,12 +2077,6 @@ If optional argument is non-nil, checking is omitted."
 			 wl-summary-buffer-folder-name
 			 mark-alist unread-marks)))
       (while mark-alist
-	(setq progress (/ (* (- num-ma ma-length) 100) num-ma))
-	(if (not (eq progress last-progress))
-	    (elmo-display-progress 'wl-summary-sync-marks
-				   "Updating marks..."
-				   progress))
-	(setq last-progress progress)
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
 	    (setq importants-in-db (cons (car (car mark-alist))
@@ -2081,11 +2084,15 @@ If optional argument is non-nil, checking is omitted."
 	  (if (member (cadr (car mark-alist)) unread-marks)
 	      (setq unreads-in-db (cons (car (car mark-alist))
 					unreads-in-db))))
-	(setq mark-alist (cdr mark-alist)
-	      ma-length (1- ma-length)))
-      (elmo-display-progress 'wl-summary-sync-marks
-			     "Updating marks..."
-			     100)
+	(setq mark-alist (cdr mark-alist))
+	(when (> num-ma elmo-display-progress-threshold)
+	  (setq i (1+ i)
+		progress (/ (* i 100) num-ma))
+	  (if (not (eq progress last-progress))
+	      (elmo-display-progress 'wl-summary-sync-marks
+				     "Updating marks..."
+				     progress))
+	  (setq last-progress progress)))
       (setq diff (elmo-list-diff importants importants-in-db))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
@@ -2149,7 +2156,7 @@ If optional argument is non-nil, checking is omitted."
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
 	 diff append-list delete-list
-	 i percent num result
+	 i num result
 	 gc-message
 	 in-folder
 	 in-db curp
@@ -2245,6 +2252,7 @@ If optional argument is non-nil, checking is omitted."
 	    (setq curp overview-append)
 	    (setq num (length curp))
 	    (setq wl-summary-delayed-update nil)
+	    (setq wl-summary-last-delayed-update nil)
 	    (elmo-kill-buffer wl-summary-search-buf-name)
 	    (while curp
 	      (setq entity (car curp))
@@ -2259,14 +2267,19 @@ If optional argument is non-nil, checking is omitted."
 		   (car entity) folder
 		   (elmo-msgdb-overview-entity-get-number entity)))
 	      (setq curp (cdr curp))
-	      (setq i (+ i 1))
-	      (setq percent (/ (* i 100) num))
-	      (elmo-display-progress
-	       'wl-summary-sync-update3 "Updating thread..."
-	       percent))
+	      (when (> num elmo-display-progress-threshold)
+		(setq i (+ i 1))
+		(if (or (zerop (% i 5)) (= i num))
+		    (elmo-display-progress
+		     'wl-summary-sync-update3 "Updating thread..."
+		     (/ (* i 100) num)))))
 	    (when wl-summary-delayed-update
 	      (message "Updating thread (reversed)...")
 	      (while wl-summary-delayed-update
+		(if (equal (car wl-summary-delayed-update)
+			   (car wl-summary-last-delayed-update))
+		    (error "Summary is broken, please rescan summary"))
+		(setq wl-summary-last-delayed-update wl-summary-delayed-update)
 		(when (setq top-num
 			    (wl-summary-append-message-func-internal
 			     (car wl-summary-delayed-update)
@@ -2307,11 +2320,11 @@ If optional argument is non-nil, checking is omitted."
 				(and sync-all
 				     (wl-summary-rescore-msgs number-alist))
 				sync-all)
-      (setq expunged (wl-summary-score-update-all-lines))
-      (if expunged
-	  (setq ret-val (concat ret-val 
-				(format " (%d expunged)" 
-					(length expunged))))))
+      (when (and wl-summary-scored
+		 (setq expunged (wl-summary-score-update-all-lines)))
+	(setq ret-val (concat ret-val 
+			      (format " (%d expunged)" 
+				      (length expunged))))))
     ;; crosspost
     (setq crossed2 (wl-summary-update-crosspost))
     (if (or crossed crossed2)
@@ -2410,13 +2423,15 @@ If optional argument is non-nil, checking is omitted."
       (message "Hilighting...")
       (setq i 0)
       (while msgs
-	(setq i (+ i 1))
-	(elmo-display-progress
-	 'wl-summary-highlight-msgs "Highlighting..."
-	 (/ (* i 100) len))
 	(if (wl-summary-jump-to-msg (car msgs))
 	    (wl-highlight-summary-current-line))
-	(setq msgs (cdr msgs)))
+	(setq msgs (cdr msgs))
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (+ i 1))
+	  (if (or (zerop (% i 5)) (= i len))
+	      (elmo-display-progress
+	       'wl-summary-highlight-msgs "Highlighting..."
+	       (/ (* i 100) len)))))
       (message "Highlighting...done."))))
 
 (defun wl-summary-message-number ()
@@ -6037,6 +6052,9 @@ Reply to author if invoked with argument."
       (if (interactive-p)
 	  (setq dst-parent (string-to-int dst-parent))
 	(setq dst-parent parent-number)))
+    (if (and dst-parent
+	     (memq dst-parent (wl-thread-get-children-msgs number)))
+	(error "Parent is children or myself"))
     (setq entity (wl-thread-get-entity number))
     (when (and number entity)
       (let* (older-brothers younger-brothers parent-entity beg)
