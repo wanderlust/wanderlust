@@ -1,3 +1,9 @@
+2001-10-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-maildir.el (elmo-maildir-max-of-folder): Call
+	elmo-maildir-update-current (In order to create qinfo-MSG
+	in queue folder correctly).
+
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-dop.el (elmo-dop-flush-pending-append-operations): Check

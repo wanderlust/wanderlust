@@ -375,6 +375,7 @@ file name for maildir directories."
   (elmo-maildir-list-folder-subr spec))
 
 (defun elmo-maildir-max-of-folder (spec)
+  (elmo-maildir-update-current spec)
   (elmo-maildir-list-folder-subr spec t))
 
 (defalias 'elmo-maildir-check-validity 'elmo-localdir-check-validity)
