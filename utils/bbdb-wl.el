@@ -105,7 +105,7 @@
 	  (switch-to-buffer (get-buffer-create bbdb-buffer-name)))))))
 
 (defun bbdb-wl-get-petname (from)
-  "For `wl-summary-get-petname-func'."
+  "For `wl-summary-get-petname-function'."
   (let* ((address (wl-address-header-extract-address from))
 	 (record (bbdb-search-simple nil address)))
     (and record
@@ -113,7 +113,7 @@
 	     (car (bbdb-record-name record))))))
 
 (defun bbdb-wl-from-func (string)
-  "A candidate From field STRING.  For `wl-summary-from-func'."
+  "A candidate From field STRING.  For `wl-summary-from-function'."
   (let ((hit (bbdb-search-simple nil (wl-address-header-extract-address
 				      string)))
 	first-name last-name from-str)

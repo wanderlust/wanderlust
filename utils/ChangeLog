@@ -1,3 +1,8 @@
+2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* bbdb-wl.el (bbdb-wl-get-petname): Fixed docstring.
+	(bbdb-wl-from-func): Ditto.
+
 2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* bbdb-wl.el (bbdb-wl-extract-field-value-internal): Enclose the
