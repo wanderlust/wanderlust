@@ -1,3 +1,8 @@
+2003-01-30  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-thread.el (wl-thread-save-entities): Bind print-length
+	and print-level.
+
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-thread.el (wl-thread-save-top-list): Bind print-length.
