@@ -83,6 +83,11 @@ If nil, default acap port is used."
   :type '(repeat symbol)
   :group 'wl)
 
+(defcustom wl-acap-cache-filename "acap-cache"
+  "ACAP setting cache file."
+  :type 'string
+  :group 'wl)
+
 ;; Encoding string as BASE64 is temporal solution.
 ;; As far as I know, current implementation of ACAP server
 ;; (cyrus-smlacapd 0.5) does not accept literal argument for STORE.
@@ -100,85 +105,132 @@ If nil, default acap port is used."
 
 (defun wl-acap-exit ()
   "End ACAP session."
-  (setq elmo-msgdb-directory wl-acap-original-msgdb-directory))
+  (when wl-acap-original-msgdb-directory
+    (setq elmo-msgdb-directory wl-acap-original-msgdb-directory)))
 
 (defun wl-acap-init ()
   "A candidate for `wl-folder-init-function'."
   (setq wl-acap-original-msgdb-directory nil)
-  (condition-case nil ; catch error and quit.
-  (let ((service (wl-acap-find-acap-service))
-	proc entries settings folder-top type)
-    (unless (car service) (error "No ACAP service found"))
-    (setq proc (acap-open (car service)
-			  wl-acap-user
-			  (upcase (symbol-name wl-acap-authenticate-type))
-			  (cdr service)))
-    (setq entries (acap-response-entries
-		   (acap-search proc (concat "/"
-					     wl-acap-dataset-class
-					     "/~/")
-				'((RETURN ("*"))))))
-    (while entries
-      (when (string= (acap-response-entry-entry (car entries))
-		     wl-acap-entry-name)
-	(setq settings (car (acap-response-entry-return-data-list
-			     (car entries)))
-	      entries nil))
-      (setq entries (cdr entries)))
-    (setq settings
-	  (delq
-	   'wl-acap-ignored
-	   (mapcar (lambda (x)
-		     (let ((sym (wl-acap-symbol (car x))))
-		       (cond
-			((and sym (eq sym 'wl-folders))
-			 ;; Folders.
-			 (setq wl-folder-entity
-			       (wl-acap-create-folder-entity (cadr x)))
-			 'wl-acap-ignored)
-			((and sym (boundp sym))
-			 (setq type (custom-variable-type sym))
-			 (cons
-			  sym
-			  (when (cadr x)
-			    (cond
-			     ((or (eq (car type) 'string)
-				  (and (eq (car type) 'choice)
-				       (memq 'string type)))
-			      (if (memq sym wl-acap-base64-encode-options)
-				  (wl-acap-base64-decode-string (cadr x))
-				(decode-coding-string
-				 (cadr x)
-				 wl-acap-coding-system)))
-			     (t
-			      (if (cadr x)
-				  (read
-				   (if (memq sym
-					     wl-acap-base64-encode-options)
-				       (wl-acap-base64-decode-string (cadr x))
-				      (read (concat
-					     "\""
-					     (decode-coding-string
-					      (cadr x)
-					      wl-acap-coding-system)
-					     "\""))
-				      ))))))))
-			(t 'wl-acap-ignored))))
-		   settings)))
-    ;; Setup options.
-    (dolist (setting settings)
-      (set (car setting) (cdr setting)))
-    ;; Database directory becomes specific to the ACAP server.
-    (setq wl-acap-original-msgdb-directory elmo-msgdb-directory)
-    (setq elmo-msgdb-directory (expand-file-name
-				(concat "acap/" (car service) "/" wl-acap-user)
-				elmo-msgdb-directory))
-    (acap-close proc))
-  (error (when wl-acap-original-msgdb-directory
-	   (setq elmo-msgdb-directory wl-acap-original-msgdb-directory)))
-  (quit (when wl-acap-original-msgdb-directory
-	  (setq elmo-msgdb-directory wl-acap-original-msgdb-directory)))))
-
+  (condition-case err			; catch error and quit.
+      (let ((service (wl-acap-find-acap-service))
+	    proc entries settings folder-top type caches msgdb-dir)
+	(if (null (car service))
+	    (if (setq caches
+		      (delq 
+		       nil
+		       (mapcar
+			(lambda (dirent)
+			  (let ((dir
+				 (elmo-localdir-folder-directory-internal
+				  (elmo-make-folder dirent))))
+			    (if (file-exists-p
+				 (setq dir (expand-file-name
+					    wl-acap-cache-filename
+					    dir)))
+				dir)))
+			(elmo-folder-list-subfolders
+			 (elmo-make-folder (concat "+"
+						   (expand-file-name
+						    "acap"
+						    elmo-msgdb-directory)))))))
+		(if (y-or-n-p "No ACAP service found. Try cache?")
+		    (let (selected rpath alist)
+		      (setq alist
+			    (mapcar
+			     (lambda (dir)
+			       (setq rpath (nreverse (split-string dir "/")))
+			       (cons (concat (nth 1 rpath) "@" (nth 2 rpath))
+				     dir))
+			     caches)
+			    selected
+			    (cdr (assoc
+				  (completing-read
+				   "Select ACAP cache: " alist nil t)
+				  alist))
+			    msgdb-dir (file-name-directory selected)
+			    entries (elmo-object-load selected)))
+		  (error "No ACAP service found."))
+	      (error "No ACAP service found."))
+	  (setq proc (acap-open (car service)
+				wl-acap-user
+				(upcase (symbol-name
+					 wl-acap-authenticate-type))
+				(cdr service)))
+	  (setq entries (acap-response-entries
+			 (acap-search proc (concat "/"
+						   wl-acap-dataset-class
+						   "/~/")
+				      '((RETURN ("*"))))))
+	  (when entries
+	    (elmo-object-save 
+	     (expand-file-name
+	      (concat "acap/" (car service) "/" wl-acap-user "/"
+		      wl-acap-cache-filename)
+	      elmo-msgdb-directory)
+	     entries)))
+	(while entries
+	  (when (string= (acap-response-entry-entry (car entries))
+			 wl-acap-entry-name)
+	    (setq settings (car (acap-response-entry-return-data-list
+				 (car entries)))
+		  entries nil))
+	  (setq entries (cdr entries)))
+	(setq settings
+	      (delq
+	       'wl-acap-ignored
+	       (mapcar (lambda (x)
+			 (let ((sym (wl-acap-symbol (car x))))
+			   (cond
+			    ((and sym (eq sym 'wl-folders))
+			     ;; Folders.
+			     (setq wl-folder-entity
+				   (wl-acap-create-folder-entity (cadr x)))
+			     'wl-acap-ignored)
+			    ((and sym (boundp sym))
+			     (setq type (custom-variable-type sym))
+			     (cons
+			      sym
+			      (when (cadr x)
+				(cond
+				 ((or (eq (car type) 'string)
+				      (and (eq (car type) 'choice)
+					   (memq 'string type)))
+				  (if (memq sym wl-acap-base64-encode-options)
+				      (wl-acap-base64-decode-string (cadr x))
+				    (decode-coding-string
+				     (cadr x)
+				     wl-acap-coding-system)))
+				 (t
+				  (if (cadr x)
+				      (read
+				       (if (memq sym
+						 wl-acap-base64-encode-options)
+					   (wl-acap-base64-decode-string
+					    (cadr x))
+					 (read (concat
+						"\""
+						(decode-coding-string
+						 (cadr x)
+						 wl-acap-coding-system)
+						"\""))
+					 ))))))))
+			    (t 'wl-acap-ignored))))
+		       settings)))
+	;; Setup options.
+	(dolist (setting settings)
+	  (set (car setting) (cdr setting)))
+	;; Database directory becomes specific to the ACAP server.
+	(setq wl-acap-original-msgdb-directory elmo-msgdb-directory)
+	(setq elmo-msgdb-directory (or msgdb-dir
+				       (expand-file-name
+					(concat "acap/" (car service)
+						"/" wl-acap-user)
+					elmo-msgdb-directory)))
+	(when proc (acap-close proc)))
+    ((error quit)
+     (when wl-acap-original-msgdb-directory
+       (setq elmo-msgdb-directory wl-acap-original-msgdb-directory))
+     (signal (car err) (cdr err)))))
 
 (defun wl-acap-create-folder-entity (string)
   (with-temp-buffer

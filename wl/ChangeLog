@@ -1,3 +1,9 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (wl-acap-cache-filename): New variable.
+	(wl-acap-exit): Resume elmo-msgdb-directory only if it is preserved.
+	(wl-acap-init): Use cache if no ACAP server found.
+
 2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-acap.el (wl-acap-original-msgdb-directory): Renamed from
