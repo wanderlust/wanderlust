@@ -1371,15 +1371,14 @@ If optional argument UNMARK is non-nil, unmark."
 	  (elmo-imap4-send-command-wait session
 					(format
 					 (if elmo-imap4-use-uid
-					     "uid fetch %s rfc822%s"
-					   "fetch %s rfc822%s")
+					     "uid fetch %s body%s[]"
+					   "fetch %s body%s[]")
 					 msg
 					 (if leave-seen-flag-untouched
 					     ".peek" ""))))
-    (and (setq response (elmo-imap4-response-value
+    (and (setq response (elmo-imap4-response-bodydetail-text
 			 (elmo-imap4-response-value-all
-			  response 'fetch )
-			 'rfc822))
+			  response 'fetch )))
 	 (with-current-buffer outbuf
 	   (erase-buffer)
 	   (insert response)

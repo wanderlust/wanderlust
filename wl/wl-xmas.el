@@ -518,6 +518,19 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
+(defun wl-read-event-char ()
+  "Get the next event."
+  (let ((event (next-command-event)))
+    (sit-for 0)
+    ;; We junk all non-key events.  Is this naughty?
+    (while (not (or (key-press-event-p event)
+		    (button-press-event-p event)))
+      (dispatch-event event)
+      (setq event (next-command-event)))
+    (cons (and (key-press-event-p event)
+	       (event-to-character event))
+	  event)))
+
 (require 'product)
 (product-provide (provide 'wl-xmas) (require 'wl-version))
 

@@ -1,3 +1,23 @@
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved to elmo-util.el.
+
+	* elmo-util.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved from elmo-pipe.el
+
+	* elmo-archive.el (elmo-archive-call-process): Enclose with
+	static-if.
+
+	* elmo-imap4.el (elmo-imap4-read-msg): Use "BODY[]" instead of
+	"RFC822" (because RFC822.PEEK is obsolete).
+	(Adviced by IMAI Takeshi <imai@on.rim.or.jp>)
+
+2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* elmo-archive.el (elmo-archive-call-process): Don't check for
+	the exit status when Nemacs is running.
+
 2001-01-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-net.el (elmo-network-session-password-key): Don't set default to

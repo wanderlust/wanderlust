@@ -603,6 +603,11 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
+(defun wl-read-event-char ()
+  "Get the next event."
+  (let ((event (read-event)))
+    (cons (and (numberp event) event) event)))
+
 (require 'product)
 (product-provide (provide 'wl-e21) (require 'wl-version))
 
