@@ -1,3 +1,8 @@
+2004-03-08  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-vars.el (elmo-msgdb-default-type): Remove generic from the
+	range.
+
 2004-03-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (elmo-msgdb-list-flagged): Use append instead
