@@ -317,16 +317,6 @@
 		 (setq li (cdr li))))))))
 
 ;;; ELMO folder structure with cache.
-(defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
-  "Get elmo folder structure from entity."
-  (` (if (, no-cache)
-	 (elmo-make-folder (elmo-string (, entity)))
-       (or (wl-folder-elmo-folder-cache-get (, entity))
-	   (let* ((name (elmo-string (, entity)))
-		  (folder (elmo-make-folder name)))
-	     (wl-folder-elmo-folder-cache-put name folder)
-	     folder)))))
-
 (defmacro wl-folder-elmo-folder-cache-get (name &optional hashtb)
   "Returns a elmo folder structure associated with NAME from HASHTB.
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
@@ -338,6 +328,16 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (` (elmo-set-hash-val (, name) (, folder)
 			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
+
+(defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
+  "Get elmo folder structure from entity."
+  (` (if (, no-cache)
+	 (elmo-make-folder (elmo-string (, entity)))
+       (or (wl-folder-elmo-folder-cache-get (, entity))
+	   (let* ((name (elmo-string (, entity)))
+		  (folder (elmo-make-folder name)))
+	     (wl-folder-elmo-folder-cache-put name folder)
+	     folder)))))
 
 (defun wl-folder-prev-entity ()
   (interactive)

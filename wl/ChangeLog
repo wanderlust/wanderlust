@@ -1,3 +1,15 @@
+2002-05-03  Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-draft.el (wl-draft-beginning-of-line): New command imported
+	from the recent message.el.
+	(wl-draft-point-in-header-p): Ditto.
+	* wl-mule.el (wl-draft-mode-map): Bind "\C-a" to
+	wl-draft-beginning-of-line.
+	* wl-e21.el (wl-draft-mode-map): Ditto.
+	* wl-xmacs.el (wl-draft-mode-map): Ditto.
+
+	* wl-folder.el: Sort macrodefs by dependencies.
+
 2002-05-03  Yuuichi Teranishi  <teranisi@ns.templewest.net>
 
 	* wl-summary.el (wl-summary-prev): Fixed regexp.
@@ -406,7 +418,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 	
-2002-03-11  J.ANirNtme Marant <jerome.marant@free.fr>
+2002-03-11  J,Ai(Br,At(Bme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 

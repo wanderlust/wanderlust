@@ -774,6 +774,29 @@ text was killed."
   (kill-region b e)
   (insert wl-draft-elide-ellipsis))
 
+;; Imported from message.el.
+(defun wl-draft-beginning-of-line (&optional n)
+  "Move point to beginning of header value or to beginning of line."
+  (interactive "p")
+  (if (wl-draft-point-in-header-p)
+      (let* ((here (point))
+	     (bol (progn (beginning-of-line n) (point)))
+	     (eol (line-end-position))
+	     (eoh (re-search-forward ": *" eol t)))
+	(if (or (not eoh) (equal here eoh))
+	    (goto-char bol)
+	  (goto-char eoh)))
+    (beginning-of-line n)))
+
+(defun wl-draft-point-in-header-p ()
+  "Return t if point is in the header."
+  (save-excursion
+    (let ((p (point)))
+      (goto-char (point-min))
+      (not (re-search-forward
+	    (concat "^" (regexp-quote mail-header-separator) "\n")
+	    p t)))))
+
 ;; function for wl-sent-message-via
 
 (defmacro wl-draft-sent-message-p (type)

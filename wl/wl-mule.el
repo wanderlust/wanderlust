@@ -159,7 +159,8 @@ Special commands:
 ;;   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
   (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer)
-  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
+  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region)
+  (define-key wl-draft-mode-map "\C-a" 'wl-draft-beginning-of-line))
 
 (defun wl-draft-overload-menubar ()
   (let ((keymap (current-local-map)))
