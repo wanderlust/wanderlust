@@ -1,5 +1,9 @@
 2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-unset-persistent-mark): Ignore case
+	for completion.
+	(wl-summary-set-persistent-mark): Ditto.
+
 	* wl-draft.el (wl-draft-send-confirm): Call `wl-mime-quit-preview'
 	instead of `wl-draft-quit-preview'.
 

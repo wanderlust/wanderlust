@@ -3088,14 +3088,15 @@ Return non-nil if the mark is updated"
   "Unset persistent mark."
   (interactive)
   (when (interactive-p)
-    (setq flag (intern (downcase
-			(completing-read
-			 "Flag: "
-			 (mapcar (lambda (flag)
-				   (list (capitalize (symbol-name flag))))
-				 elmo-preserved-flags)
-			 nil
-			 'require-match)))))
+    (let ((completion-ignore-case t))
+      (setq flag (intern (downcase
+			  (completing-read
+			   "Flag: "
+			   (mapcar (lambda (flag)
+				     (list (capitalize (symbol-name flag))))
+				   elmo-preserved-flags)
+			   nil
+			   'require-match))))))
   (wl-summary-set-persistent-mark-internal 'inverse
 					   flag
 					   number-or-numbers
@@ -3107,14 +3108,15 @@ Return non-nil if the mark is updated"
   "Set persistent mark."
   (interactive)
   (when (interactive-p)
-    (setq flag (intern (downcase
-			(completing-read
-			 "Flag: "
-			 (mapcar (lambda (flag)
-				   (list (capitalize (symbol-name flag))))
-				 elmo-preserved-flags)
-			 nil
-			 'require-match)))))
+    (let ((completion-ignore-case t))
+      (setq flag (intern (downcase
+			  (completing-read
+			   "Flag: "
+			   (mapcar (lambda (flag)
+				     (list (capitalize (symbol-name flag))))
+				   elmo-preserved-flags)
+			   nil
+			   'require-match))))))
   (wl-summary-set-persistent-mark-internal
    nil
    flag
