@@ -180,6 +180,14 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 		 (const :tag "Sequential" sequence))
   :group 'wl-summary)
 
+(defcustom wl-summary-default-view-alist nil
+  "An alist of folder name and summary default view.
+If no match, `wl-summary-default-view' is used."
+  :type '(repeat (cons (regexp :tag "Folder Regexp")
+		       (choice (const :tag "Thread" thread)
+			       (const :tag "Sequential" sequence))))
+  :group 'wl-summary)
+
 (defvar wl-summary-mode-line-format-spec-alist
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname (elmo-folder-name-internal

@@ -2464,7 +2464,11 @@ If ARG, without confirm."
 		  (if (file-exists-p view)
 		      (setq wl-summary-buffer-view
 			    (wl-summary-load-file-object view))
-		    (setq wl-summary-buffer-view wl-summary-default-view))
+		    (setq wl-summary-buffer-view
+			  (or (wl-get-assoc-list-value
+			       wl-summary-default-view-alist
+			       (elmo-folder-name-internal folder))
+			      wl-summary-default-view)))
 		  (wl-thread-resume-entity folder)
 		  (wl-summary-open-folder folder))
 	      (setq wl-summary-buffer-view
