@@ -1,5 +1,7 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo.el (elmo-folder-rename-internal): New method to cause error.
+
 	* elmo-nntp.el (elmo-folder-search): Body search is to search from
 	cache even if the folder is plugged.
 	(elmo-nntp-search-primitive): Do nothing when body search is
