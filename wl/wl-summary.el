@@ -603,7 +603,7 @@ you."
 	(cond
 	 ((and
 	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
+	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/report\\)") nil t)
 	   (not (bolp))
 	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
 	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
@@ -611,7 +611,6 @@ you."
 	    (cond
 	     ((and (setq start (re-search-forward
 			   (concat "^--" boundary "\n"
-				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				   "[Cc]ontent-[Tt]ype:[ \t]+"
 				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
 				   "\\(.+\n\\)*\n") nil t))
@@ -1078,25 +1077,12 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(if (setq message-buf (get-buffer wl-message-buf-name))
 	    (if (setq message-win (get-buffer-window message-buf))
 		(delete-window message-win)))
-	(if (and wl-summary-use-frame
-		 (> (length (visible-frame-list)) 1))
-	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if wl-summary-use-frame
-		(let (select-frame)
-		  (save-selected-window
-		    (dolist (frame (visible-frame-list))
-		      (select-frame frame)
-		      (if (get-buffer-window folder-buf)
-			  (setq select-frame frame))))
-		  (if select-frame
-		      (select-frame select-frame)
-		    (switch-to-buffer folder-buf)))
-	      (if (setq folder-win (get-buffer-window folder-buf))
-		  ;; folder win is already displayed.
-		  (select-window folder-win)
-		;; folder win is not displayed.
-		(switch-to-buffer folder-buf)))
+	    (if (setq folder-win (get-buffer-window folder-buf))
+		;; folder win is already displayed.
+		(select-window folder-win)
+	      ;; folder win is not displayed.
+	      (switch-to-buffer folder-buf))
 	  ;; currently no folder buffer
 	  (wl-folder))
 	(and wl-folder-move-cur-folder
@@ -5430,10 +5416,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
           (setq wl-current-summary-buffer (current-buffer))
-	  (if (wl-message-redisplay fld num 'mime msgdb
-				    (or force-reload
-					;; if draft folder, force reload.
-					(string= fld wl-draft-folder)))
+	  (if (wl-message-redisplay fld num 'mime msgdb force-reload)
 	      (wl-summary-mark-as-read nil
 				       ;; cached, then change server-mark.
 				       (if wl-message-cache-used
@@ -5475,9 +5458,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-last-displayed-msg
 		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-normal-message-redisplay fld num 'no-mime msgdb
-				       ;; if draft folder, force reload.
-				       (string= fld wl-draft-folder))
+	  (wl-normal-message-redisplay fld num 'no-mime msgdb)
 	  (wl-summary-mark-as-read nil nil t)
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
@@ -5504,9 +5485,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-last-displayed-msg
 		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (if (wl-message-redisplay fld num 'all-header msgdb
-				    ;; if draft folder, force reload.
-				    (string= fld wl-draft-folder))
+	  (if (wl-message-redisplay fld num 'all-header msgdb); t if displayed.
 	      (wl-summary-mark-as-read nil nil t))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
