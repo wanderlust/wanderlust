@@ -1,3 +1,12 @@
+2003-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-move-messages): Don't display any message.
+
+	* elmo-imap4.el (elmo-imap4-send-command): Accept process output when
+	parsing.
+	(elmo-imap4-session-check): Don't wait CHECK response.
+	(elmo-folder-delete-messages-plugged): Don't wait EXPUNGE response.
+
 2003-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-synchronize): Fixed bug when sync-all.

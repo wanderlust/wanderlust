@@ -1092,8 +1092,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (elmo-folder-close dst-folder)))
       (if (and (not no-delete) succeeds)
 	  (progn
-	    (if (not no-delete-info)
-		(message "Cleaning up src folder..."))
+	    ;;(if (not no-delete-info)
+	    ;;(message "Cleaning up src folder..."))
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
 		     (elmo-msgdb-delete-msgs
 		      (elmo-folder-msgdb src-folder) succeeds))
@@ -1101,13 +1101,13 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))
 	      (setq result nil))
-	    (if (and result
-		     (not no-delete-info))
-		(message "Cleaning up src folder...done"))
+	    ;;(if (and result
+	    ;;(not no-delete-info))
+	    ;;(message "Cleaning up src folder...done"))
 	    result)
 	(if no-delete
 	    (progn
-	      (message "Copying messages...done")
+	      ;; (message "Copying messages...done")
 	      t)
 	  (if (eq len 0)
 	      (message "No message was moved.")

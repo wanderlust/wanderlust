@@ -291,8 +291,11 @@ Returns a TAG string which is assigned to the COMMAND."
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
 	(elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
-      (if elmo-imap4-parsing
-	  (error "IMAP process is running. Please wait (or plug again)"))
+      (when elmo-imap4-parsing
+	(message "Waiting for IMAP response...")
+	(accept-process-output (elmo-network-session-process-internal
+				session))
+	(message "Waiting for IMAP response...done"))
       (setq elmo-imap4-parsing t)
       (elmo-imap4-debug "<-(%s)- %s" tag command)
       (while (setq token (car command-args))
@@ -474,7 +477,7 @@ If response is not `OK' response, causes error with IMAP response text."
   (with-current-buffer (elmo-network-session-buffer session)
     (setq elmo-imap4-fetch-callback nil)
     (setq elmo-imap4-fetch-callback-data nil))
-  (elmo-imap4-send-command-wait session "check"))
+  (elmo-imap4-send-command session "check"))
 
 (defun elmo-imap4-atom-p (string)
   "Return t if STRING is an atom defined in rfc2060."
@@ -2085,7 +2088,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
   ((folder elmo-imap4-folder) numbers)
   (let ((session (elmo-imap4-get-session folder)))
     (elmo-imap4-set-flag folder numbers "\\Deleted")
-    (elmo-imap4-send-command-wait session "expunge")))
+    (elmo-imap4-send-command session "expunge")))
 
 (defmacro elmo-imap4-detect-search-charset (string)
   (` (with-temp-buffer
