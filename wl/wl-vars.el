@@ -1020,16 +1020,15 @@ cdr of each cons cell is used for preparing headers of draft message."
 						      new
 						      answered
 						      unread)
-  "List of flags reflected with the priority to persistent marks and faces."
-  :type '(repeat (radio (const :format "%v " new)
-			(const :format "%v " flag)
-			(const :format "%v " answered)
-			(const :format "%v " unread)))
+  "List of preserved flag symbols to define the priority to map\
+to the persistent mark.
+Special symbol `flag' means the user defined flag."
+  :type '(repeat (symbol :tag "preserved flag"))
   :group 'wl-summary)
 
 (defcustom wl-summary-flag-alist
   '((important "orange"))
-  "An alist to define the flags for the summary mode.
+  "An alist to define the global flags for the summary mode.
 Each element is a form like:
 \(SYMBOL-OF-FLAG COLOR [MARK]\)
 Example:

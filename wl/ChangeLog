@@ -1,5 +1,18 @@
 2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-persistent-mark-priority-list): Update
+	docstring and custom spec.
+
+	* wl-summary.el (wl-summary-unset-persistent-mark): Treat global
+	flags too; Don't treat Cached and New.
+	(wl-summary-set-persistent-mark): Ditto.
+
+	* wl-folder.el (wl-folder-set-persistent-mark): Renamed from
+	`wl-folder-set-flag'.
+
+	* wl-draft.el (wl-draft-send): Use `wl-folder-set-persistent-mark'
+	instead of `wl-folder-set-flag'.
+
 	* wl-summary.el (wl-summary-unset-persistent-mark): Ignore case
 	for completion.
 	(wl-summary-set-persistent-mark): Ditto.

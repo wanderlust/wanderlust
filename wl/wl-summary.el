@@ -3094,7 +3094,12 @@ Return non-nil if the mark is updated"
 			   "Flag: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
-				   elmo-preserved-flags)
+				   (delq
+				    'cached
+				    (delq 'new
+					  (elmo-uniq-list
+					   (append elmo-global-flag-list
+						   elmo-preserved-flags)))))
 			   nil
 			   'require-match))))))
   (wl-summary-set-persistent-mark-internal 'inverse
@@ -3114,7 +3119,12 @@ Return non-nil if the mark is updated"
 			   "Flag: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
-				   elmo-preserved-flags)
+				    (delq
+				     'cached
+				     (delq 'new
+					   (elmo-uniq-list
+					    (append elmo-global-flag-list
+						    elmo-preserved-flags)))))
 			   nil
 			   'require-match))))))
   (wl-summary-set-persistent-mark-internal

@@ -505,8 +505,8 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	    (wl-folder-toggle-disp-summary 'off wl-queue-folder)
 	  (switch-to-buffer cur-buf))))))
 
-(defun wl-folder-set-flag (folder number flag)
-  "Set FLAG on the message."
+(defun wl-folder-set-persistent-mark (folder number flag)
+  "Set a persistent mark which corresponds to the specified flag on message."
   (let ((buffer (wl-summary-get-buffer folder))
 	elmo-folder)
     (if buffer
