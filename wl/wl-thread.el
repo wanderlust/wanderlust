@@ -505,6 +505,12 @@ ENTITY is returned."
       (setq wl-summary-buffer-number-list
 	    (delq msg wl-summary-buffer-number-list))
       (when entity
+	(when deep
+	  (setq wl-summary-buffer-number-list
+		(elmo-list-delete
+		 (wl-thread-entity-get-descendant entity)
+		 wl-summary-buffer-number-list
+		 #'delq)))
 	(let ((parent (wl-thread-entity-get-parent-entity entity)))
 	  (if parent
 	      ;; has parent.

@@ -1,3 +1,8 @@
+2005-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-thread.el (wl-thread-delete-message): Delete descendant
+	numbers from `wl-summary-buffer-number-list' if `deep' is non-nil.
+
 2005-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-xmas.el (wl-folder-internal-icon-list): Fix last change.
