@@ -186,7 +186,8 @@
 	 ((consp (cdr dst-diff)) ; new unread all
 	  (mapcar (lambda (number) (+ number src-length)) dst-diff))
 	 (t
-	  (cons (+ (car dst-diff) src-length) (cdr dst-diff))))
+	  (cons (+ (car dst-diff) src-length)
+		(+ (cdr dst-diff) src-length))))
       ;; No save.
       (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
       (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))))
