@@ -1636,19 +1636,24 @@ See also variable `wl-summary-next-no-unread-command'."
   :group 'wl-pref
   :group 'wl-setting)
 
-(defcustom wl-cache-prefetch-folder-type-list '(imap4 nntp)
+(defcustom wl-message-buffer-prefetch-folder-type-list t
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."
-  :type '(set (const localdir)
-	      (const localnews)
-	      (const imap4)
-	      (const nntp)
-	      (const pop3)
-	      (const archive)
-	      (const internal))
+  :type '(choice (const :tag "all" t)
+		 (const :tag "never" nil)
+		 (set (const localdir)
+		      (const localnews)
+		      (const maildir)
+		      (const imap4)
+		      (const nntp)
+		      (const pop3)
+		      (const shimbun)
+		      (const nmz)
+		      (const archive)
+		      (const internal)))
   :group 'wl-pref)
 
-(defcustom wl-cache-prefetch-folder-list nil
+(defcustom wl-message-buffer-prefetch-folder-list nil
   "*All folders that match this list prefetch next message,
 and reserved buffer cache.
 e.x.

@@ -47,8 +47,6 @@
 (defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
 
-(defvar wl-message-buffer-prefetch-folder-type-list t)
-
 (defvar wl-message-buffer-prefetch-debug nil)
 
 (defvar wl-message-buffer nil) ; message buffer.
@@ -532,24 +530,25 @@ Returns non-nil if bottom of message."
       (setq buffer-read-only t))))
 
 (defsubst wl-message-buffer-prefetch-p (folder &optional number)
-  (cond 
-   ((eq wl-message-buffer-prefetch-folder-type-list t)
-    t)
-   ((and number wl-message-buffer-prefetch-folder-type-list)
-    (memq (elmo-folder-type-internal
-	   (elmo-message-folder folder number))
-	  wl-message-buffer-prefetch-folder-type-list))
-   (wl-message-buffer-prefetch-folder-type-list
-    (let ((list wl-message-buffer-prefetch-folder-type-list)
-	  type)
-      (catch 'done
-	(while (setq type (pop list))
-	  (if (elmo-folder-contains-type folder type)
-	      (throw 'done t))))))
-   ((consp wl-message-buffer-prefetch-folder-type-list)
-    (wl-string-match-member (elmo-folder-name-internal folder)
-			    wl-message-buffer-prefetch-folder-type-list))
-   (t wl-message-buffer-prefetch-folder-type-list)))
+  (or (cond
+       ((eq wl-message-buffer-prefetch-folder-type-list t)
+	t)
+       ((and number wl-message-buffer-prefetch-folder-type-list)
+	(memq (elmo-folder-type-internal
+	       (elmo-message-folder folder number))
+	      wl-message-buffer-prefetch-folder-type-list))
+       (wl-message-buffer-prefetch-folder-type-list
+	(let ((list wl-message-buffer-prefetch-folder-type-list)
+	      type)
+	  (catch 'done
+	    (while (setq type (pop list))
+	      (if (elmo-folder-contains-type folder type)
+		  (throw 'done t)))))))
+      (cond
+       ((consp wl-message-buffer-prefetch-folder-list)
+	(wl-string-match-member (elmo-folder-name-internal folder)
+				wl-message-buffer-prefetch-folder-list))
+       (t wl-message-buffer-prefetch-folder-list))))
 
 (defvar wl-message-buffer-prefetch-timer nil)
 
@@ -585,7 +584,7 @@ Returns non-nil if bottom of message."
 						      number message-id)))
 	      (let* ((size (elmo-message-field folder number 'size)))
 		(when (or (elmo-message-file-p folder number)
-			  (not 
+			  (not
 			   (and (integerp size)
 				elmo-message-fetch-threshold
 				(>= size

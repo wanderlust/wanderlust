@@ -1,3 +1,18 @@
+2001-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-message-buffer-prefetch-folder-type-list): New
+	user option (Renamed from wl-cache-prefetch-folder-type-list).
+	(wl-message-buffer-prefetch-folder-list): New user option (Renamed
+	from wl-cache-prefetch-folder-list).
+
+	* wl-message.el (wl-message-buffer-prefetch-folder-type-list):
+	Move to wl-vars.el.
+	(wl-message-buffer-prefetch-p): Changed to enable
+	`wl-message-buffer-prefetch-folder-list'.
+
+	* wl-summary.el (wl-summary-prefetch-region): Added argument
+	`ignore-cache'.
+
 2001-11-23  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-config-sub-func-alist): Added

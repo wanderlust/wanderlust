@@ -3791,8 +3791,8 @@ If ARG, exit virtual folder."
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist))))))
 
-(defun wl-summary-target-mark-prefetch ()
-  (interactive)
+(defun wl-summary-target-mark-prefetch (&optional ignore-cache)
+  (interactive "P")
   (save-excursion
     (let* ((mlist (nreverse wl-summary-buffer-target-mark-list))
 	   (inhibit-read-only t)
@@ -3803,7 +3803,7 @@ If ARG, exit virtual folder."
 	   skipped
 	   new-mark)
       (while mlist
-	(setq new-mark (wl-summary-prefetch-msg (car mlist)))
+	(setq new-mark (wl-summary-prefetch-msg (car mlist) ignore-cache))
 	(if new-mark
 	    (progn
 	      (message "Prefetching... %d/%d message(s)"
