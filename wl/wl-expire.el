@@ -310,7 +310,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 Refile to archive folder followed message number."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-fmt (funcall
-			  wl-expire-archive-get-folder-function folder))
+			  wl-expire-archive-get-folder-func folder))
 	 (dst-folder-base (car dst-folder-fmt))
 	 (dst-folder-fmt (cdr dst-folder-fmt))
 	 (refile-func (if no-delete
@@ -356,7 +356,7 @@ Refile to archive folder followed message number."
 Refile to archive folder followed the number of message in one archive folder."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-fmt (funcall
-			  wl-expire-archive-get-folder-function folder))
+			  wl-expire-archive-get-folder-func folder))
 	 (dst-folder-base (car dst-folder-fmt))
 	 (dst-folder-fmt (cdr dst-folder-fmt))
 	 (refile-func (if no-delete
@@ -413,7 +413,7 @@ Refile to archive folder followed message date."
 	 (number-alist (elmo-msgdb-get-number-alist msgdb))
 	 (overview (elmo-msgdb-get-overview msgdb))
 	 (dst-folder-fmt (funcall
-			  wl-expire-archive-get-folder-function
+			  wl-expire-archive-get-folder-func
 			  folder
 			  wl-expire-archive-date-folder-name-fmt
 			  ))

@@ -134,9 +134,10 @@ ARG is ignored."			; ARG ignored this version (?)
        (setq wl-template (car (nth wl-template-cur-num wl-template-alist)))
        mail-header-separator)
       (wl-highlight-message (point-min) (point-max) t)
-      (when wl-highlight-x-face-function
-	(funcall wl-highlight-x-face-function
-		 (point-min) (re-search-forward mail-header-separator nil t)))
+      (and wl-highlight-x-face-func
+	   (funcall
+	    wl-highlight-x-face-func
+	    (point-min) (re-search-forward mail-header-separator nil t)))
       (setq mode-line-process (concat ":" wl-template))
       (set-buffer-modified-p nil))))
 

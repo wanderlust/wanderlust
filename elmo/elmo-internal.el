@@ -66,14 +66,8 @@
 						 &optional one-level)
   (mapcar
    (lambda (x)
-     (if (elmo-folder-have-subfolder-p
-	  (elmo-make-folder
-	   (concat (elmo-folder-prefix-internal folder)
+     (list (concat (elmo-folder-prefix-internal folder)
 		   (symbol-name x))))
-	 (list (concat (elmo-folder-prefix-internal folder)
-		       (symbol-name x)))
-       (concat (elmo-folder-prefix-internal folder)
-	       (symbol-name x))))
    elmo-internal-folder-list))
 
 (require 'product)

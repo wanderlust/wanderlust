@@ -645,15 +645,15 @@ that `read' can handle, whenever this is possible."
 	  ">"))
 
 ;;; Profile loading.
-(defvar wl-load-profile-function 'wl-local-load-profile)
+(defvar wl-load-profile-func 'wl-local-load-profile)
 (defun wl-local-load-profile ()
   "Load `wl-init-file'."
   (message "Initializing ...")
   (load wl-init-file 'noerror 'nomessage))
 
 (defun wl-load-profile ()
-  "Call `wl-load-profile-function' function."
-  (funcall wl-load-profile-function))
+  "Call `wl-load-profile-func' function."
+  (funcall wl-load-profile-func))
 
 ;;;
 

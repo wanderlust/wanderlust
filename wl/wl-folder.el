@@ -56,7 +56,7 @@
 
 (defvar wl-folder-newsgroups-hashtb nil)
 (defvar wl-folder-info-alist-modified nil)
-(defvar wl-folder-completion-function nil)
+(defvar wl-folder-completion-func nil)
 
 (defvar wl-folder-mode-map nil)
 
@@ -1969,12 +1969,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
 
-(defvar wl-folder-init-function 'wl-local-folder-init)
+(defvar wl-folder-init-func 'wl-local-folder-init)
 
 (defun wl-folder-init ()
-  "Call `wl-folder-init-function' function."
+  "Call `wl-folder-init-func' function."
   (interactive)
-  (funcall wl-folder-init-function))
+  (funcall wl-folder-init-func))
 
 (defun wl-local-folder-init ()
   "Initialize local folder."

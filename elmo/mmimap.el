@@ -31,8 +31,6 @@
 (require 'mmgeneric)
 (require 'mime)
 (require 'pces)
-(require 'static)
-(require 'mime-parse)
 
 (eval-and-compile
   (luna-define-class mime-imap-entity (mime-entity)
@@ -66,20 +64,17 @@ SECTION is a section string which is defined in RFC2060.")
      (reverse node-id)
      "."))))
 
-(static-if (fboundp 'mime-decode-parameter-plist)
-    (defalias 'mmimap-parse-parameters-from-list 'mime-decode-parameter-plist)
-  (defun mmimap-parse-parameters-from-list (attrlist)
-    "Parse parameters from ATTRLIST."
-    (let (ret-val)
-      (while attrlist
-	(setq ret-val (append ret-val
-			      (list (cons (downcase (car attrlist))
-					  (car (cdr attrlist))))))
-	(setq attrlist (cdr (cdr attrlist))))
-      ret-val)))
+(defun mmimap-parse-parameters-from-list (attrlist)
+  "Parse parameters from ATTRLIST."
+  (let (ret-val)
+    (while attrlist
+      (setq ret-val (append ret-val
+			    (list (cons (downcase (car attrlist))
+					(car (cdr attrlist))))))
+      (setq attrlist (cdr (cdr attrlist))))
+    ret-val))
 
-(defun mmimap-make-mime-entity (bodystructure class location node-id number
-					      parent)
+(defun mmimap-make-mime-entity (bodystructure class location node-id parent)
   "Analyze parsed IMAP4 BODYSTRUCTURE response and make MIME entity.
 CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
   (cond
@@ -92,10 +87,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	     :new      t
 	     :parent   parent
 	     :location location
-	     :node-id (if (eq number 0)
-			  node-id
-			(nconc (list number) node-id))
-	     ))
+	     :node-id  node-id))
       (while (and (setq curp (car bodystructure))
 		  (listp curp))
 	(setq children
@@ -103,10 +95,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 		     (list
 		      (mmimap-make-mime-entity curp class
 					       location
-					       (if (eq number 0)
-						   node-id
-						 (nconc (list number) node-id))
-					       num
+					       (nconc (list num) node-id)
 					       entity))))
 	(setq num (+ num 1))
 	(setq bodystructure (cdr bodystructure)))
@@ -139,7 +128,6 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	  (setq content-type (append content-type
 				     (mmimap-parse-parameters-from-list
 				      (nth 2 bodystructure)))))
-      (setq node-id (nconc (list number) node-id))
       (setq entity
 	    (luna-make-entity
 	     class
@@ -160,7 +148,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	   entity
 	   (list (mmimap-make-mime-entity
 		  (nth 8 bodystructure) class
-		  location node-id 0
+		  location node-id
 		  entity))))
       entity))))
 
@@ -174,12 +162,13 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
       (mime-entity-location-internal entity))
      (luna-class-name entity)
      (mime-entity-location-internal entity)
-     nil 0 nil)))
+     nil nil)))
 
 ;;; @ entity
 ;;
 
 (luna-define-method mime-insert-entity ((entity mime-imap-entity))
+  ;; Root entity.
   (if (mime-root-entity-p entity)
       (progn
 	(insert (mime-imap-entity-header-string entity))
@@ -246,13 +235,9 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
        entity
        (mime-imap-location-section-body
 	(mime-entity-location-internal entity)
-	(if (if (eq (car (mime-entity-node-id-internal entity)) 0)
-		(cdr (mime-entity-node-id-internal entity))
-	      (mime-entity-node-id-internal entity))
+	(if (mime-entity-node-id-internal entity)
 	    (concat (mmimap-entity-section
-		     (if (eq (car (mime-entity-node-id-internal entity)) 0)
-			 (cdr (mime-entity-node-id-internal entity))
-		       (mime-entity-node-id-internal entity)))
+		     (mime-entity-node-id-internal entity))
 		    ".HEADER")
 	  "HEADER")))))
 
