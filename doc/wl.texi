@@ -3655,19 +3655,22 @@ moves to the next message.
 Initial setting is @code{'(1 . 4)}.  It is a cons cell and the ratio of
 its car and cdr value corresponds to the ratio of Summary and Message
 windows.
+
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
 (SEMI only) Initial setting is nil.
 All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name.
-If nil, the value of mime-view-ignored-field-list is used.
+If nil, the value of @code{mime-view-ignored-field-list} is used.
+
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
 (SEMI only) Initial setting is nil.
-All fields that match this list will be hidden in message buffer.
+All fields that match this list will be display in message buffer.
 Each elements are regexp of field-name. This value precedes
-wl-message-ignored-field-list.
+@code{wl-message-ignored-field-list}.
 If nil, the value of mime-view-visible-field-list is used.
+
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
 (SEMI only) Initial setting is
