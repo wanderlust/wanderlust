@@ -465,9 +465,7 @@ Don't cache if nil.")
 (defsubst elmo-nntp-catchup-msgdb (msgdb max-number)
   (let ((numbers (elmo-msgdb-list-messages msgdb))
 	msgdb-max)
-    (setq msgdb-max (if numbers
-			(car (sort numbers '>))
-		      0))
+    (setq msgdb-max (if numbers (apply #'max numbers) 0))
     (when (and msgdb-max
 	       max-number
 	       (< msgdb-max max-number))
@@ -901,9 +899,7 @@ Don't cache if nil.")
 	  (setq max-number
 		(nth 1 (read (concat "(" (elmo-nntp-read-contents
 					  session) ")"))))
-	  (setq msgdb-max (if numbers
-			      (car (sort numbers '>))
-			    0))
+	  (setq msgdb-max (if numbers (apply #'max numbers) 0))
 	  (when (and msgdb-max
 		     max-number
 		     (< msgdb-max max-number))

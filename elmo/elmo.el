@@ -850,7 +850,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
   "Set FOLDER info by MSGDB-NUMBER in msgdb."
   (elmo-folder-set-info-hashtb
    folder
-   (or (car (sort numbers '>)) 0)
+   (if numbers (apply #'max numbers) 0)
    nil ;;(length num-db)
    ))
 
@@ -929,9 +929,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	  (let ((number-list (elmo-folder-list-messages folder
 							nil 'in-msgdb)))
 	    ;; No info-cache.
-	    (setq in-db (sort number-list '<))
-	    (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
-				0))
+	    (setq in-db number-list)
+	    (setq in-db-max (if in-db (apply #'max in-db) 0))
 	    (elmo-folder-set-info-hashtb folder in-db-max nil))
 	(setq in-db-max cached-in-db-max))
       (setq unsync (if (and in-db (car in-folder))
