@@ -1,7 +1,28 @@
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-read-msg): Use "BODY[]" instead of
+	"RFC822" (because RFC822.PEEK is obsolete).
+	(Adviced by IMAI Takeshi <imai@on.rim.or.jp>)
+
+2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* elmo-archive.el (elmo-archive-call-process): Don't check for
+	the exit status when Nemacs is running.
+
 2001-01-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-session-password-key): Don't set default to
+	'plain.
+
+	* elmo-util.el (elmo-imap4-get-spec): Set default of auth to 'clear.
+	(elmo-pop3-get-spec): Set default of auth to 'user.
 
 	* elmo-imap4.el (elmo-imap4-session-check):
 	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+	(elmo-imap4-clear-login): New function; Renamed from `elmo-imap4-login'.
+	(elmo-imap4-auth-login): New function; Revival.
+	(elmo-network-authenticate-session): Use `elmo-imap4-clear-login' and
+	`elmo-imap4-auth-login'.
 
 2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

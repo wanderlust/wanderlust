@@ -279,6 +279,11 @@ Warning: Unknown req `%S' with options `%S'" req options))
 			     nil))))
 	match)))))
 
+(defun wl-read-event-char ()
+  "Get the next event."
+  (let ((event (read-event)))
+    (cons (and (numberp event) event) event)))
+
 (require 'product)
 (product-provide (provide 'wl-mule) (require 'wl-version))
 
