@@ -156,6 +156,22 @@
    important-mark)
   (elmo-filter-folder-list-importants-internal folder important-mark))
 
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-filter-folder)
+						 &optional one-level)
+  (let* ((target (elmo-filter-folder-target-internal folder))
+	 (prefix (and (string-match
+		       (concat "^\\(.*\\)"
+			       (regexp-quote
+				(elmo-folder-name-internal
+				 target))
+			       "$")
+		       (elmo-folder-name-internal folder))
+		      (match-string 1 (elmo-folder-name-internal
+				       folder)))))
+    (elmo-mapcar-list-of-list
+     (lambda (x) (concat prefix x))
+     (elmo-folder-list-subfolders target one-level))))
+
 (luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder)
 					      &optional numbers)
   (if (not (and (vectorp (elmo-filter-folder-condition-internal
