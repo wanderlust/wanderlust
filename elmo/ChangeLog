@@ -1,5 +1,7 @@
 2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.13.0.
+
 	* elmo-vars.el (elmo-msgdb-convert-type): Changed default value to
 	`auto'.
 
