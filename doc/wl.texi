@@ -4261,9 +4261,6 @@ In the cdr part of a cons, not only a variable but also an elisp
 expression can be specified as is.  If the car part is a header field
 and the cdr part is @code{nil}, the field will be deleted.
 
-If you want to use name of parent folder, you can refer the buffer local
-variable @code{wl-draft-parent-folder}.
-
 See the next example as well:
 
 @lisp
@@ -4283,6 +4280,22 @@ it is applied when the draft is prepared by @code{wl-summary-reply} for
 example, and when it matches the header being replied.  It is ignored
 when there is no buffer being replied, like after @code{wl-draft} was
 invoked.
+
+If you want to use name of parent folder, you can refer the buffer local
+variable @code{wl-draft-parent-folder}. In the following example, Wanderlust
+changes From according to the folder name of the summary in which the draft
+was invoked.
+
+@lisp
+@group
+(setq wl-draft-config-alist
+      '(((string-match \".*@@domain1$\" wl-draft-parent-folder)
+         (\"From\" . \"user@@domain1\"))
+        ((string-match \".*@@domain2$\" wl-draft-parent-folder)
+         (\"From\" . \"user@@domain2\"))))
+@end group
+@end lisp
+
 
 Note that @code{wl-draft-config-alist} is applied only once when
 @code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked.

@@ -4223,9 +4223,6 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 $BCM$K$OJ8;zNs$dJQ?t$NB>!"(Belisp$B<0$r$=$N$^$^5-=R$9$k$3$H$b$G$-$^$9!#$b$7!"(B
 Field $B$NCM$,(B @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 
-$B?F%U%)%k%@$NL>A0$rMxMQ$7$?$$>l9g$K$O!"%P%C%U%!%m!<%+%kJQ?t(B
-@code{wl-draft-parent-folder} $B$rMxMQ$G$-$^$9!#(B
-
 $B$D$E$$$F!"<!$NNc$r8+$F2<$5$$!#(B
 
 @lisp
@@ -4244,6 +4241,21 @@ Field $B$NCM$,(B @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 @code{wl-summary-reply} $B$J$I$G%I%i%U%H$r:n@.$7$?>l9g!"JV?.85$N%X%C%@$K%^%C(B
 $B%A$9$l$PE,MQ$5$l$k$h$&$K$J$j$^$9!#$?$@$7!"(B@code{wl-draft} $B$r<B9T$7$?$H$-(B
 $B$J$IJV?.85$N%P%C%U%!$,$J$$>l9g$OL5;k$5$l$^$9!#(B
+
+$B?F%U%)%k%@$NL>A0$rMxMQ$7$?$$>l9g$K$O!"%P%C%U%!%m!<%+%kJQ?t(B
+@code{wl-draft-parent-folder} $B$rMxMQ$G$-$^$9!#<!$NNc$G$O!"%I%i%U%H$r3+$/;~$K(B
+$B5o$?%5%^%j%P%C%U%!$N%U%)%k%@L>$K$h$C$F(B From $B$rJQ99$7$^$9!#(B
+
+@lisp
+@group
+(setq wl-draft-config-alist
+      '(((string-match \".*@@domain1$\" wl-draft-parent-folder)
+         (\"From\" . \"user@@domain1\"))
+        ((string-match \".*@@domain2$\" wl-draft-parent-folder)
+         (\"From\" . \"user@@domain2\"))))
+@end group
+@end lisp
+
 
 $B2?$bFCJL$J@_Dj$r$7$J$1$l$P!"(B@code{wl-draft-config-alist} $B$O!"(B
 @code{wl-draft-send-and-exit} $B$+(B @code{wl-draft-send} $B$,<B9T$5$l$kD>A0$K(B
