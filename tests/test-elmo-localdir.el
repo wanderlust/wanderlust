@@ -15,8 +15,8 @@
 (luna-define-method test-elmo-folder-expand-msgdb-path-2 ((case test-elmo-localdir))
   (lunit-assert
    (string=
-    (elmo-folder-expand-msgdb-path (wl-folder-get-elmo-folder "+inbox"))
-    (expand-file-name "localdir/inbox" elmo-msgdb-directory))))
+    (expand-file-name "localdir/inbox" elmo-msgdb-directory)
+    (elmo-folder-expand-msgdb-path (wl-folder-get-elmo-folder "+inbox")))))
 
 
 (luna-define-method test-elmo-folder-expand-msgdb-path-3 ((case test-elmo-localdir))
@@ -25,3 +25,11 @@
     (string=
      (elmo-folder-expand-msgdb-path (wl-folder-get-elmo-folder "+/inbox"))
      (elmo-folder-expand-msgdb-path (wl-folder-get-elmo-folder "+inbox"))))))
+
+(luna-define-method test-elmo-folder-expand-msgdb-path-4 ((case test-elmo-localdir))
+  (lunit-assert
+   (string=
+    (expand-file-name "localdir/inbox" elmo-msgdb-directory)
+    (elmo-folder-expand-msgdb-path
+     (wl-folder-get-elmo-folder
+      (concat "+" elmo-localdir-folder-path "/inbox"))))))
