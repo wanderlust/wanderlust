@@ -213,15 +213,15 @@
 		(elmo-shimbun-folder-shimbun-internal folder))
 	       "."
 	       x))
-     (shimbun-groups-internal (elmo-shimbun-folder-shimbun-internal folder)))))
+     (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
       (progn
 	(member 
 	 (elmo-shimbun-folder-group-internal folder)
-	 (shimbun-groups-internal (elmo-shimbun-folder-shimbun-internal
-				   folder))))
+	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
+			  folder))))
     t))
 
 (luna-define-method elmo-folder-search ((folder elmo-shimbun-folder)
