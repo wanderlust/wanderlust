@@ -390,7 +390,7 @@
 
 (defun wl-texinfo-install-file (lang)
   (let ((infofile (symbol-value (intern (format "wl-%s-info" lang)))))
-    (install-file infofile DOCDIR INFODIR)))
+    (install-file infofile DOCDIR INFODIR nil 'overwrite)))
 
 (defun wl-texinfo-install ()
   (cond ((listp wl-info-lang)
