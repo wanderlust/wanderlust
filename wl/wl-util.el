@@ -600,6 +600,7 @@ that `read' can handle, whenever this is possible."
 				  (% num 36))))))
 
 (defvar wl-unique-id-char nil)
+(defvar wl-unique-id-suffix ".wl")
 
 (defun wl-unique-id ()
   ;; Don't use microseconds from (current-time), they may be unsupported.
@@ -638,7 +639,7 @@ that `read' can handle, whenever this is possible."
      ;; Append the name of the message interface, because while the
      ;; generated ID is unique to this newsreader, other newsreaders
      ;; might otherwise generate the same ID via another algorithm.
-     ".wl")))
+     wl-unique-id-suffix)))
 
 (defun wl-draft-make-message-id-string ()
   "Return Message-ID field value."
