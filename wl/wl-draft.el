@@ -313,10 +313,14 @@ e.g.
       (substring subject (match-end 0))
     subject))
 
+(defun wl-draft-self-reply-p ()
+  "Return t when From address in the current message is user's self one or not."
+  (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
+
 (defun wl-draft-reply-list-symbol (with-arg)
   "Return symbol `wl-draft-reply-*-argument-list' match condition.
 Check WITH-ARG and From: field."
-  (if (wl-address-user-mail-address-p (or (elmo-field-body "From") ""))
+  (if (wl-draft-self-reply-p)
       (if with-arg
 	  'wl-draft-reply-myself-with-argument-list
 	'wl-draft-reply-myself-without-argument-list)
