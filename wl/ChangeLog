@@ -1,3 +1,8 @@
+2002-03-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-draft-fields): "FCC" -> "Fcc".
+	* wl-address.el (wl-folder-complete-header-regexp): Ditto.
+
 2002-03-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl.el (wl-check-environment): Don't check Message-ID when

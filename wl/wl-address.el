@@ -39,7 +39,7 @@
 
 (defvar wl-address-complete-header-regexp "^\\(To\\|From\\|Cc\\|Bcc\\|Mail-Followup-To\\|Reply-To\\|Return-Receipt-To\\):")
 (defvar wl-newsgroups-complete-header-regexp "^\\(Newsgroups\\|Followup-To\\):")
-(defvar wl-folder-complete-header-regexp "^\\(FCC\\):")
+(defvar wl-folder-complete-header-regexp "^\\(Fcc\\):")
 (defvar wl-address-list nil)
 (defvar wl-address-completion-list nil)
 (defvar wl-address-petname-hash nil)

@@ -927,7 +927,7 @@ This can either be a regular expression or list of regular expressions."
   :group 'wl-score)
 
 (defcustom wl-draft-fields
-  '("To:" "Cc:" "Bcc:" "FCC:" "Distribution:" "Organization:"
+  '("To:" "Cc:" "Bcc:" "Fcc:" "Distribution:" "Organization:"
     "Newsgroups:" "Followup-To:" "Mail-Followup-To:" "From:" "Reply-To:")
   "Fields used in draft mode."
   :type '(repeat (string :tag "Field"))
