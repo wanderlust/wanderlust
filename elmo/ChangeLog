@@ -1,3 +1,8 @@
+2002-10-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-accessible-p): Renamed from
+	elmo-message-cached-p and rewritten.
+
 2002-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-list-flagged): New generic function.

@@ -1117,9 +1117,12 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
        folder
        (elmo-folder-expand-msgdb-path folder))))
 
-(defun elmo-message-cached-p (folder number)
-  "Get cache status of the message in the msgdb."
-  (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number))
+(defun elmo-message-accessible-p (folder number)
+  "Get accessibility of the message.
+Return non-nil when message is accessible."
+  (or (elmo-folder-plugged-p folder)
+      (elmo-folder-local-p folder)
+      (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number)))
 
 (defun elmo-message-set-cached (folder number cached)
   "Set cache status of the message in the msgdb.

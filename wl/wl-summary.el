@@ -4180,7 +4180,6 @@ If ARG, exit virtual folder."
 	  (nums (memq num (if (eq direction 'up)
 			      (reverse wl-summary-buffer-number-list)
 			    wl-summary-buffer-number-list)))
-	  (plugged (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
 	  flagged-list nums2)
       (unless hereto (setq nums (cdr nums)))
       (setq nums2 nums)
@@ -4195,10 +4194,9 @@ If ARG, exit virtual folder."
 				(cdr (car cur-spec))))
 			 (while nums
 			   (if (and (memq (car nums) flagged-list)
-				    (or plugged
-					(elmo-message-cached-p
-					 wl-summary-buffer-elmo-folder
-					 (car nums))))
+				    (elmo-message-accessible-p
+				     wl-summary-buffer-elmo-folder
+				     (car nums)))
 			       (throw 'done (car nums)))
 			   (setq nums (cdr nums)))))
 		    ((eq (car (car cur-spec)) 't)

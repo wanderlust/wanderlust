@@ -1,3 +1,8 @@
+2002-10-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-next-message): Use
+	elmo-message-accessible-p instead of elmo-message-cached-p.
+
 2002-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-regexp-opt): Define as an alias for elmo-regexp-opt.
