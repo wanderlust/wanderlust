@@ -469,9 +469,9 @@ With ARG, ask destination folder."
 (defun wl-mime-combine-message/partial-pieces (entity situation)
   "Internal method for wl to combine message/partial messages automatically."
   (interactive)
-  (let* ((msgdb (save-excursion
-		  (set-buffer wl-message-buffer-cur-summary-buffer)
-		  (wl-summary-buffer-msgdb)))
+  (let* ((folder (save-excursion
+		   (set-buffer wl-message-buffer-cur-summary-buffer)
+		   wl-summary-buffer-elmo-folder))
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 (folder wl-message-buffer-cur-folder)
 	 (id (or (cdr (assoc "id" situation)) ""))
@@ -504,18 +504,16 @@ With ARG, ask destination folder."
 	      wl-summary-buffer-mime-charset)))
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0))))
-      (setq overviews (elmo-msgdb-get-overview msgdb))
       (catch 'tag
-	(while overviews
+	(elmo-folder-do-each-message-entity (entity folder)
 	  (when (string-match
 		 (regexp-quote subject-id)
-		 (elmo-msgdb-overview-entity-get-subject (car overviews)))
+		 (elmo-message-entity-field entity 'subject))
 	    (let* ((message
 		    ;; request message at the cursor in Subject buffer.
 		    (wl-message-request-partial
 		     folder
-		     (elmo-msgdb-overview-entity-get-number
-		      (car overviews))))
+		     (elmo-message-entity-number entity)))
 		   (situation (mime-entity-situation message))
 		   (the-id (or (cdr (assoc "id" situation)) "")))
 	      (when (string= (downcase the-id)
@@ -523,8 +521,7 @@ With ARG, ask destination folder."
 		(with-current-buffer mother
 		  (mime-store-message/partial-piece message situation))
 		(if (file-exists-p full-file)
-		    (throw 'tag nil)))))
-	  (setq overviews (cdr overviews)))
+		    (throw 'tag nil))))))
 	(message "Not all partials found.")))))
 
 (defun wl-mime-display-text/plain (entity situation)

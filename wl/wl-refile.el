@@ -89,8 +89,8 @@
 		     (downcase (wl-address-header-extract-address entity))))
 		  (wl-parse-addresses
 		   (concat
-		    (elmo-msgdb-overview-entity-get-to entity) ","
-		    (elmo-msgdb-overview-entity-get-cc entity)))))
+		    (elmo-message-entity-field entity 'to) ","
+		    (elmo-message-entity-field entity 'cc)))))
     (while tocc-list
       (if (wl-string-member
 	   (car tocc-list)
@@ -104,8 +104,7 @@
 	   (setq from
 		 (downcase
 		  (wl-address-header-extract-address
-		   (elmo-msgdb-overview-entity-get-from
-		    entity)))))
+		   (elmo-message-entity-field entity 'from)))))
 	  (setq key from))
       (if (or wl-refile-msgid-alist
 	      (memq 'wl-refile-guess-by-msgid
@@ -122,7 +121,7 @@
 				  wl-refile-alist)))))
 
 (defun wl-refile-msgid-learn (entity dst)
-  (let ((key (elmo-msgdb-overview-entity-get-id entity))
+  (let ((key (elmo-message-entity-field entity 'message-id))
 	hit)
     (setq dst (elmo-string dst))
     (if key
@@ -133,7 +132,7 @@
 
 (defun wl-refile-subject-learn (entity dst)
   (let ((subject (funcall wl-summary-subject-filter-function
-			  (elmo-msgdb-overview-entity-get-subject entity)))
+n			  (elmo-message-entity-field entity 'subject)))
 	hit)
     (setq dst (elmo-string dst))
     (if (and subject (not (string= subject "")))
@@ -200,13 +199,9 @@ If RULE does not match ENTITY, returns nil."
 (defun wl-refile-get-field-value (entity field)
   "Get FIELD value from ENTITY."
   (let ((field (downcase field))
-	(fixed-fields '("from" "subject" "to" "cc")))
+	(fixed-fields '(from subject to cc)))
     (if (member field fixed-fields)
-	(funcall (symbol-function
-		  (intern (concat
-			   "elmo-msgdb-overview-entity-get-"
-			   field)))
-		 entity)
+	(elmo-message-entity-field entity field)
       (elmo-msgdb-overview-entity-get-extra-field entity field))))
 
 (defun wl-refile-guess-by-rule (entity)

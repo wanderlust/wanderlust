@@ -1,3 +1,30 @@
+2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-refile.el (wl-refile-learn): Don't use msgdb.
+	(wl-refile-msgid-learn): Ditto.
+	(wl-refile-get-field-value): Ditto.
+
+	* wl-mime.el (wl-mime-combine-message/partial-pieces): Don't use msgdb.
+
+	* wl-expire.el (wl-expire-message-p): Renamed from wl-expire-msg-p.
+	(wl-expire-delete-reserved-messages): Renamed from
+	wl-expire-reserve-marked-msgs-from-list.
+	(wl-expire-delete): Removed argument `msgdb'.
+	(wl-expire-refile): Ditto.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+	(wl-expire-archive-number-delete-old): Ditto; Use folder instead of
+	mark-alist as argument.
+	(wl-expire-archive-number1): Removed argument `msgdb'.
+	(wl-expire-archive-number2): Ditto.
+	(wl-expire-archive-date): Ditto.
+	(wl-expire-localdir-date): Ditto.
+	(wl-expire-hide): Ditto.
+	(wl-archive-number1): Ditto.
+	(wl-archive-number2): Ditto.
+	(wl-archive-date): Ditto.
+	(wl-archive-folder): Ditto.
+	All other related portions are changed.
+
 2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-acap.el (toplevel): Don't require un-define.
