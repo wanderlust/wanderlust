@@ -1,3 +1,38 @@
+2000-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-important):
+	Remove cache if	folder is local.
+
+2000-12-06  Taro Kawagishi <taro.kawagishi@nokia.com>
+
+	* wl-summary.el (wl-summary-edit-addresses-subr): Call `try-completion'
+	to get existing e-mail address string.
+
+2000-12-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-generate-user-agent-string): Commentary.
+	(wl-generate-user-agent-string-1): Use `when' for
+	one-branch conditional statement, instead of `and' and `if'.
+	(wl-extended-emacs-version, wl-extended-emacs-version2,
+	wl-extended-emacs-version3): Ditto.
+
+2000-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-all-init): New inline function.
+	(wl-summary-sync): Enclose `wl-summary-sync-update3' with
+	condition-case; Remove initialization.
+	(wl-summary-confirm-appends): Don't enclose with `condition-case'.
+	(wl-summary-sync-update3): Added argument `sync-all';
+	Eliminated local variable `msgdb';
+	Call `wl-summary-sync-all-init' when `sync-all' is non-nil.
+	Call `wl-summary-confirm-appends' before `wl-summary-sync-all-init'.
+	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
+
+2000-12-12  KOGURO Naoki  <koguro@dd.iij4u.or.jp>
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Close POP
+	connection before call `wl-draft-send-mail-with-smtp'.
+
 2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version): Changed codename to "Rio".
