@@ -1,3 +1,8 @@
+2004-09-02  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-draft.el (wl-draft-kill-flags): Avoid error when
+	`wl-draft-parent-folder' is "".
+
 2004-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Treat digits as prefix args.
