@@ -4,6 +4,8 @@
 	directly.
 	(wl-score-overview-entity-get-lines): Ditto.
 	(wl-score-overview-entity-get-xref): Ditto.
+	(wl-score-get-latest-msgs): Ditto.
+	(wl-summary-rescore): Ditto.
 
 	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-mark-as-answered
 	to "&".

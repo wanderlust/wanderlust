@@ -438,7 +438,7 @@ Set `wl-score-cache' nil."
       (while wl-scores-messages
 	(when (or (/= wl-summary-default-score
 		      (cdar wl-scores-messages)))
-	  (setq num (elmo-msgdb-overview-entity-get-number
+	  (setq num (elmo-message-entity-number
 		     (caar wl-scores-messages))
 		score (cdar wl-scores-messages))
 	  (if (setq entry (assq num wl-summary-scored))
@@ -921,22 +921,23 @@ Set `wl-score-cache' nil."
   (let* ((now (wl-day-number (current-time-string)))
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
-	 (roverview (reverse (elmo-msgdb-get-overview
-			      (wl-summary-buffer-msgdb))))
+	 (rnumbers (reverse wl-summary-buffer-number-list))
 	 msgs)
     (if (not expire)
 	(elmo-folder-list-messages wl-summary-buffer-elmo-folder
 				   nil t)
-      ;; XXX What's this?
       (catch 'break
-	(while roverview
+	(while rnumbers
 	  (if (< (wl-day-number
-		  (elmo-msgdb-overview-entity-get-date (car roverview)))
+		  (elmo-message-entity-field
+		   (elmo-message-entity wl-summary-buffer-elmo-folder
+					(car rnumbers))
+		   'date))
 		 expire)
 	      (throw 'break t))
-	  (wl-push (elmo-msgdb-overview-entity-get-number (car roverview))
-		   msgs)
-	  (setq roverview (cdr roverview))))
+	  
+	  (wl-push (car rnumbers))
+	  (setq rnumbers (cdr rnumbers))))
       msgs)))
 
 (defun wl-score-get-header (header &optional extra)
@@ -1175,9 +1176,10 @@ Set `wl-score-cache' nil."
     (wl-score-save)
     (setq wl-score-cache nil)
     (setq wl-summary-scored nil)
-    (setq number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
     (wl-summary-score-headers (unless arg
-				(wl-summary-rescore-msgs number-alist)))
+				(wl-summary-rescore-msgs
+				 (elmo-folder-list-messages
+				  wl-summary-buffer-elmo-folder t t))))
     (setq expunged (wl-summary-score-update-all-lines t))
     (if expunged
 	(message "%d message(s) are expunged by scoring." (length expunged)))
