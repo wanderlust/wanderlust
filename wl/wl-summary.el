@@ -1347,8 +1347,8 @@ If ARG is non-nil, checking is omitted."
   (unless arg
     (save-excursion
       (wl-summary-sync-force-update)))
-  (wl-summary-prefetch-region (point-min) (point-max)
-			      wl-summary-incorporate-marks))
+  (wl-summary-prefetch-region-no-mark (point-min) (point-max)
+				      wl-summary-incorporate-marks))
 
 (defun wl-summary-prefetch-msg (number &optional arg)
   "Returns status-mark. if skipped, returns nil."
@@ -1417,6 +1417,68 @@ If ARG is non-nil, checking is omitted."
 		       (+ wl-summary-buffer-unread-count
 			  wl-summary-buffer-new-count))))
 		  new-mark)))))))
+
+(defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
+  (interactive "r")
+  (let ((count 0)
+	targets
+	mark length
+	entity msg
+	start-pos pos)
+    (save-excursion
+      (setq start-pos (point))
+      (save-restriction
+	(narrow-to-region beg end)
+	;; collect prefetch targets.
+	(message "Collecting marks...")
+	(goto-char (point-min))
+	(while (not (eobp))
+	  (setq mark (wl-summary-persistent-mark)
+		msg (wl-summary-message-number))
+	  (if (or (and (null prefetch-marks)
+		       msg
+		       (null (elmo-file-cache-exists-p
+			      (elmo-message-field
+			       wl-summary-buffer-elmo-folder
+			       msg
+			       'message-id))))
+		  (member mark prefetch-marks))
+	      (setq targets (nconc targets (list msg))))
+	  (setq entity (wl-thread-get-entity msg))
+	  (if (or (not (eq wl-summary-buffer-view 'thread))
+		  (wl-thread-entity-get-opened entity))
+	      (); opened. no hidden children.
+	    (setq targets (nconc
+			   targets
+			   (wl-thread-get-children-msgs-uncached
+			    msg prefetch-marks))))
+	  (forward-line 1))
+	(setq length (length targets))
+	(message "Prefetching...")
+	(while targets
+	  (setq mark (if (not (wl-thread-entity-parent-invisible-p
+			       (wl-thread-get-entity (car targets))))
+			 (progn
+			   (wl-summary-jump-to-msg (car targets))
+			   (wl-summary-prefetch))
+		       (wl-summary-prefetch-msg (car targets))))
+	  (if (if prefetch-marks
+		  (string= mark elmo-msgdb-unread-cached-mark)
+		(or (string= mark elmo-msgdb-unread-cached-mark)
+		    (string= mark " ")))
+	      (message "Prefetching... %d/%d message(s)"
+		       (setq count (+ 1 count)) length))
+	  ;; redisplay!
+	  (save-excursion
+	    (setq pos (point))
+	    (goto-char start-pos)
+	    (if (pos-visible-in-window-p pos)
+		(save-restriction
+		  (widen)
+		  (sit-for 0))))
+	  (setq targets (cdr targets)))
+	(message "Prefetched %d/%d message(s)" count length)
+	(cons count length)))))
 
 (defun wl-summary-prefetch-region (beg end)
   (interactive "r")
@@ -2665,48 +2727,6 @@ If ARG, without confirm."
 	  (wl-thread-maybe-get-children-num number)
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
-
-;;; Mark & Action
-(defvar wl-summary-mark-action-list
-  '(("*"
-     wl-summary-set-target-mark
-     wl-summary-unset-target-mark
-     nil)
-    ("d"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
-     wl-summary-exec-action-delete)
-    ("D"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
-     wl-summary-exec-action-erase)
-    ("o"
-     wl-summary-set-action-refile
-     wl-summary-unset-action-refile
-     wl-summary-exec-action-refile)
-    ("O"
-     wl-summary-set-action-copy
-     wl-summary-unset-action-copy
-     wl-summary-exec-action-copy)
-    ("i"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
-     wl-summary-exec-action-prefetch)
-    ;; Action can be added here.
-    )
-  "A variable to define Mark & Action.
-Each element of the list should be a list of
-\(MARK SET-MARK-FUNCTION UNSET-MARK-FUNCTION EXEC-FUNCTION)
-MARK is a temporal mark string to define.
-SET-MARK-FUNCTION is a function called to set the mark.
-Its argument is (MARK NUMBER VISIBLE INTERACTIVE DATA).
-UNSET-MARK-FUNCTION is a function called to unset the mark.
-Its argument is (NUMBER).
-EXEC-FUNCTION is a function called to execute the action.
-Its argument is a list of MARK-INFO.
-MARK-INFO is a list of (NUMBER MARK DATA).
-DATA is the value which is specified by SET-MARK-FUNCTION."
-  )
 
 ;; Set mark
 (defun wl-summary-set-mark (&optional set-mark number interactive data)

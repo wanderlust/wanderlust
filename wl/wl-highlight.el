@@ -806,7 +806,7 @@
 	(put-text-property bol eol 'face text-face)))))
 
 (defun wl-highlight-summary-line-string (line mark temp-mark indent)
-  (let (fsymbol)
+  (let (fsymbol action)
     (cond ((and (string= temp-mark wl-summary-score-over-mark)
 		(member mark (list elmo-msgdb-unread-cached-mark
 				   elmo-msgdb-unread-uncached-mark
@@ -817,18 +817,8 @@
 				   elmo-msgdb-unread-uncached-mark
 				   elmo-msgdb-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	  ((string= temp-mark "o")
-	   (setq fsymbol 'wl-highlight-summary-refiled-face))
-	  ((string= temp-mark "O")
-	   (setq fsymbol 'wl-highlight-summary-copied-face))
-	  ((string= temp-mark "d")
-	   (setq fsymbol 'wl-highlight-summary-deleted-face))
-	  ((string= temp-mark "D")
-	   (setq fsymbol 'wl-highlight-summary-erased-face))
-	  ((string= temp-mark "i")
-	   (setq fsymbol 'wl-highlight-summary-prefetch-face))
-	  ((string= temp-mark "*")
-	   (setq fsymbol 'wl-highlight-summary-temp-face))
+	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
+	   (setq fsymbol (nth 4 action)))
 	  ((string= mark elmo-msgdb-new-mark)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
 	  ((member mark (list elmo-msgdb-unread-cached-mark
@@ -856,28 +846,15 @@
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  fsymbol bol eol matched thread-top looked-at dest ds)
+	  fsymbol action bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
       (setq status-mark (wl-summary-persistent-mark))
       (setq temp-mark (wl-summary-temp-mark))
-      (cond
-       ((string= temp-mark "*")
-	(setq fsymbol 'wl-highlight-summary-temp-face))
-       ((string= temp-mark "d")
-	(setq fsymbol 'wl-highlight-summary-deleted-face))
-       ((string= temp-mark "D")
-	(setq fsymbol 'wl-highlight-summary-erased-face))
-       ((string= temp-mark "i")
-	(setq fsymbol 'wl-highlight-summary-prefetch-face))
-       ((string= temp-mark "O")
-	(setq fsymbol 'wl-highlight-summary-copied-face
-	      dest t))
-       ((string= temp-mark "o")
-	(setq fsymbol 'wl-highlight-summary-refiled-face
-	      dest t)))
+      (when (setq action (assoc temp-mark wl-summary-mark-action-list))
+	(setq fsymbol (nth 4 action)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
@@ -912,23 +889,9 @@
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
-      (when dest
-	(put-text-property (next-single-property-change
-			    (next-single-property-change
-			     bol 'wl-summary-destination
-			     nil eol)
-			    'wl-summary-destination nil eol)
-			   eol
-			   'face
-			   'wl-highlight-refile-destination-face))
       (if wl-use-highlight-mouse-line
 	  (put-text-property bol
-;;; Use bol instead of (1- (match-end 0))
-;;;			     (1- (match-end 0))
 			     eol 'mouse-face 'highlight))
-;;;   (put-text-property (match-beginning 3) (match-end 3)
-;;;			 'face 'wl-highlight-thread-indent-face)
-      ;; Dnd stuff.
       (if wl-use-dnd
 	  (wl-dnd-set-drag-starter bol eol)))))
 

@@ -332,6 +332,59 @@ If nil, never search search parent by subject."
 		 (const :tag "Don't search parent" nil))
   :group 'wl-summary)
 
+;;; Mark & Action
+(defcustom wl-summary-mark-action-list
+  '(("*"
+     wl-summary-set-target-mark
+     wl-summary-unset-target-mark
+     nil
+     wl-highlight-summary-temp-face)
+    ("d"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-delete
+     wl-highlight-summary-deleted-face)
+    ("D"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-erase
+     wl-highlight-summary-erased-face)
+    ("o"
+     wl-summary-set-action-refile
+     wl-summary-unset-action-refile
+     wl-summary-exec-action-refile
+     wl-highlight-summary-refiled-face)
+    ("O"
+     wl-summary-set-action-copy
+     wl-summary-unset-action-copy
+     wl-summary-exec-action-copy
+     wl-highlight-summary-copied-face)
+    ("i"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-prefetch
+     wl-highlight-summary-prefetch-face))
+  "A variable to define Mark & Action.
+Each element of the list should be a list of
+\(MARK SET-MARK-FUNCTION UNSET-MARK-FUNCTION EXEC-FUNCTION FACE)
+MARK is a temporal mark string to define.
+SET-MARK-FUNCTION is a function called to set the mark.
+Its argument is (MARK NUMBER VISIBLE INTERACTIVE DATA).
+UNSET-MARK-FUNCTION is a function called to unset the mark.
+Its argument is (NUMBER).
+EXEC-FUNCTION is a function called to execute the action.
+Its argument is a list of MARK-INFO.
+MARK-INFO is a list of (NUMBER MARK DATA).
+DATA is the value which should be specified by `wl-summary-register-temp-mark'
+in the SET-MARK-FUNCTION.
+FACE is a face for highlighting."
+  :type '(repeat (string :tag "Temporary mark")
+		 (symbol :tag "Set mark function")
+		 (symbol :tag "Unset mark function")
+		 (symbol :tag "Exec function")
+		 (symbol :tag "Face symbol"))
+  :group 'wl-summary)
+
 ;; Important folders
 (defcustom wl-default-folder "%inbox"
   "*Default folder used in `wl-summary-goto-folder'."

@@ -1,5 +1,21 @@
 2003-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-mark-action-list): Moved from wl-summary.el
+	and define using defcustom;
+	Define 4th element as a face.
+	
+	* wl-summary.el (wl-summary-incorporate): Use 
+	`wl-summary-prefetch-region-no-mark' instead of
+	`wl-summary-prefetch-region'.
+	(wl-summary-prefetch-region-no-mark): Revival of old
+	`wl-summary-prefetch-region'.
+	(wl-summary-mark-action-list): Moved to wl-vars.el
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Decide
+	face according to the `wl-summary-mark-action-list'.
+	(wl-highlight-summary-current-line): Ditto;
+	Removed destination highlighting.
+
 	* wl-highlight.el (wl-highlight-summary-prefetch-face): New face.
 	(wl-highlight-summary-line-string): Highlight for "i" mark.
 	(wl-highlight-summary-current-line): Ditto.
