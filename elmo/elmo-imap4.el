@@ -112,7 +112,8 @@
 (defvar elmo-imap4-authenticator-alist
   '((login	elmo-imap4-auth-login)
     (cram-md5	elmo-imap4-auth-cram-md5)
-    (digest-md5 elmo-imap4-auth-digest-md5))
+    (digest-md5 elmo-imap4-auth-digest-md5)
+    (plain      elmo-imap4-login))
   "Definition of authenticators.")
 
 ;;;;
@@ -237,7 +238,7 @@ If response is not `OK', causes error with IMAP response text."
   "Send COMMAND to the SESSION.
 Returns a TAG string which is assigned to the COMAND."
   (let* ((command-args (if (listp command)
-			  command
+			   command
 			 (list command)))
 	 (process (elmo-network-session-process-internal session))
 	 cmdstr tag token kind)
@@ -250,7 +251,8 @@ Returns a TAG string which is assigned to the COMAND."
       (goto-char (point-min))
       (if (elmo-imap4-response-bye-p elmo-imap4-current-response)
 	  (signal 'elmo-imap4-bye-error
-		  (list (elmo-imap4-response-error-text response))))
+		  (list (elmo-imap4-response-error-text
+			 elmo-imap4-current-response))))
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
 	  (error "IMAP process is running. Please wait (or plug again.)"))
@@ -518,7 +520,7 @@ BUFFER must be a single-byte buffer."
 		   (with-current-buffer (elmo-network-session-buffer session)
 		     elmo-imap4-server-namespace)))
 		 elmo-imap4-default-hierarchy-delimiter))
-	 response result append-serv type)
+	 result append-serv type)
     ;; Append delimiter
     (if (and root
 	     (not (string= root ""))
@@ -1132,7 +1134,7 @@ If optional argument UNMARK is non-nil, unmark."
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-imap4-session))
   (let ((process (elmo-network-session-process-internal session))
-	response capability mechanism)
+	capability)
     (with-current-buffer (process-buffer process)
       (set-process-filter process 'elmo-imap4-arrival-filter)
       (set-process-sentinel process 'elmo-imap4-sentinel)
@@ -1164,6 +1166,7 @@ If optional argument UNMARK is non-nil, unmark."
 		       (elmo-network-session-process-internal session))
    (unless (eq elmo-imap4-status 'auth)
      (unless (or (not (elmo-network-session-auth-internal session))
+		 (eq (elmo-network-session-auth-internal session) 'plain)
 		 (and (memq (intern
 			     (format "auth=%s"
 				     (elmo-network-session-auth-internal
@@ -1291,8 +1294,7 @@ If optional argument UNMARK is non-nil, unmark."
     (elmo-imap4-send-command-wait (elmo-imap4-get-session spec) "expunge")))
 
 (defun elmo-imap4-delete-msg-by-id (spec msgid)
-  (let* ((session (elmo-imap4-get-session spec))
-	 response msgs)
+  (let ((session (elmo-imap4-get-session spec)))
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (elmo-imap4-delete-msgs-no-expunge
@@ -1344,9 +1346,7 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-copy-msgs (dst-spec
 			     msgs src-spec &optional expunge-it same-number)
   "Equivalence of hostname, username is assumed."
-  (let ((src-folder (elmo-imap4-spec-mailbox src-spec))
-	(dst-folder (elmo-imap4-spec-mailbox dst-spec))
-	(session (elmo-imap4-get-session src-spec)))
+  (let ((session (elmo-imap4-get-session src-spec)))
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox src-spec))
     (while msgs
@@ -1357,7 +1357,7 @@ If optional argument UNMARK is non-nil, unmark."
 					  "uid copy %s "
 					"copy %s ")
 				      (car msgs))
-				     (elmo-imap4-mailbox dst-folder)))
+				     (elmo-imap4-mailbox dst-spec)))
       (setq msgs (cdr msgs)))
     (when expunge-it
       (elmo-imap4-send-command-wait session "expunge"))
@@ -1720,7 +1720,7 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-parse-fetch (response)
   (when (eq (char-after) ?\()
-    (let (element list bodydetail)
+    (let (element list)
       (while (not (eq (char-after) ?\)))
 	(elmo-imap4-forward)
 	(let ((token (elmo-imap4-fetch-read (current-buffer))))

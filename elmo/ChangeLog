@@ -1,3 +1,16 @@
+2000-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-authenticator-alist): Added `plain' entry.
+	(elmo-imap4-send-command): Use `elmo-imap4-current-response' instead
+	of `response'.
+	(elmo-imap4-list-folders): Removed unused local variable.
+	(elmo-network-initialize-session): Ditto.
+	(elmo-imap4-delete-msg-by-id): Ditto.
+	(elmo-imap4-parse-fetch): Ditto.
+	(elmo-imap4-copy-msgs): Ditto.
+	Use `dst-spec' instead of `dst-folder'.
+	(elmo-network-authenticate-session): Check authenticate type `plain'.
+
 2000-09-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-parse-response): Use string-match for
