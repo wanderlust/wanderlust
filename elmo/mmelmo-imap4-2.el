@@ -139,6 +139,9 @@
   (let* ((spec (elmo-folder-get-spec folder))
 	 (session (elmo-imap4-get-session spec)))
     (elmo-imap4-session-select-mailbox session (elmo-imap4-spec-mailbox spec))
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-fetch-callback nil)
+      (setq elmo-imap4-fetch-callback-data nil))    
     (mmelmo-imap4-parse-bodystructure-object
      folder
      number

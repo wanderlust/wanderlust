@@ -1,3 +1,13 @@
+2000-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+
+	* elmo-imap4.el (elmo-network-initialize-session): Skip garbage output
+	before greeting.
+	(elmo-imap4-read-part): Use "body.peek" to fetch part.
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+
 2000-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmelmo-imap4-2.el (mime-entity-children): Defined.

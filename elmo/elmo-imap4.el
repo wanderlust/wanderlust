@@ -1139,13 +1139,19 @@ If optional argument UNMARK is non-nil, unmark."
   (let ((process (elmo-network-session-process-internal session))
 	capability)
     (with-current-buffer (process-buffer process)
+      ;; Skip garbage output from process before greeting.
+      (while (and (memq (process-status process) '(open run))
+		  (goto-char (point-max))
+		  (forward-line -1)
+		  (not (elmo-imap4-parse-greeting)))
+	(accept-process-output process 1))
       (set-process-filter process 'elmo-imap4-arrival-filter)
       (set-process-sentinel process 'elmo-imap4-sentinel)
-      (while (and (memq (process-status process) '(open run))
-		  (eq elmo-imap4-status 'initial))
-	;;(message "Waiting for server response...")
-	(accept-process-output process 1))
-      ;(message "")
+;;      (while (and (memq (process-status process) '(open run))
+;;		  (eq elmo-imap4-status 'initial))
+;;        (message "Waiting for server response...")
+;;	  (accept-process-output process 1))
+;;      (message "")
       (unless (memq elmo-imap4-status '(nonauth auth))
 	(signal 'elmo-open-error
 		(list 'elmo-network-initialize-session)))
@@ -1225,14 +1231,17 @@ If optional argument UNMARK is non-nil, unmark."
 	 (session (elmo-imap4-get-session spec)))
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-fetch-callback nil)
+      (setq elmo-imap4-fetch-callback-data nil))
     (elmo-delete-cr
      (elmo-imap4-response-bodydetail-text
       (elmo-imap4-response-value-all
        (elmo-imap4-send-command-wait session
 				     (format
 				      (if elmo-imap4-use-uid
-					  "uid fetch %s body[%s]"
-					"fetch %s body[%s]")
+					  "uid fetch %s body.peek[%s]"
+					"fetch %s body.peek[%s]")
 				      msg part))
        'fetch)))))
 
