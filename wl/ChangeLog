@@ -1,5 +1,7 @@
 2001-11-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl.el (wl-exit): Changed confirm message.
+
 	* wl.el (wl-init): (require 'mime-setup) move to toplevel.
 	* wl-draft.el (wl-draft): Remove verbose `featurep'.
 

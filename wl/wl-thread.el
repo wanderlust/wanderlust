@@ -1,4 +1,4 @@
-;;; wl-thread.el -- Thread display modules for Wanderlust.
+;;; wl-thread.el --- Thread display modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA  <muse@ba2.so-net.ne.jp>
@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-summary)
 (require 'wl-highlight)
@@ -37,10 +37,10 @@
 
 ;; buffer local variables.
 ;;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
-(defvar wl-thread-tops nil)           ; top number list (number)
+(defvar wl-thread-tops nil)		; top number list (number)
 (defvar wl-thread-entities nil)
-(defvar wl-thread-entity-list nil)    ; entity list
-(defvar wl-thread-entity-hashtb nil)  ; obarray
+(defvar wl-thread-entity-list nil)	; entity list
+(defvar wl-thread-entity-hashtb nil)	; obarray
 (defvar wl-thread-indent-regexp nil)
 
 (make-variable-buffer-local 'wl-thread-entity-hashtb)
@@ -201,10 +201,10 @@
     (elmo-list-insert wl-summary-buffer-number-list
 		      (wl-thread-entity-get-number entity)
 		      (progn
-			(while (setq curc 
+			(while (setq curc
 				     (wl-thread-entity-get-children curp))
-			  (setq curp (wl-thread-get-entity 
-				      (nth (- (length curc) 1) 
+			  (setq curp (wl-thread-get-entity
+				      (nth (- (length curc) 1)
 					   curc))))
 			(wl-thread-entity-get-number curp)))
     (setcar (cddr to) (wl-append children
@@ -310,8 +310,8 @@ ENTITY is returned."
 (defun wl-thread-jump-to-msg (&optional number)
   (interactive)
   (let ((num (or number
-                 (string-to-int
-                  (read-from-minibuffer "Jump to Message(No.): ")))))
+		 (string-to-int
+		  (read-from-minibuffer "Jump to Message(No.): ")))))
     (wl-thread-entity-force-open (wl-thread-get-entity num))
     (wl-summary-jump-to-msg num)))
 
@@ -652,10 +652,10 @@ ENTITY is returned."
 					 ent entity nil))
 	      (setq insert-msgs (cdr insert-msgs))))))
       (if update
- 	  ;; modify buffer.
+	  ;; modify buffer.
 	  (while update-msgs
 	    (wl-thread-update-line-on-buffer-sub nil (pop update-msgs)))
- 	;; don't update buffer
+	;; don't update buffer
 	update-msgs)))) ; return value
 
 (defun wl-thread-insert-message (overview-entity overview mark-alist
@@ -771,7 +771,7 @@ Message is inserted to the summary buffer."
 	   (ding)
 	   (message "Error in wl-thread-update-children-number-hook."))))))))
 
-;; 
+;;
 ;; Thread oriented commands.
 ;;
 (defun wl-thread-call-region-func (func &optional arg)
@@ -829,7 +829,7 @@ Message is inserted to the summary buffer."
     (error
      (elmo-display-error err t)
      nil)))
-	
+
 (defun wl-thread-delete (&optional arg)
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-delete-region arg)
@@ -1142,7 +1142,7 @@ Message is inserted to the summary buffer."
 	       (wl-thread-get-entity (wl-summary-message-number)))))))
       (wl-summary-set-message-modified)
       (set-buffer-modified-p nil))))
-  
+
 
 (defun wl-thread-get-depth-of-current-line ()
   (interactive)

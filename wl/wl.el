@@ -1,4 +1,4 @@
-;;; wl.el -- Wanderlust bootstrap.
+;;; wl.el --- Wanderlust bootstrap.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -37,7 +37,7 @@
 
 ;; from x-face.el
 (unless (and (fboundp 'defgroup)
-             (fboundp 'defcustom))
+	     (fboundp 'defcustom))
   (require 'backquote)
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
@@ -481,7 +481,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (save-excursion
       (beginning-of-line)
       (cond
-       ;; swtich variable
+       ;; switch variable
        ((bobp)
 	(let (variable switch name)
 	  (goto-char cur-point)
@@ -500,7 +500,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	      (delete-region (match-beginning 2) (match-end 2))
 	      (insert (wl-plugged-string switch))
 	      (set-buffer-modified-p nil)))))
-       ;; swtich plug
+       ;; switch plug
        ((looking-at "^\\( *\\)\\[\\([^]]+\\)\\]\\([^ \n]*\\)")
 	(let* ((indent (length (elmo-match-buffer 1)))
 	       (switch (elmo-match-buffer 2))
@@ -642,7 +642,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-exit ()
   (interactive)
   (when (or (not wl-interactive-exit)
-	    (y-or-n-p "Quit Wanderlust? "))
+	    (y-or-n-p "Do you really want to quit Wanderlust? "))
     (elmo-quit)
     (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
@@ -776,7 +776,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 	    (wl-folder-auto-check)
 	    (run-hooks 'wl-auto-check-folder-hook))
 	  (unless arg (wl-biff-start)))
-      (error 
+      (error
        (if (buffer-live-p demo-buf)
 	   (kill-buffer demo-buf))
        (signal (car obj)(cdr obj)))

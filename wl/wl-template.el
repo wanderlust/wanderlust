@@ -1,4 +1,4 @@
-;;; wl-template.el -- Draft template feature for Wanderlust.
+;;; wl-template.el --- Draft template feature for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -27,7 +27,7 @@
 ;;; Commentary:
 
 ;;; Code:
-;; 
+;;
 
 ;; Variables
 
@@ -77,7 +77,7 @@ See info under Wanderlust for full documentation.
 
 \\{wl-template-mode}
 
-Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
+Entering WL-Template mode calls the value of `wl-template-mode-hook'."
   (kill-all-local-variables)
   (setq mode-name "Wl-Template"
 	major-mode 'wl-template-mode)

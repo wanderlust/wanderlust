@@ -1,4 +1,4 @@
-;;; wl-mime.el -- SEMI implementations of MIME processing on Wanderlust.
+;;; wl-mime.el --- SEMI implementations of MIME processing on Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'mime-view)
 (require 'mime-edit)
@@ -140,19 +140,19 @@ By setting following-method as yank-content."
 (defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
    (elmo-message-fetch (wl-folder-get-elmo-folder folder)
-		       number 
+		       number
 		       (elmo-make-fetch-strategy 'entire)
 		       nil
 		       (current-buffer)
 		       'unread)
    (mime-parse-buffer nil)))
 
-(defalias 'wl-message-read            'mime-preview-scroll-up-entity)
-(defalias 'wl-message-next-content    'mime-preview-move-to-next)
-(defalias 'wl-message-prev-content    'mime-preview-move-to-previous)
-(defalias 'wl-message-play-content    'mime-preview-play-current-entity)
-(defalias 'wl-message-extract-content 'mime-preview-extract-current-entity)
-(defalias 'wl-message-quit            'mime-preview-quit)
+(defalias 'wl-message-read		'mime-preview-scroll-up-entity)
+(defalias 'wl-message-next-content	'mime-preview-move-to-next)
+(defalias 'wl-message-prev-content	'mime-preview-move-to-previous)
+(defalias 'wl-message-play-content	'mime-preview-play-current-entity)
+(defalias 'wl-message-extract-content	'mime-preview-extract-current-entity)
+(defalias 'wl-message-quit		'mime-preview-quit)
 (defalias 'wl-message-button-dispatcher-internal
   'mime-button-dispatcher)
 

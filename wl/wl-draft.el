@@ -1,4 +1,4 @@
-;;; wl-draft.el -- Message draft mode for Wanderlust.
+;;; wl-draft.el --- Message draft mode for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -76,20 +76,20 @@
 (defvar wl-draft-parent-folder nil)
 
 (defvar wl-draft-config-sub-func-alist
-  '((body          . wl-draft-config-sub-body)
-    (top           . wl-draft-config-sub-top)
-    (bottom        . wl-draft-config-sub-bottom)
-    (header        . wl-draft-config-sub-header)
-    (header-top    . wl-draft-config-sub-header-top)
-    (header-bottom . wl-draft-config-sub-header)
-    (part-top      . wl-draft-config-sub-part-top)
-    (part-bottom   . wl-draft-config-sub-part-bottom)
-    (body-file     . wl-draft-config-sub-body-file)
-    (top-file      . wl-draft-config-sub-top-file)
-    (bottom-file   . wl-draft-config-sub-bottom-file)
-    (header-file   . wl-draft-config-sub-header-file)
-    (template      . wl-draft-config-sub-template)
-    (x-face        . wl-draft-config-sub-x-face)))
+  '((body		. wl-draft-config-sub-body)
+    (top		. wl-draft-config-sub-top)
+    (bottom		. wl-draft-config-sub-bottom)
+    (header		. wl-draft-config-sub-header)
+    (header-top		. wl-draft-config-sub-header-top)
+    (header-bottom	. wl-draft-config-sub-header)
+    (part-top		. wl-draft-config-sub-part-top)
+    (part-bottom	. wl-draft-config-sub-part-bottom)
+    (body-file		. wl-draft-config-sub-body-file)
+    (top-file		. wl-draft-config-sub-top-file)
+    (bottom-file	. wl-draft-config-sub-bottom-file)
+    (header-file	. wl-draft-config-sub-header-file)
+    (template		. wl-draft-config-sub-template)
+    (x-face		. wl-draft-config-sub-x-face)))
 
 (make-variable-buffer-local 'wl-draft-buffer-file-name)
 (make-variable-buffer-local 'wl-draft-buffer-cur-summary-buffer)
@@ -895,7 +895,7 @@ from current buffer."
   "Get address list suitable for smtp RCPT TO:<address>.
 Group list content is removed if `wl-draft-remove-group-list-contents' is
 non-nil."
-  (let ((fields        '("to" "cc" "bcc"))
+  (let ((fields '("to" "cc" "bcc"))
 	(resent-fields '("resent-to" "resent-cc" "resent-bcc"))
 	(case-fold-search t)
 	addrs recipients)

@@ -1,4 +1,4 @@
-;;; wl-highlight.el -- Hilight modules for Wanderlust.
+;;; wl-highlight.el --- Hilight modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -886,7 +886,7 @@
       (put-text-property bol eol 'face fsymbol)
       (when dest
 	(put-text-property (next-single-property-change
-			    (next-single-property-change 
+			    (next-single-property-change
 			     bol 'wl-summary-destination
 			     nil eol)
 			    'wl-summary-destination nil eol)

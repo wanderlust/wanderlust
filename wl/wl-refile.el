@@ -1,4 +1,4 @@
-;;; wl-refile.el -- Refile modules for Wanderlust.
+;;; wl-refile.el --- Refile modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-vars)
 (require 'wl-util)
@@ -117,7 +117,7 @@
 	  (wl-refile-subject-learn entity dst)))
     (when key
       (if (setq hit (assoc key wl-refile-alist))
-          (setq wl-refile-alist (delq hit wl-refile-alist)))
+	  (setq wl-refile-alist (delq hit wl-refile-alist)))
       (setq wl-refile-alist (cons (cons key dst)
 				  wl-refile-alist)))))
 
@@ -243,7 +243,7 @@ If RULE does not match ENTITY, returns nil."
   (if (string-match "\\([^@]+\\)@[^@]+" address)
       (wl-match-string 1 address)
     address))
-		 
+
 (defun wl-refile-guess-by-from (entity)
   (let ((from
 	 (downcase (wl-address-header-extract-address
@@ -252,7 +252,7 @@ If RULE does not match ENTITY, returns nil."
     (or (cdr (assoc from wl-refile-alist))
 	(format "%s/%s" wl-refile-default-from-folder
 		(wl-refile-get-account-part-from-address from)))))
-  
+
 (defun wl-refile-guess-by-msgid (entity)
   (cdr (assoc (elmo-msgdb-overview-entity-get-references entity)
 	      wl-refile-msgid-alist)))

@@ -1,4 +1,4 @@
-;;; wl-acap.el -- ACAP support for Wanderlust.
+;;; wl-acap.el --- ACAP support for Wanderlust.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 

@@ -1,4 +1,4 @@
-;;; wl-address.el -- Tiny address management for Wanderlust.
+;;; wl-address.el --- Tiny address management for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Shun-ichi GOTO <gotoh@taiyo.co.jp>
@@ -28,10 +28,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-util)
 (require 'wl-vars)
@@ -96,7 +96,7 @@ If level 3 is required for uniqness with other candidates,
 		    values nil)
 	    (setq values (cdr values)))))
     ret))
-	  
+
 (defun wl-ldap-get-value-list (type entry)
   ""
   (cdr (assoc type entry)))
@@ -379,8 +379,8 @@ Matched address lists are append to CL."
     (if (null cl)
 	nil
       (setq completion
-            (let ((completion-ignore-case t))
-              (try-completion pattern cl)))
+	    (let ((completion-ignore-case t))
+	      (try-completion pattern cl)))
       (cond ((eq completion t)
 	     (let ((alias (assoc pattern cl)))
 	       (if alias
@@ -487,24 +487,24 @@ Refresh `wl-address-list', `wl-address-completion-list', and
   (when (< nest-count 5)
     (let (expn-str new-expn-str expn new-expn(n 0) (expanded nil))
       (while (setq expn-str (cdr (nth n alist)))
-        (setq new-expn-str nil)
-        (while (string-match "^[ \t]*\\([^,]+\\)" expn-str)
-          (setq expn (elmo-match-string 1 expn-str))
+	(setq new-expn-str nil)
+	(while (string-match "^[ \t]*\\([^,]+\\)" expn-str)
+	  (setq expn (elmo-match-string 1 expn-str))
 	  (setq expn-str (wl-string-delete-match expn-str 0))
-          (if (string-match "^[ \t,]+" expn-str)
+	  (if (string-match "^[ \t,]+" expn-str)
 	      (setq expn-str (wl-string-delete-match expn-str 0)))
-          (if (string-match "[ \t,]+$" expn)
+	  (if (string-match "[ \t,]+$" expn)
 	      (setq expn (wl-string-delete-match expn 0)))
-          (setq new-expn (cdr (assoc expn alist)))
-          (if new-expn
-              (setq expanded t))
-          (setq new-expn-str (concat new-expn-str (and new-expn-str ", ")
-                                     (or new-expn expn))))
-        (when new-expn-str
-          (setcdr (nth n alist) new-expn-str))
-        (setq n (1+ n)))
+	  (setq new-expn (cdr (assoc expn alist)))
+	  (if new-expn
+	      (setq expanded t))
+	  (setq new-expn-str (concat new-expn-str (and new-expn-str ", ")
+				     (or new-expn expn))))
+	(when new-expn-str
+	  (setcdr (nth n alist) new-expn-str))
+	(setq n (1+ n)))
       (and expanded
-           (wl-address-expand-aliases alist (1+ nest-count))))))
+	   (wl-address-expand-aliases alist (1+ nest-count))))))
 
 (defun wl-address-make-alist-from-alias-file (file)
   (elmo-set-work-buf
@@ -514,7 +514,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
       (while (re-search-forward ",$" nil t)
 	(end-of-line)
 	(forward-char 1)
- 	(delete-backward-char 1))
+	(delete-backward-char 1))
       (goto-char (point-min))
       (while (re-search-forward "^\\([^#;\n][^:]+\\):[ \t]*\\(.*\\)$" nil t)
 	(setq alias (wl-match-buffer 1)
@@ -566,18 +566,18 @@ e.g. \"Mine Sakurai <m-sakura@ccs.mt.nec.co.jp>\"
 e.g. \"m-sakura@ccs.mt.nec.co.jp (Mine Sakurai)\"
   ->  \"m-sakura@ccs.mt.nec.co.jp\"."
   (cond ((string-match ".*<\\([^>]*\\)>" str) ; .* to extract last <>
-         (wl-match-string 1 str))
-        ((string-match "\\([^ \t\n]*@[^ \t\n]*\\)" str)
 	 (wl-match-string 1 str))
-        (t str)))
+	((string-match "\\([^ \t\n]*@[^ \t\n]*\\)" str)
+	 (wl-match-string 1 str))
+	(t str)))
 
 (defsubst wl-address-header-extract-realname (str)
   "Extracts a real name from STR and return it.
 e.g. \"Mr. bar <hoge@foo.com>\"
   ->  \"Mr. bar\"."
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
-         (wl-match-string 1 str))
-        (t "")))
+	 (wl-match-string 1 str))
+	(t "")))
 
 (defmacro wl-address-concat-token (string token)
   (` (cond

@@ -1,4 +1,4 @@
-;;; wl-summary.el -- Summary mode for Wanderlust.
+;;; wl-summary.el --- Summary mode for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -757,7 +757,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
     (make-local-variable 'window-scroll-functions)
-    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))  
+    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -1660,7 +1660,7 @@ If ARG is non-nil, checking is omitted."
 	    (delete-region (match-beginning 2) (match-end 2))
 	    (goto-char (match-beginning 2))
 	    (insert new-mark)
-	    (elmo-file-cache-delete 
+	    (elmo-file-cache-delete
 	     (elmo-file-cache-get-path
 	      (elmo-message-field wl-summary-buffer-elmo-folder
 				  number
@@ -1697,7 +1697,7 @@ If ARG is non-nil, checking is omitted."
 	(if (elmo-file-cache-exists-p msgid)
 	    (if (or
 		 (string= mark wl-summary-unread-uncached-mark) ; U -> !
-		 (string= mark wl-summary-new-mark)             ; N -> !
+		 (string= mark wl-summary-new-mark)		; N -> !
 		 )
 		(setq set-mark wl-summary-unread-cached-mark)
 	      (if (string= mark wl-summary-read-uncached-mark)  ; u -> ' '
@@ -1764,7 +1764,7 @@ If ARG is non-nil, checking is omitted."
       (while mark-alist
 	(setq entity (car mark-alist))
 	(if (setq msg-num (car (rassoc (car entity) number-alist)))
-	    (progn 
+	    (progn
 ;;;	      (goto-char (point-min))
 	      (if (re-search-forward (format "^ *%s \\( \\)" msg-num) nil t)
 		  (progn
@@ -1951,7 +1951,7 @@ If ARG is non-nil, checking is omitted."
 			       wl-summary-unread-uncached-mark
 			       wl-summary-new-mark)
 	    mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb))
-            num-ma (length mark-alist)
+	    num-ma (length mark-alist)
 	    importants (elmo-folder-list-importants
 			wl-summary-buffer-elmo-folder
 			wl-summary-important-mark)
@@ -2031,7 +2031,7 @@ If ARG is non-nil, checking is omitted."
 	 (buffer-read-only nil)
 	 (elmo-folder-update-threshold wl-summary-update-confirm-threshold)
 	 gc-message
-	 overview number-alist mark-alist 
+	 overview number-alist mark-alist
 	 curp num i new-msgdb
 	 append-list delete-list crossed
 	 update-thread update-top-list
@@ -2140,7 +2140,7 @@ If ARG is non-nil, checking is omitted."
 		(if elmo-use-database
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
-		(setq mes 
+		(setq mes
 		      (if (and (eq (length delete-list) 0)
 			       (eq num 0))
 			  (format
@@ -2200,7 +2200,7 @@ If ARG is non-nil, checking is omitted."
       (wl-delete-all-overlays)
       (set-buffer-modified-p nil)
       (if mes (message "%s" mes)))))
-  
+
 (defun wl-summary-set-score-mark (mark)
   (save-excursion
     (beginning-of-line)
@@ -2593,7 +2593,7 @@ If ARG, without confirm."
 	  (set-buffer-modified-p nil)
 	  (goto-char (point-min))
 	  (if (wl-summary-cursor-down t)
-	      (let ((unreadp (wl-summary-next-message 
+	      (let ((unreadp (wl-summary-next-message
 			      (wl-summary-message-number)
 			      'down t)))
 		(cond ((and wl-auto-select-first
@@ -2794,7 +2794,7 @@ If ARG, without confirm."
 		     ;; Is founded entity myself or children?
 		     (not (string=
 			   (elmo-msgdb-overview-entity-get-id entity)
-			   (elmo-msgdb-overview-entity-get-id 
+			   (elmo-msgdb-overview-entity-get-id
 			    (car found-entity))))
 		     (with-current-buffer summary-buf
 		       (not (wl-thread-descendant-p

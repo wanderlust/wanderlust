@@ -1,4 +1,4 @@
-;;; wl-util.el -- Utility modules for Wanderlust.
+;;; wl-util.el --- Utility modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
@@ -513,14 +513,14 @@ that `read' can handle, whenever this is possible."
 	 "^nntp://\\([^:/]*\\):?\\([0-9]*\\)/\\([^/]*\\)/\\([0-9]*\\).*$" url)
 	(progn
 	  (if (eq (length (setq fld-name
-                                (elmo-match-string 3 url))) 0)
-              (setq fld-name nil))
+				(elmo-match-string 3 url))) 0)
+	      (setq fld-name nil))
 	  (if (eq (length (setq port
 				(elmo-match-string 2 url))) 0)
-              (setq port (int-to-string elmo-nntp-default-port)))
+	      (setq port (int-to-string elmo-nntp-default-port)))
 	  (if (eq (length (setq server
-                                (elmo-match-string 1 url))) 0)
-              (setq server elmo-nntp-default-server))
+				(elmo-match-string 1 url))) 0)
+	      (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
 	  (if (eq (length (setq msg
 				(elmo-match-string 4 url))) 0)
@@ -539,7 +539,7 @@ that `read' can handle, whenever this is possible."
 (defmacro wl-current-message-buffer ()
   (` (save-excursion
        (if (buffer-live-p wl-current-summary-buffer)
-           (set-buffer wl-current-summary-buffer))
+	   (set-buffer wl-current-summary-buffer))
        wl-message-buffer)))
 
 (defmacro wl-kill-buffers (regexp)

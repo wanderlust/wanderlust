@@ -1,4 +1,4 @@
-;;; wl-xmas.el -- Wanderlust modules for XEmacsen.
+;;; wl-xmas.el --- Wanderlust modules for XEmacsen.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
@@ -362,23 +362,23 @@
 
 (defvar wl-folder-internal-icon-list
   ;; alist of (glyph . icon-file)
-  '((wl-folder-nntp-glyph         . wl-nntp-folder-icon)
-    (wl-folder-imap4-glyph        . wl-imap-folder-icon)
-    (wl-folder-pop3-glyph         . wl-pop-folder-icon)
-    (wl-folder-localdir-glyph     . wl-localdir-folder-icon)
-    (wl-folder-localnews-glyph    . wl-localnews-folder-icon)
-    (wl-folder-internal-glyph     . wl-internal-folder-icon)
-    (wl-folder-multi-glyph        . wl-multi-folder-icon)
-    (wl-folder-filter-glyph       . wl-filter-folder-icon)
-    (wl-folder-archive-glyph      . wl-archive-folder-icon)
-    (wl-folder-pipe-glyph         . wl-pipe-folder-icon)
-    (wl-folder-maildir-glyph      . wl-maildir-folder-icon)
-    (wl-folder-nmz-glyph          . wl-nmz-folder-icon)
-    (wl-folder-shimbun-glyph      . wl-shimbun-folder-icon)
-    (wl-folder-trash-empty-glyph  . wl-empty-trash-folder-icon)
-    (wl-folder-draft-glyph        . wl-draft-folder-icon)
-    (wl-folder-queue-glyph        . wl-queue-folder-icon)
-    (wl-folder-trash-glyph        . wl-trash-folder-icon)))
+  '((wl-folder-nntp-glyph	. wl-nntp-folder-icon)
+    (wl-folder-imap4-glyph	. wl-imap-folder-icon)
+    (wl-folder-pop3-glyph	. wl-pop-folder-icon)
+    (wl-folder-localdir-glyph	. wl-localdir-folder-icon)
+    (wl-folder-localnews-glyph	. wl-localnews-folder-icon)
+    (wl-folder-internal-glyph	. wl-internal-folder-icon)
+    (wl-folder-multi-glyph	. wl-multi-folder-icon)
+    (wl-folder-filter-glyph	. wl-filter-folder-icon)
+    (wl-folder-archive-glyph	. wl-archive-folder-icon)
+    (wl-folder-pipe-glyph	. wl-pipe-folder-icon)
+    (wl-folder-maildir-glyph	. wl-maildir-folder-icon)
+    (wl-folder-nmz-glyph	. wl-nmz-folder-icon)
+    (wl-folder-shimbun-glyph	. wl-shimbun-folder-icon)
+    (wl-folder-trash-empty-glyph . wl-empty-trash-folder-icon)
+    (wl-folder-draft-glyph	. wl-draft-folder-icon)
+    (wl-folder-queue-glyph	. wl-queue-folder-icon)
+    (wl-folder-trash-glyph	. wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
   (dolist (icon wl-folder-internal-icon-list)

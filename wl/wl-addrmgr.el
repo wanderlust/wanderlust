@@ -1,4 +1,4 @@
-;;; wl-addrmgr.el -- Address manager for Wanderlust.
+;;; wl-addrmgr.el --- Address manager for Wanderlust.
 
 ;; Copyright (C) 2001 Kitamoto Tsuyoshi <tsuyoshi.kitamoto@city.sapporo.jp>
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>

@@ -1,4 +1,4 @@
-;;; wl-message.el -- Message displaying modules for Wanderlust.
+;;; wl-message.el --- Message displaying modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-vars)
 (require 'wl-highlight)
@@ -203,9 +203,9 @@ Return its cache buffer."
     (if window
 	(select-window window)
       (when wl-fixed-window-configuration
-        (delete-other-windows)
-        (and wl-stay-folder-window
-             (wl-summary-toggle-disp-folder)))
+	(delete-other-windows)
+	(and wl-stay-folder-window
+	     (wl-summary-toggle-disp-folder)))
       ;; There's no buffer window. Search for message window and snatch it.
       (if (setq window (wl-message-buffer-window))
 	  (select-window window)
@@ -228,7 +228,7 @@ If ARG is specified, narrow to ARGth page."
   (setq arg (if arg (prefix-numeric-value arg) 0))
   (save-excursion
     (condition-case ()
-        (forward-page -1)               ; Beginning of current page.
+	(forward-page -1)		; Beginning of current page.
       (beginning-of-buffer
        (goto-char (point-min))))
     (forward-char 1)  ; for compatibility with emacs-19.28 and emacs-19.29
@@ -301,7 +301,7 @@ Returns non-nil if bottom of message."
 	      ;; XEmacs 21.2.20 and later.
 	      (let (window-pixel-scroll-increment)
 		(scroll-up lines))
-	    (scroll-up lines))	      
+	    (scroll-up lines))
 	(end-of-buffer
 	 (goto-char (point-max))))
       (setq bottom nil))
@@ -321,7 +321,7 @@ Returns non-nil if bottom of message."
   (let ((mail-reply-buffer buffer))
     (wl-draft-yank-from-mail-reply-buffer nil)))
 
-;; 
+;;
 
 (defun wl-message-mode ()
   "A major mode for message displaying."
@@ -354,7 +354,7 @@ Returns non-nil if bottom of message."
 	  (wl-message-select-buffer wl-message-buffer))
       (wl-summary-goto-folder-subr wl-message-buffer-cur-folder 'no-sync
 				   nil nil t)
-  					; no summary-buf
+					; no summary-buf
       (let ((sum-buf (current-buffer)))
 	(wl-message-select-buffer wl-message-buffer)
 	(setq wl-message-buffer-cur-summary-buffer sum-buf)))))
@@ -381,7 +381,7 @@ Returns non-nil if bottom of message."
 	       (match-end (nth 1 entry))
 	       (nth 2 entry)
 	       (match-string (nth 3 entry))))))))))
-  
+
 (defun wl-message-add-buttons-to-header (start end)
   (save-excursion
     (save-restriction
@@ -507,7 +507,7 @@ Returns non-nil if bottom of message."
   (let ((elmo-message-fetch-threshold wl-fetch-confirm-threshold)
 	(default-mime-charset wl-mime-charset))
     (setq wl-message-buffer-all-header-flag (eq flag 'all-header))
-    (prog1 
+    (prog1
 	(if (eq flag 'as-is)
 	    (let (wl-highlight-x-face-function)
 	      (prog1 (elmo-mime-display-as-is folder number

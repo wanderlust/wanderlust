@@ -1,4 +1,4 @@
-;;; wl-folder.el -- Folder mode for Wanderlust.
+;;; wl-folder.el --- Folder mode for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -290,7 +290,7 @@
 (defun wl-folder-persistent-p (folder)
   (or (and (wl-folder-search-entity-by-name folder wl-folder-entity
 					    'folder)
-	   t) 	; on Folder mode.
+	   t) ; on Folder mode.
       (catch 'found
 	(let ((li wl-save-folder-list))
 	  (while li
@@ -892,7 +892,7 @@ Optional argument ARG is repeart count."
 	(setq ret-val
 	      (wl-folder-add-folder-info
 	       ret-val
-	       (wl-folder-check-one-entity (elmo-folder-name-internal 
+	       (wl-folder-check-one-entity (elmo-folder-name-internal
 					    folder))))
 	;;(sit-for 0)
 	))
@@ -1770,7 +1770,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    (goto-char (point-min))
 	    (while (wl-folder-buffer-search-entity name)
 	      (wl-folder-update-line value))))))))
-  
+
 (defun wl-folder-update-unread (folder unread)
 ;  (save-window-excursion
     (let ((buf (get-buffer wl-folder-buffer-name))
@@ -2194,7 +2194,7 @@ Use `wl-subscribed-mailing-list'."
 				 (wl-summary-get-sync-range
 				  (wl-folder-get-elmo-folder fld-name))
 				 nil sticky t)))
-  
+
 (defun wl-folder-suspend ()
   (interactive)
   (run-hooks 'wl-folder-suspend-hook)

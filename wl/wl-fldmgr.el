@@ -1,4 +1,4 @@
-;;; wl-fldmgr.el -- Folder manager for Wanderlust.
+;;; wl-fldmgr.el --- Folder manager for Wanderlust.
 
 ;; Copyright 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;;                          Yuuichi Teranishi <teranisi@gohome.org>
@@ -25,10 +25,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-folder)
 (require 'wl-summary)
@@ -410,7 +410,7 @@ return value is diffs '(-new -unread -all)."
 		(setq unsubscribes (delete (elmo-string (car new2))
 					   unsubscribes)))
 	      (setq new2 (cdr new2)))
- 	    (setcdr (cddr entity) (list unsubscribes))
+	    (setcdr (cddr entity) (list unsubscribes))
 	    (wl-fldmgr-add-modified-access-list group))
 	  (if (not key-path);; insert group top
 	      (if (cddr entity)
@@ -891,9 +891,9 @@ return value is diffs '(-new -unread -all)."
 ;;;		    (setcdr (assq id wl-folder-entity-id-name-alist) group)
 		    (wl-folder-set-id-name id group)
 		    (wl-fldmgr-delete-line)
- 		    (wl-folder-insert-entity
- 		     indent
- 		     group-entity t)
+		    (wl-folder-insert-entity
+		     indent
+		     group-entity t)
 		    (setq wl-fldmgr-modified t)
 		    (set-buffer-modified-p nil)))))))))
        (t ;; folder
@@ -931,7 +931,7 @@ return value is diffs '(-new -unread -all)."
 	    (type 'group)
 	    group tmp indent path new prev-id flist diffs)
 	(setq tmp (wl-fldmgr-get-path-from-buffer t))
-    	(setq path (car tmp))
+	(setq path (car tmp))
 	(setq indent (wl-fldmgr-make-indent (nth 1 tmp)))
 	(setq prev-id (nth 3 tmp))
 	(if (eq (cdr (nth 2 tmp)) 'access)

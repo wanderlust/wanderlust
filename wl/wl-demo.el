@@ -1,4 +1,4 @@
-;;; wl-demo.el -- Opening demo on Wanderlust.
+;;; wl-demo.el --- Opening demo on Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>

@@ -1,5 +1,4 @@
-;;; wl-mule.el -- Wanderlust modules for Mule compatible Emacsen.
-;;                (Mule2.3@19.28, Mule2.3@19.34, Emacs 20.x)
+;;; wl-mule.el --- Wanderlust modules for Mule compatible Emacsen.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -25,7 +24,7 @@
 ;;
 
 ;;; Commentary:
-;;
+;; For Mule2.3@19.34, Emacs 20.x
 
 ;;; Code:
 ;;
