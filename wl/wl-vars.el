@@ -1227,17 +1227,17 @@ Each elements are regexp of field-name."
   :group 'wl-pref)
 
 (defcustom wl-message-body-button-alist
-  '(("<mailto:[^>]+>" 0 'ignore 1024 0)
-    ("<[^>]+@[^>]+>" 0 wl-message-button-refer-article 1024 0))
+  '(("<mailto:[^>]+>" 0 'ignore 0 1024)
+    ("<[^>]+@[^>]+>" 0 wl-message-button-refer-article 0 1024))
   "Alist of regexps to match buttons in message body."
   :type '(repeat
 	  (list regexp
 		(integer :tag "Button")
 		(function :tag "Callback")
-		(integer :tag "Max Length")
 		(repeat :tag "Data"
 			:inline t
-			(integer :tag "Regexp group"))))
+			(integer :tag "Regexp group"))
+		(integer :tag "Max Length")))
   :group 'wl-pref)
 
 (defcustom wl-folder-window-width 20
