@@ -1,3 +1,7 @@
+2004-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-do-fcc): Undo last change.
+
 2004-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-overview-entity-compare-by-from): 

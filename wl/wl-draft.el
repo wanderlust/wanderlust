@@ -1602,7 +1602,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (if (elmo-folder-append-buffer
 	       (wl-folder-get-elmo-folder
 		(eword-decode-string (car fcc-list)))
-	       (or wl-fcc-force-as-read '(unread)))
+	       (and wl-fcc-force-as-read '(read)))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (if (and wl-draft-fcc-append-read-folder-history
