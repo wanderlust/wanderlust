@@ -284,7 +284,7 @@
 		((string= fld-name wl-queue-folder);; queue folder
 		 (get 'wl-folder-queue-glyph 'glyph))
 		(;; and one of many other folders
-		 (setq type (elmo-folder-type fld-name))
+		 (setq type (elmo-folder-get-type fld-name))
 		 (get (intern (format "wl-folder-%s-glyph" type)) 'glyph))))))
 	  (let ((end (point-at-eol)))
 	    (when wl-use-highlight-mouse-line
@@ -371,7 +371,6 @@
     (wl-folder-archive-glyph      . wl-archive-folder-icon)
     (wl-folder-pipe-glyph         . wl-pipe-folder-icon)
     (wl-folder-maildir-glyph      . wl-maildir-folder-icon)
-    (wl-folder-nmz-glyph          . wl-nmz-folder-icon)
     (wl-folder-trash-empty-glyph  . wl-empty-trash-folder-icon)
     (wl-folder-draft-glyph        . wl-draft-folder-icon)
     (wl-folder-queue-glyph        . wl-queue-folder-icon)
