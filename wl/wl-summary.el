@@ -747,8 +747,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (use-local-map wl-summary-mode-map)
 ;;;(setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
   (setq buffer-read-only t)
-  (make-local-variable 'truncate-partial-width-windows)
-  (setq truncate-partial-width-windows nil)
   (setq truncate-lines t)
 ;;;(make-local-variable 'tab-width)
 ;;;(setq tab-width 1)

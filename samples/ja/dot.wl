@@ -103,6 +103,8 @@
 ;; 長い行を切り縮める
 ;(setq wl-message-truncate-lines t)
 ;(setq wl-draft-truncate-lines t)
+;; XEmacs の場合、以下が必要
+;(setq truncate-partial-width-windows nil)
 
 ;; ドラフトを新しいフレームで書く
 ;(setq wl-draft-use-frame t)

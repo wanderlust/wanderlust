@@ -104,6 +104,8 @@
 ;; Truncate long lines.
 ;(setq wl-message-truncate-lines t)
 ;(setq wl-draft-truncate-lines t)
+;; Following line is needed for XEmacs.
+;(setq truncate-partial-width-windows nil)
 
 ;; Open new frame for draft buffer.
 ;(setq wl-draft-use-frame t)
