@@ -64,7 +64,7 @@
   (unless (string-match (eval-when-compile
 			  (concat "^flag\\(/\\(["
 				  elmo-flag-char-regexp
-				  "]+\\)\\)?"))
+				  "]+\\)\\)?$"))
 			name)
     (error "Error in folder name `%s'" (elmo-folder-name-internal folder)))
   (if (match-beginning 1)

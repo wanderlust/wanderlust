@@ -1,5 +1,7 @@
 2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-flag.el (elmo-folder-initialize): Fixed the last change.
+
 	* elmo-util.el (elmo-read-search-condition): Eliminate (renamed to
 	`wl-read-search-condition').
 	(elmo-read-search-condition-internal): Likewise.
