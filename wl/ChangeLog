@@ -1,3 +1,7 @@
+2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.15.
+
 2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-delete-all-msgs): Use

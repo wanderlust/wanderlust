@@ -1,3 +1,7 @@
+2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.11.15.
+
 2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-flag.el (elmo-folder-list-global-flag-messages): New function.
