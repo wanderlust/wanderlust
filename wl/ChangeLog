@@ -1,7 +1,13 @@
 2002-01-22  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (wl-message-buffer-prefetch-subr):
+	Fix for cancel-function-timers bug.
+
+2002-01-22  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-message.el (wl-message-buffer-prefetch-next): Rewrite.
 	(wl-message-buffer-prefetch-subr): Rewrite.
+	Rename from `wl-message-buffer-prefetch'.
 
 2002-01-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

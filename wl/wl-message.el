@@ -558,6 +558,15 @@ Returns non-nil if bottom of message."
 	     folder number (or count 1) summary charset))
 ;;;     cannot use for the bug of fsf-compat package (1.09).
 ;;;	(cancel-function-timers 'wl-message-buffer-prefetch-subr)
+	(if (featurep 'xemacs)
+	    (let ((p itimer-list))
+	      (while (car p)
+		(if (eq 'wl-message-buffer-prefetch-subr
+			(itimer-function (car p)))
+		    (delete-itimer (car p)))
+		(setq p (cdr p))))
+	  ;; FSF Emacs is correct
+	  (cancel-function-timers 'wl-message-buffer-prefetch-subr))
 	(run-with-idle-timer
 	 wl-message-buffer-prefetch-idle-time
 	 nil
