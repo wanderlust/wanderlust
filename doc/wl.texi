@@ -6271,11 +6271,6 @@ This is the MIME charset for messages that are not MIME (e.g. without
 summary.  (If you want to share Summary on Nemacs and other Emacsen, set
 this value as 'iso-2022-jp.)
 
-@item wl-search-mime-charset
-@vindex wl-search-mime-charset
-The initial setting is 'iso-2022-jp.
-This is used as a MIME charset for searching.
-
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
 This is meaningful for XEmacs or Emacs 21..  The initial setting depends

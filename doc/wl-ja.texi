@@ -6215,11 +6215,6 @@ MIME ではないメッセージの場合 (@samp{Content-Type:} がないメールなど
 (Nemacs とその他の Emacsen でサマリを共有したい場合は、
 この値を 'iso-2022-jp としてください。)
 
-@item wl-search-mime-charset
-@vindex wl-search-mime-charset
-初期設定は 'iso-2022-jp。
-検索で用いる MIME charset です。
-
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
 XEmacs または Emacs 21 で有効です。初期設定はその (X)Emacs に依存します
