@@ -738,9 +738,38 @@ the directory becomes empty after deletion."
       (setq list (cdr list)))
     ret-val))
 
-(defun elmo-list-diff (list1 list2 &optional mes)
-  (if mes
-      (message "%s" mes))
+(defun elmo-list-diff (list1 list2)
+  (let ((clist1 (sort (copy-sequence list1) #'<))
+	(clist2 (sort (copy-sequence list2) #'<))
+	list1-only list2-only)
+    (while (or clist1 clist2)
+      (cond
+       ((null clist1)
+	(while clist2
+	  (setq list2-only (cons (car clist2) list2-only))
+	  (setq clist2 (cdr clist2))))
+       ((null clist2)
+	(while clist1
+	  (setq list1-only (cons (car clist1) list1-only))
+	  (setq clist1 (cdr clist1))))
+       ((< (car clist1) (car clist2))
+	(while (not (eq (car clist1) (car clist2)))
+	  (setq list1-only (cons (car clist1) list1-only))
+	  (setq clist1 (cdr clist1)))
+	(setq clist1 (cdr clist1)
+	      clist2 (cdr clist2)))
+       ((< (car clist2) (car clist1))
+	(while (not (eq (car clist1) (car clist2)))
+	  (setq list2-only (cons (car clist2) list2-only))
+	  (setq clist2 (cdr clist2)))
+	(setq clist1 (cdr clist1)
+	      clist2 (cdr clist2)))
+       ((= (car clist1) (car clist2))
+	(setq clist1 (cdr clist1)
+	      clist2 (cdr clist2)))))
+    (list list1-only list2-only)))
+
+(defun elmo-list-diff-nonsortable (list1 list2)
   (let ((clist1 (copy-sequence list1))
 	(clist2 (copy-sequence list2)))
     (while list2
@@ -749,8 +778,6 @@ the directory becomes empty after deletion."
     (while list1
       (setq clist2 (delq (car list1) clist2))
       (setq list1 (cdr list1)))
-    (if mes
-	(message "%sdone" mes))
     (list clist1 clist2)))
 
 (defun elmo-list-bigger-diff (list1 list2 &optional mes)

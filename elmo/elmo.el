@@ -973,7 +973,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 	append-list delete-list diff)
     (cons (if (equal in-folder in-db)
 	      0
-	    (setq diff (elmo-list-diff in-folder in-db nil))
+	    (setq diff (elmo-list-diff in-folder in-db))
 	    (setq append-list (car diff))
 	    (setq delete-list (cadr diff))
 	    (if append-list
