@@ -1,11 +1,5 @@
 2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* Version number is increased to 2.5.3.
-
-	* wl-draft.el (wl-draft-smtp-send-buffer): New function
-	(for compatibility).
-	(wl-draft-send-mail-with-smtp): Use it.
-
 	* wl-summary.el (wl-summary-save-view-cache):
 	Delete duplicated `write-region';
 	Use `write-region-as-binary' instead of `as-binary-output-file' and
