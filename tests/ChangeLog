@@ -1,3 +1,7 @@
+2003-07-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* check-modules.el (test-shimbun): Check `shimbun-server'.
+
 2003-02-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el (test-semi-mime-edit): Check

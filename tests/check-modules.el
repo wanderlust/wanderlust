@@ -142,3 +142,9 @@
 (luna-define-method test-semi-mime-play ((case check-modules))
   (require 'mime-play)
   (lunit-assert (fboundp 'mime-store-message/partial-piece)))
+
+;; emacs-w3m >= 1.3.4
+(luna-define-method test-shimbun ((case check-modules))
+  (when (locate-library "shimbun")
+    (require 'shimbun)
+    (lunit-assert (fboundp 'shimbun-server))))
