@@ -1,19 +1,4 @@
-2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-e21.el (wl-highlight-folder-current-line): Fixed regexp.
-
-2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-std11-parse-addresses): Ignore trailing
-	spaces (Adviced by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>).
-
-	* wl-address.el (wl-address-specials-regexp): Eliminated.
-	(wl-address-quote-specials): Rewrite.
-
 2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style
-	shy-groups for regexp.
 
 	* wl-e21.el (wl-highlight-folder-current-line): Use Posix style
 	character classes and Perl style shy-groups for regexp.

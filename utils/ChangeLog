@@ -1,5 +1,0 @@
-2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* bbdb-wl.el (bbdb-wl-exit): Use `bbdb-offer-save' instead of
-	`bbdb-save-db'.
-
