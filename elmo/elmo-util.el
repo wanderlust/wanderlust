@@ -242,7 +242,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (goto-char (match-end 0))))
 ;; search-key   ::= [A-Za-z-]+
 ;;                 ;; "since" / "before" / "last" / "first" /
-;;                 ;; "body" / "mark" / field-name
+;;                 ;; "body" / "flag" / field-name
    ((looking-at "\\(!\\)? *\\([A-Za-z-]+\\) *: *")
     (goto-char (match-end 0))
     (let ((search-key (vector
