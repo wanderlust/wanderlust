@@ -1,5 +1,8 @@
 2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* WL-ELS (SASL-MODULES): Remove scram-md5, digest-md5, unique-id;
+	Append sasl-cram, sasl-digest.
+
 	* utils/sasl: Sync up with flim-1_14.
 
 	* utils/sasl/sasl-cram.el: New file.
