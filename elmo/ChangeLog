@@ -1,3 +1,13 @@
+2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-localdir.el (elmo-localdir-msgdb-create-as-numlist):
+	Initialize local variables with `let'.  Inline a temporary
+	variable for the progress percentage.  Sort `setq' to reduce
+	function call in the while-loop.
+
+	* mmelmo.el (mmelmo-get-original-buffer): Move `save-excursion'
+	into the conditional branch.
+
 2000-05-30  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo2.el (elmo-move-msgs): Replace `append' with `nconc'.
