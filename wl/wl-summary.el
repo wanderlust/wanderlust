@@ -2986,7 +2986,9 @@ If optional argument is non-nil, checking is omitted."
 	    (setq founds (wl-summary-get-alike))))))
     (if (and founds
 	     ;; Is founded entity myself or children?
-	     (not (eq entity (car founds)))
+	     (not (string=
+		   (elmo-msgdb-overview-entity-get-id entity)
+		   (elmo-msgdb-overview-entity-get-id (car founds))))
 	     (not (wl-thread-descendant-p
 		   (elmo-msgdb-overview-entity-get-number entity)
 		   (elmo-msgdb-overview-entity-get-number (car founds)))))
