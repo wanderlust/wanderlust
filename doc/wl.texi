@@ -4005,6 +4005,9 @@ If it is non-nil, truncate long lines in message buffer.
 At Summary mode, pressing @kbd{w} and the like creates a new draft
 buffer.  You can edit and send mail and news articles in this buffer.
 
+By pressing @kbd{W}, Wanderlust guess addressees and prepare draft buffer
+with those if possible.
+
 @section Tips
 
 Basically it is Emacs-standard mail mode.
