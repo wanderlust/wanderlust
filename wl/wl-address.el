@@ -119,6 +119,7 @@ Returns matched uniq string list."
       (setq type (car (car entry))
 	    values (mapcar (function wl-ldap-alias-safe-string)
 			   (cdr (car entry)))
+	    values (elmo-flatten values)
 	    entry (cdr entry))
       (if (string-match "::?$" type)
 	  (setq type (substring type 0 (match-beginning 0))))
@@ -134,15 +135,13 @@ Returns matched uniq string list."
 (defun wl-ldap-alias-safe-string (str)
   "Modify STR for alias.
 Replace space/tab in STR into '_' char.
-Replace '@' in STR into '/' char."
+Replace '@' in STR into list of mailbox and sub-domains."
   (while (string-match "[^_a-zA-Z0-9+@%.!\\-/]+" str)
     (setq str (concat (substring str 0 (match-beginning 0))
 		      "_"
 		      (substring str (match-end 0)))))
   (if (string-match "\\(@\\)[^/@]+" str)
-      (setq str (concat (substring str 0 (match-beginning 1))
-			"/"
-			(substring str (match-end 1)))))
+      (setq str (split-string str  "[@\\.]")))
   str)
 
 (defun wl-ldap-register-dn-string (hash dn &optional str dn-list)
@@ -158,7 +157,8 @@ Replace '@' in STR into '/' char."
 				    (if (string-match "[a-z]+=\\(.*\\)" str)
 					(wl-ldap-alias-safe-string
 					 (wl-match-string 1 str))))
-				  (split-string dn ",")))))
+				  (split-string dn "[ \t]*,[ \t]*")))))
+      (setq dn-list (elmo-flatten dn-list))
       ;; prepare candidate for uniq str
       (if str
 	  (setq str (concat str wl-ldap-alias-sep (car dn-list))

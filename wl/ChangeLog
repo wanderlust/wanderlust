@@ -1,5 +1,9 @@
 2000-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-address.el (wl-ldap-register-dn-string): Flatten dn-list.
+	(wl-ldap-make-matched-value-list): Ditto.
+	(wl-ldap-alias-safe-string): Split e-mail address.
+
 	* wl-summary.el (wl-summary-read-folder): Fixed problem when
 	petname folder default was selected.
 	(Fix by HIROSE Yuuji <yuuji@gentei.org>)
