@@ -42,9 +42,7 @@
 (eval-and-compile
   (luna-define-class elmo-nntp-session (elmo-network-session)
 		     (current-group))
-  (luna-define-internal-accessors 'elmo-nntp-session)
-  (autoload 'starttls-open-stream "starttls")
-  (autoload 'starttls-negotiate "starttls"))
+  (luna-define-internal-accessors 'elmo-nntp-session))
 
 ;;
 ;; internal variables

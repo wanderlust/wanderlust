@@ -33,23 +33,19 @@
 
 (require 'elmo-msgdb)
 (require 'elmo-net)
-(require 'sasl)
 
 (eval-when-compile
-  (require 'elmo-util)
-  (defun-maybe md5 (a)))
+  (require 'elmo-util))
 
 (eval-and-compile
-  (autoload 'starttls-open-stream "starttls")
-  (autoload 'starttls-negotiate "starttls"))
+  (autoload 'md5 "md5"))
 
 (defvar elmo-pop3-use-uidl t
   "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
 
-(eval-and-compile
-  (luna-define-class elmo-pop3-session (elmo-network-session) ()))
+(luna-define-class elmo-pop3-session (elmo-network-session))
 
 ;; buffer-local
 (defvar elmo-pop3-read-point nil)
@@ -168,7 +164,6 @@
 		    (elmo-network-session-greeting-internal session))
       ;; good, APOP ready server
       (progn
-	(require 'md5)
 	(elmo-pop3-send-command
 	 (elmo-network-session-process-internal session)
 	 (format "apop %s %s"
