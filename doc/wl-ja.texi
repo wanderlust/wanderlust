@@ -2763,7 +2763,7 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 $B<jF0$G%9%l%C%I$N7R$.$J$*$7$,$G$-$^$9!#%5%^%j$G3:Ev$9$k%a%C%;!<%8$K%+!<%=(B
 $B%k$r9g$o$;$F(B @kbd{M-w} (@code{wl-summary-save-current-message}) $B$7!"?7$7(B
 $B$$?F%a%C%;!<%8$N$H$3$m$G(B @kbd{C-y}
-(@code{wl-summary-yank-saved-message})$B$r<B9T$7$/$@$5$$!#(B
+(@code{wl-summary-yank-saved-message})$B$r<B9T$7$F$/$@$5$$!#(B
 
 
 @node Cache, Auto Refile, Thread Operations, Summary
@@ -3230,7 +3230,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @findex wl-summary-mark-as-important
 @samp{important} $B%U%i%0$r$D$1$^$9!#4{$K(B @samp{important} $B%U%i%0$,$"$l$P(B
 $B%U%i%0$r<h$j=|$-$^$9!#(Bprefix argument $B$r$D$1$F<B9T$7$?>l9g$O!"(B@kbd{F} $B$H(B
-$BF1MM$KIU2C$9$k%0%m!<%P%k%U%i%0$r?R$$$F$-$^$9!#(B
+$BF1MM$KIU2C$9$k%0%m!<%P%k%U%i%0$r?R$M$F$-$^$9!#(B
 (@code{wl-summary-mark-as-important})
 
 @item F
@@ -7786,7 +7786,7 @@ Non-nil $B$J$i(B@code{wl-highlight-citation-prefix-regexp}$B$GM?$($i$l$k(B
 @vindex wl-max-signature-size
 $B=i4|@_Dj$O(B 400$B!#(B
 $B%7%0%K%A%c$r%O%$%i%$%H$9$k>l9g!"(B
-$B%O%$%i%$%H$9$k:GBg$N%7%0%J%A%c$NBg$-$5$r;XDj$7$^$9!#(B
+$B%O%$%i%$%H$9$k:GBg$N%7%0%K%A%c$NBg$-$5$r;XDj$7$^$9!#(B
 
 @item wl-use-highlight-mouse-line
 @vindex  wl-use-highlight-mouse-line
