@@ -1,11 +1,31 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
-* Changes in 2.14.0 from 2.12.x
+* Changes in 2.14.0 from 2.12.2
 
 ** New folder type `access' is added.
+   In `access' folder, sub-folders of the specified folder can be treated
+   as one folder.
 
-* Changes in 2.12.1 from 2.12.0
-  Version 2.12.1 is a bug fix version of 2.12.0.
+** Synchronization speed of the folder is improved.
+   The function which calculates list diff is re-wrote and is faster
+   than previous implementation, especially in the folders with large
+   number of the messages.
+
+** New event handling mechanism is incorporated.
+
+** Improved the disconnected operations for IMAP draft saving.
+   There was a bug of message numbering in the disconnected imap draft.
+   It is fixed using new event handling mechanism.
+
+** `Shimbun' summary buffers are updated dynamically.
+   Some shimbun folder does not have correct information.
+   In this version, they are corrected using the message body after retrieval.
+   It is implemented with new event handling mechanism.
+
+** Many bug fixes.
+
+* Changes in 2.12.2 from 2.12.0
+  Version 2.12.2 is a bug fix version of 2.12.0.
 
 ** Now Maildir is usable on Windows systems.
    Note that it does not conform to the Maildir standard.
