@@ -236,7 +236,9 @@
 	 case-fold-search)
     (setq num (length msgs))
     (while msgs
-      (if (and (setq cache-file (elmo-cache-exists-p (cdr (car loc-alist))))
+      (if (and (setq cache-file (elmo-cache-get-path (cdr (assq (car msgs)
+								loc-alist))))
+	       (file-exists-p cache-file)
 	       (elmo-file-field-condition-match cache-file
 						condition
 						(car msgs)

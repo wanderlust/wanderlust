@@ -1,3 +1,7 @@
+2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-internal.el (elmo-internal-search): Fix last change.
+
 2000-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-internal.el (elmo-internal-search): Rewrite.
