@@ -1,3 +1,8 @@
+2002-04-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-quit-yes): Call get-buffer-window with
+	2nd argument.
+
 2002-03-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-create-contents): Don't take neither

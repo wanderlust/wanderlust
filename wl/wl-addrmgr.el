@@ -365,7 +365,7 @@ Return nil if no ADDRESS exists."
   (let ((draft-buffer wl-addrmgr-draft-buffer))
     (if (and draft-buffer
 	     (buffer-live-p draft-buffer)
-	     (null (get-buffer-window draft-buffer)))
+	     (null (get-buffer-window draft-buffer 'visible)))
 	(switch-to-buffer draft-buffer)
       (unless (one-window-p)
 	(delete-window)))
