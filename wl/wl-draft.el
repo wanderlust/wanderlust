@@ -308,7 +308,7 @@ e.g.
   (mail-position-on-field "To"))
 
 (defun wl-draft-strip-subject-re (subject)
-  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus."
+  "Remove \"Re:\" from SUBJECT string. Shamelessly copied from Gnus."
   (if (string-match wl-subject-prefix-regexp subject)
       (substring subject (match-end 0))
     subject))
@@ -704,7 +704,7 @@ Reply to author if WITH-ARG is non-nil."
 	 (insert cite-title "\n"))
     (mail-indent-citation)))
 
-(defvar wl-draft-buffer nil "Draft buffer to yank content")
+(defvar wl-draft-buffer nil "Draft buffer to yank content.")
 (defun wl-draft-yank-to-draft-buffer (buffer)
   "Yank BUFFER content to `wl-draft-buffer'."
   (set-buffer wl-draft-buffer)
@@ -756,7 +756,7 @@ Reply to author if WITH-ARG is non-nil."
 		(switch-to-buffer sum-buf))))))))
 
 (defun wl-draft-delete (editing-buffer)
-  "kill the editing draft buffer and delete the file corresponds to it."
+  "Kill the editing draft buffer and delete the file corresponds to it."
   (save-excursion
     (when editing-buffer
       (set-buffer editing-buffer)
@@ -1311,7 +1311,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (kill-buffer sending-buffer))))))
 
 (defun wl-draft-mime-bcc-field ()
-  "Return the MIME-Bcc field body. The field is deleted."
+  "Return the MIME-Bcc field body.  The field is deleted."
   (prog1 (std11-field-body wl-draft-mime-bcc-field-name)
     (wl-draft-delete-field wl-draft-mime-bcc-field-name)))
 
@@ -1656,10 +1656,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
                        ;;  insert symbol-value: string
   (symbol . nil)       ;;  do nothing
   nil                  ;;  do nothing
-  )
-"
+  )"
   (unless (eq major-mode 'wl-draft-mode)
-    (error "wl-draft-create-header must be use in wl-draft-mode."))
+    (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (let ((halist header-alist)
 	field value)
     (while halist
@@ -1694,7 +1693,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-prepare-edit ()
   (unless (eq major-mode 'wl-draft-mode)
-    (error "wl-draft-create-header must be use in wl-draft-mode."))
+    (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
     (add-hook 'local-write-file-hooks 'wl-draft-save)
@@ -1822,7 +1821,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (cdar condition))
 	    (setq condition (cdr condition)))))
     (unless elmo-nntp-default-function
-      (error "wl-draft-nntp-send: posting-function is nil."))
+      (error "wl-draft-nntp-send: posting-function is nil"))
     (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
 	(wl-draft-set-sent-message 'news 'unplugged
 				   (cons elmo-nntp-default-server

@@ -309,7 +309,7 @@ TYPE specifies the archiver's symbol."
 		      (not (eobp)))  ; for GNU tar 981010
 	    (setq file-list (nconc file-list (list (string-to-int
 						    (match-string 1)))))))
-      (error "%s does not exist." file))
+      (error "%s does not exist" file))
     (if nonsort
 	(cons (or (elmo-max-of-list file-list) 0)
 	      (if killed
@@ -522,7 +522,7 @@ TYPE specifies the archiver's symbol."
     (elmo-mapcar-list-of-list
      (function (lambda (x)
 		 (if (file-exists-p
-		      (expand-file-name 
+		      (expand-file-name
 		       (concat elmo-archive-basename
 			       (elmo-archive-get-suffix
 				(elmo-archive-folder-archive-type-internal
