@@ -489,7 +489,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
       (let (number uid list)
 	(insert string)
 	(goto-char (point-min))
-	(while (re-search-forward "^\\([0-9]+\\)[\t ]+\\([^ \n]+\\)$" nil t)
+	(while (re-search-forward "^\\([0-9]+\\)[\t ]\\([^ \n]+\\)$" nil t)
 	  (setq number  (elmo-match-buffer 1))
 	  (setq uid (elmo-match-buffer 2))
 	  (with-current-buffer buffer

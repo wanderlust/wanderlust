@@ -137,6 +137,9 @@ load-path
      '("apel" "flim" "semi" "wl"))
   --------------------------------------------------------------------
 
+  If you are using Emacs 19.28 or earlier, you can't use subdirs.el.
+  Please write setting about load-path in site configuration file.
+
 
 Manual
 ======
