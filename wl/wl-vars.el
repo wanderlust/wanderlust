@@ -237,8 +237,8 @@ them will have the specified number of columns."
   "An alist of folder name and a summary line format.
 If no match, `wl-summary-line-format' is used.
 e.x.
-      '((\"^%\" . \"%M/%D(%W)%h:%m %t%[%14F %](%S) %s\")
-	(\"^@2ch\" . \"%M%/%D/%h:%m %t[%9F ]%s\")))"
+      '((\"^%\" . \"%M/%D(%W)%h:%m %t%[%14(%c %f%) %](%S) %s\")
+	(\"^@2ch\" . \"%M%/%D/%h:%m %t[%9(%c %f%) ]%s\")))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (string :tag "line format")))
   :group 'wl-summary)

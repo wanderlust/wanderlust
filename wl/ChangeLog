@@ -2,6 +2,8 @@
 
 	* wl-vars.el (wl-summary-line-format-spec-alist): Redefined `c'
 	and removed `F'.
+	(wl-folder-summary-line-format-alist): Fixed docstring (Follow the
+	change above).
 
 2002-05-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
