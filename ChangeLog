@@ -2,6 +2,8 @@
 
 	* utils/ptexinfmt.el: Disable broken check notice.
 
+	* utils/ptexinfmt.el (texinfo-format-uref): Fixed.
+
 2000-07-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: Support @multitable.
