@@ -445,6 +445,13 @@ content of MSGDB is changed."
     (and extra
 	 (cdr (assoc field-name extra)))))
 
+(defsubst elmo-msgdb-overview-entity-get-extra (entity)
+  (and entity (aref (cdr entity) 8)))
+
+(defsubst elmo-msgdb-overview-entity-set-extra (entity extra)
+  (and entity (aset (cdr entity) 8 extra))
+  entity)
+
 (defun elmo-msgdb-overview-get-entity-by-number (database number)
   (when number
     (let ((db database)
@@ -459,7 +466,7 @@ content of MSGDB is changed."
 (defun elmo-msgdb-overview-get-entity (id msgdb)
   (when id
     (let ((ovht (elmo-msgdb-get-overviewht msgdb)))
-      (if ovht ;; use overview hash
+      (if ovht ; use overview hash
 	  (if (stringp id) ;; ID is message-id
 	      (elmo-get-hash-val id ovht)
 	    (elmo-get-hash-val (format "#%d" id) ovht))
@@ -714,7 +721,8 @@ Header region is supposed to be narrowed."
 	   (elmo-clear-hash-val (car entity) hashtb)))))
 
 (defun elmo-msgdb-make-overview-hashtb (overview &optional hashtb)
-  (if elmo-use-overview-hashtb
+  (if (and elmo-use-overview-hashtb
+	   overview)
       (let ((hashtb (or hashtb ;; append
 			(elmo-make-hash (length overview)))))
 	(while overview
