@@ -1,3 +1,10 @@
+2001-10-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Make truncate-partial-width-windows
+	buffer local and set it to nil.
+
+	* wl-message.el (wl-message-redisplay): Ditto.
+
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-important): If message is

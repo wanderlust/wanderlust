@@ -425,6 +425,8 @@ Returns non-nil if bottom of message."
     (wl-message-select-buffer wl-message-buffer)
 
     (set-buffer message-buf)
+    (make-local-variable 'truncate-partial-width-windows)
+    (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-message-truncate-lines)
     (setq buffer-read-only nil)
     (setq wl-message-buffer-cur-summary-buffer summary-buf)

@@ -1352,6 +1352,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
+    (make-local-variable 'truncate-partial-width-windows)
+    (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
     (if (stringp (or from wl-from))
