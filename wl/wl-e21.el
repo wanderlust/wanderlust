@@ -27,7 +27,7 @@
 ;;
 ;; This module uses `before-string' overlay property to show icon
 ;; images instead of `insert-image', so don't delete such overlays
-;; sloppily.  Here is a sample code to show incons in the buffer.
+;; sloppily.  Here is a sample code to show icons in the buffer.
 ;;
 ;;(let* ((load-path (cons wl-icon-dir load-path))
 ;;       (image (find-image `((:type xpm :file ,wl-nntp-folder-icon
