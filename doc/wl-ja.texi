@@ -6266,7 +6266,7 @@ pop3                    ×    △    △    △
 	;; @r{wanderlust メーリングリストからのメールを @samp{%wanderlust} へ}
 	;; @r{そして続けてそれ以下の規則も評価する。}
 	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Yahoo 利用者からのメッセージを @samp{+yahoo-{username}} へ}
+	;; @r{Yahoo 利用者からのメッセージを @samp{+yahoo-@{username@}} へ}
 	((match from "\\(.*\\)@@yahoo\\.com")
 	 "+yahoo-\\1")
 	;; @r{マッチしなかった残りを @samp{+inbox} へ}

@@ -6355,7 +6355,7 @@ example, please.
 	;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
 	;; @r{and continue evaluating following rules}
 	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Store messages from Yahoo user into @samp{+yahoo-{username}}}
+	;; @r{Store messages from Yahoo user into @samp{+yahoo-@{username@}}}
 	((match from "\\(.*\\)@@yahoo\\.com")
 	 "+yahoo-\\1")
 	;; @r{Store unmatched mails into @samp{+inbox}}
