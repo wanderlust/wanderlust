@@ -1609,16 +1609,16 @@ Wanderlust $B$NFbIt$GJ];}$5$l$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 
 @item w
 @kindex w (Folder)
-@findex wl-summary-write
+@findex wl-draft
 $B?75,%I%i%U%H$rMQ0U$7$^$9!#(B
-(@code{wl-summary-write})
+(@code{wl-draft})
 
 @item W
 @kindex W (Folder)
-@findex wl-summary-write-current-newsgroup
+@findex wl-folder-write-current-newsgroup
 $B8=:_%+!<%=%k$,$"$k%U%)%k%@$,(B NNTP $B%U%)%k%@$J$i!"(B
 Newsgroups $B%U%#!<%k%I$rJd$C$F%I%i%U%H$rMQ0U$7$^$9!#(B
-(@code{wl-summary-write-current-newsgroup})
+(@code{wl-folder-write-current-newsgroup})
 
 @item s
 @kindex s (Folder)
@@ -2717,9 +2717,9 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 
 @item w
 @kindex w (Summary)
-@findex wl-draft
+@findex wl-summary-write
 $B?75,%I%i%U%H$rMQ0U$7$^$9!#(B
-(@code{wl-draft})
+(@code{wl-summary-write})
 
 @item W
 @kindex W (Summary)

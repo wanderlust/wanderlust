@@ -1588,16 +1588,16 @@ structure.)
 
 @item w
 @kindex w (Folder)
-@findex wl-summary-write
+@findex wl-draft
 Create a new draft message.
-(@code{wl-summary-write})
+(@code{wl-draft})
 
 @item W
 @kindex W (Folder)
-@findex wl-summary-write-current-newsgroup
+@findex wl-folder-write-current-newsgroup
 If the current cursor point is on the NNTP folder,
 create a new draft message which already has newsgroups field.
-(@code{wl-summary-write-current-newsgroup})
+(@code{wl-folder-write-current-newsgroup})
 
 @item s
 @kindex s (Folder)
@@ -2718,16 +2718,16 @@ as @samp{$}.
 
 @item w
 @kindex w (Summary)
-@findex wl-draft
+@findex wl-summary-write
 Prepare a new draft.
-(@code{wl-draft})
+(@code{wl-summary-write})
 
 @item W
 @kindex W (Summary)
-@findex wl-draft-write-current-newsgroup
+@findex wl-summary-write-current-newsgroup
 Prepare a new draft.
 If the current folder is netnews folder, Newsgroups: field is completed.
-(@code{wl-draft-write-current-newsgroup})
+(@code{wl-summary-write-current-newsgroup})
 
 @item H
 @kindex H (Summary)
