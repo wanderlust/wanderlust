@@ -2711,9 +2711,9 @@ Following is an example of @code{wl-refile-rule-alist}.
          ("^Wanderlust" . "+wl")
          ("^Elisp" . "+elisp"))
         (("To" "Cc")
-         ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
+         ("\\([a-z]+\\)@@gohome\\.org" . "+\\1"))
         ("From"
-         ("me@@gohome.org" . ("To" ("you@@gohome.org" .
+         ("me@@gohome\\.org" . ("To" ("you@@gohome\\.org" .
                                     "+from-me-to-you"))))))
 @end group
 @end lisp
@@ -3916,13 +3916,13 @@ before sending the message.
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.example.com$" (system-name))
+      '(((string-match "aaa\\.example\\.com$" (system-name))
          ;; @r{applied if the expression is non-nil}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{settings of temporary variables}
          )
-        ("^To: .*user@@aaa.bbb.example.com"
+        ("^To: .*user@@aaa\\.bbb\\.example\\.com"
          ;; @r{applied if it matches the header of the draft buffer}
          ("Organization" . (format "Go %s" my-webpage)))
                        ;; @r{you can write elisp expressions here (eval only)}

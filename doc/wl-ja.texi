@@ -2709,9 +2709,9 @@ IMAP のメッセージだけが先読みされます。この変数は
          ("^Wanderlust" . "+wl")
          ("^Elisp" . "+elisp"))
         (("To" "Cc")
-         ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
+         ("\\([a-z]+\\)@@gohome\\.org" . "+\\1"))
         ("From"
-         ("me@@gohome.org" . ("To" ("you@@gohome.org" . 
+         ("me@@gohome\\.org" . ("To" ("you@@gohome\\.org" . 
                                     "+from-me-to-you"))))))
 @end group
 @end lisp
@@ -3894,13 +3894,13 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.example.com$" (system-name))
+      '(((string-match "aaa\\.example\\.com$" (system-name))
          ;; @r{式がnon-nilなら適用する}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{一時的な変数の設定}
          )
-        ("^To: .*user@@aaa.bbb.example.com"
+        ("^To: .*user@@aaa\\.bbb\\.example\\.com"
          ;; @r{ドラフトバッファのヘッダにマッチすれば適用する}
          ("Organization" . (format "Go %s" my-webpage)))
                            ;; @r{elisp 式が書ける (eval しているだけ)}
