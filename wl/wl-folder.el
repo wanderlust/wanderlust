@@ -1017,7 +1017,7 @@ If current line is group folder, check all subfolders."
     (let ((entity-name (wl-folder-get-entity-from-buffer))
 	  (group (wl-folder-buffer-group-p)))
       (when (and entity-name
-		 (y-or-n-p (format "Sync %s?" entity-name)))
+		 (y-or-n-p (format "Sync %s? " entity-name)))
 	(wl-folder-sync-entity
 	 (if group
 	     (wl-folder-search-group-entity-by-name entity-name
@@ -1068,7 +1068,7 @@ If current line is group folder, all subfolders are marked."
 	  (group (wl-folder-buffer-group-p))
 	  summary-buf)
       (when (and entity-name
-		 (y-or-n-p (format "Mark all messages in %s as read?" entity-name)))
+		 (y-or-n-p (format "Mark all messages in %s as read? " entity-name)))
 	(wl-folder-mark-as-read-all-entity
 	 (if group
 	     (wl-folder-search-group-entity-by-name entity-name
@@ -2735,7 +2735,7 @@ If current line is group folder, all subfolders are prefetched."
 ;	  summary-buf entity)
 ;      (when (and entity-name
 ;		 (y-or-n-p (format
-;			    "Drop all unsync messages in %s?" entity-name)))
+;			    "Drop all unsync messages in %s? " entity-name)))
 ;	(setq entity
 ;	      (if group
 ;		  (wl-folder-search-group-entity-by-name entity-name
@@ -2767,7 +2767,7 @@ Call `wl-summary-write-current-folder' with current folder name."
       (kill-buffer bufname))))
 
 (defun wl-folder-create-subr (folder)
-  (if (y-or-n-p (format "Folder %s does not exist, create it?"
+  (if (y-or-n-p (format "Folder %s does not exist, create it? "
 			(elmo-folder-name-internal folder)))
       (progn
 	(message "")

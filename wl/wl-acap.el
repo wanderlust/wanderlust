@@ -133,7 +133,7 @@ If nil, default acap port is used."
 						   (expand-file-name
 						    "acap"
 						    elmo-msgdb-directory)))))))
-		(if (y-or-n-p "No ACAP service found. Try cache?")
+		(if (y-or-n-p "No ACAP service found. Try cache? ")
 		    (let (selected rpath alist)
 		      (setq alist
 			    (mapcar
