@@ -73,13 +73,17 @@ nil なら original は利用しない。
   を用意．
   関連関数は新規ファイル wl-action.el に定義．
 
----- ここまで DONE ----
-
 * 仮想フォルダの msgdb の扱い
   pipe, filter, multi では、オリジナルフォルダの msgdb を操作する。
-  elmo-folder-pack-number でオリジナルの番号入れ換えをする。
-  (--> 次にオリジナルを visit したときに sync-all が必要)
   msgdb はフォルダメソッドを介して操作する．  
+
+* POP3 フォルダ
+  elmo-pop3-exists-exactly のデフォルト値を nil にした．
+  → 接続回数が減った．
+
+---- ここまで DONE ----
+* elmo-folder-pack-number でオリジナルの番号入れ換えをする。
+  (--> 次にオリジナルを visit したときに sync-all が必要)
 
 * global mark の管理
 
