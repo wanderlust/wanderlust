@@ -19,7 +19,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    サマリで C-u g すると C-u q と同様にサマリを破棄します。サマリやフォルダ
    モードから G でサマリに移動すると、新規サマリがスティッキーになります。
 
-** C-cC-n や C-cC-p でサマリバッファ達を巡回できます。
+** C-cC-n や C-cC-p でサマリバッファ間を巡回できます。
 
 ** リスト wl-folder-hierarchy-access-folders の各要素は、アクセスグループに
    ついての正規表現になりました(これまでは正確なグループ名でした)。
