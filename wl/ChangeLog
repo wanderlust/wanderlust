@@ -1,7 +1,11 @@
 2002-03-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-target-mark-print): New function.
-	(wl-summary-mode-map): Bind wl-summary-target-mark-print.
+	(wl-summary-pipe-message-subr): Extracted from
+	`wl-summary-pipe-message'.
+	(wl-summary-target-mark-pipe): New function.
+	(wl-summary-mode-map): Bind `wl-summary-target-mark-print' and
+	`wl-summary-target-mark-pipe'.
 
 2002-03-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

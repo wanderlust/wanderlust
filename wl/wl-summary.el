@@ -495,6 +495,7 @@
   (define-key wl-summary-mode-map "mf"   'wl-summary-target-mark-forward)
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
   (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
+  (define-key wl-summary-mode-map "m|"   'wl-summary-target-mark-pipe)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -5389,6 +5390,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
       (message "No message to display."))))
 
 (defun wl-summary-jump-to-current-message ()
+  "Jump into Message buffer."
   (interactive)
   (let (message-buf message-win)
     (if (setq message-buf wl-message-buffer)
@@ -5483,6 +5485,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
 (defun wl-summary-save (&optional arg wl-save-dir)
+  "Save current message to disk."
   (interactive)
   (let ((filename)
 	(num (wl-summary-message-number)))
@@ -5541,16 +5544,33 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
     (setq command (read-string "Shell command on message: "
 			       wl-summary-shell-command-last))
     (if (y-or-n-p "Send this message to pipe? ")
-	(save-excursion
-	  (wl-summary-set-message-buffer-or-redisplay)
-	  (set-buffer (wl-message-get-original-buffer))
-	  (if (string= command "")
-	      (setq command wl-summary-shell-command-last))
-	  (goto-char (point-min)) ; perhaps this line won't be necessary
-	  (if prefix
-	      (search-forward "\n\n"))
-	  (shell-command-on-region (point) (point-max) command nil)
-	  (setq wl-summary-shell-command-last command)))))
+	(wl-summary-pipe-message-subr prefix command))))
+
+(defun wl-summary-target-mark-pipe (prefix command)
+  "Send each marked messages via pipe."
+  (interactive (list current-prefix-arg nil))
+  (if (null wl-summary-buffer-target-mark-list)
+      (message "No marked message.")
+    (setq command (read-string "Shell command on each marked message: "
+			       wl-summary-shell-command-last))
+    (when (y-or-n-p "Send each marked message to pipe? ")
+      (while (car wl-summary-buffer-target-mark-list)
+	(let ((num (car wl-summary-buffer-target-mark-list)))
+	  (wl-thread-jump-to-msg num)
+	  (wl-summary-pipe-message-subr prefix command)
+	  (wl-summary-unmark num))))))
+
+(defun wl-summary-pipe-message-subr (prefix command)
+  (save-excursion
+    (wl-summary-set-message-buffer-or-redisplay)
+    (set-buffer (wl-message-get-original-buffer))
+    (if (string= command "")
+	(setq command wl-summary-shell-command-last))
+    (goto-char (point-min)) ; perhaps this line won't be necessary
+    (if prefix
+	(search-forward "\n\n"))
+    (shell-command-on-region (point) (point-max) command nil)
+    (setq wl-summary-shell-command-last command)))
 
 (defun wl-summary-print-message (&optional arg)
   (interactive "P")
@@ -5569,6 +5589,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	(message "")))))
 
 (defun wl-summary-print-message-with-ps-print (&optional filename)
+  "Print message via ps-print."
   (interactive)
   (if (null (wl-summary-message-number))
       (message "No message.")
