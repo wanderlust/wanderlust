@@ -6705,12 +6705,18 @@ spam マークは、後述する spam の判定処理で自動的に付く他、@samp{k m} 
 された時に真となります。
 @xref{Split messages}
 
+また、判定結果を元に学習させることも出来ます。(ある程度学習が進んでから、
+この設定を有効にするとよいでしょう)
+
 以下に例を示します。
 
 @lisp
 @group
-(setq elmo-split-rule '(((spam-p) "+spam")
-                        (t "+inbox"))
+(setq elmo-split-rule
+      '(((spam-p) "+spam")
+        ;; @r{判定結果を元に学習させる場合は代わりに下の条件を使う}
+        ;((spam-p :register t) "+spam")
+        (t "+inbox"))
 @end group
 @end lisp
 @end enumerate
