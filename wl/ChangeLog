@@ -1,3 +1,9 @@
+2004-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-set-flags): Allow flag operation even
+	if folder type is `'flag'.
+	(wl-summary-mark-as-important): Ditto.
+
 2004-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-address.el (wl-address-minibuffer-history): New variable.
@@ -4645,7 +4651,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 
-2002-03-11  J,Ai(Br,At(Bme Marant <jerome.marant@free.fr>
+2002-03-11  J.ANirNtme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 

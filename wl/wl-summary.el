@@ -3265,14 +3265,10 @@ Return non-nil if the mark is updated"
 
 (defun wl-summary-set-flags (&optional remove)
   (interactive "P")
-  (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
-      (error "Cannot process flags in this folder"))
   (wl-summary-set-flags-internal nil nil nil remove))
 
 (defun wl-summary-mark-as-important (&optional prompt)
   (interactive "P")
-  (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
-      (error "Cannot process flags in this folder"))
   (if prompt
       (wl-summary-set-flags-internal)
     (wl-summary-set-persistent-mark-internal

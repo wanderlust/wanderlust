@@ -426,7 +426,8 @@
 					    flag
 					    &optional is-local)
   (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local)))
+    (ignore-errors
+     (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local))))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
 					      flag

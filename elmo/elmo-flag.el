@@ -213,6 +213,13 @@
 					       &optional flag number)
   (error "Cannot append to the flag folder"))
 
+(luna-define-method elmo-folder-unset-flag :before ((folder elmo-flag-folder)
+						    numbers
+						    flag
+						    &optional is-local)
+  (when (eq flag (elmo-flag-folder-flag-internal folder))
+    (error "Cannot unset flag `%s' in this folder." flag)))
+
 ;;; Utilities
 
 (defmacro elmo-flag-get-folder (flag)
@@ -371,7 +378,8 @@ If optional DELETE-IF-NONE is non-nil, delete message from flag folder when
 the message is not flagged in any folder.
 If DELETE-IF-NONE is a symbol `always',
 delete message without flagged in other folder."
-  (unless (eq (elmo-folder-type-internal folder) 'flag)
+  (unless (and (eq (elmo-folder-type-internal folder) 'flag)
+	       (eq (elmo-flag-folder-flag-internal folder) flag))
     (let ((flag-folder (elmo-flag-get-folder flag))
 	  elem key)
       (when flag-folder
