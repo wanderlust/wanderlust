@@ -502,7 +502,7 @@ Return a list of message numbers which have duplicated message-ids."
   (when entity
     (let ((number (elmo-msgdb-overview-entity-get-number-internal entity))
 	  (message-id (elmo-msgdb-overview-entity-get-id-internal entity))
-	  mark)
+	  mark cell)
       (elmo-msgdb-set-overview
        msgdb
        (nconc (elmo-msgdb-get-overview msgdb)
@@ -513,15 +513,12 @@ Return a list of message numbers which have duplicated message-ids."
 	      (list (cons number message-id))))
       (modb-generic-set-message-modified-internal msgdb t)
       (when (setq mark (modb-legacy-flags-to-mark flags))
+	(setq cell (list number mark))
 	(elmo-msgdb-set-mark-alist
 	 msgdb
-	 (nconc (elmo-msgdb-get-mark-alist msgdb)
-		(list (list number mark))))
+	 (nconc (elmo-msgdb-get-mark-alist msgdb) (list cell)))
 	(modb-generic-set-flag-modified-internal msgdb t))
-      (elmo-msgdb-make-index
-       msgdb
-       (list entity)
-       (list (list number mark))))))
+      (elmo-msgdb-make-index msgdb (list entity) (list cell)))))
 
 (luna-define-method elmo-msgdb-delete-messages ((msgdb modb-legacy)
 						numbers)

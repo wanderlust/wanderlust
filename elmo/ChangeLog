@@ -1,3 +1,8 @@
+2003-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-legacy.el (elmo-msgdb-append-entity): Registered an
+	identical cons cell into the mark-alist and the hash table.
+
 2003-10-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-folder-list-target-messages): Call
