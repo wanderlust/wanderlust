@@ -508,7 +508,7 @@ file name for maildir directories."
 	    dir))
 	  ;; src folder's msgdb is loaded.
 	  (when (setq id (and src-msgdb-exists
-			      (elmo-message-field src-folder (car numbers)
+			      (elmo-message-field src-folder number
 						  'message-id)))
 	    (elmo-flag-table-set table id flags))
 	  (elmo-progress-notify 'elmo-folder-move-messages))
