@@ -29,7 +29,7 @@
 ;;; Code:
 ;; 
 (require 'product)
-(provide 'elmo-version)
+(provide 'elmo-version)			; have to declare in the top.
 
 (product-provide 'elmo-version
   (product-define "ELMO" nil '(2 3 90)))
@@ -37,7 +37,7 @@
 ;; set version-string
 (if (fboundp 'product-version-as-string)
     (product-version-as-string 'elmo-version)
-  (product-string-1 'elmo-version))
+  (product-string-1 'elmo-version))	; APEL 10.2 or earlier
 
 (defun elmo-version ()
   "Return ELMO version."
