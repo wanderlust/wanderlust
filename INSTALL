@@ -158,7 +158,7 @@ Sample configuration file
 
   Wanderlust requires the following three configuration files:
 
-	~/.addresses    Address Book
+	~/.addresses    Address Book (optional)
 	~/.folders      Folder Book
 	~/.wl           Wanderlust Configuration (loaded at startup)
 
