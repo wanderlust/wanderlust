@@ -1,5 +1,11 @@
 2001-06-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
+	as nil.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+	(wl-folder-drop-unsync-entity): Ditto.
+
 	* wl-summary.el (wl-summary-collect-unread): Eliminated.
 	(wl-summary-mark-as-read-all): Call elmo-list-folder-unread instead
 	of wl-summary-collect-unread.

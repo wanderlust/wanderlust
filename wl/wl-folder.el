@@ -984,6 +984,7 @@ If current line is group folder, check all sub entries."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
+		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -1031,6 +1032,7 @@ If current line is group folder, check all subfolders."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
+		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -2642,6 +2644,7 @@ Use `wl-subscribed-mailing-list'."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
+		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
@@ -2699,6 +2702,7 @@ If current line is group folder, all subfolders are prefetched."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
+		(wl-summary-use-frame nil)
 		(wl-message-buf-name (concat wl-message-buf-name
 					     (symbol-name this-command))))
 	    (save-window-excursion
