@@ -705,16 +705,17 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-check-environment (no-check-folder)
   (unless wl-from (elmo-warning "Please set `wl-from'."))
   ;; Message-ID
-  (let ((message-id (funcall wl-message-id-function))
-	domain)
-    (unless (string-match "^<\\([^@]*\\)@\\([^@]*\\)>$" message-id)
-      (error
-       "Check around `wl-message-id-function' to get valid Message-ID string."))
-    (setq domain (match-string 2 message-id))
-    (if (or (not (string-match "[^.]\\.[^.]" domain))
-	    (string= domain "localhost.localdomain"))
-	(elmo-warning
-	 "Please set `wl-message-id-domain' to get valid Message-ID string.")))
+  (when wl-insert-message-id
+    (let ((message-id (funcall wl-message-id-function))
+	  domain)
+      (unless (string-match "^<\\([^@]*\\)@\\([^@]*\\)>$" message-id)
+	(error
+	 "Check around `wl-message-id-function' to get valid Message-ID string."))
+      (setq domain (match-string 2 message-id))
+      (if (or (not (string-match "[^.]\\.[^.]" domain))
+	      (string= domain "localhost.localdomain"))
+	  (elmo-warning
+	   "Please set `wl-message-id-domain' to get valid Message-ID string."))))
   ;; folders
   (when (not no-check-folder)
     (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
