@@ -1,5 +1,14 @@
 2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
 
+	* etc/icons/wl-alpha-logo.img: New file.
+	* etc/icons/wl-alpha-xmas-logo.img: New file.
+	* etc/icons/wl-beta-logo.img: New file.
+	* etc/icons/wl-beta-xmas-logo.img: New file.
+	* etc/icons/wl-stable-logo.img: New file.
+	* etc/icons/wl-stable-xmas-logo.img: New file.
+
+2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
 	* etc/icons/wl-alpha-xmas-logo.xbm: New file.
 	* etc/icons/wl-beta-xmas-logo.xbm: New file.
 	* etc/icons/wl-stable-xmas-logo.xbm: New file.
