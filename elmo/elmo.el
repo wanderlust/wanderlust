@@ -40,6 +40,7 @@
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo-msgdb)
+(require 'elmo-cache)
 
 (eval-when-compile (require 'cl))
 

@@ -130,11 +130,10 @@
 	 dir)
     (when path
       (setq dir (directory-file-name (file-name-directory path)))
-      (unless (file-exists-p dir)
-	(elmo-make-directory dir))
-      (when (file-writable-p path)
-	(write-region-as-binary (point-min) (point-max)
-				path nil 'no-msg)))
+      (if (not (file-exists-p dir))
+	  (elmo-make-directory dir))
+      (as-binary-output-file (write-region (point-min) (point-max)
+					   path nil 'no-msg)))
     (elmo-msgdb-global-mark-set msgid 
 				(elmo-mark-folder-mark-internal folder))))
 
@@ -176,6 +175,7 @@
 	 file
 	 matched
 	 case-fold-search)
+    (setq num (length msgs))
     (while msgs
       (if (and (setq file (elmo-message-file-name folder (car msgs)))
 	       (file-exists-p file)

@@ -127,5 +127,7 @@ archive フォルダ用 msgdb path を変更。
    wl-folder-check-entity-async
 ** パートフェッチが SEMI まかせ
 ** フォルダとアイコンファイルの対応
+** wl-summary-move-order が 'new だと次のプリフェッチメッセージを
+   探すのがおそい
 ** elmo-folder-delete-messages のときに msgdb も消す。
 → サマリと msgdb 間も sync する必要がある(in 2.7?)。

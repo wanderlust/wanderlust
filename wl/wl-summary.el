@@ -1823,8 +1823,7 @@ If ARG is non-nil, checking is omitted."
 	      (progn
 		(delete-region (match-beginning 0) (match-end 0))
 		(delete-char 1) ; delete '\n'
-		(setq wl-summary-buffer-number-list
-		      (delq (car msgs) wl-summary-buffer-number-list)))))
+		)))
 	(when (and deleting-info
 		   (> len elmo-display-progress-threshold))
 	  (setq i (1+ i))
@@ -2563,10 +2562,8 @@ If ARG, without confirm."
 	  (let ((case-fold-search nil)
 		(inhibit-read-only t)
 		(buffer-read-only nil))
-	    ;; Select folder
-	    (elmo-folder-open folder)
 	    (erase-buffer)
-	    ;; Resume summary view
+	    ;; resume summary cache
 	    (if wl-summary-cache-use
 		(let* ((dir (elmo-folder-msgdb-path folder))
 		       (cache (expand-file-name wl-summary-cache-file dir))
@@ -2583,12 +2580,9 @@ If ARG, without confirm."
 			  (wl-summary-load-file-object view)))
 		  (if (eq wl-summary-buffer-view 'thread)
 		      (wl-thread-resume-entity folder)
-		    (wl-summary-make-number-list)))
-	      (setq wl-summary-buffer-view
-		    (wl-summary-load-file-object
-		     (expand-file-name wl-summary-view-file
-				       (elmo-folder-msgdb-path folder))))
-	      (wl-summary-rescan))
+		    (wl-summary-make-number-list))))
+	    ;; Select folder
+	    (elmo-folder-open folder)
 	    (wl-summary-count-unread
 	     (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	    (wl-summary-update-modeline)))
@@ -4301,18 +4295,11 @@ If ARG, exit virtual folder."
       (elmo-date-get-week year month mday))))
 
 (defvar wl-summary-move-spec-alist
-  (` ((new . ((t . nil)
-	      (p . (, wl-summary-new-mark))
-	      (p . (, (wl-regexp-opt
-		       (list wl-summary-unread-uncached-mark
-			     wl-summary-unread-cached-mark))))
-	      (p . (, (regexp-quote wl-summary-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, (wl-regexp-opt
-			  (list wl-summary-new-mark
-				wl-summary-unread-uncached-mark
-				wl-summary-unread-cached-mark))))
-		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+  '((new . ((p . "\\(N\\|\\$\\)")
+	    (p . "\\(U\\|!\\)")
+	    (t . nil)))
+    (unread . ((p . "\\(N\\|\\$\\|U\\|!\\)")
+	       (t . nil)))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 
@@ -5608,13 +5595,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 ;; 	(message "Dropping...done"))))
 
 (defun wl-summary-default-get-next-msg (msg)
-  (or (wl-summary-next-message msg
-			       (if wl-summary-move-direction-downward 'down
-				 'up)
-			       nil)
-      (cadr (memq msg (if wl-summary-move-direction-downward
-			  wl-summary-buffer-number-list
-			(reverse wl-summary-buffer-number-list))))))
+  (wl-summary-next-message msg
+			   (if wl-summary-move-direction-downward 'down
+			     'up)
+			   nil))
 
 (defun wl-summary-save-current-message ()
   "Save current message for `wl-summary-yank-saved-message'."

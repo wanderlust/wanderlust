@@ -36,6 +36,7 @@
 (require 'elmo-util)
 (require 'emu)
 (require 'std11)
+(require 'elmo-cache)
 
 (defsubst elmo-msgdb-append-element (list element)
   (if list
