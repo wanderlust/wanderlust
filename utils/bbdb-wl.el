@@ -62,7 +62,20 @@
   (when (and (not (featurep 'bbdb-autoloads))
 	     (module-installed-p 'bbdb-autoloads))
     ;; BBDB 2.20: bbdb-autoloads.el NOT includes (provide 'bbdb-autoloads)
-    (load "bbdb-autoloads")))
+    (load "bbdb-autoloads"))
+  
+  (if (not (boundp 'bbdb-get-addresses-from-headers))
+      (defvar bbdb-get-addresses-from-headers
+	'("From" "Resent-From" "Reply-To")))
+
+  (if (not (boundp 'bbdb-get-addresses-to-headers))
+      (defvar bbdb-get-addresses-to-headers
+	'("Resent-To" "Resent-CC" "To" "CC" "BCC")))
+
+  (if (not (boundp 'bbdb-get-addresses-headers))
+      (defvar bbdb-get-addresses-headers
+	(append bbdb-get-addresses-from-headers
+		bbdb-get-addresses-to-headers))))
 
 (defun bbdb-wl-exit ()
   (let (bbdb-buf)
@@ -140,18 +153,6 @@
 		 (setq from-str (or first-name last-name))))
 	  from-str)
       string)))
-
-(if (not (boundp 'bbdb-get-addresses-from-headers))
-    (defvar bbdb-get-addresses-from-headers
-      '("From" "Resent-From" "Reply-To")))
-
-(if (not (boundp 'bbdb-get-addresses-to-headers))
-    (defvar bbdb-get-addresses-to-headers
-      '("Resent-To" "Resent-CC" "To" "CC" "BCC")))
-
-(if (not (boundp 'bbdb-get-addresses-headers))
-    (defvar bbdb-get-addresses-headers
-      (append bbdb-get-addresses-from-headers bbdb-get-addresses-to-headers)))
 
 (defun bbdb-wl-get-addresses-1 (&optional only-first-address)
   "Return real name and email address of sender respectively recipients.

@@ -1530,12 +1530,16 @@ Return a hashtable for newsgroups."
 			       'elmo-imap4-default-user)
 (elmo-define-obsolete-variable 'elmo-default-imap4-port
 			       'elmo-imap4-default-port)
+(elmo-define-obsolete-variable 'elmo-default-imap4-stream-type
+			       'elmo-imap4-default-stream-type)
 (elmo-define-obsolete-variable 'elmo-default-nntp-server
 			       'elmo-nntp-default-server)
 (elmo-define-obsolete-variable 'elmo-default-nntp-user
 			       'elmo-nntp-default-user)
 (elmo-define-obsolete-variable 'elmo-default-nntp-port
 			       'elmo-nntp-default-port)
+(elmo-define-obsolete-variable 'elmo-default-nntp-stream-type
+			       'elmo-nntp-default-stream-type)
 (elmo-define-obsolete-variable 'elmo-default-pop3-server
 			       'elmo-pop3-default-server)
 (elmo-define-obsolete-variable 'elmo-default-pop3-user
@@ -1544,6 +1548,8 @@ Return a hashtable for newsgroups."
 			       'elmo-pop3-default-authenticate-type)
 (elmo-define-obsolete-variable 'elmo-default-pop3-port
 			       'elmo-pop3-default-port)
+(elmo-define-obsolete-variable 'elmo-default-pop3-stream-type
+			       'elmo-pop3-default-stream-type)
 (elmo-define-obsolete-variable 'elmo-cache-dirname
 			       'elmo-cache-directory)
 (elmo-define-obsolete-variable 'elmo-msgdb-dir

@@ -1,3 +1,10 @@
+2002-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-default-imap4-stream-type): Define as obsolete
+	variable.
+	(elmo-default-nntp-stream-type): Ditto.
+	(elmo-default-pop3-stream-type): Ditto.
+
 2002-01-25  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* elmo.el (elmo-generic-folder-append-messages): Disable multibyte.

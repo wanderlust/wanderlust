@@ -7,6 +7,7 @@
 	(bbdb-wl-address-headers-spec): New function.
 	(bbdb-wl-show-all-recipients): Use it.
 	(bbdb-wl-show-sender): Ditto.
+	(bbdb-wl-setup): Include defvars for bbdb-get-addresses-headers.
 
 2002-01-17  Kenichi OKADA  <okada@opaopa.org>
 
