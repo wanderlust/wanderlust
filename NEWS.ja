@@ -1,6 +1,13 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
-** SMTP AUTH でのエラーによるパスワード消去の不具合が修正されました。
+** 重要マークつきメッセージのキャッシュに対する保護機能が働かない
+   不具合が修正されました。
+
+** wl-summary-line-format の %# で大きな数値を正しく扱えない不具合
+   が修正されました。
+
+** SMTP AUTH で認証以外のエラーでもパスワード消去される不具合が修
+   正されました。
 
 ** wl-message-buffer-prefetch-folder-type-list,
    wl-message-buffer-prefetch-idle-time,
