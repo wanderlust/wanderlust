@@ -212,11 +212,11 @@ Valid states are `closed', `initial', `auth'.")
 	 (buffer (get-buffer-create (concat " *acap on " user " at " server)))
 	 process passphrase mechanism tag)
     (with-current-buffer buffer
+      (erase-buffer)
       (if acap-process
 	  (delete-process acap-process))
       (setq process (acap-network-stream-open buffer server port type)
 	    acap-process process)
-      (erase-buffer)
       (set-buffer-multibyte nil)
       (buffer-disable-undo)
       (setq acap-state 'initial)
@@ -350,7 +350,42 @@ Examples:
 (defun acap-store (process entries)
   "Execute STORE command on PROCESS.
 ENTRIES is a store-entry list."
-  (acap-send-command-wait process (concat "STORE " (prin1-to-string entries))))
+  (with-temp-buffer
+    ;; As far as I know, current implementation of ACAP server
+    ;; (cyrus-smlacapd 0.5) does not accept literal argument for STORE.
+    ;; If literal argument is available, command arguments can be sent using
+    ;; function `acap-send-command-wait'.
+    (set-buffer-multibyte nil)
+    (insert "STORE (")
+    (let (beg tag)
+      (while entries
+	(cond
+	 ((stringp (car entries))
+	  (setq beg (point))
+	  (insert (car entries))
+	  (goto-char beg)
+	  (while (re-search-forward "\\\\" nil t)
+	    (replace-match "\\\\\\\\"))
+	  (goto-char beg)
+	  (while (re-search-forward "\"" nil t)
+	    (replace-match "\\\\\""))	  
+	  (goto-char beg)
+	  (insert "\"")
+	  (goto-char (point-max))
+	  (insert "\""))
+	 ((symbolp (car entries))
+	  (insert (prin1-to-string (car entries)))))
+	(if (cdr entries)(insert " "))
+	(setq entries (cdr entries)))
+      (insert ")")
+      (goto-char (point-min))
+      (insert (with-current-buffer (process-buffer process)
+		(number-to-string (setq tag (setq acap-tag (1+ acap-tag)))))
+	      " ")
+      (process-send-region process (point-min) (point-max))
+      (acap-debug (concat (buffer-string) acap-client-eol))
+      (process-send-string process acap-client-eol)
+      (acap-wait-for-response process tag))))
 
 (defun acap-deletedsince (process name time)
   "Execute DELETEDSINCE command on PROCESS."

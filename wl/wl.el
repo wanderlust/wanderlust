@@ -754,8 +754,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (unless wl-init
-    (wl-load-profile))
-  (elmo-init)
+    (wl-load-profile)
+    (elmo-init)
+    (wl-folder-init))
   (let (demo-buf check)
     (unless wl-init
       (if wl-demo (setq demo-buf (wl-demo)))
