@@ -3186,30 +3186,31 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defun wl-summary-print-destination (msg-num folder)
   "Print refile destination on line."
   (wl-summary-remove-destination)
-  (let ((inhibit-read-only t)
-	(folder (copy-sequence folder))
-	(buffer-read-only nil)
-	len rs re c)
-    (setq len (string-width folder))
-    (if (< len 1) ()
-      ;;(end-of-line)
-      (beginning-of-line)
-      (search-forward "\r")
-      (forward-char -1)
-      (setq re (point))
-      (setq c 0)
-      (while (< c len)
+  (save-excursion
+    (let ((inhibit-read-only t)
+	  (folder (copy-sequence folder))
+	  (buffer-read-only nil)
+	  len rs re c)
+      (setq len (string-width folder))
+      (if (< len 1) ()
+	;;(end-of-line)
+	(beginning-of-line)
+	(search-forward "\r")
 	(forward-char -1)
-	(setq c (+ c (char-width (following-char)))))
-      (and (> c len) (setq folder (concat " " folder)))
-      (setq rs (point))
-      (when wl-summary-width
+	(setq re (point))
+	(setq c 0)
+	(while (< c len)
+	  (forward-char -1)
+	  (setq c (+ c (char-width (following-char)))))
+	(and (> c len) (setq folder (concat " " folder)))
+	(setq rs (point))
+	(when wl-summary-width
 	  (put-text-property rs re 'invisible t))
-      (put-text-property rs re 'wl-summary-destination t)
-      (goto-char re)
-      (wl-highlight-refile-destination-string folder)
-      (insert folder)
-      (set-buffer-modified-p nil))))
+	(put-text-property rs re 'wl-summary-destination t)
+	(goto-char re)
+	(wl-highlight-refile-destination-string folder)
+	(insert folder)
+	(set-buffer-modified-p nil)))))
 
 (defsubst wl-summary-get-mark (number)
   "Return a temporal mark of message specified by NUMBER."
@@ -5006,6 +5007,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
   (let ((start (point))
 	(skip-tmark-regexp (wl-regexp-opt wl-summary-skip-mark-list))
 	(skip t)
+	(column (current-column))
 	skip-pmark-regexp goto-next next-entity finfo)
     (if (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
 	()
@@ -5013,6 +5015,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-regexp-opt (list " "
 				 wl-summary-unread-cached-mark
 				 wl-summary-important-mark))))
+    (beginning-of-line)
     (while (and skip
 		(not (if downward (eobp) (bobp))))
       (if downward
@@ -5030,8 +5033,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
-
-    (beginning-of-line)
+    (move-to-column column)
 
     (if (not goto-next)
 	(if wl-summary-buffer-disp-msg
