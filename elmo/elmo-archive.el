@@ -426,7 +426,8 @@ TYPE specifies the archiver's symbol."
 	  (if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
 	      (setq base-folder (elmo-match-string 1 base-folder))
 	    (unless (file-directory-p path)
-	      (setq base-folder (file-name-directory base-folder))))
+	      (setq base-folder (or (file-name-directory base-folder)
+				    base-folder))))
 	  (delq
 	   nil
 	   (mapcar
