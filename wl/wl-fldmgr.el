@@ -1328,7 +1328,7 @@ return value is diffs '(-new -unread -all)."
        wl-folders-file
        nil
        'no-msg)
-      (set-file-modes wl-folders-file 384)) ; 600
+      (set-file-modes wl-folders-file (+ (* 64 6) (* 8 0) 0))) ; chmod 0600
     (kill-buffer tmp-buf)
     (while access-list
       (setq entity (wl-folder-search-group-entity-by-name

@@ -1,5 +1,8 @@
 2000-10-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-fldmgr.el (wl-fldmgr-save-folders): Fixed permission lateral
+	representation.
+
 	* wl-fldmgr.el (wl-fldmgr-folders-header): Include version
 	number.
 	(wl-fldmgr-save-folders): Don't use `format' when insert
