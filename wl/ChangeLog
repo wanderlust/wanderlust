@@ -1,5 +1,9 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-normal-send-func): Fixed last change.
+
+	* wl-action.el (wl-summary-define-mark-action): Fixed region function.
+
 	* wl-summary.el (wl-summary-set-message-modified): 
 	Call wl-summary-set-mark-modified.
 	(wl-summary-delete-messages-on-buffer): Call

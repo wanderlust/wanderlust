@@ -358,9 +358,10 @@ Return number if put mark succeed"
 	      (quote ,(intern (format "wl-summary-%s"
 				      (wl-summary-action-symbol action))))
 	      beg end
-	      (if ,(wl-summary-action-argument-function action)
-		  (funcall ,(wl-summary-action-argument-function action)
-			   ,(wl-summary-action-symbol action)
+	      (if (quote ,(wl-summary-action-argument-function action))
+		  (funcall (function 
+			    ,(wl-summary-action-argument-function action))
+			   (quote ,(wl-summary-action-symbol action))
 			   (wl-summary-message-number))))))
     (fset (intern (format "wl-summary-target-mark-%s"
 			  (wl-summary-action-symbol action)))
