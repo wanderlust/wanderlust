@@ -1,3 +1,9 @@
+2001-11-18  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-config-sub-header-top): New fucntion.
+	(wl-draft-config-sub-func-alist): Added `wl-draft-config-sub-header-top'.
+	`wl-draft-config-sub-header-bottom'.
+
 2001-11-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-get-newsgroups): Fixed probrem when
