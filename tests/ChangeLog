@@ -1,5 +1,10 @@
 2003-01-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-elmo-localdir.el: New file.
+	(test-elmo-folder-expand-msgdb-path-1): New testcase.
+	(test-elmo-folder-expand-msgdb-path-2): Ditto.
+	(test-elmo-folder-expand-msgdb-path-3): Ditto.
+
 	* test-dist.el (test-wl-modules-exists): Fix void variable.
 	(test-elmo-modules-exists): Ditto.
 
