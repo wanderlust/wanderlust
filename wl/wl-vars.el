@@ -413,11 +413,6 @@ when `wl-prefetch-confirm' is non-nil."
   :group 'wl-pref
   :group 'wl-setting)
 
-(defcustom wl-cache-prefetch-threshold 30000
-  "*Quit forward cache prefetching if message size is larger than this value."
-  :type 'integer
-  :group 'wl-pref)
-
 (defcustom wl-thread-insert-opened nil
   "*Non-nil forces to insert thread as opened in updating."
   :type 'boolean
@@ -1720,6 +1715,11 @@ e.x.
 (defcustom wl-message-buffer-prefetch-idle-time 0.2
   "*Idle time of buffer prefetch."
   :type 'number
+  :group 'wl-pref)
+
+(defcustom wl-message-buffer-prefetch-threshold 30000
+  "*Quit forward cache prefetching if message size is larger than this value."
+  :type 'integer
   :group 'wl-pref)
 
 (defcustom wl-summary-always-sticky-folder-list nil

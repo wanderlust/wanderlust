@@ -5234,10 +5234,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
-	    (wl-message-buffer-prefetch-next folder num
-					     wl-message-buffer-prefetch-depth
-					     (current-buffer)
-					     wl-summary-buffer-mime-charset))
+	  (wl-message-buffer-prefetch-next folder num
+					   wl-message-buffer-prefetch-depth
+					   (current-buffer)
+					   wl-summary-buffer-mime-charset)
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display."))))
 

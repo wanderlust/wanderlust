@@ -1,7 +1,8 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-message-buffer-prefetch-threshold): New variable.
 	* wl-message.el (wl-message-buffer-prefetch-get-next): Use
-	`wl-cache-prefetch-threshold'.
+	`wl-message-buffer-prefetch-threshold'.
 	* wl-summary.el (wl-summary-redisplay-internal): Remove
 	the check of `wl-message-buffer-prefetch-depth'.
 

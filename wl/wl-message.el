@@ -580,9 +580,7 @@ Returns non-nil if bottom of message."
       (with-current-buffer summary
 	(let* ((next (funcall wl-message-buffer-prefetch-get-next-function
 			      number))
-	       (size (elmo-message-field folder next 'size))
-	       (threshold (or wl-cache-prefetch-threshold
-			      elmo-message-fetch-threshold)))
+	       (size (elmo-message-field folder next 'size)))
 	  (if next
 	      (cond
 	       ((not (wl-message-buffer-prefetch-p folder next))
@@ -591,8 +589,8 @@ Returns non-nil if bottom of message."
 		 folder next summary))
 	       ((and (not (elmo-message-file-p folder next))
 		     (integerp size)
-		     (integerp threshold)
-		     (>= size threshold))
+		     wl-message-buffer-prefetch-threshold
+		     (>= size wl-message-buffer-prefetch-threshold))
 		(wl-message-buffer-prefetch-get-next
 		 folder next summary))
 	       (t
