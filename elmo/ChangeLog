@@ -1,3 +1,7 @@
+2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el: New file.  Use product.el.
+
 2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-copy-msgs): Set `spec' as 1st argument for
