@@ -711,9 +711,10 @@ Returns nil if selecting folder was in failure."
 	      (progn
 		(elmo-imap4-send-command (process-buffer process)
 					 process
-					 (format "select \"%s\"" 
-						 (elmo-imap4-spec-mailbox
-						  spec)))
+					 (list "select "
+					       (elmo-imap4-mailbox
+						(elmo-imap4-spec-mailbox spec))
+					       ))
 		(setq msgdb (elmo-msgdb-load (elmo-string folder)))
 		(setq response (elmo-imap4-read-response 
 				(process-buffer process)
