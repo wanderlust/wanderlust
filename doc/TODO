@@ -3,7 +3,7 @@
 ** independent cache mark
 ** History Folder (proposal by Tomotaka SUWA)
 ** enable to define folder icons in elmo.el
-** reverse sort, sorted update in summary mode
+** sorted update in summary mode
 ** use hash table for entries in .addresses
 ** mitigate special treatment of NNTP around wl-folder-check-entity-async
 ** organize variable like wl-summary-other-frame-list so as to open

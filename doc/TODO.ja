@@ -3,7 +3,7 @@
 ** キャッシュマークの独立
 ** History Folder (proposal by Tomotaka SUWA)
 ** elmo.el でフォルダのアイコンを定義できるようにする
-** サマリのリバースソート、ソート状態を保持したまま Update
+** サマリのソート状態を保持したまま Update
 ** .addresses エントリについて hash table を使う
 ** wl-folder-check-entity-async のあたりで NNTP が特別扱いになっているのを
    どうにかする

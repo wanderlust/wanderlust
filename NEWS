@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** Now you can sort summary lines into descending order.
+
 ** Abbreviate too long header extended to lines in message buffer.
 
 ** New hooks
