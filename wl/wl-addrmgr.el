@@ -87,20 +87,13 @@
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-default-method 'local
-  "Default access method for address entries.
-Defined by `wl-addrmgr-method-alist'."
+  "Default access method for address entries."
   :type 'symbol
   :group 'wl-addrmgr)
 
 (defvar wl-addrmgr-buffer-name "Address")
 (defvar wl-addrmgr-mode-map nil)
-
-(defvar wl-addrmgr-method-alist
-  '((local . (wl-addrmgr-local-list   ; list address entries
-	      wl-addrmgr-local-add    ; add address entry
-	      wl-addrmgr-local-edit   ; edit address entry
-	      wl-addrmgr-local-delete ; delete address entry
-	      ))))
+(defvar wl-addrmgr-method-list '(local))
 
 ;; buffer local variable.
 (defvar wl-addrmgr-draft-buffer nil)
@@ -454,9 +447,9 @@ Return nil if no ADDRESS exists."
 				 (completing-read
 				  (format "Method (%s): "
 					  (symbol-name wl-addrmgr-method))
-				  (mapcar (lambda (pair)
-					    (list (symbol-name (car pair))))
-					  wl-addrmgr-method-alist)
+				  (mapcar (lambda (method)
+					    (list (symbol-name method)))
+					  wl-addrmgr-method-list)
 				  nil t nil nil
 				  (symbol-name wl-addrmgr-method)))))
   (wl-addrmgr-redraw))

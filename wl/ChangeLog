@@ -1,5 +1,9 @@
 2001-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-addrmgr.el (wl-addrmgr-method-list): New variable.
+	(wl-addrmgr-method-list): Abolished.
+	(wl-addrmgr-change-method): Follow above change.
+
 	* wl-draft.el (wl-draft): Call `wl-plugged-init'.
 
 2001-09-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
