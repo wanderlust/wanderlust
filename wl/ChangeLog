@@ -1,6 +1,6 @@
 2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-summary.el (wl-summary-pick): Fixed.
+	* wl-summary.el (wl-summary-pick): Rewrite.
 
 	* wl-draft.el (wl-draft-forward): Get references field from
 	original buffer.

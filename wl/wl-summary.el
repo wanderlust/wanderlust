@@ -3864,91 +3864,23 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-pick (&optional from-list delete-marks)
   (interactive)
-  (save-excursion
-    (let* ((completion-ignore-case t)
-	   (field (completing-read
-		   (format "Field name (%s): " wl-summary-pick-field-default)
-		   (mapcar 'list
-			   (append '("From" "Subject" "Date"
-				     "To" "Cc" "Body" "Since" "Before")
-				   elmo-msgdb-extra-fields))))
-	   (field (if (string= field "")
-		      (setq field wl-summary-pick-field-default)
-		    field))
-	   (value (if (string-match field "Since\\|Before")
-		      (completing-read "Value: "
-				       (mapcar (function
-						(lambda (x)
-						  (list (format "%s" (car x)))))
-					       elmo-date-descriptions))
-		    (read-from-minibuffer "Value: ")))
-	   (overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
-	   (number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
-	   server-side-search
-	   result get-func sum)
-      (if delete-marks
-	  (let ((mlist wl-summary-buffer-target-mark-list))
-	    (while mlist
-	      (when (wl-summary-jump-to-msg (car mlist))
-		(wl-summary-unmark))
-	      (setq mlist (cdr mlist)))
-	    (setq wl-summary-buffer-target-mark-list nil)))
-      (setq field (downcase field))
-      (cond
-       ((string-match field "from")
-	(setq get-func 'elmo-msgdb-overview-entity-get-from))
-       ((string-match field "subject")
-	(setq get-func 'elmo-msgdb-overview-entity-get-subject))
-       ((string-match field "date")
-	(setq get-func 'elmo-msgdb-overview-entity-get-date))
-       ((string-match field "to")
-	(setq get-func 'elmo-msgdb-overview-entity-get-to))
-       ((string-match field "cc")
-	(setq get-func 'elmo-msgdb-overview-entity-get-cc))
-       ((string-match field "since")
-	(setq server-side-search (vector 'match "since" value)))
-       ((string-match field "before")
-	(setq server-side-search (vector 'match "before" value)))
-       ((string-match field "body")
-	(setq server-side-search (vector 'match "body" value)))
-       ((member field elmo-msgdb-extra-fields)
-	(setq get-func
-	      (lambda (entity)
-		(elmo-msgdb-overview-entity-get-extra-field entity field))))
-       (t
-	(error "Pick by %s is not supported" field)))
-      (unwind-protect
-	  (if server-side-search
-	      (progn
-		(message "Searching...")
-		(let ((elmo-mime-charset wl-summary-buffer-mime-charset))
-		  (setq result (elmo-search wl-summary-buffer-folder-name
-					    server-side-search)))
-		(if from-list
-		    (setq result (elmo-list-filter from-list result)))
-		(message "%d message(s) are picked." (length result)))
-	    (setq sum 0)
-	    (message "Searching...")
-	    (while overview
-	      (when (and (string-match value
-				       (or
-					(funcall get-func (car overview))
-					""))
-			 (or (not from-list)
-			     (memq
-			      (elmo-msgdb-overview-entity-get-number
-			       (car overview)) from-list)))
-		(setq result
-		      (append result
-			      (list
-			       (elmo-msgdb-overview-entity-get-number
-				(car overview)))))
-		(message "Picked %d message(s)." (setq sum (+ sum 1))))
-	      (setq overview (cdr overview)))
-	    (message "%d message(s) are picked." sum))
-	(if (null result)
-	    (message "No message was picked.")
-	  (wl-summary-target-mark-msgs result))))))
+  (let ((result (elmo-msgdb-search 
+		 wl-summary-buffer-folder-name
+		 (elmo-read-search-condition wl-summary-pick-field-default)
+		 wl-summary-buffer-msgdb)))
+    (if delete-marks
+      (let ((mlist wl-summary-buffer-target-mark-list))
+	(while mlist
+	  (when (wl-summary-jump-to-msg (car mlist))
+	    (wl-summary-unmark))
+	  (setq mlist (cdr mlist)))
+	(setq wl-summary-buffer-target-mark-list nil)))
+    (if from-list
+	(setq result (elmo-list-filter from-list result)))
+    (message "%d message(s) are picked." (length result))
+    (if (null result)
+	(message "No message was picked.")
+      (wl-summary-target-mark-msgs result))))
 
 (defun wl-summary-unvirtual ()
   "Exit from current virtual folder."
