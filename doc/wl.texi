@@ -2090,7 +2090,7 @@ For example, if you specify
 @end lisp
 
 @noindent
-such access group hierarchy is obtained.
+you obtain the access group hierarchy as follows.
 
 @example
 @group
@@ -2165,9 +2165,9 @@ To append new folder to the empty folder group
 (after you create folder group by typing @kbd{m g}),
 firstly open it, then execute append command in the next line.
 If it is closed, folder is appended on the same level with
-the above folder group. It is difficult to explain by words so try it.
+the folder group above. It is difficult to explain by words so try it.
 In other words, appended position depends on the
-above folder group's open/close status.
+open/close status of the upper one.
 
 @subsubsection Charset of the Folders File.
 
