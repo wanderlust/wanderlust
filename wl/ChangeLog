@@ -1,9 +1,3 @@
-2004-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-vars.el (wl-smtp-authenticate-realm): New user option.
-
-	* wl-draft.el (wl-smtp-extension-bind): Use wl-smtp-authenticate-realm.
-
 2004-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-e21.el (wl-draft-mode-setup): Avoid global-font-lock-mode

@@ -594,14 +594,6 @@ If nil, don't authenticate."
   :group 'wl
   :group 'wl-setting)
 
-(defcustom wl-smtp-authenticate-realm nil
-  "*SMTP Authentication realm.
-If you don't need to specify realm, set as nil."
-  :type '(choice (const :tag "none" nil)
-		 string)
-  :group 'wl
-  :group 'wl-setting)
-
 (defcustom wl-pop-before-smtp-user nil
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.

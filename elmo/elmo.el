@@ -59,8 +59,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 
 (defcustom elmo-folder-update-threshold 500
   "Update threshold."
-  :type '(choice (integer :tag "Number of messages")
-		 (const :tag "No limitation" nil))
+  :type 'integer
   :group 'elmo)
 
 (defcustom elmo-folder-update-confirm t
