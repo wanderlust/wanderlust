@@ -1,6 +1,7 @@
 2001-09-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-biff-notify-hook): Set default to beep.
+	(toplevel): Require elmo-util.
 
 2001-09-24  Katsumi Yamaoka  <yamaoka@jpl.org>
 
