@@ -169,10 +169,10 @@ DOCSTRING will be printed if ASSERTION is nil and
 	  (insert (format " {%s}\n" str))
 	  (goto-char (point-min))
 	  (if (= (car (texinfo-multitable-widths)) (length str))
-	      nil
-	    t)))
+	      t
+	    nil)))
     ;; function definition is void
-    t))
+    nil))
 
 (ptexinfmt-broken-facility texinfo-multitable-item
   "`texinfo-multitable-item' unsupport wide-char."

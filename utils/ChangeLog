@@ -1,3 +1,8 @@
+2005-02-24  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* ptexinfmt.el (texinfo-multitable-widths): Reverse the logic that
+	shows whether it is broken.
+
 2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* rfc2368.el (rfc2368-unhexify-string): Rewrite (%0D%0A -> \n).
