@@ -30,6 +30,8 @@
 ;; 
 
 (provide 'wl-util)
+(eval-when-compile
+  (require 'elmo-util))
 
 (condition-case ()
     (require 'tm-edit)
