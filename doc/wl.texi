@@ -4399,14 +4399,10 @@ domain part of the @samp{Message-ID:}.  If your terminal does not have
 global IP address, set unique string to this value (e.x. your e-mail
 address).
 
-@item wl-message-id-domain
-@vindex wl-message-id-domain
-The initial setting is @code{nil}.  If @code{nil}, the return value of
-the function @code{system-name} will be used as the domain part of
-@samp{Message-ID:}.  If @code{system-name} does not return FQDN
-(i.e. the full name of the host, like @samp{smtp.gohome.org}), you
-@strong{must} set this variable to the string of the full name of the
-host.  Otherwise, you might be beaten up on the Net News.
+@item wl-unique-id-suffix
+@vindex wl-unique-id-suffix
+The initial setting is @samp{.wl}. You can specify the string on the
+right neighbor of @samp{@@} in generated Message-ID.
 
 @item wl-draft-config-alist
 @vindex wl-draft-config-alist

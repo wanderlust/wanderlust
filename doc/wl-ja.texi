@@ -4356,6 +4356,11 @@ Non-nil $B$J$i!"Aw?.;~$K(B @samp{Message-ID:} $B%U%#!<%k%I$r<+F0E*$KA^F~$7$^$
 $B%H$r7h$a$i$l$J$$>l9g$O!"(B@code{wl-message-id-domain} $B$K0l0U$JJ8;zNs(B($BNc$((B
 $B$P!"%a!<%k%"%I%l%9$J$I(B)$B$r@_Dj$7$F$/$@$5$$!#(B
 
+@item wl-unique-id-suffix
+@vindex wl-unique-id-suffix
+$B=i4|@_Dj$O(B @samp{.wl}$B!#(BMessage-ID $B$r@8@.$9$k:]$K(B @samp{@@} $B$ND>A0$K8=$l$k(B
+$BJ8;zNs$r;XDj$7$^$9!#(B
+
 @item wl-draft-config-alist
 @vindex wl-draft-config-alist
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
