@@ -317,10 +317,9 @@
    (elmo-filter-folder-target-internal folder)
    number flag))
 
-(luna-define-method elmo-message-flags ((folder elmo-filter-folder) number
-					&optional msgid)
+(luna-define-method elmo-message-flags ((folder elmo-filter-folder) number)
   (elmo-message-flags (elmo-filter-folder-target-internal folder)
-		      number msgid))
+		      number))
 
 (luna-define-method elmo-message-set-cached ((folder elmo-filter-folder)
 					     number cached)

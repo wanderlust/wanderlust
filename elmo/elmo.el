@@ -459,25 +459,17 @@ Return newly created temporary directory name which contains temporary files.")
 (luna-define-generic elmo-message-file-p (folder number)
   "Return t if message in the FOLDER with NUMBER is a file.")
 
-(luna-define-generic elmo-message-flags (folder number &optional msgid)
+(luna-define-generic elmo-message-flags (folder number)
   "Return a list of flags.
 FOLDER is a ELMO folder structure.
-NUMBER is a number of the message.
-If optional argument MSGID is specified,
-the message with NUMBER checks whether it has MSGID.")
+NUMBER is a number of the message.")
 
 (luna-define-method elmo-message-flag-available-p ((folder elmo-folder) number
 						   flag)
   (elmo-msgdb-flag-available-p (elmo-folder-msgdb folder) flag))
 
-(luna-define-method elmo-message-flags ((folder elmo-folder) number
-					&optional msgid)
-  (if msgid
-      (let ((this-id (elmo-message-field folder number 'message-id)))
-	(and this-id
-	     (string= this-id msgid)
-	     (elmo-msgdb-flags (elmo-folder-msgdb folder) number)))
-    (elmo-msgdb-flags (elmo-folder-msgdb folder) number)))
+(luna-define-method elmo-message-flags ((folder elmo-folder) number)
+  (elmo-msgdb-flags (elmo-folder-msgdb folder) number))
 
 (defsubst elmo-message-flagged-p (folder number flag)
   "Return non-nil if the message is set FLAG.
@@ -1058,11 +1050,13 @@ If optional argument IF-EXISTS is nil, load on demand.
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     (or (elmo-message-flags
-			  src-folder
-			  (car numbers)
-			  (elmo-msgdb-get-message-id-from-buffer))
-			 '(read))
+		     (let ((this-id (elmo-message-field src-folder (car numbers)
+							'message-id)))
+		       (and this-id
+			    (string= this-id
+				     (elmo-msgdb-get-message-id-from-buffer))
+			    (or (elmo-message-flags src-folder (car numbers))
+				'(read))))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished

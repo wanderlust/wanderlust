@@ -1,5 +1,18 @@
 2004-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-flags): Abolish optional argument `msgid'.
+	(elmo-generic-folder-append-messages): If src message exists but
+	has no flag, pass (read) for the FLAG argument of
+	`elmo-folder-append-buffer'. Otherwise, pass nil.
+
+	* elmo-split.el (elmo-split-subr): Likewise.
+
+	* elmo-pipe.el (elmo-message-flags): Abolish optional argument `msgid'.
+
+	* elmo-multi.el (elmo-message-flags): Ditto.
+
+	* elmo-filter.el (elmo-message-flags): Ditto.
+
 	* elmo.el (elmo-folder-append-buffer): Fix docstring.
 	(elmo-generic-folder-append-messages): If elmo-message-flags return nil,
 	pass (read) for the FLAG argument of elmo-folder-append-buffer.
