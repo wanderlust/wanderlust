@@ -28,19 +28,38 @@ flag:any
 
 フィルタフォルダ, マルチフォルダでは、オリジナルの msgdb も読み書きする。
 msgdb とサマリビューは open 時に sync する。
-elmo-folder-check でオリジナルフォルダの msgdb を sync する。
 
-(elmo-folder-search-requires-msgdb-p folder condition)
+* seen-list の廃止
+
+seen-list は廃止し、{"<message-id>" => "mark"} のハッシュテーブルとする。
+
+elmo-flag-table-load:
+id-mark-table があれば使う。cons cell の list を hashtable にする。
+なければ、seen-list をさがす => seen-list ファイルは消す
+
+elmo-flag-table-save:
+(cons message-id mark) のリストとしてセーブ
+
+* (elmo-folder-search-requires-msgdb-p folder condition)
 
 を設け、filter フォルダで t なら original msgdb を利用する。
 nil なら original は利用しない。
-msgdb への操作はなるべく抽象化すること。
 
 * マークの更新
 
 マークは elmo-folder-mark-as-read、elmo-message-set-cached などにより変更する。
 更新されたマークは、操作のあとで elmo-message-mark を呼び出すことにより
 得る。
+
+---- ここまで DONE ----
+
+* 仮想フォルダの msgdb の扱い
+  pipe, filter, multi では、オリジナルフォルダの msgdb を操作する。
+  elmo-folder-check でオリジナルを sync する。
+  elmo-folder-pack-number でオリジナルの番号入れ換えをする。
+  (--> 次にオリジナルを visit したときに sync-all が必要)
+
+  msgdb への操作をなるべく抽象化する。
 
 * global mark の管理
 
@@ -56,13 +75,3 @@ msgdb への操作はなるべく抽象化すること。
 
  update したときに、elmo-marked-message-folder にあればマークを付ける。
 
-* seen-list の廃止
-
-seen-list は廃止し、{"<message-id>" => "mark"} のハッシュテーブルとする。
-
-elmo-msgdb-id-mark-table-load:
-id-mark-table があれば使う。cons cell の list を hashtable にする。
-なければ、seen-list をさがす => seen-list ファイルは消す
-
-elmo-msgdb-id-mark-table-save:
-(cons message-id mark) のリストとしてセーブ
