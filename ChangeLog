@@ -2,6 +2,7 @@
 
 	* WL-MK (wl-texinfo-format-file): require ptexinfmt.
 	* utils/ptexinfmt.el: provide feature.
+	(documentlanguage, documentencoding): Fixed probrem.
 
 2000-07-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

@@ -205,8 +205,8 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
       (texinfo-discard-command))))
 
 ;;; misc.
-(put 'documentlanguage 'texinfo-format 'texinfo-discard-line)
-(put 'documentencoding 'texinfo-format 'texinfo-discard-line)
+(put 'documentlanguage 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'documentencoding 'texinfo-format 'texinfo-discard-line-with-args)
 (put 'smallbook 'texinfo-format 'texinfo-discard-line)
 (put 'overfullrule 'texinfo-format 'texinfo-discard-line)
 (put 'smallbreak 'texinfo-format 'texinfo-discard-line)
