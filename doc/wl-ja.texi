@@ -4114,6 +4114,11 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 $B%*%U%i%$%sAw?.$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(BNon-nil $B$J$i%*%U%i%$%sAw?.$7$^$9!#(B
 
+@item wl-draft-use-cache
+@vindex wl-draft-use-cache
+$B=i4|@_Dj$O(B @code{t}$B!#(B
+$BAw?.$9$k%a%C%;!<%8$r%-%c%C%7%e$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#(B
+
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
 $B=i4|@_Dj$O(B @code{t}$B!#(B
