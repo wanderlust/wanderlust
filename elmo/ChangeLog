@@ -1,7 +1,12 @@
+2003-09-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-folder-expand-msgdb-path): Define.
+	(elmo-folder-initialize): Use it.
+
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-flag.el: New file.
-	
+
 	* elmo-mark.el: Removed.
 
 	* modb-legacy.el (modb-legacy-new-mark,
@@ -64,7 +69,7 @@
 	(elmo-folder-unflag-read): Ditto.
 	(elmo-folder-flag-as-read): Ditto.
 	(elmo-folder-unflag-answered): Ditto.
-	(elmo-folder-flag-as-answered): Ditto.	
+	(elmo-folder-flag-as-answered): Ditto.
 
 	* elmo-multi.el (elmo-folder-list-importants): Don't call
 	elmo-folder-list-messages-with-global-mark.
@@ -105,7 +110,7 @@
 	(elmo-map-folder-flag-as-answered): Ditto.
 	(elmo-map-folder-unflag-answered): Ditto.
 
-	* elmo-localdir.el (elmo-folder-msgdb-create): 	Call
+	* elmo-localdir.el (elmo-folder-msgdb-create): Call
 	`elmo-global-flags-set'.
 	(elmo-global-flags-set): Added autoload setting.
 

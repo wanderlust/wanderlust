@@ -50,26 +50,22 @@
       (setq name (match-string 1 name))
     (setq name (symbol-name (car elmo-global-flag-list))))
   (or (cdr (assq (intern name) elmo-global-flag-folder-alist))
-      (progn
-	(unless (file-directory-p (expand-file-name (concat "flag/" name)
-						elmo-msgdb-directory))
-	  (elmo-make-directory (expand-file-name (concat "flag/" name)
-						 elmo-msgdb-directory)))
+      (let (msgdb-path)
+	(elmo-flag-folder-set-flag-internal folder (intern name))
+	;; must be AFTER set flag slot.
+	(setq msgdb-path (elmo-folder-msgdb-path folder))
+	(unless (file-directory-p msgdb-path)
+	  (elmo-make-directory msgdb-path))
 	(elmo-localdir-folder-set-dir-name-internal
-	 folder (expand-file-name (concat "flag/" name)
-				  elmo-msgdb-directory))
+	 folder
+	 msgdb-path)
 	(elmo-localdir-folder-set-directory-internal
 	 folder
-	 (expand-file-name (concat "flag/" name)
-			   elmo-msgdb-directory))
-	(if (file-exists-p (expand-file-name
-			    (concat "flag/" name "/.minfo")
-			    elmo-msgdb-directory))
+	 msgdb-path)
+	(if (file-exists-p (expand-file-name "/.minfo" msgdb-path))
 	    (elmo-flag-folder-set-minfo-internal
 	     folder
-	     (elmo-object-load (expand-file-name
-				(concat "flag/" name "/.minfo")
-				elmo-msgdb-directory))))
+	     (elmo-object-load (expand-file-name "/.minfo" msgdb-path))))
 	(elmo-flag-folder-set-minfo-hash-internal
 	 folder
 	 (elmo-make-hash (length (elmo-flag-folder-minfo-internal folder))))
@@ -84,10 +80,15 @@
 				       ":" (car pair))
 			       elem
 			       (elmo-flag-folder-minfo-hash-internal folder))))
-	(elmo-flag-folder-set-flag-internal folder (intern name))
 	(setq elmo-global-flag-folder-alist
 	      (cons (cons (intern name) folder) elmo-global-flag-folder-alist))
 	folder)))
+
+(luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-flag-folder))
+  (expand-file-name (concat "flag/"
+			    (symbol-name
+			     (elmo-flag-folder-flag-internal folder)))
+		    elmo-msgdb-directory))
 
 (luna-define-method elmo-folder-commit :after ((folder
 						elmo-flag-folder))
