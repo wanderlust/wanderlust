@@ -19,7 +19,7 @@ Required environment
 
   SEMI only supports relatively new Emacsen like Emacs 20.xx, XEmacs, etc.
   But Mule based on Emacs 19.34 can also run SEMI.
-  See the following web page to get more information (in Japanese).
+  See the following web page to get more information (written by Japanese).
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
@@ -33,17 +33,17 @@ Required environment
 
   You can download these packages from following URLs.
 
-	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
-	FLIM:     ftp://ftp.m17n.org/pub/mule/flim/
-	SEMI:     ftp://ftp.m17n.org/pub/mule/semi/
+	APEL:     ftp://ftp.m17n.org/mule/apel/
+	FLIM:     ftp://ftp.m17n.org/mule/flim/
+	SEMI:     ftp://ftp.m17n.org/mule/semi/
 
-  Please install APEL, FLIM, and SEMI, in that order.
-  Generally, 'make install' will do the job.
-  To get full information, please refer to the README.en within each package.
+  Please install APEL, FLIM, SEMI in order.
+  Generally  'make install' will do the job.
+  To get full information, please refer README.en within each package.
 
   You can also use many other FLIM/SEMI variants.
   Combination of the latest versions should work.
-  For example, the following combinations are confirmed to work:
+  For example, following combination is confirmed to work.
 
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
 	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
@@ -63,7 +63,7 @@ Required environment
 
   In this case, please install APEL 10.2 or later.
 
-	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
+	APEL:     ftp://ftp.m17n.org/mule/apel/
 
 
 Installation
@@ -126,10 +126,10 @@ Install as a XEmacs package
 load-path
 =========
 
-  If you are using Emacs 20.3 or later, or XEmacs, there is no need
-  to set load-path.
+  If you are using Emacs 20.3 or later, or XEmacs, there are no need
+  of setting about load-path.
 
-  If you are using Emacs 20.2 or earlier, please add the directory of
+  If you are using Emacs 20.2 or earlier, please add directory of
   Wanderlust to load-path.
 
   If you install by default setting, with Emacs 19.29 or later, Emacs
@@ -141,7 +141,7 @@ load-path
   --------------------------------------------------------------------
 
   If you are using Emacs 19.28 or earlier, you can't use subdirs.el.
-  Please write setting about load-path in site configuration file.
+  Please you write setting about load-path in site configuration file.
 
 
 Manual
@@ -162,13 +162,13 @@ Manual
 Sample configuration file
 =========================
 
-  Wanderlust requires the following three configuration files:
+  Wanderlust requires following three configuration files.
 
 	~/.addresses    Address Book
 	~/.folders      Folder Book
 	~/.wl           Wanderlust Configuration (loaded at startup)
 
   Each sample file (dot.addresses, dot.folders, dot.wl) exists on
-  samples/en/ directory. Please refer to them.
+  samples/en/ directory. Please refer them.
 
   To get full information, please read Info file.
