@@ -1,3 +1,8 @@
+2003-10-03  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-thread.el (wl-thread-delete-message): Rewrite the procedure
+	for updating `wl-thread-entity-list'.
+
 2003-10-02  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-thread.el (wl-thread-delete-message): Omit redundant nil
