@@ -1,4 +1,4 @@
-;;; wl-e21.el -- Wanderlust modules for Emacs 21.
+;;; wl-e21.el --- Wanderlust modules for Emacs 21.
 
 ;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Copyright (C) 2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
@@ -33,7 +33,7 @@
 ;;(let (image icon from to overlay)
 ;;  ;; The function `find-image' will look for an image first on `load-path'
 ;;  ;; and then in `data-directory'.
-;;  (let ((load-path (cons wl-icon-dir load-path)))
+;;  (let ((load-path (cons wl-icon-directory load-path)))
 ;;    (setq image (find-image (list (list :type 'xpm :file wl-nntp-folder-icon
 ;;					:ascent 'center)))))
 ;;  ;; `propertize' is a convenient function in such a case.
@@ -79,6 +79,8 @@
 (add-hook 'wl-init-hook 'wl-plugged-init-icons)
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
+
+(add-hook 'wl-message-display-internal-hook 'wl-setup-message)
 
 (defvar wl-use-toolbar (image-type-available-p 'xpm))
 (defvar wl-plugged-image nil)
@@ -168,18 +170,18 @@
 
 (eval-when-compile
   (defmacro wl-e21-display-image-p ()
-    '(and (display-graphic-p)
+    '(and (display-images-p)
 	  (image-type-available-p 'xpm))))
 
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar
 	     (wl-e21-display-image-p))
-    (let ((load-path (cons wl-icon-dir load-path))
+    (let ((load-path (cons wl-icon-directory load-path))
 	  (props '(:type xpm :ascent center
 			 :color-symbols (("backgroundToolBarColor" . "None"))
 			 :file))
 	  (success t)
-	  icon up down disabled name success)
+	  icon up down disabled name)
       (while bar
 	(setq icon (aref (pop bar) 0))
 	(unless (boundp icon)
@@ -196,7 +198,7 @@
       success)))
 
 (defvar wl-e21-toolbar-configurations
-  '((auto-resize-tool-bar        . t)
+  '((auto-resize-tool-bars       . t)
     (auto-raise-tool-bar-buttons . t)
     (tool-bar-button-margin      . 0)
     (tool-bar-button-relief      . 2)))
@@ -231,13 +233,13 @@
     (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
 (eval-when-compile
-  (defsubst wl-e21-setup-message-toolbar (keymap)
-    (when (wl-e21-setup-toolbar wl-message-toolbar)
-      (wl-e21-make-toolbar-buttons keymap wl-message-toolbar)))
-
   (defsubst wl-e21-setup-draft-toolbar ()
     (when (wl-e21-setup-toolbar wl-draft-toolbar)
       (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
+
+(defun wl-e21-setup-message-toolbar ()
+  (when (wl-e21-setup-toolbar wl-message-toolbar)
+    (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-image       . wl-opened-group-folder-icon)
@@ -258,7 +260,7 @@
 	  (unless image
 	    (let ((name (symbol-value
 			 (cdr (assq icon wl-folder-toggle-icon-list))))
-		  (load-path (cons wl-icon-dir load-path)))
+		  (load-path (cons wl-icon-directory load-path)))
 	      (when (setq image (find-image `((:type xpm :file ,name
 						     :ascent center))))
 		(setq image (put icon 'image (propertize name
@@ -278,7 +280,7 @@
       (let ((inhibit-read-only t))
 	(if (and wl-highlight-folder-by-numbers
 		 numbers (nth 0 numbers) (nth 1 numbers)
-		 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+"
+		 (re-search-forward "[-[:digit:]]+/[-[:digit:]]+/[-[:digit:]]+"
 				    (line-end-position) t))
 	    (let* ((unsync (nth 0 numbers))
 		   (unread (nth 1 numbers))
@@ -330,7 +332,7 @@
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
-	     (looking-at "[\t ]+\\([^\t\n ]+\\)"))
+	     (looking-at "[[:blank:]]+\\([^[:blank:]\n]+\\)"))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(let (image)
@@ -373,7 +375,7 @@
 	(when (display-color-p)
 	  (wl-e21-highlight-folder-by-numbers
 	   start end
-	   (if (looking-at (format "^[\t ]*\\(%s\\|%s\\)"
+	   (if (looking-at (format "^[[:blank:]]*\\(?:%s\\|%s\\)"
 				   wl-folder-unsubscribe-mark
 				   wl-folder-removed-mark))
 	       'wl-highlight-folder-killed-face
@@ -385,7 +387,7 @@
   (when (wl-e21-display-image-p)
     (save-excursion
       (beginning-of-line)
-      (when (looking-at "[\t ]*\\(\\[\\([^]]+\\)\\]\\)")
+      (when (looking-at "[[:blank:]]*\\(\\[\\([^]]+\\)\\]\\)")
 	(let* ((start (match-beginning 1))
 	       (end (match-end 1))
 	       (status (match-string-no-properties 2))
@@ -409,14 +411,12 @@
   (if (wl-e21-display-image-p)
       (let (type)
 	(cond ((string= folder wl-queue-folder)
-	       (concat (propertize " " 'display
-				   (get 'wl-folder-queue-image 'image))
+	       (concat (get 'wl-folder-queue-image 'image)
 		       string))
 	      ((setq type (elmo-folder-type folder))
-	       (concat (propertize " " 'display
-				   (get (intern (format "wl-folder-%s-image"
-							type))
-					'image))
+	       (concat (get (intern (format "wl-folder-%s-image"
+					    type))
+			    'image)
 		       string))
 	      (t
 	       string)))
@@ -444,7 +444,7 @@
 
 (defun wl-folder-init-icons ()
   (when (wl-e21-display-image-p)
-    (let ((load-path (cons wl-icon-dir load-path))
+    (let ((load-path (cons wl-icon-directory load-path))
 	  (icons wl-folder-internal-icon-list)
 	  icon name image)
       (while (setq icon (pop icons))
@@ -456,13 +456,13 @@
 
 (defun wl-plugged-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-toggle-plugged))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-toggle-plugged))
 		       'help-echo "mouse-2 toggles plugged status"))))
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-plugged-image
-	    (let ((load-path (cons wl-icon-dir load-path)))
+	    (let ((load-path (cons wl-icon-directory load-path)))
 	      (setq wl-plugged-image (find-image
 				      `((:type xpm
 					       :file ,wl-plugged-icon
@@ -487,13 +487,13 @@
 
 (defun wl-biff-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-biff-check-folders))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-biff-check-folders))
 		       'help-echo "mouse-2 checks new mails"))))
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-biff-mail-image
-	    (let ((load-path (cons wl-icon-dir load-path)))
+	    (let ((load-path (cons wl-icon-directory load-path)))
 	      (setq wl-biff-mail-image (find-image
 					`((:type xpm
 						 :file ,wl-biff-mail-icon
@@ -524,19 +524,19 @@
 
 (defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
-(defun wl-message-overload-functions ()
-  (let ((keymap (current-local-map)))
-    (when keymap
-      (wl-e21-setup-message-toolbar keymap)
-      (define-key keymap "l" 'wl-message-toggle-disp-summary)
-      (define-key keymap [mouse-2] 'wl-message-refer-article-or-url)
-      (define-key keymap [mouse-4] 'wl-message-wheel-down)
-      (define-key keymap [mouse-5] 'wl-message-wheel-up)
-      (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
-      (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-      (set-keymap-parent wl-message-button-map keymap)
-      (define-key wl-message-button-map
-	[mouse-2] 'wl-message-button-dispatcher))))
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap [mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [mouse-5] 'wl-message-wheel-up)
+    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map
+      [mouse-2] 'wl-message-button-dispatcher)
+    keymap))
+
+(defalias 'wl-setup-message 'wl-e21-setup-message-toolbar)
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
@@ -597,7 +597,6 @@ Special commands:
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)
   (define-key wl-draft-mode-map "\C-c\C-s" 'wl-draft-send)
-  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-draft-insert-x-face-field)
   (define-key wl-draft-mode-map "\C-c\C-c" 'wl-draft-send-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-z" 'wl-draft-save-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-k" 'wl-draft-kill)
@@ -609,6 +608,7 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-e" 'wl-draft-config-exec)
   (define-key wl-draft-mode-map "\C-c\C-j" 'wl-template-select)
   (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
+  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
 
