@@ -1,0 +1,5969 @@
+\input texinfo @c -*-texinfo -*- coding: iso-2022-jp -*-
+@c %**start of header
+@setfilename wl-ja.info
+@settitle Wanderlust -- Yet Another Message Interface On Emacsen --
+@c @documentlanguage ja
+@c %**end of header
+@c Wanderlust の texinfo
+@set Time-stamp: <2000-04-03 14:29:40 teranisi>
+@set version 1.1.0
+@synindex pg cp
+@finalout
+
+@direntry
+* Wanderlust-ja: (wl-ja).  Yet Another Message Interface On Emacsen
+@end direntry
+
+@c permissions text appears in an Info file before the first node.
+@ifinfo
+This file documents Wanderlust,
+Yet another message interface on Emacsen.
+
+このファイルは Emacs で動くメール/ニュース管理システム
+Wanderlust に関する説明書です。
+
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
+@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@c @w{Kenichi Okada} and @w{Kaoru Takahashi}.
+
+This edition is for Wanderlust version @value{version}.
+
+この版は Wanderlust version @value{version} に対応します。
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+著作権表示とこの許可文がすべての複製に存在する限り、
+この説明書のまったく同一の複製を作り、配布することを許可する。
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+この段落が取り除かれているのを除き、これと同じ複製に関する許可文が表示さ
+れている限り、このファイルを TeX にかけて、その結果を印刷することを許可
+する(この段落は印刷されたマニュアルでは参照されません)。
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+同一複製の条件の下で、それによって得られた結果もこの許可文の表示と同一の
+条件のもとで配布する限り、この説明書の修正版の複製をし、配布することを許
+可する。
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+上記の修正版に関する条件の下で、この説明書の翻訳の複製を作り、
+配布することを許可する。
+@end ifinfo
+
+@titlepage
+@sp 10
+@title Wanderlust ユーザマニュアル (ver. @value{version})
+@author Yuuichi Teranishi 寺西裕一
+@author Fujikazu Okunishi 奥西藤和
+@author Masahiro Murata   村田全寛
+@author Kenichi Okada     岡田健一
+@author Kaoru Takahashi   高橋  郁
+@page
+
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
+@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@c @w{Kenichi Okada}, and @w{Kaoru Takahashi}.
+
+This manual is for Wanderlust version @value{version}.
+
+このマニュアルは Wanderlust version @value{version} に対応します。
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+著作権表示とこの許可文がすべての複製に存在する限り、
+この説明書のまったく同一の複製を作り、配布することを許可する。
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+同一複製の条件の下で、それによって得られた結果をこの許可文の表示と同一の
+条件のもとで配布する限り、この説明書の修正版の複製をし、配布することを許
+可する。
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+上記の修正版に関する条件の下で、この説明書の翻訳の複製を作り、
+配布することを許可する。
+@end titlepage
+
+
+@c
+@c  Top
+@c 
+@ifinfo
+@node Top, Introduction, (dir), (dir)
+@top Wanderlust ユーザマニュアル
+
+@flushright
+Yuuichi Teranishi 寺西裕一
+Fujikazu Okunishi 奥西藤和
+Masahiro Murata   村田全寛
+Kenichi Okada     岡田健一
+Kaoru Takahashi   高橋  郁
+Last Modified@value{Time-stamp:}
+@end flushright
+
+この文書は Wanderlust@value{version} に対応します。
+
+@end ifinfo
+
+@menu
+* Introduction::             はじめに
+* Start Me Up::              Wanderlust を起動する
+* Folders::                  Wanderlust で扱えるフォルダたち
+* Folder::                   フォルダモード
+* Summary::                  サマリモード
+* Message::                  メッセージバッファ
+* Draft::                    ドラフトバッファ
+* Disconnected Operations::  オフライン処理
+* Expire and Archive::       メッセージの自動削除とアーカイブ
+* Scoring::                  メッセージのスコア
+* Customization::            カスタマイズ
+* Mailing List::             メーリングリスト
+* Addition::                 おまけ
+* Index::                    索引
+@end menu
+
+
+@c
+@c  Introduction
+@c 
+@node Introduction, Start Me Up, Top, Top
+@chapter はじめに
+@cindex Introduction
+
+Wanderlust は Emacs で動くメール/ニュース管理システムです。
+IMAP4rev1(RFC2060), NNTP, POP およびローカルのメッセージに対応しています。
+
+Wanderlust の主な特徴/特長は以下の通りです。
+
+@itemize @minus
+@item elisp のみによる実装。
+@item IMAP4rev1, NNTP, POP(POP3/APOP), MH, Maildir 形式のサポート。
+@item Mew っぽい Folder Specification に基づくメッセージへの統一的アクセス。
+@item Mew っぽいキーバインドとマーク処理。
+@item 未読管理。
+@item インタラクティブなスレッド表示。
+@item 購読フォルダの一覧を表示するフォルダモード。
+@item メッセージキャッシュ、Disconnected Operation (現在は表示のみ)。
+@item MH 的 FCC。(@samp{FCC: %Backup} や @samp{FCC: $Backup} も可)。
+@item MIME 対応 (by SEMI or tm)。
+@item ニュース/メールの送信を統合したメッセージ送信ドラフト。
+@item フォルダ一覧のアイコン表示 (XEmacs)。
+@item 大きなパートを取り寄せずに表示(IMAP4)。
+@item メッセージの検索をサーバ側で実行(IMAP4)。日本語検索も可。
+@item 仮想フォルダ。
+@item 多い日も安心の、マルチアーカイバ対応圧縮フォルダ。
+@item フォルダ中の古い記事を自動的にアーカイブ/削除して整理する expire 機能。
+@item 自動リファイル。
+@item 定型メッセージの送信に便利なテンプレート機能。
+@end itemize
+
+Wanderlust は Emacs 19.28〜 をベースとした Mule, Emacs 20.2〜, XEmacs 
+20.4〜、 および MS Windows 上で動く Meadow 1.00, Mule for Windows v1.22,
+NTEmacs(Windows NT) で動作することが確認されています。OS/2 上で動作する 
+PMMule も当然 OK です。さらに、Nemacs 3.3.2 上でも、(使える機能は限定さ
+れるものの) 動作することが確認されています。
+
+また、Wanderlust が接続して動作することが確認されている IMAP サーバはUW
+imapd 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.7a, Cyrus imapd 1.4, Cyrus imapd 1.5.19,
+AIR MAIL(AIRCimapd release 2.00) です。
+
+
+@c
+@c  Start Me Up
+@c 
+@node Start Me Up, Folders, Introduction, Top
+@chapter Wanderlust を起動する
+@cindex Start up
+
+Wanderlust を起動するまでに必要な手順を順番に説明します。
+
+(当然のことながら、これらよりも先に、メール/ニュースを読むことができる環境があらかじめ必要です。)
+
+@menu
+* MIME Modules::      MIME 用モジュールのインストール
+* Download::          パッケージの入手と展開
+* Install::           バイトコンパイルとインストール
+* Minimal Settings::  @file{.emacs} の設定
+* Mail Addresses::    アドレス帳の定義
+* Folder Definition:: 購読するフォルダの定義
+* Start Wanderlust::  Wanderlust の起動
+@end menu
+
+
+@node MIME Modules, Download, Start Me Up, Start Me Up
+@section MIME 用モジュールのインストール
+@cindex MIME modules
+@pindex APEL
+@pindex FLIM
+@pindex SEMI
+@pindex tm
+
+Wanderlust を正常に動作させるには、まず、SEMI もしくは tm がインス
+トールされている必要があります。
+
+Emacs19.28 以前をベースとした mule をお使いの場合は SEMI が動かないはず
+@footnote{Emacs 19.34 ベースの Mule では SEMI を動作させることも可能です。@*
+@samp{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} が参考になります。}
+なので tm をインストールします。
+(tm はバージョン 8.7 以降をご利用ください。)
+
+SEMI が使える Emacsen では、tm よりも機能の充実した SEMIをインストールす
+ることをお勧めします。
+
+インストールの方法は各パッケージに添付されているドキュメントを参照して
+ください。
+
+SEMI, tm は以下の場所からダウンロードできます。
+
+@example
+SEMI: ftp://ftp.m17n.org/mule/semi/
+tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+@end example
+
+SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
+FLIM, APEL は以下の場所からダウンロードできます。
+
+@example
+FLIM:     ftp://ftp.m17n.org/mule/flim/
+APEL:     ftp://ftp.m17n.org/mule/apel/
+@end example
+
+APEL, FLIM, SEMI の順にインストールしてください。
+基本的にすべて @samp{make install} の実行で済むはずです
+(XEmacs 21 では @samp{make install-package})。
+
+推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
+
+@itemize @minus
+@item APEL 10.2, FLIM 1.12.7, SEMI 1.13.4
+@item APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
+@end itemize
+
+APEL 10.2 と FLIM 1.12.7 の組合せでは、FLIM 1.12.7 のコンパイル時に
+
+@example
+Please install latest APEL 7.3 or later.
+@end example
+   
+というエラーが発生する場合があります。この場合、FLIM-CFG の以下の行を
+コメントアウトして下さい。
+
+@example
+(or (fboundp 'write-region-as-binary)
+    (error "Please install latest APEL 7.3 or later."))
+(or (fboundp 'insert-file-contents-as-binary)
+    (error "Please install latest APEL 7.3 or later."))
+@end example
+
+その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
+それらのいずれも利用することが可能です。
+基本的に最新版の組合せなら動作するはずです。
+例えば、以下の組合せの動作が確認されています。
+
+@itemize @minus
+@item APEL 10.2, Chao 1.14.1, REMI 1.14.1
+@end itemize
+
+@c APEL, FLIM, SEMI か tm のバージョンアップを行った場合は、
+@c Wanderlust をインストールしなおしてください。
+
+
+@node Download, Install, MIME Modules, Start Me Up
+@section パッケージの入手と展開
+@cindex Download
+
+Wanderlust 本体は以下の場所からダウンロードできます。
+
+一次配布元:
+@example
+ftp://ftp.gohome.org/wl/
+@end example
+
+ミラーしていただいている ftp, http サイト:
+
+@example
+ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
+ftp://daidai.kuis.kyoto-u.ac.jp/pub/mirror/ftp.gohome.org/pub/elisp/wl/
+http://www.jpl.org/elips/
+http://www.ring.gr.jp/archives/text/elisp/wl/
+ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
+ftp://opaopa.org/pub/mirror/elisp/wl/
+@end example
+
+入手したパッケージは適当な作業ディレクトリに展開しましょう。
+
+@example
+% cd ~/work
+% tar zxvf wl-(@var{version}).tar.gz
+% cd wl-(@var{version})
+@end example
+
+@subsection SSL (Secure Socket Layer)の利用
+
+Wanderlust では、SMTP, IMAP, NNTP, POP のコネクションにおいて、
+SSL (Secure Socket Layer) を用いることができます。
+SSL の利用形態には2種類あり、コネクションと同時に
+SSL negotiation を始めるものと、 starttls command の後に、
+SSL negotiation を始めるものがあります。
+通常の SSL を利用するには 本パッケージの @file{utils} ディレクトリにある
+@file{ssl.el} をインストールする必要があります。
+なおかつ、OpenSSL に含まれる openssl にパスが通っている必要があります。
+STARTTLS を利用するには、さらに、starttls パッケージをインストール
+する必要があります。
+starttls パッケージは以下の場所から入手できます。
+
+@example
+ftp://opaopa.org/pub/elisp/
+@end example
+
+@node Install, Minimal Settings, Download, Start Me Up
+@section バイトコンパイルとインストール
+@cindex Bytecompile
+@cindex Compile
+@cindex Install
+@cindex Makefile
+@cindex Make
+
+@subsection 通常のインストール
+
+@file{Makefile} は @code{LISPDIR}, @code{EMACS} のあたりを編集します。
+@code{LISPDIR} にはパッケージのインストール先、
+@code{EMACS} には利用する Emacs のコマンド名を指定します。
+
+@example
+% make
+% make install
+@end example
+
+@file{Makefile} 中の @code{LISPDIR} を変更せず、
+そのまま(@samp{NONE} のままでも)インストールした場合、
+自動的にインストール先を適当に検出します。
+実際のインストール先については後述します。
+
+Mule 2.3 など、@file{subdirs.el} が無く、load-path にサブディレクトリが
+自動的に加わらない Emacs では、
+
+@example
+Cannot open load file: mime-setup
+@end example
+
+@noindent
+というエラーが出ることがあります。この場合は、
+custom, apel, flim, semi のインストール先を環境変数 @code{EMACSLOADPATH}
+に加えるか、展開ディレクトリの @file{WL-CFG} というファイル中で
+load-path を通しておくとよいでしょう。
+
+また、BBDB を利用したい場合、BBDB へも load-path を通しておくと必要なモ
+ジュールがバイトコンパイル/インストールされます。
+@xref{BBDB}.
+
+@subsection WL-CFG
+
+@file{WL-CFG} というファイルが展開ディレクトリに存在すると、
+インストール時に load されるようになっています。
+インストールで SEMI 等の load-path の設定が必要であれば、
+@file{WL-CFG} に設定してください。
+
+インストール先は @file{Makefile}中の @code{LISPDIR} で指定しますが、
+実際に @file{*.el}, @file{*.elc} が入るディレクトリ
+(@code{LISPDIR} からの相対パス)は
+ @file{WL-CFG} 中の変数 @code{WL_PREFIX}, @code{ELMO_PREFIX} で指定します。
+
+@table @code
+@item WL_PREFIX
+WL モジュールをインストールするディレクトリを指定します。
+これは @code{LISPDIR} からの相対パスです。
+WL モジュールにはファイル @file{wl*.el} @file{wl*.elc} が含まれます。
+@c  必要に応じて @file{util/} 以下のファイルもインストールされます。
+
+@item ELMO_PREFIX
+ELMO モジュールをインストールするディレクトリを指定します。
+これは  @code{LISPDIR} からの相対パスです。
+ELMO モジュールにはファイル @file{elmo*.el} @file{elmo*.elc} が含まれます。
+@c  @file{utf7.el}, @file{utf7.elc} も ELMO モジュールに含まれます。
+@end table
+  
+@noindent
+@code{WL_PREFIX}, @code{ELMO_PREFIX}
+ のデフォルトはいずれも @file{wl} です。
+
+@file{elmo*} (ELMO モジュール) は @file{elmo} 配下にインストールしたければ、
+
+@lisp
+(setq ELMO_PREFIX "elmo")
+@end lisp
+
+@noindent
+とします。
+
+@subsection XEmacs package としてインストール
+@cindex XEmacs package
+@cindex XEmacs package install
+@cindex Package, XEmacs
+@cindex Package install, XEmacs
+@c @cindex install-package
+
+Wanderlust は XEmacs (21.0 〜) の package のひとつとしてインストールする
+ことも可能です。package としてインストールすると、autoload の設定、
+アイコンのパス設定を個人の @file{.emacs} に記述しなくても Wanderlust
+を正常に起動できるようになります。
+
+XEmacs の package としてインストールするには以下のようにします。
+
+@example
+% vi Makefile
+% make package
+% make install-package
+@end example
+
+package のディレクトリは SEMI がインストールされていれば自動検出されます。
+(@file{Makefile} 中の PACKAGEDIR でも設定可)
+
+@subsection インストールしないで利用
+
+Wanderlust はバイトコンパイル、インストールしなくても、
+wl, elmo のディレクトリに load-path が設定されていれば起動することができます。
+例えば @file{~/work} にパッケージを展開した場合、
+@file{.emacs} に以下の設定をすると起動できます。
+
+@lisp
+(add-to-list 'load-path "~/work/wl-(@var{version})")
+(add-to-list 'load-path "~/work/wl-(@var{version})/elmo")
+@end lisp
+
+@subsection マニュアルについて
+
+マニュアルは Info 形式です。
+インストールするには下記を実行してください。
+
+@example
+% make info
+% make install-info
+@end example
+
+XEmacs の package としてインストールした場合は自動的に Info ファイルも
+インストールされるのでこれらの操作は必要ありません。
+
+また、下記にもマニュアルがあります。
+
+@example
+http://www.gohome.org/wl/doc/wl-euc_toc.html
+@end example
+
+
+@node Minimal Settings, Mail Addresses, Install, Start Me Up
+@section .emacs の設定
+@cindex Minimal Settings
+@cindex Settings
+@cindex Configuration
+@cindex .emacs
+@cindex .wl
+
+Wanderlust のパッケージには大きく分けて二つのモジュール群が含まれています。
+
+@table @samp
+@item ELMO (elmo-*.el)
+すべてをフォルダに見せるモジュール群です。Wanderlust のバックエンドです。
+@item WL (wl-*.el)
+Wanderlust 本体の動作を決めるモジュール群です。ELMO のフロントエンドです。
+@end table
+
+ユーザは @code{elmo-*}, @code{wl-*} で始まる変数の設定を変えることによって
+Wanderlust の動作をカスタマイズできます。
+
+最低限必要な設定は以下の通りです。
+
+@lisp
+;; @r{SEMI/tm を使うための設定}
+(load "mime-setup")
+
+;; @r{autoload の設定}
+;; @r{(XEmacs の package としてインストールされている場合、必要ありません)}
+(autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; @r{アイコンを置くディレクトリ (XEmacs のみ)。初期設定は nil。}
+;; @r{(XEmacs の package としてインストールされている場合、必要ありません)}
+(setq wl-icon-dir "~/work/wl/etc")
+
+;; @r{メールを送信する SMTP サーバ。 初期設定は "localhost"。}
+(setq wl-smtp-posting-server "your.smtp.server.com")
+;; @r{ニュース投稿用の NNTP サーバ。 初期設定は nil。}
+(setq wl-nntp-posting-server "your.nntp.server.com")
+@end lisp
+
+Wanderlust 起動後、@file{~/.wl} が存在すればロードされますので、Wanderlust に
+固有の設定は @file{~/.wl} に記述しておけば整理しやすいでしょう。
+face の設定は @file{.emacs} に書くことはできないので
+@file{~/.wl} に書いてください。
+@xref{Highlights}.
+
+(上記のうち、@samp{(load "mime-setup")} 以外は @file{~/.wl} に記述できます。)
+
+@subsection mail-user-agent
+@cindex Default Mailer
+@cindex Mailer, Default
+@vindex mail-user-agent
+@findex compose-mail
+
+以下のような設定を @file{.emacs} 等にしておくと、@kbd{C-x m}
+(@code{compose-mail}) 等によって Wanderlust のドラフトモードが起動される
+ようになります。Wanderlust を Emacs 上の標準メーラとして使いたい場合は
+設定しておくとよいでしょう。
+ただし、これは @code{mail-user-agent} の定義が可能な Emacs の場合のみ有効です。
+@c @xref{Mail Methods, , ,emacs}.
+
+@lisp
+(autoload 'wl-user-agent-compose "wl-draft" nil t)
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'wl-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill
+      'mail-send-hook))
+@end lisp
+
+
+@node Mail Addresses, Folder Definition, Minimal Settings, Start Me Up
+@section アドレス帳の定義
+@cindex Address book Definition
+@cindex .addresses
+@cindex Alias, Address
+
+アドレスファイル @file{~/.addresses} を作成し、自分用に編集します。
+
+@file{~/.addresses} に書かれたデータは、ドラフト作成時のアドレス補完データとして
+利用されるほか、サマリ表示での名前表示等にも用いられます。
+アドレス補完やサマリの表示に凝る必要がない場合は、この項は飛ばしても構いません。
+また、起動したあとでサマリのバッファから @file{~/.addresses} にアドレスを
+追加/変更/削除することも可能です。
+
+書き方はとても単純です。こんなかんじです。
+
+@example
+#
+# @r{@samp{#} で始まる行はコメント。}
+# @r{空行は無視。}
+#
+# @r{メールアドレス  ``あだ名'' ``本名''}
+#
+teranisi@@gohome.org            "てらにし"      "寺西裕一"
+foo@@bar.gohome.org             "Foo さん"      "John Foo"
+bar@@foo.gohome.org             "Bar さん"      "Michael Bar"
+@end example
+
+@noindent
+一行が一人分の定義です。
+
+実際には(デフォルト設定では)サマリ表示で``あだ名''、
+ドラフト作成時のアドレス情報として``本名''がつかわれます。
+試してみて、確認してからの方がわかりやすいと思われます。
+ちょっと書いて試してみてから、またアドレス帳の定義をやりなおすのがよいでしょう。
+
+また、変数 @code{wl-alias-file} のファイルに MH の alias file が指定されて
+いれば、ドラフト作成時のアドレス情報として使われます。
+
+
+@node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
+@section 購読するフォルダの定義
+@cindex Folder Definition
+@cindex .folders
+
+購読するフォルダをファイル @file{~/.folders} に定義します。
+@file{~/.folders} に書かれた内容がそのままあなたの購読するフォルダとなります。
+
+起動したあとでフォルダ一覧のバッファから購読フォルダを追加/編集すること
+も可能ですので、この項は飛ばしても構いません。
+
+@file{~/.folders} の書き方はとても単純です。こんなかんじです。
+
+@example
+#
+# @r{@samp{#} で始まる行はコメント。}
+# @r{空行は無視。}
+#
+# @r{フォルダ}  "@r{あだ名}"
+# @r{(あだ名は無くてもよい)}
+#
+%inbox  "受信箱"
++trash  "ゴミ箱"
++draft  "草稿"
+%#mh/Backup@@my.imap.server.com "送信済み"
+# グループの定義
+Emacsen@{
+    %#mh/spool/wl            "Wanderlust ML"
+    %#mh/spool/elips         "ELIPS ML"
+    %#mh/spool/tm-ja         "tm (日本語) ML"
+    %#mh/spool/xemacs-beta   "XEmacs ベータ"
+    -fj.news.reader.gnus@@other.nntp.server.com
+    *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj の Emacsen"
+@}
+#
+# @r{行末に @samp{/} がつくと、そのフォルダに含まれるサブフォルダ全てが}
+# @r{ひとつのグループとなる。}
+#
+%#mh/expire@@localhost /
+# @r{MH のフォルダ全てをひとつのグループにする例。}
++ /
+@end example
+
+一行にひとつ、読みたいフォルダを書きます。
+各フォルダの定義については次の章で詳しく説明します。
+
+@samp{@var{グループ名}@{} と @samp{@}} で囲まれた部分は一つのグループとなります。
+ひとつのグループはフォルダモードでは開閉できるディレクトリのように見えます。
+いくつかのフォルダをまとめて整理するのに便利です。
+
+注意すべきなのは、@samp{@var{グループ名}@{} と @samp{@}} は１行を占領して書く
+必要があることです(これはパーサがダサいからです)。
+
+グループには、２つの種類があります。一つは、上の例の @samp{Emacsen} のように
+直接自分で好きなフォルダをグループとして定義するタイプです。
+
+もう一つは、上の例の @samp{+} のような @dfn{アクセスグループ} です。
+これは、あるフォルダに含まれるサブフォルダ全てを一つのグループとするものです。
+(これはフォルダのタイプによって違います。例えば @samp{+} なら
+ MH のサブディレクトリすべてがひとつのグループとなります。)
+
+実際に試してみて、確認してからの方がわかりやすいと思われます。
+ちょっと書いて試してみてから、またフォルダの定義をやりなおすのがよいでしょう。
+
+
+@node Start Wanderlust,  , Folder Definition, Start Me Up
+@section Wanderlust の起動
+@cindex Start Wanderlust
+
+インストール、および設定がうまくいっていれば、
+
+@example
+M-x wl
+@end example
+
+@noindent
+で起動できます。
+初期化ののち、フォルダ一覧を表示するフォルダモードがあらわれます。
+
+@kbd{C-u M-x wl} のように prefix argument つきで実行すると、
+フォルダのチェックを省略して起動します。
+
+
+@c
+@c  Folders
+@c
+@node Folders, Folder, Start Me Up, Top
+@chapter Wanderlust で扱えるフォルダたち
+@cindex Folder Type
+
+以下では Wanderlust で扱えるフォルダについて説明します。
+
+Wanderlust は ELMO のインタフェースを利用しているため、ELMO モジュールに
+よってサポートされていれば、どんなフォルダでも利用することができます。
+
+バージョン @value{version} 現在、用意されているフォルダの種類は、
+IMAP, NNTP, LocalDir(MH), Maildir, News Spool, POP, Archive, 
+Multi, Filter, Pipe, Internal の 10 種類です。
+
+@menu
+* IMAP Folder::              @samp{%} -- IMAP フォルダ
+* NNTP Folder::              @samp{-} -- NNTP フォルダ
+* MH Folder::                @samp{+} -- MH フォルダ
+* Maildir Folder::           @samp{.} -- Maildir フォルダ
+* News Spool Folder::        @samp{=} -- News Spool フォルダ
+* Archive Folder::           @samp{$} -- アーカイブフォルダ
+* POP Folder::               @samp{&} -- POP フォルダ
+* Multi Folder::             @samp{*} -- マルチフォルダ
+* Filter Folder::            @samp{/} -- フィルタフォルダ
+* Pipe Folder::              @samp{|} -- パイプフォルダ
+* Internal Folder::          @samp{'} -- 内部フォルダ
+@end menu
+
+
+@node IMAP Folder, NNTP Folder, Folders, Folders
+@section IMAP フォルダ
+@cindex IMAP Folder
+@cindex @samp{%}
+@cindex RFC 2060
+@cindex IMAP4rev1
+
+RFC 2060 で規定された IMAP4rev1 を利用してメールを読むためのフォルダです。
+
+@example
+書式: '%' 'メールボックス名'[':' 'ユーザ名' ['/' '認証法']]['@@' 'ホスト名'][':' 'ポート番号']['!']
+
+認証法には "auth" (エンコードしてパスワードを送信)か
+           "cram-md5" (cram-md5による認証)か
+           "login" (生パスワードを送信) のいずれかを指定。
+
+(cram-md5 による認証を行なうには 本パッケージの utils/sasl/ をインストールする
+必要があります。)
+
+default 値:
+
+ユーザ名  -> 変数 @code{elmo-default-imap4-user} の値。
+             初期設定は 環境変数 USER か、LOGNAME か、(user-login-name) の返り値。
+認証法    -> 変数 @code{elmo-default-imap4-authenticate-type} の値。
+             初期設定は "auth"。
+ホスト名  -> 変数 @code{elmo-default-imap4-server} の値。
+             初期設定は "localhost"。
+ポート番号-> 変数 @code{elmo-default-imap4-port} の値。
+             初期設定は "143"。
+
+メインで使用する IMAP サーバを変数 @code{elmo-default-imap4-server} 
+に指定すると、いちいちフォルダ名にホスト名を書かずにすみます。例えばファ
+イアウォールを越えなければならない場合でも @samp{foo%imap@@geteway} のよ
+うに指定できます。
+
+フォルダ名の最後に '!' が付いていると、SSL (Secure Socket Layer)を
+利用してコネクションを張ります。'!!' だと、STARTTLSにより
+SSLコネクションを張ります。
+変数 @code{elmo-default-imap4-ssl} の値が non-nil なら、'!' を付け
+なくても SSL を使います。'starttls なら '!!' を意味します。
+
+(SSL を利用するには 本パッケージの utils/ssl.el をインストールする
+必要があります。なおかつ、OpenSSLに含まれるopensslにパスが通っている
+必要があります。
+STARTTLS を利用するには、さらに、starttlsパッケージをインストール
+する必要があります。)
+
+認証法として、"auth" もしくは "cram-md5" を指定した場合、パスワードを
+エンコードして送信します。ただし、サーバ側がパスワードをエンコードして
+受け取る能力が無い場合は、確認ののち、"login" (生パスワードを送る) 
+に切替えます。変数 @code{elmo-imap4-force-login} が non-nil ならば、
+確認無しに "login" に切替えます(初期設定は nil)。
+
+例: %inbox     -> IMAP のメールボックス、"inbox"
+    %#mh/inbox -> IMAP のメールボックス、"#mh/inbox"
+
+    %inbox:hoge -> IMAP のメールボックス、"inbox" へユーザ "hoge" でアクセス。
+    %inbox:hoge/login@@server1
+                -> server1 上の IMAP のメールボックス "inbox" へ
+                   ユーザ "hoge" で、生パスワードを送って("login"で)
+                   アクセス。
+@end example
+
+@subsection 日本語メールボックス名の扱い(Modified UTF7)
+
+使用している Emacs がユニコードに対応しており，かつ、変数 
+@code{elmo-imap4-use-modified-utf7} に non-nil の値を設定している場合(デ
+フォルトは nil)、日本語(やその他の英語以外の言語)でメールボックス名を
+指定することができます。
+
+ユニコードを扱える Emacs には以下があります。
+
+@itemize @bullet
+@item Emacs 20.3 以降 + Mule-UCS
+
+Emacs 20 では、Mule-UCS がインストールされていればユニコードを扱えます。
+Mule-UCS は以下の URL から入手可能です。
+
+@example
+ftp://ftp.m17n.org/pub/mule/Mule-UCS/
+@end example
+
+@item XEmacs 21.2.13 以降
+
+現状、XEmacs 21.2 でユニコード(UTF-8)を扱うには、ucs-conv パッケージが必
+要です。ucs-conv は以下の anonymous cvs 経由で入手可能です。
+
+@example
+:pserver:anonymous@@cvs.m17n.org:/cvs/root
+Password: NULL (改行を入力)
+@end example
+
+また，XEmacs で日本語フォルダ名を扱うには、さらに、コマンド u7tou8,
+u8tou7 がインストールされている必要があります。これらのコマンドは以下か
+ら入手できる UTF7 パッケージに含まれています。
+
+@example
+ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
+@end example
+
+@end itemize
+
+@node NNTP Folder, MH Folder, IMAP Folder, Folders
+@section NNTP フォルダ
+@cindex NNTP Folder
+@cindex @samp{-}
+
+ネットニュースを読むためのフォルダです。
+一つのニュースグループが一つのフォルダとして扱われます。
+
+@example
+書式: '-' 'ニュースグループ名'[[':' 'ユーザ名']['@@' 'ホスト名'][':' 'ポート番号']]['!']
+
+default 値:
+ホスト名  -> 変数 @code{elmo-default-nntp-server} の値。初期設定は "localhost"。
+ユーザ名  -> 変数 @code{elmo-default-nntp-user} の値。初期設定は nil。
+ポート番号-> 変数 @code{elmo-default-nntp-port} の値。
+             初期設定は 119。
+
+ユーザ名が non-nil の場合はAUTHINFOによる認証を行ないます。
+フォルダ名の最後に '!' が付いていると、SSL を利用してコネクションを張ります。
+'!!' だと、STARTTLSによりSSLコネクションを張ります。
+変数 @code{elmo-default-nntp-ssl} の値が non-nil なら、'!' を付け
+なくても SSL を使います。'starttls なら '!!' を意味します。
+(SSL を利用するには 本パッケージの utils/ssl.el をインストールする
+必要があります。なおかつ、OpenSSLに含まれるopensslにパスが通っている
+必要があります。
+STARTTLS を利用するには、さらに、starttlsパッケージをインストール
+する必要があります。)
+
+
+例: -fj.rec.tv            -> ニュースグループ、fj.rec.tv。
+    -fj.rec.tv@@newsserver -> newsserver 上のニュースグループ、fj.rec.tv。
+@end example
+
+
+@node MH Folder, Maildir Folder, NNTP Folder, Folders
+@section MH フォルダ
+@cindex MH Folder
+@cindex @samp{+}
+@pindex MH
+@cindex Maildir
+
+MH 形式(1ファイル1メール)で保存されたメールを読むためのフォルダです。
+
+@example
+書式: '+' 'ディレクトリ名'
+
+ディレクトリ名は、通常、変数 @code{elmo-localdir-folder-path}
+(初期設定は @file{~/Mail}) からの相対パスですが、
+@samp{/} や @samp{~} で始まっていれば絶対パスと見做します
+(ドライブレターも同様です)。
+
+メッセージが保存されるファイルのファイル名には、メッセージ番号が使用されます。
+
+例: +inbox         -> "~/Mail/inbox"
+    +from/teranisi -> "~/Mail/from/teranisi"
+    +~/test        -> "~/test"
+@end example
+
+@node Maildir Folder, News Spool Folder, MH Folder, Folders
+@section Maildir フォルダ
+@cindex Maildir Folder
+@cindex @samp{.}
+@pindex Maildir
+
+Maildir 形式(1ファイル1メール)で保存されたメールを読むためのフォルダです。
+
+@example
+書式: '.' 'ディレクトリ名'
+
+ディレクトリ名は、通常、変数 @code{elmo-maildir-folder-path} (初期設定は 
+@file{~/Maildir}) からの相対パスですが、@samp{/} や @samp{~} で始まって
+いれば絶対パスと見做します(ドライブレターも同様です)。
+
+Maildir は、cur、new、tmp のディレクトリを含んでいます。実際にメッセージ
+が含まれるのは、指定ディレクトリ直下の cur ディレクトリです。指定ディレ
+クトリ直下の new ディレクトリに含まれるメッセージファイルは、アクセス時
+に cur ディレクトリへ移動されます。また、tmp ディレクトリに含まれ、36 時
+間以上アクセスが無いメッセージファイルは削除されます。
+
+この動作は @samp{http://cr.yp.to/proto/maildir.html}
+(日本語訳は @samp{http://www.jp.qmail.org/q103/jman5/maildir.html}) 
+に従っています。
+
+例: .              -> "~/Maildir"
+    .inbox         -> "~/Maildir/inbox"
+    .from/teranisi -> "~/Maildir/from/teranisi"
+    .~/test        -> "~/test"
+@end example
+
+@node News Spool Folder, Archive Folder, Maildir Folder, Folders
+@section News Spool フォルダ
+@cindex News spool Folder
+@cindex @samp{=}
+@pindex gnspool
+
+Mew/IM が提唱する、ローカルに保存されたニュース記事を読み書きするための
+フォルダです。NNTP 経由ではなく、gnspool などを使って取り寄せているよう
+な場合にそのスプールを直接読む、という使い方も想定しています。
+
+@example
+書式: '=' 'ディレクトリ名'
+
+ディレクトリ名は、変数 @code{elmo-localnews-folder-path}
+ (初期設定は @file{~/News})
+で指定されたディレクトリのサブディレクトリを指します。
+ディレクトリの区切りは @samp{.} でも可です。
+
+例: =fj/os/os2         -> "~/News/fj/os/os2"
+    =fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
+@end example
+
+
+@node Archive Folder, POP Folder, News Spool Folder, Folders
+@section アーカイブフォルダ
+@cindex Archive Folder
+@cindex @samp{$}
+@c @pindex ange-ftp
+
+Info-ZIP や LHA などで圧縮されたアーカイブファイルを一つのフォルダとし
+て扱います。
+
+@example
+書式: '$' 'ディレクトリ名' [';' アーカイバタイプ ';' プレフィクス]
+
+『ディレクトリ名』は、通常、変数 @code{elmo-archive-folder-path}
+(初期設定は @file{~/Mail}) からの相対パスですが、
+@samp{/} や @samp{~} で始まっていれば絶対パスと見做します
+(ドライブレターも OK)。
+ange-ftp 表記も ange-ftp, efs が使える環境では OK です。
+
+フォルダの実体としての書庫ファイルは、上述のディレクトリにある
+@code{elmo-archive-basename}(初期値は "elmo-archive")になります。
+ただし、ディレクトリでなくファイルであった場合、そのファイルをフォルダ
+と見做します。
+拡張子はアーカイバ毎に自動的に(動的に)選択されます。
+
+『アーカイバタイプ』を省略した場合、変数 @code{elmo-archive-default-type}
+(初期設定は 'zip)が参照されます。
+
+『プレフィクス』は、書庫がディレクトリ構造をもっている場合に、そのディ
+レクトリ部分を指定します。
+これは主にアーカイブサービスや tar+gz+uue によるダイジェスト配送を提供し
+ている ML の書庫ファイルを展開することなくマウントするためのもの、つまり
+閲覧時の便宜のためのものです。
+例えば ML サーバが fml の場合、@file{msend.tar.gz} は @file{spool/1} の
+ような構造なので、"spool" を指定します。
+
+例: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
+    $bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
+    $/foo@@server:~/bar;zoo     -> server 上の "~/bar/elmo-archive.zoo"
+    $d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
+@end example
+
+@menu
+* Archiver::     対応(可能)アーカイバ
+* Archive Tips:: TIPS
+* Archive Vars:: カスタマイズ変数
+@end menu
+
+
+@node Archiver, Archive Tips, Archive Folder, Archive Folder
+@subsection アーカイブフォルダが対応している(対応可能な)アーカイバ
+@cindex Archiver
+@pindex LHA
+@pindex Info-ZIP
+@pindex UNZIP
+@pindex ZOO
+@pindex RAR
+@pindex TAR
+@pindex GNU TAR
+
+デフォルトで以下のアーカイバに対応します。
+
+@example
+        LHA, Info-ZIP/UNZIP, ZOO, RAR  ;; フルスペック
+        GNU TAR('tgz, 'tar)            ;; デフォルトでは閲覧専用
+@end example
+
+複数ファイルを１プロセスで一つの書庫へまとめることができるアーカイバで
+あれば、必要な変数を追加定義するだけで使える可能性があります(ARJ/UNARJ,
+ARC は、手許で使ってないので定義していません。TAR は元ファイルを消す
+('mv) ことができない点で真面目にサポートしていません)。
+複数ファイルを一つにまとめられない点で gzip, bzip, bzip2 は使えません。
+標準出力へ解凍できないアーカイバにも標準では対応しません。
+
+@subsection 各 OS でのアーカイバに関する特記事項
+
+フルスペックで読み書き可能なことが確認されているアーカイバは、以下のとお
+りです(@samp{*} 印のものは処理速度などの点で最も適しているもの)。
+
+@example
+[OS/2]  Warp4.0J(w/o VoiceType)+Fx00505/emx0.9c(fix04)/PMMule,EmacsPM
+         LHA  OS/2 version Rel.2.06b    Feb 18, 1998
+        *UnZip 5.32 of 3 November 1997, by Info-ZIP.
+        *Zip 2.2 (November 3rd 1997).
+         Zoo archiver, zoo 2.1 $@asis{}Date: 91/07/09 02:10:34 $
+         GNU tar version 1.10 - AK 2.58 (DBCS/SJIS) 981216(homy)版
+         gzip 1.2.4 (18 Aug 93) + bzip2 パッチ(by 飯田さん)
+
+[UN|X]  FreeBSD 2.2.7-RELEASE, Linux 2.0.30, Solaris2.6, HP-UX 9.07
+         LHa for UNIX  V 1.14c
+         UnZip 5.32 of 3 November 1997
+         Zip 2.2 (November 3rd 1997)
+         GNU tar 1.12 (1.11.x は不可)
+         gzip 1.2.4 (18 Aug 93)
+
+[Win32] Win.98/Meadow
+         Lha32 version 1.28
+         Zip 2.2
+         UnZip 5.40
+         GNU tar 1.11.8 + 1.5(WIN32)
+         GZIP 1.2.4
+         RAR 2.06
+
+※ LHA に関する注意
+
+OS/2 の場合、Peter Fitzsimmons 氏作の LH/2 には対応しません。平松版をお
+使いください。
+Win32 では DOS 版でなく、LHa32 でないと動かないとのことです。
+
+※ GNU tar に関する注意
+
+GNU tar は書庫からの削除に問題があるものが多いので、特に注意してください。
+書庫が破壊される危険性が高いので、フルスペックで読み書きする前に
+--delete -f を充分テストしておいてください。なお、上記のものでは
+今のところ問題は報告されていません。
+@end example
+
+
+@node Archive Tips, Archive Vars, Archiver, Archive Folder
+@subsection TIPS
+@cindex Archive Tips
+
+快適に移行するには、wl-summary-archive() を実行する (@pxref{Archive}) か、
+Expire 機能 (@pxref{Expire}) と組み合わせるといいでしょう。
+ただし、Expire 機能で作成したアーカイブフォルダを扱う場合は、
+変数 @code{elmo-archive-treat-file} を non-nil に設定する必要があります。
+なお、OS/2 上でのテストでは、Mule2.3(19.28) と Emacs20.2 では処理速度に
+圧倒的な違いがあります。
+快適に使うには Emacs20 をお勧めします(re-search の速度の問題だとすると 
+19.3x 以上かどうかが境になるでしょう)。
+
+また、一つの書庫ファイルに多くのファイルが含まれているとアーカイバ起動時
+のオーバーヘッドが加速度的に増加する(特に LHA の場合)ため、150 通程度、
+最大でも 200通までにしておくと、ストレスなく読み書きできるでしょう。
+
+なお、当然のことながら
+
+@lisp
+(setq wl-fcc "$backup")
+(setq wl-trash-folder "$trash;lha")
+@end lisp
+
+@noindent
+も可能です@t{:-)}。
+
+
+@node Archive Vars,  , Archive Tips, Archive Folder
+@subsection アーカイブフォルダに関する変数
+@cindex Archive variables
+
+@table @code
+@item elmo-archive-default-type
+@vindex elmo-archive-default-type
+デフォルトのアーカイバタイプを symbol で指定します。初期値は 'zip です。
+
+@item elmo-archive-@var{type}-method-alist
+@vindex elmo-archive-TYPE-method-alist
+アーカイバの @var{type}
+(実際には @samp{lha}, @samp{zip}, @samp{zoo}, @samp{tgz} などの文字列が入る)
+毎の、各種メソッドを記述します。alist の各要素は以下のようになります。
+
+@example
+        (action . (exec-name options))   ;; 外部プログラムとオプション
+        (action . function)              ;; 関数
+@end example
+
+現在のところ、有効な action は
+
+@example
+        'ls, 'cat ('cat-headers)        ;; 最低限必要(閲覧のみ)
+        'mv ('mv-pipe), 'rm ('rm-pipe)  ;; 上とセットでフルスペック
+        'cp ('cp-pipe)                  ;;
+@end example
+
+@noindent
+です。括弧内のものは、なくても構いません(あれば優先的に使います)。
+
+@item elmo-archive-suffix-alist
+@vindex elmo-archive-suffix-alist
+アーカイバタイプ(symbol) 毎に対応する書庫の拡張子を記述します。
+
+@item elmo-archive-file-regexp-alist
+@vindex elmo-archive-file-regexp-alist
+書庫のリスト閲覧時の出力からファイル名を取得するための正規表現を、アー
+カイバタイプ (symbol) 毎に記述します。
+
+@item elmo-archive-method-list
+@vindex elmo-archive-method-list
+有効にしたい @var{type} の elmo-archive-@var{type}-method-alist
+(@var{type} はアーカイバの symbol)をリストで記述します。
+
+@item elmo-archive-lha-dos-compatible
+@vindex elmo-archive-lha-dos-compatible
+この変数が non-nil であれば DOS 版(吉崎氏オリジナル)の LHA とオプショ
+ン互換と見做します。初期値では OS/2 と Win32 のみ t です。
+
+@item elmo-archive-cmdstr-max-length
+@vindex elmo-archive-cmdstr-max-length
+elmo-archive からは(標準状態では)アーカイバをシェルを経由せずに起動し
+ます。elisp レベルでのコマンド文字列の総バイト数には制限はないとのことな
+ので、多くのパラメータを一度に与えて動かせるかどうかは OS レベルの問題に
+なります。これは、例えば数百通単位のメッセージを一度に消去できるかどうか
+の問題、と読み替えてください。
+OS/2 ではシェルを介さずに発行できるコマンド文字列は 8190 バイトまでなの
+で、余裕を見てデフォルトを 8000 にしています。OS/2 REXX やシェルスクリプ
+トなどを噛ます場合、シェルの実装に依存することに注意してください。
+
+なお、アーカイバが処理対象となるファイルのリストを標準入力から受け付ける
+(前述の rm-pipe, mv-pipe, cat-headers action が指定されている)場合、１
+プロセスで処理することができます。
+@end table
+
+
+@node POP Folder, Multi Folder, Archive Folder, Folders
+@section POP フォルダ
+@cindex POP Folder
+@cindex @samp{&}
+@cindex RFC 1939
+@cindex POP3
+@cindex APOP
+
+RFC 1939 で規定された POP3 を利用してメールを読むためのフォルダです。
+
+@example
+書式: '&' ['ユーザ名'][['/' '認証法']['@@' 'ホスト名'][':' 'ポート番号']]['!']
+
+認証法には、以下の 2 種類があります。
+            "user"     (生パスワードを送信して認証)
+            "apop"     (APOP で認証)
+
+default 値:
+ユーザ名   -> 変数 @code{elmo-default-pop3-user} の値。
+              初期設定は 環境変数 USER か、LOGNAME か、(user-login-name) の返り値。
+認証法     -> 変数 @code{elmo-default-pop3-authenticate-type} の値。
+              初期設定は "user"。
+ホスト名   -> 変数 @code{elmo-default-pop3-server} の値。
+              初期設定は "localhost"。
+ポート番号 -> 変数 @code{elmo-pop3-default-port} の値。
+              初期設定は 110。
+
+例: &hoge@@localhost -> localhost へユーザ "hoge" でアクセス。
+    &hoge@@popserver:109 -> ホスト "popserver" のポート 109 番へ
+                            ユーザ "hoge" でアクセス。
+@end example
+
+APOP を利用するには、@file{md5.el} が必要です。
+(XEmacsでは、必要ありません。)
+@file{md5.el} は 本パッケージの @file{utils/sasl/lisp/} か
+ Emacs/W3 パッケージ
+
+@example
+http://www.cs.indiana.edu/elisp/w3/docs.html
+@end example
+
+または、LCD archive から入手可能です(GPL2)。
+
+フォルダ名の最後に '!' が付いていると、SSL を利用してコネクションを張ります。
+変数 @code{elmo-default-pop-ssl} の値が non-nil なら、'!' を付け
+なくても SSL を使います。'starttls なら '!!' を意味します。
+(SSL を利用するには 本パッケージの utils/ssl.el をインストールする
+必要があります。なおかつ、OpenSSLに含まれるopensslにパスが通っている
+必要があります。
+STARTTLS を利用するには、さらに、starttlsパッケージをインストール
+する必要があります。)
+
+@node Multi Folder, Filter Folder, POP Folder, Folders
+@section マルチフォルダ
+@cindex Multi Folder
+@cindex @samp{*}
+@cindex Folder, Multiple
+@cindex Folder, Marge
+
+複数のフォルダを仮想的に一つに見えるようにするフォルダです。
+
+@example
+書式: '*' 'フォルダ' [',' 'フォルダ'] ... [',' 'フォルダ']
+
+'*' の後に フォルダ,フォルダ,@dots{},フォルダ のように ',' (コンマ)で区切って
+一つに見えるようにしたいフォルダ群を指定します。
+
+例:
+  *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+  -> -fj.editor.xemacs, -fj.editor.mule, -fj.editor.emacs が一つの
+     フォルダとして見える。
+
+  *+inbox,-fj.rec.tv,%inbox
+  -> +inbox, -fj.rec.tv, %inbox が一つのフォルダとして見える。
+
+@end example
+
+
+@node Filter Folder, Pipe Folder, Multi Folder, Folders
+@section フィルタフォルダ
+@cindex Filter Folder
+@cindex @samp{/}
+@cindex Folder, Filtering
+@cindex Folder, Virtual
+
+指定した条件を満たすメッセージのみを含む仮想的なフォルダです。
+
+@example
+書式: '/' '条件' '/' 'フォルダ'
+
+『条件』には、以下を書けます。
+
+1. 部分フィルタ： "first:数字", "last:数字"
+
+first: 全メッセージの先頭から'数字'の数だけメッセージを切り出します。
+last: 全メッセージの末尾から'数字'の数だけメッセージを切り出します。
+
+例:
+  /last:10/-fj.os.linux -> -fj.os.linux の最近の 10 個のメッセージ
+                           のみを表示するフォルダ
+  /first:20/%inbox      -> %inbox の最初の 20 個を表示するフォルダ
+
+2. 日付けフィルタ： "since:日付" "before:日付"
+
+since: '日付'より最近のメッセージのみを取り出します。
+before: '日付'より最近のメッセージのみを取り出します。
+
+'日付' には以下が書けます。
+
+yesterday ->  昨日
+lastweek  ->  先週の今日
+lastmonth ->  先月の今日
+lastyear  ->  去年の今日
+'数字'daysago -> '数字' 日前 (e.x. 3daysago)
+'日'-'月の略名'-'年' ->  日付けそのものの指定 (ex. 1-Nov-1998)
+
+例:
+  /since:3daysago/+inbox → 最近３日間の +inbox 中のメッセージ。
+  /before:yesterday/+inbox → きのうより以前の +inbox 中のメッセージ。
+
+3. フィールドフィルタ： "フィールド名=文字列"
+
+メッセージのフィールドの中身がマッチするメッセージを取り出します。
+『フィールド名』、『文字列』に大文字小文字の区別はありません。
+
+例:
+  /from=teranisi/+inbox -> +inbox で、From: フィールドに "teranisi"
+                           という文字列を含むメッセージのフォルダ
+  /body=なんとか/%inbox -> %inbox で、本文に "なんとか"
+                           という文字列を含むメッセージのフォルダ
+
+"|" で区切って OR 条件を指定できます。
+また、/tocc=xxxx/ は、/to=xxxx|cc=xxxx/ と同じになります。
+
+例:
+
+  /from=teranisi|to=teranisi/+inbox
+                        -> +inbox でTo: フィールドか From: フィールドに
+                          "teranisi" を含むメッセージのフォルダ
+  /tocc=teranisi/+inbox -> +inbox で、To: フィールドか Cc: フィールドに
+                          "teranisi" を含むメッセージのフォルダ
+
+応用編
+
+  %inbox,/from=teranisi/%inbox@@server
+         -> %inbox、および、
+            %inbox@@server の中で From フィールドが "teranisi" のメッセージ群、
+            をいっぺんに表示するフォルダ。
+
+  /last:100//to=teranisi/*+inbox,%inbox
+         -> +inbox と %inbox 中のメッセージのうち、
+            To: フィールドが "teranisi" にマッチする
+            メッセージの最近の100個を表示するフォルダ。
+
+  /from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
+  (→で折り返し。実際は一行)
+
+         -> %#mh/inbox@@localhost の中で、To か Cc に "teranisi" が含まれる
+            メッセージの最近の 20 個のうち、From が "hogehoge" のものを
+            表示するフォルダ。
+
+;;; --- 実装上の制約 ---
+;;; 現在のところ、nntp フォルダは日付フィルタ、フィールドフィルタ
+;;; を書けません。
+;;; また、imap4 フォルダ では rfc2060 の search コマンドにそのまま
+;;; 与えられるものしか条件のフィールド名に書けません。
+;;; (-> to,cc,from,subject,body のみ)
+;;; localdir のフォルダには任意のフィールド名を書けます。
+@end example
+
+
+@node Pipe Folder, Internal Folder, Filter Folder, Folders
+@section パイプフォルダ
+@cindex Pipe Folder
+@cindex @samp{|}
+@cindex Get Message
+@cindex Download Message
+@cindex Incorporate Message
+
+フォルダ閲覧時に、自動的にメッセージの取り込みを実行するフォルダです。
+
+@example
+書式: '|'取り込み元'|'取り込み先
+
+フォルダ閲覧時、『取り込み元』から『取り込み先』へ自動的にメッセージが
+移動します。POP を利用してメッセージをローカルにダウンロードして閲覧したい
+場合は、
+
+|&username@@popserver|+inbox
+
+のように指定すると、フォルダの表示を更新するときに
+&username@@popserver から、+inbox へメッセージが自動的に取り込まれます。
+
+例: %inbox|%myinbox   -> %inbox から %myinbox へメッセージを取り込んで
+                         閲覧するフォルダ。
+    *&user@@popserver1,&user@@popserver2|+inbox
+    -> &user@@popserver1 と &user@@popserver2 から +inbox へメッセージを
+    取り込んで閲覧するフォルダ。
+@end example
+
+メッセージが移動したあと、フック @code{elmo-pipe-drained-hook} が呼ばれ
+ますので、ダウンロード後に実行したい関数を登録しておくとよいでしょう。
+
+@node Internal Folder,  , Pipe Folder, Folders
+@section 内部フォルダ
+@cindex Internal Folder
+@cindex @samp{'}
+@cindex Folder, @samp{$} mark
+@cindex Cache
+
+Wanderlust の内部で保持されたメッセージを閲覧するためのフォルダです。
+
+@example
+書式: 'mark 
+      もしくは
+      'cache/00〜1F
+
+'mark というフォルダは、後述の『重要マーク @samp{$}』がついたメッセージを
+あつかう特別な仮想フォルダです。
+重要マークをメッセージにつけておいて、あとから見直したいときなどに便利です。
+
+このフォルダでメッセージを削除すると、そのメッセージについていた @samp{$}
+マークが削除されます。
+また、このフォルダにメッセージを追加すると、そのメッセージには @samp{$} マーク
+が付けられます。
+
+'cache/00 〜 1F はネットワーク経由で読んだメッセージのキャッシュにアクセ
+スするためのフォルダです。00 〜 1F には、キャッシュディレクトリ 
+(@file{~/.elmo/cache})のサブディレクトリ名を指定します。
+@end example
+
+@c
+@c  Folder
+@c
+@node Folder, Summary, Folders, Top
+@chapter フォルダモード
+@cindex Folder
+
+起動して最初に現れるのがフォルダモード(フォルダの一覧表示)です。
+
+フォルダモードでは、読みたいフォルダの選択、購読フォルダの編集を行ないます。
+
+@menu
+* Selecting Folder:: 読みたいフォルダの選択
+* Folder Manager::   購読フォルダの編集
+@end menu
+
+
+@node Selecting Folder, Folder Manager, Folder, Folder
+@section 読みたいフォルダの選択
+@cindex Selecting Folder
+
+@subsection 使用方法(TIPS)
+
+@subsubsection 新規数、未読数のチェック
+
+フォルダモードの見ためはこんな感じになるはずです。
+(XEmacs ではもうちょっとかっこよく見えるはずです @t{;-)})
+
+@example
+[-]Desktop:14186/35580/67263
+   受信箱:3/10/10
+   ゴミ箱:2/7/10
+   草稿:0/0/3
+   送信済み:0/9/348
+   [-]Emacsen:0/34/4837
+     Wanderlust ML:0/0/558
+     ELIPS ML:0/0/626
+     tm (日本語) ML:0/0/821
+     XEmacs ベータ:0/29/255
+     Mew:0/0/998
+     Mule-Win32:0/0/1491
+     fj の Emacsen:0/5/88
+@end example
+
+各行に表示されるのは、
+
+@example
+『フォルダ名:未同期(新規)数/未読数/総数』
+@end example
+
+@noindent
+です。
+チェックしたいフォルダの上にカーソルを合わせて @kbd{s} を押すと、
+これらの数が最新のものに更新されます。
+たくさん新規メッセージがあると色が変わります。
+
+フォルダモード全体は @samp{Desktop} というグループフォルダになります。
+グループフォルダはリターンキーで開閉できます。
+グループフォルダに対する操作は、そのグループフォルダに属する全ての子
+フォルダに対する一括した操作として扱われます。
+例えば、@samp{[-]Emacsen} のところにカーソルを合わせて @kbd{s} を押すと、
+これに含まれる６つのフォルダの表示を最新のものに更新します。
+
+@subsubsection フォルダの選択
+フォルダの行にカーソルを置いてリターン(スペース)キーを押すとそのフォルダの内容を表示するサマリモードに移動します。
+
+このとき、変数 @code{wl-stay-folder-window} が non-nil ならサマリに移動したときにフォルダバッファの右にサマリのバッファが現れます。
+
+@subsection キーバインド
+
+フォルダモードでのフォルダ選択に関するコマンドのキーバインドは以下の通りです。
+
+@table @kbd
+@item @key{SPC}
+@itemx @key{RET}
+@kindex @key{SPC} (Folder)
+@kindex @key{RET} (Folder)
+@findex wl-folder-jump-to-current-entity
+現在カーソルがある行のフォルダのサマリ表示へ移動します。
+グループフォルダにカーソルがある場合は、グループフォルダの開閉を行ないます。
+アクセスグループでは、prefix argument つきでグループフォルダを開くと、
+内容を最新のリストに更新します。
+アクセスグループが階層構造になっている場合は再帰的に更新します。
+(@code{wl-folder-jump-to-current-entity})
+
+@item M-@key{RET}
+@kindex M-@key{RET} (Folder)
+@findex wl-folder-update-recursive-current-entity
+現在カーソルがあるアクセスグループの内容を最新のリストに更新します。
+アクセスグループが階層構造になっている場合は再帰的に更新します。
+(@code{wl-folder-update-recursive-current-entity})
+
+@item w
+@kindex w (Folder)
+@findex wl-summary-write
+新規ドラフトを用意します。
+(@code{wl-summary-write})
+
+@item W
+@kindex W (Folder)
+@findex wl-summary-write-current-newsgroup
+現在カーソルがあるフォルダが NNTP フォルダなら、
+Newsgroups フィールドを補ってドラフトを用意します。
+(@code{wl-summary-write-current-newsgroup})
+
+@item s
+@kindex s (Folder)
+@findex wl-folder-check-current-entity
+現在カーソルがある行のフォルダの未同期メッセージ数を更新します。
+(@code{wl-folder-check-current-entity})
+
+@item S
+@kindex S (Folder)
+@findex wl-folder-sync-current-entity
+現在カーソルがある行のフォルダのサマリを更新します。
+(@code{wl-folder-sync-current-entity})
+
+@item r s
+@kindex r s (Folder)
+@findex wl-folder-check-region
+リージョンにあるフォルダの未同期メッセージ数を更新します。
+(@code{wl-folder-check-region})
+
+@item r S
+@kindex r S (Folder)
+@findex wl-folder-sync-region
+リージョンにあるフォルダのサマリを更新します。
+(@code{wl-folder-sync-region})
+
+@item P
+@kindex P (Folder)
+@findex wl-folder-prev-unread
+ひとつ上の未読があるフォルダ(もしくはグループ)に移動します。
+(@code{wl-folder-prev-unread})
+
+@item N
+@kindex N (Folder)
+ひとつ下の未読があるフォルダ(もしくはグループ)に移動します。
+(@code{wl-folder-next-unread})
+
+@item p
+@kindex p (Folder)
+ひとつ上のフォルダへ移動します。
+(@code{wl-folder-prev-entity})
+
+@item n
+@kindex n (Folder)
+ひとつ下のフォルダへ移動します。
+(@code{wl-folder-next-entity})
+
+@item J
+@kindex J (Folder)
+指定したフォルダへカーソルを移動します。
+(@code{wl-folder-jump-folder})
+
+@item I
+@kindex I (Folder)
+@findex wl-folder-prefetch-current-entity
+現在カーソルがある行のフォルダに対して、
+@code{wl-summary-incorporate}により、
+新着記事をプリフェッチします。
+グループフォルダにカーソルがある場合は、
+再帰的に実行します。
+(@code{wl-folder-prefetch-current-entity})
+
+@item c
+@kindex c (Folder)
+@findex wl-folder-mark-as-read-all-current-entity
+現在カーソルがある行のフォルダの
+メッセージを全て読んだことにします。
+グループフォルダにカーソルがある場合は、
+再帰的に実行します。
+(@code{wl-folder-mark-as-read-all-current-entity})
+
+@item f
+@kindex f (Folder)
+@findex wl-folder-goto-first-unread-folder
+最初の未読があるフォルダのサマリへ移動します。
+(@code{wl-folder-goto-first-unread-folder})
+
+@item E
+@kindex E (Folder)
+@findex wl-folder-empty-trash
+ゴミ箱を空にします。
+(@code{wl-folder-empty-trash})
+
+@item o
+@kindex o (Folder)
+@findex wl-folder-open-all-unread-folder
+全ての未読があるフォルダが含まれるグループを開きます。
+(@code{wl-folder-open-all-unread-folder})
+
+@item /
+@kindex / (Folder)
+@findex wl-folder-open-close
+カーソル行のグループの開閉をトグルします。
+(@code{wl-thread-open-close})
+
+@item [
+@kindex [ (Folder)
+全てのグループを開きます。
+(@code{wl-folder-open-all})
+
+@item ]
+@kindex ] (Folder)
+全てのグループを閉じます。
+(@code{wl-folder-close-all})
+
+@item q
+@kindex q (Folder)
+Wanderlust を終了します。
+(@code{wl-exit})
+
+@item z
+@kindex z (Folder)
+Wanderlust をサスペンドします。
+(@code{wl-folder-suspend})
+
+@item M-s
+@itemx C-x C-s
+@kindex M-s (Folder)
+@kindex C-x C-s (Folder)
+現在のフォルダの状態をセーブします。
+(@code{wl-save})
+
+@item M-t
+@kindex M-t (Folder)
+Wanderlust のオフラインモード/オンラインモードをトグルします。
+(@code{wl-toggle-plugged})
+
+@item C-t
+@kindex C-t (Folder)
+Wanderlust のサーバ・ポート別のオフライン/オンラインを変更します。
+(@code{wl-plugged-change})
+@end table
+
+@subsection カスタマイズ変数
+
+@table @code
+@item wl-folders-file
+@vindex wl-folders-file
+初期設定は "~/.folders"。
+購読するフォルダを記述するファイルの名前です。
+
+@item wl-folder-info-save
+@vindex wl-folder-info-save
+初期設定は t。
+次に立ち上げ直したときに前回の未読数などの結果を使いまわしするかどうか、です。
+
+@item wl-stay-folder-window
+@vindex wl-stay-folder-window
+初期設定は nil。
+Non-nil ならサマリに移動したときにフォルダバッファの右にサマリのバッファが現れます。
+
+@item wl-folder-window-width
+@vindex wl-folder-window-width
+初期設定は 20。
+@code{wl-stay-folder-window} が non-nil のときにのこすフォルダバッファのウィンドウの幅です。
+
+@item wl-folder-many-unsync-threshold
+@vindex wl-folder-many-unsync-threshold
+初期設定は 70。
+未同期数がたくさんかどうかの閾値。この値を越えると色が変わります。
+
+@item wl-folder-desktop-name
+@vindex wl-folder-desktop-name
+初期設定は "Desktop"。
+トップのグループの名前です。
+
+@item wl-folder-petname-alist
+@vindex wl-folder-petname-alist
+初期設定は nil。
+フォルダの本名とあだ名の cons のリストです。
+
+@item wl-folder-access-subscribe-alist
+@vindex wl-folder-access-subscribe-alist
+初期設定は nil。
+アクセスグループのリスト取得で自動的に subscribe、もしくは unsubscribe
+するフォルダを指定します。
+
+リストの各要素は
+
+(アクセスグループの正規表現 . (購読フラグ フォルダの正規表現 @dots{}))
+
+となっています。購読フラグが non-nil の場合はフォルダの正規表現にマッチ
+したフォルダのみ表示し、購読フラグが nil の場合はフォルダの正規表現にマッ
+チしたフォルダは表示されなくなります。ただし、購読フラグが non-nil でも
+既に unsubscribe されているフォルダは表示されません。また、フォルダの正
+規表現は複数個記述できます。
+
+例:
+
+@example
+'(("^-fj$" . (t   "^-fj\\.\\(comp\\|editor\\|mail\\)"
+                  "^-fj\\.\\(net\\|news\\|os\\|rec\\)"))
+  ("^-$" . (t   "^-\\(fj\\|tnn\\|japan\\|gnu\\|comp\\)"))
+  ("^\\+ml$" . (nil "^\\+ml$" "^\\+ml/tmp")))
+@end example
+
+@item wl-folder-hierarchy-access-folders
+@vindex wl-folder-hierarchy-access-folders
+初期設定は '("-" "-alt")。
+階層構造に作成するアクセスグループフォルダのリスト。
+
+例えば、以下のように 
+@code{wl-folder-hierarchy-access-folders} を設定すると、
+
+@lisp
+(setq wl-folder-hierarchy-access-folders
+     '("-" "-alt" "-japan" "-comp" "-comp.unix"))
+@end lisp
+
+次のような階層構造になったアクセスグループが作られます。
+
+@example
+   [-]-:912/912/3011
+     [-]-fj:674/674/1314
+       -fj.comp.announce:0/0/2
+       -fj.comp.dev.cdrom:0/0/0
+       @dots{}
+     [+]-japan:238/238/1688
+     [-]-comp:0/0/4
+       [-]-comp.unix:0/0/0
+         -comp.unix.admin:0/0/0
+         -comp.unix.dos-under-unix:0/0/0
+         -comp.unix.programmer:0/0/0
+         [-]-comp.unix.bsd:0/0/23
+           -comp.unix.bsd.freebsd.announce:0/0/0
+     @dots{}
+@end example
+
+ただし、@samp{-} を開いただけでは1つ目の階層
+(@samp{-fj}, @samp{-japan}, @samp{-tnn}, @dots{}) が作られるだけで、
+2つ目の階層(@samp{-fj.comp.announce}, @dots{}, @samp{-comp.unix}, @dots{})
+以下のフォルダはあらためてそのグループを開くまで作られません。
+@end table
+
+
+@node Folder Manager,  , Selecting Folder, Folder
+@section 購読フォルダの編集
+@cindex Folder Manager
+@cindex Folder, Edit
+@cindex Folder, Subscribe
+@cindex Folder, Unsubscribe
+
+前に述べた通り、購読するフォルダは @file{~/.folders} に保持されますが、
+@file{~/.folders} を直接編集するまでもなく、
+フォルダモードからもフォルダの追加/削除/グループの定義などの編集が可能となっています。
+
+
+@subsection 使用方法(TIPS)
+
+@subsubsection フォルダの追加
+
+@kbd{m a} で新規に購読するフォルダを追加します。
+@kbd{m g} でグループが追加されます。
+このグループにフォルダを追加するには、まずこのグループを開いた状態にします。
+そして次の行で挿入のコマンドを実行するとグループに追加されるようになります。
+
+@subsubsection フォルダの編集
+
+@kbd{C-k} でカット(切り取り)、@kbd{C-y} でペースト(張り付け)ができます。
+つまり、通常の文書編集の行編集と同じようにフォルダの位置を変更可能です。
+
+@subsubsection マルチフォルダの作成方法
+
+@enumerate
+@item
+@kbd{m q}で @code{wl-fldmgr-cut-entity-list} を消します。
+@item
+@kbd{C-k} か @kbd{M-c} でフォルダを削除、またはコピーします。
+@item
+@kbd{m m} を実行すると、マルチフォルダが作成されます。
+@end enumerate
+
+@subsubsection あだ名(petname)やフィルタの削除
+
+あだ名やフィルタの設定では、minibuffer で ""(NULL) を入力すると
+あだ名やフィルタが削除されます。
+
+@subsubsection 空グループへの追加
+
+@kbd{m g} などでグループを作成した後、このグループにフォルダを追加するに
+は、まずこのグループを開いた状態にします。そして次の行で追加や挿入のコ
+マンドを実行するとグループに追加されます。閉じた状態ではそのグループと
+同じレベルに挿入されます。言葉で説明するのは難しいので実際に実行してみ
+るといいでしょう。つまり、カーソル位置より上にあるグループの開閉状態に
+より挿入される位置が異なるのです。
+
+@subsubsection save時の言語コード
+
+@code{wl-folders-file} を save するときは @code{wl-mime-charset} の言語コードになります。
+
+@subsubsection フィルタフォルダの作成
+
+フィルタフォルダの作成コマンドはカーソル上のフォルダをフィルタ付きに変更
+します。もしカーソル上のフォルダを残したまま新たにフィルタフォルダを作成
+する場合は、まずコピーしてからフィルタを作成し、その後コピーしたフォルダ
+を挿入します。
+フィルタフォルダ作成時には一度に複数の(多段の)フィルタが指定できます。
+""(NULL)を入力すれば、先頭のフィルタは全て削除されます。
+
+@subsubsection フォルダの並び変え
+
+グループ内のフォルダを並び変えする際、@code{wl-fldmgr-sort-func} に指定
+された関数を用います。初期設定では @code{wl-fldmgr-sort-standard} が指定
+されており、これはアルファベット順に並びかえグループは最初にする関数です。
+並び変えは指定したグループのみ行い、下位のグループまで並び変えはしません。
+つまり、recursive には行いません。
+
+@subsubsection アクセスグループ内の表示しないフォルダの指定
+
+アクセスグループを開くと通常全てのフォルダが表示されますが、
+表示しないフォルダを指定することもできます。
+以下の操作はアクセスグループ内でのみ有効です。
+
+コマンド @code{wl-fldmgr-unsubscribe} (@kbd{u}) はカーソル位置のフォルダの
+表示(subscribe)・非表示(unsubscribe)設定をトグルします。それに対して
+@code{wl-fldmgr-unsubscribe-region} (@kbd{U}) は指定範囲のフォルダを非表示に
+します。unsubscribe はトグルしますが、region だと通常トグルになら
+ないことに注意下さい。region の場合トグルにするよりどちらかに設定さ
+せる方が使いやすいと考えこのようにしています。しかし、上記2つの関数と
+も prefix argument の値が正ならフォルダを非表示、負なら表示、0なら
+トグルさせます。
+
+またキーには割り当てていませんが、フォルダを表示に設定するだけの
+@code{wl-fldmgr-subscribe} と @code{wl-fldmgr-subscribe-region} も用意して
+います。使用する場合は適当なキーに割り当ててください。
+
+さらに、アクセスグループ内で @code{wl-fldmgr-cut} と 
+@code{wl-fldmgr-cut-region} を実行すると、それぞれ 
+@code{wl-fldmgr-unsubscribe} と @code{wl-fldmgr-unsubscribe-region} を実
+行したのと同じ効果が得られます。違いは cut(-region) の場合は画面からも消
+去することです。
+
+@subsubsection アクセスグループ内の操作
+
+アクセスグループ内でも削除や挿入が行えます。といっても実際には 
+unsubscribe するかどうかを設定しているだけですので、当然そのアクセスグルー
+プに属しているフォルダのみ変更が可能です。つまり、挿入は subscribe し、
+削除は unsubscribe したことと同じになります。
+@footnote{現在は、指定範囲を表示しないフォルダにするとき、
+指定範囲の削除を行った方が高速です。}
+従って、Wanderlust 以外でフォルダが変更された場合、
+そのフォルダを実際に追加したり削除したりするには、
+アクセスグループを @kbd{C-u @key{RET}} で更新してください。
+@xref{Selecting Folder}.
+
+また、挿入/削除/並び変えなどを行ったあとのフォルダの並びは保持されます。
+もし @code{wl-force-fetch-folders} を設定するか、
+@kbd{C-u @key{RET}} でグループを開くかすると、
+存在しないフォルダは削除され、
+新たに作成されたフォルダは先頭に追加されます。
+
+@subsection キーバインド
+@cindex Keybind, Folder Mode
+@cindex Keybind, Folder Buffer
+
+フォルダの編集に関する主なコマンドのキーバインドは以下の通りです。一応 
+@kbd{m} で始まるキーに全て割り当てて、主なもののみ1ストロークで使用できるよ
+うにしています。
+
+@table @kbd
+@item m a
+@kindex m a (Folder)
+@findex wl-fldmgr-add
+フォルダを作成します。
+(@code{wl-fldmgr-add})
+
+@item +
+@itemx m g
+@kindex + (Folder)
+@kindex m g (Folder)
+@findex wl-fldmgr-make-group
+グループを作成します。
+(@code{wl-fldmgr-make-group})
+
+@itemx m A
+@kindex m A (Folder)
+@findex wl-fldmgr-make-access-group
+アクセスグループを作成します。
+(@code{wl-fldmgr-make-access-group})
+
+@item m d
+@kindex m d (Folder)
+@findex wl-fldmgr-delete
+フォルダの実体とその msgdb を削除します。
+nntpなどの削除できないフォルダでは msgdb のみ削除します。
+(@code{wl-fldmgr-delete})
+
+@item R
+@itemx m R
+@kindex R (Folder)
+@kindex m R (Folder)
+@findex wl-fldmgr-rename
+フォルダ、もしくはグループ名を変更します。
+フォルダを変更する場合は msgdb のパスも変更します。
+(@code{wl-fldmgr-rename})
+
+@item *
+@itemx m m
+@kindex * (Folder)
+@kindex m m(Folder)
+@findex wl-fldmgr-make-multi
+マルチフォルダを作成します (cut, copy されたフォルダを結合します)。
+(@code{wl-fldmgr-make-multi})
+
+@item |
+@itemx m f
+@kindex | (Folder)
+@kindex m f (Folder)
+@findex wl-fldmgr-make-filter
+フィルタフォルダを作成します (選択したフォルダにfilterを付けます)。
+(@code{wl-fldmgr-make-filter})
+
+@item M-c
+@itemx m c
+@kindex M-c (Folder)
+@kindex m c (Folder)
+@findex wl-fldmgr-copy
+フォルダをコピーする (グループはコピー不可)。
+(@code{wl-fldmgr-copy})
+
+@item M-w
+@itemx m W
+@kindex M-w (Folder)
+@kindex m W (Folder)
+@findex wl-fldmgr-copy-region
+指定範囲のフォルダのコピー。
+(@code{wl-fldmgr-copy-region})
+
+@item C-k
+@itemx m k
+@kindex C-k (Folder)
+@kindex m k (Folder)
+@findex wl-fldmgr-cut
+フォルダの削除 (切り取り)。フォルダの実体は削除しません。
+(@code{wl-fldmgr-cut})
+
+@item C-w
+@itemx m C-w
+@kindex C-w (Folder)
+@kindex m C-w (Folder)
+@findex wl-fldmgr-cut-region
+指定範囲のフォルダの削除 (切り取り)。
+(@code{wl-fldmgr-cut-region})
+
+@item C-y
+@itemx m y
+@kindex C-y (Folder)
+@kindex m y (Folder)
+@findex wl-fldmgr-yank
+コピー、削除したフォルダ(cut-list)を挿入する(ペースト、貼り付け)。
+(@code{wl-fldmgr-yank})
+
+@item m p
+@kindex m p (Folder)
+@findex wl-fldmgr-set-petname
+フォルダにあだ名(petname)を付ける。
+(@code{wl-fldmgr-set-petname})
+
+@item m q
+@kindex m q (Folder)
+@findex wl-fldmgr-clear-cut-entity-list
+cut, copy したフォルダ情報(cut-list)を消す。
+(@code{wl-fldmgr-clear-cut-entity-list})
+
+@item m s
+@kindex m s (Folder)
+@findex wl-fldmgr-sort
+グループ内のフォルダを並び変える (そのグループ階層のみ)。
+(@code{wl-fldmgr-sort})
+
+@item m C-s
+@kindex m C-s (Folder)
+@findex wl-fldmgr-save
+wl-folders-file に save する。
+(@code{wl-fldmgr-save})
+@end table
+
+[以下の操作はアクセスグループに対してのみ有効]
+
+@table @kbd
+@item u
+@itemx m u
+@kindex u (Folder)
+@kindex m u (Folder)
+@findex wl-fldmgr-unsubscribe
+フォルダの表示/非表示の設定。
+(@code{wl-fldmgr-unsubscribe})
+
+@item U
+@itemx r u
+@kindex U (Folder)
+@kindex r u (Folder)
+@findex wl-fldmgr-unsubscribe-region
+指定範囲にあるフォルダの表示/非表示の設定。
+(@code{wl-fldmgr-unsubscribe-region})
+
+@item l
+@itemx m l
+@kindex l (Folder)
+@kindex m l (Folder)
+@findex wl-fldmgr-access-display-normal
+現在有効なフォルダのみ一覧表示する。
+(@code{wl-fldmgr-access-display-normal})
+
+@item L
+@itemx m L
+@kindex L (Folder)
+@kindex m L (Folder)
+@findex wl-fldmgr-access-display-all
+非表示のフォルダも含めて全てのフォルダを一覧表示する。
+(@code{wl-fldmgr-access-display-all})
+
+@item C-c C-o
+@kindex C-c C-o (Folder)
+@findex wl-jump-to-draft-buffer
+ドラフトバッファがあれば移動します。 複数のドラフトバッファが存在する場合は、
+次々と切り替えていきます。また、prefix argument をつけることにより、
+バッファが存在していない場合は、ドラフトフォルダからファイルを(存在すれば)
+読み込みます。
+(@code{wl-jump-to-draft-buffer})
+@end table
+
+
+@subsection カスタマイズ変数
+
+@table @code
+@item  wl-interactive-save-folders
+@vindex wl-interactive-save-folders
+初期設定は t。
+フォルダ変更の操作を行った場合、Wanderlust 終了時もしくは Emacs 終了時に
+ save するか確認を行います。nil だと確認なしで save します。
+
+@item wl-fldmgr-make-backup
+@vindex wl-fldmgr-make-backup
+初期設定は t。
+Non-nil なら、saveする際に @file{~/.folders.bak} にバックアップを取ります。
+
+@item wl-fldmgr-sort-func
+@vindex wl-fldmgr-sort-func
+初期設定は 'wl-fldmgr-sort-standard。
+sort 時に使用する関数を指定します。
+初期設定は、アルファベット順に並べグループは最初にする関数です。
+(@code{wl-fldmgr-sort-group-first} が non-nil の場合)。
+
+@item wl-fldmgr-sort-group-first
+@vindex wl-fldmgr-sort-group-first
+初期設定は t。
+Non-nil なら、@code{wl-fldmgr-sort-standard} で並び替えるときグループを最
+初にする。nil なら、グループも含めてアルファベット順に並び替えます。
+
+@item wl-folder-check-async
+@vindex wl-folder-check-async
+初期設定は t。
+Non-nil の場合、フォルダの新規メッセージ数のチェックを非同期に行ないます。
+ニュースグループのチェックが大幅に速くなります。
+
+@item wl-folder-check-fast
+@vindex wl-folder-check-fast
+初期設定は nil。
+Non-nil の場合、フォルダの新規メッセージ数のチェックを行うたびに
+フォルダの表示を更新しません。
+
+@item wl-folder-notify-deleted
+@vindex wl-folder-notify-deleted
+初期設定は nil。
+@c  nil means?
+Non-nil ならメッセージが削除されたときにフォルダモードで未読数をチェック
+すると負の値が表示されます。
+値が 'sync ならば、メッセージが削除されていたときにフォルダの内容と同期を
+取ります。
+@end table
+
+@subsection その他
+
+フォルダの編集に関して、以下のような仕掛けや制限があります。
+
+@enumerate
+@item
+cut や copy を行うと、スタックのように変数 @code{wl-fldmgr-cut-entity-list}
+ にたまっていきます。paste(yank) は cut や copy した単位で
+ (region で copy したならその region 内のフォルダが 一度に) 吐き出されます。
+
+@item
+Desktop グループの cut, copy はできません。また、Desktop 外への挿入はできません。
+
+@item
+グループの copy はできません。
+
+@item
+アクセスグループの操作はアクセスグループに属しているフォルダのみ対象
+となります。
+
+@item
+全体で同じ名前のグループは複数作れません。
+
+@item
+同じグループ(階層)に同じフォルダは作れません。階層が違えば複数作れます。
+異なるフォルダに同じあだ名は指定できません。
+@end enumerate
+
+
+@c
+@c  Summary
+@c
+@node Summary, Message, Folder, Top
+@chapter サマリモード
+
+@section 使用方法(TIPS)
+
+@subsection サマリの表示内容
+
+フォルダモードで読みたいフォルダを選択すると、サマリモードに移動します。
+サマリモードには、以下のようにメッセージの一覧が表示されます。
+
+@example
+  377  09/16(水)11:57 [+1: 北目さん       ] Bug?
+  381  09/17(木)00:16 [+3: 奥西さん       ] elmo-lha.el -- LHA interface
+  384  09/17(木)01:32 [+1: てらにし       ] wl-0.6.2
+  389 N09/18(金)01:07 [+2: てらにし       ] wl-0.6.3
+@end example
+
+各メッセージは、一行に
+
+@example
+メッセージ番号、一時的マーク、永続的マーク、日付け、差出人、 サブジェクト
+@end example
+
+@noindent
+の順に表示されます。現在バージョンでは表示を変更することはできません。
+
+メッセージ番号はそのフォルダ中にあるメッセージにつけられた番号です。
+News フォルダでは article 番号、IMAP フォルダでは UID、MH フォルダでは
+ファイル名です。
+
+一時的/永続的マークについては、あとで詳しく説明します。
+
+日付けは、月/日(曜日)時:分 のように表示されます。曜日を日本語ではなく英語表記したい場合は、@code{wl-summary-weekday-name-lang} を "en" に設定してください。
+
+差出人は、スレッドの深さ分インデントされて表示されます。差出人の名前は、
+アドレス帳にあだ名があればあだ名で表示します。あだ名表記をやめたい場合は、
+@code{wl-use-petname} を nil に設定してください。
+
+差出人の部分にある @samp{+2} のような数字の表示は、
+そのメッセージに対する返事の数を表します。
+例えば @samp{+2} なら 2 通あったことを示します。
+
+サブジェクトは、メッセージの Subject フィールドです。
+同じスレッドで、かつ親と同じサブジェクトを持つメッセージなら表示されません。
+メーリングリストなどの通し番号表示は無視されます。サブジェクトがない場合、
+変数 @code{wl-summary-no-subject-message} の内容が表示されます。
+
+@subsection 一時的マーク
+@cindex Mark, Temporary
+
+一時的マークは、メッセージを操作するためマークです。
+
+一時的マークには、@samp{*}, @samp{D}, @samp{o}, @samp{O} があります。
+
+@table @samp
+@item *
+まとめ処理用マークです。
+@kbd{m} ではじまるコマンドで @samp{*}マークのついたメッセージ対して一括した処理
+ができます。
+
+@item D
+削除するメッセージに付くマークです。@kbd{d} を押すと付きます。
+
+@item o
+リファイルするメッセージに付くマークです。
+@kbd{o}を押すと、リファイル先を聞いて来るので答えると、リファイル先のフォルダ情報とともに付けられます。
+
+@item O
+コピーするメッセージに付くマークです。
+@kbd{O}を押すと、コピー先を聞いて来るので答えると、コピー先のフォルダ情報とともに付けられます。
+@end table
+
+@kbd{x} を押すことにより、@samp{D}, @samp{o}, @samp{O} のマークがつけられたメッセージの削除、リファイル、コピーが実行されます。
+
+@subsection 永続的マーク
+
+永続的マークは、メッセージの状態をしめすマークです。
+
+永続的マークには、@samp{N}, @samp{U}, @samp{!}, @samp{u}, @samp{$} があります。
+
+
+@table @samp
+@item N
+新規メッセージに付きます。
+@item U
+未読メッセージに付きます。
+@item !
+未読メッセージに付きます。@samp{U} との違いは、@samp{!} のメッセージは
+キャッシュされていることです。
+@item u
+既読メッセージに付きます。マークなしとの違いは、@samp{u} のメッセージは
+キャッシュされていないことです。
+@item $
+@kbd{$} キーを押すと、@samp{$} マークが付きます。
+このマークはEmacsを終了しても保存されるため、あとで返事を書きたい場合など、覚えておきたい重要なメッセージに付けておくと便利です。@samp{$} の付いたメッセージは、ニュース記事やサーバ上のIMAPフォルダのメッセージが expire されるなどして消えた場合も残ります。
+@item なし
+既読メッセージにはマークが存在しません。
+@end table
+
+@samp{N}, @samp{U}, @samp{u} は、
+そのメッセージがキャッシュされていないことをしめしています。
+これらのマークが付いていない場合、
+つまり、そのメッセージがキャッシュされている場合は、
+ネットワークに接続されていなくても IMAP フォルダのメッセージや
+NNTP フォルダのニュース記事を読むことができます。
+
+@subsection メッセージの読みすすめかた
+
+基本的にスペースキーを押すだけで読み進めることができます。
+サマリの表示内容をフォルダの最新の状態に合わせる(同期する)には、
+@kbd{s} を押します。
+
+@kbd{N} で次の未読、@kbd{n} で次のメッセージを表示します。
+@kbd{j} を押すと現在表示中のメッセージのバッファに移動します。
+マルチパートの操作はメッセージバッファに移動してから行います。
+
+@subsection スレッドの操作
+
+例えば、
+
+@example
+  384  09/17(木)01:32 [+1: てらにし       ] wl-0.6.2
+@end example
+
+@noindent
+は一つのスレッド(一つの話題の流れ)を示しています。
+この行で、@kbd{/} を押すとこのスレッドが開かれ、次のような表示になります。
+
+@example
+  384  09/17(木)01:32 [ てらにし          ] wl-0.6.2
+  388  09/17(木)22:34 └[ 村田さん          ]
+@end example
+
+(388 番のメッセージは 384 番のメッセージに対する返事です。)
+もう一回 @kbd{/} を押すと、スレッドを閉じます。
+prefix argument つきで @kbd{/} を押すと、全ての子スレッドを開きます。
+
+@kbd{t} から始まるコマンドで、そのスレッドに属するメッセージに対して一括して処理を行うことができます。
+
+@subsection キャッシュファイル
+
+ネットワーク経由のメッセージはキャッシュされます。
+キャッシュは、ディレクトリ @file{~/.elmo/cache} に保持されます。
+キャッシュをクリアするには、
+
+@example
+M-x elmo-cache-expire-by-size
+@end example
+
+@noindent
+と入力してください。
+最近使われてないキャッシュから順に、一定のディスク容量になるまで消します。
+
+@subsection バッファキャッシュと先読み機能
+
+@code{elmo-use-buffer-cache} が non-nil であれば、
+一度読んだメッセージが一定数バッファに保持されます。
+保持するバッファの数は @code{elmo-buffer-cache-size} で指定します。
+
+また、メッセージを読んでいる間に次のメッセージを取得しておく
+先読み機能があります。
+これは先読みしたメッセージをバッファキャッシュにためておくため、
+@code{elmo-use-buffer-cache} が non-nil であることが必要です。
+
+この先読みするフォルダは次の2つの変数により指定できます。
+
+@table @code
+@item wl-cache-prefetch-folder-type-list
+@vindex wl-cache-prefetch-folder-type-list
+初期設定は '(nntp imap4)。
+先読み機能を有効にするフォルダを種別のリストで指定します。
+初期設定の場合、もし localdir と imap4 フォルダが混在した multiフォルダでは 
+imap4 のメッセージだけが先読みされます。
+この変数は @code{wl-cache-prefetch-folder-list} よりも優先されます。
+
+もし、localdir と localnews フォルダも先読みする場合は次のように指定します。
+@lisp
+(setq wl-cache-prefetch-folder-type-list
+      '(nntp imap4 localdir localnews))
+@end lisp
+
+@item wl-cache-prefetch-folder-list
+@vindex wl-cache-prefetch-folder-list
+初期設定は nil。
+先読み機能を有効にするフォルダをフォルダ名(正規表現)のリストで指定します。
+@end table
+
+@subsection 自動リファイル
+
+メッセージのヘッダ情報から任意のフォルダへ振り分ける自動リファイル機能が
+@kbd{C-o} (@code{wl-summary-auto-refile}) で使用できます。自動リファイルは 
+msgdb の overview 情報を元に振り分けします。
+標準では @samp{From} @samp{Subject} @samp{To} @samp{Cc} が含まれています。
+これ以外の拡張項目で振り分けしたいときには、
+
+@lisp
+(setq elmo-msgdb-extra-fields
+      '("x-ml-name"
+      "reply-to"
+      "sender"
+      "mailing-list"
+      "newsgroups"))
+@end lisp
+
+@noindent
+として拡張項目が msgdb に含まれるようにしてください。すでに取得したメッ
+セージの拡張項目を取り込むには @kbd{s all} などで msgdb を再作成する必要
+があります。
+
+次に振り分けするルールを設定します。
+
+@lisp
+(setq wl-refile-rule-alist
+      '(
+        ("x-ml-name"
+         ("^Wanderlust" . "+wl")
+         ("^Elisp" . "+elisp"))
+        ("From"
+         ("teranisi@@isl.ntt.co.jp" . "+teranisi"))))
+@end lisp
+
+このような設定をし @kbd{C-o} (@code{wl-summary-auto-refile}) で条件に
+マッチしたメッセージにリファイルマークが付加されます。@kbd{x} でリファイ
+ルを実行します。ルールの前方にある振り分け条件が優先されます。
+
+@code{wl-summary-auto-refile-skip-marks} を設定することにより、
+自動リファイルの対象とするメッセージを変更することができます。
+標準では @samp{N} @samp{U} @samp{!} が設定されており、
+これらの永続的マークのついたメッセージは、自動リファイルしません。
+つまり標準では未読のメッセージを自動リファイルしないことになります。
+すべてのメッセージを自動リファイルの対象にするには、
+
+@lisp
+(setq wl-summary-auto-refile-skip-marks nil)
+@end lisp
+
+@noindent
+の様に @code{wl-summary-auto-refile-skip-marks} を nil にします。
+
+
+@subsection スティッキーサマリ
+@cindex Summary, Sticky
+@cindex Sticky Summary
+
+スティッキーサマリは、@kbd{q} で現在のサマリを終了してもバッファが消えな
+い、その名の通りスティッキー(しつこい)サマリです。
+
+@kbd{C-u g} でフォルダ移動するか、通常のサマリで @kbd{M-s}
+(@code{wl-summary-stick}) を実行するとステッィキーサマリになります。ス
+ティッキーサマリのバッファ名は、@samp{Summary:@var{フォルダ名}} となります。
+@kbd{C-x b} (@code{switch-to-buffer}) などで、適当に切替えればいつでも参
+照できます。スティッキーサマリを終了するには @kbd{C-u q} です。その他の
+操作に関しては通常のサマリと同様です。
+
+変数 @code{wl-summary-always-sticky-folder-list} にフォルダ名(正規表現)
+のリストを設定することにより、フォルダ移動時に自動的にスティッキーサマリとすることもできます。
+
+@section キーバインド
+@cindex Keybind, Summary Mode
+@cindex Keybind, Summary Buffer
+
+サマリモードのキーバインドは以下の通りです。
+
+@table @kbd
+@item @key{SPC}
+@kindex @key{SPC} (Summary)
+@findex wl-summary-read
+現在カーソルがある行のメッセージをメッセージバッファに表示します。
+(@code{wl-summary-read})
+
+@item .
+@kindex . (Summary)
+@findex wl-summary-redisplay
+現在カーソルがある行のメッセージを再表示します。
+prefix argument つきならばキャッシュが存在しても無視して再読み込みし直します。
+(@code{wl-summary-redisplay})
+
+@item <
+@kindex < (Summary)
+@findex wl-summary-display-top
+最初のメッセージを表示します。
+(@code{wl-summary-display-top})
+
+@item >
+@kindex > (Summary)
+@findex wl-summary-display-bottom
+最後尾のメッセージを表示します。
+(@code{wl-summary-display-bottom})
+
+@item @key{BS}
+@itemx @key{DEL}
+@kindex @key{BS} (Summary)
+@kindex @key{DEL} (Summary)
+前のページを表示します。
+@findex wl-summary-prev-page
+(@code{wl-summary-prev-page})
+
+@item @key{RET}
+@kindex @key{RET} (Summary)
+@findex wl-summary-next-line-content
+カーソル行のメッセージが表示中であればメッセージを一行上にスクロールします。
+表示中でなければ、表示します。
+(@code{wl-summary-next-line-content})
+
+@item /
+@kindex / (Summary)
+@findex wl-thread-open-close
+カーソル行のスレッドの開閉をトグルします。
+(@code{wl-thread-open-close})
+
+@item [
+@kindex [ (Summary)
+全てのスレッドを開きます。
+@findex wl-thread-open-all
+(@code{wl-thread-open-all})
+
+@item ]
+@kindex ] (Summary)
+全てのスレッドを閉じます。
+@findex wl-thread-close-all
+(@code{wl-thread-close-all})
+
+@item -
+@itemx M-@key{RET}
+@kindex - (Summary)
+@kindex M-@key{RET} (Summary)
+@findex wl-summary-prev-line-content
+カーソル行のメッセージが表示中であればメッセージを一行下にスクロールします。
+表示中でなければ、表示します。
+(@code{wl-summary-prev-line-content})
+
+@item g
+@kindex g (Summary)
+@findex wl-summary-goto-folder
+違うフォルダに移動します。
+(@code{wl-summary-goto-folder})
+
+@item c
+@kindex c (Summary)
+全てのメッセージを読んだことにします。
+@findex wl-summary-mark-as-read-all
+(@code{wl-summary-mark-as-read-all})
+
+@item a
+@kindex a (Summary)
+@findex wl-summary-reply
+現在カーソルがある行のメッセージへの返事用のドラフトを用意します。
+(@code{wl-summary-reply})
+
+@item A
+@kindex A (Summary)
+@findex wl-summary-reply-with-citation
+現在カーソルがある行のメッセージへの返事用のドラフトを本文を引用して用意します。
+(@code{wl-summary-reply-with-citation})
+
+@item C
+@kindex C (Summary)
+@findex wl-summary-cancel-message
+現在のカーソルがある行のメッセージが自分が出したニュース記事の場合、その投稿をキャンセルします。
+(@code{wl-summary-cancel-message})
+
+@item E
+@kindex E (Summary)
+@findex wl-summary-reedit
+現在カーソルがある行のメッセージの内容をもつドラフトを用意します。
+もし、prefix argument つきで実行すれば Supersedes メッセージを作成します。
+ただし、NNTP フォルダでかつ自分が投稿したメッセージに限ります。
+(@code{wl-summary-reedit})
+
+@item M-e
+@kindex M-e (Summary)
+@findex wl-summary-resend-bounced-mail
+カーソル行のメッセージが、自分のところに返ってきたエラーメッセージならば、
+もう一回送るためのドラフトを用意します。
+(@code{wl-summary-resend-bounced-mail})
+
+@item f
+@kindex f (Summary)
+@findex wl-summary-forward
+現在カーソルがある行のメッセージを他の人に転送するドラフトを用意します。
+(@code{wl-summary-forward})
+
+@item $
+@kindex $ (Summary)
+@findex wl-summary-mark-as-important
+@samp{$} マークをつけます。すでに @samp{$} マークがあれば削除します。
+(@code{wl-summary-mark-as-important})
+
+@item y
+@itemx e
+@kindex y (Summary)
+@kindex e (Summary)
+現在カーソルがある行のメッセージを保存します。
+@findex wl-summary-save
+(@code{wl-summary-save})
+
+@item n
+@kindex n (Summary)
+@findex wl-summary-next
+一つ下のメッセージへ移動します。
+(@code{wl-summary-next})
+
+@item p
+@kindex p (Summary)
+@findex wl-summary-prev
+一つ上のメッセージへ移動します。
+(@code{wl-summary-prev})
+
+@item N
+@kindex N (Summary)
+@findex wl-summary-down
+下方向にある未読もしくは @samp{$}マークつきのメッセージへ移動します。
+(@code{wl-summary-down})
+
+@item P
+@kindex P (Summary)
+@findex wl-summary-up
+上方向にある未読もしくは @samp{$}マークつきのメッセージへ移動します。
+(@code{wl-summary-up})
+
+@item w
+@kindex w (Summary)
+@findex wl-draft
+新規ドラフトを用意します。
+(@code{wl-draft})
+
+@item W
+@kindex W (Summary)
+@findex wl-draft-write-current-newsgroup
+現在のサマリがニュースグループの場合、Newsgroups:フィールドを補って
+ドラフトを用意します。
+(@code{wl-draft-write-current-newsgroup})
+
+@item H
+@kindex H (Summary)
+@findex wl-summary-redisplay-all-header
+現在カーソルがある行のメッセージを、すべてのヘッダ情報とともに表示します。
+(@code{wl-summary-redisplay-all-header})
+
+@item M
+@kindex M (Summary)
+@findex wl-summary-redisplay-no-mime
+現在カーソルがある行のメッセージを、MIME 解析することなく表示します。
+(@code{wl-summary-redisplay-no-mime})
+
+@item B
+@kindex B (Summary)
+@findex wl-summary-burst
+現在カーソルがある行のメッセージが
+MIME でカプセル化された複数のメッセージ含む場合、
+それらを現在のフォルダにほどきます(未実装)。
+(@code{wl-summary-burst})
+
+@item @@
+@kindex @@ (Summary)
+@findex wl-summary-edit-petname
+サマリ行のメールのFrom(発信者)を @file{~/.addresses} にインタラクティブに追加します。
+すでに登録されている場合は変更/削除もできます。
+prefix argument つきで実行すると、任意の入力アドレスを登録/変更/削除できます。
+(@code{wl-summary-edit-petname})
+
+@item Z
+@kindex Z (Summary)
+@findex wl-status-update
+@file{~/.addresses} 等の状態を最新のものに更新します。
+(@code{wl-status-update})
+
+@item |
+@kindex | (Summary)
+@findex wl-summary-pipe-message
+現在のメッセージの内容を他のプロセスにパイプ経由で引き渡します。
+(@code{wl-summary-pipe-message})
+
+@item #
+@kindex # (Summary)
+@findex wl-summary-print-message
+現在のメッセージの内容を印刷します。
+Emacs20 〜 では ps-print を使います。
+白黒プリンタでは、@code{wl-ps-print-buffer-func} を
+'ps-print-buffer に設定したほうがよいかもしれません。
+(@code{wl-summary-print-message})
+
+@item q
+@kindex q (Summary)
+@findex wl-summary-exit
+現在のフォルダを脱出します。
+(@code{wl-summary-exit})
+
+@item j
+@kindex j (Summary)
+@findex wl-summary-jump-to-current-message
+現在表示中のメッセージのバッファに移動します。
+(@code{wl-summary-jump-to-current-message})
+
+@item J
+@kindex J (Summary)
+ほかのメッセージにジャンプします。
+@findex wl-summary-jump-to-msg
+(@code{wl-summary-jump-to-msg})
+
+@item I
+@kindex I (Summary)
+サマリの表示を更新したあと、
+@code{wl-summary-incorporate-marks} に含まれるマークを持つメッセージを
+プリフェッチします。
+@findex wl-summary-incorporate
+(@code{wl-summary-incorporate})
+
+@item M-j
+@kindex M-j (Summary)
+@findex wl-summary-jump-to-msg-by-message-id
+入力したメッセージID をもつメッセージの行にジャンプします。
+@code{elmo-use-database} が non-nilなら、現在のサマリ以外からも
+候補を検索します。
+(@code{wl-summary-jump-to-msg-by-message-id})
+
+@item ^
+@kindex ^ (Summary)
+現在のメッセージの親メッセージに移動します。
+@findex wl-summary-jump-to-parent-message
+(@code{wl-summary-jump-to-parent-message})
+
+@item !
+@kindex ! (Summary)
+@findex wl-summary-mark-as-unread
+カーソルがある行のメッセージを読まなかったことにします。
+(@code{wl-summary-mark-as-unread})
+
+@item s
+@kindex s (Summary)
+@findex wl-summary-sync
+メッセージの一覧表示の更新レンジ(all, update, rescan, first, last)の入力を受け付けたのち、それにもとづいてメッセージの一覧表示を更新します。
+
+@example
+all            ...すべて更新
+update         ...現在の表示を更新
+rescan         ...現在の msgdb の内容を再表示
+rescan-noscore ...現在の msgdb の内容を再表示(スコアなし)
+first, last    ...フィルタフォルダに移動
+@end example
+
+@noindent
+(@code{wl-summary-sync})
+
+@item S
+@kindex S (Summary)
+@findex wl-summary-sort
+サマリの表示順序を並び変えます。
+Date(日付) From(発信者) Number(メッセージ番号) Subject(サブジェクト) のいずれかを元に並び変えます。
+(@code{wl-summary-sort})
+
+@item T
+@kindex T (Summary)
+@findex wl-summary-toggle-thread
+スレッド表示をトグルします。
+(@code{wl-summary-toggle-thread})
+
+@item l
+@kindex l (Summary)
+@findex wl-summary-toggle-disp-folder
+フォルダモードのバッファの表示をトグルします。
+(@code{wl-summary-toggle-disp-folder})
+
+@item v
+@kindex v (Summary)
+メッセージのバッファの表示をトグルします。
+@findex wl-summary-toggle-disp-msg
+(@code{wl-summary-toggle-disp-msg})
+
+@item V
+@kindex V (Summary)
+与えられた条件を持つメッセージのみをもつ仮想フォルダへ移動します。
+prefix argument つきで実行すると仮想フォルダから脱出します。
+@findex wl-summary-virtual
+(@code{wl-summary-virtual})
+
+@item @key{TAB}
+@kindex @key{TAB} (Summary)
+@findex wl-summary-goto-last-displayed-msg
+さっき表示したメッセージに飛びます。
+(@code{wl-summary-goto-last-displayed-msg})
+
+@item ?
+@kindex ? (Summary)
+与えられた条件を持つメッセージにまとめ処理マーク @samp{*} をつけます。
+@findex wl-summary-pick
+(@code{wl-summary-pick})
+
+@item R
+@kindex R (Summary)
+@findex wl-summary-mark-as-read
+カーソル行のメッセージを読んだことにします。
+(@code{wl-summary-mark-as-read})
+
+@item i
+@kindex i (Summary)
+カーソル行のメッセージをプリフェッチします。
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item x
+@kindex x (Summary)
+すべての @samp{D}, @samp{o}, @samp{O} マークを実行します。
+@findex wl-summary-exec
+(@code{wl-summary-exec})
+
+@item *
+@kindex * (Summary)
+@findex wl-summary-target-mark-line
+カーソル行のメッセージにまとめ処理用マークをつけます。
+(@code{wl-summary-target-mark-line})
+
+@item o
+@kindex o (Summary)
+カーソル行のメッセージにリファイルマークをつけます。
+@findex wl-summary-refile
+(@code{wl-summary-refile})
+
+@item C-o
+@kindex C-o (Summary)
+自動リファイルを実行します。
+@findex wl-summary-auto-refile
+(@code{wl-summary-auto-refile})
+
+@item O
+@kindex O (Summary)
+カーソル行のメッセージにコピーマークをつけます。
+@findex wl-summary-copy
+(@code{wl-summary-copy})
+
+@item M-o
+@kindex M-o (Summary)
+カーソル行のメッセージに、直前にリファイルしたフォルダと同じフォルダ宛に、
+リファイルマークをつけます。
+@findex wl-summary-refile-prev-destination
+(@code{wl-summary-refile-prev-destination})
+
+@item d
+@kindex d (Summary)
+@findex wl-summary-delete
+カーソル行のメッセージに削除マークをつけます。
+(@code{wl-summary-delete})
+
+@item u
+@kindex u (Summary)
+@findex wl-summary-unmark
+カーソル行のメッセージにマークがあれば削除します。
+(@code{wl-summary-unmark})
+
+@item U
+@kindex U (Summary)
+指定したマークをすべて削除します。
+@findex wl-summary-unmark-all
+(@code{wl-summary-unmark-all})
+
+@item r R
+@kindex r R (Summary)
+@findex wl-summary-mark-as-read-region
+指定リージョンにあるメッセージを全て読んだことにします。
+(@code{wl-summary-mark-as-read-region})
+
+@item r $
+@kindex r $ (Summary)
+@findex wl-summary-mark-as-important-region
+指定リージョンにあるメッセージ全てに @samp{$} マークをつけます。
+すでに @samp{$} マークがあれば削除します。
+(@code{wl-summary-mark-as-important-region})
+
+@item r !
+@kindex r ! (Summary)
+@findex wl-summary-mark-as-unread-region
+指定リージョンにあるメッセージを全て読まなかったことにします。
+(@code{wl-summary-mark-as-unread-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+指定リージョンにあるメッセージを全てプリフェッチします。
+(@code{wl-summary-prefetch-region})
+
+@item r x
+@kindex r x (Summary)
+@findex wl-summary-exec-region
+指定リージョンにあるメッセージについた @samp{D}, @samp{o}, @samp{O} マークを実行します。
+(@code{wl-summary-exec-region})
+
+@item r *
+@kindex r * (Summary)
+@findex wl-summary-target-mark-region
+指定リージョンにあるメッセージにまとめ処理用マークをつけます。
+(@code{wl-summary-target-mark-region})
+
+@item r o
+@kindex r o (Summary)
+@findex wl-summary-refile-region
+指定リージョンにあるメッセージにリファイルマークをつけます。
+(@code{wl-summary-refile-region})
+
+@item r O
+@kindex r O (Summary)
+@findex wl-summary-copy-region
+指定リージョンにあるメッセージにコピーマークをつけます。
+(@code{wl-summary-copy-region})
+
+@item r d
+@kindex r d (Summary)
+@findex wl-summary-delete-region
+指定リージョンにあるメッセージに削除マークをつけます。
+(@code{wl-summary-delete-region})
+
+@item r u
+@kindex r u (Summary)
+@findex wl-summary-unmark-region
+指定リージョンにあるメッセージにマークがあれば削除します。
+(@code{wl-summary-unmark-region})
+
+@item r y
+@kindex r y (Summary)
+指定リージョンにあるメッセージを保存します。
+現在カーソルがある行の
+@findex wl-summary-save-region
+(@code{wl-summary-save-region})
+
+@item t R
+@kindex t R (Summary)
+@findex wl-thread-mark-as-read
+カーソル行があるメッセージを先頭とするスレッドを読んだことにします。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てを読んだことにします。
+(@code{wl-thread-mark-as-read})
+
+@item t $
+@kindex t $ (Summary)
+@findex wl-thread-mark-as-important
+カーソル行があるメッセージを先頭とするスレッドに @samp{$} マークをつけます。
+すでに @samp{$} マークがあれば削除します。
+prefix argument つきならばカーソル行があるメッセージを含むスレッドに
+@samp{$} マークをつけるか削除するかします。
+(@code{wl-thread-mark-as-important})
+
+@item t !
+@kindex t ! (Summary)
+@findex wl-thread-mark-as-unread
+カーソル行があるメッセージを先頭とするスレッドを読まなかったことにします。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てを読まなかったことにします。
+(@code{wl-thread-mark-as-unread})
+
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+カーソル行があるメッセージを先頭とするスレッドをプリフェッチします。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てをプリフェッチします。
+(@code{wl-thread-prefetch})
+
+@item t x
+@kindex t x (Summary)
+@findex wl-thread-exec
+カーソル行があるメッセージを先頭とするスレッドについた @samp{D}, @samp{o}, @samp{O} マークを実行します。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てについた @samp{D}, @samp{o}, @samp{O} マークを実行します。
+(@code{wl-thread-exec})
+
+@item t *
+@kindex t * (Summary)
+@findex wl-thread-target-mark
+カーソル行があるメッセージを先頭とするスレッドにまとめ処理用マークをつけます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てにまとめ処理用マークをつけます。
+(@code{wl-thread-target-mark})
+
+@item t o
+@kindex t o (Summary)
+@findex wl-thread-refile
+カーソル行があるメッセージを先頭とするスレッドにリファイルマークをつけます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てにリファイルマークをつけます。
+(@code{wl-thread-refile})
+
+@item t O
+@kindex t O (Summary)
+@findex wl-thread-copy
+カーソル行があるメッセージを先頭とするスレッドにコピーマークをつけます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てにコピーマークをつけます。
+(@code{wl-thread-copy})
+
+@item t d
+@kindex t d (Summary)
+@findex wl-thread-delete
+カーソル行があるメッセージを先頭とするスレッドに削除マークをつけます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに削除マークをつけます。
+(@code{wl-thread-delete})
+
+@item t u
+@kindex t u (Summary)
+@findex wl-thread-unmark
+カーソル行があるメッセージを先頭とするスレッドのメッセージにマークがあれば削除します。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全体のメッセージにマークがあれば削除します。
+(@code{wl-thread-unmark})
+
+@item t y
+@kindex t y (Summary)
+@findex wl-thread-save
+カーソル行があるメッセージを先頭とするスレッドを保存します。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てを保存します。
+(@code{wl-thread-save})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+まとめ処理用マーク @samp{*} のついたメッセージを全てプリフェッチします。
+(@code{wl-summary-target-mark-prefetch})
+
+@item m R
+@kindex m R (Summary)
+@findex wl-summary-target-mark-mark-as-read
+まとめ処理用マーク @samp{*} のついたメッセージを読んだことにします。
+(@code{wl-summary-target-mark-mark-as-read})
+
+@item m $
+@kindex m $ (Summary)
+@findex wl-summary-target-mark-mark-as-important
+まとめ処理用マーク @samp{*} のついたメッセージに @samp{$} マークをつけます。
+すでに @samp{$} マークがあれば削除します。
+(@code{wl-summary-target-mark-mark-as-important})
+
+@item m !
+@kindex m ! (Summary)
+@findex wl-summary-target-mark-mark-as-unread
+まとめ処理用マーク @samp{*} のついたメッセージを読まなかったことにします。
+(@code{wl-summary-target-mark-mark-as-unread})
+
+@item m o
+@kindex m o (Summary)
+@findex wl-summary-target-mark-refile
+まとめ処理用マーク @samp{*} のついたメッセージにリファイルマークをつけます。
+(@code{wl-summary-target-mark-refile})
+
+@item m O
+@kindex m O (Summary)
+@findex wl-summary-target-mark-copy
+まとめ処理用マーク @samp{*} のついたメッセージにコピーマークをつけます。
+(@code{wl-summary-target-mark-copy})
+
+@item m d
+@kindex m d (Summary)
+@findex wl-summary-target-mark-delete
+まとめ処理用マーク @samp{*} のついたメッセージに削除マークをつけます。
+(@code{wl-summary-target-mark-delete})
+
+@item m y
+@kindex m y (Summary)
+@findex wl-summary-target-mark-save
+まとめ処理用マーク @samp{*} のついたメッセージを保存します。
+(@code{wl-summary-target-mark-save})
+
+@item m u
+@kindex m u (Summary)
+全ての一時的マークを消します。
+(@code{wl-summary-delete-all-temp-marks})
+@findex wl-summary-delete-all-temp-marks
+
+@item m a
+@kindex m a (Summary)
+全てにまとめ処理用マーク @samp{*} を付けます。
+(@code{wl-summary-target-mark-all})
+@findex wl-summary-target-mark-all
+
+@item m t
+@kindex m t (Summary)
+まとめ処理用マーク @samp{*} を現在のスレッドにつけます。
+@findex wl-summary-target-mark-thread
+(@code{wl-summary-target-mark-thread})
+
+@item m r
+@kindex m r (Summary)
+@findex wl-summary-target-mark-region
+指定されたリージョンにまとめ処理用マーク @samp{*} をつけます。
+(@code{wl-summary-target-mark-region})
+
+@item m A
+@kindex m A (Summary)
+@findex wl-summary-target-mark-reply-with-citation
+まとめ処理用マーク @samp{*} のついたメッセージを引用して返事を書くドラフト
+を用意します。
+(@code{wl-summary-target-mark-reply-with-citation})
+
+@item m f
+@kindex m f (Summary)
+@findex wl-summary-target-mark-forward
+まとめ処理用マーク @samp{*} のついたメッセージをフォワードするドラフトを
+用意します。
+(@code{wl-summary-target-mark-forward})
+
+@item m U
+@kindex m U (Summary)
+@findex wl-summary-target-mark-uudecode
+まとめ処理用マーク @samp{*} のついたメッセージをまとめて uudecode します。
+(@code{wl-summary-target-mark-uudecode})
+
+@item m ?
+@kindex m ? (Summary)
+@findex wl-summary-target-mark-pick
+まとめ処理用マーク @samp{*} のついたメッセージのなかで、
+条件にマッチするメッセージの @samp{*} マークのみを残します。
+(@code{wl-summary-target-mark-pick})
+
+@item M-t
+@kindex M-t (Summary)
+@findex wl-toggle-plugged
+Wanderlust のオフラインモード/オンラインモードをトグルします。
+(@code{wl-toggle-plugged})
+
+@item C-t
+@kindex C-t (Summary)
+Wanderlust のサーバ・ポート別のオフライン/オンラインを変更します。
+(@code{wl-plugged-change})
+
+@item C-c C-o
+@kindex C-c C-o (Summary)
+@findex wl-jump-to-draft-buffer
+ドラフトバッファがあれば移動します。 複数のドラフトバッファが存在する場合は、
+次々と切り替えていきます。また、prefix argument をつけることにより、
+バッファが存在していない場合は、ドラフトフォルダからファイルを(存在すれば)
+読み込みます。
+(@code{wl-jump-to-draft-buffer})
+@end table
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-summary-move-order
+@vindex wl-summary-move-order
+初期設定は 'unread。
+メッセージを読み進めるときに、何を優先するかを指定します。
+新規メッセージを優先したいときは 'new を設定します。
+未読をメッセージを優先したいときは 'unread を設定します。
+nil なら単純に次のメッセージに進みます。
+
+@item wl-auto-select-first
+@vindex wl-auto-select-first
+初期設定は nil。
+Non-nil ならフォルダに移動した時に最初のメッセージを自動的に表示します。
+
+@item wl-auto-select-next
+@vindex wl-auto-select-next
+初期設定は nil。
+Non-nil なら、あるフォルダのサマリから次のフォルダのサマリへ自動的に移動します。
+値が 'unread なら、確認を求めて未読メッセージがないフォルダに移動します。
+値が 'skip-no-unread なら、未読メッセージがないフォルダを自動的に飛ばします。
+
+@item wl-thread-insert-opened
+@vindex wl-thread-insert-opened
+初期設定は nil。
+Non-nil なら最初から thread が開かれた状態でサマリに表示されます。
+
+@item wl-thread-open-reading-thread
+@vindex wl-thread-open-reading-thread
+初期設定は t。
+Non-nil なら、閉じた状態の thread へ移動した時に自動的に thread を開きます。
+
+@item wl-summary-exit-next-move
+@vindex wl-summary-exit-next-move
+初期設定は t。
+Non-nil なら、サマリを終了するときに次のフォルダに移動します。
+
+@item wl-folder-move-cur-folder
+@vindex wl-folder-move-cur-folder
+初期設定は nil。
+Non-nil ならサマリで他のフォルダに移動するとフォルダモードでのカーソル位置も合わせて移動します。
+
+@item wl-summary-weekday-name-lang
+@vindex  wl-summary-weekday-name-lang
+初期設定は "ja"。
+サマリの曜日表示の言語を指定します。
+"en" なら英語、"fr" ならフランス語、"de" ならドイツ語となります。
+
+@item wl-summary-fix-timezone
+@vindex  wl-summary-fix-timezone
+初期設定は "JST"。
+サマリの日時表示を指定したタイムゾーンに直します。
+nil なら GMT に直します。
+
+@item wl-use-petname
+@vindex  wl-use-petname
+初期設定は t。
+Non-nil ならサマリの From 部分にあだ名を表示します。
+
+@item wl-break-pages
+@vindex  wl-break-pages
+初期設定は t。
+Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
+
+@item wl-message-window-size
+@vindex  wl-message-window-size
+初期設定は '(1 . 4)。
+サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を cons で指定します。car:cdr が サマリ:メッセージ です。
+
+@item wl-summary-recenter
+@vindex  wl-summary-recenter
+初期設定は t。
+Non-nil ならば表示したときに表示中のメッセージのサマリ行を
+ウィンドウの中央付近に移動させます。
+
+@item wl-summary-indent-length-limit
+@vindex  wl-summary-indent-length-limit
+初期設定は 46。
+設定された値以上サマリを indent しません。
+nil ならサマリの indent を無制限にします。
+
+@item wl-summary-no-from-message
+@vindex  wl-summary-no-from-message
+初期設定は "nobody@@nowhere?"。
+メッセージに From: が無かった場合にサマリに表示する文字列です。
+
+@item wl-summary-no-subject-message
+@vindex  wl-summary-no-subject-message
+初期設定は "(WL:No Subject in original.)"。
+メッセージに Subject: が無かった場合にサマリに表示する文字列です。
+
+@item wl-summary-width
+@vindex  wl-summary-width
+初期設定は 80。
+サマリの表示幅を設定された値に切り詰めます。
+nil なら表示幅を切り詰めません。
+
+@item wl-use-folder-petname
+@vindex  wl-use-folder-petname
+初期設定は '(modeline)。
+petname を使用する場所(symbol)のリストを指定します。
+指定できる symbol は次の通りです。
+
+@table @code
+@item modeline
+サマリのモードラインを petname で表示します。
+@item ask-folder
+@code{wl-auto-select-next} が non-nil のとき、
+移動先フォルダを petname で表示します。
+@item read-folder
+@code{wl-summary-read-folder} におけるフォルダ入力の際、
+petname でも補完ができます。
+@end table
+
+@item wl-summary-move-direction-toggle
+@vindex  wl-summary-move-direction-toggle
+初期設定は t。
+Non-nil なら最後に実行された @kbd{p}, @kbd{P}, @kbd{n}, @kbd{N} の結果で、
+次のメッセージが上か下かを切り替える。
+読んでいる方向を意識したいときは t にするとよいでしょう。
+
+@item wl-from-width
+@vindex wl-from-width
+初期設定は 17。
+サマリの From 部分の表示幅です。
+
+@item wl-summary-divide-thread-when-subject-changed
+@vindex wl-summary-divide-thread-when-subject-changed
+初期設定は nil。
+Non-nil ならサブジェクトが変わったときにスレッドを切ります。
+
+@item wl-summary-search-via-nntp
+@vindex wl-summary-search-via-nntp
+初期設定は 'confirm。
+Non-nil なら @code{wl-summary-jump-to-msg-by-message-id} で、
+メッセージを見つけることができなかったときに、
+@code{wl-summary-jump-to-msg-by-message-id-via-nntp} を呼び、
+@code{elmo-default-nntp-server} で指定されたサーバから検索します。
+このとき @code{elmo-default-nntp-user}, @code{elmo-default-nntp-port}, 
+@code{elmo-default-nntp-ssl} で指定した条件でサーバと接続します。
+'confirm なら @code{elmo-default-nntp-*} で指定されたサーバから検索するか、
+サーバを指定するかを確認します。
+この場合、サーバのホスト名、もしくは @samp{-:username@@servername:119!}
+のように NTTPフォルダ形式での指定が可能です。
+
+@item wl-summary-keep-cursor-command
+@vindex wl-summary-keep-cursor-command
+初期設定は '(wl-summary-goto-folder wl-summary-goto-last-visited-folder)。
+すでに存在するサマリへ移動したときに更新せず、カーソル位置を保存する
+コマンドのリストです。
+
+@item wl-summary-update-confirm-threshold
+@vindex wl-summary-update-confirm-threshold
+初期設定は 500。
+この値よりサマリの更新数が多い場合、一部分だけ更新するかどうか、質問します。
+
+@item wl-summary-always-sticky-folder-list
+@vindex wl-summary-always-sticky-folder-list
+初期設定は nil。
+フォルダ名(正規表現)のリストを設定することにより、
+自動的にスティッキーサマリとするかどうかをフォルダ毎に指定します。
+
+@item wl-summary-reserve-mark-list
+@vindex wl-summary-reserve-mark-list
+初期設定は、'("o" "O" "D")。
+このリストにある一時マークは、消さないかぎり上書きされません。
+
+@item wl-summary-skip-mark-list
+@vindex wl-summary-skip-mark-list
+初期設定は、'("D")。
+このリストにある一時マークが付いたメッセージは、カーソル移動でスキップ
+されます。
+
+@item wl-fetch-confirm-threshold
+@vindex wl-fetch-confirm-threshold
+初期設定は 30000 (bytes)。@code{wl-fetch-confirm-threshold} を越えるサイズの
+メッセージを表示する時は、確認を求めます。nil にすると、確認せずに表示します。
+
+@item wl-prefetch-threshold
+@vindex wl-prefetch-threshold
+初期設定は 30000 (bytes)。@code{wl-prefetch-threshold} を越えるサイズの
+メッセージは、@code{wl-prefetch-confirm} が non-nil の場合、
+プリフェッチ時に確認を求めます。@code{wl-prefetch-threshold}を nil にすると、
+@code{wl-prefetch-confirm} の値にかかわらずプリフェッチを実行します。
+
+@item wl-prefetch-confirm
+@vindex wl-prefetch-confirm
+初期設定は t。Non-nil ならば @code{wl-prefetch-threshold} を越えるサイズの
+メッセージをプリフェッチしようとしたときに、確認を求めます。
+
+@item wl-cache-fetch-threshold
+@vindex wl-cache-fetch-threshold
+初期設定は 30000 (bytes)。@code{wl-fetch-confirm-threshold} を越えるサイズの
+メッセージは、メッセージの先読みを実行しません。
+nil にすると、どんな大きさのメッセージでも先読みを実行します。
+
+@item elmo-imap4-use-cache
+@vindex elmo-imap4-use-cache
+初期設定は t。Non-nil なら、IMAP4 で読んだメッセージをキャッシュします。
+
+@item elmo-nntp-use-cache
+@vindex elmo-nntp-use-cache
+初期設定は t。Non-nil なら、NNTP で読んだメッセージをキャッシュします。
+
+@item elmo-pop3-use-cache
+@vindex elmo-pop3-use-cache
+初期設定は t。Non-nil なら、POP3 で読んだメッセージをキャッシュします。
+@end table
+
+
+@c
+@c  Message
+@c
+@node Message, Draft, Summary, Top
+@chapter メッセージバッファ
+
+メッセージバッファは SEMI/tm の MIME-View mode です。
+操作の方法、キーバインドはそれぞれのドキュメントを参照してください。
+@xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+
+メッセージの先頭で @kbd{p}、メッセージの最後尾で @kbd{n} を押すと、
+サマリモードに戻ります。
+また、@kbd{l} を押すと、サマリモードバッファの表示がトグルされます。
+
+@section キーバインド
+@cindex Keybind, Message Mode
+@cindex Keybind, Message Buffer
+
+@table @kbd
+@item l
+@kindex l (Message)
+@findex wl-message-toggle-disp-summary
+サマリモードバッファを表示するかどうかをトグルします。
+(@code{wl-message-toggle-disp-summary})
+
+@item Button-2
+@findex wl-message-refer-article-or-url
+@kindex Button-2 (Message)
+マウスポインタの位置に Message-ID があったときに対応するメッセージが
+見つかれば表示します。
+(@code{wl-message-refer-article-or-url})
+
+@item Button-4 (ホイールつきマウスのホイールを上へ)
+@kindex Button-4 (Message)
+@findex wl-message-wheel-down
+メッセージを上にスクロールします。メッセージの末尾まで到達すると、
+次のメッセージに移動します。
+(@code{wl-message-wheel-down})
+
+@item Button-5 (ホイールつきマウスのホイールを下へ)
+@kindex Button-5 (Message)
+@findex wl-message-wheel-up
+メッセージを上にスクロールします。メッセージの先頭まで到達すると、
+前のメッセージに移動します。
+(@code{wl-message-wheel-up})
+@end table
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-message-window-size
+@vindex wl-message-window-size
+初期設定は @code{'(1 . 4)}。cons セルで、car 値: cdr 値が
+サマリのウィンドウ幅：メッセージのウィンドウ幅となります。
+@end table
+
+
+@c
+@c  Draft
+@c
+@node Draft, Disconnected Operations, Message, Top
+@chapter ドラフトバッファ
+
+サマリモードで @kbd{w} を押す等することにより新規ドラフトバッファが
+用意されます。このバッファでメール、ニュース記事の(新規)編集、送信を行います。
+
+@section 使い方(TIPS)
+
+基本は Emacs 標準のメールモードです。
+
+@subsection アドレスの補完
+
+初期状態では To: にカーソルがあります。
+送信相手のアドレスを入力してください。@kbd{@key{TAB}} で補完します。
+
+ニュース記事として出したい場合は、Newsgroups: フィールドを自分で書き加えてください。フィールド名は @kbd{@key{TAB}} で補完します。
+
+編集中のドラフトをセーブすると、@code{wl-draft-folder} に設定されたドラフトフォルダに追加されます。
+
+FCC: フィールドで送信したメッセージのコピーを保存しておくフォルダを指定することができます。
+
+@subsection メッセージの編集
+
+マルチパートの編集は SEMI/tm の MIME 編集モードを利用しています。
+編集の方法は各パッケージ付属のドキュメントを参照してください。
+@xref{Mail Methods, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+
+@subsection メッセージの動的な変更
+@vindex wl-draft-config-alist
+@c @cindex Chage Message
+@c @cindex Message, Chage Dynamic
+
+@code{wl-draft-config-alist} を設定することで、
+ヘッダやその他の情報により、自動的に他のヘッダや本文を変更すること
+ができます。
+
+変数 @code{wl-draft-config-alist} について説明します。
+この変数の初期設定は nilです。
+
+例えば以下のように設定すると、@code{wl-draft-send-and-exit} や
+@code{wl-draft-send} を実行した時にヘッダが変更されます。
+@code{wl-interactive-send} を non-nil に設定しておくと、送信前
+に変更点が確認できるので安心です。
+
+@lisp
+(setq wl-draft-config-alist
+      '(((string-match "aaa.ne.jp$" (system-name))
+         ;; @r{式がnon-nilなら適用する}
+         (wl-smtp-posting-server . "mailserver-B")
+         (wl-nntp-posting-server . "newsserver-B")
+         ;; @r{一時的な変数の設定}
+         )
+        ("^To: .*user@@aaa.bbb.com"
+         ;; @r{ドラフトバッファのヘッダにマッチすれば適用する}
+         ("Organization" . (format "Go %s" my-webpage)))
+                           ;; @r{elisp 式が書ける (eval しているだけ)}
+         (top . "  ○○です。\n")    ;; @r{本文先頭へ文字列を挿入します}
+         (bottom . "\n以上です。\n") ;; @r{本文末尾へ文字列を挿入します}
+        ))
+@end lisp
+
+@code{wl-draft-config-alist} は次の形式になっています。
+
+@example
+'(("ヘッダの正規表現" または elisp式
+   ("Field" . 値(elisp式))
+   (variable . 値(elisp式))
+   (サブ関数 . 値(elisp式))
+   関数
+   @dots{})
+  ("ヘッダの正規表現" または elisp式
+   ("Field" . 値(elisp式))
+   @dots{}))
+@end example
+
+[サブ関数]には、デフォルトで以下の10個が用意されています。
+
+@example
+'header:      ヘッダの末尾に指定した文字列を挿入します。
+'header-file: ヘッダの末尾に指定したファイルを挿入します。
+'x-face:      指定したファイルの内容をもつ "X-Face" フィールドを
+              挿入します。
+'top:         本文の先頭に指定した文字列を挿入します。
+'top-file:    本文の先頭に指定したファイルを挿入します。
+'body:        本文を指定した文字列に置き換えます。
+              nil を指定すると本文の文字列を削除します。
+'body-file:   本文を指定したファイルの内容で置き換えます。
+'bottom:      本文の末尾に指定した文字列を挿入します。
+'bottom-file: 本文の末尾に指定したファイルを挿入します。
+'template:    指定したテンプレートを適用します。
+              (次項 テンプレートの挿入参照)
+@end example
+
+また、これらは @code{wl-draft-config-sub-func-alist} に定義されて
+おり、変更したり自分で作った関数を追加することができます。関
+数の書き方はここで説明するより直接コードを見た方が分かりやす
+いでしょうから省略します。
+
+各要素の1番目には "ヘッダの正規表現" か elisp式 を指定します。elisp式の
+場合は評価した値がnon-nilの場合に適用されます。
+
+また、デフォルトでは複数の要素がマッチまたはnon-nilになった場合に、
+その全てが適用されますが、変数 @code{wl-draft-config-matchone} を
+t にすることで最初にマッチした1つだけを適用することもできます。
+
+要素の2番目には cons か関数の list を指定します。
+cons にはヘッダの Field か変数、サブ関数を指定し、
+Field を指定した場合はその Field を変更、
+変数を指定した場合は一時的にその変数値を変更します。
+
+値には string や変数の他、elisp式がそのまま記述でき、もし、Field の値が 
+nil ならばその Field を削除します。
+
+つづいて、次の例を見て下さい。
+
+@lisp
+(setq wl-draft-config-alist
+      '((reply                         ;; @r{(1)}
+         "X-ML-Name: \\(Wanderlust\\|emacs-mime-ja\\|apel-ja\\)"
+         ;; @r{返信元バッファのヘッダにマッチすれば適用する}
+         (body . "  こんにちは\n")
+         (template . "default")
+         )))
+@end lisp
+
+この例 (1)のように、ヘッダの正規表現の前に @code{reply} をつけると
+@code{wl-summary-reply} などでドラフトを作成した場合、
+返信元のヘッダにマッチすれば適用されるようになります。
+ただし、@code{wl-draft} を実行したときなど返信元のバッファがない場合は無
+視されます。
+
+注意点としては、
+この @code{wl-draft-config-alist} は、@code{wl-draft-send-and-exit} や 
+@code{wl-draft-send} を実行した時に一度だけ適用されることです。
+そのため、送信を取りやめた後に再度 @code{wl-draft-config-alist} を適用したい
+場合は、@kbd{C-c C-e} (@code{wl-draft-config-exec}) を実行してください。
+
+また、ドラフトバッファの作成時に自動的にこの 
+@code{wl-draft-config-alist} を適用したい場合は、次のように設定します。
+
+@lisp
+(add-hook 'wl-mail-setup-hook 'wl-draft-config-exec)
+@end lisp
+
+@subsection テンプレートの挿入
+@cindex Templete
+@cindex Apply Template
+
+変数 @code{wl-template-alist} を設定し、
+ドラフトバッファで
+@kbd{C-c C-j} もしくは @kbd{M-x wl-template-select}
+と入力することで適用します。
+@code{wl-template-alist} の書式は @code{wl-draft-config-alist} とほぼ同じです。
+
+@lisp
+(setq wl-template-alist
+      '(("default"
+         ("From" . wl-from)
+         ("Organization" . "~/.wl sample")
+         (body . "  ○○です。\n"))
+        ("report"
+         (template . "default")                 ;; @r{(a)}
+         ("To" . "jousi@@kaisha.jp")
+         ("Subject" . "報告")
+         (body-file . "~/work/report.txt")
+         )
+        ))
+@end lisp
+
+このようにヘッダの正規表現の代わりに "default" や "report" のように各
+要素の名前(テンプレート名)をつけるだけです。
+各要素の定義は @code{wl-draft-config-alist} と同じであるので、
+(a)のように別のテンプレートを呼ぶことも可能です。
+
+コマンド@code{wl-template-select}を実行すると、テンプレートの選択を行いますが、
+変数@code{wl-template-visible-select}により動作が異なります。
+
+@code{wl-template-visible-select} が t (デフォルト)の場合、
+ドラフトバッファの下に適用後のバッファウィンドウが表示されるので、
+それを見ながら @kbd{n} と @kbd{p} で選択します。
+そしてリターンキーで決定すると実際にドラフトバッファに適用され
+ます。@kbd{q} を押した場合なにも適用されません。なお、
+@code{wl-template-buffer-lines} でウィンドウの大きさが変更できます。
+
+@code{wl-template-visible-select} が nil の場合、ミニバッファでテンプレート名
+を入力することで選択します。
+
+また、@code{wl-draft-config-alist} の例のように例えば
+
+@example
+(template . "default")
+@end example
+
+@noindent
+と書くことで "default" のテンプレートを適用することができます。
+
+@subsection POP-before-SMTPによるメールの送信
+@cindex POP-before-SMTP
+
+POP-before-SMTPによるメールの送信ができます。
+設定は、
+
+@lisp
+(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
+@end lisp
+
+@noindent
+の1行のみですが、必要に応じて以下の変数を設定してください。
+
+@table @code
+@item wl-pop-before-smtp-user
+POP-before-SMTP で認証を行なうときのPOPユーザ名です。
+設定されていない場合は @code{elmo-default-pop3-user} が使われます。
+
+@item wl-pop-before-smtp-server
+POP-before-SMTP で認証を行なうときのPOPサーバ名です。
+設定されていない場合は @code{elmo-default-pop3-server} が使われます。
+
+@item wl-pop-before-smtp-authenticate-type
+POP-before-SMTP で認証を行なうときのPOP認証方式です。
+設定されていない場合は @code{elmo-default-pop3-authenticate-type}
+が使われます。
+
+@item wl-pop-before-smtp-port
+POP-before-SMTP で認証を行なうときのPOPポート番号です。
+設定されていない場合は  @code{elmo-default-pop3-port} が使われます。
+
+@item wl-pop-before-smtp-ssl
+Non-nil なら SSL を利用して POPコネクションを張ります。
+'starttlsならSTARTTLS (RFC2595)を利用してコネクションが張られます。
+設定されていない場合は @code{elmo-default-pop3-ssl} が使われます。
+@end table
+
+POP-before-SMTP用の変数 (@code{wl-pop-before-smtp-*})
+が設定されていない場合は、
+POP フォルダの設定 (@code{elmo-default-pop3-*}) が用いられます。
+そのため、SMTPサーバとPOPサーバの実体が同じで、
+デフォルト設定のPOPフォルダ(@samp{&} など)が利用可能なら、
+設定は不要です。
+
+なお、POP-before-SMTPについては以下を参照してください。
+
+@example
+http://spam.ayamura.org/tools/smPbS.html
+http://www.iecc.com/pop-before-smtp.html
+@end example
+
+@section キーバインド
+@cindex Keybind, Draft Mode
+@cindex Keybind, Draft Buffer
+
+@table @kbd
+@item C-c C-y
+@kindex C-c C-y (Draft)
+@findex wl-draft-yank-original
+現在表示中のメッセージバッファの内容を引用します。
+(@code{wl-draft-yank-original})
+
+@item C-c C-p
+@kindex C-c C-p (Draft)
+@findex wl-draft-preview-message
+現在のドラフトの内容をプレビューします。
+MIME のマルチパートメッセージの確認に使うと便利です。
+(@code{wl-draft-preview-message})
+
+@item C-c C-s
+@kindex C-c C-s (Draft)
+@findex wl-draft-send
+現在のドラフトの内容を送信します。ドラフトバッファは消去しません。
+複数の人に少しずつ内容を変えてメッセージを送りたい場合に便利です。
+(@code{wl-draft-send})
+
+@item C-c C-c
+@kindex C-c C-c (Draft)
+@findex wl-draft-send-and-exit
+現在のドラフトの内容を送信し、ドラフトバッファを消去します。
+(@code{wl-draft-send-and-exit})
+
+@item C-x C-s
+@kindex C-x C-s (Draft)
+@findex wl-draft-save
+現在のドラフトをセーブします。
+(@code{wl-draft-save})
+
+@item C-c C-k
+@kindex C-c C-k (Draft)
+@findex wl-draft-kill
+現在のドラフトを破棄します。
+セーブしていた場合、@samp{+draft} フォルダからも削除されます。
+(@code{wl-draft-kill})
+
+@c @item C-x k
+@c @kindex C-x k (Draft)
+@c @findex wl-draft-mimic-kill-buffer
+@c 現在のドラフトを破棄します。
+@c (@code{wl-draft-mimic-kill-buffer})
+
+@item C-c C-z
+@kindex C-c C-z (Draft)
+@findex wl-draft-save-and-exit
+現在のドラフトをセーブし、ドラフトバッファを消去します。
+ドラフトの編集を中断したいときに便利です。
+@samp{+draft} フォルダに入って @kbd{E} (@code{wl-summary-reedit} を押せば、
+編集を再開できます。
+(@code{wl-draft-save-and-exit})
+
+@item C-c C-r
+@kindex C-c C-r (Draft)
+@findex wl-caesar-region
+指定されたリージョンをシーザ暗号でエンコード/デコードします。
+(@code{wl-caesar-region})
+
+@item M-t
+@kindex M-t (Draft)
+@findex wl-toggle-plugged
+Wanderlust のオフラインモード/オンラインモードをトグルします。
+(@code{wl-toggle-plugged})
+
+@item C-c C-o
+@kindex C-c C-o (Draft)
+@findex wl-jump-to-draft-buffer
+他のドラフトバッファがあれば移動します。
+また、prefix argument をつけることにより、バッファが存在していない場合は、
+ドラフトフォルダからファイルを(存在すれば)読み込みます。
+(@code{wl-jump-to-draft-buffer})
+
+@item C-c C-e
+@kindex C-c C-e (Draft)
+@findex wl-draft-config-exec
+@code{wl-draft-config-alist}を適用します。
+(@code{wl-draft-config-exec})
+
+@item C-c C-j
+@kindex C-c C-j (Draft)
+@findex wl-template-select
+テンプレートを選択します。
+(@code{wl-template-select})
+
+@item C-c C-a
+@kindex C-c C-a (Draft)
+@findex wl-draft-insert-x-face-field
+ファイル @file{~/.xface} (変数 @code{wl-x-face-file} の値) の内容を
+ドラフトバッファに X-Faceフィールドとして挿入します。
+
+Encode された X-Face 文字列をあらかじめファイル @file{~/.xface}
+の内容に用意しておく必要があります。
+(@code{wl-draft-insert-x-face-field})
+@end table
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-subscribed-mailing-list
+@vindex wl-subscribed-mailing-list
+初期設定は nil。
+参加しているメーリングリスト。
+返事のドラフトを用意するときに Mail-Followup-To や Cc にこれらが
+含まれるときは自分のアドレスを除きます。
+また、リファイル先を覚えるときにこれらが To か Cc に含まれるとき
+には、そのアドレスでリファイル先を覚えます。
+
+@item wl-insert-mail-followup-to
+@vindex wl-insert-mail-followup-to
+初期設定は nil。
+Non-nil なら、Mail-Followup-To フィールドを
+ドラフトバッファに自動的に挿入します。
+
+@item wl-insert-mail-reply-to
+@vindex wl-insert-mail-reply-to
+初期設定は nil。
+Non-nil なら、Mail-Reply-To フィールドを
+ドラフトバッファに自動的に挿入します。
+
+@item wl-auto-insert-x-face
+@vindex wl-auto-insert-x-face
+初期設定は t。
+Non-nil でかつ、Encode された X-Face 文字列を @file{~/.xface}
+(変数 @code{wl-x-face-file} の値です)の内容に用意しておくと、
+ドラフトが準備されるときに自動的に X-Faceフィールドとして挿入されます。
+nilの場合は自動的には挿入されませんが、@kbd{C-c C-a} を押すとヘッダ部に
+挿入されます。
+
+@item wl-insert-message-id
+@vindex wl-insert-message-id
+初期設定は t。
+Non-nil なら、送信時に Message-ID フィールドを自動的に挿入します。
+
+@item wl-local-domain
+@vindex wl-local-domain
+初期設定は nil。
+nil ならば Message-ID のドメインパートは関数 @code{system-name} の返値が
+設定されます。
+@code{system-name} が FQDN (つまり、@samp{smtp.gohome.org} のような
+ホストのフルネーム) を返さない場合は、
+この変数に @strong{必ず} ホスト名を除いたドメイン名 (@samp{gohome.org}など) を
+設定してください。 もし、グローバルなIPを持たない場合は、
+@code{wl-message-id-domain}を設定してください。
+(Message-ID のドメインがおかしいと、
+ネットニュースでふくろ叩きにあってしまう可能性があります。)
+また、この値が設定されている場合、
+@code{system-name} にこの値を付加したホスト名が
+SMTP の HELO の引数として利用されます。
+
+@item wl-message-id-domain
+@vindex wl-message-id-domain
+初期設定は nil。
+Non-nil なら、Message-ID のドメインパートに使用されます。
+グローバルな IP を持たない場合など、ドメインパートを決められない場合は、
+@code{wl-message-id-domain} に一意な文字列
+(例えば、メールアドレスなど)を設定してください。
+
+@item wl-draft-config-alist
+@vindex wl-draft-config-alist
+初期設定は nil。
+送信直前にドラフトメッセージを変更します。
+自動的に @code{wl-draft-config-alist} の内容が適用されるのは送信時に一度
+だけです。もし，手動で適用する場合は，@kbd{C-c C-e}
+(@code{wl-draft-config-exec}) を使用してください。このコマンドは何度でも
+適用できます。
+
+@item wl-template-alist
+@vindex wl-template-alist
+初期設定は nil。
+ドラフトバッファで適用するテンプレートを設定します。
+
+@item wl-draft-config-matchone
+@vindex wl-draft-config-matchone
+初期設定は nil。
+Non-nil なら @code{wl-draft-config-alist} の適用時に最初にマッチした要素
+のみを適用します。nil ならマッチしたものすべてを適用します。
+
+@item wl-template-visible-select
+@vindex wl-template-visible-select
+初期設定は t。
+Non-nil なら別ウィンドウに適用後の状態を表示しながらテンプレートを選択します。
+
+@item wl-template-confirm
+@vindex wl-template-confirm
+初期設定は nil。
+Non-nil ならウィンドウを表示しながらテンプレートを選択する場合、リターン
+キーで選択する時に確認を行います。
+
+@item wl-template-buffer-lines
+@vindex wl-template-buffer-lines
+初期設定は 7。
+@code{wl-template-visible-select}が non-nil の場合、
+適用後の状態を表示するウィンドウの大きさを指定します。
+
+@item wl-draft-reply-buffer-style
+@vindex wl-draft-reply-buffer-style
+初期設定は 'split。
+'split と 'full が指定できます。
+'full なら返事を書くときにフレーム全体を使ったドラフトバッファが
+用意されます。
+
+@item wl-from
+@vindex wl-from
+初期設定は変数 @code{user-mail-address} の値。
+設定された値をドラフトの From フィールドとして最初から挿入します。
+
+@item wl-envelope-from
+@vindex wl-envelope-from
+初期設定は nil。
+設定された値を envelope from (MAIL FROM) に使用します。
+nil なら @code{wl-from} のアドレス部分を使用します。
+
+@item wl-user-mail-address-list
+@vindex wl-user-mail-address-list
+初期設定は nil。
+ユーザのアドレスリストです。
+アドレスを複数持っている場合は設定してください。
+
+@item wl-fcc
+@vindex wl-fcc
+初期設定は nil。
+Non-nil なら、設定された値をドラフトの FCC として最初から挿入します。
+
+@item wl-bcc
+@vindex wl-bcc
+初期設定は nil。
+Non-nil なら、設定された値をドラフトの Bcc として最初から挿入します。
+
+@item wl-reply-subject-prefix
+@vindex wl-reply-subject-prefix
+初期設定は "Re: "。
+返信時のドラフトの Subject で、元記事の Subject の先頭に付け加える文字列です。
+
+@item wl-draft-enable-queuing
+@vindex wl-draft-enable-queuing
+初期設定は t。
+オフライン送信するかどうかを示すフラグです。Non-nil ならオフライン送信します。
+
+@item wl-auto-flush-queue
+@vindex wl-auto-flush-queue
+初期設定は t。
+オンラインになったときに自動的にキューを送信するかどうかを示すフラグです。
+Non-nil なら自動的に送信します (いちおう @code{y-or-n-p} で確認します)。
+手動でキューを送信するには、フォルダモードで @kbd{F} を押してください。
+
+@item wl-draft-always-delete-myself
+@vindex wl-draft-always-delete-myself
+Non-nil なら、自分宛てのメールに返信する場合、常に To, Cc から自分の
+メールアドレスを削除します。
+
+@item wl-smtp-posting-server
+@vindex wl-smtp-posting-server
+初期設定は nil。
+メール送信時の SMTP サーバ名です。
+
+@item wl-smtp-posting-user
+@vindex wl-smtp-posting-user
+初期設定は nil。
+SMTP AUTHによる認証を行なうときのユーザ名です。
+nilなら @code{smtp-authenticate-user} を使います。
+
+@item wl-smtp-authenticate-type
+@vindex wl-smtp-authenticate-type
+初期設定は nil。
+SMTP AUTHによる認証を行なうときの認証方式です。
+nilのままなら @code{smtp-authenticate-type}を利用します。
+それでも、nilなら認証を行いません。
+
+@item wl-smtp-connection-type
+@vindex wl-smtp-connection-type
+初期設定は nil。
+SMTPのコネクションをどのように張るかを指定します。
+nilなら @code{smtp-connection-type} を利用します。
+'starttlsならSTARTTLS (RFC2595)を利用してコネクションが張られます。
+
+@item wl-nntp-posting-server
+@vindex wl-nntp-posting-server
+初期設定は nil。
+ニュース投稿時の NNTP サーバ名です。
+nilなら @code{elmo-default-nntp-server} を使います。
+
+@item wl-nntp-posting-user
+@vindex wl-nntp-posting-user
+初期設定は nil。
+ニュース投稿時にAUTHINFOによる認証を行なうときのユーザ名です。
+nilなら @code{elmo-default-nntp-user} を使います。
+それでも、nilならAUTHINFOによる認証を行ないません。
+
+@item wl-nntp-posting-port
+@vindex wl-nntp-posting-port
+初期設定は nil。
+ニュース投稿時の NNTP サーバのポート番号。
+nilなら @code{elmo-default-nntp-server} を使います。
+
+@item wl-nntp-posting-ssl
+@vindex wl-nntp-posting-ssl
+初期設定は nil。
+nilなら @code{elmo-default-nntp-ssl} を評価します。
+Non-nilならニュース投稿時にSSLを利用します。
+'starttlsならSTARTTLS (RFC2595)を利用してコネクションが張られます。
+
+@item wl-pop-before-smtp-user
+@vindex wl-pop-before-smtp-user
+初期設定は nil。
+POP-before-SMTPでPOPを行なうときのユーザ名です。
+nilのままなら @code{elmo-default-pop3-user}を利用します。
+
+@item wl-pop-before-smtp-server
+@vindex wl-pop-before-smtp-server
+初期設定は nil。
+POP-before-SMTPでPOPを行なうときのサーバ名です。
+nilのままなら @code{elmo-default-pop3-server}を利用します。
+
+@item wl-pop-before-smtp-authenticate-type
+@vindex wl-pop-before-smtp-authenticate-type
+初期設定は nil。
+POP-before-SMTPでPOPを行なうときの認証方式です。
+nilのままなら @code{elmo-default-pop3-authenticate}を利用します。
+
+@item wl-pop-before-smtp-port
+@vindex wl-pop-before-smtp-port
+初期設定は nil。
+POP-before-SMTPでPOPを行なうときのポート番号です。
+nilのままなら @code{elmo-default-pop3-port}を利用します。
+
+@item wl-pop-before-smtp-ssl
+@vindex wl-pop-before-smtp-ssl
+初期設定は nil。
+POP-before-SMTPでSSLを利用するかどうかを示すフラグです。
+nilのままなら @code{elmo-default-pop3-ssl}を利用します。
+'starttlsならSTARTTLS (RFC2595)を利用してコネクションが張られます。
+
+@item wl-draft-queue-save-variables
+@vindex wl-draft-queue-save-variables
+オフライン送信時にキューに格納されたメッセージについて保存しておく変数を
+リストで指定します。
+
+@item wl-draft-sendlog
+@vindex wl-draft-sendlog
+初期設定は t。
+t なら @file{~/.elmo/sendlog} に送信ログを出力します。
+ログを出力するタイミングは smtp, qmail による送信、fcc, queuing によるフォ
+ルダへの格納、です(失敗の場合も)。ただし、im-wl.el による送信は sendlog に
+は出力せずに imput のログ機能におまかせします。
+
+@item wl-draft-sendlog-max-size
+@vindex wl-draft-sendlog-max-size
+初期設定は 20000 (バイト)。
+@code{wl-draft-sendlog} が t の場合、
+保存したログの大きさが指定した大きさ以上になれば、ログをローテーションします。
+@end table
+
+
+@c
+@c  Dsiconnected Operations
+@c
+@node Disconnected Operations, Expire and Archive, Draft, Top
+@chapter オフライン処理
+@cindex Disconnected Operations
+@cindex Offline
+@cindex Unplugged
+
+@section オフラインモード
+
+Wanderlust にはオンラインモードとオフラインモードがあります。
+オフラインモードでは、ネットワーク経由でなければ読めないメッセージは
+アクセスできません(キャッシュされていればアクセスできます)。
+
+モードラインに @samp{[ON]} と出ているときは
+オンラインモードにあることを示しています。
+モードラインに @samp{[--]} と出ているときはオフラインモードです。
+フォルダモード、サマリモードで @kbd{M-t} を押すとオフライン/オンラインの切り替えができます。
+
+@file{~/.wl} などで変数 @code{wl-plugged} を nil に設定してから起動すると、
+起動時からオフラインモードとなります。
+
+以下の操作は(対象となるメッセージがキャッシュされていれば)
+オフラインモードでも実行できます。
+(変数 @code{elmo-enable-disconnected-operation} (後述) が non-nil のとき。)
+
+@itemize @minus
+@item メッセージの送信
+@item リファイル/コピー (IMAP4)
+@item フォルダ生成 (IMAP4)
+@item マーク付け (IMAP4)
+@item プリフェッチ (IMAP4, NNTP)
+@end itemize
+
+オフラインモード中になされたこれらの操作は、Wanderlust がオンラインモード
+になった瞬間にネットワーク経由でサーバ上に反映されます。
+
+@section メッセージの送信
+
+オフライン状態でメール/ニュース記事を送信できます。
+(im-wl.el をお使いの場合は、関係ありません。)
+オフラインのときに送信されたメッセージは
+キューフォルダ @samp{+queue} に溜ります。
+溜ったメッセージは、オンラインになったときに一気に送信されます。
+
+オフラインのうちに @samp{+queue} を訪れて、
+キューにあるメッセージの内容を確認できます。
+メッセージを削除することも可能です。
+(削除されたメッセージはオンラインになっても送信されません。)
+
+@c キューにあるメッセージを再編集することも可能ですが、
+@c 問題が起こる可能性がありますのでお勧めできません。
+
+@section リファイル/コピー(IMAP4)
+
+オフライン状態のあいだに実行された IMAP フォルダに対するリファイル
+/コピー操作はキューにためられ、オンラインになったときにサーバ側に反映さ
+れます。オフライン・リファイル/コピーのあと、リファイル/コピー先のフォル
+ダを訪れると、オフラインでもメッセージが追加されているように見えます。
+
+オフライン・リファイルのキュー処理時の削除処理は安全を期してサーバ上のメッ
+セージと Message-ID が一致した場合のみ削除します。また、キュー処理時にリ
+ファイル/コピー先に指定されたフォルダにメッセージを追加するのに失敗した
+ときは @samp{+lost+found} フォルダに追加されます。
+
+@section フォルダ生成(IMAP4)
+
+IMAP フォルダの生成もオフライン状態で実行できます。オンラインになったとき
+にフォルダ生成がサーバに反映されますが、このとき、何らかの原因でフォルダ生
+成が失敗してしまった場合、オフライン中に生成されたフォルダへリファイルされ
+たメッセージは "+lost+found" フォルダに追加されます。
+
+@section マーク付け(IMAP4)
+
+IMAP フォルダにあるメッセージに対する未読/既読の情報、および、
+重要マーク @samp{$} がついているかどうか、もオフライン中の変更がオンラインに
+なったときにサーバに反映されます。
+
+@section プリフェッチ(IMAP4, NNTP)
+
+IMAP もしくは NNTP フォルダにあるメッセージに対して、プリフェッチの予約
+をします。プリフェッチの予約がされたメッセージは @samp{!} が付きますが、
+この時点ではキャッシュされておらず、オンラインになったときにサーバから
+プリフェッチされます。
+
+変数 @code{elmo-enable-disconnected-operation} が nil なら、
+これらの IMAP4 と NNTPに関するオフライン処理は実行されず、
+オフライン中のリファイル/コピー等の操作は単にエラーになります。
+
+オフライン処理でキャッシュファイルを使うので、
+キャッシュファイルを手で消すと Wanderlust が誤動作するおそれがあります。
+キャッシュを消したいときは
+@kbd{M-x elmo-cache-expire-by-size}
+を実行するようにしてください。
+@code{elmo-cache-expire-by-size} はオフライン処理の対象となるメッセージの
+キャッシュは削除しません。
+
+@section サーバ・ポート別のオンライン、オフラインの切り替え
+
+上記の @kbd{M-t} による操作ではネットワークの状態を一括して切り替えますが、
+サーバ・ポート別にオンラインとオフラインを切り替えることもできます。
+
+フォルダモード、サマリモードで @kbd{C-t} を押すと以下のような 
+wl-plugged-mode に入り、このモードで各ポートの plug 状態を変更します。
+
+@example
+Queuing:[ON] AutoFlushQueue:[--] DisconnectedOperation:[ON]
+[ON](wl-plugged)
+  [--]hosta
+    [--]smtp        +queue: 2 msgs (1,2)        @dots{}@r{sending queue}
+    [--]nntp(119)   +queue: 1 msg (3)           @dots{}@r{sending queue}
+  [ON]hostb
+    [--]imap4/cram-md5(143) %#mh/wl(prefetch-msgs:3,mark-as-important:1)
+                            %inbox(delete-msgids:1)    @dots{}@r{dop queue}
+    [ON]nntp(119)
+    [ON]smtp
+@end example
+
+1行目はオフライン操作に関係する次の3つの変数の状態を表示し、
+それぞれのラベル欄で @kbd{@key{SPC}} や @kbd{@key{RET}} を押すことで
+変数の値を簡単に変更できるようになっています。
+
+@example
+"Queuing"               wl-draft-enable-queuing
+"AutoFlushQueue"        wl-auto-flush-queue
+"DisconnectedOperation" elmo-enable-disconnected-operation
+@end example
+
+ここで、@samp{[ON]} はその変数の値が t であることを、
+@samp{[--]} は nil であることを示しています。
+
+また、2行目以降ではサーバとポートのオンラインとオフライン状態を表示し、
+@samp{[ON]} はそのサーバやポートがオンラインであることを、
+@samp{[--]} はオフラインであることを示しています
+(XEmacs ではアイコンで表示されます)。
+そしてそれぞれの行で @kbd{@key{SPC}} や @kbd{@key{RET}} を押すことで
+状態を切り替えることができます。
+
+sending queue はオフライン送信時に @samp{+queue} フォルダに格納されている
+送信待ちのメッセージを指し、
+dop queue はオフラインで行ったリファイル/コピー等の操作を指すとします。
+@c 変数 @code{elmo-enable-disconnected-operation} が non-nil なら
+@c オフライン操作ができます。
+
+そしてもし、これらの sending queue や dop queue があれば
+その状態が画面に表示されます。
+上記例では、sending queue には hosta の smtp 向けに 2 つ
+(queue フォルダの1番と2番)と、
+hosta の nntp 向けに 1 つ(3番)のメッセージがあり、
+dop queue には @samp{%inbox} の操作が1つと、
+@samp{%#mh/wl} の操作が2つあることを示しています。
+
+このモードで2行目にある (wl-plugged) を変更すると、wl-plugged 変数が変更さ
+れ、これによりモードラインの indicator と全体の ポート plug 状態が 
+ON/OFF されます。
+また、各サーバやポートの plug 状態を変更すると、
+@code{elmo-plugged-condition} (後述)の設定と各ポートの plug 状態により 2行目の 
+wl-plugged が変化します。
+
+@section 起動時のオフライン状態設定
+
+前述の通り、@file{~/.wl} などで変数 @code{wl-plugged} を nil に設定してから起動す
+ると、起動時からオフラインモードにすることができますが、さらに細かくサーバ
+やポート毎にオフライン状態を設定することもできます。
+併せて変数 @code{wl-reset-plugged-alist} も参照下さい。
+
+通常、起動時には @file{~/.folder} と @code{wl-smtp-posting-server},
+@code{wl-nntp-posting-server} などから各ポートの plug 状態が自動的に追加されます
+が、これらのポートのplug状態を変更したり、上記以外のポートを追加したりする
+場合には @code{wl-make-plugged-hook} に変更する関数を記述します。
+
+@lisp
+(add-hook 'wl-make-plugged-hook
+          '(lambda ()
+             (elmo-set-plugged plugged値(t/nil) server port)
+                     ;; @r{server,portのplug状態を新規追加もしくは変更する}
+             (elmo-set-plugged plugged値(t/nil) server)
+                     ;; @r{port を省略するとserverの全portが変更される}
+                     ;; @r{(port を省略して新規の追加はできない)}
+             ))
+@end lisp
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-plugged
+@vindex wl-plugged
+この値を nil に設定して Wanderlust を起動すると、
+起動時からオフラインモードとなります。
+
+@item wl-queue-folder
+@vindex wl-queue-folder
+初期設定は "+queue"。送信キューのメッセージが溜るフォルダ。
+
+@item wl-auto-flush-queue
+@vindex wl-auto-flush-queue
+初期設定は t。オンラインになったときに自動的にキューを送信するかどうか。
+Non-nil なら自動的に送信します (いちおう @code{y-or-n-p} で確認します)。
+手動でキューを送信するには、フォルダモードで @kbd{F} を押してください。
+
+@item elmo-enable-disconnected-operation
+@vindex elmo-enable-disconnected-operation
+初期設定は nil。IMAP4 に関するオフライン処理を実行するかどうか。
+Non-nil ならオフライン処理を実行します。
+
+@item elmo-lost+found-folder
+@vindex elmo-lost+found-folder
+初期設定は "+lost+found"。オフライン・リファイル/コピーのキュー処理で
+メッセージの追加に失敗したときにメッセージを退避させるフォルダです。
+
+@item elmo-plugged-condition
+@vindex elmo-plugged-condition
+初期設定は 'one。
+@code{wl-plugged} の値は関数 @code{elmo-plugged-p} (引数なし)の戻り値により決定されます。
+この変数 @code{elmo-plugged-condition} は (elmo-plugged-p) の戻り値が t になる条件
+を各ポートのplug状態により指定します。
+
+@example
+'one         : 1つ以上のポートが plugged なら plugged である
+'all         : 全てのポートが plugged なら plugged である
+'independent : ポートの plug 状態に関係なく wl-plugged (elmo-plugged)
+               を参照する
+function     : 関数の戻り値により変化する
+ 標準で用意されている関数
+ 'elmo-plug-on-by-servrs
+             : 変数 elmo-plug-on-servers で指定したサーバの plug
+               状態により変化する
+ 'elmo-plug-on-by-exclude-servers
+             : 変数 elmo-plug-on-exclude-servers で指定した以外の
+               サーバの plug 状態により変化する
+                  elmo-plug-on-exclude-servers のデフォルト値は
+                   '("localhost"
+                     (system-name)
+                     (system-name)からドメイン部を除いたもの)
+                  である
+@end example
+
+@example
+例1:
+ (setq elmo-plugged-condition 'all)
+例2:
+ (setq elmo-plug-on-servers '("smtpserver" "newsserver"))
+ (setq elmo-plugged-condition 'elmo-plug-on-by-servers)
+例3:
+ (setq elmo-plug-on-exclude-servers '("localhost" "myname"))
+ (setq elmo-plugged-condition 'elmo-plug-on-by-exclude-servers)
+@end example
+
+@item wl-reset-plugged-alist
+@vindex wl-reset-plugged-alist
+初期設定は t。Non-nil なら Wanderlust の起動時にサーバ・ポート別のプラグ
+状態を @code{wl-plugged} の値により初期化します。
+
+nil なら、Emacs が動作している間、前回終了した時点のプラグ状態を保持します。
+言い換えれば nil であっても Emacs を再起動すると初期化されます。
+@end table
+
+
+@c
+@c  Expire and Archive
+@c
+@node Expire and Archive, Scoring, Disconnected Operations, Top
+@chapter メッセージの自動削除とアーカイブ
+@cindex Expire and Archive
+
+@menu
+* Expire::      期限メッセージの自動削除、アーカイブ
+* Archive::     全メッセージのアーカイブ
+@end menu
+
+
+@node Expire, Archive, Expire and Archive, Expire and Archive
+@section メッセージの自動削除
+@cindex Expire Message
+
+Expire とは、指定した期間を過ぎた古いメッセージを削除する機能です。
+
+しかし、@code{wl-expire} ではメッセージを単純に消すだけではなく、指定したアーカ
+イブフォルダに移動することも出来ます。
+
+@section 使い方
+
+@code{wl-expire-alist}を設定して、フォルダモードで @kbd{e}、もしくはサマ
+リモードで @kbd{M-e} を押します。
+
+@subsection @code{wl-expire-alist}の設定
+
+次に@code{wl-expire-alist}の設定例を示します。この@code{wl-expire-alist}
+の書き方一つで expire の実施方法が大きく変わりますので、慎重に設定してく
+ださい。
+最初のうちは@code{wl-expire-use-log}を t にセットしておくと良いでしょう。
+
+@lisp
+(setq wl-expire-alist
+      '(("^\\+trash$"   (date 14) remove)
+                                  ;; @r{削除する。}
+        ("^\\+tmp$"     (date 7) trash)
+                                  ;; @r{@code{wl-trash-folder} にrefileする。}
+        ("^\\+outbox$"  (number 300) "$outbox;lha")
+                                  ;; @r{特定のフォルダにrefileする。}
+        ("^\\+ml/tmp$"  nil)
+                           ;; @r{expireしない}
+        ("^\\+ml/wl$"   (number 500 510) wl-expire-archive-number1 t)
+                           ;; @r{番号ごとにアーカイブする(番号は保持する)。}
+        ("^\\+ml/.*"    (number 300 310) wl-expire-archive-number2 t)
+                           ;; @r{一定数ごとにアーカイブする(番号は保持する)。}
+        ("^\\+nikki$"   (date 30) wl-expire-archive-date)
+                           ;; @r{年月ごとにアーカイブする(番号は保持しない)。}
+        ))
+@end lisp
+
+各リストの要素は
+
+@example
+("フォルダのregexp"  (削除メッセージの指定) 削除先)
+@end example
+
+@noindent
+となっています。
+リストの先頭から"フォルダのregexp"にマッチするかどうかを調べます。
+もし、"フォルダのregexp"にマッチしないフォルダで、expire を実行しても何もしません。
+また、2,3 番目の要素のいずれかが nil であれば expire しません。
+
+削除メッセージの指定には次のものを指定します。
+
+@table @code
+@item (number n1 [n2])
+フォルダにあるメッセージ数に応じて削除を行います。
+
+n1 は削除後のメッセージ数で、
+例えば値が 500 なら最新の 500 個を残して残りを削除することになります。
+
+n2 は expire を実行するためのメッセージの総数で、省略すると n1 + 1 になります。
+例えば値が 510 ならメッセージが 510 以上のときに expire を実行することになります。
+これは自動実行で expire を行うようにした場合、頻繁にメールが来るフォルダで
+は毎回 expire を実行するため、メールを読むまでに時間がかかり、
+煩わしくなってしまいます。
+そこで n2 を n1 よりも大きめの値に設定することにより、一定数溜まるまでは
+expire を実行しないようにすることができます。
+
+また、@code{wl-summary-expire-reserve-marks}で指定したメッセージ
+(importantマークや新規・未読マークの付いたメッセージ)
+は削除しないようになっていますが、
+もし、@code{wl-expire-number-with-reserve-marks} が non-nil の場合、
+このようなメッセージも含めて 500 個になるように expire されます。
+nil の場合は上記メッセージ以外で 500 になるように expire します。
+
+@item (date d1)
+メッセージの日付により削除を行います。
+
+d1 は現在より何日前のメッセージを削除するどうかであり、
+例えば値が 7 なら 7日より前のメッセージを削除します。
+なお、この日付とはメッセージのDateフィールドの日付であり、
+メッセージがフォルダに入った日付ではないことに注意してください。
+
+もし、メッセージに Dateフィールドがなかったり、Dateフィールドが不正な値
+なら、expire されませんので手で削除するなりして下さい。
+@end table
+
+削除先には次のものを指定します。
+
+@table @code
+@item 'remove
+即メッセージを削除します。
+
+@item 'trash
+メッセージを @code{wl-trash-folder} に移動します。
+
+@item string(folder)
+メッセージを指定のフォルダに移動します。
+
+アーカイブフォルダを指定すると便利ですが、
+importantメッセージなどは移動されないため、
+下記の標準関数を使う方がよりよいです。
+
+@item function
+指定の関数を呼び出します。
+
+指定した関数には次の3つの引数、フォルダ名、削除するメッセージのリスト、そし
+てサマリのmsgdb情報が渡されます。
+また関数名の後に関数独自の引数も指定できます。
+なお、この関数には@code{wl-summary-expire-reserve-marks}で指定したメッセー
+ジも含んだリストが渡されますので、独自に関数を作る場合は注意してください。
+
+ここで指定できる関数には、標準で次の3つが用意されています。
+これらは指定した方法でアーカイブフォルダにメッセージを移動するものです。
+つまり、古いメッセージをフォルダから削除しながら別ファイルに圧縮して保存
+しておくことができます。
+
+@table @code
+@item wl-expire-archive-number1
+削除対象のメッセージ番号に対するアーカイブフォルダにrefileします。
+例えば、102 番であるなら @file{wl-00100.zip}、
+390 番であるなら @file{wl-00300.zip}、などのようにです。
+なお、@code{wl-expire-archive-files} を 200 にすると、
+@file{wl-00000.zip}, @file{wl-00200.zip}, @file{wl-00400.zip},
+@dots{} に refile していきます。
+
+refile 先のアーカイブフォルダは削除元のフォルダ名により次のように決定されます。
+(このとき、アーカイブフォルダは @code{elmo-archive-treat-file} が non-nil の場合としてあつかわれます)
+
+@table @code
+@item フォルダタイプがlocaldir
+
+@code{$ArchiveDir/foldername-xxxxx.zip}
+例えば @samp{+ml/wl} は @samp{$ml/wl;zip}
+(@file{~/Mail/ml/wl-00100.zip})となります。
+
+@item フォルダタイプがlocaldir以外
+@code{$ArchiveDir/foldertype/foldername-xxxxx.zip}
+
+例えば、@samp{%#mh/ml/wl} は @samp{$imap4/#mh/ml/wl;zip}
+
+(@file{~/Mail/imap4/#mh/ml/wl-00100.zip})となります。
+@end table
+
+すなわち、localdir の場合は種別がパス名に含まれませんが、それ以外は種別
+がパス名に含まれるのです。
+また、@code{wl-expire-archive-folder-prefix} により、
+アーカイブフォルダに付ける prefix が制御できます。
+@code{wl-expire-archive-folder-prefix}の説明を良く見ておいてください。
+
+@item wl-expire-archive-number2
+指定した個数ごとにアーカイブフォルダにrefileします。
+
+@samp{wl-expire-archive-number1}
+と異なる点はメッセージ番号に関係なくアーカイブフォルダが指定数に達するまでそのフォルダに refile する、という点です。
+なお、refile 先のアーカイブフォルダは @code{wl-expire-archive-number1}
+と同じように決定されます。
+
+@item wl-expire-archive-date
+メッセージの日付(年月)ごとにアーカイブフォルダにrefileします。
+
+例えば、1998年12月のメッセージは @code{$folder-199812;zip} 
+にrefileされます。
+なお、日付の部分以外のアーカイブフォルダ名は @code{wl-expire-archive-number1}
+と同じように決定されます。
+@end table
+
+また、上記の3つの標準関数では @code{wl-expire-alist} での第1引数に non-nil を指定すると、
+フォルダのメッセージ番号をそのまま保存することができます。
+例えば、次のように関数名の後に続けて指定します。
+
+@example
+("^\\+ml/wl$" (number 300 310) wl-expire-archive-number1 t)
+@end example
+
+引数を指定しない場合は、各アーカイブフォルダごとに 1 から順に番号が与え
+られて保存されます。
+@end table
+
+@subsection importantや未読メッセージの扱い
+
+削除先に 'remove や 'trash、フォルダ名、標準関数のいずれを指定した場合で
+も、@code{wl-summary-expire-reserve-marks}で指定したマークのメッセージ
+(以下、@dfn{reserveメッセージ}と呼びます)は残すようになっています。
+
+この変数にはデフォルトで、importantマーク、新規マーク、未読マークが設定
+されていますので、これらのマークのついたメッセージは削除されないことにな
+ります。
+ただし、この変数には一時的マークは指定できないため(すなわち削除されるた
+め)、expireを実行する前に一時的マークは処理しておいてください。
+
+@subsection 自動実行
+
+サマリに移動すると自動的に expire を実行するには次のような設定を行
+います。ただし、この場合は確認せずに自動実行するため、
+フォルダのregexpなどに誤りがないかどうかを十分確認してから設定して下さい。
+
+@lisp
+(add-hook 'wl-summary-prepared-pre-hook
+          'wl-summary-expire)
+@end lisp
+
+また、フォルダモードで各フォルダごとに expire を実行できるのはもちろん、
+グループ単位の実行も可能です。従って、@samp{Desktop} グループを指定すれ
+ば@code{wl-expire-alist}にマッチする全てのフォルダで expire が実行されま
+す。
+
+@section TIPS
+
+@subsection 作成したアーカイブフォルダの取り扱い
+
+上記の標準関数 @code{wl-expire-archive-number1} などで作成したアーカイブ
+フォルダを扱う場合は、変数 @code{elmo-archive-treat-file} を non-nil に設
+定しておく必要があります。
+
+@subsection 動作確認
+
+'remove を指定する場合は、まず 'trash にして期待通りにメールが 
+@code{wl-trash-folder} に移動されることを確認してから 'remove に変えると
+よいでしょう。いきなり 'remove を指定するのは危険です。
+
+また、@code{wl-expire-archive-number1}などの関数を利用する場合、
+まずは使用するアーカイバタイプ('zip や 'lha)などのフォルダを試しにつくっ
+て、正しく追加できるかどうかを確認してください。
+たとえ、@code{wl-expire-alist} や @code{elmo-archive} の設定が正しくても、
+アーカイブプログラムが正しく動かなければどこにも保存されずに
+メッセージが消えてしまうかも知れません。
+
+アーカイブフォルダの動作が確認でき、実際に expire を実行するようになれば、
+ログを活用してください。
+@code{wl-expire-use-log} を t にすると、@file{~/.elmo/expired-log}には以
+下のように記録されます。
+
+@example
+delete  +ml/wl  (593 594 595 596 597 598 599)
+move    +ml/wl -> $ml/wl-00600;tgz;wl  (600 601 602)
+@end example
+
+最初の項目は動作を示すもので、delete, copy, move があります。次が expire
+を実行したフォルダ名で、copy と move の場合は@samp{->}に続けてコピーもし
+くは移動先のフォルダ名が記録されます。最後の項目は、実際に削除や移動され
+たメッセージ番号のリストです(copyやmoveの場合、移動後ではなく移動前のメッ
+セージ番号です)。
+
+@subsection reserveメッセージのrefile
+
+標準で用意されている3つの関数では、reserveメッセージはアーカイブフォルダ
+にコピーしますが、元のフォルダからは削除しないようになっています。なお、
+importantマークなどは常に残るため、何度もコピーされることがないように
+@file{~/.elmo/expired-alist} に記録するようにしています。
+ただし、reserveメッセージがrefile対象になったときのみです。
+また、@code{wl-summary-archive} などでコピーされる場合は記録されません。
+
+ログ機能を有効にしていた場合は、refile 時には通常 move が記
+録されますが、reserveメッセージが含まれていると、copy と 
+delete に分けて記録されます。これは reserveメッセージを含めたメッ
+セージをコピーした後、reserveメッセージを除いたメッセージを削除する、
+という処理を行っているためです。
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-expire-alist
+@vindex wl-expire-alist
+初期設定は nil。
+expire を行うフォルダと expire 方法の指定を行います。詳しくは上記の
+@code{wl-expire-alist}の設定をご覧下さい。
+
+@item wl-summary-expire-reserve-marks
+@vindex wl-summary-expire-reserve-marks
+初期設定は以下のリスト。
+
+@lisp
+(list wl-summary-important-mark
+      wl-summary-new-mark
+      wl-summary-unread-mark
+      wl-summary-unread-uncached-mark
+      wl-summary-unread-cached-mark)
+@end lisp
+
+expire を行っても、フォルダには残しておくメッセージのマークを指定します。
+マークには 永続的マーク のみ指定できます。
+一時的マークは指定できません。
+
+デフォルトのようにリストで指定するとそのマークのメッセージを残すことがで
+きる他、以下の指定もできます。
+
+@table @code
+@item 'all
+永続マークの付いたすべてのメッセージを残します。
+つまり、デフォルトで設定されているマーク以外に
+@code{wl-summary-read-uncached-mark} が含まれます。
+
+@item 'none
+どんなマークの付いたメッセージであっても、通常の既読メッセージと同じ扱い
+をします。すなわち、importantメッセージであっても削除されます。
+@end table
+
+@item wl-expire-archive-files
+@vindex wl-expire-archive-files
+初期設定は 100。
+ひとつのアーカイブフォルダに保持するメッセージ数を指定します。
+
+@item wl-expire-number-with-reserve-marks
+@vindex wl-expire-number-with-reserve-marks
+初期設定は nil。
+Non-nil にすると、
+削除メッセージの指定で number を指定したとき、
+残しておくメッセージ数に @code{wl-summary-expire-reserve-marks} で設定さ
+れたメッセージを含めます。
+
+@item wl-expire-archive-get-folder-func
+@vindex wl-expire-archive-get-folder-func
+初期設定は 'wl-expire-archive-get-folder。
+
+削除先の標準関数でアーカイブフォルダ名を取得する関数を指定します。
+次の3つの変数により簡易なフォルダ名の変更できますが、もっと複雑な指定を
+したい場合は新たに関数を作ってこの変数に設定します。
+
+関数@code{wl-expire-archive-get-folder}のカスタマイズ変数には次の
+ものがあります。
+@itemize @bullet
+@item wl-expire-archive-folder-name-fmt
+@item wl-expire-archive-folder-type
+@item wl-expire-archive-folder-prefix
+@end itemize
+
+@item wl-expire-archive-folder-name-fmt
+@vindex wl-expire-archive-folder-name-fmt
+初期設定は "%s-%%05d;%s"。
+@code{wl-expire-archive-number1}および@code{wl-expire-archive-number2}で
+使用されるアーカイブのフォルダの format 形式の文字列を指定します。
+なお、2度 @code{format} で指定するため、
+かならず番号の部分は @samp{%%d} にしなくてはなりません。
+
+もし、変更する場合は @code{wl-expire-archive-folder-num-regexp}
+も合わせるようにしてください。
+
+@item wl-expire-archive-date-folder-name-fmt
+@vindex wl-expire-archive-date-folder-name-fmt
+初期設定は "%s-%%04d%%02d;%s"。
+@code{wl-expire-archive-date}
+で使用されるアーカイブのフォルダの format 形式の文字列を指定します。
+なお、2度 @code{format} で指定するため、
+かならず番号の部分は @samp{%%d} にしなくてはなりません。
+また、メッセージの年と月が与えられるため、@code{%%d} は2つ必要です。
+
+もし、変更する場合は @code{wl-expire-archive-date-folder-num-regexp}
+も合わせるようにしてください。
+
+@item wl-expire-archive-folder-type
+@vindex wl-expire-archive-folder-type
+初期設定は 'zip。
+アーカイブフォルダのアーカイバタイプを指定します。
+
+@item wl-expire-archive-folder-prefix
+@vindex wl-expire-archive-folder-prefix
+初期設定は nil。
+アーカイブフォルダに付ける prefix を指定します。
+ただし、アーカイブフォルダに prefix (ディレクトリ構造)を付ける仕様は
+おまけ機能ですので、取り扱いは慎重に行って下さい。
+最悪アーカイブファイルを壊す恐れがあります。
+
+@table @code
+@item nil
+prefix は付きません。
+
+@item 'short
+例えば、@samp{+ml/wl} では prefix @samp{wl} が付き、
+@samp{$ml/wl-00000;zip;wl} となります。
+
+@item t
+例えば、@samp{+ml/wl} では prefix @samp{ml/wl} が付き、
+
+@samp{$ml/wl-00000;zip;ml/wl} となります。
+@end table
+
+@item wl-expire-archive-folder-num-regexp
+@vindex wl-expire-archive-folder-num-regexp
+初期設定は "-\\([-0-9]+\\);"。
+@code{elmo-list-folders} による複数のアーカイブフォルダ名から
+番号を取得するための正規表現を指定します。
+@code{wl-expire-archive-folder-name-fmt} に対応して設定してください。
+
+@item wl-expire-archive-date-folder-num-regexp
+@vindex wl-expire-archive-date-folder-num-regexp
+初期設定は "-\\([-0-9]+\\);"。
+@code{elmo-list-folders} による複数のアーカイブフォルダ名から
+番号を取得するための正規表現を指定します。
+@code{wl-expire-archive-date-folder-name-fmt} に対応して設定してください。
+
+@item wl-expire-delete-oldmsg-confirm
+@vindex wl-expire-delete-oldmsg-confirm
+初期設定は t。
+Non-nilの場合、既に存在しているアーカイブフォルダの最大メッセージ番号よりも
+古いメッセージがあった場合に確認してから削除します。
+nilの場合は確認せずに削除します。
+
+なお、標準関数の引数に non-nil を指定して番号を保持するようにした場合の
+み有効です。
+
+@item wl-expire-use-log
+@vindex wl-expire-use-log
+初期設定は nil。
+Non-nil にすると、@file{~/.elmo/expired-log}に expire の実行結果を記録します。
+なお、ファイルに追加していく一方なので、適当に手で消す必要があります。
+
+@item wl-expire-add-seen-list
+@vindex wl-expire-add-seen-list
+初期設定は t。
+
+Non-nil の場合、expire によりメッセージを refile した場合、既読情報を
+refile先のフォルダに伝えるようにします。
+
+ただし、refile先のフォルダを Wanderlust上から読まないと、
+@file{~/.elmo/}以下にある @file{seen} ファイルが大きくなっていくので、
+アーカイブフォルダなどに単に保存しておくだけなら
+ nil に設定しておくとよいでしょう。nil に設定しても、
+refileしたアーカイブフォルダを読むときに新規メッセージ扱いされるだけで、
+expire などの動作には影響はありません。
+
+@item wl-expire-folder-update-msgdb
+@vindex wl-expire-folder-update-msgdb
+初期設定は t。
+t の場合、フォルダモードで expire を実行するときに、
+サマリ情報をupdateしてからexpireを実行する。
+また、フォルダ名の正規表現のリストを指定した場合は、マッチしたフォルダの
+みサマリ情報をupdateする。
+@end table
+
+
+@node Archive,  , Expire, Expire and Archive
+@section メッセージのアーカイブ
+
+@subsection メッセージのアーカイブ
+@kbd{M-x wl-summary-archive} でフォルダ全体をアーカイブフォルダにコピーしま
+す。既にアーカイブフォルダがある場合、新規メッセージのみ追加します。
+
+@code{wl-expire-alist} と同じ様に、フォルダ名に応じてどのようにアーカイブ
+するかを @code{wl-archive-alist} で指定します。例えば以下のようになりま
+す。
+
+@lisp
+(setq wl-archive-alist
+      '(("^\\+tmp$"     wl-archive-date)
+        ("^\\+outbox$"  wl-archive-number2)
+        (".*"           wl-archive-number1)
+        ))
+@end lisp
+
+各リストの要素は次のようになります。
+
+@example
+("フォルダのregexp"  削除関数)
+@end example
+
+このように@samp{フォルダのregexp}の後には関数しか指定できません。
+標準では次の3つの関数
+
+@itemize
+@item wl-archive-number1
+@item wl-archive-number2
+@item wl-archive-date
+@end itemize
+
+が用意されており、名前からお解りの通り次の点を除いて Expire で用意されて
+いるのと同じ動作をします。
+
+@itemize
+@item メッセージを削除しない
+@item 引数なしであってもメッセージ番号を保持する
+@end itemize
+
+フォルダの全メッセージを番号ごとや日付ごとにまとめてアーカイブしたい場合
+は、これらの関数を使用するとよいでしょう。
+また、expire を行う前のバックアップや動作を確認するのにも有効です。
+もっとも、アーカイブ後にexpireでrefileすると、refileせずに削除するだけに
+なります。
+
+デフォルトではコピー先のアーカイブフォルダは
+@code{wl-expire-archive-get-folder-func} に従って自動的に決定されますが、
+prefix argument を付けて @kbd{C-u M-x wl-summary-archive} で実行すると、
+指定したフォルダにコピーすることができます。
+
+しかし、単純に1つのアーカイブフォルダにコピーするだけなら、
+@code{wl-summary-copy-region} などで全メッセージをアーカイブフォルダにコ
+ピーすることでも可能なため、おまけの機能でしかありません
+(つまり、動作確認は不十分です)。
+
+
+このアーカイブフォルダの決定方法は@code{wl-summary-expire}と同じものを用
+いているため、カスタマイズ変数の中で次に示すものが関係してきます。
+
+@itemize @bullet
+@item wl-expire-archive-files
+@item wl-expire-archive-get-folder-func
+@item wl-expire-archive-folder-name-fmt
+@item wl-expire-archive-folder-type
+@item wl-expire-archive-folder-prefix
+@item wl-expire-archive-folder-num-regexp
+@end itemize
+
+@subsection カスタマイズ変数
+
+@table @code
+@item wl-archive-alist
+@vindex wl-archive-alist
+初期設定は '((".*" wl-archive-number1))。
+
+アーカイブフォルダにコピーする処理を行う関数を指定します。
+この関数には、フォルダ名、フォルダ内にあるメッセージのリスト、サマリのmsgdb情報、
+の3つの引数が渡されます。
+もちろんユーザが独自に作って指定することができます。
+@end table
+
+
+@c
+@c  Scoring
+@c
+@node Scoring, Customization, Expire and Archive, Top
+@chapter スコア
+@cindex Scoring
+@c @cindex Kill File
+
+スコアとは、メッセージにスコア(値)をつけ、
+その値により既読マークを付けたりサマリから消したりする機能です。
+
+この機能によって重要なメッセージに temp マークや important マークをつけた
+り、spam 記事などの読みたくないメッセージに既読マークをつけたりすることが
+できます。
+
+このスコア機能は Gnus のスコアとほぼ同等の機能を持ち、またスコアファイルの
+書式もほぼ同じです。ただし、幾つかは未対応であったり Wanderlust 特有の機能
+があったりします。
+
+@menu
+* Score Commands::             スコアに関するコマンド
+* Score File Format::          スコアファイルの書式
+@end menu
+
+
+@node Score Commands, Score File Format, Scoring, Scoring
+@section スコアに関するコマンド
+@cindex Score Commands
+
+@subsection スコアファイルの指定方法
+
+変数 @code{wl-score-folder-alist}
+にフォルダ名に対応したスコアファイル名かスコアを定義した変数を設定します。
+
+@lisp
+(setq wl-score-folder-alist
+      '(("^-.*"
+         "news.SCORE"
+         "my.SCORE")
+        (".*"
+         "all.SCORE")))
+@end lisp
+
+スコアファイル名のパスを省略した場合は、
+変数 @code{wl-score-files-dir} で指定したディレクトリにあるものとします。
+
+また、@code{wl-score-folder-alist} の設定に関わらず
+デフォルトのスコアファイル @code{wl-score-default-file} (@file{all.SCORE})
+ は必ず読み込まれます(ファイルが存在していなくてもかまいません)。
+したがって、上記例の @samp{^-.*} にマッチしたフォルダでは 
+@file{news.SCORE}, @file{my.SCORE}, @file{all.SCORE} の3つのスコアファイル
+が読み込まれることになります。
+
+@subsection スコアファイルの対象メッセージ
+
+スコアはサマリの update 時に一時的に @code{wl-summary-score-marks}
+で指定したメッセージのみにつけられます。
+つまりサマリから抜けるとメッセージにつけられたスコアは消去され、
+デフォルトのスコア値に戻ります。
+
+@subsection スコアファイルの作成
+
+まずサマリバッファで適当なメッセージに移動してから @kbd{L} をタイプしま
+す。その後ミニバッファでの入力を求められますので、つづけて @kbd{s},
+@kbd{s}, @kbd{p} とタイプしてみてください。すると Subject の文字列が入力
+されている状態になりますので、適当に編集したのち @kbd{@key{RET}} を押します。
+
+これで、入力した文字列と同じ Subject を持つメッセージに対してスコア 
+-1000 がつけられるようになります。つまり、このようなスコアファイルが自動的
+に作成されたことになります。
+
+次に、同じサマリバッファで @kbd{h} @kbd{e} とタイプしてください。
+すると先ほど作成したスコアファイルが表示されていると思います。
+このバッファをスコア編集バッファと呼びます。
+このスコア編集バッファで @kbd{C-c C-e} とタイプすると、
+ミニバッファで先ほどと同じような入力を求められると思いますが、
+ここで @kbd{a} とタイプしてください。今度はすぐに "From" のスコアエントリが挿
+入されたはずです。
+このようにしてサマリバッファでもスコア編集バッファでも
+スコアファイルを簡単に作成することができます。
+
+ところで、ミニバッファでの入力時に @kbd{s s p} または @kbd{a} とタイプしたように、
+キータイプ数が違っていたと思います。
+これは、@code{wl-score-header-default-entry} の設定によるものです。
+この変数ではヘッダに応じたデフォルトのスコアエントリを設定します。
+たとえば、"subject" ヘッダでは型と期限についての入力を求めますが、
+"from" ヘッダでは型は substring, 期限は永続に自動的に決定されます。
+ただし、スコアの値は prefix argument で強制的に変更することができます。
+また、ミニバッファでの入力時に @kbd{?} とタイプすることでキーとそれに対応す
+るヘッダや型を(help)を表示します。
+
+では最後に、スコア編集バッファで @kbd{C-c C-c} と入力して下さい。これでスコア
+ファイルを保存して編集モードを終了します。バッファの内容を消去してから 
+@kbd{C-c C-c} すると編集中のスコアファイルを削除します。
+
+@subsection TIPS
+
+@subsubsection スコアファイルの選択
+
+@code{wl-summary-increase-score} と @code{wl-summary-lower-score} とで追
+加するスコアファイルは @code{wl-score-change-score-file} で変更すること
+ができます。
+
+@subsubsection スコアの加算
+
+@code{wl-summary-increase-score} や @code{wl-summary-lower-score}、
+@code{wl-score-edit-insert-entry} で同じエントリを追加した場合、
+スコアが加算されます。
+
+たとえば、@kbd{L a} でスコアが -1000 の @samp{from} エントリを作成した後、
+再度 @kbd{C-u 200 L a} でスコアが -200 の @samp{from} エントリを作成すると、
+スコアが -1200 のエントリが1つ作成されることになります。
+
+@subsubsection Threadキーの作成
+
+@code{wl-summary-increase-score} か @code{wl-summary-lower-score} で
+@samp{Thread}キーを作成すると、子スレッドの @samp{Message-ID} も全て
+追加されます。
+
+@subsubsection Followupキーの作成
+
+@code{wl-summary-increase-score} か @code{wl-summary-lower-score} で
+@samp{Followup}キーを作成すると、カーソル上のメッセージの
+@samp{Message-ID} も @samp{References} キーに追加されます。
+もし、@code{wl-score-auto-make-followup-entry} が non-nil であれば
+@code{wl-score-expiry-days} で指定した日にち以内の全followup対象のメッセー
+ジの @samp{Message-ID} が追加されます。
+
+@subsection キーバインド
+
+@table @kbd
+@item K
+@kindex K (Summary)
+@findex wl-summary-increase-score
+現在のメッセージのスコアを高くします。
+同時にスコアエントリがスコアファイルに追加されます。
+また、prefix argument でスコアの値を設定することができます。
+
+@item L
+@kindex L (Summary)
+@findex wl-summary-lower-score
+現在のメッセージのスコアを低くします。
+同時にスコアエントリがスコアファイルに追加されます。
+また、prefix argument でスコアの値を設定することができます。
+
+@item h R
+@kindex h R (Summary)
+@findex wl-summary-rescore
+スコアを適用し直します。
+ただし、既にスコアがつけられているメッセージには、新たにスコアはつきません。
+
+@item h c
+@kindex h c (Summary)
+@findex wl-score-change-score-file
+現在選択しているスコアファイルを変更します。
+
+@item h e
+@kindex h e (Summary)
+@findex wl-score-edit-current-scores
+現在選択しているスコアファイルを編集します。
+スコアファイルが複数ある場合先に指定されたファイルが選択されます。
+
+@item h f
+@kindex h f (Summary)
+@findex wl-score-edit-file
+任意のスコアファイルを編集し、このスコアファイルを選択します。
+
+@item h F
+@kindex h F (Summary)
+@findex wl-score-flush-cache
+読み込んだスコアファイルは一旦キャッシュされますが、そのキャッシュを消去します。
+Wanderlust 以外で直接スコアファイルを変更した場合は、
+キャッシュを消去して再読み込みする必要があります。
+
+@item h m
+@kindex h m (Summary)
+@findex wl-score-set-mark-below
+既読マークを付ける(読んだことにする)スコア基準値を設定します。
+この値よりも小さなスコアが既読になります。
+
+@item h x
+@kindex h x (Summary)
+@findex wl-score-set-expunge-below
+サマリから消去するスコア基準値を設定します。
+この値よりも小さなスコアが消去されます。
+消去といっても表示されないだけであり、サマリ情報やフォルダからは削除されま
+せん。
+消去されたメッセージは rescan-noscore により再び表示することができます。
+@end table
+
+@subsection スコア編集バッファのキーバインド
+
+@table @kbd
+@item C-c C-k
+@kindex C-c C-k (Score Mode)
+@findex wl-score-edit-kill
+編集中のファイルを破棄します。
+
+@item C-c C-c
+@kindex C-c C-c (Score Mode)
+@findex wl-score-edit-exit
+編集中のファイルを保存して、編集モードを終了します。
+
+@item C-c C-p
+@kindex C-c C-p (Score Mode)
+@findex wl-score-pretty-print
+スコアを綺麗に表示し直します。
+
+@item C-c C-d
+@kindex C-c C-d (Score Mode)
+@findex wl-score-edit-insert-date
+紀元前1年12月31日からの日数を挿入します。
+期限付きのスコアを作るときに期限の要素(3番目)に使用します。
+
+@item C-c C-s
+@kindex C-c C-s (Score Mode)
+@findex wl-score-edit-insert-header
+サマリバッファで選択しているメッセージのヘッダを挿入します。
+
+@item C-c C-e
+@kindex C-c C-e (Score Mode)
+@findex wl-score-edit-insert-entry
+サマリバッファで選択しているメッセージのスコアエントリを追加します。
+@end table
+
+@subsection カスタマイズ変数
+
+@table @code
+@item wl-summary-default-score
+@vindex wl-summary-default-score
+初期設定は 0。
+スコアのデフォルト値を設定します。この値を元にスコアが加減されます。
+
+@item wl-summary-important-above
+@vindex wl-summary-important-above
+初期設定は nil。
+この値より大きいスコアに対して importantマーク(@samp{$}) をつけます。
+nil の場合はマークを付けません。
+
+@item wl-summary-temp-above
+@vindex wl-summary-temp-above
+初期設定は nil。
+この値より大きいスコアに対して tempマーク(@samp{*}) をつけます。
+nil の場合はマークを付けません。
+
+@item wl-summary-mark-below
+@vindex wl-summary-mark-below
+初期設定は 0。
+この値より小さなスコアに対して既読マークをつけます(読んだことにします)。
+
+@item wl-summary-expunge-below
+@vindex wl-summary-expunge-below
+初期設定は nil。
+この値より小さなスコアはサマリから消去します。
+nil の場合は消去しません。
+
+@item wl-summary-score-marks
+@vindex wl-summary-score-marks
+初期設定は '("N" "!" "U")。
+スコアをつけるメッセージのマークを指定します。
+
+@item wl-use-scoring
+@vindex wl-use-scoring
+初期設定は t。
+Non-nil ならスコア機能を有効にします。
+
+@item wl-score-files-dir
+@vindex wl-score-files-dir
+初期設定は "~/.elmo/"。
+スコアファイルをデフォルトのディレクトリを指定します。
+
+@item wl-score-interactive-default-score
+@vindex wl-score-interactive-default-score
+初期設定は 1000。
+スコアファイルでスコア要素が nil の時に用いるスコアを指定します。
+また、@code{wl-summary-increase-score} や @code{wl-summary-lower-score}
+でつけるスコア値でも用いられます。ただし、
+@code{wl-score-header-default-entry} のスコア値が nil の時。
+
+@item wl-score-expiry-days
+@vindex wl-score-expiry-days
+初期設定は 7。
+期限付きスコアを削除する日数を指定します。
+
+@item wl-score-update-entry-dates
+@vindex wl-score-update-entry-dates
+初期設定は t。
+Non-nil なら期限付きスコアを削除する機能を有効にします。
+
+@item wl-score-header-default-entry
+@vindex wl-score-header-default-entry
+@code{wl-summary-increase-score} や @code{wl-summary-lower-score}、
+@code{wl-score-edit-insert-entry} でスコアエントリを作成する場合の
+各ヘッダのデフォルト値を設定します。
+
+@item wl-score-simplify-fuzzy-regexp
+@vindex wl-score-simplify-fuzzy-regexp
+スコアエントリの型で fuzzy を指定した場合、
+文字列から削除する正規表現を指定します。
+Subject で使用されることが多いので、デフォルトでは
+メイリングリストプログラムでつけられる prefix を指定しています。
+
+@item wl-summary-rescore-partial-threshold
+@vindex wl-summary-rescore-partial-threshold
+初期設定は 200。
+sync-all や rescan が実行されたときに、この値を越えるメッセージが
+サマリにある場合、サマリの最後から指定された数のメッセージだけ、
+部分的にスコア付けが適用されます。
+
+@item wl-summary-auto-sync-marks
+@vindex wl-summary-auto-sync-marks
+Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
+未読マークは、IMAP4 サーバ上の未読情報が反映されます。
+重要マークは IMAP4 サーバ上の重要情報(Flagged フラグがついているか)、
+および 'mark フォルダの内容が、反映されます。
+初期設定は t。
+@end table
+
+
+@node Score File Format,  , Score Commands, Scoring
+@section スコアファイル書式
+@cindex Score File Format
+
+スコアファイルの書式は Gnus と同じなので、Gnus で使用していた
+スコアファイルがそのまま利用できます。
+ただし、幾つかのキーは対応していなかったり Wanderlust 特有のキーがあったり
+しますので、完全に互換性があるわけではありません。
+
+@example
+(("subject"
+  ("for sale" -1000 nil s)
+  ("儲け" -1000 nil s))
+ ("from"
+  ("spam@@spamspamspam" -10000 nil s))
+ ("followup"
+  ("my@@address" 3001 nil s))
+ ("chars"
+  (1000000 -10 nil >))
+ (important 5000)
+ (temp 3000)
+ (mark 0)
+ (expunge -3000))
+@end example
+
+@table @code
+@item 文字列 (STRING)
+キーが文字列である場合、マッチさせるヘッダの名前を指定します。
+このキーには次のものが指定できます。
+@code{Subject}, @code{From}, @code{Date}, @code{Message-Id},
+@code{References}, @code{To}, @code{Cc}, @code{Chars}, @code{Lines},
+@code{Xref}, @code{Extra}, @code{Followup}, @code{Thread}
+この中で、@code{Chars} はメッセージのサイズを指し、@code{Extra},
+@code{Followup}, @code{Thread} については後述します。
+残りはキーと同じ名前のフィールドが対象となります。
+
+このキーの後にスコアエントリを任意の数だけ指定し、
+この各スコアエントリは次の5つの要素からなります。
+
+@enumerate
+@item
+ヘッダにマッチする要素。"lines" と "chars" の場合は数字で、それ以外は文字
+列を指定します。
+
+@item
+スコア要素。１番目の要素がマッチした場合、そのメッセージのスコアをこの値分
+増減させます。
+
+@item
+期限の要素。nil なら永続(permanent)指定で、
+数字(日数)なら一定期間(@code{wl-score-expiry-days})マッチしないと削除されます。
+この日数は紀元前1年12月31日から経過した日にちです。
+
+@item
+型の要素。１番目の要素をマッチさせる方法を指定します。
+キーによって指定できる型が異なります。
+
+@table @dfn
+@item From, Subject, References, Message-Id
+これらの文字列のキーに対しては、@code{r} と @code{R} (正規表現) (regexp) 
+や、@code{s} と @code{S} (文字列の一部) (substring)、@code{e} と 
+@code{E} (正確な合致) (exact match)、それに @code{f} と @code{F}
+(あいまい) (fuzzy) が指定できます。
+@code{R}, @code{S}, @code{E}, @code{F} は大文字小文字を区別してマッチさせます。
+
+@item Lines, Chars
+これらは数字の大小を指定します。その記号は次の5つです。
+@code{<}, @code{>}, @code{=}, @code{>=}, @code{<=}
+
+@item Followup
+このキーは、@code{From}ヘッダーにマッチし、
+そのメッセージへの全てのフォローアップに対してスコアをつけます。
+たとえば、自分自身の記事へのフォローアップのスコアを増やしたりするのに便利です。
+
+@code{f} を除いて @code{From} キーと同じ型が指定出来ます。
+また、自動的にスコアファイルに @samp{Followup} エントリが追加されます。
+
+@item Thread
+このキーは、@code{Message-ID} @var{x} で始まっている(サブ)スレッドにスコアを付ける場合に指定します。
+これは @code{References} ヘッダーに @var{x} を持つそれぞれの記事に新しい
+@samp{Thread} エントリを自動的に追加します。
+これにより、全ての祖先の @code{Message-ID} を @code{References} に含んでいない場合でも、
+確実にスレッド全体のスコアを増減させることができます。
+
+@code{f} を除いて @code{References} キーと同じ型が指定出来ます。
+また、自動的にスコアファイルに @samp{Thread} エントリが追加されます。
+@end table
+
+@item
+拡張ヘッダの要素。キーが @code{Extra} である場合のみ意味を持ちます。
+@code{Subject} や @code{From} などの標準以外のヘッダにマッチさせたい場合に
+そのヘッダを指定します。
+ただし、指定したヘッダは @code{elmo-msgdb-extra-fields} にも設定する必要があります。
+したがって、拡張ヘッダが取得できないフォルダでは機能しません。
+
+@end enumerate
+
+そしてこれらの@emph{全ての要素を当てはめた後の}合計のスコアがそのメッセー
+ジのスコアとなります。
+
+@cindex Score File Atoms
+@item mark
+この値より小さいスコアのメッセージには既読マークをつけます。
+デフォルト値は @code{wl-summary-mark-below} で指定されます。
+
+@item expunge
+この値より小さいスコアのメッセージはサマリから消去します。
+デフォルト値は @code{wl-summary-expunge-below} で指定されます。
+
+@item mark-and-expunge
+@code{mark} と @code{expunge} を同時に指定します。
+つまり、この値より小さいスコアのメッセージは既読マークをつけ、サマリから消去します。
+
+@item temp
+この値より大きいスコアのメッセージには temp マークをつけます。
+デフォルト値は @code{wl-summary-temp-above} で指定されます。
+
+@item important
+この値より大きいスコアのメッセージには important マークをつけます。
+デフォルト値は @code{wl-summary-important-above} で指定されます。
+@end table
+
+@subsection 注意事項
+
+@code{extra} キーはもちろん、@code{lines} と @code{xref} キーを使用する
+場合でも、@code{elmo-msgdb-extra-fields} を設定する必要があります。
+
+@lisp
+(setq elmo-msgdb-extra-fields '("lines" "xref"))
+@end lisp
+
+その他、下記の制限事項があります。
+
+@itemize @bullet
+@item サマリ情報に含まれる@samp{References}フィールドには最後の
+@samp{Message-ID}しか存在しないため、@code{references}キーもその
+@samp{Message-ID}にしかマッチしない。
+@end itemize
+
+フォルダ種別により参照できるキーの一覧。
+
+@example
+                        chars lines xref  extra
+localdir,localnews      ○    △    △    △
+nntp (xover対応)        ○    △    △    ×
+     (xover非対応)      ×    △    △    △
+imap4                   ○    △    △    △
+pop3                    ×    △    △    △
+
+                ○: 参照できる
+                ×: 参照できない(無視される)
+                △: @code{elmo-msgdb-extra-fields} を設定すれば参照できる
+@end example
+
+
+@c
+@c  Customization
+@c
+@node Customization, Mailing List, Scoring, Top
+@chapter Wanderlust のカスタマイズ
+@cindex Customization
+
+@menu
+* Living with other packages::  パッケージのある生活
+* Highlights::                  ハイライトの設定
+* Advanced Settings::           カスタマイズ〜応用編〜
+* Customizable Valiables::      その他のカスタマイズ変数一覧
+@end menu
+
+
+@node Living with other packages, Highlights, Customization, Customization
+@section パッケージのある生活
+
+他のパッケージを使うための設定例です。
+
+@menu
+* BBDB::                        BBDB
+* supercite::                   supercite.el
+* mu-cite::                     mu-cite.el
+* x-face-mule::                 x-face-mule.el
+* dired-dd::                    dired-dd.el
+@end menu
+
+
+@node BBDB, supercite, Living with other packages, Living with other packages
+@subsection bbdb.el
+@pindex BBDB
+
+@file{util/bbdb-wl.el} を load-path において以下のように設定すれば OK です。
+
+インストール時に load-path 上に BBDB があれば、
+@file{bbdb-wl.el} はバイトコンパイル/インストールされます。
+@xref{Install}.
+
+@lisp
+(require 'bbdb-wl)
+
+(bbdb-wl-setup)
+;; @r{ポップアップ表示}
+(setq bbdb-use-pop-up t)
+;; @r{自動収集}
+(setq bbdb/mail-auto-create-p t)
+(setq signature-use-bbdb t)
+(setq bbdb-north-american-phone-numbers-p nil)
+;; @r{サマリに bbdb の名前を表示} :-)。
+(setq wl-summary-from-func 'bbdb-wl-from-func)
+;; @r{自動的に ML フィールドを加える}
+(add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
+(setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
+@end lisp
+
+
+@node supercite, mu-cite, BBDB, Living with other packages
+@subsection sc.el(supercite), sc-register.el
+@pindex sc
+@pindex supercite
+
+ふつうの mailer と同じ設定で OK です。以下は、設定の一例です。
+
+@lisp
+(autoload 'sc-cite-original "sc" nil t)
+(setq mail-yank-hooks 'sc-cite-original)
+(setq sc-preferred-header-style 1)
+(setq sc-electric-references-p nil)
+(setq sc-citation-leader "")
+(setq sc-load-hook '(lambda () (require 'sc-register)))
+(setq sc-preferred-attribution 'registeredname)
+@end lisp
+
+
+@node mu-cite, x-face-mule, supercite, Living with other packages
+@subsection mu-cite.el
+@pindex mu-cite
+
+ふつうの mailer と同じ設定で OK です。以下は、設定の一例です。
+
+mu-cite 8.0以前のバージョンをお使いなら、
+以下のように設定してください。
+
+@lisp
+(autoload 'mu-cite/cite-original "mu-cite" nil t)
+(setq mail-citation-hook 'mu-cite/cite-original)
+@end lisp
+
+mu-cite 8.1以降のバージョンをお使いなら、
+以下のように設定してください。
+
+@lisp
+(autoload 'mu-cite-original "mu-cite" nil t)
+(add-hook 'mail-citation-hook (function mu-cite-original))
+@end lisp
+
+@node x-face-mule, dired-dd, mu-cite, Living with other packages
+@subsection x-face-mule.el
+@pindex x-face-mule
+@pindex bitmap-mule
+
+x-face-mule のバージョンによって設定が異なります。
+
+x-face-mule 0.19以前のバージョンをお使いなら、
+以下のように設定してください。
+
+@lisp
+(setq wl-highlight-x-face-func
+      (function
+       (lambda (beg end)
+        (x-face-mule:x-face-decode-message-header))))
+(require 'x-face-mule)
+@end lisp
+
+x-face-mule 0.20 以降のバージョンをお使いなら、
+以下のように設定してください。
+
+@lisp
+(setq wl-highlight-x-face-func
+      (function
+       (lambda (beg end)
+        (x-face-mule-x-face-decode-message-header))))
+(require 'x-face-mule)
+@end lisp
+
+bitmap-mule 8.0以降に付属の @file{x-face-mule.el}
+をお使いになる場合は以下のように設定してください。
+
+@lisp
+(autoload 'x-face-decode-message-header "x-face-mule")
+(setq wl-highlight-x-face-func
+      (function x-face-decode-message-header))
+@end lisp
+
+Encode 済みの X-Face 文字列を @file{~/.xface}
+(変数 @code{wl-x-face-file} の値です)の内容に用意しておくと、
+ドラフトが準備されるときに自動的に X-Faceフィールドとして挿入されます。
+(変数 @code{wl-auto-insert-x-face} が non-nil の場合)
+
+
+@node dired-dd,  , x-face-mule, Living with other packages
+@subsection dired-dd(Dired-DragDrop)
+@pindex Dired-DragDrop
+@pindex Dired-DD
+@cindex Drag and Drop
+
+dired-dd パッケージに含まれる @file{dired-dd-mime.el} を組み込めば、GNU Emacs
+で編集中の草稿バッファへ dired から Drag&Drop するだけで簡単にマルチパー
+トを作成できます(もっとも、Wanderlust 専用ではなく tm/SEMI 汎用ですが)。
+
+@lisp
+;; @r{dired-dd:} http://www.asahi-net.or.jp/~pi9s-nnb/dired-dd-home.html
+(add-hook 'dired-load-hook
+          (function
+           (lambda ()
+             (load "dired-x")
+             ;; @r{Set dired-x variables here.}
+             ;; @r{To and flo@dots{}}
+             (if window-system
+                 (progn (require 'dired-dd)
+                        (require 'dired-dd-mime))))))
+@end lisp
+
+
+@node Highlights, Advanced Settings, Living with other packages, Customization
+@section ハイライトの設定
+
+@subsection カスタマイズ変数
+
+@table @code
+@item  wl-summary-highlight
+@vindex wl-summary-highlight
+初期設定は t。サマリのハイライトを行うかどうか。
+Non-nil ならサマリのハイライトを行います。
+
+@item  wl-highlight-max-summary-lines
+@vindex wl-highlight-max-summary-lines
+初期設定は 10000。
+サマリの行数がこの値より大きい場合、サマリのハイライトを行いません。
+
+@item  wl-summary-highlight-partial-threshold
+@vindex wl-summary-highlight-partial-threshold
+初期設定は 1000。
+サマリ全体をハイライトするかどうかの閾値。
+この値を越える行数のメッセージがサマリに存在する場合、
+部分的なハイライトを行います。
+
+@item  wl-summary-partial-highlight-above-lines
+@vindex wl-summary-partial-highlight-above-lines
+初期設定は 30。
+@code{wl-summary-highlight-partial-threshold}を越える行数のメッセージが
+サマリに存在する場合、バッファ末から、カーソル行よりこの値の行数分だけ
+上のメッセージまで部分的なハイライトが行なわれます。
+(この値を nil にするとバッファ末から
+ @code{wl-summary-highlight-partial-threshold}行分だけハイライトされる
+ ようになります。)
+
+@item wl-highlight-body-too
+@vindex  wl-highlight-body-too
+初期設定は t。
+Non-nil ならドラフトおよびメッセージの本文もハイライトの対象とします。
+
+@item  wl-highlight-message-header-alist
+@vindex wl-highlight-message-header-alist
+ドラフトおよびメッセージのヘッダのハイライトを行う際に、
+重要 (@code{wl-highlight-message-important-header-contents})な、
+二番目に重要 (@code{wl-highlight-message-important-header-contents2})な、
+そして重要ではない (@code{wl-highlight-message-unimportant-header-contents})
+ことを表す face をそれぞれどのメッセージヘッダに割り当てるかを設定します。
+同様に、任意の正規表現に対して任意のfaceを割り当てることもできます。
+
+@item wl-highlight-citation-prefix-regexp
+@vindex  wl-highlight-citation-prefix-regexp
+ドラフトおよびメッセージの本文内の引用行を示す正規表現を指定します。
+この正規表現にマッチした本文は、
+(@code{wl-highlight-message-cited-text-*})で指定されるfaceでハイライトされます。
+
+@item  wl-highlight-highlight-citation-too
+@vindex wl-highlight-highlight-citation-too
+初期設定は nil。
+Non-nil なら@code{wl-highlight-citation-prefix-regexp}で与えられる
+引用行の引用を示す正規表現自体もハイライトの対象とします。
+
+@item  wl-highlight-citation-header-regexp
+@vindex wl-highlight-citation-header-regexp
+引用を始めることを示すヘッダの正規表現を指定します。
+この正規表現にマッチした本文は、
+@code{wl-highlight-message-headers}で指定されるfaceでハイライトされます。
+
+@item  wl-highlight-max-message-size
+@vindex wl-highlight-max-message-size
+初期設定は 10000。
+メッセージがこの値より大きい場合、メッセージのハイライトを行いません。
+これによりuuencodeや非常に大きなダイジェストなどの
+ハイライトの抑止を行います。
+
+@item  wl-highlight-signature-separator
+@vindex wl-highlight-signature-separator
+シグニチャの境界を表す正規表現を指定します。
+正規表現でも、正規表現のリストでも構いません。
+この正規表現にマッチした場所以降のメッセージは、
+@code{wl-highlight-message-signature}で指定されるfaceでハイライトされます。
+
+@item  wl-max-signature-size
+@vindex wl-max-signature-size
+初期設定は 400。
+シグニチャをハイライトする場合、
+ハイライトする最大のシグナチャの大きさを指定します。
+
+@item wl-use-highlight-mouse-line
+@vindex  wl-use-highlight-mouse-line
+初期設定は t。
+Non-nil ならフォルダモード、サマリモードなどで
+マウスポインタの行をハイライトの対象とします。
+@end table
+
+@subsection 文字の色、フォントの設定
+
+文字の色や、フォントを変えるには、Wanderlust で定義されている face を変更
+する必要があります。フォントを変えたいときは set-face-font、色を変えたいと
+きは set-face-foreground などを使えばよいでしょう。face の設定は @file{.emacs} に
+書くことはできないので @file{~/.wl} に書いてください。
+
+たとえば、シグニチャの色を黄色に変えたいときは、
+
+@lisp
+(set-face-foreground 'wl-highlight-message-signature "yellow")
+@end lisp
+
+@noindent
+を @file{~/.wl} に書きます。
+
+以下に Wanderlust で定義されている face について説明します。
+
+@table @code
+@item wl-highlight-message-headers
+メッセージヘッダの名前部分の face です。
+
+@item wl-highlight-message-header-contents
+メッセージヘッダの内容部分の face です。
+
+@item wl-highlight-message-important-header-contents
+メッセージヘッダの内容のうち重要な部分の face です。
+デフォルトでは、Subject の内容部分が設定されています。
+この値は @code{wl-highlight-message-header-alist}
+ を変更すれば変えることができます。
+
+@item wl-highlight-message-important-header-contents2
+メッセージヘッダの内容のうち重要な部分の face その２です。
+デフォルトでは、From と To の内容部分が設定されています。
+この値は @code{wl-highlight-message-header-alist}
+ を変更すれば変えることができます。
+
+@item wl-highlight-message-unimportant-header-contents
+メッセージヘッダの内容のうち重要ではない部分の face です。
+デフォルトでは、X- で始まるヘッダと User-Agent の内容部分が設定されています。
+この値は @code{wl-highlight-message-header-alist}
+ を変更すれば変えることができます。
+
+@item wl-highlight-message-citation-header
+メッセージの引用ヘッダ部分の face です。
+
+@item wl-highlight-message-cited-text-*
+メッセージの引用テキスト部分の face です。
+最後には数字がつき、10 段階まで引用ごとに色分けできるようにしています。
+
+@item wl-highlight-message-signature
+メッセージのシグニチャ部分の face です。
+初期設定は、明色バックでは khaki 暗色バックでは DarkSlateBule です。
+
+@item wl-highlight-header-separator-face
+ドラフトのメッセージのヘッダセパレータの face です。
+
+@item wl-highlight-summary-important-face
+サマリで重要マークのついたメッセージ行の face です。
+
+@item wl-highlight-summary-new-face
+サマリで新規マークのついたメッセージ行の face です。
+
+@item wl-highlight-summary-displaying-face
+サマリで現在表示中のメッセージ行の face です。
+この face は overlay されます。
+
+@item wl-highlight-thread-indent-face
+サマリで現在表示中のメッセージ行の face です。
+
+@item wl-highlight-summary-unread-face
+サマリで未読マークのついたメッセージ行の face です。
+
+@item wl-highlight-summary-deleted-face
+サマリで削除マークのついたメッセージ行の face です。
+
+@item wl-highlight-summary-refiled-face
+サマリでリファイルマークのついたメッセージ行の face です。
+
+@item wl-highlight-refile-destination-face
+サマリでリファイルマークの付いたメッセージ行の、
+リファイル先情報の部分につく face です。
+
+@item wl-highlight-summary-copied-face
+サマリでコピーマークのついたメッセージ行の face です。
+
+@item wl-highlight-summary-target-face
+サマリで一時処理用マーク @samp{*} のついたメッセージ行の face です。
+
+@item wl-highlight-summary-thread-top-face
+サマリでスレッドトップのメッセージ行の face です。
+
+@item wl-highlight-summary-normal-face
+サマリでスレッドトップではないメッセージ行の face です。
+
+@item wl-highlight-folder-unknown-face
+フォルダモードで、いくつ未同期メッセージがあるかわからないフォルダの
+ face です。
+
+@item wl-highlight-folder-zero-face
+フォルダモードで、未同期メッセージがないフォルダの face です。
+
+@item wl-highlight-folder-few-face
+フォルダモードで、未同期メッセージがすこしあるフォルダの face です。
+
+@item wl-highlight-folder-many-face
+フォルダモードで、未同期メッセージがたくさんあるフォルダの face です。
+「すこし」と「たくさん」の切れ目は、
+変数 @code{wl-folder-many-unsync-threshold} で設定されます。
+
+@item wl-highlight-folder-unread-face
+フォルダモードで、未同期メッセージがなくて未読メッセージがある
+フォルダの face です。
+
+@item wl-highlight-folder-killed-face
+フォルダモードで、アクセスグループ中の削除されたフォルダの face です。
+
+@item wl-highlight-folder-opened-face
+フォルダモードで、開いたグループにつく face です。
+変数 @code{wl-highlight-group-folder-by-numbers} が nil のとき有効です。
+
+@item wl-highlight-folder-closed-face
+フォルダモードで、閉じたグループにつく face です。
+変数 @code{wl-highlight-group-folder-by-numbers} が nil のとき有効です。
+
+@item wl-highlight-folder-path-face
+フォルダモードで、現在選択中のフォルダまでのパスにつく face です。
+
+@item wl-highlight-logo-face
+デモでロゴにつく face です。
+
+@item wl-highlight-demo-face
+デモの文字列(バージョン番号など)につく face です。
+@end table
+
+
+@node Advanced Settings, Customizable Valiables, Highlights, Customization
+@section カスタマイズ〜応用編〜
+
+@menu
+* Draft for Reply::             返事用ドラフト
+* Thread Format::               スレッドの見た目
+* User-Agent Header::           User-Agent ヘッダ
+@end menu
+
+
+@node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
+@subsection 返事用ドラフト
+
+Mailng List の記事に返事を書くときは、サマリモードで @kbd{a} を押しただけで
+元記事の Reply-To にあるアドレスを To に用意してほしい、という場合は、
+以下のようにしたらよいでしょう。
+
+@lisp
+(setq wl-draft-reply-without-argument-list
+      '(("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+        ("Followup-To" . (nil nil ("Followup-To")))
+        (("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+        ("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+@end lisp
+
+@noindent
+("X-ML-Name" フィールド及び "Reply-To" フィールドの両方が元記事に
+存在する場合だけ To: に元記事中の Reply-To: フィールドが準備されます。)
+
+@c @noindent
+@c (最後の行の意味は、To: に元記事中の From フィールドが、Cc: に元記事の 
+@c To フィールドおよび Cc フィールド、そして Newsgroups: に元記事の 
+@c Newsgroups フィールドがそれぞれ (あれば) 準備されるということです。)
+
+
+@node Thread Format, User-Agent Header, Draft for Reply, Advanced Settings
+@subsection スレッドの見ため
+
+@example
+  389  09/18(金)01:07 [ てらにし          ] wl-0.6.3
+  390  09/18(金)07:25 +-[ 津邑さん          ]
+  391  09/18(金)19:24 +-[ 村田さん          ]
+  392  09/20(日)21:49 +-[ 奥西さん          ]
+  396  09/20(日)22:11 | +-[ 津邑さん          ]
+  398  09/21(月)00:17 |   +-[ 津邑さん          ]
+  408  09/21(月)22:37 |     +-[ 奥西さん          ]
+  411  09/22(火)01:34 |       +-[ 津邑さん          ]
+  412  09/22(火)09:28 |       +-[ てらにし          ]
+  415  09/22(火)11:52 |         +-[ 津邑さん          ]
+  416  09/22(火)12:38 |           +-[ てらにし          ]
+  395  09/20(日)21:49 +-[ 奥西さん          ]
+  397  09/21(月)00:15 +-[ 奥西さん          ]
+@end example
+
+スレッドの見ためを上記のようにしたい場合の設定は以下の通りです。
+
+@lisp
+(setq wl-thread-indent-level 2)
+(setq wl-thread-have-younger-brother-str "+")
+(setq wl-thread-youngest-child-str       "+")
+(setq wl-thread-vertical-str             "|")
+(setq wl-thread-horizontal-str           "-")
+(setq wl-thread-space-str                " ")
+@end lisp
+
+枝を表示しないようにしたい場合の設定は以下のようにします。
+
+@lisp
+(setq wl-thread-indent-level 2)
+(setq wl-thread-have-younger-brother-str " ")
+(setq wl-thread-youngest-child-str       " ")
+(setq wl-thread-vertical-str             " ")
+(setq wl-thread-horizontal-str           " ")
+(setq wl-thread-space-str                " ")
+@end lisp
+
+@node User-Agent Header,  , Thread Format, Advanced Settings
+@subsection User-Agent
+
+ X-Mailer フィールドや User-Agent フィールドに凝りたいという
+変わったひとは、適当に文字列を insert する関数を自分の好きなように定義して
+@code{wl-generate-mailer-string-func} に設定してください。
+
+以下は設定の一例です。
+
+@lisp
+(setq wl-generate-mailer-string-func
+      (function
+       (lambda ()
+         (concat "X-Mailer: "
+                 (format "%s/%s (%s)" wl-appname wl-version wl-codename)))))
+@end lisp
+
+
+@node Customizable Valiables,  , Advanced Settings, Customization
+@section その他のカスタマイズ変数一覧
+
+その他のカスタマイズ変数一覧。
+
+@table @code
+@item wl-default-folder
+@vindex wl-default-folder
+初期設定は "%inbox"。フォルダ移動時などのデフォルト値となります。
+
+@item wl-draft-folder
+@vindex wl-draft-folder
+初期設定は "+draft"。ドラフトをセーブするフォルダです。
+localdir フォルダである必要があります。
+
+@item wl-trash-folder
+@vindex wl-trash-folder
+初期設定は "+trash"。ゴミ箱フォルダです。
+この値を変更したときは Wanderlust を再起動することをお勧めします。
+
+@item wl-interactive-exit
+@vindex wl-interactive-exit
+初期設定は t。
+Non-nil ならば、Wanderlust 終了時に確認を行います。
+
+@item wl-interactive-send
+@vindex wl-interactive-send
+初期設定は nil。
+Non-nil ならば、メール送信時に本当に送信してよいかを確認します。
+
+@item wl-folder-sync-range-alist
+@vindex wl-folder-sync-range-alist
+初期設定は、以下の値。
+@example
+(("^&.*$" . "all")
+ ("^\\+draft$\\|^\\+queue$" . "all"))
+@end example
+フォルダ名の正規表現とフォルダ移動時のサマリ更新レンジ連想リストです。
+更新レンジには wl-summary-sync で入力できる値のいずれか
+(all, update, rescan, rescan-noscore, first, last) を指定します。
+マッチしなかった場合は、update となります。
+
+@item wl-ask-range
+@vindex wl-ask-range
+初期設定は t。
+nil なら、folder 移動時のサマリ更新で @code{wl-folder-sync-range-alist} の値を
+使用します。
+
+@item wl-mime-charset
+@vindex wl-mime-charset
+初期設定は 'x-ctext。
+MIME ではないメッセージの場合 (Content-Type がないメールなど) や、
+サマリの表示で用いられる MIME charset です。
+(Nemacs とその他の Emacs でサマリを共有したい場合は、
+この値を 'iso-2022-jp としてください。)
+
+@item wl-search-mime-charset
+@vindex wl-search-mime-charset
+初期設定は 'iso-2022-jp。
+検索で用いる MIME charset です。
+
+@item wl-highlight-folder-with-icon
+@vindex wl-highlight-folder-with-icon
+XEmacs のみ有効です。初期設定は XEmacs に依存します(アイコンを使用できるXEmacs では t になります)。
+
+@item wl-strict-diff-folders
+@vindex wl-strict-diff-folders
+フォルダ名の正規表現のリストです。
+フォルダモードで @kbd{s} を押すなどして未読のメッセージ数を
+チェックした場合、通常は簡易的な方法でチェックしています(処理は速いが、正確ではない)。
+この変数にマッチするフォルダはまじめにチェックします。
+IMAP4 フォルダに対する条件フィルタフォルダのような場合には、
+この変数にマッチするよう設定するとよいでしょう。
+初期設定は nil。
+
+@item wl-folder-use-server-diff
+@vindex wl-folder-use-server-diff
+フォルダモードで @kbd{s} を押すなどして未読のメッセージ数をチェックした
+場合、通常は(サーバ上のメッセージ数)−(ローカルにあるメッセージ数)が未読
+とみなされます。しかし、この変数がNon-nil ならば、サーバ上の未読のメッセー
+ジ数をチェックします。IMAP4 フォルダにのみ影響があります。ただし、変数 
+@code{elmo-imap4-disuse-server-flag-mailbox-regexp} にマッチするメールボックス
+の IMAP4 フォルダは、この変数にマッチしてもサーバ上の未読のメッセージ数
+をチェックしません。初期設定は t。
+
+@item wl-auto-check-folder-name
+@vindex wl-auto-check-folder-name
+初期設定は nil。
+Non-nil ならば、設定された値を持つフォルダの未読数を起動時にチェックします。
+'none ならば、起動時にチェックしません。
+list ならば、list に設定された全てのフォルダを起動時にチェックします。
+
+@item wl-auto-uncheck-folder-list
+@vindex wl-auto-uncheck-folder-list
+初期設定は '("\\$.*")。
+@code{wl-auto-check-folder-name} に指定されたグループに含まれていても
+起動時に未読チェックしないフォルダ名の正規表現のリストです。
+
+@item wl-auto-check-folder-list
+@vindex wl-auto-check-folder-list
+初期設定は nil。
+@code{wl-auto-check-folder-name} に指定されたグループに含まれていたら
+起動時に必ず未読チェックするフォルダ名の正規表現のリストです。
+@code{wl-auto-uncheck-folder-list} よりも優先します。
+
+@item wl-no-save-folder-list
+@vindex wl-no-save-folder-list
+初期設定は '("^/.*$")。
+セーブしないフォルダ名の正規表現のリストです。
+
+@item wl-save-folder-list
+@vindex wl-save-folder-list
+初期設定は nil。
+セーブするフォルダ名の正規表現のリストです。
+@code{wl-no-save-folder-list} よりも優先します。
+
+@item wl-folder-mime-charset-alist
+@vindex wl-folder-mime-charset-alist
+初期設定は以下のリスト。
+
+@lisp
+'(("^-alt\\.chinese" . big5)
+  ("^-relcom\\." . koi8-r)
+  ("^-tw\\." . big5)
+  ("^-han\\." . euc-kr)
+  )
+@end lisp
+
+フォルダ名の正規表現と MIME charset の連想リストです。
+マッチしなかった場合は @code{wl-mime-charset} が使われます。
+
+@item wl-folder-init-load-access-folders
+@vindex wl-folder-init-load-access-folders
+初期設定は nil。
+初期化時に特定のアクセスグループのみロードする場合に、そのグループのリ
+ストを指定します。
+nilの場合は @code{wl-folder-init-no-load-access-folders} が参照されます。
+
+@item wl-folder-init-no-load-access-folders
+@vindex wl-folder-init-no-load-access-folders
+初期設定は nil。
+初期化時に特定のアクセスグループを除いてロードする場合に、ロードしない
+アクセスグループのリストを指定します。
+@code{wl-folder-init-load-access-folders} が non-nil の場合は無視されます。
+
+@item wl-delete-folder-alist
+@vindex wl-delete-folder-alist
+初期設定は '(("^-" . remove))。
+delete mark をつけたメッセージを削除する方針を設定します。
+リストの各要素はフォルダと削除先になっており、削除先には次のものが指定で
+きます。
+
+@example
+'remove or 'null : メッセージを即削除する。
+string           : 指定したフォルダに移動する。
+'trash or その他 : `wl-trash-folder'に移動する。
+@end example
+
+@item wl-refile-policy-alist
+@vindex wl-refile-policy-alist
+初期設定は '(("^[-=]" . copy) (".*" . move))。
+refile mark をつける際、メッセージを移動するかコピーするかを指定します。
+リストの各要素にはフォルダと copy または move の cons cell を指定します。
+
+@item wl-x-face-file
+@vindex wl-x-face-file
+初期設定は "~/.xface"。
+Encode 済みの X-Face 文字列を内容とするファイル名です。
+@xref{x-face-mule}.
+
+@item wl-demo-display-logo
+@vindex wl-demo-display-logo
+Non-nil ならばオープニングデモでビットマップのイメージを表示します。
+
+@item elmo-use-database
+@vindex  elmo-use-database
+XEmacs のみ有効です。初期設定は、XEmacs に依存します。
+(dbm の機能をもつ XEmacs ならば t となります。)
+Non-nil ならば dbm を使って Message-ID の管理を行ないます。
+
+@item elmo-passwd-alist-file-name
+@vindex  elmo-passwd-alist-file-name
+初期設定は "passwd"。
+パスワードをセーブしておくファイルの名前です。
+コマンド @code{elmo-passwd-alist-save} を実行するとこのファイルに現在設定
+されているパスワードがセーブされます。
+
+@item elmo-nntp-list-folders-use-cache
+@vindex elmo-nntp-list-folders-use-cache
+初期設定は 600 (秒)。
+NNTP において @samp{list} や @samp{list active} の結果を
+cacheしておく時間を秒単位で指定します。
+nil なら cache しません。
+
+@item elmo-nntp-max-number-precedes-list-active
+@vindex elmo-nntp-max-number-precedes-list-active
+初期設定は nil。
+NNTP において @samp{list active} の結果得られる記事番号を
+フォルダの最大記事番号として利用します。
+NNTP サーバとして INN 2.3 などを使用していて、フォルダモードでの既読数
+が一致しない場合は t にしてください。
+@c non-nil means?
+
+@item elmo-nntp-default-use-listgroup
+@vindex elmo-nntp-default-use-listgroup
+初期設定は t。
+NNTP において 総記事数を調べるために、@samp{listgroup} を使う。
+nil ならば @samp{group} の結果を用います。
+@samp{group} を使うと、正確さには欠けますが、若干高速化されます。
+
+@item elmo-pop3-send-command-synchronously
+@vindex elmo-pop3-send-command-synchronously
+初期設定は nil。
+Non-nil なら POP3 のコマンドを同期的に発行します。サーバによってはこの値を設定しないとサマリ情報を取り出せない場合があるようです。
+POP3 参照時に処理がハングするような場合は、tにするといいかもしれません。
+
+@item elmo-dop-flush-confirm
+@vindex elmo-dop-flush-confirm
+初期設定は、t。
+Non-nil ならばオフライン処理で溜った処理を実行するかどうかを確認します。
+@end table
+
+
+@c
+@c  Mailing List
+@c
+@node Mailing List, Addition, Customization, Top
+@chapter メーリングリスト
+
+@display
+Wanderlust Mailing List @t{<wl@@lists.airs.net>}
+@end display
+
+Wanderlust に関する議論はこのメイリングリストで行われます。
+最新バージョンのアナウンスもこちらに流れます。
+
+@t{wl-ctl@@lists.airs.net} 宛のメールの本文に、
+
+@example
+# guide
+@end example
+
+@noindent
+と書いたメールを送ると入会のガイドが自動的にもらえます。
+
+バグ報告やパッチの送付もこちらのメーリングリストへ送ってください。
+メーリングリストのメンバでなくとも、送信できる設定になっています。
+
+メーリングリストの皆様には貴重な御助言、
+コードをたくさん御提供いただいております。
+この場を借りてお礼申し上げます。
+
+@c
+@c  Addition
+@c
+@node Addition, Index, Mailing List, Top
+@chapter おまけ
+
+@section 略歴
+
+@example
+1998  3/05    MH メッセージをスレッド表示するプロトタイプを作ってみる。
+      3/10    elisp による msgdb のしくみをつくる。
+      3/26    IMAP と NNTP もスレッド表示できるようになる。
+      4/13    スレッド表示用モジュールを elmo としてまとめはじめる。
+      5/01    0.1.0 ボロボロの initial version が完成。
+      6/12    tm-ja ML で、IMAP 対応の elisp メーラを作っている、
+              とつい口を滑べらせてしまう。
+      6/16    tm-ja, elips ML で 0.1.3 をアナウンス。
+      6/22    北目さんのおかげで northeye.org でメーリングリストがスタート。
+      7/01    mm-backend 対応(0.3.0)。
+      8/25    multi フォルダ追加(0.5.0)。
+      8/28    filter フォルダ追加(0.5.1)。
+      9/10    スレッドが開閉できるようになる(0.6.0)。
+      9/11    fldmgr by 村田さん によりフォルダの編集が簡単に。
+      9/18    lha フォルダ追加 by 奥西さん(0.6.3)。
+      9/24    スレッドの枝を表示(0.6.5)。
+      9/28    圧縮フォルダがマルチアーカイバに対応 by 奥西さん。
+     10/28    オフライン処理 (0.7.4)。
+     12/09    ベータバージョンに。
+     12/21    wl-expire by 村田さん。
+1999  2/03    auto-refile by 津邑さん。
+      4/28    wl-template by 村田さん。
+      5/18    1.0.0 stable リリース。
+      7/05    スコア機能 by 村田さん(2.1.0)。
+@end example
+
+くわしい変遷は @file{ChangeLog} を御覧ください。
+
+@section 名前
+
+Wanderlust には、研究社英和辞典によれば、
+
+@display
+wanderlust   wan・der・lust
+  ‡ドイツ語 'desire to wander' の意から‡
+  −名 放浪癖， 旅行熱， 旅心： have 〜 放浪癖がある．
+@end display
+
+@noindent
+という意味があります。が、名前にたいして深い意図はありません。
+(強いて言えば、IMAP @t{=>} どこでもメールが読める @t{=>} 放浪癖 ?)
+
+elmo は、@samp{Elisp Library for Message Orchestration} の略です。
+最初はあの赤いぬいぐるみのつもりでしたが、
+放浪 @t{=>} 漂流 @t{=>} 道標 @t{=>} St.@: Elmo's fire @t{=>} elmo という、
+それっぽい連想も可能です。
+
+@section コードネーム
+
+各バージョンにはコードネームがついています(ほとんど冗談です)。
+いまのところ 1980 年代の米ビルボード誌トップ 40 ヒット
+
+(@samp{http://www.summer.com.br/~pfilho/html/top40/index.html})
+
+からアルファベット順に適当に好きなものをピックアップして使っています。
+
+
+@node Index,  , Addition, Top
+@unnumbered 索引
+
+@menu
+* Concept Index::               概念索引
+* Key Index::                   キーバインド索引
+* Variable Index::              変数索引
+* Function Index::              関数索引
+@end menu
+
+@node Concept Index, Key Index, Index, Index
+@unnumberedsec 概念索引
+@printindex cp
+
+@node Key Index, Variable Index, Concept Index, Index
+@unnumberedsec キーバインド索引
+@printindex ky
+
+@node Variable Index, Function Index, Key Index, Index
+@unnumberedsec 変数索引
+@printindex vr
+
+@node Function Index,  , Variable Index, Index
+@unnumberedsec 関数索引
+@printindex fn
+
+@summarycontents
+@contents
+@bye

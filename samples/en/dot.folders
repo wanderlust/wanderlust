@@ -1,0 +1,72 @@
+#
+#  "~/.folders" sample file.
+#                    by Yuuichi Teranishi <teranisi@gohome.org>
+# Time-stamp: <99/09/10 15:49:11 teranisi>
+#
+# Lines begin with '#' are comment.
+# Empty lines are ignored.
+# 
+
+%inbox
++trash
++draft
+%#mh/Backup@my.imap.server.com
+%#mh/spool/mm
+# group definition
+Emacsen{
+	%#mh/spool/xemacs-beta
+	%#mh/spool/mew-dist
+	%#mh/spool/tm-ja
+	%#mh/spool/mule-win32
+	-fj.news.reader.gnus@other.nntp.server.com
+# multi folder
+# following line defines multi folder of  -fj.editor.xemacs,-fj.editor.mule,
+# and -fj.editor.emacs.
+	*-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+	-gnu.emacs.sources
+}
+UNIX{
+# You can define multi level group.
+ BSD {
+ %#mh/spool/freebsd-users-jp
+ -fj.os.bsd.freebsd
+ -japan.comp.freebsd
+ %#mh/spool/bsd-nomads
+ -fj.os.bsd.misc
+ }
+ Linux {
+ -fj.os.linux
+ -japan.comp.linux
+ }
+-fj.kanji
+-fj.lang.perl
+-fj.unix
+-fj.questions.unix
+-fj.sys.sun
+-fj.sys.j3100
+-comp.windows.x.i386unix
+-fj.comp.x11
+}
+Television{
+%#mh/spool/tvdrama
+-fj.rec.tv
+-japan.tv
+-fj.rec.tv.cm
+-japan.tv.cm
+-fj.rec.idol
+-fj.rec.music
+}
+My folders {
+INBOXes {
+%inbox@localhost
+#
+# access group
+# If there is '/' in the end of line,
+# all subfolders are added to group
+#
+%#mh/expire@localhost /
+}
+# following definition adds all MH subfolders to group.
++ /
+%#mh@my.imap.server.com
+}

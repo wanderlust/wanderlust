@@ -1,0 +1,133 @@
+Wanderlust NEWS -- User-visible changes in Wanderlust. 21 Mar 2000
+
+* Changes in version 1.1.1.
+
+** Directory structure is changed.
+
+*** 00README, 00README.ja is renamed to README, README.ja.
+
+*** All wl-* files are moved to the directory 'wl'.
+
+* Changes in version 1.1.0 from 1.0.3.
+
+** Install
+
+*** tm7 is not supported anymore.
+see the file INSTALL for details.
+
+*** WL_PREFIX and ELMO_PREFIX default as "wl"
+(defvar WL_PREFIX "wl")
+(defvar ELMO_PREFIX "wl")
+
+e.g. install directory is
+  1.0.3  /usr/local/share/emacs/site-lisp/
+  1.1.0  /usr/local/share/emacs/site-lisp/wl/
+
+*** Change default macro in Makefile.
+EMACS   = emacs
+XEMACS  = xemacs
+use $(XEMACS), `package' and `install-package' target.
+
+*** Install not only *.elc, but also *.el.
+
+*** English document (wl.texi).
+
+** New feature
+
+*** Modified UTF7 support.
+Now international mailbox name can be used in IMAP4 in the Emacsen
+with unicode feature.
+
+*** Scoring support.
+
+*** New plugged system.
+
+*** IMAP4 support became more generic.
+Many IMAP4 servers are supported.
+
+*** New authentication type
+  IMAP4: CRAM-MD5, DIGEST-MD5, STARTTLS
+  POP3:  CRAM-MD5, DIGEST-MD5, SCRAM-MD5, STARTTLS
+  NNTP:  STARTTLS
+  SMTP:  STARTTLS
+
+*** New folder type
+  |      Pipe Folder     Incorporate message.
+  .      Maildir Folder  Now Maildir is one of the folder type.
+  'cache Cache Folder    View internal cache.
+
+*** Message buffer cache
+Next message is prefetched while idle time.
+
+*** Sticky summary is enhanced.
+Now message buffer is also sticky.
+You can specify always-sticky summary.
+
+** misc
+
+*** Eliminated wl-draft-prepared-config-alist
+unified with wl-draft-config-alist.
+
+*** POP-before-SMTP variables are re-arranged.
+
+*** Ask non-existing folder.
+ When FCC: contains new folder.
+ When auto-refile specified new folder.
+
+*** Change fetch threshold and confirm settings.
+wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
+
+*** Can use petname for completion.
+
+*** Change Message-ID generator.
+
+*** wl-demo.el support bitmap-mule.
+
+*** Allow function type `smtp-server' value.
+
+*** Make sendlog when `wl-draft-sendlog' is non-nil.
+
+*** `wl-summary-incorporate-marks'
+
+*** Reserve prefetching while off-line status.
+
+*** Draft use new frame when `wl-draft-use-frame' is non-nil.
+
+*** New variable `wl-user-mail-address-list' .
+
+*** New variable `wl-local-domain' for set FQDN.
+
+*** Server side unread status is used in IMAP4 folder.
+
+*** Change defaults
+  wl-mime-charset         iso-2022-jp  =>  x-ctext
+  wl-summary-move-order   'new  =>  'unread
+  wl-tmp-dir              TMPDIR  =>  ~/tmp/
+
+*** New hooks
+  wl-draft-send-hook
+  wl-draft-reedit-hook
+  wl-mime-edit-preview-message-hook
+  wl-folder-suspend-hook
+  wl-summary-toggle-disp-folder-message-resumed-hook
+  wl-summary-line-inserted-hook
+  wl-thread-update-children-number-hook
+  mmelmo-header-inserted-hook
+  mmelmo-entity-content-inserted-hook
+
+*** New function
+  wl-save
+  wl-summary-write
+  wl-summary-supersedes-message
+  wl-fldmgr-delete
+  wl-refile-guess-by-msgid
+  wl-address-user-mail-address-p
+  wl-summary-jump-to-msg-by-message-id-via-nntp
+  wl-summary-temp-mark-pick
+
+* For details of changes, see the file ChangeLog.
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:

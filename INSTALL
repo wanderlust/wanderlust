@@ -1,0 +1,180 @@
+
+	How to install Wanderlust
+
+		                       Time-stamp: <00/03/14 20:05:52 teranisi>
+				       Kaoru Takahashi,
+				       Yuuichi Teranishi,
+				       Tsunehiko Baba
+
+Required environment
+====================
+
+  Before installing Wanderlust, please install either of the following
+  MIME modules. SEMI is recommended because it's more functional.
+
+	SEMI    (1.13.4 or later)
+	tm      (8.7 or later)
+
+  If you use Mule based on Emacs 19.28 or earlier, please install tm.
+  SEMI does not support Emacs 19.28 or earlier.
+
+  SEMI only supports relatively new Emacsen like Emacs 20.xx, XEmacs, etc.
+  But Mule based on Emacs 19.34 can also run SEMI.
+  See the following web page to get more information (written by Japanese).
+
+	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+
+
+(a) SEMI
+
+  SEMI requires APEL and FLIM packages.
+  Recommended combination of APEL, FLIM and SEMI are:
+
+	APEL 10.2, FLIM 1.12.7 and SEMI 1.13.4
+         or
+	APEL 10.2, FLIM 1.13.2 and SEMI 1.13.7
+
+  Combination of APEL 10.2 and FLIM 1.12.7 makes following error
+  while compiling FLIM 1.12.7.
+
+  'Please install latest APEL 7.3 or later.'
+
+  In this case, please comment out following lines in FLIM-CFG.
+
+  (or (fboundp 'write-region-as-binary)
+      (error "Please install latest APEL 7.3 or later."))
+  (or (fboundp 'insert-file-contents-as-binary)
+     (error "Please install latest APEL 7.3 or later."))
+
+  You can download these packages from following URLs.
+
+	APEL:     ftp://ftp.m17n.org/mule/apel/
+	FLIM:     ftp://ftp.m17n.org/mule/flim/
+	SEMI:     ftp://ftp.m17n.org/mule/semi/
+
+  Please install APEL, FLIM, SEMI in order.
+  Generally  'make install' will do the job.
+  To get full information, please refer README.en within each package.
+
+  You can also use many other FLIM/SEMI variants.
+  Combination of the latest versions should work.
+  For example, following combination is confirmed to work.
+
+	APEL 10.2, Chao 1.14.1 and REMI 1.14.1
+
+(b) tm
+
+  The tm, whose version is 8.7 or later, is recommended.  Please
+  obtain from the following web site.
+
+	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+
+  To get full information, please refer README.en within package.
+
+
+Installation
+============
+
+(a) Edit Makefile
+
+  Edit EMACS, LISPDIR, and so on in Makefile.
+
+	EMACS      Emacs command name.
+	LISPDIR    site-lisp directory.
+
+  If LISPDIR is not specified (or NONE by default), it is automatically
+  detected.
+
+(b) Bytecompile and Install
+
+  Please do following.
+
+	% make
+	% make install
+
+  If you use Emacs without subdirs.el (e.g. Mule 2.3 based on Emacs
+  19.28), the following error message ocasinally appears.
+
+	Cannot open load file: mime-setup
+
+  In this case, add directories of custom, APEL, FLIM, SEMI to
+  EMACSLOADPATH (environment variable), or add those directories to
+  load-path in WL-CFG.
+
+
+Install as a XEmacs package
+===========================
+
+  Wanderlust is able to be installed as one of XEmacs (21.0 or later)
+  packages.  After installation as a XEmacs package, you do not need
+  configurations of autoload, icon path in your own .emacs file.
+
+(a) Edit Makefile
+
+  Edit XEMACS, PACKAGEDIR, and so on in Makefile.
+
+	XEMACS      XEmacs command name.
+	PACKAGEDIR  package directory.
+
+  If PACKAGEDIR is not specified (NONE by default) and the SEMI
+  modules have been installed, it is automatically detected.
+
+(b) Bytecompile and Install
+
+  Please do following.
+
+	% make package
+	% make install-package
+
+  Install with Info file.
+
+
+load-path
+=========
+
+  If you are using Emacs 20.3 or later, or XEmacs, there are no need
+  of setting about load-path.
+
+  If you are using Emacs 20.2 or earlier, please add directory of
+  Wanderlust to load-path.
+
+  If you install by default setting, with Emacs 19.29 or later, Emacs
+  20.1, or Emacs 20.2, you can write subdirs.el for example:
+
+  --------------------------------------------------------------------
+    (normal-top-level-add-to-load-path
+     '("apel" "flim" "semi" "wl"))
+  --------------------------------------------------------------------
+
+  If you are using Emacs 19.28 or earlier, you can't use subdirs.el.
+  Please you write setting about load-path in site configuration file.
+
+
+Manual
+======
+
+  Manual is described in Info format. Please do following.
+
+	% make info
+	% make install-info
+
+  If you install Wanderlust as a XEmacs package, Info file is already
+  installed too, so there are no need of these commands.
+
+  Manual directory is automatically detected. Of course, it can be
+  configured by INFODIR in Makefile.
+
+
+Sample configuration file
+=========================
+
+  Wanderlust requires following three configuration files.
+
+	~/.addresses    Address Book
+	~/.folders      Folder Book
+	~/.wl           Wanderlust Configuration (loaded at startup)
+
+  Each sample file (dot.addresses, dot.folders, dot.wl) exists on
+  samples/en/ directory. Please refer them.
+
+  To get full information, please read Info file.

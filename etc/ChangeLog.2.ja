@@ -1,0 +1,1290 @@
+1999-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.0.0 - "Kokomo"
+
+1999-05-18  Tsunehiko Baba <tbaba@mtl.t.u-tokyo.ac.jp>
+
+	* 新規ファイル ChangeLog.en 追加。
+
+1999-05-18  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* Message で mouse-2 が動かなくなっていたのを修正。
+
+1999-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.0.0 pre2 - "Kokomo-pre2"
+	* Folder で グループの中の未読数が減るとハイライトの範囲が変わ
+	  ってしまうのを修正。
+	  (小玉さん <kodama@ayame.mfd.cs.fujitsu.co.jp> の御指摘)
+	* Draft の C-cC-s と menubar のキーバインドはドラフトバッファ毎に
+	  local-set-key するようにした。
+	* wl-summary-mark-as-read-all が，スレッドが閉じた状態で隠れて
+	  いるメッセージに対して効かなくなっていたのを修正。
+	  (大澤さん <ohsawa@mxq.mesh.ne.jp> の御指摘)
+
+1999-05-18  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-summary-reply-with-citation では
+	  wl-draft-prepared-config-alist での本文挿入位置が狂うのを修正
+	  した。
+
+1999-05-17  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* [bbdb.el] wl-folder-exit-hook -> wl-exit-hook に対応。
+
+1999-05-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pre 1.0.0 - "Kokomo-pre"
+	* replace-match () を使わないようにした。
+
+1999-05-17  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* POP-before-SMTP のドキュメント追加。
+	* POP-before-SMTP に対応。
+
+1999-05-17  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-multi-get-msg-filename() が存在しなかったので追加。
+	* wl-message-refer-article-or-url() で mailto: を通す。
+
+1999-05-17  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-summary-goto-folder を interactive で実行した場合，
+	  wl-folder-buffer-cur-{path|entity-id} が変更されないのを修正し
+	  た。
+	* wl-expire-alist の 2，3番目の要素のいずれかが nil の場合は
+	  expire しないようにした。
+
+1999-05-17  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* AUTHINFO に関する部分のドキュメント追加。
+
+1999-05-17  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* マウス行ハイライトのバグ修正。
+
+1999-05-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* あちこちから BETA を取る。
+	* XEmacs で Folder に toolbar が付かなくなっていたのを修正。
+	* サブジェクトが日本語だと partial のマージがうまくいかないのを修正。
+	* 0.10.3 - "Jumpin' Jack Flash"
+
+1999-05-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* make uninstall が WL_PREFIX, ELMO_PREFIX を考慮していなかったのを
+	  修正。
+	* Mule2.3 向けに (point-at-bol), (point-at-eol) を使わないようにした。
+	* 名前変更 wl-folder-exit-hook -> wl-exit-hook。
+	* 名前変更 wl-folder-exit -> wl-exit。
+	* ja.Emacs を更新。
+	* [wl-ja.texi] wl-summary-print-message の説明追加。
+
+1999-05-16  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-auto-select-first が t であっても未読がない場合，
+	  メッセージバッファが消えないのを修正。
+
+1999-05-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* [wl-ja.texi] highlight、internal フォルダの説明を追加。
+	* wl-highlight からいくつかの defvar を wl-vars に移し、
+	  defcustom にした。
+	* unplugged で nntp フォルダを選択するとエラーが出るのを修正。
+	  (丸山さん <maru@kthree.co.jp> より御指摘)
+	* wl-stay-folder-window が t のとき、Sticky Summary が絡むと
+	  キャッシュが更新されないなどの不具合が発生していたのを修正。
+	* Summary のマウス行のハイライトを行頭から行末までにした。
+	* wl-init の初期化の順序とメッセージを一部変更。
+	  prefix-arg つきでは、基本フォルダの存在をチェックしないようにした。
+	* Sticky Summary を exit するときに、ビューキャッシュも
+	  セーブするようにした。
+
+1999-05-14  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-summary-reedit() した時に wl-mail-setup-hook が参照されない
+	  のを修正。
+
+1999-05-14  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-summary-next-folder-or-exit() の修正が
+	  wl-auto-select-first が t の場合が考慮されてないのを修正。
+	* wl-summary-next-no-unread が t のときの移動コマンドを変更でき
+	  るようにした。
+
+1999-05-14  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* [wl-ja.texi] wl-draft-write-current-newsgroup のドキュメント追加。
+
+1999-05-13  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* mode-motion-hook を用いずに mouse-face のhighlight を行う事にした。
+	* wl-version-show を追加した。
+
+1999-05-13  Koichiro Ohba <Koichiro.Ohba@nf-system.co.jp>
+
+	* [wl-ja.texi] Sticky Summary の説明を追加。
+
+1999-05-13  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* wl-summary-stickしたフォルダで，wl-summary-forwardした後，
+	  変なウインドウに行ってしまうのを修正。
+
+1999-05-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-template が recursive-edit を使わないようにした。
+
+1999-05-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft-config-alist のサブ関数に 'x-face を追加。
+	* [wl-template] select バッファをハイライトするようにした。
+
+1999-05-13  Mito <mit@nines.nec.co.jp>
+
+	* フォルダを移動しても、直前のメッセージが表示されたままなのを
+	  避けるため wl-summary-next-folder-or-exit() で
+	  (wl-summary-toggle-disp-msg 'off) するようにした。
+	* wl-summary-toggle-disp-msg() で arg に off を指定して呼
+	  び出した場合エラーが出るのを修正。
+
+1999-05-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* NNTP フォルダを wl-folder-update-recursive-current-entity で更
+	  新するとエラーになるのを修正した。
+
+1999-05-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pop3, imap4, nntp で、elmo-*-use-cache が nil のときに
+	  uncached になってしまうのを修正。
+	  (村田さん <muse@ba2.so-net.ne.jp> の御指摘)
+
+1999-05-12  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	 * localnews が読めなくなっていたバグを修正。また、
+	   elmo-localnews-local-file-p() の引数が足りなかったのを修正。
+
+1999-05-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 0.10.2 - "I'm Your Man"
+
+1999-05-12  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* [wl-ja.texi] いくつかのコマンドの説明を追加。
+
+1999-05-12  Koichiro Ohba <Koichiro.Ohba@nf-system.co.jp>
+
+	* [sample.dot.wl] auto-refile 設定を追加。
+	* [wl-ja.texi] wl-summary-auto-refile-skip-marks の説明を追加。
+
+1999-05-12  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 大文字のニュースグループ名のチェックに失敗するのを修正。
+
+1999-05-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* localdir で既読メッセージが uncached になってしまうのを修正。
+	* 新規変数 wl-ps-print-buffer-func。ps-print で使う関数を指定。
+	  default は 'ps-print-buffer-with-faces。
+	  (水戸さん <mit@nines.nec.co.jp> の御要望に基づく)。
+	* .folders 解析時にグループと petname に同じ名前がでてきたら
+	   エラーを出すようにした。
+
+1999-05-11  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* sample.dot.wl を更新。
+	* アクセスグループの記述の修正他。
+
+1999-05-11  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* フィルタフォルダで "$" をつける対象がローカルファイルである
+	  場合に、マークはつくがキャッシュできないバグを修正。
+
+1999-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* tm 向け partial 結合関数を実装。
+	* Nemacs で wl-defface が動かなかったのを修正。
+	* wl-summary-exec を高速化。
+	* Summary に 'D' を割り振るのを忘れていた。
+	* imap4 のメッセージ削除時、スレッドの具合によっては msgdb から
+	  削除されない場合があったのを修正。
+	* wl-folder-check-one-entity ですぐに結果が表示されるよう
+	  (sit-for 0) するようにした。
+	* wl-message-redisplay-hook を unwind-protect し、
+	  bbdb などの prompt で C-g したときにも Summary
+	  にカーソルが戻るようにした。
+
+1999-05-10  Tomokazu Matsumaru <matty@tamtam.co.jp>
+
+	* たくさんメッセージがある POP3 フォルダがハングする問題を修正。
+
+1999-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規変数 wl-folder-sync-range-alist, wl-default-sync-range。
+	  フォルダごとに sync のデフォルトを変えられるようにした。
+	  (神嶌さん<kamisima@etl.go.jp>より御要望)
+	* Mule 2.3 で make に失敗するのを修正。
+	  (小玉さん <kodama@ayame.mfd.cs.fujitsu.co.jp> の御指摘)
+	* wl-vars.el が euc になっていてスレッド枝が文字化けするのを修正。
+	  (村田さん <muse@ba2.so-net.ne.jp> の御指摘)
+	* 0.10.1 - "Harlem Shuffle"
+
+1999-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* imap4 で、select-folder 中に C-g すると、カレントフォルダが
+	  おかしくなるのを修正(したつもり)。
+	 (水原＠表千家 <mizuhara@acm.org> さんの御指摘)
+	* 新規変数、elmo-archive-use-cache、elmo-nntp-use-cache
+	  elmo-imap4-use-cache、elmo-pop3-use-cache。
+	  それぞれ、読んだ時にメッセージをキャッシュするかどうかを設定。
+	* wl-no-cache-folder-list -> 廃止。
+	* important-mark を付けた瞬間にキャッシュするようにした。
+
+1999-05-08  Koichiro Ohba <koichiro@ca.mbn.or.jp>
+
+	* [wl-ja.texi] typo 他の修正。
+
+1999-05-08  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* [wl-ja.texi] typo 他の修正。
+
+1999-05-05  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* ^L で改頁されてる時に限り wl-message-prev-page() するとカー
+	  ソルがメッセージバッファからサマリへ戻らないバグを修正。
+	* make install 時には *.elc は rename-file() する。
+	* mode-motion-hook は XEmacs 固有なため、GNU Emacs でバイトコ
+	  ンパイルするとエラーメッセージが出るのを黙らせる。
+
+1999-05-05  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-summary-refile-region, wl-summary-copy-region, wl-thread-refile,
+	  wl-thread-copy がバグっていたのを修正。
+
+1999-05-05  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-{nntp|imap4|pop3}.el で case-fold-search が操作対象バッファ
+	  で有効になっていなかったのを修正した。
+
+1999-05-04  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft-send を1度中断した後に送信を行うと，
+	  wl-draft-config-alist の変数が適用されない問題を修正した。
+
+1999-05-01  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* NNTP フォルダで top カテゴリの頭文字が数字になっている
+	  ニュースグループを読める様にした。
+
+1999-04-30  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* face をポータブルに定義する関数、wl-defface を定義。
+
+1999-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 編集中のドラフトを Summary から reedit するとバッファ名の
+	  フォルダ名部分が増殖してしまうのを修正。
+	  (岡崎さん OKAZAKI Tetsurou <okazaki@be.to> より御指摘)
+	* 空フォルダで s->rescan するとどこにジャンプするか訊いてしまう
+	  のを修正。
+	  (岡崎さん OKAZAKI Tetsurou <okazaki@be.to> より御指摘)
+	* [bbdb-wl] (require 'wl) するようにした。
+	* Thread の子も親もないメッセージで wl-thread-open-close すると
+	  どこにジャンプするか訊いてしまうのを修正。
+	* 新規コマンド、wl-summary-drop-unsync,
+	  wl-folder-drop-unsync-current-entity。
+	  全ての未同期メッセージを、なかったことにする。
+	  'D' に割り当て。
+
+1999-04-28  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規変数 wl-draft-prepared-config-alist。
+	  wl-draft-config-alist に幾つかの機能拡張を行った。
+	* 新規ファイル wl-template。
+	  ドラフトにテンプレートを選択・挿入する機能を追加した。
+
+1999-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Nemacs 以外は wl-draft-mode-map を使うようにした。
+	  (村田さん <muse@ba2.so-net.ne.jp> より御助言)
+
+1999-04-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* Summary バッファの case-fold-search が常に nil になってしまうのを
+	  修正。
+	* elmo-nntp-open-connection が失敗したときの返り値が docstring と
+	  異なっていたのを修正。
+
+1999-04-28  Mito <mit@nines.nec.co.jp>
+
+	* wl-draft-buffer-cur-summary-buffer が #<killed buffer> になった
+	  ときに送信コマンドが失敗してしまうのを修正。
+
+1999-04-27  Mito <mit@nines.nec.co.jp>
+
+	* Summary から '#' でプリントする時に確認を求めるようにした。
+
+1999-04-27  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* wl-summary-refile-region がおかしくなってたのを修正。
+
+1999-04-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Nemacs で動かなくなっていたのを修正。
+	* custom がない環境で問題があったのを修正。
+	* いくつか忘れていたパッチのマージ (pop3 がハングする問題の修正含む)。
+	  (嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp> より御指摘)
+	* 0.10.0 - "Got My Mind Set On You"
+	* localnews が wl-summary-local-p で local 扱いされていなかったのを
+	  修正(戸田さん <ktoda@v7.com> より御報告)
+
+1999-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-internal.el の各バックエンド関数を実装。
+	* Sticky Summary 対応のため、
+	  (get-buffer wl-summary-buffer-name) をしらみつぶしに修正。
+	* 現在のサマリを sticky にする新規コマンド、wl-summary-stick を追加。
+	  \M-s にバインド。
+
+1999-04-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* SEMI で partial を結合する関数を書き直した。
+	* [bbdb-wl] Sticky Summary に対応。
+	* wl-default-draft-cite がバグっていたのを修正。
+	  (サマリのカーソル位置がずれていると、間違った citation title を
+	   つけてしまう)
+
+1999-04-23  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* body の一つの行に二つ message-idがあるときに、左のmessage-idを
+	  真中クリックすると右の message-id に飛んでしまうのを修正。
+
+1999-04-23 岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* wl-summaryモードの最下行の空行で，wl-thread-{copy,refile}すると，
+	  エラーが出るのを修正。
+
+1999-04-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* prefix arg つきでフォルダ移動すると、Sticky Summary に
+	  移動するようにした。
+	  (これまでの wl-folder-goto-folder、wl-summary-goto-folder を
+	   それぞれ wl-folder-goto-folder-subr、wl-summary-goto-folder-subr
+	   に変更)
+	* wl-highlight-body-too が nil の時に draft-buffer で"^L" しても
+	  re-highlight しないようにした。
+	   (嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp> の修正)。
+	* しつこいサマリ、Sticky Summary。
+	  (水戸さん <mit@nines.nec.co.jp> の御要望に基づく)。
+	* mmelmo-imap4 は mmelmo を継承するようにした。
+
+1999-04-21  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-folder-close-parent-entity にバグがあったのを修正。
+	* wl-thread-open-close の機能を拡張し、子がない場合は親を close
+	  するようにした。
+	* wl-folder-close-parent-entity -> wl-folder-open-close
+	* wl-folder-open-close を "/" にバインド。
+
+1999-04-21  Mito <mit@nines.nec.co.jp>
+
+	* ネストしてる alias も展開するようにした。
+
+1999-04-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary-move-order が 'new、かつ最初のメッセージのマークが
+	  "$" かつフォルダ内に "$" 以外のマークがないとき、
+	  wl-summary-goto-folder で最初のメッセージにカーソルが行かない
+	  のを修正。
+	* wl-summary-goto-folder で明らかに２回 wl-summary-cursor-down を
+	  行っていた(!)のを修正。
+
+1999-04-21  Kazuyuki IENAGA <ienaga@jsys.co.jp>
+
+	* custom に対応。
+
+1999-04-21  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* leafnode など group コマンドのレスポンスに余分なメッセージを付
+	  けるサーバでは，ホスト名を付加したフォルダの情報が取得できない
+	  バグを修正した。
+
+1999-04-20  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 新規ファイル elmo-internal.el。
+	  内部データをブラウズするためのフォルダ。
+
+1999-04-19  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* 新規関数 wl-draft-highlight-and-recenter。ドラフトで C-l すると、
+	  ハイライト後 recenter。
+	* [elmo-nntp] elmo-nntp-search の引数が違っていたのを修正。
+
+1999-04-19  Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* nntp の folder 定義にポート指定をできるようにした。
+
+1999-04-19  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl-summary-copy-prev-destination を \M-O に割り振っていたのが
+	  vt-100のカーソルまわりで問題があったのでキーバインドを外した。
+	  (すがのさん <siesta@mvd.biglobe.ne.jp> より御指摘、
+	   嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp> より御助言)。
+	* nntp でメッセージ番号が 6 桁を越えると番号が全部 0 になって
+	  しまうのを修正(嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp>の御指摘)。
+
+1999-04-19  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* オフライン・リファイル/コピーのあと、リファイル/コピー先のフォル
+	  ダを訪れると、オフラインでもメッセージが追加されているように見えない
+	  のを修正。
+	* オフライン時の未読処理もするように修正。
+
+1999-04-19  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* サマリの \M-O のバインドを外す。
+
+1999-04-17  Koichiro Ohba <koichiro@ca.mbn.or.jp>
+
+	* wl-summary-auto-refile のドキュメント追加。
+	* wl-summary-auto-refile のキーバインド追加。
+	* sample.dot.wl で Mail-Followup-To と Mail-Reply-To を自前で付け
+	  ているのを修正。
+
+1999-04-14  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* ドラフトバッファのモードを mail-mode を derive した
+	  wl-draft-mode にした。
+	  (小林さん <shuhei@aqua.ocn.ne.jp> の御助言)
+	* [WL-ELS] 新規変数 WL_PREFIX、ELMO_PREFIX を設け、
+	  それぞれの値を ELISPDIR からの相対ディレクトリとして
+	   wl, elmo モジュールをインストールするようにした。default は ""。
+	   (小林さん <shuhei@aqua.ocn.ne.jp> の御助言)
+	* "make clean" が WL-ELS を load してしまうので、他の emacs で
+	   compile した *.elc のある source tree で別の emacs で動かないのを
+	   修正。
+	* 複数メッセージがあると POP がハングしてしまうのを修正。
+	  (石川さん <ichiro@mail.ne.jp> より御報告)
+
+1999-04-13  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* [elmo-nntp] docstring の typo 修正。
+
+1999-04-12  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* summary bufferで、"E" を押して reedit すると、body が全部
+	  signature-face になってしまうのを修正。
+	* summary mode と folder mode の時に、mouse 行を
+	  highlight させる(xemacsのみ)。
+
+1999-04-12  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* ドラフトで、タブで始まる行の次のフィールドが空だと、
+	  タブで始まる行までもが消されてしまうバグを修正
+	  (嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp>の御指摘)。
+	* Summary で 'q' を押した後すかさず C-g すると文字化けした
+	  バッファが残ってしまうのを修正(阿部さん <take@gohome.org> の御指摘)。
+	* XEmacs で日本語 Subject の pick が失敗するのを修正
+	  (嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp>の御指摘)。
+	* 4/2 の elmo-nntp-get-folders-info がハングしてしまう修正を
+	  ChangeLog に加えるのを忘れていたので追加。
+	  (中川さん <nakagawa@pochi.tis.co.jp> より御指摘)。
+	* 0.9.8 - "Faith"
+
+1999-04-10  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 新規変数、elmo-msgid-replace-string-alist
+	  Message-id ->キャッシュのファイル名の変換ルールを設定。
+
+1999-04-09  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* [elmo-imap4] LOGIN でパスワードに空白文字があるばあいに
+	  認証に失敗するのを修正。
+	  (熊野さん <kumano@strl.nhk.or.jp> より御報告)
+
+1999-04-07  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* [NNTP] AUTHINFO に対応。
+
+1999-04-07  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* C-u . で、キャッシュがあっても再読み込みするようにした。
+	* 初期化時、ネットワークにつながっていなくても C-g を押せば
+	  起動できるようにした。
+
+1999-04-06 SHIMADA Mitsunobu <simm-wl@fan.gr.jp>
+
+	*  Maildir のメールの削除、リファイルに失敗する場合があったのを修正。
+
+1999-04-03 OKAZAKI Tetsurou <okazaki@be.to>
+
+	* [wl-ja.texi] 変数 wl-insert-mail-(followup|reply)-to の初期設定値
+	  の間違いを修正。
+
+1999-04-02  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規変数 elmo-nntp-get-folders-securely。Non-nil にすると
+	  elmo-nntp-get-folders-info が戻ってこなくなるのを修正する変更が
+	  有効になる。default は nil。
+
+1999-04-02  nakagawa@pochi.tis.co.jp (中川 誠)
+
+	* cnews(?) だと elmo-nntp-get-folders-info が戻ってこなくなり、
+	  ハングしてしまうのを修正。
+
+1999-03-31  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* petname-alist を obarray 化。
+	* 新規変数 wl-summary-divide-thread-when-subject-changed。
+	  t ならサブジェクトが変わったときにスレッドを切るようにした。
+	 (やまだあきらさん <akira@arika.org> の御要望)
+	* 新規変数 wl-summary-subject-filter-func サブジェクト比較前に
+	  処理を行う関数を指定。
+	* wl-summary-from-func, wl-summary-subject-func,
+	  wl-summary-subject-filter-func を funcall するのをやめ、
+	  起動時に fset するようにした。
+	* wl-draft-config-exec-flag をバッファローカル変数にした。
+	* Summary で M->j->q するとエラーが発生するのを修正。
+	  (岡田さん<kokada@tamaru.kuee.kyoto-u.ac.jp>の御指摘)
+	* signature の face のデフォルトを色つきフォントにした。
+
+1999-03-30  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 空行で'd'できないようにした。
+	* 該当のMessage-Idの記事が同じフォルダに複数あるときにそのうち一つを
+	  オフラインで削除して elmo-dop-queue-flush すると，
+	  elmo-imap4-delete-msg-by-idが失敗するのを修正。
+
+1999-03-29  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* signature 領域の検出を賢くした。
+	* signature をハイライトするようにした。
+
+1999-03-26  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 現在いる（同じ）フォルダに誤って goto-folder すると、サマリが
+	  化けてしまう問題を修正(奥西さん <fuji0924@mbox.kyoto-inet.or.jp>
+	  の御指摘)。
+	* 変数 wl-draft-clone-local-variable-regexp (デフォルトは "^mime")
+	  にマッチするローカル変数の値を送信バッファにコピーするようにした。
+
+1999-03-26  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 新規コマンド wl-summary-write-current-newsgroup ()
+	  Summaryモードで，current-folderのニュースグループに投稿するときに，
+	  Newsgroup: フィールドをあらかじめ補間してからdraftバッファを用意
+	  する。"W" にバインド。
+
+1999-03-25  Hidekazu NAKAMURA <u90121@uis-inf.co.jp>
+
+	* wl-summary-forward() で、wl-mail-setup-hook が呼ばれなかった
+	  のを修正。
+
+1999-03-25  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 村田さんによる wl-draft-config-alist に lambda 式を書けるようにする
+	  パッチをマージしわすれていたのをマージ。
+
+1999-03-25  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-summary-temp-mark-uudecode でメッセージ1つだけのファイル
+	  がデコードできないのを修正。
+
+1999-03-24  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* default-case-fold-search が nil の場合、メッセージが送信されない
+	  のを修正(葛原さん<kuz@post1.com>の御指摘)。
+
+1999-03-24  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 新規コマンド wl-folder-close-parent-entity、M-SPC にバインド。
+	* 新規変数 wl-draft-config-exec-flag を設け、wl-draft-config-exec は
+	  一度しか実行されないようにした。
+
+1999-03-21  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* [im-wl.el] (再) wl-insert-message-id を nil に設定しても、Message-Id
+	  をつけてしまう修正(石川さん <ichiro@mail.ne.jp> の御指摘)。
+	* (再)(featurep 'xpm) の xemacs を -nw であげたときに wl を起動すると
+	  warning が出る修正(嵯峨田さん<sagata@nttvdt.hil.ntt.co.jp>の御指摘)。
+
+1999-03-18  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-ja.texi に説明を追加。
+	* ドラフトで、 "To:" や "Cc:" のヘッダ自体の補完をするときに、
+	  小文字からでも補完するようにした。
+
+1999-03-18  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 0.9.7 - "Everything She Wants"
+	* multi フォルダにへんな日付けのメッセージがあると msgdb 生成が
+	  中断されてしまうのを修正。
+
+1999-03-17  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* petname をインタラクティブに編集する関数を追加。
+
+1999-03-17  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* IMAP の存在しないフォルダにリファイルしようとしてやめると、その後
+	  現在のフォルダが操作不能になってしまうバグを修正。
+	 (阿部さん <take@gohome.org> の御指摘)。
+	* wl-folder-next-unsync がグループと通常フォルダを区別しないよう
+	  にした。
+	* XEmacs のツールバーボタンを押して sync したときにメッセージが
+	  中途半端だったのを修正。
+
+1999-03-12  Tsunehiko Baba <tbaba@mtl.t.u-tokyo.ac.jp>
+
+	* 00README を修正。
+
+1999-03-12  Masato Taruishi <taru@debian.or.jp>
+
+	* 00README を追加。
+
+1999-03-12  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* refile, copy が一部失敗しても全体に影響しないようにした。
+	* wl-ja.texi を ptex でフォーマットして見やすいようsection 割りを
+	  構成しなおす (森藤さん <hajime@morito.org> より御指摘)。
+
+1999-03-09 Yuuichi Teranishi  <teranisi@wanderlust.dq.isl.ntt.co.jp>
+
+	* まぎらわしいのでリファイル中、カーソルがバッファ末尾に
+	  移動しないようにした。
+
+1999-03-06 Ishikawa Ichiro  <teranisi@wanderlust.dq.isl.ntt.co.jp>
+
+	* [im-wl.el] wl-insert-message-id を nil に設定しても、Message-Id
+	  をつけてしまうのを修正。
+
+1999-03-04 Yuuichi Teranishi  <teranisi@wanderlust.dq.isl.ntt.co.jp>
+
+	* tm-wl.el の tm-wl-setup() で、
+	  (fset 'mime-preview/x-face-function-use-highlight-headers nil)
+	  していたのをやめる。
+	  (嵯峨田さん <sagata@nttvdt.hil.ntt.co.jp> より御指摘)
+	* 新規コマンド wl-summary-refile-prev-destination "M-o" にバインド。
+	  (嵯峨田さん <sagata@nttvdt.hil.ntt.co.jp> より御要望)
+	* 新規コマンド wl-summary-copy-prev-destination "M-O" にバインド。
+
+1999-03-05  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* tm を使っている時に User-Agent: に '\n' が入ってしまうのを修正。
+	* Subject を [???, 0000] のようにつける ML に対応。
+
+1999-03-04  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* (featurep 'xpm) の xemacs を -nw であげたときに wl を起動すると
+	   warning が出るのを修正。
+	* 変数 wl-auto-insert-x-face の追加。(default = t)
+	* wl-auto-insert-x-face t でかつ、~/.xface があるときは自動的に挿入。
+	  (今まで通り,default)
+	* draft 作成時に wl-draft-insert-x-face-fieldで X-Face: を挿入可能
+	  とした。(C-c C-a にバインド)
+	* C-c C-a の時に、 ~/.xface が無ければ error message を発生させる
+	  ようにした。
+
+1999-03-03  A.SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* 新規 hook wl-summary-refile-hook を追加。
+
+1999-03-03  Hajime MORITO  <hajime@morito.org>
+
+	* [wl-ja.texi] ptex で整形するとエラーになるのを修正。
+	* [wl-ja.texi] '{','}' が表示されていない部分を修正。
+
+1999-03-03  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 0.9.6 - "Dirty Diana"
+	* [elmo] へんな cache ファイルがあったときに cache の expire が
+	  動かなかったのを回避。
+	* 新規変数 wl-summary-auto-refile-skip-marks。未読メッセージは
+	  auto-refile の対象から外した。
+	  (大場さん <Koichiro.Ohba@nf-system.co.jp> より御要望)
+	* imap4 でメッセージを表示したときに余分に未読フラグをセット
+	  していた(!)のを修正。
+	* [wl-ja.texi] wl-summary-wday-use-japanese の記述を削除。
+	  wl-summary-weekday-name-lang の説明を追加。
+	  (石黒さん <kunihiro@zebra.org> より御指摘)
+	* [wl-ja.texi] wl-summary-fix-timezone の記述を追加。
+	  (射場さん <iba+@andrew.cmu.edu> より御指摘)
+
+1999-03-01  Hermit-chan <hermit@tomato.saino.ne.jp>
+
+	* wl-draft-folder を設定している場合、
+	  M-x wl する前に M-x wl-draft すると、error になるのを修正。
+
+1999-03-01  Akihiro Motoki <motoki@ptl.abk.nec.co.jp>
+
+	* wl-highlight と ChangeLog の typo 修正。
+
+1999-03-01  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 関数 wl-ask-folder が XEmacs のキー以外のイベントをすべて
+	  同じとみなしてしまうのを修正。
+
+1999-02-28  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft-config-alist の書式を拡張。
+
+1999-02-26  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* [wl-refile] extra-field を取るときに downcase するようにした。
+	* [wl-refile] いらない変数を削除。
+
+1999-02-26  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* Summary のメニューを修正。
+
+1999-02-25  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* フィルタフォルダの未読チェックが失敗するのを修正。
+
+1999-02-10  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* draft で font-lock が有効になるのを回避。
+
+1999-02-24  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 0.9.5 - "California Girls"
+
+1999-02-25  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-folder-notify-deleted が 'sync なら負の数を表示せず
+	  同期させるようにした。
+
+1999-02-24  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 新規変数 wl-folder-notify-deleted。メッセージが削除されていたとき
+	  に負の数字を表示して知らせるかどうか。default は nil にした。
+	* wl-summary-auto-refile をデフォルトではスレッドを閉じたまま
+	  処理するようにした。Prefix argument つきなら全スレッドを開いて
+	  から実行。
+	* 新規変数 wl-x-face-file。デフォルトは "~/.xface"。
+
+1999-02-16  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 新規関数 elmo-passwd-alist-{load,save}。
+	  新規変数 elmo-passwd-alist-file-name に設定されたファイル{から|へ}
+	  パスワードを{ロード|セーブ}する。
+
+1999-02-11  Tsunehiko Baba <tbaba@mtl.t.u-tokyo.ac.jp>
+
+	* [wl-ja.texi] に "~/.xface" の説明を追加。
+
+1999-02-06  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* wl-draft-replace-field () で header を insert するときに
+	  "\n" を先に concatinate してから insert するようにした。
+
+1999-02-06  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* imap で未読情報をコピー先にも引き継ぐようにした。
+
+1999-02-05  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* refile の宛先用の face、wl-highlight-refile-destination-face
+	  を新設。
+	* [wl-ja.texi] '$' の説明文を修正。
+	  (後藤(と)さん <pf21@pure.cpdc.canon.co.jp> より御助言)
+
+1999-02-04  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* XEmacs でフォルダの未読チェック後ハイライトがおかしくなる場合が
+	  あったのを修正。
+
+1999-02-03  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 新規関数 wl-folder-prefetch-entity。"I" にバインド。
+
+1999-02-03  Teruki SHIGITANI <shigi@tel.ts.fujitsu.co.jp>
+
+	* [sample.dot.wl] my-wl-summary-from-func-petname の
+	  folder 名を参照する部分を summary-mode でのみ呼ばれるようにした。
+
+1999-02-03  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* 関数 wl-summary-auto-refile, wl-refile-rule-alist の追加。
+
+1999-02-02  IMAI Takeshi <imai@ed2.com1.fc.nec.co.jp>
+
+	* wl-expire で imap 先に refile するとエラーになるのを修正。
+
+1999-01-29  Akihiro Motoki <motoki@ptl.abk.nec.co.jp>
+
+	* Summaryモードの view を cache にセーブするとき，
+	  widen するように変更。
+
+1999-01-22  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-auto-check-folder-name の拡張。
+
+1999-01-19  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* フォルダモードで expire をする時に，サマリ情報をupdateしてから
+	  expire が行えるようにした。
+	* reserve-marked-msg を省いた結果，expireするメッセージがなく
+	  なると，エラーが起こるのを修正した。
+	* elmo-datevec-substitute において年をまたぐ場合を考慮した。
+
+1999-01-19  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 新規変数 wl-auto-uncheck-folder-list, wl-auto-check-folder-list。
+	  起動時のグループチェックでチェックをスキップするかどうか設定できる
+	  ようにした。(元木さん <motoki@ptl.abk.nec.co.jp> より御要望)
+	  デフォルトでは archive フォルダのチェックをスキップ。
+	* [elmo-nntp] サーバから Message-ID をもらう部分がバグっていたのを
+	  修正。
+
+1999-01-18  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl-ja.texi を更新 (mA, mf の説明追加等)。
+	* wl-folder-{prev,next}-unread で unread でないgroupへは飛ばない
+	  ようにした(Prefix ARG つきなら group へも飛ぶ)。
+	  (岡田さん <kokada@tamaru.kuee.kyoto-u.ac.jp> の御指摘)
+	* wl-folder-check-entity でフォルダがなくなっていたときなど
+	  エラーで止まってしまうのを回避。
+	  (石川さん <ichiro@mail.ne.jp> より御指摘)
+
+1999-01-16  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* 新規関数 wl-summary-temp-mark-uudecode。
+	* wl-ja.texi を変更 (@item->@defvar 等)。
+
+1999-01-15  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-{folder|summary}-goto-folder() で ~/.folders にないフォル
+	  ダを指定した場合にも、存在しない property を参照しようとして
+	  こけるバグを修正。
+
+1999-01-15  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* [elmo-archive] header-regexp で footer も check。
+	* [elmo-archive] rar の圧縮率を上げた。
+
+1999-01-15  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 19.28ベースの Emacs で wl-expire が出来なかったのを修正した。
+	* elmo-date で年をまたいだ指定が行えるようにした。
+	* [fldmgr] Emacs-19 で wl-fldmgr-add が正常に動作しなかったのを
+	  修正した。
+
+1999-01-14  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* Emacs-19 以前ではアクセスグループの階層構造が作られないのを修
+	  正した。
+	* [fldmgr] 空のグループにフォルダを挿入するとエラーになるのを修
+	  正した。
+	* [expire] elmo の呼出しで失敗した場合はエラーで止めるようにした。
+
+1999-01-14  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* wl-summary-temp-mark-prefetch が動かなくなっていたので再実装。
+	  (岡田さん <kokada@tamaru.kuee.kyoto-u.ac.jp> の御指摘)
+	* Meadowで日本語 Subjectのメールに返事を書こうとすると，
+	  ドラフトに用意されたメールのサブジェクトが，エスケープ
+	  コード丸出しで化けてしまうのを修正。
+	  (飯田さん <iida@isl.ntt.co.jp> の御指摘)
+
+1999-01-13  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* Windows で LHA archive が動くように修正。
+
+1999-01-13  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 0.9.4 - "Broken Wings"
+	* wl-folder-init-no-load-access-folders と
+	  wl-folder-init-load-access-folders の両方が nil のとき、
+	  全てのフォルダ情報をロードしなかったのを修正。
+	* NNTP の multi フォルダを脱出後、同じフォルダに行き直すと、
+	  fetch error が発生する場合があったのを修正。
+
+1999-01-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-folder-entity-alist と wl-folder-entity-id-name-alist を
+	  obarray (hashtable) にした。
+	* wl-folder-entity-alist と elmo-folder-info-alist を統合した。
+	* check 時の表示更新を高速化した。また，変数
+	  wl-folder-check-fast を廃止した。
+	* 初期化時にロードするアクセスグループのフォルダを指定できるように
+	  した。
+	* アクセスグループのリストを階層構造で取得できるようにした。
+	* unsubscribeされたフォルダを表示するときのマークを '#' に変えた。
+	* フォルダモードでの操作で時間がかかるものは経過を表示するように
+	  した。
+
+1999-01-13  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl-tmp-dir がなければ起動時につくるようにした。
+	  (門脇さん <kadowaki@stat.phys.titech.ac.jp> より御指摘)
+	* wl-queue-folder がなければ起動時に作るようにした。
+
+1999-01-12  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* window-width が 100 の時などに，wl-demo で xpm が真ん中にでない
+	  のを修正。
+
+1999-01-12  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* [elmo-archive] rar のパラメータ追加と windows-nt 向け修正。
+
+1999-01-12  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* [elmo-nntp] "-/" で全ニュースグループを表示するようにした。
+	  (石川さん <ichiro@mail.ne.jp> より御指摘)
+	  (しかし 1999-1-13 の村田さんパッチでこの変更は上書き。)
+	* unplugged で filter フォルダの動作がおかしかったのを修正。
+	* 'mA' (一時マークつきメッセージに対するマルチ引用つきリプライ)，
+	  'mf' (一時マークつきメッセージのマルチフォワード)。
+	  (北目さん <kitame@northeye.org> の御要望に基づく)。
+	* unplugged にしたあとサマリを脱出するとキャッシュがセーブされない
+	  バグを修正。
+	* [elmo-nntp] Cancel-Lock に対応したつもり。
+
+1999-01-08  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl-dnd.el XEmacs21.2.8 の API に合わせた。
+
+1999-01-08  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-localdir-list-folders-subr() で
+	  親フォルダが含まれなくなってしまうのを修正。
+
+1999-01-06  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 新規 hook，wl-highlight-message-hook 追加．
+
+1999-01-05  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* [elmo-util] elmo-default-imap4-server を
+	  "hoge%imap_server@gw" のような形式でも指定できるようにした。
+
+1999-01-05  Hironori Fukuchi <nory@valis.co.jp>
+
+	* Toに存在しないアドレスを書いて送信すると、ミニバッファには
+	  sending...doneと表示され、正常に送信されたかのように見えるが
+	  実際には送信に失敗してしまうバグを修正。
+
+1999-01-03  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-draft-edit-string() で To: フィールドが常に nil にされて
+	  しまうバグ (typo) を修正。
+
+1998-12-31  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-localdir-list-folders-subr() でサブディレクトリが存在す
+	  る親フォルダが重複してしまうバグを修正。
+	* wl-summary-redisplay-no-mime() では wl-break-pages を nil に
+	  束縛する。
+	* elmo-localdir-list-folders-subr() で link count 概念のないファ
+	  イルシステムでも二階層以上下層のディレクトリも返すようにした
+	  （初期値では OS/2 版 variant と Mule for Win32 のみ）。
+	* 実際に呼ばれてない無駄な関数を消した。
+
+1998-12-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 同じ名前のフォルダがグループよりも前に存在するとエラーが発生するのを
+	  修正。
+
+1998-12-27  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* [wl-folder] wl-folder-mark-as-read-all-current-entity() で全
+	  てのフォルダに移動せず、新規／未読が存在するフォルダだけを
+	  catchup するようにした（高速化のため）。
+
+1998-12-25  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* Meadow 等の Emacs20.2 以下でサマリが文字化けするバグの修正を
+	  反映し忘れていた。
+	  (ばばさん <tbaba@mtl.t.u-tokyo.ac.jp> より御指摘)。
+
+1998-12-24  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 0.9.3 - "Last Christmas" クリスマス限定版(?)
+
+1998-12-23  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* パスセパレータとして "/" を使っていたのを修正した。
+	* delete の使用で delq で済むところは置き換えた。
+
+1998-12-21  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規ファイル wl-expire。
+	  古いメッセージを自動的に削除・移動する機能を追加した。
+	* wl-fldmgr を autoload 化した。
+	* wl-folder で幾つかのコマンド(グループの自動open関係)の整理・高
+	  速化を行った。
+	* wl-demo.el のバイトコンパイルで XEmacs 以外ではロゴファイルを
+	  読み込まないようにした。
+	* [elmo-archive] elmo-archive-treat-file が non-nil のとき，
+	  elmo-archive-list-folders でディレクトリが存在しない場合にエラー
+	  になることがあるのを修正した。
+	* [WL 838] にある後ろの2つのパッチが当たっていなかったのを反映し
+	  た。
+
+1998-12-21  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 送信時に XEmacs でエラーが発生すると wrong type argument エラーが
+	  発生するのを回避。(神嶌さん<kamisima@etl.go.jp>より御指摘)
+
+1998-12-18  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* クリスマスらしい気分を出してみた。
+	* wl-draft の引数はデコードされた文字列とすることにした。
+	  (中村さん<u90121@uis-inf.co.jp> の修正に基づく変更)
+	* Meadow 等の Emacs20.2 以下でサマリが文字化けするバグの修正。
+	  (中村さん<u90121@uis-inf.co.jp>、
+	   藤井さん<fujii@mail.fjts.fujitsu.co.jp> より御報告)
+
+1998-12-17  Hidekazu NAKAMURA <u90121@uis-inf.co.jp>
+
+	* "Re:" を含めてエンコードされる場合に "Re: Re:" となってしまう
+	  のを回避。
+
+1998-12-17  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 0.9.2 - "Addicted To Love"
+
+1998-12-17  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* [fldmgr] 空のグループを削除すると，
+	  wl-folder-entity-id-name-alist が壊れる場合があるのを修正した。
+	* [elmo-archive] method に関数が定義できるようにした。
+	* [elmo-archive] 'tgz 形式でも追加と削除が行えるようにした。
+	  また，'tgz の suffix を ".tar.gz" に変更した。
+	* [elmo-archive] elmo-archive-msgdb-create-as-numlist-subr2() が
+	  prefix を考慮してなかったのを修正。
+
+1998-12-16  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* Draft バッファで、Mail 用メニューのコマンドの内容を
+	  wl のものに置き換えるようにした。
+	* smtp.el が最新の apel でなくとも動作するよう、
+	  open-network-stream-as-binary が未定義なら定義するようにした。
+	* smtp.el を最新の FLIM のものに合わせた。
+
+1998-12-16  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* [fldmgr] nntpでないフォルダを追加すると，
+	  wl-folder-newsgroups-hashtb が nil になるのを修正した。
+
+1998-12-16  Hidekazu NAKAMURA <u90121@uis-inf.co.jp>
+
+	* SEMI を利用する場合 smtp.el をインストールしないよう WL-ELS を
+	  変更。
+
+1998-12-15  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* In-Reply-To: の日付部分を "" で括るようにした。
+	* wl-summary-rescan で生成されたサマリの保存は、スキャン終了時では
+	  なくサマリ終了時にまとめてやるようにした。
+	* 新規変数 wl-folder-thread-indent-set-alist。フォルダごとに
+	  スレッドのインデント文字列を選べるようにした。
+	  wl-thread-indent-level, wl-thread-have-younger-brother-str,
+	  wl-thread-youngest-child-str, wl-thread-vertical-str,
+	  wl-thread-horizontal-str, wl-thread-space-str は
+	  これにマッチしない場合の default 値として用いるよう変更。
+	* 新規変数 wl-folder-weekday-name-lang-alist。フォルダごとに
+	  曜日表示の言語を選べるようにした。
+	  wl-summary-weekday-name-lang はこれにマッチしない場合の
+	  default 値として用いるよう変更。
+	* elmo-nntp.el,elmo-imap4.el,elmo-msgdb.el で、msgdb に保存する
+	  Subject, From の文字列の作り方が間違っていたため、中国語やハングル
+	  が化けてしまっていたのを修正。
+	* Summary の cache の{挿入|保存}を as-binary-{input|output}-file
+	  で行なうようにし、バッファごとの mime-charset で{encode|decode}する
+	  ようにした。
+	* wl-init で wl-draft-folder が存在しないときも elmo-create-folder ()
+	  を呼ぶようにした。
+	* wl-generate-user-agent-string を Nemacs 対応。
+	  ついでに tm のバージョン情報も入れるようにした。
+	* メッセージ削除時、当該メッセージが閉じたスレッドに隠れていたときに、
+	  子どもスレッドをおかしな位置に挿入してしまうことがあるのを修正
+	  (したつもり…)。
+	* bbdb-wl.el でバイトコンパイルに必要なモジュールを require する
+	  ようにした。
+	* smtp-via-smtp を (as-binary-process) で括った。
+	  (小玉 さん <kodama@ayame.mfd.cs.fujitsu.co.jp> 他よりいただいた
+	   御報告に基づく)
+	* [wl-ja.texi] デフォルトで @directory が有効になるようにした。
+	  (千田さん <senda@iod.ricoh.co.jp> より御指摘)
+
+1998-12-13  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 新規ファイル wl-mule.el, wl-nemacs.el。
+	* wl-nemacs ブランチをマージ。
+
+1998-12-10  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* message-id が含まれていない In-Reply-To フィールドがあると，代
+	  わりに Reference フィールドがあっても参照されないバグを修正。
+
+1998-12-11  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 0.9.1 - "Yankee Rose"
+
+1998-12-10  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* ドラフトバッファの名前を変更した。("1" -> "+draft/1")
+	* 新規関数 wl-jump-to-draft-buffer。
+	* wl-draft-config-alist の処理で1つマッチしても続けて処理を行う
+	  ようにした。
+	* wl-draft-config-exec-hook を追加。
+	* 新規変数 wl-draft-always-delete-myself。
+	* アーカイブフォルダの prefix に数字が含まれていた場合，
+	  elmo-archive-list-folder が常に nil を返すのを修正した。
+	* elmo-*-copy-msgs は成功すれば non-nil を返すようにした。
+	* elmo-move-msgs でのコピーに失敗すれば削除を実行しないようにし
+	  た。
+
+1998-12-10  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* elmo-match-string, elmo-match-buffer を使えるところは使うようにした。
+	* wl-insert-mail-followup-to, wl-insert-mail-reply-to の default を
+	  nil にした。
+	* wl-ja.info を Emacs 20.3 で作るようにした。
+	* "M-x wl-draft" でも正しく起動できるようにした。
+	* Mule もバイトコンパイル時の Warning を減らした。
+
+1998-12-10  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* pack-number 後に、msgdb の number-alist が更新されてなかった
+	  のを修正。
+
+1998-12-10  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* wl-bcc が設定されていれば mail-self-blind の値に関係なく Bcc: を
+	  挿入するようにした (wl-fcc と動作を合わせた)。
+
+1998-12-10  Akihiro Motoki <motoki@ptl.abk.nec.co.jp>
+
+	* 新規変数 wl-bcc。non-nil のときは wl-bcc の値が Bcc: に入る。
+
+1998-12-10  SENDA Shigeya <senda@iod.ricoh.co.jp>
+
+	* XEmacs 向けに wl-ja.texi を修正。
+	* wl-ja.texi で vindexが一つ抜けていたのを修正。
+	* WL-ELS で xemacs の install-package のとき info がインストール
+	  されるようにした。
+
+1998-12-10  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* スレッドの途中で、閉じたスレッドのメッセージがあった時、
+	  そのメッセージ以降のスレッドが挿入されないバグがあったのを修正。
+
+1998-12-09  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-move-msgs, elmo-copy-msgs でオプション指定により，フォル
+	  ダ元の番号のまま移動，コピーする機能の追加。関連して，
+	  elmo-append-msg もオプションで指定した番号で追加する機能の追加。
+	* 'localdir から 'archive にコピーする場合は1度に複数のメッセー
+	  ジを処理するようにした。
+
+1998-12-09  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* 0.9.0 - "With Or Without You"
+	* elmo-archive.el のバイトコンパイル時に Warning が出ないように
+	  した。
+
+1998-12-09  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-archive.el "v0.16 [981208/alpha]"。
+	* copy-msgs() で dst-spec のフォルダがなければ作るようにした
+	  （寺田さん Masayuki TERADA <te@isl.ntt.co.jp> のご指摘）。
+	* elmo-archive-treat-file が non-nil の時に get-archive-name()
+	  で suffix が regexp-quote() されてないバグを修正。
+
+1998-12-09  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl-folder-check-entity で対象フォルダがまだ
+	  存在しないときは elmo-create-folder () を呼ぶようにした。
+	* wl-init で wl-trash-folder が存在しないときは
+	  elmo-create-folder () を呼ぶようにした。
+	  (奥西さん<fuji0924@mbox.kyoto-inet.or.jp> の御指摘)
+
+1998-12-08  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* XEmacs, Emacs でバイトコンパイラが生成する Warning を減らした。
+	* mmelmo-imap4 の mime-entity 生成部分で parent の扱いが間違ってい
+	  たためエラーが発生する場合があったのを修正。
+
+1998-12-07  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* 00README.ja のメーリングリストアドレスが古いままだったのを修正。
+
+1998-12-06  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-summary-buffer-view が 'thread の時，wl-summary-cursor-up
+	  の hereto が無視されていたのを修正した。
+	* wl-thread-jump-to-next-unread, wl-thread-jump-to-prev-unreadで
+	  hereto が non-nil のとき，success-mark がなくカーソルが
+	  failure-mark の位置にあると，戻り値が nil になるのを修正した。
+	* サマリのアップデート時の削除で処理の進捗を表示するようにした。
+
+1998-12-06  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-localdir-pack-number() のデバッグコード除去と経過表示。
+	* data scope 問題で free var にならないように elmo-call-func()
+	  で SPEC を通すようにした（byte-compile warning を消すため）。
+
+1998-12-05  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-ja.texi のいくつかのあやまりを修正。
+
+1998-12-05  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規変数 elmo-archive-treat-file。non-nil の場合
+	  は archive フォルダがファイルを対象とするようにした。
+
+1998-12-04  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo で作成する一時バッファが WL を終了しても残る場合があるの
+	  を修正した。
+	* wl-summary-rescan 実行後も，カーソル位置を実行前と同じメッセー
+	  ジの位置に移動するようにした。
+	* サマリのアップデート表示でピリオドが2つかさならないようにした。
+	* wl-summary-pick で Since と Before の値を入力するときは候補が
+	  補完できるようにした。
+	* completing-read のリストを整理した。
+	* wl-auto-select-first が t のときでも，wl-summary-move-order の
+	  指定で優先度が低いマークしかない場合はメッセージを表示しないよ
+	  うにした。
+	* elmo-archive-delete-msgs が削除に成功したとき t を返すようにした。
+
+1998-12-04  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* wl-summary-unread-message-hook を
+	  wl-summary-mark-as-read  () の中で呼ぶよう変更。
+
+1998-12-04  岡田 健一 <kokada@tamaru.kuee.kyoto-u.ac.jp>
+
+	* 未読記事が読まれたときに呼ばれる wl-summary-unread-message-hook
+	  を追加。
+
+1998-12-03  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* folder mode でアーカイブフォルダを check しても表示が更新されな
+	  いときがあるのを修正。
+
+1998-12-03  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* wl_nemacs ブランチを作成、Nemacs 対応開始。
+	* smtp.el を flim-1.12 付属の smtp.el と入れ換え、
+	  変更された API に合わせた
+	  (smtp-do-bcc の削除、smtp-via-smtp の引数の変更)。
+	* im-wl.el でも変数 wl-insert-message-id がまるっきり無視されていた
+	  のを修正。
+	* wl-summary-prefetch-msg 時、大きなメッセージでエラーがでてしまう
+	  エラーを修正。
+	* 頻繁に使われていた append を nconc に置き換えることで
+	  multi フォルダの動作を全般に高速化。
+
+1998-12-02  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+	    Hironori Fukuchi <nory@valis.co.jp>
+
+	* wl-ja.texi のいくつかのあやまりを修正。
+
+1998-12-02  Yuuichi Teranishi  <teranisi@kyrie.dq.isl.ntt.co.jp>
+
+	* alpha -> beta。
+	* これまでの ChangeLog を etc に移動。

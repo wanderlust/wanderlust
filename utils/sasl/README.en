@@ -1,0 +1,17 @@
+README: SASL library for Emacs.
+=========================================================
+
+How to compile elisp files:
+
+  cd lisp
+  emacs --batch --no-init-file --no-site-file \
+    --eval '(setq load-path (cons "." load-path))' \
+    --funcall batch-byte-compile *.el
+
+How to compile DL modules (Emacs 20.3 and later with DL patch):
+
+  cd src
+  gcc -shared -nostdlib -fPIC -I${EMACSSRCDIR}/src -o md5.so md5-dl.c -lcrypto
+  gcc -shared -nostdlib -fPIC -I${EMACSSRCDIR}/src -o sha1.so sha1-dl.c -lcrypto
+
+  Current version of DL modules require libcrypto library from OpenSSL.

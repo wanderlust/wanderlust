@@ -1,0 +1,6031 @@
+\input texinfo @c -*-texinfo -*- coding: iso-2022-jp -*-
+@c %**start of header
+@setfilename wl.info
+@settitle Wanderlust -- Yet Another Message Interface On Emacsen --
+@c @documentlanguage en
+@c %**end of header
+@c texinfo of Wanderlust
+@set Time-stamp: <2000-04-03 14:30:38 teranisi>
+@set version 1.1.0
+@synindex pg cp
+@finalout
+
+@direntry
+* Wanderlust: (wl).         Yet Another Message Interface On Emacsen
+@end direntry
+
+@c permissions text appears in an Info file before the first node.
+@ifinfo
+This file documents Wanderlust,
+Yet another message interface on Emacsen.
+
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
+@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@c @w{Kenichi Okada}, @w{Kaoru Takahashi}, @w{Bun Mizuhara}
+and @w{Masayuki Osada}.
+
+This edition is for Wanderlust version @value{version}.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+@end ifinfo
+
+@titlepage
+@sp 10
+@title Wanderlust User's Manual (ver. @value{version})
+@author Yuuichi Teranishi
+@author Fujikazu Okunishi
+@author Masahiro Murata
+@author Kenichi Okada
+@author Kaoru Takahashi
+@author Bun Mizuhara
+@author Masayuki Osada
+@page
+
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
+@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@c @w{Kenichi Okada}, @w{Kaoru Takahashi}, 
+@c @w{Bun Mizuhara} and @w {Masayuki Osada}
+
+This manual is for Wanderlust version @value{version}.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions.
+
+@end titlepage
+
+
+@c
+@c  Top
+@c 
+@ifinfo
+@node Top, Introduction, (dir), (dir)
+@top Wanderlust User's Manual
+
+@flushright
+Yuuichi Teranishi
+Fujikazu Okunishi
+Masahiro Murata
+Kenichi Okada
+Kaoru Takahashi
+Bun Mizuhara
+Masayuki Osada
+Last Modified@value{Time-stamp:}
+@end flushright
+
+This manual is for Wanderlust@value{version}.
+
+@end ifinfo
+
+@menu
+* Introduction::             Read this first.
+* Start Me Up::              Invoking Wanderlust.
+* Folders::                  How to specify folders.
+* Folder::                   Selecting and editing folders.
+* Summary::                  Reading and refiling messages.
+* Message::                  Saving and playing MIME multipart entities.
+* Draft::                    Draft buffer, sending mail and news.
+* Disconnected Operations::  Off-Line management
+* Expire and Archive::       Automatic expiration and archiving of messages.
+* Scoring::                  Score of the messages.
+* Customization::            Customizing Wanderlust.
+* Mailing List::             Wanderlust mailing list
+* Addition::                 Additional Information
+* Index::                    Key index.
+@end menu
+
+
+@c
+@c  Introduction
+@c 
+@node Introduction, Start Me Up, Top, Top
+@chapter Introduction of Wanderlust
+@cindex Introduction
+
+Wanderlust is an mail/news management system on Emacsen.
+It supports IMAP4rev1(RFC2060), NNTP, POP and local message files.
+
+The main features of Wanderlust:
+
+@itemize @minus
+@item Pure elisp implementation.
+@item Supports IMAP4rev1, NNTP, POP(POP3/APOP), MH and Maildir format.
+@item Unified access method to messages based on Mew-like Folder Specification.
+@item Mew-like Key-bind and mark handling.
+@item Manages unread messages.
+@item Interactive thread display.
+@item Folder Mode shows the list of subscribed folders.
+@item Message Cache, Disconnected Operation (Read Only).
+@item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
+@item MIME compliant (by SEMI or tm).
+@item Transmission of news and mail are unified by Message transmitting draft.
+@item Graphical list of folders (XEmacs).
+@item View a part of message without retrieving the whole message (IMAP4).
+@item Server-side message look up (IMAP4). Multi-byte characters are allowed.
+@item Virtual Folders.
+@item Supports compressed folder using common archiving utilities.
+@item Old articles in folders are automatically removed/archived (Expiration).
+@item Automatic re-file.
+@item Template function makes it convenient to send fixed form messages.
+@end itemize
+
+Wanderlust is supposed to run on Mules based on Emacs 19.28, 19.34, 
+Emacs 20.2 or later, XEmacs 20.4 or later, Meadow 1.00 or later(on MS Windows),
+Mule for Windows v1.22 (on MS Windows), NTEmacs(Windows NT).
+PMMule on OS/2 is also supported. Wanderlust runs even on Nemacs 3.3.2
+based on Emacs 18.55, 18.59 (with limited functionality).
+
+IMAP4 connectivity with UW imapd 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.7a,
+Cyrus imapd 1.4, Cyrus imapd 1.5.19, AIR MAIL(AIRCimapd release 2.00)
+and ExpressMail are confirmed to work with Wanderlust.
+
+@c
+@c  Start Me Up
+@c 
+@node Start Me Up, Folders, Introduction, Top
+@chapter Start up Wanderlust
+@cindex Start up
+
+
+The necessary procedure for starting Wanderlust is explained in steps here.
+
+(Of course, you need a mail/news readable environment in advance)
+
+@menu
+* MIME Modules::      Installing the MIME modules.
+* Download::          Download and extract the packages.
+* Install::           Byte-compile and install.
+* Minimal Settings::  @file{.emacs} setup.
+* Mail Addresses::    Address book definition.
+* Folder Definition:: Folder definition.
+* Start Wanderlust::  Starting Wanderlust
+@end menu
+
+
+@node MIME Modules, Download, Start Me Up, Start Me Up
+@section Installing MIME modules
+@cindex MIME modules
+@pindex APEL
+@pindex FLIM
+@pindex SEMI
+@pindex tm
+
+SEMI or tm must be installed to make Wanderlust work correctly.
+
+SEMI does not run on Emacs19.28 or earlier
+@footnote{SEMI runs on Emacs 19.34. @*
+@samp{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
+so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
+is needed.)
+
+However, SEMI is recommended because of its wider functionality.
+Partial download function in IMAP4 is enabled only when SEMI is installed.
+
+Refer to the documents of each package for detailed installation procedure.
+
+SEMI and tm can be downloaded from these sites:
+
+@example
+SEMI: ftp://ftp.m17n.org/mule/semi/
+tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+@end example
+
+You need packages named APEL and FLIM to use SEMI.
+You can download FLIM and APEL from following URLs.
+
+@example
+FLIM:     ftp://ftp.m17n.org/mule/flim/
+APEL:     ftp://ftp.m17n.org/mule/apel/
+@end example
+
+You have to install APEL, FLIM and SEMI in this order.
+Generally @samp{make install} will do the job.
+(In XEmacs 21, @samp{make install-package}.)
+
+Recommended combination of APEL, FLIM and SEMI are:
+
+@itemize @minus
+@item APEL 10.2, FLIM 1.12.7 and SEMI 1.13.4
+@item APEL 10.2, FLIM 1.13.2 and SEMI 1.13.7
+@end itemize
+
+Combination of APEL 10.2 and FLIM 1.12.7 makes following error
+while compiling FLIM 1.12.7.
+
+@example
+Please install latest APEL 7.3 or later.
+@end example
+
+In this case, please comment out following lines in FLIM-CFG.
+
+@example
+(or (fboundp 'write-region-as-binary)
+    (error "Please install latest APEL 7.3 or later."))
+(or (fboundp 'insert-file-contents-as-binary)
+    (error "Please install latest APEL 7.3 or later."))
+@end example
+
+You can also use many other FLIM/SEMI variants. Combination of the
+latest versions should work.  For example, following combination is
+confirmed to work.
+
+@itemize @minus
+@item APEL 10.2, Chao 1.14.1 and REMI 1.14.1
+@end itemize
+
+@c You have to re-install Wanderlust
+@c if you upgraded APEL, FLIM, SEMI or tm.
+
+@node Download, Install, MIME Modules, Start Me Up
+@section Download and Extract the Package
+@cindex Download
+
+You can download Wanderlust package from following sites:
+
+Original site:
+@example
+ftp://ftp.gohome.org/wl/
+@end example
+
+Mirrored ftp/http sites:
+
+@example
+ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
+ftp://daidai.kuis.kyoto-u.ac.jp/pub/mirror/ftp.gohome.org/pub/elisp/wl/
+http://www.jpl.org/elips/
+http://www.ring.gr.jp/archives/text/elisp/wl/
+ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
+ftp://opaopa.org/pub/mirror/elisp/wl/
+@end example
+
+Extract the obtained package to your working directory:
+
+@example
+% cd ~/work
+% tar zxvf wl-(@var{version}).tar.gz
+% cd wl-(@var{version})
+@end example
+
+@subsection To use SSL (Secure Socket Layer)
+
+SSL (Secure Socket Layer) can be used for 
+SMTP, IMAP, NNTP and POP connections in Wanderlust.
+
+There are two ways to use SSL. One is to start SSL negotiation just after
+the connection establishment (generic way). 
+The other one is to start SSL negotiation by invoking STARTTLS command in
+the each session.
+
+To use the formar SSL (generic SSL), you must install @file{ssl.el} in the 
+@file{utils} directory. OpenSSL command @file{openssl} is also required
+to use @file{ssl.el}. You must set PATH to the directory that OpenSSL
+commands are installed.
+
+To use the latter SSL(STARTTLS), you must install starttls package in
+addition to above. 
+You can download starttls package from the following site.
+
+@example
+ftp://opaopa.org/pub/elisp/
+@end example
+
+@node Install, Minimal Settings, Download, Start Me Up
+@section Byte-compile and install
+@cindex Byte-compile
+@cindex Compile
+@cindex Install
+@cindex Makefile
+@cindex Make
+
+@subsection Installation
+
+Edit @code{LISPDIR} and @code{EMACS} in @file{Makefile}.
+Set the Emacs's command name to @code{EMACS}.
+Set package installation directory to @code{LISPDIR}.
+Then, please execute following commands.
+
+@example
+% make
+% make install
+@end example
+
+Destination directory is auto-probed if you leave @code{LISPDIR}
+in @file{Makefile} as is. (That is, leave it as NONE)
+
+If you are using an Emacs variant which does not merge specified directory
+to load-path (e.g. Mule 2.3 based on Emacs 19.28), 
+then you will see the error message:
+
+@example
+Cannot open load file: mime-setup
+@end example
+
+@noindent
+In this case, either add destination directories of custom, apel, flim and semi
+to environmental variable EMACSLOADPATH, or define load-path in @file{WL-CFG}
+in extracted directory.
+
+If you want to use BBDB, then the necessary modules are byte-compiled and
+installed when BBDB directory is added to load-path.
+@xref{BBDB}.
+
+@subsection WL-CFG
+
+Contents of the file @file{WL-CFG} is loaded under installation if a file
+with that name exists in extracted directory. You can use @file{WL-CFG} to
+configure load-path to extra packages such as SEMI if needed.
+
+If you want to specify the install directory of Wanderlust related
+files, then set following variables in @file{WL-CFG}
+
+@table @code
+@item WL_PREFIX
+A directory to install WL modules.
+This directory is relative directory from @code{LISPDIR}.
+WL modules include @file{wl*.el}, @file{wl*.elc} files.
+@c  Modules under the directory @file{util/} are also installed if 
+@c it detected as necessary.
+
+@item ELMO_PREFIX
+A directory to install ELMO modules.
+This directory is relative directory from @code{LISPDIR}.
+ELMO modules include @file{elmo*.el}, @file{elmo*.elc} files.
+@c  @file{utf7.el}, @file{utf7.elc} are also included in the ELMO.
+@end table
+  
+@noindent
+Default value of @code{WL_PREFIX} and @code{ELMO_PREFIX} are @file{wl}.
+
+If you want to install ELMO related files under a sub-directory
+such as "elmo" then add following to @file{WL-CFG}:
+
+@lisp
+(setq ELMO_PREFIX "elmo")
+@end lisp
+
+@noindent
+
+@subsection Install as a XEmacs package
+@cindex XEmacs package
+@cindex XEmacs package install
+@cindex Package, XEmacs
+@cindex Package install, XEmacs
+@c @cindex install-package
+
+It is possible to install Wanderlust as one of packages of XEmacs (21.0
+or greater). Configuration for autoload and icon-path in local
+@file{.emacs} files are no longer necessary, if you install Wanderlust
+as a package.
+
+Follow the next example to install Wanderlust as an XEmacs package.
+
+@example
+% vi Makefile
+% make package
+% make install-package
+@end example
+
+package directory is auto-probed, if SEMI is installed.
+(you can also specify it with @code{PACKAGEDIR} in @file{Makefile})
+
+@subsection Run in place
+
+If wl and elmo directories are defined in load-path, then byte-compilation
+and installation are not necessary to start Wanderlust. For example,
+if package is extracted in @file{~/work}, Wanderlust can be invoked with
+following setting in @file{.emacs}.
+
+@lisp
+(add-to-list 'load-path "~/work/wl-(@var{version})")
+(add-to-list 'load-path "~/work/wl-(@var{version})/elmo")
+@end lisp
+
+@node Minimal Settings, Mail Addresses, Install, Start Me Up
+@section Set up .emacs
+@cindex Minimal Settings
+@cindex Settings
+@cindex Configuration
+@cindex .emacs
+@cindex .wl
+
+The Wanderlust package contains two module groups.
+
+@table @samp
+@item ELMO (elmo-*.el)
+These modules show everything as folders. This is the back-end for Wanderlust.
+@item WL (wl-*.el)
+These modules controls the behavior of main body of Wanderlust.
+They are also the front-end for ELMO.
+@end table
+
+You can customize the  behavior of Wanderlust by changing the value
+of environmental variables which begins with @code{elmo-*} and @code{wl-*}.
+
+The minimal requirement for settings is as the following.
+
+@lisp
+;; The setting to use SEMI/tm
+(load "mime-setup")
+
+;; autoload configuration
+;; (These are not required if Wanderlust is installed as XEmacs package)
+(autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;; Directory where icons are placed (XEmacs Only). Default value is nil.
+;; (This is not required if Wanderlust is installed as XEmacs package)
+(setq wl-icon-dir "~/work/wl/etc")
+
+;; SMTP server for mail posting. Default: "localhost"
+(setq wl-smtp-posting-server "your.smtp.server.com")
+;; NNTP server for news posting. Default: "localhost"
+(setq wl-nntp-posting-server "your.nntp.server.com")
+@end lisp
+
+@file{~/.wl} is automatically loaded when Wanderlust starts up (if such a
+file exists). So it is convenient to gather Wanderlust specific settings
+in @file{~/.wl}. Settings for "face" must be written in @file{~/.wl},
+because you can't write them in @file{.emacs}
+(if you write it to @file{.emacs}, you'll get an error).
+@xref{Highlights}.
+
+All above described settings except (load "mime-setup") can be written in
+@file{~/.wl}).
+
+@subsection mail-user-agent
+@cindex Default Mailer
+@cindex Mailer, Default
+@vindex mail-user-agent
+@findex compose-mail
+
+If you write following setting in you @file{.emacs}, you can
+start Wanderlust draft mode by typing @kbd{C-x m} (@code{compose-mail}). 
+This means it enables you to run Wanderlust as a default mail composer
+ of Emacs.
+
+It is effective only when your Emacs can define @code{mail-user-agent}.
+@c @xref{Mail Methods, , ,emacs}.
+
+@lisp
+(autoload 'wl-user-agent-compose "wl-draft" nil t)
+(if (boundp 'mail-user-agent)
+    (setq mail-user-agent 'wl-user-agent))
+(if (fboundp 'define-mail-user-agent)
+    (define-mail-user-agent
+      'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill
+      'mail-send-hook))
+@end lisp
+
+
+@node Mail Addresses, Folder Definition, Minimal Settings, Start Me Up
+@section Address book
+@cindex Address book Definition
+@cindex .addresses
+@cindex Alias, Address
+
+The file @file{~/.addresses} is a simple address book for Wanderlust.
+Make address file @file{~/.addresses}, and edit to suit your requirement.
+
+The data written in @file{~/.addresses} are used for address completion
+under draft editing mode. Furthermore, they are used when showing names
+in summary display mode. You can safely skip this section, if you don't
+want to customize address completion and summary display.
+It is possible to add/change/remove addresses from @file{~/.addresses} in
+summary buffer after Wanderlust is invoked. @refill
+
+The format is very simple. Like this. @refill
+
+@example
+#
+# @r{Lines begin with @samp{#} are comment.}
+# @r{Empty lines are ignored}
+#
+# @r{Format of each line:}
+# @r{email-address  ``nickname'' ``realname''}
+#
+teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
+foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
+bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
+@end example
+
+@noindent
+
+One line defines one persons description.
+
+Actually, in default setup, "nickname" is used in summary-mode and "real name"
+is used in draft preparation mode. This behavior is better understood if you
+try it and confirmed the function first. You can write and try a small
+definition, so you will know the idea of the address book before writing a big
+one.
+
+And, if MH alias file is specified in variable @code{wl-alias-file},
+it is used as an address information in the draft preparation mode.
+
+@node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
+@section Folder Definition
+@cindex Folder Definition
+@cindex .folders
+
+Define the folders you want to subscribe in file @file{~/.folders}.
+The contents written in @file{~/.folders} become the folders which
+you subscribe to as it is.
+
+You can skip this section because it is possible to add/edit the
+subscribe folders from the buffer for list of folders.
+
+Format for @file{~/.folders} is very simple. Here is an example:
+
+@example
+#
+# @r{Lines begin with @samp{#} are comment.}
+# @r{Empty lines are ignored}
+#
+# @r{folder name}  "@r{folder nickname}"
+# @r{(nicknames are not necessary)}
+#
+%inbox  "Inbox"
++trash  "Trash"
++draft  "Drafts"
+%#mh/Backup@@my.imap.server.com "Sent"
+# Folder Group
+Emacsen@{
+    %#mh/spool/wl            "Wanderlust ML"
+    %#mh/spool/elips         "ELIPS ML"
+    %#mh/spool/tm-ja         "tm Japanese ML"
+    %#mh/spool/xemacs-beta   "XEmacs beta"
+    -fj.news.reader.gnus@@other.nntp.server.com "Gnus Net news"
+    *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj's Emacsen"
+@}
+#
+# @r{If folder name ends with @samp{/}, that means an `access group',}
+# @r{all subfolders automatically included in one folder group.}
+#
+%#mh/expire@@localhost /
+# @r{All MH folders are included in one folder group.}
++ /
+@end example
+
+Each line contains one folder you want to read. The definition of folders
+will be explained in detail in the next section.
+
+The part surrounded by @samp{@var{group name}@{} and @samp{@}} will become one folder group.
+One folder group is treated as a directory which can bed opened and closed in
+folder mode. It is convenient for collecting some folders and putting them
+in order.
+
+Please note that @samp{@var{group name}@{} and @samp{@}} occupies one
+line and you have to write it that way (It is because the parser sucks).
+
+There are two types of groups. One is like @samp{Emacsen} from above
+example which the user chooses his favorite folders as a group.
+
+The other one is @dfn{access group} like @samp{+} from above example.
+It makes all the sub-folders in a folder to a group.
+(It differs from the type of the folder. For example, @samp{+} makes entire
+ MH sub-directories to one group)
+
+This behavior is better understood if you try it and confirmed the function
+first. You can write and try a small folder definition, so you will know the
+idea of the folder function before writing the real one.
+
+@node Start Wanderlust,  , Folder Definition, Start Me Up
+@section Start Wanderlust
+@cindex Start Wanderlust
+
+If installation and configuration worked well, you can invoke Wanderlust by
+typing following command in Emacs.
+
+@example
+M-x wl
+@end example
+
+@noindent
+
+After initialization, Folder Mode which shows the list of folders will appear.
+That means the folders you defined in the @file{~/.folders} are listed
+If you start Wanderlust with prefix argument like @kbd{C-u M-x wl}, you
+can skip folder checking.
+
+@c
+@c  Folders
+@c
+@node Folders, Folder, Start Me Up, Top
+@chapter Wanderlust's folders 
+@cindex Folder Type
+
+This chapter describes the folder types which Wanderlust is able to handle.
+
+Wanderlust uses ELMO as it's interface, so every folder types supported
+by ELMO is usable in Wanderlust.
+
+As of version @value{version}, 10 types of folders are predefined. These are
+IMAP, NNTP, LocalDir(MH), News Spool, POP, Archive, Multi, Filter, Pipe
+and Internal folder types.
+
+@menu
+* IMAP Folder::              @samp{%} -- IMAP folder
+* NNTP Folder::              @samp{-} -- NNTP folder
+* MH Folder::                @samp{+} -- MH folder
+* Maildir Folder::           @samp{.} -- Maildir folder
+* News Spool Folder::        @samp{=} -- News spool folder
+* Archive Folder::           @samp{$} -- Archive folder
+* POP Folder::               @samp{&} -- POP folder
+* Multi Folder::             @samp{*} -- Multi folder
+* Filter Folder::            @samp{/} -- Filter folder
+* Pipe Folder::              @samp{|} -- Pipe folder
+* Internal Folder::          @samp{'} -- Internal folder
+@end menu
+
+
+@node IMAP Folder, NNTP Folder, Folders, Folders
+@section IMAP Folder
+@cindex IMAP Folder
+@cindex @samp{%}
+@cindex RFC 2060
+@cindex IMAP4rev1
+
+A folder to access e-mails via IMAP4rev1 protocol (RFC 2060).
+
+@example
+Format: '%' 'IMAP mailbox'[':' 'username' ['/' 'authenticate-type']]['@@' 'hostname'][':' 'port']['!']
+
+You can specify
+"auth" (encoded password transmission), "cram-md5" (cram-md5 authentication)
+and "login" (plain password transmission) as authenticate-type.
+(To use cram-md5 authentication, you must install utils/sasl package.)
+
+default:
+
+username  -> The value of @code{elmo-default-imap4-user}.
+             Initial setting is `USER' environment variable or
+             `LOGNAME' environment variable or return value of
+             (user-login-name).
+authenticate-type -> The value of @code{elmo-default-imap4-authenticate-type}.
+             Initial setting is "auth".
+hostname  -> The value of @code{elmo-default-imap4-server}.
+             Initial setting is "localhost".
+port -> The value of @code{elmo-default-imap4-port}.
+             Initial setting is 143.
+
+You can omit the hostname from folder names if you set
+@code{elmo-default-imap4-server} as your main IMAP server.
+For example, you can specify a folder as @samp{foo%imap@@geteway} even
+if you have to go through a firewall.
+
+SSL (Secure Socket Layer) connection will be used if a folder name
+ends with '!'. Or, if the value of @code{elmo-default-imap4-ssl} is non-nil,
+SSL will be the default connection.
+If a folder name ends with '!!', STARTTLS connection will be established.
+if the value of @code{elmo-default-imap4-ssl} is 'starttls,
+STARTTLS will be the default connection.
+
+If you specify "auth" or "cram-md5" as authentication method, the password
+is sent in encoded form. But, if your server is unable to receive an encoded
+password, authentication will fall back to "login" (that is, sending password
+in raw format) after confirmation to user. If @code{elmo-imap4-force-login}
+is non-nil, authentication will fall back to "login" without confirmation
+(default value is nil).
+
+Example: %inbox     -> IMAP mailbox "inbox"
+         %#mh/inbox -> IMAP mailbox "#mh/inbox"
+
+         %inbox:hoge -> IMAP mailbox "inbox" of user "hoge".
+         %inbox:hoge/login@@server1
+                     -> server1's IMAP mailbox "inbox"
+                        of user "hoge", with plain password authentication
+                        ("login").
+@end example
+
+@subsection International mailbox names (Modified UTF7)
+
+You can use international mailbox names in 'IMAP mailbox' part, if you
+are using Emacs which can treat unicode and
+@code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
+value is nil).
+
+Currently, following Emacsen can treat unicode.
+
+@itemize @bullet
+@item Emacs 20.3 or later + Mule-UCS
+
+If you installed Mule-UCS package, Emacs can treat unicode.
+You can obtain Mule-UCS package from following URL.
+
+@example
+ftp://ftp.m17n.org/pub/mule/Mule-UCS/
+@end example
+
+@item XEmacs 21.2.13 or later + ucs-conv package
+
+By default, XEmacs 21 cannot treat unicodes, but if you installed
+ucs-conv package, it can.
+You can obtain ucs-conv package from following anonymous CVS.
+
+@example
+:pserver:anonymous@@cvs.m17n.org:/cvs/root
+Password: NULL (Just enter return key)
+@end example
+
+You also need utf7 conversion programs, u7tou8 and u8tou7 to use international
+mailbox name in the current XEmacs. 
+These programs are included in the UTF7 package which can be obtained 
+from following URL.
+
+@example
+ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
+@end example
+@end itemize
+
+@node NNTP Folder, MH Folder, IMAP Folder, Folders
+@section NNTP Folder
+@cindex NNTP Folder
+@cindex @samp{-}
+
+A folder to access USENET news via NNTP protocol (RFC 977).
+One newsgroup is treated as a folder.
+
+@example
+Format: '-' 'newsgroup'[[':' 'username']['@@' 'hostname'][':' 'port']]['!']
+
+default:
+hostname  -> The value of @code{elmo-default-nntp-server}.
+             Initial setting is "localhost".
+username  -> The value of @code{elmo-default-nntp-user}. 
+             Initial setting is nil.
+port      -> The value of @code{elmo-default-nntp-port}.
+             Initial setting is 119.
+
+AUTHINFO is used as authentication method if the username is non-nil.
+SSL will be default method if @code{elmo-default-nntp-ssl} is non-nil even
+if the folder name doesn't end with '!'
+If a folder name ends with '!!', STARTTLS connection will be established.
+if the value of @code{elmo-default-nntp-ssl} is 'starttls,
+STARTTLS will be the default connection.
+
+Example: -fj.rec.tv            -> Newsgroup `fj.rec.tv'.
+         -fj.rec.tv@@newsserver -> Newsgroup `fj.rec.tv' on newsserver.
+@end example
+
+@node MH Folder, Maildir Folder, NNTP Folder, Folders
+@section MH Folder
+@cindex MH Folder
+@cindex @samp{+}
+@pindex MH
+
+A folder to access MH format mail (1 file is 1 mail).
+
+@example
+Format: '+' 'directory-name'
+
+Normally, directory paths are relative to variable
+@code{elmo-localdir-folder-path} (default is @file{~/Mail}), but if it
+starts with @samp{/} or @samp{~}, then it is treated as an absolute path
+(this is also true for drive-letters).
+
+Message number is used for the name of the message file.
+
+Example: +inbox         -> "~/Mail/inbox"
+         +from/teranisi -> "~/Mail/from/teranisi"
+         +~/test        -> "~/test"
+@end example
+
+@node Maildir Folder, News Spool Folder, MH Folder, Folders
+@section Maildir Folder
+@cindex Maildir Folder
+@cindex @samp{.}
+@pindex Maildir
+
+A folder to access to Maildir format (1 file is 1 mail).
+
+@example
+Format: '.' 'directory-name'
+
+Normally, directory paths are relative to variable
+@code{elmo-maildir-folder-path} (default is @file{~/Maildir}), but if it
+starts with @samp{/} or @samp{~}, then it is treated as an absolute path
+(this is also true for drive-letters).
+
+Maildir contains @file{cur}, @file{new} and @file{tmp} subdirectories.
+Messages are contained in the @file{cur} directory.  All
+message files in the @file{new} directory are moved to @file{cur}
+directory when you access to the folder. All message files contained in
+the @file{tmp} directory and not accessed for 36 hours are deleted.
+
+These behaviors are defined the @samp{http://cr.yp.to/proto/maildir.html}.
+
+Example: .              -> "~/Maildir"
+         .inbox         -> "~/Maildir/inbox"
+         .from/teranisi -> "~/Maildir/from/teranisi"
+         .~/test        -> "~/test"
+@end example
+
+@node News Spool Folder, Archive Folder, Maildir Folder, Folders
+@section News Spool Folder
+@cindex News spool Folder
+@cindex @samp{=}
+@pindex gnspool
+
+This folder handles locally saved news articles which are proposed by Mew/IM.
+You can also read articles directly from a spool-file which is retrieved
+by an utility like gnspool.
+
+@example
+Format: '=' 'directory-name'
+
+directory-name is sub-directory to the directory defined by variable
+@code{elmo-localnews-folder-path} (default is "~/News")
+You can use @samp{.} as directory delimiter as well as @samp{/}.
+
+Example: =fj/os/os2         -> "~/News/fj/os/os2"
+         =fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
+@end example
+
+@node Archive Folder, POP Folder, News Spool Folder, Folders
+@section Archive Folder
+@cindex Archive Folder
+@cindex @samp{$}
+@c @pindex ange-ftp
+
+This method can handle archive files, which are compressed by utilities
+such as Info-ZIP or LHA, as one folder.
+
+@example
+Format: '$' 'path-name' [';' archiver-type ';' prefix]
+
+`path-name' is the relative path from @code{elmo-archive-folder-path}
+(initial setting is @file{~/Mail}).
+If path-name begins with @samp{/} or @samp{~} or `drive-letter of DOS',
+path-name is treated as absolute path.
+ange-ftp format is also permitted under the environment of ange-ftp, efs.
+
+The actual file name of the archive folder is 
+@code{elmo-archive-basename}(Initial setting is "elmo-archive")
+under the path-name. If a file named path-name exists, it is treated as
+folder. The suffix is automatically decided for archiver-type.
+
+If `archiver-type' is omitted, @code{elmo-archive-default-type}
+(Initial setting is 'zip) is referred.
+
+`prefix' specifies the internal directory structure of the archive.
+For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
+@file{spool/1}, so you have to specify "spool" as `prefix'.
+
+Example: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
+         $bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
+         $/foo@@server:~/bar;zoo     -> "~/bar/elmo-archive.zoo" on ftp server
+         $d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
+@end example
+
+@menu
+* Archiver::     Archivers supported
+* Archive Tips:: TIPS
+* Archive Vars:: Customization
+@end menu
+
+
+@node Archiver, Archive Tips, Archive Folder, Archive Folder
+@subsection Supported Archives
+@cindex Archiver
+@pindex LHA
+@pindex Info-ZIP
+@pindex UNZIP
+@pindex ZOO
+@pindex RAR
+@pindex TAR
+@pindex GNU TAR
+
+By default, following archives are supported.
+
+@example
+        LHA, Info-ZIP/UNZIP, ZOO, RAR  ;; full-access
+        GNU TAR('tgz, 'tar)            ;; read-only
+@end example
+
+If your archiver can include multiple files in one archive, you have a
+possibility use it as an archiver of Wanderlust (ARJ/UNARJ, ARC is one
+of the candidate. TAR is supported read-only because it cannot delete
+file in the archive ('mv)).
+
+gzip, bzip, bzip2 cannot be used as an archiver of Wanderlust because
+they cannot include multiple files. Archivers that cannot extract files
+to standard output are also not supported.
+
+@subsection OS specific information about archiver.
+
+Behaviors of the following archivers are confirmed by further experiences.
+(@samp{*} mark means recommended archiver).
+
+@example
+[OS/2]  Warp4.0J(w/o VoiceType)+Fx00505/emx0.9c(fix04)/PMMule,EmacsPM
+         LHA  OS/2 version Rel.2.06b    Feb 18, 1998
+        *UnZip 5.32 of 3 November 1997, by Info-ZIP.
+        *Zip 2.2 (November 3rd 1997).
+         Zoo archiver, zoo 2.1 $@asis{}Date: 91/07/09 02:10:34 $
+         GNU tar version 1.10 - AK 2.58 (DBCS/SJIS) 981216(homy) version
+         gzip 1.2.4 (18 Aug 93) + bzip2 patch(by Iida-san)
+
+[UN|X]  FreeBSD 2.2.7-RELEASE, Linux 2.0.30, Solaris2.6, HP-UX 9.07
+         LHa for UNIX  V 1.14c
+         UnZip 5.32 of 3 November 1997
+         Zip 2.2 (November 3rd 1997)
+         GNU tar 1.12 (1.11.x is no good)
+         gzip 1.2.4 (18 Aug 93)
+
+[Win32] Win.98/Meadow
+         Lha32 version 1.28
+         Zip 2.2
+         UnZip 5.40
+         GNU tar 1.11.8 + 1.5(WIN32)
+         GZIP 1.2.4
+         RAR 2.06
+
+* Caution about LHA
+
+If you are an OS/2 user, Peter Fitzsimmons's LH/2 is not supported.
+Hiramatsu version of LHA is only supported.
+In Win32, LHa32 is only supported (DOS version is no good).
+
+* Caution about GNU tar
+
+You have to take care about GNU tar's version because
+many version has problem on deleting file from archive.
+
+Please test --delete -f options work. Otherwise, your archive will be
+destroyed. No problem is reported on above versions of GNU tar.
+@end example
+
+
+@node Archive Tips, Archive Vars, Archiver, Archive Folder
+@subsection TIPS
+@cindex Archive Tips
+
+For comfortable migration, usage of wl-summary-archive() (@pxref{Archive}) or 
+Expire (@pxref{Expire}) is recommended.
+To treat archive folders created by expiration, 
+you must set non-nil value to @code{elmo-archive-treat-file}.
+
+On the OS/2, there is a great difference between Mule2.3(19.28) and Emacs20.2
+in processing speed. For comfortable use, Emacs20 is recommended.
+(If re-search's performance is the problem, 19.3x or later may be okay.)
+
+If many files are included in one archive,
+it takes long time to access to the archive folder because 
+archiver starting overhead is increased (especially LHA).
+150-200 messages in one archive is recommended.
+
+Of course, following is possible @t{:-)} 
+(meanings of these variables are described later.)
+@lisp
+(setq wl-fcc "$backup")
+(setq wl-trash-folder "$trash;lha")
+@end lisp
+
+@noindent
+
+
+@node Archive Vars,  , Archive Tips, Archive Folder
+@subsection Variables About Archive Folder
+@cindex Archive variables
+
+@table @code
+@item elmo-archive-default-type
+@vindex elmo-archive-default-type
+The initial setting is 'zip.
+Set archiver type by symbol. 
+
+@item elmo-archive-@var{type}-method-alist
+@vindex elmo-archive-TYPE-method-alist
+Define archiver @var{type}'s methods.
+(@var{type} is @samp{lha}, @samp{zip}, @samp{zoo}, @samp{tgz} etc)
+Each element of the alist is following.
+
+@example
+        (action . (exec-name options))   ;; external program and its option.
+        (action . function)              ;; function
+@end example
+
+Currently available actions are following.
+
+@example
+        'ls, 'cat ('cat-headers)        ;; Minimal setting(read-only)
+        'mv ('mv-pipe), 'rm ('rm-pipe)  ;; full-access (with above)
+        'cp ('cp-pipe)                  ;;
+@end example
+
+@noindent
+In above actions, 
+actions enclosed with braces are optional (They are used for better
+performance).
+
+@item elmo-archive-suffix-alist
+@vindex elmo-archive-suffix-alist
+An alist of archiver-type (symbol) and suffix.
+
+@item elmo-archive-file-regexp-alist
+@vindex elmo-archive-file-regexp-alist
+An alist of a regexp to get file number from list output of archiver
+and archiver-type (symbol).
+
+@item elmo-archive-method-list
+@vindex elmo-archive-method-list
+A list of elmo-archive-@var{type}-method-alist
+(@var{type} is a symbol of archiver-type).
+
+@item elmo-archive-lha-dos-compatible
+@vindex elmo-archive-lha-dos-compatible
+The initial setting is t on OS/2 and Win32.
+If non-nil, LHA is DOS (Mr. Yoshizaki original) compatible.
+
+@item elmo-archive-cmdstr-max-length
+@vindex elmo-archive-cmdstr-max-length
+The initial setting is 8000.
+
+Max length of command line argument for external archiver program.
+Emacs does not have a limit of command line byte length, but some OS
+(e.x OS/2) have. It depends on the OS. Archive folder is affected by
+this limit because it calls external archiver program directly (not
+called via shell).  For example, you cannot delete messages if archiver
+program must receive larger bytes of arguments to delete.  OS/2 have a
+command line argument limit of 8190 bytes, so we defined default as 8000
+with some margin.
+
+However, you don't have an influence of command line argument limit
+if the archiver has `actions' to receive target file information from
+standard input (rm-pipe, mv-pipe, cat-headers action).
+@end table
+
+@node POP Folder, Multi Folder, Archive Folder, Folders
+@section POP Folder
+@cindex POP Folder
+@cindex @samp{&}
+@cindex RFC 1939
+@cindex POP3
+@cindex APOP
+
+A folder to access e-mails via POP3 protocol (RFC 1939).
+
+@example
+Format: '&' ['username'][['/' 'authenticate-type']['@@' 'hostname'][':' 'port']]['!']
+
+You can specify
+"user"  (plain password transmission) or "apop"  (APOP authentication)
+as authenticate-type.
+
+default:
+username   -> The value of @code{elmo-default-pop3-user}.
+              Initial setting is `USER' environment variable or
+             `LOGNAME' environment variable or return value of
+             (user-login-name).
+authenticate-type -> The value of @code{elmo-default-pop3-authenticate-type}.
+              Initial setting is "user".
+hostname   -> The value of @code{elmo-default-pop3-server}.
+              Initial setting is "localhost".
+port       -> The value of @code{elmo-pop3-default-port}.
+              Initial setting is 110.
+
+Example: &hoge@@localhost -> access to localhost as user "hoge".
+         &hoge@@popserver:109 -> access to the server "popserver" on port 109
+                                 as user "hoge".
+@end example
+
+To use apop as an authenticate-type, @file{md5.el} is needed
+(XEmacs doesn't need @file{md5.el}).
+@file{md5.el} is included in @file{utils/sasl/lisp/} or Emacs/W3 package
+
+@example
+http://www.cs.indiana.edu/elisp/w3/docs.html
+@end example
+
+or LCD archive (GPL2).
+
+If the last character of the folder name is '!', Wanderlust connects to
+the POP server via SSL (Secure Socket Layer).  If you set non-nil
+value to @code{elmo-default-pop-ssl}, you don't have to put '!' in the
+end of the folder name to use SSL. 
+If a folder name ends with '!!', STARTTLS connection will be established.
+if the value of @code{elmo-default-pop-ssl} is 'starttls,
+STARTTLS will be the default connection.
+
+@node Multi Folder, Filter Folder, POP Folder, Folders
+@section Multi Folder
+@cindex Multi Folder
+@cindex @samp{*}
+@cindex Folder, Multiple
+@cindex Folder, Marge
+
+A folder to access to a folder which collects messages from
+multiple folders virtually.
+
+@example
+Format: '*' 'folder' [',' 'folder'] ... [',' 'folder']
+
+After '*' character, specify multiple folders you want to collect 
+separated by ',' like folder1,folder2,@dots{},folderN.
+
+Example:
+  *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+  -> -fj.editor.xemacs, -fj.editor.mule and -fj.editor.emacs are
+     treated as one folder.
+
+  *+inbox,-fj.rec.tv,%inbox
+  -> +inbox, -fj.rec.tv and %inbox are treated as one folder.
+
+@end example
+
+
+@node Filter Folder, Pipe Folder, Multi Folder, Folders
+@section Filter Folder
+@cindex Filter Folder
+@cindex @samp{/}
+@cindex Folder, Filtering
+@cindex Folder, Virtual
+
+A folder to access to a folder which collects all messages that 
+satisfy a condition virtually.
+
+@example
+Format: '/' 'condition' '/' 'target-folder'
+
+In the 'condition' part, you can specify following.
+
+1. Partial filter: "first:NUMBER", "last:NUMBER"
+
+first: 'NUMBER' messages are picked from top of folder.
+last:  'NUMBER' messages are picked from bottom of folder.
+
+Example:
+  /last:10/-fj.os.linux -> Latest 10 messages from -fj.os.linux are picked.
+  /first:20/%inbox      -> First 20 messages from %inbox are picked.
+
+2. Date filter: "since:DATE" "before:DATE"
+
+since: only messages arrived since 'DATE' are picked.
+before: only messages arrived before 'DATE' are picked.
+
+You can specify following as 'DATE'.
+
+yesterday ->  a day before today.
+lastweek  ->  same day of last week.
+lastmonth ->  same day of last month.
+lastyear  ->  same day of last year.
+'NUMBER'daysago -> 'NUMBER' days ago. (e.x. '3daysago')
+'DAY'-'MONTH'-'YEAR' -> specify date directly (ex. 1-Nov-1998)
+
+Example:
+  /since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
+                            are picked.
+  /before:yesterday/+inbox -> messages arrived before yesterday in +inbox
+                            are picked. 
+
+3. Field filter: "FIELD=VALUE"
+
+All messages that have FIELD and its value is VALUE are picked.
+'FIELD' and 'VALUE' are case insensitive.
+
+Example:
+  /from=teranisi/+inbox -> In +inbox, messages which have From: field
+                           and its value includes "teranisi" string are picked.
+  /body=foo/%inbox      -> In %inbox, messages which have "foo" text
+                           are picked.
+
+If you can split conditions by character "|", it is considered as OR condition.
+/tocc=xxxx/ is an abbreviation of /to=xxxx|cc=xxxx/.
+
+Example:
+
+  /from=teranisi|to=teranisi/+inbox
+                        -> In +inbox, messages are picked if
+                           the message's To: field includes
+                           "teranisi" or From: field includes "teranisi".
+  /tocc=teranisi/+inbox -> In +inbox, messages are picked if
+                           the message's To: field or Cc: field includes
+                          "teranisi".
+
+Advanced example:
+
+  %inbox,/from=teranisi/%inbox@@server
+         -> Messages in %inbox or
+            message is in the %inbox@@server folder and it's From field
+            includes "teranisi" are collected.
+
+  /last:100//to=teranisi/*+inbox,%inbox
+         -> Latest 100 messages which is in the +inbox or %inbox folder
+            and To: field matches "teranisi".
+
+  /from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
+         -> Pick messages which have From: field and it includes "hogehoge"
+            from latest 20 messages in the %#mh/inbox@@localhost
+            and To: or Cc: field includes "teranisi".
+
+;;; --- Limit of implementation ---
+;;; In the current implementation, NNTP folder does not treat date filter and
+;;; field filter.
+;;; In IMAP4 folder, field filter only supports fields which can be 
+;;; passed directly to rfc2060's search command.
+;;; (i.e. to,cc,from,subject and body)
+;;; Localdir folder treats arbitrary field name.
+@end example
+
+@node Pipe Folder, Internal Folder, Filter Folder, Folders
+@section Pipe Folder
+@cindex Pipe Folder
+@cindex @samp{|}
+@cindex Get Message
+@cindex Download Message
+@cindex Incorporate Message
+
+In the pipe folder, messages are automatically transferred from the source
+folder to destination folder.
+
+@example
+Format: '|' source-folder '|' destination-folder
+
+When you access to the pipe folder, messages are automatically transferred
+from source-folder to destination-folder.
+It is convenient if you want to download messages to local disk via POP.
+For example, if you specify following
+
+|&username@@popserver|+inbox
+
+and access to it, messages are downloaded automatically from
+&username@@popserver to +inbox.
+
+Example: %inbox|%myinbox   -> Download %inbox to %myinbox.
+         *&user@@popserver1,&user@@popserver2|+inbox
+         -> Download from &user@@popserver1 and &user@@popserver2 to +inbox.
+@end example
+
+After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
+
+@node Internal Folder,  , Pipe Folder, Folders
+@section Internal folder
+@cindex Internal Folder
+@cindex @samp{'}
+@cindex Folder, @samp{$} mark
+
+A folder to access to internal messages of Wanderlust.
+
+@example
+Format: 'mark
+        or
+        'cache/00 - 1F
+
+A folder named 'mark is a special virtual folder which collects messages
+which have important mark @samp{$}.
+
+You can review important messages at once after you put important marks
+on the messages in the different folders.
+
+In this folder, if you delete message, important mark @samp{$} put on
+the message is removed.  If you append messages to this folder, the
+message will have @samp{$} mark.
+
+You can access to the cached messages fetched via network by accessing
+to the folders named 'cache/00 - 1F. 00 - 1F are the name of the
+subdirectories of the cache directory (@file{~/.elmo/cache}).
+@end example
+
+@c
+@c  Folder
+@c
+@node Folder, Summary, Folders, Top
+@chapter Folder mode
+@cindex Folder
+
+After you start Wanderlust, folder mode is appeared firstly.
+It contains folder list you subscribed.
+You can select and edit folders in this mode.
+
+@menu
+* Selecting Folder:: Select folder you want to read.
+* Folder Manager::   Editing folders.
+@end menu
+
+
+@node Selecting Folder, Folder Manager, Folder, Folder
+@section Selecting Folder
+@cindex Selecting Folder
+
+@subsection Usage (TIPS)
+
+@subsubsection Check new, unread number
+
+Folder mode looks like this.
+(In XEmacs, it looks much nicer @t{;-)})
+
+@example
+[-]Desktop:14186/35580/67263
+   Inbox:3/10/10
+   Trash:2/7/10
+   Drafts:0/0/3
+   Sent:0/9/348
+   [-]Emacsen:0/34/4837
+     Wanderlust ML:0/0/558
+     ELIPS ML:0/0/626
+     tm:0/0/821
+     XEmacs Beta:0/29/255
+     Mew:0/0/998
+     Mule-Win32:0/0/1491
+     fj's Emacsen:0/5/88
+@end example
+
+
+Each line means:
+
+@example
+FOLDER-NAME:NEW-NUMBER/UNREAD-NUMBER/ALL-NUMBER
+@end example
+
+@noindent
+
+@kbd{s} key on the folder line updates these numbers.
+It changes its color if it has many new messages.
+
+The whole folder mode is a folder group named @samp{Desktop}.
+Folder group open/close by return key.
+A operation to a folder group is treated as operations on the
+children folders.
+For example, when you type @kbd{s} on @samp{[-]Emacsen},
+six children folders update its unread number status.
+
+@subsubsection Select Folder
+
+To enter summary mode of the folder, type return (or spece) key on
+the folder line.
+If the variable @code{wl-stay-folder-window} has non-nil value, 
+summary window appears on the right of the folder mode window.
+
+@subsection Key bindings
+
+Folder mode's key binding (related to selecting folders) is following.
+
+@table @kbd
+@item @key{SPC}
+@itemx @key{RET}
+@kindex @key{SPC} (Folder)
+@kindex @key{RET} (Folder)
+@findex wl-folder-jump-to-current-entity
+Enter to the summary mode of the folder at the current cursor point.
+If the cursor is on the top of folder group line, 
+the folder group is opened or closed.
+When the cursor is on the access group and this command is called 
+with prefix argument, folder children list is updated to the newest one.
+(Children list is updated recursively if the access folder has hierarchical
+structure.)
+(@code{wl-folder-jump-to-current-entity})
+
+@item M-@key{RET}
+@kindex M-@key{RET} (Folder)
+@findex wl-folder-update-recursive-current-entity
+Folder children list of the access group at the current cursor point
+is updated to the newest one.
+(Children list is updated recursively if the access folder has hierarchical
+structure.)
+(@code{wl-folder-update-recursive-current-entity})
+
+@item w
+@kindex w (Folder)
+@findex wl-summary-write
+Create a new draft message.
+(@code{wl-summary-write})
+
+@item W
+@kindex W (Folder)
+@findex wl-summary-write-current-newsgroup
+If the current cursor point is on the NNTP folder,
+create a new draft message which already has newsgroups field.
+(@code{wl-summary-write-current-newsgroup})
+
+@item s
+@kindex s (Folder)
+@findex wl-folder-check-current-entity
+Update new and unread number information of the folder at the current 
+cursor point.
+(@code{wl-folder-check-current-entity})
+
+@item S
+@kindex S (Folder)
+@findex wl-folder-sync-current-entity
+Update summary information of the folder at the current cursor point.
+(@code{wl-folder-sync-current-entity})
+
+@item r s
+@kindex r s (Folder)
+@findex wl-folder-check-region
+Update new and unread number information of the folders in the currently
+selected region.
+(@code{wl-folder-check-region})
+
+@item r S
+@kindex r S (Folder)
+@findex wl-folder-sync-region
+Update summary information of the folders in the currently selected region.
+(@code{wl-folder-sync-region})
+
+@item P
+@kindex P (Folder)
+@findex wl-folder-prev-unread
+Jump cursor to the folder which have unread messages on the upward from
+current cursor point.
+(@code{wl-folder-prev-unread})
+
+@item N
+@kindex N (Folder)
+Jump cursor to the folder which have unread messages on the downward
+from current cursor point.
+(@code{wl-folder-next-unread})
+
+@item p
+@kindex p (Folder)
+Move cursor to the folder on the previous line.
+(@code{wl-folder-prev-entity})
+
+@item n
+@kindex n (Folder)
+Move cursor to the folder on the next line.
+(@code{wl-folder-next-entity})
+
+@item J
+@kindex J (Folder)
+Jump to the folder specified by the user input.
+(@code{wl-folder-jump-folder})
+
+@item I
+@kindex I (Folder)
+@findex wl-folder-prefetch-current-entity
+Prefetch new messages of the folder at the current cursor point by
+@code{wl-summary-incorporate}.
+If the cursor is on the folder group, it is executed recursively.
+(@code{wl-folder-prefetch-current-entity})
+
+@item c
+@kindex c (Folder)
+@findex wl-folder-mark-as-read-all-current-entity
+Mark all unread messages of the folder at the current cursor point as read.
+If the cursor is on the folder group, it is executed recursively.
+(@code{wl-folder-mark-as-read-all-current-entity})
+
+@item f
+@kindex f (Folder)
+@findex wl-folder-goto-first-unread-folder
+Enter summary mode of the first unread folder.
+(@code{wl-folder-goto-first-unread-folder})
+
+@item E
+@kindex E (Folder)
+@findex wl-folder-empty-trash
+Empty trash.
+(@code{wl-folder-empty-trash})
+
+@item o
+@kindex o (Folder)
+@findex wl-folder-open-all-unread-folder
+All unread folder is opened.
+(@code{wl-folder-open-all-unread-folder})
+
+@item /
+@kindex / (Folder)
+@findex wl-folder-open-close
+Folder group is opened/closed.
+(@code{wl-thread-open-close})
+
+@item [
+@kindex [ (Folder)
+All folder group is opened.
+(@code{wl-folder-open-all})
+
+@item ]
+@kindex ] (Folder)
+All folder group is closed.
+(@code{wl-folder-close-all})
+
+@item q
+@kindex q (Folder)
+Quit Wanderlust.
+(@code{wl-exit})
+
+@item z
+@kindex z (Folder)
+Suspend Wanderlust.
+(@code{wl-folder-suspend})
+
+@item M-s
+@kindex M-s (Folder)
+Save current folder status.
+(@code{wl-save})
+
+@item M-t
+@kindex M-t (Folder)
+Toggle Wanderlust's offline/online status.
+(@code{wl-toggle-plugged})
+
+@item C-t
+@kindex C-t (Folder)
+Start Wanderlust's plug-status manager.
+(@code{wl-plugged-change})
+@end table
+
+@subsection Customize variables
+
+@table @code
+@item wl-folders-file
+@vindex wl-folders-file
+The initial setting is "~/.folders".
+Subscribed folders are described (saved) in this file.
+
+@item wl-folder-info-save
+@vindex wl-folder-info-save
+The initial setting is t.
+If non-nil, unread information is saved and used in the next Wanderlust session.
+
+@item wl-stay-folder-window
+@vindex wl-stay-folder-window
+The initial setting is nil.
+If non-nil, summary window is appeared on the right side of the folder buffer.
+
+@item wl-folder-window-width
+@vindex wl-folder-window-width
+The initial setting is 20.
+Folder mode's window width when @code{wl-stay-folder-window} is non-nil.
+
+@item wl-folder-many-unsync-threshold
+@vindex wl-folder-many-unsync-threshold
+The initial setting is 70.
+If the number of unread messages is more than this value,
+folder color is changed.
+
+@item wl-folder-desktop-name
+@vindex wl-folder-desktop-name
+The initial setting is "Desktop".
+The name of top folder group.
+
+@item wl-folder-petname-alist
+@vindex wl-folder-petname-alist
+The initial setting is nil.
+An alist of folder's realname and its nickname.
+
+@item wl-folder-access-subscribe-alist
+@vindex wl-folder-access-subscribe-alist
+The initial setting is nil.
+
+Control automatic subscribing and unsubscribing of the children list
+of access groups.
+
+Each element is:
+
+('regexp of access-folder' . ('subscribe-flag' 'regexp-of-folders' @dots{}))
+
+If subscribe-flag is non-nil, folders which have name matched to
+regexp-of-folders are displayed. Otherwise, hidden.
+However, already unsubscribed folder is not displayed even 
+when the subscribe-flag is non-nil. Multiple regexp-of-folders can be specified.
+
+Example:
+
+@example
+'(("^-fj$" . (t   "^-fj\\.\\(comp\\|editor\\|mail\\)"
+                  "^-fj\\.\\(net\\|news\\|os\\|rec\\)"))
+  ("^-$" . (t   "^-\\(fj\\|tnn\\|japan\\|gnu\\|comp\\)"))
+  ("^\\+ml$" . (nil "^\\+ml$" "^\\+ml/tmp")))
+@end example
+
+@item wl-folder-hierarchy-access-folders
+@vindex wl-folder-hierarchy-access-folders
+The initial setting is '("-" "-alt").
+A list of access groups which creates children folder list hierarchically.
+
+For example, if you specify
+@code{wl-folder-hierarchy-access-folders} like following,
+
+@lisp
+(setq wl-folder-hierarchy-access-folders
+     '("-" "-alt" "-japan" "-comp" "-comp.unix"))
+@end lisp
+
+such access group hierarchy is obtained.
+
+@example
+   [-]-:912/912/3011
+     [-]-fj:674/674/1314
+       -fj.comp.announce:0/0/2
+       -fj.comp.dev.cdrom:0/0/0
+       @dots{}
+     [+]-japan:238/238/1688
+     [-]-comp:0/0/4
+       [-]-comp.unix:0/0/0
+         -comp.unix.admin:0/0/0
+         -comp.unix.dos-under-unix:0/0/0
+         -comp.unix.programmer:0/0/0
+         [-]-comp.unix.bsd:0/0/23
+           -comp.unix.bsd.freebsd.announce:0/0/0
+     @dots{}
+@end example
+
+If you opened @samp{-} in this example, only the direct children is created
+(@samp{-fj}, @samp{-japan}, @samp{-tnn}, @dots{}).
+second hierarchy (@samp{-fj.comp.announce}, @dots{}, @samp{-comp.unix}, @dots{})
+is not created until the children access group is opened.
+@end table
+
+
+@node Folder Manager,  , Selecting Folder, Folder
+@section Editing Folders
+@cindex Folder Manager
+@cindex Folder, Edit
+@cindex Folder, Subscribe
+@cindex Folder, Unsubscribe
+
+As described before, subscribed folder list is saved in @file{~/.folders} file.
+But you don't have to edit @file{~/.folders} directly.
+You can append, delete, edit folders from folder mode.
+
+@subsection Usage (Tips)
+
+@subsubsection Append Folder
+
+@kbd{m a} appends new folder to the folder mode.
+@kbd{m g} appends new folder group.
+To append new folder to this group, firstly open it,
+then execute append command in the next line.
+
+@subsubsection Edit Folder
+
+You can cut folder by @kbd{C-k}, paste by @kbd{C-y}.
+Thus, you can change folder position as if you were editing a normal file.
+
+@subsubsection Create Multi Folder.
+
+@enumerate
+@item
+Type @kbd{m q} to clear @code{wl-fldmgr-cut-entity-list}.
+@item
+Cut folder by @kbd{C-k} or copy folder by @kbd{M-c}.
+@item
+Type @kbd{m m}, then you can create multi folder.
+@end enumerate
+
+@subsubsection Delete Nickname, Filter
+
+You can delete nickname or filter by putting ""(NULL) from the minibuffer
+while appending.
+
+@subsubsection Append Folder to Empty Group
+
+To append new folder to the empty folder group
+(after you create folder group by typing @kbd{m g}),
+firstly open it, then execute append command in the next line.
+If it is closed, folder is appended on the same level with
+the above folder group. It is difficult to explain by words so try it.
+In other words, appended position depends on the 
+above folder group's open/close status.
+
+@subsubsection Charset of the Folders File.
+
+@code{wl-mime-charset} is used for saving @code{wl-folders-file}.
+
+@subsubsection Create Filter
+
+@kbd{m f} adds filter to the folder at the current cursor point.
+To create new filter folder and leave the current folder unchanged, 
+copy it @kbd{M-c}, make filter @kbd{m f} and paste it @kbd{C-y}.
+Multiple filter can be specified while appending filter.
+If you put ""(NULL), filter is deleted.
+
+@subsubsection Sort Folders
+
+Sorting of the folders is executed by the function specified by 
+@code{wl-fldmgr-sort-func}. 
+The initial setting is @code{wl-fldmgr-sort-standard}, 
+which sorts alphabetically.
+Sorting affects only on the current folder group. It does not 
+affect on the child groups.
+
+@subsubsection Hiding Folders in the Access Group
+
+Usually, access group displays all children folders, but you can set
+some folders hidden. Following operations are only available on access
+group.
+
+Command @code{wl-fldmgr-unsubscribe} (@kbd{u}) toggles
+the visibility (subscribe/unsubscribe) of the folder at current cursor point.
+
+Against this, @code{wl-fldmgr-unsubscribe-region} (@kbd{U}) hides folders
+in the specified region.  Note that @code{wl-fldmgr-unsubscribe-region}
+does not toggle while @code{wl-fldmgr-unsubscribe} toggles.  These two
+commands accept prefix argument and if the argument has positive number,
+the unsubscribe it.  If the prefix argument has negative value, folder
+becomes visible and if zero, folder visibility is toggled.
+
+The other commands, @code{wl-fldmgr-subscribe} and
+@code{wl-fldmgr-subscribe-region} are also prepared (not binded to the
+key).
+
+Moreover, if @code{wl-fldmgr-cut} or @code{wl-fldmgr-cut-region} is
+executed in the access group, they have a same effect with
+@code{wl-fldmgr-unsubscribe} and @code{wl-fldmgr-unsubscribe-region}.
+The difference is that cut(-region) commands deletes folders from the
+current buffer.
+
+@subsubsection Operations in the Access Group
+
+You can insert and delete folders in the access group like usual folder
+group.  But insert and delete commands can be only available for the
+children folders of the access group and they only sets the subscribe
+status.  In other words, insertion of the folder means subscribing,
+deletion means unsubscribing.
+@footnote{In the current implementation, 
+it is faster to delete region than to unsubscribe region.}
+
+To update the access group when children folders are inserted or deleted
+by other way (other than Wanderlust), 
+open the access group by typing @kbd{C-u @key{RET}}.
+@xref{Selecting Folder}.
+
+The order of children folders of access group is saved after
+insertion/deletion/sorting.
+If you set @code{wl-force-fetch-folders} to non-nil or open access group
+by typing @kbd{C-u @key{RET}}, disappeared folders are deleted and
+newly created folders are inserted on the top of the access group.
+
+@subsection Key bindings
+@cindex Keybind, Folder Mode
+@cindex Keybind, Folder Buffer
+
+Key bindings on the folder mode related to folder editing are shown below.
+All bindings starts with @kbd{m}, and primary commands are binded to 
+one stroke key binding.
+
+@table @kbd
+@item m a
+@kindex m a (Folder)
+@findex wl-fldmgr-add
+Insert a folder.
+(@code{wl-fldmgr-add})
+
+@item +
+@itemx m g
+@kindex + (Folder)
+@kindex m g (Folder)
+@findex wl-fldmgr-make-group
+Create a folder group.
+(@code{wl-fldmgr-make-group})
+
+@itemx m A
+@kindex m A (Folder)
+@findex wl-fldmgr-make-access-group
+Create an access group. 
+(@code{wl-fldmgr-make-access-group})
+
+@item m d
+@kindex m d (Folder)
+@findex wl-fldmgr-delete
+Delete folder itself and msgdb.
+If the folder itself cannot be deleted like NNTP folder,
+only msgdb is deleted.
+(@code{wl-fldmgr-delete})
+
+@item R
+@itemx m R
+@kindex R (Folder)
+@kindex m R (Folder)
+@findex wl-fldmgr-rename
+Change the name of folder or folder group.
+msgdb's path is also changed.
+(@code{wl-fldmgr-rename})
+
+@item *
+@itemx m m
+@kindex * (Folder)
+@kindex m m(Folder)
+@findex wl-fldmgr-make-multi
+Create a multi folders in the cutlist (cut, copied folders).
+(@code{wl-fldmgr-make-multi})
+
+@item |
+@itemx m f
+@kindex | (Folder)
+@kindex m f (Folder)
+@findex wl-fldmgr-make-filter
+Create a filter folder. (Put a filter on the folder).
+(@code{wl-fldmgr-make-filter})
+
+@item M-c
+@itemx m c
+@kindex M-c (Folder)
+@kindex m c (Folder)
+@findex wl-fldmgr-copy
+Copy folder (it is not available on folder group).
+(@code{wl-fldmgr-copy})
+
+@item M-w
+@itemx m W
+@kindex M-w (Folder)
+@kindex m W (Folder)
+@findex wl-fldmgr-copy-region
+Copy folders in the specified region.
+(@code{wl-fldmgr-copy-region})
+
+@item C-k
+@itemx m k
+@kindex C-k (Folder)
+@kindex m k (Folder)
+@findex wl-fldmgr-cut
+Cut folder. Folder itself is not deleted.
+(@code{wl-fldmgr-cut})
+
+@item C-w
+@itemx m C-w
+@kindex C-w (Folder)
+@kindex m C-w (Folder)
+@findex wl-fldmgr-cut-region
+Cut folders in the specified region.
+(@code{wl-fldmgr-cut-region})
+
+@item C-y
+@itemx m y
+@kindex C-y (Folder)
+@kindex m y (Folder)
+@findex wl-fldmgr-yank
+Paste folders that are copied or cut (folders in the cut-list).
+(@code{wl-fldmgr-yank})
+
+@item m p
+@kindex m p (Folder)
+@findex wl-fldmgr-set-petname
+Put nickname on the folder.
+(@code{wl-fldmgr-set-petname})
+
+@item m q
+@kindex m q (Folder)
+@findex wl-fldmgr-clear-cut-entity-list
+Clear the cut-list. (cut, copied folder information is cleared,
+you cannot paste after this)
+(@code{wl-fldmgr-clear-cut-entity-list})
+
+@item m s
+@kindex m s (Folder)
+@findex wl-fldmgr-sort
+Sort folders in the current folder group.
+(@code{wl-fldmgr-sort})
+
+@item m C-s
+@kindex m C-s (Folder)
+@findex wl-fldmgr-save
+Save current folder view to the @file{wl-folders-file}.
+(@code{wl-fldmgr-save})
+@end table
+
+[Following commands are only available on the access groups]
+
+@table @kbd
+@item u
+@itemx m u
+@kindex u (Folder)
+@kindex m u (Folder)
+@findex wl-fldmgr-unsubscribe
+Set the visibility of folder (subscribe/unsubscribe).
+(@code{wl-fldmgr-unsubscribe})
+
+@item U
+@itemx r u
+@kindex U (Folder)
+@kindex r u (Folder)
+@findex wl-fldmgr-unsubscribe-region
+Set the visibility of the folders (subscribe/unsubscribe) in the
+specified region. 
+(@code{wl-fldmgr-unsubscribe-region})
+
+@item l
+@itemx m l
+@kindex l (Folder)
+@kindex m l (Folder)
+@findex wl-fldmgr-access-display-normal
+List folders that are currently available.
+(@code{wl-fldmgr-access-display-normal})
+
+@item L
+@itemx m L
+@kindex L (Folder)
+@kindex m L (Folder)
+@findex wl-fldmgr-access-display-all
+List all folders regardless of the subscription status.
+(@code{wl-fldmgr-access-display-all})
+
+@item C-c C-o
+@kindex C-c C-o (Folder)
+@findex wl-jump-to-draft-buffer
+Move to the draft buffer if available.  If multiple draft buffer exists,
+moved to one after another.  If prefix argument is specified, load draft
+folder's message to the draft buffer and jump to it.
+(@code{wl-jump-to-draft-buffer})
+@end table
+
+
+@subsection Customize variables
+
+@table @code
+@item  wl-interactive-save-folders
+@vindex wl-interactive-save-folders
+The initial setting is t.
+If non-nil and folder view is modified, confirm saving it before
+Wanderlust or Emacs exits.
+If nil, save without confirmation.
+
+@item wl-fldmgr-make-backup
+@vindex wl-fldmgr-make-backup
+The initial setting is t.
+If non-nil, @file{~/.folders.bak} is created before saving the folder status.
+
+@item wl-fldmgr-sort-func
+@vindex wl-fldmgr-sort-func
+The initial setting is 'wl-fldmgr-sort-standard.
+A function to sort folders.
+By default function, folders are sorted alphabetically and
+folder group is put on top
+(when @code{wl-fldmgr-sort-group-first} is non-nil).
+
+@item wl-fldmgr-sort-group-first
+@vindex wl-fldmgr-sort-group-first
+The initial setting is t.
+If non-nil, @code{wl-fldmgr-sort-standard} precedes folder group.
+If nil, it does not care whether it is folder group or not.
+
+@item wl-folder-check-async
+@vindex wl-folder-check-async
+The initial setting is t.
+If non-nil, check folder's unread status asynchronously.
+It boosts newsgroup checking.
+
+@item wl-folder-check-fast
+@vindex wl-folder-check-fast
+The initial setting is nil.
+If non-nil, it does not update folder status while checking.
+@c it is obsolete?
+@item wl-folder-notify-deleted
+@vindex wl-folder-notify-deleted
+The initial setting is nil.
+@c  nil means?
+If non-nil, negative value is displayed when the message is deleted.
+If 'sync, folder is synchronized when the message is deleted.
+If nil, message deletion is ignored.
+@end table
+
+@subsection Miscellanea
+
+Following is a note for folder editing.
+
+@enumerate
+@item
+cut or copy stacks the folder in the @code{wl-fldmgr-cut-entity-list}.
+paste(yank) command pastes the folders on one cut or copy command
+(If copy command is executed by region, folders in the region are pasted
+by one paste command)
+
+@item
+You cannot cut 'Desktop' group.
+Also, you cannot paste folders at the outside of the 'Desktop'.
+
+@item
+You cannot copy folder group.
+
+@item
+Operations on the access group are only available for the folders
+in the same access group.
+
+@item
+You cannot create a folder which has same name with the folders already exist.
+
+@item
+You cannot insert folders which have same name in one group.
+You can insert them in the different groups.
+You cannot put same nickname to the different folders.
+@end enumerate
+
+
+@c
+@c  Summary
+@c
+@node Summary, Message, Folder, Top
+@chapter Summary Mode
+
+@section Usage (Tips)
+
+@subsection Summary Content
+
+After you select the folder via folder mode, you enter to the summary mode.
+In the summary mode, messages are displayed like following.
+
+@example
+  377  09/16(Wed)11:57 [+1: Takuro Kitame  ] Bug?
+  381  09/17(Thu)00:16 [+3: Fujikazu Okuni ] elmo-lha.el -- LHA interface
+  384  09/17(Thu)01:32 [+1: Yuuichi Terani ] wl-0.6.2
+  389 N09/18(Fri)01:07 [+2: Yuuichi Terani ] wl-0.6.3
+@end example
+
+Each line displays:
+
+@example
+Message number, Temporal mark, Persistent mark, Date, Sender, Subject
+@end example
+
+@noindent
+You cannot change this in the current version.
+
+'Message number' is the message's unique number in the folder. In the NNTP
+folder, it is article number, in the IMAP folder, it is UID and in the
+MH folder, it is the filename of the message.
+
+Temporal and Persistent marks are described later.
+
+'Date' is displayed like 'Month/Day(Week Day)Hour:Minute'.
+Default setting displays week day in Japanese, but if you want to 
+display it in English, set the value of @code{wl-summary-weekday-name-lang}
+as "en".
+
+'Sender's indentation corresponds to the depth of the thread.
+Sender name is displayed as nickname if it is defined in the address book.
+Set @code{wl-use-petname} as nil, if you want to quit displaying with nickname.
+
+If number is printed at the head of 'sender' part like @samp{+2},
+that means the message have 2 follow messages.
+
+'Subject' is the Subject header field of the message.  If the message
+have same subject with the parent message, it is not displayed.  Some
+mailing list puts its sequence number in the subject field, but it is
+ignored. @code{wl-summary-no-subject-message} is displayed when the
+message has empty subject field.
+
+@subsection Temporary Marks
+@cindex Mark, Temporary
+
+There are four temporary marks, 
+@samp{*}, @samp{D}, @samp{o} and @samp{O}.
+Temporary marks indicates message operations.
+
+@table @samp
+@item *
+Target mark.
+You can execute a command on the all messages that have @samp{*} mark,
+with the key bindings which begins with @kbd{m}.
+
+@item D
+The mark to delete. You can put @samp{D} by typing @kbd{d} key.
+
+@item o
+The mark to refile.
+After you type @kbd{o} key, prompt appears to input refile destination.
+Your answer is printed in the summary line.
+
+@item O
+The mark to refile.
+You can put this mark by typing @kbd{O} key.
+The difference between this mark and refile mark is, 
+this mark does not delete the message while latter does.
+@end table
+
+@kbd{x} key executes @samp{D}, @samp{o} and @samp{O} marks.
+
+@subsection Persistent Marks
+
+There are five persistent marks,
+@samp{N}, @samp{U}, @samp{!}, @samp{u} and @samp{$}.
+
+The persistent mark indicates the message's status and it is saved.
+Each persistent mark indicates:
+
+@table @samp
+@item N
+It is new message.
+@item U
+It is unread message.
+@item !
+It is unread but cached message.
+@item u
+It is read but it is not cached.
+@item $
+It is important message.  You can put @samp{$} mark by typing @kbd{$}
+key (if already exists, the mark is deleted).  It is convenient to put
+this mark on the messages to remember (If you want to remember to write
+a reply for the message, for example) because this mark remains after
+you exited Emacs.  Messages with the @samp{$} mark remains in the folder
+even the message itself is deleted in the actual folder.
+
+@item None
+If the message is read and cached (or local message),there are no
+persistent mark.
+@end table
+
+@samp{N}, @samp{U} and @samp{u} indicates that the message have no
+cache.  Messages with the marks other than these, you can read them in
+the offline status even they are in the IMAP folder or netnews folder.
+
+@subsection How To Read
+
+Basically, you can read messages only typing space key again and again.
+
+To update summary status to the newest status (synchronize),
+type @kbd{s} key.
+
+You can jump to next unread message by typing @kbd{N} key, and @kbd{n} key
+moves cursor to the next message.
+Enter message buffer by typing @kbd{j} key.
+To operate multipart, you have to enter to the message buffer.
+
+@subsection Thread Operations
+
+For example, the following line indicates one thread (a context of a topic).
+
+@example
+  384  09/17(Thu)01:32 [+1: Teranishi       ] wl-0.6.2
+@end example
+
+@noindent
+
+If you type @kbd{/} on this line, the thread is opened and it changes
+the appearance like following.
+
+@example
+  384  09/17(Thu)01:32 [ Teranishi          ] wl-0.6.2
+  388  09/17(Thu)22:34 +-[ Murata san         ]
+@end example
+
+(Message 388 is the replied message to the message 384.)
+If you type @kbd{/} key once again, the thread is closed.
+With prefix argument, @kbd{/} opens all children threads.
+
+Commands with the key binding that begins with @kbd{t} executes commands
+on the messages in the thread.
+
+@subsection Cache File
+
+The messages which have to access via network (e.x. IMAP, NNTP folder) 
+are cached as a local file.
+The cache file is saved under the directory @file{~/.elmo/cache}.
+
+To expire cache, type following.
+
+@example
+M-x elmo-cache-expire-by-size
+@end example
+
+@noindent
+
+The command deletes cache files to the specified size by the order of
+last accessed time.
+
+@subsection Buffer Cache and Prefetching
+
+If the value of @code{elmo-use-buffer-cache} is non-nil,
+the messages that are read are kept in the cache buffer.
+It is called `buffer cache'. 
+The number of cache buffer is specified by @code{elmo-buffer-cache-size}.
+
+There are message prefetching mechanism in the Wanderlust that prefetches next
+message while you are reading.  This function requires that the value of
+@code{elmo-use-buffer-cache} is non-nil.
+
+You can control the message prefetching mechanism by these two variables.
+
+@table @code
+@item wl-cache-prefetch-folder-type-list
+@vindex wl-cache-prefetch-folder-type-list
+The initial setting is '(nntp imap4).
+It specifies the folder types in which message prefetching is enabled.
+In the initial setting, multi folder that contains localdir and imap4 
+prefetches only imap4 messages.
+This variable precedes the value of @code{wl-cache-prefetch-folder-list}.
+
+If you want to prefetch localdir and localnews also, following setting is needed.
+@lisp
+(setq wl-cache-prefetch-folder-type-list
+      '(nntp imap4 localdir localnews))
+@end lisp
+
+@item wl-cache-prefetch-folder-list
+@vindex wl-cache-prefetch-folder-list
+The initial setting is nil.
+A list of regexp of folders to enable message prefetching.
+@end table
+
+@subsection Auto Refile
+
+You refile messages automatically, by typing @kbd{C-o}
+(@code{wl-summary-auto-refile}). It decides destination of refile by
+the content of the message header information (information in the msgdb).
+
+By default, @samp{From}, @samp{Subject}, @samp{To} and @samp{Cc} is available.
+If you want to decide destination by other header fields, 
+set the variable @code{elmo-msgdb-extra-fields} like following.
+
+@lisp
+(setq elmo-msgdb-extra-fields
+      '("x-ml-name"
+      "reply-to"
+      "sender"
+      "mailing-list"
+      "newsgroups"))
+@end lisp
+
+@noindent
+
+By this setting, Wanderlust saves extra fields in the msgdb.  You have
+to type @kbd{s all} to get extra fields for the messages that are
+already exists in the summary.
+
+Then, specify the refile rule in the @code{wl-refile-rule-alist} like
+following.
+
+@lisp
+(setq wl-refile-rule-alist
+      '(
+        ("x-ml-name"
+         ("^Wanderlust" . "+wl")
+         ("^Elisp" . "+elisp"))
+        ("From"
+         ("teranisi@@isl.ntt.co.jp" . "+teranisi"))))
+@end lisp
+
+After these setting, refile marks are automatically put on the condition
+matched messages by typing @kbd{C-o} (@code{wl-summary-auto-refile}).
+The rule matched first is applied.
+
+Messages which have @code{wl-summary-auto-refile-skip-marks} is skipped
+auto refiling. 
+By default, @samp{N}, @samp{U} and @samp{!} is specified, so the messages
+with these persistent marks are not automatically refiled.
+It means Wanderlust does not execute auto refile on unread messages by
+the default setting.
+To execute auto refile on all messages, set following.
+
+@lisp
+(setq wl-summary-auto-refile-skip-marks nil)
+@end lisp
+
+@subsection Sticky Summary
+@cindex Summary, Sticky
+@cindex Sticky Summary
+
+The buffer of the `sticky summary' does not killed by typing @kbd{q}. 
+
+Sticky buffer is created by entering the summary by typing @kbd{C-u g} or
+type @kbd{M-s} (@code{wl-summary-stick}) on the normal summary.
+
+The buffer name of the sticky summary becomes like 
+@samp{Summary:@var{folder-name}}.
+
+You can visit the sticky summary at any time by @kbd{C-x b}
+(@code{switch-to-buffer}).  To exit sticky summary, type @kbd{C-u
+q}. Other operations in the sticky summary are same as normal summary.
+
+@code{wl-summary-always-sticky-folder-list} specifies the folders that are
+automatically sticked.
+
+@section Key bindings
+@cindex Keybind, Summary Mode
+@cindex Keybind, Summary Buffer
+
+Key bindings of the summary mode are shown below.
+
+@table @kbd
+@item @key{SPC}
+@kindex @key{SPC} (Summary)
+@findex wl-summary-read
+Proceed reading a message at the current cursor point.
+(@code{wl-summary-read})
+
+@item .
+@kindex . (Summary)
+@findex wl-summary-redisplay
+Redisplay a message at the current cursor point.
+If this command is called with prefix argument, 
+Redisplay message regardless of the message cache (message is re-loaded
+from source). 
+(@code{wl-summary-redisplay})
+
+@item <
+@kindex < (Summary)
+@findex wl-summary-display-top
+Display the top message in the folder.
+(@code{wl-summary-display-top})
+
+@item >
+@kindex > (Summary)
+@findex wl-summary-display-bottom
+Display the bottom message in the folder.
+(@code{wl-summary-display-bottom})
+
+@item @key{BS}
+@itemx @key{DEL}
+@kindex @key{BS} (Summary)
+@kindex @key{DEL} (Summary)
+Display the previous page of the message at the current cursor point.
+@findex wl-summary-prev-page
+(@code{wl-summary-prev-page})
+
+@item @key{RET}
+@kindex @key{RET} (Summary)
+@findex wl-summary-next-line-content
+Display the next line of the message at the current cursor point.
+Display the message at the current cursor point if it is not displayed yet.
+(@code{wl-summary-next-line-content})
+
+@item /
+@kindex / (Summary)
+@findex wl-thread-open-close
+Toggle open or close the thread at the current cursor point.
+(@code{wl-thread-open-close})
+
+@item [
+@kindex [ (Summary)
+Open all threads.
+@findex wl-thread-open-all
+(@code{wl-thread-open-all})
+
+@item ]
+@kindex ] (Summary)
+Close all threads.
+@findex wl-thread-close-all
+(@code{wl-thread-close-all})
+
+@item -
+@itemx M-@key{RET}
+@kindex - (Summary)
+@kindex M-@key{RET} (Summary)
+@findex wl-summary-prev-line-content
+Display the previous line of the message at the current cursor point.
+Display the message at the current cursor point if it is not displayed yet.
+(@code{wl-summary-prev-line-content})
+
+@item g
+@kindex g (Summary)
+@findex wl-summary-goto-folder
+Go to other folder.
+(@code{wl-summary-goto-folder})
+
+@item c
+@kindex c (Summary)
+Mark all messages in the folder as read.
+@findex wl-summary-mark-as-read-all
+(@code{wl-summary-mark-as-read-all})
+
+@item a
+@kindex a (Summary)
+@findex wl-summary-reply
+Prepare a draft for reply the message at the current cursor point.
+(@code{wl-summary-reply})
+
+@item A
+@kindex A (Summary)
+@findex wl-summary-reply-with-citation
+Prepare a draft for reply the message at the current cursor point.
+(@code{wl-summary-reply-with-citation})
+
+@item C
+@kindex C (Summary)
+@findex wl-summary-cancel-message
+If the message at current cursor point is your own netnews article,
+cancel it.
+(@code{wl-summary-cancel-message})
+
+@item E
+@kindex E (Summary)
+@findex wl-summary-reedit
+Prepare a draft for re-editing the message at current cursor point.
+If the message at current cursor point is your own netnews article,
+a draft for `supersedes message' for the message is prepared.
+(@code{wl-summary-reedit})
+
+@item M-e
+@kindex M-e (Summary)
+@findex wl-summary-resend-bounced-mail
+If the message at current cursor point is a bounced message,
+a draft for re-sending original message is prepared.
+(@code{wl-summary-resend-bounced-mail})
+
+@item f
+@kindex f (Summary)
+@findex wl-summary-forward
+A draft for forwarding the message at current cursor point is prepared.
+(@code{wl-summary-forward})
+
+@item $
+@kindex $ (Summary)
+@findex wl-summary-mark-as-important
+Put @samp{$} mark on the message at current cursor point.
+If already marked as @samp{$}, delete it.
+(@code{wl-summary-mark-as-important})
+
+@item y
+@itemx e
+@kindex y (Summary)
+@kindex e (Summary)
+Save the message at current cursor point.
+@findex wl-summary-save
+(@code{wl-summary-save})
+
+@item n
+@kindex n (Summary)
+@findex wl-summary-next
+Move cursor to the next message.
+(@code{wl-summary-next})
+
+@item p
+@kindex p (Summary)
+@findex wl-summary-prev
+Move cursor to the previous message.
+(@code{wl-summary-prev})
+
+@item N
+@kindex N (Summary)
+@findex wl-summary-down
+Move cursor to the downward message which is unread or marked
+as @samp{$}.
+(@code{wl-summary-down})
+
+@item P
+@kindex P (Summary)
+@findex wl-summary-up
+Move cursor to the upward message which is unread or marked
+as @samp{$}.
+(@code{wl-summary-up})
+
+@item w
+@kindex w (Summary)
+@findex wl-draft
+Prepare a new draft.
+(@code{wl-draft})
+
+@item W
+@kindex W (Summary)
+@findex wl-draft-write-current-newsgroup
+Prepare a new draft.
+If the current folder is netnews folder, Newsgroups: field is completed.
+(@code{wl-draft-write-current-newsgroup})
+
+@item H
+@kindex H (Summary)
+@findex wl-summary-redisplay-all-header
+Redisplay the message at current cursor point with all header fields.
+(@code{wl-summary-redisplay-all-header})
+
+@item M
+@kindex M (Summary)
+@findex wl-summary-redisplay-no-mime
+Redisplay the message at current cursor point without MIME analysis.
+(@code{wl-summary-redisplay-no-mime})
+
+@item B
+@kindex B (Summary)
+@findex wl-summary-burst
+If the message at current cursor point has 
+encapsulates multiple messages using MIME,
+de-capsulate and extract them on the current folder.
+(@code{wl-summary-burst})
+
+@item @@
+@kindex @@ (Summary)
+@findex wl-summary-edit-addresses
+Append/change/delete the message's sender information to the address book
+@file{~/.addresses} interactively.
+If this command is called with prefix argument, arbitrary address can be edited.
+(@code{wl-summary-edit-petname})
+
+@item Z
+@kindex Z (Summary)
+@findex wl-status-update
+Sync up address book status with @file{~/.addresses}'s content.
+(@code{wl-status-update})
+
+@item |
+@kindex | (Summary)
+@findex wl-summary-pipe-message
+Pipe current message's content to the external process.
+(@code{wl-summary-pipe-message})
+
+@item #
+@kindex # (Summary)
+@findex wl-summary-print-message
+Print out current message's content.
+It uses ps-print module in Emacs 20.x.
+If you don't use color printer, you might want to set
+@code{wl-ps-print-buffer-func} to 'ps-print-buffer.
+(@code{wl-summary-print-message})
+
+@item q
+@kindex q (Summary)
+@findex wl-summary-exit
+Exit current folder.
+(@code{wl-summary-exit})
+
+@item j
+@kindex j (Summary)
+@findex wl-summary-jump-to-current-message
+Jump cursor to the currently displayed message's window.
+(@code{wl-summary-jump-to-current-message})
+
+@item J
+@kindex J (Summary)
+Jump cursor to the other message.
+@findex wl-summary-jump-to-msg
+(@code{wl-summary-jump-to-msg})
+
+@item I
+@kindex I (Summary)
+Update summary status and
+prefetch all messages which have marks included in the 
+@code{wl-summary-incorporate-marks}.
+@findex wl-summary-incorporate
+(@code{wl-summary-incorporate})
+
+@item M-j
+@kindex M-j (Summary)
+@findex wl-summary-jump-to-msg-by-message-id
+Jump cursor to the message which have specified Message-Id.
+If @code{elmo-use-database} is non-nil, other folder is also searched.
+(@code{wl-summary-jump-to-msg-by-message-id})
+
+@item ^
+@kindex ^ (Summary)
+Jump to parent message.
+@findex wl-summary-jump-to-parent-message
+(@code{wl-summary-jump-to-parent-message})
+
+@item !
+@kindex ! (Summary)
+@findex wl-summary-mark-as-unread
+Mark as unread the message at current cursor point.
+(@code{wl-summary-mark-as-unread})
+
+@item s
+@kindex s (Summary)
+@findex wl-summary-sync
+Synchronize summary view after prompting the update range
+(all, update, rescan, first, last).
+
+@example
+all            ...Discard current summary and update all message.
+update         ...Update the difference between summary and the folder itself.
+rescan         ...Rescan the msgdb and display again.
+rescan-noscore ...Rescan the msgdb and display again (without scoring).
+first, last    ...Move to the filter folder(partial filter).
+@end example
+
+@noindent
+(@code{wl-summary-sync})
+
+@item S
+@kindex S (Summary)
+@findex wl-summary-sort
+Sort summary order.
+You can sort by date, from, number and subject.
+(@code{wl-summary-sort})
+
+@item T
+@kindex T (Summary)
+@findex wl-summary-toggle-thread
+Toggle the threading.
+(@code{wl-summary-toggle-thread})
+
+@item l
+@kindex l (Summary)
+@findex wl-summary-toggle-disp-folder
+Toggle displaying of folder window.
+(@code{wl-summary-toggle-disp-folder})
+
+@item v
+@kindex v (Summary)
+Toggle displaying of message window.
+@findex wl-summary-toggle-disp-msg
+(@code{wl-summary-toggle-disp-msg})
+
+@item V
+@kindex V (Summary)
+Move to the virtual folder with the condition specified.
+If called with prefix argument and current folder is virtual, exit it.
+@findex wl-summary-virtual
+(@code{wl-summary-virtual})
+
+@item @key{TAB}
+@kindex @key{TAB} (Summary)
+@findex wl-summary-goto-last-displayed-msg
+Jump to the message which is displayed last.
+(@code{wl-summary-goto-last-displayed-msg})
+
+@item ?
+@kindex ? (Summary)
+Put @samp{*} mark on the messages that satisfies the specified condition.
+@findex wl-summary-pick
+(@code{wl-summary-pick})
+
+@item R
+@kindex R (Summary)
+@findex wl-summary-mark-as-read
+Mark as read the message at the current cursor point.
+(@code{wl-summary-mark-as-read})
+
+@item i
+@kindex i (Summary)
+Prefetch the message at the current cursor point.
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item x
+@kindex x (Summary)
+Execute @samp{D}, @samp{o} and @samp{O} marks.
+@findex wl-summary-exec
+(@code{wl-summary-exec})
+
+@item *
+@kindex * (Summary)
+@findex wl-summary-target-mark-line
+Put target mark on the message at the current cursor point.
+(@code{wl-summary-target-mark-line})
+
+@item o
+@kindex o (Summary)
+Put refile mark on the message at the current cursor point.
+@findex wl-summary-refile
+(@code{wl-summary-refile})
+
+@item C-o
+@kindex C-o (Summary)
+Execute auto refile.
+@findex wl-summary-auto-refile
+(@code{wl-summary-auto-refile})
+
+@item O
+@kindex O (Summary)
+Put copy mark on the message at the current cursor point.
+@findex wl-summary-copy
+(@code{wl-summary-copy})
+
+@item M-o
+@kindex M-o (Summary)
+Put refile mark on the message at the current cursor point with the destination
+previously specified.
+@findex wl-summary-refile-prev-destination
+(@code{wl-summary-refile-prev-destination})
+
+@item d
+@kindex d (Summary)
+@findex wl-summary-delete
+Put delete mark on the message at the current cursor point.
+(@code{wl-summary-delete})
+
+@item u
+@kindex u (Summary)
+@findex wl-summary-unmark
+Unmark the temporal mark on the message at the current cursor point.
+(@code{wl-summary-unmark})
+
+@item U
+@kindex U (Summary)
+Unmark all the temporal marks.
+@findex wl-summary-unmark-all
+(@code{wl-summary-unmark-all})
+
+@item r R
+@kindex r R (Summary)
+@findex wl-summary-mark-as-read-region
+Mark as read messages in the specified region.
+(@code{wl-summary-mark-as-read-region})
+
+@item r $
+@kindex r $ (Summary)
+@findex wl-summary-mark-as-important-region
+Mark as important @samp{$} messages in the specified region.
+If @samp{$} already exists, it is deleted.
+(@code{wl-summary-mark-as-important-region})
+
+@item r !
+@kindex r ! (Summary)
+@findex wl-summary-mark-as-unread-region
+Mark as unread messages in the specified region.
+(@code{wl-summary-mark-as-unread-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+Prefetch messages in the specified region.
+(@code{wl-summary-prefetch-region})
+
+@item r x
+@kindex r x (Summary)
+@findex wl-summary-exec-region
+Execute @samp{D}, @samp{o} and @samp{O} marks on the messages in the
+specified region.
+(@code{wl-summary-exec-region})
+
+@item r *
+@kindex r * (Summary)
+@findex wl-summary-target-mark-region
+Put target mark on the messages in the specified region.
+(@code{wl-summary-target-mark-region})
+
+@item r o
+@kindex r o (Summary)
+@findex wl-summary-refile-region
+Put refile mark on the messages in the specified region.
+(@code{wl-summary-refile-region})
+
+@item r O
+@kindex r O (Summary)
+@findex wl-summary-copy-region
+Put copy mark on the messages in the specified region.
+(@code{wl-summary-copy-region})
+
+@item r d
+@kindex r d (Summary)
+@findex wl-summary-delete-region
+Put delete mark on the messages in the specified region.
+(@code{wl-summary-delete-region})
+
+@item r u
+@kindex r u (Summary)
+@findex wl-summary-unmark-region
+Delete temporal mark on the messages in the specified region.
+(@code{wl-summary-unmark-region})
+
+@item r y
+@kindex r y (Summary)
+Save messages in the specified region.
+@findex wl-summary-save-region
+(@code{wl-summary-save-region})
+
+@item t R
+@kindex t R (Summary)
+@findex wl-thread-mark-as-read
+Mark as read messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-mark-as-read})
+
+@item t $
+@kindex t $ (Summary)
+@findex wl-thread-mark-as-important
+Put important mark @samp{$} on the messages which are the 
+descendant of the current thread.
+If @samp{$} mark exists, it is deleted.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-mark-as-important})
+
+@item t !
+@kindex t ! (Summary)
+@findex wl-thread-mark-as-unread
+Mark as unread messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-mark-as-unread})
+
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+Prefetch messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-prefetch})
+
+@item t x
+@kindex t x (Summary)
+@findex wl-thread-exec
+Execute @samp{D}, @samp{o} and @samp{O} marks on the messages which are
+the descendant of the current thread.  With prefix argument, it affects
+on the all messages in the thread tree.
+(@code{wl-thread-exec})
+
+@item t *
+@kindex t * (Summary)
+@findex wl-thread-target-mark
+Put target mark @samp{*} on the messages which are the descendant of the
+current thread.  With prefix argument, it affects on the all messages in
+the thread tree.
+(@code{wl-thread-target-mark})
+
+@item t o
+@kindex t o (Summary)
+@findex wl-thread-refile
+Put refile mark on the messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-refile})
+
+@item t O
+@kindex t O (Summary)
+@findex wl-thread-copy
+Put copy mark on the messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-copy})
+
+@item t d
+@kindex t d (Summary)
+@findex wl-thread-delete
+Put delete mar on the messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-delete})
+
+@item t u
+@kindex t u (Summary)
+@findex wl-thread-unmark
+
+Unmark temporal mark on the messages which are the descendant of the
+current thread. With prefix argument, it affects on the all messages in
+the thread tree. 
+(@code{wl-thread-unmark})
+
+@item t y
+@kindex t y (Summary)
+@findex wl-thread-save
+Save messages which are the descendant of the current thread.
+With prefix argument, it affects on the all messages in the thread tree.
+(@code{wl-thread-save})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+Prefetch all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-prefetch})
+
+@item m R
+@kindex m R (Summary)
+@findex wl-summary-target-mark-mark-as-read
+Mark as read all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-mark-as-read})
+
+@item m $
+@kindex m $ (Summary)
+@findex wl-summary-target-mark-mark-as-important
+Mark as important all messages which have target mark @samp{*}.
+If already marked as @samp{$}, it is deleted.
+(@code{wl-summary-target-mark-mark-as-important})
+
+@item m !
+@kindex m ! (Summary)
+@findex wl-summary-target-mark-mark-as-unread
+Mark as unread all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-mark-as-unread})
+
+@item m o
+@kindex m o (Summary)
+@findex wl-summary-target-mark-refile
+Put refile mark on the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-refile})
+
+@item m O
+@kindex m O (Summary)
+@findex wl-summary-target-mark-copy
+Put copy mark on the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-copy})
+
+@item m d
+@kindex m d (Summary)
+@findex wl-summary-target-mark-delete
+Put delete mark on the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-delete})
+
+@item m y
+@kindex m y (Summary)
+@findex wl-summary-target-mark-save
+Save messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-save})
+
+@item m u
+@kindex m u (Summary)
+Unmark all temporal marks.
+(@code{wl-summary-delete-all-temp-marks})
+@findex wl-summary-delete-all-temp-marks
+
+@item m a
+@kindex m a (Summary)
+Put target mark @samp{*} on the all messages.
+(@code{wl-summary-target-mark-all})
+@findex wl-summary-target-mark-all
+
+@item m t
+@kindex m t (Summary)
+Put target mark @samp{*} on the messages in the current thread.
+@findex wl-summary-target-mark-thread
+(@code{wl-summary-target-mark-thread})
+
+@item m r
+@kindex m r (Summary)
+@findex wl-summary-target-mark-region
+Put target mark @samp{*} on the messages in the specified region.
+(@code{wl-summary-target-mark-region})
+
+@item m A
+@kindex m A (Summary)
+@findex wl-summary-target-mark-reply-with-citation
+Prepare a draft which cites all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-reply-with-citation})
+
+@item m f
+@kindex m f (Summary)
+@findex wl-summary-target-mark-forward
+Prepare a draft which forwards all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-forward})
+
+@item m U
+@kindex m U (Summary)
+@findex wl-summary-target-mark-uudecode
+Uudecode the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-uudecode})
+
+@item m ?
+@kindex m ? (Summary)
+@findex wl-summary-target-mark-pick
+Pick messages from the @samp{*} marked messages. 
+That is, @samp{*} marks on the messages are remained
+if the specified condition is satisfied.
+(@code{wl-summary-target-mark-pick})
+
+@item M-t
+@kindex M-t (Summary)
+@findex wl-toggle-plugged
+Toggle offline/online status of Wanderlust.
+(@code{wl-toggle-plugged})
+
+@item C-t
+@kindex C-t (Summary)
+Start Wanderlust's plug-status manager.
+(@code{wl-plugged-change})
+
+@item C-c C-o
+@kindex C-c C-o (Summary)
+@findex wl-jump-to-draft-buffer
+Move to the draft buffer if available.  If multiple draft buffer exists,
+moved to one after another.  If prefix argument is specified, load draft
+folder's message to the draft buffer and jump to it.
+(@code{wl-jump-to-draft-buffer})
+@end table
+
+@section Customize variables
+
+@table @code
+@item wl-summary-move-order
+@vindex wl-summary-move-order
+The initial setting is 'unread.
+Specify cursor moving policy.
+If you want to precede new messages, set 'new.
+If you want to precede unread messages, set 'unread.
+If nil, proceed to next message.
+
+@item wl-auto-select-first
+@vindex wl-auto-select-first
+The initial setting is nil.
+If non-nil, first message is automatically displayed.
+
+@item wl-auto-select-next
+@vindex wl-auto-select-next
+The initial setting is nil.
+If non-nil, jump to next summary automatically.
+If 'unread, jump to next unread folder's summary after confirmation.
+If 'skip-no-unread, unread folders are automatically skipped.
+
+@item wl-thread-insert-opened
+@vindex wl-thread-insert-opened
+The initial setting is nil.
+If non-nil, thread is inserted as opened.
+
+@item wl-thread-open-reading-thread
+@vindex wl-thread-open-reading-thread
+The initial setting is t.
+If non-nil, reading thread is automatically opened though it is closed thread.
+
+@item wl-summary-exit-next-move
+@vindex wl-summary-exit-next-move
+The initial setting is t.
+If non-nil, move to next folder at summary exit.
+
+@item wl-folder-move-cur-folder
+@vindex wl-folder-move-cur-folder
+The initial setting is nil.
+If non-nil, cursor position on the folder is moved.
+
+@item wl-summary-weekday-name-lang
+@vindex  wl-summary-weekday-name-lang
+The initial setting is "ja".
+Specify language of the weekday.
+"en" displays English, "fr" displays French, "de" displays Deutsch.
+
+@item wl-summary-fix-timezone
+@vindex  wl-summary-fix-timezone
+The initial setting is "JST".
+Timezone to adjust summary's timezone.
+If nil, adjust to UTC.
+
+@item wl-use-petname
+@vindex  wl-use-petname
+The initial setting is t.
+If non-nil, sender part displays nickname.
+
+@item wl-break-pages
+@vindex  wl-break-pages
+The initial setting is t.
+If non-nil, message is splitted as pages by @samp{^L}.
+
+@item wl-message-window-size
+@vindex  wl-message-window-size
+The initial setting is '(1 . 4).
+A cons cell to specify the rate of summary and message window.
+car:cdr corresponds summary:message.
+
+@item wl-summary-recenter
+@vindex  wl-summary-recenter
+The initial setting is t.
+If non-nil, cursor point is moved to the center of the summary window.
+
+@item wl-summary-indent-length-limit
+@vindex  wl-summary-indent-length-limit
+The initial setting is 46.
+Specify the limit of thread indent level.
+If nil, max indent level is unlimited.
+
+@item wl-summary-no-from-message
+@vindex  wl-summary-no-from-message
+The initial setting is "nobody@@nowhere?".
+A string which is displayed when there's no From: field in the message.
+
+@item wl-summary-no-subject-message
+@vindex  wl-summary-no-subject-message
+The initial setting is "(WL:No Subject in original.)".
+A string which is displayed when there's no Subject: field in the message.
+
+@item wl-summary-width
+@vindex  wl-summary-width
+The initial setting is 80.
+Width of summary line. If nil, summary line's width is as is.
+
+@item wl-use-folder-petname
+@vindex  wl-use-folder-petname
+The initial setting is '(modeline).
+A list of display policy (symbol) of folder nickname.
+Available symbols are:
+
+@table @code
+@item modeline
+Display folder petname on modeline.
+@item ask-folder
+Destination folder is notified as nickname if
+@code{wl-auto-select-next} is non-nil.
+@item read-folder
+You can input folder name by nickname in the function
+@code{wl-summary-read-folder}.
+@end table
+
+@item wl-summary-move-direction-toggle
+@vindex  wl-summary-move-direction-toggle
+The initial setting is t.
+If non-nil, last executed @kbd{p}, @kbd{P}, @kbd{n}, @kbd{N} toggles
+the direction of cursor move.
+If you want to aware of reading direction, set this to t.
+
+@item wl-from-width
+@vindex wl-from-width
+The initial setting is 17.
+Width of sender part of summary line.
+
+@item wl-summary-divide-thread-when-subject-changed
+@vindex wl-summary-divide-thread-when-subject-changed
+The initial setting is nil.
+If non-nil, thread is splitted if the subject is changed.
+
+@item wl-summary-search-via-nntp
+@vindex wl-summary-search-via-nntp
+The initial setting is 'confirm.
+If non-nil and @code{wl-summary-jump-to-msg-by-message-id} failed,
+call @code{wl-summary-jump-to-msg-by-message-id-via-nntp} and
+search message from the NNTP server @code{elmo-default-nntp-server}.
+The value of @code{elmo-default-nntp-user}, @code{elmo-default-nntp-port}, 
+@code{elmo-default-nntp-ssl} are used. If 'confirm, server name can
+be specified. You can specify NNTP folder format like 
+@samp{-:username@@servername:119!}.
+
+@item wl-summary-keep-cursor-command
+@vindex wl-summary-keep-cursor-command
+The initial setting is 
+'(wl-summary-goto-folder wl-summary-goto-last-visited-folder).
+When you entered to summary by these commands and the target summary
+buffer already exists, summary status is not automatically updated and 
+cursor position is saved.
+
+@item wl-summary-update-confirm-threshold
+@vindex wl-summary-update-confirm-threshold
+The initial setting is 500.
+If updated message number is larger than this value, 
+confirm whether drop them or not.
+
+@item wl-summary-always-sticky-folder-list
+@vindex wl-summary-always-sticky-folder-list
+The initial setting is nil.
+@code{wl-summary-always-sticky-folder-list} specifies the folders that are
+automatically sticked. Each element is regexp of folder name.
+
+@item wl-summary-reserve-mark-list
+@vindex wl-summary-reserve-mark-list
+The initial setting is '("o" "O" "D").
+If a message is already marked as temporal marks in this list, 
+the message is not marked by any mark command.
+
+@item wl-summary-skip-mark-list
+@vindex wl-summary-skip-mark-list
+The initial setting is '("D").
+If a message is already marked as temporal marks in this list, 
+the message is skipped at cursor move.
+
+@item wl-fetch-confirm-threshold
+@vindex wl-fetch-confirm-threshold
+The initial setting is 30000 (bytes).
+If displaying message has larger size than this value,
+Wanderlust confirms whether fetch the message or not.
+If nil, the message is fetched without confirmation.
+
+@item wl-prefetch-threshold
+@vindex wl-prefetch-threshold
+The initial setting is 30000 (bytes). 
+If prefetching message has larger size than this value and
+@code{wl-prefetch-confirm} is non-nil,
+Wanderlust confirms whether prefetch the message or not.
+If @code{wl-prefetch-threshold} is nil, the message is prefetched
+without confirmation.
+
+@item wl-prefetch-confirm
+@vindex wl-prefetch-confirm
+The initial setting is t. If non-nil, 
+Wanderlust confirms whether prefetch the message or not if the
+message has larger size than @code{wl-prefetch-threshold}.
+
+@item wl-cache-fetch-threshold
+@vindex wl-cache-fetch-threshold
+The initial setting is 30000 (bytes).
+The messages which have larger size than @code{wl-fetch-confirm-threshold}
+are skipped buffer caching mechanism. If nil, any messages are prefetched by
+buffer caching mechanism.
+
+@item elmo-imap4-use-cache
+@vindex elmo-imap4-use-cache
+The initial setting is t.
+If non-nil, messages read via IMAP4 are cached.
+
+@item elmo-nntp-use-cache
+@vindex elmo-nntp-use-cache
+The initial setting is t.
+If non-nil, messages read via NNTP are cached.
+
+@item elmo-pop3-use-cache
+@vindex elmo-pop3-use-cache
+The initial setting is t.
+If non-nil, messages read via POP3 are cached.
+@end table
+
+@c
+@c  Message
+@c
+@node Message, Draft, Summary, Top
+@chapter Message Buffer
+
+Message Buffers utilize MIME-View mode of SEMI/tm.
+For operational procedures and key bindings, refer to respective
+documents.
+@xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+
+@kbd{p} at the top of a message or @kbd{n} at the bottom of a message
+brings you back to Summary mode.
+@kbd{l} toggles display of Summary mode buffer.
+
+@section Key Bindings
+
+@table @kbd
+
+@item l
+@kindex l (Message)
+@findex wl-message-toggle-disp-summary
+Toggles display of Summary mode buffer.
+(@code{wl-message-toggle-disp-summary})
+
+@item Button-2
+@findex wl-message-refer-article-or-url
+@kindex Button-2 (Message)
+Assumes Message-ID at the mouse pointer, and shows the corresponding
+message if found.
+(@code{wl-message-refer-article-or-url})
+
+@item Button-4 (upward movement of a wheel)
+@kindex Button-4 (Message)
+@findex wl-message-wheel-down
+Scrolls the message backwards.  When the top of the message is hit,
+moves to the previous message.
+(@code{wl-message-wheel-down})
+
+@item Button-5 (downward movement of a wheel)
+@kindex Button-5 (Message)
+@findex wl-message-wheel-up
+Scrolls the message forward.  When the bottom of the message is hit,
+moves to the next message.
+(@code{wl-message-wheel-up})
+@end table
+
+@section Customizable Variables
+
+@table @code
+@item wl-message-window-size
+@vindex wl-message-window-size
+Initial setting is @code{'(1 . 4)}.  It is a cons cell and the ratio of
+its car and cdr value corresponds to the ratio of Summary and Message
+windows.
+@end table
+
+@c
+@c  Draft
+@c
+@node Draft, Disconnected Operations, Message, Top
+@chapter Draft Buffer
+
+At Summary mode, pressing @kbd{w} and the like creates a new draft
+buffer.  You can edit and send mail and news articles in this buffer.
+
+@section Tips
+
+Basically it is Emacs-standard mail mode.
+
+@subsection Address Completion
+
+Initially, the cursor is at the To: field.  Fill in recipients
+addresses.  @kbd{@key{TAB}} completes them.
+
+If you want to submit a news article, add Newsgroups: field by
+yourself.  Field names can be completed by @kbd{@key{TAB}}.
+
+If you save the draft buffer you are editing, it is appended to the
+folder specified by @code{wl-draft-folder}.
+
+Using FCC: field, you can specify the folder to which a copy of the
+message is saved when it is sent.
+
+@subsection Editing Messages
+
+Multi-part editing utilize MIME edit mode of SEMI/tm.  For procedures of
+editing, refer to respective documents.
+@xref{Mail Methods, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+
+@subsection Dynamic Modification of Messages
+@vindex wl-draft-config-alist
+
+@c @cindex Change Message
+@c @cindex Message, Change Dynamic
+
+You can set @code{wl-draft-config-alist} so that header and body of the
+message will automatically modified depending on information of header
+and others.
+
+The initial setting of @code{wl-draft-config-alist} is nil.
+
+In the example below, the header is modified when
+@code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked.
+You can set @code{wl-interactive-send} to non-nil so as to confirm
+changes before sending the message.
+
+@lisp
+(setq wl-draft-config-alist
+      '(((string-match "aaa.ne.jp$" (system-name))
+         ;; @r{applied if the expression is non-nil}
+         (wl-smtp-posting-server . "mailserver-B")
+         (wl-nntp-posting-server . "newsserver-B")
+         ;; @r{settings of temporary variables}
+         )
+        ("^To: .*user@@aaa.bbb.com"
+         ;; @r{applied if it matches the header of the draft buffer}
+         ("Organization" . (format "Go %s" my-webpage)))
+                       ;; @r{you can write elisp expressions here (eval only)}
+         (top . "Hello.\n")    ;; @r{inserted at the top of the body}
+         (bottom . "\nBye.\n") ;; @r{inserted at the bottom of the body}
+        ))
+@end lisp
+
+The format of @code{wl-draft-config-alist} is:
+
+@example
+'(("regexp of the header" or elisp expression
+  ("Field" . value(elisp expression))
+   (variable . value(elisp expression))
+   (sub-function . value(elisp expression))
+   function
+   @dots{})
+  ("regexp of the header" or elisp expression
+   ("Field" . value(elisp expression))
+   @dots{}))
+@end example
+
+Per default, there are 10 following sub-functions.
+
+@example
+'header:      Inserts the specified string at the bottom of the header.
+'header-file: Inserts the specified file at the bottom of the header.
+'x-face:      Inserts "X-Face" field with the content of the specified file.
+'top:         Inserts the specified string at the top of the body.
+'top-file:    Inserts the specified file at the top of the body.
+'body:        Replaces the body with the specified string.
+              Specifying nil deletes the entire body string.
+'body-file:   Replaces the body with the content of the specified file.
+'bottom:      Inserts the specified string at the bottom of the body.
+'bottom-file: Inserts the specified file at the top of the body.
+'template:    Applies the specified template.
+              (refer to the next subsection)
+@end example
+
+These are defined in @code{wl-draft-config-sub-func-alist} and you can
+change them or add your own functions.  If you read the code, you can
+easily find how to write the functions.
+
+At the first of each item, "a regular expression of the header" or an
+elisp expression should be specified.  In the case of an elisp
+expression, the item is applied when the expression is evaluated
+non-nil.
+
+Per default, when multiple items match or are evaluated non-nil, all
+such items are applied, but if you set a variable
+@code{wl-draft-config-matchone} to t, only the first matching one is
+applied.
+
+At the second of the item, a cons or a list of functions should be
+specified.  The car part of the cons should be a header field, a
+variable, or a sub-function.  When a header field is specified, the field
+will be modified.  If a variable is specified, the value of the variable
+will be modified temporarily.
+
+In the cdr part of a cons, not only a variable but also an elisp
+expression can be specified as is.  If the car part is a header field
+and the cdr part is nil, the field will be deleted.
+
+See the next example as well:
+
+@lisp
+(setq wl-draft-config-alist
+      '((reply                         ;; @r{(1)}
+         "X-ML-Name: \\(Wanderlust\\|emacs-mime-ja\\|apel-ja\\)"
+         ;; @r{applied if it matches the header of the buffer being replied}
+         (body . "  Hello.\n")
+         (template . "default")
+         )))
+@end lisp
+
+As in the (1) above, if a header regexp is prepended with @code{reply},
+it is applied when the draft is prepared by @code{wl-summary-reply} for
+example, and when it matches the header being replied.  It is ignored
+when there is no buffer being replied, like after @code{wl-draft} was
+invoked.
+
+Note that @code{wl-draft-config-alist} is applied only once when
+@code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked.
+Therefore, if you want to apply @code{wl-draft-config-alist} again after 
+aborting transmission, execute @kbd{C-c C-e}
+(@code{wl-draft-config-exec}).
+
+If you want to apply @code{wl-draft-config-alist} when a draft buffer is 
+prepared, do the following:
+
+@lisp
+(add-hook 'wl-mail-setup-hook 'wl-draft-config-exec)
+@end lisp
+
+@subsection Inserting Templates
+@cindex Template
+@cindex Apply Template
+
+Set a variable @code{wl-template-alist}, and type
+@kbd{C-c C-j} or @kbd{M-x wl-template-select}
+in the draft buffer.
+
+The format of @code{wl-template-alist} is almost the same as
+@code{wl-draft-config-alist}.
+
+@lisp
+(setq wl-template-alist
+      '(("default"
+         ("From" . wl-from)
+         ("Organization" . "~/.wl sample")
+         (body . "Hello.\n"))
+        ("report"
+         (template . "default")                 ;; @r{(a)}
+         ("To" . "jousi@@kaisha.jp")
+         ("Subject" . "Report")
+         (body-file . "~/work/report.txt")
+         )
+        ))
+@end lisp
+
+As you can see, the only difference is item (template) names such as
+"default" and "report", instead of a regexp of header.
+Because definition of each item is the same as
+@code{wl-draft-config-alist}, you can call another template, like (a).
+
+Executing the command @code{wl-template-select} results in template
+selection, but the result differs depending on variable
+@code{wl-template-visible-select}.
+
+If @code{wl-template-visible-select} is t (default), a buffer window is
+shown below the draft buffer.  You can select a template by @kbd{n} and
+@kbd{p} seeing the buffer window.
+
+Press the RETURN key and the template is actually applied to the draft
+buffer.  If you press @kbd{q}, nothing is applied.  In addition, you can 
+adjust the window size by @code{wl-template-buffer-lines}.
+
+If @code{wl-template-visible-select} is nil, you should type the name of
+the template in the mini buffer.
+
+As shown in the example in @code{wl-draft-config-alist}, you can select
+"default" template by writing:
+
+@example
+(template . "default")
+@end example
+
+@noindent
+
+@subsection Sending mail by POP-before-SMTP
+@cindex POP-before-SMTP
+
+You can send mail by POP-before-SMTP with this single line:
+
+@lisp
+(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
+@end lisp
+
+@noindent
+Configure the following variables if you need.
+
+@table @code
+@item wl-pop-before-smtp-user
+The POP user name for POP-before-SMTP authentication.
+If unset, @code{elmo-default-pop3-user} is used.
+
+@item wl-pop-before-smtp-server
+The POP server name for POP-before-SMTP authentication.
+If unset, @code{elmo-default-pop3-server} is used.
+
+@item wl-pop-before-smtp-authenticate-type
+The POP authentication method for POP-before-SMTP authentication.
+If unset, @code{elmo-default-pop3-authenticate-type} is used.
+
+@item wl-pop-before-smtp-port
+The POP port number for POP-before-SMTP authentication.
+If unset, @code{elmo-default-pop3-port} is used.
+
+@item wl-pop-before-smtp-ssl
+If non-nil, POP connection is established using SSL.
+If 'starttls, STARTTLS (RFC2595) connection will be established.
+If unset, @code{elmo-default-pop3-ssl} is used.
+@end table
+
+If variables for POP-before-SMTP (@code{wl-pop-before-smtp-*}) are 
+unset, settings for POP folders (@code{elmo-default-pop3-*}) are
+used.
+Therefore, if SMTP server and POP server are actually the same, and if
+POP folder per default (such as @samp{&}) is available, no settings are
+required.
+
+Refer to the following URL about POP-before-SMTP.
+
+@example
+http://spam.ayamura.org/tools/smPbS.html
+http://www.iecc.com/pop-before-smtp.html
+@end example
+
+@section Key Bindings
+@cindex Keybind, Draft Mode
+@cindex Keybind, Draft Buffer
+
+@table @kbd
+
+@item C-c C-y
+@kindex C-c C-y (Draft)
+@findex wl-draft-yank-original
+Cites the content of the current message buffer.
+(@code{wl-draft-yank-original})
+
+@item C-c C-p
+@kindex C-c C-p (Draft)
+@findex wl-draft-preview-message
+Previews the content of the current draft.
+This is useful for previewing MIME multi-part messages.
+(@code{wl-draft-preview-message})
+
+@item C-c C-s
+@kindex C-c C-s (Draft)
+@findex wl-draft-send
+Sends the content of the current draft.  Does not erase the draft buffer.
+This is useful for sending multiple messages, which are a little different
+from each other.
+(@code{wl-draft-send})
+
+@item C-c C-c
+@kindex C-c C-c (Draft)
+@findex wl-draft-send-and-exit
+Sends the content of the current draft and erases the draft buffer.
+(@code{wl-draft-send-and-exit})
+
+@item C-x C-s
+@kindex C-x C-s (Draft)
+@findex wl-draft-save
+Save the current draft.
+(@code{wl-draft-save})
+
+@item C-c C-k
+@kindex C-c C-k (Draft)
+@findex wl-draft-kill
+Kills the current draft.
+(@code{wl-draft-kill})
+
+@c @item C-x k
+@c @kindex C-x k (Draft)
+@c @findex wl-draft-mimic-kill-buffer
+@c Kills the current draft.
+@c (@code{wl-draft-mimic-kill-buffer})
+
+@item C-c C-z
+@kindex C-c C-z (Draft)
+@findex wl-draft-save-and-exit
+Saves the current draft, and erases the draft buffer.
+This is useful if you want to suspend editing of the draft.
+You can resume editing by pressing @kbd{E} (@code{wl-summary-reedit}) in
+the @samp{+draft} folder.
+(@code{wl-draft-save-and-exit})
+
+@item C-c C-r
+@kindex C-c C-r (Draft)
+@findex wl-caesar-region
+Encodes or decodes the specified region in Caesar cipher.
+(@code{wl-caesar-region})
+
+@item M-t
+@kindex M-t (Draft)
+@findex wl-toggle-plugged
+Toggles off-line/on-line states of Wanderlust.
+(@code{wl-toggle-plugged})
+
+@item C-c C-o
+@kindex C-c C-o (Draft)
+@findex wl-jump-to-draft-buffer
+Jumps to the other draft buffer, if exists.
+With prefix argument, reads a file (if any) from the draft folder when
+there is no such buffer.
+(@code{wl-jump-to-draft-buffer})
+
+@item C-c C-e
+@kindex C-c C-e (Draft)
+@findex wl-draft-config-exec
+Applies @code{wl-draft-config-alist}.
+(@code{wl-draft-config-exec})
+
+@item C-c C-j
+@kindex C-c C-j (Draft)
+@findex wl-template-select
+Selects a template.
+(@code{wl-template-select})
+
+@item C-c C-a
+@kindex C-c C-a (Draft)
+@findex wl-draft-insert-x-face-field
+Inserts the content of a file @file{~/.xface} (the value of the variable
+@code{wl-x-face-file}) as an X-Face field in the draft buffer.
+
+There should be encoded X-Face strings as a content of a file @file{~/.xface}.
+(@code{wl-draft-insert-x-face-field})
+@end table
+
+@section Customizable Variables
+
+@table @code
+@item wl-subscribed-mailing-list
+@vindex wl-subscribed-mailing-list
+The initial setting is nil.
+Mailing lists to which you subscribe.
+If any of these are contained in To or Cc field of a reply draft,
+removes your own address from Mail-Followup-To and Cc.
+And if any of these are contained in To or Cc field of a message to be
+automatically re-filed, the destination folder will be leaned in
+connection with the address.
+@item wl-insert-mail-followup-to
+@vindex wl-insert-mail-followup-to
+The initial setting is nil.
+If non-nil, Mail-Followup-To field is automatically inserted in the
+draft buffer.
+
+@item wl-insert-mail-reply-to
+@vindex wl-insert-mail-reply-to
+The initial setting is nil.
+If non-nil, Mail-Reply-To field is automatically inserted in the
+draft buffer.
+
+@item wl-auto-insert-x-face
+@vindex wl-auto-insert-x-face
+The initial setting is t.
+If non-nil and there is an encoded X-Face string in a file
+@file{~/.xface} (the value of the variable @code{wl-x-face-file}),
+inserts it as an X-Face field in the draft buffer.
+If nil, it is not automatically inserted. Press @kbd{C-c C-a} to insert.
+
+@item wl-insert-message-id
+@vindex wl-insert-message-id
+The initial setting is t.
+If non-nil, Message-ID field is automatically inserted on the
+transmission.
+
+@item wl-local-domain
+@vindex wl-local-domain
+The initial setting is nil.
+If nil, the return value of the function @code{system-name} will be
+used as the domain part of Message-ID.
+
+If @code{system-name} does not return FQDN (i.e. the full name of the
+host, like @samp{smtp.gohome.org}), you @strong{must} set this variable to the
+string of the local domain name without hostname (like @samp{gohome.org}). 
+That is, a concatenation of @code{system-name} "." @code{wl-local-domain} 
+is used as domain part of the Message-ID.
+
+If your terminal does not have global IP, set the value of
+@code{wl-message-id-domain}.
+(You might be beaten up on the Net News if you use invalid Message-ID.)
+
+Moreover, 
+concatenation of @code{system-name} "." @code{wl-local-domain} 
+will be used as an argument to the HELO command in SMTP.
+
+@item wl-message-id-domain
+@vindex wl-message-id-domain
+The initial setting is nil.
+If non-nil, this value is used as a domain part of the Message-ID.
+If your terminal does not have global IP, set unique string to this value
+(e.x. your e-mail address).
+
+@item wl-message-id-domain
+@vindex wl-message-id-domain
+The initial setting is nil.
+If nil, the return value of the function @code{system-name} will be
+used as the domain part of Message-ID.
+If @code{system-name} does not return FQDN (i.e. the full name of the
+host, like smtp.gohome.org), you @strong{must} set this variable to the
+string of the full name of the host.  Otherwise, you might be beaten up
+on the Net News.
+
+@item wl-draft-config-alist
+@vindex wl-draft-config-alist
+The initial setting is nil.
+Modifies the draft message just before the transmission.
+The content of @code{wl-draft-config-alist} will be automatically
+applied only once on the transmission.  If you want to apply it
+manually, use @kbd{C-c C-e}.  This command can be used many times.
+
+@item wl-template-alist
+@vindex wl-template-alist
+The initial setting is nil.
+This variable specifies the template to be applied in the draft buffer.
+
+@item wl-draft-config-matchone
+@vindex wl-draft-config-matchone
+The initial setting is nil.
+If non-nil, only the first matching item is used when
+@code{wl-draft-config-alist} is applied.  If nil, all matching items are 
+used.
+
+@item wl-template-visible-select
+@vindex wl-template-visible-select
+The initial setting is t.
+If non-nil, you can preview the result of the template selection in
+another window.
+
+@item wl-template-confirm
+@vindex wl-template-confirm
+The initial setting is nil.
+If non-nil, asks for confirmation when you press the enter key to select
+template while previewing.
+
+@item wl-template-buffer-lines
+@vindex wl-template-buffer-lines
+The initial setting is 7.
+If @code{wl-template-visible-select} is non-nil, this variable specifies 
+the size of the preview window.
+
+@item wl-draft-reply-buffer-style
+@vindex wl-draft-reply-buffer-style
+The initial setting is 'split.
+'split or 'full can be specified.
+In the case of 'full, the whole frame will be used for a reply draft
+buffer when it is prepared.
+
+@item wl-from
+@vindex wl-from
+The initial setting is the value of the variable @code{user-mail-address}.
+The value of this variable is inserted as a From field of the draft when
+it is prepared.
+
+@item wl-envelope-from
+@vindex wl-envelope-from
+The initial setting is nil.
+The value of this variable is used for envelope from (MAIL FROM).
+If nil, the address part of @code{wl-from} is used.
+
+@item wl-user-mail-address-list
+@vindex wl-user-mail-address-list
+The initial setting is nil.
+This is the User's address list.  If you have multiple addresses,
+set this variable.
+
+@item wl-fcc
+@vindex wl-fcc
+The initial setting is nil.
+If non-nil, the value of this variable is inserted as a FCC of the draft
+when it is prepared.
+
+@item wl-bcc
+@vindex wl-bcc
+The initial setting is nil.
+If non-nil, the value of this variable is inserted as a Bcc of the draft
+when it is prepared.
+
+@item wl-reply-subject-prefix
+@vindex wl-reply-subject-prefix
+The initial setting is "Re: ".
+In the Subject of the reply draft, this string is prepended to the
+Subject of being replied.
+
+@item wl-draft-enable-queuing
+@vindex wl-draft-enable-queuing
+The initial setting is t.
+This flag controls off-line transmission.  If non-nil, the draft is
+sent off-line.
+
+@item wl-auto-flush-queue
+@vindex wl-auto-flush-queue
+The initial setting is t.
+This flag controls automatic transmission of the queue when Wanderlust
+becomes on-line.  If non-nil, the queue is automatically transmitted
+(with confirmation by @code{y-or-n-p}).  If you want to transmit it
+manually, press @kbd{F} in the folder mode.
+
+@item wl-draft-always-delete-myself
+@vindex wl-draft-always-delete-myself
+If non-nil, always removes your own address from To and CC when you are
+replying to the mail addressed to you.
+
+@item wl-smtp-posting-server
+@vindex wl-smtp-posting-server
+The initial setting is nil.
+This is the SMTP server name for mail transmission.
+
+@item wl-smtp-posting-user
+@vindex wl-smtp-posting-user
+The initial setting is nil.
+This is the user name for SMTP AUTH authentication.
+If nil, @code{smtp-authenticate-user} is used.
+
+@item wl-smtp-authenticate-type
+@vindex wl-smtp-authenticate-type
+The initial setting is nil.
+This is the authentication method for SMTP AUTH authentication.
+If nil, @code{smtp-authenticate-type} is used.
+If it is still nil, authentication will not be carried out.
+
+@item wl-smtp-connection-type
+@vindex wl-smtp-connection-type
+The initial setting is nil.
+This variable specifies how to establish SMTP connections.
+If nil, @code{smtp-connection-type} is used.
+If it is 'starttls, STARTTLS (RFC2595) is used.
+
+@item wl-nntp-posting-server
+@vindex wl-nntp-posting-server
+The initial setting is nil.
+This is the NNTP server name used for news submission.
+If nil, @code{elmo-default-nntp-server} is used.
+
+@item wl-nntp-posting-user
+@vindex wl-nntp-posting-user
+The initial setting is nil.
+This is the user name for AUTHINFO authentication on news submission.
+If nil, @code{elmo-default-nntp-user} is used.
+If it is still nil, AUTHINFO authentication will not be carried out.
+
+@item wl-nntp-posting-port
+@vindex wl-nntp-posting-port
+The initial setting is nil.
+This is the port number of the NNTP server used for news submission.
+If nil, @code{elmo-default-nntp-server} is used.
+
+@item wl-nntp-posting-ssl
+@vindex wl-nntp-posting-ssl
+The initial setting is nil.
+If nil, @code{elmo-default-nntp-ssl} is evaluated.
+If non-nil, SSL is used for news submission.
+If 'starttls, STARTTLS (RFC2595) connection will be established.
+
+@item wl-pop-before-smtp-user
+@vindex wl-pop-before-smtp-user
+The initial setting is nil.
+This is the POP user name for POP-before-SMTP.
+If it is nil, @code{elmo-default-pop3-user} is used.
+
+@item wl-pop-before-smtp-server
+@vindex wl-pop-before-smtp-server
+The initial setting is nil.
+This is the POP server name for POP-before-SMTP.
+If it is nil, @code{elmo-default-pop3-server} is used.
+
+@item wl-pop-before-smtp-authenticate-type
+@vindex wl-pop-before-smtp-authenticate-type
+The initial setting is nil.
+This is the authentication method for POP-before-SMTP authentication.
+If it is nil, @code{elmo-default-pop3-authenticate} is used.
+
+@item wl-pop-before-smtp-port
+@vindex wl-pop-before-smtp-port
+The initial setting is nil.
+This is the POP port number for POP-before-SMTP.
+If it is nil, @code{elmo-default-pop3-port} is used.
+
+@item wl-pop-before-smtp-ssl
+@vindex wl-pop-before-smtp-ssl
+The initial setting is nil.
+This flag controls the use of SSL for POP-before-SMTP.
+If it is nil, @code{elmo-default-pop3-ssl} is used.
+
+@item wl-draft-queue-save-variables
+@vindex wl-draft-queue-save-variables
+Specifies a list of variable to which queued messages are saved on the
+off-line transmission.
+
+@item wl-draft-sendlog
+@vindex wl-draft-sendlog
+The initial setting is t.
+If t, transmission log is written in @file{~/.elmo/sendlog}.
+It is written when drafts are sent by smtp or qmail, and when they are
+saved into folders by fcc or queuing (it is written even if the
+transmission fails).
+But transmission by im-wl.el is not written in the sendlog and left to
+the logging function of imput.
+
+@item wl-draft-sendlog-max-size
+@vindex wl-draft-sendlog-max-size
+The initial setting is 20000 (in bytes).
+If @code{wl-draft-sendlog} is t, the log is rotated when it grows beyond 
+the size specified by this variable.
+@end table
+
+
+@c
+@c  Disconnected Operations
+@c
+@node Disconnected Operations, Expire and Archive, Draft, Top
+@chapter Off-line Management
+@cindex Disconnected Operations
+
+@section Off-line State
+
+Wanderlust has on-line and off-line states.
+In the off-line state, you cannot access messages via network, unless
+they are cached.
+
+@samp{[ON]} in the mode line indicates the on-line state.
+@samp{[--]} in the mode line indicates the off-line state.
+In folder or summary modes, press @kbd{M-t} to switch between off-
+and on-line.
+
+You can invoke Wanderlust in the off-line state by setting
+@code{wl-plugged} to nil in @file{~/.wl} or anything appropriate.
+
+Even in the off-line state, provided that relevant messages are cached,
+and the variable @code{elmo-enable-disconnected-operation} (described
+later) is non-nil, you can:
+
+@itemize @minus
+@item transmit messages
+@item re-file and copy (IMAP4)
+@item create folders (IMAP4)
+@item mark (IMAP4)
+@item pre-fetch (IMAP4, NNTP)
+@end itemize
+
+As soon as Wanderlust becomes on-line, such operations invoked
+off-line are reflected in the servers via network.
+
+@section Transmission of Messages
+
+You can send mail/news messages off-line (if you are using im-wl.el, it
+is irrelevant).  Messages sent off-line are accumulated in the queue
+folder, @samp{+queue}.  These messages are transmitted at once when
+Wanderlust becomes on-line.
+
+You can visit @samp{+queue} in the off-line state and confirm content
+of messages in the queue.  You can also remove messages.  Removed messages
+are not transmitted even in the on-line state.
+
+@section Re-file and Copy (IMAP4)
+
+Re-file and copy operations to IMAP folders invoked during the off-line
+state are accumulated in the queue, and reflected in the server side
+when Wanderlust becomes on-line.  If you visit destination folders after
+off-line re-file or copy, it looks as if messages were appended even in
+off-line state.
+
+For the safety reasons, messages re-filed off-line are removed from
+source folders only if their Message-ID match messages on the servers.
+While the queue is processed, messages that failed to be re-filed or
+copied to the specified folders are appended to the folder
+@samp{+lost+found}.
+
+@section Creation of Folders (IMAP4)
+
+You can create IMAP folders off-line.  The creation of folders are
+reflected in the servers when Wanderlust becomes on-line.  At that time, 
+if folders failed to be created on the servers for any reasons, messages
+re-filed to such folders are appended to the folder "+lost+found".
+
+@section Marking (IMAP4)
+
+Off-line changes in unread/read and importance mark @samp{$} information
+are also reflected in the servers when Wanderlust becomes on-line.
+
+@section Pre-fetching (IMAP4, NNTP)
+
+You can make reservations for pre-fetching messages in IMAP or NNTP
+folders.  Reserved messages are marked with @samp{!} but not cached
+yet.  When Wanderlust becomes on-line, they are pre-fetched from
+servers.
+
+If the variable @code{elmo-enable-disconnected-operation} is nil, these
+off-line operations for IMAP4 and NNTP do not take place, and off-line
+re-file, copy or suchlike simply results in error.
+
+Because off-line operations use cache files, it is a bad idea to erase
+them by hand; it may cause Wanderlust to malfunction.
+
+If you want to remove caches, be sure to execute
+@kbd{M-x elmo-cache-expire-by-size}.
+@code{elmo-cache-expire-by-size} does not remove caches for messages
+relevant to off-line operations.
+
+@section Switching On-line/Off-line per Server/Port
+
+@kbd{M-t} described above switches networking states as a whole, but you 
+can switch on-line/off-line per server/port.
+
+Pressing @kbd{C-t} in the folder or summary modes brings you in
+wl-plugged-mode shown below, in which you can change the plugged state
+for each port.
+
+@example
+Queuing:[ON] AutoFlushQueue:[--] DisconnectedOperation:[ON]
+[ON](wl-plugged)
+  [--]hosta
+    [--]smtp        +queue: 2 msgs (1,2)        @dots{}@r{sending queue}
+    [--]nntp(119)   +queue: 1 msg (3)           @dots{}@r{sending queue}
+  [ON]hostb
+    [--]imap4/cram-md5(143) %#mh/wl(prefetch-msgs:3,mark-as-important:1)
+                            %inbox(delete-msgids:1)    @dots{}@r{dop queue}
+    [ON]nntp(119)
+    [ON]smtp
+@end example
+
+The first line indicates status of the following three variables, and
+simply pressing @kbd{@key{SPC}} or @kbd{@key{RET}} in each labelled
+column modifies the values of these variables.
+
+@example
+"Queuing"               wl-draft-enable-queuing
+"AutoFlushQueue"        wl-auto-flush-queue
+"DisconnectedOperation" elmo-enable-disconnected-operation
+@end example
+
+where @samp{[ON]} means its value is t, and @samp{[--]} means nil.
+
+The second and after lines indicate on-line/off-line states of servers
+and ports, where @samp{[ON]} stands for on-line and @samp{[--]} for
+off-line (in XEmacs, they are shown with icons).  Pressing
+@kbd{@key{SPC}} or @kbd{@key{RET}} in each line switches its state.
+
+"sending queue" means messages accumulated in the folder @samp{+queue}
+for off-line transmission, and "dop queue" means off-line operations
+when @code{elmo-enable-disconnected-operation} is t.
+@c If the variable @code{elmo-enable-disconnected-operation} is non-nil, 
+@c off-line operations are enabled.
+
+They are displayed if there are any of them.  In the example above,
+in the sending queue there are two messages (the first and the second
+in the queue folder) for smtp to hosta and one (the third) for nntp to
+hosta, and in the dop queue there are one for @samp{%inbox} and two for
+@samp{%#mh/wl}.
+
+If you change (wl-plugged) in the second line, the variable
+@code{wl-plugged} is changed, so that the mode line indicator and
+plugged states of all ports are affected.
+If you change plugged states of any servers or ports, wl-plugged in the
+second line is affected depending on @code{elmo-plugged-condition}
+settings and the plugged state of each port.
+
+@section Invoking Wanderlust in the Off-line State
+
+As described before, if you set @code{wl-plugged} to nil in @file{~/.wl}
+or anything appropriate, you can invoke Wanderlust in the off-line
+state.  You can specify off-line state on a per server or port basis.
+Refer to @code{wl-reset-plugged-alist} also.
+
+Usually, when Wanderlust starts up, the plugged state of each port is
+read from @file{~/.folder} and @code{wl-smtp-posting-server},
+@code{wl-nntp-posting-server} and so on.  If you want to change the
+plugged state of these ports or to add other ports, configure
+@code{wl-make-plugged-hook} with a function.
+
+@lisp
+(add-hook 'wl-make-plugged-hook
+          '(lambda ()
+             (elmo-set-plugged plugged-value(t/nil) server port)
+                 ;; @r{add or change plugged states of the port of the server}
+             (elmo-set-plugged plugged-value(t/nil) server)
+                 ;; @r{if the port is omitted, all ports are affected}
+                 ;; @r{(you cannot omit the port if you newly add the server)}
+             ))
+@end lisp
+
+@section Customizable Variables
+
+@table @code
+@item wl-plugged
+@vindex wl-plugged
+If this variable is set to nil, Wanderlust starts up in off-line mode from
+the beginning.
+
+@item wl-queue-folder
+@vindex wl-queue-folder
+The initial setting is "+queue".
+This is the folder in which messages in the transmission queue are
+accumulated.
+
+@item wl-auto-flush-queue
+@vindex wl-auto-flush-queue
+The initial setting is t.
+This flag controls automatic transmission of the queue when Wanderlust
+becomes on-line.  If non-nil, the queue is automatically transmitted
+(with confirmation by @code{y-or-n-p}).  If you want to transmit it
+manually, press @kbd{F} in the folder mode.
+
+@item elmo-enable-disconnected-operation
+@vindex elmo-enable-disconnected-operation
+The initial setting is nil.  Controls off-line operations regarding IMAP4.
+If non-nil, off-line operations are carried out.
+
+@item elmo-lost+found-folder
+@vindex elmo-lost+found-folder
+The initial setting is "+lost+found".
+This is the folder to which messages are saved when they fails to be
+appended while the off-line re-file/copy queue is processed.
+
+@item elmo-plugged-condition
+@vindex elmo-plugged-condition
+The initial setting is 'one.
+The value of @code{wl-plugged} reflects the return value of the function 
+@code{elmo-plugged-p} (without arguments).
+This variable @code{elmo-plugged-condition} specifies the condition on
+which the return value of (elmo-plugged-p) should be t depending on the
+plugged state of each port.
+
+@example
+'one         : plugged if one or more ports are plugged.
+'all         : plugged if all ports are plugged.
+'independent : reflects wl-plugged (elmo-plugged) regardless of plugged
+               states of the ports.
+function     : reflects the return value of the function
+ functions available per default
+ 'elmo-plug-on-by-servers
+             : reflects the plugged state of the servers specified by the
+               variable elmo-plug-on-servers.
+ 'elmo-plug-on-by-exclude-servers
+             : reflects the plugged state of the servers that are not
+               in elmo-plug-on-exclude-servers.
+                  elmo-plug-on-exclude-servers defaults to
+                   '("localhost"
+                     (system-name)
+                     (system-name)without the domain part)
+@end example
+
+@example
+Example 1:
+ (setq elmo-plugged-condition 'all)
+Example 2:
+ (setq elmo-plug-on-servers '("smtpserver" "newsserver"))
+ (setq elmo-plugged-condition 'elmo-plug-on-by-servers)
+Example 3:
+ (setq elmo-plug-on-exclude-servers '("localhost" "myname"))
+ (setq elmo-plugged-condition 'elmo-plug-on-by-exclude-servers)
+@end example
+
+@item wl-reset-plugged-alist
+@vindex wl-reset-plugged-alist
+The initial setting is t.  If non-nil, plugged states are initialized on
+a per server or port basis when Wanderlust starts up.
+
+If nil, plugged states are retained while Emacs is running.
+In other words, they are initialized when Emacs is restarted even if the
+value is nil.
+@end table
+
+@c
+@c  Expire and Archive
+@c
+@node Expire and Archive, Scoring, Disconnected Operations, Top
+@chapter Automatic Expiration and Archiving of Messages
+@cindex Expire and Archive
+
+@menu
+* Expire::      Expiration and Archiving
+* Archive::     Archiving All Messages
+@end menu
+
+
+@node Expire, Archive, Expire and Archive, Expire and Archive
+@section Expiration
+@cindex Expire Message
+
+Expiration means deletion of old messages which have outlasted a
+certain period of time.
+
+@code{wl-expire} supports not only simple deletion, but also moving to
+specified archiving folders.
+
+@section How to Use
+
+Configure @code{wl-expire-alist} and press @kbd{e} in the folder mode,
+or @kbd{M-e} in the summary mode.
+
+@subsection Configuring @code{wl-expire-alist}
+
+An example configuration of @code{wl-expire-alist} is shown below.
+Everything in this @code{wl-expire-alist} makes a great difference in
+expiration, so be careful.
+I advise you to set @code{wl-expire-use-log} to t, especially in the
+initial stage.
+
+@lisp
+(setq wl-expire-alist
+      '(("^\\+trash$"   (date 14) remove)
+                                  ;; @r{delete}
+        ("^\\+tmp$"     (date 7) trash)
+                                  ;; @r{re-file to @code{wl-trash-folder}}
+        ("^\\+outbox$"  (number 300) "$outbox;lha")
+                                  ;; @r{re-file to the specific folder}
+        ("^\\+ml/tmp$"  nil)
+                           ;; @r{do not expire}
+        ("^\\+ml/wl$"   (number 500 510) wl-expire-archive-number1 t)
+                           ;; @r{archive by message number (retaining numbers)}
+        ("^\\+ml/.*"    (number 300 310) wl-expire-archive-number2 t)
+                           ;; @r{archive by a fixed number (retaining numbers)}
+        ("^\\+nikki$"   (date 30) wl-expire-archive-date)
+                           ;; @r{archive by year and month (numbers discarded)}
+        ))
+@end lisp
+
+Items in the list has the format of:
+
+@example
+("regexp_for_folders"  (specification_of_messages_to_be_deleted) destination)
+@end example
+
+@noindent
+
+The folder is examined if it matches "regexp_for_folders" from the
+beginning of the list.  If you invoke expiration on the folder that does
+not match any of them, nothing will happen.
+And if either the second or the third element of the item is nil,
+expiration will not take place.
+
+You can use any one of the following for
+specification_of_message_to_be_deleted:
+
+@table @code
+@item (number n1 [n2])
+deletes messages depending on the number of messages in the folder.
+
+n1 is the number of messages which should survive deletion, for example
+if its value is 500, the newest 500 messages survive and the rests are
+deleted.
+
+n2 is the number of messages in the folder on which expiration should
+take place, which defaults to n1 + 1.  For example if its value is 510,
+folders with 510 or more messages are expired.
+If you configured automatic expiration, frequently used folders may
+expire every time it receive messages, and you may be annoyed with the
+long delay in reading mail.
+In that case, you can set a wide margin between n2 and n1, so that
+expiration would not take place until a certain number of messages
+accumulate.
+
+Messages with marks in @code{wl-summary-expire-reserve-marks} (marked
+with important/new/unread) are not deleted.
+If @code{wl-expire-number-with-reserve-marks} is non-nil, the folder
+will expire so as to have 500 messages including such ones.
+Otherwise, it will have 500 messages except such ones.
+
+@item (date d1)
+deletes messages depending on the dates.
+
+Messages dated d1 or more days ago are deleted, for example if its value
+is seven, messages seven days old or more are deleted.
+Note that the date is the one in the Date field of the message, not when 
+the message entered the folder.
+
+Messages with no or invalid Date field does not expire; you might have
+to delete them by hand.
+@end table
+
+You can use any one of the following in the place of destination:
+
+@table @code
+@item 'remove
+deletes the messages instantly.
+
+@item 'trash
+moves the messages to @code{wl-trash-folder}.
+
+@item string(folder)
+moves the messages to the specified folder.
+
+It would be useful for specifying an archiving folder, but because this
+does not move important messages, it might be better to use the
+standard functions described below.
+
+@item function
+invokes the specified function.
+
+To the function, three arguments are passed: a folder name, a list of
+messages to be deleted, and msgdb information of the summary.
+You can specify function-specific arguments after the name of the
+function.
+Note that the list contains messages with marks in
+@code{wl-summary-expire-reserve-marks}, be careful in writing your own
+function.
+
+These are three standard functions; they moves messages to an archive
+folder in the specified way.  This means old messages can be compressed
+and saved in a file, being deleted from the original folder.
+
+@table @code
+@item wl-expire-archive-number1
+re-files to archiving folders corresponding to the message numbers of
+the messages being deleted.
+For example, a message numbered 102 will be re-filed to
+@file{wl-00100.zip}, 390 to @file{wl-00300.zip}, and so on.
+If @code{wl-expire-archive-files} is 200, messages will be re-filed to
+@file{wl-00000.zip}, @file{wl-00200.zip}, @file{wl-00400.zip}, @dots{}.
+
+The archiving folders to which messages are re-filed are determined by
+the name of the folder as follows
+(in this case, archiving folders are handled as if
+@code{elmo-archive-treat-file} were non-nil).
+
+@table @code
+@item If the folder type is localdir:
+
+@code{$ArchiveDir/foldername-xxxxx.zip}
+For example, @samp{+ml/wl} corresponds to @samp{$ml/wl;zip}
+(@file{~/Mail/ml/wl-00100.zip}).
+
+@item The folder type is other than localdir:
+@code{$ArchiveDir/foldertype/foldername-xxxxx.zip}
+
+For example, @samp{%#mh/ml/wl} corresponds to
+@samp{$imap4/#mh/ml/wl;zip} (@file{~/Mail/imap4/#mh/ml/wl-00100.zip}).
+@end table
+
+As you can see, in the case of localdir, the folder type is not included
+in the path name, but otherwise it is included.
+And you can control the prefix to the archiving folder name by
+@code{wl-expire-archive-folder-prefix}.
+Refer to @code{wl-expire-archive-folder-prefix} for details.
+
+@item wl-expire-archive-number2
+re-files every certain number of messages to archiving folders.
+
+This differs from @samp{wl-expire-archive-number1} in that this re-files
+to the folder up to the specified number regardless of message numbers.
+The archiving folders to which messages are re-filed are determined in the 
+same way as @code{wl-expire-archive-number1}.
+
+@item wl-expire-archive-date
+re-files messages depending on its date (year and month) to archive
+folders.
+
+For example, a message dated December 1998 is re-filed to
+@code{$folder-199812;zip}.
+The name of the archiving folders except the date part are determined in
+the same way as @code{wl-expire-archive-number1}.
+@end table
+
+You can set the first argument to these three standard functions to non-nil
+in @code{wl-expire-alist} so as to retain message numbers in the folder.
+For example, it can be specified just after the name of the function:
+
+@example
+("^\\+ml/wl$" (number 300 310) wl-expire-archive-number1 t)
+@end example
+
+If you omit the argument, consecutive numbers from 1 are assigned for
+each archiving folder.
+@end table
+
+@subsection Treatment for Important or Unread Messages
+
+If you specify any of 'remove, 'trash, a folder name, or a standard
+function, messages with marks in @code{wl-summary-expire-reserve-marks}
+(which are called @dfn{reserved messages} thereafter) are retained.
+
+Per default, this variable include the important, new, and unread marks,
+so that messages with these marks are not removed.
+Note that you cannot include the temporary mark (i.e. temporary marks
+are removed anyway), and be sure to process temporary marks before you
+invoke expiration.
+
+@subsection Auto Expiration
+
+The following setup invokes expiration when you move into the summary
+mode.  There will be no confirmation, so make sure you made no mistake
+in regexp and other settings before you set up this.
+
+@lisp
+(add-hook 'wl-summary-prepared-pre-hook
+          'wl-summary-expire)
+@end lisp
+
+In the folder mode, you can invoke expiration per group as well as per
+folder.  Therefore, if you specify @samp{Desktop} group, all folders
+matching @code{wl-expire-alist} expire.
+
+@section Tips
+
+@subsection Treating archive folders.
+To treat archive folders created by @code{wl-expire-archive-number1} and so on,
+you must set non-nil value to @code{elmo-archive-treat-file}.
+
+@subsection Confirming
+
+If you are to use 'remove, try 'trash at first and see messages move to
+@code{wl-trash-folder} as expected, then replace it with 'remove.
+It would be dangerous to use 'remove from the beginning.
+
+If you are to use @code{wl-expire-archive-number1} and the like, try to
+make a folder of the archiver type ('zip or 'lha) and see if you can
+append messages to it.
+Even if settings in @code{wl-expire-alist} and @code{elmo-archive} are
+correct, messages would not be saved anywhere and disappeared in case
+the archiver program fails.
+
+After you make sure you can archive to the folder correctly, you can
+invoke expiration and utilize the log.
+
+If you set @code{wl-expire-use-log} to t, @file{~/.elmo/expired-log}
+should contain the log, for example:
+
+@example
+delete  +ml/wl  (593 594 595 596 597 598 599)
+move    +ml/wl -> $ml/wl-00600;tgz;wl  (600 601 602)
+@end example
+
+The first column indicates the operation, i.e. delete, copy, or move.
+The next is the name of the folder that expired.  In the case of copy
+and move, the destination folder is recorded after @samp{->}.
+The last is the list of message numbers that are actually deleted or
+moved (in the case of copy and move, the number is the one in the source 
+folder, rather than the destination folder).
+
+@subsection Re-filing Reserved Messages
+
+The three standard functions copy reserved messages to the archive
+folder, but do not delete them from the source folder.  Because
+reserved messages and the like always remain, they are recorded in
+@file{~/.elmo/expired-alist} so that they are not copied over and over
+again.  They are not recorded if copied by @code{wl-summary-archive}.
+
+If you enabled logging, usually "move" is recorded for re-filing, but
+instead "copy" and "delete" are recorded separately if reserved messages
+are involved.
+This is because it actually copies messages including reserved, then
+deletes ones except reserved in that case.
+
+@section Customizable Variables
+
+@table @code
+@item wl-expire-alist
+@vindex wl-expire-alist
+The initial setting is nil.
+This variable specifies folders and methods to expire.  For details,
+refer to @code{wl-expire-alist} settings above.
+
+@item wl-summary-expire-reserve-marks
+@vindex wl-summary-expire-reserve-marks
+The initial setting is the list below.
+
+@lisp
+(list wl-summary-important-mark
+      wl-summary-new-mark
+      wl-summary-unread-mark
+      wl-summary-unread-uncached-mark
+      wl-summary-unread-cached-mark)
+@end lisp
+
+Messages with these marks are retained in the folder, even after
+expiration.
+Only permanent marks can be listed, not temporary marks.
+
+You can list marks one by one as in the default; you can use the
+following settings as well:
+
+@table @code
+@item 'all
+All messages with permanent marks are retained,
+i.e. @code{wl-summary-read-uncached-mark} is included in addition to the 
+defaults.
+
+@item 'none
+All messages are handled as usual ones that are already read, no matter
+what marks they have; even important messages are deleted.
+@end table
+
+@item wl-expire-archive-files
+@vindex wl-expire-archive-files
+The initial setting is 100.
+This variable specifies the number of messages to be retained in one
+archiving folder.
+
+@item wl-expire-number-with-reserve-marks
+@vindex wl-expire-number-with-reserve-marks
+The initial setting is nil.
+If non-nil, if expiring messages are specified by "number", messages
+with @code{wl-summary-expire-reserve-marks} are also retained.
+
+@item wl-expire-archive-get-folder-func
+@vindex wl-expire-archive-get-folder-func
+The initial setting is 'wl-expire-archive-get-folder.
+
+This variable specifies a function that returns the name of an archiving 
+folder for standard functions in the place of destination.
+You can use the following three variables for simple modification of
+folder names; if you want more complex settings, define your own
+function in this variable.
+
+@code{wl-expire-archive-get-folder} can be customized by these
+variables:
+@itemize @bullet
+@item wl-expire-archive-folder-name-fmt
+@item wl-expire-archive-folder-type
+@item wl-expire-archive-folder-prefix
+@end itemize
+
+@item wl-expire-archive-folder-name-fmt
+@vindex wl-expire-archive-folder-name-fmt
+The initial setting is "%s-%%05d;%s".
+This is a format string for archiving folders used in
+@code{wl-expire-archive-number1} and @code{wl-expire-archive-number2}.
+Note that you must specify the message number by @samp{%%d}, because it
+is parsed twice by @code{format}.
+
+If you modify this, adjust @code{wl-expire-archive-folder-num-regexp} as 
+well.
+
+@item wl-expire-archive-date-folder-name-fmt
+@vindex wl-expire-archive-date-folder-name-fmt
+The initial setting is "%s-%%04d%%02d;%s".
+This is a format string for archiving folders used in
+@code{wl-expire-archive-date}.
+Note that you must specify the message number by @samp{%%d}, because it
+is parsed twice by @code{format}.
+There should be @code{%%d} twice, one for the year and the other for the
+month.
+
+If you modify this, adjust
+@code{wl-expire-archive-date-folder-num-regexp} as well.
+
+@item wl-expire-archive-folder-type
+@vindex wl-expire-archive-folder-type
+The initial setting is 'zip.
+This variable specifies an archiver type of the archiving folders.
+
+@item wl-expire-archive-folder-prefix
+@vindex wl-expire-archive-folder-prefix
+The initial setting is nil.
+This variable specifies the prefix (directory structure) to archiving
+folders.
+Exercise extreme caution in using this feature, as it has not been
+seriously tested.
+In the worst case, there is a fear of destructing archiving folders.
+
+@table @code
+@item nil
+There will be no prefix.
+
+@item 'short
+For example, @samp{+ml/wl} will be prefixed by @samp{wl}, resulting in
+@samp{$ml/wl-00000;zip;wl}.
+
+@item t
+For example, @samp{+ml/wl} will be prefixed by prefix @samp{ml/wl},
+resulting in
+
+@samp{$ml/wl-00000;zip;ml/wl}.
+@end table
+
+@item wl-expire-archive-folder-num-regexp
+@vindex wl-expire-archive-folder-num-regexp
+The initial setting is "-\\([-0-9]+\\);".
+This variable specifies the regular expression to be used for getting
+message numbers from multiple archiving folders specified by
+@code{elmo-list-folders}.
+Set it in accordance with @code{wl-expire-archive-folder-name-fmt}.
+
+@item wl-expire-archive-date-folder-num-regexp
+@vindex wl-expire-archive-date-folder-num-regexp
+The initial setting is "-\\([-0-9]+\\);".
+This is the regular expression to be used for getting message numbers
+from multiple archiving folders specified by @code{elmo-list-folders}.
+Set it in accordance with @code{wl-expire-archive-date-folder-name-fmt}.
+
+@item wl-expire-delete-oldmsg-confirm
+@vindex wl-expire-delete-oldmsg-confirm
+The initial setting is t.
+If non-nil, messages older than the one with the largest number will be
+deleted with confirmation.
+If nil, they are deleted without confirmation.
+
+This feature is valid only if non-nil is specified as a argument to the
+standard functions so as to retain numbers.
+
+@item wl-expire-use-log
+@vindex wl-expire-use-log
+The initial setting is nil.
+If non-nil, expiration logs are recorded in @file{~/.elmo/expired-log}.
+They are appended but not truncated or rotated automatically; you might
+need to remove it manually.
+
+@item wl-expire-add-seen-list
+@vindex wl-expire-add-seen-list
+The initial setting is t.
+
+If non-nil, when messages are re-filed by expiration, read/unread
+information is passed to the destination folder.
+
+However if you do not read the destination folder from Wanderlust,
+@file{seen} under @file{~/.elmo/} grows larger and larger, so you might
+want to set this to nil if you are simply saving to some archiving
+folders.  Even if its value is nil, messages in the archiving folders
+are simply treated as unread; it does not affect expiration itself.
+
+@item wl-expire-folder-update-msgdb
+@vindex wl-expire-folder-update-msgdb
+The initial setting is t.
+If t, in the folder mode, expiration is carried out after updating
+summary information.
+If you specified a list of regular expressions of folder names, summary
+information is updated for matching folders only.
+@end table
+
+
+@node Archive,  , Expire, Expire and Archive
+@section Archiving Messages
+
+@subsection Archiving Messages
+@kbd{M-x wl-summary-archive} copies the whole folder to archiving
+folders.  If there are the archiving folders already, only new messages
+are appended.
+
+You can use @code{wl-archive-alist} in order to specify how messages are 
+archived according to their folder names, as in @code{wl-expire-alist}.
+For example:
+
+@lisp
+(setq wl-archive-alist
+      '(("^\\+tmp$"     wl-archive-date)
+        ("^\\+outbox$"  wl-archive-number2)
+        (".*"           wl-archive-number1)
+        ))
+@end lisp
+
+Each item in the list has the following format:
+
+@example
+("folders_regexp"  deleting_function)
+@end example
+
+As you can see, you can only use a function after @samp{folders_regexp}.
+Per default, there are three functions:
+
+@itemize @bullet
+@item wl-archive-number1
+@item wl-archive-number2
+@item wl-archive-date
+@end itemize
+
+As inferred from their names, they work similarly to "expire" versions,
+other than the following points:
+
+@itemize @minus
+@item No messages are deleted
+@item Message numbers are retained even if invoked without arguments
+@end itemize
+
+These functions are good to archive all messages in a folder by their
+numbers or by their dates.
+These are also useful for backup or confirmation purposes before
+expiration.
+If you try to re-file them after they are archived, they are deleted but 
+not re-filed.
+
+Per default, the archiving folders to which messages are copied are
+determined automatically by @code{wl-expire-archive-get-folder-func}.
+You can copy to a specific folder by invoking with a prefix argument,
+i.e. @kbd{C-u M-x wl-summary-archive}.
+
+Note that this feature has not been seriously tested, because you can
+simply copy to an archiving folder, for example by
+@code{wl-summary-copy-region}.
+
+The archiving folders are determined by the same logic as in
+@code{wl-summary-expire}; the following customizable variables are
+relevant:
+
+@itemize @bullet
+@item wl-expire-archive-files
+@item wl-expire-archive-get-folder-func
+@item wl-expire-archive-folder-name-fmt
+@item wl-expire-archive-folder-type
+@item wl-expire-archive-folder-prefix
+@item wl-expire-archive-folder-num-regexp
+@end itemize
+
+@subsection Customizable Variables
+
+@table @code
+@item wl-archive-alist
+@vindex wl-archive-alist
+The initial setting is '((".*" wl-archive-number1)).
+
+This variable specifies a function that copies to archiving folders.
+To the function, three arguments are passed: a folder name, a list of
+messages in the folder, and msgdb information of the summary.
+Needless to say, you can use your own function.
+@end table
+
+
+@c
+@c  Scoring
+@c
+@node Scoring, Customization, Expire and Archive, Top
+@chapter Score of the Messages
+@cindex Scoring
+@c @cindex Kill File
+
+Scoring is the function that associates a score (value) with each
+message, and marks as read or deletes from the summary according to it.
+
+You can put temp or important marks on essential messages, or read marks
+on the ones you do not want to read, for example spam articles.
+
+This scoring function has a capability and a format similar to the one
+that Gnus has, although there are some unsupported features and
+Wanderlust specifics.
+
+@menu
+* Score Commands::             Score Commands
+* Score File Format::          Score File Format
+@end menu
+
+
+@node Score Commands, Score File Format, Scoring, Scoring
+@section Score Commands
+@cindex Score Commands
+
+@subsection Score File Specification
+
+@code{wl-score-folder-alist} specifies score files or variables in which 
+scores are defined, corresponding to folder names.
+
+@lisp
+(setq wl-score-folder-alist
+      '(("^-.*"
+         "news.SCORE"
+         "my.SCORE")
+        (".*"
+         "all.SCORE")))
+@end lisp
+
+If paths to the score files are omitted, the directory specified in the
+variable @code{wl-score-files-dir} is assumed.
+
+No matter what you write in @code{wl-score-folder-alist}, the default
+score file @code{wl-score-default-file} (@file{all.SCORE}) is always
+read (it does not have to exist).
+Therefore, in the example above, the three score files,
+@file{news.SCORE}, @file{my.SCORE}, and @file{all.SCORE} are read for
+the folders that matches @samp{^-.*}.
+
+@subsection Scored Messages
+
+Scores are attached to the messages that are specified by
+@code{wl-summary-score-marks} temporarily when the summary is updated;
+when you exit from the summary, the scores are removed and reverts to
+the defaults.
+
+@subsection Creation of Score Files
+
+In the summary buffer, move to an appropriate message and type @kbd{L}.
+Then type @kbd{s}, @kbd{s}, and @kbd{p} at a prompt in a mini-buffer.
+The string in Subject is presented.  Edit it and press @kbd{@key{RET}}.
+
+This makes -1000 are scored for messages with the same Subject as the
+string you entered.  That is, such a score file is created
+automatically.
+
+Then, try typing @kbd{h} and @kbd{e} in the same summary buffer.
+The score file you just made appears.
+This buffer is called "score editing buffer" thereafter.
+When you type @kbd{C-c C-e} in it, you are prompted in the mini-buffer
+as you are previously; type @kbd{a}.  Then a score entry for "From"
+should be inserted.
+In this way, you can create a score file easily either in the summary
+buffer or in the score editing buffer.
+
+By the way, you might be aware the numbers of key strokes are different
+between @kbd{s s p} and @kbd{a}.
+This is determined by @code{wl-score-header-default-entry}.
+This variable specifies the default score entries corresponding to
+header fields.
+For example, for "subject" field, a type and a time limit are prompted,
+but for "from" field, they are fixed upon automatically as substring and
+permanent respectively.
+However, score values can be modified by the prefix argument.
+Typing @kbd{?} at the mini-buffer shows a help on keys and corresponding 
+headers and types.
+
+At last, type @kbd{C-c C-c} in the score editing buffer.  This saves the 
+score file and terminates the edit mode.  Typing @kbd{C-c C-c} after
+erasing contents of the buffer deletes the score file being edited.
+
+@subsection Tips
+
+@subsubsection Selecting Score Files
+
+You can change score files to which scores are appended by
+@code{wl-summary-increase-score} and @code{wl-summary-lower-score} by
+@code{wl-score-change-score-file}.
+
+@subsubsection Summing Up the Score
+
+If you add the same entries by @code{wl-summary-increase-score},
+@code{wl-summary-lower-score}, and @code{wl-score-edit-insert-entry},
+scores for the entry is summed up.
+
+For example, if you create @samp{from} entry with the score of -1000 by
+@kbd{L a} and again @samp{from} with -200, one entry with the score of
+-1200 will be created as a result.
+
+@subsubsection Creating Thread Key
+
+Creating @samp{Thread} key by @code{wl-summary-increase-score} or
+@code{wl-summary-lower-score} appends @samp{Message-ID} of all children.
+
+@subsubsection Creating Followup Key
+
+Creating @samp{Followup} key by @code{wl-summary-increase-score} or
+@code{wl-summary-lower-score} appends @samp{Message-ID} of the message
+at the cursor to @samp{References} key.
+If @code{wl-score-auto-make-followup-entry} is non-nil,
+@samp{Message-ID} of all messages to be followed up within dates
+specified by @code{wl-score-expiry-days}.
+
+@subsection Key Bindings
+
+@table @kbd
+@item K
+@kindex K (Summary)
+@findex wl-summary-increase-score
+Increases the score for the current message.
+And the score entry is appended to the score file at the same moment.
+You can specify the score value by a prefix argument.
+
+@item L
+@kindex L (Summary)
+@findex wl-summary-lower-score
+Decreases the score for the current message.
+And the score entry is appended to the score file at the same moment.
+You can specify the score value by a prefix argument.
+
+@item h R
+@kindex h R (Summary)
+@findex wl-summary-rescore
+Re-applies the scoring.
+However, already scored messages are not scored anew.
+
+@item h c
+@kindex h c (Summary)
+@findex wl-score-change-score-file
+Changes the score file currently selected.
+
+@item h e
+@kindex h e (Summary)
+@findex wl-score-edit-current-scores
+Edits the score file currently selected.
+If there are multiple score files, the previously specified one is
+selected.
+
+@item h f
+@kindex h f (Summary)
+@findex wl-score-edit-file
+Edits an arbitrary score file and selects it.
+
+@item h F
+@kindex h F (Summary)
+@findex wl-score-flush-cache
+Erases caches associated to the score files that are read.
+If you modified score files directly (from other than Wanderlust), you
+need to re-read them after erasing the cache.
+
+@item h m
+@kindex h m (Summary)
+@findex wl-score-set-mark-below
+Specifies the criterion for scores to be marked as read.
+Messages with scores less than this value are marked as read.
+
+@item h x
+@kindex h x (Summary)
+@findex wl-score-set-expunge-below
+Specifies the criterion for scores to be deleted from the summary.
+Messages with scores less than this value are deleted.
+"Deleted" means it is not shown; they are not removed from the summary
+information or the folder.
+The deleted messages can be shown by rescan-noscore again.
+@end table
+
+@subsection Key Bindings in the Score Editing Buffer
+
+@table @kbd
+@item C-c C-k
+@kindex C-c C-k (Score Mode)
+@findex wl-score-edit-kill
+Abandons the file being edited.
+
+@item C-c C-c
+@kindex C-c C-c (Score Mode)
+@findex wl-score-edit-exit
+Saves the file being edited, and quits from the edit mode.
+
+@item C-c C-p
+@kindex C-c C-p (Score Mode)
+@findex wl-score-pretty-print
+Re-draws the score.
+
+@item C-c C-d
+@kindex C-c C-d (Score Mode)
+@findex wl-score-edit-insert-date
+Inserts the number of dates from Dec. 31, 1 B.C.
+It is used for creating the third factor of time-limited scores.
+
+@item C-c C-s
+@kindex C-c C-s (Score Mode)
+@findex wl-score-edit-insert-header
+Inserts the header of the message selected in the summary buffer.
+
+@item C-c C-e
+@kindex C-c C-e (Score Mode)
+@findex wl-score-edit-insert-entry
+Inserts the score entry of the message selected in the summary buffer.
+@end table
+
+@subsection Customizable Variables
+
+@table @code
+@item wl-summary-default-score
+@vindex wl-summary-default-score
+The initial setting is zero.
+This variable specifies the default value of the score.
+The score is increased or decreased based upon this value.
+
+@item wl-summary-important-above
+@vindex wl-summary-important-above
+The initial setting is nil.
+Messages with scores larger than this value are attached with the
+important mark (@samp{$}).
+If nil, no important marks are attached.
+
+@item wl-summary-temp-above
+@vindex wl-summary-temp-above
+The initial setting is nil.
+Messages with scores larger than this value are attached with the temp
+mark (@samp{*}).
+If nil, no temp marks are attached.
+
+@item wl-summary-mark-below
+@vindex wl-summary-mark-below
+The initial setting is zero.
+Messages with scores smaller than this value are marked as read.
+
+@item wl-summary-expunge-below
+@vindex wl-summary-expunge-below
+The initial setting is nil.
+Messages with scores smaller than this value are deleted from the
+summary.
+If nil, they are not deleted.
+
+@item wl-summary-score-marks
+@vindex wl-summary-score-marks
+The initial setting is '("N" "!" "U").
+Messages with these marks are scored.
+
+@item wl-use-scoring
+@vindex wl-use-scoring
+The initial setting is t.
+If non-nil, scoring is enabled.
+
+@item wl-score-files-dir
+@vindex wl-score-files-dir
+The initial setting is "~/.elmo/".
+The default directory for score files.
+
+@item wl-score-interactive-default-score
+@vindex wl-score-interactive-default-score
+The initial setting is 1000.
+This value is used as a score when a score factor is nil in the score
+file.
+It is also used in @code{wl-summary-increase-score} and
+@code{wl-summary-lower-score}, on condition that the value of
+@code{wl-score-header-default-entry} is nil.
+
+@item wl-score-expiry-days
+@vindex wl-score-expiry-days
+The initial setting is 7.
+This is the number of days before time-limited scores are deleted.
+
+@item wl-score-update-entry-dates
+@vindex wl-score-update-entry-dates
+The initial setting is t.
+If non-nil, it enables deletion of time-limited scores.
+
+@item wl-score-header-default-entry
+@vindex wl-score-header-default-entry
+Specifies the default value for each header field for score entries
+created by @code{wl-summary-increase-score},
+@code{wl-summary-lower-score}, and @code{wl-score-edit-insert-entry}.
+
+@item wl-score-simplify-fuzzy-regexp
+@vindex wl-score-simplify-fuzzy-regexp
+In the case of a type of a score entry is "fuzzy", this specifies a
+regular expression to be deleted from the string.
+Because this is usually used for Subject, the default is prefixes that
+are attached by mailing list programs.
+
+@item wl-summary-rescore-partial-threshold
+@vindex wl-summary-rescore-partial-threshold
+The initial setting is 200.
+When sync-all or rescan is executed, if there are messages more than
+this value, only the last same number of messages as this value are
+scored.
+
+@item wl-summary-auto-sync-marks
+@vindex wl-summary-auto-sync-marks
+If non-nil, unread/important marks are synchronized when the summary
+does.
+Unread marks reflect information on the IMAP4 server.
+Important marks reflect information on the IMAP4 server (flagged or
+not), and contents of 'mark folder.
+The initial setting is t.
+@end table
+
+
+@node Score File Format,  , Score Commands, Scoring
+@section Score File Format
+@cindex Score File Format
+
+The format of score files are the same as Gnus, and basically you can
+use Gnus score files as they are.  But they are not fully compatible
+because some keys are not supported and there are Wanderlust specifics.
+
+@example
+(("subject"
+  ("for sale" -1000 nil s)
+  ("profit" -1000 nil s))
+ ("from"
+  ("spam@@spamspamspam" -10000 nil s))
+ ("followup"
+  ("my@@address" 3001 nil s))
+ ("chars"
+  (1000000 -10 nil >))
+ (important 5000)
+ (temp 3000)
+ (mark 0)
+ (expunge -3000))
+@end example
+
+@table @code
+@item string
+If the key is a string, it is the name of the header to be matched.
+The following keys are available:
+@code{Subject}, @code{From}, @code{Date}, @code{Message-ID},
+@code{References}, @code{To}, @code{Cc}, @code{Chars}, @code{Lines},
+@code{Xref}, @code{Extra}, @code{Followup}, @code{Thread}
+@code{Chars} and @code{Lines} mean the size and the number of lines of
+the message, respectively.  @code{Extra}, @code{Followup}, @code{Thread}
+are described later.
+The rest corresponds the field of the same name.
+
+Arbitrary numbers of core entries are specified after the key.
+Each score entry consists of these five factors:
+
+@enumerate
+@item
+A factor that matches header.  This should be a number in the cases of
+"lines" and "chars", otherwise a string.
+
+@item
+A score factor.  When the first item matches, the score of the message
+is increased or decreased by this value.
+
+@item
+A time limiting factor.  If nil, the score is permanent, and in the case
+of a number, the score is deleted if it does not match for days
+(@code{wl-score-expiry-days}) from the date specified by this.
+The date is since Dec. 31, 1 B.C.
+
+@item
+A type factor.  This specifies the way the first factor matches.
+Available types depend on keys.
+
+@table @dfn
+@item From, Subject, References, Message-ID
+For these keys in string, @code{r} and @code{R} (regexp),
+@code{s} and @code{S} (substring), @code{e} and @code{E} (exact match),
+as well as @code{f} and @code{F} (fuzzy) can be used.
+@code{R}, @code{S}, @code{E}, and @code{F} are case sensitive.
+
+@item Lines, Chars
+For these keys, the following five numerical relative operators can be
+used: @code{<}, @code{>}, @code{=}, @code{>=}, @code{<=}.
+
+@item Followup
+This key matches @code{From} header, and scores all follow-ups to the
+message.
+For example, it would be useful for increasing scores for follow-ups to
+you own article.
+
+You can use the same types as @code{From} except for @code{f}.
+And a @samp{Followup} entry is automatically appended to the score file.
+
+@item Thread
+This key scores (sub-)threads beginning with @code{Message-ID} @var{x}.
+A @samp{Thread} entry is automatically appended for each article that
+has @var{x} in the @code{References} header.
+You can make sure the whole thread including messages that does not have
+all ancestors @code{Message-ID} in @code{References} is scored.
+
+You can use the same types as @code{References} except for @code{f}.
+And a @samp{Thread} entry is automatically appended to the score file.
+@end table
+
+@item
+A factor for extension header.  This is meaningful only if the key is
+@code{Extra}.
+This specifies headers to be matched other than standard headers like
+@code{Subject} and @code{From}.
+Note that you should specify the header in
+@code{elmo-msgdb-extra-fields} also.
+Therefore it does not work in folders where extension headers cannot be
+retrieved.
+
+@end enumerate
+
+The sum of these scores @emph{after all factors are applied} becomes the 
+score of the message.
+
+@cindex Score File Atoms
+@item mark
+Messages with a score less than this value is marked as read.
+The default is @code{wl-summary-mark-below}.
+
+@item expunge
+Messages with a score less than this value is deleted from the summary.
+The default is @code{wl-summary-expunge-below}.
+
+@item mark-and-expunge
+Both @code{mark} and @code{expunge} are applied,
+i.e. messages with a score less than this value is marked as read and
+deleted from the summary.
+
+@item temp
+Messages with a score greater than this value is attached with temp
+marks.
+The default is @code{wl-summary-temp-above}.
+
+@item important
+Messages with a score greater than this value is attached with important
+marks.
+The default is @code{wl-summary-important-above}.
+@end table
+
+@subsection Caveats
+
+Not to mention the @code{extra} key, if @code{lines} or @code{xref} keys 
+are used, you need to set @code{elmo-msgdb-extra-fields}.
+
+@lisp
+(setq elmo-msgdb-extra-fields '("lines" "xref"))
+@end lisp
+
+There are other restrictions as shown below:
+
+@itemize @bullet
+@item Because @samp{References} field in the summary information
+contains only the last @samp{Message-ID}, @code{references} key matches
+the last one only.
+@end itemize
+
+Keys that can be seen by folder of types:
+
+@example
+                        chars lines xref  extra
+localdir,localnews        Y     E     E     E
+nntp (supporting xover)   Y     E     E     N
+     (otherwise)          N     E     E     E
+imap4                     Y     E     E     E
+pop3                      N     E     E     E
+
+                Y: can be seen
+                N: cannot be seen (ignored)
+                E: can be seen with @code{elmo-msgdb-extra-fields} settings
+@end example
+
+
+@c
+@c  Customization
+@c
+@node Customization, Mailing List, Scoring, Top
+@chapter Customizing Wanderlust
+@cindex Customization
+
+@menu
+* Living with other packages:: Living with other packages
+* Highlights::                 Highlights
+* Advanced Settings::          Advanced Settings
+* Customizable Variables::     Customizable Variables
+@end menu
+
+
+@node Living with other packages, Highlights, Customization, Customization
+@section Living with other packages
+
+Examples with other packages.
+
+@menu
+* BBDB::                        BBDB
+* supercite::                   supercite.el
+* mu-cite::                     mu-cite.el
+* x-face-mule::                 x-face-mule.el
+* dired-dd::                    dired-dd.el
+@end menu
+
+
+@node BBDB, supercite, Living with other packages, Living with other packages
+@subsection bbdb.el
+@pindex BBDB
+
+Place @file{util/bbdb-wl.el} on the load-path and do the following
+settings.
+
+If BBDB is on the load-path at the installation, @file{bbdb-wl.el} is
+byte-compiled and installed.
+@xref{Install}.
+
+@lisp
+(require 'bbdb-wl)
+
+(bbdb-wl-setup)
+;; @r{enable pop-ups}
+(setq bbdb-use-pop-up t)
+;; @r{auto collection}
+(setq bbdb/mail-auto-create-p t)
+(setq signature-use-bbdb t)
+(setq bbdb-north-american-phone-numbers-p nil)
+;; @r{shows the name of bbdb in the summary} :-)
+(setq wl-summary-from-func 'bbdb-wl-from-func)
+;; @r{automatically add mailing list fields}
+(add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
+(setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
+@end lisp
+
+@node supercite, mu-cite, BBDB, Living with other packages
+@subsection sc.el(supercite), sc-register.el
+@pindex sc
+@pindex supercite
+
+The same setting as usual mailers should be OK.  The following is an
+example of settings.
+
+@lisp
+(autoload 'sc-cite-original "sc" nil t)
+(setq mail-yank-hooks 'sc-cite-original)
+(setq sc-preferred-header-style 1)
+(setq sc-electric-references-p nil)
+(setq sc-citation-leader "")
+(setq sc-load-hook '(lambda () (require 'sc-register)))
+(setq sc-preferred-attribution 'registeredname)
+@end lisp
+
+
+@node mu-cite, x-face-mule, supercite, Living with other packages
+@subsection mu-cite.el
+@pindex mu-cite
+
+The same setting as usual mailers should be OK.  The following is an
+example of settings.
+
+If you use mu-cite version 8.0 or earlier:
+
+@lisp
+(autoload 'mu-cite/cite-original "mu-cite" nil t)
+(setq mail-citation-hook 'mu-cite/cite-original)
+@end lisp
+
+If you use mu-cite version 8.1 or later:
+
+@lisp
+(autoload 'mu-cite-original "mu-cite" nil t)
+(add-hook 'mail-citation-hook (function mu-cite-original))
+@end lisp
+
+@node x-face-mule, dired-dd, mu-cite, Living with other packages
+@subsection x-face-mule.el
+@pindex x-face-mule
+@pindex bitmap-mule
+
+It depends on the version of x-face-mule.
+If you use x-face-mule 0.19 or older, do the following:
+
+@lisp
+(setq wl-highlight-x-face-func
+      (function
+       (lambda (beg end)
+        (x-face-mule:x-face-decode-message-header))))
+
+If you use x-face-mule 0.20 or later, try the following.
+
+(setq wl-highlight-x-face-func
+      (function
+       (lambda (beg end)
+        (x-face-mule-x-face-decode-message-header))))
+(require 'x-face-mule)
+@end lisp
+
+Use these settings when you use @file{x-face-mule.el} attached to
+bitmap-mule 8.0 or later.
+
+@lisp
+(autoload 'x-face-decode-message-header "x-face-mule")
+(setq wl-highlight-x-face-func
+      (function x-face-decode-message-header))
+@end lisp
+
+If there is an encoded X-Face string in a file @file{~/.xface} (the value
+of the variable @code{wl-x-face-file}), it is inserted as a X-Face field
+in the draft buffer (if @code{wl-auto-insert-x-face} is non-nil).
+
+
+@node dired-dd,  , x-face-mule, Living with other packages
+@subsection dired-dd(Dired-DragDrop)
+@pindex Dired-DragDrop
+@pindex Dired-DD
+@cindex Drag and Drop
+
+If you embed @file{dired-dd-mime.el} in the dired-dd package, you can
+compose multi-part by simple Drag&Drop from dired to the draft buffer
+being edited in GNU Emacs (this feature is not Wanderlust specific, but
+general-purpose for tm/SEMI).
+
+@lisp
+;; @r{dired-dd:} http://www.asahi-net.or.jp/~pi9s-nnb/dired-dd-home.html
+(add-hook
+ 'dired-load-hook
+ (function
+  (lambda ()
+    (load "dired-x")
+    ;; @r{Set dired-x variables here.}
+    ;; @r{To and flo@dots{}}
+    (if window-system
+        (progn (require 'dired-dd)
+               (require 'dired-dd-mime))))))
+@end lisp
+
+
+@node Highlights, Advanced Settings, Living with other packages, Customization
+@section Highlights
+
+@subsection Customizable Variables
+
+@table @code
+@item  wl-summary-highlight
+@vindex wl-summary-highlight
+The initial setting is t.
+If non-nil, the summary is highlighted.
+
+@item  wl-highlight-max-summary-lines
+@vindex wl-highlight-max-summary-lines
+The initial setting is 10000.
+The summary is not highlighted if it has more lines than this value.
+
+@item  wl-summary-highlight-partial-threshold
+@vindex wl-summary-highlight-partial-threshold
+The initial setting is 1000.
+This is a threshold whether the whole summary is highlighted.
+If there are more lines of messages in the summary, it is partially
+highlighted.
+
+@item  wl-summary-partial-highlight-above-lines
+@vindex wl-summary-partial-highlight-above-lines
+The initial setting is 30.
+If there are more lines of messages than
+@code{wl-summary-highlight-partial-threshold} in the summary, messages
+after the point that is the same number of lines as this value above the
+cursor line are highlighted partially.
+(If this value is nil, the last same number of lines as the value of
+@code{wl-summary-highlight-partial-threshold} are highlighted.)
+
+@item wl-highlight-body-too
+@vindex  wl-highlight-body-too
+The initial setting is t.
+If non-nil, bodies of drafts and messages are also highlighted.
+
+@item  wl-highlight-message-header-alist
+@vindex wl-highlight-message-header-alist
+When highlighting headers of drafts and messages, this variable
+specifies which faces are allocated to important
+(@code{wl-highlight-message-important-header-contents}), secondly
+important (@code{wl-highlight-message-important-header-contents2}), and
+unimportant (@code{wl-highlight-message-unimportant-header-contents})
+message headers.
+Similarly, it can be used for allocating arbitrary faces to arbitrary
+regular expressions.
+
+@item wl-highlight-citation-prefix-regexp
+@vindex  wl-highlight-citation-prefix-regexp
+Specifies a regular expression to which quoted lines in bodies of 
+drafts and messages match.
+Bodies matching to this regular expression are highlighted by the faces
+specified by (@code{wl-highlight-message-cited-text-*}).
+
+@item  wl-highlight-highlight-citation-too
+@vindex wl-highlight-highlight-citation-too
+The initial setting is nil.
+If non-nil, the quoting regular expression itself given by
+@code{wl-highlight-citation-prefix-regexp} is also highlighted.
+
+@item  wl-highlight-citation-header-regexp
+@vindex wl-highlight-citation-header-regexp
+Specifies a regular expression that denotes beginning of quotation.
+Bodies matching to this regular expression are highlighted by the face
+specified by @code{wl-highlight-message-headers}.
+
+@item  wl-highlight-max-message-size
+@vindex wl-highlight-max-message-size
+The initial setting is 10000.
+If a message is larger than this value, it will not be highlighted.
+With this variable, highlight is suppressed for uuencode or huge digest
+messages.
+
+@item  wl-highlight-signature-separator
+@vindex wl-highlight-signature-separator
+Specifies regular expressions that denotes the boundary of a signature.
+It can be a regular expression, or a list of ones.
+Messages after the place that matches this regular expression are
+highlighted by the face specified by
+@code{wl-highlight-message-signature}.
+
+@item  wl-max-signature-size
+@vindex wl-max-signature-size
+The initial setting is 400.
+This is the largest size for a signature to be highlighted.
+
+@item wl-use-highlight-mouse-line
+@vindex  wl-use-highlight-mouse-line
+The initial setting is t.
+If non-nil, the line pointed by the mouse is highlighted in the folder
+mode, summary mode, and the like.
+@end table
+
+@subsection Setting Colors and Fonts of the Characters
+
+If you want to change colors or fonts of the characters, you need to
+modify faces defined in Wanderlust.  Use set-face-font if you want to
+change fonts, and set-face-foreground for colors, and so on.
+You cannot write face settings in @file{.emacs}; write in @file{~/.wl}.
+
+For example, if you want to change the color for signatures to yellow,
+write
+
+@lisp
+(set-face-foreground 'wl-highlight-message-signature "yellow")
+@end lisp
+
+@noindent
+in @file{~/.wl}.
+
+Faces defined in Wanderlust:
+
+@table @code
+@item wl-highlight-message-headers
+The face for field names of message headers.
+
+@item wl-highlight-message-header-contents
+The face for field bodies of message headers.
+
+@item wl-highlight-message-important-header-contents
+The face for important parts of message headers.
+Per default, this face is used for a body of Subject field.
+You can change its value by editing
+@code{wl-highlight-message-header-alist}.
+
+@item wl-highlight-message-important-header-contents2
+The face for secondly important parts of message headers.
+Per default, this face is used for bodies of From and To fields.
+You can change its value by editing
+@code{wl-highlight-message-header-alist}.
+
+@item wl-highlight-message-unimportant-header-contents
+The face for unimportant parts of message headers.
+Per default, this face is used for bodies of X- fields User-Agent fields.
+You can change its value by editing
+@code{wl-highlight-message-header-alist}.
+
+@item wl-highlight-message-citation-header
+The face for headers of quoted messages.
+
+@item wl-highlight-message-cited-text-*
+The face for texts of quoted messages.
+The last "*" is a single figure so that 10 different colors can be used
+according to citation levels.
+
+@item wl-highlight-message-signature
+The face for signatures of messages.
+The initial settings are khaki for light background colors, and
+DarkSlateBlue for dark background colors.
+
+@item wl-highlight-header-separator-face
+The face for header separators of draft messages.
+
+@item wl-highlight-summary-important-face
+The face for message lines with important marks in the summary.
+
+@item wl-highlight-summary-new-face
+The face for message lines with new marks in the summary.
+
+@item wl-highlight-summary-displaying-face
+The face for the message line that is currently displayed.
+This face is overlaid.
+
+@item wl-highlight-thread-indent-face
+The face for the threads that is currently displayed.
+
+@item wl-highlight-summary-unread-face
+The face for message lines with unread marks in the summary.
+
+@item wl-highlight-summary-deleted-face
+The face for message lines with delete marks in the summary.
+
+@item wl-highlight-summary-refiled-face
+The face for message lines with re-file marks in the summary.
+
+@item wl-highlight-refile-destination-face
+The face for re-file information part of message lines with re-file
+marks in the summary.
+
+@item wl-highlight-summary-copied-face
+The face for message lines with copy marks in the summary.
+
+@item wl-highlight-summary-target-face
+The face for message lines with temp marks @samp{*} in the summary.
+
+@item wl-highlight-summary-thread-top-face
+The face for message lines that are on the top of the thread in the
+summary.
+
+@item wl-highlight-summary-normal-face
+The face for message lines that are not on top of the thread in the
+summary.
+
+@item wl-highlight-folder-unknown-face
+The face for folders that are not known to have how many unsync messages
+in the folder mode.
+
+@item wl-highlight-folder-zero-face
+The face for folders that have no unsync messages in the folder mode.
+
+@item wl-highlight-folder-few-face
+The face for folders that have some unsync messages in the folder mode.
+
+@item wl-highlight-folder-many-face
+The face for folders that have many unsync messages in the folder mode.
+The boundary between `some' and `many' is specified by the variable
+@code{wl-folder-many-unsync-threshold}.
+
+@item wl-highlight-folder-unread-face
+The face for folders that have no unsync but unread messages in the
+folder mode.
+
+@item wl-highlight-folder-killed-face
+The face for folders that are deleted from the access group in the
+folder mode.
+
+@item wl-highlight-folder-opened-face
+The face for open groups in the folder mode.
+It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil.
+
+@item wl-highlight-folder-closed-face
+The face for close groups in the folder mode.
+It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil.
+
+@item wl-highlight-folder-path-face
+The face for the path to the currently selected folder in the folder
+mode.
+
+@item wl-highlight-logo-face
+The face for logo in the demo.
+
+@item wl-highlight-demo-face
+The face for strings (for example, a version number) in the demo.
+@end table
+
+@node Advanced Settings, Customizable Variables, Highlights, Customization
+@section Advanced Settings
+
+@menu
+* Draft for Reply::             Draft for Reply
+* Thread Format::               Appearance of Thread
+* User-Agent Header::           User-Agent Header
+@end menu
+
+
+@node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
+@subsection Draft for Replay
+
+If you want, when you replying to articles in mailing lists, the address
+in Reply-To field of the original message to be prepared to To field of
+the reply draft by simply pressing @kbd{a} in the summary mode, try the
+following settings:
+
+@lisp
+(setq wl-draft-reply-without-argument-list
+      '(("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+        ("Followup-To" . (nil nil ("Followup-To")))
+        (("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+        ("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+@end lisp
+
+@noindent
+(Only if there are both of "X-ML-Name" and "Reply-To" fields in the
+original message, Reply-To: field in the original is copied to To:
+field.)
+
+@node Thread Format, User-Agent Header, Draft for Reply, Advanced Settings
+@subsection Appearance of Threads
+
+@example
+  389  09/18(Fri)01:07 [ Teranishi         ] wl-0.6.3
+  390  09/18(Fri)07:25 +-[ Tsumura-san       ]
+  391  09/18(Fri)19:24 +-[ Murata-san        ]
+  392  09/20(Sun)21:49 +-[ Okunishi-san      ]
+  396  09/20(Sun)22:11 | +-[ Tsumura-san       ]
+  398  09/21(Mon)00:17 |   +-[ Tsumura-san       ]
+  408  09/21(Mon)22:37 |     +-[ Okunishi-san      ]
+  411  09/22(Tue)01:34 |       +-[ Tsumura-san       ]
+  412  09/22(Tue)09:28 |       +-[ Teranishi         ]
+  415  09/22(Tue)11:52 |         +-[ Tsumura-san       ]
+  416  09/22(Tue)12:38 |           +-[ Teranishi         ]
+  395  09/20(Sun)21:49 +-[ Okunishi-san      ]
+  397  09/21(Mon)00:15 +-[ Okunishi-san      ]
+@end example
+
+Settings to make appearance of threads like shown above:
+
+@lisp
+(setq wl-thread-indent-level 2)
+(setq wl-thread-have-younger-brother-str "+")
+(setq wl-thread-youngest-child-str       "+")
+(setq wl-thread-vertical-str             "|")
+(setq wl-thread-horizontal-str           "-")
+(setq wl-thread-space-str                " ")
+@end lisp
+
+If you do not want to see branches, do the following:
+
+@lisp
+(setq wl-thread-indent-level 2)
+(setq wl-thread-have-younger-brother-str " ")
+(setq wl-thread-youngest-child-str       " ")
+(setq wl-thread-vertical-str             " ")
+(setq wl-thread-horizontal-str           " ")
+(setq wl-thread-space-str                " ")
+@end lisp
+
+
+@node User-Agent Header,  , Thread Format, Advanced Settings
+@subsection User-Agent
+
+If you are eccentric enough to elaborate X-Mailer or User-Agent fields,
+define a function that inserts appropriate strings as you like, and set
+it to @code{wl-generate-mailer-string-func}.
+
+The following is an example.
+
+@lisp
+(setq wl-generate-mailer-string-func
+      (function
+       (lambda ()
+         (concat "X-Mailer: "
+                 (format "%s/%s (%s)" wl-appname wl-version wl-codename)))))
+@end lisp
+
+@node Customizable Variables,  , Advanced Settings, Customization
+@section Customizable Variables
+
+Customizable variables that have not been described yet:
+
+@table @code
+@item wl-default-folder
+@vindex wl-default-folder
+The initial setting is "%inbox".  This is the default value for moving to
+a folder and the like.
+
+@item wl-draft-folder
+@vindex wl-draft-folder
+The initial setting is "+draft".  It is the folder to which drafts are
+saved.  It must be a localdir folder.
+
+@item wl-trash-folder
+@vindex wl-trash-folder
+The initial setting is "+trash".  It is the wastebasket folder.
+If you changed this variable, you had better restart Wanderlust.
+
+@item wl-interactive-exit
+@vindex wl-interactive-exit
+The initial setting is t.
+If non-nil, you are asked for confirmation when Wanderlust terminates.
+
+@item wl-interactive-send
+@vindex wl-interactive-send
+The initial setting is nil.
+If non-nil, you are asked for confirmation when mail is sent.
+
+@item wl-folder-sync-range-alist
+@vindex wl-folder-sync-range-alist
+The initial setting is the list shown below:
+@example
+(("^&.*$" . "all")
+ ("^\\+draft$\\|^\\+queue$" . "all"))
+@end example
+This is an associative list of regular expressions of folder names and
+update range of the summary.
+Update range is one of the "all", "update", "rescan", "rescan-noscore", "first"
+ and "last". If a folder do not match, "update" is used.
+
+@item wl-ask-range
+@vindex wl-ask-range
+The initial setting is t.
+If nil, the value of @code{wl-folder-sync-range-alist} is used for
+updating the summary when you changed folders.
+
+@item wl-mime-charset
+@vindex wl-mime-charset
+The initial setting is 'x-ctext.
+This is the MIME charset for messages that are not MIME (e.g. without
+Content-Type). This value also used as default charset for summary.
+(If you want to share Summary on Nemacs and other Emacsen,
+set this value as 'iso-2022-jp.)
+
+@item wl-search-mime-charset
+@vindex wl-search-mime-charset
+The initial setting is 'iso-2022-jp.
+This is used as a MIME charset for searching.
+
+@item wl-highlight-folder-with-icon
+@vindex wl-highlight-folder-with-icon
+This is meaningful for XEmacs only.  The initial setting depends on
+XEmacs (t for XEmacs with icons).
+
+@item wl-strict-diff-folders
+@vindex wl-strict-diff-folders
+This is a list of regular expressions of folders.
+Unread messages are checked, for example when you press @kbd{s} in
+the folder mode, usually in a brief way (rapidly processed but not
+accurate).
+The folders matching this variable are seriously checked.
+You may want to set this variable so as to match conditional filter
+folders for IMAP4 folders.
+The initial setting is nil.
+
+@item wl-folder-use-server-diff
+@vindex wl-folder-use-server-diff
+When unread messages are checked, for example when you press @kbd{s} in
+the folder mode, usually (the number of messages on the server) - (the
+number of local messages) will be the number of unread messages.
+However, if this variable is non-nil, the number of unread messages on
+the server is checked.  This affects IMAP4 folders only, but IMAP4
+folders in mail boxes matching
+@code{elmo-imap4-disuse-server-flag-mailbox-regexp} are not checked for
+the number of unread messages on the server, even if they matches this
+variable.  The initial setting is t.
+
+@item wl-auto-check-folder-name
+@vindex wl-auto-check-folder-name
+The initial setting is nil.
+If non-nil, the folder with the name of the value is checked for unread
+messages at the start.
+If it is 'none, no folders are checked.
+If it is a list, all folders in the list are checked at the start.
+
+@item wl-auto-uncheck-folder-list
+@vindex wl-auto-uncheck-folder-list
+The initial setting is '("\\$.*").
+Folders with the name matching this variable are not checked for unread
+messages at the start, even if they are included in the groups in
+@code{wl-auto-check-folder-name}.
+
+@item wl-auto-check-folder-list
+@vindex wl-auto-check-folder-list
+The initial setting is nil.
+Folders with the name matching this variable are always checked for
+unread messages at the start, if they are included in the groups in
+@code{wl-auto-check-folder-name}.
+This takes precedence over @code{wl-auto-uncheck-folder-list}.
+
+@item wl-no-save-folder-list
+@vindex wl-no-save-folder-list
+The initial setting is '("^/.*$").
+This is a list of regular expressions of folders not to be saved.
+
+@item wl-save-folder-list
+@vindex wl-save-folder-list
+The initial setting is nil.
+This is a list of regular expressions of folders to be saved.
+This takes precedence over @code{wl-no-save-folder-list}.
+
+@item wl-folder-mime-charset-alist
+@vindex wl-folder-mime-charset-alist
+The initial setting is the list shown below:
+
+@lisp
+'(("^-alt\\.chinese" . big5)
+  ("^-relcom\\." . koi8-r)
+  ("^-tw\\." . big5)
+  ("^-han\\." . euc-kr)
+  )
+@end lisp
+
+This is an associative list of regular expressions of folder names and
+MIME charsets.
+If a folder do not match, @code{wl-mime-charset} is used.
+
+@item wl-folder-init-load-access-folders
+@vindex wl-folder-init-load-access-folders
+The initial setting is nil.
+This is a list of access groups to be loaded specifically at the start.
+If it is  nil, @code{wl-folder-init-no-load-access-folders} is referred.
+
+@item wl-folder-init-no-load-access-folders
+@vindex wl-folder-init-no-load-access-folders
+The initial setting is nil.
+This is a list of access groups not to be loaded specifically at the
+start.
+It is ignored if @code{wl-folder-init-load-access-folders} is non-nil.
+
+@item wl-delete-folder-alist
+@vindex wl-delete-folder-alist
+The initial setting is '(("^-" . remove)).
+This list determines disposition of messages with delete marks.
+Each item in the list is a folder and destination; you can specify any
+one of the following in the place of destination:
+
+@example
+'remove or 'null : deletes the messages instantly.
+string           : moves the messages to the specific folder.
+'trash or others : moves the messages to `wl-trash-folder'.
+@end example
+
+@item wl-refile-policy-alist
+@vindex wl-refile-policy-alist
+The initial setting is '(("^[-=]" . copy) (".*" . move)).
+This list determines whether messages with re-file marks are moved or
+copied.
+Each item in the list is a cons cell of a folder and copy or move.
+
+@item wl-x-face-file
+@vindex wl-x-face-file
+The initial setting is "~/.xface".
+The name of the file that contains encoded X-Face strings.
+@xref{x-face-mule}.
+
+@item wl-demo-display-logo
+@vindex wl-demo-display-logo
+If non-nil, bitmap image is shown on the opening demo.
+
+@item elmo-use-database
+@vindex  elmo-use-database
+This is meaningful for XEmacs only.  The initial setting depends on
+XEmacs (t for XEmacs with dbm).
+If non-nil, Message-ID is controlled by dbm.
+
+@item elmo-passwd-alist-file-name
+@vindex  elmo-passwd-alist-file-name
+The initial setting is "passwd".
+This is the name of the file in which passwords are saved.
+@code{elmo-passwd-alist-save} saves current passwords to the file.
+
+@item elmo-nntp-list-folders-use-cache
+@vindex elmo-nntp-list-folders-use-cache
+The initial setting is 600 (in seconds).
+This is period in seconds during which results of @samp{list} and
+@samp{list active} in NNTP are cached.  If it is nil, they are not
+cached.
+
+@item elmo-nntp-max-number-precedes-list-active
+@vindex elmo-nntp-max-number-precedes-list-active
+The initial setting is nil.
+If non-nil, the number of article obtained by @samp{list active} in NNTP
+are used as the maximum article number of the folder.
+Set this to t if you are using for example INN 2.3 as an NNTP server,
+and if the number of read messages is not correct.
+
+@item elmo-nntp-default-use-listgroup
+@vindex elmo-nntp-default-use-listgroup
+The initial setting is t.
+If non-nil, @samp{listgroup} is used for checking the total number of
+articles.
+If it is nil, @samp{group} is used.  In the latter case, the processing
+will be a little faster at the sacrifice of accuracy.
+
+@item elmo-pop3-send-command-synchronously
+@vindex elmo-pop3-send-command-synchronously
+The initial setting is nil.
+If non-nil, POP3 commands are issued synchronously.  Some implementation
+of POP3 server fails to get summary information without this setting.
+You may have to set this variable to t, if the process hangs while
+looking up POP3.
+
+@item elmo-dop-flush-confirm
+@vindex elmo-dop-flush-confirm
+The initial setting is t.
+If non-nil, you are asked for confirmation if accumulated off-line
+operations are executed.
+@end table
+
+
+@c
+@c  Mailing List
+@c
+@node Mailing List, Addition, Customization, Top
+@chapter Wanderlust Mailing List
+
+@display
+Wanderlust Mailing List @t{<wl@@lists.airs.net>}
+@end display
+
+Topics related to Wanderlust are discussed in the mailing list.
+The latest version is also announced there (in Japanese, sorry).
+
+A guide can be obtained automatically by sending mail to
+@t{wl-ctl@@lists.airs.net} with the body
+
+@example
+# guide
+@end example
+Please send bug reports or patches to the mailing list.
+You can post to the mailing list even though you are not a member of it.
+
+I would like to express my thanks to the members of the mailing list for 
+valuable advice and many pieces of code they contributed.
+
+
+@c
+@c  Addition
+@c
+@node Addition, Index, Mailing List, Top
+@chapter Additional Information
+
+@section Brief History
+
+@example
+1998  3/05    Tried to make a prototype that displays MH messages in threads.
+      3/10    Made a msgdb mechanism by elisp.
+      3/26    IMAP and NNTP can be displayed in threads.
+      4/13    Began to assemble thread display modules as elmo.
+      5/01    Finished 0.1.0, initial version with many defects.
+      6/12    I made a slip of the tongue and said I was writing elisp
+              mailer supporting IMAP
+      6/16    0.1.3 was announced at tm-ja, elisp ML.
+      6/22    Thanks to Kitame-san, the mailing list started at northeye.org.
+      7/01    Support for mm-backend (0.3.0).
+      8/25    multi folder added (0.5.0).
+      8/28    filter folder added (0.5.1).
+      9/10    You can open/close threads (0.6.0).
+      9/11    fldmgr by Murata-san made editing folders easy.
+      9/18    lha folders added by Okunishi-san (0.6.3).
+      9/24    Display of branches of threads (0.6.5).
+      9/28    Compression folder supporting multiple archivers by Okunishi-san.
+     10/28    Off-line operations (0.7.4).
+     12/09    Becomes beta version.
+     12/21    wl-expire by Murata-san.
+1999  2/03    auto-refile by Tsumura-san.
+      4/28    wl-template by Murata-san.
+      5/18    Released 1.0.0 stable.
+      7/5     Scoring by Murata-san (2.1.0).
+@end example
+
+See @file{ChangeLog} for details.
+
+@section The Name
+
+According to a dictionary, Wanderlust has the meaning:
+
+@display
+wanderlust
+  n eager longing for or impulse towards travelling in distant lands
+  [Ger, fr wandern to wander + lust desire, pleasure]
+@end display
+
+@noindent
+but I had no profound intention.
+(if farfetched, IMAP @t{=>} you can read mail anywhere @t{=>} desire to
+wander ?)
+
+Elmo is the abbreviation of @samp{Elisp Library for Message
+Orchestration}.
+At first I meant the red puppet in the Sesame Street, but you may
+associate it with
+Wandering @t{=>} Drifting @t{=>} Guidepost @t{=>} St.@: Elmo's fire @t{=>} elmo.
+
+@section Code Names
+
+Each versions has code names (they are almost jokes).
+Currently they are picked up alphabetically from the top 40 hits of
+U.S. Billboard magazines in 1980s.
+
+(@samp{http://www.summer.com.br/~pfilho/html/top40/index.html})
+
+
+@node Index,  , Addition, Top
+@unnumbered Index
+
+@menu
+* Concept Index::               Concept Index
+* Key Index::                   Key Index
+* Variable Index::              Variable Index
+* Function Index::              Function Index
+@end menu
+
+@node Concept Index, Key Index, Index, Index
+@unnumberedsec Concept Index
+@printindex cp
+
+@node Key Index, Variable Index, Concept Index, Index
+@unnumberedsec Key Index
+@printindex ky
+
+@node Variable Index, Function Index, Key Index, Index
+@unnumberedsec Variable Index
+@printindex vr
+
+@node Function Index,  , Variable Index, Index
+@unnumberedsec Function Index
+@printindex fn
+
+@summarycontents
+@contents
+@bye

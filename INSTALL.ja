@@ -1,0 +1,190 @@
+
+	Wanderlust のインストール方法
+
+		                       Time-stamp: <00/03/14 20:06:38 teranisi>
+				       Kaoru Takahashi   高橋郁,
+				       Yuuichi Teranishi 寺西裕一
+
+MIME用モジュールのインストール
+==============================
+
+  Wanderlust を使うためには、以下のどちらかの MIME 用モジュールをイン
+  ストールしておく必要があります。機能が充実している SEMI の使用をお勧
+  めします。
+
+	SEMI    (1.13.4 以上)
+	tm      (8.7 以上)
+
+  Emacs 19.28 以前をベースとした Mule をお使いの場合は tm をインストー
+  ルしてください。SEMI は動きません。
+
+  Emacs 19.34 ベースの Mule では SEMI を動作させることも可能です。
+  下記のページが参考になります。
+
+	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+
+
+(a) SEMI のインストール
+
+  SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
+  推奨される APEL, FLIM, SEMI の組合せは以下の通りです。
+
+	APEL 10.2, FLIM 1.12.7, SEMI 1.13.4
+         または、
+	APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
+
+   APEL 10.2 と FLIM 1.12.7 の組合せでは、FLIM 1.12.7 のコンパイル時に
+
+   'Please install latest APEL 7.3 or later.'
+   
+  というエラーが発生する場合があります。この場合、FLIM-CFG の以下の行を
+  コメントアウトして下さい。
+
+  (or (fboundp 'write-region-as-binary)
+      (error "Please install latest APEL 7.3 or later."))
+  (or (fboundp 'insert-file-contents-as-binary)
+      (error "Please install latest APEL 7.3 or later."))
+
+  APEL, FLIM, SEMI, パッケージはそれぞれ以下の URL で入手可能です。
+
+	APEL:     ftp://ftp.m17n.org/mule/apel/
+	FLIM:     ftp://ftp.m17n.org/mule/flim/
+	SEMI:     ftp://ftp.m17n.org/mule/semi/
+
+  APEL, FLIM, SEMI の順にインストールしてください。基本的にすべて
+  make install の実行で済むはずです。
+
+  詳しいインストールの方法は各パッケージに添付されているドキュメント 
+  (README.ja, README.en) を参照してください。
+
+  その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
+  それらのいずれも利用することが可能です。
+  基本的に最新版の組合せなら動作するはずです。
+  例えば、以下の組合せの動作が確認されています。
+
+	APEL 10.2, Chao 1.14.1, REMI 1.14.1
+
+(b) tm のインストール
+
+  tm 8.7 以降のバージョンが必要です。入手先を以下に示します。
+
+	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+
+  詳しいインストールの方法はパッケージに添付されているドキュメント
+  (README.en) を参照してください。
+
+
+通常のインストール
+==================
+
+(a)Makefile の編集
+
+  Makefile は、EMACS, LISPDIR の部分を編集してください。
+
+	EMACS       使用している Emacs のコマンド名を指定
+	LISPDIR    インストール先を指定
+
+  LISPDIR は特に指定しなくても (NONE のままでも) 自動的にインストール
+  先を検出します。
+
+(b)バイトコンパイル・インストール
+
+  以下を実行してください。
+
+	% make
+	% make install
+
+  このとき、Emacs 19.28 ベースの Mule 2.3 など subdirs.el のない Emacs 
+  では、
+
+	Cannot open load file: mime-setup
+
+  というエラーが出ることがあります。
+
+  この場合は、custom, APEL, FLIM, SEMI のインストール先を環境変数
+  EMACSLOADPATH に加えるか、展開ディレクトリの WL-CFG というファイル中
+  で load-path を通しておくとよいでしょう。
+
+
+XEmacs のパッケージとしてインストール
+=====================================
+
+  Wanderlust は XEmacs (21.0 以降) のパッケージのひとつとしてインストー
+  ルすることも可能です。パッケージとしてインストールすると、autoload 
+  の設定、アイコンのパス設定を個人の .emacs に記述しなくても 
+  Wanderlust を正常に起動できるようになります。
+
+(a)Makefile の編集
+
+  Makefile は、XEMACS, PACKAGEDIR の部分を編集してください。
+
+	XEMACS      使用している XEmacs のコマンド名を指定
+	PACKAGEDIR  package のディレクトリを指定
+
+  PACKAGEDIR は特に指定しなくても (NONE のままでも)、SEMI がインストー
+  ルされていれば自動的に検出されます。
+
+
+(b)バイトコンパイル・インストール
+
+  以下を実行してください。
+
+	% make package
+	% make install-package
+
+  Info ファイルも同時にインストールされます。
+
+
+load-path の設定
+================
+
+  Emacs 20.3 以降もしくは XEmacs 使って普通にインストールした場合は、
+  load-path を設定する必要はありません。
+
+  Emacs 20.2 以前をお使いなら、Wanderlust を install した場所を
+  load-path に設定してください。
+
+  もし Emacs 19.29 以降または Emacs 20.1, Emacs 20.2 を使って初期設定
+  でインストールしたのなら、次のように subdirs.el を書くことができます。
+
+  --------------------------------------------------------------------
+    (normal-top-level-add-to-load-path
+     '("apel" "flim" "semi" "wl"))
+  --------------------------------------------------------------------
+
+  Emacs 19.28 以前では subdirs.el を使うことができませんので、サイトの
+  初期設定ファイルなどで load-path を設定してください。
+
+
+マニュアルのインストール
+========================
+
+  マニュアルは Info 形式です。インストールするには以下のことを実行して
+  ください。
+
+	% make info
+	% make install-info
+
+  XEmacs の package としてインストールした場合は自動的に Info ファイル
+  もインストールされるのでこれらの操作は必要ありません。
+
+  マニュアルのインストール先は自動検出されます。(Makefile 中の INFODIR 
+  でも設定可能です)
+
+
+サンプル設定
+============
+
+  Wanderlust の設定ファイルには、
+
+    ~/.addresses  アドレス帳
+    ~/.folders    フォルダ設定
+    ~/.wl         Wanderlust の設定 (起動時に読み込まれる)
+
+  の三つがあります。
+
+  それぞれ、samples/ja/ ディレクトリの下にサンプル設定
+  (dot.addresses, dot.folders, dot.wl) がありますので、
+  各自でホームディレクトリにコピーして編集するなどしてください。
+
+  詳しい設定は Info を御覧ください。

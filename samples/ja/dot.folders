@@ -1,0 +1,73 @@
+#
+# フォルダ定義ファイルサンプル
+#                    by Yuuichi Teranishi <teranisi@gohome.org>
+# Time-stamp: <98/10/02 18:31:06 teranisi>
+#
+# '#' で始まる行はコメント。
+# 空行は無視。
+# 
+# 個々のフォルダの書式については info を参照のこと。
+#
+
+%inbox
++trash
++draft
+%#mh/Backup@my.imap.server.com
+%#mh/spool/mm
+# グループの定義
+Emacsen{
+	%#mh/spool/xemacs-beta
+	%#mh/spool/mew-dist
+	%#mh/spool/tm-ja
+	%#mh/spool/mule-win32
+	-fj.news.reader.gnus@other.nntp.server.com
+# マルチフォルダ(複数のフォルダを仮想的に一つに見えるようにするフォルダ)
+# 次の行は -fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs を一つにする例
+	*-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+	-gnu.emacs.sources
+}
+UNIX 関連{
+# グループの入れ子も可
+ BSD {
+ %#mh/spool/freebsd-users-jp
+ -fj.os.bsd.freebsd
+ -japan.comp.freebsd
+ %#mh/spool/bsd-nomads
+ -fj.os.bsd.misc
+ }
+ Linux {
+ -fj.os.linux
+ -japan.comp.linux
+ }
+-fj.kanji
+-fj.lang.perl
+-fj.unix
+-fj.questions.unix
+-fj.sys.sun
+-fj.sys.j3100
+-comp.windows.x.i386unix
+-fj.comp.x11
+}
+芸能音楽{
+%#mh/spool/tvdrama
+-fj.rec.tv
+-japan.tv
+-fj.rec.tv.cm
+-japan.tv.cm
+-fj.rec.idol
+-fj.rec.music
+}
+マイフォルダー {
+INBOXes {
+%inbox@localhost
+#
+# アクセスグループ
+# 行末に '/' がつくと、そのフォルダに含まれるサブフォルダ全てが
+# ひとつのグループとなる。
+#
+%#mh/expire@localhost /
+}
+# MH のフォルダ全てをひとつのグループにする例。
++ /
+%#mh@my.imap.server.com
+}

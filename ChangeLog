@@ -1,0 +1,21 @@
+2000-03-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl/ChangeLog: New file.
+	* elmo/ChangeLog: New file.
+	* etc/ChangeLog.1.ja: Renamed from etc/ChangeLog.alpha.ja.
+	* etc/ChangeLog.2: Renamed from etc/ChangeLog.beta.
+	* etc/ChangeLog.2.ja: Renamed from etc/ChangeLog.beta.ja.
+	* etc/ChangeLog.3: Renamed from ChangeLog.
+	* etc/ChangeLog.3.ja: Renamed from ChangeLog.ja.
+
+	* WL-MK (WLDIR): Changed to "./wl".
+	(ICONDIR): New variable.
+	(config-wl-package-subr): set wl-icon-dir as ICONDIR.
+	(compile-wl-package-xmas): refer WLDIR.
+
+	* README.ja: Renamed from 00README.ja.
+	* README: Renamed from 00README.
+
+	* wl: New directory.
+	All wl-related files are moved to this directory.
+

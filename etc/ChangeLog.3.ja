@@ -1,0 +1,3066 @@
+2000-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.1.0 - "Overjoyed"
+
+2000-03-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-refile.el (wl-refile-guess-func-list): 変数定義を修正。
+	(KOYAMA Tetsuji <koyama@hoge.org> さんより御指摘)
+	* 1.1.0pre6 - "Overjoyed-pre6"
+	* wl-folder.el (wl-create-folder-entity-from-buffer): localnews の定義
+	があだ名定義になってしまうのを修正。
+	(AOXI Tenghe <fuji0924@mbox.kyoto-inet.or.jp> さん他より御指摘)
+
+2000-03-23  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-mode-menu-spec): wl-draft を
+	wl-summary-write に変更。
+	(wl-summary-msg-marked-as-target):
+	wl-summary-msg-marked-as-temp から改名。
+	* wl-thread.el (wl-thread-close-all): 局所変数名を変更。
+
+2000-03-22  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-refile.el (wl-refile-guess-func-list): 新規変数。
+	(wl-refile-guess): wl-refile-guess-func-list を使うようにした。
+
+2000-03-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el: Byte compile の Warning を減らした。
+	* wl-xmas.el,wl-mule.el,wl-nemacs.el (wl-make-modeline): 定義。
+	XEmacs ではプラグのアイコン表示をデフォルトにした。
+	(Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp> さんより御助言)
+	* wl-util.el (wl-make-modeline-subr): wl-make-modeline から改名。
+	* utils/bbdb-wl.el (bbdb-wl-update-record): Sticky summary 対応。
+	(bbdb-wl-update-record, bbdb-wl-get-update-record):
+	raw buffer が multibyte にならないようにした。
+	* wl-draft.el (wl-draft-reply):	同様。
+	* 1.1.0pre5 - "Overjoyed-pre5"
+
+2000-03-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS.ja: 新規ファイル。
+	* elmo-maildir.el (elmo-maildir-list-folders):
+	elmo-have-link-count を nil に拘束
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御助言)。
+	* wl-summary.el (wl-summary-edit-addresses-subr):
+	アドレスを downcase するようにした。
+
+2000-03-18  TAKAHASHI Kaoru <nil@din.or.jp>
+
+	* NEWS: 新規ファイル。
+
+2000-03-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-follow-current-entity):
+	オリジナルバッファを参照するようにした
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御指摘)。
+	* elmo-maildir.el (elmo-maildir-list-folders):
+	Maildir になっているかどうかチェックするようにした。
+	(<hermit@lei.homeip.net> さんの御指摘)
+
+2000-03-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-create-folder-entity-from-buffer): 空白が２個以上
+	ある場合に解析に失敗するのを修正。
+	* wl-summary.el (wl-summary-edit-addresses): オリジナルバッファから
+	アドレス情報を得るようにした。
+	(wl-summary-prefetch): wl-prefetch-threshold を nil に拘束するのは
+	やめた。
+
+2000-03-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.1.0pre4 - "Overjoyed-pre4"
+	* エラーメッセージの最後が "." で終らないようにした。
+	* elmo/elmo-archive.el (elmo-archive-copy-msgs): same-number のときに
+	maildir ならファイル名そのままだと思わないようにした。
+	* wl-expire.el (wl-expire-archive-get-folder): elmo-safe-filename の
+	代わりに elmo-replace-msgid-as-filename を使うようにした．
+	* wl-folder.el (wl-folder-goto-folder-subr): デフォルトを
+	wl-default-folder とした．
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの御助言)
+	* wl-folder.el (wl-create-folder-entity-from-buffer):
+	フォルダ名に空白が含まれていてもよいようにした。
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id):
+	カレントフォルダでターゲットが見付かった場合は
+	wl-thread-jump-to-msg を使うようにした．
+
+2000-03-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-skip-mark-list): 新規変数。
+	* wl-summary.el (wl-summary-prefetch): interactive の場合だけ
+	wl-prefetch-threshold を nil とするようにした。
+	(Akihiro MOTOKI <motoki@ptl.abk.nec.co.jp> さんの御指摘)
+	(wl-summary-exec-subr): マーク総数の数え方が間違っていたのを修正
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御指摘)。
+	(wl-summary-next, wl-summary-prev): wl-summary-skip-mark-list を使う
+	ようにした。
+	(wl-summary-move-cached-regex): defmacro->defun。
+	* etc/ja.Emacs: 更新。
+	* elmo-imap4.el (elmo-imap4-search): from-msgs を考慮するようにした。
+	* elmo-maildir.el (elmo-maildir-search): 修正。
+	* mmelmo-imap4-1.el (mmelmo-imap4-parse-bodystructure-string):
+	literal の読み取り部分を修正。
+
+2000-03-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-expire.el: Filter folder で expire 出来ない場合があるのを修正した。
+	* wl-fldmgr.el: 改行を含むフォルダ名やあだ名などを扱えないようにした。
+
+2000-03-12  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-get-path-from-buffer):
+	wl-desktop group が閉じているときにエラーが出る場合があるのを修正。
+
+2000-03-11  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-folder.el (wl-folder-mode-menu-spec): 追加、更新。
+
+2000-03-08  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-score-files-dir): wl-score-files-directory から改名。
+	* wl-score.el (wl-score-edit-file, wl-score-load-file,
+	wl-score-change-score-file): 同上。
+
+2000-03-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-mime-charset): デフォルト値を x-ctext とした。
+
+2000-03-08  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-nntp.el (elmo-nntp-list-folders):
+	ルートフォルダ名が "" のときの不具合を修正。
+
+2000-03-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.1.0pre3 - "Overjoyed-pre3"
+	* elmo-imap4.el (elmo-imap4-create-msgdb-from-overview-string):
+	ローカルの未読情報を考慮し忘れていたのを修正。
+	* elmo2.el (elmo-delete-folder): maildir もフォルダ削除可能とした。
+	(elmo-move-msgs): ローカルの未読情報が引き継がれないのを修正。
+	* elmo-maildir.el (elmo-maildir-delete-folder): 書き直し。
+	* mmelmo.el (mime-parse-parameters-from-list): mmelmo-imap4.el から
+	移動。
+	* wl-message.el (wl-mmelmo-message-redisplay): mime-display-header-hook
+	を nil に拘束。
+	* wl-mime.el (wl-mime-display-message): SEMI のバージョン判定が
+	間違っていたのを修正。
+	(wl-summary-burst): mime-message-structure を参照しないようにした。
+	(wl-mime-entity-read-field): 新規 alias/macro。
+	(wl-mime-combine-message/partial-pieces): wl-mime-entity-read-field
+	を使うようにした。
+	(mime-edit-user-agent-value): XEmacs beta のバージョン表示が重複する
+	のに対処 (For SEMI 1.13.4 or earlier)。
+
+2000-03-06  katsuta@cced.mt.nec.co.jp
+
+	* elmo-util.el (elmo-buffer-field-condition-match): std11-field-body
+	が nil を返す場合に対処。
+
+2000-03-04  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-prefetch-msg): マークを参照しない
+	ようにした。
+
+2000-03-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-read-folder): "" のときはデフォルトを使う
+	ようにした。
+	* wl-fldmgr.el, wl-folder.el, etc: メッセージは大文字で
+	始まるようにした。
+	* wl-draft.el (wl-draft-yank-original): kill-ring からの yank が
+	動かなくなっていたのを修正。
+	* mmelmo-1.el (insert-header): mmelmo-insert-sorted-header-from-buffer
+	を使うようにした。
+	(insert-text-content): 新規メソッド。
+	(run-hooks 'mmelmo-entity-content-inserted-hook) するようにした。
+	* utils/bbdb-wl.el (bbdb-wl-show-bbdb-buffer): 新規関数。
+	wl-summary-toggle-disp-folder-message-resumed-hook に追加。
+	* 1.1.0pre2 - "Overjoyed-pre2"
+	* elmo-maildir.el (elmo-maildir-sequence-number-internal): 新規変数。
+	(elmo-maildir-make-unique-string):
+	v19 向けに定義されていなかったのを修正。また、
+	elmo-maildir-sequence-number-internal を使うようにした。
+	(elmo-maildir-temporal-filename): 2 秒待たないようにした。
+	(toplevel): (eval-when-compile (require 'cl) を追加。
+	* wl-summary.el (wl-summary-buffer-number-column-detect):
+	re-search-forward の返り値を使わないようにした。
+
+2000-03-06  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-pop3.el (elmo-pop3-port-label): typo 修正 (port->ssl)。
+	* elmo-nntp.el (elmo-nntp-sync-number-alist):
+	folder-modeで未読数がマイナスになったままになる場合があるのを修正。
+
+2000-03-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-switch-to-clone-buffer):
+	wl-summary-buffer-number-column,
+	wl-summary-buffer-number-regexp を引き継ぐようにした。
+	(wl-summary-write): 新規コマンド。'w' にバインド。
+	* wl-draft.el (wl-draft): wl-summary-write 向けの動作を追加。
+
+2000-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-cache.el (elmo-cache-list-folder-subr): ディレクトリを無視。
+	* wl-summary.el (wl-summary-insert-line): 新規関数。
+	(wl-summary-insert-summary, wl-summary-update-thread):
+	`wl-summary-insert-line' を使うようにした。
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub):
+	同上。
+	* WL-MK (wl-info-lang): list なら含まれる lang を全部インストールする
+	ようにした。
+	* elmo/elmo-maildir.el (elmo-maildir-append-msg):
+	new で tmp のファイル名をそのまま使うようにした。
+	(elmo-maildir-list-folders): ルートを含むようにした。
+
+2000-03-04  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-buffer-set-folder): コラム数の設定を削除。
+	(wl-summary-goto-folder-subr): コラム数を動的に検出するようにした。
+	(wl-summary-target-mark-forward): フォワード順序を修正。
+	(wl-summary-cleanup-temp-marks): まとめ処理マークを削除するようにした。
+
+2000-02-29  nisikawa@nisikawa.org (西川 亮太)
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp):
+	オフラインでメールを +queue にためる際にエラーが出るのに対処。
+
+2000-03-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-update-children-number):
+	wl-thread-update-children-number から改名。
+	新規 hook、wl-thread-update-children-number-hook を呼ぶようにした。
+
+2000-03-04  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	wl-folder.el (wl-folder-sync-entity,
+	wl-folder-mark-as-read-all-entity,
+	wl-folder-prefetch-entity): Sticky 向けのハイライト設定の修正。
+
+2000-03-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): target が 'null のときは未読の保存を
+	スキップするようにした。
+	* elmo-maildir.el (elmo-maildir-make-unique-string):
+	elmo-maildir-create-unique-string から変更。
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御助言)
+	* 1.1.0 pre1 - "Overjoyed-pre1"
+
+2000-03-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply-buffer): 新規バッファローカル変数
+	(wl-draft-reply): `wl-draft-reply-buffer' を設定するようにした。
+	(wl-draft-config-exec): `wl-draft-reply-buffer' を参照するようにした。
+	(wl-draft-reply<var>): 廃止。
+	* WL-MK, WL-CFG (wl-info-lang): 新規変数。
+	* wl.texi: 新規ファイル。
+	* Makefile, WL-MK, WL-CFG: ELISPDIR->LISPDIR。
+	(TAKAHASHI Kaoru <kaoru@kaisei.org> さんより御提案)
+	* elmo-maildir.el: 大幅に書き直し。
+	* elmo-util.el, elmo-msgdb.el, elmo-vars.el: maildir の記号を '.'
+	とした。
+	* wl-folder.el, wl-summary.el, elmo-pop3.el, etc: メッセージが大文字で
+	始まるようにした。
+	* elmo-vars.el (elmo-maildir-folder-path): 新規変数。
+	* elmo-internal.el (elmo-internal-list-folders): 'cache と 'mark を
+	返却するようにした。
+
+2000-03-02  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-nntp.el: starttls 部分の修正。
+	* elmo-nntp.el, elmo-imap4.el:
+	list-folders で "!" マークが消えてしまうのを修正。
+
+2000-03-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el: エラーメッセージの "Illegal" を "Invalid" に変えた。
+
+2000-03-01  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-refile-subr): キャッシュフォルダへの
+	リファイルで名前を適切なものに修正。
+	* elmo-nntp.el: starttls に対応(実験的)。
+
+2000-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-cache2.el: elmo-cache.el にマージ。
+	* elmo-internal.el, elmo-util.el, elmo-msgdb.el: cache バックエンドを
+	internal の一部として扱うようにした。
+
+2000-03-01  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-cache2.el: 新規バックエンド 'cache' 追加。
+
+2000-02-29  IMAI Takeshi <take-i@ceres.dti.ne.jp>
+
+	* wl-expire.el (wl-folder-expire-entity): Sticky 向けの
+	ハイライト設定の修正。
+
+2000-02-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): 未読情報を引き継ぐようにした。
+	引数 unread-marks 追加。
+	(elmo-msgdb-sync): 削除。
+	* wl-summary.el (wl-summary-exec):
+	elmo-move-msgs に未読マークを渡すようにした。
+	(wl-summary-edit-petname): To や Cc も編集対象と
+	なるようにした。
+	(wl-summary-edit-addresses): wl-summary-edit-petname から変名。
+	(wl-summary-edit-petname): 削除。
+	(wl-summary-mark-as-unread): キャッシュを有効かどうかを考慮。
+	* wl-vars.el (wl-summary-toggle-disp-folder-message-resumed-hook)
+	(wl-summary-line-inserted-hook): 新規 hook。
+	(wl-summary-print-destination): 非可視領域に
+	'wl-summary-destination プロパティを追加するようにした。
+	* wl-thread.el, wl-summary.el: サマリ行が insert された後、
+	wl-summary-line-inserted-hook を呼ぶようにした。
+	* utils/bbdb-wl.el:
+	wl-summary-toggle-disp-folder-message-resumed-hook でポップアップする
+	ようにした。
+
+2000-02-28  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-folder-sync-current-entity でも Scoring するようにした。
+	* stickyフォルダで wl-summary-buffer-disp-msg とバッファの表示が
+	  あっていないことがあるのを修正した。
+
+2000-02-25  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-message.el (wl-message-refer-article-or-url):
+	wl-summary-jump-to-msg-by-message-idを呼ぶ際、記事を発見できなかった
+	場合は、wl-summary-redisplay しないようにした。
+	* wl-vars.el (wl-local-domain): 初期設定変更。
+	* wl.el (wl-check-environment): wl-local-domain を hostname を
+	除いた部分とみなすよう変更。
+	* wl-util.el (wl-draft-make-message-id-string): 同上。
+
+2000-02-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-expire.el (wl-folder-expire-entity): wl-summary-save-status を
+	呼ぶようにした。
+
+2000-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-send-hook): 新規 hook。
+	* wl-draft.el (wl-draft-send): wl-draft-send-hook を呼ぶようにした。
+	(Kenichi Sato <ksato@sonycom.com> さんの御要望)
+
+2000-02-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-cache.el (elmo-cache-save): ファイル名が長すぎてセーブに
+	失敗する場合に備えて (condition-case) で括るようにした。
+	(Mikya Tani <wani@mx2.nisiq.net> さんの御報告)
+	* wl-draft.el: FCC に IMAP の日本語フォルダが扱えなかったのを修正。
+	(HIRATA Naoto <hirata-naoto@sannet.ne.jp> さんの御指摘)
+
+2000-02-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address.el (wl-address-header-extract-address): '\n' をアドレス
+	文字列とみなしてしまう場合があるのを修正。
+	(Tomotaka SUWA (諏訪 友崇) <cooper@saitama.fujimic.fujisankei-g.co.jp>
+	 さんの御指摘)
+	* mmelmo.el (mmelmo-header-max-column): 新規変数。
+	(Kenichi Sato <ksato@sonycom.com> さんより御要望)
+	(mmelmo-header-inserted-hook): 新規 hook.
+	(mmelmo-entity-content-inserted-hook): 新規 hook.
+	* mmelmo-2.el (mime-insert-text-content): 新規 entity メソッド。
+	mmelmo-entity-content-inserted-hook を呼ぶようにした。
+	* mmelmo.el (mmelmo-insert-sorted-header-from-buffer): elmo-util.el
+	から移動、`mmelmo-header-max-column' を使うようにした。
+	また、mmelmo-header-inserted-hook を呼ぶようにした。
+
+2000-02-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-mmelmo-message-redisplay): wl-mime-display-message
+	を使うようにした。
+	(Toshihiko Kodama (小玉 利彦) <kodama@ayame.mfd.cs.fujitsu.co.jp>
+	さんの御指摘)
+	* wl-mime.el (wl-mime-display-message): 新規 macro/alias.
+	* 2.2.18 - "Please Forgive Me"
+	* wl-summary.el (wl-summary-move-cached-regex):
+	unplugged でも 'D' マークをスキップするようにした。
+	* elmo-msgdb.el (elmo-msgdb-expand-path): IMAP4 の INBOX を downcase
+	するようにした(Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp> さんの御指摘)。
+	* wl-folder.el (wl-create-folder-entity-from-buffer):
+	アクセスフォルダ定義に '}' を含んでもよいようにした。
+	* wl-message.el (wl-mmelmo-message-redisplay):
+	mime-display-message にメジャーモードを渡すようにした。
+
+2000-02-18  Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp>
+
+	* wl-demo.el: Emacs 21 対応の修正。
+
+2000-02-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mime-entity-buffer): カレントバッファが
+	変化しないようにした。
+	また、まだフェッチされていない場合、フェッチするようにした。
+	* mmelmo-imap4-2.el (mime-write-entity-content):
+	新規メソッド。セーブ時にスキップしたパートをフェッチする。
+	* mmelmo-imap4-2.el (mmelmo-imap4-fetched):
+	新規バッファローカル変数。
+	* elmo-imap4.el (elmo-imap4-server-namespace):
+	新規バッファローカル変数。
+	(elmo-imap4-open-connection):
+	elmo-imap4-server-namespace を設定するようにした。
+	(elmo-imap4-parse-namespace): 新規関数。
+	(elmo-imap4-process-folder-list):
+	elmo-imap4-server-namespace を使うようにした。
+	(elmo-imap4-extra-namespace-alist): 新規変数。
+	* wl-util.el (wl-string-member, wl-string-match-member,
+	wl-string-delete-match, wl-string-match-assoc, wl-string-rassoc):
+	elmo-* に改名、defalias とした。
+
+2000-02-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el: wl-summary-toggle-disp-folder-off-hook の設定を追加。
+
+2000-02-16  Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp>
+
+	* wl-demo.el: frame の font parameter で <CHARSET_REGISTRY> が
+	与えられている場合に、font-info から中央の座標を計算するようにした。
+
+2000-02-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-toggle-disp-folder): ウィンドウサイズが
+	小さくなる場合があるのを修正。
+	(Shigeru OKUMURA <sokumura@jaist.ac.jp> さんの御指摘)
+	* wl-draft.el (wl-draft-insert-x-face-field-here): 最初の空白を削除。
+	(Akihiro MOTOKI <mokkun@iname.com> さんの御指摘)
+
+2000-02-12  Akihiro MOTOKI <mokkun@iname.com>
+
+	* elmo/elmo-localdir.el
+	(elmo-localdir-msgdb-create-overview-entity-from-file):
+	`timezone-make-date-arpa-standard' に `current-time-zone' の値を
+	渡すようにした。
+
+2000-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo/mmelmo-imap4-2.el (mmelmo-imap4-node-id-to-string):
+	"header" -> "0"。
+	* elmo/mmelmo-imap4-1.el (mmelmo-imap4-node-id-to-string):
+	同上。
+	(TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp> さんの御指摘)
+	* wl-message.el (wl-message-follow-current-entity): wl-draft-reply
+	の引数にサマリバッファを渡すようにした。
+	* wl-summary.el (wl-summary-reply): wl-draft-reply の引数に
+	current-buffer を渡すようにした。
+	(wl-summary-msgdb-load-async): mailbox を "" で括るようにした。
+	* elmo-imap4.el: 同上。
+
+2000-02-09  UENO Kazuaki <kazu@a-u.net>
+
+	* wl-draft.el (wl-draft-queue-flush): elmo-dop-flush-confirm
+	を使うようにした。
+
+2000-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft): 初期化の順序変更。
+	(Taiji.Can@atesoft.advantest.co.jp さんの御報告に基づく)
+
+2000-02-08  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-score.el (wl-summary-score-update-all-lines):
+	既読にしたメッセージに read-uncached mark を付ける時にフォルダ種別を
+	考慮するようにした。
+
+2000-02-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-target-mark-prefetch):
+	既読未キャッシュマークが消えないのを修正。
+	(Hironori Fukuchi <nory@valis.co.jp> さんの御指摘)
+	* wl-summary.el (wl-summary-target-mark-prefetch):
+	プリフェッチの進捗を表示するようにした。また、
+	キャッシュしなかった場合は '*' マークを残すようにした。
+	* wl-dnd.el (start-drag): static-cond で定義しなおした。
+	* elmo2.el (elmo-buffer-cache-message): 読み出し中に
+	quit すると違うメッセージを表示してしまうのを修正。
+	* elmo-filter.el (elmo-filter-list-folder-important):
+	elmo-search の回数を減らした
+	(Akihiro MOTOKI <mokkun@iname.com> さんの御助言)。
+
+2000-02-07  Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp>
+
+	* wl-xmas.el (wl-highlight-folder-current-line):
+	set-extent-properties を使わないようにした。
+
+	* wl-draft.el (wl-smtp-extension-bind): Fixed.
+
+2000-02-07  Akihiro MOTOKI <mokkun@iname.com>
+
+	* elmo-util.el (elmo-buffer-field-condition-match):
+	ヘッダの値を eword-decode-string でデコードしてから比較するようにした。
+
+2000-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-dnd.el: バイトコンパイル時の Warning を減らした。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの御指摘)
+	* utils/sasl/sha1.el, utils/sasl/md5-el.el,
+	utils/sasl/hex-util.el, utils/sasl/sha1-el.el: 最新版に update。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの御指摘)
+	* wl-vars.el (wl-demo-use-bitmap): wl-demo-display-logo に変更。
+	(wl-demo-display-logo): 新規変数。
+	* wl-demo.el: wl-demo-display-logo を使うようにした。
+
+2000-02-07  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-vars.el (wl-demo-use-bitmap): 初期値設定方法を変えた。
+
+2000-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.17 - "One Of Us"
+	* elmo-util.el (elmo-y-or-n-p): 新規関数。
+	* elmo-vars.el (elmo-dop-flush-confirm): 新規変数。
+	* elmo-dop.el (elmo-dop-queue-flush): elmo-y-or-n-p,
+	elmo-dop-flush-confirm を使うようにした。
+	* elmo-imap4.el (elmo-delete-msgids): 進捗を表示するようにした。
+	また、expunge は最後に１回だけ実行するようにした。
+
+2000-02-07  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* wl-folder.el, wl-xmas.el: -nw で起動された XEmacs で frame を
+	開いた場合でもアイコンが表示されるようにした。
+
+2000-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-target-face): 新規 face。
+	(temp-face から改名)
+	* wl-vars.el (wl-demo-use-bitmap): wl-demo.el から移動。
+	defcustom にした。また、初期値を (module-installed-p 'bitmap) とした。
+	* wl-demo.el (wl-demo-use-bitmap): wl-vars.el に移動。
+	* WL-CFG: wl-demo-use-bitmap を削除。
+	* elmo-vars.el: Require 'poe, バイトコンパイル時の warning を減らす。
+	* wl-nemacs.el (buffer-disable-undo, rassoc, delete, string-to-number,
+	window-live-p, completing-read, accept-process-output,
+	get-buffer-window): 削除。
+
+2000-02-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo): wl-demo-use-bitmap を実行時にチェックする
+	ようにした。
+
+2000-02-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* INSTALL, INSTALL.ja: tm-8 の URL を更新。
+	* utils/hmac -> utils/sasl に改名。
+	* WL-ELS: HMAC->SASL。
+	* WL-MK: HMAC->SASL。
+
+2000-02-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir.el
+	(elmo-localdir-msgdb-create-overview-entity-from-file):
+	format-time-string を使うのを止め、timezone-make-date-arpa-standard
+	を使うようにした。
+	* elmo-vars.el (elmo-time-format): 削除。
+
+2000-02-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-queue-flush): append-operations のキャンセル
+	処理を追加。
+	* wl-summary.el (wl-summary-refile-prev-destination,
+	wl-summary-copy-prev-destination): Fixed.
+	(IMAI Takeshi <take-i@ceres.dti.ne.jp> さんの御報告)
+
+2000-02-02  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-vars.el (wl-prefetch-confirm-threshold): 廃止し、
+	wl-prefetch-confirm と wl-prefetch-threshold に分離。
+	(wl-prefetch-confirm, wl-prefetch-threshold): 新規変数。
+	* wl-summary.el (wl-summary-prefetch-msg): wl-prefetch-confirm,
+	wl-prefetch-threshold に従うようにした。
+
+2000-02-02  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* wl-draft.el (wl-smtp-features): smtp-authenticate-type が symbol
+	になったのに対応。
+
+2000-01-31  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info): Fixed.
+
+2000-01-31  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* wl-demo.el: Emacs21 で wl-logo.xpm を表示するようにした。
+
+2000-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL, INSTALL.ja: Fixed.
+
+2000-01-30  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* WL-ELS: 既に open-database が定義済みの場合も	ELMO-MODULES に
+	elmo-database を追加するようにした。
+
+2000-01-30  Akihiro MOTOKI <mokkun@iname.com>
+
+	* elmo-loacaldir.el
+	(elmo-localdir-msgdb-create-overview-entity-from-file):
+	Date: フィールドがない場合は、ファイルの最終更新日を日付として表示する
+	ようにした。
+	* elmo-msgdb.el (elmo-msgdb-create-overview-from-buffer):
+	引数 time を追加。
+	* elmo-vars.el (elmo-time-format): 新規変数。
+
+2000-01-29  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id):
+	NNTP サーバを指定できるようにした。
+	(wl-summary-jump-to-msg-by-message-id-via-nntp)
+	サーバ指定時に、単なるサーバ名だけでなく、
+	"-:username@servername:8119!"のような指定もできるようにした。
+	* elmo-nntp.el (elmo-nntp-folder-postfix): 引数 ssl 追加。
+
+2000-01-29  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-vars.el (elmo-database-dl-module, elmo-database-dl-handle):
+	新規変数。
+	(toplevel): elmo-database-dl-handle が non-nil なら
+	emacs_database_init を dynamic_call するようにした。
+	(elmo-use-database): open-database があれば elmo-use-database を設定。
+	* WL-ELS: 'dynamic-link があれば ELMO-MODULES に elmo-database を追加。
+
+2000-01-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo): Fix copyright information.
+
+2000-01-27  Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp>
+
+	* mmelmo-imap4-2.el ([luna]mime-entity-buffer):
+	section "0" -> "header".
+
+2000-01-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-node-id-to-string):
+	section "0" -> "header".
+	* mmelmo-imap4-1.el: 同上。
+
+2000-01-26  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-create-folder):
+	UW imapd-4.7 で新しく folder が作れない問題への対処。
+
+2000-01-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-parse-bodystructure-string):
+	BODYSTRUCTURE の取り出し方を修正。
+	(mmelmo-imap4-parse-bodystructure-object): content-type の subtype
+	が NIL の場合を考慮するようにした。
+	* mmelmo-imap4-1.el: 同上。
+	* utils/hmac/unique-id.el: 新規ファイル。
+	* WL-ELS (HMAC-MODULES): scram-md5, digest-md5, unique-id を追加。
+	* wl-dnd.el (wl-dnd-drop-func): Fixed.
+	* 2.2.16 - "No Son Of Mine"
+
+2000-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-reserve-mark-list): 新規変数。
+	* wl-summary.el: temp-mark -> target-mark 名前変更。
+	一時マーク系コマンドで `wl-summary-reserve-mark-list'
+	を使うようにした。
+	* wl-score.el, wl-thread.el: 同上。
+	* wl-folder.el (toplevel): require 'wl するようにした。
+	* elmo-util.el (elmo-imap4-encode-string): optional 引数を追加。
+
+2000-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mule.el, wl-xmas.el, wl-nemacs.el (wl-summary-format-date):
+	削除、wl-summary.el へ移動。
+	* utils/hmac/lisp/sasl.el, utils/hmac/lisp/digest-md5.el,
+	utils/hmac/lisp/scram-md5.el: 最新版に update。
+	* wl-fldmgr.el (wl-fldmgr-ext): 確認メッセージを変更。
+	* doc/TODO.ja: 更新。
+
+2000-01-22  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* wl-folder.el (toplevel): Fixed menu.
+
+2000-01-21  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-imap4.el: DIGEST-MD5 に対応。
+	* elmo-pop3: CRAM-MD5, DIGEST-MD5, SCRAM-MD5に対応。
+
+2000-01-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (toplevel): リージョン系キーバインドの定義位置を変更。
+	(wl-summary-prefetch-region): 閉じたスレッドのメッセージをプリフェッチ
+	しないのを修正。(OKAZAKI Tetsurou <okazaki@be.to> さん他より御報告)
+	* elmo: append-msg, move-msgs メソッドに引数 no-see を追加。
+	* elmo-pipe: move-msgs で 'no-see を指定するようにした。
+	* wl-folder.el (wl-folder-mimic-kill-buffer): 新規コマンド。
+	(toplevel): C-xk に` wl-folder-mimic-kill-buffer' を、
+	C-xC-s に `wl-save' をそれぞれ割り当て。
+
+2000-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-nemacs.el (accept-process-output): 新規関数。
+	* Makefile: コメント修正。
+
+2000-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-folder-identical-system-p): 別サーバで
+	同じ名前のメールボックスが同一視されてしまうのを修正。
+	(Tatsuya Matsui <t.matsui@rdc.east.ntt.co.jp> さんの御指摘)
+	* wl-address.el (wl-complete-field-body-or-tab): 引数をなくした。
+
+2000-01-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el
+	(wl-prefetch-confirm-threshold, wl-cache-fetch-threshold): 新規変数。
+	* wl-summary.el (wl-summary-prefetch-msg):
+	wl-prefetch-confirm-threshold を使うようにした。
+	(wl-cache-prefetch-message): wl-cache-fetch-threshold を使うよう
+	にした。
+
+2000-01-13  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-message.el
+	(wl-message-decide-backend, wl-normal-message-redisplay):
+	wl-fetch-confirm-threshold が nil なら確認しないようにした。
+
+2000-01-11  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-draft.el (wl-draft-delete): wl-draft-buffer-file-name が
+	nil の時を考慮するようにした。
+
+2000-01-11  Nishimoto Masaki <gaju@ceres.dti.ne.jp>
+
+	* wl-draft.el (wl-draft-save-and-exit): 関係ないバッファを kill
+	してしまうことがあるのを修正。
+
+2000-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.15 - "More Than Words"
+
+2000-01-11  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* samples/ja/dot.folders, samples/en/dot.folders: 'アクセスグループ'
+	の記述を加えた。
+
+2000-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el, tm-wl.el (wl-draft-preview-message): 全ヘッダを表示
+	するようにした。
+	* wl-summary.el (wl-summary-mode): tab-width を設定しないようにした。
+	(Yoshinari NOMURA <nom@csce.kyushu-u.ac.jp> さんの御指摘)
+	(wl-summary-copy, wl-summary-refile): wl-draft-folder にコピー
+	できないようにした
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA)さんの御指摘)。
+	(wl-summary-overview-entity-compare-by-date): エラーを無視
+	(MIZUHARA Bun <mizuhara@acm.org> さんの御指摘)。
+	* wl.el (wl-plugged-mode): inhibit-read-only の設定を削除。
+	(Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp> さんの御指摘)
+	* wl-vars.el (wl-draft-reedit-hook): 新規 hook。
+	* wl-draft.el (wl-draft-save, wl-draft-mimic-kill-buffer):
+	新規関数。
+	(wl-draft): 既に使われているバッファ名は使わないようにした。
+	(wl-draft-reedit): wl-mail-setup-hook をrun-hookせず、かわりに
+	wl-draft-reedit-hook を run-hook するようにした。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA)さんの御指摘)。
+	* wl-xmas.el, wl-mule.el (wl-draft-key-setup):
+	C-xC-s に wl-draft-save を、C-xk に wl-draft-mimic-kill-buffer を
+	割り当てた。
+	* wl-nemacs.el (wl-draft-overload-functions): 同上。
+
+2000-01-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-mule.el, wl-util.el: (require 'static) を
+	(eval-when-compile (require 'static)) に変更。
+	* wl.el (wl-save): の docstring を追加。
+
+2000-01-08  Mito <mit@nines.nec.co.jp>
+
+	* wl-score.el (wl-score-guess-like-gnus): (when (stringp fld-name)..)
+	で括った。
+
+2000-01-08  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-config-info-operation): 新規関数。
+	(wl-draft-delete, wl-draft-save-and-exit, wl-draft-reedit):
+	`wl-draft-config-info-operation' を使うようにした。
+
+2000-01-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-demo.el (toplevel): bitmap がインストールされていない場合に
+	バイトコンパイルで出る Warning を減らした。
+	(wl-demo-use-bitmap): 新規変数。bitmap のデモを表示するかどうかを指定。
+	デフォルトは t。
+	* WL-CFG: wl-demo-use-bitmap を nil にする例を追加。
+	* wl-nemacs.el (toplevel): timezone のエミュレーションを止めた
+	(APEL 10 〜 を前提)。
+	* wl-demo.el, wl-draft.el, wl-folder.el, wl-util.el,
+	wl-message.el, wl-summary.el (toplevel): 未定義変数は
+	make-local-variable で得られるシンボルに値を set するようにした。
+	(Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp> さんの御助言)
+
+2000-01-07  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* wl-draft.el (wl-smtp-features, wl-smtp-parse-extension): 修正。
+
+2000-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-user-agent-compose): wl-draft を interactive に呼ぶ
+	ようにした。(Atsushi Tada <tada@tworks.co.jp> さんの御指摘)
+	* Makefile (EMACS): デフォルトを emacs にした。
+	(XEMACS): 新規変数。
+	(package, install-package): $(XEMACS) を使うようにした。
+	* 2.2.14 - "Layla"
+	* wl-summary.el (wl-summary-mode): default-directory を設定するのを
+	やめた。
+	* wl-vars.el (wl-tmp-dir): デフォルトを"~/tmp/" とした
+	(WL-ML 3735 のスレッド参照)。
+
+2000-01-06  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* wl-draft.el (wl-smtp-features): 新規変数。
+	(wl-smtp-extension-bind): 新規マクロ。
+	* wl-summary.el (wl-summary-mode-map):
+	wl-summary-prev-page のキーバインドを backspace にも割当てた。
+
+2000-01-06  Kentaro Yoshitomi <yositomi-wl@center.osaka-wu.ac.jp>
+
+	* elmo-maildir.el (elmo-maildir-create-folder):
+	ディレクトリ名が "/" で終るときに error になるのを修正。
+
+2000-01-06  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-draft.el: smtp.el 変数名の authenticate への変更に対応。
+
+2000-01-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-load-profile): wl.el から移動。
+	* COPYING: 新規ファイル (etc/copyright から改名).
+	* wl-vars.el (wl-smtp-connection-type): wl-smtp-use-tls から改名。
+	* wl-draft.el (wl-draft-send-mail-with-smtp): smtp-connection-type
+	を wl-smtp-connection-type で bind するようにした。
+	(wl-draft-queue-save-filename): fixed typo.
+	* wl-vars.el (wl-cs-*): Nemacs 向けの定義を変更。
+	* all files: 著作権表示の更新、checkdoc fix。
+
+2000-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-ja.texi: 著作権表示と複写許可表示を追加。
+
+2000-01-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-score.el (wl-summary-score-update-all-lines):
+	スコアで読んだことにする場合に、未キャッシュとするようにした。
+	* elmo-util.el (elmo-imap4-get-spec):
+	elmo-default-imap4-ssl が t の場合に対応していなかったのを修正。
+	(Taro FUNAKI <taro@bear.ecl.ntt.co.jp> さんより御報告)
+	* tm-wl.el (wl-draft-yank-current-message-entity):
+	mime-viewer/following-method-alist の修正もれを修正。
+	(Taiji.Can@atesoft.advantest.co.jp さんより御報告)
+
+2000-01-04  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-message.el (wl-message-decode):
+	'no-mime のときに wl-cs-autoconv でデコードするようにした。
+
+1999-12-31  Kentaro Yoshitomi <yositomi-wl@center.osaka-wu.ac.jp>
+
+	* elmo-maildir.el, elmo-util.el: Maildir フォルダの作成、削除、
+	コピーへ対応。
+
+1999-12-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft): `wl-load-profile' を呼ぶようにした。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御指摘)
+	* elmo-imap4.el (elmo-imap4-make-number-set-list): 新規関数。
+	(elmo-imap4-msgdb-create): `elmo-imap4-make-number-set-list'
+	を使うようにした。
+	(elmo-imap4-mark-set-on-msgs): 同上。
+
+1999-12-11  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-get-sync-range):
+	offline 時に POP フォルダに入るたびに Unplugged と文句を
+	言われないようにした。
+
+1999-12-28  Nishimoto Masaki <gaju@ceres.dti.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): アーカイブフォルダのパス
+	展開に失敗していたのを修正。
+
+1999-12-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.13 - "Keep The Faith"
+
+1999-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-network-get-spec): 新規関数。
+	(elmo-*-get-spec): 書き直し、ユーザ名部に '@' を含められるようにした。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの御指摘に基づく)
+	* elmo-imap4.el (elmo-imap4-create-msgdb-from-overview-string):
+	float が扱えない Emacs への対応。
+	* elmo-pop3.el (elmo-pop3-get-connection): 引数を変更。
+	* check-paren fix.
+
+1999-12-21  Koga Masato <mkoga@mail7.dddd.ne.jp>
+
+	* wl-draft.el (wl-draft-reedit):
+	`wl-draft-use-frame' が効くようにした。
+
+1999-12-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-imap4-use-modified-utf7): 新規変数。
+	デフォルトは nil。
+
+1999-12-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el, tm-wl.el (wl-mime-save-content): 最後にセーブした
+	ディレクトリを覚えるようにした。
+	* wl.el (wl-save): 新規コマンド。現在のフォルダ状態等をセーブする。
+	(JINMEI Tatuya <jinmei@isl.rdc.toshiba.co.jp> さんより御要望)
+	* wl-folder.el (wl-folder-mode-map): "\M-s" に `wl-save' をバインド。
+	* elmo-util.el (elmo-imap4-get-spec): `utf7-encode-string' を
+	使うようにした。
+	* elmo-imap4.el (elmo-imap4-list-folders): `utf7-decode-string'
+	を使うようにした。
+	* elmo/utf7.el: 新規ファイル。
+
+1999-12-20  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* elmo-imap4.el (elmo-imap4-open-connection): starttls 対応の修正。
+	* wl-draft.el: featurep->boundp。
+
+1999-12-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-search-mime-charset): 新規変数。
+	* wl-summary.el (wl-summary-pick): `wl-search-mime-charset' を
+	使うようにした。
+
+1999-12-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (wl-texinfo-format): 古い texinfmt.el を使ってい
+	るときには `@direntry' をエミュレーションするようにした。
+
+1999-12-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-config-exec): ハイライトしなおすようにした。
+	(Motomichi Matsuzaki <mzaki@e-mail.ne.jp> さんの御指摘)
+	* wl-summary.el (toplevel): `wl-summary-temp-mark-region' の
+	キーバインド順を変えた (okada@opaopa.org (岡田 健一 / Kenichi OKADA)
+	さんの御助言)。
+
+1999-12-16  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-mark-as-important-region,
+	wl-summary-mark-as-unread-region,
+	wl-thread-mark-as-important,
+	wl-thread-mark-as-unread,
+	wl-summary-temp-mark-mark-as-important,
+	wl-summary-temp-mark-mark-as-unread): New functions.
+	(wl-summary-save-region): 無駄な処理を削除．
+	(wl-summary-prefetch-region): wl-summary-message-uncached-marks で
+	判断するのをやめ、elmo-cache-exists-pを使うようにした。
+	* wl-thread.el (wl-thread-get-children-msgs-uncached): 同上。
+
+1999-12-14  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* pop, imap の STARTTLS で、tls を使用するように指定しているのに，
+	サーバが許可していない場合は，error を出すようにした。
+
+1999-12-14  TSUMURA Tomoaki <tsumura@notredame.ac.jp>
+
+	* dot.wl: wl-default-folder では ML-name と ML-count を表示し、
+	それ以外の folder では ML-count のみ表示する例を追加。
+
+1999-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-parse-bodystructure-string):
+	生 JIS のファイル名があったりすると parse に失敗するのを修正。
+	* wl-summary.el (wl-summary-copy): ２回目のコピー指示が登録されないのを
+	修正。(Hiroshi Watanabe <whoami@din.or.jp> さんより御報告)
+
+1999-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): sticky にする
+	タイミングを変更 (Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+	さんの御指摘)。
+	* wl-vars.el (wl-folder-sync-range-alist): デフォルトでドラフトと
+	キューのレンジを "all" とした。
+
+1999-12-11  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-get-sync-range):
+	offline 時に POP フォルダに入るたびに Unplugged と文句を
+	言われないようにした。
+
+1999-12-10  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo にある関数を defalias している wl の関数を
+	elmo の関数に置き換えた。
+
+1999-12-07  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-nntp.el: elmo-nntp-max-number-precedes-list-active が t 
+	かつ list-active が提供されていない場合の挙動を修正。
+
+1999-12-07  TAKAHASHI Kaoru <kaoru@kaisei.org>
+
+	* INSTALL.ja: 修正。
+	* wl-summary.el (wl-summary-always-sticky-folder-p): 新規マクロ。
+	(wl-summary-goto-folder-subr): (wl-summary-always-sticky-folder-p)
+	を使うようにした。
+
+1999-12-07  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-vars.el (wl-summary-always-sticky-folder-list): 新規変数。
+	* wl-summary.el (wl-summary-stick): Optional 引数を加えた。
+	(wl-summary-goto-folder-subr): wl-summary-always-sticky-folder-list
+	にマッチするフォルダは自動的に Sticky になるようにした。
+
+1999-12-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* INSTALL.ja: 文字コードを ISO-2022-JP にした。
+	* wl-draft.el (wl-draft-send-mail-with-smtp): 
+	(default-)?case-fold-search のバインド位置を変更。
+	(Atsushi Tada <tada@tworks.co.jp> さん、
+	 津金久倫 <tao@pfu.co.jp>さん他より御報告)
+	(wl-draft-send): with-current-buffer を使わないようにした。
+	* 2.2.12 - "Joyride"
+
+1999-12-07  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* etc/icons/wl-logo.xbm: Christmas version.
+
+1999-12-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-overview-string):
+	elmo-imap4-use-uid が nil のとき動かなかったのを修正。
+	* utils/hmac/scram-md5.el, utils/hmac/hmac-util.el: 削除。
+	* wl-summary.el (wl-summary-mark-as-unread):
+	wrong-type-argument エラーが出るのを修正。
+	* wl-folder.el (wl-folder-empty-trash):	サマリ増殖現象の修正もれ。
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御報告)
+
+1999-12-07  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-condig-exec):
+	wl-draft-config-exec-flag は wl-draft-config-alist が適用された
+	ときのみ nil にするよう変更。
+
+1999-12-06  Shigeru OKUMURA <sokumura@jaist.ac.jp>
+
+	* WL-ELS (HMAC-MODULES): 更新。
+
+1999-12-06  Tsunehiko Baba <tbaba@mtl.t.u-tokyo.ac.jp>
+
+	* INSTALL: 新規ファイル。
+
+1999-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-create-msgdb-from-overview-string):
+	フィルタがうまく動かないのを修正。
+	(Kazuyoshi Mii <mii@isl.ntt.co.jp> さんより御報告)
+	* 2.2.11 - "Iris"
+	* utils/hmac/lisp/*.el: Sync up with slim-1.13.4.
+	* elmo-imap4.el
+	(elmo-imap4-open-connection): cram-md5 認証で sasl-cram-md5 を
+	使うようにした。
+	(toplevel): (require 'hmac-md5) ではなく、(require 'sasl) とする
+	ようにした。また、eval-when-compile を外した。
+
+1999-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-read): msgdb に存在しない
+	メッセージにはマークを付けないようにした。
+	* wl-summary.el (wl-summary-pick): msgdb 対象のときにひとつも pick
+	できなかったときにメッセージを出すようにした。
+
+1999-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-overview-get-parent-entity):
+	引数を変更。
+	* wl-vars.el (wl-smtp-posting-server): 初期値を nil とした。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの御助言)
+	* elmo-imap4.el (elmo-imap4-create-msgdb-from-overview-string):
+	extra-field 名を downcase するようにした。
+	(Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp> さんより御指摘)
+	* elmo-util.el (elmo-collect-field(-from-string)?):
+	引数 downcase-field-name を増やした。
+
+1999-12-03  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* wl-folder.el (wl-folder-empty-trash):	サマリ増殖現象の修正。
+
+1999-12-03  Nishimoto Masaki <gaju@ceres.dti.ne.jp>
+
+	* wl-summary.el (wl-summary-default-from): Newsgroup 名が表示
+	されなかったのを修正。
+
+1999-12-03  TAKAHASHI Kaoru <nil@din.or.jp>
+
+	* INSTALL.ja: 新規ファイル。
+	* draft 再編集時に、Newsgroups: ヘッダがあれば、To: を付加しないよ
+	うにする修正のマージし忘れを修正。
+
+1999-12-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-mime-string): elmo-set-work-buf で括るようにした。
+	(Mikiya Tani <m-tani@hml.cl.nec.co.jp> さんの御指摘)
+	* 2.2.10 - "Human Touch"
+	* etc/icons/wl-logo.xpm: Christmas version.
+	* elmo-imap4.el (elmo-imap4-make-attributes-object):
+	Nemacs で read が失敗してしまうのに対処。
+	* elmo-dop.el (elmo-dop-list-folder): pipe 対応忘れを修正。
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御指摘)
+
+1999-12-03  sen_ml@eccosys.com
+
+	* utils/wl-mailto.el: 0.5.
+
+1999-12-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-1.el: buffer read only のエラーが出るのを修正。
+	* wl-mime.el, tm-wl.el: wl-draft-preview-message のキーバインドを変更。
+	(Makoto.Nakagawa@jp.compaq.com (中川 誠) さんの御報告に基づく)
+	* utils/ssl.el: 最新版に入れ換え。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA)さんの御指摘)
+	* elmo-util.el (elmo-mime-string, elmo-decode-mime-charset-string):
+	新規関数。
+	* elmo-imap4.el: FETCH 結果解析処理部分を大幅に書き換えた。
+
+1999-12-02  Hironori Fukuchi <nory@valis.co.jp>
+
+	* wl-xmas.el: (featurep 'dragdrop) が nil のときに、
+	wl-dnd-set-drop-target がエラーを発生する場合があるのを修正。
+
+1999-12-02  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* starttls.el がないとエラーが出るのを修正。
+
+1999-12-01  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* smtp authのところで，wl-smtp-posting-userが nil でも
+	error を出さないようにした。
+	* nntpフォルダでポート番号を指定するとエラーが出るのを修正
+
+1999-11-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-reedit): interactive でないのに
+	wl-mail-setup-hook を呼ぶかどうかが (interactive-p) で判別されて
+	いたのを修正。
+	* New command: wl-fldmgr-delete.
+	* Rename: wl-fldmgr-rename-group -> wl-fldmgr-rename.
+	* New function: elmo-folder-creatable-p.
+	* imap4 で #mh タイプのフォルダを作るとき，必ずディレクトリが作
+	  成されるようにした。
+	* wl-folder-check-one-entity で存在しないフォルダを作成するよう
+	  にした。
+	* New macro: wl-folder-clear-entity-info.
+
+1999-11-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-message.el (wl-message-narrow-to-page): "^L\n^L" を含むメッセー
+	ジを読むときに `beginning-of-buffer' エラーが出ないようにした。
+
+1999-11-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary-mode の引数をなくした。
+	* wl-address.el (wl-address-petname-add-or-change):
+	.addresses の最後の行に改行がない場合に対処。
+	* elmo-imap4-[12].el (mmelmo-imap4-parse-bodystructure-entity):
+	mime-parse-parameters-from-list を使うようにした。
+
+1999-11-24  Tetsuya Uemura <uemura@pp.iij4u.or.jp>
+
+	* x-face-xmas-mew-display-x-face -> x-face-xmas-wl-display-x-face
+
+1999-11-22  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-vars.el (wl-smtp-authenticate-type, wl-smtp-use-tls): 新規変数。
+	* wl-draft.el (wl-draft-send-mail-with-smtp): SMTP の TLS 対応。
+
+1999-11-21  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary-jump-to-msg-internalが
+	wl-summary-jump-to-msg-by-message-id-via-nntpから呼ばれるときに，
+	scan-typeがupdateになるようにした。
+
+1999-11-22  Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+
+	* elmo-imap4.el, elmo-pop3.el: STARTTLS 対応。
+
+1999-11-20  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp):
+	connection を張る時に process-connection-type を nil に拘束した。
+
+1999-11-20  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-util.el (elmo-open-network-stream):
+	connection を張る時に process-connection-type を nil に拘束した。
+
+1999-11-20  Nishimoto Masaki <gaju@ceres.dti.ne.jp>
+
+	* 既にimportantマークがついているメッセージに
+	importantなスコアがつくとマークが消えてしまうのを修正。
+
+1999-11-19  Hironori Fukuchi <nory@valis.co.jp>
+
+	* tm-wl.el: fixed typo.
+
+1999-11-18  Yasuo OKABE <okabe@i.kyoto-u.ac.jp>
+
+	* 表示しているメッセージがない状態で wl-draft-insert-message を実
+	行するとエラーが出るようにした。
+
+1999-11-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el: 新規変数 wl-summary-showto-folder-regexp。
+	* wl-summary.el (wl-summary-default-from):
+	my-wl-summary-from-func-petname にした。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御助言)
+	* wl-summary.el (wl-summary-simple-from): wl-summary-default-from
+	から名前変更。
+
+1999-11-17  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-message.el (wl-message-get-buffer-create):
+	sticky メッセージを表示するときにエラーになるのを修正した。
+
+1999-11-17  sen_ml@eccosys.com
+
+	* wl-mailto.el: 0.5-pre1.
+
+1999-11-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-delete-cr-get-content-type):
+	Content-Type がないときに t を返却するようにした。
+	* 2.2.9 - "Gonna Make You Sweat"
+
+1999-11-15  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* wl-util.el (wl-unique-id): current-time と timezone を使わない版。
+
+1999-11-14  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el, wl-summary.el: reply 時は wl-draft-reply を t に,
+	 forward 時は wl-draft-forward を t に設定するようにした。
+	* wl-folder.el, wl.el: wl-folder でフォルダリストを生成したときのみ，
+	  wl-make-plugged-alist を呼ぶようにした。
+
+1999-11-14  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-pipe.el (elmo-pipe-use-cache-p): 実装。
+	* elmo2.el (elmo-folder-number-get-spec): 修正。
+
+1999-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-nemacs.el: current-time 実装を取り込んだ。
+	* wl-draft.el: insert-mail の実装。
+	* メッセージの MIME ボタンで 'a' を押したときに、そのパートを引用した
+	ドラフトを用意するようにした。
+	* wl-draft.el: wl-user-agent.el をマージした。
+	* wl-mime.el, tm-wl.el: MIME module との API を整理しなおした。
+
+1999-11-12  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-imap4.el: 存在しないフォルダに対して
+	wl-folder-check-current-entity を実行するとエラーが出るのを修正。
+	* wl-draft.el: wl-draft-config-list, wl-template-alist で
+	header, header-file も指定できるようにした。
+
+1999-11-12  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* wl-util.el (wl-draft-make-message-id-string, wl-unique-id,
+	wl-number-base36): New functions.
+	(wl-unique-id-char): New internal variable.
+
+	* wl-mule.el (wl-draft-make-message-id-string): Remove.
+	* wl-nemacs.el (wl-draft-make-message-id-string): Remove.
+	* wl-xmas.el (wl-draft-make-message-id-string): Remove.
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): `smtp-server' が関数
+	だったら funcall するようにした; Resent-* フィールドの扱いを `smtp'
+	に任せるようにした。
+
+1999-11-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft (wl-draft-get-fcc-list): FCC に指定されたフォルダが
+	存在しないときにエラーとせず、作成するかどうかきくようにした。
+	* Rename: wl-summary-confirm-folder-existence ->
+	wl-folder-confirm-existence。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御助言に
+	基づく)
+	* Rename: wl-mime-edit-preview-message-hook
+	-> wl-draft-preview-message-hook
+	* elmo-nntp.el (elmo-nntp-string-to-vector): 関数呼び出しにするのを
+	止めた。
+	* elmo-util.el (elmo-tokenize-string): 廃止。split-string で代用。
+	* wl-highlight.el: 新規 face、wl-highlight-logo-face。ロゴ用 face。
+
+1999-11-11  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* wl-demo.el: bitmap-mule 対応。
+	* wl-logo.xbm: 新規ファイル。
+	* elmo-nntp.el (elmo-nntp-string-to-vector): vector の長さを無制限
+	にした。
+	(elmo-nntp-parse-overview-string): `elmo-nntp-string-to-vector' に
+	第２引数を与えるのをやめた。
+
+1999-11-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el: Message-ID に '%' が含まれていると検索に失敗するの
+	を修正。
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御助言)
+	* wl-message.el, mmelmo-[12].el: read-only の設定を整理。
+	* wl-draft-save-and-hide -> wl-draft-save-and-exit とし、
+	  C-c C-z にバインドした。
+
+1999-11-11  Yasuo OKABE <okabe@i.kyoto-u.ac.jp>
+
+	* wl-summary.el (wl-summary-temp-mark-forward):
+	マークされているメッセージが複数ならば全体を multipart/digest で囲む
+	ようにした。
+
+1999-11-11  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* 新規変数 wl-nntp-posting-port, wl-nntp-posting-ssl
+	wl-nntp-posting-{user,server,port,ssl}と
+	elmo-default-nntp-{user,server,port,ssl} を対応させるようにした。
+	* wl-nntp-posting-* の初期設定は nil とし、
+	nil のままなら elmo-default-nntp-* を利用するようにした。
+	* utils/bbdb-wl.el: (setq bbdb-use-pop-up nil) の場合、
+	サマリで ':' を押した後 q と押すとエラーが出るのを修正。
+	* wl-draft.el: 新規関数 wl-draft-save-and-hide。
+
+1999-11-10  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-demoで，wl-logo.xpmの表示位置をちゃんと計算するようにした。
+
+1999-11-10  Tsutomu Okada (岡田 勉) <okada@furuno.co.jp>
+
+	* wl-message.el (wl-message-refer-article-or-url):
+	メッセージバッファで mouse-button-2 を押してもカーソルが
+	メッセージバッファに移動しないようにした。
+
+1999-11-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay):
+	Sticky Message があるとオリジナルバッファが実際と異なったままに
+	なる場合があるのを修正。(Mito <mit@nines.nec.co.jp> さんより御報告)
+	* wl-util.el (wl-string): elmo-string への alias とした。
+	* elmo-util.el (elmo-string): 新規関数。
+	* 新規変数 wl-smtp-posting-port。
+	* wl-summary-resend-bounced-mail を "\eE" にバインド。
+
+1999-11-10  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* WL-ELS の typo の修正もれの修正。
+
+1999-11-10  kurati@bigfoot.com
+
+	* refile でフォルダ作成したときにフォルダ名補完候補に加わるようにした。
+	* FCC: に新規フォルダを指定した時に作成するか聞くようにした。
+	* auto-refile のとき、存在しないフォルダがあった時に作成するか聞く。
+
+1999-11-10  Yasuo OKABE <okabe@i.kyoto-u.ac.jp>
+
+	* wl-summary.el (wl-summary-resend-message,
+	wl-summary-resend-bounced-mail): 新規コマンド。
+	* wl-draft.el (wl-draft-dispatch-message): dispatch された
+	メッセージが Resent-to ヘッダを含んでいた場合は Newsgroups ヘッダ
+	を持っていてもニュースには送らない。
+
+1999-11-09  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-summary.el (wl-summary-jump-to-msg-internal): 記事が
+	表示されない場合があるのを修正。
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id-via-nntp):
+	移動先のニュースグループの候補が複数あるときに
+	wl-folder-newsgroups-hashtb に含まれるものを優先するようにした。
+
+1999-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.8 - "Free As A Bird"
+
+1999-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-send): 送信後、C-cC-s が insert-signature に
+	なってしまうのを回避。(Akihiro MOTOKI <motoki@ptl.abk.nec.co.jp> さん
+	より御報告)
+	* WL-MK: Nemacs では (fset 'file-executable-p 'file-exists-p) とした。
+	* WL-MK, WL-CFG: WL_PREFIX と ELMO_PREFIX のデフォルトを "wl"
+	とした。
+	* 新規変数 wl-user-mail-address-list。
+	ユーザのメールアドレスが複数あるときに自分かどうかの判定に用いられる。
+	* 新規関数 wl-address-user-mail-address-p
+	wl-user-mail-address-list と wl-from を使って自分のアドレスかどうか
+	判別する。
+	* wl-summary.el (wl-summary-cancel-message,
+	wl-summary-supersedes-message): wl-address-user-mail-address-p
+	を使ってアドレス判定するようにした。
+	(okada@opaopa.org (岡田 健一 /  Kenichi OKADA) さんの変更に基づく)
+	* wl-refile.el (wl-refile-learn, wl-refile-guess-by-history): 同上。
+	* wl-draft.el (wl-draft-make-mail-followup-to, wl-draft-reply
+	wl-draft-delete-myself-from-cc): 同上。
+	* elmo-filter.el (elmo-filter-list-folder-unread,
+	elmo-filter-list-folder-important): フィルタ処理が間違っていた
+	のを修正。(Kazuyoshi Mii <mii@isl.ntt.co.jp> さんより御報告)
+
+1999-11-08  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* POP-before-SMTP 関連変数の初期化法を変更。
+
+1999-11-07  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-nntp.el: list active が失敗したら，list を実行するようにした。
+
+1999-11-07  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-draft-prepared-confi-alist を廃止し，
+	  wl-draft-config-alist と統合した。
+	* wl-template-select を実行したときでもローカル変数を継承するよ
+	  うにした。
+	* Fcc フォルダの処理を送信が成功した時に行うようにした。
+	* wl-draft-queue-save-variables の変数を user-mail-address から
+	  wl-envelope-from に変更した。
+	* wl-draft-insert-from-field において，user-mail-address が nil
+	  のときにエラーになるのを修正した。
+
+1999-11-06  Tetsuya Uemura <uemura@pp.iij4u.or.jp>
+
+	* describe-mode でモードマップが表示されるようにした。
+
+1999-11-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-mode-map):
+	wl-fldmgr-copy-region のキーバインドを変えた。
+
+1999-11-06  Hironori Fukuchi <nory@valis.co.jp>
+
+	* wl-summary.el (wl-summary-stick): 括弧の位置がずれていたのを修正。
+
+1999-11-06  Yasuo OKABE <okabe@i.kyoto-u.ac.jp>
+
+	* utils/wl-user-agent.el: sendmail-user-agent の動作に合わせた。
+
+1999-11-06  sen_ml@eccosys.com
+
+	* utils/wl-user-agent.el: 0.5.
+
+1999-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el: ソースをかなり整理した。
+	* elmo-imap4.el: 新規変数 elmo-imap4-debug。
+	Non-nil なら "*IMAP4 DEBUG*" バッファにデバッグ情報を出力する。
+	* elmo-imap4.el, elmo-pop3.el, elmo-nntp.el:
+	メッセージ本体読み出し時のコピー回数を削減。
+	* elmo-imap4.el: コマンドの返答が最後まで得られるまでロックするように
+	した。
+	* wl-summary.el: wl-refile-rule-alist が nil だとオートリファイルが
+	エラーになるのを修正。
+	* WL-MK: install-package で info がインストールされないのを修正。
+	("MATSUBAYASHI 'Shaolin' Kohji" <shaolin@rins.st.ryukoku.ac.jp> さん
+	より御報告)
+	* elmo-cache.el (elmo-cache-search): 部分キャッシュの検索に対応
+	していなかったのを修正 (Yasuo OKABE <okabe@i.kyoto-u.ac.jp>
+	さんの御指摘)。
+
+1999-11-04  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* POP-before-SMTP の整理と拡張。
+	* 新規変数 elmo-default-pop3-user, wl-pop-before-smtp-user,
+	wl-pop-before-smtp-server, wl-pop-before-smtp-port,
+	wl-pop-before-smtp-ssl, wl-pop-before-smtp-authenticate-type。
+	* elmo-pop-before-smtp-* -> wl-pop-before-smtp-*
+
+1999-11-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-mime-edit-preview-message):
+	新規 hook: wl-mime-edit-preview-message-hook。
+	* elmo-util.el: バイトコンパイラの出す Warning を削減した。
+	* wl-summary.el (wl-summary-sync-marks): マーク同期処理を大幅に高速化。
+	* elmo-pipe.el (elmo-pipe-max-of-folder): 頻繁に削除される
+	IMAP4 フォルダでは未読数がおかしくなるのを修正。
+	(Toshihiko Kodama (小玉 利彦) <kodama@ayame.mfd.cs.fujitsu.co.jp>
+	さんの御報告に基づく)
+
+1999-11-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.7 - "Escapade"
+	* WL-MK: install-info すると INFODIR のメッセージがおかしくなるの
+	を修正。
+	* 起動して最初に Folder モードから prefetch するとエラーが発生する
+	のを修正 (岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+	さんより御報告)。
+	* mime-elmo-entity クラスを mime-buffer-entity クラスの
+	サブクラスとし、他の MUA に影響が及ばないようにした。
+	* 閉じたスレッドにメッセージが追加されたときに番号部分が
+	ハイライトされなかったのを修正。
+	* pipe に対応し忘れていた部分を対応させた。
+
+1999-11-03  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* フォルダ名の補完などで，folder petname を使用するようにした。
+	* wl-force-fetch-folders が non-nil の場合，アクセスグループが
+	  unplugged だと開けなくなるのを修正した。
+	* フォルダモードの最下行で wl-fldmgr-set-petname が出来ないよう
+	  にした。
+	* wl-plugged-mode で変更しなかった場合は，wl-toggle-plugged を呼
+	  ばないようにした。
+	* wl-exit と wl-folder-suspend 時のバッファ消去を整理した。
+	* wl-folder.el: 一部を関数 wl-folder-buffer-group-p で置き換えた。
+	* wl-summary.el: 一部を関数 wl-summary-entity-info-msg で置き換
+	  えた。
+	* wl-reset-plugged-alist のデフォルト値を t に変更した。
+	* wl-plugged-mode で plugged 状態を変更しても全部リセットされて
+	  しまうのを修正した。
+
+1999-11-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-reedit): ニュース記事の再編
+	集時に、To: ヘッダを加えないようにした。
+
+1999-11-03  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* wl-summary-write-current-newsgroup で
+	elmo-folder-get-primitive-folder-listを使うようにした。
+	* 新規コマンド wl-folder-write-current-newsgroup
+	* elmo-folder-get-primitive-folder-list と
+	elmo-folder-get-primitive-spec-list を pipe フォルダに対応させた．
+	* elmo-pop3-flush-connectionする前に電話を切ると，
+	wl-toggle-plugged できなくなるのを修正。
+
+1999-11-03  sike@ic.netlaputa.ne.jp
+
+	* Message-Id の途中で改行があっても大丈夫なようにした。
+
+1999-11-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.6 - "Diamonds And Pearls"
+	* 起動時に plug status を wl-plugged に合わせるようにした。
+	(Yasuo OKABE <okabe@i.kyoto-u.ac.jp> さんの御指摘)
+	* WL-MK: 大幅に書き換えた。
+	* Rename: wl-address-complete-address
+	-> wl-complete-field-body
+	* Rename: wl-address-complete-address-or-tab
+	-> wl-complete-field-body-or-tab
+
+1999-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* フォルダアイコン初期化関数を簡略化。
+	* elmo-pipe: New module.
+
+1999-11-01  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* WL-ELS の typo 修正。
+	* wl-user-agent.el と wl-mailto.el の byte-compile 時に
+	"Cannot open load file wl" のエラーが出るのを修正。
+
+1999-10-29  Takaaki MORIYAMA  <taka@airlab.cs.ritsumei.ac.jp>
+
+	* wl-exit で kill-emacs-hook から wl-save-status を消すようにした。
+
+1999-10-28  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* new file: WL-ELS。
+	* WL-MK: install.el を使うよう大幅に書き換えた。
+
+1999-10-28  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-ja.texi: wl-template-select のキーバインドが間違っていたのを
+	修正。
+	* INN 2.3 でも未読数が一致するようにした。
+
+1999-10-28  TAKAHASHI Kaoru (高橋 郁) <kaoru@kaisei.org>
+
+	* wl-ja.texi: 大幅に修正。
+
+1999-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Folder モードでも 'Z' に wl-status-update をバインドした。
+	* Fix: wl-summary-goto-last-displayed-msg
+	１つしか表示したことがない時に前のメッセージに戻れなかったのを
+	修正。
+
+1999-10-26  kurati <kurati@bigfoot.com>
+
+	* FCC: で補完が効くようにした。
+
+1999-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Unplugged 時でも重要マークの同期はするようにした。
+	* auto-refile の前に存在するかどうかチェックするようにした。
+	(Toshihiko Kodama (小玉 利彦) <kodama@ayame.mfd.cs.fujitsu.co.jp>
+	さんの御要望に基づく)
+	* Fix: score で expunge したメッセージは IMAP4 サーバ上でも
+	読んだことにすることにした。
+
+1999-10-22  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* サマリバッファ(スレッドモード)でカーソルが行頭にないときに
+	スレッドに対する mark 操作をすると動作が変になるのを修正。
+	* wl-thread-refile で refile 先に refile 元と同じフォルダを
+	(間違って)指定してエラーとなったときにカーソルを移動しない様にした。
+	* wl-summary-jump-to-parent-message で message の検索が失敗した時の
+	メッセージを変えた。
+	* wl-summary-exec-region で行単位でない region を指定した時の
+	region の補正方法が直観的でなかったのを変更した。
+
+1999-10-25  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* fldmgr: グループフォルダを追加するとエラーになるのを修正した。
+	* wl-defface の設定を static にした。
+	* wl-folder-buffer-search-entity, wl-folder-folder-name で
+	  未読数など不明のフォルダにもマッチするようにした。
+	* wl-summary-redisplay-no-mime でも，wl-summary-buffer-disp-msg と
+	  wl-current-summary-buffer を設定するようにした。
+
+1999-10-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 起動時にドメイン名が正しいかチェックするようにした。
+	* 新規変数 wl-local-domain。FQDN を返さないシステム用のドメイン名
+	を設定。
+	* フォルダモードの横スクロールバーを消した。
+	("MATSUBAYASHI 'Shaolin' Kohji" <shaolin@rins.st.ryukoku.ac.jp> の
+	御報告に基づく)
+	* 新規関数 wl-mime-edit-preview-message。プレビューの色つけ。
+	* unplugged かつ、キャッシュされた未読がないとき、
+	カーソルをアクセスできる最後のメッセージに合わせるようにした。
+	* WL-CFG の utils の指定の仕方がまちがっていたのを修正。
+	(Taiji.Can@atesoft.advantest.co.jp さんの御指摘)
+	* make info に失敗するのを修正。
+	(Kazufumi Hayasaka <hayakazu@hauN.org> さんの御指摘)
+	* 2.2.5 - "Come Undone"
+
+1999-10-24  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* double negative を simplify。
+
+1999-10-24  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* FCC が unplugged folder なら dop キューに追加するようにした。
+	* elmo-dop-queue に "append-operations" を追加した。
+	* wl-summary-flush-pending-append-operations において既読メッセー
+	  ジを引き継ぐようにした。
+
+1999-10-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-CFG としてそれっぽいのを用意してみた。
+	* オフライン送信で IMAP4 フォルダへの FCC が無視されるのを修正。
+	(Masafumi NAKANE <max@wide.ad.jp> さんより御報告)
+	* Emacs と XEmacs で refile-alist を共有できなかったのを修正。
+	(Takuo KITAME / 北目拓郎 <kitame@northeye.org> さんより御報告)
+	* wl-ja.texi: tm, semi の配布元を修正。
+	* Folder モードで別サーバで同じ名前の IMAP4 フォルダがあったときに、
+	別のフォルダの未読数が書き変わってしまうことがあるのを修正。
+	(Kazuyoshi Mii <mii@isl.ntt.co.jp> さんより御報告)
+
+1999-10-23  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* elmo-dop-merge-funcs にない操作を，捨てるようになっていたのを
+	修正。
+
+1999-10-23  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* port の label を自動的に作成するようにした。
+	* dop queue の表示を少しだけ詳細にした。
+	* elmo-dop-queue-merge で elmo-dop-queue が nil になることがあるの
+	  を修正した。
+
+1999-10-23  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* elmo-prefetch-msgs で，処理の進みぐあいをカウントするようにした．
+
+1999-10-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime-save-content を SEMI に登録するときに Wanderlust 専用
+	メソッドとするようにした。
+	* FLIM-1.12 系で partial のマージに失敗するのを修正。
+	* WL-MK: 大幅に書き直した。
+
+1999-10-22  TAKAHASHI Kaoru <kaoru@kaisei.org>
+
+	* Rename: wl-score-edit-exit-function -> wl-score-edit-exit-func
+
+1999-10-22  Takuo KITAME / 北目拓郎 <kitame@northeye.org>
+
+	* etc/ja.Emacs: いくつか値が重複していたのを修正。
+
+1999-10-22  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* [wl-ja.texi] wl-summary-save-*
+	  wl-summary-jump-to-msg-by-message-id-via-nntp
+	  オフラインprefetch
+	  wl-folder-jump-to-current-entity
+	  cram-md5,SSL の説明を追加。
+
+1999-10-22  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* XEmacs built-in の md5 を呼ぶときの CODING を 'binary にした。
+	* sticky summary から "g" で別のフォルダに移動すると，
+	temp マークなどが消えるにも関わらず face が元に戻らないのを修正。
+	* 新規変数 wl-prog-uudecode-no-stdout-option。Non-nil なら
+	指定されたファイル名でセーブするようにした。
+
+1999-10-21  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* オフライン処理キューのマージ処理。
+
+1999-10-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address-header-extract-address で std11.el を利用しないように
+	した。
+
+1999-10-20  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-reset-plugged-alist が nil ならサーバ・ポート別のプラグ状態を
+	  初期化しないようにした。
+
+1999-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Emacs 20.2 では、Folder モード初期化時に buffer-read-only
+	のエラーが発生するのを修正。
+	(Yasuhiro Ohta <yohta@acsu.buffalo.edu> さんより御報告、
+	TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp> さんより御助言)
+	* XEmacs で scrollbar と toolbar のチェックをするようにした。
+	(Shigeru OKUMURA <sokumura@jaist.ac.jp> さんより御助言)
+
+1999-10-20  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* 不正なヘッダのメールをリファイルしようとするとエラーが発生するのを
+	修正。
+	* アクセスグループを最初に開いたときに内容が現れなくなっていた
+	のを修正。
+
+1999-10-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Folder モードの 'E' で wl-folder-toggle-disp-summary がエラー
+	を発生するのを修正。
+	(Shigeru OKUMURA <sokumura@jaist.ac.jp> さんの御報告)
+	* timezone の y2k 対策で eval-after-load を使わないようにした。
+	* 2.2.4 - "Black Or White"
+
+1999-10-19  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* wl-fetch-confirm-thresholdを越えるメッセージを
+	prefetchしようとしたときに、'n'を押してキャンセルしても
+	マークが空になってしまうバグの修正。
+	* Offline Prefetch。
+
+1999-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* フォルダモードの最後の行で 'm f' できないようにした。
+	* バイトコンパイル時の Warning を減らした。
+	* hmac パッケージと ssl.el を utils/ に含めてみた。
+	(WL-CFG で wl-install-hmac が t ならインストールするようにした。)
+	* FLIM-1.12 でも動くようにした。
+	* Unplugged 時に IMAP4 フォルダに移動するとエラーが出るのを修正．
+	* サマリ更新時、wl-summary-update-confirm-threshold よりも更新数が
+	多いならば、一部分だけ更新にするかどうか、質問するようにした．
+	* 新規変数 wl-summary-update-confirm-threshold．
+
+1999-10-18  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* 新規変数 wl-summary-search-via-nntp。Non-nil で
+	wl-summary-jump-to-msg-by-message-id から
+	wl-summary-jump-to-msg-by-message-id-via-nntp を呼ぶ。
+	値が 'confirm なら、確認を求めてから呼び出す。
+	* 新規関数 wl-summary-jump-to-msg-by-message-id-via-nntp
+	指定された Message-ID のニュース記事を NNTP 経由で検索し、
+	フォルダ移動。
+
+1999-10-16  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* expire が number-or-marker-p error を発生する場合があるのを修正。
+	* filter 生成時に tocc で補完できるようにした。
+	* フォルダモードでの filter の作り方を変更。
+
+1999-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* IMAP4 フォルダの未読数が正しく反映されるよう，
+	elmo-imap4-server-diff 時に、elmo-imap4-commit するようにした。
+	* 新規関数 elmo-commit。サーバの状態をアップデートさせる。
+	* wl-folder-check-one-entity が無駄にフォルダの存在をチェックして
+	いたのを修正。
+	* elmo-imap4-max-of-folder: new implementation.
+	* elmo-imap4-folder-exists-p: new implementation.
+
+1999-10-14  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* wl-ja.texi: fixed typo (@kbd {l} -> @kbd{l}).
+
+1999-10-14  TAKAHASHI Kaoru <kaoru@kaisei.org>
+
+	* xemacs で wl-local-variable-p 他が動かないのを修正。
+
+1999-10-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* キャッシュがあるといくら読んでも未読マークが消えなくなってしまうの
+	を修正。
+	(Taiji.Can@atesoft.advantest.co.jp さんの御指摘)
+	* wl-address-header-extract-address で std11.el を利用するようにした。
+
+1999-10-14  Masafumi NAKANE <max@wide.ad.jp>
+
+	* Fixed Typo: exit-> exist.
+
+1999-10-13  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* unplugged.xpm: 赤を入れた。
+
+1999-10-13  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-filter-get-spec の仕様変更に関係する修正洩れの修正洩れ
+	を修正 (elmo-folder-diff)。
+
+1999-10-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-plugged-mode のウィンドウ作成処理の負荷を軽くした。
+	* wl-draft-raw-send で wl-draft-config-alist を nil に
+	拘束しないようにした。
+
+1999-10-13  Sasaki Toshiya <toshi@unicorn.tohoku.nttcom.co.jp>
+
+	* wl-folder-use-sever-diff-p: マルチフォルダで、一つでも
+	IMAP4 フォルダがあれば t になるようにした。
+
+1999-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 'm U' (wl-summary-temp-mark-uudecode)で、出力先の
+	ファイル名を指定できるようにした。
+	* フォルダモードもホイールに対応させた。
+	* tm-wl.el が編集中だったのを修正。
+	(Toshihiko Kodama (小玉 利彦) <kodama@ayame.mfd.cs.fujitsu.co.jp> さん
+	の御指摘)
+	* wl-ja.texi: OR 条件の説明を追加。
+	* time-stamp に依存しないようにした。
+
+1999-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.3 - "Always"
+	* read-directroy-name -> wl-read-directory-name。
+
+1999-10-12  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* 新規関数 wl-summary-save-region (ry), wl-thread-save (ty),
+	wl-summary-temp-mark-save (my)。
+
+1999-10-11  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規変数 wl-draft-sendlog。non-nil なら送信ログを生成する。
+	* New plugged system 第２弾.
+
+1999-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規関数 wl-summary-temp-mark-pick (m? にバインド)。
+	一時マークがついたメッセージを対象として検索。
+	* 新規変数 elmo-imap4-disuse-server-flag-mailbox-regexp。
+	文字列がマッチしたメールボックスのフラグを使わない。
+	デフォルトは "^#mh"。
+	* wl-address-file-name -> wl-address-file。
+	* wl-score-default-file-name -> wl-score-default-file。
+	* 新規変数 wl-summary-auto-sync-marks。
+	Non-nil ならサマリ同期時に未読/重要マークも同期する。
+	デフォルトは t。
+	* wl-stirict-diff-folders のデフォルトを nil にした。
+	* サマリで重要マークを同期するようにした。
+	* IMAP4 フォルダで未読フラグを同期するようにした。
+	* 新規コマンド wl-summary-sync-marks。
+	* IMAP4 フォルダでサーバ側の未読数を表示できるようにした。
+	* 新規変数 wl-folder-use-server-diff。
+
+1999-10-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規変数 wl-envelope-from。envelope from を設定。
+	nil なら wl-from が envelope from となる。デフォルトは nil。
+
+1999-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Message バッファで 'e' を押したときのセーブ関数を
+	ちょっとだけ親切なものをデフォルトとした (SEMI 用)。
+	* wl-draft-send で、sending-buffer が buffer-live-p の場合だけ
+	kill-buffer するようにしてみた。
+	* 未読数チェック時、フォルダの存在をいちいち調べるのをやめ、
+	チェックに失敗したときにフォルダの存在を調べるようにした。
+	* メッセージバッファにカーソルがあるときにホイールを回すとエラー
+	になるのを修正。
+
+1999-10-04  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* グループフォルダ(非アクセスグループ)に対して，
+	C-u SPC した時に，wl-folder-update-recursive-current-entity を
+	呼ぶようにした．
+
+1999-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* filter された IMAP4 フォルダのオフライン処理で無駄な削除処理
+	キューが溜るのを修正。
+	(OKAZAKI Tetsurou <okazaki@be.to> さんの御指摘)
+
+1999-10-04  okada@opaopa.org (岡田 健一 /  Kenichi OKADA)
+
+	* アクセスグープに Petname をつけると
+	wl-folder-update-recursive-current-entity が動かなかったのを修正．
+
+1999-10-03  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* wl-refile-alist に登録する際の key (mail address) に
+	 downcase をかけるようにした。
+
+1999-10-02  Tetsuya Uemura <uemura@pp.iij4u.or.jp>
+
+	* ドラフトバッファでメールを作成中に、
+	C-u 0 C-l などで指定の位置にカーソルが行くように修正。
+
+1999-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* IMAP4 のパートフェッチでは、そのメッセージを読んだことに
+	しないようにした。
+
+1999-09-30  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* -nw で起動した Emacs 20 でプリントできないのを修正。
+
+1999-09-28  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* フォルダからサマリに移動する際，フォルダを表示していないウィン
+	  ドウにサマリが表示されることがあるのを修正した。
+	* ホストが2つ以下だと wl-plugged-change でエラーになるのを修正。
+	* サマリでも wl-plugged-change できるようにした。
+
+1999-09-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* コンパイル時に wl.el を load しないようにした。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御指摘に
+	 基づく)
+
+1999-09-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* New plugged system で error が発生する場合があるのを修正。
+
+1999-09-26  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* New plugged system.
+
+1999-09-24  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-break-pages を nil に拘束しても
+	wl-summary-set-message-buffer-or-redisplay() では再描画されないので、
+	wl-summary-redisplay-internal () を実行するようにした。
+	* wl-break-pages が t の時は改頁された後の部分がプリント出力
+	されないのを修正。
+
+1999-09-23  岡田 健一 (Kenichi OKADA) <okada@opaopa.org>
+
+	* wl-stay-folder-window tで使っていると，行が折り返されて，
+	非常に見辛いので，truncate-line tにした。
+
+1999-09-23  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-filter-get-spec の仕様変更に関係する修正洩れを修正
+	(elmo-folder-diff)。
+
+1999-09-23  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* localdir 等が絶対パスかどうかを file-name-absolute-p で判定し、
+	.elmo 以下に db を作るようにした。
+
+1999-09-20  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* mime-view-caesar で作られたバッファを消去するコードが
+	抹殺されてしまったのを復活。
+
+1999-09-21  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* 関数 elmo-safe-filename で OS/2 では "|<>" をファイル名として
+	使えないのに対応。
+
+1999-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.2 - "You Could Be Mine"
+	* フォルダモードにあるフォルダは、wl-save-folder-list の値に
+	関係なくセーブするようにしてみた。
+	* filter でフィールド名に 'tocc' を指定すると to か cc に指定文字列が
+	含まれるメッセージを取り出すようにした。
+	* filter フォルダで OR 条件、NOT 条件を指定できるようにした。
+	* wl-uniq-list -> elmo-uniq-list
+
+1999-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* timezone.el の y2k 対策の定義を変更。
+	* wl-summary-save で、セーブ後 "No message to save." と
+	言われるのを修正。
+	* local-variable-p の定義を wl-util.el へ移動。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御報告
+	に基づく)
+
+1999-02-02  IMAI Takeshi <imai@ed2.com1.fc.nec.co.jp>
+
+	* IMAP フォルダに expire できなかったのを修正。
+
+1999-09-20  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* mime-view-caesar で作られたバッファを消去するコードが
+	抹殺されてしまったのを復活。
+
+1999-09-19  Shigeru OKUMURA <sokumura@jaist.ac.jp>
+
+	* open-network-stream の process-buffer を unibyte に設定。
+
+1999-09-19  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* wl-ja.texi の修正。
+
+1999-09-17  HAYAKAWA akio <akio-h@po.iijnet.or.jp>
+
+	* ローカルのフォルダだけで構成されているマルチフォルダ
+	もローカルとみなすようにした。
+
+1999-09-16  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* typo fix.
+
+1999-09-16  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 1つのフレームにおいてメッセージを表示するウィンドウは共有する
+	  ようにした。
+	* wl-summary-goto-folder した時に，wl-summary-buffer-disp-msg
+	  の値によりメッセージの表示を復元するようにした。
+
+1999-09-15  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* make install で elmo 関係の el ファイルが無条件に
+	インストールされてしまうのを修正。
+	* 新規関数 wl-install-modules。
+
+1999-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.1 - "Wild World"
+	* typo: stickey -> sticky.
+	* wl-nemacs.el: Nemacs 向けに local-variable-p を定義。
+	* Rename: etc/ChangeLog.* -> etc/ChangeLog.*.ja
+	* Rename: etc/ChangeLog.*.en -> etc/ChangeLog.*
+	* XEmacs でロゴが出ないのを修正。
+	* XEmacs のインストール関数がこわれていたのを修正。
+	(Hidetomo Machi <machi@ailab.is.tsukuba.ac.jp> さんの御指摘)
+	* wl-ja.texi: MIME 用モジュールのインストールの項を更新。
+	* インストール時、作った info ファイルを消さないようにした。
+	* 新規関数 wl-kill-buffers。
+	* wl-summary-force-exit と wl-exit のときに Sticky Message を削除
+	するようにした。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御助言)
+
+1999-09-14  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* XEmacs-21.1.6 では sticky サマリで wl-summary-read がエラーにな
+	  るのを修正した。
+
+1999-09-14  Koichiro Ohba <Koichiro.Ohba@nf-system.co.jp>
+
+	* ja/dot.wl の elmo-eword-decode-string の変更洩れを修正。
+
+1999-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* tm-wl.el: SEMI API にあわせて defalias-maybe した。
+	* よく考えたら smtp.el は flim|clime に含まれているので削除．
+
+1999-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.2.0 - "Vogue"
+	* smtp.el: Sync up with flim-1.13.2。
+	* 新規変数 wl-install-els。nil なら el ファイルをインストールしない。
+	(for WL-CFG)
+	* wl-draft-reply 等を Sticky Message 対応。
+	* wl-drfat-buffer-cur-message-buffer ->
+	wl-current-message-buffer とし、wl-util.el に移動。
+	* elmo-cross-device-link-error-p を変更。
+	(pf21 GOTO_Toshiya <pf21@pure.cpdc.canon.co.jp> さんの御報告に基づく)
+
+1999-09-13  Mito <mit@nines.nec.co.jp>
+
+	* Sticky Message。
+	* Score ファイルの guess 方法の拡張。
+	* elc だけでなく el ファイルもインストールされるようにした。
+
+1999-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* サンプルファイルは samples ディレクトリにまとめるようにした。
+	* サンプルファイル英語版を追加。
+	* etc/*.xpm -> etc/icons/*.xpm
+	* etc/TODO -> doc/TODO.ja
+
+1999-09-12 OKAZAKI Tetsurou <okazaki@be.to>
+
+	* since, before 関係の修正。
+
+1999-09-10  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* im-wl-prog-imput-error-msg ->	im-wl-dispatcher-error-msg。
+
+1999-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* convert-standard-filename の defmacro を廃止。
+	* open-network-stream-as-binary の defmacro を削除。
+	* with-current-buffer, with-temp-buffer 等の defmacro を削除。
+	* elmo-eword-decode-string -> 廃止。
+
+1999-09-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規変数 elmo-default-imap4-user．
+	(Taiji.Can@atesoft.advantest.co.jp さん の御助言に基づく)
+	* 2.1.5 - "Unbelievable"
+
+1999-09-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規変数 elmo-nntp-max-number-precedes-list-active。
+	Non-nil なら list active で得られる数字を記事番号の最大値として扱う。
+	* 新規関数 elmo-update-number。
+	elmo-nntp-max-number-precedes-list-active が non-nil のときに
+	サマリの同期時に、msgdb の更新がなくても記事番号の最大値を同期
+	させるようにした。
+	(岡田 健一 (Kenichi OKADA) <okada@opaopa.org> さんの御指摘に基づく)
+
+1999-09-06  Akihiro Motoki <mokkun@iname.com>
+
+	* elmo-localnews-append-msg の引数が足りなかったのを修正。
+
+1999-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* [im-wl] im-wl-prog-imput-error-msg がバッファローカルになっても
+	大丈夫なよう、プロセスバッファに値をコピーするようにした。
+	* (elmo-folder-local-p) を使って、'N','P' も local なら plug 状態
+	に関係なく動作するようにした。
+	(Akihiro Motoki <mokkun@iname.com> さんの御助言)
+
+1999-09-03  Akihiro Motoki <mokkun@iname.com>
+
+	* 'p' が localdir でも未読メッセージをスキップしてしまうのを修正。
+	* 新規関数 (elmo-folder-local-p)
+
+1999-09-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* テンプレート選択のキーバインドを C-cC-j にした。
+	(TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>さん、
+	Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御助言)
+
+1999-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* ドラフトの送信時、キュー処理時のメッセージの出し方を変更。
+
+1999-08-31  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* [im-wl] サブプロセスの呼び出し時にバッファを変更せず、
+	  プロセスの出力だけ" *Wl Watch*" に向けるようにした。
+
+1999-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* [wl-ja.texi] extra-fields が IMAP フォルダで有効になっていたのを
+	反映。(Sasaki Toshiya <toshi@unicorn.tohoku.nttcom.co.jp>さんの御指摘)
+	*  分割された MIME encode されたメッセージを送ろうと思うと、
+	無限ループに陥ってしまうのを修正。
+	(Mikio Nakajima <minakaji@osaka.email.ne.jp> さんの御指摘)
+
+1999-08-30  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* new im-wl.el
+
+1999-08-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 最下行で `K'/`L' (wl-summary-increase/lower-score) すると,
+	rule 入力に突入してしまうので if 文をひとつ被せた。
+	(TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp> さんの御助言)
+	* EMWAC 等のサーバーでは、サーバーからの返答を待つ前にコマンドを
+	送ってしまうとその後サーバーからの応答がなくなってしまうらしいので、
+	新規変数 elmo-pop3-send-command-synchronously が non-nil なら
+	サーバの返答を待つようにした。
+	(Atsushi Tada <tada@tworks.co.jp> さんのパッチに基づく)
+	* 最近の SEMI で mime-store-message/partial-piece が動かなく
+	なったのを修正。
+	* XEmacs でドラフトモードのアイコンが出なくなっていたのを修正。
+
+1999-08-26  Teruki SHIGITANI <shigi@tel.ts.fujitsu.co.jp>
+
+	* サマリモードで最後の行（メッセージがない行）にカーソルをおい
+	て "y" を入力する（wl-summary-saveを実行しようとする）と、メッ
+	セージ番号が取れないためエラーとなるのを修正。
+
+1999-08-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 背景が明色の場合の色のデフォルトをちょっと変更してみた。
+	* フィルタ指定で /last=200/ としてしまうとまずいことになるのを修正．
+	* % のアクセスグループとして root を指定できなかったのを修正．
+
+1999-08-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.1.4 - "Tears In Heaven"
+	* [wl-ja.texi] Summary の C-u . の説明を追加
+	  (susumu-w@ops.dti.ne.jp の御指摘)。
+
+1999-08-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* フォルダ脱出時のマーク実行が失敗した場合、サマリにゴミが
+	  残ってしまうので、失敗した場合はエラーを発生するようにした。
+	* split されたメッセージのヘッダが encode されないことがあるのを修正。
+	* Unplugged で，キャッシュされたIMAPフォルダの未読メッセージを
+	  読んだことが，オンラインになった瞬間にサーバ側に反映されないのを
+	  修正．
+	* Unplugged で，ファイルキャッシュされていないメッセージを読むと，
+	  前のメッセージが表示されてしまうのを修正．
+	* 全般に, スレッドを開閉すると temp-mark より mark の方が優先
+	  されて色がつくのを修正(susumu-w@ops.dti.ne.jp の御指摘)．
+	* wl-thread-insert-message: wl-summary-goto-top-of-current-thread を
+	  使わないようにした。
+	* wl-summary-goto-top-of-current-thread: 書き直し。
+	* "W" でドラフトを作成したときに，
+	  wl-mail-setup-hook が呼ばれない修正がなされていなかった．
+	  (岡田 健一 (Kenichi OKADA) <okada@opaopa.org> さんの御指摘)
+	* push -> wl-push．
+	  (Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御助言)
+
+1999-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-eword-decode-string を defalias するのをやめる。
+	* tm で flim が使われていれば User-Agent にバージョンを表示．
+	* partial merge 関数の ID 比較部分を修正．
+
+1999-08-22  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-catchup-msgdb): overview が得られなくて，
+	msgdb が (nil nil nil nil) となる場合に対処。
+
+1999-08-20  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-pop3.el: elmo-pop3-list-folder を整理。
+
+1999-08-20  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 新規変数 wl-score-folder-alist-matchone。
+	* wl-score-folder-alist の書式を拡張した。
+
+1999-08-20  Mito <mit@nines.nec.co.jp>
+
+	* wl-score-folder-alist の score file を指定する所に
+	  guess というシンボルを指定した場合はそのフォルダ名から score
+	  file を推測するようにした。
+
+1999-08-19  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* (wl-summary-switch-to-clone-buffer): コピーする変数に
+	  wl-summary-buffer-temp-mark-list, wl-summary-default-score,
+	  wl-summary-important-above, wl-summary-temp-above,
+	  wl-summary-mark-below, wl-summary-expunge-below を追加した。
+
+1999-08-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 忘れ去られていた wl-thread-exec を実装。
+	  ("KJ.TASAKI" <kj.tasaki@18software.co.jp> さんの御指摘)
+	* sync-all のときも temp-mark が残っていれば、実行するかどうか
+	  確認するようにした。
+	  (Taiji.Can@atesoft.advantest.co.jp さんの御指摘)
+	* elmo-vars.el の berkeley-db の修正洩れ。
+	  (Mikio Nakajima <minakaji@osaka.email.ne.jp> さんの御指摘)
+	* timezone-parse-date の y2k 対策。
+	  (Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御指摘)
+
+1999-08-17  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* wl-fldmgr.el の interactive command の autoload 設定を整理。
+
+1999-08-16  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* Scoring 処理を高速化した。
+	* wl-summary-sort-by-{from|subject} を高速化した。
+	* wl-summary-switch-to-clone-buffer で変数 wl-current-score-file
+	  と wl-score-alist もコピーするようにした。
+	* 関数 wl-as-mime-charset を追加した。
+	* Use wl-score-mode-mime-charset instead of
+	  wl-score-mode-coding-system.
+	* elmo-make-hash のデフォルトテーブルサイズを 1024 とした。
+
+1999-08-14  susumu-w@ops.dti.ne.jp
+
+	* wl-thread-jump-to-msg が interactive で呼ばれるとエラーになる
+	  のを修正．
+	* Summary の "J" に wl-thread-jump-to-msg を割り当て．
+	* localdir, localnew, maildir において unplugged でも
+	  plugged と同じように n,p する．
+	* t d では方向を考慮してくれないのを修正．
+	* c-u t d で いっこ前のスレッドが D されてしまうのを修正．
+	* d だと次のメッセージが表示されるが, t d だと表示されないのを修正．
+	* n,p において, D が付いたメッセージを飛ばすようにした．
+
+1999-08-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* [elmo] UW imapd のリモートフォルダにアクセスできなかったのを修正．
+
+1999-08-04  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* wl-queue-folder に格納されたメッセージの本文が
+	  表示されないのを修正(須崎 昇 <no_bo@geocities.co.jp> さんの御指摘)．
+	* 2.1.3 - "Sukiyaki"
+
+1999-08-03  岡田 健一 (Kenichi OKADA) <okada@opaopa.org>
+
+	* ChangeLog から余分な Tab/Space を削除。
+	* wl-vars.el の typo 修正。
+	* wl-ja.texi: wl-folder-{prefetch|mark-as-read-all}-current-entity
+	の説明を追加。
+
+1999-08-03  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* キューに溜ったメッセージの送信時にエラーが発生してもキューから
+	消えてしまうのを修正。
+	(Mikio Nakajima <minakaji@osaka.email.ne.jp> さんの御指摘)
+	* mmelmo-imap4.el: mime-goto-header-start-point,
+	mime-goto-header-end-point, mime-entity-header-buffer,
+	mime-entity-body-buffer を実装。
+	(Taiji.Can@atesoft.advantest.co.jp さんの御指摘)
+	* smtp.el: 試しに新規オプション smtp-notify-success をつけてみた。
+	* wl-mime.el: pertial のマージに失敗する場合があるのを修正。
+	(Shuichi Nishioka <shu@gohome.org> さんの御指摘)
+	* reedit 時にマルチパートのメッセージを再編集できなくなっていたの
+	を修正。
+	* 一時マークの処理を unwind-protect で囲まないようにし、
+	サマリ脱出時に一時マークの処理を C-g で中断できるようにした。
+	(Mito <mit@nines.nec.co.jp> さん、
+	Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さん,
+	Taiji.Can@atesoft.advantest.co.jp さんらの御指摘御助言に基づく)
+
+1999-08-02  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* POP3 の接続が切れてしまったときにオフラインへのトグルが
+	できないのを修正。
+	* wl-ja.texi で wl-toggle-plugged が wl-draft-toggle-plugged に
+	なっていたのを修正。
+
+1999-08-01  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* XEmacs の configure に --with-database=berkdb オプションを付け
+	てコンパイルしている場合、elmo-use-database
+	を non-nil にセットしても elmo-database.el が load されてないのを
+	修正。
+
+1999-07-30  Mito <mit@nines.nec.co.jp>
+
+	* Summary の (window-height) が小さい時、SPC でエラーが出るのを修正。
+
+1999-07-29  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* (localdir, maildir, localnews, archive) ->
+	 (localdir, localnews, archive) というコピーや移動は直接 link(copy)
+	するようにした。
+	* wl-summary-pick において，同じ Message-ID である複数のメッセー
+	  ジにマッチしても1つ目にしかtempマークが付かないのを修正した。
+	* Followup-To: poster に対応した。
+	* Superseds メッセージを作成するコマンド
+	 wl-summary-supersedes-message を新規作成した。
+	* wl-util.el (wl-string): Use set-text-properties instead of
+	  format.
+
+1999-07-28  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* 先の elmo-multiple-field-body の修正で自分が出したメールに
+	  reply できなくなっていたのを修正。
+
+1999-07-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* New function: elmo-multiple-field-body and
+	  elmo-multiple-fields-body-list. 同名の複数のフィールドを取得す
+	  るようにした。
+
+1999-07-26  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-localnews-copy-msgs が未定義にも関わらず呼ばれるのを修正。
+
+1999-07-24  HAYAKAWA akio <akio-h@po.iijnet.or.jp>
+
+	*  wl-(un)plugged-hook を定義するとエラーになってしまうのを修正。
+
+1999-07-23  岡田 健一 (Kenichi OKADA) <okada@opaopa.org>
+
+	* "W"でドラフトを作成したときに wl-mail-setup-hook が呼ばれない
+	  のを修正。
+
+1999-07-22  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* wl-summary-cancel-message を Sticky Summary に対応させた。
+
+1999-07-16  Teruki SHIGITANI <shigi@tel.ts.fujitsu.co.jp>
+
+	* sample.dot.wl内に、送信したメッセージのときは差出人の代わりにToや
+	  Newsgroupsを表示する機能を実現するコードで、To が
+	  mime-encodeされたままになってしまう不具合を修正。
+
+1999-07-15  Masahiro Murata  <muse@ba2.so-net.ne.jp>
+
+	* Fix: void-function wl-summary-rescore-msgs.
+
+1999-07-15  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* elmo-imap4 も Emacs20 の multibyte の設定がおかしくて
+	文字化けしていたのを修正。
+	* 2.1.2 - "Rico Suave"
+
+1999-07-14  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* Summary での "I" も prefix-arg つきならチェックをスキップする
+	ようにした。
+	* elmo-nntp で Emacs20 の multibyte の設定がおかしくて
+	文字化けしていたのを修正。
+	* 'u' のメッセージを読まなかったことにできなかったのを修正。
+	* XEmacs でいきなり wl-draft を実行するとエラーが発生を修正。
+	  (Taiji.Can@atesoft.advantest.co.jp さんより御指摘)
+	* 一部で wl-summary-highlight が無視されていたのを修正。
+	* フォルダのグループから "I" したときに合計を表示するようにした。
+	* プリフェッチするとサマリが modified になってしまうのを修正。
+	* フォルダから "U" のメッセージを "I" できないのを修正。
+	  (susumu-w@ops.dti.ne.jp さんより御報告)
+
+1999-07-14  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-score: (wl-score-simplify-subject)
+	wl-summary-subject-func を呼ぶ代わりに
+	wl-score-simplify-fuzzy-regexp を使用するようにした。
+	* バッファキャッシュ機能で同じキャッシュバッファが複数できるのを
+	  修正した。
+
+1999-07-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* delete-if -> elmo-delete-if。
+
+1999-07-13  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* 'I' で、サイズが大きくてプリフェッチをスキップしても
+	  プリフェッチした数に含まれてしまうのを修正。
+	  (susumu-w@ops.dti.ne.jp さんより御報告)
+	* 2.1.1 - "Praying For Time"
+
+1999-07-12  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* wl-draft-insert-signature -> 廃止。
+	* wl-summary-prefetch-all-new -> 削除。
+	* C-g でパスワード入力を中断すると wrong-type-argument databasep nil
+	  が出ることがあるのを修正(したつもり)。
+	  ("MATSUBAYASHI 'Shaolin' Kohji" <shaolin@rins.st.ryukoku.ac.jp>
+	   さんの御報告に基づく)
+	* 新規変数 wl-summary-incorporate-marks。
+	 'I' でプリフェッチするマークを指定。デフォルトは、"N" と "U"。
+	* elmo-nntp.el と mmelmo.el から (elmo-set-buffer-multibyte nil)
+	  を削除 (Shigeru OKUMURA <sokumura@jaist.ac.jp> さんの御助言)。
+	* wl-mule.el に make-face が定義されていないときにダミー関数を定義。
+	  (HAYAKAWA akio <akio-h@po.iijnet.or.jp> さん、
+	   OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp> さんの
+	   御助言に基づく)
+	* pop3 フォルダが unplugged でエラーを発生するのを修正(したつもり)。
+	  (HAYAKAWA akio <akio-h@po.iijnet.or.jp> さんの御指摘)
+
+1999-07-12  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-msgdb-extra-fields が nil のとき，fetch が失敗するのを修
+	  正した。
+
+1999-07-11  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* elmo-crosspost-message-alist をファイルに保存するようにした。
+	* 変数値を保存する際は，なるべく elmo-object-load と
+	  elmo-object-save を使用するように変更した。
+	* Scoring 機能で wl-summary-rescan や sync-all 時には references
+	  や thread のエントリを自動追加しないようにした。
+	* imap4 フォルダで extra フィールドが取得できるようにした。
+
+1999-07-10  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* localnews でも 'W' で Newsgrops を補完してドラフトを作成できるよう
+	  にした。
+
+1999-07-08  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* Nemacs で internal("'mark") が読めなかったのを修正。
+
+1999-07-07  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* wl-summary-mark-below のcustomのグループを 'wl-score に修正。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御指摘)
+	* wl-summary-incorporate で、wl-summary-prefetch-all-new のかわりに
+	(wl-summary-prefetch-region (point-min) (point-max))
+	を使うようにした。
+	(Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp> さんの御助言)
+	* Summary の C-u . が効かなくなっていたのを修正。
+	(Hideo Matsumoto <hideo-m@nerv.org> さんより御指摘)
+
+1999-07-06 sen_ml@eccosys.com
+
+	* rfc2368.el - version 0.3
+
+1999-07-06  Hideo Matsumoto <hideo-m@nerv.org>
+
+	* 新規変数 wl-draft-use-frame。
+	draftを開くときに新しいframeを開く。
+
+1999-07-06  Masahiro MURATA (村田全寛)  <muse@ba2.so-net.ne.jp>
+
+	* 関数 wl-day-number の mapcar にある lambda を quote。
+	* wl-score.el: wl-summary-{increase|lower}-score で Subject のマッ
+	  チ文字列を簡略化するようにした。
+	  wl-current-score-file と wl-score-alist を buffer-local にした。
+	* wl-summary.el: wl-summary-scored を nil にする位置を変更した。
+	* Rename:
+	  wl-score-simplify-subject-fuzzy-regexp ->
+	  wl-score-simplify-fuzzy-regexp
+	  wl-score-simplify-buffer-fuzzy-step -> elmo-buffer-replace.
+	* wl-ja.texi: スコア機能の変更。
+	* wl-draft.el: autoload 設定の追加。
+	* sample.dot.wl: wl-summary-next-no-unreadの削除。score機能の設
+	  定追加。
+
+1999-07-06  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* Summary の C-u . が効かなくなっていたのを修正。
+	  (Hideo Matsumoto <hideo-m@nerv.org> さんより御指摘)
+	* Nemacs では wl-summary-{print|remove}-destination を
+	ダミー関数にする。
+	* Nemacs 用に rassoc を定義。
+	* Nemacs の Folder モードで 'm' を押すとエラーになるのを修正。
+	* Nemacs では wl-use-scoring の default を nil にした。
+	* 新規関数 elmo-delete-if。replacement of delete-if。
+	* Nemacs でバイトコンパイルするとなぜか (defvar nil nil) のエラー
+	  が出るのを修正。
+	  (Taiji.Can@atesoft.advantest.co.jp さんより御指摘)
+	* 2.1.0 - "Ordinary World"
+
+1999-07-05  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* partial をマージできなかったのを修正。
+	  (Taiji.Can@atesoft.advantest.co.jp さんより御指摘)
+	* wl-summary-rescore も wl-summary-rescore-partial-threshold に従う
+	  ようにしてみた。
+	* wl-summary-score-update-all-lines の処理中メッセージを出すように
+	  した。
+
+1999-07-04  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-score.el: date, extra, followup, thread キーを追加した。
+	* `wl-score-default-file-name' で指定されたスコアファイルを必ず読み
+	込むようにした。
+	* サマリバッファ，およびスコア編集バッファでスコアファイルを作成する
+	機能を追加した。
+	* wl-vars.el: defcustom を整理した。
+	* wl-highlight.el: defface にグループを追加した。
+
+1999-07-01  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* 新規 sync レンジ rescan-noscore。スコアを反映せず表示しなおす。
+	* rescan/sync-all では既読メッセージでも score を反映するようにした。
+	* 新規変数 wl-summary-rescore-partial-threshold。rescan, sync-all で
+	  スコア付けするメッセージ数の上限を指定。
+	* wl-edit-again-func->wl-edit-decode-message-func
+	(tomo@etl.go.jp (守岡 知彦 / MORIOKA Tomohiko) さんの御助言)
+	* elmo-util.el から日本語コメントを消す。
+	* wl-refile-alist-setup の実装を変更。
+
+1999-06-29  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* wl-refile-(msgid-)learn や, wl-refile-guess-* の中で,
+	  毎回 wl-refile-(msgid-)alist が load されてるかどうか調べるのは
+	  無駄なので起動時に必ず load するようにした。
+	* wl-refile-(msgid-)learn が一度呼ばれる毎に wl-refile-alist-save
+	  するのは, 無駄なので WL 終了時に一回だけ save するように
+	  した。
+	* wl-refile-(msgid-)learn の返り値を変更。
+
+1999-06-29  Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp>
+
+	* cl の require を eval-when-compile で括り、順番を変える。
+
+1999-06-29  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* unread が 0 の時 [Space] でサマリから抜けられなかったのを修正。
+	* cl.el の member () が poe-18.el の member () を上書きしてしまう
+	  のを修正。
+
+1999-06-29  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* AIR MAIL(AIRCimapd release 2.00) に対応。
+	(Sasaki Toshiya <toshi@unicorn.tohoku.nttcom.co.jp> さんの御報告
+	 に基づく)
+
+1999-06-29  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* wl-score での expunge を「読んだことにして、
+	  サマリバッファから消すだけ」とした。
+	* update 時に expunge したことを報告。
+
+1999-06-28  Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp>
+
+	* elmo-pop3.el で md5-encode を使わないようにした。
+
+1999-06-28  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* MK-MK:
+	(mapcar (lambda ..)) が v18 では動かないので quote する。
+	Nemacs でも wl-mule.elc がインストールされることになってたのを
+	修正。
+	defgroup(), defcustom() 問題回避コードを復活。
+	* wl-summary.el, wl-demo.el:
+	float が使えない一部の Emacsen でのエラー回避。
+	* wl-nemacs.el:
+	completing-read() は引数を五つまでしか受付けないので関数を置換
+	（極悪）。
+	read-char-exclusive() が存在しない場合にエラーにならないように
+	する。
+
+1999-06-28  Masahiro MURATA (村田全寛)  <muse@ba2.so-net.ne.jp>
+
+	* default-case-fold-search が nil のとき，wl-summary-pick が正常
+	  に動作しないのを修正した。
+	* important マークが2つ以上あると，wl-auto-select-next がnon-nil
+	  のときに次の未読フォルダに移らないのを修正した。
+
+1999-06-28  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* 関数 wl-summary-delete-all-delete-marks () 追加。
+	* (wl-summary-cleanup-temp-marks) がなぜか２回呼ばれていたのを修正。
+	(嵯峨田さん <sagata@nttvdt.hil.ntt.co.jp> の御指摘)
+
+1999-06-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* folder モードで wl-summary-goto-folder-subr を一時的にサマリに移
+	  動した時は，Scoring されないようにした。
+	* wl-summary-next-no-unread を削除し，wl-auto-select-next だけで制
+	  御するようにした。
+	* wl-summary-move-order のデフォルト値を 'new から 'unread に変更
+	  した。
+
+1999-06-27  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* Nemacs で  (wrong-type-argument listp 1) が発生するのを修正。
+	* Nemacs が timer がなくてエラーになるのを condition-case で回避。
+
+1999-06-27  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* スコアファイルを ctext (*ctext) で読み書きするようにした。
+
+1999-06-26  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* mailto: と同様 nntp: news: に対応させる関数．
+	  (-> wl-utils.el に追加。)
+
+1999-06-25  Masahiro MURATA <muse@ba2.so-net.ne.jp>
+
+	* wl-score.el: coding-system がバグっていたのを修正。
+
+1999-06-25  Masahiro MURATA <muse@ba2.so-net.ne.jp>
+
+	* wl-score.el: 新規ファイル。Score 機能を追加した。
+	* wl-summary.el: (wl-summary-sync-update3)
+	 wl-folder-set-folder-updated のタイミングを変更した。
+	* (wl-summary-update-crosspost) スレッドをオープンせずに既読マー
+	 クを付けるように変更した。
+	* wl-util.el: New function `wl-delete-alist'.
+	 New macro `wl-as-coding-system'. Add emulate function `pp'.
+
+1999-06-24  pf21 GOTO_Toshiya <pf21@pure.cpdc.canon.co.jp>
+
+	* [wl-ja.texi] wl-thread-open-reading-thread の説明追加。
+
+1999-06-24  Kenichi OKADA <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* elmo-cache-expire がエラーを発生するのを修正。
+
+1999-06-24  sen_ml@eccosys.com
+
+	* utils/rfc2368.el のバグ修正。
+
+1999-06-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.0.1 - "Now And Forever"
+	* body に --text follows this line-- があるとその行以前がなくなる
+	  のを修正(不完全)。
+	  (岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp> さん
+	   の御指摘)
+
+1999-06-24  MAKINO Takashi <makino@cyber.office.ne.jp>
+
+	* 新規関数 wl-refile-guess-by-msgid。
+
+1999-06-23  Akihiro Motoki <mokkun@iname.com>
+
+	* wl を起動していない状態 かつ (setq wl-stay-folder-window t)の場合、
+	  wl-draft を行うと、wl-draft-send-and-exit も wl-draft-kill も
+	  失敗するのを修正。
+
+1999-06-23  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* wl-ja.texi: wl-template-alist の説明: file -> body-file
+
+1999-06-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Draft で prefix つきで C-c C-y するとカットバッファから
+	  引用するようにしてみた。
+	* elmo-imap4-int-string-to-list -> 廃止。
+	  (Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>さんの御助言)
+	* 最近よく間違えるので Summary の 'e' を wl-summary-save に
+	  割り当てた。
+	* wl-set-string-width から不要と思われる let を取った。
+	* Unplugged状態だと，MHフォルダ間でのrefileで，elmo-copy-msgs のあとに
+	  elmo-append-msg も呼ばれるのを修正。
+	  (Koji IIDA / 飯田 浩二 <kiida@nttx.co.jp> さんより御指摘)
+
+1999-06-22  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* mule/emacs で wl-draft-prepared-config-exec が
+	  C-c C-d と C-c C-e の両方に割りあてられていたのを修正。
+	* wl-completion-buf-name の値を
+	  emacs 標準の補完用バッファ *Completions* に合わせた。
+	* wl-message-buffer-created-hook を設定しても適切に hook が
+	  呼ばれていないのを修正。
+	  (Akihiro Motoki <mokkun@iname.com> さんより御指摘)
+
+1999-06-22  Masahiro MURATA (村田全寛)  <muse@ba2.so-net.ne.jp>
+
+	* elmo-nntp.el: XOVER での size の取得が誤っていたのを修正した。
+	(elmo-nntp-string-to-vector): Renamed from
+	`elmo-nntp-string-to-list'.
+	* elmo-localdir.el: ファイルサイズを file-attributes で取得するよ
+	うにした。
+
+1999-06-21  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* elmo-pop3 の max-of-folder を効率化。
+
+1999-06-21  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* .wl の syntax 等のエラーをちゃんと吐かせる（ユーザに知らせる）
+	  ようにした。
+	* おまけ。
+
+1999-06-19  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* (featurep 'tinycustom) なら defface の定義を無視する。
+
+1999-06-18  Shigeru OKUMURA <sokumura@jaist.ac.jp>
+
+	* nntp の文字化けがまだ直っていなかったのを修正。
+
+1999-06-18  Masahiro MURATA (村田全寛)  <muse@ba2.so-net.ne.jp>
+
+	* @ で正しくアドレスを expand するようにした。
+
+1999-06-16  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* 新規変数 wl-use-dnd。ドラッグアンドドロップ機能をつかうかどうか。
+
+1999-06-16  Masahiro MURATA (村田全寛)  <muse@ba2.so-net.ne.jp>
+
+	* [elmo-nntp] elmo-list-folder で "LISTGROUP" コマンドを使うよう
+	  にした。
+	* [elmo-nntp] xover の使用可否をサーバごとに保持するようにした。
+
+1999-06-16  Shigeru OKUMURA <sokumura@jaist.ac.jp>
+
+	* Content-Typeがsjisやeucだと mailやnewsが化けてしまうのを修正。
+
+1999-06-16  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* [elmo-imap4] cram-md5 対応。
+
+1999-06-15  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* tm で error: Split sender is not specified for `wl-draft-mode'.
+	  と出るのを修正。
+	(Toshihiko Kodama <kodama@ayame.mfd.cs.fujitsu.co.jp> さんの御指摘)
+
+1999-06-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* `wl-draft-enable-queuing' の説明がダブっていたのを修正。
+	(Toshihiko Kodama (小玉 利彦) <kodama@ayame.mfd.cs.fujitsu.co.jp>
+	さんより御助言)
+
+1999-06-14  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* wl-detect-info-directory() をちょっと賢くしてみた。
+
+1999-06-13  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* バッファキャッシュ。
+	   新規変数 elmo-use-buffer-cache が non-nil ならキャッシュ。
+	  デフォルトは t。
+	 一旦読んだメッセージをバッファに残しておく機能。
+	* メッセージの先読み(cache-prefetch)。
+	  メッセージを読んでいる間に次の(未読)メッセージを先読みして
+	  バッファキャッシュにためておく。
+	  新規変数 wl-cache-prefetch-folder-type-list にあるフォルダを
+	  キャッシュする。デフォルトは '(nntp imap4)。
+	* 新規変数 elmo-buffer-cache-size。デフォルトは 10。
+	* 新規変数 wl-cache-prefetch-folder-list。デフォルトは nil。
+	* 新規変数 wl-summary-no-mime-folder-list。デフォルトは
+	  '("^\\+draft$")。mime解析せずに表示するフォルダの設定。
+
+1999-06-13  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* WL-MK:
+	  info 生成時の codesys の決定は wl-vars.el を利用する。
+	  info の分割オプションを廃止。
+	  info のインストール時には複写ではなく移動する。
+
+1999-06-13 Sen Nagata <sen@eccosys.com>
+
+	* 新規ファイル utils/wl-use-agent.el, utils/rfc2368.el
+
+1999-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-get-mime-entityの中の
+	  elmo-imap4-get-connectionの引数が少なかったのを修正。
+	  (岡田健一さん<kokada@tamaru.kuee.kyoto-u.ac.jp>の御助言)
+	* 2.0.0 - "Mmmbop"
+	* wl-summary-partial-highlight-above-lines が nil なら
+	  Summary 開始時のカーソルの位置に関係なく最後から
+	  wl-summary-highlight-partial-threshold 行だけハイライトする
+	  ようにした。
+	* Sen Nagata <sen@eccosys.com> さん作の util/wl-user-agent.el を
+	  最新版に更新。
+	  (奥西さん <fuji0924@mbox.kyoto-inet.or.jp> より御指摘)
+
+1999-06-10  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* IAMP4とNNTPのアクセスグループで，ポート番号が
+	  デフォルトと違うとエラーが出るのを修正。
+
+1999-06-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* ファイル名変更
+	  ChangeLog.en -> ChangeLog
+	  ChangeLog -> ChangeLog.ja
+	* [wl-ja.texi] wl-plugged の説明を追加。
+	  (池田さん <daisuke@cc.kyushu-u.ac.jp> より御助言)
+
+1999-06-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 新規変数 elmo-default-pop3-ssl elmo-default-nntp-ssl
+	  elmo-default-imap4-ssl。non-nil なら "!" を付けなくても SSL を使う。
+	* 名前変更
+	  elmo-nntp-port -> elmo-default-nntp-port
+	  elmo-imap4-port -> elmo-default-imap4-port。
+	  (岡田さん <kokada@vlsi.kuee.kyoto-u.ac.jp> の御助言)
+	* [elmo] imap4, nntp, pop3 でフォルダ名の最後に "!" がついたら SSL を
+	  使うようにした。
+	* [elmo] imap4, nntp, pop3 でポートを指定してないサーバとのセッションと
+	  ポートを指定した同じサーバとのセッションでコネクションが
+	  かちあわないようにした。
+
+1999-06-09  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* POP でも変数 elmo-default-pop3-server を新設、"&USER" だけで
+	  もアクセスできるようにした。
+	* mmelmo-imap4.el にポート番号指定の修正。
+	* [wl-ja.texi] 修正。
+
+1999-06-08  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* IMAP4 フォルダで port 番号を指定できるようにした。
+
+1999-06-07  Akihiro Motoki <motoki@ptl.abk.nec.co.jp>
+
+	* メールの順序が 削除前のフォルダと trashフォルダで逆になってしまう
+	  のを修正。
+	* wl-summary-pick で field-name として elmo-msgdb-extra-fields を指定
+	  できるようにした。
+
+1999-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary-jump-to-parent-message() は、スレッドと同様
+	  In-Reply-To を優先する。
+	  (嵯峨田さん <sagata@nttvdt.hil.ntt.co.jp> の御指摘)
+	* From が wl-from にマッチするメッセージに返事を書くときは、
+	  To, Cc, Newsgroups を保存する。
+	  (津邑さん <tsumura@kuis.kyoto-u.ac.jp> の御助言)
+
+1999-06-06  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* stickyサマリに対して，wl-folder-mark-as-read-all-entity,
+	  wl-folder-sync-entity, wl-folder-prefetch-entity を実行すると，
+	  未読メッセージなどに highlight がつかないのを修正した。
+
+1999-06-05  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* wl-folder-no-auto-check-folder-p で wl-auto-check-folder-list を
+	  優先させるようにした。
+	* wl-summary-switch-to-clone-buffer で
+	  wl-summary-buffer-new-count と wl-summary-buffer-unread-count が
+	  コピーされないのを修正した。
+	* wl-folder-empty-trash でサマリバッファが表示されないのを修正した。
+	* bbdb2 で bbdb-wl.el をコンパイルする時のwarningをなくした。
+	* interactive を nil にして wl-summary-goto-folder-subr した際，
+	  recenter でエラーが出ることがあるのを修正した。
+	* bbdb2 で bbdb-wl.el をコンパイルする時のwarningをなくした。
+	* wl-folder-suspend-hook を追加した。
+
+1999-06-06  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* "V" で仮想フォルダを作成するとサマリが表示されず、sync update
+	  しなければならない。また、更に "V" してから "C-u V" で元の仮想
+	  フォルダに戻ると再びサマリが表示されなくなってしまう。
+
+1999-06-04  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* font-lock による弊害を避けるため、wl-draft-reedit() でも
+	  change-major-mode-hook を nil に束縛する。
+	* wl-message-refer-article-or-url() を実行した際、サマリのカー
+	  ソルが当該メッセージに移動しないバグを修正。
+
+1999-06-03  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* sticky サマリから移動する際，temp-mark がついているとその
+	  マークは消えても highlight が残ったままになるのを修正した。
+	* wl-summary-buffer-copy-list が buffer-local-variables になって
+	  いなかったのを修正した。
+	* サマリの移動時に interactive でない場合は switch-to-buffer で
+	  はなく，set-buffer するようにした。
+
+1999-06-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	*  関数 elmo-imap4-identical-name-space-p を実装するのを忘れていた。
+	   (森山さん <taka@airlab.cs.ritsumei.ac.jp> の御指摘)
+	* [mmelmo.el, mmelmo-imap4.el] FLIM 1.13 API に対応。
+
+1999-06-03  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* sticky summaryを使うと、draft終了後、別のsummaryに戻る事がある。
+	* menu に mR と mfが二つづつあったのを修正。
+	* wl-summary-jump-to-current-message がちょっと変だったのを修正。
+
+1999-06-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* XEmacs package でも BBDB が存在すれば utils/bbdb-wl.el も
+	  bytecomp/install する。
+	* 新規変数 wl-summary-keep-cursor-command。
+	  コマンドごとにカーソル位置をそのままにするかどうかを設定できる
+	  ようにした。
+
+1999-06-02  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* BBDB が存在すれば utils/bbdb-wl.el も bytecomp/install する。
+
+1999-06-02  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* elmo-pop3のバイトコンパイル時のヲーニングをとる。
+	* [WL-MK] 一度，makeしてelcを作った後に，elmo-*.elを変更して，
+	  もう一度makeすると，エラーになるのを修正。
+
+1999-06-02  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* sticky サマリでの update 時に，新規メッセージが highlight されなく
+	  なったのを修正した。
+
+1999-06-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.0.1 から分岐。
+
+1999-06-01  Masahiro MURATA (村田全寛) <muse@ba2.so-net.ne.jp>
+
+	* 移動先のバッファが既に存在していた場合の動作を変更し、
+	  'g' で呼ばれた場合は update せずにカーソル位置を保持するようにした。
+	* 'g' で移動する際，wl-ask-range(新規変数) が nil なら，
+	  wl-folder-sync-range-alist の値を使用するようにした。
+	* wl-summary-read-folder で入力したフォルダ名のみの履歴を
+	  wl-read-folder-hist に記録するようにした。
+	* 交互にサマリを切り替える新規コマンド、
+	  wl-summary-goto-last-visited-folder。(キーバインドには未割り当て)
+
+1999-06-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 1.0.1 - "The Look"
+	* wl-ja.info をパッケージから削除。
+
+1999-06-01  Sen Nagata <sen@eccosys.com>
+
+	* compose-mail のインターフェースをサポート。
+	  (新規ファイル wl-user-agent.el を追加)
+
+1999-05-31  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-stay-folder-window が non-nil のとき、full window で
+	  draft を作成した後、 C-cC-k や C-cC-c で、draft を終了して
+	  summary mode に戻った時に、folder window が消えてしまわない
+	  ようにした。
+
+1999-05-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* folder モードなどからフォルダ移動するとき、
+	  wl-folder-sync-range-alist の値を反映するようにした。
+	  (神嶌さん <mag00573@nifty.ne.jp> の御助言)
+	* wl-draft-reply-buffer-style が 'full のとき、multi-reply/forward
+	  がエラーになるのを修正。
+	  (嵯峨田さん <sagata@nttvdt.hil.ntt.co.jp> の御指摘)
+	* sticky summary に移動したときは msgdb をロードしないようにした。
+	  (村田さん <muse@ba2.so-net.ne.jp> の御助言)
+	* wl-summary-exit が無駄にセーブしてしまうのを修正。
+
+
+1999-05-29  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* [wl-mime.el, tm-wl.el]
+	  (tm-)wl-mime-combine-message/partial-pieces() で
+	  regexp が regexp-quote() されてなかったのを修正。
+
+1999-05-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir-search をこころもち高速化。
+
+1999-05-26  Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp>
+
+	* elmo-archive-search をこころもち高速化。
+
+1999-05-25  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* 宛先が localdir, localnews の時でも elmo-move-msgs() を高速
+	  化した。なお、procmail などの MDA を使っている場合、変数
+	  `elmo-localdir-lockfile-list'（初期値は nil）に MDA が生成す
+	  るロックファイル名を指定する。
+	* いくつかの関数をこころもち高速化
+
+1999-05-24  岡田 健一 (Kenichi OKADA) <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* POP3 を SSL に対応させた。
+	* elmo-pop3-get-specで port が string だったのを int にした。
+	* elmo-default-pop3-port,elmo-default-pop3-authenticate-typeを
+	  反映していなかったのを修正。
+
+1999-05-24  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* customize で幾つか `mismatch' が出ていたのを修正。
+
+1999-05-21  OKUNISHI -GTO- Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* WL-ELS を WL-MK に改名。
+	* make install で Emacs が２回起動されないようにする。
+
+1999-05-20  Yuuichi Teranishi  <teranisi@wanderlust.dq.isl.ntt.co.jp>
+
+	* wl-exit () 中の delete-other-windows () を削除。
+	* wl-summary-force-exit を interactive にするのを忘れていた。
+	(石川さん Ishikawa Ichiro <ichiro@mail.ne.jp> の御指摘)
+
+1999-05-20 Hidetoshi Shimokawa <simokawa@sat.t.u-tokyo.ac.jp>
+
+	* device-class が color の tty のときの不具合を修正。
+
+1999-05-20  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* highlightをcustomに対応した.
+	* ハイライト変数のinfoを追加した.
+
+1999-05-19  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-highlight-signature-separator を追加。
+
+1999-05-19  TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+
+	* wl-summary-jump-to-message-by-message-id () が
+	  スレッドが閉じた状態で隠れているメッセージに飛ばないのを修正。
+
+1999-05-19  Yuuichi Teranishi  <teranisi@wanderlust.dq.isl.ntt.co.jp>
+
+	* wl-summary-msgdb-load-async () を修正。
+	* フォルダ移動時のバッファ切替えのタイミングを変更。
+	* wl-summary-mark-as-read-all が，スレッドが閉じた状態で隠れて
+	  いるメッセージに対して効かなくなっていたのを修正。
+	  (大澤さん <ohsawa@mxq.mesh.ne.jp> の御指摘)
+

@@ -1,0 +1,31 @@
+2000-03-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-demo.el (wl-title-logo): Refer wl-icon-dir.
+
+	* wl-folder.el (wl-create-folder-entity-from-buffer):
+	Fixed problem when '}' character is contained in folder name.
+
+	* wl-xmas.el (wl-make-modeline): Consider plugged status.
+
+2000-03-29  Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-add-completion-hashtb): New variable.
+	(wl-fldmgr-add-completion-all-completions):
+	Use wl-fldmgr-add-completion-hashtb.
+
+2000-03-28  Daiki Ueno <ueno@kiss.kake.info.waseda.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions,
+	wl-fldmgr-add-completion-subr):	New functions.
+	* wl-folder.el (wl-folder-completion-func): New variable.
+	* wl-summary.el (wl-summary-read-folder):
+	Use wl-folder-completion-func.
+
+	* wl-refile.el: Eliminate throw & catch.
+
+	* wl.el (wl-plugged-sending-queue-status): Fixed.
+
+2000-03-27  Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* wl-draft.el (wl-draft): Put category property on
+	mail-header-separator.
