@@ -1,3 +1,8 @@
+2001-06-06  Peter Møller Neergaard <turtle@bu.edu>
+
+	* wl-summary.el (wl-summary-resend-bounced-mail): Modified regexp
+	for postfix.
+
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-edit-string): Fetch From: field value and
