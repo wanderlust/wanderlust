@@ -15,6 +15,8 @@
 	(make-temp-file temporary-file-directory)))
 
 (luna-define-method lunit-test-case-teardown ((case test-elmo-util))
+  (setq print-length nil
+	print-level nil)
   (when (file-exists-p test-elmo-temoporary-file)
     (delete-file test-elmo-temoporary-file)))
 
