@@ -7,6 +7,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** バッチ処理用のモジュールが新たに追加されました．
 
 ** メッセージデータベースの構造が改善されました．
+   以下の設定をすれば、msgdb 再構築(サマリバッファで s all RET)時に旧来の
+   タイプの msgdb を新しいタイプのものに変換します。
+   (setq elmo-msgdb-default-type 'standard
+         elmo-msgdb-convert-type 'sync)
 
 ** ドラフトの保存機能が改善されました．
    IMAP フォルダや，Maildir フォルダを wl-draft-folder に指定できるように
