@@ -734,7 +734,7 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
       (setq mark-alist (cdr mark-alist)))
     (nreverse ret-val)))
 
-(defun elmo-buffer-cache-message (fld msg &optional msgdb force-reload)
+(defun elmo-buffer-cache-message (fld msg &optional msgdb force-reload unread)
   (let* ((msg-id (cdr (assq msg (elmo-msgdb-get-number-alist msgdb))))
 	 (hit (elmo-buffer-cache-hit (list fld msg msg-id)))
 	 (read nil))
@@ -749,7 +749,8 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 	      (set-buffer hit)
 	      (elmo-read-msg fld msg
 			     (current-buffer)
-			     msgdb force-reload 'unread))
+			     msgdb force-reload
+			     unread))
 	  (quit
 	   (elmo-buffer-cache-delete)
 	   (error "read message %s/%s is quitted" fld msg))
