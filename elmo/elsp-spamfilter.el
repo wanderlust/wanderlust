@@ -98,20 +98,21 @@
 		 (elsp-spamfilter-good-corpus-internal processor)
 		 (elsp-spamfilter-bad-corpus-internal  processor))))
       (when register
-	(elsp-spamfilter-register-buffer-internal processor buffer spam))
+	(elsp-spamfilter-register-buffer-internal
+	 processor (current-buffer) spam))
       spam)))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-spamfilter)
 						    buffer &optional restore)
   (with-temp-buffer
     (elsp-spamfilter-decode-buffer buffer)
-    (elsp-spamfilter-register-buffer-internal processor buffer t)))
+    (elsp-spamfilter-register-buffer-internal processor (current-buffer) t)))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-spamfilter)
 						    buffer &optional restore)
   (with-temp-buffer
     (elsp-spamfilter-decode-buffer buffer)
-    (elsp-spamfilter-register-buffer-internal processor buffer nil)))
+    (elsp-spamfilter-register-buffer-internal processor (current-buffer) nil)))
 
 (require 'product)
 (product-provide (provide 'elsp-spamfilter) (require 'elmo-version))

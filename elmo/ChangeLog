@@ -1,3 +1,10 @@
+2004-03-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-spamfilter.el (elmo-spam-buffer-spam-p): Call
+	elsp-spamfilter-register-buffer-internal with current buffer.
+	(elmo-spam-register-spam-buffer): Ditto.
+	(elmo-spam-register-good-buffer): Ditto.
+
 2004-03-15  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Add root mailbox
