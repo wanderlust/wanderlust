@@ -1,3 +1,9 @@
+2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-move-cached-regex): Eliminated.
+	(wl-summary-prev): Move cursor regardless of unread status.
+	(wl-summary-next): Ditto.
+
 2000-04-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-summary-burst-subr): Renamed from `wl-burst'.

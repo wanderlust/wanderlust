@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-05 00:39:28 teranisi>
+;; Time-stamp: <2000-04-13 12:03:05 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -5057,24 +5057,6 @@ Reply to author if invoked with argument."
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number)))))
 
-(defun wl-summary-move-cached-regex (skip-marks)
-  (if (eq wl-summary-move-order 'unread)
-      (list
-       (format "^%s[^%s]\\(%s\\)"
-	       wl-summary-buffer-number-regexp
-	       skip-marks
-	       (regexp-quote wl-summary-unread-cached-mark))
-       (format "^%s[^%s]\\(%s\\| \\)"
-	       wl-summary-buffer-number-regexp
-	       skip-marks
-	       (regexp-quote wl-summary-important-mark)))
-    (list
-     (format "^%s[^%s]\\(%s\\|%s\\| \\)"
-	     wl-summary-buffer-number-regexp
-	     skip-marks
-	     (regexp-quote wl-summary-unread-cached-mark)
-	     (regexp-quote wl-summary-important-mark)))))
-
 (defun wl-summary-prev (&optional interactive)
   (interactive)
   (if wl-summary-move-direction-toggle
@@ -5086,19 +5068,16 @@ Reply to author if invoked with argument."
 	goto-next regex-list regex next-entity finfo)
     (beginning-of-line)
     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
-	(progn
-	  (setq regex (format "^%s[^%s]"
-			      wl-summary-buffer-number-regexp
-			      skip-mark-regexp))
-	  (unless (re-search-backward regex nil t)
-	    (setq goto-next t)))
-      (setq regex-list (wl-summary-move-cached-regex skip-mark-regexp))
-      (catch 'done
-	(while regex-list
-	  (if (re-search-backward (car regex-list) nil t)
-	      (throw 'done t))
-	  (setq regex-list (cdr regex-list)))
-	(setq goto-next t)))
+	(setq regex (format "^%s[^%s]"
+			    wl-summary-buffer-number-regexp
+			    skip-mark-regexp))
+      (setq regex (format "^%s[^%s]\\(%s\\|%s\\| \\)"
+			  wl-summary-buffer-number-regexp
+			  skip-mark-regexp
+			  (regexp-quote wl-summary-unread-cached-mark)
+			  (regexp-quote wl-summary-important-mark))))
+    (unless (re-search-backward regex nil t)
+      (setq goto-next t))
     (beginning-of-line)
     (if (not goto-next)
 	(progn
@@ -5127,20 +5106,17 @@ Reply to author if invoked with argument."
 	goto-next regex regex-list next-entity finfo)
     (end-of-line)
     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
-	(progn
-	  (setq regex (format "^%s[^%s]"
-			      wl-summary-buffer-number-regexp
-			      skip-mark-regexp))
-	  (unless (re-search-forward regex nil t)
-	    (forward-line 1)
-	    (setq goto-next t)))
-      (setq regex-list (wl-summary-move-cached-regex skip-mark-regexp))
-      (catch 'done
-	(while regex-list
-	  (if (re-search-forward (car regex-list) nil t)
-	      (throw 'done t))
-	  (setq regex-list (cdr regex-list)))
-	(setq goto-next t)))
+	(setq regex (format "^%s[^%s]"
+			    wl-summary-buffer-number-regexp
+			    skip-mark-regexp))
+      (setq regex (format "^%s[^%s]\\(%s\\|%s\\| \\)"
+			  wl-summary-buffer-number-regexp
+			  skip-mark-regexp
+			  (regexp-quote wl-summary-unread-cached-mark)
+			  (regexp-quote wl-summary-important-mark))))    
+    (unless (re-search-forward regex nil t)
+      (forward-line 1)
+      (setq goto-next t))
     (beginning-of-line)
     (if (not goto-next)
 	(if wl-summary-buffer-disp-msg
