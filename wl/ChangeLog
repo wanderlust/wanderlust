@@ -1,7 +1,11 @@
 2002-04-03  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-summary.el (wl-summary-suspend): New function.
+
+2002-04-03  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl.el (wl): Do not check variables if check is nil.
-	* wl-utils.el (wl-collect-draft): New function. 
+	* wl-utils.el (wl-collect-draft): New function.
 	* wl-folder.el (wl-folder-suspend): Put summary buffers
 	and draft buffers at the end of buffer list.
 	* wl-draft.el (wl-jump-to-draft-folder): Use `wl-collect-draft'.

@@ -421,6 +421,7 @@
   (define-key wl-summary-mode-map "Z"    'wl-status-update)
   (define-key wl-summary-mode-map "#"    'wl-summary-print-message)
   (define-key wl-summary-mode-map "|"    'wl-summary-pipe-message)
+  (define-key wl-summary-mode-map "z"    'wl-summary-suspend)
   (define-key wl-summary-mode-map "q"    'wl-summary-exit)
   (define-key wl-summary-mode-map "Q"    'wl-summary-force-exit)
 
@@ -1095,6 +1096,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	      (set-buffer summary-buf)
 	      (kill-buffer summary-buf)))
 	(run-hooks 'wl-summary-exit-hook)))))
+
+(defun wl-summary-suspend ()
+  (interactive)
+  (wl-summary-exit)
+  (wl-folder-suspend))
 
 (defun wl-summary-sync-force-update (&optional unset-cursor no-check)
   (interactive)
