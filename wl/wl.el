@@ -102,8 +102,8 @@
     (let ((summaries (wl-collect-summary)))
       (while summaries
 	(set-buffer (pop summaries))
-	(elmo-folder-commit wl-summary-buffer-elmo-folder)
-	(wl-summary-set-message-modified))))
+	(wl-summary-save-view)
+	(elmo-folder-commit wl-summary-buffer-elmo-folder))))
   (setq wl-biff-check-folders-running nil)
   (if wl-plugged
       (progn
