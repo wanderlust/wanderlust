@@ -147,7 +147,7 @@
     (elmo-msgdb-global-mark-delete location)))
 
 (luna-define-method elmo-message-fetch-with-cache-process
-  ((folder elmo-mark-folder) number strategy &optional section unseen)
+  ((folder elmo-cache-folder) number strategy &optional section unseen)
   ;; disbable cache process
   (elmo-message-fetch-internal folder number strategy section unseen))
 
