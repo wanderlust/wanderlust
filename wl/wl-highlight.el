@@ -338,7 +338,20 @@
      (:foreground "khaki4")))
   "Face used for displaying answered messages."
   :group 'wl-summary-faces
-  :group 'wl-faces)  
+  :group 'wl-faces)
+
+(wl-defface wl-summary-persistent-mark-face
+  '((((type tty))
+     (:foreground "blue"))
+    (((class color)
+      (background dark))
+     (:foreground "SeaGreen4"))
+    (((class color)
+      (background light))
+     (:foreground "SeaGreen1")))
+  "Dafault face used for displaying messages with persistent mark."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
 
 ;; obsolete.
 (wl-defface wl-highlight-summary-temp-face
@@ -849,8 +862,9 @@
 				   (intern (format
 					    "wl-highlight-summary-%s-face"
 					    (car priorities))))
-			     (when (find-face face)
-			       (list face))))))
+			     (if (find-face face)
+				 (list face)
+			       (list 'wl-summary-persistent-mark-face))))))
 	    (setq priorities (cdr priorities)))
 	  result))
        ((string= temp-mark wl-summary-score-below-mark)

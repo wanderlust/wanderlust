@@ -754,8 +754,24 @@ the functions `wl-plugged-init-icons' and `wl-biff-init-icons' for
 reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-hook nil
   "A hook called when Wanderlust is invoked.")
-(defvar wl-reply-hook nil
-  "A hook called when replied.")
+
+(defvar wl-draft-reply-hook nil
+  "A hook called when replied.
+This hook runs on the draft buffer.")
+
+(defvar wl-draft-forward-hook nil
+  "A hook called when forwarded.
+This hook runs on the draft buffer.")
+
+(defvar wl-summary-reply-hook
+  '((lambda () (wl-summary-set-persistent-mark 'answered)))
+  "A hook called when `wl-summary-reply' is called.
+This hook runs on the summary buffer.")
+
+(defvar wl-summary-forward-hook nil
+  "A hook called when `wl-summary-forward' is called.
+This hook runs on the summary buffer.")
+
 (defvar wl-mail-setup-hook nil
   "A hook called when Draft is prepared.")
 (defvar wl-draft-reedit-hook '(wl-draft-remove-text-plain-tag)
@@ -1761,6 +1777,11 @@ message buffer."
   "*Use address with full-name in the draft of replied message."
   :type 'boolean
   :group 'wl-pref
+  :group 'wl-draft)
+
+(defcustom wl-draft-kill-flags '(answered)
+  "Remove specified flags when parent message of current draft is killed."
+  :type '(repeat (symbol :tag "flag"))
   :group 'wl-draft)
 
 (defcustom wl-subject-re-prefix-regexp "^[ \t]*\\([Rr][Ee][:>][ \t]*\\)*[ \t]*"

@@ -1,5 +1,35 @@
 2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-reply-hook): Abolish.
+	(wl-draft-reply-hook): New hook.
+	(wl-summary-reply-hook): Ditto.
+	(wl-draft-forward-hook): Ditto.
+	(wl-summary-forward-hook): Ditto.
+	(wl-draft-kill-flags): New variable.
+
+	* wl-summary.el (wl-summary-mark-as-answered-region): Use
+	wl-summary-set-persistent-mark-internal.
+	(wl-summary-sync-marks): Use elmo-preserved-flags.
+	(wl-summary-update-persistent-mark): Make it interactive.
+	(wl-summary-set-persistent-mark-internal): New inline function.
+	(wl-summary-mark-as-answered): Use it.
+	(wl-summary-mark-as-unanswered): Ditto.
+	(wl-summary-unset-persistent-mark): New function.
+	(wl-summary-set-persistent-mark): Ditto.
+	(wl-summary-reply): Don't set answered flag;
+	Run wl-summary-reply-hook instead.
+	(wl-summary-forward): Call wl-draft-forward with number.
+	Run wl-summary-forward-hook.
+
+	* wl-highlight.el (wl-summary-persistent-mark-face): New face.
+	(wl-highlight-summary-line-face-spec): Use it as a default
+	persistent mark face.
+
+	* wl-draft.el (wl-draft-forward): Added optional argument number;
+	Set wl-draft-parent-number; Run wl-draft-forward-hook.
+	(wl-draft-reply): Run wl-draft-reply-hook instead of wl-reply-hook.
+	(wl-draft-kill): Use wl-draft-kill-flags.
+
 	* wl-vars.el (wl-summary-answered-uncached-mark): Fixed typo.
 
 	* wl-folder.el (wl-folder-check-one-entity): Follow the change

@@ -1616,7 +1616,8 @@ If ARG is non-nil, checking is omitted."
 					    'answered))))
     (if (null number-list)
 	(message "No message.")
-      (wl-summary-mark-as-answered-internal remove number-list)
+      (wl-summary-set-persistent-mark-internal remove 'answered
+					       number-list)
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -1786,7 +1787,7 @@ This function is defined for `window-scroll-functions'"
 
       (message "Updating marks...")
       (dolist (flag elmo-global-flag-list)
-	(unless (memq flag '(answered cached new unread))
+	(unless (memq flag elmo-preserved-flags)
 	  (setq diff (elmo-list-diff (elmo-folder-list-flagged
 				      wl-summary-buffer-elmo-folder
 				      flag)
@@ -1806,39 +1807,24 @@ This function is defined for `window-scroll-functions'"
 					  (list flag) 'no-server)
 	    (setq diffs (cdr diffs)))))
 
-      (setq diff (elmo-list-diff (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'answered)
-				 (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'answered 'in-msgdb)))
-      (setq diffs (cadr diff))
-      (setq mes (concat mes (format "-%d" (length diffs))))
-      (while diffs
-	(wl-summary-mark-as-unanswered (car diffs) 'no-modeline)
-	(setq diffs (cdr diffs)))
-      (setq diffs (car diff)) ; unread-appends
-      (setq mes (concat mes (format "/+%d answered," (length diffs))))
-      (while diffs
-	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
-	(setq diffs (cdr diffs)))
-
-      (setq diff (elmo-list-diff (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'unread)
-				 (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'unread 'in-msgdb)))
-      (setq diffs (cadr diff))
-      (setq mes (concat mes (format "-%d" (length diffs))))
-      (while diffs
-	(wl-summary-mark-as-read (car diffs) 'no-folder 'no-modeline)
-	(setq diffs (cdr diffs)))
-      (setq diffs (car diff)) ; unread-appends
-      (setq mes (concat mes (format "/+%d unread." (length diffs))))
-      (while diffs
-	(wl-summary-mark-as-unread (car diffs) 'no-folder 'no-modeline)
-	(setq diffs (cdr diffs)))
+      (dolist (flag (delete 'new (delete 'cached
+					 (copy-sequence elmo-preserved-flags))))
+	(setq diff (elmo-list-diff (elmo-folder-list-flagged
+				    wl-summary-buffer-elmo-folder
+				    flag)
+				   (elmo-folder-list-flagged
+				    wl-summary-buffer-elmo-folder
+				    flag 'in-msgdb)))
+	(setq diffs (cadr diff))
+	(setq mes (concat mes (format "-%d" (length diffs))))
+	(while diffs
+	  (wl-summary-unset-persistent-mark flag (car diffs) 'no-modeline)
+	  (setq diffs (cdr diffs)))
+	(setq diffs (car diff)
+	      mes (concat mes (format "/+%d %s " (length diffs) flag)))
+	(while diffs
+	  (wl-summary-set-persistent-mark flag (car diffs) 'no-modeline)
+	  (setq diffs (cdr diffs))))
       (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor
@@ -2841,19 +2827,20 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 	      (setq mark wl-summary-flag-mark)))
 	(when (memq (car priorities) flags)
 	  (setq mark
-		(or (case (car priorities)
-		      (new
-		       (if cached
-			   wl-summary-new-cached-mark
-			 wl-summary-new-uncached-mark))
-		      (answered
-		       (if cached
-			   wl-summary-answered-cached-mark
-			 wl-summary-answered-uncached-mark))
-		      (unread
-		       (if cached
-			   wl-summary-unread-cached-mark
-			 wl-summary-unread-uncached-mark)))))))
+		(let ((var
+		       (intern
+			(if cached
+			    (format
+			     "wl-summary-%s-cached-mark" (car priorities))
+			  (format
+			   "wl-summary-%s-uncached-mark" (car priorities))))))
+		  (if (boundp var)
+		      (symbol-value var)
+		    (if cached
+			(downcase (substring (symbol-name (car priorities))
+					     0 1))
+		      (upcase (substring (symbol-name (car priorities))
+					 0 1))))))))
       (setq priorities (cdr priorities)))
     (or mark
 	(if (or cached (elmo-folder-local-p folder))
@@ -2982,6 +2969,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 (defun wl-summary-update-persistent-mark (&optional number flags)
   "Synch up persistent mark of current line with msgdb's.
 Return non-nil if the mark is updated"
+  (interactive)
   (prog1
       (when wl-summary-buffer-persistent-mark-column
 	(save-excursion
@@ -3065,10 +3053,11 @@ Return non-nil if the mark is updated"
 				    no-folder-mark
 				    no-modeline-update))
 
-(defsubst wl-summary-mark-as-answered-internal (inverse
-						&optional
-						number-or-numbers
-						no-modeline-update)
+(defsubst wl-summary-set-persistent-mark-internal (inverse
+						   &optional flag
+						   number-or-numbers
+						   no-modeline-update)
+  "Set persistent mark."
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
 	  number number-list visible)
@@ -3083,8 +3072,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unset-flag folder number-list 'answered)
-	  (elmo-folder-set-flag folder number-list 'answered))
+	    (elmo-folder-unset-flag folder number-list flag)
+	  (elmo-folder-set-flag folder number-list flag))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
@@ -3100,22 +3089,64 @@ Return non-nil if the mark is updated"
 	   (+ wl-summary-buffer-unread-count
 	      wl-summary-buffer-new-count)))))))
 
+(defun wl-summary-unset-persistent-mark (&optional flag
+						   number-or-numbers
+						   no-modeline-update)
+  "Unset persistent mark."
+  (interactive)
+  (when (interactive-p)
+    (setq flag (intern (downcase
+			(completing-read
+			 "Flag: "
+			 (mapcar (lambda (flag)
+				   (list (capitalize (symbol-name flag))))
+				 elmo-preserved-flags)
+			 nil
+			 'require-match)))))
+  (wl-summary-set-persistent-mark-internal 'inverse
+					   flag
+					   number-or-numbers
+					   no-modeline-update))
+
+(defun wl-summary-set-persistent-mark (&optional flag
+						 number-or-numbers
+						 no-modeline-update)
+  "Set persistent mark."
+  (interactive)
+  (when (interactive-p)
+    (setq flag (intern (downcase
+			(completing-read
+			 "Flag: "
+			 (mapcar (lambda (flag)
+				   (list (capitalize (symbol-name flag))))
+				 elmo-preserved-flags)
+			 nil
+			 'require-match)))))
+  (wl-summary-set-persistent-mark-internal
+   nil
+   flag
+   number-or-numbers
+   no-modeline-update))
+
 (defun wl-summary-mark-as-answered (&optional number-or-numbers
 					      no-modeline-update)
   (interactive)
-  (wl-summary-mark-as-answered-internal
+  (wl-summary-set-persistent-mark-internal
    (and (interactive-p)
 	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
 				(wl-summary-message-number)
 				'answered))
+   'answered
    number-or-numbers
    no-modeline-update))
 
 (defun wl-summary-mark-as-unanswered (&optional number-or-numbers
 						no-modeline-update)
-  (wl-summary-mark-as-answered-internal 'inverse
-					number-or-numbers
-					no-modeline-update))
+  (wl-summary-set-persistent-mark-internal
+   'inverse
+   'answered
+   number-or-numbers
+   no-modeline-update))
 
 (defun wl-summary-decide-flag (folder number)
   (let ((flags (elmo-get-global-flags (elmo-message-flags
@@ -4070,9 +4101,7 @@ Reply to author if invoked with ARG."
 	      (run-hooks 'wl-mail-setup-hook)))
 	(error (set-window-configuration winconf)
 	       (signal (car err)(cdr err))))
-      (with-current-buffer summary-buf
-	(elmo-folder-set-flag folder (list number) 'answered)
-	(wl-summary-update-persistent-mark))
+      (with-current-buffer summary-buf (run-hooks 'wl-summary-reply-hook))
       t)))
 
 (defun wl-summary-write ()
@@ -4149,7 +4178,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		       (elmo-message-entity folder number) 'subject 'decode)
 		      ""))))
       (set-buffer mes-buf)
-      (wl-draft-forward subject summary-buf)
+      (wl-draft-forward subject summary-buf number)
+      (with-current-buffer summary-buf (run-hooks 'wl-summary-forward-hook))
       (unless without-setup-hook
 	(run-hooks 'wl-mail-setup-hook)))))
 

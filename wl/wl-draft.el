@@ -271,7 +271,7 @@ e.g.
 		  wl-subject-re-prefix-regexp)))
 	(t original-subject)))
 
-(defun wl-draft-forward (original-subject summary-buf)
+(defun wl-draft-forward (original-subject summary-buf &optional number)
   (let (references parent-folder subject)
     (with-current-buffer summary-buf
       (setq parent-folder (wl-summary-buffer-folder-name)))
@@ -293,9 +293,11 @@ e.g.
 		    (cons 'Subject subject)
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
+  (setq wl-draft-parent-number number)
   (goto-char (point-max))
   (wl-draft-insert-message)
-  (mail-position-on-field "To"))
+  (mail-position-on-field "To")
+  (run-hooks 'wl-draft-forward-hook))
 
 (defun wl-draft-self-reply-p ()
   "Return t when From address in the current message is user's self one or not."
@@ -462,7 +464,7 @@ Reply to author if WITH-ARG is non-nil."
     (setq wl-draft-config-variables
 	  (append wl-draft-reply-saved-variables
 		  wl-draft-config-variables)))
-  (run-hooks 'wl-reply-hook))
+  (run-hooks 'wl-draft-reply-hook))
 
 (defun wl-draft-reply-position (position)
   (cond ((eq position 'body)
@@ -783,7 +785,8 @@ Reply to author if WITH-ARG is non-nil."
 		       (string= (wl-summary-buffer-folder-name)
 				folder-name)))
 		(with-current-buffer buffer
-		  (elmo-folder-unset-flag folder (list number) 'answered)
+		  (dolist (flag wl-draft-kill-flags)
+		    (elmo-folder-unset-flag folder (list number) flag))
 		  (when (wl-summary-jump-to-msg number)
 		    (wl-summary-update-persistent-mark)))
 	      (elmo-folder-open folder 'load-msgdb)
