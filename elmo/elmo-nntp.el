@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:41:50 teranisi>
+;; Time-stamp: <00/04/28 10:30:51 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -425,6 +425,9 @@ Don't cache if nil.")
 		  'elmo-nntp-list-folders "Parsing active..."
 		  (/ (* i 100) len))))))
       (kill-buffer tmp-buffer)
+      (elmo-display-progress
+       'elmo-nntp-list-folders "Parsing active..."
+       100)
       (unless (string= server elmo-default-nntp-server)
 	(setq append-serv (concat "@" server)))
       (unless (eq port elmo-default-nntp-port)
@@ -702,8 +705,9 @@ Don't cache if nil.")
 			seen-mark
 			important-mark
 			seen-list
-			filter)))))
-	  (message "Getting overview...done."))
+			filter))))))
+	(elmo-display-progress
+	 'elmo-nntp-msgdb-create "Getting overview..." 100)
 	;; If there are canceled messages, overviews are not obtained
 	;; to max-number(inn 2.3?).
 	(when (and (elmo-nntp-max-number-precedes-list-active-p)
@@ -1166,6 +1170,9 @@ Return nil if connection failed."
 	      'elmo-nntp-groups-read-response "Getting folders info..."
 	      (/ (* received 100) count)))
 	)
+      (elmo-display-progress
+       'elmo-nntp-groups-read-response "Getting folders info..."
+       100)
       ;; Wait for the reply from the final command.
       (goto-char (point-max))
       (re-search-backward "^[0-9]" nil t)
@@ -1247,6 +1254,8 @@ Return nil if connection failed."
 	    (accept-process-output process 1)
 	    (discard-input)
 	    )))
+      (elmo-display-progress
+       'elmo-nntp-retrieve-headers "Getting headers..." 100)
       (message "Getting headers...done")
       ;; Remove all "\r"'s.
       (goto-char (point-min))
@@ -1309,9 +1318,9 @@ Return nil if connection failed."
 	(and (zerop (% i 20))
 	     (elmo-display-progress
 	      'elmo-nntp-msgdb-create-message "Creating msgdb..."
-	      (/ (* i 100) len)))
-	)
-      (message "Creating msgdb...done.")
+	      (/ (* i 100) len))))
+      (elmo-display-progress
+       'elmo-nntp-msgdb-create-message "Creating msgdb..." 100)
       (list overview number-alist mark-alist))))
 
 (defun elmo-nntp-use-cache-p (spec number)

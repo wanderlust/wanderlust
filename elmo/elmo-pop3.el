@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-03 09:29:38 teranisi>
+;; Time-stamp: <00/04/28 10:28:08 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -484,7 +484,8 @@
 	    ;(accept-process-output process)
 	    (discard-input)
 	    )))
-      (message "Getting headers...done")
+      (elmo-display-progress
+       'elmo-pop3-retrieve-headers "Getting headers..." 100)
       ;; Remove all "\r"'s.
       (goto-char (point-min))
       (while (search-forward "\r\n" nil t)
@@ -579,7 +580,8 @@
 	      'elmo-pop3-msgdb-create-message "Creating msgdb..."
 	      (/ (* i 100) num)))
 	)
-      (message "Creating msgdb...done.")
+      (elmo-display-progress
+       'elmo-pop3-msgdb-create-message "Creating msgdb..." 100)
       (list overview number-alist mark-alist))))
 
 (defun elmo-pop3-read-body (buffer process outbuf)
