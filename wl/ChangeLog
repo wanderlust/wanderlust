@@ -1,5 +1,8 @@
 2001-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (toplevel): Require 'custom.
+	(wl-trash-folder): Added to `wl-setting' group.
+
 	* wl-addrmgr.el (wl-addrmgr-goto-top): Fixed problem when no entry
 	exists.
 	(wl-addrmgr-draw): Insert empty line when no entry exists.

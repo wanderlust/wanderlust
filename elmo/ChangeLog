@@ -1,5 +1,9 @@
 2001-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-mime.el (elmo-mime-display-as-is-coding-system): New user
+	option.
+	(elmo-mime-display-as-is-internal): Use it.
+
 	* acap.el (acap-read-passphrase): Use `ange-ftp-read-passwd'
 	if `read-passwd' is not defined.
 

@@ -33,9 +33,7 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
-
-(if (module-installed-p 'custom)
-    (require 'custom))
+(require 'custom)
 
 ;;; Customizable Variables
 
@@ -210,7 +208,8 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 (defcustom wl-trash-folder "+trash"
   "*Trash folder"
   :type 'string
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 (defcustom wl-queue-folder "+queue"
   "*Queue folder"
   :type 'string

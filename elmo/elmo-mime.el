@@ -53,6 +53,12 @@ value is used."
 		 (function :tag "Function"))
   :group 'elmo)
 
+(defcustom elmo-mime-display-as-is-coding-system (if (boundp 'MULE)
+						     '*autoconv* 'undecided)
+  "*Coding system used when message is displayed as is."
+  :type 'symbol
+  :group 'elmo)
+
 (luna-define-method initialize-instance :after ((entity mime-elmo-buffer-entity)
 						&rest init-args)
   entity)
@@ -290,7 +296,8 @@ Return non-nil if cache is used."
       (set-buffer-multibyte nil)
       (mime-insert-entity message)
       (set-buffer-multibyte t)
-      (decode-coding-region (point-min) (point-max) 'undecided)
+      (decode-coding-region (point-min) (point-max)
+			    elmo-mime-display-as-is-coding-system)
       (save-restriction
 	(std11-narrow-to-header)
 	(run-hooks 'elmo-message-header-inserted-hook))
