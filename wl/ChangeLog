@@ -3249,7 +3249,7 @@
 
 	* wl-util.el (wl-biff-check-folders, wl-biff-event-handler,
 	wl-biff-start, wl-biff-stop): New functions.
-	(timer-next-integral-multiple-of-time): Defined with `defun-meybe'.
+	(timer-next-integral-multiple-of-time): Defined with `defun-maybe'.
 	(wl-biff-timer-name): New variable.
 
 	* wl-summary.el (wl-summary-mode): Show biff in modeline.
