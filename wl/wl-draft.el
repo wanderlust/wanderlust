@@ -329,7 +329,7 @@ Reply to author if WITH-ARG is non-nil."
 					      r-to-list))
 				       ",")))
 	    (if (and r-cc-list (symbolp r-cc-list))
-		(setq cc (wl-concat-list (funcall r-to-list) ","))
+		(setq cc (wl-concat-list (funcall r-cc-list) ","))
 	      (setq cc (wl-concat-list (cons cc
 					     (elmo-multiple-fields-body-list
 					      r-cc-list))
