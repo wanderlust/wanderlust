@@ -2497,7 +2497,7 @@ If ARG, without confirm."
   (let ((summary-buf (current-buffer))
 	(buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name (wl-summary-buffer-folder-name))
-	match founds cur result)
+	match founds result)
     (with-current-buffer buf
       (let ((case-fold-search t))
 	(when (or (not (string= wl-summary-search-buf-folder-name folder-name))
