@@ -1,34 +1,3 @@
-2001-05-08  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl.el (wl): Fix for wl-demo.
-
-2001-05-08  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-summary.el (wl-summary-supersedes-message): Use 'message-buf'
-
-2001-05-08  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-folder.el (wl-folder-prefetch-entity): Use
-	`wl-folder-get-elmo-folder'.
-	(wl-folder-count-incorporates): Do not use
-	`wl-folder-get-elmo-folder'.
-
-2001-05-08  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-xmas.el (wl-plugged-set-folder-icon): Use `elmo-folder-type'
-	instead of `elmo-folder-get-type'.
-
-2001-05-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-summary.el (wl-summary-write-current-folder): Set cursor
-	position on Subject: field.
-	(Advised by Mito <mit@nines.nec.co.jp>)
-
-2001-04-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* wl-folder.el (wl-folder-prefetch-entity): Use
-	`wl-folder-get-elmo-folder'.
-
 2001-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-folder-process-duplicates-alist): New user option.

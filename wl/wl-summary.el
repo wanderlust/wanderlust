@@ -4879,13 +4879,16 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		(nth 2 guess-list))	; Newsgroups:
 	    (setq flist nil)
 	  (setq flist (cdr flist))))
-      (when (null guess-list)
-	(error "Can't guess by folder %s" folder))
-      (wl-draft (nth 0 guess-list) nil nil ; To:
-		(nth 1 guess-list) nil	; Cc:
-		(nth 2 guess-list))	; Newsgroups:
-      (run-hooks 'wl-mail-setup-hook)
-      (mail-position-on-field "Subject"))))
+      (if guess-list
+	  (progn
+	    (wl-draft (nth 0 guess-list) ; To:
+		      nil nil
+		      (nth 1 guess-list) ; Cc:
+		      nil		
+		      (nth 2 guess-list)) ; Newsgroups:
+	    (run-hooks 'wl-mail-setup-hook))
+;;;	(error "%s is not newsgroup" folder)
+	(error "Can't guess by folder %s" folder)))))
 
 (defun wl-summary-forward (&optional without-setup-hook)
   ""
@@ -5305,7 +5308,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		      "Supersedes: " message-id "\n"
 		      (and followup-to
 			   (concat "Followup-To: " followup-to "\n")))))
-    (if message-buf (set-buffer message-buf))
+	(set-buffer (wl-message-get-original-buffer))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
 (defun wl-summary-save (&optional arg wl-save-dir)

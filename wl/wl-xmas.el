@@ -350,7 +350,7 @@
 	(put-text-property 0 len 'begin-glyph
 			   (get 'wl-folder-queue-glyph 'glyph)
 			   string)
-      (if (setq type (elmo-folder-type folder))
+      (if (setq type (elmo-folder-get-type folder))
 	  (put-text-property 0 len
 			     'begin-glyph
 			     (get (intern (format "wl-folder-%s-glyph" type))

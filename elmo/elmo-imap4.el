@@ -1932,7 +1932,7 @@ Return nil if no complete line has arrived."
 			 (mapcar '(lambda (fld)
 				    (unless
 					(string-match
-					 (concat "^" (regexp-quote folder) delim)
+					 (concat "^" (regexp-quote folder))
 					 fld)
 				      fld))
 				 result))))
@@ -2427,9 +2427,21 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-message-fetch-unplugged
   ((folder elmo-imap4-folder)
    number strategy  &optional section outbuf unseen)
-  (error "%d%s is not cached." number (if section
-					  (format "(%s)" section)
-					"")))
+  (let ((cache-file (elmo-file-cache-expand-path
+		     (elmo-fetch-strategy-cache-path strategy)
+		     section)))
+    (if (and (elmo-fetch-strategy-use-cache strategy)
+	     (file-exists-p cache-file))
+	(if outbuf
+	    (with-current-buffer outbuf
+	      (insert-file-contents-as-binary cache-file)
+	      t)
+	  (with-temp-buffer
+	    (insert-file-contents-as-binary cache-file)
+	    (buffer-string)))
+      (error "%d%s is not cached." number (if section
+					      (format "(%s)" section)
+					    "")))))
 
 (defsubst elmo-imap4-message-fetch (folder number strategy
 					   section outbuf unseen)
