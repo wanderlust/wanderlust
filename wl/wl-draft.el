@@ -89,10 +89,6 @@ e.g.
 
 (defvar wl-draft-parent-number nil)
 
-(defconst wl-draft-reply-saved-variables
-  '(wl-draft-parent-folder
-    wl-draft-parent-number))
-
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
     (top		. wl-draft-config-sub-top)
@@ -483,10 +479,7 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
     (setq wl-draft-parent-number number)
-    (setq wl-draft-reply-buffer buf)
-    (setq wl-draft-config-variables
-	  (append wl-draft-reply-saved-variables
-		  wl-draft-config-variables)))
+    (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
 (defun wl-draft-add-references ()
@@ -778,23 +771,13 @@ Reply to author if WITH-ARG is non-nil."
 	       (or force-kill
 		   (y-or-n-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
-	(when (and wl-draft-parent-number
-		   (not (string= wl-draft-parent-folder "")))
-	  (let* ((number wl-draft-parent-number)
-		 (folder-name wl-draft-parent-folder)
-		 (folder (wl-folder-get-elmo-folder folder-name))
-		 buffer)
-	    (if (and (setq buffer (wl-summary-get-buffer folder-name))
-		     (with-current-buffer buffer
-		       (string= (wl-summary-buffer-folder-name)
-				folder-name)))
-		(with-current-buffer buffer
-		  (elmo-folder-unmark-answered folder (list number))
-		  (wl-summary-jump-to-msg number)
-		  (wl-summary-update-mark number))
-	      (elmo-folder-open folder 'load-msgdb)
-	      (elmo-folder-unmark-answered folder (list number))
-	      (elmo-folder-close folder))))
+	(when wl-draft-parent-number
+	  (let ((number wl-draft-parent-number))
+	    (with-current-buffer wl-draft-buffer-cur-summary-buffer
+	      (wl-summary-jump-to-msg number)
+	      (elmo-folder-unmark-answered wl-summary-buffer-elmo-folder
+					   (list number))
+	      (wl-summary-update-mark number))))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
     (message "")))
