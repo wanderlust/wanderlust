@@ -263,6 +263,10 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'ifnotplaintext 'texinfo-format 'texinfo-discard-line)
 (put 'ifnotplaintext 'texinfo-end 'texinfo-discard-command)
 
+;; @ifnotdocbook ... @end ifnotdocbook (makeinfo 4.7 or later)
+(put 'ifnotdocbook 'texinfo-format 'texinfo-discard-line)
+(put 'ifnotdocbook 'texinfo-end 'texinfo-discard-command)
+
 
 ;; @ifnotinfo ... @end ifnotinfo (makeinfo 3.11 or later)
 (put 'ifnotinfo 'texinfo-format 'texinfo-format-ifnotinfo)
@@ -278,6 +282,13 @@ DOCSTRING will be printed if ASSERTION is nil and
 		 (progn (re-search-forward "@end html[ \t]*\n")
 			(point))))
 
+;; @docbook ... @end docbook (makeinfo 4.7 or later)
+(put 'docbook 'texinfo-format 'texinfo-format-docbook)
+(ptexinfmt-defun-if-void texinfo-format-docbook ()
+  (delete-region texinfo-command-start
+		 (progn (re-search-forward "@end docbook[ \t]*\n")
+			(point))))
+
 ;; @ifhtml ... @end ifhtml (makeinfo 3.8 or later)
 (put 'ifhtml 'texinfo-format 'texinfo-format-ifhtml)
 (defun texinfo-format-ifhtml ()
@@ -290,6 +301,13 @@ DOCSTRING will be printed if ASSERTION is nil and
 (ptexinfmt-defun-if-void texinfo-format-ifplaintext ()
   (delete-region texinfo-command-start
 		 (progn (re-search-forward "@end ifplaintext[ \t]*\n")
+			(point))))
+
+;; @ifdocbook ... @end ifdocbook (makeinfo 4.7 or later)
+(put 'ifdocbook 'texinfo-format 'texinfo-format-ifdocbook)
+(ptexinfmt-defun-if-void texinfo-format-ifdocbook ()
+  (delete-region texinfo-command-start
+		 (progn (re-search-forward "@end ifdocbook[ \t]*\n")
 			(point))))
 
 
@@ -362,6 +380,12 @@ For example, @verb\{|@|\} results in @ and
 
 
 ;;; Accents and Special characters
+;; @registeredsymbol{}	==>	(R)
+(put 'pounds 'texinfo-format 'texinfo-format-registeredsymbol)
+(ptexinfmt-defun-if-void texinfo-format-registeredsymbol ()
+  (texinfo-parse-arg-discard)
+  (insert "(R)"))
+
 ;; @pounds{}	==>	#	Pounds Sterling
 (put 'pounds 'texinfo-format 'texinfo-format-pounds)
 (ptexinfmt-defun-if-void texinfo-format-pounds ()

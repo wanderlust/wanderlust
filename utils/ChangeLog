@@ -1,3 +1,8 @@
+2004-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Support @docbook, @ifdocbook, @ifnotdocbook, and
+	@registeredsymbol.
+
 2004-01-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* ssl.el (toplevel): Don't include cl at run time.
