@@ -187,7 +187,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 
 @section $BF0:n4D6-(B
 
-Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
+Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$r3NG'$7$F$$$^$9!#(B
 
 @itemize @bullet
 @item Mule 2.3 based on Emacs 19.34
@@ -198,7 +198,7 @@ Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
 @item PMMule
 @end itemize
 
-Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL(B
+Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$r3NG'$7$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL(B
 $B$j$G$9!#(B
 
 @itemize @bullet
@@ -211,7 +211,7 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 @item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
 @end itemize
 
-Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
+Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$r3NG'$7$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
 $B$j$G$9!#(B
 
 @itemize @bullet
