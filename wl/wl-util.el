@@ -186,8 +186,9 @@ to add the result instead of white space."
 	(setq string (truncate-string-to-width string (abs width))))
     (if (= (string-width string) (abs width))
 	string
-      (let ((paddings (make-string (- (abs width) (string-width string))
-				   (or padding ?\ ))))
+      (let ((paddings (make-string
+		       (max 0 (- (abs width) (string-width string)))
+		       (or padding ?\ ))))
 	(if (< width 0)
 	    (concat paddings string)
 	  (concat string paddings)))))
