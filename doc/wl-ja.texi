@@ -8330,19 +8330,20 @@ IMAP4 フォルダに対する条件フィルタフォルダのような場合には、
 アクセスグループのリストを指定します。
 @code{wl-folder-init-load-access-folders} が non-nil の場合は無視されます。
 
-@item wl-delete-folder-alist
-@vindex wl-delete-folder-alist
+@item wl-dispose-folder-alist
+@vindex wl-dispose-folder-alist
 初期設定は以下の連想リスト。
 
 @lisp
 @group
-(("^-" . remove))
+(("^-" . remove)
+ ("^@" . remove))
 @end group
 @end lisp
 
 @noindent
-削除マーク @samp{D} をつけたメッセージを削除する方針を設定します。
-リストの各要素はフォルダと削除先になっており、削除先には次のものが指定で
+処分マーク @samp{d} をつけたメッセージを処分する方針を設定します。
+リストの各要素はフォルダと処分先になっており、処分先には次のものが指定で
 きます。
 
 @example

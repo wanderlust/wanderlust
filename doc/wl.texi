@@ -8355,18 +8355,19 @@ This is a list of access groups not to be loaded specifically at the
 start.
 It is ignored if @code{wl-folder-init-load-access-folders} is non-nil.
 
-@item wl-delete-folder-alist
-@vindex wl-delete-folder-alist
+@item wl-dispose-folder-alist
+@vindex wl-dispose-folder-alist
 The initial setting is the alist shown below:
 
 @lisp
 @group
-(("^-" . remove))
+(("^-" . remove)
+ ("^@" . remove))
 @end group
 @end lisp
 
 @noindent
-This list determines disposition of messages with delete marks.
+This list determines disposition of messages with disposal marks.
 Each item in the list is a folder and destination; you can specify any
 one of the following in the place of destination:
 
