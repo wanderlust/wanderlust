@@ -1,3 +1,9 @@
+2001-07-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-get-session): Set stream-type argument
+	for `elmo-plugged-p'.
+	(elmo-open-network-stream): Fixed stream-type argument.
+
 2001-07-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-archive.el (elmo-archive-get-archive-name): Cause an error when
