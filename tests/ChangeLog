@@ -1,3 +1,8 @@
+2002-07-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el (check-modules-charsets-mime-charset-alist):
+	New testcase.
+
 2002-05-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el (check-modules-x-face-mule): New testcase.

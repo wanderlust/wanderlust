@@ -13,6 +13,11 @@
   (lunit-assert
    (product-version>= (product-find 'apel-ver) '(10 3))))
 
+(luna-define-method check-modules-charsets-mime-charset-alist ((case check-modules))
+  (require 'mcharset)
+  (lunit-assert
+   (not (memq nil charsets-mime-charset-alist))))
+
 ;; X-Face on XEmacs
 (luna-define-method check-modules-x-face-xmas ((case check-modules))
   (when (and (locate-library "x-face") (featurep 'xemacs))
