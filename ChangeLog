@@ -1,3 +1,7 @@
+2001-12-02  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* doc/wl-refcard.tex: New file.
+
 2001-12-02  Kenichi OKADA  <okada@opaopa.org>
 
 	* WL-ELS (ELMO-MODULES): Added 'elmo-sendlog'
