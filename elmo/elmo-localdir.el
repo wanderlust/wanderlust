@@ -140,7 +140,8 @@
 
 (defun elmo-localdir-msgdb-create-entity (msgdb dir number)
   (elmo-msgdb-create-message-entity-from-file
-   msgdb number (expand-file-name (int-to-string number) dir)))
+   (elmo-msgdb-message-entity-handler msgdb)
+   number (expand-file-name (int-to-string number) dir)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers

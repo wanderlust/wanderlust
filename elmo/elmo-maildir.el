@@ -153,7 +153,7 @@ LOCATION."
       (setq location (elmo-map-message-location folder number))
       (setq entity
 	    (elmo-msgdb-create-message-entity-from-file
-	     new-msgdb
+	     (elmo-msgdb-message-entity-handler new-msgdb)
 	     number
 	     (elmo-maildir-message-file-name folder location)))
       (when entity

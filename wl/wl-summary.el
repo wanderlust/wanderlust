@@ -675,7 +675,7 @@ you."
       (insert
        (wl-summary-create-line
 	(elmo-msgdb-make-message-entity
-	 (luna-make-entity 'modb-generic)
+	 (luna-make-entity 'modb-entity-handler)
 	 :number 10000
 	 :from "foo"
 	 :subject "bar"
@@ -3263,45 +3263,46 @@ Return non-nil if the mark is updated"
 	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
 	   (temp-column wl-summary-buffer-temp-mark-column)
 	   (charset wl-summary-buffer-mime-charset))
-      (if (file-directory-p dir)
-	  (); ok.
-	(if (file-exists-p dir)
-	    (error "File %s already exists" dir)
-	  (elmo-make-directory dir)))
-      (if (eq save-view 'thread)
-	  (wl-thread-save-entity dir))
-      (when wl-summary-check-line-format
-	(wl-summary-line-format-save))
-      (unwind-protect
-	  (progn
-	    (when (file-writable-p cache)
-	      (copy-to-buffer tmp-buffer (point-min) (point-max))
-	      (with-current-buffer tmp-buffer
-		(widen)
-		(make-local-variable 'wl-summary-highlight)
-		(setq wl-summary-highlight nil
-		      wl-summary-buffer-target-mark-list mark-list
-		      wl-summary-buffer-temp-mark-list temp-list
-		      wl-summary-buffer-temp-mark-column temp-column)
-		(wl-summary-delete-all-temp-marks 'no-msg 'force)
-		(encode-coding-region
-		 (point-min) (point-max)
-		 (or (and wl-on-mule
-			  ;; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
-			  (mime-charset-to-coding-system charset 'LF))
-		     ;; Mule 2 doesn't have `*ctext*unix'.
-		     (mime-charset-to-coding-system charset)))
-		(write-region-as-binary (point-min)(point-max)
-					cache nil 'no-msg)))
-	    (when (file-writable-p view) ; 'thread or 'sequence
-	      (save-excursion
-		(set-buffer tmp-buffer)
-		(erase-buffer)
-		(prin1 save-view tmp-buffer)
-		(princ "\n" tmp-buffer)
-		(write-region (point-min) (point-max) view nil 'no-msg))))
-	;; kill tmp buffer.
-	(kill-buffer tmp-buffer)))))
+      (when dir
+	(if (file-directory-p dir)
+	    (); ok.
+	  (if (file-exists-p dir)
+	      (error "File %s already exists" dir)
+	    (elmo-make-directory dir)))
+	(if (eq save-view 'thread)
+	    (wl-thread-save-entity dir))
+	(when wl-summary-check-line-format
+	  (wl-summary-line-format-save))
+	(unwind-protect
+	    (progn
+	      (when (file-writable-p cache)
+		(copy-to-buffer tmp-buffer (point-min) (point-max))
+		(with-current-buffer tmp-buffer
+		  (widen)
+		  (make-local-variable 'wl-summary-highlight)
+		  (setq wl-summary-highlight nil
+			wl-summary-buffer-target-mark-list mark-list
+			wl-summary-buffer-temp-mark-list temp-list
+			wl-summary-buffer-temp-mark-column temp-column)
+		  (wl-summary-delete-all-temp-marks 'no-msg 'force)
+		  (encode-coding-region
+		   (point-min) (point-max)
+		   (or (and wl-on-mule
+			    ;; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
+			    (mime-charset-to-coding-system charset 'LF))
+		       ;; Mule 2 doesn't have `*ctext*unix'.
+		       (mime-charset-to-coding-system charset)))
+		  (write-region-as-binary (point-min)(point-max)
+					  cache nil 'no-msg)))
+	      (when (file-writable-p view) ; 'thread or 'sequence
+		(save-excursion
+		  (set-buffer tmp-buffer)
+		  (erase-buffer)
+		  (prin1 save-view tmp-buffer)
+		  (princ "\n" tmp-buffer)
+		  (write-region (point-min) (point-max) view nil 'no-msg))))
+	  ;; kill tmp buffer.
+	  (kill-buffer tmp-buffer))))))
 
 (defsubst wl-summary-get-sync-range (folder)
   (intern (or (and

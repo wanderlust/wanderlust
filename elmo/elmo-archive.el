@@ -901,7 +901,8 @@ TYPE specifies the archiver's symbol."
 	(setq header-end (point))
       (setq header-end (point-max)))
     (narrow-to-region (point-min) header-end)
-    (elmo-msgdb-create-message-entity-from-buffer msgdb number)))
+    (elmo-msgdb-create-message-entity-from-buffer
+     (elmo-msgdb-message-entity-handler msgdb) number)))
 
 ;; verrrry slow!!
 (defsubst elmo-archive-msgdb-create-entity (msgdb

@@ -96,7 +96,7 @@
     (while numbers
       (setq entity
 	    (elmo-msgdb-create-message-entity-from-file
-	     new-msgdb
+	     (elmo-msgdb-message-entity-handler new-msgdb)
 	     (car numbers) (elmo-message-file-name folder (car numbers))))
       (when entity
 	(setq message-id (elmo-message-entity-field entity 'message-id)

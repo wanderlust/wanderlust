@@ -338,7 +338,8 @@ update overview when message is fetched."
 	 (elmo-shimbun-folder-shimbun-internal folder)
 	 header)
 	(setq ov (elmo-msgdb-create-message-entity-from-buffer
-		  (elmo-folder-msgdb-internal folder) number))
+		  (elmo-msgdb-message-entity-handler
+		   (elmo-folder-msgdb-internal folder)) number))
 	(elmo-message-entity-set-field
 	 ov
 	 'xref (shimbun-header-xref header)))

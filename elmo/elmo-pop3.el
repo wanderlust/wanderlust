@@ -779,7 +779,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	    (narrow-to-region beg (point))
 	    (setq entity
 		  (elmo-msgdb-create-message-entity-from-buffer
-		   new-msgdb (car numlist)))
+		   (elmo-msgdb-message-entity-handler new-msgdb)
+		   (car numlist)))
 	    (setq numlist (cdr numlist))
 	    (when entity
 	      (with-current-buffer (process-buffer process)

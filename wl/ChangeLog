@@ -1,5 +1,9 @@
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-detect-mark-position): Use
+	modb-entity-handler.
+	(wl-summary-save-view-cache): Don't cause an error when dir is nil.
+
 	* Version number is increased to 2.11.17.
 
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>

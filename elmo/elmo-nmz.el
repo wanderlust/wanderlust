@@ -103,7 +103,7 @@ If the value is a list, all elements are used as index paths for namazu."
   (let ((location (expand-file-name (elmo-map-message-location folder number)))
 	entity uid)
     (setq entity (elmo-msgdb-create-message-entity-from-file
-		  msgdb number location))
+		  (elmo-msgdb-message-entity-handler msgdb) number location))
     (unless (or (> (length (elmo-message-entity-field entity 'to)) 0)
 		(> (length (elmo-message-entity-field entity 'cc)) 0)
 		(not (string= (elmo-message-entity-field entity 'subject)
@@ -129,7 +129,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	    (elmo-nmz-msgdb-create-entity
 	     new-msgdb folder (car numlist)))
       (when entity
-	(elmo-msgdb-append-entity new-msgdb entity '(new)))
+	(elmo-msgdb-append-entity new-msgdb entity '(new unread)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))

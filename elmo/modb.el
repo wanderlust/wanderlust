@@ -33,6 +33,7 @@
 (eval-when-compile (require 'cl))
 
 (require 'luna)
+(require 'modb-entity)
 
 (eval-and-compile
   (luna-define-class modb-generic () (location         ; location for save.
@@ -123,74 +124,8 @@ KEY is a number or a string.
 A number is for message number in the MSGDB.
 A string is for message-id of the message.")
 
-;; Message entity handling.
-(defvar modb-cache-internal nil)
-(defun elmo-message-entity-db (entity)
-  "Get modb instance which corresponds to the ENTITY."
-  (if (or (null (car entity))
-	  (stringp (car entity)))
-      ;; Transitional implementation for modb-legacy.
-      (or modb-cache-internal
-	  (progn
-	    (require 'modb-legacy)
-	    (setq modb-cache-internal (luna-make-entity 'modb-legacy))))
-    ;; XXX Next generation entity structure...not decided yet.
-    (car entity)))
-
-(luna-define-generic elmo-msgdb-make-message-entity (msgdb
-						     &rest args)
-  "Make a message entity for MSGDB.")
-
-(luna-define-generic elmo-msgdb-message-entity-number (msgdb entity)
-  "Number of the ENTITY.")
-
-(luna-define-generic elmo-msgdb-message-entity-set-number (msgdb entity number)
-  "Set number of the ENTITY.")
-
-(luna-define-generic elmo-msgdb-message-entity-field (msgdb
-						      entity field
-						      &optional decode)
-  "Retrieve field value of the message entity.
-MSGDB is the msgdb structure.
-ENTITY is the message entity structure.
-FIELD is a symbol of the field.
-If optional DECODE is no-nil, the field value is decoded.")
-
-(luna-define-generic elmo-msgdb-message-entity-set-field (msgdb
-							  entity field value)
-  "Set the field value of the message entity.
-MSGDB is the msgdb structure.
-ENTITY is the message entity structure.
-FIELD is a symbol of the field.
-VALUE is the field value to set.")
-
-(luna-define-generic elmo-msgdb-copy-message-entity (msgdb entity)
-  "Copy message entity.
-MSGDB is the msgdb structure.
-ENTITY is the message entity structure.")
-
-(luna-define-generic elmo-msgdb-create-message-entity-from-file (msgdb number
-								       file)
-  "Create message entity from file.
-MSGDB is the msgdb structure.
-NUMBER is the number of the newly created message entity.
-FILE is the message file.")
-
-(luna-define-generic elmo-msgdb-create-message-entity-from-buffer (msgdb
-								   number
-								   &rest args)
-  "Create message entity from current buffer.
-NUMBER is the number of the newly created message entity.
-Rest of the ARGS is a plist of message entity field for initial value.
-Header region is supposed to be narrowed.")
-
-;; Transitional interface.
-(luna-define-generic elmo-msgdb-match-condition-internal (msgdb
-							  condition
-							  entity
-							  flags
-							  numbers)
-  "Return non-nil when the entity matches the condition.")
+(luna-define-generic elmo-msgdb-message-entity-handler (msgdb)
+  "Get modb entity handler instance which corresponds to the MSGDB.")
 
 ;;; generic implement
 ;;
@@ -223,46 +158,11 @@ Header region is supposed to be narrowed.")
 (luna-define-method elmo-msgdb-length ((msgdb modb-generic))
   0)
 
-;; Generic method.
-(luna-define-method elmo-msgdb-create-message-entity-from-file
-  ((msgdb modb-generic) number file)
-  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook header-end
-	(attrib (file-attributes file))
-	ret-val size mtime)
-    (with-temp-buffer
-      (if (not (file-exists-p file))
-	  ()
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (goto-char (point-min))
-	  (setq header-end
-		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
-		    (point)
-		  (point-max)))
-	  (narrow-to-region (point-min) header-end)
-	  (elmo-msgdb-create-message-entity-from-buffer
-	   msgdb number :size size :date mtime))))))
 
-;; Dummy message-entity methods.
-(luna-define-method elmo-msgdb-make-message-entity ((msgdb modb-generic)
-						    args)
-  (cons msgdb args))
-
-(luna-define-method elmo-msgdb-message-entity-field ((msgdb modb-generic)
-						     entity field
-						     &optional decode)
-  (plist-get (cdr entity) (intern (concat ":" (symbol-name field)))))
-
-(luna-define-method elmo-msgdb-message-entity-number ((msgdb modb-generic)
-						      entity)
-  (plist-get (cdr entity) :number))
+(luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-generic))
+  (or modb-entity-default-cache-internal
+      (setq modb-entity-default-cache-internal
+	    (luna-make-entity modb-entity-default-handler))))
 
 ;; for on demand loading
 (provide 'modb-generic)

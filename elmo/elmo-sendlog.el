@@ -90,7 +90,7 @@
     (while numbers
       (setq entity
 	    (elmo-msgdb-create-message-entity-from-file
-	     new-msgdb (car numbers)
+	     (elmo-msgdb-message-entity-handler new-msgdb) (car numbers)
 	     (elmo-message-file-name folder (car numbers))))
       (if (null entity)
 	  (elmo-folder-set-killed-list-internal

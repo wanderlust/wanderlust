@@ -1121,7 +1121,7 @@ If CACHED is t, message is set as cached.")
     (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached)))
 
 (defun elmo-message-copy-entity (entity)
-  (elmo-msgdb-copy-message-entity (elmo-message-entity-db entity)
+  (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
 				  entity))
 
 (luna-define-generic elmo-message-entity (folder key)
@@ -1159,11 +1159,11 @@ ENTITY is the message-entity to get the parent.")
      ,@form))
 
 (defmacro elmo-message-entity-number (entity)
-  `(elmo-msgdb-message-entity-number (elmo-message-entity-db ,entity)
+  `(elmo-msgdb-message-entity-number (elmo-message-entity-handler ,entity)
 				     ,entity))
 
 (defmacro elmo-message-entity-set-number (entity number)
-  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-db ,entity)
+  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-handler ,entity)
 					 ,entity
 					 ,number))
 
@@ -1173,7 +1173,7 @@ ENTITY is the message entity structure obtained by `elmo-message-entity'.
 FIELD is the symbol of the field name.
 if optional DECODE is non-nil, returned value is decoded."
   (elmo-msgdb-message-entity-field
-   (elmo-message-entity-db entity)
+   (elmo-message-entity-handler entity)
    entity field decode))
 
 (defun elmo-message-entity-set-field (entity field value)
@@ -1182,7 +1182,7 @@ ENTITY is the message entity structure.
 FIELD is the symbol of the field name.
 VALUE is the field value (raw)."
   (elmo-msgdb-message-entity-set-field
-   (elmo-message-entity-db entity)
+   (elmo-message-entity-handler entity)
    entity field value))
 
 (luna-define-generic elmo-folder-count-flags (folder)

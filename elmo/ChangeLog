@@ -1,5 +1,56 @@
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-entity.el: New file (again).
+
+	* modb.el (toplevel): Require modb-entity.
+	(elmo-msgdb-message-entity-handler): New method.
+
+	* modb-standard.el (modb-standard-entity-id): Use
+	elmo-message-entity-handler.
+	(modb-standard-load-entity): Ditto.
+	(elmo-msgdb-append-entity): Ditto.
+	(elmo-msgdb-create-message-entity-from-buffer): Ditto.
+
+	* modb-legacy.el (elmo-msgdb-get-decoded-cache,
+	elmo-msgdb-decoded-cache-hashtb,
+	(modb-legacy-make-message-entity,
+	elmo-msgdb-make-message-entity,
+	elmo-msgdb-create-message-entity-from-buffer,
+	elmo-msgdb-message-entity-number,
+	elmo-msgdb-message-entity-set-number,
+	elmo-msgdb-message-entity-field,
+	elmo-msgdb-message-entity-set-field,
+	elmo-msgdb-copy-message-entity,
+	elmo-msgdb-match-condition-internal,
+	elmo-msgdb-match-condition-primitive): Moved to modb-entity.el.
+
+	* elmo.el (elmo-message-copy-entity): Use elmo-message-entity-handler.
+	(elmo-message-entity-set-number): Ditto.
+	(elmo-message-entity-field): Ditto.
+	(elmo-message-entity-set-field): Ditto.
+
+	* elmo-shimbun.el (elmo-shimbun-msgdb-create-entity): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+
+	* elmo-nmz.el (elmo-nmz-msgdb-create-entity): Ditto.
+	(elmo-folder-msgdb-create): Add unread flag.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-localdir.el (elmo-localdir-msgdb-create-entity): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-entity-subr): Call
+	elmo-msgdb-messge-entity-handler.
 	* elmo-version.el (elmo-version): Up to 2.11.17.
 
 2003-09-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

@@ -66,7 +66,7 @@
   (if (eq 'autoload (car-safe entity))
       (cddr entity)
     (elmo-msgdb-message-entity-field
-     (elmo-message-entity-db entity)
+     (elmo-message-entity-handler entity)
      entity 'message-id)))
 
 (defsubst modb-standard-entity-map (modb)
@@ -168,12 +168,12 @@
 		      path)))
       (elmo-set-hash-val (modb-standard-key
 			  (elmo-msgdb-message-entity-number
-			   (elmo-message-entity-db entity)
+			   (elmo-message-entity-handler entity)
 			   entity))
 			 entity
 			 table)
       (elmo-set-hash-val (elmo-msgdb-message-entity-field
-			  (elmo-message-entity-db entity)
+			  (elmo-message-entity-handler entity)
 			  entity 'message-id)
 			 entity
 			 table))
@@ -357,9 +357,9 @@
 (luna-define-method elmo-msgdb-append-entity ((msgdb modb-standard)
 					      entity &optional flags)
   (let ((number (elmo-msgdb-message-entity-number
-		 (elmo-message-entity-db entity) entity))
+		 (elmo-message-entity-handler entity) entity))
 	(msg-id (elmo-msgdb-message-entity-field
-		 (elmo-message-entity-db entity) entity 'message-id))
+		 (elmo-message-entity-handler entity) entity 'message-id))
 	duplicate)
     ;; number-list
     (modb-standard-set-number-list-internal
@@ -462,7 +462,7 @@
     (save-excursion
       (setq entity (modb-standard-make-message-entity args)
 	    ;; For compatibility.
-	    msgdb (elmo-message-entity-db entity))
+	    msgdb (elmo-message-entity-handler entity))
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq message-id (elmo-msgdb-get-message-id-from-buffer))
       (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))

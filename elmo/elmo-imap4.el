@@ -818,7 +818,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
      (while (search-forward "\r\n" nil t)
        (replace-match "\n"))
      (elmo-msgdb-create-message-entity-from-buffer
-      (elmo-folder-msgdb-internal (cdr app-data))
+      (elmo-msgdb-message-entity-handler
+       (elmo-folder-msgdb-internal (cdr app-data)))
       (elmo-imap4-response-value element 'uid)
       :size (elmo-imap4-response-value element 'rfc822size)))
    (elmo-imap4-response-value element 'flags)
