@@ -1670,8 +1670,15 @@ If ARG is non-nil, checking is omitted."
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq importants (elmo-folder-list-importants
-			wl-summary-buffer-elmo-folder)
+      (setq importants (elmo-uniq-list
+			(nconc (elmo-folder-list-importants
+				wl-summary-buffer-elmo-folder)
+			       ;; XXX Temporal implementation.
+			       ;; It should be merged to the
+			       ;; elmo-folder-list-flagged.
+			       (elmo-folder-list-global-flag-messages
+				wl-summary-buffer-elmo-folder
+				'important)))
 	    unreads (elmo-folder-list-unreads
 		     wl-summary-buffer-elmo-folder)
 	    answereds (elmo-folder-list-answereds
@@ -4605,6 +4612,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-message-header-narrowing-toggle)
 	  (and wpos (set-window-start mwin wpos)))))))
 
+(autoload 'elmo-folder-list-global-flag-messages "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))

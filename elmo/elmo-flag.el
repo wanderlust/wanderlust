@@ -226,6 +226,19 @@ NUMBER is the number of the message."
       (setq flag-list (cdr flag-list)))
     matches))
 
+(defun elmo-folder-list-global-flag-messages (folder flag)
+  "List messages which have global flag.
+FOLDER is the elmo folder structure.
+FLAG is the symbol of the flag."
+  (when (elmo-global-flag-p flag)
+    (let ((flag-folder (elmo-flag-get-folder flag))
+	  result entity)
+      (dolist (elem (elmo-flag-folder-minfo-internal flag-folder))
+	(if (setq entity (elmo-message-entity folder (nth 1 elem)))
+	    (setq result (cons (elmo-message-entity-number entity)
+			       result))))
+      result)))
+
 ;;;
 ;; minfo is a list of following cell.
 ;; ((((FNAME . NUMBER)...(FNAME . NUMBER)) MESSAGE-ID NUMBER-IN-FLAG-FOLDER)

@@ -1,5 +1,7 @@
 2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-flag.el (elmo-folder-list-global-flag-messages): New function.
+
 	* elmo.el (elmo-folder-delete-messages): Added notice in docstring.
 	(elmo-folder-move-messages): Call elmo-global-flag-detach-messages
 	with argument `delete-if-none' when dst-folder is 'null.
