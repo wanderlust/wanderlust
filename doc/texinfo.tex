@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2001-02-02.17}
+\def\texinfoversion{2001-01-12.11}
 %
 % Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
 % Free Software Foundation, Inc.
@@ -2908,17 +2908,16 @@ width0pt\relax} \fi
         % Now the real index entry with the fonts.
         \toks0 = {#2}%
         %
-        % If the third (subentry) arg is present, add it to the index
-        % line to write.
+        % If third (subentry) arg is present, add it to the index
+        % string.  And include a space.
         \ifx\thirdarg\emptymacro \else
-          \toks0 = \expandafter{\the\toks0{#3}}%
+          \toks0 = \expandafter{\the\toks0 \space #3}%
         \fi
         %
-        % Set up the complete index entry, with both the sort key and
-        % the original text, including any font commands.  We write
-        % three arguments to \entry to the .?? file (four in the
-        % subentry case), texindex reduces to two when writing the .??s
-        % sorted result.
+        % Set up the complete index entry, with both the sort key
+        % and the original text, including any font commands.  We write
+        % three arguments to \entry to the .?? file, texindex reduces to
+        % two when writing the .??s sorted result.
         \edef\temp{%
           \write\csname#1indfile\endcsname{%
             \realbackslash entry{\indexsorttmp}{\folio}{\the\toks0}}%
@@ -3140,18 +3139,11 @@ width0pt\relax} \fi
 \def\primary #1{\line{#1\hfil}}
 
 \newskip\secondaryindent \secondaryindent=0.5cm
-\def\secondary#1#2{{%
-  \parfillskip=0in
-  \parskip=0in
-  \hangindent=1in
-  \hangafter=1
-  \noindent\hskip\secondaryindent\hbox{#1}\indexdotfill
-  \ifpdf
-    \pdfgettoks#2.\ \the\toksA % The page number ends the paragraph.
-  \else
-    #2
-  \fi
-  \par
+
+\def\secondary #1#2{
+{\parfillskip=0in \parskip=0in
+\hangindent =1in \hangafter=1
+\noindent\hskip\secondaryindent\hbox{#1}\indexdotfill #2\par
 }}
 
 % Define two-column mode, which we use to typeset indexes.
