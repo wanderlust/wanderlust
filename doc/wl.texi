@@ -3624,7 +3624,7 @@ cursor position is saved.
 @item wl-summary-update-confirm-threshold
 @vindex wl-summary-update-confirm-threshold
 The initial setting is 500.  If updated message number is larger than
-this value, confirm whether drop them or not. If `nil', all the message
+this value, confirm whether drop them or not. If @code{nil}, all the message
 will be updated without confirmation.
 
 @item wl-summary-always-sticky-folder-list

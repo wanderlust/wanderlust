@@ -3612,7 +3612,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @item wl-summary-update-confirm-threshold
 @vindex wl-summary-update-confirm-threshold
 $B=i4|@_Dj$O(B 500$B!#$3$NCM$h$j%5%^%j$N99?7?t$,B?$$>l9g!"0lItJ,$@$199?7$9$k$+(B
-$B$I$&$+!"<ALd$7$^$9!#(B`nil' $B$K$9$k$H!"3NG'$;$:$KA4$F$r99?7$7$^$9!#(B
+$B$I$&$+!"<ALd$7$^$9!#(B@code{nil} $B$K$9$k$H!"3NG'$;$:$KA4$F$r99?7$7$^$9!#(B
 
 @item wl-summary-always-sticky-folder-list
 @vindex wl-summary-always-sticky-folder-list
