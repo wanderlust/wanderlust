@@ -2805,7 +2805,7 @@ If ARG, without confirm."
 	  (if (wl-summary-cursor-down t)
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
-			      'down nil)))
+			      'down t)))
 		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
 		      ((not unreadp)
@@ -4521,25 +4521,27 @@ If ARG, exit virtual folder."
 	marked-list nums2)
     (unless hereto (setq nums (cdr nums)))
     (setq nums2 nums)
-    (catch 'done
-      (while cur-spec
-	(setq nums nums2)
-	(cond ((eq (car (car cur-spec)) 'p)
-	       (if (setq marked-list (elmo-msgdb-list-messages-mark-match
-				      wl-summary-buffer-msgdb
-				      (cdr (car cur-spec))))
+    (if cur-spec
+	(catch 'done
+	  (while cur-spec
+	    (setq nums nums2)
+	    (cond ((eq (car (car cur-spec)) 'p)
+		   (if (setq marked-list (elmo-msgdb-list-messages-mark-match
+					  wl-summary-buffer-msgdb
+					  (cdr (car cur-spec))))
+		       (while nums
+			 (if (memq (car nums) marked-list)
+			     (throw 'done (car nums)))
+			 (setq nums (cdr nums)))))
+		  ((eq (car (car cur-spec)) 't)
 		   (while nums
-		     (if (memq (car nums) marked-list)
+		     (if (and wl-summary-buffer-target-mark-list
+			      (memq (car nums)
+				    wl-summary-buffer-target-mark-list))
 			 (throw 'done (car nums)))
 		     (setq nums (cdr nums)))))
-	      ((eq (car (car cur-spec)) 't)
-	       (while nums
-		 (if (and wl-summary-buffer-target-mark-list
-			  (memq (car nums)
-				wl-summary-buffer-target-mark-list))
-		     (throw 'done (car nums)))
-		 (setq nums (cdr nums)))))
-	(setq cur-spec (cdr cur-spec))))))
+	    (setq cur-spec (cdr cur-spec))))
+      (car nums))))
 
 (defsubst wl-summary-cursor-move (direction hereto)
   (when (and (eq direction 'up)
