@@ -6007,6 +6007,7 @@ Examples with other packages.
 * X-Face::                      x-face,bitmap-mule
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
+* Addrbook::                    Addrbook
 @end menu
 
 
@@ -6196,7 +6197,7 @@ specific, but general-purpose for SEMI).
 @end group
 @end lisp
 
-@node MHC,  , dired-dd, Living with other packages
+@node MHC, Addrbook, dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -6222,6 +6223,23 @@ For mhc-current:
 @group
 (autoload 'mhc-wl-setup "mhc-wl")
 (add-hook 'wl-init-hook 'mhc-wl-setup)
+@end group
+@end lisp
+
+@node Addrbook,  , MHC, Living with other packages
+@subsection wl-addrbook.el
+@pindex Addrbook
+
+Addrbook of Mew
+(@uref{http://www.mew.org/})
+
+Place @file{util/wl-addrbook.el} and @file{util/wl-complete.el} on the
+@code{load-path} and do the following settings.
+
+@lisp
+@group
+(require 'wl-addrbook)
+(wl-addrbook-setup)
 @end group
 @end lisp
 

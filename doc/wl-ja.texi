@@ -5919,6 +5919,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 * X-Face::                      x-face,bitmap-mule
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
+* Addrbook::                    Addrbook
 @end menu
 
 
@@ -6109,7 +6110,7 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end group
 @end lisp
 
-@node MHC,  , dired-dd, Living with other packages
+@node MHC, Addrbook, dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -6135,6 +6136,24 @@ mhc-current $B$N>l9g!'(B
 @group
 (autoload 'mhc-wl-setup "mhc-wl")
 (add-hook 'wl-init-hook 'mhc-wl-setup)
+@end group
+@end lisp
+
+@node Addrbook,  , MHC, Living with other packages
+@subsection wl-addrbook.el
+@pindex Addrbook
+
+Addrbook of Mew
+(@uref{http://www.mew.org/})
+
+Mew $B$N(B Addrbook $B$r(B Wanderlust $B$G;HMQ$G$-$k$h$&$K$9$k$K$O!"(B
+@file{util/wl-addrbook.el} $B$H(B @file{util/wl-complete.el} $B$r(B 
+@code{load-path} $B$K$*$$$F!"0J2<$N$h$&$K@_Dj$7$^$9!#(B
+
+@lisp
+@group
+(require 'wl-addrbook)
+(wl-addrbook-setup)
 @end group
 @end lisp
 
