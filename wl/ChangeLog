@@ -1,3 +1,15 @@
+2003-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-thread-saved-entity-hashtb-internal): New
+	internal variable.
+	(wl-summary-rescan): Saved wl-thread-entity-hashtb; Bind
+	wl-summary-search-parent-by-subject-regexp and
+	wl-summary-divide-thread-when-subject-changed as nil.
+	(wl-summary-insert-sequential): If entity is nil, nothing to do.
+	(wl-summary-insert-thread): Search parent entity from
+	wl-thread-saved-entity-hashtb-internal; Fixed logic to detect
+	thread loop.
+
 2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-check-environment): Don't check wl-draft-folder is file.

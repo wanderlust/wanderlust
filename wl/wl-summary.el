@@ -132,6 +132,8 @@
 (defvar wl-ps-preprint-hook nil)
 (defvar wl-ps-print-hook nil)
 
+(defvar wl-thread-saved-entity-hashtb-internal nil)
+
 (make-variable-buffer-local 'wl-summary-buffer-elmo-folder)
 (make-variable-buffer-local 'wl-summary-search-buf-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-disp-msg)
@@ -933,6 +935,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(buffer-read-only nil)
 	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
 					    (not disable-killed) t)) ; in-msgdb
+	(wl-thread-saved-entity-hashtb-internal wl-thread-entity-hashtb)
+	wl-summary-search-parent-by-subject-regexp
+	wl-summary-divide-thread-when-subject-changed
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
@@ -2435,22 +2440,23 @@ If ARG, without confirm."
     (run-hooks 'wl-summary-line-inserted-hook)))
 
 (defun wl-summary-insert-sequential (entity folder &rest args)
-  (let ((inhibit-read-only t)
-	(number (elmo-message-entity-number entity))
-	buffer-read-only)
-    (goto-char (point-max))
-    (wl-summary-insert-line
-     (wl-summary-create-line entity nil nil
-			     (elmo-message-flags
-			      wl-summary-buffer-elmo-folder
-			      number)
-			     (elmo-message-cached-p
-			      wl-summary-buffer-elmo-folder
-			      number)))
-    (setq wl-summary-buffer-number-list
-	  (wl-append wl-summary-buffer-number-list
-		     (list (elmo-message-entity-number entity))))
-    nil))
+  (when entity
+    (let ((inhibit-read-only t)
+	  (number (elmo-message-entity-number entity))
+	  buffer-read-only)
+      (goto-char (point-max))
+      (wl-summary-insert-line
+       (wl-summary-create-line entity nil nil
+			       (elmo-message-flags
+				wl-summary-buffer-elmo-folder
+				number)
+			       (elmo-message-cached-p
+				wl-summary-buffer-elmo-folder
+				number)))
+      (setq wl-summary-buffer-number-list
+	    (wl-append wl-summary-buffer-number-list
+		       (list (elmo-message-entity-number entity))))
+      nil)))
 
 (defun wl-summary-default-subject-filter (subject)
   (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
@@ -2555,25 +2561,34 @@ If ARG, without confirm."
   (let ((depth 0)
 	this-id	parent-entity parent-number relatives anumber
 	cur number cur-entity linked retval delayed-entity
-	update-list entity-stack)
+	update-list entity-stack thread-entity)
     (while entity
       (setq this-id (elmo-message-entity-field entity 'message-id)
-	    parent-entity
-	    (elmo-message-entity-parent folder entity)
-	    parent-number (elmo-message-entity-number parent-entity))
-      (setq number (elmo-message-entity-number entity))
+	    number (elmo-message-entity-number entity))
+      (if (and wl-thread-saved-entity-hashtb-internal
+	       (setq thread-entity
+		     (elmo-get-hash-val
+		      (format "#%d" (elmo-message-entity-number entity))
+		      wl-thread-saved-entity-hashtb-internal)))
+	  (setq parent-entity
+		(elmo-message-entity
+		 folder
+		 (wl-thread-entity-get-parent thread-entity))
+		linked (wl-thread-entity-get-linked thread-entity))
+	(setq parent-entity (elmo-message-entity-parent folder entity)
+	      linked nil))
+      (setq parent-number (and parent-entity
+			       (elmo-message-entity-number parent-entity)))
       (setq cur entity)
       ;; If thread loop detected, set parent as nil.
       (while cur
-	(setq anumber
-	      (elmo-message-entity-number
-	       (setq cur (elmo-message-entity-parent folder cur))))
-	(if (memq anumber relatives)
-	    (setq parent-number nil
-		  cur nil))
-	(setq relatives (cons
-			 (elmo-message-entity-number cur)
-			 relatives)))
+	(when (setq anumber
+		    (elmo-message-entity-number
+		     (setq cur (elmo-message-entity-parent folder cur))))
+	  (if (memq anumber relatives)
+	      (setq parent-number nil
+		    cur nil))
+	  (setq relatives (cons anumber relatives))))
       (if (and parent-number
 	       (not (wl-thread-get-entity parent-number))
 	       (not force-insert))
