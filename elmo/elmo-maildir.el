@@ -393,7 +393,7 @@ file name for maildir directories."
     filename))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       &optional flag number)
+					       &optional flags number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
 	dst-buf filename)
@@ -411,6 +411,12 @@ file name for maildir directories."
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
 	    basedir))
+	  (let* ((path (elmo-folder-msgdb-path folder))
+		 (table (elmo-flag-table-load path))
+		 (msgid (std11-field-body "message-id")))
+	    (when msgid
+	      (elmo-flag-table-set table msgid flags)
+	      (elmo-flag-table-save path table)))
 	  t)
       ;; If an error occured, return nil.
       (error))))

@@ -7,6 +7,7 @@
 	elmo-folder-append-buffer.
 
 	* elmo-localdir.el (elmo-folder-append-buffer): Create flag-table.
+	* elmo-maildir.el (elmo-folder-append-buffer): Ditto.
 
 	* elmo-cache.el (elmo-folder-append-buffer): Check existence of
 	message-id.
