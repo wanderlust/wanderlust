@@ -40,6 +40,8 @@
 (defvar wl-refile-subject-alist nil)
 (defvar wl-refile-subject-alist-file-name "refile-subject-alist")
 
+(defvar wl-refile-default-from-folder-path-separator "/")
+
 (defvar wl-refile-alist-max-length 1000)
 
 (defun wl-refile-alist-setup ()
@@ -148,7 +150,8 @@
   '(wl-refile-guess-by-rule
     wl-refile-guess-by-msgid
     wl-refile-guess-by-subject
-    wl-refile-guess-by-history)
+    wl-refile-guess-by-history
+    wl-refile-guess-by-from)
   "*Functions in this list are used for guessing refile destination folder.")
 
 ;; 2000-11-05: *-func-list -> *-functions
@@ -225,8 +228,7 @@ If RULE does not match ENTITY, returns nil."
       (if (setq ret-val (cdr (assoc (car tocc-list) wl-refile-alist)))
 	  (setq tocc-list nil)
 	(setq tocc-list (cdr tocc-list))))
-    (or ret-val
-	(wl-refile-guess-by-from entity))))
+    ret-val))
 
 (defun wl-refile-get-account-part-from-address (address)
   (if (string-match "\\([^@]+\\)@[^@]+" address)
@@ -234,13 +236,18 @@ If RULE does not match ENTITY, returns nil."
     address))
 
 (defun wl-refile-guess-by-from (entity)
-  (let ((from
-	 (downcase (wl-address-header-extract-address
-		    (elmo-message-entity-field entity 'from)))))
+  (let ((from (downcase (wl-address-header-extract-address
+			 (elmo-message-entity-field entity 'from))))
+	(folder (elmo-make-folder wl-refile-default-from-folder))
+	(elmo-path-sep wl-refile-default-from-folder-path-separator))
     ;; search from alist
     (or (cdr (assoc from wl-refile-alist))
-	(elmo-concat-path wl-refile-default-from-folder
-			  (wl-refile-get-account-part-from-address from)))))
+	(concat
+	 (elmo-folder-prefix-internal folder)
+	 (elmo-concat-path
+	  (substring wl-refile-default-from-folder
+		     (length (elmo-folder-prefix-internal folder)))
+	  (wl-refile-get-account-part-from-address from))))))
 
 (defun wl-refile-guess-by-msgid (entity)
   (cdr (assoc (elmo-message-entity-field entity 'references)

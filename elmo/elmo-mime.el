@@ -293,28 +293,32 @@ Return non-nil if cache is used."
 
       ;; Humm...
       (set-buffer-multibyte nil)
-      (mime-insert-entity message)
+      (insert (mime-entity-body message))
       (set-buffer-multibyte t)
       (decode-coding-region (point-min) (point-max)
 			    elmo-mime-display-as-is-coding-system)
-      (save-restriction
-	(std11-narrow-to-header)
-	(run-hooks 'elmo-message-header-inserted-hook))
+      (goto-char (point-min))
+      (insert "\n")
+      (goto-char (point-min))
+
+      (let ((method (cdr (assq original-major-mode
+			       mime-header-presentation-method-alist))))
+	(if (functionp method)
+	    (funcall method message nil)))
+
       ;; set original major mode for mime-preview-quit
       (put-text-property (point-min) (point-max)
 			 'mime-view-situation
 			 `((major-mode . ,original-major-mode)))
+      (put-text-property (point-min) (point-max)
+			 'elmo-as-is-entity message)
       (use-local-map
        (or keymap
 	   (if default-keymap-or-function
 	       (mime-view-define-keymap default-keymap-or-function)
 	     mime-view-mode-default-map)))
-      (let ((point
-	     (next-single-property-change (point-min) 'mime-view-entity)))
-	(if point
-	    (goto-char point)
-	  (goto-char (point-min))
-	  (search-forward "\n\n" nil t)))
+      (goto-char (point-min))
+      (search-forward "\n\n" nil t)
       (run-hooks 'mime-view-mode-hook)
       (set-buffer-modified-p nil)
       (setq buffer-read-only t)

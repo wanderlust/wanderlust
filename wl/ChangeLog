@@ -1,3 +1,43 @@
+2004-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Added spec "m".
+	(wl-message-mode-line-format-spec-alist): Ditto.
+	(wl-message-mode-line-format): Ditto.
+	(wl-summary-mode-line-format): Ditto for docstring.
+	(wl-summary-no-mime-folder-list): Fix typo.
+
+	* wl-util.el (wl-current-message-buffer): Call
+	`wl-message-buffer-display' with `as-is' and `all-header' as nil.
+
+	* wl-summary.el (wl-summary-buffer-display-as-is): New buffer-local
+	variable.
+	(wl-summary-mode-map): Bind 'M' as `wl-summary-toggle-mime' instead
+	of `wl-summary-redisplay-no-mime'.
+	(wl-summary-goto-folder-subr): Set up wl-summary-buffer-display-as-is.
+	(wl-summary-toggle-mime): New function.
+	(wl-summary-redisplay-all-header): Rewrite.
+	(wl-summary-redisplay-no-mime): Ditto.
+	(wl-summary-redisplay-internal): Added argument `as-is' and
+	`all-header'.
+
+	* wl-refile.el (wl-refile-default-from-folder-path-separator):
+	New variable.
+	(wl-refile-guess-functions): Added wl-refile-guess-by-from at the
+	bottom.
+	(wl-refile-guess-by-history): Don't use wl-refile-guess-by-from.
+	(wl-refile-guess-by-from): Rewrite to fix the bug which inserts
+	"/" unconditionally.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Use
+	wl-mime-preview-follow-no-mime for as-is content.
+	(wl-mime-preview-follow-no-mime): New function.
+	(wl-mime-preview-follow-current-region): Fixed parenthesis.
+
+	* wl-message.el (wl-message-redisplay): Removed argument `display-type'
+	and added `as-is', `all-header'.
+	(wl-message-buffer-display): Ditto.
+	(wl-message-buffer-display-type): New function.
+
 2004-09-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-message-header-button-alist): Change default

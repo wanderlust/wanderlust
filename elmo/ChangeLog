@@ -1,3 +1,8 @@
+2004-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-display-as-is-internal): Insert decoded
+	header.
+
 2004-09-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* modb-standard.el (modb-standard-load-entity): Don't bind inhibit-quit

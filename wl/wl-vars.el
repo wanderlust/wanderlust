@@ -201,6 +201,7 @@ If no match, `wl-summary-default-view' is used."
 				    wl-summary-buffer-elmo-folder))
 	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
     (?t (if (eq wl-summary-buffer-view 'thread) "T" "S"))
+    (?m (if wl-summary-buffer-display-as-is "-" "M"))
     (?n wl-summary-buffer-new-count)
     (?u wl-summary-buffer-unread-count)
     (?a (length wl-summary-buffer-number-list)))
@@ -217,6 +218,7 @@ which are replaced by the given information:
 
 %f The folder name.
 %t The thread status of the summary ('T' for thread, 'S' for sequential).
+%m The mime analysis status of the summary ('M' for MIME ON)
 %n The number of new messages.
 %u The number of unread messages (includes new messages).
 %a The number of all messages."
@@ -1098,7 +1100,7 @@ Example:
   :group 'wl-summary-marks)
 
 (defcustom wl-summary-no-mime-folder-list nil
-  "*All folders that match this list don't analysis mime."
+  "*All folders that match this list don't analyze mime."
   :type '(repeat string)
   :group 'wl-summary)
 
@@ -1643,6 +1645,8 @@ which appear just before @."
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname wl-message-buffer-cur-folder)
 	  wl-message-buffer-cur-folder))
+    (?m (if (get-text-property (point-min) 'mime-view-entity)
+	    "MIME" "AS-IS"))
     (?F wl-message-buffer-flag-indicator)
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.
@@ -1651,13 +1655,14 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-message-mode-line-format "Wanderlust: << %f / %n %F>>"
+(defcustom wl-message-mode-line-format "Wanderlust: << %f / %n %F>> [%m]"
   "*A format string for message buffer's mode-line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
 
 %f The folder name.
 %n The number of the message.
+%m The MIME analysis status.
 %F The global flag indicator."
   :group 'wl-pref
   :type 'string)

@@ -109,6 +109,7 @@
 (defvar wl-summary-buffer-line-format nil)
 (defvar wl-summary-buffer-mode-line-formatter nil)
 (defvar wl-summary-buffer-mode-line nil)
+(defvar wl-summary-buffer-display-as-is nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -182,6 +183,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-line-format)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line-formatter)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
+(make-variable-buffer-local 'wl-summary-buffer-display-as-is)
 
 (defvar wl-datevec)
 (defvar wl-thr-indent-string)
@@ -434,7 +436,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\C-c\C-p" 'wl-summary-previous-buffer)
   (define-key wl-summary-mode-map "\C-c\C-n" 'wl-summary-next-buffer)
   (define-key wl-summary-mode-map "H"    'wl-summary-redisplay-all-header)
-  (define-key wl-summary-mode-map "M"    'wl-summary-redisplay-no-mime)
+  (define-key wl-summary-mode-map "M"    'wl-summary-toggle-mime)
   (define-key wl-summary-mode-map "B"    'wl-summary-burst)
   (define-key wl-summary-mode-map "Z"    'wl-status-update)
   (define-key wl-summary-mode-map "#"    'wl-summary-print-message)
@@ -2299,6 +2301,8 @@ If ARG, without confirm."
 	  (unless (eq major-mode 'wl-summary-mode)
 	    (wl-summary-mode))
 	  (wl-summary-buffer-set-folder folder)
+	  (setq wl-summary-buffer-display-as-is
+		(wl-summary-no-mime-p wl-summary-buffer-elmo-folder))
 	  (setq wl-summary-buffer-disp-msg nil)
 	  (setq wl-summary-buffer-last-displayed-msg nil)
 	  (setq wl-summary-buffer-current-msg nil)
@@ -3014,8 +3018,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unset-flag folder number-list 'read no-folder-mark)
-	  (elmo-folder-set-flag folder number-list 'read no-folder-mark))
+	    (elmo-folder-set-flag folder number-list 'unread no-folder-mark)
+	  (elmo-folder-unset-flag folder number-list 'unread no-folder-mark))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  (unless inverse
@@ -3803,9 +3807,8 @@ Return t if message exists."
 	(progn
 	  (set-buffer wl-message-buffer)
 	  t)
-      (if (wl-summary-no-mime-p folder)
-	  (wl-summary-redisplay-no-mime-internal folder number)
-	(wl-summary-redisplay-internal folder number))
+      (wl-summary-redisplay-internal folder number nil
+				     wl-summary-buffer-display-as-is)
       (when (buffer-live-p wl-message-buffer)
 	(set-buffer wl-message-buffer))
       nil)))
@@ -4336,14 +4339,41 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-summary-redisplay)))
     (message "No last message.")))
 
-(defun wl-summary-redisplay (&optional arg)
-  (interactive "P")
-  (if (and (not arg)
-	   (wl-summary-no-mime-p wl-summary-buffer-elmo-folder))
-      (wl-summary-redisplay-no-mime)
-    (wl-summary-redisplay-internal nil nil arg)))
+(defun wl-summary-toggle-mime ()
+  "Toggle MIME decoding."
+  (interactive)
+  (setq wl-summary-buffer-display-as-is
+	(not wl-summary-buffer-display-as-is))
+  (wl-summary-redisplay)
+  (wl-summary-update-modeline)
+  (message "MIME decoding: %s"
+	   (if wl-summary-buffer-display-as-is "OFF" "ON")))
 
-(defun wl-summary-redisplay-internal (&optional folder number force-reload)
+(defun wl-summary-redisplay (&optional arg)
+  "Redisplay message."
+  (interactive "P")
+  (wl-summary-redisplay-internal nil nil arg
+				 wl-summary-buffer-display-as-is))
+
+(defun wl-summary-redisplay-all-header (&optional arg)
+  "Redisplay message with all header."
+  (interactive "P")
+  (wl-summary-redisplay-internal nil nil arg
+				 wl-summary-buffer-display-as-is 'all-header))
+
+(defun wl-summary-redisplay-no-mime (&optional ask-coding)
+  "Display message without MIME decoding.
+If ASK-CODING is non-nil, coding-system for the message is asked."
+  (interactive "P")
+  (let ((elmo-mime-display-as-is-coding-system
+	 (if ask-coding
+	     (or (read-coding-system "Coding system: ")
+		 elmo-mime-display-as-is-coding-system)
+	   elmo-mime-display-as-is-coding-system)))
+    (wl-summary-redisplay-internal nil nil nil t 'all-header)))
+
+(defun wl-summary-redisplay-internal (&optional folder number force-reload
+						as-is all-header)
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
@@ -4373,7 +4403,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq no-folder-mark
 		;; If cache is used, change folder-mark.
 		(if (wl-message-redisplay folder num
-					  'mime
+					  as-is all-header
 					  (or
 					   force-reload
 					   (string= (elmo-folder-name-internal
@@ -4404,74 +4434,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
 					   wl-message-buffer-prefetch-depth
 					   (current-buffer)
 					   wl-summary-buffer-mime-charset)
-	  (run-hooks 'wl-summary-redisplay-hook))
-      (message "No message to display."))))
-
-(defun wl-summary-redisplay-no-mime (&optional ask-coding)
-  "Display message without MIME decoding.
-If ASK-CODING is non-nil, coding-system for the message is asked."
-  (interactive "P")
-  (let ((elmo-mime-display-as-is-coding-system
-	 (if ask-coding
-	     (or (read-coding-system "Coding system: ")
-		 elmo-mime-display-as-is-coding-system)
-	   elmo-mime-display-as-is-coding-system)))
-    (wl-summary-redisplay-no-mime-internal)))
-
-(defun wl-summary-redisplay-no-mime-internal (&optional folder number)
-  (let* ((fld (or folder wl-summary-buffer-elmo-folder))
-	 (num (or number (wl-summary-message-number)))
-	 wl-break-pages)
-    (if num
-	(progn
-	  (setq wl-summary-buffer-disp-msg t)
-	  (setq wl-summary-buffer-last-displayed-msg
-		wl-summary-buffer-current-msg)
-	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-message-redisplay fld num 'as-is
-				(string= (elmo-folder-name-internal fld)
-					 wl-draft-folder))
-	  (when (elmo-message-use-cache-p fld num)
-	    (elmo-message-set-cached fld num t))
-	  (ignore-errors
-	    (if (elmo-message-flagged-p fld num 'unread)
-		(wl-summary-mark-as-read num); no-folder-mark)
-	      (wl-summary-update-persistent-mark)))
-	  (setq wl-summary-buffer-current-msg num)
-	  (when wl-summary-recenter
-	    (recenter (/ (- (window-height) 2) 2))
-	    (if (not wl-summary-indent-length-limit)
-		(wl-horizontal-recenter)))
-	  (wl-highlight-summary-displaying)
-	  (run-hooks 'wl-summary-redisplay-hook))
-      (message "No message to display.")
-      (wl-ask-folder 'wl-summary-exit
-		     "No more messages. Type SPC to go to folder mode."))))
-
-(defun wl-summary-redisplay-all-header (&optional folder number)
-  (interactive)
-  (let* ((fld (or folder wl-summary-buffer-elmo-folder))
-	 (num (or number (wl-summary-message-number)))
-	 (wl-mime-charset      wl-summary-buffer-mime-charset)
-	 (default-mime-charset wl-summary-buffer-mime-charset))
-    (if num
-	(progn
-	  (setq wl-summary-buffer-disp-msg t)
-	  (setq wl-summary-buffer-last-displayed-msg
-		wl-summary-buffer-current-msg)
-	  (setq wl-current-summary-buffer (current-buffer))
-	  (when (elmo-message-use-cache-p fld num)
-	    (elmo-message-set-cached fld num t))
-	  (if (wl-message-redisplay fld num 'all-header
-				    (string= (elmo-folder-name-internal fld)
-					     wl-draft-folder))
-	      (wl-summary-mark-as-read num))
-	  (setq wl-summary-buffer-current-msg num)
-	  (when wl-summary-recenter
-	    (recenter (/ (- (window-height) 2) 2))
-	    (if (not wl-summary-indent-length-limit)
-		(wl-horizontal-recenter)))
-	  (wl-highlight-summary-displaying)
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display."))))
 

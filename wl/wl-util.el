@@ -538,7 +538,7 @@ that `read' can handle, whenever this is possible."
 	  (and (wl-summary-message-number)
 	       (car (wl-message-buffer-display wl-summary-buffer-elmo-folder
 					       (wl-summary-message-number)
-					       'mime)))))))
+					       nil nil)))))))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function
