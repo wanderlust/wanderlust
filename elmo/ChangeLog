@@ -15,6 +15,7 @@
 	(elmo-imap4-parse-namespace): Ditto.	
 	(elmo-imap4-open-connection): Rewrite.
 	(elmo-imap4-open-connection-1): Simplified (authenticate only).
+	(elmo-imap4-get-connection): Abolish local variable `result'.
 
 2000-08-21  Kaoru Takahashi  <kaoru@kaisei.org>
 

@@ -420,16 +420,15 @@ BUFFER must be a single-byte buffer."
 	 (port   (elmo-imap4-spec-port spec))
 	 (auth   (elmo-imap4-spec-auth spec))
 	 (type   (elmo-imap4-spec-stream-type spec))
-	 entry connection result process
+	 entry connection process
 	 user-at-host-on-port)
     (if (not (elmo-plugged-p host port))
 	(error "Unplugged"))
-    (setq user-at-host-on-port (format "%s@%s:%d" user host port))
-    (if type
-	(setq user-at-host-on-port
-	      (concat
-	       user-at-host-on-port
-	       (elmo-network-stream-type-spec-string type))))
+    (setq user-at-host-on-port
+	  (format "%s@%s:%d%s" user host port
+		  (if type
+		      (elmo-network-stream-type-spec-string type)
+		    "")))
     (setq entry (assoc user-at-host-on-port elmo-imap4-connection-cache))
     (if (and entry
 	     (memq (process-status (cadr (cdr entry)))
