@@ -53,18 +53,23 @@
   :group 'elmo-spam-bogofilter)
 
 (defcustom elmo-spam-bogofilter-arguments-alist
-  '((classify . ((if register "-u")
-		 (if elmo-spam-bogofilter-database-directory
-		     (list "-d" elmo-spam-bogofilter-database-directory))))
-    (register . ((if spam "-s" "-n")
-		 (if restore (if spam "-N" "-S"))
-		 (if elmo-spam-bogofilter-database-directory
-		     (list "-d" elmo-spam-bogofilter-database-directory)))))
+  '((classify
+     (if elmo-spam-bogofilter-debug "-vv")
+     (if register "-u")
+     (if elmo-spam-bogofilter-database-directory
+	 (list "-d" elmo-spam-bogofilter-database-directory)))
+    (register
+     (if elmo-spam-bogofilter-debug "-vv")
+     (if spam "-s" "-n")
+     (if restore (if spam "-N" "-S"))
+     (if elmo-spam-bogofilter-database-directory
+	 (list "-d" elmo-spam-bogofilter-database-directory))))
   "*An alist of options that are used with call bogofilter process.
 Each element is a list of following:
-\(TYPE . LIST-EXP)
+\(TYPE [SEXP...])
 TYPE is a symbol from `classify' or `register'.
-LIST-EXP is an expression to get list of options."
+SEXP is an expression to get options.
+Must be return a string or list of string."
   :type '(repeat (cons (choice (const :tag "Classify" classify)
 			       (const :tag "Register" register))
 		       (repeat sexp)))
@@ -79,19 +84,20 @@ LIST-EXP is an expression to get list of options."
 (eval-and-compile
   (luna-define-class elsp-bogofilter (elsp-generic)))
 
-(defsubst elmo-spam-bogofilter-call (&rest args)
+(defsubst elmo-spam-bogofilter-call (&optional args)
   (apply #'call-process-region
 	 (point-min) (point-max)
 	 elmo-spam-bogofilter-program
 	 nil (if elmo-spam-bogofilter-debug
 		 (get-buffer-create "*Debug ELMO SPAM Bogofilter*"))
 	 nil
-	 (delq nil (append elmo-spam-bogofilter-args
-			   (elmo-flatten args)))))
+	 (append elmo-spam-bogofilter-args
+		 (delq nil args))))
 
 (defmacro elmo-spam-bogofilter-arguments (type)
-  `(mapcar #'eval
-	   (cdr (assq ,type elmo-spam-bogofilter-arguments-alist))))
+  `(elmo-flatten
+    (mapcar #'eval
+	    (cdr (assq ,type elmo-spam-bogofilter-arguments-alist)))))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bogofilter)
 					     buffer &optional register)

@@ -1,6 +1,11 @@
 2004-01-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bogofilter.el (elmo-spam-bogofilter-arguments-alist):
+	Added "-vv" if elmo-spam-bogofilter-debug is non-nil.
+	(elmo-spam-bogofilter-call): Fixed the last change.
+	(elmo-spam-bogofilter-arguments): Ditto.
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-arguments-alist):
 	Follow the options change of latest bogofilter.
 
 	* elsp-bogofilter.el (elmo-spam-bogofilter-spam-switch): Abolish.
