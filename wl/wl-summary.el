@@ -952,6 +952,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-sort-by-list-info ()
   (interactive)
   (wl-summary-rescan "list-info"))
+(defun wl-summary-sort-by-size ()
+  (interactive)
+  (wl-summary-rescan "size"))
 
 (defun wl-summary-rescan (&optional sort-by disable-killed disable-thread)
   "Rescan current folder without updating."
