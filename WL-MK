@@ -20,7 +20,7 @@
 (defvar COMPRESS-SUFFIX-LIST '("" ".gz" ".Z" ".bz2"))
 
 (defvar wl-install-utils nil
-  "if Non-nil, install `wl-utils-modules'.")
+  "If Non-nil, install `wl-utils-modules'.")
 
 ;;; INFO
 (defconst wl-ja-info "wl-ja.info")
@@ -30,10 +30,6 @@
 
 (defvar wl-info-lang "ja"
   "The language of info file (\"ja\" or \"en\").")
-
-;; for Nemacs (dirty!)
-(if (not (fboundp 'file-executable-p))
-    (fset 'file-executable-p 'file-exists-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -84,8 +80,7 @@
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
 ;; v18, v19
-(if (or (boundp 'MULE)
-	(fboundp 'nemacs-version))
+(if (boundp 'MULE)
     (setq max-lisp-eval-depth 400))
 
 ;; FIXME: it is currently needed to byte-compile with Emacs 21.
@@ -111,11 +106,11 @@
     (load "./WL-ELS" nil nil t)
     (condition-case ()
 	(require 'mime-setup)
-      (error (error "No MIME module was detected. Please install SEMI or tm.")))
+      (error (error "No MIME module was detected. Please install SEMI.")))
     ;; smtp.el version check.
     (require 'smtp)
     (if (not (fboundp 'smtp-send-buffer))
-	(error "Please install FLIM 1.14.0 or later."))))
+	(error "Please install new FLIM.  See INSTALL or INSTALL.ja."))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."
@@ -147,6 +142,7 @@
   (princ "\n"))
 
 (defun test-wl ()
+  "Run test suite for developer."
   (config-wl-package)
   (require 'lunit)
   (let ((files (directory-files "tests" t "^test-.*\\.el$"))
@@ -163,6 +159,7 @@
     (lunit suite)))
 
 (defun check-wl ()
+  "Check user environment.  Not for developer."
   (config-wl-package)
   (require 'lunit)
   (let ((files (directory-files "tests" t "^check-.*\\.el$"))
@@ -203,10 +200,7 @@
 
 
 (defun compile-wl-package ()
-  ;; For nemacs byte compiler's strange behavior(?).
   (config-wl-package)
-  (if (fboundp 'nemacs-version)
-      (load (expand-file-name "wl.el" WLDIR)))
   (mapcar
    '(lambda (x)
       (compile-elisp-modules (cdr x) (car x)))
@@ -386,8 +380,6 @@
 
 (defun wl-detect-info-directory ()
   (config-wl-package-subr)
-  (if (fboundp 'nemacs-version)
-      (error "Cannot format info on Nemacs. Please use another formatter."))
   ;; INFODIR check.
   (require 'info)
   (if (fboundp 'info-initialize)

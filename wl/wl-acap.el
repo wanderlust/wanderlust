@@ -138,14 +138,22 @@ If nil, default acap port is used."
 				       (memq 'string type)))
 			      (if (memq sym wl-acap-base64-encode-options)
 				  (wl-acap-base64-decode-string (cadr x))
-				(cadr x)))
+				(decode-coding-string
+				 (cadr x)
+				 wl-acap-coding-system)))
 			     (t
 			      (if (cadr x)
 				  (read
 				   (if (memq sym
 					     wl-acap-base64-encode-options)
 				       (wl-acap-base64-decode-string (cadr x))
-				     (read (concat "\"" (cadr x) "\""))))))))))
+				      (read (concat 
+					     "\""
+					     (decode-coding-string
+					      (cadr x)
+					      wl-acap-coding-system)
+					     "\""))
+				      ))))))))
 			(t 'wl-acap-ignored))))
 		   settings)))
     ;; Setup options.
@@ -261,11 +269,15 @@ If nil, default acap port is used."
 		      (if (memq option wl-acap-base64-encode-options)
 			  (wl-acap-base64-encode-string
 			   (symbol-value option))
-			(symbol-value option)))
+			(encode-coding-string
+			 (symbol-value option)
+			 wl-acap-coding-system)))
 		     (t (if (memq option wl-acap-base64-encode-options)
 			    (wl-acap-base64-encode-string
 			     (prin1-to-string (symbol-value option)))
-			  (prin1-to-string (symbol-value option))))))
+			  (encode-coding-string
+			   (prin1-to-string (symbol-value option))
+			   wl-acap-coding-system)))))
 		  settings)))
     (unwind-protect
 	(progn
