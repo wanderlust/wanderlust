@@ -153,7 +153,7 @@
 		(setq return-value nil))
 	    (setq elmo-pop3-read-point match-end)
 	    (if not-command
-		(setq response-continue nil))
+ 		(setq response-continue nil))
 	    (setq return-value
 		  (if return-value
 		      (concat return-value "\n" response-string)
@@ -309,6 +309,13 @@
     (with-current-buffer (process-buffer process)
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))
+      ;; Skip garbage output from process before greeting.
+      (while (and (memq (process-status process) '(open run))
+		  (goto-char (point-max))
+		  (forward-line -1)
+		  (not (looking-at "+OK")))
+	(accept-process-output process 1))
+      (setq elmo-pop3-read-point (point))
       (or (elmo-network-session-set-greeting-internal
 	   session
 	   (elmo-pop3-read-response process t))
@@ -340,30 +347,30 @@
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
   (let ((process (elmo-network-session-process-internal session))
-	response)
+	count response)
     (with-current-buffer (process-buffer process)
-      (setq elmo-pop3-size-hash (make-vector 31 0))
+      (setq elmo-pop3-size-hash (elmo-make-hash 31))
       ;; To get obarray of uidl and size
       (elmo-pop3-send-command process "list")
       (if (null (elmo-pop3-read-response process))
-	  (error "POP List folder failed"))
+	  (error "POP LIST command failed"))
       (if (null (setq response
 		      (elmo-pop3-read-contents
 		       (current-buffer) process)))
-	  (error "POP List folder failed"))
+	  (error "POP LIST command failed"))
       ;; POP server always returns a sequence of serial numbers.
-      (elmo-pop3-parse-list-response response)
+      (setq count (elmo-pop3-parse-list-response response))
       ;; UIDL
       (when elmo-pop3-use-uidl
-	(setq elmo-pop3-uidl-number-hash (make-vector 31 0))
-	(setq elmo-pop3-number-uidl-hash (make-vector 31 0))
+	(setq elmo-pop3-uidl-number-hash (elmo-make-hash (* count 2)))
+	(setq elmo-pop3-number-uidl-hash (elmo-make-hash (* count 2)))
 	;; UIDL
 	(elmo-pop3-send-command process "uidl")
 	(unless (elmo-pop3-read-response process)
-	  (error "UIDL failed"))
+	  (error "POP UIDL failed"))
 	(unless (setq response (elmo-pop3-read-contents
 				(current-buffer) process))
-	  (error "UIDL failed"))
+	  (error "POP UIDL failed"))
 	(elmo-pop3-parse-uidl-response response)))))
 
 (defun elmo-pop3-read-contents (buffer process)
@@ -419,22 +426,27 @@
 
 (defun elmo-pop3-parse-list-response (string)
   (let ((buffer (current-buffer))
-	number list size)
+	(count 0)
+	alist)
     (with-temp-buffer
       (insert string)
       (goto-char (point-min))
       (while (re-search-forward "^\\([0-9]+\\)[\t ]\\([0-9]+\\)$" nil t)
-	(setq list
+	(setq alist
 	      (cons
-	       (string-to-int (setq number (elmo-match-buffer 1)))
-	       list))
-	(setq size (elmo-match-buffer 2))
-	(with-current-buffer buffer
-	  (elmo-set-hash-val (concat "#" number)
-			     size
-			     elmo-pop3-size-hash)))
-      (with-current-buffer buffer (setq elmo-pop3-list-done t))
-      (nreverse list))))
+	       (cons (elmo-match-buffer 1)
+		     (elmo-match-buffer 2))
+	       alist))
+	(setq count (1+ count)))
+      (with-current-buffer buffer
+	(setq elmo-pop3-size-hash (elmo-make-hash (* (length alist) 2)))
+	(while alist
+	  (elmo-set-hash-val (concat "#" (car (car alist)))
+			     (cdr (car alist))
+			     elmo-pop3-size-hash)
+	  (setq alist (cdr alist)))
+	(setq elmo-pop3-list-done t))
+      count)))
 
 (defun elmo-pop3-list-location (spec)
   (with-current-buffer (process-buffer

@@ -1,3 +1,14 @@
+2000-11-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-network-initialize-session): Skip garbage output
+	before greeting.
+	(elmo-network-setup-session): Set UIDL hash size according to
+	the length of list response.
+	(elmo-pop3-parse-list-response): Setup elmo-pop3-size-hash
+	according to the length of list response;
+	Return the length of list response.
+	(Adviced by OKAZAKI Tetsurou <okazaki@be.to>)
+
 2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-folder-exists-p): Don't use UIDL.
