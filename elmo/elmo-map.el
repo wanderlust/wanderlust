@@ -190,12 +190,13 @@
 			 (elmo-map-folder-location-hash-internal
 			  folder)))
 		  location-alist))
-      (elmo-clear-hash-val (concat "#" (int-to-string (car pair)))
-			   (elmo-map-folder-location-hash-internal
-			    folder))
-      (elmo-clear-hash-val location
-			   (elmo-map-folder-location-hash-internal
-			    folder)))
+      (when pair
+	(elmo-clear-hash-val (concat "#" (int-to-string (car pair)))
+			     (elmo-map-folder-location-hash-internal
+			      folder))
+	(elmo-clear-hash-val location
+			     (elmo-map-folder-location-hash-internal
+			      folder))))
     (setq i (elmo-map-folder-number-max-internal folder))
     (dolist (location new-locs)
       (setq i (1+ i))
@@ -219,9 +220,10 @@
   (elmo-map-folder-location-setup
    folder 
    (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
-  (elmo-map-folder-update-locations
-   folder
-   (elmo-map-folder-list-message-locations folder)))
+  (if (elmo-folder-plugged-p folder)
+      (elmo-map-folder-update-locations
+       folder
+       (elmo-map-folder-list-message-locations folder))))
 
 (luna-define-method elmo-folder-commit :after ((folder elmo-map-folder))
   (when (elmo-folder-persistent-p folder)

@@ -1,3 +1,8 @@
+2001-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use
+	`with-current-buffer'.
+
 2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Removed shimbun related modules;
