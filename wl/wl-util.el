@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (provide 'wl-util)
 (eval-when-compile
@@ -474,7 +474,7 @@ Insert User-Agent field instead of X-Mailer field."
   (if (fboundp 'region-exists-p)
       (defmacro wl-region-exists-p ()
 	(list 'region-exists-p))))
-  
+
 (if (not (fboundp 'overlays-in))
     (defun overlays-in (beg end)
       "Return a list of the overlays that overlap the region BEG ... END.
@@ -638,11 +638,11 @@ that `read' can handle, whenever this is possible."
 (defsubst wl-get-date-iso8601 (date)
   (or (get-text-property 0 'wl-date date)
       (let* ((d1 (timezone-fix-time date nil nil))
- 	     (time (format "%04d%02d%02dT%02d%02d%02d"
- 			   (aref d1 0) (aref d1 1) (aref d1 2)
- 			   (aref d1 3) (aref d1 4) (aref d1 5))))
- 	(put-text-property 0 1 'wl-date time date)
- 	time)))
+	     (time (format "%04d%02d%02dT%02d%02d%02d"
+			   (aref d1 0) (aref d1 1) (aref d1 2)
+			   (aref d1 3) (aref d1 4) (aref d1 5))))
+	(put-text-property 0 1 'wl-date time date)
+	time)))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -650,13 +650,13 @@ that `read' can handle, whenever this is possible."
 		  s)
     (concat (wl-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
- 
+
 (defun wl-date-iso8601 (date)
   "Convert the DATE to YYMMDDTHHMMSS."
   (condition-case ()
       (wl-get-date-iso8601 date)
     (error "")))
- 
+
 (defun wl-day-number (date)
   (let ((dat (mapcar '(lambda (s) (and s (string-to-int s)) )
 		     (timezone-parse-date date))))
@@ -714,17 +714,17 @@ that `read' can handle, whenever this is possible."
 		    (and (get-buffer x)
 			 (kill-buffer x)))))
 	     (buffer-list))))
- 
+
 (defun wl-sendlog-time ()
   (static-if (fboundp 'format-time-string)
       (format-time-string "%Y/%m/%d %T")
     (let ((date (current-time-string)))
       (format "%s/%02d/%02d %s"
- 	      (substring date -4)
- 	      (cdr (assoc (upcase (substring date 4 7))
+	      (substring date -4)
+	      (cdr (assoc (upcase (substring date 4 7))
 			  timezone-months-assoc))
- 	      (string-to-int (substring date 8 10))
- 	      (substring date 11 19)))))
+	      (string-to-int (substring date 8 10))
+	      (substring date 11 19)))))
 
 (defun wl-collect-summary ()
   (let (result)
@@ -817,7 +817,7 @@ that `read' can handle, whenever this is possible."
 (defun wl-local-load-profile ()
   (message "Initializing ...")
   (load wl-init-file 'noerror 'nomessage))
-  
+
 (defun wl-load-profile ()
   (funcall wl-load-profile-func))
 
@@ -854,5 +854,114 @@ that `read' can handle, whenever this is possible."
 		  (+ 2 (- max (window-width)))))
 	  (set-window-hscroll (get-buffer-window (current-buffer) t) 0))
 	max))))
+
+;; Biff
+(static-cond
+ (wl-on-xemacs
+  (defvar wl-biff-timer-name "wl-biff")
+
+  (defun wl-biff-stop ()
+    (when (get-itimer wl-biff-timer-name)
+      (delete-itimer wl-biff-timer-name)))
+
+  (defun wl-biff-start ()
+    (wl-biff-stop)
+    (when wl-biff-check-folder-list
+      (start-itimer "wl-biff" 'wl-biff-check-folders
+		    wl-biff-check-interval wl-biff-check-interval))))
+
+ ((condition-case nil (require 'timer) (error nil));; FSFmacs 19+
+  (autoload 'run-at-time "timer")
+
+  (defun wl-biff-stop ()
+    (put 'wl-biff 'timer nil))
+
+  (defun wl-biff-start ()
+    (when wl-biff-check-folder-list
+      (put 'wl-biff 'timer (run-at-time t wl-biff-check-interval
+					'wl-biff-event-handler))))
+
+  (defun-maybe timer-next-integral-multiple-of-time (time secs)
+    "Yield the next value after TIME that is an integral multiple of SECS.
+More precisely, the next value, after TIME, that is an integral multiple
+of SECS seconds since the epoch.  SECS may be a fraction.
+This function is imported from Emacs 20.7."
+    (let ((time-base (ash 1 16)))
+      (if (fboundp 'atan)
+	  ;; Use floating point, taking care to not lose precision.
+	  (let* ((float-time-base (float time-base))
+		 (million 1000000.0)
+		 (time-usec (+ (* million
+				  (+ (* float-time-base (nth 0 time))
+				     (nth 1 time)))
+			       (nth 2 time)))
+		 (secs-usec (* million secs))
+		 (mod-usec (mod time-usec secs-usec))
+		 (next-usec (+ (- time-usec mod-usec) secs-usec))
+		 (time-base-million (* float-time-base million)))
+	    (list (floor next-usec time-base-million)
+		  (floor (mod next-usec time-base-million) million)
+		  (floor (mod next-usec million))))
+	;; Floating point is not supported.
+	;; Use integer arithmetic, avoiding overflow if possible.
+	(let* ((mod-sec (mod (+ (* (mod time-base secs)
+				   (mod (nth 0 time) secs))
+				(nth 1 time))
+			     secs))
+	       (next-1-sec (+ (- (nth 1 time) mod-sec) secs)))
+	  (list (+ (nth 0 time) (floor next-1-sec time-base))
+		(mod next-1-sec time-base)
+		0)))))
+
+  (defun wl-biff-event-handler ()
+    ;; PAKURing from FSF:time.el
+    (wl-biff-check-folders)
+    ;; Do redisplay right now, if no input pending.
+    (sit-for 0)
+    (let* ((current (current-time))
+	   (timer (get 'wl-biff 'timer))
+	   ;; Compute the time when this timer will run again, next.
+	   (next-time (timer-relative-time
+		       (list (aref timer 1) (aref timer 2) (aref timer 3))
+		       (* 5 (aref timer 4)) 0)))
+      ;; If the activation time is far in the past,
+      ;; skip executions until we reach a time in the future.
+      ;; This avoids a long pause if Emacs has been suspended for hours.
+      (or (> (nth 0 next-time) (nth 0 current))
+	  (and (= (nth 0 next-time) (nth 0 current))
+	       (> (nth 1 next-time) (nth 1 current)))
+	  (and (= (nth 0 next-time) (nth 0 current))
+	       (= (nth 1 next-time) (nth 1 current))
+	       (> (nth 2 next-time) (nth 2 current)))
+	  (progn
+	    (timer-set-time timer (timer-next-integral-multiple-of-time
+				   current wl-biff-check-interval)
+			    wl-biff-check-interval)
+	    (timer-activate timer))))))
+ (t
+  (fset 'wl-biff-stop 'ignore)
+  (fset 'wl-biff-start 'ignore)))
+
+(defun wl-biff-check-folders ()
+  (interactive)
+  (when (interactive-p)
+    (message "Checking new mails..."))
+  (let ((new-mails 0)
+	(flist (or wl-biff-check-folder-list '("%inbox")))
+	folder)
+    (while flist
+      (setq folder (car flist)
+	    flist (cdr flist))
+      (when (elmo-folder-plugged-p folder)
+	(setq new-mails (+ new-mails
+			   (nth 0 (wl-folder-check-one-entity folder))))))
+    (setq wl-biff-state-indicator (if (zerop new-mails)
+				      'wl-biff-state-indicator-off
+				    'wl-biff-state-indicator-on))
+    (force-mode-line-update t)
+    (when (interactive-p)
+      (cond ((zerop new-mails) (message "No mail."))
+	    ((eq 1 new-mails) (message "You have a new mail."))
+	    (t (message "You have %d new mails." new-mails))))))
 
 ;;; wl-util.el ends here

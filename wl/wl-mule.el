@@ -97,9 +97,6 @@ Special commands:
 (defun wl-plugged-set-folder-icon (folder string)
   string)
 
-(defun wl-folder-init-icons ()) ; dummy.
-(defun wl-plugged-init-icons ()) ; dummy.
-
 (defun wl-message-overload-functions ()
   (local-set-key "l" 'wl-message-toggle-disp-summary)
   (local-set-key [mouse-2] 'wl-message-refer-article-or-url)
@@ -174,11 +171,15 @@ Special commands:
     '("FCC" . wl-draft-fcc)))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(wl-mode-line-buffer-identification
-	 (if wl-show-plug-status-on-modeline
-	     '("" wl-plug-state-indicator "Wanderlust: %12b")
-	   '("Wanderlust: %12b"))))
+  (let ((id '("Wanderlust: %12b")))
+    (when wl-show-plug-status-on-modeline
+      (wl-push 'wl-plug-state-indicator id))
+    (when wl-biff-check-folder-list
+      (wl-push 'wl-biff-state-indicator id))
+    (when (cdr id)
+      (wl-push "" id))
+    (setq mode-line-buffer-identification
+	  (wl-mode-line-buffer-identification id)))
   (local-set-key "\C-c\C-s" 'wl-draft-send)    ; override
   (wl-draft-overload-menubar))
 

@@ -1,8 +1,50 @@
+2000-09-18  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+            Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl.el (wl): Call `wl-biff-start'.
+	(wl-exit): Call `wl-biff-stop'.
+	(wl-plugged-mode): Show biff in modeline.
+	(wl-unplugged-glyph, wl-unplugged-glyph): Removed.
+
+	* wl-xmas.el (wl-draft-overload-functions): Show biff in modeline.
+	(wl-biff-init-icons): New function.
+	(wl-plugged-init-icons): Don't make too much keymaps.
+	(wl-biff-nomail-glyph, wl-biff-mail-glyph): New variables.
+
+	* wl-vars.el (wl-biff-nomail-icon, wl-biff-mail-icon,
+	wl-biff-state-indicator-off, wl-biff-state-indicator-on): New
+	variables.
+	(wl-biff-check-interval, wl-biff-check-folder-list): New user
+	options.
+
+	* wl-util.el (wl-biff-check-folders, wl-biff-event-handler,
+	wl-biff-start, wl-biff-stop): New functions.
+	(timer-next-integral-multiple-of-time): Defined with `defun-meybe'.
+	(wl-biff-timer-name): New variable.
+
+	* wl-summary.el (wl-summary-mode): Show biff in modeline.
+
+	* wl-nemacs.el (wl-draft-overload-functions): Show biff in modeline.
+	(wl-plugged-init-icons, wl-folder-init-icons): Removed.
+
+	* wl-mule.el (wl-draft-overload-functions): Show biff in modeline.
+	(wl-plugged-init-icons, wl-folder-init-icons): Removed.
+
+	* wl-folder.el (wl-make-plugged-alist): Call `wl-biff-init-icons'.
+	(TopLevel): Bind `wl-biff-init-icons', `wl-plugged-init-icons' and
+	`wl-folder-init-icons' to `ignore' if they are not available.
+	(wl-folder-mode): Show biff in modeline.
+
+	* wl-e21.el (wl-draft-overload-functions): Show biff in modeline.
+	(wl-biff-init-icons): New function.
+	(wl-plugged-init-icons): Don't make too much keymaps.
+	(wl-biff-nomail-image, wl-biff-mail-image): New variables.
+
 2000-09-15  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-vars.el (wl-strict-diff-folders): Customization Type
 	and doc fix.  Define as a list of regular expressions for
-	folders or nil.  
+	folders or nil.
 	* wl-folder.el (wl-folder-check-one-entity): Use
 	`wl-string-match-member' instead of `wl-string-member' for
 	`wl-strict-diff-folders'.

@@ -40,6 +40,8 @@
 (defvar wl-use-toolbar (if (featurep 'toolbar) 'default-toolbar nil))
 (defvar wl-plugged-glyph nil)
 (defvar wl-unplugged-glyph nil)
+(defvar wl-biff-mail-glyph nil)
+(defvar wl-biff-nomail-glyph nil)
 
 (defvar wl-folder-toolbar
   '([wl-folder-jump-to-current-entity
@@ -370,28 +372,44 @@
    wl-folder-internal-icon-list))
 
 (defun wl-plugged-init-icons ()
-  (unless wl-plugged-glyph
-    (setq wl-plugged-glyph (wl-xmas-make-icon-glyph
-			    (concat "[" wl-plugged-plug-on "]")
-			    wl-plugged-icon))
-    (let ((extent (make-extent nil nil))
-	  (toggle-keymap (make-sparse-keymap)))
-      (define-key toggle-keymap 'button2
-	(make-modeline-command-wrapper 'wl-toggle-plugged))
-      (set-extent-keymap extent toggle-keymap)
-      (set-extent-property extent 'help-echo "button2 toggles plugged status")
-      (setq wl-plug-state-indicator-on (cons extent wl-plugged-glyph))))
-  (unless wl-unplugged-glyph
-    (setq wl-unplugged-glyph (wl-xmas-make-icon-glyph
-			      (concat "[" wl-plugged-plug-off "]")
-			      wl-unplugged-icon))
-    (let ((extent (make-extent nil nil))
-	  (toggle-keymap (make-sparse-keymap)))
-      (define-key toggle-keymap 'button2
-	(make-modeline-command-wrapper 'wl-toggle-plugged))
-      (set-extent-keymap extent toggle-keymap)
-      (set-extent-property extent 'help-echo "button2 toggles plugged status")
-      (setq wl-plug-state-indicator-off (cons extent wl-unplugged-glyph)))))
+  (let (extent)
+    (unless (or wl-plugged-glyph wl-unplugged-glyph)
+      (setq extent (make-extent nil nil))
+      (let ((toggle-keymap (make-sparse-keymap)))
+	(define-key toggle-keymap 'button2
+	  (make-modeline-command-wrapper 'wl-toggle-plugged))
+	(set-extent-keymap extent toggle-keymap))
+      (set-extent-property extent 'help-echo "button2 toggles plugged status"))
+    (unless wl-plugged-glyph
+      (setq wl-plugged-glyph (wl-xmas-make-icon-glyph
+			      (concat "[" wl-plugged-plug-on "]")
+			      wl-plugged-icon)
+	    wl-plug-state-indicator-on (cons extent wl-plugged-glyph)))
+    (unless wl-unplugged-glyph
+      (setq wl-unplugged-glyph (wl-xmas-make-icon-glyph
+				(concat "[" wl-plugged-plug-off "]")
+				wl-unplugged-icon)
+	    wl-plug-state-indicator-off (cons extent wl-unplugged-glyph)))))
+
+(defun wl-biff-init-icons ()
+  (let (extent)
+    (unless (or wl-biff-mail-glyph wl-biff-nomail-glyph)
+      (setq extent (make-extent nil nil))
+      (let ((keymap (make-sparse-keymap)))
+	(define-key keymap 'button2
+	  (make-modeline-command-wrapper 'wl-biff-check-folders))
+	(set-extent-keymap extent keymap))
+      (set-extent-property extent 'help-echo "button2 checks new mails"))
+    (unless wl-biff-mail-glyph
+      (setq wl-biff-mail-glyph (wl-xmas-make-icon-glyph
+				wl-biff-state-indicator-on
+				wl-biff-mail-icon)
+	    wl-biff-state-indicator-on (cons extent wl-biff-mail-glyph)))
+    (unless wl-biff-nomail-glyph
+      (setq wl-biff-nomail-glyph (wl-xmas-make-icon-glyph
+				  wl-biff-state-indicator-off
+				  wl-biff-nomail-icon)
+	    wl-biff-state-indicator-off (cons extent wl-biff-nomail-glyph)))))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -488,11 +506,15 @@ Special commands:
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(wl-mode-line-buffer-identification
-	 (if wl-show-plug-status-on-modeline
-	     '("" wl-plug-state-indicator "Wanderlust: %12b")
-	   '("Wanderlust: %12b"))))
+  (let ((id '("Wanderlust: %12b")))
+    (when wl-show-plug-status-on-modeline
+      (wl-push 'wl-plug-state-indicator id))
+    (when wl-biff-check-folder-list
+      (wl-push 'wl-biff-state-indicator id))
+    (when (cdr id)
+      (wl-push "" id))
+    (setq mode-line-buffer-identification
+	  (wl-mode-line-buffer-identification id)))
   (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
   (wl-draft-overload-menubar))

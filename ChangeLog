@@ -1,3 +1,7 @@
+2000-09-18  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* etc/icons/letter.xpm, etc/icons/no-letter.xpm: New files.
+
 2000-09-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (texinfo-multitable-widths): Add

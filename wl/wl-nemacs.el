@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (defun wl-message-overload-functions ()
   (local-set-key "l" 'wl-message-toggle-disp-summary))
@@ -50,9 +50,6 @@
 (defun wl-plugged-set-folder-icon (folder string)
   string)
 
-(defun wl-folder-init-icons ()) ; dummy.
-(defun wl-plugged-init-icons ()) ; dummy.
-
 (defmacro wl-defface (face spec doc &rest args)
   (` (defvar (, face) (, spec) (, doc))))
 
@@ -69,11 +66,15 @@
   (list (cons t (mime-charset-to-coding-system default-mime-charset))))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(wl-mode-line-buffer-identification
-	 (if wl-show-plug-status-on-modeline
-	     '("" wl-plug-state-indicator "Wanderlust: %12b")
-	   '("Wanderlust: %12b"))))
+  (let ((id '("Wanderlust: %12b")))
+    (if wl-show-plug-status-on-modeline
+	(wl-push 'wl-plug-state-indicator id))
+    (if wl-biff-check-folder-list
+	(wl-push 'wl-biff-state-indicator id))
+    (if (cdr id)
+	(wl-push "" id))
+    (setq mode-line-buffer-identification
+	  (wl-mode-line-buffer-identification id)))
   (local-set-key "\C-c\C-y" 'wl-draft-yank-original)
   (local-set-key "\C-c\C-s" 'wl-draft-send)
   (local-set-key "\C-c\C-a" 'wl-draft-insert-x-face-field)

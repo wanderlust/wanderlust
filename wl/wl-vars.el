@@ -264,8 +264,8 @@ references field of the current draft."
   "*SMTP connection type.
 If nil, default smtp connection type is used."
   :type '(choice (const :tag "default" nil)
- 		 (const :tag "Use STARTTLS" starttls)
- 		 symbol)
+		 (const :tag "Use STARTTLS" starttls)
+		 symbol)
   :group 'wl)
 
 (defcustom wl-smtp-posting-user nil
@@ -1317,6 +1317,17 @@ Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-folder)
 
+(defcustom wl-biff-check-folder-list nil
+  "All folders that match this list are automatically checked
+every intervals specified by wl-biff-check-interval. "
+  :type '(repeat (regexp :tag "Folder Regexp"))
+  :group 'wl-folder)
+
+(defcustom wl-biff-check-interval 40
+  "Number of seconds between updates of new mails in the mode line."
+  :type 'integer
+  :group 'wl-folder)
+
 (defcustom wl-interactive-send nil
   "*If non-nil, require your confirmation when sending draft message."
   :type 'boolean
@@ -1867,13 +1878,13 @@ the `wl-highlight-message-headers' face."
 
 (defcustom wl-highlight-citation-header-regexp
   (concat "In article.*$\\|In message.*$\\|In the message.*$\\|"
- 	  "^At[^\n]+\n[^\n]+wrote:\n\\|"
- 	  "^.*\\(writes\\|wrote\\|said\\):\n")
+	  "^At[^\n]+\n[^\n]+wrote:\n\\|"
+	  "^.*\\(writes\\|wrote\\|said\\):\n")
   "*The pattern to match the prolog of a cited block.
 Text in the body of a message which matches this will be displayed in
 the `wl-highlight-message-headers' face."
-   :type 'regexp
-   :group 'wl-highlight)
+  :type 'regexp
+  :group 'wl-highlight)
 
 (defcustom wl-highlight-max-message-size 10000
   "*If the message body is larger than this many chars, don't highlight it.
@@ -1966,6 +1977,10 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 (defvar wl-plug-state-indicator-off " [--] ")
 (defvar wl-plug-state-indicator 'wl-plug-state-indicator-on)
 
+(defvar wl-biff-state-indicator-on "(M@il)")
+(defvar wl-biff-state-indicator-off "(-)")
+(defvar wl-biff-state-indicator wl-biff-state-indicator-off)
+
 (defvar wl-show-plug-status-on-modeline t)
 
 ;; Advanced thread view.
@@ -2024,6 +2039,10 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
   "*Icon file for plugged state.")
 (defvar wl-unplugged-icon "unplugged.xpm"
   "*Icon file for unplugged state.")
+(defvar wl-biff-mail-icon "letter.xpm"
+  "*Icon file for mail existed state.")
+(defvar wl-biff-nomail-icon "no-letter.xpm"
+  "*Icon file for no mail existed state.")
 (defvar wl-prog-uudecode "uudecode"
   "*uudecode program name")
 (defvar wl-prog-uudecode-arg '("-p") ;; outout is stdout.

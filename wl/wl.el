@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo2)
 ;; from x-face.el
@@ -143,7 +143,7 @@
   '(("Queuing" . wl-draft-enable-queuing)
     ("AutoFlushQueue" . wl-auto-flush-queue)
     ("DisconnectedOperation" . elmo-enable-disconnected-operation)))
- 
+
 (defvar wl-plugged-buf-name "Plugged")
 (defvar wl-plugged-mode-map nil)
 (defvar wl-plugged-alist nil)
@@ -152,9 +152,6 @@
 (defvar wl-plugged-sending-queue-alist nil)
 (defvar wl-plugged-dop-queue-alist nil)
 (defvar wl-plugged-alist-modified nil)
-
-(defvar wl-plugged-glyph nil)
-(defvar wl-unplugged-glyph nil)
 
 (defvar wl-plugged-mode-menu-spec
   '("Plugged"
@@ -212,11 +209,15 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (setq major-mode 'wl-plugged-mode)
   (setq mode-name "Plugged")
   (easy-menu-add wl-plugged-mode-menu)
-  (setq mode-line-buffer-identification
-	(wl-mode-line-buffer-identification
-	 (if wl-show-plug-status-on-modeline
-	     '("" wl-plug-state-indicator "Wanderlust: %12b")
-	   '("Wanderlust: %12b"))))
+  (let ((id '("Wanderlust: %12b")))
+    (when wl-show-plug-status-on-modeline
+      (wl-push 'wl-plug-state-indicator id))
+    (when wl-biff-check-folder-list
+      (wl-push 'wl-biff-state-indicator id))
+    (when (cdr id)
+      (wl-push "" id))
+    (setq mode-line-buffer-identification
+	  (wl-mode-line-buffer-identification id)))
   (setq wl-plugged-switch wl-plugged)
   (setq wl-plugged-alist-modified nil)
   (setq buffer-read-only t)
@@ -644,6 +645,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (when (or (not wl-interactive-exit)
 	    (y-or-n-p "Quit Wanderlust?"))
     (elmo-quit)
+    (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
     (wl-folder-cleanup-variables)
@@ -715,9 +717,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (error "Please set `wl-from'"))
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain
- 					      (concat (system-name)
+					      (concat (system-name)
 						      "." wl-local-domain)
- 					    (system-name))))
+					    (system-name))))
     (error "Please set `wl-local-domain' to get valid FQDN"))
   (when (not no-check-folder)
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
@@ -761,6 +763,7 @@ If prefix argument is specified, folder checkings are skipped."
   (unwind-protect
       (wl-init arg)
     (wl-folder arg))
+  (wl-biff-start)
   (run-hooks 'wl-hook))
 
 ;; Define some autoload functions WL might use.
@@ -810,7 +813,7 @@ If prefix argument is specified, folder checkings are skipped."
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)
- 
+
 (provide 'wl)
 
 ;;; wl.el ends here
