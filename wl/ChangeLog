@@ -1,3 +1,8 @@
+2004-05-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-cursor-move-surface): Avoid error on
+	the last line of summary in unplugged mode.
+
 2004-05-26  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-vars.el (wl-refile-rule-alist): Doc fix.

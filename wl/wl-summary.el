@@ -4199,9 +4199,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(forward-line -1))
       (setq skip (or (string-match skip-tmark-regexp
 				   (wl-summary-temp-mark))
-		     (not (elmo-message-accessible-p
-			   wl-summary-buffer-elmo-folder
-			   (wl-summary-message-number))))))
+		     (not (and (wl-summary-message-number)
+			       (elmo-message-accessible-p
+				wl-summary-buffer-elmo-folder
+				(wl-summary-message-number)))))))
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
