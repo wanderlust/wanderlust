@@ -14,7 +14,6 @@
 (defvar DOCDIR "./doc")
 (defvar ICONDIR "./etc/icons")
 (defvar UTILSDIR "./utils")
-(defvar SASLDIR "./utils/sasl/lisp")
 (defvar WL_PREFIX "wl")
 (defvar ELMO_PREFIX "wl")
 
@@ -22,8 +21,6 @@
 
 (defvar wl-install-utils nil
   "if Non-nil, install `wl-utils-modules'.")
-(defvar wl-install-sasl nil
-  "if Non-nil, install sasl utilities.")
 
 ;;; INFO
 (defconst wl-ja-info "wl-ja.info")
@@ -99,8 +96,6 @@
 ;;; load-path
   (if wl-install-utils
       (setq load-path (cons (expand-file-name UTILSDIR) load-path)))
-  (if wl-install-sasl
-      (setq load-path (cons (expand-file-name SASLDIR) load-path)))
   (require 'install)
   (load "./WL-ELS")
   (condition-case ()
@@ -206,7 +201,7 @@
 					  LISPDIR))
 	(elmo-install-dir (expand-file-name ELMO_PREFIX
 					    LISPDIR)))
-    (wl-uninstall (wl-scan-source (list WLDIR UTILSDIR SASLDIR))
+    (wl-uninstall (wl-scan-source (list WLDIR UTILSDIR))
 		  wl-install-dir)
     (wl-uninstall (wl-scan-source (list ELMODIR))
 		  elmo-install-dir))

@@ -1,5 +1,9 @@
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-MK: Remove sasl.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* utils/sasl: Remove.
 
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
