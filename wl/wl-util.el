@@ -33,8 +33,6 @@
 ;;; Code:
 ;;
 
-(require 'product)
-(product-provide (provide 'wl-util) (require 'wl-version))
 (eval-when-compile
   (require 'elmo-util))
 
@@ -900,5 +898,8 @@ This function is imported from Emacs 20.7."
 	(wl-biff-notify (car (wl-biff-check-folder folder))
 			notify-minibuf)
 	(setq wl-biff-check-folders-running nil)))))
+
+(require 'product)
+(product-provide (provide 'wl-util) (require 'wl-version))
 
 ;;; wl-util.el ends here

@@ -29,13 +29,13 @@
 ;;; Code:
 ;; 
 
+(require 'elmo-version)			; reduce recursive-load-depth
 (require 'elmo-vars)
 (require 'elmo-msgdb)
 (require 'elmo-cache)
 (require 'elmo-util)
 (require 'elmo-dop)
-(require 'product)
-(product-provide (provide 'elmo2) (require 'elmo-version))
+;;;(provide 'elmo2)			; circular dependency
 
 (eval-when-compile
   (require 'elmo-localdir)
@@ -920,5 +920,8 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 (autoload 'elmo-localdir-max-of-folder "elmo-localdir")
 (autoload 'elmo-localdir-msgdb-create-overview-entity-from-file "elmo-localdir")
 (autoload 'elmo-archive-copy-msgs-froms "elmo-archive")
+
+(require 'product)
+(product-provide (provide 'elmo2) (require 'elmo-version))
 
 ;;; elmo2.el ends here
