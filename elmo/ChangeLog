@@ -1,3 +1,58 @@
+2001-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Fixed problem when there's no
+	new message.
+
+2001-04-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-cache-save): Ignore errors.
+
+	* elmo-net.el (elmo-message-fetch): Check cache-path is non-nil before
+	saving.
+
+2001-04-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Added optional no-check argument.
+
+	* elmo-shimbun.el (elmo-shimbun-folder): Added headers slot.
+	(elmo-folder-open-internal): Set up headers slot.
+	(elmo-folder-check): Call elmo-folder-close-internal and
+	elmo-folder-open-internal.
+	(elmo-folder-close-internal): Clean up headers slot.
+
+2001-04-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-archive.el (elmo-archive-folder-list-subfolders): Match
+	exactly folder list.
+	(elmo-folder-append-messages): Fixed append archive with prefix.
+
+	* elmo-localdir.el (elmo-folder-message-make-temp-files): Fixed
+	make temp files with start-number.
+
+	* elmo-pipe.el (elmo-folder-message-make-temp-file-p): Fixed typo.
+
+2001-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-list-messages-internal): Fixed lucking optional
+	argument `visible-only'.
+	(elmo-generic-folder-append-messages): Fixed condition. Use `unless'
+	instead of `if'.
+
+	* elmo-pop3.el (elmo-folder-open-internal): Check
+	`elmo-inhibit-number-mapping' is non-nil.
+
+	* elmo-pipe.el (elmo-folder-status): Fixed.
+
+2001-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-dop-queue-flush): Added autload setting.
+
+	* elmo-shimbun.el (elmo-shimbun-folder): Added `header-hash' slot.
+	(elmo-folder-open-internal): Setup `header-hash' slot.
+	(elmo-shimbun-msgdb-create-entity): Use `header-hash' to get header
+	information.
+	(elmo-map-message-fetch): Ditto.
+
 2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* shimbun.el, sb-airs.el, sb-asahi.el, sb-bbdb-ml.el, sb-cnet.el,

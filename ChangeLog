@@ -1,3 +1,8 @@
+2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Removed shimbun related modules;
+	Add elmo-shimbun only if shimbun is installed.
+
 2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Added sb-tcup.

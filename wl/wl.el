@@ -535,7 +535,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (interactive)
   (let ((cur-point (point)))
     (setq wl-plugged-switch (not wl-plugged-switch))
-    (elmo-set-plugged wl-plugged-switch nil nil nil wl-plugged-alist)
+    (elmo-set-plugged wl-plugged-switch nil nil nil nil wl-plugged-alist)
     (wl-plugged-redrawing wl-plugged-alist)
     (goto-char cur-point)
     (setq wl-plugged-alist-modified t)
