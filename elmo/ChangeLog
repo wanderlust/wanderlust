@@ -1,3 +1,11 @@
+2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-split.el (elmo-split-spam-p): New function.
+
+	* elmo-spam.el: New file.
+
+	* elsp-bogofilter.el: Ditto.
+
 2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-next-message-number): New API.

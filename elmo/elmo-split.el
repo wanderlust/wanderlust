@@ -37,9 +37,14 @@
 ;; according to the definition of `elmo-split-rule'.
 ;;
 
+;;; Code:
 (require 'elmo)
 
-;;; Code:
+(eval-when-compile
+  ;; Avoid compile warnings
+  (defun-maybe elmo-spam-processor)
+  (defun-maybe elmo-spam-buffer-spam-p (processor buffer)))
+
 (defcustom elmo-split-rule nil
   "Split rule for the command `elmo-split'.
 The format of this variable is a list of RULEs which has form like:
@@ -72,7 +77,11 @@ FIELD-NAME is a symbol of the field name.
 `or'                ... True if one of the argument returns true.
 `and'               ... True if all of the arguments return true.
 
-4. A symbol.
+4. Functions which accept not argument.
+
+`spam-p'            ... True if contents of the message is guessed as spam.
+
+5. A symbol.
 
 When a symbol is specified, it is evaluated.
 
@@ -210,6 +219,10 @@ It can be some ACTION as in `elmo-split-rule'."
 			 elmo-split-message-entity
 			 (symbol-name field)))))
       (equal field-value value))))
+
+(defun elmo-split-spam-p (buffer)
+  (require 'elmo-spam)
+  (elmo-spam-buffer-spam-p (elmo-spam-processor) buffer))
 
 (defun elmo-split-match (buffer field value)
   (with-current-buffer buffer

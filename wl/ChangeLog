@@ -1,5 +1,9 @@
 2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-spam.el: New file.
+
+2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
 	* wl-refile.el (wl-refile-guess): Added second argument `functions'.
 
 	* wl-action.el (wl-auto-refile-guess-functions): New variable.

@@ -367,4 +367,53 @@
 ;; ません。nil ですべてのメッセージが対象になります。
 ;(setq wl-summary-auto-refile-skip-marks nil)
 
+;;; [[ spam 用の設定 ]]
+
+;; バックエンドに bogofilter を使う事を設定
+;(setq elmo-spam-scheme 'bogofilter)
+
+;(require 'wl-spam)
+
+;; サマリバッファで `o' (wl-summary-refile) した時, *最初*に spam かど
+;; うかを判定する様にする
+;(unless (memq 'wl-refile-guess-by-spam wl-refile-guess-functions)
+;  (setq wl-refile-guess-functions
+;	(cons #'wl-refile-guess-by-spam 
+;	      wl-refile-guess-functions)))
+
+;; サマリバッファで `C-o' (wl-summary-auto-refile) した時, *最初*に 
+;; spam かどうかを判定する様にする
+;(unless (memq 'wl-refile-guess-by-spam wl-auto-refile-guess-functions)
+;  (setq wl-auto-refile-guess-functions
+;	(cons #'wl-refile-guess-by-spam 
+;	      wl-auto-refile-guess-functions)))
+
+;; refile-rule を優先したい場合 (spamfilter-wl.el や bogofilter-wl.el 
+;; と同じ設定) は, こっちの設定を有効にする
+;(unless (memq 'wl-refile-guess-by-spam wl-auto-refile-guess-functions)
+;  (setq wl-auto-refile-guess-functions
+;	(append wl-auto-refile-guess-functions
+;		'(wl-refile-guess-by-spam))))
+
+;; wl-spam-auto-check-policy-alist の設定に従って各サマリに移動した時
+;; に spam かどうかチェックする
+;(add-hook 'wl-summary-prepared-pre-hook #'wl-summary-auto-check-spam)
+
+;; +inbox に入った時, spam と判定されたメッセージにリファイルマークを
+;; 付ける場合の設定
+;(setq wl-spam-auto-check-policy-alist '(("\\+inbox" . refile)))
+
+;; refile の実行時に学習させる為の設定
+;; 以下の設定をしたからと言って常に学習する訳ではありません. 詳しくは,
+;; wl-spam.el の wl-spam-undecided-folder-regexp-list と 
+;; wl-spam-ignored-folder-regexp-list の docstring を参照して下さい.
+;(let ((actions wl-summary-mark-action-list)
+;      action)
+;  (while actions
+;    (setq action  (car actions)
+;	  actions (cdr actions))
+;    (when (eq (wl-summary-action-symbol action) 'refile)
+;      (setf (nth 4 action) 'wl-summary-exec-action-refile-with-register)
+;      (setq actions nil))))
+
 ;;; dot.wl ends here

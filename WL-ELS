@@ -11,6 +11,7 @@
    wl-vars wl-draft wl-util wl-version wl-address wl-addrmgr
    wl-highlight wl-demo wl-refile wl-thread
    wl-fldmgr wl-expire wl-template wl-score wl-acap wl-news
+   wl-spam
    ))
 
 (defconst ELMO-MODULES '(
@@ -22,6 +23,7 @@
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-flag elmo-sendlog
    elmo-dop elmo-nmz elmo-split
+   elmo-spam elsp-bogofilter
    modb modb-entity modb-legacy modb-standard
    ))
 
