@@ -1,3 +1,8 @@
+2000-07-26  Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed problem
+	when dired is used on XEmacs.
+
 2000-07-25  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-process-folder-list): Use `nconc'
@@ -12,7 +17,7 @@
 	Use `cons' instead of `append' for updating the connection cache.
 	* elmo-nntp.el (elmo-nntp-get-connection): Likewise.
 	* elmo-imap4.el (elmo-imap4-get-connection): Likewise.
-	
+
 2000-07-22  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-read-bytes): Advance

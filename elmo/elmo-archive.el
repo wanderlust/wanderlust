@@ -307,7 +307,10 @@ TYPE specifies the archiver's symbol."
 	  (expand-file-name
 	   (concat folder suffix)
 	   elmo-archive-folder-path))
-      (if (and (not (find-file-name-handler dir 'copy-file)) ; dir is local.
+      (if (and (let ((handler (find-file-name-handler dir 'copy-file))) ; dir is local.
+		 (or (not handler)
+		     (if (featurep 'xemacs)
+			 (eq handler 'dired-handler-fn))))
 	       (or (not (file-exists-p dir))
 		   (file-directory-p dir)))
 	  (expand-file-name
