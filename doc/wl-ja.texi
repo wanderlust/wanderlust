@@ -6884,7 +6884,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @group
 ;; @r{@samp{bogofilter} を使う場合。}
 ;; @r{ここで、使いたい spam フィルタの @samp{scheme} を設定して下さい。}
-;; @r{@xref{Spam Filter Processor}}
+;; @r{@xref{Spam Filter Processors}}
 (setq elmo-spam-scheme 'bogofilter)
 (require 'wl-spam)
 @end group

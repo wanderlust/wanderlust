@@ -6893,7 +6893,7 @@ To use @code{wl-spam}, write in @file{~/.wl} as follows:
 @group
 ;; @r{Use @samp{bogofilter} as spam back end}
 ;; @r{Set @samp{scheme} here as the spam filter you will use.}
-;; @r{@xref{Spam Filter Processor}}
+;; @r{@xref{Spam Filter Processors}}
 (setq elmo-spam-scheme 'bogofilter)
 (require 'wl-spam)
 @end group
