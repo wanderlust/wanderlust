@@ -1013,7 +1013,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (float (nth 7 file-attr))))))
 
 (defun elmo-get-last-accessed-time (path &optional dir)
-  "Returns last accessed time."
+  "Return the last accessed time of PATH."
   (let ((last-accessed (nth 4 (file-attributes (or (and dir
 							(expand-file-name
 							 path dir))
@@ -1024,7 +1024,7 @@ Otherwise treat \\ in NEWTEXT string as special:
       0)))
 
 (defun elmo-get-last-modification-time (path &optional dir)
-  "Returns last accessed time."
+  "Return the last accessed time of PATH."
   (let ((last-modified (nth 5 (file-attributes (or (and dir
 							(expand-file-name
 							 path dir))
@@ -1033,7 +1033,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 			      (float 65536)) (nth 1 last-modified)))))
 
 (defun elmo-make-directory (path)
-  "create directory recursively."
+  "Create directory recursively."
   (let ((parent (directory-file-name (file-name-directory path))))
     (if (null (file-directory-p parent))
 	(elmo-make-directory parent))
@@ -1043,7 +1043,7 @@ Otherwise treat \\ in NEWTEXT string as special:
       )))
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
-  "delete directory recursively."
+  "Delete directory recursively."
   (let ((dirent (directory-files path))
 	relpath abspath hierarchy)
     (while dirent
@@ -1435,7 +1435,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     (kill-buffer buffer)))
 
 (defun elmo-delete-if (pred lst)
-  "Returns new list contains items which don't satisfy PRED in LST."
+  "Return new list contains items which don't satisfy PRED in LST."
   (let (result)
     (while lst
       (unless (funcall pred (car lst))
@@ -1454,7 +1454,7 @@ the value of `foo'."
   list2)
 
 (defun elmo-list-member (list1 list2)
-  "If any element of list1 is member of list2, returns t."
+  "If any element of list1 is member of list2, return t."
   (catch 'done
     (while list1
       (if (member (car list1) list2)
@@ -1541,7 +1541,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
     (y-or-n-p prompt)))
 
 (defun elmo-string-member (string slist)
-  "Returns t if STRING is a member of the SLIST."
+  "Return t if STRING is a member of the SLIST."
   (catch 'found
     (while slist
       (if (and (stringp (car slist))
@@ -1620,7 +1620,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 ;; number-set      ::= "(" *number-set-elem ")"   ;; list
 
 (defun elmo-number-set-member (number number-set)
-  "Returns non-nil if NUMBER is an element of NUMBER-SET.
+  "Return non-nil if NUMBER is an element of NUMBER-SET.
 The value is actuall the tail of SET-LIST whose car contains NUMBER."
   (or (memq number number-set)
       (let (found)
