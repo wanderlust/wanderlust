@@ -4,6 +4,8 @@
 	Do not delete other windows.
 	* wl-draft.el (wl-draft-edit-string): Do not delete other windows.
 	(wl-draft-reedit): Switch buffer with `wl-draft-buffer-style'.
+	(wl-draft-create-buffer): Set reply-or-forward also for target
+	mark commands.
 
 2002-11-07  Yuuichi Teranishi  <teranisi@gohome.org>
 

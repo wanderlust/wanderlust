@@ -1600,7 +1600,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 (summary-buf (wl-summary-get-buffer parent-folder))
 	buf-name file-name num change-major-mode-hook
 	(reply-or-forward (or (eq this-command 'wl-summary-reply)
-			      (eq this-command 'wl-summary-forward))))
+			      (eq this-command 'wl-summary-forward)
+			      (eq this-command 'wl-summary-target-mark-forward)
+			      (eq this-command 'wl-summary-target-mark-reply-with-citation))))
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
     (setq num (elmo-max-of-list
