@@ -805,7 +805,7 @@ Optional argument ARG is repeart count."
 (defun wl-folder-check-one-entity (entity)
   (let* ((elmo-use-server-diff (wl-folder-use-server-diff-p entity))
 	 (nums (condition-case err
-		   (if (wl-string-member entity wl-strict-diff-folders)
+		   (if (wl-string-match-member entity wl-strict-diff-folders)
 		       (elmo-strict-folder-diff entity)
 		     (elmo-folder-diff entity))
 		 (error

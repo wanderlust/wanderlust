@@ -1275,8 +1275,9 @@ e.x.
   :group 'wl-pref)
 
 (defcustom wl-strict-diff-folders nil
-  "Folders in this list are checked its unsync message number strictly."
-  :type '(repeat (string :tag "Folder"))
+  "List of regexps matching folders of which Wanderlust seriously counts unsync messages."
+  :type '(choice (const :tag "Off" nil)
+		 (repeat (regexp :tag "Folder Regexp")))
   :group 'wl-folder)
 
 (defcustom wl-folder-use-server-diff t
