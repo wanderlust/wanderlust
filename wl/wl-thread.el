@@ -367,15 +367,14 @@ ENTITY is returned."
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
-	 message-entity temp-mark summary-line invisible-top dest-pair)
+	 message-entity temp-mark summary-line invisible-top)
     (if (wl-thread-delete-line-from-buffer msg)
 	(progn
 	  (cond
 	   ((memq msg wl-summary-buffer-target-mark-list)
 	    (setq temp-mark "*"))
 	   ((setq temp-mark (wl-summary-registered-temp-mark msg))
-	    (setq dest-pair (cons (nth 0 temp-mark)(nth 2 temp-mark))
-		  temp-mark (nth 1 temp-mark)))
+	    (setq temp-mark (nth 1 temp-mark)))
 	   (t (setq temp-mark (wl-summary-get-score-mark msg))))
 	  (when (setq message-entity
 		      (elmo-message-entity wl-summary-buffer-elmo-folder
@@ -394,10 +393,7 @@ ENTITY is returned."
 		  nil
 		(wl-thread-maybe-get-children-num msg))
 	      (wl-thread-make-indent-string entity)
-	      (wl-thread-entity-get-linked entity)))
-	    (if dest-pair
-		(wl-summary-print-argument (car dest-pair)
-					   (cdr dest-pair)))))
+	      (wl-thread-entity-get-linked entity)))))
       ;; insert thread (moving thread)
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))

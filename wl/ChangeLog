@@ -1,3 +1,34 @@
+2005-03-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-add): Create folder after testing parent
+	group is access or not (it is not strict, like wl-fldmgr-rename).
+
+2005-03-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Avoid
+	duplicate call of `wl-summary-print-argument' on the wrong line.
+
+2005-03-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-jump-to-msg): Don't interactive input
+	even if argument `number' is nil.
+	(wl-summary-insert-line): Print action argument if current message
+	has it.
+
+2005-03-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-draft.el (wl-draft-forward): Call `wl-draft' with number.
+	(wl-draft-reply): Ditto.
+	(wl-draft): Add optional argument `parent-number' and call
+	`wl-draft-create-buffer' with it.
+	(wl-draft-create-buffer): Add optional argument
+	`parent-number'. Set wl-draft-parent-number as it.
+
+2005-03-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder.el (wl-folder-set-persistent-mark): If summary
+	buffer is not for given folder, don't use it.
+
 2005-03-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.14.0.

@@ -293,8 +293,7 @@ e.g.
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject subject)
 		    (cons 'References references))
-	      nil nil nil nil parent-folder))
-  (setq wl-draft-parent-number number)
+	      nil nil nil nil parent-folder number))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To")
@@ -463,8 +462,7 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'In-Reply-To in-reply-to)
 		    (cons 'References references)
 		    (cons 'Mail-Followup-To mail-followup-to))
-	      nil nil nil nil parent-folder)
-    (setq wl-draft-parent-number number)
+	      nil nil nil nil parent-folder number)
     (setq wl-draft-reply-buffer buf)
     (setq wl-draft-config-variables
 	  (append wl-draft-parent-variables
@@ -1634,7 +1632,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft (&optional header-alist
 			   content-type content-transfer-encoding
 			   body edit-again
-			   parent-folder)
+			   parent-folder
+			   parent-number)
   "Write and send mail/news message with Wanderlust."
   (interactive)
   (require 'wl)
@@ -1648,7 +1647,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
   (wl-set-save-drafts)
   (let (buffer header-alist-internal)
-    (setq buffer (wl-draft-create-buffer parent-folder))
+    (setq buffer (wl-draft-create-buffer parent-folder parent-number))
     (unless (cdr (assq 'From header-alist))
       (setq header-alist
 	    (append (list (cons 'From wl-from)) header-alist)))
@@ -1690,7 +1689,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (goto-char (point-max))))
     buffer))
 
-(defun wl-draft-create-buffer (&optional parent-folder)
+(defun wl-draft-create-buffer (&optional parent-folder parent-number)
   (let* ((draft-folder (wl-draft-get-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
 	 (summary-buf (wl-summary-get-buffer parent-folder))
@@ -1746,6 +1745,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq wl-sent-message-queued nil)
     (setq wl-draft-config-exec-flag t)
     (setq wl-draft-parent-folder (or parent-folder ""))
+    (setq wl-draft-parent-number parent-number)
     (or (eq this-command 'wl-folder-write-current-folder)
 	(setq wl-draft-buffer-cur-summary-buffer summary-buf))
     buffer))

@@ -444,12 +444,14 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 (defun elmo-global-flags-initialize (&optional additional-flags)
   (let ((dir (expand-file-name "flag" elmo-msgdb-directory)))
     (setq elmo-global-flags
-	  (elmo-uniq-list
-	   (append
-	    elmo-global-flags
-	    additional-flags
-	    (mapcar 'intern
-		    (delete ".." (delete "." (directory-files dir)))))))))
+	  (elmo-list-delete
+	   elmo-local-flags
+	   (elmo-uniq-list
+	    (append
+	     elmo-global-flags
+	     additional-flags
+	     (mapcar 'intern
+		     (delete ".." (delete "." (directory-files dir))))))))))
 
 ;;; To migrate from global mark folder
 (defvar elmo-global-mark-filename "global-mark"

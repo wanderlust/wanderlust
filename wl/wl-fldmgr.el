@@ -831,20 +831,34 @@ return value is diffs '(-new -unread -all)."
 	(setq indent (wl-fldmgr-make-indent (nth 1 tmp)))
 	(or name
 	    (setq name (wl-fldmgr-read-string
-			(wl-summary-read-folder wl-default-folder "to add"))))
-	;; maybe add elmo-plugged-alist.
-	(elmo-folder-set-plugged (wl-folder-get-elmo-folder
-				  (if (listp name) (car name) name))
-				 wl-plugged t)
-	(when (setq diffs
-		    (wl-add-entity
-		     path (list name) wl-folder-entity (nth 3 tmp) t))
-	  (wl-folder-insert-entity indent name)
-	  (wl-fldmgr-update-group path diffs)
-	  (setq wl-fldmgr-modified t)
-	  (set-buffer-modified-p nil)
-	  (setq ret-val t)))
-      ret-val)))
+			(wl-summary-read-folder wl-default-folder
+						"to add" nil t))))
+	(let ((parent (nth 2 (wl-fldmgr-get-path-from-buffer))))
+	  (if (eq (cdr parent) 'access)
+	      (if (string-match
+		   (format "^%s" (regexp-quote (car parent))) name)
+		  ;; force update access group
+		  (progn
+		    (wl-folder-confirm-existence
+		     (wl-folder-get-elmo-folder name))
+		    (wl-folder-open-close)
+		    (wl-folder-jump-to-current-entity t)
+		    (setq ret-val t))
+		(error "Can't insert folder under access group"))
+	    (wl-folder-confirm-existence (wl-folder-get-elmo-folder name))
+	    ;; maybe add elmo-plugged-alist.
+	    (elmo-folder-set-plugged (wl-folder-get-elmo-folder
+				      (if (listp name) (car name) name))
+				     wl-plugged t)
+	    (when (setq diffs
+			(wl-add-entity
+			 path (list name) wl-folder-entity (nth 3 tmp) t))
+	      (wl-folder-insert-entity indent name)
+	      (wl-fldmgr-update-group path diffs)
+	      (setq wl-fldmgr-modified t)
+	      (set-buffer-modified-p nil)
+	      (setq ret-val t)))
+	  ret-val)))))
 
 (defun wl-fldmgr-delete ()
   (interactive)
