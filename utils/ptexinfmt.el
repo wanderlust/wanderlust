@@ -3,7 +3,7 @@
 ;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993,
 ;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
 ;; Copyright (C) 1999 Yoshiki Hayashi <yoshiki@xemacs.org>
-;; Copyright (C) 2000, 2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000, 2001, 2002 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;;	Yoshiki Hayashi <yoshiki@xemacs.org>
@@ -114,15 +114,6 @@ This is NO-NOTICE argument in `broken-facility'.")
   (if-broken texinfo-multitable-widths nil t)
   ptexinfmt-disable-broken-notice-flag)
 
-
-;;; Obsolete
-;; Removed Texinfo 3.8
-(put 'overfullrule 'texinfo-format 'texinfo-discard-line)
-(put 'smallbreak 'texinfo-format 'texinfo-discard-line)
-(put 'medbreak 'texinfo-format 'texinfo-discard-line)
-(put 'bigbreak 'texinfo-format 'texinfo-discard-line)
-;; Removed Texinfo 3.9
-(put 'setchapterstyle 'texinfo-format 'texinfo-discard-line-with-args)
 
 ;;; Hardcopy and HTML (discard)
 ;; html
@@ -533,9 +524,6 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 	      (buffer-substring (match-beginning 2) (match-end 2)))
 	     texinfo-alias-list))
       (texinfo-discard-command))))
-
-;; @definfoenclose NEWCMD, BEFORE, AFTER
-
 
 
 ;;; Special
