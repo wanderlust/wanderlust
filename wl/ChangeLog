@@ -1,3 +1,7 @@
+2003-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.10.
+
 2003-09-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-draft-attribute-value): Fixed.
