@@ -1,3 +1,7 @@
+2004-04-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-refile.el (wl-refile-guess-by-from): Use elmo-concat-path.
+
 2004-03-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-list-diff): Remove unused function.

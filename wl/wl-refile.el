@@ -242,8 +242,8 @@ If RULE does not match ENTITY, returns nil."
 		    (elmo-message-entity-field entity 'from)))))
     ;; search from alist
     (or (cdr (assoc from wl-refile-alist))
-	(format "%s/%s" wl-refile-default-from-folder
-		(wl-refile-get-account-part-from-address from)))))
+	(elmo-concat-path wl-refile-default-from-folder
+			  (wl-refile-get-account-part-from-address from)))))
 
 (defun wl-refile-guess-by-msgid (entity)
   (cdr (assoc (elmo-message-entity-field entity 'references)
