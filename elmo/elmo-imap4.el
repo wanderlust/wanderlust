@@ -2347,13 +2347,13 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						  numbers flag)
   (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
     (when spec
-      (elmo-imap4-set-flag folder numbers (car spec) (cdr spec)))))
+      (elmo-imap4-set-flag folder numbers (car spec) (nth 1 spec)))))
 
 (luna-define-method elmo-folder-unset-flag-plugged ((folder elmo-imap4-folder)
 						    numbers flag)
   (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
     (when spec
-      (elmo-imap4-set-flag folder numbers (car spec) (not (cdr spec))))))
+      (elmo-imap4-set-flag folder numbers (car spec) (not (nth 1 spec))))))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
 					      number)

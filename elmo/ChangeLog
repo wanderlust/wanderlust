@@ -1,3 +1,13 @@
+2004-01-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-maildir.el (elmo-map-folder-set-flag): Use cdr of
+	`elmo-maildir-flag-specs' element instead of one.
+	(elmo-map-folder-unset-flag): Ditto.
+	(Reported by Ken Makimura <macky@astem.or.jp>)
+
+	* elmo-imap4.el (elmo-folder-set-flag-plugged): Fixed.
+	(elmo-folder-unset-flag-plugged): Ditto.
+
 2004-01-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-nntp.el (elmo-folder-list-flagged): Return a list according

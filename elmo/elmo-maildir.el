@@ -314,14 +314,17 @@ LOCATION."
 
 (luna-define-method elmo-map-folder-set-flag ((folder elmo-maildir-folder)
 					      locations flag)
-  (let ((spec (assq flag elmo-maildir-flag-specs)))
-    (elmo-maildir-set-mark-messages folder locations (car spec) (cdr spec))))
+  (let ((spec (cdr (assq flag elmo-maildir-flag-specs))))
+    (when spec
+      (elmo-maildir-set-mark-messages folder locations
+				      (car spec) (nth 1 spec)))))
 
 (luna-define-method elmo-map-folder-unset-flag ((folder elmo-maildir-folder)
 						locations flag)
-  (let ((spec (assq flag elmo-maildir-flag-specs)))
-    (elmo-maildir-set-mark-messages folder locations
-				    (car spec) (not (cdr spec)))))
+  (let ((spec (cdr (assq flag elmo-maildir-flag-specs))))
+    (when spec
+      (elmo-maildir-set-mark-messages folder locations
+				      (car spec) (not (nth 1 spec))))))
 
 (luna-define-method elmo-folder-list-subfolders
   ((folder elmo-maildir-folder) &optional one-level)
