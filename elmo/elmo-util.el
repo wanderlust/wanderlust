@@ -332,14 +332,17 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (replace-match "\n"))
      (buffer-string))))
 
-(defun elmo-uniq-list (lst)
+(defun elmo-uniq-list (lst &optional delete-function)
   "Distractively uniqfy elements of LST."
+  (setq delete-function (or delete-function #'delete))
   (let ((tmp lst))
-    (while tmp (setq tmp
-		     (setcdr tmp
-			     (and (cdr tmp)
-				  (delete (car tmp)
-					  (cdr tmp)))))))
+    (while tmp
+      (setq tmp
+	    (setcdr tmp
+		    (and (cdr tmp)
+			 (funcall delete-function
+				  (car tmp)
+				  (cdr tmp)))))))
   lst)
 
 (defun elmo-list-insert (list element after)

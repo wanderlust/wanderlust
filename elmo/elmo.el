@@ -230,7 +230,11 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
       (setq list (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
     (if visible-only
 	(elmo-living-messages list killed-list)
-      list)))
+      (if in-msgdb
+	  (elmo-uniq-list
+	   (nconc (elmo-number-set-to-number-list killed-list) list)
+	   #'delq)
+	list))))
 
 (luna-define-generic elmo-folder-list-unreads (folder)
   "Return a list of unread message numbers contained in FOLDER.")
