@@ -72,7 +72,7 @@ CVS:
 
   安定版の枝から Wanderlust 取り出す場合は、以下のようにしてください。
 
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_6 wanderlust
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_8 wanderlust
 
   CVS repository は以下からも参照できます。
 
