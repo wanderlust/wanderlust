@@ -197,8 +197,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
     (elmo-pop3-debug "SEND: %s\n" (if no-log "<NO LOGGING>" command))
-    (process-send-string process command)
-    (process-send-string process "\r\n")))
+    (process-send-string process (concat command "\r\n"))))
 
 (defun elmo-pop3-read-response (process &optional not-command)
   ;; buffer is in case for process is dead.
