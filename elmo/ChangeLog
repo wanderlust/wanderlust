@@ -3,6 +3,7 @@
 	* elmo-imap4.el (elmo-imap4-session-select-mailbox): Use
 	`permanentflag'	instead of `flags'.
 	(elmo-folder-open): Ditto.
+	(elmo-imap4-set-flag): Treat \Deleted flag as an exception.
 
 2003-10-06  Yuuichi Teranishi  <teranisi@gohome.org>
 

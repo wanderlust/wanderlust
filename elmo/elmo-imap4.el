@@ -2097,9 +2097,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					folder))
-    (when (elmo-string-member-ignore-case
-	   flag
-	   (elmo-imap4-session-flags-internal session))
+    (when (or (elmo-string-member-ignore-case
+	       flag
+	       (elmo-imap4-session-flags-internal session))
+	      (string= flag "\\Deleted")) ; XXX Humm..
       (setq set-list (elmo-imap4-make-number-set-list
 		      numbers
 		      elmo-imap4-number-set-chop-length))
