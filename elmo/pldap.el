@@ -700,13 +700,15 @@ entry according to the value of WITHDN."
 				    nil
 				    (mapcar
 				     (lambda (attr)
-				       (if (setq value (ldap/field-body attr))
-					   (if attrsonly
-					       (list attr)
-					     (nconc (list attr) value))))
+				       ;; dn is not an attribute.
+				       (unless (string= attr "dn")
+					 (if (setq value
+						   (ldap/field-body attr))
+					     (if attrsonly
+						 (list attr)
+					       (nconc (list attr) value)))))
 				     attrs)))
-	      (setq attrs-result
-		    (ldap/collect-field "dn"))
+	      (setq attrs-result (ldap/collect-field "dn"))
 	      (if attrsonly
 		  (setq attrs-result (mapcar (lambda (x) (list (car x)))
 					     attrs-result))))
