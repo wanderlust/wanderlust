@@ -426,8 +426,7 @@ without cacheing."
 	pair fld-list
 	ret-val)
     (while msg-list
-      (when (and (numberp (car msg-list))
-		 (> (car msg-list) 0))
+      (when (> (car msg-list) 0)
 	(setq pair (elmo-get-real-folder-number folder (car msg-list)))
 	(if (setq fld-list (assoc (car pair) ret-val))
 	    (setcdr fld-list (cons (cdr pair) (cdr fld-list)))

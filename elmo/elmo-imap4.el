@@ -661,7 +661,7 @@ BUFFER must be a single-byte buffer."
   (if elmo-use-server-diff
       (elmo-imap4-server-diff spec)
     (elmo-generic-folder-diff spec folder number-list)))
-
+    
 (defun elmo-imap4-get-session (spec &optional if-exists)
   (elmo-network-get-session
    'elmo-imap4-session
@@ -1582,7 +1582,6 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-arrival-filter (proc string)
   "IMAP process filter."
-  (when (buffer-live-p (process-buffer proc))
   (with-current-buffer (process-buffer proc)
     (elmo-imap4-debug "-> %s" string)
     (goto-char (point-max))
@@ -1610,7 +1609,7 @@ Return nil if no complete line has arrived."
 		    (t
 		     (message "Unknown state %s in arrival filter"
 			      elmo-imap4-status))))
-	  (delete-region (point-min) (point-max))))))))
+	  (delete-region (point-min) (point-max)))))))
 
 ;; IMAP parser.
 
