@@ -181,9 +181,10 @@
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (elmo-message-field (car pair) (cdr pair) field)))
 
-(luna-define-method elmo-message-flags ((folder elmo-multi-folder) number)
+(luna-define-method elmo-message-flags ((folder elmo-multi-folder) number
+					&optional msgid)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (elmo-message-flags (car pair) (cdr pair))))
+    (elmo-message-flags (car pair) (cdr pair) msgid)))
 
 (defun elmo-multi-split-numbers (folder numlist &optional as-is)
   (let ((numbers (sort numlist '<))

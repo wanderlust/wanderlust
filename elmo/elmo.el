@@ -453,13 +453,22 @@ Return newly created temporary directory name which contains temporary files.")
 (luna-define-generic elmo-message-file-p (folder number)
   "Return t if message in the FOLDER with NUMBER is a file.")
 
-(luna-define-generic elmo-message-flags (folder number)
+(luna-define-generic elmo-message-flags (folder number &optional msgid)
   "Return a list of flags.
 FOLDER is a ELMO folder structure.
-NUMBER is a number of the message.")
+NUMBER is a number of the message.
+If optional argument MSGID is specified,
+the message with NUMBER checks whether it has MSGID.")
 
-(luna-define-method elmo-message-flags ((folder elmo-folder) number)
-  (elmo-msgdb-flags (elmo-folder-msgdb folder) number))
+(luna-define-method elmo-message-flags ((folder elmo-folder) number
+					&optional msgid)
+  (if msgid
+      (let ((this-id (elmo-message-field folder number 'message-id)))
+	(and this-id
+	     (string= this-id msgid)
+	     (or (elmo-msgdb-flags (elmo-folder-msgdb folder) number)
+		 '(read))))
+    (elmo-msgdb-flags (elmo-folder-msgdb folder) number)))
 
 (defsubst elmo-message-flagged-p (folder number flag)
   "Return non-nil if the message is set FLAG.
@@ -1008,7 +1017,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	unseen table flags
+	unseen table
 	succeed-numbers failure cache id)
     (setq table (elmo-folder-flag-table folder))
     (with-temp-buffer
@@ -1017,9 +1026,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 	(setq failure nil
 	      id (and src-msgdb-exists
 		      (elmo-message-field src-folder (car numbers)
-					  'message-id))
-	      flags (or (elmo-message-flags src-folder (car numbers))
-			(and id '(read))))
+					  'message-id)))
 	(condition-case nil
 	    (setq cache (elmo-file-cache-get id)
 		  failure
@@ -1043,7 +1050,10 @@ If optional argument IF-EXISTS is nil, load on demand.
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     flags
+		     (elmo-message-flags
+		      src-folder
+		      (car numbers)
+		      (elmo-msgdb-get-message-id-from-buffer))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
