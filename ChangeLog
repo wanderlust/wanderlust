@@ -1,7 +1,8 @@
 2002-03-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* etc/icons/wl-folder-goto-draft-folder-up.xpm: Modified.
-
+	* etc/icons/wl-draft-save-and-exit-up.xpm: Ditto.
+	
 2002-03-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* etc/icons/wl-folder-goto-draft-folder-up.xpm : New file.
