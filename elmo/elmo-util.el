@@ -953,14 +953,10 @@ the directory becomes empty after deletion."
 	 file (nth 2 condition) number number-list)))))
 
 (defmacro elmo-get-hash-val (string hashtable)
-  `(and (stringp ,string)
-	,hashtable
-	(let ((sym (intern-soft ,string ,hashtable)))
-	  (if (boundp sym)
-	      (symbol-value sym)))))
+  `(symbol-value (intern-soft ,string ,hashtable)))
 
 (defmacro elmo-set-hash-val (string value hashtable)
-  (list 'set (list 'intern string hashtable) value))
+  `(set (intern ,string ,hashtable) ,value))
 
 (defmacro elmo-clear-hash-val (string hashtable)
   (static-if (fboundp 'unintern)
