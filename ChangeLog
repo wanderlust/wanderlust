@@ -1,3 +1,10 @@
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* utils/sasl/sasl.el: sync up to flim-1_14.
+	* utils/sasl/sasl-cram.el: New file.
+	* utils/sasl/sasl-digest.el: New file.
+	* utils/sasl/digest-md5.el: Delete.
+
 2000-10-31  Tetsuo Tsukamoto <czkmt@remus.dti.ne.jp>
 
 	* WL-MK: Require "backquote" before dealing with the custom issue.

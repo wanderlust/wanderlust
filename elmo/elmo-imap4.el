@@ -1152,22 +1152,6 @@ If optional argument UNMARK is non-nil, unmark."
 	      (elmo-get-passwd (elmo-network-session-password-key session))))))
      (signal 'elmo-authenticate-error '(login)))))
 
-;;; dirty hack
-;;;(defconst sasl-imap4-login-steps
-;;;  '(sasl-imap4-login-response))
-;;;
-;;;(defun sasl-imap4-login-response (client step)
-;;;  (concat
-;;;   (sasl-client-name client)
-;;;   " "
-;;;   (sasl-read-passphrase
-;;;    (format "LOGIN passphrase for %s: " (sasl-client-name client)))))
-;;;
-;;;(put 'sasl-imap4-login 'sasl-mechanism
-;;;     (sasl-make-mechanism "IMAP4-LOGIN" sasl-imap4-login-steps))
-;;;
-;;;(provide 'sasl-imap4-login)
-
 (luna-define-method
   elmo-network-initialize-session-buffer :after ((session
 						  elmo-imap4-session) buffer)
@@ -1216,42 +1200,29 @@ If optional argument UNMARK is non-nil, unmark."
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (let* ((auth (elmo-network-session-auth-internal session))
-;	   (auth (mapcar '(lambda (a)
-;			    (if (eq a 'plain)
-;				'imap4-login
-;			      a))
-;			 (if (listp auth) auth (list auth)))))
 	   (auth (if (listp auth) auth (list auth))))
       (unless (or (eq elmo-imap4-status 'auth)
 		  (null auth))
 	(if (eq 'plain (car auth))
 	    (elmo-imap4-login session)
 	  (let* ((elmo-imap4-debug-inhibit-logging t)
-;	       (sasl-mechanism-alist
-;		(append
-;		 sasl-mechanism-alist
-;		 (list '("IMAP4-LOGIN" sasl-imap4-login))))
-	       (sasl-mechanisms
-;		(append
-		 (delq nil
-		       (mapcar '(lambda (cap)
-				  (if (string-match "^auth=\\(.*\\)$"
-						    (symbol-name cap))
-				      (match-string 1 (upcase (symbol-name cap)))))
-			       (elmo-imap4-session-capability-internal session))))
-;		 (list "IMAP4-LOGIN")))
-	       (mechanism
-;		(if (eq auth 'any)
-;		    (sasl-find-mechanism sasl-mechanisms)
+		 (sasl-mechanisms
+		  (delq nil
+			(mapcar '(lambda (cap)
+				   (if (string-match "^auth=\\(.*\\)$"
+						     (symbol-name cap))
+				       (match-string 1 (upcase (symbol-name cap)))))
+				(elmo-imap4-session-capability-internal session))))
+		 (mechanism
 		  (sasl-find-mechanism
 		   (delq nil
 			 (mapcar '(lambda (cap) (upcase (symbol-name cap)))
 				 (if (listp auth)
 				     auth
-				   (list auth))))));)
-	       client name step response tag
-	       sasl-read-passphrase)
-	   (unless mechanism
+				   (list auth)))))) ;)
+		 client name step response tag
+		 sasl-read-passphrase)
+	    (unless mechanism
 	      (if (or elmo-imap4-force-login
 		      (y-or-n-p
 		       (format
@@ -1278,21 +1249,16 @@ If optional argument UNMARK is non-nil, unmark."
 		   (lambda (prompt)
 		     (elmo-get-passwd
 		      (elmo-network-session-password-key session)))))
-;	    (if (string= name "IMAP4-LOGIN")
-;		(setq tag
-;		      (elmo-imap4-send-command
-;		       session
-;		       (concat "LOGIN " (sasl-step-data step))))
-	      (setq tag
-		    (elmo-imap4-send-command
-		     session
-		     (concat "AUTHENTICATE " name
-			     (and (sasl-step-data step)
-				  (concat 
-				   " "
-				   (elmo-base64-encode-string
-				    (sasl-step-data step)
-				    'no-lin-break))))));)
+	    (setq tag
+		  (elmo-imap4-send-command
+		   session
+		   (concat "AUTHENTICATE " name
+			   (and (sasl-step-data step)
+				(concat 
+				 " "
+				 (elmo-base64-encode-string
+				  (sasl-step-data step)
+				  'no-lin-break)))))) ;)
 	    (catch 'done
 	      (while t
 		(setq response (elmo-imap4-read-untagged
