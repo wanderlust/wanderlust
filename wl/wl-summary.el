@@ -4488,7 +4488,7 @@ If ARG, exit virtual folder."
 	(wl-match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
-(defvar wl-summary-move-spec-alist
+(defvar wl-summary-move-spec-plugged-alist
   (` ((new . ((t . nil)
 	      (p . (, wl-summary-new-mark))
 	      (p . (, (wl-regexp-opt
@@ -4502,9 +4502,19 @@ If ARG, exit virtual folder."
 				wl-summary-unread-cached-mark))))
 		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
+(defvar wl-summary-move-spec-unplugged-alist
+  (` ((new . ((t . nil)
+	      (p . (, wl-summary-unread-cached-mark))
+	      (p . (, (regexp-quote wl-summary-important-mark)))))
+      (unread . ((t . nil)
+		 (p . (, wl-summary-unread-cached-mark))
+		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 
-			     wl-summary-move-spec-alist)))
+			     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
+				 wl-summary-move-spec-plugged-alist
+			       wl-summary-move-spec-unplugged-alist))))
 	(nums (memq num (if (eq direction 'up)
 			    (reverse wl-summary-buffer-number-list)
 			  wl-summary-buffer-number-list)))
