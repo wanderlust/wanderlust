@@ -1,3 +1,10 @@
+2002-05-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary): Added optional `lazy'
+	argument and when it is non-nil, check face property before
+	highlighting for each line.
+	(wl-highlight-summary-window): Set it.
+
 2002-05-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-disable-bcc-for-mime-bcc): New user option.

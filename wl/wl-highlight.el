@@ -954,7 +954,7 @@ Variables used:
   (interactive)
   (wl-highlight-summary (point-min)(point-max)))
 
-(defun wl-highlight-summary (start end)
+(defun wl-highlight-summary (start end &optional lazy)
   "Highlight summary between start and end.
 Faces used:
   wl-highlight-summary-unread-face      unread messages
@@ -984,9 +984,11 @@ Variables used:
       (setq i 0)
       (while (and (not (eobp))
 		  (< (point) end))
-	(wl-highlight-summary-current-line nil nil
-					   (or wl-summary-lazy-highlight
-					       wl-summary-scored))
+	(when (or (not lazy)
+		  (null (get-text-property (point) 'face)))
+	  (wl-highlight-summary-current-line nil nil
+					     (or wl-summary-lazy-highlight
+						 wl-summary-scored)))
 	(forward-line 1))
       (unless wl-summary-lazy-highlight
 	(message "Highlighting...done")))))
@@ -998,10 +1000,8 @@ This function is defined for `window-scroll-functions'"
       (with-current-buffer (window-buffer win)
 	(when (eq major-mode 'wl-summary-mode)
 	  (wl-highlight-summary (window-start win)
-				(save-excursion
-				  (goto-char (window-start win))
-				  (forward-line (frame-height))
-				  (point)))
+				(window-end win)
+				'lazy)
 	  (set-buffer-modified-p nil)))))
 
 (defun wl-highlight-headers (&optional for-draft)
