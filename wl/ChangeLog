@@ -1,3 +1,9 @@
+2005-02-01  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-thread.el (wl-thread-entity-get-descendant): Change `defsubst'
+	to `defun'.  Use `nconc' instead of `append' to collect descendant
+	message numbers.
+
 2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-thread.el (wl-thread-save-top-list)
