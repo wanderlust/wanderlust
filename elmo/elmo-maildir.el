@@ -411,12 +411,8 @@ file name for maildir directories."
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
 	    basedir))
-	  (let* ((path (elmo-folder-msgdb-path folder))
-		 (table (elmo-flag-table-load path))
-		 (msgid (std11-field-body "message-id")))
-	    (when msgid
-	      (elmo-flag-table-set table msgid flags)
-	      (elmo-flag-table-save path table)))
+	  (elmo-folder-preserve-falgs
+	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
 	  t)
       ;; If an error occured, return nil.
       (error))))
@@ -455,7 +451,7 @@ file name for maildir directories."
   (if (elmo-folder-message-file-p src-folder)
       (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
 	    (dir (elmo-maildir-folder-directory-internal folder))
-	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
+	    (table (elmo-folder-flag-table folder))
 	    (succeeds numbers)
 	    filename flags id)
 	(dolist (number numbers)
@@ -476,7 +472,7 @@ file name for maildir directories."
 	    (elmo-flag-table-set table id flags))
 	  (elmo-progress-notify 'elmo-folder-move-messages))
 	(when (elmo-folder-persistent-p folder)
-	  (elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
+	  (elmo-folder-close-flag-table folder))
 	succeeds)
     (luna-call-next-method)))
 

@@ -578,11 +578,11 @@ TYPE specifies the archiver's symbol."
   (elmo-archive-message-fetch-internal folder number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-archive-folder)
-					       &optional flag number)
-  (elmo-archive-folder-append-buffer folder flag number))
+					       &optional flags number)
+  (elmo-archive-folder-append-buffer folder flags number))
 
 ;; verrrrrry slow!!
-(defun elmo-archive-folder-append-buffer (folder flag number)
+(defun elmo-archive-folder-append-buffer (folder flags number)
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (arc (elmo-archive-get-archive-name folder))
@@ -617,6 +617,11 @@ TYPE specifies the archiver's symbol."
 		 (as-binary-output-file
 		  (write-region (point-min) (point-max) newfile nil 'no-msg))
 		 (elmo-archive-call-method method (list arc newfile))
+		 (elmo-folder-preserve-falgs
+		  folder
+		  (with-current-buffer src-buffer
+		    (elmo-msgdb-get-message-id-from-buffer))
+		  flags)
 		 t)
 	     nil))))))
 

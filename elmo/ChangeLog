@@ -1,5 +1,31 @@
 2004-04-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder): Add new slot `flag-table'.
+	(elmo-folder-flag-table): New API.
+	(elmo-folder-close-flag-table): Ditto.
+	(elmo-folder-preserve-falgs): New function.
+	(elmo-generic-folder-append-messages): Use
+	`elmo-folder-flag-table' and `elmo-folder-close-flag-table'.
+	Flag of a non-registered message, it sets to nil.
+	Does not set flag to flag-table.
+
+	* elmo-maildir.el (elmo-folder-append-buffer): Use
+	`elmo-folder-preserve-falgs'.
+	(elmo-folder-append-messages): Use `elmo-folder-flag-table' and
+	`elmo-folder-close-flag-table'.
+
+	* elmo-archive.el (elmo-folder-append-buffer): Fix interface.
+	(elmo-archive-folder-append-buffer): Use
+	`elmo-folder-preserve-falgs'.
+
+	* elmo-cache.el (elmo-folder-append-buffer): Ditto.
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Ditto.
+
+	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
+	(elmo-folder-append-messages): Use `elmo-folder-flag-table' and
+	`elmo-folder-close-flag-table'.
+
 	* elmo-version.el (elmo-version): Up to 2.11.26.
 
 2004-04-18  Yoichi NAKAYAMA  <yoichi@geiin.org>

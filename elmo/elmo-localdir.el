@@ -206,12 +206,8 @@
 	       (not (file-exists-p filename)))
       (write-region-as-binary
        (point-min) (point-max) filename nil 'no-msg)
-      (let* ((path (elmo-folder-msgdb-path folder))
-	     (table (elmo-flag-table-load path))
-	     (msgid (std11-field-body "message-id")))
-	(when msgid
-	  (elmo-flag-table-set table msgid flags)
-	  (elmo-flag-table-save path table)))
+      (elmo-folder-preserve-falgs
+       folder (elmo-msgdb-get-message-id-from-buffer) flags)
       t)))
 
 (luna-define-method elmo-folder-append-messages :around
@@ -220,7 +216,7 @@
   (if (elmo-folder-message-file-p src-folder)
       (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
 	    (dir (elmo-localdir-folder-directory-internal folder))
-	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
+	    (table (elmo-folder-flag-table folder))
 	    (succeeds numbers)
 	    (next-num (1+ (car (elmo-folder-status folder))))
 	    flags id)
@@ -246,7 +242,7 @@
 			(1+ (car (elmo-folder-status folder)))
 		      (1+ next-num)))))
 	(when (elmo-folder-persistent-p folder)
-	  (elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
+	  (elmo-folder-close-flag-table folder))
 	succeeds)
     (luna-call-next-method)))
 

@@ -117,6 +117,7 @@ If a folder name begins with PREFIX, use BACKEND."
 				     path   ; directory path for msgdb.
 				     msgdb  ; msgdb (may be nil).
 				     killed-list  ; killed list.
+				     flag-table   ; flag table.
 				     persistent   ; non-nil if persistent.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
@@ -375,8 +376,9 @@ FOLDER is the ELMO folder structure.")
 (luna-define-generic elmo-folder-append-buffer (folder &optional flags
 						       number)
   "Append current buffer as a new message.
-FOLDER is the destination folder(ELMO folder structure).
+FOLDER is the destination folder (ELMO folder structure).
 FLAGS is the status of appended message (list of symbols).
+If it is nil, it is not that there is no flag and what is not defined is meant.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
 Return nil on failure.")
@@ -827,6 +829,39 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 (luna-define-method elmo-folder-have-subfolder-p ((folder elmo-folder))
   t)
 
+;; Flag table
+(luna-define-generic elmo-folder-flag-table (folder &optional if-exists)
+  "Return the flag-table of FOLDER.
+If optional argument IF-EXISTS is nil, load on demand.
+\(For internal use only.\)")
+
+(luna-define-generic elmo-folder-close-flag-table (folder)
+  "Close flag-table of FOLDER.")
+
+(luna-define-method elmo-folder-flag-table ((folder elmo-folder)
+					    &optional if-exists)
+  (or (elmo-folder-flag-table-internal folder)
+      (unless if-exists
+	(elmo-folder-set-flag-table-internal
+	 folder
+	 (elmo-flag-table-load (elmo-folder-msgdb-path folder))))))
+
+(luna-define-method elmo-folder-close-flag-table ((folder elmo-folder))
+  (elmo-flag-table-save (elmo-folder-msgdb-path folder)
+			(elmo-folder-flag-table folder))
+  (elmo-folder-set-flag-table-internal folder nil))
+
+(defun elmo-folder-preserve-falgs (folder msgid flags)
+  "Preserve FLAGS into FOLDER for a message that has MSGID."
+  (when (and msgid flags)
+    (let ((flag-table (elmo-folder-flag-table folder 'if-exists))
+	  load-now)
+      (when (setq load-now (null flag-table))
+	(setq flag-table (elmo-folder-flag-table folder)))
+      (elmo-flag-table-set flag-table msgid flags)
+      (when load-now
+	(elmo-folder-close-flag-table folder)))))
+
 ;;; Folder info
 ;; Folder info is a message number information cache (hashtable)
 (defsubst elmo-folder-get-info (folder &optional hashtb)
@@ -975,7 +1010,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
 	unseen table flags
 	succeed-numbers failure cache id)
-    (setq table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
+    (setq table (elmo-folder-flag-table folder))
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (while numbers
@@ -983,7 +1018,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	      id (and src-msgdb-exists
 		      (elmo-message-field src-folder (car numbers)
 					  'message-id))
-	      flags (elmo-message-flags src-folder (car numbers)))
+	      flags (or (elmo-message-flags src-folder (car numbers))
+			(and id '(read))))
 	(condition-case nil
 	    (setq cache (elmo-file-cache-get id)
 		  failure
@@ -1007,18 +1043,16 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     (or flags '(read))
+		     flags
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (when id
-	    (elmo-flag-table-set table id flags))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(elmo-progress-notify 'elmo-folder-move-messages)
 	(setq numbers (cdr numbers)))
       (when (elmo-folder-persistent-p folder)
-	(elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
+	(elmo-folder-close-flag-table folder))
       succeed-numbers)))
 
 ;; Arguments should be reduced.
