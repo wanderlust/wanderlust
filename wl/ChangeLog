@@ -1,3 +1,9 @@
+2002-12-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-append-to-folder): New function.
+	(wl-news-exit): Rewrite.
+	(wl-news-discard-and-mail): Merge to `wl-news-exit'.
+
 2002-12-22  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-reply-position): New function.

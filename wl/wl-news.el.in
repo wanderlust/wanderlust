@@ -188,6 +188,7 @@
   (define-key wl-news-mode-map "Q"     'wl-news-force-exit)
   (define-key wl-news-mode-map "\C-xk" 'wl-news-exit)
   (define-key wl-news-mode-map "a"     'wl-news-show-all)
+  (define-key wl-news-mode-map "m"     'wl-news-append-to-folder)
   (define-key wl-news-mode-map "\C-m"  'wl-news-next-line)
   (define-key wl-news-mode-map " "     'wl-news-next-page))
 
@@ -217,6 +218,7 @@
 		  ;; insert news
 		  (let ((buffer-read-only nil))
 		    (insert "--- Wanderlust NEWS ---  press 'a' to show all NEWS\n")
+		    (insert "                         press 'm' to mail this NEWS to your folder\n")
 		    (insert "                         press 'q' to quit\n")
 		    (insert "                         press 'Q' to force quit\n\n")
 		    (while (car lang)
@@ -247,32 +249,41 @@
 
 (defun wl-news-exit ()
   (interactive)
-  (let ((buf))
-    (when (setq buf (get-buffer wl-news-buf-name))
-      (wl-news-discard-and-mail)
+  (let* ((oldest-version (cdr (wl-news-previous-version-load)))
+	 (current-version (product-version (product-find 'wl-version)))
+	 (new-old-version current-version)
+	 (buf (get-buffer wl-news-buf-name)))
+    (when buf
+      (if (wl-news-check-news oldest-version wl-news-lang)
+	  (if (y-or-n-p "Do you want to see this message again? ")
+	      (progn
+		(message "Please M-x wl-news if you want to see it.")
+		(setq new-old-version oldest-version))))
+      (wl-news-previous-version-save
+       current-version new-old-version)
+      (kill-buffer (current-buffer))
+      (if wl-news-winconf
+	  (set-window-configuration wl-news-winconf))
       (kill-buffer buf)
       (if wl-news-winconf
 	  (set-window-configuration wl-news-winconf)))))
 
-(defun wl-news-discard-and-mail ()
+(defun wl-news-append-to-folder ()
   (interactive)
   (let* ((oldest-version (cdr (wl-news-previous-version-load)))
 	 (current-version (product-version (product-find 'wl-version)))
-	 (new-old-version current-version))
-    (if (wl-news-check-news oldest-version wl-news-lang)
-	(if (y-or-n-p "Do you want to see this message again? ")
-	    (progn
-	      (message "Please M-x wl-news if you want to see it.")
-	      (setq new-old-version oldest-version))
-	  (if (y-or-n-p "Do you want this message for a mail? ")
-	      (or (wl-news-send-news oldest-version wl-news-lang)
-		  (error
-		   (format "Cannot append NEWS mail to %s" wl-default-folder))))))
-    (wl-news-previous-version-save
-     current-version new-old-version)
-	(kill-buffer (current-buffer))
-	(if wl-news-winconf
-	    (set-window-configuration wl-news-winconf))))
+	 (new-old-version current-version)
+	 (folder wl-default-folder))
+    (if (or (and (elmo-folder-writable-p
+		  (wl-folder-get-elmo-folder folder))
+		 (y-or-n-p (format
+			    "Do you want to append this message to %s ? "
+			    wl-default-folder)))
+	    (setq folder
+		  (wl-summary-read-folder wl-default-folder "to append ")))
+	(or (wl-news-send-news oldest-version wl-news-lang)
+	    (error
+	     (format "Cannot append NEWS mail to %s" wl-default-folder))))))
 
 (defun wl-news-force-exit ()
   (interactive)
