@@ -1,3 +1,7 @@
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-send-news): Add 'Date' header.
+
 2002-12-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-news.el.in (wl-news-send-to-address): New variable.
