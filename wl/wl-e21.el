@@ -35,6 +35,7 @@
   (require 'wl-draft)
   (require 'wl-message)
   (require 'wl-highlight)
+  (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
 (defvar wl-use-toolbar (and (display-graphic-p)
@@ -152,6 +153,26 @@
 		success nil))))
     success))
 
+(defun wl-e21-make-icon-image (icon-text icon-file)
+  (if wl-highlight-folder-with-icon
+      (let ((load-path (cons wl-icon-dir load-path)))
+	(cond ((let (case-fold-search)
+		 ;; It may be a default value.
+		 (string-match "\\.xpm$" icon-file))
+	       (find-image
+		`((:type xpm :file ,icon-file :ascent center)
+		  (:type xbm
+			 :file ,(concat
+				 (substring icon-file 0 (match-beginning 0))
+				 ".xbm")
+			 :ascent center))))
+	      ((let ((case-fold-search t))
+		 (string-match "\\.\\(x[bp]m\\|png\\|gif\\)$" icon-file))
+	       (find-image
+		`((:type ,(intern (downcase (match-string 1 icon-file)))
+			 :file ,icon-file :ascent center))))))
+    icon-text))
+
 (defvar wl-e21-toolbar-configurations
   '((auto-resize-tool-bar        . t)
     (auto-raise-tool-bar-buttons . t)
@@ -184,88 +205,92 @@
        (wl-e21-setup-toolbar wl-summary-toolbar)
        (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
-(defun wl-e21-setup-message-toolbar ()
-  (and wl-use-toolbar
-       (wl-e21-setup-toolbar wl-message-toolbar)
-       (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
+(eval-when-compile
+  (defsubst wl-e21-setup-message-toolbar ()
+    (and wl-use-toolbar
+	 (wl-e21-setup-toolbar wl-message-toolbar)
+	 (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
 
-(defun wl-e21-setup-draft-toolbar ()
-  (and wl-use-toolbar
-       (wl-e21-setup-toolbar wl-draft-toolbar)
-       (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar)))
+  (defsubst wl-e21-setup-draft-toolbar ()
+    (and wl-use-toolbar
+	 (wl-e21-setup-toolbar wl-draft-toolbar)
+	 (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
 
-(defun wl-e21-insert-image (image &optional string)
-  (unless string
-    (setq string " "))
+(defun wl-e21-insert-image (image &optional text)
+  (unless text
+    (setq text " "))
   (let* ((start (point))
-	 (end (+ start (length string))))
+	 (end (+ start (length text))))
     (if (stringp image)
 	(progn
-	  (insert string)
+	  (insert text)
 	  (let ((ovl (make-overlay start end)))
 	    (overlay-put ovl 'before-string image)
 	    (overlay-put ovl 'evaporate t)
 	    (add-text-properties start end
 				 '(invisible t intangible t
 					     rear-nonsticky t))))
-      (insert-image image string))
+      (insert-image image text))
     (put-text-property start end 'wl-e21-icon t)))
 
-(defun wl-e21-make-icon-image (icon-string icon-file)
-  (if wl-highlight-folder-with-icon
-      (let ((load-path (cons wl-icon-dir load-path)))
-	(cond ((let (case-fold-search)
-		 ;; It may be a default value.
-		 (string-match "\\.xpm$" icon-file))
-	       (find-image
-		`((:type xpm :file ,icon-file :ascent center)
-		  (:type xbm
-			 :file ,(concat
-				 (substring icon-file 0 (match-beginning 0))
-				 ".xbm")
-			 :ascent center))))
-	      ((let ((case-fold-search t))
-		 (string-match "\\.\\(x[bp]m\\|png\\|gif\\)$" icon-file))
-	       (find-image
-		`((:type ,(intern (downcase (match-string 1 icon-file)))
-			 :file ,icon-file :ascent center))))))
-    icon-string))
+(defvar wl-folder-toggle-icon-list
+  '((wl-folder-opened-image       . wl-opened-group-folder-icon)
+    (wl-folder-closed-image       . wl-closed-group-folder-icon)))
 
 (eval-when-compile
-  (defsubst wl-e21-highlight-folder-group-icon (image &optional string-face)
-    (let ((string (match-string-no-properties 1))
-	  (start (goto-char (match-beginning 1)))
+  (defsubst wl-e21-highlight-folder-group-line (image text-face numbers)
+    (let ((start (goto-char (match-beginning 1)))
 	  (inhibit-read-only t))
-      (delete-region start (match-end 1))
-      (unless (get image 'image)
-	(put image 'image (wl-e21-make-icon-image
-			   string
-			   (symbol-value
-			    (cdr (assq image wl-folder-toggle-icon-list))))))
-      (setq image (get image 'image))
-      (wl-e21-insert-image image string)
-      (when (stringp image)
-	(put-text-property (line-beginning-position) (line-end-position)
-			   'face string-face))
+      (let ((text (match-string-no-properties 1)))
+	(delete-region start (match-end 1))
+	(wl-e21-insert-image
+	 (or (get image 'image)
+	     (put image 'image
+		  (wl-e21-make-icon-image
+		   text (symbol-value
+			 (cdr (assq image wl-folder-toggle-icon-list))))))
+	 text))
       (when wl-use-highlight-mouse-line
-	(put-text-property start (line-end-position)
-			   'mouse-face 'highlight)))))
+	(put-text-property start (line-end-position) 'mouse-face 'highlight))
+      (setq start (point))
+      (if (and wl-highlight-folder-by-numbers
+	       numbers (nth 0 numbers) (nth 1 numbers)
+	       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" (line-end-position)
+				  t))
+	  (let* ((unsync (nth 0 numbers))
+		 (unread (nth 1 numbers))
+		 (face (cond ((and unsync (zerop unsync))
+			      (if (and unread (zerop unread))
+				  'wl-highlight-folder-zero-face
+				'wl-highlight-folder-unread-face))
+			     ((and unsync
+				   (>= unsync wl-folder-many-unsync-threshold))
+			      'wl-highlight-folder-many-face)
+			     (t
+			      'wl-highlight-folder-few-face))))
+	    (if (numberp wl-highlight-folder-by-numbers)
+		(progn
+		  (put-text-property start (match-beginning 0) 'face text-face)
+		  (put-text-property (match-beginning 0) (point) 'face face))
+	      (put-text-property start (point) 'face face)))
+	(put-text-property start (line-end-position) 'face text-face)))))
 
 (defun wl-highlight-folder-current-line (&optional numbers)
   (interactive)
   (save-excursion
     (beginning-of-line)
-    ;; put an icon
     (let (fld-name)
       (cond
        (;; opened folder group
 	(looking-at wl-highlight-folder-opened-regexp)
-	(wl-e21-highlight-folder-group-icon 'wl-folder-opened-image
-					    'wl-highlight-folder-opened-face))
+	(wl-e21-highlight-folder-group-line 'wl-folder-opened-image
+					    'wl-highlight-folder-opened-face
+					    numbers))
        (;; closed folder group
 	(looking-at wl-highlight-folder-closed-regexp)
-	(wl-e21-highlight-folder-group-icon 'wl-folder-closed-image
-					    'wl-highlight-folder-closed-face))
+	(wl-e21-highlight-folder-group-line 'wl-folder-closed-image
+					    'wl-highlight-folder-closed-face
+					    numbers))
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
@@ -275,50 +300,59 @@
 	  (if (get-text-property (point) 'wl-e21-icon)
 	      (delete-char 1)
 	    (forward-char 1))
-	  (let ((start (point))
-		type)
-	    (wl-e21-insert-image
-	     (cond
-	      ((string= fld-name wl-trash-folder);; trash folder
-	       (let ((num (nth 2 numbers)));; number of messages
-		 (get (if (or (not num) (zerop num))
-			  'wl-folder-trash-empty-image
-			'wl-folder-trash-image)
-		      'image)))
-	      ((string= fld-name wl-draft-folder);; draft folder
-	       (get 'wl-folder-draft-image 'image))
-	      ((string= fld-name wl-queue-folder);; queue folder
-	       (get 'wl-folder-queue-image 'image))
-	      (;; and one of many other folders
-	       (setq type (elmo-folder-get-type fld-name))
-	       (get (intern (format "wl-folder-%s-image" type)) 'image))))
-	    (when wl-use-highlight-mouse-line
-	      (put-text-property start (line-end-position)
-				 'mouse-face 'highlight)))))))
-    (let ((inhibit-read-only t))
-      (if (and numbers (nth 0 numbers) (nth 1 numbers))
-	  (let ((unsync (nth 0 numbers))
-		(unread (nth 1 numbers))
-		(inhibit-read-only t))
-	    (put-text-property
-	     (line-beginning-position) (line-end-position)
-	     'face
-	     (cond ((and unsync (zerop unsync))
-		    (if (and unread (zerop unread))
-			'wl-highlight-folder-zero-face
-		      'wl-highlight-folder-unread-face))
-		   ((and unsync
-			 (>= unsync wl-folder-many-unsync-threshold))
-		    'wl-highlight-folder-many-face)
-		   (t
-		    'wl-highlight-folder-few-face))))
-	(beginning-of-line)
-	(put-text-property (point) (line-end-position) 'face
-			   (if (looking-at (format "^[ ]*\\(%s\\|%s\\)"
-						   wl-folder-unsubscribe-mark
-						   wl-folder-removed-mark))
-			       'wl-highlight-folder-killed-face
-			     'wl-highlight-folder-unknown-face))))))
+	  (let ((start (point)))
+	    (let (type)
+	      (wl-e21-insert-image
+	       (cond
+		((string= fld-name wl-trash-folder);; trash folder
+		 (let ((num (nth 2 numbers)));; number of messages
+		   (get (if (or (not num) (zerop num))
+			    'wl-folder-trash-empty-image
+			  'wl-folder-trash-image)
+			'image)))
+		((string= fld-name wl-draft-folder);; draft folder
+		 (get 'wl-folder-draft-image 'image))
+		((string= fld-name wl-queue-folder);; queue folder
+		 (get 'wl-folder-queue-image 'image))
+		(;; and one of many other folders
+		 (setq type (elmo-folder-get-type fld-name))
+		 (get (intern (format "wl-folder-%s-image" type)) 'image)))))
+	    (let ((end (line-end-position)))
+	      (when wl-use-highlight-mouse-line
+		(put-text-property start end 'mouse-face 'highlight))
+	      (setq start (point))
+	      (beginning-of-line)
+	      (let ((text-face
+		     (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
+					     wl-folder-unsubscribe-mark
+					     wl-folder-removed-mark))
+			 'wl-highlight-folder-killed-face
+		       'wl-highlight-folder-unknown-face)))
+		(if (and wl-highlight-folder-by-numbers
+			 numbers (nth 0 numbers) (nth 1 numbers)
+			 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" end t))
+		    (let* ((unsync (nth 0 numbers))
+			   (unread (nth 1 numbers))
+			   (face (cond
+				  ((and unsync (zerop unsync))
+				   (if (and unread (zerop unread))
+				       'wl-highlight-folder-zero-face
+				     'wl-highlight-folder-unread-face))
+				  ((and unsync
+					(>= unsync
+					    wl-folder-many-unsync-threshold))
+				   'wl-highlight-folder-many-face)
+				  (t
+				   'wl-highlight-folder-few-face))))
+		      (if (numberp wl-highlight-folder-by-numbers)
+			  (progn
+			    (put-text-property start (match-beginning 0)
+					       'face text-face)
+			    (put-text-property (match-beginning 0)
+					       (match-end 0)
+					       'face face))
+			(put-text-property start (match-end 0) 'face face)))
+		  (put-text-property start end 'face text-face)))))))))))
 
 (defun wl-highlight-plugged-current-line ()
   (interactive)
@@ -368,10 +402,6 @@
     (wl-folder-draft-image        . wl-draft-folder-icon)
     (wl-folder-queue-image        . wl-queue-folder-icon)
     (wl-folder-trash-image        . wl-trash-folder-icon)))
-
-(defvar wl-folder-toggle-icon-list
-  '((wl-folder-opened-image       . wl-opened-group-folder-icon)
-    (wl-folder-closed-image       . wl-closed-group-folder-icon)))
 
 (defun wl-folder-init-icons ()
   (let ((load-path (cons wl-icon-dir load-path))

@@ -141,7 +141,7 @@ The main features of Wanderlust:
 @item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
 @item MIME compliant (by SEMI or tm).
 @item Transmission of news and mail are unified by Message transmitting draft.
-@item Graphical list of folders (XEmacs).
+@item Graphical list of folders (XEmacs and Emacs 21).
 @item View a part of message without retrieving the whole message (IMAP4).
 @item Server-side message look up (IMAP4). Multi-byte characters are allowed.
 @item Virtual Folders.
@@ -517,7 +517,8 @@ The minimal requirement for settings is as the following.
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; @r{Directory where icons are placed (XEmacs Only). Default value is @code{nil}.}
+;; @r{Directory where icons are placed (XEmacs or Emacs 21). Default value
+;; is @code{nil}.}
 ;; @r{(This is not required if Wanderlust is installed as XEmacs package)}
 (setq wl-icon-dir "~/work/wl/etc")
 
@@ -1804,6 +1805,15 @@ Folder mode's window width when @code{wl-stay-folder-window} is non-nil.
 The initial setting is 70.
 If the number of unread messages is more than this value,
 folder color is changed.
+
+@item wl-highlight-folder-by-numbers
+@vindex wl-highlight-folder-by-numbers
+This option controls how to highlight each line in the folder buffer.
+The default value is @code{t}, highlighting with various colors based on
+the message numbers.  If it is @code{nil}, highlighting with various
+colors based on the folder status.  In addition, if it is a number
+(e.g. @code{1}), highlighting will be done based on both the message
+numbers and the folder status.
 
 @item wl-folder-desktop-name
 @vindex wl-folder-desktop-name
@@ -4395,7 +4405,7 @@ where @samp{[ON]} means its value is t, and @samp{[--]} means nil.
 
 The second and after lines indicate on-line/off-line states of servers
 and ports, where @samp{[ON]} stands for on-line and @samp{[--]} for
-off-line (in XEmacs, they are shown with icons).  Pressing
+off-line (in XEmacs or Emacs 21, they are shown with icons).  Pressing
 @kbd{@key{SPC}} or @kbd{@key{RET}} in each line switches its state.
 
 "sending queue" means messages accumulated in the folder @samp{+queue}
@@ -5989,11 +5999,13 @@ folder mode.
 
 @item wl-highlight-folder-opened-face
 The face for open groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil.
+It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil
+or a number.
 
 @item wl-highlight-folder-closed-face
 The face for close groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil.
+It is meaningful when @code{wl-highlight-group-folder-by-numbers} is nil
+or a number.
 
 @item wl-highlight-folder-path-face
 The face for the path to the currently selected folder in the folder
@@ -6188,8 +6200,8 @@ This is used as a MIME charset for searching.
 
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
-This is meaningful for XEmacs only.  The initial setting depends on
-XEmacs (t for XEmacs with icons).
+This is meaningful for XEmacs or Emacs 21..  The initial setting depends
+on (X)Emacs (t for XEmacs or Emacs 21 with icons).
 
 @item wl-strict-diff-folders
 @vindex wl-strict-diff-folders

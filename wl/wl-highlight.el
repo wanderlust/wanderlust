@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (if (and (featurep 'xemacs)
 	 (featurep 'dragdrop))
@@ -36,11 +36,14 @@
 (provide 'wl-highlight)
 
 (eval-when-compile
-  (if wl-on-xemacs
-      (require 'wl-xmas)
-    (if wl-on-nemacs
-	(require 'wl-nemacs)
-      (require 'wl-mule)))
+  (cond (wl-on-xemacs
+	 (require 'wl-xmas))
+	(wl-on-emacs21
+	 (require 'wl-e21))
+	(wl-on-nemacs
+	 (require 'wl-nemacs))
+	(t
+	 (require 'wl-mule)))
   (defun-maybe extent-begin-glyph (a))
   (defun-maybe delete-extent (a))
   (defun-maybe make-extent (a b))
@@ -729,6 +732,13 @@
       () ; noop
     (` (defun (, name) (,@ everything-else)))))
 
+(defmacro wl-delete-all-overlays ()
+  (if wl-on-nemacs
+      nil
+    '(mapcar (lambda (x)
+	       (delete-overlay x))
+	     (overlays-in (point-min) (point-max)))))
+
 (defun-hilit wl-highlight-summary-displaying ()
   (interactive)
   (wl-delete-all-overlays)
@@ -741,41 +751,35 @@
       (overlay-put ov 'face 'wl-highlight-summary-displaying-face))))
 
 (defun-hilit2 wl-highlight-folder-group-line (numbers)
-  (if wl-highlight-group-folder-by-numbers
-      (let (fsymbol bol eol)
-	(beginning-of-line)
-	(setq bol (point))
-	(save-excursion (end-of-line) (setq eol (point)))
-	(setq fsymbol
-	      (let ((unsync (nth 0 numbers))
-		    (unread (nth 1 numbers)))
-		(cond ((and unsync (eq unsync 0))
-		       (if (and unread (> unread 0))
-			   'wl-highlight-folder-unread-face
-			 'wl-highlight-folder-zero-face))
-		      ((and unsync
-			    (>= unsync wl-folder-many-unsync-threshold))
-		       'wl-highlight-folder-many-face)
-		      (t
-		       'wl-highlight-folder-few-face))))
-	(put-text-property bol eol 'face fsymbol))
-    (let ((highlights (list "opened" "closed"))
-	  fregexp fsymbol bol eol matched type extent num type)
-      (beginning-of-line)
-      (setq bol (point))
-      (save-excursion (end-of-line) (setq eol (point)))
-      (catch 'highlighted
-	(while highlights
-	  (setq fregexp (symbol-value
-			 (intern (format "wl-highlight-folder-%s-regexp"
-					 (car highlights)))))
-	  (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
-					(car highlights))))
-	  (when (looking-at fregexp)
-	    (put-text-property bol eol 'face fsymbol)
-	    (setq matched t)
-	    (throw 'highlighted nil))
-	  (setq highlights (cdr highlights)))))))
+  (end-of-line)
+  (let ((eol (point))
+	bol)
+    (beginning-of-line)
+    (setq bol (point))
+    (let ((text-face (cond ((looking-at wl-highlight-folder-opened-regexp)
+			    'wl-highlight-folder-opened-face)
+			   ((looking-at wl-highlight-folder-closed-regexp)
+			    'wl-highlight-folder-closed-face))))
+      (if (and wl-highlight-folder-by-numbers
+	       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" eol t))
+	  (let* ((unsync (nth 0 numbers))
+		 (unread (nth 1 numbers))
+		 (face (cond ((and unsync (zerop unsync))
+			      (if (and unread (> unread 0))
+				  'wl-highlight-folder-unread-face
+				'wl-highlight-folder-zero-face))
+			     ((and unsync
+				   (>= unsync wl-folder-many-unsync-threshold))
+			      'wl-highlight-folder-many-face)
+			     (t
+			      'wl-highlight-folder-few-face))))
+	    (if (numberp wl-highlight-folder-by-numbers)
+		(progn
+		  (put-text-property bol (match-beginning 0) 'face text-face)
+		  (put-text-property (match-beginning 0) (match-end 0)
+				     'face face))
+	      (put-text-property bol (match-end 0) 'face face)))
+	(put-text-property bol eol 'face text-face)))))
 
 (defun-hilit2 wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol)
@@ -814,7 +818,7 @@
     (put-text-property 0 (length line) 'face fsymbol line))
   (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
-  
+
 (defun-hilit2 wl-highlight-summary-current-line (&optional smark regexp temp-too)
   (interactive)
   (save-excursion
@@ -921,12 +925,6 @@ Variables used:
 	    (wl-highlight-folder-current-line)
 	    (forward-line 1)))))))
 
-(if (not wl-on-nemacs)
-    (defsubst wl-delete-all-overlays ()
-      (mapcar (lambda (x)
-		(delete-overlay x))
-	      (overlays-in (point-min) (point-max)))))
-
 (defun-hilit2 wl-highlight-folder-path (folder-path)
   "Highlight current folder path...overlay"
   (save-excursion
@@ -958,7 +956,7 @@ Variables used:
   "For evaluation"
   (interactive)
   (wl-highlight-summary (point-min)(point-max)))
-  
+
 (defun-hilit2 wl-highlight-summary (start end)
   "Highlight summary between start and end.
 Faces used:

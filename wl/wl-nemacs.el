@@ -29,11 +29,6 @@
 ;;; Code:
 ;; 
 
-(defun wl-xmas-setup-folder ()) ; dummy
-(defun wl-xmas-setup-summary ())
-(defun wl-xmas-setup-draft-toolbar ())
-
-(defun wl-summary-setup-mouse ())
 (defun wl-message-overload-functions ()
   (local-set-key "l" 'wl-message-toggle-disp-summary))
 
@@ -49,7 +44,6 @@
 (defun wl-highlight-summary-line-string (line mark indent before-indent))
 (defun wl-highlight-body-region (beg end))
 (defun wl-highlight-message (start end hack-sig &optional body-only))
-(defun wl-delete-all-overlays ())
 (defun wl-highlight-summary-current-line (&optional smark regexp temp-too))
 
 (defun wl-highlight-plugged-current-line ())

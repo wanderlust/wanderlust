@@ -1,3 +1,39 @@
+2000-09-14  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-xmas.el (wl-xmas-highlight-folder-group-line): New function.
+	(wl-highlight-folder-current-line): Use it; new implementation.
+	(wl-xmas-setup-draft-toolbar, wl-xmas-setup-message-toolbar,
+	wl-xmas-setup-summary-toolbar, wl-xmas-setup-folder-toolbar): Use
+	`defsubst' instead of `defun'.
+
+	* wl-vars.el (wl-highlight-folder-by-numbers): Renamed from
+	`wl-highlight-group-folder-by-numbers'; made it can also be a
+	number.  See info for more details.
+
+	* wl-summary.el: Bind `wl-xmas-setup-summary' when XEmacs is not
+	running.
+
+	* wl-nemacs.el (wl-xmas-setup-*, wl-delete-all-overlays): No need
+	to bind them.
+
+	* wl-mule.el (wl-xmas-setup-*): No need to bind them.
+	(wl-highlight-folder-current-line): New implementation.
+
+	* wl-highlight.el (wl-highlight-folder-group-line): New
+	implementation.
+	(wl-delete-all-overlays): Rewrite as a marco.
+	(TopLevel): Require `wl-e21' when Emacs 21 is running.
+
+	* wl-folder.el: Bind `wl-xmas-setup-folder' when XEmacs is not
+	running.
+	(wl-folder-*-glyph): No need to bind them.
+
+	* wl-e21.el (wl-e21-highlight-folder-group-line): Renamed from
+	`wl-e21-highlight-folder-group-icon'; rewrite.
+	(wl-e21-setup-draft-toolbar, wl-e21-setup-message-toolbar): Use
+	`defsubst' instead of `defun'.
+	(wl-folder-mode-map): Bind it when compiling.
+
 2000-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl): Initialize plug-related settings before `wl-init'.

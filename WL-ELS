@@ -31,6 +31,8 @@
   (setq ELMO-MODULES (append (list 'elmo-database) ELMO-MODULES)))
  ((fboundp 'nemacs-version)
   (setq WL-MODULES (append WL-MODULES (list 'wl-nemacs))))
+ ((and (boundp 'emacs-major-version) (>= emacs-major-version 21))
+  (setq WL-MODULES (append WL-MODULES (list 'wl-e21))))
  ((featurep 'mule)
   (setq WL-MODULES (append WL-MODULES (list 'wl-mule)))))
 

@@ -61,24 +61,6 @@
 
 (defvar wl-folder-mode-map nil)
 
-(defvar wl-folder-opened-glyph nil)
-(defvar wl-folder-closed-glyph nil)
-(defvar wl-folder-nntp-glyph nil)
-(defvar wl-folder-imap4-glyph nil)
-(defvar wl-folder-pop3-glyph nil)
-(defvar wl-folder-localdir-glyph nil)
-(defvar wl-folder-localnews-glyph nil)
-(defvar wl-folder-internal-glyph nil)
-(defvar wl-folder-multi-glyph nil)
-(defvar wl-folder-filter-glyph nil)
-(defvar wl-folder-archive-glyph nil)
-(defvar wl-folder-pipe-glyph nil)
-(defvar wl-folder-maildir-glyph nil)
-(defvar wl-folder-trash-empty-glyph nil)
-(defvar wl-folder-trash-glyph nil)
-(defvar wl-folder-draft-glyph nil)
-(defvar wl-folder-queue-glyph nil)
-
 (defvar wl-folder-buffer-disp-summary nil)
 (defvar wl-folder-buffer-cur-entity-id nil)
 (defvar wl-folder-buffer-cur-path nil)
@@ -1404,6 +1386,8 @@ If current line is group folder, all subfolders are marked."
 
 ;; Avoid byte-compile warning.
 (eval-when-compile
+  (unless wl-on-xemacs
+    (defalias 'wl-xmas-setup-folder 'ignore))
   (unless wl-on-emacs21
     (defalias 'wl-e21-setup-folder 'ignore)))
 

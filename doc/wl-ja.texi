@@ -164,7 +164,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 @item MH $BE*(B FCC$B!#(B(@samp{FCC: %Backup} $B$d(B @samp{FCC: $Backup} $B$b2D(B)$B!#(B
 @item MIME $BBP1~(B (by SEMI or tm)$B!#(B
 @item $B%K%e!<%9(B/$B%a!<%k$NAw?.$rE}9g$7$?%a%C%;!<%8Aw?.%I%i%U%H!#(B
-@item $B%U%)%k%@0lMw$N%"%$%3%sI=<((B (XEmacs)$B!#(B
+@item $B%U%)%k%@0lMw$N%"%$%3%sI=<((B (XEmacs $B$H(B Emacs 21)$B!#(B
 @item $BBg$-$J%Q!<%H$r<h$j4s$;$:$KI=<((B(IMAP4)$B!#(B
 @item $B%a%C%;!<%8$N8!:w$r%5!<%PB&$G<B9T(B(IMAP4)$B!#F|K\8l8!:w$b2D!#(B
 @item $B2>A[%U%)%k%@!#(B
@@ -548,7 +548,7 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; @r{$B%"%$%3%s$rCV$/%G%#%l%/%H%j(B (XEmacs $B$N$_(B)$B!#=i4|@_Dj$O(B @code{nil}$B!#(B}
+;; @r{$B%"%$%3%s$rCV$/%G%#%l%/%H%j(B (XEmacs $B$H(B Emacs 21)$B!#=i4|@_Dj$O(B @code{nil}$B!#(B}
 ;; @r{(XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$5$l$F$$$k>l9g!"I,MW$"$j$^$;$s(B)}
 (setq wl-icon-dir "~/work/wl/etc")
 
@@ -1832,6 +1832,13 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 @vindex wl-folder-many-unsync-threshold
 $B=i4|@_Dj$O(B 70$B!#(B
 $BL$F14|?t$,$?$/$5$s$+$I$&$+$NogCM!#$3$NCM$r1[$($k$H?'$,JQ$o$j$^$9!#(B
+
+@item wl-highlight-folder-by-numbers
+@vindex wl-highlight-folder-by-numbers
+$B%U%)%k%@%P%C%U%!$K$*$1$k3F9T$N%O%$%i%$%H$N7A<0$r;XDj$7$^$9!#=i4|CM$O(B
+@code{t} $B$G!"9TA4BN$K%a%C%;!<%8?t$K1~$8$??'$rIU$1$^$9!#(B@code{nil} $B$G$O%U%)(B
+$B%k%@$N>uBV$K1~$8$??'$rIU$1$^$9!#$^$?!"?t;z(B ($BNc$($P(B @code{1}) $B$K$7$F$*$/(B
+$B$H!"%a%C%;!<%8?t$H%U%)%k%@$N>uBV$NN>J}$K1~$8$?%O%$%i%$%H$,9T$J$o$l$^$9!#(B
 
 @item wl-folder-desktop-name
 @vindex wl-folder-desktop-name
@@ -4368,7 +4375,7 @@ Queuing:[ON] AutoFlushQueue:[--] DisconnectedOperation:[ON]
 $B$^$?!"(B2$B9TL\0J9_$G$O%5!<%P$H%]!<%H$N%*%s%i%$%s$H%*%U%i%$%s>uBV$rI=<($7!"(B
 @samp{[ON]} $B$O$=$N%5!<%P$d%]!<%H$,%*%s%i%$%s$G$"$k$3$H$r!"(B
 @samp{[--]} $B$O%*%U%i%$%s$G$"$k$3$H$r<($7$F$$$^$9(B
-(XEmacs $B$G$O%"%$%3%s$GI=<($5$l$^$9(B)$B!#(B
+(XEmacs $B$H(B Emacs 21 $B$G$O%"%$%3%s$GI=<($5$l$^$9(B)$B!#(B
 $B$=$7$F$=$l$>$l$N9T$G(B @kbd{@key{SPC}} $B$d(B @kbd{@key{RET}} $B$r2!$9$3$H$G(B
 $B>uBV$r@Z$jBX$($k$3$H$,$G$-$^$9!#(B
 
@@ -5927,11 +5934,13 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @item wl-highlight-folder-opened-face
 $B%U%)%k%@%b!<%I$G!"3+$$$?%0%k!<%W$K$D$/(B face $B$G$9!#(B
-$BJQ?t(B @code{wl-highlight-group-folder-by-numbers} $B$,(B nil $B$N$H$-M-8z$G$9!#(B
+$BJQ?t(B @code{wl-highlight-folder-by-numbers} $B$,(B @code{nil} $B$+(B @dfn{$B?t(B} $B$N(B
+$B$H$-M-8z$G$9!#(B
 
 @item wl-highlight-folder-closed-face
 $B%U%)%k%@%b!<%I$G!"JD$8$?%0%k!<%W$K$D$/(B face $B$G$9!#(B
-$BJQ?t(B @code{wl-highlight-group-folder-by-numbers} $B$,(B nil $B$N$H$-M-8z$G$9!#(B
+$BJQ?t(B @code{wl-highlight-folder-by-numbers} $B$,(B @code{nil} $B$+(B @dfn{$B?t(B} $B$N(B
+$B$H$-M-8z$G$9!#(B
 
 @item wl-highlight-folder-path-face
 $B%U%)%k%@%b!<%I$G!"8=:_A*BrCf$N%U%)%k%@$^$G$N%Q%9$K$D$/(B face $B$G$9!#(B
@@ -6130,8 +6139,8 @@ MIME $B$G$O$J$$%a%C%;!<%8$N>l9g(B (@samp{Content-Type:} $B$,$J$$%a!<%k$J$I(B
 
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
-XEmacs $B$N$_M-8z$G$9!#=i4|@_Dj$O(B XEmacs $B$K0MB8$7$^$9(B($B%"%$%3%s$r;HMQ$G$-$k(B
-XEmacs $B$G$O(B t $B$K$J$j$^$9(B)$B!#(B
+XEmacs $B$^$?$O(B Emacs 21 $B$GM-8z$G$9!#=i4|@_Dj$O$=$N(B (X)Emacs $B$K0MB8$7$^$9(B
+($B%"%$%3%s$r;HMQ$G$-$k(B (X)Emacs $B$G$O(B t $B$K$J$j$^$9(B)$B!#(B
 
 @item wl-strict-diff-folders
 @vindex wl-strict-diff-folders

@@ -753,6 +753,8 @@ Returns nil if selecting folder was in failure."
 
 ;; Avoid byte-compile warning.
 (eval-when-compile
+  (unless wl-on-xemacs
+    (defalias 'wl-xmas-setup-summary 'ignore))
   (unless wl-on-emacs21
     (defalias 'wl-e21-setup-summary 'ignore)))
 

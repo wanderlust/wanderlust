@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo-vars)
 
@@ -531,7 +531,7 @@ Default is for 'reply-to-author'."
 			     (repeat :tag "Fields For Cc" string)
 			     (repeat :tag "Fields For Newsgroups" string))))
   :group 'wl-draft)
-  
+
 (defcustom wl-draft-reply-without-argument-list
   '(("Followup-To" . (nil nil ("Followup-To")))
     ("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
@@ -575,7 +575,7 @@ Default is for 'reply-to-all'."
   :type 'boolean
   :group 'wl-draft)
 
-;;;; 
+;;;;
 (defcustom wl-init-file "~/.wl"
   "*User customization setting file."
   :type 'file
@@ -1809,7 +1809,7 @@ list  : reserved specified permanent marks."
   "*If the summary is larger than this lines, don't highlight it."
   :type 'integer
   :group 'wl-highlight)
- 
+
 ;; highilght about draft and message
 (defcustom wl-highlight-body-too t
   "*In addition to header, highlight the body too. if non nil."
@@ -1881,7 +1881,7 @@ uuencoded files and large digests.  If this is nil, all messages will
 be highlighted."
     :type 'integer
     :group 'wl-highlight)
-  
+
 ;; highilght about signature (of draft and message)
 (defcustom wl-highlight-signature-separator
   '("\n--+\n" "\n\n--+.*\n*\\'")
@@ -1898,14 +1898,14 @@ This variable can also be a regex. "
   "*If the signature is larger than this chars, don't treat it as a signature."
   :type 'integer
   :group 'wl-highlight)
-  
+
 ;; highilght about mouse
 (defcustom wl-use-highlight-mouse-line (and (or wl-on-xemacs wl-on-emacs21)
 					    window-system)
   "*Highlight mouse line, if non nil."
   :type 'boolean
   :group 'wl-highlight)
- 
+
 ;; highilght about folder
 (defcustom wl-highlight-folder-with-icon
   (or (and (featurep 'xemacs)
@@ -1914,9 +1914,12 @@ This variable can also be a regex. "
   "*Highlight folder with icon(XEmacs or Emacs 21)."
   :type 'boolean
   :group 'wl-highlight)
-(defcustom wl-highlight-group-folder-by-numbers t
-  "*Highlight group folder by numbers."
-  :type 'boolean
+(defcustom wl-highlight-folder-by-numbers t
+  "Highlight folder lines by numbers.  If it is a number, only numbers
+will be highlighted."
+  :type '(choice (const :tag "whole line" t)
+		 (const :tag "only numbers" 1)
+		 (const :tag "don't highlight" nil))
   :group 'wl-highlight)
 
 (defcustom wl-highlight-signature-search-func 'wl-highlight-signature-search

@@ -1,3 +1,13 @@
+2000-09-14  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* doc/wl.texi, doc/wl-ja.texi: Replace
+	`wl-highlight-group-folder-by-numbers' with
+	`wl-highlight-folder-by-numbers';
+	add description about `wl-highlight-folder-by-numbers';
+	update for Emacs 21.
+
+	* WL-ELS (WL-MODULES): Add `wl-e21'.
+
 2000-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (texinfo-multitable-widths,
