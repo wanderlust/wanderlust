@@ -10,7 +10,7 @@
 
 ;; Icon directory
 ;; (No need if installed as XEmacs package.)
-;(setq wl-icon-dir "/usr/local/lib/emacs/etc")
+;(setq wl-icon-directory "/usr/local/lib/emacs/etc")
 
 
 ;; [[ SEMI Setting ]]
