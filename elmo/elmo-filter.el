@@ -345,7 +345,8 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-filter-folder)
 					     number cached)
   (elmo-message-set-cached
-   (elmo-filter-folder-target-internal folder) number cached))
+   (elmo-filter-folder-target-internal folder) number cached)
+  (elmo-folder-notify-event folder 'cache-changed number))
 
 (luna-define-method elmo-message-number ((folder elmo-filter-folder)
 					 message-id)
