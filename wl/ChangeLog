@@ -1,5 +1,7 @@
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-create-line): Fix.
+
 	* wl-vars.el (wl-summary-line-format-spec-alist): New variable.
 	(wl-summary-line-format): New user option.
 	(wl-folder-summary-line-format-alist): Ditto.

@@ -4114,7 +4114,8 @@ If ARG, exit virtual folder."
 		     nil
 		     wl-summary-fix-timezone))
 	line mark)
-    (if (and wl-summary-indent-length-limit
+    (if (and wl-thr-indent-string
+	     wl-summary-indent-length-limit
 	     (< wl-summary-indent-length-limit
 		(string-width wl-thr-indent-string)))
 	(setq wl-thr-indent-string (wl-set-string-width
