@@ -1272,7 +1272,17 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (y-or-n-p "Do you really want to send current draft? "))
+	    (let (result)
+	      (wl-draft-preview-message)
+	      (goto-char (point-min))
+	      (condition-case nil
+		  (setq result
+			(y-or-n-p "Do you really want to send current draft? "))
+		(quit
+		 (mime-preview-quit)
+		 (signal 'quit nil)))
+	      (mime-preview-quit)
+	      result))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
