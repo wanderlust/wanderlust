@@ -1753,16 +1753,19 @@ Return nil if no complete line has arrived."
 	    (progn
 	      (elmo-imap4-folder-set-mailbox-internal
 	       folder
-	       (elmo-match-string 1 name))
+	       (elmo-imap4-encode-folder-string
+		(elmo-match-string 1 name)))
 	      (if (eq (length (elmo-imap4-folder-mailbox-internal folder))
 		      0)
 		  ;; No information is specified other than folder type.
 		  (elmo-imap4-folder-set-mailbox-internal
 		   folder
-		   elmo-imap4-default-mailbox)))
+		   (elmo-imap4-encode-folder-string
+		    elmo-imap4-default-mailbox))))
 	  (elmo-imap4-folder-set-mailbox-internal
 	   folder
-	   elmo-imap4-default-mailbox))
+	   (elmo-imap4-encode-folder-string
+	    elmo-imap4-default-mailbox)))
 	;; Setup slots for elmo-net-folder.
 	(elmo-net-folder-set-user-internal
 	 folder
