@@ -1,5 +1,20 @@
 2004-09-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-pick): If call it with prefix
+	argument, set `delete-marks' as non-nil. Pick from only visible
+	messages.
+	(wl-summary-check-target-mark): New function.
+	(wl-summary-target-mark-mark-as-read): Use it.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+	(wl-summary-target-mark-operation): Ditto.
+	(wl-summary-target-mark-set-flags): Ditto.
+	(wl-summary-target-mark-save): Ditto.
+	(wl-summary-target-mark-pick): Ditto.
+	(wl-summary-target-mark-forward): Ditto.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+	(wl-summary-target-mark-print): Ditto.
+	(wl-summary-target-mark-uudecode): Ditto.
+
 	* wl-summary.el (wl-summary-toggle-mime): Added optional argument
 	`no-mime'. if it is non-nil, call `wl-summary-redisplay-no-mime'
 	with `ask-coding' is non-nil.

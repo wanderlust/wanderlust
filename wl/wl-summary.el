@@ -2729,14 +2729,20 @@ If ARG, without confirm."
     i))
 
 (defun wl-summary-pick (&optional from-list delete-marks)
-  (interactive)
+  (interactive "i\nP")
   (save-excursion
-    (let* ((condition (car (elmo-parse-search-condition
+    (let* ((messages (or from-list
+			 (elmo-folder-list-messages
+			  wl-summary-buffer-elmo-folder
+			  'visible
+			  'in-msgdb)
+			 (error "No messages")))
+	   (condition (car (elmo-parse-search-condition
 			    (elmo-read-search-condition
 			     wl-summary-pick-field-default))))
 	   (result (elmo-folder-search wl-summary-buffer-elmo-folder
 				       condition
-				       from-list))
+				       messages))
 	   num)
       (if delete-marks
 	  (let ((mlist wl-summary-buffer-target-mark-list))
@@ -2898,8 +2904,13 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
      (or (cadr (memq (current-buffer) buffers))
 	 (car buffers)))))
 
+(defun wl-summary-check-target-mark ()
+  (when (null wl-summary-buffer-target-mark-list)
+    (error "No marked message")))
+
 (defun wl-summary-target-mark-mark-as-read ()
   (interactive)
+  (wl-summary-check-target-mark)
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
@@ -2911,6 +2922,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 
 (defun wl-summary-target-mark-mark-as-unread ()
   (interactive)
+  (wl-summary-check-target-mark)
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
@@ -2921,6 +2933,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 	(wl-summary-unset-mark number)))))
 
 (defun wl-summary-target-mark-operation (flag &optional inverse)
+  (wl-summary-check-target-mark)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
@@ -2941,6 +2954,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 
 (defun wl-summary-target-mark-set-flags (&optional remove)
   (interactive "P")
+  (wl-summary-check-target-mark)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
@@ -2953,6 +2967,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 
 (defun wl-summary-target-mark-save ()
   (interactive)
+  (wl-summary-check-target-mark)
   (let ((wl-save-dir
 	 (wl-read-directory-name "Save to directory: "
 				 wl-temporary-file-directory))
@@ -2966,6 +2981,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 
 (defun wl-summary-target-mark-pick ()
   (interactive)
+  (wl-summary-check-target-mark)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
 (defun wl-summary-update-persistent-mark (&optional number flags)
@@ -3815,6 +3831,7 @@ Return t if message exists."
 
 (defun wl-summary-target-mark-forward (&optional arg)
   (interactive "P")
+  (wl-summary-check-target-mark)
   (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
 	(summary-buf (current-buffer))
 	(wl-draft-forward t)
@@ -3845,6 +3862,7 @@ Return t if message exists."
 
 (defun wl-summary-target-mark-reply-with-citation (&optional arg)
   (interactive "P")
+  (wl-summary-check-target-mark)
   (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
 	(summary-buf (current-buffer))
 	change-major-mode-hook
@@ -4692,14 +4710,13 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 
 (defun wl-summary-target-mark-print ()
   (interactive)
-  (if (null wl-summary-buffer-target-mark-list)
-      (message "No marked message.")
-    (when (y-or-n-p "Print all marked messages. OK? ")
-      (while (car wl-summary-buffer-target-mark-list)
-	(let ((num (car wl-summary-buffer-target-mark-list)))
-	  (wl-thread-jump-to-msg num)
-	  (wl-summary-print-message)
-	  (wl-summary-unmark))))))
+  (wl-summary-check-target-mark)
+  (when (y-or-n-p "Print all marked messages. OK? ")
+    (while (car wl-summary-buffer-target-mark-list)
+      (let ((num (car wl-summary-buffer-target-mark-list)))
+	(wl-thread-jump-to-msg num)
+	(wl-summary-print-message)
+	(wl-summary-unmark)))))
 
 (defun wl-summary-folder-info-update ()
   (wl-folder-set-folder-updated
@@ -4723,6 +4740,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 
 (defun wl-summary-target-mark-uudecode ()
   (interactive)
+  (wl-summary-check-target-mark)
   (let ((mlist (reverse wl-summary-buffer-target-mark-list))
 	(summary-buf (current-buffer))
 	(tmp-buf (get-buffer-create "*WL UUENCODE*"))
