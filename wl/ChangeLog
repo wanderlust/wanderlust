@@ -1,3 +1,14 @@
+2003-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-action.el (wl-summary-set-mark): Use
+	`wl-summary-message-visible-p' to check visibility of the message
+	and jump to message only when the message line is visible and have
+	different number; Call wl-summary-unset-mark with number argument.
+	(wl-summary-unset-mark): 
+	Use `wl-summary-message-visible-p'
+	to check visibility of the message and jump to message only when
+	the message line is visible and have different number;
+
 2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.7.

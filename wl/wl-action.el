@@ -69,13 +69,14 @@ Return number if put mark succeed"
     (prog1
 	(save-excursion
 	  ;; Put mark
-	  (setq visible (or
-			 ;; not-interactive and visible
-			 (and number (wl-summary-jump-to-msg number))
-			 ;; interactive
-			 (and (null number) current))
-		number (or number current)
-		cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	  (if number
+	      ;; Jump to message if cursor is not on the message.
+	      (when (and (setq visible (wl-summary-message-visible-p number))
+			 (not (eq number current)))
+		(wl-summary-jump-to-msg number))
+	    (setq visible t
+		  number current))
+	  (setq cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
 	  (unless number
 	    (error "No message"))
 	  (if (wl-summary-reserve-temp-mark-p cur-mark)
@@ -87,8 +88,8 @@ Return number if put mark succeed"
 	      (setq data (funcall (wl-summary-action-argument-function action)
 				  (wl-summary-action-symbol action)
 				  number)))
-	    ;; Unset the mark of current line.
-	    (wl-summary-unset-mark)
+	    ;; Unset the current mark.
+	    (wl-summary-unset-mark number)
 	    ;; Set action.
 	    (funcall (wl-summary-action-set-function action)
 		     number
@@ -223,7 +224,10 @@ Return number if put mark succeed"
     (let ((buffer-read-only nil)
 	  visible mark action)
       (if number
-	  (setq visible (wl-summary-jump-to-msg number)) ; can be nil
+	  ;; Jump to message
+	  (when (and (setq visible (wl-summary-message-visible-p number))
+		     (not (eq number (wl-summary-message-number))))
+	    (wl-summary-jump-to-msg number))
 	(setq visible t
 	      number (wl-summary-message-number)))
       (setq mark (wl-summary-temp-mark))
