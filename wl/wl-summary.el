@@ -147,7 +147,7 @@
        'wl-summary-default-score
        'wl-summary-move-direction-downward
        'wl-summary-important-above
-       'wl-summary-temp-above
+       'wl-summary-target-above
        'wl-summary-mark-below
        'wl-summary-expunge-below
        'wl-thread-indent-level-internal
