@@ -609,16 +609,15 @@ If optional USE-CACHE is non-nil, use cache if exists."
   "Re-edit current message.
 If ARG is non-nil, Supersedes message"
   (interactive "P")
+  (wl-summary-toggle-disp-msg 'off)
   (if arg
       (wl-summary-supersedes-message)
     (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
-	(if (wl-summary-message-number)
-	    (progn
-	      (wl-draft-reedit (wl-summary-message-number))
-	      (if (wl-message-news-p)
-		  (mail-position-on-field "Newsgroups")
-		(mail-position-on-field "To"))
-	      (delete-other-windows)))
+	(when (wl-summary-message-number)
+	  (wl-draft-reedit (wl-summary-message-number))
+	  (if (wl-message-news-p)
+	      (mail-position-on-field "Newsgroups")
+	    (mail-position-on-field "To")))
       (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()

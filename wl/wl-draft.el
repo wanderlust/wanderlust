@@ -619,7 +619,6 @@ Reply to author if WITH-ARG is non-nil."
 		   (buffer-substring (point) (point-max))
 		   'edit-again))
       (and to (mail-position-on-field "To"))
-      (delete-other-windows)
       (kill-buffer tmp-buf)))
   (run-hooks 'wl-draft-reedit-hook))
 
@@ -1891,9 +1890,22 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (switch-to-buffer buffer))
 	  (set-buffer buffer))
       (setq buffer (get-buffer-create (number-to-string number)))
+      ;; switch-buffer according to draft buffer style.
       (if wl-draft-use-frame
 	  (switch-to-buffer-other-frame buffer)
-	(switch-to-buffer buffer))
+	(case wl-draft-buffer-style
+	  (split
+	   (split-window-vertically)
+	   (other-window 1)
+	   (switch-to-buffer buffer))
+	  (keep
+	   (switch-to-buffer buffer))
+	  (full
+	   (delete-other-windows)
+	   (switch-to-buffer buffer))
+	  (t (if (functionp wl-draft-buffer-style)
+		 (funcall wl-draft-buffer-style buf-name)
+	       (error "Invalid value for wl-draft-buffer-style")))))
       (set-buffer buffer)
       (insert-file-contents-as-binary file-name)
       (let((mime-edit-again-ignored-field-regexp
