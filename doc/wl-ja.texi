@@ -2469,6 +2469,14 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 
 @kbd{t} $B$+$i;O$^$k%3%^%s%I$G!"$=$N%9%l%C%I$KB0$9$k%a%C%;!<%8$KBP$7$F0l3g$7$F=hM}$r9T$&$3$H$,$G$-$^$9!#(B
 
+@section $B%9%l%C%I$N7R$.$J$*$7(B
+
+$B<jF0$G%9%l%C%I$N7R$.$J$*$7$,$G$-$^$9!#(B
+$B%5%^%j$G3:Ev$9$k%a%C%;!<%8$K%+!<%=%k$r9g$o$;$F(B @kbd{M-w}
+(@code{wl-summary-save-current-message}) $B$7!"(B
+$B?7$7$$?F%a%C%;!<%8$N$H$3$m$G(B @kbd{C-y} (@code{wl-summary-yank-saved-message})
+$B$9$k$H%9%l%C%I$,7R$.$J$*$5$l$^$9!#(B
+
 
 @node Cache, Auto Refile, Thread Operations, Summary
 @section $B%-%c%C%7%e(B
@@ -3333,6 +3341,20 @@ Wanderlust $B$N%5!<%P!&%]!<%HJL$N%*%U%i%$%s(B/$B%*%s%i%$%s$rJQ99$7$^$9!#(B
 $B%P%C%U%!$,B8:_$7$F$$$J$$>l9g$O!"%I%i%U%H%U%)%k%@$+$i%U%!%$%k$r(B($BB8:_$9$l$P(B)
 $BFI$_9~$_$^$9!#(B
 (@code{wl-jump-to-draft-buffer})
+
+@item M-w
+@kindex M-w (Summary)
+@findex wl-summary-save-current-message
+$B%+!<%=%k9T$N%a%C%;!<%8$N%3%T!<!#(B
+(@code{wl-summary-save-current-message})
+
+@item C-y
+@kindex C-y (Summary)
+@findex wl-summary-yank-saved-message
+$B%+!<%=%k9T$N%a%C%;!<%8$r?F%a%C%;!<%8$H$7$F!"(B
+@code{wl-summary-save-current-message} $B$GJ]B8$5$l$?%a%C%;!<%8$r(B
+$B%9%l%C%I$K7R$.$^$9!#(B
+(@code{wl-summary-yank-saved-message})
 @end table
 
 

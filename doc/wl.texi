@@ -2455,6 +2455,14 @@ With prefix argument, @kbd{/} opens all children threads.
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
 
+@section reconstruct thread by hand
+
+You can reconstruct the thread manually.
+In Summary, @kbd{M-w} (@code{wl-summary-save-current-message})
+at the corresponding message, and @kbd{C-y} 
+(@code{wl-summary-yank-saved-message}) at the new parent message
+then you have the reconstructed thread.
+
 
 @node Cache, Auto Refile, Thread Operations, Summary
 @section Cache
@@ -3327,6 +3335,21 @@ Move to the draft buffer if available.  If multiple draft buffer exists,
 moved to one after another.  If prefix argument is specified, load draft
 folder's message to the draft buffer and jump to it.
 (@code{wl-jump-to-draft-buffer})
+
+@item M-w
+@kindex M-w (Summary)
+@findex wl-summary-save-current-message
+Save the message at the current cursor point.
+(@code{wl-summary-save-current-message})
+
+@item C-y
+@kindex C-y (Summary)
+@findex wl-summary-yank-saved-message
+Regard the message at the current cursor point as
+parent, connect the message saved by
+@code{wl-summary-save-current-message}
+to the thread.
+(@code{wl-summary-yank-saved-message})
 @end table
 
 
