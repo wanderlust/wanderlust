@@ -1,3 +1,8 @@
+2002-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder): Call elmo-pop3-get-session
+	with argument 'any-exists.
+
 2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-write-file-function): Fix.

@@ -1,3 +1,8 @@
+2002-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-get-session): If if-exists is 'any-exists,
+	return normal pop3 session or pop3 biff session.
+
 2002-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-maildir-update-current): Don't append

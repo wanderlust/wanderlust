@@ -161,16 +161,26 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (delete-process (elmo-network-session-process-internal session))))
 
 (defun elmo-pop3-get-session (folder &optional if-exists)
+  "Get POP3 session for FOLDER.
+If IF-EXISTS is non-nil, don't get new session.
+If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
   (let ((elmo-pop3-use-uidl-internal (if elmo-inhibit-number-mapping
 					 nil
 				       (elmo-pop3-folder-use-uidl-internal
 					folder))))
-    (elmo-network-get-session 'elmo-pop3-session
-			      (concat
-			       (if (elmo-folder-biff-internal folder)
-				   "BIFF-")
-			       "POP3")
-			      folder if-exists)))
+    (if (eq if-exists 'any-exists)
+	(or (elmo-network-get-session 'elmo-pop3-session
+				      "POP3"
+				      folder if-exists)
+	    (elmo-network-get-session 'elmo-pop3-session
+				      "BIFF-POP3"
+				      folder if-exists))
+      (elmo-network-get-session 'elmo-pop3-session
+				(concat
+				 (if (elmo-folder-biff-internal folder)
+				     "BIFF-")
+				 "POP3")
+				folder if-exists))))
 
 (defun elmo-pop3-send-command (process command &optional no-erase no-log)
   (with-current-buffer (process-buffer process)
