@@ -1,5 +1,8 @@
 2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-network-close-session): Don't use
+	`process-live-p'.
+
 	* elmo-vars.el (elmo-default-pop3-authenticate-type):
 	Set default as 'user.
 
