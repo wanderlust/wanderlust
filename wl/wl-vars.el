@@ -1456,8 +1456,11 @@ every intervals specified by wl-biff-check-interval."
 					       (not (featurep 'mule)))
 					  "[Mail]"
 					(decode-coding-string
+					 ;; Youbin mark
 					 (read "\"[\e$B\\\")\e(B]\"")
-					 'iso-2022-jp)) ; Youbin mark
+					 (if (boundp 'MULE)
+					     '*iso-2022-jp*
+					   'iso-2022-jp)))
   "String used to show biff status ON."
   :type 'string
   :group 'wl-highlight)

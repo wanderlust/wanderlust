@@ -1,3 +1,8 @@
+2001-09-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-biff-state-indicator-on): Use `*iso-2022-jp*'
+	when Mule 2 is running.
+
 2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-e21.el (make-mode-line-mouse-map): Import from Emacs
