@@ -5484,7 +5484,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @end lisp
 
 $B%9%3%"%U%!%$%kL>$N%Q%9$r>JN,$7$?>l9g$O!"(B
-$BJQ?t(B @code{wl-score-files-dir} $B$G;XDj$7$?%G%#%l%/%H%j$K$"$k$b$N$H$7$^$9!#(B
+$BJQ?t(B @code{wl-score-files-directory} $B$G;XDj$7$?%G%#%l%/%H%j$K$"$k$b$N$H$7$^$9!#(B
 
 $B$^$?!"(B@code{wl-score-folder-alist} $B$N@_Dj$K4X$o$i$:(B
 $B%G%U%)%k%H$N%9%3%"%U%!%$%k(B @code{wl-score-default-file} (@file{all.SCORE})
@@ -5714,8 +5714,8 @@ Wanderlust $B0J30$GD>@\%9%3%"%U%!%$%k$rJQ99$7$?>l9g$O!"(B
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i%9%3%"5!G=$rM-8z$K$7$^$9!#(B
 
-@item wl-score-files-dir
-@vindex wl-score-files-dir
+@item wl-score-files-directory
+@vindex wl-score-files-directory
 $B=i4|@_Dj$O(B @file{~/.elmo/}$B!#(B
 $B%9%3%"%U%!%$%k$r%G%U%)%k%H$N%G%#%l%/%H%j$r;XDj$7$^$9!#(B
 
