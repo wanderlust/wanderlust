@@ -1,3 +1,11 @@
+2001-02-25  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-folder.el (wl-folder-sync-entity): Fixed change value of
+	`wl-message-buf-name' and `wl-summary-buffer-name'.
+	(wl-folder-mark-as-read-all-entity) : Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+	(wl-folder-drop-unsync-entity): Ditto.
+
 2001-02-25  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-highlight.el (wl-highlight-summary-displaying): Optimize;
