@@ -408,7 +408,7 @@ TYPE specifies the archiver's symbol."
 	(elmo-localdir-folder-path elmo-archive-folder-path))
     (if elmo-archive-treat-file
 	(let* ((path (elmo-localdir-get-folder-directory spec))
-	       (base-folder (or (file-name-directory (nth 1 spec)) ""))
+	       (base-folder (or (nth 1 spec) ""))
 	       (suffix (nth 2 spec))
 	       (prefix (if (string= (nth 3 spec) "")
 			   "" (concat ";" (nth 3 spec))))
