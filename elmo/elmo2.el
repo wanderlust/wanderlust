@@ -208,12 +208,11 @@ without cacheing."
 (defun elmo-read-msg (folder msg outbuf msgdb &optional force-reload)
   "Read message into outbuf."
   (let ((inhibit-read-only t))
-    (if elmo-inhibit-read-cache
     ;;Only use elmo-read-msg-with-cache, because if folder is network and
     ;;elmo-use-cache-p is nil, cannot read important msg. (by muse)
     ;;(if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf)
-      (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
+    ;;  (elmo-read-msg-no-cache folder msg outbuf)
+    (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload)))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb
 					&optional force-reload)
