@@ -31,7 +31,6 @@
 ;;; Code:
 ;;
 
-(require 'mime-setup)
 (require 'elmo)
 (require 'wl-version)			; reduce recursive-load-depth
 
@@ -666,6 +665,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-init ()
   (when (not wl-init)
+    (require 'mime-setup)
     (setq elmo-plugged wl-plugged)
     (add-hook 'kill-emacs-hook 'wl-save-status)
     (wl-address-init)
