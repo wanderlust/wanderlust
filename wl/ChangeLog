@@ -6,7 +6,7 @@
 	* wl-mule.el (wl-draft-mode-map): Bind "\C-a" to
 	wl-draft-beginning-of-line.
 	* wl-e21.el (wl-draft-mode-map): Ditto.
-	* wl-xmacs.el (wl-draft-mode-map): Ditto.
+	* wl-xmas.el (wl-draft-mode-map): Ditto.
 
 	* wl-folder.el: Sort macrodefs by dependencies.
 
