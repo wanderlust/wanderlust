@@ -1109,14 +1109,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
        folder
        (elmo-folder-expand-msgdb-path folder))))
 
-(defun elmo-message-set-cached (folder number cached)
-  "Set cache status of the message mark.
-FOLDER is the ELMO folder structure.
-NUMBER is a number of the message.
-If CACHED is t, message mark is set as cached."
-  (elmo-msgdb-set-cached 
-   (elmo-folder-msgdb folder) number cached))
-
 (defun elmo-message-mark (folder number)
   "Get mark of the message.
 FOLDER is the ELMO folder structure.

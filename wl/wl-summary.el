@@ -1424,12 +1424,23 @@ If ARG is non-nil, checking is omitted."
 			(elmo-message-encache
 			 wl-summary-buffer-elmo-folder
 			 number))
-		    (elmo-message-set-cached wl-summary-buffer-elmo-folder
-					     number t)
 		    (setq new-mark
-			  (or (elmo-message-mark wl-summary-buffer-elmo-folder
-						 number)
-			      " "))
+			  (cond
+			   ((string= mark
+				     elmo-msgdb-unread-uncached-mark)
+			    elmo-msgdb-unread-cached-mark)
+			   ((string= mark elmo-msgdb-new-mark)
+			    (setq wl-summary-buffer-new-count
+				  (- wl-summary-buffer-new-count 1))
+			    (setq wl-summary-buffer-unread-count
+				  (+ wl-summary-buffer-unread-count 1))
+			    elmo-msgdb-unread-cached-mark)
+			   ((string= mark elmo-msgdb-read-uncached-mark)
+			    nil)
+			   (t mark)))
+		    (elmo-msgdb-set-mark msgdb number new-mark)
+		    (or new-mark (setq new-mark " "))
+		    (wl-summary-set-mark-modified)
 		    (wl-summary-update-modeline)
 		    (wl-folder-update-unread
 		     (wl-summary-buffer-folder-name)
@@ -1701,12 +1712,20 @@ If ARG is non-nil, checking is omitted."
 	   (msgdb (wl-summary-buffer-msgdb))
 	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (case-fold-search nil)
-	   new-mark mark number unread)
-      (setq number (wl-summary-message-number))
-      (elmo-message-set-cached folder number nil)
-      (setq new-mark (elmo-message-mark folder number)
-	    mark (wl-summary-persistent-mark))
-      (unless (string= new-mark mark)
+	   mark number unread new-mark)
+      (setq mark (wl-summary-persistent-mark))
+      (cond
+       ((or (string= mark elmo-msgdb-new-mark)
+	    (string= mark elmo-msgdb-unread-uncached-mark)
+	    (string= mark elmo-msgdb-important-mark))
+	;; noop
+	)
+       ((string= mark elmo-msgdb-unread-cached-mark)
+	(setq new-mark elmo-msgdb-unread-uncached-mark))
+       (t
+	(setq new-mark elmo-msgdb-read-uncached-mark)))
+      (when new-mark
+	(setq number (wl-summary-message-number))
 	(delete-backward-char 1)
 	(insert new-mark)
 	(elmo-file-cache-delete
@@ -1714,8 +1733,8 @@ If ARG is non-nil, checking is omitted."
 	  (elmo-message-field wl-summary-buffer-elmo-folder
 			      number
 			      'message-id)))
-	;; (elmo-msgdb-set-mark msgdb number new-mark)
-	;; (wl-summary-set-mark-modified)
+	(elmo-msgdb-set-mark msgdb number new-mark)
+	(wl-summary-set-mark-modified)
 	(if wl-summary-highlight
 	    (wl-highlight-summary-current-line nil nil t))
 	(set-buffer-modified-p nil)))))
@@ -3929,36 +3948,61 @@ If ARG, exit virtual folder."
 	  (folder wl-summary-buffer-elmo-folder)
 	  (msgdb (wl-summary-buffer-msgdb))
 	  (case-fold-search nil)
-	  mark visible new-mark)
-      (setq visible (if number
+	  cur-mark mark stat visible uncached new-mark marked)
+      (setq number (or number (wl-summary-message-number))
+	    visible (if number
 			(wl-summary-jump-to-msg number)
 		      ;; interactive
 		      t)
-	    number (or number (wl-summary-message-number))
-	    mark (elmo-message-mark folder number))
-      (when (member mark (elmo-msgdb-unread-marks))
-	;; folder mark.
-	(elmo-folder-mark-as-read folder (list number) no-folder-mark))
-      (elmo-message-set-cached folder number t)
-      (setq new-mark (elmo-message-mark folder number))
-      ;;
-      ;; elmo-folder-mark-as-read should return unread numbers?
-      ;;
-      (wl-summary-count-unread)
+	    mark (elmo-msgdb-get-mark msgdb number))
+      (cond
+       ((string= mark elmo-msgdb-new-mark) ; N
+	(setq stat 'new))
+       ((string= mark elmo-msgdb-unread-uncached-mark) ; U
+	(setq stat 'unread))
+       ((string= mark elmo-msgdb-unread-cached-mark)  ; !
+	(setq stat 'unread))
+       ((string= mark elmo-msgdb-read-uncached-mark)  ; u
+	(setq stat 'read))
+       (t
+	;; no need to mark server.
+	(setq no-folder-mark t)))
+      (setq new-mark
+	    (if (and (if (elmo-message-use-cache-p folder number)
+			 (not (elmo-folder-local-p folder)))
+		     (not (elmo-file-cache-exists-p
+			   (elmo-message-field wl-summary-buffer-elmo-folder
+					       number 'message-id))))
+		elmo-msgdb-read-uncached-mark
+	      nil))
+      ;; folder mark.
+      (unless no-folder-mark
+	(elmo-folder-mark-as-read folder (list number)))
+      (cond ((eq stat 'unread)
+	     (setq wl-summary-buffer-unread-count
+		   (1- wl-summary-buffer-unread-count)))
+	    ((eq stat 'new)
+	     (setq wl-summary-buffer-new-count
+		   (1- wl-summary-buffer-new-count))))
       (wl-summary-update-modeline)
       (wl-folder-update-unread
        (wl-summary-buffer-folder-name)
-       	 (+ wl-summary-buffer-unread-count
-	    wl-summary-buffer-new-count))
-      ;; set mark on buffer
-      (when visible
-	(unless (string= (wl-summary-persistent-mark) new-mark)
-	  (delete-backward-char 1)
-	  (insert (or new-mark " "))))
+       (+ wl-summary-buffer-unread-count
+	  wl-summary-buffer-new-count))
+      (when stat
+	;; set mark on buffer
+	(when visible
+	  (unless (string= (wl-summary-persistent-mark) new-mark)
+	    (delete-backward-char 1)
+	    (insert (or new-mark " "))))
+	;; set msgdb mark.
+	(unless (string= mark new-mark)
+	  (elmo-msgdb-set-mark msgdb number new-mark))
+	(wl-summary-set-mark-modified))
       (if (and visible wl-summary-highlight)
 	  (wl-highlight-summary-current-line nil nil t))
       (set-buffer-modified-p nil)
-      (if (member mark (elmo-msgdb-unread-marks))
+      (if stat
 	  (run-hooks 'wl-summary-unread-message-hook))
       number ;return value
       )))
