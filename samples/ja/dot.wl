@@ -163,10 +163,10 @@
 ;; サマリ表示において使用する情報を持つフィールドをoverview情報に
 ;; 入れる設定(ただし，localフォルダのみ)
 ;; 自動リファイルに必要なフィールドも設定
-(setq elmo-msgdb-extra-fields '("newsgroups"
-				"x-ml-name" "list-id"
-				"x-mail-count" "x-ml-count" "x-sequence"
-				"mailing-list"))
+(setq elmo-msgdb-extra-fields
+      '("newsgroups"
+	"list-id" "x-ml-name" "mailing-list"
+	"x-mail-count" "x-ml-count" "x-sequence"))
 
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する
@@ -298,13 +298,13 @@
 	       'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
-	 ;; x-face-mule 0.20以後
+	 ;; x-face-mule 0.20以降
 	 (setq wl-highlight-x-face-func
 	       (function
 		(lambda (&rest dummy)
 		  (x-face-decode-message-header))))
-	 (require 'x-face-mule)
-	 )))
+	 (require 'x-face-mule))
+	))
 
 ;; 自動リファイルのルール設定
 ;(setq wl-refile-rule-alist
