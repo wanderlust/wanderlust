@@ -5932,6 +5932,12 @@ Specifies a regular expression that denotes beginning of quotation.
 Bodies matching to this regular expression are highlighted by the face
 specified by @code{wl-highlight-message-headers}.
 
+@item wl-highlight-max-header-size
+@vindex wl-highlight-max-header-size
+The initial setting is @code{nil}.  If a header size is larger than this
+value, it will not be highlighted.  If @code{nil}, always highlighted
+(ignore header size).
+
 @item  wl-highlight-max-message-size
 @vindex wl-highlight-max-message-size
 The initial setting is 10000.

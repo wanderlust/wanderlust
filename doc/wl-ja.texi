@@ -5857,19 +5857,25 @@ Non-nil ならドラフトおよびメッセージの本文もハイライトの対象とします。
 この正規表現にマッチした本文は、
 (@code{wl-highlight-message-cited-text-*})で指定されるfaceでハイライトされます。
 
-@item  wl-highlight-highlight-citation-too
+@item wl-highlight-highlight-citation-too
 @vindex wl-highlight-highlight-citation-too
 初期設定は @code{nil}。
 Non-nil なら@code{wl-highlight-citation-prefix-regexp}で与えられる
 引用行の引用を示す正規表現自体もハイライトの対象とします。
 
-@item  wl-highlight-citation-header-regexp
+@item wl-highlight-citation-header-regexp
 @vindex wl-highlight-citation-header-regexp
 引用を始めることを示すヘッダの正規表現を指定します。
 この正規表現にマッチした本文は、
 @code{wl-highlight-message-headers}で指定される face でハイライトされます。
 
-@item  wl-highlight-max-message-size
+@item wl-highlight-max-header-size
+@vindex wl-highlight-max-header-size
+初期設定は @code{nil}。
+メッセージのヘッダサイズがこの値より大きい場合、ヘッダをハイライトしませ
+ん。@code{nil} の場合、サイズに関係なくハイライトします。
+
+@item wl-highlight-max-message-size
 @vindex wl-highlight-max-message-size
 初期設定は 10000。
 メッセージがこの値より大きい場合、メッセージのハイライトを行いません。
