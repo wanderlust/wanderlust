@@ -1,8 +1,10 @@
 ;;; elmo-version.el -- Version information for ELMO.
 
 ;; Copyright 2000 Yuuichi Teranishi <teranisi@gohome.org>
+;;                TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;         TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
@@ -31,13 +33,25 @@
 (require 'product)
 (provide 'elmo-version)			; have to declare in the top.
 
+;; For APEL 10.2 or earlier.
+(defun-maybe product-version-as-string (product)
+  "Return version number of product as a string.
+PRODUCT is a product structure which returned by `product-define'.
+If optional argument UPDATE is non-nil, then regenerate
+`produce-version-string' from `product-version'."
+  (setq product (product-find product))
+  (or (product-version-string product)
+      (and (product-version product)
+           (product-set-version-string product
+                                       (mapconcat (function int-to-string)
+                                                  (product-version product)
+                                                  ".")))))
+
 (product-provide 'elmo-version
   (product-define "ELMO" nil '(2 3 92)))
 
 ;; set version-string
-(if (fboundp 'product-version-as-string)
-    (product-version-as-string 'elmo-version)
-  (product-string-1 'elmo-version))	; APEL 10.2 or earlier
+(product-version-as-string 'elmo-version)
 
 (defun elmo-version ()
   "Return ELMO version."

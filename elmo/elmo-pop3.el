@@ -1,8 +1,10 @@
 ;;; elmo-pop3.el -- POP3 Interface for ELMO.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright 1999,2000      Kenichi OKADA  <okada@opaopa.org>
 
-;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>,
+;;         Kenichi OKADA  <okada@opaopa.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).

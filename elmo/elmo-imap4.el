@@ -1,8 +1,14 @@
 ;;; elmo-imap4.el -- IMAP4 Interface for ELMO.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright 1999,2000      Kenichi OKADA  <okada@opaopa.org>
+;; Copyright 2000           OKAZAKI Tetsurou  <okazaki@be.to>
+;; Copyright 2000           Daiki Ueno  <ueno@unixuser.org>
 
-;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>,
+;;         Kenichi OKADA  <okada@opaopa.org>,
+;;         OKAZAKI Tetsurou  <okazaki@be.to>,
+;;         Daiki Ueno  <ueno@unixuser.org>,
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).

@@ -1,3 +1,16 @@
+2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (product-version-as-string): Defined using
+	`defun-maybe'.
+	(toplevel): Use it.
+
+	* elmo-localdir.el (toplevel): Updated copyright notice.
+	* elmo-version.el (toplevel): Ditto.
+	* elmo-msgdb.el (toplevel): Ditto.
+	* elmo-imap4.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+	* elmo-pop3.el (toplevel): Ditto.
+
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Don't save msgdb after moving
