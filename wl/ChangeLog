@@ -1,3 +1,10 @@
+
+2000-10-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-draft-reply-myself-with-argument-list,
+	wl-draft-reply-myself-without-argument-list, ): Add variables.
+	* wl-draft.el (wl-draft-reply): Use it.
+
 2000-10-06   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions): Pass

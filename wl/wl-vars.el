@@ -534,6 +534,8 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
     ("From" . (("From") nil nil)))
   "Alist of cons cell of
 ('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+'field-name' is a string.
+'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
 cdr of each cons cell is used for draft message.
 Default is for 'reply-to-author'."
@@ -555,6 +557,42 @@ Default is for 'reply-to-author'."
 If car of each cons cell exists in original message,
 cdr of each cons cell is used for draft message.
 Default is for 'reply-to-all'."
+  :type '(repeat (cons (choice (string :tag "Field Name")
+			       (repeat (string :tag "Field Name")))
+		       (list (repeat :tag "Fields For To" string)
+			     (repeat :tag "Fields For Cc" string)
+			     (repeat :tag "Fields For Newsgroups" string))))
+  :group 'wl-draft)
+
+(defcustom wl-draft-reply-myself-with-argument-list
+  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
+    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
+    ("From" . (("To") ("Cc") nil)))
+  "Alist of cons cell of
+('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+'field-name' is a string.
+'fields for ***' is a list of strings.
+If car of each cons cell exists in original message,
+cdr of each cons cell is used for draft message.
+Default is for 'reply-to-me'."
+  :type '(repeat (cons (choice (string :tag "Field Name")
+			       (repeat (string :tag "Field Name")))
+		       (list (repeat :tag "Fields For To" string)
+			     (repeat :tag "Fields For Cc" string)
+			     (repeat :tag "Fields For Newsgroups" string))))
+  :group 'wl-draft)
+
+(defcustom wl-draft-reply-myself-without-argument-list
+  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
+    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
+    ("From" . (("To") ("Cc") nil)))
+  "Alist of cons cell of
+('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+'field-name' is a string.
+'fields for ***' is a list of strings.
+If car of each cons cell exists in original message,
+cdr of each cons cell is used for draft message.
+Default is for 'followup-to-me'."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (repeat (string :tag "Field Name")))
 		       (list (repeat :tag "Fields For To" string)

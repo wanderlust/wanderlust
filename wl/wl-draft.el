@@ -275,8 +275,7 @@ the `wl-smtp-features' variable."
 
 (defun wl-draft-reply (buf no-arg summary-buf)
 ;  (save-excursion
-  (let ((r-list (if no-arg wl-draft-reply-without-argument-list
-		  wl-draft-reply-with-argument-list))
+  (let (r-list
 	(eword-lexical-analyzer '(eword-analyze-quoted-string
 				  eword-analyze-domain-literal
 				  eword-analyze-comment
@@ -287,52 +286,53 @@ the `wl-smtp-features' variable."
 	to mail-followup-to cc subject in-reply-to references newsgroups
 	from addr-alist)
     (set-buffer buf)
-    (if (wl-address-user-mail-address-p
-	 (setq from
-	       (wl-address-header-extract-address (std11-field-body "From"))))
-	(setq to (mapconcat 'identity (elmo-multiple-field-body "To") ",")
-	      cc (mapconcat 'identity (elmo-multiple-field-body "Cc") ",")
-	      newsgroups (or (std11-field-body "Newsgroups") ""))
-      (catch 'done
-	(while r-list
-	  (when (let ((condition (car (car r-list))))
-		  (cond ((stringp condition)
-			 (std11-field-body condition))
-			((listp condition)
-			 (catch 'done
-			   (while condition
-			     (if (not (std11-field-body (car condition)))
-				 (throw 'done nil))
-			     (setq condition (cdr condition)))
-			   t))
-			((symbolp condition)
-			 (funcall condition))))
-	    (let ((r-to-list (nth 0 (cdr (car r-list))))
-		  (r-cc-list (nth 1 (cdr (car r-list))))
-		  (r-ng-list (nth 2 (cdr (car r-list)))))
-	      (when (and (member "Followup-To" r-ng-list)
-			 (string= (std11-field-body "Followup-To") "poster"))
-		(setq r-to-list (cons "From" r-to-list))
-		(setq r-ng-list (delete "Followup-To" (copy-sequence r-ng-list))))
-	      (setq to (wl-concat-list (cons to
-					     (elmo-multiple-fields-body-list
-					      r-to-list))
-				       ","))
-	      (setq cc (wl-concat-list (cons cc
-					     (elmo-multiple-fields-body-list
-					      r-cc-list))
-				       ","))
-	      (setq newsgroups (wl-concat-list (cons newsgroups
-						     (std11-field-bodies
-						      r-ng-list))
-					       ",")))
-	    (throw 'done nil))
-	  (setq r-list (cdr r-list)))
-	(error "No match field: check your `wl-draft-reply-without-argument-list'")))
+    (setq from (wl-address-header-extract-address (std11-field-body "From")))
+    (setq r-list 
+	  (if (wl-address-user-mail-address-p from)
+	      (if no-arg wl-draft-reply-myself-without-argument-list
+		wl-draft-reply-myself-with-argument-list)
+	    (if no-arg wl-draft-reply-without-argument-list
+	      wl-draft-reply-with-argument-list)))
+    (catch 'done
+      (while r-list
+	(when (let ((condition (car (car r-list))))
+		(cond ((stringp condition)
+		       (std11-field-body condition))
+		      ((listp condition)
+		       (catch 'done
+			 (while condition
+			   (if (not (std11-field-body (car condition)))
+			       (throw 'done nil))
+			   (setq condition (cdr condition)))
+			 t))
+		      ((symbolp condition)
+		       (funcall condition))))
+	  (let ((r-to-list (nth 0 (cdr (car r-list))))
+		(r-cc-list (nth 1 (cdr (car r-list))))
+		(r-ng-list (nth 2 (cdr (car r-list)))))
+	    (when (and (member "Followup-To" r-ng-list)
+		       (string= (std11-field-body "Followup-To") "poster"))
+	      (setq r-to-list (cons "From" r-to-list))
+	      (setq r-ng-list (delete "Followup-To" (copy-sequence r-ng-list))))
+	    (setq to (wl-concat-list (cons to
+					   (elmo-multiple-fields-body-list
+					    r-to-list))
+				     ","))
+	    (setq cc (wl-concat-list (cons cc
+					   (elmo-multiple-fields-body-list
+					    r-cc-list))
+				     ","))
+	    (setq newsgroups (wl-concat-list (cons newsgroups
+						   (std11-field-bodies
+						    r-ng-list))
+					     ",")))
+	  (throw 'done nil))
+	(setq r-list (cdr r-list)))
+      (error "No match field: check your `wl-draft-reply-without-argument-list'"))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
-    (with-temp-buffer ; to keep raw buffer unibyte.
+    (with-temp-buffer			; to keep raw buffer unibyte.
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq subject (or (and subject
 			     (eword-decode-string
