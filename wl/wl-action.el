@@ -663,12 +663,12 @@ Return number if put mark succeed"
 			     (wl-summary-action-mark action)
 			     nil) collected)))
     (dolist (mark-info wl-summary-buffer-temp-mark-list)
-      (if numbers
-	  (when (memq (nth 0 mark-info) numbers)
-	    (setq pair (assoc (nth 1 mark-info) collected)))
-	(setq pair (assoc (nth 1 mark-info) collected)))
-      (setq pair (assoc (nth 1 mark-info) collected))
-      (setcdr pair (cons mark-info (cdr pair))))
+      (setq pair
+	    (when (or (null numbers)
+		      (memq (nth 0 mark-info) numbers))
+	      (assoc (nth 1 mark-info) collected)))
+      (if pair
+	  (setcdr pair (cons mark-info (cdr pair)))))
     ;; collected is a pair of
     ;; mark-string and a list of mark-info
     (dolist (pair collected)
