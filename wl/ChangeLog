@@ -1,7 +1,8 @@
 2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-exec-subr): Fixed problem when
-	wl-message-buffer is nil.
+	wl-message-buffer is nil;
+	Hide progress bar after moving messages.
 
 2001-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
