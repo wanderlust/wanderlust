@@ -47,15 +47,13 @@
 
 (defconst wl-message-buffer-prefetch-idle-time
   (if (featurep 'lisp-float-type) (/ (float 1) (float 5)) 1))
-(defvar wl-message-buffer-prefetch-get-next-func
+(defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
 
 (defvar wl-message-buffer-prefetch-folder-type-list t)
 
 (defvar wl-message-buffer-prefetch-debug
   t)
-(defvar wl-message-buffer-prefetch-threshold
-  30000)
 
 (defvar wl-message-buffer nil) ; message buffer.
 
@@ -457,7 +455,7 @@ Returns non-nil if bottom of message."
 	(elmo-fetch-threshold wl-fetch-confirm-threshold))
     (prog1 
 	(if (eq flag 'as-is)
-	    (let (wl-highlight-x-face-func)
+	    (let (wl-highlight-x-face-function)
 	      (elmo-mime-display-as-is folder number
 				       (current-buffer)
 				       (wl-message-get-original-buffer)
@@ -496,7 +494,7 @@ Returns non-nil if bottom of message."
 					       summary charset)
   (if (wl-message-buffer-prefetch-p folder)
       (with-current-buffer (or summary (get-buffer wl-summary-buffer-name))
-	(let* ((next (funcall wl-message-buffer-prefetch-get-next-func
+	(let* ((next (funcall wl-message-buffer-prefetch-get-next-function
 			      number)))
 	  (when (and next (wl-message-buffer-prefetch-p folder next))
 	    (if (not (fboundp 'run-with-idle-timer))
@@ -524,9 +522,9 @@ Returns non-nil if bottom of message."
 		(when (or (elmo-message-file-p folder number)
 			  (not 
 			   (and (integerp size)
-				wl-message-buffer-prefetch-threshold
+				elmo-message-fetch-threshold
 				(>= size
-				    wl-message-buffer-prefetch-threshold))))
+				    elmo-message-fetch-threshold))))
 		  ;;(not (elmo-file-cache-exists-p message-id)))))
 		  (when wl-message-buffer-prefetch-debug
 		    (setq time1 (current-time))

@@ -1684,7 +1684,9 @@ Definition is stored in `elmo-obsolete-variable-alist'."
   "Resque obsolete variable OBSOLETE as VAR.
 If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
   (when (boundp obsolete)
-    (set var (symbol-value obsolete))
+    (static-if (fboundp 'defvaralias)
+	(defvaralias obsolete var)
+      (set var (symbol-value obsolete)))
     (if elmo-obsolete-variable-show-warnings
 	(elmo-warning (format "%s is obsolete. Use %s instead."
 			      (symbol-name obsolete)
