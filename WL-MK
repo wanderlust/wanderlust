@@ -489,7 +489,10 @@
 		  (let ((p (point)))
 		    (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
 		    (save-excursion
-		      (replace-regexp "^(" "\\\\(" nil p (point)))) ; avoid font-lock confusion
+		      (narrow-to-region p (point))
+		      (goto-char (1+ p))
+		      (replace-regexp "^(" "\\\\(") ; avoid font-lock confusion
+		      (widen)))
 		  (insert ")\n"))
 	      (insert "(defconst wl-news-news-alist nil)\n\n"))
 	    (let ((buffer-file-coding-system (mime-charset-to-coding-system 'x-ctext)))
