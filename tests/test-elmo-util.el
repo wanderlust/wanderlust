@@ -104,10 +104,10 @@
      (equal '(nil nil)
 	    (elmo-list-diff nil nil)))
     (lunit-assert
-     (equal '(nil (1 2 3))
+     (equal '(nil (3 2 1))
 	    (elmo-list-diff nil list1)))
     (lunit-assert
-     (equal '((1 2 3) nil)
+     (equal '((3 2 1) nil)
 	    (elmo-list-diff list1 nil)))
     (lunit-assert
      (equal '(nil nil)
