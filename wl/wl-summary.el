@@ -345,6 +345,7 @@
     "----"
     ("Writing Messages"
      ["Write a message" wl-summary-write t]
+     ["Write for current folder" wl-summary-write-current-folder t]
      ["Reply" wl-summary-reply t]
      ["Reply with citation" wl-summary-reply-with-citation t]
      ["Forward" wl-summary-forward t])

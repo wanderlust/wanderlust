@@ -1,3 +1,9 @@
+2002-03-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-mode-menu-spec): Add "Write for current
+	folder" entry.
+	* wl-summary.el (wl-summary-mode-menu-spec): Ditto.
+
 2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-goto-folder-sticky): Simply call
@@ -13,12 +19,12 @@
 
 2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
-	* wl-folder.el (toplevel): Bind [(shift return)] to
+	* wl-folder.el (wl-folder-mode-map): Bind [(shift return)] for
 	wl-folder-jump-to-current-entity-with-arg.
 	(wl-folder-jump-to-current-entity-with-arg): Simply call with arg
 	`wl-folder-jump-to-current-entity'.
-	* wl-summary.el (toplevel): Bind `wl-summary-goto-folder-sticky'
-	to "G".
+	* wl-summary.el (wl-summary-mode-map): Bind "G" for
+	`wl-summary-goto-folder-sticky'.
 	(wl-summary-goto-folder-sticky): Simply call with the sticky arg
 	`wl-summary-goto-folder'.
 	(wl-summary-goto-folder-subr): Add 7th argument force-exit.

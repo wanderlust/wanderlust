@@ -110,6 +110,7 @@
      ["Display all" wl-fldmgr-access-display-all t])
     "----"
     ["Write a message" wl-draft t]
+    ["Write for current folder" wl-folder-write-current-folder t]
     "----"
     ["Toggle Plug Status" wl-toggle-plugged t]
     ["Change Plug Status" wl-plugged-change t]
