@@ -3,6 +3,9 @@
 	* utf7.el (toplevel): Check the ucs features dynamically.
 	(Advice from Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>)
 
+	* elmo-pipe.el (elmo-folder-creatable-p): Don't check whether the
+	folder is creatabe or not if it already exists.
+
 2002-11-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-search-primitive): Revert the last change.
