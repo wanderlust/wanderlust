@@ -81,7 +81,7 @@
   (with-temp-buffer
     (insert string)
     (goto-char (point-min))
-    (while (re-search-forward "%\\([0-9]\\{2\\}\\)" nil t)
+    (while (re-search-forward "%\\([0-9A-F][0-9A-F]\\)" nil t)
       (replace-match (string (string-to-number (match-string 1)
 					       16))
 		       nil nil))
