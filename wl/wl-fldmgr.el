@@ -1174,7 +1174,8 @@ return value is diffs '(-new -unread -all)."
 		  (save-excursion (forward-line -1)
 				  (wl-highlight-folder-current-line))
 		  (remove-text-properties beg (point) '(wl-folder-entity-id))
-		  (setq execed t))))))
+		  (setq execed t))
+	      (message "not an access group folder")))))
 	(set-buffer-modified-p nil)))
     (if (or force execed)
 	(progn

@@ -1,3 +1,8 @@
+2004-12-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-unsubscribe): Show message if it is not
+	a folder under access group.
+
 2004-12-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-buffer-prefetch-subr): Fix argument of
