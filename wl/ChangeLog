@@ -1,3 +1,7 @@
+2003-01-10  Masahiro Murata  <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-reedit): Avoid error on Meadow [wl:11209].
+
 2003-01-06  Mito  <mito@mxa.nes.nec.co.jp>
 
 	* wl-summary.el (wl-summary-line-list-info): Use %f to make
