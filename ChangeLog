@@ -1,3 +1,8 @@
+2002-11-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL, INSTALL.ja: Update Recommended combination of MIME
+	module package.
+
 2002-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* README, README.ja: Update stable branch.
