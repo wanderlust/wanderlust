@@ -41,6 +41,9 @@
 (provide 'ptexinfmt)
 
 ;;; Broken
+(defvar ptexinfmt-disable-broken-notice t
+  "If non-nil disable notice, when call `broken-facility'.")
+
 ;; @var
 (broken-facility texinfo-format-var
   "Don't perse @COMMAND included @var"
@@ -52,7 +55,7 @@
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
     (error nil))
-  'no-notice)
+  ptexinfmt-disable-broken-notice)
 
 ;; @xref
 (broken-facility texinfo-format-xref
@@ -65,7 +68,7 @@
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
     (error nil))
-  'no-notice)
+  ptexinfmt-disable-broken-notice)
 
 ;; @uref
 (broken-facility texinfo-format-uref
@@ -78,7 +81,7 @@
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
     (error nil))
-  'no-notice)
+  ptexinfmt-disable-broken-notice)
 
 ;;; Obsolete
 ;; Removed Texinfo 3.8
@@ -537,7 +540,8 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
                  ;; forward-sexp works with braces in Texinfo mode
                   (progn (forward-sexp 1) (1- (point)))))
             (setq texinfo-multitable-width-list
-                  (cons (- end-of-template start-of-template)
+		  (cons (- (progn (goto-char end-of-template) (current-column))
+			   (progn (goto-char start-of-template) (current-column)))
                         texinfo-multitable-width-list))
             ;; Remove carriage return from within a template, if any.
             ;; This helps those those who want to use more than
@@ -658,10 +662,8 @@ This command is executed when texinfmt sees @item inside @multitable."
              ;; add one more space for inter-column spacing
              (needed-whitespace
               (1+
-               (- fill-column
-                  (-
-                   (progn (end-of-line) (point)) ; end of existing line
-                   beg)))))
+	       (- fill-column
+		  (progn (end-of-line) (current-column)))))) ; end of existing line
         (insert (make-string
                  (if (> needed-whitespace 0) needed-whitespace 1)
                  ? )))
@@ -696,6 +698,5 @@ This command is executed when texinfmt sees @item inside @multitable."
         (setq column-number (1+ column-number))))
     (kill-buffer texinfo-multitable-buffer-name)
     (setq fill-column existing-fill-column)))
-
 
 ;;; ptexinfmt.el ends here
