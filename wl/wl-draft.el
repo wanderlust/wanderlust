@@ -1149,7 +1149,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
     (let (wl-interactive-send
 ;;;	  wl-draft-verbose-send
 	  (wl-mail-send-pre-hook (and force-pre-hook wl-mail-send-pre-hook))
-;;;	  wl-news-send-pre-hook
+	  (wl-news-send-pre-hook (and force-pre-hook wl-news-send-pre-hook))
 	  mail-send-hook
 	  mail-send-actions)
       (wl-draft-send kill-when-done mes-string))))
