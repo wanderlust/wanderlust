@@ -1348,27 +1348,70 @@ namazu (@uref{http://www.namazu.org/}) を用いて、検索式にマッチした
 
 @example
 @group
-@samp{[} @var{namazu 検索式} @samp{]} [ @var{namazu index のパス（絶対パス）} ]
+@samp{[} @var{namazu 検索式} @samp{]} [ @var{インデックスのパス（絶対パス）} ]
 @end group
 @end example
 
-namazu index のパスのデフォルト値は @code{elmo-nmz-default-index-path} で指定できます。
+インデックスのパスのデフォルト値は @code{elmo-nmz-default-index-path} で指定できます。
 
 例:
 
 @example
 @group
-[wanderlust]           -> デフォルトの index から "wanderlust"
+[wanderlust]           -> デフォルトのインデックスから "wanderlust"
                           にマッチするものを探す
-[semi flim]~/Mail/semi -> ディレクトリ "~/Mail/semi" にある index
+[semi flim]~/Mail/semi -> ディレクトリ "~/Mail/semi" にあるインデックス
                           から "semi flim" を探す
 @end group
 @end example
 
-Tips
+@subsection TIPS
+
+@subsubsection 複数キーワードの入力
 
 フォルダ名入力時に空白を入力したい場合、@kbd{C-q @key{SPC}} でできます。
 
+@subsubsection インデックスのエイリアス名
+
+インデックスにはエイリアス名(別名)を定義できます。
+
+@example
+(setq elmo-nmz-index-alias-alist
+      '(("cache" . "~/.elmo/cache")
+        ("docs" . "~/documents")))
+@end example
+
+の様に設定することによりインデックスの別名を定義できます。
+上記例であれば、
+
+@example
+[wanderlust]cache
+@end example
+
+と入力すれば、@file{~/.elmo/cache} にある namazu インデックスを対象として、
+キーワード @samp{wanderlust} で検索を行います。
+
+@subsubsection 複数インデックスの指定
+
+@code{elmo-nmz-default-index-path}, @code{elmo-nmz-index-alias-alist} の値として
+の値としてインデックスのリストを指定することも可能です。
+リストを指定すると、複数インデックスを対象とした検索が行われます。
+
+例えば、
+
+@example
+(setq elmo-nmz-index-alias-alist
+      '(("all" . ("~/.elmo/cache" "~/documents"))
+        ("cache" . "~/.elmo/cache")))
+@end example
+
+のように指定すると、
+
+@example
+[wanderlust]all
+@end example
+
+と入力すれば、@file{~/.elmo/cache} と @file{~/documents} のインデックスを対象として、キーワード @samp{wanderlust} で検索を行います。
 
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section マルチフォルダ
