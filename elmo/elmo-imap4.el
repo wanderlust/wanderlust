@@ -65,6 +65,12 @@
 (defvar elmo-imap4-use-uid t
   "Use UID as message number.")
 
+(defvar elmo-imap4-authenticator-alist
+  '((login	elmo-imap4-auth-login)
+    (cram-md5	elmo-imap4-auth-cram-md5)
+    (digest-md5 elmo-imap4-auth-digest-md5))
+  "Definition of authenticators.")
+
 (defconst elmo-imap4-quoted-specials-list '(?\\ ?\"))
 
 (defconst elmo-imap4-non-atom-char-regex
@@ -86,6 +92,8 @@
 (defvar elmo-imap4-extra-namespace-alist
   '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
   "Extra namespace alist. A list of cons cell like: (REGEXP . DELIMITER) ")
+
+(defvar elmo-imap4-password-key nil)
 
 ;; buffer local variable
 (defvar elmo-imap4-server-capability nil)
@@ -277,7 +285,7 @@ BUFFER must be a single-byte buffer."
 						(process-buffer process))
 					       elmo-imap4-server-namespace)))
 		 "/"))
-	   response result append-serv ssl)
+	   response result append-serv type)
       ;; Append delimiter
       (if (and root
 	       (not (string= root ""))
@@ -304,12 +312,13 @@ BUFFER must be a single-byte buffer."
 	(setq append-serv (concat append-serv ":" 
 				  (int-to-string 
 				   (elmo-imap4-spec-port spec)))))
-      (unless (eq (setq ssl (elmo-imap4-spec-ssl spec))
-		  elmo-default-imap4-ssl)
-	(if ssl
-	    (setq append-serv (concat append-serv "!")))
-	(if (eq ssl 'starttls)
-	    (setq append-serv (concat append-serv "!"))))
+      (setq type (elmo-imap4-spec-stream-type spec))
+      (unless (eq (elmo-network-stream-type-symbol type)
+		  elmo-default-imap4-stream-type)
+	(if type
+	    (setq append-serv (concat append-serv
+				      (elmo-network-stream-type-spec-string
+				       type)))))
       (mapcar '(lambda (fld)
 		 (concat "%" (elmo-imap4-decode-folder-string fld)
 			 (and append-serv 
@@ -407,51 +416,42 @@ BUFFER must be a single-byte buffer."
 (defun elmo-imap4-get-connection (spec)
   "Return opened IMAP connection for SPEC."
   (let* ((user   (elmo-imap4-spec-username spec))
-	 (server (elmo-imap4-spec-hostname spec))
+	 (host   (elmo-imap4-spec-hostname spec))
 	 (port   (elmo-imap4-spec-port spec))
 	 (auth   (elmo-imap4-spec-auth spec))
-	 (ssl    (elmo-imap4-spec-ssl spec))
-	 (user-at-host (format "%s@%s" user server))
-	 entry connection result buffer process proc-stat
+	 (type   (elmo-imap4-spec-stream-type spec))
+	 entry connection result process
 	 user-at-host-on-port)
-    (if (not (elmo-plugged-p server port))
+    (if (not (elmo-plugged-p host port))
 	(error "Unplugged"))
-    (setq user-at-host-on-port 
-	  (concat user-at-host ":" (int-to-string port)
-		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
+    (setq user-at-host-on-port (format "%s@%s:%d" user host port))
+    (if type
+	(setq user-at-host-on-port
+	      (concat
+	       user-at-host-on-port
+	       (elmo-network-stream-type-spec-string type))))
     (setq entry (assoc user-at-host-on-port elmo-imap4-connection-cache))
     (if (and entry
-	     (memq (setq proc-stat
-			 (process-status (cadr (cdr entry))))
+	     (memq (process-status (cadr (cdr entry)))
 		   '(closed exit)))
 	;; connection is closed...
- 	(let ((buffer (car (cdr entry))))
+	(let ((buffer (car (cdr entry))))
 	  (setq elmo-imap4-connection-cache 
 		(delq entry elmo-imap4-connection-cache))
 	  (if buffer (kill-buffer buffer))
 	  (setq entry nil)))
     (if entry
 	(cdr entry)			; connection cache exists.
-      (setq result
-	    (elmo-imap4-open-connection server user auth port
-					(elmo-get-passwd user-at-host)
-					ssl))
-      (if (null result)
-	  (error "Connection failed"))
+      (setq process
+	    (elmo-imap4-open-connection host port user auth type))
       (elmo-imap4-debug "Connected to %s" user-at-host-on-port)
-      (setq buffer (car result))
-      (setq process (cdr result))
-      (when (and process (null buffer))
-	(elmo-remove-passwd user-at-host)
-	(delete-process process)
-	(error "Login failed"))
       ;; add a new entry to the top of the cache.
       (setq elmo-imap4-connection-cache
 	    (cons
 	     (cons user-at-host-on-port
-		   (setq connection (list buffer process
-				       "" ; current-folder..
-				       )))
+		   (setq connection (list (process-buffer process) process
+					  "" ; current-folder..
+					  )))
 	     elmo-imap4-connection-cache))
       connection)))
 
@@ -563,6 +563,16 @@ BUFFER must be a single-byte buffer."
 	(setq ret-val (elmo-delete-cr-get-content-type)))
       (setq elmo-imap4-read-point (+ start bytes))
       ret-val)))
+
+(defun elmo-imap4-send-string (buffer process string)
+  "Send STRING to server."
+  (save-excursion
+    (set-buffer buffer)
+    (erase-buffer)
+    (goto-char (point-min))
+    (setq elmo-imap4-read-point (point))
+    (process-send-string process string)
+    (process-send-string process "\r\n")))
   
 (defun elmo-imap4-noop (connection)
   (let ((buffer (car connection))
@@ -1245,147 +1255,223 @@ If optional argument UNMARK is non-nil, unmark."
 	      (> (length (car x))
 		 (length (car y))))))))
 
-(defun elmo-imap4-open-connection (imap4-server user auth port passphrase ssl)
-  "Open IMAP connection to IMAP4-SERVER on PORT for USER.
-Return a cons cell of (session-buffer . process).
+(defmacro elmo-imap4-error (type process message)
+  "Make error structure (Vector of [TYPE PROCESS MESSAGE]).
+Type is one of the 'connection, 'authenticate"
+  (` (let ((vec (vector nil nil nil)))
+       (aset vec 0 (, type))
+       (aset vec 1 (, process))
+       (aset vec 2 (, message))
+       vec)))
+
+(defmacro elmo-imap4-error-type (error)
+  (` (aref error 0)))
+
+(defmacro elmo-imap4-error-process (error)
+  (` (aref error 1)))
+
+(defmacro elmo-imap4-error-message (error)
+  (` (aref error 2)))
+
+(defun elmo-imap4-auth-login (buffer process name)
+  (with-current-buffer buffer
+    (elmo-imap4-send-command
+     (current-buffer) process "authenticate login" 'no-lock)
+    (or (elmo-imap4-read-response (current-buffer) process t)
+	(throw 'elmo-imap4-error
+	       (elmo-imap4-error 'authenticate process
+				 "AUTH=LOGIN failed.")))
+    (elmo-imap4-send-string
+     (current-buffer) process (elmo-base64-encode-string name))
+    (or (elmo-imap4-read-response (current-buffer) process t)
+	(throw 'elmo-imap4-error
+	       (elmo-imap4-error 'authenticate process
+				 "AUTH=LOGIN failed.")))
+    (elmo-imap4-send-string
+     (current-buffer) process (elmo-base64-encode-string
+			       (elmo-get-passwd elmo-imap4-password-key)))
+    (or (elmo-imap4-read-response (current-buffer) process)
+	(throw 'elmo-imap4-error
+	       (elmo-imap4-error 'authenticate process 
+				 "AUTH=LOGIN failed.")))))
+
+(defun elmo-imap4-auth-cram-md5 (buffer process name)
+  (save-excursion
+    (set-buffer buffer)
+    (let (response)
+      (elmo-imap4-send-command 
+       (current-buffer) process "authenticate cram-md5" 'no-lock)
+      (setq response (elmo-imap4-read-response (current-buffer) process t))
+      (or response
+	  (throw 'elmo-imap4-error
+		 (elmo-imap4-error 'authenticate process 
+				   "AUTH=CRAM-MD5 failed.")))
+      (setq response (cadr (split-string response " ")))
+      (elmo-imap4-send-string
+       (current-buffer) process
+       (elmo-base64-encode-string
+	(sasl-cram-md5 name (elmo-get-passwd elmo-imap4-password-key)
+		       (elmo-base64-decode-string response))))
+      (or (elmo-imap4-read-response (current-buffer) process)
+	  (throw 'elmo-imap4-error
+		 (elmo-imap4-error 'authenticate process 
+				   "AUTH=CRAM-MD5 failed."))))))
+
+(defun elmo-imap4-auth-digest-md5 (buffer process name)
+  (save-excursion
+    (set-buffer buffer)
+    (let (response)
+      (elmo-imap4-send-command 
+       (current-buffer) process "authenticate digest-md5" 'no-lock)
+      (setq response (elmo-imap4-read-response (current-buffer) process t))
+      (or response
+	  (throw 'elmo-imap4-error
+		 (elmo-imap4-error 'authenticate process 
+				   "AUTH=DIGEST-MD5 failed.")))
+      (setq response (cadr (split-string response " ")))
+      (elmo-imap4-send-string
+       (current-buffer) process
+       (elmo-base64-encode-string
+	(sasl-digest-md5-digest-response
+	 (elmo-base64-decode-string response)
+	 name (elmo-get-passwd elmo-imap4-password-key)
+	 "imap" elmo-imap4-password-key);; XXX
+	'no-line-break))
+      (or (elmo-imap4-read-response (current-buffer) process t)
+	  (throw 'elmo-imap4-error
+		 (elmo-imap4-error 'authenticate process 
+				   "AUTH=DIGEST-MD5 failed.")))
+      (elmo-imap4-send-string (current-buffer) process "")
+      (or (elmo-imap4-read-response (current-buffer) process)
+	  (throw 'elmo-imap4-error
+		 (elmo-imap4-error 'authenticate process 
+				   "AUTH=DIGEST-MD5 failed."))))))
+
+(defun elmo-imap4-login (buffer process name)
+  (save-excursion
+    (set-buffer buffer)
+    (elmo-imap4-send-command
+     (current-buffer) process
+     (list "login " (elmo-imap4-userid name) " "
+	   (elmo-imap4-password
+	    (elmo-get-passwd elmo-imap4-password-key)))
+     nil 'no-log)
+    (or (elmo-imap4-read-response (current-buffer) process)
+	(throw 'elmo-imap4-error
+	       (elmo-imap4-error 'authenticate process 
+				 "LOGIN failed.")))))
+
+(defun elmo-imap4-open-connection (host port user auth type)
+  "Open IMAP connection to HOST on PORT for USER.
 Return nil if connection failed."
-  (let ((process nil)
-	(host imap4-server)
-	process-buffer ret-val response capability)
-    (catch 'done
-      (as-binary-process
-       (setq process-buffer
-	     (get-buffer-create (format " *IMAP session to %s:%d" host port)))
-       (save-excursion
-	 (set-buffer process-buffer)
-	 (elmo-set-buffer-multibyte nil)	 
-	 (make-variable-buffer-local 'elmo-imap4-server-capability)
-	 (make-variable-buffer-local 'elmo-imap4-lock)
-	 (erase-buffer))
-       (setq process
-	     (elmo-open-network-stream "IMAP" process-buffer host port ssl))
-       (and (null process) (throw 'done nil))
-       (set-process-filter process 'elmo-imap4-process-filter)
-       ;; flush connections when exiting...
-       (save-excursion
-	 (set-buffer process-buffer)
-	 (make-local-variable 'elmo-imap4-read-point)
-	 (setq elmo-imap4-read-point (point-min))
-	 (if (null (setq response
-			 (elmo-imap4-read-response process-buffer process t)))
-	     (throw 'done nil)
-	   (when (string-match "^\\* PREAUTH" response)
-	     (setq ret-val (cons process-buffer process))
-	     (throw 'done nil)))
-	 (elmo-imap4-send-command process-buffer process "capability")
-	 (setq elmo-imap4-server-capability
-	       (elmo-imap4-parse-capability
-		(elmo-imap4-read-response process-buffer process)))
-	 (setq capability elmo-imap4-server-capability)
-	 (if (eq ssl 'starttls)
-	     (if (and (memq 'starttls capability)
-		      (progn
-			(elmo-imap4-send-command process-buffer process "starttls")
-			(setq response
-			      (elmo-imap4-read-response process-buffer process)))
-		      
-		      (string-match 
-		       (concat "^\\(" elmo-imap4-seq-prefix 
-			       (int-to-string elmo-imap4-seqno)
-			       "\\|\\*\\) OK")
-		       response))
-		 (starttls-negotiate process)
-	       (error "STARTTLS aborted")))
-	 (if (or (and (string= "auth" auth)
-		      (not (memq 'auth=login capability)))
-		 (and (string= "cram-md5" auth)
-		      (not (memq 'auth=cram-md5 capability)))
-		 (and (string= "digest-md5" auth)
-		      (not (memq 'auth=digest-md5 capability))))
-	     (if (or elmo-imap4-force-login
-		     (y-or-n-p 
-		      (format 
-		       "There's no %s capability in server. continue?" auth)))
-		 (setq auth "login")
-	       (error "Login aborted")))
-	 (cond 
-	  ((string= "auth" auth)
-	   (elmo-imap4-send-command
-	    process-buffer process "authenticate login" 'no-lock)
-	   ;; Base64 
-	   (when (null (elmo-imap4-read-response process-buffer process t))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (elmo-imap4-send-string
-	    process-buffer process (elmo-base64-encode-string user))
-	   (when (null (elmo-imap4-read-response process-buffer process t))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (elmo-imap4-send-string
-	    process-buffer process (elmo-base64-encode-string passphrase))
-	   (when (null (elmo-imap4-read-response process-buffer process))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (setq ret-val (cons process-buffer process)))
-	  ((string= "cram-md5" auth)
-	   (elmo-imap4-send-command 
-	    process-buffer process "authenticate cram-md5" 'no-lock)
-	   (when (null (setq response 
-			     (elmo-imap4-read-response 
-			      process-buffer process t)))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (setq response (cadr (split-string response " ")))
-	   (elmo-imap4-send-string
-	    process-buffer process 
-	    (elmo-base64-encode-string
-	     (sasl-cram-md5 user passphrase 
-			    (elmo-base64-decode-string response))))
-	   (when (null (elmo-imap4-read-response process-buffer process))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (setq ret-val (cons process-buffer process)))
-	  ((string= "digest-md5" auth)
-	   (elmo-imap4-send-command 
-	    process-buffer process "authenticate digest-md5" 'no-lock)
-	   (when (null (setq response
-			     (elmo-imap4-read-response 
-			      process-buffer process t)))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (setq response (cadr (split-string response " ")))
-	   (elmo-imap4-send-string
-	    process-buffer process
-	    (elmo-base64-encode-string
-	     (sasl-digest-md5-digest-response
-	      (elmo-base64-decode-string response)
-	      user passphrase "imap" host)
-	     'no-line-break))
-	   (when (null (elmo-imap4-read-response
-			process-buffer process t))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (elmo-imap4-send-string process-buffer process "")
-	   (when (null (elmo-imap4-read-response process-buffer process))
-	     (setq ret-val (cons nil process))
-	     (throw 'done nil))
-	   (setq ret-val (cons process-buffer process)))
-	  (t ;; not auth... try login
-	   (elmo-imap4-send-command 
-	    process-buffer process
-	    (list "login " (elmo-imap4-userid user) " " (elmo-imap4-password passphrase))
-	    nil 'no-log) ;; No LOGGING.
-	   (if (null (elmo-imap4-read-response process-buffer process))
-	       (setq ret-val (cons nil process))
-	     (setq ret-val (cons process-buffer process)))))
-	 ;; get namespace of server if possible.
-	 (when (memq 'namespace elmo-imap4-server-capability)
-	   (elmo-imap4-send-command process-buffer process "namespace")
-	   (setq elmo-imap4-server-namespace
-		 (elmo-imap4-parse-namespace
-		  (elmo-imap4-parse-response
-		   (elmo-imap4-read-response process-buffer process))))))))
-    ret-val))
+  (let (process error)
+    (setq error
+	  (catch 'elmo-imap4-error
+	    (save-excursion
+	      (setq process
+		    (elmo-imap4-open-connection-1 host port user auth type)))
+	    nil))
+    (when error
+      (and (elmo-imap4-error-process error)
+	   (delete-process (elmo-imap4-error-process error)))
+      (cond ((eq (elmo-imap4-error-type error) 'connection)
+	     nil)
+	    ((eq (elmo-imap4-error-type error) 'authenticate)
+	     (and (elmo-imap4-error-process error)
+		  (with-current-buffer (process-buffer
+					(elmo-imap4-error-process error))
+		    (elmo-remove-passwd elmo-imap4-password-key)))))
+      (error "Failed to open %s@%s: %s" user host
+	     (elmo-imap4-error-message error)))
+    process))
+
+(defun elmo-imap4-open-connection-1 (host port user auth type)
+  "Open IMAP connection to HOST on PORT for USER.
+Return nil if connection failed."
+  (let ((process nil) response capability mechanism)
+    (as-binary-process
+     (setq process
+	   (elmo-open-network-stream
+	    "IMAP" (format " *IMAP session to %s:%d" host port)
+	    host port type)))
+    (or process
+	(throw 'elmo-imap4-error
+	       (elmo-imap4-error 'connection nil
+				 "Connection failed.")))
+    (set-buffer (process-buffer process))
+    (elmo-set-buffer-multibyte nil)
+    (buffer-disable-undo)
+    (make-variable-buffer-local 'elmo-imap4-server-capability)
+    (make-variable-buffer-local 'elmo-imap4-lock)
+    (make-local-variable 'elmo-imap4-read-point)
+    (setq elmo-imap4-read-point (point-min))
+    (make-local-variable 'elmo-imap4-password-key)
+    (setq elmo-imap4-password-key (format "IMAP4:%s/%s@%s:%d"
+ 					  user
+					  (symbol-name (or auth "plain"))
+					  host
+					  port
+					  (elmo-network-stream-type-spec-string
+					   type)))
+    (erase-buffer)
+    (set-process-filter process 'elmo-imap4-process-filter)
+    ;; flush connections when exiting...
+    (setq response
+	  (elmo-imap4-read-response (current-buffer) process t))
+    (unless (string-match "^\\* PREAUTH" response)
+      (elmo-imap4-send-command (current-buffer) process "capability")
+      (setq elmo-imap4-server-capability
+	    (elmo-imap4-parse-capability
+	     (elmo-imap4-read-response (current-buffer) process))
+	    capability elmo-imap4-server-capability)
+      (when (eq (elmo-network-stream-type-symbol type) 'starttls)
+	(or (memq 'starttls capability)
+	    (throw 'elmo-imap4-error
+		   (elmo-imap4-error
+		    'connection
+		    process
+		    "There's no STARTTLS support in server.")))
+	(elmo-imap4-send-command (current-buffer) process "starttls")
+	(setq response
+	      (elmo-imap4-read-response (current-buffer) process))
+	(if (string-match 
+	     (concat "^\\(" elmo-imap4-seq-prefix 
+		     (int-to-string elmo-imap4-seqno)
+		     "\\|\\*\\) OK")
+	     response)
+	    (starttls-negotiate process)))
+      (unless (or (not auth)
+		  (and (memq (intern (format "auth=%s" auth))
+			     capability)
+		       (setq mechanism
+			     (assq auth elmo-imap4-authenticator-alist))))
+	(if (or elmo-imap4-force-login
+		(y-or-n-p
+		 (format 
+		  "There's no %s capability in server. continue?" auth)))
+	    (progn
+	      (setq auth nil)
+	      (setq elmo-imap4-password-key
+		    (format "IMAP4:%s/%s@%s:%d"
+			    user
+			    (symbol-name (or auth 'plain))
+			    host
+			    port
+			    (elmo-network-stream-type-spec-string
+			     type))))
+	  (throw 'elmo-imap4-error
+		 (cons process "There's no AUTHENTICATE mechanism."))))
+      (if auth
+	  (funcall (nth 1 mechanism) (current-buffer) process user)
+	(elmo-imap4-login (current-buffer) process user)));; try login
+    ;; get namespace of server if possible.
+    (when (memq 'namespace elmo-imap4-server-capability)
+      (elmo-imap4-send-command (current-buffer) process "namespace")
+      (setq elmo-imap4-server-namespace
+	    (elmo-imap4-parse-namespace
+	     (elmo-imap4-parse-response
+	      (elmo-imap4-read-response (current-buffer) process)))))
+    process))
 	    
 (defun elmo-imap4-get-seqno ()
   (setq elmo-imap4-seqno (+ 1 elmo-imap4-seqno)))
@@ -1471,16 +1557,6 @@ Return nil if connection failed."
 	  (process-send-string process cmdstr))
       (process-send-string process "\r\n"))
       ))
-
-(defun elmo-imap4-send-string (buffer process string)
-  "Send STRING to server."
-  (save-excursion
-    (set-buffer buffer)
-    (erase-buffer)
-    (goto-char (point-min))
-    (setq elmo-imap4-read-point (point))
-    (process-send-string process string)
-    (process-send-string process "\r\n")))
 
 (defun elmo-imap4-read-part (folder msg part)
   (save-excursion
@@ -1744,7 +1820,8 @@ Return nil if connection failed."
 			       process
 			       (list 
 				"status "
-				(elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+				(elmo-imap4-mailbox
+				 (elmo-imap4-spec-mailbox spec))
 				" (unseen messages)"))
       (setq response (elmo-imap4-read-response 
 		      (process-buffer process) process))
@@ -1761,7 +1838,11 @@ Return nil if connection failed."
 
 (defun elmo-imap4-port-label (spec)
   (concat "imap4"
-	  (if (nth 6 spec) "!ssl" "")))
+	  (if (elmo-imap4-spec-stream-type spec)
+	      (concat "!" (symbol-name
+			   (elmo-network-stream-type-symbol
+			    (elmo-imap4-spec-stream-type spec)))))))
+	      
 
 (defsubst elmo-imap4-portinfo (spec)
   (list (elmo-imap4-spec-hostname spec) (elmo-imap4-spec-port spec)))

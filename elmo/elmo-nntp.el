@@ -80,12 +80,12 @@ Don't cache if nil.")
 (put 'elmo-nntp-setting 'lisp-indent-function 1)
 
 (defmacro elmo-nntp-setting (spec &rest body)
-  (` (let* ((ssl (elmo-nntp-spec-ssl (, spec)))
+  (` (let* ((type (elmo-nntp-spec-stream-type (, spec)))
 	    (port (elmo-nntp-spec-port (, spec)))
 	    (user (elmo-nntp-spec-username (, spec)))
 	    (server (elmo-nntp-spec-hostname (, spec)))
 	    (folder (elmo-nntp-spec-group (, spec)))
-	    (connection (elmo-nntp-get-connection server user port ssl))
+	    (connection (elmo-nntp-get-connection server user port type))
 	    (buffer  (car connection))
 	    (process (cadr connection)))
        (,@ body))))
@@ -143,7 +143,7 @@ Don't cache if nil.")
 (defsubst elmo-nntp-max-number-precedes-list-active-p ()
   elmo-nntp-max-number-precedes-list-active)
 
-(defsubst elmo-nntp-folder-postfix (user server port ssl)
+(defsubst elmo-nntp-folder-postfix (user server port type)
   (concat
    (and user (concat ":" user))
    (if (and server
@@ -153,10 +153,9 @@ Don't cache if nil.")
 	    (null (eq port elmo-default-nntp-port)))
        (concat ":" (if (numberp port)
 		       (int-to-string port) port)))
-   (unless (eq ssl elmo-default-nntp-ssl)
-     (if (eq ssl 'starttls)
-	 "!!"
-       (if ssl "!")))))
+   (unless (eq (elmo-network-stream-type-symbol type)
+	       elmo-default-nntp-stream-type)
+     (elmo-network-stream-type-spec-string type))))
 
 (defun elmo-nntp-flush-connection ()
   (interactive)
@@ -170,12 +169,12 @@ Don't cache if nil.")
       (setq cache (cdr cache)))
     (setq elmo-nntp-connection-cache nil)))
 
-(defun elmo-nntp-get-connection (server user port ssl)
+(defun elmo-nntp-get-connection (server user port type)
   "Return opened NNTP connection to SERVER on PORT for USER."
   (let* ((user-at-host (format "%s@%s" user server))
 	 (user-at-host-on-port (concat
 				user-at-host ":" (int-to-string port)
-				(if (eq ssl 'starttls) "!!" (if ssl "!"))))
+				(elmo-network-stream-type-spec-string type)))
 	 entry connection result buffer process proc-stat)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
@@ -192,7 +191,7 @@ Don't cache if nil.")
 	  (setq entry nil)))
     (if entry
 	(cdr entry)
-      (setq result (elmo-nntp-open-connection server user port ssl))
+      (setq result (elmo-nntp-open-connection server user port type))
       (if (null result)
 	  (error "Connection failed"))
       (setq buffer (car result))
@@ -288,8 +287,8 @@ Don't cache if nil.")
 	(insert-buffer-substring buffer start (- end 3))
 	(elmo-delete-cr-get-content-type)))))
 
-(defun elmo-nntp-goto-folder (server folder user port ssl)
-  (let* ((connection (elmo-nntp-get-connection server user port ssl))
+(defun elmo-nntp-goto-folder (server folder user port type)
+  (let* ((connection (elmo-nntp-get-connection server user port type))
 	 (buffer  (car connection))
 	 (process (cadr connection))
 	 (cwf     (caddr connection)))
@@ -348,7 +347,7 @@ Don't cache if nil.")
     (save-excursion
       (set-buffer tmp-buffer)
       (if (and folder
-	       (elmo-nntp-goto-folder server folder user port ssl))
+	       (elmo-nntp-goto-folder server folder user port type))
 	  (setq ret-val (list folder))) ;; add top newsgroups
       (unless (setq response (elmo-nntp-list-folders-get-cache
 			      folder tmp-buffer))
@@ -431,11 +430,11 @@ Don't cache if nil.")
 	(setq append-serv (concat "@" server)))
       (unless (eq port elmo-default-nntp-port)
 	(setq append-serv (concat append-serv ":" (int-to-string port))))
-      (unless (eq ssl elmo-default-nntp-ssl)
-	(if ssl
-	    (setq append-serv (concat append-serv "!")))
-	(if (eq ssl 'starttls)
-	    (setq append-serv (concat append-serv "!"))))
+      (unless (eq (elmo-network-stream-type-symbol type)
+		  elmo-default-nntp-stream-type)
+	(setq append-serv
+	      (concat append-serv
+		      (elmo-network-stream-type-spec-string type))))
       (mapcar '(lambda (fld)
 		 (if (consp fld)
 		     (list (concat "-" (car fld)
@@ -509,7 +508,7 @@ Don't cache if nil.")
   (let* ((port (elmo-nntp-spec-port spec))
 	 (user (elmo-nntp-spec-username spec))
 	 (server (elmo-nntp-spec-hostname spec))
-	 (ssl (elmo-nntp-spec-ssl spec))
+	 (type  (elmo-nntp-spec-stream-type spec))
 	 (folder (elmo-nntp-spec-group spec))
 	 (dir (elmo-msgdb-expand-path nil spec))
 	 (killed-list (and elmo-use-killed-list
@@ -517,7 +516,7 @@ Don't cache if nil.")
 	 number-alist end-num)
     (if elmo-nntp-groups-async
 	(let* ((fld (concat folder
-			    (elmo-nntp-folder-postfix user server port ssl)))
+			    (elmo-nntp-folder-postfix user server port type)))
 	       (entry (elmo-get-hash-val fld elmo-nntp-groups-hashtb)))
 	  (if entry
 	      (progn
@@ -538,7 +537,7 @@ Don't cache if nil.")
 		      (setq killed-list (cdr killed-list))))))
 		(cons end-num (car entry)))
 	    (error "No such newsgroup \"%s\"" fld)))
-      (let* ((connection (elmo-nntp-get-connection server user port ssl))
+      (let* ((connection (elmo-nntp-get-connection server user port type))
 	     (buffer  (car connection))
 	     (process (cadr connection))
 	     response e-num)
@@ -685,7 +684,7 @@ Don't cache if nil.")
 	     ret-val ov-str use-xover dir)
 	(if (and folder
 		 (not (string= cwf folder))
-		 (null (elmo-nntp-goto-folder server folder user port ssl)))
+		 (null (elmo-nntp-goto-folder server folder user port type)))
 	    (error "group %s not found" folder))
 	(when (setq use-xover (elmo-nntp-xover-p server port))
 	  (setq beg-num (car numlist)
@@ -788,7 +787,7 @@ Don't cache if nil.")
 	      (if (and folder
 		       (not (string= cwf folder))
 		       (null (elmo-nntp-goto-folder
-			      server folder user port ssl)))
+			      server folder user port type)))
 		  (error "group %s not found" folder))
 	      (elmo-nntp-send-command buffer process
 				      (format "list active %s" folder))
@@ -845,16 +844,16 @@ Don't cache if nil.")
 ;      (kill-buffer tmp-buffer)
       ret-val)))
 
-(defun elmo-nntp-get-overview (server beg end folder user port ssl)
+(defun elmo-nntp-get-overview (server beg end folder user port type)
   (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port ssl))
+    (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection))
 ;	   (cwf     (caddr connection))	 
 	   response errmsg ov-str)  
       (catch 'done
 	(if folder
-	    (if (null (elmo-nntp-goto-folder server folder user port ssl))
+	    (if (null (elmo-nntp-goto-folder server folder user port type))
 		(progn
 		  (setq errmsg (format "group %s not found." folder))
 		  (throw 'done nil))))
@@ -879,11 +878,11 @@ Don't cache if nil.")
 	ov-str))))
 
 
-(defun elmo-nntp-get-message (server user number folder outbuf port ssl)
+(defun elmo-nntp-get-message (server user number folder outbuf port type)
   "Get nntp message on FOLDER at SERVER. 
 Returns message string."
   (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port ssl))
+    (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection))
 	   (cwf     (caddr connection))	 
@@ -891,7 +890,7 @@ Returns message string."
       (catch 'done
 	(if (and folder
 		 (not (string= cwf folder)))
-	    (if (null (elmo-nntp-goto-folder server folder user port ssl))
+	    (if (null (elmo-nntp-goto-folder server folder user port type))
 		(progn
 		  (setq errmsg (format "group %s not found." folder))
 		  (throw 'done nil))))
@@ -918,10 +917,10 @@ Returns message string."
 	    nil))
       response)))
 
-(defun elmo-nntp-get-newsgroup-by-msgid (msgid server user port ssl)
+(defun elmo-nntp-get-newsgroup-by-msgid (msgid server user port type)
   "Get nntp header string."
   (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port ssl))
+    (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection)))
       (elmo-nntp-send-command buffer process 
@@ -931,7 +930,7 @@ Returns message string."
       (set-buffer buffer)
       (std11-field-body "Newsgroups"))))
 
-(defun elmo-nntp-open-connection (server user portnum ssl)
+(defun elmo-nntp-open-connection (server user portnum type)
   "Open NNTP connection to SERVER on PORTNUM for USER.
 Return a cons cell of (session-buffer . process).
 Return nil if connection failed."
@@ -950,7 +949,7 @@ Return nil if connection failed."
 	 (elmo-set-buffer-multibyte nil)
 	 (erase-buffer))
        (setq process
-	     (elmo-open-network-stream "NNTP" process-buffer host port ssl))
+	     (elmo-open-network-stream "NNTP" process-buffer host port type))
        (and (null process) (throw 'done nil))
        (set-process-filter process 'elmo-nntp-process-filter)
        ;; flush connections when exiting...?
@@ -965,7 +964,7 @@ Return nil if connection failed."
 	 (if elmo-nntp-send-mode-reader
 	     (elmo-nntp-send-mode-reader process-buffer process))
  	 ;; starttls
- 	 (if (eq ssl 'starttls)
+ 	 (if (eq (elmo-network-stream-type-symbol type) 'starttls)
  	     (if (progn
 		   (elmo-nntp-send-command process-buffer process "starttls")
 		   (elmo-nntp-read-response process-buffer process))
@@ -1012,7 +1011,7 @@ Return nil if connection failed."
 			 (elmo-nntp-spec-group spec)
 			 outbuf 
 			 (elmo-nntp-spec-port spec)
-			 (elmo-nntp-spec-ssl spec)))
+			 (elmo-nntp-spec-stream-type spec)))
 
 ;(defun elmo-msgdb-nntp-overview-create-range (spec beg end mark)
 ;    (elmo-nntp-overview-create-range hostname beg end mark folder)))
@@ -1028,7 +1027,7 @@ Return nil if connection failed."
 	  (elmo-nntp-get-connection 
 	   hostname 
 	   elmo-default-nntp-user
-	   elmo-default-nntp-port elmo-default-nntp-ssl))
+	   elmo-default-nntp-port elmo-default-nntp-stream-type))
 	 (buffer (car connection))
 	 (process (cadr connection))
 	 response has-message-id
@@ -1139,7 +1138,7 @@ Return nil if connection failed."
 	    (unless (setq key (assoc (cons buffer process) connection-keys))
 	      (erase-buffer)
 	      (setq key (cons (cons buffer process)
-			      (vector 0 server user port ssl)))
+			      (vector 0 server user port type)))
 	      (setq connection-keys (nconc connection-keys (list key))))
 	    (elmo-nntp-send-command buffer 
 				    process 
@@ -1168,7 +1167,7 @@ Return nil if connection failed."
 	     (server  (aref key 1))
 	     (user    (aref key 2))
 	     (port    (aref key 3))
-	     (ssl     (aref key 4))
+	     (type    (aref key 4))
 	     (hashtb (or elmo-nntp-groups-hashtb
 			 (setq elmo-nntp-groups-hashtb
 			       (elmo-make-hash count)))))
@@ -1177,7 +1176,7 @@ Return nil if connection failed."
 	  (set-buffer cur)
 	  (goto-char (point-min))
 	  (let ((case-replace nil)
-		(postfix (elmo-nntp-folder-postfix user server port ssl)))
+		(postfix (elmo-nntp-folder-postfix user server port type)))
 	    (if (not (string= postfix ""))
 		(save-excursion
 		  (replace-regexp "^\\(211 [0-9]+ [0-9]+ [0-9]+ [^ \n]+\\).*$"
@@ -1389,7 +1388,10 @@ Return nil if connection failed."
 
 (defun elmo-nntp-port-label (spec)
   (concat "nntp"
-	  (if (elmo-nntp-spec-ssl spec) "!ssl" "")))
+	  (if (elmo-nntp-spec-stream-type spec)
+	      (concat "!" (symbol-name
+			   (elmo-network-stream-type-symbol
+			    (elmo-nntp-spec-stream-type spec)))))))
 
 (defsubst elmo-nntp-portinfo (spec)
   (list (elmo-nntp-spec-hostname spec) 

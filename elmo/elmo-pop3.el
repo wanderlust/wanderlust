@@ -112,7 +112,7 @@
 	 (server (elmo-pop3-spec-hostname spec))
 	 (port   (elmo-pop3-spec-port spec))
 	 (auth   (elmo-pop3-spec-auth spec))
-	 (ssl    (elmo-pop3-spec-ssl spec))
+	 (type   (elmo-pop3-spec-stream-type spec))
 	 (user-at-host (format "%s@%s" user server))
 	 entry connection result buffer process proc-stat response
 	 user-at-host-on-port)
@@ -120,7 +120,7 @@
 	(error "Unplugged"))
     (setq user-at-host-on-port
 	  (concat user-at-host ":" (int-to-string port)
-		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
+		  (elmo-network-stream-type-spec-string type)))
     (setq entry (assoc user-at-host-on-port elmo-pop3-connection-cache))
     (if (and entry
 	     (memq (setq proc-stat
@@ -138,7 +138,7 @@
 	(setq result
 	      (elmo-pop3-open-connection
 	       server user port auth
-	       (elmo-get-passwd user-at-host) ssl))
+	       (elmo-get-passwd user-at-host) type))
 	(if (null result)
 	    (error "Connection failed"))
 	(setq buffer (car result))
@@ -240,7 +240,7 @@
     (goto-char (point-max))
     (insert output)))
 
-(defun elmo-pop3-open-connection (server user port auth passphrase ssl)
+(defun elmo-pop3-open-connection (server user port auth passphrase type)
   "Open POP3 connection to SERVER on PORT for USER.
 Return a cons cell of (session-buffer . process).
 Return nil if connection failed."
@@ -256,7 +256,7 @@ Return nil if connection failed."
 	 (elmo-set-buffer-multibyte nil)       	 
 	 (erase-buffer))
        (setq process
-	     (elmo-open-network-stream "POP" process-buffer host port ssl))
+	     (elmo-open-network-stream "POP" process-buffer host port type))
        (and (null process) (throw 'done nil))
        (set-process-filter process 'elmo-pop3-process-filter)
        ;; flush connections when exiting...
@@ -268,7 +268,7 @@ Return nil if connection failed."
 			   (elmo-pop3-read-response process-buffer process t)))
 	   (setq ret-val (cons nil process))
 	   (throw 'done nil))
-	 (when (eq ssl 'starttls)
+	 (when (eq (elmo-network-stream-type-symbol type) 'starttls)
 	   (elmo-pop3-send-command process-buffer process "stls")
 	   (string-match "^\+OK" 
 			 (elmo-pop3-read-response 
@@ -799,7 +799,10 @@ Return nil if connection failed."
 
 (defun elmo-pop3-port-label (spec)
   (concat "pop3"
-	  (if (elmo-pop3-spec-ssl spec) "!ssl" "")))
+	  (if (elmo-pop3-spec-stream-type spec)
+	      (concat "!" (symbol-name
+			   (elmo-network-stream-type-symbol
+			    (elmo-pop3-spec-stream-type spec)))))))
 
 (defsubst elmo-pop3-portinfo (spec)
   (list (elmo-pop3-spec-hostname spec) 

@@ -277,14 +277,16 @@ even an operation concerns the unplugged folder."
 		'(imap4 nntp pop3 filter pipe))
 	  (and (elmo-multi-p folder) (not (elmo-folder-local-p folder))))
       (if elmo-enable-disconnected-operation
-	  (let* ((number-alist (elmo-msgdb-number-load
-				(elmo-msgdb-expand-path folder)))
+	  (let* ((path (elmo-msgdb-expand-path folder))
+		 (number-alist (elmo-msgdb-number-load path))
 		 (number-list (mapcar 'car number-alist))
 		 (append-list (elmo-dop-append-list-load folder))
 		 (append-num (length append-list))
+		 (killed (and elmo-use-killed-list
+			      (elmo-msgdb-killed-list-load path)))
 		 alreadies
-		 (i 0)
-		 max-num)
+		 max-num
+		 (i 0))
 	    (while append-list
 	      (if (rassoc (car append-list) number-alist)
 		  (setq alreadies (append alreadies 
@@ -299,7 +301,12 @@ even an operation concerns the unplugged folder."
 		    (append number-list
 			    (list (+ max-num i 1))))
 	      (setq i (+ 1 i)))
-	    number-list)
+	    (if killed
+		(delq nil
+		      (mapcar (lambda (number)
+				(unless (memq number killed) number))
+			      number-list))
+	      number-list))
 	(error "Unplugged"))
     ;; not imap4 folder...list folder
     (elmo-call-func folder "list-folder")))

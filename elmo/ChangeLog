@@ -1,3 +1,67 @@
+2000-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-default-imap4-stream-type): New variable.
+	(elmo-default-nntp-stream-type): Ditto.
+	(elmo-default-pop3-stream-type): Ditto.
+	(elmo-network-stream-type-alist): Ditto.
+	(elmo-default-imap4-ssl): Abolished.
+	(elmo-default-nntp-ssl): Ditto.
+	(elmo-default-pop3-ssl): Ditto.
+
+	* elmo-util.el: (toplevel): Removed needless requires.
+	(elmo-network-get-spec): Use `elmo-network-stream-type-alist'.
+	(elmo-open-network-stream): Open network stream according to
+	the value of `elmo-network-stream-type-alist'.
+	(elmo-get-network-stream-type): New function.
+	(elmo-network-stream-type-spec-string): New macro.
+	(elmo-network-stream-type-symbol): Ditto.
+	(elmo-network-stream-type-function): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Follow up changes for
+	network-stream-type. All other related portions are changed.
+	(elmo-pop3-open-connection): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-setting): Follow up changes for
+	network-stream-type. All other related portions are changed.
+
+	* elmo-imap4.el (elmo-imap4-get-connection): Follow up changes for
+	network-stream-type.All other related portions are changed.
+	(elmo-imap4-error): New macro.
+	(elmo-imap4-error-type): Ditto.
+	(elmo-imap4-error-process): Ditto.
+	(elmo-imap4-error-message): Ditto.
+	(elmo-imap4-auth-login): Use `elmo-imap4-error'.
+	(elmo-imap4-auth-cram-md5): Ditto.
+	(elmo-imap4-auth-digest-md5): Ditto.
+	(elmo-imap4-login): Ditto.
+	(elmo-imap4-open-connection): Remove password entry if authentication
+	was in vain.
+	(elmo-imap4-user-at-host): Abolished.
+	(elmo-imap4-password-key): New buffer local variable.
+	(elmo-imap4-open-connection-1): Set value of `elmo-imap4-password-key'
+	using protocol, port, auth and stream-type.
+
+	* elmo-dop.el (elmo-dop-list-folder): Use killed list.
+
+2000-08-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-vars.el (elmo-default-imap4-authenticate-type): Default to nil.
+
+	* elmo-util.el (elmo-imap4-get-spec): Assume auth as symbol.
+
+	* elmo-imap4.el (elmo-imap4-user-at-host): New variable.
+	(elmo-imap4-authenticator-alist): New variable.
+	(elmo-imap4-open-connection-1): Rename from
+	elmo-imap4-open-connection.
+	(elmo-imap4-open-connection): Abolish 5th argument `passphrase';
+	only wraps elmo-imap4-open-connection-1.
+	(elmo-imap4-get-connection): Abolish local variable buffer, proc-stat,
+	user-at-host.
+	(elmo-imap4-auth-login): New function.
+	(elmo-imap4-auth-cram-md5): New function.
+	(elmo-imap4-auth-digest-md5): New function.
+	(elmo-imap4-login): New function.
+
 2000-08-12  Kenichi OKADA <okada@opaopa.org>
 
 	* elmo-maildir.el (elmo-maildir-delete-folder): Set argument of the

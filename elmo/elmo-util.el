@@ -36,16 +36,6 @@
 (require 'eword-decode)
 (require 'utf7)
 
-(eval-when-compile 
-  (condition-case nil 
-      (progn
-	(require 'ssl)
-	(require 'starttls))
-    (error))
-  (defun-maybe starttls-negotiate (a))
-  (defun-maybe starttls-open-stream (a b c d))
-  (defun-maybe open-ssl-stream (a b c d)))
-
 (defmacro elmo-set-buffer-multibyte (flag)
   "Set the multibyte flag of the current buffer to FLAG."
   (cond ((boundp 'MULE)
@@ -287,9 +277,10 @@ File content is encoded with MIME-CHARSET."
       (utf7-encode-string string 'imap)
     string))
 
-(defun elmo-network-get-spec (folder default-server default-port default-tls)
-  (let (server port tls)
-    (if (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!*\\)$" folder)
+(defun elmo-network-get-spec (folder default-server default-port
+				     default-stream-type)
+  (let (server port type)
+    (if (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
 	(progn
 	  (if (match-beginning 1)
 	      (setq server (elmo-match-substring 1 folder 1))
@@ -298,23 +289,21 @@ File content is encoded with MIME-CHARSET."
 	      (setq port 
 		    (string-to-int (elmo-match-substring 2 folder 1)))
 	    (setq port default-port))
-	  (setq tls (elmo-match-string 3 folder))
-	  (if (and (match-beginning 3)
-		   (> (length tls) 0))
-	      (setq tls (if (= 2 (length tls)) 'starttls
-			  (string= tls "!")))
-	    (setq tls default-tls))
+	  (if (match-beginning 3)
+	      (setq type (assoc (elmo-match-string 3 folder)
+				elmo-network-stream-type-alist))
+	    (setq type default-stream-type))
 	  (setq folder (substring folder 0 (match-beginning 0))))
       (setq server default-server
 	    port   default-port
-	    tls    default-tls))
-    (cons folder (list server port tls))))
+	    type   (elmo-get-network-stream-type default-stream-type)))
+    (cons folder (list server port type))))
 
 (defun elmo-imap4-get-spec (folder)
-  (let ((default-user    elmo-default-imap4-user)
-	(default-server  elmo-default-imap4-server)
-	(default-port    elmo-default-imap4-port)
-	(default-tls     elmo-default-imap4-ssl)
+  (let ((default-user        elmo-default-imap4-user)
+	(default-server      elmo-default-imap4-server)
+	(default-port        elmo-default-imap4-port)
+	(default-stream-type elmo-default-imap4-stream-type)
 	spec mailbox user auth)
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
       ;; case: default-imap4-server is specified like 
@@ -322,7 +311,7 @@ File content is encoded with MIME-CHARSET."
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
     (setq spec (elmo-network-get-spec 
-		folder default-server default-port default-tls))
+		folder default-server default-port default-stream-type))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(%\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
@@ -335,7 +324,7 @@ File content is encoded with MIME-CHARSET."
 		       (elmo-match-substring 3 folder 1)
 		     default-user))
 	(setq auth (if (match-beginning 4)
-		       (elmo-match-substring 4 folder 1)
+		       (intern (elmo-match-substring 4 folder 1))
 		     elmo-default-imap4-authenticate-type))
 	(append (list 'imap4 
 		      (elmo-imap4-encode-folder-string mailbox)
@@ -357,7 +346,7 @@ File content is encoded with MIME-CHARSET."
 (defsubst elmo-imap4-spec-port (spec)
   (nth 5 spec))
 
-(defsubst elmo-imap4-spec-ssl (spec)
+(defsubst elmo-imap4-spec-stream-type (spec)
   (nth 6 spec))
 
 (defalias 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
@@ -377,7 +366,7 @@ File content is encoded with MIME-CHARSET."
     (setq spec (elmo-network-get-spec folder
 				      elmo-default-nntp-server
 				      elmo-default-nntp-port
-				      elmo-default-nntp-ssl))
+				      elmo-default-nntp-stream-type))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(-\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
@@ -407,7 +396,7 @@ File content is encoded with MIME-CHARSET."
 (defsubst elmo-nntp-spec-port (spec)
   (nth 4 spec))
 
-(defsubst elmo-nntp-spec-ssl (spec)
+(defsubst elmo-nntp-spec-stream-type (spec)
   (nth 5 spec))
 
 (defun elmo-localdir-get-spec (folder)
@@ -498,7 +487,7 @@ File content is encoded with MIME-CHARSET."
     (setq spec (elmo-network-get-spec folder
 				      elmo-default-pop3-server
 				      elmo-default-pop3-port
-				      elmo-default-pop3-ssl))
+				      elmo-default-pop3-stream-type))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(&\\)\\([^:/!]*\\)\\(/[^/:@!]+\\)?"
@@ -525,7 +514,7 @@ File content is encoded with MIME-CHARSET."
 (defsubst elmo-pop3-spec-port (spec)
   (nth 4 spec))
 
-(defsubst elmo-pop3-spec-ssl (spec)
+(defsubst elmo-pop3-spec-stream-type (spec)
   (nth 5 spec))
 
 (defun elmo-internal-get-spec (folder)
@@ -733,6 +722,11 @@ File content is encoded with MIME-CHARSET."
       (kill-buffer tmp-buffer)
       ret-val)))
 
+(defun elmo-passwd-alist-clear ()
+  "Clear password cache."
+  (interactive)
+  (setq elmo-passwd-alist nil))
+  
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
@@ -755,29 +749,29 @@ File content is encoded with MIME-CHARSET."
         (message (format "%s is not writable." filename)))
       (kill-buffer tmp-buffer))))
 
-(defun elmo-get-passwd (user-at-host)
+(defun elmo-get-passwd (key)
   "Get password from password pool."
-  (let (data pass)
+  (let (pair pass)
     (if (not elmo-passwd-alist)
 	(setq elmo-passwd-alist (elmo-passwd-alist-load)))
-    (setq data (assoc user-at-host elmo-passwd-alist))
-    (if data
-	(elmo-base64-decode-string (cdr data))
+    (setq pair (assoc key elmo-passwd-alist))
+    (if pair
+	(elmo-base64-decode-string (cdr pair))
       (setq pass (elmo-read-passwd (format "Password for %s: " 
-					   user-at-host) t))
+					   key) t))
       (setq elmo-passwd-alist
 	    (append elmo-passwd-alist
-		    (list (cons user-at-host 
+		    (list (cons key 
 				(elmo-base64-encode-string pass)))))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
-			  (` (lambda () (elmo-remove-passwd (, user-at-host))))))
+			  (` (lambda () (elmo-remove-passwd (, key))))))
       pass)))
 
-(defun elmo-remove-passwd (user-at-host)
+(defun elmo-remove-passwd (key)
   "Remove password from password pool (for failure)."
   (let (pass-cons)
-    (if (setq pass-cons (assoc user-at-host elmo-passwd-alist))
+    (if (setq pass-cons (assoc key elmo-passwd-alist))
 	(progn
 	  (unwind-protect
 	      (fillarray (cdr pass-cons) 0))
@@ -1513,21 +1507,43 @@ Otherwise treat \\ in NEWTEXT string as special:
     (and (eq (car diff) 0)
 	 (< diff-time (nth 1 diff)))))
 
-(defun elmo-open-network-stream (name buffer host service ssl)
+
+(defun elmo-get-network-stream-type (stream-type)
+  (let ((ali elmo-network-stream-type-alist)
+	entry)
+    (while ali
+      (when (eq (car (cdr (car ali))) stream-type)
+	(setq entry (car ali)
+	      ali nil))
+      (setq ali (cdr ali)))
+    entry))
+
+(defmacro elmo-network-stream-type-spec-string (stream-type)
+  (` (nth 0 (, stream-type))))
+
+(defmacro elmo-network-stream-type-symbol (stream-type)
+  (` (nth 1 (, stream-type))))
+
+(defmacro elmo-network-stream-type-feature (stream-type)
+  (` (nth 2 (, stream-type))))
+
+(defmacro elmo-network-stream-type-function (stream-type)
+  (` (nth 3 (, stream-type))))
+
+(defun elmo-open-network-stream (name buffer host service stream-type)
   (let ((auto-plugged (and elmo-auto-change-plugged
 			   (> elmo-auto-change-plugged 0)))
 	process)
-    (if (eq ssl 'starttls)
-	(require 'starttls)
-      (if ssl (require 'ssl)))
+    (if (and stream-type
+	     (elmo-network-stream-type-feature stream-type))
+	(require (elmo-network-stream-type-feature stream-type)))
     (condition-case err
  	(let (process-connection-type)
 	  (setq process
-		(if (eq ssl 'starttls)
-		    (starttls-open-stream name buffer host service)
-		  (if ssl
-		      (open-ssl-stream name buffer host service)
-		    (open-network-stream name buffer host service)))))
+		(if stream-type
+		    (funcall (elmo-network-stream-type-function stream-type)
+			     name buffer host service)
+		  (open-network-stream name buffer host service))))
       (error
        (when auto-plugged
 	 (elmo-set-plugged nil host service (current-time))

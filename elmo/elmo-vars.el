@@ -47,16 +47,17 @@
   "*Default IMAP4 mailbox.")
 (defvar elmo-default-imap4-server "localhost"
   "*Default IMAP4 server.")
-(defvar elmo-default-imap4-authenticate-type "auth"
-  "*Default Authentication type for IMAP4.") ; "auth" or "login"
+(defvar elmo-default-imap4-authenticate-type 'login
+  "*Default Authentication type for IMAP4.")
 (defvar elmo-default-imap4-user (or (getenv "USER")
 				    (getenv "LOGNAME")
 				    (user-login-name))
   "*Default username for IMAP4.")
 (defvar elmo-default-imap4-port 143
   "*Default Port number of IMAP.")
-(defvar elmo-default-imap4-ssl nil
-  "*Non-nil forces using SSL by default.")
+(defvar elmo-default-imap4-stream-type nil
+  "*Default stream type for IMAP4.
+Any symbol value of `elmo-network-stream-type-alist'.")
 
 ;; POP3
 (defvar elmo-default-pop3-user (or (getenv "USER")
@@ -69,8 +70,9 @@
   "*Default Authentication type for POP3.") ; "apop" or "user"
 (defvar elmo-default-pop3-port 110
   "*Default POP3 port.")
-(defvar elmo-default-pop3-ssl nil
-  "*Non-nil forces using SSL by default.")
+(defvar elmo-default-pop3-stream-type nil
+  "*Default stream type for POP3.
+Any symbol value of `elmo-network-stream-type-alist'.")
 
 ;; NNTP
 (defvar elmo-default-nntp-server  "localhost"
@@ -79,8 +81,9 @@
   "*Default User of NNTP.  nil means no user authentication.")
 (defvar elmo-default-nntp-port 119
   "*Default Port number of NNTP.")
-(defvar elmo-default-nntp-ssl nil
-  "*Non-nil forces using SSL by default.")
+(defvar elmo-default-nntp-stream-type nil
+  "*Default stream type for NNTP.
+Any symbol value of `elmo-network-stream-type-alist'.")
 
 ;; Local
 (defvar elmo-localdir-folder-path "~/Mail"
@@ -252,6 +255,18 @@ If function, return value of function.")
     (?'  . internal)
     (?|  . pipe)
     (?.  . maildir)))
+
+(defvar elmo-network-stream-type-alist
+  '(("!"      ssl       ssl      open-ssl-stream)
+    ("!!"     starttls  starttls starttls-open-stream)
+    ("!socks" socks     socks    socks-open-network-stream))
+  "An alist of (SPEC-STRING SYMBOL FEATURE OPEN-STREAM-FUNCTION).
+SPEC-STRING is a string for stream-type spec (it must start with '!').
+SYMBOL is a symbol which indicates the name of the stream type.
+SYMBOL should be identical in this alist.
+FEATURE is a symbol of the feature for OPEN-STREAM-FUNCTION.
+OPEN-STREAM-FUNCTION is a function to open network stream.
+Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 
 (defvar elmo-debug nil)
 (defconst mmelmo-entity-buffer-name "*MMELMO-BUFFER*")
