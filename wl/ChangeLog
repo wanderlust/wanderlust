@@ -1,3 +1,7 @@
+2005-02-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-news.el.in: Set file variable `no-byte-compile'.
+
 2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (elmo-event-handler-flag-changed): Does not check

@@ -294,4 +294,8 @@
 (require 'product)
 (product-provide (provide 'wl-news) (require 'wl-version))
 
+
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
 ;;; wl-news.el ends here
