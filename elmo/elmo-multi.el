@@ -425,18 +425,32 @@
   ((folder elmo-multi-folder) &optional nohide)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
-	 numbers)
+	 list numbers)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq numbers (append
-		     numbers
-		     (mapcar
-		      (function
-		       (lambda (x)
-			 (+
-			  (* (elmo-multi-folder-divide-number-internal
-			      folder) cur-number) x)))
-		      (elmo-folder-list-messages-internal (car flds)))))
+      (setq list (elmo-folder-list-messages-internal (car flds)))
+      (setq numbers
+	    (append
+	     numbers
+	     (if (listp list)
+		 (mapcar
+		  (function
+		   (lambda (x)
+		     (+
+		      (* (elmo-multi-folder-divide-number-internal
+			  folder) cur-number) x)))
+		  list)
+	       ;; Use current list.
+	       (elmo-delete-if
+		(lambda (num)
+		  (not
+		   (eq cur-number (/ num
+				     (elmo-multi-folder-divide-number-internal
+				      folder)))))
+		(mapcar
+		 'car
+		 (elmo-msgdb-get-number-alist
+		  (elmo-folder-msgdb folder)))))))
       (setq flds (cdr flds)))
     numbers))
 
