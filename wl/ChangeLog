@@ -1,3 +1,7 @@
+2001-11-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-e21.el: Removed kludge for Emacs 21 prerelease versions.
+
 2001-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-message-buffer-prefetch-folder-type-list): New

@@ -72,18 +72,6 @@
   (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
-;; For Emacs 21.0.104 or earlier
-(defun-maybe make-mode-line-mouse-map (mouse function) "\
-Return a keymap with single entry for mouse key MOUSE on the mode line.
-MOUSE is defined to run function FUNCTION with no args in the buffer
-corresponding to the mode line clicked."
-  (let ((map (make-sparse-keymap)))
-    (define-key map (vector 'mode-line mouse) function)
-    map))
-
-;; `display-images-p' has not been available prior to Emacs 21.0.105.
-(defalias-maybe 'display-images-p 'display-graphic-p)
-
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
 
