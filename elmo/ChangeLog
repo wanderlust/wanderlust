@@ -1,5 +1,10 @@
 2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-localdir.el (elmo-folder-message-make-temp-files): Use
+	elmo-copy-file instead of elmo-add-name-to-file.
+
+	* elmo-nmz.el (elmo-folder-message-make-temp-files): Ditto.
+
 	* elmo-nmz.el (elmo-map-folder-list-message-locations): Allow
 	"file://..." index.
 

@@ -124,7 +124,7 @@
   (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (or start-number 0)))
     (dolist (number numbers)
-      (elmo-add-name-to-file
+      (elmo-copy-file
        (expand-file-name
 	(int-to-string number)
 	(elmo-localdir-folder-directory-internal folder))
