@@ -697,15 +697,6 @@
 (defvar wl-highlight-folder-closed-regexp " *\\(\\[\\+\\]\\)")
 (defvar wl-highlight-folder-leaf-regexp "[ ]*\\([-%\\+]\\)\\(.*\\):.*$")
 
-(defvar wl-highlight-summary-unread-regexp " *[0-9]+[^0-9]\\(!\\|U\\)")
-(defvar wl-highlight-summary-important-regexp " *[0-9]+[^0-9]\\$")
-(defvar wl-highlight-summary-new-regexp " *[0-9]+[^0-9]N")
-(defvar wl-highlight-summary-deleted-regexp " *[0-9]+D")
-(defvar wl-highlight-summary-refiled-regexp " *[0-9]+o")
-(defvar wl-highlight-summary-copied-regexp " *[0-9]+O")
-(defvar wl-highlight-summary-target-regexp " *[0-9]+\\*")
-;;(defvar wl-highlight-summary-thread-top-regexp " *[0-9]+[^0-9][^0-9]../..\(.*\)..:.. \\[")
-
 (defvar wl-highlight-citation-face-list
   '(wl-highlight-message-cited-text-1
     wl-highlight-message-cited-text-2
@@ -962,16 +953,7 @@ Faces used:
   wl-highlight-summary-deleted-face     messages mark as deleted
   wl-highlight-summary-refiled-face     messages mark as refiled
   wl-highlight-summary-copied-face      messages mark as copied
-  wl-highlight-summary-new-face         new messages
-
-Variables used:
-  wl-highlight-summary-unread-regexp    matches unread messages
-  wl-highlight-summary-important-regexp matches important messages
-  wl-highlight-summary-deleted-regexp   matches messages mark as deleted
-  wl-highlight-summary-refiled-regexp   matches messages mark as refiled
-  wl-highlight-summary-copied-regexp    matches messages mark as copied
-  wl-highlight-summary-new-regexp       matches new messages
-"
+  wl-highlight-summary-new-face         new messages"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
   (let (lines too-big gc-message e p hend i percent)
