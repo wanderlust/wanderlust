@@ -981,13 +981,13 @@ If current line is group folder, check all sub entries."
       (setq unread (or (cadr nums) 0))
       (if (or (not unread-only)
 	      (or (< 0 new) (< 0 unread)))
-	  (save-window-excursion
-	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
+	  (let ((wl-summary-buffer-name (concat
+					 wl-summary-buffer-name
+					 (symbol-name this-command)))
+		(wl-message-buf-name (concat wl-message-buf-name
+					     (symbol-name this-command))))
+	    (save-window-excursion
+	      (save-excursion
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range entity)
 					     nil nil nil t)
@@ -1028,18 +1028,18 @@ If current line is group folder, check all subfolders."
       (setq new (or (car nums) 0))
       (setq unread (or (cadr nums) 0))
       (if (or (< 0 new) (< 0 unread))
-	(save-window-excursion
-	  (save-excursion
-	    (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-	      (wl-summary-goto-folder-subr entity
+	  (let ((wl-summary-buffer-name (concat
+					 wl-summary-buffer-name
+					 (symbol-name this-command)))
+		(wl-message-buf-name (concat wl-message-buf-name
+					     (symbol-name this-command))))
+	    (save-window-excursion
+	      (save-excursion
+		(wl-summary-goto-folder-subr entity
 					   (wl-summary-get-sync-range entity)
 					   nil)
-	      (wl-summary-mark-as-read-all)
-	      (wl-summary-exit))))
+		(wl-summary-mark-as-read-all)
+		(wl-summary-exit))))
 	(sit-for 0))))))
 
 (defun wl-folder-mark-as-read-all-current-entity ()
@@ -2618,13 +2618,13 @@ Use `wl-subscribed-mailing-list'."
       (setq count (+ count (wl-folder-count-incorporates entity)))
       (if (or (null (car nums)) ; unknown
 	      (< 0 count))
-	  (save-window-excursion
-	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
+	  (let ((wl-summary-buffer-name (concat
+					 wl-summary-buffer-name
+					 (symbol-name this-command)))
+		(wl-message-buf-name (concat wl-message-buf-name
+					     (symbol-name this-command))))
+	    (save-window-excursion
+	      (save-excursion
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range entity)
 					     nil)
@@ -2675,13 +2675,13 @@ If current line is group folder, all subfolders are prefetched."
 	  wl-summary-highlight wl-auto-select-first new)
       (setq new (or (car nums) 0))
       (if (< 0 new)
-	  (save-window-excursion
-	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
+	  (let ((wl-summary-buffer-name (concat
+					 wl-summary-buffer-name
+					 (symbol-name this-command)))
+		(wl-message-buf-name (concat wl-message-buf-name
+					     (symbol-name this-command))))
+	    (save-window-excursion
+	      (save-excursion
 		(wl-summary-goto-folder-subr entity 'no-sync nil)
 		(wl-summary-drop-unsync)
 		(wl-summary-exit)))))))))

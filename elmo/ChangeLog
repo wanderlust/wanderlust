@@ -56,7 +56,7 @@
 
 	* elmo2.el (elmo-buffer-cache-message): Added argument `unread'.
 
-2001-02-13  OKAZAKI Tetsurou  <refactor@acidrain.localnet>
+2001-02-13  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-prefetch-msg): Set `msgdb'
 	argument of `elmo-imap4-read-msg' as nil.
