@@ -1,3 +1,13 @@
+2001-02-21  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-display-progress): Prefer
+	`progress-feedback-with-label' to `lprogress-display'.
+	
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-network-authenticate-session): Fix.
+	* elmo-pop3.el (elmo-network-authenticate-session): Add comments.
+
 2000-02-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-imap4-list-folder): Added 'uid'
@@ -7,16 +17,16 @@
 	* elmo2.el (elmo-list-folder): Added optional argument `nohide'.
 	* elmo-imap4.el (elmo-imap4-list-folder): Added optional argument `nohide'.
 	* elmo-pop3.el (elmo-pop3-list-folder): Ditto.
-    	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
+	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
 	* elmo-localdir.el (elmo-localdir-list-folder): Ditto.
 	* elmo-localnews.el (elmo-localnews-list-folder): Ditto.
 	* elmo-archive.el (elmo-archive-list-folder): Ditto.
-    	* elmo-filter.el (elmo-filter-list-folder): Ditto.
+	* elmo-filter.el (elmo-filter-list-folder): Ditto.
 	* elmo-internal.el (elmo-internal-list-folder): Ditto.
-    	* elmo-pipe.el (elmo-pipe-list-folder): Ditto.
-    	* elmo-multi.el (elmo-multi-list-folder): Ditto.
-    	* elmo-maildir.el (elmo-maildir-list-folder): Ditto.
-    	* elmo-dop.el (elmo-dop-list-folder): Ditto.
+	* elmo-pipe.el (elmo-pipe-list-folder): Ditto.
+	* elmo-multi.el (elmo-multi-list-folder): Ditto.
+	* elmo-maildir.el (elmo-maildir-list-folder): Ditto.
+	* elmo-dop.el (elmo-dop-list-folder): Ditto.
 
 2000-02-17  Kenichi OKADA  <okada@opaopa.org>
 

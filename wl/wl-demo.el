@@ -224,27 +224,27 @@ any conversions and evaluate FORMS there like `progn'."
 
 (eval-when-compile
   (defmacro wl-demo-image-type-alist ()
-    (` (append (if (and (get 'wl-logo-xpm 'width)
-			(or (and (featurep 'xemacs)
-				 (featurep 'xpm)
-				 (device-on-window-system-p))
-			    (and wl-on-emacs21
-				 (display-graphic-p)
-				 (image-type-available-p 'xpm))))
-		   '(("xpm" . xpm)))
-	       (if (and (get 'wl-logo-xbm 'width)
-			(or (and (featurep 'xemacs)
-				 (device-on-window-system-p))
-			    (and wl-on-emacs21
-				 (display-graphic-p)
-				 (image-type-available-p 'xbm))))
-		   '(("xbm" . xbm)))
-	       (if (and (get 'wl-logo-bitmap 'width)
-			(not (featurep 'xemacs))
-			window-system
-			(featurep 'bitmap))
-		   '(("bitmap" . bitmap)))
-	       '(("ascii"))))))
+    '(append (if (and (get 'wl-logo-xpm 'width)
+		      (or (and (featurep 'xemacs)
+			       (featurep 'xpm)
+			       (device-on-window-system-p))
+			  (and wl-on-emacs21
+			       (display-graphic-p)
+			       (image-type-available-p 'xpm))))
+		 '(("xpm" . xpm)))
+	     (if (and (get 'wl-logo-xbm 'width)
+		      (or (and (featurep 'xemacs)
+			       (device-on-window-system-p))
+			  (and wl-on-emacs21
+			       (display-graphic-p)
+			       (image-type-available-p 'xbm))))
+		 '(("xbm" . xbm)))
+	     (if (and (get 'wl-logo-bitmap 'width)
+		      (not (featurep 'xemacs))
+		      window-system
+		      (featurep 'bitmap))
+		 '(("bitmap" . bitmap)))
+	     '(("ascii")))))
 
 (defun wl-demo (&optional image-type)
   "Demo on the startup screen.

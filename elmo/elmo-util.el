@@ -1566,10 +1566,10 @@ the value of `foo'."
 		(list 'error-message doc
 		      'error-conditions (cons error conds))))))
 
-(cond ((fboundp 'lprogress-display)
-       (defalias 'elmo-display-progress 'lprogress-display))
-      ((fboundp 'progress-feedback-with-label)
+(cond ((fboundp 'progress-feedback-with-label)
        (defalias 'elmo-display-progress 'progress-feedback-with-label))
+      ((fboundp 'lprogress-display)
+       (defalias 'elmo-display-progress 'lprogress-display))
       (t
        (defun elmo-display-progress (label format &optional value &rest args)
 	 "Print a progress message."
