@@ -1,3 +1,7 @@
+2000-07-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: New file.
+
 2000-07-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* README: Remove CVS keyword.
