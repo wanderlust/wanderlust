@@ -569,7 +569,7 @@ Return number if put mark succeed"
     (save-excursion
       ;; We first set up a normal mail buffer.
       (set-buffer (get-buffer-create " *wl-draft-resend*"))
-      (buffer-disable-undo (current-buffer))
+      (set-buffer-multibyte nil)
       (erase-buffer)
       (setq wl-sent-message-via nil)
       ;; Insert our usual headers.
@@ -587,7 +587,7 @@ Return number if put mark succeed"
       (let ((beg (point)))
 	;; Insert the message to be resent.
 	(insert
-	 ;; elmo-message-fetch is erace current buffer before fetch message
+	 ;; elmo-message-fetch is erase current buffer before fetch message
 	 (elmo-message-fetch-string folder number
 				    (if wl-summary-resend-use-cache
 					(elmo-make-fetch-strategy

@@ -1,3 +1,9 @@
+2005-02-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-exec-action-resend-subr): Disable
+	multibyte on working buffer and removed unnecessary
+	`buffer-disable-undo'.
+
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-read-search-condition-internal): Fixed the last
