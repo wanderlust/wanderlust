@@ -1,5 +1,8 @@
 2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-net.el (elmo-network-open-session): Add user and
+	stream-type for process-buffer name.
+
 	* elmo-pop3.el (elmo-network-initialize-session): Call
 	buffer-disable-undo.
 

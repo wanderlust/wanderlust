@@ -164,9 +164,13 @@ Returns a process object. if making session failed, returns nil."
 	   session
 	   (elmo-open-network-stream
 	    (elmo-network-session-name-internal session)
-	    (format " *%s session to %s:%d"
-		    (elmo-network-session-name-internal session)
-		    host port)
+	    (format " *%s session for %s@%s:%d%s"
+		    name
+		    user
+		    host
+		    port
+		    (or (elmo-network-stream-type-spec-string stream-type)
+			""))
 	    host port stream-type))
 	  (when (elmo-network-session-process-internal session)
 	    (elmo-network-initialize-session session)
