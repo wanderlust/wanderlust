@@ -1,3 +1,8 @@
+2000-10-17  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-expire.el (wl-expire-hide): New function.
+	(wl-summary-expire): Add `hide'.
+
 2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-reply-without-argument-list):

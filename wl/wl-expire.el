@@ -465,6 +465,15 @@ Refile to archive folder followed message date."
     deleted-list
     ))
 
+(defun wl-expire-hide (folder hide-list msgdb)
+  (let ((mess (format "Hiding %s msgs..." (length hide-list))))
+    (message mess)
+    (elmo-msgdb-delete-msgs folder hide-list msgdb t)
+    (elmo-msgdb-append-to-killed-list folder hide-list)
+    (elmo-msgdb-save folder msgdb)
+    (message (concat mess "done"))
+    (cons hide-list (length hide-list))))
+
 (defsubst wl-expire-folder-p (folder)
   (wl-get-assoc-list-value wl-expire-alist folder))
 
@@ -538,6 +547,8 @@ Refile to archive folder followed message date."
 			 (car (wl-expire-delete folder delete-list msgdb)))
 			((eq rm-type 'trash)
 			 (car (wl-expire-refile folder delete-list msgdb wl-trash-folder)))
+			((eq rm-type 'hide)
+			 (car (wl-expire-hide folder delete-list msgdb)))
 			((stringp rm-type)
 			 (car (wl-expire-refile folder delete-list msgdb rm-type)))
 			((fboundp rm-type)
