@@ -90,17 +90,18 @@
 				    elmo-pop3-list-done))
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
-  (unless (memq (process-status
-		 (elmo-network-session-process-internal session))
-		'(closed exit))
-    (elmo-pop3-send-command (elmo-network-session-process-internal session)
-			    "quit")
-    (or (elmo-pop3-read-response
-	 (elmo-network-session-process-internal session) t)
-	(error "POP error: QUIT failed")))
-  (kill-buffer (process-buffer
-		(elmo-network-session-process-internal session)))
-  (delete-process (elmo-network-session-process-internal session)))
+  (when (elmo-network-session-process-internal session)
+    (unless (memq (process-status
+		   (elmo-network-session-process-internal session))
+		  '(closed exit))
+      (elmo-pop3-send-command (elmo-network-session-process-internal session)
+			      "quit")
+      (or (elmo-pop3-read-response
+	   (elmo-network-session-process-internal session) t)
+	  (error "POP error: QUIT failed")))
+    (kill-buffer (process-buffer
+		  (elmo-network-session-process-internal session)))
+    (delete-process (elmo-network-session-process-internal session))))
 
 (defun elmo-pop3-get-session (spec &optional if-exists)
   (elmo-network-get-session
