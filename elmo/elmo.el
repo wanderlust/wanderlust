@@ -708,8 +708,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	(when (elmo-msgdb-message-modified-p msgdb)
 	  (elmo-folder-set-info-max-by-numdb
 	   folder
-	   (elmo-folder-list-messages folder nil 'in-msgdb))
-	(elmo-msgdb-save msgdb))))
+	   (elmo-folder-list-messages folder nil 'in-msgdb)))
+	(elmo-msgdb-save msgdb)))
     (elmo-msgdb-killed-list-save
      (elmo-folder-msgdb-path folder)
      (elmo-folder-killed-list-internal folder))))
