@@ -1,3 +1,8 @@
+2001-10-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-jump-to-current-message): Don't go to
+	point-min.
+
 2001-10-02  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-xmas.el (wl-message-define-keymap): Return a keymap.
