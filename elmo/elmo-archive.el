@@ -594,51 +594,53 @@ TYPE specifies the archiver's symbol."
   ((folder elmo-archive-folder) src-folder numbers unread-marks
    &optional same-number)
   (let ((prefix (elmo-archive-folder-archive-prefix-internal folder)))
-  (cond
-   ((and same-number
-	 (null prefix)
-	 (elmo-folder-message-file-p src-folder)
-	 (elmo-folder-message-file-number-p src-folder))
-    ;; same-number(localdir, localnews) -> archive
-    (elmo-archive-append-files folder
-			       (elmo-folder-message-file-directory src-folder)
-			       numbers)
-    numbers)
-   ((elmo-folder-message-make-temp-file-p src-folder)
-    ;; not-same-number (localdir, localnews), (archive maildir) -> archive
-    (let ((temp-dir (elmo-folder-message-make-temp-files
-		     src-folder
-		     numbers
-		     (unless same-number
-		       (1+ (if (file-exists-p (elmo-archive-get-archive-name
-					       folder))
-			       (car (elmo-folder-status folder)) 0)))))
-	  new-dir base-dir files)
-      (setq base-dir temp-dir)
-      (when (> (length prefix) 0)
-	(when (file-name-directory prefix)
-	  (elmo-make-directory (file-name-directory prefix)))
-	(rename-file
-	 temp-dir
-	 (setq new-dir
-	       (expand-file-name
-		prefix
-		;; parent of temp-dir..(works in windows?)
-		(expand-file-name ".." temp-dir))))
-	;; now temp-dir has name prefix.
-	(setq temp-dir new-dir)
-	;; parent of prefix becomes base-dir.
-	(setq base-dir (expand-file-name ".." temp-dir)))
-      (setq files
-	    (mapcar
-	     '(lambda (x) (elmo-concat-path prefix x))
-	     (directory-files temp-dir nil "^[^\\.]")))
-      (if (elmo-archive-append-files folder
-				     base-dir
-				     files)
-	  (elmo-delete-directory temp-dir)))
-    numbers)
-   (t (luna-call-next-method)))))
+    (cond
+     ((and same-number
+	   (null prefix)
+	   (elmo-folder-message-file-p src-folder)
+	   (elmo-folder-message-file-number-p src-folder))
+      ;; same-number(localdir, localnews) -> archive
+      (elmo-archive-append-files folder
+				 (elmo-folder-message-file-directory src-folder)
+				 numbers)
+      (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
+      numbers)
+     ((elmo-folder-message-make-temp-file-p src-folder)
+      ;; not-same-number (localdir, localnews), (archive maildir) -> archive
+      (let ((temp-dir (elmo-folder-message-make-temp-files
+		       src-folder
+		       numbers
+		       (unless same-number
+			 (1+ (if (file-exists-p (elmo-archive-get-archive-name
+						 folder))
+				 (car (elmo-folder-status folder)) 0)))))
+	    new-dir base-dir files)
+	(setq base-dir temp-dir)
+	(when (> (length prefix) 0)
+	  (when (file-name-directory prefix)
+	    (elmo-make-directory (file-name-directory prefix)))
+	  (rename-file
+	   temp-dir
+	   (setq new-dir
+		 (expand-file-name
+		  prefix
+		  ;; parent of temp-dir..(works in windows?)
+		  (expand-file-name ".." temp-dir))))
+	  ;; now temp-dir has name prefix.
+	  (setq temp-dir new-dir)
+	  ;; parent of prefix becomes base-dir.
+	  (setq base-dir (expand-file-name ".." temp-dir)))
+	(setq files
+	      (mapcar
+	       '(lambda (x) (elmo-concat-path prefix x))
+	       (directory-files temp-dir nil "^[^\\.]")))
+	(if (elmo-archive-append-files folder
+				       base-dir
+				       files)
+	    (elmo-delete-directory temp-dir)))
+      (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
+      numbers)
+     (t (luna-call-next-method)))))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
   ((folder elmo-archive-folder))

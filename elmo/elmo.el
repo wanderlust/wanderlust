@@ -893,6 +893,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 				   'message-id)
 				  seen-list)))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
+	(elmo-progress-notify 'elmo-folder-move-messages)
 	(setq numbers (cdr numbers)))
       (if (and seen-list (elmo-folder-persistent-p folder))
 	  (elmo-msgdb-seen-save (elmo-folder-msgdb-path folder)
@@ -913,11 +914,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (let* ((messages msgs)
 	   (elmo-inhibit-display-retrieval-progress t)
 	   (len (length msgs))
-	   (all-msg-num (or all len))
-	   (done-msg-num (or done 0))
-	   (progress-message (if no-delete
-				 "Copying messages..."
-			       "Moving messages..."))
 	   succeeds i result)
       (if (eq dst-folder 'null)
 	  (setq succeeds messages)
@@ -945,11 +941,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 		   msgs (elmo-folder-msgdb src-folder)
 		   unread-marks seen-list))
 	    (elmo-msgdb-seen-save dir seen-list))))
-      (when (and done
-		 (> all-msg-num elmo-display-progress-threshold))
-	(elmo-display-progress
-	 'elmo-folder-move-messages progress-message
-	 (/ (* done-msg-num 100) all-msg-num)))
       (if (and (not no-delete) succeeds)
 	  (progn
 	    (if (not no-delete-info)

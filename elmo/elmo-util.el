@@ -1158,6 +1158,52 @@ the value of `foo'."
 	   (apply (function message) (concat format " %d%%")
 		  (nconc args (list value)))))))
 
+(defvar elmo-progress-counter-alist nil)
+
+(defmacro elmo-progress-counter-value (counter)
+  (` (aref (cdr (, counter)) 0)))
+
+(defmacro elmo-progress-counter-all-value (counter)
+  (` (aref (cdr (, counter)) 1)))
+
+(defmacro elmo-progress-counter-format (counter)
+  (` (aref (cdr (, counter)) 2)))
+
+(defmacro elmo-progress-counter-set-value (counter value)
+  (` (aset (cdr (, counter)) 0 (, value))))
+
+(defun elmo-progress-set (label all-value &optional format)
+  (unless (assq label elmo-progress-counter-alist)
+    (setq elmo-progress-counter-alist
+	  (cons (cons label (vector 0 all-value (or format "")))
+		elmo-progress-counter-alist))))
+
+(defun elmo-progress-clear (label)
+  (let ((counter (assq label elmo-progress-counter-alist)))
+    (when counter
+      (elmo-display-progress label "" 100)
+      (setq elmo-progress-counter-alist
+	    (delq counter elmo-progress-counter-alist)))))
+
+(defun elmo-progress-notify (label &optional value op &rest args)
+  (let ((counter (assq label elmo-progress-counter-alist)))
+    (when counter
+      (let* ((value (or value 1))
+	     (cur-value (elmo-progress-counter-value counter))
+	     (all-value (elmo-progress-counter-all-value counter))
+	     (new-value (if (eq op 'set) value (+ cur-value value)))
+	     (cur-rate (/ (* cur-value 100) all-value))
+	     (new-rate (/ (* new-value 100) all-value)))
+	(elmo-progress-counter-set-value counter new-value)
+	(unless (= cur-rate new-rate)
+	  (apply 'elmo-display-progress
+		 label
+		 (elmo-progress-counter-format counter)
+		 new-rate
+		 args))
+	(when (>= new-rate 100)
+	  (elmo-progress-clear label))))))
+
 (defun elmo-time-expire (before-time diff-time)
   (let* ((current (current-time))
 	 (rest (when (< (nth 1 current) (nth 1 before-time))

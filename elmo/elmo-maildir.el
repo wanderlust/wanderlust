@@ -403,7 +403,8 @@ file name for maildir directories."
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
-	    dir)))
+	    dir))
+	  (elmo-progress-notify 'elmo-folder-move-messages))
 	succeeds)
     (luna-call-next-method)))
 

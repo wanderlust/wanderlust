@@ -1,3 +1,31 @@
+2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-progress-counter-alist): New internal
+	variable.
+	(elmo-progress-counter-value): New macro.
+	(elmo-progress-counter-all-value): Ditto.
+	(elmo-progress-counter-format): Ditto.
+	(elmo-progress-counter-set-value): Ditto.
+	(elmo-progress-set): New function.
+	(elmo-progress-clear): Ditto.
+	(elmo-progress-notify): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-drain): Setup and clear progress
+	counter.
+
+	* elmo.el (elmo-generic-folder-append-messages): Call
+	`elmo-progress-notify'.
+	(elmo-folder-move-messages): Don't call `elmo-display-progress'.
+
+	* elmo-archive.el (elmo-folder-append-messages): Call
+	`elmo-progress-notify'.
+
+	* elmo-imap4.el (elmo-folder-append-messages): Ditto.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Ditto.
+
+	* elmo-maildir.el (elmo-folder-append-messages): Ditto.
+
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-dop.el (elmo-dop-queue-method-name-alist): Fixed 'Encache' and

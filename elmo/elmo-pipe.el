@@ -97,10 +97,17 @@
 
 (defun elmo-pipe-drain (src dst)
   "Move all messages of SRC to DST."
-  (let ((elmo-inhibit-number-mapping t)) ; No need to use UIDL
+  (let ((elmo-inhibit-number-mapping t) ; No need to use UIDL
+	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
     (elmo-folder-open-internal src)
-    (elmo-folder-move-messages src (elmo-folder-list-messages src) dst))
+    (setq msgs (elmo-folder-list-messages src)
+	  len (length msgs))
+    (when (> len elmo-display-progress-threshold)
+      (elmo-progress-set 'elmo-folder-move-messages
+			 len "Moving messages..."))
+    (elmo-folder-move-messages src msgs dst)
+    (elmo-progress-clear 'elmo-folder-move-messages))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)

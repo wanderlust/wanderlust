@@ -2422,7 +2422,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	   (elmo-imap4-identical-system-p folder src-folder)
 	   (elmo-folder-plugged-p folder))
       ;; Plugged
-      (elmo-imap4-copy-messages src-folder folder numbers)
+      (prog1
+	  (elmo-imap4-copy-messages src-folder folder numbers)
+	(elmo-progress-notify 'elmo-folder-move-messages (length numbers)))
     (luna-call-next-method)))
 
 (luna-define-method elmo-message-deletable-p ((folder elmo-imap4-folder)
