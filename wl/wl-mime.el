@@ -32,7 +32,7 @@
 (require 'mime-view)
 (require 'mime-edit)
 (require 'mime-play)
-(require 'mmelmo)
+(require 'elmo)
 
 (eval-when-compile
   (defalias-maybe 'Meadow-version 'ignore))
@@ -182,7 +182,7 @@ By setting following-method as yank-content."
 	children message-entity content-type target)
     (save-excursion
       (setq target wl-summary-buffer-elmo-folder)
-      (while (not (elmo-folder-message-appendable-p target))
+      (while (not (elmo-folder-writable-p target))
 	(setq target
 	      (wl-summary-read-folder wl-default-folder "to extract to")))
       (wl-summary-set-message-buffer-or-redisplay)
@@ -279,13 +279,6 @@ By setting following-method as yank-content."
 		    (throw 'tag nil)))))
 	  (setq overviews (cdr overviews)))
 	(message "Not all partials found.")))))
-
-(defun wl-mime-header-presentation-method (entity situation)
-  (let ((mmelmo-sort-field-list wl-message-sort-field-list))
-    (mime-insert-header entity
-			wl-message-ignored-field-list
-			wl-message-visible-field-list)
-    (wl-highlight-headers)))
 
 ;;; Setup methods.
 (defun wl-mime-setup ()

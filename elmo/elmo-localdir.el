@@ -214,8 +214,8 @@
 		       (1+ (car (elmo-folder-status folder)))))))
     (if (file-writable-p filename)
 	(write-region-as-binary
-	 (point-min) (point-max) filename nil 'no-msg)
-      t)))
+	 (point-min) (point-max) filename nil 'no-msg))
+    t))
 
 (luna-define-method elmo-folder-append-messages :around ((folder elmo-localdir-folder)
 							 src-folder numbers
@@ -277,7 +277,7 @@
       (buffer-string))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-localdir-folder))
+  ((folder elmo-localdir-folder) &optional nohide)
   (elmo-localdir-list-subr folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-localdir-folder))

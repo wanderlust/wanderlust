@@ -115,14 +115,14 @@
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-pipe-folder))
+  ((folder elmo-pipe-folder) &optional nohide)
   (elmo-folder-list-messages-internal (elmo-pipe-folder-dst-internal
-				       folder)))
+				       folder) nohide))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-pipe-folder) unread-marks)
+  ((folder elmo-pipe-folder) unread-marks &optional mark-alist)
   (elmo-folder-list-unreads-internal (elmo-pipe-folder-dst-internal folder)
-				     unread-marks))
+				     unread-marks mark-alist))
   
 (luna-define-method elmo-folder-list-importants-internal
   ((folder elmo-pipe-folder) important-mark)

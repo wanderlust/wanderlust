@@ -1,3 +1,91 @@
+2001-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Luna-fy Kenichi OKADA's following changes.
+	* elmo.el (elmo-folder-list-messages-internal): Added optional argument
+	`nohide'.
+	(elmo-folder-synchronize): Changed meaning of argument `ignore-msgdb'.
+
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-imap4-list-folder): Added 'uid'
+
+2000-02-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo2.el (elmo-list-folder): Added optional argument `nohide'.
+	* elmo-imap4.el (elmo-imap4-list-folder): Added optional argument `nohide'.
+	* elmo-pop3.el (elmo-pop3-list-folder): Ditto.
+	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
+	* elmo-localdir.el (elmo-localdir-list-folder): Ditto.
+	* elmo-localnews.el (elmo-localnews-list-folder): Ditto.
+	* elmo-archive.el (elmo-archive-list-folder): Ditto.
+	* elmo-filter.el (elmo-filter-list-folder): Ditto.
+	* elmo-internal.el (elmo-internal-list-folder): Ditto.
+	* elmo-pipe.el (elmo-pipe-list-folder): Ditto.
+	* elmo-multi.el (elmo-multi-list-folder): Ditto.
+	* elmo-maildir.el (elmo-maildir-list-folder): Ditto.
+	* elmo-dop.el (elmo-dop-list-folder): Ditto.
+
+2000-02-17  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-msgdb.el (elmo-msgdb-max-of-killed): New function.
+	* elmo-imap4.el (elmo-imap4-list-folder): Use killed-list.
+
+2001-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-process-crosspost): New generic method.
+	(elmo-folder-writable-p): Ditto.
+	(elmo-folder-message-appendable-p): Eliminated.
+	(elmo-generic-folder-append-msgdb): Rewrite.
+	(elmo-newsgroups-hashtb): New internal variable.
+	(elmo-crosspost-message-set): Eliminated.
+	(elmo-crosspost-message-delete): Ditto.
+	(elmo-setup-subscribed-newsgroups): New function.
+	(elmo-crosspost-message-alist-modified): New internal variable.
+	(elmo-crosspost-message-alist-load): New function (Renamed from
+	`wl-crosspost-alist-load').
+	(elmo-crosspost-message-alist-save): Ditto (Renamed from
+	`wl-crosspost-alist-save').
+
+	* elmo-util.el (elmo-parse): New function (Renamed from `wl-parse').
+
+	* elmo-nntp.el (elmo-nntp-folder): New slots `temp-crosses' and
+	`unreads'.
+	(elmo-nntp-groups-hashtb): Eliminated (Renamed to
+	elmo-newsgroups-hashtb).
+	(elmo-nntp-message-fetch): Call `elmo-nntp-setup-crosspost-buffer',
+	`elmo-nntp-folder-update-crosspost-message-alist'.
+	(elmo-nntp-get-folders-info): Use `elmo-newsgroups-hashtb' instead of
+	`elmo-nntp-groups-hashtb'.
+	(elmo-nntp-make-groups-hashtb): Eliminated.
+	(elmo-nntp-parse-newsgroups): New function (Renamed from
+	`wl-parse-newsgroups').
+	(elmo-folder-creatable-p, elmo-folder-writable-p,
+	elmo-folder-close-internal, elmo-folder-mark-as-read,
+	elmo-folder-process-crosspost, elmo-folder-list-unreads-internal):
+	Define.
+	(elmo-nntp-folder-update-crosspost-message-alist): New function.
+
+	* elmo-net.el (elmo-message-fetch): Check buffer size.
+
+	* elmo-multi.el (elmo-multi-split-number-alist): New function.
+
+	* elmo-localdir.el (elmo-folder-append-buffer): Fixed logic.
+
+	* elmo-imap4.el (elmo-folder-rename-internal): Send `select' command
+	before `close' command.
+
+	* elmo.el (elmo-folder-list-unreads-internal): Added argument
+	`mark-alist' (All other related portions are changed).
+
+2001-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-create-hash-size): Eliminated.
+	(elmo-make-hash) Make a hash with `one less than a power of two'
+	length.
+
+	* elmo-vars.el (elmo-hash-minimum-size): New variable.
+	(elmo-hash-maximum-size): Changed value.
+
 2001-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mime.el (elmo-mime-message-display): Added argument `unread'.
@@ -87,6 +175,10 @@
 2000-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-cache.el: Rewrite.
+
+2000-02-17  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Bind `sasl-mechanisms'
 
 2000-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -1878,7 +1878,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(setq entities (wl-pop entity-stack))))
     (and info (message "Creating newsgroups...done"))
     (if (or newsgroups make-hashtb)
-	(elmo-nntp-make-groups-hashtb newsgroups))))
+	(elmo-setup-subscribed-newsgroups newsgroups))))
 
 (defun wl-folder-get-path (entity target-id &optional string)
   (let ((entities (list entity))
@@ -2180,7 +2180,7 @@ Use `wl-subscribed-mailing-list'."
   (interactive)
   (run-hooks 'wl-folder-suspend-hook)
   (wl-folder-info-save)
-  (wl-crosspost-alist-save)
+  (elmo-crosspost-message-alist-save)
   (elmo-quit)
   ;(if (fboundp 'mmelmo-cleanup-entity-buffers)
   ;(mmelmo-cleanup-entity-buffers))

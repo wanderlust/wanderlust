@@ -73,6 +73,9 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 
 ;;; internal
 (defvar elmo-folder-type-alist nil)
+
+(defvar elmo-newsgroups-hashtb nil)
+
 (elmo-define-error 'elmo-error "Error" 'error)
 (elmo-define-error 'elmo-open-error "Cannot open" 'elmo-error)
 (elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
@@ -179,9 +182,10 @@ Return value is a cons cell of NEWS and MESSAGES.")
 (luna-define-generic elmo-folder-status (folder)
   "Returns a cons cell of (MAX-NUMBER . MESSAGES) in the FOLDER.")
 
-(defun elmo-folder-list-messages (folder)
-  "Return a list of message numbers contained in FOLDER."
-  (let ((list (elmo-folder-list-messages-internal folder))
+(defun elmo-folder-list-messages (folder &optional visible-only)
+  "Return a list of message numbers contained in FOLDER.
+If optional VISIBLE-ONLY is non-nil, killed messages are not listed."
+  (let ((list (elmo-folder-list-messages-internal folder visible-only))
 	(killed (elmo-folder-killed-list-internal folder))
 	numbers)
     (setq numbers
@@ -196,7 +200,8 @@ Return value is a cons cell of NEWS and MESSAGES.")
 (defun elmo-folder-list-unreads (folder unread-marks)
   "Return a list of unread message numbers contained in FOLDER.
 UNREAD-MARKS is the unread marks."
-  (let ((list (elmo-folder-list-unreads-internal folder unread-marks)))
+  (let ((list (elmo-folder-list-unreads-internal folder
+						 unread-marks)))
     (if (listp list)
 	list
       ;; Not available, use current mark.
@@ -223,13 +228,17 @@ IMPORTANT-MARK is the important mark."
 		    (car x))))
 	     (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))))
 
-(luna-define-generic elmo-folder-list-messages-internal (folder)
+(luna-define-generic elmo-folder-list-messages-internal (folder &optional
+								visible-only)
   ;; Return a list of message numbers contained in FOLDER.
   ;; Return t if the message list is not available.
   )
 
-(luna-define-generic elmo-folder-list-unreads-internal (folder unread-marks)
+(luna-define-generic elmo-folder-list-unreads-internal (folder
+							unread-marks
+							&optional mark-alist)
   ;; Return a list of unread message numbers contained in FOLDER.
+  ;; If optional MARK-ALIST is set, it is used as mark-alist.
   ;; Return t if this feature is not available.
   )
 
@@ -251,14 +260,14 @@ Otherwise, all descendent folders are returned.")
 (luna-define-generic elmo-folder-creatable-p (folder)
   "Returns non-nil when FOLDER is creatable.")
 
+(luna-define-generic elmo-folder-writable-p (folder)
+  "Returns non-nil when FOLDER is writable.")
+
 (luna-define-generic elmo-folder-persistent-p (folder)
   "Return non-nil when FOLDER is persistent.")
 
 (luna-define-generic elmo-folder-create (folder)
   "Create a FOLDER.")
-
-(luna-define-generic elmo-folder-message-appendable-p (folder)
-  "Returns non-nil when FOLDER is appendable.")
 
 (luna-define-generic elmo-message-deletable-p (folder number)
   "Returns non-nil when the message in the FOLDER with NUMBER is deletable.")
@@ -325,8 +334,8 @@ If optional argument NUMBER is specified, the new message number is set
 						  same-number)
   "Append messages from folder.
 FOLDER is the ELMO folder structure.
-Make sure FOLDER is `message-appendable'.
-(Can be checked with `elmo-folder-message-appendable-p').
+Caller should make sure FOLDER is `writable'.
+(Can be checked with `elmo-folder-writable-p').
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
 UNREAD-MARKS is a list of unread mark string.
@@ -473,7 +482,7 @@ Return newly created temporary directory name which contains temporary files.")
   t)
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-folder) unread-marks)
+  ((folder elmo-folder) unread-marks &optional mark-alist)
   t)
 
 (luna-define-method elmo-folder-list-importants-internal
@@ -508,6 +517,13 @@ Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-folder (folder number)
   "Get primitive folder of the message.")
+
+(luna-define-generic elmo-folder-process-crosspost (folder
+						    &optional
+						    number-alist)
+  "Process crosspost for FOLDER.
+If NUMBER-ALIST is set, it is used as number-alist.
+Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (luna-define-generic elmo-folder-append-msgdb (folder append-msgdb)
   "Append  APPEND-MSGDB to the current msgdb of the folder.")
@@ -938,33 +954,42 @@ FIELD is a symbol of the field."
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-folder) numbers)
   t)
 
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-folder)
+						   &optional
+						   number-alist)
+  ;; Do nothing.
+  )
+
 (defun elmo-generic-folder-append-msgdb (folder append-msgdb)
-  (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
-	 (all-alist (copy-sequence (append
-				    (elmo-msgdb-get-number-alist
-				     (elmo-folder-msgdb-internal folder))
-				    number-alist)))
-	 (cur number-alist)
-	 pair
-	 to-be-deleted
-	 mark-alist)
-    (while cur
-      (setq all-alist (delq (car cur) all-alist))
-      ;; same message id exists.
-      (if (setq pair (rassoc (cdr (car cur)) all-alist))
-	  (setq to-be-deleted (nconc to-be-deleted (list (car pair)))))
-      (setq cur (cdr cur)))
-    (setq mark-alist (elmo-delete-if
-		      (function
-		       (lambda (x)
-			 (memq (car x) to-be-deleted)))
-		      (elmo-msgdb-get-mark-alist append-msgdb)))
-    (elmo-msgdb-set-mark-alist append-msgdb mark-alist)
-    (elmo-folder-set-msgdb-internal folder
-				    (elmo-msgdb-append
-				     (elmo-folder-msgdb-internal folder)
-				     append-msgdb t))
-    (length to-be-deleted)))
+  (if append-msgdb
+      (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
+	     (all-alist (copy-sequence (append
+					(elmo-msgdb-get-number-alist
+					 (elmo-folder-msgdb-internal folder))
+					number-alist)))
+	     (cur number-alist)
+	     pair
+	     to-be-deleted
+	     mark-alist)
+	(while cur
+	  (setq all-alist (delq (car cur) all-alist))
+	  ;; same message id exists.
+	  (if (setq pair (rassoc (cdr (car cur)) all-alist))
+	      (setq to-be-deleted (nconc to-be-deleted (list (car pair)))))
+	  (setq cur (cdr cur)))
+	;; XXXX If caching is enabled, read-uncached mark should be set.
+	(setq mark-alist (elmo-delete-if
+			  (function
+			   (lambda (x)
+			     (memq (car x) to-be-deleted)))
+			  (elmo-msgdb-get-mark-alist append-msgdb)))
+	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
+	(elmo-folder-set-msgdb-internal folder
+					(elmo-msgdb-append
+					 (elmo-folder-msgdb-internal folder)
+					 append-msgdb t))
+	(length to-be-deleted))
+    0))
 
 (luna-define-method elmo-folder-append-msgdb ((folder elmo-folder)
 					      append-msgdb)
@@ -1007,7 +1032,8 @@ NEW-MARK, UNREAD-CACHED-MARK, READ-UNCACHED-MARK, and IMPORTANT-MARK
 are mark strings for new messages, unread but cached messages,
 read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
-read mark status.
+read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
+are thrown away and synchronized.
 
 Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
@@ -1034,7 +1060,8 @@ CROSSED is cross-posted message number."
 			    (concat important-mark read-uncached-mark))
 			   seen-list))
 	  ;; Make killed list as nil.
-	  (elmo-folder-set-killed-list-internal folder nil)
+	  (unless (eq ignore-msgdb 'visible-only)
+	    (elmo-folder-set-killed-list-internal folder nil))
 	  (elmo-folder-set-msgdb-internal folder
 					  (elmo-msgdb-clear))))
     (elmo-folder-check folder)
@@ -1043,7 +1070,9 @@ CROSSED is cross-posted message number."
 	  (message "Checking folder diff...")
 	  ;; TODO: killed list is loaded in elmo-folder-open and
 	  ;; list-messages use internal killed-list-folder.
-	  (setq diff (elmo-list-diff (elmo-folder-list-messages folder)
+	  (setq diff (elmo-list-diff (elmo-folder-list-messages
+				      folder
+				      (eq 'visible-only ignore-msgdb))
 				     (unless ignore-msgdb
 				       (sort (mapcar 
 					      'car 
@@ -1069,9 +1098,9 @@ CROSSED is cross-posted message number."
 		  (and (eq (length (car diff)) 0)
 		       (eq (length (cadr diff)) 0)))
 	      (progn
-		;; NNTP:
 		(elmo-folder-update-number folder)
-		nil ; no update
+		(elmo-folder-process-crosspost folder)
+		nil ; no update.
 		)
 	    (if delete-list (elmo-msgdb-delete-msgs folder delete-list))
 	    (when new-list
@@ -1089,10 +1118,13 @@ CROSSED is cross-posted message number."
 				   (elmo-folder-msgdb-path folder) nil)))
 	      (setq before-append nil)
 	      (setq crossed (elmo-folder-append-msgdb folder new-msgdb))
+	      ;; process crosspost.
+	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
+	      (elmo-folder-process-crosspost folder)
 	      (elmo-folder-set-message-modified-internal folder t)
-	      (elmo-folder-set-mark-modified-internal folder t))
-	    ;; return value.
-	    (list new-msgdb delete-list crossed)))
+	      (elmo-folder-set-mark-modified-internal folder t)
+	      ;; return value.
+	      (list new-msgdb delete-list crossed))))
       (quit
        ;; Resume to the original status.
        (if before-append
@@ -1161,22 +1193,42 @@ CROSSED is cross-posted message number."
 	    (elmo-make-directory new-dir))
 	(rename-file old new)))))
 
-(defun elmo-crosspost-message-set (message-id folders &optional type)
-  (if (assoc message-id elmo-crosspost-message-alist)
-      (setcdr (assoc message-id elmo-crosspost-message-alist)
-	      (list folders type))
-    (setq elmo-crosspost-message-alist
-	  (nconc elmo-crosspost-message-alist
-		 (list (list message-id folders type))))))
+(defun elmo-setup-subscribed-newsgroups (groups)
+  "Setup subscribed newsgroups.
+GROUPS is a list of newsgroup name string.
+Return a hashtable for newsgroups."
+  (let ((hashtb (or elmo-newsgroups-hashtb
+		    (setq elmo-newsgroups-hashtb
+			  (elmo-make-hash (length groups))))))
+    (dolist (group groups)
+      (or (elmo-get-hash-val group hashtb)
+	  (elmo-set-hash-val group nil hashtb)))
+    hashtb))
 
-(defun elmo-crosspost-message-delete (message-id folders)
-  (let* ((id-fld (assoc message-id elmo-crosspost-message-alist))
-	 (folder-list (nth 1 id-fld)))
-    (when id-fld
-      (if (setq folder-list (elmo-list-delete folders folder-list))
-	  (setcar (cdr id-fld) folder-list)
-	(setq elmo-crosspost-message-alist
-	      (delete id-fld elmo-crosspost-message-alist))))))
+(defvar elmo-crosspost-message-alist-modified nil)
+(defun elmo-crosspost-message-alist-load ()
+  "Load crosspost message alist."
+  (setq elmo-crosspost-message-alist (elmo-crosspost-alist-load))
+  (setq elmo-crosspost-message-alist-modified nil))
+
+(defun elmo-crosspost-message-alist-save ()
+  "Save crosspost message alist."
+  (when elmo-crosspost-message-alist-modified
+    (let ((alist elmo-crosspost-message-alist)
+	  newsgroups)
+      (while alist
+	(setq newsgroups
+	      (elmo-delete-if
+	       '(lambda (x)
+		  (not (intern-soft x elmo-newsgroups-hashtb)))
+	       (nth 1 (car alist))))
+	(if newsgroups
+	    (setcar (cdar alist) newsgroups)
+	  (setq elmo-crosspost-message-alist
+		(delete (car alist) elmo-crosspost-message-alist)))
+	(setq alist (cdr alist)))
+      (elmo-crosspost-alist-save elmo-crosspost-message-alist)
+      (setq elmo-crosspost-message-alist-modified nil))))
 
 (defun elmo-folder-make-temp-dir (folder)
   ;; Make a temporary directory for FOLDER.

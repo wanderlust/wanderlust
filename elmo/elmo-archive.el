@@ -317,7 +317,8 @@ TYPE specifies the archiver's symbol."
       (elmo-living-messages numbers killed))))
 
 (luna-define-method elmo-folder-list-messages-internal ((folder
-							 elmo-archive-folder))
+							 elmo-archive-folder)
+							&optional nohide)
   (elmo-archive-list-folder-subr folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-archive-folder))

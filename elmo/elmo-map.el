@@ -237,7 +237,7 @@
    (elmo-map-folder-list-message-locations folder)))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-map-folder))
+  ((folder elmo-map-folder) &optional nohide)
   (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-map-folder)
@@ -271,7 +271,7 @@
    strategy section outbuf unread))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-map-folder) unread-marks)
+  ((folder elmo-map-folder) unread-marks &optional mark-alist)
   (elmo-map-folder-locations-to-numbers
    folder
    (elmo-map-folder-list-unreads folder)))
