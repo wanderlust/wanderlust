@@ -925,7 +925,7 @@ return value is diffs '(-new -unread -all)."
 	      (progn
 		(wl-folder-open-close)
 		(wl-folder-jump-to-current-entity t)
-		(message (format "%s is renamed to %s" new-folder old-folder))
+		(message "%s is renamed to %s" old-folder new-folder)
 		(sit-for 1))
 	    ;; update folder list
 	    (when (wl-fldmgr-cut tmp nil t)
