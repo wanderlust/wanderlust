@@ -1,5 +1,10 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-save):
+	Override `mime-header-encode-method-alist'.
+
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-folder.el (wl-folder-pick): New function.
 	Define key as "?".
 

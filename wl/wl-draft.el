@@ -1237,7 +1237,9 @@ Derived from `message-save-drafts' in T-gnus."
 		  (goto-char (point-max))
 		  (insert (if (eq (char-before) ?\n) "" "\n")
 			  mail-header-separator "\n"))))
-	    (mime-edit-translate-buffer)
+	    (let ((mime-header-encode-method-alist
+		   '((eword-encode-unstructured-field-body))))
+	      (mime-edit-translate-buffer))
 	    (wl-draft-get-header-delimiter t)))
 	(set-buffer-modified-p nil)
 	(wl-draft-config-info-operation
