@@ -200,7 +200,7 @@ Remove Re, Was, Fwd etc."
 
 (defun wl-score-string-index< (a1 a2)
   (string-lessp (wl-score-ov-entity-get-by-index (car a1) wl-score-index)
- 		(wl-score-ov-entity-get-by-index (car a2) wl-score-index)))
+		(wl-score-ov-entity-get-by-index (car a2) wl-score-index)))
 
 (defun wl-score-string-func< (a1 a2)
   (string-lessp (funcall wl-score-index (car a1))
@@ -341,7 +341,7 @@ Set `wl-score-cache' nil."
   (let ((files (wl-get-assoc-list-value
 		score-alist folder
 		(if (not wl-score-folder-alist-matchone) 'all-list)))
-        fl f)
+	fl f)
     (while (setq f (wl-pop files))
       (wl-append
        fl
