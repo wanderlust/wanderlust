@@ -626,7 +626,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-exit ()
   (interactive)
   (when (or (not wl-interactive-exit)
-	    (y-or-n-p "Quit Wanderlust?"))
+	    (y-or-n-p "Quit Wanderlust? "))
     (elmo-quit)
     (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
@@ -701,6 +701,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (require 'mime-setup))
   (unless wl-from
     (error "Please set `wl-from'"))
+  ;; Message-ID
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain
 					      (concat (system-name)
@@ -713,34 +714,36 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 					"." wl-local-domain)
 			      (system-name))))
       (error "Please remove `@' from `wl-message-id-domain'"))
+  ;; folders
   (when (not no-check-folder)
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
 	(error "%s is not allowed for draft folder" wl-draft-folder))
     (unless (elmo-folder-exists-p wl-draft-folder)
       (if (y-or-n-p
-	   (format "Draft Folder %s does not exist, create it?"
+	   (format "Draft Folder %s does not exist, create it? "
 		   wl-draft-folder))
 	  (elmo-create-folder wl-draft-folder)
 	(error "Draft Folder is not created")))
     (if (and wl-draft-enable-queuing
 	     (not (elmo-folder-exists-p wl-queue-folder)))
 	(if (y-or-n-p
-	     (format "Queue Folder %s does not exist, create it?"
+	     (format "Queue Folder %s does not exist, create it? "
 		     wl-queue-folder))
 	    (elmo-create-folder wl-queue-folder)
 	  (error "Queue Folder is not created"))))
   (when (not (eq no-check-folder 'wl-draft))
     (unless (elmo-folder-exists-p wl-trash-folder)
       (if (y-or-n-p
-	   (format "Trash Folder %s does not exist, create it?"
+	   (format "Trash Folder %s does not exist, create it? "
 		   wl-trash-folder))
 	  (elmo-create-folder wl-trash-folder)
 	(error "Trash Folder is not created")))
     (unless (elmo-folder-exists-p elmo-lost+found-folder)
       (elmo-create-folder elmo-lost+found-folder)))
+  ;; tmp dir
   (unless (file-exists-p wl-tmp-dir)
     (if (y-or-n-p
-	 (format "Temp directory (to save multipart) %s does not exist, create it now?"
+	 (format "Temp directory (to save multipart) %s does not exist, create it now? "
 		 wl-tmp-dir))
 	(make-directory wl-tmp-dir)
       (error "Temp directory is not created"))))
@@ -748,7 +751,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 ;;;###autoload
 (defun wl (&optional arg)
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
-If prefix argument is specified, folder checkings are skipped."
+If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (or wl-init (wl-load-profile))
   (unwind-protect
@@ -756,7 +759,7 @@ If prefix argument is specified, folder checkings are skipped."
     (wl-plugged-init (wl-folder arg))
     (sit-for 0))
   (unwind-protect
-      (unless arg 
+      (unless arg
 	(run-hooks 'wl-auto-check-folder-pre-hook)
 	(wl-folder-auto-check)
 	(run-hooks 'wl-auto-check-folder-hook))
