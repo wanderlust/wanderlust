@@ -48,6 +48,8 @@
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 
+(add-hook 'wl-message-display-internal-hook 'wl-setup-message)
+
 (defvar wl-use-toolbar (if (featurep 'toolbar) 'default-toolbar nil))
 (defvar wl-plugged-glyph nil)
 (defvar wl-unplugged-glyph nil)
@@ -177,17 +179,17 @@
 	 (set-specifier (symbol-value wl-use-toolbar)
 			(cons (current-buffer) wl-summary-toolbar))))
 
-  (defsubst wl-xmas-setup-message-toolbar ()
-    (and wl-use-toolbar
-	 (wl-xmas-setup-toolbar wl-message-toolbar)
-	 (set-specifier (symbol-value wl-use-toolbar)
-			(cons (current-buffer) wl-message-toolbar))))
-
   (defsubst wl-xmas-setup-draft-toolbar ()
     (and wl-use-toolbar
 	 (wl-xmas-setup-toolbar wl-draft-toolbar)
 	 (set-specifier (symbol-value wl-use-toolbar)
 			(cons (current-buffer) wl-draft-toolbar)))))
+
+(defun wl-xmas-setup-message-toolbar ()
+  (and wl-use-toolbar
+       (wl-xmas-setup-toolbar wl-message-toolbar)
+       (set-specifier (symbol-value wl-use-toolbar)
+		      (cons (current-buffer) wl-message-toolbar))))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-glyph       . wl-opened-group-folder-icon)
@@ -438,17 +440,18 @@
        (set-specifier scrollbar-height (cons (current-buffer) 0)))
   (wl-xmas-setup-summary-toolbar))
 
-(defun wl-message-overload-functions ()
-  (wl-xmas-setup-message-toolbar)
-  (local-set-key "l" 'wl-message-toggle-disp-summary)
-  (local-set-key 'button2 'wl-message-refer-article-or-url)
-  (local-set-key 'button4 'wl-message-wheel-down)
-  (local-set-key 'button5 'wl-message-wheel-up)
-  (local-set-key [(shift button4)] 'wl-message-wheel-down)
-  (local-set-key [(shift button5)] 'wl-message-wheel-up)
-  (set-keymap-parent wl-message-button-map (current-local-map))
-  (define-key wl-message-button-map 'button2
-    'wl-message-button-dispatcher))
+(defalias 'wl-setup-message 'wl-xmas-setup-message-toolbar)
+
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap 'button4 'wl-message-wheel-down)
+    (define-key keymap 'button5 'wl-message-wheel-up)
+    (define-key keymap [(shift button4)] 'wl-message-wheel-down)
+    (define-key keymap [(shift button5)] 'wl-message-wheel-up)
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map 'button2
+      'wl-message-button-dispatcher)
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

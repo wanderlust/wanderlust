@@ -1,3 +1,9 @@
+2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-message-display): Added argument keymap;
+	Set 4th argument of mime-display-message.
+	(elmo-mime-display-as-is): Ditto.
+
 2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nmz.el (toplevel): Require 'mime-edit.

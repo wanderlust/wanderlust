@@ -210,7 +210,7 @@ value is used."
     rawbuf))
 
 (defun elmo-mime-message-display (folder number viewbuf rawbuf original-mode
-					 &optional ignore-cache unread)
+					 &optional ignore-cache unread keymap)
   "Display MIME message. 
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
@@ -235,14 +235,15 @@ Return non-nil if not entire message was fetched."
 	'elmo-buffer)
       (elmo-make-mime-message-location
        folder number strategy rawbuf unread))
-     viewbuf nil nil original-mode)
+     viewbuf nil keymap
+     original-mode)
     (if strategy
 	(or (elmo-fetch-strategy-use-cache strategy)
 	    (eq (elmo-fetch-strategy-entireness strategy)
 		'section)))))
 
 (defun elmo-mime-display-as-is (folder number viewbuf rawbuf original-mode
-				       &optional ignore-cache unread)
+				       &optional ignore-cache unread keymap)
   "Display MIME message. 
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
@@ -267,7 +268,7 @@ Return non-nil if cache is used."
       'elmo-buffer
       (elmo-make-mime-message-location
        folder number strategy rawbuf unread))
-     viewbuf nil nil original-mode)
+     viewbuf nil keymap original-mode)
     (elmo-fetch-strategy-use-cache strategy)))
 
 ;; Replacement of mime-display-message.

@@ -365,6 +365,50 @@ Returns non-nil if bottom of message."
   "Get original buffer for current message buffer."
   wl-message-buffer-original-buffer)
 
+(defun wl-message-add-buttons-to-body (start end)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((case-fold-search t)
+	    (alist wl-message-body-button-alist)
+	    entry)
+	(while alist
+	  (setq entry (car alist)
+		alist (cdr alist))
+	  (goto-char (point-min))
+	  (while (re-search-forward (car entry) nil t)
+	    (unless (get-text-property (point) 'keymap)
+	      (wl-message-add-button
+	       (match-beginning (nth 1 entry))
+	       (match-end (nth 1 entry))
+	       (nth 2 entry)
+	       (match-string (nth 3 entry))))))))))
+  
+(defun wl-message-add-buttons-to-header (start end)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((case-fold-search t)
+	    (alist wl-message-header-button-alist)
+	    entry)
+	(while alist
+	  (setq entry (car alist)
+		alist (cdr alist))
+	  (goto-char (point-min))
+	  (while (re-search-forward (car entry) nil t)
+	    (setq start (match-beginning 0)
+		  end (if (re-search-forward "^[^ \t]" nil t)
+			  (match-beginning 0)
+			(point-max)))
+	    (goto-char start)
+	    (while (re-search-forward (nth 1 entry) end t)
+	      (goto-char (match-end 0))
+	      (wl-message-add-button
+	       (match-beginning (nth 2 entry))
+	       (match-end (nth 2 entry))
+	       (nth 3 entry) (match-string (nth 4 entry))))
+	    (goto-char end)))))))
+
 (defun wl-message-redisplay (folder number flag &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
 	 (buffer-read-only nil)
@@ -372,7 +416,7 @@ Returns non-nil if bottom of message."
 	 message-buf
 	 strategy entity
 	 cache-used
-	 header-end real-fld-num summary-win)
+	 header-end real-fld-num summary-win delim)
     (setq buffer-read-only nil)
     (setq cache-used (wl-message-buffer-display
 		      folder number flag force-reload))
@@ -386,7 +430,6 @@ Returns non-nil if bottom of message."
     (setq wl-message-buffer-cur-summary-buffer summary-buf)
     (setq wl-message-buffer-cur-folder (elmo-folder-name-internal folder))
     (setq wl-message-buffer-cur-number number)
-    (wl-message-overload-functions)
     (setq mode-line-buffer-identification
 	  (format "Wanderlust: << %s / %s >>"
 		  (if (memq 'modeline wl-use-folder-petname)
@@ -400,6 +443,10 @@ Returns non-nil if bottom of message."
 	(wl-message-narrow-to-page)
       (error nil)); ignore errors.
     (setq cache-used (cdr cache-used))
+    (goto-char (point-min))
+    (when (re-search-forward "^$" nil t)
+      (wl-message-add-buttons-to-header (point-min) (point))
+      (wl-message-add-buttons-to-body (point) (point-max)))
     (goto-char (point-min))
     (unwind-protect
 	(save-excursion
@@ -467,7 +514,8 @@ Returns non-nil if bottom of message."
 					      (wl-message-get-original-buffer)
 					      'wl-original-message-mode
 					      force-reload
-					      unread)
+					      unread
+					      (wl-message-define-keymap))
 		(let (buffer-read-only)
 		  (wl-highlight-message (point-min) (point-max) t))))
 	  (elmo-mime-message-display folder number
@@ -475,7 +523,9 @@ Returns non-nil if bottom of message."
 				     (wl-message-get-original-buffer)
 				     'wl-original-message-mode
 				     force-reload
-				     unread))
+				     unread
+				     (wl-message-define-keymap)))
+      (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 
 (defsubst wl-message-buffer-prefetch-p (folder &optional number)
@@ -497,7 +547,6 @@ Returns non-nil if bottom of message."
     (wl-string-match-member (elmo-folder-name-internal folder)
 			    wl-message-buffer-prefetch-folder-type-list))
    (t wl-message-buffer-prefetch-folder-type-list)))
-
 
 (defvar wl-message-buffer-prefetch-timer nil)
 
@@ -584,34 +633,6 @@ Returns non-nil if bottom of message."
    wl-message-buffer-cur-summary-buffer)
   (if (wl-summary-jump-to-msg-by-message-id data)
       (wl-summary-redisplay)))
-
-(defun wl-message-refer-article-or-url (e)
-  "Read article specified by message-id around point.
-If failed, attempt to execute button-dispatcher."
-  (interactive "e")
-  (let ((window (get-buffer-window (current-buffer)))
-	mouse-window point beg end msg-id)
-    (unwind-protect
-	(progn
-	  (mouse-set-point e)
-	  (setq mouse-window (get-buffer-window (current-buffer)))
-	  (setq point (point))
-	  (setq beg (save-excursion (beginning-of-line) (point)))
-	  (setq end (save-excursion (end-of-line) (point)))
-	  (search-forward ">" end t)      ;Move point to end of "<....>".
-	  (if (and (re-search-backward "\\(<[^<> \t\n]+@[^<> \t\n]+>\\)"
-				       beg t)
-		   (not (string-match "mailto:"
-				      (setq msg-id (wl-match-buffer 1)))))
-	      (progn
-		(goto-char point)
-		(switch-to-buffer-other-window
-		 wl-message-buffer-cur-summary-buffer)
-		(if (wl-summary-jump-to-msg-by-message-id msg-id)
-		    (wl-summary-redisplay)))
-	    (wl-message-button-dispatcher-internal e)))
-      (if (eq mouse-window (get-buffer-window (current-buffer)))
-	  (select-window window)))))
 
 (defun wl-message-uu-substring (buf outbuf &optional first last)
   (save-excursion

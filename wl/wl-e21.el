@@ -92,6 +92,8 @@ corresponding to the mode line clicked."
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 
+(add-hook 'wl-message-display-internal-hook 'wl-setup-message)
+
 (defvar wl-use-toolbar (image-type-available-p 'xpm))
 (defvar wl-plugged-image nil)
 (defvar wl-unplugged-image nil)
@@ -191,7 +193,7 @@ corresponding to the mode line clicked."
 			 :color-symbols (("backgroundToolBarColor" . "None"))
 			 :file))
 	  (success t)
-	  icon up down disabled name success)
+	  icon up down disabled name)
       (while bar
 	(setq icon (aref (pop bar) 0))
 	(unless (boundp icon)
@@ -243,13 +245,13 @@ corresponding to the mode line clicked."
     (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
 (eval-when-compile
-  (defsubst wl-e21-setup-message-toolbar (keymap)
-    (when (wl-e21-setup-toolbar wl-message-toolbar)
-      (wl-e21-make-toolbar-buttons keymap wl-message-toolbar)))
-
   (defsubst wl-e21-setup-draft-toolbar ()
     (when (wl-e21-setup-toolbar wl-draft-toolbar)
       (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
+
+(defun wl-e21-setup-message-toolbar ()
+  (when (wl-e21-setup-toolbar wl-message-toolbar)
+    (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-image       . wl-opened-group-folder-icon)
@@ -534,19 +536,23 @@ corresponding to the mode line clicked."
 
 (defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
-(defun wl-message-overload-functions ()
-  (let ((keymap (current-local-map)))
-    (when keymap
-      (wl-e21-setup-message-toolbar keymap)
-      (define-key keymap "l" 'wl-message-toggle-disp-summary)
-      (define-key keymap [mouse-2] 'wl-message-refer-article-or-url)
-      (define-key keymap [mouse-4] 'wl-message-wheel-down)
-      (define-key keymap [mouse-5] 'wl-message-wheel-up)
-      (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
-      (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-      (set-keymap-parent wl-message-button-map keymap)
-      (define-key wl-message-button-map
-	[mouse-2] 'wl-message-button-dispatcher))))
+(defvar widget-keymap)
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap [mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [mouse-5] 'wl-message-wheel-up)
+    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+    (when (and (get 'mime-button 'widget-type) ; mime-button is defined.
+	       (boundp 'widget-keymap))
+      (set-keymap-parent keymap widget-keymap))
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map
+      [mouse-2] 'wl-message-button-dispatcher)
+    keymap))
+
+(defalias 'wl-setup-message 'wl-e21-setup-message-toolbar)
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

@@ -524,6 +524,10 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when summary line is inserted.")
 (defvar wl-summary-insert-headers-hook nil
   "A hook called when insert header for search header.")
+(defvar wl-message-display-internal-hook nil
+  "A hook called when message buffer is created and message is displayed.
+This hook may contain the functions `wl-setup-message' for
+reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-thread-update-children-number-hook nil
   "A hook called when children number is updated.")
 (defvar wl-folder-update-access-group-hook nil
@@ -1203,6 +1207,37 @@ Each elements are regexp of field-name."
   :type '(repeat (string :tag "Field Regexp"))
   :group 'wl-pref
   :group 'wl-setting)
+
+(defcustom wl-message-header-button-alist
+  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):"
+       "<[^>]+>"
+       0 wl-message-button-refer-article  0)
+      ("^[^:]+:"
+       "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
+       1 wl-message-button-refer-article 3)))
+  "Alist of headers and regexps to match buttons in message headers."
+  :type '(repeat
+	  (list (regexp :tag "Header")
+		regexp
+		(integer :tag "Button")
+		(function :tag "Callback")
+		(repeat :tag "Data"
+			:inline t
+			(integer :tag "Regexp group"))))
+  :group 'wl-pref)
+
+(defcustom wl-message-body-button-alist
+  '(("<mailto:[^>]+>" 0 'ignore 0)
+    ("<[^>]+@[^>]+>" 0 wl-message-button-refer-article 0))
+  "Alist of regexps to match buttons in message body."
+  :type '(repeat
+	  (list regexp
+		(integer :tag "Button")
+		(function :tag "Callback")
+		(repeat :tag "Data"
+			:inline t
+			(integer :tag "Regexp group"))))
+  :group 'wl-pref)
 
 (defcustom wl-folder-window-width 20
   "*Width of folder window."
@@ -2080,22 +2115,6 @@ list  : reserved specified permanent marks."
     ("X-[^ \t]*:\\|User-Agent[ \t]*:" . wl-highlight-message-unimportant-header-contents))
   ""
   :type '(repeat (cons regexp face))
-  :group 'wl-highlight)
-
-(defcustom wl-highlight-message-header-button-alist
-  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):" "<[^>]+>"
-       0 wl-message-button-refer-article  0)
-      ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
-       1 wl-message-button-refer-article 3)))
-  "Alist of headers and regexps to match buttons in message headers."
-  :type '(repeat
-	  (list (regexp :tag "Header")
-		regexp
-		(integer :tag "Button")
-		(function :tag "Callback")
-		(repeat :tag "Data"
-			:inline t
-			(integer :tag "Regexp group"))))
   :group 'wl-highlight)
 
 (defcustom wl-highlight-citation-prefix-regexp

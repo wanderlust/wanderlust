@@ -1,3 +1,40 @@
+2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-message-display-internal-hook): Define.
+	(wl-xmas-setup-message-toolbar): Define as function.
+	(wl-setup-message): Define as alias for wl-xmas-setup-message-toolbar.
+	(wl-message-overload-functions): Abolished.
+	(wl-message-define-keymap): New function.
+
+	* wl-vars.el (wl-message-display-internal-hook): New variable.
+	(wl-message-header-button-alist): New variable (Renamed from
+	wl-highlight-message-header-button-alist).
+	(wl-message-body-button-alist): Ditto.
+
+	* wl-mule.el (wl-message-define-keymap): New function.
+	(wl-message-overload-functions): Abolished.
+
+	* wl-message.el (wl-message-add-buttons-to-body): New function.
+	(wl-message-redisplay): Don't call wl-message-overload-functions;
+	Call wl-message-add-buttons-to-header and
+	wl-message-add-buttons-to-body.
+	(wl-message-display-internal): Set keymap argument for
+	elmo-mime-display-as-is, elmo-mime-message-display;
+	Run wl-message-display-internal-hook.
+	(wl-message-refer-article-or-url): Abolished.
+
+	* wl-highlight.el (wl-highlight-headers): Don't call
+	wl-highlight-message-add-buttons-to-header.
+	(wl-highlight-message-add-buttons-to-header): Abolished.
+
+
+	* wl-e21.el (wl-message-display-internal-hook): Define.
+	(wl-e21-setup-toolbar): Deleted duplicated binding.
+	(wl-e21-setup-message-toolbar): Define as function.
+	(wl-setup-message): Define as alias for wl-e21-setup-message-toolbar.
+	(wl-message-define-keymap): New function.
+	(wl-message-overload-functions): Abolished.
+
 2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-queue-flush): Call elmo-folder-open-internal
