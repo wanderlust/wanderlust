@@ -1,5 +1,10 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-folder.el (wl-folder-virtual): New function.
+	Define key "V".
+
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-fldmgr.el (wl-fldmgr-make-filter): Make filter folder of
 	multi folder if entity is group.
 

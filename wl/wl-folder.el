@@ -170,6 +170,7 @@
   (define-key wl-folder-mode-map "e"    'wl-folder-expire-current-entity)
   (define-key wl-folder-mode-map "E"    'wl-folder-empty-trash)
   (define-key wl-folder-mode-map "F"    'wl-folder-flush-queue)
+  (define-key wl-folder-mode-map "V"    'wl-folder-virtual)
   (define-key wl-folder-mode-map "q"    'wl-exit)
   (define-key wl-folder-mode-map "z"    'wl-folder-suspend)
   (define-key wl-folder-mode-map "\M-t" 'wl-toggle-plugged)
@@ -2790,6 +2791,26 @@ Call `wl-summary-write-current-folder' with current folder name."
 		(file-exists-p (elmo-folder-msgdb-path folder))
 		(elmo-folder-exists-p folder))
       (wl-folder-create-subr folder))))
+
+(defun wl-folder-virtual ()
+  "Goto virtual folder."
+  (interactive)
+  (let ((entity (wl-folder-get-entity-from-buffer)))
+    (if (wl-folder-buffer-group-p)
+	(setq entity
+	      (concat
+	       "*"
+	       (mapconcat 'identity
+			  (wl-folder-get-entity-list
+			   (wl-folder-search-group-entity-by-name
+			    entity
+			    wl-folder-entity)) ","))))
+    (unless entity (error "No folder"))
+    (wl-folder-goto-folder-subr
+     (concat "/"
+	     (elmo-read-search-condition
+	      wl-fldmgr-make-filter-default)
+	     "/" entity))))
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))
