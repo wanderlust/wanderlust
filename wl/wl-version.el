@@ -27,10 +27,6 @@
 
 ;;; Commentary:
 ;;
-;; Put the following lines to each file of Wanderlust package.
-;;
-;; (require 'product)
-;; (product-provide (provide FEATURE) (require 'wl-version))
 
 ;;; Code:
 ;;

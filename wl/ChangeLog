@@ -1,9 +1,3 @@
-2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-thread.el (wl-thread-open-all): Rewrite to open all threads and
-	keep cursor position. (Advised by OKAZAKI Tetsurou  <okazaki@be.to>)
-	(wl-thread-close-all): keep cursor position.
-
 2000-12-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-version-status-alist): Use `zerop' instead of
