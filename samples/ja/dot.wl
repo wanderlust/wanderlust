@@ -5,6 +5,7 @@
 ;; まず、次の設定を ~/.emacs などに書いてください。
 ;; XEmacs の package としてインストールされている場合は必要ありません。
 (autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
 ;; アイコンを置くディレクトリ

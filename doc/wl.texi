@@ -493,6 +493,7 @@ The minimal requirement for settings is as the following.
 ;; @r{autoload configuration}
 ;; @r{(These are not required if Wanderlust is installed as XEmacs package)}
 (autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
 ;; @r{Directory where icons are placed.}

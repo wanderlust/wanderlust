@@ -527,6 +527,7 @@ Wanderlust の動作をカスタマイズできます。
 ;; @r{autoload の設定}
 ;; @r{(XEmacs の package としてインストールされている場合、必要ありません)}
 (autoload 'wl "wl" "Wanderlust" t)
+(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
 ;; @r{アイコンを置くディレクトリ。初期設定は Emacs 固有のデフォルト値。}
