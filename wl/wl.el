@@ -809,7 +809,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 		(wl-check-variables)
 		(wl-check-variables-2)
 		(message "Checking type of variables...done")))
-	  (wl-plugged-init (wl-folder arg))
+	  (let ((inhibit-quit t))
+	    (wl-plugged-init (wl-folder arg)))
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
