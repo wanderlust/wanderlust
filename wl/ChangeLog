@@ -1,3 +1,8 @@
+2002-07-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-config-exec): Fixed docstring.
+	* wl-vars.el (wl-draft-config-alist): Ditto.
+
 2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.9.14.

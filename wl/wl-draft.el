@@ -2013,7 +2013,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (wl-draft-config-exec config-alist reply-buf)))))
 
 (defun wl-draft-config-exec (&optional config-alist reply-buf)
-  "Change headers in draft sending time."
+  "Change headers according to the value of `wl-draft-config-alist'.
+Automatically applied in draft sending time."
   (interactive)
   (let ((case-fold-search t)
 	(alist (or config-alist wl-draft-config-alist))

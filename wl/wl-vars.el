@@ -1115,14 +1115,24 @@ If nil, a string `This is a blind carbon copy.' is used."
   :group 'wl-draft)
 
 (defcustom wl-draft-config-alist nil
-  "Alist of configuration field on draft.
+  "Alist of condition and actions for dynamical draft modification.
+First element of each list is some condition for the draft buffer (regular
+expression for header or elisp expression) and remaining elements indicate
+actions.
+If the first element is `reply' keyword, the next element be the condition
+for the message being replied, and remaining elements are actions.
+
+The configuration is applied when `wl-draft-config-exec' is called, or
+applied automatically before sending message.
+
 ex.
 '((\"^To: .*wl@lists.airs.net\"
-   (\"From\" . wl-from2)
-   (\"Organization\" . wl-organization2))
-  (\"^To: .*hogehoge@\"
-   (\"From\" . \"Anonymous <hogehoge@aaa.ne.jp>\")
-   wl-my-draft-config-func-hoge))"
+   (\"From\" . my-from-address-for-wl-list)
+   (\"Organization\" . my-organization-for-wl-list))
+  (reply
+   \"^To: .*hogehoge@aaa.ne.jp\"
+   (\"From\" . \"Alternative Address <hogehoge@aaa.ne.jp>\")
+   my-draft-config-function-hogehoge))"
   :type '(repeat (list (sexp :tag "Match")
 		       (repeat
 			:inline t
