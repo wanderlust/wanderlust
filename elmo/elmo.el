@@ -216,19 +216,20 @@ Return value is cons cell or list:
   "Return a list of message numbers contained in FOLDER.
 If optional VISIBLE-ONLY is non-nil, killed messages are not listed.
 If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
+
 (luna-define-method elmo-folder-list-messages ((folder elmo-folder)
 					       &optional visible-only in-msgdb)
   (let ((list (if in-msgdb
 		  t
-		(elmo-folder-list-messages-internal folder visible-only))))
-    (setq list
-	  (if (listp list)
-	      list
-	    ;; Use current list.
-	    (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
+		(elmo-folder-list-messages-internal folder visible-only)))
+	(killed-list (elmo-folder-killed-list-internal folder)))
+    (unless (listp list)
+      ;; Use current list.
+      (setq list (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
     (if visible-only
-	(elmo-living-messages list (elmo-folder-killed-list-internal folder))
-      list)))
+	(elmo-living-messages list killed-list)
+      (elmo-uniq-list
+       (nconc (elmo-number-set-to-number-list killed-list) list)))))
 
 (luna-define-generic elmo-folder-list-unreads (folder)
   "Return a list of unread message numbers contained in FOLDER.")

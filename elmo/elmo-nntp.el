@@ -463,16 +463,20 @@ Don't cache if nil.")
 	  )))))
 
 (defsubst elmo-nntp-catchup-msgdb (msgdb max-number)
-  (let (msgdb-max number-alist)
-    (setq number-alist (elmo-msgdb-get-number-alist msgdb))
-    (setq msgdb-max (car (nth (max (- (length number-alist) 1) 0)
-			      number-alist)))
-    (if (or (not msgdb-max)
-	    (and msgdb-max max-number
-		 (< msgdb-max max-number)))
-	(elmo-msgdb-set-number-alist
-	 msgdb
-	 (nconc number-alist (list (cons max-number nil)))))))
+  (let ((numbers (elmo-msgdb-list-messages msgdb))
+	msgdb-max)
+    (setq msgdb-max (if numbers
+			(car (sort numbers '>))
+		      0))
+    (when (and msgdb-max
+	       max-number
+	       (< msgdb-max max-number))
+      (let ((i (1+ msgdb-max))
+	    killed)
+	(while (<= i max-number)
+	  (setq killed (cons i killed))
+	  (incf i))
+	(nreverse killed)))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-nntp-folder)
 						 &optional one-level)
@@ -870,42 +874,45 @@ Don't cache if nil.")
 	  (progn
 	    (elmo-nntp-set-list-active session nil)
 	    (error "NNTP list command failed")))
-      (elmo-nntp-catchup-msgdb
-       new-msgdb
-       (nth 1 (read (concat "(" (elmo-nntp-read-contents
-				 session) ")")))))
+      (let ((killed (elmo-nntp-catchup-msgdb
+		     new-msgdb
+		     (nth 1 (read (concat "(" (elmo-nntp-read-contents
+					       session) ")"))))))
+	(when killed
+	  (elmo-folder-kill-messages folder killed))))
     new-msgdb))
 
 (luna-define-method elmo-folder-update-number ((folder elmo-nntp-folder))
-  (if (elmo-nntp-max-number-precedes-list-active-p)
-      (let ((session (elmo-nntp-get-session folder))
-	    (number-alist (elmo-msgdb-get-number-alist
-			   (elmo-folder-msgdb folder))))
-	(if (elmo-nntp-list-active-p session)
-	    (let (msgdb-max max-number)
-	      ;; If there are canceled messages, overviews are not obtained
-	      ;; to max-number(inn 2.3?).
-	      (elmo-nntp-select-group session
-				      (elmo-nntp-folder-group-internal folder))
-	      (elmo-nntp-send-command session
-				      (format "list active %s"
-					      (elmo-nntp-folder-group-internal
-					       folder)))
-	      (if (null (elmo-nntp-read-response session))
-		  (error "NNTP list command failed"))
-	      (setq max-number
-		    (nth 1 (read (concat "(" (elmo-nntp-read-contents
-					      session) ")"))))
-	      (setq msgdb-max
-		    (car (nth (max (- (length number-alist) 1) 0)
-			      number-alist)))
-	      (if (or (and number-alist (not msgdb-max))
-		      (and msgdb-max max-number
-			   (< msgdb-max max-number)))
-		  (elmo-msgdb-set-number-alist
-		   (elmo-folder-msgdb folder)
-		   (nconc number-alist
-			  (list (cons max-number nil))))))))))
+  (when (elmo-nntp-max-number-precedes-list-active-p)
+    (let ((session (elmo-nntp-get-session folder)))
+      (when (elmo-nntp-list-active-p session)
+	(let ((numbers (elmo-folder-list-messages folder nil 'in-msgdb))
+	      msgdb-max max-number)
+	  ;; If there are canceled messages, overviews are not obtained
+	  ;; to max-number(inn 2.3?).
+	  (elmo-nntp-select-group session
+				  (elmo-nntp-folder-group-internal folder))
+	  (elmo-nntp-send-command session
+				  (format "list active %s"
+					  (elmo-nntp-folder-group-internal
+					   folder)))
+	  (if (null (elmo-nntp-read-response session))
+	      (error "NNTP list command failed"))
+	  (setq max-number
+		(nth 1 (read (concat "(" (elmo-nntp-read-contents
+					  session) ")"))))
+	  (setq msgdb-max (if numbers
+			      (car (sort numbers '>))
+			    0))
+	  (when (and msgdb-max
+		     max-number
+		     (< msgdb-max max-number))
+	    (let ((i (1+ msgdb-max))
+		  killed)
+	      (while (<= i max-number)
+		(setq killed (cons i killed))
+		(incf i))
+	      (elmo-folder-kill-messages folder (nreverse killed)))))))))
 
 (defun elmo-nntp-msgdb-create-by-header (session numbers flag-table)
   (with-temp-buffer
