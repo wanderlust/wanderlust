@@ -475,8 +475,7 @@ the message with NUMBER checks whether it has MSGID.")
       (let ((this-id (elmo-message-field folder number 'message-id)))
 	(and this-id
 	     (string= this-id msgid)
-	     (or (elmo-msgdb-flags (elmo-folder-msgdb folder) number)
-		 '(read))))
+	     (elmo-msgdb-flags (elmo-folder-msgdb folder) number)))
     (elmo-msgdb-flags (elmo-folder-msgdb folder) number)))
 
 (defsubst elmo-message-flagged-p (folder number flag)

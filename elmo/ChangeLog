@@ -2,6 +2,7 @@
 
 	* elmo.el (elmo-folder-append-buffer): Fix docstring.
 	(elmo-folder-append-msgdb): Don't treat `read'.
+	(elmo-message-flags): Don't return `read'.
 
 	* elmo-dop.el (elmo-folder-set-read-delayed): Don't treat `read'.
 	(elmo-folder-unset-read-delayed): Ditto.

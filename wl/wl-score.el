@@ -1208,8 +1208,8 @@ Set `wl-score-cache' nil."
 	   (/ (* i 100) count))))
       (when dels
 	(dolist (del dels)
-	  (elmo-message-set-flag wl-summary-buffer-elmo-folder
-				 del 'read))
+	  (elmo-message-unset-flag wl-summary-buffer-elmo-folder
+				   del 'unread))
 	(elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)

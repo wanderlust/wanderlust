@@ -885,12 +885,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-overview-entity-compare-by-from (x y)
   "Compare entity X and Y by from."
   (string<
-   (wl-address-header-extract-address
-    (or (elmo-message-entity-field x 'from t)
-	wl-summary-no-from-message))
-   (wl-address-header-extract-address
-    (or (elmo-message-entity-field y 'from t)
-	wl-summary-no-from-message))))
+   (or (elmo-message-entity-field x 'from t)
+       wl-summary-no-from-message)
+   (or (elmo-message-entity-field y 'from t)
+       wl-summary-no-from-message)))
 
 (defun wl-summary-overview-entity-compare-by-subject (x y)
   "Compare entity X and Y by subject."
@@ -1658,10 +1656,10 @@ If ARG is non-nil, checking is omitted."
       (let ((folder wl-summary-buffer-elmo-folder)
 	    (cur-buf (current-buffer)))
 	(message "Setting all msgs as read...")
-	(elmo-folder-set-flag
+	(elmo-folder-unset-flag
 	 folder
 	 (elmo-folder-list-flagged folder 'unread 'in-msgdb)
-	 'read)
+	 'unread)
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (not (eobp))

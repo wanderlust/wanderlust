@@ -1,3 +1,13 @@
+2004-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-overview-entity-compare-by-from): 
+	Don't extract mail address.
+	(wl-summary-mark-as-read-all): Dont' treat `read' flag.
+
+	* wl-draft.el (wl-draft-do-fcc): Don't treat `read' flag.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
 2004-09-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-exit): Display length of
