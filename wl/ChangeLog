@@ -1,3 +1,7 @@
+2001-02-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-cache-prefetch-message): Fixed last change.
+
 2001-02-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-cache-prefetch-message):
