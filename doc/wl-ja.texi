@@ -6566,8 +6566,9 @@ OK です。
 @subsection bbdb.el
 @pindex BBDB
 
-@file{util/bbdb-wl.el} を @code{load-path} において以下のように設定すれば
-OK です。
+The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
+を Wanderlust と共に使うには、 @file{util/bbdb-wl.el} を @code{load-path}
+に置いて以下のように設定すれば OK です。
 
 インストール時に @code{load-path} 上に BBDB があれば、
 @file{bbdb-wl.el} はバイトコンパイル/インストールされます。
@@ -6602,7 +6603,8 @@ OK です。
 @subsection lsdb.el
 @pindex LSDB
 
-以下は、設定の一例です。
+The Lovely Sister Database (@uref{http://sourceforge.jp/projects/lsdb/})
+を Wanderlust と共に使うための設定例を以下に示します。
 
 @lisp
 @group
