@@ -675,8 +675,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   (elmo-generic-folder-commit folder))
 
 (defun elmo-generic-folder-commit (folder)
-  (when (elmo-folder-persistent-p folder)
-    (let ((msgdb (elmo-folder-msgdb folder)))
+  (let ((msgdb (elmo-folder-msgdb-internal folder)))
+    (when (and msgdb (elmo-folder-persistent-p folder))
       (when (elmo-msgdb-message-modified-p msgdb)
 	(elmo-folder-set-info-max-by-numdb
 	 folder

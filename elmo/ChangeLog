@@ -1,5 +1,7 @@
 2003-09-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-generic-folder-commit): Don't load msgdb.
+
 	* elmo-mark.el (elmo-mark-folder-msgdb-create): Use flag instead
 	of mark.
 
