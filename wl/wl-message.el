@@ -596,35 +596,29 @@ Returns non-nil if bottom of message."
 	       folder next summary)
 	    next)))))
 
-(defun wl-message-buffer-prefetch (folder number &optional
-					  count summary charset)
+(defun wl-message-buffer-prefetch (folder number count
+					  &optional summary charset)
   (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
 	 (num number))
-    (when (wl-message-buffer-prefetch-p folder)
+    (when (and count
+	       (wl-message-buffer-prefetch-p folder))
       (unless (wl-message-buffer-prefetch-p folder number)
 	(setq num
 	      (wl-message-buffer-prefetch-get-next folder number summary)))
       (when num
 	(wl-message-buffer-prefetch-clear-timer)
 	(wl-message-buffer-prefetch-set-timer
-	 folder
-	 num
-	 (or count 1)
-	 summary
-	 charset)))))
+	 folder num count summary charset)))))
 
-(defun wl-message-buffer-prefetch-next (folder number &optional
-					       count summary charset)
+(defun wl-message-buffer-prefetch-next (folder number count
+					       &optional summary charset)
   (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
 	 (next (wl-message-buffer-prefetch-get-next folder number summary)))
-    (when (wl-message-buffer-prefetch-p folder)
+    (when (and count
+	       (wl-message-buffer-prefetch-p folder))
       (wl-message-buffer-prefetch-clear-timer)
       (wl-message-buffer-prefetch-set-timer
-       folder
-       next
-       (or count 1)
-       summary
-       charset))))
+       folder next count summary charset))))
 
 (defun wl-message-buffer-prefetch-subr (folder number count summary charset)
   (if (buffer-live-p summary)

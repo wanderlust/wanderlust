@@ -1,5 +1,11 @@
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (wl-message-buffer-prefetch): Require `count'.
+	If count is nil, do not prefetch.
+	(wl-message-buffer-prefetch-next): Next.
+
+2002-01-24  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-prepare-edit): Use `wl-draft-save'.
 
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
