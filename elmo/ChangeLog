@@ -1,6 +1,7 @@
 2001-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-process-filter): Don't use floor nor float.
+	(elmo-message-fetch-plugged): Fixed.
 
 	* elmo-imap4.el (elmo-imap4-find-next-line): Ditto.
 
