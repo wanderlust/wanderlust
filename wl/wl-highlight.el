@@ -340,6 +340,21 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
+;; forwarded
+(wl-defface wl-highlight-summary-forwarded-face
+  '((((type tty)
+      (background dark))
+     (:foreground "yellow"))
+    (((class color)
+      (background dark))
+     (:foreground "DarkOliveGreen2"))
+    (((class color)
+      (background light))
+     (:foreground "DarkOliveGreen4")))
+  "Face used for displaying forwarded messages."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
 (wl-defface wl-summary-persistent-mark-face
   '((((type tty))
      (:foreground "blue"))
@@ -916,34 +931,35 @@
 	  (deactivate-mark nil)
 	  (number (or number (wl-summary-message-number)))
 	  bol eol spec)
-      (end-of-line)
-      (setq eol (point))
-      (beginning-of-line)
-      (setq bol (point))
-      (setq spec (wl-highlight-summary-line-face-spec
-		  (or flags
-		      (elmo-message-flags wl-summary-buffer-elmo-folder
-					  number))
-		  (wl-summary-temp-mark number)
-		  (wl-thread-entity-get-parent-entity
-		   (wl-thread-get-entity number))))
-      (when (car spec)
-	(put-text-property bol eol 'face (car spec)))
-      (when (cdr spec)
-	(put-text-property (next-single-property-change
-			    (next-single-property-change
-			     bol 'wl-summary-action-argument
-			     nil eol)
-			    'wl-summary-action-argument nil eol)
-			   eol
-			   'face
-			   'wl-highlight-action-argument-face))
-      (when wl-use-highlight-mouse-line
-	(put-text-property bol eol 'mouse-face 'highlight))
-      (when wl-highlight-summary-line-help-echo-alist
-	(wl-highlight-summary-line-help-echo number bol eol))
-      (when wl-use-dnd
-	(wl-dnd-set-drag-starter bol eol)))))
+      (when number
+	(end-of-line)
+	(setq eol (point))
+	(beginning-of-line)
+	(setq bol (point))
+	(setq spec (wl-highlight-summary-line-face-spec
+		    (or flags
+			(elmo-message-flags wl-summary-buffer-elmo-folder
+					    number))
+		    (wl-summary-temp-mark number)
+		    (wl-thread-entity-get-parent-entity
+		     (wl-thread-get-entity number))))
+	(when (car spec)
+	  (put-text-property bol eol 'face (car spec)))
+	(when (cdr spec)
+	  (put-text-property (next-single-property-change
+			      (next-single-property-change
+			       bol 'wl-summary-action-argument
+			       nil eol)
+			      'wl-summary-action-argument nil eol)
+			     eol
+			     'face
+			     'wl-highlight-action-argument-face))
+	(when wl-use-highlight-mouse-line
+	  (put-text-property bol eol 'mouse-face 'highlight))
+	(when wl-highlight-summary-line-help-echo-alist
+	  (wl-highlight-summary-line-help-echo number bol eol))
+	(when wl-use-dnd
+	  (wl-dnd-set-drag-starter bol eol))))))
 
 (defun wl-highlight-folder (start end)
   "Highlight folder between start and end.

@@ -759,7 +759,8 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when replied.
 This hook runs on the draft buffer.")
 
-(defvar wl-draft-forward-hook nil
+(defvar wl-draft-forward-hook
+  '((lambda () (wl-draft-setup-parent-flag 'forwarded)))
   "A hook called when forwarded.
 This hook runs on the draft buffer.")
 
@@ -1019,6 +1020,7 @@ cdr of each cons cell is used for preparing headers of draft message."
 (defcustom wl-summary-persistent-mark-priority-list '(flag
 						      new
 						      answered
+						      forwarded
 						      unread)
   "List of preserved flag symbols to define the priority to map\
 to the persistent mark.
@@ -1042,12 +1044,17 @@ Example:
 			       (const :tag "Default mark" nil))))
   :group 'wl-summary)
 
+(defcustom wl-summary-uncached-mark "!"
+  "Mark for uncached message with no flag."
+  :type '(string :tag "Mark")
+  :group 'wl-summary-marks)
+
 (defcustom wl-summary-new-uncached-mark "N"
   "Mark for new and uncached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-new-cached-mark "?"
+(defcustom wl-summary-new-cached-mark "n"
   "Mark for new but already cached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
@@ -1057,17 +1064,12 @@ Example:
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-unread-cached-mark "!"
+(defcustom wl-summary-unread-cached-mark "u"
   "Mark for unread but already cached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-read-uncached-mark "u"
-  "Mark for read but uncached message."
-  :type '(string :tag "Mark")
-  :group 'wl-summary-marks)
-
-(defcustom wl-summary-answered-cached-mark "&"
+(defcustom wl-summary-answered-cached-mark "a"
   "Mark for answered and cached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
@@ -2244,6 +2246,14 @@ Each elements are regexp of folder name."
 		(repeat (regexp :tag "Folder Regexp")))
   :group 'wl-pref)
 
+(defcustom wl-summary-force-prefetch-folder-list nil
+    "All folders that match this list are prefetched.
+Each elements are regexp of folder name."
+    :type '(radio (const :tag "none" nil)
+		  (const :tag "all" t)
+		  (repeat (regexp :tag "Folder Regexp")))
+    :group 'wl-pref)
+
 (defcustom wl-no-save-folder-list '("^/.*$" "^\\[.*$")
   "All folders that match this list won't save its msgdb.
 Each elements are regexp of folder name."
@@ -2311,8 +2321,7 @@ e.x.
   :group 'wl-pref)
 
 (defcustom wl-folder-sync-range-alist
-  (list (cons 'wl-require-update-all-folder-p "all")
-	(cons "^'flag" "all"))
+  (list (cons 'wl-require-update-all-folder-p "all"))
   "*Default sync range alist.  If no matches, `wl-default-sync-range' is used."
   :type '(repeat (cons (choice (regexp :tag "Folder Regexp")
 			       (symbol :tag "A function"))

@@ -1,5 +1,38 @@
 2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-draft-forward-hook): Setup to put forwarded flag.
+	(wl-summary-persistent-mark-priority-list): Add `forwarded'.
+	(wl-summary-uncached-mark): Renamed from wl-summary-read-uncached-mark.
+	(wl-summary-new-cached-mark): Changed default value to 'n'.
+	(wl-summary-unread-cached-mark): Changed default value to 'u'.
+	(wl-summary-answered-cached-mark): Changed default value to 'a'.
+	(wl-folder-sync-range-alist): Remove spec for 'flag.
+	(wl-summary-force-prefetch-folder-list): New user option.
+
+	* wl-summary.el (wl-summary-mode-map): Bind 'M-k' to
+	`wl-summary-toggle-persistent-mark'.
+	(wl-summary-update-mark-and-highlight-window): Don't highlight when
+	number is nil.
+	(wl-summary-mark-as-answered-region): Set interactive argument of
+	`wl-summary-set-persistent-mark-internal'.
+	(wl-summary-mark-as-important-region): Ditto.
+	(wl-summary-unset-persistent-mark): Ditto.
+	(wl-summary-set-persistent-mark): Ditto.
+	(wl-summary-mark-as-answered): Ditto.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-set-persistent-mark-internal): Do nothing
+	when `elmo-message-flag-available-p' is nil.
+	(wl-summary-toggle-persistent-mark): New function.
+	(wl-summary-goto-folder-subr): Call `wl-summary-force-prefetch'
+	when the folder matches `wl-summary-force-prefetch-folder-list'.
+
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Do nothing
+	when number is nil.
+	(wl-highlight-summary-forwarded-face): New face.
+
+2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* Version number is increased to 2.11.31.
 
 2004-09-11  Yoichi NAKAYAMA  <yoichi@geiin.org>

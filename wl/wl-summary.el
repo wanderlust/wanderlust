@@ -417,6 +417,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "f"    'wl-summary-forward)
   (define-key wl-summary-mode-map "$"    'wl-summary-mark-as-important)
   (define-key wl-summary-mode-map "F"    'wl-summary-set-flags)
+  (define-key wl-summary-mode-map "\M-k"  'wl-summary-toggle-persistent-mark)
   (define-key wl-summary-mode-map "&"    'wl-summary-mark-as-answered)
   (define-key wl-summary-mode-map "@"    'wl-summary-edit-addresses)
 
@@ -592,9 +593,10 @@ See also variable `wl-use-petname'."
 	  (goto-char beg)
 	  (while (and (< (point) end) (not (eobp)))
 	    (when (null (get-text-property (point) 'face))
-	      (setq number (wl-summary-message-number)
-		    flags (elmo-message-flags wl-summary-buffer-elmo-folder
-					      number))
+	      (setq number (wl-summary-message-number))
+	      (when number
+		(setq flags (elmo-message-flags wl-summary-buffer-elmo-folder
+						number)))
 	      (let (wl-summary-highlight)
 		(wl-summary-update-persistent-mark number flags))
 	      (wl-highlight-summary-current-line number flags))
@@ -1626,7 +1628,8 @@ If ARG is non-nil, checking is omitted."
     (if (null number-list)
 	(message "No message.")
       (wl-summary-set-persistent-mark-internal remove 'answered
-					       number-list)
+					       number-list
+					       nil nil (interactive-p))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -1641,7 +1644,8 @@ If ARG is non-nil, checking is omitted."
 					    'important))))
     (if (null number-list)
 	(message "No message.")
-      (wl-summary-set-persistent-mark-internal remove 'important number-list)
+      (wl-summary-set-persistent-mark-internal remove 'important number-list
+					       nil nil (interactive-p))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -2438,6 +2442,11 @@ If ARG, without confirm."
     (when (and wl-summary-buffer-window-scroll-functions
 	       wl-on-xemacs)
       (sit-for 0))
+    (when (or (eq t wl-summary-force-prefetch-folder-list)
+	      (wl-string-match-member
+	       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
+	       wl-summary-force-prefetch-folder-list))
+      (wl-summary-force-prefetch))
     (unwind-protect
 	(run-hooks 'wl-summary-prepared-hook)
       (set-buffer-modified-p nil))
@@ -2827,7 +2836,8 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 			     "wl-summary-%s-cached-mark" (car priorities))
 			  (format
 			   "wl-summary-%s-uncached-mark" (car priorities))))))
-		  (if (boundp var)
+		  (if (and (boundp var)
+			   (symbol-value var))
 		      (symbol-value var)
 		    (if cached
 			(downcase (substring (symbol-name (car priorities))
@@ -2838,7 +2848,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
     (or mark
 	(if (or cached (elmo-folder-local-p folder))
 	    nil
-	  wl-summary-read-uncached-mark))))
+	  wl-summary-uncached-mark))))
 
 (defsubst wl-summary-message-mark (folder number &optional flags)
   "Return mark of the message."
@@ -3046,10 +3056,11 @@ Return non-nil if the mark is updated"
 				    no-modeline-update))
 
 (defsubst wl-summary-set-persistent-mark-internal (inverse
-						   &optional flag
-						   number-or-numbers
+						   flag
+						   &optional number-or-numbers
 						   no-modeline-update
-						   no-server)
+						   no-server
+						   interactive)
   "Set persistent mark."
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
@@ -3064,22 +3075,26 @@ Return non-nil if the mark is updated"
 			       (list number))))
       (if (null number-list)
 	  (message "No message.")
-	(if inverse
-	    (elmo-folder-unset-flag folder number-list flag no-server)
-	  (elmo-folder-set-flag folder number-list flag no-server))
-	(dolist (number number-list)
-	  (setq visible (wl-summary-jump-to-msg number))
-	  ;; set mark on buffer
-	  (when visible
-	    (wl-summary-update-persistent-mark)))
-	(unless no-modeline-update
-	  ;; Update unread numbers.
-	  ;; should elmo-flag-mark-as-read return unread numbers?
-	  (wl-summary-count-unread)
-	  (wl-summary-update-modeline)
-	  (wl-folder-update-unread
-	   (wl-summary-buffer-folder-name)
-	   wl-summary-buffer-unread-count))))))
+	;; XXX Only the first element of the list is checked.
+	(if (elmo-message-flag-available-p folder (car number-list) flag)
+	    (progn
+	      (if inverse
+		  (elmo-folder-unset-flag folder number-list flag no-server)
+		(elmo-folder-set-flag folder number-list flag no-server))
+	      (dolist (number number-list)
+		;; set mark on buffer
+		(when (wl-summary-jump-to-msg number)
+		  (wl-summary-update-persistent-mark)))
+	      (unless no-modeline-update
+		;; Update unread numbers.
+		;; should elmo-flag-mark-as-read return unread numbers?
+		(wl-summary-count-unread)
+		(wl-summary-update-modeline)
+		(wl-folder-update-unread
+		 (wl-summary-buffer-folder-name)
+		 wl-summary-buffer-unread-count)))
+	  (if interactive
+	      (error "Flag `%s' is not available in this folder" flag)))))))
 
 (defun wl-summary-unset-persistent-mark (&optional flag
 						   number-or-numbers
@@ -3101,7 +3116,8 @@ Return non-nil if the mark is updated"
 					   flag
 					   number-or-numbers
 					   no-modeline-update
-					   no-server))
+					   no-server
+					   (interactive-p)))
 
 (defun wl-summary-set-persistent-mark (&optional flag
 						 number-or-numbers
@@ -3123,7 +3139,28 @@ Return non-nil if the mark is updated"
 					   flag
 					   number-or-numbers
 					   no-modeline-update
-					   no-server))
+					   no-server
+					   (interactive-p)))
+
+(defun wl-summary-toggle-persistent-mark (&optional force)
+  "Toggle persistent mark."
+  (interactive "P")
+  (let ((completion-ignore-case t)
+	flag)
+    (setq flag (intern (downcase
+			(completing-read
+			 "Flag: "
+			 (mapcar (lambda (flag)
+				   (list (capitalize (symbol-name flag))))
+				 (wl-summary-get-available-flags))
+			 nil
+			 'require-match))))
+    (if (and (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				     (wl-summary-message-number)
+				     flag)
+	     (not force))
+	(wl-summary-unset-persistent-mark flag)
+      (wl-summary-set-persistent-mark flag))))
 
 (defun wl-summary-mark-as-answered (&optional number-or-numbers
 					      no-modeline-update)
@@ -3135,7 +3172,9 @@ Return non-nil if the mark is updated"
 				'answered))
    'answered
    number-or-numbers
-   no-modeline-update))
+   no-modeline-update
+   nil
+   (interactive-p)))
 
 (defun wl-summary-mark-as-unanswered (&optional number-or-numbers
 						no-modeline-update)
@@ -3222,7 +3261,8 @@ Return non-nil if the mark is updated"
 	  (elmo-message-flagged-p wl-summary-buffer-elmo-folder
 				  (wl-summary-message-number)
 				  'important))
-     'important)))
+     'important
+     nil nil nil (interactive-p))))
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)
