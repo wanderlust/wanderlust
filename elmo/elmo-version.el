@@ -1,7 +1,7 @@
-;;; elmo-version.el -- Version information for ELMO.
+;;; elmo-version.el --- Version information for ELMO.
 
-;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -26,35 +26,21 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 ;; Put the following lines to each file of ELMO package.
 ;;
 ;; (require 'product)
 ;; (product-provide (provide FEATURE) (require 'elmo-version))
 
 ;;; Code:
-;; 
+;;
 (require 'product)
 (provide 'elmo-version)			; before product-provide
 
 ;; product-define in the first place
 (product-provide 'elmo-version
   ;; Don't forget to check `wl-version.el' and Info.
-  (product-define "ELMO" nil '(2 5 8)))
-
-;; For APEL 10.2 or earlier.
-(defun-maybe product-version-as-string (product)
-  "Return version number of product as a string.
-PRODUCT is a product structure which returned by `product-define'.
-If optional argument UPDATE is non-nil, then regenerate
-`produce-version-string' from `product-version'."
-  (setq product (product-find product))
-  (or (product-version-string product)
-      (and (product-version product)
-           (product-set-version-string product
-                                       (mapconcat (function int-to-string)
-                                                  (product-version product)
-                                                  ".")))))
+  (product-define "ELMO" nil '(2 8 0)))
 
 ;; set version-string
 (product-version-as-string 'elmo-version)
@@ -62,7 +48,6 @@ If optional argument UPDATE is non-nil, then regenerate
 (defun elmo-version ()
   "Return ELMO version."
   (product-string-1 'elmo-version))
-
 
 ;; for backward compatibility
 (defconst elmo-appname (product-name (product-find 'elmo-version)))

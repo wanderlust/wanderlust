@@ -1,4 +1,1069 @@
+2001-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-version.el (wl-version): Changed codename.
+
+	* Version number is increased to 2.8.0.
+
+2001-12-14  Takuo KITAME <kitame@northeye.org>
+
+	* wl-acap.el (wl-acap-init): Fixed `y-or-n-p' prompts.
+	* wl-folder.el (wl-folder-sync-current-entity, wl-folder-create-subr)
+	(wl-folder-mark-as-read-all-current-entity): Ditto.
+
+2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-from-width): Define as obsolete variable.
+	(wl-subject-length-limit): Ditto.
+
+	* wl.el (wl-plugged-dop-queue-status): Shrink queue list.
+
+	* wl-expire.el (wl-folder-expire-entity): Follow the last change on
+	wl-summary-save-view.
+
+	* wl.el (wl-save-status): Ditto.
+	(Pointed out by MAKINO Takashi <makino@cyber.office.ne.jp>)
+
+	* wl-summary.el (wl-summary-save-view): Removed unused argument.
+	(wl-summary-exit): Follow the change above.
+	(wl-summary-goto-folder-subr): Ditto.
+
+	* wl-folder.el (wl-folder-create-subr): Don't use
+	`elmo-folder-creatable-p'.
+
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-demo.el (wl-demo-icon-name): Use X'mas logo on Dec 25 too.
+
+2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-image-type-alist): Add bitmap, prefer xbm
+	rather than bitmap on Emacs 21.
+	(wl-demo-insert-image): Decode bitmap data line by line when Emacs
+	21 is running (cf. mule-ja:08245); make Emacs 21 use BITMAP-MULE
+	for xbm if the new redisplay engine is not available.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-init-hook): New hook.
+	(wl-folder-init): Run `wl-folder-init-hook'.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-insert-image): Fixed the face name for xbm.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (wl-acap-cache-filename): New variable.
+	(wl-acap-exit): Resume elmo-msgdb-directory only if it is preserved.
+	(wl-acap-init): Use cache if no ACAP server found.
+
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (wl-acap-original-msgdb-directory): Renamed from
+	`wl-acap-original-msgdb-dir'.
+
+	* wl-vars.el (wl-icon-directory): Renamed from `wl-icon-dir'.
+	(wl-score-files-directory): Renamed from `wl-score-files-dir'.
+
+	* wl-mime.el (wl-mime-save-directory): Renamed from
+	`wl-mime-save-dir'.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-icon-dir): Fixed the docstring.
+
+	* wl-demo.el: Require `path-util'.
+	(wl-demo-bitmap-mule-available-p): New internal variable.
+	(wl-demo-image-type-alist): Use it; don't require `bitmap', use
+	`module-installed-p' instead.
+	(wl-demo-insert-image): Use *.img file for a bitmap image.
+	(wl-demo): Don't call the ascii demo recursively.
+
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Version number is increased to 2.7.7.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-exit): Eliminated byte-compile warning.
+
+2001-12-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-update-confirm-threshold): Defined as
+	obsolete variable using `elmo-define-obsolete-variable'.
+	(wl-fetch-confirm-threshold): Ditto.
+	(wl-cache-prefetch-folder-type-list): Ditto.
+	(wl-cache-prefetch-folder-list): Ditto.
+
+2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el: Rewrote to make it read a logo file at the run-time.
+	(wl-demo-icon-name): Use Xmas logo at the end of the year.
+	(wl-demo-insert-image): New function.
+	(wl-demo-insert-text): New function.
+	(wl-demo-image-type-alist): Redefine as a function.
+	(wl-demo): Use `wl-demo-insert-image' and `wl-demo-insert-text'.
+	(wl-demo-with-temp-file-buffer): Removed.
+	(wl-logo-xpm): Removed.
+	(wl-logo-xbm): Removed.
+	(wl-logo-bitmap): Removed.
+
+2001-10-30  Nishimoto Masaki <nishimoto@gaju.org>
+
+	* wl-expire.el (wl-expire-localdir-date-folder-name-fmt): New variable.
+	(wl-expire-localdir-get-folder-function): New user option.
+	(wl-expire-localdir-get-folder): New function.
+	(wl-expire-localdir-date): Ditto.
+
+2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed car of return
+	value.  Refactoring `wl-folder-notify-deleted' is nil case.
+	Fixed unread number mismatch when all-unread < unread.
+
+2001-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-update-confirm-threshold): Abolished.
+	(wl-fetch-confirm-threshold): Ditto.
+
+	* wl-summary.el (wl-summary-confirm-appends): Removed.
+	(wl-summary-sync-update): Don't refer
+	`wl-summary-update-confirm-threshold' (It is now abolished).
+
+	* wl-message.el (wl-message-display-internal): Don't refer
+	`wl-fetch-confirm-threshold' (It is now abolished).
+
+2001-12-07  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-logo-xpm): Use Xmas logo temporally.
+
+2001-12-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-from-width): Rename from wl-from-width.
+	(wl-summary-subject-length-limit): Rename from wl-subject-length-limit.
+	Change default value to nil.
+	(wl-summary-indent-length-limit): The value can be nil, nil means
+	unlimited.
+
+	* wl-summary.el: Don't set limit for indent length if the value of
+	wl-summary-indent-length-limit is nil.
+	If the value of wl-summary-width is nil, it means only that the	width
+	of summary is unlimited (nil doesn't mean that the indent length is
+	unlimited).
+
+	* wl-thread.el: Ditto.
+
+2001-12-06  Hiroshi Tsutsui  <tsutsui@easter.kuee.kyoto-u.ac.jp>
+
+	* wl-vars.el (wl-summary-update-confirm-threshold): The value can
+	be nil,	nil means never confirm.
+	* wl-summary.el (wl-summary-confirm-appends): Ditto.
+
+2001-12-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-subject-length-limit): This value can be nil (nil
+	means unlimited).
+
+2001-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-write-sendlog): Use `write-region-as-binary';
+	Use `with-temp-buffer'.
+
+2001-12-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-get-entity-id): Ignore nemacs (rewrite
+	with new backquote style).
+	(wl-folder-get-entity-from-buffer): Ditto.
+
+2001-12-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-version.el (nemacs-version): Eliminated.
+	(wl-extended-emacs-version2): Ignore nemacs.
+	(wl-extended-emacs-version3): Ditto.
+
+2001-11-30  Tatsuya Kinoshita  <tats@iris.ne.jp>
+
+	* wl-vars.el (wl-draft-add-references): Set default value as nil.
+	(wl-draft-add-in-reply-to): New variable.
+	* wl-draft.el (wl-draft-add-references, wl-draft-add-in-reply-to):
+	Divided from `wl-draft-add-references'; add support `In-Reply-To'.
+	(wl-draft-yank-from-mail-reply-buffer): Use
+	`wl-draft-add-in-reply-to'.
+	(wl-draft-insert-current-message): Ditto.
+
+2001-12-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-folder-process-duplicates-alist): Fixed
+	typo (kill->hide).
+	(wl-message-buffer-prefetch-folder-type-list): Added elements
+	`mark' and `cache' instead of `internal'.
+
+2001-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (wl-acap-init): If initialization via ACAP is interrupted,
+	resume msgdb directory.
+
+2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-exit): Call `wl-acap-exit'.
+
+	* wl-summary.el (wl-summary-message-string): New function.
+	(wl-summary-reedit): Use it.
+	(wl-summary-resend-bounced-mail): Remove needless let.
+	(wl-summary-supersedes-message): Ditto.
+	(wl-summary-save): Ditto.
+
+	* wl-acap.el (wl-acap-original-msgdb-dir): New variable.
+	(wl-acap-init): Set it.
+	(wl-acap-exit): New function.
+
+2001-11-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-init): Revert (require 'mime-setup). move from
+	toplevel.
+
+2001-11-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-write-current-folder): Remove unused
+	local variables.  Add error when guess function return invalid
+	value.
+
+2001-11-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule):
+	Change local variable name.
+	(wl-folder-guess-mailing-list-by-folder-name): Ditto.
+	(wl-folder-get-newsgroups): Return nil when non-news folder.
+	* wl-summary.el (wl-summary-write-current-folder): State through
+	when guess-list return nil.
+	(wl-summary-write-current-folder-functions): Fixed docstring.
+
+	* wl.el (wl-exit): Changed confirm message.
+
+	* wl.el (wl-init): (require 'mime-setup) move to toplevel.
+	* wl-draft.el (wl-draft): Remove verbose `featurep'.
+
+	* wl-e21.el: Removed kludge for Emacs 21 prerelease versions.
+
+2001-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-message-buffer-prefetch-folder-type-list): New
+	user option (Renamed from wl-cache-prefetch-folder-type-list).
+	(wl-message-buffer-prefetch-folder-list): New user option (Renamed
+	from wl-cache-prefetch-folder-list).
+
+	* wl-message.el (wl-message-buffer-prefetch-folder-type-list):
+	Move to wl-vars.el.
+	(wl-message-buffer-prefetch-p): Changed to enable
+	`wl-message-buffer-prefetch-folder-list'.
+
+	* wl-summary.el (wl-summary-target-mark-prefetch): Added argument
+	`ignore-cache'.
+
+2001-11-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-config-sub-func-alist): Added
+	`part-top' and `part-bottom'.
+	(wl-draft-config-sub-part-top): New function.
+	(wl-draft-config-sub-part-bottom): New function.
+
+2001-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-reply): Call wl-draft with parent folder.
+
+2001-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-get-newsgroups): Fix.
+
+2001-11-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Added 14th argument `parent-folder'.
+
+	* wl-summary.el (wl-summary-write): Call wl-draft with 14th argument.
+	(wl-summary-write-current-folder): Ditto.
+
+2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-get-newsgroups): Use
+	`elmo-folder-newsgroups'.
+
+2001-11-18  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-config-sub-header-top): New fucntion.
+	(wl-draft-config-sub-func-alist): Added `wl-draft-config-sub-header-top'.
+	`wl-draft-config-sub-header-bottom'.
+
+2001-11-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-get-newsgroups): Fixed probrem when
+	localnews folder.
+
+2001-11-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-mode): Undo last change.
+
+	* wl-folder.el (wl-folder-mode): Ditto.
+
+2001-11-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-mode): Locally set
+	truncate-partial-window-width to nil.
+	(for XEmacs)
+
+	* wl-folder.el (wl-folder-mode): Ditto.
+
+2001-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-set-string-width) [Emacs]: New implementation.
+
+2001-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder-async-callback): Fixed unread
+	number.
+
+	* wl-folder.el (wl-folder-check-one-entity): Use `new' value of diff.
+
+	* wl-util.el (wl-biff-check-folder-async-callback): Ditto.
+
+	* Version number is increased to 2.7.6.
+
+2001-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-insert-summary): Renamed dummy argument.
+
+2001-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update): Enclose network
+	related portion with `unwind-protect'.
+
+2001-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-add): Fixed problem when `name' is list.
+
+2001-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-add-buttons-to-body): Exchenged 3rd and 4th
+	element.
+	* wl-vars.el (wl-message-body-button-alist): Ditto.
+
+	* wl-vars.el (wl-message-body-button-alist): Set 4th element as the
+	max match length.
+	(Pointed out by Akihiro MOTOKI <amotoki@dd.iij4u.or.jp>.)
+
+	* wl-message.el (wl-message-add-buttons-to-body): Use 3rd element value
+	for the max match length;
+	Use 4th element value for the button string regexp group.
+
+	* wl-acap.el (wl-acap-find-acap-service): If multiple ACAP server
+	candidate exists, prompt to select.
+
+2001-10-15  NAKAJIMA Mikio  <minakaji@osaka.email.ne.jp>
+
+	* wl-summary.el (wl-summary-jump-to-msg): Search before
+	calibration point by `beginning-of-line'.
+
+2001-10-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-make-group): Check folder name only
+	for access group.
+
+2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-display-internal): Bind
+	`default-mime-charset'.
+
+	* wl-fldmgr.el (wl-fldmgr-make-group): Check folder name error.
+
+	* wl-draft.el (wl-draft-reply): Decode newsgroup field.
+
+	* Version number is increased to 2.7.5.
+
+2001-10-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-expire.el (wl-summary-archive): Fixed;
+	Use `elmo-folder-name-internal'.
+
+2001-10-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-expire.el (wl-expire-refile): Remove ALL and DONE arguments
+	from `elmo-folder-move-messages' caller.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+
+	* wl-summary.el (wl-summary-exec-subr): Likewise (All other
+	related portions are changed).
+
+2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-exec-subr): Setup and clear progress
+	counter.
+
+2001-10-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Make truncate-partial-width-windows
+	buffer local and set it to nil.
+
+	* wl-message.el (wl-message-redisplay): Ditto.
+
+2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-important): If message is
+	already cached, set messag as read, otherwise encache and mark as read.
+
+2001-10-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-jump-to-current-message): Don't go to
+	point-min.
+
+2001-10-02  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-xmas.el (wl-message-define-keymap): Return a keymap.
+	* wl-mule.el (wl-message-define-keymap): Fixed parenthesis; return
+	a keymap.
+
+2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-e21.el (wl-message-define-keymap): Don't set widget-keymap as
+	parent.
+
+	* wl-mule.el (wl-message-define-keymap): Ditto.
+
+	* wl-xmas.el (wl-message-define-keymap): Fixed parenthesis.
+
+	* wl-xmas.el (wl-message-display-internal-hook): Define.
+	(wl-xmas-setup-message-toolbar): Define as function.
+	(wl-setup-message): Define as alias for wl-xmas-setup-message-toolbar.
+	(wl-message-overload-functions): Abolished.
+	(wl-message-define-keymap): New function.
+
+	* wl-vars.el (wl-message-display-internal-hook): New variable.
+	(wl-message-header-button-alist): New variable (Renamed from
+	wl-highlight-message-header-button-alist).
+	(wl-message-body-button-alist): Ditto.
+
+	* wl-mule.el (wl-message-define-keymap): New function.
+	(wl-message-overload-functions): Abolished.
+
+	* wl-message.el (wl-message-add-buttons-to-body): New function.
+	(wl-message-redisplay): Don't call wl-message-overload-functions;
+	Call wl-message-add-buttons-to-header and
+	wl-message-add-buttons-to-body.
+	(wl-message-display-internal): Set keymap argument for
+	elmo-mime-display-as-is, elmo-mime-message-display;
+	Run wl-message-display-internal-hook.
+	(wl-message-refer-article-or-url): Abolished.
+
+	* wl-highlight.el (wl-highlight-headers): Don't call
+	wl-highlight-message-add-buttons-to-header.
+	(wl-highlight-message-add-buttons-to-header): Abolished.
+
+
+	* wl-e21.el (wl-message-display-internal-hook): Define.
+	(wl-e21-setup-toolbar): Deleted duplicated binding.
+	(wl-e21-setup-message-toolbar): Define as function.
+	(wl-setup-message): Define as alias for wl-e21-setup-message-toolbar.
+	(wl-message-define-keymap): New function.
+	(wl-message-overload-functions): Abolished.
+
+2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-queue-flush): Call elmo-folder-open-internal
+	and elmo-folder-close.
+
+	* wl.el (wl): Call `wl-check-environment' before `wl-plugged-init'.
+
+2001-09-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-toggle-plugged): Use `not' instead of `null' for
+	boolean value.
+	* wl-draft.el (wl-draft-do-fcc): Ditto.
+
+2001-09-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-fcc-force-as-read): New variable.
+	* wl-draft.el (wl-draft-do-fcc): If `wl-fcc-force-as-read' is non-nil,
+	mark copied message as read.
+
+2001-09-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Fixed.
+
+2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-switch-to-clone-buffer): Use
+	`wl-summary-target-above' instead of obsolete variable
+	`wl-summary-temp-above'.
+
+	* wl-vars.el (toplevel): Use `elmo-define-obsolete-variable'
+	instead of `make-obsolete-variable'.
+	* wl-refile.el (toplevel): Ditto.
+
+2001-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Push mark
+	with third argument t.
+	(wl-draft): Set first argument for wl-plugged-init as t.
+
+	* wl-vars.el (wl-biff-state-indicator-off): Fixed default value
+	definition.
+
+2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el: Tabify.
+	(wl-biff-notify-hook): Use `ding' instead of `beep'.
+
+	* wl-draft.el (wl-draft-send): Fixed docstring and confirm
+	message.
+
+2001-09-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-biff-notify-hook): Remove duplicate definition
+	and set default to beep.
+
+2001-09-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-draft-truncate-lines): New variable.
+
+	* wl-draft.el (wl-draft): Use wl-draft-truncate-lines
+	instead of wl-message-truncate-lines for truncate-lines.
+
+2001-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-display-internal): Call
+	`wl-highlight-message' after `elmo-mime-display-as-is'.
+
+	* wl-mime.el (wl-mime-display-text/plain): New function.
+	(wl-mime-display-header): Ditto.
+	(wl-mime-setup): Register `wl-mime-display-text/plain' as a
+	body-presentation-method for text/plain;
+	Register `wl-mime-display-header' as a header-presentation-method;
+	Don't set up `elmo-message-text-content-inserted-hook' and
+	`elmo-message-header-inserted-hook'.
+
+	* wl-message.el (wl-message-buffer-all-header-flag): New buffer local
+	variable.
+	(wl-message-display-internal): Set `wl-message-buffer-all-header-flag'
+	as t if flag is 'all-header;
+	Don't bind `elmo-message-ignored-field-list',
+	`elmo-message-visible-field-list' and `elmo-message-sorted-field-list'.
+
+2001-09-24  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el: (wl-biff-state-indicator-off): Changed default value
+	for xemacs with non-mule environment.
+
+2001-09-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-strip-subject-re, wl-draft-kill)
+	(wl-draft-send-mail-with-qmail, wl-draft-get-fcc-list)
+	(wl-draft-do-fcc, wl-draft-queue-flush): Checkdoc.
+
+2001-09-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-interactive-send): Set default value as t.
+
+2001-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-addrmgr.el (wl-addrmgr-method-list): New variable.
+	(wl-addrmgr-method-list): Abolished.
+	(wl-addrmgr-change-method): Follow above change.
+
+	* wl-draft.el (wl-draft): Call `wl-plugged-init'.
+
+2001-09-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-truncate-lines): Change default value
+	to default-truncate-lines.
+
+	* wl-draft.el (wl-draft): Set truncate-lines as in wl-message.
+
+2001-09-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-truncate-lines): New variable.
+
+	* wl-message.el (wl-message-redisplay): Set truncate-lines using
+	wl-message-truncate-lines.
+
+2001-09-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (wl-acap-init): Remove period from error message.
+	(wl-acap-find-acap-service): Remove period from message.
+
+2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-check-environment): Undo last change.
+
+	* wl-vars.el (wl-from): Changed default value.
+
+	* wl-util.el (toplevel): Don't require tm-edit.
+
+	* wl-draft.el (wl-draft): Changed order of `elmo-init' and
+	`wl-folder-init';
+	Don't set mark on mail body.
+	(wl-draft-reedit): Ditto.
+
+	* wl-address.el (wl-address-quote-specials): Define as an alias for
+	elmo-address-quote-specials.
+
+2001-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-check-environment): If `wl-from' is nil, use default value.
+
+	* wl-vars.el (wl-from): Set default value as nil.
+	(wl-organization): Set default value as ORGANIZATION environment
+	variable.
+
+	* wl-draft.el (wl-smtp-extension-bind): Check value of
+	wl-smtp-connection-type.
+
+	* wl-acap.el (wl-acap-init): If ACAP service is not found, cause an
+	error.
+
+2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Version number is increased to 2.7.4.
+
+	* wl-highlight.el (wl-highlight-headers): Remove BEG and END
+	arguments from `wl-highlight-x-face-function' caller.
+	Use x-face-1.3.6.12 or later.
+
+2001-09-17  Reuben Thomas <rrt@dcs.gla.ac.uk>
+
+	* wl-addrmgr.el (wl-fldmgr-delete): Fix docstring.
+
+2001-09-17  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-width): Fix type to accept nil.
+	(wl-fcc): Fix to accept function.
+	(Reported by Reuben Thomas <rrt@dcs.gla.ac.uk>).
+
+2001-09-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (toplevel): Added `product-provide' declare.
+	* wl-addrmgr.el (toplevel): Fixed `product-provide' declare style.
+
+2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Changed order of calling `elmo-init'
+	and `elmo-folder-init'.
+
+2001-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-summary-burst): Extract message when content-type
+	of root entity is not only `multipart' but also `message/rfc822'.
+	(wl-summary-burst-subr): Ditto.
+
+2001-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (toplevel): Require 'custom.
+	(wl-trash-folder): Added to `wl-setting' group.
+
+	* wl-addrmgr.el (wl-addrmgr-goto-top): Fixed problem when no entry
+	exists.
+	(wl-addrmgr-draw): Insert empty line when no entry exists.
+
+	* wl-mule.el (wl-message-wheel-up): Fixed.
+	(wl-message-wheel-down): Ditto.
+
+2001-09-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-draft.el (wl-draft-config-exec-sub): Fixed problem when
+	config is an anonymous lambda expression.
+
+2001-09-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-biff-state-indicator-on): Use `*iso-2022-jp*'
+	when Mule 2 is running.
+
+2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-e21.el (wl-highlight-folder-current-line): Fixed regexp.
+
+2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-std11-parse-addresses): Ignore trailing
+	spaces (Adviced by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>).
+
+	* wl-address.el (wl-address-specials-regexp): Eliminated.
+	(wl-address-quote-specials): Rewrite.
+
+2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style
+	shy-groups for regexp.
+
+	* wl-e21.el (wl-highlight-folder-current-line): Use Posix style
+	character classes and Perl style shy-groups for regexp.
+	(wl-highlight-plugged-current-line): Use Posix style character
+	classes for regexp.
+	(wl-e21-highlight-folder-by-numbers): Ditto.
+	(wl-e21-display-image-p): Use `display-images-p' instead of
+	`display-graphic-p'.
+	(display-images-p): Make an alias to `display-graphic-p' if it is
+	not available.  It is for Emacs version prior to 21.0.105.
+
+	* wl-demo.el (wl-demo): Use `display-images-p' instead of
+	`display-graphic-p'.
+	(wl-demo-image-type-alist): Ditto.
+	(display-images-p): Make an alias to `display-graphic-p' if it is
+	not available.  It is for Emacs version prior to 21.0.105.
+
+2001-09-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-generate-user-agent-string-1): Remove tm
+	support.
+	(wl-generate-user-agent-string): Ditto.
+
+	* wl-version.el (wl-version): Update docsting.
+	(wl-version-status): Ditto.
+
+2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-e21.el (make-mode-line-mouse-map): Import from Emacs
+	21.0.105.  For Emacs 21.0.104 or earlier.
+
+2001-09-03  Takuo KITAME <kitame@northeye.org>
+
+	* wl-e21.el (wl-plugged-init-icons): Use
+	`make-mode-line-mouse-map' instead of `make-mode-line-mouse2-map'.
+	(wl-biff-init-icons): Ditto.
+
+2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-current-line):
+	Fixed highlighting refile/copy destination.
+
+	* wl-acap.el (wl-acap-init): Decode string by wl-acap-coding-system.
+	(wl-acap-store): Encode string by wl-acap-coding-system.
+
+2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (toplevel): Check and require 'un-define before
+	'xemacs-ucs;
+	 Added checking for UTF-2000.
+
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (toplevel): Require 'un-define before 'wl;
+	Don't enclose with `eval-and-compile'.
+
+	* wl.el (wl): Call `elmo-init' and `wl-folder-init' unless
+	wl-init is non-nil.
+
+	* wl-draft.el (wl-draft): Ditto.
+
+	* wl-folder.el (wl-folder): Don't call `wl-folder-init' here.
+
+	* wl-acap.el (toplevel): Require 'wl.
+	(wl-acap-store): Call `elmo-init'.
+
+	* wl.el (wl): Changed position of `wl-check-environment'.
+	(toplevel): Added autoload setting for wl-acap.
+
+	* wl-vars.el (wl-setting): New custom group.
+	(wl-from): Added wl-setting group.
+	(wl-user-mail-address-list): Ditto.
+	(wl-organization): Ditto.
+	(wl-subscribed-mailing-list): Ditto.
+	(wl-envelope-from): Ditto.
+	(wl-smtp-posting-user): Ditto.
+	(wl-smtp-posting-server): Ditto.
+	(wl-smtp-posting-port): Ditto.
+	(wl-smtp-authenticate-type): Ditto.
+	(wl-pop-before-smtp-user): Ditto.
+	(wl-pop-before-smtp-server): Ditto.
+	(wl-pop-before-smtp-port): Ditto.
+	(wl-pop-before-smtp-authenticate-type): Ditto.
+	(wl-nntp-posting-server): Ditto.
+	(wl-nntp-posting-user): Ditto.
+	(wl-nntp-posting-port): Ditto.
+	(wl-fetch-confirm-threshold): Ditto.
+	(wl-prefetch-threshold): Ditto.
+	(wl-thread-insert-opened): Ditto.
+	(wl-ldap-server): Ditto.
+	(wl-ldap-port): Ditto.
+	(wl-ldap-base): Ditto.
+	(wl-ldap-objectclass): Ditto.
+	(wl-use-ldap): Ditto.
+	(wl-draft-config-alist): Ditto.
+	(wl-draft-config-matchone): Ditto.
+	(wl-template-alist): Ditto.
+	(wl-message-sort-field-list): Ditto.
+	(wl-message-ignored-field-list): Ditto.
+	(wl-message-visible-field-list): Ditto.
+	(wl-interactive-send): Ditto.
+	(wl-summary-move-order): Ditto.
+	(wl-auto-select-first): Ditto.
+	(wl-auto-select-next): Ditto.
+	(wl-interactive-save-folders): Ditto.
+
+	* wl-folder.el (wl-folder): Moved position of `wl-folder-init';
+	Initialization codes are moved from wl-local-folder-init.
+	(wl-local-folder-init): Follow the change above.
+	(wl-folder-init): Call `wl-acap-init' when `wl-use-acap' is non-nil.
+
+	* wl-acap.el: New file.
+
+	* Version number is increased to 2.7.3.
+
+2001-08-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-addrmgr.el (wl-addrmgr-apply-exec): Fix for already-list.
+
+2001-08-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-addrmgr.el (wl-addrmgr-draw): Fix for already-list.
+	(wl-addrmgr-address-entry-list): Ditto.
+
+2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-e21.el (wl-draft-mode-map): Removed binding for
+	`wl-draft-insert-x-face-field'.
+
+	* wl-mule.el (wl-draft-mode-map): Ditto.
+
+	* wl-xmas.el (wl-draft-mode-map): Ditto.
+
+	* wl-vars.el (wl-cs-noconv): Ignore nemacs.
+	(wl-cs-autoconv): Ditto.
+	(wl-cs-local): Ditto.
+	(wl-use-scoring): Ditto.
+	(wl-mime-charset): Ditto.
+	(wl-folder-check-async): Ditto.
+
+	* wl.el (toplevel): Ignore nemacs and tm.
+	(wl-exit): Ditto.
+
+	* wl-summary.el (wl-summary-setup-mouse): Ignore nemacs.
+	(wl-summary-mode-map): Added binding for `wl-addrmgr'.
+	(wl-summary-edit-addresses-subr): Use wl-address-add-or-change
+	instead of wl-address-petname-add-or-change.
+	(wl-summary-edit-addresses-subr): Use wl-address-delete
+	instead of wl-address-petname-delete.
+
+	* wl-util.el (wl-as-coding-system): Ignore nemacs.
+
+	* wl-mime.el (wl-draft-preview-message): Kill raw preview buffer
+	if error occured.
+
+	* wl-message.el (require): Remove tm support.
+
+	* wl-highlight.el (defin-hilit, defun-hilit2): Eliminated.
+
+	* wl-folder.el (wl-folder-setup-mouse): Ignore nemacs.
+	(wl-folder-jump-to-current-entity): Ditto.
+	(wl-folder-mode-map): Added binding for `wl-addrmgr'.
+
+	* wl-e21.el (wl-draft-key-setup): Replaced binding (C-cC-a)for
+	`wl-draft-insert-x-face-field' to `wl-addrmgr'.
+	Changed binding for `wl-draft-insert-x-face-field' to C-cC-x.
+
+	* wl-mule.el (wl-draft-key-setup): Ditto.
+
+	* wl-xmas.el (wl-draft-key-setup): Ditto.
+
+	* wl-draft.el (toplevel): Added autoload setting for wl-addrmgr.
+	(wl-draft-std11-parse-addresses): New function.
+	(wl-draft-parse-mailbox-list): Use it.
+	(wl-draft): Ignore nemacs.
+	(wl-draft-reedit): Ditto.
+
+	* wl-addrmgr.el: New file.
+	(Original is wl-rcpt.el written by
+	"Kitamoto Tsuyoshi <tsuyoshi.kitamoto@city.sapporo.jp>".
+	Thanks Kitamoto-san.)
+
+	* wl-address.el (wl-address-make-address-list): Modified parsing
+	process.
+	(wl-address-delete): Renamed from `wl-address-petname-delete';
+	Modify wl-address-list too.
+	(wl-address-add-or-change): Renamed from
+	`wl-address-petname-add-or-change'; Rewote for wl-addrmgr.
+
+2001-08-15  YAMASHITA Junji <ysjj@unixuser.org>
+
+	* wl-highlight.el (wl-highlight-summary-current-line):
+	  Work with transient-mark-mode
+
+2001-08-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.7.2.
+
+	* wl.el (wl-plugged-dop-queue-info): Use elmo-dop-queue-method-name
+	instead of elmo-dop-queue-method.
+
+2001-08-06  SAITO Atsunori <sai@yedo.com>
+
+	* wl-vars.el (wl-ldap-objectclass): New user option.
+
+	* wl-address.el (wl-ldap-make-filter): Use it.
+
+2001-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-fldmgr.el (wl-fldmgr-rename): Fixed second argument.
+
+2001-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder): redisplay after folder insertion.
+
+	* wl-demo.el (wl-demo): Don't delete toolbar on emacs-21.
+
+	* wl-summary.el (wl-summary-sync-update):
+	Change status mark only when new-msgdb exists.
+	(Advised by Akihiro MOTOKI <mokkun@iname.com>.)
+
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-open-folder): New function.
+	(wl-summary-goto-folder-subr): Use it.
+	(wl-summary-mark-as-important): Fix;
+	Encache only when no cache exists.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
+	Use with-current-buffer.
+
+2001-07-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-score.el (wl-score-insert-help): Check `wl-message-buffer'
+	before call `get-buffer'. Fixed parenthesis.
+	(wl-score-get-header-entry): Clear message and help window when
+	keyboard quit.
+	(wl-score-edit-insert-header): Ditto.
+
+2001-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-message-mail-p): Test resent-to: field.
+	(Fix by Peter M~ller Neergaard <turtle@bu.edu>)
+	(wl-default-draft-cite): Fix.
+
+	* wl-score.el (wl-score-insert-help): Fixed parenthesis.
+	(Pointed out by ABE Yasushi <yasushi@stbbs.net>)
+
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-prev-page): Do same bahavior
+	as summary when it is called in the message buffer.
+	(wl-message-next-page): Ditto.
+
+2001-07-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-forward): Use cache if it is not
+	section cache.
+
+2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el: Changed file coding system to ISO-2022-JP.
+	Removed redundant require of elmo-vars.
+	(wl-biff-state-indicator-on): Changed default value for
+	xemacs with non-mule environment.
+
+	* wl-summary.el (wl-summary-exec-subr): Fixed problem when
+	wl-message-buffer is nil;
+	Hide progress bar after moving messages.
+
+2001-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-exec-subr): Delete message buffer only when
+	message at cursor point is deleted.
+
+2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el: Changed file coding system to euc-japan.
+	Added -*-coding:-*- magic to the first line.
+
+	* wl-summary.el (wl-summary-search-by-subject): Fixed bug;
+	Search parent from the first message.
+
+	* Version number is increased to 2.7.1.
+
+2001-06-28  OHASHI Akira  <bg66@koka-in.org>
+
+	* wl-vars.el: Fix file coding system to ISO-2022-JP.
+
+2001-06-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-exec-subr): Hide message buffer after
+	refile/delete execution.
+
+	* wl-vars.el (wl-summary-fix-timezone): Changed default value to nil;
+	Fixed docstring.
+
+2001-06-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update): If sync-result is non-nil,
+	do update process;
+	Don't update marks when update process is interrupted.
+
+2001-06-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-reply): Fixed problem when
+	wl-draft-use-frame is non-nil.
+	(wl-summary-forward): Ditto.
+
+	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
+	as nil.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
+	* wl.el (wl): Check environment before wl-init.
+
+	* wl-summary.el (wl-summary-collect-unread): Eliminated.
+	(wl-summary-mark-as-read-all): Use elmo-folder-list-unreads
+	instead of wl-summary-collect-unread.
+	(wl-summary-reply): Split message window.
+
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl): Set custom-manual link as "wl-ja"
+	only if current language environment is japanese,
+
+	* wl-folder.el (wl-folder-jump-to-current-entity): Call
+	wl-folder-select-buffer when wl-summary-use-frame is non-nil.
+	(wl-folder-goto-folder-subr): Ditto.
+
+	* wl-draft.el (wl-draft-dispatch-message): Call
+	`elmo-file-cache-get-path'.
+
+2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-cursor-move): If return value of
+	wl-summary-next-message is not number, don't jump.
+
+2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-next-message-function): New
+	variable.
+	(wl-summary-next-message): Call wl-summary-buffer-next-message-function
+	if it is bound.
+
+	* wl-e21.el (wl-plugged-set-folder-icon): Don't propertize image
+	string.
+
+	* wl.el (wl-plugged-dop-queue-info): Fix to check stream-type.
+	(wl-plugged-drawing): Ditto.
+
+2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder): Use own buffer for pop3 biff
+	process.
+	(wl-biff-check-folder-async): Enclose wl-biff-check-folder
+	with unwind-protect.
+
+	* wl.el (wl-init): Require mime-setup.
+	(wl-check-environment): Don't require mime-setup.
+
+	* wl-util.el (wl-biff-check-folder): Use elmo-folder-type-internal
+	instead of elmo-folder-type.
+
+	* wl-message.el (wl-message-buffer-prefetch-debug): Set default
+	value as nil.
+
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.7.0.
+
+	* wl-version.el (wl-version): Changed codename.
 
 	* wl-summary.el (wl-summary-delete-cache): Fixed.
 
@@ -13,7 +1078,7 @@
 	* wl-util.el (wl-biff-check-folder): Call elmo-folder-check instead
 	of elmo-folder-close.
 
-2001-06-06  Peter Møller Neergaard <turtle@bu.edu>
+2001-06-06  Peter M~ller Neergaard <turtle@bu.edu>
 
 	* wl-summary.el (wl-summary-resend-bounced-mail): Modified regexp
 	for postfix.

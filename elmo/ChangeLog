@@ -1,4 +1,801 @@
+2001-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.8.0.
+
+2001-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-folder): Added `dir-name' slot.
+	(elmo-archive-folder-path): Define.
+	(elmo-folder-initialize): Setup `dir-name' slot.
+	(elmo-archive-folder-list-subfolders): Fixed problem when `name' is "".
+	Use `dir-name' as prefix of each subfolders.
+	(Applyed patch from Takaaki MORIYAMA <taka@arcadia.co.jp>)
+
+2001-12-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-pipe-folder-copied-filename): New variable.
+	(elmo-pipe-folder-list-target-messages): New internal function.
+	(elmo-pipe-drain): Use new argument `ignore-list' instead of
+	`killed-list'.
+	(elmo-pipe-folder-copied-list-load): New function.
+	(elmo-pipe-folder-copied-list-save): Ditto.
+	(elmo-folder-open-internal): Follow the change above.
+	(elmo-folder-status): Fixed for copy.
+
+2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-creatable-p): Define.
+
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir.el (elmo-folder-message-make-temp-files): Use
+	elmo-copy-file instead of elmo-add-name-to-file.
+
+	* elmo-nmz.el (elmo-folder-message-make-temp-files): Ditto.
+
+	* elmo-nmz.el (elmo-map-folder-list-message-locations): Allow
+	"file://..." index.
+
+	* elmo-pop3.el (elmo-pop3-read-response): Set timeout argument
+	of accept-process-output as 1.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-read-body): Ditto.
+
+2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (product-version-as-string): Remove define.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-number-set-chop-length): New variable.
+	(elmo-imap4-copy-messages): Chop number set using
+	`elmo-imap4-number-set-chop-length'.
+	(elmo-imap4-set-flag): Ditto.
+	(elmo-imap4-search-internal-primitive): Ditto.
+
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo.el (elmo-folder-make-temporary-directory): Renamed from
+	`elmo-folder-make-temp-dir'
+
+	* elmo-vars.el (elmo-cache-directory): New variable.
+	(elmo-cache-dir): Abolished.
+	(elmo-msgdb-directory): Renamed from `elmo-msgdb-dir'.
+
+	* elmo-version.el (elmo-version): Up to 2.7.7.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-obsolete-variable-show-warnings): Define with
+	defcustom; Set default value as t.
+
+2001-12-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-ldif-field-name-regexp): Changed regexp.
+	(ldap-search-program-arguments): Changed default value.
+	(ldap-search-basic): Accept exit status 4.
+	(ldap/field-body): Parse options.
+	(ldap/collect-field): Ditto.
+	(According to the advise from Mito <mito@mxa.nes.nec.co.jp>)
+
+	* elmo-imap4.el (elmo-imap4-process-bye): New function.
+	(elmo-imap4-send-command): Call elmo-imap4-process-bye.
+	(elmo-imap4-accept-ok): Ditto.
+	(elmo-imap4-session-select-mailbox): If argument `no-error' equals to
+	'notify-bye, only BYE error is reported.
+	(elmo-folder-exists-p-plugged): Set no-error argument of
+	`elmo-imap4-session-select-mailbox' as 'notify-bye.
+
+	* elmo.el (elmo-imap4-bye-error): Changed message.
+
+	* elmo-dop.el (elmo-dop-queue-flush): Fixed obsolete version message.
+	(elmo-dop-queue-flush): Don't append to the dop-queue while flushing
+	queues (It causes infinite loop).
+
+2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo.el (elmo-folder-diff): Fixed docstring for IMAP4
+	(RECENT UNSEEN MESSAGES) extension.
+
+2001-12-07  Mito <mito@mxa.nes.nec.co.jp>
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string):
+	Check number of overview fields.
+
+2001-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-confirm-appends): Changed message.
+	(elmo-folder-confirm-appends): Ditto.
+
+	* elmo-archive.el (elmo-archive-exec-msgs-subr1): Use
+	`with-temp-buffer'.
+	(According to the advise from Nishimoto Masaki <nishimoto@gaju.org>)
+
+2001-12-06  Hiroshi Tsutsui  <tsutsui@easter.kuee.kyoto-u.ac.jp>
+
+	* elmo.el (elmo-folder-confirm-appends): Check whether the value
+	of elmo-folder-update-threshold is nil, which can be set by
+	wl-summary-update-confirm-threshold.
+
+2001-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el (elmo-nmz-default-index-path): Allow path list.
+	(elmo-nmz-index-alias-alist): Ditto.
+	(elmo-map-folder-list-message-locations): Follow the change above.
+
+2001-12-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-list-subfolders): Defined.
+
+	* elmo-archive.el (elmo-archive-call-process): Ignore nemacs.
+
+	* elmo-msgdb.el (elmo-msgdb-insert-file-header): Ditto.
+
+	* elmo-util.el (elmo-read): Ditto.
+	(elmo-display-error): Ditto.
+
+	* elmo-vars.el (elmo-date-match): Ditto.
+
+	* pldap.el (ldap-coding-system): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-drain): If `copy' is non-nil, bind
+	`elmo-inhibit-number-mapping' as nil.
+
+2001-11-30  Tatsuya Kinoshita  <tats@iris.ne.jp>
+
+	* elmo-pop3.el (elmo-pop3-parse-list-response): Allow multiple
+	space delimiter for list response.
+
+2001-12-02  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-sendlog.el (elmo-sendlog-buffer-name): Deleted.
+
+2001-12-02  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-sendlog.el (elmo-folder-delete-messages): Added.
+	(elmo-map-message-fetch): Fix.
+	* elmo-map.el (elmo-folder-status): Fix for killed.
+
+2001-12-02  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-sendlog.el: New file.
+	* elmo-internal.el (elmo-internal-folder-list): Added 'sendlog.
+
+2001-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-logging-out): New buffer local variable.
+	(acap-close): Set it.
+	(acap-wait-for-response): If acap-logging-out is non-nil, don't cause
+	an error.
+
+2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-response-bye-p): New function.
+	(acap-response-bye-message): Ditto.
+	(acap-wait-for-response): If bye response is received, cause an error.
+	(acap-parse-response): Make bye response when 'Bye' is received.
+
+2001-11-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Load killed-list.
+
+2001-11-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-copy-file): Added argument
+	`ok-if-already-exists'.
+	(elmo-copy-file): Fixed typo.
+
+2001-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Load killed-list.
+
+2001-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Save killed-list.
+
+2001-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Append copied messages
+	to killed-list.
+
+2001-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-folder): Add `copy'.
+	(elmo-folder-initialize): Fix for `copy'.
+	(elmo-pipe-drain): Ditto.
+	(elmo-folder-open-internal): Ditto.
+	(elmo-folder-newsgroups): Fix.
+
+2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-folder-append-messages): Make temporal filename
+	for each message.
+
+	* elmo-multi.el (elmo-multi-folder-diff): Fixed problem when
+	recent value is returned from imap folder.
+
+	* elmo.el (elmo-folder-newsgroups): New generic function.
+
+	* elmo-localnews.el (elmo-localnews-folder): Added `group' slot.
+	(elmo-folder-initialize): Set it.
+	(elmo-folder-expand-msgdb-path): Use it.
+	(elmo-folder-newsgroups): Define.
+
+	* elmo-filter.el (elmo-folder-newsgroups): Define.
+
+	* elmo-pipe.el (elmo-folder-newsgroups): Ditto.
+
+	* elmo-nntp.el (elmo-folder-newsgroups): Ditto.
+
+	* elmo-multi.el (elmo-folder-newsgroups): Ditto.
+
+2001-11-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview-folder-list): New
+	user option.
+	(elmo-shimbun-header-extra-field): New inline function.
+	(elmo-shimbun-header-set-extra-field): Ditto.
+	(elmo-shimbun-folder-header-hash-setup): Ditto.
+	(elmo-shimbun-update-overview): Ditto.
+	(elmo-shimbun-msgdb-to-headers): Set extra field `x-shimbun-id'.
+	(elmo-shimbun-folder-setup): Use
+	`elmo-shimbun-folder-header-hash-setup' to be setup hash table.
+	(elmo-shimbun-get-headers): Ditto.
+	(elmo-map-message-fetch): Call `elmo-shimbun-update-overview';
+	Insert `X-Shimbun-Id:' header if extra field is set.
+	(elmo-map-folder-list-message-locations): Return `x-shimbun-id'
+	field's value instead of `shimbun-header-id'.
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-set-references): New
+	inline function.
+	(elmo-msgdb-overview-entity-set-date): Ditto.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+
+2001-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-entity-section): Changed body node number from
+	"0" to "1".
+
+2001-11-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pop3.el (elmo-folder-delete-messages-plugged): Renamed from
+	`elmo-folder-delete-messages'.
+
+	* elmo-nmz.el (elmo-nmz-index-alias-alist): New user option.
+	(elmo-folder-initialize): Changed to expand alias into index path.
+
+	* elmo-mime.el (elmo-mime-insert-sorted-header): Call
+	`elmo-mime-insert-header-from-buffer' with 6th arg
+	`sorted-fields'.
+
+2001-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-entity-section): If node-id is nil, return "0".
+
+	* elmo.el (elmo-diff-new): New inline function.
+	(elmo-diff-unread): Ditto.
+	(elmo-diff-all): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-server-diff-async-callback-1): Get recent
+	value from responseb.
+	(elmo-imap4-folder-diff-plugged): Ditto.
+	(elmo-imap4-server-diff-async): Added recent argument.
+	(elmo-server-diff-async): Ditto.
+	(elmo-imap4-folder-diff-plugged): Ditto.
+
+	* elmo-version.el (elmo-version): Up to 2.7.6.
+
+2001-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-parse-token): Fixed how to treat quoted-pair
+	in quoted-stirng.
+
+2001-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-folder-initialize): Rewrite.
+
+	* elmo-imap4.el (elmo-folder-initialize): Ditto.
+
+	* elmo-nntp.el (elmo-folder-initialize): Ditto.
+
+	* elmo-multi.el (elmo-folder-initialize): Ditto.
+
+	* elmo-util.el (elmo-parse-token): New function.
+	(elmo-parse-prefixed-element): Ditto.
+
+2001-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-send-command): If BYE response is detected,
+	delete process.
+	(elmo-imap4-accept-ok): Ditto.
+
+2001-10-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mmimap.el (mime-imap-entity-header-string): Don't check first
+	element of node-id is `0' (Follow last change).
+
+2001-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mmimap.el (mmimap-make-mime-entity): Fixed problem to be
+	assigned irregular node-id to nested multipart section.
+	(initialize-instance): Followed above change.
+
+2001-10-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-get-headers): Don't call
+	`shimbun-open-group' (Moved to `elmo-folder-open-internal').
+	(elmo-folder-open-internal): Call `shimbun-open-group' (Moved from
+	`elmo-shimbun-get-headers');
+	Call `elmo-shimbun-folder-setup' if headers is empty (An entity of
+	visible article on summary exists in headers).
+	(elmo-map-message-fetch): Cause an error when folder is unplugged.
+
+2001-10-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-use-cache): Fix typo in the
+	definition.
+
+2001-10-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localnews.el (elmo-folder-expand-msgdb-path): Define.
+
+2001-10-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-insert-file-header): Moved searching
+	header separator into loop condition.
+
+2001-10-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed problem;
+	Return duplicate folder if it has subfolder.
+
+2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-make-folder): Add folder name error check.
+
+	* elmo-nntp.el (elmo-nntp-group-coding-system): New variable.
+	(elmo-nntp-encode-group-string): New inline function.
+	(elmo-nntp-decode-group-string): Ditto.
+	(elmo-folder-initialize): Use elmo-nntp-encode-group-string.
+	(elmo-nntp-folder-list-subfolders): Set processing buffer as unibyte;
+	Use `not' instead of `null';
+	Use elmo-nntp-decode-group-string.
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Don't append delimiter.
+
+	* elmo-version.el (elmo-version): Up to 2.7.5.
+
+2001-10-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-pipe-drain): Use `unwind-protect';
+	Hide progress gauge if `elmo-folder-move-messages' exits
+	nonlocally.
+
+2001-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-initialize): Use
+	`elmo-imap4-encode-folder-string' for folder name.
+
+2001-10-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-move-messages): Removed arguments `all' and
+	`done'.
+
+2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-progress-counter-alist): New internal
+	variable.
+	(elmo-progress-counter-value): New macro.
+	(elmo-progress-counter-all-value): Ditto.
+	(elmo-progress-counter-format): Ditto.
+	(elmo-progress-counter-set-value): Ditto.
+	(elmo-progress-set): New function.
+	(elmo-progress-clear): Ditto.
+	(elmo-progress-notify): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-drain): Setup and clear progress
+	counter.
+
+	* elmo.el (elmo-generic-folder-append-messages): Call
+	`elmo-progress-notify'.
+	(elmo-folder-move-messages): Don't call `elmo-display-progress'.
+
+	* elmo-archive.el (elmo-folder-append-messages): Call
+	`elmo-progress-notify'.
+
+	* elmo-imap4.el (elmo-folder-append-messages): Ditto.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Ditto.
+
+	* elmo-maildir.el (elmo-folder-append-messages): Ditto.
+
+2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-queue-method-name-alist): Fixed 'Encache' and
+	'Create'.
+	(elmo-message-encache-dop): Added argument `read'.
+
+	* elmo-shimbun.el (elmo-message-encache): Ditto.
+
+	* elmo-net.el (elmo-message-encache): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-seen-messages): New buffer local variable.
+	(elmo-imap4-fetch-callback-1-subr): Save important message numbers to
+	elmo-imap4-seen-messages.
+	(elmo-folder-msgdb-create-plugged): Initialize
+	elmo-imap4-seen-messages;
+	Set seen mark on elmo-imap4-seen-messages.
+
+	* elmo-pipe.el (elmo-folder-message-file-p): Define.
+
+	* elmo.el (elmo-generic-folder-append-messages): Check return value of
+	elmo-folder-append-buffer.
+	(elmo-folder-encache): Added optional argument `read'.
+	(elmo-message-encache): Ditto.
+
+	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Ditto.
+
+	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
+
+	* elmo-archive.el (elmo-archive-folder-append-buffer): Return t
+	if append buffer content succeds.
+
+2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-message-fetch-plugged): Fixed label for
+	elmo-display-progress.
+
+	* elmo-mime.el (elmo-mime-message-display): Added argument keymap;
+	Set 4th argument of mime-display-message.
+	(elmo-mime-display-as-is): Ditto.
+
+2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el (toplevel): Require 'mime-edit.
+	(elmo-nmz-content-type-alist): Abolished.
+	(elmo-nmz-msgdb-create-entity): Add From: and Subject: field if
+	content is not a message.
+	(elmo-map-message-fetch): Changed behavior exept for message content;
+	Detect mime-charset automatically, Use `mime-find-file-type' to detect
+	content-type, Add From: and Subject: field.
+
+2001-09-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-nmz.el (elmo-nmz-content-type-alist): New variable.
+	(elmo-map-message-fetch): Add `Content-Type' field if contents is
+	not a message.
+
+2001-09-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-writable-p): Changed default value to nil.
+	(elmo-folder-move-messages): Check `elmo-folder-writable-p'.
+
+	* elmo-archive.el (elmo-folder-writable-p): Defined.
+
+	* elmo-cache.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-filter.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-imap4.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-localdir.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-maildir.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-mark.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-pipe.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-nntp.el (elmo-folder-writable-p): Eliminated.
+
+2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-address-quote-specials): New function;
+	Renamed from `wl-address-quote-specials'.
+
+2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.4.
+
+2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-quit): Call `elmo-dop-queue-save'.
+
+2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* acap.el (acap-read-passphrase): Always autoload ange-ftp for
+	both compile-time and run-time to avoid byte-compile warning.
+
+2001-09-13  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-post): Fix for `elmo-nntp-default-stream-type'.
+
+2001-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-display-as-is-coding-system): New user
+	option.
+	(elmo-mime-display-as-is-internal): Use it.
+
+	* acap.el (acap-read-passphrase): Use `ange-ftp-read-passwd'
+	if `read-passwd' is not defined.
+
+2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-list-location): Sort locations
+	by original number.
+	(elmo-folder-status): Call `elmo-folder-open-internal';
+	Call `elmo-folder-close-internal' instead of `elmo-folder-close'.
+	(elmo-folder-close-internal): Set location-alist as nil.
+	(elmo-folder-clear): Define.
+	(elmo-folder-check): Don't set location-alist as nil.
+
+	* elmo-dop.el (elmo-dop-queue-method-name-alist): Fixed symbols.
+
+2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-msgid-to-cache): Enclose with `save-match-data'.
+	(Pointed out by Akihiro MOTOKI <amotoki@dd.iij4u.or.jp>)
+
+	* mmimap.el (mime-imap-entity::requested): New slot.
+	(mime-imap-location-fetch-entity-p): New generic function.
+	(mime-decode-parameters): Define using `defun-maybe'.
+	(mmimap-make-mime-entity): Use `make-mime-content-type' to make
+	content-type structure.
+	(mime-entity-body): Return empty body if
+	`mime-imap-location-fetch-entity-p' returns nil in the first request.
+
+	* elmo.el (elmo-message-displaying): New variable.
+
+	* elmo-mime.el (elmo-mime-message-display): Bind
+	elmo-message-displaying as t.
+
+	* elmo-imap4.el (mime-imap-location-fetch-entity-p): Define.
+
+2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-open): erase buffer before starting network process.
+	(acap-store): Rewrite.
+
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-default-mailbox,
+	elmo-imap4-default-server
+	elmo-imap4-default-authenticate-type,
+	elmo-imap4-default-user,
+	elmo-imap4-default-port,
+	elmo-imap4-default-stream-type,
+	elmo-imap4-stream-type-alist): Moved to elmo-vars.el.
+
+	* elmo-pop3.el (elmo-pop3-default-user,
+	elmo-pop3-default-server,
+	elmo-pop3-default-authenticate-type,
+	elmo-pop3-default-port,
+	elmo-pop3-default-stream-type,
+	elmo-pop3-stream-type-alist): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-default-server,
+	elmo-nntp-default-user,
+	elmo-nntp-default-port,
+	elmo-nntp-default-stream-type,
+	elmo-nntp-stream-type-alist): Ditto.
+
+	* elmo-vars.el: Follow changes above.
+	(elmo-setting): New custom group; added 'elmo-setting group to
+	above variables.
+
+	* elmo-version.el (elmo-version): Up to 2.7.3.
+
+	* acap.el (acap-parse-response): Don't delete process when BYE
+	response (It causes hang-up on slow network environment).
+	(toplevel): Added comment.
+
+2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* slp.el (slp-exec-wait): Use `slp-program-arguments'.
+
+	* acap.el (acap-parse-return-metadata-or-return-metalist): Fix for
+	parsing NIL.
+	(acap-parse-return-metadata): Ditto.
+
+	* slp.el: New file.
+	(toplevel): Fixed typo.
+
+	* acap.el: New file.
+	(acap-network-stream-open): Show "Connecting..." message.
+	(acap-parse-response): Fixed problem for BYE untagged response.
+	(acap-open): Changed argument (Use `acap-default-user' if user is nil).
+	(toplevel): Added tiny comments.
+
+2001-08-20  Tatsuya Kinoshita <tats@iris.ne.jp>
+
+	* elmo-pop3.el (elmo-pop3-parse-uidl-response): Allow multiple
+	space delimiter for uidl response.
+
+2001-08-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-use-semi): Eliminated.
+
+	* elmo-util.el (elmo-string-assoc-all): New function.
+
+2001-08-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-mime.el (elmo-mime-display-as-is-internal): Put text
+	property 'mime-preview-situation for `mime-preview-quit'.
+
+2001-08-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-fetch-with-cache-process): Call
+	elmo-message-fetch-internal instead of causing an error when fetch
+	strategy is 'entire but only 'section cache is available.
+
+2001-08-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.2.
+
+	* elmo.el (elmo-generic-folder-append-messages): Make
+	fetch-strategy with `use-cache'.
+
+	* elmo-dop.el (elmo-dop-queue-method-name-alist): New variable.
+	(elmo-dop-queue-method-name): New macro.
+
+2001-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed
+	unbalanced parenthesis.
+
+2001-08-03  YAMASHITA Junji <ysjj@unixuser.org>
+
+	* elmo-localdir.el (elmo-folder-rename-internal): Fixed typo.
+
+2001-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed logic.
+	(Advised by YAMASHITA Junji <ysjj@unixuser.org>.)
+
+2001-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Bind unbound
+	local variables.
+
+2001-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-use-cache): New user option.
+	(elmo-message-use-cache-p): Define.
+	(elmo-folder-msgdb-create): Treat cache.
+
+2001-07-28  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Call
+	`elmo-nntp-send-mode-reader'.
+	(elmo-network-setup-session): Remove `elmo-nntp-send-mode-reader'.
+
+2001-07-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-index-range-alist): Changed to regexp
+	alist.
+	(elmo-folder-initialize): Use elmo-string-matched-assoc instead of
+	assoc.
+
+	* elmo-net.el (elmo-network-get-session): Set stream-type argument
+	for `elmo-plugged-p'.
+	(elmo-open-network-stream): Fixed stream-type argument.
+
+2001-07-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Cause an error when
+	unknown archive type is specified.
+
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-open-internal): Fixed.
+
+	* elmo.el (elmo-generic-folder-open): Bind inhibit-quit as t
+	while loading msgdb.
+
+	* elmo-shimbun.el (elmo-shimbun-folder-setup): New function.
+	(elmo-folder-open-internal): Rewrite.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-display-as-is-internal):
+	Adjust buffer-multibyte status.
+
+2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-msgdb-search): Use elmo-condition-in-msgdb-p instead
+	of elmo-condition-find-key.
+
+	* elmo-util.el (elmo-condition-in-msgdb-p-internal): New function.
+	(elmo-condition-in-msgdb-p): Ditto.
+	(elmo-read-search-condition-internal): Don't set REQUIRE-MATCH
+	argument.
+
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-folder-pack-numbers): Define.
+
+2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-find-next-line): Fixed
+	label for elmo-display-progress.
+
+2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-clear): New method.
+	(elmo-folder-clear): Define.
+	(elmo-folder-synchronize): Call `elmo-folder-clear'.
+
+	* elmo-shimbun.el (elmo-folder-check): Rewrite.
+	(elmo-folder-clear): Define.
+
+	* elmo-map.el (elmo-folder-clear): Define.
+
+	* elmo-version.el (elmo-version): Up to 2.7.1.
+
+2001-06-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Return list of nil when no
+	updates.
+
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-append-messages): Fixed logic.
+	(Detected by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>)
+
+2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-get-network-stream-type): Moved to elmo-net.el.
+
+	* elmo-net.el (elmo-get-network-stream-type): Moved from elmo-util.el
+	and re-written.
+
+	* elmo-imap4.el (elmo-folder-initialize): Use
+	elmo-get-network-stream-type.
+
+	* elmo-nntp.el (elmo-folder-initialize): Ditto.
+
+	* elmo-pop3.el (elmo-folder-initialize): Ditto.
+
+2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-encache): Set unread argument for
+	elmo-message-fetch.
+
+	* elmo-shimbun.el (elmo-dop): Require 'elmo-dop.
+
+	* elmo.el (elmo-net-port-info): New method.
+
+	* elmo-shimbun.el (elmo-net-port-info): Define.
+	(elmo-message-encache): Ditto.
+
+	* elmo-net.el (elmo-net-port-info): Define as method.
+
+	* elmo.el (elmo-generic-folder-append-messages): Find cache file in
+	unplugged status when elmo-enable-disconnected-operation is t.
+
+	* elmo-dop.el (elmo-dop-spool-folder-append-buffer): Check existence
+	of spool folder before checking new number.
+
+2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-network-close-session): Removed 3rd argument.
+	(elmo-network-setup-session): Ditto.
+	(elmo-message-fetch-plugged): Ditto.
+	(elmo-pop3-send-command): Don't call elmo-pop3-lock.
+	(elmo-network-initialize-session): Ditto.
+	(elmo-pop3-read-response): Abolish 3rd argument.
+	(elmo-pop3-read-response): Don't call elmo-pop3-unlock.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-read-body): Ditto.
+	(elmo-folder-status): Call elmo-folder-close.
+	(elmo-pop3-lock): Abolish.
+	(elmo-pop3-unlock): Ditto.
+	(elmo-pop3-locked-p): Ditto.
+	(elmo-folder-check): Don't call elmo-pop3-locked-p.
+
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.0.
 
 	* elmo-pop3.el (elmo-pop3-debug): New variable.
 	(elmo-pop3-debug-inhibit-logging): Ditto.
@@ -270,7 +1067,7 @@
 	* elmo.el (elmo-message-fetch): Define.
 	(elmo-message-fetch-with-cache-process): New generic method.
 	(elmo-message-fetch-internal): New generic method.
-	(elmo-folder-synchronize): 
+	(elmo-folder-synchronize):
 
 	* elmo-archive.el (elmo-message-fetch-internal): Define.
 	(elmo-message-fetch): Eliminated.

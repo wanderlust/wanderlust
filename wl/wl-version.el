@@ -1,4 +1,4 @@
-;;; wl-version.el -- Version information for Wanderlust.
+;;; wl-version.el --- Version information for Wanderlust.
 
 ;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -46,9 +46,9 @@
    "Wanderlust" nil
    (eval-when-compile
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
-   "Smooth Criminal"))
+   "Something-pre"))
 
-(defconst wl-version-status "alpha"
+(defconst wl-version-status nil
   "Wanderlust verstion status.  For override default rule.
 If nil, use default rule.")
 
@@ -56,11 +56,11 @@ If nil, use default rule.")
 ;; set version-string
 (product-version-as-string 'wl-version)
 
-;; Don't support insert string at-point (C-u M-x wl-version).
-;; For bug report, use `wl-generate-user-agent-string-1' instead.
-;; When non-interactive, use `product-string-1' instead.
 (defun wl-version ()
-  "Print Wanderlust version."
+  "Print Wanderlust version.
+Don't support insert string at-point (C-u M-x wl-version).
+For bug report, use `wl-generate-user-agent-string-1' instead.
+When non-interactive, use `product-string-1' instead."
   (interactive)
   (let ((product-info (product-string-1 'wl-version t)))
     (if (interactive-p)
@@ -68,7 +68,8 @@ If nil, use default rule.")
       product-info)))
 
 (defun wl-version-status ()
-  "Return version status string."
+  "Return version status string.
+If variable `wl-version-status' is non-nil, override default rule."
   (or wl-version-status
       (if (zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))
 	  "stable"
@@ -76,7 +77,6 @@ If nil, use default rule.")
 
 ;; avoid compile warnings
 (defvar mule-version)
-(defvar nemacs-version)
 (defvar emacs-beta-version)
 (defvar xemacs-codename)
 (defvar mime-edit-insert-user-agent-field)
@@ -90,10 +90,8 @@ Insert User-Agent field instead of X-Mailer field."
   (concat "User-Agent: "
 	  (wl-generate-user-agent-string-1
 	   ;; for backward compatibility
-	   (or (and (boundp 'mime-edit-insert-user-agent-field)
-		    mime-edit-insert-user-agent-field) ; SEMI
-	       (and (boundp 'mime-editor/version)
-		    mime-editor/version))))) ; verbose User-Agent when tm
+	   (and (boundp 'mime-edit-insert-user-agent-field)
+		mime-edit-insert-user-agent-field))))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
@@ -107,24 +105,6 @@ If VERBOSE return with SEMI, FLIM and APEL version."
    ((and (boundp 'mime-edit-user-agent-value) mime-edit-user-agent-value)
     (concat (product-string-verbose 'wl-version) " "
 	    mime-edit-user-agent-value))
-   ;; tm (verbose)
-   ((and (boundp 'mime-editor/version) mime-editor/version)
-    (concat (product-string-verbose 'wl-version) " "
-	    "tm/" mime-editor/version
-	    (when (and (boundp 'mime-editor/codename) mime-editor/codename)
-	      (concat " (" mime-editor/codename ")"))
-	    (when (and (boundp 'mime-library-product) mime-library-product)
-	      (concat " " (aref mime-library-product 0)
-		      "/" (mapconcat 'int-to-string
-				     (aref mime-library-product 1)
-				     ".")
-		      " (" (aref mime-library-product 2) ")"))
-	    (condition-case nil
-		(progn
-		  (require 'apel-ver)
-		  (concat " " (apel-version)))
-	      (file-error nil))
-	    " " (wl-extended-emacs-version3 "/" t)))
    ;; error case
    (t
     (product-string-1 'wl-version nil))))
@@ -163,15 +143,8 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 		(elmo-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(concat "Nemacs" (or delimiter " ")
-		nemacs-version
-		"@"
-		(substring emacs-version
-			   (match-beginning 1)
-			   (match-end 1)))
-      (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+    (concat "Emacs" (or delimiter " ")
+	    (elmo-match-string 1 emacs-version)))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (elmo-match-string 1 emacs-version)
@@ -200,21 +173,8 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 		(elmo-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(let ((nemacs-codename-assoc '(("3.3.2" . " (FUJIMUSUME)")
-				       ("3.3.1" . " (HINAMATSURI)")
-				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
-	  (format "Emacs%s%s Nemacs%s%s%s"
-		  (or delimiter " ")
-		  (elmo-match-string 1 emacs-version)
-		  (or delimiter " ")
-		  nemacs-version
-		  (or (and with-codename
-			   (cdr (assoc nemacs-version
-				       nemacs-codename-assoc)))
-		      "")))
-      (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+    (concat "Emacs" (or delimiter " ")
+	    (elmo-match-string 1 emacs-version)))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (elmo-match-string 1 emacs-version)
