@@ -270,7 +270,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-condition-parse-search-value ()
   (cond
    ((looking-at "\"")
-    (elmo-read (current-buffer)))
+    (read (current-buffer)))
    ((or (looking-at "yesterday") (looking-at "lastweek")
 	(looking-at "lastmonth") (looking-at "lastyear")
 	(looking-at "[0-9]+ *daysago")
