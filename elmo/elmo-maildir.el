@@ -406,7 +406,9 @@ file name for maildir directories."
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg))
 	  ;; add link from new.
-	  (elmo-add-name-to-file
+	  ;; Some filesystem (like AFS) does not have hard-link.
+	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
+	  (elmo-copy-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
@@ -460,7 +462,9 @@ file name for maildir directories."
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)
-	  (elmo-add-name-to-file
+	  ;; Some filesystem (like AFS) does not have hard-link.
+	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
+	  (elmo-copy-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
