@@ -1,3 +1,7 @@
+2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2005.
+
 2005-01-01  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
 
 	* wl-util.el (wl-save-drafts): Avoid error on redisplaying
