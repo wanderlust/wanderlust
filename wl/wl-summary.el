@@ -103,6 +103,9 @@
 (defvar wl-read-folder-hist nil)
 (defvar wl-summary-scored nil)
 (defvar wl-crosspost-alist-modified nil)
+(defvar wl-summary-alike-hashtb nil)
+(defvar wl-summary-search-buf-name " *wl-search-subject*")
+(defvar wl-summary-delayed-update nil)
 
 (defvar wl-summary-message-regexp "^ *\\([0-9]+\\)")
 
@@ -908,6 +911,8 @@ q	Goto folder mode.
     (setq wl-summary-buffer-target-mark-list nil)
     (setq wl-summary-buffer-refile-list nil)
     (setq wl-summary-buffer-delete-list nil)
+    (setq wl-summary-delayed-update nil)
+    (elmo-kill-buffer wl-summary-search-buf-name)
     (message "Constructing summary structure..." percent)
     (while curp
       (setq entity (car curp))
@@ -918,6 +923,12 @@ q	Goto folder mode.
       (elmo-display-progress
        'wl-summary-rescan "Constructing summary structure..."
        (/ (* i 100) num)))
+    (when wl-summary-delayed-update
+      (message "Constructing summary structure (reversed)...")
+      (while wl-summary-delayed-update
+	(wl-summary-append-message-func-internal
+	 (car wl-summary-delayed-update)
+	 overview mark-alist nil)))
     (message "Constructing summary structure...done." percent)
     (set-buffer cur-buf)
     (when (eq wl-summary-buffer-view 'thread)
@@ -1084,6 +1095,7 @@ q	Goto folder mode.
       ;; for sticky summary
       (wl-delete-all-overlays)
       (setq wl-summary-buffer-disp-msg nil)
+      (elmo-kill-buffer wl-summary-search-buf-name)
       ;; delete message window if displayed.
       (if (setq message-buf (get-buffer wl-message-buf-name))
 	  (if (setq message-win (get-buffer-window message-buf))
@@ -1873,6 +1885,7 @@ If optional argument is non-nil, checking is omitted."
 
 (defun wl-summary-delete-messages-on-buffer (msgs &optional deleting-info)
   (interactive)
+  (elmo-kill-buffer wl-summary-search-buf-name)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
@@ -1905,12 +1918,12 @@ If optional argument is non-nil, checking is omitted."
       (when deleting-info
 	(elmo-display-progress
 	 'wl-summary-delete-messages-on-buffer "Deleting..." 100))
-      (if (eq wl-summary-buffer-view 'thread)
-	  (wl-thread-update-line-msgs (elmo-uniq-list update-list)))
+      (when (eq wl-summary-buffer-view 'thread)
+	(wl-thread-update-line-msgs (elmo-uniq-list update-list)))
       (wl-thread-cleanup-symbols msgs2)
       (wl-summary-count-unread 
        (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
-      (wl-summary-update-modeline)	    
+      (wl-summary-update-modeline)
       (wl-folder-update-unread
        wl-summary-buffer-folder-name
        (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)))))
@@ -2223,6 +2236,8 @@ If optional argument is non-nil, checking is omitted."
 	    ;; (setq location (elmo-msgdb-get-location msgdb))
 	    (setq curp overview-append)
 	    (setq num (length curp))
+	    (setq wl-summary-delayed-update nil)
+	    (elmo-kill-buffer wl-summary-search-buf-name)
 	    (while curp
 	      (setq entity (car curp))
 	      (setq top-num
@@ -2241,10 +2256,19 @@ If optional argument is non-nil, checking is omitted."
 	      (elmo-display-progress
 	       'wl-summary-sync-update3 "Updating thread..."
 	       percent))
+	    (when wl-summary-delayed-update
+	      (message "Updating thread (reversed)...")
+	      (while wl-summary-delayed-update
+		(when (setq top-num
+			    (wl-summary-append-message-func-internal
+			     (car wl-summary-delayed-update)
+			     overview mark-alist (not sync-all)))
+		  (wl-append update-top-list (list top-num))))
+	      (message "Updating thread (reversed)...done."))
 	    (setq update-top-list
 		  (elmo-uniq-list update-top-list))
 	    (when (and (eq wl-summary-buffer-view 'thread)
-		       update-top-list )
+		       update-top-list)
 	      (message "Updating indent...")
 	      (wl-thread-update-indent-string-thread update-top-list)
 	      (message "Updating indent...done."))
@@ -2255,6 +2279,7 @@ If optional argument is non-nil, checking is omitted."
       (wl-summary-set-mark-modified)
       (setq wl-summary-buffer-msgdb msgdb)
       (when (and sync-all (eq wl-summary-buffer-view 'thread))
+	(elmo-kill-buffer wl-summary-search-buf-name)
 	(message "Inserting thread...")
 	(setq wl-thread-entity-cur 0)
 	(wl-thread-insert-top)
@@ -2809,7 +2834,7 @@ If optional argument is non-nil, checking is omitted."
 
 (defun wl-summary-goto-bottom-of-current-thread ()
   (if (re-search-forward (concat "^" wl-summary-buffer-number-regexp 
-				 "..../..\(.*\)..:.. \\[") nil t)
+				 "..../..\(.*\)..:.. [[<]") nil t)
       ()
     (goto-char (point-max))))
 
@@ -2872,6 +2897,77 @@ If optional argument is non-nil, checking is omitted."
   (string= (wl-summary-subject-filter-func-internal subject1)
 	   (wl-summary-subject-filter-func-internal subject2)))
 
+(defmacro wl-summary-put-alike (alike)
+  (` (elmo-set-hash-val (format "#%d" (wl-count-lines))
+			(, alike)
+			wl-summary-alike-hashtb)))
+
+(defmacro wl-summary-get-alike ()
+  (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
+			wl-summary-alike-hashtb)))
+
+(defun wl-summary-insert-headers (overview func mime-decode)
+  (let (ov this last alike)
+    (buffer-disable-undo (current-buffer))
+    (make-local-variable 'wl-summary-alike-hashtb)
+    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length overview) 2)))
+    (when mime-decode
+      (elmo-set-buffer-multibyte default-enable-multibyte-characters))
+    (while (setq ov (pop overview))
+      (setq this (funcall func ov))
+      (and this (setq this (std11-unfold-string this)))
+      (if (equal last this)
+	  (wl-append alike (list ov))
+	(when last
+	  (wl-summary-put-alike alike)
+	  (insert last ?\n))
+	(setq alike (list ov)
+	      last this)))
+    (when last
+      (wl-summary-put-alike alike)
+      (insert last ?\n))
+    (when mime-decode
+      (decode-mime-charset-region (point-min) (point-max)
+				  elmo-mime-charset)
+      (when (eq mime-decode 'mime)
+	(eword-decode-region (point-min) (point-max))))))
+
+(defun wl-summary-search-by-subject (entity overview)
+  (let ((buf (get-buffer-create wl-summary-search-buf-name))
+	(folder-name wl-summary-buffer-folder-name)
+	match founds)
+    (save-excursion
+      (set-buffer buf)
+      (let ((case-fold-search t))
+	(when (or (not (string= wl-summary-buffer-folder-name folder-name))
+		  (zerop (buffer-size)))
+	  (setq wl-summary-buffer-folder-name folder-name)
+	  (wl-summary-insert-headers
+	   overview
+	   (function
+	    (lambda (x)
+	      (wl-summary-subject-filter-func-internal
+	       (elmo-msgdb-overview-entity-get-subject-no-decode x))))
+	   t))
+	(setq match (wl-summary-subject-filter-func-internal
+		     (elmo-msgdb-overview-entity-get-subject entity)))
+	(if (string= match "")
+	    (setq match "\n"))
+	(goto-char (point-min))
+	(while (and (not founds)
+		    (not (eobp))
+		    (search-forward match nil t))
+	  ;; check exactly match
+	  (when (and (eolp)
+		     (= (save-excursion (forward-line 0) (point))
+			(match-beginning 0)))
+	    (setq founds (wl-summary-get-alike))))
+	(if (and founds
+		 (< (elmo-msgdb-overview-entity-get-number (car founds))
+		    (elmo-msgdb-overview-entity-get-number entity)))
+	    ;; return first matching entity
+	    (car founds))))))
+
 (defun wl-summary-insert-thread-entity (entity overview mark-alist update)
   (let* ((this-id (elmo-msgdb-overview-entity-get-id entity))
 	 (parent-entity 
@@ -2879,25 +2975,32 @@ If optional argument is non-nil, checking is omitted."
 	 ;;(parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
 	 (case-fold-search t)
-	 overview2 cur-entity
-	 msg) 
-    ;; Search parent by subject.
-    (when (and (null parent-number)
- 	       (string-match wl-summary-search-parent-by-subject-regexp
- 			     (elmo-msgdb-overview-entity-get-subject
- 			      entity)))
-      (setq overview2 overview)
-      (while overview2
- 	(setq cur-entity (car overview2))
- 	(when (wl-summary-subject-equal
- 	       (or (elmo-msgdb-overview-entity-get-subject cur-entity)
- 		   "")
- 	       (or (elmo-msgdb-overview-entity-get-subject entity)
- 		   ""))
- 	  (setq parent-number (elmo-msgdb-overview-entity-get-number
- 			       cur-entity))
- 	  (setq overview2 nil))
- 	(setq overview2 (cdr overview2))))
+	 msg overview2 cur-entity linked)
+    (setq msg (elmo-msgdb-overview-entity-get-number entity))
+    (if (and parent-number
+	     (not (wl-thread-get-entity parent-number)))
+	;; parent is exists in overview, but not exists in wl-thread-entities
+	(progn
+	  (if (equal entity (car wl-summary-delayed-update))
+	      (setq wl-summary-delayed-update
+		    (cdr wl-summary-delayed-update))) ;; delete first
+	  (wl-append wl-summary-delayed-update (list entity))
+	  nil)
+      ;; Search parent by subject.
+      (setq wl-summary-delayed-update
+	    (delete entity wl-summary-delayed-update))
+      (when (and (null parent-number)
+		 wl-summary-search-parent-by-subject-regexp
+		 (string-match wl-summary-search-parent-by-subject-regexp
+			       (elmo-msgdb-overview-entity-get-subject entity)))
+	(let ((found (wl-summary-search-by-subject entity overview)))
+	  (when (and found
+		     (not (member found wl-summary-delayed-update)))
+	    (setq parent-entity found)
+	    (setq parent-number
+		  (elmo-msgdb-overview-entity-get-number parent-entity))
+	    (setq linked t))))
+      ;; If subject is change, divide thread.
     (if (and parent-number
 	     wl-summary-divide-thread-when-subject-changed
 	     (not (wl-summary-subject-equal 
@@ -2906,9 +3009,9 @@ If optional argument is non-nil, checking is omitted."
 		   (or (elmo-msgdb-overview-entity-get-subject 
 			parent-entity) ""))))
 	(setq parent-number nil))
-    (setq msg (elmo-msgdb-overview-entity-get-number entity))
+    ;;
     (wl-thread-insert-message entity overview mark-alist
-			      msg parent-number update)))
+			      msg parent-number update linked))))
 
 (defun wl-summary-update-thread (entity 
 				 overview 
@@ -2931,12 +3034,12 @@ If optional argument is non-nil, checking is omitted."
 		       parent-number (current-buffer)) -1))
       (setq depth (+ 1 depth))
       (wl-thread-goto-bottom-of-sub-thread)))
-    (if (and (elmo-msgdb-overview-entity-get-number entity))
+    (if (and (setq msg (elmo-msgdb-overview-entity-get-number entity)))
 	(if (setq summary-line
-		  (wl-summary-overview-create-summary-line 
-		   (elmo-msgdb-overview-entity-get-number entity)
-		   entity parent-entity depth mark-alist nil nil
-		   thr-entity))
+		  (wl-summary-overview-create-summary-line
+		   msg entity parent-entity depth mark-alist
+		   (wl-thread-maybe-get-children-num msg)
+		   nil thr-entity))
 	    (let ((inhibit-read-only t)
 		  (buffer-read-only nil))
 	      (wl-summary-insert-line summary-line))))))
@@ -4324,9 +4427,11 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	mark line
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
 	(children-num (if children-num (int-to-string children-num)))
-	(thr-str ""))
-    (if thr-entity
-	(setq thr-str (wl-thread-make-indent-string thr-entity)))
+	(thr-str "")
+	linked)
+    (when thr-entity
+      (setq thr-str (wl-thread-make-indent-string thr-entity))
+      (setq linked (wl-thread-entity-get-linked thr-entity)))
     (if (string= thr-str "")
 	(setq no-parent t)) ; no parent
     (if (and wl-summary-width 
@@ -4368,15 +4473,23 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			 (wl-summary-format-date
 			  (elmo-msgdb-overview-entity-get-date entity))
 			 (if thr-str thr-str "")))
-	   (format "[%s ] %s"
+	   (format (if linked
+		       "<%s > %s"
+		     "[%s ] %s")
 		   (if children-num
 		       (concat "+" children-num ": " from)
 		     (concat " " from))
-		   (if (or no-parent
-			   (null parent-subject)
-			   (not (wl-summary-subject-equal 
-				 subject parent-subject)))
-		       (wl-summary-subject-func-internal subject) ""))))
+		   (progn
+		     (setq subject
+			   (if (or no-parent
+				   (null parent-subject)
+				   (not (wl-summary-subject-equal 
+					 subject parent-subject)))
+			       (wl-summary-subject-func-internal subject) ""))
+		     (if (and (not wl-summary-width)
+			      wl-subject-length-limit)
+			 (truncate-string subject wl-subject-length-limit)
+		       subject)))))
     (if wl-summary-width (setq line 
 			       (wl-set-string-width 
 				(- wl-summary-width 1) line)))
@@ -5331,8 +5444,10 @@ Reply to author if invoked with argument."
 				       t) ;; displayed
 	    )
 	  (setq wl-summary-buffer-current-msg num)
-	  (if wl-summary-recenter
-	      (recenter (/ (- (window-height) 2) 2)))
+	  (when wl-summary-recenter
+	    (recenter (/ (- (window-height) 2) 2))
+	    (if (not wl-summary-width)
+		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
 	  (wl-cache-prefetch-next fld num (current-buffer))
 	  (run-hooks 'wl-summary-redisplay-hook))
@@ -5353,8 +5468,10 @@ Reply to author if invoked with argument."
 	  (wl-normal-message-redisplay fld num 'no-mime msgdb)
 	  (wl-summary-mark-as-read nil nil t)
 	  (setq wl-summary-buffer-current-msg num)
-	  (if wl-summary-recenter
-	      (recenter (/ (- (window-height) 2) 2)))
+	  (when wl-summary-recenter
+	    (recenter (/ (- (window-height) 2) 2))
+	    (if (not wl-summary-width)
+		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display.")
@@ -5902,18 +6019,50 @@ Reply to author if invoked with argument."
   "Set current message's parent interactively."
   (interactive)
   (let ((number (wl-summary-message-number))
-	(parent (read-from-minibuffer "Parent Message (No.): "))
+	(dst-parent (read-from-minibuffer "Parent Message (No.): "))
+	(overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
+	entity dst-parent-entity src-parent
 	buffer-read-only)
-    (when number
-      (wl-thread-delete-message number t)
-      (wl-thread-insert-message 
-       (elmo-msgdb-overview-get-entity-by-number
-	(elmo-msgdb-get-overview wl-summary-buffer-msgdb)
-	number)
-       (elmo-msgdb-get-overview wl-summary-buffer-msgdb)
-       (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
-       number
-       (string-to-int parent) t))))
+    (if (string= dst-parent "")
+	(setq dst-parent nil)
+      (setq dst-parent (string-to-int dst-parent)))
+    (setq entity (wl-thread-get-entity number))
+    (when (and number entity)
+      (let* (older-brothers younger-brothers parent-entity beg)
+	;; delete from old parent
+	(setq parent-entity (wl-thread-entity-get-parent-entity entity))
+	(if parent-entity
+	    (progn
+	      (setq older-brothers (wl-thread-entity-get-older-brothers
+				    entity parent-entity))
+	      (setq younger-brothers (wl-thread-entity-get-younger-brothers
+				      entity parent-entity))
+	      (wl-thread-entity-set-children
+	       parent-entity (append older-brothers younger-brothers))
+	      (setq src-parent (wl-thread-entity-get-number parent-entity)))
+	  (setq wl-thread-entity-list
+		(delq number wl-thread-entity-list)))
+	;; delete thread on buffer
+	(when (wl-summary-jump-to-msg number)
+	  (setq beg (point))
+	  (wl-thread-goto-bottom-of-sub-thread)
+	  (delete-region beg (point))))
+      ;; insert as child at new parent
+      (setq dst-parent-entity (wl-thread-get-entity dst-parent))
+      (if dst-parent-entity
+	  (wl-thread-entity-set-children
+	   dst-parent-entity
+	   (append
+	    (wl-thread-entity-get-children dst-parent-entity)
+	    (list number)))
+	;; insert as top
+	(wl-append wl-thread-entity-list (list number)))
+      (wl-thread-entity-set-parent entity dst-parent)
+      (wl-thread-entity-set-linked entity t)
+      ;; update thread on buffer
+      (wl-thread-update-line-msgs
+       (append (and src-parent (list src-parent))
+	       (list (or dst-parent number)))))))
 
 (provide 'wl-summary)
 
