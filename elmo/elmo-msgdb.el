@@ -450,7 +450,13 @@ header separator."
 			  (elmo-date-make-sortable-string
 			   (elmo-date-get-datevec
 			    (elmo-filter-value condition))))))
-	(setq result (if (string= key "before") res (not res))))))
+	(setq result (if (string= key "before") res (not res)))))
+     ((member key elmo-msgdb-extra-fields)
+      (let ((extval (elmo-msgdb-overview-entity-get-extra-field entity key)))
+	(if (stringp extval)
+	    (setq result (string-match
+			  (elmo-filter-value condition)
+			  extval))))))
     (if (eq (elmo-filter-type condition) 'unmatch)
 	(setq result (not result)))
     result))

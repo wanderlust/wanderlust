@@ -1,3 +1,8 @@
+2000-10-17  Akihiro MOTOKI <motoki@da.jp.nec.com>
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): Search by
+	extra-fields.
+
 2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.3.90.
