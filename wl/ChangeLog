@@ -1,3 +1,7 @@
+2004-07-01  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-folder.el (wl-folder-update-group): Change `defsubst' to `defun'.
+
 2004-06-27  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-rescan): Remove unused variables.
