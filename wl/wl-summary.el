@@ -1168,7 +1168,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "mark")
 	   (let ((msg (wl-summary-message-number)))
-	     (wl-summary-sync-marks)
+	     (call-interactively 'wl-summary-sync-marks)
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "cache-status")
 	   (let ((msg (wl-summary-message-number)))
@@ -1182,7 +1182,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 					'force-update nil nil t))
 	  (t
 	   (wl-summary-sync-update unset-cursor
-				   (string-match "nokill" range)
+				   (string-match "entirely" range)
 				   (string-match "all" range))))))
 
 (defvar wl-summary-edit-addresses-candidate-fields
@@ -1692,7 +1692,7 @@ If ARG is non-nil, checking is omitted."
 	(wl-summary-mark-as-unanswered (car diffs) 'no-modeline)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; unread-appends
-      (setq mes (concat mes (format "/+%d) answered mark(s)." (length diffs))))
+      (setq mes (concat mes (format "/+%d) answered mark(s)," (length diffs))))
       (while diffs
 	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
 	(setq diffs (cdr diffs)))
@@ -3312,12 +3312,13 @@ Return non-nil if the mark is updated"
 			    "first:"
 			    "last:"
 			    "cache-status"
+			    "mark"
 			    "rescan"
 			    "rescan-noscore"
 			    "update"
-			    "update-nokill"
+			    "update-entirely"
 			    "all"
-			    "all-nokill"))
+			    "all-entirely"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)

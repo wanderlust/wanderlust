@@ -1233,10 +1233,9 @@ Set `wl-score-cache' nil."
 	   'wl-summary-score-update-all-lines "Updating score..."
 	   (/ (* i 100) count))))
       (when dels
-	;;(let ((marks dels))
-	;;(while marks
-	;;(elmo-message-set-flag wl-summary-buffer-elmo-folder
-	;;				   (pop marks) 'read)))
+	(dolist (del dels)
+	  (elmo-message-set-flag wl-summary-buffer-elmo-folder
+				 del 'read))
 	(elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
