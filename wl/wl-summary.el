@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-09 17:20:12 teranisi>
+;; Time-stamp: <2000-05-09 17:36:35 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -4822,12 +4822,10 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-reply-with-citation (&optional arg)
   (interactive "P")
-  ;; Is unwind-protect needed?
-  ;(unwind-protect
-  (wl-summary-reply arg t)
-  (goto-char (point-max))
-  (wl-draft-yank-original)
-  (run-hooks 'wl-mail-setup-hook));)
+  (when (wl-summary-reply arg t)
+    (goto-char (point-max))
+    (wl-draft-yank-original)
+    (run-hooks 'wl-mail-setup-hook)))
 
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
   (interactive)
@@ -4991,18 +4989,22 @@ Reply to author if invoked with argument."
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	mes-buf)
-    (unless number (error "No message"))
-    (wl-summary-redisplay-internal folder number)
-    (wl-select-buffer (get-buffer (setq mes-buf (wl-current-message-buffer))))
-    (set-buffer mes-buf)
-    (goto-char (point-min))
-    (or wl-draft-use-frame
-	(split-window-vertically))
-    (other-window 1)
-    (when (setq mes-buf (wl-message-get-original-buffer))
-      (wl-draft-reply mes-buf (not arg) summary-buf)
-      (unless without-setup-hook
-	(run-hooks 'wl-mail-setup-hook)))))
+    (if number
+	(unwind-protect
+	    (progn
+	      (wl-summary-redisplay-internal folder number)
+	      (wl-select-buffer
+	       (get-buffer (setq mes-buf (wl-current-message-buffer))))
+	      (set-buffer mes-buf)
+	      (goto-char (point-min))
+	      (or wl-draft-use-frame
+		  (split-window-vertically))
+	      (other-window 1)
+	      (when (setq mes-buf (wl-message-get-original-buffer))
+		(wl-draft-reply mes-buf (not arg) summary-buf)
+		(unless without-setup-hook
+		  (run-hooks 'wl-mail-setup-hook))))
+	  t))))
 
 (defun wl-summary-write ()
   "Write a new draft from Summary."
