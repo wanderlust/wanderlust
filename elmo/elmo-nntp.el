@@ -976,7 +976,7 @@ Don't cache if nil.")
 					number strategy
 					&optional section
 					outbuf
-					unread)
+					unseen)
   (if (elmo-folder-plugged-p folder)
       (let ((cache-file (elmo-file-cache-expand-path
 			 (elmo-fetch-strategy-cache-path strategy)
@@ -1002,7 +1002,7 @@ Don't cache if nil.")
 	      (with-current-buffer outbuf
 		(elmo-folder-send folder 'elmo-message-fetch-plugged
 				  number strategy section
-				  (current-buffer) unread)
+				  (current-buffer) unseen)
 		(elmo-delete-cr-buffer)
 		(when (and (> (buffer-size) 0)
 			   (elmo-fetch-strategy-save-cache strategy))
@@ -1013,7 +1013,7 @@ Don't cache if nil.")
 	    (with-temp-buffer
 	      (elmo-folder-send folder 'elmo-message-fetch-plugged
 				number strategy section
-				(current-buffer) unread)
+				(current-buffer) unseen)
 	      (elmo-delete-cr-buffer)
 	      (when (and (> (buffer-size) 0)
 			 (elmo-fetch-strategy-save-cache strategy))
@@ -1022,7 +1022,7 @@ Don't cache if nil.")
 		 section))
 	      (buffer-string)))))
     (elmo-folder-send folder 'elmo-message-fetch-unplugged
-		      number strategy section outbuf unread)))
+		      number strategy section outbuf unseen)))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
 						number strategy

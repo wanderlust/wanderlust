@@ -339,20 +339,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
 					  (cdr tmp)))))))
   lst)
 
-(defun elmo-list-insert (list element after)
-  "Insert an ELEMENT to the LIST, just after AFTER."
-  (let ((li list)
-	(curn 0)
-	p pn)
-    (while li
-      (if (eq (car li) after)
-	  (setq p li pn curn li nil)
-	(incf curn))
-      (setq li (cdr li)))
-    (if pn
-	(setcdr (nthcdr pn list) (cons element (cdr p)))
-      (nconc list (list element)))))
-
 (defun elmo-string-partial-p (string)
   (and (stringp string) (string-match "message/partial" string)))
 
