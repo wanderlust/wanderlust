@@ -1341,7 +1341,8 @@ If current line is group folder, all subfolders are marked."
 	   'is-group
 	   (car entity))
 	  (wl-folder-set-id-name wl-folder-entity-id
-				 (car entity) hashtb))
+				 (car entity) hashtb)
+	  (setq wl-folder-entity-id (+ 1 wl-folder-entity-id)))
 	(and entities
 	     (wl-push entities entity-stack))
 	(setq entities (nth 2 entity)))
@@ -1356,8 +1357,8 @@ If current line is group folder, all subfolders are marked."
 	   nil
 	   entity)
 	  (wl-folder-set-id-name wl-folder-entity-id
-				 entity hashtb))))
-      (setq wl-folder-entity-id (+ 1 wl-folder-entity-id))
+				 entity hashtb)
+	  (setq wl-folder-entity-id (+ 1 wl-folder-entity-id)))))
       (unless entities
 	(setq entities (wl-pop entity-stack))))))
 

@@ -1,3 +1,8 @@
+2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-entity-assign-id): Fix for folder entity
+	id.
+
 2004-09-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-enter-handler): If argument is not a
