@@ -1,3 +1,13 @@
+2001-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el: Changed file coding system to euc-japan.
+	Added -*-coding:-*- magic to the first line.
+
+2001-06-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-fix-timezone): Changed default value to nil;
+	Fixed docstring.
+
 2001-06-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
