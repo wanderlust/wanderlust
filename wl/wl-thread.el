@@ -653,9 +653,7 @@ the closed parent will be opened."
 (defsubst wl-thread-update-line-on-buffer-sub (entity msg &optional parent-msg)
   (let* ((entity (or entity (wl-thread-get-entity msg)))
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
-	 (number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
 	 (overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
-	 (overviewht (elmo-msgdb-get-overviewht wl-summary-buffer-msgdb))
 	 (mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
@@ -673,18 +671,15 @@ the closed parent will be opened."
 	  (unless temp-mark
 	    (setq temp-mark (wl-summary-get-score-mark msg)))
 	  (setq overview-entity
-		(elmo-msgdb-search-overview-entity
-		 msg number-alist overview overviewht))
+		(elmo-msgdb-overview-get-entity
+		 msg wl-summary-buffer-msgdb))
 	  (when overview-entity
 	    (setq summary-line 
 		  (wl-summary-overview-create-summary-line
 		   msg
 		   overview-entity
-		   (elmo-msgdb-search-overview-entity
-		    parent-msg number-alist overview overviewht)
-;; 		   (assoc		; parent-entity
-;; 		    (cdr (assq parent-msg
-;; 			       number-alist)) overview)
+		   (elmo-msgdb-overview-get-entity
+		    parent-msg wl-summary-buffer-msgdb)
 		   nil
 		   mark-alist
 		   (if wl-thread-insert-force-opened
@@ -696,13 +691,13 @@ the closed parent will be opened."
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))
 	  (wl-summary-update-thread
-	   (elmo-msgdb-overview-get-entity-by-number overview msg)
+	   (elmo-msgdb-overview-get-entity msg wl-summary-buffer-msgdb)
 	   overview
 	   mark-alist
 	   entity
 	   (and parent-msg
-		(elmo-msgdb-overview-get-entity-by-number
-		 overview parent-msg)))
+		(elmo-msgdb-overview-get-entity
+		 parent-msg wl-summary-buffer-msgdb)))
 	;; currently invisible.. update closed line.
 	(wl-thread-update-children-number invisible-top)))))
 
@@ -928,7 +923,8 @@ Message is inserted to the summary buffer."
 	       overview 
 	       mark-alist 
 	       child-entity
-	       (elmo-msgdb-overview-get-entity-by-number overview parent-msg))
+	       (elmo-msgdb-overview-get-entity
+		parent-msg wl-summary-buffer-msgdb))
 	      (when parent
 		;; use thread structure.
 		(wl-thread-entity-get-nearly-older-brother
@@ -1180,10 +1176,7 @@ Message is inserted to the summary buffer."
 	     (/ (* cur 100) len)))))))
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
-  (let ((number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
-	(overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
-	(overviewht (elmo-msgdb-get-overviewht wl-summary-buffer-msgdb))
-	(mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+  (let ((mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
 	msg-num
 	overview-entity
 	temp-mark
@@ -1201,19 +1194,16 @@ Message is inserted to the summary buffer."
       (unless temp-mark
 	(setq temp-mark (wl-summary-get-score-mark msg-num)))
       (setq overview-entity 
-	    (elmo-msgdb-search-overview-entity
-	     (nth 0 entity) number-alist overview overviewht))
+	    (elmo-msgdb-overview-get-entity
+	     (nth 0 entity) wl-summary-buffer-msgdb))
       ;;(wl-delete-all-overlays)
       (when overview-entity
 	(setq summary-line 
 	      (wl-summary-overview-create-summary-line
 	       msg-num
 	       overview-entity
-	       (elmo-msgdb-search-overview-entity
-		(nth 0 parent-entity) number-alist overview overviewht)
-;; 	       (assoc  ; parent-entity
-;; 		(cdr (assq (nth 0 parent-entity)
-;; 			   number-alist)) overview)
+	       (elmo-msgdb-overview-get-entity
+		(nth 0 parent-entity) wl-summary-buffer-msgdb)
 	       (1+ indent)
 	       mark-alist
 	       (if wl-thread-insert-force-opened
