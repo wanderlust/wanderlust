@@ -2889,13 +2889,12 @@ You can alter the format of lines in Summary mode.
 Summary line format is specified by @code{wl-summary-line-format}.
 You can use control strings defined by
 @code{wl-summary-line-format-spec-alist}.
-Note that @code{wl-summary-line-format} must contain
-temporary mark (@samp{%T}) and permanent mark(@samp{%P}) at
-constant positions respectively. An example follows.
+
+An example follows.
 
 @lisp
 @group
-;; @r{number temporary-mark permanent-mark date branch}
+;; @r{number temporary-mark persistent-mark date branch}
 ;; @r{[ (number-of-children) sender ] subject}
 (setq wl-summary-line-format "%n%T%P%M/%D(%W) %t%[%17(%c %f%) %] %s")
 @end lisp
@@ -2924,13 +2923,33 @@ are displayed in the following list.
 %S  size
 %c  +number-of-children: (display only for opened thread)
 %C  [+number-of-children] (display only for opened thread)
+%T  temporary mark (mandatory)
+%P  persistent mark (mandatory)
 @end example
 @end group
 
+@code{wl-summary-line-format} must contain temporary mark (@samp{%T})
+and persistent mark (@samp{%P}). Furthermore, these marks must appear at
+the constant column. For example, if you specify @samp{%T} or
+@samp{%P} after the @samp{%t}, which changes its length by thread
+position, marks are not treated correctly.
+
+If the format string is enclosed by @samp{%number(} and @samp{%)}, the
+column of the enclosed region is justified to the `number'. Multiple
+level @samp{%number(} parenthesis can be defined.  It is useful to
+justify the column of the multiple control strings.  For example, in the
+above @code{wl-summary-line-format},
+
+@example
+%17(%c %f%)
+@end example
+
+means ``Adjust number-of-children and sender string to the 17 column''.
+
 You can specify the format by each folders with
-@code{wl-folder-summary-line-format-alist}.
-Please set regular expression for folder names and summary
-line format as the following example.
+@code{wl-folder-summary-line-format-alist}.  Please set regular
+expression for folder names and summary line format as the following
+example.
 
 @lisp
 @group
