@@ -1,3 +1,18 @@
+2000-10-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-msgdb.el (elmo-living-messages): New function.
+	* elmo-archive.el (elmo-archive-list-folder-subr): Use it.
+	* elmo-cache.el (elmo-cache-list-folder): Ditto.
+	* elmo-dop.el (elmo-dop-list-folder): Ditto.
+	* elmo-imap4.el (elmo-imap4-list-folder): Ditto.
+	* elmo-internal.el (elmo-internal-list-folder-subr): Ditto.
+	* elmo-localdir.el (elmo-localdir-list-folder-subr): Ditto.
+	* elmo-maildir.el (elmo-maildir-list-folder-subr): Ditto.
+	* elmo-multi.el (elmo-multi-list-folder): Ditto.
+	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
+	* elmo-pipe.el (elmo-pipe-list-folder): Ditto.
+	* elmo-pop3.el (elmo-pop3-list-folder): Ditto.
+
 2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-maildir-pack-number): Implemented.
