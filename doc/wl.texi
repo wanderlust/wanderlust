@@ -6326,8 +6326,9 @@ pop3                      N     E     E     E
 @cindex Split messages
 
 You can use @code{elmo-split} to split message in folder
-@code{elmo-split-folder} a la procmail according to some specified rules.
-To use this feature, set as follows in your @file{~/.emacs} at first.
+@code{elmo-split-folder} a la @command{procmail} according to some
+specified rules. To use this feature, set as follows in your
+@file{~/.emacs} at first.
 
 @lisp
 (autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
