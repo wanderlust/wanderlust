@@ -1,3 +1,8 @@
+2003-01-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-info-lang): Skip "ja" for non-mule.
+	(wl-news-lang): Ditto.
+
 2002-12-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK (test-wl, check-wl): Load wl-news.el.in.
