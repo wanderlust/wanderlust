@@ -1,3 +1,7 @@
+2003-03-02  Jeremy Shaw  <jeremy.shaw@lindows.com>
+
+	* wl-draft.el (wl-draft-reply): Fixed.
+
 2003-02-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-xmas.el (wl-xmas-highlight-folder-group-line): Use
