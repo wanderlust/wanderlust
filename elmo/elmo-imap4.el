@@ -86,17 +86,6 @@ Any symbol value of `elmo-network-stream-type-alist' or
   :type 'symbol
   :group 'elmo)
 
-(elmo-define-obsolete-variable 'elmo-default-imap4-mailbox
-			       'elmo-imap4-default-mailbox)
-(elmo-define-obsolete-variable 'elmo-default-imap4-server
-			       'elmo-imap4-default-server)
-(elmo-define-obsolete-variable 'elmo-default-imap4-authenticate-type
-			       'elmo-imap4-default-authenticate-type)
-(elmo-define-obsolete-variable 'elmo-default-imap4-user
-			       'elmo-imap4-default-user)
-(elmo-define-obsolete-variable 'elmo-default-imap4-port
-			       'elmo-imap4-default-port)
-
 (defvar elmo-imap4-stream-type-alist nil
   "*Stream bindings for IMAP4.
 This is taken precedence over `elmo-network-stream-type-alist'.")
