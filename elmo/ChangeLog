@@ -1,3 +1,7 @@
+2001-12-27  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-vars.el (elmo-nntp-default-user): Customization Type fix.
+
 2001-12-27  Taiji Can  <Taiji.Can@grd.advantest.co.jp>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Fixed for NNTP response.
