@@ -460,7 +460,7 @@ TYPE specifies the archiver's symbol."
 ;;; Article file related functions
 ;;; read(extract) / append(move) / delete(delete) / query(list)
 
-(defun elmo-archive-read-msg (spec number outbuf &optional msgdb unread)
+(defun elmo-archive-read-msg (spec number outbuf)
   (save-excursion
     (let* ((type (nth 2 spec))
 	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
