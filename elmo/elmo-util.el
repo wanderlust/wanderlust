@@ -1272,6 +1272,25 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	  (throw 'found t))
       (setq slist (cdr slist)))))
 
+(cond ((fboundp 'member-ignore-case)
+       (defalias 'elmo-string-member-ignore-case 'member-ignore-case))
+      ((fboundp 'compare-strings)
+       (defun elmo-string-member-ignore-case (elt list)
+	 "Like `member', but ignores differences in case and text representation.
+ELT must be a string.  Upper-case and lower-case letters are treated as equal.
+Unibyte strings are converted to multibyte for comparison."
+	 (while (and list (not (eq t (compare-strings elt 0 nil (car list) 0 nil t))))
+	   (setq list (cdr list)))
+	 list))
+      (t
+       (defun elmo-string-member-ignore-case (elt list)
+	 "Like `member', but ignores differences in case and text representation.
+ELT must be a string.  Upper-case and lower-case letters are treated as equal."
+	 (let ((str (downcase elt)))
+	   (while (and list (not (string= str (downcase (car list)))))
+	     (setq list (cdr list)))
+	   list))))
+
 (defun elmo-string-match-member (str list &optional case-ignore)
   (let ((case-fold-search case-ignore))
     (catch 'member

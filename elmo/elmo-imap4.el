@@ -607,7 +607,7 @@ BUFFER must be a single-byte buffer."
 	(mapcar
 	 (lambda (entry)
 	   (if (and (eq 'list (car entry))
-		    (not (member "\\Noselect" (nth 1 (nth 1 entry)))))
+		    (not (elmo-string-member-ignore-case "\\Noselect" (nth 1 (nth 1 entry)))))
 	       (car (nth 1 entry))))
 	 response)))
 
@@ -780,10 +780,10 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	 (app-data (car app-data))
 	 (seen (member (car entity) (nth 4 app-data)))
 	 mark)
-    (if (member "\\Flagged" flags)
+    (if (elmo-string-member-ignore-case "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
     (if (setq mark (elmo-msgdb-global-mark-get (car entity)))
-	(unless (member "\\Seen" flags)
+	(unless (elmo-string-member-ignore-case "\\Seen" flags)
 	  (setq elmo-imap4-seen-messages
 		(cons
 		 (elmo-msgdb-overview-entity-get-number entity)
@@ -792,12 +792,12 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			  (elmo-file-cache-get (car entity)))
 			 (if (or seen
 				 (and use-flag
-				      (member "\\Seen" flags)))
+				      (elmo-string-member-ignore-case "\\Seen" flags)))
 			     nil
 			   (nth 1 app-data))
 		       (if (or seen
 			       (and use-flag
-				    (member "\\Seen" flags)))
+				    (elmo-string-member-ignore-case "\\Seen" flags)))
 			   (if elmo-imap4-use-cache
 			       (nth 2 app-data))
 			 (nth 0 app-data))))))
