@@ -772,7 +772,7 @@ File content is encoded with MIME-CHARSET."
 				(elmo-base64-encode-string pass)))))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
-			  `(lambda () (elmo-remove-passwd ,user-at-host))))
+			  (` (lambda () (elmo-remove-passwd (, user-at-host))))))
       pass)))
 
 (defun elmo-remove-passwd (user-at-host)
