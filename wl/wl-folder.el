@@ -2083,6 +2083,8 @@ Use `wl-subscribed-mailing-list'."
 	    (if (eq 'imap4 (elmo-folder-get-type folder))
 		(elmo-imap4-spec-mailbox (elmo-imap4-get-spec folder))
 	      (substring folder 1)))
+      (if (string-match "@" folder)
+	  (setq folder (substring folder 0 (match-beginning 0))))
       (when (string-match "[^\\./]+$" folder) ; last hierarchy
 	(setq key (regexp-quote
 		   (concat (substring folder (match-beginning 0)) "@")))
