@@ -672,6 +672,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (elmo-quit)
     (when wl-use-acap (funcall (symbol-function 'wl-acap-exit)))
     (wl-biff-stop)
+    (elmo-passwd-alist-clear)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
     (wl-folder-cleanup-variables)
