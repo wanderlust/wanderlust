@@ -1,7 +1,6 @@
 2002-04-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl-util.el (wl-display-bytes): Fixed probrem when num <
-	1000 return "0B".
+	* wl-util.el (wl-display-bytes): Remove unused function.
 
 2002-04-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
