@@ -776,9 +776,9 @@ default 値:
              初期設定は 環境変数 @env{USER} か、@env{LOGNAME} か、
              @code{(user-login-name)} の返り値。
 認証法    -> 変数 @code{elmo-default-imap4-authenticate-type} の値。
-             初期設定は 'login。
+             初期設定は @code{login}。
 ホスト名  -> 変数 @code{elmo-default-imap4-server} の値。
-             初期設定は "localhost"。
+             初期設定は @samp{localhost}。
 ポート番号-> 変数 @code{elmo-default-imap4-port} の値。
              初期設定は 143。
 @end example
@@ -788,11 +788,21 @@ default 値:
 イアウォールを越えなければならない場合でも @samp{foo%imap@@gateway} のよ
 うに指定できます。
 
+@lisp
+;; 例: imap4.exaple.org をメインで使用する IMAP サーバとして設定
+(setq elmo-default-imap4-server "imap4.example.org")
+@end lisp
+
 フォルダ名の最後に @samp{!} が付いていると、SSL (Secure Socket Layer)を
 利用してコネクションを張ります。@samp{!!} だと、STARTTLS によりSSLコネク
 ションを張ります。変数 @code{elmo-default-imap4-stream-type} の値が 
-non-nil なら、@samp{!} を付けなくても SSL を使います。'starttls なら 
-@samp{!!} を意味します。
+@code{ssl} なら、@samp{!} を付けなくても SSL を使います。@code{starttls} 
+なら @samp{!!} を意味します。
+
+@lisp
+;; 例: SSL を利用してコネクションを張る
+(setq elmo-default-imap4-stream-type 'ssl) 
+@end lisp
 
 (SSL を利用するには 本パッケージの @file{utils/ssl.el} をインストールす
 る必要があります。なおかつ、OpenSSLに含まれる @command{openssl} にパスが
@@ -805,6 +815,11 @@ non-nil なら、@samp{!} を付けなくても SSL を使います。'starttl
 @code{clear} (生パスワードを送る) に切替えます。変数 
 @code{elmo-imap4-force-login} が non-nil ならば、確認無しに @code{clear} 
 に切替えます(初期設定は @code{nil})。
+
+@lisp
+;; 例: 生パスワードで認証
+(setq elmo-default-imap4-authenticate-type 'clear) 
+@end lisp
 
 例:
 

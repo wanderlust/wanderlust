@@ -762,12 +762,22 @@ You can omit the @var{hostname} from folder names if you set
 For example, you can specify a folder as @samp{foo%imap@@gateway} even
 if you have to go through a firewall.
 
+@lisp
+;; Example: imap4.exaple.org as main IMAP server
+(setq elmo-default-imap4-server "imap4.example.org")
+@end lisp
+
 SSL (Secure Socket Layer) connection will be used if a folder name ends
 with @samp{!}. Or, if the value of @code{elmo-default-imap4-stream-type}
-is non-nil, SSL will be the default connection.  If a folder name ends
-with @samp{!!}, STARTTLS connection will be established.  If the value
-of @code{elmo-default-imap4-stream-type} is @code{starttls}, STARTTLS
-will be the default connection.
+is @code{ssl}, SSL will be the default connection.  If a folder name
+ends with @samp{!!}, STARTTLS connection will be established.  If the
+value of @code{elmo-default-imap4-stream-type} is @code{starttls},
+STARTTLS will be the default connection.
+
+@lisp
+;; Example: Use SSL connection
+(setq elmo-default-imap4-stream-type 'ssl)
+@end lisp
 
 If you specify @code{login}, @code{cram-md5} or @code{digest-md5} as
 authentication method, the password is sent in encoded form. But, if
@@ -776,6 +786,11 @@ will fall back to @code{clear} (that is, sending password in raw format)
 after confirmation to user. If @code{elmo-imap4-force-login} is non-nil,
 authentication will fall back to @code{clear} without confirmation
 (default value is @code{nil}).
+
+@lisp
+;; Example: password in raw format
+(setq elmo-default-imap4-authenticate-type 'clear)
+@end lisp
 
 Example:
 
