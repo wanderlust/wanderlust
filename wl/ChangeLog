@@ -1,3 +1,7 @@
+2002-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Bind wl-draft-parent-folder.
+
 2002-09-03  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-default-from): Write description.

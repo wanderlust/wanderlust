@@ -73,6 +73,7 @@ By setting following-method as yank-content."
   (interactive)
   (let* (recipients-message
 	 (config-exec-flag wl-draft-config-exec-flag)
+	 (parent-folder wl-draft-parent-folder)
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 (mime-header-encode-method-alist
 	  (append
@@ -86,7 +87,8 @@ By setting following-method as yank-content."
 	   (list
 	    (function
 	     (lambda ()
-	       (let ((wl-draft-config-exec-flag config-exec-flag))
+	       (let ((wl-draft-config-exec-flag config-exec-flag)
+		     (wl-draft-parent-folder parent-folder))
 		 (run-hooks 'wl-draft-send-hook)
 		 (setq recipients-message
 		       (condition-case err
