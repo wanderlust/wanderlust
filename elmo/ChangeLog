@@ -1,5 +1,8 @@
 2005-03-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-access.el (elmo-folder-initialize): Call
+	`elmo-multi-connect-signals'.
+
 	* elmo-pipe.el (elmo-folder-close): Define.
 
 	* elmo-multi.el (elmo-folder-close): Call `elmo-folder-close' with
