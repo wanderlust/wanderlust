@@ -1,3 +1,11 @@
+2001-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-random-alphabet): Removed.
+	(wl-draft-confirm): Don't use conditonal statement
+	in `format' argument; Use gettext style.
+	(wl-draft-insert-x-face-field): Refactoring; Use guard statement
+	for error case.
+
 2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to
