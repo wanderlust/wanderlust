@@ -1704,9 +1704,10 @@ If KBYTES is kilo bytes (This value must be float)."
 ;;;
 ;; msgid to path.
 (defun elmo-msgid-to-cache (msgid)
-  (when (and msgid
-	     (string-match "<\\(.+\\)>$" msgid))
-    (elmo-replace-string-as-filename (elmo-match-string 1 msgid))))
+  (save-match-data
+    (when (and msgid
+	       (string-match "<\\(.+\\)>$" msgid))
+      (elmo-replace-string-as-filename (elmo-match-string 1 msgid)))))
 
 (defun elmo-cache-get-path (msgid &optional folder number)
   "Get path for cache file associated with MSGID, FOLDER, and NUMBER."

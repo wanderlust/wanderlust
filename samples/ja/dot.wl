@@ -107,6 +107,7 @@
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
 ;; スレッドの見た目を変える
+;(setq wl-thread-indent-level 2)
 ;(setq wl-thread-have-younger-brother-str "+"
 ;      wl-thread-youngest-child-str	 "+"
 ;      wl-thread-vertical-str		 "|"
@@ -193,7 +194,6 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
-;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
@@ -222,7 +222,8 @@
 ;(setq wl-generate-mailer-string-function
 ;      (function
 ;       (lambda ()
-;	 (wl-generate-user-agent-string-1 nil))))
+;	 (concat "User-Agent: "
+;		 (wl-generate-user-agent-string-1 nil)))))
 
 
 ;;; [[ テンプレート ]]
@@ -307,13 +308,13 @@
 
 ;; 表示するヘッダの設定
 ;; 'wl-message-ignored-field-list' より優先される
-(setq mime-view-visible-field-list '("^Message-Id:"))
+(setq wl-view-visible-field-list '("^Message-Id:"))
 
 
 ;; X-Face を表示する (要 x-face (and x-face-mule))
 (when (and window-system
 	   (module-installed-p 'x-face))
-  (cond ((featurep 'xemacs)
+  (cond ((featurep 'xemacs)		; for XEmacs
 	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
 	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
@@ -335,9 +336,6 @@
 ;	("^-"
 ;	 "news.SCORE")))
 
-;; スコアファイルを保存するディレクトリ
-; (setq wl-score-files-directory "~/.elmo/")
-
 
 ;; 自動リファイルのルール設定
 ;(setq wl-refile-rule-alist
@@ -352,6 +350,5 @@
 ;; 標準では "N" "U" "!" になっており、未読メッセージを自動リファイルし
 ;; ません。nil ですべてのメッセージが対象になります。
 ;(setq wl-summary-auto-refile-skip-marks nil)
-
 
 ;;; dot.wl ends here
