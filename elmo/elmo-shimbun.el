@@ -254,6 +254,9 @@ update overview when message is fetched."
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
 
+(luna-define-method elmo-folder-local-p ((folder elmo-shimbun-folder))
+  nil)
+
 (luna-define-method elmo-message-use-cache-p ((folder elmo-shimbun-folder)
 					      number)
   elmo-shimbun-use-cache)
