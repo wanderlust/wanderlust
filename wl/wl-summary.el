@@ -3073,11 +3073,11 @@ Return non-nil if the mark is updated"
 	  (elmo-delete-char ?\n
 			    (or (elmo-message-entity-field
 				 wl-message-entity
-				 'subject)
+				 'subject t)
 				wl-summary-no-subject-message)))
     (setq parent-raw-subject
 	  (elmo-message-entity-field wl-parent-message-entity
-				     'subject))
+				     'subject t))
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
