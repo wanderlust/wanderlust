@@ -1,3 +1,7 @@
+2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-parse-msg-id-list-string): Fix.
+
 2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-save-view): Renamed from
