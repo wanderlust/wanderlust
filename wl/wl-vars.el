@@ -540,6 +540,7 @@ references field of the current draft."
 If nil, default smtp connection type is used."
   :type '(choice (const :tag "default" nil)
 		 (const :tag "Use STARTTLS" starttls)
+		 (const :tag "SMTP over SSL" ssl)
 		 symbol)
   :group 'wl)
 

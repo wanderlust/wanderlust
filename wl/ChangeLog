@@ -1,3 +1,8 @@
+2004-04-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-smtp-extension-bind): Support smtp over ssl.
+	* wl-vars.el (wl-smtp-connection-type): Ditto.
+
 2004-04-03  Colin Rafferty  <colin.rafferty@morganstanley.com>
 
 	* wl-highlight.el (wl-highlight-message): Change to strict regexp

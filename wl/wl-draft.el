@@ -53,6 +53,8 @@
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
+(autoload 'open-ssl-stream "ssl")
+
 (defvar wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)
@@ -136,6 +138,14 @@ e.g.
 			   (list wl-smtp-authenticate-type)))))
 	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
 	    (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
+	    (smtp-open-connection-function
+	     (if (eq wl-smtp-connection-type 'ssl)
+		 #'open-ssl-stream
+	       smtp-open-connection-function))
+	    (smtp-end-of-line
+	     (if (eq wl-smtp-connection-type 'ssl)
+		 "\n"
+	       smtp-end-of-line))
 	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
        (if (and (string= (car smtp-sasl-mechanisms) "DIGEST-MD5")
 		;; sendmail bug?
