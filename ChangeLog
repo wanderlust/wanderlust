@@ -1,3 +1,8 @@
+2001-05-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-detect-info-directory): Call `info-initialize' for
+	Emacs21.
+
 2001-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use function
