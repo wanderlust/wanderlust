@@ -33,6 +33,7 @@
   "Copyright (C) 1998-2000 Yuuichi Teranishi <teranisi@gohome.org>")
 
 (require 'wl-vars)
+(require 'wl-version)
 (require 'wl-highlight)
 (provide 'wl-demo)
 
@@ -286,7 +287,7 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      (indent-rigidly (point-min) (point-max)
 			      (/ (- (* 8 (1+ ww)) lw) 16))))
 	    (goto-char (point-min)))
-	(insert (or wl-logo-ascii wl-appname))
+	(insert (or wl-logo-ascii (product-name (product-find 'wl-version))))
 	(put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
 	(setq rest (- wh (count-lines (point-min) (point)) 1))
 	(let ((lw (current-column))
@@ -305,7 +306,9 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 			       "version %s - \"%s\"\n\n%s")
 			      (t
 			       "\nversion %s - \"%s\"\n\n%s"))
-			wl-version wl-codename wl-demo-copyright-notice))
+			(product-version-string (product-find 'wl-version))
+			(product-code-name (product-find 'wl-version))
+			wl-demo-copyright-notice))
 	(put-text-property start (point) 'face 'wl-highlight-demo-face)
 	(let ((fill-column ww))
 	  (center-region start (point))))

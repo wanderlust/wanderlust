@@ -11,6 +11,7 @@
 	* wl-fldmgr.el (wl-fldmgr-save-folders): Use `product-string-1'
 	for ~/.folders header.
 	(wl-fldmgr-folders-header): Changed.
+	* wl-demo.el (wl-demo): Use product.el.
 
 	* wl-vars.el (wl-appname, wl-version, wl-codename): Move to
 	wl-version.el.

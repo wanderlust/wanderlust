@@ -49,7 +49,7 @@
 
 
 ;; for backward compatibility
-(defconst wl-appname  (product-name (product-find 'wl-version)))
+(defconst wl-appname (product-name (product-find 'wl-version)))
 (make-obsolete-variable
  'wl-appname
  "use (product-name (product-find 'wl-version)) insteaed.")
