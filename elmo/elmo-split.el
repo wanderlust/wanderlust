@@ -129,7 +129,7 @@ Example:
 (defun elmo-split-and (buffer &rest args)
   (catch 'done
     (dolist (arg args)
-      (unless (not (elmo-split-eval buffer arg))
+      (unless (elmo-split-eval buffer arg)
 	(throw 'done nil)))
     t))
 
