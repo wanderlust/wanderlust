@@ -450,7 +450,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (enlarge-window (- window-lines (window-height)))
 	    (when (fboundp 'pos-visible-in-window-p)
 	      (goto-char (point-min))
-	      (while (and (< (window-height) max-lines)
+	      (while (and (<= (window-height) max-lines)
 			  (not (pos-visible-in-window-p (1- (point-max)))))
 		(enlarge-window 2))))
 	(error))

@@ -40,10 +40,7 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-shimbun-folder)
 					    name)
-  (let ((server-group (if (string-match "\\([^.]+\\)\\." name)
-			  (list (elmo-match-string 1 name)
-				(substring name (match-end 0)))
-			(list name))))
+  (let ((server-group (split-string name "\\.")))
     (if (nth 0 server-group) ; server
 	(elmo-shimbun-folder-set-shimbun-internal
 	 folder
@@ -56,21 +53,20 @@
 
 (luna-define-method elmo-folder-open-internal :before ((folder
 							elmo-shimbun-folder))
-  (when (elmo-folder-plugged-p folder)
-    (shimbun-open-group
-     (elmo-shimbun-folder-shimbun-internal folder)
-     (elmo-shimbun-folder-group-internal folder))
-    (elmo-shimbun-folder-set-headers-internal
-     folder (shimbun-headers
-	     (elmo-shimbun-folder-shimbun-internal folder)))
-    (elmo-shimbun-folder-set-header-hash-internal
-     folder
-     (elmo-make-hash (length (elmo-shimbun-folder-headers-internal folder))))
-    ;; Set up header hash.
-    (dolist (header (elmo-shimbun-folder-headers-internal folder))
-      (elmo-set-hash-val
-       (shimbun-header-id header) header
-       (elmo-shimbun-folder-header-hash-internal folder)))))
+  (shimbun-open-group
+   (elmo-shimbun-folder-shimbun-internal folder)
+   (elmo-shimbun-folder-group-internal folder))
+  (elmo-shimbun-folder-set-headers-internal
+   folder (shimbun-headers
+	   (elmo-shimbun-folder-shimbun-internal folder)))
+  (elmo-shimbun-folder-set-header-hash-internal
+   folder
+   (elmo-make-hash (length (elmo-shimbun-folder-headers-internal folder))))
+  ;; Set up header hash.
+  (dolist (header (elmo-shimbun-folder-headers-internal folder))
+    (elmo-set-hash-val
+     (shimbun-header-id header) header
+     (elmo-shimbun-folder-header-hash-internal folder))))
 
 (luna-define-method elmo-folder-close-internal :after ((folder
 							elmo-shimbun-folder))
@@ -80,24 +76,6 @@
    folder nil)
   (elmo-shimbun-folder-set-header-hash-internal
    folder nil))
-
-(luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
-  (elmo-plugged-p
-   "shimbun" 
-   (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))
-   nil nil
-   (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))))
-			    
-(luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
-					     plugged &optional add)
-  (elmo-set-plugged plugged
-		    "shimbun"
-		    (shimbun-server-internal
-		     (elmo-shimbun-folder-shimbun-internal folder))
-		    nil nil nil
-		    (shimbun-server-internal
-		     (elmo-shimbun-folder-shimbun-internal folder))
-		    add))
 
 (luna-define-method elmo-folder-check :after ((folder elmo-shimbun-folder))
   (when (shimbun-current-group-internal 
@@ -116,15 +94,12 @@
    (expand-file-name "shimbun" elmo-msgdb-dir)))
 		     
 (defun elmo-shimbun-msgdb-create-entity (folder number)
-  (let ((header (elmo-get-hash-val
-		 (elmo-map-message-location folder number)
-		 (elmo-shimbun-folder-header-hash-internal folder))))
-    (when header
-      (with-temp-buffer
-	(shimbun-header-insert
-	 (elmo-shimbun-folder-shimbun-internal folder)
-	 header)
-	(elmo-msgdb-create-overview-from-buffer number)))))
+  (with-temp-buffer
+    (shimbun-header-insert
+     (elmo-get-hash-val
+      (elmo-map-message-location folder number)
+      (elmo-shimbun-folder-header-hash-internal folder)))
+    (elmo-msgdb-create-overview-from-buffer number)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
 					      numlist new-mark
@@ -191,12 +166,6 @@
 			(elmo-shimbun-folder-header-hash-internal folder)))
       (buffer-string))))
 
-(luna-define-method elmo-folder-list-messages-internal :around
-  ((folder elmo-shimbun-folder) &optional nohide)
-  (if (elmo-folder-plugged-p folder)
-      (luna-call-next-method)
-    t))
-
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-shimbun-folder))
   (mapcar
@@ -213,15 +182,15 @@
 		(elmo-shimbun-folder-shimbun-internal folder))
 	       "."
 	       x))
-     (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder)))))
+     (shimbun-groups-internal (elmo-shimbun-folder-shimbun-internal folder)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
       (progn
 	(member 
 	 (elmo-shimbun-folder-group-internal folder)
-	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
-			  folder))))
+	 (shimbun-groups-internal (elmo-shimbun-folder-shimbun-internal
+				   folder))))
     t))
 
 (luna-define-method elmo-folder-search ((folder elmo-shimbun-folder)
