@@ -1,3 +1,8 @@
+2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utf7.el (utf7-fragment-encode): Don't use narrow-to-region to
+	avoid the bug of Emacs 21.3.
+
 2004-08-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* utf7.el (utf7-utf-16-coding-system): Avoid error when the

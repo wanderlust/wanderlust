@@ -67,6 +67,9 @@
 ;; * Don't use mm-with-unibyte-current-buffer etc.
 ;; * Do nothing if utf-16 coding system is not found.
 
+;; Modified 31 Aug 2004 by Yuuichi Teranishi so that it can avoid the bug of
+;; Emacs 21.3 release version.
+
 ;;; Code:
 
 (eval-when-compile (require 'cl))
@@ -125,21 +128,26 @@ Use IMAP modification if FOR-IMAP is non-nil."
 (defun utf7-fragment-encode (start end &optional for-imap)
   "Encode text from START to END in buffer as UTF-7 escape fragment.
 Use IMAP modification if FOR-IMAP is non-nil."
-  (save-restriction
-    (narrow-to-region start end)
-    (let ((converter (utf7-get-u16char-converter 'to-utf-16))
-	  pm)
-      (when converter
-	(funcall converter)
-	(set-buffer-multibyte nil)
-	(utf7-base64-encode-region start (point-max))
-	(goto-char start)
-	(setq pm (point-max))
-	(when for-imap
-	  (while (search-forward "/" nil t)
-	    (replace-match ",")))
-	(skip-chars-forward "^= \t\n" pm)
-	(delete-region (point) pm)))))
+  (let ((converter (utf7-get-u16char-converter 'to-utf-16))
+	(str (buffer-substring start end))
+	pm)
+    (when converter
+      (delete-region start end)
+      (goto-char start)
+      (insert
+       (with-temp-buffer
+	 (insert str)
+	 (funcall converter)
+	 (set-buffer-multibyte nil)
+	 (utf7-base64-encode-region (point-min) (point-max))
+	 (goto-char (point-min))
+	 (setq pm (point-max))
+	 (when for-imap
+	   (while (search-forward "/" nil t)
+	     (replace-match ",")))
+	 (skip-chars-forward "^= \t\n" pm)
+	 (delete-region (point) pm)
+	 (buffer-string))))))
 
 (defun utf7-decode-internal (&optional for-imap)
   "Decode UTF-7 text in (temporary) buffer.
