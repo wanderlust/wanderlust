@@ -152,7 +152,8 @@ If RULE does not match ENTITY, returns nil."
       (setq pairs (cdr rule))
       (setq value (wl-refile-get-field-value entity (car rule)))
       (while pairs
-	(if (and (string-match
+	(if (and (stringp value)
+		 (string-match
 		  (car (car pairs))
 		  value)
 		 (setq guess (wl-refile-expand-newtext

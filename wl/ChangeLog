@@ -1,3 +1,8 @@
+2000-04-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-refile.el (wl-refile-evaluate-rule): Fixed problem
+	when wl-refile-get-field-value return nil.
+
 2000-04-04   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-refile.el
