@@ -66,11 +66,13 @@
 
 (defvar wl-folder-buffer-disp-summary nil)
 (defvar wl-folder-buffer-cur-entity-id nil)
+(defvar wl-folder-buffer-last-visited-entity-id nil)
 (defvar wl-folder-buffer-cur-path nil)
 (defvar wl-folder-buffer-cur-point nil)
 
 (make-variable-buffer-local 'wl-folder-buffer-disp-summary)
 (make-variable-buffer-local 'wl-folder-buffer-cur-entity-id)
+(make-variable-buffer-local 'wl-folder-buffer-last-visited-entity-id)
 (make-variable-buffer-local 'wl-folder-buffer-cur-path)
 (make-variable-buffer-local 'wl-folder-buffer-cur-point)
 
@@ -155,6 +157,7 @@
   (define-key wl-folder-mode-map "g"    'wl-folder-goto-folder)
   (define-key wl-folder-mode-map "G"    'wl-folder-goto-folder-sticky)
   (define-key wl-folder-mode-map "j"    'wl-folder-jump-to-current-entity)
+  (define-key wl-folder-mode-map "\C-i" 'wl-folder-revisit-last-visited-folder)
   (define-key wl-folder-mode-map "w"    'wl-draft)
   (define-key wl-folder-mode-map "W"    'wl-folder-write-current-folder)
   (define-key wl-folder-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
@@ -615,68 +618,69 @@ Optional argument ARG is repeart count."
   (interactive "P")
   (beginning-of-line)
   (let (entity beg end indent opened fname err fld-name)
-    (cond
-     ((and (wl-folder-buffer-group-p)
-	   (looking-at wl-folder-group-regexp))
-      (save-excursion
-	(setq fname (wl-folder-get-entity-from-buffer))
-	(setq indent (wl-match-buffer 1))
-	(setq opened (wl-match-buffer 2))
-	(if (string= opened "+")
-	    (progn
-	      (setq entity (wl-folder-search-group-entity-by-name
-			    fname
-			    wl-folder-entity))
-	      (setq beg (point))
-	      (if arg
-		  (wl-folder-update-recursive-current-entity entity)
-		;; insert as opened
-		(setcdr (assoc (car entity) wl-folder-group-alist) t)
-		(if (eq 'access (cadr entity))
-		    (wl-folder-maybe-load-folder-list entity))
-		;(condition-case errobj
-		    (progn
-		      (if (or (wl-folder-force-fetch-p (car entity))
-			      (and
-			       (eq 'access (cadr entity))
-			       (null (caddr entity))))
-			  (wl-folder-update-newest indent entity)
-			(wl-folder-insert-entity indent entity))
-		      (wl-highlight-folder-path wl-folder-buffer-cur-path))
-		 ; (quit
-		 ;  (setq err t)
-		 ;  (setcdr (assoc fname wl-folder-group-alist) nil))
-		 ; (error
-		 ;  (elmo-display-error errobj t)
-		 ;  (ding)
-		 ;  (setq err t)
-		 ;  (setcdr (assoc fname wl-folder-group-alist) nil)))
-		(if (not err)
-		    (let ((buffer-read-only nil))
-		      (delete-region (save-excursion (beginning-of-line)
-						     (point))
-				     (save-excursion (end-of-line)
-						     (+ 1 (point))))))))
-	  (setq beg (point))
-	  (end-of-line)
-	  (save-match-data
-	    (setq end
-		  (progn (wl-folder-goto-bottom-of-current-folder indent)
-			 (beginning-of-line)
-			 (point))))
-	  (setq entity (wl-folder-search-group-entity-by-name
-			fname
-			wl-folder-entity))
-	  (let ((buffer-read-only nil))
-	    (delete-region beg end))
-	  (setcdr (assoc (car entity) wl-folder-group-alist) nil)
-	  (wl-folder-insert-entity indent entity) ; insert entity
-	  (forward-line -1)
-	  (wl-highlight-folder-path wl-folder-buffer-cur-path)
-;	  (wl-delete-all-overlays)
-;	  (wl-highlight-folder-current-line)
-	  )))
-     ((setq fld-name (wl-folder-get-entity-from-buffer))
+    (if (and (wl-folder-buffer-group-p)
+	     (looking-at wl-folder-group-regexp))
+	;; folder group
+	(save-excursion
+	  (setq fname (wl-folder-get-entity-from-buffer))
+	  (setq indent (wl-match-buffer 1))
+	  (setq opened (wl-match-buffer 2))
+	  (if (string= opened "+")
+	      (progn
+		(setq entity (wl-folder-search-group-entity-by-name
+			      fname
+			      wl-folder-entity))
+		(setq beg (point))
+		(if arg
+		    (wl-folder-update-recursive-current-entity entity)
+		  ;; insert as opened
+		  (setcdr (assoc (car entity) wl-folder-group-alist) t)
+		  (if (eq 'access (cadr entity))
+		      (wl-folder-maybe-load-folder-list entity))
+		  ;(condition-case errobj
+		  (progn
+		    (if (or (wl-folder-force-fetch-p (car entity))
+			    (and
+			     (eq 'access (cadr entity))
+			     (null (caddr entity))))
+			(wl-folder-update-newest indent entity)
+		      (wl-folder-insert-entity indent entity))
+		    (wl-highlight-folder-path wl-folder-buffer-cur-path))
+		  ; (quit
+		  ;  (setq err t)
+		  ;  (setcdr (assoc fname wl-folder-group-alist) nil))
+		  ; (error
+		  ;  (elmo-display-error errobj t)
+		  ;  (ding)
+		  ;  (setq err t)
+		  ;  (setcdr (assoc fname wl-folder-group-alist) nil)))
+		  (if (not err)
+		      (let ((buffer-read-only nil))
+			(delete-region (save-excursion (beginning-of-line)
+						       (point))
+				       (save-excursion (end-of-line)
+						       (+ 1 (point))))))))
+	    (setq beg (point))
+	    (end-of-line)
+	    (save-match-data
+	      (setq end
+		    (progn (wl-folder-goto-bottom-of-current-folder indent)
+			   (beginning-of-line)
+			   (point))))
+	    (setq entity (wl-folder-search-group-entity-by-name
+			  fname
+			  wl-folder-entity))
+	    (let ((buffer-read-only nil))
+	      (delete-region beg end))
+	    (setcdr (assoc (car entity) wl-folder-group-alist) nil)
+	    (wl-folder-insert-entity indent entity) ; insert entity
+	    (forward-line -1)
+	    (wl-highlight-folder-path wl-folder-buffer-cur-path)
+	    ; (wl-delete-all-overlays)
+	    ; (wl-highlight-folder-current-line)
+	    ))
+      ;; ordinal folder
+      (setq fld-name (wl-folder-get-entity-from-buffer))
       (wl-folder-set-current-entity-id
        (get-text-property (point) 'wl-folder-entity-id))
       (setq fld-name (wl-folder-get-folder-name-by-id
@@ -691,7 +695,7 @@ Optional argument ARG is repeart count."
 	(wl-summary-goto-folder-subr fld-name
 				     (wl-summary-get-sync-range
 				      (wl-folder-get-elmo-folder fld-name))
-				     nil arg t)))))
+				     nil arg t))))
   (set-buffer-modified-p nil))
 
 (defun wl-folder-close-entity (entity)
@@ -976,6 +980,10 @@ Optional argument ARG is repeart count."
 	    (if buf-win
 		(select-window buf-win)
 	      (set-buffer buf))
+	    (when (and wl-folder-buffer-cur-entity-id
+		       (not (eq wl-folder-buffer-last-visited-entity-id
+				wl-folder-buffer-cur-entity-id)))
+	      (setq wl-folder-buffer-last-visited-entity-id wl-folder-buffer-cur-entity-id))
 	    (setq wl-folder-buffer-cur-entity-id entity-id)
 	    (setq wl-folder-buffer-cur-path
 		  (wl-folder-get-path wl-folder-entity entity-id))
@@ -2231,16 +2239,28 @@ Use `wl-subscribed-mailing-list'."
 	    (set-buffer-modified-p nil))))))
 
 (defun wl-folder-goto-folder (&optional arg)
+  "Visit some folder."
   (interactive "P")
   (wl-folder-goto-folder-subr nil arg))
 
 (defun wl-folder-goto-folder-sticky ()
+  "Visit some folder and make it sticky."
   (interactive)
   (wl-folder-goto-folder-subr nil t))
 
 (defun wl-folder-goto-draft-folder (&optional arg)
+  "Visit draft folder."
   (interactive "P")
   (wl-folder-goto-folder-subr wl-draft-folder arg))
+
+(defun wl-folder-revisit-last-visited-folder (&optional arg)
+  "Revisit last visited folder."
+  (interactive "P")
+  (let ((folder
+	 (wl-folder-get-folder-name-by-id wl-folder-buffer-last-visited-entity-id)))
+    (if (and folder
+	     (y-or-n-p (format "Revisit %s? " folder)))
+	(wl-folder-goto-folder-subr folder arg))))
 
 (defun wl-folder-goto-folder-subr (&optional folder sticky)
   (beginning-of-line)
