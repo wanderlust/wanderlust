@@ -37,8 +37,8 @@
 (defconst wl-news-news-file '(("en" "NEWS")
 			      ("ja" "NEWS.ja")))
 (defconst wl-news-search-regexp
-  '(("en" "^\\* Changes in \\([0-9.]*\\) from")
-    ("ja" "^\\* [0-9.]* から \\([0-9.]*\\) への変更点")))
+  '(("en" "^\\* Changes in \\([0-9.]*\\) from [0-9.]+x?")
+    ("ja" "^\\* [0-9.]+x? から \\([0-9.]*\\) への変更点")))
 (defconst wl-news-filename "wl-news.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

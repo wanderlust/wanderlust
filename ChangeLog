@@ -1,3 +1,8 @@
+2005-02-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-MK (wl-news-search-regexp): Allow ".x" at the
+	end of version number.
+
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* WL-ELS (ELMO-MODULES): Added elmo-signal.
