@@ -731,8 +731,6 @@ Returns response value if selecting folder succeed. "
 (defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
 (defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
 (defvar elmo-imap4-header-fields "HEADER\.FIELDS")
-(defmacro elmo-imap4-replace-dot-symbols ()) ;; noop
-(defalias 'elmo-imap4-fetch-read 'read)
 
 (defun elmo-imap4-make-number-set-list (msg-list &optional chop-length)
   "Make RFC2060's message set specifier from MSG-LIST.
@@ -1458,7 +1456,7 @@ Return nil if no complete line has arrived."
     (let (element list)
       (while (not (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
-	(let ((token (elmo-imap4-fetch-read (current-buffer))))
+	(let ((token (read (current-buffer))))
 	  (elmo-imap4-forward)
 	  (setq element
 		(cond ((eq token 'UID)

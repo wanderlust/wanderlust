@@ -1,3 +1,10 @@
+2003-01-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (elmo-imap4-fetch-read): Abolish alias.
+	(elmo-imap4-replace-dot-symbols): Abolish noop macro.
+	(elmo-imap4-parse-fetch): Use `read' instead of
+	`elmo-imap4-fetch-read'.
+
 2003-01-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-imap4.el (toplevel): Ignore Nemacs.
