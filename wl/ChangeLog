@@ -1,3 +1,16 @@
+2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el: Rewrote to make it read a logo file at the run-time.
+	(wl-demo-icon-name): Use Xmas logo at the end of the year.
+	(wl-demo-insert-image): New function.
+	(wl-demo-insert-text): New function.
+	(wl-demo-image-type-alist): Redefine as a function.
+	(wl-demo): Use `wl-demo-insert-image' and `wl-demo-insert-text'.
+	(wl-demo-with-temp-file-buffer): Removed.
+	(wl-logo-xpm): Removed.
+	(wl-logo-xbm): Removed.
+	(wl-logo-bitmap): Removed.
+
 2001-10-30  Nishimoto Masaki <nishimoto@gaju.org>
 
 	* wl-expire.el (wl-expire-localdir-date-folder-name-fmt): New variable.
@@ -824,7 +837,7 @@
 2001-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-message-mail-p): Test resent-to: field.
-	(Fix by Peter Møller Neergaard <turtle@bu.edu>)
+	(Fix by Peter M~ller Neergaard <turtle@bu.edu>)
 	(wl-default-draft-cite): Fix.
 
 	* wl-score.el (wl-score-insert-help): Fixed parenthesis.
@@ -968,7 +981,7 @@
 	* wl-util.el (wl-biff-check-folder): Call elmo-folder-check instead
 	of elmo-folder-close.
 
-2001-06-06  Peter Møller Neergaard <turtle@bu.edu>
+2001-06-06  Peter M~ller Neergaard <turtle@bu.edu>
 
 	* wl-summary.el (wl-summary-resend-bounced-mail): Modified regexp
 	for postfix.
