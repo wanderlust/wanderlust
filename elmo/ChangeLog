@@ -1,3 +1,8 @@
+2004-02-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-file.el (elmo-file-command-argument): Fixed problem when a
+	value returned from elmo-file-find is nil.
+
 2004-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mime.el (elmo-mime-display-as-is-coding-system): Moved

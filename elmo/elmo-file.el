@@ -48,11 +48,11 @@
   :group 'elmo)
 
 (defcustom elmo-file-command-argument
-  `("-m"
-    ,(elmo-file-find
-      '("/usr/share/magic.mime"
-	"/usr/share/file/magic.mime"
-	"/cygwin/usr/share/file/magic.mime")))
+  (let ((magic-file (elmo-file-find
+		     '("/usr/share/magic.mime"
+		       "/usr/share/file/magic.mime"
+		       "c:/cygwin/usr/share/file/magic.mime"))))
+    (if magic-file (list "-m" magic-file)))
   "*Argument list for the `file' command.
 \(It should return the MIME content type\)"
   :type '(repeat string)
