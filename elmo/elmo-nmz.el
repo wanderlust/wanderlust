@@ -60,6 +60,10 @@ If the value is a list, all elements are used as index paths for namazu."
 			       (repeat (directory :tag "Index Path")))))
   :group 'elmo)
 
+(defvar elmo-nmz-use-drive-letter (if (memq system-type
+					    '(OS/2 emx windows-nt)) t nil)
+  "*If non-nil, do a drive letter conversion (e.g. /a|/ => a:/).")
+
 ;;; "namazu search"
 (eval-and-compile
   (luna-define-class elmo-nmz-folder
@@ -234,7 +238,14 @@ If the value is a list, all elements are used as index paths for namazu."
       (goto-char (point-min))
       (while (not (eobp))
 	(beginning-of-line)
-	(setq bol (if (looking-at "^file://") (match-end 0)(point)))
+	;; convert url to file path.
+	(when (looking-at "^file://")
+	  (replace-match ""))
+	(when (and elmo-nmz-use-drive-letter
+		   (looking-at "^/\\([A-Za-z]\\)|/"))
+	  (replace-match "\\1:/")
+	  (beginning-of-line))
+	(setq bol (point))
 	(end-of-line)
 	(setq locations (cons (buffer-substring bol (point)) locations))
 	(forward-line 1))

@@ -1,3 +1,9 @@
+2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el (elmo-nmz-use-drive-letter): New variable.
+	(elmo-map-folder-list-message-locations): Do drive letter conversion
+	on Windows environment.
+
 2001-12-27  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-read-response): Fixed for Response '400'
