@@ -1,9 +1,3 @@
-2001-02-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* elmo.el (toplevel): Require 'elmo-version first;
-	for little `recursive-load-depth' settings.
-	Fix "ends here" comment.
-
 2001-02-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (toplevel): Require 'poem;

@@ -178,7 +178,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type 'function
   :group 'wl-summary)
 
-(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re[\\^[:> ]"
+(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re[\\^[: ]"
   "*If message does not have in-reply-to field nor references field and
  subject matches this regexp, search parent message by subject matching."
   :type 'string
