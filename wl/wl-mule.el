@@ -162,16 +162,16 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
 
 (defun wl-draft-overload-menubar ()
-  (local-set-key [menu-bar mail preview]
-    '("Preview Message" . wl-draft-preview-message))
+;  (local-set-key [menu-bar mail preview]
+;    '("Preview Message" . wl-draft-preview-message))
   (local-set-key [menu-bar mail send]
     '("Send Message" . wl-draft-send-and-exit))
   (local-set-key [menu-bar mail send-stay]
     '("Send, Keep Editing" . wl-draft-send))
   (local-set-key [menu-bar mail cancel]
     '("Kill Current Draft" . wl-draft-kill))
-  (local-set-key [menu-bar mail save]
-    '("Save Draft and Exit" . wl-draft-save-and-exit))
+;  (local-set-key [menu-bar mail save]
+;    '("Save Draft and Exit" . wl-draft-save-and-exit))
   (local-set-key [menu-bar mail yank]
     '("Cite Message" . wl-draft-yank-original))
   (local-set-key [menu-bar mail signature]

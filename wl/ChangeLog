@@ -1,3 +1,12 @@
+2002-03-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-quit-yes): Put cursor on draft buffer
+	if addrmgr is called from draft in splitted window.
+
+	* wl-e21.el (wl-draft-overload-menubar): Undo last change.
+	* wl-mule.el: Ditto.
+	* wl-xmas.el: Ditto.
+
 2002-03-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fix docstring.

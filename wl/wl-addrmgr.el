@@ -362,13 +362,16 @@ Return nil if no ADDRESS exists."
       (forward-char 4)))))
 
 (defun wl-addrmgr-quit-yes ()
-  (if (and wl-addrmgr-draft-buffer
-	   (buffer-live-p wl-addrmgr-draft-buffer)
-	   (null (get-buffer-window wl-addrmgr-draft-buffer)))
-      (switch-to-buffer wl-addrmgr-draft-buffer)
-    (unless (one-window-p)
-      (delete-window)))
-  (kill-buffer wl-addrmgr-buffer-name))
+  (let ((draft-buffer wl-addrmgr-draft-buffer))
+    (if (and draft-buffer
+	     (buffer-live-p draft-buffer)
+	     (null (get-buffer-window draft-buffer)))
+	(switch-to-buffer draft-buffer)
+      (unless (one-window-p)
+	(delete-window)))
+    (kill-buffer wl-addrmgr-buffer-name)
+    (if (and draft-buffer (not (one-window-p)))
+	(switch-to-buffer-other-window draft-buffer))))
 
 (defun wl-addrmgr-quit ()
   "Exit from electric reference mode without inserting reference."
