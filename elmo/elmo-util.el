@@ -40,6 +40,9 @@
 (require 'poem)
 (require 'emu)
 
+(eval-and-compile
+  (autoload 'md5 "md5"))
+
 (defmacro elmo-set-buffer-multibyte (flag)
   "Set the multibyte flag of the current buffer to FLAG."
   (cond ((boundp 'MULE)
