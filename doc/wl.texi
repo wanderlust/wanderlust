@@ -182,6 +182,7 @@ Wanderlust:
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
+@item Sun Internet Mail Server 4.0
 @end itemize
 
 @c LDAP connectivity with following LDAPd are confirmed to work with
