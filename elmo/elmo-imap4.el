@@ -725,14 +725,16 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-list-folder-unread (spec number-alist mark-alist
 					   unread-marks)
-  (if (elmo-imap4-use-flag-p spec)
+  (if (and (elmo-imap4-plugged-p spec)
+	   (elmo-imap4-use-flag-p spec))
       (elmo-imap4-list spec "unseen")
     (elmo-generic-list-folder-unread spec number-alist mark-alist
 				     unread-marks)))
 
 (defun elmo-imap4-list-folder-important (spec number-alist)
-  (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-list spec "flagged")))
+  (if (and (elmo-imap4-plugged-p spec)
+	   (elmo-imap4-use-flag-p spec))
+      (elmo-imap4-list spec "flagged")))
 
 (defmacro elmo-imap4-detect-search-charset (string)
   (` (with-temp-buffer

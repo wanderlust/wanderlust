@@ -1,3 +1,8 @@
+2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-list-folder-unread): Check plugged status.
+	(elmo-imap4-list-folder-important): Ditto.
+
 2000-10-16  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Fix.
