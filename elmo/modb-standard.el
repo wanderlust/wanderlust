@@ -482,8 +482,8 @@
   (let ((ret (elmo-get-hash-val
 	      key
 	      (modb-standard-entity-map-internal msgdb))))
-    (if (and (eq 'autoload (car-safe ret)) load)
-	(when modb-standard-divide-number
+    (if (eq 'autoload (car-safe ret))
+	(when (and load modb-standard-divide-number)
 	  (modb-standard-load-entity
 	   msgdb
 	   (elmo-msgdb-location msgdb)
