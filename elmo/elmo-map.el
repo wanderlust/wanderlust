@@ -202,7 +202,7 @@
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))
   (elmo-map-folder-location-setup
-   folder 
+   folder
    (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
   (if (elmo-folder-plugged-p folder)
       (elmo-map-folder-update-locations

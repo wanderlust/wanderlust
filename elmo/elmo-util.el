@@ -762,7 +762,7 @@ the directory becomes empty after deletion."
     (dolist (file (directory-files path t regexp))
       (delete-file file))
     (if remove-if-empty
-	(ignore-errors 
+	(ignore-errors
 	  (delete-directory path) ; should be removed if empty.
 	  ))))
 

@@ -505,7 +505,7 @@ Don't cache if nil.")
 			    (not (string= (elmo-nntp-folder-group-internal
 					   folder) "")))
 		       (concat " active"
-			       (format 
+			       (format
 				" %s.*"
 				(elmo-nntp-folder-group-internal folder))))))
 	  (if (elmo-nntp-read-response session t)
