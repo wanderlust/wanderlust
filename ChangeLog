@@ -1,5 +1,7 @@
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* etc/icons/file.xpm: New file.
+
 	* etc/icons/wl-summary-set-flags-up.xpm: Renamed from
 	wl-summary-mark-as-important-up.xpm.
 
