@@ -156,7 +156,7 @@ If function is specified, its return value is used.")
 	(while attrlist
 	  (setq ret-val (append ret-val
 				(list (cons (downcase (car attrlist))
-					    (downcase (car (cdr attrlist)))))))
+					    (car (cdr attrlist))))))
 	  (setq attrlist (cdr (cdr attrlist))))
 	ret-val)))
 

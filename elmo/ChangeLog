@@ -1,3 +1,8 @@
+2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo.el (mime-parse-parameters-from-list): Don't downcase
+	parameter value (It sometimes contains raw kanji).
+
 2000-10-28  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-network-initialize-session): Check capability.
