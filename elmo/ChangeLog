@@ -1,5 +1,8 @@
 2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Fixed
+	msgdb path (To keep compatibility with main trunk).
+
 	* elmo-vars.el (elmo-inhibit-number-mapping): New variable.
 
 	* elmo-util.el (elmo-make-file-cache): Moved position of
