@@ -1,3 +1,7 @@
+2004-07-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Support @s.
+
 2004-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* bbdb-wl.el (bbdb-wl-get-addresses-1): Use set-buffer-multibyte

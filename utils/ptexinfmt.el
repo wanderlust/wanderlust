@@ -36,6 +36,21 @@
 
 ;; Modified by Yamaoka not to use APEL functions.
 
+;; Unimplemented command:
+;;  @float, @caption, @shortcaption, @listoffloats
+;;  @deftypecv[x]
+;;  @headitem
+;;  @comma{}
+;;  @quotation (optional arguments)
+;;  @acronym (optional argument)
+;;  @dofirstparagraphindent
+;;  @indent
+;;  @verbatiminclude
+;;  @\
+;;  @definfoenclose
+;;  @deftypeivar
+;;  @deftypeop
+
 ;;; Code:
 
 (require 'backquote)
@@ -199,6 +214,9 @@ DOCSTRING will be printed if ASSERTION is nil and
 ;; misc
 (put 'page 'texinfo-format 'texinfo-discard-line)
 (put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
+
+;; @s{} (makeinfo 4.8 or later)
+(put 's 'texinfo-format 'texinfo-format-noop)
 
 ;; @tie{} (makeinfo 4.3 or later)
 (put 'tie 'texinfo-format 'texinfo-format-tie)
