@@ -291,19 +291,24 @@ Return a number of lines that an image occupies in the buffer."
   "Set background color of the demo buffer."
   (cond
    (wl-on-emacs21
-    ;; I think there should be a better way to set face background in the
-    ;; buffer local way. But I don't know how to do it on Emacs21.
+    ;; I think there should be a better way to set face background
+    ;; for the buffer only. But I don't know how to do it on Emacs21.
     (goto-char (point-max))
     (dotimes (i (- (window-height)
 		   (count-lines (point-min) (point)) 1)) ; 1 means modeline
       (insert ?\n))
-    (put-text-property (point-min) (point-max)
-		       'face 'wl-highlight-demo-face)
-    (set-face-background 'wl-highlight-demo-face
-			 wl-demo-background-color))
+    (let ((fg (face-foreground 'wl-highlight-demo-face)))
+      (put-text-property (point-min) (point-max)
+			 'face
+			 (nconc '(variable-pitch :slant oblique)
+				(list ':background
+				      wl-demo-background-color)
+				(when (stringp fg)
+				  (list ':foreground fg))))))
    ((featurep 'xemacs)
-    (set-face-background 'default wl-demo-background-color
-			 (current-buffer)))))
+    (and wl-demo-background-color
+	 (set-face-background 'default wl-demo-background-color
+			      (current-buffer))))))
 
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
@@ -322,17 +327,8 @@ should be a number of lines that an image occupies in the buffer."
     (goto-char (point-min))
     (insert-char ?\n (max 0 (/ (- height 4) 2)))
     (setq start (goto-char (point-max)))
-    (if wl-on-emacs21
-	(let ((bg (face-background 'wl-highlight-demo-face))
-	      (fg (face-foreground 'wl-highlight-demo-face)))
-	  (insert (propertize text
-			      'face (nconc '(variable-pitch :slant oblique)
-					   (when (stringp bg)
-					     (list ':background bg))
-					   (when (stringp fg)
-					     (list ':foreground fg))))))
-      (insert text)
-      (put-text-property start (point) 'face 'wl-highlight-demo-face))
+    (insert text)
+    (put-text-property start (point) 'face 'wl-highlight-demo-face)
     (let ((fill-column (window-width)))
       (center-region start (point)))))
 
@@ -366,8 +362,7 @@ argument."
     (set (make-local-variable 'tab-stop-list)
 	 '(8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
     (wl-demo-insert-text (wl-demo-insert-image image-type))
-    (when wl-demo-background-color
-      (wl-demo-set-background-color))
+    (wl-demo-set-background-color)
     (set-buffer-modified-p nil)
     (goto-char (point-min))
     (sit-for (if (featurep 'lisp-float-type)

@@ -1,3 +1,10 @@
+2004-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-demo.el (wl-demo-set-background-color)[Emacs21]: Set slant and
+	foreground property of the face.
+	(wl-demo-insert-text): Don't set up face property here.
+	(wl-demo): Call wl-demo-set-background-color, anyway.
+
 2004-02-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-demo-background-color): The value can be nil.
