@@ -101,8 +101,9 @@
 		      (elmo-map-folder-location-alist-internal folder))))
 	(cons (elmo-max-of-list numbers)
 	      (length numbers)))
-    ;; No save.
-    (elmo-folder-close-internal folder)))
+    ;; Don't close after status.
+    (unless (elmo-folder-reserve-status-p folder)
+      (elmo-folder-close-internal folder))))
 
 (defun elmo-map-message-number (folder location)
   "Return number of the message in the FOLDER with LOCATION."
