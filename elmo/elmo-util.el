@@ -85,6 +85,14 @@
 	   spec
 	   args)))
 
+;; Nemacs's `read' is different.
+(static-if (fboundp 'nemacs-version)
+    (defun elmo-read (obj)
+      (prog1 (read obj)
+	(if (bufferp obj)
+	    (or (bobp) (forward-char -1)))))
+  (defalias 'elmo-read 'read))
+
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer. Work buffer remains."
   (` (save-excursion
@@ -598,7 +606,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-condition-parse-search-value ()
   (cond
    ((looking-at "\"")
-    (read (current-buffer)))
+    (elmo-read (current-buffer)))
    ((or (looking-at "yesterday") (looking-at "lastweek")
 	(looking-at "lastmonth") (looking-at "lastyear")
 	(looking-at "[0-9]+ *daysago")

@@ -1,3 +1,12 @@
+2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-read): Abolished.
+	(Renamed to `elmo-read' and moved to elmo-util.el)
+	All other related portions are changed.
+
+	* elmo-util.el (elmo-read): New function.
+	(elmo-condition-parse-search-value): Use it.
+
 2000-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-quit): Don't use `elmo-nntp-flush-connection'.
