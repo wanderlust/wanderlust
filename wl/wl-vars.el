@@ -583,6 +583,7 @@ If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
 		 (const :tag "PLAIN" "plain")
 		 (const :tag "CRAM-MD5" "cram-md5")
+		 (const :tag "DIGEST-MD5" "digest-md5")
 		 (const :tag "LOGIN" "login")
 		 (string :tag "Other"))
   :group 'wl
@@ -870,9 +871,11 @@ cdr of each cons cell is used for preparing headers of draft message.
 Default is for 'reply-to-all'."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (symbol :tag "Function")
+			       (const :tag "Replying to self" wl-draft-self-reply-p)
 			       (repeat :tag "AND"
 				       (choice (string :tag "Field Name")
-					       (symbol :tag "Function"))))
+					       (symbol :tag "Function")
+					       (const :tag "Replying to self" wl-draft-self-reply-p))))
 		       (list (repeat :tag "Fields For To" string)
 			     (repeat :tag "Fields For Cc" string)
 			     (repeat :tag "Fields For Newsgroups" string))))
@@ -887,7 +890,7 @@ Default is for 'reply-to-all'."
     (wl-draft-self-reply-p . (("To") ("Cc") nil))
     ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('condition' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'condition' is a header name string (non-nil if the header exists in original
 message), a function (evaluated in original message buffer) or a list of those
 \(means 'AND' condition).
@@ -896,9 +899,11 @@ If car of each cons cell returns non-nil value,
 cdr of each cons cell is used for preparing headers of draft message."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (symbol :tag "Function")
+			       (const :tag "Replying to self" wl-draft-self-reply-p)
 			       (repeat :tag "AND"
 				       (choice (string :tag "Field Name")
-					       (symbol :tag "Function"))))
+					       (symbol :tag "Function")
+					       (const :tag "Replying to self" wl-draft-self-reply-p))))
 		       (list (repeat :tag "Fields For To" string)
 			     (repeat :tag "Fields For Cc" string)
 			     (repeat :tag "Fields For Newsgroups" string))))
@@ -2764,6 +2769,7 @@ Handler take two arguments elmo-folder and message number and return string."
   "*Highlight folder with icon(XEmacs or Emacs 21)."
   :type 'boolean
   :group 'wl-highlight)
+
 (defcustom wl-highlight-folder-by-numbers t
   "Highlight folder lines by numbers.
 If it is a number, only numbers will be highlighted."

@@ -5069,21 +5069,20 @@ If @code{nil}, default SMTP port number (25) is used.
 @item wl-smtp-posting-user
 @vindex wl-smtp-posting-user
 The initial setting is @code{nil}.
-This is the user name for SMTP AUTH authentication.  If @code{nil},
-@code{smtp-authenticate-user} is used.
+This is the user name for SMTP AUTH authentication.
 
 @item wl-smtp-authenticate-type
 @vindex wl-smtp-authenticate-type
 The initial setting is @code{nil}.
-This is the authentication method for SMTP AUTH authentication.  If
-@code{nil}, @code{smtp-authenticate-type} is used.  If
-@code{smtp-authenticate-type} is still @code{nil}, authentication will
-not be carried out.
+This string-valued variable specifies the authentication method for SMTP
+AUTH authentication.  You may specify @code{plain}, @code{cram-md5},
+@code{digest-md5}, @code{login}, etc.  If @code{nil}, authentication
+will not be carried out.
 
 @item wl-smtp-connection-type
 @vindex wl-smtp-connection-type
 The initial setting is @code{nil}.
-This variable specifies how to establish SMTP connections.
+This symbol-valued variable specifies how to establish SMTP connections.
 If @code{nil}, use default connection type.
 If it is @code{starttls}, use STARTTLS (RFC2595).
 If it is @code{ssl}, use SSL.
@@ -8063,9 +8062,14 @@ These are evaluated in order and first matched one is used.
 Moreover, the behavior of @kbd{a} with prefix argument can
 be directed by @code{wl-draft-reply-with-argument-list} as well.
 
+
 By the way, you can use some function (will be evaluated in the parent
 message buffer) in the place of @samp{key} or @samp{to-list} etc.
-For example, if you only want to reply to mailing lists in
+
+If you want to write a rule for replying to message written by yourself,
+specify function @code{wl-draft-self-reply-p} as @samp{key}.
+
+If you only want to reply to mailing lists in
 @code{wl-subscribed-mailing-list} if the parent has some of them,
 set as follows:
 

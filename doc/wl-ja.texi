@@ -5102,19 +5102,19 @@ Non-nil $B$G!"(B@samp{To:}, @samp{Cc:} $B$,(B $BJQ?t(B @code{wl-subscribed
 @vindex wl-smtp-posting-user
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
-@code{nil} $B$J$i(B @code{smtp-authenticate-user} $B$r;H$$$^$9!#(B
 
 @item wl-smtp-authenticate-type
 @vindex wl-smtp-authenticate-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
-@code{nil} $B$N$^$^$J$i(B @code{smtp-authenticate-type}$B$rMxMQ$7$^$9!#(B
-@code{smtp-authenticate-type} $B$b(B @code{nil} $B$J$iG'>Z$r9T$$$^$;$s!#(B
+SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$NG'>ZJ}<0$rJ8;zNs$G;XDj$7$^$9!#(B
+$BCM$H$7$F(B @code{plain}, @code{cram-md5}, @code{digest-md5}, @code{login}
+$B$J$I$,;XDj$G$-$^$9!#(B
+@code{nil} $B$J$iG'>Z$r9T$$$^$;$s!#(B
 
 @item wl-smtp-connection-type
 @vindex wl-smtp-connection-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
+SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r%7%s%\%k$G;XDj$7$^$9!#(B
 @code{nil} $B$J$i%G%U%)%k%H$N@\B37?<0$rMxMQ$7$^$9!#(B
 @code{starttls} $B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 @code{ssl} $B$J$i(B SSL $B$rMxMQ$7$^$9!#(B
@@ -8045,7 +8045,11 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 $B$^$?!"4X?t(B($B?F%a%C%;!<%8$N%P%C%U%!$GI>2A$5$l$k(B)$B$r(B @samp{key} $B$d(B
 @samp{to-list} $BEy$NJQ$o$j$KMQ$$$k$3$H$b$G$-$^$9!#(B
-$BNc$($P(B @kbd{C-u a} $B$7$?$H$-$K!"(B@code{wl-subscribed-mailing-list} $B$N(B
+
+$B<+J,$N=q$$$?%a%C%;!<%8$X$NJV?.$N>l9g$K%^%C%A$5$;$?$$>l9g$K$O(B
+@samp{key} $B$H$7$F4X?t(B @code{wl-draft-self-reply-p} $B$r;XDj$7$^$9!#(B
+
+@kbd{C-u a} $B$7$?$H$-$K!"(B@code{wl-subscribed-mailing-list} $B$N(B
 $B%"%I%l%9$,4^$^$l$k%a!<%k$KBP$7$F$O%a!<%j%s%0%j%9%H$K$N$_JV?.$7$?$$>l9g!"(B
 $B<!$N$h$&$J@_Dj$,$G$-$^$9!#(B
 
