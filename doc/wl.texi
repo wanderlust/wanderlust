@@ -422,7 +422,6 @@ such as "elmo" then add following to @file{WL-CFG}:
 (setq ELMO_PREFIX "elmo")
 @end lisp
 
-@noindent
 @subsection Install as a XEmacs package
 @cindex XEmacs package
 @cindex XEmacs package install
@@ -3784,7 +3783,6 @@ As shown in the example in @code{wl-draft-config-alist}, you can select
 (template . "default")
 @end example
 
-@noindent
 @subsection Sending mail by POP-before-SMTP
 @cindex POP-before-SMTP
 
