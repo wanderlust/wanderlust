@@ -434,6 +434,8 @@ Return number if put mark succeed"
 
 ;; Refile action
 (defun wl-summary-set-action-refile (number mark data)
+  (when (null data)
+    (error "Destination folder is empty"))
   (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
 					 (wl-summary-buffer-folder-name)))
 	(elem wl-summary-mark-action-list))

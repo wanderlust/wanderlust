@@ -1,3 +1,8 @@
+2004-01-07  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-action.el (wl-summary-set-action-refile): Don't proceed if
+	destination folder is empty.
+
 2004-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-buffer-prev-copy-destination): Abolish.
