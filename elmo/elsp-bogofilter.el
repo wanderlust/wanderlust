@@ -52,6 +52,11 @@
 		 (const :tag "Use the default"))
   :group 'elmo-spam-bogofilter)
 
+(defcustom elmo-spam-bogofilter-max-messages-per-process 30
+  "Number of messages processed at one once"
+  :type 'integer
+  :group 'elmo-spam-bogofilter)
+
 (defcustom elmo-spam-bogofilter-arguments-alist
   '((classify
      (if elmo-spam-bogofilter-debug "-vv")
@@ -117,6 +122,43 @@ Must be return a string or list of string."
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-bogofilter)
 						    buffer &optional restore)
   (elsp-bogofilter-register-buffer buffer nil restore))
+
+(defsubst elmo-spam-bogofilter-register-messages (folder numbers spam restore)
+  (with-temp-buffer
+    (buffer-disable-undo (current-buffer))
+    (while numbers
+      (let ((count 0))
+	(while (and numbers
+		    (< count elmo-spam-bogofilter-max-messages-per-process))
+	  (insert "From MAILER-DAEMON\n"
+		  (with-temp-buffer
+		    (elmo-spam-message-fetch folder (car numbers))
+		    (goto-char (point-min))
+		    (while (re-search-forward "^>*From " nil t)
+		      (goto-char (match-beginning 0))
+		      (insert ?>)
+		      (forward-line))
+		    (buffer-substring (point-min) (point-max)))
+		  "\n\n")
+	  (setq count (1+ count)
+		numbers (cdr numbers)))
+	(elsp-bogofilter-register-buffer (current-buffer) spam restore)
+	(elmo-progress-notify 'elmo-spam-register count)
+	(erase-buffer)))))
+
+(luna-define-method elmo-spam-register-spam-messages :around
+  ((processor elsp-bogofilter) folder &optional numbers restore)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
+    (if (> (length numbers) 1)
+	(elmo-spam-bogofilter-register-messages folder numbers t restore)
+      (luna-call-next-method))))
+
+(luna-define-method elmo-spam-register-good-messages :around
+  ((processor elsp-bogofilter) folder &optional numbers restore)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
+    (if (> (length numbers) 1)
+	(elmo-spam-bogofilter-register-messages folder numbers nil restore)
+      (luna-call-next-method))))
 
 (require 'product)
 (product-provide (provide 'elsp-bogofilter) (require 'elmo-version))

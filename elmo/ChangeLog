@@ -1,3 +1,11 @@
+2004-01-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bogofilter.el
+	(elmo-spam-bogofilter-max-messages-per-process): New user option.
+	(elmo-spam-bogofilter-register-messages): New internal function.
+	(elmo-spam-register-spam-messages): Define.
+	(elmo-spam-register-good-messages): Ditto.
+
 2004-01-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bogofilter.el (elmo-spam-bogofilter-arguments-alist):
