@@ -61,7 +61,7 @@ If ARG insert string at point."
     (message "%s" (wl-version t))))
 
 (defvar wl-version-status-alist
-  '(((= (% (nth 1 (product-version (product-find 'wl-version))) 2) 0)
+  '(((zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))
      . "stable")
     (t . "beta"))
   "An alist to define the version status.")

@@ -1,7 +1,7 @@
 2000-12-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl-version.el (wl-version-status-alist): Use `=' instead of
-	`eq'.
+	* wl-version.el (wl-version-status-alist): Use `zerop' instead of
+	(eq x 0).
 
 2000-11-27  Kenichi OKADA  <okada@opaopa.org>
 
