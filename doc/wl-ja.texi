@@ -3600,6 +3600,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B%a%C%;!<%8%P%C%U%!$O(B SEMI/tm $B$N(B MIME-View mode $B$G$9!#(B
 $BA`:n$NJ}K!!"%-!<%P%$%s%I$O$=$l$>$l$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+$B$^$?!"%a%C%;!<%8%P%C%U%!$K$*$$$F!"(B@kbd{?} $B$G%X%k%W$,;2>H$G$-$^$9!#(B
 
 $B%a%C%;!<%8$N@hF,$G(B @kbd{p}$B!"%a%C%;!<%8$N:G8eHx$G(B @kbd{n} $B$r2!$9$H!"%5%^(B
 $B%j%b!<%I$KLa$j$^$9!#$^$?!"(B@kbd{l} $B$r2!$9$H!"%5%^%j%b!<%I%P%C%U%!$NI=<($,(B
@@ -3698,6 +3699,7 @@ Non-nil $B$J$i%a%C%;!<%8%P%C%U%!$GD9$$9T$N@^$jJV$7$r$7$^$;$s!#(B
 $B%^%k%A%Q!<%H$NJT=8$O(B SEMI/tm $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
 $BJT=8$NJ}K!$O3F%Q%C%1!<%8IUB0$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-Edit, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+$B$^$?!"%I%i%U%H%P%C%U%!$K$*$$$F!"(B@kbd{C-c C-x ?} $B$G%X%k%W$,;2>H$G$-$^$9!#(B
 
 @subsection $B%a%C%;!<%8$NF0E*$JJQ99(B
 @vindex wl-draft-config-alist
