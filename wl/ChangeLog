@@ -1,3 +1,8 @@
+2004-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address.el (wl-complete-field-body): Complete if the last
+	character is a space.
+
 2004-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-folder.el (wl-folder-clear-entity-info): Use

@@ -454,7 +454,8 @@ Matched address lists are append to CL."
 	     (message "Sole completion"))
 	    ((and epand-char
 		  (> len 0)
-		  (char-equal (aref pattern (1- len)) epand-char)
+		  (or (char-equal (aref pattern (1- len)) epand-char)
+		      (char-equal (aref pattern (1- len)) ?\ ))
 		  (assoc (substring pattern 0 (1- len)) cl))
 	     (wl-complete-insert
 	      start end
