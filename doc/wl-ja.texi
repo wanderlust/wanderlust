@@ -2706,10 +2706,10 @@ IMAP のメッセージだけが先読みされます。この変数は
 @vindex wl-message-buffer-prefetch-depth
 初期設定は 5。先読み機能するメッセージの数。
 
-@table @code
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
 初期設定は 0.2 (単位:秒)。先読み機能する時間間隔。
+@end table
 
 
 @node Auto Refile, Sticky Summary, Cache, Summary
