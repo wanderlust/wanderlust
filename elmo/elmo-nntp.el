@@ -1233,7 +1233,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	      (delq nil
 		    (mapcar
 		     (lambda (pair)
-		       (if (string-match val (cdr pair))
+		       (if (string-match val
+					 (eword-decode-string
+					  (decode-mime-charset-string
+					   (cdr pair) elmo-mime-charset)))
 			   (car pair)))
 		     (elmo-nntp-retrieve-field spec search-key
 					       from-msgs))))

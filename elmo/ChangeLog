@@ -1,5 +1,7 @@
 2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-nntp.el (elmo-nntp-search-primitive): Decode header field.
+
 	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Fixed.
 
 	* elmo-nntp.el (elmo-nntp-default-use-xhdr): New variable.
