@@ -1908,8 +1908,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-remove-text-plain-tag ()
   "Remove text/plain tag of mime-edit."
-  (if (looking-at "^--\\[\\[text/plain\\]\\]$")
-      (delete-region (point-at-bol)(1+ (point-at-eol)))))
+  (when (string= (mime-create-tag "text" "plain")
+		 (buffer-substring-no-properties (point-at-bol)(point-at-eol)))
+    (delete-region (point-at-bol)(1+ (point-at-eol)))))
 
 (defun wl-draft-reedit (number)
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))

@@ -1,3 +1,8 @@
+2003-01-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
+	`mime-create-tag'. Use `string=' instead of `looking-at'.
+
 2003-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-news.el.in (wl-news-send-news): Add 3rd argument `folder'
