@@ -30,6 +30,7 @@
 ;;
 (require 'elmo-version)
 (require 'product)
+(eval-when-compile (require 'wl-util))	; wl-match-string
 (provide 'wl-version)
 
 (product-provide 'wl-version
@@ -46,6 +47,148 @@
 (defun wl-version-show ()
   (interactive)
   (message "%s" (wl-version t)))
+
+(defun wl-generate-user-agent-string ()
+  "A candidate of wl-generate-mailer-string-func.
+Insert User-Agent field instead of X-Mailer field."
+  (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
+			      mime-edit-insert-user-agent-field
+			      mime-edit-user-agent-value)))
+    (if mime-user-agent
+	(concat "User-Agent: "
+		wl-appname "/" wl-version
+		" (" wl-codename ") "
+		mime-user-agent)
+      (if (and (boundp 'mime-editor/version)
+	       mime-editor/version)
+	  (concat "User-Agent: "
+		  wl-appname "/" wl-version
+		  " (" wl-codename ") "
+		  "tm/" mime-editor/version
+		  (if (and (boundp 'mime-editor/codename)
+			   mime-editor/codename)
+		      (concat " (" mime-editor/codename ")"))
+		  (if (and (boundp 'mime-library-product)
+			   mime-library-product)
+		      (concat " " (aref mime-library-product 0)
+			      "/"
+			      (mapconcat 'int-to-string
+					 (aref mime-library-product 1)
+					 ".")
+			      " (" (aref mime-library-product 2) ")"))
+		  (condition-case nil
+		      (progn
+			(require 'apel-ver)
+			(concat " " (apel-version)))
+		    (file-error nil))
+		  " " (wl-extended-emacs-version3 "/" t))
+	(concat "User-Agent: " wl-appname "/" wl-version " (" wl-codename ") "
+		(wl-extended-emacs-version3 "/" t))))))
+
+;; from gnus
+(defun wl-extended-emacs-version (&optional with-codename)
+  "Stringified Emacs version"
+  (interactive)
+  (cond
+   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
+    (concat "Emacs " (wl-match-string 1 emacs-version)
+	    (and (boundp 'mule-version)(concat "/Mule " mule-version))))
+   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
+		  emacs-version)
+    (concat (wl-match-string 1 emacs-version)
+	    (format " %d.%d" emacs-major-version emacs-minor-version)
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if with-codename
+		(if (boundp 'xemacs-codename)
+		    (concat " - \"" xemacs-codename "\"")))))
+   (t emacs-version)))
+
+(defun wl-extended-emacs-version2 (&optional delimiter with-codename)
+  "Stringified Emacs version"
+  (interactive)
+  (cond
+   ((and (boundp 'mule-version)
+	 mule-version
+	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
+    (format "Mule%s%s@%d.%d%s"
+	    (or delimiter " ")
+	    (wl-match-string 1 mule-version)
+	    emacs-major-version
+	    emacs-minor-version
+	    (if with-codename
+		(wl-match-string 2 mule-version)
+	      "")))
+   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
+    (if (boundp 'nemacs-version)
+	(concat "Nemacs" (or delimiter " ")
+		nemacs-version
+		"@"
+		(substring emacs-version
+			   (match-beginning 1)
+			   (match-end 1)))
+      (concat "Emacs" (or delimiter " ")
+	      (wl-match-string 1 emacs-version))))
+   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
+		  emacs-version)
+    (concat (wl-match-string 1 emacs-version)
+	    (or delimiter " ")
+	    (format "%d.%d" emacs-major-version emacs-minor-version)
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if (and with-codename
+		     (boundp 'xemacs-codename)
+		     xemacs-codename)
+		(format " (%s)" xemacs-codename))))
+   (t emacs-version)))
+
+(defun wl-extended-emacs-version3 (&optional delimiter with-codename)
+  "Stringified Emacs version"
+  (interactive)
+  (cond
+   ((and (boundp 'mule-version)
+	 mule-version
+	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
+    (format "Emacs%s%d.%d Mule%s%s%s"
+	    (or delimiter " ")
+	    emacs-major-version
+	    emacs-minor-version
+	    (or delimiter " ")
+	    (wl-match-string 1 mule-version)
+	    (if with-codename
+		(wl-match-string 2 mule-version)
+	      "")))
+   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
+    (if (boundp 'nemacs-version)
+	(let ((nemacs-codename-assoc '(("3.3.2" . " (FUJIMUSUME)")
+				       ("3.3.1" . " (HINAMATSURI)")
+				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
+	  (format "Emacs%s%s Nemacs%s%s%s"
+		  (or delimiter " ")
+		  (wl-match-string 1 emacs-version)
+		  (or delimiter " ")
+		  nemacs-version
+		  (or (and with-codename
+			   (cdr (assoc nemacs-version
+				       nemacs-codename-assoc)))
+		      "")))
+      (concat "Emacs" (or delimiter " ")
+	      (wl-match-string 1 emacs-version))))
+   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
+		  emacs-version)
+    (concat (wl-match-string 1 emacs-version)
+	    (or delimiter " ")
+	    (format "%d.%d" emacs-major-version emacs-minor-version)
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if (and with-codename
+		     (boundp 'xemacs-codename)
+		     xemacs-codename)
+		(format " (%s)" xemacs-codename))))
+   (t emacs-version)))
 
 
 ;; for backward compatibility

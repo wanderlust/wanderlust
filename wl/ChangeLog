@@ -17,6 +17,10 @@
 	wl-version.el.
 	* wl-util.el (wl-version, wl-version-show): Ditto.
 
+	* wl-util.el (wl-generate-user-agent-string,
+	wl-extended-emacs-version, wl-extended-emacs-version2,
+	wl-extended-emacs-version3): Move to wl-version.el
+
 2000-10-09  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-refile-subr): Fix.
