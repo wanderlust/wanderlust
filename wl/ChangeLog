@@ -1,3 +1,9 @@
+2003-03-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-sort, wl-fldmgr-access-display-all):
+	Fixed the last change, search group entity by its real name.
+	(Thanks to: KOBAYASHI Shinji)
+
 2003-03-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-rename,wl-fldmgr-sort)

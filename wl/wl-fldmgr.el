@@ -1053,7 +1053,9 @@ return value is diffs '(-new -unread -all)."
 		 (looking-at wl-folder-group-regexp))
 	(setq indent (wl-match-buffer 1))
 	(setq opened (wl-match-buffer 2))
-	(setq entity (wl-folder-get-entity-from-buffer))
+	(setq entity (wl-folder-search-group-entity-by-name
+		      (wl-folder-get-entity-from-buffer)
+		      wl-folder-entity))
 	(message "Sorting...")
 	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
 	(when arg (setq flist (nreverse flist)))
@@ -1194,7 +1196,9 @@ return value is diffs '(-new -unread -all)."
 	(looking-at wl-folder-group-regexp))
       (setq indent (wl-match-buffer 1))
       (setq opened (wl-match-buffer 2))
-      (setq entity (wl-folder-get-entity-from-buffer))
+      (setq entity (wl-folder-search-group-entity-by-name
+		    (wl-folder-get-entity-from-buffer)
+		    wl-folder-entity))
       (when (eq (nth 1 entity) 'access)
 	(save-excursion
 	  (if (string= opened "-")
