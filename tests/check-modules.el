@@ -126,7 +126,8 @@
   (lunit-assert (fboundp 'mime-edit-content-beginning))
   (lunit-assert (fboundp 'mime-edit-content-end))
   (lunit-assert (fboundp 'mime-edit-preview-message))
-  (lunit-assert (fboundp 'mime-create-tag)))
+  (lunit-assert (fboundp 'mime-create-tag))
+  (lunit-assert (fboundp 'mime-make-text-tag)))
 
 (luna-define-method test-semi-mime-view ((case check-modules))
   (require 'mime-view)
