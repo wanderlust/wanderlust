@@ -131,6 +131,10 @@
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
        (elmo-multi-folder-children-internal folder)))
 
+(luna-define-method elmo-message-cached-p ((folder elmo-multi-folder) number)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-cached-p (car pair) (cdr pair))))
+
 (luna-define-method elmo-message-set-cached ((folder elmo-multi-folder)
 					     number cached)
   (let ((pair (elmo-multi-real-folder-number folder number)))
