@@ -1,5 +1,28 @@
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-message-use-header-narrowing): New user option.
+	(wl-message-header-narrowing-fields): Ditto.
+	(wl-message-header-narrowing-lines): Ditto.
+	(wl-message-header-narrowing-string): Ditto.
+
+	* wl-summary.el (wl-summary-mode-map): Bind
+	wl-summary-toggle-header-narrowing to "C-cC-f".
+	(wl-summary-toggle-header-narrowing): New function.
+
+	* wl-message.el (wl-message-buffer-create): Call
+	wl-message-header-narrowing-setup.
+	(wl-message-redisplay): Call wl-message-header-narrowing.
+	(wl-message-header-narrowing): New function.
+	(wl-message-header-narrowing-map): New keymap.
+	(wl-message-header-narrowing-widen-map): New keymap.
+	(wl-message-header-narrowing-again-at-mouse): New function.
+	(wl-message-header-narrowing-1): Ditto.
+	(wl-message-header-narrowing-widen-at-mouse): Ditto.
+	(wl-message-header-narrowing-setup): Ditto.
+	(wl-message-header-narrowing-toggle): Ditto.
+	
+	* wl-highlight.el (wl-message-header-narrowing-face): New face.
+
 	* wl-vars.el (wl-folder-sync-range-alist): Set default range for
 	'flag as all.
 	(wl-use-flag-folder-help-echo): New user option.

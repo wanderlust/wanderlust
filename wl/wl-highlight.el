@@ -748,6 +748,16 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
+(defface wl-message-header-narrowing-face
+  '((((class color) (background light))
+     (:foreground "black" :background "dark khaki"))
+    (((class color) (background dark))
+     (:foreground "white" :background "dark goldenrod"))
+    (t (:bold t)))
+  "Face used for header narrowing for the message."
+  :group 'wl-message-faces
+  :group 'wl-faces)
+
 (defvar wl-highlight-folder-opened-regexp " *\\(\\[\\-\\]\\)")
 (defvar wl-highlight-folder-closed-regexp " *\\(\\[\\+\\]\\)")
 (defvar wl-highlight-folder-leaf-regexp "[ ]*\\([-%\\+]\\)\\(.*\\):.*$")

@@ -137,6 +137,8 @@ If original message buffer already exists, it is re-used."
     (with-current-buffer buffer
       (setq wl-message-buffer-original-buffer
 	    (wl-original-message-buffer-get name))
+      (when wl-message-use-header-narrowing
+	(wl-message-header-narrowing-setup))
       (run-hooks 'wl-message-buffer-created-hook))
     buffer))
 
@@ -454,6 +456,8 @@ Returns non-nil if bottom of message."
     (when (re-search-forward "^$" nil t)
       (wl-message-add-buttons-to-header (point-min) (point))
       (wl-message-add-buttons-to-body (point) (point-max)))
+    (when wl-message-use-header-narrowing
+      (wl-message-header-narrowing))
     (goto-char (point-min))
     (ignore-errors (run-hooks 'wl-message-redisplay-hook))
     ;; go back to summary mode
@@ -759,6 +763,122 @@ Returns non-nil if bottom of message."
 	(insert-buffer-substring buf sp ep)
 	(set-buffer buf)
 	filename))))
+
+;;; Header narrowing courtesy of Hideyuki Shirai.
+(defun wl-message-header-narrowing ()
+  "Narrowing headers."
+  (unless (eq this-command 'wl-summary-redisplay-all-header)
+    (save-excursion
+      (save-restriction
+	(goto-char (point-min))
+	(if (re-search-forward "^$" nil t)
+	    (beginning-of-line)
+	  (goto-char (point-max)))
+	(narrow-to-region (point-min) (point))
+	(let ((fields wl-message-header-narrowing-fields))
+	  (while fields
+	    (wl-message-header-narrowing-1 (concat "^" (car fields) ":"))
+	    (setq fields (cdr fields))))))))
+
+(defvar wl-message-header-narrowing-map (make-sparse-keymap))
+(define-key wl-message-header-narrowing-map [mouse-2]
+  'wl-message-header-narrowing-again-at-mouse)
+
+(defvar wl-message-header-narrowing-widen-map (make-sparse-keymap))
+(define-key wl-message-header-narrowing-widen-map [mouse-2]
+  'wl-message-header-narrowing-widen-at-mouse)
+
+(defun wl-message-header-narrowing-again-at-mouse (event)
+  (interactive "e")
+  (save-window-excursion
+    (save-excursion
+      (mouse-set-point event)
+      (wl-message-header-narrowing))))
+
+(defun wl-message-header-narrowing-1 (hregexp)
+  (let ((case-fold-search t)
+	ov start end)
+    (goto-char (point-min))
+    (while (re-search-forward hregexp nil t)
+      (setq start (match-beginning 0))
+      (forward-line 1)
+      (setq end (progn (while (looking-at "^[ \t]") (forward-line))
+		       (forward-line -1)
+		       (line-end-position)))
+      (if (<= (count-lines start end) wl-message-header-narrowing-lines)
+	  (forward-line 1)
+	(goto-char start)
+	(forward-line (1- wl-message-header-narrowing-lines))
+	(end-of-line)
+	(setq start (point))
+	(unless (eq (get-char-property start 'invisible)
+		    'wl-message-header-narrowing)
+	  (setq ov (or
+		    (let ((ovs (overlays-at start))
+			  ov)
+		      (while (and ovs (not (overlayp ov)))
+			(if (overlay-get (car ovs)
+					 'wl-message-header-narrowing)
+			    (setq ov (car ovs)))
+			(setq ovs (cdr ovs)))
+		      ov)
+		    (make-overlay start end)))
+	  (overlay-put ov 'wl-message-header-narrowing t)
+	  (overlay-put ov 'evaporate t)
+	  (overlay-put ov 'invisible 'wl-message-header-narrowing)
+	  (overlay-put ov 'after-string
+		       wl-message-header-narrowing-string))))))
+
+(defun wl-message-header-narrowing-widen-at-mouse (event)
+  (interactive "e")
+  (save-selected-window
+    (select-window (posn-window (event-start event)))
+    (let* ((win (selected-window))
+	   (wpos (window-start win))
+	   (pos (posn-point (event-start event)))
+	   (ovs (overlays-in (1- pos) (1+ pos)))	;; Uum...
+	   ov)
+      (while (and ovs (not (overlayp ov)))
+	(when (overlay-get (car ovs) 'wl-message-header-narrowing)
+	  (setq ov (car ovs)))
+	(setq ovs (cdr ovs)))
+      (when (overlayp ov)
+	(overlay-put ov 'face 'wl-message-header-narrowing-face)
+	(overlay-put ov 'local-map wl-message-header-narrowing-map)
+	(overlay-put ov 'invisible nil)
+	(overlay-put ov 'after-string nil))
+      (set-window-start win wpos))))
+
+(defun wl-message-header-narrowing-setup ()
+  (when (boundp 'line-move-ignore-invisible)
+    (set (make-local-variable 'line-move-ignore-invisible) t))
+  (set-text-properties 0 (length wl-message-header-narrowing-string)
+		       `(face
+			 wl-message-header-narrowing-face
+			 keymap
+			 ,wl-message-header-narrowing-widen-map)
+		       wl-message-header-narrowing-string))
+
+(defun wl-message-header-narrowing-toggle ()
+  "Toggle header narrowing."
+  (interactive)
+  (when wl-message-use-header-narrowing
+    (save-excursion
+      (goto-char (point-min))
+      (if (re-search-forward "^$" nil t)
+	  (beginning-of-line)
+	(goto-char (point-max)))
+      (let ((ovs (overlays-in (point-min) (point)))
+	    ov hn-ovs)
+	(while (setq ov (car ovs))
+	  (when (overlay-get ov 'wl-message-header-narrowing)
+	    (setq hn-ovs (cons ov hn-ovs)))
+	  (setq ovs (cdr ovs)))
+	(if hn-ovs
+	    (while hn-ovs
+	      (delete-overlay (car hn-ovs))
+	      (setq hn-ovs (cdr hn-ovs)))
+	  (wl-message-header-narrowing))))))
 
 (require 'product)
 (product-provide (provide 'wl-message) (require 'wl-version))

@@ -1518,6 +1518,26 @@ which appear just before @."
   :type 'boolean
   :group 'wl-pref)
 
+(defcustom wl-message-use-header-narrowing t
+  "Use header narrowing when non-nil."
+  :type 'boolean
+  :group 'wl-pref)
+
+(defcustom wl-message-header-narrowing-fields '("to" "cc")
+  "A list of field name to enable header narrowing."
+  :type '(repeat string)
+  :group 'wl-pref)
+
+(defcustom wl-message-header-narrowing-lines 4
+  "Line number to enable the header narrowing."
+  :type 'integer
+  :group 'wl-pref)
+
+(defcustom wl-message-header-narrowing-string "..."
+  "A string used for header narrowing truncation."
+  :type 'string
+  :group 'wl-pref)
+
 (defvar wl-message-mode-line-format-spec-alist
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname wl-message-buffer-cur-folder)

@@ -533,6 +533,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "hm"	 'wl-score-set-mark-below)
   (define-key wl-summary-mode-map "hx"   'wl-score-set-expunge-below)
 
+  ;; misc
+  (define-key wl-summary-mode-map "\C-c\C-f" 'wl-summary-toggle-header-narrowing)
   (define-key wl-summary-mode-map "\M-t" 'wl-toggle-plugged)
   (define-key wl-summary-mode-map "\C-t" 'wl-plugged-change)
   ;;
@@ -4589,6 +4591,20 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	    (wl-summary-set-thread-modified))
 	  (setq  wl-summary-buffer-saved-message nil)))
     (message "There's no saved message.")))
+
+(defun wl-summary-toggle-header-narrowing ()
+  "Toggle message header narrowing."
+  (interactive)
+  (when wl-message-use-header-narrowing
+    (save-selected-window
+      (let* ((mbuf wl-message-buffer)
+	     (mwin (when mbuf (get-buffer-window mbuf)))
+	     (wpos (when mwin (window-start mwin))))
+	(when mbuf
+	  (set-buffer mbuf)
+	  (wl-message-header-narrowing-toggle)
+	  (and wpos (set-window-start mwin wpos)))))))
+
 
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))
