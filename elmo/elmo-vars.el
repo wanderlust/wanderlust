@@ -63,7 +63,11 @@
   :group 'elmo)
 
 (defcustom elmo-preserved-flags '(forwarded answered cached new unread)
-  "Reserved flags which are not treated as global."
+  "A list to define preserved flags.
+Flags in this list can be searched by `any' flag condition.
+If you want to treat a flag in this list as a `digest' flag,
+you have to add it to `elmo-digest-flags'.
+"
   :type '(repeat (symbol :tag "flag"))
   :group 'elmo)
 

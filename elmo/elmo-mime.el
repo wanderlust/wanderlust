@@ -44,6 +44,7 @@
 (defvar elmo-message-ignored-field-list mime-view-ignored-field-list)
 (defvar elmo-message-visible-field-list mime-view-visible-field-list)
 (defvar elmo-message-sorted-field-list nil)
+(defvar elmo-mime-display-header-analysis t)
 
 (defcustom elmo-mime-header-max-column fill-column
   "*Header max column number. Default is `fill-colmn'.
@@ -87,8 +88,11 @@ value is used."
 	    (setq field (intern
 			 (capitalize (buffer-substring f-b (1- p))))
 		  field-body (buffer-substring p f-e)
-		  field-decoder (inline (mime-find-field-decoder-internal
-					 field mode-obj)))
+		  field-decoder
+		  (if elmo-mime-display-header-analysis
+		      (inline (mime-find-field-decoder-internal
+			       field mode-obj))
+		    (inline (lambda (x y z) x))))
 	    (setq vf-alist (append (list
 				    (cons field-name
 					  (list field-body field-decoder)))

@@ -60,7 +60,7 @@
 (defvar dragdrop-drop-functions)
 (defvar scrollbar-height)
 (defvar mail-reply-buffer)
-(defvar elmo-global-flag-list)
+(defvar elmo-global-flags)
 
 (defvar wl-summary-buffer-name "Summary")
 (defvar wl-summary-mode-map nil)
@@ -109,7 +109,8 @@
 (defvar wl-summary-buffer-line-format nil)
 (defvar wl-summary-buffer-mode-line-formatter nil)
 (defvar wl-summary-buffer-mode-line nil)
-(defvar wl-summary-buffer-display-as-is nil)
+(defvar wl-summary-buffer-display-mime-mode 'mime)
+(defvar wl-summary-buffer-display-all-header nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -183,7 +184,8 @@
 (make-variable-buffer-local 'wl-summary-buffer-line-format)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line-formatter)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
-(make-variable-buffer-local 'wl-summary-buffer-display-as-is)
+(make-variable-buffer-local 'wl-summary-buffer-display-mime-mode)
+(make-variable-buffer-local 'wl-summary-buffer-display-all-header)
 
 (defvar wl-datevec)
 (defvar wl-thr-indent-string)
@@ -435,7 +437,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-summary-mode-map "\C-c\C-p" 'wl-summary-previous-buffer)
   (define-key wl-summary-mode-map "\C-c\C-n" 'wl-summary-next-buffer)
-  (define-key wl-summary-mode-map "H"    'wl-summary-redisplay-all-header)
+  (define-key wl-summary-mode-map "H"    'wl-summary-toggle-all-header)
   (define-key wl-summary-mode-map "M"    'wl-summary-toggle-mime)
   (define-key wl-summary-mode-map "B"    'wl-summary-burst)
   (define-key wl-summary-mode-map "Z"    'wl-status-update)
@@ -1794,7 +1796,7 @@ This function is defined for `window-scroll-functions'"
 
 (defun wl-summary-get-available-flags (&optional include-specials)
   (let ((flags (elmo-uniq-list
-		(append elmo-global-flag-list
+		(append elmo-global-flags
 			(copy-sequence elmo-preserved-flags))
 		#'delq)))
     (if include-specials
@@ -2299,8 +2301,10 @@ If ARG, without confirm."
 	  (unless (eq major-mode 'wl-summary-mode)
 	    (wl-summary-mode))
 	  (wl-summary-buffer-set-folder folder)
-	  (setq wl-summary-buffer-display-as-is
-		(wl-summary-no-mime-p wl-summary-buffer-elmo-folder))
+	  (setq wl-summary-buffer-display-mime-mode
+		(if (wl-summary-no-mime-p wl-summary-buffer-elmo-folder)
+		    'as-is
+		  'mime))
 	  (setq wl-summary-buffer-disp-msg nil)
 	  (setq wl-summary-buffer-last-displayed-msg nil)
 	  (setq wl-summary-buffer-current-msg nil)
@@ -3119,7 +3123,7 @@ Return non-nil if the mark is updated"
     (let ((completion-ignore-case t))
       (setq flag (intern (downcase
 			  (completing-read
-			   "Flag: "
+			   "Mark name: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
 				   (wl-summary-get-available-flags))
@@ -3142,7 +3146,7 @@ Return non-nil if the mark is updated"
     (let ((completion-ignore-case t))
       (setq flag (intern (downcase
 			  (completing-read
-			   "Flag: "
+			   "Mark name: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
 				   (wl-summary-get-available-flags))
@@ -3162,7 +3166,7 @@ Return non-nil if the mark is updated"
 	flag)
     (setq flag (intern (downcase
 			(completing-read
-			 "Flag: "
+			 "Mark name: "
 			 (mapcar (lambda (flag)
 				   (list (capitalize (symbol-name flag))))
 				 (wl-summary-get-available-flags))
@@ -3212,18 +3216,20 @@ Return non-nil if the mark is updated"
 		  "Flags: "
 		  (mapcar (lambda (flag)
 			    (list (capitalize (symbol-name flag))))
-			  elmo-global-flag-list)
+			  elmo-global-flags)
 		  nil nil (mapconcat (lambda (flag)
 				       (capitalize (symbol-name flag)))
 				     flags
 				     ",")))))
     (dolist (flag new-flags)
-      (unless (memq flag elmo-global-flag-list)
-	(if (y-or-n-p (format "Flag `%s' does not exist yet. Create?"
+      (unless (memq flag elmo-global-flags)
+	(when (elmo-local-flag-p flag)
+	  (error "Cannot treat `%s'." flag))
+	(if (y-or-n-p (format "Flag `%s' is not registered yet. Register?"
 			      (capitalize (symbol-name flag))))
-	    (setq elmo-global-flag-list (append
-					 elmo-global-flag-list
-					 (list flag)))
+	    (setq elmo-global-flags (append
+				     elmo-global-flags
+				     (list flag)))
 	  (error "Stopped"))))
     new-flags))
 
@@ -3821,8 +3827,7 @@ Return t if message exists."
 	(progn
 	  (set-buffer wl-message-buffer)
 	  t)
-      (wl-summary-redisplay-internal folder number nil
-				     wl-summary-buffer-display-as-is)
+      (wl-summary-redisplay-internal folder number)
       (when (buffer-live-p wl-message-buffer)
 	(set-buffer wl-message-buffer))
       nil)))
@@ -4355,46 +4360,69 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-summary-redisplay)))
     (message "No last message.")))
 
-(defun wl-summary-toggle-mime (&optional no-mime)
+(defun wl-summary-toggle-mime (&optional arg)
   "Toggle MIME decoding.
-If NO-MIME is non-nil, force displaying the message without MIME decoding
-and ask coding-system for the message."
+If ARG is non-nil, ask coding-system to display the message in the current
+MIME analysis mode.
+
+If ARG is numeric number, decode message as following:
+1: Enable MIME analysis.
+2: Enable MIME analysis only for headers.
+3: Disable MIME analysis."
   (interactive "P")
-  (if no-mime
-      (wl-summary-redisplay-no-mime 'ask-coding)
-    (setq wl-summary-buffer-display-as-is
-	  (not wl-summary-buffer-display-as-is))
-    (wl-summary-redisplay)
+  (let ((rest (memq wl-summary-buffer-display-mime-mode
+		    wl-summary-display-mime-mode-list))
+	(elmo-mime-display-as-is-coding-system
+	 elmo-mime-display-as-is-coding-system))
+    (if (numberp arg)
+	(setq wl-summary-buffer-display-mime-mode
+	      (case arg
+		(1 'mime)
+		(2 'header-only)
+		(3 'as-is)))
+      (if arg
+	  ;; Specify coding-system (doesn't change the MIME mode).
+	  (setq elmo-mime-display-as-is-coding-system
+		(if (and arg (not (eq wl-summary-buffer-display-mime-mode
+				      'mime)))
+		    (or (read-coding-system "Coding system: ")
+			elmo-mime-display-as-is-coding-system)
+		  elmo-mime-display-as-is-coding-system))
+	;; Change the MIME mode.
+	(if (cadr rest)
+	    (setq wl-summary-buffer-display-mime-mode (cadr rest))
+	  (setq wl-summary-buffer-display-mime-mode
+		(car wl-summary-display-mime-mode-list)))))
+    (wl-summary-redisplay arg)
     (wl-summary-update-modeline)
-    (message "MIME decoding: %s"
-	     (if wl-summary-buffer-display-as-is "OFF" "ON"))))
+    (message "MIME decoding: %s%s"
+	     (upcase (symbol-name wl-summary-buffer-display-mime-mode))
+	     (if (and arg
+		      (not (numberp arg))
+		      (not (eq wl-summary-buffer-display-mime-mode
+			       'mime)))
+		 (concat " ("
+			 (symbol-name elmo-mime-display-as-is-coding-system)
+			 ")")
+	       ""))))
 
 (defun wl-summary-redisplay (&optional arg)
   "Redisplay message."
   (interactive "P")
-  (wl-summary-redisplay-internal nil nil arg
-				 wl-summary-buffer-display-as-is))
+  (wl-summary-redisplay-internal nil nil arg))
 
-(defun wl-summary-redisplay-all-header (&optional arg)
-  "Redisplay message with all header."
+(defun wl-summary-toggle-all-header (&optional arg)
+  "Toggle displaying message with all header."
   (interactive "P")
-  (wl-summary-redisplay-internal nil nil arg
-				 wl-summary-buffer-display-as-is 'all-header))
-
-(defun wl-summary-redisplay-no-mime (&optional ask-coding)
-  "Display message without MIME decoding.
-If ASK-CODING is non-nil, coding-system for the message is asked."
-  (interactive "P")
-  (let ((elmo-mime-display-as-is-coding-system
-	 (if ask-coding
-	     (or (read-coding-system "Coding system: ")
-		 elmo-mime-display-as-is-coding-system)
-	   elmo-mime-display-as-is-coding-system)))
-    (wl-summary-redisplay-internal nil nil nil 'as-is 'all-header)))
+  (setq wl-summary-buffer-display-all-header
+	(not wl-summary-buffer-display-all-header))
+  (wl-summary-redisplay-internal nil nil arg))
 
 (defun wl-summary-redisplay-internal (&optional folder number force-reload
-						as-is all-header)
+						mode all-header)
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
+	 (mode (or mode wl-summary-buffer-display-mime-mode))
+	 (all-header (or all-header wl-summary-buffer-display-all-header))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
@@ -4423,7 +4451,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (setq no-folder-mark
 		;; If cache is used, change folder-mark.
 		(if (wl-message-redisplay folder num
-					  as-is all-header
+					  mode all-header
 					  (or
 					   force-reload
 					   (string= (elmo-folder-name-internal
@@ -4670,7 +4698,6 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	      wl-break-pages)
 	  (save-excursion
 	    (wl-summary-set-message-buffer-or-redisplay)
-	    ;; (wl-summary-redisplay-internal)
 	    (let* ((buffer (generate-new-buffer " *print*"))
 		   (entity (progn
 			     (set-buffer summary-buffer)

@@ -1,3 +1,21 @@
+2004-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (autoload): Added autoload setting for `elmo-local-flag-p'.
+	(elmo-global-flag-list): Added obsolete variable setting.
+
+	* elmo-vars.el (elmo-preserved-flags): Fixed docstring.
+
+	* elmo-mime.el (elmo-mime-display-header-analysis): New variable.
+	(elmo-mime-insert-header-from-buffer): Don't decode header content when
+	`elmo-mime-display-header-analysis' is nil.
+
+	* elmo-flag.el (elmo-global-flags): Renamed from
+	`elmo-global-flag-list' (All other related portions are changed).
+	(elmo-local-flags): New variable.
+	(elmo-local-flag-p): New function.
+	(elmo-global-flag-set-internal): Cause an error when flag is not
+	global.
+
 2004-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-concat-path): Treat empty path.

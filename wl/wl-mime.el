@@ -69,27 +69,32 @@ has Non-nil value\)"
 	    (cond
 	     ((wl-region-exists-p)
 	      (wl-mime-preview-follow-current-region))
-	     ((get-text-property (point-min) 'mime-view-entity)
-	      (mime-preview-follow-current-entity))
+	     ((not (eq (get-text-property (point-min)
+					  'wl-message-display-mime-mode)
+		       'mime))
+	      (wl-mime-preview-follow-no-mime
+	       (get-text-property (point-min)
+				  'wl-message-display-mime-mode)))
 	     (t
-	      (wl-mime-preview-follow-no-mime)))))
+	      (mime-preview-follow-current-entity)))))
       (error "No message."))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
-(defun wl-mime-preview-follow-no-mime ()
+(defun wl-mime-preview-follow-no-mime (display-mode)
   "Write follow message to current message, without mime.
 It calls following-method selected from variable
 `mime-preview-following-method-alist'."
   (interactive)
   (let* ((mode (mime-preview-original-major-mode 'recursive))
 	 (new-name (format "%s-no-mime" (buffer-name)))
-	 new-buf beg end
+	 new-buf min beg end
 	 (entity (get-text-property (point-min) 'elmo-as-is-entity))
 	 (the-buf (current-buffer))
 	 fields)
     (save-excursion
       (goto-char (point-min))
-      (setq beg (re-search-forward "^$" nil t)
+      (setq min (point-min)
+	    beg (re-search-forward "^$" nil t)
 	    end (point-max)))
     (save-excursion
       (set-buffer (setq new-buf (get-buffer-create new-name)))
@@ -97,7 +102,8 @@ It calls following-method selected from variable
       (insert-buffer-substring the-buf beg end)
       (goto-char (point-min))
       ;; Insert all headers.
-      (mime-insert-header entity)
+      (let ((elmo-mime-display-header-analysis (not (eq display-mode 'as-is))))
+	(elmo-mime-insert-sorted-header entity))
       (let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	(if (functionp f)
 	    (funcall f new-buf)

@@ -85,6 +85,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   (autoload 'elmo-dop-queue-flush "elmo-dop")
   (autoload 'elmo-nntp-post "elmo-nntp")
   (autoload 'elmo-global-flag-p "elmo-flag")
+  (autoload 'elmo-local-flag-p "elmo-flag")
   (autoload 'elmo-global-flag-detach "elmo-flag")
   (autoload 'elmo-global-flag-detach-messages "elmo-flag")
   (autoload 'elmo-global-flag-set "elmo-flag")
@@ -1714,6 +1715,8 @@ Return a hashtable for newsgroups."
 			       'elmo-cache-directory)
 (elmo-define-obsolete-variable 'elmo-msgdb-dir
 			       'elmo-msgdb-directory)
+(elmo-define-obsolete-variable 'elmo-global-flag-list
+			       'elmo-global-flags)
 
 ;; Obsolete functions.
 ;; 2001-12-11: *-dir -> *-directory

@@ -201,7 +201,7 @@ If no match, `wl-summary-default-view' is used."
 				    wl-summary-buffer-elmo-folder))
 	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
     (?t (if (eq wl-summary-buffer-view 'thread) "T" "S"))
-    (?m (if wl-summary-buffer-display-as-is "-" "M"))
+    (?m (upcase (symbol-name wl-summary-buffer-display-mime-mode)))
     (?n wl-summary-buffer-new-count)
     (?u wl-summary-buffer-unread-count)
     (?a (length wl-summary-buffer-number-list)))
@@ -211,7 +211,7 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-summary-mode-line-format "Wanderlust: %f {%t}(%n/%u/%a)"
+(defcustom wl-summary-mode-line-format "Wanderlust: %f {%t}(%n/%u/%a)[%m]"
   "*A format string for summary mode-line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
@@ -1104,6 +1104,17 @@ Example:
   :type '(repeat string)
   :group 'wl-summary)
 
+(defcustom wl-summary-display-mime-mode-list '(mime as-is)
+  "*Display mime mode list toggled by `wl-summary-toggle-mime'.
+Candidates are following:
+`mime'        ... header and body are decoded
+`header-only' ... only header is decoded
+`as-is'       ... header and body are not decoded"
+  :type '(repeat (choice (const :tag "MIME"	   mime)
+			 (const :tag "HEADER-ONLY" header-only)
+			 (const :tag "AS-IS"       as-is)))
+  :group 'wl-summary)
+
 (defcustom wl-summary-fix-timezone nil
   "*Time zone of the date string in summary mode.
 If nil, it is adjust to the default time zone information
@@ -1645,8 +1656,9 @@ which appear just before @."
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname wl-message-buffer-cur-folder)
 	  wl-message-buffer-cur-folder))
-    (?m (if (get-text-property (point-min) 'mime-view-entity)
-	    "MIME" "AS-IS"))
+    (?m (upcase (symbol-name
+		 (get-text-property (point-min)
+				    'wl-message-display-mime-mode))))
     (?F wl-message-buffer-flag-indicator)
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.

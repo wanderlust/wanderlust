@@ -30,8 +30,13 @@
 (eval-when-compile (require 'cl))
 
 ;;; Code:
-(defcustom elmo-global-flag-list '(important)
+(defcustom elmo-global-flags '(important)
   "A list of flag symbol which is managed globally by the flag folder."
+  :type '(repeat symbol)
+  :group 'elmo)
+
+(defcustom elmo-local-flags '(unread any digest)
+  "A list of flag symbol which is not treated as global flag."
   :type '(repeat symbol)
   :group 'elmo)
 
@@ -48,7 +53,7 @@
 					    name)
   (if (string-match "flag/\\([a-z]+\\)" name)
       (setq name (match-string 1 name))
-    (setq name (symbol-name (car elmo-global-flag-list)))
+    (setq name (symbol-name (car elmo-global-flags)))
     (elmo-folder-set-name-internal
      folder
      (concat (elmo-folder-name-internal folder) "/" name)))
@@ -57,8 +62,8 @@
 	    msgdb-path)
 	(elmo-flag-folder-set-flag-internal folder flag)
 	(unless (elmo-global-flag-p flag)
-	  (setq elmo-global-flag-list
-		(nconc elmo-global-flag-list (list flag))))
+	  (setq elmo-global-flags
+		(nconc elmo-global-flags (list flag))))
 	;; must be AFTER set flag slot.
 	(setq msgdb-path (elmo-folder-msgdb-path folder))
 	(unless (file-directory-p msgdb-path)
@@ -123,7 +128,7 @@
 	    (elmo-uniq-list
 	     (append
 	      (mapcar 'intern (delete ".." (delete "." (directory-files dir))))
-	      elmo-global-flag-list)))))
+	      elmo-global-flags)))))
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
@@ -212,7 +217,7 @@
 
 (defmacro elmo-flag-get-folder (flag)
   "Get the flag folder structure for FLAG."
-  `(when (memq ,flag elmo-global-flag-list)
+  `(when (memq ,flag elmo-global-flags)
      (elmo-make-folder (concat  "'flag/" (symbol-name ,flag)))))
 
 (defun elmo-flag-folder-referrer (folder number)
@@ -229,13 +234,13 @@ NUMBER is the number of the message."
 ;;; Global-Flag API
 (defun elmo-global-flag-p (flag)
   "Return non-nil when FLAG is global."
-  (memq flag elmo-global-flag-list))
+  (memq flag elmo-global-flags))
 
 (defun elmo-global-flags (fname number)
   "Return a list of global flags for the message.
 FNAME is the name string of the folder.
 NUMBER is the number of the message."
-  (let ((flag-list elmo-global-flag-list)
+  (let ((flag-list elmo-global-flags)
 	folder matches)
     (while flag-list
       (setq folder (elmo-flag-get-folder (car flag-list)))
@@ -271,7 +276,13 @@ NUMBER is the message number."
   (dolist (flag flags)
     (elmo-global-flag-set flag folder number message-id)))
 
+(defun elmo-local-flag-p (flag)
+  "Return non-nil when flag is not appropriate for global flag."
+  (memq flag elmo-local-flags))
+
 (defsubst elmo-global-flag-set-internal (flag folder number message-id)
+  (when (elmo-local-flag-p flag)
+    (error "Cannot treat `%s' as global flag." flag))
   (when message-id
     (let ((flag-folder (elmo-flag-get-folder flag))
 	  cache new-file new-number elem)
@@ -391,7 +402,7 @@ NUMBERS is the message number list.
 If optional DELETE-IF-NONE is non-nil, delete message from flag folder when
 the message is not flagged in any folder."
   (unless (eq (elmo-folder-type-internal folder) 'flag)
-    (dolist (flag elmo-global-flag-list)
+    (dolist (flag elmo-global-flags)
       (dolist (number numbers)
 	(elmo-global-flag-detach flag folder number delete-if-none)))))
 
@@ -402,7 +413,7 @@ If FLAGS is `t', all global flags becomes candidates.
 If optional IGNORE-PRESERVED is non-nil, preserved flags
 \(answered, cached, new, unread\) are not included."
   (let ((result (copy-sequence (if (eq flags t)
-				   (setq flags elmo-global-flag-list)
+				   (setq flags elmo-global-flags)
 				 flags))))
     (while flags
       (unless (elmo-global-flag-p (car flags))
@@ -448,7 +459,7 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 (luna-define-method elmo-folder-delete :around ((folder elmo-flag-folder))
   (let ((flag (elmo-flag-folder-flag-internal folder)))
     (when (luna-call-next-method)
-      (setq elmo-global-flag-list (delq flag elmo-global-flag-list))
+      (setq elmo-global-flags (delq flag elmo-global-flags))
       t)))
 
 (require 'product)

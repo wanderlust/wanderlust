@@ -499,16 +499,13 @@ Returns non-nil if bottom of message."
 	(select-window summary-win))
     cache-used))
 
-(defun wl-message-buffer-display-type (as-is all-header)
-  (let ((type ""))
-    (if as-is
-	(setq type (concat type "as-is"))
-      (setq type (concat type "mime")))
+(defun wl-message-buffer-display-type (mode all-header)
+  (let ((type (symbol-name mode)))
     (when all-header (setq type (concat type "-all-header")))
     (intern type)))
 
 ;; Use message buffer cache.
-(defun wl-message-buffer-display (folder number as-is all-header
+(defun wl-message-buffer-display (folder number mode all-header
 					 &optional force-reload unread)
   (let* ((msg-id (ignore-errors (elmo-message-field folder number
 						    'message-id)))
@@ -532,7 +529,7 @@ Returns non-nil if bottom of message."
 	    (goto-char (point-min))
 	    (ignore-errors (wl-message-narrow-to-page))
 	    (unless (eq wl-message-buffer-cur-display-type
-			(wl-message-buffer-display-type as-is all-header))
+			(wl-message-buffer-display-type mode all-header))
 	      (setq read t))))
       ;; delete tail and add new to the top.
       (setq hit (wl-message-buffer-cache-add (list fname number msg-id)))
@@ -543,10 +540,10 @@ Returns non-nil if bottom of message."
 	      (set-buffer hit)
 	      (setq
 	       cache-used
-	       (wl-message-display-internal folder number as-is all-header
+	       (wl-message-display-internal folder number mode all-header
 					    force-reload unread))
 	      (setq wl-message-buffer-cur-display-type
-		    (wl-message-buffer-display-type as-is all-header)))
+		    (wl-message-buffer-display-type mode all-header)))
 	  (quit
 	   (wl-message-buffer-cache-delete)
 	   (error "Display message %s/%s is quitted" fname number))
@@ -556,14 +553,17 @@ Returns non-nil if bottom of message."
 	   nil))) ;; will not be used
     (cons hit cache-used)))
 
-(defun wl-message-display-internal (folder number as-is all-header
+(defun wl-message-display-internal (folder number mode all-header
 					   &optional force-reload unread)
   (let ((default-mime-charset wl-mime-charset)
 	(elmo-mime-charset wl-mime-charset))
     (setq wl-message-buffer-require-all-header all-header)
     (prog1
-	(if as-is
-	    (let (wl-highlight-x-face-function)
+	(if (or (eq mode 'as-is)
+		(eq mode 'header-only))
+	    (let ((elmo-mime-display-header-analysis (eq mode 'header-only))
+		  (wl-highlight-x-face-function
+		   (unless (eq mode 'as-is) wl-highlight-x-face-function)))
 	      (prog1 (elmo-mime-display-as-is folder number
 					      (current-buffer)
 					      (wl-message-get-original-buffer)
@@ -580,6 +580,9 @@ Returns non-nil if bottom of message."
 				     force-reload
 				     unread
 				     (wl-message-define-keymap)))
+      (let (buffer-read-only)
+	(put-text-property (point-min) (point-max)
+			   'wl-message-display-mime-mode mode))
       (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 

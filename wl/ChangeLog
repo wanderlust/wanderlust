@@ -1,3 +1,39 @@
+2004-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Changed
+	definition for `m'.
+	(wl-summary-mode-line-format): Add '[%m]'.
+	(wl-message-mode-line-format-spec-alist): Ditto.
+	(wl-summary-display-mime-mode-list): New variable.
+
+	* wl-summary.el (wl-summary-buffer-display-mime-mode): Renamed
+	from wl-summary-buffer-display-as-is.
+	(wl-summary-buffer-display-all-header): New buffer local variable.
+	(wl-summary-mode-map): Bind "H" to the 'wl-summary-toggle-all-header'.
+	(wl-summary-goto-folder-subr): Setup wl-summary-buffer-display-mime-mode
+	instead of wl-summary-buffer-display-as-is.
+	(wl-summary-unset-persistent-mark): Don't use term 'Flag' here.
+	(wl-summary-set-persistent-mark): Ditto.
+	(wl-summary-set-message-buffer-or-redisplay): Just call
+	`wl-summary-redisplay-internal' without optional arguments.
+	(wl-summary-toggle-mime): Rewrite.
+	(wl-summary-redisplay): Don't use `wl-summary-buffer-display-as-is'.
+	(wl-summary-toggle-all-header): New function.
+	(wl-summary-redisplay-internal): Treat mime mode.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Pass mode
+	to wl-mime-preview-follow-no-mime.
+	(wl-mime-preview-follow-no-mime): Bind elmo-mime-display-header-analysis
+	accodring to the display-mode.
+
+	* wl-message.el (wl-message-buffer-display-type): Rewrite.
+	(wl-message-buffer-display): Changed argument name from `as-is' to
+	`mode'.
+	(wl-message-display-internal): Ditto;
+	Bind elmo-mime-display-header-analysis according to the mode.
+	(wl-message-display-internal): Put wl-message-display-mime-mode
+	property on entire buffer.
+
 2004-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-do-fcc): Undo last change.
