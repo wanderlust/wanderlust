@@ -1,3 +1,18 @@
+2004-06-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-number-list-from-region): New
+	function.
+	(wl-summary-mark-as-read-region): Use it.
+	(wl-summary-mark-as-unread-region): Ditto.
+	(wl-summary-set-flags-region): Ditto and add optional argument
+	remove.
+	(wl-summary-mark-as-answered-region): Ditto.
+	(wl-summary-mark-as-important-region): Ditto.
+	(wl-summary-target-mark-mark-as-important): Added optional
+	argument remove.
+	(wl-summary-target-mark-mark-as-answered): Ditto.
+	(wl-summary-target-mark-set-flags): Ditto.
+
 2004-06-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-set-flags-region): Call
