@@ -2588,19 +2588,18 @@ Use `wl-subscribed-mailing-list'."
   (interactive)
   (unless (wl-folder-get-entity-from-buffer)
     (error "No folder"))
-  (save-excursion
-    (beginning-of-line)
-    (if (wl-folder-buffer-group-p)
-	;; if group (whether opend or closed.)
-	(wl-folder-jump-to-current-entity)
-      ;; if folder
-      (let (indent)
-	(setq indent (save-excursion
-		       (re-search-forward "\\([ ]*\\)." nil t)
-		       (wl-match-buffer 1)))
-	(while (looking-at indent)
-	  (forward-line -1)))
-      (wl-folder-jump-to-current-entity))))
+  (beginning-of-line)
+  (if (wl-folder-buffer-group-p)
+      ;; if group (whether opend or closed.)
+      (wl-folder-jump-to-current-entity)
+    ;; if folder
+    (let (indent)
+      (setq indent (save-excursion
+		     (re-search-forward "\\([ ]*\\)." nil t)
+		     (wl-match-buffer 1)))
+      (while (looking-at indent)
+	(forward-line -1)))
+    (wl-folder-jump-to-current-entity)))
 
 (defsubst wl-folder-access-subscribe-p (group folder)
   (let (subscr regexp match)
