@@ -1,3 +1,10 @@
+2002-05-18  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-nntp-posting-config-alist): New variable.
+	(wl-nntp-posting-function): New variable.
+	* wl-draft.el (wl-draft-elmo-nntp-send): Change for
+	`wl-nntp-posting-config-alist'.
+
 2002-05-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Remove staff for older

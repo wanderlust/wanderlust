@@ -523,6 +523,33 @@ If nil, `elmo-nntp-default-port' is used."
 If nil, `elmo-nntp-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
+(defcustom wl-nntp-posting-function 'elmo-nntp-post
+  "A function to post news.
+Prepared candidate is 'elmo-nntp-post."
+  :type '(radio (function-item elmo-nntp-post)
+		(function :tag "Other"))
+  :group 'wl-draft)
+(defcustom wl-nntp-posting-config-alist nil
+  "*Alist of configuration on nntp posting.
+ex.
+'((\",?local.test\" . \"news.media.kyoto-u.ac.jp\")
+  (\",?ku\\.\" .
+   ((server . \"news.media.kyoto-u.ac.jp\")
+    (user . \"newsmaster\")
+    (port . 119)
+    (function . elmo-nntp-post))
+  (\".*\" . \"newsfeed.kuee.kyoto-u.ac.jp\")))"
+  :type '(repeat (cons (sexp :tag "Match")
+		       (choice (string :tag "Server")
+			       (repeat :inlie t
+				       (cons (choice (const server)
+						     (const user)
+						     (const port)
+						     (const stream-type)
+						     (const function))
+					     (sexp :tag "Value"))))))
+  :group 'wl-draft
+  :group 'wl-setting)
 
 (defcustom wl-prefetch-confirm t
   "*Confirm prefetching if message size is larger than `wl-prefetch-threshold'."

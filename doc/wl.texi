@@ -4768,6 +4768,16 @@ If @code{nil}, @code{elmo-nntp-default-stream-type} is evaluated.  If non-nil,
 SSL is used for news submission.  If @code{starttls}, STARTTLS (RFC2595)
 connection will be established.
 
+@item wl-nntp-posting-function
+@vindex wl-nntp-posting-function
+The initial setting is @code{elmo-nntp-post}.
+This is the function to post NNTP message.
+
+@item wl-nntp-posting-config-alist
+@vindex wl-nntp-posting-config-alist
+The initial setting is @code{nil}.
+An alist to define NNTP server.
+
 @item wl-pop-before-smtp-user
 @vindex wl-pop-before-smtp-user
 The initial setting is @code{nil}.

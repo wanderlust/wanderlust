@@ -4707,6 +4707,17 @@ SMTP のコネクションをどのように張るかを指定します。
 Non-nil ならニュース投稿時に SSL を利用します。
 @code{starttls}なら STARTTLS (RFC2595)を利用してコネクションを張ります。
 
+@item wl-nntp-posting-function
+@vindex wl-nntp-posting-function
+初期設定は @code{elmo-nntp-post}。
+ニュース投稿のための関数。
+
+@item wl-nntp-posting-config-alist
+@vindex wl-nntp-posting-config-alist
+初期設定は @code{nil}。
+ニュース投稿時のサーバ選択方法を設定します。
+@code{wl-nntp-posting-{server|user|port|function}}より優先されます。
+
 @item wl-pop-before-smtp-user
 @vindex wl-pop-before-smtp-user
 初期設定は @code{nil}。

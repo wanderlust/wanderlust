@@ -1247,7 +1247,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (expand-abbrev) ; for mail-abbrevs
 	    (let ((mime-header-encode-method-alist
 		   (append
-		    '((wl-draft-eword-encode-address-list 
+		    '((wl-draft-eword-encode-address-list
 		       .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
 		    (if (boundp 'mime-header-encode-method-alist)
 			(symbol-value 'mime-header-encode-method-alist)))))
@@ -1729,12 +1729,27 @@ Derived from `message-save-drafts' in T-gnus."
 	(elmo-nntp-default-port
 	 (or wl-nntp-posting-port elmo-nntp-default-port))
 	(elmo-nntp-default-stream-type
-	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
+	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type))
+	(elmo-nntp-default-function wl-nntp-posting-function)
+	condition)
+    (if (setq condition (cdr (elmo-string-matched-assoc
+			      (std11-field-body "Newsgroups")
+			      wl-nntp-posting-config-alist)))
+	(if (stringp condition)
+	    (setq elmo-nntp-default-server condition)
+	  (while (car condition)
+	    (set (intern (format "elmo-nntp-default-%s"
+				 (symbol-name (caar condition))))
+		 (cdar condition))
+	    (setq condition (cdr condition)))))
+    (unless elmo-nntp-default-function
+      (error "wl-draft-nntp-send: posting-function is nil."))
     (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
 	(wl-draft-set-sent-message 'news 'unplugged
 				   (cons elmo-nntp-default-server
 					 elmo-nntp-default-port))
-      (elmo-nntp-post elmo-nntp-default-server (current-buffer))
+      (funcall elmo-nntp-default-function
+	       elmo-nntp-default-server (current-buffer))
       (wl-draft-set-sent-message 'news 'sent)
       (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
 			      (std11-field-body "Newsgroups")
