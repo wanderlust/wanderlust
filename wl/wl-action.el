@@ -31,6 +31,9 @@
 
 (require 'wl-summary)
 
+(eval-when-compile
+  (defalias-maybe 'wl-summary-target-mark-region 'ignore))
+
 (defsubst wl-summary-action-mark (action)
   (nth 0 action))
 (defsubst wl-summary-action-symbol (action)
@@ -897,10 +900,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(while (not (eobp))
 	  (funcall function (wl-summary-message-number) data)
 	  (forward-line 1))))))
-
-(defun wl-summary-target-mark-region (beg end)
-  (interactive "r")
-  (wl-summary-mark-region-subr 'wl-summary-target-mark beg end nil))
 
 (defun wl-summary-target-mark-all ()
   (interactive)

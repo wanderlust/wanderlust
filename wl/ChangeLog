@@ -1,6 +1,7 @@
 2003-07-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-action-docstring): Add more info.
+	(wl-summary-target-mark-region): Remove duplicate definition.
 
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
