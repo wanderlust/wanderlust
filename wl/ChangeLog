@@ -1,3 +1,8 @@
+2004-06-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-update-indent-string-thread): Use
+	`elmo-display-progress-threshold'.
+
 2004-06-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-update-mark-and-highlight-window): No

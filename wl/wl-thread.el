@@ -716,18 +716,19 @@ Message is inserted to the summary buffer."
 	 (i 0)
 	 beg)
     (while top-list
-      (when (or (zerop (% i 5)) (= i num))
-	(elmo-display-progress
-	 'wl-thread-update-indent-string-thread
-	 "Updating thread indent..."
-	 (/ (* i 100) num)))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(when (or (zerop (% i 5)) (= i num))
+	  (elmo-display-progress
+	   'wl-thread-update-indent-string-thread
+	   "Updating thread indent..."
+	   (/ (* i 100) num))))
       (when (car top-list)
 	(wl-summary-jump-to-msg (car top-list))
 	(setq beg (point))
 	(wl-thread-goto-bottom-of-sub-thread)
 	(wl-thread-update-indent-string-region beg (point)))
-      (setq top-list (cdr top-list)
-	    i (1+ i)))
+      (setq top-list (cdr top-list)))
     (message "Updating thread indent...done")))
 
 (defun wl-thread-update-children-number (entity)
