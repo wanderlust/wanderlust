@@ -445,6 +445,12 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 	    (elmo-global-flag-set 'important nil nil (car elem))))))
     (message "Upgrading flag structure...done")))
 
+(luna-define-method elmo-folder-delete :around ((folder elmo-flag-folder))
+  (let ((flag (elmo-flag-folder-flag-internal folder)))
+    (when (luna-call-next-method)
+      (setq elmo-global-flag-list (delq flag elmo-global-flag-list))
+      t)))
+
 (require 'product)
 (product-provide (provide 'elmo-flag) (require 'elmo-version))
 

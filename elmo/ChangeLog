@@ -1,3 +1,7 @@
+2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-flag.el (elmo-folder-delete): Update elmo-global-flag-list.
+
 2004-09-14  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-filter.el (elmo-folder-local-p): Define.
