@@ -1,3 +1,9 @@
+2001-09-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-strip-subject-re, wl-draft-kill)
+	(wl-draft-send-mail-with-qmail, wl-draft-get-fcc-list)
+	(wl-draft-do-fcc, wl-draft-queue-flush): Checkdoc.
+
 2001-09-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el (wl-interactive-send): Set default value as t.

@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'sendmail)
 (require 'wl-template)
@@ -109,7 +109,7 @@
 		(string-match "^\\([^@]*\\)@\\([^@]*\\)"
 			      wl-smtp-posting-user))
 	   (setq smtp-sasl-user-name (match-string 1 wl-smtp-posting-user)
-		 smtp-sasl-properties (list 'realm 
+		 smtp-sasl-properties (list 'realm
 					    (match-string 2 wl-smtp-posting-user)))
 	 (setq smtp-sasl-user-name wl-smtp-posting-user
 	       smtp-sasl-properties nil))
@@ -253,7 +253,7 @@
   (mail-position-on-field "To"))
 
 (defun wl-draft-strip-subject-re (subject)
-  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus"
+  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus."
   (if (string-match wl-subject-prefix-regexp subject)
       (substring subject (match-end 0))
     subject))
@@ -323,14 +323,14 @@ Reply to author if WITH-ARG is non-nil."
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
       (setq subject (if (and subject decoder)
 			(funcall decoder subject) subject))
-      (setq to-alist 
+      (setq to-alist
 	    (mapcar
 	     (lambda (addr)
 	       (setq decoder (mime-find-field-decoder 'To 'plain))
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     to))
-      (setq cc-alist 
+      (setq cc-alist
 	    (mapcar
 	     (lambda (addr)
 	       (setq decoder (mime-find-field-decoder 'Cc 'plain))
@@ -339,7 +339,7 @@ Reply to author if WITH-ARG is non-nil."
 	     cc)))
     (and wl-reply-subject-prefix
 	 (setq subject (concat wl-reply-subject-prefix
-                               (wl-draft-strip-subject-re
+			       (wl-draft-strip-subject-re
 				(or subject "")))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
@@ -399,26 +399,26 @@ Reply to author if WITH-ARG is non-nil."
 
 (defun wl-draft-add-references ()
   (let* ((mes-id (save-excursion
-                   (set-buffer mail-reply-buffer)
-                   (std11-field-body "message-id")))
-         (ref (std11-field-body "References"))
-         (ref-list nil) (st nil))
+		   (set-buffer mail-reply-buffer)
+		   (std11-field-body "message-id")))
+	 (ref (std11-field-body "References"))
+	 (ref-list nil) (st nil))
     (when (and mes-id ref)
       (while (string-match "<[^>]+>" ref st)
-        (setq ref-list
-              (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
-                    ref-list)))
+	(setq ref-list
+	      (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
+		    ref-list)))
       (when (and ref-list
 		 (member mes-id ref-list))
 	(setq mes-id nil)))
     (when mes-id
       (save-excursion
-        (when (mail-position-on-field "References")
-          (forward-line)
-          (while (looking-at "^[ \t]")
-            (forward-line))
-          (setq mes-id (concat "\t" mes-id "\n")))
-        (insert mes-id))
+	(when (mail-position-on-field "References")
+	  (forward-line)
+	  (while (looking-at "^[ \t]")
+	    (forward-line))
+	  (setq mes-id (concat "\t" mes-id "\n")))
+	(insert mes-id))
       t)))
 
 (defun wl-draft-yank-from-mail-reply-buffer (decode-it
@@ -695,7 +695,7 @@ Reply to author if WITH-ARG is non-nil."
     (when (and (or (eq major-mode 'wl-draft-mode)
 		   (eq major-mode 'mail-mode))
 	       (or force-kill
-		   (y-or-n-p "Kill Current Draft?")))
+		   (y-or-n-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
@@ -802,10 +802,10 @@ to find out how to use this."
 	(0   (progn
 	       (wl-draft-set-sent-message 'mail 'sent)
 	       (wl-draft-write-sendlog 'ok 'qmail nil (list to) id)))
-	(1   (error "qmail-inject reported permanent failure"))
-	(111 (error "qmail-inject reported transient failure"))
+	(1   (error "`qmail-inject' reported permanent failure"))
+	(111 (error "`qmail-inject' reported transient failure"))
 	;; should never happen
-	(t   (error "qmail-inject reported unknown failure"))))))
+	(t   (error "`qmail-inject' reported unknown failure"))))))
 
 (defun wl-draft-parse-msg-id-list-string (string)
   "Get msg-id list from STRING."
@@ -1117,7 +1117,7 @@ If optional argument is non-nil, current draft buffer is killed"
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (y-or-n-p "Send current draft. OK?"))
+	    (y-or-n-p "Send current draft.  OK? "))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
@@ -1183,7 +1183,7 @@ If optional argument is non-nil, current draft buffer is killed"
   (let ((editing-buffer (current-buffer)))
     (wl-draft-hide editing-buffer)
     (kill-buffer editing-buffer)))
-  
+
 (defun wl-draft-send-and-exit ()
   "Send current draft message and kill it."
   (interactive)
@@ -1226,7 +1226,7 @@ If optional argument is non-nil, current draft buffer is killed"
 (defun wl-draft-get-fcc-list (header-end)
   (let (fcc-list
 	(case-fold-search t))
-    (or (markerp header-end) (error "header-end must be a marker"))
+    (or (markerp header-end) (error "HEADER-END must be a marker"))
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward "^Fcc:[ \t]*" header-end t)
@@ -1250,7 +1250,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	(tembuf (generate-new-buffer " fcc output"))
 	(case-fold-search t)
 	beg end)
-    (or (markerp header-end) (error "header-end must be a marker"))
+    (or (markerp header-end) (error "HEADER-END must be a marker"))
     (save-excursion
       (unless fcc-list
 	(setq fcc-list (wl-draft-get-fcc-list header-end)))
@@ -1424,11 +1424,11 @@ If optional argument is non-nil, current draft buffer is killed"
 	(run-hooks 'wl-mail-setup-hook))
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((eq this-command 'wl-summary-write-current-newsgroup)
- 	   (mail-position-on-field "Subject"))
- 	  ((and (interactive-p) (null to))
- 	   (mail-position-on-field "To"))
- 	  (t
- 	   (goto-char (point-max))))
+	   (mail-position-on-field "Subject"))
+	  ((and (interactive-p) (null to))
+	   (mail-position-on-field "To"))
+	  (t
+	   (goto-char (point-max))))
     (setq wl-draft-buffer-cur-summary-buffer (or summary-buf
 						 (get-buffer
 						  wl-summary-buffer-name)))
@@ -1460,17 +1460,17 @@ If optional argument is non-nil, current draft buffer is killed"
 	(elmo-nntp-default-stream-type
 	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
     (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
- 	(wl-draft-set-sent-message 'news 'unplugged
- 				   (cons elmo-nntp-default-server
- 					 elmo-nntp-default-port))
+	(wl-draft-set-sent-message 'news 'unplugged
+				   (cons elmo-nntp-default-server
+					 elmo-nntp-default-port))
       (elmo-nntp-post elmo-nntp-default-server (current-buffer))
       (wl-draft-set-sent-message 'news 'sent)
       (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
- 			      (std11-field-body "Newsgroups")
- 			      (std11-field-body "Message-ID")))))
+			      (std11-field-body "Newsgroups")
+			      (std11-field-body "Message-ID")))))
 
 (defun wl-draft-generate-clone-buffer (name &optional local-variables)
-  "generate clone of current buffer named NAME."
+  "Generate clone of current buffer named NAME."
   (let ((editing-buffer (current-buffer)))
     (save-excursion
       (set-buffer (generate-new-buffer name))
@@ -1819,7 +1819,7 @@ If optional argument is non-nil, current draft buffer is killed"
       (setq msgs2 (cdr msgs2)))
     (when (> (setq len (length msgs)) 0)
       (if (elmo-y-or-n-p (format
-			  "%d message(s) are in the sending queue. Send now?"
+			  "%d message(s) are in the sending queue.  Send now? "
 			  len)
 			 (not elmo-dop-flush-confirm) t)
 	  (progn
@@ -1925,11 +1925,11 @@ If optional argument is non-nil, current draft buffer is killed"
   "Insert HEADER-NAME w/ value HEADER-VALUE into a message."
   ;; it seems like overriding existing headers is acceptable -- should
   ;; we provide an option?
-  
+
   ;; plan was: unfold header (might be folded), remove existing value, insert
   ;;           new value
   ;; wl doesn't seem to fold header lines yet anyway :-)
-  
+
   (let ((kill-whole-line t)
 	end-of-line)
     (mail-position-on-field (capitalize header-name))
@@ -1965,8 +1965,8 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
- 	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
- 	(wl-draft-reply-buffer-style 'split))
+	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
+	(wl-draft-reply-buffer-style 'split))
     (when (eq switch-function 'switch-to-buffer-other-window)
       (when (one-window-p t)
 	(if (window-minibuffer-p) (other-window 1))
