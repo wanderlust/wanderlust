@@ -2110,8 +2110,11 @@ or 'skip-no-unread."
   :group 'wl-summary)
 
 (defcustom wl-summary-search-via-nntp 'confirm
-  "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.  If the value is 'confirm, confirm before search."
-  :type 'boolean
+  "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.
+If the value is 'confirm, confirm before search."
+  :type '(choice (const confirm)
+		 (const :tag "always" t)
+		 (const :tag "never" nil))
   :group 'wl-summary)
 
 (defcustom wl-summary-keep-cursor-command
