@@ -1,3 +1,8 @@
+2001-12-27  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-read-response): Fixed for Response '400'
+	(elmo-network-initialize-session): Ditto.
+
 2001-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-message-fetch): Fixed '100%' message.
