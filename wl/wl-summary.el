@@ -4232,7 +4232,7 @@ If ARG, exit virtual folder."
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
     (if (car list-info)
-	(format (if (cdr list-info) "(%s %05d)" "(%s)")
+	(format (if (cdr list-info) "(%s %05.0f)" "(%s)")
 		(car list-info) (cdr list-info))
       "")))
 

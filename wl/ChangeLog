@@ -1,3 +1,8 @@
+2003-01-06  Mito  <mito@mxa.nes.nec.co.jp>
+
+	* wl-summary.el (wl-summary-line-list-info): Use %f to make
+	list-count instead of %d.
+
 2003-01-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-news.el.in (wl-news-buffer-oldest-version): New local variable.
