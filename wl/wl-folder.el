@@ -613,19 +613,21 @@ Optional argument ARG is repeart count."
 (defun wl-folder-jump-to-current-entity (&optional arg)
   "Enter the current folder.  If optional ARG exists, update folder list."
   (interactive "P")
-  (beginning-of-line)
-  (let (entity beg end indent opened fname err fld-name)
+  (let ((fld-name (wl-folder-get-entity-from-buffer))
+	entity beg end indent opened err)
+    (unless fld-name
+      (error "No folder"))
+    (beginning-of-line)
     (if (and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp))
 	;; folder group
 	(save-excursion
-	  (setq fname (wl-folder-get-entity-from-buffer))
 	  (setq indent (wl-match-buffer 1))
 	  (setq opened (wl-match-buffer 2))
 	  (if (string= opened "+")
 	      (progn
 		(setq entity (wl-folder-search-group-entity-by-name
-			      fname
+			      fld-name
 			      wl-folder-entity))
 		(setq beg (point))
 		(if arg
@@ -645,12 +647,12 @@ Optional argument ARG is repeart count."
 		    (wl-highlight-folder-path wl-folder-buffer-cur-path))
 		  ; (quit
 		  ;  (setq err t)
-		  ;  (setcdr (assoc fname wl-folder-group-alist) nil))
+		  ;  (setcdr (assoc fld-name wl-folder-group-alist) nil))
 		  ; (error
 		  ;  (elmo-display-error errobj t)
 		  ;  (ding)
 		  ;  (setq err t)
-		  ;  (setcdr (assoc fname wl-folder-group-alist) nil)))
+		  ;  (setcdr (assoc fld-name wl-folder-group-alist) nil)))
 		  (if (not err)
 		      (let ((buffer-read-only nil))
 			(delete-region (save-excursion (beginning-of-line)
@@ -665,7 +667,7 @@ Optional argument ARG is repeart count."
 			   (beginning-of-line)
 			   (point))))
 	    (setq entity (wl-folder-search-group-entity-by-name
-			  fname
+			  fld-name
 			  wl-folder-entity))
 	    (let ((buffer-read-only nil))
 	      (delete-region beg end))
@@ -677,7 +679,6 @@ Optional argument ARG is repeart count."
 	    ; (wl-highlight-folder-current-line)
 	    ))
       ;; ordinal folder
-      (setq fld-name (wl-folder-get-entity-from-buffer))
       (wl-folder-set-current-entity-id
        (get-text-property (point) 'wl-folder-entity-id))
       (setq fld-name (wl-folder-get-folder-name-by-id
@@ -2584,6 +2585,8 @@ Use `wl-subscribed-mailing-list'."
 (defun wl-folder-open-close ()
   "Open or close parent entity."
   (interactive)
+  (unless (wl-folder-get-entity-from-buffer)
+    (error "No folder"))
   (save-excursion
     (beginning-of-line)
     (if (wl-folder-buffer-group-p)
