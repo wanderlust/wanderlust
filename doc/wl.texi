@@ -691,7 +691,6 @@ types.
 * Pipe Folder::                 @samp{|} -- Pipe folder
 * Internal Folder::             @samp{'} -- Internal folder
 * File Folder::                          -- File folder
-* Access Folder::                        -- Access folder
 @end menu
 
 
@@ -1749,7 +1748,7 @@ the name of the subdirectories of the cache directory
 (@file{~/.elmo/cache}).
 
 
-@node File Folder, Access Folder, Internal Folder, Folders
+@node File Folder, Folder, Internal Folder, Folders
 @section File folder
 @cindex File Folder
 
@@ -1770,32 +1769,6 @@ file:~/work     -> @file{~/work}
 file:/etc       -> @file{/etc}
 @end group
 @end example
-
-
-@node Access Folder,  , File Folder, Folders
-@section Access folder
-@cindex Access Folder
-
-A folder to access virtual folder which collects messages from a root
-folder and subfolders of one.  The add and remove of the subfolder is
-automatically reflected.
-
-
-Format:
-
-@example
-@samp{access:} @var{root-folder}
-@end example
-
-Example:
-
-@example
-@group
-access:%INBOX -> All subfolders of IMAP mailbox "inbox".
-access:'cache -> All of 'cache folder
-@end group
-@end example
-
 
 @node Folder, Summary, Folders, Top
 @chapter Folder mode

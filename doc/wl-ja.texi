@@ -696,7 +696,7 @@ Wanderlust $B$O(B ELMO $B$N%$%s%?%U%'!<%9$rMxMQ$7$F$$$k$?$a!"(BELMO $B%b%8%
 
 $B%P!<%8%g%s(B @value{VERSION} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(BIMAP, NNTP,
 LocalDir(MH), Maildir, News Spool, Archive, POP, Shimbun, Namazu, Multi,
-Filter, Pipe, File, Access, Internal $B$N(B 15 $B<oN`$G$9!#(B
+Filter, Pipe, File, Internal $B$N(B 15 $B<oN`$G$9!#(B
 
 @menu
 * IMAP Folder::              @samp{%} -- IMAP $B%U%)%k%@(B
@@ -713,7 +713,6 @@ Filter, Pipe, File, Access, Internal $B$N(B 15 $B<oN`$G$9!#(B
 * Pipe Folder::              @samp{|} -- $B%Q%$%W%U%)%k%@(B
 * Internal Folder::          @samp{'} -- $BFbIt%U%)%k%@(B
 * File Folder::                  -- $B%U%!%$%k%U%)%k%@(B
-* Access Folder::                -- $B%"%/%;%9%U%)%k%@(B
 @end menu
 
 
@@ -1773,7 +1772,7 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 $B%G%#%l%/%H%j(B (@file{~/.elmo/cache})$B$N%5%V%G%#%l%/%H%jL>$r;XDj$7$^$9!#(B
 
 
-@node File Folder, Access Folder, Internal Folder, Folders
+@node File Folder, Folder, Internal Folder, Folders
 @section $B%U%!%$%k%U%)%k%@(B
 @cindex File Folder
 
@@ -1792,29 +1791,6 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 @group
 file:~/work     -> @file{~/work}
 file:/etc       -> @file{/etc}
-@end group
-@end example
-
-
-@node Access Folder,  , File Folder, Folders
-@section $B%"%/%;%9%U%)%k%@(B
-@cindex Access Folder
-
-$B;XDj$5$l$?%U%)%k%@$NG[2<$N%5%V%U%)%k%@$r2>A[E*$K0l$D$N%U%)%k%@$H$7$F07$((B
-$B$k$h$&$K$9$k%U%)%k%@$G$9!#%5%V%U%)%k%@$NA}8:$O<+F0E*$KH?1G$5$l$^$9!#(B
-
-$B=q<0(B:
-
-@example
-@samp{access:} @var{$B%k!<%H%U%)%k%@(B}
-@end example
-
-$BNc(B:
-
-@example
-@group
-access:%INBOX -> %INBOX $B0J2<$N(B IMAP $B$N%a!<%k%\%C%/%9$NA4$F(B
-access:'cache -> $BA4$F$N(B 'cache $B%U%)%k%@(B
 @end group
 @end example
 
