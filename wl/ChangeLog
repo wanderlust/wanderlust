@@ -1,5 +1,13 @@
 2002-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-line-list-info): Revised format of the
+	return value.
+
+	* wl-util.el (wl-set-string-width): Added optional argument
+	`padding' (All other related portions are changed).
+	(wl-line-parse-format): If the first letter of column number is
+	`0', zero-padding the result (ex: "%05l").
+
 	* wl-summary.el (wl-summary-line-list-count): Fixed parenthesis.
 
 2002-05-10  Yuuichi Teranishi  <teranisi@gohome.org>

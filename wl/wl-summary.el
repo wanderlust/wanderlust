@@ -4149,11 +4149,9 @@ If ARG, exit virtual folder."
 	  (if (not ml-count) (setq ml-count (match-string 2 subject-string)))))
     (condition-case nil
 	(if (and ml-name ml-count)
-	    (if (string= folder wl-default-folder)
-		(format "(%s %05d)"
-			(car (split-string ml-name " "))
-			(string-to-int ml-count))
-	      (format "#%05d" (string-to-int ml-count)))
+	    (format "(%s %05d)"
+		    (car (split-string ml-name " "))
+		    (string-to-int ml-count))
 	  "")
       (error ""))))
 
@@ -4184,7 +4182,7 @@ If ARG, exit virtual folder."
 (defun wl-summary-line-attached ()
   (let ((content-type (elmo-msgdb-overview-entity-get-extra-field
 		       wl-message-entity "content-type")))
-    (if (and content-type 
+    (if (and content-type
 	     (string-match "multipart/mixed" content-type))
 	"@"
       "")))

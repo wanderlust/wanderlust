@@ -173,10 +173,12 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 ;;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
 ;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
-(defsubst wl-set-string-width (width string)
+(defsubst wl-set-string-width (width string &optional padding)
   "Make a new string which have specified WIDTH and content of STRING.
-If WIDTH is negative number, padding spaces are added to the head and
-otherwise, padding spaces are added to the tail of the string."
+If WIDTH is negative number, padding chars are added to the head and
+otherwise, padding chars are added to the tail of the string.
+The optional 3rd arg PADDING, if non-nil, specifies a padding character
+to add the result instead of white space."
   (static-cond
    ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
 	 (not (featurep 'xemacs)))
@@ -184,40 +186,28 @@ otherwise, padding spaces are added to the tail of the string."
 	(setq string (truncate-string-to-width string (abs width))))
     (if (= (string-width string) (abs width))
 	string
-      (if (< width 0)
-	  (concat (format (format "%%%ds"
-				  (- (abs width) (string-width string)))
-			  " ")
-		  string)
-	(concat string
-		(format (format "%%%ds"
-				(- (abs width) (string-width string)))
-			" ")))))
+      (let ((paddings (make-string (- (abs width) (string-width string))
+				   (or padding ?\ ))))
+	(if (< width 0)
+	    (concat paddings string)
+	  (concat string paddings)))))
    (t
     (elmo-set-work-buf
      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
      (insert string)
-     (if (> (current-column) (abs width))
-	 (if (> (move-to-column (abs width)) (abs width))
-	     (progn
-	       (condition-case nil ; ignore error
-		   (backward-char 1)
-		 (error))
-	       (if (< width 0)
-		   (concat " " (buffer-substring (point-min) (point)))
-		 (concat (buffer-substring (point-min) (point)) " ")))
-	   (buffer-substring (point-min) (point)))
-       (if (= (current-column) (abs width))
-	   string
+     (when (> (current-column) (abs width))
+       (when (> (move-to-column (abs width)) (abs width))
+	 (condition-case nil ; ignore error
+	     (backward-char 1)
+	   (error)))
+       (setq string (buffer-substring (point-min) (point))))
+     (if (= (current-column) (abs width))
+	 string
+       (let ((paddings (make-string (- (abs width) (current-column))
+				    (or padding ?\ ))))
 	 (if (< width 0)
-	     (concat (format (format "%%%ds"
-				     (- (abs width) (current-column)))
-			     " ")
-		     string)
-	   (concat string
-		   (format (format "%%%ds"
-				   (- (abs width) (current-column)))
-			   " ")))))))))
+	     (concat paddings string)
+	   (concat string paddings))))))))
 
 (defun wl-mode-line-buffer-identification (&optional id)
   (let ((priorities '(biff plug title)))
@@ -942,12 +932,12 @@ is enclosed by at least one regexp grouping construct."
 	      (cond
 	       ((looking-at "%")
 		(goto-char (match-end 0)))
-	       ((looking-at "\\(-?[0-9]*\\)\\([^0-9]\\)")
+	       ((looking-at "\\(-?\\(0?\\)[0-9]*\\)\\([^0-9]\\)")
 		(cond
-		 ((string= (match-string 2) "(")
+		 ((string= (match-string 3) "(")
 		  (if (zerop (length (match-string 1)))
 		      (error "No number specification for %%( line format"))
-		  (push (list 
+		  (push (list
 			 (match-beginning 0) ; start
 			 (match-end 0)       ; start-content
 			 (string-to-number
@@ -955,7 +945,7 @@ is enclosed by at least one regexp grouping construct."
 			 specs) ; specs
 			stack)
 		  (setq specs nil))
-		 ((string= (match-string 2) ")")
+		 ((string= (match-string 3) ")")
 		  (let ((entry (pop stack))
 			form)
 		    (unless entry
@@ -975,14 +965,16 @@ is enclosed by at least one regexp grouping construct."
 					specs)))))))
 		 (t
 		  (setq spec
-			(if (setq spec (assq (string-to-char (match-string 2))
+			(if (setq spec (assq (string-to-char (match-string 3))
 					     spec-alist))
 			    (nth 1 spec)
-			  (match-string 2)))
+			  (match-string 3)))
 		  (unless (string= "" (match-string 1))
 		    (setq spec (list 'wl-set-string-width
 				     (string-to-number (match-string 1))
-				     spec)))
+				     spec
+				     (unless (string= "" (match-string 2))
+				       (string-to-char (match-string 2))))))
 		  (replace-match "s" 'fixed)
 		  (setq specs (append specs
 				      (list
