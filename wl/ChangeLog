@@ -1,3 +1,8 @@
+2003-02-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-rename): Do nothing on the last line.
+	(wl-fldmgr-add-completion-subr): Rewrite conditional.
+
 2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-score.el (wl-score-save): Bind print-length and print-level.
