@@ -1034,7 +1034,7 @@ This function is defined for `window-scroll-functions'"
     (unless for-draft
       (wl-highlight-message-add-buttons-to-header beg end)
       (when wl-highlight-x-face-function
-	(funcall wl-highlight-x-face-function beg end)))
+	(funcall wl-highlight-x-face-function)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)

@@ -1,3 +1,9 @@
+2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-highlight.el (wl-highlight-headers): Remove BEG and END
+	arguments from `wl-highlight-x-face-function' caller.
+	Use x-face-1.3.6.12 or later.
+
 2001-09-17  Reuben Thomas <rrt@dcs.gla.ac.uk>
 
 	* wl-addrmgr.el (wl-fldmgr-delete): Fix docstring.
