@@ -5,7 +5,6 @@
 
 ;; Author: Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-07 10:40:40 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/09 19:34:25 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
