@@ -1,3 +1,8 @@
+2000-07-26  Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* wl-refile.el (wl-refile-learn): Move hit element to the top of
+	`wl-refile-alist'.
+
 2000-07-26	Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-draft.el (wl-draft): Added argument `content-transfer-encoding'.

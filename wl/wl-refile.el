@@ -119,11 +119,10 @@
 		  (member 'wl-refile-guess-by-subject
 			  wl-refile-guess-func-list))
 	      (wl-refile-subject-learn entity dst))))
-    (if key
-	(if (setq hit (assoc key wl-refile-alist))
-	    (setcdr hit dst)
-	  (setq wl-refile-alist
-		(nconc wl-refile-alist (list (cons key dst))))))))
+    (when key
+      (if (setq hit (assoc key wl-refile-alist))
+          (setq wl-refile-alist (delq hit wl-refile-alist)))
+      (add-to-list 'wl-refile-alist (cons key dst)))))
 
 (defun wl-refile-msgid-learn (entity dst)
   (let ((key (elmo-msgdb-overview-entity-get-id entity))
