@@ -1702,10 +1702,6 @@ Derived from `message-save-drafts' in T-gnus."
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 	(wl-draft-decode-message-in-buffer))
       (wl-draft-insert-mail-header-separator)
-      (if wl-draft-use-frame
-	  (switch-to-buffer-other-frame buffer)
-	(switch-to-buffer buffer))
-      (set-buffer buffer)
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
 	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))

@@ -1,3 +1,8 @@
+2002-01-25  pf21 GOTO_Toshiya <goto.toshiya@canon.co.jp>
+
+	* wl-draft.el (wl-draft-reedit): Removed duplicated
+	switch-to-buffers.
+
 2002-01-25  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl.el (wl-other-frame): Removed garbages.
