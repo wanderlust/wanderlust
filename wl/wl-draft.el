@@ -101,9 +101,9 @@
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
 
-(defsubst wl-smtp-password-key (user mechnism server)
+(defsubst wl-smtp-password-key (user mechanism server)
   (format "SMTP:%s/%s@%s"
-	  user mechnism server))
+	  user mechanism server))
 
 (defmacro wl-smtp-extension-bind (&rest body)
   (` (let* ((smtp-sasl-mechanisms
