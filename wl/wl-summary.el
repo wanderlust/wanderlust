@@ -3089,7 +3089,7 @@ Return non-nil if the mark is updated"
 		 (lambda (flag)
 		   (and (> (length flag) 0)
 			(intern (downcase flag))))
-		 (completing-read-multiple
+		 (wl-completing-read-multiple
 		  "Flags: "
 		  (mapcar (lambda (flag)
 			    (list (capitalize (symbol-name flag))))

@@ -302,7 +302,7 @@ Return a number of lines that an image occupies in the buffer."
 				  (list ':foreground fg))))))
    ((featurep 'xemacs)
     (set-face-background 'default
-			 (face-background 'wl-highlight-demo-face)
+			 (face-background-name 'wl-highlight-demo-face)
 			 (current-buffer)))))
 
 (defun wl-demo-insert-text (height)

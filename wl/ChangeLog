@@ -1,5 +1,14 @@
 2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-decide-flag): Use
+	wl-completing-read-multiple instead of completing-read-multiple.
+
+	* wl-mule.el,wl-e21.el,wl-xmas.el (wl-completing-read-multiple): 
+	New alias.
+
+	* wl-demo.el (wl-demo-setup-properties)[XEmacs]:
+	Use face-background-name instead of face-background.
+
 	* wl-vars.el (wl-summary-save-file-suffix): New user option.
 
 	* wl-summary.el (wl-summary-save): Use it.

@@ -670,6 +670,8 @@ Special commands:
   (let ((event (read-event)))
     (cons (and (numberp event) event) event)))
 
+(defalias 'wl-completing-read-multiple 'completing-read-multiple)
+
 (put 'wl-modeline-biff-state-on 'risky-local-variable t)
 (put 'wl-modeline-biff-state-off 'risky-local-variable t)
 (put 'wl-modeline-plug-state-on 'risky-local-variable t)

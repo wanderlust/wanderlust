@@ -189,21 +189,6 @@
 
 ;; important messages
 
-(wl-defface wl-highlight-summary-important-face
-  '(
-    (((type tty)
-      (background dark))
-     (:foreground "magenta"))
-    (((class color)
-      (background dark))
-     (:foreground "orange"))
-    (((class color)
-      (background light))
-     (:foreground "purple")))
-  "Face used for displaying important messages."
-  :group 'wl-summary-faces
-  :group 'wl-faces)
-
 (wl-defface wl-highlight-summary-new-face
   '(
     (((type tty)
@@ -854,10 +839,8 @@
 				  (intern (format
 					   "wl-highlight-summary-%s-flag-face"
 					   (car (car fl)))))
-			     (unless (facep face)
-			       (make-face face 'no-init)
-			       (set-face-foreground face (nth 1 (car fl))))
-			     (list face))
+			    (when (facep face)
+			      (list face)))
 			  fl nil))
 		  (setq fl (cdr fl)))
 	      (when (memq (car priorities) flags)
@@ -1014,11 +997,11 @@ Variables used:
   "Highlight summary between start and end.
 Faces used:
   wl-highlight-summary-unread-face      unread messages
-  wl-highlight-summary-important-face   important messages
   wl-highlight-summary-deleted-face     messages mark as deleted
   wl-highlight-summary-refiled-face     messages mark as refiled
   wl-highlight-summary-copied-face      messages mark as copied
-  wl-highlight-summary-new-face         new messages"
+  wl-highlight-summary-new-face         new messages
+  wl-highlight-summary-*-flag-face      flagged messages"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
   (let (lines too-big gc-message e p hend i percent)

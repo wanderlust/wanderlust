@@ -307,6 +307,8 @@ Warning: Unknown req `%S' with options `%S'" req options)
   (let ((event (read-event)))
     (cons (and (numberp event) event) event)))
 
+(defalias 'wl-completing-read-multiple 'completing-read)
+
 (require 'product)
 (product-provide (provide 'wl-mule) (require 'wl-version))
 

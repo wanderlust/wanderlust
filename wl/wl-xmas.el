@@ -565,6 +565,8 @@ Special commands:
 	       (event-to-character event))
 	  event)))
 
+(defalias 'wl-completing-read-multiple 'completing-read)
+
 (require 'product)
 (product-provide (provide 'wl-xmas) (require 'wl-version))
 
