@@ -1,3 +1,17 @@
+2000-05-20  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-summary.el (wl-summary-insert-thread-entity): Changed delayed
+	updating process.
+	(wl-summary-rescan): Ditto.
+	(wl-summary-sync-update3): Ditto.
+	* wl-thread.el (wl-thread-set-parent): Renamed from
+	`wl-summary-set-parent'.
+	(wl-thread-insert-message): Updating buffer faster.
+	(wl-thread-delete-message): Updating buffer faster.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Changed
+	interval for display progress gauge.
+
 2000-05-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el (wl-summary-always-sticky-folder-list): `t' means all
