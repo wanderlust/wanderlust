@@ -1,3 +1,8 @@
+2000-05-30  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo2.el (elmo-move-msgs): Replace `append' with `nconc'.
+	Move a conditional out of the while-loop.
+
 2000-05-27  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-overview-get-entity): Use
