@@ -1,3 +1,14 @@
+2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-nemacs.el (wl-draft-overload-functions): Bind 'C-c C-e'
+	to `wl-draft-config-exec'.
+
+	* wl-mime.el (wl-draft-preview-message): Run `wl-draft-send-hook'
+	instead of calling `wl-draft-config-exec';
+	Process group-list and show recipients in minibuffer.
+
+	* tm-wl.el (wl-draft-preview-message): Ditto.
+
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (toplevel): Added (C) to copyright notice, and

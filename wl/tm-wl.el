@@ -62,18 +62,35 @@ By setting following-method as yank-content."
 
 (defun wl-draft-preview-message ()
   (interactive)
-  (let ((mime-viewer/content-header-filter-hook 'wl-highlight-headers)
-	(mime-viewer/ignored-field-regexp "^:$")
-	(mime-editor/translate-buffer-hook
-	 (append
-	  (list 'wl-draft-config-exec)
-	  mime-editor/translate-buffer-hook)))
+  (let* (recipients-message
+	 (mime-viewer/content-header-filter-hook 'wl-highlight-headers)
+	 (mime-viewer/ignored-field-regexp "^:$")
+	 (mime-editor/translate-buffer-hook
+	  '((lambda ()
+	      (setq recipients-message
+		    (concat "Recipients: "
+			    (mapconcat
+			     'identity
+			     (wl-draft-deduce-address-list
+			      (current-buffer)
+			      (point-min)
+			      (save-excursion
+				(re-search-forward
+				 (concat "^"
+					 (regexp-quote mail-header-separator)
+					 "$")
+				 nil t)
+				(point)))
+			     ", ")))
+	      (run-hooks 'wl-draft-send-hook)))
+	  mime-editor/translate-buffer-hook))
     (mime-editor/preview-message)
     (let ((buffer-read-only nil))
-    (let ((buffer-read-only nil))
-      (when wl-highlight-body-too
-	(wl-highlight-body))
-      (run-hooks 'wl-draft-preview-message-hook)))))
+      (let ((buffer-read-only nil))
+	(when wl-highlight-body-too
+	  (wl-highlight-body))
+	(run-hooks 'wl-draft-preview-message-hook)))
+    (message recipients-message)))
 
 (defmacro wl-draft-caesar-region (beg end)
   (` (tm:caesar-region)))

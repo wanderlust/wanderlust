@@ -71,16 +71,35 @@ By setting following-method as yank-content."
 (defun wl-draft-preview-message ()
   ""
   (interactive)
-  (let ((mime-display-header-hook 'wl-highlight-headers)
-	mime-view-ignored-field-list ; all header.
-	(mime-edit-translate-buffer-hook (append
-					  (list 'wl-draft-config-exec)
-					  mime-edit-translate-buffer-hook)))
+  (let* (recipients-message
+	 (mime-display-header-hook 'wl-highlight-headers)
+	 mime-view-ignored-field-list ; all header.
+	 (mime-edit-translate-buffer-hook
+	  (append
+	   '((lambda ()
+	       (setq recipients-message
+		     (concat "Recipients: "
+			     (mapconcat
+			      'identity
+			      (wl-draft-deduce-address-list
+			       (current-buffer)
+			       (point-min)
+			       (save-excursion
+				 (re-search-forward
+				  (concat "^"
+					  (regexp-quote mail-header-separator)
+					  "$")
+				  nil t)
+				 (point)))
+			      ", ")))
+	       (run-hooks 'wl-draft-send-hook)))
+	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
       (when wl-highlight-body-too
 	(wl-highlight-body))
-      (run-hooks 'wl-draft-preview-message-hook))))
+      (run-hooks 'wl-draft-preview-message-hook))
+    (message recipients-message)))
 
 (defalias 'wl-draft-caesar-region  'mule-caesar-region)
 

@@ -78,6 +78,7 @@
   (local-set-key "\C-c\C-r" 'wl-draft-caesar-region)
   (local-set-key "\M-t"     'wl-toggle-plugged)
   (local-set-key "\C-c\C-o" 'wl-jump-to-draft-buffer)
+  (local-set-key "\C-c\C-e" 'wl-draft-config-exec)
   (local-set-key "\C-c\C-j" 'wl-template-select)
   (local-set-key "\C-c\C-p" 'wl-draft-preview-message)
   (local-set-key "\C-x\C-s" 'wl-draft-save)
