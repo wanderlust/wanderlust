@@ -74,8 +74,9 @@
   (luna-define-class elsp-bogofilter (elsp-generic)))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bogofilter)
-					     buffer)
+					     buffer &optional register)
   (let ((args `("-v" "-2"
+		,@(if register (list "-u"))
 		,@(if elmo-spam-bogofilter-database-directory
 		      (list "-d" elmo-spam-bogofilter-database-directory)))))
     (with-current-buffer buffer
@@ -84,11 +85,12 @@
 		  elmo-spam-bogofilter-program
 		  nil nil nil args)))))
 
-(defsubst elmo-spam-bogofilter-register-buffer (buffer spam)
+(defsubst elmo-spam-bogofilter-register-buffer (buffer spam restore)
   (let ((args `("-v"
 		,(if spam
 		     elmo-spam-bogofilter-spam-switch
 		   elmo-spam-bogofilter-good-switch)
+		,@(if restore (list (if spam "-N" "-S")))
 		,@(if elmo-spam-bogofilter-database-directory
 		      (list "-d" elmo-spam-bogofilter-database-directory)))))
     (with-current-buffer buffer
@@ -98,12 +100,12 @@
 	     nil nil nil args))))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bogofilter)
-						    buffer)
-  (elmo-spam-bogofilter-register-buffer buffer t))
+						    buffer &optional restore)
+  (elmo-spam-bogofilter-register-buffer buffer t restore))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-bogofilter)
-						    buffer)
-  (elmo-spam-bogofilter-register-buffer buffer nil))
+						    buffer &optional restore)
+  (elmo-spam-bogofilter-register-buffer buffer nil restore))
 
 (require 'product)
 (product-provide (provide 'elsp-bogofilter) (require 'elmo-version))

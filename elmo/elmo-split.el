@@ -42,8 +42,7 @@
 
 (eval-when-compile
   ;; Avoid compile warnings
-  (defun-maybe elmo-spam-processor ())
-  (defun-maybe elmo-spam-buffer-spam-p (processor buffer)))
+  (require 'elmo-spam))
 
 (defcustom elmo-split-rule nil
   "Split rule for the command `elmo-split'.
@@ -220,9 +219,11 @@ It can be some ACTION as in `elmo-split-rule'."
 			 (symbol-name field)))))
       (equal field-value value))))
 
-(defun elmo-split-spam-p (buffer)
+(defun elmo-split-spam-p (buffer &rest plist)
   (require 'elmo-spam)
-  (elmo-spam-buffer-spam-p (elmo-spam-processor) buffer))
+  (elmo-spam-buffer-spam-p (elmo-spam-processor)
+			   buffer
+			   (plist-get plist :register)))
 
 (defun elmo-split-match (buffer field value)
   (with-current-buffer buffer

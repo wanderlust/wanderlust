@@ -1,3 +1,31 @@
+2003-11-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-spamfilter.el (elsp-spamfilter-decode-buffer): Renamed from
+	`elmo-spam-spamfilter-decode-buffer'.
+	(elsp-spamfilter-register-buffer-internal): New internal function.
+	(elmo-spam-buffer-spam-p): Use it; Follow the API change.
+	(elmo-spam-register-spam-buffer): Ditto.
+	(elmo-spam-register-good-buffer): Ditto.
+
+	* elsp-bogofilter.el (elmo-spam-buffer-spam-p): Follow the API
+	change.
+	(elmo-spam-bogofilter-register-buffer): Added argument `restore'.
+	(elmo-spam-register-spam-buffer): Follow the API change.
+	(elmo-spam-register-good-buffer): Ditto.
+
+	* elmo-split.el (toplevel): Require elmo-spam when copmile.
+	(elmo-split-spam-p): Added argument plist; Call
+	`elmo-spam-buffer-spam-p' with new argument register.
+
+	* elmo-spam.el (elmo-spam-buffer-spam-p): Added optional argument
+	`register'.
+	(elmo-spam-message-spam-p): Ditto.
+	(elmo-spam-register-spam-buffer): Added optional argument
+	`restore'.
+	(elmo-spam-register-good-buffer): Ditto.
+	(elmo-spam-register-spam-messages): Ditto.
+	(elmo-spam-register-good-messages): Ditto.
+
 2003-10-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-spamfilter.el (elmo-spam-register-spam-buffer): Fixed to

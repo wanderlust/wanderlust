@@ -51,28 +51,40 @@
   (luna-define-class elsp-generic ()))
 
 ;; required method
-(luna-define-generic elmo-spam-buffer-spam-p (processor buffer)
+(luna-define-generic elmo-spam-buffer-spam-p (processor buffer
+							&optional register)
   "Return non-nil if contents of BUFFER is spam.
-PROCESSOR is spam processor structure.")
+PROCESSOR is spam processor structure.
+If optional augument REGISTER is non-nil,
+register according to the classification.")
 
-(luna-define-generic elmo-spam-register-spam-buffer (processor buffer)
+(luna-define-generic elmo-spam-register-spam-buffer (processor
+						     buffer
+						     &optional restore)
   "Register contents of BUFFER as spam.
-PROCESSOR is spam processor structure.")
+PROCESSOR is spam processor structure.
+If optional argument RESTORE is non-nil, unregister from non-spam list.")
 
-(luna-define-generic elmo-spam-register-good-buffer (processor buffer)
-  "Register contents of BUFFER as non spam.
-PROCESSOR is spam processor structure.")
+(luna-define-generic elmo-spam-register-good-buffer (processor
+						     buffer
+						     &optional restore)
+  "Register contents of BUFFER as non-spam.
+PROCESSOR is spam processor structure.
+If optional argument RESTORE is non-nil, unregister from spam list.")
 
+;; optional method
 (luna-define-generic elmo-spam-modified-p (processor)
   "Return non-nil if status of PROCESSOR is modified.")
 
 (luna-define-generic elmo-spam-save-status (processor)
   "Save status of the PROCESSOR.")
 
-;; optional method
-(luna-define-generic elmo-spam-message-spam-p (processor folder number)
+(luna-define-generic elmo-spam-message-spam-p (processor folder number
+							 &optional register)
   "Return non-nil if the message in the FOLDER with NUMBER is spam.
-PROCESSOR is spam processor structure.")
+PROCESSOR is spam processor structure.
+If optional augument REGISTER is non-nil,
+register according to the classification.")
 
 (luna-define-generic elmo-spam-list-spam-messages (processor
 						   folder &optional numbers)
@@ -84,21 +96,25 @@ messages are searched from the list.")
 
 (luna-define-generic elmo-spam-register-spam-messages (processor
 						       folder
-						       &optional numbers)
+						       &optional
+						       numbers restore)
   "Register contents of messages as spam.
 PROCESSOR is spam processor structure.
 FOLDER is the ELMO folder structure.
 If optional argument NUMBERS is specified and is a list of message numbers,
-messages are searched from the list.")
+messages are searched from the list.
+If optional argument RESTORE is non-nil, unregister from non-spam list.")
 
 (luna-define-generic elmo-spam-register-good-messages (processor
 						       folder
-						       &optional numbers)
+						       &optional
+						       numbers restore)
   "Register contents of messages as non spam.
 PROCESSOR is spam processor structure.
 FOLDER is the ELMO folder structure.
 If optional argument NUMBERS is specified and is a list of message numbers,
-messages are searched from the list.")
+messages are searched from the list.
+If optional argument RESTORE is non-nil, unregister from spam list.")
 
 ;; for internal use
 (defun elmo-spam-message-fetch (folder number)
@@ -111,10 +127,10 @@ messages are searched from the list.")
 
 ;; generic implement
 (luna-define-method elmo-spam-message-spam-p ((processor elsp-generic)
-					      folder number)
+					      folder number &optional register)
   (with-temp-buffer
     (elmo-spam-message-fetch folder number)
-    (elmo-spam-buffer-spam-p processor (current-buffer))))
+    (elmo-spam-buffer-spam-p processor (current-buffer) register)))
 
 (luna-define-method elmo-spam-list-spam-messages ((processor elsp-generic)
 						  folder &optional numbers)
@@ -127,25 +143,29 @@ messages are searched from the list.")
     (nreverse spam-list)))
 
 (luna-define-method elmo-spam-register-spam-messages ((processor elsp-generic)
-						      folder &optional numbers)
+						      folder
+						      &optional
+						      numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (with-temp-buffer
       (buffer-disable-undo (current-buffer))
       (dolist (number numbers)
 	(erase-buffer)
 	(elmo-spam-message-fetch folder number)
-	(elmo-spam-register-spam-buffer processor (current-buffer))
+	(elmo-spam-register-spam-buffer processor (current-buffer) restore)
 	(elmo-progress-notify 'elmo-spam-register)))))
 
 (luna-define-method elmo-spam-register-good-messages ((processor elsp-generic)
-						      folder &optional numbers)
+						      folder
+						      &optional
+						      numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (with-temp-buffer
       (buffer-disable-undo (current-buffer))
       (dolist (number numbers)
 	(erase-buffer)
 	(elmo-spam-message-fetch folder number)
-	(elmo-spam-register-good-buffer processor (current-buffer))
+	(elmo-spam-register-good-buffer processor (current-buffer) restore)
 	(elmo-progress-notify 'elmo-spam-register)))))
 
 (provide 'elsp-generic)

@@ -76,37 +76,42 @@
    (elsp-spamfilter-bad-corpus-internal  processor))
   (elsp-spamfilter-set-modified-internal processor nil))
 
-(defun elmo-spam-spamfilter-decode-buffer (buffer)
+(defun elsp-spamfilter-decode-buffer (buffer)
   (mime-display-message
    (mime-open-entity 'elmo-buffer buffer)
    (current-buffer)))
 
+(defsubst elsp-spamfilter-register-buffer-internal (processor buffer spam)
+  (spamf-register-words-buffer
+   (if spam
+       (elsp-spamfilter-bad-corpus-internal processor)
+     (elsp-spamfilter-good-corpus-internal processor))
+   buffer)
+  (elsp-spamfilter-set-modified-internal processor t))
+
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-spamfilter)
-					     buffer)
+					     buffer &optional register)
   (with-temp-buffer
-    (elmo-spam-spamfilter-decode-buffer buffer)
-    (spamf-spam-buffer-p
-     (current-buffer)
-     (elsp-spamfilter-good-corpus-internal processor)
-     (elsp-spamfilter-bad-corpus-internal  processor))))
+    (elsp-spamfilter-decode-buffer buffer)
+    (let ((spam (spamf-spam-buffer-p
+		 (current-buffer)
+		 (elsp-spamfilter-good-corpus-internal processor)
+		 (elsp-spamfilter-bad-corpus-internal  processor))))
+      (when register
+	(elsp-spamfilter-register-buffer-internal processor buffer spam))
+      spam)))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-spamfilter)
-						    buffer)
+						    buffer &optional restore)
   (with-temp-buffer
-    (elmo-spam-spamfilter-decode-buffer buffer)
-    (spamf-register-spam-buffer
-     (current-buffer)
-     (elsp-spamfilter-bad-corpus-internal  processor))
-    (elsp-spamfilter-set-modified-internal processor t)))
+    (elsp-spamfilter-decode-buffer buffer)
+    (elsp-spamfilter-register-buffer-internal processor buffer t)))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-spamfilter)
-						    buffer)
+						    buffer &optional restore)
   (with-temp-buffer
-    (elmo-spam-spamfilter-decode-buffer buffer)
-    (spamf-register-good-buffer
-     (current-buffer)
-     (elsp-spamfilter-good-corpus-internal processor))
-    (elsp-spamfilter-set-modified-internal processor t)))
+    (elsp-spamfilter-decode-buffer buffer)
+    (elsp-spamfilter-register-buffer-internal processor buffer nil)))
 
 (require 'product)
 (product-provide (provide 'elsp-spamfilter) (require 'elmo-version))

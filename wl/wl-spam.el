@@ -101,7 +101,7 @@ See `wl-summary-mark-action-list' for the detail of element."
 		 (string :tag "Document string"))
   :group 'wl-spam)
 
-(defun wl-spam-folder-guess-domain (folder-name)
+(defun wl-spam-domain (folder-name)
   (cond ((string= folder-name wl-spam-folder-name)
 	 'spam)
 	((wl-string-match-member folder-name
@@ -257,43 +257,49 @@ See `wl-summary-mark-action-list' for the detail of element."
     (wl-summary-mark-spam)))
 
 (defun wl-summary-exec-action-spam (mark-list)
-  (let ((folder wl-summary-buffer-elmo-folder)
+  (let ((domain (wl-spam-domain (elmo-folder-name-internal
+				 wl-summary-buffer-elmo-folder)))
 	(total (length mark-list)))
-    (when (eq (wl-spam-folder-guess-domain (elmo-folder-name-internal folder))
-	      'undecided)
+    (when (memq domain '(undecided good))
       (message "Registering spam...")
       (elmo-with-progress-display (> total elmo-display-progress-threshold)
 	  (elmo-spam-register total "Registering spam...")
 	(elmo-spam-register-spam-messages (elmo-spam-processor)
-					  folder
-					  (mapcar #'car mark-list)))
+					  wl-summary-buffer-elmo-folder
+					  (mapcar #'car mark-list)
+					  (eq domain 'good)))
       (message "Registering spam...done"))
     (wl-summary-move-mark-list-messages mark-list
 					wl-spam-folder-name
 					"Refiling spam...")))
 
 (defun wl-summary-exec-action-refile-with-register (mark-list)
-  (let ((processor (elmo-spam-processor))
-	(folder wl-summary-buffer-elmo-folder)
-	spam-list good-list total)
-    (when (eq (wl-spam-folder-guess-domain
-	       (elmo-folder-name-internal folder))
-	      'undecided)
-      (message "Registering spam...")
+  (let* ((processor (elmo-spam-processor))
+	 (folder wl-summary-buffer-elmo-folder)
+	 (domain (wl-spam-domain (elmo-folder-name-internal folder)))
+	 spam-list good-list total)
+    (unless (eq domain 'ignore)
       (dolist (info mark-list)
-	(case (wl-spam-folder-guess-domain (nth 2 info))
+	(case (wl-spam-domain (nth 2 info))
 	  (spam
 	   (setq spam-list (cons (car info) spam-list)))
 	  (good
 	   (setq good-list (cons (car info) good-list)))))
-      (setq total (+ (length spam-list) (length good-list)))
-      (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	  (elmo-spam-register total "Registering spam...")
-	(when spam-list
-	  (elmo-spam-register-spam-messages processor folder spam-list))
-	(when good-list
-	  (elmo-spam-register-good-messages processor folder good-list)))
-      (message "Registering spam...done"))
+      (case domain
+	(spam (setq spam-list nil))
+	(good (setq good-list nil)))
+      (when (or spam-list good-list)
+	(message "Registering spam...")
+	(setq total (+ (length spam-list) (length good-list)))
+	(elmo-with-progress-display (> total elmo-display-progress-threshold)
+	    (elmo-spam-register total "Registering spam...")
+	  (when spam-list
+	    (elmo-spam-register-spam-messages processor folder spam-list
+					      (eq domain 'good)))
+	  (when good-list
+	    (elmo-spam-register-good-messages processor folder good-list
+					      (eq domain 'spam))))
+	(message "Registering spam...done")))
     ;; execute refile messages
     (wl-summary-exec-action-refile mark-list)))
 
