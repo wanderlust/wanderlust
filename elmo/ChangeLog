@@ -1,3 +1,10 @@
+2004-03-29  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-pop3.el (elmo-pop3-read-contents): Replace an argument `buffer'
+	with a function call of `process-buffer'.  All callers are updated.
+	(elmo-pop3-retrieve-headers): Likewise.  Move `process' to the 1st argument.
+	Remove redundant `set-buffer' in a while loop.
+
 2004-03-28  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-pop3.el (elmo-pop3-send-command): Combine `process-send-string'
