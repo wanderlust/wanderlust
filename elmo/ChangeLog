@@ -1,3 +1,8 @@
+2004-03-15  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Add root mailbox
+	if it is not contained in the response(A workaround for courier-imap).
+
 2004-03-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-imap4.el (elmo-folder-set-flag-plugged): Fix mismatched

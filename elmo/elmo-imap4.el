@@ -1952,6 +1952,14 @@ Return nil if no complete line has arrived."
 		  (elmo-imap4-send-command-wait
 		   session
 		   (list "list " (elmo-imap4-mailbox root) " *"))))
+    ;; The response of Courier-imap doesn't contain a specified folder itself.
+    (unless (member root result)
+      (setq result
+	    (append result
+		    (elmo-imap4-response-get-selectable-mailbox-list
+		     (elmo-imap4-send-command-wait
+		      session
+		      (list "list \"\" " (elmo-imap4-mailbox root)))))))
     (when (or (not (string= (elmo-net-folder-user-internal folder)
 			    elmo-imap4-default-user))
 	      (not (eq (elmo-net-folder-auth-internal folder)
@@ -2584,6 +2592,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 				  (and (memq 'answered flags)
 				       '("\\Answered")))
 				 " ")
+				;; XX KEYWORD flags
 				") ")
 		      " () ")
 		    (elmo-imap4-buffer-literal send-buffer))))
