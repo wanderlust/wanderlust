@@ -96,6 +96,7 @@
 (defvar wl-summary-buffer-saved-message nil)
 (defvar wl-summary-buffer-prev-folder-func nil)
 (defvar wl-summary-buffer-next-folder-func nil)
+(defvar wl-summary-buffer-next-message-func nil)
 (defvar wl-summary-buffer-exit-func nil)
 (defvar wl-summary-buffer-number-list nil)
 
@@ -164,6 +165,7 @@
 (make-variable-buffer-local 'wl-thread-space-str-internal)
 (make-variable-buffer-local 'wl-summary-buffer-prev-folder-func)
 (make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
+(make-variable-buffer-local 'wl-summary-buffer-next-message-func)
 (make-variable-buffer-local 'wl-summary-buffer-exit-func)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
 
@@ -603,7 +605,7 @@ you."
 	(cond
 	 ((and
 	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/report\\)") nil t)
+	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
 	   (not (bolp))
 	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
 	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
@@ -611,6 +613,7 @@ you."
 	    (cond
 	     ((and (setq start (re-search-forward
 			   (concat "^--" boundary "\n"
+				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				   "[Cc]ontent-[Tt]ype:[ \t]+"
 				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
 				   "\\(.+\n\\)*\n") nil t))
@@ -1077,11 +1080,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(if (setq message-buf (get-buffer wl-message-buf-name))
 	    (if (setq message-win (get-buffer-window message-buf))
 		(delete-window message-win)))
-	(if (and wl-folder-use-frame
+	(if (and wl-summary-use-frame
 		 (> (length (visible-frame-list)) 1))
 	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if wl-folder-use-frame
+	    (if wl-summary-use-frame
 		(let (select-frame)
 		  (save-selected-window
 		    (dolist (frame (visible-frame-list))
@@ -4538,37 +4541,40 @@ If ARG, exit virtual folder."
 				      wl-summary-important-mark))))))
 
 (defsubst wl-summary-next-message (num direction hereto)
-  (let ((cur-spec (cdr (assq wl-summary-move-order 
-			     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
-				 wl-summary-move-spec-plugged-alist
-			       wl-summary-move-spec-unplugged-alist))))
-	(nums (memq num (if (eq direction 'up)
-			    (reverse wl-summary-buffer-number-list)
-			  wl-summary-buffer-number-list)))
-	marked-list nums2)
-    (unless hereto (setq nums (cdr nums)))
-    (setq nums2 nums)
-    (if cur-spec
-	(catch 'done
-	  (while cur-spec
-	    (setq nums nums2)
-	    (cond ((eq (car (car cur-spec)) 'p)
-		   (if (setq marked-list (elmo-msgdb-list-messages-mark-match
-					  wl-summary-buffer-msgdb
-					  (cdr (car cur-spec))))
-		       (while nums
-			 (if (memq (car nums) marked-list)
-			     (throw 'done (car nums)))
-			 (setq nums (cdr nums)))))
-		  ((eq (car (car cur-spec)) 't)
-		   (while nums
-		     (if (and wl-summary-buffer-target-mark-list
-			      (memq (car nums)
-				    wl-summary-buffer-target-mark-list))
-			 (throw 'done (car nums)))
-		     (setq nums (cdr nums)))))
-	    (setq cur-spec (cdr cur-spec))))
-      (car nums))))
+  (if wl-summary-buffer-next-message-func
+      (funcall wl-summary-buffer-next-message-func num direction hereto)  
+    (let ((cur-spec (cdr (assq wl-summary-move-order 
+			       (if (elmo-folder-plugged-p 
+				    wl-summary-buffer-folder-name)
+				   wl-summary-move-spec-plugged-alist
+				 wl-summary-move-spec-unplugged-alist))))
+	  (nums (memq num (if (eq direction 'up)
+			      (reverse wl-summary-buffer-number-list)
+			    wl-summary-buffer-number-list)))
+	  marked-list nums2)
+      (unless hereto (setq nums (cdr nums)))
+      (setq nums2 nums)
+      (if cur-spec
+	  (catch 'done
+	    (while cur-spec
+	      (setq nums nums2)
+	      (cond ((eq (car (car cur-spec)) 'p)
+		     (if (setq marked-list (elmo-msgdb-list-messages-mark-match
+					    wl-summary-buffer-msgdb
+					    (cdr (car cur-spec))))
+			 (while nums
+			   (if (memq (car nums) marked-list)
+			       (throw 'done (car nums)))
+			   (setq nums (cdr nums)))))
+		    ((eq (car (car cur-spec)) 't)
+		     (while nums
+		       (if (and wl-summary-buffer-target-mark-list
+				(memq (car nums)
+				      wl-summary-buffer-target-mark-list))
+			   (throw 'done (car nums)))
+		       (setq nums (cdr nums)))))
+	      (setq cur-spec (cdr cur-spec))))
+	(car nums)))))
 
 (defsubst wl-summary-cursor-move (direction hereto)
   (when (and (eq direction 'up)
@@ -4578,7 +4584,8 @@ If ARG, exit virtual folder."
   (let (num)
     (when (setq num (wl-summary-next-message (wl-summary-message-number)
 					     direction hereto))
-      (wl-thread-jump-to-msg num)
+      (if (numberp num)
+	  (wl-thread-jump-to-msg num))
       t)))
 ;;
 ;; Goto unread or important

@@ -1,3 +1,21 @@
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl): Set custom-manual link as "wl-ja"
+	only if current language environment is japanese,
+
+	* wl-folder.el (wl-folder-jump-to-current-entity): Call
+	wl-folder-select-buffer when wl-summary-use-frame is non-nil.
+	(wl-folder-goto-folder-subr): Ditto.
+
+2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-next-message-function): New
+	variable.
+	(wl-summary-next-message): Call wl-summary-buffer-next-message-function
+	if it is bound.
+	(wl-summary-cursor-move): If return value of
+	wl-summary-next-message is not number, don't jump.
+
 2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folder): Use own buffer for pop3 biff
