@@ -1684,7 +1684,7 @@ Example:
 
 After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
 
-@node Internal Folder,  , Pipe Folder, Folders
+@node Internal Folder, File Folder, Pipe Folder, Folders
 @section Internal folder
 @cindex @samp{'}
 @cindex Internal Folder
@@ -1708,9 +1708,14 @@ Format:
 A folder named @samp{'flag} is a special virtual folder which collects
 messages which have @var{global-flag}.
 
-Now, @samp{important} flag is supported as @var{global-flag}.  You can
-review important messages at once after you put important marks on the
-messages in the different folders.
+There is @samp{important} flag defined as @var{global-flag} by default.
+You can review important messages at once after you put important marks
+on the messages in the different folders.  If @var{global-flag} is omitted,
+it is treated as @samp{important} flag is specified.
+
+In addition, in summary mode, to be described later, you can freely
+define global flags and put them on messages.
+@xref{Usage of Summary mode}.
 
 In this folder, if you delete message, @var{global-flag} put on the
 message is removed.  If you append messages to this folder, the message
@@ -1728,6 +1733,11 @@ You can access cached messages fetched via network by accessing
 folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
 the name of the subdirectories of the cache directory
 (@file{~/.elmo/cache}).
+
+
+@node File Folder,  , Internal Folder, Folders
+@section File folder
+@cindex File Folder
 
 
 @node Folder, Summary, Folders, Top
@@ -2640,12 +2650,12 @@ It is already replied message.
 @item &
 It is already replied but cached message.
 @item $
-It is important message.  You can put @samp{$} mark by typing @kbd{$}
-key (if already exists, the mark is deleted).  It is convenient to put
-this mark on the messages to remember (If you want to remember to write
-a reply for the message, for example) because this mark remains after
-you exited Emacs.  Messages with the @samp{$} mark can be reviewed in the
-@samp{'mark} folder even the message itself is deleted in the actual folder.
+It is a message with some global flag.  It is convenient to put this
+mark on the messages to remember (If you want to remember to write a
+reply for the message, for example) because this mark remains after
+you exited Emacs.  Messages with the @samp{$} mark can be reviewed in
+the @samp{'flag} folder even the message itself is deleted in the actual
+folder. You can put global flag by typing @kbd{$} or @kbd{F} key.
 
 @item None
 If the message is read and cached (or local message),there are no
@@ -3146,9 +3156,19 @@ A draft for forwarding the message at current cursor point is prepared.
 @item $
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
-Put @samp{$} mark on the message at current cursor point.
-If already marked as @samp{$}, remove the mark.
+Put @samp{important} flag on the message at current cursor point.
+If already flagged as @samp{important}, remove the flag.  If it is
+called with prefix argument, ask global flag to put similarly to @kbd{F}.
 (@code{wl-summary-mark-as-important})
+
+@item F
+@kindex F (Summary)
+@findex wl-summary-set-flags
+Put arbitrary global flag entered in the minibuffer.  If you use Emacs
+21 or later, you can specify multiple flags separated by @samp{,}
+simultaneously.  If it is called with prefix argument, remove existent
+global flags.
+(@code{wl-summary-set-flags})
 
 @item y
 @itemx e
@@ -3489,9 +3509,16 @@ Mark as read messages in the specified region.
 @item r $
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
-Mark as important @samp{$} messages in the specified region.
-If @samp{$} mark already exists, remove the mark.
+Put @samp{important} flag on messages in the specified region.
+If already flagged as @samp{important}, remove the flag.
 (@code{wl-summary-mark-as-important-region})
+
+@item r F
+@kindex r F (Summary)
+@findex wl-summary-set-flags-region
+Put arbitrary global flag entered in the minibuffer on messages in
+specified region.
+(@code{wl-summary-set-flags-region})
 
 @item r !
 @kindex r ! (Summary)
@@ -3558,11 +3585,19 @@ With prefix argument, it affects on the all messages in the thread tree.
 @item t $
 @kindex t $ (Summary)
 @findex wl-thread-mark-as-important
-Put important mark @samp{$} on the messages which are the
-descendant of the current thread.
-If @samp{$} mark exists, remove the mark.
-With prefix argument, it affects on the all messages in the thread tree.
+Put @samp{important} flag on the messages which are the descendant of
+the current thread.  If already flagged as @samp{important}, remove the
+flag.  With prefix argument, it affects on the all messages in the
+thread tree.
 (@code{wl-thread-mark-as-important})
+
+@item t F
+@kindex t F (Summary)
+@findex wl-thread-set-flags
+Put arbitrary global flag entered in the minibuffer on the messages
+which are the descendant of the current thread.  With prefix argument,
+it affects on the all messages in the thread tree.
+(@code{wl-thread-set-flags})
 
 @item t !
 @kindex t ! (Summary)
@@ -3639,9 +3674,16 @@ Mark as read all messages which have target mark @samp{*}.
 @item m $
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
-Mark as important all messages which have target mark @samp{*}.
-If already marked as @samp{$}, remove the mark.
+Put @samp{important} flag on all messages which have target mark @samp{*}.
+If already flagged as @samp{important}, remove the flag.
 (@code{wl-summary-target-mark-mark-as-important})
+
+@item m F
+@kindex m F (Summary)
+@findex wl-summary-target-mark-set-flags
+Put arbitrary global flag entered in the minibuffer on all messages
+which have target mark @samp{*}.
+(@code{wl-summary-target-mark-set-flags})
 
 @item m !
 @kindex m ! (Summary)
@@ -4114,6 +4156,21 @@ Following is an example (hide duplicated messages in multi folders)
                    ("^\\*.*" . hide) (".*" . read)))
 @end group
 @end lisp
+
+@item wl-summary-flag-alist
+@vindex wl-summary-flag-alist
+The initial setting is as follows:
+
+@lisp
+@group
+((important "orange"))
+@end group
+@end lisp
+
+Specify the color of message in summary buffer with flag.  If multiple
+global flags are on one message, the former flag in this list is
+preferred.  It is used as a candidate for complement on entering flags
+in summary buffer.
 @end table
 
 
