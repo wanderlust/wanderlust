@@ -1,3 +1,8 @@
+2004-12-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to
+	1.14.7.
+
 2004-11-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Added elsp-spamoracle.
