@@ -396,35 +396,36 @@
 	(onum-alist (elmo-msgdb-get-number-alist msgdb))
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
 	(oov (elmo-msgdb-get-overview msgdb))
-	i flist onum mark new-mark-alist total)
+	(new-number 1)			; first ordinal position in localdir
+	flist onum mark new-mark-alist total)
     (setq flist
 	  (if elmo-pack-number-check-strict
-	      (elmo-call-func spec "list-folder") ;; allow localnews
+	      (elmo-call-func spec "list-folder") ; allow localnews
 	    (mapcar 'car onum-alist)))
     (setq total (length flist))
     (while flist
       (elmo-display-progress
        'elmo-localdir-pack-number "Packing..."
-       (/ (* i 100) total))
+       (/ (* new-number 100) total))
       (setq onum (car flist))
-      (when (not (eq onum i)) ;; why \=() is wrong..
+      (when (not (eq onum new-number))		; why \=() is wrong..
         (elmo-bind-directory
 	 dir
 	 ;; xxx  nfs,hardlink
-	 (rename-file (int-to-string onum) (int-to-string i) t))
+	 (rename-file (int-to-string onum) (int-to-string new-number) t))
         ;; update overview
         (elmo-msgdb-overview-entity-set-number
 	 (elmo-msgdb-overview-get-entity-by-number
-	  oov onum) i)
+	  oov onum) new-number)
 	;; update number-alist
-	(setcar (assq onum onum-alist) i))
+	(setcar (assq onum onum-alist) new-number))
       ;; update mark-alist
       (when (setq mark (cadr (assq onum omark-alist)))
 	(setq new-mark-alist
 	      (elmo-msgdb-mark-append
 	       new-mark-alist
-	       i mark)))
-      (setq i (1+ i))
+	       new-number mark)))
+      (setq new-number (1+ new-number))
       (setq flist (cdr flist)))
     (message "Packing...done.")
     (list (elmo-msgdb-get-overview msgdb)
