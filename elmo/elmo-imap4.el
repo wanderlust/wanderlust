@@ -607,7 +607,7 @@ BUFFER must be a single-byte buffer."
 	(mapcar
 	 (lambda (entry)
 	   (if (and (eq 'list (car entry))
-		    (not (member "\\NoSelect" (nth 1 (nth 1 entry)))))
+		    (not (member "\\Noselect" (nth 1 (nth 1 entry)))))
 	       (car (nth 1 entry))))
 	 response)))
 
