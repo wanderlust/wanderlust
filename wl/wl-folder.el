@@ -998,11 +998,11 @@ If current line is group folder, check all sub entries."
       (setq unread (or (cadr nums) 0))
       (if (or (not unread-only)
 	      (or (< 0 new) (< 0 unread)))
-	  (let ((wl-summary-buffer-name (concat
-					 wl-summary-buffer-name
-					 (symbol-name this-command))))
-	    (save-window-excursion
-	      (save-excursion
+	  (save-window-excursion
+	    (save-excursion
+	      (let ((wl-summary-buffer-name (concat
+					     wl-summary-buffer-name
+					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range
 					      folder)
@@ -1454,16 +1454,17 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (if (get-buffer wl-folder-buffer-name)
 	(switch-to-buffer  wl-folder-buffer-name)
       (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
-      (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)
-      (wl-folder-init)
       (sit-for 0)
+      (wl-folder-init)
+      (set-buffer wl-folder-buffer-name)
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
 	(erase-buffer)
 	(setcdr (assoc (car wl-folder-entity) wl-folder-group-alist) t)
 	(save-excursion
 	  (wl-folder-insert-entity " " wl-folder-entity)))
+      (sit-for 0)
       (set-buffer-modified-p nil)
       (setq initialize t))
     initialize))
@@ -1964,7 +1965,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (elmo-set-plugged wl-plugged
 			wl-nntp-posting-server
 			wl-nntp-posting-stream-type
-			wl-nntp-posting-port
+			elmo-nntp-default-port
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
 

@@ -276,7 +276,6 @@ header separator."
 
 (defun elmo-msgdb-search-internal-primitive (condition entity number-list)
   (let ((key (elmo-filter-key condition))
-	(case-fold-search t)
 	result)
     (cond
      ((string= key "last")

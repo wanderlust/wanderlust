@@ -14,7 +14,7 @@ Features:
  * Management of threads and unread messages.
  * Folder mode to select and edit subscribed folders.
  * Message cache, Disconnected Operation.
- * MH-like Fcc (Fcc: %Backup is possible).
+ * MH-like FCC (FCC: %Backup is possible).
  * Full support of MIME (by SEMI or tm[5]).
  * Draft editing of mail and news as a same interface.
  * Icon based interface for the list of Folder (XEmacs).

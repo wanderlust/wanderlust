@@ -74,12 +74,10 @@ By setting following-method as yank-content."
   (let* (recipients-message
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (mime-display-header-hook 'wl-highlight-headers)
-	 mime-view-ignored-field-list	; all header.
+	 mime-view-ignored-field-list ; all header.
 	 (mime-edit-translate-buffer-hook
 	  (append
-	   (list
-	    (function
-	     (lambda ()
+	   '((lambda ()
 	       (let ((wl-draft-config-exec-flag config-exec-flag))
 		 (run-hooks 'wl-draft-send-hook)
 		 (setq recipients-message
@@ -98,7 +96,7 @@ By setting following-method as yank-content."
 				     "$")
 				    nil t)
 				   (point)))
-				", ")))))))
+				", "))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))

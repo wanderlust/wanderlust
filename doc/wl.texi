@@ -243,7 +243,7 @@ FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
 @end group
 @end example
 
-You have to install APEL, FLIM and SEMI in this order.  Generally,
+You have to install APEL, FLIM and SEMI in this order.  Generally
 @samp{make install} will do the job.  (In XEmacs 21, @samp{make
 install-package}.)
 
@@ -254,7 +254,7 @@ Recommended combination of APEL, FLIM and SEMI are following:
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
-latest versions should work.  For example, the following combination are
+latest versions should work.  For example, following combination is
 confirmed to work.
 
 @itemize @minus
@@ -502,9 +502,9 @@ The minimal requirement for settings is as the following.
 (setq wl-icon-dir "~/work/wl/etc")
 
 ;; @r{SMTP server for mail posting. Default: @code{nil}}
-(setq wl-smtp-posting-server "your.smtp.example.com")
+(setq wl-smtp-posting-server "your.smtp.server.com")
 ;; @r{NNTP server for news posting. Default: @code{nil}}
-(setq wl-nntp-posting-server "your.nntp.example.com")
+(setq wl-nntp-posting-server "your.nntp.server.com")
 @end group
 @end lisp
 
@@ -630,14 +630,14 @@ Format for @file{~/.folders} is very simple. Here is an example:
 %inbox  "Inbox"
 +trash  "Trash"
 +draft  "Drafts"
-%#mh/Backup@@my.imap.example.com "Sent"
+%#mh/Backup@@my.imap.server.com "Sent"
 # Folder Group
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
     %#mh/spool/elips         "ELIPS ML"
     %#mh/spool/apel-ja       "APEL Japanese ML"
     %#mh/spool/xemacs-beta   "XEmacs beta"
-    -fj.news.reader.gnus@@other.nntp.example.com "Gnus Net news"
+    -fj.news.reader.gnus@@other.nntp.server.com "Gnus Net news"
     *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj's Emacsen"
 @}
 #
@@ -2820,11 +2820,6 @@ yet.
 @findex wl-summary-down
 Move cursor to the downward message which is unread or marked
 as @samp{$}.
-In the offline mode, cursor is not moved to the messages which are not cached
-yet.
-If there are messages which have target mark @samp{*} in the summary,
-cursor is moved to the downward message which have a target mark.
-This behavior is changed according to the value of @code{wl-summary-move-order}.
 (@code{wl-summary-down})
 
 @item P
@@ -2832,11 +2827,6 @@ This behavior is changed according to the value of @code{wl-summary-move-order}.
 @findex wl-summary-up
 Move cursor to the upward message which is unread or marked
 as @samp{$}.
-In the offline mode, cursor is not moved to the messages which are not cached
-yet.
-If there are messages which have target mark @samp{*} in the summary,
-cursor is moved to the downward message which have a target mark.
-This behavior is changed according to the value of @code{wl-summary-move-order}.
 (@code{wl-summary-up})
 
 @item w
@@ -3741,13 +3731,13 @@ before sending the message.
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.example.com$" (system-name))
+      '(((string-match "aaa.ne.jp$" (system-name))
          ;; @r{applied if the expression is non-nil}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{settings of temporary variables}
          )
-        ("^To: .*user@@aaa.bbb.example.com"
+        ("^To: .*user@@aaa.bbb.com"
          ;; @r{applied if it matches the header of the draft buffer}
          ("Organization" . (format "Go %s" my-webpage)))
                        ;; @r{you can write elisp expressions here (eval only)}
@@ -3882,7 +3872,7 @@ The format of @code{wl-template-alist} is almost the same as
          (body . "Hello.\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}
-         ("To" . "boss@@example.com")
+         ("To" . "jousi@@kaisha.jp")
          ("Subject" . "Report")
          (body-file . "~/work/report.txt")
          )

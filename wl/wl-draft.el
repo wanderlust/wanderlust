@@ -673,7 +673,7 @@ Reply to author if WITH-ARG is non-nil."
 	    (let ((msg (and wl-draft-buffer-file-name
 			    (string-match "[0-9]+$" wl-draft-buffer-file-name)
 			    (string-to-int
-			     (match-string 0 wl-draft-buffer-file-name)))))
+			     (elmo-match-string 0 wl-draft-buffer-file-name)))))
 	      (wl-draft-config-info-operation msg 'delete))))
       (set-buffer-modified-p nil)		; force kill
       (kill-buffer editing-buffer))))
@@ -1134,7 +1134,7 @@ If optional argument is non-nil, current draft buffer is killed"
   (wl-draft-config-info-operation
    (and (string-match "[0-9]+$" wl-draft-buffer-file-name)
 	(string-to-int
-	 (match-string 0 wl-draft-buffer-file-name)))
+	 (elmo-match-string 0 wl-draft-buffer-file-name)))
    'save))
 
 (defun wl-draft-mimic-kill-buffer ()
