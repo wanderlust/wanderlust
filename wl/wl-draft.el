@@ -715,23 +715,23 @@ Reply to author if WITH-ARG is non-nil."
 	  (delete-frame)
 	;; hide draft window
 	(or (one-window-p)
-	    (delete-window)))
-      ;; stay folder window if required
-      (when wl-stay-folder-window
-	(if (setq fld-buf (get-buffer wl-folder-buffer-name))
-	    (if (setq fld-win (get-buffer-window fld-buf))
-		(select-window fld-win)
-	      (if wl-draft-resume-folder-window ;; resume folder window
-		  (switch-to-buffer fld-buf)))))
-      (if (buffer-live-p sum-buf)
-	  (if (setq sum-win (get-buffer-window sum-buf t))
-	      ;; if Summary is on the frame, select it.
-	      (select-window sum-win)
-	    ;; if summary is not on the frame, switch to it.
-	    (if (and wl-stay-folder-window
-		     (or wl-draft-resume-folder-window fld-win))
-		(wl-folder-select-buffer sum-buf)
-	      (switch-to-buffer sum-buf)))))))
+	    (delete-window))
+	;; stay folder window if required
+	(when wl-stay-folder-window
+	  (if (setq fld-buf (get-buffer wl-folder-buffer-name))
+	      (if (setq fld-win (get-buffer-window fld-buf))
+		  (select-window fld-win)
+		(if wl-draft-resume-folder-window ;; resume folder window
+		    (switch-to-buffer fld-buf)))))
+	(if (buffer-live-p sum-buf)
+	    (if (setq sum-win (get-buffer-window sum-buf t))
+		;; if Summary is on the frame, select it.
+		(select-window sum-win)
+	      ;; if summary is not on the frame, switch to it.
+	      (if (and wl-stay-folder-window
+		       (or wl-draft-resume-folder-window fld-win))
+		  (wl-folder-select-buffer sum-buf)
+		(switch-to-buffer sum-buf))))))))
 
 (defun wl-draft-delete (editing-buffer)
   "kill the editing draft buffer and delete the file corresponds to it."
