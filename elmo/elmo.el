@@ -711,6 +711,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
 
+(luna-define-method elmo-folder-rename-internal ((folder elmo-folder)
+						 new-folder)
+  (error "Cannot rename %s folder"
+	 (symbol-name (elmo-folder-type-internal folder))))
+
 (defsubst elmo-folder-search-fast (folder condition numbers)
   (when (and numbers
 	     (vectorp condition)

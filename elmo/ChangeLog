@@ -1,5 +1,7 @@
 2003-02-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* elmo.el (elmo-folder-rename-internal): New method to cause error.
+
 	* elmo-localdir.el (elmo-folder-pack-numbers): onum, a member of
 	flist, is not always a member of onum-alist.
 
