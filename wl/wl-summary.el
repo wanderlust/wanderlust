@@ -4746,7 +4746,7 @@ Return t if message exists."
 		   (and
 		    (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
 			'nntp)
-		    wl-summary-search-via-nntp)
+		    wl-summary-search-via-nntp))
 	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 	      (t
 	       (message errmsg)
