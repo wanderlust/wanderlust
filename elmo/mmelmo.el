@@ -46,16 +46,14 @@ If function is specified, its return value is used.")
   "*A hook called when entity-content is inserted.")
 
 (defun mmelmo-get-original-buffer ()
-  (save-excursion
-    (let (ret-val)
-      (if (setq ret-val 
-		(get-buffer (concat mmelmo-entity-buffer-name "0")))
-	  ret-val
-	(set-buffer (setq ret-val
-			  (get-buffer-create 
-			   (concat mmelmo-entity-buffer-name "0"))))
-	(mmelmo-original-mode)
-	ret-val))))
+  (let ((ret-val (get-buffer (concat mmelmo-entity-buffer-name "0"))))
+    (if (not ret-val)
+	(save-excursion
+	  (set-buffer (setq ret-val
+			    (get-buffer-create 
+			     (concat mmelmo-entity-buffer-name "0"))))
+	  (mmelmo-original-mode)))
+    ret-val))
 
 (defun mmelmo-cleanup-entity-buffers ()
   "Cleanup entity buffers of mmelmo."
