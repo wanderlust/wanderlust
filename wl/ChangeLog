@@ -1,6 +1,6 @@
 2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-summary.el (wl-summary-prefetch-msg): Use elmo-msgdb-set-cached.
+	* wl-summary.el (wl-summary-prefetch-msg): Use elmo-message-set-cached.
 	(wl-summary-delete-cache): Likewise.
 	(wl-summary-mark-as-read): Rewrite.
 
