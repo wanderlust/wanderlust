@@ -44,15 +44,16 @@
   "*The recipient address to send NEWS.")
 
 (defun wl-news-check ()
-  (let ((previous-version (wl-news-previous-version-load))
-	(current-version (product-version (product-find 'wl-version))))
-    (if (and (< 0 (product-version-compare
-		   current-version previous-version))
-	     wl-news-lang
-	     wl-news-send-to-address
-	     (wl-news-send-news previous-version))
-	(wl-news-previous-version-save current-version))))
-
+  (let* ((previous-version (wl-news-previous-version-load))
+	 (current-version (product-version (product-find 'wl-version)))
+	 (updated (< 0 (product-version-compare
+			current-version previous-version))))
+    (when updated
+      (and wl-news-lang
+	   wl-news-send-to-address
+	   (wl-news-send-news previous-version))
+      (wl-news-previous-version-save current-version))
+    updated))
 
 ;;; -*- news-list -*-
 

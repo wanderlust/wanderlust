@@ -3,6 +3,8 @@
 	* wl-news.el.in (wl-news-send-to-address): New variable.
 	(wl-news-send-news): Use it.
 	(wl-news-check): Call wl-news-send-news if wl-news-send-to-address.
+	Return updating status.
+	* wl.el (wl-init): Show message when wl-news-check returns non-nil.
 
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
