@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/14 10:56:07 teranisi>
+;; Time-stamp: <00/06/15 00:38:44 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -41,60 +41,48 @@
 (defvar wl-address-completion-list nil)
 (defvar wl-address-petname-hash nil)
 
-(static-if (and (featurep 'xemacs)
-		(fboundp 'ldap-open))
-;; LDAP is built-in feature.
-(defun wl-ldap-search (pat &optional cl)
-  "make completion-list by ldap search (use build-in ldap feature)"
-  (let ((ldap-pat (concat "mail=" pat "*"))
-        (ret cl)
-	hdl
-	search-ret
-        addr)
-    (setq hdl (ldap-open wl-ldap-server))
-    (setq search-ret 
-	  (ldap-search-basic hdl ldap-pat wl-ldap-base 'subtree '("mail")))
-    (ldap-close hdl)
-    (while search-ret
-      (if (listp search-ret)
-	  (progn
-	    (setq addr (car search-ret))
-	    (setq search-ret (cdr search-ret))
-	    (if (listp addr)
-		(progn
-		 (setq addr (car addr))
-		 (if (listp addr)
-		     (progn
-		       (setq addr (cdr addr))
-		       (if (listp addr)
-			   (progn
-			     (setq addr (car addr))
-			     (setq addr (cons addr addr))
-			     (if ret
-				 (setq ret (append ret (list addr)))
-			       (setq ret (list addr))))))))))
-	(setq search-ret nil)))
-    ret))
-;; LDAP is not built-in feature.
-(defun wl-ldap-search (pat &optional cl)
-  "make completion-list by ldap search"
-  (let ((ldap-pat (concat "mail=" pat "*"))
-	(ret cl)
-	addr)
-    (with-temp-buffer
-      (call-process "ldapsearch" nil (current-buffer)
-		    t "-L" "-b" wl-ldap-base
-		    "-h" wl-ldap-server ldap-pat "mail")
-      (goto-char (point-min))
-      (while (re-search-forward "^\\(mail: \\)\\(.*\\)$" nil t)
-	(progn
-	  (setq addr (match-string 2))
-	  (setq addr (cons addr addr))
-	  (if ret
-	      (setq ret (append ret (list addr)))
-	    (setq ret (list addr))))))
-    ret))
-)
+(defvar wl-address-ldap-search-hash nil)
+
+(eval-when-compile (require 'pldap))
+
+(defun wl-address-ldap-search (pattern cl)
+  "Make address completion-list matched for PATTERN by LDAP search.
+Matched address lists are append to CL."
+  (require 'pldap)
+  (unless wl-address-ldap-search-hash
+    (setq wl-address-ldap-search-hash (elmo-make-hash)))
+  (let ((hit (catch 'found
+	       (mapatoms (lambda (atom)
+			   (if (string-match 
+				(concat "^" (symbol-name atom) ".*")
+				pattern)
+			       (throw 'found (symbol-value atom))))
+			 wl-address-ldap-search-hash)))
+	(ldap-default-host wl-ldap-server)
+	(ldap-default-port (or wl-ldap-port 389))
+	(ldap-default-base wl-ldap-base)
+	result cn mails)
+    (if hit
+	(setq result hit)
+      (setq result (ldap-search-entries (concat "mail=" pattern "*")
+					nil '("mail" "cn")))
+      (elmo-set-hash-val pattern result wl-address-ldap-search-hash))
+    (while result
+      (setq mails (cdr (assoc "mail" (car result))))
+      (setq cn nil)
+      (while mails
+	(if (and (null (assoc (car mails) cl)) ; Not already in cl.
+		 (string-match pattern (car mails)))
+	    (setq cl (cons (cons (car mails)
+				 (concat 
+				  (or cn
+				      (setq cn
+					    (cadr (assoc "cn" (car result)))))
+				  " <" (car mails) ">"))
+			   cl)))
+	(setq mails (cdr mails)))
+      (setq result (cdr result)))
+    cl))
 
 (defun wl-complete-field-to ()
   (interactive)
@@ -222,10 +210,8 @@
 	 (pattern (buffer-substring start end))
 	 (len (length pattern))
 	 (cl completion-list))
-    (if use-ldap
-	(progn
-	  (setq completion-list (wl-ldap-search pattern cl))
-	  (setq cl completion-list)))
+    (when use-ldap
+      (setq cl (wl-address-ldap-search pattern cl)))
     (if (null cl)
 	(if use-ldap
 	    (progn
@@ -233,7 +219,7 @@
 	      (ding)))
       (setq completion (try-completion pattern cl))
       (cond ((eq completion t)
-	     (wl-complete-insert start end pattern completion-list)
+	     (wl-complete-insert start end pattern cl)
 	     (wl-complete-window-delete)
 	     (message "Sole completion"))
 	    ((and epand-char

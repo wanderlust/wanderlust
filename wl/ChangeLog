@@ -1,3 +1,11 @@
+2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-ldap-port): New user option.
+
+	* wl-address.el (wl-address-ldap-search): Renamed from wl-ldap-search.
+	Rewite whole implementation.
+	(wl-complete-field-body): Fixed.
+
 2000-06-14  Yuuichi Teranishi  <teranisi@quickhack.net>
 
 	* wl-address.el (wl-ldap-search-internal): Renamed to `wl-ldap-search'.
