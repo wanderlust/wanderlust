@@ -1,3 +1,7 @@
+2003-11-18  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-version.el (elmo-version): Up to 2.11.21.
+
 2003-11-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (toplevel): Don't require mime.
