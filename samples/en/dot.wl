@@ -56,6 +56,13 @@
 ;; Specific domain part for message-id.
 ;(setq wl-message-id-domain "hostname.example.com")
 
+;; IMAP authenticate type setting
+(setq elmo-default-imap4-authenticate-type 'clear) ; raw
+;(setq elmo-default-imap4-authenticate-type 'cram-md5) ; CRAM-MD5
+
+;; POP-before-SMTP
+;(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
+
 
 ;;; [[ Basic Setting ]]
 
