@@ -3901,11 +3901,6 @@ The initial setting is @code{nil}.
 If non-nil, the action argument is always printed on right side of
 window.
 
-@item wl-summary-from-width
-@vindex wl-summary-from-width
-The initial setting is 17.
-Width of sender part of summary line.
-
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit
 The initial setting is 46.

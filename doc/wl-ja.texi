@@ -3899,10 +3899,6 @@ petname でも補完ができます。
 @code{nil} であってもウィンドウの右端に揃えて、アクション引数を表示しま
 す。
 
-@item wl-summary-from-width
-@vindex wl-summary-from-width
-初期設定は 17。サマリの From 部分の表示幅です。
-
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit
 初期設定は 46。設定された値以上サマリをインデントしません。@code{nil} な
