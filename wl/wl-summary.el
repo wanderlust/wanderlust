@@ -4097,6 +4097,42 @@ If ARG, exit virtual folder."
    (wl-summary-line-children-number) " "
    (wl-summary-line-from)))
 
+(defun wl-summary-line-list-count ()
+  (let ((folder wl-summary-buffer-folder-name)
+	(sequence) (ml-name) (ml-count) (subject-string))
+    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
+		    wl-message-entity "x-sequence")
+	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
+		       wl-message-entity "x-ml-name")
+		      (and sequence
+			   (car (split-string sequence " "))))
+	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
+			wl-message-entity "x-mail-count")
+		       (elmo-msgdb-overview-entity-get-extra-field
+			wl-message-entity "x-ml-count")
+		       (and sequence
+			    (cadr (split-string sequence " "))))
+	  subject-string
+	  (elmo-delete-char ?\n
+			    (or (elmo-msgdb-overview-entity-get-subject
+				 wl-message-entity)
+				wl-summary-no-subject-message)))
+    (if (string-match
+	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+	 subject-string)
+	(progn
+	  (if (not ml-name) (setq ml-name (match-string 1 subject-string)))
+	  (if (not ml-count) (setq ml-count (match-string 2 subject-string)))))
+    (condition-case nil
+	(if (and ml-name ml-count)
+	    (if (string= folder wl-default-folder)
+		(format "(%s %05d)"
+			(car (split-string ml-name " "))
+			(string-to-int ml-count))
+	      (format "#%05d" (string-to-int ml-count)))
+	  "")
+      (error ""))))
+
 (defun wl-summary-create-line (wl-message-entity
 			       wl-parent-message-entity
 			       temp-mark

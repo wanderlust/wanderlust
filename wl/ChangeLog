@@ -1,3 +1,10 @@
+2002-05-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-line-list-count): New function, merged
+	from my-wl-summary-subject-func-ml in samples/*/dot.wl.
+	* wl-vars.el (wl-summary-line-format-spec-alist): Add entry for
+	list counts.
+
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-create-line): Ignore errors while

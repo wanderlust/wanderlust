@@ -193,40 +193,7 @@
 	"x-mail-count" "x-ml-count" "x-sequence"))
 
 ;; ML message displays ML name and ML sequence number in subject.
-(setq wl-summary-subject-function 'my-wl-summary-subject-func-ml)
-(defun my-wl-summary-subject-func-ml (subject-string)
-  (let ((folder wl-summary-buffer-folder-name)
-	(subj subject-string) (sequence) (ml-name) (ml-count))
-    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-		    entity "x-sequence")
-	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
-		       entity "x-ml-name")
-		      (and sequence
-			   (car (split-string sequence " "))))
-	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-mail-count")
-		       (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-ml-count")
-		       (and sequence
-			    (cadr (split-string sequence " ")))))
-    (if (string-match
-	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-	 subject-string)
-	(progn
-	  (setq subj (substring subject-string (match-end 0)))
-	  (if (not ml-name) (setq ml-name (match-string 1 subject-string)))
-	  (if (not ml-count) (setq ml-count (match-string 2 subject-string)))))
-    (condition-case nil
-	(if (and ml-name ml-count)
-	    (if (string= folder wl-default-folder)
-		(format "(%s %05d) %s"
-			(car (split-string ml-name " "))
-			(string-to-int ml-count)
-			subj)
-	      (format "#%05d %s"
-		      (string-to-int ml-count) subj))
-	  subj)
-      (error subj))))
+(setq wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %] %# %s")
 
 ;; imput asynchronously.
 ;; (utils/im-wl.el is needed to be installed.

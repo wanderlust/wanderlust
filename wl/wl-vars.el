@@ -188,7 +188,8 @@ If you don't have multiple e-mail addresses, you don't have to set this."
     (?S (wl-summary-line-size))
     (?c (wl-summary-line-children-number))
     (?f (wl-summary-line-from))
-    (?F (wl-summary-line-children-and-from)))
+    (?F (wl-summary-line-children-and-from))
+    (?# (wl-summary-line-list-count)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
 \(SPEC STRING-EXP\)
