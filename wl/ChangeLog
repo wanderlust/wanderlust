@@ -1,3 +1,8 @@
+2000-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-incorporate): Enclose
+	`wl-summary-sync-force-update' with save-excursion.
+
 2000-04-21  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
 
 	* wl-summary.el (wl-summary-prefetch-region):
