@@ -4,7 +4,6 @@
 ;;                          Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author:  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;; Time-stamp: <2000-01-24 12:20:07 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
