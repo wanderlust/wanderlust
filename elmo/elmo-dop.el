@@ -88,10 +88,12 @@ even an operation concerns the unplugged folder."
     ;; obsolete
     (unless (or (null queue)
 		(vectorp (car queue)))
-      (when (y-or-n-p "Saved queue is old version(2.4). Clear all pending operations? ")
-	(setq elmo-dop-queue nil)
-	(message "All pending operations are cleared.")
-	(elmo-dop-queue-save)))
+      (if (y-or-n-p "Saved queue is old version(2.6). Clear all pending operations? ")
+	  (progn
+	    (setq elmo-dop-queue nil)
+	    (message "All pending operations are cleared.")
+	    (elmo-dop-queue-save))
+	(error "Please use 2.6 or earlier.")))
     (setq count (length queue))
     (when (> count 0)
       (if (elmo-y-or-n-p
@@ -117,7 +119,9 @@ even an operation concerns the unplugged folder."
 				 (setq folder
 				       (elmo-make-folder
 					(elmo-dop-queue-fname (car queue))))
-			       (elmo-folder-open folder))
+			       (elmo-folder-open folder)
+			       (unless (elmo-folder-plugged-p folder)
+				 (error "Unplugged.")))
 			     (elmo-dop-queue-arguments (car queue)))
 		      (elmo-folder-close folder))
 		  (quit  (setq failure t))

@@ -1,3 +1,9 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-queue-flush): Fixed obsolete version message.
+	(elmo-dop-queue-flush): Don't append to the dop-queue while flushing
+	queues (It causes infinite loop).
+
 2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo.el (elmo-folder-diff): Fixed docstring for IMAP4
