@@ -358,88 +358,31 @@
 	(rename-file old new)
 	t))))
 
-(defsubst elmo-localdir-field-primitive-condition-match (spec
-							 condition
-							 number
-							 number-list)
-  (let (result)
-    (goto-char (point-min))
-    (cond
-     ((string= (elmo-filter-key condition) "last")
-      (setq result (<= (length (memq number number-list))
-		       (string-to-int (elmo-filter-value condition)))))
-     ((string= (elmo-filter-key condition) "first")
-      (setq result (< (- (length number-list)
-			 (length (memq number number-list)))
-		      (string-to-int (elmo-filter-value condition)))))
-     (t
-      (elmo-set-work-buf
-       (as-binary-input-file (insert-file-contents
-			      (expand-file-name
-			       (int-to-string number)
-			       (elmo-localdir-get-folder-directory spec))))
-       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-       ;; Should consider charset?
-       (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-       (setq result
-	     (elmo-buffer-field-primitive-condition-match
-	      condition number number-list)))))
-    (if (eq (elmo-filter-type condition) 'unmatch)
-	(setq result (not result)))
-    result))
-
-(defun elmo-localdir-field-condition-match (spec condition number number-list)
-  (cond
-   ((vectorp condition)
-    (elmo-localdir-field-primitive-condition-match
-     spec condition number number-list))
-   ((eq (car condition) 'and)
-    (and (elmo-localdir-field-condition-match
-	  spec (nth 1 condition) number number-list)
-	 (elmo-localdir-field-condition-match
-	  spec (nth 2 condition) number number-list)))
-   ((eq (car condition) 'or)
-    (or (elmo-localdir-field-condition-match
-	 spec (nth 1 condition) number number-list)
-	(elmo-localdir-field-condition-match
-	 spec (nth 2 condition) number number-list)))))
+(defsubst elmo-localdir-field-condition-match (spec condition
+						    number number-list)
+  (elmo-file-field-condition-match
+   (expand-file-name (int-to-string number)
+		     (elmo-localdir-get-folder-directory spec))
+   condition
+   number number-list))
 
 (defun elmo-localdir-search (spec condition &optional from-msgs)
   (let* ((msgs (or from-msgs (elmo-localdir-list-folder spec)))
 	 (num (length msgs))
 	 (i 0)
-	 last cur number-list case-fold-search ret-val)
-    (cond
-     ;; short cut.
-     ((and (vectorp condition)
-	   (string= (elmo-filter-key condition) "last"))
-      (nthcdr (max (- (length msgs)
-		      (string-to-int (elmo-filter-value condition)))
-		   0)
-	      msgs))
-     ((and (vectorp condition)
-	   (string= (elmo-filter-key condition) "first"))
-      (let ((rest (nthcdr (string-to-int (elmo-filter-value condition) )
-			  msgs)))
-	(mapcar '(lambda (x)
-		   (delete x msgs)) rest))
-      msgs)
-     (t
-      (setq number-list msgs)
-      (while msgs
-	(if (elmo-localdir-field-condition-match spec condition
-						 (car msgs) number-list)
-	    (setq ret-val (cons (car msgs) ret-val)))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (setq cur (/ (* i 100) num))
-	  (unless (eq cur last)
-	    (elmo-display-progress
-	     'elmo-localdir-search "Searching..."
-	     cur)
-	    (setq last cur)))
-	(setq msgs (cdr msgs)))
-      (nreverse ret-val)))))
+	 number-list case-fold-search ret-val)
+    (setq number-list msgs)
+    (while msgs
+      (if (elmo-localdir-field-condition-match spec condition
+					       (car msgs) number-list)
+	  (setq ret-val (cons (car msgs) ret-val)))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-localdir-search "Searching..."
+	 (/ (* i 100) num)))
+      (setq msgs (cdr msgs)))
+    (nreverse ret-val)))
 
 ;;; (localdir, maildir, localnews) -> localdir
 (defun elmo-localdir-copy-msgs (dst-spec msgs src-spec

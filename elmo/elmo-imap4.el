@@ -106,7 +106,6 @@
     elmo-imap4-status-callback-data
     elmo-imap4-current-msgdb))
 
-(defvar elmo-imap4-display-literal-progress nil)
 ;;;;
 
 (defconst elmo-imap4-quoted-specials-list '(?\\ ?\"))
@@ -1352,8 +1351,7 @@ If optional argument UNMARK is non-nil, unmark."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (setq elmo-imap4-display-literal-progress t))
+    (setq elmo-imap4-display-literal-progress t)
     (prog1
 	(unwind-protect
 	    (elmo-delete-cr
@@ -1367,10 +1365,7 @@ If optional argument UNMARK is non-nil, unmark."
 					      msg part))
 	       'fetch)))
 	  (setq elmo-imap4-display-literal-progress nil))
-      (unless elmo-inhibit-display-retrieval-progress
-	(elmo-display-progress 'elmo-imap4-display-literal-progress
-			       "" 100)  ; remove progress bar.
-	(message "Retrieving...done.")))))
+      (message "Retrieving...done."))))
 
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
   (elmo-imap4-read-msg spec msg outbuf nil 'unseen))
@@ -1384,8 +1379,7 @@ If optional argument UNMARK is non-nil, unmark."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (setq elmo-imap4-display-literal-progress t))
+    (setq elmo-imap4-display-literal-progress t)
     (unwind-protect
 	(setq response
 	      (elmo-imap4-send-command-wait session
@@ -1397,10 +1391,7 @@ If optional argument UNMARK is non-nil, unmark."
 					     (if leave-seen-flag-untouched
 						 ".peek" ""))))
       (setq elmo-imap4-display-literal-progress nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (elmo-display-progress 'elmo-imap4-display-literal-progress
-			     "" 100)  ; remove progress bar.
-      (message "Retrieving...done."))    
+    (message "Retrieving...done.")
     (and (setq response (elmo-imap4-response-bodydetail-text
 			 (elmo-imap4-response-value-all
 			  response 'fetch )))
@@ -1589,6 +1580,8 @@ If optional argument UNMARK is non-nil, unmark."
 (defvar elmo-imap4-client-eol "\r\n"
   "The EOL string we send to the server.")
 
+(defvar elmo-imap4-display-literal-progress nil)
+
 (defun elmo-imap4-find-next-line ()
   "Return point at end of current line, taking into account literals.
 Return nil if no complete line has arrived."
@@ -1598,16 +1591,10 @@ Return nil if no complete line has arrived."
     (if (match-string 1)
 	(if (< (point-max) (+ (point) (string-to-number (match-string 1))))
 	    (progn
-	      (if (and elmo-imap4-display-literal-progress
-		       (> (string-to-number (match-string 1))
-			  (min elmo-display-retrieval-progress-threshold 100)))
-		  (elmo-display-progress
-		   'elmo-display-retrieval-progress
-		   (format "Retrieving (%d/%d bytes)..."
+	      (if elmo-imap4-display-literal-progress
+		  (message "Retrieving...(%d/%d bytes)"
 			   (- (point-max) (point))
-			   (string-to-number (match-string 1)))
-		   (/ (- (point-max) (point))
-		      (/ (string-to-number (match-string 1)) 100))))
+			   (string-to-number (match-string 1))))
 	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))

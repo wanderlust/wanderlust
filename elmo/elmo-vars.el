@@ -363,12 +363,6 @@ set as non-nil.")
 (defvar elmo-inhibit-read-cache nil
   "*Global switch to inhibit reading cache.")
 
-(defvar elmo-inhibit-display-retrieval-progress nil
-  "Global switch to inhibit display progress of each message's retrieval.")
-
-(defvar elmo-display-retrieval-progress-threshold 30000
-  "*Don't display progress if the message size is smaller than this value.")
-
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

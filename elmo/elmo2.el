@@ -273,7 +273,6 @@ If optional UNREAD is non-nil, message is keeped as unread."
 	   (number-alist (elmo-msgdb-get-number-alist db))
 	   (mark-alist   (elmo-msgdb-get-mark-alist db))
 	   (messages msgs)
-	   (elmo-inhibit-display-retrieval-progress t)
 	   (len (length msgs))
 	   (all-msg-num (or all len))
 	   (done-msg-num (or done 0))
