@@ -6170,13 +6170,8 @@ example of settings:
 
 @lisp
 @group
-(autoload 'sc-cite-original "sc" nil t)
-(setq mail-yank-hooks 'sc-cite-original)
-(setq sc-preferred-header-style 1)
-(setq sc-electric-references-p nil)
-(setq sc-citation-leader "")
-(setq sc-load-hook '(lambda () (require 'sc-register)))
-(setq sc-preferred-attribution 'registeredname)
+(autoload 'sc-cite-original "supercite" nil t)
+(add-hook 'mail-citation-hook 'sc-cite-original)
 @end group
 @end lisp
 
