@@ -37,15 +37,6 @@
 (condition-case nil (require 'tm-edit) (error nil))
 (condition-case nil (require 'pp) (error nil))
 
-(defvar mule-version)
-(defvar nemacs-version)
-(defvar emacs-beta-version)
-(defvar xemacs-codename)
-(defvar mime-edit-insert-user-agent-field)
-(defvar mime-edit-user-agent-value)
-(defvar mime-editor/version)
-(defvar mime-editor/codename)
-
 (eval-when-compile
   (require 'time-stamp)
   (defalias-maybe 'read-event 'ignore)

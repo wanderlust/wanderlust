@@ -50,7 +50,12 @@
 
 	* wl-util.el (wl-generate-user-agent-string,
 	wl-extended-emacs-version, wl-extended-emacs-version2,
-	wl-extended-emacs-version3): Move to wl-version.el
+	wl-extended-emacs-version3): Move to wl-version.el.
+	* wl-util.el (mule-version, nemacs-version, emacs-beta-version,
+	xemacs-codename, mime-edit-insert-user-agent-field,
+	mime-edit-user-agent-value, mime-editor/version,
+	mime-editor/codename): Compile warning killer move to
+	wl-version.el
 
 2000-10-09  Kenichi OKADA  <okada@opaopa.org>
 

@@ -39,6 +39,19 @@
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Roam"))
 
+;; require wl-util after product-provide.
+(eval-when-compile (require 'wl-util))	; wl-match-string
+
+;; compile warning
+(defvar mule-version)
+(defvar nemacs-version)
+(defvar emacs-beta-version)
+(defvar xemacs-codename)
+(defvar mime-edit-insert-user-agent-field)
+(defvar mime-edit-user-agent-value)
+(defvar mime-editor/version)
+(defvar mime-editor/codename)
+
 (defun wl-version (&optional with-codename)
   "Print Wanderlust version."
   (interactive)
@@ -47,8 +60,6 @@
 (defun wl-version-show ()
   (interactive)
   (message "%s" (wl-version t)))
-
-(eval-when-compile (require 'wl-util))	; wl-match-string
 
 (defun wl-generate-user-agent-string ()
   "A candidate of wl-generate-mailer-string-func.
