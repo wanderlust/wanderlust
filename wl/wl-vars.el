@@ -2080,7 +2080,7 @@ If TYPE is nil, do nothing for duplicated messages."
   :group 'wl-folder)
 
 (defcustom wl-folder-move-cur-folder nil
-  "*Non-nil, move to current folder on folder-mode when goto folder."
+  "*Non-nil, move cursor to current folder on folder buffer when goto folder."
   :type 'boolean
   :group 'wl-folder)
 
