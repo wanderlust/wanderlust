@@ -1,3 +1,8 @@
+2002-12-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Fix logic
+	for elmo-remove-passwd.
+
 2002-12-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-e21.el (toplevel): Do not set wl-folder-mode-map.
