@@ -312,19 +312,26 @@ Reply to author if WITH-ARG is non-nil."
 	    (when (and (member "Followup-To" r-ng-list)
 		       (string= (std11-field-body "Followup-To") "poster"))
 	      (setq r-to-list (cons "From" r-to-list))
-	      (setq r-ng-list (delete "Followup-To" (copy-sequence r-ng-list))))
-	    (setq to (wl-concat-list (cons to
-					   (elmo-multiple-fields-body-list
-					    r-to-list))
-				     ","))
-	    (setq cc (wl-concat-list (cons cc
-					   (elmo-multiple-fields-body-list
-					    r-cc-list))
-				     ","))
-	    (setq newsgroups (wl-concat-list (cons newsgroups
-						   (std11-field-bodies
-						    r-ng-list))
-					     ",")))
+	      (setq r-ng-list (delete "Followup-To"
+				      (copy-sequence r-ng-list))))
+	    (if (and r-to-list (symbolp r-to-list))
+		(setq to (wl-concat-list (funcall r-to-list) ","))
+	      (setq to (wl-concat-list (cons to
+					     (elmo-multiple-fields-body-list
+					      r-to-list))
+				       ",")))
+	    (if (and r-cc-list (symbolp r-cc-list))
+		(setq cc (wl-concat-list (funcall r-to-list) ","))
+	      (setq cc (wl-concat-list (cons cc
+					     (elmo-multiple-fields-body-list
+					      r-cc-list))
+				       ",")))
+	    (if (and r-ng-list (symbolp r-ng-list))
+		(setq newsgroups (wl-concat-list (funcall r-ng-list) ","))
+	      (setq newsgroups (wl-concat-list (cons newsgroups
+						     (std11-field-bodies
+						      r-ng-list))
+					       ","))))
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
       (error "No match field: check your `%s'"

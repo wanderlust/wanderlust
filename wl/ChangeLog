@@ -1,3 +1,8 @@
+2002-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): If r-to-list is a function, call it;
+	Likewise r-cc-list and r-ng-list.
+
 2002-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-send): Use mime-header-encode-method-alist
