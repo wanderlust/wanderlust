@@ -1,3 +1,17 @@
+2001-01-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-reply-list-symbol): Remove FROM argument.
+	Argument WITH-ARG instead of NO-ARG (negative mean).
+	(wl-draft-reply): WITH-ARG instead of NO-ARG.
+	* wl-summary.el (wl-summary-reply): Fixed `wl-draft-reply' call point.
+	* wl-message.el (wl-message-follow-current-entity): Likewise.
+
+2001-01-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-reply-list-symbol): Change argument order.
+	FROM was optional argument.
+	(wl-draft-reply): Fixed `wl-draft-reply-list-symbol' call point.
+
 2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-version-show): Removed.
