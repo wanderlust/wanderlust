@@ -1,3 +1,8 @@
+2002-12-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* utf7.el (toplevel): Avoid error when the function
+	find-coding-system does not exist.
+
 2002-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.0 is released.

@@ -87,7 +87,8 @@
   (mod (- len) modulus))
 
 (cond
- ((or (find-coding-system 'utf-7)
+ ((or (and (fboundp 'find-coding-system)
+	   (find-coding-system 'utf-7))
       (module-installed-p 'un-define))
   (defun utf7-fragment-decode (start end &optional imap)
     "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
@@ -126,7 +127,8 @@ Use IMAP modification if IMAP is non-nil."
       (delete-region start end)
       (insert encoded-string))))
  ((and (featurep 'xemacs) 
-       (or (find-coding-system 'utf-8)
+       (or (and (fboundp 'find-coding-system)
+		(find-coding-system 'utf-8))
 	   (module-installed-p 'xemacs-ucs)))
   (defun utf7-fragment-decode (start end &optional imap)
     "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
