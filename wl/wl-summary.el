@@ -711,6 +711,11 @@ you."
   (setq wl-summary-buffer-persistent
 	(wl-folder-persistent-p (elmo-folder-name-internal folder)))
   (elmo-folder-set-persistent-internal folder wl-summary-buffer-persistent)
+  ;; process duplicates.
+  (elmo-folder-set-process-duplicates-internal
+   folder (cdr (elmo-string-matched-assoc
+		(elmo-folder-name-internal folder)
+		wl-folder-process-duplicates-alist)))
   (setq
    wl-thread-indent-level-internal
    (or (nth 0 wl-summary-buffer-thread-indent-set)
@@ -1010,6 +1015,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	summary-win
 	message-buf message-win
 	folder-buf folder-win)
+    (run-hooks 'wl-summary-exit-pre-hook)
     (if wl-summary-buffer-exit-function
 	(funcall wl-summary-buffer-exit-function)
       (wl-summary-cleanup-temp-marks sticky)
@@ -2473,6 +2479,7 @@ If ARG, without confirm."
 		     (elmo-folder-name-internal folder))) ; folder is moved.
 	       (eq major-mode 'wl-summary-mode)) ; called in summary.
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
+      (run-hooks 'wl-summary-exit-pre-hook)
       (wl-summary-cleanup-temp-marks (wl-summary-sticky-p))
       (wl-summary-save-view 'keep) ; keep current buffer, anyway.
       (elmo-folder-commit wl-summary-buffer-elmo-folder))
@@ -4568,7 +4575,8 @@ Return t if message exists."
       (if (wl-summary-no-mime-p folder)
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number))
-      (set-buffer wl-message-buffer)
+      (when (buffer-live-p wl-message-buffer)
+	(set-buffer wl-message-buffer))
       nil)))
 
 (defun wl-summary-target-mark-forward (&optional arg)
