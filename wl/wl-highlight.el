@@ -771,12 +771,12 @@
 
 (defun wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol)
-    (cond ((and (string= temp-mark "+")
+    (cond ((and (string= temp-mark wl-summary-score-over-mark)
 		(member mark (list wl-summary-unread-cached-mark
 				   wl-summary-unread-uncached-mark
 				   wl-summary-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	  ((and (string= temp-mark "-")
+	  ((and (string= temp-mark wl-summary-score-below-mark)
 		(member mark (list wl-summary-unread-cached-mark
 				   wl-summary-unread-uncached-mark
 				   wl-summary-new-mark)))
@@ -796,9 +796,9 @@
 	   (setq fsymbol 'wl-highlight-summary-unread-face))
 	  ((or (string= mark wl-summary-important-mark))
 	   (setq fsymbol 'wl-highlight-summary-important-face))
-	  ((string= temp-mark "-")
+	  ((string= temp-mark wl-summary-score-below-mark)
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
-	  ((string= temp-mark "+")
+	  ((string= temp-mark wl-summary-score-over-mark)
 	   (setq fsymbol 'wl-highlight-summary-high-read-face))
 	  (t (if (zerop (length indent))
 		 (setq fsymbol 'wl-highlight-summary-thread-top-face)
@@ -813,7 +813,7 @@
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  fregexp fsymbol bol eol matched thread-top looked-at dest ds)
+	  fsymbol bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
@@ -836,12 +836,12 @@
 		dest t))))
       (if (not fsymbol)
 	  (cond
-	   ((and (string= temp-mark "+")
+	   ((and (string= temp-mark wl-summary-score-over-mark)
 		 (member status-mark (list wl-summary-unread-cached-mark
 					   wl-summary-unread-uncached-mark
 					   wl-summary-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	   ((and (string= temp-mark "-")
+	   ((and (string= temp-mark wl-summary-score-below-mark)
 		 (member status-mark (list wl-summary-unread-cached-mark
 					   wl-summary-unread-uncached-mark
 					   wl-summary-new-mark)))
@@ -854,9 +854,9 @@
 	   ((string= status-mark wl-summary-important-mark)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark
-	   ((string= temp-mark "-")
+	   ((string= temp-mark wl-summary-score-below-mark)
 	    (setq fsymbol 'wl-highlight-summary-low-read-face))
-	   ((string= temp-mark "+")
+	   ((string= temp-mark wl-summary-score-over-mark)
 	    (setq fsymbol 'wl-highlight-summary-high-read-face))
 	   ;;
 	   (t (if (null
