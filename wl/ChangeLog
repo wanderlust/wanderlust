@@ -1,3 +1,13 @@
+2004-09-08  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-rescan): Implement reverse sorting.
+	Add an argument `reverse'.  All callers are updated.
+	(wl-summary-sort): Add a prefix argument `reverse' to specify
+	reverse sorting.
+	(wl-summary-sort-by-date, wl-summary-sort-by-number) 
+	(wl-summary-sort-by-subject, wl-summary-sort-by-from) 
+	(wl-summary-sort-by-list-info, wl-summary-sort-by-size): Likewise.
+
 2004-09-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-message.el (wl-message-redisplay): Does not narrow header if
