@@ -1,3 +1,20 @@
+2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-version.el (wl-version-status-alist): New variable.
+	(wl-version-status): New function.
+
+	* wl-vars.el (wl-draft-reply-without-argument-list): Added "From" to
+	"Cc" part of the case "Reply-To".
+
+	* wl-draft.el (wl-draft-reply): Use result of
+	`eword-extract-address-components'.
+
+	* wl-demo.el (wl-demo-icon-name): New constant.
+	(wl-logo-xpm): Use it.
+	(wl-logo-xbm): Ditto.
+	(wl-logo-bitmap): Ditto.
+
+
 2000-10-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-generate-user-agent-string): Fixed docstring.

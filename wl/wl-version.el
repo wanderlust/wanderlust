@@ -70,6 +70,22 @@ If ARG insert string at point."
       (insert (message "%s" (wl-version t)))
     (message "%s" (wl-version t))))
 
+(defvar wl-version-status-alist
+  '(((eq (% (nth 1 (product-version (product-find 'wl-version))) 2) 0)
+     . "stable")
+    (t . "beta"))
+  "An alist to define the version status.")
+
+(defun wl-version-status ()
+  (let ((salist wl-version-status-alist)
+	status)
+    (while salist
+      (when (eval (car (car salist)))
+	(setq status (cdr (car salist)))
+	(setq salist nil))
+      (setq salist (cdr salist)))
+    status))
+
 (defun wl-generate-user-agent-string ()
   "A candidate of `wl-generate-mailer-string-func'.
 Insert User-Agent field instead of X-Mailer field."

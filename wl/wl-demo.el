@@ -38,6 +38,8 @@
 (require 'product)
 (product-provide (provide 'wl-demo) (require 'wl-version))
 
+(defconst wl-demo-icon-name (concat "wl-" (wl-version-status) "-logo"))
+
 ;; Avoid byte compile warnings.
 (eval-when-compile
   (defalias-maybe 'bitmap-compose 'ignore)
@@ -100,7 +102,9 @@ any conversions and evaluate FORMS there like `progn'."
 (eval-when-compile
   (defmacro wl-logo-xpm ()
     ;; (WIDTH HEIGHT DATA)
-    (let ((file (expand-file-name "wl-logo.xpm" wl-icon-dir)))
+    (let ((file (expand-file-name
+		 (concat wl-demo-icon-name ".xpm")
+		 wl-icon-dir)))
       (if (file-exists-p file)
 	  (wl-demo-with-temp-file-buffer file
 	    (re-search-forward
@@ -112,7 +116,9 @@ any conversions and evaluate FORMS there like `progn'."
 		  (buffer-string))))))
   (defmacro wl-logo-xbm ()
     ;; (WIDTH HEIGHT DATA)
-    (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
+    (let ((file (expand-file-name
+		 (concat wl-demo-icon-name ".xbm")
+		 wl-icon-dir)))
       (if (file-exists-p file)
 	  (wl-demo-with-temp-file-buffer file
 	    (let ((case-fold-search t)
@@ -137,7 +143,8 @@ any conversions and evaluate FORMS there like `progn'."
 	      (list 'list width height (read (current-buffer))))))))
   (defmacro wl-logo-bitmap ()
     ;; (DECODED-P . DATA)
-    (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
+    (let ((file (expand-file-name (concat wl-demo-icon-name ".xbm")
+				  wl-icon-dir)))
       (if (file-exists-p file)
 	  (if (condition-case nil (require 'bitmap) (error nil))
 	      (list 'cons t (bitmap-decode-xbm

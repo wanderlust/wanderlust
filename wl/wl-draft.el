@@ -284,7 +284,7 @@ the `wl-smtp-features' variable."
 				  eword-analyze-encoded-word
 				  eword-analyze-atom))
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from addr-alist)
+	from to-alist cc-alist)
     (set-buffer buf)
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
     (setq r-list 
@@ -339,18 +339,28 @@ the `wl-smtp-features' variable."
 			      (decode-mime-charset-string
 			       subject
 			       wl-mime-charset)))))
-      (if wl-draft-reply-use-address-with-full-name
-	  (setq addr-alist
-		(mapcar
-		 '(lambda (addr)
-		    (setq addr (eword-extract-address-components addr))
-		    (cons (nth 1 addr)
-			  (if (nth 0 addr)
-			      (concat
-			       (wl-address-quote-specials (nth 0 addr))
-			       " <" (nth 1 addr) ">")
-			    (nth 1 addr))))
-		 (append to cc)))))
+      (setq to-alist 
+	    (mapcar
+	     '(lambda (addr)
+		(setq addr (eword-extract-address-components addr))
+		(cons (nth 1 addr)
+		      (if (nth 0 addr)
+			  (concat
+			   (wl-address-quote-specials (nth 0 addr))
+			   " <" (nth 1 addr) ">")
+			(nth 1 addr))))
+	     to))
+      (setq cc-alist 
+	    (mapcar
+	     '(lambda (addr)
+		(setq addr (eword-extract-address-components addr))
+		(cons (nth 1 addr)
+		      (if (nth 0 addr)
+			  (concat
+			   (wl-address-quote-specials (nth 0 addr))
+			   " <" (nth 1 addr) ">")
+			(nth 1 addr))))
+	     cc)))
     (and subject wl-reply-subject-prefix
 	 (let ((case-fold-search t))
 	   (not
@@ -363,12 +373,8 @@ the `wl-smtp-features' variable."
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
-    (setq to (mapcar '(lambda (addr)
-			(wl-address-header-extract-address
-			 addr)) to))
-    (setq cc (mapcar '(lambda (addr)
-			(wl-address-header-extract-address
-			 addr)) cc))
+    (setq to (delq nil (mapcar 'car to-alist)))
+    (setq cc (delq nil (mapcar 'car cc-alist)))
     ;; if subscribed mailing list is contained in cc or to
     ;; and myself is contained in cc,
     ;; delete myself from cc.
@@ -391,13 +397,13 @@ the `wl-smtp-features' variable."
     (and to (setq to (mapconcat
 		      '(lambda (addr)
 			 (if wl-draft-reply-use-address-with-full-name
-			     (or (cdr (assoc addr addr-alist)) addr)
+			     (or (cdr (assoc addr to-alist)) addr)
 			   addr))
 		      to ",\n\t")))
     (and cc (setq cc (mapconcat
 		      '(lambda (addr)
 			 (if wl-draft-reply-use-address-with-full-name
-			     (or (cdr (assoc addr addr-alist)) addr)
+			     (or (cdr (assoc addr cc-alist)) addr)
 			   addr))
 		      cc ",\n\t")))
     (and mail-followup-to
@@ -405,7 +411,7 @@ the `wl-smtp-features' variable."
 	       (mapconcat
 		'(lambda (addr)
 		   (if wl-draft-reply-use-address-with-full-name
-		       (or (cdr (assoc addr addr-alist)) addr)
+		       (or (cdr (assoc addr (append to-alist cc-alist))) addr)
 		     addr))
 		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))

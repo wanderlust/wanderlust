@@ -1,3 +1,17 @@
+2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* etc/icons/wl-logo.xbm: Removed.
+
+	* etc/icons/wl-logo.xpm: Ditto.
+
+	* etc/icons/wl-stable-logo.xbm: New file.
+
+	* etc/icons/wl-stable-logo.xpm: Ditto.
+
+	* etc/icons/wl-beta-logo.xbm: Ditto.
+
+	* etc/icons/wl-beta-logo.xpm: Ditto.
+
 2000-10-17  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* WL-MK: Since `bytecomp' is not provided in Nemacs, use `load'
