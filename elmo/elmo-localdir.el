@@ -168,11 +168,13 @@
 				       num
 				       message-id))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (elmo-msgdb-mark
-			       (elmo-flag-table-get flag-table message-id)
-			       (elmo-file-cache-status
-				(elmo-file-cache-get message-id))
-			       'new)))
+			      (unless (eq 'read (elmo-flag-table-get 
+						 flag-table message-id))
+				(elmo-msgdb-mark
+				 (elmo-flag-table-get flag-table message-id)
+				 (elmo-file-cache-status
+				  (elmo-file-cache-get message-id))
+				 'new))))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist

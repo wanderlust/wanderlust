@@ -2,6 +2,7 @@
 
 	* elmo-localdir.el (elmo-folder-append-messages): Treat flags for
 	local file messages.
+	(elmo-folder-msgdb-create): Fixed read mark.
 
 2003-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
