@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 01:00:41 teranisi>
+;; Time-stamp: <2000-05-10 10:42:05 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -582,10 +582,12 @@ If optional argument is non-nil, Supersedes message"
 	      (delete-other-windows)))
       (save-excursion
 	(let ((mmelmo-force-fetch-entire-message t))
-	  (wl-summary-set-message-buffer-or-redisplay)
-	  (set-buffer (wl-message-get-original-buffer))
-	  (wl-draft-edit-string (buffer-substring (point-min)
-						  (point-max))))))))
+	  (if (null (wl-summary-message-number))
+	      (message "No message.")	  
+	    (wl-summary-set-message-buffer-or-redisplay)
+	    (set-buffer (wl-message-get-original-buffer))
+	    (wl-draft-edit-string (buffer-substring (point-min)
+						    (point-max)))))))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
@@ -1268,49 +1270,52 @@ q	Goto folder mode.
 Optional argument ADDR-STR is used as a target address if specified."
   (interactive (if current-prefix-arg
 		   (list (read-from-minibuffer "Target address: "))))
-  (save-excursion
-    (wl-summary-set-message-buffer-or-redisplay))
-  (let* ((charset wl-summary-buffer-mime-charset)
-	 (candidates
-	  (with-current-buffer (wl-message-get-original-buffer)
-	    (wl-summary-edit-addresses-collect-candidate-fields
-	     charset)))
-	 address pair result)
-    (if addr-str
-	(setq address addr-str)
-      (when candidates
-	(setq address (car (car candidates)))
-	(setq address
-	      (completing-read 
-	       (format "Target address (%s): " address)
-	       (mapcar
-		(function (lambda (x) (cons (car x) (car x))))
-		candidates)
-	       nil nil nil nil address))))
-    (when address
-      (setq pair (assoc address candidates))
-      (unless pair
-	(setq pair (cons address nil)))
-      (when (setq result (wl-summary-edit-addresses-subr (car pair) (cdr pair)))
-	;; update alias
-	(wl-status-update)
-	(setq address (assoc (car pair) wl-address-list))
-	(if address
-	    (message "%s, %s, <%s> is %s."
-		     (nth 2 address)
-		     (nth 1 address)
-		     (nth 0 address)
-		     result)))
-      ;; i'd like to update summary-buffer, but...
-      ;;(wl-summary-rescan)
-      (run-hooks 'wl-summary-edit-addresses-hook))))
-
+  (if (null (wl-summary-message-number))
+      (message "No message.")
+    (save-excursion
+      (wl-summary-set-message-buffer-or-redisplay))
+    (let* ((charset wl-summary-buffer-mime-charset)
+	   (candidates
+	    (with-current-buffer (wl-message-get-original-buffer)
+	      (wl-summary-edit-addresses-collect-candidate-fields
+	       charset)))
+	   address pair result)
+      (if addr-str
+	  (setq address addr-str)
+	(when candidates
+	  (setq address (car (car candidates)))
+	  (setq address
+		(completing-read 
+		 (format "Target address (%s): " address)
+		 (mapcar
+		  (function (lambda (x) (cons (car x) (car x))))
+		  candidates)
+		 nil nil nil nil address))))
+      (when address
+	(setq pair (assoc address candidates))
+	(unless pair
+	  (setq pair (cons address nil)))
+	(when (setq result (wl-summary-edit-addresses-subr (car pair) (cdr pair)))
+	  ;; update alias
+	  (wl-status-update)
+	  (setq address (assoc (car pair) wl-address-list))
+	  (if address
+	      (message "%s, %s, <%s> is %s."
+		       (nth 2 address)
+		       (nth 1 address)
+		       (nth 0 address)
+		       result)))
+	;; i'd like to update summary-buffer, but...
+	;;(wl-summary-rescan)
+	(run-hooks 'wl-summary-edit-addresses-hook)))))
+  
 (defun wl-summary-incorporate (&optional arg)
   "Check and prefetch all uncached messages.
 If optional argument is non-nil, checking is omitted."
   (interactive "P")
   (unless arg
-    (wl-summary-sync-force-update))
+    (save-excursion
+      (wl-summary-sync-force-update)))
   (wl-summary-prefetch-region (point-min) (point-max)
 			      wl-summary-incorporate-marks))
 
@@ -1424,7 +1429,7 @@ If optional argument is non-nil, checking is omitted."
 	targets
 	mark length
 	entity msg
-	start-pos)
+	start-pos pos)
     (save-excursion
       (setq start-pos (point))
       (save-restriction
@@ -1472,10 +1477,12 @@ If optional argument is non-nil, checking is omitted."
 		       (setq count (+ 1 count)) length))
 	  ;; redisplay!
 	  (save-excursion
-	    (save-restriction
-	      (widen)
-	      (goto-char start-pos)
-	      (sit-for 0)))
+	    (setq pos (point))
+	    (goto-char start-pos)
+	    (if (pos-visible-in-window-p pos)
+		(save-restriction
+		  (widen)
+		  (sit-for 0))))
 	  (setq targets (cdr targets)))
 	(message "Prefetched %d/%d message(s)" count length)
 	(cons count length)))))
@@ -1895,6 +1902,9 @@ If optional argument is non-nil, checking is omitted."
 		'wl-summary-delete-messages-on-buffer "Deleting..."
 		(/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
+      (when deleting-info
+	(elmo-display-progress
+	 'wl-summary-delete-messages-on-buffer "Deleting..." 100))
       (if (eq wl-summary-buffer-view 'thread)
 	  (wl-thread-update-line-msgs (elmo-uniq-list update-list)))
       (wl-thread-cleanup-symbols msgs2)
@@ -2012,9 +2022,10 @@ If optional argument is non-nil, checking is omitted."
   "Update marks in summary."
   (interactive)
   (let ((plugged (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+	(last-progress 0)
 	mark-alist unread-marks msgs mark importants unreads 
 	importants-in-db unreads-in-db has-imap4 diff diffs
-	mes)
+	mes num-ma ma-length progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-get-type 
 		    wl-summary-buffer-folder-name)
@@ -2024,6 +2035,8 @@ If optional argument is non-nil, checking is omitted."
 			       wl-summary-unread-uncached-mark
 			       wl-summary-new-mark)
 	    mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+            num-ma (length mark-alist)
+	    ma-length num-ma
 	    importants (elmo-list-folder-important 
 			wl-summary-buffer-folder-name
 			(elmo-msgdb-get-overview wl-summary-buffer-msgdb))
@@ -2033,15 +2046,25 @@ If optional argument is non-nil, checking is omitted."
 			(elmo-list-folder-unread 
 			 wl-summary-buffer-folder-name
 			 mark-alist unread-marks)))
-      (while mark-alist 
+      (while mark-alist
+	(setq progress (/ (* (- num-ma ma-length) 100) num-ma))
+	(if (not (eq progress last-progress))
+	    (elmo-display-progress 'wl-summary-sync-marks
+				   "Updating marks..."
+				   progress))
+	(setq last-progress progress)
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
 	    (setq importants-in-db (cons (car (car mark-alist))
 					 importants-in-db))
 	  (if (member (cadr (car mark-alist)) unread-marks)
 	      (setq unreads-in-db (cons (car (car mark-alist))
- 					unreads-in-db))))
-	(setq mark-alist (cdr mark-alist)))      
+					unreads-in-db))))
+	(setq mark-alist (cdr mark-alist)
+	      ma-length (1- ma-length)))
+      (elmo-display-progress 'wl-summary-sync-marks
+			     "Updating marks..."
+			     100)
       (setq diff (elmo-list-diff importants importants-in-db))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
@@ -2742,7 +2765,9 @@ If optional argument is non-nil, checking is omitted."
 		  (save-excursion
 		    (forward-line (- 
 				   0 
-				   wl-summary-partial-highlight-above-lines))
+				   (or
+				    wl-summary-partial-highlight-above-lines
+				    wl-summary-highlight-partial-threshold)))
 		    (wl-highlight-summary (point) (point-max)))
 		(wl-highlight-summary (point-min) (point-max))))
 	  (if (null wl-summary-buffer-msgdb) ;; one more try.
@@ -2853,7 +2878,26 @@ If optional argument is non-nil, checking is omitted."
 	  (elmo-msgdb-overview-get-parent-entity entity overview));; temp
 	 ;;(parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
-	 msg)
+	 ;;(case-fold-search t)
+	 ;;overview2 cur-entity
+	 msg) 
+    ;; Search parent by subject.
+    (when (and (null parent-number)
+ 	       (string-match wl-summary-search-parent-by-subject-regexp
+ 			     (elmo-msgdb-overview-entity-get-subject
+ 			      entity)))
+      (setq overview2 overview)
+      (while overview2
+ 	(setq cur-entity (car overview2))
+ 	(when (wl-summary-subject-equal
+ 	       (or (elmo-msgdb-overview-entity-get-subject cur-entity)
+ 		   "")
+ 	       (or (elmo-msgdb-overview-entity-get-subject entity)
+ 		   ""))
+ 	  (setq parent-number (elmo-msgdb-overview-entity-get-number
+ 			       cur-entity))
+ 	  (setq overview2 nil))
+ 	(setq overview2 (cdr overview2))))
     (if (and parent-number
 	     wl-summary-divide-thread-when-subject-changed
 	     (not (wl-summary-subject-equal 
@@ -2917,11 +2961,14 @@ If optional argument is non-nil, checking is omitted."
 	      (setq mark " ")))
 	;; interactive
 	(setq visible t))
-      (end-of-line)
-      (setq eol (point))
-      (re-search-backward (concat "^" wl-summary-buffer-number-regexp
-				  "..../..")) ; set cursor line
-      (beginning-of-line)
+      (when visible
+	(if (null (wl-summary-message-number))
+	    (message "No message.")
+	  (end-of-line)
+	  (setq eol (point))
+	  (re-search-backward (concat "^" wl-summary-buffer-number-regexp
+				      "..../..")) ; set cursor line
+	  (beginning-of-line)))
       (if (or (and (not visible)
 		   ;; already exists in msgdb.
 		   (assq number (elmo-msgdb-get-number-alist msgdb)))
@@ -3247,6 +3294,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   "Print refile destination on line."
   (wl-summary-remove-destination)
   (let ((inhibit-read-only t)
+	(folder (copy-sequence folder))
 	(buffer-read-only nil)
 	len rs re c)
     (setq len (string-width folder))
@@ -3403,27 +3451,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defsubst wl-summary-no-auto-refile-message-p (msg mark-alist) 
   (member (cadr (assq msg mark-alist)) wl-summary-auto-refile-skip-marks))
 
-(defun wl-summary-auto-refile-check-refile-rule-alist ()
-  (when wl-refile-rule-alist
-    (message "Checking destination folders...")
-    (let ((ralist wl-refile-rule-alist)
-	  pairs dsts)
-      (while ralist
-	(setq pairs (cdr (car ralist)))
-	(while pairs
-	  (if (not (member (cdr (car pairs)) dsts))
-	      (setq dsts (cons (cdr (car pairs)) dsts)))
-	  (setq pairs (cdr pairs)))
-	(setq ralist (cdr ralist)))
-      (mapcar 
-       'wl-folder-confirm-existence
-       dsts))
-    (message "Checking destination folders...done.")))
-
 (defun wl-summary-auto-refile (&optional open-all)
   "Set refile mark automatically according to wl-refile-guess-by-rule."
   (interactive "P")
-  (wl-summary-auto-refile-check-refile-rule-alist)
   (message "Marking...")
   (save-excursion
     (if (and (eq wl-summary-buffer-view 'thread)
@@ -3434,6 +3464,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		      wl-summary-buffer-msgdb))
 	   (mark-alist (elmo-msgdb-get-mark-alist
 			wl-summary-buffer-msgdb))
+	   checked-dsts
 	   (count 0)
 	   number dst thr-entity)
       (goto-line 1)
@@ -3446,7 +3477,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			  (elmo-msgdb-overview-get-entity-by-number
 			   overview number)))
 		   (not (equal dst spec)))
-	  ;(wl-folder-confirm-existence dst)
+	  (when (not (member dst checked-dsts))
+	    (wl-folder-confirm-existence dst)
+	    (setq checked-dsts (cons dst checked-dsts)))
 	  (if (wl-summary-refile dst number)
 	      (incf count))
 	  (message "Marking...%d message(s)." count))
@@ -4207,11 +4240,16 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (setq visible (wl-summary-jump-to-msg number))
 	    (setq mark (or mark (cadr (assq number mark-alist)))))
 	(setq visible t))
-      (end-of-line)
-      (setq eol (point))
-      (if visible
+      (when visible
+	(if (null (wl-summary-message-number))
+	    (progn
+	      (message "No message.")
+	      (setq visible nil))
+	  (end-of-line)
+	  (setq eol (point))
 	  (re-search-backward (concat "^" wl-summary-buffer-number-regexp
 				      "..../..") nil t)) ; set cursor line
+	)
       (beginning-of-line)
       (if (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)" eol t)
 	  (progn
@@ -4796,8 +4834,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-reply-with-citation (&optional arg)
   (interactive "P")
-  (unwind-protect
-      (wl-summary-reply arg t)
+  (when (wl-summary-reply arg t)
     (goto-char (point-max))
     (wl-draft-yank-original)
     (run-hooks 'wl-mail-setup-hook)))
@@ -4912,49 +4949,51 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-jump-to-parent-message (arg)
   (interactive "P")
-  (let ((cur-buf (current-buffer))
-	(regexp "\\(<[^<>]*>\\)[ \t]*$")
-	(i -1) ;; xxx
-	msg-id ref-list ref irt)
-    (wl-summary-set-message-buffer-or-redisplay)
-    (set-buffer (wl-message-get-original-buffer))
-    (message "Searching parent message...")
-    (setq ref (std11-field-body "References")
-	  irt (std11-field-body "In-Reply-To"))
-    (cond
-     ((and arg (not (numberp arg)) ref (not (string= ref ""))
-	   (string-match regexp ref))
-      ;; The first message of the thread.
-      (setq msg-id (wl-match-string 1 ref)))
-     ;; "In-Reply-To:" has only one msg-id.
-     ((and irt (not (string= irt ""))
-	   (string-match regexp irt))
-      (setq msg-id (wl-match-string 1 irt)))
-     ((and (or (null arg) (numberp arg)) ref (not (string= ref ""))
-	   (string-match regexp ref))
-      ;; "^" searching parent, "C-u 2 ^" looking for grandparent.
-      (while (string-match regexp ref)
-	(setq ref-list
-	      (append (list
-		       (wl-match-string 1 ref))
-		      ref-list))
-	(setq ref (substring ref (match-end 0)))
-	(setq i (1+ i)))
-      (setq msg-id
-            (if (null arg) (nth 0 ref-list) ;; previous
-              (if (<= arg i) (nth (1- arg) ref-list)
-                (nth i ref-list))))))
-    (set-buffer cur-buf)
-    (cond ((null msg-id)
-	   (message "No parent message!")
-	   nil)
-	  ((wl-summary-jump-to-msg-by-message-id msg-id)
-	   (wl-summary-redisplay)
-	   (message "Searching parent message...done.")
-	   t)
-	  (t ; failed.
-	   (message "Parent message was not found.")
-	   nil))))
+  (if (null (wl-summary-message-number))
+      (message "No message.")
+    (let ((cur-buf (current-buffer))
+	  (regexp "\\(<[^<>]*>\\)[ \t]*$")
+	  (i -1) ;; xxx
+	  msg-id ref-list ref irt)
+      (wl-summary-set-message-buffer-or-redisplay)
+      (set-buffer (wl-message-get-original-buffer))
+      (message "Searching parent message...")
+      (setq ref (std11-field-body "References")
+	    irt (std11-field-body "In-Reply-To"))
+      (cond
+       ((and arg (not (numberp arg)) ref (not (string= ref ""))
+	     (string-match regexp ref))
+	;; The first message of the thread.
+	(setq msg-id (wl-match-string 1 ref)))
+       ;; "In-Reply-To:" has only one msg-id.
+       ((and irt (not (string= irt ""))
+	     (string-match regexp irt))
+	(setq msg-id (wl-match-string 1 irt)))
+       ((and (or (null arg) (numberp arg)) ref (not (string= ref ""))
+	     (string-match regexp ref))
+	;; "^" searching parent, "C-u 2 ^" looking for grandparent.
+	(while (string-match regexp ref)
+	  (setq ref-list
+		(append (list
+			 (wl-match-string 1 ref))
+			ref-list))
+	  (setq ref (substring ref (match-end 0)))
+	  (setq i (1+ i)))
+	(setq msg-id
+	      (if (null arg) (nth 0 ref-list) ;; previous
+		(if (<= arg i) (nth (1- arg) ref-list)
+		  (nth i ref-list))))))
+      (set-buffer cur-buf)
+      (cond ((null msg-id)
+	     (message "No parent message!")
+	     nil)
+	    ((wl-summary-jump-to-msg-by-message-id msg-id)
+	     (wl-summary-redisplay)
+	     (message "Searching parent message...done.")
+	     t)
+	    (t ; failed.
+	     (message "Parent message was not found.")
+	     nil)))))
 
 (defun wl-summary-reply (&optional arg without-setup-hook)
   "Reply to current message. Default is \"wide\" reply.
@@ -4964,17 +5003,22 @@ Reply to author if invoked with argument."
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	mes-buf)
-    (wl-summary-redisplay-internal folder number)
-    (wl-select-buffer (get-buffer (setq mes-buf (wl-current-message-buffer))))
-    (set-buffer mes-buf)
-    (goto-char (point-min))
-    (or wl-draft-use-frame
-	(split-window-vertically))
-    (other-window 1)
-    (when (setq mes-buf (wl-message-get-original-buffer))
-      (wl-draft-reply mes-buf (not arg) summary-buf)
-      (unless without-setup-hook
-	(run-hooks 'wl-mail-setup-hook)))))
+    (if number
+	(unwind-protect
+	    (progn
+	      (wl-summary-redisplay-internal folder number)
+	      (wl-select-buffer
+	       (get-buffer (setq mes-buf (wl-current-message-buffer))))
+	      (set-buffer mes-buf)
+	      (goto-char (point-min))
+	      (or wl-draft-use-frame
+		  (split-window-vertically))
+	      (other-window 1)
+	      (when (setq mes-buf (wl-message-get-original-buffer))
+		(wl-draft-reply mes-buf (not arg) summary-buf)
+		(unless without-setup-hook
+		  (run-hooks 'wl-mail-setup-hook)))
+	      t)))))
 
 (defun wl-summary-write ()
   "Write a new draft from Summary."
@@ -5013,28 +5057,30 @@ Reply to author if invoked with argument."
 	(summary-buf (current-buffer))
 	(wl-draft-forward t)
 	entity subject num)
-    (wl-summary-redisplay-internal folder number)
-    (wl-select-buffer (get-buffer wl-message-buf-name))
-    (or wl-draft-use-frame
-	(split-window-vertically))
-    (other-window 1)
-    ;; get original subject.
-    (if summary-buf
-	(save-excursion 
-	  (set-buffer summary-buf)
-	  (setq num (wl-summary-message-number))
-	  (setq entity (assoc (cdr (assq num 
-					 (elmo-msgdb-get-number-alist 
-					  wl-summary-buffer-msgdb)))
-			      (elmo-msgdb-get-overview 
-			       wl-summary-buffer-msgdb)))
-	  (and entity
-	       (setq subject 
-		     (or (elmo-msgdb-overview-entity-get-subject entity) 
-			 "")))))
-    (wl-draft-forward subject summary-buf)
-    (unless without-setup-hook
-      (run-hooks 'wl-mail-setup-hook))))
+    (if (null number)
+	(message "No message.")
+      (wl-summary-redisplay-internal folder number)
+      (wl-select-buffer (get-buffer wl-message-buf-name))
+      (or wl-draft-use-frame
+	  (split-window-vertically))
+      (other-window 1)
+      ;; get original subject.
+      (if summary-buf
+	  (save-excursion 
+	    (set-buffer summary-buf)
+	    (setq num (wl-summary-message-number))
+	    (setq entity (assoc (cdr (assq num 
+					   (elmo-msgdb-get-number-alist 
+					    wl-summary-buffer-msgdb)))
+				(elmo-msgdb-get-overview 
+				 wl-summary-buffer-msgdb)))
+	    (and entity
+		 (setq subject 
+		       (or (elmo-msgdb-overview-entity-get-subject entity) 
+			   "")))))
+      (wl-draft-forward subject summary-buf)
+      (unless without-setup-hook
+	(run-hooks 'wl-mail-setup-hook)))))
 
 (defun wl-summary-click (e)
   (interactive "e")
@@ -5071,24 +5117,6 @@ Reply to author if invoked with argument."
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number)))))
 
-(defun wl-summary-move-cached-regex (skip-marks)
-  (if (eq wl-summary-move-order 'unread)
-      (list
-       (format "^%s[^%s]\\(%s\\)"
-	       wl-summary-buffer-number-regexp
-	       skip-marks
-	       (regexp-quote wl-summary-unread-cached-mark))
-       (format "^%s[^%s]\\(%s\\| \\)"
-	       wl-summary-buffer-number-regexp
-	       skip-marks
-	       (regexp-quote wl-summary-important-mark)))
-    (list
-     (format "^%s[^%s]\\(%s\\|%s\\| \\)"
-	     wl-summary-buffer-number-regexp
-	     skip-marks
-	     (regexp-quote wl-summary-unread-cached-mark)
-	     (regexp-quote wl-summary-important-mark)))))
-
 (defun wl-summary-prev (&optional interactive)
   (interactive)
   (if wl-summary-move-direction-toggle
@@ -5100,19 +5128,16 @@ Reply to author if invoked with argument."
 	goto-next regex-list regex next-entity finfo)
     (beginning-of-line)
     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
-	(progn
-	  (setq regex (format "^%s[^%s]"
-			      wl-summary-buffer-number-regexp
-			      skip-mark-regexp))
-	  (unless (re-search-backward regex nil t)
-	    (setq goto-next t)))
-      (setq regex-list (wl-summary-move-cached-regex skip-mark-regexp))
-      (catch 'done
-	(while regex-list
-	  (if (re-search-backward (car regex-list) nil t)
-	      (throw 'done t))
-	  (setq regex-list (cdr regex-list)))
-	(setq goto-next t)))
+	(setq regex (format "^%s[^%s]"
+			    wl-summary-buffer-number-regexp
+			    skip-mark-regexp))
+      (setq regex (format "^%s[^%s]\\(%s\\|%s\\| \\)"
+			  wl-summary-buffer-number-regexp
+			  skip-mark-regexp
+			  (regexp-quote wl-summary-unread-cached-mark)
+			  (regexp-quote wl-summary-important-mark))))
+    (unless (re-search-backward regex nil t)
+      (setq goto-next t))
     (beginning-of-line)
     (if (not goto-next)
 	(progn
@@ -5141,20 +5166,17 @@ Reply to author if invoked with argument."
 	goto-next regex regex-list next-entity finfo)
     (end-of-line)
     (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
-	(progn
-	  (setq regex (format "^%s[^%s]"
-			      wl-summary-buffer-number-regexp
-			      skip-mark-regexp))
-	  (unless (re-search-forward regex nil t)
-	    (forward-line 1)
-	    (setq goto-next t)))
-      (setq regex-list (wl-summary-move-cached-regex skip-mark-regexp))
-      (catch 'done
-	(while regex-list
-	  (if (re-search-forward (car regex-list) nil t)
-	      (throw 'done t))
-	  (setq regex-list (cdr regex-list)))
-	(setq goto-next t)))
+	(setq regex (format "^%s[^%s]"
+			    wl-summary-buffer-number-regexp
+			    skip-mark-regexp))
+      (setq regex (format "^%s[^%s]\\(%s\\|%s\\| \\)"
+			  wl-summary-buffer-number-regexp
+			  skip-mark-regexp
+			  (regexp-quote wl-summary-unread-cached-mark)
+			  (regexp-quote wl-summary-important-mark))))    
+    (unless (re-search-forward regex nil t)
+      (forward-line 1)
+      (setq goto-next t))
     (beginning-of-line)
     (if (not goto-next)
 	(if wl-summary-buffer-disp-msg
@@ -5368,43 +5390,45 @@ Reply to author if invoked with argument."
 (defun wl-summary-cancel-message ()
   "Cancel an article on news."
   (interactive)
-  (let ((summary-buf (current-buffer))
-	message-buf)
-    (wl-summary-set-message-buffer-or-redisplay)
-    (if (setq message-buf (wl-message-get-original-buffer))
-	(set-buffer message-buf))
-    (unless (wl-message-news-p)
-      (error "This is not a news article; canceling is impossible"))
-    (when (yes-or-no-p "Do you really want to cancel this article? ")
-      (let (from newsgroups message-id distribution buf)
-	(save-excursion
-	  (setq from (std11-field-body "from")
-		newsgroups (std11-field-body "newsgroups")
-		message-id (std11-field-body "message-id")
-		distribution (std11-field-body "distribution"))
-	  ;; Make sure that this article was written by the user.
-	  (unless (wl-address-user-mail-address-p 
-		   (wl-address-header-extract-address
-		    (car (wl-parse-addresses from))))
-	    (error "This article is not yours"))
-	  ;; Make control message.
-	  (setq buf (set-buffer (get-buffer-create " *message cancel*")))
-	  (setq wl-draft-buffer-cur-summary-buffer summary-buf)
-	  (buffer-disable-undo (current-buffer))
-	  (erase-buffer)
-	  (insert "Newsgroups: " newsgroups "\n"
-		  "From: " (wl-address-header-extract-address
-			    wl-from) "\n"
-			    "Subject: cmsg cancel " message-id "\n"
-			    "Control: cancel " message-id "\n"
-			    (if distribution
-				(concat "Distribution: " distribution "\n")
-			      "")
-			    mail-header-separator "\n"
-			    wl-summary-cancel-message)
-	  (message "Canceling your message...")
-	  (wl-draft-raw-send t t) ; kill when done, force-pre-hooks.
-	  (message "Canceling your message...done"))))))
+  (if (null (wl-summary-message-number))
+      (message "No message.")
+    (let ((summary-buf (current-buffer))
+	  message-buf)
+      (wl-summary-set-message-buffer-or-redisplay)
+      (if (setq message-buf (wl-message-get-original-buffer))
+	  (set-buffer message-buf))
+      (unless (wl-message-news-p)
+	(error "This is not a news article; canceling is impossible"))
+      (when (yes-or-no-p "Do you really want to cancel this article? ")
+	(let (from newsgroups message-id distribution buf)
+	  (save-excursion
+	    (setq from (std11-field-body "from")
+		  newsgroups (std11-field-body "newsgroups")
+		  message-id (std11-field-body "message-id")
+		  distribution (std11-field-body "distribution"))
+	    ;; Make sure that this article was written by the user.
+	    (unless (wl-address-user-mail-address-p 
+		     (wl-address-header-extract-address
+		      (car (wl-parse-addresses from))))
+	      (error "This article is not yours"))
+	    ;; Make control message.
+	    (setq buf (set-buffer (get-buffer-create " *message cancel*")))
+	    (setq wl-draft-buffer-cur-summary-buffer summary-buf)
+	    (buffer-disable-undo (current-buffer))
+	    (erase-buffer)
+	    (insert "Newsgroups: " newsgroups "\n"
+		    "From: " (wl-address-header-extract-address
+			      wl-from) "\n"
+			      "Subject: cmsg cancel " message-id "\n"
+			      "Control: cancel " message-id "\n"
+			      (if distribution
+				  (concat "Distribution: " distribution "\n")
+				"")
+			      mail-header-separator "\n"
+			      wl-summary-cancel-message)
+	    (message "Canceling your message...")
+	    (wl-draft-raw-send t t) ; kill when done, force-pre-hooks.
+	    (message "Canceling your message...done")))))))
 
 (defun wl-summary-supersedes-message ()
   "Supersede current message."
@@ -5487,82 +5511,89 @@ Reply to author if invoked with argument."
 ;; mew-summary-pipe-message()
 (defun wl-summary-pipe-message (prefix command)
   "Send this message via pipe."
-  (interactive
-   (list current-prefix-arg
-	 (read-string "Shell command on message: " wl-summary-shell-command-last)))
-  (if (y-or-n-p "Send this message to pipe? ")
-      (save-excursion
-	(wl-summary-set-message-buffer-or-redisplay)
-	(set-buffer (wl-message-get-original-buffer))
-	(if (string= command "")
-	    (setq command wl-summary-shell-command-last))
-	(goto-char (point-min)) ; perhaps this line won't be necessary
-	(if prefix
-	    (search-forward "\n\n"))
-	(shell-command-on-region (point) (point-max) command nil)
-	(setq wl-summary-shell-command-last command))))
+  (interactive (list current-prefix-arg nil))
+  (if (null (wl-summary-message-number))
+      (message "No message.")  
+    (setq command (read-string "Shell command on message: "
+			       wl-summary-shell-command-last))
+    (if (y-or-n-p "Send this message to pipe? ")
+	(save-excursion
+	  (wl-summary-set-message-buffer-or-redisplay)
+	  (set-buffer (wl-message-get-original-buffer))
+	  (if (string= command "")
+	      (setq command wl-summary-shell-command-last))
+	  (goto-char (point-min)) ; perhaps this line won't be necessary
+	  (if prefix
+	      (search-forward "\n\n"))
+	  (shell-command-on-region (point) (point-max) command nil)
+	  (setq wl-summary-shell-command-last command)))))
 
 (defun wl-summary-print-message (&optional arg)
   (interactive "P")
-  (save-excursion
-    (wl-summary-set-message-buffer-or-redisplay)
-    (if (or (not (interactive-p))
-	    (y-or-n-p "Print ok?"))
-	(progn
-	  (let* ((message-buffer (get-buffer wl-message-buf-name))
-		 ;; (summary-buffer (get-buffer wl-summary-buffer-name))
-		 (buffer (generate-new-buffer " *print*")))
-	    (set-buffer message-buffer)
-	    (copy-to-buffer buffer (point-min) (point-max))
-	    (set-buffer buffer)
-	    (funcall wl-print-buffer-func)
-	    (kill-buffer buffer)))
-      (message ""))))
+  (if (null (wl-summary-message-number))
+      (message "No message.")  
+    (save-excursion
+      (wl-summary-set-message-buffer-or-redisplay)
+      (if (or (not (interactive-p))
+	      (y-or-n-p "Print ok?"))
+	  (progn
+	    (let* ((message-buffer (get-buffer wl-message-buf-name))
+		   ;; (summary-buffer (get-buffer wl-summary-buffer-name))
+		   (buffer (generate-new-buffer " *print*")))
+	      (set-buffer message-buffer)
+	      (copy-to-buffer buffer (point-min) (point-max))
+	      (set-buffer buffer)
+	      (funcall wl-print-buffer-func)
+	      (kill-buffer buffer)))
+	(message "")))))
 
 (defun wl-summary-print-message-with-ps-print (&optional filename)
-  (interactive (list (ps-print-preprint current-prefix-arg)))
-  (if (or (not (interactive-p))
-	  (y-or-n-p "Print ok?"))
-      (let ((summary-buffer (current-buffer))
-	    wl-break-pages)
-	(save-excursion
-	  ;;(wl-summary-set-message-buffer-or-redisplay)
-	  (wl-summary-redisplay-internal)
-	  (let* ((message-buffer (get-buffer wl-message-buf-name))
-		 (buffer (generate-new-buffer " *print*"))
-		 (entity (progn
-			   (set-buffer summary-buffer)
-			   (assoc (cdr (assq 
-					(wl-summary-message-number)
-					(elmo-msgdb-get-number-alist 
-					 wl-summary-buffer-msgdb)))
-				  (elmo-msgdb-get-overview 
-				   wl-summary-buffer-msgdb))))
-		 (wl-ps-subject
-		  (and entity
-		       (or (elmo-msgdb-overview-entity-get-subject entity) 
-			   "")))
-		 (wl-ps-from
-		  (and entity
-		       (or (elmo-msgdb-overview-entity-get-from entity) "")))
-		 (wl-ps-date
-		  (and entity
-		       (or (elmo-msgdb-overview-entity-get-date entity) ""))))
-	    (run-hooks 'wl-ps-preprint-hook)
-	    (set-buffer message-buffer)
-	    (copy-to-buffer buffer (point-min) (point-max))
-	    (set-buffer buffer)
-	    (unwind-protect
-		(let ((ps-left-header
-		       (list (concat "(" wl-ps-subject ")")
-			     (concat "(" wl-ps-from ")")))
-		      (ps-right-header 
-		       (list "/pagenumberstring load" 
-			     (concat "(" wl-ps-date ")"))))
-		  (run-hooks 'wl-ps-print-hook)
-		  (funcall wl-ps-print-buffer-func filename))
-	      (kill-buffer buffer)))))
-    (message "")))
+  (interactive)
+  (if (null (wl-summary-message-number))
+      (message "No message.")  
+    (setq filename (ps-print-preprint current-prefix-arg))
+    (if (or (not (interactive-p))
+	    (y-or-n-p "Print ok?"))
+	(let ((summary-buffer (current-buffer))
+	      wl-break-pages)
+	  (save-excursion
+	    ;;(wl-summary-set-message-buffer-or-redisplay)
+	    (wl-summary-redisplay-internal)
+	    (let* ((message-buffer (get-buffer wl-message-buf-name))
+		   (buffer (generate-new-buffer " *print*"))
+		   (entity (progn
+			     (set-buffer summary-buffer)
+			     (assoc (cdr (assq 
+					  (wl-summary-message-number)
+					  (elmo-msgdb-get-number-alist 
+					   wl-summary-buffer-msgdb)))
+				    (elmo-msgdb-get-overview 
+				     wl-summary-buffer-msgdb))))
+		   (wl-ps-subject
+		    (and entity
+			 (or (elmo-msgdb-overview-entity-get-subject entity) 
+			     "")))
+		   (wl-ps-from
+		    (and entity
+			 (or (elmo-msgdb-overview-entity-get-from entity) "")))
+		   (wl-ps-date
+		    (and entity
+			 (or (elmo-msgdb-overview-entity-get-date entity) ""))))
+	      (run-hooks 'wl-ps-preprint-hook)
+	      (set-buffer message-buffer)
+	      (copy-to-buffer buffer (point-min) (point-max))
+	      (set-buffer buffer)
+	      (unwind-protect
+		  (let ((ps-left-header
+			 (list (concat "(" wl-ps-subject ")")
+			       (concat "(" wl-ps-from ")")))
+			(ps-right-header 
+			 (list "/pagenumberstring load" 
+			       (concat "(" wl-ps-date ")"))))
+		    (run-hooks 'wl-ps-print-hook)
+		    (funcall wl-ps-print-buffer-func filename))
+		(kill-buffer buffer)))))
+      (message ""))))
   
 (if (featurep 'ps-print) ; ps-print is available.
     (fset 'wl-summary-print-message 'wl-summary-print-message-with-ps-print))
@@ -5866,6 +5897,23 @@ Reply to author if invoked with argument."
 		  (elmo-buffer-cache-message folder next msgdb)
 		  (if wl-cache-prefetch-debug
 		      (message "Reading %d... done" msg))))))))))
+
+(defun wl-summary-set-parent ()
+  "Set current message's parent interactively."
+  (interactive)
+  (let ((number (wl-summary-message-number))
+	(parent (read-from-minibuffer "Parent Message (No.): "))
+	buffer-read-only)
+    (when number
+      (wl-thread-delete-message number t)
+      (wl-thread-insert-message 
+       (elmo-msgdb-overview-get-entity-by-number
+	(elmo-msgdb-get-overview wl-summary-buffer-msgdb)
+	number)
+       (elmo-msgdb-get-overview wl-summary-buffer-msgdb)
+       (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+       number
+       (string-to-int parent) t))))
 
 (provide 'wl-summary)
 

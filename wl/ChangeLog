@@ -1,3 +1,200 @@
+2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
+	New variable (revival).
+	* wl-summary.el (wl-summary-insert-thread-entity): Search parent
+	by subject matching if there's no in-reply-to nor references field
+	(revival).
+
+
+2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-close-all): Fixed typo in display-progress
+	message.
+
+2000-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-reply): Return t if there was a
+	message at cursor point.
+	Added unwind-protect.
+	(wl-summary-reply-with-citation): Cite only when wl-summary-reply
+	returns t.
+	(wl-summary-cancel-message): Do nothing when there's no message at
+	cursor point.
+	(wl-summary-forward): Ditto.
+	(wl-summary-jump-to-parent-message): Ditto.
+	(wl-summary-reedit): Ditto.
+	(wl-summary-edit-addresses): Ditto.
+	(wl-summary-pipe-message): Ditto.
+	(wl-summary-print-message-with-ps-print): Ditto.
+	(wl-summary-print-message): Ditto.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-mark-as-unread): Ditto.
+
+	* wl-summary.el (wl-summary-reply): Cause an error when there's no
+	message at cursor point.
+	(wl-summary-reply-with-citation): Remove unwind-protect.
+
+	* wl-summary.el (wl-summary-insert-thread-entity): Eliminated
+	subject searching feature.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
+	Eliminated.
+
+2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
+	New variable.
+	* wl-summary.el (wl-summary-insert-thread-entity): Search parent
+	by subject matching if there's no in-reply-to nor references field.
+
+	* wl-summary.el (wl-summary-set-parent): New command (No key binding).
+
+	* wl-folder.el (wl-folder-insert-entity): Remove progress gauge
+	when display is finished.
+	(wl-folder-open-all): Ditto.
+	(wl-folder-update-access-group): Ditto.
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Ditto.
+	* wl-thread.el (wl-thread-close-all): Ditto.
+
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Remove
+	progress gauge only when it was displayed.
+	* wl-folder.el (wl-folder-insert-entity): Ditto.
+
+2000-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-incorporate): Enclose
+	`wl-summary-sync-force-update' with save-excursion.
+
+2000-04-21  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
+
+	* wl-summary.el (wl-summary-prefetch-region):
+	Pass current cursor point to `pos-visible-in-window-p' after
+	moving cursor to the started point.
+
+2000-04-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-ignored-forwarded-headers): New user option.
+
+	* wl-draft.el (wl-draft-insert-current-message): Delete useless
+	fields from the forwarding message.
+	(wl-draft-yank-from-mail-reply-buffer): Allow the optional argument
+	`ignored-fields'.
+
+2000-04-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-message-request-partial):
+	Eliminated argument `msgdb'.
+	Don't pass `msgdb' argument to `elmo-read-msg-no-cache'.
+	(wl-mime-combine-message/partial-pieces): Likewise.
+	* tm-wl.el (wl-message-request-partial): Likewise.
+	(wl-mime-combine-message/partial-pieces): Likewise.
+
+2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* wl-summary.el (wl-summary-sync-marks): Remove progress gauge
+	when display is finished.
+
+2000-04-17  HARAGUCHI Shuugou <haraguti@nd.net.fujitsu.co.jp>
+
+	* wl-summary.el (wl-summary-goto-folder-subr):
+	Fix problem when wl-summary-partial-highlight-above-lines is nil.
+
+2000-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-prefetch-region): Redisplay only
+	when cursor point is visible.
+
+2000-04-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-expire.el (wl-expire-archive-get-max-number):
+	Don't use `file-name-directory'.
+
+2000-04-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-expire.el (wl-expire-archive-get-max-number):
+	Use `file-name-directory'.
+
+2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-marks): Re-display progress
+	only when there is progress.
+
+2000-04-13  Mito <mit@nines.nec.co.jp>
+
+	* wl-summary.el (wl-summary-sync-marks): Display progress.
+
+2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-move-cached-regex): Eliminated.
+	(wl-summary-prev): Move cursor regardless of unread status.
+	(wl-summary-next): Ditto.
+
+2000-04-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-summary-burst-subr): Renamed from `wl-burst'.
+	Added argument `target' and `number'.
+	* tm-wl.el (wl-summary-burst-subr): New function.
+	(wl-summary-burst): Use it.
+
+2000-04-10  Mito <mit@nines.nec.co.jp>
+
+	* wl-mime.el (wl-burst): New function.
+	(wl-summary-burst): Use it.
+
+2000-04-07  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-address.el (wl-address-petname-add-or-change): Use e-mail address
+	as petname when there's no candidate.
+
+2000-04-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-fldmgr-add-complete-with-current-folder-list):
+	New variable.
+	* wl-fldmgr.el (wl-fldmgr-add): Use it.
+
+	* wl.el (wl-plugged-init): Flush queues if started with plugged status.
+
+	* wl-folder.el (wl-folder-flush-queue): Flush operation queue too.
+
+2000-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-refile.el (wl-refile-expand-newtext): Add `original' argument.
+	Use substring of `original' instead of buffer-substring.
+	(wl-refile-evaluate-rule):
+	Set `original' argument of wl-refile-expand-newtext.
+
+	* wl-summary.el
+	(wl-summary-auto-refile-check-refile-rule-alist-subr,
+	wl-summary-auto-refile-check-refile-rule-alist): Eliminated.
+	(wl-summary-auto-refile): Check existence of destination folder just
+	before marking.
+
+2000-04-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-refile.el (wl-refile-evaluate-rule): Fixed problem
+	when wl-refile-get-field-value return nil.
+
+2000-04-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-refile.el
+	(wl-refile-expand-newtext): New function imported from Gnus.
+	(wl-refile-evaluate-rule): Use it.
+
+2000-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-print-destination):
+	Duplicate folder string to avoid putting text-property on
+	original string.
+
+	* wl-refile.el (wl-refile-get-field-value): New function.
+	(wl-refile-evaluate-rule): New function;
+	Evaluate refile rule recursively.
+	(wl-refile-guess-by-rule): Use wl-refile-evaluate-rule.
+	* wl-summary.el (wl-summary-auto-refile-check-refile-rule-alist-subr):
+	New function; Check existence of a target folder recursively.
+	(wl-summary-auto-refile-check-refile-rule-alist):
+	Use wl-summary-auto-refile-check-refile-rule-alist-subr.
+
 2000-03-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-demo.el (wl-title-logo): Refer wl-icon-dir.

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/10 10:20:17 teranisi>
+;; Time-stamp: <2000-05-10 10:42:13 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -175,11 +175,11 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type 'function
   :group 'wl-summary)
 
-;(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re"
-;   "*If message does not have in-reply-to field nor references field and
-; subject matches this regexp, search parent message by subject matching."
-;   :type 'string
-;   :group 'wl-summary)
+(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re"
+  "*If message does not have in-reply-to field nor references field and
+ subject matches this regexp, search parent message by subject matching."
+  :type 'string
+  :group 'wl-summary)
 
 (defcustom wl-summary-update-confirm-threshold 500
   "*Confirm updating summary if message number is larger than this value."
