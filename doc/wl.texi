@@ -5,8 +5,8 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-04-03 14:30:38 teranisi>
-@set version 1.1.0
+@set Time-stamp: <2000-04-10 09:57:19 teranisi>
+@set version 1.1.1
 @synindex pg cp
 @finalout
 
@@ -2459,12 +2459,20 @@ Save the message at current cursor point.
 @kindex n (Summary)
 @findex wl-summary-next
 Move cursor to the next message.
+If message is marked with a temporal mark in 
+@code{wl-summary-skip-mark-list}, cursor is not moved to it.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
 (@code{wl-summary-next})
 
 @item p
 @kindex p (Summary)
 @findex wl-summary-prev
 Move cursor to the previous message.
+If message is marked with a temporal mark in 
+@code{wl-summary-skip-mark-list}, cursor is not moved to it.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
 (@code{wl-summary-prev})
 
 @item N
@@ -3920,6 +3928,9 @@ and on-line.
 
 You can invoke Wanderlust in the off-line state by setting
 @code{wl-plugged} to nil in @file{~/.wl} or anything appropriate.
+
+In the off-line mode, @kbd{n} and @kbd{p} command in the summary mode
+ignores uncached messages.
 
 Even in the off-line state, provided that relevant messages are cached,
 and the variable @code{elmo-enable-disconnected-operation} (described

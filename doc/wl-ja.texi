@@ -5,8 +5,8 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust $B$N(B texinfo
-@set Time-stamp: <2000-04-03 14:29:40 teranisi>
-@set version 1.1.0
+@set Time-stamp: <2000-04-10 09:51:22 teranisi>
+@set version 1.1.1
 @synindex pg cp
 @finalout
 
@@ -2469,12 +2469,18 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @kindex n (Summary)
 @findex wl-summary-next
 $B0l$D2<$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+@code{wl-summary-skip-mark-list} $B$K$"$k0l;~%^!<%/$,IU$$$?%a%C%;!<%8$X$O(B
+$B0\F0$7$^$;$s!#%*%U%i%$%s%b!<%I$N$H$-$K$O!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K$b0\F0$7$^$;$s!#(B
 (@code{wl-summary-next})
 
 @item p
 @kindex p (Summary)
 @findex wl-summary-prev
 $B0l$D>e$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+@code{wl-summary-skip-mark-list} $B$K$"$k0l;~%^!<%/$,IU$$$?%a%C%;!<%8$X$O(B
+$B0\F0$7$^$;$s!#%*%U%i%$%s%b!<%I$N$H$-$K$O!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K$b0\F0$7$^$;$s!#(B
 (@code{wl-summary-prev})
 
 @item N
@@ -3889,6 +3895,9 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
 $B%*%s%i%$%s%b!<%I$K$"$k$3$H$r<($7$F$$$^$9!#(B
 $B%b!<%I%i%$%s$K(B @samp{[--]} $B$H=P$F$$$k$H$-$O%*%U%i%$%s%b!<%I$G$9!#(B
 $B%U%)%k%@%b!<%I!"%5%^%j%b!<%I$G(B @kbd{M-t} $B$r2!$9$H%*%U%i%$%s(B/$B%*%s%i%$%s$N@Z$jBX$($,$G$-$^$9!#(B
+
+$B%*%U%i%$%s%b!<%I$G$O%5%^%j%b!<%I$N(B @kbd{n} $B$H(B @kbd{p} $B$NF0:n$,JQ$o$j!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$X$O0\F0$7$J$/$J$j$^$9!#(B
 
 @file{~/.wl} $B$J$I$GJQ?t(B @code{wl-plugged} $B$r(B nil $B$K@_Dj$7$F$+$i5/F0$9$k$H!"(B
 $B5/F0;~$+$i%*%U%i%$%s%b!<%I$H$J$j$^$9!#(B
