@@ -102,7 +102,8 @@
   (let ((elmo-inhibit-number-mapping t) ; No need to use UIDL
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
-    (elmo-folder-open-internal src)
+    ;; for load killed-list
+    (elmo-folder-open src)
     (setq msgs (elmo-folder-list-messages src)
 	  len (length msgs))
     (when (> len elmo-display-progress-threshold)
@@ -115,6 +116,7 @@
     (if (and copy msgs)
 	(progn
 	  (elmo-msgdb-append-to-killed-list src msgs)
+	  ;; for save killed-list instead of elmo-folder-close-internal
 	  (elmo-msgdb-killed-list-save
 	   (elmo-folder-msgdb-path src)
 	   (elmo-folder-killed-list-internal src)))))
