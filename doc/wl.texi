@@ -152,9 +152,13 @@ The main features of Wanderlust:
 
 @section Environment
 
-Wanderlust is supposed to run on following Emacsen:
+Wanderlust is supposed to run on following Emacsen: 
+@c Wanderlust runs even on Nemacs 3.3.2 based on Emacs 18.55, 18.59 (with
+@c limited functionality).
 
 @itemize @bullet
+@item Nemacs 3.3.2 (Caution: limited functionality)
+@item Mule 2.3 based on Emacs 19.28
 @item Mule 2.3 based on Emacs 19.34
 @item Emacs 20.2 or later
 @item XEmacs 20.4 or later
@@ -1996,7 +2000,7 @@ filter can be specified while appending filter.  If you put
 @subsubsection Sort Folders
 
 Sorting of the folders is executed by the function specified by 
-@code{wl-fldmgr-sort-function}. 
+@code{wl-fldmgr-sort-func}. 
 The initial setting is @code{wl-fldmgr-sort-standard}, 
 which sorts alphabetically.
 Sorting affects only on the current folder group. It does not 
@@ -2230,8 +2234,8 @@ modified, confirm saving it before Wanderlust or Emacs exits.  If
 The initial setting is @code{t}.  If non-nil, @file{~/.folders.bak} is
 created before saving the folder status.
 
-@item wl-fldmgr-sort-function
-@vindex wl-fldmgr-sort-function
+@item wl-fldmgr-sort-func
+@vindex wl-fldmgr-sort-func
 The initial setting is @code{wl-fldmgr-sort-standard}.  A function to
 sort folders.  By default function, folders are sorted alphabetically
 and folder group is put on top (when @code{wl-fldmgr-sort-group-first}
@@ -2911,10 +2915,10 @@ Pipe current message's content to the external process.
 Print out current message's content.
 It uses @code{ps-print} module in Emacs 20.x.
 If you don't use color printer, you might want to set
-@code{wl-ps-print-buffer-function} to @code{ps-print-buffer}.
+@code{wl-ps-print-buffer-func} to @code{ps-print-buffer}.
 
 @lisp
-(setq wl-ps-print-buffer-function 'ps-print-buffer)
+(setq wl-ps-print-buffer-func 'ps-print-buffer)
 @end lisp
 
 (@code{wl-summary-print-message})
@@ -3960,7 +3964,7 @@ As shown in the example in @code{wl-draft-config-alist}, you can select
 You can send mail by POP-before-SMTP with this single line:
 
 @lisp
-(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)
+(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
 @end lisp
 
 @noindent
@@ -5093,8 +5097,8 @@ The initial setting is @code{nil}.
 If non-nil, if expiring messages are specified by @code{number},
 messages with @code{wl-summary-expire-reserve-marks} are also retained.
 
-@item wl-expire-archive-get-folder-function
-@vindex wl-expire-archive-get-folder-function
+@item wl-expire-archive-get-folder-func
+@vindex wl-expire-archive-get-folder-func
 The initial setting is @code{wl-expire-archive-get-folder}.
 
 This variable specifies a function that returns the name of an archiving 
@@ -5271,7 +5275,7 @@ If you try to re-file them after they are archived, they are deleted but
 not re-filed.
 
 Per default, the archiving folders to which messages are copied are
-determined automatically by @code{wl-expire-archive-get-folder-function}.
+determined automatically by @code{wl-expire-archive-get-folder-func}.
 You can copy to a specific folder by invoking with a prefix argument,
 i.e. @kbd{C-u M-x wl-summary-archive}.
 
@@ -5285,7 +5289,7 @@ relevant:
 
 @itemize @bullet
 @item @code{wl-expire-archive-files}
-@item @code{wl-expire-archive-get-folder-function}
+@item @code{wl-expire-archive-get-folder-func}
 @item @code{wl-expire-archive-folder-name-fmt}
 @item @code{wl-expire-archive-folder-type}
 @item @code{wl-expire-archive-folder-prefix}
@@ -5855,7 +5859,7 @@ If @command{imput} is on the @code{exec-path} at the installation,
 @lisp
 @group
 (autoload 'wl-draft-send-with-imput-async "im-wl")
-(setq wl-draft-send-function 'wl-draft-send-with-imput-async)
+(setq wl-draft-send-func 'wl-draft-send-with-imput-async)
 @end group
 @end lisp
 
@@ -5883,7 +5887,7 @@ byte-compiled and installed.
 (setq signature-use-bbdb t)
 (setq bbdb-north-american-phone-numbers-p nil)
 ;; @r{shows the name of bbdb in the summary} :-)
-(setq wl-summary-from-function 'bbdb-wl-from-func)
+(setq wl-summary-from-func 'bbdb-wl-from-func)
 ;; @r{automatically add mailing list fields}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
@@ -5946,7 +5950,7 @@ If you use x-face-mule 0.19 or older, do the following:
 
 @lisp
 @group
-(setq wl-highlight-x-face-function
+(setq wl-highlight-x-face-func
       (function
        (lambda (&optional beg end)
          (x-face-mule:x-face-decode-message-header))))
@@ -5958,7 +5962,7 @@ If you use x-face-mule 0.20 or later, try the following:
 
 @lisp
 @group
-(setq wl-highlight-x-face-function
+(setq wl-highlight-x-face-func
       (function
        (lambda (&optional beg end)
          (x-face-mule-x-face-decode-message-header))))
@@ -5972,7 +5976,7 @@ bitmap-mule 8.0 or later:
 @lisp
 @group
 (autoload 'x-face-decode-message-header "x-face-mule")
-(setq wl-highlight-x-face-function 'x-face-decode-message-header)
+(setq wl-highlight-x-face-func 'x-face-decode-message-header)
 @end group
 @end lisp
 
@@ -6420,13 +6424,13 @@ If you do not want to see branches, do the following:
 If you are eccentric enough to elaborate @samp{X-Mailer:} or
 @samp{User-Agent:} fields, define a function that generate appropriate
 strings as you like, and set it to variable
-@code{wl-generate-mailer-string-function}.
+@code{wl-generate-mailer-string-func}.
 
 If you do not want verbose @samp{User-Agent:} field, do the following:
 
 @lisp
 @group
-(setq wl-generate-mailer-string-function
+(setq wl-generate-mailer-string-func
       (function
        (lambda ()
          (concat "User-Agent: "
@@ -6439,7 +6443,7 @@ The following is a example:
 @lisp
 @group
 (setq mime-edit-insert-user-agent-field nil)
-(setq wl-generate-mailer-string-function
+(setq wl-generate-mailer-string-func
       (function
        (lambda ()
          (format "X-Mailer: %s" (product-string-1 'wl-version)))))
