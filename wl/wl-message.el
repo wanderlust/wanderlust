@@ -286,11 +286,7 @@
 	  (wl-message-narrow-to-page 1)
 	  (setq ret-val nil))
       (condition-case ()
-	  (static-if (boundp 'window-pixel-scroll-increment)
-	      ;; XEmacs 21.2.20 and later.
-	      (let (window-pixel-scroll-increment)
-		(scroll-up lines))
-	    (scroll-up lines))
+	  (scroll-up lines)
 	(end-of-buffer
 	 (goto-char (point-max))))
       (setq ret-val nil))

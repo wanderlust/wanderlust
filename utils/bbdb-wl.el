@@ -20,6 +20,7 @@
   (require 'mime-setup)
   (require 'elmo-vars)
   (require 'elmo-util)
+  (require 'bbdb)
   (require 'wl-summary)
   (require 'wl-message)
   (require 'wl-draft)
@@ -27,11 +28,11 @@
   (defvar bbdb-pop-up-elided-display nil))
 ;;  (or (fboundp 'bbdb-wl-extract-field-value-internal)
 ;;      (defun bbdb-wl-extract-field-value-internal (field))))
-(require 'bbdb)
 
 (defvar bbdb-wl-get-update-record-hook nil)
 
 (defun bbdb-wl-setup ()
+  (require 'bbdb)
   (add-hook 'wl-message-redisplay-hook 'bbdb-wl-get-update-record)
   (add-hook 'wl-summary-exit-hook 'bbdb-wl-hide-bbdb-buffer)
   (add-hook 'wl-message-window-deleted-hook 'bbdb-wl-hide-bbdb-buffer)
