@@ -458,29 +458,35 @@
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
-  (let ((cur-buf (current-buffer))
-	proceed)
-    (save-selected-window
-      (select-window (event-window event))
-      (set-buffer cur-buf)
-      (setq proceed (wl-message-next-page)))
-    (when proceed
-      (if (memq 'shift (event-modifiers event))
-	  (wl-summary-down t)
-	(wl-summary-next t)))))
+  (if (string-match (regexp-quote wl-message-buffer-name)
+		    (regexp-quote (buffer-name)))
+      (wl-message-prev-page)
+    (let ((cur-buf (current-buffer))
+	  proceed)
+      (save-selected-window
+	(select-window (event-window event))
+	(set-buffer cur-buf)
+	(setq proceed (wl-message-next-page)))
+      (when proceed
+	(if (memq 'shift (event-modifiers event))
+	    (wl-summary-down t)
+	  (wl-summary-next t))))))
 
 (defun wl-message-wheel-down (event)
   (interactive "e")
-  (let ((cur-buf (current-buffer))
-	proceed)
-    (save-selected-window
-      (select-window (event-window event))
-      (set-buffer cur-buf)
-      (setq proceed (wl-message-prev-page)))
-    (when proceed
-      (if (memq 'shift (event-modifiers event))
-	  (wl-summary-up t)
-	(wl-summary-prev t)))))
+  (if (string-match (regexp-quote wl-message-buffer-name)
+		    (regexp-quote (buffer-name)))
+      (wl-message-prev-page)
+    (let ((cur-buf (current-buffer))
+	  proceed)
+      (save-selected-window
+	(select-window (event-window event))
+	(set-buffer cur-buf)
+	(setq proceed (wl-message-prev-page)))
+      (when proceed
+	(if (memq 'shift (event-modifiers event))
+	    (wl-summary-up t)
+	  (wl-summary-prev t)))))
 
 (defun wl-draft-overload-menubar ()
   (when (featurep 'menubar)

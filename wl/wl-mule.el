@@ -112,7 +112,7 @@ Special commands:
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
-  (if (string-match (regexp-quote wl-message-buffer-cache-name)
+  (if (string-match (regexp-quote wl-message-buffer-name)
 		    (regexp-quote (buffer-name)))
       (wl-message-next-page)
     (let ((cur-buf (current-buffer))
@@ -128,7 +128,7 @@ Special commands:
 
 (defun wl-message-wheel-down (event)
   (interactive "e")
-  (if (string-match (regexp-quote wl-message-buffer-cache-name)
+  (if (string-match (regexp-quote wl-message-buffer-name)
 		    (regexp-quote (buffer-name)))
       (wl-message-prev-page)
     (let ((cur-buf (current-buffer))
