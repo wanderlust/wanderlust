@@ -1,5 +1,11 @@
 2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-expire.el (wl-folder-expire-entity): Follow the last change on
+	wl-summary-save-view.
+
+	* wl.el (wl-save-status): Ditto.
+	(Pointed out by MAKINO Takashi <makino@cyber.office.ne.jp>)
+
 	* wl-summary.el (wl-summary-save-view): Removed unused argument.
 	(wl-summary-exit): Follow the change above.
 	(wl-summary-goto-folder-subr): Ditto.

@@ -627,7 +627,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (with-current-buffer (car summaries)
 	    (unless keep-summary
 	      (wl-summary-cleanup-temp-marks))
-	    (wl-summary-save-view keep-summary)
+	    (wl-summary-save-view)
 	    (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	    (unless keep-summary
 	      (kill-buffer (car summaries))))

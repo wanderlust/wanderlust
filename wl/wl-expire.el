@@ -744,7 +744,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	    (setq ret-val (wl-summary-expire folder (not update-msgdb)))
 	    (if update-msgdb
 		(progn
-		  (wl-summary-save-view 'keep)
+		  (wl-summary-save-view)
 		  (elmo-folder-commit wl-summary-buffer-elmo-folder))
 	      (if ret-val
 		  (wl-folder-check-entity entity))))))))))
