@@ -284,6 +284,28 @@
     ret-val))
 
 ;;
+;; mime decode cache
+
+(defvar elmo-msgdb-decoded-cache-hashtb nil)
+(make-variable-buffer-local 'elmo-msgdb-decoded-cache-hashtb)
+
+(defsubst elmo-msgdb-get-decoded-cache (string)
+  (if elmo-use-decoded-cache
+      (let ((hashtb (or elmo-msgdb-decoded-cache-hashtb
+			(setq elmo-msgdb-decoded-cache-hashtb
+			      (elmo-make-hash 2048))))
+	    decoded)
+	(or (elmo-get-hash-val string hashtb)
+	    (progn
+	      (elmo-set-hash-val
+	       string
+	       (setq decoded
+		     (decode-mime-charset-string string elmo-mime-charset))
+	       hashtb)
+	      decoded)))
+    (decode-mime-charset-string string elmo-mime-charset)))
+
+;;
 ;; overview handling
 ;;
 
@@ -445,8 +467,7 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-from (entity)
   (and entity
        (aref (cdr entity) 2)
-       (decode-mime-charset-string (aref (cdr entity) 2) 
-				   elmo-mime-charset)))
+       (elmo-msgdb-get-decoded-cache (aref (cdr entity) 2))))
 
 (defsubst elmo-msgdb-overview-entity-set-number (entity number)
   (and entity (aset (cdr entity) 0 number))
@@ -460,8 +481,7 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-subject (entity)
   (and entity
        (aref (cdr entity) 3)
-       (decode-mime-charset-string (aref (cdr entity) 3)
-				   elmo-mime-charset)))
+       (elmo-msgdb-get-decoded-cache (aref (cdr entity) 3))))
 
 (defsubst elmo-msgdb-overview-entity-get-subject-no-decode (entity)
   (and entity (aref (cdr entity) 3)))
