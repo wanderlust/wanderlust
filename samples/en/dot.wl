@@ -1,18 +1,5 @@
 ;;; dot.wl -- sample setting file for Wanderlust	-*- emacs-lisp -*-
 
-;; [[ SEMI Setting ]]
-
-;; Disable inline display HTML part.
-;; Put before (require 'mime-setup)
-(setq mime-setup-enable-inline-html nil)
-
-;; Don't split large message.
-(setq mime-edit-split-message nil)
-
-;; If lines of message is larger than this value, message is `large'.
-;(setq mime-edit-message-default-max-lines 1000)
-
-
 ;; [[ Requirement Setting ]]
 
 ;; Following must be included in ~/.emacs
@@ -43,18 +30,8 @@
 (setq wl-subscribed-mailing-list
       '("wl@lists.airs.net"
 	"apel-ja@m17n.org"
-	"emacs-mime-ja@m17n.org"
-	;; "ml@example.com" ...
+	;;"ml@example.com" ...
 	))
-
-;; If (system-name) does not return FQDN,
-;; set following as a local domain name without hostname.
-;; ((system-name) "." wl-local-domain is used as domain part of Message-ID
-;; and an argument of HELO in SMTP.
-;(setq wl-local-domain "example.com")
-
-;; Specific domain part for message-id.
-;(setq wl-message-id-domain "hostname.example.com")
 
 
 ;;; [[ Server Setting ]]
@@ -69,6 +46,15 @@
 (setq elmo-nntp-default-server "localhost")
 ;; NNTP server name for posting
 (setq wl-nntp-posting-server elmo-nntp-default-server)
+
+;; If (system-name) does not return FQDN,
+;; set following as a local domain name without hostname.
+;; ((system-name) "." wl-local-domain is used as domain part of Message-ID
+;; and an argument of HELO in SMTP.
+;(setq wl-local-domain "example.com")
+
+;; Specific domain part for message-id.
+;(setq wl-message-id-domain "hostname.example.com")
 
 ;; IMAP authenticate type setting
 (setq elmo-imap4-default-authenticate-type 'clear) ; raw
@@ -104,11 +90,17 @@
 ;; Open new frame for draft buffer.
 ;(setq wl-draft-use-frame t)
 
+;; Disable inline display HTML part.
+;; Put before (require 'mime-setup)
+;(setq mime-setup-enable-inline-html nil)
+
+;; Don't split large message.
+;(setq mime-edit-split-message nil)
+
 ;; Thread divide when change subject.
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
 ;; Thread view
-;(setq wl-thread-indent-level 2)
 ;(setq wl-thread-have-younger-brother-str "+"
 ;      wl-thread-youngest-child-str	 "+"
 ;      wl-thread-vertical-str		 "|"
@@ -151,10 +143,7 @@
 ;; change plug status by server or port at startup.
 ;(add-hook 'wl-make-plugged-hook
 ;	  '(lambda ()
-;	     ;; Add or Change plug status for SERVER and PORT.
 ;	     (elmo-set-plugged plugged(t/nil) server port)
-;	     ;; When omit port, SEVERS all port was changes.
-;	     ;; (Can't add plug status without PORT)
 ;	     (elmo-set-plugged plugged(t/nil) server)
 ;	     ))
 
@@ -193,6 +182,7 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
+;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
@@ -221,8 +211,7 @@
 ;(setq wl-generate-mailer-string-function
 ;      (function
 ;       (lambda ()
-;	 (concat "User-Agent: "
-;		 (wl-generate-user-agent-string-1 nil)))))
+;	 (wl-generate-user-agent-string-1 nil))))
 
 
 ;;; [[ Template ]]
@@ -288,26 +277,13 @@
 	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
 
 
-;;; [[ Message Display Settings ]]
-
-;; Hidden header field in message buffer.
-(setq wl-message-ignored-field-list
-      '(".*Received:" ".*Path:" ".*Id:" "^References:"
-	"^Replied:" "^Errors-To:"
-	"^Lines:" "^Sender:" ".*Host:" "^Xref:"
-	"^Content-Type:" "^Precedence:"
-	"^Status:" "^X-VM-.*:"))
-
-;; Displayed header field in message buffer.
-;; This value precedes `wl-message-ignored-field-list'
-(setq wl-message-visible-field-list '("^Message-Id:"))
-
 ;; X-Face (requires x-face (and x-face-mule))
 (when (and window-system
 	   (module-installed-p 'x-face))
-  (cond ((featurep 'xemacs)		; for XEmacs
+  (cond (wl-on-xemacs			;; for XEmacs
 	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
-	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
+	 (setq wl-highlight-x-face-function
+	       'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
 	 ;; x-face-mule 0.20 or later
@@ -317,15 +293,6 @@
 		  (x-face-decode-message-header))))
 	 (require 'x-face-mule))
 	))
-
-;; Scoring.
-;; "all.SCORE" file is used regardless of wl-score-folder-alist.
-;(setq wl-score-folder-alist
-;      '(("^-comp\\."
-;	 "news.comp.SCORE"
-;	 "news.SCORE")
-;	("^-"
-;	 "news.SCORE")))
 
 ;; rule for auto refile.
 ;(setq wl-refile-rule-alist
@@ -339,5 +306,17 @@
 ;; Marks to skip auto-refile (default is "N" "U" "!").
 ;; nil means all message is auto-refiled.
 ;(setq wl-summary-auto-refile-skip-marks nil)
+
+;; Scoring.
+;; "all.SCORE" file is used regardless of wl-score-folder-alist.
+;(setq wl-score-folder-alist
+;      '(("^-comp\\."
+;	 "news.comp.SCORE"
+;	 "news.SCORE")
+;	("^-"
+;	 "news.SCORE")))
+
+;; directory for storing score files.
+; (setq wl-score-files-directory "~/.elmo/")
 
 ;;; dot.wl ends here
