@@ -1,3 +1,14 @@
+2000-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-reply): Cause an error when there's no
+	message at cursor point.
+	(wl-summary-reply-with-citation): Remove unwind-protect.
+
+	* wl-summary.el (wl-summary-insert-thread-entity): Eliminated
+	subject searching feature.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
+	Eliminated.
+
 2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):

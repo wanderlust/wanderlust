@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 16:11:38 teranisi>
+;; Time-stamp: <2000-05-09 17:20:12 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2874,25 +2874,26 @@ If optional argument is non-nil, checking is omitted."
 	  (elmo-msgdb-overview-get-parent-entity entity overview));; temp
 	 ;;(parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
-	 (case-fold-search t)
-	 msg overview2 cur-entity)
+	 ;;(case-fold-search t)
+	 ;;overview2 cur-entity
+	 msg) 
     ;; Search parent by subject.
-    (when (and (null parent-number)
-	       (string-match wl-summary-search-parent-by-subject-regexp
-			     (elmo-msgdb-overview-entity-get-subject
-			      entity)))
-      (setq overview2 overview)
-      (while overview2
-	(setq cur-entity (car overview2))
-	(when (wl-summary-subject-equal
-	       (or (elmo-msgdb-overview-entity-get-subject cur-entity)
-		   "")
-	       (or (elmo-msgdb-overview-entity-get-subject entity)
-		   ""))
-	  (setq parent-number (elmo-msgdb-overview-entity-get-number
-			       cur-entity))
-	  (setq overview2 nil))
-	(setq overview2 (cdr overview2))))
+;     (when (and (null parent-number)
+; 	       (string-match wl-summary-search-parent-by-subject-regexp
+; 			     (elmo-msgdb-overview-entity-get-subject
+; 			      entity)))
+;       (setq overview2 overview)
+;       (while overview2
+; 	(setq cur-entity (car overview2))
+; 	(when (wl-summary-subject-equal
+; 	       (or (elmo-msgdb-overview-entity-get-subject cur-entity)
+; 		   "")
+; 	       (or (elmo-msgdb-overview-entity-get-subject entity)
+; 		   ""))
+; 	  (setq parent-number (elmo-msgdb-overview-entity-get-number
+; 			       cur-entity))
+; 	  (setq overview2 nil))
+; 	(setq overview2 (cdr overview2))))
     (if (and parent-number
 	     wl-summary-divide-thread-when-subject-changed
 	     (not (wl-summary-subject-equal 
@@ -4821,11 +4822,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-reply-with-citation (&optional arg)
   (interactive "P")
-  (unwind-protect
-      (wl-summary-reply arg t)
-    (goto-char (point-max))
-    (wl-draft-yank-original)
-    (run-hooks 'wl-mail-setup-hook)))
+  ;; Is unwind-protect needed?
+  ;(unwind-protect
+  (wl-summary-reply arg t)
+  (goto-char (point-max))
+  (wl-draft-yank-original)
+  (run-hooks 'wl-mail-setup-hook));)
 
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
   (interactive)
@@ -4989,6 +4991,7 @@ Reply to author if invoked with argument."
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	mes-buf)
+    (unless number (error "No message"))
     (wl-summary-redisplay-internal folder number)
     (wl-select-buffer (get-buffer (setq mes-buf (wl-current-message-buffer))))
     (set-buffer mes-buf)
