@@ -1,5 +1,8 @@
 2003-02-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-folder.el (wl-folder-buffer-search-group): Ignore non-group
+	folder.
+
 	* wl-vars.el (wl-delete-folder-alist): Add shimbun folder to
 	the default value.
 

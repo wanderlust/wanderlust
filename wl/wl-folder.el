@@ -243,10 +243,17 @@
 	   (wl-match-buffer 1)))))
 
 (defun wl-folder-buffer-search-group (group)
-  (re-search-forward
-   (concat
-    "^\\([ \t]*\\)\\[[\\+-]\\]"
-    (regexp-quote group) ":[-0-9-]+/[0-9-]+/[0-9-]+") nil t))
+  (let ((prev-point (point))
+	(group-regexp (concat
+		       "^\\([ \t]*\\)\\[[\\+-]\\]"
+		       (regexp-quote group) ":[-0-9-]+/[0-9-]+/[0-9-]+")))
+    (or (catch 'found
+	  (while (re-search-forward group-regexp nil t)
+	    (if (wl-folder-buffer-group-p)
+		(throw 'found (point)))))
+	(progn ; not found
+	  (goto-char prev-point)
+	  nil))))
 
 (defun wl-folder-buffer-search-entity (folder &optional searchname)
   (let ((search (or searchname (wl-folder-get-petname folder)))
@@ -338,6 +345,10 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 		  (folder (elmo-make-folder name)))
 	     (wl-folder-elmo-folder-cache-put name folder)
 	     folder)))))
+
+(defsubst wl-folder-put-folder-property (beg end id is-group &optional object)
+  (put-text-property beg end 'wl-folder-entity-id id object)
+  (put-text-property beg end 'wl-folder-is-group is-group object))
 
 (defun wl-folder-prev-entity ()
   (interactive)
@@ -2988,10 +2999,6 @@ Call `wl-summary-write-current-folder' with current folder name."
       (if (not flag)
 	  (try-completion string candidate)
 	(all-completions string candidate))))))
-
-(defun wl-folder-put-folder-property (beg end id is-group &optional object)
-  (put-text-property beg end 'wl-folder-entity-id id object)
-  (put-text-property beg end 'wl-folder-is-group is-group object))
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))
