@@ -24,28 +24,30 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo)
 
 ;;; ELMO pipe folder
 (eval-and-compile
   (luna-define-class elmo-pipe-folder (elmo-folder)
-		     (src dst))
+		     (src dst copy))
   (luna-define-internal-accessors 'elmo-pipe-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-pipe-folder)
 					    name)
-  (when (string-match "^\\([^|]*\\)|\\(.*\\)$" name)
+  (when (string-match "^\\([^|]*\\)|\\(:?\\)\\(.*\\)$" name)
     (elmo-pipe-folder-set-src-internal folder
 				       (elmo-make-folder
 					(elmo-match-string 1 name)))
     (elmo-pipe-folder-set-dst-internal folder
 				       (elmo-make-folder
-					(elmo-match-string 2 name))))
+					(elmo-match-string 3 name)))
+    (elmo-pipe-folder-set-copy-internal folder
+					(string= ":" (elmo-match-string 2 name))))
   folder)
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))
@@ -95,7 +97,7 @@
 
 (defvar elmo-pipe-drained-hook nil "A hook called when the pipe is flushed.")
 
-(defun elmo-pipe-drain (src dst)
+(defun elmo-pipe-drain (src dst copy)
   "Move all messages of SRC to DST."
   (let ((elmo-inhibit-number-mapping t) ; No need to use UIDL
 	msgs len)
@@ -107,7 +109,8 @@
       (elmo-progress-set 'elmo-folder-move-messages
 			 len "Moving messages..."))
     (unwind-protect
-	(elmo-folder-move-messages src msgs dst)
+	(elmo-folder-move-messages src msgs dst
+				   nil nil copy)
       (elmo-progress-clear 'elmo-folder-move-messages)))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
@@ -117,10 +120,11 @@
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
   (let ((src-folder (elmo-pipe-folder-src-internal folder))
-	(dst-folder (elmo-pipe-folder-dst-internal folder)))
+	(dst-folder (elmo-pipe-folder-dst-internal folder))
+	(copy (elmo-pipe-folder-copy-internal folder)))
     (when (and (elmo-folder-plugged-p src-folder)
 	       (elmo-folder-plugged-p dst-folder))
-      (elmo-pipe-drain src-folder dst-folder))))
+      (elmo-pipe-drain src-folder dst-folder copy))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
@@ -164,7 +168,7 @@
   (elmo-folder-expand-msgdb-path (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-pipe-folder))
-  (elmo-folder-newsgroups (elmo-pipe-folder-target-internal folder)))
+  (elmo-folder-newsgroups (elmo-pipe-folder-src-internal folder)))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-pipe-folder))
   (and (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder))

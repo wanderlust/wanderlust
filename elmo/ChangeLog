@@ -1,3 +1,11 @@
+2001-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-folder): Add `copy'.
+	(elmo-folder-initialize): Fix for `copy'.
+	(elmo-pipe-drain): Ditto.
+	(elmo-folder-open-internal): Ditto.
+	(elmo-folder-newsgroups): Fix.
+
 2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-folder-append-messages): Make temporal filename
