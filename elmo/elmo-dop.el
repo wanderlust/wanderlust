@@ -87,19 +87,24 @@ Automatically loaded/saved.")
 If optional argument FORCE is non-nil, try flushing all operation queues
 even an operation concerns the unplugged folder."
   (elmo-dop-queue-merge)
-  (let ((queue elmo-dop-queue)
+  (let ((queue-all elmo-dop-queue)
+	queue
 	(count 0)
-	folder
 	len)
     ;; obsolete
-    (unless (or (null queue)
-		(vectorp (car queue)))
+    (unless (or (null queue-all)
+		(vectorp (car queue-all)))
       (if (y-or-n-p "Saved queue is old version(2.6). Clear all pending operations? ")
 	  (progn
 	    (setq elmo-dop-queue nil)
 	    (message "All pending operations are cleared.")
 	    (elmo-dop-queue-save))
 	(error "Please use 2.6 or earlier.")))
+    (while queue-all
+      (if (elmo-folder-plugged-p
+	   (elmo-make-folder (elmo-dop-queue-fname (car queue-all))))
+	  (setq queue (append queue (list (car queue-all)))))
+      (setq queue-all (cdr queue-all)))
     (setq count (length queue))
     (when (> count 0)
       (if (elmo-y-or-n-p
@@ -126,7 +131,7 @@ even an operation concerns the unplugged folder."
 				       (elmo-make-folder
 					(elmo-dop-queue-fname (car queue))))
 			       (elmo-folder-open folder)
-			       (unless (elmo-folder-plugged-p folder)
+			       (unless (elmo-folder-plugged-p folder); redundant?
 				 (error "Unplugged.")))
 			     (elmo-dop-queue-arguments (car queue)))
 		      (elmo-folder-close folder))
@@ -141,11 +146,14 @@ even an operation concerns the unplugged folder."
 		       performed num)
 	      (sit-for 0) ;
 	      (elmo-dop-queue-save)))
-	(if (elmo-y-or-n-p "Clear all pending operations? "
+	;; when answer=NO against performing dop
+	(if (elmo-y-or-n-p "Clear these pending operations? "
 			   (not elmo-dop-flush-confirm) t)
 	    (progn
-	      (setq elmo-dop-queue nil)
-	      (message "All pending operations are cleared.")
+	      (while queue
+		(setq elmo-dop-queue (delq (car queue) elmo-dop-queue))
+		(setq queue (cdr queue)))
+	      (message "Pending operations are cleared.")
 	      (elmo-dop-queue-save))
 	  (message "")))
       count)))
