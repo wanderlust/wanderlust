@@ -59,7 +59,7 @@
 
 % If there were room, it would be nice to see a section on Dired.
 
-\def\versionnumber{2.9.2}
+\input version.tex
 \def\year{2001}
 
 \def\shortcopyrightnotice{\vskip 1ex plus 2 fill
@@ -265,27 +265,22 @@ are preserved on all copies.
 \section{Folder Mode}
 
 \key{Quit Wanderlust}{q}
-
 \key{Move to next entity}{n}
 \key{Move to previous entity}{p}
 \key{Move to next unread entity}{N}
 \key{Move to previous unread entity}{P}
-
 \key{Go to specified folder}{g}
 \key{Go into current folder}{SPC}
 \key{Open/Close current group}{SPC}
 \key{Rescan folders in current access group}{C-u SPC}
-
 \key{Check new messages for current entity}{s}
 \key{Synchronize current entity}{S}
 \key{Prefetch for current folder/group}{I}
 \key{Set as read all messages in current entity}{c}
 \key{Expire current entity}{e}
-
 \key{Compose message}{w}
 \key{Compose message for current folder}{W}
 \key{Reload address book}{Z}
-
 \key{Empty trash folder}{E}
 
 \section{folder management}
@@ -293,7 +288,6 @@ are preserved on all copies.
 \key{Cut region}{C-k}
 \key{Cut current entity}{C-w}
 \key{Yank}{C-y}
-
 \key{Add folder}{m a}
 \key{Add group}{m g}
 \key{Add access group}{m A}
@@ -310,7 +304,6 @@ are preserved on all copies.
 
 \key{Go back to folder mode}{q}
 \key{Go to specified folder}{g}
-
 \key{Next message}{n}
 \key{Previous message}{p}
 \key{Next unread message}{N}
@@ -318,20 +311,16 @@ are preserved on all copies.
 \key{First message}{<}
 \key{Last message}{>}
 \key{Jump to previously shown message}{TAB}
-
 \key{View current message}{SPC}
 \key{Force reloading current message}{C-u .}
 \key{Toggle display of message}{v}
-
 \key{Compose message}{w}
 \key{Compose message for current folder}{W}
 \key{Compose reply message}{a}
 \key{Compose reply message with citation}{A}
 \key{Forward current message}{f}
-
 \key{(Re-)Edit current message}{E}
 \key{Jump to message buffer}{j}
-
 \key{Reload address book}{Z}
 
 \section{mark command}
@@ -340,17 +329,13 @@ are preserved on all copies.
 \key{Mark for copying}{O}
 \key{Mark for deleting}{d}
 \key{Mark as important}{\$}
-
 \key{Mark as target}{*}
 \key{Mark all messages as target}{m a}
 \key{Mark current thread as target}{m t}
-
 \key{Pick messages and mark}{*}
 \key{Pick messages from marked ones}{m *}
-
 \key{Mark target messages for refiling}{m o}
 \key{Mark target messages for deleting}{m d}
-
 \key{Execute refile/delete/copy}{x}
 
 \section{prefix arguments for marking}
@@ -369,10 +354,8 @@ are preserved on all copies.
 \section{Message Mode}
 
 \key{Go back to summary buffer}{q}
-
 \key{Scroll up or move to next content}{SPC}
 \key{Scroll down or move to previous content}{DEL}
-
 \key{Move to upper content}{u}
 \key{Move to previous content}{p}
 \key{Decode current content as `play mode'}{v}
@@ -384,12 +367,12 @@ are preserved on all copies.
 \key{Insert message to cite}{C-c C-y}
 \key{Insert template}{C-c C-j}
 \key{Insert signature}{C-c C-w}
-
+\key{Elide the region}{C-c C-d}
 \key{Preview current draft}{C-c C-p}
-
 \key{Send current draft}{C-c C-c}
 \key{Save current draft}{C-c C-z}
 \key{Discard current draft}{C-c C-k}
+\key{Jump to another draft}{C-c C-o}
 
 \section{compose multipart message}
 
@@ -406,7 +389,6 @@ are preserved on all copies.
 
 \key{Toggle plugged status}{M-t}
 \key{Enter/Exit plugged mode}{C-t}
-
 \key{Toggle plugged state for current entity}{SPC}
 
 \section{Address Book Management}
@@ -419,7 +401,6 @@ are preserved on all copies.
 \key{Set as {\tt Bcc:}}{b}
 \key{Unset}{u}
 \key{Compose message with current mark}{x}
-
 \key{Add new entry}{a}
 \key{Edit current entry}{e}
 \key{Delete current entry}{d}
