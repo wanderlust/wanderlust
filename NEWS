@@ -25,6 +25,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    line in the 'flag folder (you can control the behavior by
    wl-highlight-summary-line-help-echo-alist).
 
+** Now you can put arbitrary user defined flag on message.
+   You can specify its flag by "F" in the summary mode.
+
 ** New mark, 'A' and '&' is added for answered messages.
    Now answered messages have its own mark in the summary mode.
    'A' is displayed for uncached messages and '&' is for cached messages.
