@@ -1,3 +1,13 @@
+2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-biff-init-icons): Don't generate icons of the
+	display does not support graphics.
+	(wl-plugged-init-icons): Ditto.
+	(wl-folder-init-icons): Ditto.
+
+	* wl-demo.el (wl-demo): Chech closely whether the display
+	supports graphics.
+
 2001-02-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-cache-prefetch-message): Fixed last change.
