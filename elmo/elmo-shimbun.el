@@ -350,8 +350,8 @@ update overview when message is fetched."
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
 					      numlist flag-table)
-  (let* (overview number-alist mark-alist entity
-		  i percent number length pair msgid gmark seen)
+  (let ((new-msgdb (elmo-make-msgdb))
+	entity i percent length msgid gmark)
     (setq length (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
@@ -360,23 +360,14 @@ update overview when message is fetched."
 	    (elmo-shimbun-msgdb-create-entity
 	     folder (car numlist)))
       (when entity
-	(setq overview
-	      (elmo-msgdb-append-element
-	       overview entity))
-	(setq number (elmo-msgdb-overview-entity-get-number entity))
 	(setq msgid (elmo-msgdb-overview-entity-get-id entity))
-	(setq number-alist
-	      (elmo-msgdb-number-add number-alist
-				     number msgid))
-	(if (setq gmark (or (elmo-msgdb-global-mark-get msgid)
-			    (elmo-msgdb-mark
-			     (elmo-flag-table-get flag-table msgid)
-			     (elmo-file-cache-status
-			      (elmo-file-cache-get msgid))
-			     'new)))
-	    (setq mark-alist
-		  (elmo-msgdb-mark-append mark-alist
-					  number gmark))))
+	(setq gmark (or (elmo-msgdb-global-mark-get msgid)
+			(elmo-msgdb-mark
+			 (elmo-flag-table-get flag-table msgid)
+			 (elmo-file-cache-status
+			  (elmo-file-cache-get msgid))
+			 'new)))
+	(elmo-msgdb-append-entity new-msgdb entity gmark))
       (when (> length elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) length))
@@ -385,8 +376,7 @@ update overview when message is fetched."
 	 percent))
       (setq numlist (cdr numlist)))
     (message "Creating msgdb...done")
-    (elmo-msgdb-sort-by-date
-     (list overview number-alist mark-alist))))
+    (elmo-msgdb-sort-by-date new-msgdb)))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))
   nil)

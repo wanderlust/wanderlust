@@ -147,8 +147,8 @@
 					      flag-table)
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
-	  overview number-alist mark-alist entity message-id
-	  num gmark
+	  (new-msgdb (elmo-make-msgdb))
+	  entity message-id gmark
 	  (i 0)
 	  (len (length numbers)))
       (message "Creating msgdb...")
@@ -156,30 +156,17 @@
 	(setq entity
 	      (elmo-localdir-msgdb-create-entity
 	       dir (car numbers)))
-	(if (null entity)
-	    ()
-	  (setq num (elmo-msgdb-overview-entity-get-number entity))
-	  (setq overview
-		(elmo-msgdb-append-element
-		 overview entity))
+	(when entity
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add number-alist
-				       num
-				       message-id))
-	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (unless (eq 'read (elmo-flag-table-get 
-						 flag-table message-id))
-				(elmo-msgdb-mark
-				 (elmo-flag-table-get flag-table message-id)
-				 (elmo-file-cache-status
-				  (elmo-file-cache-get message-id))
-				 'new))))
-	      (setq mark-alist
-		    (elmo-msgdb-mark-append
-		     mark-alist
-		     num
-		     gmark))))
+	  (setq gmark (or (elmo-msgdb-global-mark-get message-id)
+			  (unless (eq 'read (elmo-flag-table-get 
+					     flag-table message-id))
+			    (elmo-msgdb-mark
+			     (elmo-flag-table-get flag-table message-id)
+			     (elmo-file-cache-status
+			      (elmo-file-cache-get message-id))
+			     'new))))
+	  (elmo-msgdb-append-entity new-msgdb entity gmark))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (elmo-display-progress
@@ -187,7 +174,7 @@
 	   (/ (* i 100) len)))
 	(setq numbers (cdr numbers)))
       (message "Creating msgdb...done")
-      (list overview number-alist mark-alist))))
+      new-msgdb)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-localdir-folder)
 						 &optional one-level)

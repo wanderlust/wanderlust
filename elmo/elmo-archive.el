@@ -930,8 +930,8 @@ TYPE specifies the archiver's symbol."
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
-	 overview number-alist mark-alist entity
-	 i percent num message-id seen gmark)
+	 (new-msgdb (elmo-make-msgdb))
+	 entity i percent num message-id gmark)
     (with-temp-buffer
       (setq num (length numlist))
       (setq i 0)
@@ -943,27 +943,15 @@ TYPE specifies the archiver's symbol."
 	       method file (car numlist) type
 	       (elmo-archive-folder-archive-prefix-internal folder)))
 	(when entity
-	  (setq overview
-		(elmo-msgdb-append-element
-		 overview entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add
-		 number-alist
-		 (elmo-msgdb-overview-entity-get-number entity)
-		 (car entity)))
-	  (setq message-id (car entity))
-	  (if (setq gmark
-		    (or (elmo-msgdb-global-mark-get message-id)
-			(elmo-msgdb-mark
-			 (elmo-flag-table-get flag-table message-id)
-			 (elmo-file-cache-status
-			  (elmo-file-cache-get message-id))
-			 'new)))
-	      (setq mark-alist
-		    (elmo-msgdb-mark-append
-		     mark-alist
-		     (elmo-msgdb-overview-entity-get-number entity)
-		     gmark))))
+	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+	  (setq gmark
+		(or (elmo-msgdb-global-mark-get message-id)
+		    (elmo-msgdb-mark
+		     (elmo-flag-table-get flag-table message-id)
+		     (elmo-file-cache-status
+		      (elmo-file-cache-get message-id))
+		     'new)))
+	  (elmo-msgdb-append-entity new-msgdb entity gmark))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (setq percent (/ (* i 100) num))
@@ -972,7 +960,7 @@ TYPE specifies the archiver's symbol."
 	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done")
-      (list overview number-alist mark-alist))))
+      new-msgdb)))
 
 ;;; info-zip agent
 (defun elmo-archive-msgdb-create-as-numlist-subr2 (folder
@@ -986,8 +974,8 @@ TYPE specifies the archiver's symbol."
 	 (prog (car method))
 	 (args (cdr method))
 	 (arc (elmo-archive-get-archive-name folder))
-	 n i percent num result overview number-alist mark-alist
-	 msgs case-fold-search)
+	 (new-msgdb (elmo-make-msgdb))
+	 n i percent num msgs case-fold-search)
     (with-temp-buffer
       (setq num (length numlist))
       (setq i 0)
@@ -1010,15 +998,13 @@ TYPE specifies the archiver's symbol."
 	(goto-char (point-min))
 	(cond
 	 ((looking-at delim1)	;; MMDF
-	  (setq result (elmo-archive-parse-mmdf msgs flag-table))
-	  (setq overview (append overview (nth 0 result)))
-	  (setq number-alist (append number-alist (nth 1 result)))
-	  (setq mark-alist (append mark-alist (nth 2 result))))
-;;;    ((looking-at delim2)	;; UNIX MAIL
-;;;	(setq result (elmo-archive-parse-unixmail msgs))
-;;;	(setq overview (append overview (nth 0 result)))
-;;;	(setq number-alist (append number-alist (nth 1 result)))
-;;;	(setq mark-alist (append mark-alist (nth 2 result))))
+	  (elmo-msgdb-append
+	   new-msgdb
+	   (elmo-archive-parse-mmdf msgs flag-table)))
+;;; 	 ((looking-at delim2)	;; UNIX MAIL
+;;; 	  (elmo-msgdb-append
+;;; 	   new-msgdb
+;;; 	   (elmo-archive-parse-unixmail msgs flag-table)))
 	 (t			;; unknown format
 	  (error "Unknown format!")))
 	(when (> num elmo-display-progress-threshold)
@@ -1027,11 +1013,12 @@ TYPE specifies the archiver's symbol."
 	  (elmo-display-progress
 	   'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
 	   percent))))
-    (list overview number-alist mark-alist)))
+    new-msgdb))
 
 (defun elmo-archive-parse-mmdf (msgs flag-table)
   (let ((delim elmo-mmdf-delimiter)
-	number sp ep rest entity overview number-alist mark-alist ret-val
+	(new-msgdb (elmo-make-msgdb))
+	number sp ep rest entity
 	message-id gmark)
     (goto-char (point-min))
     (setq rest msgs)
@@ -1046,33 +1033,19 @@ TYPE specifies the archiver's symbol."
 	(save-excursion
 	  (narrow-to-region sp ep)
 	  (setq entity (elmo-archive-msgdb-create-entity-subr number))
-	  (setq overview
-		(elmo-msgdb-append-element
-		 overview entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add
-		 number-alist
-		 (elmo-msgdb-overview-entity-get-number entity)
-		 (car entity)))
-	  (setq message-id (car entity))
-	  (if (setq gmark
-		    (or (elmo-msgdb-global-mark-get message-id)
-			(elmo-msgdb-mark
-			 (elmo-flag-table-get flag-table message-id)
-			 (elmo-file-cache-status
-			  (elmo-file-cache-get message-id))
-			 'new)))
-	      (setq mark-alist
-		    (elmo-msgdb-mark-append
-		     mark-alist
-		     (elmo-msgdb-overview-entity-get-number entity)
-		     gmark)))
-	  (setq ret-val (append ret-val (list overview number-alist
-					      mark-alist)))
+	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+	  (setq gmark
+		(or (elmo-msgdb-global-mark-get message-id)
+		    (elmo-msgdb-mark
+		     (elmo-flag-table-get flag-table message-id)
+		     (elmo-file-cache-status
+		      (elmo-file-cache-get message-id))
+		     'new)))
+	  (elmo-msgdb-append-entity new-msgdb entity gmark)
 	  (widen)))
       (forward-line 1)
       (setq rest (cdr rest)))
-    ret-val))
+    new-msgdb))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

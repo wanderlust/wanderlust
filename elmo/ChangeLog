@@ -2,6 +2,48 @@
 
 	* elmo-version.el (elmo-version): Up to 2.11.10.
 
+2003-08-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-mark-to-flags): New function.
+	(elmo-msgdb-flags-to-mark): Ditto.
+	(elmo-msgdb-append-entity): Ditto.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-as-numlist-subr1):
+	Use `elmo-msgdb-append-entity' instead of construct msgdb.
+	(elmo-archive-msgdb-create-as-numlist-subr2): Ditto.
+	(elmo-archive-parse-mmdf): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-localdir.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-mark.el (elmo-mark-folder-msgdb-create): Ditto.
+
+	* elmo-nmz.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Ditto.
+	(elmo-folder-msgdb-create-plugged): Set elmo-imap4-current-msgdb
+	to empty msgdb.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Use
+	`elmo-msgdb-make-message-entity' and `elmo-msgdb-append-entity'
+	instead of directly construction.
+	(elmo-nntp-msgdb-create-message): Use `elmo-msgdb-append-entity'
+	instead of construct msgdb.
+
+	* elmo-pop3.el (elmo-pop3-sort-msgdb-by-original-number): Use
+	`elmo-msgdb-set-overview' instead of reconstruct msgdb.
+	(elmo-pop3-msgdb-create-message): Use `elmo-msgdb-append-entity'
+	instead of construct msgdb.
+
 2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-message-entity-field): Decode value

@@ -118,8 +118,8 @@ If the value is a list, all elements are used as index paths for namazu."
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
 					      numlist flag-table)
-  (let* (overview number-alist mark-alist entity
-		  i percent num pair)
+  (let ((new-msgdb (elmo-make-msgdb))
+	entity mark i percent num)
     (setq num (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
@@ -128,24 +128,11 @@ If the value is a list, all elements are used as index paths for namazu."
 	    (elmo-nmz-msgdb-create-entity
 	     folder (car numlist)))
       (when entity
-	(setq overview
-	      (elmo-msgdb-append-element
-	       overview entity))
-	(setq number-alist
-	      (elmo-msgdb-number-add number-alist
-				     (elmo-msgdb-overview-entity-get-number
-				      entity)
-				     (elmo-msgdb-overview-entity-get-id
-				      entity)))
-	(setq mark-alist
-	      (elmo-msgdb-mark-append
-	       mark-alist
-	       (elmo-msgdb-overview-entity-get-number
-		entity)
-	       (or (elmo-msgdb-global-mark-get
-		    (elmo-msgdb-overview-entity-get-id
-		     entity))
-		   elmo-msgdb-new-mark))))
+	(setq mark (or (elmo-msgdb-global-mark-get
+			(elmo-msgdb-overview-entity-get-id
+			 entity))
+		       elmo-msgdb-new-mark))
+	(elmo-msgdb-append-entity new-msgdb entity mark))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))
@@ -154,7 +141,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	 percent))
       (setq numlist (cdr numlist)))
     (message "Creating msgdb...done")
-    (list overview number-alist mark-alist)))
+    new-msgdb))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-nmz-folder))
   t)

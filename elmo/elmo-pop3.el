@@ -717,11 +717,13 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 (defun elmo-pop3-sort-msgdb-by-original-number (folder msgdb)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
-    (setq overview (elmo-pop3-sort-overview-by-original-number
-		    overview
-		    (elmo-pop3-folder-location-alist-internal folder)))
+    (elmo-msgdb-set-overview
+     msgdb
+     (elmo-pop3-sort-overview-by-original-number
+      overview
+      (elmo-pop3-folder-location-alist-internal folder)))
     (message "Sorting...done")
-    (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb))))
+    msgdb))
 
 (defun elmo-pop3-uidl-to-number (uidl)
   (string-to-number (elmo-get-hash-val uidl
@@ -766,8 +768,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 				       flag-table
 				       loc-alist)
   (save-excursion
-    (let (beg overview number-alist mark-alist
-	      entity i number message-id gmark seen size)
+    (let ((new-msgdb (elmo-make-msgdb))
+	  beg entity i number message-id gmark)
       (set-buffer buffer)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
@@ -785,9 +787,6 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		   (car numlist)))
 	    (setq numlist (cdr numlist))
 	    (when entity
-	      (setq overview
-		    (elmo-msgdb-append-element
-		     overview entity))
 	      (with-current-buffer (process-buffer process)
 		(elmo-msgdb-overview-entity-set-size
 		 entity
@@ -801,30 +800,21 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 			     (elmo-msgdb-overview-entity-get-number entity))
 			    loc-alist)))
 		    (elmo-msgdb-overview-entity-set-number entity number)))
-	      (setq number-alist
-		    (elmo-msgdb-number-add
-		     number-alist
-		     (elmo-msgdb-overview-entity-get-number entity)
-		     (car entity)))
-	      (setq message-id (car entity))
-	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-				  (elmo-msgdb-mark
-				   (elmo-flag-table-get flag-table message-id)
-				   (elmo-file-cache-status
-				    (elmo-file-cache-get message-id))
-				   'new)))
-		  (setq mark-alist
-			(elmo-msgdb-mark-append
-			 mark-alist
-			 (elmo-msgdb-overview-entity-get-number entity)
-			 gmark))))))
+	      (setq message-id (elmo-message-entity-field entity 'message-id))
+	      (setq gmark (or (elmo-msgdb-global-mark-get message-id)
+			      (elmo-msgdb-mark
+			       (elmo-flag-table-get flag-table message-id)
+			       (elmo-file-cache-status
+				(elmo-file-cache-get message-id))
+			       'new)))
+	      (elmo-msgdb-append-entity new-msgdb entity gmark))))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i num))
 	      (elmo-display-progress
 	       'elmo-pop3-msgdb-create-message "Creating msgdb..."
 	       (/ (* i 100) num)))))
-      (list overview number-alist mark-alist))))
+      new-msgdb)))
 
 (defun elmo-pop3-read-body (process outbuf)
   (with-current-buffer (process-buffer process)

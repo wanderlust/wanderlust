@@ -99,8 +99,7 @@
 ;; elmo-flag-table-get
 ;; elmo-flag-table-save
 
-;; elmo-msgdb-append-entity
-;; msgdb entity flag-table
+;; elmo-msgdb-append-entity MSGDB ENTITY MARK-OR-FLAGS
 
 ;; ENTITY elmo-msgdb-make-entity ARGS
 ;; VALUE elmo-msgdb-entity-field ENTITY
@@ -188,6 +187,37 @@ If argument is a string, use it as a path to load message entities."
 	  (if (stringp msgdb-or-path)
 	      (elmo-msgdb-overview-load msgdb-or-path)
 	    (elmo-msgdb-get-overview msgdb-or-path))))
+
+(defsubst elmo-msgdb-mark-to-flags (mark)
+  (append
+   (and (string= mark elmo-msgdb-new-mark)
+	'(new))
+   (and (string= mark elmo-msgdb-important-mark)
+	'(important))
+   (and (member mark (elmo-msgdb-unread-marks))
+	'(unread))
+   (and (member mark (elmo-msgdb-answered-marks))
+	'(answered))
+   (and (not (member mark (elmo-msgdb-uncached-marks)))
+	'(cached))))
+
+(defsubst elmo-msgdb-flags-to-mark (flags cached use-cache)
+  (cond ((memq 'new flags)
+	 elmo-msgdb-new-mark)
+	((memq 'important flags)
+	 elmo-msgdb-important-mark)
+	((memq 'answered flags)
+	 (if cached
+	     elmo-msgdb-answered-cached-mark
+	   elmo-msgdb-answered-uncached-mark))
+	((memq 'unread flags)
+	 (if cached
+	     elmo-msgdb-unread-cached-mark
+	   elmo-msgdb-unread-uncached-mark))
+	(t
+	 (if (or cached (not use-cache))
+	     nil
+	   elmo-msgdb-read-uncached-mark))))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
@@ -365,6 +395,28 @@ FLAG is a symbol which is one of the following:
 		  elmo-msgdb-answered-uncached-mark
 		  elmo-msgdb-unread-uncached-mark
 		  elmo-msgdb-read-uncached-mark))))
+
+(defun elmo-msgdb-append-entity (msgdb entity &optional mark)
+  (when entity
+    (let ((number (elmo-msgdb-overview-entity-get-number entity))
+	  (message-id (elmo-msgdb-overview-entity-get-id entity)))
+      (elmo-msgdb-set-overview
+       msgdb
+       (nconc (elmo-msgdb-get-overview msgdb)
+	      (list entity)))
+      (elmo-msgdb-set-number-alist
+       msgdb
+       (nconc (elmo-msgdb-get-number-alist msgdb)
+	      (list (cons number message-id))))
+      (when mark
+	(elmo-msgdb-set-mark-alist
+	 msgdb
+	 (nconc (elmo-msgdb-get-mark-alist msgdb)
+		(list (list number mark)))))
+      (elmo-msgdb-make-index
+       msgdb
+       (list entity)
+       (list (cons number mark))))))
 
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."

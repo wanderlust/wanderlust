@@ -90,28 +90,17 @@
 (defun elmo-mark-folder-msgdb-create (folder numbers)
   (let ((i 0)
 	(len (length numbers))
-	overview number-alist mark-alist entity message-id
-	num)
+	(new-msgdb (elmo-make-msgdb))
+	entity message-id)
     (message "Creating msgdb...")
     (while numbers
       (setq entity
 	    (elmo-msgdb-create-overview-entity-from-file
 	     (car numbers) (elmo-message-file-name folder (car numbers))))
-      (if (null entity)
-	  ()
-	(setq num (elmo-msgdb-overview-entity-get-number entity))
-	(setq overview
-	      (elmo-msgdb-append-element
-	       overview entity))
-	(setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	(setq number-alist
-	      (elmo-msgdb-number-add number-alist
-				     num
-				     message-id))
-	(setq mark-alist
-	      (elmo-msgdb-mark-append
-	       mark-alist
-	       num (elmo-mark-folder-mark-internal folder))))
+      (when entity
+	(elmo-msgdb-append-entity new-msgdb
+				  entity
+				  (elmo-mark-folder-mark-internal folder)))
       (when (> len elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(elmo-display-progress
@@ -119,7 +108,7 @@
 	 (/ (* i 100) len)))
       (setq numbers (cdr numbers)))
     (message "Creating msgdb...done")
-    (list overview number-alist mark-alist)))
+    new-msgdb))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-mark-folder)
 					       &optional flag number)
