@@ -1233,13 +1233,16 @@ Format:
 
 @example
 @group
-@samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
+@samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{:} @var{numbering-method}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
 @end group
 @end example
 
 You can specify
 @samp{user}  (plain password transmission) or @samp{apop}  (APOP authentication)
 as @var{authenticate-type}.
+
+You can specify @samp{uidl} (use UIDL command for message numbering) or
+@samp{list} (use LIST command for message numbering) ad @samp{numbering-method}.
 
 default:
 @example
@@ -1249,6 +1252,8 @@ default:
              @code{(user-login-name)}.
 @var{authenticate-type} -> The value of @code{elmo-pop3-default-authenticate-type}.
               Initial setting is @samp{user}.
+@var{numbering-method} -> Follow the value of @code{elmo-pop3-default-use-uidl}.
+              If t, use UIDL for numbering. Initial setting is t.
 @var{hostname}   -> The value of @code{elmo-pop3-default-server}.
               Initial setting is @samp{localhost}.
 @var{port}       -> The value of @code{elmo-pop3-default-port}.
