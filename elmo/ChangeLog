@@ -1,5 +1,7 @@
 2004-04-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* elmo-split.el (elmo-split-subr): Append message with flag.
+
 	* elmo-localdir.el (elmo-folder-append-buffer): Fix interface.
 	* elmo-flag.el (elmo-folder-append-buffer): Ditto.
 	* elmo-maildir.el (elmo-folder-append-buffer): Ditto.

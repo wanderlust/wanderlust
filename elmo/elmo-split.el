@@ -38,6 +38,7 @@
 ;;
 
 ;;; Code:
+(eval-when-compile (require 'cl))
 (require 'elmo)
 
 (eval-when-compile
@@ -299,7 +300,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 	(fcount 0)
 	(default-rule `((t ,elmo-split-default-action)))
 	msgs action target-folder failure delete-substance
-	record-log log-string)
+	record-log log-string flags)
     (message "Splitting...")
     (elmo-folder-open-internal folder)
     (setq msgs (elmo-folder-list-messages folder))
@@ -315,6 +316,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					  nil (current-buffer) 'unread))
 		(run-hooks 'elmo-split-fetch-hook)
 		(setq elmo-split-message-entity (mime-parse-buffer))
+		(setq flags (elmo-message-flags folder msg))
 		(catch 'terminate
 		  (dolist (rule (append elmo-split-rule default-rule))
 		    (setq elmo-split-match-string-internal nil)
@@ -346,7 +348,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					 action)))
 				    (elmo-folder-create target-folder)))
 				(elmo-folder-open-internal target-folder)
-				(elmo-folder-append-buffer target-folder)
+				(elmo-folder-append-buffer target-folder (or flags '(read)))
 				(elmo-folder-close-internal target-folder))
 			    (error (setq failure t)
 				   (incf fcount)))
