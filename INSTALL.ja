@@ -189,6 +189,10 @@ load-path の設定
   マニュアルのインストール先は自動検出されます。(Makefile 中の INFODIR 
   でも設定可能です)
 
+  下記の URL で見ることもできます。
+
+	http://www.gohome.org/wl/doc/wl-euc_toc.html
+
 
 サンプル設定
 ============
