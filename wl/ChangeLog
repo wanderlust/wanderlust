@@ -1,3 +1,8 @@
+2002-05-14  KAMO Tomoyuki  <kamo@i-manage.co.jp>
+
+	* wl-summary.el (wl-summary-prefetch-msg): 
+	If wl-prefetch-confirm is nil and arg is non-nil, do prefetch.
+
 2002-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-check-line-format): New user option.

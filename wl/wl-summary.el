@@ -1332,7 +1332,8 @@ If ARG is non-nil, checking is omitted."
 	   (buffer-read-only nil)
 	   (file-cached (elmo-file-cache-exists-p message-id))
 	   (force-read (and size
-			    (or (null wl-prefetch-threshold)
+			    (or (and (null wl-prefetch-confirm) arg)
+				(null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
       (unwind-protect
