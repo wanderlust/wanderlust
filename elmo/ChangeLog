@@ -1,5 +1,8 @@
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pipe.el (elmo-pipe-drain): Don't save msgdb after moving
+	messages.
+
 	* mmelmo.el (mime-parse-parameters-from-list): Don't downcase
 	parameter value (It sometimes contains raw kanji).
 

@@ -70,7 +70,9 @@
 	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
     (elmo-move-msgs src (elmo-list-folder src) dst msgdb)
-    (elmo-msgdb-save src msgdb)
+    ;; Don't save msgdb here.
+    ;; Because summary view of original folder is not updated yet.
+    ;; (elmo-msgdb-save src msgdb)
     (elmo-commit src)
     (run-hooks 'elmo-pipe-drained-hook)))
 
