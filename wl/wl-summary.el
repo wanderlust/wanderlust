@@ -2111,8 +2111,9 @@ If ARG is non-nil, checking is omitted."
 		  (read-from-minibuffer "Jump to Message(No.): ")))))
     (setq num (int-to-string num))
     (beginning-of-line)
-    (if (or (re-search-forward (concat "\r" num) nil t)
-	    (re-search-backward (concat "\r" num) nil t))
+    (if (or (and (re-search-forward (concat "\r" num "[^0-9]") nil t)
+		 (progn (backward-char 1) t))
+	    (re-search-backward (concat "\r" num "[^0-9]") nil t))
 	(progn (beginning-of-line) t)
       nil)))
 
