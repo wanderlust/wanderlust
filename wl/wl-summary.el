@@ -4245,7 +4245,7 @@ If ARG, exit virtual folder."
 	(folder wl-summary-buffer-elmo-folder)
 	(number (elmo-msgdb-overview-entity-get-number entity))
 	no-parent from subject parent-raw-subject parent-subject
-	line
+	line mark
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
 	(children-num (if thr-children-number
 			  (int-to-string thr-children-number))))
@@ -4275,7 +4275,6 @@ If ARG, exit virtual folder."
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
-    (setq mark (or (elmo-message-mark folder number) " "))
     (setq line
 	  (concat
 	   (format (concat "%"
@@ -4284,7 +4283,7 @@ If ARG, exit virtual folder."
 			   "s%s%s%s %s")
 		   number
 		   (or temp-mark " ")
-		   mark
+		   (setq mark (or (elmo-message-mark folder number) " "))
 		   (wl-summary-format-date
 		    (elmo-msgdb-overview-entity-get-date entity))
 		   (or thr-indent-string ""))
