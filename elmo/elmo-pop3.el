@@ -153,8 +153,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (unless (elmo-net-folder-stream-type-internal folder)
       (elmo-net-folder-set-stream-type-internal
        folder
-       (elmo-get-network-stream-type
-	elmo-pop3-default-stream-type)))
+       elmo-pop3-default-stream-type))
     folder))
 
 ;;; POP3 session
