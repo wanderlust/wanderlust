@@ -254,11 +254,32 @@ It calls following-method selected from variable
 (defun wl-draft-attribute-newsgroups ()
   (std11-field-body "Newsgroups"))
 
+(defun wl-draft-nntp-attribute (attribute &optional alternatives)
+  (let ((config (cdr (elmo-string-matched-assoc
+		      (std11-field-body "newsgroups")
+		      wl-nntp-posting-config-alist)))
+	entry)
+    (when (stringp config)
+      (setq config (list (cons 'server config))))
+    (if (setq entry (assq attribute config))
+	;; maybe nil
+	(cdr entry)
+      (let (value)
+	(while alternatives
+	  (if (setq value (symbol-value (car alternatives)))
+	      (setq alternatives nil)
+	    (setq alternatives (cdr alternatives))))
+	value))))
+
 (defun wl-draft-attribute-nntp-posting-server ()
-  (or wl-nntp-posting-server elmo-nntp-default-server))
+  (wl-draft-nntp-attribute
+   'server
+   '(wl-nntp-posting-server elmo-nntp-default-server)))
 
 (defun wl-draft-attribute-nntp-posting-port ()
-  (or wl-nntp-posting-port elmo-nntp-default-port))
+  (wl-draft-nntp-attribute
+   'point
+   '(wl-nntp-posting-port elmo-nntp-default-port)))
 
 (defun wl-draft-attribute-value (attr)
   (let ((name (symbol-name attr))

@@ -1,5 +1,9 @@
 2005-01-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-mime.el (wl-draft-nntp-attribute): New function.
+	(wl-draft-attribute-nntp-posting-server): Use it.
+	(wl-draft-attribute-nntp-posting-port): Ditto.
+
 	* wl-mime.el (wl-draft-preview-attributes-list): New function.
 	(wl-draft-show-attributes-buffer): Ditto.
 	(wl-draft-hide-attributes-buffer): Ditto.
