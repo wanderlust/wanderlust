@@ -2442,6 +2442,11 @@ IMAP $B%U%)%k%@$N%a%C%;!<%8$d(B NNTP $B%U%)%k%@$N%K%e!<%95-;v$rFI$`$3$H$,$G$-
 $B%^%k%A%Q!<%H$NA`:n$O%a%C%;!<%8%P%C%U%!$K0\F0$7$F$+$i9T$$$^$9!#(B
 @xref{Message}.
 
+@subsection $B%a%C%;!<%8HV9f$r5M$a$k(B
+$B%5%^%j$G(B @kbd{M-x wl-summary-pack-number} $B$H$9$k$3$H$G(B
+$B%a%C%;!<%8HV9f$r5M$a$k$3$H$,$G$-$^$9!#$?$@$7BP1~$7$F$$$k%U%)%k%@$N<oN`$O(B
+MH Folder, News Spool Folder, Maildir Folder $B$N$_$G$9!#(B
+
 
 @node Thread Operations, Cache, Usage of Summary mode, Summary
 @section $B%9%l%C%I$NA`:n(B
@@ -4353,6 +4358,13 @@ Non-nil$B$J$i(B LDAP $B$rMxMQ$7$F%"%I%l%9Jd40$7$^$9!#(B
 @vindex wl-ldap-base
 $B=i4|@_Dj$O(B @samp{c=US}$B!#(B
 $B%"%I%l%9Jd40;~$N(B LDAP $B8!:w$N3+;OE@(B(base)$B$r;XDj$7$^$9!#(B
+
+@item wl-draft-remove-group-list-contents
+@vindex wl-draft-remove-group-list-contents
+$B=i4|@_Dj$O(B @code{t}$B!#(B
+Non-nil$B$J$i%a!<%kAw?.$N:]$K08@h$+$i(B group-list $B$NFbMF$r:o=|$7$^$9(B
+(group-list $B$H$O08@h$K4^$^$l$k(B @samp{Group: foo@@gohome.org,
+bar@@gohome.org;}$B$N$h$&$J5-=R$r;X$7$^$9(B)$B!#(B
 @end table
 
 
@@ -6183,6 +6195,11 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 $BF1MM$K$7$F!"(Bprefix argument $BIU$-$G(B  @kbd{a} $B$r2!$7$?$H$-$NF0:n$,!"(B
 @code{wl-draft-reply-with-argument-list} $B$G@_Dj$G$-$^$9!#(B
+
+$BCm!'(B $B<+J,$,=P$7$?%a!<%k$KJV?.$9$k:]$NF0:n$O!"$=$l$i$KBe$o$C$F(B
+@code{wl-draft-reply-myself-without-argument-list},
+@code{wl-draft-reply-myself-with-argument-list}
+$B$G;XDj$7$^$9!#(B
 
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings

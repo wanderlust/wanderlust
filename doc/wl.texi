@@ -2427,6 +2427,11 @@ Enter message buffer by typing @kbd{j} key.
 To operate multipart, you have to enter to the message buffer.
 @xref{Message}.
 
+@subsection Pack the Message Numbers
+You can pack the message numbers in Summary by 
+@kbd{M-x wl-summary-pack-number}. Note that only MH Folder, 
+News Spool Folder and Maildir Folder are supported folder types.
+
 
 @node Thread Operations, Cache, Usage of Summary Mode, Summary
 @section Thread Operations
@@ -4388,6 +4393,13 @@ If non-nil, the value is used as port number.
 @vindex wl-ldap-base
 The initial setting is @samp{c=US}.
 LDAP search starting point (base) for address completion.
+
+@item wl-draft-remove-group-list-contents
+@vindex wl-draft-remove-group-list-contents
+The initial setting is @code{t}.
+If non-nil, remove the group-lists' members in the recipients when
+sending the message (group-list means the description such as
+@samp{Group: foo@@gohome.org, bar@@gohome.org;} in the recipients).
 @end table
 
 @node Disconnected Operations, Expire and Archive, Draft, Top
@@ -6165,12 +6177,12 @@ folder mode.
 
 @item wl-highlight-folder-opened-face
 The face for open groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
+It is meaningful when @code{wl-highlight-folder-by-numbers} is
 @code{nil} or a @var{number}.
 
 @item wl-highlight-folder-closed-face
 The face for close groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
+It is meaningful when @code{wl-highlight-folder-by-numbers} is
 @code{nil} or a @var{number}.
 
 @item wl-highlight-folder-path-face
@@ -6246,6 +6258,11 @@ copied to @samp{To:} field.)
 
 Moreover, the behavior of @kbd{a} with prefix argument can 
 be directed by @code{wl-draft-reply-with-argument-list} as well.
+
+Note: To set the behavior when you reply to the message written by yourself, use
+@code{wl-draft-reply-myself-without-argument-list} and
+@code{wl-draft-reply-myself-with-argument-list}
+instead of them.
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection Appearance of Threads
