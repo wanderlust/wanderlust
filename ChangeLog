@@ -1,3 +1,9 @@
+2002-06-22  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-texinfo-format): Move condition for INFODIR	into
+	wl-detect-info-directory.
+	(wl-detect-info-directory): Check INFODIR after WL-CFG is loaded.
+
 2002-06-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-MK (wl-texinfo-install-file): Overwrite existing info.

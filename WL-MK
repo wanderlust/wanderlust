@@ -381,8 +381,7 @@
 	)))
 
 (defun wl-texinfo-format ()
-  (unless INFODIR
-    (setq INFODIR (wl-detect-info-directory)))
+  (wl-detect-info-directory)
   (cond ((listp wl-info-lang)
 	 (mapcar 'wl-texinfo-format-file wl-info-lang))
 	((stringp wl-info-lang)
@@ -413,22 +412,22 @@
   (require 'info)
   (if (fboundp 'info-initialize)
       (info-initialize))
-  (let ((infodir (car command-line-args-left))
-	(info (wl-primary-info-file))
-	previous INFODIR)
-    (setq INFODIR
-	  (if (string= infodir "NONE")
-	      (if (setq previous
-			(exec-installed-p info Info-directory-list
-					  COMPRESS-SUFFIX-LIST))
-		  ;;(progn
-		  ;;(condition-case nil (delete-file previous))
-		  (directory-file-name (file-name-directory previous));)
-		(car Info-directory-list))
-	    infodir))
-    (setq command-line-args-left (cdr command-line-args-left))
-    (princ (format "INFODIR is %s\n\n" INFODIR))
-    INFODIR))
+  (unless INFODIR
+    (let ((infodir (car command-line-args-left))
+	  (info (wl-primary-info-file))
+	  previous)
+      (setq INFODIR
+	    (if (string= infodir "NONE")
+		(if (setq previous
+			  (exec-installed-p info Info-directory-list
+					    COMPRESS-SUFFIX-LIST))
+		    ;;(progn
+		    ;;(condition-case nil (delete-file previous))
+		    (directory-file-name (file-name-directory previous));)
+		  (car Info-directory-list))
+	      infodir))
+      (setq command-line-args-left (cdr command-line-args-left))))
+  (princ (format "INFODIR is %s\n\n" INFODIR)))
 
 (defun install-wl-info ()
   (wl-texinfo-format)
