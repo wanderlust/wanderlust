@@ -7,7 +7,7 @@
 
 	* elmo-pop3.el (elmo-network-authenticate-session): Bind `sasl-mechanisms'
 
-2001-02-13  OKAZAKI Tetsurou  <refactor@acidrain.localnet>
+2001-02-13  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-prefetch-msg): Set `msgdb'
 	argument of `elmo-imap4-read-msg' as nil.
