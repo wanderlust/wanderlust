@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-13 16:03:31 teranisi>
+;; Time-stamp: <2000-04-18 10:27:36 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1471,11 +1471,12 @@ If optional argument is non-nil, checking is omitted."
 	      (message "Prefetching... %d/%d message(s)"
 		       (setq count (+ 1 count)) length))
 	  ;; redisplay!
-	  (save-excursion
-	    (save-restriction
-	      (widen)
-	      (goto-char start-pos)
-	      (sit-for 0)))
+	  (if (pos-visible-in-window-p)
+	      (save-excursion
+		(save-restriction
+		  (widen)
+		  (goto-char start-pos)
+		  (sit-for 0))))
 	  (setq targets (cdr targets)))
 	(message "Prefetched %d/%d message(s)" count length)
 	(cons count length)))))
@@ -2015,7 +2016,7 @@ If optional argument is non-nil, checking is omitted."
 	(last-progress 0)
 	mark-alist unread-marks msgs mark importants unreads 
 	importants-in-db unreads-in-db has-imap4 diff diffs
-	mes num-ma progress)
+	mes num-ma ma-length progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-get-type 
 		    wl-summary-buffer-folder-name)
@@ -2026,6 +2027,7 @@ If optional argument is non-nil, checking is omitted."
 			       wl-summary-new-mark)
 	    mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
             num-ma (length mark-alist)
+	    ma-length num-ma
 	    importants (elmo-list-folder-important 
 			wl-summary-buffer-folder-name
 			(elmo-msgdb-get-overview wl-summary-buffer-msgdb))
@@ -2036,7 +2038,7 @@ If optional argument is non-nil, checking is omitted."
 			 wl-summary-buffer-folder-name
 			 mark-alist unread-marks)))
       (while mark-alist
-	(setq progress (/ (* (- num-ma (length mark-alist)) 100) num-ma))
+	(setq progress (/ (* (- num-ma ma-length) 100) num-ma))
 	(if (not (eq progress last-progress))
 	    (elmo-display-progress 'wl-summary-sync-marks
 				   "Updating marks..."
@@ -2049,7 +2051,11 @@ If optional argument is non-nil, checking is omitted."
 	  (if (member (cadr (car mark-alist)) unread-marks)
 	      (setq unreads-in-db (cons (car (car mark-alist))
 					unreads-in-db))))
-	(setq mark-alist (cdr mark-alist)))
+	(setq mark-alist (cdr mark-alist)
+	      ma-length (1- ma-length)))
+      (elmo-display-progress 'wl-summary-sync-marks
+			     "Updating marks..."
+			     100)
       (setq diff (elmo-list-diff importants importants-in-db))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
@@ -2750,7 +2756,8 @@ If optional argument is non-nil, checking is omitted."
 		  (save-excursion
 		    (forward-line (- 
 				   0 
-				   wl-summary-partial-highlight-above-lines))
+				   (or wl-summary-partial-highlight-above-lines
+				       wl-summary-highlight-partial-threshold)))
 		    (wl-highlight-summary (point) (point-max)))
 		(wl-highlight-summary (point-min) (point-max))))
 	  (if (null wl-summary-buffer-msgdb) ;; one more try.
