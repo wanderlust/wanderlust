@@ -2613,17 +2613,16 @@ Use `wl-subscribed-mailing-list'."
 	       (wl-folder-get-petname (car entity)))
       (cons sum-done sum-all)))
    ((stringp entity)
-    (let* ((folder (wl-folder-get-elmo-folder entity))
-	   (nums (wl-folder-get-entity-info entity))
-	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
-					 (wl-summary-always-sticky-folder-p
-					  folder))
-				     wl-summary-highlight))
-	   wl-summary-exit-next-move
-	   wl-auto-select-first ret-val
-	   count)
+    (let ((nums (wl-folder-get-entity-info entity))
+	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
+					(wl-summary-always-sticky-folder-p
+					 entity))
+				    wl-summary-highlight))
+	  wl-summary-exit-next-move
+	  wl-auto-select-first ret-val
+	  count)
       (setq count (or (car nums) 0))
-      (setq count (+ count (wl-folder-count-incorporates folder)))
+      (setq count (+ count (wl-folder-count-incorporates entity)))
       (if (or (null (car nums)) ; unknown
 	      (< 0 count))
 	  (save-window-excursion
@@ -2632,8 +2631,7 @@ Use `wl-subscribed-mailing-list'."
 					     wl-summary-buffer-name
 					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range
-					      folder)
+					     (wl-summary-get-sync-range entity)
 					     nil)
 		(setq ret-val (wl-summary-incorporate))
 		(wl-summary-exit)
@@ -2642,7 +2640,8 @@ Use `wl-subscribed-mailing-list'."
 
 (defun wl-folder-count-incorporates (folder)
   (let ((marks (elmo-msgdb-mark-load
-		(elmo-folder-msgdb-path folder)))
+		(elmo-folder-msgdb-path
+		 (wl-folder-get-elmo-folder folder))))
 	(sum 0))
     (while marks
       (if (member (cadr (car marks))

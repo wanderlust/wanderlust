@@ -754,8 +754,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (wl-load-profile))
   (elmo-init)
   (let (demo-buf)
-    (unless wl-init
-      (setq demo-buf (wl-demo)))
+    (setq demo-buf (wl-demo))
     (wl-init)
     (condition-case nil
 	(progn

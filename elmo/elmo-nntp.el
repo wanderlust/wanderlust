@@ -965,18 +965,91 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(luna-define-method elmo-message-fetch-with-cache-process :after
-  ((folder elmo-nntp-folder) number strategy &optional section unread)
-  (elmo-nntp-setup-crosspost-buffer folder number)
-  (unless unread
-    (elmo-nntp-folder-update-crosspost-message-alist
-     folder (list number))))
+(luna-define-method elmo-message-fetch ((folder elmo-nntp-folder)
+					number strategy
+					&optional section
+					outbuf
+					unread)
+  (if (elmo-folder-plugged-p folder)
+      (let ((cache-file (elmo-file-cache-expand-path
+			 (elmo-fetch-strategy-cache-path strategy)
+			 section)))
+	(if (and (elmo-fetch-strategy-use-cache strategy)
+		 (file-exists-p cache-file))
+	    (if outbuf
+		(with-current-buffer outbuf
+		  (insert-file-contents-as-binary cache-file)
+		  (elmo-nntp-setup-crosspost-buffer folder number)
+		  (unless unread
+		    (elmo-nntp-folder-update-crosspost-message-alist
+		     folder (list number)))
+		  t)
+	      (with-temp-buffer
+		(insert-file-contents-as-binary cache-file)
+		(elmo-nntp-setup-crosspost-buffer folder number)
+		(unless unread
+		  (elmo-nntp-folder-update-crosspost-message-alist
+		   folder (list number)))
+		(buffer-string)))
+	  (if outbuf
+	      (with-current-buffer outbuf
+		(elmo-folder-send folder 'elmo-message-fetch-plugged
+				  number strategy section
+				  (current-buffer) unread)
+		(elmo-delete-cr-buffer)
+		(when (and (> (buffer-size) 0)
+			   (elmo-fetch-strategy-save-cache strategy))
+		  (elmo-file-cache-save
+		   (elmo-fetch-strategy-cache-path strategy)
+		   section))
+		t)
+	    (with-temp-buffer
+	      (elmo-folder-send folder 'elmo-message-fetch-plugged
+				number strategy section
+				(current-buffer) unread)
+	      (elmo-delete-cr-buffer)
+	      (when (and (> (buffer-size) 0)
+			 (elmo-fetch-strategy-save-cache strategy))
+		(elmo-file-cache-save
+		 (elmo-fetch-strategy-cache-path strategy)
+		 section))
+	      (buffer-string)))))
+    (elmo-folder-send folder 'elmo-message-fetch-unplugged
+		      number strategy section outbuf unread)))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
 						number strategy
 						&optional section outbuf
 						unread)
   (elmo-nntp-message-fetch folder number strategy section outbuf unread))
+
+(luna-define-method elmo-message-fetch-unplugged ((folder elmo-nntp-folder)
+						  number strategy
+						  &optional section outbuf
+						  unread)
+  (if (elmo-fetch-strategy-use-cache strategy)
+      (if outbuf
+	  (with-current-buffer outbuf
+	    (insert-file-contents-as-binary
+	     (elmo-file-cache-expand-path
+	      (elmo-fetch-strategy-cache-path strategy)
+	      section))
+	    (elmo-nntp-setup-crosspost-buffer folder number)
+	    (unless unread
+	      (elmo-nntp-folder-update-crosspost-message-alist
+	       folder (list number)))
+	    t)
+	(with-temp-buffer
+	  (insert-file-contents-as-binary
+	   (elmo-file-cache-expand-path
+	    (elmo-fetch-strategy-cache-path strategy)
+	    section))
+	  (elmo-nntp-setup-crosspost-buffer folder number)
+	  (unless unread
+	    (elmo-nntp-folder-update-crosspost-message-alist
+	     folder (list number)))
+	  (buffer-string)))
+    (error "Unplugged")))
 
 (defun elmo-nntp-message-fetch (folder number strategy section outbuf unread)
   (let ((session (elmo-nntp-get-session folder))
