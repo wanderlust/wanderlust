@@ -2747,6 +2747,7 @@ If ARG, without confirm."
 	 parent-entity
 	 parent-number
 	 (case-fold-search t)
+	 (depth 0)
 	 cur number overview2 cur-entity linked retval delayed-entity
 	 update-list entity-stack)
     (while entity
