@@ -1,14 +1,5 @@
 2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-pipe.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
-	Moved to elmo-util.el.
-
-	* elmo-util.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
-	Moved from elmo-pipe.el
-
-	* elmo-archive.el (elmo-archive-call-process): Enclose with
-	static-if.
-
 	* elmo-imap4.el (elmo-imap4-read-msg): Use "BODY[]" instead of
 	"RFC822" (because RFC822.PEEK is obsolete).
 	(Adviced by IMAI Takeshi <imai@on.rim.or.jp>)

@@ -31,6 +31,12 @@
 
 (require 'elmo-msgdb)
 
+(defsubst elmo-pipe-spec-src (spec)
+  (nth 1 spec))
+
+(defsubst elmo-pipe-spec-dst (spec)
+  (nth 2 spec))
+
 (defalias 'elmo-pipe-msgdb-create 'elmo-pipe-msgdb-create-as-numlist)
 
 (defun elmo-pipe-msgdb-create-as-numlist (spec numlist new-mark already-mark

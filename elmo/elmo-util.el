@@ -474,12 +474,6 @@ File content is encoded with MIME-CHARSET."
 	  (elmo-match-string 2 folder)
 	  (elmo-match-string 3 folder))))
 
-(defsubst elmo-pipe-spec-src (spec)
-  (nth 1 spec))
-
-(defsubst elmo-pipe-spec-dst (spec)
-  (nth 2 spec))
-
 (defun elmo-folder-get-spec (folder)
   "Return spec of FOLDER."
   (let ((type (elmo-folder-get-type folder)))

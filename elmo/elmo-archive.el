@@ -29,8 +29,8 @@
 ;;; Commentary:
 ;; 
 ;; TODO:
-;; [¥Ü¥½] append-msgs() ¤¬Í‗¤·¤¤¡Ê¤±¤É multi-refile ÉÔ²Ä¡Ë¡£
-;; Info-Zip ÀלÍÑ¥¨¡¼¥¸¥§¥ף¥È¤עÍÑ¤¤¤¿ÆüËÜ¸ל¸¡÷ק¡ÊOS/2 ÀלÍÑ¡Ë¡£
+;; [$B%\%=(B] append-msgs() $B$,M_$7$$!J$1$I(B multi-refile $BIT2D!K!#(B
+;; Info-Zip $B@lMQ%(!<%8%'%s%H$rMQ$$$?F|K\8l8!:w!J(BOS/2 $B@lMQ!K!#(B
 
 ;;; Code:
 ;; 
@@ -217,7 +217,7 @@
   (` (cdr (assq (, type)
 		elmo-archive-file-regexp-alist))))
 
-(static-if (boundp 'NEMACS)
+(if (boundp 'NEMACS)
     (defsubst elmo-archive-call-process (prog args &optional output)
       (apply 'call-process prog nil output nil args)
       0)
