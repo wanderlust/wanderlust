@@ -298,6 +298,9 @@ e.g.
 	    references (wl-delete-duplicates references)
 	    references (when references
 			 (mapconcat 'identity references "\n\t"))))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
 			  (concat wl-forward-subject-prefix original-subject))
@@ -464,6 +467,9 @@ Reply to author if WITH-ARG is non-nil."
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To to)
 		    (cons 'Cc cc)
 		    (cons 'Newsgroups newsgroups)
@@ -671,31 +677,20 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-default-draft-cite ()
   (let ((mail-yank-ignored-headers "[^:]+:")
 	(mail-yank-prefix "> ")
-	(summary-buf wl-current-summary-buffer)
-	(message-buf (get-buffer (wl-current-message-buffer)))
-	from date cite-title num entity)
-    (if (and summary-buf
-	     (buffer-live-p summary-buf)
-	     message-buf
-	     (buffer-live-p message-buf))
-	(progn
-	  (with-current-buffer summary-buf
-	    (let ((elmo-mime-charset wl-summary-buffer-mime-charset))
-	      (setq num (save-excursion
-			  (set-buffer message-buf)
-			  wl-message-buffer-cur-number))
-	      (setq entity (elmo-msgdb-overview-get-entity
-			    num (wl-summary-buffer-msgdb)))
-	      (setq date (elmo-msgdb-overview-entity-get-date entity))
-	      (setq from (elmo-msgdb-overview-entity-get-from entity))))
-	  (setq cite-title (format "At %s,\n%s wrote:"
-				   (or date "some time ago")
-				   (if wl-default-draft-cite-decorate-author
-				       (funcall wl-summary-from-function
-						(or from "you"))
-				     (or from "you"))))))
-    (and cite-title
-	 (insert cite-title "\n"))
+	date from cite-title)
+    (save-restriction
+      (if (< (mark t) (point))
+	  (exchange-point-and-mark))
+      (narrow-to-region (point)(point-max))
+      (setq date (std11-field-body "date")
+	    from (std11-field-body "from")))
+    (when (or date from)
+      (insert (format "At %s,\n%s wrote:\n"
+		      (or date "some time ago")
+		      (if wl-default-draft-cite-decorate-author
+			  (funcall wl-summary-from-function
+				   (or from "you"))
+			(or from "you")))))
     (mail-indent-citation)))
 
 (defvar wl-draft-buffer nil "Draft buffer to yank content")
@@ -712,6 +707,7 @@ Reply to author if WITH-ARG is non-nil."
   (if arg
       (let (buf mail-reply-buffer)
 	(elmo-set-work-buf
+	 (insert "\n")
 	 (yank)
 	 (setq buf (current-buffer)))
 	(setq mail-reply-buffer buf)
@@ -2311,11 +2307,13 @@ Automatically applied in draft sending time."
 
 (defun wl-draft-highlight-and-recenter (&optional n)
   (interactive "P")
-  (if wl-highlight-body-too
-      (let ((beg (point-min))
-	    (end (point-max)))
-	(put-text-property beg end 'face nil)
-	(wl-highlight-message beg end t)))
+  (when wl-highlight-body-too
+    (let ((modified (buffer-modified-p)))
+      (unwind-protect
+	  (progn
+	    (put-text-property (point-min) (point-max) 'face nil)
+	    (wl-highlight-message (point-min) (point-max) t))
+	(set-buffer-modified-p modified))))
   (recenter n))
 
 ;;;; user-agent support by Sen Nagata

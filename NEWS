@@ -42,6 +42,13 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** You can send encapsulated blind carbon copies. Its default field name is
    "Ecc:".
 
+** C-c C-y (Draft) can cite region of the message.
+   It affects if transient-mark-mode (Emacs) or zmacs-regions (XEmacs) is
+   Non-nil and the region is active.
+
+** You can delete a part from multipart message.
+   It is binded as "D" in message buffer.
+
 ** You can easily configure server settings to post news article.
    Set wl-nntp-posting-config-alist appropriately. See info for an example.
 

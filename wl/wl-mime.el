@@ -34,14 +34,6 @@
 (require 'mime-play)
 (require 'elmo)
 
-(eval-when-compile
-  (defalias-maybe 'Meadow-version 'ignore))
-
-(defvar xemacs-betaname)
-(defvar xemacs-codename)
-(defvar enable-multibyte-characters)
-(defvar mule-version)
-
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -68,11 +60,9 @@ has Non-nil value\)"
 	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction
 	    (widen)
-	      (if (or (and wl-on-xemacs
-			   zmacs-regions zmacs-region-active-p)
-		      (and transient-mark-mode mark-active))
-		  (wl-mime-preview-follow-current-region)
-		(mime-preview-follow-current-entity)))))))
+	    (if (wl-region-exists-p)
+		(wl-mime-preview-follow-current-region)
+	      (mime-preview-follow-current-entity)))))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
 (defun wl-mime-preview-follow-current-region ()
@@ -280,7 +270,7 @@ It calls following-method selected from variable
 			  (wl-mime-node-id-to-string node-id))))
 	(with-temp-buffer
 	  (insert-buffer orig-buf)
-	  (kill-region header-start body-end)
+	  (delete-region header-start body-end)
 	  (goto-char header-start)
 	  (insert "Content-Type: text/plain; charset=US-ASCII\n\n")
 	  (insert "** This part has been removed by Wanderlust **\n\n")

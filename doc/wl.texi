@@ -530,7 +530,7 @@ This means it enables you to run Wanderlust as a default mail composer
  of Emacsen.
 
 It is effective only when your Emacs can define @code{mail-user-agent}.
-@xref{Mail Methods, , ,emacs-ja, The Emacs Editor}.
+@xref{Mail Methods, , ,emacs, The Emacs Editor}.
 
 @lisp
 @group
@@ -4794,6 +4794,12 @@ or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{Fcc:} field.
 @vindex wl-smtp-posting-server
 The initial setting is @code{nil}.
 This is the SMTP server name for mail transmission.
+
+@item wl-smtp-posting-port
+@vindex wl-smtp-posting-port
+The initial setting is @code{nil}.
+This is the SMTP port number for mail transmission.
+If @code{nil}, default SMTP port number (25) is used.
 
 @item wl-smtp-posting-user
 @vindex wl-smtp-posting-user
