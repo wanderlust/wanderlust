@@ -1903,8 +1903,10 @@ Return nil if no complete line has arrived."
 		  (elmo-imap4-send-command-wait
 		   session
 		   (list "list " (elmo-imap4-mailbox root) " *"))))
-    (unless (string= (elmo-net-folder-user-internal folder)
-		     elmo-imap4-default-user)
+    (unless (and (string= (elmo-net-folder-user-internal folder)
+			  elmo-imap4-default-user)
+		 (eq (elmo-net-folder-auth-internal folder)
+		     (or elmo-imap4-default-authenticate-type 'clear)))
       (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
     (unless (eq (elmo-net-folder-auth-internal folder)
 		(or elmo-imap4-default-authenticate-type 'clear))

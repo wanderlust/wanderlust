@@ -1,3 +1,8 @@
+2002-01-27  Takaaki MORIYAMA  <aka@iris.eonet.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Don't omit user
+	name if authentication type is specified.
+
 2002-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-default-imap4-stream-type): Define as obsolete
