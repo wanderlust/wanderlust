@@ -17,11 +17,18 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    By C-u g, the sticky summary is destroyed as well as C-u q. In summary or
    folder mode, G opens the sticky summary.
 
+** You can go round summary buffers by C-cC-n and C-cC-p.
+
 ** Members of the list wl-folder-hierarchy-access-folders is now some REGEXP
    for access group names instead of exact group names.
 
 ** You can specify some function in wl-draft-reply-with-argument-list etc.
    for setting the recipients in draft by the return value of it.
+
+** The interface of the function wl-draft has been changed.
+
+** The uses of wl-generate-mailer-string-function has been changed.
+   Specify a function which returns some string to appear in User-Agent header.
 
 * Changes in 2.8.0 from 2.6.1
 

@@ -19,11 +19,18 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    サマリで C-u g すると C-u q と同様にサマリを破棄します。サマリやフォルダ
    モードから G でサマリに移動すると、新規サマリがスティッキーになります。
 
+** C-cC-n や C-cC-p でサマリバッファ達を巡回できます。
+
 ** リスト wl-folder-hierarchy-access-folders の各要素は、アクセスグループに
    ついての正規表現になりました(これまでは正確なグループ名でした)。
 
 ** 変数 wl-draft-reply-with-argument-list 等で、関数の返り値から宛先を
    決められるようになりました。
+
+** 関数 wl-draft のインターフェースが変更されました。
+
+** wl-generate-mailer-string-function の使用法が変更になりました。
+   User-Agent フィールドに入る文字列を返す関数を指定して下さい。
 
 * 2.6.1 から 2.8.0 への変更点
 
