@@ -1481,10 +1481,10 @@ If update process is interrupted, return nil.")
 	flag-table crossed after-append numbers)
     (setq old-msgdb (elmo-folder-msgdb folder))
     (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
-    (setq numbers (sort (elmo-folder-list-messages folder nil t) '<))
     (when ignore-msgdb
       (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
       (elmo-folder-clear folder (eq ignore-msgdb 'visible-only)))
+    (setq numbers (sort (elmo-folder-list-messages folder nil t) '<))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(progn

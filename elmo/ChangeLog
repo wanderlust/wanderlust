@@ -1,3 +1,7 @@
+2003-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Fixed bug when sync-all.
+
 2003-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-multi.el (elmo-folder-process-crosspost): Follow the change in
