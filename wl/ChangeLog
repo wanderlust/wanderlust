@@ -1,3 +1,36 @@
+2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-e21.el (wl-highlight-folder-current-line): Fixed regexp.
+
+2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-std11-parse-addresses): Ignore trailing
+	spaces (Adviced by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>).
+
+	* wl-address.el (wl-address-specials-regexp): Eliminated.
+	(wl-address-quote-specials): Rewrite.
+
+2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style
+	shy-groups for regexp.
+
+	* wl-e21.el (wl-highlight-folder-current-line): Use Posix style
+	character classes and Perl style shy-groups for regexp.
+	(wl-highlight-plugged-current-line): Use Posix style character
+	classes for regexp.
+	(wl-e21-highlight-folder-by-numbers): Ditto.
+	(wl-e21-display-image-p): Use `display-images-p' instead of
+	`display-graphic-p'.
+	(display-images-p): Make an alias to `display-graphic-p' if it is
+	not available.  It is for Emacs version prior to 21.0.105.
+
+	* wl-demo.el (wl-demo): Use `display-images-p' instead of
+	`display-graphic-p'.
+	(wl-demo-image-type-alist): Ditto.
+	(display-images-p): Make an alias to `display-graphic-p' if it is
+	not available.  It is for Emacs version prior to 21.0.105.
+
 2001-09-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-generate-user-agent-string-1): Remove tm

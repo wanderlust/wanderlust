@@ -166,9 +166,9 @@ load-path の設定
 
   Wanderlust の設定ファイルには、
 
-    ~/.addresses  アドレス帳 (無くても起動できる)
-    ~/.folders    フォルダ設定
     ~/.wl         Wanderlust の設定 (起動時に読み込まれる)
+    ~/.folders    フォルダ設定
+    ~/.addresses  アドレス帳 (無くても起動できる)
 
   の三つがあります。
 
