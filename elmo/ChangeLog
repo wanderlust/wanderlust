@@ -1,3 +1,9 @@
+2000-05-26  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-localdir.el (elmo-localdir-pack-number): Renamed
+	the local variable for a packed number self descriptively.
+	Initialized it correctly with 1.
+
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Fixed a problem
