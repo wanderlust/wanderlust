@@ -1121,17 +1121,17 @@ Faces used:
                                                   headers
   wl-highlight-message-unimportant-header-contents contents of unimportant
                                                    headers
-  wl-highlight-message-cited-text	           quoted text from other
+  wl-highlight-message-cited-text-N	           quoted text from other
                                                    messages
   wl-highlight-message-citation-header             header of quoted texts
   wl-highlight-message-signature                   signature
 
 Variables used:
-  wl-highlight-important-header-regexp	 what makes a \"important\" header
-  wl-highlight-important-header2-regexp	 what makes a \"important\" header
-  wl-highlight-unimportant-header-regexp what makes a \"not important\" header
-  wl-highlight-citation-prefix-regexp	 matches lines of quoted text
-  wl-highlight-citation-header-regexp	 matches headers for quoted text
+  wl-highlight-message-header-alist             alist of header regexp with
+                                                face for header contents
+  wl-highlight-citation-prefix-regexp		matches lines of quoted text
+  wl-highlight-force-citation-header-regexp	matches headers for quoted text
+  wl-highlight-citation-header-regexp		matches headers for quoted text
 
 If HACK-SIG is true,then we search backward from END for something that
 looks like the beginning of a signature block, and don't consider that a
