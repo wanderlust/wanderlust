@@ -249,11 +249,11 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      (set-extent-end-glyph (make-extent (point) (point)) image))
 	     ((featurep 'image)
 	      (if (eq 'wl-logo-xbm logo)
-		  (let* ((unspecified nil)
-			 (bg (eval (face-background 'wl-highlight-logo-face)))
-			 (fg (eval (face-foreground 'wl-highlight-logo-face))))
-		    (if bg (plist-put (cdr image) ':background bg))
-		    (if fg (plist-put (cdr image) ':foreground fg))))
+		  (progn
+		    (plist-put (cdr image) ':background
+			       (face-background 'wl-highlight-logo-face))
+		    (plist-put (cdr image) ':foreground
+			       (face-foreground 'wl-highlight-logo-face))))
 	      (setq rest (/ (- (* wh (frame-char-height)) lh 1)
 			    (frame-char-height)))
 	      (insert-char ?\  (max 0 (/ (- (* (frame-char-width) (1+ ww)) lw)
