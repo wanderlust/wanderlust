@@ -2296,7 +2296,7 @@ Japanese, but if you want to display it in English, set the value of
 
 @var{Sender}'s indentation corresponds to the depth of the thread.
 Sender name is displayed as nickname if it is defined in the address
-book.  Set @code{wl-use-petname} as @samp{nil}, if you want to quit
+book.  Set @code{wl-use-petname} as @code{nil}, if you want to quit
 displaying with nickname.
 
 If number is printed at the head of @var{Sender} part like @samp{+2},
@@ -3381,7 +3381,7 @@ displays Deutsch.
 
 @item wl-summary-fix-timezone
 @vindex wl-summary-fix-timezone
-The initial setting is @samp{nil}. 
+The initial setting is @code{nil}. 
 Time zone of the date string in summary mode is adjusted using this value.
 If @code{nil}, it is adjust to the default time zone information
 (system's default time zone or environment variable @samp{TZ}).
@@ -3655,19 +3655,22 @@ moves to the next message.
 Initial setting is @code{'(1 . 4)}.  It is a cons cell and the ratio of
 its car and cdr value corresponds to the ratio of Summary and Message
 windows.
+
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI only) Initial setting is nil.
+(SEMI only) Initial setting is @code{nil}.
 All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name.
-If nil, the value of mime-view-ignored-field-list is used.
+If @code{nil}, the value of @code{mime-view-ignored-field-list} is used.
+
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI only) Initial setting is nil.
-All fields that match this list will be hidden in message buffer.
+(SEMI only) Initial setting is @code{nil}.
+All fields that match this list will be display in message buffer.
 Each elements are regexp of field-name. This value precedes
-wl-message-ignored-field-list.
-If nil, the value of mime-view-visible-field-list is used.
+@code{wl-message-ignored-field-list}.
+If @code{nil}, the value of @code{mime-view-visible-field-list} is used.
+
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
 (SEMI only) Initial setting is
@@ -4046,12 +4049,11 @@ Selects a template.
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-draft-insert-x-face-field
-Inserts the content of a file @file{~/.xface} (the value of the variable
-@code{wl-x-face-file}) as an @samp{X-Face:} field in the draft buffer.
+@findex wl-addrmgr
+Enter Address Manager.
+@xref{Address Manager}.
 
-There should be encoded X-Face strings as a content of a file @file{~/.xface}.
-(@code{wl-draft-insert-x-face-field})
+(@code{wl-addrmgr})
 @end table
 
 @section Customizable Variables
@@ -4093,8 +4095,7 @@ field is automatically inserted in the draft buffer.
 The initial setting is @code{t}.  If non-nil and there is an encoded
 X-Face string in a file @file{~/.xface} (the value of the variable
 @code{wl-x-face-file}), inserts it as an @samp{X-Face:} field in the
-draft buffer.  If @code{nil}, it is not automatically inserted. Press
-@kbd{C-c C-a} to insert.
+draft buffer.  If @code{nil}, it is not automatically inserted.
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
