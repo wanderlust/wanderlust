@@ -530,7 +530,7 @@ BUFFER must be a single-byte buffer."
 		     elmo-default-imap4-user)
       (setq append-serv (concat ":" (elmo-imap4-spec-username spec))))
     (unless (eq (elmo-imap4-spec-auth spec)
-		(or elmo-default-imap4-authenticate-type 'clear))
+		elmo-default-imap4-authenticate-type)
       (setq append-serv 
 	    (concat append-serv "/" (symbol-name (elmo-imap4-spec-auth spec)))))
     (unless (string= (elmo-imap4-spec-hostname spec)

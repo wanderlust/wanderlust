@@ -40,6 +40,9 @@
 (eval-and-compile
   (autoload 'md5 "md5"))
 
+(defvar elmo-pop3-use-uidl t
+  "*If non-nil, use UIDL.")
+
 (defvar elmo-pop3-exists-exactly t)
 (defvar sasl-mechanism-alist)
 
