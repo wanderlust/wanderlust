@@ -1,3 +1,7 @@
+2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-as-coding-system): Define for non-mule too.
+
 2003-03-02  Jeremy Shaw  <jeremy.shaw@lindows.com>
 
 	* wl-draft.el (wl-draft-reply): Fixed.
