@@ -1,3 +1,23 @@
+2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the
+	argument change in the wl-summary-create-line.
+	(wl-thread-insert-entity-sub): Ditto.
+
+	* wl-summary.el (wl-summary-detect-mark-position): Follow the
+	argument change in the wl-summary-create-line.
+	(wl-summary-insert-sequential): Ditto.
+	(wl-summary-update-thread): Ditto.
+	(wl-summary-persistent-mark-string): New inline function.
+	(wl-summary-message-mark): Use it.
+	(wl-summary-create-line): Abolish argument wl-persistent-mark
+	and added wl-flags, wl-cached.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Changed argument
+	mark to flags.
+	(wl-highlight-summary-current-line): Decide the face not by the 
+	persistent mark but flags.
+
 2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-new-mark, wl-summary-important-mark,

@@ -389,13 +389,16 @@ ENTITY is returned."
 	  (when (setq message-entity
 		      (elmo-message-entity wl-summary-buffer-elmo-folder
 					   msg))
-	    (wl-summary-insert-line 
+	    (wl-summary-insert-line
 	     (wl-summary-create-line
 	      message-entity
 	      (elmo-message-entity wl-summary-buffer-elmo-folder
 				   parent-msg)
 	      temp-mark
-	      (wl-summary-message-mark wl-summary-buffer-elmo-folder msg)
+	      (elmo-message-flags wl-summary-buffer-elmo-folder
+				  msg)
+	      (elmo-message-cached-p wl-summary-buffer-elmo-folder
+				     msg)
 	      (if wl-thread-insert-force-opened
 		  nil
 		(wl-thread-maybe-get-children-num msg))
@@ -816,7 +819,10 @@ Message is inserted to the summary buffer."
 	  (elmo-message-entity wl-summary-buffer-elmo-folder
 			       (nth 0 parent-entity))
 	  temp-mark
-	  (wl-summary-message-mark wl-summary-buffer-elmo-folder msg-num)
+	  (elmo-message-flags wl-summary-buffer-elmo-folder
+			      msg-num)
+	  (elmo-message-cached-p wl-summary-buffer-elmo-folder
+				 msg-num)
 	  (if wl-thread-insert-force-opened
 	      nil
 	    (wl-thread-maybe-get-children-num msg-num))

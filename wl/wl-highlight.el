@@ -820,29 +820,23 @@
 	      (put-text-property bol (match-end 0) 'face face)))
 	(put-text-property bol eol 'face text-face)))))
 
-(defun wl-highlight-summary-line-string (line mark temp-mark indent)
+(defun wl-highlight-summary-line-string (line flags temp-mark indent)
   (let (fsymbol action)
     (cond ((and (string= temp-mark wl-summary-score-over-mark)
-		(member mark (list wl-summary-unread-cached-mark
-				   wl-summary-unread-uncached-mark
-				   wl-summary-new-mark)))
+		(or (memq 'new flags) (memq 'unread flags)))
 	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	  ((and (string= temp-mark wl-summary-score-below-mark)
-		(member mark (list wl-summary-unread-cached-mark
-				   wl-summary-unread-uncached-mark
-				   wl-summary-new-mark)))
+		(or (memq 'new flags) (memq 'unread flags)))
 	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
 	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
 	   (setq fsymbol (nth 5 action)))
-	  ((string= mark wl-summary-new-mark)
+	  ((memq 'new flags)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
-	  ((member mark (list wl-summary-unread-cached-mark
-			      wl-summary-unread-uncached-mark))
+	  ((memq 'unread flags)
 	   (setq fsymbol 'wl-highlight-summary-unread-face))
-	  ((member mark (list wl-summary-answered-cached-mark
-			      wl-summary-answered-uncached-mark))
+	  ((memq 'answered flags)
 	   (setq fsymbol 'wl-highlight-summary-answered-face))
-	  ((or (string= mark wl-summary-important-mark))
+	  ((memq 'important flags)
 	   (setq fsymbol 'wl-highlight-summary-important-face))
 	  ((string= temp-mark wl-summary-score-below-mark)
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
@@ -859,39 +853,44 @@
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
-	  (case-fold-search nil) temp-mark status-mark
+	  (case-fold-search nil) temp-mark
 	  (deactivate-mark nil)
+	  (number (wl-summary-message-number))
 	  fsymbol action bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
-      (setq status-mark (wl-summary-persistent-mark))
       (setq temp-mark (wl-summary-temp-mark))
       (when (setq action (assoc temp-mark wl-summary-mark-action-list))
 	(setq fsymbol (nth 5 action))
 	(setq dest (nth 2 action)))
       (if (not fsymbol)
 	  (cond
+	   ((null number))
 	   ((and (string= temp-mark wl-summary-score-over-mark)
-		 (member status-mark (list wl-summary-unread-cached-mark
-					   wl-summary-unread-uncached-mark
-					   wl-summary-new-mark)))
+		 (or (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     number 'new)
+		     (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     number 'unread)))
 	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	   ((and (string= temp-mark wl-summary-score-below-mark)
-		 (member status-mark (list wl-summary-unread-cached-mark
-					   wl-summary-unread-uncached-mark
-					   wl-summary-new-mark)))
+		 (or (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     number 'new)
+		     (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					      number 'unread)))
 	    (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	   ((string= status-mark wl-summary-new-mark)
+	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				     number 'new)
 	    (setq fsymbol 'wl-highlight-summary-new-face))
-	   ((member status-mark (list wl-summary-unread-cached-mark
-				      wl-summary-unread-uncached-mark))
+	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				     number 'unread)
 	    (setq fsymbol 'wl-highlight-summary-unread-face))
-	   ((member status-mark (list wl-summary-answered-cached-mark
-				      wl-summary-answered-uncached-mark))
+	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				     number 'answered)
 	    (setq fsymbol 'wl-highlight-summary-answered-face))
-	   ((string= status-mark wl-summary-important-mark)
+	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				     number 'important)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark
 	   ((string= temp-mark wl-summary-score-below-mark)
@@ -901,10 +900,10 @@
 	   ;;
 	   (t (if (null
 		   (wl-thread-entity-get-parent-entity
-		    (wl-thread-get-entity (wl-summary-message-number))))
+		    (wl-thread-get-entity number)))
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
-      (put-text-property bol eol 'face fsymbol)
+      (when fsymbol (put-text-property bol eol 'face fsymbol))
       (when dest
 	(put-text-property (next-single-property-change
 			    (next-single-property-change
