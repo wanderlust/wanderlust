@@ -643,8 +643,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (when (or (not wl-interactive-exit)
 	    (y-or-n-p "Do you really want to quit Wanderlust? "))
     (elmo-quit)
-    (when wl-use-acap
-      (wl-acap-exit))
+    (when wl-use-acap (funcall (symbol-function 'wl-acap-exit)))
     (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)

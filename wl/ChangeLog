@@ -1,3 +1,7 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-exit): Eliminated byte-compile warning.
+
 2001-12-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-update-confirm-threshold): Defined as
