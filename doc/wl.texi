@@ -2808,8 +2808,8 @@ folder string. You can specify a rule at @var{target} part, too.  In this
 case, If the field value of the rule and the current rule is matched,
 then the current rule is fired (i.e. AND condition).
 
-In @var{target} part, you can refer matched substring of @var{regexp}.
-To refer substring, specify following in @var{target}:
+You can refer matched substring of @var{regexp} to specify @var{target} part.
+To refer substring, use following keys:
 
 @table @samp
 @item \&
