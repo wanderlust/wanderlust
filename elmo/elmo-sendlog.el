@@ -111,10 +111,15 @@
     (message "Creating msgdb...done")
     new-msgdb))
 
-(luna-define-method elmo-message-fetch-with-cache-process
-  ((folder elmo-sendlog-folder) number strategy &optional section unseen)
+(luna-define-method elmo-message-fetch
+  ((folder elmo-sendlog-folder) number strategy &optional unseen section)
   ;; disbable cache process
-  (elmo-message-fetch-internal folder number strategy section unseen))
+  (erase-buffer)
+  (when (elmo-message-fetch-internal folder number strategy section unseen)
+    (when (and (not unseen)
+	       (elmo-message-flagged-p folder number 'unread))
+      (elmo-message-unset-flag folder number 'unread))
+    t))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-sendlog-folder)
 					    location strategy

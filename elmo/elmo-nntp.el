@@ -959,8 +959,8 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(luna-define-method elmo-message-fetch-with-cache-process :around
-  ((folder elmo-nntp-folder) number strategy &optional section unread)
+(luna-define-method elmo-message-fetch :around
+  ((folder elmo-nntp-folder) number strategy &optional unread section)
   (when (luna-call-next-method)
     (elmo-nntp-setup-crosspost-buffer folder number)
     (unless unread

@@ -138,10 +138,15 @@
 		       (elmo-cache-folder-directory-internal folder))))
   t)
 
-(luna-define-method elmo-message-fetch-with-cache-process
-  ((folder elmo-cache-folder) number strategy &optional section unseen)
+(luna-define-method elmo-message-fetch
+  ((folder elmo-cache-folder) number strategy &optional unseen section)
   ;; disbable cache process
-  (elmo-message-fetch-internal folder number strategy section unseen))
+  (erase-buffer)
+  (when (elmo-message-fetch-internal folder number strategy section unseen)
+    (when (and (not unseen)
+	       (elmo-message-flagged-p folder number 'unread))
+      (elmo-message-unset-flag folder number 'unread))
+    t))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-cache-folder)
 					    location strategy

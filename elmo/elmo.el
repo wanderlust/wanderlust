@@ -633,20 +633,6 @@ If second optional argument SECTION is specified, only the
 SECTION of the message is fetched (if possible).
 Returns non-nil if fetching was succeed.")
 
-(luna-define-generic elmo-message-fetch-with-cache-process (folder
-							    number strategy
-							    &optional
-							    section
-							    unread)
-  "Fetch a message into current buffer with cache process.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not flaged as read.
-Returns non-nil if fetching was succeed.")
-
 (luna-define-generic elmo-message-fetch-internal (folder number strategy
 							 &optional
 							 section
@@ -1417,23 +1403,6 @@ If Optional LOCAL is non-nil, don't update server flag."
 					unread
 					section)
   (erase-buffer)
-  (when (elmo-message-fetch-with-cache-process folder number
-					       strategy section unread)
-    (when (and (not unread)
-	       (elmo-message-flagged-p folder number 'unread))
-      (elmo-message-unset-flag folder number 'unread
-			       ;; If cache does not exists, update only msgdb.
-			       ;; otherwise, flag status on server should be
-			       ;; changed since it is never touched at this
-			       ;; point.
-			       (not (elmo-message-flagged-p
-				     folder number 'cached))))
-    t))
-
-(luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
-							   number strategy
-							   &optional
-							   section unread)
   (let ((cache-path (elmo-fetch-strategy-cache-path strategy))
 	(method-priorities
 	 (cond ((eq (elmo-fetch-strategy-use-cache strategy) 'maybe)
@@ -1442,9 +1411,9 @@ If Optional LOCAL is non-nil, don't update server flag."
 		'(cache entity))
 	       (t
 		'(entity))))
-	result err)
+	result err updated-server-flag)
     (while (and method-priorities
-		(null result))
+		(not result))
       (setq result
 	    (case (car method-priorities)
 	      (cache
@@ -1457,13 +1426,19 @@ If Optional LOCAL is non-nil, don't update server flag."
 							   unread)
 			    (error (setq err error) nil))
 			  (> (buffer-size) 0))
+		 (setq updated-server-flag t)
 		 (when (and (elmo-fetch-strategy-save-cache strategy)
 			    cache-path)
 		   (elmo-file-cache-save cache-path section))
 		 t)))
 	    method-priorities (cdr method-priorities)))
-    (or result
-	(and err (signal (car err) (cdr err))))))
+    (if result
+	(when (and (not unread)
+		   (elmo-message-flagged-p folder number 'unread))
+	  (elmo-message-unset-flag folder number 'unread updated-server-flag))
+      (when err
+	(signal (car err) (cdr err))))
+    result))
 
 (defun elmo-folder-kill-messages-range (folder beg end)
   (elmo-folder-set-killed-list-internal

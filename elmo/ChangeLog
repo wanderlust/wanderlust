@@ -1,5 +1,18 @@
 2005-01-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Merge from
+	`elmo-message-fetch-with-cache-process'.
+
+	* elmo-sendlog.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Define.
+
+	* elmo-nntp.el (elmo-message-fetch): Renamed from
+	`elmo-message-fetch-with-cache-process'.
+
+	* elmo-cache.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Define.
+
 	* elmo-util.el (elmo-condition-parse-primitive): Downcase
 	search-key.
 
