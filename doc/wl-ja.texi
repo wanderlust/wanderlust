@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.4.1
+@set VERSION 2.4.0
 @synindex pg cp
 @finalout
 
@@ -763,7 +763,7 @@ RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$
 @var{$BG'>ZK!(B}$B$K$O(B @code{login} ($B%(%s%3!<%I$7$F%Q%9%o!<%I$rAw?.(B)$B$+(B
            @code{cram-md5} (CRAM-MD5 $B$K$h$kG'>Z(B)$B$+(B
            @code{digest-md5} (DIGEST-MD5 $B$K$h$kG'>Z(B)$B$+(B
-           @code{clear} ($B$^$?$O(B @code{nil}$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
+           @code{plain} ($B$^$?$O(B @code{nil}$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
 @end example
 
 (CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B
@@ -802,8 +802,8 @@ non-nil $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B'starttl
 $BG'>ZK!$H$7$F!"(B@code{login}$B!"(B@code{cram-md5} $B$b$7$/$O(B @code{digest-md5} 
 $B$r;XDj$7$?>l9g!"%Q%9%o!<%I$r%(%s%3!<%I$7$FAw?.$7$^$9!#$?$@$7!"%5!<%PB&$,(B
 $B%Q%9%o!<%I$r%(%s%3!<%I$7$F<u$1<h$kG=NO$,L5$$>l9g$O!"3NG'$N$N$A!"(B
-@code{clear} ($B@8%Q%9%o!<%I$rAw$k(B) $B$K@ZBX$($^$9!#JQ?t(B 
-@code{elmo-imap4-force-login} $B$,(B non-nil $B$J$i$P!"3NG'L5$7$K(B @code{clear} 
+@code{plain} ($B@8%Q%9%o!<%I$rAw$k(B) $B$K@ZBX$($^$9!#JQ?t(B 
+@code{elmo-imap4-force-login} $B$,(B non-nil $B$J$i$P!"3NG'L5$7$K(B @code{plain} 
 $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B @code{nil})$B!#(B
 
 $BNc(B:
@@ -814,9 +814,9 @@ non-nil $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B'starttl
 %#mh/inbox -> IMAP $B$N%a!<%k%\%C%/%9!"(B"#mh/inbox"
 
 %inbox:hoge -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox" $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
-%inbox:hoge/clear@@server1
+%inbox:hoge/plain@@server1
             -> server1 $B>e$N(B IMAP $B$N%a!<%k%\%C%/%9(B "inbox" $B$X(B
-               $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B('clear $B$G(B)
+               $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B('plain $B$G(B)
                $B%"%/%;%9!#(B
 @end group
 @end example
@@ -2472,13 +2472,7 @@ MH Folder, News Spool Folder, Maildir Folder $B$N$_$G$9!#(B
 $B$b$&0l2s(B @kbd{/} $B$r2!$9$H!"%9%l%C%I$rJD$8$^$9!#(B
 prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(B
 
-@kbd{[} $B$G%5%^%j$NA4$F$N%9%l%C%I$r3+$-!"(B@kbd{]}$B$GA4$F$N%9%l%C%I$rJD$8$^(B
-$B$9!#(B
-
-@kbd{t} $B$+$i;O$^$k%3%^%s%I$G!"$=$N%9%l%C%I$KB0$9$k%a%C%;!<%8$KBP$7$F0l3g(B
-$B$7$F=hM}$r9T$&$3$H$,$G$-$^$9!#(B
-@xref{Key Bindings of Summary}.
-
+@kbd{t} $B$+$i;O$^$k%3%^%s%I$G!"$=$N%9%l%C%I$KB0$9$k%a%C%;!<%8$KBP$7$F0l3g$7$F=hM}$r9T$&$3$H$,$G$-$^$9!#(B
 
 @subsection $B%9%l%C%I$N7R$.$J$*$7(B
 

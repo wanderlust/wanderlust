@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.4.1
+@set VERSION 2.4.0
 @synindex pg cp
 @finalout
 
@@ -737,7 +737,7 @@ Format:
 
 You can specify @code{login} (encoded password transmission),
 @code{cram-md5} (CRAM-MD5 authentication), @code{digest-md5} (DIGEST-MD5
-authentication) or @code{clear} (or @code{nil}, plain password
+authentication) or @code{plain} (or @code{nil}, plain password
 transmission) as @var{authenticate-type}.  (To use CRAM-MD5 or
 DIGEST-MD5 authentication, you must install @file{utils/sasl} package.)
 
@@ -771,9 +771,9 @@ will be the default connection.
 If you specify @code{login}, @code{cram-md5} or @code{digest-md5} as
 authentication method, the password is sent in encoded form. But, if
 your server is unable to receive an encoded password, authentication
-will fall back to @code{clear} (that is, sending password in raw format)
+will fall back to @code{plain} (that is, sending password in raw format)
 after confirmation to user. If @code{elmo-imap4-force-login} is non-nil,
-authentication will fall back to @code{clear} without confirmation
+authentication will fall back to @code{plain} without confirmation
 (default value is @code{nil}).
 
 Example:
@@ -784,10 +784,10 @@ Example:
 %#mh/inbox -> IMAP mailbox "#mh/inbox"
 
 %inbox:hoge -> IMAP mailbox "inbox" of user "hoge".
-%inbox:hoge/clear@@server1
+%inbox:hoge/login@@server1
             -> server1's IMAP mailbox "inbox"
                of user "hoge", with plain password authentication
-               ('clear).
+               ('plain).
 @end group
 @end example
 
@@ -2457,12 +2457,8 @@ the appearance like following.
 If you type @kbd{/} key once again, the thread is closed.
 With prefix argument, @kbd{/} opens all children threads.
 
-If you type @kbd{[}, opens all threads in summary.  @kbd{]} closes all
-threads.
-
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
-@xref{Key Bindings of Summary}.
 
 @subsection reconstruct thread by hand
 
