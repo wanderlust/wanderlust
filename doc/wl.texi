@@ -5557,7 +5557,7 @@ scores are defined, corresponding to folder names.
 @end lisp
 
 If paths to the score files are omitted, the directory specified in the
-variable @code{wl-score-files-dir} is assumed.
+variable @code{wl-score-files-directory} is assumed.
 
 No matter what you write in @code{wl-score-folder-alist}, the default
 score file @code{wl-score-default-file} (@file{all.SCORE}) is always
@@ -5791,8 +5791,8 @@ Messages with these marks are scored.
 The initial setting is t.
 If non-nil, scoring is enabled.
 
-@item wl-score-files-dir
-@vindex wl-score-files-dir
+@item wl-score-files-directory
+@vindex wl-score-files-directory
 The initial setting is @file{~/.elmo/}.
 The default directory for score files.
 
