@@ -2233,12 +2233,17 @@ Non-nil $B$J$i%a%C%;!<%8$,:o=|$5$l$?$H$-$K%U%)%k%@%b!<%I$GL$FI?t$r%A%'%C%/(B
 @node Summary, Message, Folder, Top
 @chapter $B%5%^%j%b!<%I(B
 
+$B%U%)%k%@%b!<%I$GFI$_$?$$%U%)%k%@$rA*Br$9$k$H!"%5%^%j%b!<%I$K0\F0$7$^$9!#(B
+$B%5%^%j%b!<%I$K$O%a%C%;!<%8$N0lMw$,I=<($5$l$^$9!#(B
+
 @menu
 * Usage of Summary mode::       $B;HMQJ}K!(B
-* Thread Oparations::            $B%9%l%C%I$NA`:n(B
+* Thread Oparations::           $B%9%l%C%I$NA`:n(B
 * Cache::                       $B%-%c%C%7%e$H@hFI$_5!G=(B
 * Auto Refile::                 $B<+F0%j%U%!%$%k(B
 * Sticky Summary::              $B%9%F%#%C%-!<%5%^%j(B
+* Key Bindings of Summary::     $B%-!<%P%$%s%I(B
+* Variables of Summary::        $B%+%9%?%^%$%:JQ?t(B
 @end menu
 
 
@@ -2247,7 +2252,6 @@ Non-nil $B$J$i%a%C%;!<%8$,:o=|$5$l$?$H$-$K%U%)%k%@%b!<%I$GL$FI?t$r%A%'%C%/(B
 
 @subsection $B%5%^%j$NI=<(FbMF(B
 
-$B%U%)%k%@%b!<%I$GFI$_$?$$%U%)%k%@$rA*Br$9$k$H!"%5%^%j%b!<%I$K0\F0$7$^$9!#(B
 $B%5%^%j%b!<%I$K$O!"0J2<$N$h$&$K%a%C%;!<%8$N0lMw$,I=<($5$l$^$9!#(B
 
 @example
@@ -2357,6 +2361,7 @@ NNTP $B%U%)%k%@$N%K%e!<%95-;v$rFI$`$3$H$,$G$-$^$9!#(B
 @kbd{N} $B$G<!$NL$FI!"(B@kbd{n} $B$G<!$N%a%C%;!<%8$rI=<($7$^$9!#(B
 @kbd{j} $B$r2!$9$H8=:_I=<(Cf$N%a%C%;!<%8$N%P%C%U%!$K0\F0$7$^$9!#(B
 $B%^%k%A%Q!<%H$NA`:n$O%a%C%;!<%8%P%C%U%!$K0\F0$7$F$+$i9T$$$^$9!#(B
+@xref{Message}.
 
 
 @node Thread Oparations, Cache, Usage of Summary mode, Summary
@@ -2540,7 +2545,7 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 $B$NMM$K(B @code{wl-summary-auto-refile-skip-marks} $B$r(B nil $B$K$7$^$9!#(B
 
 
-@node Sticky Summary,  , Auto Refile, Summary
+@node Sticky Summary, Key Bindings of Summary, Auto Refile, Summary
 @section $B%9%F%#%C%-!<%5%^%j(B
 @cindex Summary, Sticky
 @cindex Sticky Summary
@@ -2558,6 +2563,8 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 $BJQ?t(B @code{wl-summary-always-sticky-folder-list} $B$K%U%)%k%@L>(B($B@55,I=8=(B)
 $B$N%j%9%H$r@_Dj$9$k$3$H$K$h$j!"%U%)%k%@0\F0;~$K<+F0E*$K%9%F%#%C%-!<%5%^%j$H$9$k$3$H$b$G$-$^$9!#(B
 
+
+@node Key Bindings of Summary, Variables of Summary, Sticky Summary, Summary
 @section $B%-!<%P%$%s%I(B
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer
@@ -3241,6 +3248,8 @@ Wanderlust $B$N%5!<%P!&%]!<%HJL$N%*%U%i%$%s(B/$B%*%s%i%$%s$rJQ99$7$^$9!#(B
 (@code{wl-jump-to-draft-buffer})
 @end table
 
+
+@node Variables of Summary,  , Key Bindings of Summary, Summary
 @section $B%+%9%?%^%$%:JQ?t(B
 
 @table @code
@@ -4142,6 +4151,18 @@ t $B$J$i(B @file{~/.elmo/sendlog} $B$KAw?.%m%0$r=PNO$7$^$9!#(B
 @cindex Offline
 @cindex Unplugged
 
+Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
+
+@menu
+* Off-line State::              $B%*%U%i%$%s%b!<%I(B
+* Enable Operations::           $B%*%U%i%$%s%b!<%I$G<B9T$G$-$kA`:n(B
+* Plugged Mode::                $B%5!<%P!&%]!<%HJL$N@Z$jBX$((B
+* Off-line State settings::     $B5/F0;~$N%*%U%i%$%s>uBV@_Dj(B
+* Variables of Plugged Mode::   $B%+%9%?%^%$%:JQ?t(B
+@end menu
+
+
+@node Off-line State, Enable Operations, Disconnected Operations, Disconnected Operations
 @section $B%*%U%i%$%s%b!<%I(B
 
 Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
@@ -4159,25 +4180,32 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
 @file{~/.wl} $B$J$I$GJQ?t(B @code{wl-plugged} $B$r(B nil $B$K@_Dj$7$F$+$i5/F0$9$k$H!"(B
 $B5/F0;~$+$i%*%U%i%$%s%b!<%I$H$J$j$^$9!#(B
 
-$B0J2<$NA`:n$O(B($BBP>]$H$J$k%a%C%;!<%8$,%-%c%C%7%e$5$l$F$$$l$P(B)
-$B%*%U%i%$%s%b!<%I$G$b<B9T$G$-$^$9!#(B
-($BJQ?t(B @code{elmo-enable-disconnected-operation} ($B8e=R(B) $B$,(B non-nil $B$N$H$-!#(B)
 
-@itemize @minus
-@item $B%a%C%;!<%8$NAw?.(B
-@item $B%j%U%!%$%k(B/$B%3%T!<(B (IMAP4)
-@item $B%U%)%k%@@8@.(B (IMAP4)
-@item $B%^!<%/IU$1(B (IMAP4)
-@item $B%W%j%U%'%C%A(B (IMAP4, NNTP)
-@end itemize
+@node Enable Operations, Plugged Mode, Off-line State, Disconnected Operations
+@section $B%*%U%i%$%s%b!<%I$G<B9T$G$-$kA`:n(B
+
+$B0J2<$NA`:n$O(B($BBP>]$H$J$k%a%C%;!<%8$,%-%c%C%7%e$5$l$F$$$l$P(B) $B%*%U%i%$%s%b!<(B
+$B%I$G$b<B9T$G$-$^$9!#(B($BJQ?t(B @code{elmo-enable-disconnected-operation} ($B8e(B
+$B=R(B) $B$,(B non-nil $B$N$H$-!#(B) 
+@xref{Plugged Mode}, @xref{Off-line State settings}.
+
+@menu
+* Send Messages off-line::      $B%a%C%;!<%8$NAw?.(B
+* Re-file and Copy queue::      $B%j%U%!%$%k(B/$B%3%T!<(B (IMAP4)
+* Creation of Folders::         $B%U%)%k%@@8@.(B (IMAP4)
+* Marking::                     $B%^!<%/IU$1(B (IMAP4)
+* Pre-fetching Reservations::   $B%W%j%U%'%C%A(B (IMAP4, NNTP)
+@end menu
 
 $B%*%U%i%$%s%b!<%ICf$K$J$5$l$?$3$l$i$NA`:n$O!"(BWanderlust $B$,%*%s%i%$%s%b!<%I(B
 $B$K$J$C$?=V4V$K%M%C%H%o!<%/7PM3$G%5!<%P>e$KH?1G$5$l$^$9!#(B
 
-@section $B%a%C%;!<%8$NAw?.(B
+
+@node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
+@subsection $B%a%C%;!<%8$NAw?.(B
 
 $B%*%U%i%$%s>uBV$G%a!<%k(B/$B%K%e!<%95-;v$rAw?.$G$-$^$9!#(B
-(im-wl.el $B$r$*;H$$$N>l9g$O!"4X78$"$j$^$;$s!#(B)
+(@file{im-wl.el} $B$r$*;H$$$N>l9g$O!"4X78$"$j$^$;$s!#(B)
 $B%*%U%i%$%s$N$H$-$KAw?.$5$l$?%a%C%;!<%8$O(B
 $B%-%e!<%U%)%k%@(B @samp{+queue} $B$KN/$j$^$9!#(B
 $BN/$C$?%a%C%;!<%8$O!"%*%s%i%$%s$K$J$C$?$H$-$K0l5$$KAw?.$5$l$^$9!#(B
@@ -4190,7 +4218,9 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
 @c $B%-%e!<$K$"$k%a%C%;!<%8$r:FJT=8$9$k$3$H$b2DG=$G$9$,!"(B
 @c $BLdBj$,5/$3$k2DG=@-$,$"$j$^$9$N$G$*4+$a$G$-$^$;$s!#(B
 
-@section $B%j%U%!%$%k(B/$B%3%T!<(B(IMAP4)
+
+@node Re-file and Copy queue, Creation of Folders, Send Messages off-line, Enable Operations
+@subsection $B%j%U%!%$%k(B/$B%3%T!<(B(IMAP4)
 
 $B%*%U%i%$%s>uBV$N$"$$$@$K<B9T$5$l$?(B IMAP $B%U%)%k%@$KBP$9$k%j%U%!%$%k(B
 /$B%3%T!<A`:n$O%-%e!<$K$?$a$i$l!"%*%s%i%$%s$K$J$C$?$H$-$K%5!<%PB&$KH?1G$5(B
@@ -4202,20 +4232,26 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
 $B%U%!%$%k(B/$B%3%T!<@h$K;XDj$5$l$?%U%)%k%@$K%a%C%;!<%8$rDI2C$9$k$N$K<:GT$7$?(B
 $B$H$-$O(B @samp{+lost+found} $B%U%)%k%@$KDI2C$5$l$^$9!#(B
 
-@section $B%U%)%k%@@8@.(B(IMAP4)
+
+@node Creation of Folders, Marking, Re-file and Copy queue, Enable Operations
+@subsection $B%U%)%k%@@8@.(B(IMAP4)
 
 IMAP $B%U%)%k%@$N@8@.$b%*%U%i%$%s>uBV$G<B9T$G$-$^$9!#%*%s%i%$%s$K$J$C$?$H$-(B
 $B$K%U%)%k%@@8@.$,%5!<%P$KH?1G$5$l$^$9$,!"$3$N$H$-!"2?$i$+$N860x$G%U%)%k%@@8(B
 $B@.$,<:GT$7$F$7$^$C$?>l9g!"%*%U%i%$%sCf$K@8@.$5$l$?%U%)%k%@$X%j%U%!%$%k$5$l(B
 $B$?%a%C%;!<%8$O(B @samp{+lost+found} $B%U%)%k%@$KDI2C$5$l$^$9!#(B
 
-@section $B%^!<%/IU$1(B(IMAP4)
+
+@node Marking, Pre-fetching Reservations, Creation of Folders, Enable Operations
+@subsection $B%^!<%/IU$1(B(IMAP4)
 
 IMAP $B%U%)%k%@$K$"$k%a%C%;!<%8$KBP$9$kL$FI(B/$B4{FI$N>pJs!"$*$h$S!"(B
 $B=EMW%^!<%/(B @samp{$} $B$,$D$$$F$$$k$+$I$&$+!"$b%*%U%i%$%sCf$NJQ99$,%*%s%i%$%s$K(B
 $B$J$C$?$H$-$K%5!<%P$KH?1G$5$l$^$9!#(B
 
-@section $B%W%j%U%'%C%A(B(IMAP4, NNTP)
+
+@node Pre-fetching Reservations,  , Marking, Enable Operations
+@subsection $B%W%j%U%'%C%A(B(IMAP4, NNTP)
 
 IMAP $B$b$7$/$O(B NNTP $B%U%)%k%@$K$"$k%a%C%;!<%8$KBP$7$F!"%W%j%U%'%C%A$NM=Ls(B
 $B$r$7$^$9!#%W%j%U%'%C%A$NM=Ls$,$5$l$?%a%C%;!<%8$O(B @samp{!} $B$,IU$-$^$9$,!"(B
@@ -4234,6 +4270,8 @@ IMAP $B$b$7$/$O(B NNTP $B%U%)%k%@$K$"$k%a%C%;!<%8$KBP$7$F!"%W%j%U%'%C%A$NM=Ls
 @code{elmo-cache-expire-by-size} $B$O%*%U%i%$%s=hM}$NBP>]$H$J$k%a%C%;!<%8$N(B
 $B%-%c%C%7%e$O:o=|$7$^$;$s!#(B
 
+
+@node Plugged Mode, Off-line State settings, Enable Operations, Disconnected Operations
 @section $B%5!<%P!&%]!<%HJL$N%*%s%i%$%s!"%*%U%i%$%s$N@Z$jBX$((B
 
 $B>e5-$N(B @kbd{M-t} $B$K$h$kA`:n$G$O%M%C%H%o!<%/$N>uBV$r0l3g$7$F@Z$jBX$($^$9$,!"(B
@@ -4300,6 +4338,8 @@ ON/OFF $B$5$l$^$9!#(B
 @code{elmo-plugged-condition} ($B8e=R(B)$B$N@_Dj$H3F%]!<%H$N(B plug $B>uBV$K$h$j(B 2$B9TL\$N(B 
 (wl-plugged) $B$,JQ2=$7$^$9!#(B
 
+
+@node Off-line State settings, Variables of Plugged Mode, Plugged Mode, Disconnected Operations
 @section $B5/F0;~$N%*%U%i%$%s>uBV@_Dj(B
 
 $BA0=R$NDL$j!"(B@file{~/.wl} $B$J$I$GJQ?t(B @code{wl-plugged} $B$r(B nil $B$K@_Dj$7$F$+$i5/F0$9(B
@@ -4325,6 +4365,8 @@ ON/OFF $B$5$l$^$9!#(B
 @end group
 @end lisp
 
+
+@node Variables of Plugged Mode,  , Off-line State settings, Disconnected Operations
 @section $B%+%9%?%^%$%:JQ?t(B
 
 @table @code

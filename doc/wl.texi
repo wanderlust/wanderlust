@@ -2213,12 +2213,17 @@ You cannot put same nickname to the different folders.
 @node Summary, Message, Folder, Top
 @chapter Summary Mode
 
+After you select the folder via folder mode, you enter to the summary
+mode.
+
 @menu
-* Usage of Summary Mode::       TIPS
-* Thread Oparations::           Thread oparations
-* Cache::                       File cache, Buffer cache, and Prefetch
-* Auto Refile::                 Auto refile settings
-* Sticky Summary::              Summary make sticky
+* Usage of Summary Mode::       TIPS.
+* Thread Oparations::           Thread oparations.
+* Cache::                       File cache, Buffer cache, and Prefetch.
+* Auto Refile::                 Auto refile settings.
+* Sticky Summary::              Summary make sticky.
+* Key Bindings of Summary::     Key bindings.
+* Variables of Summary::        Customize Summary Mode.
 @end menu
 
 
@@ -2227,7 +2232,6 @@ You cannot put same nickname to the different folders.
 
 @subsection Summary Content
 
-After you select the folder via folder mode, you enter to the summary mode.
 In the summary mode, messages are displayed like following.
 
 @example
@@ -2347,6 +2351,7 @@ You can jump to next unread message by typing @kbd{N} key, and @kbd{n} key
 moves cursor to the next message.
 Enter message buffer by typing @kbd{j} key.
 To operate multipart, you have to enter to the message buffer.
+@xref{Message}.
 
 
 @node Thread Oparations, Cache, Usage of Summary Mode, Summary
@@ -2532,7 +2537,7 @@ To execute auto refile on all messages, set following.
 @end lisp
 
 
-@node Sticky Summary,  , Auto Refile, Summary
+@node Sticky Summary, Key Bindings of Summary, Auto Refile, Summary
 @section Sticky Summary
 @cindex Summary, Sticky
 @cindex Sticky Summary
@@ -2552,6 +2557,8 @@ q}. Other operations in the sticky summary are same as normal summary.
 @code{wl-summary-always-sticky-folder-list} specifies the folders that are
 automatically sticked.
 
+
+@node Key Bindings of Summary, Variables of Summary, Sticky Summary, Summary
 @section Key bindings
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer
@@ -3243,7 +3250,9 @@ folder's message to the draft buffer and jump to it.
 (@code{wl-jump-to-draft-buffer})
 @end table
 
-@section Customize variables
+
+@node Variables of Summary,  , Key Bindings of Summary, Summary
+@section Customiziable variables
 
 @table @code
 @item wl-summary-move-order
@@ -4179,6 +4188,18 @@ the size specified by this variable.
 @chapter Off-line Management
 @cindex Disconnected Operations
 
+Wanderlust has on-line and off-line states.
+
+@menu
+* Off-line State::              Wanderlust has on-line and off-line states.
+* Enable Operations::           Enable Disconeected Oparations.
+* Plugged Mode::                Switching On-line/Off-line per Server/Port.
+* Off-line State settings::     Invoking Wanderlust in the Off-line State.
+* Variables of Plugged Mode::   Customize Plugged Mode.
+@end menu
+
+
+@node Off-line State, Enable Operations, Disconnected Operations, Disconnected Operations
 @section Off-line State
 
 Wanderlust has on-line and off-line states.
@@ -4196,22 +4217,29 @@ You can invoke Wanderlust in the off-line state by setting
 In the off-line mode, @kbd{n} and @kbd{p} command in the summary mode
 ignores uncached messages.
 
+
+@node Enable Operations, Plugged Mode, Off-line State, Disconnected Operations
+@section 
+
 Even in the off-line state, provided that relevant messages are cached,
 and the variable @code{elmo-enable-disconnected-operation} (described
-later) is non-nil, you can:
+later) is non-nil, you can following oparations:
+@xref{Plugged Mode}, @xref{Off-line State settings}.
 
-@itemize @minus
-@item transmit messages
-@item re-file and copy (IMAP4)
-@item create folders (IMAP4)
-@item mark (IMAP4)
-@item pre-fetch (IMAP4, NNTP)
-@end itemize
+@menu
+* Send Messages off-line::      Transmit Messages.
+* Re-file and Copy queue::      Re-file and Copy (IMAP4).
+* Creation of Folders::         Create Folders off-line (IMAP4).
+* Marking::                     Mark (IMAP4).
+* Pre-fetching Reservations::   Pre-fetch (IMAP4, NNTP).
+@end menu
 
-As soon as Wanderlust becomes on-line, such operations invoked
-off-line are reflected in the servers via network.
+As soon as Wanderlust becomes on-line, such operations invoked off-line
+are reflected in the servers via network.
 
-@section Transmission of Messages
+
+@node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
+@subsection Transmission of Messages
 
 You can send mail/news messages off-line (if you are using im-wl.el, it
 is irrelevant).  Messages sent off-line are accumulated in the queue
@@ -4222,7 +4250,9 @@ You can visit @samp{+queue} in the off-line state and confirm content
 of messages in the queue.  You can also remove messages.  Removed messages
 are not transmitted even in the on-line state.
 
-@section Re-file and Copy (IMAP4)
+
+@node Re-file and Copy queue, Creation of Folders, Send Messages off-line, Enable Operations
+@subsection Re-file and Copy (IMAP4)
 
 Re-file and copy operations to IMAP folders invoked during the off-line
 state are accumulated in the queue, and reflected in the server side
@@ -4236,19 +4266,25 @@ While the queue is processed, messages that failed to be re-filed or
 copied to the specified folders are appended to the folder
 @samp{+lost+found}.
 
-@section Creation of Folders (IMAP4)
+
+@node Creation of Folders, Marking, Re-file and Copy queue, Enable Operations
+@subsection Creation of Folders (IMAP4)
 
 You can create IMAP folders off-line.  The creation of folders are
 reflected in the servers when Wanderlust becomes on-line.  At that time, 
 if folders failed to be created on the servers for any reasons, messages
 re-filed to such folders are appended to the folder @samp{+lost+found}.
 
-@section Marking (IMAP4)
+
+@node Marking, Pre-fetching Reservations, Creation of Folders, Enable Operations
+@subsection Marking (IMAP4)
 
 Off-line changes in unread/read and importance mark @samp{$} information
 are also reflected in the servers when Wanderlust becomes on-line.
 
-@section Pre-fetching (IMAP4, NNTP)
+
+@node Pre-fetching Reservations,  , Marking, Enable Operations
+@subsection Pre-fetching (IMAP4, NNTP)
 
 You can make reservations for pre-fetching messages in IMAP or NNTP
 folders.  Reserved messages are marked with @samp{!} but not cached
@@ -4267,6 +4303,8 @@ If you want to remove caches, be sure to execute
 @code{elmo-cache-expire-by-size} does not remove caches for messages
 relevant to off-line operations.
 
+
+@node Plugged Mode, Off-line State settings, Enable Operations, Disconnected Operations
 @section Switching On-line/Off-line per Server/Port
 
 @kbd{M-t} described above switches networking states as a whole, but you 
@@ -4329,6 +4367,8 @@ If you change plugged states of any servers or ports, (wl-plugged) in the
 second line is affected depending on @code{elmo-plugged-condition}
 settings and the plugged state of each port.
 
+
+@node Off-line State settings, Variables of Plugged Mode, Plugged Mode, Disconnected Operations
 @section Invoking Wanderlust in the Off-line State
 
 As described before, if you set @code{wl-plugged} to nil in @file{~/.wl}
@@ -4355,6 +4395,8 @@ plugged state of these ports or to add other ports, configure
 @end group
 @end lisp
 
+
+@node Variables of Plugged Mode,  , Off-line State settings, Disconnected Operations
 @section Customizable Variables
 
 @table @code
@@ -6177,7 +6219,7 @@ If a folder do not match, @code{wl-mime-charset} is used.
 @vindex wl-folder-init-load-access-folders
 The initial setting is nil.
 This is a list of access groups to be loaded specifically at the start.
-If it is  nil, @code{wl-folder-init-no-load-access-folders} is referred.
+If it is nil, @code{wl-folder-init-no-load-access-folders} is referred.
 
 @item wl-folder-init-no-load-access-folders
 @vindex wl-folder-init-no-load-access-folders
