@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-12 16:30:34 teranisi>
+;; Time-stamp: <2000-05-12 16:55:48 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -6087,10 +6087,12 @@ Reply to author if invoked with argument."
   (interactive)
   (if wl-summary-buffer-saved-message
       (let ((number (wl-summary-message-number)))
-	(save-excursion
-	  (wl-thread-jump-to-msg wl-summary-buffer-saved-message)
-	  (wl-summary-set-parent number))
-	(setq  wl-summary-buffer-saved-message nil))
+	(if (eq wl-summary-buffer-saved-message number)
+	    (message "Cannot set itself as a parent.")
+	  (save-excursion
+	    (wl-thread-jump-to-msg wl-summary-buffer-saved-message)
+	    (wl-summary-set-parent number))
+	  (setq  wl-summary-buffer-saved-message nil)))
     (message "There's no saved message.")))
 
 (provide 'wl-summary)
