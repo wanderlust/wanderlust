@@ -1,3 +1,19 @@
+2002-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-folder-diff): Treat 'mark:' filter.
+
+	* elmo.el (elmo-folder-unmark-read): Added argument `ignore-flag'.
+
+	* elmo-filter.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-map.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-multi.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-net.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-pipe.el (elmo-folder-unmark-read): Ditto.
+
 2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-parse-status): Skip white spaces after

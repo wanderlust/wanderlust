@@ -278,9 +278,10 @@
 			    numbers ignore-flag))
 
 (luna-define-method elmo-folder-unmark-read ((folder elmo-pipe-folder)
-					      numbers)
+					     numbers
+					     &optional ignore-flag)
   (elmo-folder-unmark-read (elmo-pipe-folder-dst-internal folder)
-			   numbers))
+			   numbers ignore-flag))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-pipe-folder)
 						  numbers)
