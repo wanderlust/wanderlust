@@ -170,7 +170,7 @@ File content is encoded with MIME-CHARSET."
 	       (concat field "(2) Search by") default)
 	      ")"))
      ((string-match "Since\\|Before" field)
-      (let ((default (format-time-string "%Y-%m-%d" (current-time))))
+      (let ((default (format-time-string "%Y-%m-%d")))
 	(setq value (completing-read
 		     (format "Value for '%s' [%s]: " field default)
 		     (mapcar (function
