@@ -3,6 +3,11 @@
 	* wl-vars.el (wl-smtp-posting-server): Customization Type fix.
 	(wl-summary-showto-folder-regexp): Ditto.
 
+2000-05-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-default-from): Fix probrem when
+	std11-extract-address-components return (nil "foo@bar").
+
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-close-all): Fixed typo in display-progress

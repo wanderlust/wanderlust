@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-09 19:15:19 teranisi>
+;; Time-stamp: <2000-06-05 18:22:36 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -193,8 +193,9 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (wl-address-get-petname to)
-				    (car 
-				     (std11-extract-address-components to))))))
+				    (or
+				     (car (std11-extract-address-components to))
+				     to)))))
 			      (wl-parse-addresses tos)
 			      ","))))
 	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field
