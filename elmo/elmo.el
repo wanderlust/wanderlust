@@ -1300,32 +1300,6 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?[  'nmz)
 (elmo-define-folder ?@  'shimbun)
 
-;;; Obsolete variables.
-(elmo-define-obsolete-variable 'elmo-default-imap4-mailbox
-			       'elmo-imap4-default-mailbox)
-(elmo-define-obsolete-variable 'elmo-default-imap4-server
-			       'elmo-imap4-default-server)
-(elmo-define-obsolete-variable 'elmo-default-imap4-authenticate-type
-			       'elmo-imap4-default-authenticate-type)
-(elmo-define-obsolete-variable 'elmo-default-imap4-user
-			       'elmo-imap4-default-user)
-(elmo-define-obsolete-variable 'elmo-default-imap4-port
-			       'elmo-imap4-default-port)
-(elmo-define-obsolete-variable 'elmo-default-nntp-server
-			       'elmo-nntp-default-server)
-(elmo-define-obsolete-variable 'elmo-default-nntp-user
-			       'elmo-nntp-default-user)
-(elmo-define-obsolete-variable 'elmo-default-nntp-port
-			       'elmo-nntp-default-port)
-(elmo-define-obsolete-variable 'elmo-default-pop3-server
-			       'elmo-pop3-default-server)
-(elmo-define-obsolete-variable 'elmo-default-pop3-user
-			       'elmo-pop3-default-user)
-(elmo-define-obsolete-variable 'elmo-default-pop3-authenticate-type
-			       'elmo-pop3-default-authenticate-type)
-(elmo-define-obsolete-variable 'elmo-default-pop3-port
-			       'elmo-pop3-default-port)
-
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))
 

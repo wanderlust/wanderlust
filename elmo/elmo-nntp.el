@@ -64,6 +64,13 @@ Any symbol value of `elmo-network-stream-type-alist' or
   :type 'symbol
   :group 'elmo)
 
+(elmo-define-obsolete-variable 'elmo-default-nntp-server
+			       'elmo-nntp-default-server)
+(elmo-define-obsolete-variable 'elmo-default-nntp-user
+			       'elmo-nntp-default-user)
+(elmo-define-obsolete-variable 'elmo-default-nntp-port
+			       'elmo-nntp-default-port)
+
 (defvar elmo-nntp-stream-type-alist nil
   "*Stream bindings for NNTP.
 This is taken precedence over `elmo-network-stream-type-alist'.")

@@ -750,9 +750,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
 If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
-  (unless wl-init
-    (wl-load-profile))
-  (elmo-init)
+  (or wl-init (wl-load-profile))
   (let (demo-buf)
     (setq demo-buf (wl-demo))
     (wl-init)
@@ -766,6 +764,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (condition-case obj
 	(progn
 	  (wl-plugged-init (wl-folder arg))
+	  (elmo-init)
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)

@@ -48,9 +48,6 @@
         (fboundp 'open-database))
     (add-to-list 'ELMO-MODULES 'elmo-database))
 
-(if (module-installed-p 'shimbun)
-    (add-to-list 'ELMO-MODULES 'elmo-shimbun))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; tm-8 / SEMI
 
