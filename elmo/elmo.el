@@ -339,15 +339,21 @@ FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to create msgdb.
 ID-MARK-TABLE is a hashtable of message-id and its status mark.")
 
-(luna-define-generic elmo-folder-unmark-important (folder numbers)
+(luna-define-generic elmo-folder-unmark-important (folder
+						   numbers
+						   &optional ignore-flags)
   "Un-mark messages as important.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
+NUMBERS is a list of message numbers to be processed.
+If IGNORE-FLAGS is non-nil, folder flags are not updated.")
 
-(luna-define-generic elmo-folder-mark-as-important (folder numbers)
+(luna-define-generic elmo-folder-mark-as-important (folder 
+						    numbers
+						    &optional ignore-flags)
   "Mark messages as important.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
+NUMBERS is a list of message numbers to be processed.
+If IGNORE-FLAGS is non-nil, folder flags are not updated.")
 
 (luna-define-generic elmo-folder-unmark-read (folder numbers
 						     &optional ignore-flags)
@@ -1184,7 +1190,8 @@ FIELD is a symbol of the field."
   folder) ; default is folder
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-folder)
-						  numbers)
+						  numbers
+						  &optional ignore-flags)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
@@ -1193,7 +1200,8 @@ FIELD is a symbol of the field."
 			     'important))))
 
 (luna-define-method elmo-folder-mark-as-important ((folder elmo-folder)
-						   numbers)
+						   numbers
+						   &optional ignore-flags)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)

@@ -457,8 +457,11 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 
 (luna-define-method elmo-folder-unmark-important :before ((folder
 							   elmo-net-folder)
-							  numbers)
-  (when (elmo-folder-use-flag-p folder)
+							  numbers
+							  &optional
+							  ignore-flag)
+  (when (and (elmo-folder-use-flag-p folder)
+	     (not ignore-flag))
     (if (elmo-folder-plugged-p folder)
 	(elmo-folder-send folder 'elmo-folder-unmark-important-plugged
 			  numbers)
@@ -467,8 +470,11 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 
 (luna-define-method elmo-folder-mark-as-important :before ((folder
 							    elmo-net-folder)
-							   numbers)
-  (when (elmo-folder-use-flag-p folder)
+							   numbers
+							   &optional
+							   ignore-flag)
+  (when (and (elmo-folder-use-flag-p folder)
+	     (not ignore-flag))
     (if (elmo-folder-plugged-p folder)
 	(elmo-folder-send folder 'elmo-folder-mark-as-important-plugged
 			  numbers)

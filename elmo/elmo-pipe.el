@@ -288,14 +288,16 @@
 			   numbers ignore-flag))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-pipe-folder)
-						  numbers)
+						  numbers
+						  &optional ignore-flag)
   (elmo-folder-unmark-important (elmo-pipe-folder-dst-internal folder)
-				numbers))
+				numbers ignore-flag))
 
 (luna-define-method elmo-folder-mark-as-important ((folder elmo-pipe-folder)
-						   numbers)
+						   numbers
+						   &optional ignore-flag)
   (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
-				 numbers))
+				 numbers ignore-flag))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))

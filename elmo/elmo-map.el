@@ -277,17 +277,23 @@
 
 (luna-define-method elmo-folder-unmark-important :before ((folder
 							   elmo-map-folder)
-							  numbers)
-  (elmo-map-folder-unmark-important
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
+							  numbers
+							  &optional
+							  ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-unmark-important
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
 
 (luna-define-method elmo-folder-mark-as-important :before ((folder
 							    elmo-map-folder)
-							   numbers)
-  (elmo-map-folder-mark-as-important
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
+							   numbers
+							   &optional
+							   ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-mark-as-important
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
 
 (luna-define-method elmo-folder-unmark-read :before ((folder elmo-map-folder)
 						     numbers

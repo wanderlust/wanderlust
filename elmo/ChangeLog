@@ -1,6 +1,8 @@
 2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-message-set-mark): Abolish.
+	(elmo-folder-unmark-important): Added optional argument `ignore-flag'.
+	(All related portions are changed.)
 
 	* elmo-msgdb.el (toplevel): Added comment.
 	(elmo-load-msgdb): Added 4th element `path'.

@@ -586,17 +586,23 @@
 
 (luna-define-method elmo-folder-mark-as-important :before ((folder
 							    elmo-multi-folder)
-							   numbers)
+							   numbers
+							   &optional
+							   ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-important (car folder-numbers)
-				   (cdr folder-numbers))))
+				   (cdr folder-numbers)
+				   ignore-flags)))
 
 (luna-define-method elmo-folder-unmark-important :before ((folder
 							   elmo-multi-folder)
-							  numbers)
+							  numbers
+							  &optional
+							  ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-important (car folder-numbers)
-				  (cdr folder-numbers))))
+				  (cdr folder-numbers)
+				  ignore-flags)))
 
 (luna-define-method elmo-folder-mark-as-read :before ((folder
 						       elmo-multi-folder)
