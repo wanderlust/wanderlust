@@ -233,7 +233,7 @@ File content is encoded with MIME-CHARSET."
 	(setq auth (if (match-beginning 4)
 		       (intern (elmo-match-substring 4 folder 1))
 		     elmo-default-imap4-authenticate-type))
-	(append (list 'imap4 
+	(append (list 'imap4
 		      (elmo-imap4-encode-folder-string mailbox)
 		      user auth)
 		(cdr spec))))))

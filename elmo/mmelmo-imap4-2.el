@@ -126,29 +126,6 @@
 					       (elmo-imap4-nth 5 object))))
       ret-val))))
 
-(defun mmelmo-imap4-parse-bodystructure-string (folder number msgdb string)
-  (with-temp-buffer
-    (insert string)
-    (goto-char (point-min))
-    (when (search-forward "FETCH" nil t)
-      (narrow-to-region (match-end 0) (point-max))
-      (while (re-search-forward "{\\([0-9]+\\)}\r\n" nil t)
-	(let (str)
-	  (goto-char (+ (point) 
-			(string-to-int (elmo-match-buffer 1))))
-	  (setq str (buffer-substring (match-end 0) (point)))
-	  (delete-region (match-beginning 0) (point))
-	  (insert (prin1-to-string str))))
-      (goto-char (point-min))
-      (mmelmo-imap4-parse-bodystructure-object 
-       folder ; folder
-       number ; number
-       msgdb  ; msgdb
-       nil    ; node-id
-       (nth 1 (memq 'BODYSTRUCTURE (read (current-buffer)))) ; bodystructure-object
-       nil    ; parent
-       ))))
-
 (defun mmelmo-imap4-multipart-p (entity)
   (eq (cdr (assq 'type (mime-entity-content-type entity))) 'multipart))
 
@@ -160,23 +137,24 @@
       
 (defun mmelmo-imap4-get-mime-entity (folder number msgdb)
   (let* ((spec (elmo-folder-get-spec folder))
-	 (session (elmo-imap4-get-session spec))
-	 (mailbox (elmo-imap4-spec-mailbox spec))
-	 response)
-    (when mailbox
-      (elmo-imap4-select-mailbox session mailbox)
-      (elmo-imap4-send-command
-       (elmo-network-session-process-internal session)
-       (format 
-	(if elmo-imap4-use-uid
-	    "uid fetch %s bodystructure"
-	  "fetch %s bodystructure")
-	number))
-      (or (setq response (elmo-imap4-read-contents
-			  (elmo-network-session-process-internal session)))
-	  (error "Fetching body structure failed"))
-      (mmelmo-imap4-parse-bodystructure-string folder number msgdb
-					       response))))
+	 (session (elmo-imap4-get-session spec)))
+    (elmo-imap4-session-select-mailbox session (elmo-imap4-spec-mailbox spec))
+    (mmelmo-imap4-parse-bodystructure-object
+     folder
+     number
+     msgdb
+     nil ; node-id
+     (elmo-imap4-response-value
+      (elmo-imap4-response-value
+       (elmo-imap4-send-command-wait
+	session
+	(format 
+	 (if elmo-imap4-use-uid
+	     "uid fetch %s bodystructure"
+	   "fetch %s bodystructure")
+	 number)) 'fetch) 'bodystructure)
+     nil ; parent
+     )))
 
 (defun mmelmo-imap4-read-part (entity)
   (if (or (not mmelmo-imap4-threshold)

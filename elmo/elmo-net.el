@@ -44,6 +44,9 @@
 (luna-define-generic elmo-network-initialize-session (session)
   "Initialize SESSION (Called before authentication).")
 
+(luna-define-generic elmo-network-initialize-session-buffer (session buffer)
+  "Initialize SESSION's BUFFER.")
+
 (luna-define-generic elmo-network-authenticate-session (session)
   "Authenticate SESSION.")
 
@@ -53,13 +56,20 @@
 (luna-define-generic elmo-network-close-session (session)
   "Close SESSION.")
 
+(luna-define-method
+  elmo-network-initialize-session-buffer ((session
+					   elmo-network-session) buffer)
+  (with-current-buffer buffer
+    (elmo-set-buffer-multibyte nil)
+    (buffer-disable-undo (current-buffer))))
+
 (luna-define-method elmo-network-close-session ((session elmo-network-session))
-  (and (elmo-network-session-process-internal session)
+  (when (elmo-network-session-process-internal session)
 ;       (memq (process-status (elmo-network-session-process-internal session))
 ;	     '(open run))
-       (kill-buffer (process-buffer
-		     (elmo-network-session-process-internal session)))
-       (delete-process (elmo-network-session-process-internal session))))
+    (kill-buffer (process-buffer
+		  (elmo-network-session-process-internal session)))
+    (delete-process (elmo-network-session-process-internal session))))
 
 (defmacro elmo-network-stream-type-spec-string (stream-type)
   (` (nth 0 (, stream-type))))
@@ -96,6 +106,11 @@
 	    (elmo-network-close-session (cdr pair)))
 	  elmo-network-session-cache)
   (setq elmo-network-session-cache nil))
+
+(defmacro elmo-network-session-buffer (session)
+  "Get buffer for SESSION."
+  (` (process-buffer (elmo-network-session-process-internal
+		      (, session)))))
 
 (defun elmo-network-get-session (class name host port user auth stream-type
 				       &optional if-exists)
@@ -157,22 +172,26 @@ Returns a process object. if making session failed, returns nil."
 			   :auth auth
 			   :stream-type stream-type
 			   :process nil
-			   :greeting nil)))
+			   :greeting nil))
+	(buffer (format " *%s session for %s@%s:%d%s"
+			name
+			user
+			host
+			port
+			(or (elmo-network-stream-type-spec-string stream-type)
+			    "")))
+	process)
     (condition-case error
 	(progn
+	  (if (get-buffer buffer) (kill-buffer buffer))
+	  (setq buffer (get-buffer-create buffer))
+	  (elmo-network-initialize-session-buffer session buffer)
 	  (elmo-network-session-set-process-internal
 	   session
-	   (elmo-open-network-stream
-	    (elmo-network-session-name-internal session)
-	    (format " *%s session for %s@%s:%d%s"
-		    name
-		    user
-		    host
-		    port
-		    (or (elmo-network-stream-type-spec-string stream-type)
-			""))
-	    host port stream-type))
-	  (when (elmo-network-session-process-internal session)
+	   (setq process (elmo-open-network-stream
+			  (elmo-network-session-name-internal session)
+			  buffer host port stream-type)))
+	  (when process
 	    (elmo-network-initialize-session session)
 	    (elmo-network-authenticate-session session)
 	    (elmo-network-setup-session session)))

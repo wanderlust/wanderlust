@@ -114,7 +114,6 @@ Each elements are regexp of folder name (This is obsolete).")
   "Language for displayed messages.")
 
 (defvar elmo-mime-charset 'iso-2022-jp)
-(defvar elmo-search-mime-charset 'iso-2022-jp)
 
 (defvar elmo-msgdb-mark-filename "mark"
   "Mark database.")

@@ -60,7 +60,6 @@
   "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
-(defvar elmo-pop3-read-point nil)
 
 (defvar elmo-pop3-authenticator-alist
   '((user        elmo-pop3-auth-user)
@@ -74,11 +73,19 @@
   (luna-define-class elmo-pop3-session (elmo-network-session) ()))
 
 ;; buffer-local
+(defvar elmo-pop3-read-point nil)
 (defvar elmo-pop3-number-uidl-hash nil) ; number -> uidl
 (defvar elmo-pop3-uidl-number-hash nil) ; uidl -> number
 (defvar elmo-pop3-size-hash nil) ; number -> size
 (defvar elmo-pop3-uidl-done nil)
 (defvar elmo-pop3-list-done nil)
+
+(defvar elmo-pop3-local-variables '(elmo-pop3-read-point
+				    elmo-pop3-uidl-number-hash
+				    elmo-pop3-number-uidl-hash
+				    elmo-pop3-uidl-done
+				    elmo-pop3-size-hash
+				    elmo-pop3-list-done))
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (unless (memq (process-status
@@ -288,15 +295,17 @@
 	(signal 'elmo-open-error
 		'(elmo-pop-auth-digest-md5)))))
 
+(luna-define-method elmo-network-initialize-session-buffer :after
+  ((session elmo-pop3-session) buffer)
+  (with-current-buffer buffer
+    (mapcar 'make-variable-buffer-local elmo-pop3-local-variables)))
+
 (luna-define-method elmo-network-initialize-session ((session 
 						      elmo-pop3-session))
   (let ((process (elmo-network-session-process-internal session))
 	response capability mechanism)
     (with-current-buffer (process-buffer process)
-      (elmo-set-buffer-multibyte nil)
-      (buffer-disable-undo (current-buffer))
       (set-process-filter process 'elmo-pop3-process-filter)
-      (make-local-variable 'elmo-pop3-read-point)
       (setq elmo-pop3-read-point (point-min))
       (or (elmo-network-session-set-greeting-internal
 	   session
@@ -331,12 +340,6 @@
   (let ((process (elmo-network-session-process-internal session))
 	response)
     (with-current-buffer (process-buffer process)
-      ;; Initialize list
-      (make-variable-buffer-local 'elmo-pop3-uidl-number-hash)
-      (make-variable-buffer-local 'elmo-pop3-number-uidl-hash)
-      (make-variable-buffer-local 'elmo-pop3-uidl-done)
-      (make-variable-buffer-local 'elmo-pop3-size-hash)
-      (make-variable-buffer-local 'elmo-pop3-list-done)
       (setq elmo-pop3-size-hash (make-vector 31 0))
       ;; To get obarray of uidl and size
       (elmo-pop3-send-command process "list")

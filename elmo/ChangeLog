@@ -1,3 +1,26 @@
+2000-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-search-mime-charset): Abolished.
+
+	* elmo-pop3.el (elmo-pop3-local-variables): New variable.
+	(elmo-network-initialize-session-buffer): Defined.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-parse-bodystructure-string):
+	Abolished.
+	(mmelmo-imap4-get-mime-entity): Rewrite.
+
+	* elmo2.el (elmo-error): Capitalize error message.
+
+	* elmo-net.el (elmo-network-initialize-session-buffer): New method.
+	(elmo-network-session-buffer): New macro.
+	(elmo-network-open-session): Use it.
+
+	* elmo-imap4.el: Rewrite.
+
+2000-08-27 Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (Toplevel): Require 'elmo-net.
+
 2000-08-27   Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-imap4.el (elmo-imap4-make-address): Abolish.

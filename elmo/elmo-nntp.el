@@ -38,6 +38,7 @@
   (require 'elmo-cache)
   (require 'elmo-util)
   (defun-maybe starttls-negotiate (a)))
+(require 'elmo-net)
 
 ;;
 ;; internal variables
