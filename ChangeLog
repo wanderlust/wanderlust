@@ -1,3 +1,16 @@
+2003-06-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK: Remove comment out code.  Fix indent.
+
+2003-04-08  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-MK: Nil for wl-info-lang means do nothing on info.
+
+2003-01-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-info-lang): Skip "ja" for non-mule.
+	(wl-news-lang): Ditto.
+
 2002-12-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to 1.14.5.
