@@ -5,87 +5,65 @@
 					Yuuichi Teranishi,
 					Tsunehiko Baba
 
-Select MIME Module
-==================
+Required environment
+====================
 
   Before installing Wanderlust, please install either of the following
   MIME modules. SEMI is recommended because it's more functional.
 
-	SEMI    (1.14.1 or later)
+	SEMI    (1.13.7 or later)
 	tm      (8.7 or later)
 
-  SEMI requires APEL and FLIM packages.  For each Emacsen, Recommended
-  combination of MIME module package following.
+  If you use Mule based on Emacs 19.28 or earlier, please install tm.
+  SEMI does not support Emacs 19.28 or earlier.
 
-(a) XEmacs 21.1 or later
-
-	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
-
-  Installation as a XEmacs package, If possible.
-
-(b) Emacs 20.4 or later
-
-	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
-
-(c) Emacs 20.1 to 20.3
-
-	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
-
-  Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
-  earlier.
-
-(d) Emacs 19.34 (Mule 2.3)
-
-	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
-
-  Mule based on Emacs 19.34 can also run SEMI.  See the following web
-  page to get more information (in Japanese).
+  SEMI only supports relatively new Emacsen like Emacs 20.xx, XEmacs, etc.
+  But Mule based on Emacs 19.34 can also run SEMI.
+  See the following web page to get more information (in Japanese).
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
-(e) Emacs 19.28 or earlier (Mule 2.3, Nemacs)
-
-	APEL 10.3, CLIME 1.14.3, tm 8.8
-
-  If you use Mule based on Emacs 19.28 or earlier, please install tm.
-  SEMI does not support Emacs 19.28 or earlier.  You need upgrade APEL
-  and CLIME.
-
-
-Install MIME Module
-===================
-
-  You can download these packages from following URLs.
-
-	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
-	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:	ftp://ftp.jpl.org/pub/m17n/
-	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
-	tm:	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 
 (a) SEMI
 
-  Please install APEL, FLIM(CLIME), and SEMI, in that order.  Generally,
-  'make install' will do the job.  To get full information, please refer
-  to the README.en within each package.
+  SEMI requires APEL and FLIM packages.
+  Recommended combination of APEL, FLIM and SEMI are:
 
-  You can also use many other FLIM/SEMI variants.  Combination of the
-  latest versions should work.  For example, the following combinations
-  are confirmed to work:
+	APEL 10.3, FLIM 1.14.2 and SEMI 1.14.3
+
+  You can download these packages from following URLs.
+
+	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
+	FLIM:     ftp://ftp.m17n.org/pub/mule/flim/
+	SEMI:     ftp://ftp.m17n.org/pub/mule/semi/
+
+  Please install APEL, FLIM, and SEMI, in that order.
+  Generally, 'make install' will do the job.
+  To get full information, please refer to the README.en within each package.
+
+  You can also use many other FLIM/SEMI variants.
+  Combination of the latest versions should work.
+  For example, the following combinations are confirmed to work:
 
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
 	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 
 (b) tm
 
-  The tm, whose version is 8.7 or later, is recommended.  To get full
-  information, please refer README.en within package.
+  The tm, whose version is 8.7 or later, is recommended.  Please
+  obtain from the following web site.
+
+	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+
+  To get full information, please refer README.en within package.
 
   tm-8.8 or earlier makes following error while compiling Wanderlust.
 
 	Use tm-8.x with APEL 10.2 or later.
 
   In this case, please install APEL 10.2 or later.
+
+	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
 
 
 Installation
@@ -180,10 +158,6 @@ Manual
   Manual directory is automatically detected. Of course, it can be
   configured by INFODIR in Makefile.
 
-  And you can view manual on following URL:
-
-	http://www.gohome.org/wl/doc/wl_toc.html
-
 
 Sample configuration file
 =========================
@@ -198,8 +172,3 @@ Sample configuration file
   samples/en/ directory. Please refer to them.
 
   To get full information, please read Info file.
-
-
-Local Variables: 
-fill-column: 72
-End:

@@ -241,8 +241,59 @@ Wanderlust を起動するまでに必要な手順を順番に説明します。
 @pindex SEMI
 @pindex tm
 
-Wanderlust を正常に動作させるには、まず、SEMI もしくは tm がインストール
-されている必要があります。詳しくは @file{INSTALL.ja} をご覧ください。
+Wanderlust を正常に動作させるには、まず、SEMI もしくは tm がインス
+トールされている必要があります。
+
+Emacs19.28 以前をベースとした Mule をお使いの場合は SEMI が動かないはず
+@footnote{Emacs 19.34 ベースの Mule では SEMI を動作させることも可能です。@*
+@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} が参考になります。}
+なので tm をインストールします。
+(tm はバージョン 8.7 以降をご利用ください。)
+
+SEMI が使える Emacsen では、tm よりも機能の充実した SEMIをインストールす
+ることをお勧めします。
+
+インストールの方法は各パッケージに添付されているドキュメントを参照して
+ください。
+
+SEMI, tm は以下の場所からダウンロードできます。
+
+@example
+@group
+SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
+tm:     http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+@end group
+@end example
+
+SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
+APEL, FLIM は以下の場所からダウンロードできます。
+
+@example
+@group
+APEL:   ftp://ftp.m17n.org/pub/mule/apel/
+FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
+@end group
+@end example
+
+APEL, FLIM, SEMI の順にインストールしてください。
+基本的にすべて @samp{make install} の実行で済むはずです
+(XEmacs 21 では @samp{make install-package})。
+
+推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
+
+@itemize @minus
+@item APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
+@end itemize
+
+その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
+それらのいずれも利用することが可能です。
+基本的に最新版の組合せなら動作するはずです。
+例えば、以下の組合せの動作が確認されています。
+
+@itemize @minus
+@item APEL 10.2, Chao 1.14.1, REMI 1.14.2
+@item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
+@end itemize
 
 APEL, FLIM, SEMI か tm のバージョンアップを行った場合は、Wanderlust をイ
 ンストールしなおしてください。
@@ -334,15 +385,15 @@ ftp://opaopa.org/pub/elisp/
 自動的にインストール先を適当に検出します。
 実際のインストール先については後述します。
 
-Mule 2.3 など、@file{subdirs.el} が無く、@code{load-path} にサブディレク
-トリが自動的に加わらない Emacs では、
+Mule 2.3 など、@file{subdirs.el} が無く、@code{load-path} にサブディレクトリが
+自動的に加わらない Emacs では、
 
 @example
 Cannot open load file: mime-setup
 @end example
 
 @noindent
-というエラーが出ることがあります。この場合は、custom, APEL, FLIM, SEMI
+というエラーが出ることがあります。この場合は、custom, APEL, FLIM, SEMI 
 のインストール先を環境変数 @env{EMACSLOADPATH}に加えるか、展開ディレクト
 リの @file{WL-CFG} というファイル中で@code{load-path} を通しておくとよい
 でしょう。
@@ -375,7 +426,7 @@ ELMO モジュールをインストールするディレクトリを指定します。
 ELMO モジュールにはファイル @file{elmo*.el} @file{elmo*.elc} が含まれます。
 @c  @file{utf7.el}, @file{utf7.elc} も ELMO モジュールに含まれます。
 @end table
-
+  
 @noindent
 @code{WL_PREFIX}, @code{ELMO_PREFIX}
  のデフォルトはいずれも @file{wl} です。
@@ -772,7 +823,7 @@ default 値:
 
 @lisp
 ;; 例: 生パスワードで認証
-(setq elmo-default-imap4-authenticate-type 'clear)
+(setq elmo-default-imap4-authenticate-type 'clear) 
 @end lisp
 
 例:
@@ -6681,7 +6732,6 @@ Wanderlust に関する議論はこのメーリングリストで行われます。
       9/12    biff 機能 with 嵯峨田さん＆山岡さん。
      10/17    expire-hide by 岡田さん。
      11/08    2.4.0 stable リリース。
-2001  7/04    2.6.0 stable リリース。
 @end example
 
 くわしい変遷は @file{ChangeLog} を御覧ください。
@@ -6746,6 +6796,6 @@ elmo は、@samp{Elisp Library for Message Orchestration} の略です。
 @contents
 @bye
 
-@c Local Variables:
+@c Local Variables: 
 @c fill-column: 72
 @c End:
