@@ -213,15 +213,17 @@
 	  (setq subj (substring subject-string (match-end 0)))
 	  (if (not ml-name) (setq ml-name (match-string 1 subject-string)))
 	  (if (not ml-count) (setq ml-count (match-string 2 subject-string)))))
-    (if (and ml-name ml-count)
-	(if (string= folder wl-default-folder)
-	    (format "(%s %05d) %s"
-		    (car (split-string ml-name " "))
-		    (string-to-int ml-count)
-		    subj)
-	  (format "#%05d %s"
-		  (string-to-int ml-count) subj))
-      subj)))
+    (condition-case nil
+	(if (and ml-name ml-count)
+	    (if (string= folder wl-default-folder)
+		(format "(%s %05d) %s"
+			(car (split-string ml-name " "))
+			(string-to-int ml-count)
+			subj)
+	      (format "#%05d %s"
+		      (string-to-int ml-count) subj))
+	  subj)
+      (error subj))))
 
 ;; imput asynchronously.
 ;; (utils/im-wl.el is needed to be installed.
