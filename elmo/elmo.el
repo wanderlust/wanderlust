@@ -66,9 +66,6 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   :type 'boolean
   :group 'elmo)
 
-(defvar elmo-message-displaying nil
-  "A global switch to indicate message is displaying or not.")
-
 ;;; internal
 (defvar elmo-folder-type-alist nil)
 

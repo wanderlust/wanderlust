@@ -36,7 +36,7 @@
 
 (eval-and-compile
   (luna-define-class mime-imap-entity (mime-entity)
-		     (size header-string body-string new requested))
+		     (size header-string body-string new))
   (luna-define-internal-accessors 'mime-imap-entity))
 
 ;;; @ MIME IMAP location
@@ -52,9 +52,6 @@ SECTION is a section string which is defined in RFC2060.")
   "Return a parsed bodystructure of LOCATION.
 `NIL' should be converted to nil, `astring' should be converted to a string.")
 
-(luna-define-generic mime-imap-location-fetch-entity-p (location entity)
-  "Return non-nil when LOCATION may fetch the ENTITY.")
-
 ;;; @ Subroutines
 ;; 
 
@@ -69,8 +66,10 @@ SECTION is a section string which is defined in RFC2060.")
      (reverse node-id)
      "."))))
 
-(eval-and-compile
-  (defun-maybe mime-decode-parameters (attrlist)
+(static-if (fboundp 'mime-decode-parameters)
+    (defalias 'mmimap-parse-parameters-from-list 'mime-decode-parameters)
+  (defun mmimap-parse-parameters-from-list (attrlist)
+    "Parse parameters from ATTRLIST."
     (let (ret-val)
       (while attrlist
 	(setq ret-val (append ret-val
@@ -95,7 +94,8 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	     :location location
 	     :node-id (if (eq number 0)
 			  node-id
-			(nconc (list number) node-id))))
+			(nconc (list number) node-id))
+	     ))
       (while (and (setq curp (car bodystructure))
 		  (listp curp))
 	(setq children
@@ -111,17 +111,34 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	(setq num (+ num 1))
 	(setq bodystructure (cdr bodystructure)))
       (mime-entity-set-children-internal entity children)
-      (mime-entity-set-content-type-internal
-       entity
-       (make-mime-content-type 'multipart
-			       (if (car bodystructure)
-				   (intern (downcase
-					    (car bodystructure))))
-			       (mime-decode-parameters
-				(nth 1 bodystructure))))
+      (setq content-type (list (cons 'type 'multipart)))
+      (if (car bodystructure)
+	  (setq content-type (nconc content-type
+				    (list (cons 'subtype
+						(intern
+						 (downcase
+						  (car
+						   bodystructure))))))))
+      (setq content-type (append content-type
+				 (mmimap-parse-parameters-from-list
+				  (nth 1 bodystructure))))
+      (mime-entity-set-content-type-internal entity content-type)
       entity))
    (t ; singlepart
     (let (content-type entity)
+      (setq content-type
+	    (list (cons 'type (intern (downcase (car bodystructure))))))
+      (if (nth 1 bodystructure)
+	  (setq content-type (append content-type
+				     (list
+				      (cons 'subtype
+					    (intern
+					     (downcase
+					      (nth 1 bodystructure))))))))
+      (if (nth 2 bodystructure)
+	  (setq content-type (append content-type
+				     (mmimap-parse-parameters-from-list
+				      (nth 2 bodystructure)))))
       (setq node-id (nconc (list number) node-id))
       (setq entity
 	    (luna-make-entity
@@ -132,14 +149,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	     :location location
 	     :parent parent
 	     :node-id node-id))
-      (mime-entity-set-content-type-internal
-       entity
-       (make-mime-content-type (intern (downcase (car bodystructure)))
-			       (if (nth 1 bodystructure)
-				   (intern (downcase
-					    (nth 1 bodystructure))))
-			       (mime-decode-parameters
-				(nth 2 bodystructure))))      
+      (mime-entity-set-content-type-internal entity content-type)
       (mime-entity-set-encoding-internal entity
 					 (and (nth 5 bodystructure)
 					      (downcase
@@ -190,18 +200,12 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 
 (luna-define-method mime-entity-body ((entity mime-imap-entity))
   (or (mime-imap-entity-body-string-internal entity)
-      (if (or (mime-imap-entity-requested-internal entity) ; second time.
-	      (mime-imap-location-fetch-entity-p
-	       (mime-entity-location-internal entity)
-	       entity))
-	  (mime-imap-entity-set-body-string-internal
-	   entity
-	   (mime-imap-location-section-body
-	    (mime-entity-location-internal entity)
-	    (mmimap-entity-section
-	     (mime-entity-node-id-internal entity))))
-	(mime-imap-entity-set-requested-internal entity t)
-	"")))
+      (mime-imap-entity-set-body-string-internal
+       entity
+       (mime-imap-location-section-body
+	(mime-entity-location-internal entity)
+	(mmimap-entity-section
+	 (mime-entity-node-id-internal entity))))))
 
 (luna-define-method mime-insert-entity-body ((entity mime-imap-entity))
   (insert (mime-entity-body entity)))
