@@ -3144,10 +3144,10 @@ Proceed reading a message at the current cursor point.
 @kindex . (Summary)
 @findex wl-summary-redisplay
 Redisplay a message at the current cursor point with default display
-type.  If this command is called with prefix argument, Redisplay message
-regardless of the message cache (message is re-loaded from source).  If
-this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u .},
-redisplay message with current display type regardless of the
+type.  If this command is called with prefix argument, reload and redisplay
+message regardless of the message cache.
+If this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u .},
+reload and redisplay message with current display type regardless of the
 message cache.  (@code{wl-summary-redisplay})
 
 @item <
@@ -3346,8 +3346,9 @@ list folder (refile destination), guess @samp{To:} field and completed
 @findex wl-summary-toggle-all-header
 Toggle display type between all and partial header fields and redisplay
 the message at current cursor point.  If this command is called with
-twice multiples @kbd{C-u} as @kbd{C-u C-u H}, set default display type
-of summary by current display type of header fields.
+prefix argument, reload and redisplay message regardless of the message cache.
+If this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u H},
+set default display type of summary by current display type of header fields.
 (@code{wl-summary-toggle-all-header})
 
 @item M
@@ -3369,6 +3370,12 @@ with numeric prefix argument, it switch directly as follows.
 If this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u
 M}, set default display type of summary by current display type of MIME
 analysis.  (@code{wl-summary-toggle-mime})
+
+@item C-c C-f
+@kindex C-c C-f (Summary)
+@findex wl-summary-toggle-header-narrowing
+Toggle header body narrowing of the message at current cursor point.
+(@code{wl-summary-toggle-header-narrowing})
 
 @item B
 @kindex B (Summary)
