@@ -1,3 +1,7 @@
+2002-12-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to 1.14.5.
+
 2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* WL-MK (make-wl-news): Don't add wl-news-lang setting into
