@@ -39,6 +39,11 @@
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Roam"))
 
+;; set version-string
+(if (fboundp 'product-version-as-string)
+    (product-version-as-string 'wl-version)
+  (product-string-1 'wl-version))
+
 ;; require wl-util after product-provide.
 (eval-when-compile (require 'wl-util))	; wl-match-string
 
@@ -53,13 +58,17 @@
 (defvar mime-editor/codename)
 
 (defun wl-version (&optional with-codename)
-  "Print Wanderlust version."
+  "Return Wanderlust version.  If WITH-CODENAME is non-nil, add codename."
   (interactive)
   (product-string-1 'wl-version with-codename))
 
-(defun wl-version-show ()
-  (interactive)
-  (message "%s" (wl-version t)))
+(defun wl-version-show (&optional arg)
+  "Print Wanderlust version.
+If ARG insert string at point."
+  (interactive "P")
+  (if arg
+      (insert (message "%s" (wl-version t)))
+    (message "%s" (wl-version t))))
 
 (defun wl-generate-user-agent-string ()
   "A candidate of wl-generate-mailer-string-func.
@@ -210,9 +219,7 @@ Insert User-Agent field instead of X-Mailer field."
  'wl-appname
  "use (product-name (product-find 'wl-version)) insteaed.")
 
-(defconst wl-version
-  (progn (product-string-1 'wl-version)	; for product-set-version-string
-	 (product-version-string (product-find 'wl-version))))
+(defconst wl-version (product-version-string (product-find 'wl-version)))
 (make-obsolete-variable
  'wl-version
  "use (product-version-string (product-find 'wl-version)) instead.")

@@ -1,3 +1,11 @@
+2000-10-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (toplevel): Use product-version-as-string for set
+	verstion-string, if defined.
+
+	* wl-version.el (wl-version-show): Insert string, when call with
+	argument.  And add docstring.
+
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-address.el (toplevel): Use product-provide.
