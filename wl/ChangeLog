@@ -21,6 +21,7 @@
 	end of the window if possible.
 	* wl-summary.el (wl-summary-sync-update): Support lazy
 	highlighting.
+	(wl-summary-toggle-disp-msg): Ditto.
 
 2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

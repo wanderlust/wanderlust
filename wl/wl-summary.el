@@ -4569,7 +4569,9 @@ If ARG, exit virtual folder."
 	  (select-window (get-buffer-window cur-buf))
 	  (run-hooks 'wl-summary-toggle-disp-off-hook))
 ;;;	(switch-to-buffer cur-buf)
-	)))))
+	)))
+    (when wl-summary-lazy-highlight
+      (wl-highlight-summary-window))))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."
