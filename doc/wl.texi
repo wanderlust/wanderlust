@@ -102,7 +102,7 @@ Masayuki Osada
 Last Modified@value{Time-stamp:}
 @end flushright
 
-This manual is for Wanderlust@value{version}.
+This manual is for Wanderlust @value{version}.
 
 @end ifinfo
 
@@ -164,7 +164,7 @@ Mule for Windows v1.22 (on MS Windows), NTEmacs(Windows NT).
 PMMule on OS/2 is also supported. Wanderlust runs even on Nemacs 3.3.2
 based on Emacs 18.55, 18.59 (with limited functionality).
 
-IMAP4 connectivity with UW imapd 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.7a,
+IMAP4 connectivity with UW imapd 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.7a, 4.7b, 4.7c,
 Cyrus imapd 1.4, Cyrus imapd 1.5.19, AIR MAIL(AIRCimapd release 2.00)
 and ExpressMail are confirmed to work with Wanderlust.
 
@@ -174,7 +174,6 @@ and ExpressMail are confirmed to work with Wanderlust.
 @node Start Me Up, Folders, Introduction, Top
 @chapter Start up Wanderlust
 @cindex Start up
-
 
 The necessary procedure for starting Wanderlust is explained in steps here.
 
@@ -208,7 +207,6 @@ so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
 is needed.)
 
 However, SEMI is recommended because of its wider functionality.
-Partial download function in IMAP4 is enabled only when SEMI is installed.
 
 Refer to the documents of each package for detailed installation procedure.
 
@@ -247,12 +245,12 @@ Please install latest APEL 7.3 or later.
 
 In this case, please comment out following lines in @file{FLIM-CFG}.
 
-@example
+@lisp
 (or (fboundp 'write-region-as-binary)
     (error "Please install latest APEL 7.3 or later."))
 (or (fboundp 'insert-file-contents-as-binary)
     (error "Please install latest APEL 7.3 or later."))
-@end example
+@end lisp
 
 You can also use many other FLIM/SEMI variants. Combination of the
 latest versions should work.  For example, following combination is
@@ -680,39 +678,39 @@ and Internal folder types.
 A folder to access e-mails via IMAP4rev1 protocol (RFC 2060).
 
 @example
-Format: '%' 'IMAP mailbox'[':' 'username' ['/' 'authenticate-type']]['@@' 'hostname'][':' 'port']['!']
+Format: @samp{%} @var{mailbox} [@samp{:} @var{username} [@samp{/} @var{authenticate-type}]][@samp{@@} @var{hostname}][@samp{:} @var{port}][@samp{!}]
 @end example
 
 You can specify
 "auth" (encoded password transmission), "cram-md5" (cram-md5 authentication)
-and "login" (plain password transmission) as authenticate-type.
-(To use cram-md5 authentication, you must install utils/sasl package.)
+or "login" (plain password transmission) as @var{authenticate-type}.
+(To use cram-md5 authentication, you must install @file{utils/sasl} package.)
 
 default:
 
 @example
-username  -> The value of @code{elmo-default-imap4-user}.
+@var{username}  -> The value of @code{elmo-default-imap4-user}.
              Initial setting is `USER' environment variable or
              `LOGNAME' environment variable or return value of
-             (user-login-name).
-authenticate-type -> The value of @code{elmo-default-imap4-authenticate-type}.
+             @code{(user-login-name)}.
+@var{authenticate-type} -> The value of @code{elmo-default-imap4-authenticate-type}.
              Initial setting is "auth".
-hostname  -> The value of @code{elmo-default-imap4-server}.
+@var{hostname}  -> The value of @code{elmo-default-imap4-server}.
              Initial setting is "localhost".
-port -> The value of @code{elmo-default-imap4-port}.
+@var{port} -> The value of @code{elmo-default-imap4-port}.
              Initial setting is 143.
 @end example
 
-You can omit the hostname from folder names if you set
+You can omit the @var{hostname} from folder names if you set
 @code{elmo-default-imap4-server} as your main IMAP server.
-For example, you can specify a folder as @samp{foo%imap@@geteway} even
+For example, you can specify a folder as @samp{foo%imap@@gateway} even
 if you have to go through a firewall.
 
 SSL (Secure Socket Layer) connection will be used if a folder name
 ends with @samp{!}. Or, if the value of @code{elmo-default-imap4-ssl} is non-nil,
 SSL will be the default connection.
 If a folder name ends with @samp{!!}, STARTTLS connection will be established.
-if the value of @code{elmo-default-imap4-ssl} is 'starttls,
+If the value of @code{elmo-default-imap4-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
 If you specify "auth" or "cram-md5" as authentication method, the password
@@ -740,7 +738,7 @@ Example: %inbox     -> IMAP mailbox "inbox"
 @pindex Mule-UCS
 @pindex ucs-conv
 
-You can use international mailbox names in 'IMAP mailbox' part, if you
+You can use international mailbox names in @var{mailbox} part, if you
 are using Emacs which can treat unicode and
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
 value is nil).
@@ -787,20 +785,20 @@ A folder to access USENET news via NNTP protocol (RFC 977).
 One newsgroup is treated as a folder.
 
 @example
-Format: '-' 'newsgroup'[[':' 'username']['@@' 'hostname'][':' 'port']]['!']
+Format: @samp{-} @var{newsgroup} [[@samp{:} @var{username}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
 @end example
 
 default:
 @example
-hostname  -> The value of @code{elmo-default-nntp-server}.
+@var{hostname}  -> The value of @code{elmo-default-nntp-server}.
              Initial setting is "localhost".
-username  -> The value of @code{elmo-default-nntp-user}. 
+@var{username}  -> The value of @code{elmo-default-nntp-user}. 
              Initial setting is nil.
-port      -> The value of @code{elmo-default-nntp-port}.
+@var{port}      -> The value of @code{elmo-default-nntp-port}.
              Initial setting is 119.
 @end example
 
-AUTHINFO is used as authentication method if the username is non-nil.
+AUTHINFO is used as authentication method if the @var{username} is non-nil.
 SSL will be default method if @code{elmo-default-nntp-ssl} is non-nil even
 if the folder name doesn't end with @samp{!}.
 If a folder name ends with @samp{!!}, STARTTLS connection will be established.
@@ -821,10 +819,10 @@ Example: -fj.rec.tv            -> Newsgroup `fj.rec.tv'.
 A folder to access MH format mail (1 file is 1 mail).
 
 @example
-Format: '+' 'directory-name'
+Format: @samp{+} @var{directory-name}
 @end example
 
-Normally, directory paths are relative to variable
+Normally, @var{directory-name} is an relative path to the variable
 @code{elmo-localdir-folder-path} (default is @file{~/Mail}), but if it
 starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 (this is also true for drive-letters).
@@ -846,10 +844,10 @@ Example: +inbox         -> "~/Mail/inbox"
 A folder to access to Maildir format (1 file is 1 mail).
 
 @example
-Format: '.' 'directory-name'
+Format: @samp{.} [@var{directory-name}]
 @end example
 
-Normally, directory paths are relative to variable
+Normally, @var{directory-name} is a relative path to the variable
 @code{elmo-maildir-folder-path} (default is @file{~/Maildir}), but if it
 starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 (this is also true for drive-letters).
@@ -860,7 +858,7 @@ message files in the @file{new} directory are moved to @file{cur}
 directory when you access to the folder. All message files contained in
 the @file{tmp} directory and not accessed for 36 hours are deleted.
 
-These behaviors are defined the @samp{http://cr.yp.to/proto/maildir.html}.
+This behavior conforms to the @samp{http://cr.yp.to/proto/maildir.html}.
 
 @example
 Example: .              -> "~/Maildir"
@@ -880,10 +878,10 @@ You can also read articles directly from a spool-file which is retrieved
 by an utility like gnspool.
 
 @example
-Format: '=' 'directory-name'
+Format: @samp{=} @var{directory-name}
 @end example
 
-directory-name is sub-directory to the directory defined by variable
+@var{directory-name} is a sub-directory to the directory defined by variable
 @code{elmo-localnews-folder-path} (default is @file{~/News})
 You can use @samp{.} as directory delimiter as well as @samp{/}.
 
@@ -902,26 +900,26 @@ This method can handle archive files, which are compressed by utilities
 such as Info-ZIP or LHA, as one folder.
 
 @example
-Format: '$' 'path-name' [';' archiver-type ';' prefix]
+Format: @samp{$} @var{path-name} [@samp{;} @var{archiver-type} @samp{;} @var{prefix}]
 @end example
 
-`path-name' is the relative path from @code{elmo-archive-folder-path}
+@var{path-name} is the relative path from @code{elmo-archive-folder-path}
 (initial setting is @file{~/Mail}).
-If path-name begins with @samp{/} or @samp{~} or `drive-letter of DOS',
-path-name is treated as absolute path.
+If @var{path-name} begins with @samp{/} or @samp{~} or `drive-letter of DOS',
+@var{path-name} is treated as absolute path.
 ange-ftp format is also permitted under the environment of ange-ftp, efs.
 
 The actual file name of the archive folder is 
 @code{elmo-archive-basename}(Initial setting is @file{elmo-archive})
-under the path-name. If a file named path-name exists, it is treated as
-folder. The suffix is automatically decided for archiver-type.
+under the @var{path-name}. If a file named @var{path-name} exists, it is treated as
+folder. The suffix is automatically decided for @var{archiver-type}.
 
-If `archiver-type' is omitted, @code{elmo-archive-default-type}
+If @var{archiver-type} is omitted, @code{elmo-archive-default-type}
 (Initial setting is 'zip) is referred.
 
-`prefix' specifies the internal directory structure of the archive.
+@var{prefix} specifies the internal directory structure of the archive.
 For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
-@file{spool/1}, so you have to specify @samp{spool} as `prefix'.
+@file{spool/1}, so you have to specify @samp{spool} as @var{prefix}.
 
 @example
 Example: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
@@ -1030,12 +1028,12 @@ archiver starting overhead is increased (especially LHA).
 
 Of course, following is possible @t{:-)} 
 (meanings of these variables are described later.)
+
 @lisp
 (setq wl-fcc "$backup")
 (setq wl-trash-folder "$trash;lha")
 @end lisp
 
-@noindent
 @node Archive Vars,  , Archive Tips, Archive Folder
 @subsection Variables About Archive Folder
 @cindex Archive variables
@@ -1053,16 +1051,16 @@ Define archiver @var{type}'s methods.
 Each element of the alist is following.
 
 @example
-        (action . (exec-name options))   ;; external program and its option.
-        (action . function)              ;; function
+(@var{action} . (@var{exec-name} @var{options}))   ;; external program and its option.
+(@var{action} . @var{function})              ;; function
 @end example
 
 Currently available actions are following.
 
 @example
-        'ls, 'cat ('cat-headers)        ;; Minimal setting(read-only)
-        'mv ('mv-pipe), 'rm ('rm-pipe)  ;; full-access (with above)
-        'cp ('cp-pipe)                  ;;
+'ls, 'cat ('cat-headers)        ;; Minimal setting(read-only)
+'mv ('mv-pipe), 'rm ('rm-pipe)  ;; full-access (with above)
+'cp ('cp-pipe)                  ;;
 @end example
 
 @noindent
@@ -1118,24 +1116,24 @@ standard input (@code{rm-pipe}, @code{mv-pipe}, @code{cat-headers} action).
 A folder to access e-mails via POP3 protocol (RFC 1939).
 
 @example
-Format: '&' ['username'][['/' 'authenticate-type']['@@' 'hostname'][':' 'port']]['!']
+Format: @samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
 @end example
 
 You can specify
-"user"  (plain password transmission) or "apop"  (APOP authentication)
-as authenticate-type.
+@samp{user}  (plain password transmission) or @samp{apop}  (APOP authentication)
+as @var{authenticate-type}.
 
 default:
 @example
-username   -> The value of @code{elmo-default-pop3-user}.
+@var{username}   -> The value of @code{elmo-default-pop3-user}.
               Initial setting is @code{USER} environment variable or
              @code{LOGNAME} environment variable or return value of
-             (user-login-name).
-authenticate-type -> The value of @code{elmo-default-pop3-authenticate-type}.
+             @code{(user-login-name)}.
+@var{authenticate-type} -> The value of @code{elmo-default-pop3-authenticate-type}.
               Initial setting is "user".
-hostname   -> The value of @code{elmo-default-pop3-server}.
+@var{hostname}   -> The value of @code{elmo-default-pop3-server}.
               Initial setting is "localhost".
-port       -> The value of @code{elmo-pop3-default-port}.
+@var{port}       -> The value of @code{elmo-pop3-default-port}.
               Initial setting is 110.
 @end example
 
@@ -1145,9 +1143,9 @@ Example: &hoge@@localhost -> access to localhost as user "hoge".
                                  as user "hoge".
 @end example
 
-To use apop as an authenticate-type, @file{md5.el} is needed
+To use apop as an @var{authenticate-type}, @file{md5.el} is needed
 (XEmacs doesn't need @file{md5.el}).
-@file{md5.el} is included in @file{utils/sasl/lisp/} or Emacs/W3 package
+@file{md5.el} is included in @file{utils/sasl/lisp/} or Emacs/W3 package:
 
 @example
 http://www.cs.indiana.edu/elisp/w3/docs.html
@@ -1174,20 +1172,20 @@ A folder to access to a folder which collects messages from
 multiple folders virtually.
 
 @example
-Format: '*' 'folder' [',' 'folder'] ... [',' 'folder']
+Format: @samp{*} @var{folder-1} [@samp{,} @var{folder-2}] @dots{} [@samp{,} @var{folder-N}]
 @end example
 
 After @samp{*} character, specify multiple folders you want to collect 
-separated by ',' like folder1,folder2,@dots{},folderN.
+separated by ',' like @samp{folder1,folder2,@dots{},folderN}.
 
 Example:
 @example
-  *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
-  -> -fj.editor.xemacs, -fj.editor.mule and -fj.editor.emacs are
-     treated as one folder.
+*-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+-> -fj.editor.xemacs, -fj.editor.mule and -fj.editor.emacs are
+   treated as one folder.
 
-  *+inbox,-fj.rec.tv,%inbox
-  -> +inbox, -fj.rec.tv and %inbox are treated as one folder.
+*+inbox,-fj.rec.tv,%inbox
+-> +inbox, -fj.rec.tv and %inbox are treated as one folder.
 @end example
 
 
@@ -1202,89 +1200,94 @@ A folder to access to a folder which collects all messages that
 satisfy a condition virtually.
 
 @example
-Format: '/' 'condition' '/' 'target-folder'
+Format: @samp{/} @var{condition} @samp{/} @var{target-folder}
 @end example
 
-In the 'condition' part, you can specify following.
+In the @var{condition} part, you can specify following.
 
-1. Partial filter: "first:NUMBER", "last:NUMBER"
+@enumerate
+@item
+Partial filter: @samp{first:@var{NUMBER}}, @samp{last:@var{NUMBER}}
 
-first: 'NUMBER' messages are picked from top of folder.
-last:  'NUMBER' messages are picked from bottom of folder.
+first: @var{NUMBER} messages are picked from top of folder.
+last:  @var{NUMBER} messages are picked from bottom of folder.
 
 Example:
 @example
-  /last:10/-fj.os.linux -> Latest 10 messages from -fj.os.linux are picked.
-  /first:20/%inbox      -> First 20 messages from %inbox are picked.
+/last:10/-fj.os.linux -> Latest 10 messages from -fj.os.linux are picked.
+/first:20/%inbox      -> First 20 messages from %inbox are picked.
 @end example
 
-2. Date filter: "since:DATE" "before:DATE"
+@item
+Date filter: @samp{since:@var{DATE}}, @samp{before:@var{DATE}}
 
-since: only messages arrived since 'DATE' are picked.
-before: only messages arrived before 'DATE' are picked.
+since: only messages arrived since @var{DATE} are picked.
+before: only messages arrived before @var{DATE} are picked.
 
-You can specify following as 'DATE'.
+You can specify following as @var{DATE}.
 
 @example
 yesterday ->  a day before today.
 lastweek  ->  same day of last week.
 lastmonth ->  same day of last month.
 lastyear  ->  same day of last year.
-'NUMBER'daysago -> 'NUMBER' days ago. (e.x. '3daysago')
-'DAY'-'MONTH'-'YEAR' -> specify date directly (ex. 1-Nov-1998)
+@var{NUMBER}daysago -> @var{NUMBER} days ago. (e.x. '3daysago')
+@var{DAY}-@var{MONTH}-@var{YEAR} -> specify date directly (ex. 1-Nov-1998)
 @end example
 
 Example:
 @example
-  /since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
-                            are picked.
-  /before:yesterday/+inbox -> messages arrived before yesterday in +inbox
-                            are picked. 
+/since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
+                          are picked.
+/before:yesterday/+inbox -> messages arrived before yesterday in +inbox
+                          are picked. 
 @end example
 
-3. Field filter: "FIELD=VALUE"
+@item
+Field filter: @samp{@var{FIELD}=@var{VALUE}}
 
-All messages that have FIELD and its value is VALUE are picked.
-'FIELD' and 'VALUE' are case insensitive.
+All messages that have @var{FIELD} and its value is @var{VALUE} are picked.
+@var{FIELD} and @var{VALUE} are case insensitive.
 
 Example:
 @example
-  /from=teranisi/+inbox -> In +inbox, messages which have From: field
-                           and its value includes "teranisi" string are picked.
-  /body=foo/%inbox      -> In %inbox, messages which have "foo" text
-                           are picked.
+/from=teranisi/+inbox -> In +inbox, messages which have From: field
+                         and its value includes "teranisi" string are picked.
+/body=foo/%inbox      -> In %inbox, messages which have "foo" text
+                         are picked.
 @end example
 
-If you can split conditions by character "|", it is considered as OR condition.
-/tocc=xxxx/ is an abbreviation of /to=xxxx|cc=xxxx/.
+If you can split conditions by character @samp{|}, it is considered as OR condition.
+@samp{/tocc=xxxx/} is an abbreviation of @samp{/to=xxxx|cc=xxxx/}.
 
 Example:
 @example
-  /from=teranisi|to=teranisi/+inbox
-                        -> In +inbox, messages are picked if
-                           the message's To: field includes
-                           "teranisi" or From: field includes "teranisi".
-  /tocc=teranisi/+inbox -> In +inbox, messages are picked if
-                           the message's To: field or Cc: field includes
-                          "teranisi".
+/from=teranisi|to=teranisi/+inbox
+                      -> In +inbox, messages are picked if
+                         the message's To: field includes
+                         "teranisi" or From: field includes "teranisi".
+/tocc=teranisi/+inbox -> In +inbox, messages are picked if
+                         the message's To: field or Cc: field includes
+                         "teranisi".
 @end example
+@end enumerate
 
 Advanced example:
 
 @example
-  %inbox,/from=teranisi/%inbox@@server
-         -> Messages in %inbox or
-            message is in the %inbox@@server folder and it's From field
-            includes "teranisi" are collected.
+%inbox,/from=teranisi/%inbox@@server
+       -> Messages in %inbox or
+          message is in the %inbox@@server folder and it's From field
+          includes "teranisi" are collected.
 
-  /last:100//to=teranisi/*+inbox,%inbox
-         -> Latest 100 messages which is in the +inbox or %inbox folder
-            and To: field matches "teranisi".
+/last:100//to=teranisi/*+inbox,%inbox
+       -> Latest 100 messages which is in the +inbox or %inbox folder
+          and To: field matches "teranisi".
 
-  /from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
-         -> Pick messages which have From: field and it includes "hogehoge"
-            from latest 20 messages in the %#mh/inbox@@localhost
-            and To: or Cc: field includes "teranisi".
+/from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
+       -> Pick messages which have From: field and it includes "hogehoge"
+          from latest 20 messages in the %#mh/inbox@@localhost
+          and To: or Cc: field includes "teranisi".
 @end example
 
  --- Limit of implementation ---
@@ -1309,11 +1312,11 @@ In the pipe folder, messages are automatically transferred from the source
 folder to destination folder.
 
 @example
-Format: '|' source-folder '|' destination-folder
+Format: @samp{|} @var{source-folder} @samp{|} @var{destination-folder}
 @end example
 
 When you access to the pipe folder, messages are automatically transferred
-from source-folder to destination-folder.
+from @var{source-folder} to @var{destination-folder}.
 It is convenient if you want to download messages to local disk via POP.
 For example, if you specify following
 
@@ -1424,7 +1427,7 @@ six children folders update its unread number status.
 
 @subsubsection Select Folder
 
-To enter summary mode of the folder, type return (or spece) key on
+To enter summary mode of the folder, type return (or space) key on
 the folder line.
 If the variable @code{wl-stay-folder-window} has non-nil value, 
 summary window appears on the right of the folder mode window.
@@ -1647,21 +1650,23 @@ of access groups.
 
 Each element is:
 
-('regexp of access-folder' . ('subscribe-flag' 'regexp-of-folders' @dots{}))
+@example
+(@var{regexp-of-access-folder} . (@var{subscribe-flag} @var{regexp-of-folders} @dots{}))
+@end example
 
-If subscribe-flag is non-nil, folders which have name matched to
-regexp-of-folders are displayed. Otherwise, hidden.
+If @var{subscribe-flag} is non-nil, folders which have name matched to
+@var{regexp-of-folders} are displayed. Otherwise, hidden.
 However, already unsubscribed folder is not displayed even 
-when the subscribe-flag is non-nil. Multiple regexp-of-folders can be specified.
+when the @var{subscribe-flag} is non-nil. Multiple @var{regexp-of-folders} can be specified.
 
 Example:
 
-@example
+@lisp
 '(("^-fj$" . (t   "^-fj\\.\\(comp\\|editor\\|mail\\)"
                   "^-fj\\.\\(net\\|news\\|os\\|rec\\)"))
   ("^-$" . (t   "^-\\(fj\\|tnn\\|japan\\|gnu\\|comp\\)"))
   ("^\\+ml$" . (nil "^\\+ml$" "^\\+ml/tmp")))
-@end example
+@end lisp
 
 @item wl-folder-hierarchy-access-folders
 @vindex wl-folder-hierarchy-access-folders
@@ -2311,30 +2316,35 @@ refiling is decided by the value of @code{wl-refile-rule-alist}.
 @code{wl-refile-rule-alist} is a list of a rule:
 
 @example
-        (FIELD (REGEXP . TARGET)
-               (REGEXP . TARGET)
-               @dots{})
+(@var{FIELD} (@var{REGEXP} . @var{TARGET})
+       (@var{REGEXP} . @var{TARGET})
+       @dots{})
 @end example
 
-Each rule means `if FIELD value matches REGEXP, then refile to TARGET folder'.
+Each rule means `if @var{FIELD} value matches @var{REGEXP},
+then refile to @var{TARGET} folder'.
 The rule matched first is applied.
 
-FIELD is a string of field name.  You can specify a list of field name
+@var{FIELD} is a string of field name.  You can specify a list of field name
 string, too. In this case, if one of these fields is matched, then the
 rule is fired (i.e. OR condition).
 
-REGEXP is a regular expression for field value.  TARGET is a target
-folder string. You can specify a rule at TARGET part, too.  In this
+@var{REGEXP} is a regular expression for field value.  @var{TARGET} is a target
+folder string. You can specify a rule at @var{TARGET} part, too.  In this
 case, If the field value of the rule and the current rule is matched,
 then the current rule is fired (i.e. AND condition).
 
-In TARGET part, you can refer matched substring of REGEXP.
-To refer substring, specify following in TARGET:
+In @var{TARGET} part, you can refer matched substring of @var{REGEXP}.
+To refer substring, specify following in @var{TARGET}:
 
-@example
-\&            means substitute original matched text.
-\N (number)   means substitute what matched the Nth `\(...\)'.
-@end example
+@table @samp
+@item \&
+means substitute original matched text.
+
+@item \@var{N}
+means substitute what matched the @var{N}th `\(@dots{}\)'.
+(@var{N} is a number.)
+@end table
 
 Following is an example of @code{wl-refile-rule-alist}.
 
@@ -2937,7 +2947,6 @@ With prefix argument, it affects on the all messages in the thread tree.
 @item t u
 @kindex t u (Summary)
 @findex wl-thread-unmark
-
 Unmark temporal mark on the messages which are the descendant of the
 current thread. With prefix argument, it affects on the all messages in
 the thread tree. 
@@ -3297,7 +3306,7 @@ If non-nil, messages read via POP3 are cached.
 Message Buffers utilize MIME-View mode of SEMI/tm.
 For operational procedures and key bindings, refer to respective
 documents.
-@xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+@xref{MIME-View, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
 @kbd{p} at the top of a message or @kbd{n} at the bottom of a message
 brings you back to Summary mode.
@@ -3376,11 +3385,10 @@ message is saved when it is sent.
 
 Multi-part editing utilize MIME edit mode of SEMI/tm.  For procedures of
 editing, refer to respective documents.
-@xref{Mail Methods, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
+@xref{MIME-Edit, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
-
 @c @cindex Change Message
 @c @cindex Message, Change Dynamic
 
@@ -4205,7 +4213,7 @@ The initial setting is 'one.
 The value of @code{wl-plugged} reflects the return value of the function 
 @code{elmo-plugged-p} (without arguments).
 This variable @code{elmo-plugged-condition} specifies the condition on
-which the return value of (elmo-plugged-p) should be t depending on the
+which the return value of @code{(elmo-plugged-p)} should be t depending on the
 plugged state of each port.
 
 @example
@@ -4213,7 +4221,7 @@ plugged state of each port.
 'all         : plugged if all ports are plugged.
 'independent : reflects wl-plugged (elmo-plugged) regardless of plugged
                states of the ports.
-function     : reflects the return value of the function
+@var{function}     : reflects the return value of the @var{function}
  functions available per default
  'elmo-plug-on-by-servers
              : reflects the plugged state of the servers specified by the
@@ -4298,7 +4306,7 @@ initial stage.
                            ;; @r{archive by message number (retaining numbers)}
         ("^\\+ml/.*"    (number 300 310) wl-expire-archive-number2 t)
                            ;; @r{archive by a fixed number (retaining numbers)}
-        ("^\\+nikki$"   (date 30) wl-expire-archive-date)
+        ("^\\+diary$"   (date 30) wl-expire-archive-date)
                            ;; @r{archive by year and month (numbers discarded)}
         ))
 @end lisp
@@ -4306,34 +4314,34 @@ initial stage.
 Items in the list has the format of:
 
 @example
-("regexp_for_folders"  (specification_of_messages_to_be_deleted) destination)
+(@var{regexp-for-folders} @var{specification-of-messages-to-be-deleted} @var{destination})
 @end example
 
 @noindent
-The folder is examined if it matches "regexp_for_folders" from the
+The folder is examined if it matches @var{regexp-for-folders} from the
 beginning of the list.  If you invoke expiration on the folder that does
 not match any of them, nothing will happen.
 And if either the second or the third element of the item is nil,
 expiration will not take place.
 
 You can use any one of the following for
-specification_of_message_to_be_deleted:
+@var{specification-of-message-to-be-deleted}:
 
 @table @code
-@item (number n1 [n2])
+@item (number @var{n1} [@var{n2}])
 deletes messages depending on the number of messages in the folder.
 
-n1 is the number of messages which should survive deletion, for example
+@var{n1} is the number of messages which should survive deletion, for example
 if its value is 500, the newest 500 messages survive and the rests are
 deleted.
 
-n2 is the number of messages in the folder on which expiration should
-take place, which defaults to n1 + 1.  For example if its value is 510,
+@var{n2} is the number of messages in the folder on which expiration should
+take place, which defaults to @var{n1} + 1.  For example if its value is 510,
 folders with 510 or more messages are expired.
 If you configured automatic expiration, frequently used folders may
 expire every time it receive messages, and you may be annoyed with the
 long delay in reading mail.
-In that case, you can set a wide margin between n2 and n1, so that
+In that case, you can set a wide margin between @var{n2} and @var{n1}, so that
 expiration would not take place until a certain number of messages
 accumulate.
 
@@ -4343,10 +4351,10 @@ If @code{wl-expire-number-with-reserve-marks} is non-nil, the folder
 will expire so as to have 500 messages including such ones.
 Otherwise, it will have 500 messages except such ones.
 
-@item (date d1)
+@item (date @var{d1})
 deletes messages depending on the dates.
 
-Messages dated d1 or more days ago are deleted, for example if its value
+Messages dated @var{d1} or more days ago are deleted, for example if its value
 is seven, messages seven days old or more are deleted.
 Note that the date is the one in the Date field of the message, not when 
 the message entered the folder.
@@ -4355,29 +4363,29 @@ Messages with no or invalid Date field does not expire; you might have
 to delete them by hand.
 @end table
 
-You can use any one of the following in the place of destination:
+You can use any one of the following in the place of @var{destination}:
 
-@table @code
-@item 'remove
+@table @asis
+@item @code{'remove}
 deletes the messages instantly.
 
-@item 'trash
+@item @code{'trash}
 moves the messages to @code{wl-trash-folder}.
 
-@item string(folder)
-moves the messages to the specified folder.
+@item @var{string}(folder)
+moves the messages to the folder specified with @var{string}.
 
 It would be useful for specifying an archiving folder, but because this
 does not move important messages, it might be better to use the
 standard functions described below.
 
-@item function
-invokes the specified function.
+@item @var{function}
+invokes the specified @var{function}.
 
-To the function, three arguments are passed: a folder name, a list of
+To the @var{function}, three arguments are passed: a folder name, a list of
 messages to be deleted, and msgdb information of the summary.
 You can specify function-specific arguments after the name of the
-function.
+@var{function}.
 Note that the list contains messages with marks in
 @code{wl-summary-expire-reserve-marks}, be careful in writing your own
 function.
@@ -4400,10 +4408,10 @@ the name of the folder as follows
 (in this case, archiving folders are handled as if
 @code{elmo-archive-treat-file} were non-nil).
 
-@table @code
+@table @asis
 @item If the folder type is localdir:
-
 @code{$ArchiveDir/foldername-xxxxx.zip}
+
 For example, @samp{+ml/wl} corresponds to @samp{$ml/wl;zip}
 (@file{~/Mail/ml/wl-00100.zip}).
 
@@ -4442,9 +4450,9 @@ You can set the first argument to these three standard functions to non-nil
 in @code{wl-expire-alist} so as to retain message numbers in the folder.
 For example, it can be specified just after the name of the function:
 
-@example
+@lisp
 ("^\\+ml/wl$" (number 300 310) wl-expire-archive-number1 t)
-@end example
+@end lisp
 
 If you omit the argument, consecutive numbers from 1 are assigned for
 each archiving folder.
@@ -4584,7 +4592,7 @@ with @code{wl-summary-expire-reserve-marks} are also retained.
 The initial setting is 'wl-expire-archive-get-folder.
 
 This variable specifies a function that returns the name of an archiving 
-folder for standard functions in the place of destination.
+folder for standard functions in the place of @var{destination}.
 You can use the following three variables for simple modification of
 folder names; if you want more complex settings, define your own
 function in this variable.
@@ -4592,9 +4600,9 @@ function in this variable.
 @code{wl-expire-archive-get-folder} can be customized by these
 variables:
 @itemize @bullet
-@item wl-expire-archive-folder-name-fmt
-@item wl-expire-archive-folder-type
-@item wl-expire-archive-folder-prefix
+@item @code{wl-expire-archive-folder-name-fmt}
+@item @code{wl-expire-archive-folder-type}
+@item @code{wl-expire-archive-folder-prefix}
 @end itemize
 
 @item wl-expire-archive-folder-name-fmt
@@ -4728,10 +4736,10 @@ For example:
 Each item in the list has the following format:
 
 @example
-("folders_regexp"  deleting_function)
+(@var{folders-regexp}  @var{deleting-function})
 @end example
 
-As you can see, you can only use a function after @samp{folders_regexp}.
+As you can see, you can only use a function after @var{folders-regexp}.
 Per default, there are three functions:
 
 @itemize @bullet
@@ -5062,7 +5070,7 @@ If non-nil, scoring is enabled.
 
 @item wl-score-files-dir
 @vindex wl-score-files-dir
-The initial setting is "~/.elmo/".
+The initial setting is @file{~/.elmo/}.
 The default directory for score files.
 
 @item wl-score-interactive-default-score
@@ -5123,7 +5131,7 @@ The format of score files are the same as Gnus, and basically you can
 use Gnus score files as they are.  But they are not fully compatible
 because some keys are not supported and there are Wanderlust specifics.
 
-@example
+@lisp
 (("subject"
   ("for sale" -1000 nil s)
   ("profit" -1000 nil s))
@@ -5137,7 +5145,7 @@ because some keys are not supported and there are Wanderlust specifics.
  (target 3000)
  (mark 0)
  (expunge -3000))
-@end example
+@end lisp
 
 @table @code
 @item string
@@ -5799,10 +5807,12 @@ If non-nil, you are asked for confirmation when mail is sent.
 @item wl-folder-sync-range-alist
 @vindex wl-folder-sync-range-alist
 The initial setting is the list shown below:
-@example
+
+@lisp
 (("^&.*$" . "all")
  ("^\\+draft$\\|^\\+queue$" . "all"))
-@end example
+@end lisp
+
 This is an associative list of regular expressions of folder names and
 update range of the summary.
 Update range is one of the "all", "update", "rescan", "rescan-noscore", "first"
