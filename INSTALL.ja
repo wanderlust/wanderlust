@@ -2,7 +2,8 @@
 	Wanderlust のインストール方法
 
 					Kaoru Takahashi   高橋郁,
-					Yuuichi Teranishi 寺西裕一
+					Yuuichi Teranishi 寺西裕一,
+					Tsunehiko Baba    馬場恒彦
 
 MIME用モジュールのインストール
 ==============================
@@ -11,7 +12,7 @@ MIME用モジュールのインストール
   ストールしておく必要があります。機能が充実している SEMI の使用をお勧
   めします。
 
-	SEMI    (1.13.4 以上)
+	SEMI    (1.13.7 以上)
 	tm      (8.7 以上)
 
   Emacs 19.28 以前をベースとした Mule をお使いの場合は tm をインストー
@@ -28,21 +29,7 @@ MIME用モジュールのインストール
   SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
   推奨される APEL, FLIM, SEMI の組合せは以下の通りです。
 
-	APEL 10.2, FLIM 1.12.7, SEMI 1.13.4
-         または、
 	APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
-
-  APEL 10.2 と FLIM 1.12.7 の組合せでは、FLIM 1.12.7 のコンパイル時に
-
-    Please install latest APEL 7.3 or later.
-   
-  というエラーが発生する場合があります。この場合、FLIM-CFG の以下の行を
-  コメントアウトして下さい。
-
-  (or (fboundp 'write-region-as-binary)
-      (error "Please install latest APEL 7.3 or later."))
-  (or (fboundp 'insert-file-contents-as-binary)
-      (error "Please install latest APEL 7.3 or later."))
 
   APEL, FLIM, SEMI, パッケージはそれぞれ以下の URL で入手可能です。
 
@@ -61,7 +48,8 @@ MIME用モジュールのインストール
   基本的に最新版の組合せなら動作するはずです。
   例えば、以下の組合せの動作が確認されています。
 
-	APEL 10.2, Chao 1.14.1, REMI 1.14.1
+	APEL 10.2, Chao 1.14.1, REMI 1.14.2
+	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 
 (b) tm のインストール
 

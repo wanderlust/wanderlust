@@ -29,7 +29,8 @@ Features:
 System Requirements:
 
  * Emacs19 or later.
- * tm or SEMI (version 1.13.4 or later).
+ * tm (version 8.7 or later) or SEMI (version 1.13.7 or later).
+ * APEL (version 10.2 or later)
 
 Install:
 

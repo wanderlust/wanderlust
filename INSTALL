@@ -11,7 +11,7 @@ Required environment
   Before installing Wanderlust, please install either of the following
   MIME modules. SEMI is recommended because it's more functional.
 
-	SEMI    (1.13.4 or later)
+	SEMI    (1.13.7 or later)
 	tm      (8.7 or later)
 
   If you use Mule based on Emacs 19.28 or earlier, please install tm.
@@ -29,21 +29,7 @@ Required environment
   SEMI requires APEL and FLIM packages.
   Recommended combination of APEL, FLIM and SEMI are:
 
-	APEL 10.2, FLIM 1.12.7 and SEMI 1.13.4
-         or
 	APEL 10.2, FLIM 1.13.2 and SEMI 1.13.7
-
-  Combination of APEL 10.2 and FLIM 1.12.7 makes following error
-  while compiling FLIM 1.12.7.
-
-	Please install latest APEL 7.3 or later.
-
-  In this case, please comment out following lines in FLIM-CFG.
-
-  (or (fboundp 'write-region-as-binary)
-      (error "Please install latest APEL 7.3 or later."))
-  (or (fboundp 'insert-file-contents-as-binary)
-     (error "Please install latest APEL 7.3 or later."))
 
   You can download these packages from following URLs.
 
@@ -59,7 +45,8 @@ Required environment
   Combination of the latest versions should work.
   For example, following combination is confirmed to work.
 
-	APEL 10.2, Chao 1.14.1 and REMI 1.14.1
+	APEL 10.2, Chao 1.14.1, REMI 1.14.2
+	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 
 (b) tm
 
