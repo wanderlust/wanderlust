@@ -1,3 +1,9 @@
+2004-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-spam.el (elmo-spam-scheme): Add 'sa' as a candidate.
+
+	* elsp-sa.el: New file. 
+
 2003-12-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (modb-standard-message-entity): New function.

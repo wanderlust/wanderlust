@@ -44,7 +44,8 @@
   "*Scheme of spam processor implementation. "
   :type '(choice (const :tag "none" nil)
 		 (const :tag "Bogofilter" bogofilter)
-		 (const :tag "Spamfilter" spamfilter))
+		 (const :tag "Spamfilter" spamfilter)
+		 (const :tag "SpamAssassin" sa))
   :group 'elmo-spam)
 
 (eval-and-compile
