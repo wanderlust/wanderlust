@@ -3332,8 +3332,10 @@ prefix argument つきならば、カーソル行の子スレッドを全て開きます。
 @kindex H (Summary)
 @findex wl-summary-toggle-all-header
 現在カーソルがある行のメッセージを、全てヘッダ情報を表示するかどうかを切
-り換えて再表示します。@kbd{C-u C-u H} のように 2回の @kbd{C-u} を付けて実
-行した場合、現在のヘッダの表示形式をサマリのデフォルト値として設定します。
+り換えて再表示します。prefix argument つきならばキャッシュが存在しても
+無視して再読み込みし直します。@kbd{C-u C-u H} のように 2回の @kbd{C-u} を
+付けて実行した場合、現在のヘッダの表示形式をサマリのデフォルト値として
+設定します。
 (@code{wl-summary-toggle-all-header})
 
 @item M
