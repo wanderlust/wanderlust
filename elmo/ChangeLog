@@ -1,3 +1,8 @@
+2005-01-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-net.el (elmo-network-session-idle-timeout): Fix customization
+	type mismatch.
+
 2005-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mime.el (elmo-mime-entity-display): Bind elmo-message-displaying
