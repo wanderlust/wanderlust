@@ -1,3 +1,8 @@
+2003-08-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-detect-mark-position): Bind
+	wl-summary-flag-priority-list to '(new).
+
 2003-08-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-highlight.el (wl-highlight-summary-line-face-spec): New

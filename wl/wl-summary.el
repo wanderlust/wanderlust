@@ -664,6 +664,7 @@ you."
 	(formatter wl-summary-buffer-line-formatter)
 	(dummy-temp (char-to-string 200))
 	(wl-summary-new-mark (char-to-string 201)) ; bind only for the check.
+	(wl-summary-flag-priority-list '(new))     ; ditto.
 	temp persistent)
     (with-temp-buffer
       (setq wl-summary-buffer-number-column column
