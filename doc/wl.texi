@@ -6115,6 +6115,10 @@ byte-compiled and installed.
 @end group
 @end lisp
 
+You can complete address with BBDB by @kbd{M-@key{TAB}}
+in draft buffer.
+
+
 @node supercite, mu-cite, BBDB, Living with other packages
 @subsection sc.el(supercite), sc-register.el
 @pindex sc

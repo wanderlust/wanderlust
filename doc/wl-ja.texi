@@ -6027,6 +6027,9 @@ OK です。
 @end group
 @end lisp
 
+ドラフトバッファで @kbd{M-@key{TAB}} により BBDB を用いた
+アドレスの補完ができます。
+
 
 @node supercite, mu-cite, BBDB, Living with other packages
 @subsection sc.el(supercite), sc-register.el
