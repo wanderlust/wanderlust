@@ -276,6 +276,27 @@ Matched address lists are append to CL."
 	(completing-read "To: " cl)
       (read-string "To: "))))
 
+(defun wl-address-make-completion-list (address-list)
+  (let (addr-tuple cl)
+    (while address-list
+      (setq addr-tuple (car address-list))
+      (setq cl
+	     (cons
+	      (cons (nth 0 addr-tuple)
+		    (concat (nth 2 addr-tuple) " <"(nth 0 addr-tuple)">"))
+	      cl))
+      ;; nickname completion.
+      (unless (or (equal (nth 1 addr-tuple) (nth 0 addr-tuple))
+		  ;; already exists
+		  (assoc (nth 1 addr-tuple) cl))
+	(setq cl
+	      (cons
+	       (cons (nth 1 addr-tuple)
+		     (concat (nth 2 addr-tuple) " <"(nth 0 addr-tuple)">"))
+	       cl)))
+      (setq address-list (cdr address-list)))
+    cl))
+
 (defun wl-complete-field-body-or-tab ()
   (interactive)
   (let ((case-fold-search t)
@@ -383,26 +404,22 @@ Matched address lists are append to CL."
 	      (if (setq comp-win (get-buffer-window comp-buf))
 		  (delete-window comp-win)))))))
 
-(defun wl-complete-field-body (completion-list &optional epand-char skip-chars use-ldap)
+(defun wl-complete-field-body (completion-list
+			       &optional epand-char skip-chars use-ldap)
   (interactive)
   (let* ((end (point))
 	 (start (save-excursion
-;		  (skip-chars-backward "_a-zA-Z0-9+@%.!\\-")
-		  (skip-chars-backward (or skip-chars 
-					   "_a-zA-Z0-9+@%.!\\-/"))
+		  (skip-chars-backward (or skip-chars "^:,>\n"))
+		  (skip-chars-forward " \t")
 		  (point)))
 	 (completion)
-	 (pattern (elmo-string (buffer-substring start end)))
+	 (pattern (buffer-substring start end))
 	 (len (length pattern))
-	 (completion-ignore-case t)
 	 (cl completion-list))
     (when use-ldap
-      (setq cl (wl-address-ldap-search pattern cl)))
+      (setq cl (wl-address-ldap-search pattern cl)))    
     (if (null cl)
-	(if use-ldap
-	    (progn
-	      (message "Can't find completion for \"%s\"" pattern)
-	      (ding)))
+	nil
       (setq completion (try-completion pattern cl))
       (cond ((eq completion t)
 	     (if use-ldap (setq wl-address-ldap-search-hash nil))
@@ -518,11 +535,6 @@ Matched address lists are append to CL."
     (or (elmo-get-hash-val addr wl-address-petname-hash)
 	str)))
 
-(defsubst wl-address-make-completion-list (address-list)
-  (mapcar '(lambda (entity)
-	     (cons (nth 0 entity)
-		   (concat (nth 2 entity) " <"(nth 0 entity)">"))) address-list))
-
 (defsubst wl-address-user-mail-address-p (address)
   "Judge whether ADDRESS is user's or not."
   (member (downcase (wl-address-header-extract-address address))
@@ -550,6 +562,49 @@ e.g. \"Mr. bar <hoge@foo.com>\"
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
          (wl-match-string 1 str))
         (t "")))
+
+(defmacro wl-address-concat-token (string token)
+  (` (cond
+      ((eq 'quoted-string (car (, token)))
+       (concat (, string) "\"" (cdr (, token)) "\""))
+      ((eq 'comment (car (, token)))
+       (concat (, string) "(" (cdr (, token)) ")"))
+      (t 
+       (concat (, string) (cdr (, token)))))))
+
+(defun wl-address-string-without-group-list-contents (sequence)
+  "Return address string from lexical analyzed list SEQUENCE.
+Group list contents is not included."
+  (let (address-string route-addr-end token seq)
+  (while sequence
+    (setq token (car sequence))
+    (cond 
+     ;;   group       =  phrase ":" [#mailbox] ";"
+     ((and (eq 'specials (car token))
+	   (string= (cdr token) ":"))
+      (setq address-string (concat address-string (cdr token))) ; ':'
+      (setq seq (cdr sequence))
+      (setq token (car seq))
+      (while (not (and (eq 'specials (car token))
+		       (string= (cdr token) ";")))
+	(setq token (car seq))
+	(setq seq (cdr seq)))
+      (setq address-string (concat address-string (cdr token))) ; ';'
+      (setq sequence seq))
+     ;;   route-addr  =  "<" [route] addr-spec ">"
+     ;;   route       =  1#("@" domain) ":"           ; path-relative
+     ((and (eq 'specials (car token))
+	   (string= (cdr token) "<"))
+      (setq seq (std11-parse-route-addr sequence))
+      (setq route-addr-end (car (cdr seq)))
+      (while (not (eq (car sequence) route-addr-end))
+	(setq address-string (wl-address-concat-token address-string
+						      (car sequence)))
+	(setq sequence (cdr sequence))))
+     (t 
+      (setq address-string (wl-address-concat-token address-string token))
+      (setq sequence (cdr sequence)))))
+  address-string))
 
 (defun wl-address-petname-delete (the-email)
   "Delete petname in wl-address-file."
@@ -619,3 +674,4 @@ If already registerd, change it."
 (provide 'wl-address)
 
 ;;; wl-address.el ends here
+

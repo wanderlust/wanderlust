@@ -568,6 +568,11 @@ Default is for 'reply-to-all'."
   :type 'boolean
   :group 'wl-draft)
 
+(defcustom wl-draft-remove-group-list-contents t
+  "*If non-nil, remove group list contents in `wl-draft-send-mail-with-smtp'"
+  :type 'boolean
+  :group 'wl-draft)
+
 ;;;; 
 (defcustom wl-init-file "~/.wl"
   "*User customization setting file."

@@ -1,3 +1,25 @@
+2000-08-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-remove-group-list-contents): New user option.
+
+	* wl-draft.el (wl-draft-deduce-address-list): New function.
+	(wl-draft-parse-mailbox-list): Ditto.
+	(wl-draft-send-mail-with-smtp): Use `wl-draft-deduce-address-list'
+	instead of `smtp-deduce-address-list'.
+	(wl-draft-on-field-p): Follow group list.
+
+	* wl-address.el (wl-address-concat-token): New function.
+	(wl-address-string-without-group-list-contents): Ditto.
+	(wl-complete-field-body): Fixed problem of completion
+	by japanese petname.
+	(wl-address-make-completion-list): Rewrite.
+
+2000-08-11  Taro Kawagishi <taro.kawagishi@nokia.com>
+
+	* wl-address.el (wl-address-make-completion-list): Completion by
+	petname.
+	(wl-complete-field-body): Likewise.
+
 2000-08-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply): Fixed problem when to or cc

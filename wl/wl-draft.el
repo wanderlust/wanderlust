@@ -813,6 +813,73 @@ to find out how to use this."
 	;; should never happen
 	(t   (error "qmail-inject reported unknown failure"))))))
 
+(defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
+  "Get mailbox list of FIELD from current buffer.
+The buffer is expected to be narrowed to just the headers of the message.
+If optional argument REMOVE-GROUP-LIST is non-nil, remove group list content
+from current buffer."
+  (save-excursion
+    (let ((case-fold-search t)
+	  (inhibit-read-only t)
+	  addresses address
+	  mailbox-list beg seq has-group-list)
+      (goto-char (point-min))
+      (while (re-search-forward (concat "^" (regexp-quote field) "[\t ]*:")
+				nil t)
+	(setq beg (point))
+	(re-search-forward "^[^ \t]" nil 'move)
+	(beginning-of-line)
+	(skip-chars-backward "\n")
+	(setq seq (std11-lexical-analyze
+		   (buffer-substring-no-properties beg (point))))
+	(setq addresses (std11-parse-addresses seq))
+	(while addresses
+	  (cond ((eq (car (car addresses)) 'group)
+		 (setq has-group-list t)
+		 (setq mailbox-list
+		       (nconc mailbox-list
+			      (mapcar
+			       'std11-address-string
+			       (nth 2 (car addresses))))))
+		((eq (car (car addresses)) 'mailbox)
+		 (setq address (nth 1 (car addresses)))
+		 (setq mailbox-list
+		       (nconc mailbox-list
+			      (list
+			       (std11-addr-to-string
+				(if (eq (car address) 'phrase-route-addr)
+				    (nth 2 address)
+				  (cdr address))))))))
+	  (setq addresses (cdr addresses)))
+	(when (and remove-group-list has-group-list)
+	  (delete-region beg (point))
+	  (insert " " (wl-address-string-without-group-list-contents seq))))
+      mailbox-list)))
+
+(defun wl-draft-deduce-address-list (buffer header-start header-end)
+  "Get address list suitable for smtp RCPT TO:<address>.
+Group list content is removed if `wl-draft-remove-group-list-contents' is
+non-nil."
+  (let ((fields        '("to" "cc" "bcc"))
+	(resent-fields '("resent-to" "resent-cc" "resent-bcc"))
+	(case-fold-search t)
+	addrs recipients)
+    (save-excursion
+      (save-restriction
+	(narrow-to-region header-start header-end)
+	(goto-char (point-min))
+	(save-excursion
+	  (if (re-search-forward "^resent-to[\t ]*:" nil t)
+	      (setq fields resent-fields)))
+	(while fields
+	  (setq recipients
+		(nconc recipients
+		       (wl-draft-parse-mailbox-list
+			(car fields)
+			wl-draft-remove-group-list-contents)))
+	  (setq fields (cdr fields)))
+	recipients))))
+
 ;;
 ;; from Semi-gnus
 ;;
@@ -832,21 +899,30 @@ to find out how to use this."
 		       (concat "^" (regexp-quote mail-header-separator)
 			       "$\\|^$") nil t)
 		      (point-marker)))
-	 (recipients (smtp-deduce-address-list (current-buffer)
-					       (point-min) delimline))
-	 (smtp-server (or wl-smtp-posting-server
-			  (if (functionp smtp-server)
-			      (funcall smtp-server sender
-				       recipients)
-			    (or smtp-server "localhost"))))
+	 (smtp-server
+	  (or wl-smtp-posting-server
+	      (if (functionp smtp-server)
+		  (funcall
+		   smtp-server
+		   sender
+		   ;; no harm..
+		   (let (wl-draft-remove-group-list-contents)
+		     (wl-draft-deduce-address-list
+		      (current-buffer) (point-min) delimline)))
+		(or smtp-server "localhost"))))
 	 (smtp-service (or wl-smtp-posting-port smtp-service))
 	 (smtp-local-domain (or smtp-local-domain wl-local-domain))
-	 (id (std11-field-body "message-id")))
+	 (id (std11-field-body "message-id"))
+	 recipients)
     (if (not (elmo-plugged-p smtp-server smtp-service))
 	(wl-draft-set-sent-message 'mail 'unplugged
 				   (cons smtp-server smtp-service))
       (unwind-protect
 	  (save-excursion
+	    ;; Instead of `smtp-deduce-address-list'.
+	    (setq recipients (wl-draft-deduce-address-list
+			      (current-buffer) (point-min) delimline))
+	    (unless recipients (error "No recipients"))
 	    ;; Insert an extra newline if we need it to work around
 	    ;; Sun's bug that swallows newlines.
 	    (goto-char (1+ delimline))
@@ -1184,7 +1260,9 @@ If optional argument is non-nil, current draft buffer is killed"
 	      t
 	    (save-excursion
 	      (forward-line -1)
-	      (if (looking-at ".*,[ \t]?$") nil t)))
+	      (if (or (looking-at ".*,[ \t]?$")
+		      (looking-at "^[^ \t]+:[ \t]+.*:$")); group list name
+		  nil t)))
 	(let ((pos (point)))
 	  (save-excursion
 	    (beginning-of-line)
