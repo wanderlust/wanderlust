@@ -1810,13 +1810,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (wl-folder-check-entity wl-folder-entity))
 
 (defun wl-folder-entity-hashtb-set (entity-hashtb name value buffer)
-  (let (cur-val
+  (let ((cur-val (wl-folder-get-entity-info name entity-hashtb))
 	(new-diff 0)
 	(unread-diff 0)
 	(all-diff 0)
-	diffs
-	entity-list)
-    (setq cur-val (wl-folder-get-entity-info name entity-hashtb))
+	diffs)
     (setq new-diff    (- (or (nth 0 value) 0) (or (nth 0 cur-val) 0)))
     (setq unread-diff
 	  (+ new-diff
@@ -1829,11 +1827,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (save-match-data
 	(with-current-buffer buffer
 	  (save-excursion
-	    (setq entity-list (wl-folder-search-entity-list-by-name
-			       name wl-folder-entity))
-	    (while entity-list
-	      (wl-folder-update-group (car entity-list) diffs)
-	      (setq entity-list (cdr entity-list)))
+	    (let ((entity-list (wl-folder-search-entity-list-by-name
+				name wl-folder-entity)))
+	      (while entity-list
+		(wl-folder-update-group (car entity-list) diffs)
+		(setq entity-list (cdr entity-list))))
 	    (goto-char (point-min))
 	    (while (wl-folder-buffer-search-entity name)
 	      (wl-folder-update-line value))))))))
