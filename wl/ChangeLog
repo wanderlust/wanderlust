@@ -1,3 +1,12 @@
+2004-05-29  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* wl-e21.el (wl-e21-display-image-p): Don't call
+	`display-images-p'.
+	(wl-e21-highlight-folder-group-line): Change for emacs multi-tty
+	support.
+	(wl-highlight-folder-current-line): Ditto.
+	(wl-folder-init-icons): Ditto.
+
 2004-05-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-cursor-move-surface): Avoid error on

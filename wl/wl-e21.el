@@ -171,8 +171,7 @@
 
 (eval-when-compile
   (defmacro wl-e21-display-image-p ()
-    '(and (display-images-p)
-	  (image-type-available-p 'xpm))))
+    '(image-type-available-p 'xpm)))
 
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar
@@ -262,12 +261,9 @@
 	    (let ((name (symbol-value
 			 (cdr (assq icon wl-folder-toggle-icon-list))))
 		  (load-path (cons wl-icon-directory load-path)))
-	      (when (setq image (find-image `((:type xpm :file ,name
-						     :ascent center))))
-		(setq image (put icon 'image (propertize name
-							 'display image))))))
-	  (overlay-put overlay 'before-string image)
-	  (overlay-put overlay 'invisible (and image t))
+	      (setq image (find-image `((:type xpm :file ,name
+					       :ascent center))))))
+	  (overlay-put overlay 'display image)
 	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
 	    (let ((inhibit-read-only t))
 	      (put-text-property (if image
@@ -368,7 +364,9 @@
 					     (elmo-make-folder fld-name))))
 			     (get (intern (format "wl-folder-%s-image" type))
 				  'image)))))
-	      (overlay-put overlay 'before-string image)))
+	      (overlay-put overlay 'before-string
+			   (propertize " " 'display image
+				       'invisible t))))
 	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
 	    (let ((inhibit-read-only t))
 	      (put-text-property (if image
@@ -458,7 +456,7 @@
 	  (setq name (symbol-value (cdr icon))
 		image (find-image `((:type xpm :file ,name :ascent center))))
 	  (when image
-	    (put (car icon) 'image (propertize name 'display image))))))))
+	    (put (car icon) 'image image)))))))
 
 (defun wl-plugged-init-icons ()
   (let ((props (when (display-mouse-p)
