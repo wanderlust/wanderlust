@@ -17,13 +17,13 @@ System Requirements
   Before installing Wanderlust, please install the following MIME
   modules.
 
-	SEMI	(1.14.3 or later)
-	FLIM	(1.14.3 or later)
+	SEMI	(1.14.6 or later)
+	FLIM	(1.14.6 or later)
 
   Wanderlust and MIME modules require APEL.  Before installing MIME
   modules, please install the APEL.
 
-	APEL	(10.3 or later)
+	APEL	(10.6 or later)
 
 
 Select MIME Module
