@@ -1,20 +1,4 @@
-2001-08-21  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-addrmgr.el (wl-addrmgr-apply-exec): Fix for already-list.
-
-2001-08-21  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-addrmgr.el (wl-addrmgr-draw): Fix for already-list.
-	(wl-addrmgr-address-entry-list): Ditto.
-
 2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-e21.el (wl-draft-mode-map): Removed binding for
-	`wl-draft-insert-x-face-field'.
-
-	* wl-mule.el (wl-draft-mode-map): Ditto.
-
-	* wl-xmas.el (wl-draft-mode-map): Ditto.
 
 	* wl-vars.el (wl-cs-noconv): Ignore nemacs.
 	(wl-cs-autoconv): Ditto.
@@ -3480,3 +3464,4 @@
 
 	* wl-draft.el (wl-draft): Put category property on
 	mail-header-separator.
+                                                                                                                                                                                                                                     
