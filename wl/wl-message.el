@@ -561,7 +561,7 @@
   "Create a button between FROM and TO with callback FUNCTION and DATA."
   (add-text-properties
    from to
-   (nconc '(mouse-face highlight)
+   (nconc (list 'mouse-face 'highlight)
 	  (list 'local-map wl-message-button-map)
 	  (list 'wl-message-button-callback function)
 	  (if data
