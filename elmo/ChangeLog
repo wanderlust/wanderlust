@@ -1,3 +1,17 @@
+2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (luna-define-class): Remove slot message-modified and
+	flag-modified.
+	(elmo-folder-set-message-modified): Abolish.
+	(elmo-generic-folder-commit): Follow the change above.
+	(elmo-folder-synchronize): Ditto.
+
+	* elmo-pipe.el (elmo-folder-set-message-modified): Abolish.
+
+	* elmo-multi.el (elmo-folder-set-message-modified): Ditto.
+
+	* elmo-filter.el (elmo-folder-set-message-modified): Ditto.
+
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* modb-standard.el (modb-standard-make-message-entity,

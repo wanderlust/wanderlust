@@ -1,3 +1,13 @@
+2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-set-message-modified): No use
+	elmo-folder-set-message-modified and wl-summary-set-mark-modified.
+	(wl-summary-set-mark-modified): Abolish.
+	(wl-summary-mark-modified-p): Ditto.
+	(wl-summary-save-view): Follow the change above.
+
+	* wl-expire.el (wl-summary-expire): Likewise.
+
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Use

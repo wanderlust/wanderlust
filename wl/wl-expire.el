@@ -691,7 +691,6 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	      (wl-summary-delete-messages-on-buffer delete-list deleting-info)
 	      (wl-summary-folder-info-update)
 	      (wl-summary-set-message-modified)
-	      (wl-summary-set-mark-modified)
 	      (sit-for 0)
 	      (set-buffer-modified-p nil))
 	    (wl-expired-alist-save))

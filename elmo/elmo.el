@@ -106,8 +106,6 @@ If a folder name begins with PREFIX, use BACKEND."
 				     msgdb  ; msgdb (may be nil).
 				     killed-list  ; killed list.
 				     persistent   ; non-nil if persistent.
-				     message-modified ; message is modified.
-				     flag-modified    ; flag is modified.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
 				     ))
@@ -204,12 +202,6 @@ Return value is cons cell or list:
 
 (luna-define-generic elmo-folder-reserve-status-p (folder)
   "If non-nil, the folder should not close folder after `elmo-folder-status'.")
-
-(luna-define-generic elmo-folder-set-message-modified (folder modified)
-  "Set FOLDER as modified.")
-(luna-define-method elmo-folder-set-message-modified ((folder elmo-folder)
-						      modified)
-  (elmo-folder-set-message-modified-internal folder modified))
 
 (luna-define-generic elmo-folder-list-messages (folder &optional visible-only
 						       in-msgdb)
@@ -672,8 +664,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	(elmo-msgdb-killed-list-save
 	 (elmo-folder-msgdb-path folder)
 	 (elmo-folder-killed-list-internal folder)))
-      (elmo-folder-set-message-modified folder nil)
-      (elmo-folder-set-flag-modified-internal folder nil)
       (elmo-msgdb-save msgdb))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-folder))
@@ -1564,9 +1554,7 @@ If update process is interrupted, return nil.")
 	      (setq crossed (elmo-folder-append-msgdb folder new-msgdb))
 	      ;; process crosspost.
 	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).
-	      (elmo-folder-process-crosspost folder)
-	      (elmo-folder-set-message-modified folder t)
-	      (elmo-folder-set-flag-modified-internal folder t))
+	      (elmo-folder-process-crosspost folder))
 	    ;; return value.
 	    (or crossed 0)))
       (quit

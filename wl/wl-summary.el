@@ -1007,18 +1007,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       "folder mode"))
 
 (defun wl-summary-set-message-modified ()
-  (elmo-folder-set-message-modified
-   wl-summary-buffer-elmo-folder t)
-  (setq wl-summary-buffer-message-modified t)
-  (wl-summary-set-mark-modified))
+  (setq wl-summary-buffer-message-modified t))
 (defun wl-summary-message-modified-p ()
   wl-summary-buffer-message-modified)
-(defun wl-summary-set-mark-modified ()
-  (elmo-folder-set-flag-modified-internal
-   wl-summary-buffer-elmo-folder t))
-(defun wl-summary-mark-modified-p ()
-  (elmo-folder-flag-modified-internal
-   wl-summary-buffer-elmo-folder))
 (defun wl-summary-set-thread-modified ()
   (setq wl-summary-buffer-thread-modified t))
 (defun wl-summary-thread-modified-p ()
@@ -1045,7 +1036,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     ;; save the current summary buffer view.
     (if (and wl-summary-cache-use
 	     (or (wl-summary-message-modified-p)
-		 (wl-summary-mark-modified-p)
 		 (wl-summary-thread-modified-p)))
 	(wl-summary-save-view-cache))))
 
