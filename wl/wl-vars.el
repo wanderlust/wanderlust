@@ -1385,7 +1385,7 @@ which appear just before @."
   :group 'wl-draft
   :group 'wl-pref)
 
-(defcustom wl-message-scroll-amount 5
+(defcustom wl-message-scroll-amount nil
   "*Scroll amount by SPC key."
   :type 'integer
   :group 'wl-pref)

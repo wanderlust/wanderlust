@@ -1,3 +1,11 @@
+2002-06-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-message.el (wl-message-prev-page): When it is called without
+	lines argument, scroll down by wl-message-scroll-amount lines.
+	(wl-message-next-page): Ditto.
+	* wl-vars.el (wl-message-scroll-amount): Change default value
+	to preserve current behavior.
+
 2002-06-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-prefetch-msg): Bind

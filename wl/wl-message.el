@@ -268,7 +268,7 @@ Returns non-nil if top of message."
 	  (recenter))
       (if (not (bobp))
 	  (condition-case nil
-	      (scroll-down lines)
+	      (scroll-down (or lines wl-message-scroll-amount))
 	    (error))
 	(setq top t)))
     (if real-top
@@ -304,8 +304,8 @@ Returns non-nil if bottom of message."
 	  (static-if (boundp 'window-pixel-scroll-increment)
 	      ;; XEmacs 21.2.20 and later.
 	      (let (window-pixel-scroll-increment)
-		(scroll-up lines))
-	    (scroll-up lines))
+		(scroll-up (or lines wl-message-scroll-amount)))
+	    (scroll-up (or lines wl-message-scroll-amount)))
 	(end-of-buffer
 	 (goto-char (point-max))))
       (setq bottom nil))
