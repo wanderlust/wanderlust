@@ -85,11 +85,13 @@
   (let (headers)
     (dolist (ov (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
       (when (and (elmo-msgdb-overview-entity-get-extra-field ov "xref")
-		 (> (elmo-shimbun-lapse-seconds
-		     (elmo-shimbun-parse-time-string
-		      (elmo-msgdb-overview-entity-get-date ov)))
-		    (* expire-days 86400 ; seconds per day
-		       )))
+		 (if expire-days
+		     (> (elmo-shimbun-lapse-seconds
+			 (elmo-shimbun-parse-time-string
+			  (elmo-msgdb-overview-entity-get-date ov)))
+			(* expire-days 86400 ; seconds per day
+			   ))
+		   t))
 	(setq headers
 	      (cons (shimbun-make-header
 		     (elmo-msgdb-overview-entity-get-number ov)
@@ -178,6 +180,8 @@
   (elmo-shimbun-folder-set-headers-internal
    folder nil)
   (elmo-shimbun-folder-set-header-hash-internal
+   folder nil)
+  (elmo-shimbun-folder-set-last-check-internal
    folder nil))
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))

@@ -4,6 +4,7 @@
 	(elmo-shimbun-msgdb-to-headers): Added `expire-days' argument.
 	(elmo-shimbun-get-headers): Use return value of
 	`shimbun-article-expiration-days'.
+	(elmo-folder-close-internal): Clean up last-check slot.
 
 	* elmo-pop3.el (elmo-pop3-process-filter): Show retrieve progress.
 	(elmo-pop3-total-size): New variable.
