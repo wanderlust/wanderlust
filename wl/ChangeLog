@@ -1,3 +1,7 @@
+2003-12-18  Yoichi NAKAYAMA <yoichi@geiin.org>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): Remove kludge.
+
 2003-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-action.el (wl-summary-delete-all-mark): Fix for "*".

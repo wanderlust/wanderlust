@@ -428,10 +428,8 @@ It calls following-method selected from variable
 	  (set-window-start
 	   (get-buffer-window mime-echo-buffer-name)
 	   (point-max))
-	  (setq m-beg (point))
 	  (insert-buffer-substring
-	   (if status pgg-output-buffer pgg-errors-buffer))
-	  (decode-coding-region m-beg (point) wl-cs-autoconv))
+	   (if status pgg-output-buffer pgg-errors-buffer)))
       (message "Cannot find pgp signed region"))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
