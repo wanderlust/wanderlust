@@ -761,7 +761,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (make-directory wl-temporary-file-directory)
 	  (error "Temp directory is not created"))))))
 
-(defconst wl-check-type-variables
+(defconst wl-check-variables-alist
   '((numberp . elmo-pop3-default-port)
     (symbolp . elmo-pop3-default-authenticate-type)
     (numberp . elmo-imap4-default-port)
@@ -770,8 +770,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (numberp . wl-pop-before-smtp-port)
     (symbolp . wl-pop-before-smtp-authenticate-type)))
 
-(defun wl-check-type ()
-  (let ((type-variables wl-check-type-variables)
+(defun wl-check-variables ()
+  (let ((type-variables wl-check-variables-alist)
 	type)
     (while (setq type (car type-variables))
       (if (and (eval (cdr type))
@@ -782,6 +782,16 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		 (substring (format "%s" (car type)) 0 -1)
 		 (eval (cdr type))))
       (setq type-variables (cdr type-variables)))))
+
+(defun wl-check-variables-2 ()
+  (if (< wl-message-buffer-cache-size 1)
+      (error "`wl-message-buffer-cache-size' must be larger than 0."))
+  (when wl-message-buffer-prefetch-depth
+    (if (not (< wl-message-buffer-prefetch-depth
+		wl-message-buffer-cache-size))
+	(error (concat
+		"`wl-message-buffer-prefetch-depth' must be smaller than "
+		"`wl-message-buffer-cache-size' - 1.")))))
 
 ;;;###autoload
 (defun wl (&optional arg)
@@ -805,7 +815,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 		(wl-check-environment arg)
 		(message "Checking environment...done")
 		(message "Checking type of variables...")
-		(wl-check-type)
+		(wl-check-variables)
+		(wl-check-variables-2)
 		(message "Checking type of variables...done")))
 	  (wl-plugged-init (wl-folder arg))
 	  (unless arg

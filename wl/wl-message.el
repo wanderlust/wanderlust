@@ -559,6 +559,7 @@ Returns non-nil if bottom of message."
 		(when (sit-for wl-message-buffer-prefetch-idle-time)
 		  (wl-message-buffer-prefetch
 		   folder next count summary charset))
+	      (setq wl-message-buffer-prefetch-timer nil)
 	      (unless wl-message-buffer-prefetch-timer
 		(setq wl-message-buffer-prefetch-timer
 		      (run-with-idle-timer

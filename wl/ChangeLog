@@ -1,3 +1,11 @@
+2002-01-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-message-buffer-prefetch-depth): Default is 3.
+	wl.el (wl-check-variables): Rename from `wl-check-type'.
+	(wl-check-variables-alist): Rename from `wl-check-type-variables'.
+	(wl-check-variables-2): New function.
+	(wl): Call `wl-check-variables-2'.
+
 2002-01-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-fldmgr.el (wl-fldmgr-rename): Fixed around message appear

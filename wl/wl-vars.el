@@ -1695,7 +1695,7 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-message-buffer-prefetch-depth 5
+(defcustom wl-message-buffer-prefetch-depth 3
   "*Depth of buffer prefetch in summary mode."
   :type 'integer
   :group 'wl-pref)
