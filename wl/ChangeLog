@@ -1,3 +1,13 @@
+2005-03-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-set-folder): Use
+	`wl-folder-mime-charset'.
+
+	* wl-folder.el (wl-draft-get-folder): Call `elmo-make-folder' with
+	`mime-charset'.
+	(wl-folder-get-elmo-folder): Ditto.
+	(wl-folder-mime-charset): New function.
+
 2005-03-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-parse-addresses): Define alias of

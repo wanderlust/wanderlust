@@ -36,9 +36,10 @@
 (require 'modb-entity)
 
 (eval-and-compile
-  (luna-define-class modb-generic () (location         ; location for save.
+  (luna-define-class modb-generic () (location	       ; location for save.
 				      message-modified ; message is modified.
 				      flag-modified    ; flag is modified.
+				      mime-charset     ; for encode & decode.
 				      ))
   (luna-define-internal-accessors 'modb-generic))
 

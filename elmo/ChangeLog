@@ -1,3 +1,42 @@
+2005-03-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb.el (modb-generic): Added slot `mime-charset'.
+
+	* modb-standard.el (modb-standard): Added slot `overview-handler'.
+	(modb-standard-save-entity-1): Use `modb-entity-handler-equal-p'
+	and `modb-entity-handler-dump-parameters'.
+	(modb-standard-default-entity-handler): Abolish.
+	(elmo-msgdb-message-entity-handler): Save created handler by
+	instance slot.
+
+	* modb-entity.el (modb-entity-handler): Added slot `mime-charset'.
+	(modb-entity-handler-list-parameters): New method.
+	(modb-entity-handler-equal-p): New function.
+	(modb-entity-handler-dump-parameters): Ditto.
+	(modb-entity-parse-address-string): Encode return value.
+	(modb-entity-make-address-string): Decode argument value.
+	(modb-entity-decode-string-recursive): New function.
+	(modb-entity-encode-string-recursive): Ditto.
+	(modb-standard-entity-normalizer): Set to encode field value.
+	(modb-standard-entity-specializer): Follow the above change.
+	(modb-standard-entity-set-field): Bind `elmo-mime-charset' by
+	mime-charset of handler.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Fixed reference to internal
+	structure.
+	(modb-entity-make-mailing-list-info-string): Decode `ml-name'.
+
+	* elmo.el (elmo-folder): Added slot `mime-charset'.
+	(elmo-make-folder): Added argument `mime-charset'.
+	(elmo-folder-msgdb-load): Call `elmo-load-msgdb' with
+	`mime-charest'.
+
+	* elmo-msgdb.el (elmo-load-msgdb): Added argument `mime-charset'.
+	(elmo-make-msgdb): Likewise.
+
+	* elmo-internal.el (elmo-internal-folder-initialize): Call
+	`luna-make-entity' with :mime-charset parameter.
+
 2005-03-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Decode

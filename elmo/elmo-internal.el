@@ -64,7 +64,8 @@
 	  :type sym
 	  :prefix (elmo-folder-prefix-internal folder)
 	  :name (elmo-folder-name-internal folder)
-	  :persistent (elmo-folder-persistent-internal folder))
+	  :persistent (elmo-folder-persistent-internal folder)
+	  :mime-charset (elmo-folder-mime-charset-internal folder))
 	 name)
       folder)))
 

@@ -336,22 +336,31 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	   (string= (elmo-folder-name-internal wl-draft-folder-internal)
 		    wl-draft-folder))
       wl-draft-folder-internal
-    (setq wl-draft-folder-internal (elmo-make-folder wl-draft-folder))
+    (setq wl-draft-folder-internal (elmo-make-folder
+				    wl-draft-folder
+				    nil
+				    (wl-folder-mime-charset wl-draft-folder)))
     (wl-folder-confirm-existence wl-draft-folder-internal)
     (elmo-folder-open wl-draft-folder-internal 'load-msgdb)
     wl-draft-folder-internal))
 
-(defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
+(defun wl-folder-mime-charset (folder-name)
+  (or (wl-get-assoc-list-value wl-folder-mime-charset-alist folder-name)
+      wl-mime-charset))
+
+(defsubst wl-folder-get-elmo-folder (entity &optional no-cache)
   "Get elmo folder structure from ENTITY."
-  `(if ,no-cache
-       (elmo-make-folder (elmo-string ,entity))
-     (if (string= (elmo-string ,entity) wl-draft-folder)
-	 (wl-draft-get-folder)
-       (or (wl-folder-elmo-folder-cache-get ,entity)
-	   (let* ((name (elmo-string ,entity))
-		  (folder (elmo-make-folder name)))
-	     (wl-folder-elmo-folder-cache-put name folder)
-	     folder)))))
+  (let ((name (elmo-string entity)))
+    (if no-cache
+	(elmo-make-folder name nil (wl-folder-mime-charset name))
+      (if (string= name wl-draft-folder)
+	  (wl-draft-get-folder)
+	(or (wl-folder-elmo-folder-cache-get name)
+	    (let ((folder (elmo-make-folder name
+					    nil
+					    (wl-folder-mime-charset name))))
+	      (wl-folder-elmo-folder-cache-put name folder)
+	      folder))))))
 
 (defsubst wl-folder-put-folder-property (beg end id is-group &optional object)
   (put-text-property beg end 'wl-folder-entity-id id object)

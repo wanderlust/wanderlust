@@ -41,7 +41,7 @@
 
 ;;; MSGDB interface.
 ;;
-;; MSGDB elmo-load-msgdb PATH
+;; MSGDB elmo-load-msgdb PATH MIME-CHARSET
 ;; MSGDB elmo-make-msgdb LOCATION TYPE
 ;; elmo-msgdb-sort-by-date MSGDB
 
@@ -108,9 +108,9 @@ VALUE is the field value."
 
 ;;; Helper functions for MSGDB
 ;;
-(defun elmo-load-msgdb (location)
+(defun elmo-load-msgdb (location mime-charset)
   "Load the MSGDB from PATH."
-  (let ((msgdb (elmo-make-msgdb location elmo-msgdb-default-type))
+  (let ((msgdb (elmo-make-msgdb location elmo-msgdb-default-type mime-charset))
 	priorities loaded temp-modb)
     (unless (elmo-msgdb-load msgdb)
       (setq priorities
@@ -118,7 +118,9 @@ VALUE is the field value."
 		  (copy-sequence elmo-msgdb-load-priorities)))
       (while (and priorities
 		  (not loaded))
-	(setq temp-modb (elmo-make-msgdb location (car priorities))
+	(setq temp-modb (elmo-make-msgdb location
+					 (car priorities)
+					 mime-charset)
 	      loaded (elmo-msgdb-load temp-modb)
 	      priorities (cdr priorities)))
       (when loaded
@@ -127,13 +129,14 @@ VALUE is the field value."
 	  (setq msgdb temp-modb))))
     msgdb))
 
-(defun elmo-make-msgdb (&optional location type)
+(defun elmo-make-msgdb (&optional location type mime-charset)
   "Make a MSGDB."
   (let* ((type (or type elmo-msgdb-default-type))
 	 (class (intern (format "modb-%s" type))))
     (require class)
     (luna-make-entity class
-		      :location location)))
+		      :location location
+		      :mime-charset mime-charset)))
 
 (defun elmo-msgdb-sort-by-date (msgdb)
   (elmo-msgdb-sort-entities

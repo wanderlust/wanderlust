@@ -149,6 +149,7 @@ If a folder name begins with PREFIX, use BACKEND."
 				     persistent   ; non-nil if persistent.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
+				     mime-charset ; charset for encode & decode
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 
@@ -161,9 +162,11 @@ If a folder name begins with PREFIX, use BACKEND."
   (` (luna-send (, folder) (, message) (, folder) (,@ args))))
 
 ;;;###autoload
-(defun elmo-make-folder (name &optional non-persistent)
+(defun elmo-make-folder (name &optional non-persistent mime-charset)
   "Make an ELMO folder structure specified by NAME.
-If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
+If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved.
+If optional argument MIME-CHARSET is specified, it is used for
+encode and decode a multibyte string."
   (let ((type (elmo-folder-type name))
 	prefix split class folder original)
     (setq original (elmo-string name))
@@ -182,7 +185,8 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
 				   :type type
 				   :prefix prefix
 				   :name original
-				   :persistent (not non-persistent)))
+				   :persistent (not non-persistent)
+				   :mime-charset mime-charset))
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
@@ -1618,7 +1622,8 @@ If update process is interrupted, return nil.")
 (defun elmo-folder-msgdb-load (folder &optional silent)
   (unless silent
     (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))
-  (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
+  (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder)
+				(elmo-folder-mime-charset-internal folder))))
     (elmo-folder-set-info-max-by-numdb
      folder
      (elmo-msgdb-list-messages msgdb))

@@ -55,6 +55,7 @@
 		      entity-map	; number, msg-id -> entity mapping.
 		      flag-map		; number -> flag-list mapping
 		      flag-count	; list of (FLAG . COUNT)
+		      overview-handler  ; instance of modb-entity-handler.
 		      ))
   (luna-define-internal-accessors 'modb-standard))
 
@@ -197,7 +198,6 @@
 	number msgid)
     (cond ((eq (car objects) 'modb-standard-entity-handler)
 	   ;; (standard PARAMETERS ENTITY*)
-	   ;; PARAMETERS is nil (reserved for future extention).
 	   (let ((handler (apply #'luna-make-entity
 				 (car objects)
 				 (car (cdr objects))))
@@ -233,16 +233,19 @@
     (dolist (number (or (cdr section)
 			(modb-standard-number-list-internal modb)))
       (when (setq entity (elmo-msgdb-message-entity modb number))
-	(unless (eq (luna-class-name (elmo-message-entity-handler entity))
-		    (luna-class-name handler))
+	(unless (modb-entity-handler-equal-p
+		 handler
+		 (elmo-message-entity-handler entity))
 	  (setq entity (elmo-msgdb-copy-message-entity
 			(elmo-message-entity-handler entity)
 			entity handler)))
 	(setq entities (cons (cdr (cdr entity)) entities))))
     (if entities
 	(elmo-object-save filename
-			  (cons (luna-class-name handler) (cons nil entities))
-			  elmo-mime-charset)
+			  (nconc
+			   (list (luna-class-name handler)
+				 (modb-entity-handler-dump-parameters handler))
+			   entities))
       (ignore-errors (delete-file filename)))))
 
 (defun modb-standard-save-entity (modb path)
@@ -595,12 +598,13 @@
 	   ((numberp key) (modb-standard-key key)))
      'autoload)))
 
-(defvar modb-standard-default-entity-handler nil)
-
 (luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-standard))
-  (or modb-standard-default-entity-handler
-      (setq modb-standard-default-entity-handler
-	    (luna-make-entity 'modb-standard-entity-handler))))
+  (or (modb-standard-overview-handler-internal msgdb)
+      (modb-standard-set-overview-handler-internal
+       msgdb
+       (luna-make-entity 'modb-standard-entity-handler
+			 :mime-charset
+			 (modb-generic-mime-charset-internal msgdb)))))
 
 (require 'product)
 (product-provide (provide 'modb-standard) (require 'elmo-version))

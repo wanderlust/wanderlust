@@ -851,10 +851,8 @@ you."
       (setq folder (wl-folder-get-elmo-folder folder)))
   (setq wl-summary-buffer-elmo-folder folder)
   (make-local-variable 'wl-message-buffer)
-  (setq wl-summary-buffer-mime-charset (or (wl-get-assoc-list-value
-					    wl-folder-mime-charset-alist
-					    (elmo-folder-name-internal folder))
-					   wl-mime-charset))
+  (setq wl-summary-buffer-mime-charset (wl-folder-mime-charset
+					(elmo-folder-name-internal folder)))
   (setq wl-summary-buffer-weekday-name-lang
 	(or (wl-get-assoc-list-value
 	     wl-folder-weekday-name-lang-alist

@@ -36,7 +36,9 @@
 (require 'elmo-vars)
 (require 'elmo-util)
 
-(eval-and-compile (luna-define-class modb-entity-handler))
+(eval-and-compile
+  (luna-define-class modb-entity-handler () (mime-charset))
+  (luna-define-internal-accessors 'modb-entity-handler))
 
 (defcustom modb-entity-default-handler 'modb-legacy-entity-handler
   "Default entity handler."
@@ -62,6 +64,9 @@
     (or modb-entity-default-cache-internal
 	(setq modb-entity-default-cache-internal
 	      (luna-make-entity modb-entity-default-handler)))))
+
+(luna-define-generic modb-entity-handler-list-parameters (handler)
+  "Return a parameter list of HANDLER.")
 
 (luna-define-generic elmo-msgdb-make-message-entity (handler &rest args)
   "Make a message entity using HANDLER.")
@@ -130,6 +135,10 @@ Header region is supposed to be narrowed.")
   "Return non-nil when the entity matches the condition.")
 
 ;; Generic implementation.
+(luna-define-method modb-entity-handler-list-parameters
+  ((handler modb-entity-handler))
+  (list 'mime-charset))
+
 (luna-define-method elmo-msgdb-create-message-entity-from-file
   ((handler modb-entity-handler) number file)
   (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
@@ -184,6 +193,26 @@ Header region is supposed to be narrowed.")
 	(setq updated t)))
     updated))
 
+(defun modb-entity-handler-equal-p (handler other)
+  "Return non-nil, if OTHER hanlder is equal this HANDLER."
+  (and (eq (luna-class-name handler)
+	   (luna-class-name other))
+       (catch 'mismatch
+	 (dolist (slot (modb-entity-handler-list-parameters handler))
+	   (when (not (equal (luna-slot-value handler slot)
+			     (luna-slot-value other slot)))
+	     (throw 'mismatch nil)))
+	 t)))
+
+(defun modb-entity-handler-dump-parameters (handler)
+  "Return parameters for reconstruct HANDLER as plist."
+  (apply #'nconc
+	 (mapcar (lambda (slot)
+		   (let ((value (luna-slot-value handler slot)))
+		     (when value
+		       (list (intern (concat ":" (symbol-name slot)))
+			     value))))
+	 (modb-entity-handler-list-parameters handler))))
 
 ;; field in/out converter
 (defun modb-set-field-converter (converter type &rest specs)
@@ -275,14 +304,38 @@ If each field is t, function is set as default converter."
 			    (symbol-name field))))
 
 (defun modb-entity-parse-address-string (field value)
-  (if (stringp value)
-      (elmo-parse-addresses value)
-    value))
+  (modb-entity-encode-string-recursive
+   field
+   (if (stringp value)
+       (elmo-parse-addresses value)
+     value)))
 
 (defun modb-entity-make-address-string (field value)
-  (if (stringp value)
-      value
-    (mapconcat 'identity value ", ")))
+  (let ((value (modb-entity-decode-string-recursive field value)))
+    (if (stringp value)
+	value
+      (mapconcat 'identity value ", "))))
+
+(defun modb-entity-decode-string-recursive (field value)
+  (cond ((stringp value)
+	 (elmo-msgdb-get-decoded-cache value))
+	((consp value)
+	 (setcar value (modb-entity-decode-string-recursive field (car value)))
+	 (setcdr value (modb-entity-decode-string-recursive field (cdr value)))
+	 value)
+	(t
+	 value)))
+
+(defun modb-entity-encode-string-recursive (field value)
+  (cond ((stringp value)
+	 (elmo-with-enable-multibyte
+	   (encode-mime-charset-string value elmo-mime-charset)))
+	((consp value)
+	 (setcar value (modb-entity-encode-string-recursive field (car value)))
+	 (setcdr value (modb-entity-encode-string-recursive field (cdr value)))
+	 value)
+	(t
+	 value)))
 
 
 (defun modb-entity-create-field-indices (slots)
@@ -633,19 +686,36 @@ If each field is t, function is set as default converter."
 
 (defvar modb-standard-entity-normalizer nil)
 (modb-set-field-converter 'modb-standard-entity-normalizer nil
-  'date	#'modb-entity-parse-date-string
-  'to	#'modb-entity-parse-address-string
-  'cc	#'modb-entity-parse-address-string
-  t	nil)
+  'messgae-id	nil
+  'number	nil
+  'date		#'modb-entity-parse-date-string
+  'to		#'modb-entity-parse-address-string
+  'cc		#'modb-entity-parse-address-string
+  'references	nil
+  'size		nil
+  'score	nil
+  t		#'modb-entity-encode-string-recursive)
 
 (defvar modb-standard-entity-specializer nil)
-(modb-set-field-converter 'modb-standard-entity-specializer nil t nil)
+(modb-set-field-converter 'modb-standard-entity-specializer nil
+  'messgae-id	nil
+  'number	nil
+  'date		nil
+  'references	nil
+  'size		nil
+  'score	nil
+  t		#'modb-entity-decode-string-recursive)
 (modb-set-field-converter 'modb-standard-entity-specializer 'string
+  'messgae-id	nil
+  'number	nil
   'date		#'modb-entity-make-date-string
   'to		#'modb-entity-make-address-string
   'cc		#'modb-entity-make-address-string
+  'references	nil
+  'size		nil
+  'score	nil
   'ml-info	#'modb-entity-make-mailing-list-info-string
-  t		nil)
+  t		#'modb-entity-decode-string-recursive)
 
 (defmacro modb-standard-entity-field-index (field)
   `(cdr (assq ,field modb-standard-entity-field-indices)))
@@ -654,8 +724,11 @@ If each field is t, function is set as default converter."
   (when entity
     (let (index)
       (unless as-is
-	(setq value (modb-convert-field-value modb-standard-entity-normalizer
-					      field value)))
+	(let ((elmo-mime-charset
+	       (or (modb-entity-handler-mime-charset-internal (car entity))
+		   elmo-mime-charset)))
+	  (setq value (modb-convert-field-value modb-standard-entity-normalizer
+						field value))))
       (cond ((memq field '(message-id :message-id))
 	     (setcar (cdr entity) value))
 	    ((setq index (modb-standard-entity-field-index field))
@@ -699,7 +772,10 @@ If each field is t, function is set as default converter."
 (luna-define-method elmo-msgdb-message-entity-field
   ((handler modb-standard-entity-handler) entity field &optional type)
   (and entity
-       (let (index)
+       (let ((elmo-mime-charset
+	      (or (modb-entity-handler-mime-charset-internal handler)
+		  elmo-mime-charset))
+	     index)
 	 (modb-convert-field-value
 	  modb-standard-entity-specializer
 	  field
@@ -725,7 +801,7 @@ If each field is t, function is set as default converter."
 			      (copy-sequence modb-standard-entity-field-slots))
 			(mapcar 'car
 				(aref
-				 (cdr entity)
+				 (cdr (cdr entity))
 				 (modb-standard-entity-field-index :extra)))
 			'(message-id)))
 	  (elmo-msgdb-message-entity-set-field
@@ -868,7 +944,8 @@ If each field is t, function is set as default converter."
 (defun modb-entity-make-mailing-list-info-string (field value)
   (when (car value)
     (format (if (cdr value) "(%s %05.0f)" "(%s)")
-	    (car value) (cdr value))))
+	    (elmo-msgdb-get-decoded-cache (car value))
+	    (cdr value))))
 
 (require 'product)
 (product-provide (provide 'modb-entity) (require 'elmo-version))
