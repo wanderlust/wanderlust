@@ -2897,8 +2897,8 @@ An example follows.
 ;; @r{number temporary-mark persistent-mark date branch}
 ;; @r{[ (number-of-children) sender ] subject}
 (setq wl-summary-line-format "%n%T%P%M/%D(%W) %t%[%17(%c %f%) %] %s")
-@end lisp
 @end group
+@end lisp
 
 Where the number set the column number of the field (for negative value,
 filled from right)
@@ -2925,8 +2925,8 @@ are displayed in the following list.
 %C  [+number-of-children] (display only for opened thread)
 %T  temporary mark (mandatory)
 %P  persistent mark (mandatory)
-@end example
 @end group
+@end example
 
 @code{wl-summary-line-format} must contain temporary mark (@samp{%T})
 and persistent mark (@samp{%P}). Furthermore, these marks must appear at

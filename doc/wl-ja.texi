@@ -2226,11 +2226,12 @@ argument $B$NCM$,@5$J$i%U%)%k%@$rHsI=<(!"Ii$J$iI=<(!"(B0$B$J$i%H%0%k$7$^$9!#
 $B%"%/%;%9%0%k!<%WFb$G$b:o=|$dA^F~$r9T$($^$9!#$H$$$C$F$b<B:]$K$O(B 
 unsubscribe $B$9$k$+$I$&$+$r@_Dj$7$F$$$k$@$1$J$N$G!"JQ99$,2DG=$J$N$O!"Ev(B
 $BA3$=$N%"%/%;%9%0%k!<%W$KB0$7$F$$$k%U%)%k%@$@$1$G$9!#$D$^$j!"A^F~$O(B 
-subscribe $B$7!":o=|$O(B unsubscribe $B$7$?$3$H$HF1$8$G$9!#(B@footnote{$B8=(B
-$B:_$O!";XDjHO0O$rI=<($7$J$$%U%)%k%@$K$9$k$H$-!";XDjHO0O$N:o=|$r9T$C$?J}$,(B
-$B9bB.$G$9!#(B} $B=>$C$F!"(BWanderlust $B0J30$G%U%)%k%@$rJQ99$7$?>l9g!"$=$N%U%)(B
-$B%k%@$r<B:]$KDI2C$7$?$j:o=|$7$?$j$9$k$K$O!"%"%/%;%9%0%k!<%W$r(B @kbd{C-u
-@key{RET}} $B$G99?7$7$F$/$@$5$$!#(B@xref{Selecting Folder}.
+subscribe $B$7!":o=|$O(B unsubscribe $B$7$?$3$H$HF1$8$G$9!#(B
+@footnote{$B8=:_$O!";XDjHO0O$rI=<($7$J$$%U%)%k%@$K$9$k$H$-!"(B
+$B;XDjHO0O$N:o=|$r9T$C$?J}$,9bB.$G$9!#(B}
+$B=>$C$F!"(BWanderlust $B0J30$G%U%)%k%@$rJQ99$7$?>l9g!"$=$N%U%)%k%@$r<B:]$KDI(B
+$B2C$7$?$j:o=|$7$?$j$9$k$K$O!"%"%/%;%9%0%k!<%W$r(B @kbd{C-u @key{RET}} $B$G99(B
+$B?7$7$F$/$@$5$$!#(B@xref{Selecting Folder}.
 
 $B$^$?!"A^F~(B/$B:o=|(B/$BJB$SBX$($J$I$r9T$C$?$"$H$N%U%)%k%@$NJB$S$OJ];}$5$l$^$9!#(B
 $B$b$7(B @code{wl-force-fetch-folders} $B$r@_Dj$9$k$+!"(B
@@ -2883,8 +2884,8 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 @group
 ;; @r{$BHV9f(B $B0l;~%^!<%/(B $B1JB3%^!<%/(B $BF|IU(B $B;^(B [ ($B;R$N?t(B) $B:9=P?M(B ] $B7oL>(B}
 (setq wl-summary-line-format "%n%T%P%M/%D(%W) %t%[%17(%c %f%) %] %s")
-@end lisp
 @end group
+@end lisp
 
 $B?t;z$O7e?t$rI=$7$^$9(B($BIi$N?t$N>l9g!"1&5M$a$K$J$j$^$9(B)
 
@@ -2910,8 +2911,8 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 %C  [+$B;R$N?t(B] ($B%9%l%C%I$r3+$$$?;~$N$_I=<((B)
 %T  $B0l;~E*%^!<%/(B($BI,?\(B)
 %P  $B1JB3E*%^!<%/(B($BI,?\(B)
-@end example
 @end group
+@end example
 
 @code{wl-summary-line-format} $B$K$O!$0l;~E*%^!<%/(B(@samp{%T}) $B$H1JB3E*%^!<(B
 $B%/(B(@samp{%P})$B$O$=$l$>$lI,$:4^$a$J$1$l$P$J$j$^$;$s!#$^$?!"$3$l$i$O!"I,$:(B
@@ -4761,7 +4762,7 @@ Non-nil $B$J$i%K%e!<%9Ej9F;~$K(B SSL $B$rMxMQ$7$^$9!#(B
 @vindex wl-nntp-posting-config-alist
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$N%5!<%PA*BrJ}K!$r@_Dj$7$^$9!#(B
-@code{wl-nntp-posting-{server|user|port|function}}$B$h$jM%@h$5$l$^$9!#(B
+@code{wl-nntp-posting-@{server|user|port|function@}}$B$h$jM%@h$5$l$^$9!#(B
 
 @item wl-pop-before-smtp-user
 @vindex wl-pop-before-smtp-user
@@ -6915,7 +6916,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end lisp
 
 $B?F%a%C%;!<%8$K(B @samp{Mail-Followup-To} $B%U%#!<%k%I$,B8:_$7$?$H$-$K%^%C%A$7$^$9!#(B
-$B?F%a%C%;!<%8$N(B @samp{Mail-Followup-To} $B$*$h$S(B @samp{Newsgroups} 
+$B?F%a%C%;!<%8$N(B @samp{Mail-Followup-To} $B$*$h$S(B @samp{Newsgroups}
 $B%U%#!<%k%I$NFbMF$r!"Ap9F$N(B @samp{To} $B$*$h$S(B @samp{Newsgroups} $B$K%3%T!<$7$^$9!#(B
 
 @lisp
