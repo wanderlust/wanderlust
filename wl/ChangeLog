@@ -1,3 +1,11 @@
+2000-09-29  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-setup-toolbar): Make the background color of
+	XPM icons transparent.
+
+	* wl-demo.el (wl-demo): Hide toolbar while showing a logo under
+	Emacs 21.
+
 2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-toggle-plugged): Set `wl-biff-check-folders-running' as
