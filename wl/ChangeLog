@@ -17,7 +17,7 @@
 	(wl-score-files-directory): Renamed from `wl-score-files-dir'.
 
 	* wl-mime.el (wl-mime-save-directory): Renamed from
-	`wl-mime-save-directory'.
+	`wl-mime-save-dir'.
 
 2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
 

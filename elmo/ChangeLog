@@ -5,7 +5,7 @@
 
 	* elmo-vars.el (elmo-cache-directory): New variable.
 	(elmo-cache-dir): Abolished.
-	(elmo-msgdb-directory): Renamed from `elmo-msgdb-directory'.
+	(elmo-msgdb-directory): Renamed from `elmo-msgdb-dir'.
 
 	* elmo-version.el (elmo-version): Up to 2.7.7.
 
