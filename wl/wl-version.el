@@ -73,17 +73,20 @@ If ARG insert string at point."
 (defun wl-generate-user-agent-string ()
   "A candidate of `wl-generate-mailer-string-func'.
 Insert User-Agent field instead of X-Mailer field."
+  (concat "User-Agent: " (wl-generate-user-agent-string-1 t)))
+
+(defun wl-generate-user-agent-string-1 (&optional verbose)
+  "Return User-Agent field value."
   (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
 			      mime-edit-insert-user-agent-field
 			      mime-edit-user-agent-value)))
-    (if mime-user-agent
-	(concat "User-Agent: "
-		(product-string-verbose 'wl-version) " "
+    (if (and verbose mime-user-agent)
+	(concat (product-string-verbose 'wl-version) " "
 		mime-user-agent)
-      (if (and (boundp 'mime-editor/version)
+      (if (and verbose
+	       (boundp 'mime-editor/version)
 	       mime-editor/version)
-	  (concat "User-Agent: "
-		  (product-string-verbose 'wl-version) " "
+	  (concat (product-string-verbose 'wl-version) " "
 		  "tm/" mime-editor/version
 		  (if (and (boundp 'mime-editor/codename)
 			   mime-editor/codename)
@@ -103,7 +106,7 @@ Insert User-Agent field instead of X-Mailer field."
 		    (file-error nil))
 		  " " (wl-extended-emacs-version3 "/" t))
 	;; Don't use product-string-verbose for short User-Agent field.
-	(concat "User-Agent: " (product-string-1 'wl-version t) " "
+	(concat (product-string-1 'wl-version t) " "
 		(wl-extended-emacs-version3 "/" t))))))
 
 ;; from gnus

@@ -5,6 +5,9 @@
 	wl-extended-emacs-version3): Remove `interactive'.  Fixed
 	docstring.
 
+	* wl-version.el (wl-generate-user-agent-string-1): New function.
+	(wl-generate-user-agent-string): Use it.
+
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-expire.el (wl-summary-expire): Fix.
