@@ -15,6 +15,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust. 21 Mar 2000
 
 ** Syntax of wl-refile-rule-alist is extended (compatible with older one).
 
+** progress gauge
+Progress gauge is displayed while processing in the Emacsen with
+progress gauge feature.
+
 * Changes in version 1.1.0 from 1.0.3.
 
 ** Install

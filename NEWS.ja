@@ -12,6 +12,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust. 21 Mar 2
 
 ** wl-refile-rule-alist の記述方法が拡張されました(以前と互換性があります)。
 
+** progress gauge 表示機能を利用するようになりました。
+progress gauge の表示機能をもつ Emacs では、処理の進捗が progress gauge に
+表示されるようになりました。
+
 * 1.0.3 から version 1.1.0 への変更点 
 
 ** インストール
