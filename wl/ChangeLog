@@ -1,3 +1,7 @@
+2003-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.10.1 is released.
+
 2003-06-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 	
 	* wl-message.el (wl-message-buffer-cache-add): Create new buffer
