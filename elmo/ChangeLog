@@ -1,3 +1,18 @@
+2000-07-25  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-process-folder-list): Use `nconc'
+	instead of `append'.
+	(elmo-imap4-commit): Use `elmo-imap4-plugged-p' instead of
+	`elmo-plugged-p' directly.
+	* elmo-pop3.el (elmo-pop3-commit): Use `elmo-pop3-plugged-p' instead
+	of `elmo-plugged-p' directly.
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Split temporary variable.
+	Eliminate unused variable.  Use `memq' for checking a process status.
+	Use `cons' instead of `append' for updating the connection cache.
+	* elmo-nntp.el (elmo-nntp-get-connection): Likewise.
+	* elmo-imap4.el (elmo-imap4-get-connection): Likewise.
+	
 2000-07-22  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-read-bytes): Advance
