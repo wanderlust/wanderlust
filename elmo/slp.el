@@ -51,7 +51,8 @@
   "Synchronous execution of slp-program.
 TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
   (with-temp-buffer 
-    (let ((result (apply 'call-process slp-program nil t nil (delq nil args))))
+    (let ((result (apply 'call-process slp-program nil t nil
+			 (append slp-program-arguments (delq nil args)))))
       (unless (zerop result)
 	(error "SLP error: " (buffer-string)))
       (goto-char (point-min))
