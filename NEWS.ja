@@ -44,6 +44,13 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** カプセル化 Blind Carbon Copy を送れるようになりました。
    デフォルトのフィールド名は "Ecc:" です。
 
+** ドラフトの C-c C-y でリージョンを引用できるようになりました。
+   transient-mark-mode (Emacs) もしくは zmacs-regions (XEmacs)
+   が Non-nil で、リージョンが有効のときに作用します。
+
+** マルチパートのメッセージからパートを削除できるようになりました。
+   メッセージバッファで "D" にバインドされています。
+
 ** ニュース記事を投稿するサーバを簡単に設定できるようになりました。
    info の例に習って wl-nntp-posting-config-alist を設定して下さい。
 
