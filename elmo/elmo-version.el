@@ -68,7 +68,7 @@ If optional argument UPDATE is non-nil, then regenerate
 (defconst elmo-appname (product-name (product-find 'elmo-version)))
 (make-obsolete-variable
  'elmo-appname
- "use (product-name (product-find 'elmo-version)) instead.")
+ "use (product-name (product-find 'elmo-version)) insteaed.")
 
 (defconst elmo-version (product-version-string (product-find 'elmo-version)))
 (make-obsolete-variable
