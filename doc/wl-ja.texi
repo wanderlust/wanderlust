@@ -136,7 +136,6 @@ into another language, under the above conditions for modified versions.
 * Disconnected Operations::  $B%*%U%i%$%s=hM}(B
 * Expire and Archive::       $B%a%C%;!<%8$N<+F0:o=|$H%"!<%+%$%V(B
 * Scoring::                  $B%a%C%;!<%8$N%9%3%"(B
-* Address Book::             $B%"%I%l%9D"(B
 * Customization::            $B%+%9%?%^%$%:(B
 * Mailing List::             $B%a!<%j%s%0%j%9%H(B
 * Addition::                 $B$*$^$1(B
@@ -219,6 +218,7 @@ Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 * Download::          $B%Q%C%1!<%8$NF~<j$HE83+(B
 * Install::           $B%P%$%H%3%s%Q%$%k$H%$%s%9%H!<%k(B
 * Minimal Settings::  @file{.emacs} $B$N@_Dj(B
+* Mail Addresses::    $B%"%I%l%9D"$NDj5A(B
 * Folder Definition:: $B9XFI$9$k%U%)%k%@$NDj5A(B
 * Start Wanderlust::  Wanderlust $B$N5/F0(B
 @end menu
@@ -417,7 +417,7 @@ ELMO $B%b%8%e!<%k$r%$%s%9%H!<%k$9$k%G%#%l%/%H%j$r;XDj$7$^$9!#(B
 ELMO $B%b%8%e!<%k$K$O%U%!%$%k(B @file{elmo*.el} @file{elmo*.elc} $B$,4^$^$l$^$9!#(B
 @c  @file{utf7.el}, @file{utf7.elc} $B$b(B ELMO $B%b%8%e!<%k$K4^$^$l$^$9!#(B
 @end table
-
+  
 @noindent
 @code{WL_PREFIX}, @code{ELMO_PREFIX}
  $B$N%G%U%)%k%H$O$$$:$l$b(B @file{wl} $B$G$9!#(B
@@ -492,7 +492,7 @@ http://www.gohome.org/wl/doc/wl-euc_toc.html
 @end example
 
 
-@node Minimal Settings, Folder Definition, Install, Start Me Up
+@node Minimal Settings, Mail Addresses, Install, Start Me Up
 @section @file{.emacs}, @file{.wl} $B$N@_Dj(B
 @cindex Minimal Settings
 @cindex Settings
@@ -572,7 +572,60 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 @end group
 @end lisp
 
-@node Folder Definition, Start Wanderlust, Minimal Settings, Start Me Up
+
+@node Mail Addresses, Folder Definition, Minimal Settings, Start Me Up
+@section $B%"%I%l%9D"$NDj5A(B
+@cindex Address book Definition
+@cindex .addresses
+@cindex Alias, Address
+
+$B%"%I%l%9Jd40$d%5%^%j$NI=<($K6E$kI,MW$,$J$$>l9g$O!"$3$N9`$OFI$_Ht$P$7$F$b9=$$(B
+$B$^$;$s!#(B
+
+$B%"%I%l%9%U%!%$%k(B @file{~/.addresses} $B$r:n@.$7!"<+J,MQ$KJT=8$7$^$9!#(B
+@file{~/.addresses} $B$K=q$+$l$?%G!<%?$O!"%I%i%U%H:n@.;~$N%"%I%l%9Jd40%G!<(B
+$B%?$H$7$FMxMQ$5$l$k$[$+!"%5%^%jI=<($G$NL>A0I=<(Ey$K$bMQ$$$i$l$^$9!#$J$*!"(B
+$B5/F0$7$?>uBV$G%5%^%j%P%C%U%!$+$i(B @file{~/.addresses} $B$K%"%I%l%9$rDI2C(B/
+$BJQ99(B/$B:o=|$9$k$3$H$b2DG=$G$9!#(B
+
+$B=q$-J}$O$H$F$bC1=c$G$9!#$3$s$J46$8$G$9!#(B
+
+@example
+@group
+#
+# @r{@samp{#} $B$G;O$^$k9T$O%3%a%s%H!#(B}
+# @r{$B6u9T$OL5;k!#(B}
+#
+# @var{$B%a!<%k%"%I%l%9(B}  "@var{$B$"$@L>(B}"  "@var{$BK\L>(B}"
+#
+teranisi@@gohome.org            "$B$F$i$K$7(B"      "$B;{@>M50l(B"
+foo@@bar.gohome.org             "Foo $B$5$s(B"      "John Foo"
+bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
+@end group
+@end example
+
+@noindent
+$B0l9T$,0l?MJ,$NDj5A$G$9!#(B
+
+$B<B:]$K$O(B($B%G%U%)%k%H@_Dj$G$O(B)$B%5%^%jI=<($G(B@var{$B$"$@L>(B}$B!"%I%i%U%H:n@.;~$N%"(B
+$B%I%l%9>pJs$H$7$F(B@var{$BK\L>(B}$B$,;H$o$l$^$9!#;n$7$F$_$F!"3NG'$7$F$+$i$NJ}$,(B
+$B$o$+$j$d$9$$$H;W$o$l$^$9!#$A$g$C$H=q$$$F;n$7$F$_$F$+$i!"$^$?%"%I%l%9D"$N(B
+$BDj5A$r$d$jD>$9$N$,NI$$$G$7$g$&!#(B
+
+$B$^$?!"JQ?t(B @code{wl-alias-file} $B$K(B MH $B$N(B alias file $B$,;XDj$5$l$F$$$l$P!"(B
+$B%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$F;H$o$l$^$9!#(B
+
+$B$5$i$K!"JQ?t(B @code{wl-use-ldap} ($B=i4|@_Dj$O(B @code{nil}) $B$r(B non-nil $B$K@_(B
+$BDj$9$k$H!"(BLDAP $B%5!<%P$N>pJs$r%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$FMxMQ$7$^(B
+$B$9!#(B
+
+LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
+@code{wl-ldap-base} $B$bE,@Z$K@_Dj$7$F2<$5$$!#$^$?!"(BLDAP $BBP1~$N(B XEmacs $B0J(B
+$B30$G$O!"30It%W%m%0%i%`$H$7$F(B @command{ldapsearch} $B$rMxMQ$7$^$9$N$G!"(B
+@command{ldapsearch} $B$X$"$i$+$8$a%3%^%s%I<B9T%Q%9$r@_Dj$7$F$*$/I,MW$,$"(B
+$B$j$^$9!#(B
+
+@node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section $B9XFI$9$k%U%)%k%@$NDj5A(B
 @cindex Folder Definition
 @cindex .folders
@@ -5204,7 +5257,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @end table
 
 
-@node Scoring, Address Book, Expire and Archive, Top
+@node Scoring, Customization, Expire and Archive, Top
 @chapter $B%9%3%"(B
 @cindex Scoring
 @c @cindex Kill File
@@ -5691,129 +5744,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @end example
 
 
-@node Address Book, Customization, Scoring, Top
-@chapter $B%"%I%l%9D"(B
-@cindex Address Book
-
-$B%"%I%l%9D"$rMxMQ$9$k$3$H$G!"%a!<%k%"%I%l%9$r4JC1$KF~NO$7$?$j!$(B
-$B%5%^%j$NI=<($K%Z%C%H%M!<%`$rMQ$$$k$3$H$,=PMh$^$9!#(B
-
-@menu
-* Mail Addresses::   $B%"%I%l%9D"$NDj5A(B
-* Address Manager::  $B%"%I%l%9%^%M!<%8%c(B
-@end menu
-
-@node Mail Addresses, Address Manager, Address Book, Address Book
-@section $B%"%I%l%9D"$NDj5A(B
-@cindex Address book Definition
-@cindex .addresses
-@cindex Alias, Address
-
-$B%"%I%l%9%U%!%$%k(B @file{~/.addresses} $B$r:n@.$7!"<+J,MQ$KJT=8$7$^$9!#(B
-@file{~/.addresses} $B$K=q$+$l$?%G!<%?$O!"%I%i%U%H:n@.;~$N%"%I%l%9Jd40%G!<(B
-$B%?$H$7$FMxMQ$5$l$k$[$+!"%5%^%jI=<($G$NL>A0I=<(Ey$K$bMQ$$$i$l$^$9!#$J$*!"(B
-$B5/F0$7$?>uBV$G%5%^%j%P%C%U%!$+$i(B @file{~/.addresses} $B$K%"%I%l%9$rDI2C(B/
-$BJQ99(B/$B:o=|$9$k$3$H$b2DG=$G$9!#(B
-
-$B=q$-J}$O$H$F$bC1=c$G$9!#$3$s$J46$8$G$9!#(B
-
-@example
-@group
-#
-# @r{@samp{#} $B$G;O$^$k9T$O%3%a%s%H!#(B}
-# @r{$B6u9T$OL5;k!#(B}
-#
-# @var{$B%a!<%k%"%I%l%9(B}  "@var{$B$"$@L>(B}"  "@var{$BK\L>(B}"
-#
-teranisi@@gohome.org            "$B$F$i$K$7(B"      "$B;{@>M50l(B"
-foo@@bar.gohome.org             "Foo $B$5$s(B"      "John Foo"
-bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
-@end group
-@end example
-
-@noindent
-$B0l9T$,0l?MJ,$NDj5A$G$9!#(B
-
-$B<B:]$K$O(B($B%G%U%)%k%H@_Dj$G$O(B)$B%5%^%jI=<($G(B@var{$B$"$@L>(B}$B!"%I%i%U%H:n@.;~$N%"(B
-$B%I%l%9>pJs$H$7$F(B@var{$BK\L>(B}$B$,;H$o$l$^$9!#;n$7$F$_$F!"3NG'$7$F$+$i$NJ}$,(B
-$B$o$+$j$d$9$$$H;W$o$l$^$9!#$A$g$C$H=q$$$F;n$7$F$_$F$+$i!"$^$?%"%I%l%9D"$N(B
-$BDj5A$r$d$jD>$9$N$,NI$$$G$7$g$&!#(B
-
-$B$^$?!"JQ?t(B @code{wl-alias-file} $B$K(B MH $B$N(B alias file $B$,;XDj$5$l$F$$$l$P!"(B
-$B%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$F;H$o$l$^$9!#(B
-
-$B$5$i$K!"JQ?t(B @code{wl-use-ldap} ($B=i4|@_Dj$O(B @code{nil}) $B$r(B non-nil $B$K@_(B
-$BDj$9$k$H!"(BLDAP $B%5!<%P$N>pJs$r%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$FMxMQ$7$^(B
-$B$9!#(B
-
-LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
-@code{wl-ldap-base} $B$bE,@Z$K@_Dj$7$F2<$5$$!#$^$?!"(BLDAP $BBP1~$N(B XEmacs $B0J(B
-$B30$G$O!"30It%W%m%0%i%`$H$7$F(B @command{ldapsearch} $B$rMxMQ$7$^$9$N$G!"(B
-@command{ldapsearch} $B$X$"$i$+$8$a%3%^%s%I<B9T%Q%9$r@_Dj$7$F$*$/I,MW$,$"(B
-$B$j$^$9!#(B
-
-@node Address Manager,  , Mail Addresses, Address Book
-@section $B%"%I%l%9%^%M!<%8%c(B
-@cindex Address Manager
-
-@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c$G$O(B
-$B%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;XDj$7$?%"%I%l%9$r(B
-$B%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
-
-@subsection $B%-!<%P%$%s%I(B
-
-@table @kbd
-@item t
-@kindex t (Address Manager)
-@findex wl-addrmgr-set-to
-@samp{To:} $B%^!<%/$r$D$1$^$9!#(B
-
-@item c
-@kindex c (Address Manager)
-@findex wl-addrmgr-set-cc
-@samp{Cc:} $B%^!<%/$r$D$1$^$9!#(B
-
-@item b
-@kindex b (Address Manager)
-@findex wl-addrmgr-set-bcc
-@samp{Bcc:} $B%^!<%/$r$D$1$^$9!#(B
-
-@item u
-@kindex u (Address Manager)
-@findex wl-addrmgr-unmark
-$B%^!<%/$r<h$j>C$7$^$9!#(B
-
-@item x
-@kindex x (Address Manager)
-@findex wl-addrmgr-apply
-$B08@h%^!<%/$,$D$$$F$$$k>l9g!"$=$l$i$N%"%I%l%9$r%I%i%U%H%P%C%U%!$K(B
-$BH?1G$7$F%"%I%l%9%^%M!<%8%c$r=*N;$7$^$9!#%I%i%U%H%P%C%U%!$,L5$$>l9g!"(B
-$B$=$l$i$rH?1G$7$F?75,$K%I%i%U%H%P%C%U%!$r3+$-$^$9!#(B
-$B08@h%^!<%/$,$D$$$F$$$J$$>l9g$OC1$K%"%I%l%9%^%M!<%8%c$r=*N;$7$^$9!#(B
-
-@item q
-@kindex q (Address Manager)
-@findex wl-addrmgr-quit
-$B%"%I%l%9%^%M!<%8%c$r=*N;$7$^$9!#(B
-
-@item a
-@kindex a (Address Manager)
-@findex wl-addrmgr-add
-$B%"%I%l%9D"$K?7$7$$9`L\$rDI2C$7$^$9!#(B
-
-@item d
-@kindex d (Address Manager)
-@findex wl-addrmgr-delete
-$B%"%I%l%9D"$N9`L\$r:o=|$7$^$9!#(B
-
-@item e
-@kindex e (Address Manager)
-@findex wl-addrmgr-edit
-$B%"%I%l%9D"$N9`L\$rJT=8$7$^$9!#(B
-@end table
-
-
-@node Customization, Mailing List, Address Book, Top
+@node Customization, Mailing List, Scoring, Top
 @chapter Wanderlust $B$N%+%9%?%^%$%:(B
 @cindex Customization
 
@@ -6014,7 +5945,7 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end group
 @end lisp
 
-@node MHC,  , dired-dd, Living with other packages
+@node MHC, , dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -6806,7 +6737,6 @@ Wanderlust $B$K4X$9$k5DO@$O$3$N%a!<%j%s%0%j%9%H$G9T$o$l$^$9!#(B
      10/17    expire-hide by $B2,ED$5$s!#(B
      11/08    2.4.0 stable $B%j%j!<%9!#(B
 2001  7/04    2.6.0 stable $B%j%j!<%9!#(B
-      8/21    wl-addrmgr by $BKLK\$5$s!#(B
 @end example
 
 $B>\$7$$JQA+$O(B @file{ChangeLog} $B$r8fMw$/$@$5$$!#(B
