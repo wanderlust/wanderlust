@@ -1,3 +1,7 @@
+2001-12-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-mode): Fixed docstring.
+
 2001-12-17  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-e21-toolbar-configurations): Replace
