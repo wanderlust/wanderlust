@@ -186,9 +186,9 @@
 If MSGDB-OR-PATH is a msgdb structure, use it as a msgdb.
 If argument is a string, use it as a path to load message entities."
   (mapcar 'elmo-msgdb-overview-entity-get-number
-	  (if (stringp msgdb)
-	      (elmo-msgdb-overview-load msgdb)
-	    (elmo-msgdb-get-overview msgdb))))
+	  (if (stringp msgdb-or-path)
+	      (elmo-msgdb-overview-load msgdb-or-path)
+	    (elmo-msgdb-get-overview msgdb-or-path))))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
