@@ -38,8 +38,14 @@
 (defgroup elmo nil
   "ELMO, Elisp Library for Message Orchestration."
   :tag "ELMO"
+  :prefix "elmo-"
   :group 'news
   :group 'mail)
+
+(defgroup elmo-setting nil
+  "ELMO common settings."
+  :prefix "elmo-"
+  :group 'elmo)
 
 ;; Local
 (defvar elmo-localnews-folder-path "~/News"
@@ -69,8 +75,126 @@ Each elements are regexp of folder name (This is obsolete).")
   "A hook called when message is deleted from database.")
 (defvar elmo-nntp-post-pre-hook nil
   "A hook called just before the nntp posting.")
-(defvar elmo-lang "ja"
-  "Language for displayed messages.")
+
+;;; IMAP4
+
+(defcustom elmo-imap4-default-mailbox "inbox"
+  "*Default IMAP4 mailbox."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-imap4-default-server "localhost"
+  "*Default IMAP4 server."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-imap4-default-authenticate-type 'login
+  "*Default Authentication type for IMAP4."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-user (or (getenv "USER")
+				       (getenv "LOGNAME")
+				       (user-login-name))
+  "*Default username for IMAP4."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-imap4-default-port 143
+  "*Default Port number of IMAP."
+  :type 'integer
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-imap4-default-stream-type nil
+  "*Default stream type for IMAP4.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-imap4-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-imap4-stream-type-alist nil
+  "*Stream bindings for IMAP4.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+;;; NNTP
+
+;; User options
+(defcustom elmo-nntp-default-server "localhost"
+  "*Default NNTP server."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-nntp-default-user nil
+  "*Default User of NNTP.  nil means no user authentication."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-nntp-default-port 119
+  "*Default Port number of NNTP."
+  :type 'integer
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-nntp-default-stream-type nil
+  "*Default stream type for NNTP.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-nntp-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-nntp-stream-type-alist nil
+  "*Stream bindings for NNTP.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+;;; POP3
+
+;; POP3
+(defcustom elmo-pop3-default-user (or (getenv "USER")
+				      (getenv "LOGNAME")
+				      (user-login-name))
+  "*Default username for POP3."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-pop3-default-server  "localhost"
+  "*Default POP3 server."
+  :type 'string
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-pop3-default-authenticate-type 'user
+  "*Default Authentication type for POP3."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-port 110
+  "*Default POP3 port."
+  :type 'integer
+  :group 'elmo
+  :group 'elmo-setting)
+
+(defcustom elmo-pop3-default-stream-type nil
+  "*Default stream type for POP3.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-pop3-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-pop3-stream-type-alist nil
+  "*Stream bindings for POP3.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+(defcustom elmo-lang "ja"
+  "Language for displayed messages."
+  :type 'string
+  :group 'elmo-setting)
 
 (defvar elmo-mime-charset 'iso-2022-jp)
 

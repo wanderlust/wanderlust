@@ -29,6 +29,9 @@ FLAGS   = -batch -q -no-site-file
 elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package $(LISPDIR) $(PIXMAPDIR)
 
+check:
+	$(EMACS) $(FLAGS) -l WL-MK -f check-wl $(LISPDIR) $(PIXMAPDIR)
+
 install-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR) $(PIXMAPDIR)
 

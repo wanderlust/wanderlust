@@ -50,6 +50,9 @@
 ;;
 ;; (acap-close proc)
 ;; => t
+;;
+;; Todo:
+;;  * Send literal data for STORE.
 
 ;;; History:
 ;;
@@ -760,7 +763,7 @@ ENTRIES is a store-entry list."
 	  (BYE   ;(cons 'bye (acap-parse-resp-body)))
 	   ;;(message (nth 1  (acap-parse-resp-body)))
 	   ;;(ding)
-	   (delete-process acap-process))
+	   )
 	  (CHANGE (cons 'change
 			(list (acap-parse-quoted)
 			      (progn
