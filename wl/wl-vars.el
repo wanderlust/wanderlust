@@ -32,6 +32,7 @@
 ;;
 
 (require 'elmo-vars)
+(require 'elmo-util)
 
 (if (module-installed-p 'custom)
     (require 'custom))

@@ -490,6 +490,9 @@ Returns non-nil if bottom of message."
 			    wl-message-buffer-prefetch-folder-type-list))
    (t wl-message-buffer-prefetch-folder-type-list)))
 
+
+(defvar wl-message-buffer-prefetch-timer nil)
+
 (defun wl-message-buffer-prefetch-next (folder number &optional
 					       summary charset)
   (if (wl-message-buffer-prefetch-p folder)
@@ -500,11 +503,13 @@ Returns non-nil if bottom of message."
 	    (if (not (fboundp 'run-with-idle-timer))
 		(when (sit-for wl-message-buffer-prefetch-idle-time)
 		  (wl-message-buffer-prefetch folder next summary charset))
-	      (run-with-idle-timer
-	       wl-message-buffer-prefetch-idle-time
-	       nil
-	       'wl-message-buffer-prefetch folder next summary charset)
-	      (sit-for 0)))))))
+	      (unless wl-message-buffer-prefetch-timer
+		(setq wl-message-buffer-prefetch-timer
+		      (run-with-idle-timer
+		       wl-message-buffer-prefetch-idle-time
+		       nil
+		       'wl-message-buffer-prefetch
+		       folder next summary charset)))))))))
 
 (defun wl-message-buffer-prefetch (folder number summary charset)
   (when (buffer-live-p summary)
@@ -538,7 +543,8 @@ Returns non-nil if bottom of message."
 		    (setq micro (+ micro (* 1000000 sec)))
 		    (message "Prefetching %d...done(%f msec)."
 			     number
-			     (/ micro 1000.0)))))))))))
+			     (/ micro 1000.0))))))))))
+  (setq wl-message-buffer-prefetch-timer nil))
 
 (defvar wl-message-button-map (make-sparse-keymap))
 

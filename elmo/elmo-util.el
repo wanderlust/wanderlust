@@ -32,6 +32,8 @@
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
 (require 'elmo-date)
+(require 'mcharset)
+(require 'pces)
 (require 'std11)
 (require 'eword-decode)
 (require 'utf7)
@@ -1437,26 +1439,32 @@ SECTION is the section string."
   (elmo-file-cache-status (elmo-file-cache-get msgid)))
 
 (defun elmo-file-cache-save (cache-path section)
-  "Save current buffer as cache on PATH."
-  (let ((path (if section (expand-file-name section cache-path) cache-path))
-	files dir)
-    (if (and (null section)
-	     (file-directory-p path))
-	(progn
-	  (setq files (directory-files path t "^[^\\.]"))
-	  (while files
-	    (delete-file (car files))
-	    (setq files (cdr files)))
-	  (delete-directory path))
-      (if (and section
-	       (not (file-directory-p cache-path)))
-	  (delete-file cache-path)))
-    (when path
-      (setq dir (directory-file-name (file-name-directory path)))
-      (if (not (file-exists-p dir))
-	  (elmo-make-directory dir))
-      (write-region-as-binary (point-min) (point-max)
-			      path nil 'no-msg))))
+  "Save current buffer as cache on PATH.
+Return t if cache is saved successfully."
+  (condition-case nil
+      (let ((path (if section (expand-file-name section cache-path)
+		    cache-path))
+	    files dir)
+	(if (and (null section)
+		 (file-directory-p path))
+	    (progn
+	      (setq files (directory-files path t "^[^\\.]"))
+	      (while files
+		(delete-file (car files))
+		(setq files (cdr files)))
+	      (delete-directory path))
+	  (if (and section
+		   (not (file-directory-p cache-path)))
+	      (delete-file cache-path)))
+	(when path
+	  (setq dir (directory-file-name (file-name-directory path)))
+	  (if (not (file-exists-p dir))
+	      (elmo-make-directory dir))
+	  (write-region-as-binary (point-min) (point-max)
+				  path nil 'no-msg)
+	  t))
+    ;; ignore error
+    (error)))
 
 (defun elmo-file-cache-get (msgid &optional section)
   "Returns the current file-cache object associated with MSGID.

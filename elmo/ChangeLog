@@ -1,3 +1,49 @@
+2001-04-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-multi-folder-diff): Use dummy number list
+	at first time.
+
+	* elmo-util.el (toplevel): Require 'mcharset and 'pces.
+	(With a little help from 'NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>')
+
+2001-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-open-internal): Do nothing if unplugged.
+	(elmo-folder-plugged-p): Define.
+	(elmo-folder-set-plugged): Ditto.
+	(elmo-shimbun-msgdb-create-entity): Do nothing if there's no header.
+	(elmo-folder-list-messages-internal): Return t if unplugged.
+	(elmo-folder-initialize): Fixed for "@gnome.gnome-1.4-list".
+
+	* elmo-multi.el (elmo-folder-list-messages-internal): Fixed problem
+	when elmo-folder-list-messages-internal method of children returns t.
+
+	* elmo-map.el (elmo-map-folder-update-locations): Fixed problem when
+	pair is nil.
+	(elmo-folder-open-internal): Don't update if unplugged status.
+
+2001-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Fixed problem when there's no
+	new message.
+
+2001-04-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-cache-save): Ignore errors.
+
+	* elmo-net.el (elmo-message-fetch): Check cache-path is non-nil before
+	saving.
+
+2001-04-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Added optional no-check argument.
+
+	* elmo-shimbun.el (elmo-shimbun-folder): Added headers slot.
+	(elmo-folder-open-internal): Set up headers slot.
+	(elmo-folder-check): Call elmo-folder-close-internal and
+	elmo-folder-open-internal.
+	(elmo-folder-close-internal): Clean up headers slot.
+
 2001-04-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-archive.el (elmo-archive-folder-list-subfolders): Match

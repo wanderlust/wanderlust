@@ -1046,7 +1046,8 @@ FIELD is a symbol of the field."
 				unread-cached-mark   ;"!"
 				read-uncached-mark   ;"u"
 				important-mark       ;"$"
-				&optional ignore-msgdb)
+				&optional ignore-msgdb
+				no-check)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 NEW-MARK, UNREAD-CACHED-MARK, READ-UNCACHED-MARK, and IMPORTANT-MARK
@@ -1055,6 +1056,7 @@ read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
 are thrown away and synchronized.
+If NO-CHECK is non-nil, recheck folder is skipped.
 
 Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
@@ -1085,7 +1087,7 @@ CROSSED is cross-posted message number."
 	    (elmo-folder-set-killed-list-internal folder nil))
 	  (elmo-folder-set-msgdb-internal folder
 					  (elmo-msgdb-clear))))
-    (elmo-folder-check folder)
+    (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(progn
 	  (message "Checking folder diff...")
@@ -1144,9 +1146,9 @@ CROSSED is cross-posted message number."
 	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
 	      (elmo-folder-process-crosspost folder)
 	      (elmo-folder-set-message-modified-internal folder t)
-	      (elmo-folder-set-mark-modified-internal folder t)
-	      ;; return value.
-	      (list new-msgdb delete-list crossed))))
+	      (elmo-folder-set-mark-modified-internal folder t))
+	    ;; return value.
+	    (list new-msgdb delete-list crossed)))
       (quit
        ;; Resume to the original status.
        (if before-append

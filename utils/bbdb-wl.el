@@ -63,9 +63,9 @@
   (bbdb-save-db t))
 
 (defun bbdb-wl-get-update-record ()
-  (set-buffer (wl-message-get-original-buffer))
-  (bbdb-wl-update-record)
-  (run-hooks 'bbdb-wl-get-update-record-hook))
+  (with-current-buffer (wl-message-get-original-buffer)
+    (bbdb-wl-update-record)
+    (run-hooks 'bbdb-wl-get-update-record-hook)))
 
 (defun bbdb-wl-hide-bbdb-buffer ()
   (let (bbdb-buf bbdb-win)
