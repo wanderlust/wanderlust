@@ -1,3 +1,8 @@
+2003-09-24  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Use
+	`wl-summary-folder-info-update'.
+
 2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-set-message-modified): No use
