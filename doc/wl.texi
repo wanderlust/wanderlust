@@ -286,6 +286,7 @@ http://www.jpl.org/elips/wl/
 http://www.ring.gr.jp/archives/text/elisp/wl/
 ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
 ftp://opaopa.org/pub/mirror/elisp/wl/
+@c ftp://roguelife.org/pub/tsumura/wl/
 @end group
 @end example
 
@@ -633,7 +634,7 @@ Format for @file{~/.folders} is very simple. Here is an example:
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
     %#mh/spool/elips         "ELIPS ML"
-    %#mh/spool/tm-ja         "tm Japanese ML"
+    %#mh/spool/apel-ja       "APEL Japanese ML"
     %#mh/spool/xemacs-beta   "XEmacs beta"
     -fj.news.reader.gnus@@other.nntp.server.com "Gnus Net news"
     *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj's Emacsen"
@@ -1262,22 +1263,18 @@ Example:
 @end example
 
 To use apop as an @var{authenticate-type}, @file{md5.el} is needed
-(XEmacs doesn't need @file{md5.el}).
-@file{md5.el} is included in @file{utils/sasl/lisp/} or Emacs/W3 package:
+(XEmacs doesn't need @file{md5.el}).  @file{md5.el} is included in
+@file{utils/sasl/lisp/} or Emacs/W3 package
+(@uref{http://www.cs.indiana.edu/elisp/w3/docs.html}) or LCD archive
+(GPL2).
 
-@example
-http://www.cs.indiana.edu/elisp/w3/docs.html
-@end example
-
-or LCD archive (GPL2).
-
-If the last character of the folder name is @samp{!}, Wanderlust connects to
-the POP server via SSL (Secure Socket Layer).  If you set non-nil
-value to @code{elmo-default-pop-ssl}, you don't have to put @samp{!} in the
-end of the folder name to use SSL. 
-If a folder name ends with @samp{!!}, STARTTLS connection will be established.
-if the value of @code{elmo-default-pop-ssl} is @code{starttls},
-STARTTLS will be the default connection.
+If the last character of the folder name is @samp{!}, Wanderlust
+connects to the POP server via SSL (Secure Socket Layer).  If you set
+non-nil value to @code{elmo-default-pop-ssl}, you don't have to put
+@samp{!} in the end of the folder name to use SSL. If a folder name ends
+with @samp{!!}, STARTTLS connection will be established.  if the value
+of @code{elmo-default-pop-ssl} is @code{starttls}, STARTTLS will be the
+default connection.
 
 @node Multi Folder, Filter Folder, POP Folder, Folders
 @section Multi Folder
@@ -1298,7 +1295,7 @@ Format:
 @end example
 
 After @samp{*} character, specify multiple folders you want to collect
-separated by ',' like
+separated by @samp{,} like
 @samp{@var{folder-1},@var{folder-2},@dots{},@var{folder-N}}.
 
 Example:
@@ -1480,8 +1477,9 @@ For example, if you specify following
 |&username@@popserver|+inbox
 @end example
 
+@noindent
 and access to it, messages are downloaded automatically from
-&username@@popserver to @samp{+inbox}.
+@samp{&username@@popserver} to @samp{+inbox}.
 
 Example:
 
@@ -2012,8 +2010,8 @@ key).
 Moreover, if @code{wl-fldmgr-cut} or @code{wl-fldmgr-cut-region} is
 executed in the access group, they have a same effect with
 @code{wl-fldmgr-unsubscribe} and @code{wl-fldmgr-unsubscribe-region}.
-The difference is that cut(-region) commands deletes folders from the
-current buffer.
+The difference is that cut commands deletes folders from the current
+buffer.
 
 @subsubsection Operations in the Access Group
 
@@ -4002,6 +4000,17 @@ field of a reply draft, removes your own address from
 contained in @samp{To:} or @samp{Cc:} field of a message to be
 automatically re-filed, the destination folder will be leaned in
 connection with the address.
+
+Example:
+
+@lisp
+@group
+(setq wl-subscribed-mailing-list
+      '("wl@@lists.airs.net"
+        "apel-ja@@m17n.org"
+        "emacs-mime-ja@@m17n.org"))
+@end group
+@end lisp
 
 @item wl-insert-mail-followup-to
 @vindex wl-insert-mail-followup-to
