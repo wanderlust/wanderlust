@@ -372,11 +372,11 @@ If optional IS-LOCAL is non-nil, update only local (not server) status.")
   "The next message number that will be assigned to a new message.
 FOLDER is the ELMO folder structure.")
 
-(luna-define-generic elmo-folder-append-buffer (folder &optional flag
+(luna-define-generic elmo-folder-append-buffer (folder &optional flags
 						       number)
   "Append current buffer as a new message.
 FOLDER is the destination folder(ELMO folder structure).
-FLAG is the status of appended message.
+FLAGS is the status of appended message (list of symbols).
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
 Return nil on failure.")

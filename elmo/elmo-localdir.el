@@ -197,7 +197,7 @@
       (sort flist '<))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-localdir-folder)
-					       &optional flag number)
+					       &optional flags number)
   (let ((filename (elmo-message-file-name
 		   folder
 		   (or number
@@ -210,7 +210,7 @@
 	     (table (elmo-flag-table-load path))
 	     (msgid (std11-field-body "message-id")))
 	(when msgid
-	  (elmo-flag-table-set table msgid flag)
+	  (elmo-flag-table-set table msgid flags)
 	  (elmo-flag-table-save path table)))
       t)))
 
