@@ -1,3 +1,8 @@
+2000-08-23  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-folder.el (wl-folder-open-all): Remove progress gauge when
+	display is finished.
+
 2000-08-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-confirm-existence): Fixed typo in
