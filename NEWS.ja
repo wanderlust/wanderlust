@@ -1,4 +1,4 @@
-Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
+Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust. 10 May 2000
 
 * 2.4.1 から 2.6.0 への変更点
 
@@ -18,12 +18,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    進捗が表示されるようになりました。
 
 ** サマリの色づけがオンデマンドになりました(Emacs のみ)。
-   新規変数 wl-summary-lazy-highlight が non-nil ならサマリの表示部分のみを
-   自動的に色付けします (Emacs のみ)。
-
-** biff の通知方法がカスタマイズ可能になりました。
-   新規フック wl-biff-notify-hook, wl-biff-unnotify-hook で設定できます。
-   例: (add-hook wl-biff-notify-hook 'ding)
+   新規変数 wl-summary-lazy-highlight 
+   non-nil ならサマリの表示部分のみを自動的に色付けします (Emacs のみ)。
 
 ** 多くのバグフィックス
 

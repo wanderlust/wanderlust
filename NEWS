@@ -1,4 +1,4 @@
-Wanderlust NEWS -- User-visible changes in Wanderlust.
+Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
 
 * Changes in 2.6.0 from 2.4.1.
 
@@ -20,11 +20,6 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Coloring of summary buffer is processed on demand (only on Emacs).
    If `wl-summary-lazy-highlight' is non-nil, 
    only visible portion of the buffer is colored.
-
-** Customizable biff notify.
-   New hook `wl-biff-notify-hook' and `wl-biff-unnotify-hook' is
-   now available.
-   e.g. (add-hook wl-biff-notify-hook 'ding)
 
 ** Many bug fixes.
 
