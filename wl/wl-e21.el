@@ -411,19 +411,19 @@
 	      (overlay-put overlay 'display image))))))))
 
 (defun wl-plugged-set-folder-icon (folder string)
-  (if (wl-e21-display-image-p)
-      (let (type)
-	(cond ((string= folder wl-queue-folder)
-	       (concat (get 'wl-folder-queue-image 'image)
-		       string))
-	      ((setq type (elmo-folder-type folder))
-	       (concat (get (intern (format "wl-folder-%s-image"
-					    type))
-			    'image)
-		       string))
-	      (t
-	       string)))
-    string))
+  (let (image type)
+    (when (wl-e21-display-image-p)
+      (setq image
+	    (cond ((string= folder wl-queue-folder)
+		   (get 'wl-folder-queue-image 'image))
+		  ((setq type (or (elmo-folder-type folder)
+				  (elmo-folder-type-internal
+				   (elmo-make-folder folder))))
+		   (get (intern (format "wl-folder-%s-image" type))
+			'image)))))
+    (if image
+	(concat (propertize " " 'display image 'invisible t) string)
+      string)))
 
 (defvar wl-folder-internal-icon-list
   ;; alist of (image . icon-file)

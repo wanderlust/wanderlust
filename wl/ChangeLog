@@ -1,3 +1,8 @@
+2004-07-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-e21.el (wl-plugged-set-folder-icon): Follow the change for
+	multi-tty support.
+
 2004-07-01  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-folder.el (wl-folder-update-group): Change `defsubst' to `defun'.
