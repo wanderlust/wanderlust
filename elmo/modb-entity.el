@@ -300,7 +300,8 @@ Header region is supposed to be narrowed.")
   ((handler modb-legacy-entity-handler) condition entity flags numbers)
   (cond
    ((vectorp condition)
-    (elmo-msgdb-match-condition-primitive condition entity flags numbers))
+    (elmo-msgdb-match-condition-primitive handler condition
+					  entity flags numbers))
    ((eq (car condition) 'and)
     (let ((lhs (elmo-msgdb-message-match-condition handler
 						   (nth 1 condition)
@@ -338,7 +339,11 @@ Header region is supposed to be narrowed.")
 					     entity flags numbers)))))))
 
 ;;
-(defun elmo-msgdb-match-condition-primitive (condition entity flags numbers)
+(defun elmo-msgdb-match-condition-primitive (handler
+					     condition
+					     entity
+					     flags
+					     numbers)
   (catch 'unresolved
     (let ((key (elmo-filter-key condition))
 	  (case-fold-search t)
@@ -347,8 +352,7 @@ Header region is supposed to be narrowed.")
        ((string= key "last")
 	(setq result (<= (length (memq
 				  (elmo-msgdb-message-entity-number
-				   (elmo-message-entity-handler entity)
-				   entity)
+				   handler entity)
 				  numbers))
 			 (string-to-int (elmo-filter-value condition)))))
        ((string= key "first")
@@ -356,8 +360,7 @@ Header region is supposed to be narrowed.")
 			 (length numbers)
 			 (length (memq
 				  (elmo-msgdb-message-entity-number
-				   (elmo-message-entity-handler entity)
-				   entity)
+				   handler entity)
 				  numbers)))
 			(string-to-int (elmo-filter-value condition)))))
        ((string= key "flag")
@@ -380,33 +383,28 @@ Header region is supposed to be narrowed.")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       (elmo-message-entity-handler entity)
-		       entity 'from t))))
+		       handler entity 'from t))))
        ((string= key "subject")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       (elmo-message-entity-handler entity)
-		       entity 'subject t))))
+		       handler entity 'subject t))))
        ((string= key "to")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       (elmo-message-entity-handler entity)
-		       entity 'to))))
+		       handler entity 'to))))
        ((string= key "cc")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       (elmo-message-entity-handler entity)
-		       entity 'cc))))
+		       handler entity 'cc))))
        ((or (string= key "since")
 	    (string= key "before"))
 	(let ((field-date (elmo-date-make-sortable-string
 			   (timezone-fix-time
 			    (elmo-msgdb-message-entity-field
-			     (elmo-message-entity-handler entity)
-			     entity 'date)
+			     handler entity 'date)
 			    (current-time-zone) nil)))
 	      (specified-date
 	       (elmo-date-make-sortable-string
@@ -417,9 +415,9 @@ Header region is supposed to be narrowed.")
 			       (string< specified-date field-date))
 			 (string< field-date specified-date)))))
        ((member key elmo-msgdb-extra-fields)
-	(let ((extval (elmo-msgdb-message-entity-field
-		       (elmo-message-entity-handler entity)
-		       entity (intern key))))
+	(let ((extval (elmo-msgdb-message-entity-field handler
+						       entity
+						       (intern key))))
 	  (when (stringp extval)
 	    (setq result (string-match
 			  (elmo-filter-value condition)

@@ -362,7 +362,7 @@
 (luna-define-method elmo-message-folder ((folder elmo-pipe-folder)
 					 number)
   (elmo-pipe-folder-dst-internal folder))
-					     
+
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
 

@@ -1,3 +1,12 @@
+2004-03-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (elmo-msgdb-list-flagged): Use append instead
+	of nconc.
+
+	* modb-entity.el (elmo-msgdb-match-condition-primitive): Added
+	argument handler.
+	(elmo-msgdb-message-match-condition): Follow the change above.
+
 2004-02-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-flag.el (elmo-folder-initialize): Complete abbreviated

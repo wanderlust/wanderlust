@@ -344,9 +344,9 @@
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-standard) flag)
   (let ((flags (case flag
 		 (digest
-		  (nconc '(unread)(elmo-get-global-flags t t)))
+		  (append '(unread) (elmo-get-global-flags t t)))
 		 (any
-		  (nconc '(unread answered)(elmo-get-global-flags t t)))))
+		  (append '(unread answered) (elmo-get-global-flags t t)))))
 	entry matched)
     (case flag
       (read
