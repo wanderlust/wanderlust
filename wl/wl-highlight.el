@@ -280,6 +280,21 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
+(wl-defface wl-highlight-summary-prefetch-face
+  '(
+    (((type tty)
+      (background dark))
+     (:foreground "Green"))
+    (((class color)
+      (background dark))
+     (:foreground "DeepSkyBlue"))
+    (((class color)
+      (background light))
+     (:foreground "brown")))
+  "Face used for displaying messages mark as deleted."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
 (wl-defface wl-highlight-summary-refiled-face
   '(
     (((type tty)
@@ -810,6 +825,8 @@
 	   (setq fsymbol 'wl-highlight-summary-deleted-face))
 	  ((string= temp-mark "D")
 	   (setq fsymbol 'wl-highlight-summary-erased-face))
+	  ((string= temp-mark "i")
+	   (setq fsymbol 'wl-highlight-summary-prefetch-face))
 	  ((string= temp-mark "*")
 	   (setq fsymbol 'wl-highlight-summary-temp-face))
 	  ((string= mark elmo-msgdb-new-mark)
@@ -853,6 +870,8 @@
 	(setq fsymbol 'wl-highlight-summary-deleted-face))
        ((string= temp-mark "D")
 	(setq fsymbol 'wl-highlight-summary-erased-face))
+       ((string= temp-mark "i")
+	(setq fsymbol 'wl-highlight-summary-prefetch-face))
        ((string= temp-mark "O")
 	(setq fsymbol 'wl-highlight-summary-copied-face
 	      dest t))

@@ -1,3 +1,20 @@
+2003-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-prefetch-face): New face.
+	(wl-highlight-summary-line-string): Highlight for "i" mark.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-thread.el (wl-thread-print-destination-region): Avoid error when
+	no destination.
+
+	* wl-summary.el (wl-summary-prefetch-msg): If cache file already
+	exists,	just go ahead.
+	(wl-summary-prefetch-region): Rewrite.
+	(wl-summary-prefetch): Ditto.
+	(wl-summary-mark-action-list): Define mark "i" and prefetch action.
+	(wl-summary-exec-action-prefetch): New function.
+	(wl-summary-target-mark-prefetch): Rewrite.
+
 2003-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-highlight.el (wl-highlight-summary-erased-face): New face.

@@ -1365,7 +1365,8 @@ If ARG is non-nil, checking is omitted."
 	   (buffer-read-only nil)
 	   (file-cached (elmo-file-cache-exists-p message-id))
 	   (force-read (and size
-			    (or (and (null wl-prefetch-confirm) arg)
+			    (or file-cached
+				(and (null wl-prefetch-confirm) arg)
 				(null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
@@ -1417,83 +1418,14 @@ If ARG is non-nil, checking is omitted."
 			  wl-summary-buffer-new-count))))
 		  new-mark)))))))
 
-(defun wl-summary-prefetch-region (beg end &optional prefetch-marks)
+(defun wl-summary-prefetch-region (beg end)
   (interactive "r")
-  (let ((count 0)
-	targets
-	mark length
-	entity msg
-	start-pos pos)
-    (save-excursion
-      (setq start-pos (point))
-      (save-restriction
-	(narrow-to-region beg end)
-	;; collect prefetch targets.
-	(message "Collecting marks...")
-	(goto-char (point-min))
-	(while (not (eobp))
-	  (setq mark (wl-summary-persistent-mark)
-		msg (wl-summary-message-number))
-	  (if (or (and (null prefetch-marks)
-		       msg
-		       (null (elmo-file-cache-exists-p
-			      (elmo-message-field
-			       wl-summary-buffer-elmo-folder
-			       msg
-			       'message-id))))
-		  (member mark prefetch-marks))
-	      (setq targets (nconc targets (list msg))))
-	  (setq entity (wl-thread-get-entity msg))
-	  (if (or (not (eq wl-summary-buffer-view 'thread))
-		  (wl-thread-entity-get-opened entity))
-	      (); opened. no hidden children.
-	    (setq targets (nconc
-			   targets
-			   (wl-thread-get-children-msgs-uncached
-			    msg prefetch-marks))))
-	  (forward-line 1))
-	(setq length (length targets))
-	(message "Prefetching...")
-	(while targets
-	  (setq mark (if (not (wl-thread-entity-parent-invisible-p
-			       (wl-thread-get-entity (car targets))))
-			 (progn
-			   (wl-summary-jump-to-msg (car targets))
-			   (wl-summary-prefetch))
-		       (wl-summary-prefetch-msg (car targets))))
-	  (if (if prefetch-marks
-		  (string= mark elmo-msgdb-unread-cached-mark)
-		(or (string= mark elmo-msgdb-unread-cached-mark)
-		    (string= mark " ")))
-	      (message "Prefetching... %d/%d message(s)"
-		       (setq count (+ 1 count)) length))
-	  ;; redisplay!
-	  (save-excursion
-	    (setq pos (point))
-	    (goto-char start-pos)
-	    (if (pos-visible-in-window-p pos)
-		(save-restriction
-		  (widen)
-		  (sit-for 0))))
-	  (setq targets (cdr targets)))
-	(message "Prefetched %d/%d message(s)" count length)
-	(cons count length)))))
+  (wl-summary-mark-region-subr 'wl-summary-prefetch beg end))
 
-(defun wl-summary-prefetch (&optional arg)
+(defun wl-summary-prefetch (&optional number)
   "Prefetch current message."
-  (interactive "P")
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  (mark (wl-summary-persistent-mark)))
-      (setq mark (wl-summary-prefetch-msg (wl-summary-message-number) arg))
-      (when mark
-	(delete-backward-char 1)
-	(insert mark)
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line)))
-      (set-buffer-modified-p nil)
-      mark)))
+  (interactive)
+  (wl-summary-set-mark "i" number (interactive-p) nil))
 
 (defun wl-summary-delete-marks-on-buffer (marks)
   (while marks
@@ -2756,10 +2688,11 @@ If ARG, without confirm."
      wl-summary-set-action-copy
      wl-summary-unset-action-copy
      wl-summary-exec-action-copy)
-;;    ("i"
-;;     wl-summary-set-action-generic
-;;     wl-summary-unset-action-generic
-;;     wl-summary-exec-action-prefetch)
+    ("i"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-prefetch)
+    ;; Action can be added here.
     )
   "A variable to define Mark & Action.
 Each element of the list should be a list of
@@ -3241,6 +3174,36 @@ Return number if put mark succeed"
       (elmo-progress-clear 'elmo-folder-move-messages)
       failures)))
 
+;; Prefetch.
+(defun wl-summary-exec-action-prefetch (mark-list)
+  (save-excursion
+    (let* ((buffer-read-only nil)
+	   (count 0)
+	   (length (length mark-list))
+	   (mark-list-copy (copy-sequence mark-list))
+	   (pos (point))
+	   (failures 0)
+	   new-mark)
+      (dolist (mark-info mark-list-copy)
+	(message "Prefetching...(%d/%d)"
+		 (setq count (+ 1 count)) length)
+	(setq new-mark (wl-summary-prefetch-msg (car mark-info)))
+	(if new-mark
+	    (progn
+	      (wl-summary-unset-mark (car mark-info))
+	      (when (wl-summary-jump-to-msg (car mark-info))
+		(wl-summary-persistent-mark) ; move
+		(delete-backward-char 1)
+		(insert new-mark)
+		(when wl-summary-highlight
+		  (wl-highlight-summary-current-line))
+		(save-excursion
+		  (goto-char pos)
+		  (sit-for 0))))
+	  (incf failures)))
+      (message "Prefetching...done")
+      0)))
+
 (defun wl-summary-remove-destination ()
   (save-excursion
     (let ((inhibit-read-only t)
@@ -3461,8 +3424,6 @@ destination folder.
 If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
   (wl-summary-set-mark "O" number (interactive-p) dst))
-
-
 
 (defun wl-summary-refile-prev-destination ()
   "Refile message to previously refiled destination."
@@ -3799,39 +3760,25 @@ If ARG, exit virtual folder."
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist))))))
 
-(defun wl-summary-target-mark-prefetch (&optional ignore-cache)
-  (interactive "P")
+(defun wl-summary-target-mark-prefetch ()
+  (interactive)
   (save-excursion
-    (let* ((mlist (nreverse wl-summary-buffer-target-mark-list))
-	   (inhibit-read-only t)
-	   (buffer-read-only nil)
-	   (count 0)
-	   (length (length mlist))
-	   (pos (point))
-	   skipped
-	   new-mark)
+    (goto-char (point-min))
+    (let (number mlist)
+      (while (not (eobp))
+	(when (string= (wl-summary-temp-mark) "*")
+	  (let (wl-summary-buffer-disp-msg)
+	    (when (setq number (wl-summary-message-number))
+	      (wl-summary-prefetch number)
+	      (setq wl-summary-buffer-target-mark-list
+		    (delq number wl-summary-buffer-target-mark-list)))))
+	(forward-line 1))
+      (setq mlist wl-summary-buffer-target-mark-list)
       (while mlist
-	(setq new-mark (wl-summary-prefetch-msg (car mlist) ignore-cache))
-	(if new-mark
-	    (progn
-	      (message "Prefetching... %d/%d message(s)"
-		       (setq count (+ 1 count)) length)
-	      (when (wl-summary-jump-to-msg (car mlist))
-		(wl-summary-unmark)
-		(when new-mark
-		  (wl-summary-persistent-mark) ; move
-		  (delete-backward-char 1)
-		  (insert new-mark)
-		  (if wl-summary-highlight
-		      (wl-highlight-summary-current-line))
-		  (save-excursion
-		    (goto-char pos)
-		    (sit-for 0)))))
-	  (setq skipped (cons (car mlist) skipped)))
-	(setq mlist (cdr mlist)))
-      (setq wl-summary-buffer-target-mark-list skipped)
-      (message "Prefetching... %d/%d message(s)" count length)
-      (set-buffer-modified-p nil))))
+	(wl-summary-register-temp-mark (car mlist) "i" nil)
+	(setq wl-summary-buffer-target-mark-list
+	      (delq (car mlist) wl-summary-buffer-target-mark-list))
+	(setq mlist (cdr mlist))))))
 
 (defun wl-summary-target-mark-refile-subr (copy-or-refile mark)
   (let ((numlist wl-summary-buffer-number-list)

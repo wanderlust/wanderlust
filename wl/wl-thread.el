@@ -945,6 +945,7 @@ Message is inserted to the summary buffer."
 		  temp-mark pair)
 	      (when (and (setq temp-mark
 			       (wl-summary-registered-temp-mark num))
+			 (nth 2 temp-mark)
 			 (setq pair (cons (nth 0 temp-mark)(nth 2 temp-mark))))
 		(wl-summary-print-destination (car pair) (cdr pair))))
 	    (forward-line 1))))))
