@@ -1,3 +1,7 @@
+2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el: New module.
+
 2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-localdir.el (elmo-localdir-msgdb-create-as-numlist):
