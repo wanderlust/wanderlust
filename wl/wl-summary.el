@@ -3678,33 +3678,44 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
     (wl-summary-target-mark-region beg end)))
 
 (defun wl-summary-target-mark-msgs (msgs)
-  (while msgs
-    (if (eq wl-summary-buffer-view 'thread)
-	(wl-thread-jump-to-msg (car msgs))
-      (wl-summary-jump-to-msg (car msgs)))
-    (wl-summary-target-mark (wl-summary-message-number))
-    (setq msgs (cdr msgs))))
+  "Return the number of marked messages."
+  (let ((i 0) num)
+    (while msgs
+      (if (eq wl-summary-buffer-view 'thread)
+	  (wl-thread-jump-to-msg (car msgs))
+	(wl-summary-jump-to-msg (car msgs)))
+      (setq num (wl-summary-message-number))
+      (when (eq num (car msgs))
+	(wl-summary-target-mark num)
+	(setq i (1+ i)))
+      (setq msgs (cdr msgs)))
+    i))
 
 (defun wl-summary-pick (&optional from-list delete-marks)
   (interactive)
-  (let* ((condition (car (elmo-parse-search-condition
-			  (elmo-read-search-condition
-			   wl-summary-pick-field-default))))
-	 (result (elmo-folder-search wl-summary-buffer-elmo-folder
-				     condition
-				     from-list)))
-    (if delete-marks
-      (let ((mlist wl-summary-buffer-target-mark-list))
-	(while mlist
-	  (when (wl-summary-jump-to-msg (car mlist))
-	    (wl-summary-unmark))
-	  (setq mlist (cdr mlist)))
-	(setq wl-summary-buffer-target-mark-list nil)))
-    (if result
-	(progn
-	  (wl-summary-target-mark-msgs result)
-	  (message "%d message(s) are picked." (length result)))
-      (message "No message was picked."))))
+  (save-excursion
+    (let* ((condition (car (elmo-parse-search-condition
+			    (elmo-read-search-condition
+			     wl-summary-pick-field-default))))
+	   (result (elmo-folder-search wl-summary-buffer-elmo-folder
+				       condition
+				       from-list))
+	   num)
+      (if delete-marks
+	  (let ((mlist wl-summary-buffer-target-mark-list))
+	    (while mlist
+	      (when (wl-summary-jump-to-msg (car mlist))
+		(wl-summary-unmark))
+	      (setq mlist (cdr mlist)))
+	    (setq wl-summary-buffer-target-mark-list nil)))
+      (if result
+	  (setq num (wl-summary-target-mark-msgs result)))
+      (if (> num 0)
+	  (if (= num (length result))
+	      (message "%d message(s) are picked." num)
+	    (message "%d(%d) message(s) are picked." num
+		     (- (length result) num)))
+	(message "No message was picked.")))))
 
 (defun wl-summary-unvirtual ()
   "Exit from current virtual folder."

@@ -1,3 +1,8 @@
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-pick): Fix for killed messages.
+	(wl-summary-target-mark-msgs): Return the number of marked messages.
+
 2002-01-26  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* wl-summary.el (wl-summary-sync): Fixed problem when "last:" or
