@@ -380,8 +380,8 @@ TYPE specifies the archiver's symbol."
 		   dir)
 		 filename))
 	    filename)
-	(if (or (not (file-exists-p dir)
-		     (file-directory-p dir)))
+	(if (or (not (file-exists-p dir))
+		(file-directory-p dir))
 	    (expand-file-name
 	     (concat elmo-archive-basename suffix)
 	     dir)
