@@ -2,6 +2,8 @@
 
 	* wl-summary.el (wl-summary-refile-subr): Cause an error if FOLDER
 	is not writable.
+	(wl-summary-sync-update): Call `wl-folder-confirm-existence' with
+	plugged status instead of `'force' as 2nd argument.
 
 	* wl-folder.el (wl-folder-create-subr): Cause an error if FOLDER
 	is not creatable.

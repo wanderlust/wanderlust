@@ -2076,7 +2076,7 @@ If ARG is non-nil, checking is omitted."
 	  ;;(setq seen-list
 	  ;;(wl-summary-flush-pending-append-operations seen-list))
 	  (goto-char (point-max))
-	  (wl-folder-confirm-existence folder 'force)
+	  (wl-folder-confirm-existence folder (elmo-folder-plugged-p folder))
 	  (setq sync-result (elmo-folder-synchronize
 			     folder
 			     wl-summary-new-mark
