@@ -108,21 +108,20 @@
 		  (wl-address-header-extract-address
 		   (elmo-msgdb-overview-entity-get-from 
 		    entity)))))
-	  (setq key from)))
-    (if (not ml)
-	(progn
-	  (if (or wl-refile-msgid-alist
-		  (member 'wl-refile-guess-by-msgid
-			  wl-refile-guess-func-list))
-	      (wl-refile-msgid-learn entity dst))
-	  (if (or wl-refile-subject-alist
-		  (member 'wl-refile-guess-by-subject
-			  wl-refile-guess-func-list))
-	      (wl-refile-subject-learn entity dst))))
+	  (setq key from))
+      (if (or wl-refile-msgid-alist
+	      (memq 'wl-refile-guess-by-msgid
+		    wl-refile-guess-func-list))
+	  (wl-refile-msgid-learn entity dst))
+      (if (or wl-refile-subject-alist
+	      (memq 'wl-refile-guess-by-subject
+		    wl-refile-guess-func-list))
+	  (wl-refile-subject-learn entity dst)))
     (when key
       (if (setq hit (assoc key wl-refile-alist))
           (setq wl-refile-alist (delq hit wl-refile-alist)))
-      (add-to-list 'wl-refile-alist (cons key dst)))))
+      (setq wl-refile-alist (cons (cons key dst)
+				  wl-refile-alist)))))
 
 (defun wl-refile-msgid-learn (entity dst)
   (let ((key (elmo-msgdb-overview-entity-get-id entity))
