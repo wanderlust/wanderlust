@@ -1,3 +1,12 @@
+2005-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Sort the return value of
+	`elmo-list-diff'.
+
+	* elmo-util.el (elmo-list-diff): Don't care the order of the returned
+	list.
+	
+
 2005-02-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-with-enable-multibyte): Don't bind

@@ -1,3 +1,9 @@
+2005-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* test-elmo-util.el (test-elmo-same-list-p): New function.
+	(test-elmo-same-diff-p): Ditto.
+	(test-elmo-list-diff): Use it.
+
 2005-02-27  Tetsurou Okazaki  <okazaki@be.to>
 
 	* test-elmo-util.el (test-elmo-list-diff): New testcase.

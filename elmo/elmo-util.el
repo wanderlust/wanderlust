@@ -762,7 +762,7 @@ the directory becomes empty after deletion."
        ((= (car clist1) (car clist2))
 	(setq clist1 (cdr clist1)
 	      clist2 (cdr clist2)))))
-    (list (nreverse list1-only) (nreverse list2-only))))
+    (list list1-only list2-only)))
 
 (defun elmo-list-diff-nonsortable (list1 list2)
   (let ((clist1 (copy-sequence list1))

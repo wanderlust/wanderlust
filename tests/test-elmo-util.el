@@ -94,6 +94,23 @@
 ;;;   (equal '(1 2 "3" 5 4)
 ;;;	  (elmo-list-insert '(1 2 "3" 5) 4 "3"))
 
+(defun test-elmo-same-list-p (list1 list2)
+  (let ((clist1 (copy-sequence list1))
+	(clist2 (copy-sequence list2)))
+    (while list2
+      (setq clist1 (delq (car list2) clist1))
+      (setq list2 (cdr list2)))
+    (while list1
+      (setq clist2 (delq (car list1) clist2))
+      (setq list1 (cdr list1)))
+    (equal (list clist1 clist2) '(nil nil))))
+
+(defun test-elmo-same-diff-p (diff1 diff2)
+  (and (test-elmo-same-list-p (car diff1)
+			      (car diff2))
+       (test-elmo-same-list-p (nth 1 diff1)
+			      (nth 1 diff2))))
+
 (luna-define-method test-elmo-list-diff ((case test-elmo-util))
   (let ((list1 '(1 2 3))
 	(list2 '(1 2 3 4))
@@ -101,32 +118,32 @@
 	(list4 '(4 5 6))
 	(list5 '(3 4 5 6)))
     (lunit-assert
-     (equal '(nil nil)
-	    (elmo-list-diff nil nil)))
+     (test-elmo-same-diff-p '(nil nil)
+			    (elmo-list-diff nil nil)))
     (lunit-assert
-     (equal '(nil (1 2 3))
-	    (elmo-list-diff nil list1)))
+     (test-elmo-same-diff-p '(nil (1 2 3))
+			    (elmo-list-diff nil list1)))
     (lunit-assert
-     (equal '((1 2 3) nil)
-	    (elmo-list-diff list1 nil)))
+     (test-elmo-same-diff-p '((1 2 3) nil)
+			    (elmo-list-diff list1 nil)))
     (lunit-assert
-     (equal '(nil nil)
-	    (elmo-list-diff list1 list1)))
+     (test-elmo-same-diff-p '(nil nil)
+			    (elmo-list-diff list1 list1)))
     (lunit-assert
-     (equal '(nil (4))
-	    (elmo-list-diff list1 list2)))
+     (test-elmo-same-diff-p '(nil (4))
+			    (elmo-list-diff list1 list2)))
     (lunit-assert
-     (equal '((3) (4))
-	    (elmo-list-diff list1 list3)))
+     (test-elmo-same-diff-p '((3) (4))
+			    (elmo-list-diff list1 list3)))
     (lunit-assert
-     (equal '((1 2 3) (4 5 6))
-	    (elmo-list-diff list1 list4)))
+     (test-elmo-same-diff-p '((1 2 3) (4 5 6))
+			    (elmo-list-diff list1 list4)))
     (lunit-assert
-     (equal '((1 2) (5 6))
-	    (elmo-list-diff list3 list4)))
+     (test-elmo-same-diff-p '((1 2) (5 6))
+			    (elmo-list-diff list3 list4)))
     (lunit-assert
-     (equal '((1 2) (3 5 6))
-	    (elmo-list-diff list3 list5)))))
+     (test-elmo-same-diff-p '((1 2) (3 5 6))
+			    (elmo-list-diff list3 list5)))))
 
 (luna-define-method test-elmo-delete-char-1 ((case test-elmo-util))
   (lunit-assert
