@@ -1,5 +1,9 @@
 2005-01-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-summary.el (wl-summary-goto-folder-subr): Avoid error for
+	`wl-message-buffer-prefetch-depth' is nil though it is illegal.
+	(wl-summary-redisplay-internal): Ditto.
+
 	* wl-summary.el (wl-summary-goto-folder-subr): Protect current
 	message (the condition is borrowed from `wl-check-variables-2').
 	(wl-summary-redisplay-internal): Ditto.

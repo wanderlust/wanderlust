@@ -2514,7 +2514,7 @@ If ARG, without confirm."
 	      (wl-message-buffer-prefetch
 	       folder
 	       (wl-summary-message-number)
-	       (min wl-message-buffer-prefetch-depth
+	       (min (or wl-message-buffer-prefetch-depth 0)
 		    (1- wl-message-buffer-cache-size))
 	       (current-buffer)
 	       wl-summary-buffer-mime-charset))
@@ -4596,7 +4596,7 @@ If ARG is numeric number, decode message as following:
 	  (wl-highlight-summary-displaying)
 	  (wl-message-buffer-prefetch-next
 	   folder num
-	   (min wl-message-buffer-prefetch-depth
+	   (min (or wl-message-buffer-prefetch-depth 0)
 		(1- wl-message-buffer-cache-size))
 	   (current-buffer)
 	   wl-summary-buffer-mime-charset)
