@@ -4617,7 +4617,7 @@ off-line state.  You can specify off-line state on a per server or port
 basis.  Refer to @code{wl-reset-plugged-alist} also.
 
 Usually, when Wanderlust starts up, the plugged state of each port is
-read from @file{~/.folder} and @code{wl-smtp-posting-server},
+read from @file{~/.folders} and @code{wl-smtp-posting-server},
 @code{wl-nntp-posting-server} and so on.  If you want to change the
 plugged state of these ports or to add other ports, configure
 @code{wl-make-plugged-hook} with a function.

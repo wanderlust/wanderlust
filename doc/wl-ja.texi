@@ -4578,7 +4578,7 @@ plug 状態により 2行目の @samp{(wl-plugged)} が変化します。
 さらに細かくサーバやポート毎にオフライン状態を設定することもできます。併
 せて変数 @code{wl-reset-plugged-alist} も参照下さい。
 
-通常、起動時には @file{~/.folder} と @code{wl-smtp-posting-server},
+通常、起動時には @file{~/.folders} と @code{wl-smtp-posting-server},
 @code{wl-nntp-posting-server} などから各ポートの plug 状態が自動的に追加
 されますが、これらのポートの plug 状態を変更したり、上記以外のポートを追加
 したりする場合には @code{wl-make-plugged-hook} に変更する関数を記述しま
