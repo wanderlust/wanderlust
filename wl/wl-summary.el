@@ -2020,7 +2020,8 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-confirm-appends (appends)
   (let ((len (length appends))
 	in)
-    (if (> len wl-summary-update-confirm-threshold)
+    (if (and wl-summary-update-confirm-threshold
+	     (> len wl-summary-update-confirm-threshold))
 	(if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
 	    appends
 	  (setq in wl-summary-update-confirm-threshold)

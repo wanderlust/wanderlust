@@ -196,8 +196,10 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :group 'wl-summary)
 
 (defcustom wl-summary-update-confirm-threshold 500
-  "*Confirm updating summary if message number is larger than this value."
-  :type 'integer
+  "*Confirm updating summary if message number is larger than this value.
+If nil, all the message will be updated without confirmation."
+  :type '(choice (const :tag "Never confirm" nil)
+		 integer)
   :group 'wl-summary)
 
 ;; Important folders
