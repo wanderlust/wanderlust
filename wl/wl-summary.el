@@ -4351,8 +4351,11 @@ If ARG, exit virtual folder."
 		      wl-summary-buffer-delete-list delete-list
 		      wl-summary-buffer-temp-mark-column temp-column)
 		(wl-summary-delete-all-temp-marks)
-		(encode-mime-charset-region
-		 (point-min) (point-max) charset 'LF)
+		(encode-coding-region
+		 (point-min) (point-max)
+		 (or (mime-charset-to-coding-system charset 'LF)
+		     ;; Mule 2 doesn't have `*ctext*unix'.
+		     (mime-charset-to-coding-system charset)))
 		(write-region-as-binary (point-min)(point-max)
 					cache nil 'no-msg)))
 	    (when (file-writable-p view) ; 'thread or 'sequence
