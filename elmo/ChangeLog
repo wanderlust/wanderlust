@@ -1,5 +1,9 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-util.el (elmo-string-member-ignore-case): New function.
+	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Use it.
+	(elmo-imap4-fetch-callback-1-subr): Likewise.
+
 	* acap.el, elmo-imap4.el, elmo-nntp.el, elmo-util.el, pldap.el:
 	`message' and `error' take format string.
 
