@@ -920,6 +920,7 @@ return value is diffs '(-new -unread -all)."
 	   new-folder
 	   (wl-folder-get-entity-info old-folder))
 	  (wl-folder-clear-entity-info old-folder)
+	  (setq wl-folder-info-alist-modified t)
 	  (if (eq (cdr (nth 2 tmp)) 'access)
 
 	      ;; force update access group

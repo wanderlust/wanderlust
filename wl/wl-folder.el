@@ -279,10 +279,7 @@
        (and sym (boundp sym)))))
 
 (defmacro wl-folder-clear-entity-info (entity &optional hashtb)
-  (` (let ((sym (intern-soft (, entity)
-			     (or (, hashtb) wl-folder-entity-hashtb))))
-       (if (boundp sym)
-	   (makunbound sym)))))
+  (` (elmo-clear-hash-val (, entity) (or (, hashtb) wl-folder-entity-hashtb))))
 
 (defmacro wl-folder-get-entity-info (entity &optional hashtb)
   (` (elmo-get-hash-val (, entity) (or (, hashtb) wl-folder-entity-hashtb))))
