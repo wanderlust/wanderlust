@@ -621,14 +621,14 @@
   "Face used for displaying demo."
   :group 'wl-faces)
 
-(wl-defface wl-highlight-refile-destination-face
+(wl-defface wl-highlight-action-argument-face
   '((((class color)
       (background dark))
      (:foreground "pink"))
     (((class color)
       (background light))
      (:foreground "red")))
-  "Face used for displaying refile destination."
+  "Face used for displaying action argument."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
@@ -869,7 +869,8 @@
       (setq status-mark (wl-summary-persistent-mark))
       (setq temp-mark (wl-summary-temp-mark))
       (when (setq action (assoc temp-mark wl-summary-mark-action-list))
-	(setq fsymbol (nth 5 action)))
+	(setq fsymbol (nth 5 action))
+	(setq dest (nth 2 action)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
@@ -904,6 +905,15 @@
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
+      (when dest
+	(put-text-property (next-single-property-change
+			    (next-single-property-change
+			     bol 'wl-summary-action-argument
+			     nil eol)
+			    'wl-summary-action-argument nil eol)
+			   eol
+			   'face
+			   'wl-highlight-action-argument-face))
       (if wl-use-highlight-mouse-line
 	  (put-text-property bol
 			     eol 'mouse-face 'highlight))
@@ -964,9 +974,9 @@ Variables used:
 	  (overlay-put ov 'wl-momentary-overlay t))
 	(forward-line 1)))))
 
-(defun wl-highlight-refile-destination-string (string)
+(defun wl-highlight-action-argument-string (string)
   (put-text-property 0 (length string) 'face
-		     'wl-highlight-refile-destination-face
+		     'wl-highlight-action-argument-face
 		     string))
 
 (defun wl-highlight-summary-all ()

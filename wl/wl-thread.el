@@ -402,8 +402,8 @@ ENTITY is returned."
 	      (wl-thread-make-indent-string entity)
 	      (wl-thread-entity-get-linked entity)))
 	    (if dest-pair
-		(wl-summary-print-destination (car dest-pair)
-					      (cdr dest-pair)))))
+		(wl-summary-print-argument (car dest-pair)
+					   (cdr dest-pair)))))
       ;; insert thread (moving thread)
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))
@@ -888,16 +888,16 @@ Message is inserted to the summary buffer."
       (forward-line 1))
     (beginning-of-line)))
 
-(defun wl-thread-remove-destination-region (beg end)
+(defun wl-thread-remove-argument-region (beg end)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
       (goto-char (point-min))
       (while (not (eobp))
-	(wl-summary-remove-destination)
+	(wl-summary-remove-argument)
 	(forward-line 1)))))
 
-(defun wl-thread-print-destination-region (beg end)
+(defun wl-thread-print-argument-region (beg end)
   (if wl-summary-buffer-temp-mark-list
       (save-excursion
 	(save-restriction
@@ -910,7 +910,7 @@ Message is inserted to the summary buffer."
 			       (wl-summary-registered-temp-mark num))
 			 (nth 2 temp-mark)
 			 (setq pair (cons (nth 0 temp-mark)(nth 2 temp-mark))))
-		(wl-summary-print-destination (car pair) (cdr pair))))
+		(wl-summary-print-argument (car pair) (cdr pair))))
 	    (forward-line 1))))))
 
 (defsubst wl-thread-get-children-msgs (msg &optional visible-only)
@@ -976,8 +976,8 @@ Message is inserted to the summary buffer."
     (beginning-of-line)
     (setq beg (point))
     (wl-thread-goto-bottom-of-sub-thread)
-    (wl-thread-remove-destination-region beg
-					 (point))
+    (wl-thread-remove-argument-region beg
+				      (point))
     (forward-char -1)	;; needed for mouse-face.
     (delete-region beg (point))
     (wl-thread-insert-entity (- depth 1)
@@ -986,7 +986,7 @@ Message is inserted to the summary buffer."
 			      (nth 3 entity))
 			     nil)
     (delete-char 1) ; delete '\n'
-    (wl-thread-print-destination-region beg (point))))
+    (wl-thread-print-argument-region beg (point))))
 
 (defun wl-thread-open (entity)
   (let (depth beg)
@@ -1001,7 +1001,7 @@ Message is inserted to the summary buffer."
 			     (wl-thread-get-entity
 			      (nth 3 entity)) nil)
     (delete-char 1) ; delete '\n'
-    (wl-thread-print-destination-region beg (point))))
+    (wl-thread-print-argument-region beg (point))))
 
 (defun wl-thread-open-close (&optional force-open)
   (interactive "P")

@@ -1,5 +1,22 @@
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-action.el (wl-summary-set-mark): Changed terminology
+	refile-destination -> action-argument.
+	(wl-summary-unset-mark): Ditto.
+	(wl-summary-remove-argument): Ditto.
+	(wl-summary-print-argument): Ditto.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Ditto.
+	(wl-thread-remove-argument-region): Ditto.
+	(wl-thread-print-argument-region): Ditto.
+	(wl-thread-close): Ditto.
+	(wl-thread-open): Ditto.
+
+	* wl-highlight.el (wl-highlight-action-argument-face): Ditto.
+	(wl-highlight-refile-destination-face is abolished)
+	(wl-highlight-action-argument-string): Ditto.
+	(wl-highlight-summary-current-line): Highlight action argument.
+
 	* wl-highlight.el (wl-highlight-summary-deleted-face): Changed default
 	color for light backgrounds.
 	(wl-highlight-summary-answered-face): Ditto.

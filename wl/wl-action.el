@@ -84,7 +84,7 @@ Return number if put mark succeed"
 	      (when wl-summary-highlight
 		(wl-highlight-summary-current-line))
 	      (when data
-		(wl-summary-print-destination number data)))
+		(wl-summary-print-argument number data)))
 	    ;; Set action.
 	    (funcall (wl-summary-action-set-function action)
 		     number
@@ -226,7 +226,7 @@ Return number if put mark succeed"
 	  (when wl-summary-highlight
 	    (wl-highlight-summary-current-line))
 	  (when (wl-summary-action-argument-function action)
-	    (wl-summary-remove-destination)))
+	    (wl-summary-remove-argument)))
 	(set-buffer-modified-p nil))
       ;; Remove from temporal mark structure.
       (wl-summary-unregister-target-mark number)
@@ -627,7 +627,7 @@ Return number if put mark succeed"
     (message "Resending message to %s...done" address)))
 
 ;;;
-(defun wl-summary-remove-destination ()
+(defun wl-summary-remove-argument ()
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
@@ -638,11 +638,11 @@ Return number if put mark succeed"
       (search-forward "\r")
       (forward-char -1)
       (setq eol (point))
-      (setq rs (next-single-property-change sol 'wl-summary-destination
+      (setq rs (next-single-property-change sol 'wl-summary-action-argument
 					    buf eol))
-      (setq re (next-single-property-change rs 'wl-summary-destination
+      (setq re (next-single-property-change rs 'wl-summary-action-argument
 					    buf eol))
-      (put-text-property rs re 'wl-summary-destination nil)
+      (put-text-property rs re 'wl-summary-action-argument nil)
       (put-text-property rs re 'invisible nil)
       (goto-char re)
       (delete-char (- eol re)))))
@@ -739,10 +739,10 @@ Return number if put mark succeed"
 				      fld))))
     fld))
 
-(defun wl-summary-print-destination (msg-num folder)
-  "Print refile destination on line."
+(defun wl-summary-print-argument (msg-num folder)
+  "Print action argument on line."
   (when folder
-    (wl-summary-remove-destination)
+    (wl-summary-remove-argument)
     (save-excursion
       (let ((inhibit-read-only t)
 	    (folder (copy-sequence folder))
@@ -763,9 +763,9 @@ Return number if put mark succeed"
 	  (setq rs (point))
 	  (when wl-summary-width
 	    (put-text-property rs re 'invisible t))
-	  (put-text-property rs re 'wl-summary-destination t)
+	  (put-text-property rs re 'wl-summary-action-argument t)
 	  (goto-char re)
-	  (wl-highlight-refile-destination-string folder)
+	  (wl-highlight-action-argument-string folder)
 	  (insert folder)
 	  (set-buffer-modified-p nil))))))
 
