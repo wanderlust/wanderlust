@@ -242,7 +242,7 @@
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (let (fld-name extent)
+    (let (fld-name)
       (cond
        (;; opened folder group
 	(looking-at wl-highlight-folder-opened-regexp)
@@ -380,44 +380,37 @@
    wl-folder-internal-icon-list))
 
 (defun wl-plugged-init-icons ()
-  (let (extent)
-    (unless (or wl-plugged-glyph wl-unplugged-glyph)
-      (setq extent (make-extent nil nil))
-      (let ((toggle-keymap (make-sparse-keymap)))
-	(define-key toggle-keymap 'button2
+  (unless wl-plugged-glyph
+    (setq wl-plugged-glyph (wl-xmas-make-icon-glyph
+			    wl-plug-state-indicator-on wl-plugged-icon)
+	  wl-unplugged-glyph (wl-xmas-make-icon-glyph
+			      wl-plug-state-indicator-off wl-unplugged-icon))
+    (let ((extent (make-extent nil nil)))
+      (let ((keymap (make-sparse-keymap)))
+	(define-key keymap 'button2
 	  (make-modeline-command-wrapper 'wl-toggle-plugged))
-	(set-extent-keymap extent toggle-keymap))
-      (set-extent-property extent 'help-echo "button2 toggles plugged status"))
-    (unless wl-plugged-glyph
-      (setq wl-plugged-glyph (wl-xmas-make-icon-glyph
-			      (concat "[" wl-plugged-plug-on "]")
-			      wl-plugged-icon)
-	    wl-plug-state-indicator-on (cons extent wl-plugged-glyph)))
-    (unless wl-unplugged-glyph
-      (setq wl-unplugged-glyph (wl-xmas-make-icon-glyph
-				(concat "[" wl-plugged-plug-off "]")
-				wl-unplugged-icon)
-	    wl-plug-state-indicator-off (cons extent wl-unplugged-glyph)))))
+	(set-extent-keymap extent keymap)
+	(set-extent-property extent 'help-echo
+			     "button2 toggles plugged status"))
+      (setq wl-modeline-plug-state-on (cons extent wl-plugged-glyph)
+	    wl-modeline-plug-state-off (cons extent wl-unplugged-glyph)))))
 
 (defun wl-biff-init-icons ()
-  (let (extent)
-    (unless (or wl-biff-mail-glyph wl-biff-nomail-glyph)
-      (setq extent (make-extent nil nil))
+  (unless wl-biff-mail-glyph
+    (setq wl-biff-mail-glyph (wl-xmas-make-icon-glyph
+			      wl-biff-state-indicator-on
+			      wl-biff-mail-icon)
+	  wl-biff-nomail-glyph (wl-xmas-make-icon-glyph
+				wl-biff-state-indicator-off
+				wl-biff-nomail-icon))
+    (let ((extent (make-extent nil nil)))
       (let ((keymap (make-sparse-keymap)))
 	(define-key keymap 'button2
 	  (make-modeline-command-wrapper 'wl-biff-check-folders))
-	(set-extent-keymap extent keymap))
-      (set-extent-property extent 'help-echo "button2 checks new mails"))
-    (unless wl-biff-mail-glyph
-      (setq wl-biff-mail-glyph (wl-xmas-make-icon-glyph
-				wl-biff-state-indicator-on
-				wl-biff-mail-icon)
-	    wl-biff-state-indicator-on (cons extent wl-biff-mail-glyph)))
-    (unless wl-biff-nomail-glyph
-      (setq wl-biff-nomail-glyph (wl-xmas-make-icon-glyph
-				  wl-biff-state-indicator-off
-				  wl-biff-nomail-icon)
-	    wl-biff-state-indicator-off (cons extent wl-biff-nomail-glyph)))))
+	(set-extent-keymap extent keymap)
+	(set-extent-property extent 'help-echo "button2 checks new mails"))
+      (setq wl-modeline-biff-state-on (cons extent wl-biff-mail-glyph)
+	    wl-modeline-biff-state-off (cons extent wl-biff-nomail-glyph)))))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -430,6 +423,8 @@
   (and (featurep 'scrollbar)
        (set-specifier scrollbar-height (cons (current-buffer) 0)))
   (wl-xmas-setup-folder-toolbar))
+
+(defvar dragdrop-drop-functions)
 
 (defun wl-setup-summary ()
   (make-local-variable 'dragdrop-drop-functions)

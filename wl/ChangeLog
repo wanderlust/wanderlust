@@ -1,3 +1,46 @@
+2000-09-22  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl.el (wl-plugged-toggle-all): Set the value of
+	`wl-modeline-plug-status' instead of `wl-plug-state-indicator'.
+	(wl-plugged-toggle): Ditto.
+	(wl-toggle-plugged): Ditto.
+	(wl-plugged-init): Ditto.
+
+	* wl-xmas.el (wl-biff-init-icons): Set icons data to
+	`wl-modeline-biff-state-off' and `wl-modeline-biff-state-on'
+	instead of `wl-biff-state-indicator-off' and
+	`wl-biff-state-indicator-on'; don't modify the value and the type
+	of `wl-biff-state-indicator-off' and `wl-biff-state-indicator-on'.
+	(wl-plugged-init-icons): Set icons data to
+	`wl-modeline-plug-state-off' and `wl-modeline-plug-state-on'
+	instead of `wl-plug-state-indicator-off' and
+	`wl-plug-state-indicator-on'; don't modify the value and the type
+	of `wl-plug-state-indicator-off' and `wl-plug-state-indicator-on'.
+
+	* wl-vars.el (wl-modeline-biff-state-off,
+	wl-modeline-biff-state-on, wl-modeline-biff-status,
+	wl-modeline-plug-state-off, wl-modeline-plug-state-on,
+	wl-modeline-plug-status): New internal variables.
+	(wl-biff-state-indicator-off, wl-biff-state-indicator-on,
+	wl-biff-check-interval, wl-biff-check-folder-list): Change
+	customization group from `wl-folder' to `wl-highlight'.
+	(wl-plug-state-indicator-off, wl-plug-state-indicator-on,
+	wl-show-plug-status-on-modeline): Defcustomized.
+
+	* wl-util.el (wl-biff-check-folders): Set the value of the flag
+	`wl-modeline-biff-status' instead of `wl-biff-state-indicator'.
+	(wl-mode-line-buffer-identification): Set both ON and OFF data with
+	a flag to `mode-line-buffer-identification'.
+
+	* wl-e21.el (wl-biff-init-icons): Set icons data to
+	`wl-modeline-biff-state-off' and `wl-modeline-biff-state-on'
+	instead of `wl-biff-state-indicator-off' and
+	`wl-biff-state-indicator-on'.
+	(wl-plugged-init-icons): Set icons data to
+	`wl-modeline-plug-state-off' and `wl-modeline-plug-state-on'
+	instead of `wl-plug-state-indicator-off' and
+	`wl-plug-state-indicator-on'.
+
 2000-09-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-mode-line-buffer-identification): Don't breed

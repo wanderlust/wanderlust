@@ -80,11 +80,8 @@
   (when make-alist
     (wl-make-plugged-alist))
   ;; Plug status.
-  (setq elmo-plugged (setq wl-plugged (elmo-plugged-p)))
-  (setq wl-plug-state-indicator
-	(if wl-plugged
-	    'wl-plug-state-indicator-on
-	  'wl-plug-state-indicator-off))
+  (setq elmo-plugged (setq wl-plugged (elmo-plugged-p))
+	wl-modeline-plug-status wl-plugged)
   (if wl-plugged
       (wl-toggle-plugged t 'flush)))
 
@@ -99,7 +96,8 @@
       (setq wl-plugged nil))
      (t (setq wl-plugged (null wl-plugged))))
     (elmo-set-plugged wl-plugged))
-  (setq elmo-plugged wl-plugged)
+  (setq elmo-plugged wl-plugged
+	wl-modeline-plug-status wl-plugged)
   (save-excursion
     (mapcar
      (function
@@ -112,7 +110,6 @@
   (if wl-plugged
       (progn
 	;; flush queue!!
-	(setq wl-plug-state-indicator 'wl-plug-state-indicator-on)
 	(elmo-dop-queue-flush)
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
@@ -126,7 +123,6 @@
 		  (wl-summary-flush-pending-append-operations seen-list))
 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
-    (setq wl-plug-state-indicator 'wl-plug-state-indicator-off)
     (run-hooks 'wl-unplugged-hook))
   (force-mode-line-update t))
 
@@ -512,13 +508,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (elmo-set-plugged plugged nil nil nil alist)))
 	  ;; redraw
 	  (wl-plugged-redrawing wl-plugged-alist)
-	  ;; change wl-plug-state-indicator
+	  ;; show plugged status in modeline
 	  (let ((elmo-plugged wl-plugged-switch))
-	    (setq wl-plugged-switch (elmo-plugged-p))
-	    (setq wl-plug-state-indicator
-		  (if wl-plugged-switch
-		      'wl-plug-state-indicator-on
-		    'wl-plug-state-indicator-off))
+	    (setq wl-plugged-switch (elmo-plugged-p)
+		  wl-modeline-plug-status wl-plugged-switch)
 	    (force-mode-line-update t))))))
     (setq wl-plugged-alist-modified t)
     (goto-char cur-point)))
@@ -536,11 +529,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (wl-plugged-redrawing wl-plugged-alist)
     (goto-char cur-point)
     (setq wl-plugged-alist-modified t)
-    ;; change wl-plug-state-indicator
-    (setq wl-plug-state-indicator
-	  (if wl-plugged-switch
-	      'wl-plug-state-indicator-on
-	    'wl-plug-state-indicator-off))
+    ;; show plugged status in modeline
+    (setq wl-modeline-plug-status wl-plugged-switch)
     (force-mode-line-update t)))
 
 (defun wl-plugged-exit ()

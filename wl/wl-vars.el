@@ -1325,28 +1325,41 @@ Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-folder)
 
+(defcustom wl-show-plug-status-on-modeline t
+  "If it is non-nil, show plugged status in modeline."
+  :type 'boolean
+  :group 'wl-highlight)
+
+(defcustom wl-plug-state-indicator-on  " [ON] "
+  "String used to show plugged status ON."
+  :type 'string
+  :group 'wl-highlight)
+
+(defcustom wl-plug-state-indicator-off " [--] "
+  "String used to show plugged status OFF."
+  :type 'string
+  :group 'wl-highlight)
+
 (defcustom wl-biff-check-folder-list nil
   "All folders that match this list are automatically checked
 every intervals specified by wl-biff-check-interval. "
   :type '(repeat (regexp :tag "Folder Regexp"))
-  :group 'wl-folder)
+  :group 'wl-highlight)
 
 (defcustom wl-biff-check-interval 40
   "Number of seconds between updates of new mails in the mode line."
   :type 'integer
-  :group 'wl-folder)
+  :group 'wl-highlight)
 
 (defcustom wl-biff-state-indicator-on "[〒]"
   "String used to show biff status ON."
   :type 'string
-  :group 'wl-folder)
+  :group 'wl-highlight)
 
 (defcustom wl-biff-state-indicator-off "[‐]"
   "String used to show biff status OFF."
   :type 'string
-  :group 'wl-folder)
-
-(defvar wl-biff-state-indicator wl-biff-state-indicator-off)
+  :group 'wl-highlight)
 
 (defcustom wl-mode-line-display-priority-list '(biff plug title)
   "Displaying order of items to be shown in modeline.  The first item will
@@ -2012,11 +2025,13 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 (defvar wl-unplugged-hook nil)
 (defvar wl-plugged t)
 
-(defvar wl-plug-state-indicator-on  " [ON] ")
-(defvar wl-plug-state-indicator-off " [--] ")
-(defvar wl-plug-state-indicator 'wl-plug-state-indicator-on)
-
-(defvar wl-show-plug-status-on-modeline t)
+;; Internal variables used to modeline identifiers.
+(defvar wl-modeline-plug-status nil)
+(defvar wl-modeline-plug-state-on wl-plug-state-indicator-on)
+(defvar wl-modeline-plug-state-off wl-plug-state-indicator-off)
+(defvar wl-modeline-biff-status nil)
+(defvar wl-modeline-biff-state-on wl-biff-state-indicator-on)
+(defvar wl-modeline-biff-state-off wl-biff-state-indicator-off)
 
 ;; Advanced thread view.
 (defvar wl-thread-indent-level 1
@@ -2096,8 +2111,6 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 (make-obsolete-variable 'wl-score-files-directory 'wl-score-files-dir)
 (defvar wl-summary-temp-above wl-summary-target-above)
 (make-obsolete-variable 'wl-summary-temp-above 'wl-summary-target-above)
-
-
 
 ;; plug
 (defvar wl-plugged-plug-on "ON")

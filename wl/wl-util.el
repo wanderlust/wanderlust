@@ -413,14 +413,19 @@ Insert User-Agent field instead of X-Mailer field."
       (while priorities
 	(setq priority (car priorities)
 	      priorities (cdr priorities))
-	(cond ((eq 'biff priority)
-	       (when wl-biff-check-folder-list
-		 (setq result (append result '(wl-biff-state-indicator)))))
-	      ((eq 'plug priority)
-	       (when wl-show-plug-status-on-modeline
-		 (setq result (append result '(wl-plug-state-indicator)))))
-	      (t
-	       (setq result (append result (or id '("Wanderlust: %12b")))))))
+	(cond
+	 ((eq 'biff priority)
+	  (when wl-biff-check-folder-list
+	    (setq result (append result '((wl-modeline-biff-status
+					   wl-modeline-biff-state-on
+					   wl-modeline-biff-state-off))))))
+	 ((eq 'plug priority)
+	  (when wl-show-plug-status-on-modeline
+	    (setq result (append result '((wl-modeline-plug-status
+					   wl-modeline-plug-state-on
+					   wl-modeline-plug-state-off))))))
+	 (t
+	  (setq result (append result (or id '("Wanderlust: %12b")))))))
       (prog1
 	  (setq mode-line-buffer-identification (if (stringp (car result))
 						    result
@@ -485,7 +490,7 @@ Insert User-Agent field instead of X-Mailer field."
 
 (defun wl-parse-newsgroups (string &optional subscribe-only)
   (let* ((nglist (wl-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
-	 spec ret-val)
+	 ret-val)
     (if (not subscribe-only)
 	nglist
       (while nglist
@@ -984,9 +989,7 @@ This function is imported from Emacs 20.7."
       (when (elmo-folder-plugged-p folder)
 	(setq new-mails (+ new-mails
 			   (nth 0 (wl-folder-check-one-entity folder))))))
-    (setq wl-biff-state-indicator (if (zerop new-mails)
-				      'wl-biff-state-indicator-off
-				    'wl-biff-state-indicator-on))
+    (setq wl-modeline-biff-status (> new-mails 0))
     (force-mode-line-update t)
     (when (interactive-p)
       (cond ((zerop new-mails) (message "No mail."))

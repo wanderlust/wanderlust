@@ -438,54 +438,54 @@
 			      :file ,name :ascent center))))))))))
 
 (defun wl-plugged-init-icons ()
-  (let ((props (unless (or wl-plugged-image wl-unplugged-image)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
+  (unless wl-plugged-image
+    (setq wl-plugged-image (wl-e21-make-icon-image
+			    wl-plug-state-indicator-on wl-plugged-icon)
+	  wl-unplugged-image (wl-e21-make-icon-image
+			      wl-plug-state-indicator-off wl-unplugged-icon))
+    (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
 					     #'wl-toggle-plugged))
-		       'help-echo "mouse-2 toggles plugged status"))))
-    (unless wl-plugged-image
-      (setq wl-plug-state-indicator-on (concat "[" wl-plugged-plug-on "]")
-	    wl-plugged-image (wl-e21-make-icon-image
-			      wl-plug-state-indicator-on
-			      wl-plugged-icon))
-      (add-text-properties 0 (length wl-plug-state-indicator-on)
+		       'help-echo "mouse-2 toggles plugged status")))
+      (setq wl-modeline-plug-state-on (copy-sequence
+				       wl-plug-state-indicator-on)
+	    wl-modeline-plug-state-off (copy-sequence
+					wl-plug-state-indicator-off))
+      (add-text-properties 0 (length wl-modeline-plug-state-on)
 			   (nconc props (unless (stringp wl-plugged-image)
 					  (list 'display wl-plugged-image)))
-			   wl-plug-state-indicator-on))
-    (unless wl-unplugged-image
-      (setq wl-plug-state-indicator-off (concat "[" wl-plugged-plug-off "]")
-	    wl-unplugged-image (wl-e21-make-icon-image
-				wl-plug-state-indicator-off
-				wl-unplugged-icon))
-      (add-text-properties 0 (length wl-plug-state-indicator-off)
+			   wl-modeline-plug-state-on)
+      (add-text-properties 0 (length wl-modeline-plug-state-off)
 			   (nconc props (unless (stringp wl-unplugged-image)
 					  (list 'display wl-unplugged-image)))
-			   wl-plug-state-indicator-off))))
+			   wl-modeline-plug-state-off))))
 
 (defun wl-biff-init-icons ()
-  (let ((props (unless (or wl-biff-mail-image wl-biff-nomail-image)
-		 (list 'local-map (purecopy
-				   (make-mode-line-mouse2-map
-				    (lambda nil
-				      (call-interactively
-				       'wl-biff-check-folders))))
-		       'help-echo "mouse-2 checks new mails"))))
-    (unless wl-biff-mail-image
-      (setq wl-biff-mail-image (wl-e21-make-icon-image
-				wl-biff-state-indicator-on
-				wl-biff-mail-icon))
-      (add-text-properties 0 (length wl-biff-state-indicator-on)
+  (unless wl-biff-mail-image
+    (setq wl-biff-mail-image (wl-e21-make-icon-image
+			      wl-biff-state-indicator-on
+			      wl-biff-mail-icon)
+	  wl-biff-nomail-image (wl-e21-make-icon-image
+				wl-biff-state-indicator-off
+				wl-biff-nomail-icon))
+    (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
+					     (lambda nil
+					       (call-interactively
+						'wl-biff-check-folders))))
+		       'help-echo "mouse-2 checks new mails")))
+      (setq wl-modeline-biff-state-on (copy-sequence
+				       wl-biff-state-indicator-on)
+	    wl-modeline-biff-state-off (copy-sequence
+					wl-biff-state-indicator-off))
+      (add-text-properties 0 (length wl-modeline-biff-state-on)
 			   (nconc props (unless (stringp wl-biff-mail-image)
-					  (list 'display wl-biff-mail-image)))
-			   wl-biff-state-indicator-on))
-    (unless wl-biff-nomail-image
-      (setq wl-biff-nomail-image (wl-e21-make-icon-image
-				  wl-biff-state-indicator-off
-				  wl-biff-nomail-icon))
-      (add-text-properties 0 (length wl-biff-state-indicator-off)
+					  (list 'display
+						wl-biff-mail-image)))
+			   wl-modeline-biff-state-on)
+      (add-text-properties 0 (length wl-modeline-biff-state-off)
 			   (nconc props (unless (stringp wl-biff-nomail-image)
 					  (list 'display
 						wl-biff-nomail-image)))
-			   wl-biff-state-indicator-off))))
+			   wl-modeline-biff-state-off))))
 
 (defun wl-make-date-string ()
   (format-time-string "%a, %d %b %Y %T %z"))
