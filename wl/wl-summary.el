@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-06-05 18:05:53 teranisi>
+;; Time-stamp: <00/06/28 13:31:45 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -94,6 +94,8 @@
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
 (defvar wl-summary-buffer-saved-message nil)
+(defvar wl-summary-buffer-prev-folder-func nil)
+(defvar wl-summary-buffer-next-folder-func nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -155,7 +157,9 @@
        'wl-thread-youngest-child-str-internal
        'wl-thread-vertical-str-internal
        'wl-thread-horizontal-str-internal
-       'wl-thread-space-str-internal))
+       'wl-thread-space-str-internal
+       'wl-summary-buffer-prev-folder-func
+       'wl-summary-buffer-next-folder-func))
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -5351,20 +5355,22 @@ Reply to author if invoked with argument."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(let (next-entity finfo)
-	  (when wl-auto-select-next
-	    (progn
-	      (setq next-entity (wl-summary-get-prev-unread-folder))
-	      (if next-entity
-		  (setq finfo (wl-folder-get-entity-info next-entity)))))
-	  (if (and skip-no-unread
-		   (eq wl-auto-select-next 'skip-no-unread))
-	      (wl-summary-next-folder-or-exit next-entity t)
-	    (wl-ask-folder 
-	     '(lambda () (wl-summary-next-folder-or-exit next-entity t))
-	     (format
-	      "No more unread messages. Type SPC to go to %s."
-	      (wl-summary-entity-info-msg next-entity finfo))))))))
+	(if wl-summary-buffer-prev-folder-func
+	    (funcall wl-summary-buffer-prev-folder-func)
+	  (let (next-entity finfo)
+	    (when wl-auto-select-next
+	      (progn
+		(setq next-entity (wl-summary-get-prev-unread-folder))
+		(if next-entity
+		    (setq finfo (wl-folder-get-entity-info next-entity)))))
+	    (if (and skip-no-unread
+		     (eq wl-auto-select-next 'skip-no-unread))
+		(wl-summary-next-folder-or-exit next-entity t)
+	      (wl-ask-folder 
+	       '(lambda () (wl-summary-next-folder-or-exit next-entity t))
+	       (format
+		"No more unread messages. Type SPC to go to %s."
+		(wl-summary-entity-info-msg next-entity finfo)))))))))
 
 (defun wl-summary-get-prev-folder ()
   (let ((folder-buf (get-buffer wl-folder-buffer-name))
@@ -5407,19 +5413,21 @@ Reply to author if invoked with argument."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(let (next-entity finfo)
-	  (when wl-auto-select-next
-	    (setq next-entity (wl-summary-get-next-unread-folder))
+	(if wl-summary-buffer-next-folder-func
+	    (funcall wl-summary-buffer-next-folder-func)
+	  (let (next-entity finfo)
+	    (when wl-auto-select-next
+	      (setq next-entity (wl-summary-get-next-unread-folder)))
 	    (if next-entity
-		(setq finfo (wl-folder-get-entity-info next-entity))))
-	  (if (and skip-no-unread
-		   (eq wl-auto-select-next 'skip-no-unread))
-	      (wl-summary-next-folder-or-exit next-entity)
-	    (wl-ask-folder 
-	     '(lambda () (wl-summary-next-folder-or-exit next-entity))
-	     (format
-	      "No more unread messages. Type SPC to go to %s."
-	      (wl-summary-entity-info-msg next-entity finfo))))))))
+		(setq finfo (wl-folder-get-entity-info next-entity)))
+	    (if (and skip-no-unread
+		     (eq wl-auto-select-next 'skip-no-unread))
+		(wl-summary-next-folder-or-exit next-entity)
+	      (wl-ask-folder 
+	       '(lambda () (wl-summary-next-folder-or-exit next-entity))
+	       (format
+		"No more unread messages. Type SPC to go to %s."
+		(wl-summary-entity-info-msg next-entity finfo)))))))))
 
 (defun wl-summary-goto-last-displayed-msg ()
   (interactive)
