@@ -1,4 +1,18 @@
+2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Removed shimbun related modules;
+	Add elmo-shimbun only if shimbun is installed.
+
+2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added sb-tcup.
+
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utils/bbdb-wl.el: Applied patch from
+	Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp> for bbdb 2.33
+	(X-Mail-Count: 07190, 07195 in the ML);
+	Added workaround for older version of bbdb.
 
 	* WL-ELS (ELMO-MODULES): Added shimbun related modules.
 
