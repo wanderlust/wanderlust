@@ -1,4 +1,27 @@
+2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-lock): New buffer local variable.
+	(elmo-pop3-send-command): Call elmo-pop3-lock.
+	(elmo-pop3-read-response): Call elmo-pop3-unlock.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-lock): New function.
+	(elmo-pop3-unlock): Ditto.
+	(elmo-pop3-locked-p): Ditto.
+	(elmo-pop3-commit): Don't delete process if elmo-pop3-locked-p
+	returns t.
+
 2001-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-field-primitive-condition-match):
+	New inline function (Don't fetch file content if "first" or "last").
+	(elmo-file-field-condition-match): Use
+	elmo-file-field-primitive-condition-match.
+
+	* elmo-localdir.el (elmo-localdir-field-primitive-condition-match):
+	New inline function.
+	(elmo-localdir-field-condition-match):
+	Use elmo-localdir-field-primitive-condition-match.
+	(elmo-localdir-search): Speed up simple "last" and "first".
 
 	* elmo2.el (elmo-move-msgs): Bind
 	elmo-inhibit-display-retrieval-progress as t while moving messages.
