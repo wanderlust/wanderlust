@@ -889,7 +889,9 @@ Don't cache if nil.")
   (let ((session (elmo-nntp-get-session
 		  (list 'nntp nil elmo-default-nntp-user
 			hostname elmo-default-nntp-port
-			elmo-default-nntp-stream-type)))
+			(elmo-get-network-stream-type
+			 elmo-default-nntp-stream-type
+			 elmo-network-stream-type-alist))))
 	response has-message-id)
     (save-excursion
       (set-buffer content-buf)
