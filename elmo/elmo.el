@@ -105,9 +105,7 @@ If a folder name begins with PREFIX, use BACKEND."
 (defmacro elmo-folder-type (name)
   "Get folder type from NAME string."
   `(and (stringp ,name)
-	(or (cdr (assoc (string-to-char ,name) elmo-folder-type-alist))
-	    (when (string-match "\\([^:]*\\):" ,name)
-	      (intern (match-string 1 ,name))))))
+	(cdr (assoc (string-to-char ,name) elmo-folder-type-alist))))
 
 ;;; ELMO folder
 ;; A elmo folder provides uniformed (orchestrated) access

@@ -1,5 +1,10 @@
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-e21.el (wl-highlight-folder-current-line): Use
+	elmo-folder-type-internal when elmo-folder-type returns nil.
+
+	* wl-xmas.el (wl-highlight-folder-current-line): Ditto.
+
 	* wl.el (wl-init): Setup faces accoding to wl-summary-flag-alist.
 
 	* wl-xmas.el (wl-summary-toolbar): Setup wl-summary-set-flags.

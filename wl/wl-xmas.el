@@ -291,7 +291,9 @@
 		((string= fld-name wl-queue-folder);; queue folder
 		 (get 'wl-folder-queue-glyph 'glyph))
 		(;; and one of many other folders
-		 (setq type (elmo-folder-type fld-name))
+		 (setq type (or (elmo-folder-type fld-name)
+				(elmo-folder-type-internal
+				 (elmo-make-folder fld-name))))
 		 (get (intern (format "wl-folder-%s-glyph" type)) 'glyph))))))
 	  (let ((end (point-at-eol)))
 	    (when wl-use-highlight-mouse-line

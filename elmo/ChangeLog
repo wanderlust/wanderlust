@@ -1,5 +1,7 @@
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-type): Undo last change.
+
 	* slp.el (slp-exec-wait): Avoid byte-compile warnings.
 
 	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Avoid byte-compile

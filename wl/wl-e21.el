@@ -363,7 +363,9 @@
 			    ((string= fld-name wl-queue-folder);; queue folder
 			     (get 'wl-folder-queue-image 'image))
 			    (;; and one of many other folders
-			     (setq type (elmo-folder-type fld-name))
+			     (setq type (or (elmo-folder-type fld-name)
+					    (elmo-folder-type-internal
+					     (elmo-make-folder fld-name))))
 			     (get (intern (format "wl-folder-%s-image" type))
 				  'image)))))
 	      (overlay-put overlay 'before-string image)))
