@@ -1,5 +1,9 @@
 2001-12-02  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-sendlog.el (elmo-sendlog-buffer-name): Deleted.
+
+2001-12-02  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-sendlog.el (elmo-folder-delete-messages): Added.
 	(elmo-map-message-fetch): Fix.
 	* elmo-map.el (elmo-folder-status): Fix for killed.

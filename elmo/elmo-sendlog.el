@@ -34,7 +34,6 @@
 (require 'elmo-map)
 
 (defvar elmo-sendlog-filename "sendlog")
-(defvar elmo-sendlog-buffer-name "*elmo-sendlog*")
 
 ;;; ELMO sendlog folder
 (eval-and-compile
