@@ -1,3 +1,8 @@
+2001-03-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-e21.el (wl-draft-overload-menubar): "FCC" -> "Fcc".
+	* wl-mule.el (wl-draft-overload-menubar): Ditto.
+
 2001-02-28  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-mime.el (wl-draft-preview-message): Use `function' instead of
