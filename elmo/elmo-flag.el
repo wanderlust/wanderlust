@@ -48,7 +48,10 @@
 					    name)
   (if (string-match "flag/\\([a-z]+\\)" name)
       (setq name (match-string 1 name))
-    (setq name (symbol-name (car elmo-global-flag-list))))
+    (setq name (symbol-name (car elmo-global-flag-list)))
+    (elmo-folder-set-name-internal
+     folder
+     (concat (elmo-folder-name-internal folder) "/" name)))
   (or (cdr (assq (intern name) elmo-global-flag-folder-alist))
       (let ((flag (intern name))
 	    msgdb-path)
@@ -85,7 +88,7 @@
 			       elem
 			       (elmo-flag-folder-minfo-hash-internal folder))))
 	(setq elmo-global-flag-folder-alist
-	      (cons (cons (intern name) folder) elmo-global-flag-folder-alist))
+	      (cons (cons flag folder) elmo-global-flag-folder-alist))
 	folder)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-flag-folder))
