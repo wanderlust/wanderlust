@@ -1,5 +1,10 @@
 2002-01-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* Version number is increased to 2.9.5.
+	* wl-summary.el (wl-summary-prefetch-msg): Fix for buffer-cache.
+
+2002-01-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-fldmgr-allow-rename-access-group): New variable.
 	* wl-fldmgr.el (wl-fldmgr-rename): Allow rename for access group.
 	Based on the patch written by

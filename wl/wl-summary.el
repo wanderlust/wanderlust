@@ -1268,68 +1268,69 @@ If ARG is non-nil, checking is omitted."
 	   (size (elmo-msgdb-overview-entity-get-size ov))
 	   (inhibit-read-only t)
 	   (buffer-read-only nil)
+	   (file-cached (elmo-file-cache-exists-p message-id))
 	   (force-read (and size
 			    (or (null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
-      (if (or arg
-	      (null (elmo-file-cache-exists-p message-id)))
-	  (unwind-protect
-	      (progn
-		(when (and size (not force-read) wl-prefetch-confirm)
-		  (setq force-read
-			(save-restriction
-			  (widen)
-			  (y-or-n-p
-			   (format
-			    "Message from %s has %d bytes.  Prefetch it? "
-			    (concat
-			     "[ "
-			     (save-match-data
-			       (wl-set-string-width
-				wl-summary-from-width
-				(wl-summary-from-func-internal
-				 (eword-decode-string
-				  (elmo-delete-char
-				   ?\"
-				   (or
-				    (elmo-msgdb-overview-entity-get-from ov)
-				    "??")))))) " ]")
-			    size))))
-		  (message ""))		; flush.
-		(setq mark (cadr (assq number mark-alist)))
-		(if force-read
-		    (save-excursion
-		      (save-match-data
-			;; online
+      (unwind-protect
+	  (progn
+	    (when (and (or arg (not file-cached))
+		       size (not force-read) wl-prefetch-confirm)
+	      (setq force-read
+		    (save-restriction
+		      (widen)
+		      (y-or-n-p
+		       (format
+			"Message from %s has %d bytes.  Prefetch it? "
+			(concat
+			 "[ "
+			 (save-match-data
+			   (wl-set-string-width
+			    wl-summary-from-width
+			    (wl-summary-from-func-internal
+			     (eword-decode-string
+			      (elmo-delete-char
+			       ?\"
+			       (or
+				(elmo-msgdb-overview-entity-get-from ov)
+				"??")))))) " ]")
+			size))))
+	      (message ""))		; flush.
+	    (setq mark (cadr (assq number mark-alist)))
+	    (if force-read
+		(save-excursion
+		  (save-match-data
+		    ;; online
+		    (if (or arg (not file-cached))
 			(elmo-message-encache
 			 wl-summary-buffer-elmo-folder
-			 number)
-			(setq new-mark
-			      (cond
-			       ((string= mark
-					 wl-summary-unread-uncached-mark)
-				wl-summary-unread-cached-mark)
-			       ((string= mark wl-summary-new-mark)
-				(setq wl-summary-buffer-new-count
-				      (- wl-summary-buffer-new-count 1))
-				(setq wl-summary-buffer-unread-count
-				      (+ wl-summary-buffer-unread-count 1))
-				wl-summary-unread-cached-mark)
-			       ((string= mark wl-summary-read-uncached-mark)
-				nil)
-			       (t mark)))
-			(setq mark-alist (elmo-msgdb-mark-set
-					  mark-alist number new-mark))
-			(or new-mark (setq new-mark " "))
-			(elmo-msgdb-set-mark-alist msgdb mark-alist)
-			(wl-summary-set-mark-modified)
-			(wl-summary-update-modeline)
-			(wl-folder-update-unread
-			 (wl-summary-buffer-folder-name)
-			 (+ wl-summary-buffer-unread-count
-			    wl-summary-buffer-new-count)))
-		      new-mark))))))))
+			 number))
+		    (setq new-mark
+			  (cond
+			   ((string= mark
+				     wl-summary-unread-uncached-mark)
+			    wl-summary-unread-cached-mark)
+			   ((string= mark wl-summary-new-mark)
+			    (setq wl-summary-buffer-new-count
+				  (- wl-summary-buffer-new-count 1))
+			    (setq wl-summary-buffer-unread-count
+				  (+ wl-summary-buffer-unread-count 1))
+			    wl-summary-unread-cached-mark)
+			   ((string= mark wl-summary-read-uncached-mark)
+			    nil)
+			   (t mark)))
+		    (setq mark-alist (elmo-msgdb-mark-set
+				      mark-alist number new-mark))
+		    (or new-mark (setq new-mark " "))
+		    (elmo-msgdb-set-mark-alist msgdb mark-alist)
+		    (wl-summary-set-mark-modified)
+		    (wl-summary-update-modeline)
+		    (wl-folder-update-unread
+		     (wl-summary-buffer-folder-name)
+		     (+ wl-summary-buffer-unread-count
+			wl-summary-buffer-new-count)))
+		  new-mark)))))))
 
 ;;(defvar wl-summary-message-uncached-marks
 ;;  (list wl-summary-new-mark
