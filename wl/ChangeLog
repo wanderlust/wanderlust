@@ -1,6 +1,7 @@
 2001-08-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-addrmgr.el (wl-addrmgr-draw): Fix for already-list.
+	(wl-addrmgr-address-entry-list): Ditto.
 
 2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
