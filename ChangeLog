@@ -1,3 +1,7 @@
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS, NEWS.ja: Changed order.
+
 2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* WL-MK (install-wl-icons): Install *.img files for Emacs 21.

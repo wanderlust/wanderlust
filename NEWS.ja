@@ -7,6 +7,11 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** FLIM 1.14.2 以前の FLIM ではうまく動かない場合があります。
    FLIM 1.14.3 以降および対応した SEMI をインストールしてください。
 
+** 名前変更等で既に使われなくなった変数が設定されていると warning
+   が表示されるようになりました。
+   warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を
+   nil にしてください。
+
 ** 新規フォルダ shimbun フォルダが追加されました。
 
    書式: '@' '仮想サーバ名' '.' 'グループ名'
@@ -46,11 +51,6 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** アーカイブ, マルチフォルダ用の msgdb path が変更されました。
    そのままでも問題ありませんが、ディスクに無駄なデータを残したくない方は
    .elmo/multi, .elmo/archive 以下をあらかじめ削除しておいてください。
-
-** 名前変更等で既に使われなくなった変数が設定されていると warning
-   がでるようになりました。
-   warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を
-   nil にしてください。
 
 ** xxx-dir という名前の変数は xxx-directory という名前に変更されました。
    例えば、wl-icon-dir は wl-icon-directory に変更されています。

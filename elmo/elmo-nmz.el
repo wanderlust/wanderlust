@@ -233,7 +233,7 @@ If the value is a list, all elements are used as index paths for namazu."
       (goto-char (point-min))
       (while (not (eobp))
 	(beginning-of-line)
-	(setq bol (point))
+	(setq bol (if (looking-at "^file://") (match-end 0)(point)))
 	(end-of-line)
 	(setq locations (cons (buffer-substring bol (point)) locations))
 	(forward-line 1))

@@ -1,5 +1,8 @@
 2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-nmz.el (elmo-map-folder-list-message-locations): Allow
+	"file://..." index.
+
 	* elmo-pop3.el (elmo-pop3-read-response): Set timeout argument
 	of accept-process-output as 1.
 	(elmo-pop3-read-contents): Ditto.

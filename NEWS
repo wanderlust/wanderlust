@@ -7,6 +7,11 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Wanderlust might not work with FLIM 1.14.2 and older.
    It is recommended to use FLIM 1.14.3 or newer and associated SEMI.
 
+** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
+   messages and urge you to change settings.
+   To suppress warning messages, set elmo-obsolete-variable-show-warnings to
+   nil.
+
 ** Added new type of folders: shimbun folder
 
    Format: '@' 'virtual server name' '.' 'group name'
@@ -45,11 +50,6 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    No problem for running wanderlust even if you do not deal with them.
    But if you don't want to leave useless data on the disk, delete under
    .elmo/multi and .elmo/archive in advance.
-
-** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
-   messages and urge you to change settings.
-   To suppress warning messages, set elmo-obsolete-variable-show-warnings to
-   nil.
 
 ** Variables named xxx-dir are renamed to xxx-directory.
    e.g. wl-icon-dir is renamed to wl-icon-directory.
