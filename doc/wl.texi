@@ -3901,8 +3901,8 @@ Per default, there are 10 following sub-functions.
 'body-file:   Replaces the body with the content of the specified file.
 'bottom:      Inserts the specified string at the bottom of the body.
 'bottom-file: Inserts the specified file at the top of the body.
-'header-top:  Inserts the specified string at the top of the current part.
-'header-bottom: Inserts the specified string at the bottom of the current part.
+'part-top:  Inserts the specified string at the top of the current part.
+'part-bottom: Inserts the specified string at the bottom of the current part.
 'template:    Applies the specified template.
               (refer to the next subsection)
 @end example
