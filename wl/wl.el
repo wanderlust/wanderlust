@@ -805,6 +805,5 @@ If prefix argument is specified, folder checkings are skipped."
 
 (require 'product)
 (product-provide (provide 'wl) (require 'wl-version))
-(provide 'wl) ; circular dependency
 
 ;;; wl.el ends here

@@ -29,7 +29,6 @@
 ;;; Code:
 ;;
 (require 'product)
-(eval-when-compile (require 'wl-util))	; wl-match-string
 (provide 'wl-version)
 
 (product-provide 'wl-version
@@ -48,6 +47,8 @@
 (defun wl-version-show ()
   (interactive)
   (message "%s" (wl-version t)))
+
+(eval-when-compile (require 'wl-util))	; wl-match-string
 
 (defun wl-generate-user-agent-string ()
   "A candidate of wl-generate-mailer-string-func.
