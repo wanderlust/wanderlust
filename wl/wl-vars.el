@@ -1025,7 +1025,7 @@ cdr of each cons cell is used for preparing headers of draft message."
 						      answered
 						      forwarded
 						      unread)
-  "List of preserved flag symbols to define the priority to map\
+  "List of preserved flag symbols to define the priority to map \
 to the persistent mark.
 Special symbol `flag' means the user defined flag."
   :type '(repeat (symbol :tag "preserved flag"))
