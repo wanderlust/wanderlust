@@ -749,50 +749,12 @@ you."
 
 (defun wl-summary-mode ()
   "Major mode for reading threaded messages.
-The keys that are defined for this mode are:\\<wl-summary-mode-map>
+See Info under Wanderlust for full documentation.
 
-SPC	Read messages.
-DEL	Back-scroll this message.
-.	Force to display this message.
-RET	Make this message scroll up with one line.
-M-RET -	Make this message scroll down with one line.
+Special commands:
+\\{wl-summary-mode-map}
 
-C-n	Go to the next line.
-C-p	Go to the previous line.
-n	Move to below then display.
-N       Move to next unread.
-p	Move to above then display.
-P       Move to previous unread.
-s	Sync current folder.
-t       Same as 's' but force update.
-g	Go to the folder which you input.
-w	Write a message. A new draft is prepared.
-a	Answer to this message. A new draft is prepared in Draft mode.
-f	Forward this message to a third person. A new draft is prepared in
-	Draft mode and this message is automatically attached.
-v	Toggle \"Summary and Folder view\".
-        You can quickly put the delete marks since the next message is not
-        displayed.
-i       Prefetch message if uncached.
-o	Put the refile mark('o') on this message.
-!	Mark current message as unread.
-$	Toggle mark current message as important.
-d	Put the delete mark('D') on this message.
-c       Check all messages as read.
-*	Put the temporal mark('*') on this message.
-u	Cancel the mark on this message.
-x	Process marked messages.
-
-mo	Put the refile mark onto all messages marked with '*'.
-	This is very convenient to refile all messages picked by '?'.
-md	Put the delete mark onto all messages marked with '*'.
-mi      Prefetch all messages marked with '*'.
-mu	Unmark all target-marked messages.
-mt      Put the '*' mark onto all messages which belong to th current thread.
-ma      Put the '*' mark onto all messages.
-?	Pick messages according to a pick pattern which you input,
-	then put the '*' mark onto them.
-q	Goto folder mode."
+Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (interactive)
   (unless (interactive-p) (kill-all-local-variables))
   (setq major-mode 'wl-summary-mode)
@@ -2551,7 +2513,7 @@ If ARG is non-nil, checking is omitted."
 	nil))))
 
 (defun wl-summary-toggle-thread (&optional arg)
-  "Toggle thread status (T)hread and (S)equencial.
+  "Toggle thread status (T)hread and (S)equential.
 If ARG, without confirm."
   (interactive "P")
   (when (or arg
