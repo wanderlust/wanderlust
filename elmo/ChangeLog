@@ -1,3 +1,13 @@
+2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-filter-folder-diff): Use target folder's diff
+	Only when filter is 'last'.
+
+	* elmo-util.el (elmo-condition-atom-regexp): New constant.
+	(elmo-condition-parse-search-value): Use it.
+	(elmo-read-search-condition-internal): Quote value only when
+	it is not an atom.
+
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo2.el (elmo-generic-folder-diff): Fix.

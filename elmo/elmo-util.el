@@ -482,6 +482,9 @@ File content is encoded with MIME-CHARSET."
       (error "%s is not supported folder type" folder))))
 
 ;;; Search Condition
+
+(defconst elmo-condition-atom-regexp "[^/ \")|&]*")
+
 (defun elmo-read-search-condition (default)
   "Read search condition string interactively"
   (elmo-read-search-condition-internal "Search by" default))
@@ -497,7 +500,8 @@ File content is encoded with MIME-CHARSET."
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
 				   "!Since" "!Before" "!ToCc")
-				 elmo-msgdb-extra-fields)))))
+				 elmo-msgdb-extra-fields))))
+	 value)
     (setq field (if (string= field "")
 		    (setq field default)
 		  field))
@@ -511,19 +515,18 @@ File content is encoded with MIME-CHARSET."
 	       (concat field "(2) Search by") default)
 	      ")"))
      ((string-match "Since\\|Before" field)
-      (concat
-       (downcase field) ":"
-       (completing-read (format "Value for '%s': " field)
-			(mapcar (function
-				 (lambda (x)
-				   (list (format "%s" (car x)))))
-				elmo-date-descriptions))))
+      (concat (downcase field) ":"
+	      (completing-read (format "Value for '%s': " field)
+			       (mapcar (function
+					(lambda (x)
+					  (list (format "%s" (car x)))))
+				       elmo-date-descriptions))))
      (t
-      (concat
-       (downcase field) ":"
-       (prin1-to-string
-	(read-from-minibuffer
-	 (format "Value for '%s': " field))))))))
+      (setq value (read-from-minibuffer (format "Value for '%s': " field)))
+      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
+			    value)
+	(setq value (prin1-to-string value)))
+      (concat (downcase field) ":" value)))))
 
 (defsubst elmo-condition-parse-error ()
   (error "Syntax error in '%s'" (buffer-string)))
@@ -613,8 +616,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(looking-at "[0-9]+ *daysago")
 	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
 	(looking-at "[0-9]+")
-	(looking-at "[^/ \")|&]*") ; atom* (except quoted specials).
-	)
+	(looking-at elmo-condition-atom-regexp))
     (prog1 (elmo-match-buffer 0)
       (goto-char (match-end 0))))
    (t (error "Syntax error '%s'" (buffer-string)))))

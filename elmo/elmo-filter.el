@@ -83,7 +83,7 @@
 (defun elmo-filter-folder-diff (spec folder &optional number-list)
   (if (or (elmo-multi-p folder)
 	  (not (and (vectorp (nth 1 spec))
-		    (string-match "^first$\\|^last$"
+		    (string-match "^last$"
 				  (elmo-filter-key (nth 1 spec))))))
       (cons nil (cdr (elmo-folder-diff (nth 2 spec))))
     (elmo-generic-folder-diff spec folder number-list)))
