@@ -1,5 +1,20 @@
 2003-10-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-imap4.el (elmo-imap4-session): Added new slot `flags'.
+	(elmo-imap4-session-select-mailbox): Set it according to the SELECT
+	response.
+	(elmo-folder-open): Ditto.
+	(elmo-imap4-set-flag): Send store flag command only when the `flags'
+	slot of the session includes the flag.
+	(elmo-imap4-session-flag-available-p): New function.
+	(elmo-imap4-folder-list-flagged): Ditto.
+	(elmo-folder-list-unreads-plugged): Use it.
+	(elmo-folder-list-importants-plugged): Ditto.
+	(elmo-folder-list-answereds-plugged): Ditto.
+	(elmo-imap4-search-internal-primitive): Ditto.
+	(elmo-imap4-folder-list-any-plugged,
+	elmo-imap4-folder-list-digest-plugged): Abolish.
+
 	* elmo-filter.el (elmo-folder-search): Don't call elmo-list-filter
 	if numbers is nil.
 

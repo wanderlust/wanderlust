@@ -181,7 +181,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;;; Session
 (eval-and-compile
   (luna-define-class elmo-imap4-session (elmo-network-session)
-		     (capability current-mailbox read-only))
+		     (capability current-mailbox read-only flags))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
 ;;; MIME-ELMO-IMAP Location
@@ -693,7 +693,10 @@ Returns response value if selecting folder succeed. "
 	      (elmo-imap4-session-set-current-mailbox-internal session mailbox)
 	      (elmo-imap4-session-set-read-only-internal
 	       session
-	       (nth 1 (assq 'read-only (assq 'ok response)))))
+	       (nth 1 (assq 'read-only (assq 'ok response))))
+	      (elmo-imap4-session-set-flags-internal
+	       session
+	       (nth 1 (assq 'flags response))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
 	  (if (and (eq no-error 'notify-bye)
 		   (elmo-imap4-response-bye-p response))
@@ -729,6 +732,47 @@ Returns response value if selecting folder succeed. "
       (format (if elmo-imap4-use-uid "uid search %s"
 		"search %s") flag))
      'search)))
+
+(defun elmo-imap4-session-flag-available-p (session flag)
+  (case flag
+    ((read unread) (elmo-string-member-ignore-case
+		    "\\seen" (elmo-imap4-session-flags-internal session)))
+    (important
+     (elmo-string-member-ignore-case
+      "\\flagged" (elmo-imap4-session-flags-internal session)))
+    (digest
+     (or (elmo-string-member-ignore-case
+	  "\\seen" (elmo-imap4-session-flags-internal session))
+	 (elmo-string-member-ignore-case
+	  "\\flagged" (elmo-imap4-session-flags-internal session))))
+    (t (elmo-string-member-ignore-case
+	(concat "\\" (symbol-name flag))
+	(elmo-imap4-session-flags-internal session)))))
+
+(defun elmo-imap4-folder-list-flagged (folder flag)
+  "List flagged message numbers in the FOLDER.
+FLAG is one of the `unread', `read', `important', `answered', `any'."
+  (let ((session (elmo-imap4-get-session folder))
+	(criteria (case flag
+		    (read "seen")
+		    (unread "unseen")
+		    (important "flagged")
+		    (any "or answered or unseen flagged")
+		    (digest "or unseen flagged")
+		    (t (symbol-name flag)))))
+    (if (elmo-imap4-session-flag-available-p session flag)
+	(progn
+	  (elmo-imap4-session-select-mailbox
+	   session
+	   (elmo-imap4-folder-mailbox-internal folder))
+	  (elmo-imap4-response-value
+	   (elmo-imap4-send-command-wait
+	    session
+	    (format (if elmo-imap4-use-uid "uid search %s"
+		      "search %s") criteria))
+	   'search))
+      ;; List flagged messages in the msgdb.
+      (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag))))
 
 (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
 (defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
@@ -1857,21 +1901,15 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-list-unreads-plugged
   ((folder elmo-imap4-folder))
-  (elmo-imap4-list folder "unseen"))
+  (elmo-imap4-folder-list-flagged folder 'unread))
 
 (luna-define-method elmo-folder-list-importants-plugged
   ((folder elmo-imap4-folder))
-  (elmo-imap4-list folder "flagged"))
+  (elmo-imap4-folder-list-flagged folder 'important))
 
 (luna-define-method elmo-folder-list-answereds-plugged
   ((folder elmo-imap4-folder))
-  (elmo-imap4-list folder "answered"))
-
-(defun elmo-imap4-folder-list-any-plugged (folder)
-  (elmo-imap4-list folder "or answered or unseen flagged"))
-
-(defun elmo-imap4-folder-list-digest-plugged (folder)
-  (elmo-imap4-list folder "or unseen flagged"))
+  (elmo-imap4-folder-list-flagged folder 'answered))
 
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
@@ -2059,26 +2097,29 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					folder))
-    (setq set-list (elmo-imap4-make-number-set-list
-		    numbers
-		    elmo-imap4-number-set-chop-length))
-    (while set-list
-      (with-current-buffer (elmo-network-session-buffer session)
-	(setq elmo-imap4-fetch-callback nil)
-	(setq elmo-imap4-fetch-callback-data nil))
-      (unless (elmo-imap4-response-ok-p
-	       (elmo-imap4-send-command-wait
-		session
-		(format
-		 (if elmo-imap4-use-uid
-		     "uid store %s %sflags.silent (%s)"
-		   "store %s %sflags.silent (%s)")
-		 (cdr (car set-list))
-		 (if remove "-" "+")
-		 flag)))
-	(setq response 'fail))
-      (setq set-list (cdr set-list)))
-    (not (eq response 'fail))))
+    (when (elmo-string-member-ignore-case
+	   flag
+	   (elmo-imap4-session-flags-internal session))
+      (setq set-list (elmo-imap4-make-number-set-list
+		      numbers
+		      elmo-imap4-number-set-chop-length))
+      (while set-list
+	(with-current-buffer (elmo-network-session-buffer session)
+	  (setq elmo-imap4-fetch-callback nil)
+	  (setq elmo-imap4-fetch-callback-data nil))
+	(unless (elmo-imap4-response-ok-p
+		 (elmo-imap4-send-command-wait
+		  session
+		  (format
+		   (if elmo-imap4-use-uid
+		       "uid store %s %sflags.silent (%s)"
+		     "store %s %sflags.silent (%s)")
+		   (cdr (car set-list))
+		   (if remove "-" "+")
+		   flag)))
+	  (setq response 'fail))
+	(setq set-list (cdr set-list)))
+      (not (eq response 'fail)))))
 
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
@@ -2117,17 +2158,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(mapcar '(lambda (x) (delete x numbers)) rest)
 	numbers))
      ((string= "flag" search-key)
-      (cond
-       ((string= "unread" (elmo-filter-value filter))
-	(elmo-folder-list-unreads folder))
-       ((string= "important" (elmo-filter-value filter))
-	(elmo-folder-list-importants folder))
-       ((string= "answered" (elmo-filter-value filter))
-	(elmo-folder-list-answereds folder))
-       ((string= "digest" (elmo-filter-value filter))
-	(elmo-imap4-folder-list-digest-plugged folder))
-       ((string= "any" (elmo-filter-value filter))
-	(elmo-imap4-folder-list-any-plugged folder))))
+      (elmo-imap4-folder-list-flagged
+       folder (intern (elmo-filter-value filter))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key)
@@ -2431,7 +2463,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		     session mailbox)
 		    (elmo-imap4-session-set-read-only-internal
 		     session
-		     (nth 1 (assq 'read-only (assq 'ok response)))))
+		     (nth 1 (assq 'read-only (assq 'ok response))))
+		    (elmo-imap4-session-set-flags-internal
+		     session
+		     (nth 1 (assq 'flags response))))
 		(elmo-imap4-session-set-current-mailbox-internal session nil)
 		(if (elmo-imap4-response-bye-p response)
 		    (elmo-imap4-process-bye session)
