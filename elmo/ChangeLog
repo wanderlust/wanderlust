@@ -1,23 +1,3 @@
-2000-02-17  Kenichi OKADA  <okada@opaopa.org>
-
-	* elmo-pop3.el (elmo-network-authenticate-session): Bind `sasl-mechanisms'
-
-2001-02-16  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-msgdb.el (elmo-msgdb-rename-path): Fix.
-
-	* elmo-imap4.el (elmo-imap4-rename-folder): Send select command
-	before rename command.
-
-2001-02-14  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo2.el (elmo-buffer-cache-message): Added argument `unread'.
-
-2001-02-13  OKAZAKI Tetsurou  <refactor@acidrain.localnet>
-
-	* elmo-imap4.el (elmo-imap4-prefetch-msg): Set `msgdb'
-	argument of `elmo-imap4-read-msg' as nil.
-
 2001-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-prefetch-msg): Set `unread' argument of
