@@ -121,6 +121,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Split messages::           Splitting messages
 * Address Book::             Management of Address Book
 * Spam Filter::              Spam filtering
+* Batch Processing::         Invoke commands in batch mode
 * Customization::            Customizing Wanderlust
 * Terminology::              Terminologies
 * Mailing List::             Wanderlust mailing list
@@ -6697,7 +6698,7 @@ Edit entry.
 @end table
 
 
-@node Spam Filter, Customization, Address Book, Top
+@node Spam Filter, Batch Processing, Address Book, Top
 @chapter Spam Filter
 @cindex Spam Filter
 
@@ -7219,7 +7220,31 @@ for making spam decision.
 @end table
 
 
-@node Customization, Terminology, Spam Filter, Top
+@node Batch Processing, Customization, Spam Filter, Top
+@chapter Batch Processing
+@cindex Batch Processing
+
+You can request wanderlust to do some job on the command line.
+For now, you can invoke prefetching new messages in specified folders.
+
+Specify target folders in @code{wl-batch-prefetch-folder-list} then
+invoke as follows to execute prefetching:
+
+@group
+emacs -batch -l wl-batch -f wl-batch-prefetch
+@end group
+
+@section Customize Variables
+
+@table @code
+@item wl-batch-prefetch-folder-list
+@vindex wl-batch-prefetch-folder-list
+Target folders of prefetching by @code{wl-batch-prefetch}, specified as
+a list of folder names.
+@end table
+
+
+@node Customization, Terminology, Batch Processing, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 

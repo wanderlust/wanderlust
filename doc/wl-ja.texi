@@ -146,6 +146,7 @@ into another language, under the above conditions for modified versions.
 * Split messages::           メッセージの振り分け
 * Address Book::             アドレス帳
 * Spam Filter::              Spam フィルタ
+* Batch Processing::         バッチ処理
 * Customization::            カスタマイズ
 * Migration::                旧バージョンからの移行
 * Terminology::              用語の解説
@@ -6714,7 +6715,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @end table
 
 
-@node Spam Filter, Migration, Address Book, Top
+@node Spam Filter, Batch Processing, Address Book, Top
 @chapter Spam フィルタ
 @cindex Spam Filter
 
@@ -7231,7 +7232,31 @@ overview 情報に含まれないフィールドを検査の対象とする場合、
 @end table
 
 
-@node Migration, Customization, Spam Filter, Top
+@node Batch Processing, Migration, Spam Filter, Top
+@chapter バッチ処理
+@cindex Batch Processing
+
+コマンドラインから wanderlust に仕事をさせることができます。
+現在できる処理は指定したフォルダの新着メッセージのプリフェッチです。
+
+@code{wl-batch-prefetch-folder-list} にプリフェッチを行うフォルダを
+指定してコマンドラインから以下のようにするとプリフェッチを行います。
+
+@group
+emacs -batch -l wl-batch -f wl-batch-prefetch
+@end group
+
+@section カスタマイズ変数
+
+@table @code
+@item wl-batch-prefetch-folder-list
+@vindex wl-batch-prefetch-folder-list
+@code{wl-batch-prefetch} でプリフェッチを行うフォルダを、フォルダ名のリスト
+で指定します。
+@end table
+
+
+@node Migration, Customization, Batch Processing, Top
 @chapter 旧バージョンからの移行
 
 
