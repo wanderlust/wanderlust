@@ -826,7 +826,7 @@
 		    wl-summary-buffer-number-regexp 
 		    "\\(.\\)\\(.\\)../..\(.*\)..:.. \\("
 		    wl-highlight-thread-indent-string-regexp
-		    "\\)\\["))
+		    "\\)[[<]"))
 	  fregexp fsymbol bol eol matched thread-top looked-at)
       (beginning-of-line)
       (setq bol (point))
