@@ -191,7 +191,7 @@
   (interactive)
   (if (not (file-exists-p wl-x-face-file))
       (error "File %s does not exist" wl-x-face-file)
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (search-forward mail-header-separator nil t)
     (beginning-of-line)
     (wl-draft-insert-x-face-field-here)
