@@ -171,6 +171,28 @@ See info under Wanderlust for full documentation.
    (wl-parse-addresses
     (mapconcat 'identity (elmo-multiple-fields-body-list (list field)) ","))))
 
+(defun wl-addrmgr-pickup-entry-list (buffer)
+  "Return a list of address entiry from BUFFER."
+  (when buffer
+    (with-current-buffer buffer
+      (mapcar
+       (lambda (addr)
+	 (let ((structure (std11-extract-address-components addr)))
+	   (list (cadr structure)
+		 (or (car structure) "")
+		 (or (car structure) ""))))
+       (wl-parse-addresses
+	(mapconcat
+	 'identity
+	 (elmo-multiple-fields-body-list '("to" "cc" "bcc")) ","))))))
+
+(defun wl-addrmgr-merge-entries (base-list append-list)
+  "Return a merged list of address entiry."
+  (dolist (entry append-list)
+    (unless (assoc (car entry) base-list)
+      (setq base-list (nconc base-list (list entry)))))
+  base-list)
+
 ;;;###autoload
 (defun wl-addrmgr ()
   "Start an Address manager."
@@ -201,7 +223,9 @@ See info under Wanderlust for full documentation.
     (unless wl-addrmgr-sort-order
       (setq wl-addrmgr-sort-order wl-addrmgr-default-sort-order))
     (setq wl-addrmgr-draft-buffer buffer)
-    (setq wl-addrmgr-list (wl-addrmgr-list))
+    (setq wl-addrmgr-list
+	  (wl-addrmgr-merge-entries (wl-addrmgr-list)
+				    (wl-addrmgr-pickup-entry-list buffer)))
     (wl-addrmgr-draw already-list)
     (setq wl-addrmgr-unknown-list already-list)
     (wl-addrmgr-goto-top)))
