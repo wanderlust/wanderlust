@@ -3,12 +3,12 @@
 	* wl-version.el (toplevel): Use `product-version-as-string' for
 	set verstion-string, if defined.
 
-	* wl-version.el (wl-version-show): Insert string, when call with
-	argument.  And add docstring.
+	* wl-version.el (wl-version-show): Insert string at point, when
+	call with argument.
 
 	* wl-version.el (wl-generate-user-agent-string): Use
 	`product-string-1' instead of `wl-appname', `wl-version' and
-	`wl-codename.
+	`wl-codename'.
 
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
