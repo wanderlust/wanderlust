@@ -1,3 +1,9 @@
+2004-11-23  Daishi Kato <daishi@axlight.com>
+
+	* elsp-spamoracle.el (elmo-spam-spamoracle-spam-header-regexp):
+	New user option.
+	(elmo-spam-spamoracle-call): Use it.
+
 2004-11-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo.el (elmo-message-accessible-p): Message in dop spool

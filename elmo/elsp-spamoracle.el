@@ -50,6 +50,11 @@
   :type '(file :tag "Filename of the SpamOracle database")
   :group 'elmo-spam-spamoracle)
 
+(defcustom elmo-spam-spamoracle-spam-header-regexp "^X-Spam: yes;"
+  "Regexp of the SpamOracle spam header."
+  :type '(string :tag "Regexp of the SpamOracle spam header")
+  :group 'elmo-spam-spamoracle)
+
 (eval-and-compile
   (luna-define-class elsp-spamoracle (elsp-generic)))
 
@@ -81,7 +86,8 @@
 	  (goto-char (point-min))
 	  (let ((body-point (re-search-forward "^$" nil t)))
 	    (goto-char (point-min))
-	    (re-search-forward "^X-Spam: yes;" body-point t)))
+	    (re-search-forward elmo-spam-spamoracle-spam-header-regexp
+			       body-point t)))
       t)))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-spamoracle)
