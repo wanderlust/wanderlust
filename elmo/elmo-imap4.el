@@ -192,13 +192,16 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   (luna-define-internal-accessors 'mime-elmo-imap-location))
 
 ;;; Debug
-(defsubst elmo-imap4-debug (message &rest args)
-  (if elmo-imap4-debug
-      (with-current-buffer (get-buffer-create "*IMAP4 DEBUG*")
-	(goto-char (point-max))
-	(if elmo-imap4-debug-inhibit-logging
-	    (insert "NO LOGGING\n")
-	  (insert (apply 'format message args) "\n")))))
+(defmacro elmo-imap4-debug (message &rest args)
+  (` (if elmo-imap4-debug
+	 (elmo-imap4-debug-1 (, message) (,@ args)))))
+
+(defun elmo-imap4-debug-1 (message &rest args)
+  (with-current-buffer (get-buffer-create "*IMAP4 DEBUG*")
+    (goto-char (point-max))
+    (if elmo-imap4-debug-inhibit-logging
+	(insert "NO LOGGING\n")
+      (insert (apply 'format message args) "\n"))))
 
 (defsubst elmo-imap4-decode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
