@@ -1,5 +1,8 @@
 2004-12-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-message.el (wl-message-buffer-prefetch-subr): Fix argument of
+	wl-message-buffer-display.
+
 	* wl-util.el (wl-set-save-drafts): Fix typo.
 
 2004-12-01  Katsumi Yamaoka  <yamaoka@jpl.org>
