@@ -1,5 +1,15 @@
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-insert-summary): Changed argument.
+	(wl-summary-rescan): Follow the change above.
+	(wl-summary-sync-update): Ditto.
+	(wl-summary-insert-thread-entity): Ditto;
+	Don't use `let*' in every while loop;
+	Detect infinite loop of threads.
+	(wl-summary-update-thread): Removed argument `overview'.
+
+	* wl-thread.el (wl-thread-insert-message): Ditto.
+
 	* Version number is increased to 2.9.10.
 	
 	* wl-message.el (wl-message-redisplay): Ignore errors while

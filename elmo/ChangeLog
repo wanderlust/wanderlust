@@ -2,6 +2,10 @@
 
 	* elmo-version.el (elmo-version): Up to 2.9.10.
 
+	* elmo-util.el (elmo-get-hash-val): Check the 1st argument is string.
+
+	* elmo-msgdb.el (elmo-msgdb-get-parent-entity): New inline function.
+
 2002-04-26  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-utils.el (elmo-make-directory): Add option.

@@ -658,7 +658,8 @@ ENTITY is returned."
 	;; don't update buffer
 	update-msgs)))) ; return value
 
-(defun wl-thread-insert-message (overview-entity overview mark-alist
+(defun wl-thread-insert-message (overview-entity
+				 mark-alist
 				 msg parent-msg &optional update linked)
   "Insert MSG to the entity.
 When optional argument UPDATE is non-nil,
@@ -673,7 +674,8 @@ Message is inserted to the summary buffer."
 	;; insert as children.
 	(wl-thread-entity-insert-as-children
 	 parent
-	 (setq child-entity (wl-thread-create-entity msg (nth 0 parent) nil linked)))
+	 (setq child-entity (wl-thread-create-entity
+			     msg (nth 0 parent) nil linked)))
       ;; insert as top message.
       (wl-thread-entity-insert-as-top
        (wl-thread-create-entity msg nil)))
@@ -684,7 +686,6 @@ Message is inserted to the summary buffer."
 	    (progn
 	      (wl-summary-update-thread
 	       overview-entity
-	       overview
 	       mark-alist
 	       child-entity
 	       (elmo-msgdb-overview-get-entity
