@@ -1,3 +1,8 @@
+2004-09-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-mime.el (wl-mime-preview-follow-current-region): Avoid error
+	on null entity.
+
 2004-09-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-draft-reply-default-position): Fix range.

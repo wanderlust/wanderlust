@@ -96,7 +96,8 @@ It calls following-method selected from variable
 	(insert-buffer-substring the-buf r-beg r-end)
 	(goto-char (point-min))
 	(let ((current-entity
-	       (if (and (eq (mime-entity-media-type entity) 'message)
+	       (if (and entity
+			(eq (mime-entity-media-type entity) 'message)
 			(eq (mime-entity-media-subtype entity) 'rfc822))
 		   (car (mime-entity-children entity))
 		 entity)))
