@@ -2707,6 +2707,16 @@ The initial setting is @code{nil}.
 A list of regexp of folders to enable message prefetching.
 @end table
 
+@table @code
+@item wl-message-buffer-prefetch-depth
+@vindex wl-message-buffer-prefetch-depth
+The initial settionf is 5. The number of prefetching messages.
+
+@table @code
+@item wl-message-buffer-prefetch-idle-time
+@vindex wl-message-buffer-prefetch-idle-time
+The initial settionf is 0.2 (in seconds). The period of prefetching.
+
 
 @node Auto Refile, Sticky Summary, Cache, Summary
 @section Auto Refile

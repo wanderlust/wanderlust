@@ -1695,6 +1695,16 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
+(defcustom wl-message-buffer-prefetch-depth 5
+  "*Depth of buffer prefetch in summary mode."
+  :type 'integer
+  :group 'wl-pref)
+
+(defcustom wl-message-buffer-prefetch-idle-time 0.2
+  "*Idle time of buffer prefetch."
+  :type 'number
+  :group 'wl-pref)
+
 (defcustom wl-summary-always-sticky-folder-list nil
   "All folders that match this list has sticky summary.
 Each elements are regexp of folder name."

@@ -2701,6 +2701,16 @@ IMAP のメッセージだけが先読みされます。この変数は
 先読み機能を有効にするフォルダをフォルダ名(正規表現)のリストで指定します。
 @end table
 
+@table @code
+@item wl-message-buffer-prefetch-depth
+@vindex wl-message-buffer-prefetch-depth
+初期設定は 5。先読み機能するメッセージの数。
+
+@table @code
+@item wl-message-buffer-prefetch-idle-time
+@vindex wl-message-buffer-prefetch-idle-time
+初期設定は 0.2 (単位:秒)。先読み機能する時間間隔。
+
 
 @node Auto Refile, Sticky Summary, Cache, Summary
 @section 自動リファイル

@@ -1,5 +1,16 @@
 2002-01-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-message-buffer-prefetch-depth): New variable.
+	(wl-message-buffer-prefetch-idle-time): Moved from `wl-message.el'
+	* wl-message.el (wl-message-buffer-prefetch-next): Rewrite.
+	(wl-message-buffer-prefetch): Rewrite.
+	(wl-message-buffer-prefetch-idle-time): Removed.
+	* wl-summary.el (wl-summary-redisplay-internal):
+	Prepare prefetch with `wl-message-buffer-prefetch-depth'.
+	Error check for `wl-message-buffer-prefetch-depht'.
+
+2002-01-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* Version number is increased to 2.9.5.
 	* wl-summary.el (wl-summary-prefetch-msg): Fix for buffer-cache.
 
