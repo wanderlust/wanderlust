@@ -3381,7 +3381,7 @@ Non-nil $B$J$i%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$KI=<($7$^$9!#(B
 
 @item wl-summary-fix-timezone
 @vindex wl-summary-fix-timezone
-$B=i4|@_Dj$O(B @code{nil}$B!#%5%^%j$NF|;~I=<($r;XDj$7$?%?%$%`%>!<%s$KD>$7$^$9!#(B
+$B=i4|@_Dj$O(B @samp{nil}$B!#%5%^%j$NF|;~I=<($r;XDj$7$?%?%$%`%>!<%s$KD>$7$^$9!#(B
 @code{nil} $B$J$i$P!"%G%U%)%k%H$N%?%$%`%>!<%s$r;2>H$7$FD>$7$^$9!#(B
 $B%G%U%)%k%H$N%?%$%`%>!<%s$H$O!"%7%9%F%`$K$"$i$+$8$a@_Dj$5$l$?%?%$%`%>!<%s$+!"(B
 $B4D6-JQ?t(B @samp{TZ} $B$NCM$G$9!#(B
@@ -3646,21 +3646,18 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex wl-message-window-size
 $B=i4|@_Dj$O(B @code{(1 . 4)}$B!#(Bcons $B%;%k$G!"(Bcar $BCM(B: cdr $BCM$,%5%^%j$N%&%#%s%I(B
 $B%&I}!'%a%C%;!<%8$N%&%#%s%I%&I}$H$J$j$^$9!#(B
-
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI=<($7$J$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
 $B;XDj$7$^$9!#(B
-@code{nil} $B$J$i!"(B@code{mime-view-ignored-field-list} $B$NCM$,;H$o$l$^$9!#(B
-
+nil $B$J$i!"(Bmime-view-ignored-field-list $B$NCM$,;H$o$l$^$9!#(B
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI,$:I=<($7$?$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
-$B;XDj$7$^$9!#(B@code{wl-message-ignored-field-list} $B$h$jM%@h$5$l$^$9!#(B
-@code{nil} $B$J$i!"(B@code{mime-view-visible-field-list} $B$NCM$,;H$o$l$^$9!#(B
-
+$B;XDj$7$^$9!#(Bwl-message-ignored-field-list $B$h$jM%@h$5$l$^$9!#(B
+nil $B$J$i!"(Bmime-view-visible-field-list $B$NCM$,;H$o$l$^$9!#(B
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
 (SEMI $B$N$_(B) $B=i4|@_Dj$O(B 

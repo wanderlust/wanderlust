@@ -494,17 +494,14 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal
 			 (elmo-pop3-get-session folder)))
-    (let (locations)
+    (let (list)
       (if elmo-pop3-uidl-done
 	  (progn
 	    (mapatoms
 	     (lambda (atom)
-	       (setq locations (cons (symbol-name atom) locations)))
+	       (setq list (cons (symbol-name atom) list)))
 	     elmo-pop3-uidl-number-hash)
-	    (sort locations
-		  (lambda (loc1 loc2)
-		    (< (elmo-pop3-uidl-to-number loc1)
-		       (elmo-pop3-uidl-to-number loc2)))))
+	    (nreverse list))
 	(error "POP3: Error in UIDL")))))
 
 (defun elmo-pop3-list-folder-by-location (folder locations)
@@ -569,12 +566,11 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (elmo-pop3-folder-list-messages folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-pop3-folder))
-  (elmo-folder-open-internal folder)
   (elmo-folder-check folder)
   (if (elmo-pop3-folder-use-uidl-internal folder)
       (prog1
 	  (elmo-pop3-list-by-uidl-subr folder 'nonsort)
-	(elmo-folder-close-internal folder))
+	(elmo-folder-close folder))
     (let* ((process
 	    (elmo-network-session-process-internal
 	     (elmo-pop3-get-session folder)))
@@ -589,7 +585,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	  (setq total
 		(string-to-int
 		 (substring response (match-beginning 1)(match-end 1 ))))
-	  (elmo-folder-close-internal folder)
+	  (elmo-folder-close folder)
 	  (cons total total))))))
 
 (defvar elmo-pop3-header-fetch-chop-length 200)
@@ -685,6 +681,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 (defun elmo-pop3-sort-msgdb-by-original-number (folder msgdb)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
+    (current-buffer)
     (setq overview (elmo-pop3-sort-overview-by-original-number
 		    overview
 		    (elmo-pop3-folder-location-alist-internal folder)))
@@ -828,8 +825,6 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 			       folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pop3-folder))
-  (elmo-pop3-folder-set-location-alist-internal folder nil)
-  ;; Just close connection
   (elmo-folder-check folder))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-pop3-folder)
@@ -904,16 +899,11 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (and (elmo-folder-persistent-internal folder)
        (elmo-pop3-folder-use-uidl-internal folder)))
 
-(luna-define-method elmo-folder-clear :around ((folder elmo-pop3-folder)
-					       &optional keep-killed)
-  (unless keep-killed
-    (elmo-pop3-folder-set-location-alist-internal folder nil))
-  (luna-call-next-method))
-
 (luna-define-method elmo-folder-check ((folder elmo-pop3-folder))
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-pop3-get-session folder 'if-exists)))
 	(when session
+	  (elmo-pop3-folder-set-location-alist-internal folder nil)
 	  (elmo-network-close-session session)))))
 
 (require 'product)
