@@ -121,7 +121,7 @@
 	(concat "#" (int-to-string number))
 	(elmo-map-folder-location-hash-internal folder))))
 
-(luna-define-method elmo-folder-pack-number ((folder elmo-map-folder))
+(luna-define-method elmo-folder-pack-numbers ((folder elmo-map-folder))
   (let* ((msgdb (elmo-folder-msgdb folder))
 	 (old-number-alist (elmo-msgdb-get-number-alist msgdb))
 	 (old-overview (elmo-msgdb-get-overview msgdb))
