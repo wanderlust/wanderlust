@@ -304,7 +304,7 @@ See `shimbun-headers' for more detail about RANGE."
 					      important-mark
 					      seen-list)
   (let* (overview number-alist mark-alist entity
-		  i percent number length pair msgid gmark seen)
+		  i percent number length pair msgid)
     (setq length (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
