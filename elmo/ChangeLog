@@ -1,3 +1,8 @@
+2002-01-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-utils.el (elmo-read-search-condition-internal): REQUIRE-MATCH
+	is t on `completing-read'.
+
 2002-01-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-filter.el (elmo-filter-folder-list-unreads-internal): Call

@@ -155,7 +155,8 @@ File content is encoded with MIME-CHARSET."
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
 				   "!Since" "!Before" "!ToCc")
-				 elmo-msgdb-extra-fields))))
+				 elmo-msgdb-extra-fields))
+		 nil t))
 	 value)
     (setq field (if (string= field "")
 		    (setq field default)
