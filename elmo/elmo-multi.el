@@ -517,6 +517,12 @@
 	      (elmo-folder-list-flagged child flag in-msgdb)))))
     numbers))
 
+(luna-define-method elmo-folder-set-message-modified ((folder
+						       elmo-multi-folder)
+						      modified)
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-set-message-modified child modified)))
+
 (luna-define-method elmo-folder-commit ((folder elmo-multi-folder))
   (dolist (child (elmo-multi-folder-children-internal folder))
     (elmo-folder-commit child)))
