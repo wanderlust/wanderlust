@@ -1,6 +1,9 @@
 2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* test-elmo-util.el: New file
+	* test-wl-util.el: New file.
+	(test-wl-parse-addresses-1, test-wl-unique-id): New testcases.
+
+	* test-elmo-util.el: New file.
 	(test-elmo-replace-string-as-filename-1): New testcase.
 
 	* test-dist.el: New file.
