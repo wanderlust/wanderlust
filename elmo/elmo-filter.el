@@ -294,6 +294,9 @@
 (luna-define-method elmo-folder-message-file-p ((folder elmo-filter-folder))
   (elmo-folder-message-file-p (elmo-filter-folder-target-internal folder)))
 
+(luna-define-method elmo-folder-local-p ((folder elmo-filter-folder))
+  (elmo-folder-local-p (elmo-filter-folder-target-internal folder)))
+
 (luna-define-method elmo-folder-plugged-p ((folder elmo-filter-folder))
   (elmo-folder-plugged-p (elmo-filter-folder-target-internal folder)))
 
