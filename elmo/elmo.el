@@ -483,7 +483,7 @@ Return newly created temporary directory name which contains temporary files.")
 	   (elmo-file-cache-path cache-file))))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-folder) &optional visible-only)
+  ((folder elmo-folder))
   t)
 
 (luna-define-method elmo-folder-list-unreads-internal
@@ -817,11 +817,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (unless unseen
-	    (setq seen-list (cons (elmo-message-field
-				   src-folder (car numbers)
-				   'message-id)
-				  seen-list)))
+	  (if unseen (setq seen-list (cons
+				      (elmo-message-field
+				       src-folder (car numbers)
+				       'message-id)
+				      seen-list)))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(setq numbers (cdr numbers)))
       (if (and seen-list (elmo-folder-persistent-p folder))
@@ -1046,8 +1046,7 @@ FIELD is a symbol of the field."
 				unread-cached-mark   ;"!"
 				read-uncached-mark   ;"u"
 				important-mark       ;"$"
-				&optional ignore-msgdb
-				no-check)
+				&optional ignore-msgdb)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 NEW-MARK, UNREAD-CACHED-MARK, READ-UNCACHED-MARK, and IMPORTANT-MARK
@@ -1056,7 +1055,6 @@ read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
 are thrown away and synchronized.
-If NO-CHECK is non-nil, recheck folder is skipped.
 
 Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
@@ -1087,7 +1085,7 @@ CROSSED is cross-posted message number."
 	    (elmo-folder-set-killed-list-internal folder nil))
 	  (elmo-folder-set-msgdb-internal folder
 					  (elmo-msgdb-clear))))
-    (unless no-check (elmo-folder-check folder))
+    (elmo-folder-check folder)
     (condition-case nil
 	(progn
 	  (message "Checking folder diff...")
@@ -1146,9 +1144,9 @@ CROSSED is cross-posted message number."
 	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
 	      (elmo-folder-process-crosspost folder)
 	      (elmo-folder-set-message-modified-internal folder t)
-	      (elmo-folder-set-mark-modified-internal folder t))
-	    ;; return value.
-	    (list new-msgdb delete-list crossed)))
+	      (elmo-folder-set-mark-modified-internal folder t)
+	      ;; return value.
+	      (list new-msgdb delete-list crossed))))
       (quit
        ;; Resume to the original status.
        (if before-append
@@ -1327,9 +1325,6 @@ Return a hashtable for newsgroups."
 			       'elmo-pop3-default-authenticate-type)
 (elmo-define-obsolete-variable 'elmo-default-pop3-port
 			       'elmo-pop3-default-port)
-
-;; autoloads
-(autoload 'elmo-dop-queue-flush "elmo-dop")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))
