@@ -5,8 +5,7 @@
 @c @documentlanguage ja
 @c @documentencoding iso-2022-jp
 @c %**end of header
-@c Wanderlust の texinfo
-@set Time-stamp: <2000-06-27 23:19:53 kaoru>
+@set updated $Date$
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -123,7 +122,6 @@ Fujikazu Okunishi 奥西藤和
 Masahiro Murata   村田全寛
 Kenichi Okada     岡田健一
 Kaoru Takahashi   高橋  郁
-Last Modified@value{Time-stamp:}
 @end flushright
 
 この文書は Wanderlust @value{version} に対応します。

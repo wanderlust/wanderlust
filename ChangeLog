@@ -1,3 +1,12 @@
+2000-06-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* README: CVS keyword instaed of time-stamp.
+	* README.ja: Ditto.
+	* INSTALL: Ditto.
+	* INSTALL.ja: Ditto.
+	* doc/wl.texi: Ditto.
+	* doc/wl-ja.texi: Ditto.
+
 2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Added `pldap'.

@@ -4,8 +4,7 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c @documentlanguage en
 @c %**end of header
-@c texinfo of Wanderlust
-@set Time-stamp: <2000-06-27 23:19:53 kaoru>
+@set updated $Date$
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -99,7 +98,6 @@ Kenichi Okada
 Kaoru Takahashi
 Bun Mizuhara
 Masayuki Osada
-Last Modified@value{Time-stamp:}
 @end flushright
 
 This manual is for Wanderlust @value{version}.
