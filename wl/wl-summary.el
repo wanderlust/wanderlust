@@ -406,7 +406,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "g"    'wl-summary-goto-folder)
   (define-key wl-summary-mode-map "G"    'wl-summary-goto-folder-sticky)
   (define-key wl-summary-mode-map "c"    'wl-summary-mark-as-read-all)
-;  (define-key wl-summary-mode-map "D"    'wl-summary-drop-unsync)
 
   (define-key wl-summary-mode-map "a"    'wl-summary-reply)
   (define-key wl-summary-mode-map "A"    'wl-summary-reply-with-citation)
@@ -476,6 +475,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "d"    'wl-summary-delete)
   (define-key wl-summary-mode-map "u"    'wl-summary-unmark)
   (define-key wl-summary-mode-map "U"    'wl-summary-unmark-all)
+  (define-key wl-summary-mode-map "D"    'wl-summary-erase)
 
   ;; thread commands
   (define-key wl-summary-mode-map "t"	(make-sparse-keymap))
@@ -3132,6 +3132,29 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			     (format " (%d copying failed)" copy-failures)
 			   "")
 			 "."))))))
+
+(defun wl-summary-erase (&optional number)
+  "Erase message actually, without moving it to trash."
+  (interactive)
+  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
+      (let* ((buffer-num (wl-summary-message-number))
+	     (msg-num (or number buffer-num)))
+	(if (null msg-num)
+	    (message "No message.")
+	  (let* ((msgdb (wl-summary-buffer-msgdb))
+		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
+		 (subject (elmo-delete-char
+			   ?\n (or (elmo-msgdb-overview-entity-get-subject
+				    entity)
+				   wl-summary-no-subject-message))))
+	    (when (yes-or-no-p
+		   (format "Erase \"%s\" without moving it to trash? "
+			   (truncate-string subject 30)))
+	      (wl-summary-unmark msg-num)
+	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
+					   (list msg-num))
+	      (wl-summary-sync nil "update")))))
+    (message "Read-only folder.")))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)

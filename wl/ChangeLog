@@ -1,5 +1,8 @@
 2002-11-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-summary.el (wl-summary-erase): New function to erase message
+	without moving it to trash. Bind to "D".
+
 	* wl-draft.el (wl-user-agent-compose): Set wl-draft-buffer-style
 	as `keep' unless switch-function.
 
