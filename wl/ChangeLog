@@ -1,3 +1,17 @@
+2000-05-26  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-folder.el (wl-folder-create-folder-entity): Use
+	with-current-buffer.
+	(wl-local-folder-init): Call set-buffer to make sure we are in
+	the Folder buffer. Don't touch buffer-local variables here.
+	(wl-folder-mode): Initialize buffer-local variables here.
+
+	* wl-folder.el (wl-folder-get-path): Use let instead of let*.
+	(wl-folder-entity-assign-id): Ditto.
+	(wl-folder-create-entity-hashtb): Ditto.
+	(wl-local-folder-init): Ditto.
+	(wl-folder-create-group-alist): Initialize `cur-alist' with let.
+
 2000-05-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-default-from): Fix probrem when
