@@ -797,7 +797,7 @@ Example:
 @cindex UTF7
 @cindex UTF8
 @cindex Unicode
-pindex Mule-UCS
+@pindex Mule-UCS
 @pindex ucs-conv
 
 You can use international mailbox names in @var{mailbox} part, if you
