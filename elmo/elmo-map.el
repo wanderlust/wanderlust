@@ -304,14 +304,16 @@
 
 (luna-define-method elmo-folder-unflag-answered :before ((folder
 							  elmo-map-folder)
-							 numbers)
+							 numbers
+							 &optional is-local)
   (elmo-map-folder-unflag-answered
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
 (luna-define-method elmo-folder-flag-as-answered :before ((folder
-							  elmo-map-folder)
-							 numbers)
+							   elmo-map-folder)
+							  numbers
+							  &optional is-local)
   (elmo-map-folder-flag-as-answered
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))

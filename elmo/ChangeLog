@@ -1,3 +1,9 @@
+2003-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-map.el (elmo-folder-unflag-answered): Added optional argument
+	`is-local'.
+	(elmo-folder-flag-as-answered): Ditto.
+
 2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el: New file.
