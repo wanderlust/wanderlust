@@ -4778,6 +4778,7 @@ Return t if message exists."
 (defun wl-summary-jump-to-parent-message (arg)
   (interactive "P")
   (let ((cur-buf (current-buffer))
+	(disp-msg wl-summary-buffer-disp-msg)
 	(number (wl-summary-message-number))
 	(regexp "\\(<[^<>]*>\\)[ \t]*$")
 	(i -1) ;; xxx
@@ -4831,17 +4832,18 @@ Return t if message exists."
 	  (setq msg-id
 		(if (null arg) (nth 0 ref-list) ;; previous
 		  (if (<= arg i) (nth (1- arg) ref-list)
-		    (nth i ref-list)))))))
-      (set-buffer cur-buf)
+		    (nth i ref-list))))))
+	(set-buffer cur-buf)
+	(or disp-msg (wl-summary-toggle-disp-msg 'off)))
       (cond ((and (null msg-id) (null msg-num))
 	     (message "No parent message!")
 	     nil)
 	    ((and msg-id (wl-summary-jump-to-msg-by-message-id msg-id))
-	     (wl-summary-redisplay)
+	     (if wl-summary-buffer-disp-msg (wl-summary-redisplay))
 	     (message "Searching parent message...done")
 	     t)
 	    ((and msg-num (wl-summary-jump-to-msg msg-num))
-	     (wl-summary-redisplay)
+	     (if wl-summary-buffer-disp-msg (wl-summary-redisplay))
 	     (message "Searching parent message...done")
 	     t)
 	    (t ; failed.
