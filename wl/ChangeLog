@@ -1,3 +1,10 @@
+2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-save-view-cache):
+	Delete duplicated `write-region';
+	Use `write-region-as-binary' instead of `as-binary-output-file' and
+	`write-region'.
+
 2000-11-20  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-make-date-string): Bind `system-time-locale' to "C".
