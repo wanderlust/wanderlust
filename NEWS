@@ -2,7 +2,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.8.0 from 2.6.1
 
-** Nemacs, Mule 2.3 based on Emacs 19.28 are no longer supported.
+** Nemacs, Mule 2.3 based on Emacs 19.28 are not supported any longer.
 
 ** Wanderlust might not work with FLIM 1.14.2 and older.
    It is recommended to use FLIM 1.14.3 or newer and associated SEMI.
@@ -76,6 +76,19 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    You can put cache directory to another place by setting
    elmo-cache-directory (e.g. for whom put symbolic link for ~/.elmo/cache
    on NFS environment).
+
+* Version 2.6.1 is basically a bug fix version of 2.6.0.
+
+** Fixed a problem that Emacs 21 causes `Recursive load...' error.
+
+** Fixed a problem that thread character is broken in XEmacs 21.1.
+
+** Fixed a problem that in IMAP4 folder, progress bar is remained in XEmacs .
+
+** Fixed a problem that searching is failed for the header fields that
+   begins with X-.
+
+** Some other fixes.
 
 * Changes in 2.6.0 from 2.4.1.
 
