@@ -87,7 +87,7 @@ If level 3 is required for uniqness with other candidates,
 (defconst wl-ldap-alias-sep "/")
 
 (defconst wl-ldap-search-attribute-type-list
-  '("sn" "cn" "mail" "email" "displayName" "gecos"))
+  '("sn" "cn" "mail" "email"))
 
 (defun wl-ldap-get-value (type entry)
   ""
@@ -207,7 +207,7 @@ Matched address lists are append to CL."
 	(ldap-default-base (or wl-ldap-base ldap-default-base))
 	(dnhash (elmo-make-hash))
 	cache len sym tmpl regexp entries ent values dn dnstr alias
-	result fullname mails)
+	result cn mails)
     ;; check cache
     (mapatoms (lambda (atom)
 		(if (and (string-match
@@ -244,9 +244,7 @@ Matched address lists are append to CL."
 		    ent)
 	    mails (or (wl-ldap-get-value-list "mail" ent)
 		      (wl-ldap-get-value-list "email" ent))
-	    fullname (or (wl-ldap-get-value "displayName" ent)
-			 (wl-ldap-get-value "gecos" ent)
-			 (wl-ldap-get-value "cn" ent))
+	    cn (wl-ldap-get-value "cn" ent)
 	    dn (car (car entries))
 	    dnstr (elmo-get-hash-val (upcase dn) dnhash))
       ;; make alias list generated from LDAP data.
@@ -261,7 +259,7 @@ Matched address lists are append to CL."
 	(when (not (boundp sym))
 	  (set sym alias)
 	  (setq result (cons (cons alias
-				   (concat fullname " <" (car mails) ">"))
+				   (concat cn " <" (car mails) ">"))
 			     result)))
 	(setq values (cdr values)))
       ;; make mail addrses list
@@ -270,7 +268,7 @@ Matched address lists are append to CL."
 	    ;; (string-match regexp (car mails))
 	    ;; add mail address itself to completion list
 	    (setq result (cons (cons (car mails)
-				     (concat fullname " <" (car mails) ">"))
+				     (concat cn " <" (car mails) ">"))
 			       result)))
 	(setq mails (cdr mails)))
       (setq entries (cdr entries)))
