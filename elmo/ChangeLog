@@ -1,5 +1,14 @@
 2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-folder-get-store-type): Rewrite.
+
+2000-12-26  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-util.el (elmo-folder-get-store-type): New function.
+	(elmo-folder-direct-copy-p): Use it.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* elmo-imap4.el (elmo-imap4-msgdb-create): Set
 	`elmo-imap4-fetch-callback-data' as a cons cell of `args'
 	and result of `elmo-imap4-use-flag-p'.
