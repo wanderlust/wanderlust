@@ -594,7 +594,7 @@ With ARG, ask destination folder."
 	(elmo-folder-do-each-message-entity (entity folder)
 	  (when (string-match
 		 (regexp-quote subject-id)
-		 (elmo-message-entity-field entity 'subject))
+		 (elmo-message-entity-field entity 'subject 'decode))
 	    (let* ((message
 		    ;; request message at the cursor in Subject buffer.
 		    (wl-message-request-partial

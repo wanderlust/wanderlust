@@ -1,3 +1,8 @@
+2003-12-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-mime-combine-message/partial-pieces): Call
+	`elmo-message-entity-field' with 3rd argument which is non-nil.
+
 2003-12-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-mime-combine-message/partial-pieces): Fixed bug;
