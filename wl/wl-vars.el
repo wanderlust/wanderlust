@@ -1725,7 +1725,7 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-fcc nil
-  "*Folder Carbon Copy."
+  "*Folder Carbon Copy target initially added on creating draft buffer."
   :type '(choice (const :tag "disable" nil)
 		 string function)
   :group 'wl-draft
@@ -1738,7 +1738,7 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-bcc nil
-  "*Blind Carbon Copy."
+  "*Blind Carbon Copy target initially added on creating draft buffer."
   :type '(choice (const :tag "disable" nil)
 		 string)
   :group 'wl-draft
