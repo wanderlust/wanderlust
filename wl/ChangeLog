@@ -1,5 +1,10 @@
 2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-util.el (wl-biff-check-folder): Use own buffer for pop3 biff
+	process.
+	(wl-biff-check-folder-async): Enclose wl-biff-check-folder
+	with unwind-protect.
+
 	* wl.el (wl-init): Require mime-setup.
 	(wl-check-environment): Don't require mime-setup.
 
