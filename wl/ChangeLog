@@ -1,3 +1,8 @@
+2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-marks): Changed argument for
+	`elmo-list-folder-unread' and `elmo-list-folder-important'.
+
 2000-10-08  Kenichi OKADA	<okada@opaopa.org>
 
 	* wl.el (wl-check-environment): Check too many `@'.

@@ -2055,13 +2055,15 @@ If optional argument is non-nil, checking is omitted."
             num-ma (length mark-alist)
 	    importants (elmo-list-folder-important
 			wl-summary-buffer-folder-name
-			wl-summary-buffer-msgdb)
+			(elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
 	    has-imap4 (elmo-folder-contains-type
 		       wl-summary-buffer-folder-name 'imap4)
 	    unreads (if (and has-imap4 plugged)
 			(elmo-list-folder-unread
 			 wl-summary-buffer-folder-name
-			 wl-summary-buffer-msgdb unread-marks)))
+			 (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb)
+			 (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+			 unread-marks)))
       (while mark-alist
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
