@@ -311,7 +311,8 @@
     (let (fld-name start end)
       (cond
        (;; opened folder group
-	(looking-at wl-highlight-folder-opened-regexp)
+	(and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-opened-regexp))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(wl-e21-highlight-folder-group-line start end
@@ -321,7 +322,8 @@
 					    'wl-highlight-folder-opened-face
 					    numbers))
        (;; closed folder group
-	(looking-at wl-highlight-folder-closed-regexp)
+	(and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-closed-regexp))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(wl-e21-highlight-folder-group-line start end

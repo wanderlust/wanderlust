@@ -1,5 +1,19 @@
 2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-folder.el (wl-folder-buffer-group-p): Rewritten.
+	(wl-folder-put-folder-property): New function to put text property.
+	(wl-folder-jump-to-current-entity, wl-folder-entity-assign-id)
+	(wl-folder-insert-entity, wl-folder-update-diff-line)
+	(wl-folder-update-diff-line, wl-folder-pick): Change accordingly.
+	* wl-e21.el, wl-xmas.el, wl-mule.el
+	(wl-highlight-folder-current-line): Ditto.
+	* wl-fldmgr.el (wl-fldmgr-get-path-from-buffer, wl-fldmgr-cut)
+	(wl-fldmgr-copy-region, wl-fldmgr-copy, wl-fldmgr-delete)
+	(wl-fldmgr-rename, wl-fldmgr-sort, wl-fldmgr-unsubscribe)
+	(wl-fldmgr-access-display-all, wl-fldmgr-set-petname): Ditto.
+
+2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* Version number is increased to 2.11.3.
 
 2003-02-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

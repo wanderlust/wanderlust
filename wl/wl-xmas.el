@@ -252,12 +252,14 @@
     (let (fld-name)
       (cond
        (;; opened folder group
-	(looking-at wl-highlight-folder-opened-regexp)
+	(and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-opened-regexp))
 	(wl-xmas-highlight-folder-group-line 'wl-folder-opened-glyph
 					     'wl-highlight-folder-opened-face
 					     numbers))
        (;; closed folder group
-	(looking-at wl-highlight-folder-closed-regexp)
+	(and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-closed-regexp))
 	(wl-xmas-highlight-folder-group-line 'wl-folder-closed-glyph
 					     'wl-highlight-folder-closed-face
 					     numbers))

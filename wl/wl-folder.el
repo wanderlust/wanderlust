@@ -227,8 +227,7 @@
 	       ""))))
 
 (defmacro wl-folder-buffer-group-p ()
-  (` (save-excursion (beginning-of-line)
-		     (looking-at wl-folder-group-regexp))))
+  (` (get-text-property (point) 'wl-folder-is-group)))
 
 (defmacro wl-folder-folder-name ()
   (` (save-excursion
@@ -606,7 +605,8 @@ Optional argument ARG is repeart count."
   (beginning-of-line)
   (let (entity beg end indent opened fname err fld-name)
     (cond
-     ((looking-at wl-folder-group-regexp)
+     ((and (wl-folder-buffer-group-p)
+	   (looking-at wl-folder-group-regexp))
       (save-excursion
 	(setq fname (wl-folder-get-realname (wl-match-buffer 3)))
 	(setq indent (wl-match-buffer 1))
@@ -1298,10 +1298,11 @@ If current line is group folder, all subfolders are marked."
 			(get-text-property 0
 					   'wl-folder-entity-id
 					   (car entity))))
-	  (put-text-property 0 (length (car entity))
-			     'wl-folder-entity-id
-			     wl-folder-entity-id
-			     (car entity))
+	  (wl-folder-put-folder-property
+	   0 (length (car entity))
+	   wl-folder-entity-id
+	   'is-group
+	   (car entity))
 	  (wl-folder-set-id-name wl-folder-entity-id
 				 (car entity) hashtb))
 	(and entities
@@ -1312,10 +1313,11 @@ If current line is group folder, all subfolders are marked."
 			(get-text-property 0
 					   'wl-folder-entity-id
 					   entity)))
-	  (put-text-property 0 (length entity)
-			     'wl-folder-entity-id
-			     wl-folder-entity-id
-			     entity)
+	  (wl-folder-put-folder-property
+	   0 (length entity)
+	   wl-folder-entity-id
+	   nil
+	   entity)
 	  (wl-folder-set-id-name wl-folder-entity-id
 				 entity hashtb))))
       (setq wl-folder-entity-id (+ 1 wl-folder-entity-id))
@@ -1703,9 +1705,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		      (wl-folder-get-petname (car entity)))
 	      (setq group-name-end (point))
 	      (insert ":0/0/0\n")
-	      (put-text-property beg (point) 'wl-folder-entity-id
-				 (get-text-property 0 'wl-folder-entity-id
-						    (car entity)))
+	      (wl-folder-put-folder-property
+	       beg (point)
+	       (get-text-property 0 'wl-folder-entity-id (car entity))
+	       'is-group)
 	      (when removed
 		(setq beg (point))
 		(while removed
@@ -1752,9 +1755,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			  (or (nth 1 ret-val) 0)
 			  (or (nth 2 ret-val) 0))
 		  "\n")
-	  (put-text-property beg (point) 'wl-folder-entity-id
-			     (get-text-property 0 'wl-folder-entity-id
-						(car entity)))
+	  (wl-folder-put-folder-property
+	   beg (point)
+	   (get-text-property 0 'wl-folder-entity-id (car entity))
+	   'is-group)
 	  (save-excursion (forward-line -1)
 			  (wl-highlight-folder-current-line ret-val)))))
      ((stringp entity)
@@ -1770,8 +1774,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 					      (+ (nth 0 nums)(nth 1 nums))))
 			    "*")
 			(or (setq all (nth 2 nums)) "*")))
-	(put-text-property beg (point) 'wl-folder-entity-id
-			   (get-text-property 0 'wl-folder-entity-id entity))
+	(wl-folder-put-folder-property
+	 beg (point)
+	 (get-text-property 0 'wl-folder-entity-id entity)
+	 nil)
 	(save-excursion (forward-line -1)
 			(wl-highlight-folder-current-line nums))
 	(setq ret-val (list new unread all)))))
@@ -2151,10 +2157,11 @@ Use `wl-subscribed-mailing-list'."
 	cur-new new-new
 	cur-unread new-unread
 	cur-all new-all
-	id)
+	id is-group)
     (save-excursion
       (beginning-of-line)
       (setq id (get-text-property (point) 'wl-folder-entity-id))
+      (setq is-group (get-text-property (point) 'wl-folder-is-group))
       (when (looking-at "^[ ]*\\(.*\\):\\([0-9\\*-]*\\)/\\([0-9\\*-]*\\)/\\([0-9\\*]*\\)")
 	;;(looking-at "^[ ]*\\([^\\[].+\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
 	(setq cur-new (string-to-int
@@ -2170,8 +2177,7 @@ Use `wl-subscribed-mailing-list'."
 			(setq new-new (+ cur-new (nth 0 diffs)))
 			(setq new-unread (+ cur-unread (nth 1 diffs)))
 			(setq new-all (+ cur-all (nth 2 diffs)))))
-	(put-text-property (match-beginning 2) (point)
-			   'wl-folder-entity-id id)
+	(wl-folder-put-folder-property (match-beginning 2) (point) id is-group)
 	(if wl-use-highlight-mouse-line
 	    (put-text-property (match-beginning 2) (point)
 			       'mouse-face 'highlight))
@@ -2182,10 +2188,11 @@ Use `wl-subscribed-mailing-list'."
 (defun wl-folder-update-line (nums &optional is-group)
   (let ((inhibit-read-only t)
 	(buffer-read-only nil)
-	id)
+	id is-group)
     (save-excursion
       (beginning-of-line)
       (setq id (get-text-property (point) 'wl-folder-entity-id))
+      (setq is-group (get-text-property (point) 'wl-folder-is-group))
       (if (looking-at "^[ ]*\\(.*\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
 ;;;	  (looking-at "^[ ]*\\([^\\[].+\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
 	  (progn
@@ -2198,8 +2205,7 @@ Use `wl-subscribed-mailing-list'."
 				     (+ (nth 0 nums)(nth 1 nums)))
 				"*")
 			    (or (nth 2 nums) "*")))
-	    (put-text-property (match-beginning 2) (point)
-			       'wl-folder-entity-id id)
+	    (put-text-property (match-beginning 2) (point) id is-group)
 	    (if is-group
 		;; update only colors
 		(wl-highlight-folder-group-line nums)
@@ -2434,7 +2440,8 @@ Use `wl-subscribed-mailing-list'."
 		       (car path))))))
 	(beginning-of-line)
 	(setq path (cdr path))
-	(if (and (looking-at wl-folder-group-regexp)
+	(if (and (wl-folder-buffer-group-p)
+		  (looking-at wl-folder-group-regexp)
 		 (string= "+" (wl-match-buffer 2)));; closed group
 	    (save-excursion
 	      (setq indent (wl-match-buffer 1))
@@ -2982,6 +2989,9 @@ Call `wl-summary-write-current-folder' with current folder name."
 	  (try-completion string candidate)
 	(all-completions string candidate))))))
 
+(defun wl-folder-put-folder-property (beg end id is-group &optional object)
+  (put-text-property beg end 'wl-folder-entity-id id object)
+  (put-text-property beg end 'wl-folder-is-group is-group object))
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))
