@@ -1,3 +1,8 @@
+2001-03-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-normal-message-redisplay):
+	Set `wl-message-cache-used'.
+
 2001-03-13  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-mode): Use `make-local-hook' instead
