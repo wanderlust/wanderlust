@@ -567,13 +567,11 @@ ENTITY is returned."
 		  (wl-thread-reparent-children children top-child)
 		  (wl-append update-msgs children))))
 	    ;; delete myself from top list.
-	    (let ((older-brothers (wl-thread-entity-get-older-brothers
-				   entity nil))
-		  (younger-brothers (wl-thread-entity-get-younger-brothers
-				     entity nil)))
+	    (let ((older-brothers (wl-thread-entity-get-older-brothers entity))
+		  (younger-brothers (wl-thread-entity-get-younger-brothers entity)))
 	      (setq wl-thread-entity-list
-		    (append (append older-brothers
-				    (and top-child (list top-child)))
+		    (append older-brothers
+			    (and top-child (list top-child))
 			    younger-brothers))))))
       ;;
       (if deep
