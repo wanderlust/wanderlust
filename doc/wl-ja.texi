@@ -4101,6 +4101,9 @@ Non-nil $B$J$i%a%C%;!<%8%P%C%U%!$GD9$$9T$N@^$jJV$7$r$7$^$;$s!#(B
 @node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
 @subsection $B%X%C%@$NJT=8(B
 
+$B<B:]$KAw?.A`:n$r9T$J$&$^$G$G$"$l$P!"(B@samp{--text follows this line--}
+$B$h$j>e$N%X%C%@NN0h$O<+M3$KJT=8$9$k$3$H$,$G$-$^$9!#(B
+
 $B=i4|>uBV$G$O(B @samp{To:} $B$K%+!<%=%k$,$"$j$^$9!#Aw?.Aj<j$N%"%I%l%9$rF~NO$7(B
 $B$F$/$@$5$$!#%"%I%l%9$rF~NO$9$k:]$K$O!"(B@kbd{@key{TAB}} $B$GJd40$,$G$-$^$9!#(B
 
@@ -4146,6 +4149,11 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 
 @node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
 @subsection $B%a%C%;!<%8$NJT=8(B
+
+$B@bL@$9$k$^$G$b$J$$$G$9$,!"%a%C%;!<%8K\J8$NJT=8$O4pK\E*$KDL>o$NJ8>O:n@.$H(B
+$BF1MM$K9T$J$$$^$9!#K\J8$O(B @samp{--text follows this line--} $B$N9T$h$j2<$K(B
+$B5-=R$7$^$9!#(B($BCm0U!'(B @samp{--text follows this line--} $B$N9T$O$$$8$i$J$$$G(B
+$B2<$5$$!#(B)
 
 $B%^%k%A%Q!<%H$NJT=8$O(B SEMI $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
 $BJT=8$NJ}K!$K$D$$$F$O3F%Q%C%1!<%8IUB0$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
