@@ -1763,7 +1763,7 @@ If ARG is non-nil, checking is omitted."
 	  (goto-char (point-min))
 	  (if (wl-summary-jump-to-msg (car msgs))
 	      (progn
-		(delete-region (match-beginning 0) (match-end 0))
+		(delete-region (point-at-bol) (point-at-eol))
 		(delete-char 1) ; delete '\n'
 		(setq wl-summary-buffer-number-list
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
