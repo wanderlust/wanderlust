@@ -1,3 +1,15 @@
+2003-09-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (elmo-msgdb-create-message-entity-from-buffer): 
+	Fixed how to set extra field into entity.
+	(elmo-msgdb-message-entity-set-field): Fixed mistake string for
+	symbol.
+
+	* modb-legacy.el (elmo-msgdb-create-message-entity-from-buffer):
+	Fixed how to set extra field into entity.
+	(elmo-msgdb-message-entity-set-field): Fixed mistake string for
+	symbol.
+
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* modb.el (elmo-message-entity-db): New function.

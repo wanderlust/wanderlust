@@ -704,11 +704,11 @@ Return a list of message numbers which have duplicated message-ids."
 	  (setq size 0)))
       (while extras
 	(if (setq field-body (elmo-field-body (car extras)))
-	    (setq extra (cons (cons (downcase (car extras))
-				    field-body) extra)))
+	    (elmo-msgdb-message-entity-set-field
+	     msgdb entity (intern (downcase (car extras))) field-body))
 	(setq extras (cdr extras)))
-      (dolist (field '(message-id number references from subject date to cc
-				  size extra))
+      (dolist (field '(message-id number references from subject
+				  date to cc size))
 	(when (symbol-value field)
 	  (elmo-msgdb-message-entity-set-field
 	   msgdb entity field (symbol-value field))))
@@ -761,7 +761,7 @@ Return a list of message numbers which have duplicated message-ids."
 	 (t
 	  (let ((extras (and entity (aref (cdr entity) 8)))
 		extra)
-	    (if (setq extra (assoc field extras))
+	    (if (setq extra (assoc (symbol-name field) extras))
 		(setcdr extra value)
 	      (aset (cdr entity) 8 (cons (cons (symbol-name field)
 					       value) extras))))))))
