@@ -1,5 +1,11 @@
 2002-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-create-buffer): Don't clear buffer-file-name.
+	(wl-draft-reedit): Ditto.
+	(wl-draft-prepare-edit): Add `wl-draft-save' to
+	`local-write-file-hooks'.
+	(wl-draft-prepare-edit): Call clear-visited-file-modtime.
+
 	* wl.el (wl-exit): If wl-delete-startup-frame-function is non-nil,
 	call it.
 	(wl-delete-startup-frame-function): New variable.

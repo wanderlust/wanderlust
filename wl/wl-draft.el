@@ -1484,8 +1484,6 @@ Derived from `message-save-drafts' in T-gnus."
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)
-    ;; Don't care about supersession.
-    (setq buffer-file-name nil)
     (setq wl-sent-message-via nil)
     (setq wl-sent-message-queued nil)
     (setq wl-draft-buffer-file-name file-name)
@@ -1539,9 +1537,11 @@ Derived from `message-save-drafts' in T-gnus."
     (error "wl-draft-create-header must be use in wl-draft-mode."))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
+    (add-hook 'local-write-file-hooks 'wl-draft-save)
     (wl-draft-overload-functions)
     (wl-highlight-headers 'for-draft)
-    (wl-draft-save)))
+    (wl-draft-save)
+    (clear-visited-file-modtime)))
 
 (defun wl-draft-decode-header ()
   (save-excursion
@@ -1711,11 +1711,9 @@ Derived from `message-save-drafts' in T-gnus."
 	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))
       (auto-save-mode -1)
       (wl-draft-mode)
-      ;; Don't care about supersession.
       (make-local-variable 'truncate-partial-width-windows)
       (setq truncate-partial-width-windows nil)
       (setq truncate-lines wl-draft-truncate-lines)
-      (setq buffer-file-name nil)
       (setq wl-sent-message-via nil)
       (setq wl-sent-message-queued nil)
       (setq wl-draft-buffer-file-name file-name)
