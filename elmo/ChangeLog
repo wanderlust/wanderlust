@@ -1,3 +1,9 @@
+2003-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-folder-initialize): Don't use
+	elmo-nntp-default-user if zero-length username is specified
+	explicitly.
+
 2003-07-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Don't omit

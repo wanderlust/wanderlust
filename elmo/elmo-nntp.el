@@ -95,16 +95,18 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 		   (append elmo-nntp-stream-type-alist
 			   elmo-network-stream-type-alist))
 	   elmo-network-stream-type-alist))
-	parse)
+	explicit-user parse)
     (setq name (luna-call-next-method))
     (setq parse (elmo-parse-token name ":"))
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
 					  (car parse)))
+    (setq explicit-user (eq ?: (string-to-char (cdr parse))))    
     (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
-					   elmo-nntp-default-user
+					   (unless explicit-user
+					     elmo-nntp-default-user)
 					 (car parse)))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder
