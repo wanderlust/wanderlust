@@ -4858,6 +4858,8 @@ http://www.iecc.com/pop-before-smtp.html
 リージョンが有効な場合には、リージョンを引用します
 (@code{transient-mark-mode} (GNU Emacs の場合) か @code{zmacs-regions}
 (XEmacs の場合) が Non-nil の時のみ)。
+また、prefix argument を付けると、yank で挿入されるテキスト
+の内容(クリップボードの内容)が引用されます。
 (@code{wl-draft-yank-original})
 
 @item C-c C-p

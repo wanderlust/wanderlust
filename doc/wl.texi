@@ -4853,7 +4853,8 @@ http://www.iecc.com/pop-before-smtp.html
 Cites the content of the current message buffer (the part under cursor).
 If the region is active, cites the region (it affects only if
 @code{transient-mark-mode} (on GNU Emacs) or @code{zmacs-regions}
-(on XEmacs) is Non-nil).
+(on XEmacs) is Non-nil). If the command is called with prefix argument,
+the text inserted by yank command (the text content of clipboard) is cited.
 (@code{wl-draft-yank-original})
 
 @item C-c C-p
