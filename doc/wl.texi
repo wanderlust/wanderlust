@@ -1566,7 +1566,7 @@ Format:
 @example
 @group
 'mark
-@r{or}
+'sendlog
 'cache/00 - 1F
 @end group
 @end example
@@ -1584,6 +1584,14 @@ message will have @samp{$} mark.
 (Can't remove important mark @samp{$} on IMAP server from @samp{'mark}
 folder.  If you want IMAP folder's message remove from @samp{'mark}
 folder, remove important mark at IMAP Folder.)
+
+
+A folder named @samp{'sendlog} is a virtual folder which collects
+cached messages which are recoded on @file{~/.elmo/sendlog}.
+It might be useful when you forgot to add cc for yourself.
+To use this, you should set @code{wl-draft-use-cache} to non-nil
+so that sent messages are cached.
+
 
 You can access cached messages fetched via network by accessing
 folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
