@@ -43,7 +43,7 @@
 	     ;; ignore broken module
 	     (not (featurep 'tinycustom)))
   (when (and (boundp 'emacs-major-version)
-	     (eq emacs-major-version 19)
+	     (= emacs-major-version 19)
 	     (>= emacs-minor-version 29))
     (message "%s" "
   Warning: You don't seem to have \"new custom\" package installed.
@@ -105,11 +105,11 @@
     (load "./WL-ELS" nil nil t)
     (condition-case ()
 	(require 'mime-setup)
-      (error (error "No MIME module was detected. Please install SEMI.")))
+      (error (error "No MIME module was detected.  Please install SEMI")))
     ;; smtp.el version check.
     (require 'smtp)
     (if (not (fboundp 'smtp-send-buffer))
-	(error "Please install new FLIM.  See INSTALL or INSTALL.ja."))))
+	(error "Please install new FLIM.  See INSTALL or INSTALL.ja"))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."
@@ -263,7 +263,7 @@
 
 (defun config-wl-package-xmas ()
   (if (not (featurep 'xemacs))
-      (error "This directive is only for XEmacs."))
+      (error "This directive is only for XEmacs"))
   (config-wl-package-subr)
   ;; PACKAGEDIR check.
   (let (package-dir)
