@@ -1,3 +1,11 @@
+2003-09-29  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window): Call
+	set-buffer-modified-p.
+	(wl-summary-display-top): Call wl-summary-window-scroll-functions.
+	(wl-summary-display-bottom): Ditto.
+	(wl-summary-toggle-disp-msg): Ditto.
+
 2003-09-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-score.el (wl-score-ov-entity-get): Treat extra field.

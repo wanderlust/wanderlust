@@ -578,7 +578,8 @@ See also variable `wl-use-petname'."
 	      (wl-summary-update-persistent-mark number flags)
 	      (setq wl-summary-highlight t)
 	      (wl-highlight-summary-current-line number flags))
-	    (forward-line 1)))))))
+	    (forward-line 1)))))
+    (set-buffer-modified-p nil)))
 
 (defun wl-summary-window-scroll-functions ()
   (or wl-summary-window-scroll-functions
@@ -599,8 +600,9 @@ See also variable `wl-use-petname'."
 (defun wl-summary-display-top ()
   (interactive)
   (goto-char (point-min))
-  (when wl-summary-lazy-highlight
-    (wl-highlight-summary-window))
+  (when wl-summary-window-scroll-functions
+    (dolist (function wl-summary-window-scroll-functions)
+      (funcall function)))
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -608,8 +610,9 @@ See also variable `wl-use-petname'."
   (interactive)
   (goto-char (point-max))
   (forward-line -1)
-  (when wl-summary-lazy-highlight
-    (wl-highlight-summary-window))
+  (when wl-summary-window-scroll-functions
+    (dolist (function wl-summary-window-scroll-functions)
+      (funcall function)))
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -3522,8 +3525,9 @@ Return non-nil if the mark is updated"
 	  (run-hooks 'wl-summary-toggle-disp-off-hook))
 ;;;	(switch-to-buffer cur-buf)
 	)))
-    (when wl-summary-lazy-highlight
-      (wl-highlight-summary-window))))
+    (when wl-summary-window-scroll-functions
+      (dolist (function wl-summary-window-scroll-functions)
+	(funcall function)))))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."
