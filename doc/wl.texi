@@ -254,7 +254,7 @@ may help you.}.
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.4 and SEMI 1.14.5
+@item APEL 10.4, FLIM 1.14.5 and SEMI 1.14.5
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
