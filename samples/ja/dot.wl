@@ -222,6 +222,13 @@
 	    ;;"e-mail2@bbb.com" ...
 	    ))
 
+;; 自分の参加しているメーリングリストのリスト
+(setq wl-subscribed-mailing-list
+      '("wl@lists.airs.net"
+	"apel-ja@m17n.org"
+	;;"ml@example.com" ...
+	))
+
 ;; サマリ表示関数を変更する
 
 ;; サマリ表示において使用する情報を持つフィールドをoverview情報に
