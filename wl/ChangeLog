@@ -29,6 +29,11 @@
 	* wl-e21.el (toplevel): Do not set wl-folder-mode-map.
 	(avoid error for the case without byte-compiling)
 
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-weekday-name-lang): Set default value
+	according to current-language-environment.
+
 2002-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.0 is released.
