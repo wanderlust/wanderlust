@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:39:23 teranisi>
+;; Time-stamp: <2000-04-07 09:41:13 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -51,14 +51,17 @@ Automatically loaded/saved.")
 		    (list operation)))
       (elmo-dop-queue-save))))
 
-(defun elmo-dop-queue-flush ()
+(defun elmo-dop-queue-flush (&optional force)
+  "Flush Disconnected operations.
+If optional argument FORCE is non-nil, try flushing all operation queues
+even an operation concerns the unplugged folder."
   (elmo-dop-queue-load) ; load cache.
   (elmo-dop-queue-merge)
   (let ((queue elmo-dop-queue)
 	(count 0)
 	len)
     (while queue
-      (if (elmo-folder-plugged-p (caar queue))
+      (if (or force (elmo-folder-plugged-p (caar queue)))
 	  (setq count (1+ count)))
       (setq queue (cdr queue)))
     (when (> count 0)
@@ -79,7 +82,8 @@ Automatically loaded/saved.")
 		(setq i (+ 1 i))
 		(message "Flushing queue....%d/%d." i num)
 		(condition-case err
-		    (if (not (elmo-folder-plugged-p (nth 0 (car queue))))
+		    (if (and (not force)
+			     (not (elmo-folder-plugged-p (nth 0 (car queue)))))
 			(setq failure t)
 		      (setq folder (nth 0 (car queue))
 			    func (nth 1 (car queue)))

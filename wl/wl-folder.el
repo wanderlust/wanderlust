@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/25 16:30:59 teranisi>
+;; Time-stamp: <2000-04-07 09:30:54 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -456,16 +456,16 @@
 	(wl-auto-select-first nil)
 	(wl-plugged t)
 	emptied)
+    (if elmo-enable-disconnected-operation
+	(elmo-dop-queue-flush 'force)) ; Try flushing all queue.
     (if (not (elmo-list-folder wl-queue-folder))
-	(error "No queue exists")
+	(message "No sending queue exists.")
       (if wl-stay-folder-window
 	  (wl-folder-select-buffer 
 	   (wl-summary-get-buffer-create wl-queue-folder)))
       (wl-summary-goto-folder-subr wl-queue-folder 'force-update nil)
       (unwind-protect
 	  (wl-draft-queue-flush)
-	(if wl-summary-cache-use (wl-summary-save-view-cache))
-	(wl-summary-msgdb-save)
 	(if (get-buffer-window cur-buf)
 	    (select-window (get-buffer-window cur-buf)))
 	(set-buffer cur-buf)

@@ -1,7 +1,7 @@
 
  Wanderlust -- Yet Another Message Interface on Emacsen
                       by Yuuichi Teranishi <teranisi@gohome.org>
-                      Time-stamp: <2000-02-24 00:26:49 teranisi>
+                      Time-stamp: <2000-04-07 09:50:00 teranisi>
 
 Wanderlust is a mail/news management system with IMAP4rev1 support for Emacs.
 
@@ -52,6 +52,28 @@ release in Japanese.
 
 To subscribe, send mail to wl-ctl@lists.airs.net, with '# guide' as
 the message body.
+
+CVS:
+
+  Development of Wanderlust uses CVS.  So latest developing version is
+  available at CVS.
+
+(0) cvs login (first time only)
+
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
+
+    CVS password: [CR] # NULL string
+
+(1) checkout
+
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
+
+  If you would like to join CVS based development, please send mail to
+
+	cvs@cvs.m17n.org
+
+  with your account name and UNIX /etc/passwd style crypted password.
+  We hope you will join the open development.
 
 References:
 

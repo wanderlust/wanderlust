@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 15:44:44 teranisi>
+;; Time-stamp: <2000-04-07 09:15:33 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -83,6 +83,8 @@
 	(if wl-plugged
 	    wl-plug-state-indicator-on
 	  wl-plug-state-indicator-off))
+  (if wl-plugged
+      (wl-toggle-plugged t 'flush))
   (force-mode-line-update t))
 
 (defun wl-toggle-plugged (&optional arg queue-flush-only)

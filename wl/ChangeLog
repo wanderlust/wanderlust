@@ -1,3 +1,9 @@
+2000-04-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-plugged-init): Flush queues if started with plugged status.
+
+	* wl-folder.el (wl-folder-flush-queue): Flush operation queue too.
+
 2000-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-refile.el (wl-refile-expand-newtext): Add `original' argument.
