@@ -1700,11 +1700,12 @@ If ARG is non-nil, checking is omitted."
 	   (msgdb (wl-summary-buffer-msgdb))
 	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (case-fold-search nil)
-	   mark number unread)
-      (setq mark (wl-summary-persistent-mark)
-	    number (wl-summary-message-number)
-	    new-mark (elmo-msgdb-set-cached msgdb number nil))
-      (when new-mark
+	   new-mark mark number unread)
+      (setq number (wl-summary-message-number))
+      (elmo-msgdb-set-cached msgdb number nil)
+      (setq new-mark (elmo-message-mark folder number)
+	    mark (wl-summary-persistent-mark))
+      (unless (string= new-mark mark)
 	(delete-backward-char 1)
 	(insert new-mark)
 	(elmo-file-cache-delete
@@ -1712,8 +1713,8 @@ If ARG is non-nil, checking is omitted."
 	  (elmo-message-field wl-summary-buffer-elmo-folder
 			      number
 			      'message-id)))
-	(elmo-msgdb-set-mark msgdb number new-mark)
-	(wl-summary-set-mark-modified)
+	;; (elmo-msgdb-set-mark msgdb number new-mark)
+	;; (wl-summary-set-mark-modified)
 	(if wl-summary-highlight
 	    (wl-highlight-summary-current-line nil nil t))
 	(set-buffer-modified-p nil)))))
@@ -3927,7 +3928,7 @@ If ARG, exit virtual folder."
 	  (folder wl-summary-buffer-elmo-folder)
 	  (msgdb (wl-summary-buffer-msgdb))
 	  (case-fold-search nil)
-	  old-mark visible new-mark)
+	  mark visible new-mark)
       (setq visible (if number
 			(wl-summary-jump-to-msg number)
 		      ;; interactive
