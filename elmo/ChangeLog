@@ -1,3 +1,11 @@
+2001-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-buffer-cache-message): Call `elmo-read-msg' with
+	argument `unread' as non-nil.
+	(elmo-read-msg-with-cache): Added argument `unread'.
+	(elmo-read-msg-no-cache): Ditto.
+	(elmo-read-msg): Ditto.
+
 2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Bind `elmo-inhibit-read-cache' as t
