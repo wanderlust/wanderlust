@@ -824,7 +824,7 @@
 		    "\\(.\\)\\(.\\)../..\(.*\)..:.. \\("
 		    wl-highlight-thread-indent-string-regexp
 		    "\\)[[<]"))
-	  fregexp fsymbol bol eol matched thread-top looked-at dest ds)
+	  fregexp fsymbol bol eol matched thread-top looked-at)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
@@ -847,11 +847,9 @@
 	   ((string= temp-mark "D")
 	    (setq fsymbol 'wl-highlight-summary-deleted-face))
 	   ((string= temp-mark "O")
-	    (setq fsymbol 'wl-highlight-summary-copied-face
-		  dest t))
+	    (setq fsymbol 'wl-highlight-summary-copied-face))
 	   ((string= temp-mark "o")
-	    (setq fsymbol 'wl-highlight-summary-refiled-face
-		  dest t)))))
+	    (setq fsymbol 'wl-highlight-summary-refiled-face)))))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark "+")
@@ -884,15 +882,6 @@
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
-      (when dest
-	(put-text-property (next-single-property-change
-			    (next-single-property-change 
-			     bol 'wl-summary-destination
-			     nil eol)
-			    'wl-summary-destination nil eol)
-			   eol
-			   'face
-			   'wl-highlight-refile-destination-face))
       (if wl-use-highlight-mouse-line
 	  (put-text-property bol
 ;;; Use bol instead of (1- (match-end 0))

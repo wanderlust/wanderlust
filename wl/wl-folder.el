@@ -1446,6 +1446,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-folder (&optional arg)
   (interactive "P")
   (let (initialize folder-buf)
+    (unless (get-buffer wl-folder-buffer-name)
+      (wl-folder-init))
     (if (setq folder-buf (get-buffer wl-folder-buffer-name))
 	(if wl-folder-use-frame
 	    (let (select-frame)
