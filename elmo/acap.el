@@ -169,7 +169,9 @@ Valid states are `closed', `initial', `auth'.")
 	(if (functionp 'read-passwd)
 	    (read-passwd prompt)
 	  (if (load "passwd" t)
-	      (read-passwd prompt))))))
+	      (read-passwd prompt)
+	    (autoload 'ange-ftp-read-passwd "ange-ftp")
+	    (ange-ftp-read-passwd prompt))))))
 
 ;;; Debug.
 (defvar acap-debug t)
