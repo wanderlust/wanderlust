@@ -340,49 +340,49 @@ If nil, never search search parent by subject."
      wl-summary-register-target-mark
      nil
      wl-highlight-summary-temp-face
-     "put target mark.")
+     "Put target mark.")
     ("d"
      dispose
      nil
      wl-summary-register-temp-mark
      wl-summary-exec-action-dispose
      wl-highlight-summary-disposed-face
-     "dispose messages according to `wl-dispose-folder-alist'.")
+     "Dispose messages according to `wl-dispose-folder-alist'.")
     ("D"
      delete
      nil
      wl-summary-register-temp-mark
      wl-summary-exec-action-delete
      wl-highlight-summary-deleted-face
-     "delete messages immediately.")
+     "Delete messages immediately.")
     ("o"
      refile
      wl-summary-get-refile-destination
      wl-summary-set-action-refile
      wl-summary-exec-action-refile
      wl-highlight-summary-refiled-face
-     "refile messages to the other folder.")
+     "Refile messages to the other folder.")
     ("O"
      copy
      wl-summary-get-copy-destination
      wl-summary-register-temp-mark
      wl-summary-exec-action-copy
      wl-highlight-summary-copied-face
-     "copy messages to the other folder.")
+     "Copy messages to the other folder.")
     ("i"
      prefetch
      nil
      wl-summary-register-temp-mark
      wl-summary-exec-action-prefetch
      wl-highlight-summary-prefetch-face
-     "prefetch messages.")
+     "Prefetch messages.")
     ("~"
      resend
      wl-summary-get-resend-address
      wl-summary-register-temp-mark
      wl-summary-exec-action-resend
      wl-highlight-summary-resend-face
-     ))
+     "Resend messages."))
   "A variable to define Mark & Action.
 Each element of the list should be a list of
 \(MARK
@@ -390,7 +390,8 @@ Each element of the list should be a list of
   ARGUMENT-FUNCTION
   SET-MARK-FUNCTION
   EXEC-FUNCTION
-  FACE)
+  FACE
+  DOC-STRING)
 
 MARK is a temporal mark string to define.
 SYMBOL is an action name to define.
