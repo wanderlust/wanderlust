@@ -1,3 +1,10 @@
+2003-10-02  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-thread.el (wl-thread-delete-message): Omit redundant nil
+	parameter from calling `wl-thread-entity-get-older-brothers' and
+	`wl-thread-entity-get-younger-brothers'.
+	Replace nested `append' with a single one.
+
 2003-10-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mode): Don't use the return value of
