@@ -41,6 +41,7 @@
 
 (eval-when-compile
   (require 'time-stamp)
+  (defalias-maybe 'read-event 'ignore)
   (defalias-maybe 'next-command-event 'ignore)
   (defalias-maybe 'event-to-character 'ignore)
   (defalias-maybe 'key-press-event-p 'ignore)
@@ -147,6 +148,28 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
   (if element
       (append list (list element))
     list))
+
+(defun wl-read-event-char ()
+  "Get the next event."
+  (let ((event (read-event)))
+    ;; should be gnus-characterp, but this can't be called in XEmacs anyway
+    (cons (and (numberp event) event) event)))
+
+(defun wl-xmas-read-event-char ()
+  "Get the next event."
+  (let ((event (next-command-event)))
+    (sit-for 0)
+    ;; We junk all non-key events.  Is this naughty?
+    (while (not (or (key-press-event-p event)
+		    (button-press-event-p event)))
+      (dispatch-event event)
+      (setq event (next-command-event)))
+    (cons (and (key-press-event-p event)
+	       (event-to-character event))
+	  event)))
+
+(if wl-on-xemacs
+    (fset 'wl-read-event-char 'wl-xmas-read-event-char))
 
 (defmacro wl-push (v l)
   "Insert V at the head of the list stored in L."
