@@ -1396,7 +1396,7 @@ If current line is group folder, all subfolders are marked."
 
 (defun wl-folder-mode ()
   "Major mode for Wanderlust Folder.
-See info under Wanderlust for full documentation.
+See Info under Wanderlust for full documentation.
 
 Special commands:
 \\{wl-folder-mode-map}
