@@ -1,5 +1,116 @@
 2005-03-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb.el (elmo-msgdb-message-field): Add argument `type'.
+	(elmo-msgdb-match-condition): Get handler from entity instead of
+	msgdb.
+
+	* modb-standard.el (modb-standard-economize-entity-size): Abolish.
+	(modb-standard-load-entity): Treat new file format.
+	(modb-standard-save-entity-1): Save as new file format.
+	(modb-standard-save-entity): Split messages into section here.
+	(elmo-msgdb-message-field): Follow the API change.
+	(modb-standard-default-entity-handler): New internal variable.
+	(elmo-msgdb-message-entity-handler): Define.
+
+	* modb-entity.el (elmo-msgdb-prefer-in-reply-to-for-parent): Moved
+	to `elmo-vars.el'.
+	(modb-entity-field-extractor-alist): New user option.
+	(elmo-msgdb-message-entity-field): Removed argument `decode' and
+	added argument `type'.
+	(elmo-msgdb-copy-message-entity): Add optional argument
+	`make-handler'.
+	(modb-set-field-converter): New function.
+	(modb-convert-field-value): Ditto.
+	(modb-entity-string-decoder): Ditto.
+	(modb-entity-string-encoder): Ditto.
+	(modb-entity-parse-date-string): Ditto.
+	(modb-entity-make-date-string): Ditto.
+	(modb-entity-mime-decoder): Ditto.
+	(modb-entity-mime-encoder): Ditto.
+	(modb-entity-address-list-decoder): Ditto.
+	(modb-entity-address-list-encoder): Ditto.
+	(modb-entity-parse-address-string): Ditto.
+	(modb-entity-make-address-string): Ditto.
+	(modb-entity-create-field-indices): Ditto.
+	(modb-legacy-entity-field-slots): New constant.
+	(modb-legacy-entity-field-indices): Ditto.
+	(modb-legacy-entity-normalizer): New variable.
+	(modb-legacy-entity-specializer): Ditto.
+	(modb-legacy-entity-field-index): New macro.
+	(modb-legacy-entity-set-field): New function.
+	(modb-legacy-make-message-entity): Rewrite.
+	(elmo-msgdb-create-message-entity-from-buffer): Use
+	`elmo-msgdb-get-references-from-buffer'. Use
+	`elmo-decoded-field-body' instead of `elmo-unfold-field-body'.
+	Use `modb-legacy-entity-set-field' instead of
+	`elmo-msgdb-message-entity-set-field'.
+	(elmo-msgdb-message-entity-field): Rewrite.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Make new entity by
+	`make-handler' if it specified.
+	(elmo-msgdb-message-match-condition): Define a method of
+	`modb-entity-handler' and follow the API change.
+	(modb-standard-entity-handler): New class.
+	(modb-entity-extract-ml-info-from-x-sequence): New function.
+	(modb-entity-extract-ml-info-from-subject): Ditto.
+	(modb-entity-extract-ml-info-from-return-path): Ditto.
+	(modb-entity-extract-ml-info-from-delivered-to): Ditto.
+	(modb-entity-extract-ml-info-from-mailing-list): Ditto.
+	(modb-entity-extract-mailing-list-info): Ditto.
+	(modb-entity-extract-mailing-list-info-functions): New variable.
+
+	* elmo.el (elmo-message-field): Add optional argument `type'.
+
+	* elmo-vars.el (elmo-msgdb-prefer-in-reply-to-for-parent): Moved
+	from `modb-entity.el'.
+
+	* elmo-util.el (elmo-object-load): Decode by coding-system from
+	`set-auto-coding-function'.
+	(elmo-object-save): Use `detect-mime-charset-region' and add
+	coding cookie if encode.
+	(elmo-msgdb-get-references-from-buffer): New function.
+	(elmo-parse-addresses): Ditto (renamed from `wl-parse-addresses').
+
+	* elmo-spam.el (elmo-spam-message-spam-p): Follow the API change.
+
+	* elmo-shimbun.el (elmo-shimbun-parse-time-string): Removed.
+	(elmo-shimbun-entity-to-header): Use `shimbun-create-header'
+	instead of `shimbun-make-header' and follow the API change.
+	(elmo-shimbun-update-overview): Follow the API change.
+	(elmo-map-folder-list-message-locations): Ditto.
+
+	* elmo-pipe.el (elmo-message-field): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string):
+	Ditto.
+
+	* elmo-nmz.el (elmo-nmz-msgdb-create-entity): Ditto.
+
+	* elmo-multi.el (elmo-message-field): Ditto.
+
+	* elmo-msgdb.el (elmo-message-entity-field): Ditto.
+	(elmo-msgdb-sort-by-date): Ditto.
+	(elmo-msgdb-flag-table): Use `elmo-msgdb-message-field' instead of
+	`elmo-message-entity-field'.
+	(elmo-msgdb-overview-entity-get-from-no-decode): Follow the API
+	change.
+	(elmo-msgdb-overview-entity-get-from): Ditto.
+	(elmo-msgdb-overview-entity-get-subject): Ditto.
+	(elmo-msgdb-overview-entity-get-subject-no-decode): Ditto.
+	(elmo-msgdb-overview-entity-get-date): Ditto.
+	(elmo-msgdb-overview-entity-get-to): Ditto.
+	(elmo-msgdb-overview-entity-get-cc): Ditto.
+
+	* elmo-mime.el (elmo-message-mime-entity): Ditto.
+	(elmo-mime-collect-message/partial-pieces): Ditto.
+
+	* elmo-filter.el (elmo-message-field): Ditto.
+
+	* elmo-date.el (elmo-datevec-to-time): New function.
+	(elmo-time-parse-date-string): Ditto.
+	(elmo-time-make-date-string): Ditto.
+	(elmo-time<): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.15.1.
 
 2005-03-14  Yoichi NAKAYAMA  <yoichi@geiin.org>

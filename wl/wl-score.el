@@ -176,8 +176,8 @@ Remove Re, Was, Fwd etc."
   (not (or (string< s1 s2)
 	   (string= s1 s2))))
 
-(defsubst wl-score-ov-entity-get (entity index &optional extra decode)
-  (elmo-message-entity-field entity (if extra (intern extra) index) decode))
+(defsubst wl-score-ov-entity-get (entity index &optional extra)
+  (elmo-message-entity-field entity (if extra (intern extra) index)))
 
 (defun wl-score-string< (a1 a2)
   (string-lessp (wl-score-ov-entity-get (car a1) wl-score-index)
@@ -755,8 +755,9 @@ Set `wl-score-cache' nil."
 			       (< expire
 				  (setq day
 					(wl-day-number
-					 (elmo-message-entity-field
-					  (car art) 'date))))))
+					 (elmo-time-make-date-string
+					  (elmo-message-entity-field
+					   (car art) 'date)))))))
 		  (when (setq new (wl-score-add-followups
 				   (car art) score all-scores alist thread
 				   day))
@@ -780,7 +781,7 @@ Set `wl-score-cache' nil."
       (list (cons "references" news)))))
 
 (defun wl-score-add-followups (header score scores alist &optional thread day)
-  (let* ((id (car header))
+  (let* ((id (elmo-message-entity-field header 'message-id))
 	 (scores (car scores))
 	 entry dont)
     (when id
@@ -903,10 +904,11 @@ Set `wl-score-cache' nil."
       (catch 'break
 	(while rnumbers
 	  (if (< (wl-day-number
-		  (elmo-message-entity-field
-		   (elmo-message-entity wl-summary-buffer-elmo-folder
-					(car rnumbers))
-		   'date))
+		  (elmo-time-make-date-string
+		   (elmo-message-entity-field
+		    (elmo-message-entity wl-summary-buffer-elmo-folder
+					 (car rnumbers))
+		    'date)))
 		 expire)
 	      (throw 'break t))
 	  (wl-push (car rnumbers) msgs)
@@ -920,7 +922,7 @@ Set `wl-score-cache' nil."
 	(wl-score-ov-entity-get
 	 (elmo-message-entity wl-summary-buffer-elmo-folder
 			      (wl-summary-message-number))
-	 index extra decode))))
+	 index extra))))
 
 (defun wl-score-kill-help-buffer ()
   (when (get-buffer "*Score Help*")

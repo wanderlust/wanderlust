@@ -1271,14 +1271,16 @@ If optional IS-LOCAL is non-nil, update only local (not server) status."
   ;; XXX Transitional implementation.
   (elmo-folder-unset-flag folder (list number) flag is-local))
 
-(luna-define-generic elmo-message-field (folder number field)
+(luna-define-generic elmo-message-field (folder number field &optional type)
   "Get message field value in the msgdb.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
-FIELD is a symbol of the field.")
+FIELD is a symbol of the field.
+If optional argument TYPE is specified, return converted value.")
 
-(luna-define-method elmo-message-field ((folder elmo-folder) number field)
-  (elmo-msgdb-message-field (elmo-folder-msgdb folder) number field))
+(luna-define-method elmo-message-field ((folder elmo-folder)
+					number field &optional type)
+  (elmo-msgdb-message-field (elmo-folder-msgdb folder) number field type))
 
 (luna-define-generic elmo-message-set-field (folder number field value)
   "Set message field value in the msgdb.

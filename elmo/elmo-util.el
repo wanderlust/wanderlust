@@ -104,17 +104,21 @@ File content is decoded with MIME-CHARSET."
   (if (not (file-readable-p filename))
       nil
     (with-temp-buffer
-      (as-binary-input-file
-       (insert-file-contents filename))
-      (when mime-charset
-	(set-buffer-multibyte default-enable-multibyte-characters)
-	(decode-mime-charset-region (point-min) (point-max) mime-charset))
+      (insert-file-contents-as-binary filename)
+      (let ((coding-system (or (funcall set-auto-coding-function
+					filename
+					(- (point-max) (point-min)))
+			       (mime-charset-to-coding-system
+				mime-charset))))
+	(when coding-system
+	  (decode-coding-region (point-min) (point-max) coding-system)))
+      (goto-char (point-min))
       (condition-case nil
 	  (read (current-buffer))
 	(error (unless no-err
 		 (message "Warning: Loading object from %s failed."
 			  filename)
-		 (elmo-object-save filename nil))
+		 (elmo-object-save filename nil mime-charset))
 	       nil)))))
 
 (defsubst elmo-save-buffer (filename &optional mime-charset)
@@ -142,8 +146,15 @@ File content is encoded with MIME-CHARSET."
   (with-temp-buffer
     (let (print-length print-level)
       (prin1 object (current-buffer)))
-;;;    (princ "\n" (current-buffer))
-    (elmo-save-buffer filename mime-charset)))
+    (when mime-charset
+      (let ((coding (mime-charset-to-coding-system
+		     (or (detect-mime-charset-region (point-min) (point-max))
+			 mime-charset))))
+	(goto-char (point-min))
+	(insert ";;; -*- mode: emacs-lisp; coding: "
+		(symbol-name coding) " -*-\n")
+	(encode-coding-region (point-min) (point-max) coding)))
+    (elmo-save-buffer filename)))
 
 ;;; Search Condition
 
@@ -1996,6 +2007,13 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
 
+(defun elmo-msgdb-get-references-from-buffer ()
+  (if elmo-msgdb-prefer-in-reply-to-for-parent
+      (or (elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to"))
+	  (elmo-msgdb-get-last-message-id (elmo-field-body "references")))
+    (or (elmo-msgdb-get-last-message-id (elmo-field-body "references"))
+	(elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to")))))
+
 (defsubst elmo-msgdb-insert-file-header (file)
   "Insert the header of the article."
   (let ((beg 0)
@@ -2028,6 +2046,48 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		       (list (buffer-substring-no-properties
 			      (match-end 0) (std11-field-end))))))
 	field-body))))
+
+(defun elmo-parse-addresses (string)
+  (if (null string)
+      ()
+    (elmo-set-work-buf
+      (let (list start s char)
+	(insert string)
+	(goto-char (point-min))
+	(skip-chars-forward "\t\f\n\r ")
+	(setq start (point))
+	(while (not (eobp))
+	  (skip-chars-forward "^\"\\,(")
+	  (setq char (following-char))
+	  (cond ((= char ?\\)
+		 (forward-char 1)
+		 (if (not (eobp))
+		     (forward-char 1)))
+		((= char ?,)
+		 (setq s (buffer-substring start (point)))
+		 (if (or (null (string-match "^[\t\f\n\r ]+$" s))
+			 (not (string= s "")))
+		     (setq list (cons s list)))
+		 (skip-chars-forward ",\t\f\n\r ")
+		 (setq start (point)))
+		((= char ?\")
+		 (re-search-forward "[^\\]\"" nil 0))
+		((= char ?\()
+		 (let ((parens 1))
+		   (forward-char 1)
+		   (while (and (not (eobp)) (not (zerop parens)))
+		     (re-search-forward "[()]" nil 0)
+		     (cond ((or (eobp)
+				(= (char-after (- (point) 2)) ?\\)))
+			   ((= (preceding-char) ?\()
+			    (setq parens (1+ parens)))
+			   (t
+			    (setq parens (1- parens)))))))))
+	(setq s (buffer-substring start (point)))
+	(if (and (null (string-match "^[\t\f\n\r ]+$" s))
+		 (not (string= s "")))
+	    (setq list (cons s list)))
+	(nreverse list)))))
 
 ;;; Queue.
 (defvar elmo-dop-queue-filename "queue"

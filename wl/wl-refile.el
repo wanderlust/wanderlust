@@ -86,13 +86,11 @@
   (let (tocc-list from key hit ml)
     (setq dst (elmo-string dst))
     (setq tocc-list
-	  (mapcar (function
-		   (lambda (entity)
-		     (downcase (wl-address-header-extract-address entity))))
-		  (wl-parse-addresses
-		   (concat
-		    (elmo-message-entity-field entity 'to) ","
-		    (elmo-message-entity-field entity 'cc)))))
+	  (mapcar (lambda (entity)
+		    (downcase (wl-address-header-extract-address entity)))
+		  (append
+		   (elmo-message-entity-field entity 'to)
+		   (elmo-message-entity-field entity 'cc))))
     (while tocc-list
       (if (wl-string-member
 	   (car tocc-list)
@@ -134,7 +132,7 @@
 
 (defun wl-refile-subject-learn (entity dst)
   (let ((subject (funcall wl-summary-subject-filter-function
-			  (elmo-message-entity-field entity 'subject 'decode)))
+			  (elmo-message-entity-field entity 'subject)))
 	hit)
     (setq dst (elmo-string dst))
     (if (and subject (not (string= subject "")))
@@ -202,7 +200,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-get-field-value (entity field)
   "Get FIELD value from ENTITY."
-  (elmo-message-entity-field entity (intern (downcase field)) 'decode))
+  (elmo-message-entity-field entity (intern (downcase field)) 'string))
 
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)
@@ -215,13 +213,11 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-guess-by-history (entity)
   (let ((tocc-list
-	 (mapcar (function
-		  (lambda (entity)
-		    (downcase (wl-address-header-extract-address entity))))
-		 (wl-parse-addresses
-		  (concat
-		   (elmo-message-entity-field entity 'to) ","
-		   (elmo-message-entity-field entity 'cc)))))
+	 (mapcar (lambda (entity)
+		   (downcase (wl-address-header-extract-address entity)))
+		 (append
+		  (elmo-message-entity-field entity 'to)
+		  (elmo-message-entity-field entity 'cc))))
 	ret-val)
     (setq tocc-list (wl-address-delete-user-mail-addresses tocc-list))
     (while tocc-list
@@ -255,7 +251,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-guess-by-subject (entity)
   (cdr (assoc (funcall wl-summary-subject-filter-function
-		       (elmo-message-entity-field entity 'subject 'decode))
+		       (elmo-message-entity-field entity 'subject))
 	      wl-refile-subject-alist)))
 
 (require 'product)

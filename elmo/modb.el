@@ -162,15 +162,17 @@ KEY is a number or a string.
 A number is for message number in the MSGDB.
 A string is for message-id of the message.")
 
-(luna-define-generic elmo-msgdb-message-field (msgdb number field)
+(luna-define-generic elmo-msgdb-message-field (msgdb number field
+						     &optional type)
   "Get message field value in the MSGDB.
 NUMBER is a number of the message.
-FIELD is a symbol of the field.")
+FIELD is a symbol of the field.
+If optional argument TYPE is specified, return converted value.")
 
 (luna-define-method elmo-msgdb-message-field ((msgdb modb-generic)
-					      number field)
+					      number field &optional type)
   (elmo-message-entity-field (elmo-msgdb-message-entity msgdb number)
-			     field))
+			     field type))
 
 (luna-define-generic elmo-msgdb-message-entity-handler (msgdb)
   "Get modb entity handler instance which corresponds to the MSGDB.")
@@ -217,7 +219,7 @@ FIELD is a symbol of the field.")
   (let ((entity (elmo-msgdb-message-entity msgdb number)))
     (if entity
 	(elmo-msgdb-message-match-condition
-	 (elmo-msgdb-message-entity-handler msgdb)
+	 (elmo-message-entity-handler entity)
 	 condition
 	 entity
 	 (elmo-msgdb-flags msgdb number)

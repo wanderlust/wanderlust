@@ -43,10 +43,11 @@
   :type 'symbol
   :group 'elmo)
 
-(defcustom elmo-msgdb-prefer-in-reply-to-for-parent nil
-  "*Non-nil to prefer In-Reply-To header for finding parent message on thread,
-rather than References header."
-  :type 'boolean
+(defcustom modb-entity-field-extractor-alist
+  '((ml-info . modb-entity-extract-mailing-list-info))
+  "*An alist of field name and function to extract field body from buffer."
+  :type '(repeat (cons (symbol :tag "Field Name")
+		       (function :tag "Function")))
   :group 'elmo)
 
 (defvar modb-entity-default-cache-internal nil)
@@ -72,14 +73,13 @@ rather than References header."
 							   entity number)
   "Set number of the ENTITY.")
 
-(luna-define-generic elmo-msgdb-message-entity-field (handler
-						      entity field
-						      &optional decode)
+(luna-define-generic elmo-msgdb-message-entity-field (handler entity field
+							      &optional type)
   "Retrieve field value of the message entity.
 HANDLER is the message entity handler.
 ENTITY is the message entity structure.
 FIELD is a symbol of the field.
-If optional DECODE is no-nil, the field value is decoded.")
+If optional argument TYPE is specified, return converted value.")
 
 (luna-define-generic elmo-msgdb-message-entity-set-field (handler
 							  entity field value)
@@ -96,10 +96,13 @@ HANDLER is the message entity handler.
 ENTITY is the message entity structure.
 VALUES is an alist of field-name and field-value.")
 
-(luna-define-generic elmo-msgdb-copy-message-entity (handler entity)
+(luna-define-generic elmo-msgdb-copy-message-entity (handler entity
+							     &optional
+							     make-handler)
   "Copy message entity.
 HANDLER is the message entity handler.
-ENTITY is the message entity structure.")
+ENTITY is the message entity structure.
+If optional argument MAKE-HANDLER is specified, use it to make new entity.")
 
 (luna-define-generic elmo-msgdb-create-message-entity-from-file (handler
 								 number
@@ -161,7 +164,7 @@ Header region is supposed to be narrowed.")
 (luna-define-method elmo-msgdb-message-entity-field ((handler
 						     modb-entity-handler)
 						     entity field
-						     &optional decode)
+						     &optional type)
   (plist-get (cdr entity) (intern (concat ":" (symbol-name field)))))
 
 (luna-define-method elmo-msgdb-message-entity-number ((handler
@@ -181,13 +184,42 @@ Header region is supposed to be narrowed.")
 	(setq updated t)))
     updated))
 
-;; Legacy implementation.
-(eval-and-compile (luna-define-class modb-legacy-entity-handler
-				     (modb-entity-handler)))
 
-;;
+;; field in/out converter
+(defun modb-set-field-converter (converter type &rest specs)
+  "Set convert function of TYPE into CONVERTER.
+SPECS must be like `FIELD1 FUNCTION1 FIELD2 FUNCTION2 ...'.
+If each field is t, function is set as default converter."
+  (when specs
+    (let ((alist (symbol-value converter))
+	  (type (or type t)))
+      (while specs
+	(let ((field (pop specs))
+	      (function (pop specs))
+	      cell)
+	  (if (setq cell (assq type alist))
+	      (setcdr cell (put-alist field function (cdr cell)))
+	    (setq cell  (cons type (list (cons field function)))
+		  alist (cons cell alist)))
+	  ;; support colon keyword (syntax sugar).
+	  (unless (or (eq field t)
+		      (string-match "^:" (symbol-name field)))
+	    (setcdr cell (put-alist (intern (concat ":" (symbol-name field)))
+				    function
+				    (cdr cell))))))
+      (set converter alist))))
+(put 'modb-set-field-converter 'lisp-indent-function 2)
+
+(defsubst modb-convert-field-value (converter field value &optional type)
+  (and value
+       (let* ((alist (cdr (assq (or type t) converter)))
+	      (function (cdr (or (assq field alist)
+				 (assq t alist)))))
+	 (if function
+	     (funcall function field value)
+	   value))))
+
 ;; mime decode cache
-;;
 (defvar elmo-msgdb-decoded-cache-hashtb nil)
 (make-variable-buffer-local 'elmo-msgdb-decoded-cache-hashtb)
 
@@ -206,18 +238,157 @@ Header region is supposed to be narrowed.")
     (elmo-with-enable-multibyte
       (decode-mime-charset-string string elmo-mime-charset))))
 
+(defun modb-entity-string-decoder (field value)
+  (elmo-msgdb-get-decoded-cache value))
+
+(defun modb-entity-string-encoder (field value)
+  (elmo-with-enable-multibyte
+    (encode-mime-charset-string value elmo-mime-charset)))
+
+(defun modb-entity-parse-date-string (field value)
+  (if (stringp value)
+      (elmo-time-parse-date-string value)
+    value))
+
+(defun modb-entity-make-date-string (field value)
+  (if (stringp value)
+      value
+    (elmo-time-make-date-string value)))
+
+(defun modb-entity-mime-decoder (field value)
+  (mime-decode-field-body value (symbol-name field) 'summary))
+
+(defun modb-entity-mime-encoder (field value)
+  (mime-encode-field-body value (symbol-name field)))
+
+(defun modb-entity-address-list-decoder (field value)
+  (if (stringp value)
+      (mapcar (lambda (address)
+		(mime-decode-field-body address (symbol-name field)))
+	      (elmo-parse-addresses value))
+    value))
+
+(defun modb-entity-address-list-encoder (field value)
+  (if (stringp value)
+      value
+    (mime-encode-field-body (mapconcat 'identity value ", ")
+			    (symbol-name field))))
+
+(defun modb-entity-parse-address-string (field value)
+  (if (stringp value)
+      (elmo-parse-addresses value)
+    value))
+
+(defun modb-entity-make-address-string (field value)
+  (if (stringp value)
+      value
+    (mapconcat 'identity value ", ")))
+
+
+(defun modb-entity-create-field-indices (slots)
+  (let ((index 0)
+	indices)
+    (while slots
+      (setq indices (cons (cons (car slots) index) indices)
+	    index   (1+ index)
+	    slots   (cdr slots)))
+    (append
+     indices
+     (mapcar (lambda (cell)
+	       (cons (intern (concat ":" (symbol-name (car cell))))
+		     (cdr cell)))
+	     indices))))
+
+
+;; Legacy implementation.
+(eval-and-compile
+  (luna-define-class modb-legacy-entity-handler (modb-entity-handler)))
+
+(defconst modb-legacy-entity-field-slots
+ '(number
+   references
+   from
+   subject
+   date
+   to
+   cc
+   size
+   extra))
+
+(defconst modb-legacy-entity-field-indices
+  (modb-entity-create-field-indices modb-legacy-entity-field-slots))
+
+(defvar modb-legacy-entity-normalizer nil)
+(modb-set-field-converter 'modb-legacy-entity-normalizer nil
+  'message-id	nil
+  'number	nil
+  'references	nil
+  'from		#'modb-entity-string-encoder
+  'subject	#'modb-entity-string-encoder
+  'date		#'modb-entity-make-date-string
+  'to		#'modb-entity-address-list-encoder
+  'cc		#'modb-entity-address-list-encoder
+  'size		nil
+  t		#'modb-entity-mime-encoder)
+
+(defvar modb-legacy-entity-specializer nil)
+;; default type
+(modb-set-field-converter 'modb-legacy-entity-specializer nil
+  'message-id	nil
+  'number	nil
+  'references	nil
+  'from		#'modb-entity-string-decoder
+  'subject	#'modb-entity-string-decoder
+  'date		#'modb-entity-parse-date-string
+  'to		#'modb-entity-address-list-decoder
+  'cc		#'modb-entity-address-list-decoder
+  'size		nil
+  t		#'modb-entity-mime-decoder)
+;; string type
+(modb-set-field-converter 'modb-legacy-entity-specializer 'string
+  'message-id	nil
+  'number	nil			; not supported
+  'references	nil
+  'from		#'modb-entity-string-decoder
+  'subject	#'modb-entity-string-decoder
+  'date		nil
+  'size		nil			; not supported
+  t		#'modb-entity-mime-decoder)
+
+
+(defmacro modb-legacy-entity-field-index (field)
+  `(cdr (assq ,field modb-legacy-entity-field-indices)))
+
+(defsubst modb-legacy-entity-set-field (entity field value &optional as-is)
+  (when entity
+    (let (index)
+      (unless as-is
+	(setq value (modb-convert-field-value
+		     modb-legacy-entity-normalizer
+		     field value)))
+      (cond ((memq field '(message-id :message-id))
+	     (setcar entity value))
+	    ((setq index (modb-legacy-entity-field-index field))
+	     (aset (cdr entity) index value))
+	    (t
+	     (setq index (modb-legacy-entity-field-index :extra))
+	     (let ((extras (and entity (aref (cdr entity) index)))
+		   extra)
+	       (if (setq extra (assoc (symbol-name field) extras))
+		   (setcdr extra value)
+		 (aset (cdr entity) index (cons (cons (symbol-name field)
+						      value) extras)))))))))
+
 (defsubst modb-legacy-make-message-entity (args)
   "Make an message entity."
-  (cons (plist-get args :message-id)
-	(vector (plist-get args :number)
-		(plist-get args :references)
-		(plist-get args :from)
-		(plist-get args :subject)
-		(plist-get args :date)
-		(plist-get args :to)
-		(plist-get args :cc)
-		(plist-get args :size)
-		(plist-get args :extra))))
+  (let ((entity (cons nil (make-vector 9 nil)))
+	field value)
+    (while args
+      (setq field (pop args)
+	    value (pop args))
+      (when value
+	(modb-legacy-entity-set-field entity field value)))
+    entity))
 
 (luna-define-method elmo-msgdb-make-message-entity
   ((handler modb-legacy-entity-handler) args)
@@ -237,15 +408,7 @@ Header region is supposed to be narrowed.")
 	   (setq charset (intern-soft charset))
 	   (setq default-mime-charset charset))
       (setq references
-	    (if elmo-msgdb-prefer-in-reply-to-for-parent
-		(or (elmo-msgdb-get-last-message-id
-		     (elmo-field-body "in-reply-to"))
-		    (elmo-msgdb-get-last-message-id
-		     (elmo-field-body "references")))
-	      (or (elmo-msgdb-get-last-message-id
-		   (elmo-field-body "references"))
-		  (elmo-msgdb-get-last-message-id
-		   (elmo-field-body "in-reply-to"))))
+	    (elmo-msgdb-get-references-from-buffer)
 	    from (elmo-replace-in-string
 		  (elmo-mime-string (or (elmo-field-body "from")
 					elmo-no-from))
@@ -254,7 +417,7 @@ Header region is supposed to be narrowed.")
 		     (elmo-mime-string (or (elmo-field-body "subject")
 					   elmo-no-subject))
 		     "\t" " ")
-	    date (elmo-unfold-field-body "date")
+	    date (elmo-decoded-field-body "date")
 	    to   (mapconcat 'identity (elmo-multiple-field-body "to") ",")
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
@@ -263,14 +426,14 @@ Header region is supposed to be narrowed.")
 	  (setq size 0)))
       (while extras
 	(if (setq field-body (elmo-field-body (car extras)))
-	    (elmo-msgdb-message-entity-set-field
-	     handler entity (intern (downcase (car extras))) field-body))
+	    (modb-legacy-entity-set-field
+	     entity (intern (downcase (car extras))) field-body 'as-is))
 	(setq extras (cdr extras)))
       (dolist (field '(message-id number references from subject
 				  date to cc size))
 	(when (symbol-value field)
-	  (elmo-msgdb-message-entity-set-field
-	   handler entity field (symbol-value field))))
+	  (modb-legacy-entity-set-field
+	   entity field (symbol-value field) 'as-is)))
       entity)))
 
 (luna-define-method elmo-msgdb-message-entity-number
@@ -283,51 +446,43 @@ Header region is supposed to be narrowed.")
   entity)
 
 (luna-define-method elmo-msgdb-message-entity-field
-  ((handler modb-legacy-entity-handler) entity field &optional decode)
+  ((handler modb-legacy-entity-handler) entity field &optional type)
   (and entity
-       (let ((field-value
-	      (case field
-		(to (aref (cdr entity) 5))
-		(cc (aref (cdr entity) 6))
-		(date (aref (cdr entity) 4))
-		(subject (aref (cdr entity) 3))
-		(from (aref (cdr entity) 2))
-		(message-id (car entity))
-		(references (aref (cdr entity) 1))
-		(size (aref (cdr entity) 7))
-		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
-	 (if (and decode (memq field '(from subject)))
-	     (elmo-msgdb-get-decoded-cache field-value)
-	   field-value))))
+       (let (index)
+	 (modb-convert-field-value
+	  modb-legacy-entity-specializer
+	  field
+	  (cond ((memq field '(message-id :message-id))
+		 (car entity))
+		((setq index (modb-legacy-entity-field-index field))
+		 (aref (cdr entity) index))
+		(t
+		 (setq index (modb-legacy-entity-field-index :extra))
+		 (cdr (assoc (symbol-name field)
+			     (aref (cdr entity) index)))))
+	  type))))
 
 (luna-define-method elmo-msgdb-message-entity-set-field
   ((handler modb-legacy-entity-handler) entity field value)
-  (and entity
-       (case field
-	 (number (aset (cdr entity) 0 value))
-	 (to (aset (cdr entity) 5 value))
-	 (cc (aset (cdr entity) 6 value))
-	 (date (aset (cdr entity) 4 value))
-	 (subject (aset (cdr entity) 3 value))
-	 (from (aset (cdr entity) 2 value))
-	 (message-id (setcar entity value))
-	 (references (aset (cdr entity) 1 value))
-	 (size (aset (cdr entity) 7 value))
-	 (t
-	  (let ((extras (and entity (aref (cdr entity) 8)))
-		extra)
-	    (if (setq extra (assoc (symbol-name field) extras))
-		(setcdr extra value)
-	      (aset (cdr entity) 8 (cons (cons (symbol-name field)
-					       value) extras))))))))
+  (modb-legacy-entity-set-field entity field value))
 
 (luna-define-method elmo-msgdb-copy-message-entity
-  ((handler modb-legacy-entity-handler) entity)
-  (cons (car entity)
-	(copy-sequence (cdr entity))))
+  ((handler modb-legacy-entity-handler) entity &optional make-handler)
+  (if make-handler
+      (let ((copy (elmo-msgdb-make-message-entity make-handler)))
+	(dolist (field (append '(message-id number references from subject
+					    date to cc size)
+			       (mapcar (lambda (extra) (intern (car extra)))
+				       (aref (cdr entity) 8))))
+	  (elmo-msgdb-message-entity-set-field
+	   make-handler copy field
+	   (elmo-msgdb-message-entity-field handler entity field)))
+	copy)
+    (cons (car entity)
+	  (copy-sequence (cdr entity)))))
 
 (luna-define-method elmo-msgdb-message-match-condition
-  ((handler modb-legacy-entity-handler) condition entity flags numbers)
+  ((handler modb-entity-handler) condition entity flags numbers)
   (cond
    ((vectorp condition)
     (elmo-msgdb-match-condition-primitive handler condition
@@ -413,41 +568,38 @@ Header region is supposed to be narrowed.")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       handler entity 'from t))))
+		       handler entity 'from))))
        ((string= key "subject")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       handler entity 'subject t))))
+		       handler entity 'subject))))
        ((string= key "to")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       handler entity 'to))))
+		       handler entity 'to 'string))))
        ((string= key "cc")
 	(setq result (string-match
 		      (elmo-filter-value condition)
 		      (elmo-msgdb-message-entity-field
-		       handler entity 'cc))))
+		       handler entity 'cc 'string))))
        ((or (string= key "since")
 	    (string= key "before"))
-	(let ((field-date (elmo-date-make-sortable-string
-			   (timezone-fix-time
-			    (elmo-msgdb-message-entity-field
-			     handler entity 'date)
-			    (current-time-zone) nil)))
+	(let ((field-date (elmo-msgdb-message-entity-field
+			   handler entity 'date))
 	      (specified-date
-	       (elmo-date-make-sortable-string
+	       (elmo-datevec-to-time
 		(elmo-date-get-datevec
 		 (elmo-filter-value condition)))))
 	  (setq result (if (string= key "since")
-			   (or (string= specified-date field-date)
-			       (string< specified-date field-date))
-			 (string< field-date specified-date)))))
+			   (not (elmo-time< field-date specified-date))
+			 (elmo-time< field-date specified-date)))))
        ((member key elmo-msgdb-extra-fields)
 	(let ((extval (elmo-msgdb-message-entity-field handler
 						       entity
-						       (intern key))))
+						       (intern key)
+						       'string)))
 	  (when (stringp extval)
 	    (setq result (string-match
 			  (elmo-filter-value condition)
@@ -457,6 +609,266 @@ Header region is supposed to be narrowed.")
       (if (eq (elmo-filter-type condition) 'unmatch)
 	  (not result)
 	result))))
+
+
+;; Standard implementation.
+(eval-and-compile
+  (luna-define-class modb-standard-entity-handler (modb-entity-handler)))
+
+(defconst modb-standard-entity-field-slots
+  '(number
+    from
+    subject
+    date
+    to
+    cc
+    content-type
+    references
+    size
+    score
+    extra))
+
+(defconst modb-standard-entity-field-indices
+  (modb-entity-create-field-indices modb-standard-entity-field-slots))
+
+(defvar modb-standard-entity-normalizer nil)
+(modb-set-field-converter 'modb-standard-entity-normalizer nil
+  'date	#'modb-entity-parse-date-string
+  'to	#'modb-entity-parse-address-string
+  'cc	#'modb-entity-parse-address-string
+  t	nil)
+
+(defvar modb-standard-entity-specializer nil)
+(modb-set-field-converter 'modb-standard-entity-specializer nil t nil)
+(modb-set-field-converter 'modb-standard-entity-specializer 'string
+  'date		#'modb-entity-make-date-string
+  'to		#'modb-entity-make-address-string
+  'cc		#'modb-entity-make-address-string
+  'ml-info	#'modb-entity-make-mailing-list-info-string
+  t		nil)
+
+(defmacro modb-standard-entity-field-index (field)
+  `(cdr (assq ,field modb-standard-entity-field-indices)))
+
+(defsubst modb-standard-entity-set-field (entity field value &optional as-is)
+  (when entity
+    (let (index)
+      (unless as-is
+	(setq value (modb-convert-field-value modb-standard-entity-normalizer
+					      field value)))
+      (cond ((memq field '(message-id :message-id))
+	     (setcar (cdr entity) value))
+	    ((setq index (modb-standard-entity-field-index field))
+	     (aset (cdr (cdr entity)) index value))
+	    (t
+	     (setq index (modb-standard-entity-field-index :extra))
+	     (let ((extras (aref (cdr (cdr entity)) index))
+		   cell)
+	       (if (setq cell (assq field extras))
+		   (setcdr cell value)
+		 (aset (cdr (cdr entity))
+		       index
+		       (cons (cons field value) extras)))))))))
+
+(defsubst modb-standard-make-message-entity (handler args)
+  (let ((entity (cons handler
+		      (cons nil
+			    (make-vector
+			     (length modb-standard-entity-field-slots)
+			     nil))))
+	field value)
+    (while args
+      (setq field (pop args)
+	    value (pop args))
+      (when value
+	(modb-standard-entity-set-field entity field value)))
+    entity))
+
+(luna-define-method elmo-msgdb-make-message-entity
+  ((handler modb-standard-entity-handler) args)
+  (modb-standard-make-message-entity handler args))
+
+(luna-define-method elmo-msgdb-message-entity-number
+  ((handler modb-standard-entity-handler) entity)
+  (and entity (aref (cdr (cdr entity)) 0)))
+
+(luna-define-method elmo-msgdb-message-entity-set-number
+  ((handler modb-standard-entity-handler) entity number)
+  (and entity (aset (cdr (cdr entity)) 0 number)))
+
+(luna-define-method elmo-msgdb-message-entity-field
+  ((handler modb-standard-entity-handler) entity field &optional type)
+  (and entity
+       (let (index)
+	 (modb-convert-field-value
+	  modb-standard-entity-specializer
+	  field
+	  (cond ((memq field '(message-id :message-id))
+		 (car (cdr entity)))
+		((setq index (modb-standard-entity-field-index field))
+		 (aref (cdr (cdr entity)) index))
+		(t
+		 (setq index (modb-standard-entity-field-index :extra))
+		 (cdr (assq field (aref (cdr (cdr entity)) index)))))
+	  type))))
+
+(luna-define-method elmo-msgdb-message-entity-set-field
+  ((handler modb-standard-entity-handler) entity field value)
+  (modb-standard-entity-set-field entity field value))
+
+(luna-define-method elmo-msgdb-copy-message-entity
+  ((handler modb-standard-entity-handler) entity &optional make-handler)
+  (if make-handler
+      (let ((copy (elmo-msgdb-make-message-entity make-handler)))
+	(dolist (field (nconc
+			(delq 'extra
+			      (copy-sequence modb-standard-entity-field-slots))
+			(mapcar 'car
+				(aref
+				 (cdr entity)
+				 (modb-standard-entity-field-index :extra)))
+			'(message-id)))
+	  (elmo-msgdb-message-entity-set-field
+	   make-handler copy field
+	   (elmo-msgdb-message-entity-field handler entity field)))
+	copy)
+    (cons handler
+	  (cons (car (cdr entity))
+		(copy-sequence (cdr (cdr entity)))))))
+
+(luna-define-method elmo-msgdb-create-message-entity-from-buffer
+  ((handler modb-standard-entity-handler) number args)
+  (let ((default-mime-charset default-mime-charset)
+	entity content-type charset)
+    (save-excursion
+      (set-buffer-multibyte default-enable-multibyte-characters)
+      (and (setq content-type (elmo-decoded-field-body
+			       "content-type" 'summary))
+	   (setq charset (mime-content-type-parameter
+			  (mime-parse-Content-Type content-type) "charset"))
+	   (setq charset (intern-soft charset))
+	   (mime-charset-p charset)
+	   (setq default-mime-charset charset))
+      (setq entity
+	    (modb-standard-make-message-entity
+	     handler
+	     (append
+	      args
+	      (list
+	       :number
+	       number
+	       :message-id
+	       (elmo-msgdb-get-message-id-from-buffer)
+	       :references
+	       (elmo-msgdb-get-references-from-buffer)
+	       :from
+	       (elmo-replace-in-string
+		(or (elmo-decoded-field-body "from" 'summary)
+		    elmo-no-from)
+		"\t" " ")
+	       :subject
+	       (elmo-replace-in-string
+		(or (elmo-decoded-field-body "subject" 'summary)
+		    elmo-no-subject)
+		"\t" " ")
+	       :date
+	       (elmo-decoded-field-body "date" 'summary)
+	       :to
+	       (mapconcat
+		(lambda (field-body)
+		  (mime-decode-field-body field-body "to" 'summary))
+		(elmo-multiple-field-body "to") ",")
+	       :cc
+	       (mapconcat
+		(lambda (field-body)
+		  (mime-decode-field-body field-body "cc" 'summary))
+		(elmo-multiple-field-body "cc") ",")
+	       :content-type
+	       content-type
+	       :size
+	       (let ((size (elmo-field-body "content-length")))
+		 (if size
+		     (string-to-int size)
+		   (or (plist-get args :size) 0)))))))
+      (let (field-name field-body extractor)
+	(dolist (extra (cons "newsgroups" elmo-msgdb-extra-fields))
+	  (setq field-name (intern (downcase extra))
+		extractor  (cdr (assq field-name
+				      modb-entity-field-extractor-alist))
+		field-body (if extractor
+			       (funcall extractor field-name)
+			     (elmo-decoded-field-body extra 'summary)))
+	  (when field-body
+	    (modb-standard-entity-set-field entity field-name field-body))))
+      entity)))
+
+
+;; mailing list info handling
+(defun modb-entity-extract-ml-info-from-x-sequence ()
+  (let ((sequence (elmo-decoded-field-body "x-sequence" 'summary))
+	name count)
+    (when sequence
+      (elmo-set-list '(name count) (split-string sequence " "))
+      (cons name count))))
+
+(defun modb-entity-extract-ml-info-from-subject ()
+  (let ((subject (elmo-decoded-field-body "subject" 'summary)))
+    (when (and subject
+	       (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+			     subject))
+      (cons (match-string 1 subject) (match-string 2 subject)))))
+
+(defun modb-entity-extract-ml-info-from-return-path ()
+  (let ((return-path (elmo-decoded-field-body "return-path" 'summary)))
+    (when (and return-path
+	       (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-"
+			     return-path))
+      (cons (match-string 1 return-path)
+	    (match-string 2 return-path)))))
+
+(defun modb-entity-extract-ml-info-from-delivered-to ()
+  (let ((delivered-to (elmo-decoded-field-body "delivered-to" 'summary)))
+    (when (and delivered-to
+	       (string-match "^mailing list \\([^@]+\\)@" delivered-to))
+      (cons (match-string 1 delivered-to) nil))))
+
+(defun modb-entity-extract-ml-info-from-mailing-list ()
+  (let ((mailing-list (elmo-decoded-field-body "mailing-list" 'summary)))
+    ;; *-help@, *-owner@, etc.
+    (when (and mailing-list
+	       (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
+			     mailing-list))
+      (cons (match-string 2 mailing-list) nil))))
+
+(defvar modb-entity-extract-mailing-list-info-functions
+  '(modb-entity-extract-ml-info-from-x-sequence
+    modb-entity-extract-ml-info-from-subject
+    modb-entity-extract-ml-info-from-return-path
+    modb-entity-extract-ml-info-from-delivered-to
+    modb-entity-extract-ml-info-from-mailing-list))
+
+(defun modb-entity-extract-mailing-list-info (field)
+  (let ((ml-name (elmo-decoded-field-body "x-ml-name" 'summary))
+	(ml-count (or (elmo-decoded-field-body "x-mail-count" 'summary)
+		      (elmo-decoded-field-body "x-ml-count" 'summary)))
+	(functions modb-entity-extract-mailing-list-info-functions)
+	result)
+    (while (and functions
+		(or (null ml-name) (null ml-count)))
+      (when (setq result (funcall (car functions)))
+	(unless ml-name
+	  (setq ml-name (car result)))
+	(unless ml-count
+	  (setq ml-count (cdr result))))
+      (setq functions (cdr functions)))
+    (when (or ml-name ml-count)
+      (cons (and ml-name (car (split-string ml-name " ")))
+	    (and ml-count (string-to-int ml-count))))))
+
+(defun modb-entity-make-mailing-list-info-string (field value)
+  (when (car value)
+    (format (if (cdr value) "(%s %05.0f)" "(%s)")
+	    (car value) (cdr value))))
 
 (require 'product)
 (product-provide (provide 'modb-entity) (require 'elmo-version))

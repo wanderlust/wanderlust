@@ -431,9 +431,9 @@
   (elmo-message-folder (elmo-filter-folder-target-internal folder) number))
 
 (luna-define-method elmo-message-field ((folder elmo-filter-folder)
-					number field)
+					number field &optional type)
   (elmo-message-field
-   (elmo-filter-folder-target-internal folder) number field))
+   (elmo-filter-folder-target-internal folder) number field type))
 
 (luna-define-method elmo-message-set-field ((folder elmo-filter-folder)
 					    number field value)

@@ -734,7 +734,7 @@ Don't cache if nil.")
   (let ((new-msgdb (elmo-make-msgdb))
 	ov-list message-id entity
 	ov-entity num
-	extras extra ext field field-index flags)
+	field field-index flags)
     (setq ov-list (elmo-nntp-parse-overview-string str))
     (while ov-list
       (setq ov-entity (car ov-list))
@@ -747,33 +747,28 @@ Don't cache if nil.")
       (setq num (string-to-int (aref ov-entity 0)))
       (when (or (null numlist)
 		(memq num numlist))
-	(setq extras elmo-msgdb-extra-fields
-	      extra nil)
-	(while extras
-	  (setq ext (downcase (car extras)))
-	  (when (setq field-index (cdr (assoc ext elmo-nntp-overview-index)))
-	    (when (> (length ov-entity) field-index)
-	      (setq field (aref ov-entity field-index))
-	      (when (eq field-index 8) ;; xref
-		(setq field (elmo-msgdb-remove-field-string field)))
-	      (setq extra (cons (cons ext field) extra))))
-	  (setq extras (cdr extras)))
 	(setq entity (elmo-msgdb-make-message-entity
 		      (elmo-msgdb-message-entity-handler new-msgdb)
 		      :message-id (aref ov-entity 4)
 		      :number     num
 		      :references (elmo-msgdb-get-last-message-id
 				    (aref ov-entity 5))
-		      :from       (elmo-mime-string (elmo-delete-char
-						     ?\"
-						     (or
-						      (aref ov-entity 2)
-						      elmo-no-from) 'uni))
-		      :subject    (elmo-mime-string (or (aref ov-entity 1)
-							elmo-no-subject))
+		      :from       (elmo-delete-char  ?\"
+						     (or (aref ov-entity 2)
+							 elmo-no-from))
+		      :subject    (or (aref ov-entity 1)
+				      elmo-no-subject)
 		      :date       (aref ov-entity 3)
-		      :size       (string-to-int (aref ov-entity 6))
-		      :extra      extra))
+		      :size       (string-to-int (aref ov-entity 6))))
+	(dolist (extra elmo-msgdb-extra-fields)
+	  (setq extra (downcase extra))
+	  (when (and (setq field-index
+			   (cdr (assoc extra elmo-nntp-overview-index)))
+		     (> (length ov-entity) field-index))
+	    (setq field (aref ov-entity field-index))
+	    (when (eq field-index 8) ;; xref
+	      (setq field (elmo-msgdb-remove-field-string field)))
+	    (elmo-message-entity-set-field entity (intern extra) field)))
 	(setq message-id (elmo-message-entity-field entity 'message-id)
 	      flags (elmo-flag-table-get flag-table message-id))
 	(elmo-global-flags-set flags folder num message-id)

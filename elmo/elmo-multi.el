@@ -250,9 +250,9 @@
    (elmo-message-entity-field entity 'references)))
 
 (luna-define-method elmo-message-field ((folder elmo-multi-folder)
-					number field)
+					number field &optional type)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (elmo-message-field (car pair) (cdr pair) field)))
+    (elmo-message-field (car pair) (cdr pair) field type)))
 
 (luna-define-method elmo-message-flag-available-p ((folder
 						    elmo-multi-folder) number

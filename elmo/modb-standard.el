@@ -40,12 +40,6 @@
 		 number)
   :group 'elmo)
 
-(defcustom modb-standard-economize-entity-size t
-  "*Economize message entity size.
-When non-nil, redundunt message-id string are not saved."
-  :type 'boolean
-  :group 'elmo)
-
 (defvar modb-standard-entity-filename "entity"
   "Message entity database.")
 
@@ -196,44 +190,73 @@ When non-nil, redundunt message-id string are not saved."
 (defun modb-standard-load-entity (modb path &optional section)
   (let ((table (or (modb-standard-entity-map-internal modb)
 		   (elmo-make-hash (elmo-msgdb-length modb))))
+	(objects (elmo-object-load
+		  (expand-file-name
+		   (modb-standard-entity-filename section)
+		   path)))
 	number msgid)
-    (dolist (entity (elmo-object-load
-		     (expand-file-name
-		      (modb-standard-entity-filename section)
-		      path)))
-      (setq number (elmo-msgdb-message-entity-number
-		    (elmo-message-entity-handler entity)
-		    entity)
-	    msgid (modb-standard-loaded-message-id modb number))
-      (when msgid
-	(setcar entity msgid)
-	(elmo-set-hash-val msgid entity table)
-	(elmo-set-hash-val (modb-standard-key number) entity table)))
+    (cond ((eq (car objects) 'modb-standard-entity-handler)
+	   ;; (standard PARAMETERS ENTITY*)
+	   ;; PARAMETERS is nil (reserved for future extention).
+	   (let ((handler (apply #'luna-make-entity
+				 (car objects)
+				 (car (cdr objects))))
+		 entity)
+	     (dolist (element (cdr (cdr objects)))
+	       (setq entity (cons handler (cons nil element))
+		     number (elmo-msgdb-message-entity-number handler entity)
+		     msgid  (modb-standard-loaded-message-id modb number))
+	       (when msgid
+		 (elmo-msgdb-message-entity-set-field
+		  handler entity 'message-id msgid)
+		 (elmo-set-hash-val (modb-standard-key number) entity table)
+		 (elmo-set-hash-val msgid entity table)))))
+	  (t
+	   ;; legacy format
+	   (dolist (entity objects)
+	     (setq number (elmo-msgdb-message-entity-number
+			   (elmo-message-entity-handler entity)
+			   entity)
+		   msgid (modb-standard-loaded-message-id modb number))
+	     (when msgid
+	       (setcar entity msgid)
+	       (elmo-set-hash-val (modb-standard-key number) entity table)
+	       (elmo-set-hash-val msgid entity table)))))
     (modb-standard-set-entity-map-internal modb table)))
 
 (defsubst modb-standard-save-entity-1 (modb path &optional section)
   (let ((table (modb-standard-entity-map-internal modb))
 	(filename (expand-file-name
-		   (modb-standard-entity-filename section) path))
+		   (modb-standard-entity-filename (car section)) path))
+	(handler (elmo-msgdb-message-entity-handler modb))
 	entity entities)
-    (dolist (number (modb-standard-number-list-internal modb))
-      (when (and (or (null section)
-		     (= section (/ number modb-standard-divide-number)))
-		 (setq entity (elmo-msgdb-message-entity modb number)))
-	(when modb-standard-economize-entity-size
-	  (when (stringp (car entity))
-	    (setq entity (cons t (cdr entity)))))
-	(setq entities (cons entity entities))))
+    (dolist (number (or (cdr section)
+			(modb-standard-number-list-internal modb)))
+      (when (setq entity (elmo-msgdb-message-entity modb number))
+	(unless (eq (luna-class-name (elmo-message-entity-handler entity))
+		    (luna-class-name handler))
+	  (setq entity (elmo-msgdb-copy-message-entity
+			(elmo-message-entity-handler entity)
+			entity handler)))
+	(setq entities (cons (cdr (cdr entity)) entities))))
     (if entities
-	(elmo-object-save filename entities)
+	(elmo-object-save filename
+			  (cons (luna-class-name handler) (cons nil entities))
+			  elmo-mime-charset)
       (ignore-errors (delete-file filename)))))
 
 (defun modb-standard-save-entity (modb path)
-  (let ((sections (modb-generic-message-modified-internal modb)))
-    (cond ((listp sections)
-	   (dolist (section sections)
-	     (modb-standard-save-entity-1 modb path section)))
-	  (sections
+  (let ((modified (modb-generic-message-modified-internal modb)))
+    (cond ((listp modified)
+	   (let ((sections (mapcar 'list modified))
+		 section)
+	     (dolist (number (modb-standard-number-list-internal modb))
+	       (when (setq section (assq (/ number modb-standard-divide-number)
+					 sections))
+		 (nconc section (list number))))
+	     (dolist (section sections)
+	       (modb-standard-save-entity-1 modb path section))))
+	  (modified
 	   (modb-standard-save-entity-1 modb path)))))
 
 ;;; Implement
@@ -553,7 +576,7 @@ When non-nil, redundunt message-id string are not saved."
       (elmo-message-entity-number ret))))
 
 (luna-define-method elmo-msgdb-message-field ((msgdb modb-standard)
-					      number field)
+					      number field &optional type)
   (let ((ret (elmo-get-hash-val
 	      (modb-standard-key number)
 	      (modb-standard-entity-map-internal msgdb))))
@@ -562,7 +585,7 @@ When non-nil, redundunt message-id string are not saved."
 	(cdr (cdr ret))
       (elmo-message-entity-field (elmo-msgdb-message-entity
 				  msgdb (modb-standard-key number))
-				 field))))
+				 field type))))
 
 (luna-define-method elmo-msgdb-message-entity ((msgdb modb-standard) key)
   (when key
@@ -571,6 +594,13 @@ When non-nil, redundunt message-id string are not saved."
      (cond ((stringp key) key)
 	   ((numberp key) (modb-standard-key key)))
      'autoload)))
+
+(defvar modb-standard-default-entity-handler nil)
+
+(luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-standard))
+  (or modb-standard-default-entity-handler
+      (setq modb-standard-default-entity-handler
+	    (luna-make-entity 'modb-standard-entity-handler))))
 
 (require 'product)
 (product-provide (provide 'modb-standard) (require 'elmo-version))

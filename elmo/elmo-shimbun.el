@@ -129,8 +129,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	      (elmo-shimbun-folder-set-header-hash-internal
 	       folder
 	       (setq hash (elmo-make-hash))))
-	    (elmo-set-hash-val (elmo-message-entity-field entity
-							  'message-id)
+	    (elmo-set-hash-val (elmo-message-entity-field entity 'message-id)
 			       header
 			       hash)
 	    header)))))
@@ -139,14 +138,6 @@ If it is the symbol `all', update overview for all shimbun folders."
   (let ((now (current-time)))
     (+ (* (- (car now) (car time)) 65536)
        (- (nth 1 now) (nth 1 time)))))
-
-(defun elmo-shimbun-parse-time-string (string)
-  "Parse the time-string STRING and return its time as Emacs style."
-  (ignore-errors
-    (let ((x (timezone-fix-time string nil nil)))
-      (encode-time (aref x 5) (aref x 4) (aref x 3)
-		   (aref x 2) (aref x 1) (aref x 0)
-		   (aref x 6)))))
 
 (defsubst elmo-shimbun-headers-check-p (folder)
   (or (null (elmo-shimbun-folder-last-check-internal folder))
@@ -157,22 +148,20 @@ If it is the symbol `all', update overview for all shimbun folders."
 
 (defun elmo-shimbun-entity-to-header (entity)
   (let (message-id shimbun-id)
-    (if (setq message-id (elmo-message-entity-field
-			  entity 'x-original-id))
+    (if (setq message-id (elmo-message-entity-field entity 'x-original-id))
 	(setq shimbun-id (elmo-message-entity-field entity 'message-id))
       (setq message-id (elmo-message-entity-field entity 'message-id)
 	    shimbun-id nil))
     (elmo-with-enable-multibyte
-      (shimbun-make-header
+      (shimbun-create-header
        (elmo-message-entity-number entity)
-       (shimbun-mime-encode-string
-	(elmo-message-entity-field entity 'subject 'decode))
-       (shimbun-mime-encode-string
-	(elmo-message-entity-field entity 'from 'decode))
-       (elmo-message-entity-field entity 'date)
+       (elmo-message-entity-field entity 'subject)
+       (elmo-message-entity-field entity 'from)
+       (elmo-time-make-date-string
+	(elmo-message-entity-field entity 'date))
        message-id
        (elmo-message-entity-field entity 'references)
-       0
+       (elmo-message-entity-field entity 'size)
        0
        (elmo-message-entity-field entity 'xref)
        (and shimbun-id
@@ -392,17 +381,11 @@ If it is the symbol `all', update overview for all shimbun folders."
 				 (elmo-shimbun-folder-entity-hash folder))
 	      (list (cons 'x-original-id message-id)))
 	    (list
-	     (cons 'from
-		   (elmo-mime-string (shimbun-header-from header)))
-	     (cons 'subject
-		   (elmo-mime-string (shimbun-header-subject header)))
-	     (cons 'date
-		   (shimbun-header-date header))
+	     (cons 'from    (shimbun-header-from header 'no-encode))
+	     (cons 'subject (shimbun-header-subject header 'no-encode))
+	     (cons 'date    (shimbun-header-date header))
 	     (cons 'references
-		   (or (elmo-msgdb-get-last-message-id
-			(elmo-field-body "in-reply-to"))
-		       (elmo-msgdb-get-last-message-id
-			(elmo-field-body "references")))))))
+		   (elmo-msgdb-get-references-from-buffer)))))
       (elmo-emit-signal 'update-overview folder
 			(elmo-message-entity-number entity)))))
 
@@ -455,8 +438,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	       (when (and (elmo-message-entity-field ov 'xref)
 			  (if expire-days
 			      (< (elmo-shimbun-lapse-seconds
-				  (elmo-shimbun-parse-time-string
-				   (elmo-message-entity-field ov 'date)))
+				  (elmo-message-entity-field ov 'date))
 				 (* expire-days 86400 ; seconds per day
 				    ))
 			    t))

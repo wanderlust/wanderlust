@@ -229,7 +229,7 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 	   (lambda (field-name)
 	     (or (elmo-message-entity-field entity
 					    (intern (downcase field-name))
-					    'decode)
+					    'string)
 		 (progn
 		   (unless buffer
 		     (setq buffer (get-buffer-create

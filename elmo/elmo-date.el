@@ -211,6 +211,30 @@ Otherwise treat \\ in NEWTEXT string as special:
        (aref (, datevec) 4)
        (aref (, datevec) 5)))))
 
+(defsubst elmo-datevec-to-time (datevec)
+  (encode-time (aref datevec 5) (aref datevec 4) (aref datevec 3)
+	       (aref datevec 2) (aref datevec 1) (aref datevec 0)
+	       (aref datevec 6)))
+
+(defun elmo-time-parse-date-string (date)
+  (ignore-errors
+   (elmo-datevec-to-time (timezone-fix-time date nil nil))))
+
+(defun elmo-time-make-date-string (time)
+  (let ((system-time-locale "C"))
+    (format-time-string "%a, %d %b %Y %T %z" time)))
+
+(defun elmo-time< (lhs rhs)
+  (while (and (car lhs) (car rhs))
+    (cond ((< (car lhs) (car rhs))
+	   (setq lhs nil))
+	  ((= (car lhs) (car rhs))
+	   (setq lhs (cdr lhs)
+		 rhs (cdr rhs)))
+	  (t
+	   (setq rhs nil))))
+  (not (null rhs)))
+
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))
 

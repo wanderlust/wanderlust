@@ -278,6 +278,13 @@ For disconnected operations.")
 (defvar elmo-strict-diff-folder-list nil
   "List of regexps of folder name which should be checked its diff strictly.")
 
+(defcustom elmo-msgdb-prefer-in-reply-to-for-parent nil
+  "*Non-nil to prefer In-Reply-To header for finding parent message on thread,
+rather than References header."
+  :type 'boolean
+  :group 'elmo
+  :group 'elmo-setting)
+
 (defcustom elmo-msgdb-extra-fields nil
   "Extra fields for msgdb."
   :type '(repeat string)

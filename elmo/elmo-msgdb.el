@@ -87,19 +87,19 @@
 					entity
 					number))
 
-(defsubst elmo-message-entity-field (entity field &optional decode)
+(defsubst elmo-message-entity-field (entity field &optional type)
   "Get message entity field value.
 ENTITY is the message entity structure obtained by `elmo-message-entity'.
 FIELD is the symbol of the field name.
-if optional DECODE is non-nil, returned value is decoded."
+If optional argument TYPE is specified, return converted value."
   (elmo-msgdb-message-entity-field (elmo-message-entity-handler entity)
-				   entity field decode))
+				   entity field type))
 
 (defsubst elmo-message-entity-set-field (entity field value)
   "Set message entity field value.
 ENTITY is the message entity structure.
 FIELD is the symbol of the field name.
-VALUE is the field value (raw)."
+VALUE is the field value."
   (elmo-msgdb-message-entity-set-field (elmo-message-entity-handler entity)
 				       entity field value))
 
@@ -140,11 +140,9 @@ VALUE is the field value (raw)."
    msgdb
    (lambda (x y app-data)
      (condition-case nil
-	 (string<
-	  (timezone-make-date-sortable
-	   (elmo-message-entity-field x 'date))
-	  (timezone-make-date-sortable
-	   (elmo-message-entity-field y 'date)))
+	 (elmo-time<
+	  (elmo-message-entity-field x 'date)
+	  (elmo-message-entity-field y 'date))
        (error)))))
 
 (defsubst elmo-msgdb-get-parent-entity (entity msgdb)
@@ -236,9 +234,7 @@ VALUE is the field value (raw)."
 			(elmo-make-hash (elmo-msgdb-length msgdb))))
 	msg-id)
     (dolist (number (elmo-msgdb-list-messages msgdb))
-      (when (setq msg-id (elmo-message-entity-field
-			  (elmo-msgdb-message-entity msgdb number)
-			  'message-id))
+      (when (setq msg-id (elmo-msgdb-message-field msgdb number 'message-id))
 	(elmo-flag-table-set flag-table
 			     msg-id
 			     (elmo-msgdb-flags msgdb number))))
@@ -416,34 +412,38 @@ header separator."
   (elmo-message-entity-set-field entity 'references references))
 
 (defsubst elmo-msgdb-overview-entity-get-from-no-decode (entity)
-  (elmo-message-entity-field entity 'from))
+  (elmo-with-enable-multibyte
+    (encode-mime-charset-string
+     (elmo-message-entity-field entity 'from) elmo-mime-charset)))
 
 (defsubst elmo-msgdb-overview-entity-get-from (entity)
-  (elmo-message-entity-field entity 'from t))
+  (elmo-message-entity-field entity 'from))
 
 (defsubst elmo-msgdb-overview-entity-set-from (entity from)
   (elmo-message-entity-set-field entity 'from from))
 
 (defsubst elmo-msgdb-overview-entity-get-subject (entity)
-  (elmo-message-entity-field entity 'subject t))
+  (elmo-message-entity-field entity 'subject))
 
 (defsubst elmo-msgdb-overview-entity-get-subject-no-decode (entity)
-  (elmo-message-entity-field entity 'subject))
+  (elmo-with-enable-multibyte
+    (encode-mime-charset-string
+     (elmo-message-entity-field entity 'subject) elmo-mime-charset)))
 
 (defsubst elmo-msgdb-overview-entity-set-subject (entity subject)
   (elmo-message-entity-set-field entity 'subject subject))
 
 (defsubst elmo-msgdb-overview-entity-get-date (entity)
-  (elmo-message-entity-field entity 'date))
+  (elmo-message-entity-field entity 'date 'string))
 
 (defsubst elmo-msgdb-overview-entity-set-date (entity date)
   (elmo-message-entity-set-field entity 'date date))
 
 (defsubst elmo-msgdb-overview-entity-get-to (entity)
-  (elmo-message-entity-field entity 'to))
+  (elmo-message-entity-field entity 'to 'string))
 
 (defsubst elmo-msgdb-overview-entity-get-cc (entity)
-  (elmo-message-entity-field entity 'cc))
+  (elmo-message-entity-field entity 'cc 'string))
 
 (defsubst elmo-msgdb-overview-entity-get-size (entity)
   (elmo-message-entity-field entity 'size))

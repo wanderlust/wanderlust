@@ -78,16 +78,6 @@
       (timezone-make-time-string
        (aref (, date) 3) (aref (, date) 4) (aref (, date) 5)))))
 
-(defsubst wl-expire-date-p (key-datevec date)
-  (let ((datevec (condition-case nil
-		     (timezone-fix-time date nil nil)
-		   (error nil))))
-    (and
-     datevec (> (aref datevec 1) 0)
-     (string<
-      (wl-expire-make-sortable-date datevec)
-      (wl-expire-make-sortable-date key-datevec)))))
-
 ;; New functions to avoid accessing to the msgdb directly.
 (defsubst wl-expire-message-p (folder number)
   "Return non-nil when a message in the FOLDER with NUMBER can be expired."
@@ -465,7 +455,8 @@ Refile to archive folder followed message date."
       (wl-append deleted-list (car (wl-expire-delete folder dels))))
     (setq delete-list (car tmp))
     (while (setq msg (wl-pop delete-list))
-      (setq date (elmo-message-field folder msg 'date))
+      (setq date (elmo-time-make-date-string
+		  (elmo-message-field folder msg 'date)))
       (setq time
 	    (condition-case nil
 		(timezone-fix-time date nil nil)
@@ -549,7 +540,8 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	 msg arcmsg-alist arcmsg-list
 	 deleted-list ret-val)
     (while (setq msg (wl-pop delete-list))
-      (setq date (elmo-message-field folder msg 'date))
+      (setq date (elmo-time-make-date-string
+		  (elmo-message-field folder msg 'date)))
       (setq time
 	    (condition-case nil
 		(timezone-fix-time date nil nil)
@@ -644,14 +636,15 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 		      (setq count (1- count))))
 		  (setq msgs (cdr msgs))))))
 	   ((eq val-type 'date)
-	    (let* ((key-date (elmo-date-get-offset-datevec
-			      (timezone-fix-time (current-time-string)
-						 (current-time-zone) nil)
-			      value t)))
+	    (let* ((key-date (elmo-datevec-to-time
+			      (elmo-date-get-offset-datevec
+			       (timezone-fix-time (current-time-string)
+						  (current-time-zone) nil)
+			       value t))))
 	      (elmo-folder-do-each-message-entity (entity folder)
-		(when (wl-expire-date-p
-		       key-date
-		       (elmo-message-entity-field entity 'date))
+		(when (elmo-time<
+		       (elmo-message-entity-field entity 'date)
+		       key-date)
 		  (wl-append delete-list
 			     (list (elmo-message-entity-number entity)))))))
 	   (t

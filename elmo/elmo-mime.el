@@ -306,7 +306,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 			      (mime-entity-content-type message) "id"))))
 	     (elmo-message-reassembled-mime-entity
 	      folder id rawbuf
-	      (elmo-message-entity-field entity 'subject 'decode)
+	      (elmo-message-entity-field entity 'subject)
 	      ignore-cache
 	      unread))
 	message
@@ -405,7 +405,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 	(elmo-folder-do-each-message-entity (entity folder)
 	  (when (string-match
 		 subject-regexp
-		 (elmo-message-entity-field entity 'subject 'decode))
+		 (elmo-message-entity-field entity 'subject))
 	    (erase-buffer)
 	    (let* ((message (elmo-message-mime-entity-internal
 			     folder

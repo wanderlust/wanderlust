@@ -1,5 +1,42 @@
 2005-03-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-util.el (wl-parse-addresses): Define alias of
+	`elmo-parse-addresses' (move to `elmo-util.el').
+
+	* wl-summary.el (wl-summary-default-from): Follow the API change.
+	(wl-summary-overview-entity-compare-by-date): Ditto.
+	(wl-summary-overview-entity-compare-by-from): Ditto.
+	(wl-summary-get-list-info): Get value of `ml-info' field from
+	entity at first.
+	(wl-summary-rescan-message): Treat prefix argument.
+	(wl-summary-prefetch-msg): Follow the API change.
+	(wl-summary-search-by-subject): Ditto.
+	(wl-summary-insert-thread): Ditto.
+	(wl-summary-line-subject): Ditto.
+	(wl-summary-line-from): Ditto.
+	(wl-summary-create-line): Ditto.
+	(wl-summary-print-message-with-ps-print): Ditto.
+
+	* wl-score.el (wl-score-ov-entity-get): Ditto.
+	(wl-score-followup): Ditto.
+	(wl-score-add-followups): Use `elmo-message-entity-field' instead
+	of `car'.
+	(wl-score-get-latest-msgs): Follow the API change.
+	(wl-score-get-header): Ditto.
+
+	* wl-refile.el (wl-refile-learn): Ditto.
+	(wl-refile-subject-learn): Ditto.
+	(wl-refile-get-field-value): Ditto.
+	(wl-refile-guess-by-history): Ditto.
+	(wl-refile-guess-by-subject): Ditto.
+
+	* wl-mime.el (wl-mime-combine-message/partial-pieces): Ditto.
+
+	* wl-expire.el (wl-expire-date-p): Removed.
+	(wl-expire-archive-date): Follow the API change.
+	(wl-expire-localdir-date): Ditto.
+	(wl-summary-expire): Ditto.
+
 	* Version number is increased to 2.15.1.
 
 2005-03-20  Yoichi NAKAYAMA  <yoichi@geiin.org>

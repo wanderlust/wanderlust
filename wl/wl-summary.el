@@ -219,24 +219,20 @@ See also variable `wl-use-petname'."
 			   (wl-summary-buffer-folder-name))
 	     (wl-address-user-mail-address-p from)
 	     (cond
-	      ((and (setq tos (elmo-message-entity-field
-			       wl-message-entity 'to t))
-		    (not (string= "" tos)))
+	      ((setq tos (elmo-message-entity-field wl-message-entity 'to))
 	       (setq retval
 		     (concat "To:"
 			     (mapconcat
-			      (function
-			       (lambda (to)
-				 (eword-decode-string
-				  (if wl-use-petname
-				      (or
-				       (funcall
-					wl-summary-get-petname-function to)
-				       (car
-					(std11-extract-address-components to))
-				       to)
-				    to))))
-			      (wl-parse-addresses tos)
+			      (lambda (to)
+				(if wl-use-petname
+				    (or
+				     (funcall
+				      wl-summary-get-petname-function to)
+				     (car
+				      (std11-extract-address-components to))
+				     to)
+				  to))
+			      tos
 			      ","))))
 	      ((setq ng (elmo-message-entity-field
 			 wl-message-entity 'newsgroups))
@@ -965,11 +961,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
   (condition-case nil
-      (string<
-       (timezone-make-date-sortable
-	(elmo-message-entity-field x 'date))
-       (timezone-make-date-sortable
-	(elmo-message-entity-field y 'date)))
+      (elmo-time<
+       (elmo-message-entity-field x 'date)
+       (elmo-message-entity-field y 'date))
     (error))) ;; ignore error.
 
 (defun wl-summary-overview-entity-compare-by-number (x y)
@@ -981,9 +975,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-overview-entity-compare-by-from (x y)
   "Compare entity X and Y by from."
   (string<
-   (or (elmo-message-entity-field x 'from t)
+   (or (elmo-message-entity-field x 'from)
        wl-summary-no-from-message)
-   (or (elmo-message-entity-field y 'from t)
+   (or (elmo-message-entity-field y 'from)
        wl-summary-no-from-message)))
 
 (defun wl-summary-overview-entity-compare-by-subject (x y)
@@ -993,38 +987,42 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
-  (let (sequence ml-name ml-count subject return-path delivered-to mailing-list)
-    (setq sequence (elmo-message-entity-field entity 'x-sequence)
-	  ml-name (or (elmo-message-entity-field entity 'x-ml-name)
-		      (and sequence
-			   (car (split-string sequence " "))))
-	  ml-count (or (elmo-message-entity-field entity 'x-mail-count)
-		       (elmo-message-entity-field entity 'x-ml-count)
-		       (and sequence
-			    (cadr (split-string sequence " ")))))
-    (and (setq subject (elmo-message-entity-field entity 'subject t))
-	 (setq subject (elmo-delete-char ?\n subject))
-	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
-	 (progn
-	   (or ml-name (setq ml-name (match-string 1 subject)))
-	   (or ml-count (setq ml-count (match-string 2 subject)))))
-    (and (setq return-path
-	       (elmo-message-entity-field entity 'return-path))
-	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
-	 (progn
-	   (or ml-name (setq ml-name (match-string 1 return-path)))
-	   (or ml-count (setq ml-count (match-string 2 return-path)))))
-    (and (setq delivered-to
-	       (elmo-message-entity-field entity 'delivered-to))
-	 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
-	 (or ml-name (setq ml-name (match-string 1 delivered-to))))
-    (and (setq mailing-list
-	       (elmo-message-entity-field entity 'mailing-list))
-	 ;; *-help@, *-owner@, etc.
-	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)
-	 (or ml-name (setq ml-name (match-string 2 mailing-list))))
-    (cons (and ml-name (car (split-string ml-name " ")))
-	  (and ml-count (string-to-int ml-count)))))
+  (or (elmo-message-entity-field entity 'ml-info)
+      (let (sequence ml-name ml-count subject
+		     return-path delivered-to mailing-list)
+	(setq sequence (elmo-message-entity-field entity 'x-sequence)
+	      ml-name (or (elmo-message-entity-field entity 'x-ml-name)
+			  (and sequence
+			       (car (split-string sequence " "))))
+	      ml-count (or (elmo-message-entity-field entity 'x-mail-count)
+			   (elmo-message-entity-field entity 'x-ml-count)
+			   (and sequence
+				(cadr (split-string sequence " ")))))
+	(and (setq subject (elmo-message-entity-field entity 'subject))
+	     (setq subject (elmo-delete-char ?\n subject))
+	     (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+			   subject)
+	     (progn
+	       (or ml-name (setq ml-name (match-string 1 subject)))
+	       (or ml-count (setq ml-count (match-string 2 subject)))))
+	(and (setq return-path
+		   (elmo-message-entity-field entity 'return-path))
+	     (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
+	     (progn
+	       (or ml-name (setq ml-name (match-string 1 return-path)))
+	       (or ml-count (setq ml-count (match-string 2 return-path)))))
+	(and (setq delivered-to
+		   (elmo-message-entity-field entity 'delivered-to))
+	     (string-match "^mailing list \\([^@]+\\)@" delivered-to)
+	     (or ml-name (setq ml-name (match-string 1 delivered-to))))
+	(and (setq mailing-list
+		   (elmo-message-entity-field entity 'mailing-list))
+	     ;; *-help@, *-owner@, etc.
+	     (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
+			   mailing-list)
+	     (or ml-name (setq ml-name (match-string 2 mailing-list))))
+	(cons (and ml-name (car (split-string ml-name " ")))
+	      (and ml-count (string-to-int ml-count))))))
 
 (defun wl-summary-overview-entity-compare-by-list-info (x y)
   "Compare entity X and Y by mailing-list info."
@@ -1154,7 +1152,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 
 (defun wl-summary-rescan-message (number &optional reparent)
   "Rescan current message without updating."
-  (interactive (list (wl-summary-message-number)))
+  (interactive (list (wl-summary-message-number) current-prefix-arg))
   (let ((start-number (wl-summary-message-number))
 	(start-column (current-column)))
     (when (wl-summary-jump-to-msg number)
@@ -1615,7 +1613,7 @@ If ARG is non-nil, checking is omitted."
 			    (or
 			     (elmo-message-entity-field
 			      wl-message-entity
-			      'from t)
+			      'from)
 			     "??")))))
 		       " ]")
 		      size))))
@@ -2660,7 +2658,7 @@ If ARG, without confirm."
   (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
 			wl-summary-alike-hashtb)))
 
-(defun wl-summary-insert-headers (folder func mime-decode)
+(defun wl-summary-insert-headers (folder func &optional mime-decode)
   (let ((numbers (elmo-folder-list-messages folder 'visible t))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
@@ -2704,12 +2702,10 @@ If ARG, without confirm."
 	   (function
 	    (lambda (x)
 	      (funcall wl-summary-subject-filter-function
-		       (elmo-message-entity-field x 'subject))))
-	   t)
+		       (elmo-message-entity-field x 'subject)))))
 	  (message "Creating subject cache...done"))
 	(setq match (funcall wl-summary-subject-filter-function
-			     (elmo-message-entity-field entity 'subject
-							'decode)))
+			     (elmo-message-entity-field entity 'subject)))
 	(if (string= match "")
 	    (setq match "\n"))
 	(goto-char (point-max))
@@ -2799,10 +2795,9 @@ If ARG, without confirm."
 	(if (and parent-number
 		 wl-summary-divide-thread-when-subject-changed
 		 (not (wl-summary-subject-equal
-		       (or (elmo-message-entity-field entity
-						      'subject t) "")
+		       (or (elmo-message-entity-field entity 'subject) "")
 		       (or (elmo-message-entity-field parent-entity
-						      'subject t) ""))))
+						      'subject) ""))))
 	    (setq parent-number nil))
 	(setq retval
 	      (wl-thread-insert-message entity
@@ -3500,18 +3495,16 @@ Return non-nil if the mark is updated"
 	  (elmo-delete-char ?\n
 			    (or (elmo-message-entity-field
 				 wl-message-entity
-				 'subject t)
+				 'subject)
 				wl-summary-no-subject-message)))
     (setq parent-raw-subject
-	  (elmo-message-entity-field wl-parent-message-entity
-				     'subject t))
+	  (elmo-message-entity-field wl-parent-message-entity 'subject))
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
     (if (or no-parent
 	    (null parent-subject)
-	    (not (wl-summary-subject-equal
-		  subject parent-subject)))
+	    (not (wl-summary-subject-equal subject parent-subject)))
 	(funcall wl-summary-subject-function subject)
       "")))
 
@@ -3520,7 +3513,7 @@ Return non-nil if the mark is updated"
 		    (funcall wl-summary-from-function
 			     (elmo-message-entity-field
 			      wl-message-entity
-			      'from t))))
+			      'from))))
 
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
@@ -3568,12 +3561,12 @@ Return non-nil if the mark is updated"
 			     wl-cached))
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
-	(wl-datevec (or (ignore-errors (timezone-fix-time
-					(elmo-message-entity-field
-					 wl-message-entity
-					 'date)
-					nil
-					wl-summary-fix-timezone))
+	(wl-datevec (or (ignore-errors
+			 (timezone-fix-time
+			  (elmo-time-make-date-string
+			   (elmo-message-entity-field wl-message-entity 'date))
+			  nil
+			  wl-summary-fix-timezone))
 			(make-vector 5 0)))
 	(entity wl-message-entity) ; backward compatibility.
 	line mark)
@@ -4863,14 +4856,15 @@ If ARG is numeric number, decode message as following:
 			      (wl-summary-message-number))))
 		   (wl-ps-subject
 		    (and entity
-			 (or (elmo-message-entity-field entity 'subject t)
+			 (or (elmo-message-entity-field entity 'subject)
 			     "")))
 		   (wl-ps-from
 		    (and entity
-			 (or (elmo-message-entity-field entity 'from t) "")))
+			 (or (elmo-message-entity-field entity 'from) "")))
 		   (wl-ps-date
 		    (and entity
-			 (or (elmo-message-entity-field entity 'date) ""))))
+			 (or (elmo-time-make-date-string
+			      (elmo-message-entity-field entity 'date)) ""))))
 	      (run-hooks 'wl-ps-preprint-hook)
 	      (set-buffer wl-message-buffer)
 	      (copy-to-buffer buffer (point-min) (point-max))

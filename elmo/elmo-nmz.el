@@ -107,8 +107,8 @@ If the value is a list, all elements are used as index paths for namazu."
 	entity uid)
     (setq entity (elmo-msgdb-create-message-entity-from-file
 		  (elmo-msgdb-message-entity-handler msgdb) number location))
-    (unless (or (> (length (elmo-message-entity-field entity 'to)) 0)
-		(> (length (elmo-message-entity-field entity 'cc)) 0)
+    (unless (or (elmo-message-entity-field entity 'to)
+		(elmo-message-entity-field entity 'cc)
 		(not (string= (elmo-message-entity-field entity 'subject)
 			      elmo-no-subject)))
       (elmo-message-entity-set-field entity 'subject location)
