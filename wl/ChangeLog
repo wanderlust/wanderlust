@@ -1,5 +1,11 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (wl-message-buffer-prefetch-p): Check size.
+	(wl-message-buffer-prefetch-get-next): Remove size checking.
+	(wl-message-buffer-prefetch): call `wl-message-buffer-prefetch-p'.
+
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-decode-body): Remove `debug'.
 	(wl-draft-default-headers): Fix.
 

@@ -532,25 +532,31 @@ Returns non-nil if bottom of message."
       (setq buffer-read-only t))))
 
 (defsubst wl-message-buffer-prefetch-p (folder &optional number)
-  (or (cond
-       ((eq wl-message-buffer-prefetch-folder-type-list t)
-	t)
-       ((and number wl-message-buffer-prefetch-folder-type-list)
-	(memq (elmo-folder-type-internal
-	       (elmo-message-folder folder number))
-	      wl-message-buffer-prefetch-folder-type-list))
-       (wl-message-buffer-prefetch-folder-type-list
-	(let ((list wl-message-buffer-prefetch-folder-type-list)
-	      type)
-	  (catch 'done
-	    (while (setq type (pop list))
-	      (if (elmo-folder-contains-type folder type)
-		  (throw 'done t)))))))
-      (cond
-       ((consp wl-message-buffer-prefetch-folder-list)
-	(wl-string-match-member (elmo-folder-name-internal folder)
-				wl-message-buffer-prefetch-folder-list))
-       (t wl-message-buffer-prefetch-folder-list))))
+  (and (or (not number)
+	   (elmo-message-file-p folder number)
+	   (let ((size (elmo-message-field folder number 'size)))
+	     (not (and (integerp size)
+		       wl-message-buffer-prefetch-threshold
+		       (>= size wl-message-buffer-prefetch-threshold)))))
+       (or (cond
+	    ((eq wl-message-buffer-prefetch-folder-type-list t)
+	     t)
+	    ((and number wl-message-buffer-prefetch-folder-type-list)
+	     (memq (elmo-folder-type-internal
+		    (elmo-message-folder folder number))
+		   wl-message-buffer-prefetch-folder-type-list))
+	    (wl-message-buffer-prefetch-folder-type-list
+	     (let ((list wl-message-buffer-prefetch-folder-type-list)
+		   type)
+	       (catch 'done
+		 (while (setq type (pop list))
+		   (if (elmo-folder-contains-type folder type)
+		       (throw 'done t)))))))
+	   (cond
+	    ((consp wl-message-buffer-prefetch-folder-list)
+	     (wl-string-match-member (elmo-folder-name-internal folder)
+				     wl-message-buffer-prefetch-folder-list))
+	    (t wl-message-buffer-prefetch-folder-list)))))
 
 (defsubst wl-message-buffer-prefetch-clear-timer ()
 ;;;     cannot use for the bug of fsf-compat package (1.09).
@@ -582,34 +588,30 @@ Returns non-nil if bottom of message."
   (if (buffer-live-p summary)
       (with-current-buffer summary
 	(let* ((next (funcall wl-message-buffer-prefetch-get-next-function
-			      number))
-	       (size (elmo-message-field folder next 'size)))
-	  (if next
-	      (cond
-	       ((not (wl-message-buffer-prefetch-p folder next))
-		;; for Multi folder
-		(wl-message-buffer-prefetch-get-next
-		 folder next summary))
-	       ((and (not (elmo-message-file-p folder next))
-		     (integerp size)
-		     wl-message-buffer-prefetch-threshold
-		     (>= size wl-message-buffer-prefetch-threshold))
-		(wl-message-buffer-prefetch-get-next
-		 folder next summary))
-	       (t
-		next)))))))
+			      number)))
+	  (if (and next
+		   (not (wl-message-buffer-prefetch-p folder next)))
+	      ;; for Multi folder
+	      (wl-message-buffer-prefetch-get-next
+	       folder next summary)
+	    next)))))
 
 (defun wl-message-buffer-prefetch (folder number &optional
 					  count summary charset)
-  (let* ((summary (or summary (get-buffer wl-summary-buffer-name))))
+  (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
+	 (num number))
     (when (wl-message-buffer-prefetch-p folder)
-      (wl-message-buffer-prefetch-clear-timer)
-      (wl-message-buffer-prefetch-set-timer
-       folder
-       number
-       (or count 1)
-       summary
-       charset))))
+      (unless (wl-message-buffer-prefetch-p folder number)
+	(setq num
+	      (wl-message-buffer-prefetch-get-next folder number summary)))
+      (when num
+	(wl-message-buffer-prefetch-clear-timer)
+	(wl-message-buffer-prefetch-set-timer
+	 folder
+	 num
+	 (or count 1)
+	 summary
+	 charset)))))
 
 (defun wl-message-buffer-prefetch-next (folder number &optional
 					       count summary charset)
