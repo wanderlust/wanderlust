@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-12 16:55:48 teranisi>
+;; Time-stamp: <2000-06-05 17:52:20 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -5071,52 +5071,75 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-jump-to-parent-message (arg)
   (interactive "P")
-  (if (null (wl-summary-message-number))
-      (message "No message.")
-    (let ((cur-buf (current-buffer))
-	  (regexp "\\(<[^<>]*>\\)[ \t]*$")
-	  (i -1) ;; xxx
-	  msg-id ref-list ref irt)
-      (wl-summary-set-message-buffer-or-redisplay)
-      (set-buffer (wl-message-get-original-buffer))
-      (message "Searching parent message...")
-      (setq ref (std11-field-body "References")
-	    irt (std11-field-body "In-Reply-To"))
-      (cond
-       ((and arg (not (numberp arg)) ref (not (string= ref ""))
-	     (string-match regexp ref))
-	;; The first message of the thread.
-	(setq msg-id (wl-match-string 1 ref)))
-       ;; "In-Reply-To:" has only one msg-id.
-       ((and irt (not (string= irt ""))
-	     (string-match regexp irt))
-	(setq msg-id (wl-match-string 1 irt)))
-       ((and (or (null arg) (numberp arg)) ref (not (string= ref ""))
-	     (string-match regexp ref))
-	;; "^" searching parent, "C-u 2 ^" looking for grandparent.
-	(while (string-match regexp ref)
-	  (setq ref-list
-		(append (list
-			 (wl-match-string 1 ref))
-			ref-list))
-	  (setq ref (substring ref (match-end 0)))
-	  (setq i (1+ i)))
-	(setq msg-id
-	      (if (null arg) (nth 0 ref-list) ;; previous
-		(if (<= arg i) (nth (1- arg) ref-list)
-		  (nth i ref-list))))))
+  (let ((cur-buf (current-buffer))
+	(number (wl-summary-message-number))
+	(regexp "\\(<[^<>]*>\\)[ \t]*$")
+	(i -1) ;; xxx
+	msg-id msg-num ref-list ref irt)
+    (if (null number)
+	(message "No message.")
+      (when (eq wl-summary-buffer-view 'thread)
+	(cond ((and arg (not (numberp arg)))
+	       (setq msg-num (wl-thread-entity-get-top-entity
+			      (wl-thread-get-entity number))))
+	      ((and arg (numberp arg))
+	       (setq i 0)
+	       (setq msg-num number)
+	       (while (< i arg)
+		 (setq msg-num 
+		       (wl-thread-entity-get-number 
+			(wl-thread-entity-get-parent-entity
+			 (wl-thread-get-entity msg-num))))
+		 (setq i (1+ i))))
+	      (t (setq msg-num
+		       (wl-thread-entity-get-number
+			(wl-thread-entity-get-parent-entity
+			 (wl-thread-get-entity number)))))))
+      (when (null msg-num)
+	(wl-summary-set-message-buffer-or-redisplay)
+	(set-buffer (wl-message-get-original-buffer))
+	(message "Searching parent message...")
+	(setq ref (std11-field-body "References")
+	      irt (std11-field-body "In-Reply-To"))
+	(cond
+	 ((and arg (not (numberp arg)) ref (not (string= ref ""))
+	       (string-match regexp ref))
+	  ;; The first message of the thread.
+	  (setq msg-id (wl-match-string 1 ref)))
+	 ;; "In-Reply-To:" has only one msg-id.
+	 ((and (null arg) irt (not (string= irt ""))
+	       (string-match regexp irt))
+	  (setq msg-id (wl-match-string 1 irt)))
+	 ((and (or (null arg) (numberp arg)) ref (not (string= ref ""))
+	       (string-match regexp ref))
+	  ;; "^" searching parent, "C-u 2 ^" looking for grandparent.
+	  (while (string-match regexp ref)
+	    (setq ref-list
+		  (append (list
+			   (wl-match-string 1 ref))
+			  ref-list))
+	    (setq ref (substring ref (match-end 0)))
+	    (setq i (1+ i)))
+	  (setq msg-id
+		(if (null arg) (nth 0 ref-list) ;; previous
+		  (if (<= arg i) (nth (1- arg) ref-list)
+		    (nth i ref-list)))))))
       (set-buffer cur-buf)
-      (cond ((null msg-id)
+      (cond ((and (null msg-id) (null msg-num))
 	     (message "No parent message!")
 	     nil)
-	    ((wl-summary-jump-to-msg-by-message-id msg-id)
+	    ((and msg-id (wl-summary-jump-to-msg-by-message-id msg-id))
+	     (wl-summary-redisplay)
+	     (message "Searching parent message...done.")
+	     t)
+	    ((and msg-num (wl-summary-jump-to-msg msg-num))
 	     (wl-summary-redisplay)
 	     (message "Searching parent message...done.")
 	     t)
 	    (t ; failed.
 	     (message "Parent message was not found.")
 	     nil)))))
-
+  
 (defun wl-summary-reply (&optional arg without-setup-hook)
   "Reply to current message. Default is \"wide\" reply.
 Reply to author if invoked with argument."
