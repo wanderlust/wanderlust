@@ -1055,6 +1055,8 @@ $teranisi         -> @file{~/Mail/teranisi/elmo-archive.zip}
 $bsd/freebsd;lha  -> @file{~/Mail/bsd/freebsd/elmo-archive.lzh}
 $/foo@@server:~/bar;zoo     -> @samp{server} 上の @file{~/bar/elmo-archive.zoo}
 $d:/msend.tar.gz;tgz;spool -> @file{d:/msend.tar.gz}
+$ml;zip/        -> @file{~/Mail/ml} 以下のアーカイブフォルダからなる
+                   アクセスグループ
 @end group
 @end example
 

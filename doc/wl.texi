@@ -1030,6 +1030,8 @@ $teranisi         -> @file{~/Mail/teranisi/elmo-archive.zip}
 $bsd/freebsd;lha  -> @file{~/Mail/bsd/freebsd/elmo-archive.lzh}
 $/foo@@server:~/bar;zoo     -> @file{~/bar/elmo-archive.zoo} on ftp server
 $d:/msend.tar.gz;tgz;spool -> @file{d:/msend.tar.gz}
+$ml;zip/        -> Access group consists of archive folders
+                   under @file{~/Mail/ml}
 @end group
 @end example
 
