@@ -1,5 +1,19 @@
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-exit): Delete current frame if wl-folder-use-frame is
+	non-nil.
+
+	* wl-summary.el (wl-summary-exit): Renamed wl-folder-use-frame to
+	wl-summary-use-frame.
+
+	* wl-vars.el (wl-summary-use-frame): New user option.
+	(wl-folder-use-frame): Changed docstring.
+
+	* wl-folder.el (wl-folder): Make new frame if wl-folder-use-frame is
+	non-nil.
+	(wl-folder-select-buffer): Renamed wl-folder-use-frame to
+	wl-summary-use-frame.
+
 	* wl-vars.el (wl-folder-use-frame): New user option.
 
 	* wl-summary.el (wl-summary-exit): Back to folder frame if
