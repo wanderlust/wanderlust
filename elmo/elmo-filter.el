@@ -179,14 +179,10 @@
   (elmo-filter-folder-list-unreads folder))
 
 (defsubst elmo-filter-folder-list-importants (folder)
-  (elmo-uniq-list
-   (nconc
-    (elmo-list-filter
-     (elmo-folder-list-messages folder nil 'in-msgdb)
-     (elmo-folder-list-importants
-      (elmo-filter-folder-target-internal folder)))
-    (elmo-folder-list-messages-with-global-mark
-     folder elmo-msgdb-important-mark))))
+  (elmo-list-filter
+   (elmo-folder-list-messages folder nil 'in-msgdb)
+   (elmo-folder-list-importants
+    (elmo-filter-folder-target-internal folder))))
 
 (luna-define-method elmo-folder-list-importants ((folder elmo-filter-folder))
   (elmo-filter-folder-list-importants folder))
