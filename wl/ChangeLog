@@ -1,3 +1,11 @@
+2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Call wl-draft-create-buffer with the
+	argument full as well for wl-folder-write-current-folder.
+	If wl-*-write-current-folder cannot guess addressee, add blank
+	To header.
+	Rewrite condition for positioning cursor.
+
 2002-03-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-jump-to-next-summary): If the window of

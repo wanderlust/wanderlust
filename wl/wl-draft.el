@@ -1463,7 +1463,8 @@ Derived from `message-save-drafts' in T-gnus."
 	   (or
 	    (eq this-command 'wl-draft)
 	    (eq this-command 'wl-summary-write)
-	    (eq this-command 'wl-summary-write-current-folder))
+	    (eq this-command 'wl-summary-write-current-folder)
+	    (eq this-command 'wl-folder-write-current-folder))
 	   parent-folder))
 
     (unless (cdr (assq 'From header-alist))
@@ -1473,7 +1474,14 @@ Derived from `message-save-drafts' in T-gnus."
       (let ((to))
 	(when (setq to (and
 			(or (interactive-p)
-			    (eq this-command 'wl-summary-write))
+			    (eq this-command 'wl-summary-write)
+			    (and
+			     (null (cdr (assq 'Newsgroups header-alist)))
+			     (or
+			      (eq this-command
+				  'wl-summary-write-current-folder)
+			      (eq this-command
+				  'wl-folder-write-current-folder))))
 			""))
 	  (if (assq 'To header-alist)
 	      (setcdr (assq 'To header-alist) to)
@@ -1498,11 +1506,16 @@ Derived from `message-save-drafts' in T-gnus."
 	(run-hooks 'wl-mail-setup-hook))
     (goto-char (point-min))
     (wl-user-agent-compose-internal) ;; user-agent
-    (cond ((eq this-command 'wl-summary-write-current-newsgroup)
-	   (mail-position-on-field "Subject"))
-	  ((and (interactive-p)
-		(null (assq 'To header-alist)))
+    (cond ((and
+	    (or (interactive-p)
+		(eq this-command 'wl-summary-write)
+		(eq this-command 'wl-summary-write-current-folder)
+		(eq this-command 'wl-folder-write-current-folder))
+	    (string= (cdr (assq 'To header-alist)) ""))
 	   (mail-position-on-field "To"))
+	  ((or (eq this-command 'wl-summary-write-current-folder)
+		(eq this-command 'wl-folder-write-current-folder))
+	   (mail-position-on-field "Subject"))
 	  (t
 	   (goto-char (point-max))))
     buf-name))
