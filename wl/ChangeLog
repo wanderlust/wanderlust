@@ -1,3 +1,7 @@
+2004-09-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-draft-reply-default-position): Fix range.
+
 2004-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-resend-hook): New hook.
