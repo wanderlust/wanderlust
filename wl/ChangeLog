@@ -1,3 +1,17 @@
+2003-11-18  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-update-folder-info): New function derived from
+	`wl-summary-folder-info-update'.
+	(wl-summary-delete-messages-on-buffer): Use `wl-summary-update-folder-info'
+	instead of `wl-summary-folder-info-update'.
+	(wl-summary-sync-update): Use `wl-summary-update-folder-info' instead of
+	`wl-folder-set-folder-updated'.
+	(wl-summary-mark-as-read-internal): Use `wl-summary-update-folder-info'
+	instead of `wl-folder-update-unread'.
+	(wl-summary-mark-as-answered-internal, wl-summary-prefetch-msg): Pass
+	the value of `wl-summary-buffer-unread-count' for the second parameter of
+	`wl-folder-update-unread'.
+
 2003-11-17  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-folder.el (wl-folder-entity-hashtb-set): Narrow the scope of
