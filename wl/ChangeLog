@@ -1,3 +1,8 @@
+2001-03-03  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Fixed problem that
+	last unread message is skipped.
+
 2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-next-message):
