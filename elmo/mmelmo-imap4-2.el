@@ -158,17 +158,17 @@
 (defun mmelmo-imap4-textpart-p (entity)
   (eq (cdr (assq 'type (mime-entity-content-type entity))) 'text))
       
-(defun mmelmo-imap4-get-mime-entity (fld number msgdb)
+(defun mmelmo-imap4-get-mime-entity (folder number msgdb)
   (save-excursion
-    (let* ((spec (elmo-folder-get-spec fld))
+    (let* ((spec (elmo-folder-get-spec folder))
 	   (connection (elmo-imap4-get-connection spec))
-	   (folder (elmo-imap4-spec-mailbox spec))
+	   (mailbox (elmo-imap4-spec-mailbox spec))
 	   response)
-      (when folder
+      (when mailbox
 	(save-excursion
 	  (when (not (string= (elmo-imap4-connection-get-cwf connection)
-			      folder))
-	    (if (null (elmo-imap4-select-folder folder connection))
+			      mailbox))
+	    (if (null (elmo-imap4-select-folder mailbox connection))
 		(error "Select folder failed")))
 	  (elmo-imap4-send-command (elmo-imap4-connection-get-buffer
 				    connection)
@@ -185,7 +185,7 @@
 				    (elmo-imap4-connection-get-process
 				     connection))))
 	      (error "Fetching body structure failed")))
-	(mmelmo-imap4-parse-bodystructure-string fld number msgdb
+	(mmelmo-imap4-parse-bodystructure-string folder number msgdb
 						 response)))))
 
 (defun mmelmo-imap4-read-part (entity)
@@ -281,8 +281,7 @@ These value must be specified as argument for `luna-make-entity'."
 	      (setq mmelmo-imap4-skipped-parts nil)
 	      ;; insert header
 	      (insert (elmo-imap4-read-part 
-		       (mime-elmo-entity-folder-internal 
-			entity)
+		       (mime-elmo-entity-folder-internal entity)
 		       (mime-elmo-entity-number-internal entity)
 		       "header"))
 	      (mime-buffer-entity-set-header-start-internal 
