@@ -630,7 +630,6 @@ Reply to author if WITH-ARG is non-nil."
 		   (buffer-substring (point) (point-max))
 		   'edit-again))
       (and to (mail-position-on-field "To"))
-      (delete-other-windows)
       (kill-buffer tmp-buf)))
   (run-hooks 'wl-draft-reedit-hook))
 
@@ -1617,9 +1616,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
 	 (summary-buf (wl-summary-get-buffer parent-folder))
-	buf-name file-name num change-major-mode-hook
-	(reply-or-forward (or (eq this-command 'wl-summary-reply)
-			      (eq this-command 'wl-summary-forward))))
+	 (reply-or-forward
+	  (or (eq this-command 'wl-summary-reply)
+	      (eq this-command 'wl-summary-forward)
+	      (eq this-command 'wl-summary-target-mark-forward)
+	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
+	 buf-name file-name num change-major-mode-hook)
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
     (setq num (elmo-max-of-list
@@ -1653,11 +1655,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	       (error "Invalid value for wl-draft-reply-buffer-style"))))
 	(case wl-draft-buffer-style
 	  (split
-	   (when (and (eq major-mode 'wl-summary-mode)
-		      wl-message-buffer
-		      (buffer-live-p wl-message-buffer)
-		      (get-buffer-window wl-message-buffer))
-	     (delete-window (get-buffer-window wl-message-buffer)))
+	   (when (eq major-mode 'wl-summary-mode)
+	     (wl-summary-toggle-disp-msg 'off))
 	   (split-window-vertically)
 	   (other-window 1)
 	   (switch-to-buffer buf-name))
@@ -1835,7 +1834,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		       (progn
 			 (insert mail-header-separator "\n")
 			 (1- (point)))
-		       'category 'mail-header-separator)))
+		       'category 'mail-header-separator)
+    (point)))
 
 ;;;;;;;;;;;;;;;;
 
@@ -1909,16 +1909,32 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (switch-to-buffer buffer))
 	  (set-buffer buffer))
       (setq buffer (get-buffer-create (number-to-string number)))
+      ;; switch-buffer according to draft buffer style.
       (if wl-draft-use-frame
 	  (switch-to-buffer-other-frame buffer)
-	(switch-to-buffer buffer))
+	(case wl-draft-buffer-style
+	  (split
+	   (split-window-vertically)
+	   (other-window 1)
+	   (switch-to-buffer buffer))
+	  (keep
+	   (switch-to-buffer buffer))
+	  (full
+	   (delete-other-windows)
+	   (switch-to-buffer buffer))
+	  (t (if (functionp wl-draft-buffer-style)
+		 (funcall wl-draft-buffer-style buf-name)
+	       (error "Invalid value for wl-draft-buffer-style")))))
       (set-buffer buffer)
       (setq wl-draft-parent-folder "")
       (insert-file-contents-as-binary file-name)
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 	(wl-draft-decode-message-in-buffer))
-      (wl-draft-insert-mail-header-separator)
+      (goto-char (wl-draft-insert-mail-header-separator))
+      ;; If the first part is text/plain, the mime-edit tag is useless.
+      (if (looking-at "^--\\[\\[text/plain\\]\\]")
+	  (delete-region (point-at-bol)(1+ (point-at-eol))))
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
 	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))
@@ -2408,6 +2424,8 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
   (unless (featurep 'wl)
     (require 'wl))
+  (or switch-function
+      (setq switch-function 'keep))
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)

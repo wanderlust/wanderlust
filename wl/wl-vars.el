@@ -1207,7 +1207,7 @@ See also variable `wl-draft-parent-folder'."
 If it is a function, it is called with the draft buffer as an argument."
   :type '(choice (const :tag "Keep window" keep)
 		 (const :tag "Split window" split)
-		 (const :tag "Full window"full)
+		 (const :tag "Full window" full)
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
@@ -1218,7 +1218,7 @@ If it is a function, it is called with the draft buffer as an argument."
 If it is a function, it is called with the draft buffer as an argument."
   :type '(choice (const :tag "Keep window" keep)
 		 (const :tag "Split window" split)
-		 (const :tag "Full window"full)
+		 (const :tag "Full window" full)
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 

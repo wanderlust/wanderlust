@@ -401,7 +401,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "g"    'wl-summary-goto-folder)
   (define-key wl-summary-mode-map "G"    'wl-summary-goto-folder-sticky)
   (define-key wl-summary-mode-map "c"    'wl-summary-mark-as-read-all)
-;  (define-key wl-summary-mode-map "D"    'wl-summary-drop-unsync)
 
   (define-key wl-summary-mode-map "a"    'wl-summary-reply)
   (define-key wl-summary-mode-map "A"    'wl-summary-reply-with-citation)
@@ -471,6 +470,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "d"    'wl-summary-delete)
   (define-key wl-summary-mode-map "u"    'wl-summary-unmark)
   (define-key wl-summary-mode-map "U"    'wl-summary-unmark-all)
+  (define-key wl-summary-mode-map "D"    'wl-summary-erase)
 
   ;; thread commands
   (define-key wl-summary-mode-map "t"	(make-sparse-keymap))
@@ -601,16 +601,15 @@ If optional USE-CACHE is non-nil, use cache if exists."
   "Re-edit current message.
 If ARG is non-nil, Supersedes message"
   (interactive "P")
+  (wl-summary-toggle-disp-msg 'off)
   (if arg
       (wl-summary-supersedes-message)
     (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
-	(if (wl-summary-message-number)
-	    (progn
-	      (wl-draft-reedit (wl-summary-message-number))
-	      (if (wl-message-news-p)
-		  (mail-position-on-field "Newsgroups")
-		(mail-position-on-field "To"))
-	      (delete-other-windows)))
+	(when (wl-summary-message-number)
+	  (wl-draft-reedit (wl-summary-message-number))
+	  (if (wl-message-news-p)
+	      (mail-position-on-field "Newsgroups")
+	    (mail-position-on-field "To")))
       (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()
@@ -619,6 +618,7 @@ This only makes sense if the current message is a bounce message which
 contains some mail you have written but has been bounced back to
 you."
   (interactive)
+  (wl-summary-toggle-disp-msg 'off)
   (save-excursion
     (wl-summary-set-message-buffer-or-redisplay)
     (set-buffer (wl-message-get-original-buffer))
@@ -3054,6 +3054,29 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			   "")
 			 "."))))))
 
+(defun wl-summary-erase (&optional number)
+  "Erase message actually, without moving it to trash."
+  (interactive)
+  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
+      (let* ((buffer-num (wl-summary-message-number))
+	     (msg-num (or number buffer-num)))
+	(if (null msg-num)
+	    (message "No message.")
+	  (let* ((msgdb (wl-summary-buffer-msgdb))
+		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
+		 (subject (elmo-delete-char
+			   ?\n (or (elmo-msgdb-overview-entity-get-subject
+				    entity)
+				   wl-summary-no-subject-message))))
+	    (when (yes-or-no-p
+		   (format "Erase \"%s\" without moving it to trash? "
+			   (truncate-string subject 30)))
+	      (wl-summary-unmark msg-num)
+	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
+					   (list msg-num))
+	      (save-excursion (wl-summary-sync nil "update"))))))
+    (message "Read-only folder.")))
+
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
   (let ((fld (completing-read
@@ -5220,6 +5243,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 (defun wl-summary-supersedes-message ()
   "Supersede current message."
   (interactive)
+  (wl-summary-toggle-disp-msg 'off)
   (let ((summary-buf (current-buffer))
 	message-buf from)
     (wl-summary-set-message-buffer-or-redisplay)

@@ -1,3 +1,21 @@
+2002-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-update-current): Don't append
+	info part to the cur files when the new files already have it.
+	(Adviced by Jared Rhine <jared@wordzoo.com>)
+
+2002-11-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-split.el (elmo-split-default-action): New variable.
+	(elmo-split-subr): Use it if all other conditions are passed.
+	Extend `fname' and rename it as `action'. (implemented
+	Teranishi-san's idea in [wl:10800])
+
+2002-10-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-imap4.el: Remove Nemacs hack, replace `elmo-read' by `read'.
+	* elmo-util.el: Ditto.
+
 2002-10-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-message-accessible-p): Renamed from
@@ -27,18 +45,6 @@
 	Added 'digest'.
 
 	* elmo-filter.el (elmo-folder-diff): Use 'flag' instead of 'mark'.
-
-2002-11-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* elmo-split.el (elmo-split-default-action): New variable.
-	(elmo-split-subr): Use it if all other conditions are passed.
-	Extend `fname' and rename it as `action'. (implemented
-	Teranishi-san's idea in [wl:10800])
-
-2002-10-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* elmo-imap4.el: Remove Nemacs hack, replace `elmo-read' by `read'.
-	* elmo-util.el: Ditto.
 
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 

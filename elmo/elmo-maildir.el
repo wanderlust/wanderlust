@@ -213,7 +213,10 @@ LOCATION."
     (while news
       (rename-file
        (expand-file-name (car news) (expand-file-name "new" maildir))
-       (expand-file-name (concat (car news) ":2,")
+       (expand-file-name (concat
+			  (car news)
+			  (unless (string-match ":2,[A-Z]*$" (car news))
+			    ":2,"))
 			 (expand-file-name "cur" maildir)))
       (setq news (cdr news)))))
 
