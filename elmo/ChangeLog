@@ -1,5 +1,9 @@
 2000-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-imap4.el (elmo-imap4-send-command):
+	Cause elmo-imap4-bye-error when current response is BYE.
+	(elmo-imap4-arrival-filter): Changed greeting response value.
+
 	* elmo2.el (elmo-imap4-bye-error): Define.
 
 	* elmo-imap4.el (elmo-imap4-list): Don't call `elmo-imap4-commit'.
