@@ -1,3 +1,7 @@
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-MK (config-wl-package-subr): Check smtp.el version.
+
 2001-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.6.0 - "Twist And Shout"
