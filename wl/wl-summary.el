@@ -1373,7 +1373,8 @@ If ARG is non-nil, checking is omitted."
 	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (message-id (cdr (assq number number-alist)))
 	   (ov (elmo-msgdb-overview-get-entity message-id msgdb))
-	   (entity ov)
+	   (wl-message-entity ov)
+	   (entity ov)			; backward compatibility.
 	   (size (elmo-msgdb-overview-entity-get-size ov))
 	   (inhibit-read-only t)
 	   (buffer-read-only nil)
