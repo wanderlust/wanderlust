@@ -298,8 +298,6 @@ TYPE specifies the archiver's symbol."
   (let ((dir (elmo-archive-get-archive-directory folder))
         (suffix (elmo-archive-get-suffix type))
 	filename dbdir)
-    (unless suffix
-      (error "Unknown archiver type: %s" type))
     (if elmo-archive-treat-file
 	(if (string-match (concat (regexp-quote suffix) "$") folder)
 	    (expand-file-name
