@@ -53,6 +53,11 @@
   :type '(file :tag "Program name of SpamAssassin Learner.")
   :group 'elmo-spam-spamassassin)
 
+(defcustom elmo-spam-spamassassin-max-messages-per-process 30
+  "Number of messages processed at once."
+  :type 'integer
+  :group 'elmo-spam-spamassassin)
+
 (defcustom elmo-spamassassin-debug nil
   "Non-nil to debug elmo spamassassin spam backend."
   :type 'boolean
@@ -100,6 +105,53 @@
   (with-current-buffer buffer
     (eq 0 (apply 'elmo-spamassassin-call 'learn
 		 (list (when restore "--forget") "--ham")))))
+
+(defsubst elmo-spam-spamassassin-register-messages (folder
+						    numbers
+						    spam
+						    restore)
+  (if (not (< 0 elmo-spam-spamassassin-max-messages-per-process))
+      (error
+ "non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
+  (with-temp-buffer
+    (buffer-disable-undo (current-buffer))
+    (while numbers
+      (let ((count 0))
+	(while (and numbers
+		    (< count elmo-spam-spamassassin-max-messages-per-process))
+	  (insert "From MAILER-DAEMON@example.com\n"
+		  (with-temp-buffer
+		    (elmo-spam-message-fetch folder (car numbers))
+		    (goto-char (point-min))
+		    (while (re-search-forward "^>*From " nil t)
+		      (goto-char (match-beginning 0))
+		      (insert ?>)
+		      (forward-line))
+		    (buffer-substring (point-min) (point-max)))
+		  "\n\n")
+	  (setq count (1+ count)
+		numbers (cdr numbers)))
+	(apply 'elmo-spamassassin-call 'learn
+	       (delq nil
+		     (list "--mbox"
+			   (when restore "--forget")
+			   (if spam "--spam" "--ham"))))
+	(elmo-progress-notify 'elmo-spam-register count)
+	(erase-buffer)))))
+
+(luna-define-method elmo-spam-register-spam-messages :around
+  ((processor elsp-sa) folder &optional numbers restore)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
+    (if (> (length numbers) 1)
+	(elmo-spam-spamassassin-register-messages folder numbers t restore)
+      (luna-call-next-method))))
+
+(luna-define-method elmo-spam-register-good-messages :around
+  ((processor elsp-sa) folder &optional numbers restore)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
+    (if (> (length numbers) 1)
+	(elmo-spam-spamassassin-register-messages folder numbers nil restore)
+      (luna-call-next-method))))
 
 (require 'product)
 (product-provide (provide 'elsp-sa) (require 'elmo-version))

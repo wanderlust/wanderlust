@@ -54,7 +54,7 @@ TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
     (let ((result (apply 'call-process slp-program nil t nil
 			 (append slp-program-arguments (delq nil args)))))
       (unless (zerop result)
-	(error "SLP error: " (buffer-string)))
+	(error "SLP error: %s" (buffer-string)))
       (goto-char (point-min))
       (case type
 	(srvs (slp-parse-srvs))

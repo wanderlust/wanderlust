@@ -504,9 +504,9 @@ Don't cache if nil.")
 			    (not (string= (elmo-nntp-folder-group-internal
 					   folder) "")))
 		       (concat " active"
-			       (format " %s.*"
-				       (elmo-nntp-folder-group-internal folder)
-				       "")))))
+			       (format 
+				" %s.*"
+				(elmo-nntp-folder-group-internal folder))))))
 	  (if (elmo-nntp-read-response session t)
 	      (if (null (setq response (elmo-nntp-read-contents session)))
 		  (error "NNTP List folders failed")
@@ -546,14 +546,14 @@ Don't cache if nil.")
 	    (progn
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if (and
-				 (elmo-nntp-folder-group-internal folder)
-				 (null (string=
-					(elmo-nntp-folder-group-internal
-					 folder) "")))
+			    (if (and (elmo-nntp-folder-group-internal folder)
+				     (null (string=
+					    (elmo-nntp-folder-group-internal
+					     folder) "")))
 				(concat (elmo-nntp-folder-group-internal
 					 folder)
-					"\\.") "")))
+					"\\.")
+			      "")))
 	      (while (looking-at regexp)
 		(setq top-ng (elmo-match-buffer 1))
 		(if (string= (elmo-match-buffer 2) " ")

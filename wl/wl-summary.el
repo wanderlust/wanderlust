@@ -60,6 +60,7 @@
 (defvar dragdrop-drop-functions)
 (defvar scrollbar-height)
 (defvar mail-reply-buffer)
+(defvar elmo-global-flag-list)
 
 (defvar wl-summary-buffer-name "Summary")
 (defvar wl-summary-mode-map nil)
@@ -285,16 +286,16 @@ See also variable `wl-use-petname'."
     "----"
     ("Message Operation"
      ["Mark as read"    wl-summary-mark-as-read t]
-     ["Mark as important" wl-summary-mark-as-important t]
+     ["Set flags"	wl-summary-set-flags t]
      ["Mark as unread"   wl-summary-mark-as-unread t]
      ["Mark as answered" wl-summary-mark-as-answered t]
      ["Set dispose mark" wl-summary-dispose t]
      ["Set refile mark" wl-summary-refile t]
      ["Set copy mark"   wl-summary-copy t]
      ["Set resend mark" wl-summary-resend t]
-     ["Prefetch"        wl-summary-prefetch t]
+     ["Prefetch"	wl-summary-prefetch t]
      ["Set target mark" wl-summary-target-mark t]
-     ["Unmark"          wl-summary-unmark t]
+     ["Unmark"		wl-summary-unmark t]
      ["Save"		wl-summary-save t]
      ["Cancel posted news" wl-summary-cancel-message t]
      ["Supersedes message" wl-summary-supersedes-message t]
@@ -307,7 +308,7 @@ See also variable `wl-use-petname'."
      ["Open all"     wl-thread-open-all (eq wl-summary-buffer-view 'thread)]
      ["Close all"    wl-thread-close-all (eq wl-summary-buffer-view 'thread)]
      ["Mark as read" wl-thread-mark-as-read (eq wl-summary-buffer-view 'thread)]
-     ["Mark as important"	wl-thread-mark-as-important (eq wl-summary-buffer-view 'thread)]
+     ["Set flags"	wl-thread-set-flags (eq wl-summary-buffer-view 'thread)]
      ["Mark as unread"		wl-thread-mark-as-unread (eq wl-summary-buffer-view 'thread)]
      ["Mark as answered"	wl-thread-mark-as-answered (eq wl-summary-buffer-view 'thread)]
      ["Set delete mark"  wl-thread-delete (eq wl-summary-buffer-view 'thread)]
@@ -320,7 +321,7 @@ See also variable `wl-use-petname'."
      ["Execute"      wl-thread-exec (eq wl-summary-buffer-view 'thread)])
     ("Region Operation"
      ["Mark as read" wl-summary-mark-as-read-region t]
-     ["Mark as important" wl-summary-mark-as-important-region t]
+     ["Set flags" wl-summary-set-flags-region t]
      ["Mark as unread" wl-summary-mark-as-unread-region t]
      ["Mark as answered" wl-summary-mark-as-answered-region t]
      ["Set dispose mark" wl-summary-dispose-region t]
@@ -333,7 +334,7 @@ See also variable `wl-use-petname'."
      ["Execute" wl-summary-exec-region t])
     ("Mark Operation"
      ["Mark as read" wl-summary-target-mark-mark-as-read t]
-     ["Mark as important" wl-summary-target-mark-mark-as-important t]
+     ["Set flags" wl-summary-target-mark-set-flags t]
      ["Mark as unread" wl-summary-target-mark-mark-as-unread t]
      ["Set delete mark" wl-summary-target-mark-delete t]
      ["Set refile mark" wl-summary-target-mark-refile t]
@@ -412,7 +413,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "E"    'wl-summary-reedit)
   (define-key wl-summary-mode-map "\eE"  'wl-summary-resend-bounced-mail)
   (define-key wl-summary-mode-map "f"    'wl-summary-forward)
-  (define-key wl-summary-mode-map "$"    'wl-summary-mark-as-important)
+  (define-key wl-summary-mode-map "$"    'wl-summary-set-flags)
   (define-key wl-summary-mode-map "&"    'wl-summary-mark-as-answered)
   (define-key wl-summary-mode-map "@"    'wl-summary-edit-addresses)
 
@@ -491,7 +492,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "t~" 'wl-thread-resend)
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
-  (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
+  (define-key wl-summary-mode-map "t$" 'wl-thread-set-flags)
   (define-key wl-summary-mode-map "t&" 'wl-thread-mark-as-answered)
   (define-key wl-summary-mode-map "ty" 'wl-thread-save)
   (define-key wl-summary-mode-map "ts" 'wl-thread-set-parent)
@@ -511,7 +512,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "my"   'wl-summary-target-mark-save)
   (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "m!"   'wl-summary-target-mark-mark-as-unread)
-  (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-mark-as-important)
+  (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-set-flags)
   (define-key wl-summary-mode-map "mU"   'wl-summary-target-mark-uudecode)
   (define-key wl-summary-mode-map "ma"   'wl-summary-target-mark-all)
   (define-key wl-summary-mode-map "mt"   'wl-summary-target-mark-thread)
@@ -536,7 +537,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "r~"   'wl-summary-resend-region)
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
-  (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)
+  (define-key wl-summary-mode-map "r$"   'wl-summary-set-flags-region)
   (define-key wl-summary-mode-map "r&"   'wl-summary-mark-as-answered-region)
   (define-key wl-summary-mode-map "ry"   'wl-summary-save-region)
 
@@ -717,7 +718,7 @@ you."
 	(dummy-temp (char-to-string 200))
 	;; bind only for the check.
 	(wl-summary-new-uncached-mark (char-to-string 201))
-	(wl-summary-flag-priority-list '(new))     ; ditto.
+	(wl-summary-persistent-mark-priority-list '(new))     ; ditto.
 	(lang wl-summary-buffer-weekday-name-lang)
 	wl-summary-highlight
 	temp persistent)
@@ -1559,15 +1560,13 @@ If ARG is non-nil, checking is omitted."
 	    (forward-line 1))
 	  (wl-summary-mark-as-unread number-list))))))
 
-(defun wl-summary-mark-as-important-region (beg end)
+(defun wl-summary-set-flags-region (beg end)
   (interactive "r")
   (save-excursion
     (save-restriction
       (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
-      (let ((inverse (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-					     (wl-summary-message-number)
-					     'important)))
+      (let (flags)
 	(if (eq wl-summary-buffer-view 'thread)
 	    (while (not (eobp))
 	      (let* ((number (wl-summary-message-number))
@@ -1576,14 +1575,17 @@ If ARG is non-nil, checking is omitted."
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...mark line.
 		    ;; Crossposts are not processed
-		    (wl-summary-mark-as-important-internal inverse)
+		    (setq flags (wl-summary-set-flags-internal
+				number
+				flags))
 		  ;; closed
-		  (wl-summary-mark-as-important-internal
-		   inverse
-		   (wl-thread-get-children-msgs number)))
+		  (setq flags (wl-summary-set-flags-internal
+			      (wl-thread-get-children-msgs number)
+			      flags)))
 		(forward-line 1)))
 	  (while (not (eobp))
-	    (wl-summary-mark-as-important-internal inverse)
+	    (setq flags (wl-summary-set-flags-internal
+			(wl-summary-message-number) flags))
 	    (forward-line 1))))))
   (wl-summary-count-unread)
   (wl-summary-update-modeline))
@@ -1759,28 +1761,34 @@ This function is defined for `window-scroll-functions'"
 (defun wl-summary-sync-marks ()
   "Update persistent marks in summary."
   (interactive)
-  (let (diff diffs mes)
+  (let ((mes "Updated ")
+	diff diffs)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-type-internal
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
+
       (message "Updating marks...")
-      (setq diff (elmo-list-diff (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'important)
-				 (elmo-folder-list-flagged
-				  wl-summary-buffer-elmo-folder
-				  'important 'in-msgdb)))
-      (setq diffs (cadr diff)) ; important-deletes
-      (setq mes (format "Updated (-%d" (length diffs)))
-      (while diffs
-	(wl-summary-mark-as-unimportant (car diffs) 'no-server)
-	(setq diffs (cdr diffs)))
-      (setq diffs (car diff)) ; important-appends
-      (setq mes (concat mes (format "/+%d) important," (length diffs))))
-      (while diffs
-	(wl-summary-mark-as-important (car diffs) 'no-server)
-	(setq diffs (cdr diffs)))
+      (dolist (flag elmo-global-flag-list)
+	(unless (memq flag '(answered cached new unread))
+	  (setq diff (elmo-list-diff (elmo-folder-list-flagged
+				      wl-summary-buffer-elmo-folder
+				      flag)
+				     (elmo-folder-list-flagged
+				      wl-summary-buffer-elmo-folder
+				      flag 'in-msgdb)))
+	  (setq diffs (cadr diff)) ; deletes
+	  (setq mes (concat mes (format "-%d" (length diffs))))
+	  (while diffs
+	    (wl-summary-remove-flags-internal (car diffs)
+					     (list flag) 'no-server)
+	    (setq diffs (cdr diffs)))
+	  (setq diffs (car diff)) ; appends
+	  (setq mes (concat mes (format "/+%d %s," (length diffs) flag)))
+	  (while diffs
+	    (wl-summary-add-flags-internal (car diffs)
+					  (list flag) 'no-server)
+	    (setq diffs (cdr diffs)))))
 
       (setq diff (elmo-list-diff (elmo-folder-list-flagged
 				  wl-summary-buffer-elmo-folder
@@ -1789,12 +1797,12 @@ This function is defined for `window-scroll-functions'"
 				  wl-summary-buffer-elmo-folder
 				  'answered 'in-msgdb)))
       (setq diffs (cadr diff))
-      (setq mes (concat mes (format "(-%d" (length diffs))))
+      (setq mes (concat mes (format "-%d" (length diffs))))
       (while diffs
 	(wl-summary-mark-as-unanswered (car diffs) 'no-modeline)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; unread-appends
-      (setq mes (concat mes (format "/+%d) answered mark(s)," (length diffs))))
+      (setq mes (concat mes (format "/+%d answered," (length diffs))))
       (while diffs
 	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
 	(setq diffs (cdr diffs)))
@@ -1806,12 +1814,12 @@ This function is defined for `window-scroll-functions'"
 				  wl-summary-buffer-elmo-folder
 				  'unread 'in-msgdb)))
       (setq diffs (cadr diff))
-      (setq mes (concat mes (format "(-%d" (length diffs))))
+      (setq mes (concat mes (format "-%d" (length diffs))))
       (while diffs
 	(wl-summary-mark-as-read (car diffs) 'no-folder 'no-modeline)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; unread-appends
-      (setq mes (concat mes (format "/+%d) unread mark(s)." (length diffs))))
+      (setq mes (concat mes (format "/+%d unread." (length diffs))))
       (while diffs
 	(wl-summary-mark-as-unread (car diffs) 'no-folder 'no-modeline)
 	(setq diffs (cdr diffs)))
@@ -2236,9 +2244,8 @@ If ARG, without confirm."
 
 (defun wl-summary-auto-select-msg-p (unread-msg)
   (and unread-msg
-       (not (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				    unread-msg
-				    'important))))
+       (not (elmo-message-has-global-flag-p
+	     wl-summary-buffer-elmo-folder unread-msg))))
 
 (defsubst wl-summary-open-folder (folder)
   ;; Select folder
@@ -2377,15 +2384,15 @@ If ARG, without confirm."
 		(cond ((and wl-auto-select-first
 			    (wl-summary-auto-select-msg-p unreadp))
 		       ;; wl-auto-select-first is non-nil and
-		       ;; unreadp is non-nil but not important
+		       ;; unreadp is non-nil but not flagged
 		       (setq retval 'disp-msg))
 		      ((and wl-auto-prefetch-first
 			    (wl-summary-auto-select-msg-p unreadp))
 		       ;; wl-auto-select-first is non-nil and
-		       ;; unreadp is non-nil but not important
+		       ;; unreadp is non-nil but not flagged
 		       (setq retval 'prefetch-msg))
 		      ((not (wl-summary-auto-select-msg-p unreadp))
-		       ;; unreadp is nil or important
+		       ;; unreadp is nil or flagged
 		       (setq retval 'more-next))))
 	    (goto-char (point-max))
 	    (if (elmo-folder-plugged-p folder)
@@ -2797,26 +2804,27 @@ If ARG, exit virtual folder."
 (defsubst wl-summary-persistent-mark-string (folder flags cached)
   "Return the persistent mark string.
 The mark is decided according to the FOLDER, FLAGS and CACHED."
-  (let ((priorities wl-summary-flag-priority-list)
+  (let ((priorities wl-summary-persistent-mark-priority-list)
 	mark)
     (while (and (null mark) priorities)
-      (when (memq (car priorities) flags)
-	(setq mark
-	      (case (car priorities)
-		(new
-		 (if cached
-		     wl-summary-new-cached-mark
-		   wl-summary-new-uncached-mark))
-		(important
-		 wl-summary-important-mark)
-		(answered
-		 (if cached
-		     wl-summary-answered-cached-mark
-		   wl-summary-answered-uncached-mark))
-		(unread
-		 (if cached
-		     wl-summary-unread-cached-mark
-		   wl-summary-unread-uncached-mark)))))
+      (if (and (eq (car priorities) 'flag)
+	       (elmo-get-global-flags flags 'ignore-preserved))
+	  (setq mark wl-summary-flag-mark)
+	(when (memq (car priorities) flags)
+	  (setq mark
+		(or (case (car priorities)
+		      (new
+		       (if cached
+			   wl-summary-new-cached-mark
+			 wl-summary-new-uncached-mark))
+		      (answered
+		       (if cached
+			   wl-summary-answered-cached-mark
+			 wl-summary-answered-uncached-mark))
+		      (unread
+		       (if cached
+			   wl-summary-unread-cached-mark
+			 wl-summary-unread-uncached-mark)))))))
       (setq priorities (cdr priorities)))
     (or mark
 	(if (or cached (elmo-folder-local-p folder))
@@ -2894,16 +2902,17 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
       (dolist (number wl-summary-buffer-target-mark-list)
 	(wl-summary-unset-mark number)))))
 
-(defun wl-summary-target-mark-mark-as-important ()
+(defun wl-summary-target-mark-set-flags ()
   (interactive)
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-	  wl-summary-buffer-disp-msg)
+	  wl-summary-buffer-disp-msg
+	  flags)
       (dolist (number wl-summary-buffer-target-mark-list)
 	(wl-summary-unset-mark number)
-	(wl-summary-mark-as-important number))
+	(setq flags (wl-summary-set-flags-internal number flags)))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -3062,16 +3071,44 @@ Return non-nil if the mark is updated"
 					number-or-numbers
 					no-modeline-update))
 
-(defsubst wl-summary-mark-as-important-internal (inverse
-						 &optional
-						 number-or-numbers
-						 no-server-update)
+(defun wl-summary-decide-flag (folder number)
+  (let ((flags (elmo-get-global-flags (elmo-message-flags
+				       folder number)))
+	(completion-ignore-case t)
+	new-flags)
+    (setq new-flags
+	  (delq nil
+		(mapcar
+		 (lambda (flag)
+		   (and (> (length flag) 0)
+			(intern (downcase flag))))
+		 (completing-read-multiple
+		  "Flags: "
+		  (mapcar (lambda (flag)
+			    (list (capitalize (symbol-name flag))))
+			  elmo-global-flag-list)
+		  nil nil (mapconcat (lambda (flag)
+				       (capitalize (symbol-name flag)))
+				     (or flags '(important))
+				     ",")))))
+    (dolist (flag new-flags)
+      (unless (memq flag elmo-global-flag-list)
+	(if (y-or-n-p (format "Flag `%s' does not exist yet. Create?"
+			      (capitalize (symbol-name flag))))
+	    (setq elmo-global-flag-list (append
+					 elmo-global-flag-list
+					 (list flag)))
+	  (error "Stopped"))))
+    new-flags))
+
+(defsubst wl-summary-set-flags-internal (&optional
+					number-or-numbers
+					flags
+					local
+					remove-all)
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
 	  number number-list visible)
-      (when (and (eq (elmo-folder-type-internal folder) 'flag)
-		 (eq (elmo-flag-folder-flag-internal folder) 'important))
-	(error "Cannot process mark in this folder"))
       (setq number-list (cond ((numberp number-or-numbers)
 			       (list number-or-numbers))
 			      ((and (not (null number-or-numbers))
@@ -3080,36 +3117,81 @@ Return non-nil if the mark is updated"
 			      ((setq number (wl-summary-message-number))
 			       ;; interactive
 			       (list number))))
+      (if remove-all
+	  (setq flags nil)
+	(unless flags
+	  (setq flags (wl-summary-decide-flag folder (car number-list)))))
       (if (null number-list)
 	  (message "No message.")
-	(if inverse
-	    (elmo-folder-unset-flag folder number-list
-				    'important no-server-update)
-	  (elmo-folder-set-flag folder number-list
-				'important no-server-update))
 	(dolist (number number-list)
+	  (elmo-message-set-global-flags folder number flags local)
+	  (setq visible (wl-summary-jump-to-msg number))
+	  ;; set mark on buffer
+	  (when visible
+	    (wl-summary-update-persistent-mark))))
+      flags)))
+
+(defsubst wl-summary-add-flags-internal (&optional
+					 number-or-numbers
+					 flags
+					 local)
+  (save-excursion
+    (let ((folder wl-summary-buffer-elmo-folder)
+	  set-flags msg number-list visible)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq msg (wl-summary-message-number))
+			       ;; interactive
+			       (list msg))))
+      (if (null number-list)
+	  (message "No message.")
+	(dolist (number number-list)
+	  (setq set-flags
+		(elmo-get-global-flags
+		 (elmo-message-flags folder number)))
+	  (setq set-flags (nconc flags set-flags))
+	  (elmo-message-set-global-flags folder number set-flags local)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
 	  (when visible
 	    (wl-summary-update-persistent-mark)))))))
 
-(defun wl-summary-mark-as-important (&optional number-or-numbers
-					       no-server-update)
-  (interactive)
-  (wl-summary-mark-as-important-internal
-   (and (interactive-p)
-	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				(wl-summary-message-number)
-				'important))
-   number-or-numbers
-   no-server-update))
+(defsubst wl-summary-remove-flags-internal (&optional
+					    number-or-numbers
+					    flags
+					    local)
+  (save-excursion
+    (let ((folder wl-summary-buffer-elmo-folder)
+	  set-flags msg number-list visible)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq msg (wl-summary-message-number))
+			       ;; interactive
+			       (list msg))))
+      (if (null number-list)
+	  (message "No message.")
+	(dolist (number number-list)
+	  (setq set-flags (elmo-get-global-flags
+			   (elmo-message-flags folder number)))
+	  (dolist (flag flags)
+	    (setq set-flags (delq flag set-flags)))
+	  (elmo-message-set-global-flags folder number set-flags local)
+	  (setq visible (wl-summary-jump-to-msg number))
+	  ;; set mark on buffer
+	  (when visible
+	    (wl-summary-update-persistent-mark)))))))
 
-(defun wl-summary-mark-as-unimportant (&optional number-or-numbers
-						 no-server-update)
-  (interactive)
-  (wl-summary-mark-as-important-internal 'inverse
-					 number-or-numbers
-					 no-server-update))
+(defun wl-summary-set-flags (&optional remove)
+  (interactive "P")
+  (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
+      (error "Cannot process flags in this folder"))
+  (wl-summary-set-flags-internal nil nil nil remove))
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)
@@ -3296,10 +3378,10 @@ Return non-nil if the mark is updated"
   '((new . ((t . nil)
 	    (p . new)
 	    (p . unread)
-	    (p . important)))
+	    (p . digest)))
     (unread . ((t . nil)
 	       (p . unread)
-	       (p . important)))))
+	       (p . digest)))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (if wl-summary-buffer-next-message-function
@@ -3320,7 +3402,7 @@ Return non-nil if the mark is updated"
 		     (if (setq flagged-list
 			       (elmo-folder-list-flagged
 				wl-summary-buffer-elmo-folder
-				(cdr (car cur-spec))))
+				(cdr (car cur-spec)) t))
 			 (while nums
 			   (if (and (memq (car nums) flagged-list)
 				    (elmo-message-accessible-p
@@ -3350,7 +3432,7 @@ Return non-nil if the mark is updated"
 	  (wl-thread-jump-to-msg num))
       t)))
 ;;
-;; Goto unread or important
+;; Goto unread or global flag message
 ;; returns t if next message exists in this folder.
 (defun wl-summary-cursor-down (&optional hereto)
   (interactive "P")

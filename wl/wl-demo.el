@@ -128,12 +128,6 @@ Yet Another Message Interface On Emacsen"
 	  (delq nil (list xpm bitmap xbm '("ascii")))))
     '(("ascii"))))
 
-(defun wl-demo-xpm-set-background ()
-  "A filter function to set xpm background.
-`wl-demo-background-color' is used for the background color."
-  (when (search-forward "None" nil t)
-    (replace-match wl-demo-background-color)))
-
 (defun wl-demo-image-filter (file type)
   "Get filtered image data.
 FILE is the image file name.
@@ -287,28 +281,29 @@ Return a number of lines that an image occupies in the buffer."
 		      (max 0 (/ (1+ (- (window-width) width)) 2)))
       (count-lines (point-min) (goto-char (point-max))))))
 
-(defun wl-demo-set-background-color ()
-  "Set background color of the demo buffer."
+(defun wl-demo-setup-properties ()
+  "Set up properties of the demo buffer."
   (cond
    (wl-on-emacs21
     ;; I think there should be a better way to set face background
     ;; for the buffer only. But I don't know how to do it on Emacs21.
     (goto-char (point-max))
     (dotimes (i (- (window-height)
-		   (count-lines (point-min) (point)) 1)) ; 1 means modeline
+		   (count-lines (point-min) (point))))
       (insert ?\n))
-    (let ((fg (face-foreground 'wl-highlight-demo-face)))
+    (let ((fg (face-foreground 'wl-highlight-demo-face))
+	  (bg (face-background 'wl-highlight-demo-face)))
       (put-text-property (point-min) (point-max)
 			 'face
 			 (nconc '(variable-pitch :slant oblique)
-				(list ':background
-				      wl-demo-background-color)
+				(when (stringp bg)
+				  (list ':background bg))
 				(when (stringp fg)
 				  (list ':foreground fg))))))
    ((featurep 'xemacs)
-    (and wl-demo-background-color
-	 (set-face-background 'default wl-demo-background-color
-			      (current-buffer))))))
+    (set-face-background 'default
+			 (face-background 'wl-highlight-demo-face)
+			 (current-buffer)))))
 
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
@@ -362,7 +357,7 @@ argument."
     (set (make-local-variable 'tab-stop-list)
 	 '(8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
     (wl-demo-insert-text (wl-demo-insert-image image-type))
-    (wl-demo-set-background-color)
+    (wl-demo-setup-properties)
     (set-buffer-modified-p nil)
     (goto-char (point-min))
     (sit-for (if (featurep 'lisp-float-type)

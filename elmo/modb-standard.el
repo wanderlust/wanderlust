@@ -342,26 +342,22 @@
    (modb-standard-number-list-internal msgdb)))
 
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-standard) flag)
-  (let (entry matched)
+  (let ((flags (case flag
+		 (digest
+		  (nconc '(unread)(elmo-get-global-flags t t)))
+		 (any
+		  (nconc '(unread answered)(elmo-get-global-flags t t)))))
+	entry matched)
     (case flag
       (read
        (dolist (number (modb-standard-number-list-internal msgdb))
 	 (unless (memq 'unread (modb-standard-message-flags msgdb number))
 	   (setq matched (cons number matched)))))
-      (digest
+      ((digest any)
        (mapatoms
 	(lambda (atom)
 	  (setq entry (symbol-value atom))
-	  (when (modb-standard-match-flags '(unread important)
-					   (cdr entry))
-	    (setq matched (cons (car entry) matched))))
-	(modb-standard-flag-map msgdb)))
-      (any
-       (mapatoms
-	(lambda (atom)
-	  (setq entry (symbol-value atom))
-	  (when (modb-standard-match-flags '(unread important answered)
-					   (cdr entry))
+	  (when (modb-standard-match-flags flags (cdr entry))
 	    (setq matched (cons (car entry) matched))))
 	(modb-standard-flag-map msgdb)))
       (t

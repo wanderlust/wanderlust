@@ -1,5 +1,44 @@
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* slp.el (slp-exec-wait): Avoid byte-compile warnings.
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Avoid byte-compile
+	warnings.
+
+	* elmo-file.el: New file.
+	
+	* modb-standard.el (elmo-msgdb-list-flagged): Treat keyword flags.
+
+	* elsp-sa.el (elmo-spam-spamassassin-max-messages-per-process): New
+	variable.
+	(elmo-spam-spamassassin-register-messages): New inline function.
+	(elmo-spam-register-spam-messages): Define.
+	(elmo-spam-register-good-messages): Ditto.
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-max-messages-per-process):
+	Fixed typo.
+
+	* elmo.el (toplevel): Added autoload setting for
+	`elmo-get-global-flags'.
+	(elmo-message-has-global-flag-p): New function.
+	(elmo-message-set-global-flags): Ditto.
+	(elmo-folder-type): Improvement for name: format.
+
+	* elmo-imap4.el (elmo-imap4-session-flag-available-p): Check
+	availability of keyword flags.
+	(elmo-imap4-folder-list-flagged): Treat keyword flags.
+	(elmo-folder-list-flagged-plugged): Renamed from
+	elmo-folder-list-flagged-unplugged.
+	(elmo-imap4-set-flag): If "\*" is treated as permanent flag,
+	accept any flag as keyword flag.
+	(elmo-folder-set-flag-plugged): Accept keyword flags.
+	(toplevel): Added autoload setting for `elmo-get-global-flags'.
+
+	* elmo-flag.el (elmo-get-global-flags): New function.
+
+	* elmo-filter.el (elmo-folder-diff): Fix total number for filter
+	filters.
+
 	* elmo-version.el (elmo-version): Up to 2.11.24.
 
 2004-02-08  Yoichi NAKAYAMA  <yoichi@geiin.org>

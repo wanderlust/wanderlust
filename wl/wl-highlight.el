@@ -594,22 +594,19 @@
   :group 'wl-faces)
 
 (wl-defface wl-highlight-demo-face
-  '(
-    (((type tty)
-      (background dark))
+  '((((type tty))
      (:foreground "green"))
     (((class color)
-      (background dark))
-     (:foreground "#006600"))
-    (((class color)
       (background light))
-     (:foreground "#006600")))
+     (:foreground "#006600" :background "#d9ffd9"))
+    (((class color)
+      (background dark))
+     (:foreground "#d9ffd9" :background "#004400")))
   "Face used for displaying demo."
   :group 'wl-faces)
 
 (wl-defface wl-highlight-logo-face
-  '(
-    (((type tty)
+  '((((type tty)
       (background dark))
      (:foreground "cyan"))
     (((class color)
@@ -842,20 +839,33 @@
        ((and (string= temp-mark wl-summary-score-below-mark)
 	     (or (memq 'new flags) (memq 'unread flags)))
 	'(wl-highlight-summary-low-unread-face))
-       ((let ((priorities wl-summary-flag-priority-list)
-	      result)
+       ((let ((priorities wl-summary-persistent-mark-priority-list)
+	      (fl wl-summary-flag-alist)
+	      face result global-flags)
 	  (while (and (null result) priorities)
-	    (when (memq (car priorities) flags)
-	      (setq result
-		    (case (car priorities)
-		      (new
-		       '(wl-highlight-summary-new-face))
-		      (important
-		       '(wl-highlight-summary-important-face))
-		      (answered
-		       '(wl-highlight-summary-answered-face))
-		      (unread
-		       '(wl-highlight-summary-unread-face)))))
+	    (if (and (eq (car priorities) 'flag)
+		     (setq global-flags
+			   (elmo-get-global-flags flags 'ignore-preserved)))
+		(while fl
+		  (when (memq (car (car fl)) global-flags)
+		    (setq result
+			  (progn
+			    (setq face
+				  (intern (format
+					   "wl-highlight-summary-%s-flag-face"
+					   (car (car fl)))))
+			    (when (facep face)
+			      (list face)))
+			  fl nil))
+		  (setq fl (cdr fl)))
+	      (when (memq (car priorities) flags)
+		(setq result
+		      (progn (setq face
+				   (intern (format
+					    "wl-highlight-summary-%s-face"
+					    (car priorities))))
+			     (when (facep face)
+			       (list face))))))
 	    (setq priorities (cdr priorities)))
 	  result))
        ((string= temp-mark wl-summary-score-below-mark)
@@ -1110,9 +1120,9 @@ Returns start point of signature."
 Faces used:
   wl-highlight-message-headers			  the part before the colon
   wl-highlight-message-header-contents		  the part after the colon
-  wl-highlight-message-important-header-contents  contents of \"special\"
+  wl-highlight-message-important-header-contents  contents of \"important\"
                                                   headers
-  wl-highlight-message-important-header-contents2 contents of \"special\"
+  wl-highlight-message-important-header-contents2 contents of \"important\"
                                                   headers
   wl-highlight-message-unimportant-header-contents contents of unimportant
                                                    headers
@@ -1122,9 +1132,9 @@ Faces used:
   wl-highlight-message-signature                   signature
 
 Variables used:
-  wl-highlight-important-header-regexp	 what makes a \"special\" header
-  wl-highlight-important-header2-regexp	 what makes a \"special\" header
-  wl-highlight-unimportant-header-regexp what makes a \"special\" header
+  wl-highlight-important-header-regexp	 what makes a \"important\" header
+  wl-highlight-important-header2-regexp	 what makes a \"important\" header
+  wl-highlight-unimportant-header-regexp what makes a \"not important\" header
   wl-highlight-citation-prefix-regexp	 matches lines of quoted text
   wl-highlight-citation-header-regexp	 matches headers for quoted text
 

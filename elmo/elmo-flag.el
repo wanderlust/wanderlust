@@ -375,6 +375,24 @@ the message is not flagged in any folder."
       (dolist (number numbers)
 	(elmo-global-flag-detach flag folder number delete-if-none)))))
 
+(defun elmo-get-global-flags (&optional flags ignore-preserved)
+  "Get global flags.
+Return value is a subset of optional argument FLAGS.
+If FLAGS is `t', all global flags becomes candidates.
+If optional IGNORE-PRESERVED is non-nil, preserved flags
+\(answered, cached, new, unread\) are not included."
+  (let ((result (copy-sequence (if (eq flags t)
+				   (setq flags elmo-global-flag-list)
+				 flags))))
+    (while flags
+      (unless (elmo-global-flag-p (car flags))
+	(setq result (delq (car flags) result)))
+      (setq flags (cdr flags)))
+    (when ignore-preserved
+      (dolist (flag '(answered cached new unread))
+	(setq result (delq flag result))))
+    result))
+
 ;;; To migrate from global mark folder
 (defvar elmo-global-mark-filename "global-mark"
   "Obsolete variable. (Just for migration)")

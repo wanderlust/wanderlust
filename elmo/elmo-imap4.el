@@ -750,9 +750,12 @@ Returns response value if selecting folder succeed. "
 	  "\\seen" (elmo-imap4-session-flags-internal session))
 	 (elmo-string-member-ignore-case
 	  "\\flagged" (elmo-imap4-session-flags-internal session))))
-    (t (elmo-string-member-ignore-case
-	(concat "\\" (symbol-name flag))
-	(elmo-imap4-session-flags-internal session)))))
+    (answered
+     (elmo-string-member-ignore-case
+      (concat "\\" (symbol-name flag))
+      (elmo-imap4-session-flags-internal session)))
+    (t
+     (member "\\*" (elmo-imap4-session-flags-internal session)))))
 
 (defun elmo-imap4-folder-list-flagged (folder flag)
   "List flagged message numbers in the FOLDER.
@@ -762,9 +765,20 @@ FLAG is one of the `unread', `read', `important', `answered', `any'."
 		    (read "seen")
 		    (unread "unseen")
 		    (important "flagged")
+		    (answered "answered")
+		    (new "new")
 		    (any "or answered or unseen flagged")
 		    (digest "or unseen flagged")
-		    (t (symbol-name flag)))))
+		    (t (concat "keyword " (capitalize (symbol-name flag)))))))
+    ;; Add search keywords
+    (when (or (eq flag 'digest)(eq flag 'any))
+      (let ((flags (delq 'important (elmo-get-global-flags t t))))
+	(while flags
+	  (setq criteria (concat "or keyword "
+				 (symbol-name (car flags))
+				 " "
+				 criteria))
+	  (setq flags (cdr flags)))))
     (if (elmo-imap4-session-flag-available-p session flag)
 	(progn
 	  (elmo-imap4-session-select-mailbox
@@ -1905,7 +1919,7 @@ Return nil if no complete line has arrived."
 			 (format "uid %d:*" (cdr (car killed)))
 		       "all"))))
 
-(luna-define-method elmo-folder-list-flagged-unplugged
+(luna-define-method elmo-folder-list-flagged-plugged
   ((folder elmo-imap4-folder) flag)
   (elmo-imap4-folder-list-flagged folder flag))
 
@@ -2098,6 +2112,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (when (or (elmo-string-member-ignore-case
 	       flag
 	       (elmo-imap4-session-flags-internal session))
+	      (member "\\*" (elmo-imap4-session-flags-internal session))
 	      (string= flag "\\Deleted")) ; XXX Humm..
       (setq set-list (elmo-imap4-make-number-set-list
 		      numbers
@@ -2346,14 +2361,16 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-set-flag-plugged ((folder elmo-imap4-folder)
 						  numbers flag)
   (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
-    (when spec
-      (elmo-imap4-set-flag folder numbers (car spec) (nth 1 spec)))))
+    (elmo-imap4-set-flag folder numbers (or (car spec)
+					    (capitalize (symbol-name flag))
+					    (nth 1 spec)))))
 
 (luna-define-method elmo-folder-unset-flag-plugged ((folder elmo-imap4-folder)
 						    numbers flag)
   (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
-    (when spec
-      (elmo-imap4-set-flag folder numbers (car spec) (not (nth 1 spec))))))
+    (elmo-imap4-set-flag folder numbers (or (car spec)
+					    (capitalize (symbol-name flag)))
+			 (not (nth 1 spec)))))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
 					      number)
@@ -2706,6 +2723,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
   nil)
 
 (autoload 'elmo-global-flags-set "elmo-flag")
+(autoload 'elmo-get-global-flags "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))

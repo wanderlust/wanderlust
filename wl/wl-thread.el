@@ -735,9 +735,9 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-mark-as-unread-region arg))
 
-(defun wl-thread-mark-as-important (&optional arg)
+(defun wl-thread-set-flags (&optional arg)
   (interactive "P")
-  (wl-thread-call-region-func 'wl-summary-mark-as-important-region arg))
+  (wl-thread-call-region-func 'wl-summary-set-flags-region arg))
 
 (defun wl-thread-mark-as-answered (&optional arg)
   (interactive "P")

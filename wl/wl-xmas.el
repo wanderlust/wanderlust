@@ -92,8 +92,8 @@
      wl-summary-sync-force-update t "Sync Current Folder"]
     [wl-summary-dispose
      wl-summary-dispose t "Dispose Current Message"]
-    [wl-summary-mark-as-important
-     wl-summary-mark-as-important t "Mark Current Message as Important"]
+    [wl-summary-set-flags
+     wl-summary-set-flags t "Set Flags"]
     [wl-draft
      wl-summary-write-current-folder t "Write for Current Folder"]
     [wl-summary-reply
@@ -380,6 +380,7 @@
     (wl-folder-maildir-glyph	. wl-maildir-folder-icon)
     (wl-folder-nmz-glyph	. wl-nmz-folder-icon)
     (wl-folder-shimbun-glyph	. wl-shimbun-folder-icon)
+    (wl-folder-file-glyph	. wl-file-folder-icon)
     (wl-folder-trash-empty-glyph . wl-empty-trash-folder-icon)
     (wl-folder-draft-glyph	. wl-draft-folder-icon)
     (wl-folder-queue-glyph	. wl-queue-folder-icon)

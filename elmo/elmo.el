@@ -87,6 +87,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   (autoload 'elmo-global-flag-detach "elmo-flag")
   (autoload 'elmo-global-flag-detach-messages "elmo-flag")
   (autoload 'elmo-global-flag-set "elmo-flag")
+  (autoload 'elmo-get-global-flags "elmo-flag")
   (autoload 'elmo-global-mark-migrate "elmo-flag")
   (autoload 'elmo-folder-list-global-flag-messages "elmo-flag"))
 
@@ -103,8 +104,10 @@ If a folder name begins with PREFIX, use BACKEND."
 
 (defmacro elmo-folder-type (name)
   "Get folder type from NAME string."
-  (` (and (stringp (, name))
-	  (cdr (assoc (string-to-char (, name)) elmo-folder-type-alist)))))
+  `(and (stringp ,name)
+	(or (cdr (assoc (string-to-char ,name) elmo-folder-type-alist))
+	    (when (string-match "\\([^:]*\\):" ,name)
+	      (intern (match-string 1 ,name))))))
 
 ;;; ELMO folder
 ;; A elmo folder provides uniformed (orchestrated) access
@@ -252,9 +255,8 @@ FLAG is a symbol which is one of the following:
   `important'  (marked as important)
 'sugar' flags:
   `read'       (not unread)
-  `digest'     (unread + important)
-  `any'        (digest + answered)
-
+  `digest'     (unread + important + other flags)
+  `any'        (digest + answered + other flags)
 If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-folder) flag
@@ -1193,6 +1195,32 @@ FIELD is a symbol of the field.")
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
 			   number
 			   flag))))
+
+(defun elmo-message-has-global-flag-p (folder number)
+  "Return non-nil when the message in the FOLDER with NUMBER has global flag."
+  (let ((flags (elmo-message-flags folder number))
+	result)
+    (while flags
+      (when (and (elmo-global-flag-p (car flags))
+		 (not (memq (car flags) '(answered unread cached))))
+	(setq result t
+	      flags nil))
+      (setq flags (cdr flags)))
+    result))
+
+(defun elmo-message-set-global-flags (folder number flags &optional local)
+  "Set global flags of the message in the FOLDER with NUMBER as FLAGS.
+If Optional LOCAL is non-nil, don't update server flag."
+  (dolist (flag flags)
+    (unless (elmo-global-flag-p flag)
+      (error "Not a global flag")))
+  (let ((old-flags (elmo-get-global-flags (elmo-message-flags folder number))))
+    (dolist (flag flags)
+      (unless (memq flag old-flags)
+	(elmo-message-set-flag folder number flag local)))
+    (dolist (flag old-flags)
+      (unless (memq flag flags)
+	(elmo-message-unset-flag folder number flag local)))))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-folder)
 					    numbers

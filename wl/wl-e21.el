@@ -122,8 +122,8 @@
      wl-summary-sync-force-update t "Sync Current Folder"]
     [wl-summary-dispose
      wl-summary-dispose t "Dispose Current Message"]
-    [wl-summary-mark-as-important
-     wl-summary-mark-as-important t "Mark Current Message as Important"]
+    [wl-summary-set-flags
+     wl-summary-set-flags t "Set Flags"]
     [wl-draft
      wl-summary-write-current-folder t "Write for Current Folder"]
     [wl-summary-reply
@@ -427,23 +427,24 @@
 
 (defvar wl-folder-internal-icon-list
   ;; alist of (image . icon-file)
-  '((wl-folder-nntp-image         . wl-nntp-folder-icon)
-    (wl-folder-imap4-image        . wl-imap-folder-icon)
-    (wl-folder-pop3-image         . wl-pop-folder-icon)
+  '((wl-folder-nntp-image	  . wl-nntp-folder-icon)
+    (wl-folder-imap4-image	  . wl-imap-folder-icon)
+    (wl-folder-pop3-image	  . wl-pop-folder-icon)
     (wl-folder-localdir-image     . wl-localdir-folder-icon)
     (wl-folder-localnews-image    . wl-localnews-folder-icon)
     (wl-folder-internal-image     . wl-internal-folder-icon)
-    (wl-folder-multi-image        . wl-multi-folder-icon)
+    (wl-folder-multi-image	  . wl-multi-folder-icon)
     (wl-folder-filter-image       . wl-filter-folder-icon)
     (wl-folder-archive-image      . wl-archive-folder-icon)
-    (wl-folder-pipe-image         . wl-pipe-folder-icon)
+    (wl-folder-pipe-image	  . wl-pipe-folder-icon)
     (wl-folder-maildir-image      . wl-maildir-folder-icon)
-    (wl-folder-nmz-image          . wl-nmz-folder-icon)
+    (wl-folder-nmz-image	  . wl-nmz-folder-icon)
     (wl-folder-shimbun-image      . wl-shimbun-folder-icon)
+    (wl-folder-file-image	  . wl-file-folder-icon)
     (wl-folder-trash-empty-image  . wl-empty-trash-folder-icon)
-    (wl-folder-draft-image        . wl-draft-folder-icon)
-    (wl-folder-queue-image        . wl-queue-folder-icon)
-    (wl-folder-trash-image        . wl-trash-folder-icon)))
+    (wl-folder-draft-image	  . wl-draft-folder-icon)
+    (wl-folder-queue-image	  . wl-queue-folder-icon)
+    (wl-folder-trash-image	  . wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
   (when (wl-e21-display-image-p)

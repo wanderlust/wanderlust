@@ -56,19 +56,21 @@
 
 (defvar wl-message-buffer-cur-folder nil)
 (defvar wl-message-buffer-cur-number nil)
-(defvar wl-message-buffer-cur-flag nil)
+(defvar wl-message-buffer-cur-display-type nil)
 (defvar wl-message-buffer-cur-summary-buffer nil)
+(defvar wl-message-buffer-require-all-header nil)
 (defvar wl-message-buffer-original-buffer nil) ; original buffer.
-(defvar wl-message-buffer-all-header-flag nil)
 (defvar wl-message-buffer-mode-line-formatter nil)
+(defvar wl-message-buffer-flag-indicator nil)
 
 (make-variable-buffer-local 'wl-message-buffer-cur-folder)
 (make-variable-buffer-local 'wl-message-buffer-cur-number)
-(make-variable-buffer-local 'wl-message-buffer-cur-flag)
+(make-variable-buffer-local 'wl-message-buffer-cur-display-type)
 (make-variable-buffer-local 'wl-message-buffer-cur-summary-buffer)
+(make-variable-buffer-local 'wl-message-buffer-require-all-header)
 (make-variable-buffer-local 'wl-message-buffer-original-buffer)
-(make-variable-buffer-local 'wl-message-buffer-all-header-flag)
 (make-variable-buffer-local 'wl-message-buffer-mode-line-formatter)
+(make-variable-buffer-local 'wl-message-buffer-flag-indicator)
 
 (defvar wl-fixed-window-configuration nil)
 
@@ -413,17 +415,17 @@ Returns non-nil if bottom of message."
 	       (nth 3 entry) (match-string (nth 4 entry))))
 	    (goto-char end)))))))
 
-(defun wl-message-redisplay (folder number flag &optional force-reload)
+(defun wl-message-redisplay (folder number display-type &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
 	 (buffer-read-only nil)
 	 (summary-buf (current-buffer))
 	 message-buf
 	 strategy entity
 	 cache-used
-	 summary-win delim)
+	 summary-win delim flags)
     (setq buffer-read-only nil)
     (setq cache-used (wl-message-buffer-display
-		      folder number flag force-reload))
+		      folder number display-type force-reload))
     (setq wl-message-buffer (car cache-used))
     (setq message-buf wl-message-buffer)
     (wl-message-select-buffer wl-message-buffer)
@@ -437,6 +439,33 @@ Returns non-nil if bottom of message."
     (setq wl-message-buffer-cur-summary-buffer summary-buf)
     (setq wl-message-buffer-cur-folder (elmo-folder-name-internal folder))
     (setq wl-message-buffer-cur-number number)
+    (setq wl-message-buffer-flag-indicator
+	  (if (setq flags (elmo-get-global-flags (elmo-message-flags
+						  folder number)))
+	      (let ((fl wl-summary-flag-alist)
+		    flag-strings flag-string face)
+		(while fl
+		  (when (memq (car (car fl)) flags)
+		    (setq flag-string (capitalize
+				       (symbol-name (car (car fl))))
+			  flags (delq (car (car fl)) flags))
+		    (when (facep (setq face
+				       (intern
+					(format
+					 "wl-highlight-summary-%s-flag-face"
+					 (car (car fl))))))
+		      (put-text-property 0 (length flag-string)
+					 'face face flag-string))
+		    (setq flag-strings (nconc flag-strings
+					      (list flag-string))))
+		  (setq fl (cdr fl)))
+		(setq flag-strings
+		      (nconc flag-strings
+			     (mapcar (lambda (flag)
+				       (capitalize (symbol-name flag)))
+				     flags)))
+		(concat " (" (mapconcat 'identity flag-strings ", ") ")"))
+	    ""))
     (wl-line-formatter-setup
      wl-message-buffer-mode-line-formatter
      wl-message-mode-line-format
@@ -466,7 +495,7 @@ Returns non-nil if bottom of message."
     cache-used))
 
 ;; Use message buffer cache.
-(defun wl-message-buffer-display (folder number flag
+(defun wl-message-buffer-display (folder number display-type
 					 &optional force-reload unread)
   (let* ((msg-id (ignore-errors (elmo-message-field folder number
 						    'message-id)))
@@ -489,7 +518,7 @@ Returns non-nil if bottom of message."
 	    (widen)
 	    (goto-char (point-min))
 	    (ignore-errors (wl-message-narrow-to-page))
-	    (unless (eq wl-message-buffer-cur-flag flag)
+	    (unless (eq wl-message-buffer-cur-display-type display-type)
 	      (setq read t))))
       ;; delete tail and add new to the top.
       (setq hit (wl-message-buffer-cache-add (list fname number msg-id)))
@@ -500,9 +529,9 @@ Returns non-nil if bottom of message."
 	      (set-buffer hit)
 	      (setq
 	       cache-used
-	       (wl-message-display-internal folder number flag
+	       (wl-message-display-internal folder number display-type
 					    force-reload unread))
-	      (setq wl-message-buffer-cur-flag flag))
+	      (setq wl-message-buffer-cur-display-type display-type))
 	  (quit
 	   (wl-message-buffer-cache-delete)
 	   (error "Display message %s/%s is quitted" fname number))
@@ -512,13 +541,14 @@ Returns non-nil if bottom of message."
 	   nil))) ;; will not be used
     (cons hit cache-used)))
 
-(defun wl-message-display-internal (folder number flag
+(defun wl-message-display-internal (folder number display-type
 					   &optional force-reload unread)
   (let ((default-mime-charset wl-mime-charset)
 	(elmo-mime-charset wl-mime-charset))
-    (setq wl-message-buffer-all-header-flag (eq flag 'all-header))
+    (setq wl-message-buffer-require-all-header (eq display-type
+						   'all-header))
     (prog1
-	(if (eq flag 'as-is)
+	(if (eq display-type 'as-is)
 	    (let (wl-highlight-x-face-function)
 	      (prog1 (elmo-mime-display-as-is folder number
 					      (current-buffer)

@@ -615,7 +615,7 @@ With ARG, ask destination folder."
 
 (defun wl-mime-display-header (entity situation)
   (let ((elmo-message-ignored-field-list
-	 (if wl-message-buffer-all-header-flag
+	 (if wl-message-buffer-require-all-header
 	     nil
 	   wl-message-ignored-field-list))
 	(elmo-message-visible-field-list wl-message-visible-field-list)

@@ -1,3 +1,10 @@
+2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* etc/icons/wl-summary-set-flags-up.xpm: Renamed from
+	wl-summary-mark-as-important-up.xpm.
+
+	* WL-ELS (ELMO-MODULES): Added elmo-file.
+
 2004-01-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-ELS (UTILS-MODULES): Add im-wl.

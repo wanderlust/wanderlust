@@ -213,7 +213,7 @@ value is used."
 
 (defun elmo-mime-message-display (folder number viewbuf rawbuf original-mode
 					 &optional ignore-cache unread keymap)
-  "Display MIME message. 
+  "Display MIME message.
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
 ORIGINAL is the major mode of RAWBUF.
@@ -246,7 +246,7 @@ Return non-nil if not entire message was fetched."
 
 (defun elmo-mime-display-as-is (folder number viewbuf rawbuf original-mode
 				       &optional ignore-cache unread keymap)
-  "Display MIME message. 
+  "Display MIME message.
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
 ORIGINAL is the major mode of RAWBUF.

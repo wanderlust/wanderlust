@@ -197,9 +197,10 @@
 		   (string= (elmo-filter-value condition) "unread")))
 	  (setq diff (elmo-folder-diff (elmo-filter-folder-target-internal
 					folder)))
-	  (if (consp diff)
-	      (cons (car diff) (car diff))
-	    (cons (car diff) (nth 1 diff))))
+	  (if (consp (cdr diff))
+	      ;; new unread unread
+	      (list (car diff) (nth 1 diff) (nth 1 diff))
+	    (cons (car diff) (car diff))))
 	 ((string= "last" (elmo-filter-key condition))
 	  (luna-call-next-method))
 	 (t

@@ -498,13 +498,6 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
   :type '(repeat (cons symbol function))
   :group 'wl-pref)
 
-(defcustom wl-demo-background-color "#d9ffd9"
-  "The color name for demo background.
-If nil, the default face background is used."
-  :type '(choice (const :tag "Default")
-		 (string :tag "Color name"))
-  :group 'wl-pref)
-
 (defcustom wl-envelope-from nil
   "*Envelope From used in SMTP.
 If nil, `wl-from' is used."
@@ -978,12 +971,29 @@ cdr of each cons cell is used for draft message."
   :type 'boolean
   :group 'wl-folder)
 
-(defcustom wl-summary-flag-priority-list '(new important answered unread)
- "List of flags reflected with the priority to a persistent mark."
+(defcustom wl-summary-persistent-mark-priority-list '(new
+						      flag
+						      answered
+						      unread)
+  "List of flags reflected with the priority to persistent marks and faces."
   :type '(repeat (radio (const :format "%v " new)
-			(const :format "%v " important)
+			(const :format "%v " flag)
 			(const :format "%v " answered)
 			(const :format "%v " unread)))
+  :group 'wl-summary)
+
+(defcustom wl-summary-flag-alist
+  '((important "orange"))
+  "An alist to define the flags for the summary mode.
+Each element is a form like:
+\(SYMBOL-OF-FLAG COLOR\)
+Example:
+\((important \"orange\"\)
+ \(todo \"red\"\)
+ \(business \"green\"\)
+ \(private \"blue\"\)\)"
+  :type '(repeat (list (symbol :tag "flag")
+		       (string :tag "color")))
   :group 'wl-summary)
 
 (defcustom wl-summary-new-uncached-mark "N"
@@ -1021,8 +1031,8 @@ cdr of each cons cell is used for draft message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-important-mark "$"
-  "Mark for important message."
+(defcustom wl-summary-flag-mark "$"
+  "Mark for the messages which have tags."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
@@ -1575,6 +1585,7 @@ which appear just before @."
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname wl-message-buffer-cur-folder)
 	  wl-message-buffer-cur-folder))
+    (?F wl-message-buffer-flag-indicator)
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.
 Each element is a list of following:
@@ -1582,13 +1593,14 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-message-mode-line-format "Wanderlust: << %f / %n >>"
+(defcustom wl-message-mode-line-format "Wanderlust: << %f / %n %F>>"
   "*A format string for message buffer's mode-line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
 
 %f The folder name.
-%n The number of the message."
+%n The number of the message.
+%F The global flag indicator."
   :group 'wl-pref
   :type 'string)
 
@@ -2514,7 +2526,7 @@ ex.
   :group 'wl-expire)
 
 (defcustom wl-summary-expire-reserve-marks
-  (list wl-summary-important-mark
+  (list wl-summary-flag-mark
 	wl-summary-new-uncached-mark
 	wl-summary-new-cached-mark
 	wl-summary-unread-uncached-mark
@@ -2819,6 +2831,8 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   "*Icon file for namazu folder.")
 (defvar wl-shimbun-folder-icon "shimbun.xpm"
   "*Icon file for shimbun folder.")
+(defvar wl-file-folder-icon "file.xpm"
+  "*Icon file for file folder.")
 (defvar wl-maildir-folder-icon "maildir.xpm"
   "*Icon file for maildir folder.")
 (defvar wl-empty-trash-folder-icon "trash-e.xpm"

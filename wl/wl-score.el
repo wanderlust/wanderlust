@@ -1195,7 +1195,7 @@ Set `wl-score-cache' nil."
 	      ((and wl-summary-important-above
 		    (> score wl-summary-important-above))
 	       (if (wl-thread-jump-to-msg num);; force open
-		   (wl-summary-mark-as-important num)))
+		   (wl-summary-add-flags-internal num '(important))))
 	      ((and wl-summary-target-above
 		    (> score wl-summary-target-above))
 	       (if visible

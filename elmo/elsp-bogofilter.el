@@ -53,7 +53,7 @@
   :group 'elmo-spam-bogofilter)
 
 (defcustom elmo-spam-bogofilter-max-messages-per-process 30
-  "Number of messages processed at one once"
+  "Number of messages processed at once."
   :type 'integer
   :group 'elmo-spam-bogofilter)
 

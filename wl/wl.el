@@ -699,6 +699,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (fset 'wl-summary-subject-filter-func-internal
 	  (symbol-value 'wl-summary-subject-filter-function))
     (wl-summary-define-mark-action)
+    (dolist (spec wl-summary-flag-alist)
+      (set-face-foreground
+       (make-face (intern
+		   (format "wl-highlight-summary-%s-flag-face" (car spec))))
+       (nth 1 spec)))
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
     (wl-news-check)

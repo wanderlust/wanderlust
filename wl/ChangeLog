@@ -1,5 +1,78 @@
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-init): Setup faces accoding to wl-summary-flag-alist.
+
+	* wl-xmas.el (wl-summary-toolbar): Setup wl-summary-set-flags.
+
+	* wl-e21.el (wl-summary-toolbar): Ditto.
+
+	* wl-vars.el (wl-demo-background-color): Abolished.
+	(wl-summary-persistent-mark-priority-list): Renamed from
+	wl-summary-flag-priority-list.
+	(wl-summary-flag-alist): New user option.
+	(wl-summary-flag-mark): Renamed from wl-summary-important-mark.
+	(wl-message-mode-line-format-spec-alist): Added 'F'.
+	(wl-message-mode-line-format): Likewise.
+	(wl-summary-expire-reserve-marks): Use wl-summary-flag-mark
+	instead of wl-summary-important-mark.
+	(wl-file-folder-icon): New variable.
+
+	* wl-thread.el (wl-thread-set-flags): Renamed from
+	wl-thread-mark-as-important.
+
+	* wl-summary.el: Define `elmo-global-flag-list' to avoid byte-compile
+	warning.
+	(wl-summary-mode-menu-spec): Follow the change of 
+	`wl-summary-mark-as-important', `wl-thread-set-flags', and so on.
+	(wl-summary-mode-map): Follow the change of
+	`wl-summary-mark-as-important', `wl-thread-set-flags', and so on.
+	(wl-summary-detect-mark-position): Follow the variable name change.
+	(wl-summary-set-flags-region): New function for the replacement of
+	wl-summary-mark-as-important-region.
+	(wl-summary-sync-marks): Sync all global-flags.
+	(wl-summary-auto-select-msg-p): Use elmo-message-has-global-flag-p
+	instead of elmo-message-flagged-p.
+	(wl-summary-persistent-mark-string): Follow the variable name change;
+	Put wl-summary-flag-mark if the message has global-flag.
+	(wl-summary-target-mark-set-flags): Renamed from 
+	wl-summary-target-mark-mark-as-important.
+	(wl-summary-decide-flag): New function.
+	(wl-summary-set-flags-internal): Renamed from
+	wl-summary-mark-as-important-internal.
+	(wl-summary-add-flags-internal): New function.
+	(wl-summary-remove-flags-internal): Ditto.
+	(wl-summary-set-flags): Renamed from wl-summary-mark-as-important.
+	(wl-summary-mark-as-unimportant): Abolish.
+	(wl-summary-move-spec-alist): Changed `important' to `digest'.
+	(wl-summary-next-message): List flagged messages in the msgdb.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Use
+	wl-summary-add-flags-internal instead of 
+
+	* wl-mime.el (wl-mime-display-header): Follow the variable name change.
+
+	* wl-message.el (wl-message-buffer-cur-display-type): Renamed
+	from wl-message-buffer-cur-flag (To avoid misunderstanding).
+	(wl-message-buffer-require-all-header): Renamed from
+	wl-message-buffer-all-header-flag (Ditto).
+	(wl-message-buffer-flag-indicator): New variable.
+	(wl-message-redisplay): Changed local varibale name from `flag' to
+	`display-type'; Set up wl-message-buffer-flag-indicator.
+	(wl-message-buffer-display): Changed varibale name from `flag' to
+	`display-type'.
+	(wl-message-display-internal): Likewise.
+
+	* wl-highlight.el (wl-highlight-demo-face): Define default background
+	color.
+	(wl-highlight-summary-line-face-spec): Highlight flagged messages.
+
+	* wl-e21.el (wl-folder-internal-icon-list): Added file folder icon.
+
+	* wl-demo.el (wl-demo-xpm-set-background): Abolish.
+	(wl-demo-setup-properties): Renamed from
+	`wl-demo-set-background-color'.
+	(wl-demo): Follow the change above.
+	
 	* Version number is increased to 2.11.24.
 
 2004-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
