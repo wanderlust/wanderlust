@@ -1,3 +1,9 @@
+2004-02-08  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Use
+	elmo-multiple-field-body instead of std11-field-body to check all
+	headers.
+
 2004-02-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-cache-expire): Completion require match "age"
@@ -834,7 +840,7 @@
 
 	* elmo-util.el (elmo-msgdb-insert-file-header): Moved from
 	modb-legacy.el.
-	(elmo-multiple-field-body): Moved from elmo-util.el.
+	(elmo-multiple-field-body): Moved from elmo-msgdb.el.
 
 	* elmo-msgdb.el (elmo-multiple-field-body): Moved to elmo-util.el.
 

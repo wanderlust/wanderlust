@@ -864,11 +864,12 @@ the directory becomes empty after deletion."
 	   (setq result (search-forward (elmo-filter-value condition)
 					nil t))))
      (t
-      (let ((fval (std11-field-body (elmo-filter-key condition))))
+      (dolist (fval (elmo-multiple-field-body (elmo-filter-key condition)))
 	(if (eq (length fval) 0) (setq fval nil))
 	(if fval (setq fval (eword-decode-string fval)))
-	(setq result (and fval (string-match
-				(elmo-filter-value condition) fval))))))
+	(setq result (or result
+			 (and fval (string-match
+				    (elmo-filter-value condition) fval)))))))
     (if (eq (elmo-filter-type condition) 'unmatch)
 	(setq result (not result)))
     result))
