@@ -1,3 +1,7 @@
+2002-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.9.9.
+
 2002-03-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo.el (elmo-find-fetch-strategy): Don't use file cache when
@@ -15,7 +19,7 @@
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed logic.
 
-2002-02-18   Daiki Ueno  <ueno@unixuser.org>
+2002-02-18  Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-nntp.el (elmo-nntp-send-mode-reader): Don't throw an error.
 
