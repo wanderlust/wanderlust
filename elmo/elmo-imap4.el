@@ -59,9 +59,6 @@
 	(require 'starttls)
 	(require 'sasl))
     (error))
-;  (defun-maybe sasl-cram-md5 (username passphrase challenge))
-;  (defun-maybe sasl-digest-md5-digest-response
-;    (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe starttls-negotiate (a))
   (defun-maybe elmo-generic-list-folder-unread (spec number-alist mark-alist unread-marks))
   (defun-maybe elmo-generic-folder-diff (spec folder number-list))
@@ -123,13 +120,6 @@
     elmo-imap4-status-callback
     elmo-imap4-status-callback-data
     elmo-imap4-current-msgdb))
-
-(defvar elmo-imap4-authenticator-alist
-  '((login	elmo-imap4-auth-login)
-    (cram-md5	elmo-imap4-auth-cram-md5)
-    (digest-md5 elmo-imap4-auth-digest-md5)
-    (plain      elmo-imap4-login))
-  "Definition of authenticators.")
 
 ;;;;
 
@@ -1141,64 +1131,6 @@ If optional argument UNMARK is non-nil, unmark."
   (if (string-match "^\\*\\(.*\\)$" string)
       (elmo-read
        (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
-
-;; Current buffer is process buffer.
-(defun elmo-imap4-auth-login (session)
-  (let ((tag (elmo-imap4-send-command session "authenticate login"))
-	(elmo-imap4-debug-inhibit-logging t))
-    (or (elmo-imap4-read-continue-req session)
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
-    (elmo-imap4-send-string session
-			    (elmo-base64-encode-string
-			     (elmo-network-session-user-internal session)))
-    (or (elmo-imap4-read-continue-req session)
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
-    (elmo-imap4-send-string session
-			    (elmo-base64-encode-string
-			     (elmo-get-passwd
-			      (elmo-network-session-password-key session))))
-    (or (elmo-imap4-read-ok session tag)
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
-    (setq elmo-imap4-status 'auth)))
-
-(defun elmo-imap4-auth-cram-md5 (session)
-  (let ((tag (elmo-imap4-send-command session "authenticate cram-md5"))
-	(elmo-imap4-debug-inhibit-logging t)
-	response)
-    (or (setq response (elmo-imap4-read-continue-req session))
-	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-cram-md5)))
-    (elmo-imap4-send-string
-     session
-     (elmo-base64-encode-string
-      (sasl-cram-md5 (elmo-network-session-user-internal session)
-		     (elmo-get-passwd
-		      (elmo-network-session-password-key session))
-		     (elmo-base64-decode-string response))))
-    (or (elmo-imap4-read-ok session tag)
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-cram-md5)))))
-
-(defun elmo-imap4-auth-digest-md5 (session)
-  (let ((tag (elmo-imap4-send-command session "authenticate digest-md5"))
-	(elmo-imap4-debug-inhibit-logging t)
-	response)
-    (or (setq response (elmo-imap4-read-continue-req session))
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-digest-md5)))
-    (elmo-imap4-send-string
-     session
-     (elmo-base64-encode-string
-      (sasl-digest-md5-digest-response
-       (elmo-base64-decode-string response)
-       (elmo-network-session-user-internal session)
-       (elmo-get-passwd (elmo-network-session-password-key session))
-       "imap"
-       (elmo-network-session-password-key session))
-      'no-line-break))
-    (or (setq response (elmo-imap4-read-continue-req session))
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-digest-md5)))
-    (elmo-imap4-send-string session "")
-    (or (elmo-imap4-read-ok session tag)
-	(signal 'elmo-authenticate-error '(elmo-imap4-auth-digest-md5)))))
 
 (defun elmo-imap4-login (session)
   (let ((elmo-imap4-debug-inhibit-logging t))
