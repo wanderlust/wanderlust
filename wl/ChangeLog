@@ -1,3 +1,11 @@
+2003-09-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-mark-as-read): Fixed typo
+	and call `wl-summary-mark-as-read' before to call
+	`wl-summary-unset-mark'.
+	(wl-summary-target-mark-mark-as-unread): Likewise.
+	(wl-summary-target-mark-mark-as-important): Don't bind mlist.
+
 2003-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-draft-preview-message): Use actual value for

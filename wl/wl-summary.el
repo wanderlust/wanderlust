@@ -2751,11 +2751,10 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
     (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-	  wl-summary-buffer-disp-msg
-	  (mlist wl-summary-buffer-temp-mark-list))
-      (dolist (number mlist)
-	(wl-summary-unset-mark number))
-      (wl-summary-mark-as-read mlist))))
+	  wl-summary-buffer-disp-msg)
+      (wl-summary-mark-as-read wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
 
 (defun wl-summary-target-mark-mark-as-unread ()
   (interactive)
@@ -2763,11 +2762,10 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
     (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-	  wl-summary-buffer-disp-msg
-	  (mlist wl-summary-buffer-target-mark-list))
-      (dolist (number mlist)
-	(wl-summary-unset-mark number))
-      (wl-summary-mark-as-unread mlist))))
+	  wl-summary-buffer-disp-msg)
+      (wl-summary-mark-as-unread wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
 
 (defun wl-summary-target-mark-mark-as-important ()
   (interactive)
@@ -2775,9 +2773,8 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
     (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-	  wl-summary-buffer-disp-msg
-	  (mlist wl-summary-buffer-target-mark-list))
-      (dolist (number mlist)
+	  wl-summary-buffer-disp-msg)
+      (dolist (number wl-summary-buffer-target-mark-list)
 	(wl-summary-unset-mark number)
 	(wl-summary-mark-as-important number))
       (wl-summary-count-unread)
