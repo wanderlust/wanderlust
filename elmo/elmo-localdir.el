@@ -32,122 +32,103 @@
 
 ;;; Code:
 ;; 
-(eval-when-compile (require 'cl))
 
+(require 'emu)
+(require 'std11)
+
+(eval-when-compile
+  (require 'elmo-cache))
 (require 'elmo-msgdb)
-(require 'elmo)
 
-(defcustom elmo-localdir-folder-path "~/Mail"
-  "*Local mail directory (MH format) path."
-  :type 'directory
-  :group 'elmo)
+(defsubst elmo-localdir-get-folder-directory (spec)
+  (if (file-name-absolute-p (nth 1 spec))
+      (nth 1 spec) ; already full path.
+    (expand-file-name (nth 1 spec)
+		      (cond ((eq (car spec) 'localnews)
+			     elmo-localnews-folder-path)
+			    (t
+			     elmo-localdir-folder-path)))))
 
-;;; ELMO Local directory folder
-(eval-and-compile
-  (luna-define-class elmo-localdir-folder (elmo-folder)
-		     (dir-name directory))
-  (luna-define-internal-accessors 'elmo-localdir-folder))
+(defun elmo-localdir-msgdb-expand-path (spec)
+  (let ((fld-name (nth 1 spec)))
+    (expand-file-name fld-name
+		      (expand-file-name "localdir"
+					elmo-msgdb-dir))))
 
-;;; elmo-localdir specific methods.
-(luna-define-generic elmo-localdir-folder-path (folder)
-  "Return local directory path of the FOLDER.")
+(defun elmo-localdir-number-to-filename (spec dir number &optional loc-alist)
+  (expand-file-name (int-to-string number) dir))
 
-(luna-define-generic elmo-localdir-folder-name (folder name)
-  "Return directory NAME for FOLDER.")
+(if (boundp 'nemacs-version)
+    (defsubst elmo-localdir-insert-header (file)
+      "Insert the header of the article (Does not work on nemacs)."
+      (as-binary-input-file
+       (insert-file-contents file)))
+  (defsubst elmo-localdir-insert-header (file)
+    "Insert the header of the article."
+    (let ((beg 0)
+	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook
+	  format-alist)
+      (when (file-exists-p file)
+	;; Read until header separator is found.
+	(while (and (eq elmo-localdir-header-chop-length
+			(nth 1
+			     (as-binary-input-file
+			      (insert-file-contents
+			       file nil beg
+			       (incf beg elmo-localdir-header-chop-length)))))
+		    (prog1 (not (search-forward "\n\n" nil t))
+		      (goto-char (point-max)))))))))
 
-(luna-define-method elmo-localdir-folder-path ((folder elmo-localdir-folder))
-  elmo-localdir-folder-path)
 
-(luna-define-method elmo-localdir-folder-name ((folder elmo-localdir-folder)
-					       name)
-  name)
-
-(luna-define-method elmo-folder-initialize ((folder
-					     elmo-localdir-folder)
-					    name)
-  (elmo-localdir-folder-set-dir-name-internal folder name)
-  (if (file-name-absolute-p name)
-      (elmo-localdir-folder-set-directory-internal
-       folder
-       (expand-file-name name))
-    (elmo-localdir-folder-set-directory-internal
-     folder
-     (expand-file-name
-      (elmo-localdir-folder-name folder name)
-      (elmo-localdir-folder-path folder))))
-  folder)
-
-;; open, check, commit, and close are generic.
-
-(luna-define-method elmo-folder-exists-p ((folder elmo-localdir-folder))
-  (file-directory-p (elmo-localdir-folder-directory-internal folder)))
-
-(luna-define-method elmo-folder-expand-msgdb-path ((folder
-						    elmo-localdir-folder))
-  (expand-file-name 
-   (elmo-replace-string-as-filename 
-    (elmo-localdir-folder-dir-name-internal folder))
-   (expand-file-name ;;"localdir"
-    (symbol-name (elmo-folder-type-internal folder))
-    elmo-msgdb-dir)))
-
-(luna-define-method elmo-message-file-name ((folder
-					     elmo-localdir-folder)
-					    number)
-  (expand-file-name (int-to-string number)
-		    (elmo-localdir-folder-directory-internal folder)))
-
-(luna-define-method elmo-folder-message-file-number-p ((folder
-							elmo-localdir-folder))
-  t)
-
-(luna-define-method elmo-folder-message-file-directory ((folder
-							 elmo-localdir-folder))
-  (elmo-localdir-folder-directory-internal folder))
-
-(luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-localdir-folder))
-  t)
-
-(luna-define-method elmo-folder-message-make-temp-files ((folder
-							  elmo-localdir-folder)
-							 numbers
-							 &optional
-							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
-	(cur-number (if start-number 0)))
-    (dolist (number numbers)
-      (elmo-add-name-to-file
-       (expand-file-name
-	(int-to-string number)
-	(elmo-localdir-folder-directory-internal folder))
-       (expand-file-name
-	(int-to-string (if start-number (incf cur-number) number))
-	temp-dir)))
-    temp-dir))
+(defsubst elmo-localdir-msgdb-create-overview-entity-from-file (number file)
+  (save-excursion
+    (let ((tmp-buffer (get-buffer-create " *ELMO LocalDir Temp*"))
+	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook header-end
+	  (attrib (file-attributes file))
+	  ret-val size mtime)
+      (set-buffer tmp-buffer)
+      (erase-buffer)
+      (if (not (file-exists-p file))
+	  ()
+	(setq size (nth 7 attrib))
+	(setq mtime (timezone-make-date-arpa-standard
+		     (current-time-string (nth 5 attrib)) (current-time-zone)))
+	;; insert header from file.
+	(catch 'done
+	  (condition-case nil
+	      (elmo-localdir-insert-header file)
+	    (error (throw 'done nil)))
+	  (goto-char (point-min))
+	  (setq header-end
+		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
+		    (point)
+		  (point-max)))
+	  (narrow-to-region (point-min) header-end)
+	  (setq ret-val (elmo-msgdb-create-overview-from-buffer number size mtime))
+	  (kill-buffer tmp-buffer))
+	ret-val
+	))))
 
 (defun elmo-localdir-msgdb-create-entity (dir number)
-  (elmo-msgdb-create-overview-entity-from-file
+  (elmo-localdir-msgdb-create-overview-entity-from-file
    number (expand-file-name (int-to-string number) dir)))
 
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
-					      numbers
-					      new-mark
-					      already-mark
-					      seen-mark
-					      important-mark
-					      seen-list)
-  (when numbers
-    (let ((dir (elmo-localdir-folder-directory-internal folder))
+(defun elmo-localdir-msgdb-create-as-numlist (spec numlist new-mark
+						   already-mark seen-mark
+						   important-mark seen-list)
+  (when numlist
+    (let ((dir (elmo-localdir-get-folder-directory spec))
 	  overview number-alist mark-alist entity message-id
 	  num seen gmark
 	  (i 0)
-	  (len (length numbers)))
+	  (len (length numlist)))
       (message "Creating msgdb...")
-      (while numbers
+      (while numlist
 	(setq entity
 	      (elmo-localdir-msgdb-create-entity
-	       dir (car numbers)))
+	       dir (car numlist)))
 	(if (null entity)
 	    ()
 	  (setq num (elmo-msgdb-overview-entity-get-number entity))
@@ -161,7 +142,7 @@
   				       message-id))
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-file-cache-exists-p message-id) ; XXX
+			      (if (elmo-cache-exists-p message-id) ; XXX
 				  (if seen
 				      nil
 				    already-mark)
@@ -176,136 +157,197 @@
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (elmo-display-progress
-	   'elmo-localdir-msgdb-create-as-numbers "Creating msgdb..."
+	   'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
 	   (/ (* i 100) len)))
-	(setq numbers (cdr numbers)))
+	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done")
       (list overview number-alist mark-alist))))
 
-(luna-define-method elmo-folder-list-subfolders ((folder elmo-localdir-folder)
-						 &optional one-level)
-  (mapcar
-   (lambda (x) (concat (elmo-folder-prefix-internal folder) x))
-   (elmo-list-subdirectories
-    (elmo-localdir-folder-path folder)
-    (or (elmo-localdir-folder-dir-name-internal folder) "")
-    one-level)))
+(defalias 'elmo-localdir-msgdb-create 'elmo-localdir-msgdb-create-as-numlist)
 
-(defsubst elmo-localdir-list-subr (folder &optional nonsort)
-  (let ((flist (mapcar 'string-to-int
-		       (directory-files 
-			(elmo-localdir-folder-directory-internal folder)
-			nil "^[0-9]+$" t)))
-	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
+(defvar elmo-localdir-list-folders-spec-string "+")
+(defvar elmo-localdir-list-folders-filter-regexp "^\\(\\.\\.?\\|[0-9]+\\)$")
+
+(defun elmo-localdir-list-folders (spec &optional hierarchy)
+  (let ((folder (concat elmo-localdir-list-folders-spec-string (nth 1 spec))))
+    (elmo-localdir-list-folders-subr folder hierarchy)))
+
+(defun elmo-localdir-list-folders-subr (folder &optional hierarchy)
+  (let ((case-fold-search t)
+	(w32-get-true-file-link-count t) ; for Meadow
+	folders curdir dirent relpath abspath attr
+	subprefix subfolder)
+    (condition-case ()
+	(progn
+	  (setq curdir
+		(expand-file-name (nth 1 (elmo-folder-get-spec folder))
+				  elmo-localdir-folder-path))
+	  (if (string-match "^[+=$.]$" folder) ; localdir, archive, localnews
+	      (setq subprefix folder)
+	    (setq subprefix (concat folder elmo-path-sep))
+	    ;; include parent
+	    (setq folders (list folder)))
+	  (setq dirent (directory-files curdir))
+	  (catch 'done
+	   (while dirent
+	    (setq relpath (car dirent))
+	    (setq dirent (cdr dirent))
+	    (setq abspath (expand-file-name relpath curdir))
+	    (and
+	     (not (string-match
+		   elmo-localdir-list-folders-filter-regexp
+		   relpath))
+	     (eq (nth 0 (setq attr (file-attributes abspath))) t)
+	     (if (eq hierarchy 'check)
+		 (throw 'done (nconc folders t))
+	       t)
+	     (setq subfolder (concat subprefix relpath))
+	     (setq folders (nconc folders
+				  (if (and hierarchy
+					   (if elmo-have-link-count
+					       (< 2 (nth 1 attr))
+					     (cdr
+					      (elmo-localdir-list-folders-subr
+					       subfolder 'check))))
+				      (list (list subfolder))
+				    (list subfolder))))
+	     (or
+	      hierarchy
+	      (and elmo-have-link-count (>= 2 (nth 1 attr)))
+	      (setq folders
+		    (nconc folders (cdr (elmo-localdir-list-folders-subr
+					 subfolder hierarchy))))))))
+	  folders)
+      (file-error folders))))
+
+(defsubst elmo-localdir-list-folder-subr (spec &optional nonsort)
+  (let* ((dir (elmo-localdir-get-folder-directory spec))
+	 (flist (mapcar 'string-to-int
+			(directory-files dir nil "^[0-9]+$" t)))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 numbers)
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
 	      (if killed
 		  (- (length flist)
 		     (elmo-msgdb-killed-list-length killed))
 		(length flist)))
-      (sort flist '<))))
+      (setq numbers (sort flist '<))
+      (elmo-living-messages numbers killed))))
 
-(luna-define-method elmo-folder-append-buffer ((folder elmo-localdir-folder)
-					       unread
-					       &optional number)
-  (let ((filename (elmo-message-file-name
-		   folder
-		   (or number
-		       (1+ (car (elmo-folder-status folder)))))))
-    (if (file-writable-p filename)
-	(write-region-as-binary
-	 (point-min) (point-max) filename nil 'no-msg)
-      t)))
+(defun elmo-localdir-append-msg (spec string &optional msg no-see)
+  (let ((dir (elmo-localdir-get-folder-directory spec))
+	(tmp-buffer (get-buffer-create " *ELMO Temp buffer*"))
+	(next-num (or msg
+		      (1+ (car (elmo-localdir-max-of-folder spec)))))
+	filename)
+    (save-excursion
+      (set-buffer tmp-buffer)
+      (erase-buffer)
+      (setq filename (expand-file-name (int-to-string
+					next-num)
+				       dir))
+      (unwind-protect
+	  (if (file-writable-p filename)
+	      (progn
+		(insert string)
+		(as-binary-output-file
+		 (write-region (point-min) (point-max) filename nil 'no-msg))
+		t)
+	    nil
+	    )
+	(kill-buffer tmp-buffer)))))
 
-(luna-define-method elmo-folder-append-messages :around ((folder elmo-localdir-folder)
-							 src-folder numbers
-							 unread-marks
-							 &optional same-number)
-  (if (elmo-folder-message-file-p src-folder)
-      (let ((dir (elmo-localdir-folder-directory-internal folder))
-	    (succeeds numbers)
-	    (next-num (1+ (car (elmo-folder-status folder)))))
-	(while numbers
-	  (elmo-copy-file
-	   (elmo-message-file-name src-folder (car numbers))
-	   (expand-file-name
-	    (int-to-string
-	     (if same-number (car numbers) next-num))
-	    dir))
-	  (if (and (setq numbers (cdr numbers))
-		   (not same-number))
-	      (setq next-num
-		    (if (elmo-localdir-locked-p)
-			;; MDA is running.
-			(1+ (car (elmo-folder-status folder)))
-		      (1+ next-num)))))
-	succeeds)
-    (luna-call-next-method)))
+(defun elmo-localdir-delete-msg (spec number)
+  (let (file
+	(dir (elmo-localdir-get-folder-directory spec))
+        (number (int-to-string number)))
+    (setq file (expand-file-name number dir))
+    (if (and (string-match "[0-9]+" number) ; for safety.
+	     (file-exists-p file)
+	     (file-writable-p file)
+	     (not (file-directory-p file)))
+	(progn (delete-file file)
+	       t))))
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-localdir-folder)
-						 numbers)
-  (dolist (number numbers)
-    (elmo-localdir-delete-message folder number))
+(defun elmo-localdir-read-msg (spec number outbuf &optional set-mark)
+  (save-excursion
+    (let* ((number (int-to-string number))
+	   (dir (elmo-localdir-get-folder-directory spec))
+	   (file (expand-file-name number dir)))
+      (set-buffer outbuf)
+      (erase-buffer)
+      (when (file-exists-p file)
+	(as-binary-input-file (insert-file-contents file))
+	(elmo-delete-cr-get-content-type)))))
+
+(defun elmo-localdir-delete-msgs (spec msgs)
+  (mapcar '(lambda (msg) (elmo-localdir-delete-msg spec msg))
+	  msgs))
+
+(defun elmo-localdir-list-folder (spec); called by elmo-localdir-search()
+  (elmo-localdir-list-folder-subr spec))
+
+(defun elmo-localdir-max-of-folder (spec)
+  (elmo-localdir-list-folder-subr spec t))
+
+(defun elmo-localdir-check-validity (spec validity-file)
+  (let* ((dir (elmo-localdir-get-folder-directory spec))
+	 (cur-val (nth 5 (file-attributes dir)))
+	 (file-val (read
+		    (or (elmo-get-file-string validity-file)
+			"nil"))))
+    (cond
+     ((or (null cur-val) (null file-val)) nil)
+     ((> (car cur-val) (car file-val)) nil)
+     ((= (car cur-val) (car file-val))
+      (if (> (cadr cur-val) (cadr file-val)) nil t)) ; t if same
+     (t t))))
+
+(defun elmo-localdir-sync-validity (spec validity-file)
+  (save-excursion
+    (let* ((dir (elmo-localdir-get-folder-directory spec))
+	   (tmp-buffer (get-buffer-create " *ELMO TMP*"))
+	   (number-file (expand-file-name elmo-msgdb-number-filename dir)))
+      (set-buffer tmp-buffer)
+      (erase-buffer)
+      (prin1 (nth 5 (file-attributes dir)) tmp-buffer)
+      (princ "\n" tmp-buffer)
+      (if (file-writable-p validity-file)
+	  (write-region (point-min) (point-max)
+			validity-file nil 'no-msg)
+	(message (format "%s is not writable." number-file)))
+      (kill-buffer tmp-buffer))))
+
+(defun elmo-localdir-folder-exists-p (spec)
+  (file-directory-p (elmo-localdir-get-folder-directory spec)))
+
+(defun elmo-localdir-folder-creatable-p (spec)
   t)
 
-(defun elmo-localdir-delete-message (folder number)
-  "Delete message in the FOLDER with NUMBER."
-  (let ((filename (elmo-message-file-name folder number)))
-    (when (and (string-match "[0-9]+" filename) ; for safety.
-	       (file-exists-p filename)
-	       (file-writable-p filename)
-	       (not (file-directory-p filename)))
-      (delete-file filename)
-      t)))
+(defun elmo-localdir-create-folder (spec)
+  (save-excursion
+    (let ((dir (elmo-localdir-get-folder-directory spec)))
+      (if (file-directory-p dir)
+          ()
+	(if (file-exists-p dir)
+	    (error "Create folder failed")
+	  (elmo-make-directory dir))
+	t
+	))))
 
-(luna-define-method elmo-message-fetch ((folder elmo-localdir-folder)
-					number strategy
-					&optional section outbuf unseen)
-  ;; strategy, section, unseen is ignored.
-  (if outbuf
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(when (file-exists-p (elmo-message-file-name folder number))
-	  (insert-file-contents-as-binary
-	   (elmo-message-file-name folder number))
-	  (elmo-delete-cr-buffer))
-	t)
-    (with-temp-buffer
-      (when (file-exists-p (elmo-message-file-name folder number))
-	(insert-file-contents-as-binary (elmo-message-file-name folder number))
-	(elmo-delete-cr-buffer))
-      (buffer-string))))
-
-(luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-localdir-folder))
-  (elmo-localdir-list-subr folder))
-
-(luna-define-method elmo-folder-status ((folder elmo-localdir-folder))
-  (elmo-localdir-list-subr folder t))
-
-(luna-define-method elmo-folder-creatable-p ((folder elmo-localdir-folder))
-  t)
-
-(luna-define-method elmo-folder-create ((folder elmo-localdir-folder))
-  (let ((dir (elmo-localdir-folder-directory-internal folder)))
-    (if (file-directory-p dir)
-	()
-      (if (file-exists-p dir)
-	  (error "Create folder failed")
-	(elmo-make-directory dir))
-      t)))
-
-(luna-define-method elmo-folder-delete ((folder elmo-localdir-folder))
-  (let ((dir (elmo-localdir-folder-directory-internal folder)))
+(defun elmo-localdir-delete-folder (spec)
+  (let* ((dir (elmo-localdir-get-folder-directory spec)))
     (if (not (file-directory-p dir))
 	(error "No such directory: %s" dir)
       (elmo-delete-directory dir t)
       t)))
 
-(luna-define-method elmo-folder-rename-internal ((folder elmo-localdir-folder)
-						 new-folder)
-  (let* ((old (elmo-localdir-folder-directory-internal folder))
-	 (new (elmo-localdir-folder-directory-internal folder))
+(defun elmo-localdir-rename-folder (old-spec new-spec)
+  (let* ((old (elmo-localdir-get-folder-directory old-spec))
+	 (new (elmo-localdir-get-folder-directory new-spec))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	(error "No such directory: %s" old)
@@ -316,22 +358,22 @@
 	(rename-file old new)
 	t))))
 
-(defsubst elmo-localdir-field-condition-match (folder condition
-						      number number-list)
+(defsubst elmo-localdir-field-condition-match (spec condition
+						    number number-list)
   (elmo-file-field-condition-match
    (expand-file-name (int-to-string number)
-		     (elmo-localdir-folder-directory-internal folder))
-   condition number number-list))
+		     (elmo-localdir-get-folder-directory spec))
+   condition
+   number number-list))
 
-(luna-define-method elmo-folder-search ((folder elmo-localdir-folder)
-					condition &optional numbers)
-  (let* ((msgs (or numbers (elmo-folder-list-messages folder)))
+(defun elmo-localdir-search (spec condition &optional from-msgs)
+  (let* ((msgs (or from-msgs (elmo-localdir-list-folder spec)))
 	 (num (length msgs))
 	 (i 0)
 	 number-list case-fold-search ret-val)
     (setq number-list msgs)
     (while msgs
-      (if (elmo-localdir-field-condition-match folder condition
+      (if (elmo-localdir-field-condition-match spec condition
 					       (car msgs) number-list)
 	  (setq ret-val (cons (car msgs) ret-val)))
       (when (> num elmo-display-progress-threshold)
@@ -342,22 +384,45 @@
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
-(luna-define-method elmo-folder-pack-numbers ((folder elmo-localdir-folder))
-  (let* ((dir (elmo-localdir-folder-directory-internal folder))
-	 (msgdb (elmo-folder-msgdb folder))
-	 (onum-alist (elmo-msgdb-get-number-alist msgdb))
-	 (omark-alist (elmo-msgdb-get-mark-alist (elmo-folder-msgdb msgdb)))
-	 (new-number 1)			; first ordinal position in localdir
-	 flist onum mark new-mark-alist total)
+;;; (localdir, maildir, localnews) -> localdir
+(defun elmo-localdir-copy-msgs (dst-spec msgs src-spec
+					 &optional loc-alist same-number)
+  (let ((dst-dir
+	 (elmo-localdir-get-folder-directory dst-spec))
+	(next-num (1+ (car (elmo-localdir-max-of-folder dst-spec)))))
+    (while msgs
+      (elmo-copy-file
+       ;; src file
+       (elmo-call-func src-spec "get-msg-filename" (car msgs) loc-alist)
+       ;; dst file
+       (expand-file-name (int-to-string
+			  (if same-number (car msgs) next-num))
+			 dst-dir))
+      (if (and (setq msgs (cdr msgs))
+	       (not same-number))
+	  (setq next-num
+		(if (and (eq (car dst-spec) 'localdir)
+			 (elmo-localdir-locked-p))
+		    ;; MDA is running.
+		    (1+ (car (elmo-localdir-max-of-folder dst-spec)))
+		  (1+ next-num)))))
+    t))
+
+(defun elmo-localdir-pack-number (spec msgdb arg)
+  (let ((dir (elmo-localdir-get-folder-directory spec))
+	(onum-alist (elmo-msgdb-get-number-alist msgdb))
+	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
+	(new-number 1)			; first ordinal position in localdir
+	flist onum mark new-mark-alist total)
     (setq flist
 	  (if elmo-pack-number-check-strict
-	      (elmo-folder-list-messages folder) ; allow localnews
+	      (elmo-call-func spec "list-folder") ; allow localnews
 	    (mapcar 'car onum-alist)))
     (setq total (length flist))
     (while flist
       (when (> total elmo-display-progress-threshold)
 	(elmo-display-progress
-	 'elmo-folder-pack-numbers "Packing..."
+	 'elmo-localdir-pack-number "Packing..."
 	 (/ (* new-number 100) total)))
       (setq onum (car flist))
       (when (not (eq onum new-number))		; why \=() is wrong..
@@ -380,23 +445,23 @@
       (setq new-number (1+ new-number))
       (setq flist (cdr flist)))
     (message "Packing...done")
-    (elmo-folder-set-msgdb-internal
-     folder
-     (list (elmo-msgdb-get-overview msgdb)
-	   onum-alist
-	   new-mark-alist
-	   ;; remake hash table
-	   (elmo-msgdb-make-overview-hashtb
-	    (elmo-msgdb-get-overview msgdb))))))
+    (list (elmo-msgdb-get-overview msgdb)
+	  onum-alist
+	  new-mark-alist
+	  (elmo-msgdb-get-location msgdb)
+	  ;; remake hash table
+	  (elmo-msgdb-make-overview-hashtb (elmo-msgdb-get-overview msgdb)))))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
+(defun elmo-localdir-use-cache-p (spec number)
+  nil)
+
+(defun elmo-localdir-local-file-p (spec number)
   t)
 
-(luna-define-method elmo-message-file-name ((folder elmo-localdir-folder)
-					    number)
+(defun elmo-localdir-get-msg-filename (spec number &optional loc-alist)
   (expand-file-name
    (int-to-string number)
-   (elmo-localdir-folder-directory-internal folder)))
+   (elmo-localdir-get-folder-directory spec)))
 
 (defun elmo-localdir-locked-p ()
   (if elmo-localdir-lockfile-list
@@ -406,6 +471,15 @@
 	    (if (file-exists-p (car lock))
 		(throw 'found t))
 	    (setq lock (cdr lock)))))))
+
+(defalias 'elmo-localdir-sync-number-alist
+  'elmo-generic-sync-number-alist)
+(defalias 'elmo-localdir-list-folder-unread
+  'elmo-generic-list-folder-unread)
+(defalias 'elmo-localdir-list-folder-important
+  'elmo-generic-list-folder-important)
+(defalias 'elmo-localdir-commit 'elmo-generic-commit)
+(defalias 'elmo-localdir-folder-diff 'elmo-generic-folder-diff)
 
 (require 'product)
 (product-provide (provide 'elmo-localdir) (require 'elmo-version))

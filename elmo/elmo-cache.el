@@ -33,113 +33,63 @@
 (require 'elmo-vars)
 (require 'elmo-util)
 
+(defun elmo-cache-delete (msgid folder number)
+  "Delete cache file associated with message-id 'MSGID', FOLDER, NUMBER."
+  (let ((path (elmo-cache-exists-p msgid folder number)))
+    (if path (delete-file path))))
+
 (defsubst elmo-cache-to-msgid (filename)
-  (concat "<" (elmo-recover-string-from-filename filename) ">"))
+  (concat "<" (elmo-recover-msgid-from-filename filename) ">"))
 
-;;; File cache.
-
-(defun elmo-file-cache-get-path (msgid &optional section)
-  "Get cache path for MSGID.
-If optional argument SECTION is specified, partial cache path is returned."
-  (if (setq msgid (elmo-msgid-to-cache msgid))
-      (expand-file-name
-       (if section
-	   (format "%s/%s/%s/%s/%s"
-		   elmo-msgdb-dir
-		   elmo-cache-dirname
-		   (elmo-cache-get-path-subr msgid)
-		   msgid
-		   section)
-	 (format "%s/%s/%s/%s"
-		 elmo-msgdb-dir
-		 elmo-cache-dirname
-		 (elmo-cache-get-path-subr msgid)
-		 msgid)))))
-
-(defmacro elmo-file-cache-expand-path (path section)
-  "Return file name for the file-cache corresponds to the section.
-PATH is the file-cache path.
-SECTION is the section string."
-  (` (expand-file-name (or (, section) "") (, path))))
-
-(defun elmo-file-cache-delete (path)
-  "Delete a cache on PATH."
-  (let (files)
-    (when (file-exists-p path)
-      (if (file-directory-p path)
+(defun elmo-cache-force-delete (path &optional locked)
+  "Delete cache file."
+  ;; for safety...
+  (unless (string-match elmo-cache-dirname path)
+    (error "%s is not cache file!" path))
+  (let (message-id)
+    (if (or (elmo-msgdb-global-mark-get
+	     (setq message-id
+		   (elmo-cache-to-msgid (file-name-nondirectory path))))
+	    (member message-id locked))
+	nil;; Don't delete caches with mark (or locked message).
+      (if (and path
+	       (file-directory-p path))
 	  (progn
-	    (setq files (directory-files path t "^[^\\.]"))
-	    (while files
-	      (delete-file (car files))
-	      (setq files (cdr files)))
+	    (mapcar 'delete-file (directory-files path t "^[^\\.]"))
 	    (delete-directory path))
-	(delete-file path)))))
+	(delete-file path))
+      t)))
 
-(defun elmo-file-cache-exists-p (msgid)
-  "Returns 'section or 'entire if a cache which corresponds to MSGID exists."
-  (elmo-file-cache-status (elmo-file-cache-get msgid)))
-
-(defun elmo-file-cache-save (cache-path section)
-  "Save current buffer as cache on PATH."
-  (let ((path (if section (expand-file-name section cache-path) cache-path))
-	files dir)
-    (if (and (null section)
-	     (file-directory-p path))
-	(progn
-	  (setq files (directory-files path t "^[^\\.]"))
-	  (while files
-	    (delete-file (car files))
-	    (setq files (cdr files)))
-	  (delete-directory path))
-      (if (and section
-	       (not (file-directory-p cache-path)))
-	  (delete-file cache-path)))
-    (when path
-      (setq dir (directory-file-name (file-name-directory path)))
-      (if (not (file-exists-p dir))
-	  (elmo-make-directory dir))
-      (write-region-as-binary (point-min) (point-max)
-			      path nil 'no-msg))))
-
-(defmacro elmo-make-file-cache (path status)
-  "PATH is the cache file name.
-STATUS is one of 'section, 'entire or nil.
- nil means no cache exists.
-'section means partial section cache exists.
-'entire means entire cache exists.
-If the cache is partial file-cache, TYPE is 'partial."
-  (` (cons (, path) (, status))))
-
-(defmacro elmo-file-cache-path (file-cache)
-  "Returns the file path of the FILE-CACHE."
-  (` (car (, file-cache))))
-
-(defmacro elmo-file-cache-status (file-cache)
-  "Returns the status of the FILE-CACHE."
-  (` (cdr (, file-cache))))
-
-(defun elmo-file-cache-get (msgid &optional section)
-  "Returns the current file-cache object associated with MSGID.
-MSGID is the message-id of the message.
-If optional argument SECTION is specified, get partial file-cache object
-associated with SECTION."
+(defun elmo-cache-delete-partial (msgid folder number)
+  "Delete cache file only if it is partial message."
   (if msgid
-      (let ((path (elmo-cache-get-path msgid)))
-	(if (and path (file-exists-p path))
-	    (if (file-directory-p path)
-		(if section
-		    (if (file-exists-p (setq path (expand-file-name
-						   section path)))
-			(cons path 'section))
-		  ;; section is not specified but sectional.
-		  (cons path 'section))
-	      ;; not directory.
-	      (unless section
-		(cons path 'entire)))
-	  ;; no cache.
-	  (cons path nil)))))
+      (let ((path1 (elmo-cache-get-path msgid))
+	    path2)
+	(if (and path1
+		 (file-exists-p path1))
+	    (if (and folder
+		     (file-directory-p path1))
+		(when (file-exists-p (setq path2
+					   (expand-file-name
+					    (format "%s@%s"
+						    number
+						    (elmo-safe-filename
+						     folder))
+					    path1)))
+		  (delete-file path2)
+		  (unless (directory-files path1 t "^[^\\.]")
+		    (delete-directory path1))))))))
 
-;;;
+(defun elmo-cache-read (msgid &optional folder number outbuf)
+  "Read cache contents to OUTBUF."
+  (save-excursion
+    (let ((path (elmo-cache-exists-p msgid folder number)))
+      (when path
+	(if outbuf (set-buffer outbuf))
+	(erase-buffer)
+	(as-binary-input-file (insert-file-contents path))
+	t))))
+
 (defun elmo-cache-expire ()
   (interactive)
   (let* ((completion-ignore-case t)
@@ -288,6 +238,44 @@ If KBYTES is kilo bytes (This value must be float)."
 	  (setq files (cdr files))))
       (setq dirs (cdr dirs)))))
 
+(defun elmo-cache-save (msgid partial folder number &optional inbuf)
+  "If PARTIAL is non-nil, save current buffer (or INBUF) as partial cache."
+  (condition-case nil
+      (save-excursion
+	(let* ((path (if partial
+			 (elmo-cache-get-path msgid folder number)
+		       (elmo-cache-get-path msgid)))
+	       dir tmp-buf)
+	  (when path
+	    (setq dir (directory-file-name (file-name-directory path)))
+	    (if (not (file-exists-p dir))
+		(elmo-make-directory dir))
+	    (if inbuf (set-buffer inbuf))
+	    (goto-char (point-min))
+	    (as-binary-output-file (write-region (point-min) (point-max)
+						 path nil 'no-msg)))))
+    (error)))
+
+(defun elmo-cache-exists-p (msgid &optional folder number)
+  "Returns the path if the cache exists."
+  (save-match-data
+    (if msgid
+	(let ((path (elmo-cache-get-path msgid)))
+	  (if (and path
+		   (file-exists-p path))
+	      (if (and folder
+		       (file-directory-p path))
+		  (if (file-exists-p (setq path (expand-file-name
+						 (format "%s@%s"
+							 (or number "")
+							 (elmo-safe-filename
+							  folder))
+						 path)))
+		      path
+		    )
+		;; not directory.
+		path))))))
+
 (defun elmo-cache-search-all (folder condition from-msgs)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-msgdb-expand-path folder)))
@@ -338,7 +326,7 @@ If KBYTES is kilo bytes (This value must be float)."
 (defun elmo-msgid-to-cache (msgid)
   (when (and msgid
 	     (string-match "<\\(.+\\)>$" msgid))
-    (elmo-replace-string-as-filename (elmo-match-string 1 msgid))))
+    (elmo-replace-msgid-as-filename (elmo-match-string 1 msgid))))
 
 (defun elmo-cache-get-path (msgid &optional folder number)
   "Get path for cache file associated with MSGID, FOLDER, and NUMBER."
@@ -370,7 +358,75 @@ If KBYTES is kilo bytes (This value must be float)."
   
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;; buffer cache module
+
+(defconst elmo-buffer-cache-name " *elmo cache*")
+
+(defvar elmo-buffer-cache nil
+  "Message cache.  (old ... new) order alist.
+With association ((\"folder\" message \"message-id\") . cache-buffer).")
+
+(defmacro elmo-buffer-cache-buffer-get (entry)
+  (` (cdr (, entry))))
+
+(defmacro elmo-buffer-cache-folder-get (entry)
+  (` (car (car (, entry)))))
+
+(defmacro elmo-buffer-cache-message-get (entry)
+  (` (cdr (car (, entry)))))
+
+(defmacro elmo-buffer-cache-entry-make (fld-msg-id buf)
+  (` (cons (, fld-msg-id) (, buf))))
+
+(defmacro elmo-buffer-cache-hit (fld-msg-id)
+  "Return value assosiated with key."
+  (` (elmo-buffer-cache-buffer-get
+      (assoc (, fld-msg-id) elmo-buffer-cache))))
+
+(defun elmo-buffer-cache-sort (entry)
+  (let* ((pointer (cons nil elmo-buffer-cache))
+	 (top pointer))
+    (while (cdr pointer)
+      (if (equal (car (cdr pointer)) entry)
+	  (setcdr pointer (cdr (cdr pointer)))
+	(setq pointer (cdr pointer))))
+    (setcdr pointer (list entry))
+    (setq elmo-buffer-cache (cdr top))))
+
+(defun elmo-buffer-cache-add (fld-msg-id)
+  "Adding (FLD-MSG-ID . buf) to the top of `elmo-buffer-cache'.
+Returning its cache buffer."
+  (let ((len (length elmo-buffer-cache))
+	(buf nil))
+    (if (< len elmo-buffer-cache-size)
+	(setq buf (get-buffer-create (format "%s%d" elmo-buffer-cache-name len)))
+      (setq buf (elmo-buffer-cache-buffer-get (nth (1- len) elmo-buffer-cache)))
+      (setcdr (nthcdr (- len 2) elmo-buffer-cache) nil))
+    (save-excursion
+      (set-buffer buf)
+      (elmo-set-buffer-multibyte nil))
+    (setq elmo-buffer-cache
+	  (cons (elmo-buffer-cache-entry-make fld-msg-id buf)
+		elmo-buffer-cache))
+    buf))
+
+(defun elmo-buffer-cache-delete ()
+  "Delete the most recent cache entry."
+  (let ((buf (elmo-buffer-cache-buffer-get (car elmo-buffer-cache))))
+    (setq elmo-buffer-cache
+	  (nconc (cdr elmo-buffer-cache)
+		 (list (elmo-buffer-cache-entry-make nil buf))))))
+
+(defun elmo-buffer-cache-clean-up ()
+  "A function to flush all decoded messages in cache list."
+  (interactive)
+  (let ((n 0) buf)
+    (while (< n elmo-buffer-cache-size)
+      (setq buf (concat elmo-buffer-cache-name (int-to-string n)))
+      (elmo-kill-buffer buf)
+      (setq n (1+ n))))
+  (setq elmo-buffer-cache nil))
+
 ;;
 ;; cache backend by Kenichi OKADA <okada@opaopa.org>
 ;;
