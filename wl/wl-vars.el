@@ -174,6 +174,12 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 		 string)
   :group 'wl)
 
+(defcustom wl-summary-default-view 'thread
+  "Default status of summary view, thread or sequential view."
+  :type '(choice (const :tag "Thread" thread)
+		 (const :tag "Sequential" sequence))
+  :group 'wl-summary)
+
 (defvar wl-summary-mode-line-format-spec-alist
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname (elmo-folder-name-internal

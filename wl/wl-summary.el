@@ -86,7 +86,7 @@
 (defvar wl-summary-buffer-mime-charset  nil)
 (defvar wl-summary-buffer-weekday-name-lang  nil)
 (defvar wl-summary-buffer-thread-indent-set-alist  nil)
-(defvar wl-summary-buffer-view 'thread)
+(defvar wl-summary-buffer-view nil)
 (defvar wl-summary-buffer-message-modified nil)
 (defvar wl-summary-buffer-mark-modified nil)
 (defvar wl-summary-buffer-thread-modified nil)
@@ -2452,9 +2452,10 @@ If ARG, without confirm."
 		    (decode-mime-charset-region
 		     (point-min)(point-max)
 		     wl-summary-buffer-mime-charset 'LF))
-		  (when (file-exists-p view)
-		    (setq wl-summary-buffer-view
-			  (wl-summary-load-file-object view)))
+		  (if (file-exists-p view)
+		      (setq wl-summary-buffer-view
+			    (wl-summary-load-file-object view))
+		    (setq wl-summary-buffer-view wl-summary-default-view))
 		  (wl-thread-resume-entity folder)
 		  (wl-summary-open-folder folder))
 	      (setq wl-summary-buffer-view
