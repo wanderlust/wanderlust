@@ -1,3 +1,8 @@
+2005-01-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-pickup-entry-list): Call
+	'elmo-multiple-fields-body-list' with boundary specified.
+
 2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2005.
