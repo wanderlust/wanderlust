@@ -36,32 +36,24 @@
 (require 'wl-highlight)
 (require 'wl-refile)
 (require 'wl-util)
-(condition-case ()
-    (progn
-      (require 'timezone)
-      (require 'easymenu))
-  (error))
+(require 'timezone nil 'noerror)
+(require 'easymenu nil 'noerror)
 (require 'elmo-date)
-
-(condition-case nil
-    (require 'ps-print)
-  (error))
+(require 'ps-print nil 'noerror)
 
 (eval-when-compile
   (require 'cl)
   (condition-case () (require 'timer) (error nil))
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(dragdrop-drop-functions scrollbar-height mail-reply-buffer))
-  (defun-maybe ps-print-buffer-with-faces (a))
-  (defun-maybe elmo-database-msgid-put (a b c))
-  (defun-maybe elmo-database-close ())
-  (defun-maybe elmo-database-msgid-get (a))
-  (defun-maybe run-with-idle-timer (secs repeat function &rest args))
-  (defun-maybe ps-print-preprint (a)))
+  (defalias-maybe 'ps-print-buffer-with-faces 'ignore)
+  (defalias-maybe 'elmo-database-msgid-put 'ignore)
+  (defalias-maybe 'elmo-database-close 'ignore)
+  (defalias-maybe 'elmo-database-msgid-get 'ignore)
+  (defalias-maybe 'run-with-idle-timer 'ignore)
+  (defalias-maybe 'ps-print-preprint 'ignore))
+
+(defvar dragdrop-drop-functions)
+(defvar scrollbar-height)
+(defvar mail-reply-buffer)
 
 (defvar wl-summary-buffer-name "Summary")
 (defvar wl-summary-mode-map nil)
@@ -120,51 +112,49 @@
 (defvar wl-ps-preprint-hook nil)
 (defvar wl-ps-print-hook nil)
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-summary-buffer-msgdb
-       'wl-summary-buffer-disp-msg
-       'wl-summary-buffer-disp-folder
-       'wl-summary-buffer-refile-list
-       'wl-summary-buffer-copy-list
-       'wl-summary-buffer-target-mark-list
-       'wl-summary-buffer-delete-list
-       'wl-summary-buffer-folder-name
-       'wl-summary-buffer-folder-indicator
-       'wl-summary-buffer-last-displayed-msg
-       'wl-summary-buffer-unread-status
-       'wl-summary-buffer-unread-count
-       'wl-summary-buffer-new-count
-       'wl-summary-buffer-mime-charset
-       'wl-summary-buffer-weekday-name-lang
-       'wl-summary-buffer-thread-indent-set
-       'wl-summary-buffer-message-redisplay-func
-       'wl-summary-buffer-view
-       'wl-summary-buffer-message-modified
-       'wl-summary-buffer-mark-modified
-       'wl-summary-buffer-thread-modified
-       'wl-summary-buffer-number-column
-       'wl-summary-buffer-number-regexp
-       'wl-summary-buffer-persistent
-       'wl-summary-buffer-thread-nodes
-       'wl-summary-buffer-prev-refile-destination
-       'wl-summary-buffer-saved-message
-       'wl-summary-scored
-       'wl-summary-default-score
-       'wl-summary-move-direction-downward
-       'wl-summary-important-above
-       'wl-summary-target-above
-       'wl-summary-mark-below
-       'wl-summary-expunge-below
-       'wl-thread-indent-level-internal
-       'wl-thread-have-younger-brother-str-internal
-       'wl-thread-youngest-child-str-internal
-       'wl-thread-vertical-str-internal
-       'wl-thread-horizontal-str-internal
-       'wl-thread-space-str-internal
-       'wl-summary-buffer-prev-folder-func
-       'wl-summary-buffer-next-folder-func
-       'wl-summary-buffer-exit-func))
+(make-variable-buffer-local 'wl-summary-buffer-msgdb)
+(make-variable-buffer-local 'wl-summary-buffer-disp-msg)
+(make-variable-buffer-local 'wl-summary-buffer-disp-folder)
+(make-variable-buffer-local 'wl-summary-buffer-refile-list)
+(make-variable-buffer-local 'wl-summary-buffer-copy-list)
+(make-variable-buffer-local 'wl-summary-buffer-target-mark-list)
+(make-variable-buffer-local 'wl-summary-buffer-delete-list)
+(make-variable-buffer-local 'wl-summary-buffer-folder-name)
+(make-variable-buffer-local 'wl-summary-buffer-folder-indicator)
+(make-variable-buffer-local 'wl-summary-buffer-last-displayed-msg)
+(make-variable-buffer-local 'wl-summary-buffer-unread-status)
+(make-variable-buffer-local 'wl-summary-buffer-unread-count)
+(make-variable-buffer-local 'wl-summary-buffer-new-count)
+(make-variable-buffer-local 'wl-summary-buffer-mime-charset)
+(make-variable-buffer-local 'wl-summary-buffer-weekday-name-lang)
+(make-variable-buffer-local 'wl-summary-buffer-thread-indent-set)
+(make-variable-buffer-local 'wl-summary-buffer-message-redisplay-func)
+(make-variable-buffer-local 'wl-summary-buffer-view)
+(make-variable-buffer-local 'wl-summary-buffer-message-modified)
+(make-variable-buffer-local 'wl-summary-buffer-mark-modified)
+(make-variable-buffer-local 'wl-summary-buffer-thread-modified)
+(make-variable-buffer-local 'wl-summary-buffer-number-column)
+(make-variable-buffer-local 'wl-summary-buffer-number-regexp)
+(make-variable-buffer-local 'wl-summary-buffer-persistent)
+(make-variable-buffer-local 'wl-summary-buffer-thread-nodes)
+(make-variable-buffer-local 'wl-summary-buffer-prev-refile-destination)
+(make-variable-buffer-local 'wl-summary-buffer-saved-message)
+(make-variable-buffer-local 'wl-summary-scored)
+(make-variable-buffer-local 'wl-summary-default-score)
+(make-variable-buffer-local 'wl-summary-move-direction-downward)
+(make-variable-buffer-local 'wl-summary-important-above)
+(make-variable-buffer-local 'wl-summary-target-above)
+(make-variable-buffer-local 'wl-summary-mark-below)
+(make-variable-buffer-local 'wl-summary-expunge-below)
+(make-variable-buffer-local 'wl-thread-indent-level-internal)
+(make-variable-buffer-local 'wl-thread-have-younger-brother-str-internal)
+(make-variable-buffer-local 'wl-thread-youngest-child-str-internal)
+(make-variable-buffer-local 'wl-thread-vertical-str-internal)
+(make-variable-buffer-local 'wl-thread-horizontal-str-internal)
+(make-variable-buffer-local 'wl-thread-space-str-internal)
+(make-variable-buffer-local 'wl-summary-buffer-prev-folder-func)
+(make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
+(make-variable-buffer-local 'wl-summary-buffer-exit-func)
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -1544,27 +1534,28 @@ If optional argument is non-nil, checking is omitted."
 	(delete-region (match-beginning 1) (match-end 1))
 	(insert " ")))))
 
+(defun wl-summary-delete-marks-on-buffer (marks)
+  (while marks
+    (wl-summary-unmark (pop marks))))
+
 (defun wl-summary-delete-copy-marks-on-buffer (copies)
-  (mapcar (function
-	   (lambda (x)
-	     (wl-summary-unmark x)))
-	  copies))
+  (wl-summary-delete-marks-on-buffer copies))
 
 (defun wl-summary-delete-all-refile-marks ()
-  (mapcar (function
-	   (lambda (x)
-	     (wl-summary-unmark (car x)))) wl-summary-buffer-refile-list))
+  (let ((marks wl-summary-buffer-refile-list))
+    (while marks
+      (wl-summary-unmark (car (pop marks))))))
 
 (defun wl-summary-delete-all-copy-marks ()
-  (mapcar (function
-	   (lambda (x)
-	     (wl-summary-unmark (car x)))) wl-summary-buffer-copy-list))
+  (let ((marks wl-summary-buffer-copy-list))
+    (while marks
+      (wl-summary-unmark (car (pop marks))))))
 
 (defun wl-summary-delete-all-delete-marks ()
-  (mapcar 'wl-summary-unmark wl-summary-buffer-delete-list))
+  (wl-summary-delete-marks-on-buffer wl-summary-buffer-delete-list))
 
 (defun wl-summary-delete-all-target-marks ()
-  (mapcar 'wl-summary-unmark wl-summary-buffer-target-mark-list))
+  (wl-summary-delete-marks-on-buffer wl-summary-buffer-target-mark-list))
 
 (defun wl-summary-delete-all-temp-marks-on-buffer (&optional sticky)
   ;; for summary view cache saving.
@@ -2631,13 +2622,12 @@ If optional argument is non-nil, checking is omitted."
     (let ((buffer-read-only nil))
       (insert-buffer cur-buf))
     (set-buffer-modified-p nil)
-    (mapcar
-     (function
-      (lambda (var)
-	(set var (save-excursion
-		   (set-buffer cur-buf)
-		   (symbol-value var)))))
-     copy-variables)
+    (while copy-variables
+      (set (car copy-variables)
+	   (save-excursion
+	     (set-buffer cur-buf)
+	     (symbol-value (car copy-variables))))
+      (setq copy-variables (cdr copy-variables)))
     (switch-to-buffer buf)
     (kill-buffer cur-buf)
     (wl-summary-count-unread
@@ -3600,25 +3590,25 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (message "Marking...%d message(s)." count))
 	(if (eq wl-summary-buffer-view 'thread)
 	    ;; process invisible children.
-	    (if (not (wl-thread-entity-get-opened
-		      (setq thr-entity (wl-thread-get-entity number))))
-		(mapcar
-		 (function
-		  (lambda (x)
-		    (when (and (setq dst
-				     (wl-refile-guess-by-rule
-				      (elmo-msgdb-overview-get-entity
-				       x wl-summary-buffer-msgdb)))
-			       (not (equal dst spec)))
-		      (if (wl-summary-refile dst x)
-			  (incf count))
-		      (message "Marking...%d message(s)." count))))
-		 (elmo-delete-if
-		  (function (lambda (x)
-			      (wl-summary-no-auto-refile-message-p
-			       x
-			       mark-alist)))
-		  (wl-thread-entity-get-descendant thr-entity)))))
+	    (unless (wl-thread-entity-get-opened
+		     (setq thr-entity (wl-thread-get-entity number)))
+	      (let ((messages
+		     (elmo-delete-if
+		      (function
+		       (lambda (x)
+			 (wl-summary-no-auto-refile-message-p
+			  x mark-alist)))
+		      (wl-thread-entity-get-descendant thr-entity))))
+		(while messages
+		  (when (and (setq dst
+				   (wl-refile-guess-by-rule
+				    (elmo-msgdb-overview-get-entity
+				     (car messages) wl-summary-buffer-msgdb)))
+			     (not (equal dst spec)))
+		    (if (wl-summary-refile dst (car messages))
+			(incf count))
+		    (message "Marking...%d message(s)." count))
+		  (setq messages (cdr messages))))))
 	(forward-line))
       (if (eq count 0)
 	  (message "No message was marked.")
@@ -3743,11 +3733,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		      ;; opened...refile line.
 		      (funcall function folder number)
 		    ;; closed
-		    (mapcar
-		     (function
-		      (lambda (x)
-			(funcall function folder x)))
-		     (wl-thread-get-children-msgs number)))
+		    (setq children (wl-thread-get-children-msgs number))
+		    (while children
+		      (funcall function folder (pop children))))
 		  (forward-line 1))))
 	  (while (not (eobp))
 	    (funcall function folder (wl-summary-message-number))
@@ -3768,8 +3756,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		    ;; opened...unmark line.
 		    (wl-summary-unmark)
 		  ;; closed
-		  (mapcar
-		   'wl-summary-unmark
+		  (wl-summary-delete-marks-on-buffer
 		   (wl-thread-get-children-msgs number))))
 	      (forward-line 1)))
 	(while (not (eobp))
@@ -3786,14 +3773,15 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (while (not (eobp))
 	      (let* ((number (wl-summary-message-number))
 		     (entity (wl-thread-get-entity number))
-		     (wl-summary-move-direction-downward t))
+		     (wl-summary-move-direction-downward t)
+		     children)
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...delete line.
 		    (funcall function number)
 		  ;; closed
-		  (mapcar
-		   function
-		   (wl-thread-get-children-msgs number)))
+		  (setq children (wl-thread-get-children-msgs number))
+		  (while children
+		    (funcall function (pop children))))
 		(forward-line 1))))
 	(while (not (eobp))
 	  (funcall function (wl-summary-message-number))

@@ -38,15 +38,26 @@
 
 ;; Avoid byte compile warnings.
 (eval-when-compile
-  (mapcar
-   (function (lambda (fn) (or (fboundp fn) (fset fn 'ignore))))
-   '(bitmap-compose
-     bitmap-decode-xbm bitmap-read-xbm-buffer bitmap-read-xbm-file
-     create-image device-on-window-system-p display-graphic-p
-     frame-char-height frame-char-width frame-parameter
-     image-type-available-p insert-image make-extent make-glyph
-     set-extent-end-glyph set-glyph-face set-specifier tool-bar-mode
-     window-pixel-height window-pixel-width)))
+  (defalias-maybe 'bitmap-compose 'ignore)
+  (defalias-maybe 'bitmap-decode-xbm 'ignore)
+  (defalias-maybe 'bitmap-read-xbm-buffer 'ignore)
+  (defalias-maybe 'bitmap-read-xbm-file 'ignore)
+  (defalias-maybe 'create-image 'ignore)
+  (defalias-maybe 'device-on-window-system-p 'ignore)
+  (defalias-maybe 'display-graphic-p 'ignore)
+  (defalias-maybe 'frame-char-height 'ignore)
+  (defalias-maybe 'frame-char-width 'ignore)
+  (defalias-maybe 'frame-parameter 'ignore)
+  (defalias-maybe 'image-type-available-p 'ignore)
+  (defalias-maybe 'insert-image 'ignore)
+  (defalias-maybe 'make-extent 'ignore)
+  (defalias-maybe 'make-glyph 'ignore)
+  (defalias-maybe 'set-extent-end-glyph 'ignore)
+  (defalias-maybe 'set-glyph-face 'ignore)
+  (defalias-maybe 'set-specifier 'ignore)
+  (defalias-maybe 'tool-bar-mode 'ignore)
+  (defalias-maybe 'window-pixel-height 'ignore)
+  (defalias-maybe 'window-pixel-width 'ignore))
 
 ;;
 ;; demo ;-)

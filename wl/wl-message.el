@@ -39,16 +39,10 @@
 	(require 'mime-view)
 	(require 'mmelmo-imap4))
     (require 'tm-wl))
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(mmelmo-imap4-skipped-parts))
-  (defun-maybe event-window (a))
-  (defun-maybe posn-window (a))
-  (defun-maybe event-start (a))
-  (defun-maybe mime-open-entity (a b)))
+  (defalias-maybe 'event-window 'ignore)
+  (defalias-maybe 'posn-window 'ignore)
+  (defalias-maybe 'event-start 'ignore)
+  (defalias-maybe 'mime-open-entity 'ignore))
 
 (defvar wl-original-buf-name "*Message*")
 (defvar wl-message-buf-name "Message")
@@ -60,10 +54,10 @@
 (defvar wl-original-buffer-cur-number nil)
 (defvar wl-original-buffer-cur-msgdb  nil)
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-message-buffer-cur-folder
-       'wl-message-buffer-cur-number))
+(defvar mmelmo-imap4-skipped-parts)
+
+(make-variable-buffer-local 'wl-message-buffer-cur-folder)
+(make-variable-buffer-local 'wl-message-buffer-cur-number)
 
 (provide 'wl-message)
 

@@ -3,6 +3,61 @@
 	* wl-demo.el (wl-demo): Don't pass by the XEmacs routine when
 	window system is not used.
 
+2000-10-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-thread.el: Don't use `mapcar' only for iteration.
+	(wl-thread-resume-entity): Ditto.
+	(wl-thread-delete-message): Ditto.
+
+	* wl-summary.el: Bind `dragdrop-drop-functions',
+	`scrollbar-height' and `mail-reply-buffer'; specify 3rd argument
+	of `require' for `timezone', `easymenu' and `ps-print';
+	don't use `mapcar' only for iteration.
+
+	* wl-util.el: Bind `mule-version', `nemacs-version',
+	`emacs-beta-version', `xemacs-codename',
+	`mime-edit-insert-user-agent-field', `mime-edit-user-agent-value',
+	`mime-editor/version' and `mime-editor/codename'; specify 3rd
+	argument of `require' for `tm-edit' and `pp'; don't use `mapcar'
+	only for iteration.
+
+	* wl-score.el: Don't use `mapcar' only for iteration.
+	(wl-score-simplify-buffer-fuzzy): Ditto.
+	(wl-score-simplify-subject): Ditto.
+	(wl-score-headers): Ditto.
+	(wl-summary-score-update-all-lines): Ditto.
+
+	* wl-mime.el: Bind `xemacs-betaname', `xemacs-codename',
+	`enable-multibyte-characters' and `mule-version'.
+
+	* wl-message.el: Bind `mmelmo-imap4-skipped-parts'; don't use
+	`mapcar' only for iteration.
+
+	* wl-demo.el: Don't use `mapcar' only for iteration.
+
+	* wl-folder.el: Don't use `mapcar' only for iteration.
+	(wl-folder-open-all): Ditto.
+	(wl-folder-count-incorporates): Ditto.
+
+	* wl-fldmgr.el (wl-add-entity): Don't use `mapcar' only for iteration.
+	(wl-add-entity-sub): Ditto; use `delq' instead of `delete'.
+
+	* wl-draft.el: Bind `x-face-add-x-face-version-header',
+	`mail-reply-buffer', `mail-from-style', `smtp-authenticate-*' and
+	`smtp-connection-type'; specify 3rd argument of `require' for
+	`timezone'; don't use `mapcar' only for iteration.
+	(wl-draft-clone-local-variables): Don't use `mapcar'.
+	(wl-draft-generate-clone-buffer): Ditto.
+	(wl-user-agent-compose-internal): Ditto.
+
+	* wl-xmas.el (wl-folder-init-icons): Use `dolist' instead of `mapcar'.
+
+	* wl.el (wl-toggle-plugged): Don't use `mapcar' only for iteration.
+	(wl-save-status): Ditto.
+
+	* wl-address.el (wl-local-address-init): Don't use `mapcar' only
+	for iteration.
+
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-pick-field-default): Added `Last', `First' and

@@ -33,35 +33,28 @@
 (eval-when-compile
   (require 'elmo-util))
 
-(condition-case ()
-    (require 'tm-edit)
-  (error))
-(condition-case ()
-    (require 'pp)
-  (error))
+(require 'tm-edit nil 'noerror)
+(require 'pp nil 'noerror)
+
+(defvar mule-version)
+(defvar nemacs-version)
+(defvar emacs-beta-version)
+(defvar xemacs-codename)
+(defvar mime-edit-insert-user-agent-field)
+(defvar mime-edit-user-agent-value)
+(defvar mime-editor/version)
+(defvar mime-editor/codename)
+
 (eval-when-compile
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(mule-version
-     nemacs-version
-     emacs-beta-version
-     xemacs-codename
-     mime-edit-insert-user-agent-field
-     mime-edit-user-agent-value
-     mime-editor/version
-     mime-editor/codename))
   (require 'time-stamp)
-  (defun-maybe read-event ())
-  (defun-maybe next-command-event ())
-  (defun-maybe event-to-character (a))
-  (defun-maybe key-press-event-p (a))
-  (defun-maybe button-press-event-p (a))
-  (defun-maybe set-process-kanji-code (a b))
-  (defun-maybe set-process-coding-system (a b c))
-  (defun-maybe dispatch-event (a)))
+  (defalias-maybe 'read-event 'ignore)
+  (defalias-maybe 'next-command-event 'ignore)
+  (defalias-maybe 'event-to-character 'ignore)
+  (defalias-maybe 'key-press-event-p 'ignore)
+  (defalias-maybe 'button-press-event-p 'ignore)
+  (defalias-maybe 'set-process-kanji-code 'ignore)
+  (defalias-maybe 'set-process-coding-system 'ignore)
+  (defalias-maybe 'dispatch-event 'ignore))
 
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
 (make-obsolete 'wl-set-work-buf 'elmo-set-work-buf)

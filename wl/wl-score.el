@@ -36,6 +36,8 @@
 (eval-when-compile
   (provide 'elmo-msgdb))
 
+(eval-when-compile (require 'cl))	; dolist
+
 (defvar wl-score-edit-header-char
   '((?a "from" nil string)
     (?s "subject" nil string)
@@ -104,10 +106,8 @@
 (defvar wl-score-edit-exit-func nil
   "Function run on exit from the score buffer.")
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-current-score-file
-       'wl-score-alist))
+(make-variable-buffer-local 'wl-current-score-file)
+(make-variable-buffer-local 'wl-score-alist)
 
 ;; Utility functions
 
@@ -118,18 +118,16 @@ It is assumed to be a single-line subject.
 Whitespace is generally cleaned up, and miscellaneous leading/trailing
 matter is removed.  Additional things can be deleted by setting
 wl-score-simplify-fuzzy-regexp."
-  (let ((case-fold-search t)
-	(modified-tick))
+  (let ((regexp
+	 (if (listp wl-score-simplify-fuzzy-regexp)
+	     (regexp-or wl-score-simplify-fuzzy-regexp)
+	   wl-score-simplify-fuzzy-regexp))
+	(case-fold-search t)
+	modified-tick)
     (elmo-buffer-replace "\t" " ")
     (while (not (eq modified-tick (buffer-modified-tick)))
       (setq modified-tick (buffer-modified-tick))
-      (cond
-       ((listp wl-score-simplify-fuzzy-regexp)
-	(mapcar 'elmo-buffer-replace
-		wl-score-simplify-fuzzy-regexp))
-       (wl-score-simplify-fuzzy-regexp
-	(elmo-buffer-replace
-	 wl-score-simplify-fuzzy-regexp)))
+      (elmo-buffer-replace regexp)
       (elmo-buffer-replace "^ *\\[[-+?*!][-+?*!]\\] *")
       (elmo-buffer-replace
        "^ *\\(re\\|fw\\|fwd\\|forward\\)[[{(^0-9]*[])}]?[:;] *")
@@ -150,15 +148,13 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 
 (defun wl-score-simplify-subject (subject)
   (elmo-set-work-buf
-   (let ((case-fold-search t))
+   (let ((regexp
+	  (if (listp wl-score-simplify-fuzzy-regexp)
+	      (regexp-or wl-score-simplify-fuzzy-regexp)
+	    wl-score-simplify-fuzzy-regexp))
+	 (case-fold-search t))
      (insert subject)
-     (cond
-      ((listp wl-score-simplify-fuzzy-regexp)
-       (mapcar 'elmo-buffer-replace
-	       wl-score-simplify-fuzzy-regexp))
-      (wl-score-simplify-fuzzy-regexp
-       (elmo-buffer-replace
-	wl-score-simplify-fuzzy-regexp)))
+     (elmo-buffer-replace regexp)
      (elmo-buffer-replace
       "^[ \t]*\\(re\\|was\\|fw\\|fwd\\|forward\\)[:;][ \t]*")
      (buffer-string))))
@@ -466,8 +462,9 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	(setq wl-scores-messages (cdr wl-scores-messages))))
     (message "Scoring...done")
     ;; Remove buffers.
-    (mapcar '(lambda (x) (elmo-kill-buffer x))
-    	    wl-score-header-buffer-list)
+    (let ((buffers wl-score-header-buffer-list))
+      (while buffers
+	(elmo-kill-buffer (pop buffers))))
     (setq wl-score-header-buffer-list nil)))
 
 (defun wl-score-integer (scores header now expire)
@@ -1261,10 +1258,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 ;				dels wl-summary-buffer-msgdb t)
 	;; mark as read.
 	(setq mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
-	(mapcar (function (lambda (x)
-			    (setq mark-alist
-				  (elmo-msgdb-mark-set mark-alist x nil))))
-		dels)
+	(dolist (del dels)
+	  (setq mark-alist (elmo-msgdb-mark-set mark-alist del nil)))
 	(elmo-mark-as-read wl-summary-buffer-folder-name
 			   dels wl-summary-buffer-msgdb)
 	(elmo-msgdb-set-mark-alist wl-summary-buffer-msgdb mark-alist)

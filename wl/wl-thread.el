@@ -32,6 +32,8 @@
 (require 'wl-summary)
 (require 'wl-highlight)
 
+(eval-when-compile (require 'cl))	; dolist
+
 ;; buffer local variables.
 ;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
 (defvar wl-thread-tops nil)           ; top number list (number)
@@ -40,13 +42,11 @@
 (defvar wl-thread-entity-hashtb nil)  ; obarray
 (defvar wl-thread-indent-regexp nil)
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-thread-entity-hashtb
-       'wl-thread-entities     ; -> ".wl-thread-entity"
-       'wl-thread-entity-list  ; -> ".wl-thread-entity-list"
-       'wl-thread-entity-cur
-       'wl-thread-indent-regexp))
+(make-variable-buffer-local 'wl-thread-entity-hashtb)
+(make-variable-buffer-local 'wl-thread-entities)     ; ".wl-thread-entity"
+(make-variable-buffer-local 'wl-thread-entity-list)  ; ".wl-thread-entity-list"
+(make-variable-buffer-local 'wl-thread-entity-cur)
+(make-variable-buffer-local 'wl-thread-indent-regexp)
 
 ;;; global flag
 (defvar wl-thread-insert-force-opened nil)
@@ -109,12 +109,9 @@
     (message "Resuming thread structure...")
     ;; set obarray value.
     (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
-    (mapcar
-     '(lambda (x)
-       (elmo-set-hash-val (format "#%d" (car x))
-			  x
-			  wl-thread-entity-hashtb))
-     entities)
+    (dolist (entity entities)
+      (elmo-set-hash-val (format "#%d" (car entity)) entity
+			 wl-thread-entity-hashtb))
     ;; set buffer local variables.
     (setq wl-thread-entities entities)
     (setq wl-thread-entity-list top-list)
@@ -808,16 +805,15 @@ the closed parent will be opened."
 	      ;;
 	      (unless deep
 		(setq children (wl-thread-entity-get-children entity))
-		(mapcar '(lambda (x)
-			   (wl-thread-entity-set-parent
-			    (wl-thread-get-entity x)
-			    (wl-thread-entity-get-number parent))
-			   (wl-thread-entity-set-linked
-			    (wl-thread-get-entity x)
-			    t)
-			   (wl-append update-msgs
-				      (wl-thread-get-children-msgs x t)))
-			children))
+		(dolist (entity children)
+		  (wl-thread-entity-set-parent
+		   (wl-thread-get-entity entity)
+		   (wl-thread-entity-get-number parent))
+		  (wl-thread-entity-set-linked
+		   (wl-thread-get-entity entity)
+		   t)
+		  (wl-append update-msgs
+			     (wl-thread-get-children-msgs entity t))))
 	      (wl-thread-entity-set-children
 	       parent
 	       (append
@@ -851,13 +847,11 @@ the closed parent will be opened."
 	       (append
 		(wl-thread-entity-get-children top-entity)
 		children))
-	      (mapcar
-	       '(lambda (x)
-		  (wl-thread-entity-set-parent (wl-thread-get-entity x)
-					       top-child)
-		  (wl-thread-entity-set-linked (wl-thread-get-entity x)
-					       t))
-	       children)
+	      (dolist (entity children)
+		(wl-thread-entity-set-parent (wl-thread-get-entity entity)
+					     top-child)
+		(wl-thread-entity-set-linked (wl-thread-get-entity entity)
+					     t))
 	      (wl-append update-msgs children)))
 	  ;; delete myself from top list.
 	  (setq older-brothers (wl-thread-entity-get-older-brothers
@@ -912,20 +906,18 @@ the closed parent will be opened."
 		(if (setq ent (wl-thread-get-entity (car insert-msgs)))
 		    (wl-thread-entity-set-opened ent t))))
 	    ;; insert children
-	    (mapcar
-	     '(lambda (x)
-		;; if no exists in summary, insert entity.
-		(when (and x (not (wl-summary-jump-to-msg x)))
-		  (setq ent (wl-thread-get-entity x))
-		  (wl-thread-insert-entity 0 ; no mean now...
-					   ent entity nil)))
-	     insert-msgs))))
-
+	    (while insert-msgs
+	      ;; if no exists in summary, insert entity.
+	      (when (and (car insert-msgs)
+			 (not (wl-summary-jump-to-msg (car insert-msgs))))
+		(setq ent (wl-thread-get-entity (car insert-msgs)))
+		(wl-thread-insert-entity 0 ; no mean now...
+					 ent entity nil))
+	      (setq insert-msgs (cdr insert-msgs))))))
       (if update
  	  ;; modify buffer.
-	  (mapcar '(lambda (x)
-		     (wl-thread-update-line-on-buffer-sub nil x))
-		  update-msgs)
+	  (while update-msgs
+	    (wl-thread-update-line-on-buffer-sub nil (pop update-msgs)))
  	;; don't update buffer
 	update-msgs)))) ; return value
 

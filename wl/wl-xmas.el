@@ -35,7 +35,8 @@
   (require 'wl-draft)
   (require 'wl-message)
   (require 'wl-highlight)
-  (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
+  (defvar-maybe wl-draft-mode-map (make-sparse-keymap))
+  (defalias-maybe 'toolbar-make-button-list 'ignore))
 
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
@@ -372,12 +373,10 @@
     (wl-folder-trash-glyph        . wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
-  (mapcar
-   (lambda (x)
-     (unless (get (car x) 'glyph)
-       (put (car x) 'glyph
-	    (wl-xmas-make-icon-glyph "" (symbol-value (cdr x))))))
-   wl-folder-internal-icon-list))
+  (dolist (icon wl-folder-internal-icon-list)
+    (unless (get (car icon) 'glyph)
+      (put (car icon) 'glyph
+	   (wl-xmas-make-icon-glyph "" (symbol-value (cdr icon)))))))
 
 (defun wl-plugged-init-icons ()
   (unless wl-plugged-glyph

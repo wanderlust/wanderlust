@@ -99,14 +99,12 @@
   (setq elmo-plugged wl-plugged
 	wl-modeline-plug-status wl-plugged)
   (save-excursion
-    (mapcar
-     (function
-      (lambda (x)
-	(set-buffer x)
+    (let ((summaries (wl-collect-summary)))
+      (while summaries
+	(set-buffer (pop summaries))
 	(wl-summary-msgdb-save)
 	;; msgdb is saved, but cache is not saved yet.
-	(wl-summary-set-message-modified)))
-     (wl-collect-summary)))
+	(wl-summary-set-message-modified))))
   (setq wl-biff-check-folders-running nil)
   (if wl-plugged
       (progn
@@ -606,16 +604,14 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let (summary-buf)
     (save-excursion
       (let ((summaries (wl-collect-summary)))
-	(mapcar
-	 (function
-	  (lambda (x)
-	    (set-buffer x)
-	    (unless keep-summary
-	      (wl-summary-cleanup-temp-marks))
-	    (wl-summary-save-status keep-summary)
-	    (unless keep-summary
-	      (kill-buffer x))))
-	 summaries))))
+	(while summaries
+	  (set-buffer (car summaries))
+	  (unless keep-summary
+	    (wl-summary-cleanup-temp-marks))
+	  (wl-summary-save-status keep-summary)
+	  (unless keep-summary
+	    (kill-buffer (car summaries)))
+	  (setq summaries (cdr summaries))))))
   (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))

@@ -66,12 +66,10 @@
 (defvar wl-folder-buffer-cur-path nil)
 (defvar wl-folder-buffer-cur-point nil)
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-folder-buffer-disp-summary
-       'wl-folder-buffer-cur-entity-id
-       'wl-folder-buffer-cur-path
-       'wl-folder-buffer-cur-point))
+(make-variable-buffer-local 'wl-folder-buffer-disp-summary)
+(make-variable-buffer-local 'wl-folder-buffer-cur-entity-id)
+(make-variable-buffer-local 'wl-folder-buffer-cur-path)
+(make-variable-buffer-local 'wl-folder-buffer-cur-point)
 
 (defconst wl-folder-entity-regexp "^\\([ ]*\\)\\(\\[[\\+-]\\]\\)?\\([^\\[].+\\):[-*0-9]+/[-*0-9]+/[-*0-9]+")
 (defconst wl-folder-group-regexp  "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+\n")
@@ -2329,10 +2327,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (if refresh
 	(let ((id (progn
 		    (wl-folder-prev-entity-skip-invalid t)
-		    (wl-folder-get-entity-from-buffer t))))
-	  (mapcar '(lambda (x)
-		     (setcdr x t))
-		  wl-folder-group-alist)
+		    (wl-folder-get-entity-from-buffer t)))
+	      (alist wl-folder-group-alist))
+	  (while alist
+	    (setcdr (pop alist) t))
 	  (erase-buffer)
 	  (wl-folder-insert-entity " " wl-folder-entity)
 	  (wl-folder-move-path id))
@@ -2558,12 +2556,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(cons 0 0))))))
 
 (defun wl-folder-count-incorporates (folder)
-  (let ((sum 0))
-    (mapcar '(lambda (x)
-	       (if (member (cadr x)
-			   wl-summary-incorporate-marks)
-		   (incf sum)))
-	    (elmo-msgdb-mark-load (elmo-msgdb-expand-path folder)))
+  (let ((marks (elmo-msgdb-mark-load (elmo-msgdb-expand-path folder)))
+	(sum 0))
+    (while marks
+      (if (member (cadr (car marks))
+		  wl-summary-incorporate-marks)
+	  (incf sum))
+      (setq marks (cdr marks)))
     sum))
 
 (defun wl-folder-prefetch-current-entity (&optional no-check)

@@ -350,13 +350,10 @@ return value is diffs '(-new -unread -all)."
 
 (defun wl-add-entity (key-path new entity prev-entity-id &optional errmes)
   (when (string= (caar key-path) (car entity))
-    (mapcar
-     '(lambda (ent)
+    (let ((entities new))
+      (while entities
 	(wl-folder-entity-assign-id
-	 ent
-	 wl-folder-entity-id-name-hashtb
-	 t))
-     new)
+	 (pop entities) wl-folder-entity-id-name-hashtb t)))
     (when (wl-add-entity-sub (cdr key-path) new entity errmes)
       ;; return value is non-nil (diffs)
       (wl-fldmgr-add-entity-hashtb new))))
@@ -402,20 +399,15 @@ return value is diffs '(-new -unread -all)."
 	  ;; do it
 	  (when access
 	    ;; remove from unsubscribe
-	    (mapcar
-	     '(lambda (x)
-		(cond
-		 ((consp x)
+	    (setq new2 new)
+	    (while new2
+	      (if (consp (car new2))
 		  (setq unsubscribes
-			(delete (wl-string-assoc (car x) unsubscribes)
-				unsubscribes)))
-		 (t
-		  (setq unsubscribes (delete (elmo-string x) unsubscribes)))))
-	     new)
-;;	    (setq new2 new)
-;; 	    (while new2
-;; 	      (setq unsubscribes (delete (elmo-string (car new2)) unsubscribes))
-;; 	      (setq new2 (cdr new2)))
+			(delq (wl-string-assoc (car (car new2)) unsubscribes)
+			      unsubscribes))
+		(setq unsubscribes (delete (elmo-string (car new2))
+					   unsubscribes)))
+	      (setq new2 (cdr new2)))
  	    (setcdr (cddr entity) (list unsubscribes))
 	    (wl-fldmgr-add-modified-access-list group))
 	  (if (not key-path);; insert group top

@@ -470,13 +470,12 @@ Matched address lists are append to CL."
 	    (append wl-address-completion-list
 		    (wl-address-make-alist-from-alias-file wl-alias-file))))
   (setq wl-address-petname-hash (elmo-make-hash))
-  (mapcar
-   (function
-	(lambda (x)
-	  (elmo-set-hash-val (downcase (car x))
-						 (cadr x)
-						 wl-address-petname-hash)))
-   wl-address-list)
+  (let ((addresses wl-address-list))
+    (while addresses
+      (elmo-set-hash-val (downcase (car (car addresses)))
+			 (cadr (car addresses))
+			 wl-address-petname-hash)
+      (setq addresses (cdr addresses))))
   (message "Updating addresses...done."))
 
 

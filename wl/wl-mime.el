@@ -35,16 +35,12 @@
 (require 'mmelmo)
 
 (eval-when-compile
-  (defun-maybe Meadow-version ())
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(xemacs-betaname
-     xemacs-codename
-     enable-multibyte-characters
-     mule-version)))
+  (defalias-maybe 'Meadow-version 'ignore))
+
+(defvar xemacs-betaname)
+(defvar xemacs-codename)
+(defvar enable-multibyte-characters)
+(defvar mule-version)
 
 ;;; Draft
 

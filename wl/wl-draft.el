@@ -32,31 +32,24 @@
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
-(if (module-installed-p 'timezone)
-    (require 'timezone))
+(require 'timezone nil 'noerror)
 (require 'std11)
 (require 'wl-vars)
 
+(defvar x-face-add-x-face-version-header)
+(defvar mail-reply-buffer)
+(defvar mail-from-style)
+(defvar smtp-authenticate-type)
+(defvar smtp-authenticate-user)
+(defvar smtp-authenticate-passphrase)
+(defvar smtp-connection-type)
+
 (eval-when-compile
-  (require 'smtp)
   (require 'elmo-pop3)
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(x-face-add-x-face-version-header
-     mail-reply-buffer
-     mail-from-style
-     smtp-authenticate-type
-     smtp-authenticate-user
-     smtp-authenticate-passphrase
-     smtp-connection-type
-     ))
-  (defun-maybe x-face-insert (a))
-  (defun-maybe x-face-insert-version-header ())
-  (defun-maybe wl-init (&optional a))
-  (defun-maybe wl-draft-mode ()))
+  (defalias-maybe 'x-face-insert 'ignore)
+  (defalias-maybe 'x-face-insert-version-header 'ignore)
+  (defalias-maybe 'wl-init 'ignore)
+  (defalias-maybe 'wl-draft-mode 'ignore))
 
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-caesar-region-func nil)
@@ -1098,16 +1091,13 @@ non-nil."
 (defun wl-draft-clone-local-variables ()
   (let ((locals (buffer-local-variables))
 	result)
-    (mapcar
-     (function
-      (lambda (local)
-	(when (and (consp local)
-		   (car local)
-		   (string-match
-		    wl-draft-clone-local-variable-regexp
-		    (symbol-name (car local))))
-	  (wl-append result (list (car local))))))
-     locals)
+    (while locals
+      (when (and (consp (car locals))
+		 (car (car locals))
+		 (string-match wl-draft-clone-local-variable-regexp
+			       (symbol-name (car (car locals)))))
+	(wl-append result (list (car (car locals)))))
+      (setq locals (cdr locals)))
     result))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
@@ -1462,15 +1452,13 @@ If optional argument is non-nil, current draft buffer is killed"
       (wl-draft-editor-mode)
       (insert-buffer editing-buffer)
       (message "")
-      (when local-variables
-	(mapcar
-	 (function
-	  (lambda (var)
-	    (make-local-variable var)
-	    (set var (save-excursion
-		       (set-buffer editing-buffer)
-		       (symbol-value var)))))
-	 local-variables))
+      (while local-variables
+	(make-local-variable (car local-variables))
+	(set (car local-variables)
+	     (save-excursion
+	       (set-buffer editing-buffer)
+	       (symbol-value (car local-variables))))
+	(setq local-variables (cdr local-variables)))
       (current-buffer))))
 
 (defun wl-draft-reedit (number)
@@ -2004,16 +1992,15 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   (if wl-user-agent-compose-p
       (progn
 	;; insert headers
-	(let ((case-fold-search t))
-	  (mapcar
-	   (lambda (x)
-	     (let ((header-name (car x))
-		   (header-value (cdr x)))
-	       ;; skip body
-	       (if (not (string-match "^body$" header-name))
-		   (wl-user-agent-insert-header header-name header-value)
-		 t)))
-	   wl-user-agent-headers-and-body-alist))
+	(let ((headers wl-user-agent-headers-and-body-alist)
+	      (case-fold-search t))
+	  (while headers
+	    ;; skip body
+	    (if (not (string-match "^body$" (car (car headers))))
+		(wl-user-agent-insert-header
+		 (car (car headers)) (cdr (car headers)))
+	      t)
+	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
 	(let (wl-highlight-x-face-func)
 	  (wl-highlight-headers))
