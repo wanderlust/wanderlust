@@ -5,8 +5,6 @@
 
 	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
 
-	* elmo-imap4.el (elmo-folder-append-buffer): Ditto.
-
 	* elmo-archive.el (elmo-archive-folder-append-buffer): Return t
 	if append buffer content succeds.
 

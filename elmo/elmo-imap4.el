@@ -2389,8 +2389,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    (if unread " " " (\\Seen) ")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
-	(and result
-	     (elmo-imap4-response-ok-p result)))
+	result)
     ;; Unplugged
     (if elmo-enable-disconnected-operation
 	(elmo-folder-append-buffer-dop folder unread number)
