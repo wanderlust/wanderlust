@@ -132,17 +132,13 @@
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-flag-folder)
 						 &optional one-level)
-  (let ((dir (expand-file-name "flag" elmo-msgdb-directory)))
-    (mapcar (lambda (flag)
-	      (concat
-	       (elmo-folder-prefix-internal folder)
-	       (symbol-name (elmo-folder-type-internal folder))
-	       "/"
-	       (symbol-name flag)))
-	    (elmo-uniq-list
-	     (append
-	      (mapcar 'intern (delete ".." (delete "." (directory-files dir))))
-	      (copy-sequence elmo-global-flags))))))
+  (mapcar (lambda (flag)
+	    (concat
+	     (elmo-folder-prefix-internal folder)
+	     (symbol-name (elmo-folder-type-internal folder))
+	     "/"
+	     (symbol-name flag)))
+	  elmo-global-flags))
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
@@ -444,6 +440,16 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
       (dolist (flag elmo-preserved-flags)
 	(setq result (delq flag result))))
     result))
+
+(defun elmo-global-flags-initialize (&optional additional-flags)
+  (let ((dir (expand-file-name "flag" elmo-msgdb-directory)))
+    (setq elmo-global-flags
+	  (elmo-uniq-list
+	   (append
+	    elmo-global-flags
+	    additional-flags
+	    (mapcar 'intern
+		    (delete ".." (delete "." (directory-files dir)))))))))
 
 ;;; To migrate from global mark folder
 (defvar elmo-global-mark-filename "global-mark"

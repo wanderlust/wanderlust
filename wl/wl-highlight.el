@@ -189,6 +189,20 @@
 
 ;; important messages
 
+(wl-defface wl-highlight-summary-flagged-face
+  '((((type tty)
+      (background dark))
+     (:foreground "magenta"))
+    (((class color)
+      (background dark))
+     (:foreground "orange"))
+    (((class color)
+      (background light))
+     (:foreground "purple")))
+  "Face used for displaying flagged messages."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
 (wl-defface wl-highlight-summary-new-face
   '(
     (((type tty)
@@ -840,6 +854,11 @@
 	      (put-text-property bol (match-end 0) 'face face)))
 	(put-text-property bol eol 'face text-face)))))
 
+(defsubst wl-highlight-get-face-by-name (format &rest args)
+  (let ((face (intern (apply #'format format args))))
+    (and (find-face face)
+	 face)))
+
 (defsubst wl-highlight-summary-line-face-spec (flags temp-mark indent)
   "Return a cons cell of (face . argument)."
   (let (action)
@@ -856,30 +875,26 @@
 	      (fl wl-summary-flag-alist)
 	      face result global-flags)
 	  (while (and (null result) priorities)
-	    (if (and (eq (car priorities) 'flag)
-		     (setq global-flags
-			   (elmo-get-global-flags flags 'ignore-preserved)))
-		(while fl
-		  (when (memq (car (car fl)) global-flags)
-		    (setq result
-			  (progn
-			    (setq face
-				  (intern (format
-					   "wl-highlight-summary-%s-flag-face"
-					   (car (car fl)))))
-			    (when (find-face face)
-			      (list face)))
-			  fl nil))
-		  (setq fl (cdr fl)))
+	    (if (eq (car priorities) 'flag)
+		(when (setq global-flags
+			    (elmo-get-global-flags flags 'ignore-preserved))
+		  (while fl
+		    (when (memq (car (car fl)) global-flags)
+		      (setq result
+			    (list (or (wl-highlight-get-face-by-name
+				       "wl-highlight-summary-%s-flag-face"
+				       (car (car fl)))
+				      'wl-highlight-summary-flagged-face))
+			    fl nil))
+		    (setq fl (cdr fl)))
+		  (unless result
+		    (setq result (list 'wl-highlight-summary-flagged-face))))
 	      (when (memq (car priorities) flags)
 		(setq result
-		      (progn (setq face
-				   (intern (format
-					    "wl-highlight-summary-%s-face"
-					    (car priorities))))
-			     (if (find-face face)
-				 (list face)
-			       (list 'wl-summary-persistent-mark-face))))))
+		      (list (or (wl-highlight-get-face-by-name
+				 "wl-highlight-summary-%s-face"
+				 (car priorities))
+				'wl-summary-persistent-mark-face)))))
 	    (setq priorities (cdr priorities)))
 	  result))
        ((string= temp-mark wl-summary-score-below-mark)

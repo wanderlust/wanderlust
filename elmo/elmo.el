@@ -115,6 +115,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   (autoload 'elmo-global-flag-detach-messages "elmo-flag")
   (autoload 'elmo-global-flag-set "elmo-flag")
   (autoload 'elmo-get-global-flags "elmo-flag")
+  (autoload 'elmo-global-flags-initialize "elmo-flag")
   (autoload 'elmo-global-mark-migrate "elmo-flag")
   (autoload 'elmo-folder-list-global-flag-messages "elmo-flag"))
 
