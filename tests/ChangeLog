@@ -1,5 +1,9 @@
 2004-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-elmo-util.el (test-elmo-object-save-1): New testcase.
+	(lunit-test-case-setup, lunit-test-case-teardown): Add
+	temporary-file stuff.
+
 	* test-elmo-localdir.el (test-elmo-folder-expand-msgdb-path-4):
 	New testcase.
 	(test-elmo-folder-expand-msgdb-path-2): Change order.
