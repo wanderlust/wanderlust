@@ -194,7 +194,11 @@
 
 ;; ML message displays ML name and ML sequence number in subject.
 (setq wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")
-;(setq wl-summary-line-format "%T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%#%~%s")
+;; Set summary line format according to folder name.
+;(setq wl-folder-summary-line-format-alist
+;      '(("^+" . "%n %T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%s")
+;	("^%inbox\\.emacs\\.wl$" .
+;	 "%-5l %T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%s")))
 
 ;; imput asynchronously.
 ;; (utils/im-wl.el is needed to be installed.

@@ -194,7 +194,11 @@
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する
 (setq wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")
-;(setq wl-summary-line-format "%T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%#%~%s")
+;; フォルダ毎にサマリの表示形式を変える設定
+;(setq wl-folder-summary-line-format-alist
+;      '(("^+" . "%n %T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%s")
+;	("^%inbox\\.emacs\\.wl$" .
+;	 "%-5l %T%P%M/%D %h:%m %-4S %[ %17f %] %t%C%s")))
 
 ;; imput により非同期で送信する
 ;; (utils/im-wl.el をインストールしておく必要があります。
