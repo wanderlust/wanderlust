@@ -641,6 +641,7 @@ entry according to the value of WITHDN."
 	     (not (equal "" sizelimit)))
 	(setq arglist (nconc arglist (list (format "-z%s" sizelimit)))))
     (with-temp-buffer
+      (set-buffer-multibyte nil)
       (setq ret (apply 'call-process
 		       ldap-search-program
 		       nil (current-buffer) t
@@ -852,12 +853,14 @@ entry according to the value of WITHDN."
 			      attributes attrsonly withdn
 			      ldap-verbose))
     (ldap-close ldap)
-    (if ldap-ignore-attribute-codings
-	result
-      (mapcar (function
-	       (lambda (record)
-		 (mapcar 'ldap-decode-attribute record)))
-	      result))))
+    (with-temp-buffer
+      (set-buffer-multibyte nil)  
+      (if ldap-ignore-attribute-codings
+	  result
+	(mapcar (function
+		 (lambda (record)
+		   (mapcar 'ldap-decode-attribute record)))
+		result)))))
 
 (defun ldap-add-entries (entries &optional host binddn passwd)
   "Add entries to an LDAP directory.

@@ -6,6 +6,9 @@
 	(ldap-encode-attribute): New function.
 	(ldap-add-entries): Use it.
 	(ldap-modify-entries): Ditto.
+	(ldap-search-entries): Enclosed decoding function with
+	`with-temp-buffer' and set as unibyte.
+	(ldap-search-basic): Set process buffer as unibyte.
 
 	* elmo-util.el (elmo-folder-identical-system-p):
 	Eliminated name space checking.
