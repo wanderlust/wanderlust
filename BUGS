@@ -1,4 +1,2 @@
 * Cannot communicate with UW imapd with qmail patch.
 * Biff of the POP3 folders do not work correctly (c.f. [wl: 08937]).
-* part-top etc in wl-draft-config-alist does not work correctly
-  with wl-draft-preview-message

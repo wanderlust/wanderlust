@@ -1,4 +1,2 @@
 * qmail 対応の UW imapd のメッセージを扱えない。
 * POP3 フォルダの biff がうまく動かない (c.f. [wl: 08937])。
-* wl-draft-preview-message のときに、 wl-draft-config-alist の
-  part-top 等が誤った動作をする。
