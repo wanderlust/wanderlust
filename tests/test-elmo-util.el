@@ -104,10 +104,10 @@
      (equal '(nil nil)
 	    (elmo-list-diff nil nil)))
     (lunit-assert
-     (equal '(nil (3 2 1))
+     (equal '(nil (1 2 3))
 	    (elmo-list-diff nil list1)))
     (lunit-assert
-     (equal '((3 2 1) nil)
+     (equal '((1 2 3) nil)
 	    (elmo-list-diff list1 nil)))
     (lunit-assert
      (equal '(nil nil)
@@ -119,13 +119,13 @@
      (equal '((3) (4))
 	    (elmo-list-diff list1 list3)))
     (lunit-assert
-     (equal '((3 2 1) (6 5 4))
+     (equal '((1 2 3) (4 5 6))
 	    (elmo-list-diff list1 list4)))
     (lunit-assert
-     (equal '((2 1) (6 5))
+     (equal '((1 2) (5 6))
 	    (elmo-list-diff list3 list4)))
     (lunit-assert
-     (equal '((2 1) (6 5 3))
+     (equal '((1 2) (3 5 6))
 	    (elmo-list-diff list3 list5)))))
 
 (luna-define-method test-elmo-delete-char-1 ((case test-elmo-util))
