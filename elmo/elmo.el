@@ -455,15 +455,6 @@ Return newly created temporary directory name which contains temporary files.")
 (luna-define-generic elmo-message-file-p (folder number)
   "Return t if message in the FOLDER with NUMBER is a file.")
 
-(defmacro elmo-message-entity-number (entity)
-  `(elmo-msgdb-message-entity-number (elmo-message-entity-handler ,entity)
-				     ,entity))
-
-(defmacro elmo-message-entity-set-number (entity number)
-  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-handler ,entity)
-					 ,entity
-					 ,number))
-
 (luna-define-generic elmo-message-flags (folder number)
   "Return a list of flags.
 FOLDER is a ELMO folder structure.
@@ -1136,24 +1127,6 @@ ENTITY is the message-entity to get the parent.")
 \)"
   `(dolist (,(car spec) (elmo-folder-list-message-entities ,(car (cdr spec))))
      ,@form))
-
-(defun elmo-message-entity-field (entity field &optional decode)
-  "Get message entity field value.
-ENTITY is the message entity structure obtained by `elmo-message-entity'.
-FIELD is the symbol of the field name.
-if optional DECODE is non-nil, returned value is decoded."
-  (elmo-msgdb-message-entity-field
-   (elmo-message-entity-handler entity)
-   entity field decode))
-
-(defun elmo-message-entity-set-field (entity field value)
-  "Set message entity field value.
-ENTITY is the message entity structure.
-FIELD is the symbol of the field name.
-VALUE is the field value (raw)."
-  (elmo-msgdb-message-entity-set-field
-   (elmo-message-entity-handler entity)
-   entity field value))
 
 (luna-define-generic elmo-folder-count-flags (folder)
   "Count flagged message number in the msgdb of the FOLDER.
