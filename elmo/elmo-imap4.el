@@ -1356,10 +1356,10 @@ If optional argument UNMARK is non-nil, unmark."
        'fetch)))))
 
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
-  (elmo-imap4-read-msg spec msg outbuf nil 'unseen))
+  (elmo-imap4-read-msg spec msg outbuf 'unseen))
 
 (defun elmo-imap4-read-msg (spec msg outbuf
-				 &optional msgdb leave-seen-flag-untouched)
+				 &optional leave-seen-flag-untouched)
   (let ((session (elmo-imap4-get-session spec))
 	response)
     (elmo-imap4-session-select-mailbox session

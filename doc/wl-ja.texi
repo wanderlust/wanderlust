@@ -2513,6 +2513,7 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @item wl-cache-prefetch-folder-type-list
 @vindex wl-cache-prefetch-folder-type-list
 $B=i4|@_Dj$O0J2<$N%j%9%H!#(B
+The initial setting is the list shown below:
 @lisp
 @group
 (nntp imap4)
