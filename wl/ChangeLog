@@ -1,3 +1,8 @@
+2001-02-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-cache-prefetch-message):
+	Call `elmo-buffer-cache-message' with `unread' argument.
+
 2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-parse-msg-id-list-string): Fix.
