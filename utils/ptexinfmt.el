@@ -47,7 +47,7 @@ This is NO-NOTICE argument in `broken-facility'.")
 (broken-facility texinfo-format-printindex
   "Can't sort on Mule for Windows."
   (if (and (memq system-type '(windows-nt ms-dos))
-;;; I don't know version threshold. 
+;;; I don't know version threshold.
 ;;;	   (string< texinfmt-version "2.37 of 24 May 1997")
 	   (boundp 'MULE) (not (featurep 'meadow))) ; Mule for Windows
       nil
@@ -221,8 +221,12 @@ This is NO-NOTICE argument in `broken-facility'.")
 (put 'endhtml 'texinfo-format 'texinfo-discard-line)
 (defun-maybe texinfo-format-html ()
   (delete-region texinfo-command-start
-                 (progn (re-search-forward "@end html[ \t]*\n")
-                        (point))))
+		 (progn (re-search-forward "@end html[ \t]*\n")
+			(point))))
+
+;; @cartouche  ... @end cartouche
+(put 'cartouche 'texinfo-format 'texinfo-discard-line)
+(put 'cartouche 'texinfo-end 'texinfo-discard-command)
 
 
 
@@ -421,6 +425,21 @@ Insert < ... > around EMAIL-ADDRESS."
   (insert (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
+;; @.
+(put '\. 'texinfo-format 'texinfo-format-\.)
+(defun-maybe texinfo-format-\. ()
+  (texinfo-discard-command)
+  (insert "."))
+
+;; @:
+(put '\: 'texinfo-format 'texinfo-format-\:)
+(defun-maybe texinfo-format-\: ()
+  (texinfo-discard-command))
+
+;; @-
+(put '\- 'texinfo-format 'texinfo-format-soft-hyphen)
+(defun-maybe texinfo-format-soft-hyphen ()
+  (texinfo-discard-command))
 
 
 ;;; Cross References
@@ -454,8 +473,26 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
     (texinfo-discard-command)
     ;; if url-title
     (if (nth 1 args)
-        (insert  (nth 1 args) " (" (nth 0 args) ")")
+	(insert  (nth 1 args) " (" (nth 0 args) ")")
       (insert "`" (nth 0 args) "'"))))
+
+;; @inforef
+(put 'inforef 'texinfo-format 'texinfo-format-inforef)
+(defun-maybe texinfo-format-inforef ()
+  (let ((args (texinfo-format-parse-args)))
+    (texinfo-discard-command)
+    (if (nth 1 args)
+	(insert "*Note " (nth 1 args) ": (" (nth 2 args) ")" (car args))
+      (insert "*Note " "(" (nth 2 args) ")" (car args) "::"))))
+
+
+;; @anchor
+;; don't emulation
+;; If support @anchor for Mule 2.3, We must fix informat.el and info.el:
+;;  - Info-tagify suport @anthor-*-refill.
+;;  - info.el support Ref in Tag table.
+(unless (eq 'texinfo-anchor (get 'anchor 'texinfo-format))
+  (put 'anchor 'texinfo-format 'texinfo-discard-command-and-arg))
 
 
 
