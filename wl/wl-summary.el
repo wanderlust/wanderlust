@@ -1913,11 +1913,11 @@ If optional argument is non-nil, checking is omitted."
       (while msgs
 	(if (eq wl-summary-buffer-view 'thread)
 	    (progn
+	      ;; don't use wl-append(nconc), because list is broken. ...why?
 	      (setq update-list
-		    (wl-append update-list
-			       (wl-thread-delete-message (car msgs))))
-	      (setq update-list (and update-list
-				     (delete (car msgs) update-list))))
+		    (append update-list
+			    (wl-thread-delete-message (car msgs))))
+	      (setq update-list (delq (car msgs) update-list)))
 	  (goto-char (point-min))
 	  (if (re-search-forward (format "^ *%d[^0-9]\\([^0-9]\\).*$" 
 					 (car msgs)) nil t)
