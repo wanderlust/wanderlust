@@ -1,3 +1,8 @@
+2005-03-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-draft-preview-attributes-list): Protect
+	wl-draft-preview-attributes-list from distraction.
+
 2005-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync-update): Sort the return value of

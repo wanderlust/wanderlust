@@ -179,10 +179,12 @@ It calls following-method selected from variable
 (defun wl-draft-preview-attributes-list ()
   (if (listp (car wl-draft-preview-attributes-list))
       (elmo-uniq-list
-       (append (and (wl-message-mail-p)
-		    (cdr (assq 'mail wl-draft-preview-attributes-list)))
-	       (and (wl-message-news-p)
-		    (cdr (assq 'news wl-draft-preview-attributes-list)))))
+       (nconc (and (wl-message-mail-p)
+		   (copy-sequence
+		    (cdr (assq 'mail wl-draft-preview-attributes-list))))
+	      (and (wl-message-news-p)
+		   (copy-sequence
+		    (cdr (assq 'news wl-draft-preview-attributes-list))))))
     wl-draft-preview-attributes-list))
 
 (defun wl-draft-show-attributes-buffer (attribute-values)
