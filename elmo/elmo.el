@@ -365,6 +365,7 @@ FLAG is a symbol which is one of the following:
   `important' (remove important flag)
 'sugar' flag:
   `read'      (set unread flag)
+  `all'       (remove all flags)
 If optional IS-LOCAL is non-nil, update only local (not server) status.")
 
 (luna-define-generic elmo-folder-next-message-number (folder)
@@ -1383,13 +1384,12 @@ If Optional LOCAL is non-nil, don't update server flag."
 
 (defun elmo-folder-kill-messages (folder numbers)
   "Kill(hide) messages in the FOLDER with NUMBERS."
-  (let ((msgdb (elmo-folder-msgdb folder))
-	(killed (elmo-folder-killed-list-internal folder)))
-    (dolist (number numbers)
-      (setq killed (elmo-number-set-append killed number))
-      (elmo-msgdb-unset-flag msgdb number 'all))
-    (elmo-folder-set-killed-list-internal folder killed)))
-
+  (elmo-folder-set-killed-list-internal
+   folder
+   (elmo-number-set-append-list
+    (elmo-folder-killed-list-internal folder)
+    numbers))
+  (elmo-folder-unset-flag folder numbers 'all 'local-only))
 
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)

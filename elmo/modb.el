@@ -75,22 +75,29 @@ Return a list of messages which have duplicated message-id.")
 MSGDB is the ELMO msgdb.
 NUMBER is a message number to set flag.
 FLAG is a symbol which is one of the following:
-`new'       ... Message which is new.
-`read'      ... Message which is already read.
-`important' ... Message which is important.
-`answered'  ... Message which is answered.
-`cached'    ... Message which is cached.")
+  `new'       ... Message which is new.
+  `unread'    ... Message which is not read.
+  `important' ... Message which is important.
+  `answered'  ... Message which is answered.
+  `cached'    ... Message which is cached.
+'sugar' falg:
+  `read'      ... Message which is already read.
+  `uncached'  ... Message which is not cached.")
 
 (luna-define-generic elmo-msgdb-unset-flag (msgdb number flag)
   "Unset message flag.
 MSGDB is the ELMO msgdb.
 NUMBER is a message number to set flag.
 FLAG is a symbol which is one of the following:
-`new'       ... Message which is new.
-`read'      ... Message which is already read.
-`important' ... Message which is important.
-`answered'  ... Message which is answered.
-`cached'    ... Message which is cached.")
+  `new'       ... Message which is new.
+  `unread'    ... Message which is not read.
+  `important' ... Message which is important.
+  `answered'  ... Message which is answered.
+  `cached'    ... Message which is cached.
+'sugar' falg:
+  `read'      ... Message which is already read.
+  `uncached'  ... Message which is not cached.
+  `all'       ... Remove all flags.")
 
 (luna-define-generic elmo-msgdb-flag-count (msgdb)
   "Return a list of cons cell as (flag . count).
