@@ -1,3 +1,7 @@
+2001-02-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-default-get-next-msg): Fix (num => msg).
+
 2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-default-get-next-msg): Fix.

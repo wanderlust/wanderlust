@@ -5921,7 +5921,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 			       (if wl-summary-move-direction-downward 'down
 				 'up)
 			       nil)
-      (cadr (memq num (if wl-summary-move-direction-downward
+      (cadr (memq msg (if wl-summary-move-direction-downward
 			  wl-summary-buffer-number-list
 			(reverse wl-summary-buffer-number-list))))))
 
