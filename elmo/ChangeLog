@@ -1,3 +1,7 @@
+2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.14.
+
 2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb.el (elmo-msgdb-length): Define.
