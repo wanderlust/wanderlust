@@ -96,6 +96,8 @@
   '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
   "Extra namespace alist. A list of cons cell like: (REGEXP . DELIMITER) ")
 
+(defvar elmo-imap4-default-hierarchy-delimiter "/")
+
 ;; buffer local variable
 (defvar elmo-imap4-server-capability nil)
 (defvar elmo-imap4-server-namespace nil)
@@ -264,13 +266,11 @@ BUFFER must be a single-byte buffer."
     (let* ((root (elmo-imap4-spec-mailbox spec))
 	   (process (elmo-imap4-get-process spec))
 	   (delim (or
-		 (cdr
-		  (elmo-string-matched-assoc root
-					     (save-excursion
-					       (set-buffer
-						(process-buffer process))
-					       elmo-imap4-server-namespace)))
-		 "/"))
+		   (cdr
+		    (elmo-string-matched-assoc
+		     root (with-current-buffer (process-buffer process)
+			    elmo-imap4-server-namespace)))
+		   elmo-imap4-default-hierarchy-delimiter))
 	   response result append-serv type)
       ;; Append delimiter
       (if (and root
@@ -691,16 +691,14 @@ BUFFER must be a single-byte buffer."
 	   (elmo-uniq-list (sort ret-val '<)))
 	(elmo-uniq-list (sort ret-val '<))))))
 
-(defsubst elmo-imap4-value (value)
-  (if (eq value 'NIL) nil
-    value))
+(defmacro elmo-imap4-value (value)
+  (` (if (eq (, value) 'NIL) nil
+       (, value))))
 
 (defmacro elmo-imap4-nth (pos list)
   (` (let ((value (nth (, pos) (, list))))
-       (if (eq 'NIL value)
-	   nil
-	 value))))
-  
+       (elmo-imap4-value value))))
+
 (defun elmo-imap4-use-flag-p (spec)
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-spec-mailbox spec))))
@@ -1117,36 +1115,30 @@ If optional argument UNMARK is non-nil, unmark."
       (read (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
 
 (defun elmo-imap4-parse-namespace (obj)
-  (let ((ns (cdr obj))
-	(i 0)
-	prefix delim
-	cur namespace-alist)
+  (let ((namespaces (cdr obj))
+	prefix delim namespace-alist)
     ;; 0: personal, 1: other, 2: shared
-    (while (< i 3)
-      (setq cur (elmo-imap4-nth i ns))
-      (incf i)
-      (while cur
-	(setq prefix (elmo-imap4-nth 0 (car cur)))
-	(setq delim    (elmo-imap4-nth 1 (car cur)))
-	(if (and prefix delim
-		 (string-match (concat "\\(.*\\)" 
-				       (regexp-quote delim)
-				       "\\'")
-			       prefix))
-	    (setq prefix (substring prefix (match-beginning 1)(match-end 1))))
-	(setq namespace-alist (nconc namespace-alist
-				     (list (cons
-					    (concat "^" (regexp-quote prefix)
-						    ".*$")
-					    delim))))
-	(setq cur (cdr cur))))
-    (append
-     elmo-imap4-extra-namespace-alist
-     (sort namespace-alist
-	   (function
-	    (lambda (x y)
-	      (> (length (car x))
-		 (length (car y)))))))))
+    (dotimes (i 3)
+      (setq namespace-alist
+	    (nconc namespace-alist
+		   (mapcar
+		    (lambda (namespace)
+		      (setq prefix (elmo-imap4-nth 0 namespace)
+			    delim (elmo-imap4-nth 1 namespace))
+		      (if (and prefix delim
+			       (string-match
+				(concat (regexp-quote delim) "\\'")
+				prefix))
+			  (setq prefix (substring prefix 0 (match-beginning 0))))
+		      (cons
+		       (concat "^"
+			       (if (string= (downcase prefix) "inbox")
+				   "[Ii][Nn][Bb][Oo][Xx]"
+				 (regexp-quote prefix))
+			       ".*$")
+		       delim))
+		    (elmo-imap4-nth i namespaces)))))
+    namespace-alist))
 
 ;; Current buffer is process buffer.
 (defun elmo-imap4-auth-login (session)
@@ -1314,9 +1306,10 @@ If optional argument UNMARK is non-nil, unmark."
       (when (memq 'namespace (elmo-imap4-session-capability-internal session))
 	(elmo-imap4-send-command process "namespace")
 	(setq elmo-imap4-server-namespace
-	      (elmo-imap4-parse-namespace
-	       (elmo-imap4-parse-response
-		(elmo-imap4-read-response process))))))))
+	      (nconc (elmo-imap4-parse-namespace
+		      (elmo-imap4-parse-response
+		       (elmo-imap4-read-response process)))
+		     elmo-imap4-extra-namespace-alist))))))
 
 (defun elmo-imap4-get-seqno ()
   (setq elmo-imap4-seqno (+ 1 elmo-imap4-seqno)))

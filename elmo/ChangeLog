@@ -1,3 +1,9 @@
+2000-08-26   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-namespace): Tolerate INBOX regexp.
+	(elmo-imap4-default-hierarchy-delimiter): New variable.
+	(elmo-imap4-list-folders): Use it.
+
 2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-net.el (elmo-network-open-session): Add user and
