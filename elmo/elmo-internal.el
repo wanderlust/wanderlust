@@ -56,7 +56,7 @@
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
   (let* ((path (elmo-msgdb-expand-path nil spec))
-	 (location-alist 
+	 (location-alist
 	  (if msgdb
 	      (elmo-msgdb-get-location msgdb)
 	    (elmo-msgdb-location-load path)))
@@ -73,7 +73,7 @@
 			  (list (cons (car pair) (car location)))))
 	  (setq i (1+ i))
 	  (setq result (append result
-			       (list 
+			       (list
 				(cons (+ location-max i) (car location))))))
 	(setq location (cdr location))))
     (setq result (sort result '(lambda (x y)
@@ -85,10 +85,10 @@
     (mapcar 'car result)))
 
 (defun elmo-internal-list-location (directive arg)
-  (let ((mark-alist 
+  (let ((mark-alist
 	 (or elmo-msgdb-global-mark-alist
 	     (setq elmo-msgdb-global-mark-alist
-		   (elmo-object-load (expand-file-name 
+		   (elmo-object-load (expand-file-name
 				      elmo-msgdb-global-mark-filename
 				      elmo-msgdb-dir)))))
 	result)
@@ -102,16 +102,16 @@
    number
    (elmo-cache-get-path (cdr (assq number loc-alist)))))
 
-(defun elmo-internal-msgdb-create (spec numlist new-mark 
-				       already-mark seen-mark 
-				       important-mark 
+(defun elmo-internal-msgdb-create (spec numlist new-mark
+				       already-mark seen-mark
+				       important-mark
 				       seen-list
 				       &optional msgdb)
   (when numlist
     (let* ((directive (nth 1 spec))
 	   (arg       (nth 2 spec))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-			(elmo-msgdb-location-load (elmo-msgdb-expand-path 
+			(elmo-msgdb-location-load (elmo-msgdb-expand-path
 						   nil spec))))
 	   (loc-list (elmo-internal-list-location directive arg))
 	   overview number-alist mark-alist entity
@@ -125,7 +125,7 @@
 	       (car numlist) loc-alist))
 	(if (null entity)
 	    ()
-	  (setq overview 
+	  (setq overview
 		(elmo-msgdb-append-element
 		 overview entity))
 	  (setq number-alist
@@ -138,14 +138,14 @@
 	  (unless (memq location seen-list)
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append
-		   mark-alist 
+		   mark-alist
 		   (elmo-msgdb-overview-entity-get-number
 		    entity)
 					;(nth 0 entity)
-		   (or (elmo-msgdb-global-mark-get 
+		   (or (elmo-msgdb-global-mark-get
 			(elmo-msgdb-overview-entity-get-id
 			 entity))
-		       (if (elmo-cache-exists-p 
+		       (if (elmo-cache-exists-p
 			    (elmo-msgdb-overview-entity-get-id
 			     entity))
 			   already-mark
@@ -175,7 +175,7 @@
    (let* ((msgid (elmo-field-body "message-id"))
 	  (path (elmo-cache-get-path msgid))
 	  dir)
-     (when path 
+     (when path
        (setq dir (directory-file-name (file-name-directory path)))
        (if (not (file-exists-p dir))
 	   (elmo-make-directory dir))
@@ -185,7 +185,7 @@
 
 (defun elmo-internal-delete-msgs (spec msgs &optional msgdb)
   (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-		     (elmo-msgdb-location-load (elmo-msgdb-expand-path 
+		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
 						nil spec)))))
     (mapcar '(lambda (msg) (elmo-internal-delete-msg spec msg
 						     loc-alist))
@@ -198,7 +198,7 @@
 (defun elmo-internal-read-msg (spec number outbuf &optional msgdb)
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-			(elmo-msgdb-location-load (elmo-msgdb-expand-path 
+			(elmo-msgdb-location-load (elmo-msgdb-expand-path
 						   nil spec))))
 	   (file (elmo-cache-get-path (cdr (assq number loc-alist)))))
       (set-buffer outbuf)
@@ -226,15 +226,15 @@
   nil)
 
 (defun elmo-internal-search (spec condition &optional from-msgs msgdb)
-  (let* ((mark-alist 
+  (let* ((mark-alist
 	 (or elmo-msgdb-global-mark-alist
 	     (setq elmo-msgdb-global-mark-alist
-		   (elmo-object-load (expand-file-name 
+		   (elmo-object-load (expand-file-name
 				      elmo-msgdb-global-mark-filename
 				      elmo-msgdb-dir)))))
 	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-		      (elmo-msgdb-location-load (elmo-msgdb-expand-path 
-						 nil spec))))	 
+		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
+						 nil spec))))
 	 cache-file
 	 ret-val
 	 case-fold-search msg
@@ -262,7 +262,7 @@
   )
 
 (defalias 'elmo-internal-sync-number-alist 'elmo-generic-sync-number-alist)
-(defalias 'elmo-internal-list-folder-unread 
+(defalias 'elmo-internal-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-internal-list-folder-important
   'elmo-generic-list-folder-important)

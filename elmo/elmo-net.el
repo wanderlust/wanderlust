@@ -137,7 +137,7 @@ if making session failed, returns nil."
 		      (elmo-network-session-process-internal
 		       (cdr pair)))
 		     '(closed exit)))
-      (setq elmo-network-session-cache 
+      (setq elmo-network-session-cache
 	    (delq pair elmo-network-session-cache))
       (elmo-network-close-session (cdr pair))
       (setq pair nil))
@@ -195,7 +195,7 @@ Returns a process object. if making session failed, returns nil."
 	    (elmo-network-initialize-session session)
 	    (elmo-network-authenticate-session session)
 	    (elmo-network-setup-session session)))
-      (error 
+      (error
        (when (eq (car error) 'elmo-authenticate-error)
 	 (elmo-remove-passwd (elmo-network-session-password-key session)))
        (elmo-network-close-session session)

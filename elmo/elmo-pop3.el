@@ -39,15 +39,15 @@
 	(require 'sasl))
     (error))
   (defun-maybe md5 (a))
-  (defun-maybe sasl-digest-md5-digest-response 
-    (digest-challenge username passwd serv-type host &optional realm))  
+  (defun-maybe sasl-digest-md5-digest-response
+    (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe sasl-scram-md5-client-msg-1
     (authenticate-id &optional authorize-id))
   (defun-maybe sasl-scram-md5-client-msg-2
     (server-msg-1 client-msg-1 salted-pass))
   (defun-maybe sasl-scram-md5-make-salted-pass
     (server-msg-1 passphrase))
-  (defun-maybe sasl-cram-md5 (username passphrase challenge))  
+  (defun-maybe sasl-cram-md5 (username passphrase challenge))
   (defun-maybe sasl-scram-md5-authenticate-server
     (server-msg-1 server-msg-2 client-msg-1 salted-pass))
   (defun-maybe starttls-negotiate (a)))
@@ -137,23 +137,23 @@
 	      (buffer-substring elmo-pop3-read-point (- match-end 2)))
 	(goto-char elmo-pop3-read-point)
 	(if (looking-at "\\+.*$")
-	    (progn 
+	    (progn
 	      (setq response-continue nil)
 	      (setq elmo-pop3-read-point match-end)
-	      (setq return-value 
-		    (if return-value 
+	      (setq return-value
+		    (if return-value
 			(concat return-value "\n" response-string)
 		      response-string)))
 	  (if (looking-at "\\-.*$")
-	      (progn 
+	      (progn
 		(setq response-continue nil)
 		(setq elmo-pop3-read-point match-end)
 		(setq return-value nil))
 	    (setq elmo-pop3-read-point match-end)
 	    (if not-command
 		(setq response-continue nil))
-	    (setq return-value 
-		  (if return-value 
+	    (setq return-value
+		  (if return-value
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
@@ -169,12 +169,12 @@
   (let ((process (elmo-network-session-process-internal session)))
     ;; try USER/PASS
     (elmo-pop3-send-command
-     process 
+     process
      (format "user %s" (elmo-network-session-user-internal session)))
     (or (elmo-pop3-read-response process t)
 	(signal 'elmo-authenticate-error
 		'(elmo-pop-auth-user)))
-    (elmo-pop3-send-command  process 
+    (elmo-pop3-send-command  process
 			     (format
 			      "pass %s"
 			      (elmo-get-passwd
@@ -189,11 +189,11 @@
       ;; good, APOP ready server
       (progn
 	(require 'md5)
-	(elmo-pop3-send-command  
+	(elmo-pop3-send-command
 	 (elmo-network-session-process-internal session)
-	 (format "apop %s %s" 
+	 (format "apop %s %s"
 		 (elmo-network-session-user-internal session)
-		 (md5 
+		 (md5
 		  (concat (match-string
 			   1
 			   (elmo-network-session-greeting-internal session))
@@ -247,7 +247,7 @@
        server-msg-1
        client-msg-1
        (setq salted-pass
-	     (sasl-scram-md5-make-salted-pass 
+	     (sasl-scram-md5-make-salted-pass
 	      server-msg-1
 	      (elmo-get-passwd
 	       (elmo-network-session-password-key session)))))))
@@ -300,7 +300,7 @@
   (with-current-buffer buffer
     (mapcar 'make-variable-buffer-local elmo-pop3-local-variables)))
 
-(luna-define-method elmo-network-initialize-session ((session 
+(luna-define-method elmo-network-initialize-session ((session
 						      elmo-pop3-session))
   (let ((process (elmo-network-session-process-internal session))
 	response capability mechanism)
@@ -316,13 +316,13 @@
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
 	(elmo-pop3-send-command process "stls")
-	(if (string-match "^\+OK" 
+	(if (string-match "^\+OK"
 			  (elmo-pop3-read-response process))
 	    (starttls-negotiate process)
 	  (signal 'elmo-open-error
 		  '(elmo-network-intialize-session)))))))
 
-(luna-define-method elmo-network-authenticate-session ((session 
+(luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
   (let (authenticator)
     ;; defaults to 'user.
@@ -335,7 +335,7 @@
 				 (elmo-network-session-auth-internal session)))
     (funcall authenticator session)))
 
-(luna-define-method elmo-network-setup-session ((session 
+(luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
   (let ((process (elmo-network-session-process-internal session))
 	response)
@@ -375,7 +375,7 @@
 	(goto-char elmo-pop3-read-point))
       (setq match-end (point))
       (elmo-delete-cr
-       (buffer-substring elmo-pop3-read-point 
+       (buffer-substring elmo-pop3-read-point
 			 (- match-end 3))))))
 
 ;; dummy functions
@@ -585,7 +585,7 @@
 			    (elmo-msgdb-location-load
 			     (elmo-msgdb-expand-path nil spec)))))
       (elmo-pop3-msgdb-create-by-header process numlist
-					new-mark already-mark 
+					new-mark already-mark
 					seen-mark seen-list
 					loc-alist))))
 
@@ -602,7 +602,7 @@
 		     elmo-pop3-size-hash))
 
 (defun elmo-pop3-msgdb-create-by-header (process numlist
-						 new-mark already-mark 
+						 new-mark already-mark
 						 seen-mark
 						 seen-list
 						 loc-alist)
@@ -610,9 +610,9 @@
     (with-current-buffer (process-buffer process)
       (if loc-alist ; use uidl.
 	  (setq numlist
-		(delq 
+		(delq
 		 nil
-		 (mapcar 
+		 (mapcar
 		  (lambda (number)
 		    (elmo-pop3-uidl-to-number (cdr (assq number loc-alist))))
 		  numlist))))
@@ -620,17 +620,17 @@
 				  tmp-buffer process numlist)
       (prog1
 	  (elmo-pop3-msgdb-create-message
-	   tmp-buffer 
+	   tmp-buffer
 	   process
 	   (length numlist)
 	   numlist
 	   new-mark already-mark seen-mark seen-list loc-alist)
 	(kill-buffer tmp-buffer)))))
 
-(defun elmo-pop3-msgdb-create-message (buffer 
+(defun elmo-pop3-msgdb-create-message (buffer
 				       process
 				       num
-				       numlist new-mark already-mark 
+				       numlist new-mark already-mark
 				       seen-mark
 				       seen-list
 				       loc-alist)
@@ -650,11 +650,11 @@
 	  (save-restriction
 	    (narrow-to-region beg (point))
 	    (setq entity
-		  (elmo-msgdb-create-overview-from-buffer 
+		  (elmo-msgdb-create-overview-from-buffer
 		   (car numlist)))
 	    (setq numlist (cdr numlist))
 	    (when entity
-	      (setq overview 
+	      (setq overview
 		    (elmo-msgdb-append-element
 		     overview entity))
 	      (with-current-buffer (process-buffer process)
@@ -678,7 +678,7 @@
 	      (setq message-id (car entity))
 	      (setq seen (member message-id seen-list))
 	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-				  (if (elmo-cache-exists-p 
+				  (if (elmo-cache-exists-p
 				       message-id) ; XXX
 				      (if seen
 					  nil
@@ -688,7 +688,7 @@
 					    seen-mark)
 				      new-mark))))
 		  (setq mark-alist
-			(elmo-msgdb-mark-append 
+			(elmo-msgdb-mark-append
 			 mark-alist
 			 (elmo-msgdb-overview-entity-get-number entity)
 			 gmark))))))
@@ -728,7 +728,7 @@
 	  (setq number (elmo-pop3-uidl-to-number
 			(cdr (assq number loc-alist)))))
       (when number
-	(elmo-pop3-send-command process 
+	(elmo-pop3-send-command process
 				(format "retr %s" number))
 	(when (null (setq response (elmo-pop3-read-response
 				    process t)))
@@ -749,7 +749,7 @@
 			(cdr (assq number loc-alist)))))
       (if number
 	  (progn
-	    (elmo-pop3-send-command process 
+	    (elmo-pop3-send-command process
 				    (format "dele %s" number))
 	    (when (null (setq response (elmo-pop3-read-response
 					process t)))
@@ -764,7 +764,7 @@
 			  (elmo-msgdb-expand-path nil spec)))))
 	(process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session spec))))
-    (mapcar '(lambda (msg) (elmo-pop3-delete-msg 
+    (mapcar '(lambda (msg) (elmo-pop3-delete-msg
 			    process msg loc-alist))
 	    msgs)))
 
@@ -785,7 +785,7 @@
 			    (elmo-pop3-spec-stream-type spec)))))))
 
 (defsubst elmo-pop3-portinfo (spec)
-  (list (elmo-pop3-spec-hostname spec) 
+  (list (elmo-pop3-spec-hostname spec)
 	(elmo-pop3-spec-port spec)))
 
 (defun elmo-pop3-plugged-p (spec)
@@ -798,9 +798,9 @@
 	 (append (elmo-pop3-portinfo spec)
 		 (list nil nil (quote (elmo-pop3-port-label spec)) add))))
 
-(defalias 'elmo-pop3-sync-number-alist 
+(defalias 'elmo-pop3-sync-number-alist
   'elmo-generic-sync-number-alist)
-(defalias 'elmo-pop3-list-folder-unread 
+(defalias 'elmo-pop3-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)

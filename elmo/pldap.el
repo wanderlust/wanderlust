@@ -451,7 +451,7 @@ This table is built from RFC2252 Section 5 and RFC2256 Section 5")
 
 ;;; LDAP primitive functions.
 ;;
-;; LDAP object is 
+;; LDAP object is
 ;; (__ldap-object HOSTNAME PLIST)
 
 (defun ldapp (object)
@@ -910,7 +910,7 @@ entry according to the value of WITHDN."
 			      ldap-verbose))
     (ldap-close ldap)
     (with-temp-buffer
-      (set-buffer-multibyte nil)  
+      (set-buffer-multibyte nil)
       (if ldap-ignore-attribute-codings
 	  result
 	(mapcar (function

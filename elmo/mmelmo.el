@@ -49,7 +49,7 @@ If function is specified, its return value is used.")
     (if (not ret-val)
 	(save-excursion
 	  (set-buffer (setq ret-val
-			    (get-buffer-create 
+			    (get-buffer-create
 			     (concat mmelmo-entity-buffer-name "0"))))
 	  (mmelmo-original-mode)))
     ret-val))
@@ -61,7 +61,7 @@ If function is specified, its return value is used.")
 		(kill-buffer x)))
 	  (mapcar 'buffer-name (buffer-list))))
 
-(defun mmelmo-insert-sorted-header-from-buffer (buffer 
+(defun mmelmo-insert-sorted-header-from-buffer (buffer
 						start end
 						&optional invisible-fields
 						visible-fields

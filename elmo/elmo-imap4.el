@@ -54,9 +54,9 @@
 	(require 'sasl))
     (error))
   (defun-maybe sasl-cram-md5 (username passphrase challenge))
-  (defun-maybe sasl-digest-md5-digest-response 
+  (defun-maybe sasl-digest-md5-digest-response
     (digest-challenge username passwd serv-type host &optional realm))
-  (defun-maybe starttls-negotiate (a))  
+  (defun-maybe starttls-negotiate (a))
   (defun-maybe elmo-generic-list-folder-unread (spec mark-alist unread-marks))
   (defsubst-maybe utf7-decode-string (string &optional imap) string))
 
@@ -132,9 +132,9 @@
 (defconst elmo-imap4-literal-threshold 1024
  "Limitation of characters that can be used in a quoted string.")
 
-;; For debugging. 
+;; For debugging.
 (defvar elmo-imap4-debug nil
-  "Non-nil forces IMAP4 folder as debug mode. 
+  "Non-nil forces IMAP4 folder as debug mode.
 Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defvar elmo-imap4-debug-inhibit-logging nil)
@@ -220,7 +220,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ; 			     command)))
 
 (defun elmo-imap4-send-command-wait (session command)
-  "Send COMMAND to the SESSION. 
+  "Send COMMAND to the SESSION.
 Returns RESPONSE (parsed lisp object) of IMAP session.
 If response is not `OK', causes error with IMAP response text."
   (elmo-imap4-accept-ok session
@@ -229,7 +229,7 @@ If response is not `OK', causes error with IMAP response text."
 			 command)))
 
 (defun elmo-imap4-send-command (session command)
-  "Send COMMAND to the SESSION. 
+  "Send COMMAND to the SESSION.
 Returns a TAG string which is assigned to the COMAND."
   (let* ((command-args (if (listp command)
 			  command
@@ -510,7 +510,7 @@ BUFFER must be a single-byte buffer."
     ;; Append delimiter
     (if (and root
 	     (not (string= root ""))
-	     (not (string-match (concat "\\(.*\\)" 
+	     (not (string-match (concat "\\(.*\\)"
 					(regexp-quote delim)
 					"\\'")
 				root)))
@@ -522,14 +522,14 @@ BUFFER must be a single-byte buffer."
     (unless (string= (elmo-imap4-spec-username spec)
 		     elmo-default-imap4-user)
       (setq append-serv (concat ":" (elmo-imap4-spec-username spec))))
-    (unless (string= (elmo-imap4-spec-hostname spec) 
+    (unless (string= (elmo-imap4-spec-hostname spec)
 		     elmo-default-imap4-server)
       (setq append-serv (concat append-serv "@" (elmo-imap4-spec-hostname
 						 spec))))
     (unless (eq (elmo-imap4-spec-port spec)
 		elmo-default-imap4-port)
-      (setq append-serv (concat append-serv ":" 
-				(int-to-string 
+      (setq append-serv (concat append-serv ":"
+				(int-to-string
 				 (elmo-imap4-spec-port spec)))))
     (setq type (elmo-imap4-spec-stream-type spec))
     (unless (eq (elmo-network-stream-type-symbol type)
@@ -540,7 +540,7 @@ BUFFER must be a single-byte buffer."
 				     type)))))
     (mapcar (lambda (fld)
 	      (concat "%" (elmo-imap4-decode-folder-string fld)
-		      (and append-serv 
+		      (and append-serv
 			   (eval append-serv))))
 	    result)))
 
@@ -602,7 +602,7 @@ BUFFER must be a single-byte buffer."
      (- (elmo-imap4-response-value status 'uidnext) 1)
      (elmo-imap4-response-value status 'messages))))
 
-;      (when (and response (string-match 
+;      (when (and response (string-match
 ;			   "\\* STATUS [^(]* \\(([^)]*)\\)" response))
 ;	(setq response (read (downcase (elmo-match-string 1 response))))
 ;	(cons (- (cadr (memq 'uidnext response)) 1)
@@ -654,7 +654,7 @@ BUFFER must be a single-byte buffer."
 	       session
 	       (nth 1 (assq 'read-only (assq 'ok response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
-	  (error (or 
+	  (error (or
 		  (elmo-imap4-response-error-text response)
 		  (format "Select %s failed" mailbox))))))))
 
@@ -720,13 +720,13 @@ BUFFER must be a single-byte buffer."
       (setq search-key (concat "sent" search-key))
       (elmo-imap4-response-value
        (elmo-imap4-send-command-wait session
-				     (format 
+				     (format
 				      (if elmo-imap4-use-uid
-					  "uid search %s %s" 
+					  "uid search %s %s"
 					" search %s %s")
 				      search-key
 				      (elmo-date-get-description
-				       (elmo-date-get-datevec 
+				       (elmo-date-get-datevec
 					(elmo-filter-value filter)))))
        'search))
      (t
@@ -738,7 +738,7 @@ BUFFER must be a single-byte buffer."
 				      (if elmo-imap4-use-uid
 					  "uid search CHARSET "
 					"search CHARSET ")
-				      (elmo-imap4-astring 
+				      (elmo-imap4-astring
 				       (symbol-name charset))
 				      (if (eq (elmo-filter-type filter)
 					      'unmatch)
@@ -755,7 +755,7 @@ BUFFER must be a single-byte buffer."
     (let* ((session (elmo-imap4-get-session spec))
 	   response matched)
       (elmo-imap4-session-select-mailbox
-       session 
+       session
        (elmo-imap4-spec-mailbox spec))
       (while condition
 	(setq response (elmo-imap4-search-internal session
@@ -763,7 +763,7 @@ BUFFER must be a single-byte buffer."
 	(setq matched (nconc matched response))
 	(setq condition (cdr condition)))
       (if from-msgs
-	  (elmo-list-filter 
+	  (elmo-list-filter
 	   from-msgs
 	   (elmo-uniq-list (sort matched '<)))
 	(elmo-uniq-list (sort matched '<))))))
@@ -772,7 +772,7 @@ BUFFER must be a single-byte buffer."
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-spec-mailbox spec))))
 
-(static-cond 
+(static-cond
  ((fboundp 'float)
   ;; Emacs can parse dot symbol.
   (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
@@ -784,14 +784,14 @@ BUFFER must be a single-byte buffer."
   (defalias 'elmo-imap4-fetch-read 'read)
   (defalias 'elmo-imap4-read 'read)
   )
- (t 
+ (t
   ;;; For Nemacs.
   ;; Cannot parse dot symbol.
   (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
   (defvar elmo-imap4-header-fields "HEADER_FIELDS")
   (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
   (defvar elmo-imap4-rfc822-text "RFC822_TEXT")
-  (defvar elmo-imap4-rfc822-header "RFC822_HEADER")  
+  (defvar elmo-imap4-rfc822-header "RFC822_HEADER")
   (defvar elmo-imap4-header-fields "HEADER_FIELDS")
   (defun elmo-imap4-fetch-read (buffer)
     (with-current-buffer buffer
@@ -822,7 +822,7 @@ BUFFER must be a single-byte buffer."
 	entity found)
     (while (and elist (not found))
       (setq entity (car elist))
-      (cond 
+      (cond
        ((and (consp entity)
 	     (eq (+ 1 (cdr entity)) msg))
 	(setcdr entity msg)
@@ -832,7 +832,7 @@ BUFFER must be a single-byte buffer."
 	(setcar elist (cons entity msg))
 	(setq found t))
        ((or (and (integerp entity) (eq entity msg))
-	    (and (consp entity) 
+	    (and (consp entity)
 		 (<= (car entity) msg)
 		 (<= msg (cdr entity)))) ; included
 	(setq found t))); noop
@@ -857,12 +857,12 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(setq chop-length (length msg-list)))
       (while (and (not (null msg-list))
 		  (< count chop-length))
-	(setq cont-list 
-	      (elmo-imap4-add-to-cont-list 
+	(setq cont-list
+	      (elmo-imap4-add-to-cont-list
 	       cont-list (car msg-list)))
 	(incf count)
 	(setq msg-list (cdr msg-list)))
-      (setq set-list 
+      (setq set-list
 	    (cons
 	     (cons
 	      count
@@ -888,14 +888,14 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 If optional argument UNMARK is non-nil, unmark."
   (let ((session (elmo-imap4-get-session spec))
 	set-list)
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (setq set-list (elmo-imap4-make-number-set-list msgs))
     (when set-list
       (elmo-imap4-send-command-wait
        session
-       (format 
-	(if elmo-imap4-use-uid 
+       (format
+	(if elmo-imap4-use-uid
 	    "uid store %s %sflags.silent (%s)"
 	  "store %s %sflags.silent (%s)")
 	(cdr (car set-list))
@@ -915,7 +915,7 @@ If optional argument UNMARK is non-nil, unmark."
 
 (defun elmo-imap4-unmark-important (spec msgs)
   (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-mark-set-on-msgs spec msgs "\\Flagged" 'unmark 
+       (elmo-imap4-mark-set-on-msgs spec msgs "\\Flagged" 'unmark
 				    'no-expunge)))
 
 (defun elmo-imap4-mark-as-unread (spec msgs)
@@ -928,8 +928,8 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-delete-msgs-no-expunge (spec msgs)
   (elmo-imap4-mark-set-on-msgs spec msgs "\\Deleted" nil 'no-expunge))
 
-(defun elmo-imap4-msgdb-create-as-numlist (spec numlist new-mark already-mark 
-						seen-mark important-mark 
+(defun elmo-imap4-msgdb-create-as-numlist (spec numlist new-mark already-mark
+						seen-mark important-mark
 						seen-list)
   "Create msgdb for SPEC for NUMLIST."
   (elmo-imap4-msgdb-create spec numlist new-mark already-mark
@@ -990,14 +990,14 @@ If optional argument UNMARK is non-nil, unmark."
 	    '("Subject" "From" "To" "Cc" "Date"
 	      "Message-Id" "References" "In-Reply-To")
 	    elmo-msgdb-extra-fields))
-	  (total 0) 
+	  (total 0)
 	  (length (length numlist))
 	  rfc2060 set-list)
       (setq rfc2060 (memq 'imap4rev1
 			  (elmo-imap4-session-capability-internal
 			   session)))
       (message "Getting overview...")
-      (elmo-imap4-session-select-mailbox session 
+      (elmo-imap4-session-select-mailbox session
 					 (elmo-imap4-spec-mailbox spec))
       (setq set-list (elmo-imap4-make-number-set-list
 		      numlist
@@ -1020,7 +1020,7 @@ If optional argument UNMARK is non-nil, unmark."
 	  (when (> length elmo-display-progress-threshold)
 	    (setq total (+ total (car (car set-list))))
 	    (elmo-display-progress
-	     'elmo-imap4-msgdb-create "Getting overview..." 
+	     'elmo-imap4-msgdb-create "Getting overview..."
 	     (/ (* total 100) length)))
 	  (setq set-list (cdr set-list)))
 	(message "Getting overview...done.")
@@ -1044,7 +1044,7 @@ If optional argument UNMARK is non-nil, unmark."
 	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
     (elmo-imap4-send-string session
 			    (elmo-base64-encode-string
-			     (elmo-get-passwd 
+			     (elmo-get-passwd
 			      (elmo-network-session-password-key session))))
     (or (elmo-imap4-read-ok session tag)
 	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
@@ -1091,7 +1091,7 @@ If optional argument UNMARK is non-nil, unmark."
 
 (defun elmo-imap4-login (session)
   (let ((elmo-imap4-debug-inhibit-logging t))
-    (or 
+    (or
      (elmo-imap4-read-ok
       session
       (elmo-imap4-send-command
@@ -1111,7 +1111,7 @@ If optional argument UNMARK is non-nil, unmark."
     (setq elmo-imap4-seqno 0)
     (setq elmo-imap4-status 'initial)))
 
-(luna-define-method elmo-network-initialize-session ((session 
+(luna-define-method elmo-network-initialize-session ((session
 						      elmo-imap4-session))
   (let ((process (elmo-network-session-process-internal session))
 	response capability mechanism)
@@ -1140,7 +1140,7 @@ If optional argument UNMARK is non-nil, unmark."
 	(elmo-imap4-send-command-wait session "starttls")
 	(starttls-negotiate process)))))
 
-(luna-define-method elmo-network-authenticate-session ((session 
+(luna-define-method elmo-network-authenticate-session ((session
 							elmo-imap4-session))
  (with-current-buffer (process-buffer
 		       (elmo-network-session-process-internal session))
@@ -1170,7 +1170,7 @@ If optional argument UNMARK is non-nil, unmark."
 	      'elmo-imap4-login)))
        (funcall authenticator session)))))
 
-(luna-define-method elmo-network-setup-session ((session 
+(luna-define-method elmo-network-setup-session ((session
 						 elmo-imap4-session))
   (with-current-buffer (elmo-network-session-buffer session)
     (when (memq 'namespace (elmo-imap4-session-capability-internal session))
@@ -1188,7 +1188,7 @@ If optional argument UNMARK is non-nil, unmark."
 	(elmo-set-buffer-multibyte nil)
 	(insert string)
 	(goto-char (point-min))
-	(if (eq (re-search-forward "^$" nil t) 
+	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
 	    (insert "\n"))
 	(goto-char (point-min))
@@ -1199,14 +1199,14 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-read-part (folder msg part)
   (let* ((spec (elmo-folder-get-spec folder))
 	 (session (elmo-imap4-get-session spec)))
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (elmo-delete-cr
      (elmo-imap4-response-bodydetail-text
       (elmo-imap4-response-value
        (elmo-imap4-send-command-wait session
-				     (format 
-				      (if elmo-imap4-use-uid 
+				     (format
+				      (if elmo-imap4-use-uid
 					  "uid fetch %s body[%s]"
 					"fetch %s body[%s]")
 				      msg part))
@@ -1215,20 +1215,20 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
   (elmo-imap4-read-msg spec msg outbuf 'unseen))
 
-(defun elmo-imap4-read-msg (spec msg outbuf 
+(defun elmo-imap4-read-msg (spec msg outbuf
 				 &optional leave-seen-flag-untouched)
   (let ((session (elmo-imap4-get-session spec))
 	response)
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
     (setq response
 	  (elmo-imap4-send-command-wait session
-					(format 
-					 (if elmo-imap4-use-uid 
-					     "uid fetch %s rfc822%s" 
+					(format
+					 (if elmo-imap4-use-uid
+					     "uid fetch %s rfc822%s"
 					   "fetch %s rfc822%s")
 					 msg
 					 (if leave-seen-flag-untouched
@@ -1237,13 +1237,13 @@ If optional argument UNMARK is non-nil, unmark."
 			 (elmo-imap4-response-value-all
 			  response 'fetch )
 			 'rfc822))
-	 (with-current-buffer outbuf 
+	 (with-current-buffer outbuf
 	   (erase-buffer)
 	   (insert response)
 	   (elmo-delete-cr-get-content-type)))))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
-  (let ((tmp-buf (get-buffer-create 
+  (let ((tmp-buf (get-buffer-create
 		  " *elmo-imap4-setup-send-buffer-from-file*")))
     (save-excursion
       (save-match-data
@@ -1252,9 +1252,9 @@ If optional argument UNMARK is non-nil, unmark."
 	(as-binary-input-file
 	 (insert-file-contents file))
 	(goto-char (point-min))
-	(if (eq (re-search-forward "^$" nil t) 
+	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
-	    (insert "\n"))	
+	    (insert "\n"))
 	(goto-char (point-min))
 	(while (search-forward "\n" nil t)
 	  (replace-match "\r\n"))))
@@ -1275,14 +1275,14 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-delete-msg-by-id (spec msgid)
   (let* ((session (elmo-imap4-get-session spec))
 	 response msgs)
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (elmo-imap4-delete-msgs-no-expunge
      spec
      (elmo-imap4-response-value
       (elmo-imap4-send-command-wait session
 				    (list
-				     (if elmo-imap4-use-uid 
+				     (if elmo-imap4-use-uid
 					 "uid search header message-id "
 				       "search header message-id ")
 				     (elmo-imap4-field-body msgid)))
@@ -1291,9 +1291,9 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-append-msg-by-id (spec msgid)
   (let ((session (elmo-imap4-get-session spec))
 	send-buf)
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
-    (setq send-buf (elmo-imap4-setup-send-buffer-from-file 
+    (setq send-buf (elmo-imap4-setup-send-buffer-from-file
 		    (elmo-cache-get-path msgid)))
     (unwind-protect
 	(elmo-imap4-send-command-wait
@@ -1309,7 +1309,7 @@ If optional argument UNMARK is non-nil, unmark."
 (defun elmo-imap4-append-msg (spec string &optional msg no-see)
   (let ((session (elmo-imap4-get-session spec))
 	send-buf)
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (setq send-buf (elmo-imap4-setup-send-buffer string))
     (unwind-protect
@@ -1329,14 +1329,14 @@ If optional argument UNMARK is non-nil, unmark."
   (let ((src-folder (elmo-imap4-spec-mailbox src-spec))
 	(dst-folder (elmo-imap4-spec-mailbox dst-spec))
 	(session (elmo-imap4-get-session src-spec)))
-    (elmo-imap4-session-select-mailbox session 
+    (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox src-spec))
     (while msgs
       (elmo-imap4-send-command-wait session
 				    (list
 				     (format
-				      (if elmo-imap4-use-uid 
-					  "uid copy %s " 
+				      (if elmo-imap4-use-uid
+					  "uid copy %s "
 					"copy %s ")
 				      (car msgs))
 				     (elmo-imap4-mailbox dst-folder)))
@@ -1352,7 +1352,7 @@ If optional argument UNMARK is non-nil, unmark."
     (elmo-imap4-commit spec)
     (setq response
 	  (elmo-imap4-send-command-wait (elmo-imap4-get-session spec)
-					(list 
+					(list
 					 "status "
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-spec-mailbox spec))
@@ -1432,18 +1432,18 @@ Return nil if no complete line has arrived."
 	  (goto-char (point-min))
 	  (unwind-protect
 	      (cond ((eq elmo-imap4-status 'initial)
-		     (setq elmo-imap4-current-response 
+		     (setq elmo-imap4-current-response
 			   (elmo-imap4-parse-greeting)))
 		    ((or (eq elmo-imap4-status 'auth)
 			 (eq elmo-imap4-status 'nonauth)
 			 (eq elmo-imap4-status 'selected)
 			 (eq elmo-imap4-status 'examine))
 		     (setq elmo-imap4-current-response
-			   (cons 
+			   (cons
 			    (elmo-imap4-parse-response)
 			    elmo-imap4-current-response)))
 		    (t
-		     (message "Unknown state %s in arrival filter" 
+		     (message "Unknown state %s in arrival filter"
 			      elmo-imap4-status))))
 	  (delete-region (point-min) (point-max)))))))
 
@@ -1495,7 +1495,7 @@ Return nil if no complete line has arrived."
 
 (defsubst elmo-imap4-parse-astring ()
   (or (elmo-imap4-parse-string)
-      (buffer-substring (point) 
+      (buffer-substring (point)
 			(if (re-search-forward "[(){ \r\n%*\"\\]" nil t)
 			    (goto-char (1- (match-end 0)))
 			  (end-of-line)
@@ -1563,7 +1563,7 @@ Return nil if no complete line has arrived."
 	   (LIST       (list 'list (elmo-imap4-parse-data-list)))
 	   (LSUB       (list 'lsub (elmo-imap4-parse-data-list)))
 	   (SEARCH     (list
-			'search 
+			'search
 			(elmo-imap4-read (concat "("
 				      (buffer-substring (point) (point-max))
 				      ")"))))
@@ -1688,14 +1688,14 @@ Return nil if no complete line has arrived."
       (nreverse strlist))))
 
 (defsubst elmo-imap4-parse-fetch-body-section ()
-  (let ((section 
+  (let ((section
 	 (buffer-substring (point)
 			   (1-
 			    (progn (re-search-forward "[] ]" nil t)
 				   (point))))))
     (if (eq (char-before) ? )
 	(prog1
-	    (mapconcat 'identity 
+	    (mapconcat 'identity
 		       (cons section (elmo-imap4-parse-header-list)) " ")
 	  (search-forward "]" nil t))
       section)))
@@ -1731,7 +1731,7 @@ Return nil if no complete line has arrived."
 			   (list
 			    'bodydetail
 			    (upcase (elmo-imap4-parse-fetch-body-section))
-			    (and 
+			    (and
 			     (eq (char-after) ?<)
 			     (buffer-substring (1+ (point))
 					       (progn
@@ -1771,7 +1771,7 @@ Return nil if no complete line has arrived."
 			(list 'unseen (elmo-imap4-read (current-buffer))))
 		       (t
 			(message
-			 "Unknown status data %s in mailbox %s ignored" 
+			 "Unknown status data %s in mailbox %s ignored"
 			 token mailbox))))
 	       status))))
     (list 'status status)))
@@ -1789,7 +1789,7 @@ Return nil if no complete line has arrived."
   (list 'namespace
 	(nconc
 	 (copy-sequence elmo-imap4-extra-namespace-alist)
-	 (elmo-imap4-parse-namespace-subr	
+	 (elmo-imap4-parse-namespace-subr
 	  (elmo-imap4-read (concat "(" (buffer-substring
 			     (point) (point-max))
 			")"))))))
@@ -1988,7 +1988,7 @@ Return nil if no complete line has arrived."
 	(when (eq (char-after) ?\ );; body-ext-1part:
 	  (elmo-imap4-forward)
 	  (push (elmo-imap4-parse-nstring) body);; body-fld-md5
-	  (setq body 
+	  (setq body
 		(append (elmo-imap4-parse-body-ext) body)));; body-ext-1part..
     
 	(assert (eq (char-after) ?\)))

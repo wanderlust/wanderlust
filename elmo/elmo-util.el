@@ -59,7 +59,7 @@
 
 ;; base64 encoding/decoding
 (require 'mel)
-(fset 'elmo-base64-encode-string 
+(fset 'elmo-base64-encode-string
       (mel-find-function 'mime-encode-string "base64"))
 (fset 'elmo-base64-decode-string
       (mel-find-function 'mime-decode-string "base64"))
@@ -68,7 +68,7 @@
 ;; Check make-symbolic-link() instead.  -- 981002 by Fuji
 (if (fboundp 'make-symbolic-link)  ;; xxx
     (defalias 'elmo-add-name-to-file 'add-name-to-file)
-  (defun elmo-add-name-to-file 
+  (defun elmo-add-name-to-file
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
@@ -95,7 +95,7 @@
 
 (defmacro elmo-match-substring (pos string from)
   "Substring of POSth matched string of STRING. "
-  (` (substring (, string) 
+  (` (substring (, string)
 		(+ (match-beginning (, pos)) (, from))
 		(match-end (, pos)))))
 
@@ -130,7 +130,7 @@ File content is decoded with MIME-CHARSET."
 	 (elmo-set-buffer-multibyte default-enable-multibyte-characters)
 	 (decode-mime-charset-region (point-min) (point-max) mime-charset))
        (condition-case nil
-	   (read (current-buffer)) 
+	   (read (current-buffer))
 	 (error (unless no-err
 		  (message "Warning: Loading object from %s failed."
 			   filename)
@@ -193,7 +193,7 @@ File content is encoded with MIME-CHARSET."
 	      (setq server (elmo-match-substring 1 folder 1))
 	    (setq server default-server))
 	  (if (match-beginning 2)
-	      (setq port 
+	      (setq port
 		    (string-to-int (elmo-match-substring 2 folder 1)))
 	    (setq port default-port))
 	  (if (match-beginning 3)
@@ -213,18 +213,18 @@ File content is encoded with MIME-CHARSET."
 	(default-stream-type elmo-default-imap4-stream-type)
 	spec mailbox user auth)
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
-      ;; case: default-imap4-server is specified like 
+      ;; case: default-imap4-server is specified like
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
-    (setq spec (elmo-network-get-spec 
+    (setq spec (elmo-network-get-spec
 		folder default-server default-port default-stream-type))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(%\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
 	   folder)
       (progn
-	(setq mailbox (if (match-beginning 2) 
+	(setq mailbox (if (match-beginning 2)
 			  (elmo-match-string 2 folder)
 			elmo-default-imap4-mailbox))
 	(setq user (if (match-beginning 3)
@@ -278,11 +278,11 @@ File content is encoded with MIME-CHARSET."
     (when (string-match
 	   "^\\(-\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
 	   folder)
-      (setq group 
+      (setq group
 	    (if (match-beginning 2)
 		(elmo-match-string 2 folder)))
-      (setq user 
-	    (if (match-beginning 3) 
+      (setq user
+	    (if (match-beginning 3)
 		(elmo-match-substring 3 folder 1)
 	      elmo-default-nntp-user))
       (append (list 'nntp group user)
@@ -291,7 +291,7 @@ File content is encoded with MIME-CHARSET."
 (defsubst elmo-nntp-spec-group (spec)
   (nth 1 spec))
 
-(defsubst elmo-nntp-spec-username (spec)  
+(defsubst elmo-nntp-spec-username (spec)
   (nth 2 spec))
 
 ;; future use?
@@ -354,7 +354,7 @@ File content is encoded with MIME-CHARSET."
 			    (elmo-match-string 2 folder))) 0)
 	  (setq fld-name "")
 	)
-      (list 'localnews 
+      (list 'localnews
 	    (elmo-replace-in-string fld-name "\\." "/")))))
 
 (defun elmo-cache-get-spec (folder)
@@ -483,7 +483,7 @@ File content is encoded with MIME-CHARSET."
 	term ret-val)
     (while terms
       (setq term (car terms))
-      (cond 
+      (cond
        ((string-match "^\\([a-zA-Z\\-]+\\)=\\(.*\\)$" term)
 	(if (save-match-data
 	      (string-match "tocc" (elmo-match-string 1 term))) ;; syntax sugar
@@ -493,7 +493,7 @@ File content is encoded with MIME-CHARSET."
 					 (elmo-match-string 2 term))
 				 (vector 'match "cc"
 					 (elmo-match-string 2 term)))))
-	  (setq ret-val (cons (vector 'match 
+	  (setq ret-val (cons (vector 'match
 				      (elmo-match-string 1 term)
 				      (elmo-match-string 2 term))
 			      ret-val))))
@@ -506,7 +506,7 @@ File content is encoded with MIME-CHARSET."
 					 (elmo-match-string 2 term))
 				 (vector 'unmatch "cc"
 					 (elmo-match-string 2 term)))))
-	  (setq ret-val (cons (vector 'unmatch 
+	  (setq ret-val (cons (vector 'unmatch
 				      (elmo-match-string 1 term)
 				      (elmo-match-string 2 term))
 			      ret-val))))
@@ -588,12 +588,12 @@ File content is encoded with MIME-CHARSET."
       (elmo-set-work-buf
        (as-binary-output-file
 	(insert string)
-	(write-region (point-min) (point-max) 
+	(write-region (point-min) (point-max)
 		      filename nil 'no-msg))
        )))
 
 (defun elmo-max-of-list (nlist)
-  (let ((l nlist) 
+  (let ((l nlist)
 	(max-num 0))
     (while l
       (if (< max-num (car l))
@@ -616,7 +616,7 @@ File content is encoded with MIME-CHARSET."
                                       elmo-msgdb-dir))
           (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-          insert-file-contents-post-hook 
+          insert-file-contents-post-hook
           ret-val)
       (if (not (file-readable-p filename))
           ()
@@ -624,7 +624,7 @@ File content is encoded with MIME-CHARSET."
         (insert-file-contents filename)
         (setq ret-val
               (condition-case nil
-                  (read (current-buffer)) 
+                  (read (current-buffer))
                 (error nil nil))))
       (kill-buffer tmp-buffer)
       ret-val)))
@@ -650,7 +650,7 @@ File content is encoded with MIME-CHARSET."
 ;        (error "%s is not safe.chmod 600 %s!" filename filename))
       (if (file-writable-p filename)
          (progn
-           (write-region (point-min) (point-max) 
+           (write-region (point-min) (point-max)
                          filename nil 'no-msg)
            (set-file-modes filename 384))
         (message (format "%s is not writable." filename)))
@@ -664,11 +664,11 @@ File content is encoded with MIME-CHARSET."
     (setq pair (assoc key elmo-passwd-alist))
     (if pair
 	(elmo-base64-decode-string (cdr pair))
-      (setq pass (elmo-read-passwd (format "Password for %s: " 
+      (setq pass (elmo-read-passwd (format "Password for %s: "
 					   key) t))
       (setq elmo-passwd-alist
 	    (append elmo-passwd-alist
-		    (list (cons key 
+		    (list (cons key
 				(elmo-base64-encode-string pass)))))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
@@ -888,7 +888,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defun elmo-delete-plugged (&optional server port alist)
   (let* ((alist (or alist elmo-plugged-alist))
 	 (alist2 alist))
-    (cond ((and (not port) (not server))    
+    (cond ((and (not port) (not server))
 	   (setq alist nil))
 	  ((not port)
 	   ;; delete plugged all port of server
@@ -904,11 +904,11 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defun elmo-disk-usage (path)
   "Get disk usage (bytes) in PATH."
-  (let ((file-attr 
+  (let ((file-attr
 	 (condition-case () (file-attributes path) (error nil))))
     (if file-attr
 	(if (nth 0 file-attr) ; directory
-	    (let ((files (condition-case () 
+	    (let ((files (condition-case ()
 			     (directory-files path t "^[^\\.]")
 			   (error nil)))
 		  (result 0.0))
@@ -992,14 +992,14 @@ Otherwise treat \\ in NEWTEXT string as special:
     (while numbers
       (setq cur-number (+ cur-number 1))
       (setq one-list nil)
-      (while (and numbers 
+      (while (and numbers
 		  (eq 0
 		      (/ (- (car numbers)
 			    (* elmo-multi-divide-number cur-number))
 			 elmo-multi-divide-number)))
 	(setq one-list (nconc
-			one-list 
-			(list 
+			one-list
+			(list
 			 (if as-is
 			     (car numbers)
 			   (% (car numbers)
@@ -1017,7 +1017,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     ret-val))
 
 (defun elmo-list-diff (list1 list2 &optional mes)
-  (if mes 
+  (if mes
       (message mes))
   (let ((clist1 (copy-sequence list1))
 	(clist2 (copy-sequence list2)))
@@ -1065,7 +1065,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	result
 	dels news)
     (while (or list1-list list2-list)
-      (setq result (elmo-list-bigger-diff (car list1-list) (car list2-list) 
+      (setq result (elmo-list-bigger-diff (car list1-list) (car list2-list)
 					  mes))
       (setq dels (append dels (car result)))
       (setq news (append news (cadr result)))
@@ -1126,17 +1126,17 @@ Otherwise treat \\ in NEWTEXT string as special:
       (while condition
 	(goto-char (point-min))
 	(setq term (car condition))
-	(cond 
+	(cond
 	 ((and (eq (elmo-filter-type term) 'date)
 	       (string= (elmo-filter-key term) "since"))
 	  (let ((date (elmo-date-get-datevec (elmo-filter-value term))))
 	    (if (string<
-		 (timezone-make-sortable-date (aref date 0) 
+		 (timezone-make-sortable-date (aref date 0)
 					      (aref date 1)
 					      (aref date 2)
 					      (timezone-make-time-string
-					       (aref date 3) 
-					       (aref date 4) 
+					       (aref date 3)
+					       (aref date 4)
 					       (aref date 5)))
 		 (timezone-make-date-sortable (std11-field-body "date")))
 		(throw 'done t))))
@@ -1145,12 +1145,12 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (let ((date (elmo-date-get-datevec (elmo-filter-value term))))
 	    (if (string<
 		 (timezone-make-date-sortable (std11-field-body "date"))
-		 (timezone-make-sortable-date (aref date 0) 
+		 (timezone-make-sortable-date (aref date 0)
 					      (aref date 1)
 					      (aref date 2)
 					      (timezone-make-time-string
-					       (aref date 3) 
-					       (aref date 4) 
+					       (aref date 3)
+					       (aref date 4)
 					       (aref date 5))))
 		(throw 'done t))))
 	 ((eq (elmo-filter-type term) 'match)
@@ -1282,18 +1282,18 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defvar elmo-msgid-replace-chars nil)
 
 (defsubst elmo-replace-msgid-as-filename (msgid)
-  "Replace message-id string as filename." 
+  "Replace message-id string as filename."
   (setq msgid (elmo-replace-in-string msgid " " "  "))
   (if (null elmo-msgid-replace-chars)
-      (setq elmo-msgid-replace-chars 
-	    (regexp-quote (mapconcat 
+      (setq elmo-msgid-replace-chars
+	    (regexp-quote (mapconcat
 			   'car elmo-msgid-replace-string-alist ""))))
   (while (string-match (concat "[" elmo-msgid-replace-chars "]")
 		       msgid)
-    (setq msgid (concat 
+    (setq msgid (concat
 		 (substring msgid 0 (match-beginning 0))
-		 (cdr (assoc 
-		       (substring msgid 
+		 (cdr (assoc
+		       (substring msgid
 				  (match-beginning 0) (match-end 0))
 		       elmo-msgid-replace-string-alist))
 		 (substring msgid (match-end 0)))))
@@ -1303,15 +1303,15 @@ Otherwise treat \\ in NEWTEXT string as special:
   "Recover Message-ID from filename."
   (let (tmp result)
     (while (string-match " " filename)
-      (setq tmp (substring filename 
+      (setq tmp (substring filename
 			   (match-beginning 0)
 			   (+ (match-end 0) 1)))
       (if (string= tmp "  ")
 	  (setq tmp " ")
-	(setq tmp (car (rassoc tmp 
+	(setq tmp (car (rassoc tmp
 			       elmo-msgid-replace-string-alist))))
       (setq result
-	    (concat result 
+	    (concat result
 		    (substring filename 0 (match-beginning 0))
 		    tmp))
       (setq filename (substring filename (+ (match-end 0) 1))))
@@ -1353,7 +1353,7 @@ Otherwise treat \\ in NEWTEXT string as special:
   "Any element of list1 is deleted from list2."
   (while list1
     (setq list2 (delete (car list1) list2))
-    (setq list1 (cdr list1)))  
+    (setq list1 (cdr list1)))
   list2)
 
 (defun elmo-list-member (list1 list2)
@@ -1380,7 +1380,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (errobj error-object)
 	  err-mes)
       (while errobj
-	(setq err-mes (concat err-mes (format 
+	(setq err-mes (concat err-mes (format
 				       (if (stringp (car errobj))
 					   "%s"
 					 (if (boundp 'nemacs-version)

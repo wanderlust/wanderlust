@@ -35,7 +35,7 @@
 
 (defun elmo-multi-msgdb (msgdb base)
   (list (mapcar (function
-		 (lambda (x) 
+		 (lambda (x)
 		   (elmo-msgdb-overview-entity-set-number
 		    x
 		    (+ base
@@ -64,8 +64,8 @@
       (setq one-list-list (elmo-multi-get-intlist-list numlist))
       (setq cur-number 0)
       (while (< cur-number (length flds))
-	(setq ret-val 
-	      (elmo-msgdb-append 
+	(setq ret-val
+	      (elmo-msgdb-append
 	       ret-val
 	       (elmo-multi-msgdb
 		(elmo-msgdb-create-as-numlist (nth cur-number flds)
@@ -80,7 +80,7 @@
 ;; returns append-msgdb
 (defun elmo-multi-delete-crossposts (already-msgdb append-msgdb)
   (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
-	 (dummy (copy-sequence (append 
+	 (dummy (copy-sequence (append
 				number-alist
 				(elmo-msgdb-get-number-alist already-msgdb))))
 	 (cur number-alist)
@@ -95,14 +95,14 @@
 	    ;; base is also same...delete it!
 	    (setq to-be-deleted (append to-be-deleted (list (car cur))))))
       (setq cur (cdr cur)))
-    (setq overview (elmo-delete-if 
+    (setq overview (elmo-delete-if
 		    (function
 		     (lambda (x)
 		       (assq
 			(elmo-msgdb-overview-entity-get-number x)
 			to-be-deleted)))
 		    (elmo-msgdb-get-overview append-msgdb)))
-    (setq mark-alist (elmo-delete-if 
+    (setq mark-alist (elmo-delete-if
 		      (function
 		       (lambda (x)
 			 (assq
@@ -124,8 +124,8 @@
       (setq one-list-list (elmo-multi-get-intlist-list numlist))
       (setq cur-number 0)
       (while (< cur-number (length flds))
-	(setq ret-val 
-	      (elmo-msgdb-append 
+	(setq ret-val
+	      (elmo-msgdb-append
 	       ret-val
 	       (elmo-multi-msgdb
 		(elmo-msgdb-create (nth cur-number flds)
@@ -156,7 +156,7 @@
 	(cur-number 0))
     (setq one-list-list (elmo-multi-get-intlist-list msgs))
     (while (< cur-number (length flds))
-      (elmo-delete-msgs (nth cur-number flds) 
+      (elmo-delete-msgs (nth cur-number flds)
 			(nth cur-number one-list-list))
       (setq cur-number (+ 1 cur-number)))
     t))
@@ -173,8 +173,8 @@
 			    (* elmo-multi-divide-number cur-number))
 			 elmo-multi-divide-number)))
 	(setq one-alist (nconc
-			 one-alist 
-			 (list 
+			 one-alist
+			 (list
 			  (list (% (car (car mark-alist))
 				   (* elmo-multi-divide-number cur-number))
 				(cadr (car mark-alist))))))
@@ -190,15 +190,15 @@
     (setq mark-alist-list (elmo-multi-mark-alist-list mark-alist))
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq ret-val (append 
+      (setq ret-val (append
 		     ret-val
-		     (mapcar 
+		     (mapcar
 		      (function
 		       (lambda (x)
-			 (+ 
+			 (+
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder-unread (car flds)
-					       (car mark-alist-list) 
+					       (car mark-alist-list)
 					       unread-marks))))
       (setq mark-alist-list (cdr mark-alist-list))
       (setq flds (cdr flds)))
@@ -210,12 +210,12 @@
 	 ret-val)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq ret-val (append 
+      (setq ret-val (append
 		     ret-val
-		     (mapcar 
+		     (mapcar
 		      (function
 		       (lambda (x)
-			 (+ 
+			 (+
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder-important (car flds) overview))))
       (setq flds (cdr flds)))
@@ -230,12 +230,12 @@
 	 numbers)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq numbers (append 
+      (setq numbers (append
 		     numbers
-		     (mapcar 
+		     (mapcar
 		      (function
 		       (lambda (x)
-			 (+ 
+			 (+
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder (car flds)))))
       (setq flds (cdr flds)))
@@ -292,14 +292,14 @@
 	(if (null cur-numlist)
 	    ;; t means filter all.
 	    (setq cur-numlist t)))
-      (setq ret-val (append 
+      (setq ret-val (append
 		     ret-val
-		     (elmo-list-filter 
+		     (elmo-list-filter
 		      cur-numlist
-		      (mapcar 
+		      (mapcar
 		       (function
 			(lambda (x)
-			  (+ 
+			  (+
 			   (* elmo-multi-divide-number cur-number) x)))
 		       (elmo-call-func
 			(car flds) "search" condition)))))
@@ -309,15 +309,15 @@
     ret-val))
 
 (defun elmo-multi-use-cache-p (spec number)
-  (elmo-call-func (nth (- (/ number elmo-multi-divide-number) 1) 
+  (elmo-call-func (nth (- (/ number elmo-multi-divide-number) 1)
 		       (cdr spec))
-		  "use-cache-p" 
+		  "use-cache-p"
 		  (% number elmo-multi-divide-number)))
 
 (defun elmo-multi-local-file-p (spec number)
-  (elmo-call-func (nth (- (/ number elmo-multi-divide-number) 1) 
+  (elmo-call-func (nth (- (/ number elmo-multi-divide-number) 1)
 		       (cdr spec))
-		  "local-file-p" 
+		  "local-file-p"
 		  (% number elmo-multi-divide-number)))
 
 (defun elmo-multi-commit (spec)
@@ -355,12 +355,12 @@
       (incf multi-base)
       (setq append-alist
 	    (elmo-call-func (nth (- multi-base 1) (cdr spec)) ;; folder name
-			    "sync-number-alist" 
+			    "sync-number-alist"
 			    (nth (- multi-base 1) number-alist-list)))
-      (mapcar 
+      (mapcar
        (function
 	(lambda (x)
-	  (setcar x 
+	  (setcar x
 		  (+ (* elmo-multi-divide-number multi-base) (car x)))))
        append-alist)
       (setq result-alist (nconc result-alist append-alist))

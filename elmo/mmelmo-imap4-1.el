@@ -39,12 +39,12 @@
   (let ((i (length node-id))
 	result)
     (while (> i 0)
-      (setq result 
-	    (concat result 
-		    (if result 
-			(concat "." (int-to-string 
+      (setq result
+	    (concat result
+		    (if result
+			(concat "." (int-to-string
 				     (+ 1 (nth (- i 1) node-id))))
-		      (int-to-string (or 
+		      (int-to-string (or
 				      (+ 1 (nth (- i 1) node-id))
 				      0)))))
       (setq i (- i 1)))
@@ -85,41 +85,41 @@
 	)
       (mime-entity-set-children-internal ret-val children)
       (setq content-type (list (cons 'type 'multipart)))
-      (setq content-type (append content-type 
-				 (list (cons 'subtype 
-					     (intern 
+      (setq content-type (append content-type
+				 (list (cons 'subtype
+					     (intern
 					      (downcase (car entity)))))))
-      (setq content-type (append content-type 
+      (setq content-type (append content-type
 				 (mime-parse-parameters-from-list
 				  (elmo-imap4-nth 1 entity))))
       (mime-entity-set-content-type-internal ret-val content-type)
       ret-val))
    (t ;; singlepart
     (let (content-type result)
-      ;; append size information into location 
+      ;; append size information into location
       (setq location (append location (list (nth 6 entity))))
       (setq content-type (list (cons 'type (intern (downcase (car entity))))))
       (if (elmo-imap4-nth 1 entity)
 	  (setq content-type (append content-type
-				     (list 
-				      (cons 'subtype 
-					    (intern 
+				     (list
+				      (cons 'subtype
+					    (intern
 					     (downcase
 					      (elmo-imap4-nth 1 entity))))))))
       (if (elmo-imap4-nth 2 entity)
-	  (setq content-type (append content-type 
+	  (setq content-type (append content-type
 				     (mime-parse-parameters-from-list
 				      (elmo-imap4-nth 2 entity)))))
       (setq result (make-mime-entity-internal 'elmo-imap4
 					      location
 					      content-type	; content-type
 					      nil     ; children
-					      parent  ; parent 
+					      parent  ; parent
 					      node-id ; node-id
 					      ))
-      (mime-entity-set-encoding-internal result 
+      (mime-entity-set-encoding-internal result
 					 (and (elmo-imap4-nth 5 entity)
-					      (downcase 
+					      (downcase
 					       (elmo-imap4-nth 5 entity))))
       result))))
 
@@ -136,13 +136,13 @@
       (when (search-forward "FETCH" nil t)
 	(narrow-to-region (match-end 0) (point-max))
 	(while (re-search-forward "{\\([0-9]+\\)}\r\n" nil t)
-	  (goto-char (+ (point) 
+	  (goto-char (+ (point)
 			(string-to-int (elmo-match-buffer 1))))
 	  (setq str (buffer-substring (match-end 0) (point)))
 	  (delete-region (match-beginning 0) (point))
 	  (insert (prin1-to-string str))); (insert "\""))
-	(setq entity 
-	      (nth 1 (memq 'BODYSTRUCTURE 
+	(setq entity
+	      (nth 1 (memq 'BODYSTRUCTURE
 			   (read (buffer-string)))))
 	(set-buffer raw-buffer)
 	(mmelmo-imap4-parse-bodystructure-entity location nil entity nil)
@@ -172,18 +172,18 @@
 	(save-excursion
 	  (when (not (string= (elmo-imap4-connection-get-cwf connection)
 			      (elmo-imap4-spec-mailbox spec)))
-	    (if (null (setq response 
-			    (elmo-imap4-select-folder 
+	    (if (null (setq response
+			    (elmo-imap4-select-folder
 			     (elmo-imap4-spec-mailbox spec) connection)))
 		(error "Select folder failed")))
 	  (elmo-imap4-send-command (process-buffer process)
 				   process
-				   (format "uid fetch %s bodystructure" 
+				   (format "uid fetch %s bodystructure"
 					   msg))
 	  (if (null (setq response (elmo-imap4-read-contents
 				    (process-buffer process) process)))
 	      (error "Fetching body structure failed")))
-	(mmelmo-imap4-parse-bodystructure-string location 
+	(mmelmo-imap4-parse-bodystructure-string location
 						 response); make mime-entity
 	))))
 
@@ -191,21 +191,21 @@
   (if (or (not mmelmo-imap4-threshold)
 	  (not (nth 4 location))
 	  (and (nth 4 location)
-	       mmelmo-imap4-threshold	
+	       mmelmo-imap4-threshold
 	       (<= (nth 4 location) mmelmo-imap4-threshold)))
       (cond ((mmelmo-imap4-multipart-p entity)) ; noop
 	    (t
-	     (insert (elmo-imap4-read-part 
+	     (insert (elmo-imap4-read-part
 		      (nth 0 location)
 		      (nth 1 location)
-		      (mmelmo-imap4-node-id-to-string 
+		      (mmelmo-imap4-node-id-to-string
 		       (nth 3 location))))
 	     (mime-entity-set-body-start-internal entity (point-min))
 	     (mime-entity-set-body-end-internal entity (point-max))))
-    (setq mmelmo-imap4-skipped-parts 
+    (setq mmelmo-imap4-skipped-parts
 	  (append
 	   mmelmo-imap4-skipped-parts
-	   (list (mmelmo-imap4-node-id-to-string 
+	   (list (mmelmo-imap4-node-id-to-string
 		  (nth 3 location)))))))
 
 (defun mmelmo-imap4-read-body (entity)
@@ -214,32 +214,32 @@
     (if (or (not mmelmo-imap4-threshold)
 	    (not (nth 4 location))
 	    (and (nth 4 location)
-		 mmelmo-imap4-threshold	
+		 mmelmo-imap4-threshold
 		 (<= (nth 4 location) mmelmo-imap4-threshold)))
 	(insert (elmo-imap4-read-part (nth 0 location)
 				      (nth 1 location)
 				      "1"
 				      ))
-      (setq mmelmo-imap4-skipped-parts 
+      (setq mmelmo-imap4-skipped-parts
 	    (append
 	     mmelmo-imap4-skipped-parts
-	     (list 
-	      (mmelmo-imap4-node-id-to-string 
+	     (list
+	      (mmelmo-imap4-node-id-to-string
 	       (nth 3 location))))))))
 
 ;;; mm-backend definitions for elmo-imap4
 (mm-define-backend elmo-imap4 (elmo))
 
 (mm-define-method initialize-instance ((entity elmo-imap4))
-  (let ((new-entity (mmelmo-imap4-get-mime-entity 
+  (let ((new-entity (mmelmo-imap4-get-mime-entity
 		     (mime-entity-location-internal entity))))
     ;; ...
     (aset entity 1
 	  (mime-entity-location-internal new-entity))
-    (mime-entity-set-content-type-internal 
+    (mime-entity-set-content-type-internal
      entity
      (mime-entity-content-type-internal new-entity))
-    (mime-entity-set-encoding-internal 
+    (mime-entity-set-encoding-internal
      entity
      (mime-entity-encoding-internal new-entity))
     (mime-entity-set-children-internal
@@ -253,9 +253,9 @@
      (mime-entity-body-end-internal new-entity))))
 
 (mm-define-method entity-buffer ((entity elmo-imap4))
-  (let ((buffer (get-buffer-create 
+  (let ((buffer (get-buffer-create
 		 (concat mmelmo-entity-buffer-name
-			 (mmelmo-imap4-node-id-to-string 
+			 (mmelmo-imap4-node-id-to-string
 			  (mime-entity-node-id-internal entity)))))
 	(location (mime-entity-location-internal entity)))
     (set-buffer buffer)
@@ -332,13 +332,13 @@
 (mm-define-method fetch-field ((entity elmo-imap4) field-name)
   (save-excursion
     (let ((buf (mime-entity-buffer-internal entity)))
-      (when buf 
+      (when buf
 	(set-buffer buf)
 	(save-restriction
 	  (if (and (mime-entity-header-start-internal entity)
 		   (mime-entity-header-end-internal entity))
 	      (progn
-		(narrow-to-region 
+		(narrow-to-region
 		 (mime-entity-header-start-internal entity)
 		 (mime-entity-header-end-internal entity))
 		(std11-fetch-field field-name))

@@ -232,8 +232,8 @@ Don't cache if nil.")
 	(if (looking-at "[23][0-9]+ .*$")
 	    (progn (setq response-continue nil)
 		   (setq elmo-nntp-read-point match-end)
-		   (setq return-value 
-			 (if return-value 
+		   (setq return-value
+			 (if return-value
 			     (concat return-value "\n" response-string)
 			   response-string)))
 	  (if (looking-at "[^23][0-9]+ .*$")
@@ -243,8 +243,8 @@ Don't cache if nil.")
 	    (setq elmo-nntp-read-point match-end)
 	    (if not-command
 		(setq response-continue nil))
-	    (setq return-value 
-		  (if return-value 
+	    (setq return-value
+		  (if return-value
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-nntp-read-point match-end)))
@@ -271,7 +271,7 @@ Don't cache if nil.")
 	(goto-char elmo-nntp-read-point))
       (setq match-end (point))
       (elmo-delete-cr
-       (buffer-substring elmo-nntp-read-point 
+       (buffer-substring elmo-nntp-read-point
 			 (- match-end 3))))))
 
 (defun elmo-nntp-read-body (buffer process outbuf)
@@ -297,8 +297,8 @@ Don't cache if nil.")
       (condition-case ()
 	  (if (not (string= cwf folder))
 	      (progn
-		(elmo-nntp-send-command buffer 
-					process 
+		(elmo-nntp-send-command buffer
+					process
 					(format "group %s" folder))
 		(if (elmo-nntp-read-response buffer process)
 		    (setcar (cddr connection) folder)))
@@ -342,7 +342,7 @@ Don't cache if nil.")
 
 (defun elmo-nntp-list-folders (spec &optional hierarchy)
   (elmo-nntp-setting spec
-   (let* ((cwf     (caddr connection))	 
+   (let* ((cwf     (caddr connection))
 	  (tmp-buffer (get-buffer-create " *ELMO NNTP list folders TMP*"))
 	  response ret-val top-ng append-serv use-list-active start)
     (save-excursion
@@ -446,7 +446,7 @@ Don't cache if nil.")
 		   (concat "-" fld
 			   (and user
 				(concat ":" user))
-			   (and append-serv 
+			   (and append-serv
 				(concat append-serv)))))
 	      ret-val)))))
 
@@ -484,15 +484,15 @@ Don't cache if nil.")
 		(error "Fetching listgroup failed"))
 	    (setq numbers (elmo-string-to-list response))))
 	(unless use-listgroup
-	  (elmo-nntp-send-command buffer 
-				  process 
+	  (elmo-nntp-send-command buffer
+				  process
 				  (format "group %s" folder))
 	  (if (null (setq response (elmo-nntp-read-response buffer process)))
 	      (error "Select folder failed"))
 	  (setcar (cddr connection) folder)
 	  (if (and
-	       (string-match 
-		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
+	       (string-match
+		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		response)
 	       (> (string-to-int (elmo-match-string 1 response)) 0))
 	      (setq numbers (elmo-nntp-make-msglist
@@ -545,13 +545,13 @@ Don't cache if nil.")
 	(if (not connection)
 	    (error "Connection failed"))
 	(save-excursion
-	  (elmo-nntp-send-command buffer 
-				  process 
+	  (elmo-nntp-send-command buffer
+				  process
 				  (format "group %s" folder))
 	  (setq response (elmo-nntp-read-response buffer process))
-	  (if (and response 
-		   (string-match 
-		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
+	  (if (and response
+		   (string-match
+		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		    response))
 	      (progn
 		(setq end-num (string-to-int
@@ -588,7 +588,7 @@ Don't cache if nil.")
     ("lines" . 7)
     ("xref" . 8)))
 
-(defun elmo-nntp-create-msgdb-from-overview-string (str 
+(defun elmo-nntp-create-msgdb-from-overview-string (str
 						    folder
 						    new-mark
 						    already-mark
@@ -622,17 +622,17 @@ Don't cache if nil.")
 	    (setq extra (cons (cons ext field) extra)))
 	  (setq extras (cdr extras)))
 	(setq overview
-	      (elmo-msgdb-append-element 
+	      (elmo-msgdb-append-element
 	       overview
 	       (cons (aref ov-entity 4)
 		     (vector num
-			     (elmo-msgdb-get-last-message-id 
+			     (elmo-msgdb-get-last-message-id
 			      (aref ov-entity 5))
 			     ;; from
-			     (elmo-mime-string (elmo-delete-char 
+			     (elmo-mime-string (elmo-delete-char
 						?\"
-						(or 
-						 (aref ov-entity 2) 
+						(or
+						 (aref ov-entity 2)
 						 elmo-no-from) 'uni))
 			     ;; subject
 			     (elmo-mime-string (or (aref ov-entity 1)
@@ -659,7 +659,7 @@ Don't cache if nil.")
 				      seen-mark)
 				new-mark))))
 	    (setq mark-alist
-		  (elmo-msgdb-mark-append mark-alist 
+		  (elmo-msgdb-mark-append mark-alist
 					  num gmark))))
       (setq ov-list (cdr ov-list)))
     (list overview number-alist mark-alist)))
@@ -673,7 +673,7 @@ Don't cache if nil.")
 			  t))
 
 (defun elmo-nntp-msgdb-create (spec numlist new-mark already-mark
-				    seen-mark important-mark 
+				    seen-mark important-mark
 				    seen-list &optional as-num)
   (when numlist
     (save-excursion
@@ -694,19 +694,19 @@ Don't cache if nil.")
 		length  (+ (- end-num beg-num) 1))
 	  (message "Getting overview...")
 	  (while (<= cur end-num)
-	    (elmo-nntp-send-command buffer process 
-				    (format 
-				     "xover %s-%s" 
+	    (elmo-nntp-send-command buffer process
+				    (format
+				     "xover %s-%s"
 				     (int-to-string cur)
-				     (int-to-string 
-				      (+ cur 
+				     (int-to-string
+				      (+ cur
 					 elmo-nntp-overview-fetch-chop-length))))
 	    (with-current-buffer buffer
 	      (if ov-str
-		  (setq ret-val 
+		  (setq ret-val
 			(elmo-msgdb-append
 			 ret-val
-			 (elmo-nntp-create-msgdb-from-overview-string 
+			 (elmo-nntp-create-msgdb-from-overview-string
 			  ov-str
 			  folder
 			  new-mark
@@ -726,7 +726,7 @@ Don't cache if nil.")
 	    (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
 	    (when (> length elmo-display-progress-threshold)
 	      (elmo-display-progress
-	       'elmo-nntp-msgdb-create "Getting overview..." 
+	       'elmo-nntp-msgdb-create "Getting overview..."
 	       (/ (* (+ (- (min cur end-num)
 			   beg-num) 1) 100) length))))
 	  (when (> length elmo-display-progress-threshold)
@@ -738,10 +738,10 @@ Don't cache if nil.")
 			   new-mark already-mark seen-mark seen-list))
 	  (with-current-buffer buffer
 	    (if ov-str
-		(setq ret-val 
+		(setq ret-val
 		      (elmo-msgdb-append
 		       ret-val
-		       (elmo-nntp-create-msgdb-from-overview-string 
+		       (elmo-nntp-create-msgdb-from-overview-string
 			ov-str
 			folder
 			new-mark
@@ -765,15 +765,15 @@ Don't cache if nil.")
 	;; to max-number(inn 2.3?).
 	(when (and (elmo-nntp-max-number-precedes-list-active-p)
 		   (elmo-nntp-list-active-p server port))
-	  (elmo-nntp-send-command buffer process 
+	  (elmo-nntp-send-command buffer process
 				  (format "list active %s" folder))
 	  (if (null (elmo-nntp-read-response buffer process))
 	      (progn
 		(elmo-nntp-set-list-active server port nil)
 		(error "NNTP list command failed")))
-	  (elmo-nntp-catchup-msgdb 
-	   ret-val 
-	   (nth 1 (read (concat "(" (elmo-nntp-read-contents 
+	  (elmo-nntp-catchup-msgdb
+	   ret-val
+	   (nth 1 (read (concat "(" (elmo-nntp-read-contents
 				     buffer process) ")")))))
 	ret-val)))))
 
@@ -809,7 +809,7 @@ Don't cache if nil.")
 	  number-alist))))
 
 (defun elmo-nntp-msgdb-create-by-header (folder buffer process numlist
-						new-mark already-mark 
+						new-mark already-mark
 						seen-mark seen-list)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
 	ret-val)
@@ -817,7 +817,7 @@ Don't cache if nil.")
      buffer tmp-buffer process numlist)
     (setq ret-val
 	  (elmo-nntp-msgdb-create-message
-	   tmp-buffer (length numlist) folder new-mark already-mark 
+	   tmp-buffer (length numlist) folder new-mark already-mark
 	   seen-mark seen-list))
     (kill-buffer tmp-buffer)
     ret-val))
@@ -835,8 +835,8 @@ Don't cache if nil.")
       (while (not (eobp))
 	(end-of-line)
 	(setq ret-list (save-match-data
-			 (apply 'vector (split-string 
-					 (buffer-substring beg (point)) 
+			 (apply 'vector (split-string
+					 (buffer-substring beg (point))
 					 "\t"))))
 	(beginning-of-line)
 	(forward-line 1)
@@ -850,15 +850,15 @@ Don't cache if nil.")
     (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection))
-;	   (cwf     (caddr connection))	 
-	   response errmsg ov-str)  
+;	   (cwf     (caddr connection))
+	   response errmsg ov-str)
       (catch 'done
 	(if folder
 	    (if (null (elmo-nntp-goto-folder server folder user port type))
 		(progn
 		  (setq errmsg (format "group %s not found." folder))
 		  (throw 'done nil))))
-	(elmo-nntp-send-command buffer process 
+	(elmo-nntp-send-command buffer process
 				(format "xover %s-%s" beg end))
 	(if (null (setq response (elmo-nntp-read-response
 				  buffer process t)))
@@ -873,20 +873,20 @@ Don't cache if nil.")
 	(setq ov-str response)
 	)
       (if errmsg
-	  (progn 
+	  (progn
 	    (message errmsg)
 	    nil)
 	ov-str))))
 
 
 (defun elmo-nntp-get-message (server user number folder outbuf port type)
-  "Get nntp message on FOLDER at SERVER. 
+  "Get nntp message on FOLDER at SERVER.
 Returns message string."
   (save-excursion
     (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection))
-	   (cwf     (caddr connection))	 
+	   (cwf     (caddr connection))
 	   response errmsg)
       (catch 'done
 	(if (and folder
@@ -895,7 +895,7 @@ Returns message string."
 		(progn
 		  (setq errmsg (format "group %s not found." folder))
 		  (throw 'done nil))))
-	(elmo-nntp-send-command buffer process 
+	(elmo-nntp-send-command buffer process
 				(format "article %s" number))
 	(if (null (setq response (elmo-nntp-read-response
 				  buffer process t)))
@@ -913,7 +913,7 @@ Returns message string."
 	  (forward-line))
 	)
       (if errmsg
-	  (progn 
+	  (progn
 	    (message errmsg)
 	    nil))
       response)))
@@ -924,7 +924,7 @@ Returns message string."
     (let* ((connection (elmo-nntp-get-connection server user port type))
 	   (buffer  (car connection))
 	   (process (cadr connection)))
-      (elmo-nntp-send-command buffer process 
+      (elmo-nntp-send-command buffer process
 			      (format "head %s" msgid))
       (if (elmo-nntp-read-response buffer process)
 	  (elmo-nntp-read-contents buffer process))
@@ -1008,9 +1008,9 @@ Return nil if connection failed."
 (defun elmo-nntp-read-msg (spec msg outbuf)
   (elmo-nntp-get-message (elmo-nntp-spec-hostname spec)
 			 (elmo-nntp-spec-username spec)
-			 msg 
+			 msg
 			 (elmo-nntp-spec-group spec)
-			 outbuf 
+			 outbuf
 			 (elmo-nntp-spec-port spec)
 			 (elmo-nntp-spec-stream-type spec)))
 
@@ -1024,9 +1024,9 @@ Return nil if connection failed."
 
 (defun elmo-nntp-post (hostname content-buf)
   (let* (;(folder (nth 1 spec))
-	 (connection 
-	  (elmo-nntp-get-connection 
-	   hostname 
+	 (connection
+	  (elmo-nntp-get-connection
+	   hostname
 	   elmo-default-nntp-user
 	   elmo-default-nntp-port elmo-default-nntp-stream-type))
 	 (buffer (car connection))
@@ -1040,8 +1040,8 @@ Return nil if connection failed."
 	  (delete-region (match-beginning 0)(match-end 0)))
       (setq has-message-id (std11-field-body "message-id"))
       (elmo-nntp-send-command buffer process "post")
-      (if (string-match "^340" (setq response 
-				     (elmo-nntp-read-raw-response 
+      (if (string-match "^340" (setq response
+				     (elmo-nntp-read-raw-response
 				      buffer process)))
 	  (if (string-match "recommended ID \\(<[^@]+@[^>]+>\\)" response)
 	      (unless has-message-id
@@ -1056,7 +1056,7 @@ Return nil if connection failed."
       (elmo-nntp-send-data process content-buf)
       (elmo-nntp-send-command buffer process ".")
       ;(elmo-nntp-read-response buffer process t)
-      (if (not (string-match 
+      (if (not (string-match
 		"^2" (setq response (elmo-nntp-read-raw-response
 				     buffer process))))
 	  (error (concat "NNTP error: " response))))))
@@ -1141,8 +1141,8 @@ Return nil if connection failed."
 	      (setq key (cons (cons buffer process)
 			      (vector 0 server user port type)))
 	      (setq connection-keys (nconc connection-keys (list key))))
-	    (elmo-nntp-send-command buffer 
-				    process 
+	    (elmo-nntp-send-command buffer
+				    process
 				    (format "group %s" folder)
 				    t ;; don't erase-buffer
 				    )
@@ -1319,7 +1319,7 @@ Return nil if connection failed."
 
 ;; end of from Gnus
 
-(defun elmo-nntp-msgdb-create-message (buffer len folder new-mark 
+(defun elmo-nntp-msgdb-create-message (buffer len folder new-mark
 					      already-mark seen-mark seen-list)
   (save-excursion
     (let (beg
@@ -1334,7 +1334,7 @@ Return nil if connection failed."
 	(setq beg (save-excursion (forward-line 1) (point)))
 	(setq num
 	      (and (looking-at "^2[0-9]*[ ]+\\([0-9]+\\)")
-		   (string-to-int 
+		   (string-to-int
 		    (elmo-match-buffer 1))))
 	(elmo-nntp-next-result-arrived-p)
 	(when num
@@ -1345,17 +1345,17 @@ Return nil if connection failed."
 	      (setq entity
 		    (elmo-msgdb-create-overview-from-buffer num))
 	      (when entity
-		(setq overview 
+		(setq overview
 		      (elmo-msgdb-append-element
 		       overview entity))
 		(setq number-alist
-		      (elmo-msgdb-number-add 
+		      (elmo-msgdb-number-add
 		       number-alist
 		       (elmo-msgdb-overview-entity-get-number entity)
 		       (car entity)))
 		(setq message-id (car entity))
 		(setq seen (member message-id seen-list))
-		(if (setq gmark 
+		(if (setq gmark
 			  (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-cache-exists-p message-id);; XXX
 				  (if seen
@@ -1366,8 +1366,8 @@ Return nil if connection failed."
 					seen-mark)
 				  new-mark))))
 		    (setq mark-alist
-			  (elmo-msgdb-mark-append 
-			   mark-alist 
+			  (elmo-msgdb-mark-append
+			   mark-alist
 			   num gmark)))
 		))))
 	(when (> len elmo-display-progress-threshold)
@@ -1395,7 +1395,7 @@ Return nil if connection failed."
 			    (elmo-nntp-spec-stream-type spec)))))))
 
 (defsubst elmo-nntp-portinfo (spec)
-  (list (elmo-nntp-spec-hostname spec) 
+  (list (elmo-nntp-spec-hostname spec)
 	(elmo-nntp-spec-port spec)))
 
 (defun elmo-nntp-plugged-p (spec)
@@ -1408,7 +1408,7 @@ Return nil if connection failed."
 	 (append (elmo-nntp-portinfo spec)
 		 (list nil nil (quote (elmo-nntp-port-label spec)) add))))
 
-(defalias 'elmo-nntp-list-folder-unread 
+(defalias 'elmo-nntp-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-nntp-list-folder-important
   'elmo-generic-list-folder-important)

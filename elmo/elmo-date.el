@@ -49,15 +49,15 @@
 	  (aref datevec 0)))
 
 (defun elmo-date-get-datevec (description)
-  (cond 
+  (cond
    ((not elmo-date-match)
     (error "date match is not available"))
    ((string-match "^[ \t]*\\([0-9]+\\)?[ \t]*\\([a-zA-Z]+\\)$" description)
-    (let ((today 
+    (let ((today
 	   (save-match-data
 	     (timezone-fix-time (current-time-string) (current-time-zone)
 				nil)))
-	  (number 
+	  (number
 	   (string-to-int
 	    (if (match-beginning 1)
 		(elmo-match-string 1 description)
@@ -70,7 +70,7 @@
 	    (elmo-date-get-offset-datevec today number)
 	  (error "%s is not supported yet" suffix)))))
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
-    (timezone-fix-time 
+    (timezone-fix-time
      (concat (elmo-replace-in-string description "-" " ") " 0:00")
      nil nil))))
 
@@ -113,7 +113,7 @@
 	(minute   (aref datevec 4))
 	(second   (aref datevec 5))
 	(timezone (aref datevec 6))
-	day-number p 
+	day-number p
 	day-of-month)
     (setq p 1)
     (setq day-number (- (timezone-day-number month day year)

@@ -42,19 +42,19 @@
   (let ((i (length node-id))
 	result)
     (while (> i 0)
-      (setq result 
-	    (concat result 
-		    (if result 
-			(concat "." (int-to-string 
+      (setq result
+	    (concat result
+		    (if result
+			(concat "." (int-to-string
 				     (+ 1 (nth (- i 1) node-id))))
-		      (int-to-string (or 
+		      (int-to-string (or
 				      (+ 1 (nth (- i 1) node-id))
 				      0)))))
       (setq i (- i 1)))
     (or result "0")))
 
 ;; parse IMAP4 body structure entity recursively.
-(defun mmelmo-imap4-parse-bodystructure-object (folder 
+(defun mmelmo-imap4-parse-bodystructure-object (folder
 						number msgdb
 						node-id object parent)
   (cond
@@ -84,14 +84,14 @@
       (mime-entity-set-children-internal ret-val children)
       (setq content-type (list (cons 'type 'multipart)))
       (if (elmo-imap4-nth 0 object)
-	  (setq content-type (append content-type 
-				     (list (cons 'subtype 
-						 (intern 
+	  (setq content-type (append content-type
+				     (list (cons 'subtype
+						 (intern
 						  (downcase
 						   (elmo-imap4-nth
 						    0
 						    object))))))))
-      (setq content-type (append content-type 
+      (setq content-type (append content-type
 				 (mime-parse-parameters-from-list
 				  (elmo-imap4-nth 1 object))))
       (mime-entity-set-content-type-internal ret-val content-type)
@@ -102,16 +102,16 @@
       (setq content-type (list (cons 'type (intern (downcase (car object))))))
       (if (elmo-imap4-nth 1 object)
 	  (setq content-type (append content-type
-				     (list 
-				      (cons 'subtype 
-					    (intern 
+				     (list
+				      (cons 'subtype
+					    (intern
 					     (downcase
 					      (elmo-imap4-nth 1 object))))))))
       (if (elmo-imap4-nth 2 object)
-	  (setq content-type (append content-type 
+	  (setq content-type (append content-type
 				     (mime-parse-parameters-from-list
 				      (elmo-imap4-nth 2 object)))))
-      (setq ret-val 
+      (setq ret-val
 	    (luna-make-entity
 	     (mm-expand-class-name 'elmo-imap4)
 	     :folder folder
@@ -122,7 +122,7 @@
 	     :node-id node-id))
       (mime-entity-set-encoding-internal ret-val
 					 (and (elmo-imap4-nth 5 object)
-					      (downcase 
+					      (downcase
 					       (elmo-imap4-nth 5 object))))
       ret-val))))
 
@@ -148,7 +148,7 @@
       (elmo-imap4-response-value
        (elmo-imap4-send-command-wait
 	session
-	(format 
+	(format
 	 (if elmo-imap4-use-uid
 	     "uid fetch %s bodystructure"
 	   "fetch %s bodystructure")
@@ -165,10 +165,10 @@
 		   mmelmo-imap4-threshold)))
       (progn
 	(cond ((mmelmo-imap4-multipart-p entity)) ; noop
-	      (t (insert (elmo-imap4-read-part 
+	      (t (insert (elmo-imap4-read-part
 			  (mime-elmo-entity-folder-internal entity)
 			  (mime-elmo-entity-number-internal entity)
-			  (mmelmo-imap4-node-id-to-string 
+			  (mmelmo-imap4-node-id-to-string
 			   (mime-entity-node-id-internal entity))))))
 	(setq mmelmo-imap4-fetched t)
 	(mime-buffer-entity-set-body-start-internal entity (point-min))
@@ -176,10 +176,10 @@
     (setq mmelmo-imap4-fetched nil)
     (mime-buffer-entity-set-body-start-internal entity (point-min))
     (mime-buffer-entity-set-body-end-internal entity (point-min))
-    (setq mmelmo-imap4-skipped-parts 
+    (setq mmelmo-imap4-skipped-parts
 	  (append
 	   mmelmo-imap4-skipped-parts
-	   (list (mmelmo-imap4-node-id-to-string 
+	   (list (mmelmo-imap4-node-id-to-string
 		  (mime-entity-node-id-internal entity)))))))
 
 (defun mmelmo-imap4-insert-body (entity)
@@ -187,16 +187,16 @@
   (if (or (not mmelmo-imap4-threshold)
 	  (not (mime-elmo-entity-size-internal entity))
 	  (and (mime-elmo-entity-size-internal entity)
-	       mmelmo-imap4-threshold	
+	       mmelmo-imap4-threshold
 	       (<= (mime-elmo-entity-size-internal entity)
 		   mmelmo-imap4-threshold)))
       (insert (elmo-imap4-read-part
 	       (mime-elmo-entity-folder-internal entity)
 	       (mime-elmo-entity-number-internal entity) "1"))
-    (setq mmelmo-imap4-skipped-parts 
+    (setq mmelmo-imap4-skipped-parts
 	  (append
 	   mmelmo-imap4-skipped-parts
-	   (list (mmelmo-imap4-node-id-to-string 
+	   (list (mmelmo-imap4-node-id-to-string
 		  (mime-entity-node-id-internal entity)))))))
 
 ;;; mime-elmo-imap4-entity class definitions.
@@ -207,9 +207,9 @@
 (luna-define-method initialize-instance ((entity mime-elmo-imap4-entity)
 					 &rest init-args)
   "The initialization method for elmo-imap4.
-mime-elmo-entity has its own instance variable 
+mime-elmo-entity has its own instance variable
 `imap', `folder', `msgdb', and `size'.
-These value must be specified as argument for `luna-make-entity'."  
+These value must be specified as argument for `luna-make-entity'."
   (apply (car (luna-class-find-functions
 	       (luna-find-class 'standard-object)
 	       'initialize-instance))
@@ -232,9 +232,9 @@ These value must be specified as argument for `luna-make-entity'."
 	(mime-buffer-entity-buffer-internal entity))
     ;; No buffer exist.
     (save-excursion
-      (set-buffer (get-buffer-create 
+      (set-buffer (get-buffer-create
 		   (concat mmelmo-entity-buffer-name
-			   (mmelmo-imap4-node-id-to-string 
+			   (mmelmo-imap4-node-id-to-string
 			    (mime-entity-node-id-internal entity)))))
       (mmelmo-original-mode)
       (mime-buffer-entity-set-buffer-internal entity (current-buffer))
@@ -248,23 +248,23 @@ These value must be specified as argument for `luna-make-entity'."
 	      (setq mime-message-structure entity)
 	      (setq mmelmo-imap4-skipped-parts nil)
 	      ;; insert header
-	      (insert (elmo-imap4-read-part 
+	      (insert (elmo-imap4-read-part
 		       (mime-elmo-entity-folder-internal entity)
 		       (mime-elmo-entity-number-internal entity)
 		       "header"))
-	      (mime-buffer-entity-set-header-start-internal 
+	      (mime-buffer-entity-set-header-start-internal
 	       entity (point-min))
 	      (mime-buffer-entity-set-header-end-internal
 	       entity (max (- (point) 1) 1))
 	      (if (null (mime-entity-children-internal entity))
 		  (progn
-		    (mime-buffer-entity-set-body-start-internal 
+		    (mime-buffer-entity-set-body-start-internal
 		     entity (point))
 		    ;; insert body if size is OK.
 		    (mmelmo-imap4-insert-body entity)
-		    (mime-buffer-entity-set-body-end-internal 
+		    (mime-buffer-entity-set-body-end-internal
 		     entity (point)))))
-	  (setq mime-message-structure 
+	  (setq mime-message-structure
 		mmelmo-imap4-current-message-structure)
 	  (mmelmo-imap4-read-part entity)))
       (current-buffer))))
@@ -272,14 +272,14 @@ These value must be specified as argument for `luna-make-entity'."
 ; mime-entity-children
 
 ;; override generic function for dynamic body fetching.
-(luna-define-method mime-entity-body ((entity 
+(luna-define-method mime-entity-body ((entity
 				       mime-elmo-imap4-entity))
   (save-excursion
     (set-buffer (mmelmo-imap4-mime-entity-buffer entity))
     (buffer-substring (mime-buffer-entity-body-start-internal entity)
 		      (mime-buffer-entity-body-end-internal entity))))
 
-(luna-define-method mime-entity-content ((entity 
+(luna-define-method mime-entity-content ((entity
 					  mime-elmo-imap4-entity))
   (save-excursion
     (set-buffer (mmelmo-imap4-mime-entity-buffer entity))
@@ -288,7 +288,7 @@ These value must be specified as argument for `luna-make-entity'."
 		       (mime-buffer-entity-body-end-internal entity))
      (mime-entity-encoding entity))))
 
-(luna-define-method mime-entity-fetch-field ((entity mime-elmo-imap4-entity) 
+(luna-define-method mime-entity-fetch-field ((entity mime-elmo-imap4-entity)
 					     field-name)
   (save-excursion
     (save-restriction
@@ -297,14 +297,14 @@ These value must be specified as argument for `luna-make-entity'."
 	(if (and (mime-buffer-entity-header-start-internal entity)
 		 (mime-buffer-entity-header-end-internal entity))
 	    (progn
-	      (narrow-to-region 
+	      (narrow-to-region
 	       (mime-buffer-entity-header-start-internal entity)
 	       (mime-buffer-entity-header-end-internal entity))
 	      (std11-fetch-field field-name))
 	  nil)))))
 
 (luna-define-method mime-insert-header ((entity mime-elmo-imap4-entity)
-					&optional invisible-fields 
+					&optional invisible-fields
 					visible-fields)
   (mmelmo-insert-sorted-header-from-buffer
    (mmelmo-imap4-mime-entity-buffer entity)
@@ -338,7 +338,7 @@ These value must be specified as argument for `luna-make-entity'."
 	   (mmelmo-imap4-mime-entity-buffer entity))
 	  (message "Fetching skipped part...done.")))
       (with-current-buffer (mime-buffer-entity-buffer-internal entity)
-	(mime-write-decoded-region 
+	(mime-write-decoded-region
 	 (mime-buffer-entity-body-start-internal entity)
 	 (mime-buffer-entity-body-end-internal entity)
 	 filename

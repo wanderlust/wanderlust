@@ -43,7 +43,7 @@
 (mm-define-backend elmo (buffer))
 
 (mm-define-method initialize-instance ((entity elmo))
-  (mime-entity-set-buffer-internal 
+  (mime-entity-set-buffer-internal
    entity
    (get-buffer-create (concat mmelmo-entity-buffer-name "0")))
     (save-excursion
@@ -62,7 +62,7 @@
 	(setq header-start (point-min))
 	(setq body-end (point-max))
 	(goto-char header-start)
-	(if (re-search-forward 
+	(if (re-search-forward
 	     (concat "^" (regexp-quote mail-header-separator) "$\\|^$" )
 	     nil t)
 	    (setq header-end (match-beginning 0)
