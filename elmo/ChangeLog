@@ -1,35 +1,3 @@
-2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-pop3.el (elmo-pop3-list-location): Sort locations
-	by original number.
-	(elmo-folder-status): Call `elmo-folder-open-internal';
-	Call `elmo-folder-close-internal' instead of `elmo-folder-close'.
-	(elmo-folder-close-internal): Set location-alist as nil.
-	(elmo-folder-clear): Define.
-	(elmo-folder-check): Don't set location-alist as nil.
-
-	* elmo-dop.el (elmo-dop-queue-method-name-alist): Fixed symbols.
-
-2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-util.el (elmo-msgid-to-cache): Enclose with `save-match-data'.
-	(Pointed out by Akihiro MOTOKI <amotoki@dd.iij4u.or.jp>)
-
-	* mmimap.el (mime-imap-entity::requested): New slot.
-	(mime-imap-location-fetch-entity-p): New generic function.
-	(mime-decode-parameters): Define using `defun-maybe'.
-	(mmimap-make-mime-entity): Use `make-mime-content-type' to make
-	content-type structure.
-	(mime-entity-body): Return empty body if
-	`mime-imap-location-fetch-entity-p' returns nil in the first request.
-
-	* elmo.el (elmo-message-displaying): New variable.
-
-	* elmo-mime.el (elmo-mime-message-display): Bind
-	elmo-message-displaying as t.
-
-	* elmo-imap4.el (mime-imap-location-fetch-entity-p): Define.
-
 2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* acap.el (acap-open): erase buffer before starting network process.

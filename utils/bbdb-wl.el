@@ -61,7 +61,7 @@
   (let (bbdb-buf)
     (if (setq bbdb-buf (get-buffer bbdb-buffer-name))
 	(kill-buffer bbdb-buf)))
-  (bbdb-offer-save))
+  (bbdb-save-db t))
 
 (defun bbdb-wl-get-update-record ()
   (if (or (null bbdb-wl-folder-regexp)
