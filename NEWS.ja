@@ -2,6 +2,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.10.1 から 2.12.0 への変更点
 
+** idle-timer を利用してドラフトバッファの自動保存を実行します。
+   変数 `wl-auto-save-drafts-interval' で挙動を変えられます。
+
 ** 'H' キー(ヘッダ全表示) および 'M' キー(MIMEなし表示)がトグルになりました。
    また、'M' で表示したメッセージを引用できるようになりました。
 

@@ -2,6 +2,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** Automatically save draft buffers by using idle-timer.
+   You can control behavior by the variable `wl-auto-save-drafts-interval'.
+
 ** 'H' key(display all header) and 'M' key(display without MIME analysis)
    are now toggle key.
    Now you can cite messages displayed by 'M'.
