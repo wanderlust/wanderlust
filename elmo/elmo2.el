@@ -462,12 +462,13 @@ without cacheing."
 (defun elmo-msgdb-load (folder &optional spec)
   (message "Loading msgdb for %s..." folder)
   (let* ((path (elmo-msgdb-expand-path folder spec))
+	 (overview (elmo-msgdb-overview-load path))
 	 (ret-val 
-	  (list (elmo-msgdb-overview-load path)
+	  (list overview
 		(elmo-msgdb-number-load path)
 		(elmo-msgdb-mark-load path)
 		(elmo-msgdb-location-load path)
-		elmo-msgdb-overview-hashtb
+		(elmo-msgdb-make-overview-hashtb overview)
 		)))
     (message "Loading msgdb for %s...done." folder)
     (elmo-folder-set-info-max-by-numdb folder (nth 1 ret-val))
