@@ -363,7 +363,8 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-pipe-folder)
 					     number cached)
   (elmo-message-set-cached (elmo-pipe-folder-dst-internal folder)
-			   number cached))
+			   number cached)
+  (elmo-folder-notify-event folder 'cache-changed number))
 
 (luna-define-method elmo-find-fetch-strategy ((folder elmo-pipe-folder)
 					      number

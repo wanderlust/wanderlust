@@ -1,3 +1,44 @@
+2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-folder-append-messages): Fix the problem
+	that only the first flag is used.
+
+2005-02-17  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* elmo-shimbun.el (elmo-folder-exists-p): Use `shimbun-group-p' 
+	if available.
+
+2005-02-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-imap4.el (elmo-imap4-flags-to-imap): Preserve argument
+	`flags'.
+
+2005-02-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-message-set-cached): Call
+	`elmo-folder-notify-event' with event `cache-changed'.
+
+	* elmo-multi.el (elmo-message-set-cached): Ditto.
+
+	* elmo-pipe.el (elmo-message-set-cached): Ditto.
+
+2005-02-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-folder-encache): Abolish.
+
+2005-02-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-folder-delete-messages-dop): Delete 'Append' queue.
+	(elmo-folder-next-message-number-dop): Return appropriate negative
+	integer.
+
+2005-02-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-dop.el (elmo-dop-queue-flush): Remove files in dop spool on
+	clearing pending operations.
+	(elmo-folder-next-message-number-dop): Return appropriate negative
+	integer.
+
 2005-02-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-multi.el (elmo-multi-folder-diff): Fixed problem when the

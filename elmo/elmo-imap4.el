@@ -2582,13 +2582,14 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (defun elmo-imap4-flags-to-imap (flags)
   "Convert FLAGS to the IMAP flag string."
-  (let ((imap-flag (if (not (memq 'unread flags)) "\\Seen"))
-	(flags (delq 'read (delq 'cached (delq 'unread flags))))
-	spec)
+  (let ((imap-flag (if (not (memq 'unread flags)) "\\Seen")))
     (dolist (flag flags)
-      (setq imap-flag (concat imap-flag (if imap-flag " ")
-			      (or (car (cdr (assq flag elmo-imap4-flag-specs)))
-				  (capitalize (symbol-name flag))))))
+      (unless (memq flag '(new read unread cached))
+	(setq imap-flag
+	      (concat imap-flag
+		      (if imap-flag " ")
+		      (or (car (cdr (assq flag elmo-imap4-flag-specs)))
+			  (capitalize (symbol-name flag)))))))
     imap-flag))
 
 (luna-define-method elmo-folder-append-buffer

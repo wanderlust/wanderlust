@@ -144,7 +144,8 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-multi-folder)
 					     number cached)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (elmo-message-set-cached (car pair) (cdr pair) cached)))
+    (elmo-message-set-cached (car pair) (cdr pair) cached))
+  (elmo-folder-notify-event folder 'cache-changed number))
 
 (luna-define-method elmo-find-fetch-strategy ((folder elmo-multi-folder)
 					      number

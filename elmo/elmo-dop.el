@@ -157,6 +157,12 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 			   (not elmo-dop-flush-confirm) t)
 	    (progn
 	      (while queue
+		(when (eq (elmo-dop-queue-method (car queue))
+			  'elmo-folder-append-buffer-dop-delayed)
+		  (elmo-folder-delete-messages
+		   (elmo-dop-spool-folder
+		    (elmo-make-folder (elmo-dop-queue-fname (car queue))))
+		   (list (nth 1 (elmo-dop-queue-arguments (car queue))))))
 		(setq elmo-dop-queue (delq (car queue) elmo-dop-queue))
 		(setq queue (cdr queue)))
 	      (message "Pending operations are cleared.")
@@ -247,8 +253,18 @@ FOLDER is the folder structure."
 	queue)
     (dolist (number numbers)
       (if (< number 0)
-	  (elmo-folder-delete-messages spool-folder
-				       (list (abs number))) ; delete from queue
+	  (progn
+	    ;; delete from queue
+	    (elmo-folder-delete-messages spool-folder
+					 (list (abs number)))
+	    (dolist (queue elmo-dop-queue)
+	      (when (and (eq (elmo-dop-queue-fname queue)
+			     (elmo-folder-name-internal folder))
+			 (eq (elmo-dop-queue-method queue)
+			     'elmo-folder-append-buffer-dop-delayed)
+			 (eq (abs number)
+			     (nth 1 (elmo-dop-queue-arguments queue))))
+		(setq elmo-dop-queue (delq queue elmo-dop-queue)))))
 	(setq queue (cons number queue))))
     (when queue
       (elmo-dop-queue-append folder 'elmo-folder-delete-messages-dop-delayed
@@ -311,15 +327,10 @@ FOLDER is the folder structure."
     (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
 
 (defun elmo-folder-next-message-number-dop (folder)
-  (let ((number-list (elmo-folder-list-messages folder nil 'in-msgdb))
-	(spool-folder (elmo-dop-spool-folder folder))
-	spool-length
-	max-num)
-    (setq spool-length (or (if (elmo-folder-exists-p spool-folder)
-			       (car (elmo-folder-status spool-folder)))
-			   0))
-    (setq max-num (if number-list (apply #'max number-list) 0))
-    (+ max-num spool-length)))
+  (let ((spool-folder (elmo-dop-spool-folder folder)))
+    (- (+ 1 (elmo-max-of-list (or (elmo-folder-list-messages
+				   spool-folder)
+				  '(0)))))))
 
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
