@@ -1,3 +1,7 @@
+2004-12-22  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* WL-MK (wl-texinfo-format-file): Bind undo-outer-limit.
+
 2004-12-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to
