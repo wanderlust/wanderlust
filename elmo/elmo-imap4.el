@@ -1893,6 +1893,9 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-folder-list-any-plugged (folder)
   (elmo-imap4-list folder "or answered or unseen flagged"))
 
+(defun elmo-imap4-folder-list-digest-plugged (folder)
+  (elmo-imap4-list folder "or unseen flagged"))
+
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-folder-mailbox-internal folder))))
@@ -2124,7 +2127,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 			   numbers)))
 	(mapcar '(lambda (x) (delete x numbers)) rest)
 	numbers))
-     ((string= "mark" search-key)
+     ((string= "flag" search-key)
       (cond
        ((string= "unread" (elmo-filter-value filter))
 	(elmo-folder-list-unreads folder))
@@ -2132,6 +2135,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(elmo-folder-list-importants folder))
        ((string= "answered" (elmo-filter-value filter))
 	(elmo-folder-list-answereds folder))
+       ((string= "digest" (elmo-filter-value filter))
+	(elmo-imap4-folder-list-digest-plugged folder))
        ((string= "any" (elmo-filter-value filter))
 	(elmo-imap4-folder-list-any-plugged folder))))
      ((or (string= "since" search-key)

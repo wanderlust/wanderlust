@@ -124,8 +124,7 @@ If a folder name begins with PREFIX, use BACKEND."
 ;;;###autoload
 (defun elmo-make-folder (name &optional non-persistent)
   "Make an ELMO folder structure specified by NAME.
-If optional argument NON-PERSISTENT is non-nil, folder is treated as
- non-persistent."
+If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
   (let ((type (elmo-folder-type name))
 	prefix split class folder original)
     (setq original (elmo-string name))
@@ -229,14 +228,6 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
 (luna-define-generic elmo-folder-list-answereds (folder)
   "Return a list of answered message numbers contained in FOLDER.")
 
-(luna-define-method elmo-folder-list-unreads ((folder elmo-folder))
-  (delq nil
-	(mapcar
-	 (lambda (x)
-	   (if (member (cadr x) (elmo-msgdb-unread-marks))
-	       (car x)))
-	 (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
-
 ;; TODO: Should reconsider the structure of global mark.
 (defun elmo-folder-list-messages-with-global-mark (folder mark)
   (let (entity msgs)
@@ -255,19 +246,33 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
 			   msgs))))
     msgs))
 
+(luna-define-generic elmo-folder-list-flagged (folder flag &optional in-msgdb)
+  "List messages in the FOLDER with FLAG.
+FLAG is a symbol which is one of the following:
+  `new'        (new messages)
+  `unread'     (unread messages (new messages are included))
+  `answered'   (answered or forwarded)
+  `important'  (marked as important)
+'sugar' flags:
+  `read'       (not unread)
+  `digest'     (unread + important)
+  `any'        (digest + answered)
+
+If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
+
+(luna-define-method elmo-folder-list-flagged ((folder elmo-folder) flag
+					      &optional in-msgdb)
+  ;; Currently, only in-msgdb is implemented.
+  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag))
+
+(luna-define-method elmo-folder-list-unreads ((folder elmo-folder))
+  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'unread))
+
 (luna-define-method elmo-folder-list-importants ((folder elmo-folder))
-  (elmo-folder-list-messages-mark-match folder
-					(regexp-quote
-					 elmo-msgdb-important-mark)))
+  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'important))
 
 (luna-define-method elmo-folder-list-answereds ((folder elmo-folder))
-  (delq nil
-	(mapcar
-	 (function
-	  (lambda (x)
-	    (if (member (cadr x) (elmo-msgdb-answered-marks))
-		(car x))))
-	 (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
+  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'answered))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional
 								visible-only)
@@ -731,7 +736,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   (when (and numbers
 	     (vectorp condition)
 	     (member (elmo-filter-key condition) '("first" "last" "mark")))
-    (if (string= (elmo-filter-key condition) "mark")
+    (if (string= (elmo-filter-key condition) "flag")
 	(let ((msgdb (elmo-folder-msgdb folder)))
 	  ;; msgdb should be synchronized at this point.
 	  (cond
@@ -741,6 +746,9 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	    (elmo-folder-list-importants folder))
 	   ((string= (elmo-filter-value condition) "answered")
 	    (elmo-folder-list-answereds folder))
+	   ((string= (elmo-filter-value condition) "digest")
+	    (nconc (elmo-folder-list-unreads folder)
+		   (elmo-folder-list-importants folder)))
 	   ((string= (elmo-filter-value condition) "any")
 	    (nconc (elmo-folder-list-unreads folder)
 		   (elmo-folder-list-importants folder)
@@ -1109,33 +1117,50 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
        folder
        (elmo-folder-expand-msgdb-path folder))))
 
+(defun elmo-message-cached-p (folder number)
+  "Get cache status of the message in the msgdb."
+  (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number))
+
 (defun elmo-message-set-cached (folder number cached)
-  "Set cache status of the message mark.
+  "Set cache status of the message in the msgdb.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
-If CACHED is t, message mark is set as cached."
+If CACHED is t, message is set as cached."
   (when (elmo-msgdb-set-cached (elmo-folder-msgdb folder)
 			       number
 			       cached
 			       (elmo-message-use-cache-p folder number))
     (elmo-folder-set-mark-modified-internal folder t)))
 
+(defun elmo-message-set-flag (folder number flag)
+  "Set message flag.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to set flag.
+
+FLAG is a symbol which is one of the following:
+  `unread'    (set the message as unread)
+  `answered'  (set the message as answered)
+  `important' (set the message as important)
+'sugar' flag:
+  `read'      (remove new and unread flags)")
+
+(defun elmo-message-unset-flag (folder number flag)
+  "Unset message flag.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to set flag.
+
+FLAG is a symbol which is one of the following:
+  `unread'    (remove unread and new flag)
+  `answered'  (remove answered flag)
+  `important' (remove important flag)
+'sugar' flag:
+  `read'      (set unread flag)")
 
 (defun elmo-message-mark (folder number)
   "Get mark of the message.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message."
   (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
-
-(defun elmo-folder-list-messages-mark-match (folder mark-regexp)
-  "List messages in the FOLDER which have a mark that matches MARK-REGEXP"
-  (let ((case-fold-search nil)
-	matched)
-    (if mark-regexp
-	(dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
-	  (if (string-match mark-regexp (cadr elem))
-	      (setq matched (cons (car elem) matched)))))
-    matched))
 
 (defun elmo-message-field (folder number field)
   "Get message field value in the msgdb.

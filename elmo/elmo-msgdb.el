@@ -120,6 +120,11 @@ if MARK is nil, mark is removed."
     ;; return value.
     t))
 
+(defun elmo-msgdb-get-cached (msgdb number)
+  "Return non-nil if message is cached."
+  (not (member (elmo-msgdb-get-mark msgdb number)
+	       (elmo-msgdb-uncached-marks))))
+
 (defun elmo-msgdb-set-cached (msgdb number cached use-cache)
   "Set message cache status.
 If mark is changed, return non-nil."
@@ -637,12 +642,17 @@ header separator."
 				   entity)
 				  numbers)))
 			(string-to-int (elmo-filter-value condition)))))
-       ((string= key "mark")
+       ((string= key "flag")
 	(setq result
 	      (cond
 	       ((string= (elmo-filter-value condition) "any")
 		(not (or (null mark)
 			 (string= mark elmo-msgdb-read-uncached-mark))))
+	       ((string= (elmo-filter-value condition) "digest")
+		(not (or (null mark)
+			 (string= mark elmo-msgdb-read-uncached-mark)
+			 (string= mark elmo-msgdb-answered-cached-mark)
+			 (string= mark elmo-msgdb-answered-uncached-mark))))
 ;;	  (member mark (append (elmo-msgdb-answered-marks)
 ;;			       (list elmo-msgdb-important-mark)
 ;;			       (elmo-msgdb-unread-marks))))
@@ -1170,6 +1180,41 @@ Return the updated INDEX."
    (expand-file-name
     elmo-msgdb-location-filename
     dir) alist))
+
+(defun elmo-msgdb-list-flagged (msgdb flag)
+  (let ((case-fold-search nil)
+	mark-regexp matched)
+    (case flag
+      (new
+       (setq mark-regexp (regexp-quote elmo-msgdb-new-mark)))
+      (unread
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+      (answered
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+      (important
+       (setq mark-regexp (regexp-quote elmo-msgdb-important-mark)))
+      (read
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+      (digest
+       (setq mark-regexp (elmo-regexp-opt
+			  (append (elmo-msgdb-unread-marks)
+				  (list elmo-msgdb-important-mark)))))
+      (any
+       (setq mark-regexp (elmo-regexp-opt
+			  (append
+			   (elmo-msgdb-unread-marks)
+			   (elmo-msgdb-answered-marks)
+			   (list elmo-msgdb-important-mark))))))
+    (when mark-regexp
+      (if (eq flag 'read)
+	  (dolist (number (elmo-msgdb-get-number-alist msgdb))
+	    (unless (string-match mark-regexp (elmo-msgdb-get-mark
+					       msgdb number))
+	      (setq matched (cons number matched))))
+	(dolist (elem (elmo-msgdb-get-mark-alist msgdb))
+	  (if (string-match mark-regexp (cadr elem))
+	      (setq matched (cons (car elem) matched))))))
+    matched))
 
 (put 'elmo-msgdb-do-each-entity 'lisp-indent-function '1)
 (def-edebug-spec elmo-msgdb-do-each-entity

@@ -1948,6 +1948,18 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		     elmo-msgdb-directory)
    elmo-dop-queue))
 
+(if (and (fboundp 'regexp-opt)
+	 (not (featurep 'xemacs)))
+    (defalias 'elmo-regexp-opt 'regexp-opt)
+  (defun elmo-regexp-opt (strings &optional paren)
+    "Return a regexp to match a string in STRINGS.
+Each string should be unique in STRINGS and should not contain any regexps,
+quoted or not.  If optional PAREN is non-nil, ensure that the returned regexp
+is enclosed by at least one regexp grouping construct."
+    (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
+      (concat open-paren (mapconcat 'regexp-quote strings "\\|")
+	      close-paren))))
+
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))
 

@@ -216,8 +216,9 @@
 	diff)
     (if (vectorp condition)
 	(cond
-	 ((and (string= (elmo-filter-key condition) "mark")
+	 ((and (string= (elmo-filter-key condition) "flag")
 	       (or (string= (elmo-filter-value condition) "any")
+		   (string= (elmo-filter-value condition) "digest")
 		   (string= (elmo-filter-value condition) "unread")))
 	  (setq diff (elmo-folder-diff (elmo-filter-folder-target-internal
 					folder)))

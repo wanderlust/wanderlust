@@ -1,3 +1,28 @@
+2002-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-flagged): New generic function.
+	(elmo-folder-list-importants): New implementation.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-search-fast):  Use 'flag' instead of 'mark';
+	Added 'digest'.
+	(elmo-message-cached-p): New function.
+	(elmo-message-set-flag): Ditto (no content).
+	(elmo-message-unset-flag): Ditto.
+	(elmo-folder-list-messages-mark-match): Abolish.
+
+	* elmo-util.el (elmo-regexp-opt): New function.
+
+	* elmo-msgdb.el (elmo-msgdb-get-cached): New function.
+	(elmo-msgdb-match-condition-primitive): Use 'flag' instead of 'mark';
+	Added 'digest'.
+	(elmo-msgdb-list-flagged): New function.
+
+	* elmo-imap4.el (elmo-imap4-folder-list-digest-plugged): New function.
+	(elmo-imap4-search-internal-primitive): Use 'flag' instead of 'mark';
+	Added 'digest'.
+
+	* elmo-filter.el (elmo-folder-diff): Use 'flag' instead of 'mark'.
+
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.11.0.
