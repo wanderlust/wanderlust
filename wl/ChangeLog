@@ -1,3 +1,8 @@
+2003-10-09  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-search-by-subject): Remove unused local
+	variable.
+
 2003-10-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-prefetch-msg): Bind wl-message-entity;
