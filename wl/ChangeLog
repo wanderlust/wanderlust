@@ -1,3 +1,9 @@
+2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-fldmgr.el (wl-fldmgr-save-folders): Use (wl-version t)
+	instead of product.
+
+	* wl-version.el (wl-version): Compile time evalution elmo-version.
 
 2000-10-10  Kenichi OKADA  <okada@opaopa.org>
 

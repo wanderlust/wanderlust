@@ -1309,8 +1309,7 @@ return value is diffs '(-new -unread -all)."
     (message "Saving folders...")
     (set-buffer tmp-buf)
     (erase-buffer)
-    (insert (format wl-fldmgr-folders-header
-		    (product-string-1 'wl-version 'verbose)))
+    (insert (format wl-fldmgr-folders-header (wl-version t)))
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))

@@ -28,7 +28,6 @@
 
 ;;; Code:
 ;;
-(require 'elmo-version)
 (require 'product)
 (eval-when-compile (require 'wl-util))	; wl-match-string
 (provide 'wl-version)
@@ -36,7 +35,9 @@
 (product-provide 'wl-version
   (product-define
    "Wanderlust" nil
-   (product-version (product-find 'elmo-version)) ; equals to ELMO version.
+   (eval-when-compile
+     (require 'elmo-version)
+     (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Roam"))
 
 (defun wl-version (&optional with-codename)
