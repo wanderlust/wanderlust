@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
@@ -663,9 +663,9 @@ Header region is supposed to be narrowed."
 			(nth 1
 			     (insert-file-contents-as-binary
 			      file nil beg
-			      (incf beg elmo-msgdb-file-header-chop-length)))))
-	  (prog1 (not (search-forward "\n\n" nil t))
-	    (goto-char (point-max))))))))
+			      (incf beg elmo-msgdb-file-header-chop-length))))
+		    (prog1 (not (search-forward "\n\n" nil t))
+		      (goto-char (point-max)))))))))
 
 (defsubst elmo-msgdb-create-overview-entity-from-file (number file)
   (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
@@ -690,7 +690,7 @@ Header region is supposed to be narrowed."
 		  (point-max)))
 	  (narrow-to-region (point-min) header-end)
 	  (elmo-msgdb-create-overview-from-buffer number size mtime))))))
-  
+
 (defun elmo-msgdb-overview-sort-by-date (overview)
   (sort overview
 	(function
