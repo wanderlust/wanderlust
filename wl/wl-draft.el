@@ -1293,46 +1293,37 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-do-mime-bcc (field-body)
   "Send MIME-Bcc (Encapsulated blind carbon copy)."
-  (let ((orig-from (std11-field-body "from"))
-	(orig-subj (std11-field-body "subject"))
+  (let ((orig-from (mime-decode-field-body (std11-field-body "from")
+					   'From))
+	(orig-subj (mime-decode-field-body (or (std11-field-body "subject")
+					       "")
+					   'Subject))
 	(recipients (wl-parse-addresses field-body))
 	(draft-buffer (current-buffer))
-	buffer)
-    (when (and (not wl-draft-doing-mime-bcc) ; To avoid infinite loop.
-	       (not (zerop (length field-body))))
-      (with-current-buffer (setq buffer (generate-new-buffer 
-					 " *temporary buffer for mime bcc*"))
-	(insert-buffer draft-buffer))
-      (unwind-protect
+	wl-draft-use-frame)
+    (save-window-excursion
+      (when (and (not wl-draft-doing-mime-bcc) ; To avoid infinite loop.
+		 (not (zerop (length field-body))))
+	(let ((wl-draft-doing-mime-bcc t))
 	  (dolist (recipient recipients)
-	    (with-temp-buffer
-	      (let ((wl-draft-doing-mime-bcc t)
-		    mail-citation-hook 
-		    mail-yank-hooks
-		    wl-draft-add-references
-		    wl-draft-add-in-reply-to
-		    wl-draft-cite-function)
-		;; To work wl-draft-create-contents.
-		(setq major-mode 'wl-draft-mode)
-		(wl-draft-create-contents
-		 (append `((From . ,orig-from)
-			   (To . ,recipient)
-			   (Subject . ,(concat "A blind carbon copy ("
-					       orig-subj
-					       ")")))
-			 (wl-draft-default-headers)))
-		(wl-draft-insert-required-fields)
-		(wl-draft-insert-mail-header-separator)
-		(goto-char (point-max))
-		(insert (or wl-draft-mime-bcc-body
-			    "This is a blind carbon copy.")
-			"\n")
-		(mime-edit-insert-tag "message" "rfc822")
-		(let ((mail-reply-buffer buffer))
-		  (wl-draft-yank-from-mail-reply-buffer nil))
-		(mime-edit-translate-buffer)
-		(wl-draft-raw-send))))
-	(kill-buffer buffer)))))
+	    (wl-draft-create-buffer)
+	    (wl-draft-create-contents
+	     (append `((From . ,orig-from)
+		       (To . ,recipient)
+		       (Subject . ,(concat "A blind carbon copy ("
+					   orig-subj
+					   ")")))
+		     (wl-draft-default-headers)))
+	    (wl-draft-insert-mail-header-separator)
+	    (wl-draft-prepare-edit)
+	    (goto-char (point-max))
+	    (insert (or wl-draft-mime-bcc-body
+			"This is a blind carbon copy.")
+		    "\n")
+	    (mime-edit-insert-tag "message" "rfc822")
+	    (insert-buffer draft-buffer)
+	    (let (wl-interactive-send)
+	      (wl-draft-send 'kill-when-done))))))))
 
 ;; Derived from `message-save-drafts' in T-gnus.
 (defun wl-draft-save ()

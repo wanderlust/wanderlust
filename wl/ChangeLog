@@ -1,3 +1,14 @@
+2002-05-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-do-mime-bcc): Decode field body of original
+	from and subject;
+	Bind wl-draft-use-frame;
+	Enclose with save-window-excursion;
+	Use wl-draft-create-buffer instead of with-temp-buffer;
+	Use wl-draft-prepare-edit;
+	Use insert-buffer instead of wl-draft-yank-from-mail-reply-buffer;
+	Use wl-draft-send instead of wl-draft-raw-send.
+
 2002-05-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-do-mime-bcc): Preserve original from instead
