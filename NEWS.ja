@@ -13,6 +13,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
   書式:  '[' 'namazu 検索式' ']' [ 'namazu index のパス（絶対パス）' ]
 
+* ACAP (RFC2244) に対応しました(実験的)。
+
 * IMAP4 のメッセージをパート毎にキャッシュとして保存できるようになりました。
   巨大なパートをスキップした場合でも、スキップしたパート以外は
   オフライン状態で読み返すことができるようになりました。

@@ -1,3 +1,7 @@
+2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Call `wl-check-environment' before `wl-plugged-init'.
+
 2001-09-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (wl-toggle-plugged): Use `not' instead of `null' for

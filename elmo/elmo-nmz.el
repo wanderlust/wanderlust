@@ -30,6 +30,7 @@
 ;; 
 (require 'elmo)
 (require 'elmo-map)
+(require 'mime-edit)
 
 (defcustom elmo-nmz-default-index-path "~/Mail"
   "*Default index path for namazu."
@@ -50,9 +51,6 @@
   "*Argument list for namazu to list matched files."
   :type '(repeat string)
   :group 'elmo)
-
-(defvar elmo-nmz-content-type-alist '(("\.html?\\'" . "text/html"))
-  "*An alist of (REGEXP . Content-Type) related filename.")
 
 ;;; "namazu search"
 (eval-and-compile
@@ -88,9 +86,21 @@
 
 (defun elmo-nmz-msgdb-create-entity (folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
-  (elmo-msgdb-create-overview-entity-from-file
-   number
-   (elmo-map-message-location folder number)))
+  (let ((location (elmo-map-message-location folder number))
+	entity uid)
+    (setq entity (elmo-msgdb-create-overview-entity-from-file number location))
+    (unless (or (> (length (elmo-msgdb-overview-entity-get-to entity)) 0)
+		(> (length (elmo-msgdb-overview-entity-get-cc entity)) 0)
+		(not (string= (elmo-msgdb-overview-entity-get-subject entity)
+			      elmo-no-subject)))
+      (elmo-msgdb-overview-entity-set-subject entity location)
+      (setq uid (nth 2 (file-attributes location)))
+      (elmo-msgdb-overview-entity-set-from entity
+					   (concat 
+					    (user-full-name uid)
+					    " <"(user-login-name uid) "@"
+					    (system-name) ">")))
+    entity))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
 					      numlist new-mark
@@ -171,23 +181,27 @@
   (when (file-exists-p location)
     (insert-file-contents-as-binary location)
     (unless (or (std11-field-body "To")
-		(std11-field-body "Resent-To")
 		(std11-field-body "Cc")
-		(std11-field-body "Bcc")
-		(std11-field-body "Newsgroups"))
-      (erase-buffer)
-      (set-buffer-multibyte t)
-      (insert-file-contents location)
-      (goto-char (point-min))
-      (insert "Content-Type: "
-	      (or (cdr (elmo-string-matched-assoc
-			location
-			elmo-nmz-content-type-alist))
-		  "text/plain")
-	      "; charset=ISO-2022-JP\nMIME-Version: 1.0\n\n")
-      (encode-coding-region (point-min) (point-max)
-			    (mime-charset-to-coding-system "ISO-2022-JP"))
-      (set-buffer-multibyte nil))))
+		(std11-field-body "Subject"))
+      (let (charset guess uid)
+	(erase-buffer)
+	(set-buffer-multibyte t)
+	(insert-file-contents location)
+	(setq charset (detect-mime-charset-region (point-min)
+						  (point-max)))
+	(goto-char (point-min))
+	(setq guess (mime-find-file-type location))
+	(setq uid (nth 2 (file-attributes location)))
+	(insert "From: " (concat (user-full-name uid)
+				 " <"(user-login-name uid) "@"
+				 (system-name) ">") "\n")
+	(insert "Subject: " location "\n")
+	(insert "Content-Type: "
+		(concat (nth 0 guess) "/" (nth 1 guess))
+		"; charset=" (upcase (symbol-name charset))
+		"\nMIME-Version: 1.0\n\n")
+	(encode-mime-charset-region (point-min) (point-max) charset)
+	(set-buffer-multibyte nil)))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-nmz-folder))

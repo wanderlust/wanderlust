@@ -1,3 +1,13 @@
+2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el (toplevel): Require 'mime-edit.
+	(elmo-nmz-content-type-alist): Abolished.
+	(elmo-nmz-msgdb-create-entity): Add From: and Subject: field if
+	content is not a message.
+	(elmo-map-message-fetch): Changed behavior exept for message content;
+	Detect mime-charset automatically, Use `mime-find-file-type' to detect
+	content-type, Add From: and Subject: field.
+
 2001-09-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-nmz.el (elmo-nmz-content-type-alist): New variable.

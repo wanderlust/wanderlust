@@ -763,7 +763,6 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (wl-init)
     (condition-case obj
 	(progn
-	  (wl-plugged-init (wl-folder arg))
 	  (if check
 	      (condition-case nil
 		  (progn
@@ -772,6 +771,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 		    (message "Checking environment...done"))
 		(error)
 		(quit)))
+	  (wl-plugged-init (wl-folder arg))
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
