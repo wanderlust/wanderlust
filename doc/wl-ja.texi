@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.4.1
+@set VERSION 2.4.0
 @synindex pg cp
 @finalout
 
@@ -2477,7 +2477,6 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 
 @kbd{t} $B$+$i;O$^$k%3%^%s%I$G!"$=$N%9%l%C%I$KB0$9$k%a%C%;!<%8$KBP$7$F0l3g(B
 $B$7$F=hM}$r9T$&$3$H$,$G$-$^$9!#(B
-@xref{Key Bindings of Summary}.
 
 
 @subsection $B%9%l%C%I$N7R$.$J$*$7(B

@@ -1,9 +1,3 @@
-2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-reply): Fixed problem when there's no subject
-	field in the original message.
-	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
-
 2001-01-19  Akihiro MOTOKI <mokkun@iname.com>
 
 	* wl-expire.el (wl-expire-hide):
