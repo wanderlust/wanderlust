@@ -1545,7 +1545,8 @@ Return nil if no complete line has arrived."
 			(message
 			 "Unknown status data %s in mailbox %s ignored"
 			 token mailbox))))
-	       status))))
+	       status))
+	(skip-chars-forward " ")))
     (and elmo-imap4-status-callback
 	 (funcall elmo-imap4-status-callback
 		  status
