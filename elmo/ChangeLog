@@ -1,5 +1,9 @@
 2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* acap.el (acap-parse-return-metadata-or-return-metalist): Fix for
+	parsing NIL.
+	(acap-parse-return-metadata): Ditto.
+
 	* slp.el: New file.
 	(toplevel): Fixed typo.
 
