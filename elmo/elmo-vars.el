@@ -336,7 +336,8 @@ If function, return value of function.")
 (defvar elmo-network-stream-type-alist
   '(("!"      ssl       ssl      open-ssl-stream)
     ("!!"     starttls  starttls starttls-open-stream)
-    ("!socks" socks     socks    socks-open-network-stream))
+    ("!socks" socks     socks    socks-open-network-stream)
+    ("!direct" direct   direct   open-network-stream))
   "An alist of (SPEC-STRING SYMBOL FEATURE OPEN-STREAM-FUNCTION).
 SPEC-STRING is a string for stream-type spec (it must start with '!').
 SYMBOL is a symbol which indicates the name of the stream type.

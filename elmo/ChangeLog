@@ -1,5 +1,7 @@
 2004-04-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* elmo-vars.el (elmo-network-stream-type-alist): Add direct.
+
 	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Don't use
 	md5's 4th and 5th argument (non-existent in flim one).
 
