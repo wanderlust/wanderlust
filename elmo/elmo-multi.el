@@ -156,7 +156,7 @@
     numbers-list))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-multi-folder)
-					      numbers seen-list)
+					      numbers flag-table)
   (let* ((folders (elmo-multi-folder-children-internal folder))
 	 overview number-alist mark-alist entity
 	 numbers-list
@@ -173,7 +173,7 @@
 		 (elmo-multi-msgdb
 		  (elmo-folder-msgdb-create (nth cur-number folders)
 					    (nth cur-number numbers-list)
-					    seen-list)
+					    flag-table)
 		  (* (elmo-multi-folder-divide-number-internal folder)
 		     (1+ cur-number))))))
       (setq cur-number (1+ cur-number)))

@@ -677,7 +677,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (copy-to-buffer tobuffer (point-min) (point-max)))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-pop3-folder)
-					      numlist seen-list)
+					      numlist flag-table)
   (let ((process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
     (with-current-buffer (process-buffer process)
@@ -686,7 +686,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
        (elmo-pop3-msgdb-create-by-header
 	process
 	numlist
-	seen-list
+	flag-table
 	(if (elmo-pop3-folder-use-uidl-internal folder)
 	    (elmo-pop3-folder-location-alist-internal folder)))))))
 
@@ -724,7 +724,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		     elmo-pop3-size-hash))
 
 (defun elmo-pop3-msgdb-create-by-header (process numlist
-						 seen-list
+						 flag-table
 						 loc-alist)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*")))
     (with-current-buffer (process-buffer process)
@@ -744,14 +744,14 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   process
 	   (length numlist)
 	   numlist
-	   seen-list loc-alist)
+	   flag-table loc-alist)
 	(kill-buffer tmp-buffer)))))
 
 (defun elmo-pop3-msgdb-create-message (buffer
 				       process
 				       num
 				       numlist
-				       seen-list
+				       flag-table
 				       loc-alist)
   (save-excursion
     (let (beg overview number-alist mark-alist
@@ -795,17 +795,12 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     (car entity)))
 	      (setq message-id (car entity))
-	      (setq seen (member message-id seen-list))
 	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-				  (if (elmo-file-cache-status
-				       (elmo-file-cache-get message-id))
-				      (if seen
-					  nil
-					elmo-msgdb-unread-cached-mark)
-				    (if seen
-					(if elmo-pop3-use-cache
-					    elmo-msgdb-read-uncached-mark)
-				      elmo-msgdb-new-mark))))
+				  (elmo-msgdb-mark
+				   (elmo-flag-table-get flag-table message-id)
+				   (elmo-file-cache-status
+				    (elmo-file-cache-get message-id))
+				   'new)))
 		  (setq mark-alist
 			(elmo-msgdb-mark-append
 			 mark-alist

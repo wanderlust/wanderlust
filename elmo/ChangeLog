@@ -1,3 +1,23 @@
+2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-buffer): Changed argument from unread 
+	to flag. (All other related portions are changed.)
+	(elmo-folder-msgdb-create): Likewise.
+	(elmo-generic-folder-append-messages): Use flag-table instead of
+	seen-list.
+	(elmo-folder-move-messages): Removed redundant process.
+	(elmo-folder-synchronize): Likewise.
+
+	* elmo-msgdb.el (elmo-flag-table-get): New function.
+	(elmo-flag-table-save): Fixed.
+	(elmo-msgdb-length): New inline function.
+	(elmo-msgdb-flag-table): New function.
+	(elmo-msgdb-mark): Add optional argument new.
+	(elmo-msgdb-add-msgs-to-seen-list): Abolish.
+	(elmo-msgdb-seen-list): Ditto.
+	(elmo-msgdb-add-msgs-to-seen-list): Ditto.
+
+
 2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-message-set-mark): Abolish.

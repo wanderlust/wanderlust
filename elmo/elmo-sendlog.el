@@ -81,7 +81,7 @@
    (elmo-map-message-location folder number)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-sendlog-folder)
-					      numbers seen-list)
+					      numbers flag-table)
   (let ((i 0)
 	(len (length numbers))
 	overview number-alist mark-alist entity message-id
@@ -107,8 +107,11 @@
 				     num
 				     message-id))
 	(if (setq mark (or (elmo-msgdb-global-mark-get message-id)
-			   (if (member message-id seen-list) nil
-			     elmo-msgdb-new-mark)))
+			   (elmo-msgdb-mark
+			    (elmo-flag-table-get flag-table message-id)
+			    (elmo-file-cache-status
+			     (elmo-file-cache-get message-id))
+			    'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append
 		   mark-alist

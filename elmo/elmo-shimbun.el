@@ -349,7 +349,7 @@ update overview when message is fetched."
 	  (list (cons "xref" (shimbun-header-xref header)))))))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
-					      numlist seen-list)
+					      numlist flag-table)
   (let* (overview number-alist mark-alist entity
 		  i percent number length pair msgid gmark seen)
     (setq length (length numlist))
@@ -368,15 +368,12 @@ update overview when message is fetched."
 	(setq number-alist
 	      (elmo-msgdb-number-add number-alist
 				     number msgid))
-	(setq seen (member msgid seen-list))
 	(if (setq gmark (or (elmo-msgdb-global-mark-get msgid)
-			    (if (elmo-file-cache-status
-				 (elmo-file-cache-get msgid))
-				(if seen nil elmo-msgdb-unread-cached-mark)
-			      (if seen
-				  (if elmo-shimbun-use-cache
-				      elmo-msgdb-read-uncached-mark)
-				elmo-msgdb-new-mark))))
+			    (elmo-msgdb-mark
+			     (elmo-flag-table-get flag-table msgid)
+			     (elmo-file-cache-status
+			      (elmo-file-cache-get msgid))
+			     'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append mark-alist
 					  number gmark))))

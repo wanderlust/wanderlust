@@ -438,22 +438,22 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (elmo-folder-delete-messages-dop folder numbers))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-net-folder)
-					      numbers seen-list)
+					      numbers flag-table)
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-msgdb-create-plugged
-			numbers seen-list)
+			numbers flag-table)
     (elmo-folder-send folder 'elmo-folder-msgdb-create-unplugged
-		      numbers seen-list)))
+		      numbers flag-table)))
 
 (luna-define-method elmo-folder-msgdb-create-unplugged ((folder
 							 elmo-net-folder)
 							numbers
-							seen-list)
+							flag-table)
   ;; XXXX should be appended to already existing msgdb.
   (elmo-dop-msgdb
    (elmo-folder-msgdb-create (elmo-dop-spool-folder folder)
 			     (mapcar 'abs numbers)
-			     seen-list)))
+			     flag-table)))
 
 (luna-define-method elmo-folder-unmark-important :before ((folder
 							   elmo-net-folder)

@@ -67,9 +67,9 @@
       (elmo-folder-contains-type (elmo-pipe-folder-dst-internal folder) type)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-pipe-folder)
-					      numlist seen-list)
+					      numlist flag-table)
   (elmo-folder-msgdb-create (elmo-pipe-folder-dst-internal folder)
-			    numlist seen-list))
+			    numlist flag-table))
 
 (luna-define-method elmo-folder-append-messages ((folder elmo-pipe-folder)
 						 src-folder numbers
@@ -79,9 +79,9 @@
 			       same-number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-pipe-folder)
-					       unread &optional number)
+					       &optional flag number)
   (elmo-folder-append-buffer (elmo-pipe-folder-dst-internal folder)
-			     unread number))
+			     flag number))
 
 (luna-define-method elmo-message-fetch ((folder elmo-pipe-folder)
 					number strategy

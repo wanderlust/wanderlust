@@ -703,7 +703,7 @@ Don't cache if nil.")
     ("xref" . 8)))
 
 (defun elmo-nntp-create-msgdb-from-overview-string (str
-						    seen-list
+						    flag-table
 						    &optional numlist)
   (let (ov-list gmark message-id seen
 	ov-entity overview number-alist mark-alist num
@@ -758,17 +758,12 @@ Don't cache if nil.")
 	      (elmo-msgdb-number-add number-alist num
 				     (aref ov-entity 4)))
 	(setq message-id (aref ov-entity 4))
-	(setq seen (member message-id seen-list))
 	(if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			    (if (elmo-file-cache-status
-				 (elmo-file-cache-get message-id))
-				(if seen
-				    nil
-				  elmo-msgdb-unread-cached-mark)
-			      (if seen
-				  (if elmo-nntp-use-cache
-				      elmo-msgdb-read-uncached-mark)
-				elmo-msgdb-new-mark))))
+			    (elmo-msgdb-mark
+			     (elmo-flag-table-get flag-table message-id)
+			     (elmo-file-cache-status
+			      (elmo-file-cache-get message-id))
+			     'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append mark-alist
 					  num gmark))))
@@ -776,10 +771,10 @@ Don't cache if nil.")
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nntp-folder)
-					      numbers seen-list)
-  (elmo-nntp-folder-msgdb-create folder numbers seen-list))
+					      numbers flag-table)
+  (elmo-nntp-folder-msgdb-create folder numbers flag-table))
 
-(defun elmo-nntp-folder-msgdb-create (folder numbers seen-list)
+(defun elmo-nntp-folder-msgdb-create (folder numbers flag-table)
   (let ((filter numbers)
 	(session (elmo-nntp-get-session folder))
 	beg-num end-num cur length
@@ -808,7 +803,7 @@ Don't cache if nil.")
 		     ret-val
 		     (elmo-nntp-create-msgdb-from-overview-string
 		      ov-str
-		      seen-list
+		      flag-table
 		      filter
 		      )))))
 	(if (null (elmo-nntp-read-response session t))
@@ -829,7 +824,7 @@ Don't cache if nil.")
 	 'elmo-nntp-msgdb-create "Getting overview..." 100)))
     (if (not use-xover)
 	(setq ret-val (elmo-nntp-msgdb-create-by-header
-		       session numbers seen-list))
+		       session numbers flag-table))
       (with-current-buffer (elmo-network-session-buffer session)
 	(if ov-str
 	    (setq ret-val
@@ -837,7 +832,7 @@ Don't cache if nil.")
 		   ret-val
 		   (elmo-nntp-create-msgdb-from-overview-string
 		    ov-str
-		    seen-list
+		    flag-table
 		    filter))))))
     (elmo-folder-set-killed-list-internal
      folder
@@ -897,11 +892,11 @@ Don't cache if nil.")
 		   (nconc number-alist
 			  (list (cons max-number nil))))))))))
 
-(defun elmo-nntp-msgdb-create-by-header (session numbers seen-list)
+(defun elmo-nntp-msgdb-create-by-header (session numbers flag-table)
   (with-temp-buffer
     (elmo-nntp-retrieve-headers session (current-buffer) numbers)
     (elmo-nntp-msgdb-create-message
-     (length numbers) seen-list)))
+     (length numbers) flag-table)))
 
 (defun elmo-nntp-parse-xhdr-response (string)
   (let (response)
@@ -1380,7 +1375,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 ;; end of from Gnus
 
-(defun elmo-nntp-msgdb-create-message (len seen-list)
+(defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
     (let (beg overview number-alist mark-alist
 	      entity i num gmark seen message-id)
@@ -1412,18 +1407,13 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		       (elmo-msgdb-overview-entity-get-number entity)
 		       (car entity)))
 		(setq message-id (car entity))
-		(setq seen (member message-id seen-list))
 		(if (setq gmark
 			  (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-file-cache-status
-				   (elmo-file-cache-get message-id))
-				  (if seen
-				      nil
-				    elmo-msgdb-unread-cached-mark)
-				(if seen
-				    (if elmo-nntp-use-cache
-					elmo-msgdb-read-uncached-mark)
-				  elmo-msgdb-new-mark))))
+			      (elmo-msgdb-mark
+			       (elmo-flag-table-get flag-table message-id)
+			       (elmo-file-cache-status
+				(elmo-file-cache-get message-id))
+			       'new)))
 		    (setq mark-alist
 			  (elmo-msgdb-mark-append
 			   mark-alist

@@ -144,11 +144,11 @@
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers
-					      seen-list)
+					      flag-table)
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  overview number-alist mark-alist entity message-id
-	  num seen gmark
+	  num gmark
 	  (i 0)
 	  (len (length numbers)))
       (message "Creating msgdb...")
@@ -167,15 +167,12 @@
 		(elmo-msgdb-number-add number-alist
 				       num
 				       message-id))
-	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-file-cache-exists-p message-id) ; XXX
-				  (if seen
-				      nil
-				    elmo-msgdb-unread-cached-mark)
-				(if seen
-				    nil ;;seen-mark
-				  elmo-msgdb-new-mark))))
+			      (elmo-msgdb-mark
+			       (elmo-flag-table-get flag-table message-id)
+			       (elmo-file-cache-status
+				(elmo-file-cache-get message-id))
+			       'new)))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist

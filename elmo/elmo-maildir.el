@@ -132,7 +132,7 @@ LOCATION."
   (elmo-maildir-folder-flagged-locations-internal folder))
 
 (luna-define-method elmo-folder-msgdb-create 
-  ((folder elmo-maildir-folder) numbers seen-list)
+  ((folder elmo-maildir-folder) numbers flag-table)
   (let* ((unread-list (elmo-maildir-folder-unread-locations-internal folder))
 	 (flagged-list (elmo-maildir-folder-flagged-locations-internal folder))
 	 (len (length numbers))
@@ -354,7 +354,7 @@ file name for maildir directories."
     filename))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       unread &optional number)
+					       &optional status number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
 	dst-buf filename)

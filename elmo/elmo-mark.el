@@ -84,7 +84,7 @@
    (elmo-map-message-location folder number)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-mark-folder)
-					      numbers seen-list)
+					      numbers flag-table)
   (elmo-mark-folder-msgdb-create folder numbers))
 
 (defun elmo-mark-folder-msgdb-create (folder numbers)
@@ -122,7 +122,7 @@
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-mark-folder)
-					       unread &optional number)
+					       &optional flag number)
   (let* ((msgid (elmo-field-body "message-id"))
 	 (path (elmo-file-cache-get-path msgid))
 	 dir)

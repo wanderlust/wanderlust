@@ -234,10 +234,10 @@ FOLDER is the folder structure."
 				 (car (elmo-dop-queue-arguments queue)))))))))
 
 ;;; DOP operations.
-(defsubst elmo-folder-append-buffer-dop (folder unread &optional number)
+(defsubst elmo-folder-append-buffer-dop (folder &optional flag number)
   (elmo-dop-queue-append
    folder 'elmo-folder-append-buffer-dop-delayed
-   (list unread
+   (list flag
 	 (elmo-dop-spool-folder-append-buffer
 	  folder)
 	 number)))
@@ -301,7 +301,7 @@ FOLDER is the folder structure."
     (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
 
 ;;; Delayed operation (executed at online status).
-(defun elmo-folder-append-buffer-dop-delayed (folder unread number set-number)
+(defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
 	failure saved dequeued)
     (with-temp-buffer
@@ -311,14 +311,17 @@ FOLDER is the folder structure."
 	  (condition-case nil
 	      (setq failure (not
 			     (elmo-folder-append-buffer
-			      folder unread set-number)))
+			      folder
+			      (if (eq flag t) nil flag) ; for compatibility
+			      set-number)))
 	    (error (setq failure t)))
 	(setq dequeued t)) ; Already deletef from queue.
       (when failure
 	;; Append failed...
 	(setq saved (elmo-folder-append-buffer
 		     (elmo-make-folder elmo-lost+found-folder)
-		     unread set-number)))
+		     (if (eq flag t) nil flag) ; for compatibility
+		     set-number)))
       (if (and (not dequeued)    ; if dequeued, no need to delete.
 	       (or (not failure) ; succeed
 		   saved))       ; in lost+found

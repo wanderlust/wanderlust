@@ -770,12 +770,11 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 ;;
 ;; app-data:
-;; cons of seen-list and result of use-flag-p.
+;; cons of flag-table and result of use-flag-p.
 (defsubst elmo-imap4-fetch-callback-1-subr (entity flags app-data)
   "A msgdb entity callback function."
   (let* ((use-flag (cdr app-data))
 	 (app-data (car app-data))
-	 (seen (member (car entity) app-data))
 	 mark)
     (if (member "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity)
@@ -791,16 +790,14 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			 ;; cached.
 			 (if (member "\\Answered" flags)
 			     elmo-msgdb-answered-cached-mark
-			   (if (or seen
-				   (and use-flag
-					(member "\\Seen" flags)))
+			   (if (and use-flag
+				    (member "\\Seen" flags))
 			       nil
 			     elmo-msgdb-unread-cached-mark))
 		       (if (member "\\Answered" flags)
 			   elmo-msgdb-answered-uncached-mark
-			 (if (or seen
-				 (and use-flag
-				      (member "\\Seen" flags)))
+			 (if (and use-flag
+				  (member "\\Seen" flags))
 			     (if elmo-imap4-use-cache
 				 elmo-msgdb-read-uncached-mark)
 			   elmo-msgdb-new-mark))))))
@@ -2245,7 +2242,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (luna-call-next-method)))
 
 (luna-define-method elmo-folder-msgdb-create-plugged
-  ((folder elmo-imap4-folder) numbers seen-list)
+  ((folder elmo-imap4-folder) numbers flag-table)
   (when numbers
     (let ((session (elmo-imap4-get-session folder))
 	  (headers
@@ -2271,7 +2268,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(setq elmo-imap4-current-msgdb nil
 	      elmo-imap4-seen-messages nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data (cons seen-list
+	      elmo-imap4-fetch-callback-data (cons flag-table
 						   (elmo-folder-use-flag-p
 						    folder)))
 	(while set-list
@@ -2491,7 +2488,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (elmo-imap4-folder-mailbox-internal folder)))))
 
 (luna-define-method elmo-folder-append-buffer
-  ((folder elmo-imap4-folder) unread &optional number)
+  ((folder elmo-imap4-folder) &optional flag number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
 	    send-buffer result)
@@ -2507,13 +2504,16 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    "append "
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
-		    (if unread " () " " (\\Seen) ")
+		    (cond 
+		     ((eq flag 'read) " (\\Seen) ")
+		     ((eq flag 'answered) " (\\Answered)")
+		     (t " () "))
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	result)
     ;; Unplugged
     (if elmo-enable-disconnected-operation
-	(elmo-folder-append-buffer-dop folder unread number)
+	(elmo-folder-append-buffer-dop folder flag number)
       (error "Unplugged"))))
 
 (eval-when-compile

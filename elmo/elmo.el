@@ -333,11 +333,11 @@ CONDITION is a condition structure for testing.
 NUMBERS is a list of message numbers,
 use to be test for \"last\" and \"first\" predicates.")
 
-(luna-define-generic elmo-folder-msgdb-create (folder numbers id-mark-table)
+(luna-define-generic elmo-folder-msgdb-create (folder numbers flag-table)
   "Create a message database (implemented in each backends).
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to create msgdb.
-ID-MARK-TABLE is a hashtable of message-id and its status mark.")
+FLAG-TABLE is a hashtable of message-id and flag.")
 
 (luna-define-generic elmo-folder-unmark-important (folder
 						   numbers
@@ -379,10 +379,11 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.")
 
-(luna-define-generic elmo-folder-append-buffer (folder unread &optional number)
+(luna-define-generic elmo-folder-append-buffer (folder &optional flag
+						       number)
   "Append current buffer as a new message.
 FOLDER is the destination folder(ELMO folder structure).
-If UNREAD is non-nil, message is appended as unread.
+FLAG is the status of appended message.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).")
 
@@ -1006,11 +1007,20 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
-  (let (unseen seen-list succeed-numbers failure cache)
+  (let (unseen table flag mark
+	       succeed-numbers failure cache)
+    (setq table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (while numbers
-	(setq failure nil)
+	(setq failure nil
+	      mark (elmo-message-mark src-folder (car numbers))
+	      flag (cond
+		    ((member mark (elmo-msgdb-answered-marks))
+		     'answered)
+		    ;;
+		    ((not (member mark (elmo-msgdb-unread-marks)))
+		     'read)))
 	(condition-case nil
 	    (setq cache (elmo-file-cache-get
 			 (elmo-message-field src-folder
@@ -1037,26 +1047,22 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     (setq unseen (member (elmo-message-mark
-					   src-folder (car numbers))
-					  (elmo-msgdb-unread-marks)))
+		     flag
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (unless unseen
-	    (setq seen-list (cons (elmo-message-field
-				   src-folder (car numbers)
-				   'message-id)
-				  seen-list)))
+	  (when flag
+	    (elmo-flag-table-set table
+				 (elmo-message-field
+				  src-folder (car numbers)
+				  'message-id)
+				 flag))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(elmo-progress-notify 'elmo-folder-move-messages)
 	(setq numbers (cdr numbers)))
-      (if (and seen-list (elmo-folder-persistent-p folder))
-	  (elmo-msgdb-seen-save (elmo-folder-msgdb-path folder)
-				(nconc (elmo-msgdb-seen-load
-					(elmo-folder-msgdb-path folder))
-				       seen-list)))
+      (when (elmo-folder-persistent-p folder)
+	(elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
       succeed-numbers)))
 
 ;; Arguments should be reduced.
@@ -1085,17 +1091,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 							      same-number))
 	    (error "move: append message to %s failed"
 		   (elmo-folder-name-internal dst-folder)))
-	  (elmo-folder-close dst-folder))
-	(when (and (elmo-folder-persistent-p dst-folder)
-		   save-unread)
-	  ;; Save to seen list.
-	  (let* ((dir (elmo-folder-msgdb-path dst-folder))
-		 (seen-list (elmo-msgdb-seen-load dir)))
-	    (setq seen-list
-		  (elmo-msgdb-add-msgs-to-seen-list
-		   msgs (elmo-folder-msgdb src-folder)
-		   seen-list))
-	    (elmo-msgdb-seen-save dir seen-list))))
+	  (elmo-folder-close dst-folder)))
       (if (and (not no-delete) succeeds)
 	  (progn
 	    (if (not no-delete-info)
@@ -1399,20 +1395,16 @@ If update process is interrupted, return nil."
 	(before-append t)
 	number-alist mark-alist
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
-	seen-list crossed after-append)
+	flag-table crossed after-append)
     (setq old-msgdb (elmo-folder-msgdb folder))
-    ;; Load seen-list.
-    (setq seen-list (elmo-msgdb-seen-load (elmo-folder-msgdb-path folder)))
+    (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (setq number-alist (elmo-msgdb-get-number-alist
 			(elmo-folder-msgdb folder)))
     (setq mark-alist (elmo-msgdb-get-mark-alist
 		      (elmo-folder-msgdb folder)))
-    (if ignore-msgdb
-	(progn
-	  (setq seen-list (nconc (elmo-msgdb-seen-list
-				  (elmo-folder-msgdb folder))
-				 seen-list))
-	  (elmo-folder-clear folder (eq ignore-msgdb 'visible-only))))
+    (when ignore-msgdb
+      (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
+      (elmo-folder-clear folder (eq ignore-msgdb 'visible-only)))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(progn
@@ -1448,14 +1440,14 @@ If update process is interrupted, return nil."
 			     (elmo-folder-msgdb folder) delete-list))
 	    (when new-list
 	      (setq new-msgdb (elmo-folder-msgdb-create
-			       folder new-list seen-list))
+			       folder new-list flag-table))
 	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
 				      elmo-msgdb-new-mark
 				      elmo-msgdb-unread-uncached-mark)
-	      ;; Clear seen-list.
+	      ;; Clear flag-table
 	      (if (elmo-folder-persistent-p folder)
-		  (setq seen-list (elmo-msgdb-seen-save
-				   (elmo-folder-msgdb-path folder) nil)))
+		  (elmo-flag-table-save (elmo-folder-msgdb-path folder)
+					nil))
 	      (setq before-append nil)
 	      (setq crossed (elmo-folder-append-msgdb folder new-msgdb))
 	      ;; process crosspost.
@@ -1467,8 +1459,7 @@ If update process is interrupted, return nil."
 	    (or crossed 0)))
       (quit
        ;; Resume to the original status.
-       (if before-append
-	   (elmo-folder-set-msgdb-internal folder old-msgdb))
+       (if before-append (elmo-folder-set-msgdb-internal folder old-msgdb))
        (elmo-folder-set-killed-list-internal folder killed-list)
        nil))))
 

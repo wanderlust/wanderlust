@@ -109,7 +109,7 @@
    type))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-filter-folder)
-					      numlist seen-list)
+					      numlist flag-table)
   (if (elmo-filter-folder-require-msgdb-internal folder)
       (let* ((target-folder (elmo-filter-folder-target-internal folder))
 	     (len (length numlist))
@@ -138,13 +138,13 @@
     ;; Does not require msgdb.
     (elmo-folder-msgdb-create
      (elmo-filter-folder-target-internal folder)
-     numlist seen-list)))
+     numlist flag-table)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
-					       unread &optional number)
+					       &optional flag number)
   (elmo-folder-append-buffer
    (elmo-filter-folder-target-internal folder)
-   unread number))
+   flag number))
 
 (luna-define-method elmo-message-fetch ((folder elmo-filter-folder)
 					number strategy

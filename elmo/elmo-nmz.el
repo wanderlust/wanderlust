@@ -117,7 +117,7 @@ If the value is a list, all elements are used as index paths for namazu."
     entity))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
-					      numlist seen-list)
+					      numlist flag-table)
   (let* (overview number-alist mark-alist entity
 		  i percent num pair)
     (setq num (length numlist))
