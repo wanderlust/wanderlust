@@ -1,3 +1,9 @@
+2004-09-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Use
+	unibyte string of the current buffer for the argument of `md5'
+	(Reported by Yoichi NAKAYAMA <yoichi@geiin.org>).
+
 2004-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-legacy.el (modb-legacy-flag-list): New constant.
