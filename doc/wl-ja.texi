@@ -3378,9 +3378,9 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item d
 @kindex d (Summary)
-@findex wl-summary-delete
+@findex wl-summary-dispose
 $B%+!<%=%k9T$N%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-delete})
+(@code{wl-summary-dispose})
 
 @item u
 @kindex u (Summary)
@@ -3445,9 +3445,9 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item r d
 @kindex r d (Summary)
-@findex wl-summary-delete-region
+@findex wl-summary-dispose-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-delete-region})
+(@code{wl-summary-dispose-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3521,10 +3521,10 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K%3%T!
 
 @item t d
 @kindex t d (Summary)
-@findex wl-thread-delete
+@findex wl-thread-dispose
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K:o=|%^!<%/$r$D$1$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-thread-delete})
+(@code{wl-thread-dispose})
 
 @item t u
 @kindex t u (Summary)
@@ -3581,9 +3581,9 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item m d
 @kindex m d (Summary)
-@findex wl-summary-target-mark-delete
+@findex wl-summary-target-mark-dispose
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-delete})
+(@code{wl-summary-target-mark-dispose})
 
 @item m y
 @kindex m y (Summary)
@@ -3654,12 +3654,6 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$=$l$>$l$r!"(B
 $B;XDj$7$?B>$N%W%m%;%9$K%Q%$%W7PM3$G0z$-EO$7$^$9!#(B
 (@code{wl-summary-target-mark-pipe})
-
-@item D
-@kindex D (Summary)
-@findex wl-summary-erase
-$B$4$_H"$K0\F0$;$:$K!"$=$N>l$G<B:]$K%a%C%;!<%8$r:o=|$7$^$9!#(B
-(@code{wl-summary-erase})
 
 @item M-t
 @kindex M-t (Summary)

@@ -3387,9 +3387,9 @@ previously specified.
 
 @item d
 @kindex d (Summary)
-@findex wl-summary-delete
+@findex wl-summary-dispose
 Put delete mark on the message at the current cursor point.
-(@code{wl-summary-delete})
+(@code{wl-summary-dispose})
 
 @item u
 @kindex u (Summary)
@@ -3455,9 +3455,9 @@ Put copy mark on the messages in the specified region.
 
 @item r d
 @kindex r d (Summary)
-@findex wl-summary-delete-region
+@findex wl-summary-dispose-region
 Put delete mark on the messages in the specified region.
-(@code{wl-summary-delete-region})
+(@code{wl-summary-dispose-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3533,10 +3533,10 @@ With prefix argument, it affects on the all messages in the thread tree.
 
 @item t d
 @kindex t d (Summary)
-@findex wl-thread-delete
-Put delete mar on the messages which are the descendant of the current thread.
+@findex wl-thread-dispose
+Put delete mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-delete})
+(@code{wl-thread-dispose})
 
 @item t u
 @kindex t u (Summary)
@@ -3593,9 +3593,9 @@ Put copy mark on the messages which have target mark @samp{*}.
 
 @item m d
 @kindex m d (Summary)
-@findex wl-summary-target-mark-delete
+@findex wl-summary-target-mark-dispose
 Put delete mark on the messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-delete})
+(@code{wl-summary-target-mark-dispose})
 
 @item m y
 @kindex m y (Summary)
@@ -3665,12 +3665,6 @@ Print out all messages which have target mark @samp{*}.
 Pipe content of each message with target mark @samp{*} to some specified
 external process.
 (@code{wl-summary-target-mark-pipe})
-
-@item D
-@kindex D (Summary)
-@findex wl-summary-erase
-Actually erase the message at once, without moving it to trash.
-(@code{wl-summary-erase})
 
 @item M-t
 @kindex M-t (Summary)
