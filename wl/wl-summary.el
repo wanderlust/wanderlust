@@ -2425,15 +2425,11 @@ If ARG is non-nil, checking is omitted."
 		 (string-to-int
 		  (read-from-minibuffer "Jump to Message(No.): ")))))
     (setq num (int-to-string num))
-    (if (re-search-forward (concat "^[ \t]*" num "[^0-9]") nil t)
-	(progn
-	  (beginning-of-line)
-	  t)
-      (if (re-search-backward (concat "^[ \t]*" num "[^0-9]") nil t)
-	  (progn
-	    (beginning-of-line)
-	    t)
-	nil))))
+    (beginning-of-line)
+    (if (or (re-search-forward (concat "^[ \t]*" num "[^0-9]") nil t)
+	    (re-search-backward (concat "^[ \t]*" num "[^0-9]") nil t))
+	(progn (beginning-of-line) t)
+      nil)))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion
