@@ -1,3 +1,9 @@
+2004-06-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-draft-reply-with-argument-list): Fix
+	customization type and docstring.
+	(wl-draft-reply-without-argument-list): Ditto.
+
 2004-06-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-mark-action-list): Fix customization type.

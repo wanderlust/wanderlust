@@ -860,14 +860,19 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
 	       ("Mail-Followup-To" "To" "Cc")
 	       ("Followup-To" "Newsgroups"))))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
+\('condition' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+'condition' is a header name string (non-nil if the header exists in original
+message), a function (evaluated in original message buffer) or a list of those
+\(means 'AND' condition).
 'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
+If car of each cons cell returns non-nil value,
+cdr of each cons cell is used for preparing headers of draft message.
 Default is for 'reply-to-all'."
   :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
+			       (symbol :tag "Function")
+			       (repeat :tag "AND"
+				       (choice (string :tag "Field Name")
+					       (symbol :tag "Function"))))
 		       (list (repeat :tag "Fields For To" string)
 			     (repeat :tag "Fields For Cc" string)
 			     (repeat :tag "Fields For Newsgroups" string))))
@@ -883,12 +888,17 @@ Default is for 'reply-to-all'."
     ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
 \('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
+'condition' is a header name string (non-nil if the header exists in original
+message), a function (evaluated in original message buffer) or a list of those
+\(means 'AND' condition).
 'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message."
+If car of each cons cell returns non-nil value,
+cdr of each cons cell is used for preparing headers of draft message."
   :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
+			       (symbol :tag "Function")
+			       (repeat :tag "AND"
+				       (choice (string :tag "Field Name")
+					       (symbol :tag "Function"))))
 		       (list (repeat :tag "Fields For To" string)
 			     (repeat :tag "Fields For Cc" string)
 			     (repeat :tag "Fields For Newsgroups" string))))
