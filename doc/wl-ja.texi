@@ -522,7 +522,8 @@ face の設定は @file{.emacs} に書くことはできないので
 @file{~/.wl} に書いてください。
 @xref{Highlights}.
 
-(上記のうち、@samp{(load "mime-setup")} 以外は @file{~/.wl} に記述できます。)
+(上記のうち、@samp{(load "mime-setup")} と autoload の設定以外は @file{~/.wl} 
+に記述できます。)
 
 @subsection mail-user-agent
 @cindex Default Mailer

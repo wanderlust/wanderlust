@@ -477,7 +477,8 @@ because you can't write them in @file{.emacs}
 (if you write it to @file{.emacs}, you'll get an error).
 @xref{Highlights}.
 
-All above described settings except (load "mime-setup") can be written in
+All above described settings except (load "mime-setup") and autoload
+configuration can be written in
 @file{~/.wl}).
 
 @subsection mail-user-agent
