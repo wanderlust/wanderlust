@@ -1,3 +1,11 @@
+2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-parse-parameters-from-list): Define as alias for
+	`mime-decode-parameters' instead of `mime-decode-parameter-plist'.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): Bind
+	case-fold-search.
+
 2001-02-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-resque-obsolete-variable): Use defvaralias if

@@ -748,9 +748,10 @@
   (wl-delete-all-overlays)
   (let (bol eol ov)
     (save-excursion
+      (end-of-line)
+      (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
-      (save-excursion (end-of-line) (setq eol (point)))
       (setq ov (make-overlay bol eol))
       (overlay-put ov 'face 'wl-highlight-summary-displaying-face)
       (overlay-put ov 'evaporate t)
@@ -839,14 +840,16 @@
 		    wl-highlight-thread-indent-string-regexp
 		    "\\)[[<]"))
 	  fregexp fsymbol bol eol matched thread-top looked-at)
+      (end-of-line)
+      (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
-      (save-excursion (end-of-line) (setq eol (point)))
       (if smark
 	  (setq status-mark smark)
 	(setq looked-at (looking-at sregexp))
-	(setq status-mark (buffer-substring (match-beginning 2)
-					    (match-end 2))))
+	(when looked-at
+	  (setq status-mark (buffer-substring (match-beginning 2)
+					      (match-end 2)))))
       (when temp-too
 	(unless looked-at
 	  (setq looked-at (looking-at sregexp)))

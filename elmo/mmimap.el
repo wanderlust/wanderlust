@@ -66,8 +66,8 @@ SECTION is a section string which is defined in RFC2060.")
      (reverse node-id)
      "."))))
 
-(static-if (fboundp 'mime-decode-parameter-plist)
-    (defalias 'mmimap-parse-parameters-from-list 'mime-decode-parameter-plist)
+(static-if (fboundp 'mime-decode-parameters)
+    (defalias 'mmimap-parse-parameters-from-list 'mime-decode-parameters)
   (defun mmimap-parse-parameters-from-list (attrlist)
     "Parse parameters from ATTRLIST."
     (let (ret-val)

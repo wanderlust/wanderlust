@@ -14,7 +14,7 @@ Features:
  * スレッドと未読管理。
  * 購読フォルダの一覧を表示するフォルダモード。
  * メッセージキャッシュ、 Disconnected Operation。
- * MH 的 FCC。(FCC: %Backup も可)。
+ * MH 的 Fcc。(Fcc: %Backup も可)。
  * MIME 対応 (by SEMI or tm [5])。
  * ニュース/メールの送信を統合したドラフト編集。
  * フォルダ一覧のアイコン表示 (XEmacs)。

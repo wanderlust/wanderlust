@@ -171,7 +171,7 @@ Special commands:
   (local-set-key [menu-bar mail signature]
     '("Insert Signature" . insert-signature))
   (local-set-key [menu-bar headers fcc]
-    '("FCC" . wl-draft-fcc)))
+    '("Fcc" . wl-draft-fcc)))
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)

@@ -301,7 +301,7 @@ If nil, don't authenticate."
 
 (defcustom wl-pop-before-smtp-user nil
   "*POP3 user name to send mail using POP-before-SMTP.
-If nil, `elmo-default-pop3-user' is used.
+If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
 (setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
@@ -310,27 +310,27 @@ To use POP-before-SMTP,
 
 (defcustom wl-pop-before-smtp-server nil
   "*POP3 server for POP-before-SMTP.
-If nil, `elmo-default-pop3-server' is used."
+If nil, `elmo-pop3-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-port nil
   "*POP3 port for POP-before-SMTP.
-If nil, `elmo-default-pop3-port' is used."
+If nil, `elmo-pop3-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
-If nil, `elmo-default-pop3-stream-type' is used."
+If nil, `elmo-pop3-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-authenticate-type nil
   "*Default Authentication type for POP-before-SMTP.
-If nil, `elmo-default-pop3-authenticate-type' is used."
+If nil, `elmo-pop3-default-authenticate-type' is used."
   :type '(choice (const :tag "none" nil)
 		 (const :tag "APOP" "apop")
 		 (const :tag "POP3" "user"))
@@ -338,26 +338,26 @@ If nil, `elmo-default-pop3-authenticate-type' is used."
 
 (defcustom wl-nntp-posting-server nil
   "*NNTP server name to post news.
-If nil, `elmo-default-nntp-server' is used."
+If nil, `elmo-nntp-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 (defcustom wl-nntp-posting-user nil
   "*NNTP user name to post news for authinfo.
-If nil, `elmo-default-nntp-user' is used.
+If nil, `elmo-nntp-default-user' is used.
 If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 (defcustom wl-nntp-posting-port nil
   "*NNTP port to post news.
-If nil, `elmo-default-nntp-port' is used."
+If nil, `elmo-nntp-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
   :group 'wl)
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
-If nil, `elmo-default-nntp-stream-type' is used."
+If nil, `elmo-nntp-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
 
