@@ -208,22 +208,27 @@ STATUS is a symbol which is one of the following:
 		       'answered)
 		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
+	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
+	 mark-modified)
     (case status
       (read
-       (if (eq cur-status 'read)
-	   (elmo-msgdb-set-mark msgdb number
-				(if (and cur-cached use-cache)
-				    elmo-msgdb-unread-cached-mark
-				  elmo-msgdb-unread-uncached-mark))))
+       (when (eq cur-status 'read)
+	 (elmo-msgdb-set-mark msgdb number
+			      (if (and cur-cached use-cache)
+				  elmo-msgdb-unread-cached-mark
+				elmo-msgdb-unread-uncached-mark))
+	 (setq mark-modified t)))
       (important
-       (if (eq cur-status 'important)
-	   (elmo-msgdb-set-mark msgdb number nil)))
+       (when (eq cur-status 'important)
+	 (elmo-msgdb-set-mark msgdb number nil)
+	 (setq mark-modified t)))
       (answered
-       (if (eq cur-status 'answered)
-	   (elmo-msgdb-set-mark msgdb number
-				(if (and cur-cached (not use-cache))
-				    elmo-msgdb-read-uncached-mark)))))))
+       (when (eq cur-status 'answered)
+	 (elmo-msgdb-set-mark msgdb number
+			      (if (and cur-cached (not use-cache))
+				  elmo-msgdb-read-uncached-mark))
+	 (setq mark-modified t))))
+    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
 
 (defvar elmo-msgdb-unread-marks-internal nil)
 (defsubst elmo-msgdb-unread-marks ()

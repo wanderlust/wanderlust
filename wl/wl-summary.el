@@ -817,7 +817,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
-    (if wl-on-xemacs 
+    (if wl-on-xemacs
 	(progn
 	  (make-local-variable 'pre-idle-hook)
 	  (add-hook 'pre-idle-hook 'wl-highlight-summary-window))
@@ -1649,7 +1649,7 @@ If ARG is non-nil, checking is omitted."
 	     (inhibit-read-only t)
 	     (buffer-read-only nil)
 	     (case-fold-search nil)
-	     msg mark)
+	     msg mark new-mark)
 	(message "Setting all msgs as read...")
 	(elmo-folder-mark-as-read folder
 				  (elmo-folder-list-unreads
@@ -2808,7 +2808,7 @@ If ARG, without confirm."
 	(wl-summary-update-modeline)
 	(wl-folder-update-unread
 	 (wl-summary-buffer-folder-name)
-       	 (+ wl-summary-buffer-unread-count
+	 (+ wl-summary-buffer-unread-count
 	    wl-summary-buffer-new-count)))
       (when visible
 	(unless (string= (wl-summary-persistent-mark) new-mark)
@@ -3873,7 +3873,6 @@ If ARG, exit virtual folder."
       (when (member mark (elmo-msgdb-unread-marks))
 	;; folder mark.
 	(elmo-folder-mark-as-read folder (list number) no-folder-mark))
-      (elmo-message-set-cached folder number t)
       (setq new-mark (elmo-message-mark folder number))
       (unless no-modeline-update
 	;; Update unread numbers.
@@ -3882,7 +3881,7 @@ If ARG, exit virtual folder."
 	(wl-summary-update-modeline)
 	(wl-folder-update-unread
 	 (wl-summary-buffer-folder-name)
-       	 (+ wl-summary-buffer-unread-count
+	 (+ wl-summary-buffer-unread-count
 	    wl-summary-buffer-new-count)))
       ;; set mark on buffer
       (when visible
@@ -3988,7 +3987,7 @@ If ARG, exit virtual folder."
   "Return non-nil when summary line format is changed."
   (not (string=
 	wl-summary-buffer-line-format
-	(or (elmo-object-load (expand-file-name 
+	(or (elmo-object-load (expand-file-name
 			       wl-summary-line-format-file
 			       (elmo-folder-msgdb-path
 				wl-summary-buffer-elmo-folder))
@@ -4892,7 +4891,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if downward
 	  (forward-line 1)
 	(forward-line -1))
-      (setq skip (or (string-match skip-tmark-regexp 
+      (setq skip (or (string-match skip-tmark-regexp
 				   (save-excursion
 				     (wl-summary-temp-mark)))
 		     (and skip-pmark-regexp
@@ -5044,7 +5043,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
-	 fld-buf fld-win thr-entity)
+	 no-folder-mark fld-buf fld-win thr-entity)
     (if (and wl-thread-open-reading-thread
 	     (eq wl-summary-buffer-view 'thread)
 	     (not (wl-thread-entity-get-opened
@@ -5063,23 +5062,25 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-summary-mark-as-read
-	   num
-	   ;; not fetched, then change server-mark.
-	   (if (wl-message-redisplay folder num 'mime
-				     (or force-reload
-					 (string= (elmo-folder-name-internal
-						   folder)
-						  wl-draft-folder)))
-	       nil
-	     ;; plugged, then leave server-mark.
-	     (if (and
-		  (not
-		   (elmo-folder-local-p
-		    wl-summary-buffer-elmo-folder))
-		  (elmo-folder-plugged-p
-		   wl-summary-buffer-elmo-folder))
-		 'leave)))
+	  (setq no-folder-mark
+		;; If cache is used, change folder-mark.
+		(if (wl-message-redisplay folder num
+					  'mime
+					  (or
+					   force-reload
+					   (string= (elmo-folder-name-internal
+						     folder)
+						    wl-draft-folder)))
+		    nil
+		  ;; plugged, then leave folder-mark.
+		  (if (and (not (elmo-folder-local-p
+				 wl-summary-buffer-elmo-folder))
+			   (elmo-folder-plugged-p
+			    wl-summary-buffer-elmo-folder))
+		      'leave)))
+	  (if (elmo-message-use-cache-p folder num)
+	      (elmo-message-set-cached folder num t))
+	  (wl-summary-mark-as-read num no-folder-mark)
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))

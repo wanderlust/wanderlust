@@ -33,6 +33,7 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
+(require 'elmo-msgdb)
 (require 'custom)
 
 ;;; Customizable Variables
