@@ -4051,6 +4051,7 @@ If ARG, exit virtual folder."
 	 (t (format "%dB" size)))
       "")))
 
+(defvar wl-summary-line-subject-minimum-length nil)
 (defun wl-summary-line-subject ()
   (let (no-parent subject parent-raw-subject parent-subject)
     (if (string= wl-thr-indent-string "")
@@ -4072,9 +4073,15 @@ If ARG, exit virtual folder."
 			subject parent-subject)))
 	      (funcall wl-summary-subject-function subject)
 	    ""))
+    (when (and wl-summary-line-subject-minimum-length
+	       (< (string-width subject)
+		  wl-summary-line-subject-minimum-length))
+      (while (< (string-width subject)
+		wl-summary-line-subject-minimum-length)
+	(setq subject (concat subject " "))))
     (if (and (not wl-summary-width)
 	     wl-summary-subject-length-limit)
-	(truncate-string subject 
+	(truncate-string subject
 			 wl-summary-subject-length-limit)
       subject)))
 
