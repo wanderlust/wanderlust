@@ -246,6 +246,12 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-inhibit-number-mapping nil
   "Global switch to inhibit number mapping (e.g. Inhibit UIDL on POP3).")
 
+(defvar elmo-display-retrieval-progress-threshold 30000
+  "*Don't display progress if the message size is smaller than this value.")
+
+(defvar elmo-inhibit-display-retrieval-progress nil
+  "Global switch to inhibit display progress of each message's retrieval.")
+
 (defvar elmo-dop-queue nil
   "Global variable for storing disconnected operation queues.")
 
