@@ -1,3 +1,9 @@
+2000-04-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-refile.el
+	(wl-refile-expand-newtext): New function imported from Gnus.
+	(wl-refile-evaluate-rule): Use it.
+
 2000-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-print-destination):
