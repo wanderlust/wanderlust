@@ -1,5 +1,10 @@
 2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-score.el (wl-summary-score-update-all-lines): Don't use msgdb
+	directly.
+	(wl-score-overview-entity-get-lines): Ditto.
+	(wl-score-overview-entity-get-xref): Ditto.
+
 	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-mark-as-answered
 	to "&".
 	(wl-summary-mark-as-answered-internal): New inline function.
