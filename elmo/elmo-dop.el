@@ -281,10 +281,8 @@ FOLDER is the folder structure."
 	 spool-length
 	 (i 0)
 	 max-num)
-    (setq spool-length
-	  (or (car (if (elmo-folder-exists-p spool-folder)
-		       (elmo-folder-status spool-folder)))
-	      0))
+    (setq spool-length (car (if (elmo-folder-exists-p spool-folder)
+				(elmo-folder-status spool-folder))))
     (setq max-num
 	  (or (nth (max (- (length number-list) 1) 0) number-list)
 	      0))
