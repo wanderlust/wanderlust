@@ -1,3 +1,8 @@
+2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Fixed a problem
+	of refiling failure on Maildir.
+
 2000-05-10  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-get-decoded-cache): get string of
@@ -12,6 +17,7 @@
 	(elmo-remove-passwd): Fill password with 0 before erase.
 	* elmo-vars.el (elmo-passwd-life-time): New variable.
 
+
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-cache.el (elmo-buffer-cache-add):
