@@ -914,13 +914,13 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	      (error "Deleting message failed")))
 	(error "Deleting message failed")))))
 
-(luna-define-method elmo-folder-delete-messages-plugged
-  ((folder elmo-pop3-folder) msgs)
+(luna-define-method elmo-folder-delete-messages-plugged ((folder
+							  elmo-pop3-folder)
+							 msgs)
   (let ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
 	(process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
-    (mapcar '(lambda (msg) (elmo-pop3-delete-msg
-			    process msg loc-alist))
+    (mapcar '(lambda (msg) (elmo-pop3-delete-msg process msg loc-alist))
 	    msgs)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-pop3-folder) number)

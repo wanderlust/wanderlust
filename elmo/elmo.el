@@ -1543,7 +1543,8 @@ If update process is interrupted, return nil.")
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-folder)
 						 numbers)
-  (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) numbers))
+  (if (elmo-folder-msgdb-internal folder)
+      (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) numbers)))
 
 (luna-define-generic elmo-folder-length (folder)
   "Return number of messages in the FOLDER.")
@@ -1655,7 +1656,6 @@ Return a hashtable for newsgroups."
 						 new-folder)
   (error "Cannot rename %s folder"
 	 (symbol-name (elmo-folder-type-internal folder))))
-
 
 ;;; Define folders.
 (elmo-define-folder ?% 'imap4)

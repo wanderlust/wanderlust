@@ -1,3 +1,10 @@
+2003-08-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-detach-messages): Don't load msgdb if empty.
+
+	* elmo-pipe.el (elmo-pipe-drain): Bind elmo-inhibit-number-mapping
+	only when src folder type is pop3.
+
 2003-08-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-make-index): Use
