@@ -1,21 +1,34 @@
-;;; rfc2368.el --- support for rfc 2368
-
-;; Copyright (C) 1999 Sen Nagata <sen@eccosys.com>
+;;; rfc2368.el --- support for rfc2368
 
 ;; Author: Sen Nagata <sen@eccosys.com>
-;; Version: 0.3
-;; Keywords: rfc 2368, mailto, mail
-;; License: GPL 2
+;; Keywords: mail
 
-;; This file is not a part of GNU Emacs.
+;; Copyright (C) 1998, 2000 Free Software Foundation, Inc.
+
+;; This file is part of GNU Emacs.
+
+;; GNU Emacs is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
 
 ;;; Commentary:
 ;;
 ;; notes:
 ;;
 ;;   -repeat after me: "the colon is not part of the header name..."
-;;   -if w3 becomes part of Emacs, then it may make sense to have this
-;;    file depend on w3 -- the maintainer of w3 says merging w/ emacs
+;;   -if w3 becomes part of emacs, then it may make sense to have this
+;;    file depend on w3 -- the maintainer of w3 says merging w/ Emacs
 ;;    is planned!
 ;;
 ;; historical note:
@@ -26,7 +39,7 @@
 ;;
 ;;   the functions that deal w/ unhexifying in this file were basically
 ;; taken from w3 -- i hope to replace them w/ something else soon OR
-;; perhaps if w3 becomes a part of Emacs soon, use the functions from w3.
+;; perhaps if w3 becomes a part of emacs soon, use the functions from w3.
 
 ;;; History:
 ;;
@@ -46,7 +59,6 @@
 ;;  initial implementation
 
 ;;; Code:
-(defconst rfc2368-version "rfc2368.el 0.3")
 
 ;; only an approximation?
 ;; see rfc 1738
@@ -64,39 +76,16 @@
 (defconst rfc2368-mailto-query-index 4
   "Describes the portion of the url after '?'.")
 
-;; for dealing w/ unhexifying strings, my preferred approach is to use
-;; a 'string-replace-match-using-function' which can perform a
-;; string-replace-match and compute the replacement text based on a
-;; passed function -- however, emacs doesn't seem to have such a
-;; function yet :-(
-
-;; for the moment a rip-off of url-unhex (w3/url.el)
-(defun rfc2368-unhexify-char (char)
-  "Unhexify CHAR -- e.g. %20 -> <SPC>."
-  (if (> char ?9)
-      (if (>= char ?a)
-	  (+ 10 (- char ?a))
-	(+ 10 (- char ?A)))
-    (- char ?0)))
-
-;; for the moment a rip-off of url-unhex-string (w3/url.el) (slightly modified)
 (defun rfc2368-unhexify-string (string)
   "Unhexify STRING -- e.g. 'hello%20there' -> 'hello there'."
-  (let ((case-fold-search t)
-	(result ""))
-    (while (string-match "%[0-9a-f][0-9a-f]" string)
-      (let* ((start (match-beginning 0))
-	     (hex-code (+ (* 16
-			     (rfc2368-unhexify-char (elt string (+ start 1))))
-			  (rfc2368-unhexify-char (elt string (+ start 2))))))
-	(setq result (concat
-		      result (substring string 0 start)
-		      (char-to-string hex-code))
-	      string (substring string (match-end 0)))))
-    ;; it seems clearer to do things this way than to just return:
-    ;; (concat result string)
-    (setq result (concat result string))
-    result))
+  (with-temp-buffer
+    (insert string)
+    (goto-char (point-min))
+    (while (re-search-forward "%\\([0-9]\\{2\\}\\)" nil t)
+      (replace-match (string (string-to-number (match-string 1)
+					       16))
+		       nil nil))
+    (buffer-string)))
 
 (defun rfc2368-parse-mailto-url (mailto-url)
   "Parse MAILTO-URL, and return an alist of header-name, header-value pairs.
@@ -113,7 +102,7 @@ calling this function."
 
 	  (setq prequery
 		(match-string rfc2368-mailto-prequery-index mailto-url))
-	  
+
 	  (setq query
 		(match-string rfc2368-mailto-query-index mailto-url))
 
@@ -134,20 +123,22 @@ calling this function."
 	  ;; deal w/ multiple 'To' recipients
 	  (if prequery
 	      (progn
+		(setq prequery (rfc2368-unhexify-string prequery))
 		(if (assoc "To" headers-alist)
 		    (let* ((our-cons-cell
 			    (assoc "To" headers-alist))
 			   (our-cdr
 			    (cdr our-cons-cell)))
-		      (setcdr our-cons-cell (concat our-cdr ", " prequery)))
+		      (setcdr our-cons-cell (concat prequery ", " our-cdr)))
 		  (setq headers-alist
 			(cons (cons "To" prequery) headers-alist)))))
-	  
+
 	  headers-alist)
-      
+
       (error "Failed to match a mailto: url"))
     ))
 
 (provide 'rfc2368)
 
+;;; arch-tag: ea804934-ad96-4f69-957b-857a76e4fd95
 ;;; rfc2368.el ends here
