@@ -1072,6 +1072,10 @@ non-nil."
 			   smtp-sasl-user-name
 			   (car smtp-sasl-mechanisms)
 			   smtp-server)))
+		     (signal (car err) (cdr err)))
+		    (quit
+		     (wl-draft-write-sendlog 'uncertain 'smtp smtp-server
+					     recipients id)
 		     (signal (car err) (cdr err)))))
 		 (wl-draft-set-sent-message 'mail 'sent)
 		 (wl-draft-write-sendlog

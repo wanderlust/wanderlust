@@ -1,3 +1,8 @@
+2003-05-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Catch quitting and
+	write sendlog.
+
 2003-05-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Don't restrict
