@@ -1,3 +1,22 @@
+2004-09-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-reply-hook): Changed default value.
+	(wl-draft-kill-pre-hook): Set default value as nil.
+	(wl-summary-reply-hook): Ditto.
+	(wl-draft-kill-flags): Abolish.
+
+	* wl-draft.el (wl-draft-parent-flag): New buffer local variable.
+	(wl-draft-parent-variables): Renamed from
+	wl-draft-reply-saved-variables and added wl-draft-parent-flag.
+	(wl-draft-forward): Call wl-draft-config-info-operation with 'save
+	argument; Add wl-draft-parent-variables to
+	wl-draft-config-variables.
+	(wl-draft-reply): Likewise.
+	(wl-draft-kill-flags): Abolish.
+	(wl-draft-send): Call wl-draft-set-flag-on-parent.
+	(wl-draft-set-flag-on-parent): New function.
+	(wl-draft-setup-parent-flag): Ditto.
+
 2004-09-02  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-draft.el (wl-draft-kill-flags): Avoid error when

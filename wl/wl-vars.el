@@ -754,7 +754,8 @@ reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-hook nil
   "A hook called when Wanderlust is invoked.")
 
-(defvar wl-draft-reply-hook nil
+(defvar wl-draft-reply-hook
+  '((lambda () (wl-draft-setup-parent-flag 'answered)))
   "A hook called when replied.
 This hook runs on the draft buffer.")
 
@@ -762,11 +763,10 @@ This hook runs on the draft buffer.")
   "A hook called when forwarded.
 This hook runs on the draft buffer.")
 
-(defvar wl-draft-kill-pre-hook '(wl-draft-kill-flags)
+(defvar wl-draft-kill-pre-hook nil
   "A hook called just before the draft buffer is killed.")
 
-(defvar wl-summary-reply-hook
-  '((lambda () (wl-summary-set-persistent-mark 'answered)))
+(defvar wl-summary-reply-hook nil
   "A hook called when `wl-summary-reply' is called.
 This hook runs on the summary buffer.")
 
@@ -1779,11 +1779,6 @@ message buffer."
   "*Use address with full-name in the draft of replied message."
   :type 'boolean
   :group 'wl-pref
-  :group 'wl-draft)
-
-(defcustom wl-draft-kill-flags '(answered)
-  "Remove specified flags on parent message when current draft is killed."
-  :type '(repeat (symbol :tag "flag"))
   :group 'wl-draft)
 
 (defcustom wl-subject-re-prefix-regexp "^[ \t]*\\([Rr][Ee][:>][ \t]*\\)*[ \t]*"

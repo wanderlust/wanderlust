@@ -92,10 +92,12 @@ e.g.
          (\"From\" . \"user@domain2\"))))")
 
 (defvar wl-draft-parent-number nil)
+(defvar wl-draft-parent-flag nil)
 
-(defconst wl-draft-reply-saved-variables
+(defconst wl-draft-parent-variables
   '(wl-draft-parent-folder
-    wl-draft-parent-number))
+    wl-draft-parent-number
+    wl-draft-parent-flag))
 
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
@@ -123,6 +125,7 @@ e.g.
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
 (make-variable-buffer-local 'wl-draft-parent-number)
+(make-variable-buffer-local 'wl-draft-parent-flag)
 
 (defvar wl-draft-folder-internal nil
   "Internal variable for caching `opened' draft folder.")
@@ -294,9 +297,13 @@ e.g.
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (setq wl-draft-parent-number number)
+  (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To")
+  (setq wl-draft-config-variables
+	(append wl-draft-parent-variables
+		wl-draft-config-variables)))
   (run-hooks 'wl-draft-forward-hook))
 
 (defun wl-draft-self-reply-p ()
@@ -460,9 +467,10 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
     (setq wl-draft-parent-number number)
+    (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
     (setq wl-draft-reply-buffer buf)
     (setq wl-draft-config-variables
-	  (append wl-draft-reply-saved-variables
+	  (append wl-draft-parent-variables
 		  wl-draft-config-variables)))
   (run-hooks 'wl-draft-reply-hook))
 
@@ -764,25 +772,6 @@ Reply to author if WITH-ARG is non-nil."
 					'delete))
       (set-buffer-modified-p nil)		; force kill
       (kill-buffer editing-buffer))))
-
-(defun wl-draft-kill-flags ()
-  "Remove flags on parent message when current draft is killed."
-  (let ((buffer (wl-summary-get-buffer wl-draft-parent-folder))
-	(number wl-draft-parent-number)
-	folder)
-    (if buffer
-	(with-current-buffer buffer
-	  (dolist (flag wl-draft-kill-flags)
-	    (wl-summary-unset-persistent-mark flag number)))
-      ;; Parent buffer does not exist.
-      (when (setq folder (and wl-draft-parent-folder
-			      (string< "" wl-draft-parent-folder)
-			      (wl-folder-get-elmo-folder
-			       wl-draft-parent-folder)))
-	(elmo-folder-open folder 'load-msgdb)
-	(dolist (flag wl-draft-kill-flags)
-	  (elmo-folder-unset-flag folder (list wl-draft-parent-number) flag))
-	(elmo-folder-close folder)))))
 
 (defun wl-draft-kill (&optional force-kill)
   "Kill current draft buffer and quit editing."
@@ -1378,7 +1367,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		(message "%sdone"
 			 (or wl-draft-verbose-msg
 			     mes-string
-			     "Sending..."))))
+			     "Sending...")))
+	    (with-current-buffer sending-buffer
+	      (when (and wl-draft-parent-flag
+			 wl-draft-parent-number
+			 wl-draft-parent-folder
+		(wl-draft-set-flag-on-parent wl-draft-parent-flag))))
 	;; kill sending buffer, anyway.
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))
@@ -2636,6 +2630,29 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 		   "body"
 		   wl-user-agent-headers-and-body-alist 'ignore-case)))))
     t))
+
+(defun wl-draft-set-flag-on-parent (flag)
+  "Set FLAG on parent message."
+  (let ((buffer (wl-summary-get-buffer wl-draft-parent-folder))
+	(number wl-draft-parent-number)
+	folder)
+    (if buffer
+	(with-current-buffer buffer
+	  (wl-summary-set-persistent-mark flag number))
+      ;; Parent buffer does not exist.
+      (when (setq folder (and wl-draft-parent-folder
+			      (wl-folder-get-elmo-folder
+			       wl-draft-parent-folder)))
+	(elmo-folder-open folder 'load-msgdb)
+	(elmo-folder-set-flag folder (list wl-draft-parent-number) flag)
+	(elmo-folder-close folder)))))
+
+(defun wl-draft-setup-parent-flag (flag)
+  "Setup a FLAG for parent message."
+  (when (and (> (length wl-draft-parent-folder) 0)
+	     wl-draft-parent-number)
+    (setq wl-draft-parent-flag flag)
+    (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)))
 
 (require 'product)
 (product-provide (provide 'wl-draft) (require 'wl-version))
