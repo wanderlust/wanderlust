@@ -1,5 +1,8 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-localdir.el (elmo-folder-pack-numbers): onum, a member of
+	flist, is not always a member of onum-alist.
+
 	* elmo-imap4.el (elmo-folder-expand-msgdb-path): Don't expand
 	mailbox (e.g. for %~/something).
 
