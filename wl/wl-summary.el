@@ -2231,6 +2231,9 @@ If ARG, without confirm."
 	     (symbol-value (car copy-variables))))
       (setq copy-variables (cdr copy-variables)))
     (switch-to-buffer buf)
+    (with-current-buffer cur-buf
+      (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
+				  wl-summary-buffer-event-handler))
     (kill-buffer cur-buf)
     (wl-summary-count-unread)
     (wl-summary-update-modeline)

@@ -1,3 +1,8 @@
+2004-11-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-switch-to-clone-buffer): Remove event
+	handler of current buffer from elmo-folder.
+
 2004-11-07  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-sort): Confirm before sorting.
