@@ -1,40 +1,4 @@
-2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-vars.el (wl-folder-process-duplicates-alist): Changed default
-	value to nil (According to the patch from
-	Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>).
-
-	* wl-util.el (wl-biff-check-folder): Call elmo-folder-check instead
-	of elmo-folder-close.
-
-2001-06-06  Peter Møller Neergaard <turtle@bu.edu>
-
-	* wl-summary.el (wl-summary-resend-bounced-mail): Modified regexp
-	for postfix.
-
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-resend-message): Fixed.
-
-	* wl-draft.el (wl-draft-edit-string): Fetch From: field value and
-	Call wl-draft with `from' argument if its address is included in
-	`wl-user-mail-address-list'.
-	(wl-draft): Added `from' argument.
-
-	* wl.el (wl-exit): Delete current frame if wl-folder-use-frame is
-	non-nil.
-	(wl): Don't show demo if wl-demo is nil.
-
-	* wl-summary.el (wl-summary-exit): Renamed wl-folder-use-frame to
-	wl-summary-use-frame.
-
-	* wl-vars.el (wl-summary-use-frame): New user option.
-	(wl-folder-use-frame): Changed docstring.
-
-	* wl-folder.el (wl-folder): Make new frame if wl-folder-use-frame is
-	non-nil.
-	(wl-folder-select-buffer): Renamed wl-folder-use-frame to
-	wl-summary-use-frame.
 
 	* wl-vars.el (wl-folder-use-frame): New user option.
 

@@ -1158,12 +1158,7 @@ Each elements are regexp of field-name."
   :group 'wl-pref)
 
 (defcustom wl-folder-use-frame nil
-  "*Use dedicated frame for folder mode if non-nil."
-  :type 'boolean
-  :group 'wl-pref)
-
-(defcustom wl-summary-use-frame nil
-  "*Use dedicated frame for each folder summary if non-nil."
+  "*Use dedicated frame for each folder if non-nil."
   :type 'boolean
   :group 'wl-pref)
 
@@ -1645,7 +1640,10 @@ If nil, always use default."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-folder-process-duplicates-alist nil
+(defcustom wl-folder-process-duplicates-alist
+  (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^"
+		      (regexp-quote wl-trash-folder) "$") nil)
+	(cons ".*" 'hide))
   "Specify process type of duplicated messages.
 It should be a list of cons cell like: (REGEXP . TYPE)
 REGEXP is a regular expression string of folder name.

@@ -613,7 +613,7 @@ you."
 	(cond
 	 ((and
 	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
+	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/report\\)") nil t)
 	   (not (bolp))
 	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
 	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
@@ -621,7 +621,6 @@ you."
 	    (cond
 	     ((and (setq start (re-search-forward
 			   (concat "^--" boundary "\n"
-				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				   "[Cc]ontent-[Tt]ype:[ \t]+"
 				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
 				   "\\(.+\n\\)*\n") nil t))
@@ -644,7 +643,8 @@ you."
       (message "No address specified.")
     (message "Resending message to %s..." address)
     (save-excursion
-      (let ((original (wl-summary-get-original-buffer)))
+      (let ((mmelmo-force-fetch-entire-message t))
+	(wl-summary-set-message-buffer-or-redisplay)
 	;; We first set up a normal mail buffer.
 	(set-buffer (get-buffer-create " *wl-draft-resend*"))
 	(buffer-disable-undo (current-buffer))
@@ -664,7 +664,7 @@ you."
 	(delete-region (point) (point-max))
 	(let ((beg  (point)))
 	  ;; Insert the message to be resent.
-	  (insert-buffer-substring original)
+	  (insert-buffer-substring (wl-message-get-original-buffer))
 	  (goto-char (point-min))
 	  (search-forward "\n\n")
 	  (forward-char -1)
@@ -1036,11 +1036,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	;; delete message window if displayed.
 	(if (and wl-message-buffer (get-buffer-window wl-message-buffer))
 	    (delete-window (get-buffer-window wl-message-buffer)))
-	(if (and wl-summary-use-frame
+	(if (and wl-folder-use-frame
 		 (> (length (visible-frame-list)) 1))
 	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if wl-summary-use-frame
+	    (if wl-folder-use-frame
 		(let (select-frame)
 		  (save-selected-window
 		    (dolist (frame (visible-frame-list))
