@@ -2514,7 +2514,8 @@ If ARG, without confirm."
 	      (wl-message-buffer-prefetch
 	       folder
 	       (wl-summary-message-number)
-	       wl-message-buffer-prefetch-depth
+	       (min wl-message-buffer-prefetch-depth
+		    (1- wl-message-buffer-cache-size))
 	       (current-buffer)
 	       wl-summary-buffer-mime-charset))
 	  (if mes (message "%s" mes))
@@ -4593,10 +4594,12 @@ If ARG is numeric number, decode message as following:
 	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
-	  (wl-message-buffer-prefetch-next folder num
-					   wl-message-buffer-prefetch-depth
-					   (current-buffer)
-					   wl-summary-buffer-mime-charset)
+	  (wl-message-buffer-prefetch-next
+	   folder num
+	   (min wl-message-buffer-prefetch-depth
+		(1- wl-message-buffer-cache-size))
+	   (current-buffer)
+	   wl-summary-buffer-mime-charset)
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display."))))
 

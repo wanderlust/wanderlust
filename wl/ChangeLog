@@ -1,3 +1,9 @@
+2005-01-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Protect current
+	message (the condition is borrowed from `wl-check-variables-2').
+	(wl-summary-redisplay-internal): Ditto.
+
 2005-01-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-draft-nntp-attribute): New function.
