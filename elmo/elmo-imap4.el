@@ -1242,17 +1242,24 @@ If optional argument UNMARK is non-nil, unmark."
 				  'no-lin-break)))))) ;)
 	    (catch 'done
 	      (while t
-		(setq response (elmo-imap4-read-untagged
-				(elmo-network-session-process-internal session)))
-		(if (and
-		     (null (elmo-imap4-response-continue-req-p response))
-		     (elmo-imap4-response-ok-p response)
-		     (or (sasl-next-step client step)
-			 (throw 'done nil)))
+		(setq response
+		      (elmo-imap4-read-untagged
+		       (elmo-network-session-process-internal session)))
+		(if (elmo-imap4-response-continue-req-p response)
+		    (unless (sasl-next-step client step)
+		      ;; response is '+' but there's no next step.
+		      (signal 'elmo-authenticate-error
+			      (list (intern
+				     (concat "elmo-imap4-auth-"
+					     (downcase name))))))
+		  ;; response is OK.
+		  (if (elmo-imap4-response-ok-p response)
+		      (throw 'done nil) ; finished.
+		    ;; response is NO or BAD.
 		    (signal 'elmo-authenticate-error
 			    (list (intern
 				   (concat "elmo-imap4-auth-"
-					   (downcase name))))))
+					   (downcase name)))))))
 		(sasl-step-set-data
 		 step
 		 (elmo-base64-decode-string
