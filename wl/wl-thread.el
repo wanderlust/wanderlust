@@ -639,20 +639,20 @@ ENTITY is returned."
 When optional argument UPDATE is non-nil,
 Message is inserted to the summary buffer."
   (let ((parent (wl-thread-get-entity parent-msg))
-	(depth 0) cur
 	child-entity invisible-top)
 ;;; Update the thread view...not implemented yet.
 ;;;  (when force-insert
 ;;;    (if parent
 ;;;	  (wl-thread-entity-force-open parent))
     (when (and wl-summary-max-thread-depth parent)
-      (setq cur parent)
-      (while cur
-	(incf depth)
-	(setq cur (wl-thread-entity-get-parent-entity cur)))
-      (when (> depth wl-summary-max-thread-depth)
-	(setq parent nil
-	      parent-msg nil)))
+      (let ((cur parent)
+	    (depth 0))
+	(while cur
+	  (incf depth)
+	  (setq cur (wl-thread-entity-get-parent-entity cur)))
+	(when (> depth wl-summary-max-thread-depth)
+	  (setq parent nil
+		parent-msg nil))))
     (if parent
 	;; insert as children.
 	(wl-thread-entity-insert-as-children
