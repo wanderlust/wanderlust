@@ -1,3 +1,8 @@
+2003-05-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Remove
+	trivial condition for temp-mark.
+
 2003-05-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-buffer-cache-add): Create new buffer

@@ -810,18 +810,18 @@
       (beginning-of-line)
       (setq bol (point))
       (setq status-mark (wl-summary-persistent-mark))
-      (when (setq temp-mark (wl-summary-temp-mark))
-	(cond
-	 ((string= temp-mark "*")
-	  (setq fsymbol 'wl-highlight-summary-temp-face))
-	 ((string= temp-mark "D")
-	  (setq fsymbol 'wl-highlight-summary-deleted-face))
-	 ((string= temp-mark "O")
-	  (setq fsymbol 'wl-highlight-summary-copied-face
-		dest t))
-	 ((string= temp-mark "o")
-	  (setq fsymbol 'wl-highlight-summary-refiled-face
-		dest t))))
+      (setq temp-mark (wl-summary-temp-mark))
+      (cond
+       ((string= temp-mark "*")
+	(setq fsymbol 'wl-highlight-summary-temp-face))
+       ((string= temp-mark "D")
+	(setq fsymbol 'wl-highlight-summary-deleted-face))
+       ((string= temp-mark "O")
+	(setq fsymbol 'wl-highlight-summary-copied-face
+	      dest t))
+       ((string= temp-mark "o")
+	(setq fsymbol 'wl-highlight-summary-refiled-face
+	      dest t)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
