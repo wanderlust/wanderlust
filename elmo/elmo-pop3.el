@@ -41,33 +41,65 @@
   (autoload 'md5 "md5"))
 
 ;; POP3
-(defvar elmo-default-pop3-user (or (getenv "USER")
-				   (getenv "LOGNAME")
-				   (user-login-name))
-  "*Default username for POP3.")
-(defvar elmo-default-pop3-server  "localhost"
-  "*Default POP3 server.")
-(defvar elmo-default-pop3-authenticate-type 'user
-  "*Default Authentication type for POP3.")
-(defvar elmo-default-pop3-port 110
-  "*Default POP3 port.")
-(defvar elmo-default-pop3-stream-type nil
-  "*Default stream type for POP3.
-Any symbol value of `elmo-network-stream-type-alist'.")
+(defcustom elmo-pop3-default-user (or (getenv "USER")
+				      (getenv "LOGNAME")
+				      (user-login-name))
+  "*Default username for POP3."
+  :type 'string
+  :group 'elmo)
 
+(defcustom elmo-pop3-default-server  "localhost"
+  "*Default POP3 server."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-authenticate-type 'user
+  "*Default Authentication type for POP3."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-port 110
+  "*Default POP3 port."
+  :type 'integer
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-stream-type nil
+  "*Default stream type for POP3.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-pop3-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-use-uidl t
+  "If non-nil, use UIDL on POP3."
+  :type 'boolean
+  :group 'elmo)
+
+(elmo-put-obsolete-variable 'elmo-default-pop3-server
+			    'elmo-pop3-default-server)
+(elmo-put-obsolete-variable 'elmo-default-pop3-user
+			    'elmo-pop3-default-user)
+(elmo-put-obsolete-variable 'elmo-default-pop3-authenticate-type
+			    'elmo-pop3-default-authenticate-type)
+(elmo-put-obsolete-variable 'elmo-default-pop3-port
+			    'elmo-pop3-default-port)
 
 (defvar elmo-pop3-stream-type-alist nil
   "*Stream bindings for POP3.
 This is taken precedence over `elmo-network-stream-type-alist'.")
 
-
-(defvar elmo-pop3-default-use-uidl t
-  "If non-nil, use UIDL on POP3.")
-
 (defvar elmo-pop3-use-uidl-internal t
   "(Internal switch for using UIDL on POP3).")
 (defvar elmo-pop3-inhibit-uidl nil
   "(Internal switch for using UIDL on POP3).")
+
+(defvar elmo-pop3-use-cache t
+  "Use cache in pop3 folder.")
+
+(defvar elmo-pop3-send-command-synchronously nil
+  "If non-nil, commands are send synchronously.
+If server doesn't accept asynchronous commands, this variable should be
+set as non-nil.")
 
 (defvar elmo-pop3-exists-exactly t)
 (defvar sasl-mechanism-alist)
@@ -94,12 +126,12 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 					     (elmo-match-string 1 name)))
       (if (eq (length (elmo-net-folder-user-internal folder)) 0)
 	  (elmo-net-folder-set-user-internal folder
-					     elmo-default-pop3-user))
+					     elmo-pop3-default-user))
       (elmo-net-folder-set-auth-internal
        folder
        (if (match-beginning 2)
 	   (intern (elmo-match-substring 2 name 1))
-	 elmo-default-pop3-authenticate-type))
+	 elmo-pop3-default-authenticate-type))
       (elmo-pop3-folder-set-use-uidl-internal
        folder
        (if (match-beginning 3)
@@ -107,14 +139,14 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	 elmo-pop3-default-use-uidl)))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder 
-					   elmo-default-pop3-server))
+					   elmo-pop3-default-server))
     (unless (elmo-net-folder-port-internal folder)
       (elmo-net-folder-set-port-internal folder
-					 elmo-default-pop3-port))
+					 elmo-pop3-default-port))
     (unless (elmo-net-folder-stream-type-internal folder)
       (elmo-net-folder-set-stream-type-internal
        folder
-       elmo-default-pop3-stream-type))
+       elmo-pop3-default-stream-type))
     folder))
 
 ;;; POP3 session
@@ -338,16 +370,19 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	    (catch 'done
 	      (while t
 		(unless (setq response (elmo-pop3-read-response process t))
+		  ;; response is NO or BAD.
 		  (signal 'elmo-authenticate-error
 			  (list (intern
 				 (concat "elmo-pop3-auth-"
 					 (downcase name))))))
 		(if (string-match "^\+OK" response)
 		    (if (sasl-next-step client step)
+			;; Bogus server?
 			(signal 'elmo-authenticate-error
 				(list (intern
 				       (concat "elmo-pop3-auth-"
 					       (downcase name)))))
+		      ;; The authentication process is finished.
 		      (throw 'done nil)))
 		(sasl-step-set-data
 		 step

@@ -86,14 +86,16 @@ Any symbol value of `elmo-network-stream-type-alist' or
   :type 'symbol
   :group 'elmo)
 
-;;; Obsolete.
-(defvar elmo-default-imap4-mailbox elmo-imap4-default-mailbox)
-(defvar elmo-default-imap4-server elmo-imap4-default-server)
-(defvar elmo-default-imap4-authenticate-type
-  elmo-imap4-default-authenticate-type)
-(defvar elmo-default-imap4-user elmo-imap4-default-user)
-(defvar elmo-default-imap4-port elmo-imap4-default-port)
-(defvar elmo-default-imap4-stream-type elmo-imap4-default-stream-type)
+(elmo-define-obsolete-variable 'elmo-default-imap4-mailbox
+			       'elmo-imap4-default-mailbox)
+(elmo-define-obsolete-variable 'elmo-default-imap4-server
+			       'elmo-imap4-default-server)
+(elmo-define-obsolete-variable 'elmo-default-imap4-authenticate-type
+			       'elmo-imap4-default-authenticate-type)
+(elmo-define-obsolete-variable 'elmo-default-imap4-user
+			       'elmo-imap4-default-user)
+(elmo-define-obsolete-variable 'elmo-default-imap4-port
+			       'elmo-imap4-default-port)
 
 (defvar elmo-imap4-stream-type-alist nil
   "*Stream bindings for IMAP4.
@@ -988,31 +990,31 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		   session
 		   (concat "AUTHENTICATE " name
 			   (and (sasl-step-data step)
-				(concat 
+				(concat
 				 " "
 				 (elmo-base64-encode-string
 				  (sasl-step-data step)
-				  'no-lin-break)))))) ;)
+				  'no-lin-break))))))
 	    (catch 'done
 	      (while t
 		(setq response
 		      (elmo-imap4-read-untagged
 		       (elmo-network-session-process-internal session)))
-		(if (elmo-imap4-response-continue-req-p response)
-		    (unless (sasl-next-step client step)
-		      ;; response is '+' but there's no next step.
-		      (signal 'elmo-authenticate-error
-			      (list (intern
-				     (concat "elmo-imap4-auth-"
-					     (downcase name))))))
-		  ;; response is OK.
-		  (if (elmo-imap4-response-ok-p response)
-		      (throw 'done nil) ; finished.
-		    ;; response is NO or BAD.
-		    (signal 'elmo-authenticate-error
-			    (list (intern
-				   (concat "elmo-imap4-auth-"
-					   (downcase name)))))))
+		(if (elmo-imap4-response-ok-p response)
+		    (if (sasl-next-step client step)
+			;; Bogus server?
+			(signal 'elmo-authenticate-error
+				(list (intern
+				       (concat "elmo-imap4-auth-"
+					       (downcase name)))))
+		      ;; The authentication process is finished.
+		      (throw 'done nil)))
+		(unless (elmo-imap4-response-continue-req-p response)
+		  ;; response is NO or BAD.
+		  (signal 'elmo-authenticate-error
+			  (list (intern
+				 (concat "elmo-imap4-auth-"
+					 (downcase name))))))
 		(sasl-step-set-data
 		 step
 		 (elmo-base64-decode-string
@@ -1745,16 +1747,16 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-initialize :around ((folder
 						     elmo-imap4-folder)
 						    name)
-  (let ((default-user        elmo-default-imap4-user)
-	(default-server      elmo-default-imap4-server)
-	(default-port        elmo-default-imap4-port)
+  (let ((default-user        elmo-imap4-default-user)
+	(default-server      elmo-imap4-default-server)
+	(default-port        elmo-imap4-default-port)
 	(elmo-network-stream-type-alist
 	 (if elmo-imap4-stream-type-alist
 	     (append elmo-imap4-stream-type-alist
 		     elmo-network-stream-type-alist)
 	   elmo-network-stream-type-alist)))
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
-      ;; case: default-imap4-server is specified like
+      ;; case: imap4-default-server is specified like
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
@@ -1773,10 +1775,10 @@ Return nil if no complete line has arrived."
 		  ;; No information is specified other than folder type.
 		  (elmo-imap4-folder-set-mailbox-internal
 		   folder
-		   elmo-default-imap4-mailbox)))
+		   elmo-imap4-default-mailbox)))
 	  (elmo-imap4-folder-set-mailbox-internal
 	   folder
-	   elmo-default-imap4-mailbox))
+	   elmo-imap4-default-mailbox))
 	;; Setup slots for elmo-net-folder.
 	(elmo-net-folder-set-user-internal
 	 folder
@@ -1787,7 +1789,7 @@ Return nil if no complete line has arrived."
 	 folder
 	 (if (match-beginning 3)
 	     (intern (elmo-match-substring 3 name 1))
-	   elmo-default-imap4-authenticate-type))
+	   elmo-imap4-default-authenticate-type))
 	(unless (elmo-net-folder-server-internal folder)
 	  (elmo-net-folder-set-server-internal folder default-server))
 	(unless (elmo-net-folder-port-internal folder)
@@ -1795,7 +1797,7 @@ Return nil if no complete line has arrived."
 	(unless (elmo-net-folder-stream-type-internal folder)
 	  (elmo-net-folder-set-stream-type-internal
 	   folder
-	   elmo-default-imap4-stream-type))
+	   elmo-imap4-default-stream-type))
 	folder))))
 
 ;;; ELMO IMAP4 folder
@@ -1894,24 +1896,24 @@ Return nil if no complete line has arrived."
 		   session
 		   (list "list " (elmo-imap4-mailbox root) " *"))))
     (unless (string= (elmo-net-folder-user-internal folder)
-		     elmo-default-imap4-user)
+		     elmo-imap4-default-user)
       (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
     (unless (eq (elmo-net-folder-auth-internal folder)
-		elmo-default-imap4-authenticate-type)
+		elmo-imap4-default-authenticate-type)
       (setq append-serv 
 	    (concat append-serv "/"
 		    (symbol-name (elmo-net-folder-auth-internal folder)))))
     (unless (string= (elmo-net-folder-server-internal folder)
-		     elmo-default-imap4-server)
+		     elmo-imap4-default-server)
       (setq append-serv (concat append-serv "@" 
 				(elmo-net-folder-server-internal folder))))
-    (unless (eq (elmo-net-folder-port-internal folder) elmo-default-imap4-port)
+    (unless (eq (elmo-net-folder-port-internal folder) elmo-imap4-default-port)
       (setq append-serv (concat append-serv ":"
 				(int-to-string
 				 (elmo-net-folder-port-internal folder)))))
     (setq type (elmo-net-folder-stream-type-internal folder))
     (unless (eq (elmo-network-stream-type-symbol type)
-		elmo-default-imap4-stream-type)
+		elmo-imap4-default-stream-type)
       (if type
 	  (setq append-serv (concat append-serv
 				    (elmo-network-stream-type-spec-string
