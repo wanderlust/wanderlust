@@ -882,7 +882,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 				 "Copying messages..."
 			       "Moving messages..."))
 	   succeeds i result)
-      (unless (eq dst-folder 'null)
+      (if (eq dst-folder 'null)
+	  (setq succeeds messages)
 	;; src is already opened.
 	(when messages
 	  (elmo-folder-open-internal dst-folder)
