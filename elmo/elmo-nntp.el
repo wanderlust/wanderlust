@@ -860,7 +860,7 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(defun elmo-nntp-read-msg (spec number outbuf)
+(defun elmo-nntp-read-msg (spec number outbuf &optional msgdb unread)
   (let ((session (elmo-nntp-get-session spec)))
     (with-current-buffer (elmo-network-session-buffer session)
       (elmo-nntp-select-group session (elmo-nntp-spec-group spec))

@@ -134,10 +134,11 @@
 	   (elmo-msgdb-rename-path old-folder new-folder))
 	(elmo-dop-rename-folder old-folder new-folder)))))
 
-(defun elmo-read-msg-no-cache (folder msg outbuf)
+(defun elmo-read-msg-no-cache (folder msg outbuf &optional unread)
   "Read messsage specified by FOLDER and MSG(number) into OUTBUF
-without cacheing."
-  (elmo-call-func folder "read-msg" msg outbuf))
+without cacheing.
+If optional UNREAD is non-nil, message is keeped as unread."
+  (elmo-call-func folder "read-msg" msg outbuf nil unread))
 
 (defun elmo-force-cache-msg (folder number msgid &optional loc-alist)
   "Force cache message."
@@ -180,7 +181,9 @@ without cacheing."
 	      ((elmo-folder-local-p (car real-fld-num)))
 	      (t (setq ret-val (elmo-call-func (car real-fld-num)
 					       "read-msg"
-					       (cdr real-fld-num) outbuf))))
+					       (cdr real-fld-num)
+					       outbuf
+					       nil 'unread))))
 	(if ret-val
 	    (elmo-cache-save message-id
 			     (elmo-string-partial-p ret-val)
@@ -205,17 +208,18 @@ without cacheing."
 
 ;;  elmo-read-msg (folder msg outbuf msgdb)
 ;;; read message
-(defun elmo-read-msg (folder msg outbuf msgdb &optional force-reload)
+(defun elmo-read-msg (folder msg outbuf msgdb &optional force-reload unread)
   "Read message into outbuf."
   (let ((inhibit-read-only t))
+    (if elmo-inhibit-read-cache
     ;;Only use elmo-read-msg-with-cache, because if folder is network and
     ;;elmo-use-cache-p is nil, cannot read important msg. (by muse)
     ;;(if (not (elmo-use-cache-p folder msg))
-    ;;  (elmo-read-msg-no-cache folder msg outbuf)
-    (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload)))
+	(elmo-read-msg-no-cache folder msg outbuf unread)
+      (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload unread))))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb
-					&optional force-reload)
+					&optional force-reload unread)
   "Read message into outbuf with cacheing."
   (let* ((number-alist (elmo-msgdb-get-number-alist
 			(or msgdb (elmo-msgdb-load folder))))
@@ -235,7 +239,8 @@ without cacheing."
 			  folder msg))
       (if (setq ret-val (elmo-call-func (car real-fld-num)
 					"read-msg"
-					(cdr real-fld-num) outbuf))
+					(cdr real-fld-num) outbuf
+					nil unread))
 	  (if (and message-id
 		   (not (elmo-local-file-p folder msg))
 		   (elmo-use-cache-p folder msg))
@@ -744,7 +749,7 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 	      (set-buffer hit)
 	      (elmo-read-msg fld msg
 			     (current-buffer)
-			     msgdb force-reload))
+			     msgdb force-reload 'unread))
 	  (quit
 	   (elmo-buffer-cache-delete)
 	   (error "read message %s/%s is quitted" fld msg))

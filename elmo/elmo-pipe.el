@@ -46,10 +46,10 @@
 (defun elmo-pipe-append-msg (spec string &optional msg no-see)
   (elmo-append-msg (elmo-pipe-spec-dst spec) string))
 
-(defun elmo-pipe-read-msg (spec number outbuf)
+(defun elmo-pipe-read-msg (spec number outbuf &optional msgdb unread)
   (elmo-call-func (elmo-pipe-spec-dst spec)
 		  "read-msg"
-		  number outbuf))
+		  number outbuf msgdb unread))
 
 (defun elmo-pipe-delete-msgs (spec msgs)
   (elmo-delete-msgs (elmo-pipe-spec-dst spec) msgs))
@@ -58,9 +58,7 @@
 
 (defun elmo-pipe-drain (src dst)
   "Move all messages of SRC to DST."
-  (let (elmo-nntp-use-cache
-	elmo-imap4-use-cache
-	elmo-pop3-use-cache ; Inhibit caching while moving messages.
+  (let ((elmo-inhibit-read-cache t); Inhibit caching while moving messages.
 	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
     (let ((srclist (elmo-list-folder src))
