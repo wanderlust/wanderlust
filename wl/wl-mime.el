@@ -322,6 +322,13 @@ automatically."
 	  (setq overviews (cdr overviews)))
 	(message "Not all partials found.")))))
 
+(defun wl-mime-header-presentation-method (entity situation)
+  (let ((mmelmo-sort-field-list wl-message-sort-field-list))
+    (mime-insert-header entity
+			wl-message-ignored-field-list
+			wl-message-visible-field-list)
+    (wl-highlight-headers)))
+
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
@@ -364,8 +371,15 @@ automatically."
   (set-alist 'mime-raw-representation-type-alist
 	     'mmelmo-original-mode 'binary)
   ;; Sort and highlight header fields.
-  (setq mmelmo-sort-field-list wl-message-sort-field-list)
-  (add-hook 'mmelmo-header-inserted-hook 'wl-highlight-headers)
+  (or wl-message-ignored-field-list
+      (setq wl-message-ignored-field-list
+	    mime-view-ignored-field-list))
+  (or wl-message-visible-field-list
+      (setq wl-message-visible-field-list
+	    mime-view-visible-field-list))
+  (set-alist 'mime-header-presentation-method-alist
+	     'mmelmo-original-mode
+	     (function wl-mime-header-presentation-method))
   (add-hook 'mmelmo-entity-content-inserted-hook 'wl-highlight-body))
   
 

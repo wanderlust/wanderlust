@@ -1045,6 +1045,18 @@ Set this if (system-name) does not return FQDN."
   :type '(repeat (string :tag "Field Regexp"))
   :group 'wl-pref)
 
+(defcustom wl-message-ignored-field-list nil
+  "All fields that match this list will be hidden in message buffer.
+Each elements are regexp of field-name."
+  :type '(repeat (string :tag "Field Regexp"))
+  :group 'wl-pref)
+
+(defcustom wl-message-visible-field-list nil
+  "All fields that match this list will be displayed in message buffer.
+Each elements are regexp of field-name."
+  :type '(repeat (string :tag "Field Regexp"))
+  :group 'wl-pref)
+
 (defcustom wl-folder-window-width 20
   "*Width of folder window."
   :type 'integer

@@ -1,3 +1,11 @@
+2000-08-29   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-vars.el (wl-message-ignored-field-list): New variable.
+	(wl-message-visible-field-list): New variable.
+
+	* wl-mime.el (wl-mime-header-presentation-method): New function.
+	(wl-mime-setup): Set header-presentation-method.
+
 2000-08-28   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-nemacs.el (wl-draft-overload-functions): Set
