@@ -545,6 +545,7 @@ Default is for 'reply-to-author'."
 (defcustom wl-draft-reply-without-argument-list
   '(("Followup-To" . (nil nil ("Followup-To")))
     ("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+    ("Reply-To" . (("Reply-To") ("To" "Cc") ("Newsgroups")))
     ("From" . (("From") ("To" "Cc") ("Newsgroups"))))
   "Alist of cons cell of
 ('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))

@@ -1,5 +1,9 @@
 2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-draft-reply-without-argument-list):
+	Changed default value to consider `Reply-To:'.
+	(Advised by TAKAHASHI Kaoru <kaoru@kaisei.org>)
+
 	* wl-summary.el (wl-summary-msgdb-load-async): Enclose
 	elmo-imap4-get-session with unwind-protect.
 	Don't cause error.
