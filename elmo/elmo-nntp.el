@@ -1544,8 +1544,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder))
   (elmo-nntp-folder-process-crosspost folder))
 
-(luna-define-method elmo-folder-list-flagged :around ((folder elmo-nntp-folder)
-						      flag)
+(luna-define-method elmo-folder-list-flagged-internal :around ((folder elmo-nntp-folder)
+							       flag)
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
   (case flag
