@@ -388,7 +388,8 @@ the `wl-smtp-features' variable."
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
-(defun wl-draft-yank-from-mail-reply-buffer (decode-it)
+(defun wl-draft-yank-from-mail-reply-buffer (decode-it
+					     &optional ignored-fields)
   (interactive)
   (save-restriction
     (current-buffer)
@@ -401,6 +402,9 @@ the `wl-smtp-features' variable."
 				       wl-mime-charset))       
        (buffer-substring-no-properties 
 	(point-min) (point-max))))
+    (when ignored-fields
+      (goto-char (point-min))
+      (wl-draft-delete-fields ignored-fields))
     (goto-char (point-max))
     (push-mark)
     (goto-char (point-min)))
@@ -502,7 +506,8 @@ the `wl-smtp-features' variable."
 	      (set-buffer mail-reply-buffer)
 	      (buffer-size)))
 	(error "No current message")
-      (wl-draft-yank-from-mail-reply-buffer nil))))
+      (wl-draft-yank-from-mail-reply-buffer nil
+					    wl-ignored-forwarded-headers))))
 
 (defun wl-draft-insert-get-message (dummy)
   (let ((fld (completing-read 

@@ -1145,6 +1145,11 @@ might set this variable to '(\"-f\" \"you@some.where\")."
   :type 'regexp
   :group 'wl-draft)
 
+(defcustom wl-ignored-forwarded-headers "\\(received\\|return-path\\|x-uidl\\)"
+  "*All headers that match this regexp will be deleted when forwarding a message."
+  :type 'regexp
+  :group 'wl-draft)
+
 (defcustom wl-ignored-resent-headers "\\(return-receipt\\|[bdf]cc\\)"
   "*All headers that match this regexp will be deleted when resending a message."
   :type 'regexp

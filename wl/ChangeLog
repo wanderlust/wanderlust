@@ -1,3 +1,12 @@
+2000-04-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-ignored-forwarded-headers): New user option.
+
+	* wl-draft.el (wl-draft-insert-current-message): Delete useless
+	fields from the forwarding message.
+	(wl-draft-yank-from-mail-reply-buffer): Allow the optional argument
+	`ignored-fields'.
+
 2000-04-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-message-request-partial):
