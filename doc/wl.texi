@@ -3296,7 +3296,9 @@ You can sort by @samp{date}, @samp{from}, @samp{number} and @samp{subject}.
 @item T
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
-Toggle the threading.
+Toggle the threading. The state will be preserved after exiting
+Wanderlust. You can alter default state for newly created summary
+by @code{wl-summary-default-view} or @code{wl-summary-default-view-alist}.
 Threading status is displayed on the modeline.
 @samp{@{S@}} means threading is off (Sequence) and
 @samp{@{T@}} means threading is on (Thread).
@@ -3764,7 +3766,7 @@ folder is moved.
 
 @item wl-summary-weekday-name-lang
 @vindex  wl-summary-weekday-name-lang
-The initial setting is @samp{ja}.  Specify language of the weekday.
+Specify language of the weekday.
 @samp{en} displays English, @samp{fr} displays French, @samp{de}
 displays Deutsch. You should rescan summary view after changing this value.
 
@@ -3791,15 +3793,37 @@ The initial setting is '(1 . 4).
 A cons cell to specify the rate of summary and message window.
 car:cdr corresponds summary:message.
 
+@item wl-summary-from-function
+@vindex wl-summary-from-function
+Format function to display sender in summary.
+The initial setting is @code{wl-summary-default-from}.
+
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
 The initial setting is @samp{nobody@@nowhere?}.  A string which is
 displayed when there's no @samp{From:} field in the message.
 
+@item wl-summary-subject-function
+@vindex wl-summary-subject-function
+Format function to display subject in summary.
+The initial setting is @code{wl-summary-default-subject} and
+it will cut the list name part etc. on the top of the subject.
+To display subject as it is, set as follows.
+
+@lisp
+(setq wl-summary-subject-function 'identity)
+@end lisp
+
 @item wl-summary-no-subject-message
 @vindex  wl-summary-no-subject-message
 The initial setting is @samp{(WL:No Subject in original.)}.  A string
 which is displayed when there's no @samp{Subject:} field in the message.
+
+@item wl-summary-default-view
+@vindex wl-summary-default-view
+The initial setting is @code{'thread}.
+The default state for newly created summary. You can set either
+@code{'thread} for thread view or @code{'sequence} for sequential view.
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
@@ -6412,7 +6436,7 @@ from matching @code{\(\)} patterns in the previous @samp{VALUE}.
 @end table
 
 @item
-Functions which accept an argument @samp{SIZE}, @samp{SIZE} is some number.
+Functions which accept an integer argument (@samp{SIZE}).
 
 @table @code
 @item @code{<}

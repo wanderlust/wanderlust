@@ -3280,10 +3280,13 @@ first, last    ...フィルタフォルダに移動
 @item T
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
-スレッド表示をトグルします。
-現在のスレッド表示状態はモードラインに表示されます．
-@samp{@{S@}} はスレッド・オフ(Sequence)の状態，
-@samp{@{T@}} はスレッド・オン(Thread)の状態を示します．
+スレッド表示をトグルします。その状態は Wanderlust を終了しても保存され
+ます。新規に作成されたサマリに対してのデフォルトの状態は
+@code{wl-summary-default-view} や @code{wl-summary-default-view-alist}
+で指定することができます。
+現在のスレッド表示状態はモードラインに表示されます。
+@samp{@{S@}} はスレッド・オフ(Sequence)の状態、
+@samp{@{T@}} はスレッド・オン(Thread)の状態を示します。
 (@code{wl-summary-toggle-thread})
 
 @item l
@@ -3745,7 +3748,7 @@ nil： フォルダモードに戻るか尋ねる
 
 @item wl-summary-weekday-name-lang
 @vindex  wl-summary-weekday-name-lang
-初期設定は @samp{ja}。サマリの曜日表示の言語を指定します。@samp{en} なら
+サマリの曜日表示の言語を指定します。@samp{en} なら
 英語、@samp{fr} ならフランス語、@samp{de} ならドイツ語となります。
 値を変更した後には、サマリを rescan して下さい。
 
@@ -3771,15 +3774,37 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
 初期設定は '(1 . 4)。
 サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を cons で指定します。car:cdr が サマリ:メッセージ です。
 
+@item wl-summary-from-function
+@vindex wl-summary-from-function
+サマリの差出人表示の整形に使う関数を指定します。
+初期設定は @code{wl-summary-default-from} です。
+
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
 初期設定は @samp{nobody@@nowhere?}。
 メッセージに @samp{From:} が無かった場合にサマリに表示する文字列です。
 
+@item wl-summary-subject-function
+@vindex wl-summary-subject-function
+サマリのサブジェクト表示の整形に使う関数を指定します。
+初期設定は @code{wl-summary-default-subject} で、サブジェクト先頭の
+リスト名など部分をカットします。
+サブジェクトをそのまま表示するには以下のように設定します。
+
+@lisp
+(setq wl-summary-subject-function 'identity)
+@end lisp
+
 @item wl-summary-no-subject-message
 @vindex  wl-summary-no-subject-message
 初期設定は @samp{(WL:No Subject in original.)}。メッセージに 
 @samp{Subject:} が無かった場合にサマリに表示する文字列です。
+
+@item wl-summary-default-view
+@vindex wl-summary-default-view
+初期設定は @code{'thread}。
+新規に作成されたサマリの状態をスレッド表示なら @code{'thread}、
+番号順なら @code{'sequence} のいずれかで指定します。
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
@@ -6288,7 +6313,7 @@ pop3                    ×    △    △    △
 (@samp{CONDITION} @samp{ACTION} [@code{continue}])
 @end lisp
 
-という一組で、@samp{CONDITION} が真の場合に @samp{ACTION} を実行します。
+の組で、@samp{CONDITION} が真の場合に @samp{ACTION} を実行します。
 第一の要素 @samp{CONDITION} には条件を S 式で記述します。書式については
 すぐ後で説明します。第二の要素 @samp{ACTION} にはメッセージの振り分け先
 のフォルダ名、もしくはシンボルを指定します。
@@ -6323,7 +6348,7 @@ pop3                    ×    △    △    △
 @end table
 
 @item
-何らかの数 @samp{SIZE} を引数としてとる関数。
+1 つの整数 (@samp{SIZE}) を引数としてとる関数。
 
 @table @code
 @item @code{<}
@@ -6333,7 +6358,7 @@ pop3                    ×    △    △    △
 @end table
 
 @item
-任意の数の引数を取る関数。
+任意数の引数を取る関数。
 
 @table @code
 @item @code{or}
