@@ -1,3 +1,8 @@
+2002-11-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Cause error when the
+	search-key is "body".
+
 2002-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Check the return value
