@@ -6051,6 +6051,9 @@ following settings:
 original message, @samp{Reply-To} field in the original is copied to @samp{To:}
 field.)
 
+Moreover, the behavior of @kbd{a} with prefix argument can 
+be directed by @code{wl-draft-reply-with-argument-list} as well.
+
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection Appearance of Threads
 

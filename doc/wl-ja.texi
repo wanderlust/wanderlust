@@ -5990,6 +5990,9 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @c @samp{Newsgroups:} $B%U%#!<%k%I$,$=$l$>$l(B ($B$"$l$P(B) $B=`Hw$5$l$k$H$$$&$3$H$G(B
 @c $B$9!#(B)
 
+$BF1MM$K$7$F!"(Bprefix argument $BIU$-$G(B  @kbd{a} $B$r2!$7$?$H$-$NF0:n$,!"(B
+@code{wl-draft-reply-with-argument-list} $B$G@_Dj$G$-$^$9!#(B
+
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection $B%9%l%C%I$N8+$?$a(B
