@@ -1,3 +1,8 @@
+2000-12-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-reply): Bind `mime-header-lexical-analyzer'
+	to the default value as well as `eword-lexical-analyzer'.
+
 2000-12-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-extended-emacs-version,
