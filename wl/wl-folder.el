@@ -120,7 +120,7 @@
     ["Change Plug Status" wl-plugged-change t]
     "----"
     ["Save Current Status"  wl-save t]
-    ["Update Satus"         wl-status-update t]
+    ["Update Status"        wl-status-update t]
     ["Exit"                 wl-exit t]
     ))
 
