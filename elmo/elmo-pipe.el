@@ -50,7 +50,8 @@
 				       (elmo-make-folder
 					(elmo-match-string 3 name)))
     (elmo-pipe-folder-set-copy-internal folder
-					(string= ":" (elmo-match-string 2 name))))
+					(string= ":"
+						 (elmo-match-string 2 name))))
   folder)
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))
@@ -272,9 +273,9 @@
    (elmo-pipe-folder-dst-internal folder) numbers start-number))
 
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-pipe-folder)
-					      numbers)
+					      numbers &optional ignore-flag)
   (elmo-folder-mark-as-read (elmo-pipe-folder-dst-internal folder)
-			    numbers))
+			    numbers ignore-flag))
 
 (luna-define-method elmo-folder-unmark-read ((folder elmo-pipe-folder)
 					      numbers)
