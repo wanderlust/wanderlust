@@ -174,51 +174,46 @@ File content is encoded with MIME-CHARSET."
       (utf7-encode-string string 'imap)
     string))
 
-(defun elmo-get-network-stream-type (stream-type)
-  (let ((ali elmo-network-stream-type-alist)
-	entry)
-    (while ali
-      (when (eq (car (cdr (car ali))) stream-type)
-	(setq entry (car ali)
-	      ali nil))
-      (setq ali (cdr ali)))
-    entry))
+(defun elmo-get-network-stream-type (stream-type stream-type-alist)
+  (catch 'found
+    (while stream-type-alist
+      (if (eq (nth 1 (car stream-type-alist)) stream-type)
+	  (throw 'found (car stream-type-alist)))
+      (setq stream-type-alist (cdr stream-type-alist)))))
 
-(defun elmo-network-get-spec (folder default-server default-port
-				     default-stream-type)
-  (let (server port type)
-    (if (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
-	(progn
-	  (if (match-beginning 1)
-	      (setq server (elmo-match-substring 1 folder 1))
-	    (setq server default-server))
-	  (if (match-beginning 2)
-	      (setq port
-		    (string-to-int (elmo-match-substring 2 folder 1)))
-	    (setq port default-port))
-	  (if (match-beginning 3)
-	      (setq type (assoc (elmo-match-string 3 folder)
-				elmo-network-stream-type-alist))
-	    (setq type default-stream-type))
-	  (setq folder (substring folder 0 (match-beginning 0))))
-      (setq server default-server
-	    port   default-port
-	    type   (elmo-get-network-stream-type default-stream-type)))
-    (cons folder (list server port type))))
+(defun elmo-network-get-spec (folder server port stream-type stream-type-alist)
+  (if (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
+      (progn
+	(if (match-beginning 1)
+	    (setq server (elmo-match-substring 1 folder 1)))
+	(if (match-beginning 2)
+	    (setq port (string-to-int (elmo-match-substring 2 folder 1))))
+	(if (match-beginning 3)
+	    (setq stream-type (assoc (elmo-match-string 3 folder)
+				     stream-type-alist)))
+	(setq folder (substring folder 0 (match-beginning 0))))
+    (setq stream-type-alist (elmo-get-network-stream-type
+			     stream-type stream-type-alist)))
+  (cons folder (list server port stream-type)))
 
 (defun elmo-imap4-get-spec (folder)
   (let ((default-user        elmo-default-imap4-user)
 	(default-server      elmo-default-imap4-server)
 	(default-port        elmo-default-imap4-port)
 	(default-stream-type elmo-default-imap4-stream-type)
+	(stream-type-alist elmo-network-stream-type-alist)
 	spec mailbox user auth)
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
       ;; case: default-imap4-server is specified like
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
+    (if elmo-imap4-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-imap4-stream-type-alist stream-type-alist)))
     (setq spec (elmo-network-get-spec
-		folder default-server default-port default-stream-type))
+		folder default-server default-port default-stream-type
+		stream-type-alist))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(%\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
@@ -269,11 +264,16 @@ File content is encoded with MIME-CHARSET."
   (nth 2 conn))
 
 (defun elmo-nntp-get-spec (folder)
-  (let (spec group user)
+  (let ((stream-type-alist elmo-network-stream-type-alist)
+	spec group user)
+    (if elmo-nntp-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-nntp-stream-type-alist stream-type-alist)))
     (setq spec (elmo-network-get-spec folder
 				      elmo-default-nntp-server
 				      elmo-default-nntp-port
-				      elmo-default-nntp-stream-type))
+				      elmo-default-nntp-stream-type
+				      stream-type-alist))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(-\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
@@ -390,11 +390,16 @@ File content is encoded with MIME-CHARSET."
       (list 'archive fld-name (intern-soft type) prefix))))
 
 (defun elmo-pop3-get-spec (folder)
-  (let (spec user auth)
+  (let ((stream-type-alist elmo-network-stream-type-alist)
+	spec user auth)
+    (if elmo-pop3-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-pop3-stream-type-alist stream-type-alist)))
     (setq spec (elmo-network-get-spec folder
 				      elmo-default-pop3-server
 				      elmo-default-pop3-port
-				      elmo-default-pop3-stream-type))
+				      elmo-default-pop3-stream-type
+				      stream-type-alist))
     (setq folder (car spec))
     (when (string-match
 	   "^\\(&\\)\\([^:/!]*\\)\\(/[^/:@!]+\\)?"
@@ -1421,14 +1426,14 @@ Otherwise treat \\ in NEWTEXT string as special:
     (error (copy-file src dst t)
 	   (error "copy file failed"))))
 
-(defmacro elmo-buffer-exists-p (buffer)
-  (` (when (, buffer)
-       (funcall (if (stringp (, buffer)) 'get-buffer 'buffer-name)
-		(, buffer)))))
+(defsubst elmo-buffer-exists-p (buffer)
+  (if (bufferp buffer)
+      (buffer-live-p buffer)
+    (get-buffer buffer)))
 
-(defmacro elmo-kill-buffer (buffer)
-  (` (when (elmo-buffer-exists-p (, buffer))
-       (kill-buffer (, buffer)))))
+(defsubst elmo-kill-buffer (buffer)
+  (when (elmo-buffer-exists-p buffer)
+    (kill-buffer buffer)))
 
 (defun elmo-delete-if (pred lst)
   "Returns new list contains items which don't satisfy PRED in LST."

@@ -58,6 +58,9 @@
 (defvar elmo-default-imap4-stream-type nil
   "*Default stream type for IMAP4.
 Any symbol value of `elmo-network-stream-type-alist'.")
+(defvar elmo-imap4-stream-type-alist nil
+  "*Stream bindings for IMAP4.
+This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;; POP3
 (defvar elmo-default-pop3-user (or (getenv "USER")
@@ -73,6 +76,9 @@ Any symbol value of `elmo-network-stream-type-alist'.")
 (defvar elmo-default-pop3-stream-type nil
   "*Default stream type for POP3.
 Any symbol value of `elmo-network-stream-type-alist'.")
+(defvar elmo-pop3-stream-type-alist nil
+  "*Stream bindings for POP3.
+This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;; NNTP
 (defvar elmo-default-nntp-server  "localhost"
@@ -84,6 +90,9 @@ Any symbol value of `elmo-network-stream-type-alist'.")
 (defvar elmo-default-nntp-stream-type nil
   "*Default stream type for NNTP.
 Any symbol value of `elmo-network-stream-type-alist'.")
+(defvar elmo-nntp-stream-type-alist nil
+  "*Stream bindings for NNTP.
+This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;; Local
 (defvar elmo-localdir-folder-path "~/Mail"

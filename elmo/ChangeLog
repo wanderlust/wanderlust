@@ -1,3 +1,18 @@
+2000-10-06   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-vars.el (elmo-imap4-stream-type-alist): New variable.
+	(elmo-pop3-stream-type-alist): New variable.
+	(elmo-nntp-stream-type-alist): New variable.
+
+	* elmo-util.el (elmo-buffer-exists-p): Rewrite as function.
+	(elmo-kill-buffer): Ditto.
+	(elmo-get-network-stream-type): Add 2nd argument `stream-type-alist'.
+	(elmo-network-get-spec): Add 5th argument `stream-type-alist'.
+	(elmo-nntp-get-spec): Take into account `elmo-nntp-stream-type-alist'.
+	(elmo-pop3-get-spec): Take into account `elmo-pop3-stream-type-alist'.
+	(elmo-imap4-get-spec): Take into account
+	`elmo-imap4-stream-type-alist'.
+
 2000-10-06  Kenichi OKADA <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-list-folders): Fix for `-/'
