@@ -355,6 +355,7 @@ starttls $B%Q%C%1!<%8$O0J2<$N>l=j$+$iF~<j$G$-$^$9!#(B
 ftp://opaopa.org/pub/elisp/
 @end example
 
+
 @node Install, Minimal Settings, Download, Start Me Up
 @section $B%P%$%H%3%s%Q%$%k$H%$%s%9%H!<%k(B
 @cindex Bytecompile
@@ -575,6 +576,7 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$/$H@0M}$7$d$9$$$G$7
       'mail-send-hook))
 @end group
 @end lisp
+
 
 @node Folder Definition, Start Wanderlust, Minimal Settings, Start Me Up
 @section $B9XFI$9$k%U%)%k%@$NDj5A(B
@@ -843,6 +845,7 @@ Password: @var{NULL} (Just enter return key)
 cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
 @end group
 @end example
+
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP $B%U%)%k%@(B
@@ -1419,6 +1422,7 @@ namazu (@uref{http://www.namazu.org/}) $B$rMQ$$$F!"8!:w<0$K%^%C%A$7$?(B
 
 $B$HF~NO$9$l$P!"(B@file{~/.elmo/cache} $B$H(B @file{~/documents} $B$N%$%s%G%C%/%9$rBP>]$H$7$F!"%-!<%o!<%I(B @samp{wanderlust} $B$G8!:w$r9T$$$^$9!#(B
 
+
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section $B%^%k%A%U%)%k%@(B
 @cindex @samp{*}
@@ -1660,6 +1664,7 @@ POP $B%5!<%P$K%a!<%k$r;D$7$?$^$^!"%a%C%;!<%8$r(B @samp{+inbox} $B$K%3%T!<$7$F
 
 $B%a%C%;!<%8$,0\F0$7$?8e!"%U%C%/(B @code{elmo-pipe-drained-hook} $B$,8F$P$l(B
 $B$^$9$N$G!"%@%&%s%m!<%I8e$K<B9T$7$?$$4X?t$rEPO?$7$F$*$/$HNI$$$G$7$g$&!#(B
+
 
 @node Internal Folder,  , Pipe Folder, Folders
 @section $BFbIt%U%)%k%@(B
@@ -4103,6 +4108,7 @@ Non-nil $B$J$i%a%C%;!<%8%P%C%U%!$GD9$$9T$N@^$jJV$7$r$7$^$;$s!#(B
 * POP-before-SMTP::                     POP-before-SMTP $B$K$h$k%a!<%k$NAw?.(B
 @end menu
 
+
 @node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
 @subsection $B%X%C%@$NJT=8(B
 
@@ -4152,6 +4158,7 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Fcc:} $B$H$7$F:G=i$+$iA^F~$7
 Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7$^$9!#(B
 @end table
 
+
 @node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
 @subsection $B%a%C%;!<%8$NJT=8(B
 
@@ -4167,6 +4174,7 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 
 $BJT=8Cf$N%I%i%U%H$r%;!<%V$9$k$H!"(B@code{wl-draft-folder} $B$G@_Dj$7$?%I%i%U(B
 $B%H%U%)%k%@$KDI2C$5$l$^$9!#(B
+
 
 @node Dynamical Message Re-arrangement, Template, Editing Message Body, Usage of Draft Mode
 @subsection $B%a%C%;!<%8$NF0E*$JJQ99(B
@@ -4323,6 +4331,7 @@ Field $B$NCM$,(B @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 (add-hook 'wl-draft-reedit-hook 'wl-draft-config-exec)
 @end lisp
 
+
 @node Template, POP-before-SMTP, Dynamical Message Re-arrangement, Usage of Draft Mode
 @subsection $B%F%s%W%l!<%H$NA^F~(B
 @cindex Template
@@ -4377,6 +4386,7 @@ Field $B$NCM$,(B @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 @noindent
 $B$H=q$/$3$H$G(B @samp{default} $B$N%F%s%W%l!<%H$rE,MQ$G$-$^$9!#(B
 
+
 @node POP-before-SMTP,  , Template, Usage of Draft Mode
 @subsection POP-before-SMTP $B$K$h$k%a!<%k$NAw?.(B
 @cindex POP-before-SMTP
@@ -4429,6 +4439,7 @@ http://spam.ayamura.org/tools/smPbS.html
 http://www.iecc.com/pop-before-smtp.html
 @end group
 @end example
+
 
 @node Key Bindings of Draft, Variables of Draft Mode, Usage of Draft Mode, Draft
 @section $B%-!<%P%$%s%I(B
@@ -4545,6 +4556,7 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 $B$O@Z$i$l$F(B (killed) $BJQ?t(B @code{wl-draft-elide-ellipsis} $B$NCM$GCV$-49$($i(B
 $B$l$^$9!#%G%U%)%k%H$N>JN,Id9f$H$7$F;H$o$l$kCM$O(B (@samp{[...]}) $B$G$9!#(B
 @end table
+
 
 @node Variables of Draft Mode,  , Key Bindings of Draft, Draft
 @section $B%+%9%?%^%$%:JQ?t(B
@@ -6305,7 +6317,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 (@samp{CONDITION} @samp{ACTION} [@code{continue}])
 @end lisp
 
-$B$H$$$&0lAH$G!"(B@samp{CONDITION} $B$,??$N>l9g$K(B @samp{ACTION} $B$r<B9T$7$^$9!#(B
+$B$NAH$G!"(B@samp{CONDITION} $B$,??$N>l9g$K(B @samp{ACTION} $B$r<B9T$7$^$9!#(B
 $BBh0l$NMWAG(B @samp{CONDITION} $B$K$O>r7o$r(B S $B<0$G5-=R$7$^$9!#=q<0$K$D$$$F$O(B
 $B$9$08e$G@bL@$7$^$9!#BhFs$NMWAG(B @samp{ACTION} $B$K$O%a%C%;!<%8$N?6$jJ,$1@h(B
 $B$N%U%)%k%@L>!"$b$7$/$O%7%s%\%k$r;XDj$7$^$9!#(B
@@ -6340,7 +6352,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @end table
 
 @item
-$B2?$i$+$N?t(B @samp{SIZE} $B$r0z?t$H$7$F$H$k4X?t!#(B
+1 $B$D$N@0?t(B (@samp{SIZE}) $B$r0z?t$H$7$F$H$k4X?t!#(B
 
 @table @code
 @item @code{<}
@@ -6350,7 +6362,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @end table
 
 @item
-$BG$0U$N?t$N0z?t$r<h$k4X?t!#(B
+$BG$0U?t$N0z?t$r<h$k4X?t!#(B
 
 @table @code
 @item @code{or}
@@ -6409,6 +6421,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 * Address Manager::  $B%"%I%l%9%^%M!<%8%c(B
 @end menu
 
+
 @node Mail Addresses, Address Manager, Address Book, Address Book
 @section $B%"%I%l%9D"$NDj5A(B
 @cindex Address book Definition
@@ -6457,6 +6470,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 $B30$G$O!"30It%W%m%0%i%`$H$7$F(B @command{ldapsearch} $B$rMxMQ$7$^$9$N$G!"(B
 @command{ldapsearch} $B$X$"$i$+$8$a%3%^%s%I<B9T%Q%9$r@_Dj$7$F$*$/I,MW$,$"(B
 $B$j$^$9!#(B
+
 
 @node Address Manager,  , Mail Addresses, Address Book
 @section $B%"%I%l%9%^%M!<%8%c(B
@@ -6670,6 +6684,7 @@ mu-cite 8.1$B0J9_$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 @end group
 @end lisp
 
+
 @node X-Face, dired-dd, mu-cite, Living with other packages
 @subsection x-face
 @pindex x-face
@@ -6701,6 +6716,7 @@ x-face (@uref{ftp://jpl.org/pub/elisp/}) 1.3.6.13 $B0J9_$KIUB0$N(B
 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face)
 @end group
 @end lisp
+
 
 @node x-face-mule,  , x-face-xmas, X-Face
 @subsubsection x-face-mule (Emacs $B$N>l9g(B)
@@ -6758,6 +6774,7 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end group
 @end lisp
 
+
 @node MHC, Addrbook, dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
@@ -6787,6 +6804,7 @@ mhc-current $B$N>l9g!'(B
 @end group
 @end lisp
 
+
 @node Addrbook, mime-w3m, MHC, Living with other packages
 @subsection wl-addrbook.el
 @pindex Addrbook
@@ -6804,6 +6822,7 @@ Mew $B$N(B Addrbook $B$r(B Wanderlust $B$G;HMQ$G$-$k$h$&$K$9$k$K$O!"(B
 (wl-addrbook-setup)
 @end group
 @end lisp
+
 
 @node mime-w3m,  , Addrbook, Living with other packages
 @subsection mime-w3m.el
@@ -7245,6 +7264,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 (setq wl-thread-space-str                " ")
 @end group
 @end lisp
+
 
 @node User-Agent Field,  , Thread Format, Advanced Settings
 @subsection User-Agent $B%U%#!<%k%I(B
@@ -7729,17 +7749,21 @@ elmo $B$O!"(B@samp{Elisp Library for Message Orchestration} $B$NN,$G$9!#(B
 * Function Index::              $B4X?t:w0z(B
 @end menu
 
+
 @node Concept Index, Key Index, Index, Index
 @unnumberedsec $B35G0:w0z(B
 @printindex cp
+
 
 @node Key Index, Variable Index, Concept Index, Index
 @unnumberedsec $B%-!<%P%$%s%I:w0z(B
 @printindex ky
 
+
 @node Variable Index, Function Index, Key Index, Index
 @unnumberedsec $BJQ?t:w0z(B
 @printindex vr
+
 
 @node Function Index,  , Variable Index, Index
 @unnumberedsec $B4X?t:w0z(B

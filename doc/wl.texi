@@ -6432,7 +6432,7 @@ from matching @code{\(\)} patterns in the previous @samp{VALUE}.
 @end table
 
 @item
-Functions which accept an argument @samp{SIZE}, @samp{SIZE} is some number.
+Functions which accept an integer argument (@samp{SIZE}).
 
 @table @code
 @item @code{<}
@@ -6499,6 +6499,7 @@ summary displayed with nicknames.
 * Mail Addresses::   Definition of Address Book
 * Address Manager::  Address Manager
 @end menu
+
 
 @node Mail Addresses, Address Manager, Address Book, Address Book
 @section Address book
