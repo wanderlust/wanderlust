@@ -276,7 +276,7 @@ TYPE specifies the archiver's symbol."
       (setq numbers (sort file-list '<))
       (elmo-living-messages numbers killed))))
 
-(defun elmo-archive-list-folder (spec &optional nohide)
+(defun elmo-archive-list-folder (spec)
   (elmo-archive-list-folder-subr spec))
 
 (defun elmo-archive-max-of-folder (spec)

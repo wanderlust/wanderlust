@@ -278,7 +278,7 @@
 	    folders (cdr folders)))
     importants))
 
-(defun elmo-multi-list-folder (spec &optional nohide)
+(defun elmo-multi-list-folder (spec)
   (let* ((flds (cdr spec))
 	 (cur-number 0)
 	 (killed (and elmo-use-killed-list

@@ -429,7 +429,7 @@
 	    (sort list '<))
 	(error "POP3: Error in list")))))
 
-(defun elmo-pop3-list-folder (spec &optional nohide)
+(defun elmo-pop3-list-folder (spec)
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
 		      (elmo-msgdb-expand-path spec))))

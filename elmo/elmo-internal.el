@@ -49,7 +49,7 @@
       (setq numbers (sort flist '<))
       (elmo-living-messages numbers killed))))
 
-(defun elmo-internal-list-folder (spec &optional nohide)
+(defun elmo-internal-list-folder (spec)
   (elmo-internal-list-folder-subr spec))
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
