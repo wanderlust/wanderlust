@@ -88,20 +88,21 @@ Automatically loaded/saved.")
 
 (defun elmo-dop-queue-flush ()
   "Flush disconnected operations that consern plugged folders."
+  ;; obsolete
+  (unless (or (null elmo-dop-queue)
+	      (vectorp (car elmo-dop-queue)))
+    (if (y-or-n-p "
+Saved queue is old version(2.6). Clear all pending operations? ")
+	(progn
+	  (setq elmo-dop-queue nil)
+	  (message "All pending operations are cleared.")
+	  (elmo-dop-queue-save))
+      (error "Please use 2.6 or earlier.")))
   (elmo-dop-queue-merge)
   (let ((queue-all elmo-dop-queue)
 	queue
 	(count 0)
 	len)
-    ;; obsolete
-    (unless (or (null queue-all)
-		(vectorp (car queue-all)))
-      (if (y-or-n-p "Saved queue is old version(2.6). Clear all pending operations? ")
-	  (progn
-	    (setq elmo-dop-queue nil)
-	    (message "All pending operations are cleared.")
-	    (elmo-dop-queue-save))
-	(error "Please use 2.6 or earlier.")))
     (while queue-all
       (if (elmo-folder-plugged-p
 	   (elmo-make-folder (elmo-dop-queue-fname (car queue-all))))

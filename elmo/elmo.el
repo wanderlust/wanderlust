@@ -1603,6 +1603,7 @@ Return a hashtable for newsgroups."
 
 ;; autoloads
 (autoload 'elmo-dop-queue-flush "elmo-dop")
+(autoload 'elmo-nntp-post "elmo-nntp")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

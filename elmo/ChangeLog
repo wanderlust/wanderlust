@@ -1,3 +1,7 @@
+2002-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-dop.el (elmo-dop-queue-flush): Check obsolete at first.
+
 2002-10-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-filter.el (elmo-folder-list-unreads): Call generic method
@@ -27,6 +31,11 @@
 
 	* elmo-msgdb.el (elmo-msgdb-set-status): Fixed logic (new to read).
 	(elmo-msgdb-uncached-marks): Added elmo-msgdb-new-mark.
+
+2002-09-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo.el: Add autoload setting for elmo-nntp-post, fix against
+	the problem reported by Sean Rima [wl-en:180].
 
 2002-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 

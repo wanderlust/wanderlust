@@ -1,3 +1,8 @@
+2002-10-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-summary-burst): Get elmo folder correctly.
+	Take prefix argument to force asking the destination folder.
+
 2002-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-prefetch-msg): If mark is changed,
@@ -30,6 +35,12 @@
 	(wl-summary-mark-as-read): Added no-modeline argument.
 	(wl-summary-resume-cache-status): Rewrite.
 	(wl-summary-exec-subr): Remove unused local variable.
+
+2002-09-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-cursor-move-surface): Add missing
+	logic to call `wl-summary-buffer-prev-folder-function'.
+	(pointed out by Kazuhiro NISHIYAMA [mhc:01644])
 
 2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 

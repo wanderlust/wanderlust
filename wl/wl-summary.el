@@ -4270,7 +4270,7 @@ If ARG, exit virtual folder."
 		(wl-summary-delete-all-temp-marks)
 		(encode-coding-region
 		 (point-min) (point-max)
-		 (or (and wl-on-mule ; one in mcs-ltn1 cannot take 2 arg.
+		 (or (and wl-on-mule ; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
 			  (mime-charset-to-coding-system charset 'LF))
 		     ;; Mule 2 doesn't have `*ctext*unix'.
 		     (mime-charset-to-coding-system charset)))
@@ -4912,8 +4912,12 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(if wl-summary-buffer-disp-msg
 	    (wl-summary-redisplay))
       (if interactive
-	  (if wl-summary-buffer-next-folder-function
-	      (funcall wl-summary-buffer-next-folder-function)
+	  (cond
+	   ((and (not downward) wl-summary-buffer-prev-folder-function)
+	    (funcall wl-summary-buffer-prev-folder-function))
+	   ((and downward wl-summary-buffer-next-folder-function)
+	    (funcall wl-summary-buffer-next-folder-function))
+	   (t
 	    (when wl-auto-select-next
 	      (setq next-entity
 		    (if downward
@@ -4925,7 +4929,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	     '(lambda () (wl-summary-next-folder-or-exit next-entity))
 	     (format
 	      "No more messages. Type SPC to go to %s."
-	      (wl-summary-entity-info-msg next-entity finfo))))))))
+	      (wl-summary-entity-info-msg next-entity finfo)))))))))
 
 (defun wl-summary-prev (&optional interactive)
   (interactive)
