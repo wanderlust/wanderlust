@@ -819,9 +819,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (setq wl-summary-buffer-window-scroll-functions
 	(wl-summary-window-scroll-functions))
   (when wl-summary-buffer-window-scroll-functions
-    (let ((hook (make-local-hook (if wl-on-xemacs
-				     'pre-idle-hook
-				   'window-scroll-functions))))
+    (let ((hook (if wl-on-xemacs 'pre-idle-hook 'window-scroll-functions)))
+      (make-local-hook hook)
       (dolist (function wl-summary-buffer-window-scroll-functions)
 	(add-hook hook function nil t))))
   ;; This hook may contain the function `wl-setup-summary' for reasons
