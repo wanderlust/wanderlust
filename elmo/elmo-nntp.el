@@ -190,7 +190,7 @@ Don't cache if nil.")
       (while (and (memq (process-status process) '(open run))
                   (goto-char (point-max))
                   (forward-line -1)
-                  (not (looking-at "200")))
+                  (not (looking-at "20[01]")))
         (accept-process-output process 1))
       (setq elmo-nntp-read-point (point))
       (or (elmo-nntp-read-response session t)
@@ -201,8 +201,7 @@ Don't cache if nil.")
 	(elmo-nntp-send-command session "starttls")
 	(or (elmo-nntp-read-response session)
 	    (error "Cannot open starttls session"))
-	(starttls-negotiate
-	 (elmo-network-session-process-internal session))))))
+	(starttls-negotiate process)))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-nntp-session))
