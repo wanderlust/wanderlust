@@ -177,7 +177,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;;; Session
 (eval-and-compile
   (luna-define-class elmo-imap4-session (elmo-network-session)
-		     (capability current-mailbox read-only flags))
+		     (capability current-mailbox read-only flags use-flag))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
 ;;; MIME-ELMO-IMAP Location
@@ -693,7 +693,11 @@ Returns response value if selecting folder succeed. "
 	      (elmo-imap4-session-set-flags-internal
 	       session
 	       (nth 1 (or (assq 'permanentflags response)
-			  (assq 'flags response)))))
+			  (assq 'flags response))))
+	      (elmo-imap4-session-set-use-flag-internal
+	       session
+	       (and (elmo-imap4-session-flag-available-p session 'read)
+		    (elmo-imap4-session-flag-available-p session 'important))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
 	  (if (and (eq no-error 'notify-bye)
 		   (elmo-imap4-response-bye-p response))
@@ -1910,7 +1914,7 @@ Return nil if no complete line has arrived."
   (elmo-imap4-folder-list-flagged folder 'answered))
 
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
-  t)
+  (elmo-imap4-session-use-flag-internal (elmo-imap4-get-session folder)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-imap4-folder)
 						 &optional one-level)
@@ -2412,7 +2416,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (setq messages (elmo-imap4-response-value response 'messages))
     (setq uidnext (elmo-imap4-response-value response 'uidnext))
     (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-    ;; 
+    ;;
     (when killed
       (when (and (consp (car killed))
 		 (eq (car (car killed)) 1))

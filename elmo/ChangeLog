@@ -1,3 +1,9 @@
+2003-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-session): Added use-flag slot.
+	(elmo-imap4-session-select-mailbox): Set it up.
+	(elmo-folder-use-flag-p): Return value of use-flag slot.
+
 2003-11-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-flag-table): Fixed problem when
