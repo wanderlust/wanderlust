@@ -198,20 +198,15 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 
 @itemize @bullet
 @item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c, 2000 $B0J9_(B
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22$B!A(B1.6.24, 2.0.5 $B0J9_(B
-@item Courier-IMAP 1.3.2 $B0J9_(B
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 $B0J9_(B
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
+@item Sun Internet Mail Server 4.0
 @end itemize
 
-Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
-$B$j$G$9!#(B
-
-@itemize @bullet
-@item OpenLDAP 2.0.6 $B0J9_(B
-@end itemize
+@c Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
+@c $B$j$G$9!#(B
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -282,7 +277,7 @@ APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
 $B?d>)$5$l$k(B APEL, FLIM, SEMI $B$N%P!<%8%g%s$NAH9g$;$O!"0J2<$NDL$j$G$9!#(B
 
 @itemize @minus
-@item APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
+@item APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
 @end itemize
 
 $B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"(B
@@ -608,8 +603,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 # @var{$B%a!<%k%"%I%l%9(B}  "@var{$B$"$@L>(B}"  "@var{$BK\L>(B}"
 #
 teranisi@@gohome.org            "$B$F$i$K$7(B"      "$B;{@>M50l(B"
-foo@@example.com                "$B$U!<$5$s(B"      "John Foo"
-bar@@example.org                "$B$P!<$5$s(B"      "Michael Bar"
+foo@@bar.gohome.org             "Foo $B$5$s(B"      "John Foo"
+bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
 @end group
 @end example
 
@@ -3630,6 +3625,29 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex elmo-pop3-use-cache
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"(BPOP3 $B$GFI$s$@%a%C%;!<%8$r%-%c%C%7%e$7(B
 $B$^$9!#(B
+
+@item wl-folder-process-duplicates-alist
+@vindex wl-folder-process-duplicates-alist
+$B=i4|@_Dj$O(B @code{nil}$B!#=EJ#$7$?%a%C%;!<%8$,F1$8%U%)%k%@$K$"$k>l9g$NF0:n(B
+$B$r;XDj$7$^$9!#3F9`L\$O!"%U%)%k%@L>$N@55,I=8=$HF0:n$+$i$J$j$^$9!#(B
+$BF0:n$H$7$F$O0J2<$N$b$N$,;XDj$G$-$^$9!#(B
+
+@example
+@code{nil} : $B=EJ#%a%C%;!<%8$KBP$7!$2?$b$7$J$$!%(B
+@code{hide} : $B=EJ#%a%C%;!<%8$r%5%^%j$KI=<($7$J$$!%(B
+@code{read} : $B=EJ#%a%C%;!<%8$r4{FI$K$9$k!%(B
+@end example
+
+@noindent
+$BNc$($P0J2<$N$h$&$K@_Dj$7$^$9(B ($B%^%k%A%U%)%k%@$G=EJ#%a%C%;!<%8$r1#$9>l9g(B)
+
+@lisp
+@group
+(setq wl-folder-process-duplicates-alist
+                 '(("^\\+draft$" . nil) ("^\\+trash$" . nil)
+                   ("^\\*.*" . hide) (".*" . read)))
+@end group
+@end lisp
 @end table
 
 
@@ -4189,16 +4207,6 @@ Non-nil $B$J$i%&%#%s%I%&$rI=<($7$J$,$i%F%s%W%l!<%H$rA*Br$9$k>l9g!"%j%?!<%s(B
 @vindex wl-draft-use-frame
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 Non-nil $B$J$i%I%i%U%HMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
-
-@item wl-folder-use-frame
-@vindex wl-folder-use-frame
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
-Non-nil $B$J$i%U%)%k%@0lMwMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
-
-@item wl-summary-use-frame
-@vindex wl-summary-use-frame
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
-Non-nil $B$J$i%5%^%jI=<(MQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
 
 @item wl-from
 @vindex wl-from

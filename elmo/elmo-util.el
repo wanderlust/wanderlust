@@ -29,12 +29,15 @@
 ;;; Code:
 ;; 
 
+(eval-when-compile (require 'cl))
 (require 'elmo-vars)
 (require 'elmo-date)
-(eval-when-compile (require 'cl))
+(require 'mcharset)
+(require 'pces)
 (require 'std11)
 (require 'eword-decode)
 (require 'utf7)
+(require 'poem)
 
 (defmacro elmo-set-buffer-multibyte (flag)
   "Set the multibyte flag of the current buffer to FLAG."
@@ -72,19 +75,6 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
-(defsubst elmo-call-func (folder func-name &rest args)
-  (let* ((spec (if (stringp folder)
-		   (elmo-folder-get-spec folder)
-		 folder))
-	 (type (symbol-name (car spec)))
-	 (backend-str (concat "elmo-" type))
-	 (backend-sym (intern backend-str)))
-    (unless (featurep backend-sym)
-      (require backend-sym))
-    (apply (intern (format "%s-%s" backend-str func-name))
-	   spec
-	   args)))
-
 ;; Nemacs's `read' is different.
 (static-if (fboundp 'nemacs-version)
     (defun elmo-read (obj)
@@ -101,30 +91,10 @@
        (erase-buffer)
        (,@ body))))
 
-(defmacro elmo-match-substring (pos string from)
-  "Substring of POSth matched string of STRING."
-  (` (substring (, string)
-		(+ (match-beginning (, pos)) (, from))
-		(match-end (, pos)))))
-
-(defmacro elmo-match-string (pos string)
-  "Substring POSth matched STRING."
-  (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
-
-(defmacro elmo-match-buffer (pos)
-  "Substring POSth matched from the current buffer."
-  (` (buffer-substring-no-properties
-      (match-beginning (, pos)) (match-end (, pos)))))
-
 (defmacro elmo-bind-directory (dir &rest body)
   "Set current directory DIR and execute BODY."
   (` (let ((default-directory (file-name-as-directory (, dir))))
        (,@ body))))
-
-(defmacro elmo-folder-get-type (folder)
-  "Get type of FOLDER."
-  (` (and (stringp (, folder))
-	  (cdr (assoc (string-to-char (, folder)) elmo-spec-alist)))))
 
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
@@ -172,322 +142,12 @@ File content is encoded with MIME-CHARSET."
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
-(defsubst elmo-imap4-decode-folder-string (string)
-  (if elmo-imap4-use-modified-utf7
-      (utf7-decode-string string 'imap)
-    string))
-
-(defsubst elmo-imap4-encode-folder-string (string)
-  (if elmo-imap4-use-modified-utf7
-      (utf7-encode-string string 'imap)
-    string))
-
 (defun elmo-get-network-stream-type (stream-type stream-type-alist)
   (catch 'found
     (while stream-type-alist
       (if (eq (nth 1 (car stream-type-alist)) stream-type)
 	  (throw 'found (car stream-type-alist)))
       (setq stream-type-alist (cdr stream-type-alist)))))
-
-(defun elmo-network-get-spec (folder server port stream-type stream-type-alist)
-  (setq stream-type (elmo-get-network-stream-type
-		     stream-type stream-type-alist))
-  (when (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
-    (if (match-beginning 1)
-	(setq server (elmo-match-substring 1 folder 1)))
-    (if (match-beginning 2)
-	(setq port (string-to-int (elmo-match-substring 2 folder 1))))
-    (if (match-beginning 3)
-	(setq stream-type (assoc (elmo-match-string 3 folder)
-				 stream-type-alist)))
-    (setq folder (substring folder 0 (match-beginning 0))))
-  (cons folder (list server port stream-type)))
-
-(defun elmo-imap4-get-spec (folder)
-  (let ((default-user        elmo-default-imap4-user)
-	(default-server      elmo-default-imap4-server)
-	(default-port        elmo-default-imap4-port)
-	(default-stream-type elmo-default-imap4-stream-type)
-	(stream-type-alist elmo-network-stream-type-alist)
-	spec mailbox user auth)
-    (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
-      ;; case: default-imap4-server is specified like
-      ;; "hoge%imap.server@gateway".
-      (setq default-user (elmo-match-string 1 default-server))
-      (setq default-server (elmo-match-string 2 default-server)))
-    (if elmo-imap4-stream-type-alist
-	(setq stream-type-alist
-	      (append elmo-imap4-stream-type-alist stream-type-alist)))
-    (setq spec (elmo-network-get-spec
-		folder default-server default-port default-stream-type
-		stream-type-alist))
-    (setq folder (car spec))
-    (when (string-match
-	   "^\\(%\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
-	   folder)
-      (progn
-	(setq mailbox (if (match-beginning 2)
-			  (elmo-match-string 2 folder)
-			elmo-default-imap4-mailbox))
-	(setq user (if (match-beginning 3)
-		       (elmo-match-substring 3 folder 1)
-		     default-user))
-	(setq auth (if (match-beginning 4)
-		       (intern (elmo-match-substring 4 folder 1))
-		     elmo-default-imap4-authenticate-type))
-	(setq auth (or auth 'clear))
-	(append (list 'imap4
-		      (elmo-imap4-encode-folder-string mailbox)
-		      user auth)
-		(cdr spec))))))
-
-(defsubst elmo-imap4-spec-mailbox (spec)
-  (nth 1 spec))
-
-(defsubst elmo-imap4-spec-username (spec)
-  (nth 2 spec))
-
-(defsubst elmo-imap4-spec-auth (spec)
-  (nth 3 spec))
-
-(defsubst elmo-imap4-spec-hostname (spec)
-  (nth 4 spec))
-
-(defsubst elmo-imap4-spec-port (spec)
-  (nth 5 spec))
-
-(defsubst elmo-imap4-spec-stream-type (spec)
-  (nth 6 spec))
-
-(defalias 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
-(make-obsolete 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
-
-(defsubst elmo-imap4-connection-get-process (conn)
-  (nth 1 conn))
-
-(defsubst elmo-imap4-connection-get-buffer (conn)
-  (nth 0 conn))
-
-(defsubst elmo-imap4-connection-get-cwf (conn)
-  (nth 2 conn))
-
-(defun elmo-nntp-get-spec (folder)
-  (let ((stream-type-alist elmo-network-stream-type-alist)
-	spec group user)
-    (if elmo-nntp-stream-type-alist
-	(setq stream-type-alist
-	      (append elmo-nntp-stream-type-alist stream-type-alist)))
-    (setq spec (elmo-network-get-spec folder
-				      elmo-default-nntp-server
-				      elmo-default-nntp-port
-				      elmo-default-nntp-stream-type
-				      stream-type-alist))
-    (setq folder (car spec))
-    (when (string-match
-	   "^\\(-\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
-	   folder)
-      (setq group
-	    (if (match-beginning 2)
-		(elmo-match-string 2 folder)))
-      (setq user
-	    (if (match-beginning 3)
-		(elmo-match-substring 3 folder 1)
-	      elmo-default-nntp-user))
-      (append (list 'nntp group user)
-	      (cdr spec)))))
-
-(defsubst elmo-nntp-spec-group (spec)
-  (nth 1 spec))
-
-(defsubst elmo-nntp-spec-username (spec)
-  (nth 2 spec))
-
-;; future use?
-;; (defsubst elmo-nntp-spec-auth (spec))
-
-(defsubst elmo-nntp-spec-hostname (spec)
-  (nth 3 spec))
-
-(defsubst elmo-nntp-spec-port (spec)
-  (nth 4 spec))
-
-(defsubst elmo-nntp-spec-stream-type (spec)
-  (nth 5 spec))
-
-(defun elmo-localdir-get-spec (folder)
-  (let (fld-name path)
-    (when (string-match
-	   "^\\(\\+\\)\\(.*\\)$"
-	   folder)
-      (if (eq (length (setq fld-name
-			    (elmo-match-string 2 folder))) 0)
-	  (setq fld-name "")
-	)
-      (if (file-name-absolute-p fld-name)
-	  (setq path (expand-file-name fld-name))
-;;;	(setq path (expand-file-name fld-name
-;;;				     elmo-localdir-folder-path))
-	(setq path fld-name))
-      (list (if (elmo-folder-maildir-p folder)
-		'maildir
-	      'localdir) path))))
-
-(defun elmo-maildir-get-spec (folder)
-  (let (fld-name path)
-    (when (string-match
-	   "^\\(\\.\\)\\(.*\\)$"
-	   folder)
-      (if (eq (length (setq fld-name
-			    (elmo-match-string 2 folder))) 0)
-	  (setq fld-name ""))
-      (if (file-name-absolute-p fld-name)
-	  (setq path (expand-file-name fld-name))
-	(setq path fld-name))
-      (list 'maildir path))))
-
-(defun elmo-folder-maildir-p (folder)
-  (catch 'found
-    (let ((li elmo-maildir-list))
-      (while li
-	(if (string-match (car li) folder)
-	    (throw 'found t))
-	(setq li (cdr li))))))
-
-(defun elmo-localnews-get-spec (folder)
-  (let (fld-name)
-    (when (string-match
-	 "^\\(=\\)\\(.*\\)$"
-	 folder)
-      (if (eq (length (setq fld-name
-			    (elmo-match-string 2 folder))) 0)
-	  (setq fld-name "")
-	)
-      (list 'localnews
-	    (elmo-replace-in-string fld-name "\\." "/")))))
-
-(defun elmo-cache-get-spec (folder)
-  (let (fld-name)
-    (when (string-match
-	 "^\\(!\\)\\(.*\\)$"
-	 folder)
-      (if (eq (length (setq fld-name
-			    (elmo-match-string 2 folder))) 0)
-	  (setq fld-name "")
-	)
-      (list 'cache
-	    (elmo-replace-in-string fld-name "\\." "/")))))
-
-;; Archive interface by OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-(defun elmo-archive-get-spec (folder)
-  (require 'elmo-archive)
-  (let (fld-name type prefix)
-    (when (string-match
-	   "^\\(\\$\\)\\([^;]*\\);?\\([^;]*\\);?\\([^;]*\\)$"
-	   folder)
-      ;; Drive letter is OK!
-      (if (eq (length (setq fld-name
-			    (elmo-match-string 2 folder))) 0)
-	  (setq fld-name "")
-	)
-      (if (eq (length (setq type
-			    (elmo-match-string 3 folder))) 0)
-	  (setq type (symbol-name elmo-archive-default-type)))
-      (if (eq (length (setq prefix
-			    (elmo-match-string 4 folder))) 0)
-	  (setq prefix ""))
-      (list 'archive fld-name (intern-soft type) prefix))))
-
-(defun elmo-pop3-get-spec (folder)
-  (let ((stream-type-alist elmo-network-stream-type-alist)
-	spec user auth)
-    (if elmo-pop3-stream-type-alist
-	(setq stream-type-alist
-	      (append elmo-pop3-stream-type-alist stream-type-alist)))
-    (setq spec (elmo-network-get-spec folder
-				      elmo-default-pop3-server
-				      elmo-default-pop3-port
-				      elmo-default-pop3-stream-type
-				      stream-type-alist))
-    (setq folder (car spec))
-    (when (string-match
-	   "^\\(&\\)\\([^:/!]*\\)\\(/[^/:@!]+\\)?"
-	   folder)
-      (setq user (if (match-beginning 2)
-		     (elmo-match-string 2 folder)))
-      (if (eq (length user) 0)
-	  (setq user elmo-default-pop3-user))
-      (setq auth (if (match-beginning 3)
-		     (intern (elmo-match-substring 3 folder 1))
-		   elmo-default-pop3-authenticate-type))
-      (setq auth (or auth 'user))
-      (append (list 'pop3 user auth)
-	      (cdr spec)))))
-
-(defsubst elmo-pop3-spec-username (spec)
-  (nth 1 spec))
-
-(defsubst elmo-pop3-spec-auth (spec)
-  (nth 2 spec))
-
-(defsubst elmo-pop3-spec-hostname (spec)
-  (nth 3 spec))
-
-(defsubst elmo-pop3-spec-port (spec)
-  (nth 4 spec))
-
-(defsubst elmo-pop3-spec-stream-type (spec)
-  (nth 5 spec))
-
-(defun elmo-internal-get-spec (folder)
-  (if (string-match "\\('\\)\\([^/]*\\)/?\\(.*\\)$" folder)
-      (let* ((item (downcase (elmo-match-string 2 folder)))
-	     (sym (and (> (length item) 0) (intern item))))
-	(cond ((or (null sym)
-		   (eq sym 'mark))
-	       (list 'internal sym (elmo-match-string 3 folder)))
-	      ((eq sym 'cache)
-	       (list 'cache (elmo-match-string 3 folder)))
-	      (t (error "Invalid internal folder spec"))))))
-
-(defun elmo-multi-get-spec (folder)
-  (save-match-data
-    (when (string-match
-	   "^\\(\\*\\)\\(.*\\)$"
-	   folder)
-      (append (list 'multi)
-	      (split-string
-	       (elmo-match-string 2 folder)
-	       ",")))))
-
-(defun elmo-filter-get-spec (folder)
-  (when (string-match "^\\(/\\)\\(.*\\)$" folder)
-    (let ((folder (elmo-match-string 2 folder))
-	  pair)
-      (setq pair (elmo-parse-search-condition folder))
-      (if (string-match "^ */\\(.*\\)$" (cdr pair))
-	  (list 'filter (car pair) (elmo-match-string 1 (cdr pair)))
-	(error "Folder syntax error `%s'" folder)))))
-
-(defun elmo-pipe-get-spec (folder)
-  (when (string-match "^\\(|\\)\\([^|]*\\)|\\(.*\\)$" folder)
-    (list 'pipe
-	  (elmo-match-string 2 folder)
-	  (elmo-match-string 3 folder))))
-
-(defsubst elmo-pipe-spec-src (spec)
-  (nth 1 spec))
-
-(defsubst elmo-pipe-spec-dst (spec)
-  (nth 2 spec))
-
-(defun elmo-folder-get-spec (folder)
-  "Return spec of FOLDER."
-  (let ((type (elmo-folder-get-type folder)))
-    (if type
-	(save-match-data
-	  (funcall (intern (concat "elmo-" (symbol-name type) "-get-spec"))
-		   folder))
-      (error "%s is not supported folder type" folder))))
 
 ;;; Search Condition
 
@@ -630,13 +290,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
    (t (error "Syntax error '%s'" (buffer-string)))))
 
 ;;;
-(defun elmo-multi-get-real-folder-number (folder number)
-  (let* ((spec (elmo-folder-get-spec folder))
-	 (flds (cdr spec))
-	 (num number)
-	 (fld (nth (- (/ num elmo-multi-divide-number) 1) flds)))
-    (cons fld (% num elmo-multi-divide-number))))
-
 (defsubst elmo-buffer-replace (regexp &optional newtext)
   (goto-char (point-min))
   (while (re-search-forward regexp nil t)
@@ -653,6 +306,13 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (while (search-forward (char-to-string char) nil t)
 	 (replace-match ""))
        (buffer-string)))))
+
+(defsubst elmo-delete-cr-buffer ()
+  "Delete CR from buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (while (search-forward "\r\n" nil t)
+      (replace-match "\n")) ))
 
 (defsubst elmo-delete-cr-get-content-type ()
   (save-excursion
@@ -868,49 +528,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (message "")
       ans)))
 
-;; from subr.el
-(defun elmo-replace-in-string (str regexp newtext &optional literal)
-  "Replace all matches in STR for REGEXP with NEWTEXT string.
-And returns the new string.
-Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEWTEXT string as special:
-  \\& means substitute original matched text,
-  \\N means substitute match for \(...\) number N,
-  \\\\ means insert one \\."
-  (let ((rtn-str "")
-	(start 0)
-	(special)
-	match prev-start)
-    (while (setq match (string-match regexp str start))
-      (setq prev-start start
-	    start (match-end 0)
-	    rtn-str
-	    (concat
-	     rtn-str
-	     (substring str prev-start match)
-	     (cond (literal newtext)
-		   (t (mapconcat
-		       (function
-			(lambda (c)
-			  (if special
-			      (progn
-				(setq special nil)
-				(cond ((eq c ?\\) "\\")
-				      ((eq c ?&)
-				       (elmo-match-string 0 str))
-				      ((and (>= c ?0) (<= c ?9))
-				       (if (> c (+ ?0 (length
-						       (match-data))))
-					   ;; Invalid match num
-					   (error "Invalid match num: %c" c)
-					 (setq c (- c ?0))
-					 (elmo-match-string c str)))
-				      (t (char-to-string c))))
-			    (if (eq c ?\\) (progn (setq special t) nil)
-			      (char-to-string c)))))
-		       newtext ""))))))
-    (concat rtn-str (substring str start))))
-
 (defun elmo-string-to-list (string)
   (elmo-set-work-buf
    (insert string)
@@ -964,23 +581,27 @@ Otherwise treat \\ in NEWTEXT string as special:
       (setq alist (cdr alist)))
     (elmo-plug-on-by-servers alist other-servers)))
 
-(defun elmo-plugged-p (&optional server port alist label-exp)
+(defun elmo-plugged-p (&optional server port stream-type alist label-exp)
   (let ((alist (or alist elmo-plugged-alist))
 	plugged-info)
     (cond ((and (not port) (not server))
 	   (cond ((eq elmo-plugged-condition 'one)
-		  (catch 'plugged
-		    (while alist
-		      (if (nth 2 (car alist))
-			  (throw 'plugged t))
-		      (setq alist (cdr alist)))))
+		  (if alist
+		      (catch 'plugged
+			(while alist
+			  (if (nth 2 (car alist))
+			      (throw 'plugged t))
+			  (setq alist (cdr alist))))
+		    elmo-plugged))
 		 ((eq elmo-plugged-condition 'all)
-		  (catch 'plugged
-		    (while alist
-		      (if (not (nth 2 (car alist)))
-			  (throw 'plugged nil))
-		      (setq alist (cdr alist)))
-		    t))
+		  (if alist
+		      (catch 'plugged
+			(while alist
+			  (if (not (nth 2 (car alist)))
+			      (throw 'plugged nil))
+			  (setq alist (cdr alist)))
+			t)
+		    elmo-plugged))
 		 ((functionp elmo-plugged-condition)
 		  (funcall elmo-plugged-condition alist))
 		 (t ;; independent
@@ -993,11 +614,12 @@ Otherwise treat \\ in NEWTEXT string as special:
 		     (throw 'plugged t)))
 	       (setq alist (cdr alist)))))
 	  (t
-	   (setq plugged-info (assoc (cons server port) alist))
+	   (setq plugged-info (assoc (list server port stream-type) alist))
 	   (if (not plugged-info)
 	       ;; add elmo-plugged-alist automatically
 	       (progn
-		 (elmo-set-plugged elmo-plugged server port nil nil label-exp)
+		 (elmo-set-plugged elmo-plugged server port stream-type
+				   nil nil nil label-exp)
 		 elmo-plugged)
 	     (if (and elmo-auto-change-plugged
 		      (> elmo-auto-change-plugged 0)
@@ -1007,7 +629,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 		 t
 	       (nth 2 plugged-info)))))))
 
-(defun elmo-set-plugged (plugged &optional server port time
+(defun elmo-set-plugged (plugged &optional server port stream-type time
 				 alist label-exp add)
   (let ((alist (or alist elmo-plugged-alist))
 	label plugged-info)
@@ -1025,7 +647,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	     (setq alist (cdr alist))))
 	  (t
 	   ;; set plugged one port of server
-	   (setq plugged-info (assoc (cons server port) alist))
+	   (setq plugged-info (assoc (list server port stream-type) alist))
 	   (setq label (if label-exp
 			   (eval label-exp)
 			 (nth 1 plugged-info)))
@@ -1035,9 +657,11 @@ Otherwise treat \\ in NEWTEXT string as special:
 		 (setcdr plugged-info (list label plugged time)))
 	     (setq alist
 		   (setq elmo-plugged-alist
-			 (nconc elmo-plugged-alist
-				(list
-				 (list (cons server port) label plugged time))))))))
+			 (nconc
+			  elmo-plugged-alist
+			  (list
+			   (list (list server port stream-type)
+				 label plugged time))))))))
     alist))
 
 (defun elmo-delete-plugged (&optional server port alist)
@@ -1105,6 +729,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
   "Delete directory recursively."
+  (if (stringp path) ; nil is not permitted.
   (let ((dirent (directory-files path))
 	relpath abspath hierarchy)
     (while dirent
@@ -1118,7 +743,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	      (elmo-delete-directory abspath no-hierarchy))
 	  (delete-file abspath))))
     (unless hierarchy
-      (delete-directory path))))
+      (delete-directory path)))))
 
 (defun elmo-list-filter (l1 l2)
   "L1 is filter."
@@ -1129,42 +754,6 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(elmo-delete-if (lambda (x) (not (memq x l1))) l2)
       ;; filter is nil
       l2)))
-
-(defun elmo-folder-local-p (folder)
-  "Return whether FOLDER is a local folder or not."
-  (let ((spec (elmo-folder-get-spec folder)))
-    (case (car spec)
-      (filter (elmo-folder-local-p (nth 2 spec)))
-      (pipe (elmo-folder-local-p (elmo-pipe-spec-dst spec)))
-      (t (memq (car spec)
-	       '(localdir localnews archive maildir internal cache))))))
-
-(defun elmo-folder-writable-p (folder)
-  (let ((type (elmo-folder-get-type folder)))
-    (memq type '(imap4 localdir archive))))
-
-(defun elmo-multi-get-intlist-list (numlist &optional as-is)
-  (let ((numbers (sort numlist '<))
-	(cur-number 0)
-	one-list int-list-list)
-    (while numbers
-      (setq cur-number (+ cur-number 1))
-      (setq one-list nil)
-      (while (and numbers
-		  (eq 0
-		      (/ (- (car numbers)
-			    (* elmo-multi-divide-number cur-number))
-			 elmo-multi-divide-number)))
-	(setq one-list (nconc
-			one-list
-			(list
-			 (if as-is
-			     (car numbers)
-			   (% (car numbers)
-			      (* elmo-multi-divide-number cur-number))))))
-	(setq numbers (cdr numbers)))
-      (setq int-list-list (nconc int-list-list (list one-list))))
-    int-list-list))
 
 (defsubst elmo-list-delete-if-smaller (list number)
   (let ((ret-val (copy-sequence list)))
@@ -1216,68 +805,6 @@ Otherwise treat \\ in NEWTEXT string as special:
 		   'elmo-list-bigger-diff "%s%d%%" percent mes))))
 	(setq l1 (cdr l1)))
       (cons diff1 (list l2)))))
-
-(defun elmo-multi-list-bigger-diff (list1 list2 &optional mes)
-  (let ((list1-list (elmo-multi-get-intlist-list list1 t))
-	(list2-list (elmo-multi-get-intlist-list list2 t))
-	result
-	dels news)
-    (while (or list1-list list2-list)
-      (setq result (elmo-list-bigger-diff (car list1-list) (car list2-list)
-					  mes))
-      (setq dels (append dels (car result)))
-      (setq news (append news (cadr result)))
-      (setq list1-list (cdr list1-list))
-      (setq list2-list (cdr list2-list)))
-    (cons dels (list news))))
-
-(defvar elmo-imap4-name-space-regexp-list nil)
-(defun elmo-imap4-identical-name-space-p (fld1 fld2)
-  ;; only on UW?
-  (if (or (eq (string-to-char fld1) ?#)
-	  (eq (string-to-char fld2) ?#))
-      (string= (car (split-string fld1 "/"))
-	       (car (split-string fld2 "/")))
-    t))
-
-(defun elmo-folder-identical-system-p (folder1 folder2)
-  "FOLDER1 and FOLDER2 should be real folder (not virtual)."
-  (cond ((eq (elmo-folder-get-type folder1) 'imap4)
-	 (let ((spec1 (elmo-folder-get-spec folder1))
-	       (spec2 (elmo-folder-get-spec folder2)))
-	   (and 
-;;; No use.	    
-;;;	    (elmo-imap4-identical-name-space-p 
-;;;	     (nth 1 spec1) (nth 1 spec2))
-	    (string= (elmo-imap4-spec-hostname spec1)
-		     (elmo-imap4-spec-hostname spec2)) ; hostname
-	    (string= (elmo-imap4-spec-username spec1)
-		     (elmo-imap4-spec-username spec2))))) ; username
-	(t
-	 (elmo-folder-direct-copy-p folder1 folder2))))
-
-(defun elmo-folder-get-store-type (folder)
-  (let ((spec (elmo-folder-get-spec folder)))
-    (case (car spec)
-      (filter (elmo-folder-get-store-type (nth 2 spec)))
-      (pipe (elmo-folder-get-store-type (elmo-pipe-spec-dst spec)))
-      (multi (elmo-folder-get-store-type (nth 1 spec)))
-      (t (car spec)))))
-
-(defconst elmo-folder-direct-copy-alist
-  '((localdir  . (localdir localnews archive))
-    (maildir   . (maildir  localdir localnews archive))
-    (localnews . (localdir localnews archive))
-    (archive   . (localdir localnews archive))
-    (cache     . (localdir localnews archive))))
-
-(defun elmo-folder-direct-copy-p (src-folder dst-folder)
-  (let ((src-type (elmo-folder-get-store-type src-folder))
-	(dst-type (elmo-folder-get-store-type dst-folder))
-	dst-copy-type)
-    (and (setq dst-copy-type
-	       (cdr (assq src-type elmo-folder-direct-copy-alist)))
-	 (memq dst-type dst-copy-type))))
 
 (defmacro elmo-filter-type (filter)
   (` (aref (, filter) 0)))
@@ -1431,11 +958,23 @@ Emacs 19.28 or earlier does not have `unintern'."
   (static-if (fboundp 'unintern)
       (list 'unintern string)))
 
-;; Make a hash table (default and minimum size is 1024).
 (defun elmo-make-hash (&optional hashsize)
+  "Make a new hash table which have HASHSIZE size."
   (make-vector
-   (if hashsize (max (min (elmo-create-hash-size hashsize)
-			  elmo-hash-maximum-size) 1024) 1024) 0))
+   (if hashsize 
+       (max
+	;; Prime numbers as lengths tend to result in good
+	;; hashing; lengths one less than a power of two are 
+	;; also good.
+	(min
+	 (let ((i 1))
+	   (while (< (- i 1) hashsize)
+	     (setq i (* 2 i)))
+	   (- i 1))
+	 elmo-hash-maximum-size)
+	elmo-hash-minimum-size)
+     elmo-hash-minimum-size)
+   0))
 
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
@@ -1484,12 +1023,6 @@ Emacs 19.28 or earlier does not have `unintern'."
 	    (setq dest (cons (cons name body) dest))))
       dest)))
 
-(defun elmo-create-hash-size (min)
-  (let ((i 1))
-    (while (< i min)
-      (setq i (* 2 i)))
-    i))
-
 (defun elmo-safe-filename (folder)
   (elmo-replace-in-string
    (elmo-replace-in-string
@@ -1497,28 +1030,28 @@ Emacs 19.28 or earlier does not have `unintern'."
     ":" "__")
    "|" "_or_"))
 
-(defvar elmo-msgid-replace-chars nil)
+(defvar elmo-filename-replace-chars nil)
 
-(defsubst elmo-replace-msgid-as-filename (msgid)
-  "Replace Message-ID string (MSGID) as filename."
+(defsubst elmo-replace-string-as-filename (msgid)
+  "Replace string as filename."
   (setq msgid (elmo-replace-in-string msgid " " "  "))
-  (if (null elmo-msgid-replace-chars)
-      (setq elmo-msgid-replace-chars
+  (if (null elmo-filename-replace-chars)
+      (setq elmo-filename-replace-chars
 	    (regexp-quote (mapconcat
-			   'car elmo-msgid-replace-string-alist ""))))
-  (while (string-match (concat "[" elmo-msgid-replace-chars "]")
+			   'car elmo-filename-replace-string-alist ""))))
+  (while (string-match (concat "[" elmo-filename-replace-chars "]")
 		       msgid)
     (setq msgid (concat
 		 (substring msgid 0 (match-beginning 0))
 		 (cdr (assoc
 		       (substring msgid
 				  (match-beginning 0) (match-end 0))
-		       elmo-msgid-replace-string-alist))
+		       elmo-filename-replace-string-alist))
 		 (substring msgid (match-end 0)))))
   msgid)
 
-(defsubst elmo-recover-msgid-from-filename (filename)
-  "Recover Message-ID from FILENAME."
+(defsubst elmo-recover-string-from-filename (filename)
+  "Recover string from FILENAME."
   (let (tmp result)
     (while (string-match " " filename)
       (setq tmp (substring filename
@@ -1527,7 +1060,7 @@ Emacs 19.28 or earlier does not have `unintern'."
       (if (string= tmp "  ")
 	  (setq tmp " ")
 	(setq tmp (car (rassoc tmp
-			       elmo-msgid-replace-string-alist))))
+			       elmo-filename-replace-string-alist))))
       (setq result
 	    (concat result
 		    (substring filename 0 (match-beginning 0))
@@ -1808,6 +1341,447 @@ NUMBER-SET is altered."
     (if (not found)
 	(setq number-set-1 (nconc number-set-1 (list number))))
     number-set-1))
+
+(defun elmo-number-set-to-number-list (number-set)
+  "Return a number list which corresponds to NUMBER-SET."
+  (let (number-list elem i)
+    (while number-set
+      (setq elem (car number-set))
+      (cond
+       ((consp elem)
+	(setq i (car elem))
+	(while (<= i (cdr elem))
+	  (setq number-list (cons i number-list))
+	  (incf i)))
+       ((integerp elem)
+	(setq number-list (cons elem number-list))))
+      (setq number-set (cdr number-set)))
+    (nreverse number-list)))
+
+(defcustom elmo-list-subdirectories-ignore-regexp "^\\(\\.\\.?\\|[0-9]+\\)$"
+  "*Regexp to filter subfolders."
+  :type 'regexp
+  :group 'elmo)
+
+(defun elmo-list-subdirectories-1 (basedir curdir one-level)
+  (let ((root (zerop (length curdir)))
+	(w32-get-true-file-link-count t) ; for Meadow
+	attr dirs dir)
+    (catch 'done
+      (dolist (file (directory-files (setq dir (expand-file-name curdir basedir))))
+	(when (and (not (string-match
+			 elmo-list-subdirectories-ignore-regexp
+			 file))
+		   (car (setq attr (file-attributes
+				    (expand-file-name file dir)))))
+	  (when (eq one-level 'check) (throw 'done t))
+	  (let ((relpath
+		 (concat curdir (and (not root) elmo-path-sep) file))
+		subdirs)
+	    (setq dirs (nconc dirs
+			      (if (if elmo-have-link-count (< 2 (nth 1 attr))
+				    (setq subdirs
+					  (elmo-list-subdirectories-1
+					   basedir
+					   relpath
+					   (if one-level 'check))))
+				  (if one-level
+				      (list (list relpath))
+				    (cons relpath
+					  (or subdirs
+					      (elmo-list-subdirectories-1
+					       basedir
+					       relpath
+					       nil))))
+				(list relpath)))))))
+      dirs)))
+
+(defun elmo-list-subdirectories (directory file one-level)
+  (let ((subdirs (elmo-list-subdirectories-1 directory file one-level)))
+    (if (zerop (length file))
+	subdirs
+      (cons file subdirs))))
+
+(defun elmo-mapcar-list-of-list (func list-of-list)
+  (mapcar
+   (lambda (x)
+     (cond ((listp x) (elmo-mapcar-list-of-list func x))
+	   (t (funcall func x))))
+   list-of-list))
+
+(defun elmo-parse (string regexp &optional matchn)
+  (or matchn (setq matchn 1))
+  (let (list)
+    (store-match-data nil)
+    (while (string-match regexp string (match-end 0))
+      (setq list (cons (substring string (match-beginning matchn)
+                                  (match-end matchn)) list)))
+    (nreverse list)))
+
+;;; File cache.
+(defmacro elmo-make-file-cache (path status)
+  "PATH is the cache file name.
+STATUS is one of 'section, 'entire or nil.
+ nil means no cache exists.
+'section means partial section cache exists.
+'entire means entire cache exists.
+If the cache is partial file-cache, TYPE is 'partial."
+  (` (cons (, path) (, status))))
+
+(defmacro elmo-file-cache-path (file-cache)
+  "Returns the file path of the FILE-CACHE."
+  (` (car (, file-cache))))
+
+(defmacro elmo-file-cache-status (file-cache)
+  "Returns the status of the FILE-CACHE."
+  (` (cdr (, file-cache))))
+
+(defsubst elmo-cache-to-msgid (filename)
+  (concat "<" (elmo-recover-string-from-filename filename) ">"))
+
+(defsubst elmo-cache-get-path-subr (msgid)
+  (let ((chars '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?A ?B ?C ?D ?E ?F))
+	(clist (string-to-char-list msgid))
+	(sum 0))
+    (while clist
+      (setq sum (+ sum (car clist)))
+      (setq clist (cdr clist)))
+    (format "%c%c"
+	    (nth (% (/ sum 16) 2) chars)
+	    (nth (% sum 16) chars))))
+
+(defun elmo-file-cache-get-path (msgid &optional section)
+  "Get cache path for MSGID.
+If optional argument SECTION is specified, partial cache path is returned."
+  (if (setq msgid (elmo-msgid-to-cache msgid))
+      (expand-file-name
+       (if section
+	   (format "%s/%s/%s/%s/%s"
+		   elmo-msgdb-dir
+		   elmo-cache-dirname
+		   (elmo-cache-get-path-subr msgid)
+		   msgid
+		   section)
+	 (format "%s/%s/%s/%s"
+		 elmo-msgdb-dir
+		 elmo-cache-dirname
+		 (elmo-cache-get-path-subr msgid)
+		 msgid)))))
+
+(defmacro elmo-file-cache-expand-path (path section)
+  "Return file name for the file-cache corresponds to the section.
+PATH is the file-cache path.
+SECTION is the section string."
+  (` (expand-file-name (or (, section) "") (, path))))
+
+(defun elmo-file-cache-delete (path)
+  "Delete a cache on PATH."
+  (let (files)
+    (when (file-exists-p path)
+      (if (file-directory-p path)
+	  (progn
+	    (setq files (directory-files path t "^[^\\.]"))
+	    (while files
+	      (delete-file (car files))
+	      (setq files (cdr files)))
+	    (delete-directory path))
+	(delete-file path)))))
+
+(defun elmo-file-cache-exists-p (msgid)
+  "Returns 'section or 'entire if a cache which corresponds to MSGID exists."
+  (elmo-file-cache-status (elmo-file-cache-get msgid)))
+
+(defun elmo-file-cache-save (cache-path section)
+  "Save current buffer as cache on PATH.
+Return t if cache is saved successfully."
+  (condition-case nil
+      (let ((path (if section (expand-file-name section cache-path)
+		    cache-path))
+	    files dir)
+	(if (and (null section)
+		 (file-directory-p path))
+	    (progn
+	      (setq files (directory-files path t "^[^\\.]"))
+	      (while files
+		(delete-file (car files))
+		(setq files (cdr files)))
+	      (delete-directory path))
+	  (if (and section
+		   (not (file-directory-p cache-path)))
+	      (delete-file cache-path)))
+	(when path
+	  (setq dir (directory-file-name (file-name-directory path)))
+	  (if (not (file-exists-p dir))
+	      (elmo-make-directory dir))
+	  (write-region-as-binary (point-min) (point-max)
+				  path nil 'no-msg)
+	  t))
+    ;; ignore error
+    (error)))
+
+(defun elmo-cache-path-section-p (path)
+  "Return non-nil when PATH is `section' cache path."
+  (file-directory-p path))
+
+(defun elmo-file-cache-get (msgid &optional section)
+  "Returns the current file-cache object associated with MSGID.
+MSGID is the message-id of the message.
+If optional argument SECTION is specified, get partial file-cache object
+associated with SECTION."
+  (if msgid
+      (let ((path (elmo-cache-get-path msgid)))
+	(if (and path (file-exists-p path))
+	    (if (elmo-cache-path-section-p path)
+		(if section
+		    (if (file-exists-p (setq path (expand-file-name
+						   section path)))
+			(cons path 'section))
+		  ;; section is not specified but sectional.
+		  (cons path 'section))
+	      ;; not directory.
+	      (unless section
+		(cons path 'entire)))
+	  ;; no cache.
+	  (cons path nil)))))
+
+;;;
+;; Expire cache.
+
+(defun elmo-cache-expire ()
+  (interactive)
+  (let* ((completion-ignore-case t)
+	 (method (completing-read (format "Expire by (%s): "
+					  elmo-cache-expire-default-method)
+				  '(("size" . "size")
+				    ("age" . "age")))))
+    (if (string= method "")
+	(setq method elmo-cache-expire-default-method))
+    (funcall (intern (concat "elmo-cache-expire-by-" method)))))
+
+(defun elmo-read-float-value-from-minibuffer (prompt &optional initial)
+  (let ((str (read-from-minibuffer prompt initial)))
+    (cond
+     ((string-match "[0-9]*\\.[0-9]+" str)
+      (string-to-number str))
+     ((string-match "[0-9]+" str)
+      (string-to-number (concat str ".0")))
+     (t (error "%s is not number" str)))))
+
+(defun elmo-cache-expire-by-size (&optional kbytes)
+  "Expire cache file by size.
+If KBYTES is kilo bytes (This value must be float)."
+  (interactive)
+  (let ((size (or kbytes
+		  (and (interactive-p)
+		       (elmo-read-float-value-from-minibuffer
+			"Enter cache disk size (Kbytes): "
+			(number-to-string
+			 (if (integerp elmo-cache-expire-default-size)
+			     (float elmo-cache-expire-default-size)
+			   elmo-cache-expire-default-size))))
+		  (if (integerp elmo-cache-expire-default-size)
+		      (float elmo-cache-expire-default-size))))
+	(count 0)
+	(Kbytes 1024)
+	total beginning)
+    (message "Checking disk usage...")
+    (setq total (/ (elmo-disk-usage
+		    (expand-file-name
+		     elmo-cache-dirname elmo-msgdb-dir)) Kbytes))
+    (setq beginning total)
+    (message "Checking disk usage...done")
+    (let ((cfl (elmo-cache-get-sorted-cache-file-list))
+	  (deleted 0)
+	  oldest
+	  cur-size cur-file)
+      (while (and (<= size total)
+		  (setq oldest (elmo-cache-get-oldest-cache-file-entity cfl)))
+	(setq cur-file (expand-file-name (car (cdr oldest)) (car oldest)))
+	(setq cur-size (/ (elmo-disk-usage cur-file) Kbytes))
+	(when (elmo-file-cache-delete cur-file)
+	  (setq count (+ count 1))
+	  (message "%d cache(s) are expired." count))
+	(setq deleted (+ deleted cur-size))
+	(setq total (- total cur-size)))
+      (message "%d cache(s) are expired from disk (%d Kbytes/%d Kbytes)."
+	       count deleted beginning))))
+
+(defun elmo-cache-make-file-entity (filename path)
+  (cons filename (elmo-get-last-accessed-time filename path)))
+
+(defun elmo-cache-get-oldest-cache-file-entity (cache-file-list)
+  (let ((cfl cache-file-list)
+	flist firsts oldest-entity wonlist)
+    (while cfl
+      (setq flist (cdr (car cfl)))
+      (setq firsts (append firsts (list
+				   (cons (car (car cfl))
+					 (car flist)))))
+      (setq cfl (cdr cfl)))
+;;; (prin1 firsts)
+    (while firsts
+      (if (and (not oldest-entity)
+	       (cdr (cdr (car firsts))))
+	  (setq oldest-entity (car firsts)))
+      (if (and (cdr (cdr (car firsts)))
+	       (cdr (cdr oldest-entity))
+	       (> (cdr (cdr oldest-entity)) (cdr (cdr (car firsts)))))
+	  (setq oldest-entity (car firsts)))
+      (setq firsts (cdr firsts)))
+    (setq wonlist (assoc (car oldest-entity) cache-file-list))
+    (and wonlist
+	 (setcdr wonlist (delete (car (cdr wonlist)) (cdr wonlist))))
+    oldest-entity))
+
+(defun elmo-cache-get-sorted-cache-file-list ()
+  (let ((dirs (directory-files
+	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       t "^[^\\.]"))
+	(i 0) num
+	elist
+	ret-val)
+    (setq num (length dirs))
+    (message "Collecting cache info...")
+    (while dirs
+      (setq elist (mapcar (lambda (x)
+			    (elmo-cache-make-file-entity x (car dirs)))
+			  (directory-files (car dirs) nil "^[^\\.]")))
+      (setq ret-val (append ret-val
+			    (list (cons
+				   (car dirs)
+				   (sort
+				    elist
+				    (lambda (x y)
+				      (< (cdr x)
+					 (cdr y))))))))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ i 1))
+	(elmo-display-progress
+	 'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
+	 (/ (* i 100) num)))
+      (setq dirs (cdr dirs)))
+    (message "Collecting cache info...done")
+    ret-val))
+
+(defun elmo-cache-expire-by-age (&optional days)
+  (let ((age (or (and days (int-to-string days))
+		 (and (interactive-p)
+		      (read-from-minibuffer
+		       (format "Enter days (%s): "
+			       elmo-cache-expire-default-age)))
+		 (int-to-string elmo-cache-expire-default-age)))
+	(dirs (directory-files
+	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       t "^[^\\.]"))
+	(count 0)
+	curtime)
+    (if (string= age "")
+	(setq age elmo-cache-expire-default-age)
+      (setq age (string-to-int age)))
+    (setq curtime (current-time))
+    (setq curtime (+ (* (nth 0 curtime)
+			(float 65536)) (nth 1 curtime)))
+    (while dirs
+      (let ((files (directory-files (car dirs) t "^[^\\.]"))
+	    (limit-age (* age 86400)))
+	(while files
+	  (when (> (- curtime (elmo-get-last-accessed-time (car files)))
+		   limit-age)
+	    (when (elmo-file-cache-delete (car files))
+	      (setq count (+ 1 count))
+	      (message "%d cache file(s) are expired." count)))
+	  (setq files (cdr files))))
+      (setq dirs (cdr dirs)))))
+
+;;;
+;; msgid to path.
+(defun elmo-msgid-to-cache (msgid)
+  (when (and msgid
+	     (string-match "<\\(.+\\)>$" msgid))
+    (elmo-replace-string-as-filename (elmo-match-string 1 msgid))))
+
+(defun elmo-cache-get-path (msgid &optional folder number)
+  "Get path for cache file associated with MSGID, FOLDER, and NUMBER."
+  (if (setq msgid (elmo-msgid-to-cache msgid))
+      (expand-file-name
+       (expand-file-name
+	(if folder
+	    (format "%s/%s/%s@%s"
+		    (elmo-cache-get-path-subr msgid)
+		    msgid
+		    (or number "")
+		    (elmo-safe-filename folder))
+	  (format "%s/%s"
+		  (elmo-cache-get-path-subr msgid)
+		  msgid))
+	(expand-file-name elmo-cache-dirname
+			  elmo-msgdb-dir)))))
+
+;;;
+;; Warnings.
+
+(defconst elmo-warning-buffer-name "*elmo warning*")
+
+(defun elmo-warning (&rest args)
+  "Display a warning, making warning message by passing all args to `insert'."
+  (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
+    (goto-char (point-max))
+    (apply 'insert (append args '("\n")))
+    (recenter 1))
+  (display-buffer elmo-warning-buffer-name))
+
+(defvar elmo-obsolete-variable-alist nil)
+(defvar elmo-obsolete-variable-show-warnings nil)
+
+(defun elmo-define-obsolete-variable (obsolete var)
+  "Define obsolete variable.
+OBSOLETE is a symbol for obsolete variable.
+VAR is a symbol for new variable.
+Definition is stored in `elmo-obsolete-variable-alist'."
+  (let ((pair (assq var elmo-obsolete-variable-alist)))
+    (if pair
+	(setcdr pair obsolete)
+      (setq elmo-obsolete-variable-alist
+	    (cons (cons var obsolete)
+		  elmo-obsolete-variable-alist)))))
+
+(defun elmo-resque-obsolete-variable (obsolete var)
+  "Resque obsolete variable OBSOLETE as VAR.
+If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
+  (when (boundp obsolete)
+    (static-if (and (fboundp 'defvaralias)
+		    (subrp (symbol-function 'defvaralias)))
+	(defvaralias var obsolete)
+      (set var (symbol-value obsolete)))
+    (if elmo-obsolete-variable-show-warnings
+	(elmo-warning (format "%s is obsolete. Use %s instead."
+			      (symbol-name obsolete)
+			      (symbol-name var))))))
+
+(defun elmo-resque-obsolete-variables (&optional alist)
+  "Resque obsolete variables in ALIST.
+ALIST is a list of cons cell of
+\(OBSOLETE-VARIABLE-SYMBOL . NEW-VARIABLE-SYMBOL\).
+If ALIST is nil, `elmo-obsolete-variable-alist' is used."
+  (dolist (pair elmo-obsolete-variable-alist)
+    (elmo-resque-obsolete-variable (cdr pair)
+				   (car pair))))
+
+;;; Queue.
+(defvar elmo-dop-queue-filename "queue"
+  "*Disconnected operation queue is saved in this file.")
+
+(defun elmo-dop-queue-load ()
+  (setq elmo-dop-queue
+	(elmo-object-load
+	 (expand-file-name elmo-dop-queue-filename
+			   elmo-msgdb-dir))))
+
+(defun elmo-dop-queue-save ()
+  (elmo-object-save
+   (expand-file-name elmo-dop-queue-filename
+		     elmo-msgdb-dir)
+   elmo-dop-queue))
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

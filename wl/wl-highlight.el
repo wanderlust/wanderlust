@@ -994,29 +994,28 @@ Variables used:
       (let ((s start)) (setq start end end s)))
   (let (lines too-big gc-message e p hend i percent)
     (save-excursion
-      (save-match-data
-	(unless wl-summary-lazy-highlight
-	  (setq lines (count-lines start end)
-		too-big (and wl-highlight-max-summary-lines
-			     (> lines wl-highlight-max-summary-lines))))
-	(goto-char start)
-	(setq i 0)
-	(while (and (not (eobp))
-		    (< (point) end))
-	  (wl-highlight-summary-current-line nil nil
-					     (or wl-summary-lazy-highlight
-						 wl-summary-scored))
-	  (when (and (not wl-summary-lazy-highlight)
-		     (> lines elmo-display-progress-threshold))
-	    (setq i (+ i 1))
-	    (setq percent (/ (* i 100) lines))
-	    (if (or (zerop (% percent 5)) (= i lines))
-		(elmo-display-progress
-		 'wl-highlight-summary "Highlighting..."
-		 percent)))
-	  (forward-line 1))
-	(unless wl-summary-lazy-highlight
-	  (message "Highlighting...done"))))))
+      (unless wl-summary-lazy-highlight
+	(setq lines (count-lines start end)
+	      too-big (and wl-highlight-max-summary-lines
+			   (> lines wl-highlight-max-summary-lines))))
+      (goto-char start)
+      (setq i 0)
+      (while (and (not (eobp))
+		  (< (point) end))
+	(wl-highlight-summary-current-line nil nil
+					   (or wl-summary-lazy-highlight
+					       wl-summary-scored))
+	(when (and (not wl-summary-lazy-highlight)
+		   (> lines elmo-display-progress-threshold))
+	  (setq i (+ i 1))
+	  (setq percent (/ (* i 100) lines))
+	  (if (or (zerop (% percent 5)) (= i lines))
+	      (elmo-display-progress
+	       'wl-highlight-summary "Highlighting..."
+	       percent)))
+	(forward-line 1))
+      (unless wl-summary-lazy-highlight
+	(message "Highlighting...done")))))
 
 (defun wl-highlight-summary-window (&optional win beg)
   "Highlight summary window.
@@ -1038,8 +1037,8 @@ This function is defined for `window-scroll-functions'"
     (wl-highlight-message beg end nil)
     (unless for-draft
       (wl-highlight-message-add-buttons-to-header beg end)
-      (when wl-highlight-x-face-func
-	(funcall wl-highlight-x-face-func beg end)))
+      (when wl-highlight-x-face-function
+	(funcall wl-highlight-x-face-function beg end)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)
@@ -1162,9 +1161,10 @@ interpreted as cited text.)"
 	  (widen)
 	  ;; take off signature
 	  (if (and hack-sig (not too-big))
-	      (setq end (funcall wl-highlight-signature-search-func
+	      (setq end (funcall wl-highlight-signature-search-function
 				 (- end wl-max-signature-size) end)))
-	  (if hack-sig
+	  (if (and hack-sig
+		   (not (eq end real-end)))
 	      (put-text-property end (point-max)
 				 'face 'wl-highlight-message-signature))
 	  (narrow-to-region start end)

@@ -29,7 +29,6 @@
 ;;; Commentary:
 ;; 
 ;; TODO:
-;; [ボソ] append-msgs() が欲しい（けど multi-refile 不可）。
 ;; Info-Zip 専用エージェントを用いた日本語検索（OS/2 専用）。
 
 ;;; Code:
@@ -39,9 +38,6 @@
 (require 'emu)
 (require 'std11)
 (eval-when-compile (require 'elmo-localdir))
-
-;;; Const
-(defconst elmo-archive-version "v0.18 [990729/alpha]")
 
 ;;; User vars.
 (defvar elmo-archive-lha-dos-compatible
@@ -74,6 +70,53 @@
 
 (defvar elmo-archive-treat-file nil
   "*Treat archive folder as a file if non-nil.")
+
+;;; User variables for elmo-archive.
+(defvar elmo-archive-default-type 'zip
+  "*Default archiver type.  The value must be a symbol.")
+
+(defvar elmo-archive-use-cache nil
+  "Use cache in archive folder.")
+
+;;; ELMO Local directory folder
+(eval-and-compile
+  (luna-define-class elmo-archive-folder (elmo-folder)
+		     (archive-name archive-type archive-prefix))
+  (luna-define-internal-accessors 'elmo-archive-folder))
+
+(luna-define-method elmo-folder-initialize ((folder
+					     elmo-archive-folder)
+					    name)
+  (when (string-match
+	 "^\\([^;]*\\);?\\([^;]*\\);?\\([^;]*\\)$"
+	 name)
+    ;; Drive letter is OK!
+    (or (elmo-archive-folder-set-archive-name-internal
+	 folder (elmo-match-string 1 name))
+	(elmo-archive-folder-set-archive-name-internal
+	 folder ""))
+    (or (elmo-archive-folder-set-archive-type-internal
+	 folder (intern-soft (elmo-match-string 2 name)))
+	(elmo-archive-folder-set-archive-type-internal
+	 folder elmo-archive-default-type))
+    (or (elmo-archive-folder-set-archive-prefix-internal
+	 folder (elmo-match-string 3 name))
+	(elmo-archive-folder-set-archive-prefix-internal
+	 folder "")))
+  folder)
+
+(luna-define-method elmo-folder-expand-msgdb-path ((folder
+						    elmo-archive-folder))
+  ;; For compatibility
+  (expand-file-name
+   (elmo-replace-string-as-filename
+    (elmo-folder-name-internal folder))
+   (expand-file-name (concat (symbol-name (elmo-folder-type-internal folder))
+			     "/"
+			     (symbol-name
+			      (elmo-archive-folder-archive-type-internal
+			       folder)))
+		     elmo-msgdb-dir)))
 
 ;;; MMDF parser -- info-zip agent w/ REXX
 (defvar elmo-mmdf-delimiter "^\01\01\01\01$"
@@ -235,38 +278,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scan Folder
 
-(defsubst elmo-archive-list-folder-subr (spec &optional nonsort)
+(defsubst elmo-archive-list-folder-subr (folder &optional nonsort)
   "*Returns list of number-file(int, not string) in archive FILE.
 TYPE specifies the archiver's symbol."
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-         (file (elmo-archive-get-archive-name (nth 1 spec) type spec))
+  (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
+         (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'ls))
 	 (args (list file))
 	 (file-regexp (format (elmo-archive-get-regexp type)
 			      (elmo-concat-path (regexp-quote prefix) "")))
-	 (killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path spec))))
+	 (killed (elmo-folder-killed-list-internal folder))
 	 numbers buf file-list header-end)
-    (when (file-exists-p file)
-      (save-excursion
-	(set-buffer (setq buf (get-buffer-create " *ELMO ARCHIVE ls*")))
-	(unless (elmo-archive-call-method method args t)
-	  (error "%s exited abnormally!" method))
-	(goto-char (point-min))
-	(when (re-search-forward elmo-archive-header-regexp nil t)
-	  (forward-line 1)
-	  (setq header-end (point))
+    (if (file-exists-p file)
+	(with-temp-buffer
+	  (unless (elmo-archive-call-method method args t)
+	    (error "%s exited abnormally!" method))
+	  (goto-char (point-min))
 	  (when (re-search-forward elmo-archive-header-regexp nil t)
+	    (forward-line 1)
+	    (setq header-end (point))
+	    (when (re-search-forward elmo-archive-header-regexp nil t)
 	      (beginning-of-line)
 	      (narrow-to-region header-end (point))
 	      (goto-char (point-min))))
-	(while (and (re-search-forward file-regexp nil t)
-		    (not (eobp)))  ; for GNU tar 981010
-	  (setq file-list (nconc file-list (list (string-to-int
-						  (match-string 1))))))
-	(kill-buffer buf)))
+	  (while (and (re-search-forward file-regexp nil t)
+		      (not (eobp)))  ; for GNU tar 981010
+	    (setq file-list (nconc file-list (list (string-to-int
+						    (match-string 1)))))))
+      (error "%s does not exist." file))
     (if nonsort
 	(cons (or (elmo-max-of-list file-list) 0)
 	      (if killed
@@ -276,37 +316,46 @@ TYPE specifies the archiver's symbol."
       (setq numbers (sort file-list '<))
       (elmo-living-messages numbers killed))))
 
-(defun elmo-archive-list-folder (spec &optional nohide)
-  (elmo-archive-list-folder-subr spec))
+(luna-define-method elmo-folder-list-messages-internal ((folder
+							 elmo-archive-folder)
+							&optional nohide)
+  (elmo-archive-list-folder-subr folder))
 
-(defun elmo-archive-max-of-folder (spec)
-  (elmo-archive-list-folder-subr spec t))
-
+(luna-define-method elmo-folder-status ((folder elmo-archive-folder))
+  (elmo-archive-list-folder-subr folder t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Folder related functions
 
-(defsubst elmo-archive-get-archive-directory (name)
+(defsubst elmo-archive-get-archive-directory (folder)
   ;; allow fullpath. return format is "/foo/bar/".
-  (if (file-name-absolute-p name)
-      (if (find-file-name-handler name 'copy-file)
-	  name
-	(expand-file-name name))
-    (expand-file-name name elmo-archive-folder-path)))
+  (if (file-name-absolute-p (elmo-archive-folder-archive-name-internal folder))
+      (if (find-file-name-handler
+	   (elmo-archive-folder-archive-name-internal folder)
+	   'copy-file)
+	  (elmo-archive-folder-archive-name-internal folder)
+	(expand-file-name (elmo-archive-folder-archive-name-internal folder)))
+    (expand-file-name (elmo-archive-folder-archive-name-internal folder)
+		      elmo-archive-folder-path)))
 
-(defun elmo-archive-get-archive-name (folder type &optional spec)
+(defun elmo-archive-get-archive-name (folder)
   (let ((dir (elmo-archive-get-archive-directory folder))
-        (suffix (elmo-archive-get-suffix type))
+        (suffix (elmo-archive-get-suffix
+		 (elmo-archive-folder-archive-type-internal
+		  folder)))
 	filename dbdir)
     (if elmo-archive-treat-file
-	(if (string-match (concat (regexp-quote suffix) "$") folder)
-	    (expand-file-name
-	     folder
-	     elmo-archive-folder-path)
-	  (expand-file-name
-	   (concat folder suffix)
-	   elmo-archive-folder-path))
-      (if (and (let ((handler (find-file-name-handler dir 'copy-file))) ; dir is local.
+	(if (string-match (concat (regexp-quote suffix) "$")
+			  (elmo-archive-folder-archive-name-internal folder))
+	    (expand-file-name (elmo-archive-folder-archive-name-internal
+			       folder)
+			      elmo-archive-folder-path)
+	  (expand-file-name (concat (elmo-archive-folder-archive-name-internal
+				     folder)
+				    suffix)
+			    elmo-archive-folder-path))
+      (if (and (let ((handler
+		      (find-file-name-handler dir 'copy-file))) ; dir is local.
 		 (or (not handler)
 		     (if (featurep 'xemacs)
 			 (eq handler 'dired-handler-fn))))
@@ -316,12 +365,12 @@ TYPE specifies the archiver's symbol."
 	   (concat elmo-archive-basename suffix)
 	   dir)
 	;; for full-path specification.
-	(if (and (find-file-name-handler dir 'copy-file) ; ange-ftp, efs
-		 spec)
+	(if (find-file-name-handler dir 'copy-file) ; ange-ftp, efs
 	    (progn
 	      (setq filename (expand-file-name
 			      (concat elmo-archive-basename suffix)
-			      (setq dbdir (elmo-msgdb-expand-path spec))))
+			      (setq dbdir
+				    (elmo-folder-msgdb-path folder))))
 	      (if (file-directory-p dbdir)
 		  (); ok.
 		(if (file-exists-p dbdir)
@@ -338,18 +387,17 @@ TYPE specifies the archiver's symbol."
 	      filename)
 	  dir)))))
 
-(defun elmo-archive-folder-exists-p (spec)
-  (file-exists-p
-   (elmo-archive-get-archive-name (nth 1 spec) (nth 2 spec) spec)))
+(luna-define-method elmo-folder-exists-p ((folder elmo-archive-folder))
+  (file-exists-p (elmo-archive-get-archive-name folder)))
 
-(defun elmo-archive-folder-creatable-p (spec)
+(luna-define-method elmo-folder-creatable-p ((folder elmo-archive-folder))
   t)
 
-(defun elmo-archive-create-folder (spec)
+(luna-define-method elmo-folder-create ((folder elmo-archive-folder))
   (let* ((dir (directory-file-name	; remove tail slash.
-	       (elmo-archive-get-archive-directory (nth 1 spec))))
-         (type (nth 2 spec))
-         (arc (elmo-archive-get-archive-name (nth 1 spec) type)))
+	       (elmo-archive-get-archive-directory folder)))
+         (type (elmo-archive-folder-archive-type-internal folder))
+         (arc (elmo-archive-get-archive-name folder)))
     (if elmo-archive-treat-file
 	(setq dir (directory-file-name (file-name-directory dir))))
     (cond ((and (file-exists-p dir)
@@ -359,16 +407,16 @@ TYPE specifies the archiver's symbol."
           ((file-directory-p dir)
            (if (file-exists-p arc)
                t			; return value
-	     (elmo-archive-create-file arc type spec)))
+	     (elmo-archive-create-file arc type folder)))
           (t
 	   (elmo-make-directory dir)
-	   (elmo-archive-create-file arc type spec)
+	   (elmo-archive-create-file arc type folder)
 	   t))))
 
-(defun elmo-archive-create-file (archive type spec)
+(defun elmo-archive-create-file (archive type folder)
   (save-excursion
     (let* ((tmp-dir (directory-file-name
-		     (elmo-msgdb-expand-path spec)))
+		     (elmo-folder-msgdb-path folder)))
            (dummy elmo-archive-dummy-file)
            (method (or (elmo-archive-get-method type 'create)
 		       (elmo-archive-get-method type 'mv)))
@@ -393,20 +441,23 @@ TYPE specifies the archiver's symbol."
 	     (delete-file dummy)))
        ))))
 
-(defun elmo-archive-delete-folder (spec)
-  (let* ((arc (elmo-archive-get-archive-name (nth 1 spec) (nth 2 spec))))
+(luna-define-method elmo-folder-delete ((folder elmo-archive-folder))
+  (let ((arc (elmo-archive-get-archive-name folder)))
     (if (not (file-exists-p arc))
 	(error "No such file: %s" arc)
       (delete-file arc)
       t)))
 
-(defun elmo-archive-rename-folder (old-spec new-spec)
-  (let* ((old-arc (elmo-archive-get-archive-name
-		   (nth 1 old-spec) (nth 2 old-spec)))
-	 (new-arc (elmo-archive-get-archive-name
-		   (nth 1 new-spec) (nth 2 new-spec))))
-    (unless (and (eq (nth 2 old-spec) (nth 2 new-spec))
-		 (equal (nth 3 old-spec) (nth 3 new-spec)))
+(luna-define-method elmo-folder-rename-internal ((folder elmo-archive-folder)
+						 new-folder)
+  (let* ((old-arc (elmo-archive-get-archive-name folder))
+	 (new-arc (elmo-archive-get-archive-name new-folder)))
+    (unless (and (eq (elmo-archive-folder-archive-type-internal folder)
+		     (elmo-archive-folder-archive-type-internal new-folder))
+		 (equal (elmo-archive-folder-archive-prefix-internal
+			 folder)
+			(elmo-archive-folder-archive-prefix-internal
+			 new-folder)))
       (error "Not same archive type and prefix"))
     (if (not (file-exists-p old-arc))
 	(error "No such file: %s" old-arc)
@@ -415,85 +466,106 @@ TYPE specifies the archiver's symbol."
 	(rename-file old-arc new-arc)
 	t))))
 
-(defun elmo-archive-list-folders (spec &optional hierarchy)
-  (let ((folder (concat "$" (nth 1 spec)))
-	(elmo-localdir-folder-path elmo-archive-folder-path))
-    (if elmo-archive-treat-file
-	(let* ((path (elmo-localdir-get-folder-directory spec))
-	       (base-folder (or (nth 1 spec) ""))
-	       (suffix (nth 2 spec))
-	       (prefix (if (string= (nth 3 spec) "")
-			   "" (concat ";" (nth 3 spec))))
-	       (dir (if (file-directory-p path)
-			path (file-name-directory path)))
-	       (name (if (file-directory-p path)
-			 "" (file-name-nondirectory path)))
-	       (flist (and (file-directory-p dir)
-			   (directory-files dir nil name nil)))
-	       (regexp (format "^\\(.*\\)\\(%s\\)$"
-			       (mapconcat
-				'(lambda (x) (regexp-quote (cdr x)))
-				elmo-archive-suffix-alist
-				"\\|"))))
-	  (if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
-	      (setq base-folder (elmo-match-string 1 base-folder))
-	    (unless (file-directory-p path)
-	      (setq base-folder (or (file-name-directory base-folder)
-				    base-folder))))
-	  (delq
-	   nil
-	   (mapcar
-	    '(lambda (x)
-	       (when (and (string-match regexp x)
-			  (eq suffix
-			      (car
-			       (rassoc (elmo-match-string 2 x)
-				       elmo-archive-suffix-alist))))
-		 (format "$%s;%s%s"
-			 (elmo-concat-path base-folder (elmo-match-string 1 x))
-			 suffix prefix)))
-	    flist)))
-      (elmo-localdir-list-folders-subr folder hierarchy))))
+(defun elmo-archive-folder-list-subfolders (folder one-level)
+  (if elmo-archive-treat-file
+      (let* ((path (elmo-archive-get-archive-directory folder))
+	     (base-folder (or (elmo-archive-folder-archive-name-internal
+			       folder)
+			      ""))
+	     (suffix (elmo-archive-folder-archive-type-internal folder))
+	     (prefix (if (string=
+			  (elmo-archive-folder-archive-prefix-internal folder)
+			  "")
+			 "" 
+		       (concat ";"
+			       (elmo-archive-folder-archive-prefix-internal
+				folder))))
+	     (dir (if (file-directory-p path)
+		      path (file-name-directory path)))
+	     (name (if (file-directory-p path)
+		       "" (file-name-nondirectory path)))
+	     (flist (and (file-directory-p dir)
+			 (directory-files dir nil
+					  (concat "^" name "[^A-z][^A-z]")
+					  nil)))
+	     (regexp (format "^\\(.*\\)\\(%s\\)$"
+			     (mapconcat
+			      '(lambda (x) (regexp-quote (cdr x)))
+			      elmo-archive-suffix-alist
+			      "\\|"))))
+	(if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
+	    (setq base-folder (elmo-match-string 1 base-folder))
+	  (unless (file-directory-p path)
+	    (setq base-folder (or (file-name-directory base-folder) ""))))
+	(delq
+	 nil
+	 (mapcar
+	  '(lambda (x)
+	     (when (and (string-match regexp x)
+			(eq suffix
+			    (car
+			     (rassoc (elmo-match-string 2 x)
+				     elmo-archive-suffix-alist))))
+	       (format "%s%s;%s%s"
+		       (elmo-folder-prefix-internal folder)
+		       (elmo-concat-path base-folder (elmo-match-string 1 x))
+		       suffix prefix)))
+	  flist)))
+    (elmo-mapcar-list-of-list
+     (function (lambda (x) (concat (elmo-folder-prefix-internal folder) x)))
+     (elmo-list-subdirectories
+      (elmo-archive-get-archive-directory folder)
+      ""
+      one-level))))
 
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-archive-folder)
+						 &optional one-level)
+  (elmo-archive-folder-list-subfolders folder one-level))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Article file related functions
 ;;; read(extract) / append(move) / delete(delete) / query(list)
 
-(defun elmo-archive-read-msg (spec number outbuf &optional msgdb unread)
-  (save-excursion
-    (let* ((type (nth 2 spec))
-	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
-	   (prefix (nth 3 spec))
-	   (method (elmo-archive-get-method type 'cat))
-	   (args (list arc (elmo-concat-path
-			    prefix (int-to-string number)))))
-      (set-buffer outbuf)
-      (erase-buffer)
-      (when (file-exists-p arc)
-	(and
-	 (as-binary-process
-	  (elmo-archive-call-method method args t))
-	 (elmo-delete-cr-get-content-type))))))
+(defsubst elmo-archive-message-fetch-internal (folder number)
+  (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	 (arc (elmo-archive-get-archive-name folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
+	 (method (elmo-archive-get-method type 'cat))
+	 (args (list arc (elmo-concat-path
+			  prefix (int-to-string number)))))
+    (when (file-exists-p arc)
+      (and
+       (as-binary-process
+	(elmo-archive-call-method method args t))
+       (elmo-delete-cr-buffer)))))
+
+(luna-define-method elmo-message-fetch-internal ((folder elmo-archive-folder)
+						 number strategy
+						 &optional section unseen)
+  (elmo-archive-message-fetch-internal folder number))
+
+(luna-define-method elmo-folder-append-buffer ((folder elmo-archive-folder)
+					       unread &optional number)
+  (elmo-archive-folder-append-buffer folder unread number))
 
 ;; verrrrrry slow!!
-(defun elmo-archive-append-msg (spec string &optional msg no-see)
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type))
+(defun elmo-archive-folder-append-buffer (folder unread number)
+  (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
+	 (arc (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'mv))
-	 (tmp-buffer (get-buffer-create " *ELMO ARCHIVE mv*"))
-	 (next-num (or msg
+	 (next-num (or number
 		       (1+ (if (file-exists-p arc)
-			       (car (elmo-archive-max-of-folder spec)) 0))))
-	 (tmp-dir (elmo-msgdb-expand-path spec))
+			       (car
+				(elmo-folder-status folder)) 0))))
+	 (tmp-dir (elmo-folder-msgdb-path folder))
+	 (src-buffer (current-buffer))
+	 dst-buffer
 	 newfile)
     (when (null method)
       (ding)
       (error "WARNING: read-only mode: %s (method undefined)" type))
-    (save-excursion
-      (set-buffer tmp-buffer)
-      (erase-buffer)
+    (with-temp-buffer
       (let ((tmp-dir (expand-file-name prefix tmp-dir)))
 	(when (not (file-directory-p tmp-dir))
 	  (elmo-make-directory (directory-file-name tmp-dir))))
@@ -506,153 +578,178 @@ TYPE specifies the archiver's symbol."
 	   (if (and (or (functionp method) (car method))
 		    (file-writable-p newfile))
 	       (progn
-		 (insert string)
+		 (setq dst-buffer (current-buffer))
+		 (with-current-buffer src-buffer
+		   (copy-to-buffer dst-buffer (point-min) (point-max)))
 		 (as-binary-output-file
 		  (write-region (point-min) (point-max) newfile nil 'no-msg))
 		 (elmo-archive-call-method method (list arc newfile)))
-	     nil))
-	(kill-buffer tmp-buffer)))))
+	     nil))))))
 
-;; (localdir, maildir, localnews, archive) -> archive
-(defun elmo-archive-copy-msgs (dst-spec msgs src-spec
-					&optional loc-alist same-number)
-  (let* ((dst-type (nth 2 dst-spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 dst-spec) dst-type))
-	 (prefix (nth 3 dst-spec))
-	 (p-method (elmo-archive-get-method dst-type 'mv-pipe))
-	 (n-method (elmo-archive-get-method dst-type 'mv))
-	 (new (unless same-number
-		(1+ (car (elmo-archive-max-of-folder dst-spec)))))
-	 (src-dir (elmo-localdir-get-folder-directory src-spec))
-	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path dst-spec)))
-	 (do-link t)
-	 src tmp newfile tmp-msgs)
-    (when (not (elmo-archive-folder-exists-p dst-spec))
-      (elmo-archive-create-folder dst-spec))
+(luna-define-method elmo-folder-append-messages :around
+  ((folder elmo-archive-folder) src-folder numbers unread-marks
+   &optional same-number)
+  (let ((prefix (elmo-archive-folder-archive-prefix-internal folder)))
+  (cond
+   ((and same-number
+	 (null prefix)
+	 (elmo-folder-message-file-p src-folder)
+	 (elmo-folder-message-file-number-p src-folder))
+    ;; same-number(localdir, localnews) -> archive
+    (elmo-archive-append-files folder 
+			       (elmo-folder-message-file-directory src-folder)
+			       numbers)
+    numbers)
+   ((elmo-folder-message-make-temp-file-p src-folder)
+    ;; not-same-number (localdir, localnews), (archive maildir) -> archive
+    (let ((temp-dir (elmo-folder-message-make-temp-files
+		     src-folder
+		     numbers
+		     (unless same-number
+		       (1+ (if (file-exists-p (elmo-archive-get-archive-name
+					       folder))
+			       (car (elmo-folder-status folder)) 0)))))
+	  new-dir base-dir files)
+      (setq base-dir temp-dir)
+      (when (> (length prefix) 0)
+	(when (file-name-directory prefix)
+	  (elmo-make-directory (file-name-directory prefix)))
+	(rename-file
+	 temp-dir
+	 (setq new-dir 
+	       (expand-file-name
+		prefix
+		;; parent of temp-dir..(works in windows?)
+		(expand-file-name ".." temp-dir))))
+	;; now temp-dir has name prefix.
+	(setq temp-dir new-dir)
+	;; parent of prefix becomes base-dir.
+	(setq base-dir (expand-file-name ".." temp-dir)))
+      (setq files
+	    (mapcar
+	     '(lambda (x) (elmo-concat-path prefix x))
+	     (directory-files temp-dir nil "^[^\\.]")))
+      (if (elmo-archive-append-files folder
+				     base-dir
+				     files)
+	  (elmo-delete-directory temp-dir)))
+    numbers)
+   (t (luna-call-next-method)))))
+
+(luna-define-method elmo-folder-message-make-temp-file-p
+  ((folder elmo-archive-folder))
+  (let ((type (elmo-archive-folder-archive-type-internal folder)))
+    (or (elmo-archive-get-method type 'ext-pipe)
+	(elmo-archive-get-method type 'ext))))
+
+(luna-define-method elmo-folder-message-make-temp-files 
+  ((folder elmo-archive-folder) numbers
+   &optional start-number)
+  (elmo-archive-folder-message-make-temp-files folder numbers start-number))
+
+(defun elmo-archive-folder-message-make-temp-files (folder
+						    numbers
+						    start-number)
+  (let* ((tmp-dir-src (elmo-folder-make-temp-dir folder))
+	 (tmp-dir-dst (elmo-folder-make-temp-dir folder))
+ 	 (arc     (elmo-archive-get-archive-name folder))
+	 (type    (elmo-archive-folder-archive-type-internal folder))
+	 (prefix  (elmo-archive-folder-archive-prefix-internal folder))
+	 (p-method (elmo-archive-get-method type 'ext-pipe))
+	 (n-method (elmo-archive-get-method type 'ext))
+	 (tmp-msgs (mapcar (lambda (x) (elmo-concat-path
+					prefix
+					(int-to-string x))) numbers))
+	 number)
+    ;; Expand files in the tmp-dir-src.
+    (elmo-bind-directory 
+     tmp-dir-src
+     (cond
+      ((functionp n-method)
+       (funcall n-method (cons arc tmp-msgs)))
+      (p-method
+       (let ((p-prog (car p-method))
+	     (p-prog-arg (cdr p-method)))
+	 (elmo-archive-exec-msgs-subr1
+	  p-prog (append p-prog-arg (list arc)) tmp-msgs)))
+      (t
+       (let ((n-prog (car n-method))
+	     (n-prog-arg (cdr n-method)))
+	 (elmo-archive-exec-msgs-subr2
+	  n-prog (append n-prog-arg (list arc)) tmp-msgs
+	  (length arc))))))
+    ;; Move files to the tmp-dir-dst.
+    (setq number start-number)
+    (dolist (tmp-file tmp-msgs)
+      (rename-file (expand-file-name
+		    tmp-file
+		    tmp-dir-src)
+		   (expand-file-name
+		    (if start-number
+			(int-to-string number)
+		      (file-name-nondirectory tmp-file))
+		    tmp-dir-dst))
+      (if start-number (incf number)))
+    ;; Remove tmp-dir-src.
+    (elmo-delete-directory tmp-dir-src)
+    ;; tmp-dir-dst is the return directory.
+    tmp-dir-dst))
+    
+(defun elmo-archive-append-files (folder dir &optional files)
+  (let* ((dst-type (elmo-archive-folder-archive-type-internal folder))
+	 (arc (elmo-archive-get-archive-name folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
+	 (p-method (elmo-archive-get-method dst-type 'cp-pipe))
+	 (n-method (elmo-archive-get-method dst-type 'cp))
+	 src tmp newfile)
+    (unless (elmo-folder-exists-p folder) (elmo-folder-create folder))
+    (unless files (setq files (directory-files dir nil "^[^\\.]")))
     (when (null (or p-method n-method))
       (ding)
       (error "WARNING: read-only mode: %s (method undefined)" dst-type))
-    (when (and same-number
-	       (not (eq (car src-spec) 'maildir))
-	       (string-match (concat prefix "$") src-dir)
-	       (or
-		(elmo-archive-get-method dst-type 'cp-pipe)
-		(elmo-archive-get-method dst-type 'cp)))
-      (setq tmp-dir (substring src-dir 0 (match-beginning 0)))
-      (setq p-method (elmo-archive-get-method dst-type 'cp-pipe)
-	    n-method (elmo-archive-get-method dst-type 'cp))
-      (setq tmp-msgs (mapcar '(lambda (x)
-				(elmo-concat-path prefix (int-to-string x)))
-			     msgs))
-      (setq do-link nil))
-    (when do-link
-      (let ((tmp-dir (expand-file-name prefix tmp-dir)))
-	(when (not (file-directory-p tmp-dir))
-	  (elmo-make-directory (directory-file-name tmp-dir))))
-      (while msgs
-	(setq newfile (elmo-concat-path prefix (int-to-string
-						(if same-number
-						    (car msgs)
-						  new))))
-	(setq tmp-msgs (nconc tmp-msgs (list newfile)))
-	(elmo-copy-file
-	 ;; src file
-	 (elmo-call-func src-spec "get-msg-filename" (car msgs) loc-alist)
-	 ;; tmp file
-	 (expand-file-name newfile tmp-dir))
-	(setq msgs (cdr msgs))
-	(unless same-number (setq new (1+ new)))))
     (save-excursion
       (elmo-bind-directory
-       tmp-dir
+       dir
        (cond
 	((functionp n-method)
-	 (funcall n-method (cons arc tmp-msgs)))
+	 (funcall n-method (cons arc files)))
 	(p-method
 	 (let ((p-prog (car p-method))
 	       (p-prog-arg (cdr p-method)))
 	   (elmo-archive-exec-msgs-subr1
-	    p-prog (append p-prog-arg (list arc)) tmp-msgs)))
+	    p-prog (append p-prog-arg (list arc)) files)))
 	(t
 	 (let ((n-prog (car n-method))
 	       (n-prog-arg (cdr n-method)))
 	   (elmo-archive-exec-msgs-subr2
-	    n-prog (append n-prog-arg (list arc)) tmp-msgs (length arc)))))))))
+	    n-prog (append n-prog-arg (list arc)) files (length arc)))))))))
 
-;;; archive -> (localdir, localnews, archive)
-(defun elmo-archive-copy-msgs-froms (dst-spec msgs src-spec
-					      &optional loc-alist same-number)
-  (let* ((src-type (nth 2 src-spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 src-spec) src-type))
-	 (prefix (nth 3 src-spec))
-	 (p-method (elmo-archive-get-method src-type 'ext-pipe))
-	 (n-method (elmo-archive-get-method src-type 'ext))
-	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path src-spec)))
-	 (tmp-msgs (mapcar '(lambda (x) (elmo-concat-path
-					 prefix
-					 (int-to-string x)))
-			   msgs))
-	 result)
-    (unwind-protect
-	(setq result
-	      (and
-	       ;; extract messages
-	       (save-excursion
-		 (elmo-bind-directory
-		  tmp-dir
-		  (cond
-		   ((functionp n-method)
-		    (funcall n-method (cons arc tmp-msgs)))
-		   (p-method
-		    (let ((p-prog (car p-method))
-			  (p-prog-arg (cdr p-method)))
-		      (elmo-archive-exec-msgs-subr1
-		       p-prog (append p-prog-arg (list arc)) tmp-msgs)))
-		   (t
-		    (let ((n-prog (car n-method))
-			  (n-prog-arg (cdr n-method)))
-		      (elmo-archive-exec-msgs-subr2
-		       n-prog (append n-prog-arg (list arc)) tmp-msgs (length arc)))))))
-	       ;; call elmo-*-copy-msgs of destination folder
-	       (elmo-call-func dst-spec "copy-msgs"
-			       msgs src-spec loc-alist same-number)))
-      ;; clean up tmp-dir
-      (elmo-bind-directory
-       tmp-dir
-       (while tmp-msgs
-	 (if (file-exists-p (car tmp-msgs))
-	     (delete-file (car tmp-msgs)))
-	 (setq tmp-msgs (cdr tmp-msgs))))
-      result)))
-
-(defun elmo-archive-delete-msgs (spec msgs)
-  (save-excursion
-    (let* ((type (nth 2 spec))
-	   (prefix (nth 3 spec))
-	   (arc (elmo-archive-get-archive-name (nth 1 spec) type))
-	   (p-method (elmo-archive-get-method type 'rm-pipe))
-	   (n-method (elmo-archive-get-method type 'rm))
-	   (msgs (mapcar '(lambda (x) (elmo-concat-path
-				       prefix
-				       (int-to-string x)))
-			 msgs)))
-      (cond ((functionp n-method)
-	     (funcall n-method (cons arc msgs)))
-            (p-method
-	     (let ((p-prog (car p-method))
-		   (p-prog-arg (cdr p-method)))
-	       (elmo-archive-exec-msgs-subr1
-		p-prog (append p-prog-arg (list arc)) msgs)))
-            (n-method
-	     (let ((n-prog (car n-method))
-		   (n-prog-arg (cdr n-method)))
-	       (elmo-archive-exec-msgs-subr2
-		n-prog (append n-prog-arg (list arc)) msgs (length arc))))
-	    (t
-	     (ding)
-	     (error "WARNING: not delete: %s (method undefined)" type))) )))
+(luna-define-method elmo-folder-delete-messages ((folder elmo-archive-folder)
+						 numbers)
+  (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
+	 (arc (elmo-archive-get-archive-name folder))
+	 (p-method (elmo-archive-get-method type 'rm-pipe))
+	 (n-method (elmo-archive-get-method type 'rm))
+	 (numbers (mapcar '(lambda (x) (elmo-concat-path
+					prefix
+					(int-to-string x)))
+			  numbers)))
+    (cond ((functionp n-method)
+	   (funcall n-method (cons arc numbers)))
+	  (p-method
+	   (let ((p-prog (car p-method))
+		 (p-prog-arg (cdr p-method)))
+	     (elmo-archive-exec-msgs-subr1
+	      p-prog (append p-prog-arg (list arc)) numbers)))
+	  (n-method
+	   (let ((n-prog (car n-method))
+		 (n-prog-arg (cdr n-method)))
+	     (elmo-archive-exec-msgs-subr2
+	      n-prog (append n-prog-arg (list arc)) numbers (length arc))))
+	  (t
+	   (ding)
+	   (error "WARNING: not delete: %s (method undefined)" type)))))
 
 (defun elmo-archive-exec-msgs-subr1 (prog args msgs)
   (let ((buf (get-buffer-create " *ELMO ARCHIVE exec*")))
@@ -785,35 +882,34 @@ TYPE specifies the archiver's symbol."
        (elmo-archive-call-method method arg-list t))
       (elmo-archive-msgdb-create-entity-subr number))))
 
-(defun elmo-archive-msgdb-create-as-numlist (spec numlist new-mark
-						  already-mark seen-mark
-						  important-mark seen-list)
-  (when numlist
+(luna-define-method elmo-folder-msgdb-create ((folder elmo-archive-folder)
+					      numbers new-mark
+					      already-mark seen-mark
+					      important-mark seen-list)
+  (when numbers
     (save-excursion ;; 981005
       (if (and elmo-archive-use-izip-agent
-	       (elmo-archive-get-method (nth 2 spec) 'cat-headers))
+	       (elmo-archive-get-method
+		(elmo-archive-folder-archive-type-internal folder)
+		'cat-headers))
 	  (elmo-archive-msgdb-create-as-numlist-subr2
-           spec numlist new-mark already-mark seen-mark important-mark
+           folder numbers new-mark already-mark seen-mark important-mark
 	   seen-list)
 	(elmo-archive-msgdb-create-as-numlist-subr1
-         spec numlist new-mark already-mark seen-mark important-mark
+         folder numbers new-mark already-mark seen-mark important-mark
 	 seen-list)))))
 
-(defalias 'elmo-archive-msgdb-create 'elmo-archive-msgdb-create-as-numlist)
-
-
-(defun elmo-archive-msgdb-create-as-numlist-subr1 (spec numlist new-mark
-							already-mark seen-mark
-							important-mark
-							seen-list)
-  (let* ((type (nth 2 spec))
-	 (file (elmo-archive-get-archive-name (nth 1 spec) type spec))
+(defun elmo-archive-msgdb-create-as-numlist-subr1 (folder 
+						   numlist new-mark
+						   already-mark seen-mark
+						   important-mark
+						   seen-list)
+  (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
-	 (tmp-buf (get-buffer-create " *ELMO ARCHIVE msgdb*"))
 	 overview number-alist mark-alist entity
 	 i percent num message-id seen gmark)
-    (save-excursion
-      (set-buffer tmp-buf)
+    (with-temp-buffer
       (setq num (length numlist))
       (setq i 0)
       (message "Creating msgdb...")
@@ -821,7 +917,8 @@ TYPE specifies the archiver's symbol."
 	(erase-buffer)
 	(setq entity
 	      (elmo-archive-msgdb-create-entity
-	       method file (car numlist) type (nth 3 spec)))
+	       method file (car numlist) type
+	       (elmo-archive-folder-archive-prefix-internal folder)))
 	(when entity
 	  (setq overview
 		(elmo-msgdb-append-element
@@ -835,7 +932,8 @@ TYPE specifies the archiver's symbol."
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark
 		    (or (elmo-msgdb-global-mark-get message-id)
-			(if (elmo-cache-exists-p message-id) ; XXX
+			(if (elmo-file-cache-status
+			     (elmo-file-cache-get message-id))
 			    (if seen
 				nil
 			      already-mark)
@@ -854,70 +952,68 @@ TYPE specifies the archiver's symbol."
 	   'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
 	   percent))
 	(setq numlist (cdr numlist)))
-      (kill-buffer tmp-buf)
       (message "Creating msgdb...done")
-      (list overview number-alist mark-alist)) ))
+      (list overview number-alist mark-alist))))
 
 ;;; info-zip agent
-(defun elmo-archive-msgdb-create-as-numlist-subr2 (spec numlist new-mark
-							already-mark seen-mark
-							important-mark
-							seen-list)
-  (let* ((buf (get-buffer-create " *ELMO ARCHIVE headers*"))
-	 (delim1 elmo-mmdf-delimiter)		;; MMDF
+(defun elmo-archive-msgdb-create-as-numlist-subr2 (folder
+						   numlist new-mark
+						   already-mark seen-mark
+						   important-mark
+						   seen-list)
+  (let* ((delim1 elmo-mmdf-delimiter)		;; MMDF
 	 (delim2 elmo-unixmail-delimiter)	;; UNIX Mail
-	 (type (nth 2 spec))
-	 (prefix (nth 3 spec))
+	 (type (elmo-archive-folder-archive-type-internal folder))
+	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (method (elmo-archive-get-method type 'cat-headers))
 	 (prog (car method))
 	 (args (cdr method))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type))
+	 (arc (elmo-archive-get-archive-name folder))
 	 n i percent num result overview number-alist mark-alist
 	 msgs case-fold-search)
-    (set-buffer buf)
-    (setq num (length numlist))
-    (setq i 0)
-    (message "Creating msgdb...")
-    (while numlist
-      (setq n (min (1- elmo-archive-fetch-headers-volume)
-		   (1- (length numlist))))
-      (setq msgs (reverse (memq (nth n numlist) (reverse numlist))))
-      (setq numlist (nthcdr (1+ n) numlist))
-      (erase-buffer)
-      (insert
-       (mapconcat
-	'concat
-	(mapcar '(lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
-	"\n"))
-      (message "Fetching headers...")
-      (as-binary-process (apply 'call-process-region
-				(point-min) (point-max)
-				prog t t nil (append args (list arc))))
-      (goto-char (point-min))
-      (cond
-       ((looking-at delim1)	;; MMDF
-	(setq result (elmo-archive-parse-mmdf msgs
-					      new-mark
-					      already-mark seen-mark
-					      seen-list))
-	(setq overview (append overview (nth 0 result)))
-	(setq number-alist (append number-alist (nth 1 result)))
-	(setq mark-alist (append mark-alist (nth 2 result))))
+    (with-temp-buffer
+      (setq num (length numlist))
+      (setq i 0)
+      (message "Creating msgdb...")
+      (while numlist
+	(setq n (min (1- elmo-archive-fetch-headers-volume)
+		     (1- (length numlist))))
+	(setq msgs (reverse (memq (nth n numlist) (reverse numlist))))
+	(setq numlist (nthcdr (1+ n) numlist))
+	(erase-buffer)
+	(insert
+	 (mapconcat
+	  'concat
+	  (mapcar '(lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
+	  "\n"))
+	(message "Fetching headers...")
+	(as-binary-process (apply 'call-process-region
+				  (point-min) (point-max)
+				  prog t t nil (append args (list arc))))
+	(goto-char (point-min))
+	(cond
+	 ((looking-at delim1)	;; MMDF
+	  (setq result (elmo-archive-parse-mmdf msgs
+						new-mark
+						already-mark seen-mark
+						seen-list))
+	  (setq overview (append overview (nth 0 result)))
+	  (setq number-alist (append number-alist (nth 1 result)))
+	  (setq mark-alist (append mark-alist (nth 2 result))))
 ;;;    ((looking-at delim2)	;; UNIX MAIL
 ;;;	(setq result (elmo-archive-parse-unixmail msgs))
 ;;;	(setq overview (append overview (nth 0 result)))
 ;;;	(setq number-alist (append number-alist (nth 1 result)))
 ;;;	(setq mark-alist (append mark-alist (nth 2 result))))
-       (t			;; unknown format
-	(error "Unknown format!")))
-      (when (> num elmo-display-progress-threshold)
-	(setq i (+ n i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
-	 percent)))
-    (kill-buffer buf)
-    (list overview number-alist mark-alist)) )
+	 (t			;; unknown format
+	  (error "Unknown format!")))
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (+ n i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
+	   percent))))
+    (list overview number-alist mark-alist)))
 
 (defun elmo-archive-parse-mmdf (msgs new-mark
 				     already-mark
@@ -951,7 +1047,8 @@ TYPE specifies the archiver's symbol."
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark
 		    (or (elmo-msgdb-global-mark-get message-id)
-			(if (elmo-cache-exists-p message-id) ; XXX
+			(if (elmo-file-cache-status
+			     (elmo-file-cache-get message-id))
 			    (if seen
 				nil
 			      already-mark)
@@ -973,11 +1070,11 @@ TYPE specifies the archiver's symbol."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Search functions
 
-(defsubst elmo-archive-field-condition-match (spec number number-list
-						   condition prefix)
+(defsubst elmo-archive-field-condition-match (folder number number-list
+						     condition prefix)
   (save-excursion
-    (let* ((type (nth 2 spec))
-	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
+    (let* ((type (elmo-archive-folder-archive-type-internal folder))
+	   (arc (elmo-archive-get-archive-name folder))
 	   (method (elmo-archive-get-method type 'cat))
 	   (args (list arc (elmo-concat-path prefix (int-to-string number)))))
       (elmo-set-work-buf
@@ -988,21 +1085,23 @@ TYPE specifies the archiver's symbol."
 	 (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
 	 (elmo-buffer-field-condition-match condition number number-list))))))
 
-(defun elmo-archive-search (spec condition &optional from-msgs)
+(luna-define-method elmo-folder-search ((folder elmo-archive-folder)
+					condition &optional from-msgs)
   (let* (;;(args (elmo-string-to-list key))
 	 ;; XXX: I don't know whether `elmo-archive-list-folder'
 	 ;;      updates match-data.
 	 ;; (msgs (or from-msgs (elmo-archive-list-folder spec)))
-	 (msgs (or from-msgs (elmo-archive-list-folder spec)))
+	 (msgs (or from-msgs (elmo-folder-list-messages folder)))
 	 (num (length msgs))
 	 (i 0)
 	 (case-fold-search nil)
 	 number-list ret-val)
     (setq number-list msgs)
     (while msgs
-      (if (elmo-archive-field-condition-match spec (car msgs) number-list
-					      condition
-					      (nth 3 spec))
+      (if (elmo-archive-field-condition-match 
+	   folder (car msgs) number-list
+	   condition
+	   (elmo-archive-folder-archive-prefix-internal folder))
 	  (setq ret-val (cons (car msgs) ret-val)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
@@ -1012,17 +1111,6 @@ TYPE specifies the archiver's symbol."
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Misc functions
-
-(defun elmo-archive-check-validity (spec validity-file)
-  t) ; ok.
-
-(defun elmo-archive-sync-validity (spec validity-file)
-  t) ; ok.
-
-
 ;;; method(alist)
 (if (null elmo-archive-method-alist)
     (let ((mlist elmo-archive-method-list) ; from mew-highlight.el
@@ -1049,27 +1137,9 @@ TYPE specifies the archiver's symbol."
 	      (nconc elmo-archive-suffixes (list (cdr tmp))))
 	(setq slist (cdr slist)))))
 
-(defun elmo-archive-use-cache-p (spec number)
+(luna-define-method elmo-message-use-cache-p ((folder elmo-archive-folder)
+					      number)
   elmo-archive-use-cache)
-
-(defun elmo-archive-local-file-p (spec number)
-  nil)
-
-(defun elmo-archive-get-msg-filename (spec number &optional loc-alist)
-  (let ((tmp-dir (file-name-as-directory (elmo-msgdb-expand-path spec)))
-	(prefix (nth 3 spec)))
-    (expand-file-name
-     (elmo-concat-path prefix (int-to-string number))
-     tmp-dir)))
-
-(defalias 'elmo-archive-sync-number-alist
-  'elmo-generic-sync-number-alist)
-(defalias 'elmo-archive-list-folder-unread
-  'elmo-generic-list-folder-unread)
-(defalias 'elmo-archive-list-folder-important
-  'elmo-generic-list-folder-important)
-(defalias 'elmo-archive-commit 'elmo-generic-commit)
-(defalias 'elmo-archive-folder-diff 'elmo-generic-folder-diff)
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)

@@ -284,7 +284,7 @@
 		((string= fld-name wl-queue-folder);; queue folder
 		 (get 'wl-folder-queue-glyph 'glyph))
 		(;; and one of many other folders
-		 (setq type (elmo-folder-get-type fld-name))
+		 (setq type (elmo-folder-type fld-name))
 		 (get (intern (format "wl-folder-%s-glyph" type)) 'glyph))))))
 	  (let ((end (point-at-eol)))
 	    (when wl-use-highlight-mouse-line
@@ -350,7 +350,7 @@
 	(put-text-property 0 len 'begin-glyph
 			   (get 'wl-folder-queue-glyph 'glyph)
 			   string)
-      (if (setq type (elmo-folder-get-type folder))
+      (if (setq type (elmo-folder-type folder))
 	  (put-text-property 0 len
 			     'begin-glyph
 			     (get (intern (format "wl-folder-%s-glyph" type))
@@ -371,6 +371,8 @@
     (wl-folder-archive-glyph      . wl-archive-folder-icon)
     (wl-folder-pipe-glyph         . wl-pipe-folder-icon)
     (wl-folder-maildir-glyph      . wl-maildir-folder-icon)
+    (wl-folder-nmz-glyph          . wl-nmz-folder-icon)
+    (wl-folder-shimbun-glyph      . wl-shimbun-folder-icon)
     (wl-folder-trash-empty-glyph  . wl-empty-trash-folder-icon)
     (wl-folder-draft-glyph        . wl-draft-folder-icon)
     (wl-folder-queue-glyph        . wl-queue-folder-icon)
@@ -512,7 +514,7 @@ Special commands:
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)
-  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
+  ;; (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
   (wl-draft-overload-menubar))
 

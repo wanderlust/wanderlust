@@ -3,10 +3,29 @@
 	* WL-MK (wl-detect-info-directory): Call `info-initialize' for
 	Emacs21.
 
+2001-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use function
+	`wl-summary-buffer-folder-name' instead of same name variable.
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* utils/bbdb-wl.el (bbdb-wl-folder-regexp): New variable.
+	(bbdb-wl-get-update-record): Use `bbdb-wl-folder-regexp'.
+
 2001-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use
 	`with-current-buffer'.
+
+2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Removed shimbun related modules;
+	Add elmo-shimbun only if shimbun is installed.
+
+2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added sb-tcup.
 
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
@@ -14,6 +33,24 @@
 	Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp> for bbdb 2.33
 	(X-Mail-Count: 07190, 07195 in the ML);
 	Added workaround for older version of bbdb.
+
+	* WL-ELS (ELMO-MODULES): Added shimbun related modules.
+
+2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added elmo-mark.
+
+2001-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* etc/icons/nmz.xpm: New file.
+
+	* WL-ELS (ELMO-MODULES): Added elmo-nmz.
+
+2000-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Changed order.
+	Added mmimap, elmo, elmo-mime.
+	Removed mmelmo-imap4, mmelmo.
 
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 

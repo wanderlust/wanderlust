@@ -31,7 +31,7 @@
 ;;; Code:
 ;;
 
-(require 'elmo2)
+(require 'elmo)
 (require 'wl-version)			; reduce recursive-load-depth
 
 ;; from x-face.el
@@ -69,6 +69,7 @@
 (require 'wl-highlight)
 
 (eval-when-compile
+  (require 'cl)
   (require 'smtp)
   (require 'wl-score)
   (unless wl-on-nemacs
@@ -106,8 +107,7 @@
     (let ((summaries (wl-collect-summary)))
       (while summaries
 	(set-buffer (pop summaries))
-	(wl-summary-msgdb-save)
-	;; msgdb is saved, but cache is not saved yet.
+	(elmo-folder-commit wl-summary-buffer-elmo-folder)
 	(wl-summary-set-message-modified))))
   (setq wl-biff-check-folders-running nil)
   (if wl-plugged
@@ -118,14 +118,14 @@
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))
-	(when (and (eq major-mode 'wl-summary-mode)
-		   (elmo-folder-plugged-p wl-summary-buffer-folder-name))
-	  (let* ((msgdb-dir (elmo-msgdb-expand-path
-			     wl-summary-buffer-folder-name))
-		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
-	    (setq seen-list
-		  (wl-summary-flush-pending-append-operations seen-list))
-	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
+;; 	(when (and (eq major-mode 'wl-summary-mode)
+;; 		   (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
+;; 	  (let* ((msgdb-dir (elmo-folder-msgdb-path
+;; 			     wl-summary-buffer-elmo-folder))
+;; 		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
+;; 	 (setq seen-list
+;; 		  (wl-summary-flush-pending-append-operations seen-list))
+;; 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
     (wl-biff-stop)
     (run-hooks 'wl-unplugged-hook))
@@ -134,9 +134,9 @@
 ;;; wl-plugged-mode
 
 (defvar wl-plugged-port-label-alist
-  (list (cons elmo-default-nntp-port "nntp")
-	(cons elmo-default-imap4-port "imap4")
-	(cons elmo-default-pop3-port "pop3")))
+  (list (cons 119 "nntp")
+	(cons 143 "imap4")
+	(cons 110 "pop3")))
 	;;(cons elmo-pop-before-smtp-port "pop3")
 
 (defconst wl-plugged-switch-variables
@@ -235,7 +235,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-plugged-sending-queue-info ()
   ;; sending queue status
   (let (alist msgs sent-via server port)
-    (setq msgs (elmo-list-folder wl-queue-folder))
+    (setq msgs (elmo-folder-list-messages
+		(wl-folder-get-elmo-folder wl-queue-folder)))
     (while msgs
       (setq sent-via (wl-draft-queue-info-operation (car msgs) 'get-sent-via))
       (while sent-via
@@ -267,28 +268,40 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-plugged-dop-queue-info ()
   ;; dop queue status
   (let* ((count 0)
-	 elmo-dop-queue dop-queue last alist server-info
+	 (elmo-dop-queue (copy-sequence elmo-dop-queue))
+	 dop-queue last alist server-info
 	 ope operation)
-    (elmo-dop-queue-load)
+    ;(elmo-dop-queue-load)
     (elmo-dop-queue-merge)
     (setq dop-queue (sort elmo-dop-queue '(lambda (a b)
-					    (string< (car a) (car b)))))
+					    (string< (elmo-dop-queue-fname a)
+						     (elmo-dop-queue-fname b)))))
     (wl-append dop-queue (list nil)) ;; terminate(dummy)
-    (setq last (caar dop-queue)) ;; first
+    (when (car dop-queue)
+      (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
     (while dop-queue
-      (setq ope (cons (nth 1 (car dop-queue))
-		      (length (nth 2 (car dop-queue)))))
-      (if (string= last (caar dop-queue))
+      (when (car dop-queue)
+	(setq ope (cons (elmo-dop-queue-method (car dop-queue))
+			(length 
+			 (if (listp
+			      (car 
+			       (elmo-dop-queue-arguments (car dop-queue))))
+			     (car (elmo-dop-queue-arguments
+				   (car dop-queue))))))))
+      (if (and (car dop-queue)
+	       (string= last (elmo-dop-queue-fname (car dop-queue))))
 	  (wl-append operation (list ope))
 	;;(setq count (1+ count))
-	(when (and last (setq server-info (elmo-folder-portinfo last)))
+	(when (and last (setq server-info (elmo-net-port-info
+					   (wl-folder-get-elmo-folder last))))
 	  (setq alist
 		(wl-append-assoc-list
 		 (cons (car server-info) (nth 1 server-info)) ;; server port
 		 (cons last operation)
 		 alist)))
-	(setq last (caar dop-queue)
-	      operation (list ope)))
+	(when (car dop-queue)
+	  (setq last (elmo-dop-queue-fname (car dop-queue))
+		operation (list ope))))
       (setq dop-queue (cdr dop-queue)))
     alist))
 
@@ -336,8 +349,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		    (wl-plugged-sending-queue-status qinfo))))
       (insert line "\n"))
     (while alist
-      (setq server (caaar alist)
-	    port (cdaar alist)
+      (setq server (nth 0 (caar alist))
+	    port (nth 1 (caar alist))
 	    label (nth 1 (car alist))
 	    plugged (nth 2 (car alist))
 	    time (nth 3 (car alist)))
@@ -419,6 +432,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (wl-plugged-redrawing-switch
        wl-plugged-port-indent plugged time)
       (setq alist (cdr alist))))
+  (sit-for 0)
   (set-buffer-modified-p nil))
 
 (defun wl-plugged-change ()
@@ -448,7 +462,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (enlarge-window (- window-lines (window-height)))
 	    (when (fboundp 'pos-visible-in-window-p)
 	      (goto-char (point-min))
-	      (while (and (<= (window-height) max-lines)
+	      (while (and (< (window-height) max-lines)
 			  (not (pos-visible-in-window-p (1- (point-max)))))
 		(enlarge-window 2))))
 	(error))
@@ -497,20 +511,23 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	       (name (elmo-match-buffer 3))
 	       (plugged (not (string= switch wl-plugged-plug-on)))
 	       (alist wl-plugged-alist)
-	       server port)
+	       server port stream-type name-1)
 	  (cond
 	   ((eq indent wl-plugged-port-indent)  ;; toggle port plug
 	    (cond
 	     ((string-match "\\([^([]*\\)(\\([^)[]+\\))" name)
-	      (setq port (string-to-int (elmo-match-string 2 name))))
+	      (setq port (string-to-int (elmo-match-string 2 name)))
+	      (if (string-match "!" (setq name-1 (elmo-match-string 1 name)))
+		  (setq stream-type
+			(intern (substring name-1 (match-end 0))))))
 	     (t
 	      (setq port name)))
 	    (setq server (wl-plugged-get-server))
-	    (elmo-set-plugged plugged server port nil alist))
+	    (elmo-set-plugged plugged server port stream-type nil alist))
 	   ((eq indent wl-plugged-server-indent)  ;; toggle server plug
-	    (elmo-set-plugged plugged name nil nil alist))
+	    (elmo-set-plugged plugged name nil nil nil alist))
 	   ((eq indent 0)  ;; toggle all plug
-	    (elmo-set-plugged plugged nil nil nil alist)))
+	    (elmo-set-plugged plugged nil nil nil nil alist)))
 	  ;; redraw
 	  (wl-plugged-redrawing wl-plugged-alist)
 	  ;; show plugged status in modeline
@@ -530,7 +547,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (interactive)
   (let ((cur-point (point)))
     (setq wl-plugged-switch (not wl-plugged-switch))
-    (elmo-set-plugged wl-plugged-switch nil nil nil wl-plugged-alist)
+    (elmo-set-plugged wl-plugged-switch nil nil nil nil wl-plugged-alist)
     (wl-plugged-redrawing wl-plugged-alist)
     (goto-char cur-point)
     (setq wl-plugged-alist-modified t)
@@ -612,17 +629,18 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (save-excursion
       (let ((summaries (wl-collect-summary)))
 	(while summaries
-	  (set-buffer (car summaries))
-	  (unless keep-summary
-	    (wl-summary-cleanup-temp-marks))
-	  (wl-summary-save-status keep-summary)
-	  (unless keep-summary
-	    (kill-buffer (car summaries)))
+	  (with-current-buffer (car summaries)
+	    (unless keep-summary
+	      (wl-summary-cleanup-temp-marks))
+	    (wl-summary-save-view keep-summary)
+	    (elmo-folder-commit wl-summary-buffer-elmo-folder)
+	    (unless keep-summary
+	      (kill-buffer (car summaries))))
 	  (setq summaries (cdr summaries))))))
   (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
-  (wl-crosspost-alist-save)
+  (elmo-crosspost-message-alist-save)
   (message "Saving summary and folder status...done"))
 
 (defun wl-exit ()
@@ -634,72 +652,52 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
     (wl-folder-cleanup-variables)
-    (elmo-cleanup-variables)
+    (wl-message-buffer-cache-clean-up)
     (wl-kill-buffers
      (format "^\\(%s\\)$"
 	     (mapconcat 'identity
-			(list (format "%s\\(:.*\\)?"
-				      (default-value 'wl-message-buf-name))
-			      wl-original-buf-name
-			      wl-folder-buffer-name
+			(list wl-folder-buffer-name
 			      wl-plugged-buf-name)
 			"\\|")))
-    (elmo-buffer-cache-clean-up)
-    (if (fboundp 'mmelmo-cleanup-entity-buffers)
-	(mmelmo-cleanup-entity-buffers))
     (if (and wl-folder-use-frame
 	     (> (length (visible-frame-list)) 1))
-	(delete-frame))    
+	(delete-frame))
     (setq wl-init nil)
     (unless wl-on-nemacs
       (remove-hook 'kill-emacs-hook 'wl-save-status))
     t)
-  (message "") ;; empty minibuffer.
+  (message "") ; empty minibuffer.
   )
 
-(defun wl-init (&optional arg)
+(defun wl-init ()
   (when (not wl-init)
     (setq elmo-plugged wl-plugged)
-    (let (succeed demo-buf)
-      (if wl-demo
-	  (setq demo-buf (wl-demo)))
-      (unless wl-on-nemacs
-	(add-hook 'kill-emacs-hook 'wl-save-status))
-      (unwind-protect
-	  (progn
-	    (wl-address-init)
-	    (wl-draft-setup)
-	    (wl-refile-alist-setup)
-	    (wl-crosspost-alist-load)
-	    (if wl-use-semi
-		(progn
-		  (require 'wl-mime)
-		  (setq elmo-use-semi t))
-	      (require 'tm-wl)
-	      (setq elmo-use-semi nil))
-	    ;; defined above.
-	    (wl-mime-setup)
-	    (fset 'wl-summary-from-func-internal
-		  (symbol-value 'wl-summary-from-func))
-	    (fset 'wl-summary-subject-func-internal
-		  (symbol-value 'wl-summary-subject-func))
-	    (fset 'wl-summary-subject-filter-func-internal
-		  (symbol-value 'wl-summary-subject-filter-func))
-	    (setq elmo-no-from wl-summary-no-from-message)
-	    (setq elmo-no-subject wl-summary-no-subject-message)
-	    (setq succeed t)
-	    (progn
-	      (message "Checking environment...")
-	      (wl-check-environment arg)
-	      (message "Checking environment...done")))
-	(if demo-buf
-	    (kill-buffer demo-buf))
-	(if succeed
-	    (setq wl-init t))
-	;; This hook may contain the functions `wl-plugged-init-icons' and
-	;; `wl-biff-init-icons' for reasons of system internal to accord
-	;; facilities for the Emacs variants.
-	(run-hooks 'wl-init-hook)))))
+    (unless wl-on-nemacs
+      (add-hook 'kill-emacs-hook 'wl-save-status))
+    (wl-address-init)
+    (wl-draft-setup)
+    (wl-refile-alist-setup)
+    (if wl-use-semi
+	(progn
+	  (require 'wl-mime)
+	  (setq elmo-use-semi t))
+      (require 'tm-wl)
+      (setq elmo-use-semi nil))
+    ;; defined above.
+    (wl-mime-setup)
+    (fset 'wl-summary-from-func-internal
+	  (symbol-value 'wl-summary-from-function))
+    (fset 'wl-summary-subject-func-internal
+	  (symbol-value 'wl-summary-subject-function))
+    (fset 'wl-summary-subject-filter-func-internal
+	  (symbol-value 'wl-summary-subject-filter-function))
+    (setq elmo-no-from wl-summary-no-from-message)
+    (setq elmo-no-subject wl-summary-no-subject-message)
+    (setq wl-init t)
+    ;; This hook may contain the functions `wl-plugged-init-icons' and
+    ;; `wl-biff-init-icons' for reasons of system internal to accord
+    ;; facilities for the Emacs variants.
+    (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
   (unless (featurep 'mime-setup)
@@ -725,55 +723,79 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (error "Please set `wl-message-id-domain'"))
   ;; folders
   (when (not no-check-folder)
-    (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
-	(error "%s is not allowed for draft folder" wl-draft-folder))
-    (unless (elmo-folder-exists-p wl-draft-folder)
-      (if (y-or-n-p
-	   (format "Draft Folder %s does not exist, create it? "
-		   wl-draft-folder))
-	  (elmo-create-folder wl-draft-folder)
-	(error "Draft Folder is not created")))
-    (if (and wl-draft-enable-queuing
-	     (not (elmo-folder-exists-p wl-queue-folder)))
+    (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
+	  (queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
+	  (trash-folder (wl-folder-get-elmo-folder wl-trash-folder))
+	  (lost+found-folder (wl-folder-get-elmo-folder
+			      elmo-lost+found-folder)))
+      (if (not (elmo-folder-message-file-p draft-folder))
+	  (error "%s is not allowed for draft folder" wl-draft-folder))
+      (unless (elmo-folder-exists-p draft-folder)
 	(if (y-or-n-p
-	     (format "Queue Folder %s does not exist, create it? "
-		     wl-queue-folder))
-	    (elmo-create-folder wl-queue-folder)
-	  (error "Queue Folder is not created"))))
-  (when (not (eq no-check-folder 'wl-draft))
-    (unless (elmo-folder-exists-p wl-trash-folder)
-      (if (y-or-n-p
-	   (format "Trash Folder %s does not exist, create it? "
-		   wl-trash-folder))
-	  (elmo-create-folder wl-trash-folder)
-	(error "Trash Folder is not created")))
-    (unless (elmo-folder-exists-p elmo-lost+found-folder)
-      (elmo-create-folder elmo-lost+found-folder)))
-  ;; tmp dir
-  (unless (file-exists-p wl-tmp-dir)
-    (if (y-or-n-p
-	 (format "Temp directory (to save multipart) %s does not exist, create it now? "
-		 wl-tmp-dir))
-	(make-directory wl-tmp-dir)
-      (error "Temp directory is not created"))))
+	     (format "Draft Folder %s does not exist, create it? "
+		     wl-draft-folder))
+	    (elmo-folder-create draft-folder)
+	  (error "Draft Folder is not created")))
+      (if (and wl-draft-enable-queuing
+	       (not (elmo-folder-exists-p queue-folder)))
+	  (if (y-or-n-p
+	       (format "Queue Folder %s does not exist, create it? "
+		       wl-queue-folder))
+	      (elmo-folder-create queue-folder)
+	    (error "Queue Folder is not created")))
+      (when (not (eq no-check-folder 'wl-draft))
+	(unless (elmo-folder-exists-p trash-folder)
+	  (if (y-or-n-p
+	       (format "Trash Folder %s does not exist, create it? "
+		       wl-trash-folder))
+	      (elmo-folder-create trash-folder)
+	    (error "Trash Folder is not created")))
+	(unless (elmo-folder-exists-p lost+found-folder)
+	  (elmo-folder-create lost+found-folder)))
+      ;; tmp dir
+      (unless (file-exists-p wl-tmp-dir)
+	(if (y-or-n-p
+	     (format "Temp directory (to save multipart) %s does not exist, create it now? "
+		     wl-tmp-dir))
+	    (make-directory wl-tmp-dir)
+	  (error "Temp directory is not created"))))))
 
 ;;;###autoload
 (defun wl (&optional arg)
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
 If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
-  (or wl-init (wl-load-profile))
-  (unwind-protect
-      (wl-init arg)
-    (wl-plugged-init (wl-folder arg))
-    (sit-for 0))
-  (unwind-protect
-      (unless arg
-	(run-hooks 'wl-auto-check-folder-pre-hook)
-	(wl-folder-auto-check)
-	(run-hooks 'wl-auto-check-folder-hook))
-    (unless arg (wl-biff-start))
-    (run-hooks 'wl-hook)))
+  (unless wl-init
+    (wl-load-profile))
+  (elmo-init)
+  (let (demo-buf)
+    (unless wl-init
+      (if wl-demo (setq demo-buf (wl-demo))))
+    (wl-init)
+    (unless wl-init
+      (condition-case nil
+	  (progn
+	    (message "Checking environment...")
+	    (wl-check-environment arg)
+	    (message "Checking environment...done"))
+	(error)
+	(quit)))
+    (condition-case obj
+	(progn
+	  (wl-plugged-init (wl-folder arg))
+	  (unless arg
+	    (run-hooks 'wl-auto-check-folder-pre-hook)
+	    (wl-folder-auto-check)
+	    (run-hooks 'wl-auto-check-folder-hook))
+	  (unless arg (wl-biff-start)))
+      (error 
+       (if (buffer-live-p demo-buf)
+	   (kill-buffer demo-buf))
+       (signal (car obj)(cdr obj)))
+      (quit))
+    (if (buffer-live-p demo-buf)
+	(kill-buffer demo-buf)))
+  (run-hooks 'wl-hook))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile

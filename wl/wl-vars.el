@@ -32,6 +32,7 @@
 ;;
 
 (require 'elmo-vars)
+(require 'elmo-util)
 
 (if (module-installed-p 'custom)
     (require 'custom))
@@ -163,17 +164,17 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 		 string)
   :group 'wl)
 
-(defcustom wl-summary-from-func 'wl-summary-default-from
+(defcustom wl-summary-from-function 'wl-summary-default-from
   "*A function for displaying sender (From: field) information."
   :type 'function
   :group 'wl-summary)
 
-(defcustom wl-summary-subject-func 'wl-summary-default-subject
+(defcustom wl-summary-subject-function 'wl-summary-default-subject
   "*A function for displaying subject."
   :type 'function
   :group 'wl-summary)
 
-(defcustom wl-summary-subject-filter-func 'wl-summary-default-subject-filter
+(defcustom wl-summary-subject-filter-function 'wl-summary-default-subject-filter
   "*A filter function for comparing subjects."
   :type 'function
   :group 'wl-summary)
@@ -301,36 +302,36 @@ If nil, don't authenticate."
 
 (defcustom wl-pop-before-smtp-user nil
   "*POP3 user name to send mail using POP-before-SMTP.
-If nil, `elmo-default-pop3-user' is used.
+If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)"
+(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-server nil
   "*POP3 server for POP-before-SMTP.
-If nil, `elmo-default-pop3-server' is used."
+If nil, `elmo-pop3-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-port nil
   "*POP3 port for POP-before-SMTP.
-If nil, `elmo-default-pop3-port' is used."
+If nil, `elmo-pop3-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
-If nil, `elmo-default-pop3-stream-type' is used."
+If nil, `elmo-pop3-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-authenticate-type nil
   "*Default Authentication type for POP-before-SMTP.
-If nil, `elmo-default-pop3-authenticate-type' is used."
+If nil, `elmo-pop3-default-authenticate-type' is used."
   :type '(choice (const :tag "none" nil)
 		 (const :tag "APOP" "apop")
 		 (const :tag "POP3" "user"))
@@ -338,26 +339,26 @@ If nil, `elmo-default-pop3-authenticate-type' is used."
 
 (defcustom wl-nntp-posting-server nil
   "*NNTP server name to post news.
-If nil, `elmo-default-nntp-server' is used."
+If nil, `elmo-nntp-default-server' is used."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 (defcustom wl-nntp-posting-user nil
   "*NNTP user name to post news for authinfo.
-If nil, `elmo-default-nntp-user' is used.
+If nil, `elmo-nntp-default-user' is used.
 If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
                  string)
   :group 'wl)
 (defcustom wl-nntp-posting-port nil
   "*NNTP port to post news.
-If nil, `elmo-default-nntp-port' is used."
+If nil, `elmo-nntp-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
   :group 'wl)
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
-If nil, `elmo-default-nntp-stream-type' is used."
+If nil, `elmo-nntp-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
 
@@ -456,6 +457,8 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when Message is displayed.")
 (defvar wl-message-exit-hook nil
   "A hook called when quit message.")
+(defvar wl-summary-exit-pre-hook nil
+  "A hook called before exit summary mode.")
 (defvar wl-summary-exit-hook nil
   "A hook called when exit summary mode.")
 (defvar wl-highlight-headers-hook nil
@@ -508,22 +511,24 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
   "A hook called when make plugged alist.")
+(defvar wl-biff-notify-hook '(beep)
+  "A hook called when a biff-notification is invoked.")
 
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")
 
 ;;;; functions for draft
-(defcustom wl-draft-send-func 'wl-draft-normal-send-func
+(defcustom wl-draft-send-function 'wl-draft-normal-send-func
   "A function to send message."
   :type 'function
   :group 'wl-draft)
 
-(defcustom wl-draft-send-news-func 'wl-draft-elmo-nntp-send
+(defcustom wl-draft-send-news-function 'wl-draft-elmo-nntp-send
   "A function to send news."
   :type 'function
   :group 'wl-draft)
 
-(defcustom wl-draft-send-mail-func 'wl-draft-send-mail-with-smtp
+(defcustom wl-draft-send-mail-function 'wl-draft-send-mail-with-smtp
   "A function to send mail.
 Prepared candidates are 'wl-draft-send-mail-with-smtp,
 'wl-draft-send-mail-with-qmail and 'wl-draft-send-mail-with-pop-before-smtp."
@@ -1048,12 +1053,12 @@ Available if only `wl-summary-lazy-highlight' is nil."
   :type 'file
   :group 'wl-summary)
 
-(defcustom wl-print-buffer-func 'lpr-buffer
+(defcustom wl-print-buffer-function 'lpr-buffer
   "A function to print current buffer."
   :type 'function
   :group 'wl-pref)
 
-(defcustom wl-ps-print-buffer-func
+(defcustom wl-ps-print-buffer-function
   (if window-system 'ps-print-buffer-with-faces 'ps-print-buffer)
   "A function to print current buffer with ps-print."
   :type 'function
@@ -1273,7 +1278,7 @@ with wl-highlight-folder-many-face."
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-generate-mailer-string-func 'wl-generate-user-agent-string
+(defcustom wl-generate-mailer-string-function 'wl-generate-user-agent-string
   "A function to create X-Mailer field string ."
   :type 'function
   :group 'wl-draft)
@@ -1286,7 +1291,7 @@ with wl-highlight-folder-many-face."
 		(const light))
   :group 'wl-highlight)
 
-(defcustom wl-highlight-x-face-func nil
+(defcustom wl-highlight-x-face-function nil
   "A function to display X-Face."
   :type 'function
   :group 'wl-highlight)
@@ -1535,16 +1540,6 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-cache-prefetch-get-next-func 'wl-summary-default-get-next-msg
-  "*A function to get message number when prefetch next message."
-  :type 'function
-  :group 'wl-pref)
-
-;; obsolete
-;(defvar wl-no-cache-folder-list '("^\\$.*")
-;  "All folders that match this list won't be cached when reading messages.
-;Each elements are regexp of folder name.")
-
 (defcustom wl-summary-always-sticky-folder-list nil
   "All folders that match this list has sticky summary.
 Each elements are regexp of folder name."
@@ -1553,7 +1548,7 @@ Each elements are regexp of folder name."
 		(repeat (regexp :tag "Folder Regexp")))
   :group 'wl-pref)
 
-(defcustom wl-no-save-folder-list '("^/.*$")
+(defcustom wl-no-save-folder-list '("^/.*$" "^\\[.*$")
   "All folders that match this list won't save its msgdb.
 Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
@@ -1569,7 +1564,8 @@ Each elements are regexp of folder name."
   '(("^-alt\\.chinese" . big5)
     ("^-relcom\\." . koi8-r)
     ("^-tw\\." . big5)
-    ("^-han\\." . euc-kr))
+    ("^-han\\." . euc-kr)
+    ("@sponichi" . shift_jis))
   "Charset alist.  If no match, `wl-mime-charset' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp") (symbol :tag "Charset")))
   :group 'wl-summary
@@ -1648,6 +1644,19 @@ e.x.
 If nil, always use default."
   :type 'boolean
   :group 'wl-pref)
+
+(defcustom wl-folder-process-duplicates-alist nil
+  "Specify process type of duplicated messages.
+It should be a list of cons cell like: (REGEXP . TYPE)
+REGEXP is a regular expression string of folder name.
+TYPE is one of the symbols `hide' or `read'.
+`hide' means hide duplicated messages.
+`read' means mark as read duplicated messages.
+If TYPE is nil, do nothing for duplicated messages."
+  :type '(repeat (cons (regexp :tag "Folder regexp")
+		       (choice (const :tag "Hide" kill)
+			       (const :tag "Mark as read" read))))
+  :group 'wl-folder)
 
 (defcustom wl-folder-move-cur-folder nil
   "*Non-nil, move to current folder on folder-mode when goto folder."
@@ -1793,7 +1802,7 @@ ex.
   :type 'string
   :group 'wl-folder)
 
-(defcustom wl-fldmgr-sort-func 'wl-fldmgr-sort-standard
+(defcustom wl-fldmgr-sort-function 'wl-fldmgr-sort-standard
   "*A function to sort folder."
   :type 'function
   :group 'wl-folder)
@@ -1919,7 +1928,7 @@ list  : reserved specified permanent marks."
   :group 'wl-expire)
 
 ;; for wl-expire-archive-{number1|number2|date}
-(defcustom wl-expire-archive-get-folder-func
+(defcustom wl-expire-archive-get-folder-function
   'wl-expire-archive-get-folder
   "*A function to get archive folder name."
   :type 'function
@@ -2096,7 +2105,7 @@ If it is a number, only numbers will be highlighted."
 		 (const :tag "don't highlight" nil))
   :group 'wl-highlight)
 
-(defcustom wl-highlight-signature-search-func 'wl-highlight-signature-search
+(defcustom wl-highlight-signature-search-function 'wl-highlight-signature-search
   "Function to search signature area in the message body."
   :type 'function
   :group 'wl-highlight)
@@ -2183,6 +2192,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   "*Icon file for archive folder.")
 (defvar wl-pipe-folder-icon "pipe.xpm"
   "*Icon file for pipe folder.")
+(defvar wl-nmz-folder-icon "nmz.xpm"
+  "*Icon file for namazu folder.")
+(defvar wl-shimbun-folder-icon "shimbun.xpm"
+  "*Icon file for shimbun folder.")
 (defvar wl-maildir-folder-icon "maildir.xpm"
   "*Icon file for maildir folder.")
 (defvar wl-empty-trash-folder-icon "trash-e.xpm"
@@ -2227,6 +2240,34 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-server-indent 2)
 (defvar wl-plugged-port-indent 4)
 (defvar wl-plugged-queue-status-column 25)
+
+;; Obsolete variables.
+(elmo-define-obsolete-variable 'wl-summary-from-func
+			       'wl-summary-from-function)
+(elmo-define-obsolete-variable 'wl-summary-subject-func
+			       'wl-summary-subject-function)
+(elmo-define-obsolete-variable 'wl-summary-subject-filter-func
+			       'wl-summary-subject-filter-function)
+(elmo-define-obsolete-variable 'wl-draft-send-func
+			       'wl-draft-send-function)
+(elmo-define-obsolete-variable 'wl-draft-send-news-func
+			       'wl-draft-send-news-function)
+(elmo-define-obsolete-variable 'wl-draft-send-mail-func
+			       'wl-draft-send-mail-function)
+(elmo-define-obsolete-variable 'wl-print-buffer-func
+			       'wl-print-buffer-function)
+(elmo-define-obsolete-variable 'wl-ps-print-buffer-func
+			       'wl-ps-print-buffer-function)
+(elmo-define-obsolete-variable 'wl-generate-mailer-string-func
+			       'wl-generate-mailer-string-function)
+(elmo-define-obsolete-variable 'wl-highlight-x-face-func
+			       'wl-highlight-x-face-function)
+(elmo-define-obsolete-variable 'wl-fldmgr-sort-func
+			       'wl-fldmgr-sort-function)
+(elmo-define-obsolete-variable 'wl-expire-archive-get-folder-func
+			       'wl-expire-archive-get-folder-function)
+(elmo-define-obsolete-variable 'wl-highlight-signature-search-func
+			       'wl-highlight-signature-search-function)
 
 (require 'product)
 (product-provide (provide 'wl-vars) (require 'wl-version))

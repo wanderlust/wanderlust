@@ -28,242 +28,53 @@
 
 ;;; Code:
 ;; 
-(require 'elmo-localdir)
+(require 'elmo)
 
-(defsubst elmo-internal-list-folder-subr (spec &optional nonsort)
-  (let* ((directive (nth 1 spec))
-	 (arg (nth 2 spec))
-	 (flist (elmo-list-folder-by-location
-		 spec
-		 (elmo-internal-list-location directive arg)))
-	 (killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path spec))))
-	 numbers)
-    (if nonsort
-	(cons (or (elmo-max-of-list flist) 0)
-	      (if killed
-		  (- (length flist)
-		     (elmo-msgdb-killed-list-length killed))
-		(length flist)))
-      (setq numbers (sort flist '<))
-      (elmo-living-messages numbers killed))))
+;;; ELMO internal folder
+(luna-define-class elmo-internal-folder (elmo-folder) ())
 
-(defun elmo-internal-list-folder (spec &optional nohide)
-  (elmo-internal-list-folder-subr spec))
+(luna-define-method elmo-folder-initialize ((folder
+					     elmo-internal-folder)
+					    name)
+  (elmo-internal-folder-initialize folder name))
 
-(defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
-  (let* ((path (elmo-msgdb-expand-path spec))
-	 (location-alist
-	  (if msgdb
-	      (elmo-msgdb-get-location msgdb)
-	    (elmo-msgdb-location-load path)))
-	 (i 0)
-	 result pair
-	 location-max modified)
-    (setq location-max
-	  (or (elmo-max-of-list (mapcar 'car location-alist)) 0))
-    (when location-max
-      (while location
-	(if (setq pair (rassoc (car location) location-alist))
-	    (setq result
-		  (append result
-			  (list (cons (car pair) (car location)))))
-	  (setq i (1+ i))
-	  (setq result (append result
-			       (list
-				(cons (+ location-max i) (car location))))))
-	(setq location (cdr location))))
-    (setq result (sort result '(lambda (x y)
-				 (< (car x)(car y)))))
-    (if (not (equal result location-alist))
-	(setq modified t))
-    (if modified
-	(elmo-msgdb-location-save path result))
-    (mapcar 'car result)))
+(defvar elmo-internal-folder-list '(mark cache))
 
-(defun elmo-internal-list-location (directive arg)
-  (let ((mark-alist
-	 (or elmo-msgdb-global-mark-alist
-	     (setq elmo-msgdb-global-mark-alist
-		   (elmo-object-load (expand-file-name
-				      elmo-msgdb-global-mark-filename
-				      elmo-msgdb-dir)))))
-	result)
-    (mapcar (function (lambda (x)
-			(setq result (cons (car x) result))))
-	    mark-alist)
-    (nreverse result)))
+(defun elmo-internal-folder-initialize (folder name)
+  (let ((fsyms elmo-internal-folder-list)
+	fname class sym)
+    (if (progn (while fsyms
+		 (setq fname (symbol-name (car fsyms)))
+		 (when (string-match (concat "^" fname) name)
+		   (require (intern (concat "elmo-" fname)))
+		   (setq class (intern (concat "elmo-" fname "-folder"))
+			 sym (intern fname)
+			 fsyms nil))
+		 (setq fsyms (cdr fsyms)))
+	       class)
+	(elmo-folder-initialize
+	 (luna-make-entity
+	  class
+	  :type sym
+	  :prefix (elmo-folder-prefix-internal folder)
+	  :name (elmo-folder-name-internal folder)
+	  :persistent (elmo-folder-persistent-internal folder))
+	 name)
+      folder)))
 
-(defun elmo-internal-msgdb-create-entity (number loc-alist)
-  (elmo-localdir-msgdb-create-overview-entity-from-file
-   number
-   (elmo-cache-get-path (cdr (assq number loc-alist)))))
-
-(defun elmo-internal-msgdb-create (spec numlist new-mark
-				       already-mark seen-mark
-				       important-mark
-				       seen-list
-				       &optional msgdb)
-  (when numlist
-    (let* ((directive (nth 1 spec))
-	   (arg       (nth 2 spec))
-	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   spec))))
-	   (loc-list (elmo-internal-list-location directive arg))
-	   overview number-alist mark-alist entity
-	   i percent num location pair)
-      (setq num (length numlist))
-      (setq i 0)
-      (message "Creating msgdb...")
-      (while numlist
-	(setq entity
-	      (elmo-internal-msgdb-create-entity
-	       (car numlist) loc-alist))
-	(if (null entity)
-	    ()
-	  (setq overview
-		(elmo-msgdb-append-element
-		 overview entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add number-alist
-				       (elmo-msgdb-overview-entity-get-number
-					entity)
-				       (elmo-msgdb-overview-entity-get-id
-					entity)))
-	  (setq location (cdr (assq (car numlist) loc-alist)))
-	  (unless (memq location seen-list)
-	    (setq mark-alist
-		  (elmo-msgdb-mark-append
-		   mark-alist
-		   (elmo-msgdb-overview-entity-get-number
-		    entity)
-;;;		   (nth 0 entity)
-		   (or (elmo-msgdb-global-mark-get
-			(elmo-msgdb-overview-entity-get-id
-			 entity))
-		       (if (elmo-cache-exists-p
-			    (elmo-msgdb-overview-entity-get-id
-			     entity))
-			   already-mark
-			 new-mark))))))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (setq percent (/ (* i 100) num))
-	  (elmo-display-progress
-	   'elmo-internal-msgdb-create "Creating msgdb..."
-	   percent))
-	(setq numlist (cdr numlist)))
-      (message "Creating msgdb...done")
-      (list overview number-alist mark-alist loc-alist))))
-
-(defalias 'elmo-internal-msgdb-create-as-numlist 'elmo-internal-msgdb-create)
-
-(defun elmo-internal-list-folders (spec &optional hierarchy)
-  ;; XXX hard cording.
-  (unless (nth 1 spec) ; toplevel.
-    (list (list "'cache") "'mark")))
-
-(defvar elmo-internal-mark "$")
-
-(defun elmo-internal-append-msg (spec string &optional msg no-see)
-  (elmo-set-work-buf
-   (insert string)
-   (let* ((msgid (elmo-field-body "message-id"))
-	  (path (elmo-cache-get-path msgid))
-	  dir)
-     (when path
-       (setq dir (directory-file-name (file-name-directory path)))
-       (if (not (file-exists-p dir))
-	   (elmo-make-directory dir))
-       (as-binary-output-file (write-region (point-min) (point-max)
-					    path nil 'no-msg)))
-     (elmo-msgdb-global-mark-set msgid elmo-internal-mark))))
-
-(defun elmo-internal-delete-msgs (spec msgs &optional msgdb)
-  (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						spec)))))
-    (mapcar '(lambda (msg) (elmo-internal-delete-msg spec msg
-						     loc-alist))
-	    msgs)))
-
-(defun elmo-internal-delete-msg (spec number loc-alist)
-  (let ((pair (assq number loc-alist)))
-    (elmo-msgdb-global-mark-delete (cdr pair))))
-
-(defun elmo-internal-read-msg (spec number outbuf &optional msgdb unread)
-  (save-excursion
-    (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   spec))))
-	   (file (elmo-cache-get-path (cdr (assq number loc-alist)))))
-      (set-buffer outbuf)
-      (erase-buffer)
-      (when (file-exists-p file)
-	(as-binary-input-file (insert-file-contents file))
-	(elmo-delete-cr-get-content-type)))))
-
-(defun elmo-internal-max-of-folder (spec)
-  (elmo-internal-list-folder-subr spec t))
-
-(defun elmo-internal-check-validity (spec)
-  nil)
-
-(defun elmo-internal-sync-validity (spec)
-  nil)
-
-(defun elmo-internal-folder-exists-p (spec)
-  t)
-
-(defun elmo-internal-folder-creatable-p (spec)
-  nil)
-
-(defun elmo-internal-create-folder (spec)
-  nil)
-
-(defun elmo-internal-search (spec condition &optional from-msgs msgdb)
-  (let* ((msgs (or from-msgs (elmo-internal-list-folder spec)))
-	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
-		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						 spec))))
-	 (number-list (mapcar 'car loc-alist))
-	 (i 0)
-	 (num (length msgs))
-	 cache-file
-	 matched
-	 case-fold-search)
-    (setq num (length msgs))
-    (while msgs
-      (if (and (setq cache-file (elmo-cache-get-path (cdr (assq (car msgs)
-								loc-alist))))
-	       (file-exists-p cache-file)
-	       (elmo-file-field-condition-match cache-file
-						condition
-						(car msgs)
-						number-list))
-	  (setq matched (nconc matched (list (car msgs)))))
-      (elmo-display-progress
-       'elmo-internal-search "Searching..."
-       (/ (* (setq i (1+ i)) 100) num))
-      (setq msgs (cdr msgs)))
-    matched))
-
-(defun elmo-internal-use-cache-p (spec number)
-  nil)
-
-(defun elmo-internal-local-file-p (spec number)
-  nil ;; XXXX
-  )
-
-(defalias 'elmo-internal-sync-number-alist 'elmo-generic-sync-number-alist)
-(defalias 'elmo-internal-list-folder-unread
-  'elmo-generic-list-folder-unread)
-(defalias 'elmo-internal-list-folder-important
-  'elmo-generic-list-folder-important)
-(defalias 'elmo-internal-commit 'elmo-generic-commit)
-(defalias 'elmo-internal-folder-diff 'elmo-generic-folder-diff)
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-internal-folder)
+						 &optional one-level)
+  (mapcar
+   (lambda (x)
+     (if (elmo-folder-have-subfolder-p
+	  (elmo-make-folder
+	   (concat (elmo-folder-prefix-internal folder)
+		   (symbol-name x))))
+	 (list (concat (elmo-folder-prefix-internal folder)
+		       (symbol-name x)))
+       (concat (elmo-folder-prefix-internal folder)
+	       (symbol-name x))))
+   elmo-internal-folder-list))
 
 (require 'product)
 (product-provide (provide 'elmo-internal) (require 'elmo-version))

@@ -33,12 +33,100 @@
 ;;; Code:
 ;; 
 
+(require 'elmo-vars)
+(require 'elmo-util)
+(require 'elmo-date)
 (require 'elmo-msgdb)
-(eval-when-compile
-  (require 'elmo-cache)
-  (require 'elmo-util))
+(require 'elmo-cache)
+(require 'elmo)
 (require 'elmo-net)
 
+;; User options
+(defcustom elmo-nntp-default-server "localhost"
+  "*Default NNTP server."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-nntp-default-user nil
+  "*Default User of NNTP.  nil means no user authentication."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-nntp-default-port 119
+  "*Default Port number of NNTP."
+  :type 'integer
+  :group 'elmo)
+
+(defcustom elmo-nntp-default-stream-type nil
+  "*Default stream type for NNTP.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-nntp-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-nntp-stream-type-alist nil
+  "*Stream bindings for NNTP.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+(defvar elmo-nntp-overview-fetch-chop-length 200
+ "*Number of overviews to fetch in one request in nntp.")
+
+(defvar elmo-nntp-use-cache t
+  "Use cache in nntp folder.")
+
+(defvar elmo-nntp-max-number-precedes-list-active nil
+  "Non-nil means max number of msgdb is set as the max number of `list active'.
+(Needed for inn 2.3 or later?).")
+
+;;; ELMO NNTP folder
+(eval-and-compile
+  (luna-define-class elmo-nntp-folder (elmo-net-folder)
+		     (group temp-crosses reads))
+  (luna-define-internal-accessors 'elmo-nntp-folder))
+
+(luna-define-method elmo-folder-initialize :around ((folder
+						     elmo-nntp-folder)
+						    name)
+  (let ((elmo-network-stream-type-alist
+	 (if elmo-nntp-stream-type-alist
+	     (setq elmo-network-stream-type-alist
+		   (append elmo-nntp-stream-type-alist
+			   elmo-network-stream-type-alist))
+	   elmo-network-stream-type-alist)))
+    (setq name (luna-call-next-method))
+    (when (string-match
+	   "^\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
+	   name)
+      (elmo-nntp-folder-set-group-internal
+       folder
+       (if (match-beginning 1)
+	   (elmo-match-string 1 name)))
+      ;; Setup slots for elmo-net-folder
+      (elmo-net-folder-set-user-internal folder
+					 (if (match-beginning 2)
+					     (elmo-match-substring 2 name 1)
+					   elmo-nntp-default-user))
+      (unless (elmo-net-folder-server-internal folder)
+	(elmo-net-folder-set-server-internal folder 
+					     elmo-nntp-default-server))
+      (unless (elmo-net-folder-port-internal folder)
+	(elmo-net-folder-set-port-internal folder
+					   elmo-nntp-default-port))
+      (unless (elmo-net-folder-stream-type-internal folder)
+	(elmo-net-folder-set-stream-type-internal
+	 folder
+	 elmo-nntp-default-stream-type))
+      folder)))
+
+(luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-nntp-folder))
+  (convert-standard-filename
+   (expand-file-name
+    (elmo-nntp-folder-group-internal folder)
+    (expand-file-name (or (elmo-net-folder-server-internal folder) "nowhere")
+		      (expand-file-name "nntp"
+					elmo-msgdb-dir)))))
+
+;;; NNTP Session
 (eval-and-compile
   (luna-define-class elmo-nntp-session (elmo-network-session)
 		     (current-group))
@@ -57,7 +145,7 @@
 Don't cache if nil.")
 
 (defvar elmo-nntp-list-folders-cache nil)
-(defvar elmo-nntp-groups-hashtb nil)
+
 (defvar elmo-nntp-groups-async nil)
 (defvar elmo-nntp-header-fetch-chop-length 200)
 
@@ -85,7 +173,7 @@ Don't cache if nil.")
 					   (list-active . 2)))
 
 (defmacro elmo-nntp-get-server-command (session)
-  (` (assoc (cons (elmo-network-session-host-internal (, session))
+  (` (assoc (cons (elmo-network-session-server-internal (, session))
 		  (elmo-network-session-port-internal (, session)))
 	    elmo-nntp-server-command-alist)))
 
@@ -97,7 +185,7 @@ Don't cache if nil.")
 	       (nconc elmo-nntp-server-command-alist
 		      (list (cons
 			     (cons
-			      (elmo-network-session-host-internal (, session))
+			      (elmo-network-session-server-internal (, session))
 			      (elmo-network-session-port-internal (, session)))
 			     (setq entry
 				   (vector
@@ -156,25 +244,21 @@ Don't cache if nil.")
   (concat
    (and user (concat ":" user))
    (if (and server
-	    (null (string= server elmo-default-nntp-server)))
+	    (null (string= server elmo-nntp-default-server)))
        (concat "@" server))
    (if (and port
-	    (null (eq port elmo-default-nntp-port)))
+	    (null (eq port elmo-nntp-default-port)))
        (concat ":" (if (numberp port)
 		       (int-to-string port) port)))
    (unless (eq (elmo-network-stream-type-symbol type)
-	       elmo-default-nntp-stream-type)
+	       elmo-nntp-default-stream-type)
      (elmo-network-stream-type-spec-string type))))
 
-(defun elmo-nntp-get-session (spec &optional if-exists)
+(defun elmo-nntp-get-session (folder &optional if-exists)
   (elmo-network-get-session
    'elmo-nntp-session
    "NNTP"
-   (elmo-nntp-spec-hostname spec)
-   (elmo-nntp-spec-port spec)
-   (elmo-nntp-spec-username spec)
-   nil ; auth type
-   (elmo-nntp-spec-stream-type spec)
+   folder
    if-exists))
 
 (luna-define-method elmo-network-initialize-session ((session
@@ -314,8 +398,7 @@ Don't cache if nil.")
       (with-current-buffer outbuf
 	(erase-buffer)
 	(insert-buffer-substring (elmo-network-session-buffer session)
-				 start (- end 3))
-	(elmo-delete-cr-get-content-type)))))
+				 start (- end 3))))))
 
 (defun elmo-nntp-select-group (session group &optional force)
   (let (response)
@@ -365,31 +448,41 @@ Don't cache if nil.")
 	 msgdb
 	 (nconc number-alist (list (cons max-number nil)))))))
 
-(defun elmo-nntp-list-folders (spec &optional hierarchy)
-  (let ((session (elmo-nntp-get-session spec))
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-nntp-folder)
+						 &optional one-level)
+  (elmo-nntp-folder-list-subfolders folder one-level))
+
+(defun elmo-nntp-folder-list-subfolders (folder one-level)
+  (let ((session (elmo-nntp-get-session folder))
 	response ret-val top-ng append-serv use-list-active start)
     (with-temp-buffer
-      (if (and (elmo-nntp-spec-group spec)
-	       (elmo-nntp-select-group session (elmo-nntp-spec-group spec)))
+      (if (and (elmo-nntp-folder-group-internal folder)
+	       (elmo-nntp-select-group 
+		session
+		(elmo-nntp-folder-group-internal folder)))
 	  ;; add top newsgroups
-	  (setq ret-val (list (elmo-nntp-spec-group spec))))
+	  (setq ret-val (list (elmo-nntp-folder-group-internal folder))))
       (unless (setq response (elmo-nntp-list-folders-get-cache
-			      (elmo-nntp-spec-group spec)(current-buffer)))
+			      (elmo-nntp-folder-group-internal folder)
+			      (current-buffer)))
 	(when (setq use-list-active (elmo-nntp-list-active-p session))
 	  (elmo-nntp-send-command
 	   session
 	   (concat "list"
-		   (if (and (elmo-nntp-spec-group spec)
-			    (null (string= (elmo-nntp-spec-group spec) "")))
+		   (if (and (elmo-nntp-folder-group-internal folder)
+			    (null (string= (elmo-nntp-folder-group-internal
+					    folder) "")))
 		       (concat " active"
-			       (format " %s.*" (elmo-nntp-spec-group spec)
+			       (format " %s.*"
+				       (elmo-nntp-folder-group-internal folder)
 				       "")))))
 	  (if (elmo-nntp-read-response session t)
 	      (if (null (setq response (elmo-nntp-read-contents session)))
 		  (error "NNTP List folders failed")
 		(when elmo-nntp-list-folders-use-cache
 		  (setq elmo-nntp-list-folders-cache
-			(list (current-time) (elmo-nntp-spec-group spec)
+			(list (current-time)
+			      (elmo-nntp-folder-group-internal folder)
 			      response)))
 		(erase-buffer)
 		(insert response))
@@ -407,22 +500,27 @@ Don't cache if nil.")
 	  (setq start nil)
 	  (while (string-match (concat "^"
 				       (regexp-quote
-					(or (elmo-nntp-spec-group spec)
-					    "")) ".*$")
+					(or 
+					 (elmo-nntp-folder-group-internal
+					  folder)
+					 "")) ".*$")
 			       response start)
 	    (insert (match-string 0 response) "\n")
 	    (setq start (match-end 0)))))
       (goto-char (point-min))
       (let ((len (count-lines (point-min) (point-max)))
 	    (i 0) regexp)
-	(if hierarchy
+	(if one-level
 	    (progn
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if (and (elmo-nntp-spec-group spec)
-				     (null (string=
-					    (elmo-nntp-spec-group spec) "")))
-				(concat (elmo-nntp-spec-group spec)
+			    (if (and 
+				 (elmo-nntp-folder-group-internal folder)
+				 (null (string=
+					(elmo-nntp-folder-group-internal
+					 folder) "")))
+				(concat (elmo-nntp-folder-group-internal
+					 folder)
 					"\\.") "")))
 	      (while (looking-at regexp)
 		(setq top-ng (elmo-match-buffer 1))
@@ -453,31 +551,34 @@ Don't cache if nil.")
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
 	   'elmo-nntp-list-folders "Parsing active..." 100))))
-    (unless (string= (elmo-nntp-spec-hostname spec)
-		     elmo-default-nntp-server)
-      (setq append-serv (concat "@" (elmo-nntp-spec-hostname spec))))
-    (unless (eq (elmo-nntp-spec-port spec) elmo-default-nntp-port)
+    (unless (string= (elmo-net-folder-server-internal folder)
+		     elmo-nntp-default-server)
+      (setq append-serv (concat "@" (elmo-net-folder-server-internal
+				     folder))))
+    (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
       (setq append-serv (concat append-serv
 				":" (int-to-string
-				     (elmo-nntp-spec-port spec)))))
+				     (elmo-net-folder-port-internal folder)))))
     (unless (eq (elmo-network-stream-type-symbol
-		 (elmo-nntp-spec-stream-type spec))
-		elmo-default-nntp-stream-type)
+		 (elmo-net-folder-stream-type-internal folder))
+		elmo-nntp-default-stream-type)
       (setq append-serv
 	    (concat append-serv
 		    (elmo-network-stream-type-spec-string
-		     (elmo-nntp-spec-stream-type spec)))))
+		     (elmo-net-folder-stream-type-internal folder)))))
     (mapcar '(lambda (fld)
 	       (if (consp fld)
 		   (list (concat "-" (car fld)
-				 (and (elmo-nntp-spec-username spec)
+				 (and (elmo-net-folder-user-internal folder)
 				      (concat
-				       ":" (elmo-nntp-spec-username spec)))
+				       ":"
+				       (elmo-net-folder-user-internal folder)))
 				 (and append-serv
 				      (concat append-serv))))
 		 (concat "-" fld
-			 (and (elmo-nntp-spec-username spec)
-			      (concat ":" (elmo-nntp-spec-username spec)))
+			 (and (elmo-net-folder-user-internal folder)
+			      (concat ":" (elmo-net-folder-user-internal
+					   folder)))
 			 (and append-serv
 			      (concat append-serv)))))
 	    ret-val)))
@@ -496,12 +597,11 @@ Don't cache if nil.")
      (goto-char (point-min))
      (read (current-buffer)))))
 
-(defun elmo-nntp-list-folder (spec &optional nohide)
-  (let ((session (elmo-nntp-get-session spec))
-	(group   (elmo-nntp-spec-group spec))
-	(killed (and elmo-use-killed-list
-		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path spec))))
+(luna-define-method elmo-folder-list-messages-internal ((folder
+							 elmo-nntp-folder)
+							&optional nohide)
+  (let ((session (elmo-nntp-get-session folder))
+	(group   (elmo-nntp-folder-group-internal folder))
 	response numbers use-listgroup)
     (save-excursion
       (when (setq use-listgroup (elmo-nntp-listgroup-p session))
@@ -528,39 +628,43 @@ Don't cache if nil.")
 	  (setq numbers (elmo-nntp-make-msglist
 			 (elmo-match-string 2 response)
 			 (elmo-match-string 3 response)))))
-      (elmo-living-messages numbers killed))))
+      numbers)))
 
-(defun elmo-nntp-max-of-folder (spec)
-  (let ((killed-list (and elmo-use-killed-list
-			  (elmo-msgdb-killed-list-load
-			   (elmo-msgdb-expand-path spec))))
+(luna-define-method elmo-folder-status ((folder elmo-nntp-folder))
+  (elmo-nntp-folder-status folder))
+
+(defun elmo-nntp-folder-status (folder)
+  (let ((killed-list (elmo-msgdb-killed-list-load
+		      (elmo-folder-msgdb-path folder)))
 	end-num entry)
     (if elmo-nntp-groups-async
 	(if (setq entry
 		  (elmo-get-hash-val
-		   (concat (elmo-nntp-spec-group spec)
+		   (concat (elmo-nntp-folder-group-internal folder)
 			   (elmo-nntp-folder-postfix
-			    (elmo-nntp-spec-username spec)
-			    (elmo-nntp-spec-hostname spec)
-			    (elmo-nntp-spec-port spec)
-			    (elmo-nntp-spec-stream-type spec)))
-		   elmo-nntp-groups-hashtb))
+			    (elmo-net-folder-user-internal folder)
+			    (elmo-net-folder-server-internal folder)
+			    (elmo-net-folder-port-internal folder)
+			    (elmo-net-folder-stream-type-internal folder)))
+		   elmo-newsgroups-hashtb))
 	    (progn
 	      (setq end-num (nth 2 entry))
-	      (when (and killed-list elmo-use-killed-list
+	      (when(and  killed-list
 			 (elmo-number-set-member end-num killed-list))
 		;; Max is killed.
 		(setq end-num nil))
 	      (cons end-num (car entry)))
-	  (error "No such newsgroup \"%s\"" (elmo-nntp-spec-group spec)))
-      (let ((session (elmo-nntp-get-session spec))
+	  (error "No such newsgroup \"%s\"" 
+		 (elmo-nntp-folder-group-internal folder)))
+      (let ((session (elmo-nntp-get-session folder))
 	    response e-num)
 	(if (null session)
 	    (error "Connection failed"))
 	(save-excursion
 	  (elmo-nntp-send-command session
-				  (format "group %s"
-					  (elmo-nntp-spec-group spec)))
+				  (format 
+				   "group %s"
+				   (elmo-nntp-folder-group-internal folder)))
 	  (setq response (elmo-nntp-read-response session))
 	  (if (and response
 		   (string-match
@@ -571,14 +675,14 @@ Don't cache if nil.")
 			       (elmo-match-string 3 response)))
 		(setq e-num (string-to-int
 			     (elmo-match-string 1 response)))
-		(when (and killed-list elmo-use-killed-list
+		(when (and killed-list
 			   (elmo-number-set-member end-num killed-list))
 		  ;; Max is killed.
 		  (setq end-num nil))
 		(cons end-num e-num))
 	    (if (null response)
 		(error "Selecting newsgroup \"%s\" failed"
-		       (elmo-nntp-spec-group spec))
+		       (elmo-nntp-folder-group-internal folder))
 	      nil)))))))
 
 (defconst elmo-nntp-overview-index
@@ -593,7 +697,6 @@ Don't cache if nil.")
     ("xref" . 8)))
 
 (defun elmo-nntp-create-msgdb-from-overview-string (str
-						    folder
 						    new-mark
 						    already-mark
 						    seen-mark
@@ -654,7 +757,8 @@ Don't cache if nil.")
 	(setq message-id (aref ov-entity 4))
 	(setq seen (member message-id seen-list))
 	(if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			    (if (elmo-cache-exists-p message-id);; XXX
+			    (if (elmo-file-cache-status
+				 (elmo-file-cache-get message-id))
 				(if seen
 				    nil
 				  already-mark)
@@ -668,73 +772,38 @@ Don't cache if nil.")
       (setq ov-list (cdr ov-list)))
     (list overview number-alist mark-alist)))
 
-(defun elmo-nntp-msgdb-create-as-numlist (spec numlist new-mark already-mark
-					       seen-mark important-mark
-					       seen-list)
-  "Create msgdb for SPEC for NUMLIST."
-  (elmo-nntp-msgdb-create spec numlist new-mark already-mark
-			  seen-mark important-mark seen-list
-			  t))
+(luna-define-method elmo-folder-msgdb-create ((folder elmo-nntp-folder)
+					      numbers new-mark already-mark
+					      seen-mark important-mark
+					      seen-list)
+  (elmo-nntp-folder-msgdb-create folder numbers new-mark already-mark
+				 seen-mark important-mark
+				 seen-list))
 
-(defun elmo-nntp-msgdb-create (spec numlist new-mark already-mark
-				    seen-mark important-mark
-				    seen-list &optional as-num)
-  (when numlist
-    (let ((filter  numlist)
-	  (session (elmo-nntp-get-session spec))
-	  beg-num end-num cur length
-	  ret-val ov-str use-xover dir)
-      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
-      (when (setq use-xover (elmo-nntp-xover-p session))
-	(setq beg-num (car numlist)
-	      cur beg-num
-	      end-num (nth (1- (length numlist)) numlist)
-	      length  (+ (- end-num beg-num) 1))
-	(message "Getting overview...")
-	(while (<= cur end-num)
-	  (elmo-nntp-send-command
-	   session
-	   (format
-	    "xover %s-%s"
-	    (int-to-string cur)
-	    (int-to-string
-	     (+ cur
-		elmo-nntp-overview-fetch-chop-length))))
-	  (with-current-buffer (elmo-network-session-buffer session)
-	    (if ov-str
-		(setq ret-val
-		      (elmo-msgdb-append
-		       ret-val
-		       (elmo-nntp-create-msgdb-from-overview-string
-			ov-str
-			(elmo-nntp-spec-group spec)
-			new-mark
-			already-mark
-			seen-mark
-			important-mark
-			seen-list
-			filter
-			)))))
-	  (if (null (elmo-nntp-read-response session t))
-	      (progn
-		(setq cur end-num);; exit while loop
-		(elmo-nntp-set-xover session nil)
-		(setq use-xover nil))
-	    (if (null (setq ov-str (elmo-nntp-read-contents session)))
-		(error "Fetching overview failed")))
-	  (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
-	  (when (> length elmo-display-progress-threshold)
-	    (elmo-display-progress
-	     'elmo-nntp-msgdb-create "Getting overview..."
-	     (/ (* (+ (- (min cur end-num)
-			 beg-num) 1) 100) length))))
-	(when (> length elmo-display-progress-threshold)
-	  (elmo-display-progress
-	   'elmo-nntp-msgdb-create "Getting overview..." 100)))
-      (if (not use-xover)
-	  (setq ret-val (elmo-nntp-msgdb-create-by-header
-			 session numlist
-			 new-mark already-mark seen-mark seen-list))
+(defun elmo-nntp-folder-msgdb-create (folder numbers new-mark already-mark
+					     seen-mark important-mark
+					     seen-list)
+  (let ((filter numbers)
+	(session (elmo-nntp-get-session folder))
+	beg-num end-num cur length
+	ret-val ov-str use-xover dir)
+    (elmo-nntp-select-group session (elmo-nntp-folder-group-internal
+				     folder))
+    (when (setq use-xover (elmo-nntp-xover-p session))
+      (setq beg-num (car numbers)
+	    cur beg-num
+	    end-num (nth (1- (length numbers)) numbers)
+	    length  (+ (- end-num beg-num) 1))
+      (message "Getting overview...")
+      (while (<= cur end-num)
+	(elmo-nntp-send-command
+	 session
+	 (format
+	  "xover %s-%s"
+	  (int-to-string cur)
+	  (int-to-string
+	   (+ cur
+	      elmo-nntp-overview-fetch-chop-length))))
 	(with-current-buffer (elmo-network-session-buffer session)
 	  (if ov-str
 	      (setq ret-val
@@ -742,52 +811,88 @@ Don't cache if nil.")
 		     ret-val
 		     (elmo-nntp-create-msgdb-from-overview-string
 		      ov-str
-		      (elmo-nntp-spec-group spec)
 		      new-mark
 		      already-mark
 		      seen-mark
 		      important-mark
 		      seen-list
-		      filter))))))
-      (when elmo-use-killed-list
-	(setq dir (elmo-msgdb-expand-path spec))
-	(elmo-msgdb-killed-list-save
-	 dir
-	 (nconc
-	  (elmo-msgdb-killed-list-load dir)
-	  (car (elmo-list-diff
-		numlist
-		(mapcar 'car
-			(elmo-msgdb-get-number-alist
-			 ret-val)))))))
-      ;; If there are canceled messages, overviews are not obtained
-      ;; to max-number(inn 2.3?).
-      (when (and (elmo-nntp-max-number-precedes-list-active-p)
-		 (elmo-nntp-list-active-p session))
-	(elmo-nntp-send-command session
-				(format "list active %s"
-					(elmo-nntp-spec-group spec)))
-	(if (null (elmo-nntp-read-response session))
+		      filter
+		      )))))
+	(if (null (elmo-nntp-read-response session t))
 	    (progn
-	      (elmo-nntp-set-list-active session nil)
-	      (error "NNTP list command failed")))
-	(elmo-nntp-catchup-msgdb
-	 ret-val
-	 (nth 1 (read (concat "(" (elmo-nntp-read-contents
-				   session) ")")))))
-      ret-val)))
+	      (setq cur end-num);; exit while loop
+	      (elmo-nntp-set-xover session nil)
+	      (setq use-xover nil))
+	  (if (null (setq ov-str (elmo-nntp-read-contents session)))
+	      (error "Fetching overview failed")))
+	(setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
+	(when (> length elmo-display-progress-threshold)
+	  (elmo-display-progress
+	   'elmo-nntp-msgdb-create "Getting overview..."
+	   (/ (* (+ (- (min cur end-num)
+		       beg-num) 1) 100) length))))
+      (when (> length elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-nntp-msgdb-create "Getting overview..." 100)))
+    (if (not use-xover)
+	(setq ret-val (elmo-nntp-msgdb-create-by-header
+		       session numbers
+		       new-mark already-mark seen-mark seen-list))
+      (with-current-buffer (elmo-network-session-buffer session)
+	(if ov-str
+	    (setq ret-val
+		  (elmo-msgdb-append
+		   ret-val
+		   (elmo-nntp-create-msgdb-from-overview-string
+		    ov-str
+		    new-mark
+		    already-mark
+		    seen-mark
+		    important-mark
+		    seen-list
+		    filter))))))
+    (elmo-folder-set-killed-list-internal
+     folder
+     (nconc
+      (elmo-folder-killed-list-internal folder)
+      (car (elmo-list-diff
+	    numbers
+	    (mapcar 'car
+		    (elmo-msgdb-get-number-alist
+		     ret-val))))))
+    ;; If there are canceled messages, overviews are not obtained
+    ;; to max-number(inn 2.3?).
+    (when (and (elmo-nntp-max-number-precedes-list-active-p)
+	       (elmo-nntp-list-active-p session))
+      (elmo-nntp-send-command session
+			      (format "list active %s"
+				      (elmo-nntp-folder-group-internal
+				       folder)))
+      (if (null (elmo-nntp-read-response session))
+	  (progn
+	    (elmo-nntp-set-list-active session nil)
+	    (error "NNTP list command failed")))
+      (elmo-nntp-catchup-msgdb
+       ret-val
+       (nth 1 (read (concat "(" (elmo-nntp-read-contents
+				 session) ")")))))
+    ret-val))
 
-(defun elmo-nntp-sync-number-alist (spec number-alist)
+(luna-define-method elmo-folder-update-number ((folder elmo-nntp-folder))
   (if (elmo-nntp-max-number-precedes-list-active-p)
-      (let ((session (elmo-nntp-get-session spec)))
+      (let ((session (elmo-nntp-get-session folder))
+	    (number-alist (elmo-msgdb-get-number-alist
+			   (elmo-folder-msgdb folder))))
 	(if (elmo-nntp-list-active-p session)
 	    (let (msgdb-max max-number)
 	      ;; If there are canceled messages, overviews are not obtained
 	      ;; to max-number(inn 2.3?).
-	      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+	      (elmo-nntp-select-group session
+				      (elmo-nntp-folder-group-internal folder))
 	      (elmo-nntp-send-command session
 				      (format "list active %s"
-					      (elmo-nntp-spec-group spec)))
+					      (elmo-nntp-folder-group-internal
+					       folder)))
 	      (if (null (elmo-nntp-read-response session))
 		  (error "NNTP list command failed"))
 	      (setq max-number
@@ -799,18 +904,18 @@ Don't cache if nil.")
 	      (if (or (and number-alist (not msgdb-max))
 		      (and msgdb-max max-number
 			   (< msgdb-max max-number)))
-		  (nconc number-alist
-			 (list (cons max-number nil)))
-		number-alist))
-	  number-alist))))
+		  (elmo-msgdb-set-number-alist
+		   (elmo-folder-msgdb folder)
+		   (nconc number-alist
+			  (list (cons max-number nil))))))))))
 
-(defun elmo-nntp-msgdb-create-by-header (session numlist
+(defun elmo-nntp-msgdb-create-by-header (session numbers
 						 new-mark already-mark
 						 seen-mark seen-list)
   (with-temp-buffer
-    (elmo-nntp-retrieve-headers session (current-buffer) numlist)
+    (elmo-nntp-retrieve-headers session (current-buffer) numbers)
     (elmo-nntp-msgdb-create-message
-     (length numlist) new-mark already-mark seen-mark seen-list)))
+     (length numbers) new-mark already-mark seen-mark seen-list)))
 
 (defun elmo-nntp-parse-xhdr-response (string)
   (let (response)
@@ -852,7 +957,12 @@ Don't cache if nil.")
   "Get nntp header string."
   (save-excursion
     (let ((session (elmo-nntp-get-session
-		    (list 'nntp nil user server port type))))
+		    (luna-make-entity
+		     'elmo-nntp-folder
+		     :user user
+		     :server server
+		     :port port
+		     :stream-type type))))
       (elmo-nntp-send-command session
 			      (format "head %s" msgid))
       (if (elmo-nntp-read-response session)
@@ -860,10 +970,24 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(defun elmo-nntp-read-msg (spec number outbuf &optional msgdb unread)
-  (let ((session (elmo-nntp-get-session spec)))
+(luna-define-method elmo-message-fetch-with-cache-process :after
+  ((folder elmo-nntp-folder) number strategy &optional section unread)
+  (elmo-nntp-setup-crosspost-buffer folder number)
+  (unless unread
+    (elmo-nntp-folder-update-crosspost-message-alist
+     folder (list number))))
+
+(luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
+						number strategy
+						&optional section outbuf
+						unread)
+  (elmo-nntp-message-fetch folder number strategy section outbuf unread))
+
+(defun elmo-nntp-message-fetch (folder number strategy section outbuf unread)
+  (let ((session (elmo-nntp-get-session folder))
+	newsgroups)
     (with-current-buffer (elmo-network-session-buffer session)
-      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+      (elmo-nntp-select-group session (elmo-nntp-folder-group-internal folder))
       (elmo-nntp-send-command session (format "article %s" number))
       (if (null (elmo-nntp-read-response session t))
 	  (progn
@@ -875,21 +999,20 @@ Don't cache if nil.")
 	    (goto-char (point-min))
 	    (while (re-search-forward "^\\." nil t)
 	      (replace-match "")
-	      (forward-line))))))))
-
-;;(defun elmo-msgdb-nntp-overview-create-range (spec beg end mark)
-;;  (elmo-nntp-overview-create-range hostname beg end mark folder)))
-
-;;(defun elmo-msgdb-nntp-max-of-folder (spec)
-;;  (elmo-nntp-max-of-folder hostname folder)))
-
-(defun elmo-nntp-append-msg (spec string &optional msg no-see))
+	      (forward-line))
+	    (elmo-nntp-setup-crosspost-buffer folder number)
+	    (unless unread
+	      (elmo-nntp-folder-update-crosspost-message-alist
+	       folder (list number)))))))))
 
 (defun elmo-nntp-post (hostname content-buf)
   (let ((session (elmo-nntp-get-session
-		  (list 'nntp nil elmo-default-nntp-user
-			hostname elmo-default-nntp-port
-			elmo-default-nntp-stream-type)))
+		  (luna-make-entity
+		   'elmo-nntp-folder
+		   :user elmo-nntp-default-user
+		   :server hostname
+		   :port elmo-nntp-default-port
+		   :stream-type elmo-nntp-default-stream-type)))
 	response has-message-id)
     (save-excursion
       (set-buffer content-buf)
@@ -941,38 +1064,28 @@ Don't cache if nil.")
 	(unless (eq (forward-line 1) 0) (setq data-continue nil))
 	(elmo-nntp-send-data-line session line)))))
 
-(defun elmo-nntp-delete-msgs (spec msgs)
-  "MSGS on FOLDER at SERVER pretended as Deleted. Returns nil if failed."
-  (if elmo-use-killed-list
-      (let* ((dir (elmo-msgdb-expand-path spec))
-	     (killed-list (elmo-msgdb-killed-list-load dir)))
-	(mapcar '(lambda (msg)
-		   (setq killed-list
-			 (elmo-msgdb-set-as-killed killed-list msg)))
-		msgs)
-	(elmo-msgdb-killed-list-save dir killed-list)))
+(luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)
+						 numbers)
+  (elmo-nntp-folder-delete-messages folder numbers))
+
+(defun elmo-nntp-folder-delete-messages (folder numbers)
+  (let ((killed-list (elmo-folder-killed-list-internal folder)))
+    (dolist (number numbers)
+      (setq killed-list
+	    (elmo-msgdb-set-as-killed killed-list number)))
+    (elmo-folder-set-killed-list-internal folder killed-list))
   t)
 
-(defun elmo-nntp-check-validity (spec validity-file)
-  t)
-(defun elmo-nntp-sync-validity (spec validity-file)
-  t)
-
-(defun elmo-nntp-folder-exists-p (spec)
-  (let ((session (elmo-nntp-get-session spec)))
-    (if (elmo-nntp-plugged-p spec)
+(luna-define-method elmo-folder-exists-p ((folder elmo-nntp-folder))
+  (let ((session (elmo-nntp-get-session folder)))
+    (if (elmo-folder-plugged-p folder)
 	(progn
-	  (elmo-nntp-send-command session
-				  (format "group %s"
-					  (elmo-nntp-spec-group spec)))
+	  (elmo-nntp-send-command
+	   session
+	   (format "group %s"
+		   (elmo-nntp-folder-group-internal folder)))
 	  (elmo-nntp-read-response session))
       t)))
-
-(defun elmo-nntp-folder-creatable-p (spec)
-  nil)
-
-(defun elmo-nntp-create-folder (spec)
-  nil) ; noop
 
 (defun elmo-nntp-retrieve-field (spec field from-msgs)
   "Retrieve FIELD values from FROM-MSGS.
@@ -980,7 +1093,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   (let ((session (elmo-nntp-get-session spec)))
     (if (elmo-nntp-xhdr-p session)
 	(progn
-	  (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+	  (elmo-nntp-select-group session (elmo-nntp-folder-group-internal spec))
 	  (elmo-nntp-send-command session
 				  (format "xhdr %s %s"
 					  field
@@ -1003,13 +1116,13 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   (let ((search-key (elmo-filter-key condition)))
     (cond
      ((string= "last" search-key)
-      (let ((numbers (or from-msgs (elmo-nntp-list-folder spec))))
+      (let ((numbers (or from-msgs (elmo-folder-list-messages spec))))
 	(nthcdr (max (- (length numbers)
 			(string-to-int (elmo-filter-value condition)))
 		     0)
 		numbers)))
      ((string= "first" search-key)
-      (let* ((numbers (or from-msgs (elmo-nntp-list-folder spec)))
+      (let* ((numbers (or from-msgs (elmo-folder-list-messages spec)))
 	     (rest (nthcdr (string-to-int (elmo-filter-value condition) )
 			   numbers)))
 	(mapcar '(lambda (x) (delete x numbers)) rest)
@@ -1063,43 +1176,46 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result))))))
 
-(defun elmo-nntp-search (spec condition &optional from-msgs)
+(luna-define-method elmo-folder-search ((folder elmo-nntp-folder) 
+					condition &optional from-msgs)
   (let (result)
     (cond
      ((vectorp condition)
       (setq result (elmo-nntp-search-primitive
-		    spec condition from-msgs)))
+		    folder condition from-msgs)))
      ((eq (car condition) 'and)
-      (setq result (elmo-nntp-search spec (nth 1 condition) from-msgs)
+      (setq result (elmo-folder-search folder (nth 1 condition) from-msgs)
 	    result (elmo-list-filter result
-				     (elmo-nntp-search
-				      spec (nth 2 condition)
+				     (elmo-folder-search
+				      folder (nth 2 condition)
 				      from-msgs))))
      ((eq (car condition) 'or)
-      (setq result (elmo-nntp-search spec (nth 1 condition) from-msgs)
+      (setq result (elmo-folder-search folder (nth 1 condition) from-msgs)
 	    result (elmo-uniq-list
 		    (nconc result
-			   (elmo-nntp-search spec (nth 2 condition)
-					     from-msgs)))
+			   (elmo-folder-search folder (nth 2 condition)
+					       from-msgs)))
 	    result (sort result '<))))))
 
-(defun elmo-nntp-get-folders-info-prepare (spec session-keys)
+(defun elmo-nntp-get-folders-info-prepare (folder session-keys)
   (condition-case ()
-      (let ((session (elmo-nntp-get-session spec))
+      (let ((session (elmo-nntp-get-session folder))
 	    key count)
 	(with-current-buffer (elmo-network-session-buffer session)
 	  (unless (setq key (assoc session session-keys))
 	    (erase-buffer)
 	    (setq key (cons session
 			    (vector 0
-				    (elmo-nntp-spec-hostname spec)
-				    (elmo-nntp-spec-username spec)
-				    (elmo-nntp-spec-port spec)
-				    (elmo-nntp-spec-stream-type spec))))
+				    (elmo-net-folder-server-internal folder)
+				    (elmo-net-folder-user-internal folder)
+				    (elmo-net-folder-port-internal folder)
+				    (elmo-net-folder-stream-type-internal
+				     folder))))
 	    (setq session-keys (nconc session-keys (list key))))
 	  (elmo-nntp-send-command session
 				  (format "group %s"
-					  (elmo-nntp-spec-group spec))
+					  (elmo-nntp-folder-group-internal
+					   folder))
 				  'noerase)
 	  (if elmo-nntp-get-folders-securely
 	      (accept-process-output
@@ -1124,8 +1240,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	     (user    (aref key 2))
 	     (port    (aref key 3))
 	     (type    (aref key 4))
-	     (hashtb (or elmo-nntp-groups-hashtb
-			 (setq elmo-nntp-groups-hashtb
+	     (hashtb (or elmo-newsgroups-hashtb
+			 (setq elmo-newsgroups-hashtb
 			       (elmo-make-hash count)))))
 	(save-excursion
 	  (elmo-nntp-groups-read-response session cur count)
@@ -1199,17 +1315,6 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (while (search-forward "\r" nil t)
 	(replace-match "" t t))
       (copy-to-buffer outbuf (point-min) (point-max)))))
-
-(defun elmo-nntp-make-groups-hashtb (folders &optional size)
-  (let ((hashtb (or elmo-nntp-groups-hashtb
-		    (setq elmo-nntp-groups-hashtb
-			  (elmo-make-hash (or size (length folders)))))))
-    (mapcar
-     '(lambda (fld)
-	(or (elmo-get-hash-val fld hashtb)
-	    (elmo-set-hash-val fld nil hashtb)))
-     folders)
-    hashtb))
 
 ;; from nntp.el [Gnus]
 
@@ -1311,7 +1416,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		(setq seen (member message-id seen-list))
 		(if (setq gmark
 			  (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-cache-exists-p message-id);; XXX
+			      (if (elmo-file-cache-status
+				   (elmo-file-cache-get message-id))
 				  (if seen
 				      nil
 				    already-mark)
@@ -1335,39 +1441,141 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	 'elmo-nntp-msgdb-create-message "Creating msgdb..." 100))
       (list overview number-alist mark-alist))))
 
-(defun elmo-nntp-use-cache-p (spec number)
+(luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)
   elmo-nntp-use-cache)
 
-(defun elmo-nntp-local-file-p (spec number)
+(luna-define-method elmo-folder-creatable-p ((folder elmo-nntp-folder))
   nil)
 
-(defun elmo-nntp-port-label (spec)
-  (concat "nntp"
-	  (if (elmo-nntp-spec-stream-type spec)
-	      (concat "!" (symbol-name
-			   (elmo-network-stream-type-symbol
-			    (elmo-nntp-spec-stream-type spec)))))))
+(luna-define-method elmo-folder-writable-p ((folder elmo-nntp-folder))
+  nil)
 
-(defsubst elmo-nntp-portinfo (spec)
-  (list (elmo-nntp-spec-hostname spec)
-	(elmo-nntp-spec-port spec)))
+(defun elmo-nntp-parse-newsgroups (string &optional subscribe-only)
+  (let ((nglist (elmo-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
+	ngs)
+    (if (not subscribe-only)
+	nglist
+      (dolist (ng nglist)
+	(if (intern-soft ng elmo-newsgroups-hashtb)
+	    (setq ngs (cons ng ngs))))
+      ngs)))
 
-(defun elmo-nntp-plugged-p (spec)
-  (apply 'elmo-plugged-p
-	 (append (elmo-nntp-portinfo spec)
-		 (list nil (quote (elmo-nntp-port-label spec))))))
+;;; Crosspost processing.
 
-(defun elmo-nntp-set-plugged (spec plugged add)
-  (apply 'elmo-set-plugged plugged
-	 (append (elmo-nntp-portinfo spec)
-		 (list nil nil (quote (elmo-nntp-port-label spec)) add))))
+;; 1. setup crosspost alist.
+;;    1.1. When message is fetched and is crossposted message,
+;;         it is remembered in `temp-crosses' slot.
+;;         temp-crosses slot is a list of cons cell:
+;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
+;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
+;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
+;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
 
-(defalias 'elmo-nntp-list-folder-unread
-  'elmo-generic-list-folder-unread)
-(defalias 'elmo-nntp-list-folder-important
-  'elmo-generic-list-folder-important)
-(defalias 'elmo-nntp-commit 'elmo-generic-commit)
-(defalias 'elmo-nntp-folder-diff 'elmo-generic-folder-diff)
+;; 2. process crosspost alist.
+;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
+;;         `elmo-crosspost-message-alist'.
+;;    2.2. remove crosspost entry for current newsgroup from
+;;         `elmo-crosspost-message-alist'.
+;;    2.3. elmo-folder-list-unreads return unread message list according to
+;;         `reads' slot.
+;;         (There's a problem that if `elmo-folder-list-unreads'
+;;           never executed, crosspost information is thrown away.)
+;;    2.4. In elmo-folder-close, `read' slot is cleared,
+
+(defun elmo-nntp-setup-crosspost-buffer (folder number)
+;;    1.1. When message is fetched and is crossposted message,
+;;         it is remembered in `temp-crosses' slot.
+;;         temp-crosses slot is a list of cons cell:
+;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
+  (let (newsgroups crosspost-newsgroups message-id)
+    (save-restriction
+      (std11-narrow-to-header)
+      (setq newsgroups (std11-fetch-field "newsgroups")
+	    message-id (std11-msg-id-string
+			(car (std11-parse-msg-id-string
+			      (std11-fetch-field "message-id"))))))
+    (when newsgroups 
+      (when (setq crosspost-newsgroups
+		  (delete
+		   (elmo-nntp-folder-group-internal folder)
+		   (elmo-nntp-parse-newsgroups newsgroups t)))
+	(unless (assq number
+		      (elmo-nntp-folder-temp-crosses-internal folder))
+	  (elmo-nntp-folder-set-temp-crosses-internal
+	   folder
+	   (cons (cons number (list message-id crosspost-newsgroups 'ng))
+		 (elmo-nntp-folder-temp-crosses-internal folder))))))))
+
+(luna-define-method elmo-folder-close-internal ((folder elmo-nntp-folder))
+;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
+  (elmo-nntp-folder-set-temp-crosses-internal folder nil)
+  (elmo-nntp-folder-set-reads-internal folder nil)
+  )
+
+(defun elmo-nntp-folder-update-crosspost-message-alist (folder numbers)
+;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
+;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
+  (let (elem)
+    (dolist (number numbers)
+      (when (setq elem (assq number
+			     (elmo-nntp-folder-temp-crosses-internal folder)))
+	(unless (assoc (cdr (cdr elem)) elmo-crosspost-message-alist)
+	  (setq elmo-crosspost-message-alist
+		(cons (cdr elem) elmo-crosspost-message-alist)))
+	(elmo-nntp-folder-set-temp-crosses-internal
+	 folder
+	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
+
+(luna-define-method elmo-folder-mark-as-read ((folder elmo-nntp-folder)
+					      numbers)
+  (elmo-nntp-folder-update-crosspost-message-alist folder numbers)
+  t)
+
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder)
+						   &optional
+						   number-alist)
+  (elmo-nntp-folder-process-crosspost folder number-alist))
+
+(defun elmo-nntp-folder-process-crosspost (folder number-alist)
+;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
+;;         `elmo-crosspost-message-alist'.
+;;    2.2. remove crosspost entry for current newsgroup from
+;;         `elmo-crosspost-message-alist'.
+  (let (cross-deletes reads entity ngs)
+    (dolist (cross elmo-crosspost-message-alist)
+      (if number-alist
+	  (when (setq entity (rassoc (nth 0 cross) number-alist))
+	    (setq reads (cons (car entity) reads)))
+	(when (setq entity (elmo-msgdb-overview-get-entity
+			    (nth 0 cross)
+			    (elmo-folder-msgdb folder)))
+	  (setq reads (cons (elmo-msgdb-overview-entity-get-number entity)
+			    reads))))
+      (when entity
+	(if (setq ngs (delete (elmo-nntp-folder-group-internal folder)
+			      (nth 1 cross)))
+	    (setcar (cdr cross) ngs)
+	  (setq cross-deletes (cons cross cross-deletes)))
+	(setq elmo-crosspost-message-alist-modified t)))
+    (dolist (dele cross-deletes)
+      (setq elmo-crosspost-message-alist (delq
+					  dele 
+					  elmo-crosspost-message-alist)))
+    (elmo-nntp-folder-set-reads-internal folder reads)))
+
+(luna-define-method elmo-folder-list-unreads-internal 
+  ((folder elmo-nntp-folder) unread-marks mark-alist)
+  ;;    2.3. elmo-folder-list-unreads return unread message list according to
+  ;;         `reads' slot.
+  (let ((mark-alist (or mark-alist (elmo-msgdb-get-mark-alist
+				    (elmo-folder-msgdb folder)))))
+    (elmo-living-messages (delq nil
+				(mapcar 
+				 (lambda (x)
+				   (if (member (nth 1 x) unread-marks)
+				       (car x)))
+				 mark-alist))
+			  (elmo-nntp-folder-reads-internal folder))))
 
 (require 'product)
 (product-provide (provide 'elmo-nntp) (require 'elmo-version))

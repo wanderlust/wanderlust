@@ -57,14 +57,8 @@
       (list 'nconc val func)
     (list 'setq val func)))
 
-(defun wl-parse (string regexp &optional matchn)
-  (or matchn (setq matchn 1))
-  (let (list)
-    (store-match-data nil)
-    (while (string-match regexp string (match-end 0))
-      (setq list (cons (substring string (match-beginning matchn)
-                                  (match-end matchn)) list)))
-    (nreverse list)))
+(defalias 'wl-parse 'elmo-parse)
+(make-obsolete 'wl-parse 'elmo-parse)
 
 (defun wl-delete-duplicates (list &optional all hack-addresses)
   "Delete duplicate equivalent strings from the LIST.
@@ -303,17 +297,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 (defalias 'wl-string 'elmo-string)
 (make-obsolete 'wl-string 'elmo-string)
 
-(defun wl-parse-newsgroups (string &optional subscribe-only)
-  (let* ((nglist (wl-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
-	 ret-val)
-    (if (not subscribe-only)
-	nglist
-      (while nglist
-	(if (intern-soft (car nglist) wl-folder-newsgroups-hashtb)
-	    (wl-append ret-val (list (car nglist))))
-	(setq nglist (cdr nglist)))
-      ret-val)))
-
 ;; Check if active region exists or not.
 (if (boundp 'mark-active)
     (defmacro wl-region-exists-p ()
@@ -529,10 +512,10 @@ that `read' can handle, whenever this is possible."
               (setq fld-name nil))
 	  (if (eq (length (setq port
 				(elmo-match-string 2 url))) 0)
-              (setq port (int-to-string elmo-default-nntp-port)))
+              (setq port (int-to-string elmo-nntp-default-port)))
 	  (if (eq (length (setq server
                                 (elmo-match-string 1 url))) 0)
-              (setq server elmo-default-nntp-server))
+              (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
 	  (if (eq (length (setq msg
 				(elmo-match-string 4 url))) 0)
@@ -552,7 +535,7 @@ that `read' can handle, whenever this is possible."
   (` (save-excursion
        (if (buffer-live-p wl-current-summary-buffer)
            (set-buffer wl-current-summary-buffer))
-       wl-message-buf-name)))
+       wl-message-buffer)))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function
@@ -662,15 +645,15 @@ that `read' can handle, whenever this is possible."
 	  ">"))
 
 ;;; Profile loading.
-(defvar wl-load-profile-func 'wl-local-load-profile)
+(defvar wl-load-profile-function 'wl-local-load-profile)
 (defun wl-local-load-profile ()
   "Load `wl-init-file'."
   (message "Initializing ...")
   (load wl-init-file 'noerror 'nomessage))
 
 (defun wl-load-profile ()
-  "Call `wl-load-profile-func' function."
-  (funcall wl-load-profile-func))
+  "Call `wl-load-profile-function' function."
+  (funcall wl-load-profile-function))
 
 ;;;
 
@@ -829,10 +812,11 @@ This function is imported from Emacs 20.7."
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
 	  folder)
       (if (eq (length flist) 1)
-	  (wl-biff-check-folder-async (car flist) (interactive-p))
+	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
+				       (car flist)) (interactive-p))
 	(unwind-protect
 	    (while flist
-	      (setq folder (car flist)
+	      (setq folder (wl-folder-get-elmo-folder (car flist))
 		    flist (cdr flist))
 	      (when (elmo-folder-plugged-p folder)
 		(setq new-mails
@@ -842,19 +826,20 @@ This function is imported from Emacs 20.7."
 	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder (folder)
-  (if (eq (elmo-folder-get-type folder) 'pop3)
+  (if (eq (elmo-folder-type folder) 'pop3)
       ;; pop3 biff should share the session.
       (prog2
-	  (elmo-commit folder) ; Close session.
-	  (wl-folder-check-one-entity folder)
-	(elmo-commit folder))
+	  (elmo-folder-check folder)
+	  (wl-folder-check-one-entity (elmo-folder-name-internal folder))
+	(elmo-folder-close folder))
     (let ((elmo-network-session-name-prefix "BIFF-"))
-      (wl-folder-check-one-entity folder))))
+      (wl-folder-check-one-entity (elmo-folder-name-internal folder)))))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
       (with-current-buffer (nth 1 data)
-	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb (nth 0 data)
+	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb
+				     (nth 0 data)
 				     (list (car diff) 0 (cdr diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)
@@ -864,21 +849,21 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (when (elmo-folder-plugged-p folder)
-    (let ((type (elmo-folder-get-type folder)))
-      (if (and (eq type 'imap4)
-	       (wl-folder-use-server-diff-p folder))
-	  ;; Check asynchronously only when IMAP4 and use server diff.
-	  (progn
-	    (setq elmo-folder-diff-async-callback
-		  'wl-biff-check-folder-async-callback)
-	    (setq elmo-folder-diff-async-callback-data
-		  (list folder (get-buffer wl-folder-buffer-name)
-			notify-minibuf))
-	    (let ((elmo-network-session-name-prefix "BIFF-"))
-	      (elmo-folder-diff-async folder)))
-	(wl-biff-notify (car (wl-biff-check-folder folder))
-			notify-minibuf)
-	(setq wl-biff-check-folders-running nil)))))
+    (if (and (eq (elmo-folder-type-internal folder) 'imap4)
+	     (elmo-folder-use-flag-p folder))
+	;; Check asynchronously only when IMAP4 and use server diff.
+	(progn
+	  (setq elmo-folder-diff-async-callback
+		'wl-biff-check-folder-async-callback)
+	  (setq elmo-folder-diff-async-callback-data
+		(list (elmo-folder-name-internal folder)
+		      (get-buffer wl-folder-buffer-name)
+		      notify-minibuf))
+	  (let ((elmo-network-session-name-prefix "BIFF-"))
+	    (elmo-folder-diff-async folder)))
+      (wl-biff-notify (car (wl-biff-check-folder folder))
+		      notify-minibuf)
+      (setq wl-biff-check-folders-running nil))))
 
 (if (and (fboundp 'regexp-opt)
 	 (not (featurep 'xemacs)))
@@ -891,6 +876,39 @@ is enclosed by at least one regexp grouping construct."
     (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
       (concat open-paren (mapconcat 'regexp-quote strings "\\|")
 	      close-paren))))
+
+(defun wl-expand-newtext (newtext original)
+  (let ((len (length newtext))
+	(pos 0)
+	c expanded beg N did-expand)
+    (while (< pos len)
+      (setq beg pos)
+      (while (and (< pos len)
+		  (not (= (aref newtext pos) ?\\)))
+	(setq pos (1+ pos)))
+      (unless (= beg pos)
+	(push (substring newtext beg pos) expanded))
+      (when (< pos len)
+	;; We hit a \; expand it.
+	(setq did-expand t
+	      pos (1+ pos)
+	      c (aref newtext pos))
+	(if (not (or (= c ?\&)
+		     (and (>= c ?1)
+			  (<= c ?9))))
+	    ;; \ followed by some character we don't expand.
+	    (push (char-to-string c) expanded)
+	  ;; \& or \N
+	  (if (= c ?\&)
+	      (setq N 0)
+	    (setq N (- c ?0)))
+	  (when (match-beginning N)
+	    (push (substring original (match-beginning N) (match-end N))
+		  expanded))))
+      (setq pos (1+ pos)))
+    (if did-expand
+	(apply (function concat) (nreverse expanded))
+      newtext)))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))

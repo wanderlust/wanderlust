@@ -40,17 +40,79 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
-(require 'elmo-msgdb)
 (require 'elmo-date)
+(require 'elmo-msgdb)
 (require 'elmo-cache)
+(require 'elmo)
 (require 'elmo-net)
 (require 'utf7)
+(require 'elmo-mime)
 
 ;;; Code:
 (eval-when-compile (require 'cl))
 
-(defvar elmo-imap4-use-lock t
-  "USE IMAP4 with locking process.")
+;;; User options.
+(defcustom elmo-imap4-default-mailbox "inbox"
+  "*Default IMAP4 mailbox."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-server "localhost"
+  "*Default IMAP4 server."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-authenticate-type 'login
+  "*Default Authentication type for IMAP4."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-user (or (getenv "USER")
+				       (getenv "LOGNAME")
+				       (user-login-name))
+  "*Default username for IMAP4."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-port 143
+  "*Default Port number of IMAP."
+  :type 'integer
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-stream-type nil
+  "*Default stream type for IMAP4.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-imap4-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-imap4-stream-type-alist nil
+  "*Stream bindings for IMAP4.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+(defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
+  "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored.
+(Except `\\Deleted' flag).")
+
+(defvar elmo-imap4-overview-fetch-chop-length 200
+  "*Number of overviews to fetch in one request in imap4.")
+
+(defvar elmo-imap4-force-login nil
+  "*Non-nil forces to try 'login' if there is no 'auth' capability in imapd.")
+
+(defvar elmo-imap4-use-select-to-update-status nil
+  "*Some imapd have to send select command to update status.
+(ex. UW imapd 4.5-BETA?).  For these imapd, you must set this variable t.")
+
+(defvar elmo-imap4-use-modified-utf7 nil
+  "*Use mofidied UTF-7 (rfc2060) encoding for IMAP4 folder name.")
+
+(defvar elmo-imap4-use-cache t
+  "Use cache in imap4 folder.")
+
+(defvar elmo-imap4-extra-namespace-alist
+  '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
+  "Extra namespace alist.  A list of cons cell like: (REGEXP . DELIMITER).")
 ;;
 ;;; internal variables
 ;;
@@ -64,10 +126,6 @@
 (defvar elmo-imap4-reached-tag "elmo-imap40")
 
 ;;; buffer local variables
-
-(defvar elmo-imap4-extra-namespace-alist
-  '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
-  "Extra namespace alist.  A list of cons cell like: (REGEXP . DELIMITER).")
 (defvar elmo-imap4-default-hierarchy-delimiter "/")
 
 (defvar elmo-imap4-server-capability nil)
@@ -106,7 +164,6 @@
     elmo-imap4-status-callback-data
     elmo-imap4-current-msgdb))
 
-(defvar elmo-imap4-display-literal-progress nil)
 ;;;;
 
 (defconst elmo-imap4-quoted-specials-list '(?\\ ?\"))
@@ -131,36 +188,26 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defvar elmo-imap4-debug-inhibit-logging nil)
 
-;;; 
+;;; ELMO IMAP4 folder
+(eval-and-compile
+  (luna-define-class elmo-imap4-folder (elmo-net-folder)
+		     (mailbox))
+  (luna-define-internal-accessors 'elmo-imap4-folder))
 
+;;; Session
 (eval-and-compile
   (luna-define-class elmo-imap4-session (elmo-network-session)
 		     (capability current-mailbox read-only))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
-;;; imap4 spec
-
-(defsubst elmo-imap4-spec-mailbox (spec)
-  (nth 1 spec))
-
-(defsubst elmo-imap4-spec-username (spec)
-  (nth 2 spec))
-
-(defsubst elmo-imap4-spec-auth (spec)
-  (nth 3 spec))
-
-(defsubst elmo-imap4-spec-hostname (spec)
-  (nth 4 spec))
-
-(defsubst elmo-imap4-spec-port (spec)
-  (nth 5 spec))
-
-(defsubst elmo-imap4-spec-stream-type (spec)
-  (nth 6 spec))
-
+;;; MIME-ELMO-IMAP Location
+(eval-and-compile
+  (luna-define-class mime-elmo-imap-location
+		     (mime-imap-location)
+		     (folder number rawbuf strategy))
+  (luna-define-internal-accessors 'mime-elmo-imap-location))
 
 ;;; Debug
-
 (defsubst elmo-imap4-debug (message &rest args)
   (if elmo-imap4-debug
       (with-current-buffer (get-buffer-create "*IMAP4 DEBUG*")
@@ -168,6 +215,17 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 	(if elmo-imap4-debug-inhibit-logging
 	    (insert "NO LOGGING\n")
 	  (insert (apply 'format message args) "\n")))))
+
+
+(defsubst elmo-imap4-decode-folder-string (string)
+  (if elmo-imap4-use-modified-utf7
+      (utf7-decode-string string 'imap)
+    string))
+
+(defsubst elmo-imap4-encode-folder-string (string)
+  (if elmo-imap4-use-modified-utf7
+      (utf7-encode-string string 'imap)
+    string))
 
 ;;; Response
 
@@ -360,6 +418,42 @@ If response is not `OK' response, causes error with IMAP response text."
 	(error "IMAP error: %s"
 	       (or (elmo-imap4-response-error-text response)
 		   "No `OK' response from server."))))))
+
+
+
+;;; MIME-ELMO-IMAP Location
+(luna-define-method mime-imap-location-section-body ((location
+						      mime-elmo-imap-location)
+						     section)
+  (if (and (stringp section)
+	   (string= section "HEADER"))
+      ;; Even in the section mode, header fields should be saved to the
+      ;; raw buffer .
+      (with-current-buffer (mime-elmo-imap-location-rawbuf-internal location)
+	(erase-buffer)
+	(elmo-message-fetch
+	 (mime-elmo-imap-location-folder-internal location)
+	 (mime-elmo-imap-location-number-internal location)
+	 (mime-elmo-imap-location-strategy-internal location)
+	 section
+	 (current-buffer)
+	 'unseen)
+	(buffer-string))
+    (elmo-message-fetch
+     (mime-elmo-imap-location-folder-internal location)
+     (mime-elmo-imap-location-number-internal location)
+     (mime-elmo-imap-location-strategy-internal location)
+     section
+     nil 'unseen)))
+
+
+(luna-define-method mime-imap-location-bodystructure
+  ((location mime-elmo-imap-location))
+  (elmo-imap4-fetch-bodystructure
+   (mime-elmo-imap-location-folder-internal location)
+   (mime-elmo-imap-location-number-internal location)
+   (mime-elmo-imap-location-strategy-internal location)))
+
 ;;;
 
 (defun elmo-imap4-session-check (session)
@@ -503,193 +597,52 @@ BUFFER must be a single-byte buffer."
 	       (car (nth 1 entry))))
 	 response)))
 
-;;; Backend methods.
-(defun elmo-imap4-list-folders (spec &optional hierarchy)
-  (let* ((root (elmo-imap4-spec-mailbox spec))
-	 (session (elmo-imap4-get-session spec))
-	 (delim (or
-		 (cdr
-		  (elmo-string-matched-assoc
-		   root
-		   (with-current-buffer (elmo-network-session-buffer session)
-		     elmo-imap4-server-namespace)))
-		 elmo-imap4-default-hierarchy-delimiter))
-	 result append-serv type)
-    ;; Append delimiter
-    (if (and root
-	     (not (string= root ""))
-	     (not (string-match (concat "\\(.*\\)"
-					(regexp-quote delim)
-					"\\'")
-				root)))
-	(setq root (concat root delim)))
-    (setq result (elmo-imap4-response-get-selectable-mailbox-list
-		  (elmo-imap4-send-command-wait
-		   session
-		   (list "list " (elmo-imap4-mailbox root) " *"))))
-    (unless (string= (elmo-imap4-spec-username spec)
-		     elmo-default-imap4-user)
-      (setq append-serv (concat ":" (elmo-imap4-spec-username spec))))
-    (unless (eq (elmo-imap4-spec-auth spec)
-		(or elmo-default-imap4-authenticate-type 'clear))
-      (setq append-serv 
-	    (concat append-serv "/" (symbol-name (elmo-imap4-spec-auth spec)))))
-    (unless (string= (elmo-imap4-spec-hostname spec)
-		     elmo-default-imap4-server)
-      (setq append-serv (concat append-serv "@" (elmo-imap4-spec-hostname
-						 spec))))
-    (unless (eq (elmo-imap4-spec-port spec)
-		elmo-default-imap4-port)
-      (setq append-serv (concat append-serv ":"
-				(int-to-string
-				 (elmo-imap4-spec-port spec)))))
-    (setq type (elmo-imap4-spec-stream-type spec))
-    (unless (eq (elmo-network-stream-type-symbol type)
-		elmo-default-imap4-stream-type)
-      (if type
-	  (setq append-serv (concat append-serv
-				    (elmo-network-stream-type-spec-string
-				     type)))))
-    (if hierarchy
-	(let (folder folders ret)
-	  (while (setq folders (car result))
-	    (if (prog1 
-		    (string-match
-		     (concat "^\\(" root "[^" delim "]" "+\\)" delim)
-			  folders)
-		  (setq folder (match-string 1 folders)))
-		(progn
-		  (setq ret 
-			(append ret (list (list
-					   (concat "%" (elmo-imap4-decode-folder-string folder)
-						   (and append-serv
-							(eval append-serv)))))))
-		  (setq result
-			(delq nil
-			      (mapcar '(lambda (fld)
-					 (unless
-					     (string-match
-					      (concat "^" (regexp-quote folder) delim)
-					      fld)
-					   fld))
-				      result))))
-	      (setq ret (append ret (list 
-				     (concat "%" (elmo-imap4-decode-folder-string folders)
-					     (and append-serv
-						  (eval append-serv))))))
-	      (setq result (cdr result))))
-	  ret)
-      (mapcar (lambda (fld)
-		(concat "%" (elmo-imap4-decode-folder-string fld)
-			(and append-serv
-			     (eval append-serv))))
-	      result))))
-
-(defun elmo-imap4-folder-exists-p (spec)
-  (let ((session (elmo-imap4-get-session spec)))
-    (if (string=
-	 (elmo-imap4-session-current-mailbox-internal session)
-	 (elmo-imap4-spec-mailbox spec))
-	t
+(defun elmo-imap4-fetch-bodystructure (folder number strategy)
+  "Fetch BODYSTRUCTURE for the message in the FOLDER with NUMBER using STRATEGY."
+  (if (elmo-fetch-strategy-use-cache strategy)
+      (elmo-object-load
+       (elmo-file-cache-expand-path
+	(elmo-fetch-strategy-cache-path strategy)
+	"bodystructure"))
+    (let ((session (elmo-imap4-get-session folder))
+	  bodystructure)
       (elmo-imap4-session-select-mailbox
        session
-       (elmo-imap4-spec-mailbox spec)
-       'force 'no-error))))
+       (elmo-imap4-folder-mailbox-internal folder))
+      (with-current-buffer (elmo-network-session-buffer session)
+	(setq elmo-imap4-fetch-callback nil)
+	(setq elmo-imap4-fetch-callback-data nil))
+      (prog1 (setq bodystructure
+		   (elmo-imap4-response-value
+		    (elmo-imap4-response-value
+		     (elmo-imap4-send-command-wait
+		      session
+		      (format
+		       (if elmo-imap4-use-uid
+			   "uid fetch %s bodystructure"
+			 "fetch %s bodystructure")
+		       number))
+		     'fetch)
+		    'bodystructure))
+	(when (elmo-fetch-strategy-save-cache strategy)
+	  (elmo-file-cache-delete
+	   (elmo-fetch-strategy-cache-path strategy))
+	  (elmo-object-save
+	   (elmo-file-cache-expand-path
+	    (elmo-fetch-strategy-cache-path strategy)
+	    "bodystructure")
+	   bodystructure))))))
 
-(defun elmo-imap4-folder-creatable-p (spec)
-  t)
-
-(defun elmo-imap4-create-folder-maybe (spec dummy)
-  (unless (elmo-imap4-folder-exists-p spec)
-    (elmo-imap4-create-folder spec)))
-
-(defun elmo-imap4-create-folder (spec)
+;;; Backend methods.
+(luna-define-method elmo-create-folder-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-send-command-wait
-   (elmo-imap4-get-session spec)
+   (elmo-imap4-get-session folder)
    (list "create " (elmo-imap4-mailbox
-		    (elmo-imap4-spec-mailbox spec)))))
+		    (elmo-imap4-folder-mailbox-internal folder)))))
 
-(defun elmo-imap4-delete-folder (spec)
-  (let ((session (elmo-imap4-get-session spec))
-	msgs)
-    (when (elmo-imap4-spec-mailbox spec)
-      (when (setq msgs (elmo-imap4-list-folder spec))
-	(elmo-imap4-delete-msgs spec msgs))
-      (elmo-imap4-send-command-wait session "close")
-      (elmo-imap4-send-command-wait
-       session
-       (list "delete "
-	     (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec)))))))
+(defun elmo-imap4-get-session (folder &optional if-exists)
+  (elmo-network-get-session 'elmo-imap4-session "IMAP" folder if-exists))
 
-(defun elmo-imap4-rename-folder (old-spec new-spec)
-  (let ((session (elmo-imap4-get-session old-spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox old-spec))
-    (elmo-imap4-send-command-wait session "close")
-    (elmo-imap4-send-command-wait
-     session
-     (list "rename "
-	   (elmo-imap4-mailbox
-	    (elmo-imap4-spec-mailbox old-spec))
-	   " "
-	   (elmo-imap4-mailbox
-	    (elmo-imap4-spec-mailbox new-spec))))))
-  
-(defun elmo-imap4-max-of-folder (spec)
-  (let ((session (elmo-imap4-get-session spec))
-	 (killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path spec))))
-	status)
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-status-callback nil)
-      (setq elmo-imap4-status-callback-data nil))
-    (setq status (elmo-imap4-response-value
-		  (elmo-imap4-send-command-wait
-		   session
-		   (list "status "
-			 (elmo-imap4-mailbox
-			  (elmo-imap4-spec-mailbox spec))
-			 " (uidnext messages)"))
-		  'status))
-    (cons
-     (- (elmo-imap4-response-value status 'uidnext) 1)
-     (if killed
-	 (-
-	  (elmo-imap4-response-value status 'messages)
-	  (elmo-msgdb-killed-list-length killed))
-       (elmo-imap4-response-value status 'messages)))))
-
-(defun elmo-imap4-folder-diff (spec folder &optional number-list)
-  (if elmo-use-server-diff
-      (elmo-imap4-server-diff spec)
-    (elmo-generic-folder-diff spec folder number-list)))
-
-(defun elmo-imap4-get-session (spec &optional if-exists)
-  (elmo-network-get-session
-   'elmo-imap4-session
-   "IMAP"
-   (elmo-imap4-spec-hostname spec)
-   (elmo-imap4-spec-port spec)
-   (elmo-imap4-spec-username spec)
-   (elmo-imap4-spec-auth spec)
-   (elmo-imap4-spec-stream-type spec)
-   if-exists))
-
-(defun elmo-imap4-commit (spec)
-  (if (elmo-imap4-plugged-p spec)
-      (let ((session (elmo-imap4-get-session spec 'if-exists)))
-	(when session
-	  (if (string=
-	       (elmo-imap4-session-current-mailbox-internal session)
-	       (elmo-imap4-spec-mailbox spec))
-	      (if elmo-imap4-use-select-to-update-status
-		  (elmo-imap4-session-select-mailbox
-		   session
-		   (elmo-imap4-spec-mailbox spec)
-		   'force)	      
-		(elmo-imap4-session-check session)))))))
-  
 (defun elmo-imap4-session-select-mailbox (session mailbox
 						  &optional force no-error)
   "Select MAILBOX in SESSION.
@@ -739,164 +692,17 @@ Returns response value if selecting folder succeed. "
   ;; Not used.
   )
 
-(defun elmo-imap4-list (spec flag)
-  (let ((session (elmo-imap4-get-session spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
+(defun elmo-imap4-list (folder flag)
+  (let ((session (elmo-imap4-get-session folder)))
+    (elmo-imap4-session-select-mailbox
+     session
+     (elmo-imap4-folder-mailbox-internal folder))
     (elmo-imap4-response-value
      (elmo-imap4-send-command-wait
       session
       (format (if elmo-imap4-use-uid "uid search %s"
 		"search %s") flag))
      'search)))
-
-(defun elmo-imap4-list-folder (spec &optional nohide)
-  (let* ((killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path spec))))
-	 (max (elmo-msgdb-max-of-killed killed))
-	 numbers)
-    (setq numbers (elmo-imap4-list spec
-				   (if (or nohide
-					   (null (eq max 0)))
-				       (format "uid %d:*" (1+ max))
-				     "all")))
-    (elmo-living-messages numbers killed)))
-
-(defun elmo-imap4-list-folder-unread (spec number-alist mark-alist
-					   unread-marks)
-  (if (and (elmo-imap4-plugged-p spec)
-	   (elmo-imap4-use-flag-p spec))
-      (elmo-imap4-list spec "unseen")
-    (elmo-generic-list-folder-unread spec number-alist mark-alist
-				     unread-marks)))
-
-(defun elmo-imap4-list-folder-important (spec number-alist)
-  (if (and (elmo-imap4-plugged-p spec)
-	   (elmo-imap4-use-flag-p spec))
-      (elmo-imap4-list spec "flagged")))
-
-(defmacro elmo-imap4-detect-search-charset (string)
-  (` (with-temp-buffer
-       (insert (, string))
-       (detect-mime-charset-region (point-min) (point-max)))))
-
-(defun elmo-imap4-search-internal-primitive (spec session filter from-msgs)
-  (let ((search-key (elmo-filter-key filter))
-	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
-	charset)
-    (cond
-     ((string= "last" search-key)
-      (let ((numbers (or from-msgs (elmo-imap4-list-folder spec))))
-	(nthcdr (max (- (length numbers)
-			(string-to-int (elmo-filter-value filter)))
-		     0)
-		numbers)))
-     ((string= "first" search-key)
-      (let* ((numbers (or from-msgs (elmo-imap4-list-folder spec)))
-	     (rest (nthcdr (string-to-int (elmo-filter-value filter) )
-			   numbers)))
-	(mapcar '(lambda (x) (delete x numbers)) rest)
-	numbers))
-     ((or (string= "since" search-key)
-	  (string= "before" search-key))
-      (setq search-key (concat "sent" search-key))
-      (elmo-imap4-response-value
-       (elmo-imap4-send-command-wait session
-				     (format
-				      (if elmo-imap4-use-uid
-					  "uid search %s%s%s %s"
-					"search %s%s%s %s")
-				      (if from-msgs
-					  (concat
-					   (if elmo-imap4-use-uid "uid ")
-					   (cdr
-					    (car 
-					     (elmo-imap4-make-number-set-list
-					      from-msgs)))
-					   " ")
-					"")
-				      (if (eq (elmo-filter-type filter)
-					      'unmatch)
-					  "not " "")
-				      search-key
-				      (elmo-date-get-description
-				       (elmo-date-get-datevec
-					(elmo-filter-value filter)))))
-       'search))
-     (t
-      (setq charset
-	    (if (eq (length (elmo-filter-value filter)) 0)
-		(setq charset 'us-ascii)
-	      (elmo-imap4-detect-search-charset
-	       (elmo-filter-value filter))))
-      (elmo-imap4-response-value
-       (elmo-imap4-send-command-wait session
-				     (list
-				      (if elmo-imap4-use-uid "uid ")
-				      "search "
-				      "CHARSET "
-				      (elmo-imap4-astring
-				       (symbol-name charset))
-				      " "
-				      (if from-msgs
-					  (concat
-					   (if elmo-imap4-use-uid "uid ")
-					   (cdr
-					    (car
-					     (elmo-imap4-make-number-set-list
-					      from-msgs)))
-					   " ")
-					"")
-				      (if (eq (elmo-filter-type filter)
-					      'unmatch)
-					  "not " "")
-				      (format "%s%s "
-					      (if (member
-						   (elmo-filter-key filter)
-						   imap-search-keys)
-						  ""
-						"header ")
-					      (elmo-filter-key filter))
-				      (elmo-imap4-astring
-				       (encode-mime-charset-string
-					(elmo-filter-value filter) charset))))
-       'search)))))
-
-(defun elmo-imap4-search-internal (spec session condition from-msgs)
-  (let (result)
-    (cond
-     ((vectorp condition)
-      (setq result (elmo-imap4-search-internal-primitive
-		    spec session condition from-msgs)))
-     ((eq (car condition) 'and)
-      (setq result (elmo-imap4-search-internal spec session (nth 1 condition)
-					       from-msgs)
-	    result (elmo-list-filter result
-				     (elmo-imap4-search-internal
-				      spec session (nth 2 condition)
-				      from-msgs))))
-     ((eq (car condition) 'or)
-      (setq result (elmo-imap4-search-internal
-		    spec session (nth 1 condition) from-msgs)
-	    result (elmo-uniq-list
-		    (nconc result
-			   (elmo-imap4-search-internal
-			    spec session (nth 2 condition) from-msgs)))
-	    result (sort result '<))))))
-    
-
-(defun elmo-imap4-search (spec condition &optional from-msgs)
-  (save-excursion
-    (let ((session (elmo-imap4-get-session spec)))
-      (elmo-imap4-session-select-mailbox
-       session
-       (elmo-imap4-spec-mailbox spec))
-      (elmo-imap4-search-internal spec session condition from-msgs))))
-
-(defun elmo-imap4-use-flag-p (spec)
-  (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
-		     (elmo-imap4-spec-mailbox spec))))
 
 (static-cond
  ((fboundp 'float)
@@ -973,89 +779,12 @@ If CHOP-LENGTH is not specified, message set is not chopped."
     (nreverse set-list)))
 
 ;;
-;; set mark
-;; read-mark -> "\\Seen"
-;; important -> "\\Flagged"
-;; 
-;; (delete -> \\Deleted)
-(defun elmo-imap4-mark-set-on-msgs (spec msgs mark &optional unmark no-expunge)
-  "SET flag of MSGS as MARK.
-If optional argument UNMARK is non-nil, unmark."
-  (let ((session (elmo-imap4-get-session spec))
-	set-list)
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (setq set-list (elmo-imap4-make-number-set-list msgs))
-    (when set-list
-      (with-current-buffer (elmo-network-session-buffer session)
-	(setq elmo-imap4-fetch-callback nil)
-	(setq elmo-imap4-fetch-callback-data nil))
-      (elmo-imap4-send-command-wait
-       session
-       (format
-	(if elmo-imap4-use-uid
-	    "uid store %s %sflags.silent (%s)"
-	  "store %s %sflags.silent (%s)")
-	(cdr (car set-list))
-	(if unmark "-" "+")
-	mark))
-      (unless no-expunge
-	(elmo-imap4-send-command-wait session "expunge")))
-    t))
-
-(defun elmo-imap4-mark-as-important (spec msgs)
-  (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-mark-set-on-msgs spec msgs "\\Flagged" nil 'no-expunge)))
-
-(defun elmo-imap4-mark-as-read (spec msgs)
-  (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-mark-set-on-msgs spec msgs "\\Seen" nil 'no-expunge)))
-
-(defun elmo-imap4-unmark-important (spec msgs)
-  (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-mark-set-on-msgs spec msgs "\\Flagged" 'unmark
-				    'no-expunge)))
-
-(defun elmo-imap4-mark-as-unread (spec msgs)
-  (and (elmo-imap4-use-flag-p spec)
-       (elmo-imap4-mark-set-on-msgs spec msgs "\\Seen" 'unmark 'no-expunge)))
-
-(defun elmo-imap4-delete-msgs (spec msgs)
-  (elmo-imap4-mark-set-on-msgs spec msgs "\\Deleted"))
-
-(defun elmo-imap4-delete-msgs-no-expunge (spec msgs)
-  (elmo-imap4-mark-set-on-msgs spec msgs "\\Deleted" nil 'no-expunge))
-
-(defun elmo-imap4-msgdb-create-as-numlist (spec numlist new-mark already-mark
-						seen-mark important-mark
-						seen-list)
-  "Create msgdb for SPEC for NUMLIST."
-  (elmo-imap4-msgdb-create spec numlist new-mark already-mark
-			   seen-mark important-mark seen-list t))
-
-;; Current buffer is process buffer.
-(defun elmo-imap4-fetch-callback (element app-data)
-  (funcall elmo-imap4-fetch-callback
-	   (with-temp-buffer
-	     (insert (or (elmo-imap4-response-bodydetail-text element)
-			 ""))
-	     ;; Delete CR.
-	     (goto-char (point-min))
-	     (while (search-forward "\r\n" nil t)
-	       (replace-match "\n"))
-	     (elmo-msgdb-create-overview-from-buffer
-	      (elmo-imap4-response-value element 'uid)
-	      (elmo-imap4-response-value element 'rfc822size)))
-	   (elmo-imap4-response-value element 'flags)
-	   app-data))
-
-;;
 ;; app-data:
 ;; cons of list
 ;; 0: new-mark 1: already-mark 2: seen-mark 3: important-mark
 ;; 4: seen-list
 ;; and result of use-flag-p.
-(defun elmo-imap4-fetch-callback-1 (entity flags app-data)
+(defsubst elmo-imap4-fetch-callback-1-subr (entity flags app-data)
   "A msgdb entity callback function."
   (let* ((use-flag (cdr app-data))
 	 (app-data (car app-data))
@@ -1064,7 +793,8 @@ If optional argument UNMARK is non-nil, unmark."
     (if (member "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
     (setq mark (or (elmo-msgdb-global-mark-get (car entity))
-		   (if (elmo-cache-exists-p (car entity)) ;; XXX
+		   (if (elmo-file-cache-status
+			(elmo-file-cache-get (car entity)))
 		       (if (or seen
 			       (and use-flag
 				    (member "\\Seen" flags)))
@@ -1087,52 +817,21 @@ If optional argument UNMARK is non-nil, unmark."
 		      (list (elmo-msgdb-overview-entity-get-number entity)
 			    mark))))))))
 
-(defun elmo-imap4-msgdb-create (spec numlist &rest args)
-  "Create msgdb for SPEC."
-  (when numlist
-    (let ((session (elmo-imap4-get-session spec))
-	  (headers
-	   (append
-	    '("Subject" "From" "To" "Cc" "Date"
-	      "Message-Id" "References" "In-Reply-To")
-	    elmo-msgdb-extra-fields))
-	  (total 0)
-	  (length (length numlist))
-	  rfc2060 set-list)
-      (setq rfc2060 (memq 'imap4rev1
-			  (elmo-imap4-session-capability-internal
-			   session)))
-      (message "Getting overview...")
-      (elmo-imap4-session-select-mailbox session
-					 (elmo-imap4-spec-mailbox spec))
-      (setq set-list (elmo-imap4-make-number-set-list
-		      numlist
-		      elmo-imap4-overview-fetch-chop-length))
-      ;; Setup callback.
-      (with-current-buffer (elmo-network-session-buffer session)
-	(setq elmo-imap4-current-msgdb nil
-	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data (cons args
-						   (elmo-imap4-use-flag-p
-						    spec)))
-	(while set-list
-	  (elmo-imap4-send-command-wait
-	   session
-	   ;; get overview entity from IMAP4
-	   (format "%sfetch %s (%s rfc822.size flags)"
-		   (if elmo-imap4-use-uid "uid " "")
-		   (cdr (car set-list))
-		   (if rfc2060
-		       (format "body.peek[header.fields %s]" headers)
-		     (format "%s" headers))))
-	  (when (> length elmo-display-progress-threshold)
-	    (setq total (+ total (car (car set-list))))
-	    (elmo-display-progress
-	     'elmo-imap4-msgdb-create "Getting overview..."
-	     (/ (* total 100) length)))
-	  (setq set-list (cdr set-list)))
-	(message "Getting overview...done")
-	elmo-imap4-current-msgdb))))
+;; Current buffer is process buffer.
+(defun elmo-imap4-fetch-callback-1 (element app-data)
+  (elmo-imap4-fetch-callback-1-subr
+   (with-temp-buffer
+     (insert (or (elmo-imap4-response-bodydetail-text element)
+		 ""))
+     ;; Delete CR.
+     (goto-char (point-min))
+     (while (search-forward "\r\n" nil t)
+       (replace-match "\n"))
+     (elmo-msgdb-create-overview-from-buffer
+      (elmo-imap4-response-value element 'uid)
+      (elmo-imap4-response-value element 'rfc822size)))
+   (elmo-imap4-response-value element 'flags)
+   app-data))
 
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
@@ -1262,7 +961,7 @@ If optional argument UNMARK is non-nil, unmark."
 		   mechanism
 		   (elmo-network-session-user-internal session)
 		   "imap"
-		   (elmo-network-session-host-internal session)))
+		   (elmo-network-session-server-internal session)))
 ;;;	    (if elmo-imap4-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-imap4-auth-user-realm))
 	    (setq name (sasl-mechanism-name mechanism)
@@ -1327,14 +1026,18 @@ If optional argument UNMARK is non-nil, unmark."
 	     (elmo-imap4-send-command-wait session "namespace")
 	     'namespace)))))
 
-(defun elmo-imap4-setup-send-buffer (string)
-  (let ((tmp-buf (get-buffer-create " *elmo-imap4-setup-send-buffer*")))
+(defun elmo-imap4-setup-send-buffer (&optional string)
+  (let ((send-buf (get-buffer-create " *elmo-imap4-setup-send-buffer*"))
+	(source-buf (unless string (current-buffer))))
     (save-excursion
       (save-match-data
-	(set-buffer tmp-buf)
+	(set-buffer send-buf)
 	(erase-buffer)
 	(elmo-set-buffer-multibyte nil)
-	(insert string)
+	(if string
+	    (insert string)
+	  (with-current-buffer source-buf
+	    (copy-to-buffer send-buf (point-min) (point-max))))
 	(goto-char (point-min))
 	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
@@ -1342,72 +1045,7 @@ If optional argument UNMARK is non-nil, unmark."
 	(goto-char (point-min))
 	(while (search-forward "\n" nil t)
 	  (replace-match "\r\n"))))
-    tmp-buf))
-
-(defun elmo-imap4-read-part (folder msg part)
-  (let* ((spec (elmo-folder-get-spec folder))
-	 (session (elmo-imap4-get-session spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-fetch-callback nil)
-      (setq elmo-imap4-fetch-callback-data nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (setq elmo-imap4-display-literal-progress t))
-    (prog1
-	(unwind-protect
-	    (elmo-delete-cr
-	     (elmo-imap4-response-bodydetail-text
-	      (elmo-imap4-response-value-all
-	       (elmo-imap4-send-command-wait session
-					     (format
-					      (if elmo-imap4-use-uid
-						  "uid fetch %s body.peek[%s]"
-						"fetch %s body.peek[%s]")
-					      msg part))
-	       'fetch)))
-	  (setq elmo-imap4-display-literal-progress nil))
-      (unless elmo-inhibit-display-retrieval-progress
-	(elmo-display-progress 'elmo-imap4-display-literal-progress
-			       "" 100)  ; remove progress bar.
-	(message "Retrieving...done.")))))
-
-(defun elmo-imap4-prefetch-msg (spec msg outbuf)
-  (elmo-imap4-read-msg spec msg outbuf nil 'unseen))
-
-(defun elmo-imap4-read-msg (spec msg outbuf
-				 &optional msgdb leave-seen-flag-untouched)
-  (let ((session (elmo-imap4-get-session spec))
-	response)
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-fetch-callback nil)
-      (setq elmo-imap4-fetch-callback-data nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (setq elmo-imap4-display-literal-progress t))
-    (unwind-protect
-	(setq response
-	      (elmo-imap4-send-command-wait session
-					    (format
-					     (if elmo-imap4-use-uid
-						 "uid fetch %s body%s[]"
-					       "fetch %s body%s[]")
-					     msg
-					     (if leave-seen-flag-untouched
-						 ".peek" ""))))
-      (setq elmo-imap4-display-literal-progress nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (elmo-display-progress 'elmo-imap4-display-literal-progress
-			     "" 100)  ; remove progress bar.
-      (message "Retrieving...done."))    
-    (and (setq response (elmo-imap4-response-bodydetail-text
-			 (elmo-imap4-response-value-all
-			  response 'fetch )))
-	 (with-current-buffer outbuf
-	   (erase-buffer)
-	   (insert response)
-	   (elmo-delete-cr-get-content-type)))))
+    send-buf))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
   (let ((tmp-buf (get-buffer-create
@@ -1427,88 +1065,24 @@ If optional argument UNMARK is non-nil, unmark."
 	  (replace-match "\r\n"))))
     tmp-buf))
 
-(defun elmo-imap4-delete-msgids (spec msgids)
-  "If actual message-id is matched, then delete it."
-  (let ((message-ids msgids)
-	(i 0)
-	(num (length msgids)))
-    (while message-ids
-      (setq i (+ 1 i))
-      (message "Deleting message...%d/%d" i num)
-      (elmo-imap4-delete-msg-by-id spec (car message-ids))
-      (setq message-ids (cdr message-ids)))
-    (elmo-imap4-send-command-wait (elmo-imap4-get-session spec) "expunge")))
-
-(defun elmo-imap4-delete-msg-by-id (spec msgid)
-  (let ((session (elmo-imap4-get-session spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (elmo-imap4-delete-msgs-no-expunge
-     spec
-     (elmo-imap4-response-value
-      (elmo-imap4-send-command-wait session
-				    (list
-				     (if elmo-imap4-use-uid
-					 "uid search header message-id "
-				       "search header message-id ")
-				     (elmo-imap4-field-body msgid)))
-      'search))))
-
-(defun elmo-imap4-append-msg-by-id (spec msgid)
-  (let ((session (elmo-imap4-get-session spec))
-	send-buf)
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (setq send-buf (elmo-imap4-setup-send-buffer-from-file
-		    (elmo-cache-get-path msgid)))
-    (unwind-protect
-	(elmo-imap4-send-command-wait
-	 session
-	 (list
-	  "append "
-	  (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-	  " (\\Seen) "
-	  (elmo-imap4-buffer-literal send-buf)))
-      (kill-buffer send-buf)))
-  t)
-
-(defun elmo-imap4-append-msg (spec string &optional msg no-see)
-  (let ((session (elmo-imap4-get-session spec))
-	send-buf)
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox spec))
-    (setq send-buf (elmo-imap4-setup-send-buffer string))
-    (unwind-protect
-	(elmo-imap4-send-command-wait
-	 session
-	 (list
-	  "append "
-	  (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-	  (if no-see " " " (\\Seen) ")
-	  (elmo-imap4-buffer-literal send-buf)))
-      (kill-buffer send-buf)))
-  t)
-
-(defun elmo-imap4-copy-msgs (dst-spec
-			     msgs src-spec &optional expunge-it same-number)
-  "Equivalence of hostname, username is assumed."
-  (let ((session (elmo-imap4-get-session src-spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox src-spec))
-    (while msgs
-      (elmo-imap4-send-command-wait session
-				    (list
-				     (format
-				      (if elmo-imap4-use-uid
-					  "uid copy %s "
-					"copy %s ")
-				      (car msgs))
-				     (elmo-imap4-mailbox
-				      (elmo-imap4-spec-mailbox dst-spec))))
-      (setq msgs (cdr msgs)))
-    (when expunge-it
-      (elmo-imap4-send-command-wait session "expunge"))
-    t))
+(luna-define-method elmo-delete-message-safe ((folder elmo-imap4-folder)
+					      number msgid)
+  (let ((session (elmo-imap4-get-session folder))
+	candidates)
+    (elmo-imap4-session-select-mailbox
+     session
+     (elmo-imap4-folder-mailbox-internal folder))
+    (setq candidates
+	  (elmo-imap4-response-value
+	   (elmo-imap4-send-command-wait session
+					 (list
+					  (if elmo-imap4-use-uid
+					      "uid search header message-id "
+					    "search header message-id ")
+					  (elmo-imap4-field-body msgid)))
+	   'search))
+    (if (memq number candidates)
+	(elmo-folder-delete-messages folder (list number)))))
 
 (defun elmo-imap4-server-diff-async-callback-1 (status data)
   (funcall elmo-imap4-server-diff-async-callback
@@ -1516,8 +1090,25 @@ If optional argument UNMARK is non-nil, unmark."
 		 (elmo-imap4-response-value status 'messages))
 	   data))
 
-(defun elmo-imap4-server-diff-async (spec)
-  (let ((session (elmo-imap4-get-session spec)))
+(defun elmo-imap4-server-diff-async (folder)
+  (let ((session (elmo-imap4-get-session folder)))
+    ;; We should `check' folder to obtain newest information here.
+    ;; But since there's no asynchronous check mechanism in elmo yet,
+    ;; checking is not done here.
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback
+	    'elmo-imap4-server-diff-async-callback-1)
+      (setq elmo-imap4-status-callback-data
+	    elmo-imap4-server-diff-async-callback-data))
+    (elmo-imap4-send-command session
+			     (list
+			      "status "
+			      (elmo-imap4-mailbox
+			       (elmo-imap4-folder-mailbox-internal folder))
+			      " (unseen messages)"))))
+
+(luna-define-method elmo-server-diff-async ((folder elmo-imap4-folder))
+  (let ((session (elmo-imap4-get-session folder)))
     ;; commit.
     ;; (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
@@ -1529,57 +1120,8 @@ If optional argument UNMARK is non-nil, unmark."
 			     (list
 			      "status "
 			      (elmo-imap4-mailbox
-			       (elmo-imap4-spec-mailbox spec))
+			       (elmo-imap4-folder-mailbox-internal folder))
 			      " (unseen messages)"))))
-
-(defun elmo-imap4-server-diff (spec)
-  "Get server status"
-  (let ((session (elmo-imap4-get-session spec))
-	response)
-    ;; commit.
-;;; (elmo-imap4-commit spec)
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-status-callback nil)
-      (setq elmo-imap4-status-callback-data nil))
-    (setq response
-	  (elmo-imap4-send-command-wait session
-					(list
-					 "status "
-					 (elmo-imap4-mailbox
-					  (elmo-imap4-spec-mailbox spec))
-					 " (unseen messages)")))
-    (setq response (elmo-imap4-response-value response 'status))
-    (cons (elmo-imap4-response-value response 'unseen)
-	  (elmo-imap4-response-value response 'messages))))
-
-(defun elmo-imap4-use-cache-p (spec number)
-  elmo-imap4-use-cache)
-
-(defun elmo-imap4-local-file-p (spec number)
-  nil)
-
-(defun elmo-imap4-port-label (spec)
-  (concat "imap4"
-	  (if (elmo-imap4-spec-stream-type spec)
-	      (concat "!" (symbol-name
-			   (elmo-network-stream-type-symbol
-			    (elmo-imap4-spec-stream-type spec)))))))
-	      
-
-(defsubst elmo-imap4-portinfo (spec)
-  (list (elmo-imap4-spec-hostname spec) (elmo-imap4-spec-port spec)))
-
-(defun elmo-imap4-plugged-p (spec)
-  (apply 'elmo-plugged-p
-	 (append (elmo-imap4-portinfo spec)
-		 (list nil (quote (elmo-imap4-port-label spec))))))
-
-(defun elmo-imap4-set-plugged (spec plugged add)
-  (apply 'elmo-set-plugged plugged
-	 (append (elmo-imap4-portinfo spec)
-		 (list nil nil (quote (elmo-imap4-port-label spec)) add))))
-
-(defalias 'elmo-imap4-sync-number-alist 'elmo-generic-sync-number-alist)
 
 ;;; IMAP parser.
 
@@ -1588,6 +1130,8 @@ If optional argument UNMARK is non-nil, unmark."
 
 (defvar elmo-imap4-client-eol "\r\n"
   "The EOL string we send to the server.")
+
+(defvar elmo-imap4-display-literal-progress nil)
 
 (defun elmo-imap4-find-next-line ()
   "Return point at end of current line, taking into account literals.
@@ -1950,7 +1494,8 @@ Return nil if no complete line has arrived."
 		       (list 'bodystructure (elmo-imap4-parse-body)))))
 	  (setq list (cons element list))))
       (and elmo-imap4-fetch-callback
-	   (elmo-imap4-fetch-callback list elmo-imap4-fetch-callback-data))
+	   (funcall elmo-imap4-fetch-callback 
+		    list elmo-imap4-fetch-callback-data))
       (list 'fetch list))))
 
 (defun elmo-imap4-parse-status ()
@@ -2202,6 +1747,778 @@ Return nil if no complete line has arrived."
 	(elmo-imap4-forward)
 	(nreverse body)))))
 
+(luna-define-method elmo-folder-initialize :around ((folder
+						     elmo-imap4-folder)
+						    name)
+  (let ((default-user        elmo-imap4-default-user)
+	(default-server      elmo-imap4-default-server)
+	(default-port        elmo-imap4-default-port)
+	(elmo-network-stream-type-alist
+	 (if elmo-imap4-stream-type-alist
+	     (append elmo-imap4-stream-type-alist
+		     elmo-network-stream-type-alist)
+	   elmo-network-stream-type-alist)))
+    (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
+      ;; case: imap4-default-server is specified like
+      ;; "hoge%imap.server@gateway".
+      (setq default-user (elmo-match-string 1 default-server))
+      (setq default-server (elmo-match-string 2 default-server)))
+    (setq name (luna-call-next-method))
+    (when (string-match
+	   "^\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
+	   name)
+      (progn
+	(if (match-beginning 1)
+	    (progn
+	      (elmo-imap4-folder-set-mailbox-internal
+	       folder
+	       (elmo-match-string 1 name))
+	      (if (eq (length (elmo-imap4-folder-mailbox-internal folder))
+		      0)
+		  ;; No information is specified other than folder type.
+		  (elmo-imap4-folder-set-mailbox-internal
+		   folder
+		   elmo-imap4-default-mailbox)))
+	  (elmo-imap4-folder-set-mailbox-internal
+	   folder
+	   elmo-imap4-default-mailbox))
+	;; Setup slots for elmo-net-folder.
+	(elmo-net-folder-set-user-internal
+	 folder
+	 (if (match-beginning 2)
+	     (elmo-match-substring 2 name 1)
+	   default-user))
+	(elmo-net-folder-set-auth-internal
+	 folder
+	 (if (match-beginning 3)
+	     (intern (elmo-match-substring 3 name 1))
+	   (or elmo-imap4-default-authenticate-type 'clear)))
+	(unless (elmo-net-folder-server-internal folder)
+	  (elmo-net-folder-set-server-internal folder default-server))
+	(unless (elmo-net-folder-port-internal folder)
+	  (elmo-net-folder-set-port-internal folder default-port))
+	(unless (elmo-net-folder-stream-type-internal folder)
+	  (elmo-net-folder-set-stream-type-internal
+	   folder
+	   elmo-imap4-default-stream-type))
+	folder))))
+
+;;; ELMO IMAP4 folder
+(luna-define-method elmo-folder-expand-msgdb-path ((folder
+						    elmo-imap4-folder))
+  (convert-standard-filename
+   (let ((mailbox (elmo-imap4-folder-mailbox-internal folder)))
+     (if (string= "inbox" (downcase mailbox))
+	 (setq mailbox "inbox"))
+     (if (eq (string-to-char mailbox) ?/)
+	 (setq mailbox (substring mailbox 1 (length mailbox))))
+     (expand-file-name
+      mailbox
+      (expand-file-name
+       (or (elmo-net-folder-user-internal folder) "nobody")
+       (expand-file-name (or (elmo-net-folder-server-internal folder)
+			     "nowhere")
+			 (expand-file-name
+			  "imap"
+			  elmo-msgdb-dir)))))))
+
+(luna-define-method elmo-folder-status-plugged ((folder
+						 elmo-imap4-folder))
+  (elmo-imap4-folder-status-plugged folder))
+
+(defun elmo-imap4-folder-status-plugged (folder)
+  (let ((session (elmo-imap4-get-session folder))
+	(killed (elmo-msgdb-killed-list-load
+		 (elmo-folder-msgdb-path folder)))
+	status)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback nil)
+      (setq elmo-imap4-status-callback-data nil))
+    (setq status (elmo-imap4-response-value
+		  (elmo-imap4-send-command-wait
+		   session
+		   (list "status "
+			 (elmo-imap4-mailbox
+			  (elmo-imap4-folder-mailbox-internal folder))
+			 " (uidnext messages)"))
+		  'status))
+    (cons
+     (- (elmo-imap4-response-value status 'uidnext) 1)
+     (if killed
+	 (-
+	  (elmo-imap4-response-value status 'messages)
+	  (elmo-msgdb-killed-list-length killed))
+       (elmo-imap4-response-value status 'messages)))))
+
+(luna-define-method elmo-folder-list-messages-plugged ((folder
+							elmo-imap4-folder)
+						       &optional nohide)
+  (elmo-imap4-list folder
+		   (let ((max (elmo-msgdb-max-of-killed
+			       (elmo-folder-killed-list-internal folder))))
+		     (if (or nohide
+			     (null (eq max 0)))
+			 (format "uid %d:*" (1+ max))
+		       "all"))))
+
+(luna-define-method elmo-folder-list-unreads-plugged
+  ((folder elmo-imap4-folder))
+  (elmo-imap4-list folder "unseen"))
+
+(luna-define-method elmo-folder-list-importants-plugged
+  ((folder elmo-imap4-folder))
+  (elmo-imap4-list folder "flagged"))
+
+(luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
+  (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
+		     (elmo-imap4-folder-mailbox-internal folder))))
+
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-imap4-folder)
+						 &optional one-level)
+  (let* ((root (elmo-imap4-folder-mailbox-internal folder))
+	 (session (elmo-imap4-get-session folder))
+	 (prefix (elmo-folder-prefix-internal folder))
+	 (delim (or
+		 (cdr
+		  (elmo-string-matched-assoc
+		   root
+		   (with-current-buffer (elmo-network-session-buffer session)
+		     elmo-imap4-server-namespace)))
+		 elmo-imap4-default-hierarchy-delimiter))
+	 result append-serv type)
+    ;; Append delimiter
+    (if (and root
+	     (not (string= root ""))
+	     (not (string-match (concat "\\(.*\\)"
+					(regexp-quote delim)
+					"\\'")
+				root)))
+	(setq root (concat root delim)))
+    (setq result (elmo-imap4-response-get-selectable-mailbox-list
+		  (elmo-imap4-send-command-wait
+		   session
+		   (list "list " (elmo-imap4-mailbox root) " *"))))
+    (unless (string= (elmo-net-folder-user-internal folder)
+		     elmo-imap4-default-user)
+      (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
+    (unless (eq (elmo-net-folder-auth-internal folder)
+		(or elmo-imap4-default-authenticate-type 'clear))
+      (setq append-serv 
+	    (concat append-serv "/"
+		    (symbol-name (elmo-net-folder-auth-internal folder)))))
+    (unless (string= (elmo-net-folder-server-internal folder)
+		     elmo-imap4-default-server)
+      (setq append-serv (concat append-serv "@" 
+				(elmo-net-folder-server-internal folder))))
+    (unless (eq (elmo-net-folder-port-internal folder) elmo-imap4-default-port)
+      (setq append-serv (concat append-serv ":"
+				(int-to-string
+				 (elmo-net-folder-port-internal folder)))))
+    (setq type (elmo-net-folder-stream-type-internal folder))
+    (unless (eq (elmo-network-stream-type-symbol type)
+		elmo-imap4-default-stream-type)
+      (if type
+	  (setq append-serv (concat append-serv
+				    (elmo-network-stream-type-spec-string
+				     type)))))
+    (if one-level
+	(let (folder folders ret)
+	  (while (setq folders (car result))
+	    (if (prog1 
+		    (string-match
+		     (concat "^\\(" root "[^" delim "]" "+\\)" delim)
+			  folders)
+		  (setq folder (match-string 1 folders)))
+		(progn
+		  (setq ret 
+			(append ret 
+				(list 
+				 (list
+				  (concat 
+				   prefix
+				   (elmo-imap4-decode-folder-string folder)
+				   (and append-serv
+					(eval append-serv)))))))
+		  (setq result
+			(delq 
+			 nil
+			 (mapcar '(lambda (fld)
+				    (unless
+					(string-match
+					 (concat "^" (regexp-quote folder) delim)
+					 fld)
+				      fld))
+				 result))))
+	      (setq ret (append
+			 ret 
+			 (list 
+			  (concat prefix
+				  (elmo-imap4-decode-folder-string folders)
+				  (and append-serv
+				       (eval append-serv))))))
+	      (setq result (cdr result))))
+	  ret)
+      (mapcar (lambda (fld)
+		(concat prefix (elmo-imap4-decode-folder-string fld)
+			(and append-serv
+			     (eval append-serv))))
+	      result))))
+
+(luna-define-method elmo-folder-exists-p-plugged ((folder elmo-imap4-folder))
+  (let ((session (elmo-imap4-get-session folder)))
+    (if (string=
+	 (elmo-imap4-session-current-mailbox-internal session)
+	 (elmo-imap4-folder-mailbox-internal folder))
+	t
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder)
+       'force 'no-error))))
+
+(luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
+  (let ((session (elmo-imap4-get-session folder))
+	msgs)
+    (when (elmo-imap4-folder-mailbox-internal folder)
+      (when (setq msgs (elmo-folder-list-messages folder))
+	(elmo-folder-delete-messages folder msgs))
+      (elmo-imap4-send-command-wait session "close")
+      (elmo-imap4-send-command-wait
+       session
+       (list "delete "
+	     (elmo-imap4-mailbox
+	      (elmo-imap4-folder-mailbox-internal folder)))))))
+
+(luna-define-method elmo-folder-rename-internal ((folder elmo-imap4-folder)
+						 new-folder)
+  (let ((session (elmo-imap4-get-session folder)))
+    ;; make sure the folder is selected.
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (elmo-imap4-send-command-wait session "close")
+    (elmo-imap4-send-command-wait
+     session
+     (list "rename "
+	   (elmo-imap4-mailbox
+	    (elmo-imap4-folder-mailbox-internal folder))
+	   " "
+	   (elmo-imap4-mailbox
+	    (elmo-imap4-folder-mailbox-internal new-folder))))))
+
+(defun elmo-imap4-copy-messages (src-folder dst-folder numbers)
+  (let ((session (elmo-imap4-get-session src-folder))
+	(set-list (elmo-imap4-make-number-set-list numbers)))
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					src-folder))
+    (when set-list
+      (if (elmo-imap4-send-command-wait session
+					(list
+					 (format
+					  (if elmo-imap4-use-uid
+					      "uid copy %s "
+					    "copy %s ")
+					  (cdr (car set-list)))
+					 (elmo-imap4-mailbox
+					  (elmo-imap4-folder-mailbox-internal
+					   dst-folder))))
+	  numbers))))
+
+(defun elmo-imap4-set-flag (folder numbers flag &optional remove)
+  "Set flag on messages.
+FOLDER is the ELMO folder structure.
+NUMBERS is the message numbers to be flagged.
+FLAG is the flag name.
+If optional argument REMOVE is non-nil, remove FLAG."
+  (let ((session (elmo-imap4-get-session folder))
+	set-list)
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (setq set-list (elmo-imap4-make-number-set-list numbers))
+    (when set-list
+      (with-current-buffer (elmo-network-session-buffer session)
+	(setq elmo-imap4-fetch-callback nil)
+	(setq elmo-imap4-fetch-callback-data nil))
+      (elmo-imap4-send-command-wait
+       session
+       (format
+	(if elmo-imap4-use-uid
+	    "uid store %s %sflags.silent (%s)"
+	  "store %s %sflags.silent (%s)")
+	(cdr (car set-list))
+	(if remove "-" "+")
+	flag)))))
+
+(luna-define-method elmo-folder-delete-messages-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (let ((session (elmo-imap4-get-session folder)))
+    (elmo-imap4-set-flag folder numbers "\\Deleted")
+    (elmo-imap4-send-command-wait session "expunge")))
+
+(defmacro elmo-imap4-detect-search-charset (string)
+  (` (with-temp-buffer
+       (insert (, string))
+       (detect-mime-charset-region (point-min) (point-max)))))
+
+(defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
+  (let ((search-key (elmo-filter-key filter))
+	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
+	charset)
+    (cond
+     ((string= "last" search-key)
+      (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
+	(nthcdr (max (- (length numbers)
+			(string-to-int (elmo-filter-value filter)))
+		     0)
+		numbers)))
+     ((string= "first" search-key)
+      (let* ((numbers (or from-msgs (elmo-folder-list-messages folder)))
+	     (rest (nthcdr (string-to-int (elmo-filter-value filter) )
+			   numbers)))
+	(mapcar '(lambda (x) (delete x numbers)) rest)
+	numbers))
+     ((or (string= "since" search-key)
+	  (string= "before" search-key))
+      (setq search-key (concat "sent" search-key))
+      (elmo-imap4-response-value
+       (elmo-imap4-send-command-wait session
+				     (format
+				      (if elmo-imap4-use-uid
+					  "uid search %s%s%s %s"
+					"search %s%s%s %s")
+				      (if from-msgs
+					  (concat
+					   (if elmo-imap4-use-uid "uid ")
+					   (cdr
+					    (car 
+					     (elmo-imap4-make-number-set-list
+					      from-msgs)))
+					   " ")
+					"")
+				      (if (eq (elmo-filter-type filter)
+					      'unmatch)
+					  "not " "")
+				      search-key
+				      (elmo-date-get-description
+				       (elmo-date-get-datevec
+					(elmo-filter-value filter)))))
+       'search))
+     (t
+      (setq charset
+	    (if (eq (length (elmo-filter-value filter)) 0)
+		(setq charset 'us-ascii)
+	      (elmo-imap4-detect-search-charset
+	       (elmo-filter-value filter))))
+      (elmo-imap4-response-value
+       (elmo-imap4-send-command-wait session
+				     (list
+				      (if elmo-imap4-use-uid "uid ")
+				      "search "
+				      "CHARSET "
+				      (elmo-imap4-astring
+				       (symbol-name charset))
+				      " "
+				      (if from-msgs
+					  (concat
+					   (if elmo-imap4-use-uid "uid ")
+					   (cdr
+					    (car
+					     (elmo-imap4-make-number-set-list
+					      from-msgs)))
+					   " ")
+					"")
+				      (if (eq (elmo-filter-type filter)
+					      'unmatch)
+					  "not " "")
+				      (format "%s%s "
+					      (if (member
+						   (elmo-filter-key filter)
+						   imap-search-keys)
+						  ""
+						"header ")
+					      (elmo-filter-key filter))
+				      (elmo-imap4-astring
+				       (encode-mime-charset-string
+					(elmo-filter-value filter) charset))))
+       'search)))))
+
+(defun elmo-imap4-search-internal (folder session condition from-msgs)
+  (let (result)
+    (cond
+     ((vectorp condition)
+      (setq result (elmo-imap4-search-internal-primitive
+		    folder session condition from-msgs)))
+     ((eq (car condition) 'and)
+      (setq result (elmo-imap4-search-internal folder session (nth 1 condition)
+					       from-msgs)
+	    result (elmo-list-filter result
+				     (elmo-imap4-search-internal
+				      folder session (nth 2 condition)
+				      from-msgs))))
+     ((eq (car condition) 'or)
+      (setq result (elmo-imap4-search-internal
+		    folder session (nth 1 condition) from-msgs)
+	    result (elmo-uniq-list
+		    (nconc result
+			   (elmo-imap4-search-internal
+			    folder session (nth 2 condition) from-msgs)))
+	    result (sort result '<))))))
+    
+(luna-define-method elmo-folder-search ((folder elmo-imap4-folder)
+					condition &optional numbers)
+  (save-excursion
+    (let ((session (elmo-imap4-get-session folder)))
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder))
+      (elmo-imap4-search-internal folder session condition numbers))))
+
+(luna-define-method elmo-folder-msgdb-create-plugged
+  ((folder elmo-imap4-folder) numbers &rest args)
+  (when numbers
+    (let ((session (elmo-imap4-get-session folder))
+	  (headers
+	   (append
+	    '("Subject" "From" "To" "Cc" "Date"
+	      "Message-Id" "References" "In-Reply-To")
+	    elmo-msgdb-extra-fields))
+	  (total 0)
+	  (length (length numbers))
+	  rfc2060 set-list)
+      (setq rfc2060 (memq 'imap4rev1
+			  (elmo-imap4-session-capability-internal
+			   session)))
+      (message "Getting overview...")
+      (elmo-imap4-session-select-mailbox
+       session (elmo-imap4-folder-mailbox-internal folder))
+      (setq set-list (elmo-imap4-make-number-set-list
+		      numbers
+		      elmo-imap4-overview-fetch-chop-length))
+      ;; Setup callback.
+      (with-current-buffer (elmo-network-session-buffer session)
+	(setq elmo-imap4-current-msgdb nil
+	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
+	      elmo-imap4-fetch-callback-data (cons args
+						   (elmo-folder-use-flag-p
+						    folder)))
+	(while set-list
+	  (elmo-imap4-send-command-wait
+	   session
+	   ;; get overview entity from IMAP4
+	   (format "%sfetch %s (%s rfc822.size flags)"
+		   (if elmo-imap4-use-uid "uid " "")
+		   (cdr (car set-list))
+		   (if rfc2060
+		       (format "body.peek[header.fields %s]" headers)
+		     (format "%s" headers))))
+	  (when (> length elmo-display-progress-threshold)
+	    (setq total (+ total (car (car set-list))))
+	    (elmo-display-progress
+	     'elmo-imap4-msgdb-create "Getting overview..."
+	     (/ (* total 100) length)))
+	  (setq set-list (cdr set-list)))
+	(message "Getting overview...done")
+	elmo-imap4-current-msgdb))))
+
+(luna-define-method elmo-folder-unmark-important-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Flagged" 'remove))
+
+(luna-define-method elmo-folder-mark-as-important-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Flagged"))
+
+(luna-define-method elmo-folder-unmark-read-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Seen" 'remove))
+
+(luna-define-method elmo-folder-mark-as-read-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Seen"))
+
+(luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
+					      number)
+  elmo-imap4-use-cache)
+
+(luna-define-method elmo-folder-message-appendable-p ((folder elmo-imap4-folder))
+  (if (elmo-folder-plugged-p folder)
+      (not (elmo-imap4-session-read-only-internal
+	    (elmo-imap4-get-session folder)))
+    elmo-enable-disconnected-operation)) ; offline refile.
+					     
+(luna-define-method elmo-folder-check-plugged ((folder elmo-imap4-folder))
+  (let ((session (elmo-imap4-get-session folder 'if-exists)))
+    (when session
+      (if (string=
+	   (elmo-imap4-session-current-mailbox-internal session)
+	   (elmo-imap4-folder-mailbox-internal folder))
+	  (if elmo-imap4-use-select-to-update-status
+	      (elmo-imap4-session-select-mailbox
+	       session
+	       (elmo-imap4-folder-mailbox-internal folder)
+	       'force)	      
+	    (elmo-imap4-session-check session))))))
+
+(defsubst elmo-imap4-folder-diff-plugged (folder)
+  (let ((session (elmo-imap4-get-session folder))
+	messages
+	response killed)
+;;; (elmo-imap4-commit spec)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback nil)
+      (setq elmo-imap4-status-callback-data nil))
+    (setq response
+	  (elmo-imap4-send-command-wait session
+					(list
+					 "status "
+					 (elmo-imap4-mailbox
+					  (elmo-imap4-folder-mailbox-internal
+					   folder))
+					 " (unseen messages)")))
+    (setq response (elmo-imap4-response-value response 'status))
+    (setq messages (elmo-imap4-response-value response 'messages))
+    (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
+    (if killed
+	(setq messages (- messages
+			  (elmo-msgdb-killed-list-length
+			   killed))))
+    (cons (elmo-imap4-response-value response 'unseen)
+	  messages)))
+
+(luna-define-method elmo-folder-diff-plugged ((folder elmo-imap4-folder))
+  (elmo-imap4-folder-diff-plugged folder))
+
+(luna-define-method elmo-folder-diff-async ((folder elmo-imap4-folder)
+					    &optional number-alist)
+  (setq elmo-imap4-server-diff-async-callback
+	elmo-folder-diff-async-callback)
+  (setq elmo-imap4-server-diff-async-callback-data
+	elmo-folder-diff-async-callback-data)
+  (elmo-imap4-server-diff-async folder))
+
+(luna-define-method elmo-folder-open :around ((folder elmo-imap4-folder)
+					      &optional load-msgdb)
+  (if (elmo-folder-plugged-p folder)
+      (let (session mailbox msgdb response tag)
+	(condition-case err
+	    (progn
+	      (setq session (elmo-imap4-get-session folder)
+		    mailbox (elmo-imap4-folder-mailbox-internal folder)
+		    tag (elmo-imap4-send-command session
+						 (list "select "
+						       (elmo-imap4-mailbox
+							mailbox))))
+	      (if load-msgdb
+		  (setq msgdb (elmo-msgdb-load folder)))
+	      (elmo-folder-set-killed-list-internal
+	       folder
+	       (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
+	      (setq response (elmo-imap4-read-response session tag)))
+	  (quit
+	   (if response
+	       (elmo-imap4-session-set-current-mailbox-internal
+		session mailbox)
+	     (and session
+		  (elmo-imap4-session-set-current-mailbox-internal 
+		   session nil))))
+	  (error
+	   (if response
+	       (elmo-imap4-session-set-current-mailbox-internal
+		session mailbox)
+	     (and session
+		  (elmo-imap4-session-set-current-mailbox-internal
+		   session nil)))))
+	(if load-msgdb
+	    (elmo-folder-set-msgdb-internal
+	     folder
+	     (or msgdb (elmo-msgdb-load folder)))))
+    (luna-call-next-method)))
+
+;; elmo-folder-open-internal: do nothing.
+
+(luna-define-method elmo-find-fetch-strategy
+  ((folder elmo-imap4-folder) entity &optional ignore-cache)
+  (let ((number (elmo-msgdb-overview-entity-get-number entity))
+	cache-file size message-id)
+    (setq size (elmo-msgdb-overview-entity-get-size entity))
+    (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+    (setq cache-file (elmo-file-cache-get message-id))
+    (if (or ignore-cache
+	    (null (elmo-file-cache-status cache-file)))
+	(if (and elmo-message-fetch-threshold
+		 (integerp size)
+		 (>= size elmo-message-fetch-threshold)
+		 (or (not elmo-message-fetch-confirm)
+		     (not (prog1 (y-or-n-p
+				  (format
+				   "Fetch entire message at once? (%dbytes)"
+				   size))
+			    (message "")))))
+	    ;; Fetch message as imap message.
+	    (elmo-make-fetch-strategy 'section
+				      nil
+				      (elmo-message-use-cache-p
+				       folder number)
+				      (elmo-file-cache-path
+				       cache-file))
+	  ;; Don't use existing cache and fetch entire message at once.
+	  (elmo-make-fetch-strategy 'entire nil
+				    (elmo-message-use-cache-p
+				     folder number)
+				    (elmo-file-cache-path cache-file)))
+      ;; Cache found and use it.
+      (if (not ignore-cache)
+	  (if (eq (elmo-file-cache-status cache-file) 'section)
+	      ;; Fetch message with imap message.
+	      (elmo-make-fetch-strategy 'section
+					t
+					(elmo-message-use-cache-p
+					 folder number)
+					(elmo-file-cache-path
+					 cache-file))
+	    (elmo-make-fetch-strategy 'entire
+				      t
+				      (elmo-message-use-cache-p
+				       folder number)
+				      (elmo-file-cache-path
+				       cache-file)))))))
+
+(luna-define-method elmo-folder-create ((folder elmo-imap4-folder))
+  (elmo-imap4-send-command-wait
+   (elmo-imap4-get-session folder)
+   (list "create "
+	 (elmo-imap4-mailbox
+	  (elmo-imap4-folder-mailbox-internal folder)))))
+
+(luna-define-method elmo-folder-append-buffer
+  ((folder elmo-imap4-folder) unread &optional number)
+  (if (elmo-folder-plugged-p folder)
+      (let ((session (elmo-imap4-get-session folder))
+	    send-buffer result)
+	(elmo-imap4-session-select-mailbox session
+					   (elmo-imap4-folder-mailbox-internal
+					    folder))
+	(setq send-buffer (elmo-imap4-setup-send-buffer))
+	(unwind-protect
+	    (setq result
+		  (elmo-imap4-send-command-wait
+		   session
+		   (list
+		    "append "
+		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
+					 folder))
+		    (if unread " " " (\\Seen) ")
+		    (elmo-imap4-buffer-literal send-buffer))))
+	  (kill-buffer send-buffer))
+	result)
+    ;; Unplugged
+    (if elmo-enable-disconnected-operation
+	(elmo-folder-append-buffer-dop folder unread number)
+      (error "Unplugged"))))
+
+(eval-when-compile
+  (defmacro elmo-imap4-identical-system-p (folder1 folder2)
+    "Return t if FOLDER1 and FOLDER2 are in the same IMAP4 system."
+    (` (and (string= (elmo-net-folder-server-internal (, folder1))
+		     (elmo-net-folder-server-internal (, folder2)))
+	    (eq (elmo-net-folder-port-internal (, folder1))
+		(elmo-net-folder-port-internal (, folder2)))
+	    (string= (elmo-net-folder-user-internal (, folder1))
+		     (elmo-net-folder-user-internal (, folder2)))))))
+
+(luna-define-method elmo-folder-append-messages :around
+  ((folder elmo-imap4-folder) src-folder numbers unread-marks
+   &optional same-number)
+  (if (and (eq (elmo-folder-type-internal src-folder) 'imap4)
+	   (elmo-imap4-identical-system-p folder src-folder)
+	   (elmo-folder-plugged-p folder))
+      ;; Plugged
+      (elmo-imap4-copy-messages src-folder folder numbers)
+    (luna-call-next-method)))
+
+(luna-define-method elmo-message-deletable-p ((folder elmo-imap4-folder)
+					      number)
+  (if (elmo-folder-plugged-p folder)
+      (not (elmo-imap4-session-read-only-internal
+	    (elmo-imap4-get-session folder)))
+    elmo-enable-disconnected-operation)) ; offline refile.
+
+;(luna-define-method elmo-message-fetch-unplugged
+;  ((folder elmo-imap4-folder)
+;   number strategy  &optional section outbuf unseen)
+;  (error "%d%s is not cached." number (if section
+;					  (format "(%s)" section)
+;					"")))
+
+(defsubst elmo-imap4-message-fetch (folder number strategy
+					   section outbuf unseen)
+  (let ((session (elmo-imap4-get-session folder))
+	response)
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-fetch-callback nil)
+      (setq elmo-imap4-fetch-callback-data nil))
+    (unless elmo-inhibit-display-retrieval-progress
+      (setq elmo-imap4-display-literal-progress t))
+    (unwind-protect
+	(setq response
+	      (elmo-imap4-send-command-wait session
+					    (format
+					     (if elmo-imap4-use-uid
+						 "uid fetch %s body%s[%s]"
+					       "fetch %s body%s[%s]")
+					     number
+					     (if unseen ".peek" "")
+					     (or section "")
+					     )))
+      (setq elmo-imap4-display-literal-progress nil))
+    (unless elmo-inhibit-display-retrieval-progress
+      (elmo-display-progress 'elmo-imap4-display-literal-progress
+			     "" 100)  ; remove progress bar.
+      (message "Retrieving...done."))
+    (if (setq response (elmo-imap4-response-bodydetail-text
+			(elmo-imap4-response-value-all
+			 response 'fetch)))
+	(with-current-buffer outbuf
+	  (erase-buffer)
+	  (insert response)))))
+
+(luna-define-method elmo-message-fetch-plugged ((folder elmo-imap4-folder)
+						number strategy
+						&optional section 
+						outbuf unseen)
+  (elmo-imap4-message-fetch folder number strategy section outbuf unseen))
+
+(luna-define-method elmo-message-fetch-field ((folder elmo-imap4-folder)
+					      number field)
+  (let ((session (elmo-imap4-get-session folder)))
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-fetch-callback nil)
+      (setq elmo-imap4-fetch-callback-data nil))
+    (with-temp-buffer
+      (insert 
+       (elmo-imap4-response-bodydetail-text
+	(elmo-imap4-response-value
+	 (elmo-imap4-send-command-wait session
+				       (concat
+					(if elmo-imap4-use-uid
+					    "uid ")
+					(format
+					 "fetch %s (body.peek[header.fields (%s)])"
+					 number field)))
+	 'fetch)))
+      (elmo-delete-cr-buffer)
+      (goto-char (point-min))
+      (std11-field-body (symbol-name field)))))
+
+
+  
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))
 

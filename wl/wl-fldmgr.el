@@ -751,54 +751,57 @@ return value is diffs '(-new -unread -all)."
 
 (defvar wl-fldmgr-add-completion-hashtb (make-vector 7 0))
 
-(defun wl-fldmgr-add-completion-all-completions (string)
-  (let ((table
-	 (catch 'found
-	   (mapatoms
-	    (function
-	     (lambda (atom)
-	       (if (string-match (symbol-name atom) string)
-		   (throw 'found (symbol-value atom)))))
-	    wl-fldmgr-add-completion-hashtb)))
-	(pattern
-	 (if (string-match "\\.$"
-			   (car (elmo-network-get-spec
-				 string nil nil nil nil)))
-	     (substring string 0 (match-beginning 0))
-	   (concat string nil))))
-    (or table
-	(setq table (elmo-list-folders pattern))
-	(and table
-	     (or (/= (length table) 1)
-		 (elmo-folder-exists-p (car table))))
-	(setq pattern
-	      (if (string-match "\\.[^\\.]+$" string)
-		  (substring string 0 (match-beginning 0))
-		(char-to-string (aref string 0)))
-	      table (elmo-list-folders pattern)))
-    (setq pattern (concat "^" (regexp-quote pattern)))
-    (unless (intern-soft pattern wl-fldmgr-add-completion-hashtb)
-      (set (intern pattern wl-fldmgr-add-completion-hashtb) table))
-    table))
+;(defun wl-fldmgr-add-completion-all-completions (string)
+;  (let ((table
+;	 (catch 'found
+;	   (mapatoms
+;	    (function
+;	     (lambda (atom)
+;	       (if (string-match (symbol-name atom) string)
+;		   (throw 'found (symbol-value atom)))))
+;	    wl-fldmgr-add-completion-hashtb)))
+;	(pattern
+;	 (if (string-match "\\.$"
+;			   (car (elmo-network-get-spec
+;				 string nil nil nil nil)))
+;	     (substring string 0 (match-beginning 0))
+;	   (concat string nil))))
+;    (or table
+;	(setq table (elmo-folder-list-subfolders (wl-folder-get-elmo-folder
+;						  pattern)))
+;	(and table
+;	     (or (/= (length table) 1)
+;		 (elmo-folder-exists-p (wl-folder-get-elmo-folder
+;					(car table)))))
+;	(setq pattern
+;	      (if (string-match "\\.[^\\.]+$" string)
+;		  (substring string 0 (match-beginning 0))
+;		(char-to-string (aref string 0)))
+;	      table (elmo-folder-list-subfolders
+;		     (wl-folder-get-elmo-folder pattern))))
+;    (setq pattern (concat "^" (regexp-quote pattern)))
+;    (unless (intern-soft pattern wl-fldmgr-add-completion-hashtb)
+;      (set (intern pattern wl-fldmgr-add-completion-hashtb) table))
+;    table))
 
-(defun wl-fldmgr-add-completion-subr (string predicate flag)
-  (let ((table
-	 (if (string= string "")
-	     (mapcar (function (lambda (spec)
-				 (list (char-to-string (car spec)))))
-		     elmo-spec-alist)
-	   (when (assq (aref string 0) elmo-spec-alist)
-	     (delq nil (mapcar
-			(function list)
-			(condition-case nil
-			    (wl-fldmgr-add-completion-all-completions string)
-			  (error nil))))))))
-    (if (null flag)
-	(try-completion string table predicate)
-      (if (eq flag 'lambda)
-	  (eq t (try-completion string table predicate))
-	(if flag
-	    (all-completions string table predicate))))))
+;(defun wl-fldmgr-add-completion-subr (string predicate flag)
+;  (let ((table
+;	 (if (string= string "")
+;	     (mapcar (function (lambda (spec)
+;				 (list (char-to-string (car spec)))))
+;		     elmo-spec-alist)
+;	   (when (assq (aref string 0) elmo-spec-alist)
+;	     (delq nil (mapcar
+;			(function list)
+;			(condition-case nil
+;			    (wl-fldmgr-add-completion-all-completions string)
+;			  (error nil))))))))
+;    (if (null flag)
+;	(try-completion string table predicate)
+;      (if (eq flag 'lambda)
+;	  (eq t (try-completion string table predicate))
+;	(if flag
+;	    (all-completions string table predicate))))))
 
 (defun wl-fldmgr-add (&optional name)
   (interactive)
@@ -806,7 +809,7 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil)
 	  (inhibit-read-only t)
-	  (wl-folder-completion-func
+	  (wl-folder-completion-function
 	   (if wl-fldmgr-add-complete-with-current-folder-list
 	       (function wl-fldmgr-add-completion-subr)))
 	  tmp indent path diffs)
@@ -819,8 +822,7 @@ return value is diffs '(-new -unread -all)."
 	    (setq name (wl-fldmgr-read-string
 			(wl-summary-read-folder wl-default-folder "to add"))))
 	;; maybe add elmo-plugged-alist.
-	(when (stringp name)
-	  (elmo-folder-set-plugged name wl-plugged t))
+	(elmo-folder-set-plugged (wl-folder-get-elmo-folder name) wl-plugged t)
 	(when (setq diffs
 		    (wl-add-entity
 		     path (list name) wl-folder-entity (nth 3 tmp) t))
@@ -840,14 +842,15 @@ return value is diffs '(-new -unread -all)."
     (let* ((inhibit-read-only t)
 	   (tmp (wl-fldmgr-get-path-from-buffer))
 	   (entity (elmo-string (nth 4 tmp)))
-	   (msgs (and (elmo-folder-exists-p entity)
-		      (elmo-list-folder entity))))
+	   (folder (wl-folder-get-elmo-folder entity))
+	   (msgs (and (elmo-folder-exists-p folder)
+		      (elmo-folder-list-messages folder))))
       (when (yes-or-no-p (format "%sDo you really delete \"%s\"? "
 				 (if (> (length msgs) 0)
 				     (format "%d msg(s) exists. " (length msgs))
 				   "")
 				 entity))
-	(elmo-delete-folder entity)
+	(elmo-folder-delete folder)
 	(wl-fldmgr-cut tmp nil t)))))
 
 (defun wl-fldmgr-rename ()
@@ -901,9 +904,11 @@ return value is diffs '(-new -unread -all)."
 		(wl-fldmgr-read-string
 		 (wl-summary-read-folder old-folder "to rename" t t old-folder)))
 	  (if (or (wl-folder-entity-exists-p new-folder)
-		  (file-exists-p (elmo-msgdb-expand-path new-folder)))
+		  (file-exists-p (elmo-folder-msgdb-path
+				  (wl-folder-get-elmo-folder new-folder))))
 	      (error "Already exists folder: %s" new-folder))
-	  (elmo-rename-folder old-folder new-folder)
+	  (elmo-folder-rename (wl-folder-get-elmo-folder old-folder)
+			      (wl-folder-get-elmo-folder new-folder))
 	  (wl-folder-set-entity-info
 	   new-folder
 	   (wl-folder-get-entity-info old-folder))
@@ -970,9 +975,10 @@ return value is diffs '(-new -unread -all)."
 		  (message "Can't make multi included group folder")
 		  (throw 'done nil))
 		 (t
-		  (let ((spec (elmo-folder-get-spec (car cut-entity)))
+		  (let ((folder (wl-folder-get-elmo-folder
+				 (car cut-entity)))
 			multi-fld)
-		    (if (eq (car spec) 'multi)
+		    (if (eq (elmo-folder-type-internal folder) 'multi)
 			(setq multi-fld
 			      (substring (car cut-entity) 1)))
 		    (setq new-entity
@@ -1017,7 +1023,7 @@ return value is diffs '(-new -unread -all)."
 		      (wl-folder-get-realname (wl-match-buffer 3))
 		      wl-folder-entity))
 	(message "Sorting...")
-	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-func))
+	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
 	(setcar (cddr entity) flist)
 	(wl-fldmgr-add-modified-access-list (car entity))
 	(setq wl-fldmgr-modified t)

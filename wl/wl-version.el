@@ -46,8 +46,13 @@
    "Wanderlust" nil
    (eval-when-compile
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
-   "Smooth"))
+   "Too Funky"))
 
+(defconst wl-version-status nil
+  "Wanderlust verstion status.  For override default rule.
+If nil, use default rule.")
+
+
 ;; set version-string
 (product-version-as-string 'wl-version)
 
@@ -62,22 +67,12 @@
 	(message "%s" product-info)
       product-info)))
 
-(defvar wl-version-status-alist
-  '(((zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))
-     . "stable")
-    (t . "beta"))
-  "An alist to define the version status.")
-
 (defun wl-version-status ()
-  "Return version status (\"stable\" or \"beta\")."
-  (let ((salist wl-version-status-alist)
-	status)
-    (while salist
-      (when (eval (car (car salist)))
-	(setq status (cdr (car salist)))
-	(setq salist nil))
-      (setq salist (cdr salist)))
-    status))
+  "Return version status string."
+  (or wl-version-status
+      (if (zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))
+	  "stable"
+	"beta")))
 
 ;; avoid compile warnings
 (defvar mule-version)
@@ -90,7 +85,7 @@
 (defvar mime-editor/codename)
 
 (defun wl-generate-user-agent-string ()
-  "A candidate of `wl-generate-mailer-string-func'.
+  "A candidate of `wl-generate-mailer-string-function'.
 Insert User-Agent field instead of X-Mailer field."
   (concat "User-Agent: "
 	  (wl-generate-user-agent-string-1
