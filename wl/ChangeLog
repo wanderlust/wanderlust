@@ -7,6 +7,9 @@
 	original buffer which corresponds current mime-view buffer.
 	(fetched buffer might have different structure, possibly)
 
+	* wl-mime.el (wl-message-delete-current-part): Quit if the
+	message content differs from the actual message.
+
 2002-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-insert-headers): Put alike hash in reverse

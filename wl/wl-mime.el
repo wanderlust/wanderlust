@@ -184,6 +184,12 @@ By setting following-method as yank-content."
 	 (number wl-message-buffer-cur-number)
 	 (msgid (elmo-message-field folder number 'message-id))
 	 (orig-buf wl-message-buffer-original-buffer))
+    (with-current-buffer orig-buf
+      (unless (string-equal
+	       (buffer-string)
+	       (elmo-message-fetch folder number
+				   (elmo-make-fetch-strategy 'entire)))
+	(error "Buffer content differs from actual message")))
     (when (and (elmo-folder-writable-p folder)
 	       (buffer-live-p orig-buf)
 	       node-id
