@@ -3,7 +3,7 @@
 
 ;; Emacs 21.3.50 or later
 (if (boundp 'utf-translate-cjk-mode)
-    (utf-translate-cjk-mode)
+    (utf-translate-cjk-mode 1)
   ;; Use Mule-UCS if installed
   (ignore-errors (require 'un-define)))
 

@@ -1,3 +1,7 @@
+2004-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* test-utf7.el (toplevel): Enable utf-translate-cjk-mode explicitly.
+
 2004-05-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* test-elmo-localdir.el
