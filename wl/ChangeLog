@@ -1,3 +1,15 @@
+2000-04-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-summary-burst-subr): Renamed from `wl-burst'.
+	Added argument `target' and `number'.
+	* tm-wl.el (wl-summary-burst-subr): New function.
+	(wl-summary-burst): Use it.
+
+2000-04-10  Mito <mit@nines.nec.co.jp>
+
+	* wl-mime.el (wl-burst): New function.
+	(wl-summary-burst): Use it.
+
 2000-04-07  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
 
 	* wl-address.el (wl-address-petname-add-or-change): Use e-mail address

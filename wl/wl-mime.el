@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-23 15:53:53 teranisi>
+;; Time-stamp: <2000-04-10 23:49:34 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -206,12 +206,35 @@ By setting following-method as yank-content."
 (defalias 'wl-message-button-dispatcher 'mime-button-dispatcher)
 
 ;;; Summary
+(defun wl-summary-burst-subr (children target number)
+  ;; returns new number.
+  (let (content-type message-entity granch)
+    (while children
+      (setq content-type (mime-entity-content-type (car children)))
+      (if (eq (cdr (assq 'type content-type)) 'multipart)
+          (setq number (wl-summary-burst-subr 
+			(mime-entity-children (car children))
+			target
+			number))
+        (when (and (eq (cdr (assq 'type content-type)) 'message)
+                   (eq (cdr (assq 'subtype content-type)) 'rfc822))
+          (message (format "Bursting...%s" (setq number (+ 1 number))))
+          (setq message-entity
+                (car (mime-entity-children (car children))))
+          (save-restriction
+            (narrow-to-region (mime-entity-point-min message-entity)
+                              (mime-entity-point-max message-entity))
+            (elmo-append-msg target
+                             ;;(mime-entity-content (car children))))
+                             (buffer-substring (point-min) (point-max))
+                             (std11-field-body "Message-ID")))))
+      (setq children (cdr children)))
+    number))
+
 (defun wl-summary-burst ()
   (interactive)
   (let ((raw-buf (wl-message-get-original-buffer))
-	(i 0)
-	target 
-	children message-entity content-type)
+	children message-entity content-type target)
     (save-excursion
       (setq target wl-summary-buffer-folder-name)
       (while (not (elmo-folder-writable-p target))
@@ -223,27 +246,13 @@ By setting following-method as yank-content."
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
       (set-buffer raw-buf)
       (setq children (mime-entity-children message-entity))
-      (message "Bursting...")
-      (while children
-	(setq content-type (mime-entity-content-type (car children)))
-	(when (and (eq (cdr (assq 'type content-type)) 'message)
-		   (eq (cdr (assq 'subtype content-type)) 'rfc822))
-	  (message (format "Bursting...%s" (setq i (+ 1 i))))
-	  (setq message-entity
-		(car (mime-entity-children (car children))))
-	  (save-restriction
-	    (narrow-to-region (mime-entity-point-min message-entity)
-			      (mime-entity-point-max message-entity))
-	    (elmo-append-msg target
-			     ;;(mime-entity-content (car children))))
-			     (buffer-substring (point-min) (point-max))
-			     (std11-field-body "Message-ID"))))
-	(setq children (cdr children)))
-      (message "Bursting...done."))
-    (if (elmo-folder-plugged-p target)
-	(elmo-commit target))
+      (when children
+	(message "Bursting...")
+	(wl-summary-burst-subr children target 0)
+	(message "Bursting...done."))
+      (if (elmo-folder-plugged-p target)
+	  (elmo-commit target)))
     (wl-summary-sync-update3)))
-
 
 ;; internal variable.
 (defvar wl-mime-save-dir nil "Last saved directory.")
