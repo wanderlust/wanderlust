@@ -4266,7 +4266,7 @@ ignores uncached messages.
 
 
 @node Enable Operations, Plugged Mode, Off-line State, Disconnected Operations
-@section 
+@section Enable Disconeected Oparations
 
 Even in the off-line state, provided that relevant messages are cached,
 and the variable @code{elmo-enable-disconnected-operation} (described
