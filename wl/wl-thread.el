@@ -360,12 +360,8 @@ ENTITY is returned."
 
 (defun wl-thread-open-all-unread ()
   (interactive)
-  (dolist (number (elmo-folder-list-messages-mark-match
-		   wl-summary-buffer-elmo-folder
-		   (wl-regexp-opt (list elmo-msgdb-unread-uncached-mark
-					elmo-msgdb-unread-cached-mark
-					elmo-msgdb-new-mark
-					elmo-msgdb-important-mark))))
+  (dolist (number (elmo-folder-list-flagged wl-summary-buffer-elmo-folder
+					    'digest 'in-msgdb))
     (wl-thread-entity-force-open (wl-thread-get-entity number))))
 
 (defsubst wl-thread-maybe-get-children-num (msg)

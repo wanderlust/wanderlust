@@ -1,3 +1,26 @@
+2002-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-regexp-opt): Define as an alias for elmo-regexp-opt.
+
+	* wl-thread.el (wl-thread-open-all-unread): Use
+	elmo-folder-list-flagged instead of
+	elmo-folder-list-messages-mark-match.
+
+	* wl-summary.el (wl-summary-sync-marks): Use elmo-folder-list-flagged
+	instead of elmo-folder-list-messages-mark-match.
+	(wl-summary-move-spec-alist): New variable.
+	(wl-summary-move-spec-plugged-alist,
+	wl-summary-move-spec-unplugged-alist): Abolish.
+	(wl-summary-next-message): Follow the change above.
+	(wl-summary-save-view-cache): Call wl-summary-delete-all-temp-marks
+	with 'no-msg' argument.
+
+	* wl-message.el (wl-message-buffer-prefetch-move-spec-alist): New
+	variable.
+	(wl-message-buffer-prefetch-move-spec-plugged-alist,
+	wl-message-buffer-prefetch-move-spec-unplugged-alist): Abolish.
+	(wl-message-buffer-prefetch-get-next): Follow the change above.
+
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version): Changed codename.

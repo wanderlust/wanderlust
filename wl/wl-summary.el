@@ -1853,7 +1853,7 @@ If ARG is non-nil, checking is omitted."
   (let ((last-progress 0)
 	(folder wl-summary-buffer-elmo-folder)
 	(i 0)
-	importants unreads
+	answereds importants unreads answereds-in-db
 	importants-in-db unreads-in-db diff diffs
 	mes progress)
     ;; synchronize marks.
@@ -1861,12 +1861,15 @@ If ARG is non-nil, checking is omitted."
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq importants-in-db (elmo-folder-list-messages-mark-match
+      (setq importants-in-db (elmo-folder-list-flagged
 			      wl-summary-buffer-elmo-folder
-			      (regexp-quote elmo-msgdb-important-mark))
-	    unreads-in-db (elmo-folder-list-messages-mark-match
+			      'important 'in-msgdb)
+	    unreads-in-db (elmo-folder-list-flagged
 			   wl-summary-buffer-elmo-folder
-			   (wl-regexp-opt (elmo-msgdb-unread-marks)))
+			   'unread 'in-msgdb)
+	    answereds-in-db (elmo-folder-list-flagged
+			     wl-summary-buffer-elmo-folder
+			     'answered 'in-msgdb)
 	    importants (elmo-uniq-list
 			(nconc
 			 (elmo-folder-list-importants
@@ -4160,40 +4163,25 @@ If ARG, exit virtual folder."
 	(wl-match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
-(defvar wl-summary-move-spec-plugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, elmo-msgdb-new-mark))
-	      (p . (, (wl-regexp-opt
-		       (list elmo-msgdb-unread-uncached-mark
-			     elmo-msgdb-unread-cached-mark))))
-	      (p . (, (regexp-quote elmo-msgdb-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, (wl-regexp-opt
-			  (list elmo-msgdb-new-mark
-				elmo-msgdb-unread-uncached-mark
-				elmo-msgdb-unread-cached-mark))))
-		 (p . (, (regexp-quote elmo-msgdb-important-mark))))))))
-
-(defvar wl-summary-move-spec-unplugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, elmo-msgdb-unread-cached-mark))
-	      (p . (, (regexp-quote elmo-msgdb-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, elmo-msgdb-unread-cached-mark))
-		 (p . (, (regexp-quote elmo-msgdb-important-mark))))))))
+(defvar wl-summary-move-spec-alist
+  '((new . ((t . nil)
+	    (p . new)
+	    (p . unread)
+	    (p . important)))
+    (unread . ((t . nil)
+	       (p . unread)
+	       (p . important)))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (if wl-summary-buffer-next-message-function
       (funcall wl-summary-buffer-next-message-function num direction hereto)
     (let ((cur-spec (cdr (assq wl-summary-move-order
-			       (if (elmo-folder-plugged-p
-				    wl-summary-buffer-elmo-folder)
-				   wl-summary-move-spec-plugged-alist
-				 wl-summary-move-spec-unplugged-alist))))
+			       wl-summary-move-spec-alist)))
 	  (nums (memq num (if (eq direction 'up)
 			      (reverse wl-summary-buffer-number-list)
 			    wl-summary-buffer-number-list)))
-	  marked-list nums2)
+	  (plugged (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
+	  flagged-list nums2)
       (unless hereto (setq nums (cdr nums)))
       (setq nums2 nums)
       (if cur-spec
@@ -4201,12 +4189,16 @@ If ARG, exit virtual folder."
 	    (while cur-spec
 	      (setq nums nums2)
 	      (cond ((eq (car (car cur-spec)) 'p)
-		     (if (setq marked-list
-			       (elmo-folder-list-messages-mark-match
+		     (if (setq flagged-list
+			       (elmo-folder-list-flagged
 				wl-summary-buffer-elmo-folder
 				(cdr (car cur-spec))))
 			 (while nums
-			   (if (memq (car nums) marked-list)
+			   (if (and (memq (car nums) flagged-list)
+				    (or plugged
+					(elmo-message-cached-p
+					 wl-summary-buffer-elmo-folder
+					 (car nums))))
 			       (throw 'done (car nums)))
 			   (setq nums (cdr nums)))))
 		    ((eq (car (car cur-spec)) 't)
@@ -4276,7 +4268,7 @@ If ARG, exit virtual folder."
 		      wl-summary-buffer-copy-list copy-list
 		      wl-summary-buffer-delete-list delete-list
 		      wl-summary-buffer-temp-mark-column temp-column)
-		(wl-summary-delete-all-temp-marks)
+		(wl-summary-delete-all-temp-marks 'no-msg)
 		(encode-coding-region
 		 (point-min) (point-max)
 		 (or (and wl-on-mule ; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
