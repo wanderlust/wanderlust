@@ -1,5 +1,9 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-CFG (wl-news-lang): New variable.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* WL-MK (make-wl-news): New function.
 	(wl-news-parse-news): New function.
 	(wl-news-parse-news-ja): New function.
