@@ -1931,7 +1931,7 @@ If optional argument is non-nil, checking is omitted."
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i len))
 	      (elmo-display-progress
-	       'wl-summary-delete-messages-on-buffer "Deleting..."
+	       'wl-summary-delete-messages-on-buffer deleting-info
 	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
@@ -2217,7 +2217,7 @@ If optional argument is non-nil, checking is omitted."
 	(message "Deleting...")
 	(elmo-msgdb-delete-msgs folder delete-list msgdb t) ; reserve cache.
 	;;(set-buffer cur-buf)
-	(wl-summary-delete-messages-on-buffer delete-list t)
+	(wl-summary-delete-messages-on-buffer delete-list "Deleting...")
 	(message "Deleting...done."))
       ;;(set-buffer cur-buf)
       ;; Change "New" marks to "Uncached Unread" marks.
