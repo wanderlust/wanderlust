@@ -1,6 +1,6 @@
 ;;; rfc2368.el --- support for rfc 2368
 
-;;; Copyright 1999 Sen Nagata <sen@eccosys.com>
+;; Copyright (C) 1999 Sen Nagata <sen@eccosys.com>
 
 ;; Author: Sen Nagata <sen@eccosys.com>
 ;; Version: 0.3
