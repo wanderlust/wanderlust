@@ -282,13 +282,13 @@ If it is the symbol `all', update overview for all shimbun folders."
    folder nil))
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
-  (elmo-plugged-p
-   "shimbun"
-   (and (elmo-shimbun-folder-shimbun-internal folder)
-	(shimbun-server (elmo-shimbun-folder-shimbun-internal folder)))
-   nil nil
-   (and (elmo-shimbun-folder-shimbun-internal folder)
-	(shimbun-server (elmo-shimbun-folder-shimbun-internal folder)))))
+  (if (elmo-shimbun-folder-shimbun-internal folder)
+      (elmo-plugged-p
+       "shimbun"
+       (shimbun-server (elmo-shimbun-folder-shimbun-internal folder))
+       nil nil
+       (shimbun-server (elmo-shimbun-folder-shimbun-internal folder)))
+    t))
 
 (luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
 					     plugged &optional add)
