@@ -6252,13 +6252,11 @@ If you use @file{x-face-mule.el} in bitmap-mule
 @subsubsection x-face-e21 (for Emacs 21.x)
 @pindex x-face-e21
 
-If you use @file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/})
-with bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}),
+If you use @file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/}),
 do the following:
 
 @lisp
 @group
-(require 'bitmap)
 (autoload 'x-face-decode-message-header "x-face-e21")
 (setq wl-highlight-x-face-function 'x-face-decode-message-header)
 @end group

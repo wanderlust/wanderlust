@@ -6164,13 +6164,11 @@ bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0以降に
 @subsubsection x-face-e21 (Emacs 21.x の場合)
 @pindex x-face-e21
 
-bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) と
 @file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/}) を使う場合は以下の
 ように設定してください。
 
 @lisp
 @group
-(require 'bitmap)
 (autoload 'x-face-decode-message-header "x-face-e21")
 (setq wl-highlight-x-face-function 'x-face-decode-message-header)
 @end group
