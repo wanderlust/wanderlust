@@ -682,12 +682,13 @@ Return number if put mark succeed"
     ;; collected is a pair of
     ;; mark-string and a list of mark-info
     (dolist (pair collected)
-      (setq action (assoc (car pair) wl-summary-mark-action-list))
-      (when (and (cdr pair) (wl-summary-action-exec-function action))
-	(setq modified t)
-	(setq failures (+ failures (funcall
-				    (wl-summary-action-exec-function action)
-				    (cdr pair))))))
+      (when (cdr pair)
+	(setq action (assoc (car pair) wl-summary-mark-action-list))
+	(when (wl-summary-action-exec-function action)
+	  (setq modified t)
+	  (setq failures (+ failures (funcall
+				      (wl-summary-action-exec-function action)
+				      (cdr pair)))))))
     (when modified
       (wl-summary-set-message-modified))
     (run-hooks 'wl-summary-exec-hook)
