@@ -36,3 +36,23 @@
    (string=
     "QUFB"
     (elmo-base64-encode-string "AAA"))))
+
+;; Old base64 module on XEmacs 21.1
+;;  <http://lists.airs.net/wl/archive/200104/msg00150.html>
+(luna-define-method test-base64-encode-4 ((case test-env))
+  (require 'elmo-util)
+  (lunit-assert
+   (condition-case nil
+       (elmo-base64-encode-string "" t)
+     (wrong-number-of-arguments))))
+
+;;  <http://lists.airs.net/wl/archive/200107/msg00121.html>
+(luna-define-method test-base64-encode-5 ((case test-env))
+  (require 'mel)
+  (lunit-assert
+   (condition-case nil
+       (with-temp-buffer
+	 (funcall (mel-find-function 'mime-encode-region "base64")
+		  (point-min) (point-max) t)
+	 t)
+     (wrong-number-of-arguments))))
