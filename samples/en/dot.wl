@@ -217,7 +217,8 @@
 ;(setq wl-generate-mailer-string-function
 ;      (function
 ;       (lambda ()
-;	 (wl-generate-user-agent-string-1 nil))))
+;	 (concat "User-Agent: "
+;		 (wl-generate-user-agent-string-1 nil)))))
 
 
 ;;; [[ Template ]]
