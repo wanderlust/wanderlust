@@ -109,6 +109,7 @@
 
 ;;; XXX Temporal implementation
 (defvar elmo-imap4-current-msgdb nil)
+(defvar elmo-imap4-seen-messages nil)
 
 (defvar elmo-imap4-local-variables
   '(elmo-imap4-status
@@ -123,7 +124,8 @@
     elmo-imap4-fetch-callback-data
     elmo-imap4-status-callback
     elmo-imap4-status-callback-data
-    elmo-imap4-current-msgdb))
+    elmo-imap4-current-msgdb
+    elmo-imap4-seen-messages))
 
 ;;;;
 
@@ -766,20 +768,25 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	 mark)
     (if (member "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
-    (setq mark (or (elmo-msgdb-global-mark-get (car entity))
-		   (if (elmo-file-cache-status
-			(elmo-file-cache-get (car entity)))
+    (if (setq mark (elmo-msgdb-global-mark-get (car entity)))
+	(unless (member "\\Seen" flags)
+	  (setq elmo-imap4-seen-messages
+		(cons
+		 (elmo-msgdb-overview-entity-get-number entity)
+		 elmo-imap4-seen-messages)))
+      (setq mark (or (if (elmo-file-cache-status
+			  (elmo-file-cache-get (car entity)))
+			 (if (or seen
+				 (and use-flag
+				      (member "\\Seen" flags)))
+			     nil
+			   (nth 1 app-data))
 		       (if (or seen
 			       (and use-flag
 				    (member "\\Seen" flags)))
-			   nil
-			 (nth 1 app-data))
-		     (if (or seen
-			     (and use-flag
-				  (member "\\Seen" flags)))
-			 (if elmo-imap4-use-cache
-			     (nth 2 app-data))
-		       (nth 0 app-data)))))
+			   (if elmo-imap4-use-cache
+			       (nth 2 app-data))
+			 (nth 0 app-data))))))
     (setq elmo-imap4-current-msgdb
 	  (elmo-msgdb-append
 	   elmo-imap4-current-msgdb
@@ -2176,6 +2183,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       ;; Setup callback.
       (with-current-buffer (elmo-network-session-buffer session)
 	(setq elmo-imap4-current-msgdb nil
+	      elmo-imap4-seen-messages nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
 	      elmo-imap4-fetch-callback-data (cons args
 						   (elmo-folder-use-flag-p
@@ -2197,6 +2205,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	     (/ (* total 100) length)))
 	  (setq set-list (cdr set-list)))
 	(message "Getting overview...done")
+	(when elmo-imap4-seen-messages
+	  (elmo-imap4-set-flag folder elmo-imap4-seen-messages "\\Seen"))
 	elmo-imap4-current-msgdb))))
 
 (luna-define-method elmo-folder-unmark-important-plugged

@@ -1,5 +1,12 @@
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-imap4.el (elmo-imap4-seen-messages): New buffer local variable.
+	(elmo-imap4-fetch-callback-1-subr): Save important message numbers to
+	elmo-imap4-seen-messages.
+	(elmo-folder-msgdb-create-plugged): Initialize
+	elmo-imap4-seen-messages;
+	Set seen mark on elmo-imap4-seen-messages.
+
 	* elmo-pipe.el (elmo-folder-message-file-p): Define.
 
 	* elmo.el (elmo-generic-folder-append-messages): Check return value of
