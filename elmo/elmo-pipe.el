@@ -66,11 +66,6 @@
   (or (elmo-folder-contains-type (elmo-pipe-folder-src-internal folder) type)
       (elmo-folder-contains-type (elmo-pipe-folder-dst-internal folder) type)))
 
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-pipe-folder)
-					      numlist flag-table)
-  (elmo-folder-msgdb-create (elmo-pipe-folder-dst-internal folder)
-			    numlist flag-table))
-
 (luna-define-method elmo-folder-append-messages ((folder elmo-pipe-folder)
 						 src-folder numbers
 						 &optional same-number)
@@ -131,8 +126,6 @@
     (when (and copy msgs)
       (setq ignore-list (elmo-number-set-append-list ignore-list
 						     msgs)))
-    ;; Don't save msgdb here.
-    ;; Because summary view of original folder is not updated yet.
     (elmo-folder-close-internal src)
     (run-hooks 'elmo-pipe-drained-hook)
     ignore-list))
@@ -329,6 +322,47 @@
 		      (elmo-pipe-folder-dst-internal new-folder))
     (elmo-msgdb-rename-path folder new-folder)))
 
+(luna-define-method elmo-folder-commit ((folder elmo-pipe-folder))
+  (elmo-folder-commit
+   (elmo-pipe-folder-dst-internal folder)))
+
+(luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)
+					     &optional ignore-msgdb
+					     no-check)
+  (elmo-folder-synchronize
+   (elmo-pipe-folder-dst-internal folder) ignore-msgdb no-check))
+
+(luna-define-method elmo-folder-list-flagged ((folder elmo-pipe-folder)
+					      flag
+					      &optional in-msgdb)
+  (elmo-folder-list-flagged
+   (elmo-pipe-folder-dst-internal folder) flag in-msgdb))
+
+(luna-define-method elmo-folder-commit ((folder elmo-pipe-folder))
+  (elmo-folder-commit (elmo-pipe-folder-dst-internal folder)))
+
+(luna-define-method elmo-folder-length ((folder elmo-pipe-folder))
+  (elmo-folder-length (elmo-pipe-folder-dst-internal folder)))
+
+(luna-define-method elmo-folder-count-flags ((folder elmo-pipe-folder))
+  (elmo-folder-count-flags (elmo-pipe-folder-dst-internal folder)))
+
+(luna-define-method elmo-message-mark ((folder elmo-pipe-folder) number)
+  (elmo-message-mark (elmo-pipe-folder-dst-internal folder) number))
+
+(luna-define-method elmo-message-field ((folder elmo-pipe-folder)
+					number field)
+  (elmo-message-field (elmo-pipe-folder-dst-internal folder)
+		      number
+		      field))
+
+(luna-define-method elmo-message-entity ((folder elmo-pipe-folder) key)
+  (elmo-message-entity (elmo-pipe-folder-dst-internal folder) key))
+
+(luna-define-method elmo-message-folder ((folder elmo-multi-folder)
+					 number)
+  (elmo-pipe-folder-dst-internal folder))
+					     
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
 

@@ -1,3 +1,17 @@
+2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-folder-msgdb-create): Don't define.
+	(elmo-folder-commit): Define.
+	(elmo-folder-synchronize): Ditto.
+	(elmo-folder-list-flagged): Ditto.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-length): Ditto.
+	(elmo-folder-count-flags): Ditto.
+	(elmo-message-mark): Ditto.
+	(elmo-message-field): Ditto.
+	(elmo-message-entity): Ditto.
+	(elmo-message-folder): Ditto.
+
 2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-message-field): Define as a method.
