@@ -180,31 +180,11 @@
     (tool-bar-button-margin      . 0)
     (tool-bar-button-relief      . 2)))
 
-;; FIXME! It's only a quick hack.
-(defvar wl-e21-tool-bar-lines nil)
-(defun wl-e21-switch-toolbar ()
-  (let* ((frame (selected-frame))
-	 (old (frame-parameter frame 'tool-bar-lines))
-	 (new (or wl-e21-tool-bar-lines
-		  (cdr (assq 'tool-bar-lines default-frame-alist)))))
-    (unless (eq old new)
-      (modify-frame-parameters frame (list (cons 'tool-bar-lines new))))))
-(add-hook 'post-command-hook 'wl-e21-switch-toolbar)
-(defun wl-e21-switch-toolbar-after-make-frame (frame)
-  (modify-frame-parameters
-   frame (list (cons 'tool-bar-lines (or wl-e21-tool-bar-lines
-					 (frame-parameter frame
-							  'tool-bar-lines))))))
-(add-hook 'after-make-frame-functions 'wl-e21-switch-toolbar-after-make-frame)
-
 (defun wl-e21-make-toolbar-buttons (keymap defs)
   (let ((configs wl-e21-toolbar-configurations)
 	config)
     (while (setq config (pop configs))
       (set (make-local-variable (car config)) (cdr config))))
-  (modify-frame-parameters (selected-frame) '((tool-bar-lines . 1)))
-  (set (make-local-variable 'wl-e21-tool-bar-lines)
-       (frame-parameter (selected-frame) 'tool-bar-lines))
   (let ((n (1- (length defs)))
 	def)
     (while (>= n 0)

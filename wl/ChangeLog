@@ -1,5 +1,14 @@
 2000-09-28  Katsumi Yamaoka    <yamaoka@jpl.org>
 
+	* wl-e21.el (wl-e21-make-toolbar-buttons): Don't modify the value
+	of `tool-bar-lines' in the frame parameters.
+	(after-make-frame-functions, post-command-hook): Don't modify the
+	value.
+	(wl-e21-switch-toolbar-after-make-frame, wl-e21-switch-toolbar,
+	wl-e21-tool-bar-lines): Removed.
+
+2000-09-28  Katsumi Yamaoka    <yamaoka@jpl.org>
+
 	* wl-highlight.el (wl-highlight-folder-path): Put overlay
 	properties `evaporate' and `wl-momentary-overlay' as well.
 	(wl-highlight-summary-displaying): Ditto.
@@ -34,7 +43,6 @@
 
 2000-09-26  Katsumi Yamaoka    <yamaoka@jpl.org>
 
-	NOTE: This change should be fixed in the future.
 	* wl-e21.el (after-make-frame-functions): Add
 	`wl-e21-force-switch-toolbar'.
 	(wl-e21-force-switch-toolbar): New function force to switch the
