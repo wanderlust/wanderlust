@@ -1,3 +1,48 @@
+2001-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Delete important messages too.
+
+	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Fixed
+	`since'; Fix timezone.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Likewise.
+
+2001-12-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-fetch-with-cache-process): Rewrite.
+
+2001-12-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-generic-folder-append-messages): Make
+	fetch-strategy with `use-cache' as 'maybe. Check return value of
+	`elmo-message-fetch'.
+	(elmo-message-fetch): Return return value of
+	`elmo-message-fetch-with-cache-process'.
+	(elmo-message-fetch-with-cache-process): Return non-nil if
+	fetching was succeed. Load cache when fetching was failed and
+	fetch-strategy-use-cache is 'maybe.
+
+	* elmo-util.el (elmo-file-cache-load): New function.
+
+	* elmo-multi.el (elmo-message-use-cache-p): Remove duplicated
+	defun.
+
+	* elmo-archive.el (elmo-archive-message-fetch-internal): Return
+	non-nil if fetching was succeed.
+
+	* elmo-imap4.el (elmo-imap4-message-fetch): Likewise.
+
+	* elmo-nmz.el (elmo-map-message-fetch): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-read-body): Likewise.
+	(elmo-message-fetch-with-cache-process): Likwise.
+
+	* elmo-pop3.el (elmo-pop3-read-body): Likewise.
+
+	* elmo-shimbun.el (elmo-map-message-fetch): Likewise.
+
 2001-12-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-delete): Delete msgdb path.

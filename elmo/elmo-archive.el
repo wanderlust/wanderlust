@@ -551,11 +551,12 @@ TYPE specifies the archiver's symbol."
 	 (method (elmo-archive-get-method type 'cat))
 	 (args (list arc (elmo-concat-path
 			  prefix (int-to-string number)))))
-    (when (file-exists-p arc)
-      (and
-       (as-binary-process
-	(elmo-archive-call-method method args t))
-       (elmo-delete-cr-buffer)))))
+    (and (file-exists-p arc)
+	 (as-binary-process
+	  (elmo-archive-call-method method args t))
+	 (progn
+	   (elmo-delete-cr-buffer)
+	   t))))
 
 (luna-define-method elmo-message-fetch-internal ((folder elmo-archive-folder)
 						 number strategy

@@ -1,4 +1,4 @@
-;;; elmo-shimbun.el -- Shimbun interface for ELMO.
+;;; elmo-shimbun.el --- Shimbun interface for ELMO.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,12 +24,13 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-map)
+(require 'elmo-dop)
 (require 'shimbun)
 
 (defcustom elmo-shimbun-check-interval 60
@@ -44,24 +45,51 @@
 		 (integer :tag "number"))
   :group 'elmo)
 
+(defcustom elmo-shimbun-use-cache t
+  "*If non-nil, use cache for each article."
+  :type 'boolean
+  :group 'elmo)
+
 (defcustom elmo-shimbun-index-range-alist nil
-  "*Alist of FOLDER and RANGE.
-FOLDER is the shimbun folder name.
+  "*Alist of FOLDER-REGEXP and RANGE.
+FOLDER-REGEXP is the regexp for shimbun folder name.
 RANGE is the range of the header indices .
 See `shimbun-headers' for more detail about RANGE."
-  :type '(repeat (cons (string :tag "Folder Name")
+  :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const :tag "all" all)
 			       (const :tag "last" last)
 			       (integer :tag "number"))))
   :group 'elmo)
 
+(defcustom elmo-shimbun-update-overview-folder-list nil
+  "*List of FOLDER-REGEXP.
+FOLDER-REGEXP is the regexp of shimbun folder name which should be
+update overview when message is fetched."
+  :type '(repeat (regexp :tag "Folder Regexp"))
+  :group 'elmo)
+
+;; Shimbun header.
+(defsubst elmo-shimbun-header-extra-field (header field-name)
+  (let ((extra (and header (shimbun-header-extra header))))
+    (and extra
+	 (cdr (assoc field-name extra)))))
+
+(defsubst elmo-shimbun-header-set-extra-field (header field-name value)
+  (let ((extras (and header (shimbun-header-extra header)))
+	extra)
+    (if (setq extra (assoc field-name extras))
+	(setcdr extra value)
+      (shimbun-header-set-extra
+       header
+       (cons (cons field-name value) extras)))))
+
 ;; Shimbun mua.
-(eval-and-compile 
+(eval-and-compile
   (luna-define-class shimbun-elmo-mua (shimbun-mua) (folder))
   (luna-define-internal-accessors 'shimbun-elmo-mua))
 
 (luna-define-method shimbun-mua-search-id ((mua shimbun-elmo-mua) id)
-  (elmo-msgdb-overview-get-entity id 
+  (elmo-msgdb-overview-get-entity id
 				  (elmo-folder-msgdb
 				   (shimbun-elmo-mua-folder-internal mua))))
 
@@ -92,7 +120,7 @@ See `shimbun-headers' for more detail about RANGE."
 	      elmo-shimbun-check-interval))))
 
 (defun elmo-shimbun-msgdb-to-headers (folder expire-days)
-  (let (headers)
+  (let (headers message-id shimbun-id)
     (dolist (ov (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
       (when (and (elmo-msgdb-overview-entity-get-extra-field ov "xref")
 		 (if expire-days
@@ -102,6 +130,11 @@ See `shimbun-headers' for more detail about RANGE."
 			(* expire-days 86400 ; seconds per day
 			   ))
 		   t))
+	(if (setq message-id (elmo-msgdb-overview-entity-get-extra-field
+			      ov "x-original-id"))
+	    (setq shimbun-id (elmo-msgdb-overview-entity-get-id ov))
+	  (setq message-id (elmo-msgdb-overview-entity-get-id ov)
+		shimbun-id nil))
 	(setq headers
 	      (cons (shimbun-make-header
 		     (elmo-msgdb-overview-entity-get-number ov)
@@ -110,18 +143,36 @@ See `shimbun-headers' for more detail about RANGE."
 		     (shimbun-mime-encode-string
 		      (elmo-msgdb-overview-entity-get-from ov))
 		     (elmo-msgdb-overview-entity-get-date ov)
-		     (elmo-msgdb-overview-entity-get-id ov)
+		     message-id
 		     (elmo-msgdb-overview-entity-get-references ov)
 		     0
 		     0
-		     (elmo-msgdb-overview-entity-get-extra-field ov "xref"))
+		     (elmo-msgdb-overview-entity-get-extra-field ov "xref")
+		     (and shimbun-id
+			  (list (cons "x-shimbun-id" shimbun-id))))
 		    headers))))
     (nreverse headers)))
 
+(defsubst elmo-shimbun-folder-header-hash-setup (folder headers)
+  (let ((hash (elmo-make-hash (length headers)))
+	shimbun-id)
+    (dolist (header headers)
+      (elmo-set-hash-val (shimbun-header-id header) header hash)
+      (when (setq shimbun-id
+		  (elmo-shimbun-header-extra-field header "x-shimbun-id"))
+	(elmo-set-hash-val shimbun-id header hash)))
+    (elmo-shimbun-folder-set-header-hash-internal folder hash)))
+
+(defun elmo-shimbun-folder-setup (folder)
+  ;; Resume headers from existing msgdb.
+  (elmo-shimbun-folder-set-headers-internal
+   folder
+   (elmo-shimbun-msgdb-to-headers folder nil))
+  (elmo-shimbun-folder-header-hash-setup
+   folder
+   (elmo-shimbun-folder-headers-internal folder)))
+
 (defun elmo-shimbun-get-headers (folder)
-  (shimbun-open-group
-   (elmo-shimbun-folder-shimbun-internal folder)
-   (elmo-shimbun-folder-group-internal folder))
   (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
 	 (key (concat (shimbun-server-internal shimbun)
 		      "." (shimbun-current-group-internal shimbun)))
@@ -132,10 +183,11 @@ See `shimbun-headers' for more detail about RANGE."
 	  (delq nil
 		(mapcar
 		 (lambda (x)
-		   (unless (elmo-msgdb-overview-get-entity 
+		   (unless (elmo-msgdb-overview-get-entity
 			    (shimbun-header-id x)
 			    (elmo-folder-msgdb folder))
 		     x))
+		 ;; This takes much time.
 		 (shimbun-headers
 		  (elmo-shimbun-folder-shimbun-internal folder)
 		  (elmo-shimbun-folder-range-internal folder)))))
@@ -145,16 +197,9 @@ See `shimbun-headers' for more detail about RANGE."
 	     folder (shimbun-article-expiration-days
 		     (elmo-shimbun-folder-shimbun-internal folder)))
 	    headers))
-    (setq hash
-	  (elmo-shimbun-folder-set-header-hash-internal
+    (elmo-shimbun-folder-header-hash-setup
 	   folder
-	   (elmo-make-hash
-	    (length (elmo-shimbun-folder-headers-internal folder)))))
-    ;; Set up header hash.
-    (dolist (header (elmo-shimbun-folder-headers-internal folder))
-      (elmo-set-hash-val
-       (shimbun-header-id header) header
-       (elmo-shimbun-folder-header-hash-internal folder)))
+     (elmo-shimbun-folder-headers-internal folder))
     (elmo-shimbun-folder-set-last-check-internal folder (current-time))))
 
 (luna-define-method elmo-folder-initialize ((folder
@@ -175,19 +220,39 @@ See `shimbun-headers' for more detail about RANGE."
        (nth 1 server-group)))
     (elmo-shimbun-folder-set-range-internal
      folder
-     (or (cdr (assoc (elmo-folder-name-internal folder)
-		     elmo-shimbun-index-range-alist))
+     (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
+					 elmo-shimbun-index-range-alist))
 	 elmo-shimbun-default-index-range))
     folder))
 
-(luna-define-method elmo-folder-open-internal :before ((folder
-							elmo-shimbun-folder))
-  (when (elmo-folder-plugged-p folder)
-    (if (elmo-shimbun-headers-check-p folder)
-	(elmo-shimbun-get-headers folder))))
+(luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
+  (shimbun-open-group
+   (elmo-shimbun-folder-shimbun-internal folder)
+   (elmo-shimbun-folder-group-internal folder))
+  (let ((inhibit-quit t))
+    (unless (elmo-map-folder-location-alist-internal folder)
+      (elmo-map-folder-location-setup
+       folder
+       (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
+  (cond ((and (elmo-folder-plugged-p folder)
+	      (elmo-shimbun-headers-check-p folder))
+	 (elmo-shimbun-get-headers folder)
+	 (elmo-map-folder-update-locations
+	  folder
+	  (elmo-map-folder-list-message-locations folder)))
+	((null (elmo-shimbun-folder-headers-internal folder))
+	 ;; Resume headers from existing msgdb.
+	 (elmo-shimbun-folder-setup folder))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
+
+(luna-define-method elmo-message-use-cache-p ((folder elmo-shimbun-folder)
+					      number)
+  elmo-shimbun-use-cache)
+
+(luna-define-method elmo-folder-creatable-p ((folder elmo-shimbun-folder))
+  nil)
 
 (luna-define-method elmo-folder-close-internal :after ((folder
 							elmo-shimbun-folder))
@@ -202,11 +267,11 @@ See `shimbun-headers' for more detail about RANGE."
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
   (elmo-plugged-p
-   "shimbun" 
+   "shimbun"
    (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))
    nil nil
    (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))))
-			    
+
 (luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
 					     plugged &optional add)
   (elmo-set-plugged plugged
@@ -218,13 +283,26 @@ See `shimbun-headers' for more detail about RANGE."
 		     (elmo-shimbun-folder-shimbun-internal folder))
 		    add))
 
-(luna-define-method elmo-folder-check :after ((folder elmo-shimbun-folder))
-  (when (shimbun-current-group-internal 
+(luna-define-method elmo-net-port-info ((folder elmo-shimbun-folder))
+  (list "shimbun"
+	(shimbun-server-internal
 	 (elmo-shimbun-folder-shimbun-internal folder))
-    (when (elmo-shimbun-headers-check-p folder)    
-      ;; Discard current headers information.
-      (elmo-folder-close-internal folder)
-      (elmo-folder-open-internal folder))))
+	nil))
+
+(luna-define-method elmo-folder-check :around ((folder elmo-shimbun-folder))
+  (when (shimbun-current-group-internal
+	 (elmo-shimbun-folder-shimbun-internal folder))
+    (when (and (elmo-folder-plugged-p folder)
+	       (elmo-shimbun-headers-check-p folder))
+      (elmo-shimbun-get-headers folder)
+      (luna-call-next-method))))
+
+(luna-define-method elmo-folder-clear :around ((folder elmo-shimbun-folder)
+					       &optional keep-killed)
+  (elmo-shimbun-folder-set-headers-internal folder nil)
+  (elmo-shimbun-folder-set-header-hash-internal folder nil)
+  (elmo-shimbun-folder-set-last-check-internal folder nil)
+  (luna-call-next-method))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-shimbun-folder))
@@ -233,8 +311,8 @@ See `shimbun-headers' for more detail about RANGE."
 	    (elmo-shimbun-folder-shimbun-internal folder))
 	   "/"
 	   (elmo-shimbun-folder-group-internal folder))
-   (expand-file-name "shimbun" elmo-msgdb-dir)))
-		     
+   (expand-file-name "shimbun" elmo-msgdb-directory)))
+
 (defun elmo-shimbun-msgdb-create-entity (folder number)
   (let ((header (elmo-get-hash-val
 		 (elmo-map-message-location folder number)
@@ -258,8 +336,8 @@ See `shimbun-headers' for more detail about RANGE."
 					      important-mark
 					      seen-list)
   (let* (overview number-alist mark-alist entity
-		  i percent num pair)
-    (setq num (length numlist))
+		  i percent number length pair msgid gmark seen)
+    (setq length (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
     (while numlist
@@ -270,24 +348,26 @@ See `shimbun-headers' for more detail about RANGE."
 	(setq overview
 	      (elmo-msgdb-append-element
 	       overview entity))
+	(setq number (elmo-msgdb-overview-entity-get-number entity))
+	(setq msgid (elmo-msgdb-overview-entity-get-id entity))
 	(setq number-alist
 	      (elmo-msgdb-number-add number-alist
-				     (elmo-msgdb-overview-entity-get-number
-				      entity)
-				     (elmo-msgdb-overview-entity-get-id
-				      entity)))
-	(setq mark-alist
-	      (elmo-msgdb-mark-append
-	       mark-alist
-	       (elmo-msgdb-overview-entity-get-number
-		entity)
-	       (or (elmo-msgdb-global-mark-get
-		    (elmo-msgdb-overview-entity-get-id
-		     entity))
-		   new-mark))))
-      (when (> num elmo-display-progress-threshold)
+				     number msgid))
+	(setq seen (member msgid seen-list))
+	(if (setq gmark (or (elmo-msgdb-global-mark-get msgid)
+			    (if (elmo-file-cache-status
+				 (elmo-file-cache-get msgid))
+				(if seen nil already-mark)
+			      (if seen
+				  (if elmo-shimbun-use-cache
+				      seen-mark)
+				new-mark))))
+	    (setq mark-alist
+		  (elmo-msgdb-mark-append mark-alist
+					  number gmark))))
+      (when (> length elmo-display-progress-threshold)
 	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
+	(setq percent (/ (* i 100) length))
 	(elmo-display-progress
 	 'elmo-folder-msgdb-create "Creating msgdb..."
 	 percent))
@@ -299,13 +379,70 @@ See `shimbun-headers' for more detail about RANGE."
 (luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))
   nil)
 
+(defsubst elmo-shimbun-update-overview (folder shimbun-id header)
+  (let ((entity (elmo-msgdb-overview-get-entity shimbun-id
+						(elmo-folder-msgdb folder)))
+	(message-id (shimbun-header-id header))
+	references)
+    (unless (string= shimbun-id message-id)
+      (elmo-msgdb-overview-entity-set-extra-field
+       entity "x-original-id" message-id)
+      (elmo-shimbun-header-set-extra-field
+       header "x-shimbun-id" shimbun-id)
+      (elmo-set-hash-val message-id
+			 header
+			 (elmo-shimbun-folder-header-hash-internal folder)))
+    (elmo-msgdb-overview-entity-set-from
+     entity
+     (elmo-mime-string (shimbun-header-from header)))
+    (elmo-msgdb-overview-entity-set-subject
+     entity
+     (elmo-mime-string (shimbun-header-subject header)))
+    (elmo-msgdb-overview-entity-set-date
+     entity (shimbun-header-date header))
+    (when (setq references
+		(or (elmo-msgdb-get-last-message-id
+		     (elmo-field-body "in-reply-to"))
+		    (elmo-msgdb-get-last-message-id
+		     (elmo-field-body "references"))))
+      (elmo-msgdb-overview-entity-set-references
+       entity
+       (or (elmo-shimbun-header-extra-field
+	    (elmo-get-hash-val references
+			       (elmo-shimbun-folder-header-hash-internal
+				folder))
+	    "x-shimbun-id")
+	   references)))))
+
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
 					    location strategy
 					    &optional section unseen)
-  (shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
-		   (elmo-get-hash-val
-		    location
-		    (elmo-shimbun-folder-header-hash-internal folder))))
+  (if (elmo-folder-plugged-p folder)
+      (let ((header (elmo-get-hash-val
+		     location
+		     (elmo-shimbun-folder-header-hash-internal folder)))
+	    shimbun-id)
+	(shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
+			 header)
+	(when (elmo-string-match-member
+	       (elmo-folder-name-internal folder)
+	       elmo-shimbun-update-overview-folder-list)
+	  (elmo-shimbun-update-overview folder location header))
+	(when (setq shimbun-id
+		    (elmo-shimbun-header-extra-field header "x-shimbun-id"))
+	  (goto-char (point-min))
+	  (insert (format "X-Shimbun-Id: %s\n" shimbun-id)))
+	t)
+    (error "Unplugged")))
+
+(luna-define-method elmo-message-encache :around ((folder
+						   elmo-shimbun-folder)
+						  number &optional read)
+  (if (elmo-folder-plugged-p folder)
+      (luna-call-next-method)
+    (if elmo-enable-disconnected-operation
+	(elmo-message-encache-dop folder number read)
+      (error "Unplugged"))))
 
 (luna-define-method elmo-folder-list-messages-internal :around
   ((folder elmo-shimbun-folder) &optional nohide)
@@ -316,7 +453,9 @@ See `shimbun-headers' for more detail about RANGE."
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-shimbun-folder))
   (mapcar
-   (function shimbun-header-id)
+   (lambda (header)
+     (or (elmo-shimbun-header-extra-field header "x-shimbun-id")
+	 (shimbun-header-id header)))
    (elmo-shimbun-folder-headers-internal folder)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-shimbun-folder)
@@ -334,7 +473,7 @@ See `shimbun-headers' for more detail about RANGE."
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
       (progn
-	(member 
+	(member
 	 (elmo-shimbun-folder-group-internal folder)
 	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
 			  folder))))

@@ -1,4 +1,4 @@
-;;; elmo-msgdb.el -- Message Database for Elmo.
+;;; elmo-msgdb.el --- Message Database for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000           Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
@@ -73,7 +73,7 @@
 (defun elmo-msgdb-global-mark-delete (msgid)
   (let* ((path (expand-file-name
 		elmo-msgdb-global-mark-filename
-		elmo-msgdb-dir))
+		elmo-msgdb-directory))
 	 (malist (or elmo-msgdb-global-mark-alist
 		     (setq elmo-msgdb-global-mark-alist
 			   (elmo-object-load path))))
@@ -86,7 +86,7 @@
 (defun elmo-msgdb-global-mark-set (msgid mark)
   (let* ((path (expand-file-name
 		elmo-msgdb-global-mark-filename
-		elmo-msgdb-dir))
+		elmo-msgdb-directory))
 	 (malist (or elmo-msgdb-global-mark-alist
 		     (setq elmo-msgdb-global-mark-alist
 			   (elmo-object-load path))))
@@ -104,7 +104,7 @@
 			      (elmo-object-load
 			       (expand-file-name
 				elmo-msgdb-global-mark-filename
-				elmo-msgdb-dir)))))))
+				elmo-msgdb-directory)))))))
 
 ;;;
 ;; persistent mark handling
@@ -309,12 +309,18 @@ header separator."
 		    (elmo-msgdb-overview-entity-get-cc entity))))
      ((or (string= key "since")
 	  (string= key "before"))
-      (let ((res (string< (timezone-make-date-sortable
-			   (elmo-msgdb-overview-entity-get-date entity))
-			  (elmo-date-make-sortable-string
-			   (elmo-date-get-datevec
-			    (elmo-filter-value condition))))))
-	(setq result (if (string= key "before") res (not res)))))
+      (let ((field-date (elmo-date-make-sortable-string
+			 (timezone-fix-time
+			  (elmo-msgdb-overview-entity-get-date entity)
+			  (current-time-zone) nil)))
+	    (specified-date
+	     (elmo-date-make-sortable-string
+	      (elmo-date-get-datevec
+	       (elmo-filter-value condition)))))
+	(setq result (if (string= key "since")
+			 (or (string= specified-date field-date)
+			     (string< specified-date field-date))
+		       (string< field-date specified-date)))))
      ((member key elmo-msgdb-extra-fields)
       (let ((extval (elmo-msgdb-overview-entity-get-extra-field entity key)))
 	(if (stringp extval)
@@ -383,12 +389,16 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
   (and entity (aref (cdr entity) 1)))
 
+(defsubst elmo-msgdb-overview-entity-set-references (entity references)
+  (and entity (aset (cdr entity) 1 references))
+  entity)
+
 ;; entity -> parent-entity
 (defsubst elmo-msgdb-overview-get-parent-entity (entity database)
   (setq entity (elmo-msgdb-overview-entity-get-references entity))
   ;; entity is parent-id.
   (and entity (assoc entity database)))
-  
+
 (defsubst elmo-msgdb-overview-entity-get-number (entity)
   (and entity (aref (cdr entity) 0)))
 
@@ -424,6 +434,10 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-date (entity)
   (and entity (aref (cdr entity) 4)))
 
+(defsubst elmo-msgdb-overview-entity-set-date (entity date)
+  (and entity (aset (cdr entity) 4 date))
+  entity)
+
 (defsubst elmo-msgdb-overview-entity-get-to (entity)
   (and entity (aref (cdr entity) 5)))
 
@@ -444,6 +458,15 @@ content of MSGDB is changed."
   (let ((extra (and entity (aref (cdr entity) 8))))
     (and extra
 	 (cdr (assoc field-name extra)))))
+
+(defsubst elmo-msgdb-overview-entity-set-extra-field (entity field-name value)
+  (let ((extras (and entity (aref (cdr entity) 8)))
+	extra)
+    (if (setq extra (assoc field-name extras))
+	(setcdr extra value)
+      (elmo-msgdb-overview-entity-set-extra
+       entity
+       (cons (cons field-name value) extras)))))
 
 (defsubst elmo-msgdb-overview-entity-get-extra (entity)
   (and entity (aref (cdr entity) 8)))
@@ -543,13 +566,13 @@ content of MSGDB is changed."
 (defun elmo-msgdb-finfo-load ()
   (elmo-object-load (expand-file-name
 		     elmo-msgdb-finfo-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    elmo-mime-charset t))
 
 (defun elmo-msgdb-finfo-save (finfo)
   (elmo-object-save (expand-file-name
 		     elmo-msgdb-finfo-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    finfo elmo-mime-charset))
 
 (defun elmo-msgdb-flist-load (fname)
@@ -557,7 +580,7 @@ content of MSGDB is changed."
 		     elmo-msgdb-flist-filename
 		     (expand-file-name
 		      (elmo-safe-filename fname)
-		      (expand-file-name "folder" elmo-msgdb-dir)))))
+		      (expand-file-name "folder" elmo-msgdb-directory)))))
     (elmo-object-load flist-file elmo-mime-charset t)))
 
 (defun elmo-msgdb-flist-save (fname flist)
@@ -565,19 +588,19 @@ content of MSGDB is changed."
 		     elmo-msgdb-flist-filename
 		     (expand-file-name
 		      (elmo-safe-filename fname)
-		      (expand-file-name "folder" elmo-msgdb-dir)))))
+		      (expand-file-name "folder" elmo-msgdb-directory)))))
     (elmo-object-save flist-file flist elmo-mime-charset)))
 
 (defun elmo-crosspost-alist-load ()
   (elmo-object-load (expand-file-name
 		     elmo-crosspost-alist-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    nil t))
 
 (defun elmo-crosspost-alist-save (alist)
   (elmo-object-save (expand-file-name
 		     elmo-crosspost-alist-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    alist))
 
 (defun elmo-msgdb-add-msgs-to-seen-list (msgs msgdb unread-marks seen-list)
@@ -646,26 +669,21 @@ Header region is supposed to be narrowed."
   (cons (car entity)
 	(copy-sequence (cdr entity))))
 
-(static-if (boundp 'nemacs-version)
-    (defsubst elmo-msgdb-insert-file-header (file)
-      "Insert the header of the article (Does not work on nemacs)."
-      (as-binary-input-file
-       (insert-file-contents file)))
-  (defsubst elmo-msgdb-insert-file-header (file)
-    "Insert the header of the article."
-    (let ((beg 0)
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook
-	  format-alist)
-      (when (file-exists-p file)
-	;; Read until header separator is found.
-	(while (and (eq elmo-msgdb-file-header-chop-length
-			(nth 1
-			     (insert-file-contents-as-binary
-			      file nil beg
-			      (incf beg elmo-msgdb-file-header-chop-length)))))
-	  (prog1 (not (search-forward "\n\n" nil t))
-	    (goto-char (point-max))))))))
+(defsubst elmo-msgdb-insert-file-header (file)
+  "Insert the header of the article."
+  (let ((beg 0)
+	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	insert-file-contents-post-hook
+	format-alist)
+    (when (file-exists-p file)
+      ;; Read until header separator is found.
+      (while (and (eq elmo-msgdb-file-header-chop-length
+		      (nth 1
+			   (insert-file-contents-as-binary
+			    file nil beg
+			    (incf beg elmo-msgdb-file-header-chop-length))))
+		  (prog1 (not (search-forward "\n\n" nil t))
+		    (goto-char (point-max))))))))
 
 (defsubst elmo-msgdb-create-overview-entity-from-file (number file)
   (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
@@ -690,7 +708,7 @@ Header region is supposed to be narrowed."
 		  (point-max)))
 	  (narrow-to-region (point-min) header-end)
 	  (elmo-msgdb-create-overview-from-buffer number size mtime))))))
-  
+
 (defun elmo-msgdb-overview-sort-by-date (overview)
   (sort overview
 	(function

@@ -77,6 +77,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    elmo-cache-directory (e.g. for whom put symbolic link for ~/.elmo/cache
    on NFS environment).
 
+** Default value of elmo-enable-disconnected-operation is now `t'.
+   When the relevant messages are cached, you can do some operations
+   even in the off-line state.
+
 * Version 2.6.1 is basically a bug fix version of 2.6.0.
 
 ** Fixed a problem that Emacs 21 causes `Recursive load...' error.

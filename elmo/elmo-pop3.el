@@ -825,7 +825,8 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
       (setq end (point))
       (with-current-buffer outbuf
 	(erase-buffer)
-	(insert-buffer-substring (process-buffer process) start (- end 3))))))
+	(insert-buffer-substring (process-buffer process) start (- end 3)))
+      t)))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))
   (if (and (not elmo-inhibit-number-mapping)
@@ -872,7 +873,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	      (when (null (setq response (elmo-pop3-read-response
 					  process t)))
 		(error "Fetching message failed"))
-	      (setq response (elmo-pop3-read-body process outbuf)))
+	      (setq response  (elmo-pop3-read-body process outbuf)))
 	  (setq elmo-pop3-total-size nil))
 	(unless elmo-inhibit-display-retrieval-progress
 	  (elmo-display-progress

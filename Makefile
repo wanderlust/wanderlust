@@ -24,10 +24,20 @@ PIXMAPDIR = NONE
 
 
 ################# No need to modify following lines ####################
-FLAGS   = -batch -q -no-site-file
+BATCHFLAG = -batch
+FLAGS     = $(BATCHFLAG) -q -no-site-file
 
 elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package $(LISPDIR) $(PIXMAPDIR)
+
+check:
+	$(EMACS) $(BATCHFLAG) -l WL-MK -f check-wl $(LISPDIR) $(PIXMAPDIR)
+
+test:
+	$(EMACS) $(FLAGS) -l WL-MK -f test-wl $(LISPDIR) $(PIXMAPDIR)
+
+update-version:
+	$(EMACS) $(FLAGS) -l WL-MK -f update-version $(LISPDIR) $(PIXMAPDIR)
 
 install-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR) $(PIXMAPDIR)

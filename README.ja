@@ -36,7 +36,7 @@ Install:
 
 Web Page:
 
- Wanderlust の Official Web ページの URL は以下の通りです。
+ Wanderlust 公式 Web ページの URL は以下の通りです。
 
  http://www.gohome.org/wl/
 
@@ -70,7 +70,7 @@ CVS:
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
 
-  安定版の枝から Wanderlust 取り出す場合は、以下のようにしてください。
+  安定版の枝から Wanderlust を取り出す場合は、以下の様にしてください。
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_8 wanderlust
 
@@ -78,14 +78,14 @@ CVS:
 
 	http://cvs.m17n.org/cgi-bin/viewcvs/wanderlust/
 
-  CVS の commit log をメールで受け取りたいときは、以下のアドレスに空の
+  CVS の commit log をメールで受け取りたい方は、次のアドレスに空の
   メールを送ってください。
 
 	cvs-info-help@cvs.m17n.org
 
 Development:
 
-  CVS に基づいた開発に参加したいときは、
+  CVS に基づいた開発に参加したい方は、
 
 	cvs@cvs.m17n.org
 

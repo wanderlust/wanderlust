@@ -1,4 +1,4 @@
-;;; elmo-multi.el -- Multiple Folder Interface for ELMO.
+;;; elmo-multi.el --- Multiple Folder Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo)
 (require 'luna)
@@ -44,9 +44,16 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)
 					    name)
-  (elmo-multi-folder-set-children-internal
-   folder
-   (mapcar 'elmo-make-folder (split-string name ",")))
+  (while (> (length (car (setq name (elmo-parse-token name ",")))) 0)
+    (elmo-multi-folder-set-children-internal
+     folder
+     (nconc (elmo-multi-folder-children-internal
+	     folder)
+	    (list (elmo-make-folder (car name)))))
+    (setq name (cdr name))
+    (when (and (> (length name) 0)
+	       (eq (aref name 0) ?,))
+      (setq name (substring name 1))))
   (elmo-multi-folder-set-divide-number-internal
    folder
    elmo-multi-divide-number)
@@ -66,14 +73,24 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-multi-folder))
-  (expand-file-name (elmo-replace-string-as-filename 
+  (expand-file-name (elmo-replace-string-as-filename
 		     (elmo-folder-name-internal folder))
 		    (expand-file-name "multi"
-				      elmo-msgdb-dir)))
+				      elmo-msgdb-directory)))
+
+(luna-define-method elmo-folder-newsgroups ((folder elmo-multi-folder))
+  (delq nil
+	(elmo-flatten
+	 (mapcar
+	  'elmo-folder-newsgroups
+	  (elmo-flatten
+	   (mapcar
+	    'elmo-folder-get-primitive-list
+	    (elmo-multi-folder-children-internal folder)))))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-multi-folder))
   (elmo-flatten
-   (mapcar 
+   (mapcar
     'elmo-folder-get-primitive-list
     (elmo-multi-folder-children-internal folder))))
 
@@ -86,13 +103,6 @@
 	(setq children nil))
       (setq children (cdr children)))
     match))
-
-(luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
-					     number)
-  (elmo-message-use-cache-p 
-   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
-	(elmo-multi-folder-children-internal folder))
-   (% number (elmo-multi-folder-divide-number-internal folder))))
 
 (luna-define-method elmo-message-folder ((folder elmo-multi-folder)
 					 number)
@@ -198,7 +208,7 @@
 	  (if (setq same (rassoc (cdr (car cur)) all-alist))
 	      (unless (= (/ (car (car cur))
 			    (elmo-multi-folder-divide-number-internal folder))
-			 (/ (car same) 
+			 (/ (car same)
 			    (elmo-multi-folder-divide-number-internal folder)))
 		;; base is also same...delete it!
 		(setq to-be-deleted
@@ -292,7 +302,7 @@
 	(unsync 0)
 	(messages 0)
 	num-list
-	diffs)
+	diffs nums)
     ;; If first time, dummy numbers is used as current number list.
     (unless numbers
       (let ((i 0)
@@ -308,9 +318,9 @@
 				      (elmo-number-set-to-number-list killed)
 				      numbers))))
     (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff
-				      (car flds)
-				      (car num-list)))))
+      (setq nums (elmo-folder-diff (car flds) (car num-list))
+	    nums (cons (elmo-diff-unread nums) (elmo-diff-all nums)))
+      (setq diffs (nconc diffs (list nums)))
       (setq count (+ 1 count))
       (setq num-list (cdr num-list))
       (setq flds (cdr flds)))
@@ -547,7 +557,7 @@
 (luna-define-method elmo-message-file-name ((folder elmo-multi-folder) number)
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (elmo-message-file-name (car pair) (cdr pair))))
-  
+
 (luna-define-method elmo-folder-plugged-p ((folder elmo-multi-folder))
   (let ((flds (elmo-multi-folder-children-internal folder)))
     (catch 'plugged
@@ -595,7 +605,7 @@
     (elmo-folder-mark-as-important (car folder-numbers)
 				   (cdr folder-numbers)))
   t)
-  
+
 (luna-define-method elmo-folder-unmark-important ((folder elmo-multi-folder)
 						  numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))

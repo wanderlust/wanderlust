@@ -816,22 +816,30 @@ Return value is a cons cell of (STRUCTURE . REST)"
 			 (length (memq number number-list)))
 		      (string-to-int (elmo-filter-value condition)))))
      ((string= (elmo-filter-key condition) "since")
-      (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
+      (let* ((date (elmo-date-get-datevec (elmo-filter-value condition)))
+	     (field-date (elmo-date-make-sortable-string
+			  (timezone-fix-time
+			   (std11-field-body "date")
+			   (current-time-zone) nil)))
+	     (specified-date (timezone-make-sortable-date
+			      (aref date 0)
+			      (aref date 1)
+			      (aref date 2)
+			      (timezone-make-time-string
+			       (aref date 3)
+			       (aref date 4)
+			       (aref date 5)))))
 	(setq result
-	      (string<
-	       (timezone-make-sortable-date (aref date 0)
-					    (aref date 1)
-					    (aref date 2)
-					    (timezone-make-time-string
-					     (aref date 3)
-					     (aref date 4)
-					     (aref date 5)))
-	       (timezone-make-date-sortable (std11-field-body "date"))))))
+	      (or (string= field-date specified-date)
+		  (string< specified-date field-date)))))
      ((string= (elmo-filter-key condition) "before")
       (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
 	(setq result
 	      (string<
-	       (timezone-make-date-sortable (std11-field-body "date"))
+	       (timezone-make-date-sortable
+		(timezone-fix-time
+		 (std11-field-body "date")
+		 (current-time-zone) nil))
 	       (timezone-make-sortable-date (aref date 0)
 					    (aref date 1)
 					    (aref date 2)
@@ -1608,6 +1616,24 @@ Return t if cache is saved successfully."
 				  path nil 'no-msg)
 	  t))
     ;; ignore error
+    (error)))
+
+(defun elmo-file-cache-load (cache-path section)
+  "Load cache on PATH into the current buffer.
+Return t if cache is loaded successfully."
+  (condition-case nil
+      (let (cache-file)
+	(when (and cache-path
+		   (if (elmo-cache-path-section-p cache-path)
+		       section
+		     (null section))
+		   (setq cache-file (elmo-file-cache-expand-path
+				     cache-path
+				     section))
+		   (file-exists-p cache-file))
+	  (insert-file-contents-as-binary cache-file)
+	  t))
+    ;; igore error
     (error)))
 
 (defun elmo-cache-path-section-p (path)

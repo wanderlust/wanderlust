@@ -2530,7 +2530,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 			 response 'fetch)))
 	(with-current-buffer outbuf
 	  (erase-buffer)
-	  (insert response)))))
+	  (insert response)
+	  t))))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-imap4-folder)
 						number strategy

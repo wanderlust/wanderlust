@@ -1,4 +1,4 @@
-;;; elmo-nmz.el -- Namazu interface for ELMO.
+;;; elmo-nmz.el --- Namazu interface for ELMO.
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,15 +24,17 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-map)
+(require 'mime-edit)
 
 (defcustom elmo-nmz-default-index-path "~/Mail"
-  "*Default index path for namazu."
+  "*Default index path for namazu.
+If the value is a list, all elements are used as index paths for namazu."
   :type 'directory
   :group 'elmo)
 
@@ -49,6 +51,13 @@
 (defcustom elmo-nmz-args '("--all" "--list" "--early")
   "*Argument list for namazu to list matched files."
   :type '(repeat string)
+  :group 'elmo)
+
+(defcustom elmo-nmz-index-alias-alist nil
+  "*Alist of ALIAS and INDEX-PATH."
+  :type '(repeat (cons (string :tag "Alias Name")
+		       (choice (directory :tag "Index Path")
+			       (repeat (directory :tag "Index Path")))))
   :group 'elmo)
 
 ;;; "namazu search"
@@ -68,12 +77,14 @@
 					  (buffer-substring
 					   (+ 1 (point-min))
 					   (- (point) 1)))
-    (elmo-nmz-folder-set-index-path-internal folder
-					     (buffer-substring (point)
-							       (point-max)))
-    (if (eq (length (elmo-nmz-folder-index-path-internal folder)) 0)
-	(elmo-nmz-folder-set-index-path-internal folder
-						 elmo-nmz-default-index-path))
+    (let ((index (buffer-substring (point) (point-max))))
+      (elmo-nmz-folder-set-index-path-internal
+       folder
+       (cond ((cdr (assoc index elmo-nmz-index-alias-alist)))
+	     ((eq (length index) 0)
+	      elmo-nmz-default-index-path)
+	     (t
+	      index))))
     folder))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
@@ -81,13 +92,25 @@
   (expand-file-name
    (elmo-replace-string-as-filename
     (elmo-folder-name-internal folder))
-   (expand-file-name "nmz" elmo-msgdb-dir)))
-		     
+   (expand-file-name "nmz" elmo-msgdb-directory)))
+
 (defun elmo-nmz-msgdb-create-entity (folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
-  (elmo-msgdb-create-overview-entity-from-file
-   number
-   (elmo-map-message-location folder number)))
+  (let ((location (elmo-map-message-location folder number))
+	entity uid)
+    (setq entity (elmo-msgdb-create-overview-entity-from-file number location))
+    (unless (or (> (length (elmo-msgdb-overview-entity-get-to entity)) 0)
+		(> (length (elmo-msgdb-overview-entity-get-cc entity)) 0)
+		(not (string= (elmo-msgdb-overview-entity-get-subject entity)
+			      elmo-no-subject)))
+      (elmo-msgdb-overview-entity-set-subject entity location)
+      (setq uid (nth 2 (file-attributes location)))
+      (elmo-msgdb-overview-entity-set-from entity
+					   (concat
+					    (user-full-name uid)
+					    " <"(user-login-name uid) "@"
+					    (system-name) ">")))
+    entity))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
 					      numlist new-mark
@@ -152,10 +175,10 @@
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (if start-number 0)))
     (dolist (number numbers)
-      (elmo-add-name-to-file
+      (elmo-copy-file
        (elmo-message-file-name folder number)
        (expand-file-name
 	(int-to-string (if start-number (incf cur-number) number))
@@ -166,7 +189,30 @@
 					    location strategy
 					    &optional section unseen)
   (when (file-exists-p location)
-    (insert-file-contents-as-binary location)))
+    (prog1
+	(insert-file-contents-as-binary location)
+      (unless (or (std11-field-body "To")
+		  (std11-field-body "Cc")
+		  (std11-field-body "Subject"))
+	(let (charset guess uid)
+	  (erase-buffer)
+	  (set-buffer-multibyte t)
+	  (insert-file-contents location)
+	  (setq charset (detect-mime-charset-region (point-min)
+						    (point-max)))
+	  (goto-char (point-min))
+	  (setq guess (mime-find-file-type location))
+	  (setq uid (nth 2 (file-attributes location)))
+	  (insert "From: " (concat (user-full-name uid)
+				   " <"(user-login-name uid) "@"
+				   (system-name) ">") "\n")
+	  (insert "Subject: " location "\n")
+	  (insert "Content-Type: "
+		  (concat (nth 0 guess) "/" (nth 1 guess))
+		  "; charset=" (upcase (symbol-name charset))
+		  "\nMIME-Version: 1.0\n\n")
+	  (encode-mime-charset-region (point-min) (point-max) charset)
+	  (set-buffer-multibyte nil))))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-nmz-folder))
@@ -177,13 +223,18 @@
 		     (list
 		      (encode-mime-charset-string
 		       (elmo-nmz-folder-pattern-internal folder)
-		       elmo-nmz-charset)
-		      (expand-file-name
-		       (elmo-nmz-folder-index-path-internal folder)))))
+		       elmo-nmz-charset))
+		     (if (listp (elmo-nmz-folder-index-path-internal folder))
+			 (mapcar
+			  'expand-file-name
+			  (elmo-nmz-folder-index-path-internal folder))
+		       (list
+			(expand-file-name
+			 (elmo-nmz-folder-index-path-internal folder))))))
       (goto-char (point-min))
       (while (not (eobp))
 	(beginning-of-line)
-	(setq bol (point))
+	(setq bol (if (looking-at "^file://") (match-end 0)(point)))
 	(end-of-line)
 	(setq locations (cons (buffer-substring bol (point)) locations))
 	(forward-line 1))
@@ -205,13 +256,13 @@
 	   (elmo-map-message-location folder (car msgs))
 	   condition
 	   (car msgs)
- 	   orig)
- 	  (setq matches (cons (car msgs) matches)))
+	   orig)
+	  (setq matches (cons (car msgs) matches)))
        (setq i (1+ i))
        (setq percent (/ (* i 100) num))
        (elmo-display-progress
-        'elmo-nmz-search "Searching..."
-        percent)
+	'elmo-nmz-search "Searching..."
+	percent)
        (setq msgs (cdr msgs)))
     matches))
 
@@ -233,7 +284,7 @@
 
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-nmz-folder) numbers)
   t)
-  
+
 (require 'product)
 (product-provide (provide 'elmo-nmz) (require 'elmo-version))
 
