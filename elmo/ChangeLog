@@ -1,7 +1,7 @@
 2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Eliminated needless bindings;
-	Use `elmo-close-internal' instead of `elmo-close'.
+	Use `elmo-folder-close-internal' instead of `elmo-folder-close'.
 
 2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
