@@ -369,18 +369,6 @@ header separator."
 		     elmo-msgdb-directory)
 		    alist))
 
-(defun elmo-msgdb-get-message-id-from-buffer ()
-  (let ((msgid (elmo-field-body "message-id")))
-    (if msgid
-	(if (string-match "<\\(.+\\)>$" msgid)
-	    msgid
-	  (concat "<" msgid ">")) ; Invaild message-id.
-      ;; no message-id, so put dummy msgid.
-      (concat "<" (timezone-make-date-sortable
-		   (elmo-field-body "date"))
-	      (nth 1 (eword-extract-address-components
-		      (or (elmo-field-body "from") "nobody"))) ">"))))
-
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder
 		     (or hashtb elmo-folder-info-hashtb)))

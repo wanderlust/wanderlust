@@ -1254,6 +1254,11 @@ SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
     (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
   (defalias 'elmo-field-body 'std11-field-body))
 
+(defun elmo-unfold-field-body (name)
+  (let ((value (elmo-field-body name)))
+    (and value
+	 (std11-unfold-string value))))
+
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
   (let ((lal (std11-lexical-analyze word)))
@@ -1993,7 +1998,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 	  (concat "<" msgid ">")) ; Invaild message-id.
       ;; no message-id, so put dummy msgid.
       (concat "<" (timezone-make-date-sortable
-		   (elmo-field-body "date"))
+		   (elmo-unfold-field-body "date"))
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
 

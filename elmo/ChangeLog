@@ -1,3 +1,14 @@
+2003-10-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Abolish
+	duplicate definition.
+
+	* elmo-util.el (elmo-unfold-field-body): New function.
+	(elmo-msgdb-get-message-id-from-buffer): Use it.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Fixed the last change; Use elmo-unfold-field-body.
+
 2003-10-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
