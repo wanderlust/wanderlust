@@ -3119,11 +3119,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(wl-summary-set-message-modified)
 	(wl-summary-set-mark-modified)
 	(run-hooks 'wl-summary-exec-hook)
+	;; message buffer is not up-to-date
 	(unless (and wl-message-buffer
 		     (eq (wl-summary-message-number)
 			 (with-current-buffer wl-message-buffer
 			   wl-message-buffer-cur-number)))
-	  (wl-summary-toggle-disp-msg 'off))
+	  (wl-summary-toggle-disp-msg 'off)
+	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
 	(message (concat "Executing...done"
 			 (if (> refile-failures 0)
