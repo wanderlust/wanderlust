@@ -26,6 +26,11 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (defun-maybe md5-string (a))
+  (defun-maybe dynamic-link (a))
+  (defun-maybe dynamic-call (a b)))
+
 (defvar md5-dl-module
   (if (and (fboundp 'md5-string)
 	   (subrp (symbol-function 'md5-string)))
@@ -61,6 +66,5 @@ hash of a portion of OBJECT."
       (md5-region (or beg (point-min)) (or end (point-max))))))
 
 (provide 'md5-dl)
-(provide 'md5)
 
 ;;; md5-dl.el ends here.

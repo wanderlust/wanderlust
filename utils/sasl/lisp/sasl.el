@@ -82,8 +82,8 @@
   (concat authorid "\0" authenid "\0" passphrase))
 
 ;;; SCRAM-MD5
-(eval-when-compile
-  (defvar sasl-scram-md5-client-security-info
+(defvar sasl-scram-md5-client-security-info
+  (eval-when-compile
     (scram-make-security-info nil t 0)))
 
 (defun sasl-scram-md5-make-salted-pass (server-msg-1 passphrase)
@@ -121,7 +121,7 @@
 	 client-proof)
       (fillarray client-proof 0))))
 	     
-(defun sasl-scram-md5-authenticate-server (server-msg-1 
+(defun sasl-scram-md5-authenticate-server (server-msg-1
 					   server-msg-2
 					   client-msg-1
 					   salted-pass)

@@ -58,8 +58,10 @@
  ((and (fboundp 'dynamic-link)
        (file-exists-p (expand-file-name "md5.so" exec-directory)))
   ;; Emacs with DL patch.
-  (require 'md5 "md5-dl"))
+  (require 'md5-dl))
  (t
-  (require 'md5 "md5-el")))
+  (require 'md5-el)))
+
+(provide 'md5)
 
 ;;; md5.el ends here.

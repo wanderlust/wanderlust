@@ -405,4 +405,4 @@ hash of a portion of OBJECT."
 	    (kill-buffer buffer)))
       (and buffer (buffer-name buffer) (kill-buffer buffer) nil))))
 
-(provide 'md5)
+(provide 'md5-el)
