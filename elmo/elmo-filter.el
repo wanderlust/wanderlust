@@ -164,7 +164,10 @@
 							   mark-alist)
   (let ((unreads (elmo-folder-list-unreads-internal
 		  (elmo-filter-folder-target-internal folder)
-		  unread-marks mark-alist)))
+		  unread-marks
+		  (or mark-alist
+		      (elmo-msgdb-get-mark-alist
+		       (elmo-folder-msgdb folder))))))
     (unless (listp unreads)
       (setq unreads
 	    (delq nil
