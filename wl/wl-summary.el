@@ -398,8 +398,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map ">"    'wl-summary-display-bottom)
   (define-key wl-summary-mode-map "\177" 'wl-summary-prev-page)
   (define-key wl-summary-mode-map [backspace] 'wl-summary-prev-page)
-  (define-key wl-summary-mode-map "\r"   'wl-summary-next-line-content)
-  (define-key wl-summary-mode-map "\C-m" 'wl-summary-next-line-content)
+  (define-key wl-summary-mode-map "\r"   'wl-summary-enter-handler)
+  (define-key wl-summary-mode-map "\C-m" 'wl-summary-enter-handler)
   (define-key wl-summary-mode-map "/"    'wl-thread-open-close)
   (define-key wl-summary-mode-map "["    'wl-thread-open-all)
   (define-key wl-summary-mode-map "]"    'wl-thread-close-all)
@@ -3766,6 +3766,15 @@ Return non-nil if the mark is updated"
 ;;;	(switch-to-buffer cur-buf)
 	)))
     (run-hooks 'wl-summary-buffer-window-scroll-functions)))
+
+(defun wl-summary-enter-handler (&optional number)
+  "A command for `enter' key in the summary.
+Basically, it shows next line of the message.
+If optional argument NUMBER is specified, jump to the message."
+  (interactive "P")
+  (if number
+      (wl-summary-jump-to-msg number)
+    (wl-summary-next-line-content)))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."

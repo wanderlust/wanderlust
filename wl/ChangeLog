@@ -1,5 +1,9 @@
 2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-mode-map): Bind enter key to the
+	wl-summary-enter-handler.
+	(wl-summary-enter-handler): New command.
+
 	* wl-vars.el (wl-summary-persistent-mark-priority-list): Update
 	docstring and custom spec.
 
