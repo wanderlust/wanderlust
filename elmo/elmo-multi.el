@@ -220,6 +220,18 @@
       (setq cur-number (+ 1 cur-number)))
     t))
 
+(luna-define-method elmo-folder-detach-messages ((folder elmo-multi-folder)
+						 numbers)
+  (let ((flds (elmo-multi-folder-children-internal folder))
+	one-list-list
+	(cur-number 0))
+    (setq one-list-list (elmo-multi-split-numbers folder numbers))
+    (while (< cur-number (length flds))
+      (elmo-folder-detach-messages (nth cur-number flds)
+				   (nth cur-number one-list-list))
+      (setq cur-number (+ 1 cur-number)))
+    t))
+
 (luna-define-method elmo-folder-diff ((folder elmo-multi-folder)
 				      &optional numbers)
   (elmo-multi-folder-diff folder numbers))

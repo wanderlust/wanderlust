@@ -1,5 +1,9 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-detach-messages): New method.
+
+	* elmo-multi.el (elmo-folder-detach-messages): Define.
+
 	* elmo.el (elmo-message-copy-entity): New function.
 	(elmo-message-entity-set-number): Ditto.
 	(elmo-message-mark): Define as method.

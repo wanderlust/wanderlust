@@ -1534,6 +1534,13 @@ If update process is interrupted, return nil.")
        (elmo-folder-set-killed-list-internal folder killed-list)
        nil))))
 
+(luna-define-generic elmo-folder-detach-messages (folder numbers)
+  "Remove messages with NUMBERS from MSGDB.")
+
+(luna-define-method elmo-folder-detach-messages ((folder elmo-folder)
+						 numbers)
+  (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) numbers))
+
 (luna-define-generic elmo-folder-length (folder)
   "Return number of messages in the FOLDER.")
 
