@@ -817,7 +817,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		      (string-to-int (elmo-filter-value condition)))))
      ((string= (elmo-filter-key condition) "since")
       (let* ((date (elmo-date-get-datevec (elmo-filter-value condition)))
-	     (field-date (timezone-make-date-sortable
+	     (field-date (elmo-date-make-sortable-string
 			  (timezone-fix-time
 			   (std11-field-body "date")
 			   (current-time-zone) nil)))

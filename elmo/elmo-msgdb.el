@@ -309,7 +309,7 @@ header separator."
 		    (elmo-msgdb-overview-entity-get-cc entity))))
      ((or (string= key "since")
 	  (string= key "before"))
-      (let ((field-date (timezone-make-date-sortable
+      (let ((field-date (elmo-date-make-sortable-string
 			 (timezone-fix-time
 			  (elmo-msgdb-overview-entity-get-date entity)
 			  (current-time-zone) nil)))
