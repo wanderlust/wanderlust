@@ -483,7 +483,7 @@ Return newly created temporary directory name which contains temporary files.")
 	   (elmo-file-cache-path cache-file))))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-folder))
+  ((folder elmo-folder) &optional visible-only)
   t)
 
 (luna-define-method elmo-folder-list-unreads-internal
@@ -817,11 +817,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (if unseen (setq seen-list (cons
-				      (elmo-message-field
-				       src-folder (car numbers)
-				       'message-id)
-				      seen-list)))
+	  (unless unseen
+	    (setq seen-list (cons (elmo-message-field
+				   src-folder (car numbers)
+				   'message-id)
+				  seen-list)))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(setq numbers (cdr numbers)))
       (if (and seen-list (elmo-folder-persistent-p folder))
@@ -1325,6 +1325,9 @@ Return a hashtable for newsgroups."
 			       'elmo-pop3-default-authenticate-type)
 (elmo-define-obsolete-variable 'elmo-default-pop3-port
 			       'elmo-pop3-default-port)
+
+;; autoloads
+(autoload 'elmo-dop-queue-flush "elmo-dop")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

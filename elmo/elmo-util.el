@@ -1686,7 +1686,7 @@ If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
   (when (boundp obsolete)
     (static-if (and (fboundp 'defvaralias)
 		    (subrp (symbol-function 'defvaralias)))
-	(defvaralias obsolete var)
+	(defvaralias var obsolete)
       (set var (symbol-value obsolete)))
     (if elmo-obsolete-variable-show-warnings
 	(elmo-warning (format "%s is obsolete. Use %s instead."
