@@ -1,3 +1,7 @@
+2004-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-get-available-flags): Rewrite.
+
 2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-sync-marks): Remove condition which

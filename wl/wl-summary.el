@@ -1793,13 +1793,13 @@ This function is defined for `window-scroll-functions'"
    reverse))
 
 (defun wl-summary-get-available-flags (&optional include-specials)
-  (if include-specials
-      (elmo-uniq-list (append elmo-global-flag-list elmo-preserved-flags))
-    (delq 'new (delq 'cached
-		     (elmo-uniq-list
-		      (append elmo-global-flag-list
-			      elmo-preserved-flags
-			      nil))))))
+  (let ((flags (elmo-uniq-list
+		(append elmo-global-flag-list
+			(copy-sequence elmo-preserved-flags))
+		#'delq)))
+    (if include-specials
+	flags
+      (delq 'new (delq 'cached flags)))))
 
 (defun wl-summary-sync-marks ()
   "Update persistent marks in summary."
