@@ -91,7 +91,7 @@
 (defvar wl-summary-buffer-temp-mark-column nil)
 (defvar wl-summary-buffer-persistent-mark-column nil)
 
-(defvar wl-summary-buffer-unsync-mark-number-list nil)
+(defvar wl-summary-buffer-persistent-mark-version 0)
 
 (defvar wl-summary-buffer-persistent nil)
 (defvar wl-summary-buffer-thread-nodes nil)
@@ -156,7 +156,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-number-column)
 (make-variable-buffer-local 'wl-summary-buffer-temp-mark-column)
 (make-variable-buffer-local 'wl-summary-buffer-persistent-mark-column)
-(make-variable-buffer-local 'wl-summary-buffer-unsync-mark-number-list)
+(make-variable-buffer-local 'wl-summary-buffer-persistent-mark-version)
 (make-variable-buffer-local 'wl-summary-buffer-persistent)
 (make-variable-buffer-local 'wl-summary-buffer-thread-nodes)
 (make-variable-buffer-local 'wl-summary-buffer-prev-refile-destination)
@@ -612,7 +612,8 @@ See also variable `wl-use-petname'."
 	(save-excursion
 	  (goto-char beg)
 	  (while (and (< (point) end) (not (eobp)))
-	    (when (null (get-text-property (point) 'face))
+	    (when (or (null (get-text-property (point) 'face))
+		      (wl-summary-persistent-mark-invalid-p))
 	      (setq number (wl-summary-message-number))
 	      (when number
 		(setq flags (elmo-message-flags wl-summary-buffer-elmo-folder
@@ -658,10 +659,49 @@ See also variable `wl-use-petname'."
 						     numbers)
   (save-excursion
     (set-buffer (wl-summary-event-handler-buffer-internal handler))
-    (dolist (number numbers)
-      (when (and (wl-summary-message-visible-p number)
-		 (wl-summary-jump-to-msg number))
-	(wl-summary-update-persistent-mark number)))))
+    (let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
+	  invalidate)
+      (dolist (number numbers)
+	(when (wl-summary-message-visible-p number)
+	  (if (catch 'visible
+		(let ((window-list window-list)
+		      win)
+		  (while (setq win (car window-list))
+		    (when (wl-summary-jump-to-msg number
+						  (window-start win)
+						  (window-end win))
+		      (throw 'visible t))
+		    (setq window-list (cdr window-list)))))
+	      (wl-summary-update-persistent-mark number)
+	    (setq invalidate t))))
+      (when invalidate
+	(wl-summary-invalidate-persistent-mark)
+	(dolist (win window-list)
+	  (wl-summary-validate-persistent-mark
+	   (window-start win)
+	   (window-end win)))))))
+
+(luna-define-method elmo-event-handler-cache-changed
+  ((handler wl-summary-event-handler) number)
+  (save-excursion
+    (set-buffer (wl-summary-event-handler-buffer-internal handler))
+    (let ((window-list (get-buffer-window-list (current-buffer) 'nomini t)))
+      (when (wl-summary-message-visible-p number)
+	(if (catch 'visible
+	      (let ((window-list window-list)
+		    win)
+		(while (setq win (car window-list))
+		  (when (wl-summary-jump-to-msg number
+						(window-start win)
+						(window-end win))
+		    (throw 'visible t))
+		  (setq window-list (cdr window-list)))))
+	    (wl-summary-update-persistent-mark number)
+	  (wl-summary-invalidate-persistent-mark)
+	  (dolist (win window-list)
+	    (wl-summary-validate-persistent-mark
+	     (window-start win)
+	     (window-end win))))))))
 
 (defun wl-summary-buffer-detach ()
   (when (and (eq major-mode 'wl-summary-mode)
@@ -1075,7 +1115,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  wl-thread-entities nil
 	  wl-summary-scored nil
 	  wl-summary-buffer-number-list nil
-	  wl-summary-buffer-unsync-mark-number-list nil
+	  wl-summary-buffer-persistent-mark-version 0
 	  wl-summary-buffer-target-mark-list nil
 	  wl-summary-buffer-temp-mark-list nil
 	  wl-summary-delayed-update nil)
@@ -1548,20 +1588,11 @@ If ARG is non-nil, checking is omitted."
 	    (save-excursion
 	      (save-match-data
 		;; online
-		(if (or arg (not file-cached))
-		    (elmo-message-encache
-		     wl-summary-buffer-elmo-folder
-		     number))
+		(when (or arg (not file-cached))
+		  (elmo-message-encache wl-summary-buffer-elmo-folder
+					number))
 		(elmo-message-set-cached wl-summary-buffer-elmo-folder
-					 number t)
-		(when (and (wl-summary-jump-to-msg number)
-			   (wl-summary-update-persistent-mark))
-		  (sit-for 0)
-		  (wl-summary-count-unread)
-		  (wl-summary-update-modeline)
-		  (wl-folder-update-unread
-		   (wl-summary-buffer-folder-name)
-		   wl-summary-buffer-unread-count)))
+					 number t))
 	      t)
 	  nil)))))
 
@@ -1741,7 +1772,7 @@ If ARG is non-nil, checking is omitted."
 	   number)
       (setq number (wl-summary-message-number))
       (elmo-message-set-cached folder number nil)
-      (when (wl-summary-update-persistent-mark)
+      (ignore-errors
 	(elmo-file-cache-delete
 	 (elmo-file-cache-get-path
 	  (elmo-message-field wl-summary-buffer-elmo-folder
@@ -1761,7 +1792,6 @@ If ARG is non-nil, checking is omitted."
 	(setq msgid (elmo-message-field folder number 'message-id))
 	(elmo-message-set-cached folder number
 				 (elmo-file-cache-exists-p msgid))
-	(wl-summary-update-persistent-mark)
 	(forward-line 1))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
@@ -1815,12 +1845,7 @@ If ARG is non-nil, checking is omitted."
     (goto-char beg)
     (while (and (< (point) end) (not (eobp)))
       (when (or (not check)
-		(let ((number (wl-summary-message-number)))
-		  (when (memq number wl-summary-buffer-unsync-mark-number-list)
-		    (setq wl-summary-buffer-unsync-mark-number-list
-			  (delq number
-				wl-summary-buffer-unsync-mark-number-list))
-		    t)))
+		(wl-summary-persistent-mark-invalid-p))
 	(wl-summary-update-persistent-mark))
       (forward-line 1))))
 
@@ -2075,18 +2100,27 @@ This function is defined for `window-scroll-functions'"
   (setq wl-summary-buffer-mode-line
 	(funcall wl-summary-buffer-mode-line-formatter)))
 
-(defun wl-summary-jump-to-msg (&optional number)
+(defun wl-summary-jump-to-msg (&optional number beg end)
   (interactive "NJump to Number:")
   (let ((num (or number
 		 (string-to-int
-		  (read-from-minibuffer "Jump to Message(No.): ")))))
-    (setq num (int-to-string num))
-    (beginning-of-line)
-    (if (or (and (re-search-forward (concat "\r" num "[^0-9]") nil t)
-		 (progn (backward-char 1) t))
-	    (re-search-backward (concat "\r" num "[^0-9]") nil t))
-	(progn (beginning-of-line) t)
-      nil)))
+		  (read-from-minibuffer "Jump to Message(No.): "))))
+	(pos (point))
+	regexp)
+    (setq regexp (concat "\r" (int-to-string num) "[^0-9]"))
+    (if (and beg end (or (< pos beg) (< end pos)))
+	(progn
+	  (goto-char beg)
+	  (if (re-search-forward regexp end t)
+	      (progn (backward-char 1) (beginning-of-line) t)
+	    (goto-char pos)
+	    nil))
+      (beginning-of-line)
+      (if (or (and (re-search-forward regexp end t)
+		   (progn (backward-char 1) t))
+	      (re-search-backward regexp beg t))
+	  (progn (beginning-of-line) t)
+	nil))))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion
@@ -2239,7 +2273,7 @@ If ARG, without confirm."
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-thread-modified
 		   wl-summary-buffer-number-list
-		   wl-summary-buffer-unsync-mark-number-list
+		   wl-summary-buffer-persistent-mark-version
 		   wl-summary-buffer-folder-name
 		   wl-summary-buffer-line-formatter)
 		 (and (eq wl-summary-buffer-view 'thread)
@@ -2368,6 +2402,7 @@ If ARG, without confirm."
 	  (setq wl-summary-buffer-disp-msg nil)
 	  (setq wl-summary-buffer-last-displayed-msg nil)
 	  (setq wl-summary-buffer-current-msg nil)
+	  (setq wl-summary-buffer-persistent-mark-version 0)
 	  (let ((inhibit-read-only t)
 		(buffer-read-only nil))
 	    (erase-buffer)
@@ -2405,8 +2440,6 @@ If ARG, without confirm."
 	    (wl-summary-update-modeline)))
       (unless (eq wl-summary-buffer-view 'thread)
 	(wl-summary-make-number-list))
-      (setq wl-summary-buffer-unsync-mark-number-list
-	    (copy-sequence wl-summary-buffer-number-list))
       (when (and wl-summary-cache-use
 		 (or (and wl-summary-check-line-format
 			  (wl-summary-line-format-changed-p))
@@ -2877,6 +2910,31 @@ If ARG, exit virtual folder."
 	(wl-summary-get-score-mark number)
 	" ")))
 
+(defun wl-summary-persistent-mark-invalid-p ()
+  (not
+   (equal
+    ;; mey be nil.
+    (get-text-property (point) 'wl-summary-persistent-mark-version)
+    wl-summary-buffer-persistent-mark-version)))
+
+(defun wl-summary-validate-persistent-mark (beg end)
+  (let ((inhibit-read-only t)
+	(buffer-read-only nil))
+    (put-text-property beg end
+		       'wl-summary-persistent-mark-version
+		       wl-summary-buffer-persistent-mark-version)
+    (set-buffer-modified-p nil)))
+
+(defun wl-summary-validate-persistent-mark-string (string)
+  (put-text-property 0 (length string)
+		     'wl-summary-persistent-mark-version
+		     wl-summary-buffer-persistent-mark-version
+		     string))
+
+(defun wl-summary-invalidate-persistent-mark ()
+  (setq wl-summary-buffer-persistent-mark-version
+	(1+ wl-summary-buffer-persistent-mark-version)))
+
 (defsubst wl-summary-persistent-mark-string (folder flags cached)
   "Return the persistent mark string.
 The mark is decided according to the FOLDER, FLAGS and CACHED."
@@ -3058,11 +3116,14 @@ Return non-nil if the mark is updated"
 		(buffer-read-only nil)
 		(mark (buffer-substring (- (point) 1) (point)))
 		(new-mark (wl-summary-persistent-mark number flags)))
-	    (unless (string= new-mark mark)
-	      (delete-backward-char 1)
-	      (insert new-mark)
-	      (wl-summary-set-message-modified)
-	      t))))
+	    (prog1
+		(unless (string= new-mark mark)
+		  (delete-backward-char 1)
+		  (insert new-mark)
+		  (wl-summary-set-message-modified)
+		  t)
+	      (wl-summary-validate-persistent-mark (point-at-bol)
+						   (point-at-eol))))))
     (when wl-summary-highlight
       (wl-highlight-summary-current-line))
     (set-buffer-modified-p nil)))
@@ -3494,6 +3555,7 @@ Return non-nil if the mark is updated"
 		       (number-to-string
 			(elmo-message-entity-number
 			 wl-message-entity))))
+    (wl-summary-validate-persistent-mark-string line)
     (if wl-summary-highlight
 	(wl-highlight-summary-line-string
 	 (elmo-message-entity-number wl-message-entity)

@@ -1167,7 +1167,8 @@ If CACHED is t, message is set as cached.")
 					     number cached)
   (if cached
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder) number 'cached)
-    (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached)))
+    (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached))
+  (elmo-folder-notify-event folder 'cache-changed number))
 
 (defun elmo-message-copy-entity (entity)
   (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
@@ -1668,6 +1669,9 @@ Return a hashtable for newsgroups."
 
 (luna-define-generic elmo-event-handler-flag-changed (handler numbers)
   "Notify flag of the messages with NUMBERS is changed.")
+
+(luna-define-generic elmo-event-handler-cache-changed (handler number)
+  "Called when cache status of the message with NUMBER is changed.")
 
 (defun elmo-folder-add-handler (folder handler)
   (unless (memq handler (elmo-folder-handlers-internal folder))

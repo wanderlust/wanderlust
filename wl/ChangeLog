@@ -1,3 +1,30 @@
+2004-12-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-unsync-mark-number-list):
+	Abolish.
+	(wl-summary-buffer-persistent-mark-version): New internal
+	variable.
+	(wl-summary-update-mark-and-highlight-window): Check by
+	wl-summary-persistent-mark-invalid-p.
+	(wl-summary-update-status-marks): Ditto.
+	(elmo-event-handler-flag-changed): Rewrite.
+	(elmo-event-handler-cache-changed): Define.
+	(wl-summary-prefetch-msg): Does not update persistent mark here.
+	(wl-summary-delete-cache): Ditto.
+	(wl-summary-resume-cache-status): Ditto.
+	(wl-summary-jump-to-msg): Add arguments `beg' and `end'.
+	(wl-summary-persistent-mark-invalid-p): New function.
+	(wl-summary-validate-persistent-mark): Ditto.
+	(wl-summary-validate-persistent-mark-string): Ditto.
+	(wl-summary-invalidate-persistent-mark): Ditto.
+	(wl-summary-update-persistent-mark): Call
+	`wl-summary-validate-persistent-mark'.
+	(wl-summary-create-line): Call
+	`wl-summary-validate-persistent-mark-string'.
+
+	* wl-message.el (wl-message-buffer-prefetch-subr): Set cache
+	status as t if cache used.
+
 2004-12-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-set-petname): Check wl-folder-group-alist

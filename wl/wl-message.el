@@ -739,6 +739,8 @@ Returns non-nil if bottom of message."
 		  (message "Prefetching %d..." number))
 		(setq result (wl-message-buffer-display
 			      folder number display-type nil 'unread))
+		(when (elmo-message-use-cache-p folder number)
+		  (elmo-message-set-cached folder number t))
 		(when wl-message-buffer-prefetch-debug
 		  (setq time2 (current-time))
 		  (setq sec  (- (nth 1 time2)(nth 1 time1)))
