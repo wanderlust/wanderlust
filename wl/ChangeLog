@@ -1,5 +1,8 @@
 2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-vars (wl-delete-folder-alist,): Change default value.
+	(wl-folder-hierarchy-access-folders): Ditto.
+
 	* wl-summary.el (wl-summary-goto-folder-subr): Don't restrict
 	`wl-summary-highlight'.
 	(wl-summary-reedit): Use `cond' instead of nested `if'.
