@@ -705,7 +705,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless wl-from (error "Please set `wl-from' to your mail address."))
+  (unless wl-from (error "Please set `wl-from' to your mail address"))
   ;; Message-ID
   (when wl-insert-message-id
     (let ((message-id (funcall wl-message-id-function))
@@ -713,10 +713,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (unless (string-match "^<\\([^@]*\\)@\\([^@]*\\)>$" message-id)
 	(cond
 	 ((string-match "@" wl-message-id-domain)
-	  (error "Please remove `@' from `wl-message-id-domain'."))
+	  (error "Please remove `@' from `wl-message-id-domain'"))
 	 (t
 	  (error
-	   "Check around `wl-message-id-function' to get valid Message-ID string."))))
+	   "Check around `wl-message-id-function' to get valid Message-ID string"))))
       (setq domain (match-string 2 message-id))
       (if (or (not (string-match "[^.]\\.[^.]" domain))
 	      (string= domain "localhost.localdomain"))
@@ -778,7 +778,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-check-variables-2 ()
   (if (< wl-message-buffer-cache-size 1)
-      (error "`wl-message-buffer-cache-size' must be larger than 0."))
+      (error "`wl-message-buffer-cache-size' must be larger than 0"))
   (when wl-message-buffer-prefetch-depth
     (if (not (< wl-message-buffer-prefetch-depth
 		wl-message-buffer-cache-size))

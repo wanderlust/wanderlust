@@ -332,7 +332,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
 
 (defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
-  "Get elmo folder structure from entity."
+  "Get elmo folder structure from ENTITY."
   (` (if (, no-cache)
 	 (elmo-make-folder (elmo-string (, entity)))
        (or (wl-folder-elmo-folder-cache-get (, entity))
@@ -350,7 +350,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (forward-line 1))
 
 (defun wl-folder-prev-entity-skip-invalid (&optional hereto)
-  "move to previous entity. skip unsubscribed or removed entity."
+  "Move to previous entity. skip unsubscribed or removed entity."
   (interactive)
   (if hereto
       (end-of-line))
@@ -2076,7 +2076,7 @@ If FOLDER is multi, return comma separated string (cross post)."
       nil)))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule (entity)
-  "Return ML address guess by FOLDER.
+  "Return ML address guess by ENTITY.
 Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
@@ -2114,7 +2114,7 @@ Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
 	  (elmo-string-matched-member tokey wl-subscribed-mailing-list t)))))
 
 (defun wl-folder-guess-mailing-list-by-folder-name (entity)
-  "Return ML address guess by FOLDER name's last hierarchy.
+  "Return ML address guess by ENTITY name's last hierarchy.
 Use `wl-subscribed-mailing-list'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
@@ -2713,7 +2713,7 @@ Use `wl-subscribed-mailing-list'."
 					 folder))))
 			 ;; Sticky folder exists.
 			 (wl-summary-sticky-buffer-name
-			  (elmo-folder-name-internal folder))		     
+			  (elmo-folder-name-internal folder))
 		       (concat
 			wl-summary-buffer-name
 			(symbol-name this-command))))
