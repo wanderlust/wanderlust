@@ -2,6 +2,66 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** The structure of the message database is improved.
+   Following setting is to convert legacy msgdb to the new one when you
+   select a folder.
+   (setq elmo-msgdb-default-type 'standard
+         elmo-msgdb-convert-type 'auto)
+   (which is initial setting.)
+
+** The temporary mark and corresponding action is now customizable.
+
+   By default, following mark-and-actions are defined.
+   mark-and-actions which are defined as before.
+    "o" refile   (same as before)
+    "O" copy     (same as before)
+    "d" dispose  (formerly delete, 'D' mark. Messages are moved to
+    		  wl-trash-folder. Its behavior is decided by
+		  wl-dispose-folder-alist.)
+   New mark-and-actions which are newly introduced.
+    "D" delete   (remove message immediately)
+    "i" prefetch (prefetch message)
+    "~" resend   (resend message)
+   Press 'x' to execute actions which corresponds to the mark.
+   mark-and-actions can be define by the new variable, 
+   'wl-summary-mark-action-list'. See its docstring for more in detail.
+
+** SPAM filter module is added.
+   Following spam filter libraries are supported.
+   bogofilter
+   spamfilter
+   bsfilter
+   SpamAssassin
+   SpamOracle
+   Regular Expressions Header Matching
+
+** 'mark folder is renamed to 'flag folder.
+   Related to this, original message location is displayed as help-echo on summary
+   line in the 'flag folder (you can control the behavior by
+   wl-highlight-summary-line-help-echo-alist).
+
+** Now you can put arbitrary user defined flag on message.
+   You can specify its flag by "F" in the summary mode.
+
+** New marks, 'A' and 'a' are added for answered messages.
+   Now answered messages have its own mark in the summary mode.
+   'A' is displayed for uncached messages and 'a' is for cached messages.
+
+** New mark,s 'F' and 'f' are added for forwarded messages.
+   Now forwarded messages have its own mark in the summary mode.
+   'F' is displayed for uncached messages and 'f' is for cached messages.
+
+** New search condition 'Flag' (Status of the message) is added.
+   There are flags 'unread', 'important', 'answered',
+   'digest' (unread or important) and 'any' (any of the flag).
+   For example, following filter folder contains only unread or important
+   messages in the %inbox folder.
+
+   /flag:digest/%inbox
+
+** Draft save function is improved.
+   Now you can set wl-draft-folder to IMAP folder, Maildir folder, and so on.
+
 ** Automatically save draft buffers by using idle-timer.
    You can control behavior by the variable `wl-auto-save-drafts-interval'.
 
@@ -12,17 +72,6 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Now you can sort summary lines into descending order.
 
 ** Abbreviate too long header extended to lines in message buffer.
-
-** New hooks
-   wl-draft-reply-hook
-   wl-summary-reply-hook
-   wl-draft-forward-hook
-   wl-summary-forward-hook
-   wl-draft-kill-pre-hook
-   wl-summary-resend-hook
-
-** Abolished hook
-   wl-reply-hook
 
 ** Persistent mark string in summary buffer is changed.
    Default setting indicates cached state by its upper/lower case.
@@ -47,82 +96,14 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** The variable wl-refile-policy-alist is abolished.
 
-** SPAM filter module is added.
-   Following spam filter libraries are supported.
-   bogofilter
-   spamfilter
-   bsfilter
-   SpamAssassin
-   SpamOracle
-   Regular Expressions Header Matching
-
 ** Batch processing module is added.
-
-** The structure of the message database is improved.
-   Following setting is to convert legacy msgdb to the new one on reconstruction
-   of msgdb (s all RET on summary buffer).
-   (setq elmo-msgdb-default-type 'standard
-         elmo-msgdb-convert-type 'sync)
-
-** Draft save function is improved.
-   Now you can set wl-draft-folder to IMAP folder, Maildir folder, and so on.
-
-** 'mark folder is renamed to 'flag folder.
-   Related to this, original message location is displayed as help-echo on summary
-   line in the 'flag folder (you can control the behavior by
-   wl-highlight-summary-line-help-echo-alist).
-
-** Now you can put arbitrary user defined flag on message.
-   You can specify its flag by "F" in the summary mode.
-
-** New mark, 'A' and 'a' is added for answered messages.
-   Now answered messages have its own mark in the summary mode.
-   'A' is displayed for uncached messages and 'a' is for cached messages.
-
-** New search condition 'Flag' (Status of the message) is added.
-   There are flags 'unread', 'important', 'answered',
-   'digest' (unread or important) and 'any' (any of the flag).
-   For example, following filter folder contains only unread or important
-   messages in the %inbox folder.
-
-   /flag:digest/%inbox
 
 ** In the multi-folder, status of messages are synchronized with original
    folder.
    For example, unread status of '+inbox' is updated to '*+inbox,+outbox'.
 
-** The temporary mark and corresponding action is now customizable.
-
-   By default, following mark-and-actions are defined.
-   mark-and-actions which are defined as before.
-    "o" refile   (same as before)
-    "O" copy     (same as before)
-    "d" dispose  (formerly delete, 'D' mark. Messages are moved to
-    		  wl-trash-folder. Its behavior is decided by
-		  wl-dispose-folder-alist.)
-   New mark-and-actions which are newly introduced.
-    "D" delete   (remove message immediately)
-    "i" prefetch (prefetch message)
-    "~" resend   (resend message)
-   Press 'x' to execute actions which corresponds to the mark.
-   mark-and-actions can be define by the new variable, 
-   'wl-summary-mark-action-list'. See its docstring for more in detail.
-
-** The function wl-summary-resend-message is abolished. Instead of it,
-   you can put mark for resending by wl-summary-resend.
-
-** New face
-
-   wl-highlight-summary-disposed-face
-   wl-highlight-summary-prefetch-face
-   wl-highlight-summary-resend-face
-   wl-highlight-summary-answered-face
-   wl-highlight-action-argument-face
-
-** Abolished face
-
-   wl-highlight-refile-destination-face
-   (renamed to wl-highlight-action-argument-face)
+** The function wl-summary-resend-message is abolished.
+   you can put mark for resending by wl-summary-resend instead.
 
 ** Variables renamed
    wl-delete-folder-alist is renamed to wl-dispose-folder-alist.
@@ -158,6 +139,30 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Commands to verify/decrypt non-MIME PGP message are added.
    C-c:v, C-c:d in message buffer to verify or decrypt respectively.
+
+** New hooks
+   wl-draft-reply-hook
+   wl-summary-reply-hook
+   wl-draft-forward-hook
+   wl-summary-forward-hook
+   wl-draft-kill-pre-hook
+   wl-summary-resend-hook
+
+** Abolished hook
+   wl-reply-hook
+
+** New face
+
+   wl-highlight-summary-disposed-face
+   wl-highlight-summary-prefetch-face
+   wl-highlight-summary-resend-face
+   wl-highlight-summary-answered-face
+   wl-highlight-action-argument-face
+
+** Abolished face
+
+   wl-highlight-refile-destination-face
+   (renamed to wl-highlight-action-argument-face)
 
 * Changes in 2.10.1 from 2.10.0
   Version 2.10.1 is a bug fix version of 2.10.0.
