@@ -478,7 +478,8 @@ Returns a process object.  if making session failed, returns nil."
 							    numbers)
   (elmo-folder-unmark-important-dop folder numbers))
 
-(luna-define-method elmo-message-encache :around ((folder elmo-folder) number)
+(luna-define-method elmo-message-encache :around ((folder elmo-net-folder)
+						  number)
   (if (elmo-folder-plugged-p folder)
       (luna-call-next-method)
     (if elmo-enable-disconnected-operation
@@ -516,7 +517,7 @@ Returns a process object.  if making session failed, returns nil."
       (if (< number 0)
 	  (elmo-message-fetch-internal
 	   (elmo-dop-spool-folder folder) (abs number) strategy
-	   section outbuf unseen)
+	   section unseen)
 	(elmo-message-fetch
 	 folder number
 	 ;; fetch with entire cache process.
