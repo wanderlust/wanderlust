@@ -3746,6 +3746,7 @@ Return t if message exists."
 	cur-folder cur-number message-last-pos)
     (when (buffer-live-p wl-message-buffer)
       (save-window-excursion
+	(setq wl-current-summary-buffer (current-buffer))
 	(wl-message-select-buffer wl-message-buffer)
 	(setq cur-folder wl-message-buffer-cur-folder)
 	(setq cur-number wl-message-buffer-cur-number)))

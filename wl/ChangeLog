@@ -1,3 +1,8 @@
+2004-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay): Set
+	wl-current-summary-buffer.
+
 2004-07-29  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-action.el (wl-summary-exec): Fix the bug whereby a non null
