@@ -41,7 +41,10 @@
   (defalias-maybe 'event-window 'ignore)
   (defalias-maybe 'posn-window 'ignore)
   (defalias-maybe 'event-start 'ignore)
-  (defalias-maybe 'mime-open-entity 'ignore))
+  (defalias-maybe 'mime-open-entity 'ignore)
+  (defalias-maybe 'itimer-function 'ignore)
+  (defalias-maybe 'delete-itimer 'ignore)
+  (defvar-maybe itimer-list))
 
 (defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)

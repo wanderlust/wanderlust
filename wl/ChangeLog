@@ -1,5 +1,10 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (toplevel): Eliminated byte-compile warning.
+	for `itimer-function', `delete-timer' and `itimer-list'.
+
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-message-buffer-prefetch-threshold): New variable.
 	* wl-message.el (wl-message-buffer-prefetch-get-next): Use
 	`wl-message-buffer-prefetch-threshold'.
