@@ -3094,7 +3094,7 @@ A draft for forwarding the message at current cursor point is prepared.
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
 Put @samp{$} mark on the message at current cursor point.
-If already marked as @samp{$}, delete it.
+If already marked as @samp{$}, remove the mark.
 (@code{wl-summary-mark-as-important})
 
 @item y
@@ -3388,7 +3388,7 @@ previously specified.
 @item d
 @kindex d (Summary)
 @findex wl-summary-dispose
-Put delete mark on the message at the current cursor point.
+Put disposal mark on the message at the current cursor point.
 (@code{wl-summary-dispose})
 
 @item u
@@ -3413,7 +3413,7 @@ Mark as read messages in the specified region.
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
 Mark as important @samp{$} messages in the specified region.
-If @samp{$} already exists, it is deleted.
+If @samp{$} mark already exists, remove the mark.
 (@code{wl-summary-mark-as-important-region})
 
 @item r !
@@ -3456,7 +3456,7 @@ Put copy mark on the messages in the specified region.
 @item r d
 @kindex r d (Summary)
 @findex wl-summary-dispose-region
-Put delete mark on the messages in the specified region.
+Put disposal mark on the messages in the specified region.
 (@code{wl-summary-dispose-region})
 
 @item r u
@@ -3483,7 +3483,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @findex wl-thread-mark-as-important
 Put important mark @samp{$} on the messages which are the
 descendant of the current thread.
-If @samp{$} mark exists, it is deleted.
+If @samp{$} mark exists, remove the mark.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-mark-as-important})
 
@@ -3534,7 +3534,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @item t d
 @kindex t d (Summary)
 @findex wl-thread-dispose
-Put delete mark on the messages which are the descendant of the current thread.
+Put disposal mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-dispose})
 
@@ -3570,7 +3570,7 @@ Mark as read all messages which have target mark @samp{*}.
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
 Mark as important all messages which have target mark @samp{*}.
-If already marked as @samp{$}, it is deleted.
+If already marked as @samp{$}, remove the mark.
 (@code{wl-summary-target-mark-mark-as-important})
 
 @item m !
@@ -3594,7 +3594,7 @@ Put copy mark on the messages which have target mark @samp{*}.
 @item m d
 @kindex m d (Summary)
 @findex wl-summary-target-mark-dispose
-Put delete mark on the messages which have target mark @samp{*}.
+Put disposal mark on the messages which have target mark @samp{*}.
 (@code{wl-summary-target-mark-dispose})
 
 @item m y

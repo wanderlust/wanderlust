@@ -3087,7 +3087,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @item $
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
-@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-mark-as-important})
 
 @item y
@@ -3379,18 +3379,18 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @item d
 @kindex d (Summary)
 @findex wl-summary-dispose
-$B%+!<%=%k9T$N%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
+$B%+!<%=%k9T$N%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
 (@code{wl-summary-dispose})
 
 @item u
 @kindex u (Summary)
 @findex wl-summary-unmark
-$B%+!<%=%k9T$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B%+!<%=%k9T$N%a%C%;!<%8$K%^!<%/$,$"$l$P<h$j=|$-$^$9!#(B
 (@code{wl-summary-unmark})
 
 @item U
 @kindex U (Summary)
-$B;XDj$7$?%^!<%/$r$9$Y$F:o=|$7$^$9!#(B
+$B;XDj$7$?%^!<%/$r$9$Y$F<h$j=|$-$^$9!#(B
 @findex wl-summary-unmark-all
 (@code{wl-summary-unmark-all})
 
@@ -3404,7 +3404,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8A4$F$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-mark-as-important-region})
 
 @item r !
@@ -3446,7 +3446,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @item r d
 @kindex r d (Summary)
 @findex wl-summary-dispose-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
 (@code{wl-summary-dispose-region})
 
 @item r u
@@ -3472,9 +3472,9 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rFI$s$
 @kindex t $ (Summary)
 @findex wl-thread-mark-as-important
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B4{$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%I$K(B
-@samp{$} $B%^!<%/$r$D$1$k$+:o=|$9$k$+$7$^$9!#(B
+$B4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-mark-as-important})
 
 @item t !
@@ -3495,49 +3495,55 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$r%W%j%
 @kindex t x (Summary)
 @findex wl-thread-exec
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-exec})
 
 @item t *
 @kindex t * (Summary)
 @findex wl-thread-target-mark
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-target-mark})
 
 @item t o
 @kindex t o (Summary)
 @findex wl-thread-refile
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-refile})
 
 @item t O
 @kindex t O (Summary)
 @findex wl-thread-copy
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%3%T!<%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K%3%T!<%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-copy})
 
 @item t d
 @kindex t d (Summary)
 @findex wl-thread-dispose
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K:o=|%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K:o=|%^!<%/$r$D$1$^$9!#(B
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K=hJ,%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-dispose})
 
 @item t u
 @kindex t u (Summary)
 @findex wl-thread-unmark
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-unmark})
 
 @item t y
 @kindex t y (Summary)
 @findex wl-thread-save
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$rJ]B8$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rJ]B8$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$rJ]B8$7$^$9!#(B
 (@code{wl-thread-save})
 
 @item m i
@@ -3558,7 +3564,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-target-mark-mark-as-important})
 
 @item m !
@@ -3582,7 +3588,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @item m d
 @kindex m d (Summary)
 @findex wl-summary-target-mark-dispose
-$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
 (@code{wl-summary-target-mark-dispose})
 
 @item m y
