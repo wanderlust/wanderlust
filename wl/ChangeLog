@@ -1,3 +1,8 @@
+2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to
+	the default value.
+
 2001-02-26  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
 
 	* wl-folder.el (wl-folder-check-one-entity): Fixed problem that
