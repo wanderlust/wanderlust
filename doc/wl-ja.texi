@@ -3444,9 +3444,10 @@ last:数字        フィルタフォルダに移動します。
 @item S
 @kindex S (Summary)
 @findex wl-summary-sort
-サマリの表示順序を並び替えます。@samp{date} (日付)、@samp{from}(発信者)、
-@samp{number}(メッセージ番号)、@samp{subject}(サブジェクト) のいずれかを
-元に並び替えます。(@code{wl-summary-sort})
+サマリの表示順序を並び替えます。@samp{date} (日付)、@samp{from} (発信者)、
+@samp{number} (メッセージ番号)、@samp{subject} (サブジェクト)、
+@samp{size} (メッセージのサイズ)、@samp{list-info} (メーリングリストの名前とメッセージ番号)
+のいずれかを元に並び替えます。(@code{wl-summary-sort})
 
 @item T
 @kindex T (Summary)
@@ -5185,7 +5186,7 @@ POP-before-SMTP で POP を行なうときのサーバ名です。
 @vindex wl-pop-before-smtp-authenticate-type
 初期設定は @code{nil}。
 POP-before-SMTP で POP を行なうときの認証方式です。
-@code{nil} のままなら @code{elmo-pop3-default-authenticate}を利用します。
+@code{nil} のままなら @code{elmo-pop3-default-authenticate-type}を利用します。
 
 @item wl-pop-before-smtp-port
 @vindex wl-pop-before-smtp-port

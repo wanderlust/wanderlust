@@ -3431,7 +3431,8 @@ last:NUM         Move to the filter folder(partial filter).
 @kindex S (Summary)
 @findex wl-summary-sort
 Sort summary order.
-You can sort by @samp{date}, @samp{from}, @samp{number} and @samp{subject}.
+You can sort by @samp{date}, @samp{from}, @samp{number}, @samp{subject},
+@samp{size} and @samp{list-info}.
 (@code{wl-summary-sort})
 
 @item T
@@ -5153,7 +5154,7 @@ If it is @code{nil}, @code{elmo-pop3-default-server} is used.
 @vindex wl-pop-before-smtp-authenticate-type
 The initial setting is @code{nil}.
 This is the authentication method for POP-before-SMTP authentication.
-If it is @code{nil}, @code{elmo-pop3-default-authenticate} is used.
+If it is @code{nil}, @code{elmo-pop3-default-authenticate-type} is used.
 
 @item wl-pop-before-smtp-port
 @vindex wl-pop-before-smtp-port
