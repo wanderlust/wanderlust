@@ -91,8 +91,10 @@
   "Use cache in imap4 folder.")
 
 (defvar elmo-imap4-extra-namespace-alist
-  '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
-  "Extra namespace alist.  A list of cons cell like: (REGEXP . DELIMITER).")
+  '(("^\\({.*/nntp}\\).*$" . ".")) ; Default is for UW's remote nntp mailbox...
+  "Extra namespace alist. 
+A list of cons cell like: (REGEXP . DELIMITER).
+REGEXP should have a grouping for namespace prefix.")
 ;;
 ;;; internal variables
 ;;
@@ -1580,11 +1582,11 @@ Return nil if no complete line has arrived."
 			    (if (eq (length prefix) 0)
 				(progn (setq default-delim delim) nil)
 			      (cons
-			       (concat "^"
+			       (concat "^\\("
 				       (if (string= (downcase prefix) "inbox")
 					   "[Ii][Nn][Bb][Oo][Xx]"
 					 (regexp-quote prefix))
-				       ".*$")
+				       "\\).*$")
 			       delim)))
 			  (elmo-imap4-nth i ns))))))
     (if default-delim
@@ -1890,6 +1892,12 @@ Return nil if no complete line has arrived."
 		   (with-current-buffer (elmo-network-session-buffer session)
 		     elmo-imap4-server-namespace)))
 		 elmo-imap4-default-hierarchy-delimiter))
+	 ;; Append delimiter when root with namespace.
+	 (root (if (and (match-end 1)
+			(string= (substring root (match-end 1))
+				 ""))
+		   (concat root delim)
+		 root))
 	 result append-serv type)
     (setq result (elmo-imap4-response-get-selectable-mailbox-list
 		  (elmo-imap4-send-command-wait
