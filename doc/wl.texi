@@ -101,20 +101,21 @@ This manual is for Wanderlust @value{VERSION}.
 @end ifinfo
 
 @menu
-* Introduction::             Read this first.
-* Start Me Up::              Invoking Wanderlust.
-* Folders::                  How to specify folders.
-* Folder::                   Selecting and editing folders.
-* Summary::                  Reading and refiling messages.
-* Message::                  Saving and playing MIME multipart entities.
-* Draft::                    Draft buffer, sending mail and news.
+* Introduction::             Read this first
+* Start Me Up::              Invoking Wanderlust
+* Folders::                  How to specify folders
+* Folder::                   Selecting and editing folders
+* Summary::                  Reading and refiling messages
+* Message::                  Saving and playing MIME multipart entities
+* Draft::                    Draft buffer, sending mail and news
 * Disconnected Operations::  Off-Line management
-* Expire and Archive::       Automatic expiration and archiving of messages.
-* Scoring::                  Score of the messages.
-* Customization::            Customizing Wanderlust.
+* Expire and Archive::       Automatic expiration and archiving of messages
+* Scoring::                  Score of the messages
+* Address Book::             Management of Address Book
+* Customization::            Customizing Wanderlust
 * Mailing List::             Wanderlust mailing list
 * Addition::                 Additional Information
-* Index::                    Key index.
+* Index::                    Key index
 @end menu
 
 
@@ -190,12 +191,11 @@ here.
 (Of course, you need a mail/news readable environment in advance)
 
 @menu
-* MIME Modules::      Installing the MIME modules.
-* Download::          Download and extract the packages.
-* Install::           Byte-compile and install.
-* Minimal Settings::  @file{.emacs} setup.
-* Mail Addresses::    Address book definition.
-* Folder Definition:: Folder definition.
+* MIME Modules::      Installing the MIME modules
+* Download::          Download and extract the packages
+* Install::           Byte-compile and install
+* Minimal Settings::  @file{.emacs} setup
+* Folder Definition:: Folder definition
 * Start Wanderlust::  Starting Wanderlust
 @end menu
 
@@ -459,7 +459,7 @@ You can read manual at the following URL:
 http://www.gohome.org/wl/doc/wl-euc_toc.html
 @end example
 
-@node Minimal Settings, Mail Addresses, Install, Start Me Up
+@node Minimal Settings, Folder Definition, Install, Start Me Up
 @section Set up .emacs
 @cindex Minimal Settings
 @cindex Settings
@@ -545,61 +545,8 @@ It is effective only when your Emacs can define @code{mail-user-agent}.
 @end lisp
 
 
-@node Mail Addresses, Folder Definition, Minimal Settings, Start Me Up
-@section Address book
-@cindex Address book Definition
-@cindex .addresses
-@cindex Alias, Address
 
-The file @file{~/.addresses} is a simple address book for Wanderlust.
-Make address file @file{~/.addresses}, and edit to suit your requirement.
-
-The data written in @file{~/.addresses} are used for address completion
-under draft editing mode. Furthermore, they are used when showing names
-in summary display mode. You can safely skip this section, if you don't
-want to customize address completion and summary display.
-It is possible to add/change/remove addresses from @file{~/.addresses} in
-summary buffer after Wanderlust is invoked. @refill
-
-The format is very simple. Like this. @refill
-
-@example
-@group
-#
-# @r{Lines begin with @samp{#} are comment.}
-# @r{Empty lines are ignored}
-#
-# @r{Format of each line:}
-# @var{email-address}  "@var{nickname} "@var{realname}"
-#
-teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
-foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
-bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
-@end group
-@end example
-
-@noindent
-One line defines one persons description.
-
-Actually, in default setup, @var{nickname} is used in summary-mode and
-@var{realname} is used in draft preparation mode. This behavior is
-better understood if you try it and confirmed the function first. You
-can write and try a small definition, so you will know the idea of the
-address book before writing a big one.
-
-And, if MH alias file is specified in variable @code{wl-alias-file},
-it is used as an address information in the draft preparation mode.
-
-If variable @code{wl-use-ldap} is non-nil (initial setting is
-@code{nil}), address completion in draft mode uses LDAP information.
-
-If you use LDAP, you have to set @code{wl-ldap-server},
-@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
-not have LDAP feature as built-in feature (Currently only XEmacs can
-have built-in LDAP feature), you have to set command exec @env{PATH} to
-the program @command{ldapsearch}.
-
-@node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
+@node Folder Definition, Start Wanderlust, Minimal Settings, Start Me Up
 @section Folder Definition
 @cindex Folder Definition
 @cindex .folders
@@ -1043,7 +990,7 @@ $d:/msend.tar.gz;tgz;spool -> @file{d:/msend.tar.gz}
 @end example
 
 @menu
-* Archiver::     Archivers supported
+* Archiver::     Supported Archivers
 * Archive Tips:: TIPS
 * Archive Vars:: Customization
 @end menu
@@ -1406,7 +1353,7 @@ Example:
 @end example
 
 @item
-Complexed condition
+Compound condition
 
 If you combine conditions by character @samp{|}, it is considered as OR condition. @samp{&} is considered as AND condition, likewise.
 Condition can be grouped by parentheses (@samp{(}, and @samp{)}).
@@ -1552,8 +1499,8 @@ It contains folder list you subscribed.
 You can select and edit folders in this mode.
 
 @menu
-* Selecting Folder:: Select folder you want to read.
-* Folder Manager::   Editing folders.
+* Selecting Folder:: Select folder you want to read
+* Folder Manager::   Editing folders
 @end menu
 
 
@@ -1652,7 +1599,7 @@ If the current cursor point is on the NNTP folder, create a new draft
 message which already has @samp{Newsgroups:} field.  If the current
 cursor point is on the folder for mailing list (refile destination),
 create a new draft message which already has @samp{To:} field with
-guessed mailing list adderss (If @code{wl-subscribed-mailing-list} is
+guessed mailing list address (If @code{wl-subscribed-mailing-list} is
 valid list).
 (@code{wl-folder-write-current-folder})
 
@@ -2301,13 +2248,13 @@ After you select the folder via folder mode, you enter to the summary
 mode.
 
 @menu
-* Usage of Summary Mode::       TIPS.
-* Thread Operations::           Thread operations.
-* Cache::                       File cache, Buffer cache, and Prefetch.
-* Auto Refile::                 Auto refile settings.
-* Sticky Summary::              Summary make sticky.
-* Key Bindings of Summary::     Key bindings.
-* Variables of Summary::        Customize Summary Mode.
+* Usage of Summary Mode::       TIPS
+* Thread Operations::           Thread operations
+* Cache::                       File cache, Buffer cache, and Prefetch
+* Auto Refile::                 Auto refile settings
+* Sticky Summary::              Summary make sticky
+* Key Bindings of Summary::     Key bindings
+* Variables of Summary::        Customize Summary Mode
 @end menu
 
 
@@ -2659,7 +2606,7 @@ You can visit the sticky summary at any time by @kbd{C-x b}
 q}. Other operations in the sticky summary are same as normal summary.
 
 @code{wl-summary-always-sticky-folder-list} specifies the folders that
-are automatically sticked.
+are automatically stuck.
 
 
 @node Key Bindings of Summary, Variables of Summary, Sticky Summary, Summary
@@ -3447,7 +3394,7 @@ If non-nil, sender part displays nickname.
 @item wl-break-pages
 @vindex  wl-break-pages
 The initial setting is @code{t}.
-If non-nil, message is splitted as pages by @samp{^L}.
+If non-nil, message is split as pages by @samp{^L}.
 
 @item wl-message-window-size
 @vindex  wl-message-window-size
@@ -3519,7 +3466,7 @@ Width of sender part of summary line.
 
 @item wl-summary-divide-thread-when-subject-changed
 @vindex wl-summary-divide-thread-when-subject-changed
-The initial setting is @code{nil}.  If non-nil, thread is splitted if
+The initial setting is @code{nil}.  If non-nil, thread is split if
 the subject is changed.
 
 @item wl-summary-search-via-nntp
@@ -3559,7 +3506,7 @@ this value, confirm whether drop them or not.
 @vindex wl-summary-always-sticky-folder-list
 The initial setting is @code{nil}.
 @code{wl-summary-always-sticky-folder-list} specifies the folders that
-are automatically sticked. Each element is regexp of folder name.
+are automatically stuck. Each element is regexp of folder name.
 
 @item wl-summary-reserve-mark-list
 @vindex wl-summary-reserve-mark-list
@@ -3725,7 +3672,7 @@ If nil, the value of mime-view-visible-field-list is used.
 @vindex wl-message-sort-field-list
 (SEMI only) Initial setting is
 '("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From").
-Header fields in message buffer are orderd by this value.
+Header fields in message buffer are ordered by this value.
 Each elements are regexp of field-name.
 @end table
 
@@ -4466,11 +4413,11 @@ sending the message (group-list means the description such as
 Wanderlust has on-line and off-line states.
 
 @menu
-* Off-line State::              Wanderlust has on-line and off-line states.
-* Enable Operations::           Enable Disconeected Operations.
-* Plugged Mode::                Switching On-line/Off-line per Server/Port.
-* Off-line State settings::     Invoking Wanderlust in the Off-line State.
-* Variables of Plugged Mode::   Customize Plugged Mode.
+* Off-line State::              Wanderlust has on-line and off-line states
+* Enable Operations::           Enable Disconnected Operations
+* Plugged Mode::                Switching On-line/Off-line per Server/Port
+* Off-line State settings::     Invoking Wanderlust in the Off-line State
+* Variables of Plugged Mode::   Customize Plugged Mode
 @end menu
 
 
@@ -4500,11 +4447,11 @@ later) is non-nil, you can following operations:
 @xref{Plugged Mode}, @xref{Off-line State settings}.
 
 @menu
-* Send Messages off-line::      Transmit Messages.
-* Re-file and Copy queue::      Re-file and Copy (IMAP4).
-* Creation of Folders::         Create Folders off-line (IMAP4).
-* Marking::                     Mark (IMAP4).
-* Pre-fetching Reservations::   Pre-fetch (IMAP4, NNTP).
+* Send Messages off-line::      Transmit Messages
+* Re-file and Copy queue::      Re-file and Copy (IMAP4)
+* Creation of Folders::         Create Folders off-line (IMAP4)
+* Marking::                     Mark (IMAP4)
+* Pre-fetching Reservations::   Pre-fetch (IMAP4, NNTP)
 @end menu
 
 As soon as Wanderlust becomes on-line, such operations invoked off-line
@@ -4602,7 +4549,7 @@ Queuing:[ON] AutoFlushQueue:[--] DisconnectedOperation:[ON]
 @end example
 
 The first line indicates status of the following three variables, and
-simply pressing @kbd{@key{SPC}} or @kbd{@key{RET}} in each labelled
+simply pressing @kbd{@key{SPC}} or @kbd{@key{RET}} in each labeled
 column modifies the values of these variables.
 
 @example
@@ -5313,7 +5260,7 @@ Needless to say, you can use your own function.
 @end table
 
 
-@node Scoring, Customization, Expire and Archive, Top
+@node Scoring, Address Book, Expire and Archive, Top
 @chapter Score of the Messages
 @cindex Scoring
 @c @cindex Kill File
@@ -5811,12 +5758,142 @@ pop3                      N     E     E     E
 @end example
 
 
-@node Customization, Mailing List, Scoring, Top
+@node Address Book, Customization, Scoring, Top
+@chapter Address Book
+@cindex Address Book
+
+With address book, you can utilize address completion, and you have
+summary displayed with nicknames.
+
+@menu
+* Mail Addresses::   Definition of Address Book
+* Address Manager::  Address Manager
+@end menu
+
+@node Mail Addresses, Address Manager, Address Book, Address Book
+@section Address book
+@cindex Address book Definition
+@cindex .addresses
+@cindex Alias, Address
+
+The file @file{~/.addresses} is a simple address book for Wanderlust.
+Make address file @file{~/.addresses}, and edit to suit your requirement.
+
+The data written in @file{~/.addresses} are used for address completion
+under draft editing mode. Furthermore, they are used when showing names
+in summary display mode. You can safely skip this section, if you don't
+want to customize address completion and summary display.
+It is possible to add/change/remove addresses from @file{~/.addresses} in
+summary buffer after Wanderlust is invoked. @refill
+
+The format is very simple. Like this. @refill
+
+@example
+@group
+#
+# @r{Lines begin with @samp{#} are comment.}
+# @r{Empty lines are ignored}
+#
+# @r{Format of each line:}
+# @var{email-address}  "@var{nickname} "@var{realname}"
+#
+teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
+foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
+bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
+@end group
+@end example
+
+@noindent
+One line defines one persons description.
+
+Actually, in default setup, @var{nickname} is used in summary-mode and
+@var{realname} is used in draft preparation mode. This behavior is
+better understood if you try it and confirmed the function first. You
+can write and try a small definition, so you will know the idea of the
+address book before writing a big one.
+
+And, if MH alias file is specified in variable @code{wl-alias-file},
+it is used as an address information in the draft preparation mode.
+
+If variable @code{wl-use-ldap} is non-nil (initial setting is
+@code{nil}), address completion in draft mode uses LDAP information.
+
+If you use LDAP, you have to set @code{wl-ldap-server},
+@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
+not have LDAP feature as built-in feature (Currently only XEmacs can
+have built-in LDAP feature), you have to set command exec @env{PATH} to
+the program @command{ldapsearch}.
+
+
+@node Address Manager,  , Mail Addresses, Address Book
+@section Address Manager
+@cindex Address Manager
+
+You can type @kbd{C-c C-a} to enter address manger mode.  you can edit
+the address book and insert address to draft buffer.
+
+@subsection Key Bindings
+
+@table @kbd
+@item t
+@kindex t (Address Manager)
+@findex wl-addrmgr-set-to
+Add @samp{To:} mark.
+
+@item c
+@kindex c (Address Manager)
+@findex wl-addrmgr-set-cc
+Add @samp{Cc:} mark.
+
+@item b
+@kindex b (Address Manager)
+@findex wl-addrmgr-set-bcc
+Add @samp{Bcc:} mark.
+
+@item u
+@kindex u (Address Manager)
+@findex wl-addrmgr-unmark
+Cancel the mark.
+
+@item x
+@kindex x (Address Manager)
+@findex wl-addrmgr-apply
+
+Insert @samp{To:}, @samp{Cc:}, or @samp{Bcc:} marked addresses to draft
+buffer and quit address manager.  When no draft buffer, make new draft
+with insert marked addresses.
+
+If no mark, quit address manager.
+
+
+@item q
+@kindex q (Address Manager)
+@findex wl-addrmgr-quit
+Quit address manager.
+
+@item a
+@kindex a (Address Manager)
+@findex wl-addrmgr-add
+Add new entry.
+
+@item d
+@kindex d (Address Manager)
+@findex wl-addrmgr-delete
+Delete entry.
+
+@item e
+@kindex e (Address Manager)
+@findex wl-addrmgr-edit
+Edit entry.
+@end table
+
+
+@node Customization, Mailing List, Address Book, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 
 @menu
-* Living with other packages:: Living with other packages
+* Living with other packages:: Cooperating with other packages
 * Highlights::                 Highlights
 * Biff::                       Notify Mail arrival
 * Advanced Settings::          Advanced Settings
@@ -6009,7 +6086,7 @@ specific, but general-purpose for tm/SEMI).
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
+@node MHC,  , dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -6800,6 +6877,8 @@ valuable advice and many pieces of code they contributed.
       9/12    biff feature with Satata-san & Yamaoka-san.
      10/17    expire-hide by Okada-san.
      11/08    Released 2.4.0 stable.
+2001  7/04    Released 2.6.0 stable.
+      8/21    wl-addrmgr by Kitamoto-san.
 @end example
 
 See @file{ChangeLog} for details.

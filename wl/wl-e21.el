@@ -72,6 +72,18 @@
   (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
+;; For Emacs 21.0.104 or earlier
+(defun-maybe make-mode-line-mouse-map (mouse function) "\
+Return a keymap with single entry for mouse key MOUSE on the mode line.
+MOUSE is defined to run function FUNCTION with no args in the buffer
+corresponding to the mode line clicked."
+  (let ((map (make-sparse-keymap)))
+    (define-key map (vector 'mode-line mouse) function)
+    map))
+
+;; `display-images-p' has not been available prior to Emacs 21.0.105.
+(defalias-maybe 'display-images-p 'display-graphic-p)
+
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
 
@@ -168,7 +180,7 @@
 
 (eval-when-compile
   (defmacro wl-e21-display-image-p ()
-    '(and (display-graphic-p)
+    '(and (display-images-p)
 	  (image-type-available-p 'xpm))))
 
 (defun wl-e21-setup-toolbar (bar)
@@ -278,7 +290,7 @@
       (let ((inhibit-read-only t))
 	(if (and wl-highlight-folder-by-numbers
 		 numbers (nth 0 numbers) (nth 1 numbers)
-		 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+"
+		 (re-search-forward "[-[:digit:]]+/[-[:digit:]]+/[-[:digit:]]+"
 				    (line-end-position) t))
 	    (let* ((unsync (nth 0 numbers))
 		   (unread (nth 1 numbers))
@@ -330,7 +342,7 @@
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
-	     (looking-at "[\t ]+\\([^\t\n ]+\\)"))
+	     (looking-at "[[:blank:]]+\\([[:blank:]\n]+\\)"))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(let (image)
@@ -373,7 +385,7 @@
 	(when (display-color-p)
 	  (wl-e21-highlight-folder-by-numbers
 	   start end
-	   (if (looking-at (format "^[\t ]*\\(%s\\|%s\\)"
+	   (if (looking-at (format "^[[:blank:]]*\\(?:%s\\|%s\\)"
 				   wl-folder-unsubscribe-mark
 				   wl-folder-removed-mark))
 	       'wl-highlight-folder-killed-face
@@ -385,7 +397,7 @@
   (when (wl-e21-display-image-p)
     (save-excursion
       (beginning-of-line)
-      (when (looking-at "[\t ]*\\(\\[\\([^]]+\\)\\]\\)")
+      (when (looking-at "[[:blank:]]*\\(\\[\\([^]]+\\)\\]\\)")
 	(let* ((start (match-beginning 1))
 	       (end (match-end 1))
 	       (status (match-string-no-properties 2))
@@ -454,8 +466,8 @@
 
 (defun wl-plugged-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-toggle-plugged))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-toggle-plugged))
 		       'help-echo "mouse-2 toggles plugged status"))))
     (if (wl-e21-display-image-p)
 	(progn
@@ -485,8 +497,8 @@
 
 (defun wl-biff-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-biff-check-folders))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-biff-check-folders))
 		       'help-echo "mouse-2 checks new mails"))))
     (if (wl-e21-display-image-p)
 	(progn
