@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/24 14:44:00 teranisi>
+;; Time-stamp: <00/06/22 11:17:27 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -412,13 +412,13 @@
 	  (wl-summary-prev t)))))
 
 (defun wl-draft-overload-menubar ()
-  (add-menu-item '("Mail") "Send, Keep Editing" 
-		 'wl-draft-send t "Send Mail")
-  (add-menu-item '("Mail") "Send Message" 
-		 'wl-draft-send-and-exit t "Send and Exit")
-  (delete-menu-item '("Mail" "Send Mail"))
-  (delete-menu-item '("Mail" "Send and Exit"))
-  )
+  (when (featurep 'menubar)
+    (add-menu-item '("Mail") "Send, Keep Editing" 
+		   'wl-draft-send t "Send Mail")
+    (add-menu-item '("Mail") "Send Message" 
+		   'wl-draft-send-and-exit t "Send and Exit")
+    (delete-menu-item '("Mail" "Send Mail"))
+    (delete-menu-item '("Mail" "Send and Exit"))))
 
 (defun wl-draft-mode-setup ()
   (require 'derived)
