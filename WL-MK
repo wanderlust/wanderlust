@@ -64,7 +64,7 @@
     (let ((doc (concat "*" (or doc ""))))
       (` (defvar (, symbol) (, value) (, doc))))))
 
-(require 'bytecomp)
+(load "bytecomp" nil t)
 (unless (fboundp 'byte-compile-file-form-custom-declare-variable)
   ;; Bind defcustom'ed variables.
   (put 'custom-declare-variable 'byte-hunk-handler
