@@ -1980,7 +1980,7 @@ This function is defined for `window-scroll-functions'"
 						    folder))
 			(format "Updated (-%d/+%d) message(s)"
 				(length delete-list) num))))
-	    (setq mes "Quit updating.")))
+	    (setq mes "Quit updating")))
       ;; synchronize marks.
       (if (and crossed wl-summary-auto-sync-marks)
 	  (wl-summary-sync-marks))
