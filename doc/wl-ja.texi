@@ -1414,7 +1414,7 @@ namazu (@uref{http://www.namazu.org/}) を用いて、検索式にマッチした
 
 @code{elmo-nmz-default-index-path}, @code{elmo-nmz-index-alias-alist} の
 値としてインデックスのリストを指定することも可能です。
-リストを指定すると、複数インデックスを対象とした検索が行われます。
+リストを指定すると、複数のインデックスを対象とした検索となります。
 
 例えば、
 
