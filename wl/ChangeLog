@@ -1,6 +1,9 @@
 2002-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-draft.el (toplevel): require 'eword-encode.
+	* wl-draft.el (wl-draft-send): Use mime-header-encode-method-alist
+	only if	it is bound as variable.
+
+	* wl-mime.el (wl-draft-preview-message): Ditto.
 
 2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 

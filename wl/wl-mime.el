@@ -78,7 +78,8 @@ By setting following-method as yank-content."
 	  (append
 	   '((wl-draft-eword-encode-address-list 
 	      .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
-	   mime-header-encode-method-alist))
+	   (if (boundp 'mime-header-encode-method-alist)
+	       (symbol-value 'mime-header-encode-method-alist))))
 	 mime-view-ignored-field-list	; all header.
 	 (mime-edit-translate-buffer-hook
 	  (append

@@ -37,7 +37,6 @@
 (condition-case nil (require 'timezone) (error nil))
 (require 'std11)
 (require 'wl-vars)
-(require 'eword-encode)
 
 (defvar x-face-add-x-face-version-header)
 (defvar mail-reply-buffer)
@@ -1212,7 +1211,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		   (append
 		    '((wl-draft-eword-encode-address-list 
 		       .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
-		    mime-header-encode-method-alist)))
+		    (if (boundp 'mime-header-encode-method-alist)
+			(symbol-value 'mime-header-encode-method-alist)))))
 	      (run-hooks 'mail-send-hook) ; translate buffer
 	      )
 	    (if wl-draft-verbose-send
