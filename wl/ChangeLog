@@ -1,3 +1,43 @@
+2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.7.1.
+
+2001-06-28  OHASHI Akira  <bg66@koka-in.org>
+
+	* wl-vars.el: Fix file coding system to ISO-2022-JP.
+
+2001-06-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-exec-subr): Hide message buffer after
+	refile/delete execution.
+
+	* wl-vars.el (wl-summary-fix-timezone): Changed default value to nil;
+	Fixed docstring.
+
+2001-06-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update): If sync-result is non-nil,
+	do update process;
+	Don't update marks when update process is interrupted.
+
+2001-06-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-reply): Fixed problem when
+	wl-draft-use-frame is non-nil.
+	(wl-summary-forward): Ditto.
+
+	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
+	as nil.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
+	* wl.el (wl): Check environment before wl-init.
+
+	* wl-summary.el (wl-summary-collect-unread): Eliminated.
+	(wl-summary-mark-as-read-all): Use elmo-folder-list-unreads
+	instead of wl-summary-collect-unread.
+	(wl-summary-reply): Split message window.
+
 2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl): Set custom-manual link as "wl-ja"
