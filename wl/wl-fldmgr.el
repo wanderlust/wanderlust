@@ -336,7 +336,7 @@ return value is diffs '(-new -unread -all)."
 		   (message "%s not found" key)
 		   (setq update nil)
 		   (throw 'done t)))
-	    (when access
+	    (when (and access (not clear))
 	      (if is-group
 		  (wl-append unsubscribes
 			     (list (list (elmo-string key) 'access nil)))

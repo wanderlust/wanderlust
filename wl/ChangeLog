@@ -1,3 +1,8 @@
+2004-06-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-fldmgr.el (wl-delete-entity-sub): Add folder name to
+	unsubscribe list only if argument CLEAR is nil.
+
 2004-06-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-reply): Decode subject before removing
