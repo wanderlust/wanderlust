@@ -103,7 +103,7 @@ It calls following-method selected from variable
       (goto-char (point-min))
       ;; Insert all headers.
       (let ((elmo-mime-display-header-analysis
-	     (wl-message-mime-analysis-p display-type)))
+	     (wl-message-mime-analysis-p display-type 'header)))
 	(elmo-mime-insert-sorted-header entity))
       (let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	(if (functionp f)
