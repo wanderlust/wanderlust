@@ -1,3 +1,7 @@
+2000-11-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-version.el (wl-version): Changed codename to "Rio-pre2".
+
 2000-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-update-line-on-buffer-sub):
