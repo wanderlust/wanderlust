@@ -1,5 +1,15 @@
 2003-09-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-util.el (wl-copy-local-variables): New function.
+
+	* wl-mime.el (wl-draft-attribute-recipients): New function.
+	(wl-draft-attribute-envelope-from): Ditto.
+	(wl-draft-attribute-smtp-posting-server): Ditto.
+	(wl-draft-attribute-smtp-posting-port): Ditto.
+	(wl-draft-attribute-value): Ditto.
+	(wl-draft-preview-message): Use it to get value for
+	attributes. Reflect result of `wl-draft-config'.
+
 	* wl-summary.el (wl-summary-target-mark-mark-as-read): Fixed typo
 	and call `wl-summary-mark-as-read' before to call
 	`wl-summary-unset-mark'.

@@ -143,17 +143,54 @@ It calls following-method selected from variable
 
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
+(defun wl-draft-attribute-recipients ()
+  (concat (mapconcat
+	   'identity
+	   (wl-draft-deduce-address-list
+	    (current-buffer)
+	    (point-min)
+	    (save-excursion
+	      (goto-char (point-min))
+	      (re-search-forward
+	       (concat
+		"^"
+		(regexp-quote mail-header-separator)
+		"$")
+	       nil t)
+	      (point)))
+	   ", ")))
+
+(defun wl-draft-attribute-envelope-from ()
+  (or wl-envelope-from
+      (wl-address-header-extract-address wl-from)))
+
+(defun wl-draft-attribute-smtp-posting-server ()
+  (or wl-smtp-posting-server
+      (progn (require 'smtp) smtp-server)
+      "localhost"))
+
+(defun wl-draft-attribute-smtp-posting-port ()
+  (or wl-smtp-posting-port
+      (progn (require 'smtp) smtp-service)))
+
+(defun wl-draft-attribute-value (attr)
+  (let ((name (symbol-name attr))
+	fsymbol symbol)
+    (cond ((and (setq fsymbol (intern-soft
+			       (format "wl-draft-attribute-%s" name)))
+		(fboundp fsymbol))
+	   (funcall fsymbol))
+	  ((and (setq symbol (intern-soft (format "wl-%s" name)))
+		(boundp symbol))
+	   (symbol-value symbol))
+	  (t
+	   attr))))
+
 (defun wl-draft-preview-message ()
   "Preview editing message."
   (interactive)
-  (let* (wl-recipients
+  (let* (attribute-list
 	 (orig-buffer (current-buffer))
-	 (wl-envelope-from (or wl-envelope-from
-			       (wl-address-header-extract-address wl-from)))
-	 (wl-smtp-posting-server
-	  (or wl-smtp-posting-server (progn (require 'smtp) smtp-server)
-	      "localhost"))
-	 (wl-smtp-posting-port (or wl-smtp-posting-port smtp-service))
 	 (current-point (point))
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (parent-folder wl-draft-parent-folder)
@@ -168,32 +205,27 @@ It calls following-method selected from variable
 	 (mime-edit-translate-buffer-hook
 	  (append
 	   (list
-	    (function
-	     (lambda ()
-	       (let ((wl-draft-config-exec-flag config-exec-flag)
-		     (wl-draft-parent-folder parent-folder))
-		 (goto-char current-point)
-		 (run-hooks 'wl-draft-send-hook)
-		 (setq wl-recipients
-		       (condition-case err
-			   (concat (mapconcat
-				    'identity
-				    (wl-draft-deduce-address-list
-				     (current-buffer)
-				     (point-min)
-				     (save-excursion
-				       (goto-char (point-min))
-				       (re-search-forward
-					(concat
-					 "^"
-					 (regexp-quote mail-header-separator)
-					 "$")
-					nil t)
-				       (point)))
-				    ", "))
-			 (error
-			  (kill-buffer (current-buffer))
-			  (signal (car err) (cdr err)))))))))
+	    (lambda ()
+	      (let ((wl-draft-config-exec-flag config-exec-flag)
+		    (wl-draft-parent-folder parent-folder)
+		    (copy-buffer (current-buffer)))
+		(with-current-buffer orig-buffer
+		  (wl-copy-local-variables
+		   orig-buffer
+		   copy-buffer
+		   (append wl-draft-config-variables
+			   (wl-draft-clone-local-variables))))
+		(goto-char current-point)
+		(run-hooks 'wl-draft-send-hook)
+		(condition-case err
+		    (setq attribute-list
+			  (mapcar
+			   (lambda (attr)
+			     (cons attr (wl-draft-attribute-value attr)))
+			   wl-draft-preview-attributes-list))
+		  (error
+		   (kill-buffer (current-buffer))
+		   (signal (car err) (cdr err)))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
@@ -212,7 +244,8 @@ It calls following-method selected from variable
 		  (kill-buffer (get-buffer
 				wl-draft-preview-attributes-buffer-name)))))
     (if (not wl-draft-preview-attributes)
-	(message (concat "Recipients: " wl-recipients))
+	(message (concat "Recipients: "
+			 (cdr (assq 'reciepient attribute-list))))
       (ignore-errors ; in case when the window is too small
 	(let* ((cur-win (selected-window))
 	       (size (min
@@ -232,15 +265,9 @@ It calls following-method selected from variable
 	    (setq buffer-read-only t)
 	    (let (buffer-read-only)
 	      (erase-buffer)
-	      (dolist (attr wl-draft-preview-attributes-list)
-		(insert (capitalize (symbol-name attr)) ": "
-			(or
-			 (with-current-buffer orig-buffer
-			   (format "%s"
-				   (symbol-value
-				    (intern
-				     (concat "wl-" (symbol-name attr))))))
-			 "")
+	      (dolist (pair attribute-list)
+		(insert (capitalize (symbol-name (car pair))) ": "
+			(or (cdr pair) "")
 			"\n"))
 	      (goto-char (point-min))
 	      (wl-highlight-headers)))

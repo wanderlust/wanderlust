@@ -986,6 +986,14 @@ is enclosed by at least one regexp grouping construct."
        (when (get-buffer "*Compile-Log-Show*")
 	 (bury-buffer "*Compile-Log-Show*")))))
 
+(defsubst wl-copy-local-variables (src dst local-variables)
+  "Copy value of LOCAL-VARIABLES from SRC buffer to DST buffer."
+  (with-current-buffer dst
+    (dolist (variable local-variables)
+      (set (make-local-variable variable)
+	   (with-current-buffer src
+	     (symbol-value variable))))))
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 
