@@ -8,6 +8,10 @@
 	* wl-summary.el (wl-summary-write): Ditto.
 	(wl-summary-write-current-folder): Ditto.
 
+	* wl-draft.el (wl-draft-create-buffer): If called by W (Folder),
+	don't set wl-draft-buffer-cur-summary-buffer so as to go back to
+	Folder buffer after composing.
+
 2002-03-07  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-draft-insert-x-face-field-here): Strip X-Face

@@ -1521,7 +1521,8 @@ Derived from `message-save-drafts' in T-gnus."
     (setq wl-draft-buffer-file-name file-name)
     (setq wl-draft-config-exec-flag t)
     (setq wl-draft-parent-folder parent-folder)
-    (setq wl-draft-buffer-cur-summary-buffer summary-buf)
+    (or (eq this-command 'wl-folder-write-current-folder)
+	(setq wl-draft-buffer-cur-summary-buffer summary-buf))
     buf-name))
 
 (defun wl-draft-create-contents (header-alist)
