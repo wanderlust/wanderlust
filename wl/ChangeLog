@@ -1,3 +1,8 @@
+2005-01-01  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
+
+	* wl-util.el (wl-save-drafts): Avoid error on redisplaying
+	message.
+
 2004-12-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-buffer-unsync-mark-number-list):
