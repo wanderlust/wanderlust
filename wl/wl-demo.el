@@ -204,7 +204,6 @@ Return a number of lines that an image occupies in the buffer."
 		       ;; Decode bitmap data line by line.
 		       (let ((coding-system-for-read 'raw-text))
 			 (insert-file-contents file))
-		       (set-buffer-multibyte t)
 		       (while (not (eobp))
 			 (decode-coding-region (point) (line-end-position)
 					       'iso-2022-7bit)
