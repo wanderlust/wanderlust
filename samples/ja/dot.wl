@@ -291,7 +291,7 @@
 	 ("To" . "boss@company.jp")
 	 ("Subject" . "報告")
 	 (top . "今週の報告です。\n")		;; 本文先頭への挿入
-;;	 (file-bottom . "~/work/report.txt")	;; 本文末尾へファイルの挿入
+;;	 (bottom-file . "~/work/report.txt")	;; 本文末尾へファイルの挿入
 	 )
 	))
 

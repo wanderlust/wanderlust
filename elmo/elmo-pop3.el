@@ -520,6 +520,25 @@
 
 (defalias 'elmo-pop3-msgdb-create 'elmo-pop3-msgdb-create-as-numlist)
 
+(defun elmo-pop3-sort-overview-by-original-number (overview loc-alist)
+  (sort overview
+	(lambda (ent1 ent2)
+	  (< (elmo-pop3-uidl-to-number
+	      (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
+			 loc-alist)))
+	     (elmo-pop3-uidl-to-number
+	      (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
+			 loc-alist)))))))
+
+(defun elmo-pop3-sort-msgdb-by-original-number (msgdb)
+  (message "Sorting...")
+  (let ((overview (elmo-msgdb-get-overview msgdb)))
+    (setq overview (elmo-pop3-sort-overview-by-original-number
+		    overview
+		    (elmo-msgdb-get-location msgdb)))
+    (message "Sorting...done")
+    (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb)(nth 4 msgdb))))
+
 (defun elmo-pop3-msgdb-create-as-numlist (spec numlist new-mark
 					       already-mark seen-mark
 					       important-mark seen-list
@@ -532,10 +551,12 @@
 	  (setq loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			    (elmo-msgdb-location-load
 			     (elmo-msgdb-expand-path spec)))))
-      (elmo-pop3-msgdb-create-by-header process numlist
-					new-mark already-mark
-					seen-mark seen-list
-					loc-alist))))
+      (with-current-buffer (process-buffer process)
+	(elmo-pop3-sort-msgdb-by-original-number
+	 (elmo-pop3-msgdb-create-by-header process numlist
+					   new-mark already-mark
+					   seen-mark seen-list
+					   loc-alist))))))
 
 (defun elmo-pop3-uidl-to-number (uidl)
   (string-to-number (elmo-get-hash-val uidl

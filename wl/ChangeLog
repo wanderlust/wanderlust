@@ -1,3 +1,13 @@
+2001-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-mode-map): Define.
+	(wl-message-decode): Use it as local-map.
+
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-score.el (wl-score-guess-like-gnus): Abolished.
+	(wl-score-get-score-files): Don't use `wl-score-guess-like-gnus'.
+
 2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-xmas.el (wl-read-event-char): Move from wl-util.el.
@@ -9,7 +19,8 @@
 	* wl-nemacs.el (wl-read-event-char): Ditto.
 	(read-event): Removed.
 
-	* wl-util.el (toplevel): Comment out definition of `read-event'.
+	* wl-util.el (toplevel): Removed dummy definition of
+	`read-event'.
 	(wl-read-event-char, wl-xmas-read-event-char): Removed.
 
 2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
