@@ -580,7 +580,8 @@ that `read' can handle, whenever this is possible."
     result))
 
 (static-if (fboundp 'read-directory-name)
-    (defalias 'wl-read-directory-name 'read-directory-name)
+    (defun wl-read-directory-name (prompt dir)
+      (read-directory-name prompt dir dir))
   (defun wl-read-directory-name (prompt dir)
     (let ((dir (read-file-name prompt dir)))
       (unless (file-directory-p dir)

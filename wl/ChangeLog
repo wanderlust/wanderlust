@@ -1,3 +1,8 @@
+2002-06-06  KAMO Tomoyuki  <kamo@i-manage.co.jp>
+
+	* wl-util.el (wl-read-directory-name): Return displayed directory
+	as the default value also on XEmacs.
+
 2002-05-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-line-list-count): Use ".0f" for ml-count
