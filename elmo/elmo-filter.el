@@ -264,9 +264,10 @@
 
 (luna-define-method elmo-folder-mark-as-read :around ((folder
 						       elmo-filter-folder)
-						      numbers)
+						      numbers
+						      &optional ignore-flag)
   (elmo-folder-mark-as-read (elmo-filter-folder-target-internal folder)
-			    numbers)
+			    numbers ignore-flag)
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-unmark-read :around ((folder

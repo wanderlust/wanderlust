@@ -159,21 +159,6 @@
 (luna-define-method elmo-folder-writable-p ((folder elmo-mark-folder))
   t)
 
-;;; To override elmo-map-folder methods.
-(luna-define-method elmo-folder-unmark-important ((folder elmo-mark-folder)
-						  numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-mark-folder)
-						   numbers)
-  t)
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-mark-folder) numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-mark-folder) numbers)
-  t)
-
 (require 'product)
 (product-provide (provide 'elmo-mark) (require 'elmo-version))
 

@@ -455,66 +455,62 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 			     (mapcar 'abs numbers)
 			     seen-list)))
 
-(luna-define-method elmo-folder-unmark-important :around ((folder
+(luna-define-method elmo-folder-unmark-important :before ((folder
 							   elmo-net-folder)
 							  numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-unmark-important-plugged
-			    numbers)
-	(elmo-folder-send folder
-			  'elmo-folder-unmark-important-unplugged numbers))
-    (luna-call-next-method)))
+  (when (elmo-folder-use-flag-p folder)
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-unmark-important-plugged
+			  numbers)
+      (elmo-folder-send folder
+			'elmo-folder-unmark-important-unplugged numbers))))
 
-(luna-define-method elmo-folder-mark-as-important :around ((folder
+(luna-define-method elmo-folder-mark-as-important :before ((folder
 							    elmo-net-folder)
 							   numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-mark-as-important-plugged
-			    numbers)
-	(elmo-folder-send folder 'elmo-folder-mark-as-important-unplugged
-			  numbers))
-    (luna-call-next-method)))
+  (when (elmo-folder-use-flag-p folder)
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-mark-as-important-plugged
+			  numbers)
+      (elmo-folder-send folder 'elmo-folder-mark-as-important-unplugged
+			numbers))))
 
-(luna-define-method elmo-folder-unmark-read :around ((folder elmo-net-folder)
+(luna-define-method elmo-folder-unmark-read :before ((folder elmo-net-folder)
 						     numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-unmark-read-plugged numbers)
-	(elmo-folder-send folder 'elmo-folder-unmark-read-unplugged numbers))
-    (luna-call-next-method)))
+  (when (elmo-folder-use-flag-p folder)
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-unmark-read-plugged numbers)
+      (elmo-folder-send folder 'elmo-folder-unmark-read-unplugged numbers))))
 
-(luna-define-method elmo-folder-mark-as-read :around ((folder elmo-net-folder)
-						      numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-mark-as-read-plugged numbers)
-	(elmo-folder-send
-	 folder 'elmo-folder-mark-as-read-unplugged numbers))
-    (luna-call-next-method)))
+(luna-define-method elmo-folder-mark-as-read :before ((folder elmo-net-folder)
+						      numbers
+						      &optional ignore-flag)
+  (when (and (elmo-folder-use-flag-p folder)
+	     (not ignore-flag))
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-mark-as-read-plugged numbers)
+      (elmo-folder-send
+       folder 'elmo-folder-mark-as-read-unplugged numbers))))
 
-(luna-define-method elmo-folder-unmark-answered :around ((folder
+(luna-define-method elmo-folder-unmark-answered :before ((folder
 							  elmo-net-folder)
 							 numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-unmark-answered-plugged
-			    numbers)
-	(elmo-folder-send folder
-			  'elmo-folder-unmark-answered-unplugged numbers))
-    (luna-call-next-method)))
+  (when (elmo-folder-use-flag-p folder)
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-unmark-answered-plugged
+			  numbers)
+      (elmo-folder-send folder
+			'elmo-folder-unmark-answered-unplugged numbers))))
 
-(luna-define-method elmo-folder-mark-as-answered :around ((folder
+(luna-define-method elmo-folder-mark-as-answered :before ((folder
 							   elmo-net-folder)
 							  numbers)
-  (if (elmo-folder-use-flag-p folder)
-      (if (elmo-folder-plugged-p folder)
-	  (elmo-folder-send folder 'elmo-folder-mark-as-answered-plugged
-			    numbers)
-	(elmo-folder-send folder 'elmo-folder-mark-as-answered-unplugged
-			  numbers))
-    (luna-call-next-method)))
+  (when (elmo-folder-use-flag-p folder)
+    (if (elmo-folder-plugged-p folder)
+	(elmo-folder-send folder 'elmo-folder-mark-as-answered-plugged
+			  numbers)
+      (elmo-folder-send folder 'elmo-folder-mark-as-answered-unplugged
+			numbers))))
 
 (luna-define-method elmo-folder-mark-as-read-unplugged ((folder
 							 elmo-net-folder)

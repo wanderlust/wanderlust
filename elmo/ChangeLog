@@ -1,5 +1,42 @@
 2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-mark-as-read): Added argument `ignore-flag'.
+	(elmo-folder-mark-as-read): Follow the API change.
+
+	* elmo-pipe.el (elmo-folder-mark-as-read): Follow the API change.
+
+	* elmo-nntp.el (elmo-folder-mark-as-read): Set :before qualifier.
+
+	* elmo-net.el (elmo-folder-unmark-important): Set :before qualifier.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-multi.el (elmo-folder-mark-as-important): Set :before qualifier.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-mark.el (toplevel): Removed some mark method definitions.
+
+	* elmo-map.el (elmo-map-folder-unmark-answered): New method.
+	(elmo-map-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-important): Add :before qualifier.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Define.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-maildir.el (elmo-map-folder-mark-as-answered): Define.
+	(elmo-map-folder-unmark-answered): Ditto.
+
+	* elmo-filter.el (elmo-folder-mark-as-read): Follow the API change.
+
 	* elmo-net.el (elmo-folder-unmark-important): Added :around qualifier.
 	(elmo-folder-mark-as-important): Ditto.
 	(elmo-folder-unmark-read): Ditto.
