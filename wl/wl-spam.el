@@ -293,17 +293,21 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(spam (setq spam-list nil))
 	(good (setq good-list nil)))
       (when (or spam-list good-list)
-	(message "Registering spam...")
 	(setq total (+ (length spam-list) (length good-list)))
-	(elmo-with-progress-display (> total elmo-display-progress-threshold)
-	    (elmo-spam-register total "Registering spam...")
-	  (when spam-list
+	(when spam-list
+	  (message "Registering spam...")
+	  (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	      (elmo-spam-register total "Registering spam...")
 	    (elmo-spam-register-spam-messages processor folder spam-list
 					      (eq domain 'good)))
-	  (when good-list
+	  (message "Registering spam...done"))
+	(when good-list
+	  (message "Registering good...")
+	  (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	      (elmo-spam-register total "Registering good...")
 	    (elmo-spam-register-good-messages processor folder good-list
-					      (eq domain 'spam))))
-	(message "Registering spam...done")))
+					      (eq domain 'spam)))
+	  (message "Registering good...done"))))
     ;; execute refile messages
     (wl-summary-exec-action-refile mark-list)))
 
