@@ -120,7 +120,8 @@ matter is removed.  Additional things can be deleted by setting
 wl-score-simplify-fuzzy-regexp."
   (let ((regexp
 	 (if (listp wl-score-simplify-fuzzy-regexp)
-	     (apply (function regexp-or) wl-score-simplify-fuzzy-regexp)
+	     (mapconcat (function identity) wl-score-simplify-fuzzy-regexp
+			"\\|")
 	   wl-score-simplify-fuzzy-regexp))
 	(case-fold-search t)
 	modified-tick)
@@ -150,7 +151,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
   (elmo-set-work-buf
    (let ((regexp
 	  (if (listp wl-score-simplify-fuzzy-regexp)
-	      (apply (function regexp-or) wl-score-simplify-fuzzy-regexp)
+	      (mapconcat (function identity) wl-score-simplify-fuzzy-regexp
+			 "\\|")
 	    wl-score-simplify-fuzzy-regexp))
 	 (case-fold-search t))
      (insert subject)
