@@ -6648,7 +6648,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 れます。また、デフォルトの設定ではサマリでの通常の移動でスキップされるよ
 うになります。
 
-spam マークは、後述する spam の判定処理で自動的に付く他、@samp{k m} と押
+spam マークは、後述する spam の判定処理で自動的に付く他、@kbd{k m} と押
 して任意に付けることも出来ます。
 
 @subsection spam の判定
@@ -6922,6 +6922,17 @@ bogofilter の実行時に実行ファイルに渡される引数を指定します。
 使用する統計データベースの存在するディレクトリを指定します。@code{nil} 
 ならデフォルトの位置 (@file{~/.bogofilter}) が使用されます。
 初期設定は、@code{nil}
+
+@item elmo-spam-bogofilter-max-messages-per-process
+@vindex elmo-spam-bogofilter-max-messages-per-process
+初期設定は、30。
+学習時にまとめ処理されるメッセージの数を指定します。
+
+@item elmo-spam-bogofilter-debug
+@vindex elmo-spam-bogofilter-debug
+初期設定は、@code{nil}。
+non-nil に指定すると、@command{bogofilter} からの出力が
+@code{"*Debug ELMO SPAM Bogofilter*"}というバッファに出力されます。
 @end table
 
 

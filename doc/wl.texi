@@ -6722,7 +6722,7 @@ the action is called for execution. Marked messages will be skipped by
 summary walking in ordinary way.
 
 The spam mark is be put on by spam judgement described later, or by
-invoking @samp{k m} at any time.
+invoking @kbd{k m} at any time.
 
 @subsection spam judgment
 
@@ -6995,6 +6995,17 @@ Specify arguments to be supplied for bogofilter executable.
 Specify the directory for statistical database to be used.
 @code{nil} to use default directory (@file{~/.bogofilter}).
 The initial setting is @code{nil}.
+
+@item elmo-spam-bogofilter-max-messages-per-process
+@vindex elmo-spam-bogofilter-max-messages-per-process
+The initial setting is 30.  This variable specifies the number of
+messages to be learned by one process.
+
+@item elmo-spam-bogofilter-debug
+@vindex elmo-spam-bogofilter-debug
+The initial setting is @code{nil}.
+If you specify non-nil, the output from @command{bogofilter} is
+stored in the buffer named @code{"*Debug ELMO SPAM Bogofilter*"}.
 @end table
 
 
