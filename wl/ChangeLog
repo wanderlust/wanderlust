@@ -1,5 +1,7 @@
 2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-xmas.el (wl-message-define-keymap): Fixed parenthesis.
+
 	* wl-xmas.el (wl-message-display-internal-hook): Define.
 	(wl-xmas-setup-message-toolbar): Define as function.
 	(wl-setup-message): Define as alias for wl-xmas-setup-message-toolbar.
