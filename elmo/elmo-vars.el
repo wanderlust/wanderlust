@@ -71,8 +71,6 @@ Any symbol value of `elmo-network-stream-type-alist'.")
 (defvar elmo-pop3-stream-type-alist nil
   "*Stream bindings for POP3.
 This is taken precedence over `elmo-network-stream-type-alist'.")
-(defvar elmo-pop3-use-uidl t
-  "*If non-nil, use UIDL.")
 
 ;; NNTP
 (defvar elmo-default-nntp-server  "localhost"
