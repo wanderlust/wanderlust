@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-12 10:32:53 teranisi>
+;; Time-stamp: <00/06/05 17:19:53 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -670,10 +670,9 @@ the closed parent will be opened."
 	      (setq temp-mark "O"))
 	  (unless temp-mark
 	    (setq temp-mark (wl-summary-get-score-mark msg)))
-	  (setq overview-entity
-		(elmo-msgdb-overview-get-entity
-		 msg wl-summary-buffer-msgdb))
-	  (when overview-entity
+	  (when (setq overview-entity
+		      (elmo-msgdb-overview-get-entity
+		       msg wl-summary-buffer-msgdb))
 	    (setq summary-line 
 		  (wl-summary-overview-create-summary-line
 		   msg
@@ -733,22 +732,26 @@ the closed parent will be opened."
   (let ((i 0)
 	(updates msgs)
 	len)
-;;     (while msgs
-;;       (wl-append updates
-;; 		 (wl-thread-get-children-msgs (car msgs)))
-;;       (setq msgs (cdr msgs)))
-;;     (setq updates (elmo-uniq-list updates))
-    (setq len (length updates))
-    (while updates
-      (wl-thread-update-line-on-buffer-sub nil (car updates))
-      (setq updates (cdr updates))
-      (when (and (not no-msg)
-		 (> len elmo-display-progress-threshold))
-	(setq i (1+ i))
-	(if (or (zerop (% i 5)) (= i len))
-	    (elmo-display-progress
-	     'wl-thread-update-line-msgs "Updating deleted thread..."
-	     (/ (* i 100) len)))))))
+     (while msgs
+       (setq updates
+	     (append updates
+		     (wl-thread-get-children-msgs (car msgs))))
+       (setq msgs (cdr msgs)))
+     (setq updates (elmo-uniq-list updates))
+     (setq len (length updates))
+     (while updates
+       (if (wl-thread-entity-parent-invisible-p (wl-thread-get-entity
+						 (car updates)))
+	   (wl-thread-delete-line-from-buffer (car updates))
+	 (wl-thread-update-line-on-buffer-sub nil (car updates)))
+       (setq updates (cdr updates))
+       (when (and (not no-msg)
+		  (> len elmo-display-progress-threshold))
+	 (setq i (1+ i))
+	 (if (or (zerop (% i 5)) (= i len))
+	     (elmo-display-progress
+	      'wl-thread-update-line-msgs "Updating deleted thread..."
+	      (/ (* i 100) len)))))))
 
 (defun wl-thread-delete-line-from-buffer (msg)
   "Simply delete msg line."
