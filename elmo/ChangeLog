@@ -1,5 +1,8 @@
 2003-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-msgdb.el (elmo-msgdb-list-messages): Use number of overviews
+	instead of number-alist.
+
 	* elmo-localdir.el (elmo-folder-append-messages): Don't refer
 	mark nor message-id when msgdb of source folder is not loaded.
 

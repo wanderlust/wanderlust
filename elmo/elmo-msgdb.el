@@ -184,7 +184,8 @@
 
 (defun elmo-msgdb-list-messages (msgdb)
   "List message numbers in the MSGDB."
-  (mapcar 'car (elmo-msgdb-get-number-alist msgdb)))
+  (mapcar 'elmo-msgdb-overview-entity-get-number
+	  (elmo-msgdb-get-overview msgdb)))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
