@@ -371,9 +371,8 @@ Reply to author if WITH-ARG is non-nil."
 					       ","))))
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
-      (error "No match field: check your `%s'"
-	     (if with-arg "wl-draft-reply-with-argument-list"
-	       "wl-draft-reply-without-argument-list")))
+      (error "No match field: check your `wl-draft-reply-%s-argument-list'"
+	     (if with-arg "with" "without")))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
