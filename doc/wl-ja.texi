@@ -22,7 +22,7 @@ Yet another message interface on Emacsen.
 このファイルは Emacs で動くメール/ニュース管理システム Wanderlust に関す
 る説明書です。
 
-Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada} and @w{Kaoru Takahashi}.
 
