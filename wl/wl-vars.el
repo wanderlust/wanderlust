@@ -155,8 +155,12 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :group 'wl)
 
 (defcustom wl-icon-dir (if (fboundp 'locate-data-directory)
-			   (locate-data-directory "wl"))
-  "*Icon directory (XEmacs)."
+			   (locate-data-directory "wl")
+			 (let ((icons (expand-file-name "wl/icons/"
+							data-directory)))
+			   (if (file-directory-p icons)
+			       icons)))
+  "*Icon directory (XEmacs or Emacs 21)."
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl)
