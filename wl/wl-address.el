@@ -289,7 +289,8 @@ Matched address lists are append to CL."
       (setq cl
 	    (cons
 	     (cons (nth 0 addr-tuple)
-		   (if (string= (nth 2 addr-tuple) "")
+		   (if (or (string= (nth 2 addr-tuple) "")
+			   (string-match ".*:.*;$" (nth 0 addr-tuple)))
 		       (nth 0 addr-tuple)
 		     (concat
 		      (wl-address-quote-specials
@@ -302,7 +303,8 @@ Matched address lists are append to CL."
 	(setq cl
 	      (cons
 	       (cons (nth 1 addr-tuple)
-		     (if (string= (nth 2 addr-tuple) "")
+		     (if (or (string= (nth 2 addr-tuple) "")
+			     (string-match ".*:.*;$" (nth 0 addr-tuple)))
 			 (nth 0 addr-tuple)
 		       (concat
 			(wl-address-quote-specials

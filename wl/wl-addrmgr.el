@@ -578,7 +578,9 @@ Return nil if no ADDRESS exists."
 	(cond
 	 ((string= mark "To:")
 	  (setq to-list (cons
-			 (if (and full (not (string= realname "")))
+			 (if (and full
+				  (not (or (string= realname "")
+					   (string-match ".*:.*;$" addr))))
 			     (concat
 			      (wl-address-quote-specials realname)
 			      " <" addr">")
@@ -586,7 +588,9 @@ Return nil if no ADDRESS exists."
 			 to-list)))
 	 ((string= mark "Cc:")
 	  (setq cc-list (cons
-			 (if (and full (not (string= realname "")))
+			 (if (and full
+				  (not (or (string= realname "")
+					   (string-match ".*:.*;$" addr))))
 			     (concat
 			      (wl-address-quote-specials realname)
 			      " <" addr">")
@@ -594,7 +598,9 @@ Return nil if no ADDRESS exists."
 			 cc-list)))
 	 ((string= mark "Bcc:")
 	  (setq bcc-list (cons
-			  (if (and full (not (string= realname "")))
+			  (if (and full
+				   (not (or (string= realname "")
+					    (string-match ".*:.*;$" addr))))
 			      (concat
 			       (wl-address-quote-specials realname)
 			       " <" addr">")
