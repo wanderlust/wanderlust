@@ -626,12 +626,14 @@ Returns non-nil if bottom of message."
 (defun wl-message-buffer-prefetch-next (folder number count
 					       &optional summary charset)
   (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
-	 (next (wl-message-buffer-prefetch-get-next folder number summary)))
+	 next)
     (when (and count
 	       (wl-message-buffer-prefetch-p folder))
-      (wl-message-buffer-prefetch-clear-timer)
-      (wl-message-buffer-prefetch-set-timer
-       folder next count summary charset))))
+      (setq next (wl-message-buffer-prefetch-get-next folder number summary))
+      (when next
+	(wl-message-buffer-prefetch-clear-timer)
+	(wl-message-buffer-prefetch-set-timer
+	 folder next count summary charset)))))
 
 (defun wl-message-buffer-prefetch-subr (folder number count summary charset)
   (if (buffer-live-p summary)

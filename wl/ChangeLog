@@ -1,3 +1,9 @@
+2002-02-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-message.el (wl-message-buffer-prefetch-next): Don't call
+	`wl-message-buffer-prefetch-get-next' if FOLDER is not a target
+	for prefetch.
+
 2002-02-07  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-pick): Fix for no match.
