@@ -3061,12 +3061,12 @@ Return non-nil if the mark is updated"
 						 &optional
 						 number-or-numbers
 						 no-server-update)
-  (if (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
-	  'flag)
-      (error "Cannot process mark in this folder"))
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
 	  number number-list visible)
+      (when (and (eq (elmo-folder-type-internal folder) 'flag)
+		 (eq (elmo-flag-folder-flag-internal folder) 'important))
+	(error "Cannot process mark in this folder"))
       (setq number-list (cond ((numberp number-or-numbers)
 			       (list number-or-numbers))
 			      ((and (not (null number-or-numbers))

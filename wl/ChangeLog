@@ -1,5 +1,8 @@
 2004-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-mark-as-important-internal): Cause an error
+	only when the folder is 'flag/important.
+
 	* wl-address.el (wl-complete-field-body): Complete if the last
 	character is a space.
 
