@@ -1,3 +1,8 @@
+2001-03-13  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-mode): Use `make-local-hook' instead
+	of `make-local-variable' for setting up `window-scroll-functions'.
+
 2001-03-12  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-highlight.el (wl-highlight-summary): Use `save-match-data'.
