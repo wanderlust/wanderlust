@@ -817,8 +817,8 @@ Header region is supposed to be narrowed."
 	(elmo-delete-directory path t))))
 
 (defun elmo-msgdb-rename-path (old-folder new-folder &optional old-spec new-spec)
-  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-spec)))
-	 (new (directory-file-name (elmo-msgdb-expand-path new-spec)))
+  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-folder)))
+	 (new (directory-file-name (elmo-msgdb-expand-path new-folder)))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	()

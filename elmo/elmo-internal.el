@@ -193,7 +193,7 @@
   (let ((pair (assq number loc-alist)))
     (elmo-msgdb-global-mark-delete (cdr pair))))
 
-(defun elmo-internal-read-msg (spec number outbuf &optional msgdb)
+(defun elmo-internal-read-msg (spec number outbuf &optional msgdb unread)
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
