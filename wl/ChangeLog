@@ -1,3 +1,8 @@
+2002-05-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address.el (wl-complete-field-body): Bind `completion-ignore-case'
+	as t for `try-completion'.
+
 2002-05-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-default-from): Use

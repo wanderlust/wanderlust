@@ -431,6 +431,7 @@ Matched address lists are append to CL."
 	 (completion)
 	 (pattern (buffer-substring start end))
 	 (len (length pattern))
+	 (completion-ignore-case t)
 	 (cl completion-list))
     (when use-ldap
       (setq cl (wl-address-ldap-search pattern cl)))
