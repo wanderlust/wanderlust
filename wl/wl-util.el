@@ -1092,7 +1092,7 @@ is enclosed by at least one regexp grouping construct."
 			      (elmo-uniq-list
 			       (append
 				'(unread answered forwarded digest any)
-				elmo-global-flags)
+				(copy-sequence elmo-global-flags))
 			       #'delq)))))
 	(unless (elmo-flag-valid-p value)
 	  (message "Invalid char in `%s'" value)

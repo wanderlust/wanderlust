@@ -1,3 +1,13 @@
+2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-read-search-condition-internal): Fixed the last
+	change.
+
+2005-02-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-read-search-condition-internal): Protect
+	elmo-global-flags from distraction.
+
 2005-02-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-save): Use `write-region-as-binary'
