@@ -1329,8 +1329,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			   body edit-again summary-buf from parent-folder)
   "Write and send mail/news message with Wanderlust."
   (interactive)
-  (unless (featurep 'wl)
-    (require 'wl))
+  (require 'wl)
   (unless wl-init
     (wl-load-profile)
     (wl-folder-init)

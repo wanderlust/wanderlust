@@ -1,5 +1,8 @@
 2001-11-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl.el (wl-init): (require 'mime-setup) move to toplevel.
+	* wl-draft.el (wl-draft): Remove verbose `featurep'.
+
 	* wl-e21.el: Removed kludge for Emacs 21 prerelease versions.
 
 2001-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
