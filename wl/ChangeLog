@@ -1,3 +1,9 @@
+2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (toplevel): Use `elmo-define-obsolete-variable'
+	instead of `make-obsolete-variable'.
+	* wl-refile.el (toplevel): Ditto.
+
 2001-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Push mark

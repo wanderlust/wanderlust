@@ -152,8 +152,9 @@
     wl-refile-guess-by-history)
   "*Functions in this list are used for guessing refile destination folder.")
 
-(defvar wl-refile-guess-func-list wl-refile-guess-functions)
-(make-obsolete-variable 'wl-refile-guess-func-list 'wl-refile-guess-functions)
+;; 2000-11-05: *-func-list -> *-functions
+(elmo-define-obsolete-variable 'wl-refile-guess-func-list
+			       'wl-refile-guess-functions)
 
 (defun wl-refile-guess (entity)
   (let ((flist wl-refile-guess-functions) guess)

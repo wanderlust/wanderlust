@@ -2296,18 +2296,6 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-prog-uudecode-no-stdout-option t
   "*If non-nil, uudecode program don't have option for output to stdout.")
 
-;; Obsolete variables. for compatibility.
-(defvar wl-address-filename wl-address-file)
-(make-obsolete-variable 'wl-address-filename 'wl-address-file)
-(defvar wl-score-default-file-name wl-score-default-file)
-(make-obsolete-variable 'wl-score-default-file-name 'wl-score-default-file)
-(defvar wl-draft-prepared-config-alist nil)
-(make-obsolete-variable 'wl-draft-prepared-config-alist 'wl-draft-config-alist)
-(defvar wl-score-files-directory wl-score-files-dir)
-(make-obsolete-variable 'wl-score-files-directory 'wl-score-files-dir)
-(defvar wl-summary-temp-above wl-summary-target-above)
-(make-obsolete-variable 'wl-summary-temp-above 'wl-summary-target-above)
-
 ;; plug
 (defvar wl-plugged-plug-on "ON")
 (defvar wl-plugged-plug-off "--")
@@ -2316,7 +2304,9 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-port-indent 4)
 (defvar wl-plugged-queue-status-column 25)
 
-;; Obsolete variables.
+;;;; Obsolete variables.
+
+;; 2001-02-27: *-func -> *-function
 (elmo-define-obsolete-variable 'wl-summary-from-func
 			       'wl-summary-from-function)
 (elmo-define-obsolete-variable 'wl-summary-subject-func
@@ -2343,6 +2333,26 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 			       'wl-expire-archive-get-folder-function)
 (elmo-define-obsolete-variable 'wl-highlight-signature-search-func
 			       'wl-highlight-signature-search-function)
+
+;; 2000-01-25: temp mark -> target mark
+(elmo-define-obsolete-variable 'wl-summary-temp-above
+			       'wl-summary-target-above)
+
+;; 2000-03-08
+(elmo-define-obsolete-variable 'wl-score-files-directory
+			       'wl-score-files-dir)
+
+;; 1999-11-07: Unified with `wl-draft-config-alist'.
+(defvar wl-draft-prepared-config-alist nil)
+(make-obsolete-variable 'wl-draft-prepared-config-alist
+			'wl-draft-config-alist)
+
+;; 1999-10-10
+(elmo-define-obsolete-variable 'wl-address-filename
+			       'wl-address-file)
+(elmo-define-obsolete-variable 'wl-score-default-file-name
+			       'wl-score-default-file)
+
 
 (require 'product)
 (product-provide (provide 'wl-vars) (require 'wl-version))
