@@ -28,31 +28,40 @@ BATCHFLAG = -batch
 FLAGS     = $(BATCHFLAG) -q -no-site-file
 
 elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package \
+		$(LISPDIR) $(PIXMAPDIR)
 
 check:
-	$(EMACS) $(BATCHFLAG) -l WL-MK -f check-wl $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(BATCHFLAG) -l WL-MK -f check-wl \
+		$(LISPDIR) $(PIXMAPDIR)
 
 test:
-	$(EMACS) $(FLAGS) -l WL-MK -f test-wl $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f test-wl \
+		$(LISPDIR) $(PIXMAPDIR)
 
 update-version:
-	$(EMACS) $(FLAGS) -l WL-MK -f update-version $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f update-version \
+		$(LISPDIR) $(PIXMAPDIR)
 
 install-elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package \
+		$(LISPDIR) $(PIXMAPDIR)
 
 uninstall-elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package $(LISPDIR) $(PIXMAPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package \
+		$(LISPDIR) $(PIXMAPDIR)
 
 clean-elc:
-	rm -f wl/*.elc wl/*~ wl/auto-autoloads.el wl/custom-load.el wl/wl-news.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
+	rm -f wl/*.elc wl/*~ wl/auto-autoloads.el wl/custom-load.el \
+		wl/wl-news.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
 
 package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas $(PACKAGEDIR) $(PIXMAPDIR)
+	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas \
+		$(PACKAGEDIR) $(PIXMAPDIR)
 
 install-package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f install-wl-package-xmas $(PACKAGEDIR) $(PIXMAPDIR)
+	$(XEMACS) $(FLAGS) -l WL-MK -f install-wl-package-xmas \
+		$(PACKAGEDIR) $(PIXMAPDIR)
 
 info:
 	$(EMACS) $(FLAGS) -l WL-MK -f wl-texinfo-format $(INFODIR)
@@ -61,7 +70,8 @@ install-info:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-info $(INFODIR)
 
 mostlyclean-info:
-	rm -f doc/*~ doc/*.cp doc/*.fn doc/*.ky doc/*.pg doc/*.tp doc/*.vr doc/*.cps doc/*.fns doc/*.kys doc/*.pgs doc/*.tps doc/*.vrs
+	rm -f doc/*~ doc/*.cp doc/*.fn doc/*.ky doc/*.pg doc/*.tp doc/*.vr \
+		doc/*.cps doc/*.fns doc/*.kys doc/*.pgs doc/*.tps doc/*.vrs
 
 clean-info: mostlyclean-info
 	rm -f doc/*.info doc/*.info-*
