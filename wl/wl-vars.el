@@ -224,11 +224,19 @@ which are replaced by the given information:
 %] A close bracket.  If the message thread is linked,
    it is replaced with '>'.
 %c The children number of the closed message thread.
+   Children number is printed like '+??:'.
+   If the message is opened, ' ' is displayed.
+%C The children number of the closed message thread.
+   Children number is printed like '[+??] '.
+   If the message is opened, '>' or '>>' (linked) is displayed.
 %f The from: field string of the message.
 %F The children number of the closed message thread and 
    the from: field string of the message are concatenated.
 %s The subject: field string of the message.
-%S the size of the message (if available)."
+%S The size of the message (if available).
+
+If the format string contains the specifiers %( and %), the text between
+them will have the specified number of columns."
   :group 'wl-summary
   :type 'string)
 
