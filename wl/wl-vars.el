@@ -275,7 +275,8 @@ If nil, default smtp connection type is used."
 
 (defcustom wl-smtp-posting-server nil
   "*SMTP server name to send mail (wl-draft-send-mail-with-smtp)."
-  :type 'string
+  :type '(choice (const :tag "none" nil)
+		 string)
   :group 'wl)
 
 (defcustom wl-smtp-posting-port nil
@@ -1495,8 +1496,9 @@ already existing summary."
 
 (defcustom wl-summary-showto-folder-regexp nil
   "Regexp specifying the folder that shows the To (or Newsgroups) field as
-  Sender information in summary mode."
-  :type 'regexp
+Sender information in summary mode."
+  :type '(choice (const :tag "none" nil)
+		 regexp)
   :group 'wl-summary)
 
 (defcustom wl-folder-removed-mark "#<removed>"
