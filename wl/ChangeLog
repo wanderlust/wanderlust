@@ -1,3 +1,8 @@
+2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary (wl-summary-prefetch): Don't prefetch if cached.
+	(wl-summary-prefetch-msg): force prefetch if called with optional argument.
+
 2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-msg-mark-as-read): Abolished.

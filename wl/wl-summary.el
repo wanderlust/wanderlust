@@ -1344,7 +1344,7 @@ If optional argument is non-nil, checking is omitted."
   (wl-summary-prefetch-region (point-min) (point-max)
 			      wl-summary-incorporate-marks))
 
-(defun wl-summary-prefetch-msg (number)
+(defun wl-summary-prefetch-msg (number &optional arg)
   "Returns status-mark. if skipped, returns nil."
   ;; prefetching procedure.
   (save-excursion
@@ -1362,86 +1362,88 @@ If optional argument is non-nil, checking is omitted."
 			    (or (null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
-      (unwind-protect
-	  (progn
-	    (when (and size (not force-read) wl-prefetch-confirm)
-	      (setq force-read
-		    (save-restriction
-		      (widen)
-		      (y-or-n-p
-		       (format
-			"Message from %s has %d bytes. Prefetch it?"
-			(concat
-			 "[ "
-			 (save-match-data
-			   (wl-set-string-width
-			    wl-from-width
-			    (wl-summary-from-func-internal
-			     (eword-decode-string
-			      (elmo-delete-char
-			       ?\"
-			       (or
-				(elmo-msgdb-overview-entity-get-from ov)
-				"??")))))) " ]")
-			size))))
-	      (message "")); flush.
-	    (setq mark (cadr (assq number mark-alist)))
-            (if force-read
-	      (save-excursion
-		(save-match-data
-		  (if (and (null (elmo-folder-plugged-p
-				  wl-summary-buffer-folder-name))
-			   elmo-enable-disconnected-operation)
-		      (progn ;; append-queue for offline
-			(elmo-dop-prefetch-msgs
-			 wl-summary-buffer-folder-name (list number))
-			(setq new-mark
-			      (cond
-			       ((string= mark
-					 wl-summary-unread-uncached-mark)
-				wl-summary-unread-cached-mark)
-			       ((string= mark wl-summary-new-mark)
-				(setq wl-summary-buffer-new-count
-				      (- wl-summary-buffer-new-count 1))
-				(setq wl-summary-buffer-unread-count
-				      (+ wl-summary-buffer-unread-count 1))
-				wl-summary-unread-cached-mark)
-			       ((or (null mark)
-				    (string= mark wl-summary-read-uncached-mark))
-				(setq wl-summary-buffer-unread-count
-				      (+ wl-summary-buffer-unread-count 1))
-				wl-summary-unread-cached-mark)
-			       (t mark))))
-		    ;; online
-		    (elmo-prefetch-msg wl-summary-buffer-folder-name
-				       number
-				       (wl-message-get-original-buffer)
-				       msgdb)
-		    (setq new-mark
-			  (cond
-			   ((string= mark
-				     wl-summary-unread-uncached-mark)
-			    wl-summary-unread-cached-mark)
-			   ((string= mark wl-summary-new-mark)
-			    (setq wl-summary-buffer-new-count
-				  (- wl-summary-buffer-new-count 1))
-			    (setq wl-summary-buffer-unread-count
-				  (+ wl-summary-buffer-unread-count 1))
-			    wl-summary-unread-cached-mark)
-			   ((string= mark wl-summary-read-uncached-mark)
-			    nil)
-			   (t mark))))
-		  (setq mark-alist (elmo-msgdb-mark-set
-				    mark-alist number new-mark))
-		  (or new-mark (setq new-mark " "))
-		  (elmo-msgdb-set-mark-alist msgdb mark-alist)
-		  (wl-summary-set-mark-modified)
-		  (wl-summary-update-modeline)
-		  (wl-folder-update-unread
-		   wl-summary-buffer-folder-name
-		   (+ wl-summary-buffer-unread-count
-		      wl-summary-buffer-new-count)))
-		new-mark)))))))
+      (if (or arg
+	      (null (elmo-cache-exists-p message-id)))
+	  (unwind-protect
+	      (progn
+		(when (and size (not force-read) wl-prefetch-confirm)
+		  (setq force-read
+			(save-restriction
+			  (widen)
+			  (y-or-n-p
+			   (format
+			    "Message from %s has %d bytes. Prefetch it?"
+			    (concat
+			     "[ "
+			     (save-match-data
+			       (wl-set-string-width
+				wl-from-width
+				(wl-summary-from-func-internal
+				 (eword-decode-string
+				  (elmo-delete-char
+				   ?\"
+				   (or
+				    (elmo-msgdb-overview-entity-get-from ov)
+				    "??")))))) " ]")
+			    size))))
+		  (message ""))		; flush.
+		(setq mark (cadr (assq number mark-alist)))
+		(if force-read
+		    (save-excursion
+		      (save-match-data
+			(if (and (null (elmo-folder-plugged-p
+					wl-summary-buffer-folder-name))
+				 elmo-enable-disconnected-operation)
+			    (progn;; append-queue for offline
+			      (elmo-dop-prefetch-msgs
+			       wl-summary-buffer-folder-name (list number))
+			      (setq new-mark
+				    (cond
+				     ((string= mark
+					       wl-summary-unread-uncached-mark)
+				      wl-summary-unread-cached-mark)
+				     ((string= mark wl-summary-new-mark)
+				      (setq wl-summary-buffer-new-count
+					    (- wl-summary-buffer-new-count 1))
+				      (setq wl-summary-buffer-unread-count
+					    (+ wl-summary-buffer-unread-count 1))
+				      wl-summary-unread-cached-mark)
+				     ((or (null mark)
+					  (string= mark wl-summary-read-uncached-mark))
+				      (setq wl-summary-buffer-unread-count
+					    (+ wl-summary-buffer-unread-count 1))
+				      wl-summary-unread-cached-mark)
+				     (t mark))))
+			  ;; online
+			  (elmo-prefetch-msg wl-summary-buffer-folder-name
+					     number
+					     (wl-message-get-original-buffer)
+					     msgdb)
+			  (setq new-mark
+				(cond
+				 ((string= mark
+					   wl-summary-unread-uncached-mark)
+				  wl-summary-unread-cached-mark)
+				 ((string= mark wl-summary-new-mark)
+				  (setq wl-summary-buffer-new-count
+					(- wl-summary-buffer-new-count 1))
+				  (setq wl-summary-buffer-unread-count
+					(+ wl-summary-buffer-unread-count 1))
+				  wl-summary-unread-cached-mark)
+				 ((string= mark wl-summary-read-uncached-mark)
+				  nil)
+				 (t mark))))
+			(setq mark-alist (elmo-msgdb-mark-set
+					  mark-alist number new-mark))
+			(or new-mark (setq new-mark " "))
+			(elmo-msgdb-set-mark-alist msgdb mark-alist)
+			(wl-summary-set-mark-modified)
+			(wl-summary-update-modeline)
+			(wl-folder-update-unread
+			 wl-summary-buffer-folder-name
+			 (+ wl-summary-buffer-unread-count
+			    wl-summary-buffer-new-count)))
+		      new-mark))))))))
 
 ;(defvar wl-summary-message-uncached-marks
 ;  (list wl-summary-new-mark
@@ -1512,9 +1514,9 @@ If optional argument is non-nil, checking is omitted."
 	(message "Prefetched %d/%d message(s)" count length)
 	(cons count length)))))
 
-(defun wl-summary-prefetch ()
+(defun wl-summary-prefetch (&optional arg)
   "Prefetch current message."
-  (interactive)
+  (interactive "P")
   (save-excursion
     (save-match-data
       (beginning-of-line)
@@ -1524,7 +1526,7 @@ If optional argument is non-nil, checking is omitted."
 	      (buffer-read-only nil)
 	      mark)
 	  (setq mark (wl-summary-prefetch-msg
-		      (string-to-int (wl-match-buffer 1))))
+		      (string-to-int (wl-match-buffer 1)) arg))
 	  (when mark
 	    (delete-region (match-beginning 2)
 			   (match-end 2))

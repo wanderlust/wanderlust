@@ -3006,6 +3006,8 @@ prefix argument つきで実行すると仮想フォルダから脱出します。
 @item i
 @kindex i (Summary)
 カーソル行のメッセージをプリフェッチします。
+prefix argument つきならばすでにキャッシュされているメッセージも
+再度プリフェッチします。
 @findex wl-summary-prefetch
 (@code{wl-summary-prefetch})
 
