@@ -1,3 +1,8 @@
+2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Catch quitting and
+	write sendlog.
+
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-highlight.el (wl-highlight-summary-line-string): Use
