@@ -177,7 +177,8 @@ Don't cache if nil.")
 
 (defconst elmo-nntp-server-command-index '((xover . 0)
 					   (listgroup . 1)
-					   (list-active . 2)))
+					   (list-active . 2)
+					   (xhdr . 3)))
 
 (defmacro elmo-nntp-get-server-command (session)
   (` (assoc (cons (elmo-network-session-server-internal (, session))
