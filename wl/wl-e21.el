@@ -197,10 +197,14 @@
 	 (new (or wl-e21-tool-bar-lines
 		  (cdr (assq 'tool-bar-lines default-frame-alist)))))
     (unless (eq (and old t) (and new t))
-      (modify-frame-parameters frame (list (cons 'tool-bar-lines new)))
-      ;;(redraw-frame frame)
-      )))
+      (modify-frame-parameters frame (list (cons 'tool-bar-lines new))))))
 (add-hook 'post-command-hook 'wl-e21-switch-toolbar)
+(defun wl-e21-force-switch-toolbar (frame)
+  (let ((lines (frame-parameter frame 'tool-bar-lines)))
+    (unless (and lines (> lines 0))
+      (modify-frame-parameters frame (list (cons 'tool-bar-lines
+						 wl-e21-tool-bar-lines))))))
+(add-hook 'after-make-frame-functions 'wl-e21-force-switch-toolbar)
 
 (defun wl-e21-make-toolbar-buttons (keymap defs)
   (let ((configs wl-e21-toolbar-configurations)

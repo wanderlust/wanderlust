@@ -1,7 +1,11 @@
 2000-09-26  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	NOTE: This change should be fixed in the future.
-	* wl-e21.el (post-command-hook): Add `wl-e21-switch-toolbar'.
+	* wl-e21.el (after-make-frame-functions): Add
+	`wl-e21-force-switch-toolbar'.
+	(wl-e21-force-switch-toolbar): New function force to switch the
+	toolbar appearance automatically.
+	(post-command-hook): Add `wl-e21-switch-toolbar'.
 	(wl-e21-switch-toolbar): New function to switch the toolbar
 	appearance automatically.
 	(wl-e21-tool-bar-lines): New buffer local variable.
