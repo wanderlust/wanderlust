@@ -296,7 +296,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 					   (wl-folder-get-elmo-folder last))))
 	  (setq alist
 		(wl-append-assoc-list
-		 server-info
+		 (cons (car server-info) (nth 1 server-info)) ;; server port
 		 (cons last operation)
 		 alist)))
 	(when (car dop-queue)
@@ -329,7 +329,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let ((buffer-read-only nil)
 	(alist plugged-alist)
 	(vars wl-plugged-switch-variables)
-	last server port stream-type label plugged time
+	last server port label plugged time
 	line len qinfo column)
     (erase-buffer)
     (while vars
@@ -351,7 +351,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (while alist
       (setq server (nth 0 (caar alist))
 	    port (nth 1 (caar alist))
-	    stream-type (nth 2 (caar alist))
 	    label (nth 1 (car alist))
 	    plugged (nth 2 (car alist))
 	    time (nth 3 (car alist)))
@@ -387,8 +386,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	       (wl-set-string-width column line)
 	       (wl-plugged-sending-queue-status qinfo))))
        ;; dop queue status
-       ((setq qinfo (assoc (list server port stream-type)
-			   wl-plugged-dop-queue-alist))
+       ((setq qinfo (assoc (cons server port) wl-plugged-dop-queue-alist))
 	(setq line
 	      (concat
 	       (wl-set-string-width column line)
@@ -673,8 +671,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-init ()
   (when (not wl-init)
-    (unless (featurep 'mime-setup)
-      (require 'mime-setup))
     (setq elmo-plugged wl-plugged)
     (unless wl-on-nemacs
       (add-hook 'kill-emacs-hook 'wl-save-status))
@@ -704,6 +700,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
+  (unless (featurep 'mime-setup)
+    (require 'mime-setup))
   (unless wl-from
     (error "Please set `wl-from'"))
   ;; Message-ID

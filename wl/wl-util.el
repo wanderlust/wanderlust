@@ -826,12 +826,12 @@ This function is imported from Emacs 20.7."
 	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder (folder)
-  (if (eq (elmo-folder-type-internal folder) 'pop3)
-      (unless (elmo-pop3-get-session folder 'if-exists)
-	;; Currently no main pop3 process.
-	(let ((elmo-network-session-name-prefix "BIFF-"))
-	  (wl-folder-check-one-entity
-	   (elmo-folder-name-internal folder))))
+  (if (eq (elmo-folder-type folder) 'pop3)
+      ;; pop3 biff should share the session.
+      (prog2
+	  (elmo-folder-check folder)
+	  (wl-folder-check-one-entity (elmo-folder-name-internal folder))
+	(elmo-folder-close folder))
     (let ((elmo-network-session-name-prefix "BIFF-"))
       (wl-folder-check-one-entity (elmo-folder-name-internal folder)))))
 
@@ -861,10 +861,9 @@ This function is imported from Emacs 20.7."
 		      notify-minibuf))
 	  (let ((elmo-network-session-name-prefix "BIFF-"))
 	    (elmo-folder-diff-async folder)))
-      (unwind-protect
-	  (wl-biff-notify (car (wl-biff-check-folder folder))
-			  notify-minibuf)
-	(setq wl-biff-check-folders-running nil)))))
+      (wl-biff-notify (car (wl-biff-check-folder folder))
+		      notify-minibuf)
+      (setq wl-biff-check-folders-running nil))))
 
 (if (and (fboundp 'regexp-opt)
 	 (not (featurep 'xemacs)))
