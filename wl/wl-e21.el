@@ -48,8 +48,8 @@
 ;;  (setq overlay (make-overlay from to))
 ;;  ;; Put an image.
 ;;  (overlay-put overlay 'before-string icon)
-;;  ;; Put a mark that this overlay is made by `wl-e21'.  It is not always
-;;  ;; necessarily.
+;;  ;; Put a mark to indicate that this overlay is made by `wl-e21'.
+;;  ;; It is not always necessarily.
 ;;  (overlay-put overlay 'wl-e21-icon t)
 ;;  ;; Make it can be removable.
 ;;  (overlay-put overlay 'evaporate t))
