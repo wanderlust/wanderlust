@@ -166,6 +166,56 @@ By setting following-method as yank-content."
 (defalias 'wl-message-button-dispatcher-internal
   'mime-button-dispatcher)
 
+(defsubst wl-mime-node-id-to-string (node-id)
+  (if (consp node-id)
+      (mapconcat (function (lambda (num) (format "%s" (1+ num))))
+		 (reverse node-id)
+		 ".")
+    "0"))
+
+(defun wl-message-delete-current-part ()
+  "Delete a part under the cursor from the multipart message."
+  (interactive)
+  (let* ((entity (get-text-property (point) 'mime-view-entity))
+	 (node-id (mime-entity-node-id entity))
+	 (header-start (mime-buffer-entity-header-start-internal entity))
+	 (body-end (mime-buffer-entity-body-end-internal entity))
+	 (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
+	 (number wl-message-buffer-cur-number)
+	 (msgid (elmo-message-field folder number 'message-id))
+	 (orig-buf wl-message-buffer-original-buffer))
+    (with-current-buffer orig-buf
+      (unless (string-equal
+	       (buffer-string)
+	       (elmo-message-fetch folder number
+				   (elmo-make-fetch-strategy 'entire)))
+	(error "Buffer content differs from actual message")))
+    (when (and (elmo-folder-writable-p folder)
+	       (buffer-live-p orig-buf)
+	       node-id
+	       (yes-or-no-p
+		(format "Do you really want to delete part %s? "
+			(wl-mime-node-id-to-string node-id))))
+      (with-temp-buffer
+	(insert-buffer orig-buf)
+	(kill-region header-start body-end)
+	(goto-char header-start)
+	(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
+	(insert "** This part has been removed by Wanderlust **\n\n")
+	(elmo-folder-append-buffer folder t))
+
+      (elmo-folder-append-messages
+       (wl-folder-get-elmo-folder wl-trash-folder)
+       folder (list number) nil)
+      (elmo-folder-delete-messages folder (list number))
+
+      (when (file-exists-p (elmo-cache-get-path msgid))
+	(delete-file (elmo-cache-get-path msgid)))
+
+      (mime-preview-quit)
+      (wl-summary-toggle-disp-msg 'off)
+      (wl-summary-sync nil "update"))))
+
 ;;; Summary
 (defun wl-summary-burst-subr (message-entity target number)
   ;; returns new number.
