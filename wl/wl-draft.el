@@ -1350,6 +1350,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
+    (setq truncate-lines wl-message-truncate-lines)
     (setq wl-sent-message-via nil)
     (if (stringp (or from wl-from))
 	(insert "From: " (or from wl-from) "\n"))

@@ -1,3 +1,10 @@
+2001-09-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-truncate-lines): Change default value
+	to default-truncate-lines.
+
+	* wl-draft.el (wl-draft): Set truncate-lines as in wl-message.
+
 2001-09-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-message-truncate-lines): New variable.
