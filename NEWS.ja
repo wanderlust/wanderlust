@@ -1,5 +1,13 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+* 2.10.0 から 2.10.1 への変更点
+  2.10.1 は 2.10.0 のバグ修正版です。
+
+** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
+
+** wl-summary-pack-number が Maildir や shimbun フォルダで動かない
+   問題が修正されました。
+
 ** 重要マークつきメッセージのキャッシュに対する保護機能が働かない
    不具合が修正されました。
 

@@ -1,5 +1,13 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.10.1 from 2.10.0
+  Version 2.10.1 is a bug fix version of 2.10.0.
+
+** Fixed a problem that wl-draft-reedit doesn't work properly on Meadow.
+
+** Fixed a problem that wl-summary-pack-number doesn't work on Maildir and
+   shimbun folders.
+
 ** Fixed a problem that cache file is not protected even if it is marked
    as important.
 
