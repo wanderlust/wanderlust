@@ -138,7 +138,7 @@
 	 (product-version (product-find 'wl-version))
 	 (car (wl-news-previous-version-load)))))
 
-(defun wl-news-send-news (version news-lang)
+(defun wl-news-send-news (version news-lang folder)
   (require 'wl-draft)
   (let ((lang (if (listp wl-news-lang)
 		  wl-news-lang
@@ -283,7 +283,7 @@
 			    wl-default-folder)))
 	    (setq folder
 		  (wl-summary-read-folder wl-default-folder "to append ")))
-	(or (wl-news-send-news wl-news-buffer-oldest-version wl-news-lang)
+	(or (wl-news-send-news wl-news-buffer-oldest-version wl-news-lang folder)
 	    (error
 	     (format "Cannot append NEWS mail to %s" folder))))))
 

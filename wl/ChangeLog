@@ -1,5 +1,8 @@
 2003-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-news.el.in (wl-news-send-news): Add 3rd argument `folder'
+	to avoid compile warning.
+
 	* wl-summary.el (wl-summary-goto-folder-subr): Fix logic: set
 	entity-id when folder is given.
 	* wl-folder.el (wl-folder-set-current-entity-id): Don't use
