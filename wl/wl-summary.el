@@ -390,7 +390,8 @@ See also variable `wl-use-petname'."
 
 (if wl-summary-mode-map
     ()
-  (setq wl-summary-mode-map (make-sparse-keymap))
+  (setq wl-summary-mode-map (make-keymap))
+  (suppress-keymap wl-summary-mode-map)
   (define-key wl-summary-mode-map " "    'wl-summary-read)
   (define-key wl-summary-mode-map "."    'wl-summary-redisplay)
   (define-key wl-summary-mode-map "<"    'wl-summary-display-top)
@@ -2027,6 +2028,10 @@ This function is defined for `window-scroll-functions'"
 	    (re-search-backward (concat "\r" num "[^0-9]") nil t))
 	(progn (beginning-of-line) t)
       nil)))
+
+(defun wl-summary-digit-jump (number)
+  (interactive "NJump to Number: ")
+  (wl-summary-jump-to-msg number))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion

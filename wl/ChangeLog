@@ -1,3 +1,16 @@
+2004-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Treat digits as prefix args.
+	(wl-summary-digit-jump): New function.
+	(Adviced by John Owens and Hiroya Murata)
+
+	* wl-e21.el (wl-message-define-keymap): Bind "w" as wl-draft.
+	(Adviced by John Owens)
+
+	* wl-xmas.el (wl-message-define-keymap): Ditto.
+
+	* wl-mule.el (wl-message-define-keymap): Ditto.
+
 2004-08-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Follow the
