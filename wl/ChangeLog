@@ -1,3 +1,25 @@
+2001-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder): redisplay after folder insertion.
+
+	* wl-demo.el (wl-demo): Don't delete toolbar on emacs-21.
+
+	* wl-summary.el (wl-summary-sync-update):
+	Change status mark only when new-msgdb exists.
+	(Advised by Akihiro MOTOKI <mokkun@iname.com>.)
+
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-open-folder): New function.
+	(wl-summary-goto-folder-subr): Use it.
+	(wl-summary-mark-as-important): Fix;
+	Encache only when no cache exists.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
+	Use with-current-buffer.
+
 2001-07-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-score.el (wl-score-insert-help): Check `wl-message-buffer'

@@ -597,11 +597,12 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   (elmo-generic-folder-open folder load-msgdb))
 
 (defun elmo-generic-folder-open (folder load-msgdb)
-  (if load-msgdb
-      (elmo-folder-set-msgdb-internal folder (elmo-msgdb-load folder)))
-  (elmo-folder-set-killed-list-internal
-   folder
-   (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
+  (let ((inhibit-quit t))
+    (if load-msgdb
+	(elmo-folder-set-msgdb-internal folder (elmo-msgdb-load folder)))
+    (elmo-folder-set-killed-list-internal
+     folder
+     (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
   (elmo-folder-open-internal folder))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-folder))
