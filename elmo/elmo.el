@@ -1419,13 +1419,12 @@ If Optional LOCAL is non-nil, don't update server flag."
 	      (cache
 	       (elmo-file-cache-load cache-path section))
 	      (entity
-	       (when (and (condition-case error
-			      (elmo-message-fetch-internal folder number
-							   strategy
-							   section
-							   unread)
-			    (error (setq err error) nil))
-			  (> (buffer-size) 0))
+	       (when (condition-case error
+			 (elmo-message-fetch-internal folder number
+						      strategy
+						      section
+						      unread)
+		       (error (setq err error) nil))
 		 (setq updated-server-flag t)
 		 (when (and (elmo-fetch-strategy-save-cache strategy)
 			    cache-path)

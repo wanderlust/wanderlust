@@ -1,3 +1,11 @@
+2005-01-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-make-mime-entity): Set children's top node number
+	as nil.
+
+	* elmo.el (elmo-message-fetch): Return t even when the output buffer
+	size of elmo-message-fetch-internal is 0 byte.
+
 2005-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-maildir.el (elmo-map-message-fetch): Fixed last change.

@@ -148,7 +148,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	   entity
 	   (list (mmimap-make-mime-entity
 		  (nth 8 bodystructure) class
-		  location node-id 0
+		  location node-id nil
 		  entity))))
       entity))))
 
