@@ -19,11 +19,10 @@
 This file documents Wanderlust,
 Yet another message interface on Emacsen.
 
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
-@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
-@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@c @w{Kenichi Okada}, @w{Kaoru Takahashi}, @w{Bun Mizuhara}
-and @w{Masayuki Osada}.
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@w{Kenichi Okada}, @w{Kaoru Takahashi},
+@w{Bun Mizuhara} and @w{Masayuki Osada}.
 
 This edition is for Wanderlust version @value{version}.
 
@@ -50,7 +49,9 @@ into another language, under the above conditions for modified versions.
 
 @titlepage
 @sp 10
-@title Wanderlust User's Manual (ver. @value{version})
+@title Wanderlust User's Manual
+@subtitle Yet Another Message Interface On Emacsen
+@subtitle for Version @value{version}
 @author Yuuichi Teranishi
 @author Fujikazu Okunishi
 @author Masahiro Murata
@@ -61,11 +62,10 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
-@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
-@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@c @w{Kenichi Okada}, @w{Kaoru Takahashi}, 
-@c @w{Bun Mizuhara} and @w {Masayuki Osada}
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@w{Kenichi Okada}, @w{Kaoru Takahashi},
+@w{Bun Mizuhara} and @w{Masayuki Osada}.
 
 This manual is for Wanderlust version @value{version}.
 
@@ -220,11 +220,11 @@ tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end example
 
 You need packages named APEL and FLIM to use SEMI.
-You can download FLIM and APEL from following URLs.
+You can download APEL and FLIM from following URLs.
 
 @example
-FLIM:     ftp://ftp.m17n.org/mule/flim/
 APEL:     ftp://ftp.m17n.org/mule/apel/
+FLIM:     ftp://ftp.m17n.org/mule/flim/
 @end example
 
 You have to install APEL, FLIM and SEMI in this order.
@@ -245,7 +245,7 @@ while compiling FLIM 1.12.7.
 Please install latest APEL 7.3 or later.
 @end example
 
-In this case, please comment out following lines in FLIM-CFG.
+In this case, please comment out following lines in @file{FLIM-CFG}.
 
 @example
 (or (fboundp 'write-region-as-binary)
@@ -291,8 +291,8 @@ Extract the obtained package to your working directory:
 
 @example
 % cd ~/work
-% tar zxvf wl-(@var{version}).tar.gz
-% cd wl-(@var{version})
+% tar zxvf wl-@var{version}.tar.gz
+% cd wl-@var{version}
 @end example
 
 @subsection To use SSL (Secure Socket Layer)
@@ -358,7 +358,7 @@ If you want to use BBDB, then the necessary modules are byte-compiled and
 installed when BBDB directory is added to load-path.
 @xref{BBDB}.
 
-@subsection WL-CFG
+@subsection @file{WL-CFG}
 
 Contents of the file @file{WL-CFG} is loaded under installation if a file
 with that name exists in extracted directory. You can use @file{WL-CFG} to
@@ -447,7 +447,7 @@ They are also the front-end for ELMO.
 @end table
 
 You can customize the  behavior of Wanderlust by changing the value
-of environmental variables which begins with @code{elmo-*} and @code{wl-*}.
+of environmental variables which begins with @code{elmo-} and @code{wl-}.
 
 The minimal requirement for settings is as the following.
 
@@ -481,7 +481,7 @@ All above described settings except (load "mime-setup") and autoload
 configuration can be written in
 @file{~/.wl}).
 
-@subsection mail-user-agent
+@subsection @code{mail-user-agent}
 @cindex Default Mailer
 @cindex Mailer, Default
 @vindex mail-user-agent
@@ -490,7 +490,7 @@ configuration can be written in
 If you write following setting in you @file{.emacs}, you can
 start Wanderlust draft mode by typing @kbd{C-x m} (@code{compose-mail}). 
 This means it enables you to run Wanderlust as a default mail composer
- of Emacs.
+ of Emacsen.
 
 It is effective only when your Emacs can define @code{mail-user-agent}.
 @c @xref{Mail Methods, , ,emacs}.
@@ -989,7 +989,7 @@ destroyed. No problem is reported on above versions of GNU tar.
 @subsection TIPS
 @cindex Archive Tips
 
-For comfortable migration, usage of wl-summary-archive() (@pxref{Archive}) or 
+For comfortable migration, usage of @code{wl-summary-archive} (@pxref{Archive}) or 
 Expire (@pxref{Expire}) is recommended.
 To treat archive folders created by expiration, 
 you must set non-nil value to @code{elmo-archive-treat-file}.
@@ -2386,6 +2386,15 @@ Display the next line of the message at the current cursor point.
 Display the message at the current cursor point if it is not displayed yet.
 (@code{wl-summary-next-line-content})
 
+@item -
+@itemx M-@key{RET}
+@kindex - (Summary)
+@kindex M-@key{RET} (Summary)
+@findex wl-summary-prev-line-content
+Display the previous line of the message at the current cursor point.
+Display the message at the current cursor point if it is not displayed yet.
+(@code{wl-summary-prev-line-content})
+
 @item /
 @kindex / (Summary)
 @findex wl-thread-open-close
@@ -2403,15 +2412,6 @@ Open all threads.
 Close all threads.
 @findex wl-thread-close-all
 (@code{wl-thread-close-all})
-
-@item -
-@itemx M-@key{RET}
-@kindex - (Summary)
-@kindex M-@key{RET} (Summary)
-@findex wl-summary-prev-line-content
-Display the previous line of the message at the current cursor point.
-Display the message at the current cursor point if it is not displayed yet.
-(@code{wl-summary-prev-line-content})
 
 @item g
 @kindex g (Summary)
@@ -4681,9 +4681,9 @@ As you can see, you can only use a function after @samp{folders_regexp}.
 Per default, there are three functions:
 
 @itemize @bullet
-@item wl-archive-number1
-@item wl-archive-number2
-@item wl-archive-date
+@item @code{wl-archive-number1}
+@item @code{wl-archive-number2}
+@item @code{wl-archive-date}
 @end itemize
 
 As inferred from their names, they work similarly to "expire" versions,
@@ -4715,12 +4715,12 @@ The archiving folders are determined by the same logic as in
 relevant:
 
 @itemize @bullet
-@item wl-expire-archive-files
-@item wl-expire-archive-get-folder-func
-@item wl-expire-archive-folder-name-fmt
-@item wl-expire-archive-folder-type
-@item wl-expire-archive-folder-prefix
-@item wl-expire-archive-folder-num-regexp
+@item @code{wl-expire-archive-files}
+@item @code{wl-expire-archive-get-folder-func}
+@item @code{wl-expire-archive-folder-name-fmt}
+@item @code{wl-expire-archive-folder-type}
+@item @code{wl-expire-archive-folder-prefix}
+@item @code{wl-expire-archive-folder-num-regexp}
 @end itemize
 
 @subsection Customizable Variables
@@ -4748,7 +4748,7 @@ Needless to say, you can use your own function.
 Scoring is the function that associates a score (value) with each
 message, and marks as read or deletes from the summary according to it.
 
-You can put temp or important marks on essential messages, or read marks
+You can put target or important marks on essential messages, or read marks
 on the ones you do not want to read, for example spam articles.
 
 This scoring function has a capability and a format similar to the one
@@ -5706,8 +5706,8 @@ The following is an example.
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
-         (concat "X-Mailer: "
-                 (format "%s/%s (%s)" wl-appname wl-version wl-codename)))))
+         (format "X-Mailer: %s/%s (%s)"
+                 wl-appname wl-version wl-codename))))
 @end lisp
 
 @node Customizable Variables,  , Advanced Settings, Customization
@@ -6008,7 +6008,11 @@ valuable advice and many pieces of code they contributed.
 1999  2/03    auto-refile by Tsumura-san.
       4/28    wl-template by Murata-san.
       5/18    Released 1.0.0 stable.
-      7/5     Scoring by Murata-san (2.1.0).
+      7/05    Scoring by Murata-san (2.1.0).
+      9/26    New plugged system by Murata-san (2.2.2).
+     12/20    Support Modified UTF7.
+2000  3/24    Released 1.1.0 stable.
+      4/03    CVS development started.
 @end example
 
 See @file{ChangeLog} for details.

@@ -22,10 +22,9 @@ Yet another message interface on Emacsen.
 $B$3$N%U%!%$%k$O(B Emacs $B$GF0$/%a!<%k(B/$B%K%e!<%94IM}%7%9%F%`(B
 Wanderlust $B$K4X$9$k@bL@=q$G$9!#(B
 
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
-@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
-@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@c @w{Kenichi Okada} and @w{Kaoru Takahashi}.
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@w{Kenichi Okada} and @w{Kaoru Takahashi}.
 
 This edition is for Wanderlust version @value{version}.
 
@@ -67,7 +66,9 @@ into another language, under the above conditions for modified versions.
 
 @titlepage
 @sp 10
-@title Wanderlust $B%f!<%6%^%K%e%"%k(B (ver. @value{version})
+@title Wanderlust $B%f!<%6%^%K%e%"%k(B
+@subtitle Yet Another Message Interface On Emacsen
+@subtitle for version @value{version}
 @author Yuuichi Teranishi $B;{@>M50l(B
 @author Fujikazu Okunishi $B1|@>F#OB(B
 @author Masahiro Murata   $BB<EDA442(B
@@ -76,10 +77,9 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}.
-@c Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
-@c @w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@c @w{Kenichi Okada}, and @w{Kaoru Takahashi}.
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+@w{Fujikazu Okunishi}, @w{Masahiro Murata},
+@w{Kenichi Okada}, and @w{Kaoru Takahashi}.
 
 This manual is for Wanderlust version @value{version}.
 
@@ -245,11 +245,11 @@ tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end example
 
 SEMI $B$K$O(B APEL, FLIM $B$H8F$P$l$k%Q%C%1!<%8$bI,MW$G$9!#(B
-FLIM, APEL $B$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
+APEL, FLIM $B$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
 
 @example
-FLIM:     ftp://ftp.m17n.org/mule/flim/
 APEL:     ftp://ftp.m17n.org/mule/apel/
+FLIM:     ftp://ftp.m17n.org/mule/flim/
 @end example
 
 APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
@@ -269,7 +269,7 @@ APEL 10.2 $B$H(B FLIM 1.12.7 $B$NAH9g$;$G$O!"(BFLIM 1.12.7 $B$N%3%s%Q%$%k;~
 Please install latest APEL 7.3 or later.
 @end example
    
-$B$H$$$&%(%i!<$,H/@8$9$k>l9g$,$"$j$^$9!#$3$N>l9g!"(BFLIM-CFG $B$N0J2<$N9T$r(B
+$B$H$$$&%(%i!<$,H/@8$9$k>l9g$,$"$j$^$9!#$3$N>l9g!"(B@file{FLIM-CFG} $B$N0J2<$N9T$r(B
 $B%3%a%s%H%"%&%H$7$F2<$5$$!#(B
 
 @example
@@ -318,8 +318,8 @@ ftp://opaopa.org/pub/mirror/elisp/wl/
 
 @example
 % cd ~/work
-% tar zxvf wl-(@var{version}).tar.gz
-% cd wl-(@var{version})
+% tar zxvf wl-@var{version}.tar.gz
+% cd wl-@var{version}
 @end example
 
 @subsection SSL (Secure Socket Layer)$B$NMxMQ(B
@@ -381,7 +381,7 @@ load-path $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
 $B%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
 @xref{BBDB}.
 
-@subsection WL-CFG
+@subsection @file{WL-CFG}
 
 @file{WL-CFG} $B$H$$$&%U%!%$%k$,E83+%G%#%l%/%H%j$KB8:_$9$k$H!"(B
 $B%$%s%9%H!<%k;~$K(B load $B$5$l$k$h$&$K$J$C$F$$$^$9!#(B
@@ -492,7 +492,7 @@ Wanderlust $B$N%Q%C%1!<%8$K$OBg$-$/J,$1$FFs$D$N%b%8%e!<%k72$,4^$^$l$F$$$^$9!#(
 Wanderlust $BK\BN$NF0:n$r7h$a$k%b%8%e!<%k72$G$9!#(BELMO $B$N%U%m%s%H%(%s%I$G$9!#(B
 @end table
 
-$B%f!<%6$O(B @code{elmo-*}, @code{wl-*} $B$G;O$^$kJQ?t$N@_Dj$rJQ$($k$3$H$K$h$C$F(B
+$B%f!<%6$O(B @code{elmo-}, @code{wl-} $B$G;O$^$kJQ?t$N@_Dj$rJQ$($k$3$H$K$h$C$F(B
 Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 
 $B:GDc8BI,MW$J@_Dj$O0J2<$NDL$j$G$9!#(B
@@ -525,7 +525,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B
 ($B>e5-$N$&$A!"(B@samp{(load "mime-setup")} $B$H(B autoload $B$N@_Dj0J30$O(B @file{~/.wl} 
 $B$K5-=R$G$-$^$9!#(B)
 
-@subsection mail-user-agent
+@subsection @code{mail-user-agent}
 @cindex Default Mailer
 @cindex Mailer, Default
 @vindex mail-user-agent
@@ -535,7 +535,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B
 (@code{compose-mail}) $BEy$K$h$C$F(B Wanderlust $B$N%I%i%U%H%b!<%I$,5/F0$5$l$k(B
 $B$h$&$K$J$j$^$9!#(BWanderlust $B$r(B Emacs $B>e$NI8=`%a!<%i$H$7$F;H$$$?$$>l9g$O(B
 $B@_Dj$7$F$*$/$H$h$$$G$7$g$&!#(B
-$B$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,2DG=$J(B Emacs $B$N>l9g$N$_M-8z$G$9!#(B
+$B$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,2DG=$J(B Emacsen $B$N>l9g$N$_M-8z$G$9!#(B
 @c @xref{Mail Methods, , ,emacs}.
 
 @lisp
@@ -1041,7 +1041,7 @@ GNU tar $B$O=q8K$+$i$N:o=|$KLdBj$,$"$k$b$N$,B?$$$N$G!"FC$KCm0U$7$F$/$@$5$$!#(B
 @subsection TIPS
 @cindex Archive Tips
 
-$B2wE,$K0\9T$9$k$K$O!"(Bwl-summary-archive() $B$r<B9T$9$k(B (@pxref{Archive}) $B$+!"(B
+$B2wE,$K0\9T$9$k$K$O!"(B@code{wl-summary-archive} $B$r<B9T$9$k(B (@pxref{Archive}) $B$+!"(B
 Expire $B5!G=(B (@pxref{Expire}) $B$HAH$_9g$o$;$k$H$$$$$G$7$g$&!#(B
 $B$?$@$7!"(BExpire $B5!G=$G:n@.$7$?%"!<%+%$%V%U%)%k%@$r07$&>l9g$O!"(B
 $BJQ?t(B @code{elmo-archive-treat-file} $B$r(B non-nil $B$K@_Dj$9$kI,MW$,$"$j$^$9!#(B
@@ -2409,6 +2409,15 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 $BI=<(Cf$G$J$1$l$P!"I=<($7$^$9!#(B
 (@code{wl-summary-next-line-content})
 
+@item -
+@itemx M-@key{RET}
+@kindex - (Summary)
+@kindex M-@key{RET} (Summary)
+@findex wl-summary-prev-line-content
+$B%+!<%=%k9T$N%a%C%;!<%8$,I=<(Cf$G$"$l$P%a%C%;!<%8$r0l9T2<$K%9%/%m!<%k$7$^$9!#(B
+$BI=<(Cf$G$J$1$l$P!"I=<($7$^$9!#(B
+(@code{wl-summary-prev-line-content})
+
 @item /
 @kindex / (Summary)
 @findex wl-thread-open-close
@@ -2426,15 +2435,6 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 $BA4$F$N%9%l%C%I$rJD$8$^$9!#(B
 @findex wl-thread-close-all
 (@code{wl-thread-close-all})
-
-@item -
-@itemx M-@key{RET}
-@kindex - (Summary)
-@kindex M-@key{RET} (Summary)
-@findex wl-summary-prev-line-content
-$B%+!<%=%k9T$N%a%C%;!<%8$,I=<(Cf$G$"$l$P%a%C%;!<%8$r0l9T2<$K%9%/%m!<%k$7$^$9!#(B
-$BI=<(Cf$G$J$1$l$P!"I=<($7$^$9!#(B
-(@code{wl-summary-prev-line-content})
 
 @item g
 @kindex g (Summary)
@@ -2563,7 +2563,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @findex wl-summary-burst
 $B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$,(B
 MIME $B$G%+%W%;%k2=$5$l$?J#?t$N%a%C%;!<%84^$`>l9g!"(B
-$B$=$l$i$r8=:_$N%U%)%k%@$K$[$I$-$^$9(B($BL$<BAu(B)$B!#(B
+$B$=$l$i$r8=:_$N%U%)%k%@$K$[$I$-$^$9!#(B
 (@code{wl-summary-burst})
 
 @item @@
@@ -4652,10 +4652,10 @@ t $B$N>l9g!"%U%)%k%@%b!<%I$G(B expire $B$r<B9T$9$k$H$-$K!"(B
 $B$3$N$h$&$K(B@samp{$B%U%)%k%@$N(Bregexp}$B$N8e$K$O4X?t$7$+;XDj$G$-$^$;$s!#(B
 $BI8=`$G$O<!$N(B3$B$D$N4X?t(B
 
-@itemize
-@item wl-archive-number1
-@item wl-archive-number2
-@item wl-archive-date
+@itemize @bullet
+@item @code{wl-archive-number1}
+@item @code{wl-archive-number2}
+@item @code{wl-archive-date}
 @end itemize
 
 $B$,MQ0U$5$l$F$*$j!"L>A0$+$i$*2r$j$NDL$j<!$NE@$r=|$$$F(B Expire $B$GMQ0U$5$l$F(B
@@ -4687,12 +4687,12 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 $B$$$F$$$k$?$a!"%+%9%?%^%$%:JQ?t$NCf$G<!$K<($9$b$N$,4X78$7$F$-$^$9!#(B
 
 @itemize @bullet
-@item wl-expire-archive-files
-@item wl-expire-archive-get-folder-func
-@item wl-expire-archive-folder-name-fmt
-@item wl-expire-archive-folder-type
-@item wl-expire-archive-folder-prefix
-@item wl-expire-archive-folder-num-regexp
+@item @code{wl-expire-archive-files}
+@item @code{wl-expire-archive-get-folder-func}
+@item @code{wl-expire-archive-folder-name-fmt}
+@item @code{wl-expire-archive-folder-type}
+@item @code{wl-expire-archive-folder-prefix}
+@item @code{wl-expire-archive-folder-num-regexp}
 @end itemize
 
 @subsection $B%+%9%?%^%$%:JQ?t(B
@@ -4720,7 +4720,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 $B%9%3%"$H$O!"%a%C%;!<%8$K%9%3%"(B($BCM(B)$B$r$D$1!"(B
 $B$=$NCM$K$h$j4{FI%^!<%/$rIU$1$?$j%5%^%j$+$i>C$7$?$j$9$k5!G=$G$9!#(B
 
-$B$3$N5!G=$K$h$C$F=EMW$J%a%C%;!<%8$K(B temp $B%^!<%/$d(B important $B%^!<%/$r$D$1$?(B
+$B$3$N5!G=$K$h$C$F=EMW$J%a%C%;!<%8$K(B target $B%^!<%/$d(B important $B%^!<%/$r$D$1$?(B
 $B$j!"(Bspam $B5-;v$J$I$NFI$_$?$/$J$$%a%C%;!<%8$K4{FI%^!<%/$r$D$1$?$j$9$k$3$H$,(B
 $B$G$-$^$9!#(B
 
@@ -5665,8 +5665,8 @@ Mailng List $B$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7$?$@
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
-         (concat "X-Mailer: "
-                 (format "%s/%s (%s)" wl-appname wl-version wl-codename)))))
+         (format "X-Mailer: %s/%s (%s)"
+                 wl-appname wl-version wl-codename))))
 @end lisp
 
 
@@ -5708,7 +5708,7 @@ Non-nil $B$J$i$P!"%a!<%kAw?.;~$KK\Ev$KAw?.$7$F$h$$$+$r3NG'$7$^$9!#(B
  ("^\\+draft$\\|^\\+queue$" . "all"))
 @end example
 $B%U%)%k%@L>$N@55,I=8=$H%U%)%k%@0\F0;~$N%5%^%j99?7%l%s%8O"A[%j%9%H$G$9!#(B
-$B99?7%l%s%8$K$O(B wl-summary-sync $B$GF~NO$G$-$kCM$N$$$:$l$+(B
+$B99?7%l%s%8$K$O(B @code{wl-summary-sync} $B$GF~NO$G$-$kCM$N$$$:$l$+(B
 (all, update, rescan, rescan-noscore, first, last) $B$r;XDj$7$^$9!#(B
 $B%^%C%A$7$J$+$C$?>l9g$O!"(Bupdate $B$H$J$j$^$9!#(B
 
@@ -5968,6 +5968,10 @@ Wanderlust $B$K4X$9$k5DO@$O$3$N%a%$%j%s%0%j%9%H$G9T$o$l$^$9!#(B
       4/28    wl-template by $BB<ED$5$s!#(B
       5/18    1.0.0 stable $B%j%j!<%9!#(B
       7/05    $B%9%3%"5!G=(B by $BB<ED$5$s(B(2.1.0)$B!#(B
+      9/26    $B%W%i%04IM}%7%9%F%`(B by $BB<ED$5$s(B(2.2.2)$B!#(B
+     12/20    Modified UTF7 $BBP1~!#(B
+2000  3/24    1.1.0 stable $B%j%j!<%9!#(B
+      4/03    CVS $B%5!<%P$G$N3+H/$r3+;O!#(B
 @end example
 
 $B$/$o$7$$JQA+$O(B @file{ChangeLog} $B$r8fMw$/$@$5$$!#(B
@@ -5984,11 +5988,11 @@ wanderlust   wan$B!&(Bder$B!&(Blust
 
 @noindent
 $B$H$$$&0UL#$,$"$j$^$9!#$,!"L>A0$K$?$$$7$F?<$$0U?^$O$"$j$^$;$s!#(B
-($B6/$$$F8@$($P!"(BIMAP @t{=>} $B$I$3$G$b%a!<%k$,FI$a$k(B @t{=>} $BJ|O2JJ(B ?)
+($B6/$$$F8@$($P!"(BIMAP $B"*(B $B$I$3$G$b%a!<%k$,FI$a$k(B $B"*(B $BJ|O2JJ(B ?)
 
 elmo $B$O!"(B@samp{Elisp Library for Message Orchestration} $B$NN,$G$9!#(B
 $B:G=i$O$"$N@V$$$L$$$0$k$_$N$D$b$j$G$7$?$,!"(B
-$BJ|O2(B @t{=>} $BI:N.(B @t{=>} $BF;I8(B @t{=>} St.@: Elmo's fire @t{=>} elmo $B$H$$$&!"(B
+$BJ|O2(B $B"*(B $BI:N.(B $B"*(B $BF;I8(B $B"*(B St.@: Elmo's fire $B"*(B elmo $B$H$$$&!"(B
 $B$=$l$C$]$$O"A[$b2DG=$G$9!#(B
 
 @section $B%3!<%I%M!<%`(B
