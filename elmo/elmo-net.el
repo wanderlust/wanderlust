@@ -30,6 +30,17 @@
 (require 'elmo-util)
 (require 'elmo-vars)
 
+(eval-and-compile
+  (autoload 'starttls-negotiate "starttls")
+  (autoload 'sasl-find-mechanism "sasl")
+  (autoload 'sasl-make-client "sasl")
+  (autoload 'sasl-mechanism-name "sasl")
+  (autoload 'sasl-next-step "sasl")
+  (autoload 'sasl-step-data "sasl")
+  (autoload 'sasl-step-set-data "sasl"))
+
+(defvar sasl-mechanisms)
+
 ;;; Code:
 ;;
 (eval-and-compile

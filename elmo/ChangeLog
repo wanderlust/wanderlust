@@ -1,3 +1,102 @@
+2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-generic-folder-diff): Moved from elmo2.el
+	(elmo-generic-list-folder-unread): Ditto.
+	(elmo-folder-get-info): Ditto.
+	(elmo-folder-set-info-max-by-numdb): Ditto.
+	(elmo-folder-get-info-max): Ditto.
+	(elmo-folder-get-info-length): Ditto.
+	(elmo-folder-get-info-unread): Ditto.
+	(elmo-folder-info-make-hashtb): Ditto.
+
+	* elmo2.el: Removed above functions.
+
+	* elmo-imap4.el (elmo-network-authenticate-session):
+	Fixed a logic for response checking.
+
+2000-12-15   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-net.el: Add autoload settings for `starttls-negotiate',
+	`sasl-find-mechanism', `sasl-make-client', `sasl-mechanism-name',
+	`sasl-next-step', `sasl-step-data' and `sasl-step-set-data'; bind
+	`sasl-mechanisms'.
+
+	* elmo-imap4.el: Don't require `sasl'; remove autoload settings
+	for `starttls-open-stream' and `starttls-negotiate'.
+
+	* elmo-nntp.el: Remove autoload settings for
+	`starttls-open-stream' and `starttls-negotiate'.
+
+	* elmo-pop3.el: Don't require `sasl'; remove autoload settings
+	for `starttls-open-stream' and `starttls-negotiate'; don't enclose
+	`luna-define-class' with `eval-and-compile'.
+
+2000-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): Require 'ssl.
+	Add autoload 'starttls.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): defun at compile time.
+	sasl-find-mechanism, sasl-make-client, sasl-mechanism-name,
+	sasl-next-step, sasl-step-data, sasl-step-set-data.
+	* elmo-pop3.el (toplevel): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-network-authenticate-session): Use `elmo-imap4-login'
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-auth-apop): Signal `elmo-pop-auth-apop'
+	if error.
+	(elmo-network-authenticate-session): Use `elmo-pop-auth-user'
+	and `elmo-pop-auth-apop'.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Fix for `APOP'.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Split
+	encoded response value.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Abolish
+	`elmo-pop3-force-login'.
+	Redefine `sasl-mechanisms'.
+	* elmo-vars.el (elmo-pop3-force-login): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): Delete defun-maybe for sasl-*.
+	Delete `elmo-imap4-authenticator-alist'.
+	(elmo-imap4-auth-cram-md5): Delete.
+	(elmo-imap4-auth-digest-md5): Delete.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-auth-digest-md5): Delete.
+	(elmo-pop3-auth-scram-md5): Ditto.
+	(elmo-pop3-auth-cram-md5): Ditto.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (toplevel): Delete defun-maybe for sasl-*.
+	Delete `elmo-pop3-authenticator-alist'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Rewrite for
+	new SASL API.
+	* elmo-imap4.el (elmo-network-authenticate-session): Ditto.
+
+
 2000-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-get-folders-info): Fixed last change.

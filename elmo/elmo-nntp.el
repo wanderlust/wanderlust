@@ -35,13 +35,8 @@
 
 (require 'elmo-msgdb)
 (eval-when-compile
-  (condition-case nil
-      (progn
-	(require 'starttls))
-    (error))
   (require 'elmo-cache)
-  (require 'elmo-util)
-  (defun-maybe starttls-negotiate (a)))
+  (require 'elmo-util))
 (require 'elmo-net)
 
 (eval-and-compile
