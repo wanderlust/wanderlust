@@ -283,6 +283,21 @@ By setting following-method as yank-content."
 	  (setq overviews (cdr overviews)))
 	(message "Not all partials found.")))))
 
+(defun wl-mime-display-text/plain (entity situation)
+  (let ((beg (point)))
+    (mime-display-text/plain entity situation)
+    (wl-highlight-message beg (point-max) t t)))
+
+(defun wl-mime-display-header (entity situation)
+  (let ((elmo-message-ignored-field-list
+	 (if wl-message-buffer-all-header-flag
+	     nil
+	   wl-message-ignored-field-list))
+	(elmo-message-visible-field-list wl-message-visible-field-list)
+	(elmo-message-sorted-field-list wl-message-sort-field-list))
+    (elmo-mime-insert-header entity situation)
+    (wl-highlight-headers)))
+
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
@@ -299,11 +314,19 @@ By setting following-method as yank-content."
   (add-hook 'wl-message-exit-hook 'wl-message-delete-mime-out-buf)
 
   (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((type . text) (subtype . plain)
+     (body . visible)
+     (body-presentation-method . wl-mime-display-text/plain)
+     (major-mode . wl-original-message-mode)))
+
+  (ctree-set-calist-strictly
    'mime-acting-condition
    '((type . message) (subtype . partial)
      (method .  wl-mime-combine-message/partial-pieces)
      (request-partial-message-method . wl-message-request-partial)
      (major-mode . wl-original-message-mode)))
+
   (ctree-set-calist-strictly
    'mime-acting-condition
    '((mode . "extract")
@@ -333,15 +356,13 @@ By setting following-method as yank-content."
 	    mime-view-visible-field-list))
   (set-alist 'mime-header-presentation-method-alist
 	     'wl-original-message-mode
-	     (function elmo-mime-insert-header))
+	     'wl-mime-display-header)
   ;; To avoid overriding wl-draft-mode-map.
   (when (boundp 'mime-setup-signature-key-alist)
     (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
       (setq mime-setup-signature-key-alist
 	    (cons '(wl-draft-mode . "\C-c\C-w")
-		  mime-setup-signature-key-alist))))
-  (add-hook 'elmo-message-text-content-inserted-hook 'wl-highlight-body-all)
-  (add-hook 'elmo-message-header-inserted-hook 'wl-highlight-headers))
+		  mime-setup-signature-key-alist)))))
 
 (require 'product)
 (product-provide (provide 'wl-mime) (require 'wl-version))

@@ -59,12 +59,14 @@
 (defvar wl-message-buffer-cur-flag nil)
 (defvar wl-message-buffer-cur-summary-buffer nil)
 (defvar wl-message-buffer-original-buffer nil) ; original buffer.
+(defvar wl-message-buffer-all-header-flag nil)
 
 (make-variable-buffer-local 'wl-message-buffer-cur-folder)
 (make-variable-buffer-local 'wl-message-buffer-cur-number)
 (make-variable-buffer-local 'wl-message-buffer-cur-flag)
 (make-variable-buffer-local 'wl-message-buffer-cur-summary-buffer)
 (make-variable-buffer-local 'wl-message-buffer-original-buffer)
+(make-variable-buffer-local 'wl-message-buffer-all-header-flag)
 
 (defvar wl-fixed-window-configuration nil)
 
@@ -455,13 +457,8 @@ Returns non-nil if bottom of message."
 
 (defun wl-message-display-internal (folder number flag
 					   &optional force-reload unread)
-  (let ((elmo-message-ignored-field-list
-	 (if (eq flag 'all-header)
-	     nil
-	   wl-message-ignored-field-list))
-	(elmo-message-visible-field-list wl-message-visible-field-list)
-	(elmo-message-sorted-field-list wl-message-sort-field-list)
-	(elmo-message-fetch-threshold wl-fetch-confirm-threshold))
+  (let ((elmo-message-fetch-threshold wl-fetch-confirm-threshold))
+    (setq wl-message-buffer-all-header-flag (eq flag 'all-header))
     (prog1 
 	(if (eq flag 'as-is)
 	    (let (wl-highlight-x-face-function)

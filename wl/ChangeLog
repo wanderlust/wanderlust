@@ -1,3 +1,20 @@
+2001-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-mime-display-text/plain): New function.
+	(wl-mime-display-header): Ditto.
+	(wl-mime-setup): Register `wl-mime-display-text/plain' as a
+	body-presentation-method for text/plain;
+	Register `wl-mime-display-header' as a header-presentation-method;
+	Don't set up `elmo-message-text-content-inserted-hook' and
+	`elmo-message-header-inserted-hook'.
+
+	* wl-message.el (wl-message-buffer-all-header-flag): New buffer local
+	variable.
+	(wl-message-display-internal): Set `wl-message-buffer-all-header-flag'
+	as t if flag is 'all-header;
+	Don't bind `elmo-message-ignored-field-list',
+	`elmo-message-visible-field-list' and `elmo-message-sorted-field-list'.
+
 2001-09-24  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-vars.el: (wl-biff-state-indicator-off): Changed default value
