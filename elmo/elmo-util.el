@@ -254,6 +254,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 ;; time         ::= "yesterday" / "lastweek" / "lastmonth" / "lastyear" /
 ;;                   number SPACE* "daysago" /
 ;;                   number "-" month "-" number  ; ex. 10-May-2000
+;;                   number "-" number "-" number  ; ex. 2000-05-10
 ;; number       ::= [0-9]+
 ;; month        ::= "Jan" / "Feb" / "Mar" / "Apr" / "May" / "Jun" /
 ;;                  "Jul" / "Aug" / "Sep" / "Oct" / "Nov" / "Dec"
@@ -270,6 +271,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(looking-at "lastmonth") (looking-at "lastyear")
 	(looking-at "[0-9]+ *daysago")
 	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
+	(looking-at "[0-9]+-[0-9]+-[0-9]+")
 	(looking-at "[0-9]+")
 	(looking-at elmo-condition-atom-regexp))
     (prog1 (elmo-match-buffer 0)

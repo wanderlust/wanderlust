@@ -129,7 +129,13 @@ Otherwise treat \\ in NEWTEXT string as special:
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
     (timezone-fix-time
      (concat (elmo-replace-in-string description "-" " ") " 0:0")
-     (current-time-zone) nil))))
+     (current-time-zone) nil))
+   ((string-match "\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)" description)
+    (vector (string-to-number (match-string 1 description))
+	    (string-to-number (match-string 2 description))
+	    (string-to-number (match-string 3 description))
+	    0 0 0
+	    (current-time-zone)))))
 
 (defun elmo-datevec-substitute (datevec1 datevec2)
   (if (/= (aref datevec2 2) 0)
