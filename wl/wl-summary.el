@@ -5119,8 +5119,8 @@ Reply to author if invoked with ARG."
 
 (defvar wl-summary-write-current-folder-functions
   '(wl-folder-get-newsgroups
-;;; wl-folder-guess-mailing-list-by-refile-rule
-    )
+    wl-folder-guess-mailing-list-by-refile-rule
+    wl-folder-guess-mailing-list-by-folder-name)
   "Newsgroups or Mailing List address guess functions list.
 Call from `wl-summary-write-current-folder'")
 
