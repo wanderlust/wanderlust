@@ -739,7 +739,7 @@ You can specify @code{login} (encoded password transmission),
 @code{cram-md5} (CRAM-MD5 authentication), @code{digest-md5} (DIGEST-MD5
 authentication) or @code{clear} (or @code{nil}, plain password
 transmission) as @var{authenticate-type}.  (To use CRAM-MD5 or
-DIGEST-MD5 authentication, you must install @file{utils/sasl} package.)
+DIGEST-MD5 authentication, you must install @file{utils/sasl} package if FLIM version is earlier than 1.14.0. If FLIM version is 1.14.0 or later, you need not install @file{utils/sasl})
 
 default:
 

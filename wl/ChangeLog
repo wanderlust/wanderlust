@@ -1,3 +1,14 @@
+2001-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-cache-prefetch-next): Revert the logic
+	for checking `elmo-use-buffer-cache'.
+	(wl-summary-mark-as-important): Fixed typo in comment.
+
+2001-01-29  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-message.el (wl-message-next-page): Bind
+	`window-pixel-scroll-increment' to nil while scrolling up.
+
 2001-01-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-reply-list-symbol): Remove FROM argument.
