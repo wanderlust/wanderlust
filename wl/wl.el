@@ -699,6 +699,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 						      "." wl-local-domain)
 					    (system-name))))
     (error "Please set `wl-local-domain' to get valid FQDN"))
+  (if (string-match "@" (or wl-message-id-domain
+			    (if wl-local-domain
+				(concat (system-name)
+					"." wl-local-domain)
+			      (system-name))))
+      (error "Please remove `@' from `wl-message-id-domain'"))
   (when (not no-check-folder)
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
 	(error "%s is not allowed for draft folder" wl-draft-folder))

@@ -1,3 +1,7 @@
+2000-10-08  Kenichi OKADA	<okada@opaopa.org>
+
+	* wl.el (wl-check-environment): Check too many `@'.
+
 2000-10-08   Mikio Nakajima <minakaji@osaka.email.ne.jp>
 
 	* wl-thread.el (wl-thread-delete-message): Fix parentheses.
