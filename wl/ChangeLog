@@ -1,21 +1,3 @@
-2001-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-draft.el (wl-draft-random-alphabet): Removed.
-	(wl-draft-confirm): Don't use conditonal statement
-	in `format' argument; Use gettext style.
-	(wl-draft-insert-x-face-field): Refactoring; Use guard statement
-	for error case.
-
-2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
-
-	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to
-	the default value.
-
-2001-03-03  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
-
-	* wl-summary.el (wl-summary-goto-folder-subr): Fixed problem that
-	last unread message is skipped.
-
 2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-next-message):
