@@ -84,7 +84,7 @@ Installation
 	% make install
 
   If you use Emacs without subdirs.el (e.g. Mule 2.3 based on Emacs
-  19.28), the following error message ocasinally appears.
+  19.28), the following error message occasionally appears.
 
 	Cannot open load file: mime-setup
 
@@ -151,6 +151,9 @@ Manual
 
   Manual directory is automatically detected. Of course, it can be
   configured by INFODIR in Makefile.
+
+  If you want to install manual in English, you should set wl-info-lang
+  appropriately in WL-CFG.
 
 
 Sample configuration file
