@@ -1,5 +1,15 @@
 2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-util.el (wl-biff-check-folders): Set `no-cache' argument of
+	wl-folder-get-elmo-folder.
+	(wl-biff-check-folder): Set `biff' argument of
+	`wl-folder-check-one-entity'.
+	(wl-biff-check-folder-async): Setup `biff' slot of folder.
+
+	* wl-folder.el (wl-folder-get-elmo-folder): Added `no-cache' argument.
+	(wl-folder-check-one-entity): Added `biff' argument;
+	Setup `biff' slot of folder.
+
 	* Version number is increased to 2.9.1.
 
 2001-12-18  Yuuichi Teranishi  <teranisi@gohome.org>

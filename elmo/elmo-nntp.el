@@ -245,7 +245,10 @@ Don't cache if nil.")
 (defun elmo-nntp-get-session (folder &optional if-exists)
   (elmo-network-get-session
    'elmo-nntp-session
-   "NNTP"
+   (concat
+    (if (elmo-folder-biff-internal folder)
+	"BIFF-")
+    "NNTP")
    folder
    if-exists))
 

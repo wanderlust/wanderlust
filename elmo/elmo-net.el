@@ -113,19 +113,20 @@
 
 (defsubst elmo-network-session-password-key (session)
   (format "%s:%s/%s@%s:%d"
-	  (elmo-network-session-name-internal session)
+	  (upcase
+	   (nth 1 (split-string (symbol-name
+				 (luna-class-name session)) "[4-]")))
 	  (elmo-network-session-user-internal session)
 	  (elmo-network-session-auth-internal session)
 	  (elmo-network-session-server-internal session)
 	  (elmo-network-session-port-internal session)))
 
 (defvar elmo-network-session-cache nil)
-(defvar elmo-network-session-name-prefix nil)
 
 (defsubst elmo-network-session-cache-key (name folder)
   "Returns session cache key for NAME and FOLDER."
   (format "%s:%s/%s@%s:%d%s"
-	  (concat elmo-network-session-name-prefix name)
+	  name
 	  (elmo-net-folder-user-internal folder)
 	  (elmo-net-folder-auth-internal folder)
 	  (elmo-net-folder-server-internal folder)
@@ -212,7 +213,7 @@ Returns a process object.  if making session failed, returns nil."
 			   :process nil
 			   :greeting nil))
 	(buffer (format " *%s session for %s@%s:%d%s"
-			(concat elmo-network-session-name-prefix name)
+			name
 			user
 			server
 			port

@@ -818,7 +818,7 @@ This function is imported from Emacs 20.7."
 	  folder)
       (if (eq (length flist) 1)
 	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist)) (interactive-p))
+				       (car flist) 'biff) (interactive-p))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
@@ -833,12 +833,8 @@ This function is imported from Emacs 20.7."
 (defun wl-biff-check-folder (folder)
   (if (eq (elmo-folder-type-internal folder) 'pop3)
       (unless (elmo-pop3-get-session folder 'if-exists)
-	;; Currently no main pop3 process.
-	(let ((elmo-network-session-name-prefix "BIFF-"))
-	  (wl-folder-check-one-entity
-	   (elmo-folder-name-internal folder))))
-    (let ((elmo-network-session-name-prefix "BIFF-"))
-      (wl-folder-check-one-entity (elmo-folder-name-internal folder)))))
+	(wl-folder-check-one-entity (elmo-folder-name-internal folder)
+				    'biff))))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
@@ -856,6 +852,7 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (when (elmo-folder-plugged-p folder)
+    (elmo-folder-set-biff-internal folder t)
     (if (and (eq (elmo-folder-type-internal folder) 'imap4)
 	     (elmo-folder-use-flag-p folder))
 	;; Check asynchronously only when IMAP4 and use server diff.

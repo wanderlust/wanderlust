@@ -109,6 +109,7 @@ If a folder name begins with PREFIX, use BACKEND."
 				     message-modified ; message is modified.
 				     mark-modified    ; mark is modified.
 				     process-duplicates  ; read or hide
+				     biff   ; folder for biff
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 

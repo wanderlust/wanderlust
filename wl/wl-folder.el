@@ -305,13 +305,15 @@
 		 (setq li (cdr li))))))))
 
 ;;; ELMO folder structure with cache.
-(defmacro wl-folder-get-elmo-folder (entity)
+(defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
   "Get elmo folder structure from entity."
-  (` (or (wl-folder-elmo-folder-cache-get (, entity))
-	 (let* ((name (elmo-string (, entity)))
-		(folder (elmo-make-folder name)))
-	   (wl-folder-elmo-folder-cache-put name folder)
-	   folder))))
+  (` (if (, no-cache)
+	 (elmo-make-folder (elmo-string (, entity)))
+       (or (wl-folder-elmo-folder-cache-get (, entity))
+	   (let* ((name (elmo-string (, entity)))
+		  (folder (elmo-make-folder name)))
+	     (wl-folder-elmo-folder-cache-put name folder)
+	     folder)))))
 
 (defmacro wl-folder-elmo-folder-cache-get (name &optional hashtb)
   "Returns a elmo folder structure associated with NAME from HASHTB.
@@ -798,12 +800,14 @@ Optional argument ARG is repeart count."
     (run-hooks 'wl-folder-check-entity-hook)
     ret-val))
 
-(defun wl-folder-check-one-entity (entity)
-  (let* ((folder (wl-folder-get-elmo-folder entity))
+(defun wl-folder-check-one-entity (entity &optional biff)
+  (let* ((folder (wl-folder-get-elmo-folder entity biff))
 	 (nums (condition-case err
-		   (if (wl-string-match-member entity wl-strict-diff-folders)
-		       (elmo-strict-folder-diff folder)
-		     (elmo-folder-diff folder))
+		   (progn
+		     (if biff (elmo-folder-set-biff-internal folder t))
+		     (if (wl-string-match-member entity wl-strict-diff-folders)
+			 (elmo-strict-folder-diff folder)
+		       (elmo-folder-diff folder)))
 		 (error
 		  ;; maybe not exist folder.
 		  (if (and (not (memq 'elmo-open-error

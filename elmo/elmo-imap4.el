@@ -198,7 +198,6 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 	    (insert "NO LOGGING\n")
 	  (insert (apply 'format message args) "\n")))))
 
-
 (defsubst elmo-imap4-decode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
       (utf7-decode-string string 'imap)
@@ -284,7 +283,7 @@ Returns a TAG string which is assigned to the COMMAND."
 	(elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
-	  (error "IMAP process is running. Please wait (or plug again.)"))
+	  (error "IMAP process is running. Please wait (or plug again)"))
       (setq elmo-imap4-parsing t)
       (elmo-imap4-debug "<-(%s)- %s" tag command)
       (while (setq token (car command-args))
@@ -640,7 +639,12 @@ BUFFER must be a single-byte buffer."
 		    (elmo-imap4-folder-mailbox-internal folder)))))
 
 (defun elmo-imap4-get-session (folder &optional if-exists)
-  (elmo-network-get-session 'elmo-imap4-session "IMAP" folder if-exists))
+  (elmo-network-get-session 'elmo-imap4-session
+			    (concat
+			     (if (elmo-folder-biff-internal folder)
+				 "BIFF-")
+			     "IMAP")
+			    folder if-exists))
 
 (defun elmo-imap4-session-select-mailbox (session mailbox
 						  &optional force no-error)

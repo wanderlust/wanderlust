@@ -66,15 +66,15 @@ set as non-nil.")
   "Non-nil forces POP3 folder as debug mode.
 Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 
-(defvar elmo-pop3-debug-inhibit-logging nil)
-
 ;;; Debug
 (defsubst elmo-pop3-debug (message &rest args)
   (if elmo-pop3-debug
-      (with-current-buffer (get-buffer-create "*POP3 DEBUG*")
-	(goto-char (point-max))
-	(if elmo-pop3-debug-inhibit-logging
-	    (insert "NO LOGGING\n")
+      (let ((biff (string-match "BIFF-" (buffer-name)))
+	    pos)
+	(with-current-buffer (get-buffer-create (concat "*POP3 DEBUG*"
+							(if biff "BIFF")))
+	  (goto-char (point-max))
+	  (setq pos (point))
 	  (insert (apply 'format message args) "\n")))))
 
 ;;; ELMO POP3 folder
@@ -149,15 +149,13 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (when (memq (process-status
 		 (elmo-network-session-process-internal session))
 		'(open run))
-      (let ((buffer (process-buffer
-		     (elmo-network-session-process-internal session))))
-	(elmo-pop3-send-command (elmo-network-session-process-internal session)
-				"quit")
-	;; process is dead.
-	(or (elmo-pop3-read-response
-	     (elmo-network-session-process-internal session)
-	     t)
-	    (error "POP error: QUIT failed"))))
+      (elmo-pop3-send-command (elmo-network-session-process-internal session)
+			      "quit")
+      ;; process is dead.
+      (or (elmo-pop3-read-response
+	   (elmo-network-session-process-internal session)
+	   t)
+	  (error "POP error: QUIT failed")))
     (kill-buffer (process-buffer
 		  (elmo-network-session-process-internal session)))
     (delete-process (elmo-network-session-process-internal session))))
@@ -167,15 +165,20 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 					 nil
 				       (elmo-pop3-folder-use-uidl-internal
 					folder))))
-    (elmo-network-get-session 'elmo-pop3-session "POP3" folder if-exists)))
+    (elmo-network-get-session 'elmo-pop3-session
+			      (concat
+			       (if (elmo-folder-biff-internal folder)
+				   "BIFF-")
+			       "POP3")
+			      folder if-exists)))
 
-(defun elmo-pop3-send-command (process command &optional no-erase)
+(defun elmo-pop3-send-command (process command &optional no-erase no-log)
   (with-current-buffer (process-buffer process)
     (unless no-erase
       (erase-buffer))
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
-    (elmo-pop3-debug "SEND: %s\n" command)
+    (elmo-pop3-debug "SEND: %s\n" (if no-log "<NO LOGGING>" command))
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
@@ -220,8 +223,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
       return-value)))
 
 (defun elmo-pop3-process-filter (process output)
-  (save-excursion
-    (set-buffer (process-buffer process))
+  (with-current-buffer (process-buffer process)
     (goto-char (point-max))
     (insert output)
     (elmo-pop3-debug "RECEIVED: %s\n" output)
@@ -240,18 +242,24 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     ;; try USER/PASS
     (elmo-pop3-send-command
      process
-     (format "user %s" (elmo-network-session-user-internal session)))
+     (format "user %s" (elmo-network-session-user-internal session))
+     nil 'no-log)
     (or (elmo-pop3-read-response process t)
-	(signal 'elmo-authenticate-error
-		'(elmo-pop-auth-user)))
+	(progn
+	  (delete-process process)
+	  (signal 'elmo-authenticate-error
+		  '(elmo-pop-auth-user))))
     (elmo-pop3-send-command  process
 			     (format
 			      "pass %s"
 			      (elmo-get-passwd
-			       (elmo-network-session-password-key session))))
+			       (elmo-network-session-password-key session)))
+			     nil 'no-log)
     (or (elmo-pop3-read-response process t)
-	(signal 'elmo-authenticate-error
-		'(elmo-pop-auth-user)))))
+	(progn
+	  (delete-process process)
+	  (signal 'elmo-authenticate-error
+		  '(elmo-pop-auth-user))))))
 
 (defun elmo-pop3-auth-apop (session)
   (if (string-match "^\+OK .*\\(<[^\>]+>\\)"
@@ -267,12 +275,15 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 			   1
 			   (elmo-network-session-greeting-internal session))
 			  (elmo-get-passwd
-			   (elmo-network-session-password-key session))))))
+			   (elmo-network-session-password-key session)))))
+	 nil 'no-log)
 	(or (elmo-pop3-read-response
 	     (elmo-network-session-process-internal session)
 	     t)
-	    (signal 'elmo-authenticate-error
-		    '(elmo-pop3-auth-apop))))
+	    (progn
+	      (delete-process (elmo-network-session-process-internal session))
+	      (signal 'elmo-authenticate-error
+		      '(elmo-pop3-auth-apop)))))
     (signal 'elmo-open-error '(elmo-pop3-auth-apop))))
 
 (luna-define-method elmo-network-initialize-session-buffer :after
@@ -314,7 +325,6 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (let* ((process (elmo-network-session-process-internal session))
-	   (elmo-pop3-debug-inhibit-logging t)
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
@@ -355,7 +365,8 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 			  (concat
 			   " "
 			   (elmo-base64-encode-string
-			    (sasl-step-data step) 'no-line-break))))) ;)
+			    (sasl-step-data step) 'no-line-break))))
+	     nil 'no-log)
 	    (catch 'done
 	      (while t
 		(unless (setq response (elmo-pop3-read-response process t))
@@ -383,7 +394,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 		 (if (sasl-step-data step)
 		     (elmo-base64-encode-string (sasl-step-data step)
 						'no-line-break)
-		   "")))))))))
+		   "") nil 'no-log))))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
