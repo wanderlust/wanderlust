@@ -1,3 +1,7 @@
+2000-08-03  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-maildir.el (elmo-maildir-commit): New alias.
+
 2000-08-02  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-quoted-specials-list): New constant.

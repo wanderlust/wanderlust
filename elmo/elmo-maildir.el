@@ -483,6 +483,7 @@ file name for maildir directories."
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-maildir-list-folder-important
   'elmo-generic-list-folder-important)
+(defalias 'elmo-maildir-commit 'elmo-generic-commit)
 
 (provide 'elmo-maildir)
 

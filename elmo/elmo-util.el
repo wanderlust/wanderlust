@@ -1490,14 +1490,17 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(setq first nil))
       (princ err-mes stream))))
 
-(if (fboundp 'lprogress-display)
-    (defalias 'elmo-display-progress 'lprogress-display)
-  (defun elmo-display-progress (label format &optional value &rest args)
-    "Print a progress message."
-    (if (and (null format) (null args))
-	(message nil)
-      (apply (function message) (concat format " %d%%")
-	     (nconc args (list value))))))
+(cond ((fboundp 'lprogress-display)
+       (defalias 'elmo-display-progress 'lprogress-display))
+      ((fboundp 'progress-feedback-with-label)
+       (defalias 'elmo-display-progress 'progress-feedback-with-label))
+      (t
+       (defun elmo-display-progress (label format &optional value &rest args)
+	 "Print a progress message."
+	 (if (and (null format) (null args))
+	     (message nil)
+	   (apply (function message) (concat format " %d%%")
+		  (nconc args (list value)))))))
 
 (defun elmo-time-expire (before-time diff-time)
   (let* ((current (current-time))
