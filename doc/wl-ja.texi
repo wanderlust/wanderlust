@@ -3287,7 +3287,8 @@ first, last    ...フィルタフォルダに移動
 @findex wl-summary-toggle-thread
 スレッド表示をトグルします。その状態は Wanderlust を終了しても保存され
 ます。新規に作成されたサマリに対してのデフォルトの状態は
-@code{wl-summary-default-view} で指定することができます。
+@code{wl-summary-default-view} や @code{wl-summary-default-view-alist}
+で指定することができます。
 現在のスレッド表示状態はモードラインに表示されます。
 @samp{@{S@}} はスレッド・オフ(Sequence)の状態、
 @samp{@{T@}} はスレッド・オン(Thread)の状態を示します。
