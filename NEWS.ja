@@ -13,6 +13,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
   書式:  '[' 'namazu 検索式' ']' [ 'namazu index のパス（絶対パス）' ]
 
+* アドレスマネージャが新設されました(C-c C-a で起動)。
+  アドレス帳の編集をしたり、そこからドラフトに宛先を入力することができます。
+
 * ACAP (RFC2244) に対応しました(実験的)。
 
 * IMAP4 のメッセージをパート毎にキャッシュとして保存できるようになりました。
@@ -20,6 +23,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
   オフライン状態で読み返すことができるようになりました。
 
 * メッセージのプリフェッチでメッセージビューまで作成するようになりました。
+
+* メッセージバッファ、ドラフトバッファで長い行の折り返しを設定できるように
+  なりました。変数 wl-message-truncate-lines, wl-draft-truncate-lines が
+  non-nil なら、それぞれについて長い行を window 幅で切り縮めます。
 
 * elmo モジュールが全体的に書き直されました。
 
