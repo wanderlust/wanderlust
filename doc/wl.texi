@@ -162,7 +162,7 @@ The main features of Wanderlust:
 
 @section Environment
 
-Wanderlust is supposed to run on following Emacsen:
+We confirm Wanderlust works on following Emacsen:
 
 @itemize @bullet
 @item Mule 2.3 based on Emacs 19.34
@@ -220,9 +220,9 @@ here.
 @pindex FLIM
 @pindex SEMI
 
-SEMI must be installed to make Wanderlust work correctly.
+You must install SEMI beforehand to use Wanderlust.
 
-SEMI can be downloaded from these sites:
+SEMI can be downloaded from following site:
 
 @example
 @group
@@ -492,14 +492,14 @@ The minimal requirement for settings is as the following.
 (require 'mime-setup)
 
 ;; @r{autoload configuration}
-;; @r{(These are not required if Wanderlust is installed as XEmacs package)}
+;; @r{(Not required if you have installed Wanderlust as XEmacs package)}
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
 ;; @r{Directory where icons are placed.}
 ;; @r{Default: the peculiar value to the running version of Emacs.}
-;; @r{(This is not required if the default value has been set properly)}
+;; @r{(Not required if the default value points properly)}
 (setq wl-icon-directory "~/work/wl/etc")
 
 ;; @r{SMTP server for mail posting. Default: @code{nil}}
@@ -665,8 +665,8 @@ Details of each ones are explained later.
 
 This chapter describes the folder types which Wanderlust is able to handle.
 
-Wanderlust uses ELMO as it's interface, so every folder types supported
-by ELMO is usable in Wanderlust.
+Wanderlust uses ELMO as it's interface, so you can use every folder types
+supported by ELMO.
 
 As of version @value{VERSION}, 11 types of folders are predefined. These are
 IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP, Multi, Filter,
@@ -1623,13 +1623,13 @@ For example, if you specify following
 @end example
 
 @noindent
-and access it, messages are downloaded automatically from
-@samp{&username@@popserver} to @samp{+inbox}.
+and access it, Wanderlust downloads messages from
+@samp{&username@@popserver} to @samp{+inbox} automatically.
 
 On the other hand, if you put @samp{|:} instead of second @samp{|},
 then messages are copied to the destination folder (not deleted from
-source-folder). At the next time you access that folder, only new
-messages will be copied.
+source-folder). At the next time you access that folder, copies new
+messages only.
 
 @example
 @samp{|} @var{source-folder} @samp{|:} @var{destination-folder}
