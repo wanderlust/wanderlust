@@ -4199,8 +4199,7 @@ The initial setting is as follows:
 
 Specify the color of message in summary buffer with flag.  If multiple
 global flags are on one message, the former flag in this list is
-preferred.  It is used as a candidate for complement on entering flags
-in summary buffer.
+preferred.
 @end table
 
 
