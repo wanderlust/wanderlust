@@ -11,6 +11,7 @@
 	(wl-summary-mode-map): Added key binding for
 	`wl-summary-save-current-message' (\ew) and
 	`wl-summary-yank-saved-message' (\C-y).
+	(wl-summary-yank-saved-message): Inhibit setting itself as a parent.
 
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
