@@ -1,5 +1,11 @@
 2001-09-26  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-fcc-force-as-read): New variable.
+	* wl-draft.el (wl-draft-do-fcc): If `wl-fcc-force-as-read' is non-nil,
+	mark copied message as read.
+
+2001-09-26  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Fixed.
 
 2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>

@@ -30,7 +30,7 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 ;; Origin of IMAP parser part is imap.el, included in Gnus.
 ;;
 ;;    Copyright (C) 1998, 1999, 2000
@@ -843,7 +843,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
     (or (elmo-imap4-read-ok session tag)
 	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
     (setq elmo-imap4-status 'auth)))
-  
+
 (luna-define-method
   elmo-network-initialize-session-buffer :after ((session
 						  elmo-imap4-session) buffer)
@@ -888,7 +888,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(starttls-negotiate process)))))
 
 (luna-define-method elmo-network-authenticate-session ((session
- 							elmo-imap4-session))
+							elmo-imap4-session))
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (let* ((auth (elmo-network-session-auth-internal session))
@@ -1294,7 +1294,7 @@ Return nil if no complete line has arrived."
 			      (concat "(" (downcase (buffer-substring
 						     (point) (point-max)))
 				      ")"))))
-	   (ACL        (elmo-imap4-parse-acl))
+	   (ACL (elmo-imap4-parse-acl))
 	   (t       (case (prog1 (elmo-read (current-buffer))
 			    (elmo-imap4-forward))
 		      (EXISTS  (list 'exists token))
@@ -1340,7 +1340,7 @@ Return nil if no complete line has arrived."
 		      (setq text (buffer-substring (point) (point-max)))
 		      (list 'bad (list code text)))))
 	     (t   (list 'garbage (buffer-string)))))))))
-		    
+
 (defun elmo-imap4-parse-bye ()
   (let (code text)
     (when (eq (char-after (point)) ?\[)
@@ -1468,7 +1468,7 @@ Return nil if no complete line has arrived."
 		       (list 'bodystructure (elmo-imap4-parse-body)))))
 	  (setq list (cons element list))))
       (and elmo-imap4-fetch-callback
-	   (funcall elmo-imap4-fetch-callback 
+	   (funcall elmo-imap4-fetch-callback
 		    list elmo-imap4-fetch-callback-data))
       (list 'fetch list))))
 
@@ -1716,7 +1716,7 @@ Return nil if no complete line has arrived."
 	  (push (elmo-imap4-parse-nstring) body);; body-fld-md5
 	  (setq body
 		(append (elmo-imap4-parse-body-ext) body)));; body-ext-1part..
-    
+
 	(assert (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
 	(nreverse body)))))
@@ -2069,7 +2069,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 					  (concat
 					   (if elmo-imap4-use-uid "uid ")
 					   (cdr
-					    (car 
+					    (car
 					     (elmo-imap4-make-number-set-list
 					      from-msgs)))
 					   " ")

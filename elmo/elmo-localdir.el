@@ -86,10 +86,10 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localdir-folder))
-  (expand-file-name 
+  (expand-file-name
    (mapconcat
     'identity
-    (mapcar 
+    (mapcar
      'elmo-replace-string-as-filename
      (split-string (elmo-localdir-folder-dir-name-internal folder)
 		   "/"))
@@ -163,10 +163,10 @@
 		(elmo-msgdb-append-element
 		 overview entity))
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-  	  (setq number-alist
-  		(elmo-msgdb-number-add number-alist
-  				       num
-  				       message-id))
+	  (setq number-alist
+		(elmo-msgdb-number-add number-alist
+				       num
+				       message-id))
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-file-cache-exists-p message-id) ; XXX
@@ -201,7 +201,7 @@
 
 (defsubst elmo-localdir-list-subr (folder &optional nonsort)
   (let ((flist (mapcar 'string-to-int
-		       (directory-files 
+		       (directory-files
 			(elmo-localdir-folder-directory-internal folder)
 			nil "^[0-9]+$" t)))
 	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
@@ -322,7 +322,7 @@
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-folder-directory-internal folder))
    condition number number-list))
-  
+
 (luna-define-method elmo-folder-search ((folder elmo-localdir-folder)
 					condition &optional numbers)
   (let* ((msgs (or numbers (elmo-folder-list-messages folder)))
@@ -380,12 +380,12 @@
 	 (/ (* new-number 100) total)))
       (setq onum (car flist))
       (when (not (eq onum new-number))		; why \=() is wrong..
-        (elmo-bind-directory
+	(elmo-bind-directory
 	 dir
 	 ;; xxx  nfs,hardlink
 	 (rename-file (int-to-string onum) (int-to-string new-number) t))
-        ;; update overview
-        (elmo-msgdb-overview-entity-set-number
+	;; update overview
+	(elmo-msgdb-overview-entity-set-number
 	 (elmo-msgdb-overview-get-entity onum msgdb)
 	 new-number)
 	;; update number-alist

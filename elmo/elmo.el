@@ -27,7 +27,7 @@
 ;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'luna)
 
@@ -239,7 +239,7 @@ IMPORTANT-MARK is the important mark."
 	num-pair result)
     (dolist (mark-pair (or elmo-msgdb-global-mark-alist
 			   (setq elmo-msgdb-global-mark-alist
-				 (elmo-object-load 
+				 (elmo-object-load
 				  (expand-file-name
 				   elmo-msgdb-global-mark-filename
 				   elmo-msgdb-dir)))))
@@ -495,7 +495,7 @@ Return newly created temporary directory name which contains temporary files.")
       (if (not ignore-cache)
 	  (elmo-make-fetch-strategy
 	   'entire
-	   ;; ...But ignore current section cache and re-fetch 
+	   ;; ...But ignore current section cache and re-fetch
 	   ;; if section cache.
 	   (not (eq (elmo-file-cache-status cache-file) 'section))
 	   ;; Save cache.
@@ -1085,7 +1085,7 @@ FIELD is a symbol of the field."
 		   'read)
 	       ;; Mark as read duplicates.
 	       (elmo-folder-mark-as-read folder to-be-deleted))
-	      (t 
+	      (t
 	       ;; Do nothing.
 	       (setq to-be-deleted nil)))
 	(elmo-folder-set-msgdb-internal folder
@@ -1196,7 +1196,7 @@ CROSSED is cross-posted message number.
 If update process is interrupted, return nil."
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
-	number-alist mark-alist 
+	number-alist mark-alist
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
 	seen-list crossed after-append)
     (setq old-msgdb (elmo-folder-msgdb folder))
@@ -1224,8 +1224,8 @@ If update process is interrupted, return nil."
 				      folder
 				      (eq 'visible-only ignore-msgdb))
 				     (unless ignore-msgdb
-				       (sort (mapcar 
-					      'car 
+				       (sort (mapcar
+					      'car
 					      number-alist)
 					     '<))))
 	  (message "Checking folder diff...done")

@@ -1263,6 +1263,12 @@ with wl-highlight-folder-many-face."
   :group 'wl-draft
   :group 'wl-pref)
 
+(defcustom wl-fcc-force-as-read nil
+  "*If non-nil, mark copied message as read."
+  :type 'boolean
+  :group 'wl-draft
+  :group 'wl-pref)
+
 (defcustom wl-bcc nil
   "*Blind Carbon Copy."
   :type '(choice (const :tag "disable" nil)
