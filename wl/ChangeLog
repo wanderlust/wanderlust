@@ -1,5 +1,9 @@
 2002-08-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-make-mail-followup-to): Ignore case
+	while deleting address.
+	(wl-draft-delete-myself-from-cc): Ditto.
+
 	* wl-fldmgr.el (wl-fldmgr-sort): Added optional argument.
 	If optional argument is specified, reverse sort order.
 
