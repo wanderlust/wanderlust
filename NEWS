@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** Abbreviate too long header extended to lines in message buffer.
+
 ** New hooks
    wl-draft-reply-hook
    wl-summary-reply-hook
