@@ -557,16 +557,42 @@ See also variable `wl-use-petname'."
 
 (defvar wl-summary-window-scroll-functions nil)
 
+(defun wl-summary-update-mark-and-highlight-window (&optional win beg)
+  "A function to be called as window-scroll-functions."
+  (with-current-buffer (window-buffer win)
+    (when (eq major-mode 'wl-summary-mode)
+      (let ((start (window-start win))
+	    (end (condition-case nil
+		     (window-end win t)	; old emacsen doesn't support 2nd arg.
+		   (error (window-end win))))
+	    number flags
+	    wl-summary-highlight)
+	(save-excursion
+	  (goto-char beg)
+	  (while (and (< (point) end) (not (eobp)))
+	    (when (null (get-text-property (point) 'face))
+	      (setq number (wl-summary-message-number)
+		    flags (elmo-message-flags wl-summary-buffer-elmo-folder
+					      number))
+	      (setq wl-summary-highlight nil)
+	      (wl-summary-update-persistent-mark number flags)
+	      (setq wl-summary-highlight t)
+	      (wl-highlight-summary-current-line number flags))
+	    (forward-line 1)))))))
+
 (defun wl-summary-window-scroll-functions ()
-  (when (or wl-summary-lazy-highlight
-	    wl-summary-lazy-update-mark)
-    (or wl-summary-window-scroll-functions
-	(setq wl-summary-window-scroll-functions
+  (or wl-summary-window-scroll-functions
+      (setq wl-summary-window-scroll-functions
+	    (cond
+	     ((and wl-summary-lazy-highlight
+		   wl-summary-lazy-update-mark)
+	      (list 'wl-summary-update-mark-and-highlight-window))
+	     (t
 	      (append
 	       (and wl-summary-lazy-highlight
 		    '(wl-highlight-summary-window))
 	       (and wl-summary-lazy-update-mark
-		    '(wl-summary-update-mark-window)))))))
+		    '(wl-summary-update-mark-window))))))))
 
 (defun wl-status-update ()
   (interactive)
@@ -1639,7 +1665,7 @@ If ARG is non-nil, checking is omitted."
 
 (defun wl-summary-update-status-marks (beg end &optional check)
   "Synchronize status marks on current buffer to the msgdb."
-  (interactive)
+  (interactive "r")
   (save-excursion
     (goto-char beg)
     (while (and (< (point) end) (not (eobp)))
@@ -2703,9 +2729,9 @@ If ARG, exit virtual folder."
       (setq wl-summary-buffer-target-mark-list nil)
       (setq wl-summary-buffer-temp-mark-list nil))))
 
-(defsubst wl-summary-temp-mark ()
+(defsubst wl-summary-temp-mark (&optional number)
   "Return temp-mark string of current line."
-  (let ((number (wl-summary-message-number))
+  (let ((number (or number (wl-summary-message-number)))
 	info)
     (or (and (wl-summary-have-target-mark-p number)
 	     "*")
@@ -2741,18 +2767,20 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 	    nil
 	  wl-summary-read-uncached-mark))))
 
-(defsubst wl-summary-message-mark (folder number)
+(defsubst wl-summary-message-mark (folder number &optional flags)
   "Return mark of the message."
   (ignore-errors
     (wl-summary-persistent-mark-string
      folder
-     (elmo-message-flags folder number)
-     (elmo-message-cached-p folder number))))
+     (or flags (setq flags (elmo-message-flags folder number)))
+     (memq 'cached flags) ; XXX for speed-up.
+     )))
 
-(defsubst wl-summary-persistent-mark ()
+(defsubst wl-summary-persistent-mark (&optional number flags)
   "Return persistent-mark string of current line."
   (or (wl-summary-message-mark wl-summary-buffer-elmo-folder
-			       (wl-summary-message-number))
+			       (or number (wl-summary-message-number))
+			       flags)
       " "))
 
 (defun wl-summary-put-temp-mark (mark)
@@ -2840,7 +2868,7 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
   (interactive)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
-(defun wl-summary-update-persistent-mark ()
+(defun wl-summary-update-persistent-mark (&optional number flags)
   "Synch up persistent mark of current line with msgdb's.
 Return non-nil if the mark is updated"
   (prog1
@@ -2850,7 +2878,7 @@ Return non-nil if the mark is updated"
 	  (let ((inhibit-read-only t)
 		(buffer-read-only nil)
 		(mark (buffer-substring (- (point) 1) (point)))
-		(new-mark (wl-summary-persistent-mark)))
+		(new-mark (wl-summary-persistent-mark number flags)))
 	    (unless (string= new-mark mark)
 	      (delete-backward-char 1)
 	      (insert new-mark)

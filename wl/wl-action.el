@@ -170,7 +170,8 @@ Return number if put mark succeed"
 	  (delq elem wl-summary-buffer-temp-mark-list))))
 
 (defun wl-summary-registered-temp-mark (number)
-  (assq number wl-summary-buffer-temp-mark-list))
+  (and wl-summary-buffer-temp-mark-list
+       (assq number wl-summary-buffer-temp-mark-list)))
 
 (defun wl-summary-collect-temp-mark (mark &optional begin end)
   (if (or begin end)

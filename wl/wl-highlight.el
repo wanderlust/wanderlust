@@ -897,22 +897,23 @@
   (when wl-use-flag-folder-help-echo
     (wl-highlight-summary-line-flag-folder number 0 (length line) line)))
 
-(defun wl-highlight-summary-current-line ()
+(defun wl-highlight-summary-current-line (&optional number flags)
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (case-fold-search nil)
 	  (deactivate-mark nil)
-	  (number (wl-summary-message-number))
+	  (number (or number (wl-summary-message-number)))
 	  bol eol spec)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
       (setq spec (wl-highlight-summary-line-face-spec
-		  (elmo-message-flags wl-summary-buffer-elmo-folder
-				      number)
-		  (wl-summary-temp-mark)
+		  (or flags
+		      (elmo-message-flags wl-summary-buffer-elmo-folder
+					  number))
+		  (wl-summary-temp-mark number)
 		  (wl-thread-entity-get-parent-entity
 		   (wl-thread-get-entity number))))
       (when (car spec)

@@ -1,3 +1,21 @@
+2003-09-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window): New
+	function.
+	(wl-summary-window-scroll-functions): Call it when both
+	wl-summary-lazy-highlight and wl-summary-lazy-update-mark are non-nil.
+	(wl-summary-temp-mark): Added optional argument number.
+	(wl-summary-message-mark): Added optional argument flag.
+	(wl-summary-persistent-mark): Added optional argument number and flag.
+	(wl-summary-update-persistent-mark): Ditto.
+	(wl-summary-update-status-marks): Set "r" for interactive spec.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Added optional
+	argument number and flag.
+
+	* wl-action.el (wl-summary-registered-temp-mark): 
+	Do nothing when wl-summary-buffer-temp-mark-list is nil.
+
 2003-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-buffer-unsync-mark-number-list): New
