@@ -1,5 +1,13 @@
 2002-03-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-summary.el (wl-summary-mode-map): Exchange bindings for
+	wl-summary-previous-buffer and wl-summary-next-buffer.
+
+	* wl-folder.el (wl-folder-mode-map): Bind
+	wl-folder-jump-to-next-summary and wl-folder-jump-to-previous-summary.
+	(wl-folder-jump-to-next-summary): New function.
+	(wl-folder-jump-to-previous-summary): Ditto.
+
 	* wl-draft.el (wl-draft): Rearranged.
 
 2002-03-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

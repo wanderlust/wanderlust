@@ -158,6 +158,8 @@
   (define-key wl-folder-mode-map "W"    'wl-folder-write-current-folder)
   (define-key wl-folder-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
   (define-key wl-folder-mode-map "\C-c\C-a" 'wl-addrmgr)
+  (define-key wl-folder-mode-map "\C-c\C-p" 'wl-folder-jump-to-previous-summary)
+  (define-key wl-folder-mode-map "\C-c\C-n" 'wl-folder-jump-to-next-summary)
   (define-key wl-folder-mode-map "rS"   'wl-folder-sync-region)
   (define-key wl-folder-mode-map "S"    'wl-folder-sync-current-entity)
   (define-key wl-folder-mode-map "rs"   'wl-folder-check-region)
@@ -2865,6 +2867,16 @@ Call `wl-summary-write-current-folder' with current folder name."
 			      results
 			      ","))
 	(message "No message was picked.")))))
+
+(defun wl-folder-jump-to-next-summary ()
+  (interactive)
+  (when (wl-collect-summary)
+    (wl-summary-next-buffer)))
+
+(defun wl-folder-jump-to-previous-summary ()
+  (interactive)
+  (when (wl-collect-summary)
+    (wl-summary-previous-buffer)))
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))
