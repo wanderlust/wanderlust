@@ -1,65 +1,72 @@
 #
-#  ~/.folders sample file.
-#
-# For further information, see section "Folders" in the Info.
+#  "~/.folders" sample file.
+#                    by Yuuichi Teranishi <teranisi@gohome.org>
+# Time-stamp: <99/09/10 15:49:11 teranisi>
 #
 # Lines begin with '#' are comment.
 # Empty lines are ignored.
 # 
 
-## incoming mail box for IMAP users
-# %inbox
-
-## incoming mail box for POP users
-# &USERNAME@POP3.EXAMPLE.COM
-
-## [ pipe folder might be useful for some users ]
-## [ which get mails and take them in. ]
-# |&USERNAME@POP3.EXAMPLE.COM|+inbox
-
-## trash, draft and queue
+%inbox
 +trash
 +draft
-+queue
-
-## `$' marked important messages
-'mark
-
-## MH folder
-+inbox 
-
-## MH folder via IMAP
-# %#mh/inbox
-
-## NNTP folder
-# -fj.os.bsd.freebsd
-# -fj.mail.reader.mew
-# -fj.news.reader.gnus
-
-## [ other NNTP server ]
-# -jlug.ml.users@NEWS.EXAMPLE.NET
-# -emacs.auc-tex@NEWS.EXAMPLE.ORG
-# -ring.openlab.skk@NEWS.EXAMPLE.COM
-
-
-## group definition
-## [ folders between curly bracket are treated as in a group. ]
-# Emacsen{
-#	+to/wl
-#	+to/mew-dist
-#	+to/apel-ja
-## [ You can define multi level group. ]
-#	XEmacs{
-#		+to/xemacs-beta
-#		+to/xemacs-beta-ja
-#		+to/xemacs-mule
-#	}
-# }
-
-## access group
-## [ If there is '/' in the end of line, all subfolders are added to group. ]
-## [ Use `C-u RET' for update access group. ]
+%#mh/Backup@my.imap.server.com
+%#mh/spool/mm
+# group definition
+Emacsen{
+	%#mh/spool/xemacs-beta
+	%#mh/spool/mew-dist
+	%#mh/spool/tm-ja
+	%#mh/spool/mule-win32
+	-fj.news.reader.gnus@other.nntp.server.com
+# multi folder
+# following line defines multi folder of  -fj.editor.xemacs,-fj.editor.mule,
+# and -fj.editor.emacs.
+	*-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
+	-gnu.emacs.sources
+}
+UNIX{
+# You can define multi level group.
+ BSD {
+ %#mh/spool/freebsd-users-jp
+ -fj.os.bsd.freebsd
+ -japan.comp.freebsd
+ %#mh/spool/bsd-nomads
+ -fj.os.bsd.misc
+ }
+ Linux {
+ -fj.os.linux
+ -japan.comp.linux
+ }
+-fj.kanji
+-fj.lang.perl
+-fj.unix
+-fj.questions.unix
+-fj.sys.sun
+-fj.sys.j3100
+-comp.windows.x.i386unix
+-fj.comp.x11
+}
+Television{
+%#mh/spool/tvdrama
+-fj.rec.tv
+-japan.tv
+-fj.rec.tv.cm
+-japan.tv.cm
+-fj.rec.idol
+-fj.rec.music
+}
+My folders {
+INBOXes {
+%inbox@localhost
+#
+# access group
+# If there is '/' in the end of line,
+# all subfolders are added to group
+#
+%#mh/expire@localhost /
+}
+# following definition adds all MH subfolders to group.
 + /
-
-## access group for IMAP user
-# % /
+%#mh@my.imap.server.com
+}

@@ -470,7 +470,6 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-message-mail-p ()
   "If exist To, Cc or Bcc field, return non-nil."
   (or (wl-message-field-exists-p "To")
-      (wl-message-field-exists-p "Resent-to")
       (wl-message-field-exists-p "Cc")
       (wl-message-field-exists-p "Bcc")
 ;;; This may be needed..
@@ -596,18 +595,20 @@ Reply to author if WITH-ARG is non-nil."
 	(summary-buf wl-current-summary-buffer)
 	(message-buf (get-buffer (wl-current-message-buffer)))
 	from date cite-title num entity)
+    (setq date (std11-fetch-field "date"))
     (if (and summary-buf
 	     (buffer-live-p summary-buf)
 	     message-buf
 	     (buffer-live-p message-buf))
 	(progn
-	  (with-current-buffer summary-buf
-	    (setq num (save-excursion
-			(set-buffer message-buf)
-			wl-message-buffer-cur-number))
+	  (save-excursion
+	    (set-buffer summary-buf)
+	    (setq num
+		  (save-excursion
+		    (set-buffer message-buf)
+		    wl-message-buffer-cur-number))
 	    (setq entity (elmo-msgdb-overview-get-entity
 			  num (wl-summary-buffer-msgdb)))
-	    (setq date (elmo-msgdb-overview-entity-get-date entity))
 	    (setq from (elmo-msgdb-overview-entity-get-from entity)))
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
