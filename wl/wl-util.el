@@ -904,12 +904,12 @@ that `read' can handle, whenever this is possible."
 		    wl-biff-check-interval wl-biff-check-interval))))
 
  ((condition-case nil (require 'timer) (error nil));; FSFmacs 19+
-  (autoload 'run-at-time "timer")
 
   (defun wl-biff-stop ()
     (put 'wl-biff 'timer nil))
 
   (defun wl-biff-start ()
+    (require 'timer)
     (when wl-biff-check-folder-list
       (wl-biff-check-folders)
       (put 'wl-biff 'timer (run-at-time
@@ -986,24 +986,34 @@ This function is imported from Emacs 20.7."
     (cond ((zerop new-mails) (message "No mail."))
 	  ((eq 1 new-mails) (message "You have a new mail."))
 	  (t (message "You have %d new mails." new-mails)))))
-  
+
+;; Internal variable.
+(defvar wl-biff-check-folders-running nil)
+
 (defun wl-biff-check-folders ()
   (interactive)
-  (when (interactive-p)
-    (message "Checking new mails..."))
-  (let ((new-mails 0)
-	(flist (or wl-biff-check-folder-list (list wl-default-folder)))
-	(elmo-network-session-name-prefix "BIFF-")
-	folder)
-    (if (eq (length flist) 1)
-	(wl-biff-check-folder-async (car flist) (interactive-p))
-      (while flist
-	(setq folder (car flist)
-	      flist (cdr flist))
-	(when (elmo-folder-plugged-p folder)
-	  (setq new-mails (+ new-mails
-			     (nth 0 (wl-folder-check-one-entity folder))))))
-      (wl-biff-notify new-mails (interactive-p)))))
+  (if wl-biff-check-folders-running
+      (when (interactive-p)
+	(message "Biff process is running."))
+    (setq wl-biff-check-folders-running t)
+    (when (interactive-p)
+      (message "Checking new mails..."))
+    (let ((new-mails 0)
+	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
+	  (elmo-network-session-name-prefix "BIFF-")
+	  folder)
+      (if (eq (length flist) 1)
+	  (wl-biff-check-folder-async (car flist) (interactive-p))
+	(unwind-protect
+	    (while flist
+	      (setq folder (car flist)
+		    flist (cdr flist))
+	      (when (elmo-folder-plugged-p folder)
+		(setq new-mails
+		      (+ new-mails
+			 (nth 0 (wl-folder-check-one-entity folder))))))
+	  (setq wl-biff-check-folders-running nil)
+	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
@@ -1012,6 +1022,7 @@ This function is imported from Emacs 20.7."
 				     (list (car diff) 0 (cdr diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)
+  (setq wl-biff-check-folders-running nil)
   (sit-for 0)
   (wl-biff-notify (car diff) (nth 2 data)))
 

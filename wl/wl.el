@@ -742,12 +742,14 @@ If prefix argument is specified, folder checkings are skipped."
   (unwind-protect
       (wl-init arg)
     (wl-plugged-init (wl-folder arg))
-    (sit-for 0)
-    (run-hooks 'wl-auto-check-folder-pre-hook)
-    (wl-folder-auto-check)
-    (run-hooks 'wl-auto-check-folder-hook))
-  (wl-biff-start)
-  (run-hooks 'wl-hook))
+    (sit-for 0))
+  (unwind-protect
+      (progn
+	(run-hooks 'wl-auto-check-folder-pre-hook)
+	(wl-folder-auto-check)
+	(run-hooks 'wl-auto-check-folder-hook))
+    (wl-biff-start)
+    (run-hooks 'wl-hook)))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile

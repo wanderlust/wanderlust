@@ -1,5 +1,18 @@
 2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-util.el (wl-biff-check-folders-running): New variable.
+	(wl-biff-check-folders): Set and check `wl-biff-check-folders-running'.
+	(wl-biff-check-folder-async-callback):
+	Set `wl-biff-check-folders-running'.
+	(wl-biff-check-folders): Enclose `wl-folder-check-one-entity'
+	with unwind-protect.
+
+	* wl.el (wl): Call `wl-biff-start' before `wl-folder-auto-check'.
+	Enclose `wl-folder-auto-check' with unwind-protect.
+
+	* wl-util.el (wl-biff-start) [Emacs19+]: require 'timer.
+	(toplevel) [Emacs19+]: Removed autoload setting for "timer".
+
 	* wl.el (wl): Call `wl-folder-auto-check' after `wl-plugged-init'.
 
 	* wl-util.el (wl-biff-notify): New inline function.
