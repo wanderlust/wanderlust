@@ -171,7 +171,8 @@
 
 (eval-when-compile
   (defmacro wl-e21-display-image-p ()
-    '(image-type-available-p 'xpm)))
+    '(and wl-highlight-folder-with-icon
+	  (image-type-available-p 'xpm))))
 
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar

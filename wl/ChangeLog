@@ -1,5 +1,8 @@
 2004-06-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-e21.el (wl-e21-display-image-p): Respect
+	`wl-highlight-folder-with-icon'.
+
 	* wl-summary.el (wl-summary-update-mark-and-highlight-window):
 	Respect value of `wl-summary-highlight'.
 
