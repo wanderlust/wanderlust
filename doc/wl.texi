@@ -616,6 +616,15 @@ address book before writing a big one.
 And, if MH alias file is specified in variable @code{wl-alias-file},
 it is used as an address information in the draft preparation mode.
 
+If variable @code{wl-use-ldap} is non-nil (initial setting is nil),
+address completion in draft mode uses LDAP information.
+
+If you use LDAP, you have to set @code{wl-ldap-server},
+@code{wl-ldap-port} and @{wl-ldap-base} properly. If your emacs does not
+have LDAP feature as built-in feature (Currently only XEmacs can have
+built-in LDAP feature), you have to set command exec PATH to the program
+`ldapsearch'.
+
 @node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section Folder Definition
 @cindex Folder Definition
@@ -1390,7 +1399,7 @@ Example:
 @end example
 
 @item
-Field filter: @samp{@var{field}=@var{value}}
+Field filter: @samp{@var{field}:@var{value}}
 
 All messages that have @var{field} and its value is @var{value} are picked.
 @var{field} and @var{value} are case insensitive.
@@ -1399,58 +1408,71 @@ Example:
 
 @example
 @group
-/from=teranisi/+inbox -> In +inbox, messages which have From: field
+/from:teranisi/+inbox -> In +inbox, messages which have From: field
                          and its value includes "teranisi" string are picked.
-/body=foo/%inbox      -> In %inbox, messages which have "foo" text
+/body:foo/%inbox      -> In %inbox, messages which have "foo" text
                          are picked.
 @end group
 @end example
 
-If you can split conditions by character @samp{|}, it is considered as OR condition.
-@samp{/tocc=xxxx/} is an abbreviation of @samp{/to=xxxx|cc=xxxx/}.
+@item
+Complexed condition
+
+If you combine conditions by character @samp{|}, it is considered as OR condition. @samp{&} is considered as AND condition, likewise.
+Condition can be grouped by parentheses (@samp{(}, and @samp{)}).
+
+@samp{/tocc:xxxx/} is an abbreviation of @samp{/to:xxxx|cc:xxxx/}.
+@samp{/!tocc:xxxx/} is an abbreviation of @samp{/!to:xxxx&!cc:xxxx/}.
 
 Example:
 
 @example
 @group
-/from=teranisi|to=teranisi/+inbox
-                      -> In +inbox, messages are picked if
-                         the message's To: field includes
-                         "teranisi" or From: field includes "teranisi".
-/tocc=teranisi/+inbox -> In +inbox, messages are picked if
-                         the message's To: field or Cc: field includes
-                         "teranisi".
+/from:teranisi&!to:teranisi/+inbox
+                      -> In +inbox, messages are picked if the message's 
+                         From: field includes "teranisi" and 
+                         To: field doesn't include "teranisi".
+
+/tocc:"Yuuichi Teranishi"/+inbox 
+                      -> In +inbox, messages are picked if the
+                         message's To: field or Cc: field includes 
+                         "Yuuichi Teranishi".
+
+/(from:yt|from:teranisi)&subject:report/+inbox
+                      -> In +inbox, messages are picked if the message's
+                         From: field includes "yt" or "teranisi", and
+                        Subject includes "report".
 @end group
 @end example
 @end enumerate
 
+@noindent
+Tip for string description:
+
+Space character, @samp{"}, @samp{/},@samp{)},@samp{|} and @samp{&} should
+be enclosed with @samp{"} in @var{value} string.
+(@samp{"} should be escaped with @{\} in it).
+You can enclose the string with @samp{"} even it does not contain
+these characters.
+
+@noindent
 Advanced example:
 
 @example
-%inbox,/from=teranisi/%inbox@@server
+*%inbox,/from:teranisi/%inbox@@server
        -> Messages in %inbox or
           message is in the %inbox@@server folder and it's From field
           includes "teranisi" are collected.
 
-/last:100//to=teranisi/*+inbox,%inbox
+/last:100//to:teranisi/*+inbox,%inbox
        -> Latest 100 messages which is in the +inbox or %inbox folder
           and To: field matches "teranisi".
 
-/from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
+/from:hogehoge//last:20//tocc:teranisi/%#mh/inbox@@localhost
        -> Pick messages which have From: field and it includes "hogehoge"
           from latest 20 messages in the %#mh/inbox@@localhost
           and To: or Cc: field includes "teranisi".
 @end example
-
- --- Limit of implementation ---
-
-In the current implementation, NNTP folder does not treat date filter and
-field filter.
-In IMAP4 folder, field filter only supports fields which can be 
-passed directly to RFC2060'S search command.
-(i.e. to,cc,from,subject and body)
-Localdir folder treats arbitrary field name.
-
 
 @node Pipe Folder, Internal Folder, Filter Folder, Folders
 @section Pipe Folder
@@ -4096,6 +4118,7 @@ set this variable.
 The initial setting is nil.
 If non-nil, the value of this variable is inserted as a @samp{Fcc:} of
 the draft when it is prepared.
+If function is specified, its return value is used.
 
 @item wl-bcc
 @vindex wl-bcc
@@ -4242,8 +4265,27 @@ left to the logging function of imput.
 The initial setting is 20000 (in bytes).
 If @code{wl-draft-sendlog} is t, the log is rotated when it grows beyond 
 the size specified by this variable.
-@end table
 
+@item wl-use-ldap
+@vindex wl-use-ldap
+The initial setting is nil.
+If non-nil, address completion uses LDAP.
+
+@item wl-ldap-server
+@vindex wl-ldap-server
+The initial setting is localhost.
+LDAP server name for address completion.
+
+@item wl-ldap-port
+@vindex wl-ldap-port
+The initial setting is nil.
+If non-nil, the value is used as port number.
+
+@item wl-ldap-base
+@vindex wl-ldap-base
+The initial setting is "c=US".
+LDAP search starting point (base) for address completion.
+@end table
 
 @node Disconnected Operations, Expire and Archive, Draft, Top
 @chapter Off-line Management

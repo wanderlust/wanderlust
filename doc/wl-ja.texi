@@ -640,6 +640,13 @@ bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
 $B$^$?!"JQ?t(B @code{wl-alias-file} $B$N%U%!%$%k$K(B MH $B$N(B alias file $B$,;XDj$5$l$F(B
 $B$$$l$P!"%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$F;H$o$l$^$9!#(B
 
+$B$5$i$K!"JQ?t(B @code{wl-use-ldap} ($B=i4|@_Dj$O(B nil) $B$r(B non-nil $B$K@_Dj$9$k$H!"(B
+LDAP $B%5!<%P$N>pJs$r%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$FMxMQ$7$^$9!#(B
+
+LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
+@code{wl-ldap-base} $B$bE,@Z$K@_Dj$7$F2<$5$$!#$^$?!"(BLDAP $BBP1~$N(B XEmacs $B0J(B
+$B30$G$O!"30It%W%m%0%i%`$H$7$F(B ldapsearch $B$rMxMQ$7$^$9$N$G!"(Bldapsearch $B$X(B
+$B$"$i$+$8$a%3%^%s%I<B9T%Q%9$r@_Dj$7$F$*$/I,MW$,$"$j$^$9!#(B
 
 @node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section $B9XFI$9$k%U%)%k%@$NDj5A(B
@@ -1419,7 +1426,7 @@ lastyear  ->  $B5nG/$N:#F|(B
 @end example
 
 @item
-$B%U%#!<%k%I%U%#%k%?!'(B @samp{@var{$B%U%#!<%k%IL>(B}=@var{$BJ8;zNs(B}}
+$B%U%#!<%k%I%U%#%k%?!'(B @samp{@var{$B%U%#!<%k%IL>(B}:@var{$BJ8;zNs(B}}
 
 $B%a%C%;!<%8$N(B@var{$B%U%#!<%k%I(B}$B$NCf?H$,(B@var{$BJ8;zNs(B}$B$K%^%C%A$9$k%a%C%;!<%8$r<h$j=P$7$^$9!#(B
 @var{$B%U%#!<%k%IL>(B}$B!"(B@var{$BJ8;zNs(B}$B$KBgJ8;z>.J8;z$N6hJL$O$"$j$^$;$s!#(B
@@ -1428,56 +1435,74 @@ lastyear  ->  $B5nG/$N:#F|(B
 
 @example
 @group
-/from=teranisi/+inbox -> +inbox $B$G!"(BFrom: $B%U%#!<%k%I$K(B "teranisi"
-                         $B$H$$$&J8;zNs$r4^$`%a%C%;!<%8$N%U%)%k%@(B
-/body=$B$J$s$H$+(B/%inbox -> %inbox $B$G!"K\J8$K(B "$B$J$s$H$+(B"
+/from:teranisi/+inbox -> +inbox $B$G!"(BFrom: $B%U%#!<%k%I$K(B
+                         "teranisi" $B$H$$$&J8;zNs$r4^$`%a%C%;!<%8$N%U%)%k%@(B
+/body:$B$J$s$H$+(B/%inbox -> %inbox $B$G!"K\J8$K(B "$B$J$s$H$+(B"
                          $B$H$$$&J8;zNs$r4^$`%a%C%;!<%8$N%U%)%k%@(B
 @end group
 @end example
 
-@samp{|} $B$G6h@Z$C$F(B OR $B>r7o$r;XDj$G$-$^$9!#(B
-$B$^$?!"(B@samp{/tocc=xxxx/} $B$O!"(B@samp{/to=xxxx|cc=xxxx/} $B$HF1$8$K$J$j$^$9!#(B
+@item
+$BJ#9g>r7o(B
+
+$B>r7oItJ,$,(B @samp{!} $B$G;O$^$k$HH]Dj$N>r7o;XDj$H$J$j$^$9!#J#?t$N>r7o$r(B 
+@samp{|} $B$G6h@Z$C$F;XDj$9$k$H!"(BOR $B>r7o$H$J$j$^$9!#F1MM$K!"(B@samp{&} $B$G6h(B
+$B@Z$k$H(B AND $B>r7o$r;XDj$G$-$^$9(B(AND $B>r7o$O(B OR $B>r7o$h$j$bM%@h$7$FI>2A$5$l$^(B
+$B$9(B)$B!#$5$i$K!"(B@samp{(}, @samp{)}, $B$G0O$&$H>r7o<0$r%0%k!<%T%s%0;XDj$G$-$^$9!#(B
+
+$B$^$?!">r7o$N>JN,5-K!$H$7$F(B @samp{tocc} $B$,MQ0U$5$l$F$$$^$9!#(B
+@samp{/tocc:xxxx/} $B$O!"(B@samp{/to:xxxx|cc:xxxx/} $B$KE83+$5$l$^$9!#(B
+@samp{/!tocc:xxxx/} $B$O!"(B@samp{/!to:xxxx&!cc:xxxx/} $B$KE83+$5$l$^$9!#(B
 
 $BNc(B:
 
 @example
 @group
-/from=teranisi|to=teranisi/+inbox
-                      -> +inbox $B$G(BTo: $B%U%#!<%k%I$+(B From: $B%U%#!<%k%I$K(B
-                        "teranisi" $B$r4^$`%a%C%;!<%8$N%U%)%k%@(B
-/tocc=teranisi/+inbox -> +inbox $B$G!"(BTo: $B%U%#!<%k%I$+(B Cc: $B%U%#!<%k%I$K(B
-                        "teranisi" $B$r4^$`%a%C%;!<%8$N%U%)%k%@(B
+/from:teranisi&!to:teranisi/+inbox
+                      -> +inbox $B$G(B From: $B%U%#!<%k%I$K(B "teranisi" $B$r4^$_!"(B
+                        To: $B%U%#!<%k%I$K(B "teranisi" $B$r4^$^$J$$(B
+                        $B%a%C%;!<%8$N%U%)%k%@(B
+
+/tocc:"Yuuichi Teranishi"/+inbox -> +inbox $B$G!"(BTo: $B%U%#!<%k%I$+(B
+                         Cc: $B%U%#!<%k%I$K(B "Yuuichi Teranishi" $B$r4^$`(B
+                         $B%a%C%;!<%8$N%U%)%k%@(B
+
+/(from:yt|from:teranisi)&subject:$BJs9p(B/+inbox
+                      -> +inbox $B$G!"(BFrom: $B%U%#!<%k%I$,(B "yt" $B$+(B
+                        "teranisi" $B$r4^$_!"$+$D(B Subject $B$,(B "$BJs9p(B" $B$r4^$`(B
+                        $B%a%C%;!<%8$N%U%)%k%@(B
 @end group
 @end example
 @end enumerate
 
+@noindent
+$BCm0U(B
+
+$BJ8;zNsItJ,$K!"6uGrJ8;z!"(B@samp{"}$B!"(B@samp{/}$B!"(B@samp{)}$B!"(B@samp{|}$B!"(B@samp{&} 
+$B$r4^$_$?$$>l9g$O!"J8;zNsA4BN$r(B @samp{"} $B$G3g$kI,MW$,$"$j$^$9!#(B(@samp{"}
+$B$G3g$i$l$F$$$kJ8;zNsCf$K(B @samp{"} $B$r4^$`>l9g$O!"(B@samp{\} $B$G%(%9%1!<%W$9(B
+$B$kI,MW$,$"$j$^$9(B)$B!#$3$l$i$NJ8;z$r4^$^$J$$>l9g$G$b(B @samp{"} $B$G3g$k$N$OLd(B
+$BBj$"$j$^$;$s!#(B
+
+@noindent
 $B1~MQJT(B
 
 @example
-%inbox,/from=teranisi/%inbox@@server
+*%inbox,/from:teranisi/%inbox@@server
        -> %inbox$B!"$*$h$S!"(B
           %inbox@@server $B$NCf$G(B From $B%U%#!<%k%I$,(B "teranisi" $B$N%a%C%;!<%872!"(B
           $B$r$$$C$Z$s$KI=<($9$k%U%)%k%@!#(B
 
-/last:100//to=teranisi/*+inbox,%inbox
+/last:100//to:teranisi/*+inbox,%inbox
        -> +inbox $B$H(B %inbox $BCf$N%a%C%;!<%8$N$&$A!"(B
           To: $B%U%#!<%k%I$,(B "teranisi" $B$K%^%C%A$9$k(B
           $B%a%C%;!<%8$N:G6a$N(B100$B8D$rI=<($9$k%U%)%k%@!#(B
 
-/from=hogehoge//last:20//tocc=teranisi/%#mh/inbox@@localhost
+/from:hogehoge//last:20//tocc:teranisi/%#mh/inbox@@localhost
        -> %#mh/inbox@@localhost $B$NCf$G!"(BTo $B$+(B Cc $B$K(B "teranisi" $B$,4^$^$l$k(B
           $B%a%C%;!<%8$N:G6a$N(B 20 $B8D$N$&$A!"(BFrom $B$,(B "hogehoge" $B$N$b$N$r(B
           $BI=<($9$k%U%)%k%@!#(B
 @end example
-
---- $B<BAu>e$N@)Ls(B ---
-
-$B8=:_$N$H$3$m!"(Bnntp $B%U%)%k%@$OF|IU%U%#%k%?!"%U%#!<%k%I%U%#%k%?(B
-$B$r=q$1$^$;$s!#(B
-$B$^$?!"(Bimap4 $B%U%)%k%@(B $B$G$O(B RFC2060 $B$N(B search $B%3%^%s%I$K$=$N$^$^(B
-$BM?$($i$l$k$b$N$7$+>r7o$N%U%#!<%k%IL>$K=q$1$^$;$s!#(B
-(-> to,cc,from,subject,body $B$N$_(B)
-localdir $B$N%U%)%k%@$K$OG$0U$N%U%#!<%k%IL>$r=q$1$^$9!#(B
 
 
 @node Pipe Folder, Internal Folder, Filter Folder, Folders
@@ -4064,6 +4089,7 @@ nil $B$J$i(B @code{wl-from} $B$N%"%I%l%9ItJ,$r;HMQ$7$^$9!#(B
 @vindex wl-fcc
 $B=i4|@_Dj$O(B nil$B!#(B
 Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Fcc:} $B$H$7$F:G=i$+$iA^F~$7$^$9!#(B
+$B4X?t$,;XDj$5$l$F$?>l9g!"4X?t$NJV$jCM(B(string) $B$,A^F~$5$l$^$9!#(B
 
 @item wl-bcc
 @vindex wl-bcc
@@ -4083,12 +4109,12 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 
 @item wl-draft-enable-queuing
 @vindex wl-draft-enable-queuing
-$B=i4|@_Dj$O(B t$B!#(B
+$B=i4|@_Dj$O(B @code{t}$B!#(B
 $B%*%U%i%$%sAw?.$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(BNon-nil $B$J$i%*%U%i%$%sAw?.$7$^$9!#(B
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
-$B=i4|@_Dj$O(B t$B!#(B
+$B=i4|@_Dj$O(B @code{t}$B!#(B
 $B%*%s%i%$%s$K$J$C$?$H$-$K<+F0E*$K%-%e!<$rAw?.$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B
 Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B$$$A$*$&(B @code{y-or-n-p} $B$G3NG'$7$^$9(B)$B!#(B
 $B<jF0$G%-%e!<$rAw?.$9$k$K$O!"%U%)%k%@%b!<%I$G(B @kbd{F} $B$r2!$7$F$/$@$5$$!#(B
@@ -4205,6 +4231,26 @@ t $B$J$i(B @file{~/.elmo/sendlog} $B$KAw?.%m%0$r=PNO$7$^$9!#(B
 $B=i4|@_Dj$O(B 20000 ($B%P%$%H(B)$B!#(B
 @code{wl-draft-sendlog} $B$,(B t $B$N>l9g!"(B
 $BJ]B8$7$?%m%0$NBg$-$5$,;XDj$7$?Bg$-$50J>e$K$J$l$P!"%m%0$r%m!<%F!<%7%g%s$7$^$9!#(B
+
+@item wl-use-ldap
+@vindex wl-use-ldap
+$B=i4|@_Dj$O(B nil$B!#(B
+Non-nil$B$J$i(B LDAP $B$rMxMQ$7$F%"%I%l%9Jd40$7$^$9!#(B
+
+@item wl-ldap-server
+@vindex wl-ldap-server
+$B=i4|@_Dj$O(B "localhost"$B!#(B
+$B%"%I%l%9Jd40$KMQ$$$k(B LDAP $B%5!<%PL>$G$9!#(B
+
+@item wl-ldap-port
+@vindex wl-ldap-port
+$B=i4|@_Dj$O(B nil$B!%(B
+$B%"%I%l%9Jd40$KMQ$$$k(B LDAP $B%5!<%P$N%]!<%HHV9f$G$9!#(B
+
+@item wl-ldap-base
+@vindex wl-ldap-base
+$B=i4|@_Dj$O(B "c=US"
+$B%"%I%l%9Jd40;~$N(B LDAP $B8!:w$N3+;OE@(B(base)$B$r;XDj$7$^$9!#(B
 @end table
 
 
