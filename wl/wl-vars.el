@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-09 17:19:31 teranisi>
+;; Time-stamp: <00/05/10 10:28:31 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -37,7 +37,7 @@
 
 (defconst wl-appname  "Wanderlust")
 (defconst wl-version  elmo-version) ; equals to ELMO version.
-(defconst wl-codename "Purple Rain")
+(defconst wl-codename "Raspberry Beret")
 
 ;;; Customizable Variables
 
