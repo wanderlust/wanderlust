@@ -2526,6 +2526,7 @@ mode.
 * Auto Refile::                 Auto refile settings
 * Sticky Summary::              Summary make sticky
 * Summary View::                Format of summary lines
+* Mark and Action::             Temporary marks and their effect
 * Key Bindings of Summary::     Key bindings
 * Variables of Summary::        Customize Summary Mode
 @end menu
@@ -2929,7 +2930,7 @@ are same as normal summary.
 are automatically stuck.
 
 
-@node Summary View, Key Bindings of Summary, Sticky Summary, Summary
+@node Summary View, Mark and Action, Sticky Summary, Summary
 @section Format of summary lines
 @cindex Format of summary lines
 You can alter the format of lines in Summary mode.
@@ -3024,7 +3025,17 @@ its sender is yourself, set up as follows.
 @end lisp
 
 
-@node Key Bindings of Summary, Variables of Summary, Summary View, Summary
+@node Mark and Action, Key Bindings of Summary, Summary View, Summary
+@section Temporary marks and their effect
+@cindex Mark and Action
+
+You can define temporary marks and corresponding procedure by
+@code{wl-summary-mark-action-list}.  Initially, refile (@samp{o}), copy
+(@samp{O}), dispose (@samp{d}), delete (@samp{D}), prefetch (@samp{i})
+and resend (@samp{~}) are defined.
+
+
+@node Key Bindings of Summary, Variables of Summary, Mark and Action, Summary
 @section Key bindings
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer
@@ -3435,13 +3446,13 @@ Execute action for all temporary marks in the summary buffer.
 @kindex * (Summary)
 @findex wl-summary-target-mark-line
 Put target mark on the message at the current cursor point.
-(@code{wl-summary-target-mark-line})
+(@code{wl-summary-target-mark-line}) @xref{Mark and Action}.
 
 @item o
 @kindex o (Summary)
 Put refile mark on the message at the current cursor point.
 @findex wl-summary-refile
-(@code{wl-summary-refile})
+(@code{wl-summary-refile}) @xref{Mark and Action}.
 
 @item C-o
 @kindex C-o (Summary)
@@ -3453,7 +3464,7 @@ Execute auto refile.
 @kindex O (Summary)
 Put copy mark on the message at the current cursor point.
 @findex wl-summary-copy
-(@code{wl-summary-copy})
+(@code{wl-summary-copy}) @xref{Mark and Action}.
 
 @item M-o
 @kindex M-o (Summary)
@@ -3468,25 +3479,25 @@ previously specified.
 Put disposal mark on the message at the current cursor point.
 The result of disposal is controlled by @code{wl-dispose-folder-alist},
 refiled to @code{wl-trash-folder} by default.
-(@code{wl-summary-dispose})
+(@code{wl-summary-dispose}) @xref{Mark and Action}.
 
 @item D
 @kindex D (Summary)
 @findex wl-summary-delete
 Put force deletion mark on the message at the current cursor point.
-(@code{wl-summary-delete})
+(@code{wl-summary-delete}) @xref{Mark and Action}.
 
 @item i
 @kindex i (Summary)
 Put prefetch reservation mark on the message at the current cursor point.
 @findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
+(@code{wl-summary-prefetch}) @xref{Mark and Action}.
 
 @item ~
 @kindex ~ (Summary)
 @findex wl-summary-resend
 Put resend reservation mark on the message at the current cursor point.
-(@code{wl-summary-resend})
+(@code{wl-summary-resend}) @xref{Mark and Action}.
 
 @item u
 @kindex u (Summary)
@@ -3537,31 +3548,37 @@ specified region.
 @kindex r * (Summary)
 @findex wl-summary-target-mark-region
 Put target mark on the messages in the specified region.
-(@code{wl-summary-target-mark-region})
+(@code{wl-summary-target-mark-region}) @xref{Mark and Action}.
 
 @item r o
 @kindex r o (Summary)
 @findex wl-summary-refile-region
 Put refile mark on the messages in the specified region.
-(@code{wl-summary-refile-region})
+(@code{wl-summary-refile-region}) @xref{Mark and Action}.
 
 @item r O
 @kindex r O (Summary)
 @findex wl-summary-copy-region
 Put copy mark on the messages in the specified region.
-(@code{wl-summary-copy-region})
+(@code{wl-summary-copy-region}) @xref{Mark and Action}.
 
 @item r d
 @kindex r d (Summary)
 @findex wl-summary-dispose-region
 Put disposal mark on the messages in the specified region.
-(@code{wl-summary-dispose-region})
+(@code{wl-summary-dispose-region}) @xref{Mark and Action}.
+
+@item r D
+@kindex r D (Summary)
+@findex wl-summary-delete-region
+Put force deletion mark on the messages in the specified region.
+(@code{wl-summary-delete-region}) @xref{Mark and Action}.
 
 @item r i
 @kindex r i (Summary)
 @findex wl-summary-prefetch-region
 Put prefetch reservation mark on messages in the specified region.
-(@code{wl-summary-prefetch-region})
+(@code{wl-summary-prefetch-region}) @xref{Mark and Action}.
 
 @item r u
 @kindex r u (Summary)
@@ -3620,35 +3637,42 @@ on the all messages in the thread tree.
 Put target mark @samp{*} on the messages which are the descendant of the
 current thread.  With prefix argument, it affects on the all messages in
 the thread tree.
-(@code{wl-thread-target-mark})
+(@code{wl-thread-target-mark}) @xref{Mark and Action}.
 
 @item t o
 @kindex t o (Summary)
 @findex wl-thread-refile
 Put refile mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-refile})
+(@code{wl-thread-refile}) @xref{Mark and Action}.
 
 @item t O
 @kindex t O (Summary)
 @findex wl-thread-copy
 Put copy mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-copy})
+(@code{wl-thread-copy}) @xref{Mark and Action}.
 
 @item t d
 @kindex t d (Summary)
 @findex wl-thread-dispose
 Put disposal mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-dispose})
+(@code{wl-thread-dispose}) @xref{Mark and Action}.
+
+@item t D
+@kindex t D (Summary)
+@findex wl-thread-delete
+Put force deletion mark on the messages which are the descendant of the
+current thread.
+(@code{wl-thread-delete}) @xref{Mark and Action}.
 
 @item t i
 @kindex t i (Summary)
 @findex wl-thread-prefetch
 Put prefetch reservation mark on messages which are the descendant of
 the current thread.
-(@code{wl-thread-prefetch})
+(@code{wl-thread-prefetch}) @xref{Mark and Action}.
 
 @item t u
 @kindex t u (Summary)
@@ -3695,25 +3719,31 @@ Mark as unread all messages which have target mark @samp{*}.
 @kindex m o (Summary)
 @findex wl-summary-target-mark-refile
 Put refile mark on the messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-refile})
+(@code{wl-summary-target-mark-refile}) @xref{Mark and Action}.
 
 @item m O
 @kindex m O (Summary)
 @findex wl-summary-target-mark-copy
 Put copy mark on the messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-copy})
+(@code{wl-summary-target-mark-copy}) @xref{Mark and Action}.
 
 @item m d
 @kindex m d (Summary)
 @findex wl-summary-target-mark-dispose
 Put disposal mark on the messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-dispose})
+(@code{wl-summary-target-mark-dispose}) @xref{Mark and Action}.
+
+@item m D
+@kindex m D (Summary)
+@findex wl-summary-target-mark-delete
+Put force deletion mark on the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-delete}) @xref{Mark and Action}.
 
 @item m i
 @kindex m i (Summary)
 @findex wl-summary-target-mark-prefetch
 Put prefetch reservation mark on messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-prefetch})
+(@code{wl-summary-target-mark-prefetch}) @xref{Mark and Action}.
 
 @item m y
 @kindex m y (Summary)
@@ -4921,13 +4951,15 @@ set this variable.
 @vindex wl-reply-subject-prefix
 The initial setting is @samp{Re: }.
 In the @samp{Subject:} of the reply draft, this string is prepended to
-the @samp{Subject:} of being replied.
+the @samp{Subject:} of being replied.  You can specify a function to be
+message buffer of the reply target.
 
 @item wl-forward-subject-prefix
 @vindex wl-forward-subject-prefix
 The initial setting is @samp{Forward: }.
 In the @samp{Subject:} of the forwarding draft, this string is prepended
-to the @samp{Subject:} of being forwarded.
+to the @samp{Subject:} of being forwarded.  You can specify a function
+to be message buffer of the forward target.
 
 @item wl-draft-reply-use-address-with-full-name
 @vindex wl-draft-reply-use-address-with-full-name

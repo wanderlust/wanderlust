@@ -2542,6 +2542,7 @@ Non-nil $B$J$i(B @code{wl-fldmgr-add} $B$NJd408uJd$r(B
 * Auto Refile::                 $B<+F0%j%U%!%$%k(B
 * Sticky Summary::              $B%9%F%#%C%-!<%5%^%j(B
 * Summary View::                $B%5%^%j9T$N7A<0(B
+* Mark and Action::             $B0l;~%^!<%/$H$=$N=hM}(B
 * Key Bindings of Summary::     $B%-!<%P%$%s%I(B
 * Variables of Summary::        $B%+%9%?%^%$%:JQ?t(B
 @end menu
@@ -2936,7 +2937,7 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 $B$H$9$k$3$H$b$G$-$^$9!#(B
 
 
-@node Summary View, Key Bindings of Summary, Sticky Summary, Summary
+@node Summary View, Mark and Action, Sticky Summary, Summary
 @section $B%5%^%j9T$N7A<0(B
 @cindex Format of summary lines
 
@@ -3025,7 +3026,17 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 @end lisp
 
 
-@node Key Bindings of Summary, Variables of Summary, Summary View, Summary
+@node Mark and Action, Key Bindings of Summary, Summary View, Summary
+@section $B0l;~%^!<%/$H$=$N=hM}(B
+@cindex Mark and Action
+
+$B0l;~%^!<%/$H$=$l$KBP1~$9$k=hM}<j=g$r(B @code{wl-summary-mark-action-list}
+$B$GDj5A$9$k$3$H$,$G$-$^$9!#=i4|@_Dj$G$O!"(Brefile (@samp{o}), copy (@samp{O}),
+dispose (@samp{d}), delete (@samp{D}), prefetch (@samp{i}), resend (@samp{~})
+$B$,Dj5A$5$l$F$$$^$9!#(B
+
+
+@node Key Bindings of Summary, Variables of Summary, Mark and Action, Summary
 @section $B%-!<%P%$%s%I(B
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer
@@ -3428,13 +3439,13 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 @kindex * (Summary)
 @findex wl-summary-target-mark-line
 $B%+!<%=%k9T$N%a%C%;!<%8$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-line})
+(@code{wl-summary-target-mark-line}) @xref{Mark and Action}.
 
 @item o
 @kindex o (Summary)
 $B%+!<%=%k9T$N%a%C%;!<%8$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
 @findex wl-summary-refile
-(@code{wl-summary-refile})
+(@code{wl-summary-refile}) @xref{Mark and Action}.
 
 @item C-o
 @kindex C-o (Summary)
@@ -3446,7 +3457,7 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 @kindex O (Summary)
 $B%+!<%=%k9T$N%a%C%;!<%8$K%3%T!<%^!<%/$r$D$1$^$9!#(B
 @findex wl-summary-copy
-(@code{wl-summary-copy})
+(@code{wl-summary-copy}) @xref{Mark and Action}.
 
 @item M-o
 @kindex M-o (Summary)
@@ -3461,25 +3472,25 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 $B%+!<%=%k9T$N%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
 $B=hJ,$N7k2L$O(B @code{wl-dispose-folder-alist} $B$G@)8f$G$-!"%G%U%)%k%H$G$O(B
 @code{wl-trash-folder} $B$K%j%U%!%$%k$5$l$^$9!#(B
-(@code{wl-summary-dispose})
+(@code{wl-summary-dispose}) @xref{Mark and Action}.
 
 @item D
 @kindex D (Summary)
 @findex wl-summary-delete
 $B%+!<%=%k9T$N%a%C%;!<%8$K6/@):o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-delete})
+(@code{wl-summary-delete}) @xref{Mark and Action}.
 
 @item i
 @kindex i (Summary)
 $B%+!<%=%k9T$N%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$rIU$1$^$9!#(B
 @findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
+(@code{wl-summary-prefetch}) @xref{Mark and Action}.
 
 @item ~
 @kindex ~ (Summary)
 @findex wl-summary-resend
 $B%+!<%=%k9T$N%a%C%;!<%8$K:FAwM=Ls%^!<%/$rIU$1$^$9!#(B
-(@code{wl-summary-resend})
+(@code{wl-summary-resend}) @xref{Mark and Action}.
 
 @item u
 @kindex u (Summary)
@@ -3530,31 +3541,37 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 @kindex r * (Summary)
 @findex wl-summary-target-mark-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-region})
+(@code{wl-summary-target-mark-region}) @xref{Mark and Action}.
 
 @item r o
 @kindex r o (Summary)
 @findex wl-summary-refile-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-refile-region})
+(@code{wl-summary-refile-region}) @xref{Mark and Action}.
 
 @item r O
 @kindex r O (Summary)
 @findex wl-summary-copy-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K%3%T!<%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-copy-region})
+(@code{wl-summary-copy-region}) @xref{Mark and Action}.
 
 @item r d
 @kindex r d (Summary)
 @findex wl-summary-dispose-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-dispose-region})
+(@code{wl-summary-dispose-region}) @xref{Mark and Action}.
+
+@item r D
+@kindex r D (Summary)
+@findex wl-summary-delete-region
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K6/@):o=|%^!<%/$r$D$1$^$9!#(B
+(@code{wl-summary-delete-region}) @xref{Mark and Action}.
 
 @item r i
 @kindex r i (Summary)
 @findex wl-summary-prefetch-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$rIU$1$^$9!#(B
-(@code{wl-summary-prefetch-region})
+(@code{wl-summary-prefetch-region}) @xref{Mark and Action}.
 
 @item r u
 @kindex r u (Summary)
@@ -3613,7 +3630,7 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K(B
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $BE,MQ$7$^$9!#(B
-(@code{wl-thread-target-mark})
+(@code{wl-thread-target-mark}) @xref{Mark and Action}.
 
 @item t o
 @kindex t o (Summary)
@@ -3621,7 +3638,7 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $BE,MQ$7$^$9!#(B
-(@code{wl-thread-refile})
+(@code{wl-thread-refile}) @xref{Mark and Action}.
 
 @item t O
 @kindex t O (Summary)
@@ -3629,7 +3646,7 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%3%T!<%^!<%/$r$D$1$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $BE,MQ$7$^$9!#(B
-(@code{wl-thread-copy})
+(@code{wl-thread-copy}) @xref{Mark and Action}.
 
 @item t d
 @kindex t d (Summary)
@@ -3637,14 +3654,20 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K=hJ,%^!<%/$r$D$1$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
 $BE,MQ$7$^$9!#(B
-(@code{wl-thread-dispose})
+(@code{wl-thread-dispose}) @xref{Mark and Action}.
+
+@item t D
+@kindex t D (Summary)
+@findex wl-thread-delete
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K6/@):o=|%^!<%/$rIU$1$^$9!#(B
+(@code{wl-thread-delete}) @xref{Mark and Action}.
 
 @item t i
 @kindex t i (Summary)
 @findex wl-thread-prefetch
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%W%j%U%'%C%AM=Ls%^!<%/$r(B
 $BIU$1$^$9!#(B
-(@code{wl-thread-prefetch})
+(@code{wl-thread-prefetch}) @xref{Mark and Action}.
 
 @item t u
 @kindex t u (Summary)
@@ -3691,26 +3714,32 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$rJ]B8$
 @kindex m o (Summary)
 @findex wl-summary-target-mark-refile
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-refile})
+(@code{wl-summary-target-mark-refile}) @xref{Mark and Action}.
 
 @item m O
 @kindex m O (Summary)
 @findex wl-summary-target-mark-copy
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K%3%T!<%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-copy})
+(@code{wl-summary-target-mark-copy}) @xref{Mark and Action}.
 
 @item m d
 @kindex m d (Summary)
 @findex wl-summary-target-mark-dispose
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-dispose})
+(@code{wl-summary-target-mark-dispose}) @xref{Mark and Action}.
+
+@item m D
+@kindex m D (Summary)
+@findex wl-summary-target-mark-delete
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K6/@):o=|%^!<%/$rIU$1$^$9!#(B
+(@code{wl-summary-target-mark-delete}) @xref{Mark and Action}.
 
 @item m i
 @kindex m i (Summary)
 @findex wl-summary-target-mark-prefetch
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$r(B
 $BIU$1$^$9!#(B
-(@code{wl-summary-target-mark-prefetch})
+(@code{wl-summary-target-mark-prefetch}) @xref{Mark and Action}.
 
 @item m y
 @kindex m y (Summary)
@@ -4888,13 +4917,15 @@ Non-nil $B$J$i%I%i%U%HMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
 @vindex wl-reply-subject-prefix
 $B=i4|@_Dj$O(B @samp{Re: }$B!#(B
 $BJV?.;~$N%I%i%U%H$N(B @samp{Subject:} $B$G!"855-;v$N(B @samp{Subject:} $B$N@hF,$K(B
-$BIU$12C$($kJ8;zNs$G$9!#(B
+$BIU$12C$($kJ8;zNs$G$9!#JV?.BP>]$N%a%C%;!<%8%P%C%U%!$GI>2A$5$l$k4X?t$r;XDj(B
+$B$9$k$3$H$b$G$-$^$9!#(B
 
 @item wl-forward-subject-prefix
 @vindex wl-forward-subject-prefix
 $B=i4|@_Dj$O(B @samp{Forward: }$B!#(B
 $BE>Aw;~$N%I%i%U%H$N(B @samp{Subject:} $B$G!"855-;v$N(B @samp{Subject:} $B$N@hF,$K(B
-$BIU$12C$($kJ8;zNs$G$9!#(B
+$BIU$12C$($kJ8;zNs$G$9!#E>AwBP>]$N%a%C%;!<%8%P%C%U%!$GI>2A$5$l$k4X?t$r;XDj(B
+$B$9$k$3$H$b$G$-$^$9!#(B
 
 @item wl-draft-reply-use-address-with-full-name
 @vindex wl-draft-reply-use-address-with-full-name
