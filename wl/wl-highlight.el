@@ -833,6 +833,7 @@
   (save-excursion
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
+	  (deactivate-mark nil)
 	  (sregexp (concat
 		    "^"
 		    wl-summary-buffer-number-regexp
