@@ -1,5 +1,8 @@
 2002-11-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Decode PGP output
+	by `mime-view-automatic-conversion'.
+
 	* wl-mime.el (wl-message-decrypt-pgp-nonmime): New function.
 	(wl-message-verify-pgp-nonmime): Ditto.
 	* wl-e21.el, wl-mule.el, wl-xmas.el (wl-message-define-keymap):
