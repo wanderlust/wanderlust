@@ -1,3 +1,17 @@
+2000-05-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-update-line-msgs): Added optional argument
+	`no-msg'.
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Set no-msg
+	argument of `wl-thread-update-line-msgs'.
+	(wl-summary-set-parent): Added optional argument `parent-number'.
+	(wl-summary-buffer-saved-message): New buffer local variable.
+	(wl-summary-save-current-message): New command.
+	(wl-summary-yank-saved-message): Ditto.
+	(wl-summary-mode-map): Added key binding for
+	`wl-summary-save-current-message' (\ew) and
+	`wl-summary-yank-saved-message' (\C-y).
+
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Added key binding for

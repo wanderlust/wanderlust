@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/09 19:34:25 teranisi>
+;; Time-stamp: <2000-05-12 10:32:53 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -646,17 +646,17 @@ the closed parent will be opened."
     (if (not (wl-thread-entity-get-opened entity))
 	(wl-thread-entity-get-children-num entity))))
 
-(defun wl-thread-update-line-msgs (msgs)
+(defun wl-thread-update-line-msgs (msgs &optional no-msg)
   (wl-delete-all-overlays)
   (let ((count 0))
-    (message "Updating deleted thread...")
+    (unless no-msg (message "Updating deleted thread..."))
     (while msgs
       (setq msgs
 	    (wl-thread-update-line-on-buffer (car msgs) nil msgs))
       (setq count (1+ count))
-      (message (concat "Updating deleted thread..."
-		       (make-string (/ count 5) ?.))))
-    (message "Updating deleted thread...done.")))
+      (unless no-msg (message (concat "Updating deleted thread..."
+				      (make-string (/ count 5) ?.)))))
+    (unless no-msg (message "Updating deleted thread...done."))))
 
 (defsubst wl-thread-update-line-on-buffer-sub (entity msg &optional parent-msg)
   (let ((number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))

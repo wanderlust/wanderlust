@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/11 13:13:04 teranisi>
+;; Time-stamp: <2000-05-12 16:30:34 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -93,6 +93,8 @@
 (defvar wl-summary-buffer-copy-list nil) 
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
+(defvar wl-summary-buffer-saved-message nil)
+
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
 (defvar wl-thread-youngest-child-str-internal nil)
@@ -140,6 +142,7 @@
        'wl-summary-buffer-persistent
        'wl-summary-buffer-thread-nodes
        'wl-summary-buffer-prev-refile-destination
+       'wl-summary-buffer-saved-message
        'wl-summary-scored
        'wl-summary-default-score
        'wl-summary-move-direction-downward
@@ -407,6 +410,10 @@
   (define-key wl-summary-mode-map "\C-i"  'wl-summary-goto-last-displayed-msg)
   (define-key wl-summary-mode-map "?"    'wl-summary-pick)
   (define-key wl-summary-mode-map "\ee"  'wl-summary-expire)
+
+  ;; copy & paste.
+  (define-key wl-summary-mode-map "\ew"  'wl-summary-save-current-message)
+  (define-key wl-summary-mode-map "\C-y"  'wl-summary-yank-saved-message)
 
   ;; line commands
   (define-key wl-summary-mode-map "R"    'wl-summary-mark-as-read)
@@ -1920,7 +1927,7 @@ If optional argument is non-nil, checking is omitted."
 	(elmo-display-progress
 	 'wl-summary-delete-messages-on-buffer "Deleting..." 100))
       (when (eq wl-summary-buffer-view 'thread)
-	(wl-thread-update-line-msgs (elmo-uniq-list update-list)))
+	(wl-thread-update-line-msgs (elmo-uniq-list update-list) 'no-msg))
       (wl-thread-cleanup-symbols msgs2)
       (wl-summary-count-unread 
        (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
@@ -6016,17 +6023,20 @@ Reply to author if invoked with argument."
 		  (if wl-cache-prefetch-debug
 		      (message "Reading %d... done" msg))))))))))
 
-(defun wl-summary-set-parent ()
+(defun wl-summary-set-parent (&optional parent-number)
   "Set current message's parent interactively."
   (interactive)
   (let ((number (wl-summary-message-number))
-	(dst-parent (read-from-minibuffer "Parent Message (No.): "))
+	(dst-parent (if (interactive-p)
+			(read-from-minibuffer "Parent Message (No.): ")))
 	(overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
 	entity dst-parent-entity src-parent
 	buffer-read-only)
     (if (string= dst-parent "")
 	(setq dst-parent nil)
-      (setq dst-parent (string-to-int dst-parent)))
+      (if (interactive-p)
+	  (setq dst-parent (string-to-int dst-parent))
+	(setq dst-parent parent-number)))
     (setq entity (wl-thread-get-entity number))
     (when (and number entity)
       (let* (older-brothers younger-brothers parent-entity beg)
@@ -6064,6 +6074,24 @@ Reply to author if invoked with argument."
       (wl-thread-update-line-msgs
        (append (and src-parent (list src-parent))
 	       (list (or dst-parent number)))))))
+
+(defun wl-summary-save-current-message ()
+  "Save current message for `wl-summary-yank-saved-message'."
+  (interactive)
+  (let ((number (wl-summary-message-number)))
+    (setq wl-summary-buffer-saved-message number)
+    (and number (message "No: %s is saved." number))))
+
+(defun wl-summary-yank-saved-message ()
+  "Set current message as a parent of the saved message."
+  (interactive)
+  (if wl-summary-buffer-saved-message
+      (let ((number (wl-summary-message-number)))
+	(save-excursion
+	  (wl-thread-jump-to-msg wl-summary-buffer-saved-message)
+	  (wl-summary-set-parent number))
+	(setq  wl-summary-buffer-saved-message nil))
+    (message "There's no saved message.")))
 
 (provide 'wl-summary)
 
