@@ -1,5 +1,12 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.14.1 from 2.14.0
+  Version 2.14.1 is a bug fix version of 2.14.0.
+
+** Fixed message order of Maildir.
+
+** Icon for the access folder is displayed.
+
 * Changes in 2.14.0 from 2.12.2
 
 ** New folder type `access' is added.
