@@ -465,7 +465,8 @@
 	(modb-standard-set-flag-modified msgdb number)))
     (modb-standard-set-number-list-internal msgdb number-list)
     (modb-standard-set-entity-map-internal msgdb entity-map)
-    (modb-standard-set-flag-map-internal msgdb flag-map)))
+    (modb-standard-set-flag-map-internal msgdb flag-map)
+    t))
 
 (luna-define-method elmo-msgdb-sort-entities ((msgdb modb-standard)
 					      predicate &optional app-data)

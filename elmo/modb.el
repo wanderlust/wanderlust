@@ -125,7 +125,8 @@ Return CONDITION itself if no entity exists in msgdb.")
 Return non-nil if message-id of entity is duplicated.")
 
 (luna-define-generic elmo-msgdb-delete-messages (msgdb numbers)
-  "Delete messages which are contained NUMBERS from MSGDB.")
+  "Delete messages which are contained NUMBERS from MSGDB.
+Return non-nil if messages is deleted successfully.")
 
 (luna-define-generic elmo-msgdb-sort-entities (msgdb predicate
 						     &optional app-data)

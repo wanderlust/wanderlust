@@ -1,3 +1,7 @@
+2003-11-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (elmo-msgdb-delete-messages): Always return t.
+
 2003-11-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (elmo-msgdb-delete-messages): Dose not process
