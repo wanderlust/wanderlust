@@ -2695,14 +2695,16 @@ message then you have the reconstructed thread.
 @subsection Cache File
 
 The messages which have to access via network (e.x. IMAP, NNTP folder)
-are cached as a local file.  The cache file is saved under the directory
+are cached as a local file so as to save network traffic or to enable
+off-line operation.  The cache file is saved under the directory
 @file{~/.elmo/cache}.  To expire cache, type @kbd{M-x
 elmo-cache-expire-by-size}.  The command deletes cache files to the
 specified size by the order of last accessed time.
 
 @subsection Buffer Cache and Prefetching
 
-The messages that are read are kept in the cache buffer.  It is called
+The messages that are read are kept in the cache buffer so as to make
+the behavior fast when you are to read the message again.  It is called
 `buffer cache'. The number of cache buffer is specified by
 @code{wl-message-buffer-cache-size}.
 
