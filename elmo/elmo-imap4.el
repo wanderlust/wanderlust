@@ -716,43 +716,10 @@ Returns response value if selecting folder succeed. "
 		"search %s") flag))
      'search)))
 
-(static-cond
- ((fboundp 'float)
-  ;; Emacs can parse dot symbol.
-  (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
-  (defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
-  (defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
-  (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
-  (defvar elmo-imap4-header-fields "HEADER\.FIELDS")
-  (defmacro elmo-imap4-replace-dot-symbols ()) ;; noop
-  (defalias 'elmo-imap4-fetch-read 'read)
-  )
- (t
-  ;;; For Nemacs.
-  ;; Cannot parse dot symbol.
-  (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
-  (defvar elmo-imap4-header-fields "HEADER_FIELDS")
-  (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
-  (defvar elmo-imap4-rfc822-text "RFC822_TEXT")
-  (defvar elmo-imap4-rfc822-header "RFC822_HEADER")
-  (defvar elmo-imap4-header-fields "HEADER_FIELDS")
-  (defun elmo-imap4-fetch-read (buffer)
-    (with-current-buffer buffer
-      (let ((beg (point))
-	    token)
-	(when (re-search-forward "[[ ]" nil t)
-	  (goto-char (match-beginning 0))
-	  (setq token (buffer-substring beg (point)))
-	  (cond ((string= token "RFC822.SIZE")
-		 (intern elmo-imap4-rfc822-size))
-		((string= token "RFC822.HEADER")
-		 (intern elmo-imap4-rfc822-header))
-		((string= token "RFC822.TEXT")
-		 (intern elmo-imap4-rfc822-text))
-		((string= token "HEADER\.FIELDS")
-		 (intern elmo-imap4-header-fields))
-		(t (goto-char beg)
-		   (elmo-read (current-buffer))))))))))
+(defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
+(defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
+(defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
+(defvar elmo-imap4-header-fields "HEADER\.FIELDS")
 
 (defun elmo-imap4-make-number-set-list (msg-list &optional chop-length)
   "Make RFC2060's message set specifier from MSG-LIST.
@@ -852,7 +819,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
-      (elmo-read
+      (read
        (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
 
 (defun elmo-imap4-clear-login (session)
@@ -1316,11 +1283,11 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-response ()
   "Parse a IMAP command response."
   (let (token)
-    (case (setq token (elmo-read (current-buffer)))
+    (case (setq token (read (current-buffer)))
       (+ (progn
 	   (skip-chars-forward " ")
 	   (list 'continue-req (buffer-substring (point) (point-max)))))
-      (* (case (prog1 (setq token (elmo-read (current-buffer)))
+      (* (case (prog1 (setq token (read (current-buffer)))
 		 (elmo-imap4-forward))
 	   (OK         (elmo-imap4-parse-resp-text-code))
 	   (NO         (elmo-imap4-parse-resp-text-code))
@@ -1332,19 +1299,19 @@ Return nil if no complete line has arrived."
 	   (LSUB       (list 'lsub (elmo-imap4-parse-data-list)))
 	   (SEARCH     (list
 			'search
-			(elmo-read (concat "("
+			(read (concat "("
 				      (buffer-substring (point) (point-max))
 				      ")"))))
 	   (STATUS     (elmo-imap4-parse-status))
 	   ;; Added
 	   (NAMESPACE  (elmo-imap4-parse-namespace))
 	   (CAPABILITY (list 'capability
-			     (elmo-read
+			     (read
 			      (concat "(" (downcase (buffer-substring
 						     (point) (point-max)))
 				      ")"))))
 	   (ACL (elmo-imap4-parse-acl))
-	   (t       (case (prog1 (elmo-read (current-buffer))
+	   (t       (case (prog1 (read (current-buffer))
 			    (elmo-imap4-forward))
 		      (EXISTS  (list 'exists token))
 		      (RECENT  (list 'recent token))
@@ -1353,7 +1320,7 @@ Return nil if no complete line has arrived."
 		      (t       (list 'garbage (buffer-string)))))))
       (t (if (not (string-match elmo-imap4-seq-prefix (symbol-name token)))
 	     (list 'garbage (buffer-string))
-	   (case (prog1 (elmo-read (current-buffer))
+	   (case (prog1 (read (current-buffer))
 		   (elmo-imap4-forward))
 	     (OK  (progn
 		    (setq elmo-imap4-parsing nil)
@@ -1412,9 +1379,9 @@ Return nil if no complete line has arrived."
     (cond ((search-forward "PERMANENTFLAGS " nil t)
 	   (list 'permanentflags (elmo-imap4-parse-flag-list)))
 	  ((search-forward "UIDNEXT " nil t)
-	   (list 'uidnext (elmo-read (current-buffer))))
+	   (list 'uidnext (read (current-buffer))))
 	  ((search-forward "UNSEEN " nil t)
-	   (list 'unseen (elmo-read (current-buffer))))
+	   (list 'unseen (read (current-buffer))))
 	  ((looking-at "UIDVALIDITY \\([0-9]+\\)")
 	   (list 'uidvalidity (match-string 1)))
 	  ((search-forward "READ-ONLY" nil t)
@@ -1478,12 +1445,12 @@ Return nil if no complete line has arrived."
     (let (element list)
       (while (not (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
-	(let ((token (elmo-imap4-fetch-read (current-buffer))))
+	(let ((token (read (current-buffer))))
 	  (elmo-imap4-forward)
 	  (setq element
 		(cond ((eq token 'UID)
 		       (list 'uid (condition-case nil
-				      (elmo-read (current-buffer))
+				      (read (current-buffer))
 				    (error nil))))
 		      ((eq token 'FLAGS)
 		       (list 'flags (elmo-imap4-parse-flag-list)))
@@ -1498,7 +1465,7 @@ Return nil if no complete line has arrived."
 		      ((eq token (intern elmo-imap4-rfc822-text))
 		       (list 'rfc822text (elmo-imap4-parse-nstring)))
 		      ((eq token (intern elmo-imap4-rfc822-size))
-		       (list 'rfc822size (elmo-read (current-buffer))))
+		       (list 'rfc822size (read (current-buffer))))
 		      ((eq token 'BODY)
 		       (if (eq (char-before) ?\[)
 			   (list
@@ -1528,19 +1495,19 @@ Return nil if no complete line has arrived."
       (while (not (eq (char-after (point)) ?\)))
 	(setq status
 	      (cons
-	       (let ((token (elmo-read (current-buffer))))
+	       (let ((token (read (current-buffer))))
 		 (cond ((eq token 'MESSAGES)
-			(list 'messages (elmo-read (current-buffer))))
+			(list 'messages (read (current-buffer))))
 		       ((eq token 'RECENT)
-			(list 'recent (elmo-read (current-buffer))))
+			(list 'recent (read (current-buffer))))
 		       ((eq token 'UIDNEXT)
-			(list 'uidnext (elmo-read (current-buffer))))
+			(list 'uidnext (read (current-buffer))))
 		       ((eq token 'UIDVALIDITY)
 			(and (looking-at " \\([0-9]+\\)")
 			     (prog1 (list 'uidvalidity (match-string 1))
 			       (goto-char (match-end 1)))))
 		       ((eq token 'UNSEEN)
-			(list 'unseen (elmo-read (current-buffer))))
+			(list 'unseen (read (current-buffer))))
 		       (t
 			(message
 			 "Unknown status data %s in mailbox %s ignored"
@@ -1567,9 +1534,9 @@ Return nil if no complete line has arrived."
 	(nconc
 	 (copy-sequence elmo-imap4-extra-namespace-alist)
 	 (elmo-imap4-parse-namespace-subr
-	  (elmo-read (concat "(" (buffer-substring
-				  (point) (point-max))
-			     ")"))))))
+	  (read (concat "(" (buffer-substring
+			     (point) (point-max))
+			")"))))))
 
 (defun elmo-imap4-parse-namespace-subr (ns)
   (let (prefix delim namespace-alist default-delim)
