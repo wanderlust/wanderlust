@@ -119,7 +119,8 @@
 (defun wl-thread-save-top-list (dir)
   (let ((top-file (expand-file-name wl-thread-entity-list-file dir))
 	(entity wl-thread-entity-list)
-	(tmp-buffer (get-buffer-create " *wl-thread-save-top-list*")))
+	(tmp-buffer (get-buffer-create " *wl-thread-save-top-list*"))
+	print-length)
     (save-excursion
       (set-buffer tmp-buffer)
       (erase-buffer)

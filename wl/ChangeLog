@@ -1,3 +1,7 @@
+2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-thread.el (wl-thread-save-top-list): Bind print-length.
+
 2003-01-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-exec-subr): Unset wl-message-buffer if

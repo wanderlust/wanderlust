@@ -132,7 +132,8 @@ File content is encoded with MIME-CHARSET."
 Directory of the file is created if it doesn't exist.
 File content is encoded with MIME-CHARSET."
   (elmo-set-work-buf
-   (prin1 object (current-buffer))
+   (let (print-length print-level)
+     (prin1 object (current-buffer)))
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
@@ -417,7 +418,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
+	  print-length print-level)
       (set-buffer tmp-buffer)
       (erase-buffer)
       (prin1 elmo-passwd-alist tmp-buffer)
