@@ -234,13 +234,14 @@ VALUE is the field value (raw)."
   ;; Make a table of msgid flag (read, answered)
   (let ((flag-table (or flag-table
 			(elmo-make-hash (elmo-msgdb-length msgdb))))
-	entity)
+	msg-id)
     (dolist (number (elmo-msgdb-list-messages msgdb))
-      (setq entity (elmo-msgdb-message-entity msgdb number))
-      (elmo-flag-table-set
-       flag-table
-       (elmo-message-entity-field entity 'message-id)
-       (elmo-msgdb-flags msgdb number)))
+      (when (setq msg-id (elmo-message-entity-field
+			  (elmo-msgdb-message-entity msgdb number)
+			  'message-id))
+	(elmo-flag-table-set flag-table
+			     msg-id
+			     (elmo-msgdb-flags msgdb number))))
     flag-table))
 
 (defun elmo-multiple-fields-body-list (field-names &optional boundary)

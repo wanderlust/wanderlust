@@ -1,3 +1,11 @@
+2003-11-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-flag-table): Fixed problem when
+	message-id is nil.
+	(Reported by MAKINO Takashi <makino@digitalway.co.jp>)
+
+	* modb-entity.el (elmo-message-entity-handler): Likewise.
+
 2003-11-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (toplevel): Remove setting of autoloding for

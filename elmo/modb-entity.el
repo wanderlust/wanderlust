@@ -48,6 +48,7 @@
 (defun elmo-message-entity-handler (&optional entity)
   "Get modb entity handler instance which corresponds to the ENTITY."
   (if (and entity
+	   (car-safe entity)
 	   (not (stringp (car entity))))
       (car entity)
     (or modb-entity-default-cache-internal
