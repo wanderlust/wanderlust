@@ -1948,21 +1948,25 @@ prefix argument をつけると、スティッキーサマリに入ります。
 
 @item N
 @kindex N (Folder)
+@findex wl-folder-next-unread
 ひとつ下の未読があるフォルダ(もしくはグループ)に移動します。
 (@code{wl-folder-next-unread})
 
 @item p
 @kindex p (Folder)
+@findex wl-folder-prev-entity
 ひとつ上のフォルダへ移動します。
 (@code{wl-folder-prev-entity})
 
 @item n
 @kindex n (Folder)
+@findex wl-folder-next-entity
 ひとつ下のフォルダへ移動します。
 (@code{wl-folder-next-entity})
 
 @item J
 @kindex J (Folder)
+@findex wl-folder-jump-folder
 指定したフォルダへカーソルを移動します。
 (@code{wl-folder-jump-folder})
 
@@ -2022,29 +2026,39 @@ prefix argument をつけると、スティッキーサマリに入ります。
 全ての未読があるフォルダが含まれるグループを開きます。
 (@code{wl-folder-open-all-unread-folder})
 
+@item x
+@kindex x (Folder)
+@findex wl-execute-temp-marks
+サマリバッファのマークを実行します。@xref{Sticky Summary}.
+(@code{wl-execute-temp-marks})
+
 @item /
 @kindex / (Folder)
 @findex wl-folder-open-close
 カーソル行のグループの開閉をトグルします。
-(@code{wl-thread-open-close})
+(@code{wl-folder-open-close})
 
 @item [
 @kindex [ (Folder)
+@findex wl-folder-open-all
 全てのグループを開きます。
 (@code{wl-folder-open-all})
 
 @item ]
 @kindex ] (Folder)
+@findex wl-folder-close-all
 全てのグループを閉じます。
 (@code{wl-folder-close-all})
 
 @item q
 @kindex q (Folder)
+@findex wl-exit
 Wanderlust を終了します。
 (@code{wl-exit})
 
 @item z
 @kindex z (Folder)
+@findex wl-folder-suspend
 Wanderlust をサスペンドします。
 (@code{wl-folder-suspend})
 
@@ -2052,16 +2066,19 @@ Wanderlust をサスペンドします。
 @itemx C-x C-s
 @kindex M-s (Folder)
 @kindex C-x C-s (Folder)
+@findex wl-save
 現在のフォルダの状態をセーブします。
 (@code{wl-save})
 
 @item M-t
 @kindex M-t (Folder)
+@findex wl-toggle-plugged
 Wanderlust のオフラインモード/オンラインモードをトグルします。
 (@code{wl-toggle-plugged})
 
 @item C-t
 @kindex C-t (Folder)
+@findex wl-plugged-change
 Wanderlust のサーバ・ポート別のオフライン/オンラインを変更します。
 (@code{wl-plugged-change})
 @end table

@@ -1911,22 +1911,26 @@ current cursor point.
 
 @item N
 @kindex N (Folder)
+@findex wl-folder-next-unread
 Jump cursor to the folder which have unread messages on the downward
 from current cursor point.
 (@code{wl-folder-next-unread})
 
 @item p
 @kindex p (Folder)
+@findex wl-folder-prev-entity
 Move cursor to the folder on the previous line.
 (@code{wl-folder-prev-entity})
 
 @item n
 @kindex n (Folder)
+@findex wl-folder-next-entity
 Move cursor to the folder on the next line.
 (@code{wl-folder-next-entity})
 
 @item J
 @kindex J (Folder)
+@findex wl-folder-jump-folder
 Jump to the folder specified by the user input.
 (@code{wl-folder-jump-folder})
 
@@ -1981,44 +1985,57 @@ Search the folders with the condition specified.
 All unread folder is opened.
 (@code{wl-folder-open-all-unread-folder})
 
+@item x
+@kindex x (Folder)
+@findex wl-execute-temp-marks
+Execute marks in summary buffers. @xref{Sticky Summary}.
+(@code{wl-execute-temp-marks})
+
 @item /
 @kindex / (Folder)
 @findex wl-folder-open-close
 Folder group is opened/closed.
-(@code{wl-thread-open-close})
+(@code{wl-folder-open-close})
 
 @item [
 @kindex [ (Folder)
+@findex wl-folder-open-all
 All folder group is opened.
 (@code{wl-folder-open-all})
 
 @item ]
 @kindex ] (Folder)
+@findex wl-folder-close-all
 All folder group is closed.
 (@code{wl-folder-close-all})
 
 @item q
 @kindex q (Folder)
+@findex wl-exit
 Quit Wanderlust.
 (@code{wl-exit})
 
 @item z
 @kindex z (Folder)
+@findex wl-folder-suspend
 Suspend Wanderlust.
 (@code{wl-folder-suspend})
 
 @item M-s
 @kindex M-s (Folder)
+@findex wl-save
 Save current folder status.
 (@code{wl-save})
 
 @item M-t
 @kindex M-t (Folder)
+@findex wl-toggle-plugged
 Toggle Wanderlust's offline/online status.
 (@code{wl-toggle-plugged})
 
 @item C-t
 @kindex C-t (Folder)
+@findex wl-plugged-change
 Start Wanderlust's plug-status manager.
 (@code{wl-plugged-change})
 @end table
