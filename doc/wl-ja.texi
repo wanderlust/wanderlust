@@ -291,7 +291,7 @@ APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
 @end itemize
 
 APEL, FLIM, SEMI $B$+(B tm $B$N%P!<%8%g%s%"%C%W$r9T$C$?>l9g$O!"(BWanderlust $B$r%$(B
-$B%s%9%H!<%k$7D>$7$F$/$@$5$$!#(B
+$B%s%9%H!<%k$7$J$*$7$F$/$@$5$$!#(B
 
 
 @node Download, Install, MIME Modules, Start Me Up
@@ -390,7 +390,7 @@ Cannot open load file: mime-setup
 @noindent
 $B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#$3$N>l9g$O!"(Bcustom, APEL, FLIM, SEMI 
 $B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B @env{EMACSLOADPATH} $B$K2C$($k$+!"E83+%G%#%l%/%H(B
-$B%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B@code{load-path} $B$rDL$7$F$*$/$HNI$$(B
+$B%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B@code{load-path} $B$rDL$7$F$*$/$H$h$$(B
 $B$G$7$g$&!#(B
 
 $B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B @code{load-path} $B$rDL$7$F$*$/$HI,(B
@@ -557,7 +557,7 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 $B0J2<$N$h$&$J@_Dj$r(B @file{.emacs} $BEy$K$7$F$*$/$H!"(B@kbd{C-x m}
 (@code{compose-mail}) $BEy$K$h$C$F(B Wanderlust $B$N%I%i%U%H%b!<%I$,5/F0$5$l$k(B
 $B$h$&$K$J$j$^$9!#(BWanderlust $B$r(B Emacs $B>e$NI8=`%a!<%i$H$7$F;H$$$?$$>l9g$O@_(B
-$BDj$7$F$*$/$HNI$$$G$7$g$&!#$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,(B
+$BDj$7$F$*$/$H$h$$$G$7$g$&!#$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,(B
 $B2DG=$J(B Emacsen $B$N>l9g$N$_M-8z$G$9!#(B
 @xref{Mail Methods, , ,emacs-ja, The Emacs Editor}.
 
@@ -588,8 +588,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 
 $B%"%I%l%9%U%!%$%k(B @file{~/.addresses} $B$r:n@.$7!"<+J,MQ$KJT=8$7$^$9!#(B
 @file{~/.addresses} $B$K=q$+$l$?%G!<%?$O!"%I%i%U%H:n@.;~$N%"%I%l%9Jd40%G!<(B
-$B%?$H$7$FMxMQ$5$l$k$[$+!"%5%^%jI=<($G$NL>A0I=<(Ey$K$bMQ$$$i$l$^$9!#$J$*!"(B
-$B5/F0$7$?>uBV$G%5%^%j%P%C%U%!$+$i(B @file{~/.addresses} $B$K%"%I%l%9$rDI2C(B/
+$B%?$H$7$FMxMQ$5$l$k$[$+!"%5%^%jI=<($G$NL>A0I=<(Ey$K$bMQ$$$i$l$^$9!#$^$?!"(B
+$B5/F0$7$?$"$H$G%5%^%j$N%P%C%U%!$+$i(B @file{~/.addresses} $B$K%"%I%l%9$rDI2C(B/
 $BJQ99(B/$B:o=|$9$k$3$H$b2DG=$G$9!#(B
 
 $B=q$-J}$O$H$F$bC1=c$G$9!#$3$s$J46$8$G$9!#(B
@@ -614,7 +614,7 @@ bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
 $B<B:]$K$O(B($B%G%U%)%k%H@_Dj$G$O(B)$B%5%^%jI=<($G(B@var{$B$"$@L>(B}$B!"%I%i%U%H:n@.;~$N%"(B
 $B%I%l%9>pJs$H$7$F(B@var{$BK\L>(B}$B$,;H$o$l$^$9!#;n$7$F$_$F!"3NG'$7$F$+$i$NJ}$,(B
 $B$o$+$j$d$9$$$H;W$o$l$^$9!#$A$g$C$H=q$$$F;n$7$F$_$F$+$i!"$^$?%"%I%l%9D"$N(B
-$BDj5A$r$d$jD>$9$N$,NI$$$G$7$g$&!#(B
+$BDj5A$r$d$jD>$9$N$,$h$$$G$7$g$&!#(B
 
 $B$^$?!"JQ?t(B @code{wl-alias-file} $B$K(B MH $B$N(B alias file $B$,;XDj$5$l$F$$$l$P!"(B
 $B%I%i%U%H:n@.;~$N%"%I%l%9>pJs$H$7$F;H$o$l$^$9!#(B
@@ -637,7 +637,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 $B9XFI$9$k%U%)%k%@$r%U%!%$%k(B @file{~/.folders} $B$KDj5A$7$^$9!#(B
 @file{~/.folders} $B$K=q$+$l$?FbMF$,$=$N$^$^$"$J$?$N9XFI$9$k%U%)%k%@$H$J$j$^$9!#(B
 
-$B5/F0$7$?>uBV$G%U%)%k%@0lMw$N%P%C%U%!$+$i9XFI%U%)%k%@$rDI2C(B/$BJT=8$9$k$3$H(B
+$B5/F0$7$?$"$H$G%U%)%k%@0lMw$N%P%C%U%!$+$i9XFI%U%)%k%@$rDI2C(B/$BJT=8$9$k$3$H(B
 $B$b2DG=$G$9$N$G!"$3$N9`$OFI$_Ht$P$7$F$b9=$$$^$;$s!#(B
 @xref{Folder Manager}.
 
@@ -725,8 +725,8 @@ Wanderlust $B$O(B ELMO $B$N%$%s%?%U%'!<%9$rMxMQ$7$F$$$k$?$a!"(BELMO $B%b%8%
 $B$h$C$F%5%]!<%H$5$l$F$$$l$P!"$I$s$J%U%)%k%@$G$bMxMQ$9$k$3$H$,$G$-$^$9!#(B
 
 $B%P!<%8%g%s(B @value{VERSION} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(BIMAP, NNTP,
-LocalDir(MH), Maildir, News Spool, Archive, POP, Multi, Filter, Pipe,
-Internal $B$N(B 11 $B<oN`$G$9!#(B
+LocalDir(MH), Maildir, News Spool, POP, Archive, Multi, Filter, Pipe,
+Internal $B$N(B 10 $B<oN`$G$9!#(B
 
 @menu
 * IMAP Folder::              @samp{%} -- IMAP $B%U%)%k%@(B
@@ -1167,7 +1167,7 @@ GNU tar $B$O=q8K$+$i$N:o=|$KLdBj$,$"$k$b$N$,B?$$$N$G!"FC$KCm0U$7$F$/$@$5$$!#(B
 @cindex Archive Tips
 
 $B2wE,$K0\9T$9$k$K$O!"(B@code{wl-summary-archive} $B$r<B9T$9$k(B 
-(@pxref{Archive}) $B$+!"(BExpire $B5!G=(B (@pxref{Expire}) $B$HAH$_9g$o$;$k$HNI$$(B
+(@pxref{Archive}) $B$+!"(BExpire $B5!G=(B (@pxref{Expire}) $B$HAH$_9g$o$;$k$H$$$$(B
 $B$G$7$g$&!#$?$@$7!"(BExpire $B5!G=$G:n@.$7$?%"!<%+%$%V%U%)%k%@$r07$&>l9g$O!"(B
 $BJQ?t(B @code{elmo-archive-treat-file} $B$r(B non-nil $B$K@_Dj$9$kI,MW$,$"$j$^$9!#(B
 $B$J$*!"(BOS/2 $B>e$G$N%F%9%H$G$O!"(BMule2.3(19.28) $B$H(B Emacs20.2 $B$G$O=hM}B.EY$K(B
@@ -1224,7 +1224,7 @@ GNU tar $B$O=q8K$+$i$N:o=|$KLdBj$,$"$k$b$N$,B?$$$N$G!"FC$KCm0U$7$F$/$@$5$$!#(B
 @end example
 
 @noindent
-$B$G$9!#3g8LFb$N$b$N$O!"L5$/$F$b9=$$$^$;$s(B($B$"$l$PM%@hE*$K;H$$$^$9(B)$B!#(B
+$B$G$9!#3g8LFb$N$b$N$O!"$J$/$F$b9=$$$^$;$s(B($B$"$l$PM%@hE*$K;H$$$^$9(B)$B!#(B
 
 @item elmo-archive-suffix-alist
 @vindex elmo-archive-suffix-alist
@@ -1541,7 +1541,7 @@ lastyear  ->  $B5nG/$N:#F|(B
 @end example
 
 $B%a%C%;!<%8$,0\F0$7$?8e!"%U%C%/(B @code{elmo-pipe-drained-hook} $B$,8F$P$l(B
-$B$^$9$N$G!"%@%&%s%m!<%I8e$K<B9T$7$?$$4X?t$rEPO?$7$F$*$/$HNI$$$G$7$g$&!#(B
+$B$^$9$N$G!"%@%&%s%m!<%I8e$K<B9T$7$?$$4X?t$rEPO?$7$F$*$/$H$h$$$G$7$g$&!#(B
 
 @node Internal Folder,  , Pipe Folder, Folders
 @section $BFbIt%U%)%k%@(B
@@ -2006,7 +2006,7 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 $B$O!"$^$:$3$N%0%k!<%W$r3+$$$?>uBV$K$7$^$9!#$=$7$F<!$N9T$GDI2C$dA^F~$N%3(B
 $B%^%s%I$r<B9T$9$k$H%0%k!<%W$KDI2C$5$l$^$9!#JD$8$?>uBV$G$O$=$N%0%k!<%W$H(B
 $BF1$8%l%Y%k$KA^F~$5$l$^$9!#8@MU$G@bL@$9$k$N$OFq$7$$$N$G<B:]$K<B9T$7$F$_(B
-$B$k$HNI$$$G$7$g$&!#$D$^$j!"%+!<%=%k0LCV$h$j>e$K$"$k%0%k!<%W$N3+JD>uBV$K(B
+$B$k$H$$$$$G$7$g$&!#$D$^$j!"%+!<%=%k0LCV$h$j>e$K$"$k%0%k!<%W$N3+JD>uBV$K(B
 $B$h$jA^F~$5$l$k0LCV$,0[$J$k$N$G$9!#(B
 
 @subsubsection $B%;!<%V;~$N8@8l%3!<%I(B
@@ -2023,11 +2023,11 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 $B%U%#%k%?%U%)%k%@:n@.;~$K$O0lEY$KJ#?t$N(B($BB?CJ$N(B)$B%U%#%k%?$,;XDj$G$-$^$9!#(B
 ``''(@var{NULL})$B$rF~NO$9$l$P!"@hF,$N%U%#%k%?$OA4$F:o=|$5$l$^$9!#(B
 
-@subsubsection $B%U%)%k%@$NJB$SBX$((B
+@subsubsection $B%U%)%k%@$NJB$SJQ$((B
 
-$B%0%k!<%WFb$N%U%)%k%@$rJB$SBX$($9$k:]!"(B@code{wl-fldmgr-sort-func} $B$K;XDj(B
+$B%0%k!<%WFb$N%U%)%k%@$rJB$SJQ$($9$k:]!"(B@code{wl-fldmgr-sort-func} $B$K;XDj(B
 $B$5$l$?4X?t$rMQ$$$^$9!#=i4|@_Dj$G$O(B @code{wl-fldmgr-sort-standard} $B$,;XDj(B
-$B$5$l$F$*$j!"$3$l$O%"%k%U%!%Y%C%H=g$KJB$SBX$(%0%k!<%W$O:G=i$K$9$k4X?t$G$9!#(B
+$B$5$l$F$*$j!"$3$l$O%"%k%U%!%Y%C%H=g$KJB$S$+$(%0%k!<%W$O:G=i$K$9$k4X?t$G$9!#(B
 $BJB$SBX$($O;XDj$7$?%0%k!<%W$N$_9T$$!"2<0L$N%0%k!<%W$^$GJB$SBX$($O$7$^$;$s!#(B
 $B$D$^$j!":F5"E*$K$O9T$$$^$;$s!#(B
 
@@ -2083,7 +2083,7 @@ unsubscribe $B$9$k$+$I$&$+$r@_Dj$7$F$$$k$@$1$G$9$N$G!"EvA3$=$N%"%/%;%9%0%k!<(B
 @cindex Keybind, Folder Buffer
 
 $B%U%)%k%@$NJT=8$K4X$9$k<g$J%3%^%s%I$N%-!<%P%$%s%I$O0J2<$NDL$j$G$9!#0l1~(B 
-@kbd{m} $B$G;O$^$k%-!<$KA4$F3d$jEv$F$F!"<g$J5!G=$N$_(B1$B%9%H%m!<%/$G;HMQ$G$-$k$h(B
+@kbd{m} $B$G;O$^$k%-!<$KA4$F3d$jEv$F$F!"<g$J$b$N$N$_(B1$B%9%H%m!<%/$G;HMQ$G$-$k$h(B
 $B$&$K$7$F$$$^$9!#(B
 
 @table @kbd
@@ -2111,7 +2111,7 @@ unsubscribe $B$9$k$+$I$&$+$r@_Dj$7$F$$$k$@$1$G$9$N$G!"EvA3$=$N%"%/%;%9%0%k!<(B
 @kindex m d (Folder)
 @findex wl-fldmgr-delete
 $B%U%)%k%@$N<BBN$H$=$N(B msgdb $B$r:o=|$7$^$9!#(B
-nntp $B$J$I$N:o=|$G$-$J$$%U%)%k%@$G$O(B msgdb $B$N$_:o=|$7$^$9!#(B
+nntp$B$J$I$N:o=|$G$-$J$$%U%)%k%@$G$O(B msgdb $B$N$_:o=|$7$^$9!#(B
 (@code{wl-fldmgr-delete})
 
 @item R
@@ -2136,7 +2136,7 @@ nntp $B$J$I$N:o=|$G$-$J$$%U%)%k%@$G$O(B msgdb $B$N$_:o=|$7$^$9!#(B
 @kindex | (Folder)
 @kindex m f (Folder)
 @findex wl-fldmgr-make-filter
-$B%U%#%k%?%U%)%k%@$r:n@.$7$^$9(B ($BA*Br$7$?%U%)%k%@$K(B filter $B$rIU$1$^$9(B)$B!#(B
+$B%U%#%k%?%U%)%k%@$r:n@.$7$^$9(B ($BA*Br$7$?%U%)%k%@$K(Bfilter$B$rIU$1$^$9(B)$B!#(B
 (@code{wl-fldmgr-make-filter})
 
 @item M-c
@@ -2372,7 +2372,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 @code{wl-summary-weekday-name-lang} $B$r(B @samp{en} $B$K@_Dj$7$F$/$@$5$$!#(B
 
 @var{$B:9=P?M(B}$B$O!"%9%l%C%I$N?<$5J,%$%s%G%s%H$5$l$FI=<($5$l$^$9!#(B@var{$B:9=P(B
-$B?M(B}$B$O!"%"%I%l%9D"$K$"$@L>$,$"$l$P$"$@L>$GI=<($7$^$9!#$"$@L>I=5-$r;_$a$?(B
+$B?M(B}$B$O!"%"%I%l%9D"$K$"$@L>$,$"$l$P$"$@L>$GI=<($7$^$9!#$"$@L>I=5-$r$d$a$?(B
 $B$$>l9g$O!"(B@code{wl-use-petname} $B$r(B @code{nil} $B$K@_Dj$7$F$/$@$5$$!#(B
 
 @var{$B:9=P?M(B}$B$NItJ,$K$"$k(B @samp{+2} $B$N$h$&$J?t;z$NI=<($O!"$=$N%a%C%;!<%8(B
@@ -2382,7 +2382,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 @var{$B%5%V%8%'%/%H(B}$B$O!"%a%C%;!<%8$N(B @samp{Subject:} $B%U%#!<%k%I$G$9!#F1$8(B
 $B%9%l%C%I$G!"$+$D?F$HF1$8(B @samp{Subject:} $B$r;}$D%a%C%;!<%8$J$iI=<($5$l$^(B
 $B$;$s!#%a!<%j%s%0%j%9%H$J$I$NDL$7HV9fI=<($OL5;k$5$l$^$9!#(B @samp{Subject:} 
-$B$,L5$$>l9g!"JQ?t(B @code{wl-summary-no-subject-message} $B$NFbMF$,I=<($5$l$^(B
+$B$,$J$$>l9g!"JQ?t(B @code{wl-summary-no-subject-message} $B$NFbMF$,I=<($5$l$^(B
 $B$9!#(B
 
 @subsection $B0l;~E*%^!<%/(B
@@ -2428,7 +2428,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 $BL$FI%a%C%;!<%8$KIU$-$^$9!#(B@samp{U} $B$H$N0c$$$O!"(B@samp{!} $B$N%a%C%;!<%8$O(B
 $B%-%c%C%7%e$5$l$F$$$k$3$H$G$9!#(B
 @item u
-$B4{FI%a%C%;!<%8$KIU$-$^$9!#%^!<%/L5$7$H$N0c$$$O!"(B@samp{u} $B$N%a%C%;!<%8$O(B
+$B4{FI%a%C%;!<%8$KIU$-$^$9!#%^!<%/$J$7$H$N0c$$$O!"(B@samp{u} $B$N%a%C%;!<%8$O(B
 $B%-%c%C%7%e$5$l$F$$$J$$$3$H$G$9!#(B
 @item $
 @kbd{$} $B%-!<$r2!$9$H!"(B@samp{$} $B%^!<%/$,IU$-$^$9!#$3$N%^!<%/$O(B Emacs $B$r=*N;(B
@@ -2520,7 +2520,7 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @code{elmo-buffer-cache-size} $B$G;XDj$7$^$9!#(B
 
 $B$^$?!"%a%C%;!<%8$rFI$s$G$$$k4V$K<!$N%a%C%;!<%8$r<hF@$7$F$*$/@hFI$_5!G=$,(B
-$B$"$j$^$9!#$3$l$O@hFI$_$7$?%a%C%;!<%8$r%P%C%U%!%-%c%C%7%e$KN/$a$F$*$/$?$a!"(B
+$B$"$j$^$9!#$3$l$O@hFI$_$7$?%a%C%;!<%8$r%P%C%U%!%-%c%C%7%e$K$?$a$F$*$/$?$a!"(B
 @code{elmo-use-buffer-cache} $B$,(B non-nil $B$G$"$k$3$H$,I,MW$G$9!#(B
 
 $B$3$N@hFI$_$9$k%U%)%k%@$O<!$N(B2$B$D$NJQ?t$K$h$j;XDj$G$-$^$9!#(B
@@ -2581,7 +2581,7 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @end lisp
 
 @noindent
-$B$H$7$F3HD%9`L\$,(B msgdb $B$K4^$^$l$k$h$&$K$7$F$/$@$5$$!#4{$K<hF@$7$?%a%C(B
+$B$H$7$F3HD%9`L\$,(B msgdb $B$K4^$^$l$k$h$&$K$7$F$/$@$5$$!#$9$G$K<hF@$7$?%a%C(B
 $B%;!<%8$N3HD%9`L\$r<h$j9~$`$K$O(B @kbd{s all} $B$J$I$G(B msgdb $B$r:F:n@.$9$kI,MW(B
 $B$,$"$j$^$9!#(B
 
@@ -2806,7 +2806,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @item $
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
-@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+@samp{$} $B%^!<%/$r$D$1$^$9!#$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
 (@code{wl-summary-mark-as-important})
 
 @item y
@@ -2939,7 +2939,7 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 
 @item J
 @kindex J (Summary)
-$BB>$N%a%C%;!<%8$K%8%c%s%W$7$^$9!#(B
+$B$[$+$N%a%C%;!<%8$K%8%c%s%W$7$^$9!#(B
 @findex wl-summary-jump-to-msg
 (@code{wl-summary-jump-to-msg})
 
@@ -3573,7 +3573,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @end lisp
 
 @noindent
-$B$3$N%j%9%H$K$"$k0l;~%^!<%/$O!">C$5$J$$8B$j>e=q$-$5$l$^$;$s!#(B
+$B$3$N%j%9%H$K$"$k0l;~%^!<%/$O!">C$5$J$$$+$.$j>e=q$-$5$l$^$;$s!#(B
 
 @item wl-summary-skip-mark-list
 @vindex wl-summary-skip-mark-list
@@ -4265,7 +4265,7 @@ nil $B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
 @vindex wl-auto-flush-queue
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 $B%*%s%i%$%s$K$J$C$?$H$-$K<+F0E*$K%-%e!<$rAw?.$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B
-Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B0l1~(B @code{y-or-n-p} $B$G3NG'$7$^$9(B)$B!#(B
+Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B$$$A$*$&(B @code{y-or-n-p} $B$G3NG'$7$^$9(B)$B!#(B
 $B<jF0$G%-%e!<$rAw?.$9$k$K$O!"%U%)%k%@%b!<%I$G(B @kbd{F} $B$r2!$7$F$/$@$5$$!#(B
 
 @item wl-ignored-forwarded-headers
@@ -4353,19 +4353,19 @@ POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%5!<%PL>$G$9!#(B
 @item wl-pop-before-smtp-authenticate-type
 @vindex wl-pop-before-smtp-authenticate-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
+POP-before-SMTP $B$G(B POP$B$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
 @code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-authenticate}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-port
 @vindex wl-pop-before-smtp-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%]!<%HHV9f$G$9!#(B
+POP-before-SMTP $B$G(B POP$B$r9T$J$&$H$-$N%]!<%HHV9f$G$9!#(B
 @code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-port}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-stream-type
 @vindex wl-pop-before-smtp-stream-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-POP-before-SMTP $B$G(B SSL $B$rMxMQ$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B@code{nil} $B$N(B
+POP-before-SMTP $B$G(B SSL$B$rMxMQ$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B@code{nil} $B$N(B
 $B$^$^$J$i(B @code{elmo-default-pop3-stream-type}$B$rMxMQ$7$^$9!#(B
 @code{starttls}$B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$,D%$i$l$^$9!#(B
 
@@ -4501,7 +4501,7 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#%*%U%i%$%s(B
 @subsection $B%j%U%!%$%k(B/$B%3%T!<(B(IMAP4)
 
 $B%*%U%i%$%s>uBV$N$"$$$@$K<B9T$5$l$?(B IMAP $B%U%)%k%@$KBP$9$k%j%U%!%$%k(B/$B%3%T!<(B
-$BA`:n$O%-%e!<$KN/$a$i$l!"%*%s%i%$%s$K$J$C$?$H$-$K%5!<%PB&$KH?1G$5$l$^$9!#(B
+$BA`:n$O%-%e!<$K$?$a$i$l!"%*%s%i%$%s$K$J$C$?$H$-$K%5!<%PB&$KH?1G$5$l$^$9!#(B
 $B%*%U%i%$%s!&%j%U%!%$%k(B/$B%3%T!<$N8e!"%j%U%!%$%k(B/$B%3%T!<@h$N%U%)%k%@$rK,$l(B
 $B$k$H!"%*%U%i%$%s$G$b%a%C%;!<%8$,DI2C$5$l$F$$$k$h$&$K8+$($^$9!#(B
 
@@ -4537,7 +4537,7 @@ IMAP $B$b$7$/$O(B NNTP $B%U%)%k%@$K$"$k%a%C%;!<%8$KBP$7$F!"%W%j%U%'%C%A$NM=Ls
 $B%W%j%U%'%C%A$5$l$^$9!#(B
 
 $BJQ?t(B @code{elmo-enable-disconnected-operation} $B$,(B @code{nil} $B$J$i!"$3$l(B
-$B$i$N(B IMAP4 $B$H(B NNTP $B$K4X$9$k%*%U%i%$%s=hM}$O<B9T$5$l$:!"%*%U%i%$%sCf$N%j%U%!(B
+$B$i$N(B IMAP4 $B$H(B NNTP$B$K4X$9$k%*%U%i%$%s=hM}$O<B9T$5$l$:!"%*%U%i%$%sCf$N%j%U%!(B
 $B%$%k(B/$B%3%T!<Ey$NA`:n$OC1$K%(%i!<$K$J$j$^$9!#(B
 
 $B%*%U%i%$%s=hM}$G%-%c%C%7%e%U%!%$%k$r;H$&$N$G!"%-%c%C%7%e%U%!%$%k$r<j$G>C(B
@@ -4800,7 +4800,7 @@ expire $B$r<B9T$7$F$b2?$b$7$^$;$s!#$^$?!"(B2,3 $BHVL\$NMWAG$N$$$:$l$+$,(B
 $B$K(B expire $B$r<B9T$9$k$3$H$K$J$j$^$9!#$3$l$O<+F0<B9T$G(B expire $B$r9T$&$h$&$K(B
 $B$7$?>l9g!"IQHK$K%a!<%k$,Mh$k%U%)%k%@$G$OKh2s(B expire $B$r<B9T$9$k$?$a!"%a!<(B
 $B%k$rFI$`$^$G$K;~4V$,$+$+$j!"HQ$o$7$/$J$C$F$7$^$$$^$9!#$=$3$G(B @var{n2} $B$r(B 
-@var{n1} $B$h$j$bBg$-$a$NCM$K@_Dj$9$k$3$H$K$h$j!"0lDj?tN/$^$k$^$G$O(B expire 
+@var{n1} $B$h$j$bBg$-$a$NCM$K@_Dj$9$k$3$H$K$h$j!"0lDj?tN/$^$k$^$G$O(Bexpire 
 $B$r<B9T$7$J$$$h$&$K$9$k$3$H$,$G$-$^$9!#(B
 
 $B$^$?!"(B@code{wl-summary-expire-reserve-marks}$B$G;XDj$7$?%a%C%;!<%8(B($B=EMW%^!<(B
@@ -4925,7 +4925,7 @@ non-nil $B$r;XDj$9$k$H!"%U%)%k%@$N%a%C%;!<%8HV9f$r$=$N$^$^J]B8$9$k$3$H$,$G(B
 $B$3$NJQ?t$K$O%G%U%)%k%H$G!"=EMW%^!<%/!"?75,%^!<%/!"L$FI%^!<%/$,@_Dj$5$l$F(B
 $B$$$^$9$N$G!"$3$l$i$N%^!<%/$N$D$$$?%a%C%;!<%8$O:o=|$5$l$J$$$3$H$K$J$j$^$9!#(B
 $B$?$@$7!"$3$NJQ?t$K$O0l;~E*%^!<%/$O;XDj$G$-$J$$$?$a(B($B$9$J$o$A:o=|$5$l$k$?(B
-$B$a(B)$B!"(Bexpire $B$r<B9T$9$kA0$K0l;~E*%^!<%/$O=hM}$7$F$*$$$F$/$@$5$$!#(B
+$B$a(B)$B!"(Bexpire$B$r<B9T$9$kA0$K0l;~E*%^!<%/$O=hM}$7$F$*$$$F$/$@$5$$!#(B
 
 @subsection $B<+F0<B9T(B
 
@@ -5086,7 +5086,7 @@ Non-nil $B$K$9$k$H!"(B
 @code{wl-expire-archive-date}
 $B$G;HMQ$5$l$k%"!<%+%$%V$N%U%)%k%@$N(B @code{format} $B7A<0$NJ8;zNs$r;XDj$7$^$9!#(B
 $B$J$*!"(B2$BEY(B @code{format} $B$G;XDj$9$k$?$a!"(B
-$BI,$:HV9f$NItJ,$O(B @samp{%%d} $B$K$7$J$/$F$O$J$j$^$;$s!#(B
+$B$+$J$i$:HV9f$NItJ,$O(B @samp{%%d} $B$K$7$J$/$F$O$J$j$^$;$s!#(B
 $B$^$?!"%a%C%;!<%8$NG/$H7n$,M?$($i$l$k$?$a!"(B@samp{%%d} $B$O(B2$B$DI,MW$G$9!#(B
 
 $B$b$7!"JQ99$9$k>l9g$O(B @code{wl-expire-archive-date-folder-num-regexp}
@@ -5833,7 +5833,7 @@ OK $B$G$9!#(B
 @pindex sc
 @pindex supercite
 
-$BIaDL$N%a!<%i$HF1$8@_Dj$G(B OK $B$G$9!#0J2<$O!"@_Dj$N0lNc$G$9!#(B
+$B$U$D$&$N%a!<%i$HF1$8@_Dj$G(B OK $B$G$9!#0J2<$O!"@_Dj$N0lNc$G$9!#(B
 
 @lisp
 @group
@@ -5852,7 +5852,7 @@ OK $B$G$9!#(B
 @subsection mu-cite.el
 @pindex mu-cite
 
-$BIaDL$N%a!<%i$HF1$8@_Dj$G(B OK $B$G$9!#0J2<$O@_Dj$N0lNc$G$9!#(B
+$B$U$D$&$N%a!<%i$HF1$8@_Dj$G(B OK $B$G$9!#0J2<$O@_Dj$N0lNc$G$9!#(B
 
 mu-cite 8.0$B0JA0$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 $B0J2<$N$h$&$K@_Dj$7$F$/$@$5$$!#(B

@@ -908,7 +908,7 @@ return value is diffs '(-new -unread -all)."
 				  (wl-folder-get-elmo-folder new-folder))))
 	      (error "Already exists folder: %s" new-folder))
 	  (elmo-folder-rename (wl-folder-get-elmo-folder old-folder)
-			      new-folder)
+			      (wl-folder-get-elmo-folder new-folder))
 	  (wl-folder-set-entity-info
 	   new-folder
 	   (wl-folder-get-entity-info old-folder))
