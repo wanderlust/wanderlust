@@ -3,6 +3,7 @@
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;	Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
@@ -29,11 +30,15 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-msgdb)
+
+(defvar elmo-filter-number-filename "number-list"
+  "File name for message number database.")
 
 ;;; ELMO filter folder
 (eval-and-compile
   (luna-define-class elmo-filter-folder (elmo-folder)
-		     (condition target require-msgdb))
+		     (condition target require-msgdb number-list flag-count))
   (luna-define-internal-accessors 'elmo-filter-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-filter-folder)
@@ -54,34 +59,74 @@
       (elmo-filter-folder-condition-internal folder)))
     folder))
 
+(defun elmo-filter-number-list-load (dir)
+  (elmo-object-load
+   (expand-file-name elmo-filter-number-filename dir)))
+
+(defun elmo-filter-number-list-save (dir number-list)
+  (elmo-object-save
+   (expand-file-name elmo-filter-number-filename dir)
+   number-list))
+
+(defun elmo-filter-folder-number-list (folder)
+  (or (elmo-filter-folder-number-list-internal folder)
+      (elmo-filter-folder-set-number-list-internal
+       folder
+       (elmo-filter-number-list-load (elmo-folder-msgdb-path folder)))))
+
+(defsubst elmo-filter-folder-countup-message-flags (folder numbers
+							   &optional delta)
+  (let ((flag-count (elmo-filter-folder-flag-count-internal folder))
+	(delta (or delta 1))
+	elem)
+    (dolist (number numbers)
+      (dolist (flag (elmo-message-flags folder number))
+	(if (setq elem (assq flag flag-count))
+	    (setcdr elem (+ (cdr elem) delta))
+	  (setq flag-count (cons (cons flag delta) flag-count)))))
+    (elmo-filter-folder-set-flag-count-internal folder flag-count)))
+
+(defun elmo-filter-folder-flag-count (folder)
+  (or (elmo-filter-folder-flag-count-internal folder)
+      (elmo-filter-folder-countup-message-flags
+       folder
+       (elmo-folder-list-messages folder t t))))
+
+(luna-define-method elmo-folder-open :after ((folder elmo-filter-folder)
+					     &optional load-msgdb)
+  (when load-msgdb
+    (elmo-filter-folder-number-list folder)
+    (elmo-filter-folder-flag-count folder)
+    (elmo-folder-msgdb (elmo-filter-folder-target-internal folder))))
+
 (luna-define-method elmo-folder-open-internal ((folder elmo-filter-folder))
   (elmo-folder-open-internal (elmo-filter-folder-target-internal folder)))
 
-(luna-define-method elmo-folder-msgdb :around ((folder elmo-filter-folder))
-  ;; Load target's msgdb if required.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-msgdb (elmo-filter-folder-target-internal folder)))
-  ;; Load msgdb of itself.
-  (luna-call-next-method))
-
 (luna-define-method elmo-folder-check ((folder elmo-filter-folder))
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-synchronize (elmo-filter-folder-target-internal folder))))
+  (when (elmo-filter-folder-require-msgdb-internal folder)
+    (elmo-folder-synchronize (elmo-filter-folder-target-internal folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-filter-folder))
   (elmo-folder-close-internal (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-close :after ((folder elmo-filter-folder))
-  ;; Clear target msgdb if it is used.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-set-msgdb-internal (elmo-filter-folder-target-internal
-				       folder) nil)))
+  (elmo-filter-folder-set-number-list-internal folder nil)
+  (elmo-filter-folder-set-flag-count-internal folder nil)
+  (elmo-folder-set-msgdb-internal
+   (elmo-filter-folder-target-internal folder) nil))
 
-(luna-define-method elmo-folder-commit :around ((folder elmo-filter-folder))
-  ;; Save target msgdb if it is used.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-commit (elmo-filter-folder-target-internal folder)))
-  (luna-call-next-method))
+(luna-define-method elmo-folder-commit ((folder elmo-filter-folder))
+  (elmo-folder-commit (elmo-filter-folder-target-internal folder))
+  (when (elmo-folder-persistent-p folder)
+    (elmo-folder-set-info-max-by-numdb
+     folder
+     (elmo-folder-list-messages folder nil 'in-msgdb))
+    (elmo-msgdb-killed-list-save
+     (elmo-folder-msgdb-path folder)
+     (elmo-folder-killed-list-internal folder))
+    (elmo-filter-number-list-save
+     (elmo-folder-msgdb-path folder)
+     (elmo-filter-folder-number-list-internal folder))))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-filter-folder))
@@ -114,32 +159,6 @@
    (elmo-filter-folder-target-internal folder)
    type))
 
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-filter-folder)
-					      numlist flag-table)
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (let* ((target-folder (elmo-filter-folder-target-internal folder))
-	     (len (length numlist))
-	     (new-msgdb (elmo-make-msgdb))
-	     message-id entity)
-	(elmo-folder-check target-folder)
-	(when (> len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-msgdb-create
-			     len "Creating msgdb..."))
-	(unwind-protect
-	    (dolist (number numlist)
-	      (setq entity (elmo-message-entity target-folder number))
-	      (when entity
-		(elmo-msgdb-append-entity
-		 new-msgdb entity
-		 (elmo-message-flags target-folder number)))
-	      (elmo-progress-notify 'elmo-folder-msgdb-create))
-	  (elmo-progress-clear 'elmo-folder-msgdb-create))
-	new-msgdb)
-    ;; Does not require msgdb.
-    (elmo-folder-msgdb-create
-     (elmo-filter-folder-target-internal folder)
-     numlist flag-table)))
-
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
 					       &optional flag number)
   (elmo-folder-append-buffer
@@ -165,6 +184,23 @@
   (elmo-folder-delete-messages
    (elmo-filter-folder-target-internal folder) numbers))
 
+(luna-define-method elmo-folder-list-messages ((folder elmo-filter-folder)
+					       &optional visible-only in-msgdb)
+  (let ((list (if in-msgdb
+		  t
+		(elmo-folder-list-messages-internal folder visible-only)))
+	(killed-list (elmo-folder-killed-list-internal folder)))
+    (unless (listp list)
+      ;; Use current list.
+      (setq list (elmo-filter-folder-number-list folder)))
+    (if visible-only
+	(elmo-living-messages list killed-list)
+      (if (and in-msgdb killed-list list)
+	  (elmo-uniq-sorted-list
+	   (sort (nconc (elmo-number-set-to-number-list killed-list) list) #'<)
+	   #'eq)
+	list))))
+
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-filter-folder) &optional nohide)
   (let ((target (elmo-filter-folder-target-internal folder)))
@@ -176,6 +212,14 @@
 	 (elmo-filter-folder-condition-internal folder))
       ;; not available
       t)))
+
+(luna-define-method elmo-folder-list-flagged ((folder elmo-filter-folder)
+					      flag
+					      &optional in-msgdb)
+  (elmo-list-filter
+   (elmo-folder-list-messages folder nil t)
+   (elmo-folder-list-flagged
+    (elmo-filter-folder-target-internal folder) flag in-msgdb)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-filter-folder)
 						 &optional one-level)
@@ -263,23 +307,99 @@
   (elmo-message-file-name (elmo-filter-folder-target-internal folder)
 			  number))
 
-(luna-define-method elmo-folder-set-flag :before ((folder elmo-filter-folder)
-						  numbers
-						  flag
-						  &optional is-local)
-  (elmo-folder-set-flag (elmo-filter-folder-target-internal folder)
-			numbers flag is-local))
+(luna-define-method elmo-message-flags ((folder elmo-filter-folder) number
+					&optional msgid)
+  (elmo-message-flags (elmo-filter-folder-target-internal folder)
+		      number msgid))
 
-(luna-define-method elmo-folder-unset-flag :before ((folder elmo-filter-folder)
-						    numbers
-						    flag
-						    &optional is-local)
+(luna-define-method elmo-message-set-cached ((folder elmo-filter-folder)
+					     number cached)
+  (elmo-message-set-cached
+   (elmo-filter-folder-target-internal folder) number cached))
+
+(luna-define-method elmo-message-entity ((folder elmo-filter-folder) key)
+  (elmo-message-entity (elmo-filter-folder-target-internal folder) key))
+
+(luna-define-method elmo-message-entity-parent ((folder elmo-filter-folder)
+						entity)
+  (let ((parent (elmo-message-entity-parent
+		 (elmo-filter-folder-target-internal folder)
+		 entity)))
+    (when (memq (elmo-message-entity-number parent)
+		(elmo-filter-folder-number-list folder))
+      parent)))
+
+(luna-define-method elmo-folder-flag-table ((folder elmo-filter-folder)
+					    &optional if-exists)
+  (elmo-folder-flag-table (elmo-filter-folder-target-internal folder)
+			  if-exists))
+
+(luna-define-method elmo-folder-close-flag-table ((folder elmo-filter-folder))
+  (elmo-folder-close-flag-table (elmo-filter-folder-target-internal folder)))
+
+(luna-define-method elmo-folder-count-flags ((folder elmo-filter-folder))
+  (let* ((flag-count (elmo-filter-folder-flag-count folder))
+	 (new (or (cdr (assq 'new flag-count)) 0))
+	 (unread (or (cdr (assq 'unread flag-count)) 0))
+	 (answered(or (cdr (assq 'answered flag-count)) 0)))
+    (list new (- unread new) answered)))
+
+(luna-define-method elmo-folder-set-flag ((folder elmo-filter-folder)
+					  numbers
+					  flag
+					  &optional is-local)
+  (elmo-filter-folder-countup-message-flags folder numbers -1)
+  (elmo-folder-set-flag (elmo-filter-folder-target-internal folder)
+			numbers flag is-local)
+  (elmo-filter-folder-countup-message-flags folder numbers))
+
+(luna-define-method elmo-folder-unset-flag ((folder elmo-filter-folder)
+					    numbers
+					    flag
+					    &optional is-local)
+  (elmo-filter-folder-countup-message-flags folder numbers -1)
   (elmo-folder-unset-flag (elmo-filter-folder-target-internal folder)
-			  numbers flag is-local))
+			  numbers flag is-local)
+  (elmo-filter-folder-countup-message-flags folder numbers))
 
 (luna-define-method elmo-message-folder ((folder elmo-filter-folder)
 					 number)
   (elmo-message-folder (elmo-filter-folder-target-internal folder) number))
+
+(luna-define-method elmo-folder-clear ((folder elmo-filter-folder)
+				       &optional keep-killed)
+  (unless keep-killed
+    (elmo-folder-set-killed-list-internal folder nil))
+  (elmo-filter-folder-set-number-list-internal folder nil)
+  (elmo-filter-folder-set-flag-count-internal folder nil))
+
+(luna-define-method elmo-folder-synchronize ((folder elmo-filter-folder)
+					     &optional
+					     disable-killed
+					     ignore-msgdb
+					     no-check)
+  (when (elmo-folder-synchronize
+	 (elmo-filter-folder-target-internal folder)
+	 'disable-killed
+	 ignore-msgdb
+	 no-check)
+    (let ((killed-list (elmo-folder-killed-list-internal folder))
+	  (numbers (elmo-folder-list-messages folder (not disable-killed))))
+      (when (and disable-killed ignore-msgdb)
+	(elmo-folder-set-killed-list-internal folder nil))
+      (elmo-filter-folder-set-number-list-internal folder numbers)
+      (elmo-filter-folder-set-flag-count-internal folder nil)
+      0)))
+
+(luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
+						 numbers)
+  (elmo-filter-folder-countup-message-flags folder numbers -1)
+  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq)
+  (elmo-folder-detach-messages
+   (elmo-filter-folder-target-internal folder) numbers))
+
+(luna-define-method elmo-folder-length ((folder elmo-filter-folder))
+  (length (elmo-filter-folder-number-list-internal folder)))
 
 (require 'product)
 (product-provide (provide 'elmo-filter) (require 'elmo-version))
