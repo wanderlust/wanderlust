@@ -467,30 +467,6 @@ header separator."
 	(elmo-msgdb-search-internal-primitive
 	 (nth 2 condition) entity number-list)))))
 
-(defun elmo-msgdb-search (folder condition msgdb)
-  "Search messages from MSGDB which satisfy CONDITION."
-  (let* ((condition (car (elmo-parse-search-condition condition)))
-	 (overview (elmo-msgdb-get-overview msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (number-list (mapcar 'car number-alist))
-	 (length (length overview))
-	 (i 0)
-	 result)
-    (if (elmo-condition-find-key condition "body")
-	(elmo-search folder condition number-list)
-      (while overview
-	(if (elmo-msgdb-search-internal condition (car overview)
-					number-list)
-	    (setq result
-		  (cons
-		   (elmo-msgdb-overview-entity-get-number (car overview))
-		   result)))
-	(setq i (1+ i))
-	(elmo-display-progress
-	 'elmo-msgdb-search "Searching..." (/ (* i 100) length))
-	(setq overview (cdr overview)))
-      (nreverse result))))
-
 (defun elmo-msgdb-delete-msgs (folder msgs msgdb &optional reserve-cache)
   "Delete MSGS from FOLDER in MSGDB.
 content of MSGDB is changed."

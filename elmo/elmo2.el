@@ -391,6 +391,30 @@ without cacheing."
       (elmo-call-func folder "search" condition from-msgs)
     (elmo-cache-search-all folder condition from-msgs)))
 
+(defun elmo-msgdb-search (folder condition msgdb)
+  "Search messages which satisfy CONDITION from FOLDER with MSGDB."
+  (let* ((condition (car (elmo-parse-search-condition condition)))
+	 (overview (elmo-msgdb-get-overview msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (number-list (mapcar 'car number-alist))
+	 (length (length overview))
+	 (i 0)
+	 result)
+    (if (elmo-condition-find-key condition "body")
+	(elmo-search folder condition number-list)
+      (while overview
+	(if (elmo-msgdb-search-internal condition (car overview)
+					number-list)
+	    (setq result
+		  (cons
+		   (elmo-msgdb-overview-entity-get-number (car overview))
+		   result)))
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-msgdb-search "Searching..." (/ (* i 100) length))
+	(setq overview (cdr overview)))
+      (nreverse result))))
+
 (defun elmo-msgdb-create (folder numlist new-mark already-mark
 				 seen-mark important-mark seen-list)
   (if (elmo-folder-plugged-p folder)
