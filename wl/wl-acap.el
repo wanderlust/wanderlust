@@ -28,14 +28,6 @@
 ;;; Code:
 ;;
 
-(cond
- ((and (not (featurep 'utf-2000))
-       (module-installed-p 'un-define))
-  (require 'un-define))
- ((and (featurep 'xemacs)
-       (not (featurep 'utf-2000))
-       (module-installed-p 'xemacs-ucs))
-  (require 'xemacs-ucs)))
 (require 'custom)
 (require 'cus-edit)
 (require 'wl-vars)
@@ -43,6 +35,14 @@
 (require 'elmo-vars)
 (require 'acap)
 (require 'slp)
+
+(eval-and-compile
+  (cond
+   ((and (featurep 'xemacs)
+	 (module-installed-p 'xemacs-ucs))
+    (require 'xemacs-ucs))
+   ((module-installed-p 'un-define)
+    (require 'un-define))))
 
 (defconst wl-acap-dataset-class "vendor.wanderlust")
 (defconst wl-acap-entry-name "settings")
@@ -138,22 +138,14 @@ If nil, default acap port is used."
 				       (memq 'string type)))
 			      (if (memq sym wl-acap-base64-encode-options)
 				  (wl-acap-base64-decode-string (cadr x))
-				(decode-coding-string
-				 (cadr x)
-				 wl-acap-coding-system)))
+				(cadr x)))
 			     (t
 			      (if (cadr x)
 				  (read
 				   (if (memq sym
 					     wl-acap-base64-encode-options)
 				       (wl-acap-base64-decode-string (cadr x))
-				      (read (concat 
-					     "\""
-					     (decode-coding-string
-					      (cadr x)
-					      wl-acap-coding-system)
-					     "\""))
-				      ))))))))
+				     (read (concat "\"" (cadr x) "\""))))))))))
 			(t 'wl-acap-ignored))))
 		   settings)))
     ;; Setup options.
@@ -269,15 +261,11 @@ If nil, default acap port is used."
 		      (if (memq option wl-acap-base64-encode-options)
 			  (wl-acap-base64-encode-string
 			   (symbol-value option))
-			(encode-coding-string
-			 (symbol-value option)
-			 wl-acap-coding-system)))
+			(symbol-value option)))
 		     (t (if (memq option wl-acap-base64-encode-options)
 			    (wl-acap-base64-encode-string
 			     (prin1-to-string (symbol-value option)))
-			  (encode-coding-string
-			   (prin1-to-string (symbol-value option))
-			   wl-acap-coding-system)))))
+			  (prin1-to-string (symbol-value option))))))
 		  settings)))
     (unwind-protect
 	(progn
