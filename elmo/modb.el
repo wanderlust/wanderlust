@@ -150,6 +150,9 @@ A string is for message-id of the message.")
   (modb-generic-set-message-modified-internal msgdb nil)
   (modb-generic-set-flag-modified-internal msgdb nil))
 
+(luna-define-method elmo-msgdb-length ((msgdb modb-generic))
+  0)
+
 ;; for on demand loading
 (provide 'modb-generic)
 

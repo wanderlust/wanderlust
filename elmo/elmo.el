@@ -133,7 +133,7 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
 	  (setq prefix (substring name 0 1))
 	  (setq name (substring name 1)))
       (setq type (intern (car (setq split (split-string name ":")))))
-      (if (> (length split) 2)
+      (if (>= (length split) 2)
 	  (setq name (substring name (+ 1 (length (car split)))))
 	(error "Error in folder name `%s'" original))
       (setq prefix (concat (car split) ":")))
@@ -1038,7 +1038,7 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     flags
+		     (or flags '(read))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished

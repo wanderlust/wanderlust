@@ -1,5 +1,10 @@
 2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb.el (elmo-msgdb-length): Define.
+
+	* elmo.el (elmo-make-folder): Fixed.
+	(elmo-generic-folder-append-messages): Follow the API change.
+
 	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Follow the
 	API change.
 
