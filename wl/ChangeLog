@@ -1,3 +1,7 @@
+2003-08-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.8.
+
 2003-08-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-sync): Fix regexp for last: and first:.
