@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 00:14:31 teranisi>
+;; Time-stamp: <00/04/24 10:19:24 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -230,7 +230,8 @@ This variable should not be used in elsewhere.")
 	 percent)
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
-      (list overview number-alist mark-alist loc-alist))))
+      (elmo-msgdb-sort-by-date
+       (list overview number-alist mark-alist loc-alist)))))
 
 (defalias 'elmo-maildir-msgdb-create-as-numlist 'elmo-maildir-msgdb-create)
 
