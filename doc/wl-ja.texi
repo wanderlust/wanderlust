@@ -4304,6 +4304,12 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"?7J9%U%)%k%@$GFI$s$@%a%C%;!<%8$r(B
 $B%-%c%C%7%e$7$^$9!#(B
 
+@item wl-summary-resend-use-cache
+@vindex wl-summary-resend-use-cache
+$B=i4|@_Dj$O(B @code{nil}$B!#(BNon-nil $B$O$i!"%*%U%i%$%s>uBV$G$b%-%c%C%7%e$r(B
+$B;H$C$F:FAw$7$^$9!#%-%c%C%7%e$rMQ$$$F:FAw$9$k$H!"I,$:$7$b0U?^$7$?(B
+$B%a%C%;!<%8$,;H$o$l$k$H$O8B$i$J$$$3$H$KN10U$7$F$/$@$5$$!#(B
+
 @item wl-folder-process-duplicates-alist
 @vindex wl-folder-process-duplicates-alist
 $B=i4|@_Dj$O(B @code{nil}$B!#=EJ#$7$?%a%C%;!<%8$,F1$8%U%)%k%@$K$"$k>l9g$NF0:n(B
@@ -8625,6 +8631,13 @@ Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
 $B=i4|@_Dj$O(B 20$B!#(B
 $B?JD=I=<((B(progress gauge)$B$rI=<($9$kogCM!#$3$NCM$h$j$b99?7?t$,Bg$-$$>l9g$O(B
 $B?JD=I=<($7$^$9!#(B
+
+@item elmo-network-session-idle-timeout
+@vindex elmo-network-session-idle-timeout
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+$B%M%C%H%o!<%/%;%C%7%g%s$r%-%c%C%7%e$9$k%"%$%I%k;~4V$rIC$G;XDj$7$^$9!#(B
+$B$3$3$G;XDj$5$l$?CM$h$j$bD9$$;~4V!"$J$K$bDL?.$,9T$J$o$l$J$+$C$?>l9g!"(B
+$B$=$N%;%C%7%g%s$O:FMxMQ$5$l$^$;$s!#(Bnil $B$J$i!"L5>r7o$K:FMxMQ$7$^$9!#(B
 @end table
 
 
@@ -8871,6 +8884,7 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
       2/09    'file' $B%U%)%k%@!#(B
       9/12    forwarded $B%^!<%/!#(B
               $B%^!<%/J8;zNs$N%G%U%)%k%HCMJQ99!#(B
+     12/24    2.12.0 stable $B%j%j!<%9!#(B
 @end example
 
 $B>\$7$$JQA+$O(B @file{ChangeLog} $B$r8fMw$/$@$5$$!#(B
@@ -8899,7 +8913,7 @@ elmo $B$O!"(B@samp{Elisp Library for Message Orchestration} $B$NN,$G$9!#(B
 $B3F%P!<%8%g%s$K$O%3!<%I%M!<%`$,$D$$$F$$$^$9(B($B$[$H$s$I>iCL$G$9(B)$B!#(B
 $B$$$^$N$H$3$m(B 1980 $BG/Be$NJF%S%k%\!<%I;o%H%C%W(B 40 $B%R%C%H(B
 
-(@uref{http://lyrics.natalnet.com.br/html/top40/index.html})
+(@uref{http://ntl.matrix.com.br/pfilho/html/top40/})
 
 @noindent
 $B$+$i%"%k%U%!%Y%C%H=g$KE,Ev$K9%$-$J$b$N$r%T%C%/%"%C%W$7$F;H$C$F$$$^$9!#(B
