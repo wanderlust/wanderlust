@@ -1,3 +1,16 @@
+2000-05-21  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo2.el (elmo-msgdb-load): Remove elmo-msgdb-overview-hashtb.
+	* elmo-localdir.el (elmo-localdir-pack-number): Use
+	`elmo-msgdb-overview-get-entity' instead of
+	`elmo-msgdb-overview-get-entity-by-number'.
+	* elmo-msgdb.el (elmo-msgdb-overview-hashtb): Removed.
+	(elmo-msgdb-search-overview-entity): Removed.
+	(elmo-msgdb-overview-get-entity): Change argument. Get overview entity
+	by message-id or number.
+	(elmo-msgdb-delete-msgs): Use `elmo-msgdb-overview-get-entity'
+	instead of `elmo-msgdb-overview-get-entity-by-number'.
+
 2000-05-20  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-vars.el (elmo-use-overview-hashtb): New variable. If
