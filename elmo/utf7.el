@@ -214,6 +214,9 @@ Use IMAP modification if FOR-IMAP is non-nil."
       (set-buffer-multibyte t)
       (buffer-string))))
 
+(defalias 'utf7-encode-string 'utf7-encode)
+(defalias 'utf7-decode-string 'utf7-decode)
+
 (provide 'utf7)
 
 ;;; utf7.el ends here
