@@ -1,3 +1,13 @@
+2004-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-prev-copy-destination): Abolish.
+	(wl-summary-mode-map): Bound "t\M-o", "m\M-o" and "r\M-o"
+
+	* wl-action.el (wl-summary-refile-prev-destination): Rewrite.
+	(wl-summary-refile-prev-destination-region): New function.
+	(wl-thread-refile-prev-destination): Ditto.
+	(wl-summary-target-mark-refile-prev-destination): Ditto.
+
 2004-01-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-demo-image-filter-alist): Set default value to nil.

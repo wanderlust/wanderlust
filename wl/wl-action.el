@@ -479,7 +479,7 @@ Return number if put mark succeed"
 	      ;; update buffer.
 	      (wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
 	      (setq wl-summary-buffer-temp-mark-list
-		    (wl-delete-associations 
+		    (wl-delete-associations
 		     (cdr (car dst-msgs))
 		     wl-summary-buffer-temp-mark-list)))
 	  (setq failures
@@ -778,14 +778,50 @@ Return number if put mark succeed"
   "Return t if temporal MARK should be reserved."
   (member mark wl-summary-reserve-mark-list))
 
+;; Refile prev destination
 (defun wl-summary-refile-prev-destination ()
   "Refile message to previously refiled destination."
   (interactive)
-  (funcall (symbol-function 'wl-summary-refile)
-	   wl-summary-buffer-prev-refile-destination)
-  (if (eq wl-summary-move-direction-downward nil)
+  (wl-summary-refile (wl-summary-message-number)
+		     wl-summary-buffer-prev-refile-destination)
+  (if (and (interactive-p)
+	   (eq wl-summary-move-direction-downward nil))
       (wl-summary-prev)
     (wl-summary-next)))
+
+(defun wl-summary-refile-prev-destination-region (beg end)
+  "Refile messages in the region to previously refiled destination."
+  (interactive "r")
+  (wl-summary-mark-region-subr 'wl-summary-refile
+			       beg end
+			       wl-summary-buffer-prev-refile-destination))
+
+(defun wl-thread-refile-prev-destination (arg)
+  "Refile messages in the thread to previously refiled destination."
+  (interactive "P")
+  (wl-thread-call-region-func
+   'wl-summary-refile-prev-destination-region
+   arg))
+
+(defun wl-summary-target-mark-refile-prev-destination ()
+  "Refile messages with target mark to previously refiled destination."
+  (interactive)
+  (let ((elem wl-summary-mark-action-list)
+	action)
+    (while elem
+      (when (eq (wl-summary-action-symbol (car elem)) 'refile)
+	(setq action (car elem))
+	(setq elem nil))
+      (setq elem (cdr elem)))
+    (wl-summary-target-mark-set-action
+     (list
+      (car action)
+      'refile-prev-destination
+      (lambda (&rest args) wl-summary-buffer-prev-refile-destination)
+      (nth 2 action)
+      (nth 3 action)
+      (nth 4 action)
+      (nth 6 action)))))
 
 (defsubst wl-summary-no-auto-refile-message-p (number)
   (member (wl-summary-message-mark wl-summary-buffer-elmo-folder number)
