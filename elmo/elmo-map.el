@@ -87,6 +87,9 @@
 (luna-define-generic elmo-map-folder-list-importants (folder)
   "")
 
+(luna-define-method elmo-map-folder-list-importants ((folder elmo-map-folder))
+  t)
+
 (luna-define-generic elmo-map-folder-delete-messages (folder locations)
   "")
 
@@ -283,9 +286,10 @@
 
 (luna-define-method elmo-folder-list-importants-internal
   ((folder elmo-map-folder) important-mark)
-  (elmo-map-folder-locations-to-numbers
-   folder
-   (elmo-map-folder-list-importants folder)))
+  (let ((locations (elmo-map-folder-list-importants folder)))
+    (if (listp locations)
+	(elmo-map-folder-locations-to-numbers folder locations)
+      t)))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-map-folder)
 						 numbers)

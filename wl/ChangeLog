@@ -1,3 +1,56 @@
+2001-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-exec-subr): Fixed problem when
+	destination folder is 'null.
+
+2001-05-09  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule-subr):
+	New function.
+	(wl-folder-guess-mailing-list-by-folder-name-subr): New function.
+	(wl-folder-guess-mailing-list-by-refile-rule): Fix for multi folder.
+	(wl-folder-guess-mailing-list-by-folder-name): Ditto.
+
+2001-05-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-mime-setup): Added setting for
+	`mime-setup-signature-key-alist' to avoid overriding key bind for
+	`wl-draft-send'.
+
+	* wl-e21.el (wl-draft-overload-functions): Don't override key binding
+	for `wl-draft-send'.
+	* wl-mule.el (wl-draft-overload-functions): Ditto.
+	* wl-xmas.el (wl-draft-overload-functions): Ditto.
+	* wl-draft.el (wl-draft-send): Ditto.
+
+	* wl-message.el (wl-message-display-internal):
+	Fixed typo (elmo-fetch-threshold->elmo-message-fetch-threshold).
+	(Patch is provided by <kita@coe.nttdata.co.jp>).
+
+2001-05-09  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule): Fix.
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl.el (wl): Fix for wl-demo.
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-supersedes-message): Use 'message-buf'
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-prefetch-entity): Use
+	`wl-folder-get-elmo-folder'.
+	(wl-folder-count-incorporates): Do not use
+	`wl-folder-get-elmo-folder'.
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-xmas.el (wl-plugged-set-folder-icon): Use `elmo-folder-type'
+	instead of `elmo-folder-get-type'.
+
 2001-05-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-write-current-folder): Set cursor
