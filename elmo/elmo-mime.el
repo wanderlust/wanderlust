@@ -224,9 +224,7 @@ Return non-nil if not entire message was fetched."
   (let (mime-display-header-hook ; Do nothing.
 	(elmo-message-displaying t)
 	entity strategy)
-    (setq entity (elmo-msgdb-overview-get-entity number
-						 (elmo-folder-msgdb
-						  folder)))
+    (setq entity (elmo-message-entity folder number))
     (setq strategy (elmo-find-fetch-strategy folder entity
 					     ignore-cache))
     (mime-display-message

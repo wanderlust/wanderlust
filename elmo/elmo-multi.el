@@ -129,6 +129,20 @@
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
        (elmo-multi-folder-children-internal folder)))
 
+(luna-define-method elmo-message-set-cached ((folder elmo-multi-folder)
+					     number cached)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-set-cached (car pair) (cdr pair) cached)))
+
+(luna-define-method elmo-find-fetch-strategy
+  ((folder elmo-multi-folder) entity &optional ignore-cache)
+  (let ((pair (elmo-multi-real-folder-number
+	       folder
+	       (elmo-message-entity-number entity))))
+    (elmo-find-fetch-strategy
+     (car pair)
+     (elmo-message-entity (car pair) (cdr pair)) ignore-cache)))
+
 (luna-define-method elmo-message-entity ((folder elmo-multi-folder) key)
   (cond
    ((numberp key)
@@ -190,22 +204,6 @@
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder))
   (dolist (child (elmo-multi-folder-children-internal folder))
     (elmo-folder-process-crosspost child)))
-
-(defsubst elmo-multi-find-fetch-strategy (folder entity ignore-cache)
-  (if entity
-      (let ((pair (elmo-multi-real-folder-number
-		   folder
-		   (elmo-msgdb-overview-entity-get-number entity)))
-	    (new-entity (elmo-msgdb-copy-overview-entity entity)))
-	(setq new-entity
-	      (elmo-msgdb-overview-entity-set-number new-entity (cdr pair)))
-	(elmo-find-fetch-strategy (car pair) new-entity ignore-cache))
-    (elmo-make-fetch-strategy 'entire)))
-
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-multi-folder)
-   entity &optional ignore-cache)
-  (elmo-multi-find-fetch-strategy folder entity ignore-cache))
 
 (luna-define-method elmo-message-fetch ((folder elmo-multi-folder)
 					number strategy

@@ -366,6 +366,19 @@
 		      number
 		      field))
 
+(luna-define-method elmo-message-set-cached ((folder elmo-pipe-folder)
+					     number cached)
+  (elmo-message-set-cached (elmo-pipe-folder-dst-internal folder)
+			   number cached))
+
+(luna-define-method elmo-find-fetch-strategy
+  ((folder elmo-pipe-folder) entity &optional ignore-cache)
+  (elmo-find-fetch-strategy (elmo-pipe-folder-dst-internal folder)
+			    (elmo-message-entity
+			     (elmo-pipe-folder-dst-internal folder)
+			     (elmo-message-entity-number entity))
+			    ignore-cache))
+
 (luna-define-method elmo-message-entity ((folder elmo-pipe-folder) key)
   (elmo-message-entity (elmo-pipe-folder-dst-internal folder) key))
 

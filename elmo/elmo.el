@@ -1137,11 +1137,14 @@ Return non-nil when message is accessible."
       (elmo-folder-local-p folder)
       (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number)))
 
-(defun elmo-message-set-cached (folder number cached)
+(luna-define-generic elmo-message-set-cached (folder number cached)
   "Set cache status of the message in the msgdb.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
-If CACHED is t, message is set as cached."
+If CACHED is t, message is set as cached.")
+
+(luna-define-method elmo-message-set-cached ((folder elmo-folder)
+					     number cached)
   (when (elmo-msgdb-set-cached (elmo-folder-msgdb folder)
 			       number
 			       cached

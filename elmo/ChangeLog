@@ -1,5 +1,15 @@
 2003-08-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-set-cached): Define as a method.
+
+	* elmo-pipe.el (elmo-message-set-cached): Define.
+	(elmo-find-fetch-strategy): Ditto.
+
+	* elmo-multi.el (elmo-message-set-cached): Define.
+	(elmo-find-fetch-strategy): Rewrite.
+
+	* elmo-mime.el (elmo-mime-message-display): Use elmo-message-entity.
+
 	* elmo-pipe.el (elmo-message-folder): Fixed definition.
 
 2003-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
