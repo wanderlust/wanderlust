@@ -403,7 +403,8 @@ the `wl-smtp-features' variable."
 	       (mapconcat
 		'(lambda (addr)
 		   (if wl-draft-reply-use-address-with-full-name
-		       (cdr (assoc addr addr-alist))
+		       (or (cdr (assoc addr addr-alist))
+			   addr)
 		     addr))
 		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))
