@@ -560,10 +560,11 @@ Return a list of message numbers which have duplicated message-ids."
     msgdb))
 
 (luna-define-method elmo-msgdb-message-entity ((msgdb modb-legacy) key)
-  (elmo-get-hash-val
-   (cond ((stringp key) key)
-	 ((numberp key) (format "#%d" key)))
-   (elmo-msgdb-get-entity-hashtb msgdb)))
+  (when key
+    (elmo-get-hash-val
+     (cond ((stringp key) key)
+	   ((numberp key) (format "#%d" key)))
+     (elmo-msgdb-get-entity-hashtb msgdb))))
 
 (require 'product)
 (product-provide (provide 'modb-legacy) (require 'elmo-version))

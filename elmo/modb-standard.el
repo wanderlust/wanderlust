@@ -492,10 +492,11 @@
     msgdb))
 
 (luna-define-method elmo-msgdb-message-entity ((msgdb modb-standard) key)
-  (let ((ret (elmo-get-hash-val
-	      (cond ((stringp key) key)
-		    ((numberp key) (modb-standard-key key)))
-	      (modb-standard-entity-map-internal msgdb))))
+  (let ((ret (and key
+		  (elmo-get-hash-val
+		   (cond ((stringp key) key)
+			 ((numberp key) (modb-standard-key key)))
+		   (modb-standard-entity-map-internal msgdb)))))
     (if (eq 'autoload (car-safe ret))
 	(when modb-standard-divide-number
 	  (modb-standard-load-entity

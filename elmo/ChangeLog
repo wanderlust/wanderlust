@@ -1,5 +1,9 @@
 2003-10-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-legacy.el (elmo-msgdb-message-entity): Return nil when key
+	is nil.
+	* modb-standard.el (elmo-msgdb-message-entity): Ditto.
+
 	* elmo-imap4.el (elmo-imap4-session): Added new slot `flags'.
 	(elmo-imap4-session-select-mailbox): Set it according to the SELECT
 	response.
