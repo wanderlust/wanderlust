@@ -1,3 +1,8 @@
+2001-01-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-session-check):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+
 2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo2.el (toplevel): Move `product-provide' declare.

@@ -362,6 +362,9 @@ If response is not `OK' response, causes error with IMAP response text."
 ;;;
 
 (defun elmo-imap4-session-check (session)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (setq elmo-imap4-fetch-callback nil)
+    (setq elmo-imap4-fetch-callback-data nil))
   (elmo-imap4-send-command-wait session "check"))
 
 (defun elmo-imap4-atom-p (string)
