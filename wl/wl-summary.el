@@ -475,7 +475,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "t*" 'wl-thread-target-mark)
   (define-key wl-summary-mode-map "to" 'wl-thread-refile)
   (define-key wl-summary-mode-map "tO" 'wl-thread-copy)
-  (define-key wl-summary-mode-map "td" 'wl-thread-delete)
+  (define-key wl-summary-mode-map "td" 'wl-thread-dispose)
+  (define-key wl-summary-mode-map "tD" 'wl-thread-delete)
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
   (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
@@ -1687,7 +1688,7 @@ If ARG is non-nil, checking is omitted."
 	  (msgs2 msgs)
 	  (len (length msgs))
 	  (i 0)
-	  (deleting-info (or deleting-info "Deleting..."))
+	  ;(deleting-info (or deleting-info "Deleting..."))
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
       (while msgs
@@ -1705,17 +1706,17 @@ If ARG is non-nil, checking is omitted."
 		(delete-char 1) ; delete '\n'
 		(setq wl-summary-buffer-number-list
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
-	(when (> len elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (if (or (zerop (% i 5)) (= i len))
-	      (elmo-display-progress
-	       'wl-summary-delete-messages-on-buffer deleting-info
-	       (/ (* i 100) len))))
+;	(when (> len elmo-display-progress-threshold)
+;	  (setq i (1+ i))
+;	  (if (or (zerop (% i 5)) (= i len))
+;	      (elmo-display-progress
+;	       'wl-summary-delete-messages-on-buffer deleting-info
+;	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
 	(wl-thread-update-line-msgs (elmo-uniq-list update-list))
 	(wl-thread-cleanup-symbols msgs2))
-      (message (concat deleting-info "done"))
+      ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (wl-folder-update-unread

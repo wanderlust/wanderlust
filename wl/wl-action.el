@@ -264,6 +264,7 @@ Return number if put mark succeed"
 	(setq refile-len (length refiles))
 	(goto-char start)		; avoid moving cursor to
 					; the bottom line.
+	(message message)
 	(when (> refile-len elmo-display-progress-threshold)
 	  (elmo-progress-set 'elmo-folder-move-messages
 			     refile-len message))
@@ -289,6 +290,7 @@ Return number if put mark succeed"
 	    (setq wl-summary-buffer-temp-mark-list
 		  (delq mark-info wl-summary-buffer-temp-mark-list))))
 	(elmo-progress-clear 'elmo-folder-move-messages)
+	(message (concat message "done"))
 	(wl-summary-set-message-modified)
 	;; Return the operation failed message numbers.
 	(if result
@@ -365,7 +367,23 @@ Return number if put mark succeed"
 	  `(lambda ()
 	     ,(wl-summary-action-docstring action)
 	     (interactive)
-	     (wl-summary-target-mark-set-action (quote ,action))))))
+	     (wl-summary-target-mark-set-action (quote ,action))))
+    (fset (intern (format "wl-thread-%s"
+			  (wl-summary-action-symbol action)))
+	  `(lambda (arg)
+	     ,(wl-summary-action-docstring action)
+	     (interactive "P")
+	     (wl-thread-call-region-func
+	      (quote ,(intern (format "wl-summary-%s-region"
+				      (wl-summary-action-symbol action))))
+	      arg)
+	     (if arg
+		 (wl-summary-goto-top-of-current-thread))
+	     (if (not wl-summary-move-direction-downward)
+		 (wl-summary-prev)
+	       (wl-thread-goto-bottom-of-sub-thread)
+	       (if wl-summary-buffer-disp-msg
+		   (wl-summary-redisplay)))))))
 
 (defun wl-summary-get-dispose-folder (folder)
   (if (string= folder wl-trash-folder)
@@ -432,20 +450,20 @@ Return number if put mark succeed"
       (goto-char start)	; avoid moving cursor to the bottom line.
       (when (> refile-len elmo-display-progress-threshold)
 	(elmo-progress-set 'elmo-folder-move-messages
-			   refile-len "Moving messages..."))
+			   refile-len "Refiling messages..."))
       (while dst-msgs
 	(setq result nil)
 	(condition-case nil
 	    (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (wl-folder-get-elmo-folder
-			     (car (car dst-msgs)))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    nil ; no-delete
-			    nil ; same-number
-			    t))
+			  wl-summary-buffer-elmo-folder
+			  (cdr (car dst-msgs))
+			  (wl-folder-get-elmo-folder
+			   (car (car dst-msgs)))
+			  (wl-summary-buffer-msgdb)
+			  (not (null (cdr dst-msgs)))
+			  nil ; no-delete
+			  nil ; same-number
+			  t))
 	  (error nil))
 	(if result		; succeeded.
 	    (progn
@@ -617,10 +635,8 @@ Return number if put mark succeed"
       (wl-summary-toggle-disp-msg 'off)
       (setq wl-message-buffer nil))
     (set-buffer-modified-p nil)
-    (message "Executing...done%s"
-	     (if (> failures 0)
-		 (format " (%d failed)" failures)
-	       ""))))
+    (when (> failures 0)
+      (format "%d execution(s) were failed" failures))))
 
 (defun wl-summary-exec-region (beg end)
   (interactive "r")
