@@ -220,6 +220,10 @@
   ((folder elmo-nmz-folder) unread-marks &optional mark-alist)
   t)
 
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-nmz-folder) important-mark)
+  t)
+
 (luna-define-method elmo-folder-unmark-important ((folder elmo-nmz-folder)
 						  numbers)
   t)

@@ -3092,10 +3092,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (setq result (elmo-folder-move-messages
 			    wl-summary-buffer-elmo-folder
 			    (cdr (car dst-msgs))
-			    (if (eq 'null (car (car dst-msgs)))
-				'null
-			      (wl-folder-get-elmo-folder
-			       (car (car dst-msgs))))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
 			    (wl-summary-buffer-msgdb)
 			    refile-len
 			    refile-executed
@@ -5307,7 +5305,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		      "Supersedes: " message-id "\n"
 		      (and followup-to
 			   (concat "Followup-To: " followup-to "\n")))))
-    (if message-buf (set-buffer message-buf))
+	(set-buffer (wl-message-get-original-buffer))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
 (defun wl-summary-save (&optional arg wl-save-dir)

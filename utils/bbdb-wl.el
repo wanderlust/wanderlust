@@ -31,7 +31,6 @@
 (require 'bbdb)
 
 (defvar bbdb-wl-get-update-record-hook nil)
-(defvar bbdb-wl-folder-regexp nil)
 
 (defun bbdb-wl-setup ()
   (add-hook 'wl-message-redisplay-hook 'bbdb-wl-get-update-record)
@@ -64,15 +63,9 @@
   (bbdb-save-db t))
 
 (defun bbdb-wl-get-update-record ()
-  (if (or (null bbdb-wl-folder-regexp)
-	  (string-match
-	   bbdb-wl-folder-regexp
-	   (with-current-buffer
-	       wl-message-buffer-cur-summary-buffer
-	     wl-summary-buffer-folder-name)))
-      (with-current-buffer (wl-message-get-original-buffer)
-	(bbdb-wl-update-record)
-	(run-hooks 'bbdb-wl-get-update-record-hook))))
+  (with-current-buffer (wl-message-get-original-buffer)
+    (bbdb-wl-update-record)
+    (run-hooks 'bbdb-wl-get-update-record-hook)))
 
 (defun bbdb-wl-hide-bbdb-buffer ()
   (let (bbdb-buf bbdb-win)
