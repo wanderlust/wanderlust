@@ -8,6 +8,17 @@
 	(wl-summary-insert-headers): Show message.
 	(wl-summary-create-line): Set 4th argument of wl-set-string-width
 	for whole line.
+	(wl-summary-default-from): Revert last change.
+	(wl-summary-simple-from): Ditto.
+	(wl-summary-mark-as-read): Argument rearrangement and re-written.
+	(wl-summary-mark-as-read-region): Follow the change above.
+	(wl-summary-sync-marks): Ditto.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-redisplay-internal): Ditto.
+	(wl-summary-redisplay-no-mime-internal): Ditto.
+	(wl-summary-redisplay-all-header): DItto.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
 
 	* wl-util.el (wl-set-string-width): Added 4th argument ignore-invalid;
 	Don't call itself recursively (Adviced by Yamaoka-san).
@@ -135,7 +146,7 @@
 	(wl-highlight-summary): Delete progress message.
 	(wl-highlight-summary-window): Do highlight only when wl-summary-mode.
 
-        * Version number is increased to 2.9.12.
+	* Version number is increased to 2.9.12.
 
 2002-05-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

@@ -1225,9 +1225,9 @@ Set `wl-score-cache' nil."
 	       (wl-push num dels))
 	      ((< score wl-summary-mark-below)
 	       (if visible
-		   (wl-summary-mark-as-read t); opened
+		   (wl-summary-mark-as-read num); opened
 		 (setq update-unread t)
-		 (wl-summary-mark-as-read t nil nil num))) ; closed
+		 (wl-summary-mark-as-read num))) ; closed
 	      ((and wl-summary-important-above
 		    (> score wl-summary-important-above))
 	       (if (wl-thread-jump-to-msg num);; force open
