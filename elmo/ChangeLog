@@ -1,8 +1,14 @@
 2001-05-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder-synchronize): Don't check important mark in
+	mark folder.
+
+2001-05-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
 	* elmo.el (elmo-message-fetch): Define.
 	(elmo-message-fetch-with-cache-process): New generic method.
 	(elmo-message-fetch-internal): New generic method.
+	(elmo-folder-synchronize): 
 
 	* elmo-archive.el (elmo-message-fetch-internal): Define.
 	(elmo-message-fetch): Eliminated.
