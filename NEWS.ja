@@ -40,6 +40,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** カプセル化 Blind Carbon Copy を送れるようになりました。
    デフォルトのフィールド名は "Ecc:" です。
 
+** ニュース記事を投稿するサーバを簡単に設定できるようになりました。
+   info の例に習って wl-nntp-posting-config-alist を設定して下さい。
+
 ** 変数 wl-draft-reply-with-argument-list 等で、関数の返り値から宛先を
    決められるようになりました。
 
