@@ -766,8 +766,7 @@ RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$
            @code{clear} ($B$^$?$O(B @code{nil}$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
 @end example
 
-(CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B
-@file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
+(1.14.0 $B$h$j0JA0$N%P!<%8%g%s$N(B FLIM $B$G(B CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B1.14.0 $B0J9_$N%P!<%8%g%s$N(B FLIM $B$G$"$l$P!"K\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$O$"$j$^$;$s!#(B)
 
 default $BCM(B:
 
@@ -6645,6 +6644,7 @@ Wanderlust $B$K4X$9$k5DO@$O$3$N%a!<%j%s%0%j%9%H$G9T$o$l$^$9!#(B
       7/18    POP3 $B$r(B UIDL $BBP1~!#(B
       9/12    biff $B5!G=(B with $B:72eED$5$s!u;32,$5$s!#(B
      10/17    expire-hide by $B2,ED$5$s!#(B
+     11/08    2.4.0 stable $B%j%j!<%9!#(B
 @end example
 
 $B$/$o$7$$JQA+$O(B @file{ChangeLog} $B$r8fMw$/$@$5$$!#(B
