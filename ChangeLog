@@ -1,3 +1,15 @@
+2000-10-02  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* Makefile (PIXMAPDIR): New variable.
+	(elc, install-elc, uninstall-elc, package, install-package): Use
+	it.
+
+	* WL-MK (config-wl-pixmap-dir): New function.
+	(config-wl-package, config-wl-package-xmas): Use it.
+	(install-wl-icons): New function.
+	(install-wl-package, install-wl-package-xmas): Use it.
+	(uninstall-wl-package): Uninstall icons as well.
+
 2000-09-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (texinfo-multitable-widths): Fix

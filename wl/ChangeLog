@@ -1,5 +1,8 @@
 2000-10-02  Katsumi Yamaoka    <yamaoka@jpl.org>
 
+	* wl-vars.el (wl-icon-dir): Default to $(data-directory)/wl/icons/
+	when Emacs 21 is running.
+
 	* wl-e21.el (wl-e21-make-toolbar-buttons): Invalidate the default
 	bindings.
 
