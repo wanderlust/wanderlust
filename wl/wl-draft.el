@@ -1170,7 +1170,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 		  (re-search-forward "\n[ \t]*\n\n*" nil t))
       (replace-match "\n"))
     (goto-char (point-min))
-    (while (re-search-forward 
+    (while (re-search-forward
 	    "^[^ \t\n:]+:[ \t]*\\(.*\\(\n[ \t].*\\)*\\)\n"
 	    nil t)
       (when (string= "" (match-string 1))

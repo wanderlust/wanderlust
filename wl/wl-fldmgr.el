@@ -243,7 +243,7 @@ return value is diffs '(-new -unread -all)."
 
 ;; (defun wl-fldmgr-get-previous-entity (entity key-id)
 ;;   (cdr (wl-fldmgr-get-previous-entity-internal '(nil . nil) entity key-id)))
-;; 
+;;
 ;; (defun wl-fldmgr-get-previous-entity-internal (result entity key-id)
 ;;   (cond
 ;;    ((stringp entity)
@@ -766,7 +766,7 @@ return value is diffs '(-new -unread -all)."
 		   (throw 'found (symbol-value atom)))))
 	    wl-fldmgr-add-completion-hashtb)))
 	(pattern
-	 (if (string-match "\\.$" 
+	 (if (string-match "\\.$"
 			   (elmo-folder-prefix-internal
 			    (wl-folder-get-elmo-folder string)))
 	     (substring string 0 (match-beginning 0))

@@ -515,7 +515,7 @@ ENTITY is returned."
     (let ((entity (wl-thread-get-entity msg))
 	  top-child top-entity update-msgs invisible-top)
       (setq wl-summary-buffer-number-list
-	    (delq msg wl-summary-buffer-number-list))	      
+	    (delq msg wl-summary-buffer-number-list))
       (when entity
 	(let ((parent (wl-thread-entity-get-parent-entity entity)))
 	  (if parent
@@ -1073,7 +1073,7 @@ Message is inserted to the summary buffer."
       (incf depth)
       (setq entity (wl-thread-get-entity number)))
     depth))
-  
+
 (defun wl-thread-update-indent-string-region (beg end)
   (interactive "r")
   (save-excursion

@@ -37,7 +37,7 @@
 (require 'wl-vars)
 (require 'std11)
 
-(defvar wl-address-complete-header-list 
+(defvar wl-address-complete-header-list
   '("To:" "From:" "Cc:" "Bcc:" "Mail-Followup-To:" "Reply-To:"
     "Return-Receipt-To:"))
 (defvar wl-address-complete-header-regexp nil) ; auto-generated.

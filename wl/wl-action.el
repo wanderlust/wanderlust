@@ -512,7 +512,7 @@ Return number if put mark succeed"
 	      ;; update buffer.
 	      (wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
 	      (setq wl-summary-buffer-temp-mark-list
-		    (wl-delete-associations 
+		    (wl-delete-associations
 		     (cdr (car dst-msgs))
 		     wl-summary-buffer-temp-mark-list)))
 	  (setq failures
@@ -660,7 +660,7 @@ Return number if put mark succeed"
   (let ((failures 0)
 	collected pair action modified)
     (dolist (action wl-summary-mark-action-list)
-      (setq collected (cons (cons 
+      (setq collected (cons (cons
 			     (wl-summary-action-mark action)
 			     nil) collected)))
     (dolist (mark-info wl-summary-buffer-temp-mark-list)

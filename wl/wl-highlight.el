@@ -325,7 +325,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-;; answered 
+;; answered
 (wl-defface wl-highlight-summary-answered-face
   '((((type tty)
       (background dark))

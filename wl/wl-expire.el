@@ -198,7 +198,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 		;; reserve mark message already refiled or expired
 		(setq refile-list (delq msg refile-list))
 	      ;; reserve mark message not refiled
-	      (wl-append wl-expired-alist (list 
+	      (wl-append wl-expired-alist (list
 					   (cons msg-id
 						 (elmo-folder-name-internal
 						  dst-folder))))

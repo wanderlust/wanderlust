@@ -658,7 +658,7 @@ With ARG, ask destination folder."
     (mime-decrypt-application/pgp-encrypted entity situation)
     (setq wl-message-buffer-cur-summary-buffer summary-buffer)
     (setq wl-message-buffer-original-buffer original-buffer)))
-   
+
 
 ;;; Setup methods.
 (defun wl-mime-setup ()
