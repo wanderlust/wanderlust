@@ -2710,10 +2710,9 @@ IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$5$l$^$9!#$3$NJQ?t$O(B
 
 @item wl-message-buffer-prefetch-threshold
 @vindex wl-message-buffer-prefetch-threshold
-$B=i4|@_Dj$O(B 30000 (bytes)$B!#(B@code{wl-message-buffer-prefetch-threshold} $B$r(B
-$B1[$($k%5%$%:$N%a%C%;!<%8$O!"@hFI$_$7$^$;$s!#(B
-@code{wl-message-buffer-prefetch-threshold}$B$r(B @code{nil} $B$K$9$k$H!"(B
-$B@hFI$_$9$k%a%C%;!<%8$N%5%$%:$N%A%'%C%/$r$7$^$;$s!#(B
+$B=i4|@_Dj$O(B 30000 (bytes)$B!#$3$NCM$r1[$($k%5%$%:$N%a%C%;!<%8$O!"@hFI$_$7$^$;$s!#(B
+@code{wl-message-buffer-prefetch-threshold}$B$r(B @code{nil} $B$K@_Dj$9$k$H!"(B
+$B@hFI$_$9$k%a%C%;!<%8$N%5%$%:$r%A%'%C%/$7$^$;$s!#(B
 @end table
 
 
@@ -3140,7 +3139,7 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @example
 @group
 all            ...$B$9$Y$F99?7(B
-all-visible    ...$B8+$($F$$$k%a!<%C%;!<%8$K$D$$$F$9$Y$F99?7(B
+all-visible    ...$B8+$($F$$$k%a%C%;!<%8$K$D$$$F$9$Y$F99?7(B
 update         ...$B8=:_$NI=<($r99?7(B
 rescan         ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B
 rescan-noscore ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B($B%9%3%"$J$7(B)
