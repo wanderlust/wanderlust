@@ -1,5 +1,11 @@
 2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-network-initialize-session): Call
+	buffer-disable-undo.
+
+	* elmo-imap4.el (elmo-network-initialize-session):
+	Set current-buffer as an argument for `buffer-disable-undo'.
+
 	* elmo-pop3.el (elmo-network-close-session): Don't use
 	`process-live-p'.
 

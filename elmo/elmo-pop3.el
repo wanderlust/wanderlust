@@ -294,6 +294,7 @@
 	response capability mechanism)
     (with-current-buffer (process-buffer process)
       (elmo-set-buffer-multibyte nil)
+      (buffer-disable-undo (current-buffer))
       (set-process-filter process 'elmo-pop3-process-filter)
       (make-local-variable 'elmo-pop3-read-point)
       (setq elmo-pop3-read-point (point-min))

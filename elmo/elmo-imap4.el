@@ -1244,7 +1244,7 @@ If optional argument UNMARK is non-nil, unmark."
 	response greeting capability mechanism)
     (with-current-buffer (process-buffer process)
       (elmo-set-buffer-multibyte nil)
-      (buffer-disable-undo)
+      (buffer-disable-undo (current-buffer))
       (make-variable-buffer-local 'elmo-imap4-lock)
       (make-local-variable 'elmo-imap4-read-point)
       (setq elmo-imap4-read-point (point-min))
