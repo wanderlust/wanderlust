@@ -1577,8 +1577,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-set-folder-updated (name value)
   (save-excursion
-    (let (buf)
-      (if (setq buf (get-buffer wl-folder-buffer-name))
+    (let ((buf (get-buffer wl-folder-buffer-name)))
+      (if buf
 	  (wl-folder-entity-hashtb-set
 	   wl-folder-entity-hashtb name value buf))
       (setq wl-folder-info-alist-modified t))))
