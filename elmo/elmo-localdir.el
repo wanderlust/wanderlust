@@ -92,7 +92,10 @@
     (mapcar
      'elmo-replace-string-as-filename
      (split-string
-      (expand-file-name (elmo-localdir-folder-dir-name-internal folder))
+      (let ((dir-name (elmo-localdir-folder-dir-name-internal folder)))
+	(if (file-name-absolute-p dir-name)
+	    (expand-file-name dir-name)
+	  dir-name))
       "/"))
     "/")
    (expand-file-name ;;"localdir"
