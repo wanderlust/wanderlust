@@ -19,6 +19,10 @@
 	* wl-draft.el (wl-draft-normal-send-func): Fixed bug for removing
 	empty lines.
 
+2003-07-15  Mito  <mito@mxa.nes.nec.co.jp>
+
+	* wl-summary.el (wl-summary-entity-info-msg): Don't replace % to %%.
+
 2003-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.1 is released.
