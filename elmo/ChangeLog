@@ -1,3 +1,8 @@
+2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Eliminated needless bindings;
+	Use `elmo-close-internal' instead of `elmo-close'.
+
 2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mark.el: New file.
@@ -121,6 +126,10 @@
 2000-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el: Rewrite with luna.
+
+	* mmimap.el: New file.
+
+	* mmelmo.el, mmelmo-imap4.el: Removed.
 
 	* elmo-net.el: Ditto.
 
