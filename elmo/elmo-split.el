@@ -94,7 +94,7 @@ Example:
 	;; Messages from DoCoMo user are stored in `+docomo-{username}'.
 	((match from \"\\\\(.*\\\\)@docomo\\\\.ne\\\\.jp\")
 	 \"+docomo-\\\\1\")
-	;; Unmatched mails goes to `+inbox'.
+	;; Unmatched mails go to `+inbox'.
 	(t \"+inbox\")))"
   :group 'elmo
   :type 'sexp)
