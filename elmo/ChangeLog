@@ -1,3 +1,7 @@
+2000-08-30  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-send-command): Remove unused local variable.
+
 2000-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-vars.el (elmo-search-mime-charset): Abolished.
