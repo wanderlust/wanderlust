@@ -1,11 +1,3 @@
-2000-12-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* WL-MK (config-wl-package-subr): Don't try load `WL-ELS.el'.
-	And permit `WL-CFG.el' override for committer.
-
-	* WL-MK (toplevel): `file-executable-p' check use `if' instead of
-	`or'.
-
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* WL-ELS: Remove sasl.
