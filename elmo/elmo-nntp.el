@@ -181,7 +181,11 @@ Don't cache if nil.")
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-nntp-session))
   (set-process-filter (elmo-network-session-process-internal session)
-		      'elmo-nntp-process-filter))
+		      'elmo-nntp-process-filter)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (setq elmo-nntp-read-point (point-min))
+    (or (elmo-nntp-read-response session t)
+	(error "cannot open network"))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-nntp-session))
@@ -198,8 +202,13 @@ Don't cache if nil.")
        (format "authinfo pass %s"
 	       (elmo-get-passwd (elmo-network-session-password-key session))))
       (or (elmo-nntp-read-response session)
-	  (signal 'elmo-authenticate-error '(authinfo))))
-    (run-hooks 'elmo-nntp-opened-hook)))
+	  (signal 'elmo-authenticate-error '(authinfo))))))
+
+(luna-define-method elmo-network-setup-session ((session
+						 elmo-nntp-session))
+  (if elmo-nntp-send-mode-reader
+      (elmo-nntp-send-mode-reader session))
+  (run-hooks 'elmo-nntp-opened-hook))
 
 (defun elmo-nntp-process-filter (process output)
   (save-excursion
