@@ -1,3 +1,7 @@
+2002-01-24  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-message.el (wl-message-buffer-prefetch-subr): Fix.
+
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-message.el (wl-message-buffer-prefetch-p): Check size.
