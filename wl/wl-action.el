@@ -135,6 +135,7 @@ Return number if put mark succeed"
 		(setq number (car numlist)
 		      numlist nil))
 	    (setq numlist (cdr numlist)))
+	  (unless number (error "no target"))
 	  (wl-summary-jump-to-msg number)
 	  (setq data (funcall (wl-summary-action-argument-function action)
 			      (wl-summary-action-symbol action) number)))
