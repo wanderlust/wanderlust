@@ -1,3 +1,8 @@
+2000-11-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Use `smtp-send-buffer'
+	instead of `smtp-via-smtp'.
+
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (toplevel): Delete defvar for sasl-*.

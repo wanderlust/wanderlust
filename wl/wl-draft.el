@@ -956,12 +956,12 @@ non-nil."
 	      (as-binary-process
 	       (when recipients
 		 (wl-smtp-extension-bind
-		  (let ((err (smtp-via-smtp sender recipients
-					    (current-buffer))))
-		    (when (not (eq err t))
-		      (wl-draft-write-sendlog 'failed 'smtp smtp-server
-					      recipients id)
-		      (error "Sending failed; SMTP protocol error:%s" err))))
+		  (condition-case err
+		      (smtp-send-buffer sender recipients (current-buffer))
+		    (error
+		     (wl-draft-write-sendlog 'failed 'smtp smtp-server
+					     recipients id)
+		     (signal (car err) (cdr err)))))
 		 (wl-draft-set-sent-message 'mail 'sent)
 		 (wl-draft-write-sendlog
 		  'ok 'smtp smtp-server recipients id)))))
