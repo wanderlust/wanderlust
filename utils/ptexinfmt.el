@@ -37,6 +37,7 @@
 ;; Modified by Yamaoka not to use APEL functions.
 
 ;; Unimplemented command:
+;;  @abbr
 ;;  @float, @caption, @shortcaption, @listoffloats
 ;;  @deftypecv[x]
 ;;  @headitem
@@ -215,8 +216,8 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'page 'texinfo-format 'texinfo-discard-line)
 (put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
 
-;; @s{} (makeinfo 4.8 or later)
-(put 's 'texinfo-format 'texinfo-format-noop)
+;; @slanted{} (makeinfo 4.8 or later)
+(put 'slanted 'texinfo-format 'texinfo-format-noop)
 
 ;; @tie{} (makeinfo 4.3 or later)
 (put 'tie 'texinfo-format 'texinfo-format-tie)
