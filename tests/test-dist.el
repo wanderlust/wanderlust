@@ -13,7 +13,7 @@
        (lambda (module)
 	 (setq filename (concat (symbol-name module) ".el"))
 	 (unless (file-exists-p (expand-file-name filename WLDIR))
-	   (add-to-list 'lost symbol)))
+	   (add-to-list 'lost filename)))
        WL-MODULES)
       lost))))
 
@@ -26,7 +26,7 @@
        (lambda (module)
 	 (setq filename (concat (symbol-name module) ".el"))
 	 (unless (file-exists-p (expand-file-name filename ELMODIR))
-	   (add-to-list 'lost symbol)))
+	   (add-to-list 'lost filename)))
        ELMO-MODULES)
       lost))))
 
