@@ -1,6 +1,7 @@
 2000-02-26  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-default-subject-filter): Fix for `Re>'.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): Ditto.
 
 2001-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
