@@ -305,7 +305,7 @@ It calls following-method selected from variable
 	  (setq end (match-end 0))
 	  (if (setq beg (re-search-backward "^-+BEGIN PGP MESSAGE-+$" nil t))
 	      (let ((inhibit-read-only t)
-		    (buffer-file-coding-system mime-view-automatic-conversion))
+		    (buffer-file-coding-system wl-cs-autoconv))
 		(setq status (pgg-decrypt-region beg end))
 		(pgg-display-output-buffer beg end status))
 	    (message "Cannot find pgp encrypted region")))
