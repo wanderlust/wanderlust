@@ -1,5 +1,14 @@
 2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-summary.el (wl-summary-mark-as-read): Take list of numbers.
+	(wl-summary-mark-as-unread): Ditto.
+	(wl-summary-mark-as-read-region): Change accordingly.
+	(wl-summary-mark-as-unread-region): Ditto.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* Version number is increased to 2.11.2.
 
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
