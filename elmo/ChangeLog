@@ -1,3 +1,11 @@
+2000-05-10  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-get-decoded-cache): get string of
+	decoded mime-charset with cache.
+	(elmo-msgdb-overview-entity-get-from): Ditto.
+	(elmo-msgdb-overview-entity-get-subject): Ditto.
+	* elmo-vars.el (elmo-use-decoded-cache): New variable.
+
 2000-05-10  Kenichi OKADA <okada@opaopa.org>
 
 	* elmo-utils.el (elmo-get-passwd): Set timeout of password.
