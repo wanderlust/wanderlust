@@ -85,11 +85,21 @@ MIME用モジュールのインストール
   APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
   トールし直してください。
 
-  以下を実行することにより、APEL, FLIM, SEMI のチェックを含んだ環境テス
-  トが行えます。EMACS で emacs のコマンド名を指定することができます。
+
+環境の確認
+==========
+
+  Wanderlust のインストールの前に環境の確認をすることを推奨します。
 
 	% make check
+  または
 	% make EMACS=xemacs check
+
+  で APEL, FLIM, SEMI のチェックを含んだ環境テストが行えます。
+
+  新しい APEL, FLIM, SEMI がインストールされていても、load-path 上に古い
+  ものが残っている場合にはトラブルの原因となります。load-path 上で重複し
+  たファイルを探すには M-x list-load-path-shadows が便利です。
 
 
 通常のインストール
