@@ -82,11 +82,20 @@ Install MIME Module
 
   You have to re-install Wanderlust if you upgraded APEL, FLIM, or SEMI.
 
-  Do following, running environment test included APEL, FLIM, and SEMI
-  version check.  You can specify the emacs command name.
+
+Check Environment
+=================
+
+  Before going to the next step, we recommend you to run tests by
 
 	% make check
+  or
 	% make EMACS=xemacs check
+
+  to check running environment including the version of APEL, FLIM, and
+  SEMI.  (Note that even if you have installed new APEL/FLIM/SEMI, old
+  ones in load-path may cause trouble.)
+
 
 Installation
 ============
