@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 11:53:33 teranisi>
+;; Time-stamp: <00/04/28 14:26:38 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1654,11 +1654,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		    (elmo-display-progress
 		     'wl-folder-insert-entity "Inserting group %s..."
 		     (/ (* i 100) len) (car entity)))
-		  ;(elmo-display-progress
-		  ; 'wl-folder-insert-entity "Inserting group %s..."
-		  ; 100 (car entity))
 		  (setq flist (cdr flist)))
-		(when mes (message "")))
+		(when mes 
+		  (elmo-display-progress
+		   'wl-folder-insert-entity "Inserting group %s..."
+		   100 (car entity))))
 	      (save-excursion
 		(goto-char group-name-end)
 		(delete-region (point) (save-excursion (end-of-line)
