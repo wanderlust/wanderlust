@@ -1240,7 +1240,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 (defun wl-draft-send-confirm ()
   (let (result answer)
     (save-excursion
-      (goto-char (point-min))
+      (goto-char (point-min)) ; to show recipients in header
       (message "Send current draft? <y/n/p(review)> ")
       (setq answer (let ((cursor-in-echo-area t)) (read-char))))
     (cond
