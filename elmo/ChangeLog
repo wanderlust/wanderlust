@@ -1,3 +1,9 @@
+2004-04-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-pipe.el (elmo-message-folder): Call `elmo-message-folder' recursively.
+	(elmo-folder-diff): Avoid error `wrong-type-argument number-or-marker-p nil'
+	when a destination folder is a filter folder.
+
 2004-04-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-message-flags): Add optional argument `msgid'.
