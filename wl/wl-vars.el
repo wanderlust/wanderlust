@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-10 10:42:13 teranisi>
+;; Time-stamp: <2000-05-18 17:04:43 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -251,6 +251,12 @@ if you set wl-insert-mail-followup-to as t."
 If nil, wl-from is used."
   :type '(choice (const :tag "Same as 'From' field." nil)
 		 string)
+  :group 'wl)
+
+(defcustom wl-draft-add-references t
+  "*If non-nil, message-id of the cited message is inserted to the
+references field of the current draft."
+  :type 'boolean
   :group 'wl)
 
 (defcustom wl-smtp-connection-type nil
