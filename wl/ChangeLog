@@ -1,3 +1,16 @@
+2003-01-10  Masahiro Murata  <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-reedit): Avoid error on Meadow [wl:11209].
+
+2003-01-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el: Follow "Left Margin Convention" in Emacs Manual.
+		In most major modes, Emacs assumes that any opening
+		delimiter found at the left margin is the start of a
+		top-level definition, or defun. Therefore, *never put an
+		opening delimiter at the left margin unless it should have
+		that significance.*
+
 2003-01-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version): Changed codename.

@@ -1870,6 +1870,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(switch-to-buffer buffer))
       (set-buffer buffer)
       (insert-file-contents-as-binary file-name)
+      (elmo-delete-cr-buffer)
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 ;	(wl-draft-decode-message-in-buffer))

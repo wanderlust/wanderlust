@@ -200,7 +200,7 @@ If no match, `wl-summary-default-view' is used."
     (?a (length wl-summary-buffer-number-list)))
   "An alist of format specifications that can appear in summary mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -247,7 +247,7 @@ which are replaced by the given information:
     (?@ (wl-summary-line-attached)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -475,7 +475,7 @@ If nil, don't authenticate."
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp\)"
+\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl
@@ -742,7 +742,7 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
     ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
     ("From" . (("From") nil nil)))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -761,7 +761,7 @@ Default is for 'reply-to-author'."
     ("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
     ("From" . (("From") ("To" "Cc") ("Newsgroups"))))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -779,7 +779,7 @@ Default is for 'reply-to-all'."
     ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
     ("From" . (("To") ("Cc") nil)))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -797,7 +797,7 @@ Default is for 'reply-to-me'."
     ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
     ("From" . (("To") ("Cc") nil)))
   "Alist of cons cell of
-\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -940,7 +940,7 @@ Default is for 'followup-to-me'."
 (defcustom wl-summary-fix-timezone nil
   "*Time zone of the date string in summary mode.
 If nil, it is adjust to the default time zone information
-\(system's default time zone or environment variable TZ\)."
+\(system's default time zone or environment variable TZ)."
   :type '(choice (const :tag "Default time zone" nil)
 		 string)
   :group 'wl-summary)
@@ -1409,7 +1409,7 @@ which appear just before @."
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -1999,7 +1999,7 @@ e.x.
     ("^-han\\." . (2 "+" "+" "|" "-" " ")))
   "Thread indent set alist.
 If no match, following indent set is used.
-(wl-thread-indent-level
+\(wl-thread-indent-level
  wl-thread-have-younger-brother-str
  wl-thread-youngest-child-str
  wl-thread-vertical-str
