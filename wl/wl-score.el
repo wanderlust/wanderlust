@@ -1225,9 +1225,7 @@ Set `wl-score-cache' nil."
 	      ((and wl-summary-target-above
 		    (> score wl-summary-target-above))
 	       (if visible
-		   (wl-summary-mark-line "*"))
-	       (setq wl-summary-buffer-target-mark-list
-		     (cons num wl-summary-buffer-target-mark-list))))
+		   (wl-summary-set-mark "*"))))
 	(setq alist (cdr alist))
 	(when (> count elmo-display-progress-threshold)
 	  (setq i (1+ i))
@@ -1235,12 +1233,11 @@ Set `wl-score-cache' nil."
 	   'wl-summary-score-update-all-lines "Updating score..."
 	   (/ (* i 100) count))))
       (when dels
-	(let ((marks dels))
-	  (while marks
-	    (elmo-message-set-flag wl-summary-buffer-elmo-folder
-				   (pop marks) 'read)))
-	;; XXX Does this work?? XXX
-	;; XXX should it be in the killed list?
+	;;(let ((marks dels))
+	;;(while marks
+	;;(elmo-message-set-flag wl-summary-buffer-elmo-folder
+	;;				   (pop marks) 'read)))
+	(elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
 	;; Update Folder mode

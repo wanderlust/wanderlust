@@ -1462,6 +1462,19 @@ FIELD is a symbol of the field.")
     (or result
 	(and err (signal (car err) (cdr err))))))
 
+(defun elmo-folder-kill-messages-before (folder msg)
+  (elmo-folder-set-killed-list-internal
+   folder
+   (list (cons 1 msg))))
+
+(defun elmo-folder-kill-messages (folder numbers)
+  "Kill(hide) messages in the FOLDER with NUMBERS."
+  (elmo-folder-set-killed-list-internal
+   folder
+   (elmo-number-set-append-list (elmo-folder-killed-list-internal
+				 folder) numbers)))
+				
+
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)
   (unless keep-killed
@@ -1499,19 +1512,19 @@ If update process is interrupted, return nil.")
     (condition-case nil
 	(progn
 	  (message "Checking folder diff...")
-	  ;; TODO: killed list is loaded in elmo-folder-open and
-	  ;; list-messages use internal killed-list-folder.
 	  (setq diff (elmo-list-diff (elmo-folder-list-messages
 				      folder
 				      (eq 'visible-only ignore-msgdb))
 				     numbers))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends (car diff)))
-	  ;; Set killed list.
+	  ;; Set killed list as ((1 . MAX-OF-DISAPPEARED))
 	  (when (and (not (eq (length (car diff))
 			      (length new-list)))
 		     (setq diff-2 (elmo-list-diff (car diff) new-list)))
-	    (elmo-msgdb-append-to-killed-list folder (car diff-2)))
+	    (elmo-folder-kill-messages-before folder 
+					      (nth (- (length (car diff-2)) 1)
+						   (car diff-2))))
 	  (setq delete-list (cadr diff))
 	  (if (or (equal diff '(nil nil))
 		  (equal diff '(nil))

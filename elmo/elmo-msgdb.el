@@ -1040,13 +1040,6 @@ Return CONDITION itself if no entity exists in msgdb."
 (defun elmo-msgdb-set-as-killed (killed-list msg)
   (elmo-number-set-append killed-list msg))
 
-(defun elmo-msgdb-append-to-killed-list (folder msgs)
-  (elmo-folder-set-killed-list-internal
-   folder
-   (elmo-number-set-append-list
-    (elmo-folder-killed-list-internal folder)
-    msgs)))
-
 (defun elmo-msgdb-killed-list-length (killed-list)
   (let ((killed killed-list)
 	(ret-val 0))

@@ -593,7 +593,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
     (message "%s" mess)
     (elmo-folder-detach-messages folder hide-list)
-    (elmo-msgdb-append-to-killed-list folder hide-list)
+    (elmo-folder-kill-messages folder hide-list)
     (elmo-folder-commit folder)
     (message "%sdone" mess)
     (cons hide-list (length hide-list))))

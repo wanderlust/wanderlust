@@ -1853,13 +1853,17 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-list-messages-plugged ((folder
 							elmo-imap4-folder)
-						       &optional nohide)
+						       &optional
+						       enable-killed)
   (elmo-imap4-list folder
-		   (let ((max (elmo-msgdb-max-of-killed
-			       (elmo-folder-killed-list-internal folder))))
-		     (if (or nohide
-			     (null (eq max 0)))
-			 (format "uid %d:*" (1+ max))
+		   (let ((killed
+			  (elmo-folder-killed-list-internal
+			   folder)))
+		     (if (and killed
+			      (eq (length killed) 1)
+			      (consp (car killed))
+			      (eq (car (car killed)) 1))
+			 (format "uid %d:*" (cdr (car killed)))
 		       "all"))))
 
 (luna-define-method elmo-folder-list-unreads-plugged
@@ -2361,7 +2365,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (defsubst elmo-imap4-folder-diff-plugged (folder)
   (let ((session (elmo-imap4-get-session folder))
-	messages new unread response killed)
+	messages new unread response killed uidnext)
 ;;; (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
@@ -2373,14 +2377,18 @@ If optional argument REMOVE is non-nil, remove FLAG."
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
 					   folder))
-					 " (recent unseen messages)")))
+					 " (recent unseen messages uidnext)")))
     (setq response (elmo-imap4-response-value response 'status))
     (setq messages (elmo-imap4-response-value response 'messages))
+    (setq uidnext (elmo-imap4-response-value response 'uidnext))
     (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-    (if killed
-	(setq messages (- messages
-			  (elmo-msgdb-killed-list-length
-			   killed))))
+    ;; 
+    (when killed
+      (when (and (consp (car killed))
+		 (eq (car (car killed)) 1))
+	(setq messages (- uidnext (cdr (car killed)) 1)))
+      (setq messages (- messages
+			(elmo-msgdb-killed-list-length (cdr killed)))))
     (setq new (elmo-imap4-response-value response 'recent)
 	  unread (elmo-imap4-response-value response 'unseen))
     (if (< unread new) (setq new unread))

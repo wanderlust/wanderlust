@@ -1,3 +1,19 @@
+2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-append-to-killed-list): Abolish.
+
+	* elmo-imap4.el (elmo-folder-list-messages-plugged): Fixed.
+	(elmo-imap4-folder-diff-plugged): Use uidnext to calculate number of
+	messages.
+
+	* elmo.el (elmo-folder-kill-messages-before): New function.
+	(elmo-folder-kill-messages): Ditto.
+	(elmo-folder-synchronize): Use elmo-folder-kill-messages-before.
+
+	* elmo-imap4.el (elmo-folder-list-messages-plugged): 
+	Don't use elmo-msgdb-max-of-killed. It is harmful when messages are
+	killed not by synchronize (e.g. scoring).
+
 2003-07-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-search-fast): Return t if condition is not

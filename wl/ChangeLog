@@ -1,3 +1,11 @@
+2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-score.el (wl-summary-score-update-all-lines): Use
+	wl-summary-set-mark.
+	(wl-summary-score-update-all-lines): Kill expunged messages.
+
+	* wl-expire.el (wl-expire-hide): Use elmo-folder-kill-messages.
+
 2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-score.el (wl-summary-score-update-all-lines): Don't use msgdb
