@@ -696,7 +696,7 @@ Wanderlust $B$O(B ELMO $B$N%$%s%?%U%'!<%9$rMxMQ$7$F$$$k$?$a!"(BELMO $B%b%8%
 
 $B%P!<%8%g%s(B @value{VERSION} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(BIMAP, NNTP,
 LocalDir(MH), Maildir, News Spool, Archive, POP, Shimbun, Namazu, Multi,
-Filter, Pipe, Internal, File $B$N(B 14 $B<oN`$G$9!#(B
+Filter, Pipe, File, Access, Internal $B$N(B 15 $B<oN`$G$9!#(B
 
 @menu
 * IMAP Folder::              @samp{%} -- IMAP $B%U%)%k%@(B
@@ -713,6 +713,7 @@ Filter, Pipe, Internal, File $B$N(B 14 $B<oN`$G$9!#(B
 * Pipe Folder::              @samp{|} -- $B%Q%$%W%U%)%k%@(B
 * Internal Folder::          @samp{'} -- $BFbIt%U%)%k%@(B
 * File Folder::                  -- $B%U%!%$%k%U%)%k%@(B
+* Access Folder::                -- $B%"%/%;%9%U%)%k%@(B
 @end menu
 
 
@@ -1772,7 +1773,7 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 $B%G%#%l%/%H%j(B (@file{~/.elmo/cache})$B$N%5%V%G%#%l%/%H%jL>$r;XDj$7$^$9!#(B
 
 
-@node File Folder,  , Internal Folder, Folders
+@node File Folder, Access Folder, Internal Folder, Folders
 @section $B%U%!%$%k%U%)%k%@(B
 @cindex File Folder
 
@@ -1791,6 +1792,29 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 @group
 file:~/work     -> @file{~/work}
 file:/etc       -> @file{/etc}
+@end group
+@end example
+
+
+@node Access Folder,  , File Folder, Folders
+@section $B%"%/%;%9%U%)%k%@(B
+@cindex Access Folder
+
+$B;XDj$5$l$?%U%)%k%@$NG[2<$N%5%V%U%)%k%@$r2>A[E*$K0l$D$N%U%)%k%@$H$7$F07$((B
+$B$k$h$&$K$9$k%U%)%k%@$G$9!#%5%V%U%)%k%@$NA}8:$O<+F0E*$KH?1G$5$l$^$9!#(B
+
+$B=q<0(B:
+
+@example
+@samp{access:} @var{$B%k!<%H%U%)%k%@(B}
+@end example
+
+$BNc(B:
+
+@example
+@group
+access:%INBOX -> %INBOX $B0J2<$N(B IMAP $B$N%a!<%k%\%C%/%9$NA4$F(B
+access:'cache -> $BA4$F$N(B 'cache $B%U%)%k%@(B
 @end group
 @end example
 
@@ -2819,22 +2843,12 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @table @code
 @item wl-message-buffer-prefetch-folder-type-list
 @vindex wl-message-buffer-prefetch-folder-type-list
-$B=i4|@_Dj$O(B @code{t}$B!#$3$N>l9g!"A4$F$N%U%)%k%@$G@hFI$_5!G=$,M-8z$K$J$j$^(B
-$B$9!#FCDj$N%U%)%k%@<oJL$N>l9g$K$@$1@hFI$_5!G=$rM-8z$K$7$?$$>l9g$K$O!"%U%)(B
-$B%k%@<oJL$N%j%9%H$r;XDj$7$^$9!#(B
-$BNc$($P0J2<$N$h$&$K@_Dj$7$^$9!#(B(NNTP $B%U%)%k%@$H(B IMAP $B%U%)%k%@$G$@$1@hFI$_(B
-$B$7$?$$>l9g(B)
-
-@lisp
-@group
-(setq wl-message-buffer-prefetch-folder-type-list
-      '(nntp imap4))
-@end group
-@end lisp
-
-$B$3$N>l9g!"$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)%k%@$G$O(B 
-IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B 
-@code{wl-message-buffer-prefetch-folder-list} $B$h$j$bM%@h$5$l$^$9!#(B
+$B=i4|@_Dj$O(B @code{'(imap4 nntp)}$B!#@hFI$_5!G=$rM-8z$K$7$?$$%U%)%k%@%?%$%W(B
+$B$N%7%s%\%k%j%9%H$r;XDj$7$^$9!#=i4|@_Dj$G$O!"(BIMAP4 $B$H(BNNTP $B%U%)%k%@$G@hFI(B
+$B$_5!G=$,M-8z$K$J$j$^$9!#$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)(B
+$B%k%@$G$O(B IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B 
+@code{wl-message-buffer-prefetch-folder-list} $B$h$j$bM%@h$5$l$^$9!#$9$Y$F(B
+$B$N%U%)%k%@$G@hFI$_5!G=$rM-8z$K$7$?$$>l9g$K$O!"(Bt $B$r;XDj$7$^$9!#(B
 
 @item wl-message-buffer-prefetch-folder-list
 @vindex wl-message-buffer-prefetch-folder-list
@@ -2843,11 +2857,11 @@ IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B
 
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-$B=i4|@_Dj$O(B 3$B!#@hFI$_5!G=$9$k%a%C%;!<%8$N?t!#(B
+$B=i4|@_Dj$O(B 1$B!#@hFI$_5!G=$9$k%a%C%;!<%8$N?t!#(B
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
-$B=i4|@_Dj$O(B 0.2 ($BC10L(B:$BIC(B)$B!#@hFI$_5!G=$9$k;~4V4V3V!#(B
+$B=i4|@_Dj$O(B 1 ($BC10L(B:$BIC(B)$B!#@hFI$_5!G=$9$k;~4V4V3V!#(B
 
 @item wl-message-buffer-prefetch-threshold
 @vindex wl-message-buffer-prefetch-threshold
@@ -4071,12 +4085,6 @@ Non-nil $B$J$i%5%^%j$N(B From $BItJ,$K$"$@L>$rI=<($7$^$9!#(B
 @vindex  wl-break-pages
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i!"(B@samp{^L} $B$G2~%Z!<%8$7$F%a%C%;!<%8$rI=<($7$^$9!#(B
-
-@item wl-message-window-size
-@vindex  wl-message-window-size
-$B=i4|@_Dj$O(B '(1 . 4)$B!#(B
-$B%5%^%j$rI=<($9$k%&%#%s%I%&$H%a%C%;!<%8K\BN$rI=<($9$k%&%#%s%I%&$NHf$r(B
-cons $B$G;XDj$7$^$9!#(Bcar:cdr $B$,(B $B%5%^%j(B:$B%a%C%;!<%8(B $B$G$9!#(B
 
 @item wl-summary-from-function
 @vindex wl-summary-from-function
@@ -7340,7 +7348,7 @@ spam $B%a!<%k$G$"$k$3$H$r<($9%X%C%@$N@55,I=8=$r;XDj$7$^$9!#(B
 
 @end table
 
-@node Regular Expressions Header Matching,  , SpamAssassin, Spam Filter Processors
+@node Regular Expressions Header Matching,  , SpamOracle, Spam Filter Processors
 @subsection Regular Expressions Header Matching
 @cindex Regular Expressions Header Matching
 

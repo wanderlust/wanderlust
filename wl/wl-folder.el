@@ -2926,7 +2926,7 @@ Call `wl-summary-write-current-folder' with current folder name."
     (unless entity (error "No folder"))
     (wl-folder-goto-folder-subr
      (concat "/"
-	     (elmo-read-search-condition
+	     (wl-read-search-condition
 	      wl-fldmgr-make-filter-default)
 	     "/" entity))))
 
@@ -2934,7 +2934,7 @@ Call `wl-summary-write-current-folder' with current folder name."
   (interactive)
   (save-excursion
     (let* ((condition (car (elmo-parse-search-condition
-			    (elmo-read-search-condition
+			    (wl-read-search-condition
 			     wl-summary-pick-field-default))))
 	   (entity (wl-folder-get-entity-from-buffer))
 	   (folder-list

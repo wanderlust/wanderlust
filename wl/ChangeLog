@@ -1,7 +1,130 @@
+2005-02-01  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-thread.el (wl-thread-entity-get-descendant): Change `defsubst'
+	to `defun'.  Use `nconc' instead of `append' to collect descendant
+	message numbers.
+
+2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-thread.el (wl-thread-save-top-list)
+	(wl-thread-save-entities): Use `with-temp-buffer'.
+	* wl-news.el.in (wl-news-previous-version-load):
+	(wl-news-previous-version-save): Ditto.
+	* wl-summary.el (wl-summary-load-file-object)
+	(wl-summary-save-view-cache): Ditto.
+
+2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (toplevel): Require 'elmo-flag'.
+	(wl-read-search-condition): New function (Renamed from
+	`elmo-read-search-condition').
+	(wl-read-search-condition-internal): Likewise.
+
+	* wl-summary.el (wl-summary-decide-flag): Cause error if flag is
+	invalid.
+	(wl-summary-pick): Use `wl-read-search-condition' instead of
+	`elmo-read-search-condition'.
+	(wl-summary-virtual): Ditto.
+
+	* wl-folder.el (wl-folder-virtual): Ditto.
+	(wl-folder-pick): Ditto.
+
+	* wl-fldmgr.el (wl-fldmgr-make-filter): Ditto.
+
+2005-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-reedit): Call
+	`wl-summary-message-string' with argument `use-cache' as `'maybe'.
+
+2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Require wl-vars.
+
+	* wl-message.el (toplevel): Require cl at compile.
+
+	* wl-draft.el (toplevel): Require elmo.
+
+2005-01-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-message.el (wl-message-buffer-prefetch): Count is a number
+	and do nothing when it is not positive.
+	(wl-message-buffer-prefetch-next): Ditto.
+
+2005-01-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Avoid error for
+	`wl-message-buffer-prefetch-depth' is nil though it is illegal.
+	(wl-summary-redisplay-internal): Ditto.
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Protect current
+	message (the condition is borrowed from `wl-check-variables-2').
+	(wl-summary-redisplay-internal): Ditto.
+
+2005-01-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-draft-nntp-attribute): New function.
+	(wl-draft-attribute-nntp-posting-server): Use it.
+	(wl-draft-attribute-nntp-posting-port): Ditto.
+
+	* wl-mime.el (wl-draft-preview-attributes-list): New function.
+	(wl-draft-show-attributes-buffer): Ditto.
+	(wl-draft-hide-attributes-buffer): Ditto.
+	(wl-draft-attribute-newsgroups): Ditto.
+	(wl-draft-attribute-nntp-posting-server): Ditto.
+	(wl-draft-attribute-nntp-posting-port): Ditto.
+	(wl-draft-preview-message): Use there functions.
+
+	* wl-vars.el (wl-draft-preview-attributes-list): Change default
+	value.
+
+2005-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-draft.el (wl-draft-insert-get-message): Follow the API change.
+	(wl-draft-reedit): Ditto.
+	(wl-draft-queue-flush): Ditto.
+
+	* wl-mime.el (wl-message-request-partial): Ditto.
+	(wl-message-delete-current-part): Use `elmo-message-fetch-string'
+	instead of `elmo-message-fetch'.
+
+	* wl-action.el (wl-summary-exec-action-resend-subr): Ditto.
+
+	* wl-summary.el (wl-summary-message-string): Ditto.
+
+2005-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-current-message-buffer): Follow the API change.
+
+	* wl-summary.el (wl-summary-redisplay-internal): Call
+	`wl-summary-mark-as-read' with 2nd argument as nil and update
+	unread count instead of persistent mark.
+
+	* wl-message.el (wl-message-buffer-mime-entity): New buffer local
+	variable.
+	(wl-message-redisplay): Follow the API change.
+	(wl-message-buffer-display): Managed mime-entity directly and
+	return preview buffer only.
+	(wl-message-display-internal): Rewrite.
+	(wl-message-buffer-prefetch-subr): Not save return value of
+	`wl-message-buffer-display'.
+
+	* Version number is increased to 2.13.1.
+
 2005-01-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-addrmgr.el (wl-addrmgr-pickup-entry-list): Call
 	'elmo-multiple-fields-body-list' with boundary specified.
+
+2005-01-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-summary-resend-use-cache): New variable.
+	* wl-action.el (wl-summary-exec-action-resend-subr): Use file
+	cache if `wl-summary-resend-use-cache' is non-nil.
+
+2005-01-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-pop-before-smtp-stream-type): Fix range.
+	(wl-nntp-posting-stream-type): Ditto.
 
 2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
@@ -11,6 +134,33 @@
 
 	* wl-util.el (wl-save-drafts): Avoid error on redisplaying
 	message.
+
+2004-12-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-unsync-mark-number-list):
+	Abolish.
+	(wl-summary-buffer-persistent-mark-version): New internal
+	variable.
+	(wl-summary-update-mark-and-highlight-window): Check by
+	wl-summary-persistent-mark-invalid-p.
+	(wl-summary-update-status-marks): Ditto.
+	(elmo-event-handler-flag-changed): Rewrite.
+	(elmo-event-handler-cache-changed): Define.
+	(wl-summary-prefetch-msg): Does not update persistent mark here.
+	(wl-summary-delete-cache): Ditto.
+	(wl-summary-resume-cache-status): Ditto.
+	(wl-summary-jump-to-msg): Add arguments `beg' and `end'.
+	(wl-summary-persistent-mark-invalid-p): New function.
+	(wl-summary-validate-persistent-mark): Ditto.
+	(wl-summary-validate-persistent-mark-string): Ditto.
+	(wl-summary-invalidate-persistent-mark): Ditto.
+	(wl-summary-update-persistent-mark): Call
+	`wl-summary-validate-persistent-mark'.
+	(wl-summary-create-line): Call
+	`wl-summary-validate-persistent-mark-string'.
+
+	* wl-message.el (wl-message-buffer-prefetch-subr): Set cache
+	status as t if cache used.
 
 2004-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -68,42 +68,33 @@
 ;;; -*- news-list-end -*-
 
 (defun wl-news-previous-version-load ()
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name
 		     wl-news-version-file-name
 		     elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*"))
 	  insert-file-contents-pre-hook
 	  insert-file-contents-post-hook
 	  ret-val)
       (if (not (file-readable-p filename))
 	  (cons wl-news-default-previous-version
 		wl-news-default-previous-version)
-	(set-buffer tmp-buffer)
 	(insert-file-contents filename)
-	(setq ret-val
-	      (condition-case nil
-		  (read (current-buffer))
-		(error nil nil)))
-	(kill-buffer tmp-buffer)
-	ret-val))))
+	(condition-case nil
+	    (read (current-buffer))
+	  (error nil nil))))))
 
 (defun wl-news-previous-version-save (current-version previous-version)
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name
 		     wl-news-version-file-name
 		     elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*"))
 	  print-length print-level)
-      (set-buffer tmp-buffer)
-      (erase-buffer)
-      (prin1 (cons current-version previous-version) tmp-buffer)
-      (princ "\n" tmp-buffer)
+      (prin1 (cons current-version previous-version) (current-buffer))
+      (princ "\n" (current-buffer))
       (if (file-writable-p filename)
 	  (write-region (point-min) (point-max)
 			filename nil 'no-msg)
-	(message "%s is not writable." filename))
-      (kill-buffer tmp-buffer))))
+	(message "%s is not writable." filename)))))
 
 (defun wl-news-append-news (lang previous-version &optional no-mime-tag)
   (require 'wl-mime)

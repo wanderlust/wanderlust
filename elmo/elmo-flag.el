@@ -44,6 +44,14 @@
   "Internal variable to hold global-flag-folder structures.")
 
 (eval-and-compile
+  (defconst elmo-flag-char-regexp "]!#$&'+,./0-9:;<=>?@A-Z[^_`a-z|}~-"))
+
+(defun elmo-flag-valid-p (flag)
+  (string-match (eval-when-compile
+		  (concat "^[" elmo-flag-char-regexp "]+$"))
+		(if (stringp flag) flag (symbol-name flag))))
+
+(eval-and-compile
   (luna-define-class elmo-flag-folder (elmo-localdir-folder)
 		     (flag minfo minfo-hash max-number))
   (luna-define-internal-accessors 'elmo-flag-folder))
@@ -51,8 +59,14 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-flag-folder)
 					    name)
-  (if (string-match "flag/\\([a-z]+\\)" name)
-      (setq name (match-string 1 name))
+  (unless (string-match (eval-when-compile
+			  (concat "^flag\\(/\\(["
+				  elmo-flag-char-regexp
+				  "]+\\)\\)?$"))
+			name)
+    (error "Error in folder name `%s'" (elmo-folder-name-internal folder)))
+  (if (match-beginning 1)
+      (setq name (match-string 2 name))
     (setq name (symbol-name (car elmo-global-flags)))
     (elmo-folder-set-name-internal
      folder
@@ -128,7 +142,7 @@
 	    (elmo-uniq-list
 	     (append
 	      (mapcar 'intern (delete ".." (delete "." (directory-files dir))))
-	      elmo-global-flags)))))
+	      (copy-sequence elmo-global-flags))))))
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
@@ -330,9 +344,8 @@ NUMBER is the message number."
 	      (elmo-copy-file (elmo-file-cache-path cache)
 			      new-file)
 	    (when (and folder number)
-	      (elmo-message-fetch folder number (elmo-make-fetch-strategy
-						 'entire)
-				  nil (current-buffer))
+	      (elmo-message-fetch folder number
+				  (elmo-make-fetch-strategy 'entire))
 	      (write-region-as-binary (point-min) (point-max) new-file nil
 				      'no-msg))))
 	(elmo-flag-folder-set-minfo-internal
@@ -468,6 +481,9 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
   (let ((flag (elmo-flag-folder-flag-internal folder)))
     (when (luna-call-next-method)
       (setq elmo-global-flags (delq flag elmo-global-flags))
+      (setq elmo-global-flag-folder-alist
+	    (delq (assq flag elmo-global-flag-folder-alist)
+		  elmo-global-flag-folder-alist))
       t)))
 
 (require 'product)

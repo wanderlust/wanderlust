@@ -334,7 +334,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 	      (when (ignore-errors
 		      (elmo-message-fetch folder msg
 					  (elmo-make-fetch-strategy 'entire)
-					  nil (current-buffer) 'unread))
+					  'unread))
 		(run-hooks 'elmo-split-fetch-hook)
 		(setq elmo-split-message-entity (mime-parse-buffer))
 		(setq flags (elmo-message-flags-for-append folder msg))

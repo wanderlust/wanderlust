@@ -1,3 +1,13 @@
+2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Makefile (compile-strict): New target.
+
+	* WL-MK (wl-examine-modules): New function.
+
+2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* README, README.ja: Update stable branch.
+
 2004-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.12.0 - "Your Wildest Dreams"

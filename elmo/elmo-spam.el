@@ -124,9 +124,8 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
   (let (elmo-message-fetch-threshold)
     (elmo-message-fetch
      folder number
-     (elmo-find-fetch-strategy folder
-			       (elmo-message-entity folder number))
-     nil (current-buffer) 'unread)))
+     (elmo-find-fetch-strategy folder number nil 'entire)
+     'unread)))
 
 ;; generic implement
 (luna-define-method elmo-spam-message-spam-p ((processor elsp-generic)

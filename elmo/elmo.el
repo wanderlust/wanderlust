@@ -504,86 +504,89 @@ NUMBER is a message number to test."
       (t
        (memq flag cur-flags)))))
 
-(luna-define-generic elmo-find-fetch-strategy
-  (folder entity &optional ignore-cache)
-;; Returns the message fetching strategy suitable for the message.
-;; FOLDER is the ELMO folder structure.
-;; ENTITY is the overview entity of the message in the folder.
-;; If optional argument IGNORE-CACHE is non-nil, cache is ignored.
-;; Returned value is a elmo-fetch-strategy object.
-;; If return value is nil, message should not be nil.
-  )
+(luna-define-generic elmo-find-fetch-strategy (folder number
+						      &optional
+						      ignore-cache
+						      require-entireness)
+  "Return the message fetching strategy suitable for the message with NUMBER.
+FOLDER is the ELMO folder structure.
+If optional argument IGNORE-CACHE is non-nil, existing cache is ignored.
+If second optional argument REQUIRE-ENTIRENESS is non-nil,
+ensure that entireness of the returned strategy is entire.
+Returned value is a elmo-fetch-strategy object.
+If return value is nil, message should not be nil.")
 
 (defmacro elmo-make-fetch-strategy (entireness
 				    &optional
 				    use-cache
 				    save-cache
 				    cache-path)
-;; Make elmo-message-fetching strategy.
-;; ENTIRENESS is 'entire or 'section.
-;; 'entire means fetch message entirely at once.
-;; 'section means fetch message section by section.
-;; If optional USE-CACHE is non-nil, existing cache is used and otherwise,
-;; existing cache is thrown away.
-;; If SAVE-CACHE is non-nil, fetched message is saved.
-;; CACHE-PATH is the cache path to be used as a message cache file.
-  (` (vector (, entireness)
-	     (, use-cache) (, save-cache) (, cache-path))))
+  "Make elmo-message-fetching strategy.
+ENTIRENESS is 'entire or 'section.
+'entire means fetch message entirely at once.
+'section means fetch message section by section.
+If optional USE-CACHE is non-nil, existing cache is used and otherwise,
+existing cache is thrown away.
+If SAVE-CACHE is non-nil, fetched message is saved.
+CACHE-PATH is the cache path to be used as a message cache file."
+  `(vector ,entireness ,use-cache ,save-cache ,cache-path))
 
 (defmacro elmo-fetch-strategy-entireness (strategy)
-  ;; Return entireness of STRATEGY.
-  (` (aref (, strategy) 0)))
+  "Return entireness of STRATEGY."
+  `(aref ,strategy 0))
 
 (defmacro elmo-fetch-strategy-use-cache (strategy)
-  ;; Return use-cache of STRATEGY.
-  (` (aref (, strategy) 1)))
+  "Return use-cache of STRATEGY."
+  `(aref ,strategy 1))
 
 (defmacro elmo-fetch-strategy-save-cache (strategy)
-  ;; Return save-cache of STRATEGY.
-  (` (aref (, strategy) 2)))
+  "Return save-cache of STRATEGY."
+  `(aref ,strategy 2))
 
 (defmacro elmo-fetch-strategy-cache-path (strategy)
-  ;;  Return cache-path of STRATEGY.
-  (` (aref (, strategy) 3)))
+  "Return cache-path of STRATEGY."
+  `(aref ,strategy 3))
 
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-folder) entity &optional ignore-cache)
-  (let (cache-file size message-id number)
-    (setq size (elmo-message-entity-field entity 'size))
-    (setq message-id (elmo-message-entity-field entity 'message-id))
-    (setq number (elmo-message-entity-number entity))
-    (setq cache-file (elmo-file-cache-get message-id))
-    (setq ignore-cache (or ignore-cache
-			   (null (elmo-message-use-cache-p folder number))))
-    (if (or ignore-cache
-	    (null (elmo-file-cache-status cache-file)))
-	;; No cache or ignore-cache.
-	(if (and (not (elmo-folder-local-p folder))
-		 elmo-message-fetch-threshold
-		 (integerp size)
-		 (>= size elmo-message-fetch-threshold)
-		 (or (not elmo-message-fetch-confirm)
-		     (not (prog1 (y-or-n-p
-				  (format "Fetch entire message(%dbytes)? "
-					  size))
-			    (message "")))))
-	    ;; Don't fetch message at all.
-	    nil
-	  ;; Don't use existing cache and fetch entire message at once.
-	  (elmo-make-fetch-strategy
-	   'entire nil
-	   (elmo-message-use-cache-p folder number)
-	   (elmo-file-cache-path cache-file)))
-      ;; Cache exists.
-      (if (not ignore-cache)
-	  (elmo-make-fetch-strategy
-	   'entire
-	   ;; ...But ignore current section cache and re-fetch
-	   ;; if section cache.
-	   (not (eq (elmo-file-cache-status cache-file) 'section))
-	   ;; Save cache.
-	   (elmo-message-use-cache-p folder number)
-	   (elmo-file-cache-path cache-file))))))
+(luna-define-method elmo-find-fetch-strategy ((folder elmo-folder) number
+					      &optional
+					      ignore-cache
+					      require-entireness)
+  (let ((entity (elmo-message-entity folder number)))
+    (if (null entity)
+	(elmo-make-fetch-strategy 'entire)
+      (let* ((size (elmo-message-entity-field entity 'size))
+	     (message-id (elmo-message-entity-field entity 'message-id))
+	     (cache-file (elmo-file-cache-get message-id))
+	     (use-cache (elmo-message-use-cache-p folder number)))
+	(if (and (not ignore-cache)
+		 use-cache
+		 (eq (elmo-file-cache-status cache-file) 'entire))
+	    ;; Cache exists and use it.
+	    (elmo-make-fetch-strategy
+	     'entire
+	     t				; Use cache.
+	     use-cache			; Save cache.
+	     (elmo-file-cache-path cache-file))
+	  ;; No cache or ignore-cache.
+	  (if (and (not (elmo-folder-local-p folder))
+		   (not require-entireness)
+		   elmo-message-fetch-threshold
+		   (integerp size)
+		   (>= size elmo-message-fetch-threshold)
+		   (or (not elmo-message-fetch-confirm)
+		       (not (prog1
+				(y-or-n-p
+				 (format "Fetch entire message(%dbytes)? "
+					 size))
+			      (message "")))))
+	      ;; Don't fetch message at all.
+	      nil
+	    ;; Don't use existing cache and fetch entire message at once.
+	    (elmo-make-fetch-strategy
+	     'entire
+	     nil			; Don't use cache.
+	     use-cache			; Save cache.
+	     (elmo-file-cache-path cache-file))))))))
 
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-folder) &optional visible-only)
@@ -602,15 +605,16 @@ If READ is non-nil, message is flaged as read.")
 (luna-define-method elmo-message-encache ((folder elmo-folder) number
 					  &optional read)
   (let (path)
-    (elmo-message-fetch
-     folder number
-     (elmo-make-fetch-strategy 'entire
-			       nil ;use-cache
-			       t   ;save-cache
-			       (setq path (elmo-file-cache-get-path
-					   (elmo-message-field
-					    folder number 'message-id))))
-     nil nil (not read))
+    (with-temp-buffer
+      (elmo-message-fetch
+       folder number
+       (elmo-make-fetch-strategy 'entire
+				 nil ;use-cache
+				 t   ;save-cache
+				 (setq path (elmo-file-cache-get-path
+					     (elmo-message-field
+					      folder number 'message-id))))
+       (not read)))
     path))
 
 (luna-define-generic elmo-message-fetch-bodystructure (folder number strategy)
@@ -618,32 +622,15 @@ If READ is non-nil, message is flaged as read.")
 
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional
-						section
-						outbuf
-						unread)
-  "Fetch a message and return as a string.
+						unread
+						section)
+  "Fetch a message into current buffer.
 FOLDER is the ELMO folder structure.
 NUMBER is the number of the message in the FOLDER.
 STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument OUTBUF is specified, fetched message is
-inserted to the buffer and returns t if fetch was ended successfully.
-If third optional argument UNREAD is non-nil, message is not flaged as read.
-Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-with-cache-process (folder
-							    number strategy
-							    &optional
-							    section
-							    unread)
-  "Fetch a message into current buffer with cache process.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not flaged as read.
+If optional argument UNREAD is non-nil, message is not flaged as read.
+If second optional argument SECTION is specified, only the
+SECTION of the message is fetched (if possible).
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-internal (folder number strategy
@@ -836,7 +823,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 						      (and cache t)
 						      nil
 						      cache-path)
-			    nil (current-buffer) t)
+			    'unread)
 	(set-buffer-multibyte default-enable-multibyte-characters)
 	(decode-coding-region (point-min) (point-max)
 			      elmo-mime-display-as-is-coding-system)
@@ -1073,7 +1060,6 @@ If optional argument IF-EXISTS is nil, load on demand.
 				 'entire t nil
 				 (elmo-file-cache-path cache)))
 			   (error "Unplugged")))
-		     nil (current-buffer)
 		     'unread)
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
@@ -1167,7 +1153,8 @@ If CACHED is t, message is set as cached.")
 					     number cached)
   (if cached
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder) number 'cached)
-    (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached)))
+    (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached))
+  (elmo-folder-notify-event folder 'cache-changed number))
 
 (defun elmo-message-copy-entity (entity)
   (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
@@ -1402,26 +1389,20 @@ If Optional LOCAL is non-nil, don't update server flag."
 						      number strategy)
   nil)
 
+(defun elmo-message-fetch-string (folder number strategy
+					 &optional
+					 unread
+					 section)
+  (with-temp-buffer
+    (when (elmo-message-fetch folder number strategy unread section)
+      (buffer-string))))
+
 (luna-define-method elmo-message-fetch ((folder elmo-folder)
 					number strategy
 					&optional
-					section
-					outbuf
-					unread)
-  (if outbuf
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(elmo-message-fetch-with-cache-process folder number
-					       strategy section unread))
-    (with-temp-buffer
-      (elmo-message-fetch-with-cache-process folder number
-					     strategy section unread)
-      (buffer-string))))
-
-(luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
-							   number strategy
-							   &optional
-							   section unread)
+					unread
+					section)
+  (erase-buffer)
   (let ((cache-path (elmo-fetch-strategy-cache-path strategy))
 	(method-priorities
 	 (cond ((eq (elmo-fetch-strategy-use-cache strategy) 'maybe)
@@ -1430,28 +1411,33 @@ If Optional LOCAL is non-nil, don't update server flag."
 		'(cache entity))
 	       (t
 		'(entity))))
-	result err)
+	result err updated-server-flag)
     (while (and method-priorities
-		(null result))
+		(not result))
       (setq result
 	    (case (car method-priorities)
 	      (cache
 	       (elmo-file-cache-load cache-path section))
 	      (entity
-	       (when (and (condition-case error
-			      (elmo-message-fetch-internal folder number
-							   strategy
-							   section
-							   unread)
-			    (error (setq err error) nil))
-			  (> (buffer-size) 0))
+	       (when (condition-case error
+			 (elmo-message-fetch-internal folder number
+						      strategy
+						      section
+						      unread)
+		       (error (setq err error) nil))
+		 (setq updated-server-flag t)
 		 (when (and (elmo-fetch-strategy-save-cache strategy)
 			    cache-path)
 		   (elmo-file-cache-save cache-path section))
 		 t)))
 	    method-priorities (cdr method-priorities)))
-    (or result
-	(and err (signal (car err) (cdr err))))))
+    (if result
+	(when (and (not unread)
+		   (elmo-message-flagged-p folder number 'unread))
+	  (elmo-message-unset-flag folder number 'unread updated-server-flag))
+      (when err
+	(signal (car err) (cdr err))))
+    result))
 
 (defun elmo-folder-kill-messages-range (folder beg end)
   (elmo-folder-set-killed-list-internal
@@ -1668,6 +1654,9 @@ Return a hashtable for newsgroups."
 
 (luna-define-generic elmo-event-handler-flag-changed (handler numbers)
   "Notify flag of the messages with NUMBERS is changed.")
+
+(luna-define-generic elmo-event-handler-cache-changed (handler number)
+  "Called when cache status of the message with NUMBER is changed.")
 
 (defun elmo-folder-add-handler (folder handler)
   (unless (memq handler (elmo-folder-handlers-internal folder))

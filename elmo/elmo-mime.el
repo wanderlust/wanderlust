@@ -33,9 +33,57 @@
 (require 'mmimap)
 (require 'mime-view)
 
+;; MIME-Entity
 (eval-and-compile
-  (luna-define-class mime-elmo-buffer-entity (mime-buffer-entity) ())
-  (luna-define-class mime-elmo-imap-entity (mime-imap-entity) ()))
+  (luna-define-class elmo-mime-entity))
+
+(luna-define-generic elmo-mime-entity-display-p (entity mime-mode)
+  "Return non-nil if ENTITY is able to display with MIME-MODE.
+
+MIME-MODE is a symbol which is one of the following:
+  `mime'  (Can display each MIME part)
+  `as-is' (Can display raw message)")
+
+(luna-define-generic elmo-mime-entity-display (entity preview-buffer
+						      &optional
+						      original-major-mode
+						      keymap)
+  "Display MIME message ENTITY.
+PREVIEW-BUFFER is a view buffer.
+Optional argument ORIGINAL-MAJOR-MODE is major-mode of representation
+buffer of ENTITY.  If it is nil, current `major-mode' is used.
+If optional argument KEYMAP is specified,
+use for keymap of representation buffer.")
+
+(luna-define-generic elmo-mime-entity-display-as-is (entity
+						     preview-buffer
+						     &optional
+						     original-major-mode
+						     keymap)
+  "Display MIME message ENTITY as is.
+PREVIEW-BUFFER is a view buffer.
+Optional argument ORIGINAL-MAJOR-MODE is major-mode of representation
+buffer of ENTITY.  If it is nil, current `major-mode' is used.
+If optional argument KEYMAP is specified,
+use for keymap of representation buffer.")
+
+(luna-define-method elmo-mime-entity-display ((entity elmo-mime-entity)
+					      preview-buffer
+					      &optional
+					      original-major-mode
+					      keymap)
+  (let ((elmo-message-displaying t))
+    (mime-display-message entity
+			  preview-buffer
+			  nil
+			  keymap
+			  original-major-mode)))
+
+(eval-and-compile
+  (luna-define-class mime-elmo-buffer-entity (mime-buffer-entity
+					      elmo-mime-entity))
+  (luna-define-class mime-elmo-imap-entity (mime-imap-entity
+					    elmo-mime-entity)))
 
 ;; Provide backend
 (provide 'mmelmo-imap)
@@ -184,103 +232,65 @@ value is used."
    elmo-message-sorted-field-list)
   (run-hooks 'elmo-message-header-inserted-hook))
 
-(defun elmo-make-mime-message-location (folder number strategy rawbuf unread)
-;; Return the MIME message location structure.
-;; FOLDER is the ELMO folder structure.
-;; NUMBER is the number of the message in the FOLDER.
-;; STRATEGY is the message fetching strategy.
-;; RAWBUF is the output buffer for original message.
-;; If second optional argument UNREAD is non-nil, message is not marked
-;; as read.
-  (if (and strategy
-	   (eq (elmo-fetch-strategy-entireness strategy) 'section))
-      (luna-make-entity
-       'mime-elmo-imap-location
-       :folder folder
-       :number number
-       :rawbuf rawbuf
-       :strategy strategy)
-    (with-current-buffer rawbuf
-      (let (buffer-read-only)
-	(erase-buffer)
-	(if strategy
-	    (elmo-message-fetch folder number strategy
-				nil (current-buffer)
-				unread))))
-    rawbuf))
+;; mime-elmo-buffer-entity
+(luna-define-method elmo-mime-entity-display-p
+  ((entity mime-elmo-buffer-entity) mime-mode)
+  ;; always return t.
+  t)
 
-(defun elmo-mime-message-display (folder number viewbuf rawbuf original-mode
-					 &optional ignore-cache unread keymap)
-  "Display MIME message.
-A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
-VIEWBUF is a view buffer and RAWBUF is a raw buffer.
-ORIGINAL is the major mode of RAWBUF.
-If optional argument IGNORE-CACHE is specified, existing cache is ignored.
-If second optional argument UNREAD is specified, message is displayed but
-keep it as unread.
-Return non-nil if not entire message was fetched."
-  (let (mime-display-header-hook ; Do nothing.
-	(elmo-message-displaying t)
-	entity strategy)
-    (unless (zerop (elmo-folder-length folder))
-      (setq entity (elmo-message-entity folder number)))
-    (setq strategy (if entity (elmo-find-fetch-strategy folder entity
-							ignore-cache)
-		     (elmo-make-fetch-strategy 'entire)))
-    (mime-display-message
-     (mime-open-entity
-      (if (and strategy
-	       (eq (elmo-fetch-strategy-entireness strategy) 'section))
-	  'elmo-imap
-	'elmo-buffer)
-      (elmo-make-mime-message-location
-       folder number strategy rawbuf unread))
-     viewbuf nil keymap
-     original-mode)
-    (if strategy
-	(or (elmo-fetch-strategy-use-cache strategy)
-	    (eq (elmo-fetch-strategy-entireness strategy)
-		'section)))))
+(luna-define-method elmo-mime-entity-display-as-is ((entity
+						     mime-elmo-buffer-entity)
+						     preview-buffer
+						     &optional
+						     original-major-mode
+						     keymap)
+  (elmo-mime-display-as-is-internal entity
+				    preview-buffer
+				    nil
+				    keymap
+				    original-major-mode))
 
-(defun elmo-mime-display-as-is (folder number viewbuf rawbuf original-mode
-				       &optional ignore-cache unread keymap)
-  "Display MIME message.
-A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
-VIEWBUF is a view buffer and RAWBUF is a raw buffer.
-ORIGINAL is the major mode of RAWBUF.
-If optional argument IGNORE-CACHE is specified, existing cache is ignored.
-If second optional argument UNREAD is specified, message is displayed but
-keep it as unread.
-Return non-nil if cache is used."
-  (let (mime-display-header-hook ; Do nothing.
-	(elmo-message-displaying t)
-	entity cache-file cache-used)
-    (unless (zerop (elmo-folder-length folder))
-      (setq entity (elmo-message-entity folder number)))
-    (when entity
-      (setq cache-file
-	    (elmo-file-cache-get
-	     (elmo-message-entity-field entity 'message-id)))
-      ;; Required to be an entire cache.
-      (unless (eq (elmo-file-cache-status cache-file) 'entire)
-	(setq ignore-cache t)))
-    (elmo-mime-display-as-is-internal
-     (mime-open-entity
-      'elmo-buffer
-      (elmo-make-mime-message-location
-       folder number
-       (elmo-make-fetch-strategy 'entire
-				 (unless ignore-cache
-				   (setq
-				    cache-used
-				    (and cache-file
-					 (elmo-file-cache-status cache-file))))
-				 (elmo-message-use-cache-p folder number)
-				 (and cache-file
-				      (elmo-file-cache-path cache-file)))
-       rawbuf unread))
-     viewbuf nil keymap original-mode)
-    cache-used))
+;; mime-elmo-imap-entity
+(luna-define-method elmo-mime-entity-display-p
+  ((entity mime-elmo-imap-entity) mime-mode)
+  (not (eq mime-mode 'as-is)))
+
+(luna-define-method elmo-mime-entity-display-as-is ((entity
+						     mime-elmo-imap-entity)
+						     preview-buffer
+						     &optional
+						     original-major-mode
+						     keymap)
+  (error "Don't support this method."))
+
+
+(defun elmo-message-mime-entity (folder number rawbuf
+					&optional
+					ignore-cache unread entire)
+  "Return the mime-entity structure of the message in the FOLDER with NUMBER.
+RAWBUF is the output buffer for original message.
+If optional argument IGNORE-CACHE is non-nil, existing cache is ignored.
+If second optional argument UNREAD is non-nil,
+keep status of the message as unread.
+If third optional argument ENTIRE is non-nil, fetch entire message at once."
+  (let ((strategy (elmo-find-fetch-strategy folder number
+					    ignore-cache
+					    entire)))
+    (cond ((null strategy) nil)
+	  ((eq (elmo-fetch-strategy-entireness strategy) 'section)
+	   (mime-open-entity
+	    'elmo-imap
+	    (luna-make-entity 'mime-elmo-imap-location
+			      :folder folder
+			      :number number
+			      :rawbuf rawbuf
+			      :strategy strategy)))
+	  (t
+	   (with-current-buffer rawbuf
+	     (let (buffer-read-only)
+	       (erase-buffer)
+	       (elmo-message-fetch folder number strategy unread)))
+	   (mime-open-entity 'elmo-buffer rawbuf)))))
 
 ;; Replacement of mime-display-message.
 (defun elmo-mime-display-as-is-internal (message

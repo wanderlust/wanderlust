@@ -33,8 +33,8 @@
 ;;; Code:
 ;;
 (require 'bytecomp)
-(eval-when-compile
-  (require 'elmo-util))
+(require 'elmo-util)
+(require 'elmo-flag)
 
 (condition-case nil (require 'pp) (error nil))
 
@@ -536,11 +536,11 @@ that `read' can handle, whenever this is possible."
     (with-current-buffer wl-current-summary-buffer
       (or wl-message-buffer
 	  (and (wl-summary-message-number)
-	       (car (wl-message-buffer-display
-		     wl-summary-buffer-elmo-folder
-		     (wl-summary-message-number)
-		     wl-summary-buffer-display-mime-mode
-		     nil nil)))))))
+	       (wl-message-buffer-display
+		wl-summary-buffer-elmo-folder
+		(wl-summary-message-number)
+		wl-summary-buffer-display-mime-mode
+		nil nil))))))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function
@@ -1042,6 +1042,72 @@ is enclosed by at least one regexp grouping construct."
       (set (make-local-variable variable)
 	   (with-current-buffer src
 	     (symbol-value variable))))))
+
+;;; Search Condition
+(defun wl-read-search-condition (default)
+  "Read search condition string interactively."
+  (wl-read-search-condition-internal "Search by" default))
+
+(defun wl-read-search-condition-internal (prompt default &optional paren)
+  (let* ((completion-ignore-case t)
+	 (denial-fields (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
+			       '("Flag" "Since" "Before"
+				 "From" "Subject" "To" "Cc" "Body" "ToCc")))
+	 (field (completing-read
+		 (format "%s (%s): " prompt default)
+		 (mapcar 'list
+			 (append '("AND" "OR" "Last" "First")
+				 denial-fields
+				 (mapcar (lambda (f) (concat "!" f))
+					 denial-fields)))))
+	 value)
+    (setq field (if (string= field "")
+		    (setq field default)
+		  field))
+    (cond
+     ((or (string= field "AND") (string= field "OR"))
+      (concat (if paren "(" "")
+	      (wl-read-search-condition-internal
+	       (concat field "(1) Search by") default 'paren)
+	      (if (string= field "AND") "&" "|")
+	      (wl-read-search-condition-internal
+	       (concat field "(2) Search by") default 'paren)
+	      (if paren ")" "")))
+     ((string-match "Since\\|Before" field)
+      (let ((default (format-time-string "%Y-%m-%d")))
+	(setq value (completing-read
+		     (format "Value for '%s' [%s]: " field default)
+		     (mapcar (function
+			      (lambda (x)
+				(list (format "%s" (car x)))))
+			     elmo-date-descriptions)))
+	(concat (downcase field) ":"
+		(if (equal value "") default value))))
+     ((string-match "!?Flag" field)
+      (while (null value)
+	(setq value (downcase
+		     (completing-read
+		      (format "Value for '%s': " field)
+		      (mapcar (lambda (f) (list (capitalize (symbol-name f))))
+			      (elmo-uniq-list
+			       (append
+				'(unread answered forwarded digest any)
+				elmo-global-flags)
+			       #'delq)))))
+	(unless (elmo-flag-valid-p value)
+	  (message "Invalid char in `%s'" value)
+	  (setq value nil)
+	  (sit-for 1)))
+      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
+			    value)
+	(setq value (prin1-to-string value)))
+      (concat (downcase field) ":" value))
+     (t
+      (setq value (read-from-minibuffer (format "Value for '%s': " field)))
+      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
+			    value)
+	(setq value (prin1-to-string value)))
+      (concat (downcase field) ":" value)))))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))

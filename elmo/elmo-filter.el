@@ -146,11 +146,14 @@
 (luna-define-method elmo-folder-newsgroups ((folder elmo-filter-folder))
   (elmo-folder-newsgroups (elmo-filter-folder-target-internal folder)))
 
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-filter-folder) entity &optional ignore-cache)
+(luna-define-method elmo-find-fetch-strategy ((folder elmo-filter-folder)
+					      number
+					      &optional
+					      ignore-cache
+					      require-entireness)
   (elmo-find-fetch-strategy
    (elmo-filter-folder-target-internal folder)
-   entity ignore-cache))
+   number ignore-cache require-entireness))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder
 						     elmo-filter-folder))
@@ -177,10 +180,15 @@
 
 (luna-define-method elmo-message-fetch ((folder elmo-filter-folder)
 					number strategy
-					&optional section outbuf unseen)
-  (elmo-message-fetch
-   (elmo-filter-folder-target-internal folder)
-   number strategy section outbuf unseen))
+					&optional unseen section)
+  (unless unseen
+    (elmo-filter-folder-countup-message-flags folder (list number) -1))
+  (when (elmo-message-fetch (elmo-filter-folder-target-internal folder)
+			    number strategy unseen section)
+    (unless unseen
+      (elmo-filter-folder-countup-message-flags folder (list number))
+      (elmo-folder-notify-event folder 'flag-changed (list number)))
+    t))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-filter-folder)
 						 numbers)

@@ -30,7 +30,7 @@
 
 ;;; Code:
 ;;
-
+(require 'elmo)
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
@@ -674,11 +674,12 @@ Reply to author if WITH-ARG is non-nil."
 	wl-draft-cite-function)
     (unwind-protect
 	(progn
-	  (elmo-message-fetch (wl-folder-get-elmo-folder fld)
-			      number
-			      ;; No cache.
-			      (elmo-make-fetch-strategy 'entire)
-			      nil mail-reply-buffer)
+	  (with-current-buffer mail-reply-buffer
+	    (erase-buffer)
+	    (elmo-message-fetch (wl-folder-get-elmo-folder fld)
+				number
+				;; No cache.
+				(elmo-make-fetch-strategy 'entire)))
 	  (wl-draft-yank-from-mail-reply-buffer nil))
       (kill-buffer mail-reply-buffer))))
 
@@ -1983,8 +1984,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(switch-to-buffer-other-frame buffer)
       (switch-to-buffer buffer))
     (set-buffer buffer)
-    (elmo-message-fetch draft-folder number (elmo-make-fetch-strategy 'entire)
-			nil (current-buffer))
+    (elmo-message-fetch draft-folder number (elmo-make-fetch-strategy 'entire))
     (elmo-delete-cr-buffer)
     (let ((mime-edit-again-ignored-field-regexp
 	   "^\\(Content-.*\\|Mime-Version\\):"))
@@ -2362,8 +2362,7 @@ Automatically applied in draft sending time."
 		(wl-draft-queue-info-operation (car msgs) 'load)
 		(elmo-message-fetch queue-folder
 				    (car msgs)
-				    (elmo-make-fetch-strategy 'entire)
-				    nil (current-buffer))
+				    (elmo-make-fetch-strategy 'entire))
 		(condition-case err
 		    (setq failure (funcall
 				   wl-draft-queue-flush-send-function

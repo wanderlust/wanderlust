@@ -28,6 +28,7 @@
 
 ;;; Code:
 ;;
+(eval-when-compile (require 'cl))
 
 (require 'elmo)
 (require 'luna)
@@ -145,14 +146,16 @@
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (elmo-message-set-cached (car pair) (cdr pair) cached)))
 
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-multi-folder) entity &optional ignore-cache)
-  (let ((pair (elmo-multi-real-folder-number
-	       folder
-	       (elmo-message-entity-number entity))))
-    (elmo-find-fetch-strategy
-     (car pair)
-     (elmo-message-entity (car pair) (cdr pair)) ignore-cache)))
+(luna-define-method elmo-find-fetch-strategy ((folder elmo-multi-folder)
+					      number
+					      &optional
+					      ignore-cache
+					      require-entireness)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-find-fetch-strategy (car pair)
+			      (cdr pair)
+			      ignore-cache
+			      require-entireness)))
 
 (luna-define-method elmo-message-number ((folder elmo-multi-folder)
 					 message-id)
@@ -241,9 +244,13 @@
 
 (luna-define-method elmo-message-fetch ((folder elmo-multi-folder)
 					number strategy
-					&optional section outbuf unseen)
+					&optional unseen section)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (elmo-message-fetch (car pair) (cdr pair) strategy section outbuf unseen)))
+    (when (elmo-message-fetch (car pair) (cdr pair)
+			      strategy unseen section)
+      (unless unseen
+	(elmo-folder-notify-event folder 'flag-changed (list number)))
+      t)))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-multi-folder)
 						 numbers)

@@ -139,61 +139,6 @@ File content is encoded with MIME-CHARSET."
 
 (defconst elmo-condition-atom-regexp "[^/ \")|&]*")
 
-(defun elmo-read-search-condition (default)
-  "Read search condition string interactively."
-  (elmo-read-search-condition-internal "Search by" default))
-
-(defun elmo-read-search-condition-internal (prompt default)
-  (let* ((completion-ignore-case t)
-	 (field (completing-read
-		 (format "%s (%s): " prompt default)
-		 (mapcar 'list
-			 (append '("AND" "OR"
-				   "Last" "First" "Flag"
-				   "From" "Subject" "To" "Cc" "Body"
-				   "Since" "Before" "ToCc"
-				   "!From" "!Subject" "!To" "!Cc" "!Body"
-				   "!Since" "!Before" "!ToCc")
-				 elmo-msgdb-extra-fields))))
-	 value)
-    (setq field (if (string= field "")
-		    (setq field default)
-		  field))
-    (cond
-     ((or (string= field "AND") (string= field "OR"))
-      (concat "("
-	      (elmo-read-search-condition-internal
-	       (concat field "(1) Search by") default)
-	      (if (string= field "AND") "&" "|")
-	      (elmo-read-search-condition-internal
-	       (concat field "(2) Search by") default)
-	      ")"))
-     ((string-match "Since\\|Before" field)
-      (let ((default (format-time-string "%Y-%m-%d")))
-	(setq value (completing-read
-		     (format "Value for '%s' [%s]: " field default)
-		     (mapcar (function
-			      (lambda (x)
-				(list (format "%s" (car x)))))
-			     elmo-date-descriptions)))
-	(concat (downcase field) ":"
-		(if (equal value "") default value))))
-     ((string= field "Flag")
-      (setq value (completing-read
-		   (format "Value for '%s': " field)
-		   (mapcar 'list
-			   '("unread" "important" "answered" "digest" "any"))))
-      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
-			    value)
-	(setq value (prin1-to-string value)))
-      (concat (downcase field) ":" value))
-     (t
-      (setq value (read-from-minibuffer (format "Value for '%s': " field)))
-      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
-			    value)
-	(setq value (prin1-to-string value)))
-      (concat (downcase field) ":" value)))))
-
 (defsubst elmo-condition-parse-error ()
   (error "Syntax error in '%s'" (buffer-string)))
 
@@ -247,7 +192,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (goto-char (match-end 0))
     (let ((search-key (vector
 		       (if (match-beginning 1) 'unmatch 'match)
-		       (elmo-match-buffer 2)
+		       (downcase (elmo-match-buffer 2))
 		       (elmo-condition-parse-search-value))))
       ;; syntax sugar.
       (if (string= (aref search-key 1) "tocc")
@@ -419,23 +364,18 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defvar elmo-passwd-alist nil)
 
 (defun elmo-passwd-alist-load ()
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
 	  insert-file-contents-post-hook
 	  ret-val)
       (if (not (file-readable-p filename))
 	  ()
-	(set-buffer tmp-buffer)
 	(insert-file-contents filename)
-	(setq ret-val
-	      (condition-case nil
-		  (read (current-buffer))
-		(error nil nil))))
-      (kill-buffer tmp-buffer)
-      ret-val)))
+	(condition-case nil
+	    (read (current-buffer))
+	  (error nil nil))))))
 
 (defun elmo-passwd-alist-clear ()
   "Clear password cache."
@@ -448,15 +388,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  print-length print-level)
-      (set-buffer tmp-buffer)
-      (erase-buffer)
-      (prin1 elmo-passwd-alist tmp-buffer)
-      (princ "\n" tmp-buffer)
+      (prin1 elmo-passwd-alist (current-buffer))
+      (princ "\n" (current-buffer))
 ;;;   (if (and (file-exists-p filename)
 ;;;	       (not (equal 384 (file-modes filename))))
 ;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
@@ -465,8 +402,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	    (write-region (point-min) (point-max)
 			  filename nil 'no-msg)
 	    (set-file-modes filename 384))
-	(message "%s is not writable." filename))
-      (kill-buffer tmp-buffer))))
+	(message "%s is not writable." filename)))))
 
 (defun elmo-get-passwd (key)
   "Get password from password pool."

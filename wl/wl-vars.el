@@ -631,7 +631,8 @@ If nil, `elmo-pop3-default-port' is used."
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
 If nil, `elmo-pop3-default-stream-type' is used."
-  :type 'boolean
+  :type '(choice (const :tag "Use `elmo-pop3-default-stream-type'" nil)
+		 symbol)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-authenticate-type nil
@@ -668,7 +669,8 @@ If nil, `elmo-nntp-default-port' is used."
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
 If nil, `elmo-nntp-default-stream-type' is used."
-  :type 'boolean
+  :type '(choice (const :tag "Use `elmo-nntp-default-stream-type'" nil)
+		 symbol)
   :group 'wl)
 (defcustom wl-nntp-posting-function 'elmo-nntp-post
   "A function to post news.
@@ -1988,21 +1990,28 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
   :type 'boolean
   :group 'wl-draft)
 
-(defcustom wl-draft-preview-attributes-list '(recipients
-					      envelope-from
-					      smtp-posting-server
-					      smtp-posting-port)
+(defcustom wl-draft-preview-attributes-list '((mail recipients
+						    envelope-from
+						    smtp-posting-server
+						    smtp-posting-port)
+					      (news newsgroups
+						    nntp-posting-server
+						    nntp-posting-port))
   "*Attribute symbols to display in the draft preview.
 Candidates are following:
 `recipients'
 `envelope-from'
 `smtp-posting-server'
 `smtp-posting-port'
+`newsgroups'
 `nntp-posting-server'
 `nntp-posting-port'
 Also variables which begin with `wl-' can be specified
 \(`wl-' have to be removed\)"
-  :type '(repeat symbol)
+  :type '(choice (repeat (cons (choice (const :tag "Mail" mail)
+				       (const :tag "News" news))
+			       (repeat symbol)))
+		 (repeat symbol))
   :group 'wl-draft)
 
 (defcustom wl-draft-preview-attributes-buffer-lines 5
@@ -2460,6 +2469,12 @@ Sender information in summary mode."
 (defcustom wl-summary-save-file-suffix ".eml"
   "Suffix for the saved file name."
   :type 'string
+  :group 'wl-summary)
+
+(defcustom wl-summary-resend-use-cache nil
+  "*Non-nil to enable offline resending by using file cache.
+Note that strict message identity is not guaranteed when cache is used."
+  :type 'boolean
   :group 'wl-summary)
 
 (defcustom wl-folder-removed-mark "#<removed>"

@@ -1,12 +1,197 @@
+2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-server-command-index): Add entry `xhdr'.
+
+2005-02-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-flag-valid-p): Simplify.
+	(elmo-folder-list-subfolders): Copy `elmo-global-flags'.
+	(elmo-folder-delete): Update `elmo-global-flag-folder-alist'.
+
+2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-passwd-alist-load, elmo-passwd-alist-save):
+	Use `with-temp-buffer'.
+
+2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-folder-initialize): Fixed the last change.
+
+	* elmo-util.el (elmo-read-search-condition): Eliminate (renamed to
+	`wl-read-search-condition').
+	(elmo-read-search-condition-internal): Likewise.
+
+	* elmo-flag.el (elmo-flag-char-regexp): New constant.
+	(elmo-flag-valid-p): New function.
+	(elmo-folder-initialize): Check flag name is valid.
+
+2005-01-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Use root mailbox without
+	delimiter to obtain root mailbox itself.
+
+2005-01-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-net.el (elmo-network-session-idle-timeout): Fix customization
+	type mismatch.
+
+2005-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-entity-display): Bind elmo-message-displaying
+	as t.
+
+2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (toplevel): Require cl at compile.
+
+	* elmo-nntp.el (toplevel): Ditto.
+
+	* elmo-nmz.el (toplevel): Ditto.
+
+	* elmo-multi.el (toplevel): Ditto.
+
+	* elmo-file.el (toplevel): Ditto.
+
+	* elmo-dop.el (toplevel): Ditto.
+
+	* elmo-archive.el (toplevel): Likewise elmo and cl (at compile).
+
+2005-01-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-make-mime-entity): Set children's top node number
+	as nil.
+
+	* elmo.el (elmo-message-fetch): Return t even when the output buffer
+	size of elmo-message-fetch-internal is 0 byte.
+
+2005-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-maildir.el (elmo-map-message-fetch): Fixed last change.
+
 2005-01-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-shimbun.el (elmo-folder-plugged-p): Treat "@" as
 	always plugged.
 
+2005-01-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-maildir.el (elmo-map-message-fetch): Call
+	`elmo-map-folder-set-flag'.
+
+	* elmo.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Merge from
+	`elmo-message-fetch-with-cache-process'.
+
+	* elmo-sendlog.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Define.
+
+	* elmo-nntp.el (elmo-message-fetch): Renamed from
+	`elmo-message-fetch-with-cache-process'.
+
+	* elmo-cache.el (elmo-message-fetch-with-cache-process): Abolish.
+	(elmo-message-fetch): Define.
+
+	* elmo-util.el (elmo-condition-parse-primitive): Downcase
+	search-key.
+
+	* elmo-shimbun.el (shimbun-mua-search-id): Use
+	`elmo-message-entity' instead of `elmo-msgdb-message-entity'.
+	(elmo-shimbun-folder-shimbun-header): Ditto.
+	(elmo-shimbun-get-headers): Ditto.
+	(elmo-shimbun-update-overview): Ditto.
+
+	* elmo-pipe.el (elmo-folder-detach-messages): Define.
+
+	* elmo-net.el (elmo-folder-list-messages-unplugged): Use
+	`elmo-folder-list-messages' instead of `elmo-msgdb-list-messages'.
+
+2005-01-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-fetch): Unset unread flag on server when
+	message is cached.
+	(elmo-message-fetch-string): Fixed argument.
+
+2005-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-fetch): Removed argument `outbuf' and
+	exchange order of arguments `section' and `unread'.
+	(elmo-message-encache): Follow the API change.
+	(elmo-message-match-condition): Ditto.
+	(elmo-generic-folder-append-messages): Ditto.
+	(elmo-message-fetch-string): New function.
+
+	* elmo-split.el (elmo-split-subr): Ditto.
+
+	* elmo-spam.el (elmo-spam-message-fetch): Ditto.
+
+	* elmo-pipe.el (elmo-message-fetch): Ditto.
+
+	* elmo-multi.el (elmo-message-fetch): Ditto.
+
+	* elmo-mime.el (elmo-message-mime-entity): Ditto.
+
+	* elmo-flag.el (elmo-global-flag-set-internal): Ditto.
+
+	* elmo-filter.el (elmo-message-fetch): Ditto.
+
+	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Ditto.
+
+	* elmo-imap4.el (mime-imap-location-section-body): Use
+	`elmo-message-fetch-string' instead of `elmo-message-fetch' and
+	follow the API change.
+
+2005-01-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-session-idle-timeout): New option.
+	(elmo-network-session): New attribute `last-accessed'.
+	(elmo-network-get-session): Discard network cache if elapsed time
+	since last-accessed is larger than elmo-network-session-idle-timeout.
+
+2005-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-find-fetch-strategy): Removed argument `entity'
+	and added `number', `require-entireness'.
+	(elmo-find-fetch-strategy): Rewrite.
+	(elmo-message-fetch): Unset `unread' flag when argument unread is
+	non-nil.
+
+	* elmo-spam.el (elmo-spam-message-fetch): Follow the API change.
+
+	* elmo-multi.el (elmo-find-fetch-strategy): Ditto.
+	(elmo-message-fetch): Notify event `flag-changed'.
+
+	* elmo-pipe.el: Likewise.
+
+	* elmo-mime.el (elmo-mime-entity): New class.
+	(elmo-mime-entity-display-p): New generic function.
+	(elmo-mime-entity-display): Ditto.
+	(elmo-mime-entity-display-as-is): Ditto.
+	(mime-elmo-buffer-entity, mime-elmo-imap-entity): Inherit
+	elmo-mime-entity.
+	(elmo-make-mime-message-location): Removed.
+	(elmo-mime-message-display): Ditto.
+	(elmo-mime-display-as-is): Ditto.
+	(elmo-message-mime-entity): New function.
+
+	* elmo-imap4.el (elmo-find-fetch-strategy): Rewrite.
+
+	* elmo-filter.el (elmo-find-fetch-strategy): Follow the API
+	change.
+	(elmo-message-fetch): Re-count flagged message number and notify
+	event `flag-changed'.
+
+	* elmo-version.el (elmo-version): Up to 2.13.1.
+
 2005-01-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-filter.el (elmo-message-field): Define.
 	(elmo-message-set-field): Ditto.
+
+2004-12-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-set-cached): Call
+	`elmo-folder-notify-event' with cache-changed.
+	(elmo-event-handler-cache-changed): New generic function.
 
 2004-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 

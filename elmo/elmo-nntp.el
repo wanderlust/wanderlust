@@ -32,6 +32,7 @@
 
 ;;; Code:
 ;;
+(eval-when-compile (require 'cl))
 
 (require 'elmo-vars)
 (require 'elmo-util)
@@ -176,7 +177,8 @@ Don't cache if nil.")
 
 (defconst elmo-nntp-server-command-index '((xover . 0)
 					   (listgroup . 1)
-					   (list-active . 2)))
+					   (list-active . 2)
+					   (xhdr . 3)))
 
 (defmacro elmo-nntp-get-server-command (session)
   (` (assoc (cons (elmo-network-session-server-internal (, session))
@@ -959,8 +961,8 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(luna-define-method elmo-message-fetch-with-cache-process :around
-  ((folder elmo-nntp-folder) number strategy &optional section unread)
+(luna-define-method elmo-message-fetch :around
+  ((folder elmo-nntp-folder) number strategy &optional unread section)
   (when (luna-call-next-method)
     (elmo-nntp-setup-crosspost-buffer folder number)
     (unless unread

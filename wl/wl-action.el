@@ -587,11 +587,16 @@ Return number if put mark succeed"
       (let ((beg (point)))
 	;; Insert the message to be resent.
 	(insert
-	 (with-temp-buffer
-	   (elmo-message-fetch folder number
-			       (elmo-make-fetch-strategy 'entire)
-			       nil (current-buffer) 'unread)
-	   (buffer-string)))
+	 ;; elmo-message-fetch is erace current buffer before fetch message
+	 (elmo-message-fetch-string folder number
+				    (if wl-summary-resend-use-cache
+					(elmo-make-fetch-strategy
+					 'entire 'maybe nil
+					 (elmo-file-cache-get-path
+					  (elmo-message-field
+					   folder number 'message-id)))
+				      (elmo-make-fetch-strategy 'entire))
+				    'unread))
 	(goto-char (point-min))
 	(search-forward "\n\n")
 	(forward-char -1)
