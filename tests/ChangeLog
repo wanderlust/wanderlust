@@ -5,10 +5,12 @@
 	(lunit-test-case-teardown): Check file existence before remove.
 	(test-elmo-object-save-2, test-elmo-save-string-1)
 	(test-elmo-uniq-list-1, test-elmo-uniq-list-2)
-	(test-elmo-uniq-list-delq)
-	(test-elmo-list-insert-1, test-elmo-list-insert-2)
-	(test-elmo-delete-char-1, test-elmo-concat-path-1)
-	(test-elmo-remove-passwd-1): New testcases.
+	(test-elmo-uniq-list-3, test-elmo-list-insert-1)
+	(test-elmo-list-insert-2, test-elmo-delete-char-1)
+	(test-elmo-concat-path-1)
+	(test-elmo-remove-passwd-1, test-elmo-remove-passwd-2)
+	(test-elmo-remove-passwd-3, test-elmo-passwd-alist-clear-1): New
+	testcases.  Add docstring.
 
 2004-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

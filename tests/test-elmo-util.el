@@ -22,6 +22,7 @@
 
 
 (luna-define-method test-elmo-replace-string-as-filename-1 ((case test-elmo-util))
+  "Revert checking replace and recover."
   (lunit-assert
    (let ((str "/foo//./../bar/"))
      (string= str
@@ -31,14 +32,18 @@
 
 ;; object save & load
 (luna-define-method test-elmo-object-save-1 ((case test-elmo-util))
-  (let ((list '(1 2 3 4 5 6 7 8 9 10 11 12)))
+  "Check `print-length' let bindings."
+  (let ((list '(1 2 3 4 5 6 7 8 9 10 11 12))
+	(print-length 1))
     (elmo-object-save test-elmo-temoporary-file list)
     (lunit-assert
      (equal list
 	    (elmo-object-load test-elmo-temoporary-file)))))
 
 (luna-define-method test-elmo-object-save-2 ((case test-elmo-util))
-  (let ((list '(1 (2 :foo (nil . :bar)))))
+  "Check `print-level' let bindings."
+  (let ((list '(1 (2 :foo (nil . :bar))))
+	(print-level 1))
     (elmo-object-save test-elmo-temoporary-file list)
     (lunit-assert
      (equal list
@@ -65,7 +70,8 @@
   (lunit-assert
    (equal '("foo") (elmo-uniq-list '("foo" "foo")))))
 
-(luna-define-method test-elmo-uniq-list-delq ((case test-elmo-util))
+(luna-define-method test-elmo-uniq-list-3 ((case test-elmo-util))
+  "Check using DELETE-FUNCTION"
   (lunit-assert
    (equal '("foo" "foo") (elmo-uniq-list '("foo" "foo") #'delq)))
   (lunit-assert
@@ -84,6 +90,7 @@
    )
 
 (luna-define-method test-elmo-list-insert-2 ((case test-elmo-util))
+  "Check not copied"
   (let* ((list1 '(1 2 3 4 5))
 	 (list2 list1))
     (elmo-list-insert list1 4 3)
@@ -115,10 +122,46 @@
 
 
 (luna-define-method test-elmo-remove-passwd-1 ((case test-elmo-util))
+  "Check shred password."
   (let* ((password "cGFzc3dk")
 	 (elmo-passwd-alist (list (cons "key" password))))
     (elmo-remove-passwd "key")
     (lunit-assert
-     (string= "\0\0\0\0\0\0\0\0" password))
+     (string= "\0\0\0\0\0\0\0\0" password))))
+
+(luna-define-method test-elmo-remove-passwd-2 ((case test-elmo-util))
+  "Check remove target pair only.  Not rassoc."
+  (let ((password "cGFzc3dk")
+	(elmo-passwd-alist '(("foo" . "key")
+			     ("key" . "ok")
+			     ("bar" . "baz"))))
+    (elmo-remove-passwd "key")
     (lunit-assert
-     (null elmo-passwd-alist))))
+     (equal '(("foo" . "key")
+	      ("bar" . "baz"))
+	    elmo-passwd-alist))))
+
+(luna-define-method test-elmo-remove-passwd-3 ((case test-elmo-util))
+  "Multiple same key."
+  (let ((password "cGFzc3dk")
+	(elmo-passwd-alist '(("foo" . "key")
+			     ("key" . "ok")
+			     ("key" . "ok2")
+			     ("bar" . "baz"))))
+    (elmo-remove-passwd "key")
+    (lunit-assert
+     (equal '(("foo" . "key")
+	      ("bar" . "baz"))
+	    elmo-passwd-alist))))
+
+(luna-define-method test-elmo-passwd-alist-clear-1 ((case test-elmo-util))
+  "Check shred ALL password."
+  (let* ((password1 "cGFzc3dk")
+	 (password2 (copy-sequence password1))
+	 (elmo-passwd-alist (list (cons "key1" password1)
+				  (cons "key2" password2))))
+    (elmo-passwd-alist-clear)
+    (lunit-assert
+     (string= "\0\0\0\0\0\0\0\0" password1))
+    (lunit-assert
+     (string= "\0\0\0\0\0\0\0\0" password2))))
