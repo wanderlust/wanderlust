@@ -1,23 +1,4 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
-
-* Version 2.4.1 is basically a bug fix version of 2.4.0.
-
-** Wanderlust 2.4.1 now works on FLIM 1.14.x. 
-
-** Fixed a problem that POP connection remains after POP before SMTP.
-
-** The specification of IMAP4 authentication method for clear password
-   is changed.
-
-In 2.4.0, To use clear password authentication method in IMAP4
-(Logging in with LOGIN command), you have to set the variable
-`elmo-default-imap4-authenticate-type' as 'plain (or nil).
-But in 2.4.1, it is changed to 'clear (or nil).
-Example:
-(setq elmo-default-imap4-authenticate-type 'plain)
-should be changed to
-(setq elmo-default-imap4-authenticate-type 'clear)
-
 * Changes in 2.4.0 from 1.1.1.
 
 ** Version Number
