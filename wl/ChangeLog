@@ -1,3 +1,8 @@
+2000-10-05  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Don't pass by the XEmacs routine when
+	window system is not used.
+
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-pick-field-default): Added `Last', `First' and
