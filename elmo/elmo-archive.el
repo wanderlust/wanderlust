@@ -754,14 +754,10 @@ TYPE specifies the archiver's symbol."
 	   (error "WARNING: not delete: %s (method undefined)" type)))))
 
 (defun elmo-archive-exec-msgs-subr1 (prog args msgs)
-  (let ((buf (get-buffer-create " *ELMO ARCHIVE exec*")))
-    (set-buffer buf)
+  (with-temp-buffer
     (insert (mapconcat 'concat msgs "\n")) ;string
-    (unwind-protect
-	(= 0
-	   (apply 'call-process-region (point-min) (point-max)
-		  prog nil nil nil args))
-      (kill-buffer buf))))
+    (= 0 (apply 'call-process-region (point-min) (point-max)
+		prog nil nil nil args))))
 
 (defun elmo-archive-exec-msgs-subr2 (prog args msgs arc-length)
   (let ((max-len (- elmo-archive-cmdstr-max-length arc-length))

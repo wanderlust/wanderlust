@@ -1132,7 +1132,7 @@ FIELD is a symbol of the field."
 		    in (string-to-int in))
 	      (if (< len in)
 		  (throw 'end len))
-	      (if (y-or-n-p (format "%d messages are disappeared.  OK? "
+	      (if (y-or-n-p (format "%d messages are not appeared.  OK? "
 				    (max (- len in) 0)))
 		  (throw 'end in))))
 	  (nthcdr (max (- len in) 0) appends))

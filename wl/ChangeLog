@@ -1,3 +1,15 @@
+2001-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-update-confirm-threshold): Abolished.
+	(wl-fetch-confirm-threshold): Ditto.
+
+	* wl-summary.el (wl-summary-confirm-appends): Removed.
+	(wl-summary-sync-update): Don't refer
+	`wl-summary-update-confirm-threshold' (It is now abolished).
+
+	* wl-message.el (wl-message-display-internal): Don't refer
+	`wl-fetch-confirm-threshold' (It is now abolished).
+
 2001-12-07  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-logo-xpm): Use Xmas logo temporally.

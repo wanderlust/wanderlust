@@ -195,13 +195,6 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type 'string
   :group 'wl-summary)
 
-(defcustom wl-summary-update-confirm-threshold 500
-  "*Confirm updating summary if message number is larger than this value.
-If nil, all the message will be updated without confirmation."
-  :type '(choice (const :tag "Never confirm" nil)
-		 integer)
-  :group 'wl-summary)
-
 ;; Important folders
 (defcustom wl-default-folder "%inbox"
   "*Default folder used in `wl-summary-goto-folder'."
@@ -393,12 +386,6 @@ If nil, `elmo-nntp-default-port' is used."
 If nil, `elmo-nntp-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
-
-(defcustom wl-fetch-confirm-threshold 30000
-  "*Confirm fetching if message size is larger than this value."
-  :type 'integer
-  :group 'wl-pref
-  :group 'wl-setting)
 
 (defcustom wl-prefetch-confirm t
   "*Confirm prefetching if message size is larger than `wl-prefetch-threshold'."

@@ -2017,27 +2017,6 @@ If ARG is non-nil, checking is omitted."
 	(setq diffs (cdr diffs)))
       (if (interactive-p) (message mes)))))
 
-(defun wl-summary-confirm-appends (appends)
-  (let ((len (length appends))
-	in)
-    (if (and wl-summary-update-confirm-threshold
-	     (> len wl-summary-update-confirm-threshold))
-	(if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
-	    appends
-	  (setq in wl-summary-update-confirm-threshold)
-	  (catch 'end
-	    (while t
-	      (setq in (read-from-minibuffer "Update number: "
-					     (int-to-string in))
-		    in (string-to-int in))
-	      (if (< len in)
-		  (throw 'end len))
-	      (if (y-or-n-p (format "%d messages are disappeared.  OK? "
-				    (max (- len in) 0)))
-		  (throw 'end in))))
-	  (nthcdr (max (- len in) 0) appends))
-      appends)))
-
 (defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
   "Update the summary view to the newest folder status."
   (interactive)
@@ -2046,7 +2025,6 @@ If ARG is non-nil, checking is omitted."
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
-	 (elmo-folder-update-threshold wl-summary-update-confirm-threshold)
 	 gc-message
 	 overview number-alist mark-alist
 	 curp num i new-msgdb
