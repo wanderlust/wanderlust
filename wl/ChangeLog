@@ -1,3 +1,19 @@
+2000-12-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-reply): Bind `mime-header-lexical-analyzer'
+	to the default value as well as `eword-lexical-analyzer'.
+
+2000-12-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-extended-emacs-version,
+	wl-extended-emacs-version2, wl-extended-emacs-version3): Use
+	`elmo-match-string' instead of `wl-match-string'.
+
+2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-mode): Use \\{wl-summary-mode-map} in
+	docstring.
+
 2000-12-10  Hironori Fukuchi <nory@valis.co.jp>
 
 	* wl-summary.el (wl-summary-toggle-thread): Docstring typo fix.
