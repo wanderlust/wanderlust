@@ -1,3 +1,9 @@
+2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (elmo-event-handler-flag-changed): Does not check
+	whether a target message is within displaying area.
+	(elmo-event-handler-cache-changed): Ditto.
+
 2005-02-01  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-thread.el (wl-thread-entity-get-descendant): Change `defsubst'
