@@ -486,7 +486,10 @@
 	    (if wl-news-lang
 		(progn
 		  (insert "(defconst wl-news-news-alist\n  '")
-		  (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
+		  (let ((p (point)))
+		    (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
+		    (save-excursion
+		      (replace-regexp "^(" "\\\\(" nil p (point)))) ; avoid font-lock confusion
 		  (insert ")\n"))
 	      (insert "(defconst wl-news-news-alist nil)\n\n"))
 	    (let ((buffer-file-coding-system (mime-charset-to-coding-system 'x-ctext)))
