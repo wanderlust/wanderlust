@@ -62,9 +62,11 @@ wl-strict-diff-folders => elmo-strict-diff-folder-list
 wl-message-buf-name => wl-message-buffer.
 mmelmo-original-mode => wl-original-message-mode
 variable wl-summary-buffer-msgdb => Macro wl-summary-buffer-msgdb
+（互換性のために残す）
 elmo-folder-get-spec => wl-folder-get-elmo-folder
 wl-summary-buffer-folder-name 
 => Macro `wl-summary-buffer-folder-name' or `elmo-folder-name-internal'
+（互換性のために残す）
 wl-summary-msgdb-save=>elmo-folder-commit
 wl-summary-sync-update3=>wl-summary-sync-update.
 
@@ -93,7 +95,6 @@ elmo-quit
 
 wl-message-buffer-prefetch-folder-type-list
 wl-message-buffer-prefetch-debug
-wl-message-buffer-prefetch-threshold
 wl-message-buffer-cache-size
 wl-message-buffer-prefetch-idle-time
 wl-message-buffer-prefetch-get-next-func
@@ -116,11 +117,10 @@ wl-folder-use-server-diff
 * 動作変更
 
 plugged は stream-type が違うと別エントリ。
-archive フォルダ用 msgdb path を変更。
+archive, multi フォルダ用の msgdb path を変更。
 
 * 懸案
 
-** キャッシュフォルダ
 ** オフライン処理
 ** tm 対応
 ** NNTP 関連
