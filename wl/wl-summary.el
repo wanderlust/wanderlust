@@ -1191,6 +1191,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 				     (wl-summary-temp-mark number)
 				     (elmo-message-flags folder number)
 				     (elmo-message-cached-p folder number)))))
+      (when (and wl-summary-buffer-disp-msg
+		 wl-summary-buffer-current-msg)
+	(save-excursion
+	  (when (wl-summary-jump-to-msg wl-summary-buffer-current-msg)
+	    (wl-highlight-summary-displaying))))
       (wl-summary-set-message-modified)
       (wl-summary-jump-to-msg start-number)
       (move-to-column start-column))))

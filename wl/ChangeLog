@@ -1,3 +1,8 @@
+2005-03-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-rescan-message): Call
+	`wl-highlight-summary-displaying' when displaying a message.
+
 2005-03-07  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-config-info-filename): Extracted from
