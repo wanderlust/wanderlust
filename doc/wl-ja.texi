@@ -6353,7 +6353,7 @@ Non-nil ならば、Wanderlust 終了時に確認を行います。
 
 @item wl-interactive-send
 @vindex wl-interactive-send
-初期設定は @code{nil}。
+初期設定は @code{t}。
 Non-nil ならば、メール送信時に本当に送信して良いかを確認します。
 
 @item wl-folder-sync-range-alist

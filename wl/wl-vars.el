@@ -1494,7 +1494,7 @@ even if the value of this option is set to nil.  Here are some samples:
 			(sexp :tag "Other" :value title)))
   :group 'wl-highlight)
 
-(defcustom wl-interactive-send nil
+(defcustom wl-interactive-send t
   "*If non-nil, require your confirmation when sending draft message."
   :type 'boolean
   :group 'wl-pref)
