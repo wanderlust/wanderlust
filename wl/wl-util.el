@@ -579,12 +579,14 @@ that `read' can handle, whenever this is possible."
     result))
 
 (defun wl-save-drafts ()
-  (let ((buffers (wl-collect-draft)))
+  (let ((msg (current-message))
+	(buffers (wl-collect-draft)))
     (save-excursion
       (while buffers
 	(set-buffer (car buffers))
 	(if (buffer-modified-p) (wl-draft-save))
-	(setq buffers (cdr buffers))))))
+	(setq buffers (cdr buffers))))
+    (message msg)))
 
 (static-if (fboundp 'read-directory-name)
     (defun wl-read-directory-name (prompt dir)
