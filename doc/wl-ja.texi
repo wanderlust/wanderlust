@@ -144,6 +144,7 @@ into another language, under the above conditions for modified versions.
 * Disconnected Operations::  $B%*%U%i%$%s=hM}(B
 * Expire and Archive::       $B%a%C%;!<%8$N<+F0:o=|$H%"!<%+%$%V(B
 * Scoring::                  $B%a%C%;!<%8$N%9%3%"(B
+* Split messages::           $B%a%C%;!<%8$N?6$jJ,$1(B
 * Address Book::             $B%"%I%l%9D"(B
 * Customization::            $B%+%9%?%^%$%:(B
 * Terminology::              $BMQ8l$N2r@b(B
@@ -1768,9 +1769,11 @@ IMAP $B%U%)%k%@$GD>@\>C$7$?>l9g$@$1%5!<%P>e$N%^!<%/$,>C$($^$9!#(B)
 $B$3$l$K4^$^$l$k#6$D$N%U%)%k%@$NI=<($r:G?7$N$b$N$K99?7$7$^$9!#(B
 
 @subsubsection $B%U%)%k%@$NA*Br(B
-$B%U%)%k%@$N9T$K%+!<%=%k$rCV$$$F%j%?!<%s(B($B%9%Z!<%9(B)$B%-!<$r2!$9$H$=$N%U%)%k%@$NFbMF$rI=<($9$k%5%^%j%b!<%I$K0\F0$7$^$9!#(B
+$B%U%)%k%@$N9T$K%+!<%=%k$rCV$$$F%j%?!<%s(B($B%9%Z!<%9(B)$B%-!<$r2!$9$H$=$N%U%)%k%@(B
+$B$NFbMF$rI=<($9$k%5%^%j%b!<%I$K0\F0$7$^$9!#(B
 
-$B$3$N$H$-!"JQ?t(B @code{wl-stay-folder-window} $B$,(B non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$l$^$9!#(B
+$B$3$N$H$-!"JQ?t(B @code{wl-stay-folder-window} $B$,(B non-nil $B$J$i%5%^%j$K0\F0(B
+$B$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$l$^$9!#(B
 
 @subsection $B%-!<%P%$%s%I(B
 
@@ -5743,7 +5746,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @end table
 
 
-@node Scoring, Address Book, Expire and Archive, Top
+@node Scoring, Split messages, Expire and Archive, Top
 @chapter $B%9%3%"(B
 @cindex Scoring
 @c @cindex Kill File
@@ -6230,7 +6233,104 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @end example
 
 
-@node Address Book, Customization, Scoring, Top
+@node Split messages, Address Book, Scoring, Top
+@chapter $B%a%C%;!<%8$N?6$jJ,$1(B
+@cindex Split messages
+
+@code{elmo-split} $B$r;H$&$H!"%U%)%k%@(B @code{elmo-split-folder} $BFb$N(B
+$B%a%C%;!<%8$rFCDj$N5,B'$K=>$C$F(B procmail $BIw$K?6$jJ,$1$k$3$H$,$G$-$^$9!#(B
+$B$3$N5!G=$r;H$&$K$O!"$^$:(B @file{~/.emacs} $B$K0J2<$N$h$&$K@_Dj$7$F2<$5$$!#(B
+
+@lisp
+(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
+@end lisp
+
+@kbd{M-x elmo-split} $B$9$k$H(B @code{elmo-split-rule} $B$K=>$C$F?6$jJ,$1$r(B
+$B<B9T$7$^$9!#(B @kbd{C-u M-x elmo-split} $B$H$9$k$H<B:]$K$O?6$jJ,$1$r9T$o$:$K(B
+$B%j%O!<%5%k$r9T$J$$$^$9!#(B
+
+$B0J2<$G$O%k!<%k$N5-=R$N;EJ}$r@bL@$7$^$9!#$^$:$O<!$NNc$r8+$F2<$5$$!#(B
+
+@lisp
+@group
+(setq elmo-split-rule
+      ;; @r{SPAM $B$O(B @samp{+junk} $B$X(B}
+      '(((or (address-equal from "i.am@@spammer")
+	     (address-equal from "dull-work@@dull-boy")
+	     (address-equal from "death-march@@software")
+	     (address-equal from "ares@@aon.at")
+	     (address-equal from "get-money@@richman"))
+	 "+junk")
+	;; @r{mule $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%mule} $B$X(B}
+	((equal x-ml-name "mule") "%mule")
+	;; @r{wanderlust $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%wanderlust} $B$X(B}
+	;; @r{$B$=$7$FB3$1$F$=$l0J2<$N5,B'$bI>2A$9$k!#(B}
+	((equal x-ml-name "wanderlust") "%wanderlust" continue)
+	;; @r{Yahoo $BMxMQ<T$+$i$N%a%C%;!<%8$r(B @samp{+yahoo-@{username@}} $B$X(B}
+	((match from "\\(.*\\)@@yahoo\\.com")
+	 "+yahoo-\\1")
+	;; @r{$B%^%C%A$7$J$+$C$?;D$j$r(B @samp{+inbox} $B$X(B}
+	(t "+inbox")))
+@end group
+@end lisp
+
+$B5,B'$N4pK\C10L$O(B
+
+@lisp
+(@samp{$B>r7o(B} @samp{$B%U%)%k%@(B} [@code{continue}])
+@end lisp
+
+$B$H$$$&0lAH$G$9!#(B
+$BBh0l$NMWAG(B @samp{$B>r7o(B} $B$O(B sexp $B$G$9!#>\$7$/$O$9$08e$G@bL@$7$^$9!#(B
+$BBhFs$NMWAG(B @samp{$B%U%)%k%@(B} $B$O%a%C%;!<%8$N?6$jJ,$1@h$N%U%)%k%@L>$G$9!#(B
+$B$b$7Bh;0$NMWAG(B @code{continue} $B$,%7%s%\%k$H$7$FM?$($i$l$k$H!"(B
+$B$=$N>r7o$,K~$?$5$l$?$H$7$F$b?6$jJ,$15,B'$NI>2A$rB3$1$^$9!#(B
+
+@samp{$B>r7o(B} $B$N5-K!$O0J2<$N$h$&$K$J$j$^$9!#<B:]$N=q$-J}$O>e$G5s$2$?Nc$r(B
+$B;29M$K$7$F2<$5$$!#(B
+
+@enumerate
+@item
+@samp{$B%U%#!<%k%IL>(B} $B$*$h$S(B @samp{$BCM(B} $B$r0z?t$H$7$F<h$k4X?t!#(B
+(@samp{$B%U%#!<%k%IL>(B} $B$O%U%#!<%k%IL>$rI=$9%7%s%\%k$G$9(B)
+
+@table @code
+@item @code{equal}
+$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
+$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
+@item @code{match}
+$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
+@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
+$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
+$BCV$-49$($i$l$^$9!#(B
+@item @code{address-equal}
+$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
+$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
+@item @code{address-match}
+$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
+@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
+$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
+$BCV$-49$($i$l$^$9!#(B
+@end table
+
+@item
+$BG$0U$N?t$N0z?t$r<h$k4X?t!#(B
+
+@table @code
+@item @code{or}
+$B0z?t$N$$$:$l$+$,??$rJV$9$J$i$P??!#(B
+@item @code{and}
+$B0z?t$N$9$Y$F$,??$rJV$9$J$i$P??!#(B
+@end table
+
+@item
+$B%7%s%\%k!#(B
+
+$B%7%s%\%k$,;XDj$5$l$k$H!"$=$l$rI>2A$7$^$9!#(B
+@end enumerate
+
+
+@node Address Book, Customization, Split messages, Top
 @chapter $B%"%I%l%9D"(B
 @cindex Address Book
 
