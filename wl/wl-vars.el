@@ -742,7 +742,7 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
     ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
     ("From" . (("From") nil nil)))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -761,7 +761,7 @@ Default is for 'reply-to-author'."
     ("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
     ("From" . (("From") ("To" "Cc") ("Newsgroups"))))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -779,7 +779,7 @@ Default is for 'reply-to-all'."
     ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
     ("From" . (("To") ("Cc") nil)))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -797,7 +797,7 @@ Default is for 'reply-to-me'."
     ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
     ("From" . (("To") ("Cc") nil)))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,

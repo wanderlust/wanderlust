@@ -53,7 +53,7 @@
 
 (defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
   "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored.
-(Except `\\Deleted' flag).")
+\(Except `\\Deleted' flag\).")
 
 (defvar elmo-imap4-overview-fetch-chop-length 200
   "*Number of overviews to fetch in one request.")
@@ -82,7 +82,7 @@
 
 (defvar elmo-imap4-use-select-to-update-status nil
   "*Some imapd have to send select command to update status.
-(ex. UW imapd 4.5-BETA?).  For these imapd, you must set this variable t.")
+\(ex. UW imapd 4.5-BETA?\).  For these imapd, you must set this variable t.")
 
 (defvar elmo-imap4-use-modified-utf7 nil
   "*Use mofidied UTF-7 (rfc2060) encoding for IMAP4 folder name.")
@@ -92,7 +92,7 @@
 
 (defvar elmo-imap4-extra-namespace-alist
   '(("^\\({.*/nntp}\\).*$" . ".")) ; Default is for UW's remote nntp mailbox...
-  "Extra namespace alist. 
+  "Extra namespace alist.
 A list of cons cell like: (REGEXP . DELIMITER).
 REGEXP should have a grouping for namespace prefix.")
 ;;
