@@ -4987,8 +4987,8 @@ Reply to author if invoked with ARG."
 (defun wl-summary-write ()
   "Write a new draft from Summary."
   (interactive)
-  (wl-draft nil nil nil nil nil
-	    (wl-summary-buffer-folder-name))
+  (wl-draft (list (cons 'To ""))
+	    nil nil nil nil (wl-summary-buffer-folder-name))
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 
@@ -5015,7 +5015,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(setq guess-func (car func-list))
 	(setq func-list nil)))
     (if (null guess-func)
-	(wl-draft)
+	(call-interactively 'wl-summary-write)
       (unless (or (stringp (nth 0 guess-list))
 		  (stringp (nth 1 guess-list))
 		  (stringp (nth 2 guess-list)))

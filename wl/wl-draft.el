@@ -1473,15 +1473,7 @@ Derived from `message-save-drafts' in T-gnus."
     (unless (cdr (assq 'To header-alist))
       (let ((to))
 	(when (setq to (and
-			(or (interactive-p)
-			    (eq this-command 'wl-summary-write)
-			    (and
-			     (null (cdr (assq 'Newsgroups header-alist)))
-			     (or
-			      (eq this-command
-				  'wl-summary-write-current-folder)
-			      (eq this-command
-				  'wl-folder-write-current-folder))))
+			(interactive-p)
 			""))
 	  (if (assq 'To header-alist)
 	      (setcdr (assq 'To header-alist) to)

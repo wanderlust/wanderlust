@@ -1,5 +1,12 @@
 2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-summary.el (wl-summary-write-current-folder): If it cannot
+	guess anything, call wl-summary-write interactively.
+	* wl-draft.el (wl-draft): Undo corresponding part of the last
+	change (the blank To header).
+
+2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* wl-draft.el (wl-draft): Call wl-draft-create-buffer with the
 	argument full as well for wl-folder-write-current-folder.
 	If wl-*-write-current-folder cannot guess addressee, add blank
