@@ -327,7 +327,7 @@ FOLDER is the folder structure."
     (with-temp-buffer
       (when (elmo-message-fetch spool-folder number
 				(elmo-make-fetch-strategy 'entire)
-				nil (current-buffer) 'unread)
+				'unread)
 	(setq flags (or (elmo-message-flags-for-append folder (* -1 number))
 			(cond ((listp flag)
 			       flag)

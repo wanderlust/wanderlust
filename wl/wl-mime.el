@@ -354,8 +354,6 @@ It calls following-method selected from variable
    (elmo-message-fetch (wl-folder-get-elmo-folder folder)
 		       number
 		       (elmo-make-fetch-strategy 'entire)
-		       nil
-		       (current-buffer)
 		       'unread)
    (mime-parse-buffer nil)))
 
@@ -394,8 +392,9 @@ It calls following-method selected from variable
       (with-current-buffer orig-buf
 	(unless (string-equal
 		 (buffer-string)
-		 (elmo-message-fetch folder number
-				     (elmo-make-fetch-strategy 'entire)))
+		 (elmo-message-fetch-string
+		  folder number
+		  (elmo-make-fetch-strategy 'entire)))
 	  (error "Buffer content differs from actual message")))
       (when (and (elmo-folder-writable-p folder)
 		 (buffer-live-p orig-buf)

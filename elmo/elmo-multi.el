@@ -243,10 +243,10 @@
 
 (luna-define-method elmo-message-fetch ((folder elmo-multi-folder)
 					number strategy
-					&optional section outbuf unseen)
+					&optional unseen section)
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (when (elmo-message-fetch (car pair) (cdr pair)
-			      strategy section outbuf unseen)
+			      strategy unseen section)
       (unless unseen
 	(elmo-folder-notify-event folder 'flag-changed (list number)))
       t)))

@@ -1,3 +1,32 @@
+2005-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-fetch): Removed argument `outbuf' and
+	exchange order of arguments `section' and `unread'.
+	(elmo-message-encache): Follow the API change.
+	(elmo-message-match-condition): Ditto.
+	(elmo-generic-folder-append-messages): Ditto.
+	(elmo-message-fetch-string): New function.
+
+	* elmo-split.el (elmo-split-subr): Ditto.
+
+	* elmo-spam.el (elmo-spam-message-fetch): Ditto.
+
+	* elmo-pipe.el (elmo-message-fetch): Ditto.
+
+	* elmo-multi.el (elmo-message-fetch): Ditto.
+
+	* elmo-mime.el (elmo-message-mime-entity): Ditto.
+
+	* elmo-flag.el (elmo-global-flag-set-internal): Ditto.
+
+	* elmo-filter.el (elmo-message-fetch): Ditto.
+
+	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Ditto.
+
+	* elmo-imap4.el (mime-imap-location-section-body): Use
+	`elmo-message-fetch-string' instead of `elmo-message-fetch' and
+	follow the API change.
+
 2005-01-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-access.el: New file.

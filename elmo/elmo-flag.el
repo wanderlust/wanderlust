@@ -330,9 +330,8 @@ NUMBER is the message number."
 	      (elmo-copy-file (elmo-file-cache-path cache)
 			      new-file)
 	    (when (and folder number)
-	      (elmo-message-fetch folder number (elmo-make-fetch-strategy
-						 'entire)
-				  nil (current-buffer))
+	      (elmo-message-fetch folder number
+				  (elmo-make-fetch-strategy 'entire))
 	      (write-region-as-binary (point-min) (point-max) new-file nil
 				      'no-msg))))
 	(elmo-flag-folder-set-minfo-internal

@@ -78,9 +78,9 @@
 
 (luna-define-method elmo-message-fetch ((folder elmo-pipe-folder)
 					number strategy
-					&optional section outbuf unseen)
+					&optional unseen section)
   (when (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
-			    number strategy section outbuf unseen)
+			    number strategy unseen section)
     (unless unseen
       (elmo-folder-notify-event folder 'flag-changed (list number)))
     t))

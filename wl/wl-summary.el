@@ -746,21 +746,18 @@ If optional USE-CACHE is non-nil, use cache if exists."
 	(folder wl-summary-buffer-elmo-folder))
     (if (null number)
 	(message "No message.")
-      (elmo-set-work-buf
-       (elmo-message-fetch folder
-			   number
-			   (elmo-make-fetch-strategy
-			    'entire
-			    use-cache ; use cache
-			    nil ; save cache (should `t'?)
-			    (and
-			     use-cache
-			     (elmo-file-cache-get-path
-			      (elmo-message-field folder number 'message-id))))
-			   nil
-			   (current-buffer)
-			   'unread)
-       (buffer-string)))))
+      (elmo-message-fetch-string folder
+				 number
+				 (elmo-make-fetch-strategy
+				  'entire
+				  use-cache ; use cache
+				  nil ; save cache (should `t'?)
+				  (and
+				   use-cache
+				   (elmo-file-cache-get-path
+				    (elmo-message-field folder number
+							'message-id))))
+				 'unread))))
 
 (defun wl-summary-reedit (&optional arg)
   "Re-edit current message.

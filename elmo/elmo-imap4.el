@@ -448,16 +448,15 @@ If response is not `OK' response, causes error with IMAP response text."
 	 (mime-elmo-imap-location-folder-internal location)
 	 (mime-elmo-imap-location-number-internal location)
 	 (mime-elmo-imap-location-strategy-internal location)
-	 section
-	 (current-buffer)
-	 'unseen)
+	 'unseen
+	 section)
 	(buffer-string))
-    (elmo-message-fetch
+    (elmo-message-fetch-string
      (mime-elmo-imap-location-folder-internal location)
      (mime-elmo-imap-location-number-internal location)
      (mime-elmo-imap-location-strategy-internal location)
-     section
-     nil 'unseen)))
+     'unseen
+     section)))
 
 
 (luna-define-method mime-imap-location-bodystructure

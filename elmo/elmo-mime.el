@@ -289,9 +289,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 	   (with-current-buffer rawbuf
 	     (let (buffer-read-only)
 	       (erase-buffer)
-	       (elmo-message-fetch folder number strategy
-				   nil (current-buffer)
-				   unread)))
+	       (elmo-message-fetch folder number strategy unread)))
 	   (mime-open-entity 'elmo-buffer rawbuf)))))
 
 ;; Replacement of mime-display-message.

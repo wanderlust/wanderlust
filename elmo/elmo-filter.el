@@ -180,11 +180,11 @@
 
 (luna-define-method elmo-message-fetch ((folder elmo-filter-folder)
 					number strategy
-					&optional section outbuf unseen)
+					&optional unseen section)
   (unless unseen
     (elmo-filter-folder-countup-message-flags folder (list number) -1))
   (when (elmo-message-fetch (elmo-filter-folder-target-internal folder)
-			    number strategy section outbuf unseen)
+			    number strategy unseen section)
     (unless unseen
       (elmo-filter-folder-countup-message-flags folder (list number))
       (elmo-folder-notify-event folder 'flag-changed (list number)))

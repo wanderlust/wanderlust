@@ -605,15 +605,16 @@ If READ is non-nil, message is flaged as read.")
 (luna-define-method elmo-message-encache ((folder elmo-folder) number
 					  &optional read)
   (let (path)
-    (elmo-message-fetch
-     folder number
-     (elmo-make-fetch-strategy 'entire
-			       nil ;use-cache
-			       t   ;save-cache
-			       (setq path (elmo-file-cache-get-path
-					   (elmo-message-field
-					    folder number 'message-id))))
-     nil nil (not read))
+    (with-temp-buffer
+      (elmo-message-fetch
+       folder number
+       (elmo-make-fetch-strategy 'entire
+				 nil ;use-cache
+				 t   ;save-cache
+				 (setq path (elmo-file-cache-get-path
+					     (elmo-message-field
+					      folder number 'message-id))))
+       (not read)))
     path))
 
 (luna-define-generic elmo-message-fetch-bodystructure (folder number strategy)
@@ -621,18 +622,15 @@ If READ is non-nil, message is flaged as read.")
 
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional
-						section
-						outbuf
-						unread)
-  "Fetch a message and return as a string.
+						unread
+						section)
+  "Fetch a message into current buffer.
 FOLDER is the ELMO folder structure.
 NUMBER is the number of the message in the FOLDER.
 STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument OUTBUF is specified, fetched message is
-inserted to the buffer and returns t if fetch was ended successfully.
-If third optional argument UNREAD is non-nil, message is not flaged as read.
+If optional argument UNREAD is non-nil, message is not flaged as read.
+If second optional argument SECTION is specified, only the
+SECTION of the message is fetched (if possible).
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-with-cache-process (folder
@@ -839,7 +837,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 						      (and cache t)
 						      nil
 						      cache-path)
-			    nil (current-buffer) t)
+			    'unread)
 	(set-buffer-multibyte default-enable-multibyte-characters)
 	(decode-coding-region (point-min) (point-max)
 			      elmo-mime-display-as-is-coding-system)
@@ -1076,7 +1074,6 @@ If optional argument IF-EXISTS is nil, load on demand.
 				 'entire t nil
 				 (elmo-file-cache-path cache)))
 			   (error "Unplugged")))
-		     nil (current-buffer)
 		     'unread)
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
@@ -1406,27 +1403,26 @@ If Optional LOCAL is non-nil, don't update server flag."
 						      number strategy)
   nil)
 
+(defun elmo-message-fetch-string (folder number strategy
+					 &optional
+					 unread
+					 section)
+  (with-temp-buffer
+    (when (elmo-message-fetch folder number strategy section unread)
+      (buffer-string))))
+
 (luna-define-method elmo-message-fetch ((folder elmo-folder)
 					number strategy
 					&optional
-					section
-					outbuf
-					unread)
-  (let (result)
-    (prog1
-	(if outbuf
-	    (with-current-buffer outbuf
-	      (erase-buffer)
-	      (setq result (elmo-message-fetch-with-cache-process
-			    folder number strategy section unread)))
-	  (with-temp-buffer
-	    (setq result (elmo-message-fetch-with-cache-process
-			  folder number strategy section unread))
-	    (buffer-string)))
-      (when (and result
-		 (not unread)
-		 (elmo-message-flagged-p folder number 'unread))
-	(elmo-message-unset-flag folder number 'unread 'local)))))
+					unread
+					section)
+  (erase-buffer)
+  (when (elmo-message-fetch-with-cache-process folder number
+					       strategy section unread)
+    (when (and (not unread)
+	       (elmo-message-flagged-p folder number 'unread))
+      (elmo-message-unset-flag folder number 'unread 'local))
+    t))
 
 (luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
 							   number strategy
