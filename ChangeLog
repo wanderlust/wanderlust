@@ -1,3 +1,7 @@
+2002-12-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (test-wl, check-wl): Load wl-news.el.in.
+
 2002-12-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to 1.14.5.
