@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 14:26:38 teranisi>
+;; Time-stamp: <2000-05-30 09:33:02 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2551,7 +2551,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	  count)
       (setq count (or (car nums) 0))
       (setq count (+ count (wl-folder-count-incorporates entity)))
-      (if (< 0 count)
+      (if (or (null (car nums)) ; unknown
+	      (< 0 count))
 	  (save-window-excursion
 	    (save-excursion
 	      (wl-summary-goto-folder-subr entity 
