@@ -212,13 +212,21 @@
 
 (defun wl-draft-setup ()
   (let ((field wl-draft-fields)
-	ret-val)
+	cl)
     (while field
-      (setq ret-val (append ret-val
-			    (list (cons (concat (car field) " ")
-					(concat (car field) " ")))))
+      (setq cl (append cl
+		       (list (cons (concat (car field) " ")
+				   (concat (car field) " ")))))
       (setq field (cdr field)))
-    (setq wl-draft-field-completion-list ret-val)))
+    (setq cl
+	  (cons (cons (concat wl-draft-mime-bcc-field-name  ": ")
+		      (concat wl-draft-mime-bcc-field-name  ": "))
+		cl))
+    (setq wl-draft-field-completion-list cl)
+    (setq wl-address-complete-header-regexp
+	  (wl-regexp-opt
+	   (append wl-address-complete-header-list
+		   (list (concat wl-draft-mime-bcc-field-name  ":")))))))
 
 (defun wl-draft-make-mail-followup-to (recipients)
   (if (elmo-list-member
@@ -520,6 +528,7 @@ Reply to author if WITH-ARG is non-nil."
       (wl-message-field-exists-p "Resent-to")
       (wl-message-field-exists-p "Cc")
       (wl-message-field-exists-p "Bcc")
+      (wl-message-field-exists-p wl-draft-mime-bcc-field-name)
 ;;; This may be needed..
 ;;;   (wl-message-field-exists-p "Fcc")
       ))
@@ -1095,7 +1104,7 @@ non-nil."
 
 (defun wl-draft-insert-required-fields (&optional force-msgid)
   "Insert Message-ID, Date, and From field.
-If FORCE-MSGID, ignore 'wl-insert-message-id'."
+If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
   ;; Insert Message-Id field...
   (goto-char (point-min))
   (when (and (or force-msgid
@@ -1135,7 +1144,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 
 (defun wl-draft-dispatch-message (&optional mes-string)
   "Send the message in the current buffer.  Not modified the header fields."
-  (let (delimline)
+  (let (delimline mime-bcc)
     (if (and wl-draft-verbose-send mes-string)
 	(message mes-string))
     ;; get fcc folders.
@@ -1151,7 +1160,11 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	      (if (or (not (or wl-draft-force-queuing
 			       wl-draft-force-queuing-mail))
 		      (memq 'mail wl-sent-message-queued))
-		  (funcall wl-draft-send-mail-function)
+		  (progn
+		    (setq mime-bcc (wl-draft-mime-bcc-field))
+		    (funcall wl-draft-send-mail-function)
+		    (when (not (zerop (length mime-bcc)))
+		      (wl-draft-do-mime-bcc mime-bcc)))
 		(push 'mail wl-sent-message-queued)
 		(wl-draft-set-sent-message 'mail 'unplugged)))
 	  (if (and (wl-message-news-p)
@@ -1163,14 +1176,14 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 		  (funcall wl-draft-send-news-function)
 		(push 'news wl-sent-message-queued)
 		(wl-draft-set-sent-message 'news 'unplugged))))
-      ;;
       (let* ((status (wl-draft-sent-message-results))
 	     (unplugged-via (car status))
 	     (sent-via (nth 1 status)))
 	;; If one sent, process fcc folder.
 	(if (and sent-via wl-draft-fcc-list)
 	    (progn
-	      (wl-draft-do-fcc (wl-draft-get-header-delimiter) wl-draft-fcc-list)
+	      (wl-draft-do-fcc (wl-draft-get-header-delimiter)
+			       wl-draft-fcc-list)
 	      (setq wl-draft-fcc-list nil)))
 	(if wl-draft-use-cache
 	    (let ((id (std11-field-body "Message-ID"))
@@ -1253,6 +1266,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			(symbol-value 'mime-header-encode-method-alist)))))
 	      (run-hooks 'mail-send-hook) ; translate buffer
 	      )
+	    ;;
 	    (if wl-draft-verbose-send
 		(message (or mes-string "Sending...")))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
@@ -1263,9 +1277,6 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			 (cdr (car mail-send-actions)))
 		(error))
 	      (setq mail-send-actions (cdr mail-send-actions)))
-;;	    (if (or (eq major-mode 'wl-draft-mode)
-;;		    (eq major-mode 'mail-mode))
-;;		(local-set-key "\C-c\C-s" 'wl-draft-send)) ; override
 	    (if wl-draft-verbose-send
 		(message (concat (or wl-draft-verbose-msg
 				     mes-string "Sending...")
@@ -1274,9 +1285,50 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))
 
+(defun wl-draft-mime-bcc-field ()
+  "Return the MIME-Bcc field body. The field is deleted."
+  (prog1 (std11-field-body wl-draft-mime-bcc-field-name)
+    (wl-draft-delete-field wl-draft-mime-bcc-field-name)))
+
+(defun wl-draft-do-mime-bcc (field-body)
+  "Send MIME-Bcc (Encapsulated blind carbon copy)."
+  (let ((orig-subj (std11-field-body "subject"))
+	(recipients (wl-parse-addresses field-body))
+	buffer)
+    (when (not (zerop (length field-body)))
+      (setq buffer (clone-buffer " *temporary buffer for mime bcc*"))
+      (unwind-protect
+	  (dolist (recipient recipients)
+	    (with-temp-buffer
+	      (let (mail-citation-hook 
+		    mail-yank-hooks
+		    wl-draft-add-references
+		    wl-draft-add-in-reply-to
+		    wl-draft-cite-function)
+		;; To work wl-draft-create-contents.
+		(setq major-mode 'wl-draft-mode)
+		(wl-draft-create-contents
+		 (append `((To . ,recipient)
+			   (Subject . ,(concat "A blind carbon copy ("
+					       orig-subj
+					       ")")))
+			 (wl-draft-default-headers)))
+		(wl-draft-insert-required-fields)
+		(wl-draft-insert-mail-header-separator)
+		(goto-char (point-max))
+		(insert (or wl-draft-mime-bcc-body
+			    "This is a blind carbon copy.")
+			"\n")
+		(mime-edit-insert-tag "message" "rfc822")
+		(let ((mail-reply-buffer buffer))
+		  (wl-draft-yank-from-mail-reply-buffer nil))
+		(mime-edit-translate-buffer)
+		(wl-draft-raw-send))))
+	(kill-buffer buffer)))))
+
+;; Derived from `message-save-drafts' in T-gnus.
 (defun wl-draft-save ()
-  "Save current draft.
-Derived from `message-save-drafts' in T-gnus."
+  "Save current draft."
   (interactive)
   (if (buffer-modified-p)
       (progn

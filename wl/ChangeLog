@@ -1,5 +1,18 @@
 2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-draft-mime-bcc-field-name): New user option.
+	(wl-draft-mime-bcc-body): Ditto.
+
+	* wl-draft.el (wl-draft-setup): Setup wl-draft-mime-bcc-field-name.
+	(wl-message-mail-p): Added wl-draft-mime-bcc-field-name.
+	(wl-draft-dispatch-message): Call wl-draft-mime-bcc-field and
+	wl-draft-do-mime-bcc.
+	(wl-draft-mime-bcc-field): New function.
+	(wl-draft-do-mime-bcc): Ditto.
+
+	* wl-address.el (wl-address-complete-header-list): New variable.
+	(wl-address-complete-header-regexp): Changed default value.
+
 	* Version number is increased to 2.9.13.
 
 2002-05-19  Yuuichi Teranishi  <teranisi@gohome.org>

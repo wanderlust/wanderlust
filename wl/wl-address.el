@@ -37,7 +37,10 @@
 (require 'wl-vars)
 (require 'std11)
 
-(defvar wl-address-complete-header-regexp "^\\(To\\|From\\|Cc\\|Bcc\\|Mail-Followup-To\\|Reply-To\\|Return-Receipt-To\\):")
+(defvar wl-address-complete-header-list 
+  '("To:" "From:" "Cc:" "Bcc:" "Mail-Followup-To:" "Reply-To:"
+    "Return-Receipt-To:"))
+(defvar wl-address-complete-header-regexp nil) ; auto-generated.
 (defvar wl-newsgroups-complete-header-regexp "^\\(Newsgroups\\|Followup-To\\):")
 (defvar wl-folder-complete-header-regexp "^\\(Fcc\\):")
 (defvar wl-address-list nil)

@@ -1086,6 +1086,18 @@ This can either be a regular expression or list of regular expressions."
   :type '(repeat (string :tag "Field"))
   :group 'wl-draft)
 
+;; MIME Bcc.
+(defcustom wl-draft-mime-bcc-field-name "Ecc"
+  "Field name for MIME-encapsulated Bcc."
+  :type '(string :tag "Field Name")
+  :group 'wl-draft)
+
+(defcustom wl-draft-mime-bcc-body nil
+  "Body string for MIME-encapsulated Bcc.
+If nil, a string `This is a blind carbon copy.' is used."
+  :type '(string :tag "Body")
+  :group 'wl-draft)
+
 (defcustom wl-draft-config-alist nil
   "Alist of configuration field on draft.
 ex.
