@@ -1,5 +1,7 @@
 2001-06-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-pop3-process-filter): Show retrieve progress.
+
 	* elmo.el (elmo-folder-reserve-status-p): New method.
 
 	* elmo-shimbun.el (elmo-shimbun-headers-cache): Abolish.
