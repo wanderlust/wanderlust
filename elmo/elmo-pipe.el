@@ -149,27 +149,16 @@
    copied-list))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
-  (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
-  (let ((src-folder (elmo-pipe-folder-src-internal folder))
-	(dst-folder (elmo-pipe-folder-dst-internal folder)))
-    (when (and (elmo-folder-plugged-p src-folder)
-	       (elmo-folder-plugged-p dst-folder))
-      (if (elmo-pipe-folder-copy-internal folder)
-	  (elmo-pipe-folder-copied-list-save
-	   folder
-	   (elmo-pipe-drain src-folder
-			    dst-folder
-			    'copy
-			    (elmo-pipe-folder-copied-list-load folder)))
-	(elmo-pipe-drain src-folder dst-folder)))))
+  (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
 
-(luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-pipe-folder) &optional nohide)
-  (elmo-folder-list-messages-internal (elmo-pipe-folder-dst-internal
-				       folder) nohide))
+(luna-define-method elmo-folder-list-messages ((folder elmo-pipe-folder)
+					       &optional visible-only in-msgdb)
+  ;; Use target folder's killed-list in the pipe folder.
+  (elmo-folder-list-messages (elmo-pipe-folder-dst-internal
+			      folder) visible-only in-msgdb))
 
 (luna-define-method elmo-folder-list-unreads ((folder elmo-pipe-folder))
   (elmo-folder-list-unreads (elmo-pipe-folder-dst-internal folder)))
@@ -236,8 +225,7 @@
   (elmo-message-use-cache-p (elmo-pipe-folder-dst-internal folder) number))
 
 (luna-define-method elmo-folder-check ((folder elmo-pipe-folder))
-  (elmo-folder-close-internal folder)
-  (elmo-folder-open-internal folder))
+  (elmo-folder-check (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-pipe-folder))
   (and (elmo-folder-plugged-p (elmo-pipe-folder-src-internal folder))
@@ -329,6 +317,18 @@
 (luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)
 					     &optional ignore-msgdb
 					     no-check)
+  (let ((src-folder (elmo-pipe-folder-src-internal folder))
+	(dst-folder (elmo-pipe-folder-dst-internal folder)))
+    (when (and (elmo-folder-plugged-p src-folder)
+	       (elmo-folder-plugged-p dst-folder))
+      (if (elmo-pipe-folder-copy-internal folder)
+	  (elmo-pipe-folder-copied-list-save
+	   folder
+	   (elmo-pipe-drain src-folder
+			    dst-folder
+			    'copy
+			    (elmo-pipe-folder-copied-list-load folder)))
+	(elmo-pipe-drain src-folder dst-folder))))
   (elmo-folder-synchronize
    (elmo-pipe-folder-dst-internal folder) ignore-msgdb no-check))
 

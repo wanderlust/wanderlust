@@ -1,5 +1,19 @@
 2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-pop3-exists-exactly): Set default value as nil.
+	(elmo-pop3-get-session): Make msgdb directory after session.
+	(elmo-folder-exists-p): Check exactly at the first time even when the
+	elmo-pop3-exists-exactly is nil.
+
+	* elmo-pipe.el (elmo-folder-open-internal): Don't drain here.
+	(elmo-folder-list-messages): Define instead of
+	elmo-folder-list-messages-internal.
+	(elmo-folder-check): Check destination folder.
+	(elmo-folder-synchronize): Drain the pipe.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Don't cause an error
+	when msgdb is not loaded.
+
 	* elmo-msgdb.el (elmo-msgdb-append-to-killed-list): Abolish.
 
 	* elmo-imap4.el (elmo-folder-list-messages-plugged): Fixed.

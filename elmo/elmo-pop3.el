@@ -56,7 +56,11 @@
 If server doesn't accept asynchronous commands, this variable should be
 set as non-nil.")
 
-(defvar elmo-pop3-exists-exactly t)
+(defcustom elmo-pop3-exists-exactly nil
+  "If non-nil, POP3 folder existence is checked everytime before the session."
+  :type 'boolean
+  :group 'elmo)
+
 (defvar sasl-mechanism-alist)
 
 (defvar elmo-pop3-total-size nil)
@@ -168,19 +172,23 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 					 nil
 				       (elmo-pop3-folder-use-uidl-internal
 					folder))))
-    (if (eq if-exists 'any-exists)
-	(or (elmo-network-get-session 'elmo-pop3-session
-				      "POP3"
-				      folder if-exists)
-	    (elmo-network-get-session 'elmo-pop3-session
-				      "BIFF-POP3"
-				      folder if-exists))
-      (elmo-network-get-session 'elmo-pop3-session
-				(concat
-				 (if (elmo-folder-biff-internal folder)
-				     "BIFF-")
-				 "POP3")
-				folder if-exists))))
+    (prog1
+	(if (eq if-exists 'any-exists)
+	    (or (elmo-network-get-session 'elmo-pop3-session
+					  "POP3"
+					  folder if-exists)
+		(elmo-network-get-session 'elmo-pop3-session
+					  "BIFF-POP3"
+					  folder if-exists))
+	  (elmo-network-get-session 'elmo-pop3-session
+				    (concat
+				     (if (elmo-folder-biff-internal folder)
+					 "BIFF-")
+				     "POP3")
+				    folder if-exists))
+      ;; For saving existency.
+      (unless (file-exists-p (elmo-folder-msgdb-path folder))
+	(elmo-make-directory (elmo-folder-msgdb-path folder))))))
 
 (defun elmo-pop3-send-command (process command &optional no-erase no-log)
   (with-current-buffer (process-buffer process)
@@ -469,7 +477,11 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	      (setq session (elmo-pop3-get-session folder))
 	    (if session
 		(elmo-network-close-session session)))))
-    (file-directory-p (elmo-folder-msgdb-path folder))))
+    (or (file-directory-p (elmo-folder-msgdb-path folder))
+	;; First time.
+	(when (elmo-folder-plugged-p folder)
+	  (let ((elmo-pop3-exists-exactly t))
+	    (elmo-folder-exists-p folder))))))
 
 (defun elmo-pop3-parse-uidl-response (string)
   (let ((buffer (current-buffer))

@@ -232,7 +232,7 @@
 	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
 	    (next-num (1+ (car (elmo-folder-status folder))))
-	    mark flag)
+	    mark flag id)
 	(while numbers
 	  (setq mark (elmo-message-mark src-folder (car numbers))
 		flag (cond
@@ -248,11 +248,10 @@
 	    (int-to-string
 	     (if same-number (car numbers) next-num))
 	    dir))
-	  (elmo-flag-table-set table
-			       (elmo-message-field
-				src-folder (car numbers)
-				'message-id)
-			       flag)
+	  ;; src folder's msgdb is loaded.
+	  (when (setq id (elmo-message-field src-folder (car numbers)
+					     'message-id))
+	    (elmo-flag-table-set table id flag))
 	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))
 		   (not same-number))
