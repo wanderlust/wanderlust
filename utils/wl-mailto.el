@@ -1,4 +1,4 @@
-;;; wl-mailto.el --- some mailto support for wanderlust
+;;; wl-mailto.el -- some mailto support for wanderlust
 
 ;;; Copyright (C) 1999 Sen Nagata
 
@@ -20,7 +20,7 @@
 ;;
 ;; installation:
 ;;
-;;   -put this file (and rfc2368.el) in an appropriate directory (so emacs 
+;;   -put this file (and rfc2368.el) in an appropriate directory (so Emacs
 ;;    can find it)
 ;;
 ;;   <necessary>
@@ -80,7 +80,7 @@
 
 ;; how should we handle the dependecy on wl?
 ;; will this work?
-(eval-when-compile 
+(eval-when-compile
   (require 'wl))
 
 ;; use rfc2368 support -- should be usable for things other than wl too
@@ -92,18 +92,18 @@
     ;; for xemacs versions less than 21, use browse-url.el
     (progn
       (require 'browse-url)
-      (fset 'wl-mailto-url-at-point 
+      (fset 'wl-mailto-url-at-point
 	    'browse-url-url-at-point))
   ;; for everything else, use thingatpt.el
   (progn
     (require 'thingatpt)
     (fset 'wl-mailto-url-at-point
-	  (lambda () 
+	  (lambda ()
 	    (thing-at-point 'url)))))
 
 (defun wl-mailto-compose-message-from-mailto-url (url &optional dummy)
   "Compose a message from URL (RFC 2368).
-The optional second argument, DUMMY, exists to match the interface 
+The optional second argument, DUMMY, exists to match the interface
 provided by `browse-url-mail' (w3) -- DUMMY does not do anything."
   (interactive "sURL: ")
   (if (string-match rfc2368-mailto-regexp url)

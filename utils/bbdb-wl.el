@@ -1,6 +1,21 @@
+;;; bbdb-wl.el -- BBDB interface to Wanderlust
+
+;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;; Keywords: mail, news, database
+
+;;; Commentary:
 ;;
+;;  Insert the following lines in your ~/.wl
+;; 
+;;  (require 'bbdb-wl)
+;;  (bbdb-wl-setup)
+
+;;; Code:
+;;
+
 ;; bbdb setup.
-;;
 (eval-when-compile
   (require 'mime-setup)
   (require 'elmo-vars)
@@ -37,7 +52,7 @@
   (add-hook 'wl-mail-setup-hook
 	    (function
 	     (lambda ()
-;	       (local-set-key "\M-\t" 'bbdb-complete-name)
+;;;	       (local-set-key "\M-\t" 'bbdb-complete-name)
 	       (define-key (current-local-map) "\M-\t" 'bbdb-complete-name)
 	       ))))
 
@@ -84,7 +99,7 @@
 	  (switch-to-buffer (get-buffer-create bbdb-buffer-name)))))))
 
 (defun bbdb-wl-from-func (string)
-  "A candidate for wl-summary-from-func..."
+  "A candidate From field STRING.  For `wl-summary-from-func'."
   (let ((hit (bbdb-search-simple nil (wl-address-header-extract-address
 				      string)))
 	first-name last-name from-str)
@@ -152,7 +167,7 @@ the user confirms the creation."
   "Add a line to the end of the Notes field of the BBDB record
 corresponding to the sender of this message."
   (interactive (list (if bbdb-readonly-p
-			 (error "The Insidious Big Brother Database is read-only.")
+			 (error "The Insidious Big Brother Database is read-only")
 		       (read-string "Comments: "))))
   (set-buffer (wl-message-get-original-buffer))
   (bbdb-annotate-notes (bbdb-wl-update-record t) string))
@@ -171,7 +186,7 @@ of the BBDB record corresponding to the sender of this message."
 
 (defun bbdb-wl-show-sender ()
   "Display the contents of the BBDB for the sender of this message.
-This buffer will be in bbdb-mode, with associated keybindings."
+This buffer will be in `bbdb-mode', with associated keybindings."
   (interactive)
   (wl-summary-redisplay)
   (set-buffer (wl-message-get-original-buffer))
@@ -181,7 +196,7 @@ This buffer will be in bbdb-mode, with associated keybindings."
 	(progn
 	  (bbdb-wl-pop-up-bbdb-buffer)
 	  (bbdb-display-records (list record)))
-      (error "unperson"))
+      (error "Unperson"))
     (setq bbdb-win (get-buffer-window (get-buffer bbdb-buffer-name)))
     (and bbdb-win
 	 (select-window bbdb-win))))
@@ -235,10 +250,10 @@ displaying the record corresponding to the sender of the current message."
 ;;; @ bbdb-extract-field-value -- stolen from tm-bbdb.
 ;;;
 (and (not (fboundp 'bbdb-extract-field-value-internal))
-;;   (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
+;;;  (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
     (progn
-      ;; (require 'bbdb-hooks) ; not provided.
-      ;; (or (fboundp 'bbdb-extract-field-value) ; defined as autoload
+;;;   (require 'bbdb-hooks) ; not provided.
+;;;   (or (fboundp 'bbdb-extract-field-value) ; defined as autoload
       (or (fboundp 'bbdb-header-start)
           (load "bbdb-hooks"))
       (fset 'bbdb-extract-field-value-internal
@@ -257,3 +272,5 @@ displaying the record corresponding to the sender of the current message."
 
 
 (provide 'bbdb-wl)
+
+;;; bbdb-wl.el ends here

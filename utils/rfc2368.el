@@ -2,8 +2,9 @@
 
 ;;; Copyright 1999 Sen Nagata <sen@eccosys.com>
 
-;; Keywords: rfc 2368, mailto, mail
+;; Author: Sen Nagata <sen@eccosys.com>
 ;; Version: 0.3
+;; Keywords: rfc 2368, mailto, mail
 ;; License: GPL 2
 
 ;; This file is not a part of GNU Emacs.
@@ -13,7 +14,7 @@
 ;; notes:
 ;;
 ;;   -repeat after me: "the colon is not part of the header name..."
-;;   -if w3 becomes part of emacs, then it may make sense to have this
+;;   -if w3 becomes part of Emacs, then it may make sense to have this
 ;;    file depend on w3 -- the maintainer of w3 says merging w/ emacs
 ;;    is planned!
 ;;
@@ -25,7 +26,7 @@
 ;;
 ;;   the functions that deal w/ unhexifying in this file were basically
 ;; taken from w3 -- i hope to replace them w/ something else soon OR
-;; perhaps if w3 becomes a part of emacs soon, use the functions from w3.
+;; perhaps if w3 becomes a part of Emacs soon, use the functions from w3.
 
 ;;; History:
 ;;

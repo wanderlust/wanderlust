@@ -1,50 +1,48 @@
-;;;
-;;;               im-wl -- IM/Nifty4U+ interface for Wanderlust.
-;;;                          ...not completed.
-;;;
-;;; Copyright (C) 1998,1999 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;;; Copyright (C) 1998,1999 Yuuichi Teranishi <teranisi@gohome.org>
-;;;
-;;; Time-stamp: <1999-09-10 22:58:45 fuji0924>
-;;; Author: OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;;;         Yuuichi Teranishi <teranisi@gohome.org>
-;;; Keywords: mail, news, Wanderlust, IM, Nifty4U+
+;;; im-wl.el -- IM/Nifty4U+ interface for Wanderlust.  (not completed.)
 
-;;; This program is free software; you can redistribute it and/or modify
-;;; it under the terms of the GNU General Public License as published by
-;;; the Free Software Foundation; either version 2, or (at your option)
-;;; any later version.
-;;;
-;;; This program is distributed in the hope that it will be useful,
-;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;;; GNU General Public License for more details.
-;;;
-;;; You should have received a copy of the GNU General Public License
-;;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-;;; Boston, MA 02111-1307, USA.
-;;;
+;; Copyright (C) 1998,1999 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;; Copyright (C) 1998,1999 Yuuichi Teranishi <teranisi@gohome.org>
 
-;;;
-;;;  General settings:
-;;;  (autoload 'wl-draft-send-with-imput-async "im-wl")
-;;;  (setq wl-draft-send-func 'wl-draft-send-with-imput-async)
-;;;
-;;;  for Nifty4U+ users:
-;;;  (add-hook 'wl-mail-setup-hook '(lambda () (require 'im-wl)))
-;;;  (setq wl-draft-config-alist
-;;;	   '(("^Newsgroups: nifty\\..*"
-;;;	      ;; to avoid header-encoding.
-;;;	      ;; [cf. slrn-ja-0.9.4.6.jp4/doc/README.macros.euc]
-;;;	      ;(eword-field-encoding-method-alist . '((t . iso-2022-jp-2)))
-;;;	      (wl-draft-send-func . 'wl-draft-send-with-imput-async)
-;;;	      (im-wl-dispatcher . '("~/nifty4u-plus/inews-nifty4u" "-h"))
-;;;	      (im-wl-dispatcher-error-msg
-;;;	       . (format "^%s :" (expand-file-name (car im-wl-dispatcher)))))))
+;; Author: OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;;	Yuuichi Teranishi <teranisi@gohome.org>
+;; Keywords: mail, news, Wanderlust, IM, Nifty4U+
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+;;
+
+;;; Commentary:
+
+;;  General settings:
+;;  (autoload 'wl-draft-send-with-imput-async "im-wl")
+;;  (setq wl-draft-send-func 'wl-draft-send-with-imput-async)
+;;
+;;  for Nifty4U+ users:
+;;  (add-hook 'wl-mail-setup-hook '(lambda () (require 'im-wl)))
+;;  (setq wl-draft-config-alist
+;;	   '(("^Newsgroups: nifty\\..*"
+;;	      ;; to avoid header-encoding.
+;;	      ;; [cf.  slrn-ja-0.9.4.6.jp4/doc/README.macros.euc]
+;;	      ;(eword-field-encoding-method-alist . '((t .  iso-2022-jp-2)))
+;;	      (wl-draft-send-func . 'wl-draft-send-with-imput-async)
+;;	      (im-wl-dispatcher . '("~/nifty4u-plus/inews-nifty4u" "-h"))
+;;	      (im-wl-dispatcher-error-msg
+;;	       . (format "^%s :" (expand-file-name (car im-wl-dispatcher)))))))
 
 ;;; Code:
-;(require 'emu)
+;;;(require 'emu)
 
 ;;; Variables:
 (defvar im-wl-dispatcher
@@ -53,7 +51,7 @@
 This is most commonly `imput(impost)' or `inews-nifty4u'.")
 
 (defvar im-wl-dispatcher-error-msg (format "^%s: ERROR:" (car im-wl-dispatcher))
-  "Error message of dispatcher")
+  "Error message of dispatcher.")
 
 (defvar im-wl-default-temp-file-name "~/.imput-temp"
   "Default temporary file name (for async).")
