@@ -243,11 +243,13 @@
 (luna-define-method elmo-folder-search ((folder elmo-filter-folder)
 					condition &optional numbers)
   ;; search from messages in this folder
-  (elmo-list-filter
-   numbers
-   (elmo-folder-search (elmo-filter-folder-target-internal folder)
-		       condition
-		       (elmo-folder-list-messages folder))))
+  (let ((result (elmo-folder-search
+		 (elmo-filter-folder-target-internal folder)
+		 condition
+		 (elmo-folder-list-messages folder))))
+    (if numbers
+	(elmo-list-filter numbers result)
+      result)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-filter-folder)
 					      number)

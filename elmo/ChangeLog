@@ -1,3 +1,8 @@
+2003-10-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-folder-search): Don't call elmo-list-filter
+	if numbers is nil.
+
 2003-10-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-util.el (toplevel): Require emu for char-list-to-string.
