@@ -295,6 +295,9 @@ e.g.
 	    references (wl-delete-duplicates references)
 	    references (when references
 			 (mapconcat 'identity references "\n\t"))))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
 			  (concat wl-forward-subject-prefix original-subject))
@@ -461,6 +464,9 @@ Reply to author if WITH-ARG is non-nil."
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To to)
 		    (cons 'Cc cc)
 		    (cons 'Newsgroups newsgroups)
@@ -2299,11 +2305,13 @@ Automatically applied in draft sending time."
 
 (defun wl-draft-highlight-and-recenter (&optional n)
   (interactive "P")
-  (if wl-highlight-body-too
-      (let ((beg (point-min))
-	    (end (point-max)))
-	(put-text-property beg end 'face nil)
-	(wl-highlight-message beg end t)))
+  (when wl-highlight-body-too
+    (let ((modified (buffer-modified-p)))
+      (unwind-protect
+	  (progn
+	    (put-text-property (point-min) (point-max) 'face nil)
+	    (wl-highlight-message (point-min) (point-max) t))
+	(set-buffer-modified-p modified))))
   (recenter n))
 
 ;;;; user-agent support by Sen Nagata
