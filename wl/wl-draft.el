@@ -1018,18 +1018,7 @@ non-nil."
 			       "$\\|^$") nil t)
 		      (point-marker)))
 	 (smtp-server
-	  (or wl-smtp-posting-server
-	      ;; Compatibility stuff for FLIM 1.12.5 or earlier.
-	      ;; They don't accept a function as the value of `smtp-server'.
-	      (if (functionp smtp-server)
-		  (funcall
-		   smtp-server
-		   sender
-		   ;; no harm..
-		   (let (wl-draft-remove-group-list-contents)
-		     (wl-draft-deduce-address-list
-		      (current-buffer) (point-min) delimline)))
-		(or smtp-server "localhost"))))
+	  (or wl-smtp-posting-server smtp-server "localhost"))
 	 (smtp-service (or wl-smtp-posting-port smtp-service))
 	 (smtp-local-domain (or smtp-local-domain wl-local-domain))
 	 (id (std11-field-body "message-id"))

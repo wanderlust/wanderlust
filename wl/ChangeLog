@@ -1,3 +1,8 @@
+2002-05-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Remove staff for older
+	FLIM.
+
 2002-05-16  Tatsuya Kinoshita  <tats@iris.ne.jp>
 
 	* wl-summary.el (wl-summary-target-mark-refile-sub):
