@@ -5,6 +5,17 @@
 	Added unwind-protect.
 	(wl-summary-reply-with-citation): Cite only when wl-summary-reply
 	returns t.
+	(wl-summary-cancel-message): Do nothing when there's no message at
+	cursor point.
+	(wl-summary-forward): Ditto.
+	(wl-summary-jump-to-parent-message): Ditto.
+	(wl-summary-reedit): Ditto.
+	(wl-summary-edit-addresses): Ditto.
+	(wl-summary-pipe-message): Ditto.
+	(wl-summary-print-message-with-ps-print): Ditto.
+	(wl-summary-print-message): Ditto.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-mark-as-unread): Ditto.
 
 	* wl-summary.el (wl-summary-reply): Cause an error when there's no
 	message at cursor point.
