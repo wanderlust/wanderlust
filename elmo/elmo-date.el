@@ -201,7 +201,10 @@ Otherwise treat \\ in NEWTEXT string as special:
       (aref (, datevec) 0)
       (aref (, datevec) 1)
       (aref (, datevec) 2)
-      (aref (, datevec) 3))))
+      (timezone-make-time-string
+       (aref (, datevec) 3)
+       (aref (, datevec) 4)
+       (aref (, datevec) 5)))))
 
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))
