@@ -40,7 +40,7 @@
 		 number)
   :group 'elmo)
 
-(defcustom modb-standard-economize-entity-size nil
+(defcustom modb-standard-economize-entity-size t
   "*Economize message entity size.
 When non-nil, redundunt message-id string are not saved."
   :type 'boolean

@@ -73,7 +73,7 @@ you have to add it to `elmo-digest-flags'.
 
 ;; Message Database
 
-(defcustom elmo-msgdb-default-type 'legacy
+(defcustom elmo-msgdb-default-type 'standard
   "*Default type of Message Database for ELMO."
   :type '(radio (const legacy)
 		(const standard))

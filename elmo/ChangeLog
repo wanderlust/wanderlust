@@ -1,5 +1,11 @@
 2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-standard.el (modb-standard-economize-entity-size): Changed
+	default value to `t'.
+
+	* elmo-vars.el (elmo-msgdb-default-type): Changed default value to
+	`standard'.
+
 	* elmo-imap4.el (elmo-network-initialize-session): Erase buffer
 	after parsing greeting string.
 
