@@ -1,3 +1,8 @@
+2003-09-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-kill): Use `yes-or-no-p' instead of
+	`y-or-n-p'.
+
 2003-09-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-score.el (wl-score-headers): Don't use

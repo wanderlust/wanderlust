@@ -759,7 +759,7 @@ Reply to author if WITH-ARG is non-nil."
     (when (and (or (eq major-mode 'wl-draft-mode)
 		   (eq major-mode 'mail-mode))
 	       (or force-kill
-		   (y-or-n-p "Kill Current Draft? ")))
+		   (yes-or-no-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
 	(when (and wl-draft-parent-number
 		   (not (string= wl-draft-parent-folder "")))
