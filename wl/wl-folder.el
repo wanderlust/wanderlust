@@ -250,19 +250,14 @@
 			  entity (or hashtb wl-folder-entity-id-name-hashtb))))
 
 (defmacro wl-folder-get-entity-id (entity)
-  (` (or (get-text-property 0
-			    'wl-folder-entity-id
-			    (, entity))
-	 (, entity)))) ;; for nemacs
+  `(get-text-property 0 'wl-folder-entity-id ,entity))
 
 (defmacro wl-folder-get-entity-from-buffer (&optional getid)
-  (` (let ((id (get-text-property (point)
-				  'wl-folder-entity-id)))
-       (if (not id) ;; for nemacs
-	   (wl-folder-get-realname (wl-folder-folder-name))
-	 (if (, getid)
-	     id
-	   (wl-folder-get-folder-name-by-id id))))))
+  `(let ((id (get-text-property (point)
+				'wl-folder-entity-id)))
+     (if ,getid
+	 id
+       (wl-folder-get-folder-name-by-id id))))
 
 (defmacro wl-folder-entity-exists-p (entity &optional hashtb)
   (` (let ((sym (intern-soft (, entity)
