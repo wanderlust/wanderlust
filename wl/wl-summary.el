@@ -631,12 +631,14 @@ See also variable `wl-use-petname'."
       (wl-summary-redisplay)))
 
 (defun wl-summary-count-unread ()
-  (let ((lst (elmo-folder-count-flags wl-summary-buffer-elmo-folder)))
-    (if (eq major-mode 'wl-summary-mode)
-	(setq wl-summary-buffer-new-count (car lst)
-	      wl-summary-buffer-unread-count (nth 1 lst)
-	      wl-summary-buffer-answered-count (nth 2 lst)))
-    lst))
+  (let ((flag-count (elmo-folder-count-flags wl-summary-buffer-elmo-folder)))
+    (setq wl-summary-buffer-new-count
+	  (or (cdr (assq 'new flag-count)) 0)
+	  wl-summary-buffer-unread-count
+	  (or (cdr (assq 'unread flag-count)) 0)
+	  wl-summary-buffer-answered-count
+	  (or (cdr (assq 'answered flag-count)) 0))
+    flag-count))
 
 (defun wl-summary-message-string (&optional use-cache)
   "Return full body string of current message.
@@ -1394,6 +1396,31 @@ If ARG is non-nil, checking is omitted."
   (wl-summary-prefetch-region-no-mark (point-min) (point-max)
 				      wl-summary-incorporate-marks))
 
+(defun wl-summary-force-prefetch ()
+  "All uncached messages are cached."
+  (interactive)
+  (unless (elmo-folder-local-p wl-summary-buffer-elmo-folder)
+    (let ((targets (elmo-folder-list-flagged wl-summary-buffer-elmo-folder
+					     'uncached 'in-msgdb))
+	  (count 0)
+	  wl-prefetch-confirm
+	  wl-prefetch-threshold
+	  (elmo-inhibit-display-retrieval-progress t)
+	  length msg)
+      (save-excursion
+	(goto-char (point-min))
+	(setq length (length targets))
+	(dolist (target targets)
+	  (when (if (not (wl-thread-entity-parent-invisible-p
+			  (wl-thread-get-entity target)))
+		    (progn
+		      (wl-summary-jump-to-msg target)
+		      (wl-summary-prefetch-msg
+		       (wl-summary-message-number)))
+		  (wl-summary-prefetch-msg target))
+	    (message "Retrieving... %d/%d" (incf count) length)))
+	(message "Retrieved %d/%d message(s)" count length)))))
+
 (defun wl-summary-prefetch-msg (number &optional arg)
   "Prefetch message and return non-nil value. If skipped, return nil."
   ;; prefetching procedure.
@@ -1955,8 +1982,12 @@ This function is defined for `window-scroll-functions'"
       (wl-folder-set-folder-updated
        (elmo-folder-name-internal folder)
        (list 0
-	     (let ((lst (wl-summary-count-unread)))
-	       (+ (car lst) (nth 1 lst)))
+	     (let ((flag-count (wl-summary-count-unread)))
+	       (+
+		(or (cdr (assq 'new flag-count))
+		    0)
+		(or (cdr (assq 'unread flag-count))
+		    0)))
 	     (elmo-folder-length folder)))
       (wl-summary-update-modeline)
       ;;

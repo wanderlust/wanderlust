@@ -1056,7 +1056,7 @@ Example:
   :group 'wl-summary-marks)
 
 (defcustom wl-summary-answered-uncached-mark "A"
-  "Mark for answered but cached message."
+  "Mark for answered but uncached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 

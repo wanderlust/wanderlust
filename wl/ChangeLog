@@ -1,3 +1,16 @@
+2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-answered-uncached-mark): Fixed typo.
+
+	* wl-folder.el (wl-folder-check-one-entity): Follow the change
+	of return value of elmo-folder-count-flags.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
+	* wl-summary.el (wl-summary-count-unread): Ditto.
+	(wl-summary-sync-update): Follow the change above.
+	(wl-summary-force-prefetch): New function.
+
 2004-08-25  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-folder.el (wl-folder-set-folder-updated): Initialize the local
