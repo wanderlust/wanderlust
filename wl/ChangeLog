@@ -1,3 +1,8 @@
+2002-11-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): It can
+	take nil so as not to search parent by subject.
+
 2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-get-prev-folder): Ignore nemacs.
