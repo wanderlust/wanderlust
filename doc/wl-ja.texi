@@ -19,8 +19,8 @@
 This file documents Wanderlust,
 Yet another message interface on Emacsen.
 
-$B$3$N%U%!%$%k$O(B Emacs $B$GF0$/%a!<%k(B/$B%K%e!<%94IM}%7%9%F%`(B
-Wanderlust $B$K4X$9$k@bL@=q$G$9!#(B
+$B$3$N%U%!%$%k$O(B Emacs $B$GF0$/%a!<%k(B/$B%K%e!<%94IM}%7%9%F%`(B Wanderlust $B$K4X$9(B
+$B$k@bL@=q$G$9!#(B
 
 Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
@@ -78,8 +78,8 @@ into another language, under the above conditions for modified versions.
 
 @vskip 0pt plus 1filll
 Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
-@w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@w{Kenichi Okada}, and @w{Kaoru Takahashi}.
+@w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada}, and
+@w{Kaoru Takahashi}.
 
 This manual is for Wanderlust version @value{VERSION}.
 
@@ -114,11 +114,11 @@ into another language, under the above conditions for modified versions.
 @top Wanderlust $B%f!<%6%^%K%e%"%k(B
 
 @flushright
-Yuuichi Teranishi $B;{@>M50l(B
-Fujikazu Okunishi $B1|@>F#OB(B
-Masahiro Murata   $BB<EDA442(B
-Kenichi Okada     $B2,ED7r0l(B
-Kaoru Takahashi   $B9b66(B  $B0j(B
+$B;{@>M50l(B
+$B1|@>F#OB(B
+$BB<EDA442(B
+$B2,ED7r0l(B
+$B9b66(B  $B0j(B
 @end flushright
 
 $B$3$NJ8=q$O(B Wanderlust @value{VERSION} $B$KBP1~$7$^$9!#(B
@@ -239,7 +239,7 @@ Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 Wanderlust $B$r@5>o$KF0:n$5$;$k$K$O!"$^$:!"(BSEMI $B$b$7$/$O(B tm $B$,%$%s%9(B
 $B%H!<%k$5$l$F$$$kI,MW$,$"$j$^$9!#(B
 
-Emacs19.28 $B0JA0$r%Y!<%9$H$7$?(B mule $B$r$*;H$$$N>l9g$O(B SEMI $B$,F0$+$J$$$O$:(B
+Emacs19.28 $B0JA0$r%Y!<%9$H$7$?(B Mule $B$r$*;H$$$N>l9g$O(B SEMI $B$,F0$+$J$$$O$:(B
 @footnote{Emacs 19.34 $B%Y!<%9$N(B Mule $B$G$O(B SEMI $B$rF0:n$5$;$k$3$H$b2DG=$G$9!#(B@*
 @uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} $B$,;29M$K$J$j$^$9!#(B}
 $B$J$N$G(B tm $B$r%$%s%9%H!<%k$7$^$9!#(B
@@ -387,14 +387,13 @@ Cannot open load file: mime-setup
 @end example
 
 @noindent
-$B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#$3$N>l9g$O!"(B
-custom, APEL, FLIM, SEMI $B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B @env{EMACSLOADPATH}
-$B$K2C$($k$+!"E83+%G%#%l%/%H%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B
-@code{load-path} $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
+$B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#$3$N>l9g$O!"(Bcustom, APEL, FLIM, SEMI 
+$B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B @env{EMACSLOADPATH}$B$K2C$($k$+!"E83+%G%#%l%/%H(B
+$B%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B@code{load-path} $B$rDL$7$F$*$/$H$h$$(B
+$B$G$7$g$&!#(B
 
-$B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B @code{load-path} $B$rDL$7$F$*$/$HI,MW$J%b(B
-$B%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
-@xref{BBDB}.
+$B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B @code{load-path} $B$rDL$7$F$*$/$HI,(B
+$BMW$J%b%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B@xref{BBDB}.
 
 @subsection @file{WL-CFG}
 
@@ -462,9 +461,9 @@ package $B$N%G%#%l%/%H%j$O(B SEMI $B$,%$%s%9%H!<%k$5$l$F$$$l$P<+F08!=P$5$l$^$
 
 @subsection $B%$%s%9%H!<%k$7$J$$$GMxMQ(B
 
-Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$7$J$/$F$b!"(B@file{wl}, @file{elmo}
-$B$N%G%#%l%/%H%j$K(B @code{load-path} $B$,@_Dj$5$l$F$$$l$P5/F0$9$k$3$H$,$G$-$^$9!#(B
-$BNc$($P(B @file{~/work} $B$K%Q%C%1!<%8$rE83+$7$?>l9g!"(B
+Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$7$J$/$F$b!"(B@file{wl},
+@file{elmo}$B$N%G%#%l%/%H%j$K(B @code{load-path} $B$,@_Dj$5$l$F$$$l$P5/F0$9$k(B
+$B$3$H$,$G$-$^$9!#Nc$($P(B @file{~/work} $B$K%Q%C%1!<%8$rE83+$7$?>l9g!"(B
 @file{~/.emacs} $B$K0J2<$N@_Dj$r$9$k$H5/F0$G$-$^$9!#(B
 
 @lisp
@@ -1876,10 +1875,10 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 
 @noindent
 $B$H$J$C$F$$$^$9!#(B@var{$B9XFI%U%i%0(B}$B$,(B non-nil $B$N>l9g$O(B@var{$B%U%)%k%@$N@55,I=(B
-$B8=(B}$B$K%^%C%A$7$?%U%)%k%@$N$_I=<($7!"(B@var{$B9XFI%U%i%0(B}$B$,(B nil $B$N>l9g$O(B@var{
-$B%U%)%k%@$N@55,I=8=(B}$B$K%^%C%A$7$?%U%)%k%@$OI=<($5$l$J$/$J$j$^$9!#$?$@$7!"(B
-@var{$B9XFI%U%i%0(B}$B$,(B non-nil $B$G$b4{$K(B unsubscribe $B$5$l$F$$$k%U%)%k%@$OI=<((B
-$B$5$l$^$;$s!#$^$?!"(B@var{$B%U%)%k%@$N@55,I=8=(B}$B$OJ#?t8D5-=R$G$-$^$9!#(B
+$B8=(B}$B$K%^%C%A$7$?%U%)%k%@$N$_I=<($7!"(B@var{$B9XFI%U%i%0(B}$B$,(B @code{nil} $B$N>l9g(B
+$B$O(B@var{$B%U%)%k%@$N@55,I=8=(B}$B$K%^%C%A$7$?%U%)%k%@$OI=<($5$l$J$/$J$j$^$9!#$?(B
+$B$@$7!"(B@var{$B9XFI%U%i%0(B}$B$,(B non-nil $B$G$b4{$K(B unsubscribe $B$5$l$F$$$k%U%)%k%@(B
+$B$OI=<($5$l$^$;$s!#$^$?!"(B@var{$B%U%)%k%@$N@55,I=8=(B}$B$OJ#?t8D5-=R$G$-$^$9!#(B
 
 $BNc(B:
 
@@ -3714,7 +3713,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 'top:         $BK\J8$N@hF,$K;XDj$7$?J8;zNs$rA^F~$7$^$9!#(B
 'top-file:    $BK\J8$N@hF,$K;XDj$7$?%U%!%$%k$rA^F~$7$^$9!#(B
 'body:        $BK\J8$r;XDj$7$?J8;zNs$KCV$-49$($^$9!#(B
-              nil $B$r;XDj$9$k$HK\J8$NJ8;zNs$r:o=|$7$^$9!#(B
+              @code{nil} $B$r;XDj$9$k$HK\J8$NJ8;zNs$r:o=|$7$^$9!#(B
 'body-file:   $BK\J8$r;XDj$7$?%U%!%$%k$NFbMF$GCV$-49$($^$9!#(B
 'bottom:      $BK\J8$NKvHx$K;XDj$7$?J8;zNs$rA^F~$7$^$9!#(B
 'bottom-file: $BK\J8$NKvHx$K;XDj$7$?%U%!%$%k$rA^F~$7$^$9!#(B
@@ -3737,7 +3736,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B$+JQ?t!"%5%V4X?t$r;XDj$7!"(BField $B$r;XDj$7$?>l9g$O$=$N(B Field $B$rJQ99!"JQ?t(B
 $B$r;XDj$7$?>l9g$O0l;~E*$K$=$NJQ?tCM$rJQ99$7$^$9!#(B
 
-$BCM$K$OJ8;zNs$dJQ?t$NB>!"(Belisp$B<0$,$=$N$^$^5-=R$G$-!"$b$7!"(BField $B$NCM$,(B 
+$BCM$K$OJ8;zNs$dJQ?t$NB>!"(Belisp$B<0$,$=$N$^$^5-=R$G$-!"$b$7!"(BField $B$NCM$,(B
 @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 
 $B$D$E$$$F!"<!$NNc$r8+$F2<$5$$!#(B
@@ -4000,15 +3999,15 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 
 @item wl-auto-insert-x-face
 @vindex wl-auto-insert-x-face
-$B=i4|@_Dj$O(B @code{t$B!#(BNon-nil} $B$G$+$D!"%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r(B 
-@file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM$G$9(B)$B$NFbMF$KMQ0U$7$F$*(B
-$B$/$H!"%I%i%U%H$,=`Hw$5$l$k$H$-$K<+F0E*$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$F(B
-$BA^F~$5$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s$,!"(B@kbd{C-c
-C-a} $B$r2!$9$H%X%C%@It$KA^F~$5$l$^$9!#(B
+$B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$G$+$D!"%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r(B 
+@file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B)$B$NFbMF$KMQ0U$7$F$*$/$H!"(B
+$B%I%i%U%H$,=`Hw$5$l$k$H$-$K<+F0E*$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$5(B
+$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s$,!"(B@kbd{C-c C-a} $B$r(B
+$B2!$9$H%X%C%@It$KA^F~$5$l$^$9!#(B
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
-$B=i4|@_Dj$O(B t$B!#(B
+$B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i!"Aw?.;~$K(B @samp{Message-ID:} $B%U%#!<%k%I$r<+F0E*$KA^F~$7$^$9!#(B
 
 @item wl-local-domain
@@ -4023,16 +4022,15 @@ Non-nil $B$J$i!"Aw?.;~$K(B @samp{Message-ID:} $B%U%#!<%k%I$r<+F0E*$KA^F~$7$^$
 (@samp{Message-ID:} $B$N%I%a%$%s$,$*$+$7$$$H!"%M%C%H%K%e!<%9$G$U$/$mC!$-$K(B
 $B$"$C$F$7$^$&2DG=@-$,$"$j$^$9!#(B)
 
- $B$^$?!"$3$NCM$,@_Dj$5$l$F$$$k>l9g!"(B@code{system-name} $B$K$3$NCM$rIU2C$7$?(B
+$B$^$?!"$3$NCM$,@_Dj$5$l$F$$$k>l9g!"(B@code{system-name} $B$K$3$NCM$rIU2C$7$?(B
 $B%[%9%HL>$,(B SMTP $B$N(B HELO $B$N0z?t$H$7$FMxMQ$5$l$^$9!#(B
 
 @item wl-message-id-domain
 @vindex wl-message-id-domain
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
-Non-nil $B$J$i!"(B@samp{Message-ID:} $B$N%I%a%$%s%Q!<%H$K;HMQ$5$l$^$9!#%0%m!<(B
-$B%P%k$J(B IP $B$r;}$?$J$$>l9g$J$I!"%I%a%$%s%Q!<%H$r7h$a$i$l$J$$>l9g$O!"(B
-@code{wl-message-id-domain} $B$K0l0U$JJ8;zNs(B($BNc$($P!"%a!<%k%"%I%l%9$J$I(B)$B$r(B
-$B@_Dj$7$F$/$@$5$$!#(B
+$B=i4|@_Dj$O(B @code{nil}$B!#(BNon-nil $B$J$i!"(B@samp{Message-ID:} $B$N%I%a%$%s%Q!<%H(B
+$B$K;HMQ$5$l$^$9!#%0%m!<%P%k$J(B IP $B%"%I%l%9$r;}$?$J$$>l9g$J$I!"%I%a%$%s%Q!<(B
+$B%H$r7h$a$i$l$J$$>l9g$O!"(B@code{wl-message-id-domain} $B$K0l0U$JJ8;zNs(B($BNc$((B
+$B$P!"%a!<%k%"%I%l%9$J$I(B)$B$r@_Dj$7$F$/$@$5$$!#(B
 
 @item wl-draft-config-alist
 @vindex wl-draft-config-alist
@@ -4178,15 +4176,15 @@ SMTP$B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
 @item wl-nntp-posting-user
 @vindex wl-nntp-posting-user
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-$B%K%e!<%9Ej9F;~$K(BAUTHINFO$B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
+$B%K%e!<%9Ej9F;~$K(B AUTHINFO $B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
 @code{nil} $B$J$i(B @code{elmo-default-nntp-user} $B$r;H$$$^$9!#(B
-$B$=$l$G$b(B @code{nil} $B$J$i(BAUTHINFO$B$K$h$kG'>Z$r9T$J$$$^$;$s!#(B
+$B$=$l$G$b(B @code{nil} $B$J$i(B AUTHINFO $B$K$h$kG'>Z$r9T$J$$$^$;$s!#(B
 
 @item wl-nntp-posting-port
 @vindex wl-nntp-posting-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%P$N%]!<%HHV9f!#(B
-nil$B$J$i(B @code{elmo-default-nntp-server} $B$r;H$$$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-default-nntp-server} $B$r;H$$$^$9!#(B
 
 @item wl-nntp-posting-ssl
 @vindex wl-nntp-posting-ssl
@@ -4217,7 +4215,7 @@ POP-before-SMTP$B$G(BPOP$B$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
 @vindex wl-pop-before-smtp-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP$B$G(BPOP$B$r9T$J$&$H$-$N%]!<%HHV9f$G$9!#(B
-nil$B$N$^$^$J$i(B @code{elmo-default-pop3-port}$B$rMxMQ$7$^$9!#(B
+@code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-port}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-ssl
 @vindex wl-pop-before-smtp-ssl
@@ -4245,7 +4243,7 @@ STARTTLS} (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$,D%$i$l$^$9!#(B
 
 @noindent
 $B$?$@$7!"(B@file{im-wl.el} $B$K$h$kAw?.$G$O!"(B
-@file{sendlog} $B$K$O=PNO$;$:$K(B imput $B$N%m%05!G=$K$*$^$+$;$7$^$9!#(B
+@file{sendlog} $B$K$O=PNO$;$:$K(B @command{imput} $B$N%m%05!G=$K$*$^$+$;$7$^$9!#(B
 
 @item wl-draft-sendlog-max-size
 @vindex wl-draft-sendlog-max-size
@@ -4999,7 +4997,6 @@ Non-nil $B$K$9$k$H!"(B@file{~/.elmo/expired-log}$B$K(B expire $B$N<B9T7k2L$
 @item wl-expire-add-seen-list
 @vindex wl-expire-add-seen-list
 $B=i4|@_Dj$O(B @code{t}$B!#(B
-
 Non-nil $B$N>l9g!"(Bexpire $B$K$h$j%a%C%;!<%8$r%j%U%!%$%k$7$?>l9g!"4{FI>pJs$r(B
 $B%j%U%!%$%k@h$N%U%)%k%@$KEA$($k$h$&$K$7$^$9!#(B
 
@@ -5103,10 +5100,9 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @end lisp
 
 @noindent
-$B%"!<%+%$%V%U%)%k%@$K%3%T!<$9$k=hM}$r9T$&4X?t$r;XDj$7$^$9!#(B
-$B$3$N4X?t$K$O!"%U%)%k%@L>!"%U%)%k%@Fb$K$"$k%a%C%;!<%8$N%j%9%H!"%5%^%j$N(Bmsgdb$B>pJs!"(B
-$B$N(B3$B$D$N0z?t$,EO$5$l$^$9!#(B
-$B$b$A$m$s%f!<%6$,FH<+$K:n$C$F;XDj$9$k$3$H$,$G$-$^$9!#(B
+$B%"!<%+%$%V%U%)%k%@$K%3%T!<$9$k=hM}$r9T$&4X?t$r;XDj$7$^$9!#$3$N4X?t$K$O!"(B
+$B%U%)%k%@L>!"%U%)%k%@Fb$K$"$k%a%C%;!<%8$N%j%9%H!"%5%^%j$N(Bmsgdb$B>pJs!"$N(B3$B$D(B
+$B$N0z?t$,EO$5$l$^$9!#$b$A$m$s%f!<%6$,FH<+$K:n$C$F;XDj$9$k$3$H$,$G$-$^$9!#(B
 @end table
 
 
@@ -5634,9 +5630,8 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @file{util/im-wl.el} $B$r(B @code{load-path} $B$K$*$$$F0J2<$N$h$&$K@_Dj$9$l$P(B 
 OK $B$G$9!#(B
 
-$B%$%s%9%H!<%k;~$K(B @code{exec-path} $B>e$K(B imput $B$,$"$l$P!"(B@file{im-wl.el}
-$B$O%$%s%9%H!<%k$5$l$^$9!#(B
-@xref{Install}.
+$B%$%s%9%H!<%k;~$K(B @code{exec-path} $B>e$K(B @command{imput} $B$,$"$l$P!"(B
+@file{im-wl.el}$B$O%$%s%9%H!<%k$5$l$^$9!#(B@xref{Install}.
 
 @lisp
 @group
@@ -5824,13 +5819,12 @@ Non-nil $B$J$i%5%^%j$N%O%$%i%$%H$r9T$$$^$9!#(B
 
 @item  wl-summary-partial-highlight-above-lines
 @vindex wl-summary-partial-highlight-above-lines
-$B=i4|@_Dj$O(B 30$B!#(B
-@code{wl-summary-highlight-partial-threshold}$B$r1[$($k9T?t$N%a%C%;!<%8$,(B
-$B%5%^%j$KB8:_$9$k>l9g!"%P%C%U%!Kv$+$i!"%+!<%=%k9T$h$j$3$NCM$N9T?tJ,$@$1(B
-$B>e$N%a%C%;!<%8$^$GItJ,E*$J%O%$%i%$%H$,9T$J$o$l$^$9!#(B
-($B$3$NCM$r(B nil $B$K$9$k$H%P%C%U%!Kv$+$i(B
- @code{wl-summary-highlight-partial-threshold}$B9TJ,$@$1%O%$%i%$%H$5$l$k(B
- $B$h$&$K$J$j$^$9!#(B)
+$B=i4|@_Dj$O(B 30$B!#(B@code{wl-summary-highlight-partial-threshold} $B$r1[$($k9T(B
+$B?t$N%a%C%;!<%8$,%5%^%j$KB8:_$9$k>l9g!"%P%C%U%!Kv$+$i!"%+!<%=%k9T$h$j$3$N(B
+$BCM$N9T?tJ,$@$1>e$N%a%C%;!<%8$^$GItJ,E*$J%O%$%i%$%H$,9T$J$o$l$^$9!#(B($B$3$N(B
+$BCM$r(B @code{nil} $B$K$9$k$H%P%C%U%!Kv$+$i(B
+@code{wl-summary-highlight-partial-threshold}$B9TJ,$@$1%O%$%i%$%H$5$l$k$h(B
+$B$&$K$J$j$^$9!#(B)
 
 @item wl-highlight-body-too
 @vindex  wl-highlight-body-too
@@ -6453,8 +6447,8 @@ Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
 @item elmo-display-progress-threshold
 @vindex elmo-display-progress-threshold
 $B=i4|@_Dj$O(B 20$B!#(B
-$B?JD=I=<((B(progress gauge)$B$rI=<($9$k$7$-$$CM!#$3$NCM$h$j$b99?7?t$,Bg$-$$>l(B
-$B9g$O?JD=I=<($7$^$9!#(B
+$B?JD=I=<((B(progress gauge)$B$rI=<($9$kogCM!#$3$NCM$h$j$b99?7?t$,Bg$-$$>l9g$O(B
+$B?JD=I=<($7$^$9!#(B
 @end table
 
 
@@ -6488,8 +6482,8 @@ Wanderlust $B$K4X$9$k5DO@$O$3$N%a!<%j%s%0%j%9%H$G9T$o$l$^$9!#(B
 $B%P%0Js9p$d%Q%C%A$NAwIU$b$3$A$i$N%a!<%j%s%0%j%9%H$XAw$C$F$/$@$5$$!#%a!<%j(B
 $B%s%0%j%9%H$N%a%s%P$G$J$/$H$b!"Aw?.$G$-$k@_Dj$K$J$C$F$$$^$9!#(B
 
-$B$^$?!"%P%0Js9p$N>l9g$O(B Backtrace $B$r<h$C$FE:IU$9$k$H$h$j860x5fL@$7$d$9$/(B
-$B$J$j$^$9!#(B @footnote{Backtrace $B$N<h$jJ}$O(B
+$B$^$?!"%P%0Js9p$N>l9g$O%P%C%/%H%l!<%9$r<h$C$FE:IU$9$k$H860x5fL@$7$d$9$/$J(B
+$B$j$^$9!#(B @footnote{$B%P%C%/%H%l!<%9$N<h$jJ}$O(B
 @uref{http://www.jpl.org/elips/BUGS-ja.html}$B$,;29M$K$J$j$^$9!#(B}
 
 $B%a!<%j%s%0%j%9%H$N3'MM$K$O5.=E$J8f=u8@!"%3!<%I$r$?$/$5$s8fDs6!$$$?$@$$$F(B

@@ -16,31 +16,30 @@
 
 @c permissions text appears in an Info file before the first node.
 @ifinfo
-This file documents Wanderlust,
-Yet another message interface on Emacsen.
+This file documents Wanderlust, Yet another message interface on
+Emacsen.
 
 Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
-@w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@w{Kenichi Okada}, @w{Kaoru Takahashi},
-@w{Bun Mizuhara} and @w{Masayuki Osada}.
+@w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
+@w{Kaoru Takahashi}, @w{Bun Mizuhara} and @w{Masayuki Osada}.
 
 This edition is for Wanderlust version @value{VERSION}.
 
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
 
 @ignore
 Permission is granted to process this file through TeX and print the
-results, provided the printed document carries copying permission
-notice identical to this one except for the removal of this paragraph
-(this paragraph not being relevant to the printed manual).
+results, provided the printed document carries copying permission notice
+identical to this one except for the removal of this paragraph (this
+paragraph not being relevant to the printed manual).
 
 @end ignore
 Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 
 Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions.
@@ -63,20 +62,19 @@ into another language, under the above conditions for modified versions.
 
 @vskip 0pt plus 1filll
 Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
-@w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@w{Kenichi Okada}, @w{Kaoru Takahashi},
-@w{Bun Mizuhara} and @w{Masayuki Osada}.
+@w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
+@w{Kaoru Takahashi}, @w{Bun Mizuhara} and @w{Masayuki Osada}.
 
 This manual is for Wanderlust version @value{VERSION}.
 
-Permission is granted to make and distribute verbatim copies of
-this manual provided the copyright notice and this permission notice
-are preserved on all copies.
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
 
 Permission is granted to copy and distribute modified versions of this
-manual under the conditions for verbatim copying, provided that the entire
-resulting derived work is distributed under the terms of a permission
-notice identical to this one.
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 
 Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions.
@@ -216,7 +214,7 @@ here.
 
 SEMI or tm must be installed to make Wanderlust work correctly.
 
-SEMI does not run on Emacs19.28 or earlier
+SEMI does not run on Emacs 19.28 or earlier
 @footnote{SEMI runs on Emacs 19.34. @*
 @uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
 so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
@@ -245,9 +243,9 @@ FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
 @end group
 @end example
 
-You have to install APEL, FLIM and SEMI in this order.
-Generally @samp{make install} will do the job.
-(In XEmacs 21, @samp{make install-package}.)
+You have to install APEL, FLIM and SEMI in this order.  Generally
+@samp{make install} will do the job.  (In XEmacs 21, @samp{make
+install-package}.)
 
 Recommended combination of APEL, FLIM and SEMI are following:
 
@@ -364,8 +362,8 @@ In this case, either add destination directories of custom, APEL, FLIM
 and SEMI to environmental variable @env{EMACSLOADPATH}, or define
 @code{load-path} in @file{WL-CFG} in extracted directory.
 
-If you want to use BBDB, then the necessary modules are byte-compiled and
-installed when BBDB directory is added to @code{load-path}.
+If you want to use BBDB, then the necessary modules are byte-compiled
+and installed when BBDB directory is added to @code{load-path}.
 @xref{BBDB}.
 
 @subsection @file{WL-CFG}
@@ -3699,14 +3697,14 @@ The format of @code{wl-draft-config-alist} is:
 
 @example
 @group
-'(("@var{regexp of the header}" or elisp expression
-  ("@var{Field}" . value(elisp expression))
-   (@var{variable} . value(elisp expression))
-   (@var{sub-function} . value(elisp expression))
+'(("@var{regexp of the header}" or @var{elisp expression}
+  ("@var{Field}" . value(@var{elisp expression}))
+   (@var{variable} . value(@var{elisp expression}))
+   (@var{sub-function} . value(@var{elisp expression}))
    @var{function}
    @dots{})
-  ("@var{regexp of the header}" or elisp expression
-   ("@var{Field}" . value(elisp expression))
+  ("@var{regexp of the header}" or @var{elisp expression}
+   ("@var{Field}" . value(@var{elisp expression}))
    @dots{}))
 @end group
 @end example
@@ -3720,7 +3718,7 @@ Per default, there are 10 following sub-functions.
 'top:         Inserts the specified string at the top of the body.
 'top-file:    Inserts the specified file at the top of the body.
 'body:        Replaces the body with the specified string.
-              Specifying nil deletes the entire body string.
+              Specifying @code{nil} deletes the entire body string.
 'body-file:   Replaces the body with the content of the specified file.
 'bottom:      Inserts the specified string at the bottom of the body.
 'bottom-file: Inserts the specified file at the top of the body.
@@ -3733,7 +3731,7 @@ change them or add your own functions.  If you read the code, you can
 easily find how to write the functions.
 
 At the first of each item, @var{a regular expression of the header} or
-an elisp expression should be specified.  In the case of an elisp
+an @var{elisp expression} should be specified.  In the case of an elisp
 expression, the item is applied when the expression is evaluated
 non-nil.
 
@@ -4053,7 +4051,8 @@ in SMTP.
 @vindex wl-message-id-domain
 The initial setting is @code{nil}.  If non-nil, this value is used as a
 domain part of the @samp{Message-ID:}.  If your terminal does not have
-global IP, set unique string to this value (e.x. your e-mail address).
+global IP address, set unique string to this value (e.x. your e-mail
+address).
 
 @item wl-message-id-domain
 @vindex wl-message-id-domain
@@ -4281,7 +4280,7 @@ is written when:
 
 (it is written even if the transmission fails).
 But transmission by @file{im-wl.el} is not written in the @file{sendlog}
-and left to the logging function of imput.
+and left to the logging function of @command{imput}.
 
 
 @item wl-draft-sendlog-max-size
@@ -5697,9 +5696,8 @@ Examples with other packages.
 Place @file{util/im-wl.el} on the @code{load-path} and do the following
 settings.
 
-If imput is on the @code{exec-path} at the installation, @file{im-wl.el}
-is byte-compiled and installed.
-@xref{Install}.
+If @command{imput} is on the @code{exec-path} at the installation,
+@file{im-wl.el} is byte-compiled and installed.  @xref{Install}.
 
 @lisp
 @group
@@ -5883,12 +5881,11 @@ highlighted.
 
 @item  wl-summary-partial-highlight-above-lines
 @vindex wl-summary-partial-highlight-above-lines
-The initial setting is 30.
-If there are more lines of messages than
+The initial setting is 30.  If there are more lines of messages than
 @code{wl-summary-highlight-partial-threshold} in the summary, messages
 after the point that is the same number of lines as this value above the
-cursor line are highlighted partially.
-(If this value is nil, the last same number of lines as the value of
+cursor line are highlighted partially.  (If this value is @code{nil},
+the last same number of lines as the value of
 @code{wl-summary-highlight-partial-threshold} are highlighted.)
 
 @item wl-highlight-body-too
