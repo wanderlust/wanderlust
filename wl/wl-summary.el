@@ -4547,7 +4547,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
   (interactive "P")
   (elmo-folder-pack-numbers wl-summary-buffer-elmo-folder)
   (let (wl-use-scoring)
-    (wl-summary-rescan)))
+    (wl-summary-rescan nil nil t)))
 
 (defun wl-summary-target-mark-uudecode ()
   (interactive)
