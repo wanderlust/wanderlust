@@ -624,18 +624,7 @@ Don't cache if nil.")
 	    ret-val)))
 
 (defun elmo-nntp-make-msglist (beg-str end-str)
-  (elmo-set-work-buf
-   (let ((beg-num (string-to-int beg-str))
-	 (end-num (string-to-int end-str))
-	 i)
-     (setq i beg-num)
-     (insert "(")
-     (while (<= i end-num)
-       (insert (format "%s " i))
-       (setq i (1+ i)))
-     (insert ")")
-     (goto-char (point-min))
-     (read (current-buffer)))))
+  (elmo-make-number-list (string-to-int beg-str) (string-to-int end-str)))
 
 (luna-define-method elmo-folder-list-messages-plugged ((folder
 							elmo-nntp-folder)
