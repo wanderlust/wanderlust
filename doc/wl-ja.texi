@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.4.0
+@set VERSION 2.4.1
 @synindex pg cp
 @finalout
 
@@ -2472,7 +2472,13 @@ MH Folder, News Spool Folder, Maildir Folder のみです。
 もう一回 @kbd{/} を押すと、スレッドを閉じます。
 prefix argument つきで @kbd{/} を押すと、全ての子スレッドを開きます。
 
-@kbd{t} から始まるコマンドで、そのスレッドに属するメッセージに対して一括して処理を行うことができます。
+@kbd{[} でサマリの全てのスレッドを開き、@kbd{]}で全てのスレッドを閉じま
+す。
+
+@kbd{t} から始まるコマンドで、そのスレッドに属するメッセージに対して一括
+して処理を行うことができます。
+@xref{Key Bindings of Summary}.
+
 
 @subsection スレッドの繋ぎなおし
 
