@@ -1,8 +1,3 @@
-2002-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* elmo-filter.el (elmo-folder-diff): Fixed condition checking
-	`last:' filter.
-
 2002-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-dop.el (elmo-dop-queue-flush): Check obsolete at first.

@@ -224,11 +224,10 @@
 	  (if (consp diff)
 	      (cons (car diff) (car diff))
 	    (cons (car diff) (nth 1 diff))))
-	 ((string= "last" (elmo-filter-key condition))
-	  (luna-call-next-method))
-	 (t
+	 ((string-match "^last$" (elmo-filter-key condition))
 	  (cons nil (cdr (elmo-folder-diff (elmo-filter-folder-target-internal
-					    folder))))))
+					    folder)))))
+	 (t (luna-call-next-method)))
       (luna-call-next-method))))
 
 (luna-define-method elmo-folder-status ((folder elmo-filter-folder))
