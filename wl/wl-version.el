@@ -81,7 +81,7 @@ If ARG insert string at point."
       (setq salist (cdr salist)))
     status))
 
-;; compile warning
+;; avoid compile warnings
 (defvar mule-version)
 (defvar nemacs-version)
 (defvar emacs-beta-version)
