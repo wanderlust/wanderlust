@@ -2370,7 +2370,7 @@ News フォルダでは article 番号、IMAP フォルダでは UID、M
 
 @var{日付け}は、@samp{@var{月}/@var{日}(@var{曜日})@var{時}:@var{分}} の
 ように表示されます。曜日を日本語ではなく英語表記したい場合は、
-@code{wl-summary-weekday-name-lang} を @samp{en に設定してください。
+@code{wl-summary-weekday-name-lang} を @samp{en} に設定してください。
 
 @var{差出人}は、スレッドの深さ分インデントされて表示されます。@var{差出
 人}は、アドレス帳にあだ名があればあだ名で表示します。あだ名表記をやめた
