@@ -1450,8 +1450,7 @@ e.x.
   :group 'wl-pref)
 
 (defcustom wl-folder-sync-range-alist 
-  (list (cons "^&.*$" "all")
-	(cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^" 
+  (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^" 
 		      (regexp-quote wl-queue-folder) "$")
 	      "all"))
   "*Default sync range alist. If no matches, `wl-default-sync-range' is used."

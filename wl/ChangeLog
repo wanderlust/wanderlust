@@ -1,3 +1,15 @@
+2000-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode): Call `kill-all-local-variables' to
+	clear local variables.
+	(wl-summary-exit): Call `elmo-commit'.
+	(wl-summary-switch-to-clone-buffer): Call
+	`wl-summary-buffer-set-folder' after `wl-summary-mode'.
+	(wl-summary-goto-folder-subr): Ditto.
+
+	* wl-vars.el (wl-folder-sync-range-alist): Changed default value for
+	POP folder.
+
 2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* tm-wl.el, wl-address.el, wl-demo.el, wl-dnd.el, wl-draft.el,

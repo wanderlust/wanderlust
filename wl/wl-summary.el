@@ -821,14 +821,10 @@ ma      Put the '*' mark onto all messages.
 q	Goto folder mode.
 "
   (interactive)
+  (unless (interactive-p) (kill-all-local-variables))
   (setq major-mode 'wl-summary-mode)
   (setq mode-name "Summary")
   (use-local-map wl-summary-mode-map)
-  (setq wl-summary-buffer-refile-list nil)
-  (setq wl-summary-buffer-target-mark-list nil)
-  (setq wl-summary-buffer-delete-list nil)
-  (setq wl-summary-scored nil)
-  (setq wl-summary-buffer-disp-msg nil)  
 ;; (setq default-directory (or wl-tmp-dir (expand-file-name "~/")))  
   (setq buffer-read-only t)
   (setq truncate-lines t)
@@ -1121,6 +1117,7 @@ q	Goto folder mode.
 	  ;; save summary status
 	  (progn
 	    (wl-summary-save-status sticky)
+	    (elmo-commit wl-summary-buffer-folder-name)
 	    (if wl-use-scoring
 		(wl-score-save)))
 	;; for sticky summary
@@ -2644,8 +2641,8 @@ If optional argument is non-nil, checking is omitted."
 		      '(wl-current-score-file
 			wl-score-alist)))))
     (set-buffer buf)
-    (wl-summary-buffer-set-folder folder)
     (wl-summary-mode)
+    (wl-summary-buffer-set-folder folder)
     (let ((buffer-read-only nil))
       (insert-buffer cur-buf))
     (set-buffer-modified-p nil)
@@ -2740,9 +2737,9 @@ If optional argument is non-nil, checking is omitted."
 	  (if other-window
 	      (delete-other-windows))
 	  (set-buffer buf)
-	  (wl-summary-buffer-set-folder fld)
 	  (unless (eq major-mode 'wl-summary-mode)
 	    (wl-summary-mode))
+	  (wl-summary-buffer-set-folder fld)
 	  (setq wl-summary-buffer-disp-msg nil)
 	  (setq wl-summary-buffer-last-displayed-msg nil)
 	  (setq wl-summary-buffer-current-msg nil)
