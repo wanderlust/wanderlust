@@ -70,7 +70,8 @@ has Non-nil value\)"
 	    (widen)
 	      (if (or (and wl-on-xemacs
 			   zmacs-regions zmacs-region-active-p)
-		      (and transient-mark-mode mark-active))
+		      (and (not wl-on-xemacs)
+			   transient-mark-mode mark-active))
 		  (wl-mime-preview-follow-current-region)
 		(mime-preview-follow-current-entity)))))))
 
