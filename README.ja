@@ -99,10 +99,6 @@ Development:
   にアカウント名と、ssh の公開鍵を送ってください。ssh 経由では、
   cvsroot は :ext:cvs@cvs.m17n.org:/cvs/root となります。
 
-  どうしても ssh が使えない場合、pserver 経由でも開発に参加できます。
-  この場合、UNIX の /etc/passwd 様式で暗号化されたパスワードを送って下
-  さい。この場合 cvsroot は :pserver:<アカウント名>@cvs.m17n.org:/cvs/root
-  となります。
   開かれた開発に参加してくださることを期待します。
 
 References:
