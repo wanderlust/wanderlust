@@ -732,26 +732,23 @@ the closed parent will be opened."
   (let ((i 0)
 	(updates msgs)
 	len)
-     (while msgs
-       (setq updates
-	     (append updates
-		     (wl-thread-get-children-msgs (car msgs))))
-       (setq msgs (cdr msgs)))
-     (setq updates (elmo-uniq-list updates))
-     (setq len (length updates))
-     (while updates
-       (if (wl-thread-entity-parent-invisible-p (wl-thread-get-entity
-						 (car updates)))
-	   (wl-thread-delete-line-from-buffer (car updates))
-	 (wl-thread-update-line-on-buffer-sub nil (car updates)))
-       (setq updates (cdr updates))
-       (when (and (not no-msg)
-		  (> len elmo-display-progress-threshold))
-	 (setq i (1+ i))
-	 (if (or (zerop (% i 5)) (= i len))
-	     (elmo-display-progress
-	      'wl-thread-update-line-msgs "Updating deleted thread..."
-	      (/ (* i 100) len)))))))
+;;     (while msgs
+;;       (setq updates
+;; 	    (append updates
+;; 		    (wl-thread-get-children-msgs (car msgs))))
+;;       (setq msgs (cdr msgs)))
+;;     (setq updates (elmo-uniq-list updates))
+    (setq len (length updates))
+    (while updates
+      (wl-thread-update-line-on-buffer-sub nil (car updates))
+      (setq updates (cdr updates))
+      (when (and (not no-msg)
+		 (> len elmo-display-progress-threshold))
+	(setq i (1+ i))
+	(if (or (zerop (% i 5)) (= i len))
+	    (elmo-display-progress
+	     'wl-thread-update-line-msgs "Updating deleted thread..."
+	     (/ (* i 100) len)))))))
 
 (defun wl-thread-delete-line-from-buffer (msg)
   "Simply delete msg line."
@@ -775,12 +772,30 @@ the closed parent will be opened."
 			     wl-thread-entity-hashtb))
       (setq msgs (cdr msgs)))))
 
+(defun wl-thread-get-exist-children (msg)
+  (let ((msgs (list msg))
+	msgs-stack children
+	entity ret-val)
+    (while msgs
+      (setq children (wl-thread-entity-get-children
+		      (setq entity (wl-thread-get-entity (car msgs)))))
+      (when (elmo-msgdb-overview-get-entity (car msgs) wl-summary-buffer-msgdb)
+	(wl-append ret-val (list (car msgs)))
+	(setq children nil))
+      (setq msgs (cdr msgs))
+      (if (null children)
+	  (while (and (null msgs) msgs-stack)
+	    (setq msgs (wl-pop msgs-stack)))
+	(wl-push msgs msgs-stack)
+	(setq msgs children)))
+    ret-val))
+
 (defun wl-thread-delete-message (msg &optional deep update)
   "Delete MSG from entity and buffer."
   (save-excursion
     (let* ((entity (wl-thread-get-entity msg))
-	   children older-brothers younger-brothers top-child
-	   top-entity parent update-msgs ent beg)
+	   children older-brothers younger-brothers top-child ;;grandchildren
+	   top-entity parent update-msgs beg invisible-top)
       (when entity
 	(setq parent (wl-thread-entity-get-parent-entity entity))
 	(if parent
@@ -818,7 +833,7 @@ the closed parent will be opened."
 			 (not children))
 		(wl-append
 		 update-msgs
-		 (wl-thread-get-children-msgs (car (last older-brothers)) t))))
+		 (wl-thread-get-children-msgs (car (last older-brothers))))))
 
 	  ;; top...oldest child becomes top.
 	  (unless deep
@@ -826,11 +841,11 @@ the closed parent will be opened."
 	    (when children
 	      (setq top-child (car children)
 		    children (cdr children))
-	      (wl-append update-msgs
-			 (wl-thread-get-children-msgs top-child t))
 	      (setq top-entity (wl-thread-get-entity top-child))
 	      (wl-thread-entity-set-parent top-entity nil)
-	      (wl-thread-entity-set-linked top-entity nil))
+	      (wl-thread-entity-set-linked top-entity nil)
+	      (wl-append update-msgs
+			 (wl-thread-get-children-msgs top-child t)))
 	    (when children
 	      (wl-thread-entity-set-children
 	       top-entity
@@ -865,28 +880,47 @@ the closed parent will be opened."
 	(unless (wl-thread-delete-line-from-buffer msg)
 	  ;; jump to suitable point.
 	  ;; just upon the oldest younger-brother of my top.
-	  (let ((younger-bros (wl-thread-entity-get-younger-brothers
-			       (wl-thread-entity-get-top-entity entity)
-			       nil)))
-	    (if younger-bros
-		(wl-summary-jump-to-msg (car younger-bros))
-	      (goto-char (point-max))))) ; no younger brothers.
-	;; insert children if thread is closed.
-	(when (not (wl-thread-entity-get-opened entity))
-	  (if top-child
+	  (setq invisible-top
+		(car (wl-thread-entity-parent-invisible-p entity)))
+	  (if invisible-top
 	      (progn
-		(setq ent (wl-thread-get-entity top-child))
-		(if (wl-thread-entity-get-children ent)
-		    (wl-thread-entity-set-opened ent nil))
-		(wl-thread-insert-entity 0 ent nil nil))
-	    (if (not (wl-thread-entity-parent-invisible-p entity))
-		(mapcar '(lambda (x)
-			   (setq ent (wl-thread-get-entity x))
-			   (if (wl-thread-entity-get-children ent)
-			       (wl-thread-entity-set-opened ent nil))
-			   (wl-thread-insert-entity 0 ; no mean now...
-						    ent entity nil))
-			children)))))
+		(wl-append update-msgs (list invisible-top))
+		(wl-summary-jump-to-msg invisible-top))
+	    (goto-char (point-max))))
+
+	;; insert children if thread is closed or delete top.
+	(when (or top-child
+		  (not (wl-thread-entity-get-opened entity)))
+	  (let* (next-top insert-msgs ent e grandchildren)
+	    (if top-child
+		(progn
+		  (setq insert-msgs (wl-thread-get-exist-children top-child))
+		  (setq next-top (car insert-msgs))
+		  (setq ent (wl-thread-get-entity next-top))
+		  (when (and
+			 (wl-thread-entity-get-opened entity) ;; open
+			 (not (wl-thread-entity-get-opened ent)) ;; close
+			 (setq grandchildren
+			       (wl-thread-entity-get-children ent))
+			 (wl-summary-jump-to-msg next-top))
+		    (forward-line 1)
+		    (setq insert-msgs (append (cdr insert-msgs) grandchildren)))
+		  (when top-entity (wl-thread-entity-set-opened top-entity t))
+		  (when ent (wl-thread-entity-set-opened ent t)))
+	      (when (not invisible-top)
+		(setq insert-msgs (wl-thread-get-exist-children msg))
+		;; First msg always opened, because first msg maybe becomes top.
+		(if (setq ent (wl-thread-get-entity (car insert-msgs)))
+		    (wl-thread-entity-set-opened ent t))))
+	    ;; insert children
+	    (mapcar
+	     '(lambda (x)
+		;; if no exists in summary, insert entity.
+		(when (and x (not (wl-summary-jump-to-msg x)))
+		  (setq ent (wl-thread-get-entity x))
+		  (wl-thread-insert-entity 0 ; no mean now...
+					   ent entity nil)))
+	     insert-msgs))))
 
       (if update
  	  ;; modify buffer.
@@ -895,7 +929,7 @@ the closed parent will be opened."
 		  update-msgs)
  	;; don't update buffer
 	update-msgs)))) ; return value
-  
+
 (defun wl-thread-insert-message (overview-entity overview mark-alist
 				 msg parent-msg &optional update linked)
   "Insert MSG to the entity.
