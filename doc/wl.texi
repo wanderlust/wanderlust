@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.4.0
+@set VERSION 2.4.1
 @synindex pg cp
 @finalout
 
@@ -2462,6 +2462,7 @@ threads.
 
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
+@xref{Key Bindings of Summary}.
 
 @subsection reconstruct thread by hand
 
