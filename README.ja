@@ -29,7 +29,7 @@ Features:
 必要条件:
 
  * Emacs19 〜
- * tm (8.7 以降) or SEMI (1.13.7 以降)
+ * tm (8.7 以降) or SEMI (1.14.1 以降)
  * APEL (10.2 以降)
 
 Install:
