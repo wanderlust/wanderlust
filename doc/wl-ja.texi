@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.5.3
+@set VERSION 2.5.4
 @synindex pg cp
 @finalout
 

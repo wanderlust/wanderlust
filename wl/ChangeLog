@@ -1,7 +1,26 @@
+2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.5.4.
+
 2000-11-27  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl.el (wl-check-environment): Additional check for
 	'wl-local-domain' and `wl-message-id-domain'.
+
+2000-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-sync-entity): Bind name of summary/message
+	buffer as command specific.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+	(wl-folder-drop-unsync-entity): Ditto.
+
+	* wl-vars.el (wl-prog-uudecode-arg): Changed default to nil.
+	(wl-prog-uudecode-no-stdout-option): Changed default to t.
+	(Advised by YAMASHITA Junji <ysjj@unixuser.org>)
+
+	* wl-summary.el (wl-summary-toggle-disp-folder): Removed needless
+	save-excursion.
 
 2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -18,6 +18,10 @@
 	* utils/sasl/sasl-digest.el: New file.
 	* utils/sasl/digest-md5.el: Delete.
 
+2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.4.0 - "Rio"
+
 2000-10-31  Tetsuo Tsukamoto <czkmt@remus.dti.ne.jp>
 
 	* WL-MK: Require "backquote" before dealing with the custom issue.
