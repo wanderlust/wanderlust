@@ -592,23 +592,32 @@ e.g. \"Mr. bar <hoge@foo.com>\"
 
 (defun wl-address-user-mail-address-p (address)
   "Judge whether ADDRESS is user's or not."
-  (member (downcase (wl-address-header-extract-address address))
-	  (or (mapcar 'downcase wl-user-mail-address-list)
-	      (list (downcase
-		     (wl-address-header-extract-address
-		      wl-from))))))
+  (if wl-user-mail-address-regexp
+      (string-match wl-user-mail-address-regexp
+		    (wl-address-header-extract-address address))
+    (member (downcase (wl-address-header-extract-address address))
+	    (or (mapcar 'downcase wl-user-mail-address-list)
+		(list (downcase
+		       (wl-address-header-extract-address
+			wl-from)))))))
 
 (defun wl-address-delete-user-mail-addresses (address-list)
   "Delete user mail addresses from list by side effect.
 Deletion is done by using `elmo-list-delete'."
-  (let ((myself (or wl-user-mail-address-list
-		    (list (wl-address-header-extract-address wl-from)))))
-    (elmo-list-delete myself address-list
-		      (lambda (elem list)
-			(elmo-delete-if
-			 (lambda (item) (string= (downcase elem)
-						 (downcase item)))
-			 list)))))
+  (if wl-user-mail-address-regexp
+      (elmo-list-delete (list wl-user-mail-address-regexp) address-list
+			(lambda (elem list)
+			  (elmo-delete-if
+			   (lambda (item) (string-match elem item))
+			   list)))
+    (let ((myself (or wl-user-mail-address-list
+		      (list (wl-address-header-extract-address wl-from)))))
+      (elmo-list-delete myself address-list
+			(lambda (elem list)
+			  (elmo-delete-if
+			   (lambda (item) (string= (downcase elem)
+						   (downcase item)))
+			   list))))))
 
 (defmacro wl-address-concat-token (string token)
   (` (cond

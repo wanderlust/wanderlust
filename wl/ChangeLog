@@ -1,5 +1,10 @@
 2004-05-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-vars.el (wl-user-mail-address-regexp): New variable.
+	* wl-address.el (wl-address-user-mail-address-p): Use it.
+	(wl-address-delete-user-mail-addresses): Ditto.
+	Suggested by David Bremner <bremner@unb.ca>, [wl-en:463]
+
 	* wl-address.el (wl-address-user-mail-address-p): defsubst->defun.
 	(wl-address-delete-user-mail-addresses): Ditto.
 

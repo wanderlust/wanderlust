@@ -144,8 +144,17 @@
   "*A list of user's mail addresses.
 This list is used to judge whether an address is user's or not.
 You should set this variable if you use multiple e-mail addresses.
-If you don't have multiple e-mail addresses, you don't have to set this."
+If you don't have multiple e-mail addresses, you don't have to set this.
+NOTE: Non-nil value of `wl-user-mail-address-regexp' supersede this."
   :type '(repeat string)
+  :group 'wl
+  :group 'wl-setting)
+
+(defcustom wl-user-mail-address-regexp nil
+  "*A regexp for user's mail addresses.
+Supersede `wl-user-mail-address-list'."
+  :type '(choice (const :tag "Use wl-user-mail-address-list" nil)
+		 string)
   :group 'wl
   :group 'wl-setting)
 
