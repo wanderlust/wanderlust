@@ -529,9 +529,9 @@ Wanderlust の動作をカスタマイズできます。
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; @r{アイコンを置くディレクトリ (XEmacs と Emacs 21)。初期設定は @code{nil}。}
-;; @r{(XEmacs の package としてインストールされている場合、必要ありません)}
-(setq wl-icon-dir "~/work/wl/etc")
+;; @r{アイコンを置くディレクトリ。初期設定は Emacs 固有のデフォルト値。}
+;; @r{(デフォルトで設定されている値が正しければ、必要ありません)}
+(setq wl-icon-directory "~/work/wl/etc")
 
 ;; @r{メールを送信する SMTP サーバ。 初期設定は @code{nil}。}
 (setq wl-smtp-posting-server "your.smtp.example.com")
