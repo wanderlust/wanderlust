@@ -1206,6 +1206,7 @@ Set `wl-score-cache' nil."
 	 (count (length alist))
 	 (i 0)
 	 (update-unread nil)
+	 wl-summary-unread-message-hook
 	 num score dels visible score-mark mark-alist)
     (save-excursion
       (message "Updating score...")

@@ -1,5 +1,10 @@
 2002-01-22  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-score.el (wl-summary-score-update-all-lines): Do not call
+	`wl-summary-unread-message-hook'.
+
+2002-01-22  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-summary.el (wl-summary-input-range): New range `cache-status'.
 	(wl-summary-sync): Call `wl-summary-resume-cache-status'
 	if range is `cache-status'.
