@@ -1691,6 +1691,12 @@ with wl-highlight-folder-many-face."
   :group 'wl-summary
   :group 'wl-pref)
 
+(defcustom wl-summary-print-argument-within-window nil
+  "*If non-nil, always print argument right side of window."
+  :type 'boolean
+  :group 'wl-summary
+  :group 'wl-pref)
+
 (defcustom wl-summary-pick-field-default "Body"
   "*Default field for pick."
   :type '(radio (const "From")

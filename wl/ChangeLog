@@ -1,3 +1,11 @@
+2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-print-argument-within-window): New variable.
+
+	* wl-action.el (wl-summary-print-argument): Print argument to
+	right side of window if `wl-summary-print-argument-within-window'
+	is non-nil.
+
 2003-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-action.el (wl-summary-set-mark): Use
