@@ -1,3 +1,7 @@
+2002-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-folder-close): Set msgdb of children as nil.
+
 2002-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-set-status): Fixed logic (new to read).
