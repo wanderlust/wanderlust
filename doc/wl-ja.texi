@@ -241,7 +241,7 @@ SEMI, tm は以下の場所からダウンロードできます。
 
 @example
 @group
-SEMI: ftp://ftp.m17n.org/mule/semi/
+SEMI: ftp://ftp.m17n.org/pub/mule/semi/
 tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end group
 @end example
@@ -251,8 +251,8 @@ APEL, FLIM は以下の場所からダウンロードできます。
 
 @example
 @group
-APEL:     ftp://ftp.m17n.org/mule/apel/
-FLIM:     ftp://ftp.m17n.org/mule/flim/
+APEL:     ftp://ftp.m17n.org/pub/mule/apel/
+FLIM:     ftp://ftp.m17n.org/pub/mule/flim/
 @end group
 @end example
 
@@ -315,7 +315,7 @@ ftp://ftp.gohome.org/wl/
 @group
 ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
 ftp://daidai.kuis.kyoto-u.ac.jp/pub/mirror/ftp.gohome.org/pub/elisp/wl/
-http://www.jpl.org/elips/
+http://www.jpl.org/elips/wl/
 http://www.ring.gr.jp/archives/text/elisp/wl/
 ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
 ftp://opaopa.org/pub/mirror/elisp/wl/
