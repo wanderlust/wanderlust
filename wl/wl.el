@@ -659,9 +659,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			(list wl-folder-buffer-name
 			      wl-plugged-buf-name)
 			"\\|")))
-    (if (and wl-folder-use-frame
-	     (> (length (visible-frame-list)) 1))
-	(delete-frame))
     (setq wl-init nil)
     (unless wl-on-nemacs
       (remove-hook 'kill-emacs-hook 'wl-save-status))
@@ -770,7 +767,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (elmo-init)
   (let (demo-buf)
     (unless wl-init
-      (if wl-demo (setq demo-buf (wl-demo))))
+      (setq demo-buf (wl-demo)))
     (wl-init)
     (unless wl-init
       (condition-case nil
