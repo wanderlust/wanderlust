@@ -1,3 +1,8 @@
+2005-04-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-list-location): Sort by last
+	modification time of the file.
+
 2005-03-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-condition-optimize): Discriminated against

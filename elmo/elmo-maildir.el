@@ -114,6 +114,12 @@ LOCATION."
 			       nil "^[^.].*$" t))
 	 unread-locations flagged-locations answered-locations
 	 sym locations flag-list)
+    (setq cur (sort cur
+		    (lambda (x y)
+		      (< (elmo-get-last-modification-time
+			  (expand-file-name x cur-dir))
+			 (elmo-get-last-modification-time
+			  (expand-file-name y cur-dir))))))
     (setq locations
 	  (mapcar
 	   (lambda (x)
