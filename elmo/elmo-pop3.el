@@ -852,7 +852,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	(unless elmo-inhibit-display-retrieval-progress
 	  (setq elmo-pop3-total-size size)
 	  (elmo-display-progress
-	   'elmo-pop3-display-retrieval-progress
+	   'elmo-display-retrieval-progress
 	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)
 	   0))
 	(unwind-protect
