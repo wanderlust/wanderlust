@@ -647,7 +647,7 @@ Group list contents is not included."
     (with-temp-buffer
       (message "Deleting Address...")
       (insert-file-contents wl-address-file)
-      (delete-matching-lines (concat "^[ \t]*" the-email))
+      (delete-matching-lines (concat "^[ \t]*" the-email "[ \t]+\".*\"[ \t]+\".*\"$"))
       (write-region (point-min) (point-max)
 		    wl-address-file nil 'no-msg)
       ;; Delete entries.

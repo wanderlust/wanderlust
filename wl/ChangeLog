@@ -1,3 +1,7 @@
+2004-01-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-address.el (wl-address-delete): Avoid mis-deleting.
+
 2004-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2004.
