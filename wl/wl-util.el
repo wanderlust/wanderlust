@@ -166,7 +166,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	       (event-to-character event))
 	  event)))
 
-(if running-xemacs
+(if wl-on-xemacs
     (fset 'wl-read-event-char 'wl-xmas-read-event-char))
 
 (defmacro wl-push (v l)
