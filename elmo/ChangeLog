@@ -2,7 +2,7 @@
 
 	* modb-legacy.el (modb-legacy-flag-list): New constant.
 	(modb-legacy-suppoted-flag-p): New internal function.
-	(elmo-msgdb-set-flag): Check flag by `modb-legacy-suppoted-flag-p'.
+	(elmo-msgdb-set-flag): Cause error when `flag' is not supported.
 	(elmo-msgdb-unset-flag): Ditto.
 
 2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
