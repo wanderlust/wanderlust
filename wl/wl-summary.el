@@ -659,49 +659,58 @@ See also variable `wl-use-petname'."
 						     numbers)
   (save-excursion
     (set-buffer (wl-summary-event-handler-buffer-internal handler))
-    (let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
-	  invalidate)
+    (if wl-summary-lazy-update-mark
+	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
+	      invalidate)
+	  (dolist (number numbers)
+	    (when (wl-summary-message-visible-p number)
+	      (if (catch 'visible
+		    (let ((window-list window-list)
+			  win)
+		      (while (setq win (car window-list))
+			(when (wl-summary-jump-to-msg number
+						      (window-start win)
+						      (window-end win))
+			  (throw 'visible t))
+			(setq window-list (cdr window-list)))))
+		  (wl-summary-update-persistent-mark number)
+		(setq invalidate t))))
+	  (when invalidate
+	    (wl-summary-invalidate-persistent-mark)
+	    (dolist (win window-list)
+	      (wl-summary-validate-persistent-mark
+	       (window-start win)
+	       (window-end win)))))
       (dolist (number numbers)
-	(when (wl-summary-message-visible-p number)
-	  (if (catch 'visible
-		(let ((window-list window-list)
-		      win)
-		  (while (setq win (car window-list))
-		    (when (wl-summary-jump-to-msg number
-						  (window-start win)
-						  (window-end win))
-		      (throw 'visible t))
-		    (setq window-list (cdr window-list)))))
-	      (wl-summary-update-persistent-mark number)
-	    (setq invalidate t))))
-      (when invalidate
-	(wl-summary-invalidate-persistent-mark)
-	(dolist (win window-list)
-	  (wl-summary-validate-persistent-mark
-	   (window-start win)
-	   (window-end win)))))))
+	(when (and (wl-summary-message-visible-p number)
+		   (wl-summary-jump-to-msg number))
+	  (wl-summary-update-persistent-mark number))))))
 
 (luna-define-method elmo-event-handler-cache-changed
   ((handler wl-summary-event-handler) number)
   (save-excursion
     (set-buffer (wl-summary-event-handler-buffer-internal handler))
-    (let ((window-list (get-buffer-window-list (current-buffer) 'nomini t)))
-      (when (wl-summary-message-visible-p number)
-	(if (catch 'visible
-	      (let ((window-list window-list)
-		    win)
-		(while (setq win (car window-list))
-		  (when (wl-summary-jump-to-msg number
-						(window-start win)
-						(window-end win))
-		    (throw 'visible t))
-		  (setq window-list (cdr window-list)))))
-	    (wl-summary-update-persistent-mark number)
-	  (wl-summary-invalidate-persistent-mark)
-	  (dolist (win window-list)
-	    (wl-summary-validate-persistent-mark
-	     (window-start win)
-	     (window-end win))))))))
+    (if wl-summary-lazy-update-mark
+	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t)))
+	  (when (wl-summary-message-visible-p number)
+	    (if (catch 'visible
+		  (let ((window-list window-list)
+			win)
+		    (while (setq win (car window-list))
+		      (when (wl-summary-jump-to-msg number
+						    (window-start win)
+						    (window-end win))
+			(throw 'visible t))
+		      (setq window-list (cdr window-list)))))
+		(wl-summary-update-persistent-mark number)
+	      (wl-summary-invalidate-persistent-mark)
+	      (dolist (win window-list)
+		(wl-summary-validate-persistent-mark
+		 (window-start win)
+		 (window-end win))))))
+      (when (and (wl-summary-message-visible-p number)
+		 (wl-summary-jump-to-msg number))
+	(wl-summary-update-persistent-mark number)))))
 
 (defun wl-summary-buffer-detach ()
   (when (and (eq major-mode 'wl-summary-mode)
