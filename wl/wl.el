@@ -80,8 +80,8 @@
   (setq elmo-plugged (setq wl-plugged (elmo-plugged-p)))
   (setq wl-plug-state-indicator
 	(if wl-plugged
-	    wl-plug-state-indicator-on
-	  wl-plug-state-indicator-off))
+	    'wl-plug-state-indicator-on
+	  'wl-plug-state-indicator-off))
   (if wl-plugged
       (wl-toggle-plugged t 'flush))
   (force-mode-line-update t))
@@ -110,7 +110,7 @@
   (if wl-plugged
       (progn
 	;; flush queue!!
-	(setq wl-plug-state-indicator wl-plug-state-indicator-on)
+	(setq wl-plug-state-indicator 'wl-plug-state-indicator-on)
 	(elmo-dop-queue-flush)
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
@@ -124,7 +124,7 @@
 		  (wl-summary-flush-pending-append-operations seen-list))
 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
-    (setq wl-plug-state-indicator wl-plug-state-indicator-off)
+    (setq wl-plug-state-indicator 'wl-plug-state-indicator-off)
     (run-hooks 'wl-unplugged-hook))
   (force-mode-line-update t))
 
@@ -522,8 +522,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (setq wl-plugged-switch (elmo-plugged-p))
 	    (setq wl-plug-state-indicator
 		  (if wl-plugged-switch
-		      wl-plug-state-indicator-on
-		    wl-plug-state-indicator-off))
+		      'wl-plug-state-indicator-on
+		    'wl-plug-state-indicator-off))
 	    (force-mode-line-update t))))))
     (setq wl-plugged-alist-modified t)
     (goto-char cur-point)))
@@ -544,8 +544,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     ;; change wl-plug-state-indicator
     (setq wl-plug-state-indicator
 	  (if wl-plugged-switch
-	      wl-plug-state-indicator-on
-	    wl-plug-state-indicator-off))
+	      'wl-plug-state-indicator-on
+	    'wl-plug-state-indicator-off))
     (force-mode-line-update t)))
 
 (defun wl-plugged-exit ()
