@@ -1,5 +1,8 @@
 2000-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-util.el (toplevel): Removed (provide 'elmo-util).
+	(I don't know why this was needed.)
+
 	* wl-summary.el (wl-summary-jump-to-msg-by-message-id-via-nntp):
 	Follow up changes for stream-type.
 
