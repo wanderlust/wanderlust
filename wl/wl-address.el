@@ -672,8 +672,8 @@ If already registerd, change it."
     (when change-address
       (setq new-addr (read-from-minibuffer "E-Mail: " address))
       (cond
-       ((or (not (stringp address))
-	    (string-match "^[ \t]*$" address))
+       ((or (not (stringp new-addr))
+	    (string-match "^[ \t]*$" new-addr))
 	(error "empty address"))
        ((and (not (string= address new-addr))
 	     (assoc new-addr wl-address-list))
