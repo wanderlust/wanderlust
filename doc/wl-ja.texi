@@ -3824,11 +3824,6 @@ petname でも補完ができます。
 @vindex wl-summary-from-width
 初期設定は 17。サマリの From 部分の表示幅です。
 
-@item wl-summary-subject-length-limit
-@vindex wl-summary-subject-length-limit
-初期設定は @code{nil}。サマリの Subject 部分の表示幅の上限です。
-@code{nil} の場合、Subject 部分の長さの制限をしません。
-
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit
 初期設定は 46。設定された値以上サマリをインデントしません。@code{nil} な

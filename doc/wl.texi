@@ -3847,11 +3847,6 @@ Width of summary line. If @code{nil}, summary line's width is as is.
 The initial setting is 17.
 Width of sender part of summary line.
 
-@item wl-summary-subject-length-limit
-@vindex wl-summary-subject-length-limit
-The initial setting is @code{nil}. Specify the limit for the length of
-subject parts in summary. @code{nil} means unlimited.
-
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit
 The initial setting is 46.
