@@ -138,7 +138,7 @@ The main features of Wanderlust:
 @item Folder Mode shows the list of subscribed folders.
 @item Message Cache, Disconnected Operation (Read Only).
 @item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
-@item MIME compliant (by SEMI or tm).
+@item MIME compliant (by SEMI).
 @item Transmission of news and mail are unified by Message transmitting draft.
 @item Graphical list of folders (XEmacs and Emacs 21).
 @item View a part of message without retrieving the whole message (IMAP4).
@@ -160,7 +160,6 @@ Wanderlust is supposed to run on following Emacsen:
 @item Emacs 20.2 or later
 @item XEmacs 20.4 or later
 @item Meadow 1.00 or later
-@item Mule for Windows v1.22
 @item NTEmacs 20.4 or later
 @item PMMule
 @end itemize
@@ -170,15 +169,20 @@ Wanderlust:
 
 @itemize @bullet
 @item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c, 2000 or later
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 or later
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22--1.6.24, 2.0.5 or later
+@item Courier-IMAP 1.3.2 or later
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 4.0
+@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
 @end itemize
 
-@c LDAP connectivity with following LDAPd are confirmed to work with
-@c Wanderlust:
+LDAP connectivity with following LDAPd are confirmed to work with
+Wanderlust:
+
+@itemize @bullet
+@item OpenLDAP 2.0.6 or later
+@end itemize
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -484,7 +488,7 @@ The minimal requirement for settings is as the following.
 
 @lisp
 @group
-;; @r{The setting to use SEMI/tm}
+;; @r{The setting to use SEMI}
 (load "mime-setup")
 
 ;; @r{autoload configuration}
@@ -2296,7 +2300,7 @@ Japanese, but if you want to display it in English, set the value of
 
 @var{Sender}'s indentation corresponds to the depth of the thread.
 Sender name is displayed as nickname if it is defined in the address
-book.  Set @code{wl-use-petname} as @samp{nil}, if you want to quit
+book.  Set @code{wl-use-petname} as @code{nil}, if you want to quit
 displaying with nickname.
 
 If number is printed at the head of @var{Sender} part like @samp{+2},
@@ -3381,7 +3385,7 @@ displays Deutsch.
 
 @item wl-summary-fix-timezone
 @vindex wl-summary-fix-timezone
-The initial setting is @samp{nil}. 
+The initial setting is @code{nil}. 
 Time zone of the date string in summary mode is adjusted using this value.
 If @code{nil}, it is adjust to the default time zone information
 (system's default time zone or environment variable @samp{TZ}).
@@ -3607,7 +3611,7 @@ Following is an example (hide duplicated messages in multi folders)
 @node Message, Draft, Summary, Top
 @chapter Message Buffer
 
-Message Buffers utilize MIME-View mode of SEMI/tm.  For operational
+Message Buffers utilize MIME-View mode of SEMI.  For operational
 procedures and key bindings, refer to respective documents.
 @xref{MIME-View, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
@@ -3658,18 +3662,18 @@ windows.
 
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI only) Initial setting is nil.
+(SEMI only) Initial setting is @code{nil}.
 All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name.
-If nil, the value of @code{mime-view-ignored-field-list} is used.
+If @code{nil}, the value of @code{mime-view-ignored-field-list} is used.
 
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI only) Initial setting is nil.
+(SEMI only) Initial setting is @code{nil}.
 All fields that match this list will be display in message buffer.
 Each elements are regexp of field-name. This value precedes
 @code{wl-message-ignored-field-list}.
-If nil, the value of mime-view-visible-field-list is used.
+If @code{nil}, the value of @code{mime-view-visible-field-list} is used.
 
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
@@ -3705,9 +3709,9 @@ the message is saved when it is sent.
 
 @subsection Editing Messages
 
-Multi-part editing utilize MIME edit mode of SEMI/tm.  For procedures of
-editing, refer to respective documents.
-@xref{MIME-Edit, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
+Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
+editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
+a MIME user interface for GNU Emacs}.
 
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
@@ -4049,12 +4053,11 @@ Selects a template.
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-draft-insert-x-face-field
-Inserts the content of a file @file{~/.xface} (the value of the variable
-@code{wl-x-face-file}) as an @samp{X-Face:} field in the draft buffer.
+@findex wl-addrmgr
+Enter Address Manager.
+@xref{Address Manager}.
 
-There should be encoded X-Face strings as a content of a file @file{~/.xface}.
-(@code{wl-draft-insert-x-face-field})
+(@code{wl-addrmgr})
 @end table
 
 @section Customizable Variables
@@ -4096,8 +4099,7 @@ field is automatically inserted in the draft buffer.
 The initial setting is @code{t}.  If non-nil and there is an encoded
 X-Face string in a file @file{~/.xface} (the value of the variable
 @code{wl-x-face-file}), inserts it as an @samp{X-Face:} field in the
-draft buffer.  If @code{nil}, it is not automatically inserted. Press
-@kbd{C-c C-a} to insert.
+draft buffer.  If @code{nil}, it is not automatically inserted.
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -6071,7 +6073,7 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 If you embed @file{dired-dd-mime.el} in the dired-dd package, you can
 compose multi-part by simple Drag-and-Drop from dired to the draft
 buffer being edited in GNU Emacs (this feature is not Wanderlust
-specific, but general-purpose for tm/SEMI).
+specific, but general-purpose for SEMI).
 
 @lisp
 @group
