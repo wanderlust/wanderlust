@@ -6205,8 +6205,7 @@ The following is a example:
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
-         (format "X-Mailer: %s/%s (%s)"
-                 wl-appname wl-version wl-codename))))
+         (format "X-Mailer: %s" (product-string-1 'wl-version)))))
 @end group
 @end lisp
 
