@@ -460,11 +460,11 @@ Matched address lists are append to CL."
 	     (let ((list (sort (all-completions pattern cl) 'string<)))
 	       (wl-complete-window-show list)))))))
 
-(defvar wl-address-init-func 'wl-local-address-init)
+(defvar wl-address-init-function 'wl-local-address-init)
 
 (defun wl-address-init ()
-  "Call `wl-address-init-func'."
-  (funcall wl-address-init-func))
+  "Call `wl-address-init-function'."
+  (funcall wl-address-init-function))
 
 (defun wl-local-address-init ()
   "Reload `wl-address-file'.

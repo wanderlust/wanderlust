@@ -103,9 +103,9 @@
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
 (defvar wl-summary-buffer-saved-message nil)
-(defvar wl-summary-buffer-prev-folder-func nil)
-(defvar wl-summary-buffer-next-folder-func nil)
-(defvar wl-summary-buffer-exit-func nil)
+(defvar wl-summary-buffer-prev-folder-function nil)
+(defvar wl-summary-buffer-next-folder-function nil)
+(defvar wl-summary-buffer-exit-function nil)
 (defvar wl-summary-buffer-number-list nil)
 (defvar wl-summary-buffer-msgdb nil)
 (defvar wl-summary-buffer-folder-name nil)
@@ -125,7 +125,7 @@
 (defvar wl-summary-delayed-update nil)
 (defvar wl-summary-search-buf-folder-name nil)
 
-(defvar wl-summary-get-petname-func 'wl-address-get-petname-1)
+(defvar wl-summary-get-petname-function 'wl-address-get-petname-1)
 
 (defvar wl-summary-message-regexp "^ *\\([0-9-]+\\)")
 
@@ -173,9 +173,9 @@
 (make-variable-buffer-local 'wl-thread-vertical-str-internal)
 (make-variable-buffer-local 'wl-thread-horizontal-str-internal)
 (make-variable-buffer-local 'wl-thread-space-str-internal)
-(make-variable-buffer-local 'wl-summary-buffer-prev-folder-func)
-(make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
-(make-variable-buffer-local 'wl-summary-buffer-exit-func)
+(make-variable-buffer-local 'wl-summary-buffer-prev-folder-function)
+(make-variable-buffer-local 'wl-summary-buffer-next-folder-function)
+(make-variable-buffer-local 'wl-summary-buffer-exit-function)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
 (make-variable-buffer-local 'wl-summary-buffer-msgdb)
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
@@ -223,7 +223,7 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (or
-				       (funcall wl-summary-get-petname-func to)
+				       (funcall wl-summary-get-petname-function to)
 				       (car
 					(std11-extract-address-components to))
 				       to)
@@ -234,7 +234,7 @@
 			 entity "newsgroups"))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
-	  (setq retval (or (funcall wl-summary-get-petname-func from)
+	  (setq retval (or (funcall wl-summary-get-petname-function from)
 			   (car (std11-extract-address-components from))
 			   from))
 	(setq retval from)))
@@ -242,7 +242,7 @@
 
 (defun wl-summary-simple-from (string)
   (if wl-use-petname
-      (or (funcall wl-summary-get-petname-func string)
+      (or (funcall wl-summary-get-petname-function string)
 	  (car (std11-extract-address-components string))
 	  string)
     string))
@@ -1012,8 +1012,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	summary-win
 	message-buf message-win
 	folder-buf folder-win)
-    (if wl-summary-buffer-exit-func
-	(funcall wl-summary-buffer-exit-func)
+    (if wl-summary-buffer-exit-function
+	(funcall wl-summary-buffer-exit-function)
       (wl-summary-cleanup-temp-marks sticky)
       (unwind-protect
 	  ;; save summary status
@@ -3223,7 +3223,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (let ((fld (completing-read
 	      (format "Folder name %s(%s): " (or purpose "")
 		      default)
-	      (or wl-folder-completion-func
+	      (or wl-folder-completion-function
 		  (if (memq 'read-folder wl-use-folder-petname)
 		      (wl-folder-get-entity-with-petname)
 		    wl-folder-entity-hashtb))
@@ -5002,8 +5002,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (if wl-summary-buffer-disp-msg
 	      (wl-summary-redisplay)))
       (if (or interactive (interactive-p))
-	  (if wl-summary-buffer-prev-folder-func
-	      (funcall wl-summary-buffer-prev-folder-func)
+	  (if wl-summary-buffer-prev-folder-function
+	      (funcall wl-summary-buffer-prev-folder-function)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-prev-folder))
 	      (if next-entity
@@ -5041,8 +5041,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(if wl-summary-buffer-disp-msg
 	    (wl-summary-redisplay))
       (if (or interactive (interactive-p))
-	  (if wl-summary-buffer-next-folder-func
-	      (funcall wl-summary-buffer-next-folder-func)
+	  (if wl-summary-buffer-next-folder-function
+	      (funcall wl-summary-buffer-next-folder-function)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-next-folder))
 	      (if next-entity
@@ -5063,8 +5063,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(if wl-summary-buffer-prev-folder-func
-	    (funcall wl-summary-buffer-prev-folder-func)
+	(if wl-summary-buffer-prev-folder-function
+	    (funcall wl-summary-buffer-prev-folder-function)
 	  (let (next-entity finfo)
 	    (when wl-auto-select-next
 	      (progn
@@ -5121,8 +5121,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(if wl-summary-buffer-next-folder-func
-	    (funcall wl-summary-buffer-next-folder-func)
+	(if wl-summary-buffer-next-folder-function
+	    (funcall wl-summary-buffer-next-folder-function)
 	  (let (next-entity finfo)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-next-unread-folder)))
@@ -5435,7 +5435,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (let ((buffer (generate-new-buffer " *print*")))
 	      (copy-to-buffer buffer (point-min) (point-max))
 	      (set-buffer buffer)
-	      (funcall wl-print-buffer-func)
+	      (funcall wl-print-buffer-function)
 	      (kill-buffer buffer)))
 	(message "")))))
 
@@ -5482,7 +5482,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 			 (list "/pagenumberstring load"
 			       (concat "(" wl-ps-date ")"))))
 		    (run-hooks 'wl-ps-print-hook)
-		    (funcall wl-ps-print-buffer-func filename))
+		    (funcall wl-ps-print-buffer-function filename))
 		(kill-buffer buffer)))))
       (message ""))))
 

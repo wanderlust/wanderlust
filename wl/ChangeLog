@@ -1,3 +1,59 @@
+2001-02-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-buffer-exit-function): Renamed from
+	`wl-summary-buffer-exit-func'
+	(wl-summary-buffer-message-redisplay-function): Renamed from
+	`wl-summary-buffer-message-redisplay-func'
+	(wl-summary-buffer-next-folder-function): Renamed from
+	`wl-summary-buffer-next-folder-func'.
+	(wl-summary-buffer-prev-folder-function): Renamed from
+	`wl-summary-buffer-prev-folder-func'.
+	(wl-summary-get-petname-function): Renamed from
+	`wl-summary-get-petname-func'.
+
+	* wl-score.el (wl-score-edit-exit-function): Renamed from
+	`wl-score-edit-exit-func'.
+
+	* wl-message.el (wl-message-buffer-prefetch-get-next-function):
+	Renamed from `wl-message-buffer-prefetch-get-next-function'.
+
+	* wl-util.el (wl-load-profile-function): Renamed from
+	`wl-load-profile-func'.
+
+	* wl-folder.el (wl-folder-completion-function): Renamed from
+	`wl-folder-completion-func'.
+	(wl-folder-init-function): Renamed from `wl-folder-init-func'.
+
+	* wl-vars.el (wl-expire-archive-get-folder-function): Renamed from
+	`wl-expire-archive-get-folder-func'.
+	(wl-draft-send-function): Renamed from `wl-draft-send-func'.
+	(wl-draft-send-mail-function): Renamed from
+	`wl-draft-send-mail-func'.
+	(wl-draft-send-news-function): Renamed from
+	`wl-draft-send-news-func'.
+	(wl-fldmgr-sort-function): Renamed from `wl-fldmgr-sort-func'.
+	(wl-generate-mailer-string-function): Renamed from
+	`wl-generate-mailer-string-func'.
+	(wl-highlight-signature-search-function): Renamed from
+	`wl-highlight-signature-search-func'.
+	(wl-highlight-x-face-function): Renamed from
+	`wl-highlight-x-face-func'
+	(wl-print-buffer-function): Renamed from `wl-print-buffer-func'.
+	(wl-ps-print-buffer-function): Renamed from
+	`wl-ps-print-buffer-func'
+	(wl-summary-from-function): Renamed from `wl-summary-from-func'.
+	(wl-summary-subject-function): Renamed from `wl-summary-subject-func'.
+	(wl-summary-subject-filter-function): Renamed from
+	`wl-summary-subject-filter-func'.
+
+	* wl-draft.el (wl-draft-queue-flush-send-function): Renamed from
+	`wl-draft-queue-flush-send-func'
+	(wl-draft-cite-function): Renamed from
+	`wl-draft-cite-func'
+
+	* wl-address.el (wl-address-init-function): Renamed from
+	`wl-address-init-func'.
+
 2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-queue-flush): Don't call

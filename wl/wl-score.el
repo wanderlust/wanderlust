@@ -101,7 +101,7 @@
 (defvar wl-score-header-buffer-list nil)
 (defvar wl-score-alike-hashtb nil)
 
-(defvar wl-score-edit-exit-func nil
+(defvar wl-score-edit-exit-function nil
   "Function run on exit from the score buffer.")
 
 (make-variable-buffer-local 'wl-current-score-file)
@@ -1301,7 +1301,7 @@ Set `wl-score-cache' nil."
 	  (wl-message-select-buffer edit-buffer))
       (switch-to-buffer edit-buffer))
     (wl-score-mode)
-    (setq wl-score-edit-exit-func 'wl-score-edit-done)
+    (setq wl-score-edit-exit-function 'wl-score-edit-done)
     (setq wl-score-edit-summary-buffer sum-buf)
     (make-local-variable 'wl-prev-winconf)
     (setq wl-prev-winconf winconf))
@@ -1354,7 +1354,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
   (setq major-mode 'wl-score-mode)
   (setq mode-name "Score")
   (lisp-mode-variables nil)
-  (make-local-variable 'wl-score-edit-exit-func)
+  (make-local-variable 'wl-score-edit-exit-function)
   (make-local-variable 'wl-score-edit-summary-buffer)
   (run-hooks 'emacs-lisp-mode-hook 'wl-score-mode-hook))
 
@@ -1386,8 +1386,8 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
     (wl-as-mime-charset wl-score-mode-mime-charset
       (save-buffer)))
   (let ((buf (current-buffer)))
-    (when wl-score-edit-exit-func
-      (funcall wl-score-edit-exit-func))
+    (when wl-score-edit-exit-function
+      (funcall wl-score-edit-exit-function))
     (kill-buffer buf)))
 
 (defun wl-score-edit-kill ()
@@ -1395,8 +1395,8 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
   (interactive)
   (let ((buf (current-buffer)))
     (set-buffer-modified-p nil)
-    (when wl-score-edit-exit-func
-      (funcall wl-score-edit-exit-func))
+    (when wl-score-edit-exit-function
+      (funcall wl-score-edit-exit-function))
     (kill-buffer buf)))
 
 (defun wl-score-edit-get-summary-buf ()
