@@ -2,7 +2,9 @@
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Rescan if
 	scan-type is rescan.
-	(wl-summary-delete-all-temp-marks): Remove scored mark too.
+	(wl-summary-delete-all-temp-marks): Remove scored mark too when
+	new optional argument force is non-nil.
+	(wl-summary-save-view-cache): Call it with force argument non-nil.
 
 	* wl-action.el (wl-summary-unset-mark): Added optional argument FORCE.
 

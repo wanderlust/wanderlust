@@ -2646,7 +2646,7 @@ If ARG, exit virtual folder."
 				 'update nil nil t)
     (run-hooks 'wl-summary-virtual-hook)))
 
-(defun wl-summary-delete-all-temp-marks (&optional no-msg)
+(defun wl-summary-delete-all-temp-marks (&optional no-msg force)
   "Erase all temp marks from buffer."
   (interactive)
   (when (or wl-summary-buffer-target-mark-list
@@ -2657,7 +2657,7 @@ If ARG, exit virtual folder."
       (unless no-msg
 	(message "Unmarking..."))
       (while (not (eobp))
-	(wl-summary-unset-mark nil nil t)
+	(wl-summary-unset-mark nil nil force)
 	(forward-line 1))
       (unless no-msg
 	(message "Unmarking...done"))
@@ -3227,7 +3227,7 @@ Return non-nil if the mark is updated"
 		      wl-summary-buffer-target-mark-list mark-list
 		      wl-summary-buffer-temp-mark-list temp-list
 		      wl-summary-buffer-temp-mark-column temp-column)
-		(wl-summary-delete-all-temp-marks 'no-msg)
+		(wl-summary-delete-all-temp-marks 'no-msg 'force)
 		(encode-coding-region
 		 (point-min) (point-max)
 		 (or (and wl-on-mule
