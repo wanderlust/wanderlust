@@ -3398,7 +3398,7 @@ folder is moved.
 @vindex  wl-summary-weekday-name-lang
 The initial setting is @samp{ja}.  Specify language of the weekday.
 @samp{en} displays English, @samp{fr} displays French, @samp{de}
-displays Deutsch.
+displays Deutsch. You should rescan summary view after changing this value.
 
 @item wl-summary-fix-timezone
 @vindex  wl-summary-fix-timezone

@@ -3394,6 +3394,7 @@ Non-nil ならフォルダに移動した時に最初のメッセージを自動的に表示します。
 @vindex  wl-summary-weekday-name-lang
 初期設定は @samp{ja}。サマリの曜日表示の言語を指定します。@samp{en} なら
 英語、@samp{fr} ならフランス語、@samp{de} ならドイツ語となります。
+値を変更した後には、サマリを rescan して下さい。
 
 @item wl-summary-fix-timezone
 @vindex wl-summary-fix-timezone
