@@ -1,5 +1,8 @@
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-addrmgr.el (wl-addrmgr-apply-exec): Call wl-draft interactively
+	when it creates new draft buffer.
+
 	* wl-folder.el (wl-folder-flush-queue): Call elmo-dop-queue-flush
 	without argument.
 

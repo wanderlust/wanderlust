@@ -622,8 +622,8 @@ Return nil if no ADDRESS exists."
     (when (or (null wl-addrmgr-draft-buffer)
 	      (not (buffer-live-p wl-addrmgr-draft-buffer)))
       (setq wl-addrmgr-draft-buffer (save-window-excursion
-				   (wl-draft)
-				   (current-buffer))))
+				      (call-interactively 'wl-draft)
+				      (current-buffer))))
     (with-current-buffer wl-addrmgr-draft-buffer
       (setq from (std11-field-body "From"))
       (if from
