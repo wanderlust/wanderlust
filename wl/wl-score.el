@@ -1217,9 +1217,9 @@ Set `wl-score-cache' nil."
 	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 				      (list
 				       0
-				       (let ((pair
+				       (let ((lst
 					      (wl-summary-count-unread)))
-					 (+ (car pair) (cdr pair)))
+					 (+ (car lst) (nth 1 lst)))
 				       (elmo-folder-length
 					wl-summary-buffer-elmo-folder)))
 	(wl-summary-update-modeline))

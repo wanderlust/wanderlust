@@ -1,3 +1,9 @@
+2003-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-score.el (wl-summary-score-update-all-lines): Follow the API
+	change (wl-summary-count-unreads return a list instead of a cons
+	cell).
+
 2003-09-24  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-delete-messages-on-buffer): Use
