@@ -36,8 +36,6 @@
 (eval-when-compile
   (require 'elmo-msgdb))		; for inline functions
 
-(eval-when-compile (require 'cl))	; dolist
-
 (defvar wl-score-edit-header-char
   '((?a "from" nil string)
     (?s "subject" nil string)
@@ -464,9 +462,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	(setq wl-scores-messages (cdr wl-scores-messages))))
     (message "Scoring...done")
     ;; Remove buffers.
-    (let (buffer)
-      (while (setq buffer (pop wl-score-header-buffer-list))
-	(elmo-kill-buffer buffer)))))
+    (while wl-score-header-buffer-list
+      (elmo-kill-buffer (pop wl-score-header-buffer-list)))))
 
 (defun wl-score-integer (scores header now expire)
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
@@ -1255,12 +1252,12 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	   'wl-summary-score-update-all-lines "Updating score..."
 	   (/ (* i 100) count))))
       (when dels
-;	(elmo-msgdb-delete-msgs wl-summary-buffer-folder-name
-;				dels wl-summary-buffer-msgdb t)
-	;; mark as read.
-	(setq mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
-	(dolist (del dels)
-	  (setq mark-alist (elmo-msgdb-mark-set mark-alist del nil)))
+	(setq mark-alist
+	      (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+	(let ((marks dels))
+	  (while marks
+	    (setq mark-alist
+		  (elmo-msgdb-mark-set mark-alist (pop marks) nil))))
 	(elmo-mark-as-read wl-summary-buffer-folder-name
 			   dels wl-summary-buffer-msgdb)
 	(elmo-msgdb-set-mark-alist wl-summary-buffer-msgdb mark-alist)

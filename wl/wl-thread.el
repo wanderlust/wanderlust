@@ -32,8 +32,6 @@
 (require 'wl-summary)
 (require 'wl-highlight)
 
-(eval-when-compile (require 'cl))	; dolist
-
 ;; buffer local variables.
 ;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
 (defvar wl-thread-tops nil)           ; top number list (number)
@@ -109,12 +107,13 @@
     (message "Resuming thread structure...")
     ;; set obarray value.
     (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
-    (dolist (entity entities)
-      (elmo-set-hash-val (format "#%d" (car entity)) entity
-			 wl-thread-entity-hashtb))
     ;; set buffer local variables.
     (setq wl-thread-entities entities)
     (setq wl-thread-entity-list top-list)
+    (while entities
+      (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
+			 wl-thread-entity-hashtb)
+      (setq entities (cdr entities)))
     (message "Resuming thread structure...done.")))
 
 (defun wl-thread-save-entity (dir)
@@ -177,6 +176,14 @@
       (setcar (cddddr entity) linked)
     (nconc entity (list linked)))
   entity)
+
+(defsubst wl-thread-reparent-children (children parent)
+  (while children
+    (wl-thread-entity-set-parent
+     (wl-thread-get-entity (car children)) parent)
+    (wl-thread-entity-set-linked
+     (wl-thread-get-entity (car children)) t)
+    (setq children (cdr children))))
 
 (defsubst wl-thread-entity-insert-as-top (entity)
   (when (and entity
@@ -805,22 +812,18 @@ the closed parent will be opened."
 	      ;;
 	      (unless deep
 		(setq children (wl-thread-entity-get-children entity))
-		(dolist (entity children)
-		  (wl-thread-entity-set-parent
-		   (wl-thread-get-entity entity)
-		   (wl-thread-entity-get-number parent))
-		  (wl-thread-entity-set-linked
-		   (wl-thread-get-entity entity)
-		   t)
-		  (wl-append update-msgs
-			     (wl-thread-get-children-msgs entity t))))
+		(wl-thread-reparent-children
+		 children (wl-thread-entity-get-number parent))
+		(setq update-msgs
+		      (apply (function nconc)
+			     update-msgs
+			     (mapcar
+			      (function
+			       (lambda (message)
+				 (wl-thread-get-children-msgs message t))
+			       children)))))
 	      (wl-thread-entity-set-children
-	       parent
-	       (append
-		(append
-		 older-brothers
-		 children)
-		younger-brothers))
+	       parent (append older-brothers children younger-brothers))
 	      ;; If chidren and younger-brothers not exists,
 	      ;; update nearly older brother.
 	      (when (and older-brothers
@@ -847,11 +850,7 @@ the closed parent will be opened."
 	       (append
 		(wl-thread-entity-get-children top-entity)
 		children))
-	      (dolist (entity children)
-		(wl-thread-entity-set-parent (wl-thread-get-entity entity)
-					     top-child)
-		(wl-thread-entity-set-linked (wl-thread-get-entity entity)
-					     t))
+	      (wl-thread-reparent-children children top-child)
 	      (wl-append update-msgs children)))
 	  ;; delete myself from top list.
 	  (setq older-brothers (wl-thread-entity-get-older-brothers

@@ -1,3 +1,14 @@
+2000-10-06   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions): Pass
+	the 5th argument of `elmo-network-get-spec'.
+
+	* wl-thread.el (wl-thread-reparent-children): New inline function.
+	(wl-thread-delete-message): Use it.
+
+	* wl-score.el (wl-score-headers): Abolish local variable
+	(wl-summary-score-update-all-lines): Don't use `dolist'.
+
 2000-10-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-score.el (toplevel): Remove (provide 'elmo-msgdb).  And add

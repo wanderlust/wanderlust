@@ -761,7 +761,7 @@ return value is diffs '(-new -unread -all)."
 	(pattern
 	 (if (string-match "\\.$"
 			   (car (elmo-network-get-spec
-				 string nil nil nil)))
+				 string nil nil nil nil)))
 	     (substring string 0 (match-beginning 0))
 	   (concat string nil))))
     (or table
