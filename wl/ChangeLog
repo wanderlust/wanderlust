@@ -1,3 +1,10 @@
+2000-08-30  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-refile-subr): Assume
+	`copy-or-refile' as symbol.
+	(wl-summary-refile): Follow up above change.
+	(wl-summary-copy): Ditto.  Doc fix.
+
 2000-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-pick): Don't bind
