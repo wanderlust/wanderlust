@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/28 13:31:45 teranisi>
+;; Time-stamp: <00/06/28 14:52:52 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -5297,7 +5297,8 @@ Reply to author if invoked with argument."
 	  (if wl-summary-buffer-disp-msg
 	      (wl-summary-redisplay)))
       (if (or interactive (interactive-p))
-	  (progn
+	  (if wl-summary-buffer-prev-folder-func
+	      (funcall wl-summary-buffer-prev-folder-func)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-prev-folder))
 	      (if next-entity
@@ -5335,7 +5336,8 @@ Reply to author if invoked with argument."
 	(if wl-summary-buffer-disp-msg
 	    (wl-summary-redisplay))
       (if (or interactive (interactive-p))
-	  (progn
+	  (if wl-summary-buffer-next-folder-func
+	      (funcall wl-summary-buffer-next-folder-func)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-next-folder))
 	      (if next-entity
