@@ -1,57 +1,7 @@
-2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style
-	shy-groups for regexp.
-
-	* wl-e21.el (wl-highlight-folder-current-line): Use Posix style
-	character classes and Perl style shy-groups for regexp.
-	(wl-highlight-plugged-current-line): Use Posix style character
-	classes for regexp.
-	(wl-e21-highlight-folder-by-numbers): Ditto.
-	(wl-e21-display-image-p): Use `display-images-p' instead of
-	`display-graphic-p'.
-	(display-images-p): Make an alias to `display-graphic-p' if it is
-	not available.  It is for Emacs version prior to 21.0.105.
-
-	* wl-demo.el (wl-demo): Use `display-images-p' instead of
-	`display-graphic-p'.
-	(wl-demo-image-type-alist): Ditto.
-	(display-images-p): Make an alias to `display-graphic-p' if it is
-	not available.  It is for Emacs version prior to 21.0.105.
-
-2001-09-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-generate-user-agent-string-1): Remove tm
-	support.
-	(wl-generate-user-agent-string): Ditto.
-
-	* wl-version.el (wl-version): Update docsting.
-	(wl-version-status): Ditto.
-
-2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-e21.el (make-mode-line-mouse-map): Import from Emacs
-	21.0.105.  For Emacs 21.0.104 or earlier.
-
-2001-09-03  Takuo KITAME <kitame@northeye.org>
-
-	* wl-e21.el (wl-plugged-init-icons): Use
-	`make-mode-line-mouse-map' instead of `make-mode-line-mouse2-map'.
-	(wl-biff-init-icons): Ditto.
-
-2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-highlight.el (wl-highlight-summary-current-line):
-	Fixed highlighting refile/copy destination.
-
-	* wl-acap.el (wl-acap-init): Decode string by wl-acap-coding-system.
-	(wl-acap-store): Encode string by wl-acap-coding-system.
-
 2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-acap.el (toplevel): Check and require 'un-define before
-	'xemacs-ucs;
-	 Added checking for UTF-2000.
+	'xemacs-ucs.
 
 2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
