@@ -66,7 +66,7 @@
 ;;  ranges so that the command line is within that length, it should
 ;;  split the request into multiple commands. The client should use
 ;;  literals instead of long quoted strings, in order to keep the command
-;;  length down. 
+;;  length down.
 ;;  For its part, a server should allow for a command line of at least
 ;;  8000 octets. This provides plenty of leeway for accepting reasonable
 ;;  length commands from clients. The server should send a BAD response
@@ -253,9 +253,9 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;   "Send COMMAND to the SESSION and wait for response.
 ; Returns RESPONSE (parsed lisp object) of IMAP session."
 ;   (elmo-imap4-read-response session
-; 			    (elmo-imap4-send-command
-; 			     session
-; 			     command)))
+;			    (elmo-imap4-send-command
+;			     session
+;			     command)))
 
 (defun elmo-imap4-send-command-wait (session command)
   "Send COMMAND to the SESSION.

@@ -1116,6 +1116,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		 wl-use-scoring)
 	     (wl-summary-rescan)
 	     (and msg (wl-summary-jump-to-msg msg))))
+	  ((string= range "cache-status")
+	   (let ((msg (wl-summary-message-number))
+		 wl-use-scoring)
+	     (wl-summary-resume-cache-status)
+	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((or (string-match "last:" range)
 	       (string-match "first:" range))
 	   (wl-summary-goto-folder-subr
@@ -4416,6 +4421,7 @@ If ARG, exit virtual folder."
   "returns update or all or rescan."
   ;; for the case when parts are expanded in the bottom of the folder
   (let ((input-range-list '("update" "all" "rescan" "first:" "last:"
+			    "cache-status"
 			    "no-sync" "rescan-noscore" "all-visible"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
