@@ -340,7 +340,7 @@ files, then set following variables in @file{WL-CFG}
 A directory to install WL modules.
 This directory is relative directory from @code{LISPDIR}.
 WL modules include @file{wl*.el}, @file{wl*.elc} files.
-@c  Modules under the directory @file{util/} are also installed if 
+@c  Modules under the directory @file{util/} are also installed if
 @c it detected as necessary.
 
 @item ELMO_PREFIX
@@ -349,7 +349,7 @@ This directory is relative directory from @code{LISPDIR}.
 ELMO modules include @file{elmo*.el}, @file{elmo*.elc} files.
 @c  @file{utf7.el}, @file{utf7.elc} are also included in the ELMO.
 @end table
-  
+
 @noindent
 Default value of @code{WL_PREFIX} and @code{ELMO_PREFIX} are @file{wl}.
 
@@ -485,7 +485,7 @@ configuration can be written in
 @findex compose-mail
 
 If you write following setting in you @file{.emacs}, you can
-start Wanderlust draft mode by typing @kbd{C-x m} (@code{compose-mail}). 
+start Wanderlust draft mode by typing @kbd{C-x m} (@code{compose-mail}).
 This means it enables you to run Wanderlust as a default mail composer
  of Emacsen.
 
@@ -614,7 +614,7 @@ folders will be explained in detail in the next section.
 
 The part surrounded by @samp{@var{group name}@{} and @samp{@}} will
 become one folder group.  One folder group is treated as a directory
-which can bed opened and closed in folder mode. It is convenient for
+which can be opened and closed in folder mode. It is convenient for
 collecting some folders and putting them in order.
 
 Please note that @samp{@var{group name}@{} and @samp{@}} occupies one
@@ -651,7 +651,7 @@ can skip folder checking.
 
 
 @node Folders, Folder, Start Me Up, Top
-@chapter Wanderlust's folders 
+@chapter Wanderlust's folders
 @cindex Folder Type
 
 This chapter describes the folder types which Wanderlust is able to handle.
@@ -835,7 +835,7 @@ default:
 @example
 @var{hostname}  -> The value of @code{elmo-default-nntp-server}.
              Initial setting is @samp{localhost}.
-@var{username}  -> The value of @code{elmo-default-nntp-user}. 
+@var{username}  -> The value of @code{elmo-default-nntp-user}.
              Initial setting is @code{nil}.
 @var{port}      -> The value of @code{elmo-default-nntp-port}.
              Initial setting is 119.
@@ -1102,11 +1102,11 @@ in processing speed. For comfortable use, Emacs20 is recommended.
 (If re-search's performance is the problem, 19.3x or later may be okay.)
 
 If many files are included in one archive,
-it takes long time to access to the archive folder because 
+it takes long time to access to the archive folder because
 archiver starting overhead is increased (especially LHA).
 150-200 messages in one archive is recommended.
 
-Of course, following is possible @t{:-)} 
+Of course, following is possible @t{:-)}
 (meanings of these variables are described later.)
 
 @lisp
@@ -1124,7 +1124,7 @@ Of course, following is possible @t{:-)}
 @item elmo-archive-default-type
 @vindex elmo-archive-default-type
 The initial setting is @code{zip}.
-Set archiver type by symbol. 
+Set archiver type by symbol.
 
 @item elmo-archive-@var{type}-method-alist
 @vindex elmo-archive-TYPE-method-alist
@@ -1150,7 +1150,7 @@ Currently available actions are following.
 @end example
 
 @noindent
-In above actions, 
+In above actions,
 actions enclosed with braces are optional (They are used for better
 performance).
 
@@ -1294,7 +1294,7 @@ Example:
 @cindex Folder, Filtering
 @cindex Folder, Virtual
 
-A folder to access to a folder which collects all messages that 
+A folder to access to a folder which collects all messages that
 satisfy a condition virtually.
 
 Format:
@@ -1347,7 +1347,7 @@ Example:
 /since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
                           are picked.
 /before:yesterday/+inbox -> messages arrived before yesterday in +inbox
-                          are picked. 
+                          are picked.
 @end group
 @end example
 
@@ -1382,13 +1382,13 @@ Example:
 @example
 @group
 /from:teranisi&!to:teranisi/+inbox
-                      -> In +inbox, messages are picked if the message's 
-                         From: field includes "teranisi" and 
+                      -> In +inbox, messages are picked if the message's
+                         From: field includes "teranisi" and
                          To: field doesn't include "teranisi".
 
-/tocc:"Yuuichi Teranishi"/+inbox 
+/tocc:"Yuuichi Teranishi"/+inbox
                       -> In +inbox, messages are picked if the
-                         message's To: field or Cc: field includes 
+                         message's To: field or Cc: field includes
                          "Yuuichi Teranishi".
 
 /(from:yt|from:teranisi)&subject:report/+inbox
@@ -1571,7 +1571,7 @@ six children folders update its unread number status.
 
 To enter summary mode of the folder, type return (or space) key on
 the folder line.
-If the variable @code{wl-stay-folder-window} has non-nil value, 
+If the variable @code{wl-stay-folder-window} has non-nil value,
 summary window appears on the right of the folder mode window.
 
 @subsection Key bindings
@@ -1585,9 +1585,9 @@ Folder mode's key binding (related to selecting folders) is following.
 @kindex @key{RET} (Folder)
 @findex wl-folder-jump-to-current-entity
 Enter to the summary mode of the folder at the current cursor point.
-If the cursor is on the top of folder group line, 
+If the cursor is on the top of folder group line,
 the folder group is opened or closed.
-When the cursor is on the access group and this command is called 
+When the cursor is on the access group and this command is called
 with prefix argument, folder children list is updated to the newest one.
 (Children list is updated recursively if the access folder has hierarchical
 structure.)
@@ -1630,7 +1630,7 @@ folder's message to the draft buffer and jump to it.
 @item s
 @kindex s (Folder)
 @findex wl-folder-check-current-entity
-Update new and unread number information of the folder at the current 
+Update new and unread number information of the folder at the current
 cursor point.
 (@code{wl-folder-check-current-entity})
 
@@ -1941,7 +1941,7 @@ To append new folder to the empty folder group
 firstly open it, then execute append command in the next line.
 If it is closed, folder is appended on the same level with
 the above folder group. It is difficult to explain by words so try it.
-In other words, appended position depends on the 
+In other words, appended position depends on the
 above folder group's open/close status.
 
 @subsubsection Charset of the Folders File.
@@ -1958,11 +1958,11 @@ filter can be specified while appending filter.  If you put
 
 @subsubsection Sort Folders
 
-Sorting of the folders is executed by the function specified by 
-@code{wl-fldmgr-sort-func}. 
-The initial setting is @code{wl-fldmgr-sort-standard}, 
+Sorting of the folders is executed by the function specified by
+@code{wl-fldmgr-sort-func}.
+The initial setting is @code{wl-fldmgr-sort-standard},
 which sorts alphabetically.
-Sorting affects only on the current folder group. It does not 
+Sorting affects only on the current folder group. It does not
 affect on the child groups.
 
 @subsubsection Hiding Folders in the Access Group
@@ -1999,11 +1999,11 @@ group.  But insert and delete commands can be only available for the
 children folders of the access group and they only sets the subscribe
 status.  In other words, insertion of the folder means subscribing,
 deletion means unsubscribing.
-@footnote{In the current implementation, 
+@footnote{In the current implementation,
 it is faster to delete region than to unsubscribe region.}
 
 To update the access group when children folders are inserted or deleted
-by other way (other than Wanderlust), 
+by other way (other than Wanderlust),
 open the access group by typing @kbd{C-u @key{RET}}.
 @xref{Selecting Folder}.
 
@@ -2018,7 +2018,7 @@ newly created folders are inserted on the top of the access group.
 @cindex Keybind, Folder Buffer
 
 Key bindings on the folder mode related to folder editing are shown below.
-All bindings starts with @kbd{m}, and primary commands are binded to 
+All bindings starts with @kbd{m}, and primary commands are binded to
 one stroke key binding.
 
 @table @kbd
@@ -2039,7 +2039,7 @@ Create a folder group.
 @itemx m A
 @kindex m A (Folder)
 @findex wl-fldmgr-make-access-group
-Create an access group. 
+Create an access group.
 (@code{wl-fldmgr-make-access-group})
 
 @item m d
@@ -2158,7 +2158,7 @@ Set the visibility of folder (subscribe/unsubscribe).
 @kindex r u (Folder)
 @findex wl-fldmgr-unsubscribe-region
 Set the visibility of the folders (subscribe/unsubscribe) in the
-specified region. 
+specified region.
 (@code{wl-fldmgr-unsubscribe-region})
 
 @item l
@@ -2328,7 +2328,7 @@ message has empty subject field.
 @subsection Temporary Marks
 @cindex Mark, Temporary
 
-There are four temporary marks, 
+There are four temporary marks,
 @samp{*}, @samp{D}, @samp{o} and @samp{O}.
 Temporary marks indicates message operations.
 
@@ -2349,7 +2349,7 @@ Your answer is printed in the summary line.
 @item O
 The mark to refile.
 You can put this mark by typing @kbd{O} key.
-The difference between this mark and refile mark is, 
+The difference between this mark and refile mark is,
 this mark does not delete the message while latter does.
 @end table
 
@@ -2403,8 +2403,8 @@ To operate multipart, you have to enter to the message buffer.
 @xref{Message}.
 
 @subsection Pack the Message Numbers
-You can pack the message numbers in Summary by 
-@kbd{M-x wl-summary-pack-number}. Note that only MH Folder, 
+You can pack the message numbers in Summary by
+@kbd{M-x wl-summary-pack-number}. Note that only MH Folder,
 News Spool Folder and Maildir Folder are supported folder types.
 
 
@@ -2583,7 +2583,7 @@ Following is an example of @code{wl-refile-rule-alist}.
         (("To" "Cc")
          ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
         ("From"
-         ("me@@gohome.org" . ("To" ("you@@gohome.org" . 
+         ("me@@gohome.org" . ("To" ("you@@gohome.org" .
                                     "+from-me-to-you"))))))
 @end group
 @end lisp
@@ -2592,7 +2592,7 @@ After these settings, refile marks are automatically put on the condition
 matched messages by typing @kbd{C-o} (@code{wl-summary-auto-refile}).
 
 Messages which have @code{wl-summary-auto-refile-skip-marks} is skipped
-auto refiling. 
+auto refiling.
 By default, @samp{N}, @samp{U} and @samp{!} is specified, so the messages
 with these persistent marks are not automatically refiled.
 It means Wanderlust does not execute auto refile on unread messages by
@@ -2609,7 +2609,7 @@ To execute auto refile on all messages, set following.
 @cindex Summary, Sticky
 @cindex Sticky Summary
 
-The buffer of the `sticky summary' does not killed by typing @kbd{q}. 
+The buffer of the `sticky summary' does not killed by typing @kbd{q}.
 
 Sticky buffer is created by entering the summary by typing @kbd{C-u g}
 or type @kbd{M-s} (@code{wl-summary-stick}) on the normal summary.
@@ -2643,9 +2643,9 @@ Proceed reading a message at the current cursor point.
 @kindex . (Summary)
 @findex wl-summary-redisplay
 Redisplay a message at the current cursor point.
-If this command is called with prefix argument, 
+If this command is called with prefix argument,
 Redisplay message regardless of the message cache (message is re-loaded
-from source). 
+from source).
 (@code{wl-summary-redisplay})
 
 @item <
@@ -2773,7 +2773,7 @@ Save the message at current cursor point.
 @kindex n (Summary)
 @findex wl-summary-next
 Move cursor to the next message.
-If message is marked with a temporal mark in 
+If message is marked with a temporal mark in
 @code{wl-summary-skip-mark-list}, cursor is not moved to it.
 In the offline mode, cursor is not moved to the messages which are not cached
 yet.
@@ -2783,7 +2783,7 @@ yet.
 @kindex p (Summary)
 @findex wl-summary-prev
 Move cursor to the previous message.
-If message is marked with a temporal mark in 
+If message is marked with a temporal mark in
 @code{wl-summary-skip-mark-list}, cursor is not moved to it.
 In the offline mode, cursor is not moved to the messages which are not cached
 yet.
@@ -2843,7 +2843,7 @@ Redisplay the message at current cursor point without MIME analysis.
 @item B
 @kindex B (Summary)
 @findex wl-summary-burst
-If the message at current cursor point has 
+If the message at current cursor point has
 encapsulates multiple messages using MIME,
 de-capsulate and extract them on the current folder.
 (@code{wl-summary-burst})
@@ -2903,7 +2903,7 @@ Jump cursor to the other message.
 @item I
 @kindex I (Summary)
 Update summary status and
-prefetch all messages which have marks included in the 
+prefetch all messages which have marks included in the
 @code{wl-summary-incorporate-marks}.
 @findex wl-summary-incorporate
 (@code{wl-summary-incorporate})
@@ -2958,7 +2958,7 @@ You can sort by @samp{date}, @samp{from}, @samp{number} and @samp{subject}.
 @findex wl-summary-toggle-thread
 Toggle the threading.
 Threading status is displayed on the modeline.
-@samp{@{S@}} means threading is off (Sequence) and 
+@samp{@{S@}} means threading is off (Sequence) and
 @samp{@{T@}} means threading is on (Thread).
 (@code{wl-summary-toggle-thread})
 
@@ -3139,7 +3139,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @item t $
 @kindex t $ (Summary)
 @findex wl-thread-mark-as-important
-Put important mark @samp{$} on the messages which are the 
+Put important mark @samp{$} on the messages which are the
 descendant of the current thread.
 If @samp{$} mark exists, it is deleted.
 With prefix argument, it affects on the all messages in the thread tree.
@@ -3201,7 +3201,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @findex wl-thread-unmark
 Unmark temporal mark on the messages which are the descendant of the
 current thread. With prefix argument, it affects on the all messages in
-the thread tree. 
+the thread tree.
 (@code{wl-thread-unmark})
 
 @item t y
@@ -3305,7 +3305,7 @@ Uudecode the messages which have target mark @samp{*}.
 @item m ?
 @kindex m ? (Summary)
 @findex wl-summary-target-mark-pick
-Pick messages from the @samp{*} marked messages. 
+Pick messages from the @samp{*} marked messages.
 That is, @samp{*} marks on the messages are remained
 if the specified condition is satisfied.
 (@code{wl-summary-target-mark-pick})
@@ -3397,7 +3397,7 @@ displays Deutsch.
 
 @item wl-summary-fix-timezone
 @vindex  wl-summary-fix-timezone
-The initial setting is @samp{nil}. 
+The initial setting is @samp{nil}.
 Time zone of the date string in summary mode is adjusted using this value.
 If @code{nil}, it is adjust to the default time zone information
 (system's default time zone or environment variable @samp{TZ}).
@@ -3812,11 +3812,11 @@ invoked.
 
 Note that @code{wl-draft-config-alist} is applied only once when
 @code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked.
-Therefore, if you want to apply @code{wl-draft-config-alist} again after 
+Therefore, if you want to apply @code{wl-draft-config-alist} again after
 aborting transmission, execute @kbd{C-c C-e}
 (@code{wl-draft-config-exec}) explicitly.
 
-If you don't want to apply @code{wl-draft-config-alist} when 
+If you don't want to apply @code{wl-draft-config-alist} when
 @code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked,
 do the following:
 
@@ -3824,7 +3824,7 @@ do the following:
 (remove-hook 'wl-draft-send-hook 'wl-draft-config-exec)
 @end lisp
 
-If you want to apply @code{wl-draft-config-alist} when a draft buffer is 
+If you want to apply @code{wl-draft-config-alist} when a draft buffer is
 prepared, do the following:
 
 @lisp
@@ -3880,7 +3880,7 @@ window is shown below the draft buffer.  You can select a template by
 @kbd{n} and @kbd{p} seeing the buffer window.
 
 Press the @key{RET} key and the template is actually applied to the draft
-buffer.  If you press @kbd{q}, nothing is applied.  In addition, you can 
+buffer.  If you press @kbd{q}, nothing is applied.  In addition, you can
 adjust the window size by @code{wl-template-buffer-lines}.
 
 If @code{wl-template-visible-select} is @code{nil}, you should type the
@@ -3928,7 +3928,7 @@ If non-nil, POP connection is established using SSL.  If
 unset, @code{elmo-default-pop3-stream-type} is used.
 @end table
 
-If variables for POP-before-SMTP (@code{wl-pop-before-smtp-*}) are 
+If variables for POP-before-SMTP (@code{wl-pop-before-smtp-*}) are
 unset, settings for POP folders (@code{elmo-default-pop3-*}) are
 used.
 Therefore, if SMTP server and POP server are actually the same, and if
@@ -4164,7 +4164,7 @@ template while previewing.
 @item wl-template-buffer-lines
 @vindex wl-template-buffer-lines
 The initial setting is 7.
-If @code{wl-template-visible-select} is non-nil, this variable specifies 
+If @code{wl-template-visible-select} is non-nil, this variable specifies
 the size of the preview window.
 
 @item wl-draft-reply-buffer-style
@@ -4483,7 +4483,7 @@ re-filed or copied to the specified folders are appended to the folder
 @subsection Creation of Folders (IMAP4)
 
 You can create IMAP folders off-line.  The creation of folders are
-reflected in the servers when Wanderlust becomes on-line.  At that time, 
+reflected in the servers when Wanderlust becomes on-line.  At that time,
 if folders failed to be created on the servers for any reasons, messages
 re-filed to such folders are appended to the folder @samp{+lost+found}.
 
@@ -4518,7 +4518,7 @@ remove caches for messages relevant to off-line operations.
 @node Plugged Mode, Off-line State settings, Enable Operations, Disconnected Operations
 @section Switching On-line/Off-line per Server/Port
 
-@kbd{M-t} described above switches networking states as a whole, but you 
+@kbd{M-t} described above switches networking states as a whole, but you
 can switch on-line/off-line per server/port.
 
 Pressing @kbd{C-t} in the folder or summary modes brings you in
@@ -4564,7 +4564,7 @@ off-line (in XEmacs or Emacs 21, they are shown with icons).  Pressing
 @samp{+queue} for off-line transmission, and @dfn{dop queue} means
 off-line operations when @code{elmo-enable-disconnected-operation} is
 @code{t}.
-@c If the variable @code{elmo-enable-disconnected-operation} is non-nil, 
+@c If the variable @code{elmo-enable-disconnected-operation} is non-nil,
 @c off-line operations are enabled.
 
 They are displayed if there are any of them.  In the example above, in
@@ -4646,7 +4646,7 @@ appended while the off-line re-file/copy queue is processed.
 @item elmo-plugged-condition
 @vindex elmo-plugged-condition
 The initial setting is @code{one}.
-The value of @code{wl-plugged} reflects the return value of the function 
+The value of @code{wl-plugged} reflects the return value of the function
 @code{elmo-plugged-p} (without arguments).
 This variable @code{elmo-plugged-condition} specifies the condition on
 which the return value of @code{(elmo-plugged-p)} should be t depending on the
@@ -4870,7 +4870,7 @@ re-files every certain number of messages to archiving folders.
 
 This differs from @samp{wl-expire-archive-number1} in that this re-files
 to the folder up to the specified number regardless of message numbers.
-The archiving folders to which messages are re-filed are determined in the 
+The archiving folders to which messages are re-filed are determined in the
 same way as @code{wl-expire-archive-number1}.
 
 @item wl-expire-archive-date
@@ -5012,7 +5012,7 @@ following settings as well:
 @table @code
 @item all
 All messages with permanent marks are retained,
-i.e. @code{wl-summary-read-uncached-mark} is included in addition to the 
+i.e. @code{wl-summary-read-uncached-mark} is included in addition to the
 defaults.
 
 @item none
@@ -5036,7 +5036,7 @@ messages with @code{wl-summary-expire-reserve-marks} are also retained.
 @vindex wl-expire-archive-get-folder-func
 The initial setting is @code{wl-expire-archive-get-folder}.
 
-This variable specifies a function that returns the name of an archiving 
+This variable specifies a function that returns the name of an archiving
 folder for standard functions in the place of @var{destination}.
 You can use the following three variables for simple modification of
 folder names; if you want more complex settings, define your own
@@ -5166,7 +5166,7 @@ folders only.
 folders.  If there are the archiving folders already, only new messages
 are appended.
 
-You can use @code{wl-archive-alist} in order to specify how messages are 
+You can use @code{wl-archive-alist} in order to specify how messages are
 archived according to their folder names, as in @code{wl-expire-alist}.
 For example:
 
@@ -5206,7 +5206,7 @@ These functions are good to archive all messages in a folder by their
 numbers or by their dates.
 These are also useful for backup or confirmation purposes before
 expiration.
-If you try to re-file them after they are archived, they are deleted but 
+If you try to re-file them after they are archived, they are deleted but
 not re-filed.
 
 Per default, the archiving folders to which messages are copied are
@@ -5280,7 +5280,7 @@ Wanderlust specifics.
 
 @subsection Score File Specification
 
-@code{wl-score-folder-alist} specifies score files or variables in which 
+@code{wl-score-folder-alist} specifies score files or variables in which
 scores are defined, corresponding to folder names.
 
 @lisp
@@ -5339,10 +5339,10 @@ For example, for "subject" field, a type and a time limit are prompted,
 but for "from" field, they are fixed upon automatically as substring and
 permanent respectively.
 However, score values can be modified by the prefix argument.
-Typing @kbd{?} at the mini-buffer shows a help on keys and corresponding 
+Typing @kbd{?} at the mini-buffer shows a help on keys and corresponding
 headers and types.
 
-At last, type @kbd{C-c C-c} in the score editing buffer.  This saves the 
+At last, type @kbd{C-c C-c} in the score editing buffer.  This saves the
 score file and terminates the edit mode.  Typing @kbd{C-c C-c} after
 erasing contents of the buffer deletes the score file being edited.
 
@@ -5687,7 +5687,7 @@ retrieved.
 
 @end enumerate
 
-The sum of these scores @emph{after all factors are applied} becomes the 
+The sum of these scores @emph{after all factors are applied} becomes the
 score of the message.
 
 @cindex Score File Atoms
@@ -5717,7 +5717,7 @@ The default is @code{wl-summary-important-above}.
 
 @subsection Caveats
 
-Not to mention the @code{extra} key, if @code{lines} or @code{xref} keys 
+Not to mention the @code{extra} key, if @code{lines} or @code{xref} keys
 are used, you need to set @code{elmo-msgdb-extra-fields}.
 
 @lisp
@@ -6027,7 +6027,7 @@ regular expressions.
 
 @item wl-highlight-citation-prefix-regexp
 @vindex  wl-highlight-citation-prefix-regexp
-Specifies a regular expression to which quoted lines in bodies of 
+Specifies a regular expression to which quoted lines in bodies of
 drafts and messages match.
 Bodies matching to this regular expression are highlighted by the faces
 specified by (@code{wl-highlight-message-cited-text-*}).
@@ -6245,7 +6245,7 @@ If @code{nil}, wl doesn't check mail arrival.
 @item wl-biff-check-interval
 @vindex wl-biff-check-interval
 The initial setting is 40 (in seconds).
-Check mail arrival in this period. 
+Check mail arrival in this period.
 
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
@@ -6295,7 +6295,7 @@ following settings:
 in the original message, @samp{Reply-To:} field in the original is
 copied to @samp{To:} field.)
 
-Moreover, the behavior of @kbd{a} with prefix argument can 
+Moreover, the behavior of @kbd{a} with prefix argument can
 be directed by @code{wl-draft-reply-with-argument-list} as well.
 
 Note: To set the behavior when you reply to the message written by yourself, use
@@ -6694,7 +6694,7 @@ If you send a bug report, please attach Backtrace with it.
 @footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to
 in Japanese.}
 
-I would like to express my thanks to the members of the mailing list for 
+I would like to express my thanks to the members of the mailing list for
 valuable advice and many pieces of code they contributed.
 
 
