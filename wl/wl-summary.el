@@ -2473,11 +2473,13 @@ If ARG, without confirm."
 
 (defsubst wl-summary-open-folder (folder)
   ;; Select folder
-  (unwind-protect
-      (elmo-folder-open folder 'load-msgdb)
-    ;; For compatibility
-    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
-    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal folder))))
+  (let ((elmo-mime-charset wl-summary-buffer-mime-charset))
+    (unwind-protect
+	(elmo-folder-open folder 'load-msgdb)
+      ;; For compatibility
+      (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
+      (setq wl-summary-buffer-folder-name (elmo-folder-name-internal
+					   folder)))))
 
 (defun wl-summary-goto-folder-subr (&optional name scan-type other-window
 					      sticky interactive scoring)
