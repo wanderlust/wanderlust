@@ -1,3 +1,9 @@
+2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-get-prev-folder): Ignore nemacs.
+	(wl-folder-get-next-folder): Ditto.
+	(wl-folder-get-path): Ditto.
+
 2002-11-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-message-verify-pgp-nonmime): With arg, ask coding

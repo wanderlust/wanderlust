@@ -428,8 +428,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	  (setq entities (nth 2 entity)))
 	 ((stringp entity)
 	  (if (and (string= name entity)
-		   ;; don't use eq, `id' is string on Nemacs.
-		   (equal id (wl-folder-get-entity-id entity)))
+		   (eq id (wl-folder-get-entity-id entity)))
 	      (throw 'done last-entity))
 	  (if (or (not unread)
 		  (and (setq finfo (wl-folder-get-entity-info entity))
@@ -464,8 +463,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 			     (> (+ (nth 0 finfo)(nth 1 finfo)) 0)))
 		(throw 'done entity))
 	    (if (and (string= name entity)
-		     ;; don't use eq, `id' is string on Nemacs.
-		     (equal id (wl-folder-get-entity-id entity)))
+		     (eq id (wl-folder-get-entity-id entity)))
 		(setq found t)))))
 	(unless entities
 	  (setq entities (wl-pop entity-stack)))))))
@@ -1933,8 +1931,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	 (cond
 	  ((consp entity)
 	   (if (and (or (not string) (string= string (car entity)))
-		    ;; don't use eq, `id' is string on Nemacs.
-		    (equal target-id (wl-folder-get-entity-id (car entity))))
+		    (eq target-id (wl-folder-get-entity-id (car entity))))
 	       (throw 'done
 		      (wl-push target-id result-path))
 	     (wl-push (wl-folder-get-entity-id (car entity)) result-path))
@@ -1942,8 +1939,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	   (setq entities (nth 2 entity)))
 	  ((stringp entity)
 	   (if (and (or (not string) (string= string entity))
-		    ;; don't use eq, `id' is string on Nemacs.
-		    (equal target-id (wl-folder-get-entity-id entity)))
+		    (eq target-id (wl-folder-get-entity-id entity)))
 	       (throw 'done
 		      (wl-push target-id result-path)))))
 	 (unless entities
