@@ -765,7 +765,7 @@ BUFFER must be a single-byte buffer."
 					" search%s%s%s %s")
 				      (if from-msgs
 					  (concat
-					   (if elmo-imap4-use-uid "uid ")
+					   (if elmo-imap4-use-uid " uid ")
 					   (cdr
 					    (car 
 					     (elmo-imap4-make-number-set-list

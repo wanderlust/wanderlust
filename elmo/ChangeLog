@@ -1,3 +1,8 @@
+2000-10-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Added space
+	character before 'uid'.
+
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Don't save location data.
