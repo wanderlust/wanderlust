@@ -423,6 +423,10 @@ TYPE specifies the archiver's symbol."
 				'(lambda (x) (regexp-quote (cdr x)))
 				elmo-archive-suffix-alist
 				"\\|"))))
+	  (if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
+	      (setq base-folder (elmo-match-string 1 base-folder))
+	    (unless (file-directory-p path)
+	      (setq base-folder (file-name-directory base-folder))))
 	  (delq
 	   nil
 	   (mapcar
@@ -434,8 +438,7 @@ TYPE specifies the archiver's symbol."
 				       elmo-archive-suffix-alist))))
 		 (format "$%s;%s%s"
 			 (elmo-concat-path base-folder (elmo-match-string 1 x))
-			 suffix prefix)
-		 ))
+			 suffix prefix)))
 	    flist)))
       (elmo-localdir-list-folders-subr folder hierarchy))))
 
