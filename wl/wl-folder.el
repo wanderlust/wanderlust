@@ -501,11 +501,11 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (let ((cur-buf (current-buffer))
 	(wl-auto-select-first nil)
 	trash-buf emptied)
+    (setq trash-buf (wl-summary-get-buffer-create wl-trash-folder))
+    (wl-summary-goto-folder-subr wl-trash-folder 'force-update)
     (if wl-stay-folder-window
-	(wl-folder-select-buffer
-	 (wl-summary-get-buffer-create wl-trash-folder)))
-    (wl-summary-goto-folder-subr wl-trash-folder 'force-update nil nil t)
-    (setq trash-buf (current-buffer))
+	(wl-folder-select-buffer trash-buf)
+      (switch-to-buffer trash-buf))
     (unwind-protect
 	(setq emptied (wl-summary-delete-all-msgs))
       (when emptied

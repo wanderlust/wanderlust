@@ -1,3 +1,9 @@
+2003-01-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-empty-trash): Set and show up summary
+	buffer after calling `wl-summary-goto-folder-subr' without the
+	argument `interactive'.
+
 2003-01-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
