@@ -1823,7 +1823,11 @@ If KBYTES is kilo bytes (This value must be float)."
   (display-buffer elmo-warning-buffer-name))
 
 (defvar elmo-obsolete-variable-alist nil)
-(defvar elmo-obsolete-variable-show-warnings nil)
+
+(defcustom elmo-obsolete-variable-show-warnings t
+  "Show warning window if obsolete variable is treated."
+  :type 'boolean
+  :group 'elmo)
 
 (defun elmo-define-obsolete-variable (obsolete var)
   "Define obsolete variable.

@@ -1,3 +1,8 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-obsolete-variable-show-warnings): Define with
+	defcustom; Set default value as t.
+
 2001-12-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pldap.el (ldap-ldif-field-name-regexp): Changed regexp.
