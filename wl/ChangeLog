@@ -1,3 +1,8 @@
+2000-12-12  KOGURO Naoki  <koguro@dd.iij4u.or.jp>
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Close POP
+	connection before call `wl-draft-send-mail-with-smtp'.
+
 2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.5.4.
