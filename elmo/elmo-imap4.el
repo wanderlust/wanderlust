@@ -1479,14 +1479,13 @@ If optional argument UNMARK is non-nil, unmark."
 				       (elmo-imap4-spec-mailbox spec))
     (setq send-buf (elmo-imap4-setup-send-buffer string))
     (unwind-protect
-	(setq result (elmo-imap4-response-ok-p
-		      (elmo-imap4-send-command-wait
-		       session
-		       (list
-			"append "
-			(elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-			(if no-see " " " (\\Seen) ")
-			(elmo-imap4-buffer-literal send-buf)))))
+	(setq result (elmo-imap4-send-command-wait
+		      session
+		      (list
+		       "append "
+		       (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+		       (if no-see " " " (\\Seen) ")
+		       (elmo-imap4-buffer-literal send-buf))))
       (kill-buffer send-buf))
     result))
 
