@@ -1,5 +1,9 @@
 2000-08-29   Daiki Ueno  <ueno@unixuser.org>
 
+	* wl-message.el (wl-mmelmo-message-redisplay): Bind
+	`wl-message-ignored-field-list' instead of
+	`mime-view-ignored-field-list'.
+
 	* wl-folder.el (wl-folder-goto-top-of-current-folder):Simplified.
 	Add interactive spec.
 	(wl-folder-goto-bottom-of-current-folder): Ditto.

@@ -44,7 +44,7 @@
     (lambda (symbol)
       (unless (boundp symbol)
 	(set (make-local-variable symbol) nil))))
-   '(mime-view-ignored-field-list mmelmo-imap4-skipped-parts))
+   '(mmelmo-imap4-skipped-parts))
   (defun-maybe event-window (a))
   (defun-maybe posn-window (a))
   (defun-maybe event-start (a))
@@ -421,10 +421,10 @@
 	  (erase-buffer)
 	  (if backend
 	      (let (mime-display-header-hook ;; bind to nil...
-		    (mime-view-ignored-field-list 
+		    (wl-message-ignored-field-list 
 		     (if (eq flag 'all-header)
 			 nil
-		       mime-view-ignored-field-list))
+		       wl-message-ignored-field-list))
 		    (mmelmo-force-reload force-reload)
 		    (mmelmo-imap4-threshold wl-fetch-confirm-threshold))
 		(setq real-fld-num (elmo-get-real-folder-number
