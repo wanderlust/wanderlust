@@ -1175,25 +1175,36 @@ FIELD is a symbol of the field."
 							   &optional
 							   section unread)
   (let ((cache-path (elmo-fetch-strategy-cache-path strategy))
-	err)
-    (or (and (eq (elmo-fetch-strategy-use-cache strategy) t)
-	     (elmo-file-cache-load cache-path section))
-	(when (and (condition-case error
-		       (elmo-message-fetch-internal folder number
-						    strategy
-						    section
-						    unread)
-		     (error (setq err error) nil))
-		   (> (buffer-size) 0))
-	  (elmo-delete-cr-buffer)
-	  (when (and (elmo-fetch-strategy-save-cache strategy)
-		     cache-path)
-	    (elmo-file-cache-save cache-path section))
-	  t)
-	(and (eq (elmo-fetch-strategy-use-cache strategy) 'maybe)
-	     (elmo-file-cache-load cache-path section))
-	(and err
-	     (signal (car err) (cdr err))))))
+	(method-priorities
+	 (cond ((eq (elmo-fetch-strategy-use-cache strategy) 'meybe)
+		'(entity cache))
+	       ((elmo-fetch-strategy-use-cache strategy)
+		'(cache entity))
+	       (t
+		'(entity))))
+	result err)
+    (while (and method-priorities
+		(null result))
+      (setq result
+	    (case (car method-priorities)
+	      (cache
+	       (elmo-file-cache-load cache-path section))
+	      (entity
+	       (when (and (condition-case error
+			      (elmo-message-fetch-internal folder number
+							   strategy
+							   section
+							   unread)
+			    (error (setq err error) nil))
+			  (> (buffer-size) 0))
+		 (elmo-delete-cr-buffer)
+		 (when (and (elmo-fetch-strategy-save-cache strategy)
+			    cache-path)
+		   (elmo-file-cache-save cache-path section))
+		 t)))
+	    method-priorities (cdr method-priorities)))
+    (or result
+	(and err (signal (car err) (cdr err))))))
 
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)
