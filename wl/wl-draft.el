@@ -879,7 +879,7 @@ from current buffer."
 	  (setq addresses (cdr addresses)))
 	(when (and remove-group-list has-group-list)
 	  (delete-region beg (point))
-	  (insert " " (wl-address-string-without-group-list-contents seq))))
+	  (insert (wl-address-string-without-group-list-contents seq))))
       mailbox-list)))
 
 (defun wl-draft-deduce-address-list (buffer header-start header-end)

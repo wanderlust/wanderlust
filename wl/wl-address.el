@@ -587,7 +587,7 @@ e.g. \"Mr. bar <hoge@foo.com>\"
 (defun wl-address-string-without-group-list-contents (sequence)
   "Return address string from lexical analyzed list SEQUENCE.
 Group list contents is not included."
-  (let (address-string route-addr-end token seq)
+  (let (address-string route-addr-end token seq group-end)
   (while sequence
     (setq token (car sequence))
     (cond
@@ -597,10 +597,12 @@ Group list contents is not included."
       (setq address-string (concat address-string (cdr token))) ; ':'
       (setq seq (cdr sequence))
       (setq token (car seq))
-      (while (not (and (eq 'specials (car token))
-		       (string= (cdr token) ";")))
+      (setq group-end nil)
+      (while (not group-end)
 	(setq token (car seq))
-	(setq seq (cdr seq)))
+	(setq seq (cdr seq))
+	(setq group-end (and (eq 'specials (car token))
+			     (string= (cdr token) ";"))))
       (setq address-string (concat address-string (cdr token))) ; ';'
       (setq sequence seq))
      ;;   route-addr  =  "<" [route] addr-spec ">"

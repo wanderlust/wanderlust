@@ -1,3 +1,11 @@
+2000-10-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-parse-mailbox-list): Don't insert extra space.
+
+	* wl-address.el (wl-address-string-without-group-list-contents): Fixed
+	problem when group-list content is nothing.
+	(Reported by Mito <mit@nines.nec.co.jp>)
+
 2000-10-18  SAITO Atsunori <sai@yedo.com>
 
 	* wl-summary.el (wl-summary-print-destination): Adjust line length.
