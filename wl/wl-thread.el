@@ -662,19 +662,19 @@ The closed parent will be opened."
 	 (mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
-	 overview-entity temp-mark summary-line invisible-top)
+	 overview-entity temp-mark summary-line invisible-top dest-pair)
     (if (wl-thread-delete-line-from-buffer msg)
 	(progn
-	  (if (memq msg wl-summary-buffer-delete-list)
-	      (setq temp-mark "D"))
-	  (if (memq msg wl-summary-buffer-target-mark-list)
-	      (setq temp-mark "*"))
-	  (if (assq msg wl-summary-buffer-refile-list)
-	      (setq temp-mark "o"))
-	  (if (assq msg wl-summary-buffer-copy-list)
-	      (setq temp-mark "O"))
-	  (unless temp-mark
-	    (setq temp-mark (wl-summary-get-score-mark msg)))
+	  (cond
+	   ((memq msg wl-summary-buffer-delete-list)
+	    (setq temp-mark "D"))
+	   ((memq msg wl-summary-buffer-target-mark-list)
+	    (setq temp-mark "*"))
+	   ((setq dest-pair (assq msg wl-summary-buffer-refile-list))
+	    (setq temp-mark "o"))
+	   ((setq dest-pair (assq msg wl-summary-buffer-copy-list))
+	    (setq temp-mark "O"))
+	   (t (setq temp-mark (wl-summary-get-score-mark msg))))
 	  (when (setq overview-entity
 		      (elmo-msgdb-overview-get-entity
 		       msg wl-summary-buffer-msgdb))
@@ -690,7 +690,11 @@ The closed parent will be opened."
 		       nil
 		     (wl-thread-maybe-get-children-num msg))
 		   temp-mark entity))
-	    (wl-summary-insert-line summary-line)))
+	    (save-excursion
+	      (wl-summary-insert-line summary-line))
+	    (if dest-pair
+		(wl-summary-print-destination (car dest-pair)
+					      (cdr dest-pair)))))
       ;; insert thread (moving thread)
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))
