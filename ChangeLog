@@ -1,3 +1,7 @@
+2004-11-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added elsp-spamoracle.
+
 2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* doc/TODO, doc/TODO.ja: Updated.
