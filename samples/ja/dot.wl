@@ -53,6 +53,10 @@
 ;; Message-ID のドメインパートを強制的に指定
 ;(setq wl-message-id-domain "hostname.example.com")
 
+;; Message-ID のドメインパートを wl-from から生成します。
+;; globalなIPを持たない場合に使ってください。
+;; wl-local-domain, wl-message-id-domainに優先します。
+;(setq wl-message-id-use-wl-from t)
 
 ;;; [[ サーバの設定 ]]
 

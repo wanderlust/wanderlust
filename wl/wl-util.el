@@ -642,12 +642,20 @@ that `read' can handle, whenever this is possible."
 
 (defun wl-draft-make-message-id-string ()
   "Return Message-ID field value."
-  (concat "<" (wl-unique-id) "@"
-	  (or wl-message-id-domain
-	      (if wl-local-domain
-		  (concat (system-name) "." wl-local-domain)
-		(system-name)))
-	  ">"))
+  (concat "<" (wl-unique-id)
+	  (let (from user domain)
+	    (if (and wl-message-id-use-wl-from
+		     (progn
+		       (setq from (wl-address-header-extract-address wl-from))
+		       (and (string-match "^\\(.*\\)@\\(.*\\)$" from)
+			    (setq user   (match-string 1 from))
+			    (setq domain (match-string 2 from)))))
+		(format "%%%s@%s>" user domain)
+	      (format "@%s>"
+		      (or wl-message-id-domain
+			  (if wl-local-domain
+			      (concat (system-name) "." wl-local-domain)
+			    (system-name))))))))
 
 ;;; Profile loading.
 (defvar wl-load-profile-function 'wl-local-load-profile)

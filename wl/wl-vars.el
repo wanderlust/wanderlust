@@ -1166,6 +1166,11 @@ Allowed situations are:
   :group 'wl-summary
   :group 'wl-pref)
 
+(defcustom wl-message-id-use-wl-from nil
+  "*Use `wl-from' for domain part of Message-ID if non-nil."
+  :type 'boolean
+  :group 'wl-pref)
+
 (defcustom wl-local-domain nil
   "*Domain part of this client (without hostname).
 Set this if (system-name) does not return FQDN."

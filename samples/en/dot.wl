@@ -54,6 +54,9 @@
 ;; Specific domain part for message-id.
 ;(setq wl-message-id-domain "hostname.example.com")
 
+;; Use wl-from for generating message-id.
+;; wl-message-id-use-wl-from precedes wl-local-domain and wl-message-id-domain.
+;(setq wl-message-id-use-wl-from t)
 
 ;;; [[ Server Setting ]]
 

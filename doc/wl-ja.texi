@@ -4344,6 +4344,11 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 初期設定は @code{t}。
 Non-nil なら、送信時に @samp{Message-ID:} フィールドを自動的に挿入します。
 
+@item wl-message-id-use-wl-from
+@vindex wl-message-id-use-wl-from
+初期設定は @code{nil}。Non-nil なら、@samp{Message-ID:} のドメインパートに 
+@code{wl-from} を利用します。
+
 @item wl-local-domain
 @vindex wl-local-domain
 初期設定は @code{nil}。@code{nil} ならば @samp{Message-ID:} のドメインパー
