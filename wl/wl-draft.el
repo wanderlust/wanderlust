@@ -1414,7 +1414,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(wl-draft-decode-body
 	 content-type content-transfer-encoding))
     (wl-draft-insert-mail-header-separator)
-    (wl-draft-prepare-edit (interactive-p))
+    (wl-draft-prepare-edit)
+    (if (interactive-p)
+	(run-hooks 'wl-mail-setup-hook))
 
     (goto-char (point-min))
     (wl-user-agent-compose-internal) ;; user-agent
@@ -1507,18 +1509,14 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 )))
       (setq halist (cdr halist)))))
 
-(defun wl-draft-prepare-edit (&optional hook)
+(defun wl-draft-prepare-edit ()
   (unless (eq major-mode 'wl-draft-mode)
     (error "wl-draft-create-header must be use in wl-draft-mode."))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
     (wl-draft-overload-functions)
     (wl-highlight-headers 'for-draft)
-    (if hook (run-hooks 'wl-mail-setup-hook))
-    (as-binary-output-file
-     (write-region (point-min)(point-max) wl-draft-buffer-file-name
-		   nil t))))
-
+    (wl-draft-save)))
 
 (defun wl-draft-decode-header ()
   (save-excursion

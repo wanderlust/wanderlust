@@ -1,5 +1,9 @@
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-prepare-edit): Use `wl-draft-save'.
+
+2002-01-24  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-insert-mail-header-separator): Use
 	`delete-backward-char'
 	(wl-draft-prepare-edit): Check major-mode.
