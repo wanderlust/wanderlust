@@ -1,5 +1,10 @@
 2003-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-mime.el (wl-message-delete-current-part): Avoid error on
+	message without msgid.
+	Rewrite with elmo-folder-move-messages.
+	Set wl-message-buffer to nil.
+
 	* wl-summary.el (wl-summary-erase-subr): New function. Use
 	elmo-folder-move-messages.
 	(wl-summary-erase): Call it.
