@@ -1800,7 +1800,8 @@ Return nil if no complete line has arrived."
 	(unless (elmo-net-folder-stream-type-internal folder)
 	  (elmo-net-folder-set-stream-type-internal
 	   folder
-	   elmo-imap4-default-stream-type))
+	   (elmo-get-network-stream-type
+	    elmo-imap4-default-stream-type)))
 	folder))))
 
 ;;; ELMO IMAP4 folder
