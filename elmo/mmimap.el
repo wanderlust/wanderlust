@@ -238,13 +238,9 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
        entity
        (mime-imap-location-section-body
 	(mime-entity-location-internal entity)
-	(if (if (eq (car (mime-entity-node-id-internal entity)) 0)
-		(cdr (mime-entity-node-id-internal entity))
-	      (mime-entity-node-id-internal entity))
+	(if (mime-entity-node-id-internal entity)
 	    (concat (mmimap-entity-section
-		     (if (eq (car (mime-entity-node-id-internal entity)) 0)
-			 (cdr (mime-entity-node-id-internal entity))
-		       (mime-entity-node-id-internal entity)))
+		     (mime-entity-node-id-internal entity))
 		    ".HEADER")
 	  "HEADER")))))
 

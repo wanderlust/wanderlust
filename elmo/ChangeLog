@@ -1,3 +1,8 @@
+2001-10-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mmimap.el (mime-imap-entity-header-string): Don't check first
+	element of node-id is `0' (Follow last change).
+
 2001-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* mmimap.el (mmimap-make-mime-entity): Fixed problem to be
