@@ -481,6 +481,18 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
   :type 'boolean
   :group 'wl-pref)
 
+(defcustom wl-demo-icon-name-alist
+  '(((string-match "^... Dec \\([ 01][0-9]\\|2[0-5]\\)" (current-time-string))
+     .
+     (concat "wl-" (wl-version-status) "-xmas-logo"))
+    (t
+     .
+     (concat "wl-" (wl-version-status) "-logo")))
+  "An alist to determine the basename of the logo file."
+  :type '(repeat (cons (symbol :tag "condition")
+		       (symbol :tag "file name")))
+  :group 'wl-pref)
+
 (defcustom wl-envelope-from nil
   "*Envelope From used in SMTP.
 If nil, `wl-from' is used."

@@ -39,13 +39,12 @@
 (require 'wl-version)
 (require 'wl-highlight)
 
-(defconst wl-demo-icon-name
-  (concat "wl-" (wl-version-status)
-	  (if (string-match "^... Dec \\([ 01][0-9]\\|2[0-5]\\)"
-			    (current-time-string))
-	      "-xmas-logo"
-	    "-logo"))
-  "Basename of the logo file.")
+(defun wl-demo-icon-name ()
+  "A function to determine logo file name."
+  (catch 'found
+    (dolist (pair wl-demo-icon-name-alist)
+      (when (eval (car pair))
+	(throw 'found (eval (cdr pair)))))))
 
 (defvar wl-logo-ascii "\
         o$                  oo$$$$$$ooo
@@ -134,11 +133,11 @@ Yet Another Message Interface On Emacsen"
 IMAGE-TYPE specifies what a type of image should be displayed.
 Return a number of lines that an image occupies in the buffer."
   (let ((file (cond ((eq 'xpm image-type)
-		     (concat wl-demo-icon-name ".xpm"))
+		     (concat (wl-demo-icon-name) ".xpm"))
 		    ((eq 'bitmap image-type)
-		     (concat wl-demo-icon-name ".img"))
+		     (concat (wl-demo-icon-name) ".img"))
 		    ((eq 'xbm image-type)
-		     (concat wl-demo-icon-name ".xbm"))))
+		     (concat (wl-demo-icon-name) ".xbm"))))
 	image width height)
     (when (featurep 'xemacs)
       (when (boundp 'default-gutter-visible-p)

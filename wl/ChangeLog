@@ -1,3 +1,10 @@
+2003-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-demo-icon-name-alist): New variable.
+
+	* wl-demo.el (wl-demo-icon-name): Define as function.
+	(wl-demo-insert-image): Use it.
+
 2003-12-19  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-vars.el (wl-draft-mime-bcc-body): Customization type fix.
