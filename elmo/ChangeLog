@@ -1,3 +1,8 @@
+2004-05-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utf7.el: Synch up with latest gnus/utf7.el;
+	Modified for latest Emacs.
+
 2004-05-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-shimbun.el (elmo-folder-initialize): Set a dummy when the
