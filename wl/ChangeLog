@@ -1,3 +1,8 @@
+2004-06-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-config-exec): Narrow the range of
+	save-excursion so as not to include run-hooks.
+
 2004-06-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-cleanup-temp-marks): defsubst->defun.

@@ -2196,14 +2196,14 @@ Automatically applied in draft sending time."
 	      (setq found t)))
 	    (if (and found wl-draft-config-matchone)
 		(throw 'done t))
-	    (setq alist (cdr alist))))
-	(if found
-	    (setq wl-draft-config-exec-flag nil))
-	(run-hooks 'wl-draft-config-exec-hook)
-	(put-text-property (point-min)(point-max) 'face nil)
-	(wl-highlight-message (point-min)(point-max) t)
-	(setq wl-draft-config-variables
-	      (elmo-uniq-list local-variables))))))
+	    (setq alist (cdr alist)))))
+      (if found
+	  (setq wl-draft-config-exec-flag nil))
+      (run-hooks 'wl-draft-config-exec-hook)
+      (put-text-property (point-min)(point-max) 'face nil)
+      (wl-highlight-message (point-min)(point-max) t)
+      (setq wl-draft-config-variables
+	    (elmo-uniq-list local-variables)))))
 
 (defun wl-draft-replace-field (field content &optional add)
   (save-excursion
