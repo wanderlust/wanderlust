@@ -863,13 +863,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (setq elmo-folder-info-hashtb hashtb)))
 
 (defsubst elmo-diff-new (diff)
-  (when (consp (cdr diff))
-    (car diff)))
+  (car diff))
 
 (defsubst elmo-diff-unread (diff)
-  (if (consp (cdr diff))
-      (nth 1 diff)
-    (car diff)))
+  (when (consp (cdr diff))
+    (nth 1 diff)))
 
 (defsubst elmo-diff-all (diff)
   (if (consp (cdr diff))
