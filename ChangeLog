@@ -1,5 +1,9 @@
 2000-10-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* Makefile (mostlyclean-dvi, clean-dvi): New target.
+	(mostlyclean, distclean, maintainer-clean): New target.
+	(clean): Use mostlyclean target.
+
 	* doc/texinfo.tex, doc/txi-en.tex, doc/txi-ja.tex: New file
 	imported.
 

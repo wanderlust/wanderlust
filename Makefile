@@ -50,13 +50,17 @@ info:
 install-info:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-info $(INFODIR)
 
-clean-info: mostlyclean-info
-	rm -f doc/*.info doc/*.info-* doc/*.dvi
-
 mostlyclean-info:
-	rm -f doc/*~ doc/*.aux doc/*.log doc/*.toc \
-		doc/*.cp doc/*.fn doc/*.ky doc/*.pg doc/*.tp doc/*.vr \
-		doc/*.cps doc/*.fns doc/*.kys doc/*.pgs doc/*.tps doc/*.vrs
+	rm -f doc/*~ doc/*.cp doc/*.fn doc/*.ky doc/*.pg doc/*.tp doc/*.vr doc/*.cps doc/*.fns doc/*.kys doc/*.pgs doc/*.tps doc/*.vrs
+
+clean-info: mostlyclean-info
+	rm -f doc/*.info doc/*.info-*
+
+mostlyclean-dvi:
+	rm -f doc/*~ doc/*.aux doc/*.log doc/*.toc
+
+clean-dvi: mostlyclean-dvi
+	rm -f doc/*.dvi
 
 all: elc
 
@@ -64,4 +68,10 @@ install: install-elc
 
 uninstall: uninstall-elc
 
-clean: clean-elc
+mostlyclean: clean-elc mostlyclean-info mostlyclean-dvi
+
+clean: mostlyclean clean-dvi
+
+distclean: maintainer-clean
+
+maintainer-clean: clean clean-info
