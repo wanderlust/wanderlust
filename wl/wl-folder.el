@@ -214,6 +214,11 @@
   (define-key wl-folder-mode-map "\C-x\C-s" 'wl-save)
   (define-key wl-folder-mode-map "\M-s"     'wl-save)
   (define-key wl-folder-mode-map "\C-xk"    'wl-folder-mimic-kill-buffer)
+  (define-key wl-folder-mode-map "\M-\C-a"
+    'wl-folder-goto-top-of-current-folder)
+  (define-key wl-folder-mode-map "\M-\C-e"
+    'wl-folder-goto-bottom-of-current-folder)
+
   (wl-folder-setup-mouse)
   (easy-menu-define
    wl-folder-mode-menu
@@ -504,15 +509,28 @@
       (and trash-buf 
 	   (kill-buffer trash-buf)))))
 
-(defun wl-folder-goto-top-of-current-folder ()
-  (if (re-search-backward "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\)\n" nil t)
-      (beginning-of-line)
+(defun wl-folder-goto-top-of-current-folder (&optional arg)
+  "Move backward to the top of the current folder group.
+Optional argument ARG is repeart count."
+  (interactive "P")
+  (if (re-search-backward
+       "^ *\\[[\\+-]\\]" nil t (if arg (prefix-numeric-value arg)))
+      (beginning-of-line) 
     (goto-char (point-min))))
 
 (defun wl-folder-goto-bottom-of-current-folder (indent)
+  "Move forward to the bottom of the current folder group."
+  (interactive
+   (let ((indent
+	  (save-excursion
+	    (beginning-of-line)
+	    (if (looking-at "^ *")
+		(buffer-substring (match-beginning 0)(1- (match-end 0)))
+	      ""))))
+     (list indent)))
   (if (catch 'done
-	(while (re-search-forward "^\\([ ]*\\)[^ ]" nil t)
-	  (if (<= (length (wl-match-buffer 1))
+	(while (re-search-forward "^ *" nil t)
+	  (if (<= (length (match-string 0))
 		  (length indent))
 	      (throw 'done nil)))
 	(throw 'done t))

@@ -1,5 +1,10 @@
 2000-08-29   Daiki Ueno  <ueno@unixuser.org>
 
+	* wl-folder.el (wl-folder-goto-top-of-current-folder):Simplified.
+	Add interactive spec.
+	(wl-folder-goto-bottom-of-current-folder): Ditto.
+	(wl-folder-mode-map): Bind them.
+
 	* wl-vars.el (wl-message-ignored-field-list): New variable.
 	(wl-message-visible-field-list): New variable.
 
