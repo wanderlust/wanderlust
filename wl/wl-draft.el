@@ -53,8 +53,6 @@
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
 (defvar wl-draft-buf-name "Draft")
-(defvar wl-draft-cite-function 'wl-default-draft-cite)
-(defvar wl-default-draft-cite-decorate-author t)
 (defvar wl-draft-buffer-file-name nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)

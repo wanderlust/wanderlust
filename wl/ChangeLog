@@ -1,5 +1,13 @@
 2002-01-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-vars.el (wl-draft-cite-function): Moved from `wl-draft.el'.
+	(wl-default-draft-cite-decorate-author): Ditto.
+
+	* wl-draft.el (wl-draft-cite-function): Removed.
+	(wl-default-draft-cite-decorate-author): Ditto.
+
+2002-01-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* wl-draft.el (wl-default-draft-cite-decorate-author): New variable.
 	(wl-default-draft-cite): Do not arrange author name if the value of
 	`wl-default-draft-cite-decorate-author' is nil.

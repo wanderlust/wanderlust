@@ -277,6 +277,17 @@ references field of the current draft."
   :type 'boolean
   :group 'wl)
 
+(defcustom wl-draft-cite-function 'wl-default-draft-cite
+  "*A function for citation."
+  :type 'function
+  :group 'wl-draft)
+
+(defcustom wl-default-draft-cite-decorate-author t
+  "*If non-nil, the author of cited message is arranged by
+`wl-summary-from-func-internal' in `wl-default-draft-cite'."
+  :type 'boolean
+  :group 'wl-draft)
+
 (defcustom wl-smtp-connection-type nil
   "*SMTP connection type.
 If nil, default smtp connection type is used."
