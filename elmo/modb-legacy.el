@@ -473,4 +473,4 @@ Return a list of message numbers which have duplicated message-ids."
 (require 'product)
 (product-provide (provide 'modb-legacy) (require 'elmo-version))
 
-;;; mdb-legacy.el ends here
+;;; modb-legacy.el ends here
