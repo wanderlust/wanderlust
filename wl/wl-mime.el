@@ -399,7 +399,7 @@ It calls following-method selected from variable
     (if (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
 		 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
 	     (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	(let (status m-beg)
+	(let (status)
 	  (let* ((beg (point))
 		 (situation (mime-preview-find-boundary-info))
 		 (p-end (aref situation 1))
