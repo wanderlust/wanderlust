@@ -763,17 +763,17 @@ BUFFER must be a single-byte buffer."
        (elmo-imap4-send-command-wait session
 				     (format
 				      (if elmo-imap4-use-uid
-					  "uid search%s%s%s %s"
-					" search%s%s%s %s")
+					  "uid search %s%s%s %s"
+					"search %s%s%s %s")
 				      (if from-msgs
 					  (concat
-					   (if elmo-imap4-use-uid " uid ")
+					   (if elmo-imap4-use-uid "uid ")
 					   (cdr
 					    (car 
 					     (elmo-imap4-make-number-set-list
 					      from-msgs)))
 					   " ")
-					" ")
+					"")
 				      (if (eq (elmo-filter-type filter)
 					      'unmatch)
 					  "not " "")
