@@ -1,4 +1,4 @@
-2003-03-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-sort, wl-fldmgr-access-display-all):
 	Fixed the last change, search group entity by its real name.
