@@ -44,7 +44,8 @@
 (defsubst wl-summary-action-face (action)
   (nth 5 action))
 (defsubst wl-summary-action-docstring (action)
-  (nth 6 action))
+  (concat (nth 6 action)
+	  "\nThis function is defined by `wl-summary-define-mark-action'."))
 
 ;; Set mark
 (defun wl-summary-set-mark (&optional set-mark number interactive data)
