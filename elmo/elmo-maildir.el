@@ -40,6 +40,11 @@
   :type 'directory
   :group 'elmo)
 
+(defconst elmo-maildir-flag-specs '((important ?F)
+				    (read ?S)
+				    (unread ?S 'remove)
+				    (answered ?R)))
+
 ;;; ELMO Maildir folder
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
@@ -126,17 +131,17 @@ LOCATION."
     (elmo-maildir-folder-set-answered-locations-internal folder (nth 3 locs))
     (nth 0 locs)))
 
-(luna-define-method elmo-map-folder-list-unreads
-  ((folder elmo-maildir-folder))
-  (elmo-maildir-folder-unread-locations-internal folder))
-
-(luna-define-method elmo-map-folder-list-importants
-  ((folder elmo-maildir-folder))
-  (elmo-maildir-folder-flagged-locations-internal folder))
-
-(luna-define-method elmo-map-folder-list-answereds
-  ((folder elmo-maildir-folder))
-  (elmo-maildir-folder-answered-locations-internal folder))
+(luna-define-method elmo-map-folder-list-flagged ((folder elmo-maildir-folder)
+						  flag)
+  (case flag
+    (unread
+     (elmo-maildir-folder-unread-locations-internal folder))
+    (important
+     (elmo-maildir-folder-flagged-locations-internal folder))
+    (answered
+     (elmo-maildir-folder-answered-locations-internal folder))
+    (otherwise
+     t)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-maildir-folder)
 					      numbers flag-table)
@@ -301,31 +306,22 @@ LOCATION."
      mark))
   t)
 
-(luna-define-method elmo-map-folder-flag-as-important ((folder elmo-maildir-folder)
-						       locs)
-  (elmo-maildir-set-mark-msgs folder locs ?F))
-  
-(luna-define-method elmo-map-folder-unflag-important ((folder elmo-maildir-folder)
-						      locs)
-  (elmo-maildir-delete-mark-msgs folder locs ?F))
+(defsubst elmo-maildir-set-mark-messages (folder locations mark remove)
+  (when mark
+    (if remove
+	(elmo-maildir-delete-mark-msgs folder locations mark)
+      (elmo-maildir-set-mark-msgs folder locations mark))))
 
-(luna-define-method elmo-map-folder-flag-as-read ((folder elmo-maildir-folder)
-						  locs)
-  (elmo-maildir-set-mark-msgs folder locs ?S))
+(luna-define-method elmo-map-folder-set-flag ((folder elmo-maildir-folder)
+					      locations flag)
+  (let ((spec (assq flag elmo-maildir-flag-specs)))
+    (elmo-maildir-set-mark-messages folder locations (car spec) (cdr spec))))
 
-(luna-define-method elmo-map-folder-unflag-read ((folder elmo-maildir-folder)
-						 locs)
-  (elmo-maildir-delete-mark-msgs folder locs ?S))
-
-(luna-define-method elmo-map-folder-flag-as-answered ((folder
-						       elmo-maildir-folder)
-						      locs)
-  (elmo-maildir-set-mark-msgs folder locs ?R))
-
-(luna-define-method elmo-map-folder-unflag-answered ((folder
-						      elmo-maildir-folder)
-						     locs)
-  (elmo-maildir-delete-mark-msgs folder locs ?R))
+(luna-define-method elmo-map-folder-unset-flag ((folder elmo-maildir-folder)
+						locations flag)
+  (let ((spec (assq flag elmo-maildir-flag-specs)))
+    (elmo-maildir-set-mark-messages folder locations
+				    (car spec) (not (cdr spec)))))
 
 (luna-define-method elmo-folder-list-subfolders
   ((folder elmo-maildir-folder) &optional one-level)

@@ -50,8 +50,12 @@
       (setq name (match-string 1 name))
     (setq name (symbol-name (car elmo-global-flag-list))))
   (or (cdr (assq (intern name) elmo-global-flag-folder-alist))
-      (let (msgdb-path)
-	(elmo-flag-folder-set-flag-internal folder (intern name))
+      (let ((flag (intern name))
+	    msgdb-path)
+	(elmo-flag-folder-set-flag-internal folder flag)
+	(unless (elmo-global-flag-p flag)
+	  (setq elmo-global-flag-list
+		(nconc elmo-global-flag-list (list flag))))
 	;; must be AFTER set flag slot.
 	(setq msgdb-path (elmo-folder-msgdb-path folder))
 	(unless (file-directory-p msgdb-path)
@@ -180,6 +184,9 @@
 					     src-folder
 					     number
 					     'message-id)))
+  (elmo-folder-set-flag src-folder
+			numbers
+			(elmo-flag-folder-flag-internal folder))
   numbers)
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-flag-folder)

@@ -268,51 +268,6 @@
 	(cons news alls)
       (list news unreads alls))))
 
-(luna-define-method elmo-folder-list-unreads ((folder elmo-multi-folder))
-  (let ((cur-number 0)
-	unreads)
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (setq cur-number (+ cur-number 1))
-      (setq unreads
-	    (nconc
-	     unreads
-	     (mapcar (lambda (x)
-		       (+ x (* cur-number
-			       (elmo-multi-folder-divide-number-internal
-				folder))))
-		     (elmo-folder-list-unreads child)))))
-    unreads))
-
-(luna-define-method elmo-folder-list-answereds ((folder elmo-multi-folder))
-  (let ((cur-number 0)
-	answereds)
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (setq cur-number (+ cur-number 1))
-      (setq answereds
-	    (nconc
-	     answereds
-	     (mapcar (lambda (x)
-		       (+ x (* cur-number
-			       (elmo-multi-folder-divide-number-internal
-				folder))))
-		     (elmo-folder-list-answereds child)))))
-    answereds))
-
-(luna-define-method elmo-folder-list-importants ((folder elmo-multi-folder))
-  (let ((cur-number 0)
-	importants)
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (setq cur-number (+ cur-number 1))
-      (setq importants
-	    (nconc
-	     importants
-	     (mapcar (lambda (x)
-		       (+ x (* cur-number
-			       (elmo-multi-folder-divide-number-internal
-				folder))))
-		     (elmo-folder-list-importants child)))))
-    importants))
-
 (luna-define-method elmo-folder-list-messages
   ((folder elmo-multi-folder) &optional visible-only in-msgdb)
   (let* ((flds (elmo-multi-folder-children-internal folder))
@@ -443,61 +398,19 @@
       (setq msg-list (cdr msg-list)))
     ret-val))
 
-(luna-define-method elmo-folder-flag-as-important ((folder
-						    elmo-multi-folder)
-						   numbers
-						   &optional
-						   is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-flag-as-important (car folder-numbers)
-				   (cdr folder-numbers)
-				   is-local)))
+(luna-define-method elmo-folder-set-flag ((folder elmo-multi-folder)
+					  numbers
+					  flag
+					  &optional is-local)
+  (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
+    (elmo-folder-set-flag (car pair) (cdr pair) flag is-local)))
 
-(luna-define-method elmo-folder-unflag-important ((folder
-						   elmo-multi-folder)
-						  numbers
-						  &optional
-						  is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unflag-important (car folder-numbers)
-				  (cdr folder-numbers)
-				  is-local)))
-
-(luna-define-method elmo-folder-flag-as-read ((folder
-					       elmo-multi-folder)
-					      numbers
-					      &optional is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-flag-as-read (car folder-numbers)
-			      (cdr folder-numbers)
-			      is-local)))
-
-(luna-define-method elmo-folder-unflag-read ((folder
-					      elmo-multi-folder)
-					     numbers
-					     &optional is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unflag-read (car folder-numbers)
-			     (cdr folder-numbers)
-			     is-local)))
-
-(luna-define-method elmo-folder-flag-as-answered ((folder
-						   elmo-multi-folder)
-						  numbers
-						  &optional is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-flag-as-answered (car folder-numbers)
-				  (cdr folder-numbers)
-				  is-local)))
-
-(luna-define-method elmo-folder-unflag-answered ((folder
-						  elmo-multi-folder)
-						 numbers
-						 &optional is-local)
-  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unflag-answered (car folder-numbers)
-				 (cdr folder-numbers)
-				 is-local)))
+(luna-define-method elmo-folder-unset-flag ((folder elmo-multi-folder)
+					    numbers
+					    flag
+					    &optional is-local)
+  (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
+    (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local)))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
 					      flag

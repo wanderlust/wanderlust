@@ -164,6 +164,11 @@ REGEXP should have a grouping for namespace prefix.")
 (defconst elmo-imap4-literal-threshold 1024
  "Limitation of characters that can be used in a quoted string.")
 
+(defconst elmo-imap4-flag-specs '((important "\\Flagged")
+				  (read "\\Seen")
+				  (unread "\\Seen" 'remove)
+				  (answered "\\Answered")))
+
 ;; For debugging.
 (defvar elmo-imap4-debug nil
   "Non-nil forces IMAP4 folder as debug mode.
@@ -1900,17 +1905,9 @@ Return nil if no complete line has arrived."
 			 (format "uid %d:*" (cdr (car killed)))
 		       "all"))))
 
-(luna-define-method elmo-folder-list-unreads-plugged
-  ((folder elmo-imap4-folder))
-  (elmo-imap4-folder-list-flagged folder 'unread))
-
-(luna-define-method elmo-folder-list-importants-plugged
-  ((folder elmo-imap4-folder))
-  (elmo-imap4-folder-list-flagged folder 'important))
-
-(luna-define-method elmo-folder-list-answereds-plugged
-  ((folder elmo-imap4-folder))
-  (elmo-imap4-folder-list-flagged folder 'answered))
+(luna-define-method elmo-folder-list-flagged-unplugged
+  ((folder elmo-imap4-folder) flag)
+  (elmo-imap4-folder-list-flagged folder flag))
 
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
@@ -2346,29 +2343,17 @@ If optional argument REMOVE is non-nil, remove FLAG."
 				  'message-id)))
 	elmo-imap4-current-msgdb))))
 
-(luna-define-method elmo-folder-unflag-important-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Flagged" 'remove))
+(luna-define-method elmo-folder-set-flag-plugged ((folder elmo-imap4-folder)
+						  numbers flag)
+  (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
+    (when spec
+      (elmo-imap4-set-flag folder numbers (car spec) (cdr spec)))))
 
-(luna-define-method elmo-folder-flag-as-important-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Flagged"))
-
-(luna-define-method elmo-folder-unflag-read-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Seen" 'remove))
-
-(luna-define-method elmo-folder-flag-as-read-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Seen"))
-
-(luna-define-method elmo-folder-unflag-answered-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Answered" 'remove))
-
-(luna-define-method elmo-folder-flag-as-answered-plugged
-  ((folder elmo-imap4-folder) numbers)
-  (elmo-imap4-set-flag folder numbers "\\Answered"))
+(luna-define-method elmo-folder-unset-flag-plugged ((folder elmo-imap4-folder)
+						    numbers flag)
+  (let ((spec (cdr (assq flag elmo-imap4-flag-specs))))
+    (when spec
+      (elmo-imap4-set-flag folder numbers (car spec) (not (cdr spec))))))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
 					      number)

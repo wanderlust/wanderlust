@@ -1,5 +1,16 @@
 2004-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-mark-as-read-all): Follow the API
+	change.
+	(wl-summary-sync-marks): Ditto.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-mark-as-answered-internal): Ditto.
+	(wl-summary-mark-as-important-internal): Ditto.
+	(wl-summary-reply): Ditto.
+
+	* wl-draft.el (wl-draft-kill): Use `elmo-folder-unset-flag'
+	instead of `elmo-folder-unflag-answered'.
+
 	* Version number is increased to 2.11.23.
 
 	* wl-spam.el (wl-summary-exec-action-refile-with-register): Fixed

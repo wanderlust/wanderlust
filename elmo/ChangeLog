@@ -1,5 +1,156 @@
 2004-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-pipe.el (elmo-folder-list-unreads,
+	elmo-folder-list-answereds,
+	elmo-folder-list-importants,
+	elmo-folder-flag-as-important,
+	elmo-folder-unflag-important,
+	elmo-folder-flag-as-read,
+	elmo-folder-unflag-read,
+	elmo-folder-flag-as-answered,
+	elmo-folder-unflag-answered): Remove.
+	(elmo-folder-set-flag): Define.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-nntp.el (elmo-folder-flag-as-read): Remove.
+	(elmo-folder-set-flag): Define.
+	(elmo-folder-unset-flag): Ditto.
+	(elmo-folder-list-unreads): Remove.
+	(elmo-folder-list-flagged): Define.
+
+	* elmo-net.el (elmo-folder-list-flagged-internal): Define.
+	(elmo-folder-list-unreads,
+	elmo-folder-list-importants,
+	elmo-folder-list-answereds,
+	elmo-folder-list-unreads-plugged,
+	elmo-folder-list-importants-plugged,
+	elmo-folder-list-answereds-plugged): Remove.
+	(elmo-folder-list-flagged-plugged): New method.
+	(elmo-folder-unflag-important,
+	elmo-folder-flag-as-important,
+	elmo-folder-unflag-read,
+	elmo-folder-flag-as-read,
+	elmo-folder-unflag-answered,
+	elmo-folder-flag-as-answered,
+	elmo-folder-flag-as-read-unplugged,
+	elmo-folder-unflag-read-unplugged,
+	elmo-folder-flag-as-important-unplugged,
+	elmo-folder-unflag-important-unplugged,
+	elmo-folder-flag-as-answered-unplugged,
+	elmo-folder-unflag-answered-unplugged): Remove.
+	(elmo-folder-set-flag): Define.
+	(elmo-folder-unset-flag): Ditto.
+	(elmo-folder-set-flag-unplugged): Ditto.
+	(elmo-folder-unset-flag-unplugged): Ditto.
+
+	* elmo-multi.el (elmo-folder-list-unreads,
+	elmo-folder-list-answereds,
+	elmo-folder-list-importants,
+	elmo-folder-flag-as-important,
+	elmo-folder-unflag-important,
+	elmo-folder-flag-as-read,
+	elmo-folder-unflag-read,
+	elmo-folder-flag-as-answered,
+	elmo-folder-unflag-answered): Remove.
+	(elmo-folder-set-flag): Define.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-map.el (elmo-map-folder-unflag-important,
+	elmo-map-folder-flag-as-important,
+	elmo-map-folder-unflag-read,
+	elmo-map-folder-flag-as-read,
+	elmo-map-folder-unflag-answered,
+	elmo-map-folder-flag-as-answered): Remove.
+	(elmo-map-folder-set-flag): New method.
+	(elmo-map-folder-unset-flag): Ditto.
+	(elmo-map-folder-list-unreads,
+	elmo-map-folder-list-importants,
+	elmo-map-folder-list-answereds): Remove.
+	(elmo-folder-list-flagged-internal): Define.
+	(elmo-map-folder-list-flagged): New method.
+
+	* elmo-maildir.el (elmo-maildir-flag-specs): New internal variable.
+	(elmo-map-folder-list-unreads,
+	elmo-map-folder-list-importants,
+	elmo-map-folder-list-flagged): Remove.
+	(elmo-map-folder-list-flagged): Define.
+	(elmo-map-folder-flag-as-important,
+	elmo-map-folder-unflag-important,
+	elmo-map-folder-flag-as-read,
+	elmo-map-folder-unflag-read,
+	elmo-map-folder-flag-as-answered,
+	elmo-map-folder-unflag-answered): Remove.
+	(elmo-maildir-set-mark-messages): New internal function.
+	(elmo-map-folder-set-flag): Define.
+	(elmo-map-folder-unset-flag): Ditto.
+
+	* elmo.el (toplevel): Added autoload setting for
+	`elmo-folder-list-global-flag-messages'.
+	(elmo-folder-list-unreads,
+	elmo-folder-list-importants,
+	elmo-folder-list-answereds): Remove.
+	(elmo-folder-list-flagged): Use `elmo-folder-list-flagged-internal'.
+	Return a list whitch merged with messages have global flag.
+	(elmo-folder-list-flagged-internal): New method.
+	(elmo-folder-unflag-important,
+	elmo-folder-flag-as-important,
+	elmo-folder-unflag-read,
+	elmo-folder-flag-as-read,
+	elmo-folder-unflag-answered,
+	elmo-folder-flag-as-answered): Remove.
+	(elmo-folder-set-flag): New method.
+	(elmo-folder-unset-flag): Ditto.
+	(elmo-message-set-flag):Use `elmo-folder-set-flag'.
+	(elmo-message-unset-flag):Use `elmo-folder-unset-flag'.
+
+	* elmo-imap4.el (elmo-imap4-flag-specs): New internal variable.
+	(elmo-folder-list-unreads-plugged,
+	elmo-folder-list-importants-plugged,
+	elmo-folder-list-answereds-plugged,
+	elmo-folder-list-flagged-unplugged,
+	elmo-folder-unflag-important-plugged,
+	elmo-folder-flag-as-important-plugged,
+	elmo-folder-unflag-read-plugged,
+	elmo-folder-flag-as-read-plugged,
+	elmo-folder-unflag-answered-plugged,
+	elmo-folder-flag-as-answered-plugged): Remove.
+	(elmo-folder-set-flag-plugged,
+	elmo-folder-unset-flag-plugged): Define.
+
+	* elmo-flag.el (elmo-folder-initialize): Register to
+	`elmo-global-flag-list' if flag is not global.
+	(elmo-folder-append-messages): Set flag to source messages.
+
+	* elmo-filter.el (elmo-filter-folder-list-unreads,
+	elmo-folder-list-unreads,
+	elmo-filter-folder-list-importants,
+	elmo-folder-list-importants,
+	elmo-folder-flag-as-read,
+	elmo-folder-unflag-read,
+	elmo-folder-flag-as-important,
+	elmo-folder-unflag-important,
+	elmo-folder-flag-as-answered,
+	elmo-folder-unflag-answered): Remove.
+	(elmo-folder-set-flag): Define.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-dop.el (elmo-folder-flag-as-read-dop,
+	elmo-folder-unflag-read-dop,
+	elmo-folder-flag-as-important-dop,
+	elmo-folder-unflag-important-dop,
+	elmo-folder-flag-as-answered-dop,
+	elmo-folder-unflag-answered-dop): Remove.
+	(elmo-folder-set-flag-dop,
+	elmo-folder-unset-flag-dop,
+	elmo-folder-set-important-delayed,
+	elmo-folder-unset-important-delayed,
+	elmo-folder-set-read-delayed,
+	elmo-folder-unset-read-delayed,
+	elmo-folder-set-answered-delayed,
+	elmo-folder-unset-answered-delayed): New function.
+	(elmo-dop-queue-merge-method-list): Follow the above chagned.
+	(elmo-dop-queue-method-name-alist): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.23.
 
 2004-01-11  Yuuichi Teranishi  <teranisi@gohome.org>

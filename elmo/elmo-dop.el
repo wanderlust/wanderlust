@@ -63,24 +63,26 @@ Automatically loaded/saved.")
     (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
 (defvar elmo-dop-queue-merge-method-list
-  '(elmo-folder-flag-as-read
-    elmo-folder-unflag-read
-    elmo-folder-flag-as-important
-    elmo-folder-unflag-important
-    elmo-folder-flag-as-answered
-    elmo-folder-unflag-answered))
+  '(elmo-folder-set-read-delayed
+    elmo-folder-unset-read-delayed
+    elmo-folder-set-important-delayed
+    elmo-folder-unset-important-delayed
+    elmo-folder-set-answered-delayed
+    elmo-folder-unset-answered-delayed))
 
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
     (elmo-folder-delete-messages-dop-delayed . "Delete")
     (elmo-message-encache . "Encache")
     (elmo-folder-create-dop-delayed . "Create")
-    (elmo-folder-flag-as-read . "Read")
-    (elmo-folder-unflag-read . "Unread")
-    (elmo-folder-flag-as-answered . "Answered")
-    (elmo-folder-unflag-answered . "Unanswered")    
-    (elmo-folder-flag-as-important . "Important")
-    (elmo-folder-unflag-important . "Unimportant")))
+    (elmo-folder-set-read-delayed . "Read")
+    (elmo-folder-unset-read-delayed . "Unread")
+    (elmo-folder-set-answered-delayed . "Answered")
+    (elmo-folder-unset-answered-delayed . "Unanswered")
+    (elmo-folder-set-important-delayed . "Important")
+    (elmo-folder-unset-important-delayed . "Unimportant")
+    (elmo-folder-set-flag . "Set flag")
+    (elmo-folder-unset-flag . "Unset flag")))
 
 (defmacro elmo-dop-queue-method-name (queue)
   `(cdr (assq (elmo-dop-queue-method ,queue)
@@ -266,23 +268,35 @@ FOLDER is the folder structure."
 (defsubst elmo-folder-create-dop (folder)
   (elmo-dop-queue-append folder 'elmo-folder-create-dop-delayed nil))
 
-(defsubst elmo-folder-flag-as-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-flag-as-read (list numbers)))
+(defsubst elmo-folder-set-flag-dop (folder numbers flag)
+  (let ((method (case flag
+		  (unread
+		   'elmo-folder-unset-read-delayed)
+		  (read
+		   'elmo-folder-set-read-delayed)
+		  (important
+		   'elmo-folder-set-important-delayed)
+		  (answered
+		   'elmo-folder-set-answered-delayed))))
+    (if method
+	(elmo-dop-queue-append folder method (list numbers))
+      (elmo-dop-queue-append folder 'elmo-folder-set-flag
+			     (list numbers flag)))))
 
-(defsubst elmo-folder-unflag-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unflag-read (list numbers)))
-
-(defsubst elmo-folder-flag-as-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-flag-as-important (list numbers)))
-
-(defsubst elmo-folder-unflag-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unflag-important (list numbers)))
-
-(defsubst elmo-folder-flag-as-answered-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-flag-as-answered (list numbers)))
-
-(defsubst elmo-folder-unflag-answered-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unflag-answered (list numbers)))
+(defsubst elmo-folder-unset-flag-dop (folder numbers flag)
+  (let ((method (case flag
+		  (unread
+		   'elmo-folder-set-read-delayed)
+		  (read
+		   'elmo-folder-unset-read-delayed)
+		  (important
+		   'elmo-folder-unset-important-delayed)
+		  (answered
+		   'elmo-folder-unset-answered-delayed))))
+    (if method
+	(elmo-dop-queue-append folder method (list numbers))
+      (elmo-dop-queue-append folder 'elmo-folder-unset-flag
+			     (list numbers flag)))))
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
@@ -360,6 +374,24 @@ FOLDER is the folder structure."
 (defun elmo-folder-create-dop-delayed (folder)
   (unless (elmo-folder-exists-p folder)
     (elmo-folder-create folder)))
+
+(defun elmo-folder-set-important-delayed (folder numbers)
+  (elmo-folder-set-flag folder numbers 'important))
+
+(defun elmo-folder-unset-important-delayed (folder numbers)
+  (elmo-folder-unset-flag folder numbers 'important))
+
+(defun elmo-folder-set-read-delayed (folder numbers)
+  (elmo-folder-set-flag folder numbers 'read))
+
+(defun elmo-folder-unset-read-delayed (folder numbers)
+  (elmo-folder-unset-flag folder numbers 'read))
+
+(defun elmo-folder-set-answered-delayed (folder numbers)
+  (elmo-folder-set-flag folder numbers 'answered))
+
+(defun elmo-folder-unset-answered-delayed (folder numbers)
+  (elmo-folder-unset-flag folder numbers 'answered))
 
 ;;; Util
 (defun elmo-dop-msgdb (msgdb)

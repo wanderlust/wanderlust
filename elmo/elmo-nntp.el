@@ -1506,11 +1506,19 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	 folder
 	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
 
-(luna-define-method elmo-folder-flag-as-read :before ((folder
-						       elmo-nntp-folder)
-						      numbers
-						      &optional is-local)
-  (elmo-nntp-folder-update-crosspost-message-alist folder numbers))
+(luna-define-method elmo-folder-set-flag :before ((folder elmo-nntp-folder)
+						  numbers
+						  flag
+						  &optional is-local)
+  (when (eq flag 'read)
+    (elmo-nntp-folder-update-crosspost-message-alist folder numbers)))
+
+(luna-define-method elmo-folder-unset-flag :before ((folder elmo-nntp-folder)
+						    numbers
+						    flag
+						    &optional is-local)
+  (when (eq flag 'unread)
+    (elmo-nntp-folder-update-crosspost-message-alist folder numbers)))
 
 (defsubst elmo-nntp-folder-process-crosspost (folder)
 ;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
@@ -1536,12 +1544,17 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder))
   (elmo-nntp-folder-process-crosspost folder))
 
-(luna-define-method elmo-folder-list-unreads :around ((folder
-						       elmo-nntp-folder))
+(luna-define-method elmo-folder-list-flagged :around ((folder elmo-nntp-folder)
+						      flag)
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
-  (elmo-living-messages (luna-call-next-method)
-			(elmo-nntp-folder-reads-internal folder)))
+  (case flag
+    (unread
+     (elmo-living-messages (luna-call-next-method)
+			   (elmo-nntp-folder-reads-internal folder)))
+    ;; Should consider read, digest and any flag?
+    (otherwise
+     (luna-call-next-method))))
 
 (require 'product)
 (product-provide (provide 'elmo-nntp) (require 'elmo-version))

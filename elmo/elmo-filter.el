@@ -170,30 +170,6 @@
       ;; not available
       t)))
 
-(defsubst elmo-filter-folder-list-unreads (folder)
-  (elmo-list-filter
-   (elmo-folder-list-messages folder nil 'in-msgdb)
-   (elmo-folder-list-unreads
-    (elmo-filter-folder-target-internal folder))))
-
-(luna-define-method elmo-folder-list-unreads :around ((folder
-						       elmo-filter-folder))
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-filter-folder-list-unreads folder)
-    (luna-call-next-method)))
-
-(defsubst elmo-filter-folder-list-importants (folder)
-  (elmo-list-filter
-   (elmo-folder-list-messages folder nil 'in-msgdb)
-   (elmo-folder-list-importants
-    (elmo-filter-folder-target-internal folder))))
-
-(luna-define-method elmo-folder-list-importants :around ((folder
-							  elmo-filter-folder))
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-filter-folder-list-importants folder)
-    (luna-call-next-method)))
-
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-filter-folder)
 						 &optional one-level)
   (let* ((target (elmo-filter-folder-target-internal folder))
@@ -279,58 +255,19 @@
   (elmo-message-file-name (elmo-filter-folder-target-internal folder)
 			  number))
 
-(luna-define-method elmo-folder-flag-as-read :around ((folder
-						       elmo-filter-folder)
-						      numbers
-						      &optional is-local)
-  (elmo-folder-flag-as-read (elmo-filter-folder-target-internal folder)
-			    numbers is-local)
-  (luna-call-next-method))
+(luna-define-method elmo-folder-set-flag :before ((folder elmo-filter-folder)
+						  numbers
+						  flag
+						  &optional is-local)
+  (elmo-folder-set-flag (elmo-filter-folder-target-internal folder)
+			numbers flag is-local))
 
-(luna-define-method elmo-folder-unflag-read :around ((folder
-						      elmo-filter-folder)
-						     numbers
-						     &optional is-local)
-  (elmo-folder-unflag-read (elmo-filter-folder-target-internal folder)
-			   numbers is-local)
-  (luna-call-next-method))
-
-(luna-define-method elmo-folder-flag-as-important :around ((folder
-							    elmo-filter-folder)
-							   numbers
-							   &optional
-							   is-local)
-  (elmo-folder-flag-as-important (elmo-filter-folder-target-internal folder)
-				 numbers is-local)
-    (luna-call-next-method))
-
-(luna-define-method elmo-folder-unflag-important :around ((folder
-							   elmo-filter-folder)
-							  numbers
-							  &optional
-							  is-local)
-  (elmo-folder-unflag-important (elmo-filter-folder-target-internal folder)
-				numbers is-local)
-  (luna-call-next-method))
-
-(luna-define-method elmo-folder-flag-as-answered :around ((folder
-							   elmo-filter-folder)
-							  numbers
-							  &optional
-							  is-local)
-  (elmo-folder-flag-as-answered (elmo-filter-folder-target-internal folder)
-				numbers is-local)
-  (luna-call-next-method))
-
-
-(luna-define-method elmo-folder-unflag-answered :around ((folder
-							  elmo-filter-folder)
-							 numbers
-							 &optional
-							 is-local)
-  (elmo-folder-unflag-answered (elmo-filter-folder-target-internal folder)
-			       numbers is-local)
-  (luna-call-next-method))
+(luna-define-method elmo-folder-unset-flag :before ((folder elmo-filter-folder)
+						    numbers
+						    flag
+						    &optional is-local)
+  (elmo-folder-unset-flag (elmo-filter-folder-target-internal folder)
+			  numbers flag is-local))
 
 (require 'product)
 (product-provide (provide 'elmo-filter) (require 'elmo-version))

@@ -1618,9 +1618,10 @@ If ARG is non-nil, checking is omitted."
       (let ((folder wl-summary-buffer-elmo-folder)
 	    (cur-buf (current-buffer)))
 	(message "Setting all msgs as read...")
-	(elmo-folder-flag-as-read folder
-				  (elmo-folder-list-unreads
-				   folder))
+	(elmo-folder-set-flag
+	 folder
+	 (elmo-folder-list-flagged folder 'unread 'in-msgdb)
+	 'read)
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (not (eobp))
@@ -1752,30 +1753,15 @@ This function is defined for `window-scroll-functions'"
 (defun wl-summary-sync-marks ()
   "Update persistent marks in summary."
   (interactive)
-  (let ((last-progress 0)
-	(folder wl-summary-buffer-elmo-folder)
-	(i 0)
-	answereds importants unreads diff diffs
-	mes progress)
+  (let (diff diffs mes)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-type-internal
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq importants (elmo-uniq-list
-			(nconc (elmo-folder-list-importants
-				wl-summary-buffer-elmo-folder)
-			       ;; XXX Temporal implementation.
-			       ;; It should be merged to the
-			       ;; elmo-folder-list-flagged.
-			       (elmo-folder-list-global-flag-messages
-				wl-summary-buffer-elmo-folder
-				'important)))
-	    unreads (elmo-folder-list-unreads
-		     wl-summary-buffer-elmo-folder)
-	    answereds (elmo-folder-list-answereds
-		       wl-summary-buffer-elmo-folder))
-      (setq diff (elmo-list-diff importants
+      (setq diff (elmo-list-diff (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'important)
 				 (elmo-folder-list-flagged
 				  wl-summary-buffer-elmo-folder
 				  'important 'in-msgdb)))
@@ -1790,7 +1776,9 @@ This function is defined for `window-scroll-functions'"
 	(wl-summary-mark-as-important (car diffs) 'no-server)
 	(setq diffs (cdr diffs)))
 
-      (setq diff (elmo-list-diff answereds
+      (setq diff (elmo-list-diff (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'answered)
 				 (elmo-folder-list-flagged
 				  wl-summary-buffer-elmo-folder
 				  'answered 'in-msgdb)))
@@ -1805,7 +1793,9 @@ This function is defined for `window-scroll-functions'"
 	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
 	(setq diffs (cdr diffs)))
 
-      (setq diff (elmo-list-diff unreads
+      (setq diff (elmo-list-diff (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'unread)
 				 (elmo-folder-list-flagged
 				  wl-summary-buffer-elmo-folder
 				  'unread 'in-msgdb)))
@@ -2977,8 +2967,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unflag-read folder number-list no-folder-mark)
-	  (elmo-folder-flag-as-read folder number-list no-folder-mark))
+	    (elmo-folder-unset-flag folder number-list 'read no-folder-mark)
+	  (elmo-folder-set-flag folder number-list 'read no-folder-mark))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  (unless inverse
@@ -2989,7 +2979,6 @@ Return non-nil if the mark is updated"
 	    (wl-summary-update-persistent-mark)))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
-	  ;; should elmo-folder-flag-as-read return unread numbers?
 	  (wl-summary-count-unread)
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
@@ -3033,8 +3022,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unflag-answered folder number-list)
-	  (elmo-folder-flag-as-answered folder number-list))
+	    (elmo-folder-unset-flag folder number-list 'answered)
+	  (elmo-folder-set-flag folder number-list 'answered))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
@@ -3088,8 +3077,10 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unflag-important folder number-list no-server-update)
-	  (elmo-folder-flag-as-important folder number-list no-server-update))
+	    (elmo-folder-unset-flag folder number-list
+				    'important no-server-update)
+	  (elmo-folder-set-flag folder number-list
+				'important no-server-update))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
@@ -3927,7 +3918,7 @@ Reply to author if invoked with ARG."
 	(error (set-window-configuration winconf)
 	       (signal (car err)(cdr err))))
       (with-current-buffer summary-buf
-	(elmo-folder-flag-as-answered folder (list number))
+	(elmo-folder-set-flag folder (list number) 'answered)
 	(wl-summary-update-persistent-mark))
       t)))
 
