@@ -53,10 +53,6 @@
 (defmacro wl-defface (face spec doc &rest args)
   (` (defvar (, face) (, spec) (, doc))))
 
-(defsubst elmo-archive-call-process (prog args &optional output)
-  (apply 'call-process prog nil output nil args)
-  0)
-
 (defun wl-draft-mode-setup ()
   (defalias 'wl-draft-mode 'mail-mode))
 (defun wl-draft-key-setup ())
@@ -127,14 +123,13 @@ However, if `mail-yank-prefix' is non-nil, insert that prefix on each line."
 				  (forward-char -1)
 				  (point))))))))
 
-(defun-maybe find-file-name-handler (filename operation))
+(defun wl-read-event-char ()
+  "Get the next event."
+  ;; Nemacs does not have read-char-exclusive().
+  (let ((event (read-char)))
+    (cons (and (numberp event) event) event)))
 
-(defun-maybe read-event ()
-  (setq unread-command-events
-	(if (fboundp 'read-char-exclusive)
-	    (read-char-exclusive)
-	  ;; XXX Emacs18.59 does not have read-char-exclusive().
-	  (read-char))))
+(defun-maybe find-file-name-handler (filename operation))
 
 (defmacro easy-menu-define (a b c d)
   (` (defvar (, a) nil (, c))))

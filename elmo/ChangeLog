@@ -1,3 +1,7 @@
+2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.5.5.
+
 2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-network-authenticate-session):
@@ -147,7 +151,184 @@
 
 	* elmo-version.el (elmo-version): Up to 2.5.2.
 
-2000-11-15  Yuuichi Teranishi  <teranisi@gohome.org>
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-sort-overview-by-original-number):
+	New function.
+	(elmo-pop3-sort-msgdb-by-original-number): Ditto.
+	(elmo-pop3-msgdb-create-as-numlist): Use it.
+
+	* elmo-imap4.el (elmo-imap4-arrival-filter): Check process-buffer.
+	(Based on the report by AMAKAWA Shuhei <sa264@cam.ac.uk>)
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-as-numlist): Sort msgdb by date.
+	(Pointed out by Mikiya Tani <m-tani@hml.cl.nec.co.jp>)
+
+2001-01-13 Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* elmo2.el (elmo-make-folder-numbers-list): Fixed problem
+	when elmo-mark-as-read is called with second argument nil.
+
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved to elmo-util.el.
+
+	* elmo-util.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved from elmo-pipe.el
+
+	* elmo-archive.el (elmo-archive-call-process): Enclose with
+	static-if.
+
+	* elmo-imap4.el (elmo-imap4-read-msg): Use "BODY[]" instead of
+	"RFC822" (because RFC822.PEEK is obsolete).
+	(Adviced by IMAI Takeshi <imai@on.rim.or.jp>)
+
+2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* elmo-archive.el (elmo-archive-call-process): Don't check for
+	the exit status when Nemacs is running.
+
+2001-01-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-session-password-key): Don't set default to
+	'plain.
+
+	* elmo-util.el (elmo-imap4-get-spec): Set default of auth to 'clear.
+	(elmo-pop3-get-spec): Set default of auth to 'user.
+
+	* elmo-imap4.el (elmo-imap4-session-check):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+	(elmo-imap4-clear-login): New function; Renamed from `elmo-imap4-login'.
+	(elmo-imap4-auth-login): New function; Revival.
+	(elmo-network-authenticate-session): Use `elmo-imap4-clear-login' and
+	`elmo-imap4-auth-login'.
+
+2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo2.el (toplevel): Move `product-provide' declare.
+	* mmelmo.el (toplevel): Ditto.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-folder-get-store-type): Rewrite.
+
+2000-12-26  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-util.el (elmo-folder-get-store-type): New function.
+	(elmo-folder-direct-copy-p): Use it.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-msgdb-create): Set
+	`elmo-imap4-fetch-callback-data' as a cons cell of `args'
+	and result of `elmo-imap4-use-flag-p'.
+	(elmo-imap4-fetch-callback-1): Set mark according to
+	the result of `elmo-imap4-use-flag-p'.
+
+2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-generic-folder-diff): Moved from elmo2.el
+	(elmo-generic-list-folder-unread): Ditto.
+	(elmo-folder-get-info): Ditto.
+	(elmo-folder-set-info-max-by-numdb): Ditto.
+	(elmo-folder-get-info-max): Ditto.
+	(elmo-folder-get-info-length): Ditto.
+	(elmo-folder-get-info-unread): Ditto.
+	(elmo-folder-info-make-hashtb): Ditto.
+
+	* elmo2.el: Removed above functions.
+
+2000-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): Require 'ssl.
+	Add autoload 'starttls.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): defun at compile time.
+	sasl-find-mechanism, sasl-make-client, sasl-mechanism-name,
+	sasl-next-step, sasl-step-data, sasl-step-set-data.
+	* elmo-pop3.el (toplevel): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-network-authenticate-session): Use `elmo-imap4-login'
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-auth-apop): Signal `elmo-pop-auth-apop'
+	if error.
+	(elmo-network-authenticate-session): Use `elmo-pop-auth-user'
+	and `elmo-pop-auth-apop'.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Fix for `APOP'.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Split
+	encoded response value.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Abolish
+	`elmo-pop3-force-login'.
+	Redefine `sasl-mechanisms'.
+	* elmo-vars.el (elmo-pop3-force-login): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): Delete defun-maybe for sasl-*.
+	Delete `elmo-imap4-authenticator-alist'.
+	(elmo-imap4-auth-cram-md5): Delete.
+	(elmo-imap4-auth-digest-md5): Delete.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-auth-digest-md5): Delete.
+	(elmo-pop3-auth-scram-md5): Ditto.
+	(elmo-pop3-auth-cram-md5): Ditto.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (toplevel): Delete defun-maybe for sasl-*.
+	Delete `elmo-pop3-authenticator-alist'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Rewrite for
+	new SASL API.
+	* elmo-imap4.el (elmo-network-authenticate-session): Ditto.
+
+
+2000-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info): Fixed last change.
+
+2000-12-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info):
+	Fixed problem when '\' character is contained in user-id.
+	(Reported by Yoichiro Okabe <okabe@wizsoft.co.jp>)
+
+
+2000-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-delete-folder):
+	Send "close" before "delete" (Use commented out line).
+	(elmo-imap4-rename-folder): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-append): Use `elmo-string' to get
+	folder string itself.
+	(elmo-dop-list-deleted): New function.
+	(elmo-dop-list-folder): Treat result of `elmo-dop-list-deleted' as
+	killed.
+
+	* elmo-util.el (elmo-string-rassoc-all): New function.
 
 	* elmo-version.el (elmo-version): Up to 2.5.1.
 

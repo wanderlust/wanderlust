@@ -27,6 +27,10 @@
 
 ;;; Commentary:
 ;; 
+;; Put the following lines to each file of ELMO package.
+;;
+;; (require 'product)
+;; (product-provide (provide FEATURE) (require 'elmo-version))
 
 ;;; Code:
 ;; 
@@ -35,7 +39,7 @@
 
 ;; product-define in the first place
 (product-provide 'elmo-version
-  (product-define "ELMO" nil '(2 5 4)))
+  (product-define "ELMO" nil '(2 5 5)))
 
 ;; For APEL 10.2 or earlier.
 (defun-maybe product-version-as-string (product)

@@ -1,3 +1,172 @@
+2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.5.5.
+
+	* wl-address.el (wl-address-specials-regexp): New constant.
+	(wl-address-quote-specials): Use it.
+
+2001-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-rescan):
+	Call `wl-summary-buffer-number-column-detect'.
+	(Advised by Akihiro MOTOKI <mokkun@iname.com>)
+
+	* wl-message.el (wl-message-mode-map): Define.
+	(wl-message-decode): Use it as local-map.
+
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-score.el (wl-score-guess-like-gnus): Abolished.
+	(wl-score-get-score-files): Don't use `wl-score-guess-like-gnus'.
+
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-read-event-char): Move from wl-util.el.
+
+	* wl-mule.el (wl-read-event-char): Ditto.
+
+	* wl-e21.el (wl-read-event-char): Ditto.
+
+	* wl-nemacs.el (wl-read-event-char): Ditto.
+	(read-event): Removed.
+
+	* wl-util.el (toplevel): Removed dummy definition of
+	`read-event'.
+	(wl-read-event-char, wl-xmas-read-event-char): Removed.
+
+2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-nemacs.el (elmo-archive-call-process): Moved to
+	elmo-archive.el.
+
+2001-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-reply-list-symbol): New function.
+	(wl-draft-reply): Use it.  Fixed "No match field" error message.
+
+	* wl-draft.el (wl-draft-insert-from-field): Use (length "From: ")
+	instead of magic-number 6.  Use `not' instead of `null' for symbol
+	`nil' check (not empty list).
+	(wl-draft-insert-x-face-field): Fixed paren style.
+
+	* wl-draft.el (wl-draft-insert-x-face-field-here): Use `when' for
+	one-branch conditional statement, instead of `and' and `if'.
+	(wl-draft-forward): Likewise.
+	(wl-draft-add-references): Likewise.
+	(wl-draft-yank-from-mail-reply-buffer): Likewise.
+
+	* wl-draft.el (wl-draft-delete-myself-from-cc): Refactoring nested
+	conditional steatment.  Use `cond' instead of `if'.
+	(wl-draft-confirm): Likewise.
+
+2001-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-version-show): Use `product-string-1'
+	instead of `wl-version'.
+	* wl-fldmgr.el (wl-fldmgr-folders-header): Likewise.
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2001.
+
+2000-12-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-highlight.el (wl-highlight-headers): Revert
+	`wl-highlight-x-face-func' argument (`beg' and `end').
+
+2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (toplevel): Move `product-provide' declare.
+	* wl-demo.el (toplevel): Ditto.
+	* wl-dnd.el (toplevel): Ditto.
+	* wl-highlight.el (toplevel): Ditto.
+	* wl-message.el (toplevel): Ditto.
+	* wl-refile.el (toplevel): Ditto.
+	* wl-util.el (toplevel): Ditto.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-open-all): Rewrite to open all threads and
+	keep cursor position. (Advised by OKAZAKI Tetsurou  <okazaki@be.to>)
+	(wl-thread-close-all): keep cursor position.
+
+2000-12-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-version-status-alist): Use `zerop' instead of
+	(eq x 0).
+	(wl-generate-user-agent-string-1): Fix conditional statement.
+
+2000-11-27  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl.el (wl-check-environment): Additional check for
+	'wl-local-domain' and `wl-message-id-domain'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (toplevel): Delete defvar for sasl-*.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-smtp-extension-bind): Use `smtp-sasl-properties'
+	instead of `smtp-sasl-user-realm'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-smtp-extension-bind): Rewrite for new SASL API.
+
+2000-12-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-reply): Bind `mime-header-lexical-analyzer'
+	to the default value as well as `eword-lexical-analyzer'.
+
+2000-12-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-extended-emacs-version,
+	wl-extended-emacs-version2, wl-extended-emacs-version3): Use
+	`elmo-match-string' instead of `wl-match-string'.
+
+2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-mode): Use \\{wl-summary-mode-map} in
+	docstring.
+
+2000-12-10  Hironori Fukuchi <nory@valis.co.jp>
+
+	* wl-summary.el (wl-summary-toggle-thread): Docstring typo fix.
+
+2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-highlight.el (wl-highlight-headers): Remove
+	`wl-highlight-x-face-func' argument (`beg' and `end').
+
+2000-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-important):
+	Remove cache if folder is local.
+
+2000-12-06  Taro Kawagishi <taro.kawagishi@nokia.com>
+
+	* wl-summary.el (wl-summary-edit-addresses-subr): Call `try-completion'
+	to get existing e-mail address string.
+
+2000-12-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-generate-user-agent-string): Commentary.
+	(wl-generate-user-agent-string-1): Use `when' for
+	one-branch conditional statement, instead of `and' and `if'.
+	(wl-extended-emacs-version, wl-extended-emacs-version2,
+	wl-extended-emacs-version3): Ditto.
+
+2000-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-all-init): New inline function.
+	(wl-summary-sync): Enclose `wl-summary-sync-update3' with
+	condition-case; Remove initialization.
+	(wl-summary-confirm-appends): Don't enclose with `condition-case'.
+	(wl-summary-sync-update3): Added argument `sync-all';
+	Eliminated local variable `msgdb';
+	Call `wl-summary-sync-all-init' when `sync-all' is non-nil.
+	Call `wl-summary-confirm-appends' before `wl-summary-sync-all-init'.
+	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
+
 2000-12-12  KOGURO Naoki  <koguro@dd.iij4u.or.jp>
 
 	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Close POP

@@ -47,7 +47,6 @@
 (require 'utf7)
 
 ;;; Code:
-;; silence byte compiler.
 (eval-when-compile (require 'cl))
 
 (defvar elmo-imap4-use-lock t
@@ -363,6 +362,9 @@ If response is not `OK' response, causes error with IMAP response text."
 ;;;
 
 (defun elmo-imap4-session-check (session)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (setq elmo-imap4-fetch-callback nil)
+    (setq elmo-imap4-fetch-callback-data nil))
   (elmo-imap4-send-command-wait session "check"))
 
 (defun elmo-imap4-atom-p (string)
@@ -528,7 +530,7 @@ BUFFER must be a single-byte buffer."
 		     elmo-default-imap4-user)
       (setq append-serv (concat ":" (elmo-imap4-spec-username spec))))
     (unless (eq (elmo-imap4-spec-auth spec)
-		     elmo-default-imap4-authenticate-type)
+		elmo-default-imap4-authenticate-type)
       (setq append-serv 
 	    (concat append-serv "/" (symbol-name (elmo-imap4-spec-auth spec)))))
     (unless (string= (elmo-imap4-spec-hostname spec)
@@ -659,7 +661,7 @@ BUFFER must be a single-byte buffer."
   (if elmo-use-server-diff
       (elmo-imap4-server-diff spec)
     (elmo-generic-folder-diff spec folder number-list)))
-    
+
 (defun elmo-imap4-get-session (spec &optional if-exists)
   (elmo-network-get-session
    'elmo-imap4-session
@@ -1041,20 +1043,28 @@ If optional argument UNMARK is non-nil, unmark."
 
 ;;
 ;; app-data:
+;; cons of list
 ;; 0: new-mark 1: already-mark 2: seen-mark 3: important-mark
-;; 4: seen-list 5: as-number
+;; 4: seen-list
+;; and result of use-flag-p.
 (defun elmo-imap4-fetch-callback-1 (entity flags app-data)
   "A msgdb entity callback function."
-  (let ((seen (member (car entity) (nth 4 app-data)))
-	mark)
+  (let* ((use-flag (cdr app-data))
+	 (app-data (car app-data))
+	 (seen (member (car entity) (nth 4 app-data)))
+	 mark)
     (if (member "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
     (setq mark (or (elmo-msgdb-global-mark-get (car entity))
 		   (if (elmo-cache-exists-p (car entity)) ;; XXX
-		       (if (or (member "\\Seen" flags) seen)
+		       (if (or seen
+			       (and use-flag
+				    (member "\\Seen" flags)))
 			   nil
 			 (nth 1 app-data))
-		     (if (or (member "\\Seen" flags) seen)
+		     (if (or seen
+			     (and use-flag
+				  (member "\\Seen" flags)))
 			 (if elmo-imap4-use-cache
 			     (nth 2 app-data))
 		       (nth 0 app-data)))))
@@ -1094,7 +1104,9 @@ If optional argument UNMARK is non-nil, unmark."
       (with-current-buffer (elmo-network-session-buffer session)
 	(setq elmo-imap4-current-msgdb nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data args)
+	      elmo-imap4-fetch-callback-data (cons args
+						   (elmo-imap4-use-flag-p
+						    spec)))
 	(while set-list
 	  (elmo-imap4-send-command-wait
 	   session
@@ -1119,7 +1131,7 @@ If optional argument UNMARK is non-nil, unmark."
       (elmo-read
        (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
 
-(defun elmo-imap4-login (session)
+(defun elmo-imap4-clear-login (session)
   (let ((elmo-imap4-debug-inhibit-logging t))
     (or
      (elmo-imap4-read-ok
@@ -1131,8 +1143,26 @@ If optional argument UNMARK is non-nil, unmark."
 	     " "
 	     (elmo-imap4-password
 	      (elmo-get-passwd (elmo-network-session-password-key session))))))
-     (signal 'elmo-authenticate-error '(login)))))
+     (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))))
 
+(defun elmo-imap4-auth-login (session)
+  (let ((tag (elmo-imap4-send-command session "authenticate login"))
+	(elmo-imap4-debug-inhibit-logging t))
+    (or (elmo-imap4-read-continue-req session)
+	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
+    (elmo-imap4-send-string session
+			    (elmo-base64-encode-string
+			     (elmo-network-session-user-internal session)))
+    (or (elmo-imap4-read-continue-req session)
+	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
+    (elmo-imap4-send-string session
+			    (elmo-base64-encode-string
+			     (elmo-get-passwd
+			      (elmo-network-session-password-key session))))
+    (or (elmo-imap4-read-ok session tag)
+	(signal 'elmo-authenticate-error '(elmo-imap4-auth-login)))
+    (setq elmo-imap4-status 'auth)))
+  
 (luna-define-method
   elmo-network-initialize-session-buffer :after ((session
 						  elmo-imap4-session) buffer)
@@ -1177,23 +1207,28 @@ If optional argument UNMARK is non-nil, unmark."
 	(starttls-negotiate process)))))
 
 (luna-define-method elmo-network-authenticate-session ((session
-							elmo-imap4-session))
+ 							elmo-imap4-session))
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (let* ((auth (elmo-network-session-auth-internal session))
 	   (auth (if (listp auth) auth (list auth))))
       (unless (or (eq elmo-imap4-status 'auth)
 		  (null auth))
-	(if (eq 'plain (car auth))
-	    (elmo-imap4-login session)
+	(cond
+	 ((eq 'clear (car auth))
+	  (elmo-imap4-clear-login session))
+	 ((eq 'login (car auth))
+	  (elmo-imap4-auth-login session))
+	 (t
 	  (let* ((elmo-imap4-debug-inhibit-logging t)
 		 (sasl-mechanisms
 		  (delq nil
-			(mapcar '(lambda (cap)
-				   (if (string-match "^auth=\\(.*\\)$"
-						     (symbol-name cap))
-				       (match-string 1 (upcase (symbol-name cap)))))
-				(elmo-imap4-session-capability-internal session))))
+			(mapcar
+			 '(lambda (cap)
+			    (if (string-match "^auth=\\(.*\\)$"
+					      (symbol-name cap))
+				(match-string 1 (upcase (symbol-name cap)))))
+			 (elmo-imap4-session-capability-internal session))))
 		 (mechanism
 		  (sasl-find-mechanism
 		   (delq nil
@@ -1212,7 +1247,8 @@ If optional argument UNMARK is non-nil, unmark."
 			 (elmo-network-session-auth-internal session)))))
 		  (setq mechanism (sasl-find-mechanism
 				   sasl-mechanisms))
-		(signal 'elmo-authenticate-error '(elmo-imap4-auth-no-mechanisms))))
+		(signal 'elmo-authenticate-error
+			'(elmo-imap4-auth-no-mechanisms))))
 	    (setq client
 		  (sasl-make-client
 		   mechanism
@@ -1223,8 +1259,9 @@ If optional argument UNMARK is non-nil, unmark."
 ;;;		(sasl-client-set-property client 'realm elmo-imap4-auth-user-realm))
 	    (setq name (sasl-mechanism-name mechanism)
 		  step (sasl-next-step client nil))
-	    (elmo-network-session-set-auth-internal session
-						    (intern (downcase name)))
+	    (elmo-network-session-set-auth-internal
+	     session
+	     (intern (downcase name)))
 	    (setq sasl-read-passphrase
 		  (function
 		   (lambda (prompt)
@@ -1271,7 +1308,7 @@ If optional argument UNMARK is non-nil, unmark."
 		       (if (sasl-step-data step)
 			   (elmo-base64-encode-string (sasl-step-data step)
 						      'no-line-break)
-			 "")))))))))))
+			 ""))))))))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-imap4-session))
@@ -1334,15 +1371,14 @@ If optional argument UNMARK is non-nil, unmark."
 	  (elmo-imap4-send-command-wait session
 					(format
 					 (if elmo-imap4-use-uid
-					     "uid fetch %s rfc822%s"
-					   "fetch %s rfc822%s")
+					     "uid fetch %s body%s[]"
+					   "fetch %s body%s[]")
 					 msg
 					 (if leave-seen-flag-untouched
 					     ".peek" ""))))
-    (and (setq response (elmo-imap4-response-value
+    (and (setq response (elmo-imap4-response-bodydetail-text
 			 (elmo-imap4-response-value-all
-			  response 'fetch )
-			 'rfc822))
+			  response 'fetch )))
 	 (with-current-buffer outbuf
 	   (erase-buffer)
 	   (insert response)
@@ -1546,6 +1582,7 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-arrival-filter (proc string)
   "IMAP process filter."
+  (when (buffer-live-p (process-buffer proc))
   (with-current-buffer (process-buffer proc)
     (elmo-imap4-debug "-> %s" string)
     (goto-char (point-max))
@@ -1573,7 +1610,7 @@ Return nil if no complete line has arrived."
 		    (t
 		     (message "Unknown state %s in arrival filter"
 			      elmo-imap4-status))))
-	  (delete-region (point-min) (point-max)))))))
+	  (delete-region (point-min) (point-max))))))))
 
 ;; IMAP parser.
 

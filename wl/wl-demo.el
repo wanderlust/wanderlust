@@ -32,13 +32,11 @@
 ;;
 
 (defconst wl-demo-copyright-notice
-  "Copyright (C) 1998-2000 Yuuichi Teranishi <teranisi@gohome.org>")
+  "Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>")
 
 (require 'wl-vars)
 (require 'wl-version)
 (require 'wl-highlight)
-(require 'product)
-(product-provide (provide 'wl-demo) (require 'wl-version))
 
 (defconst wl-demo-icon-name (concat "wl-" (wl-version-status) "-logo"))
 
@@ -339,5 +337,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
       (goto-char (point-min))
       (sit-for (if (featurep 'lisp-float-type) (/ (float 5) (float 10)) 1))
       demo-buf)))
+
+(require 'product)
+(product-provide (provide 'wl-demo) (require 'wl-version))
 
 ;;; wl-demo.el ends here

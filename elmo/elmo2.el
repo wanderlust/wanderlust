@@ -29,13 +29,13 @@
 ;;; Code:
 ;; 
 
+(require 'elmo-version)			; reduce recursive-load-depth
 (require 'elmo-vars)
 (require 'elmo-msgdb)
 (require 'elmo-cache)
 (require 'elmo-util)
 (require 'elmo-dop)
-(require 'product)
-(product-provide (provide 'elmo2) (require 'elmo-version))
+;;;(provide 'elmo2)			; circular dependency
 
 (eval-when-compile
   (require 'elmo-localdir)
@@ -426,7 +426,8 @@ without cacheing."
 	pair fld-list
 	ret-val)
     (while msg-list
-      (when (> (car msg-list) 0)
+      (when (and (numberp (car msg-list))
+		 (> (car msg-list) 0))
 	(setq pair (elmo-get-real-folder-number folder (car msg-list)))
 	(if (setq fld-list (assoc (car pair) ret-val))
 	    (setcdr fld-list (cons (cdr pair) (cdr fld-list)))
@@ -598,15 +599,6 @@ without cacheing."
   "Just return number-alist."
   number-alist)
 
-(defun elmo-generic-list-folder-unread (spec number-alist mark-alist
-					     unread-marks)
-  (delq nil
-	(mapcar
-	 (function (lambda (x)
-		     (if (member (cadr (assq (car x) mark-alist)) unread-marks)
-			 (car x))))
-	 mark-alist)))
-
 (defun elmo-generic-list-folder-important (spec number-alist)
   nil)
 
@@ -710,86 +702,6 @@ Return value is a cons cell of NEW and MESSAGES.
 If optional argumnet NUMBER-LIST is set, it is used as a 
 message list in msgdb. Otherwise, number-list is load from msgdb."
   (elmo-call-func folder "folder-diff" folder number-list))
-
-(defun elmo-generic-folder-diff (spec folder &optional number-list)
-  (let ((cached-in-db-max (elmo-folder-get-info-max folder))
-	(in-folder (elmo-max-of-folder folder))
-	(in-db t)
-	unsync messages
-	in-db-max)
-    (if (or number-list (not cached-in-db-max))
-	(let ((number-list (or number-list
-			       (mapcar 'car
-				       (elmo-msgdb-number-load
-					(elmo-msgdb-expand-path folder))))))
-	  ;; No info-cache.
-	  (setq in-db (sort number-list '<))
-	  (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
-			      0))
-	  (if (not number-list)
-	      (elmo-folder-set-info-hashtb folder in-db-max nil)))
-      (setq in-db-max cached-in-db-max))
-    (setq unsync (if (and in-db
-			  (car in-folder))
-		     (- (car in-folder) in-db-max)
-		   (if (and in-folder
-			    (null in-db))
-		       (cdr in-folder)
-		     (if (null (car in-folder))
-			 nil))))
-    (setq messages (cdr in-folder))
-    (if (and unsync messages (> unsync messages))
-	(setq unsync messages))
-    (cons (or unsync 0) (or messages 0))))
-
-(defsubst elmo-folder-get-info (folder &optional hashtb)
-  (elmo-get-hash-val folder
-		     (or hashtb elmo-folder-info-hashtb)))
-
-(defun elmo-folder-set-info-hashtb (folder max numbers &optional new unread)
-  (let ((info (elmo-folder-get-info folder)))
-    (when info
-      (or new     (setq new     (nth 0 info)))
-      (or unread  (setq unread  (nth 1 info)))
-      (or numbers (setq numbers (nth 2 info)))
-      (or max     (setq max     (nth 3 info))))
-    (elmo-set-hash-val folder
-		       (list new unread numbers max)
-		       elmo-folder-info-hashtb)))
-
-(defun elmo-folder-set-info-max-by-numdb (folder msgdb-number)
-  (let ((num-db (sort (mapcar 'car msgdb-number) '<)))
-    (elmo-folder-set-info-hashtb
-     folder
-     (or (nth (max 0 (1- (length num-db))) num-db) 0)
-     nil ;;(length num-db)
-     )))
-
-(defun elmo-folder-get-info-max (folder)
-  "Get folder info from cache."
-  (nth 3 (elmo-folder-get-info folder)))
-
-(defun elmo-folder-get-info-length (folder)
-  (nth 2 (elmo-folder-get-info folder)))
-
-(defun elmo-folder-get-info-unread (folder)
-  (nth 1 (elmo-folder-get-info folder)))
-
-(defun elmo-folder-info-make-hashtb (info-alist hashtb)
-  (let* ((hashtb (or hashtb
-		     (elmo-make-hash (length info-alist)))))
-    (mapcar
-     '(lambda (x)
-	(let ((info (cadr x)))
-	  (and (intern-soft (car x) hashtb)
-	       (elmo-set-hash-val (car x)
-				  (list (nth 2 info)   ;; new
-					(nth 3 info)   ;; unread
-					(nth 1 info)   ;; length
-					(nth 0 info))  ;; max
-				  hashtb))))
-     info-alist)
-    (setq elmo-folder-info-hashtb hashtb)))
 
 (defun elmo-crosspost-message-set (message-id folders &optional type)
   (if (assoc message-id elmo-crosspost-message-alist)
@@ -1009,5 +921,8 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 (autoload 'elmo-localdir-max-of-folder "elmo-localdir")
 (autoload 'elmo-localdir-msgdb-create-overview-entity-from-file "elmo-localdir")
 (autoload 'elmo-archive-copy-msgs-froms "elmo-archive")
+
+(require 'product)
+(product-provide (provide 'elmo2) (require 'elmo-version))
 
 ;;; elmo2.el ends here

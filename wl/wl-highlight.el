@@ -33,8 +33,7 @@
 	 (featurep 'dragdrop))
     (require 'wl-dnd))
 (require 'wl-vars)
-(require 'product)
-(product-provide (provide 'wl-highlight) (require 'wl-version))
+(provide 'wl-highlight)			; circular dependency
 
 (eval-when-compile
   (cond (wl-on-xemacs
@@ -1028,8 +1027,8 @@ interpreted as cited text.)"
     (wl-highlight-message beg end nil)
     (unless for-draft
       (wl-highlight-message-add-buttons-to-header beg end)
-      (and wl-highlight-x-face-func
-	   (funcall wl-highlight-x-face-func beg end)))
+      (when wl-highlight-x-face-func
+	(funcall wl-highlight-x-face-func beg end)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)
@@ -1258,5 +1257,8 @@ interpreted as cited text.)"
 		(1- (point))))
 	 (inhibit-read-only t))
     (put-text-property beg end 'mouse-face 'highlight)))
+
+(require 'product)
+(product-provide (provide 'wl-highlight) (require 'wl-version))
 
 ;;; wl-highlight.el ends here

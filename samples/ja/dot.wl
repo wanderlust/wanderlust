@@ -1,6 +1,5 @@
 ;;;							-*- emacs-lisp -*-
 ;;; ~/.wl (setting file for Wanderlust)
-;;;						Last-Modified: 1999-11-07
 ;;;
 
 ;; まず，次の設定を ~/.emacs などに書いてください。
@@ -292,7 +291,7 @@
 	 ("To" . "boss@company.jp")
 	 ("Subject" . "報告")
 	 (top . "今週の報告です。\n")		;; 本文先頭への挿入
-;;	 (file-bottom . "~/work/report.txt")	;; 本文末尾へファイルの挿入
+;;	 (bottom-file . "~/work/report.txt")	;; 本文末尾へファイルの挿入
 	 )
 	))
 
@@ -353,8 +352,8 @@
 	 ;; x-face-mule 0.20以後
 	 (setq wl-highlight-x-face-func
 	       (function
-		(lambda (beg end)
-		  (x-face-mule-x-face-decode-message-header beg end))))
+		(lambda (&optional beg end) ; for compatibility
+		  (x-face-decode-message-header))))
 	 (setq x-face-mule-highlight-x-face-style 'xmas)
 	 (require 'x-face-mule)
 	 )))

@@ -1,6 +1,5 @@
 ;;;							-*- emacs-lisp -*-
 ;;; ~/.wl (setting file for Wanderlust)
-;;;						Last-Modified: 1999-11-07
 ;;;
 
 ;; Following must be included in ~/.emacs
@@ -289,7 +288,7 @@
 	 ("To" . "boss@company.jp")
 	 ("Subject" . "Report")
 	 (top . "Sir, here is my report\n")		;; insert in top.
-;;	 (file-bottom . "~/work/report.txt")	;; insert file in bottom
+;;	 (bottom-file . "~/work/report.txt")	;; insert file in bottom
 	 )
 	))
 ;; Change headers in draft sending time.
@@ -343,8 +342,8 @@
 	 ;; after x-face-mule 0.20
 	 (setq wl-highlight-x-face-func
 	       (function
-		(lambda (beg end)
-		  (x-face-mule-x-face-decode-message-header beg end))))
+		(lambda (&optional beg end) ; for compatibility
+		  (x-face-decode-message-header))))
 	 (setq x-face-mule-highlight-x-face-style 'xmas)
 	 (require 'x-face-mule)
 	 )))
