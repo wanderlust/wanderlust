@@ -1,3 +1,7 @@
+2000-07-03  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Hide scroll bars, etc. first.
+
 2000-07-01  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-msgdb-load-async): Call
