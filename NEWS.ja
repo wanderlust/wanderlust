@@ -1,5 +1,95 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust. 10 May 2000
 
+* 1.1.1 から version 2.4.0 への変更点
+
+** バージョン番号
+2.3.0 以降は、第二番号が偶数なら安定版、奇数なら開発版となります。
+
+** インストール
+
+*** FLIM 1.12 はサポートされなくなりました。
+
+*** APEL 10.2 以降が必要になりました。
+tm8 を使用している方は特にご注意ください。
+
+
+** 新機能
+
+*** LDAP サポート
+LDAP サーバーと接続し、アドレスの補完を行えます。
+
+*** POP3 フォルダで UIDL サポート。
+
+*** biff 機能。
+
+*** スレッドの編集。
+スレッドの切断・つなぎ直しが可能になります。サマリで M-w と C-y 
+で可能です。
+
+*** パスワードのタイマ設定。
+変数 elmo-passwd-file-time で設定できます。
+
+*** killed-list
+NNTP フォルダで削除したメッセージは killed-list に保存します。
+killed-list にあるメッセージはサーバ上にも存在しないかのように扱
+います。変数 elmo-use-killed-list が non-nil なら killed-list を
+使用します(デフォルトは t)。
+
+*** wl-summary-pack-number の Maildir サポート。
+
+
+** 接続・認証
+
+*** elmo-default-*-authenticate-type はシンボルで設定するようになりました。
+
+*** stream-type の定義方法を変更しました。
+変数 elmo-network-{imap4,pop3,nntp}-stream-type-alist で設定。
+ssl 関連のいくつかの変数を廃止(改名)。 
+
+** その他の変更点
+
+*** スレッドの高速化と多くのバグフィックス
+
+*** フィルタフォルダの条件部の書式の整理。
+
+*** wl-refile-rule-alist の拡張。
+
+*** wl-fcc に関数を設定できます。
+月毎にフォルダを変えたい場合などに使用できます。
+
+*** elmo-search-mime-charset は廃止されました。
+charset は入力文字列から判定されます。
+
+*** 転送時に余計なヘッダを削除します。
+変数 wl-ignored-forwarded-headers で、転送時に削除するヘッダを設
+定できます。
+
+*** メッセージバッファでのヘッダ表示を制御できます。
+変数 wl-message-ignored-field-list,
+wl-message-visible-field-list で、Wanderlust レベルで設定が可能
+になりました。(今までは SEMI で設定可能)
+
+*** In-Reply-To: フィールドの形式を変更しました。
+draft-ietf-drums-msg-fmt-09.txt に従うようになりました。
+
+
+** 返信
+
+*** Reply-To: を考慮
+wl-draft-reply-without-argument-list のデフォルトで、Reply-To: 
+フィールドを考慮するようにしました。
+
+*** 自分のメールへの返信ルール
+変数 wl-draft-reply-myself-with-argument-list,
+wl-draft-reply-myself-without-argument-list で自分が出したメール
+への返信するときのルールが設定できます。
+
+*** 返信アドレスに full-name
+変数 wl-draft-reply-use-address-with-full-name が non-nil なら返
+信アドレスに full-name が入ります。(デフォルトは t)。 
+
+
+
 * 1.1.1 は 1.1.0 のバグ修正版です。いくつかの細かい修正が加わっています。
 
 ** CVS サーバ上での開発が始められました。
