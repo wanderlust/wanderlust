@@ -320,8 +320,7 @@ Return symbol, not list.  Use symbol-name"
     (with-temp-buffer			; to keep raw buffer unibyte.
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
-      (setq subject (if (and subject decoder)
-			(funcall decoder subject) subject))
+      (setq subject (if decoder (funcall decoder subject) subject))
       (setq to-alist 
 	    (mapcar
 	     (lambda (addr)
@@ -336,10 +335,9 @@ Return symbol, not list.  Use symbol-name"
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
-    (and wl-reply-subject-prefix
+    (and subject wl-reply-subject-prefix
 	 (setq subject (concat wl-reply-subject-prefix
-                               (wl-draft-strip-subject-re
-				(or subject "")))))
+                               (wl-draft-strip-subject-re subject))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
