@@ -825,6 +825,7 @@ to find out how to use this."
 	   (not (elmo-plugged-p)))
       (wl-draft-set-sent-message 'mail 'unplugged)
     ;; send the message
+    (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
     (let ((id (std11-field-body "Message-ID"))
 	  (to (std11-field-body "To")))
       (case
@@ -985,7 +986,7 @@ non-nil."
 	    (goto-char (1+ delimline))
 	    (if (eval mail-mailer-swallows-blank-line)
 		(newline))
-;;;	    (run-hooks 'wl-mail-send-pre-hook)
+	    (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
 	    (if mail-interactive
 		(save-excursion
 		  (set-buffer errbuf)
@@ -1071,7 +1072,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
     ;; ignore any blank lines in the header
     (while (re-search-forward "\n\n\n*" nil t)
       (replace-match "\n")))
-  (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
+;;;  (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
   (wl-draft-dispatch-message)
   (when kill-when-done
     ;; hide editing-buffer.

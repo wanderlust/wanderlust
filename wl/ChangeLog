@@ -1,5 +1,12 @@
 2002-01-22  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-send-mail-with-smtp): run-hook
+	`wl-mail-send-pre-hook'.
+	(wl-draft-send-mail-with-qmail): Ditto.
+	(wl-draft-normal-send-func): Delete `wl-mail-send-pre-hook'.
+
+2002-01-22  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-message.el (wl-message-buffer-prefetch-subr):
 	Fix for cancel-function-timers bug.
 	(wl-message-buffer-prefetch-debug): Default value is t.
