@@ -265,6 +265,18 @@ Returns a process object.  if making session failed, returns nil."
 	(elmo-set-plugged t server service stream-type))
       process)))
 
+(defun elmo-get-network-stream-type (symbol)
+  "Return network stream type corresponding to SYMBOL.
+Returned value is searched from `elmo-network-stream-type-alist'."
+  (let ((alist elmo-network-stream-type-alist)
+	spec)
+    (while alist
+      (when (eq (nth 1 (car alist)) symbol)
+	(setq spec (car alist))
+	(setq alist nil))
+      (setq alist (cdr alist)))
+    spec))
+
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-net-folder)
 					    name)

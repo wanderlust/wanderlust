@@ -547,18 +547,6 @@
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
-(defun wl-summary-collect-unread (mark-alist &optional folder)
-  (let (mark ret-val)
-    (while mark-alist
-      (setq mark (cadr (car mark-alist)))
-      (and mark
-	   (or (string= mark wl-summary-new-mark)
-	       (string= mark wl-summary-unread-uncached-mark)
-	       (string= mark wl-summary-unread-cached-mark))
-	   (setq ret-val (cons (car (car mark-alist)) ret-val)))
-      (setq mark-alist (cdr mark-alist)))
-    ret-val))
-
 (defun wl-summary-count-unread (mark-alist)
   (let ((new 0)
 	(unread 0)
@@ -1599,7 +1587,12 @@ If ARG is non-nil, checking is omitted."
 	     (case-fold-search nil)
 	     msg mark)
 	(message "Setting all msgs as read...")
-	(elmo-folder-mark-as-read folder (wl-summary-collect-unread mark-alist))
+	(elmo-folder-mark-as-read folder
+				  (elmo-folder-list-unreads
+				   folder
+				   (list wl-summary-unread-cached-mark
+					 wl-summary-unread-uncached-mark
+					 wl-summary-new-mark)))
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
@@ -2068,8 +2061,7 @@ If ARG is non-nil, checking is omitted."
     (setq new-msgdb (nth 0 sync-result))
     (setq delete-list (nth 1 sync-result))
     (setq crossed (nth 2 sync-result))
-    (if (or (and sync-all sync-result)
-	    sync-result)
+    (if sync-result
 	(progn
 	  ;; Setup sync-all
 	  (if sync-all (wl-summary-sync-all-init))
@@ -2149,12 +2141,17 @@ If ARG is non-nil, checking is omitted."
 	  (if elmo-use-database
 	      (elmo-database-close))
 	  (run-hooks 'wl-summary-sync-updated-hook)
-	  (setq mes (format "Updated (-%d/+%d) message(s)"
-			    (length delete-list) num)))
-      (setq mes (format
-		 "No updates for \"%s\"" (elmo-folder-name-internal folder))))
+	  (setq mes 
+		(if (and (eq (length delete-list) 0)
+			 (eq num 0))
+		    (format
+		     "No updates for \"%s\"" (elmo-folder-name-internal
+					      folder))
+		  (format "Updated (-%d/+%d) message(s)"
+			  (length delete-list) num))))
+      (setq mes "Quit updating."))
     ;; synchronize marks.
-    (if wl-summary-auto-sync-marks
+    (if (and wl-summary-auto-sync-marks sync-result)
 	(wl-summary-sync-marks))
     ;; scoring
     (when wl-use-scoring
@@ -4352,7 +4349,8 @@ If ARG, exit virtual folder."
   (let (num)
     (when (setq num (wl-summary-next-message (wl-summary-message-number)
 					     direction hereto))
-      (wl-thread-jump-to-msg num)
+      (if (numberp num)
+	  (wl-thread-jump-to-msg num))
       t)))
 ;;
 ;; Goto unread or important
@@ -4877,6 +4875,9 @@ Reply to author if invoked with ARG."
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
+      (unless wl-draft-use-frame
+	(split-window-vertically)
+	(other-window 1))
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf)
 	(unless without-setup-hook
@@ -4936,9 +4937,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (wl-summary-redisplay-internal nil nil 'force-reload)
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer mes-buf)
-      (or wl-draft-use-frame
-	  (split-window-vertically))
-      (other-window 1)
+      (unless wl-draft-use-frame
+	(split-window-vertically)
+	(other-window 1))
       ;; get original subject.
       (if summary-buf
 	  (save-excursion
