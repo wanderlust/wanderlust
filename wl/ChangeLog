@@ -1,3 +1,8 @@
+2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-important): If message is
+	already cached, set messag as read, otherwise encache and mark as read.
+
 2001-10-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-jump-to-current-message): Don't go to

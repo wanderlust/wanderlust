@@ -4153,9 +4153,10 @@ If ARG, exit virtual folder."
 		    (elmo-msgdb-mark-set mark-alist
 					 number
 					 wl-summary-important-mark))
-	      (unless (elmo-file-cache-exists-p message-id)
+	      (if (elmo-file-cache-exists-p message-id)
+		  (elmo-folder-mark-as-read folder (list number))
 		;; Force cache message.
-		(elmo-message-encache folder number))
+		(elmo-message-encache folder number 'read))
 	      (unless no-server-update
 		(elmo-msgdb-global-mark-set message-id
 					    wl-summary-important-mark)))

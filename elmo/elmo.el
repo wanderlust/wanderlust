@@ -514,15 +514,18 @@ Return newly created temporary directory name which contains temporary files.")
   ((folder elmo-folder) important-mark)
   t)
 
-(defun elmo-folder-encache (folder numbers)
-  "Encache messages in the FOLDER with NUMBERS."
+(defun elmo-folder-encache (folder numbers &optional unread)
+  "Encache messages in the FOLDER with NUMBERS.
+If UNREAD is non-nil, messages are not marked as read."
   (dolist (number numbers)
-    (elmo-message-encache folder number)))
+    (elmo-message-encache folder number unread)))
 
-(luna-define-generic elmo-message-encache (folder number)
-  "Encache message in the FOLDER with NUMBER.")
+(luna-define-generic elmo-message-encache (folder number &optional read)
+  "Encache message in the FOLDER with NUMBER.
+If READ is non-nil, message is marked as read.")
 
-(luna-define-method elmo-message-encache ((folder elmo-folder) number)
+(luna-define-method elmo-message-encache ((folder elmo-folder) number
+					  &optional read)
   (elmo-message-fetch
    folder number
    (elmo-make-fetch-strategy 'entire
@@ -531,7 +534,7 @@ Return newly created temporary directory name which contains temporary files.")
 			     (elmo-file-cache-get-path
 			      (elmo-message-field
 			       folder number 'message-id)))
-   nil nil 'unread))
+   nil nil (not read)))
 
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional

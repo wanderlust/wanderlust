@@ -2,6 +2,8 @@
 
 	* elmo.el (elmo-generic-folder-append-messages): Check return value of
 	elmo-folder-append-buffer.
+	(elmo-folder-encache): Added optional argument `read'.
+	(elmo-message-encache): Ditto.
 
 	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Ditto.
 
