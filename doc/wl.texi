@@ -120,6 +120,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Scoring::                  Score of the messages
 * Split messages::           Splitting messages
 * Address Book::             Management of Address Book
+* Spam Filter::              Spam filtering
 * Customization::            Customizing Wanderlust
 * Terminology::              Terminologies
 * Mailing List::             Wanderlust mailing list
@@ -6959,7 +6960,7 @@ Supported spam filtering libraries are following ones.
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
 * Bsfileter::                   bsfilter
-* SpamAssassin::                spamassassin
+* SpamAssassin::                SpamAssassin
 @end menu
 
 
@@ -6985,7 +6986,7 @@ To use spam filter with bogofilter, write following setting in
 @item elmo-spam-bogofilter-program
 @vindex elmo-spam-bogofilter-program
 The initial setting is @file{bogofilter}.
-Spacify the name of executable of bogofiler. If the executable
+Specify the name of executable of bogofiler. If the executable
 is not in your environmental variable @env{PATH}, you should
 set this by full path.
 
@@ -7040,11 +7041,62 @@ It specifies the name of corpus file.
 not yet documented...
 
 @node SpamAssassin,  , Bsfilter, Spam Filter Processor
-@subsection spamassassin
-@cindex spamassassin
+@subsection SpamAssassin
+@cindex SpamAssassin
 
-not yet documented...
+SpamAssassin (@uref{http://spamassassin.org/}) is one of the most
+popular spam filtering program implemented on Perl. SpamAssassin
+attempts to identify spam using text analysis and several internet-based
+realtime blacklists.  SpamAssassin also uses a Bayesian learning filter
+which enables more accurate spam filtering.
 
+To use @file{SpamAssassin} on Wanderlust, write following setting
+in @file{~/.wl} or somewhere else.
+(Of course, you have to install SpamAssassin beforehand.)
+
+@lisp
+@group
+(setq elmo-spam-scheme 'sa)
+@end group
+@end lisp
+
+@subsubsection Customize Variables
+
+@table @code
+@item elmo-spam-spamassassin-program
+@vindex elmo-spam-spamassassin-program
+The initial setting is @file{spamassassin}.
+Specify the name of executable @command{spamassassin}. If the executable
+is not in your environmental variable @env{PATH}, you should
+set this by full path.
+
+@item elmo-spam-spamassassin-learn-program
+@vindex elmo-spam-spamassassin-learn-program
+The initial setting is @file{sa-learn}.  
+Specify the name of the SpamAssassin's Bayesian filtering learner
+program, @command{sa-learn}. If the executable is not in your
+environmental variable @env{PATH}, you should set this by full path.
+
+@item elmo-spam-spamassassin-program-arguments
+@vindex elmo-spam-spamassassin-program-arguments
+The initial setting is @code{'("-e")}.
+Specify the arguments to be supplied for @command{spamassassin} executable.
+You have to specify the argument to exit the program with an error exit code
+when the result is spam. For example, if you want to use @command{spamc}
+ instead of @command{spamassassin}, you should specify @code{'("-c")}.
+
+@item elmo-spam-spamassassin-learn-program-arguments
+@vindex elmo-spam-spamassassin-lern-program-arguments
+The initial setting is @code{nil}.
+Specify the arguments to be supplied for @command{sa-learn}.
+
+@item elmo-spamassassin-debug
+@vindex elmo-spamassassin-debug
+The initial setting is @code{nil}.
+If you specify @code{t}, the output from @command{spamassassin} is
+stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
+
+@end table
 
 @node Customization, Terminology, Spam Filter, Top
 @chapter Customizing Wanderlust

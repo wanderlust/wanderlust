@@ -6887,7 +6887,7 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
 * Bsfileter::                   bsfilter
-* SpamAssassin::                spamassassin
+* SpamAssassin::                SpamAssassin
 @end menu
 
 
@@ -6965,10 +6965,10 @@ Emacs Lisp で実装された spam フィルタリングライブラリです。
 not yet documented...
 
 @node SpamAssassin,  , Bsfilter, Spam Filter Processor
-@subsection spamassassin
-@cindex spamassassin
+@subsection SpamAssassin
+@cindex SpamAssassin
 
-SpamAssassin (@uref{http://spamassassin/}) は、SpamAssassin は Perl 言語
+SpamAssassin (@uref{http://spamassassin.org/}) は、Perl 言語
 で実装された、テキスト解析技術やブラックリストに基づくメールフィルタで、
 最もよく使われている spam フィルタの一つです。SpamAssassin は Bayesian フィ
 ルタを使用しており、spam と正当なメールについて学習させることで判定の正確
