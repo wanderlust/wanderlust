@@ -36,7 +36,7 @@ uninstall-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package $(LISPDIR) $(PIXMAPDIR)
 
 clean-elc:
-	rm -f wl/*.elc wl/auto-autoloads.el wl/custom-load.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
+	rm -f wl/*.elc wl/*~ wl/auto-autoloads.el wl/custom-load.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
 
 package:
 	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas $(PACKAGEDIR) $(PIXMAPDIR)
@@ -49,6 +49,14 @@ info:
 
 install-info:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-info $(INFODIR)
+
+clean-info: mostlyclean-info
+	rm -f doc/*.info doc/*.info-* doc/*.dvi
+
+mostlyclean-info:
+	rm -f doc/*~ doc/*.aux doc/*.log doc/*.toc \
+		doc/*.cp doc/*.fn doc/*.ky doc/*.pg doc/*.tp doc/*.vr \
+		doc/*.cps doc/*.fns doc/*.kys doc/*.pgs doc/*.tps doc/*.vrs
 
 all: elc
 

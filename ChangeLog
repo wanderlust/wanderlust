@@ -1,3 +1,8 @@
+2000-10-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Makefile (clean-info, mostlyclean-info): New rule.
+	(clean-elc): Added `wl/*~'.
+
 2000-10-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL (Installation): Add notify for tm-8 with old APEL user.
