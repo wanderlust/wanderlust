@@ -1,3 +1,25 @@
+2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.5.3.
+
+	* elmo-net.el (elmo-network-get-session): Changed logic for
+	checking process status.
+
+	* elmo-pop3.el (elmo-network-close-session): Do nothing if session
+	process is nil;
+	Changed logic for checking process status.
+
+2000-11-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-network-initialize-session): Skip garbage output
+	before greeting.
+	(elmo-network-setup-session): Set UIDL hash size according to
+	the length of list response.
+	(elmo-pop3-parse-list-response): Setup elmo-pop3-size-hash
+	according to the length of list response;
+	Return the length of list response.
+	(Adviced by OKAZAKI Tetsurou <okazaki@be.to>)
+
 2000-11-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (toplevel): Require 'ssl.
