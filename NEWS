@@ -1,5 +1,12 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.10.2 from 2.10.1
+  Version 2.10.2 is a bug fix version of 2.10.1.
+
+** Fixed bug to lost messages on refiling failure.
+
+** Fixed bug to cause mis-deletion of address book entries.
+
 * Changes in 2.10.1 from 2.10.0
   Version 2.10.1 is a bug fix version of 2.10.0.
 
