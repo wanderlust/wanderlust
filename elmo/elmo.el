@@ -1094,8 +1094,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
       (if (and (not no-delete) succeeds)
 	  (progn
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
-		     (elmo-msgdb-delete-msgs
-		      (elmo-folder-msgdb src-folder) succeeds))
+		     (elmo-folder-detach-messages src-folder succeeds))
 		(setq result t)
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))

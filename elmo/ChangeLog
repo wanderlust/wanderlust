@@ -1,6 +1,7 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-detach-messages): New method.
+	(elmo-folder-move-messages): Use it.
 
 	* elmo-multi.el (elmo-folder-detach-messages): Define.
 
