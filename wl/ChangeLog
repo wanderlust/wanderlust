@@ -1,3 +1,9 @@
+2000-12-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-extended-emacs-version,
+	wl-extended-emacs-version2, wl-extended-emacs-version3): Use
+	`elmo-match-string' instead of `wl-match-string'.
+
 2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-mode): Use \\{wl-summary-mode-map} in
