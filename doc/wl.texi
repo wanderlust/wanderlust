@@ -636,6 +636,26 @@ That means the folders you defined in the @file{~/.folders} are listed
 If you start Wanderlust with prefix argument like @kbd{C-u M-x wl}, you
 can skip folder checking.
 
+Basically, you will handle messages in wanderlust while you come and go
+from/to each of the following buffers.
+
+@table @samp
+@item Folder Buffer
+You can see the list of folders. You can select some folder and go into the summary
+of it. You can subscribe new folder or edit subscription list.
+@item Summary Buffer
+You can see the list of messages in the folder. You can select message and view its
+contents, and reply to some message. You can delete ones or move ones to another
+folder.
+@item Message Buffer
+You can see the contents of the message. You can save part to disk or open in external
+programs.
+@item Draft Buffer
+You can edit message.
+@end table
+
+Details of each ones are explained later.
+
 
 @node Folders, Folder, Start Me Up, Top
 @chapter Wanderlust's folders
