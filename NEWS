@@ -28,9 +28,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Now you can put arbitrary user defined flag on message.
    You can specify its flag by "F" in the summary mode.
 
-** New mark, 'A' and '&' is added for answered messages.
+** New mark, 'A' and 'a' is added for answered messages.
    Now answered messages have its own mark in the summary mode.
-   'A' is displayed for uncached messages and '&' is for cached messages.
+   'A' is displayed for uncached messages and 'a' is for cached messages.
 
 ** New search condition 'Flag' (Status of the message) is added.
    There are flags 'unread', 'important', 'answered',
@@ -46,7 +46,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** The temporary mark and corresponding action is now customizable.
 
-   By default, follwoing mark-and-actions are defined.
+   By default, following mark-and-actions are defined.
    mark-and-actions which are defined as before.
     "o" refile   (same as before)
     "O" copy     (same as before)
@@ -80,7 +80,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Variables renamed
    wl-delete-folder-alist is renamed to wl-dispose-folder-alist.
 
-** POP3 folder existence check is simplifyed (by default).
+** POP3 folder existence check is simplified (by default).
    The default value for elmo-pop3-exists-exactly is changed to nil.
 
 ** POP3 response code extension defined in the RFC2449 is supported.
