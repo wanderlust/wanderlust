@@ -514,6 +514,8 @@ ENTITY is returned."
     (let* ((entity (wl-thread-get-entity msg))
 	   children older-brothers younger-brothers top-child ;;grandchildren
 	   top-entity parent update-msgs beg invisible-top)
+      (setq wl-summary-buffer-number-list
+	    (delq msg wl-summary-buffer-number-list))	      
       (when entity
 	(setq parent (wl-thread-entity-get-parent-entity entity))
 	(if parent
@@ -568,8 +570,6 @@ ENTITY is returned."
 	      (wl-thread-reparent-children children top-child)
 	      (wl-append update-msgs children)))
 	  ;; delete myself from top list.
-	  (setq wl-summary-buffer-number-list
-		(delq msg wl-summary-buffer-number-list))
 	  (setq older-brothers (wl-thread-entity-get-older-brothers
 				entity nil))
 	  (setq younger-brothers (wl-thread-entity-get-younger-brothers

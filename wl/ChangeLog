@@ -1,5 +1,8 @@
 2003-07-18  Yuuichi Teranishi  <teranisi@ns.templewest.net>
 
+	* wl-thread.el (wl-thread-delete-message): Always update
+	wl-summary-buffer-number-list.
+
 	* wl-action.el (wl-summary-print-destination): 
 	Do nothing when folder is nil.
 
