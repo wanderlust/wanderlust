@@ -1162,6 +1162,23 @@ q	Goto folder mode."
 	(message "%s" ret-val))
     ret-val))
 
+(defsubst wl-summary-sync-all-init ()
+  (wl-summary-cleanup-temp-marks)
+  (erase-buffer)
+  (wl-summary-set-message-modified)
+  (wl-summary-set-mark-modified)
+  (setq wl-thread-entity-hashtb (elmo-make-hash
+				 (* (length (elmo-msgdb-get-number-alist
+					     wl-summary-buffer-msgdb)) 2)))
+  (setq wl-summary-buffer-msgdb (elmo-msgdb-clear)) ;;'(nil nil nil nil))
+  (setq wl-thread-entity-list nil)
+  (setq wl-thread-entities nil)
+  (setq wl-summary-buffer-target-mark-list nil)
+  (setq wl-summary-buffer-refile-list nil)
+  (setq wl-summary-buffer-copy-list nil)
+  (setq wl-summary-buffer-delete-list nil)
+  (wl-summary-buffer-number-column-detect nil))
+
 (defun wl-summary-sync (&optional unset-cursor force-range)
   (interactive)
   (let* ((folder wl-summary-buffer-folder-name)
@@ -1170,12 +1187,11 @@ q	Goto folder mode."
 	 (msgdb-dir (elmo-msgdb-expand-path
 		     folder))
 	 (range (or force-range (wl-summary-input-range folder)))
-	 mes seen-list)
+	 mes seen-list killed-list)
     (cond ((string= range "all")
 	   ;; initialize buffer local databases.
 	   (unless (elmo-folder-plugged-p folder) ; forbidden
 	     (error "Unplugged"))
-	   (wl-summary-cleanup-temp-marks)
 	   (setq seen-list
 		 (nconc
 		  (elmo-msgdb-mark-alist-to-seen-list
@@ -1186,19 +1202,15 @@ q	Goto folder mode."
 		   (concat wl-summary-important-mark
 			   wl-summary-read-uncached-mark))
 		  (elmo-msgdb-seen-load msgdb-dir)))
-	   (setq wl-thread-entity-hashtb (elmo-make-hash
-					  (* (length (elmo-msgdb-get-number-alist
-						      wl-summary-buffer-msgdb)) 2)))
-	   (setq wl-summary-buffer-msgdb (elmo-msgdb-clear)) ;;'(nil nil nil nil))
-	   (setq wl-thread-entity-list nil)
-	   (setq wl-thread-entities nil)
-	   (setq wl-summary-buffer-target-mark-list nil)
-	   (setq wl-summary-buffer-refile-list nil)
-	   (setq wl-summary-buffer-copy-list nil)
-	   (setq wl-summary-buffer-delete-list nil)
-	   (wl-summary-buffer-number-column-detect nil)
-	   (elmo-clear-killed folder)
-	   (setq mes (wl-summary-sync-update3 seen-list unset-cursor))
+	   (setq killed-list (elmo-msgdb-killed-list-load msgdb-dir))
+	   (elmo-clear-killed wl-summary-buffer-folder-name)
+	   (condition-case nil
+	       (setq mes (wl-summary-sync-update3 seen-list unset-cursor
+						  'sync-all))
+	     (quit
+	      ;; Resume killed-list if quit.
+	      (message "") ; clear minibuffer.
+	      (elmo-msgdb-killed-list-save msgdb-dir killed-list)))
 	   (elmo-msgdb-seen-save msgdb-dir nil) ; delete all seen.
 	   (if mes (message "%s" mes)))
 ;;;	   (wl-summary-sync-all folder t))
@@ -2131,37 +2143,33 @@ If ARG is non-nil, checking is omitted."
       (if (interactive-p) (message mes)))))
 
 (defun wl-summary-confirm-appends (appends)
-  (condition-case nil
-      (let ((len (length appends))
-	    in)
-	(if (> len wl-summary-update-confirm-threshold)
-	    (if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
-		appends
-	      (setq in wl-summary-update-confirm-threshold)
-	      (catch 'end
-		(while t
-		  (setq in (read-from-minibuffer "Update number: "
-						 (int-to-string in))
-			in (string-to-int in))
-		  (if (< len in)
-		      (throw 'end len))
-		  (if (y-or-n-p (format "%d messages are disappeared.  OK? "
-					(max (- len in) 0)))
-		      (throw 'end in))))
-	      (nthcdr (max (- len in) 0) appends))
-	  appends))
-    (quit nil)
-    (error nil))) ;
+  (let ((len (length appends))
+	in)
+    (if (> len wl-summary-update-confirm-threshold)
+	(if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
+	    appends
+	  (setq in wl-summary-update-confirm-threshold)
+	  (catch 'end
+	    (while t
+	      (setq in (read-from-minibuffer "Update number: "
+					     (int-to-string in))
+		    in (string-to-int in))
+	      (if (< len in)
+		  (throw 'end len))
+	      (if (y-or-n-p (format "%d messages are disappeared.  OK? "
+				    (max (- len in) 0)))
+		  (throw 'end in))))
+	  (nthcdr (max (- len in) 0) appends))
+      appends)))
 
-(defun wl-summary-sync-update3 (&optional seen-list unset-cursor)
+(defun wl-summary-sync-update3 (&optional seen-list unset-cursor sync-all)
   "Update the summary view."
   (interactive)
   (let* ((folder wl-summary-buffer-folder-name)
 	 (cur-buf (current-buffer))
-	 (msgdb wl-summary-buffer-msgdb)
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
-	 (overview (elmo-msgdb-get-overview msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
+	 (mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+	 (overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
 ;;;	 (location (elmo-msgdb-get-location msgdb))
 	 (case-fold-search nil)
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
@@ -2173,7 +2181,7 @@ If ARG is non-nil, checking is omitted."
 	 in-folder
 	 in-db curp
 	 overview-append
-	 entity ret-val crossed crossed2 sync-all
+	 entity ret-val crossed crossed2
 	 update-thread update-top-list mark
 	 expunged msgs unreads importants)
 ;;; (setq seen-list nil) ;for debug.
@@ -2187,15 +2195,7 @@ If ARG is non-nil, checking is omitted."
     (message "Checking folder diff...")
     (elmo-commit folder)
     (setq in-folder (elmo-list-folder folder))
-    (setq in-db (sort (mapcar 'car number-alist) '<))
-    (when (or (eq msgdb nil) ; trick for unplugged...
-	      (and (null overview)
-		   (null number-alist)
-		   (null mark-alist)))
-      (setq sync-all t)
-      (wl-summary-set-message-modified)
-      (wl-summary-set-mark-modified)
-      (erase-buffer))
+    (setq in-db (unless sync-all (sort (mapcar 'car number-alist) '<)))
     (if (not elmo-use-killed-list)
 	(setq diff (if (eq (elmo-folder-get-type folder) 'multi)
 		       (elmo-multi-list-bigger-diff in-folder in-db)
@@ -2204,6 +2204,15 @@ If ARG is non-nil, checking is omitted."
     (setq initial-append-list (car diff))
     (setq delete-list (cadr diff))
     (message "Checking folder diff...done")
+    ;; Confirm appended message number.
+    (setq append-list (wl-summary-confirm-appends initial-append-list))
+    (when (and elmo-use-killed-list
+	       (not (eq (length initial-append-list)
+			(length append-list)))
+	       (setq diff (elmo-list-diff initial-append-list append-list)))
+      (elmo-msgdb-append-to-killed-list folder (car diff)))
+    ;; Setup sync-all
+    (if sync-all (wl-summary-sync-all-init))
     ;; Don't delete important-marked msgs other than 'internal.
     (unless (eq (elmo-folder-get-type folder) 'internal)
       (setq delete-list
@@ -2213,7 +2222,9 @@ If ARG is non-nil, checking is omitted."
 	     (elmo-nntp-max-number-precedes-list-active-p))
 	;; XXX this does not work correctly in rare case.
 	(setq delete-list
-	      (wl-summary-delete-canceled-msgs-from-list delete-list msgdb)))
+	      (wl-summary-delete-canceled-msgs-from-list
+	       delete-list
+	       wl-summary-buffer-msgdb)))
     (if (or (equal diff '(nil nil))
 	    (equal diff '(nil))
 	    (and (eq (length delete-list) 0)
@@ -2221,13 +2232,14 @@ If ARG is non-nil, checking is omitted."
 	(progn
 	  ;; For max-number update...
 	  (if (and (elmo-folder-contains-type folder 'nntp)
-		     (elmo-nntp-max-number-precedes-list-active-p)
-		     (elmo-update-number folder msgdb))
+		   (elmo-nntp-max-number-precedes-list-active-p)
+		   (elmo-update-number folder wl-summary-buffer-msgdb))
 	      (wl-summary-set-message-modified)
 	    (setq ret-val (format "No update is needed for \"%s\"" folder))))
       (when delete-list
 	(message "Deleting...")
-	(elmo-msgdb-delete-msgs folder delete-list msgdb t) ; reserve cache.
+	(elmo-msgdb-delete-msgs folder delete-list
+				wl-summary-buffer-msgdb t) ; reserve cache.
 ;;;	(set-buffer cur-buf)
 	(wl-summary-delete-messages-on-buffer delete-list "Deleting...")
 	(message "Deleting...done"))
@@ -2239,13 +2251,6 @@ If ARG is non-nil, checking is omitted."
       (wl-summary-set-status-marks-on-buffer
        wl-summary-new-mark
        wl-summary-unread-uncached-mark)
-      ;; Confirm appended message number.
-      (setq append-list (wl-summary-confirm-appends initial-append-list))
-      (when (and elmo-use-killed-list
-		 (not (eq (length initial-append-list)
-			  (length append-list)))
-		 (setq diff (elmo-list-diff initial-append-list append-list)))
-	(elmo-msgdb-append-to-killed-list folder (car diff)))
       (setq num (length append-list))
       (if append-list
 	  (progn
@@ -2261,15 +2266,18 @@ If ARG is non-nil, checking is omitted."
 	    ;; delete duplicated messages.
 	    (when (elmo-folder-contains-multi folder)
 	      (setq crossed (elmo-multi-delete-crossposts
-			     msgdb result))
+			     wl-summary-buffer-msgdb result))
 	      (setq result (cdr crossed))
 	      (setq crossed (car crossed)))
 	    (setq overview-append (car result))
-	    (setq msgdb (elmo-msgdb-append msgdb result t))
+	    (setq wl-summary-buffer-msgdb
+		  (elmo-msgdb-append wl-summary-buffer-msgdb result t))
 	    ;; set these value for append-message-func
-	    (setq overview (elmo-msgdb-get-overview msgdb))
-	    (setq number-alist (elmo-msgdb-get-number-alist msgdb))
-	    (setq mark-alist (elmo-msgdb-get-mark-alist msgdb))
+	    (setq overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
+	    (setq number-alist (elmo-msgdb-get-number-alist
+				wl-summary-buffer-msgdb))
+	    (setq mark-alist (elmo-msgdb-get-mark-alist
+			      wl-summary-buffer-msgdb))
 ;;;	    (setq location (elmo-msgdb-get-location msgdb))
 	    (setq curp overview-append)
 	    (setq num (length curp))
@@ -2315,7 +2323,6 @@ If ARG is non-nil, checking is omitted."
 	    ))
       (wl-summary-set-message-modified)
       (wl-summary-set-mark-modified)
-      (setq wl-summary-buffer-msgdb msgdb)
       (when (and sync-all (eq wl-summary-buffer-view 'thread))
 	(elmo-kill-buffer wl-summary-search-buf-name)
 	(message "Inserting thread...")
@@ -2333,7 +2340,7 @@ If ARG is non-nil, checking is omitted."
     ;; scoring
     (when wl-use-scoring
       (setq wl-summary-scored nil)
-      (wl-summary-score-headers nil msgdb
+      (wl-summary-score-headers nil wl-summary-buffer-msgdb
 				(and sync-all
 				     (wl-summary-rescore-msgs number-alist))
 				sync-all)
@@ -2358,7 +2365,7 @@ If ARG is non-nil, checking is omitted."
     (wl-folder-set-folder-updated folder (list 0
 					       (wl-summary-count-unread
 						(elmo-msgdb-get-mark-alist
-						 msgdb))
+						 wl-summary-buffer-msgdb))
 					       (length in-folder)))
     (wl-summary-update-modeline)
     (wl-summary-buffer-number-column-detect t)
