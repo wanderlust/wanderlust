@@ -894,7 +894,7 @@ This function is imported from Emacs 20.7."
 	    (let ((elmo-network-session-name-prefix "BIFF-"))
 	      (elmo-folder-diff-async folder)))
 	(wl-biff-notify (car (wl-biff-check-folder folder))
-			notify-minibuf))
-      (setq wl-biff-check-folders-running nil))))
+			notify-minibuf)
+	(setq wl-biff-check-folders-running nil)))))
 
 ;;; wl-util.el ends here

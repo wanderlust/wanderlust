@@ -113,7 +113,7 @@
       (progn
 	;; flush queue!!
 	(elmo-dop-queue-flush)
-	(wl-biff-start)
+	(unless queue-flush-only (wl-biff-start))
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))

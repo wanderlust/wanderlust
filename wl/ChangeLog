@@ -1,5 +1,10 @@
 2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-toggle-plugged): Don't call `wl-biff-start' if
+	queue-flush-only is non-nil.
+
+	* wl-util.el (wl-biff-check-folder-async): Fix close parenthesis.
+
 	* wl-summary.el (wl-summary-refile-subr): Use folder realname while
 	checking cache folder.
 
