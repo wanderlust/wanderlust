@@ -174,13 +174,13 @@
 (defun wl-draft-insert-x-face-field ()
   "Insert X-Face header."
   (interactive)
-  (if (not (file-exists-p wl-x-face-file))
-      (error "File %s does not exist" wl-x-face-file)
-    (beginning-of-buffer)
-    (search-forward mail-header-separator nil t)
-    (beginning-of-line)
-    (wl-draft-insert-x-face-field-here)
-    (run-hooks 'wl-draft-insert-x-face-field-hook))) ; highlight it if you want.
+  (unless (file-exists-p wl-x-face-file)
+    (error "File %s does not exist" wl-x-face-file))
+  (beginning-of-buffer)
+  (search-forward mail-header-separator nil t)
+  (beginning-of-line)
+  (wl-draft-insert-x-face-field-here)
+  (run-hooks 'wl-draft-insert-x-face-field-hook)) ; highlight it if you want.
 
 (defun wl-draft-insert-x-face-field-here ()
   "Insert X-Face field at point."
@@ -453,21 +453,21 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-draft-confirm ()
   "Confirm send message."
   (interactive)
-  (y-or-n-p (format "Send current draft as %s? "
-		    (cond ((and (wl-message-mail-p) (wl-message-news-p))
-			   "Mail and News")
-			  ((wl-message-mail-p) "Mail")
-			  ((wl-message-news-p) "News")))))
-
-(defun wl-message-news-p ()
-  "If exist valid Newsgroups field, return non-nil."
-  (std11-field-body "Newsgroups"))
+  (y-or-n-p
+   (cond ((and (wl-message-mail-p) (wl-message-news-p))
+	  "Send current draft as Mail and News? ")
+	 ((wl-message-mail-p) "Send current draft as Mail? ")
+	 ((wl-message-news-p) "Send current draft as News? "))))
 
 (defun wl-message-field-exists-p (field)
   "If FIELD exist and FIELD value is not empty, return non-nil."
   (let ((value (std11-field-body field)))
     (and value
 	 (not (string= value "")))))
+
+(defun wl-message-news-p ()
+  "If exist valid Newsgroups field, return non-nil."
+  (std11-field-body "Newsgroups"))
 
 (defun wl-message-mail-p ()
   "If exist To, Cc or Bcc field, return non-nil."
@@ -1032,11 +1032,11 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(if (and sent-via wl-draft-fcc-list)
 	    (progn
 	      (wl-draft-do-fcc (wl-draft-get-header-delimiter) wl-draft-fcc-list)
-	      (setq wl-draft-fcc-list nil))
-	  (if wl-draft-use-cache
-	      (let ((id (std11-field-body "Message-ID"))
-		    (elmo-enable-disconnected-operation t))
-		(elmo-cache-save id nil nil nil))))
+	      (setq wl-draft-fcc-list nil)))
+	(if wl-draft-use-cache
+	    (let ((id (std11-field-body "Message-ID"))
+		  (elmo-enable-disconnected-operation t))
+	      (elmo-cache-save id nil nil nil)))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)
@@ -1269,10 +1269,6 @@ If optional argument is non-nil, current draft buffer is killed"
 	    (if (looking-at "^[ \t]")
 		nil
 	      (if (re-search-forward ":" pos t) nil t)))))))
-
-(defun wl-draft-random-alphabet ()
-  (let ((alphabet '(?A ?B ?C ?D ?E ?F ?G ?H ?I ?J ?K ?L ?M ?N ?O ?P ?Q ?R ?S ?T ?U ?V ?W ?X ?Y ?Z)))
-    (nth (abs (% (random) 26)) alphabet)))
 
 ;;;###autoload
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups

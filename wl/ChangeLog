@@ -1,3 +1,46 @@
+2001-03-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-write-current-folder): Support petname.
+
+2001-03-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-normal-message-redisplay):
+	Set `wl-message-cache-used'.
+
+2001-03-13  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-mode): Use `make-local-hook' instead
+	of `make-local-variable' for setting up `window-scroll-functions'.
+
+2001-03-12  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-summary): Use `save-match-data'.
+
+2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-move-spec-plugged-alist,
+	wl-summary-move-spec-unplugged-alist): Define without backquote.
+
+2000-03-11  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-do-fcc): Fix for `wl-draft-use-cache'
+
+2001-03-08  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el (wl-score-get-score-alist): Abolish `temp' key in
+	score file.  Use `target' instead.
+
+2001-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
+	Fixed probrem guess by top level folder.
+
+	* wl-draft.el (wl-draft-random-alphabet): Removed.
+	(wl-draft-confirm): Don't use conditonal statement
+	in `format' argument; Use gettext style.
+	(wl-draft-insert-x-face-field): Refactoring; Use guard statement
+	for error case.
+
 2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to

@@ -2064,6 +2064,7 @@ Use `wl-subscribed-mailing-list'."
   (when (memq (elmo-folder-get-type folder)
 	      '(localdir imap4 maildir))
     (let (key mladdress)
+      (setq folder (substring folder 1)) ; remove folder type symbol
       (when (string-match "[^\\./]+$" folder)
 	(setq key (regexp-quote
 		   (concat (substring folder (match-beginning 0)) "@")))
@@ -2710,10 +2711,12 @@ If optional arg exists, don't check any folders."
 	(message "All unsync messages in %s are dropped!" entity-name)))))
 
 (defun wl-folder-write-current-folder ()
-  ""
+  "Write message to current folder's newsgroup or mailing-list.
+Call `wl-summary-write-current-folder' with current folder name."
   (interactive)
   (unless (wl-folder-buffer-group-p)
-    (wl-summary-write-current-folder (wl-folder-entity-name))))
+    (wl-summary-write-current-folder
+     (wl-folder-get-realname (wl-folder-entity-name)))))
 
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."
