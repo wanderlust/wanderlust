@@ -26,14 +26,6 @@
 
 ;;; Commentary:
 
-;; Using BITMAP-MULE to compose a logo image will take a long time.
-;; It will be used if you are using Mule, Emacs 20 or Emacs 21 without
-;; a new redisplay engine.  If it makes you irritated, you can inhibit
-;; the use of BITMAP-MULE on the startup screen by the following line
-;; in your .wl file:
-;;
-;; (setq wl-demo-display-logo nil)
-
 ;;; Code:
 
 (defconst wl-demo-copyright-notice
@@ -42,6 +34,7 @@
 
 (eval-when-compile
   (require 'cl))
+(require 'path-util)
 (require 'wl-vars)
 (require 'wl-version)
 (require 'wl-highlight)
@@ -78,32 +71,69 @@ Yet Another Message Interface On Emacsen"
 
 ;; Avoid byte compile warnings.
 (eval-when-compile
-  (defalias-maybe 'bitmap-insert-xbm-file 'ignore)
-  (defalias-maybe 'create-image 'ignore)
-  (defalias-maybe 'device-on-window-system-p 'ignore)
+  (autoload 'bitmap-insert-xbm-file "bitmap" nil t)
+  (autoload 'create-image "image")
+  (autoload 'device-on-window-system-p "device")
+  (autoload 'image-type-available-p "image")
+  (autoload 'insert-image "image")
+  (autoload 'make-glyph "glyphs")
+  (autoload 'set-glyph-face "glyphs")
+  (autoload 'set-specifier "specifier")
   (defalias-maybe 'frame-char-height 'ignore)
   (defalias-maybe 'frame-char-width 'ignore)
   (defalias-maybe 'glyph-height 'ignore)
   (defalias-maybe 'glyph-width 'ignore)
   (defalias-maybe 'image-size 'ignore)
-  (defalias-maybe 'image-type-available-p 'ignore)
-  (defalias-maybe 'insert-image 'ignore)
   (defalias-maybe 'make-extent 'ignore)
-  (defalias-maybe 'make-glyph 'ignore)
   (defalias-maybe 'propertize 'ignore)
   (defalias-maybe 'set-extent-end-glyph 'ignore)
-  (defalias-maybe 'set-glyph-face 'ignore)
-  (defalias-maybe 'set-specifier 'ignore)
   (defalias-maybe 'window-pixel-height 'ignore)
   (defalias-maybe 'window-pixel-width 'ignore))
+
+(defvar wl-demo-bitmap-mule-available-p 'unknown
+  "Internal variable to say whether the BITMAP-MULE package is available.")
+
+(defun wl-demo-image-type-alist ()
+  "Return an alist of available logo image types on the current frame."
+  (if (or (and (featurep 'xemacs)
+	       (device-on-window-system-p))
+	  window-system)
+      (append
+       (when (or (and (featurep 'xemacs)
+		      (featurep 'xpm))
+		 (and wl-on-emacs21
+		      (display-images-p)
+		      (image-type-available-p 'xpm)))
+	 '(("xpm" . xpm)))
+       (when (and (not (or (featurep 'xemacs)
+			   ;; *.img files won't fit for Emacs 21.
+			   wl-on-emacs21))
+		  (or (eq t wl-demo-bitmap-mule-available-p)
+		      (and (eq 'unknown wl-demo-bitmap-mule-available-p)
+			   (module-installed-p 'bitmap)
+			   (setq wl-demo-bitmap-mule-available-p t))))
+	 '(("bitmap" . bitmap)))
+       (when (or (featurep 'xemacs)
+		 (and wl-on-emacs21
+		      (display-images-p)
+		      (image-type-available-p 'xbm))
+		 (eq t wl-demo-bitmap-mule-available-p)
+		 (and (eq 'unknown wl-demo-bitmap-mule-available-p)
+		      (module-installed-p 'bitmap)
+		      (setq wl-demo-bitmap-mule-available-p t)))
+	 '(("xbm" . xbm)))
+       '(("ascii")))
+    '(("ascii"))))
 
 (defun wl-demo-insert-image (image-type)
   "Insert a logo image at the point and position it to be centered.
 IMAGE-TYPE specifies what a type of image should be displayed.
 Return a number of lines that an image occupies in the buffer."
-  (let ((file (cond ((eq image-type 'xpm)
+  (let ((file (cond ((eq 'xpm image-type)
 		     (concat wl-demo-icon-name ".xpm"))
-		    ((memq image-type '(xbm bitmap))
+		    ((eq 'bitmap image-type)
+		     (concat wl-demo-icon-name ".img"))
+		    ((eq 'xbm image-type)
 		     (concat wl-demo-icon-name ".xbm"))))
 	image width height)
     (when (featurep 'xemacs)
@@ -116,7 +146,7 @@ Return a number of lines that an image occupies in the buffer."
 	     (if (and wl-icon-dir
 		      (file-directory-p wl-icon-dir))
 		 (setq file (expand-file-name file wl-icon-dir))
-	       (message "You should specify the value of `wl-icon-dir'")
+	       (message "You have to specify the value of `wl-icon-dir'")
 	       nil)
 	     (if (file-exists-p file)
 		 (if (file-readable-p file)
@@ -140,59 +170,30 @@ Return a number of lines that an image occupies in the buffer."
 		 (/ (+ (* 2 (glyph-height image) (window-height)) height)
 		    (* 2 height)))
 		((eq 'bitmap image-type)
-		 (message "Composing a bitmap image...")
-		 (save-restriction
-		   (narrow-to-region (point) (point))
-		   (bitmap-insert-xbm-file file)
-		   (backward-char)
-		   (indent-rigidly (point-min) (point-max)
-				   (max 0 (/ (1+ (- (window-width)
-						    (current-column)))
-					     2)))
-		   (put-text-property (point-min) (point-max)
-				      'face 'wl-highlight-logo-face)
-		   (message "Composing a bitmap image...done")
-		   (count-lines (point-min) (goto-char (point-max)))))
+		 (require 'bitmap)
+		 (let ((coding-system-for-read 'iso-2022-7bit)
+		       (input-coding-system '*iso-2022-jp*))
+		   (insert-file-contents file))
+		 (end-of-line)
+		 (indent-rigidly (point-min) (point-max)
+				 (max 0 (/ (1+ (- (window-width)
+						  (current-column)))
+					   2)))
+		 (put-text-property (point-min) (point-max)
+				    'face 'wl-highlight-logo-face)
+		 (count-lines (point-min) (goto-char (point-max))))
 		((>= emacs-major-version 21)
-		 (if (eq 'xpm image-type)
-		     (setq image (create-image file 'xpm)
-			   width (image-size image)
-			   height (cdr width)
-			   width (car width))
-		   (with-temp-buffer
-		     (setq case-fold-search t)
-		     (insert-file-contents file)
-		     (goto-char (point-min))
-		     (re-search-forward "\
-^#define[[:blank:]]+[^[:blank:]]+_width[[:blank:]]+")
-		     (setq width (read (current-buffer)))
-		     (goto-char (point-min))
-		     (re-search-forward "\
-^#define[[:blank:]]+[^[:blank:]]+_height[[:blank:]]+")
-		     (setq height (read (current-buffer)))
-		     (search-forward "{")
-		     (delete-region (point-min) (point))
-		     (while (re-search-forward "[^0-9a-fx]+" nil t)
-		       (replace-match ""))
-		     (goto-char (point-min))
-		     (insert "\"")
-		     (while (search-forward "0x" nil t)
-		       (replace-match "\\\\x"))
-		     (goto-char (point-max))
-		     (insert "\"")
-		     (goto-char (point-min))
-		     (setq image (create-image (read (current-buffer))
-					       'xbm t
-					       ':width width
-					       ':height height)
-			   width (/ (float width) (frame-char-width))
-			   height (/ (float height) (frame-char-height)))
-		     (let ((bg (face-background 'wl-highlight-logo-face))
-			   (fg (face-foreground 'wl-highlight-logo-face)))
-		       (when (stringp bg)
-			 (plist-put (cdr image) ':background bg))
-		       (when (stringp fg)
-			 (plist-put (cdr image) ':foreground fg)))))
+		 (setq image (create-image file image-type)
+		       width (image-size image)
+		       height (cdr width)
+		       width (car width))
+		 (when (eq 'xbm image-type)
+		   (let ((bg (face-background 'wl-highlight-demo-face))
+			 (fg (face-foreground 'wl-highlight-demo-face)))
+		     (when (stringp bg)
+		       (plist-put (cdr image) ':background bg))
+		     (when (stringp fg)
+		       (plist-put (cdr image) ':foreground fg))))
 		 (insert (propertize " " 'display
 				     (list 'space ':align-to
 					   (max 0 (round (- (window-width)
@@ -200,21 +201,32 @@ Return a number of lines that an image occupies in the buffer."
 							 2)))))
 		 (insert-image image)
 		 (insert "\n")
-		 (round height))))
-      (save-restriction
-	(narrow-to-region (point) (point))
-	(insert wl-logo-ascii)
-	(put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
-	(unless (bolp)
-	  (insert "\n"))
-	(setq width 0)
-	(while (progn
-		 (end-of-line 0)
-		 (not (bobp)))
-	  (setq width (max width (current-column))))
-	(indent-rigidly (point-min) (point-max)
-			(max 0 (/ (1+ (- (window-width) width)) 2)))
-	(count-lines (point-min) (goto-char (point-max)))))))
+		 (round height))
+		((eq 'xbm image-type)
+		 (message "Composing a bitmap image...")
+		 (require 'bitmap)
+		 (bitmap-insert-xbm-file file)
+		 (backward-char)
+		 (indent-rigidly (point-min) (point-max)
+				 (max 0 (/ (1+ (- (window-width)
+						  (current-column)))
+					   2)))
+		 (put-text-property (point-min) (point-max)
+				    'face 'wl-highlight-logo-face)
+		 (message "Composing a bitmap image...done")
+		 (count-lines (point-min) (goto-char (point-max))))))
+      (insert wl-logo-ascii)
+      (put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
+      (unless (bolp)
+	(insert "\n"))
+      (setq width 0)
+      (while (progn
+	       (end-of-line 0)
+	       (not (bobp)))
+	(setq width (max width (current-column))))
+      (indent-rigidly (point-min) (point-max)
+		      (max 0 (/ (1+ (- (window-width) width)) 2)))
+      (count-lines (point-min) (goto-char (point-max))))))
 
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
@@ -238,40 +250,14 @@ should be a number of lines that an image occupies in the buffer."
 	      (fg (face-foreground 'wl-highlight-demo-face)))
 	  (insert (propertize text
 			      'face (nconc '(variable-pitch :slant oblique)
-					   (if (stringp bg)
-					       (list ':background bg))
-					   (if (stringp fg)
-					       (list ':foreground fg))))))
+					   (when (stringp bg)
+					     (list ':background bg))
+					   (when (stringp fg)
+					     (list ':foreground fg))))))
       (insert text)
       (put-text-property start (point) 'face 'wl-highlight-demo-face))
     (let ((fill-column (window-width)))
       (center-region start (point)))))
-
-(defun wl-demo-image-type-alist ()
-  "Return an alist of available logo image types on the current frame."
-  (if (or (and (featurep 'xemacs)
-	       (device-on-window-system-p))
-	  window-system)
-      (let ((selection (append (when (or (and (featurep 'xemacs)
-					      (featurep 'xpm))
-					 (and wl-on-emacs21
-					      (display-images-p)
-					      (image-type-available-p 'xpm)))
-				 '(("xpm" . xpm)))
-			       (when (or (featurep 'xemacs)
-					 (and wl-on-emacs21
-					      (display-images-p)
-					      (image-type-available-p 'xbm)))
-				 '(("xbm" . xbm))))))
-	(unless (or selection
-		    (featurep 'xemacs))
-	  (condition-case nil
-	      (require 'bitmap)
-	    (error)))
-	(when (featurep 'bitmap)
-	  (setq selection (append selection '(("bitmap" . bitmap)))))
-	(append selection '(("ascii"))))
-    '(("ascii"))))
 
 (defun wl-demo (&optional image-type)
   "Demo on the startup screen.  IMAGE-TYPE should be a symbol which
@@ -290,9 +276,6 @@ argument."
 	  (setq image-type (cdr type))
 	(setq image-type (when wl-demo-display-logo
 			   (cdr (car selection)))))))
-  (when (eq 'bitmap image-type)
-    ;; Composing a bitmap image takes a long time. :-<
-    (wl-demo 'ascii))
   (let ((buffer (let ((default-enable-multibyte-characters t)
 		      (default-mc-flag t)
 		      (default-line-spacing 0))

@@ -169,7 +169,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 							data-directory)))
 			   (if (file-directory-p icons)
 			       icons)))
-  "*Icon directory (XEmacs or Emacs 21)."
+  "*Directory to load the icon files from, or nil if none."
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl)
