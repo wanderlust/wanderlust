@@ -325,7 +325,7 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	    (let ((bg (face-background 'wl-highlight-demo-face))
 		  (fg (face-foreground 'wl-highlight-demo-face)))
 	      (insert (propertize text
-				  'face (nconc '(variable-pitch)
+				  'face (nconc '(variable-pitch :slant oblique)
 					       (if (stringp bg)
 						   (list ':background bg))
 					       (if (stringp fg)
