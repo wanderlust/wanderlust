@@ -257,7 +257,9 @@
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
-  (let* ((process (elmo-network-session-process-internal session))
+  (with-current-buffer (process-buffer 
+			(elmo-network-session-process-internal session))
+    (let* ((process (elmo-network-session-process-internal session))
 	 (auth (elmo-network-session-auth-internal session))
 	 (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 		       (if (listp auth) auth (list auth))))
@@ -319,12 +321,12 @@
 	 step
 	 (elmo-base64-decode-string response))
 	(setq step (sasl-next-step client step))
-	(elmo-pop3-send-string
+	(elmo-pop3-send-command
 	 process
 	 (if (sasl-step-data step)
 	     (elmo-base64-encode-string (sasl-step-data step)
 					'no-line-break)
-	   ""))))))
+	   "")))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
