@@ -1,5 +1,8 @@
 2000-06-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-mime.el (wl-summary-burst-subr): Use `mime-entity-body' and
+	`mime-entity-fetch-field'.
+
 	* wl.el (wl-exit): Delete plugged buffer.
 
 	* wl-xmas.el (wl-draft-overload-menubar): Override menubar only when
