@@ -1,3 +1,7 @@
+2004-11-23  Daishi Kato <daishi@axlight.com>
+
+	* elsp-spamoracle.el: New file.
+
 2004-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-message-flags-for-append): New function.
