@@ -5526,8 +5526,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (select-window message-win)
 	  (wl-select-buffer (get-buffer wl-message-buf-name)))
       (wl-summary-redisplay)
-      (wl-select-buffer (get-buffer wl-message-buf-name)))
-    (goto-char (point-min))))
+      (wl-select-buffer (get-buffer wl-message-buf-name)))))
 
 (defun wl-summary-cancel-message ()
   "Cancel an article on news."
