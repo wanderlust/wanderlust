@@ -1,3 +1,12 @@
+2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-msgdb-load-async): Enclose
+	elmo-imap4-get-session with unwind-protect.
+	Don't cause error.
+	(wl-summary-sync-marks): Don't check plugged nor folder type.
+	(wl-summary-save-view-cache): Abolished argument `keep-current-buffer'
+	(Always keep current buffer).
+
 2000-10-16  Akihiro MOTOKI  <motoki@da.jp.nec.com>
 
 	* wl-highlight.el (wl-highlight-message-add-buttons-to-header):

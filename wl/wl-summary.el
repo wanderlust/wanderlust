@@ -666,27 +666,27 @@ you."
       (message "Resending message to %s...done" address))))
 
 (defun wl-summary-msgdb-load-async (folder)
-  "Loading msgdb and selecting folder is executed asynchronously in IMAP4.
-Returns nil if selecting folder was in failure."
+  "Loading msgdb and selecting folder is executed asynchronously in IMAP4."
   (if (and (elmo-folder-plugged-p folder)
 	   (eq (elmo-folder-get-type folder) 'imap4))
-      (let* ((spec (elmo-folder-get-spec folder))
-	     (session (elmo-imap4-get-session spec))
-	     (mailbox (elmo-imap4-spec-mailbox spec))
-	     msgdb response tag)
+      (let ((spec (elmo-folder-get-spec folder))
+	    session mailbox
+	    msgdb response tag)
 	(unwind-protect
 	    (progn
-	      (setq tag (elmo-imap4-send-command session
+	      (setq session (elmo-imap4-get-session spec)
+		    mailbox (elmo-imap4-spec-mailbox spec)
+		    tag (elmo-imap4-send-command session
 						 (list "select "
 						       (elmo-imap4-mailbox
 							mailbox))))
 	      (setq msgdb (elmo-msgdb-load (elmo-string folder)))
-	      (setq response (elmo-imap4-read-response session tag)))
-	  (if response
-	      (elmo-imap4-session-set-current-mailbox-internal
-	       session mailbox)
-	    (elmo-imap4-session-set-current-mailbox-internal session nil)
-	    (error "Select mailbox %s failed" mailbox)))
+	      (if (elmo-imap4-read-response session tag)
+		  (elmo-imap4-session-set-current-mailbox-internal
+		   session mailbox)))
+	  (and session
+	       (elmo-imap4-session-set-current-mailbox-internal session nil))
+	  (message "Select mailbox %s failed" mailbox))
 	msgdb)
     (elmo-msgdb-load (elmo-string folder))))
 
@@ -1062,7 +1062,7 @@ q	Goto folder mode.
 	     (or (wl-summary-message-modified-p)
 		 (wl-summary-mark-modified-p)
 		 (wl-summary-thread-modified-p)))
-	(wl-summary-save-view-cache sticky))
+	(wl-summary-save-view-cache))
     ;; save msgdb ...
     (wl-summary-msgdb-save)))
 
@@ -2070,14 +2070,11 @@ If optional argument is non-nil, checking is omitted."
 	    importants (elmo-list-folder-important
 			wl-summary-buffer-folder-name
 			(elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
-	    has-imap4 (elmo-folder-contains-type
-		       wl-summary-buffer-folder-name 'imap4)
-	    unreads (if (and has-imap4 plugged)
-			(elmo-list-folder-unread
-			 wl-summary-buffer-folder-name
-			 (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb)
-			 (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
-			 unread-marks)))
+	    unreads (elmo-list-folder-unread
+		     wl-summary-buffer-folder-name
+		     (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb)
+		     (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+		     unread-marks))
       (while mark-alist
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
@@ -2108,18 +2105,17 @@ If optional argument is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-important (car diffs) " " 'no-server)
 	(setq diffs (cdr diffs)))
-      (when (and has-imap4 plugged)
-	(setq diff (elmo-list-diff unreads unreads-in-db))
-	(setq diffs (cadr diff))
-	(setq mes (concat mes (format "(-%d" (length diffs))))
-	(while diffs
-	  (wl-summary-mark-as-read t 'no-server nil (car diffs))
-	  (setq diffs (cdr diffs)))
-	(setq diffs (car diff)) ; unread-appends
-	(setq mes (concat mes (format "/+%d) unread mark(s)." (length diffs))))
-	(while diffs
-	  (wl-summary-mark-as-unread (car diffs) 'no-server 'no-modeline)
-	  (setq diffs (cdr diffs))))
+      (setq diff (elmo-list-diff unreads unreads-in-db))
+      (setq diffs (cadr diff))
+      (setq mes (concat mes (format "(-%d" (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-read t 'no-server nil (car diffs))
+	(setq diffs (cdr diffs)))
+      (setq diffs (car diff)) ; unread-appends
+      (setq mes (concat mes (format "/+%d) unread mark(s)." (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-unread (car diffs) 'no-server 'no-modeline)
+	(setq diffs (cdr diffs)))
       (if (interactive-p) (message mes)))))
 
 (defun wl-summary-confirm-appends (appends)
@@ -4571,7 +4567,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(beginning-of-line)
 	(throw 'done nil)))))
 
-(defun wl-summary-save-view-cache (&optional keep-current-buffer)
+(defun wl-summary-save-view-cache ()
   (save-excursion
     (let* ((dir (elmo-msgdb-expand-path wl-summary-buffer-folder-name))
 	   (cache (expand-file-name wl-summary-cache-file dir))
@@ -4579,8 +4575,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	   ;;(coding-system-for-write wl-cs-cache)
 	   ;;(output-coding-system wl-cs-cache)
 	   (save-view wl-summary-buffer-view)
-	   (tmp-buffer(get-buffer-create " *wl-summary-save-view-cache*"))
-	   charset)
+	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
+	   (charset wl-summary-buffer-mime-charset))
       (if (file-directory-p dir)
 	  (); ok.
 	(if (file-exists-p dir)
@@ -4591,27 +4587,16 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (unwind-protect
 	  (progn
 	    (when (file-writable-p cache)
-	      (if keep-current-buffer
-		  (progn
-		    (save-excursion
-		      (set-buffer tmp-buffer)
-		      (erase-buffer))
-		    (setq charset wl-summary-buffer-mime-charset)
-		    (copy-to-buffer tmp-buffer (point-min) (point-max))
-		    (save-excursion
-		      (set-buffer tmp-buffer)
-		      (widen)
-		      (encode-mime-charset-region
-		       (point-min) (point-max) charset)
-		      (as-binary-output-file
-		       (write-region (point-min)
-				     (point-max) cache nil 'no-msg))))
-		(let (buffer-read-only)
-		  (widen)
-		  (encode-mime-charset-region (point-min) (point-max)
-					      wl-summary-buffer-mime-charset)
-		  (as-binary-output-file
-		   (write-region (point-min) (point-max) cache nil 'no-msg)))))
+	      (copy-to-buffer tmp-buffer (point-min) (point-max))
+	      (with-current-buffer tmp-buffer
+		(widen)
+		(encode-mime-charset-region
+		 (point-min) (point-max) charset)
+		(as-binary-output-file
+		 (write-region (point-min)
+			       (point-max) cache nil 'no-msg))
+		(write-region (point-min) (point-max) cache nil
+			      'no-msg)))
 	    (when (file-writable-p view) ; 'thread or 'sequence
 	      (save-excursion
 		(set-buffer tmp-buffer)
