@@ -666,6 +666,27 @@ without cacheing."
 (defun elmo-clear-killed (folder)
   (elmo-msgdb-killed-list-save (elmo-msgdb-expand-path folder) nil))
 
+(defvar elmo-folder-diff-async-callback nil)
+(defvar elmo-folder-diff-async-callback-data nil)
+
+(defun elmo-folder-diff-async (folder)
+  "Get diff of FOLDER asynchronously.
+`elmo-folder-diff-async-callback' is called with arguments of
+FOLDER and DIFF (cons cell of UNSEEN and MESSAGES).
+Currently works on IMAP4 folder only."
+  (if (eq (elmo-folder-get-type folder) 'imap4)
+      ;; Only works on imap4 with server diff.
+      (progn
+	(setq elmo-imap4-server-diff-async-callback
+	      elmo-folder-diff-async-callback)
+	(setq elmo-imap4-server-diff-async-callback-data
+	      elmo-folder-diff-async-callback-data)
+	(elmo-imap4-server-diff-async (elmo-folder-get-spec folder)))
+    (and elmo-folder-diff-async-callback
+	 (funcall elmo-folder-diff-async-callback
+		  folder
+		  (elmo-folder-diff folder)))))
+
 ;; returns cons cell of (unsync . number-of-messages-in-folder)
 (defun elmo-folder-diff (fld &optional number-alist)
   (interactive)

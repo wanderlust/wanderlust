@@ -93,11 +93,13 @@
 	  (elmo-network-session-port-internal session)))
 
 (defvar elmo-network-session-cache nil)
+(defvar elmo-network-session-name-prefix nil)
 
 (defsubst elmo-network-session-cache-key (name host port user auth stream-type)
   "Returns session cache key."
   (format "%s:%s/%s@%s:%d%s"
-	  name user auth host port (or stream-type "")))
+	  (concat elmo-network-session-name-prefix name)
+	  user auth host port (or stream-type "")))
 
 (defun elmo-network-clear-session-cache ()
   "Clear session cache."
@@ -174,7 +176,7 @@ Returns a process object. if making session failed, returns nil."
 			   :process nil
 			   :greeting nil))
 	(buffer (format " *%s session for %s@%s:%d%s"
-			name
+			(concat elmo-network-session-name-prefix name)
 			user
 			host
 			port

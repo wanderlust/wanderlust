@@ -88,6 +88,11 @@
 
 (defvar elmo-imap4-fetch-callback nil)
 (defvar elmo-imap4-fetch-callback-data nil)
+(defvar elmo-imap4-status-callback nil)
+(defvar elmo-imap4-status-callback-data nil)
+
+(defvar elmo-imap4-server-diff-async-callback nil)
+(defvar elmo-imap4-server-diff-async-callback-data nil)
 
 ;;; progress...(no use?)
 (defvar elmo-imap4-count-progress nil)
@@ -97,17 +102,20 @@
 ;;; XXX Temporal implementation
 (defvar elmo-imap4-current-msgdb nil)
 
-(defvar elmo-imap4-local-variables '(elmo-imap4-status
-				     elmo-imap4-current-response
-				     elmo-imap4-seqno
-				     elmo-imap4-parsing
-				     elmo-imap4-reached-tag
-				     elmo-imap4-count-progress
-				     elmo-imap4-count-progress-message
-				     elmo-imap4-progress-count
-				     elmo-imap4-fetch-callback
-				     elmo-imap4-fetch-callback-data
-				     elmo-imap4-current-msgdb))
+(defvar elmo-imap4-local-variables
+  '(elmo-imap4-status
+    elmo-imap4-current-response
+    elmo-imap4-seqno
+    elmo-imap4-parsing
+    elmo-imap4-reached-tag
+    elmo-imap4-count-progress
+    elmo-imap4-count-progress-message
+    elmo-imap4-progress-count
+    elmo-imap4-fetch-callback
+    elmo-imap4-fetch-callback-data
+    elmo-imap4-status-callback
+    elmo-imap4-status-callback-data
+    elmo-imap4-current-msgdb))
 
 (defvar elmo-imap4-authenticator-alist
   '((login	elmo-imap4-auth-login)
@@ -610,14 +618,19 @@ BUFFER must be a single-byte buffer."
 	  (elmo-imap4-spec-mailbox new-spec)))))
 
 (defun elmo-imap4-max-of-folder (spec)
-  (let ((status (elmo-imap4-response-value
-		 (elmo-imap4-send-command-wait
-		  (elmo-imap4-get-session spec)
-		  (list "status "
-			(elmo-imap4-mailbox
-			 (elmo-imap4-spec-mailbox spec))
-			" (uidnext messages)"))
-		 'status)))
+  (let ((session (elmo-imap4-get-session spec))
+	status)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback nil)
+      (setq elmo-imap4-status-callback-data nil))
+    (setq status (elmo-imap4-response-value
+		  (elmo-imap4-send-command-wait
+		   session
+		   (list "status "
+			 (elmo-imap4-mailbox
+			  (elmo-imap4-spec-mailbox spec))
+			 " (uidnext messages)"))
+		  'status))
     (cons
      (- (elmo-imap4-response-value status 'uidnext) 1)
      (elmo-imap4-response-value status 'messages))))
@@ -1376,13 +1389,39 @@ If optional argument UNMARK is non-nil, unmark."
       (elmo-imap4-send-command-wait session "expunge"))
     t))
 
+(defun elmo-imap4-server-diff-async-callback-1 (status data)
+  (funcall elmo-imap4-server-diff-async-callback
+	   (cons (elmo-imap4-response-value status 'unseen)
+		 (elmo-imap4-response-value status 'messages))
+	   data))
+
+(defun elmo-imap4-server-diff-async (spec)
+  (let ((session (elmo-imap4-get-session spec)))
+    ;; commit.
+    ;; (elmo-imap4-commit spec)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback
+	    'elmo-imap4-server-diff-async-callback-1)
+      (setq elmo-imap4-status-callback-data
+	    elmo-imap4-server-diff-async-callback-data))
+    (elmo-imap4-send-command session
+			     (list
+			      "status "
+			      (elmo-imap4-mailbox
+			       (elmo-imap4-spec-mailbox spec))
+			      " (unseen messages)"))))
+
 (defun elmo-imap4-server-diff (spec)
   "Get server status"
-  (let (response)
+  (let ((session (elmo-imap4-get-session spec))
+	response)
     ;; commit.
 ;    (elmo-imap4-commit spec)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback nil)
+      (setq elmo-imap4-status-callback-data nil))
     (setq response
-	  (elmo-imap4-send-command-wait (elmo-imap4-get-session spec)
+	  (elmo-imap4-send-command-wait session
 					(list
 					 "status "
 					 (elmo-imap4-mailbox
@@ -1805,6 +1844,10 @@ Return nil if no complete line has arrived."
 			 "Unknown status data %s in mailbox %s ignored"
 			 token mailbox))))
 	       status))))
+    (and elmo-imap4-status-callback
+	 (funcall elmo-imap4-status-callback
+		  status
+		  elmo-imap4-status-callback-data))
     (list 'status status)))
 
 

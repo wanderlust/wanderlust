@@ -1,3 +1,27 @@
+2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-folder-diff-async-callback): New variable.
+	(elmo-folder-diff-async-callback-data): Ditto.
+	(elmo-folder-diff-async): New function.
+
+	* elmo-net.el (elmo-network-session-name-prefix): New variable.
+	(elmo-network-session-cache-key): Use it as a prefix of the session
+	name.
+	(elmo-network-open-session): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-status-callback): New local variable.
+	(elmo-imap4-status-callback-data): Ditto.
+	(elmo-imap4-server-diff-async-callback): New variable.
+	(elmo-imap4-server-diff-async-callback-data): Ditto.
+	(elmo-imap4-local-variables): Added `elmo-imap4-status-callback' and
+	`elmo-imap4-status-callback-data'.
+	(elmo-imap4-max-of-folder): Set `elmo-imap4-status-callback' and
+	`elmo-imap4-status-callback-data' as nil.
+	(elmo-imap4-server-diff): Ditto.
+	(elmo-imap4-server-diff-async-callback-1): New function.
+	(elmo-imap4-server-diff-async): Ditto.
+	(elmo-imap4-parse-status): Call `elmo-imap4-status-callback'.
+
 2000-09-24  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-util.el (elmo-list-delete): Doc fix.
