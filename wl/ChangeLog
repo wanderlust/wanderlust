@@ -1,3 +1,7 @@
+2003-09-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.13.
+
 2003-09-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-previous-history-element): Fixed
