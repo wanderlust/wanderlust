@@ -928,7 +928,12 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	    (signal 'elmo-open-error
 		    '(elmo-imap4-starttls-error)))
 	(elmo-imap4-send-command-wait session "starttls")
-	(starttls-negotiate process)))))
+	(starttls-negotiate process)
+	(elmo-imap4-session-set-capability-internal
+	 session
+	 (elmo-imap4-response-value
+	  (elmo-imap4-send-command-wait session "capability")
+	  'capability))))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-imap4-session))
