@@ -304,6 +304,28 @@
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))
 
+(luna-define-method elmo-folder-rename ((folder elmo-pipe-folder) new-name)
+  (let* ((new-folder (elmo-make-folder new-name)))
+    (unless (string= (elmo-folder-name-internal
+		      (elmo-pipe-folder-src-internal folder))
+		     (elmo-folder-name-internal
+		      (elmo-pipe-folder-src-internal new-folder)))
+      (error "Source folder differ"))
+    (unless (eq (elmo-folder-type-internal
+		 (elmo-pipe-folder-dst-internal folder))
+		(elmo-folder-type-internal
+		 (elmo-pipe-folder-dst-internal new-folder)))
+      (error "Not same folder type"))
+    (if (or (file-exists-p (elmo-folder-msgdb-path
+			    (elmo-pipe-folder-dst-internal new-folder)))
+	    (elmo-folder-exists-p
+	     (elmo-pipe-folder-dst-internal new-folder)))
+	(error "Already exists folder: %s" new-name))
+    (elmo-folder-send (elmo-pipe-folder-dst-internal folder)
+		      'elmo-folder-rename-internal
+		      (elmo-pipe-folder-dst-internal new-folder))
+    (elmo-msgdb-rename-path folder new-folder)))
+
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
 
