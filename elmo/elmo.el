@@ -485,6 +485,8 @@ Return newly created temporary directory name which contains temporary files.")
     (setq message-id (elmo-msgdb-overview-entity-get-id entity))
     (setq number (elmo-msgdb-overview-entity-get-number entity))
     (setq cache-file (elmo-file-cache-get message-id))
+    (setq ignore-cache (or ignore-cache
+			   (null (elmo-message-use-cache-p folder number))))
     (if (or ignore-cache
 	    (null (elmo-file-cache-status cache-file)))
 	;; No cache or ignore-cache.
