@@ -197,21 +197,16 @@ which is corresponded to the FOLDER."
       (concat "+" (expand-file-name "spool" (elmo-folder-msgdb-path
 					     (, folder)))))))
 
-(defun elmo-dop-spool-folder-append-buffer (folder)
+(defun elmo-dop-spool-folder-append-buffer (folder flags)
   "Append current buffer content to the dop spool folder.
 FOLDER is the folder structure.
 Return a message number."
-  (setq folder (elmo-dop-spool-folder folder))
-  (unless (elmo-folder-exists-p folder)
-    (elmo-folder-create folder))
-  (let ((new-number (1+ (car (elmo-folder-status folder)))))
-    ;; dop folder is a localdir folder.
-    (write-region-as-binary (point-min) (point-max)
-			  (expand-file-name
-			   (int-to-string new-number)
-			   (elmo-localdir-folder-directory-internal folder))
-			  nil 'no-msg)
-    new-number))
+  (let ((spool (elmo-dop-spool-folder folder)))
+    (unless (elmo-folder-exists-p spool)
+      (elmo-folder-create spool))
+    (let ((new-number (1+ (car (elmo-folder-status spool)))))
+      (elmo-folder-append-buffer spool flags new-number)
+      new-number)))
 
 
 (defun elmo-dop-spool-folder-list-messages (folder)
@@ -235,13 +230,15 @@ FOLDER is the folder structure."
 				 'car
 				 (car (elmo-dop-queue-arguments queue)))))))))
 
+(defun elmo-dop-filter-pending-messages (numbers)
+  (elmo-delete-if (lambda (number) (< number 0)) numbers))
+
 ;;; DOP operations.
 (defsubst elmo-folder-append-buffer-dop (folder &optional flag number)
   (elmo-dop-queue-append
    folder 'elmo-folder-append-buffer-dop-delayed
    (list flag
-	 (elmo-dop-spool-folder-append-buffer
-	  folder)
+	 (elmo-dop-spool-folder-append-buffer folder flag)
 	 number)))
 
 (defsubst elmo-folder-delete-messages-dop (folder numbers)
@@ -269,34 +266,36 @@ FOLDER is the folder structure."
   (elmo-dop-queue-append folder 'elmo-folder-create-dop-delayed nil))
 
 (defsubst elmo-folder-set-flag-dop (folder numbers flag)
-  (let ((method (case flag
-		  (unread
-		   'elmo-folder-unset-read-delayed)
-		  (read
-		   'elmo-folder-set-read-delayed)
-		  (important
-		   'elmo-folder-set-important-delayed)
-		  (answered
-		   'elmo-folder-set-answered-delayed))))
-    (if method
-	(elmo-dop-queue-append folder method (list numbers))
-      (elmo-dop-queue-append folder 'elmo-folder-set-flag
-			     (list numbers flag)))))
+  (when (setq numbers (elmo-dop-filter-pending-messages numbers))
+    (let ((method (case flag
+		    (unread
+		     'elmo-folder-unset-read-delayed)
+		    (read
+		     'elmo-folder-set-read-delayed)
+		    (important
+		     'elmo-folder-set-important-delayed)
+		    (answered
+		     'elmo-folder-set-answered-delayed))))
+      (if method
+	  (elmo-dop-queue-append folder method (list numbers))
+	(elmo-dop-queue-append folder 'elmo-folder-set-flag
+			       (list numbers flag))))))
 
 (defsubst elmo-folder-unset-flag-dop (folder numbers flag)
-  (let ((method (case flag
-		  (unread
-		   'elmo-folder-set-read-delayed)
-		  (read
-		   'elmo-folder-unset-read-delayed)
-		  (important
-		   'elmo-folder-unset-important-delayed)
-		  (answered
-		   'elmo-folder-unset-answered-delayed))))
-    (if method
-	(elmo-dop-queue-append folder method (list numbers))
-      (elmo-dop-queue-append folder 'elmo-folder-unset-flag
-			     (list numbers flag)))))
+  (when (setq numbers (elmo-dop-filter-pending-messages numbers))
+    (let ((method (case flag
+		    (unread
+		     'elmo-folder-set-read-delayed)
+		    (read
+		     'elmo-folder-unset-read-delayed)
+		    (important
+		     'elmo-folder-unset-important-delayed)
+		    (answered
+		     'elmo-folder-unset-answered-delayed))))
+      (if method
+	  (elmo-dop-queue-append folder method (list numbers))
+	(elmo-dop-queue-append folder 'elmo-folder-unset-flag
+			       (list numbers flag))))))
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
@@ -324,37 +323,29 @@ FOLDER is the folder structure."
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
-	(flags (cond ((listp flag)
-		      flag)
-		     ;; for compatibility
-		     ((eq flag t)
-		      nil)
-		     (t
-		      (list flag))))
-	failure saved dequeued)
+	flags)
     (with-temp-buffer
-      (if (elmo-message-fetch spool-folder number
-			      (elmo-make-fetch-strategy 'entire)
-			      nil (current-buffer) 'unread)
-	  (condition-case nil
-	      (setq failure (not
-			     (elmo-folder-append-buffer
-			      folder
-			      flags
-			      set-number)))
-	    (error (setq failure t)))
-	(setq dequeued t)) ; Already deletef from queue.
-      (when failure
-	;; Append failed...
-	(setq saved (elmo-folder-append-buffer
-		     (elmo-make-folder elmo-lost+found-folder)
-		     flags
-		     set-number)))
-      (if (and (not dequeued)    ; if dequeued, no need to delete.
-	       (or (not failure) ; succeed
-		   saved))       ; in lost+found
-	  (elmo-folder-delete-messages spool-folder (list number)))
-      t)))
+      (when (elmo-message-fetch spool-folder number
+				(elmo-make-fetch-strategy 'entire)
+				nil (current-buffer) 'unread)
+	(setq flags (or (elmo-message-flags-for-append folder (* -1 number))
+			(cond ((listp flag)
+			       flag)
+			      ;; for compatibility with 2.11.12 or earlier
+			      ((eq flag t)
+			       nil)
+			      (t
+			       (list flag)))))
+	(when (or (condition-case nil
+		      (elmo-folder-append-buffer folder flags set-number)
+		    (error))
+		  ;; Append failed...
+		  (elmo-folder-append-buffer
+		   (elmo-make-folder elmo-lost+found-folder)
+		   flags))
+	  (elmo-folder-delete-messages spool-folder (list number)))))
+    ;; ignore failure (already dequed)
+    t))
 
 (defun elmo-folder-delete-messages-dop-delayed (folder number-alist)
   (ignore-errors

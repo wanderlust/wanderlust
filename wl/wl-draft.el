@@ -1591,14 +1591,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (goto-char (point-max))
       (insert-buffer-substring send-mail-buffer header-end)
       (let ((id (std11-field-body "Message-ID"))
-	    (elmo-enable-disconnected-operation t)
-	    cache-saved)
+	    (elmo-enable-disconnected-operation t))
 	(while fcc-list
-	  (unless (or cache-saved
-		      (elmo-folder-plugged-p
-		       (wl-folder-get-elmo-folder (car fcc-list))))
-	    (elmo-file-cache-save id nil) ;; for disconnected operation
-	    (setq cache-saved t))
 	  (if (elmo-folder-append-buffer
 	       (wl-folder-get-elmo-folder
 		(eword-decode-string (car fcc-list)))

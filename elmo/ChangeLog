@@ -1,3 +1,23 @@
+2004-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-flags-for-append): New function.
+	(elmo-generic-folder-append-messages): Use it.
+
+	* elmo-split.el (elmo-split-subr): Ditto.
+
+	* elmo-dop.el (elmo-dop-spool-folder-append-buffer): Add argument
+	`flags' and use elmo-folder-append-buffer instead of
+	write-region-as-binary.
+	(elmo-dop-filter-pending-messages): New function.
+	(elmo-folder-append-buffer-dop): Call
+	elmo-dop-spool-folder-append-buffer with `flag'.
+	(elmo-folder-set-flag-dop): Filter messages by
+	elmo-dop-filter-pending-messages.
+	(elmo-folder-unset-flag-dop): Ditto.
+	(elmo-folder-append-buffer-dop-delayed): Use
+	elmo-message-flags-for-append to get flags of the message and
+	simplify.
+
 2004-11-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-mime.el (elmo-mime-display-as-is): Treat ignore-cache argument.

@@ -337,16 +337,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					  nil (current-buffer) 'unread))
 		(run-hooks 'elmo-split-fetch-hook)
 		(setq elmo-split-message-entity (mime-parse-buffer))
-		(setq flags
-		      (let ((this-id (elmo-message-field folder
-							 msg
-							 'message-id)))
-			(and this-id
-			     (string= this-id
-				      (elmo-msgdb-get-message-id-from-buffer))
-			     (or (elmo-message-flags folder msg)
-				 ;; message exists, but no flag.
-				 '(read)))))
+		(setq flags (elmo-message-flags-for-append folder msg))
 		(catch 'terminate
 		  (dolist (rule (append elmo-split-rule default-rule))
 		    (setq elmo-split-match-string-internal nil)

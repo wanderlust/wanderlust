@@ -472,6 +472,19 @@ Return newly created temporary directory name which contains temporary files.")
 FOLDER is a ELMO folder structure.
 NUMBER is a number of the message.")
 
+(defun elmo-message-flags-for-append (folder number &optional message-id)
+  "Return a list of flags for `elmo-folder-append-buffer'.
+FOLDER is a ELMO folder structure.
+NUMBER is a number of the message.
+If optional argument MESSAGES-ID is not specified, get it from current buffer."
+  (let ((this-id (elmo-message-field folder number 'message-id)))
+    (and this-id
+	 (string= this-id (or message-id
+			      (elmo-msgdb-get-message-id-from-buffer)))
+	 (or (elmo-message-flags folder number)
+	     ;; message exists, but no flag.
+	     '(read)))))
+
 (luna-define-method elmo-message-flag-available-p ((folder elmo-folder) number
 						   flag)
   (elmo-msgdb-flag-available-p (elmo-folder-msgdb folder) flag))
@@ -1064,13 +1077,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     (let ((this-id (elmo-message-field src-folder (car numbers)
-							'message-id)))
-		       (and this-id
-			    (string= this-id
-				     (elmo-msgdb-get-message-id-from-buffer))
-			    (or (elmo-message-flags src-folder (car numbers))
-				'(read))))
+		     (elmo-message-flags-for-append src-folder (car numbers))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
