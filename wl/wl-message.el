@@ -629,10 +629,16 @@ Returns non-nil if bottom of message."
 			))))))
 	  ;; finish prefetch
 	  (when wl-message-buffer-prefetch-debug
-	    (message "Buffer Cached Messages %S"
-		     (mapcar '(lambda (cache)
-				(nth 1 (car cache)))
-			     wl-message-buffer-cache))) ))))
+	    (message "Buffer Cached Messages: %s"
+		     (mapconcat
+		      '(lambda (cache)
+			 (if (string=
+			      (nth 0 (car cache))
+			      (elmo-folder-name-internal folder))
+			     (format "%d"
+				     (nth 1 (car cache)))
+			   (format "*%d" (nth 1 (car cache)))))
+		      wl-message-buffer-cache " "))) ))))
 
 (defvar wl-message-button-map (make-sparse-keymap))
 
