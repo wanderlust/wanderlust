@@ -705,25 +705,15 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-check-environment (no-check-folder)
   (unless wl-from (elmo-warning "Please set `wl-from'."))
   ;; Message-ID
-  (let (from domain)
-    (if wl-message-id-use-wl-from
-	(if (and (setq from (wl-address-header-extract-address wl-from))
-		 (string-match "^\\(.*\\)@\\(.*\\)$" from))
-	    (setq domain (match-string 2 from))
-	  (elmo-warning
-	   "Please set `wl-from' to get valid Message-ID string."))
-      (setq domain
-	    (or wl-message-id-domain
-		(if wl-local-domain
-		    (concat (system-name) "." wl-local-domain)
-		  (system-name)))))
-    (unless (string-match "[^.]\\.[^.]" domain)
-      (elmo-warning "Please set `wl-local-domain' to get valid FQDN."))
-    (if (string-match "@" domain)
-	(error "Please remove `@' from `wl-message-id-domain'."))
-    (if (string= wl-local-domain "localdomain")
-	(elmo-warning "Please set `wl-local-domain' properly."))
-    (if (string= domain "localhost.localdomain")
+  (let ((message-id (funcall wl-message-id-function))
+	domain)
+    (unless (string-match "^<\\(.*\\)@\\(.*\\)>$" message-id)
+      (error "Please check `wl-message-id-function'."))
+    (if (string-match "@" (match-string 1 message-id))
+	(error "Cannot get valid Message-ID string."))
+    (setq domain (match-string 2 message-id))
+    (if (or (not (string-match "[^.]\\.[^.]" domain))
+	    (string= domain "localhost.localdomain"))
 	(elmo-warning
 	 "Please set `wl-message-id-domain' to get valid Message-ID string.")))
   ;; folders
