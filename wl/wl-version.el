@@ -67,6 +67,7 @@ If ARG insert string at point."
   "An alist to define the version status.")
 
 (defun wl-version-status ()
+  "Return version status (\"stable\" or \"beta\")."
   (let ((salist wl-version-status-alist)
 	status)
     (while salist
@@ -92,7 +93,8 @@ Insert User-Agent field instead of X-Mailer field."
   (concat "User-Agent: " (wl-generate-user-agent-string-1 t)))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
-  "Return User-Agent field value."
+  "Return User-Agent field value.
+If VERBOSE return with SEMI, FLIM and APEL version"
   (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
 			      mime-edit-insert-user-agent-field
 			      mime-edit-user-agent-value)))
