@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 15:44:44 teranisi>
+;; Time-stamp: <00/06/22 11:47:35 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -83,6 +83,8 @@
 	(if wl-plugged
 	    wl-plug-state-indicator-on
 	  wl-plug-state-indicator-off))
+  (if wl-plugged
+      (wl-toggle-plugged t 'flush))
   (force-mode-line-update t))
 
 (defun wl-toggle-plugged (&optional arg queue-flush-only)
@@ -650,7 +652,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			(list (format "%s\\(:.*\\)?"
 				      (default-value 'wl-message-buf-name))
 			      wl-original-buf-name
-			      wl-folder-buffer-name)
+			      wl-folder-buffer-name
+			      wl-plugged-buf-name)
 			"\\|")))
     (elmo-buffer-cache-clean-up)
     (if (fboundp 'mmelmo-cleanup-entity-buffers)
