@@ -5,47 +5,75 @@
 					Yuuichi Teranishi 寺西裕一,
 					Tsunehiko Baba    馬場恒彦
 
-MIME用モジュールのインストール
-==============================
+MIME用モジュールの選択
+======================
 
-  Wanderlust を使うためには、以下のどちらかの MIME 用モジュールをイン
-  ストールしておく必要があります。機能が充実している SEMI の使用をお勧
-  めします。
+  Wanderlust を使うためには、以下のどちらかの MIME 用モジュールをインス
+  トールしておく必要があります。機能が充実している SEMI の使用をお勧めし
+  ます。
 
 	SEMI    (1.14.1 以上)
 	tm      (8.7 以上)
 
-  Emacs 19.28 以前をベースとした Mule をお使いの場合は tm をインストー
-  ルしてください。SEMI は動きません。
+  SEMI には APEL, FLIM と呼ばれるパッケージも必要です。主な Emacsen につ
+  いて推奨される APEL, FLIM, SEMI の組合せを以下に示します。
 
-  Emacs 19.34 ベースの Mule では SEMI を動作させることも可能です。
-  下記のページが参考になります。
-
-	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
-
-
-(a) SEMI のインストール
-
-  SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
-  推奨される APEL, FLIM, SEMI の組合せは以下の通りです。
+(a) XEmacs 21.0 以降
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-  APEL, FLIM, SEMI, パッケージはそれぞれ以下の URL で入手可能です。
+  可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
-	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
-	FLIM:     ftp://ftp.m17n.org/pub/mule/flim/
-	SEMI:     ftp://ftp.m17n.org/pub/mule/semi/
+(b) Emacs 20.4 以降
 
-  APEL, FLIM, SEMI の順にインストールしてください。基本的にすべて
+	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
+
+(c) Emacs 20.1〜20.3
+
+	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+
+  FLIM が動きませんので、代わりに CLIME をインストールしてください。
+
+(d) Emacs 19.34 (Mule 2.3)
+
+	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+
+  Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記の
+  ページが参考になります。
+
+	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+
+(e) Emacs 19.28 以前
+
+	APEL 10.3, CLIME 1.14.0, tm-8.8
+
+  SEMI は動きませんので、tm をインストールしてください。APEL, CLIME を最
+  新版に入れ替える必要もあります。
+
+
+MIME用モジュールのインストール
+==============================
+
+  パッケージはそれぞれ以下の URL で入手可能です。
+
+	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
+	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
+	CLIME:
+	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
+	tm:	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
+
+(a) SEMI のインストール
+
+  APEL, FLIM(CLIME), SEMI の順にインストールしてください。基本的にすべて
   make install の実行で済むはずです。
 
   詳しいインストールの方法は各パッケージに添付されているドキュメント 
   (README.ja, README.en) を参照してください。
 
-  その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
-  それらのいずれも利用することが可能です。
-  基本的に最新版の組合せなら動作するはずです。
+  その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、それら
+  のいずれも利用することが可能です。基本的に最新版の組合せなら動作するは
+  ずです。
+
   例えば、以下の組合せの動作が確認されています。
 
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
@@ -53,12 +81,8 @@ MIME用モジュールのインストール
 
 (b) tm のインストール
 
-  tm 8.7 以降のバージョンが必要です。入手先を以下に示します。
-
-	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
-
-  詳しいインストールの方法はパッケージに添付されているドキュメント
-  (README.en) を参照してください。
+  tm 8.7 以降のバージョンが必要です。詳しいインストールの方法はパッケー
+  ジに添付されているドキュメント(README.en)を参照してください。
 
   tm 8.8 以前のバージョンでは、
 
@@ -66,8 +90,6 @@ MIME用モジュールのインストール
 
   というエラーがでることがあります。この場合、APEL 10.2 以降をイ
   ンストールしてください。
-
-	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
 
 
 通常のインストール
@@ -184,3 +206,8 @@ load-path の設定
   各自でホームディレクトリにコピーして編集するなどしてください。
 
   詳しい設定は Info を御覧ください。
+
+
+Local Variables: 
+fill-column: 72
+End:
