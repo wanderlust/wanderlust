@@ -36,6 +36,13 @@ elmo-folder-check でオリジナルフォルダの msgdb を sync する。
 nil なら original は利用しない。
 msgdb への操作はなるべく抽象化すること。
 
+* マークの更新
+
+! や $ や & (予定) などの操作により手動で更新される場合と、
+elmo-message-fetch や、elmo-message-encache などにより自動的に更新され
+る場合がある。更新されたマークは、操作のあとで elmo-message-mark を呼
+び出すことにより得られる。
+
 * global mark の管理
 
  elmo-marked-message-folder を作り、そこに置くようにする。
@@ -55,7 +62,6 @@ msgdb への操作はなるべく抽象化すること。
 seen-list は廃止し、{"<message-id>" => "mark"} のハッシュテーブルとする。
 
 elmo-msgdb-id-mark-table-load:
-
 id-mark-table があれば使う。cons cell の list を hashtable にする。
 なければ、seen-list をさがす => seen-list ファイルは消す
 
