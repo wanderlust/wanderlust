@@ -1,3 +1,25 @@
+2001-05-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft): use `wl-summary-write-current-folder'
+	instead of `wl-summary-write-current-newsgroup'.
+
+2001-05-19  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-summary.el (wl-summary-auto-select-msg-p): New function.
+	(wl-summary-goto-folder-subr): If `wl-auto-select-first' is
+	non-nil and selected message is important, do not display.
+
+2001-05-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl.el (wl): Omit `wl-check-environment' if wl-init is nil.
+
+2001-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-plugged-dop-queue-info): Fixed for new queue structure.
+
+	* wl-summary.el (wl-summary-mark-as-important): Set message number
+	using wl-summary-message-number.
+
 2001-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-exec-subr): Fixed problem when
@@ -81,7 +103,7 @@
 	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay):
 	Check wl-message-buffer lives before set-buffer.
 
-2001-04-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+2001-04-22  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-expire.el (wl-summary-expire): Fixed problem that do not expire
 	called in folder mode.

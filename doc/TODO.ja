@@ -1,3 +1,5 @@
+elmo-search で msgdb とフォルダ本体をシームレスに検索
+pick/virtual の completion 統合
 msgdb 構造の見直しと obarray 化
 重要マークの管理
 サマリフォーマット自由化

@@ -1319,7 +1319,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (if (or (eq wl-draft-reply-buffer-style 'full)
 	    (eq this-command 'wl-draft)
 	    (eq this-command 'wl-summary-write)
-	    (eq this-command 'wl-summary-write-current-newsgroup))
+	    (eq this-command 'wl-summary-write-current-folder))
 	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
