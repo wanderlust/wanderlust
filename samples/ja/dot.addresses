@@ -1,14 +1,13 @@
 #
-# ~/.addresses アドレス帳ファイルサンプル
+# アドレスファイルサンプル
+#                    by Yuuichi Teranishi <teranisi@gohome.org>
+# Time-stamp: <98/06/15 00:32:30 teranisi>
 #
 # '#' で始まる行はコメント。
 # 空行は無視。
 #
-# 書式:
 # メールアドレス  "あだ名" "本名"
 #
-# あだ名はサマリの表示に、本名は To: フィールドに使われます。
-#
 teranisi@gohome.org		"てらにし"	"寺西裕一"
-foo@example.com			"ふーさん"	"John Foo"
-bar@example.org			"ばーさん"	"Michael Bar"
+foo@bar.com			"ふーさん"	"Mr. Foo"
+bar@foo.com			"ばーさん"	"Mr. Bar"

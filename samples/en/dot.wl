@@ -181,8 +181,7 @@
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
     (if (string-match
-;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-         "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
 	  (setq subj (substring subject-string (match-end 0)))
