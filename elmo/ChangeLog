@@ -1,3 +1,8 @@
+2002-01-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-utils.el (elmo-read-search-condition-internal): REQUIRE-MATCH
+	is nil on `completing-read'.
+
 2002-01-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-extra-namespace-alist): Added grouping
