@@ -183,8 +183,8 @@ It calls following-method selected from variable
 	  ((and (setq symbol (intern-soft (format "wl-%s" name)))
 		(boundp symbol))
 	   (symbol-value symbol))
-	  (t
-	   attr))))
+	  ((boundp attr)
+	   (symbol-value attr)))))
 
 (defun wl-draft-preview-message ()
   "Preview editing message."
