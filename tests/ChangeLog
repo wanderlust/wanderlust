@@ -1,3 +1,7 @@
+2002-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-dist.el (test-version-toplevel-changelog): Fixed regexp.
+
 2002-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el (test-version-readme): New testcase.
