@@ -2359,7 +2359,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    (if (or (zerop (% i 5)) (= i len))
 		(elmo-display-progress
 		 'wl-folder-open-all "Opening all folders..."
-		 (/ (* i 100) len)))))))
+		 (/ (* i 100) len)))))
+	(when (> len elmo-display-progress-threshold)
+	  (elmo-display-progress
+	   'wl-folder-open-all "Opening all folders..." 100))))
     (message "Opening all folders...done.")
     (set-buffer-modified-p nil)))
 
