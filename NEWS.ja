@@ -3,10 +3,13 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust. 10 May 2
 * 1.1.1 $B$+$i(B version 2.4.0 $B$X$NJQ99E@(B
 
 ** $B%P!<%8%g%sHV9f(B
-2.3.0 $B0J9_$O!"BhFsHV9f$,6v?t$J$i0BDjHG!"4q?t$J$i3+H/HG$H$J$j$^$9!#(B
+$B%P!<%8%g%sHV9f$NIU$1J}$,JQ$o$j$^$7$?!#(B
+$B$3$l$^$G!"(B1.x $B$,0BDjHG!"(B2.0.x$B!A(B2.2.x $B$,3+H/HG$H$J$C$F$$$^$7$?$,!"(B2.3.0 
+$B0J9_$O!"BhFsHV9f$,6v?t$J$i0BDjHG!"4q?t$J$i3+H/HG$H$J$j$^$7$?!#$3$N%P!<(B
+$B%8%g%sHV9f$NIU$1J}$O0lHLE*$J%*!<%W%s%=!<%93+H/$N47=,$K4p$E$/$b$N$G$9!#(B
 
-$B8x3+(B CVS $B%5!<%P(B cvs.m17n.org $B>e(B $B$G$O!"44$,(B beta ($B3+H/(B)$BHG!$(B
-$B;^$,(B stable ($B0BDj(B)$BHG(B ($B;^L>$O!$(B2.4.x $B$J$i(B wl-2_4) $B$H$J$j$^$9!#(B
+$B8x3+(B CVS $B%5!<%P(B cvs.m17n.org $B>e(B $B$G$O!"44$,(B beta ($B3+H/(B)$BHG!"(B
+$B;^$,(B stable ($B0BDj(B)$BHG(B ($B;^L>$O!"(B2.4.x $B$J$i(B wl-2_4) $B$H$J$j$^$9!#(B
 
 ** $B%$%s%9%H!<%k(B
 
@@ -20,6 +23,8 @@ tm-8 $B$r;HMQ$9$kJ}$OFC$K$4Cm0U$/$@$5$$!#(B
 
 *** LDAP $B%5%]!<%H(B
 LDAP $B%5!<%P!<$H@\B3$7!"%"%I%l%9$NJd40$r9T$($^$9!#(B
+$BJQ?t(B wl-use-ldap $B$,(B non-nil $B$K@_Dj$5$l$F$$$k$H(B LDAP $B$rMxMQ$7$^$9(B
+($B=i4|@_Dj$O(B nil)$B!#(B
 
 *** POP3 $B%U%)%k%@$G(B UIDL $B%5%]!<%H(B
 POP3 $B%U%)%k%@$G%5%^%j$N>uBV$rJ]B8$G$-$k$h$&$K$J$j!"%"%/%;%9$,9bB.2=$5$l$^$7$?!#(B
@@ -28,7 +33,7 @@ POP3 $B%U%)%k%@$G%5%^%j$N>uBV$rJ]B8$G$-$k$h$&$K$J$j!"%"%/%;%9$,9bB.2=$5$l$^$7$?
 
 *** biff $B5!G=(B
 $B0lDj;~4V$*$-$K%5!<%P$K%a!<%k$,FO$$$F$$$k$+3NG'$7$^$9!#(B
-$BFO$$$F$$$l$P%b!<%I%i%$%s$KI=<($7!$%U%)%k%@0lMw%b!<%I$r99?7$7$^$9!#(B
+$BFO$$$F$$$l$P%b!<%I%i%$%s$KI=<($7!"%U%)%k%@0lMw%b!<%I$r99?7$7$^$9!#(B
 
 *** expire-hide 
 $B5-;v<+BN$O>C$9$3$H$J$/!"%5%^%j$K8+$($k5-;v?t$r0lDj$KJ]$D$3$H$,$G(B
@@ -48,7 +53,7 @@ NNTP $B%U%)%k%@$G:o=|$7$?%a%C%;!<%8$O(B killed-list $B$KJ]B8$7$^$9!#(B
 killed-list $B$K$"$k%a%C%;!<%8$O%5!<%P>e$K$bB8:_$7$J$$$+$N$h$&$K07(B
 $B$$$^$9!#JQ?t(B elmo-use-killed-list $B$,(B non-nil $B$J$i(B killed-list $B$r(B
 $B;HMQ$7$^$9(B($B%G%U%)%k%H$O(B t)$B!#(B
-$B$3$l$K$h$C$F(B NNTP $B$rMxMQ$7$?%Q%$%W%U%)%k%@$b<B8=$G$-$k$h$&$K$J$j$^$7$?!%(B
+$B$3$l$K$h$C$F(B NNTP $B$rMxMQ$7$?%Q%$%W%U%)%k%@$b<B8=$G$-$k$h$&$K$J$j$^$7$?!#(B
 
 *** Maildir $B$G(B pack ($BHV9f5M$a(B) $B$,$G$-$k$h$&$K$J$j$^$7$?!#(B
 Maildir $B$N%5%^%j$G(B M-x wl-summary-pack-number $B$r<B9T$9$k$H%a%C%;!<%8HV9f$r(B
@@ -80,24 +85,24 @@ AND $B>r7o$d(B OR $B>r7o$bF~NO$G$-$^$9!#(B
 *** elmo-default-*-authenticate-type $B$O%7%s%\%k$G@_Dj$9$k$h$&$K$J$j$^$7$?!#(B
 $BNc$($P!"(B
 (setq elmo-default-imap4-authenticate-type "cram-md5")
-$B$H$$$&@_Dj$O!$(B
+$B$H$$$&@_Dj$O!"(B
 (setq elmo-default-imap4-authenticate-type 'cram-md5)
-$B$KJQ99$9$kI,MW$,$"$j$^$9!%(B
+$B$KJQ99$9$kI,MW$,$"$j$^$9!#(B
 
 *** stream-type $B$NDj5AJ}K!$rJQ99$7$^$7$?!#(B
-$BJQ?t(B elmo-network-{imap4,pop3,nntp}-stream-type-alist $B$G@_Dj!#(B
-ssl $B4XO"$N$$$/$D$+$NJQ?t$rGQ;_(B($B2~L>(B)$B!#(B 
+$BJQ?t(B elmo-network-{imap4-,pop3-,nntp-,}stream-type-alist $B$G@_Dj2DG=$G$9!#(B
+SSL $B4XO"$N$$$/$D$+$NJQ?t$,GQ;_$5$l$^$7$?(B($B2~L>(B)$B!#(B 
 $B$^$?!"?7$?$K(B "!socks" $B$G=*$o$k%M%C%H%o!<%/7O%U%)%k%@(B(IMAP4, NNTP, POP3)$B$O(B
 SOCKS $B7PM3$G%"%/%;%9$5$l$k$h$&$K$J$j$^$7$?!#(B
 
 ** $B%I%i%U%H(B
 
-*** group-list $B$KBP1~$7$^$7$?!%(B
+*** group-list $B$KBP1~$7$^$7$?!#(B
 $B08@h$K(B Group: foo@gohome.org, bar@gohome.org; $B$N$h$&$K=q$1$k$h$&$K(B
 $B$J$j$^$7$?!#JQ?t(B wl-draft-remove-group-list-contents $B$,(B t $B$J$i(B
 group-list $B$NFbMF$r:o=|$7$FAw?.$7$^$9!#(B
 
-*** $B%I%i%U%H$N%W%l%S%e!<$G<u<h?M$N%"%I%l%9$,%_%K%P%C%U%!$KI=<(!#(B
+*** $B%I%i%U%H$N%W%l%S%e!<$G<u<h?M$N%"%I%l%9$,%_%K%P%C%U%!$KI=<($5$l$^$9!#(B
 group-list $B$K$bBP1~$7$F$$$^$9!#(B
 
 *** $B=i4|@_Dj$G(B Reply-To: $B$r9MN8$9$k$h$&$K$J$j$^$7$?!#(B
@@ -146,7 +151,7 @@ wl-highlight-folder-by-numbers $B$K2~L>$5$l!"CM$K1~$8$F0J2<$N0UL#$r;}$D$h$&$K(
 wl-message-visible-field-list $B$G!"(BWanderlust $B%l%Y%k$G@_Dj$,2DG=(B
 $B$K$J$j$^$7$?!#(B($B:#$^$G$O(B SEMI $B$G@_Dj$9$kI,MW$,$"$j$^$7$?(B)
 
-*** DEMO $B$NI=<(J}K!$,JQ$o$j$^$7$?!%(B
+*** DEMO $B$NI=<(J}K!$,JQ$o$j$^$7$?!#(B
 $B%+%i!<$N%T%C%/%9%^%C%W$GMxMQ$9$k?'?t$,:o8:$5$l$^$7$?!#(B
 $B$^$?!"J8;z$N$_$7$+I=<($G$-$J$$4D6-$G$b$=$l$J$j$N%G%b$,I=<($5$l$k$h$&$K(B
 $B$J$j$^$7$?!#(B
@@ -172,95 +177,95 @@ progress gauge $B$NI=<(5!G=$r$b$D(B Emacs $B$G$O!"=hM}$N?JD=$,(B progress ga
 
 ** $B%$%s%9%H!<%k(B
 
-*** tm7 $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!%(B
+*** tm7 $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
 
-$B$/$o$7$/$O(B INSTALL.ja $B$r8fMw2<$5$$!%(B
+$B$/$o$7$/$O(B INSTALL.ja $B$r8fMw2<$5$$!#(B
 
-*** WL_PREFIX $B$H(B ELMO_PREFIX $B$N=i4|@_Dj$,(B "wl" $B$K$J$j$^$7$?!%(B
+*** WL_PREFIX $B$H(B ELMO_PREFIX $B$N=i4|@_Dj$,(B "wl" $B$K$J$j$^$7$?!#(B
 (defvar WL_PREFIX "wl")
 (defvar ELMO_PREFIX "wl")
 
-$BNc$($P!$%$%s%9%H!<%k%G%#%l%/%H%j$O!$(B
+$BNc$($P!"%$%s%9%H!<%k%G%#%l%/%H%j$O!"(B
   1.0.3  /usr/local/share/emacs/site-lisp/
   1.1.0  /usr/local/share/emacs/site-lisp/wl/
-$B$H$J$j$^$9!%(B
+$B$H$J$j$^$9!#(B
 
-*** Makefile $B$NJQ?t$N%G%U%)%k%HCM$,JQ$o$j$^$7$?!%(B
+*** Makefile $B$NJQ?t$N%G%U%)%k%HCM$,JQ$o$j$^$7$?!#(B
 
 EMACS   = emacs
 XEMACS  = xemacs
-$(XEMACS) $B$O!$(B`package' $B$d(B `install-package' $B$N(B target $B$G;2>H$5$l$^$9!%(B
+$(XEMACS) $B$O!"(B`package' $B$d(B `install-package' $B$N(B target $B$G;2>H$5$l$^$9!#(B
 
-*** *.el $B%U%!%$%k$b%$%s%9%H!<%k$5$l$k$h$&$K$J$j$^$7$?!%(B
+*** *.el $B%U%!%$%k$b%$%s%9%H!<%k$5$l$k$h$&$K$J$j$^$7$?!#(B
 
-*** $B1Q8lHG%I%-%e%a%s%H(B (wl.texi) $B$,IU$-$^$7$?!%(B
+*** $B1Q8lHG%I%-%e%a%s%H(B (wl.texi) $B$,IU$-$^$7$?!#(B
 
 ** $B?75!G=(B
 
-*** Modified UTF7 $B$,%5%]!<%H$5$l$^$7$?!%(B
-$B%f%K%3!<%I$,07$($k(B Emacs $B$G$O!$(BIMAP4 $B$GF|K\8l%a!<%k%\%C%/%9L>$r;XDj$G$-$^$9!%(B
+*** Modified UTF7 $B$,%5%]!<%H$5$l$^$7$?!#(B
+$B%f%K%3!<%I$,07$($k(B Emacs $B$G$O!"(BIMAP4 $B$GF|K\8l%a!<%k%\%C%/%9L>$r;XDj$G$-$^$9!#(B
 
-*** $B%9%3%"5!G=$,IU$-$^$7$?!%(B
+*** $B%9%3%"5!G=$,IU$-$^$7$?!#(B
 
-*** $B%W%i%04IM}5!G=$,IU$-$^$7$?!%(B
+*** $B%W%i%04IM}5!G=$,IU$-$^$7$?!#(B
 
-*** IMAP4 $B$,$h$jHFMQE*$K$J$j$^$7$?!%(B
-$BB?$/$N(B IMAP4 $B%5!<%P$GF0$/$h$&$K$J$j$^$7$?!%(B
+*** IMAP4 $B$,$h$jHFMQE*$K$J$j$^$7$?!#(B
+$BB?$/$N(B IMAP4 $B%5!<%P$GF0$/$h$&$K$J$j$^$7$?!#(B
 
-*** $B$$$/$D$+$NG'>ZJ}<0$,%5%]!<%H$5$l$^$7$?!%(B
+*** $B$$$/$D$+$NG'>ZJ}<0$,%5%]!<%H$5$l$^$7$?!#(B
   IMAP4: CRAM-MD5, DIGEST-MD5, STARTTLS
   POP3:  CRAM-MD5, DIGEST-MD5, SCRAM-MD5, STARTTLS
   NNTP:  STARTTLS
   SMTP:  STARTTLS
 
-*** $B?7$7$$%U%)%k%@7?$,2C$o$j$^$7$?!%(B
-  |      $B%Q%$%W%U%)%k%@(B     $B%a%C%;!<%8$r<h$j9~$`%U%)%k%@$G$9!%(B
-  .      Maildir $B%U%)%k%@(B   Maildir $B$,$R$H$D$N%U%)%k%@7?$K$J$j$^$7$?!%(B
-  'cache $B%-%c%C%7%e%U%)%k%@(B $BFbIt%-%c%C%7%e$r%U%)%k%@$H$7$F1\Mw$G$-$^$9!%(B
+*** $B?7$7$$%U%)%k%@7?$,2C$o$j$^$7$?!#(B
+  |      $B%Q%$%W%U%)%k%@(B     $B%a%C%;!<%8$r<h$j9~$`%U%)%k%@$G$9!#(B
+  .      Maildir $B%U%)%k%@(B   Maildir $B$,$R$H$D$N%U%)%k%@7?$K$J$j$^$7$?!#(B
+  'cache $B%-%c%C%7%e%U%)%k%@(B $BFbIt%-%c%C%7%e$r%U%)%k%@$H$7$F1\Mw$G$-$^$9!#(B
 
-*** $B%a%C%;!<%8%P%C%U%!$N%W%j%U%'%C%A5!G=$,IU$-$^$7$?!%(B
-$BFI$s$G$$$k4V$K<!$N%a%C%;!<%8$rFI$_9~$_$^$9!%(B
+*** $B%a%C%;!<%8%P%C%U%!$N%W%j%U%'%C%A5!G=$,IU$-$^$7$?!#(B
+$BFI$s$G$$$k4V$K<!$N%a%C%;!<%8$rFI$_9~$_$^$9!#(B
 
-*** $B%9%F%#%C%-!<%5%^%j(B($B>C$($J$$%5%^%j(B)$B$,3HD%$5$l$^$7$?!%(B
-$B%a%C%;!<%8%P%C%U%!$b%5%^%j$KBP1~$7$FMQ0U$5$l$k$h$&$K$J$j$^$7$?!%(B
-$B>o$K%9%F%#%C%-!<$K$J$k%U%)%k%@$r@_Dj$G$-$k$h$&$K$J$j$^$7$?!%(B
+*** $B%9%F%#%C%-!<%5%^%j(B($B>C$($J$$%5%^%j(B)$B$,3HD%$5$l$^$7$?!#(B
+$B%a%C%;!<%8%P%C%U%!$b%5%^%j$KBP1~$7$FMQ0U$5$l$k$h$&$K$J$j$^$7$?!#(B
+$B>o$K%9%F%#%C%-!<$K$J$k%U%)%k%@$r@_Dj$G$-$k$h$&$K$J$j$^$7$?!#(B
 
 ** $B$=$NB>(B
 
-*** $BJQ?t(B wl-draft-prepared-config-alist $B$OGQ;_$5$l$^$7$?!%(B
-wl-draft-config-alist $B$KE}9g$5$l$^$7$?!%(B
+*** $BJQ?t(B wl-draft-prepared-config-alist $B$OGQ;_$5$l$^$7$?!#(B
+wl-draft-config-alist $B$KE}9g$5$l$^$7$?!#(B
 
-*** POP-before-SMTP $B4XO"$NJQ?t$,@0M}$5$l$^$7$?!%(B
+*** POP-before-SMTP $B4XO"$NJQ?t$,@0M}$5$l$^$7$?!#(B
 
-*** $BB8:_$7$J$$%U%)%k%@$r:n$k$+$I$&$+3NG'$9$k$h$&$K$J$j$^$7$?!%(B
- FCC: $B$K?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$d!$(Bauto-refile $B$G(B
- $B?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$K%U%)%k%@$r:n$k$+$I$&$+3NG'$7$^$9!%(B
+*** $BB8:_$7$J$$%U%)%k%@$r:n$k$+$I$&$+3NG'$9$k$h$&$K$J$j$^$7$?!#(B
+ FCC: $B$K?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$d!"(Bauto-refile $B$G(B
+ $B?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$K%U%)%k%@$r:n$k$+$I$&$+3NG'$7$^$9!#(B
 
-*** $B%W%j%U%'%C%A$N3NG'$K4X$9$k@_Dj$NJQ?t$,2C$o$j$^$7$?!%(B
+*** $B%W%j%U%'%C%A$N3NG'$K4X$9$k@_Dj$NJQ?t$,2C$o$j$^$7$?!#(B
 wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
 
-*** $B%U%)%k%@L>$N$"$@L>$r%U%)%k%@L>F~NO$GJd40$G$-$k$h$&$K$J$j$^$7$?!%(B
+*** $B%U%)%k%@L>$N$"$@L>$r%U%)%k%@L>F~NO$GJd40$G$-$k$h$&$K$J$j$^$7$?!#(B
 
-*** Message-ID $B$N@8@.J}K!$,JQ$o$j$^$7$?!%(B
+*** Message-ID $B$N@8@.J}K!$,JQ$o$j$^$7$?!#(B
 
-*** Mule $B$G$O%S%C%H%^%C%W$N%*!<%W%K%s%0%G%b2hLL$,=P$k$h$&$K$J$j$^$7$?!%(B
+*** Mule $B$G$O%S%C%H%^%C%W$N%*!<%W%K%s%0%G%b2hLL$,=P$k$h$&$K$J$j$^$7$?!#(B
 
-*** `smtp-server' $B$K4X?t$r;XDj$G$-$^$9!%(B
+*** `smtp-server' $B$K4X?t$r;XDj$G$-$^$9!#(B
 
-*** $BAw?.%m%0$,J]B8$5$l$k$h$&$K$J$j$^$7$?!%(B
-`wl-draft-sendlog' $B$,(B non-nil $B$N>l9g!$(B'sendlog' $B%U%!%$%k$KJ]B8$5$l$^$9!%(B
+*** $BAw?.%m%0$,J]B8$5$l$k$h$&$K$J$j$^$7$?!#(B
+`wl-draft-sendlog' $B$,(B non-nil $B$N>l9g!"(B'sendlog' $B%U%!%$%k$KJ]B8$5$l$^$9!#(B
 
-*** $B%*%U%i%$%s=hM}$G%W%j%U%'%C%A$rM=Ls$G$-$k$h$&$K$J$j$^$7$?!%(B
+*** $B%*%U%i%$%s=hM}$G%W%j%U%'%C%A$rM=Ls$G$-$k$h$&$K$J$j$^$7$?!#(B
 
 *** `wl-summary-incorporate-marks'
 
-*** `wl-draft-use-frame' $B$,(B non-nil $B$J$i%U%l!<%`$r@8@.$7$^$9!%(B
+*** `wl-draft-use-frame' $B$,(B non-nil $B$J$i%U%l!<%`$r@8@.$7$^$9!#(B
 
-*** $B?75,JQ?t(B `wl-user-mail-address-list'$B!%(B
+*** $B?75,JQ?t(B `wl-user-mail-address-list'$B!#(B
 
-*** $B?75,JQ?t(B `wl-local-domain'$B!%(B
+*** $B?75,JQ?t(B `wl-local-domain'$B!#(B
 
-*** IMAP4 $B$G%5!<%PB&$NL$FI>uBV$r;2>H$9$k$h$&$K$J$j$^$7$?!%(B
+*** IMAP4 $B$G%5!<%PB&$NL$FI>uBV$r;2>H$9$k$h$&$K$J$j$^$7$?!#(B
 
 *** $B=i4|@_Dj$,JQ99$5$l$?JQ?t(B
   wl-mime-charset         iso-2022-jp  =>  x-ctext
@@ -288,7 +293,7 @@ wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
   wl-summary-jump-to-msg-by-message-id-via-nntp
   wl-summary-temp-mark-pick
 
-* $BJQ99E@$N>\:Y$O(B ChangeLog $B$r8fMw2<$5$$!%(B
+* $BJQ99E@$N>\:Y$O(B ChangeLog $B$r8fMw2<$5$$!#(B
 
 Local variables:
 mode: outline

@@ -1,5 +1,166 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
+* Changes in 2.4.0 from 1.1.1.
 
+** Version Number
+The version numbering convention for Wanderlust is changed. 
+
+In earlier versions, 1.x were stable version and from 2.0.x to 2.2.x
+were beta version. But since version 2.3.0, the second (minor) version
+number implies the stability of the Wanderlust. Even minor number
+corresponds to a stable version, and an odd minor number corresponds
+to a development version. This version numbering is based on the
+widespread convention of open source development.
+
+On the open CVS server cvs.m17n.org, main trunk contains the current
+beta (newest experimental) version, and branches contain the stable
+version.  (If the version is 2.4.x, the branch name is wl-2_4)
+
+** Install
+
+*** FLIM 1.12 is not supported anymore.
+See the file INSTALL for details.
+
+*** APEL 10.2 or later is required.
+tm-8 users should check the version of APEL (tm-8.8 contains old APEL).
+
+** New feature
+
+*** LDAP support
+Complete e-mail address in draft by searching LDAP server.
+If the variable wl-use-ldap is non-nil, LDAP feature is enabled
+(Initial setting is nil).
+
+*** UIDL support in POP3 folder
+POP3 folder now saves the status of summary and it improves summary
+update speed. If the variable elmo-pop3-use-uidl is non-nil, UIDL is
+used (Initial setting is t).
+
+*** biff feature
+Server mailbox is checked periodically.
+If new mail is arrived, Wanderlust changes the biff (icon) on the modeline
+and updates folder mode content.
+
+*** expire-hide 
+Now expire mechanism has new feature `hide', it does not remove
+messages actually from folder but hides messages from summary. It
+improves processing speed for large folders.
+
+*** Message thread restoring feature
+Automatic correction of broken threads by subject matching is now available.
+Thread modification by hand (M-w (copy) and C-y (paste) in summary mode)
+is also available.
+
+*** Password expiration timer
+Password cache expires after elmo-passwd-life-time is passed.
+(nil means no expiration. Initial setting is nil)
+
+*** killed-list
+Deleted messages in the NNTP folder are saved to `killed-list'.  The
+messages in the killed-list are treated as if it were not exist on the
+server. Non-nil value for elmo-use-killed-list enables this feature
+(Initial setting is t). By this feature, NNTP pipe folder works correctly.
+
+*** Maildir pack is now available
+M-x wl-summary-pack-number in the summary mode of Maildir folder
+re-numbers the messages.
+
+** Searching
+
+*** Complex condition can be specified for filter folder
+AND condition, OR condition, NOT condition, and their combination can be
+ specified. Syntax of the condition part is changed. See info for details.
+
+Caution for those who upgrade from 1.1.1:
+By this change, saving directory for the msgdb of filter folder is altered.
+Former msgdbs are not needed anymore. It does not cause any problem but
+if you don't want to keep useless disk, you should remove files
+under the directory '.elmo/filter/' beforehand.
+
+*** Searching of the NNTP folder is available
+Now you can make NNTP filter folder.
+(If only your NNTP server responds to XHDR command.)
+
+*** Pick, Virtual in summary mode now accepts complex condition.
+You can set AND condition and OR condition by typing
+'AND' or 'OR' instead of field name.
+
+** Session, Authentication
+
+*** elmo-default-*-authenticate-type only accepts symbol(used be a string)
+Example:
+(setq elmo-default-imap4-authenticate-type "cram-md5")
+should be changed to
+(setq elmo-default-imap4-authenticate-type 'cram-md5)
+
+*** stream-type can be defined.
+You can define stream type by
+elmo-network-{imap4-,pop3-,nntp-,}stream-type-alist.
+Some SSL related variables are abolished(renamed).
+You can access to the networked folders (IMAP4, NNTP, POP3) via SOCKS
+if you specify the folder name end with "!socks".
+
+** Draft
+
+*** group-list is now available
+You can specify address like 'Group: foo@gohome.org, bar@gohome.org;'.
+If wl-draft-remove-group-list-contents is non-nil, the contents of 
+group-list is removed before sending.
+
+*** The draft preview displays recipient addresses on minibuffer 
+You can confirm the group-list recipients by this.
+
+*** Initial setting considers Reply-To:.
+Default setting of wl-draft-reply-without-argument-list considers Reply-To: 
+field (Set to To: field).
+
+*** Replying rules for the messages sent from yourself.
+You can define replying rules for the messages sent from yourself by
+setting wl-draft-reply-myself-with-argument-list and
+wl-draft-reply-myself-without-argument-list.
+
+*** Full name is used in the reply address.
+If wl-draft-reply-use-address-with-full-name is non-nil, then full
+name is inserted in with e-mail addresses on the replied message
+(Initial setting is t).
+
+*** In-Reply-To: format is changed.
+In-Reply-To: format is changed to simple one. It is based on 
+draft-ietf-drums-msg-fmt-09.txt.
+
+** misc
+
+*** Message thread processing is improved.
+
+*** Renamed variables
+wl-refile-guess-func-list => wl-refile-guess-functions
+wl-summary-temp-above => wl-summary-target-above
+
+*** You can set function to wl-fcc.
+You can change fcc folder name dynamically. For example, change folder name
+by month.
+
+*** elmo-search-mime-charset is abolished.
+Charset is guessed from the string you typed.
+
+*** Useless headers are removed when you forward the message.
+You can specify removed headers by wl-ignored-forwarded-headers.
+
+*** wl-highlight-group-folder-by-numbers is abolished.
+It is renamed to wl-highlight-folder-by-numbers and has following meaning.
+  `t'   : Whole line is colored by message number.
+  `nil' : Whole line is colored by folder status.
+   Number (ex. `1') : Line is colored by message number and folder status.
+
+*** Header visibility control is changed.
+Header visibility is controlled by Wanderlust (was controlled by SEMI).
+You can change header visibility by wl-message-ignored-field-list and 
+wl-message-visible-field-list.
+
+*** DEMO is changed.
+Less colors are used by DEMO pixmap.
+Emacsen on character based terminal also display suitable DEMO.
+
+
 * Version 1.1.1 is a bug fix version of 1.1.0 with minor user-visible changes.
 
 ** Development on the CVS server is started.
