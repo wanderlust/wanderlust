@@ -76,10 +76,17 @@
        (erase-buffer)
        (,@ body))))
 
+(put 'elmo-set-work-buf 'lisp-indent-function 0)
+(def-edebug-spec elmo-set-work-buf t)
+
 (defmacro elmo-bind-directory (dir &rest body)
   "Set current directory DIR and execute BODY."
   (` (let ((default-directory (file-name-as-directory (, dir))))
        (,@ body))))
+
+(put 'elmo-bind-directory 'lisp-indent-function 1)
+(def-edebug-spec elmo-bind-directory
+  (form &rest form))
 
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
