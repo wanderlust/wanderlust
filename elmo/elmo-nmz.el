@@ -254,29 +254,6 @@ If the value is a list, all elements are used as index paths for namazu."
 (luna-define-method elmo-folder-exists-p ((folder elmo-nmz-folder))
   t)
 
-(luna-define-method elmo-folder-search ((folder elmo-nmz-folder)
-					condition &optional from-msgs)
-  (let* ((msgs (or from-msgs (elmo-folder-list-messages folder)))
-	 (orig msgs)
-	 (i 0)
-	 case-fold-search matches
-	 percent num
-	 (num (length msgs)))
-    (while msgs
-      (if (elmo-file-field-condition-match
-	   (elmo-map-message-location folder (car msgs))
-	   condition
-	   (car msgs)
-	   orig)
-	  (setq matches (cons (car msgs) matches)))
-       (setq i (1+ i))
-       (setq percent (/ (* i 100) num))
-       (elmo-display-progress
-	'elmo-nmz-search "Searching..."
-	percent)
-       (setq msgs (cdr msgs)))
-    matches))
-
 ;;; To override elmo-map-folder methods.
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-nmz-folder) unread-marks &optional mark-alist)

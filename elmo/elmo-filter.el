@@ -87,11 +87,48 @@
 					      numlist new-mark already-mark
 					      seen-mark important-mark
 					      seen-list)
-  (elmo-folder-msgdb-create (elmo-filter-folder-target-internal folder)
-			    numlist
-			    new-mark
-			    already-mark
-			    seen-mark important-mark seen-list))
+  (let ((target-folder (elmo-filter-folder-target-internal folder)))
+    (if (elmo-folder-plugged-p target-folder)
+	(elmo-folder-msgdb-create target-folder
+				  numlist
+				  new-mark
+				  already-mark
+				  seen-mark important-mark seen-list)
+      ;; Copy from msgdb of target folder if it is unplugged.
+      (let ((len (length numlist))
+	    (msgdb (elmo-folder-msgdb target-folder))
+	    overview number-alist mark-alist
+	    message-id seen gmark)
+	(when (> len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-msgdb-create
+			     len "Creating msgdb..."))
+	(unwind-protect
+	    (dolist (number numlist)
+	      (let ((entity (elmo-msgdb-overview-get-entity number msgdb)))
+		(when entity
+		  (setq entity (elmo-msgdb-copy-overview-entity entity)
+			overview (elmo-msgdb-append-element overview entity)
+			message-id (elmo-msgdb-overview-entity-get-id entity)
+			number-alist (elmo-msgdb-number-add number-alist
+							    number
+							    message-id)
+			seen (member message-id seen-list))
+		  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
+				      (if (elmo-file-cache-exists-p message-id)
+					  (if seen
+					      nil
+					    already-mark)
+					(if seen
+					    nil ;;seen-mark
+					  new-mark))))
+		      (setq mark-alist
+			    (elmo-msgdb-mark-append
+			     mark-alist
+			     number
+			     gmark)))))
+	      (elmo-progress-notify 'elmo-folder-msgdb-create))
+	  (elmo-progress-clear 'elmo-folder-msgdb-create))
+	(list overview number-alist mark-alist)))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
 					       unread &optional number)
@@ -113,8 +150,15 @@
 
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-filter-folder) &optional nohide)
-  (elmo-folder-search (elmo-filter-folder-target-internal folder)
-		      (elmo-filter-folder-condition-internal folder)))
+  (let ((target (elmo-filter-folder-target-internal folder)))
+    (if (or (elmo-folder-plugged-p target)
+	    (not (elmo-folder-persistent-p folder)))
+	;; search target folder
+	(elmo-folder-search
+	 target
+	 (elmo-filter-folder-condition-internal folder))
+      ;; not available
+      t)))
 
 (defsubst elmo-filter-folder-list-unreads-internal (folder unread-marks
 							   mark-alist)

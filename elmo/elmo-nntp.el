@@ -1174,26 +1174,36 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result))))))
 
-(luna-define-method elmo-folder-search ((folder elmo-nntp-folder)
-					condition &optional from-msgs)
+(defun elmo-nntp-search-internal (folder condition from-msgs)
   (let (result)
     (cond
      ((vectorp condition)
       (setq result (elmo-nntp-search-primitive
 		    folder condition from-msgs)))
      ((eq (car condition) 'and)
-      (setq result (elmo-folder-search folder (nth 1 condition) from-msgs)
+      (setq result (elmo-nntp-search-internal folder
+					      (nth 1 condition)
+					      from-msgs)
 	    result (elmo-list-filter result
-				     (elmo-folder-search
+				     (elmo-nntp-search-internal
 				      folder (nth 2 condition)
 				      from-msgs))))
      ((eq (car condition) 'or)
-      (setq result (elmo-folder-search folder (nth 1 condition) from-msgs)
+      (setq result (elmo-nntp-search-internal folder
+					      (nth 1 condition)
+					      from-msgs)
 	    result (elmo-uniq-list
 		    (nconc result
-			   (elmo-folder-search folder (nth 2 condition)
-					       from-msgs)))
+			   (elmo-nntp-search-internal folder
+						      (nth 2 condition)
+						      from-msgs)))
 	    result (sort result '<))))))
+
+(luna-define-method elmo-folder-search :around ((folder elmo-nntp-folder)
+						condition &optional from-msgs)
+  (if (elmo-folder-plugged-p folder)
+      (elmo-nntp-search-internal folder condition from-msgs)
+    (luna-call-next-method)))
 
 (defun elmo-nntp-get-folders-info-prepare (folder session-keys)
   (condition-case ()

@@ -274,77 +274,104 @@ header separator."
    (expand-file-name elmo-msgdb-overview-filename dir)
    overview))
 
-(defun elmo-msgdb-search-internal-primitive (condition entity number-list)
-  (let ((key (elmo-filter-key condition))
-	(case-fold-search t)
-	result)
-    (cond
-     ((string= key "last")
-      (setq result (<= (length (memq
-				(elmo-msgdb-overview-entity-get-number entity)
-				number-list))
-		       (string-to-int (elmo-filter-value condition)))))
-     ((string= key "first")
-      (setq result (< (-
-		       (length number-list)
-		       (length (memq
-				(elmo-msgdb-overview-entity-get-number entity)
-				number-list)))
-		      (string-to-int (elmo-filter-value condition)))))
-     ((string= key "from")
-      (setq result (string-match
-		    (elmo-filter-value condition)
-		    (elmo-msgdb-overview-entity-get-from entity))))
-     ((string= key "subject")
-      (setq result (string-match
-		    (elmo-filter-value condition)
-		    (elmo-msgdb-overview-entity-get-subject entity))))
-     ((string= key "to")
-      (setq result (string-match
-		    (elmo-filter-value condition)
-		    (elmo-msgdb-overview-entity-get-to entity))))
-     ((string= key "cc")
-      (setq result (string-match
-		    (elmo-filter-value condition)
-		    (elmo-msgdb-overview-entity-get-cc entity))))
-     ((or (string= key "since")
-	  (string= key "before"))
-      (let ((field-date (elmo-date-make-sortable-string
-			 (timezone-fix-time
-			  (elmo-msgdb-overview-entity-get-date entity)
-			  (current-time-zone) nil)))
-	    (specified-date
-	     (elmo-date-make-sortable-string
-	      (elmo-date-get-datevec
-	       (elmo-filter-value condition)))))
-	(setq result (if (string= key "since")
-			 (or (string= specified-date field-date)
-			     (string< specified-date field-date))
-		       (string< field-date specified-date)))))
-     ((member key elmo-msgdb-extra-fields)
-      (let ((extval (elmo-msgdb-overview-entity-get-extra-field entity key)))
-	(if (stringp extval)
+(defun elmo-msgdb-match-condition-primitive (condition entity numbers)
+  (catch 'unresolved
+    (let ((key (elmo-filter-key condition))
+	  (case-fold-search t)
+	  result)
+      (cond
+       ((string= key "last")
+	(setq result (<= (length (memq
+				  (elmo-msgdb-overview-entity-get-number
+				   entity)
+				  numbers))
+			 (string-to-int (elmo-filter-value condition)))))
+       ((string= key "first")
+	(setq result (< (-
+			 (length numbers)
+			 (length (memq
+				  (elmo-msgdb-overview-entity-get-number
+				   entity)
+				  numbers)))
+			(string-to-int (elmo-filter-value condition)))))
+       ((string= key "from")
+	(setq result (string-match
+		      (elmo-filter-value condition)
+		      (elmo-msgdb-overview-entity-get-from entity))))
+       ((string= key "subject")
+	(setq result (string-match
+		      (elmo-filter-value condition)
+		      (elmo-msgdb-overview-entity-get-subject entity))))
+       ((string= key "to")
+	(setq result (string-match
+		      (elmo-filter-value condition)
+		      (elmo-msgdb-overview-entity-get-to entity))))
+       ((string= key "cc")
+	(setq result (string-match
+		      (elmo-filter-value condition)
+		      (elmo-msgdb-overview-entity-get-cc entity))))
+       ((or (string= key "since")
+	    (string= key "before"))
+	(let ((field-date (elmo-date-make-sortable-string
+			   (timezone-fix-time
+			    (elmo-msgdb-overview-entity-get-date entity)
+			    (current-time-zone) nil)))
+	      (specified-date
+	       (elmo-date-make-sortable-string
+		(elmo-date-get-datevec
+		 (elmo-filter-value condition)))))
+	  (setq result (if (string= key "since")
+			   (or (string= specified-date field-date)
+			       (string< specified-date field-date))
+			 (string< field-date specified-date)))))
+       ((member key elmo-msgdb-extra-fields)
+	(let ((extval (elmo-msgdb-overview-entity-get-extra-field entity key)))
+	  (when (stringp extval)
 	    (setq result (string-match
 			  (elmo-filter-value condition)
-			  extval))))))
-    (if (eq (elmo-filter-type condition) 'unmatch)
-	(setq result (not result)))
-    result))
+			  extval)))))
+       (t
+	(throw 'unresolved condition)))
+      (if (eq (elmo-filter-type condition) 'unmatch)
+	  (not result)
+	result))))
 
-(defun elmo-msgdb-search-internal (condition entity number-list)
+(defun elmo-msgdb-match-condition (condition entity numbers)
   (cond
    ((vectorp condition)
-    (elmo-msgdb-search-internal-primitive condition entity number-list))
+    (elmo-msgdb-match-condition-primitive condition entity numbers))
    ((eq (car condition) 'and)
-    (and (elmo-msgdb-search-internal
-	  (nth 1 condition) entity number-list)
-	 (elmo-msgdb-search-internal
-	  (nth 2 condition) entity number-list)))
+    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
+					   entity numbers)))
+      (cond
+       ((elmo-filter-condition-p lhs)
+	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
+					       entity numbers)))
+	  (cond ((elmo-filter-condition-p rhs)
+		 (list 'and lhs rhs))
+		(rhs
+		 lhs))))
+       (lhs
+	(elmo-msgdb-match-condition (nth 2 condition)
+				    entity numbers)))))
    ((eq (car condition) 'or)
-    (or (elmo-msgdb-search-internal
-	 (nth 1 condition) entity number-list)
-	(elmo-msgdb-search-internal
-	 (nth 2 condition) entity number-list)))))
+    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
+					   entity numbers)))
+      (cond
+       ((elmo-filter-condition-p lhs)
+	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
+					       entity numbers)))
+	  (cond ((elmo-filter-condition-p rhs)
+		 (list 'or lhs rhs))
+		(rhs
+		 t)
+		(t
+		 lhs))))
+       (lhs
+	t)
+       (t
+	(elmo-msgdb-match-condition (nth 2 condition)
+				    entity numbers)))))))
 
 (defun elmo-msgdb-delete-msgs (msgdb msgs)
   "Delete MSGS from MSGDB

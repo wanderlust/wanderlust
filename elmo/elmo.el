@@ -316,9 +316,17 @@ NUMBERS is a list of message numbers to be deleted.")
 (luna-define-generic elmo-folder-search (folder condition &optional numbers)
   "Search and return list of message numbers.
 FOLDER is the ELMO folder structure.
-CONDITION is a condition string for searching.
+CONDITION is a condition structure for searching.
 If optional argument NUMBERS is specified and is a list of message numbers,
 messages are searched from the list.")
+
+(luna-define-generic elmo-message-match-condition (folder number
+							  condition
+							  numbers)
+  "Return non-nil when the message in the FOLDER with NUMBER is matched.
+CONDITION is a condition structure for testing.
+NUMBERS is a list of message numbers,
+use to be test for \"last\" and \"first\" predicates.")
 
 (luna-define-generic elmo-folder-msgdb-create
   (folder numbers new-mark already-mark seen-mark important-mark seen-list)
@@ -700,6 +708,77 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	(error "Already exists folder: %s" new-name))
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
+
+(luna-define-method elmo-folder-search ((folder elmo-folder)
+					condition
+					&optional numbers)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder))))
+    (or (elmo-folder-search-fast folder condition numbers)
+	(let ((msgdb (elmo-folder-msgdb folder))
+	      (len (length numbers))
+	      matched)
+	  (when (> len elmo-display-progress-threshold)
+	    (elmo-progress-set 'elmo-folder-search len "Searching..."))
+	  (unwind-protect
+	      (dolist (number numbers)
+		(let ((entity (elmo-msgdb-overview-get-entity number msgdb))
+		      result)
+		  (if entity
+		      (setq result (elmo-msgdb-match-condition
+				    condition
+				    entity
+				    numbers))
+		    (setq result condition))
+		  (when (elmo-filter-condition-p result)
+		    (setq result (elmo-message-match-condition
+				  folder
+				  number
+				  condition
+				  numbers)))
+		  (when result
+		    (setq matched (cons number matched))))
+		(elmo-progress-notify 'elmo-folder-search))
+	    (elmo-progress-clear 'elmo-folder-search))
+	  (nreverse matched)))))
+
+(defsubst elmo-folder-search-fast (folder condition numbers)
+  (when (and numbers
+	     (vectorp condition)
+	     (member (elmo-filter-key condition) '("first" "last")))
+    (let ((len (length numbers))
+	  (lastp (string= (elmo-filter-key condition) "last"))
+	  (value (string-to-number (elmo-filter-value condition))))
+      (when (eq (elmo-filter-type condition) 'unmatch)
+	(setq lastp (not lastp)
+	      value  (- len value)))
+      (if lastp
+	  (nthcdr (max (- len value) 0) numbers)
+	(when (> value 0)
+	  (let ((last (nthcdr (1- value) numbers)))
+	    (when last
+	      (setcdr last nil))
+	    numbers))))))
+
+(luna-define-method elmo-message-match-condition ((folder elmo-folder)
+						  number condition
+						  numbers)
+  (let ((filename (cond
+		   ((elmo-message-file-name folder number))
+		   ((let* ((cache (elmo-file-cache-get
+				   (elmo-message-field folder number
+						       'message-id)))
+			   (cache-path (elmo-file-cache-path cache)))
+		      (when (and cache-path
+				 (not (elmo-cache-path-section-p cache-path)))
+			cache-path))))))
+    (when (and filename
+	       (file-readable-p filename))
+      (with-temp-buffer
+	(insert-file-contents-as-binary filename)
+	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
+	;; Should consider charset?
+	(decode-mime-charset-region (point-min) (point-max) elmo-mime-charset)
+	(elmo-buffer-field-condition-match condition number numbers)))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
   nil) ; default is noop.
@@ -1326,30 +1405,6 @@ If update process is interrupted, return nil."
     (elmo-folder-msgdb folder))))
 
 ;;;
-(defun elmo-msgdb-search (folder condition msgdb)
-  "Search messages which satisfy CONDITION from FOLDER with MSGDB."
-  (let* ((condition (car (elmo-parse-search-condition condition)))
-	 (overview (elmo-msgdb-get-overview msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (number-list (mapcar 'car number-alist))
-	 (length (length overview))
-	 (i 0)
-	 result)
-    (if (not (elmo-condition-in-msgdb-p condition))
-	(elmo-folder-search folder condition number-list)
-      (while overview
-	(if (elmo-msgdb-search-internal condition (car overview)
-					number-list)
-	    (setq result
-		  (cons
-		   (elmo-msgdb-overview-entity-get-number (car overview))
-		   result)))
-	(setq i (1+ i))
-	(elmo-display-progress
-	 'elmo-msgdb-search "Searching..." (/ (* i 100) length))
-	(setq overview (cdr overview)))
-      (nreverse result))))
-
 (defun elmo-msgdb-load (folder)
   (message "Loading msgdb for %s..." (elmo-folder-name-internal folder))
   (let* ((path (elmo-folder-msgdb-path folder))

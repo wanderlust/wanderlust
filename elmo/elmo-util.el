@@ -793,6 +793,9 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(setq l1 (cdr l1)))
       (cons diff1 (list l2)))))
 
+(defmacro elmo-filter-condition-p (filter)
+  `(or (vectorp ,filter) (consp ,filter)))
+
 (defmacro elmo-filter-type (filter)
   (` (aref (, filter) 0)))
 

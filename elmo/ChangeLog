@@ -1,5 +1,43 @@
 2002-01-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder-search): Defined. Fixed docstring.
+	(elmo-message-match-condition): New method.
+	(elmo-folder-search-fast): New inline function.
+	(elmo-msgdb-search): Removed.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Create from msgdb of
+	target folder if it is unplugged.
+	(elmo-folder-list-messages-internal): Return t if target folder is
+	unplugged and itself is persistent; In this case, use list be
+	searched already.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal): Removed.
+	(elmo-msgdb-search-internal-primitive): Ditto.
+	(elmo-msgdb-match-condition): New function.
+	(elmo-msgdb-match-condition-primitive): Ditto.
+
+	* elmo-util.el (elmo-filter-condition-p): New macro.
+
+	* elmo-cache.el (elmo-folder-search): Removed.
+
+	* elmo-localdir.el (elmo-folder-search): Ditto.
+
+	* elmo-maildir.el (elmo-folder-search): Ditto.
+
+	* elmo-mark.el (elmo-folder-search): Ditto.
+
+	* elmo-nmz.el (elmo-folder-search): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-search): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-search): Ditto.
+
+	* elmo-imap4.el (elmo-folder-search): Call method of parent class
+	if folder is unplugged.
+
+	* elmo-nntp.el (elmo-folder-search): Likewise.
+	(elmo-nntp-search-internal): New function.
+
 	* elmo-version.el (elmo-version): Up to 2.9.3.
 
 2001-12-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

@@ -474,27 +474,6 @@ file name for maildir directories."
 	  t)
       (error nil))))
 
-(luna-define-method elmo-folder-search ((folder elmo-maildir-folder)
-					condition &optional numbers)
-  (save-excursion
-    (let* ((msgs (or numbers (elmo-folder-list-messages folder)))
-	   (i 0)
-	   case-fold-search matches
-	   percent num
-	   (len (length msgs))
-	   number-list msg-num)
-      (setq number-list msgs)
-      (dolist (number numbers)
-	(if (elmo-file-field-condition-match
-	     (elmo-message-file-name folder number)
-	     condition number number-list)
-	    (setq matches (cons number matches)))
-	(setq i (1+ i))
-	(elmo-display-progress
-	 'elmo-maildir-search "Searching..."
-	 (/ (* i 100) len)))
-      (nreverse matches))))
-
 (require 'product)
 (product-provide (provide 'elmo-maildir) (require 'elmo-version))
 

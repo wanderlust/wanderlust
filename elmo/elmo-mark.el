@@ -164,29 +164,6 @@
 (luna-define-method elmo-folder-writable-p ((folder elmo-mark-folder))
   t)
 
-(luna-define-method elmo-folder-search ((folder elmo-mark-folder)
-					condition &optional from-msgs)
-  (let* ((msgs (or from-msgs (elmo-folder-list-messages folder)))
-	 (number-list msgs)
-	 (i 0)
-	 (num (length msgs))
-	 file
-	 matched
-	 case-fold-search)
-    (while msgs
-      (if (and (setq file (elmo-message-file-name folder (car msgs)))
-	       (file-exists-p file)
-	       (elmo-file-field-condition-match file
-						condition
-						(car msgs)
-						number-list))
-	  (setq matched (nconc matched (list (car msgs)))))
-      (elmo-display-progress
-       'elmo-internal-folder-search "Searching..."
-       (/ (* (setq i (1+ i)) 100) num))
-      (setq msgs (cdr msgs)))
-    matched))
-
 ;;; To override elmo-map-folder methods.
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-mark-folder) unread-marks &optional mark-alist)

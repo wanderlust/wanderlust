@@ -479,10 +479,6 @@ update overview when message is fetched."
 			  folder))))
     t))
 
-(luna-define-method elmo-folder-search ((folder elmo-shimbun-folder)
-					condition &optional from-msgs)
-  nil)
-
 ;;; To override elmo-map-folder methods.
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-shimbun-folder) unread-marks &optional mark-alist)
