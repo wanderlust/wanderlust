@@ -39,6 +39,7 @@
 (eval-when-compile (require 'cl))
 
 (defmacro ldap-static-if (cond then &rest else)
+  "`if' expression but COND is evaluated at compile-time."
   (if (eval cond)
       then
     (` (progn  (,@ else)))))
@@ -55,7 +56,7 @@
 ;; SAFE-CHAR                = %x01-09 / %x0B-0C / %x0E-7F
 (defconst ldap-ldif-safe-char-regexp
   "[\000-\011\013\014\016-\177]"
-  "A Regexp for safe-char")
+  "A Regexp for safe-char.")
 ;; SAFE-INIT-CHAR           = %x01-09 / %x0B-0C / %x0E-1F /
 ;;                            %x21-39 / %x3B / %x3D-7F
 (defconst ldap-ldif-safe-init-char-regexp
