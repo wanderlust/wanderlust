@@ -408,20 +408,17 @@ ENTITY is returned."
 	  (when (setq overview-entity
 		      (elmo-msgdb-overview-get-entity
 		       msg (wl-summary-buffer-msgdb)))
-	    (setq summary-line
-		  (wl-summary-overview-create-summary-line
-		   msg
-		   overview-entity
-		   (elmo-msgdb-overview-get-entity
-		    parent-msg (wl-summary-buffer-msgdb))
-		   nil
-		   mark-alist
-		   (if wl-thread-insert-force-opened
-		       nil
-		     (wl-thread-maybe-get-children-num msg))
-		   temp-mark entity))
-	    (save-excursion
-	      (wl-summary-insert-line summary-line))
+	    (wl-summary-insert-line 
+	     (wl-summary-create-line
+	      overview-entity
+	      (elmo-msgdb-overview-get-entity
+	       parent-msg (wl-summary-buffer-msgdb))
+	      temp-mark
+	      (if wl-thread-insert-force-opened
+		  nil
+		(wl-thread-maybe-get-children-num msg))
+	      (wl-thread-make-indent-string entity)
+	      (wl-thread-entity-get-linked entity)))
 	    (if dest-pair
 		(wl-summary-print-destination (car dest-pair)
 					      (cdr dest-pair)))))
@@ -917,19 +914,17 @@ Message is inserted to the summary buffer."
 	     (nth 0 entity) (wl-summary-buffer-msgdb)))
 ;;;   (wl-delete-all-overlays)
       (when overview-entity
-	(setq summary-line
-	      (wl-summary-overview-create-summary-line
-	       msg-num
-	       overview-entity
-	       (elmo-msgdb-overview-get-entity
-		(nth 0 parent-entity) (wl-summary-buffer-msgdb))
-	       (1+ indent)
-	       mark-alist
-	       (if wl-thread-insert-force-opened
-		   nil
-		 (wl-thread-maybe-get-children-num msg-num))
-	       temp-mark entity))
-	(wl-summary-insert-line summary-line)))))
+	(wl-summary-insert-line
+	 (wl-summary-create-line
+	  overview-entity
+	  (elmo-msgdb-overview-get-entity
+	   (nth 0 parent-entity) (wl-summary-buffer-msgdb))
+	  temp-mark
+	  (if wl-thread-insert-force-opened
+	      nil
+	    (wl-thread-maybe-get-children-num msg-num))
+	  (wl-thread-make-indent-string entity)
+	  (wl-thread-entity-get-linked entity)))))))
 
 (defun wl-thread-insert-entity (indent entity parent-entity all)
   "Insert thread entity in current buffer."

@@ -1960,8 +1960,7 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-get-append-message-func ()
   (if (eq wl-summary-buffer-view 'thread)
       'wl-summary-insert-thread-entity
-;;;   'wl-summary-insert-thread
-    'wl-summary-insert-summary))
+    'wl-summary-insert-sequential))
 
 (defun wl-summary-sort ()
   (interactive)
@@ -2693,21 +2692,6 @@ If ARG, without confirm."
       (set-buffer-modified-p nil))
     retval))
 
-(defun wl-summary-summary-line-already-exists-p (parent-number buffer)
-  "Return the depth."
-  (set-buffer buffer)
-  (goto-char (point-max))
-  (let ((depth 0))
-    (when (re-search-backward (format "^ *%s..../..\(.*\)..:.. "
-				      parent-number) nil t)
-      (goto-char (match-end 0))
-      (while (string-match wl-thread-indent-regexp
-			   (char-to-string
-			    (char-after (point))))
-	(setq depth (+ 1 depth))
-	(forward-char))
-      (/ depth wl-thread-indent-level-internal))))
-
 (defun wl-summary-goto-top-of-current-thread ()
   (wl-summary-jump-to-msg
    (wl-thread-entity-get-number
@@ -2740,22 +2724,15 @@ If ARG, without confirm."
        (save-excursion (beginning-of-line)(point))
        (save-excursion (end-of-line)(point))
        'mouse-face nil))
-  (condition-case nil ; it's dangerous, so ignore error.
-      (run-hooks 'wl-summary-line-inserted-hook)
-    (error (ding)
-	   (message "Error in wl-summary-line-inserted-hook"))))
+  (ignore-errors
+    (run-hooks 'wl-summary-line-inserted-hook)))
 
-(defun wl-summary-insert-summary (entity msgdb dummy &optional dumm)
-  (let ((overview-entity entity)
-	summary-line msg)
-    (setq msg (elmo-msgdb-overview-entity-get-number entity))
-    (when (setq summary-line
-		(wl-summary-overview-create-summary-line
-		 msg entity nil 0 (elmo-msgdb-get-mark-alist msgdb)))
-      (let ((inhibit-read-only t)
-	    buffer-read-only)
-	(goto-char (point-max))
-	(wl-summary-insert-line summary-line)))))
+(defun wl-summary-insert-sequential (entity msgdb &rest args)
+  (let ((inhibit-read-only t)
+	buffer-read-only)
+    (goto-char (point-max))
+    (wl-summary-insert-line
+     (wl-summary-create-line entity nil nil))))
 
 (defun wl-summary-default-subject-filter (subject)
   (let ((case-fold-search t))
@@ -2924,8 +2901,7 @@ If ARG, without confirm."
 				 mark-alist
 				 thr-entity
 				 parent-entity)
-  (let* ((depth 0)
-	 (this-id (elmo-msgdb-overview-entity-get-id entity))
+  (let* ((this-id (elmo-msgdb-overview-entity-get-id entity))
 	 (overview-entity entity)
 	 (parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
@@ -2936,19 +2912,18 @@ If ARG, without confirm."
       (goto-char (point-max))
       (beginning-of-line))
      ;; parent already exists in buffer.
-     ((setq depth (or (wl-summary-summary-line-already-exists-p
-		       parent-number (current-buffer)) -1))
-      (setq depth (+ 1 depth))
+     ((wl-summary-jump-to-msg parent-number)
       (wl-thread-goto-bottom-of-sub-thread)))
-    (if (and (setq msg (elmo-msgdb-overview-entity-get-number entity)))
-	(if (setq summary-line
-		  (wl-summary-overview-create-summary-line
-		   msg entity parent-entity depth mark-alist
-		   (wl-thread-maybe-get-children-num msg)
-		   nil thr-entity))
-	    (let ((inhibit-read-only t)
-		  (buffer-read-only nil))
-	      (wl-summary-insert-line summary-line))))))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil))
+      (wl-summary-insert-line
+       (wl-summary-create-line
+	entity
+	parent-entity 
+	nil
+	(wl-thread-maybe-get-children-num msg)
+	(wl-thread-make-indent-string thr-entity)
+	(wl-thread-entity-get-linked thr-entity))))))
 
 (defun wl-summary-mark-as-unread (&optional number
 					    no-server-update
@@ -4259,35 +4234,29 @@ If ARG, exit virtual folder."
 		(aref datevec 4)))
     (error "??/??(??)??:??")))
 
-(defun wl-summary-overview-create-summary-line (msg
-						entity
-						parent-entity
-						depth
-						mark-alist
-						&optional
-						children-num
-						temp-mark thr-entity
-						subject-differ)
+(defun wl-summary-create-line (entity parent temp-mark
+				      &optional
+				      thr-children-number
+				      thr-indent-string
+				      thr-linked)
+  "Create a summary line."
   (let ((wl-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
-	no-parent before-indent
-	from subject parent-raw-subject parent-subject
-	mark line
+	(folder wl-summary-buffer-elmo-folder)
+	(number (elmo-msgdb-overview-entity-get-number entity))
+	no-parent from subject parent-raw-subject parent-subject
+	line
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
-	(children-num (if children-num (int-to-string children-num)))
-	(thr-str "")
-	linked)
-    (when thr-entity
-      (setq thr-str (wl-thread-make-indent-string thr-entity))
-      (setq linked (wl-thread-entity-get-linked thr-entity)))
-    (if (string= thr-str "")
+	(children-num (if thr-children-number
+			  (int-to-string thr-children-number))))
+    (if (string= thr-indent-string "")
 	(setq no-parent t)) ; no parent
     (if (and wl-summary-indent-length-limit
 	     (< wl-summary-indent-length-limit
-		(string-width thr-str)))
-	(setq thr-str (wl-set-string-width
-		       wl-summary-indent-length-limit
-		       thr-str)))
+		(string-width thr-indent-string)))
+	(setq thr-indent-string (wl-set-string-width
+				 wl-summary-indent-length-limit
+				 thr-indent-string)))
     (setq from
 	  (wl-set-string-width
 	   (if children-num
@@ -4302,25 +4271,24 @@ If ARG, exit virtual folder."
 				 entity)
 				wl-summary-no-subject-message)))
     (setq parent-raw-subject
-	  (elmo-msgdb-overview-entity-get-subject parent-entity))
+	  (elmo-msgdb-overview-entity-get-subject parent))
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
-    (setq mark (or (cadr (assq msg mark-alist)) " "))
+    (setq mark (or (elmo-message-mark folder number) " "))
     (setq line
 	  (concat
-	   (setq before-indent
-		 (format (concat "%"
-				 (int-to-string
-				  wl-summary-buffer-number-column)
-				 "s%s%s%s %s")
-			 msg
-			 (or temp-mark " ")
-			 mark
-			 (wl-summary-format-date
-			  (elmo-msgdb-overview-entity-get-date entity))
-			 (if thr-str thr-str "")))
-	   (format (if linked
+	   (format (concat "%"
+			   (int-to-string
+			    wl-summary-buffer-number-column)
+			   "s%s%s%s %s")
+		   number
+		   (or temp-mark " ")
+		   mark
+		   (wl-summary-format-date
+		    (elmo-msgdb-overview-entity-get-date entity))
+		   (or thr-indent-string ""))
+	   (format (if thr-linked
 		       "<%s > %s"
 		     "[%s ] %s")
 		   (if children-num
@@ -4335,7 +4303,8 @@ If ARG, exit virtual folder."
 			       (wl-summary-subject-func-internal subject) ""))
 		     (if (and (not wl-summary-width)
 			      wl-summary-subject-length-limit)
-			 (truncate-string subject wl-summary-subject-length-limit)
+			 (truncate-string subject 
+					  wl-summary-subject-length-limit)
 		       subject)))))
     (if wl-summary-width (setq line
 			       (wl-set-string-width
@@ -4344,7 +4313,7 @@ If ARG, exit virtual folder."
 	(wl-highlight-summary-line-string line
 					  mark
 					  temp-mark
-					  thr-str))
+					  thr-indent-string))
     line))
 
 (defsubst wl-summary-buffer-number-column-detect (update)

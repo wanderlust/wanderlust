@@ -1,5 +1,15 @@
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-summary-line-already-exists-p): Abolished.
+	(wl-summary-insert-sequential): Renamed from wl-summary-insert-summary.
+	(wl-summary-create-line): Renamed from
+	wl-summary-overview-create-summary-line;
+	Argument rearrangement.
+	(wl-summary-update-thread): Follow the change above.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Likewise.
+	(wl-thread-insert-entity-sub): Likewise.
+
 	* wl-summary.el (wl-summary-append-message-func-internal): Removed
 	argument `overview', `mark-alist' and added `msgdb'.
 
