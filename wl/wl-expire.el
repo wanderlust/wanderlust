@@ -661,7 +661,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 		       key-date
 		       (elmo-message-entity-field entity 'date))
 		  (wl-append delete-list
-			     (elmo-message-entity-number entity))))))
+			     (list (elmo-message-entity-number entity)))))))
 	   (t
 	    (error "%s: not supported" val-type)))
 	  (when delete-list

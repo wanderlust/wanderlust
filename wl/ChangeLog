@@ -1,5 +1,8 @@
 2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-expire.el (wl-summary-expire): Fixed 2nd argument for `wl-append'.
+	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
+
 	* wl-summary.el (wl-summary-target-mark-reply-with-citation): 
 	Check return value of wl-summary-reply.
 	(wl-summary-reply): Recover window configuration when an error occured.
