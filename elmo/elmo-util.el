@@ -1484,6 +1484,18 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(setq first nil))
       (princ err-mes stream))))
 
+(if (fboundp 'define-error)
+    (defalias 'elmo-define-error 'define-error)
+  (defun elmo-define-error (error doc &optional parents)
+    (or parents
+	(setq parents 'error))
+    (let ((conds (get parents 'error-conditions)))
+      (or conds
+	  (error "Not an error symbol: %s" error))
+      (setplist error
+		(list 'error-message doc
+		      'error-conditions (cons error conds))))))
+
 (cond ((fboundp 'lprogress-display)
        (defalias 'elmo-display-progress 'lprogress-display))
       ((fboundp 'progress-feedback-with-label)
