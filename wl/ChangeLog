@@ -1,3 +1,8 @@
+2003-02-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-summary-burst): Update summary only when target
+	folder equals current folder.
+
 2003-02-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-thread.el (wl-thread-set-parent): Reconstruct number-list.
