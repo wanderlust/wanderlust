@@ -1,3 +1,7 @@
+2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.8.0 is released.
+
 2001-12-27  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-vars.el (elmo-nntp-default-user): Customization Type fix.

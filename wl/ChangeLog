@@ -1,11 +1,11 @@
+2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.8.0 is released.
+
 2001-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-hide): Removed `interactive'.
 	(Pointed out by YAMASHITA Junji <ysjj@unixuser.org>)
-
-2001-12-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* Version number is increased to 2.9.2.
 
 2001-12-21  Katsumi Yamaoka  <yamaoka@jpl.org>
 
