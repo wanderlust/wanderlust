@@ -5,7 +5,7 @@
 
 ;; Author: Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:34:13 teranisi>
+;; Time-stamp: <00/04/15 13:53:01 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -547,7 +547,7 @@ Refile to archive folder followed message date."
 			(t
 			 (error "%s: invalid type" rm-type))))
 	    (when (and (not notsummary) delete-list)
-	      (wl-summary-delete-messages-on-buffer delete-list)
+	      (wl-summary-delete-messages-on-buffer delete-list t)
 	      (wl-summary-folder-info-update)
 	      (wl-summary-set-message-modified)
 	      (wl-summary-set-mark-modified)
