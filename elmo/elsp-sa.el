@@ -76,7 +76,7 @@
 		(cons
 		 elmo-spam-spamassassin-learn-program
 		 elmo-spam-spamassassin-learn-program-arguments))
-	       (t (error "Internal error.")))))
+	       (t (error "Internal error")))))
     (apply #'call-process-region
 	   (point-min) (point-max)
 	   (car pair)

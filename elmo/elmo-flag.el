@@ -232,7 +232,7 @@
 						    flag
 						    &optional is-local)
   (when (eq flag (elmo-flag-folder-flag-internal folder))
-    (error "Cannot unset flag `%s' in this folder." flag)))
+    (error "Cannot unset flag `%s' in this folder" flag)))
 
 ;;; Utilities
 
@@ -303,7 +303,7 @@ NUMBER is the message number."
 
 (defsubst elmo-global-flag-set-internal (flag folder number message-id)
   (when (elmo-local-flag-p flag)
-    (error "Cannot treat `%s' as global flag." flag))
+    (error "Cannot treat `%s' as global flag" flag))
   (when message-id
     (let ((flag-folder (elmo-flag-get-folder flag))
 	  cache new-file new-number elem)
