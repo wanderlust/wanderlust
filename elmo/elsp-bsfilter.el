@@ -36,18 +36,17 @@
   "Spam bsfilter configuration."
   :group 'elmo-spam)
 
-(defcustom elmo-spam-bsfilter-shell-program (or explicit-shell-file-name
-						shell-file-name)
+(defcustom elmo-spam-bsfilter-shell-program "ruby"
   "*"
   :type 'string
   :group 'elmo-spam-bsfilter)
 
-(defcustom elmo-spam-bsfilter-shell-switch shell-command-switch
+(defcustom elmo-spam-bsfilter-shell-switch nil
   "*"
   :type 'string
   :group 'elmo-spam-bsfilter)
 
-(defcustom elmo-spam-bsfilter-program "bsfilter"
+(defcustom elmo-spam-bsfilter-program (exec-installed-p "bsfilter")
   "*Program name of the Bsfilter."
   :type '(string :tag "Program name of the bsfilter")
   :group 'elmo-spam-bsfilter)
@@ -68,6 +67,11 @@
 		 (const :tag "Use the default"))
   :group 'elmo-spam-bsfilter)
 
+(defcustom elmo-spam-bsfilter-debug nil
+  "Non-nil to debug elmo bsfilter spam backend."
+  :type 'boolean
+  :group 'elmo-spam-bsfilter-debug)
+
 (eval-and-compile
   (luna-define-class elsp-bsfilter (elsp-generic)))
 
@@ -75,11 +79,13 @@
   (apply #'call-process-region
 	 (point-min) (point-max)
 	 elmo-spam-bsfilter-shell-program
-	 nil nil nil
-	 (append (list elmo-spam-bsfilter-shell-switch
-		       elmo-spam-bsfilter-program)
-		 elmo-spam-bsfilter-args
-		 (delq nil (elmo-flatten args)))))
+	 nil (if elmo-spam-bsfilter-debug
+		 (get-buffer-create "*Debug ELMO Bsfilter*"))
+	 nil (delq nil
+		   (append (list elmo-spam-bsfilter-shell-switch
+				 elmo-spam-bsfilter-program)
+			   elmo-spam-bsfilter-args
+			   (elmo-flatten args)))))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bsfilter)
 					     buffer &optional register)

@@ -1,3 +1,15 @@
+2004-01-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bsfilter.el (elmo-spam-bsfilter-shell-program): Set default
+	value as "ruby".
+	(elmo-spam-bsfilter-shell-switch): Set default value as nil.
+	(elmo-spam-bsfilter-program): Set default value as full path for
+	`bsfilter'.
+	(elmo-spam-bsfilter-debug): New user option.
+	(elsp-bsfilter-call-bsfilter): If elmo-spam-bsfilter-debug is
+	non-nil, insert output in buffer for debug. Fix treating of
+	argument.
+
 2004-01-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-maildir.el (elmo-map-folder-set-flag): Use cdr of
