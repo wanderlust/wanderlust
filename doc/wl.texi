@@ -243,7 +243,7 @@ FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
 @end group
 @end example
 
-You have to install APEL, FLIM and SEMI in this order.  Generally,
+You have to install APEL, FLIM and SEMI in this order.  Generally
 @samp{make install} will do the job.  (In XEmacs 21, @samp{make
 install-package}.)
 
@@ -254,7 +254,7 @@ Recommended combination of APEL, FLIM and SEMI are following:
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
-latest versions should work.  For example, the following combination are
+latest versions should work.  For example, following combination is
 confirmed to work.
 
 @itemize @minus
@@ -502,9 +502,9 @@ The minimal requirement for settings is as the following.
 (setq wl-icon-dir "~/work/wl/etc")
 
 ;; @r{SMTP server for mail posting. Default: @code{nil}}
-(setq wl-smtp-posting-server "your.smtp.example.com")
+(setq wl-smtp-posting-server "your.smtp.server.com")
 ;; @r{NNTP server for news posting. Default: @code{nil}}
-(setq wl-nntp-posting-server "your.nntp.example.com")
+(setq wl-nntp-posting-server "your.nntp.server.com")
 @end group
 @end lisp
 
@@ -610,7 +610,6 @@ the program @command{ldapsearch}.
 
 You can skip this section because it is possible to add/edit the
 subscribe folders from the buffer for list of folders.
-@xref{Folder Manager}.
 
 Define the folders you want to subscribe in file @file{~/.folders}.  The
 contents written in @file{~/.folders} become the folders which you
@@ -630,14 +629,14 @@ Format for @file{~/.folders} is very simple. Here is an example:
 %inbox  "Inbox"
 +trash  "Trash"
 +draft  "Drafts"
-%#mh/Backup@@my.imap.example.com "Sent"
+%#mh/Backup@@my.imap.server.com "Sent"
 # Folder Group
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
     %#mh/spool/elips         "ELIPS ML"
     %#mh/spool/apel-ja       "APEL Japanese ML"
     %#mh/spool/xemacs-beta   "XEmacs beta"
-    -fj.news.reader.gnus@@other.nntp.example.com "Gnus Net news"
+    -fj.news.reader.gnus@@other.nntp.server.com "Gnus Net news"
     *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj's Emacsen"
 @}
 #
@@ -3731,13 +3730,13 @@ before sending the message.
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.example.com$" (system-name))
+      '(((string-match "aaa.ne.jp$" (system-name))
          ;; @r{applied if the expression is non-nil}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{settings of temporary variables}
          )
-        ("^To: .*user@@aaa.bbb.example.com"
+        ("^To: .*user@@aaa.bbb.com"
          ;; @r{applied if it matches the header of the draft buffer}
          ("Organization" . (format "Go %s" my-webpage)))
                        ;; @r{you can write elisp expressions here (eval only)}
@@ -3872,7 +3871,7 @@ The format of @code{wl-template-alist} is almost the same as
          (body . "Hello.\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}
-         ("To" . "boss@@example.com")
+         ("To" . "jousi@@kaisha.jp")
          ("Subject" . "Report")
          (body-file . "~/work/report.txt")
          )
@@ -5790,7 +5789,6 @@ Examples with other packages.
 * mu-cite::                     mu-cite.el
 * x-face-mule::                 x-face-mule.el
 * dired-dd::                    dired-dd.el
-* MHC::                         MHC
 @end menu
 
 
@@ -5935,7 +5933,7 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 @code{wl-auto-insert-x-face} is non-nil).
 
 
-@node dired-dd, MHC, x-face-mule, Living with other packages
+@node dired-dd,  , x-face-mule, Living with other packages
 @subsection dired-dd(Dired-DragDrop)
 @pindex Dired-DragDrop
 @pindex Dired-DD
@@ -5962,34 +5960,6 @@ specific, but general-purpose for tm/SEMI).
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
-@subsection mhc.el
-@pindex MHC
-
-Message Harmonized Calendaring system
-(@uref{http://www.quickhack.net/mhc/})
-
-By using MHC, you can make a calendar from the messages.
-
-For mhc-0.25:
-
-@lisp
-@group
-(setq mhc-mailer-package 'wl)
-(autoload 'mhc-mode "mhc" nil t)
-(add-hook 'wl-summary-mode-hook 'mhc-mode)
-(add-hook 'wl-folder-mode-hook 'mhc-mode)
-@end group
-@end lisp
-
-For mhc-current:
-
-@lisp
-@group
-(autoload 'mhc-wl-setup "mhc-wl")
-(add-hook 'wl-init-hook 'mhc-wl-setup)
-@end group
-@end lisp
 
 @node Highlights, Biff, Living with other packages, Customization
 @section Highlights
@@ -6260,15 +6230,6 @@ If @code{nil}, wl doesn't check mail arrival.
 @vindex wl-biff-check-interval
 The initial setting is 40 (in seconds).
 Check mail arrival in this period. 
-
-@item wl-biff-notify-hook
-@vindex wl-biff-notify-hook
-The initial setting is @code{nil}.
-This is a hook run at the arrival of the new mail.
-To beep, set as:
-@lisp
-(setq wl-biff-notify-hook '(beep))
-@end lisp
 @end table
 
 
