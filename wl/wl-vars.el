@@ -2143,7 +2143,8 @@ Sender information in summary mode."
   :type 'string
   :group 'wl-folder)
 
-(defcustom wl-delete-folder-alist '(("^-" . remove))
+(defcustom wl-delete-folder-alist '(("^-" . remove)
+				    ("^@" . remove))
   "*Alist of folder and delete policy.
 Each element is (folder-regexp . policy).
 

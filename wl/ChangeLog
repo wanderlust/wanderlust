@@ -1,5 +1,8 @@
 2003-02-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-vars.el (wl-delete-folder-alist): Add shimbun folder to
+	the default value.
+
 	* wl-mime.el (wl-summary-burst): Update summary only when target
 	folder equals current folder.
 
