@@ -35,6 +35,11 @@ POP3 folder now saves the status of summary and it improves summary
 update speed. If the variable elmo-pop3-use-uidl is non-nil, UIDL is
 used (Initial setting is t).
 
+*** Emacs 21 support
+Wanderlust has started on supporting Standard Emacs 21.
+Toolbars and icon images can be shown in almost Wanderlust
+frames like XEmacs.
+
 *** biff feature
 Server mailbox is checked periodically.
 If new mail is arrived, Wanderlust changes the biff (icon) on the modeline
