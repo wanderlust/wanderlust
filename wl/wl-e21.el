@@ -290,7 +290,7 @@ corresponding to the mode line clicked."
       (let ((inhibit-read-only t))
 	(if (and wl-highlight-folder-by-numbers
 		 numbers (nth 0 numbers) (nth 1 numbers)
-		 (re-search-forward "[[:digit:]-]+/[[:digit:]-]+/[[:digit:]-]+"
+		 (re-search-forward "[-[:digit:]]+/[-[:digit:]]+/[-[:digit:]]+"
 				    (line-end-position) t))
 	    (let* ((unsync (nth 0 numbers))
 		   (unread (nth 1 numbers))
@@ -342,7 +342,7 @@ corresponding to the mode line clicked."
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
-	     (looking-at "[[:blank:]]+\\([^\t\n ]+\\)"))
+	     (looking-at "[[:blank:]]+\\([^[:blank:]\n]+\\)"))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(let (image)

@@ -3381,7 +3381,7 @@ Non-nil $B$J$i%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$KI=<($7$^$9!#(B
 
 @item wl-summary-fix-timezone
 @vindex wl-summary-fix-timezone
-$B=i4|@_Dj$O(B @samp{nil}$B!#%5%^%j$NF|;~I=<($r;XDj$7$?%?%$%`%>!<%s$KD>$7$^$9!#(B
+$B=i4|@_Dj$O(B @code{nil}$B!#%5%^%j$NF|;~I=<($r;XDj$7$?%?%$%`%>!<%s$KD>$7$^$9!#(B
 @code{nil} $B$J$i$P!"%G%U%)%k%H$N%?%$%`%>!<%s$r;2>H$7$FD>$7$^$9!#(B
 $B%G%U%)%k%H$N%?%$%`%>!<%s$H$O!"%7%9%F%`$K$"$i$+$8$a@_Dj$5$l$?%?%$%`%>!<%s$+!"(B
 $B4D6-JQ?t(B @samp{TZ} $B$NCM$G$9!#(B
@@ -3646,18 +3646,21 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex wl-message-window-size
 $B=i4|@_Dj$O(B @code{(1 . 4)}$B!#(Bcons $B%;%k$G!"(Bcar $BCM(B: cdr $BCM$,%5%^%j$N%&%#%s%I(B
 $B%&I}!'%a%C%;!<%8$N%&%#%s%I%&I}$H$J$j$^$9!#(B
+
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI=<($7$J$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
 $B;XDj$7$^$9!#(B
-nil $B$J$i!"(Bmime-view-ignored-field-list $B$NCM$,;H$o$l$^$9!#(B
+@code{nil} $B$J$i!"(B@code{mime-view-ignored-field-list} $B$NCM$,;H$o$l$^$9!#(B
+
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI,$:I=<($7$?$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
-$B;XDj$7$^$9!#(Bwl-message-ignored-field-list $B$h$jM%@h$5$l$^$9!#(B
-nil $B$J$i!"(Bmime-view-visible-field-list $B$NCM$,;H$o$l$^$9!#(B
+$B;XDj$7$^$9!#(B@code{wl-message-ignored-field-list} $B$h$jM%@h$5$l$^$9!#(B
+@code{nil} $B$J$i!"(B@code{mime-view-visible-field-list} $B$NCM$,;H$o$l$^$9!#(B
+
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
 (SEMI $B$N$_(B) $B=i4|@_Dj$O(B 
@@ -4029,13 +4032,11 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-draft-insert-x-face-field
-$B%U%!%$%k(B @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B) $B$NFbMF$r(B
-$B%I%i%U%H%P%C%U%!$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$7$^$9!#(B
+@findex wl-addrmgr
+$B%"%I%l%9%^%M!<%8%c$r5/F0$7$^$9!#(B
+@xref{Address Manager}.
 
-$B%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r$"$i$+$8$a%U%!%$%k(B @file{~/.xface}
-$B$NFbMF$KMQ0U$7$F$*$/I,MW$,$"$j$^$9!#(B
-(@code{wl-draft-insert-x-face-field})
+(@code{wl-addrmgr})
 @end table
 
 @section $B%+%9%?%^%$%:JQ?t(B
@@ -4075,8 +4076,7 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$G$+$D!"%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r(B 
 @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B)$B$NFbMF$KMQ0U$7$F$*$/$H!"(B
 $B%I%i%U%H$,=`Hw$5$l$k$H$-$K<+F0E*$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$5(B
-$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s$,!"(B@kbd{C-c C-a} $B$r(B
-$B2!$9$H%X%C%@It$KA^F~$5$l$^$9!#(B
+$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s!#(B
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -5756,9 +5756,9 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @section $B%"%I%l%9%^%M!<%8%c(B
 @cindex Address Manager
 
-@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c$G$O(B
-$B%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;XDj$7$?%"%I%l%9$r(B
-$B%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
+@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c(B
+$B$G$O%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;X(B
+$BDj$7$?%"%I%l%9$r%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
 
 @subsection $B%-!<%P%$%s%I(B
 
