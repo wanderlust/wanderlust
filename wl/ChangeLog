@@ -1,3 +1,12 @@
+2000-10-31  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl.el (wl-init): Added comment about `wl-init-hook'.
+	* wl-folder.el (wl-make-plugged-alist): Removed useless comment.
+	* wl-vars.el (wl-init-hook): Added docs.
+	(wl-make-plugged-hook): Removed useless docs.
+	* wl-e21.el (toplevel): Removed commented `wl-make-plugged-hook'.
+	* wl-xmas.el (toplevel): Ditto.
+
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-address.el (toplevel): Fixed multiple Author header format.

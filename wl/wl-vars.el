@@ -433,7 +433,9 @@ system internal to accord facilities for the Emacs variants.")
 (defvar wl-summary-divide-thread-when-subject-changed nil
   "Divide thread when subject is changed.")
 (defvar wl-init-hook nil
-  "A hook called when initialization is finished.")
+  "A hook called when initialization is finished.  This hook may contain
+the functions `wl-plugged-init-icons' and `wl-biff-init-icons' for
+reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-hook nil
   "A hook called when Wanderlust is invoked.")
 (defvar wl-reply-hook nil
@@ -499,10 +501,7 @@ system internal to accord facilities for the Emacs variants.")
 (defvar wl-score-mode-hook nil
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
-  "A hook called when make plugged alist.
-This hook may contain the functions `wl-plugged-init-icons' and
-`wl-biff-init-icons' for reasons of system internal to accord
-facilities for the Emacs variants.")
+  "A hook called when make plugged alist.")
 
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")

@@ -691,6 +691,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (kill-buffer demo-buf))
 	(if succeed
 	    (setq wl-init t))
+	;; This hook may contain the functions `wl-plugged-init-icons' and
+	;; `wl-biff-init-icons' for reasons of system internal to accord
+	;; facilities for the Emacs variants.
 	(run-hooks 'wl-init-hook)))))
 
 (defun wl-check-environment (no-check-folder)

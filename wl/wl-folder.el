@@ -1952,9 +1952,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			wl-nntp-posting-server
 			elmo-default-nntp-port
 			nil nil "nntp" add))
-    ;; This hook may contain the functions `wl-plugged-init-icons' and
-    ;; `wl-biff-init-icons' for reasons of system internal to accord
-    ;; facilities for the Emacs variants.
     (run-hooks 'wl-make-plugged-hook)))
 
 (defvar wl-folder-init-func 'wl-local-folder-init)

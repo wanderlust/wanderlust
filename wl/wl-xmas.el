@@ -45,8 +45,6 @@
 
 (add-hook 'wl-init-hook 'wl-biff-init-icons)
 (add-hook 'wl-init-hook 'wl-plugged-init-icons)
-;; (add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
-;; (add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 
