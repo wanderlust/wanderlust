@@ -681,10 +681,9 @@ Message is inserted to the summary buffer."
 		parent-msg (wl-summary-buffer-msgdb)))
 	      (when parent
 		;; use thread structure.
-		(wl-thread-entity-get-nearly-older-brother
-		 child-entity parent))) ; return value
-;;; 		(wl-thread-entity-get-number
-;;; 		 (wl-thread-entity-get-top-entity parent)))) ; return value;
+		;;(wl-thread-entity-get-nearly-older-brother
+		;; child-entity parent))) ; return value
+ 		(wl-thread-entity-get-number parent))) ; return value
 ;;; 	      (setq beg (point))
 ;;; 	      (wl-thread-goto-bottom-of-sub-thread)
 ;;; 	      (wl-thread-update-indent-string-region beg (point)))
@@ -1103,8 +1102,8 @@ Message is inserted to the summary buffer."
   (save-excursion
     (goto-char beg)
     (while (< (point) end)
-      ;(wl-thread-update-indent-string)
-      (wl-thread-update-line-on-buffer)
+      (save-excursion
+	(wl-thread-update-line-on-buffer-sub nil (wl-summary-message-number)))
       (forward-line 1))))
 
 (defsubst wl-thread-make-indent-string (entity)

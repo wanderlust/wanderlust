@@ -1,3 +1,11 @@
+2002-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-insert-message): Return parent number if
+	exists.
+	(wl-thread-update-indent-string-region): Use
+	wl-thread-update-line-on-buffer-sub instead of
+	wl-thread-update-line-on-buffer.
+
 2002-07-23  KAMO Tomoyuki  <kamo@i-manage.co.jp>
 
 	* wl-folder.el (wl-folder-open-all): Call wl-highlight-folder-path.
