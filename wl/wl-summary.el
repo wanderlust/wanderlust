@@ -3153,7 +3153,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (wl-summary-unmark msg-num)
 	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
 					   (list msg-num))
-	      (wl-summary-sync nil "update")))))
+	      (save-excursion (wl-summary-sync nil "update"))))))
     (message "Read-only folder.")))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
