@@ -996,7 +996,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 
 ;; a subroutine for wl-summary-exit/wl-save-status
 ;; Note that folder is not commited here.
-(defun wl-summary-save-view (&optional sticky)
+(defun wl-summary-save-view ()
   ;; already in summary buffer.
   (when wl-summary-buffer-persistent
     ;; save the current summary buffer view.
@@ -1026,12 +1026,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (unwind-protect
 	  ;; save summary status
 	  (progn
-	    (if (or force-exit
-		    (not sticky))
+	    (if (or force-exit (not sticky))
 		(elmo-folder-close wl-summary-buffer-elmo-folder)
 	      (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	      (elmo-folder-check wl-summary-buffer-elmo-folder))
-	    (wl-summary-save-view sticky)
+	    (wl-summary-save-view)
 	    (if wl-use-scoring (wl-score-save)))
 	;; for sticky summary
 	(wl-delete-all-overlays)
@@ -2494,14 +2493,13 @@ If ARG, without confirm."
 	(setq name wl-default-folder))
     (setq folder (wl-folder-get-elmo-folder name))
     (when (and (not (string=
-		     (and cur-fld
-			  (elmo-folder-name-internal cur-fld))
+		     (and cur-fld (elmo-folder-name-internal cur-fld))
 		     (elmo-folder-name-internal folder))) ; folder is moved.
 	       (eq major-mode 'wl-summary-mode)) ; called in summary.
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
       (run-hooks 'wl-summary-exit-pre-hook)
       (wl-summary-cleanup-temp-marks (wl-summary-sticky-p))
-      (wl-summary-save-view 'keep) ; keep current buffer, anyway.
+      (wl-summary-save-view)
       (elmo-folder-commit wl-summary-buffer-elmo-folder))
     (setq buf (wl-summary-get-buffer-create (elmo-folder-name-internal folder)
 					    sticky))

@@ -1,3 +1,7 @@
+2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-creatable-p): Define.
+
 2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-localdir.el (elmo-folder-message-make-temp-files): Use

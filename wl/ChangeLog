@@ -1,3 +1,12 @@
+2001-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-save-view): Removed unused argument.
+	(wl-summary-exit): Follow the change above.
+	(wl-summary-goto-folder-subr): Ditto.
+
+	* wl-folder.el (wl-folder-create-subr): Don't use
+	`elmo-folder-creatable-p'.
+
 2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-demo.el (wl-demo-icon-name): Use X'mas logo on Dec 25 too.

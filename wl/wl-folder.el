@@ -2767,19 +2767,17 @@ Call `wl-summary-write-current-folder' with current folder name."
       (kill-buffer bufname))))
 
 (defun wl-folder-create-subr (folder)
-  (if (not (elmo-folder-creatable-p folder))
-      (error "Folder %s is not found" (elmo-folder-name-internal folder))
-    (if (y-or-n-p
-	 (format "Folder %s does not exist, create it?"
-		 (elmo-folder-name-internal folder)))
-	(progn
-	  (setq wl-folder-entity-hashtb
-		(wl-folder-create-entity-hashtb
-		 (elmo-folder-name-internal folder)
-		 wl-folder-entity-hashtb))
-	  (unless (elmo-folder-create folder)
-	    (error "Create folder failed")))
-      (error "Folder %s is not created" (elmo-folder-name-internal folder)))))
+  (if (y-or-n-p (format "Folder %s does not exist, create it?"
+			(elmo-folder-name-internal folder)))
+      (progn
+	(message "")
+	(setq wl-folder-entity-hashtb
+	      (wl-folder-create-entity-hashtb
+	       (elmo-folder-name-internal folder)
+	       wl-folder-entity-hashtb))
+	(unless (elmo-folder-create folder)
+	  (error "Create folder failed")))
+    (error "Folder %s is not created" (elmo-folder-name-internal folder))))
 
 (defun wl-folder-confirm-existence (folder &optional force)
   (if force
