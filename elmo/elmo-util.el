@@ -182,18 +182,17 @@ File content is encoded with MIME-CHARSET."
       (setq stream-type-alist (cdr stream-type-alist)))))
 
 (defun elmo-network-get-spec (folder server port stream-type stream-type-alist)
-  (if (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
-      (progn
-	(if (match-beginning 1)
-	    (setq server (elmo-match-substring 1 folder 1)))
-	(if (match-beginning 2)
-	    (setq port (string-to-int (elmo-match-substring 2 folder 1))))
-	(if (match-beginning 3)
-	    (setq stream-type (assoc (elmo-match-string 3 folder)
-				     stream-type-alist)))
-	(setq folder (substring folder 0 (match-beginning 0))))
-    (setq stream-type-alist (elmo-get-network-stream-type
-			     stream-type stream-type-alist)))
+  (setq stream-type (elmo-get-network-stream-type
+		     stream-type stream-type-alist))
+  (when (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
+    (if (match-beginning 1)
+	(setq server (elmo-match-substring 1 folder 1)))
+    (if (match-beginning 2)
+	(setq port (string-to-int (elmo-match-substring 2 folder 1))))
+    (if (match-beginning 3)
+	(setq stream-type (assoc (elmo-match-string 3 folder)
+				 stream-type-alist)))
+    (setq folder (substring folder 0 (match-beginning 0))))
   (cons folder (list server port stream-type)))
 
 (defun elmo-imap4-get-spec (folder)
