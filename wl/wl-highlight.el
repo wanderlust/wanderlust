@@ -40,8 +40,6 @@
 	 (require 'wl-xmas))
 	(wl-on-emacs21
 	 (require 'wl-e21))
-	(wl-on-nemacs
-	 (require 'wl-nemacs))
 	(t
 	 (require 'wl-mule)))
   (defun-maybe extent-begin-glyph (a))
@@ -720,30 +718,16 @@
     wl-highlight-message-cited-text-9
     wl-highlight-message-cited-text-10))
 
-(defmacro defun-hilit (name &rest everything-else)
-  "Define a function for highlight. Nemacs implementation is set as empty."
-  (if wl-on-nemacs
-      (` (defun (, name) nil nil))
-    (` (defun (, name) (,@ everything-else)))))
-
-(defmacro defun-hilit2 (name &rest everything-else)
-  "Define a function for highlight w/o nemacs."
-  (if wl-on-nemacs
-      () ; noop
-    (` (defun (, name) (,@ everything-else)))))
-
 (defmacro wl-delete-all-overlays ()
   "Delete all momentary overlays."
-  (if wl-on-nemacs
-      nil
-    '(let ((overlays (overlays-in (point-min) (point-max)))
-	   overlay)
-       (while (setq overlay (car overlays))
-	 (if (overlay-get overlay 'wl-momentary-overlay)
-	     (delete-overlay overlay))
-	 (setq overlays (cdr overlays))))))
+  '(let ((overlays (overlays-in (point-min) (point-max)))
+	 overlay)
+     (while (setq overlay (car overlays))
+       (if (overlay-get overlay 'wl-momentary-overlay)
+	   (delete-overlay overlay))
+       (setq overlays (cdr overlays)))))
 
-(defun-hilit wl-highlight-summary-displaying ()
+(defun wl-highlight-summary-displaying ()
   (interactive)
   (wl-delete-all-overlays)
   (let (bol eol ov)
@@ -757,7 +741,7 @@
       (overlay-put ov 'evaporate t)
       (overlay-put ov 'wl-momentary-overlay t))))
 
-(defun-hilit2 wl-highlight-folder-group-line (numbers)
+(defun wl-highlight-folder-group-line (numbers)
   (end-of-line)
   (let ((eol (point))
 	bol)
@@ -790,7 +774,7 @@
 	      (put-text-property bol (match-end 0) 'face face)))
 	(put-text-property bol eol 'face text-face)))))
 
-(defun-hilit2 wl-highlight-summary-line-string (line mark temp-mark indent)
+(defun wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol)
     (cond ((and (string= temp-mark "+")
 		(member mark (list wl-summary-unread-cached-mark
@@ -828,7 +812,7 @@
   (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
 
-(defun-hilit2 wl-highlight-summary-current-line (&optional smark regexp temp-too)
+(defun wl-highlight-summary-current-line (&optional smark regexp temp-too)
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
@@ -909,7 +893,7 @@
       (if wl-use-dnd
 	  (wl-dnd-set-drag-starter bol eol)))))
 
-(defun-hilit2 wl-highlight-folder (start end)
+(defun wl-highlight-folder (start end)
   "Highlight folder between start and end.
 Faces used:
   wl-highlight-folder-unknown-face      unread messages
@@ -939,7 +923,7 @@ Variables used:
 	    (wl-highlight-folder-current-line)
 	    (forward-line 1)))))))
 
-(defun-hilit2 wl-highlight-folder-path (folder-path)
+(defun wl-highlight-folder-path (folder-path)
   "Highlight current folder path...overlay"
   (save-excursion
     (wl-delete-all-overlays)
@@ -963,17 +947,17 @@ Variables used:
 	  (overlay-put ov 'wl-momentary-overlay t))
 	(forward-line 1)))))
 
-(defun-hilit2 wl-highlight-refile-destination-string (string)
+(defun wl-highlight-refile-destination-string (string)
   (put-text-property 0 (length string) 'face
 		     'wl-highlight-refile-destination-face
 		     string))
 
-(defun-hilit wl-highlight-summary-all ()
+(defun wl-highlight-summary-all ()
   "For evaluation"
   (interactive)
   (wl-highlight-summary (point-min)(point-max)))
 
-(defun-hilit2 wl-highlight-summary (start end)
+(defun wl-highlight-summary (start end)
   "Highlight summary between start and end.
 Faces used:
   wl-highlight-summary-unread-face      unread messages
@@ -1070,14 +1054,14 @@ This function is defined for `window-scroll-functions'"
 (defun wl-highlight-body-all ()
   (wl-highlight-message (point-min) (point-max) t t))
 
-(defun-hilit wl-highlight-body ()
+(defun wl-highlight-body ()
   (let ((beg (or (save-excursion (goto-char (point-min))
 				 (re-search-forward "^$" nil t))
 		 (point-min)))
 	(end (point-max)))
     (wl-highlight-message beg end t)))
 
-(defun-hilit2 wl-highlight-body-region (beg end)
+(defun wl-highlight-body-region (beg end)
   (wl-highlight-message beg end t t))
 
 (defun wl-highlight-signature-search-simple (beg end)
@@ -1120,7 +1104,7 @@ Returns start point of signature."
 	 (point)))	;; if no separator found, returns end.
      )))
 
-(defun-hilit2 wl-highlight-message (start end hack-sig &optional body-only)
+(defun wl-highlight-message (start end hack-sig &optional body-only)
   "Highlight message headers between start and end.
 Faces used:
   wl-highlight-message-headers			  the part before the colon
