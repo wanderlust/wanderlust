@@ -470,6 +470,8 @@ when `wl-prefetch-confirm' is non-nil."
   "A hook called when archived.")
 (defvar wl-summary-line-inserted-hook nil
   "A hook called when summary line is inserted.")
+(defvar wl-summary-insert-headers-hook nil
+  "A hook called when insert header for search header.")
 (defvar wl-thread-update-children-number-hook nil
   "A hook called when children number is updated.")
 (defvar wl-folder-update-access-group-hook nil
