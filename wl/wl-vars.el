@@ -526,13 +526,15 @@ If nil, `wl-from' is used."
 
 (defcustom wl-draft-add-in-reply-to t
   "*If non-nil, message-id of the cited message is inserted to the
-in-reply-to field of the current draft."
+in-reply-to field of the current draft.
+Note: default value follows RFC2822."
   :type 'boolean
   :group 'wl)
 
 (defcustom wl-draft-add-references nil
   "*If non-nil, message-id of the cited message is inserted to the
-references field of the current draft."
+references field of the current draft.
+Note: default value follows RFC2822."
   :type 'boolean
   :group 'wl)
 
@@ -1906,7 +1908,7 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-mime-charset 'x-ctext
+(defcustom wl-mime-charset (if wl-on-mule 'x-ctext 'iso-8859-1)
   "*MIME Charset for summary and message."
   :type 'symbol
   :group 'wl-summary

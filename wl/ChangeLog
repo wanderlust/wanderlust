@@ -1,3 +1,10 @@
+2004-10-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-mime-charset): Change default value for XEmacs
+	without mule to iso-8859-1.
+	(wl-draft-add-in-reply-to): Add note in description.
+	(wl-draft-add-references): Ditto.
+
 2004-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Changed
