@@ -1,7 +1,18 @@
 2000-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo2.el (elmo-imap4-bye-error): Define.
+
 	* elmo-imap4.el (elmo-imap4-list): Don't call `elmo-imap4-commit'.
 	(elmo-imap4-server-diff): Ditto.
+	(elmo-imap4-response-bye-p): New macro.
+	(elmo-imap4-response-error-text): Get text from BYE response.
+	(elmo-imap4-read-response): Return if BYE response.
+	(elmo-imap4-accept-ok): Cause elmo-imap4-bye-error when BYE response.
+	(elmo-imap4-folder-exists-p): Ditto.
+	(elmo-imap4-commit): Do nothing when different mailbox is selected.
+	(elmo-imap4-parse-bye): New function.
+	(elmo-imap4-parse-response): Remove needless let.
+	Call `elmo-imap4-parse-bye'.
 
 2000-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
 

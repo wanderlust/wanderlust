@@ -187,6 +187,10 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   "Returns non-nil if RESPONSE is an 'OK' response."
   (` (assq 'ok (, response))))
 
+(defmacro elmo-imap4-response-bye-p (response)
+  "Returns non-nil if RESPONSE is an 'BYE' response."
+  (` (assq 'bye (, response))))
+
 (defmacro elmo-imap4-response-value (response symbol)
   "Get value of the SYMBOL from RESPONSE."
   (` (nth 1 (assq (, symbol) (, response)))))
@@ -201,9 +205,10 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
     matched))
 
 (defmacro elmo-imap4-response-error-text (response)
-  "Returns text of NO or BAD response."
-  (` (nth 3 (or (elmo-imap4-response-value (, response) 'no)
-		(elmo-imap4-response-value (, response) 'bad)))))
+  "Returns text of NO, BAD, BYE response."
+  (` (nth 1 (or (elmo-imap4-response-value (, response) 'no)
+		(elmo-imap4-response-value (, response) 'bad)
+		(elmo-imap4-response-value (, response) 'bye)))))
 
 (defmacro elmo-imap4-response-bodydetail-text (response)
   "Returns text of BODY[section]<partial>"
@@ -243,6 +248,9 @@ Returns a TAG string which is assigned to the COMAND."
       (setq cmdstr (concat tag " "))
       ;; (erase-buffer) No need.
       (goto-char (point-min))
+      (if (elmo-imap4-response-bye-p elmo-imap4-current-response)
+	  (signal 'elmo-imap4-bye-error
+		  (list (elmo-imap4-response-error-text response))))      
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
 	  (error "IMAP process is running. Please wait (or plug again.)"))
@@ -303,7 +311,8 @@ Returns a TAG string which is assigned to the COMAND."
 TAG is the tag of the command"
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
-    (while (not (string= tag elmo-imap4-reached-tag))
+    (while (not (or (string= tag elmo-imap4-reached-tag)
+		    (elmo-imap4-response-bye-p elmo-imap4-current-response)))
       (when (memq (process-status
 		   (elmo-network-session-process-internal session))
 		  '(open run))
@@ -352,9 +361,12 @@ If response is not `OK' response, causes error with IMAP response text."
   (let ((response (elmo-imap4-read-response session tag)))
     (if (elmo-imap4-response-ok-p response)
 	response
-      (error "IMAP error: %s"
-	     (or (elmo-imap4-response-error-text response)
-		 "No OK response from server.")))))
+      (if (elmo-imap4-response-bye-p response)
+	  (signal 'elmo-imap4-bye-error
+		  (list (elmo-imap4-response-error-text response)))
+	(error "IMAP error: %s"
+	       (or (elmo-imap4-response-error-text response)
+		   "No `OK' response from server."))))))
 ;;;
 
 (defun elmo-imap4-session-check (session)
@@ -545,13 +557,19 @@ BUFFER must be a single-byte buffer."
 	    result)))
 
 (defun elmo-imap4-folder-exists-p (spec)
-  (let ((session (elmo-imap4-get-session spec)))
-    (elmo-imap4-read-ok
-     session
-     (elmo-imap4-send-command
-      session
-      (list "status " (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-	    " (messages)")))))
+  (let ((session (elmo-imap4-get-session spec))
+	response)
+    (setq response
+	  (elmo-imap4-read-response
+	   session
+	   (elmo-imap4-send-command
+	    session
+	    (list "status " (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+		  " (messages)"))))
+    (when (elmo-imap4-response-bye-p response)
+      (signal 'elmo-imap4-bye-error
+	      (list (elmo-imap4-response-error-text response))))
+    (elmo-imap4-response-ok-p response)))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)
@@ -623,13 +641,14 @@ BUFFER must be a single-byte buffer."
   (if (elmo-imap4-plugged-p spec)
       (let ((session (elmo-imap4-get-session spec 'if-exists)))
 	(when session
-	  (if elmo-imap4-use-select-to-update-status
-	      (elmo-imap4-session-select-mailbox session
-						 (elmo-imap4-spec-mailbox spec)
-						 'force)
-	    (or (elmo-imap4-session-select-mailbox
-		 session
-		 (elmo-imap4-spec-mailbox spec))
+	  (if (string=
+	       (elmo-imap4-session-current-mailbox-internal session)
+	       (elmo-imap4-spec-mailbox spec))
+	      (if elmo-imap4-use-select-to-update-status
+		  (elmo-imap4-session-select-mailbox
+		   session
+		   (elmo-imap4-spec-mailbox spec)
+		   'force)	      
 		(elmo-imap4-session-check session)))))))
   
 (defun elmo-imap4-session-select-mailbox (session mailbox &optional force)
@@ -1119,7 +1138,7 @@ If optional argument UNMARK is non-nil, unmark."
       (set-process-sentinel process 'elmo-imap4-sentinel)
       (while (and (memq (process-status process) '(open run))
 		  (eq elmo-imap4-status 'initial))
-	;(message "Waiting for server response...")
+	;;(message "Waiting for server response...")
 	(accept-process-output process 1))
       ;(message "")
       (unless (memq elmo-imap4-status '(nonauth auth))
@@ -1432,7 +1451,8 @@ Return nil if no complete line has arrived."
 	  (unwind-protect
 	      (cond ((eq elmo-imap4-status 'initial)
 		     (setq elmo-imap4-current-response
-			   (elmo-imap4-parse-greeting)))
+			   (list
+			    (list 'greeting (elmo-imap4-parse-greeting)))))
 		    ((or (eq elmo-imap4-status 'auth)
 			 (eq elmo-imap4-status 'nonauth)
 			 (eq elmo-imap4-status 'selected)
@@ -1556,7 +1576,7 @@ Return nil if no complete line has arrived."
 	   (OK         (elmo-imap4-parse-resp-text-code))
 	   (NO         (elmo-imap4-parse-resp-text-code))
 	   (BAD        (elmo-imap4-parse-resp-text-code))
-	   (BYE        (elmo-imap4-parse-resp-text-code))
+	   (BYE        (elmo-imap4-parse-bye))
 	   (FLAGS      (list 'flags
 			     (elmo-imap4-parse-flag-list)))
 	   (LIST       (list 'list (elmo-imap4-parse-data-list)))
@@ -1582,48 +1602,49 @@ Return nil if no complete line has arrived."
 		      (EXPUNGE (list 'expunge t))
 		      (FETCH   (elmo-imap4-parse-fetch token))
 		      (t       (list 'garbage (buffer-string)))))))
-      (t (let (status)
-	   (if (not (string= token
-			     (concat elmo-imap4-seq-prefix
-				     (number-to-string elmo-imap4-seqno))))
-	       (message "Garbage token(%s): %s" token (buffer-string))
-	     (case (prog1 (setq status (elmo-imap4-read (current-buffer)))
-		     (elmo-imap4-forward))
-	       (OK  (progn
-		      (setq elmo-imap4-parsing nil)
-		      (elmo-imap4-debug "*%s* OK arrived" token)
-		      (setq elmo-imap4-reached-tag token)
-		      (list 'ok (elmo-imap4-parse-resp-text-code))))
-	       (NO  (progn
-		      (setq elmo-imap4-parsing nil)
-		      (elmo-imap4-debug "*%s* NO arrived" token)
-		      (setq elmo-imap4-reached-tag token)
-		      (let (code text)
-			(when (eq (char-after) ?\[)
-			  (setq code (buffer-substring (point)
-						       (search-forward "]")))
-			  (elmo-imap4-forward))
-			(setq text (buffer-substring (point) (point-max)))
-			(list 'no (list token status code text)))))
-	       (BAD (progn
-		      (setq elmo-imap4-parsing nil)
-		      (elmo-imap4-debug "*%s* BAD arrived" token)
-		      (setq elmo-imap4-reached-tag token)
-		      (let (code text)
-			(when (eq (char-after) ?\[)
-			  (setq code (buffer-substring (point)
-						       (search-forward "]")))
-			  (elmo-imap4-forward))
-			(setq text (buffer-substring (point) (point-max)))
-			(list 'bad (list token status code text)))))
-			;;(error
-			;;"Internal error, tag %s status %s code %s text %s"
-			;;token status code text))))
-	       (t   (list 'garbage (buffer-string))))))))))
+      (t (if (not (string= token
+			   (concat elmo-imap4-seq-prefix
+				   (number-to-string elmo-imap4-seqno))))
+	     (message "Garbage token(%s): %s" token (buffer-string))
+	   (case (prog1 (elmo-imap4-read (current-buffer))
+		   (elmo-imap4-forward))
+	     (OK  (progn
+		    (setq elmo-imap4-parsing nil)
+		    (elmo-imap4-debug "*%s* OK arrived" token)
+		    (setq elmo-imap4-reached-tag token)
+		    (list 'ok (elmo-imap4-parse-resp-text-code))))
+	     (NO  (progn
+		    (setq elmo-imap4-parsing nil)
+		    (elmo-imap4-debug "*%s* NO arrived" token)
+		    (setq elmo-imap4-reached-tag token)
+		    (let (code text)
+		      (when (eq (char-after) ?\[)
+			(setq code (buffer-substring (point)
+						     (search-forward "]")))
+			(elmo-imap4-forward))
+		      (setq text (buffer-substring (point) (point-max)))
+		      (list 'no (list code text)))))
+	     (BAD (progn
+		    (setq elmo-imap4-parsing nil)
+		    (elmo-imap4-debug "*%s* BAD arrived" token)
+		    (setq elmo-imap4-reached-tag token)
+		    (let (code text)
+		      (when (eq (char-after) ?\[)
+			(setq code (buffer-substring (point)
+						     (search-forward "]")))
+			(elmo-imap4-forward))
+		      (setq text (buffer-substring (point) (point-max)))
+		      (list 'bad (list code text)))))
+	     (t   (list 'garbage (buffer-string)))))))))
 		    
-(defun elmo-imap4-parse-resp-text ()
-  (delq nil (list (elmo-imap4-parse-resp-text-code)
-		  (elmo-imap4-parse-text))))
+(defun elmo-imap4-parse-bye ()
+  (let (code text)
+    (when (eq (char-after) ?\[)
+      (setq code (buffer-substring (point)
+				   (search-forward "]")))
+      (elmo-imap4-forward))
+    (setq text (buffer-substring (point) (point-max)))
+    (list 'bye (list code text))))
 
 (defun elmo-imap4-parse-text ()
   (goto-char (point-min))

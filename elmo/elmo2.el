@@ -57,6 +57,7 @@
 (elmo-define-error 'elmo-error "Error" 'error)
 (elmo-define-error 'elmo-open-error "Cannot open" 'elmo-error)
 (elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
+(elmo-define-error 'elmo-imap4-bye-error "IMAP4 BYE response" 'elmo-open-error)
 
 (defun elmo-quit ()
   (interactive)
