@@ -45,6 +45,22 @@
 
 (defvar elmo-pop3-total-size nil)
 
+;; For debugging.
+(defvar elmo-pop3-debug nil
+  "Non-nil forces POP3 folder as debug mode.
+Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
+
+(defvar elmo-pop3-debug-inhibit-logging nil)
+
+;;; Debug
+(defsubst elmo-pop3-debug (message &rest args)
+  (if elmo-pop3-debug
+      (with-current-buffer (get-buffer-create "*POP3 DEBUG*")
+	(goto-char (point-max))
+	(if elmo-pop3-debug-inhibit-logging
+	    (insert "NO LOGGING\n")
+	  (insert (apply 'format message args) "\n")))))
+
 (luna-define-class elmo-pop3-session (elmo-network-session))
 
 ;; buffer-local
@@ -93,6 +109,7 @@
       (erase-buffer))
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
+    (elmo-pop3-debug "SEND: %s\n" command)
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
@@ -140,6 +157,7 @@
     (set-buffer (process-buffer process))
     (goto-char (point-max))
     (insert output)
+    (elmo-pop3-debug "RECEIVED: %s\n" output)
     (if elmo-pop3-total-size
 	(message "Retrieving...(%d/%d bytes)." 
 		 (buffer-size) elmo-pop3-total-size))))
@@ -223,6 +241,7 @@
   (with-current-buffer (process-buffer 
 			(elmo-network-session-process-internal session))
     (let* ((process (elmo-network-session-process-internal session))
+	   (elmo-pop3-debug-inhibit-logging t)
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
@@ -323,8 +342,7 @@
 	(elmo-pop3-parse-uidl-response response)))))
 
 (defun elmo-pop3-read-contents (buffer process)
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (let ((case-fold-search nil)
 	  match-end)
       (goto-char elmo-pop3-read-point)
@@ -449,7 +467,9 @@
 (defun elmo-pop3-max-of-folder (spec)
   (elmo-pop3-commit spec)
   (if elmo-pop3-use-uidl
-      (elmo-pop3-list-by-uidl-subr spec 'nonsort)
+      (prog1
+	  (elmo-pop3-list-by-uidl-subr spec 'nonsort)
+	(elmo-pop3-commit spec))
     (let* ((process
 	    (elmo-network-session-process-internal
 	     (elmo-pop3-get-session spec)))
@@ -464,6 +484,7 @@
 	  (setq total
 		(string-to-int
 		 (substring response (match-beginning 1)(match-end 1 ))))
+	  (elmo-pop3-commit spec)
 	  (cons total total))))))
 
 (defvar elmo-pop3-header-fetch-chop-length 200)
@@ -480,7 +501,7 @@
       nil))
    (t
     nil)))
-     
+
 (defun elmo-pop3-retrieve-headers (buffer tobuffer process articles)
   (save-excursion
     (set-buffer buffer)
@@ -805,9 +826,8 @@
 (defun elmo-pop3-commit (spec)
   (if (elmo-pop3-plugged-p spec)
       (let ((session (elmo-pop3-get-session spec 'if-exists)))
-	(and session
-	     (elmo-network-close-session session)))))
-       
+	(when session
+	  (elmo-network-close-session session)))))
 
 (require 'product)
 (product-provide (provide 'elmo-pop3) (require 'elmo-version))
