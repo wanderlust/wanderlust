@@ -156,9 +156,9 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
       (elmo-pop3-send-command (elmo-network-session-process-internal session)
 			      "quit")
       ;; process is dead.
-      (or (elmo-pop3-read-response
-	   (elmo-network-session-process-internal session)
-	   t)
+      (or (cdr (elmo-pop3-read-response
+		(elmo-network-session-process-internal session)
+		t))
 	  (error "POP error: QUIT failed")))
     (kill-buffer (process-buffer
 		  (elmo-network-session-process-internal session)))
@@ -200,12 +200,22 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
     (process-send-string process (concat command "\r\n"))))
 
 (defun elmo-pop3-read-response (process &optional not-command)
+  "Read response and return a cons cell of \(CODE . BODY\).
+PROCESS is the process to read response from.
+If optional NOT-COMMAND is non-nil, read only the first line.
+CODE is one of the following:
+'ok          ... response is OK.
+'err         ... response is ERROR.
+'login-delay ... user is not allowed to login until the login delay
+                 period has expired.
+'in-use      ... authentication was successful but the mailbox is in use."
   ;; buffer is in case for process is dead.
   (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  (response-string nil)
 	  (response-continue t)
 	  (return-value nil)
+	  (err nil)
 	  match-end)
       (while response-continue
 	(goto-char elmo-pop3-read-point)
@@ -226,9 +236,16 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		      response-string)))
 	  (if (looking-at "\\-.*$")
 	      (progn
-		(setq response-continue nil)
-		(setq elmo-pop3-read-point match-end)
-		(setq return-value nil))
+		(when (looking-at "[^ ]+ \\[\\(.*\\)\\]")
+		  (setq return-value
+			(intern
+			 (downcase
+			  (buffer-substring (match-beginning 1)
+					    (match-end 1))))))
+		(setq err t
+		      response-continue nil
+		      elmo-pop3-read-point match-end
+		      return-value (cons (or return-value 'err) nil)))
 	    (setq elmo-pop3-read-point match-end)
 	    (if not-command
 		(setq response-continue nil))
@@ -237,7 +254,9 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
-      return-value)))
+      (if err
+	  return-value
+	(cons 'ok return-value)))))
 
 (defun elmo-pop3-process-filter (process output)
   (when (buffer-live-p (process-buffer process))
@@ -256,28 +275,37 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   (/ (buffer-size) (/ elmo-pop3-total-size 100)))))))
 
 (defun elmo-pop3-auth-user (session)
-  (let ((process (elmo-network-session-process-internal session)))
+  (let ((process (elmo-network-session-process-internal session))
+	response)
     ;; try USER/PASS
     (elmo-pop3-send-command
      process
      (format "user %s" (elmo-network-session-user-internal session))
      nil 'no-log)
-    (or (elmo-pop3-read-response process t)
-	(progn
-	  (delete-process process)
-	  (signal 'elmo-authenticate-error
-		  '(elmo-pop-auth-user))))
+    (setq response (elmo-pop3-read-response process t))
+    (unless (eq (car response) 'ok)
+      (delete-process process)
+      (signal 'elmo-open-error '(elmo-pop-auth-user)))
     (elmo-pop3-send-command  process
 			     (format
 			      "pass %s"
 			      (elmo-get-passwd
 			       (elmo-network-session-password-key session)))
 			     nil 'no-log)
-    (or (elmo-pop3-read-response process t)
-	(progn
-	  (delete-process process)
+    (setq response (elmo-pop3-read-response process t))
+    (unless (eq (car response) 'ok)
+      (delete-process process)
+      (unless (eq 'ok (car response))
+	(if (or (eq (car response) 'in-use)
+		(eq (car response) 'login-delay))
+	    (error (cond ((eq (car response) 'in-use)
+			  "Maildrop is currently in use")
+			 ((eq (car response) 'login-delay)
+			  "Not allowed to login \
+until the login delay period has expired")))
 	  (signal 'elmo-authenticate-error
-		  '(elmo-pop-auth-user))))))
+		  '(elmo-pop-auth-user)))))
+    (car response)))
 
 (defun elmo-pop3-auth-apop (session)
   (if (string-match "^\+OK .*\\(<[^\>]+>\\)"
@@ -295,13 +323,22 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 			  (elmo-get-passwd
 			   (elmo-network-session-password-key session)))))
 	 nil 'no-log)
-	(or (elmo-pop3-read-response
-	     (elmo-network-session-process-internal session)
-	     t)
-	    (progn
-	      (delete-process (elmo-network-session-process-internal session))
-	      (signal 'elmo-authenticate-error
-		      '(elmo-pop3-auth-apop)))))
+	(let ((response (elmo-pop3-read-response
+			 (elmo-network-session-process-internal session)
+			 t)))
+	  (unless (eq (car response) 'ok)
+	    (delete-process (elmo-network-session-process-internal session))
+	    (unless (eq 'ok (car response))
+	      (if (or (eq (car response) 'in-use)
+		      (eq (car response) 'login-delay))
+		  (error (cond ((eq (car response) 'in-use)
+				"Maildrop is currently in use")
+			       ((eq (car response) 'login-delay)
+				"Not allowed to login \
+until the login delay period has expired")))
+		(signal 'elmo-authenticate-error
+			'(elmo-pop-auth-apop)))))
+	  (car response)))
     (signal 'elmo-open-error '(elmo-pop3-auth-apop))))
 
 (luna-define-method elmo-network-initialize-session-buffer :after
@@ -325,18 +362,16 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (setq elmo-pop3-read-point (point))
       (or (elmo-network-session-set-greeting-internal
 	   session
-	   (elmo-pop3-read-response process t))
+	   (cdr (elmo-pop3-read-response process t))) ; if ok, cdr is non-nil.
 	  (signal 'elmo-open-error
 		  '(elmo-network-intialize-session)))
       (when (eq (elmo-network-stream-type-symbol
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
 	(elmo-pop3-send-command process "stls")
-	(if (string-match "^\+OK"
-			  (elmo-pop3-read-response process))
+	(if (eq 'ok (car (elmo-pop3-read-response process)))
 	    (starttls-negotiate process)
-	  (signal 'elmo-open-error
-		  '(elmo-pop3-starttls-error)))))))
+	  (signal 'elmo-open-error '(elmo-pop3-starttls-error)))))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
@@ -387,21 +422,26 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	     nil 'no-log)
 	    (catch 'done
 	      (while t
-		(unless (setq response (elmo-pop3-read-response process t))
-		  ;; response is NO or BAD.
-		  (signal 'elmo-authenticate-error
-			  (list (intern
-				 (concat "elmo-pop3-auth-"
-					 (downcase name))))))
-		(if (string-match "^\+OK" response)
-		    (if (sasl-next-step client step)
-			;; Bogus server?
-			(signal 'elmo-authenticate-error
-				(list (intern
-				       (concat "elmo-pop3-auth-"
-					       (downcase name)))))
-		      ;; The authentication process is finished.
-		      (throw 'done nil)))
+		(setq response (elmo-pop3-read-response process t))
+		(unless (eq 'ok (car response))
+		  (if (or (eq (car response) 'in-use)
+			  (eq (car response) 'login-delay))
+		      (error (cond ((eq (car response) 'in-use)
+				    "Maildrop is currently in use")
+				   ((eq (car response) 'login-delay)
+				    "Not allowed to login \
+until the login delay period has expired")))
+		    (signal 'elmo-authenticate-error
+			    (list (intern (concat "elmo-pop3-auth-"
+						  (downcase name)))))))
+		(if (sasl-next-step client step)
+		    ;; Bogus server?
+		    (signal 'elmo-authenticate-error
+			    (list (intern
+				   (concat "elmo-pop3-auth-"
+					   (downcase name)))))
+		  ;; The authentication process is finished.
+		  (throw 'done nil))
 		(sasl-step-set-data
 		 step
 		 (elmo-base64-decode-string
@@ -422,7 +462,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (setq elmo-pop3-size-hash (elmo-make-hash 31))
       ;; To get obarray of uidl and size
       (elmo-pop3-send-command process "list")
-      (if (null (elmo-pop3-read-response process))
+      (if (null (cdr (elmo-pop3-read-response process)))
 	  (error "POP LIST command failed"))
       (if (null (setq response
 		      (elmo-pop3-read-contents process)))
@@ -435,7 +475,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	(setq elmo-pop3-number-uidl-hash (elmo-make-hash (* count 2)))
 	;; UIDL
 	(elmo-pop3-send-command process "uidl")
-	(unless (elmo-pop3-read-response process)
+	(unless (cdr (elmo-pop3-read-response process))
 	  (error "POP UIDL failed"))
 	(unless (setq response (elmo-pop3-read-contents process))
 	  (error "POP UIDL failed"))
@@ -614,7 +654,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   response)
       (with-current-buffer (process-buffer process)
 	(elmo-pop3-send-command process "STAT")
-	(setq response (elmo-pop3-read-response process))
+	(setq response (cdr (elmo-pop3-read-response process)))
 	;; response: "^\+OK 2 7570$"
 	(if (not (string-match "^\+OK[ \t]*\\([0-9]*\\)" response))
 	    (error "POP STAT command failed")
@@ -858,8 +898,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   0))
 	(unwind-protect
 	    (progn
-	      (when (null (setq response (elmo-pop3-read-response
-					  process t)))
+	      (when (null (setq response (cdr (elmo-pop3-read-response
+					       process t))))
 		(error "Fetching message failed"))
 	      (setq response  (elmo-pop3-read-body process outbuf)))
 	  (setq elmo-pop3-total-size nil))
@@ -886,8 +926,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	  (progn
 	    (elmo-pop3-send-command process
 				    (format "dele %s" number))
-	    (when (null (setq response (elmo-pop3-read-response
-					process t)))
+	    (when (null (setq response (cdr (elmo-pop3-read-response
+					     process t))))
 	      (error "Deleting message failed")))
 	(error "Deleting message failed")))))
 

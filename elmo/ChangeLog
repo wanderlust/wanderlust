@@ -1,3 +1,17 @@
+2004-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-read-response): Treat return code.
+	(elmo-network-close-session): Follow the changes in
+	`elmo-pop3-read-response'.
+	(elmo-pop3-auth-user): Ditto.
+	(elmo-pop3-auth-apop): Ditto.
+	(elmo-network-initialize-session): Ditto.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-network-setup-session): Ditto.
+	(elmo-folder-status): Ditto.
+	(elmo-message-fetch-plugged): Ditto.
+	(elmo-pop3-delete-msg): Ditto.
+
 2004-07-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-archive.el (elmo-archive-folder-append-buffer): Return nil
