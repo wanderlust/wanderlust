@@ -147,6 +147,7 @@ into another language, under the above conditions for modified versions.
 * Address Book::             $B%"%I%l%9D"(B
 * Spam Filter::              Spam $B%U%#%k%?(B
 * Customization::            $B%+%9%?%^%$%:(B
+* Migration::                $B5l%P!<%8%g%s$+$i$N0\9T(B
 * Terminology::              $BMQ8l$N2r@b(B
 * Mailing List::             $B%a!<%j%s%0%j%9%H(B
 * Addition::                 $B$*$^$1(B
@@ -696,7 +697,7 @@ Wanderlust $B$O(B ELMO $B$N%$%s%?%U%'!<%9$rMxMQ$7$F$$$k$?$a!"(BELMO $B%b%8%
 
 $B%P!<%8%g%s(B @value{VERSION} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(BIMAP, NNTP,
 LocalDir(MH), Maildir, News Spool, Archive, POP, Shimbun, Namazu, Multi,
-Filter, Pipe, Internal $B$N(B 13 $B<oN`$G$9!#(B
+Filter, Pipe, Internal, File $B$N(B 14 $B<oN`$G$9!#(B
 
 @menu
 * IMAP Folder::              @samp{%} -- IMAP $B%U%)%k%@(B
@@ -712,6 +713,7 @@ Filter, Pipe, Internal $B$N(B 13 $B<oN`$G$9!#(B
 * Filter Folder::            @samp{/} -- $B%U%#%k%?%U%)%k%@(B
 * Pipe Folder::              @samp{|} -- $B%Q%$%W%U%)%k%@(B
 * Internal Folder::          @samp{'} -- $BFbIt%U%)%k%@(B
+* File Folder::                  -- $B%U%!%$%k%U%)%k%@(B
 @end menu
 
 
@@ -1474,6 +1476,7 @@ namazu (@uref{http://www.namazu.org/}) $B$rMQ$$$F!"8!:w<0$K%^%C%A$7$?(B
 @cindex Folder, Filtering
 @cindex Folder, Virtual
 @cindex Folder, Conditional
+@cindex Flag
 
 $B;XDj$7$?>r7o$rK~$?$9%a%C%;!<%8$N$_$r4^$`2>A[E*$J%U%)%k%@$G$9!#(B
 
@@ -1544,6 +1547,37 @@ lastyear  ->  $B5nG/$N:#F|(B
                          "teranisi" $B$H$$$&J8;zNs$r4^$`%a%C%;!<%8$N%U%)%k%@(B
 /body:$B$J$s$H$+(B/%inbox -> %inbox $B$G!"K\J8$K(B "$B$J$s$H$+(B"
                          $B$H$$$&J8;zNs$r4^$`%a%C%;!<%8$N%U%)%k%@(B
+@end group
+@end example
+
+@item
+$B%U%i%0%U%#%k%?!'(B @samp{flag:@var{$B%U%i%0L>(B}}
+
+@var{$B%U%i%0L>(B}$B$G;XDj$5$l$?%U%i%0$r;}$D%a%C%;!<%8$r<h$j=P$7$^$9!#(B
+
+$B;XDj=PMh$k%U%i%0L>$K$O!"0J2<$N$b$N$,$"$j$^$9!#(B
+
+@example
+@group
+unread    -> $BL$FI(B
+important -> $B=EMW(B
+answered  -> $BJV?.:Q$_(B
+digest    -> $BL$FI$^$?$O=EMW(B
+any       -> $BL$FI$^$?$O=EMW$^$?$OJV?.:Q$_(B
+@end group
+@end example
+
+$B$^$?!"%0%m!<%P%k%U%i%0$H$7$F@_Dj$7$?%U%i%0$bF1MM$K@_Dj$9$k$3$H$,=PMh$^$9!#(B
+@xref{Internal Folder}.
+
+$BNc(B:
+
+@example
+@group
+/flag:digest/%inbox     -> %inbox $B$N$&$A!"L$FI$^$?$O=EMW$J(B
+                           $B%a%C%;!<%8$N%U%)%k%@(B
+/flag:wl/+ML/Wanderlust -> +ML/Wanderlust $B$N$&$A!"(Bwl $B$H$$$&(B
+                           $B%0%m!<%P%k%U%i%0$,IU$$$?%a%C%;!<%8$N%U%)%k%@(B
 @end group
 @end example
 
@@ -1675,11 +1709,12 @@ POP $B%5!<%P$K%a!<%k$r;D$7$?$^$^!"%a%C%;!<%8$r(B @samp{+inbox} $B$K%3%T!<$7$F
 $B$^$9$N$G!"%@%&%s%m!<%I8e$K<B9T$7$?$$4X?t$rEPO?$7$F$*$/$HNI$$$G$7$g$&!#(B
 
 
-@node Internal Folder,  , Pipe Folder, Folders
+@node Internal Folder, File Folder, Pipe Folder, Folders
 @section $BFbIt%U%)%k%@(B
 @cindex @samp{'}
 @cindex Internal Folder
 @cindex Folder, @samp{$} mark
+@cindex Flag
 @cindex Cache
 @c @cindex Folder, Null
 
@@ -1695,13 +1730,17 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 @end group
 @end example
 
-@samp{'flag} $B$H$$$&%U%)%k%@$O!"(B@var{$B%0%m!<%P%k%U%i%0(B} $B$G;XDj$7$?%U%i%0$N(B
+@samp{'flag} $B$H$$$&%U%)%k%@$O!"(B@var{$B%0%m!<%P%k%U%i%0(B}$B$G;XDj$7$?%U%i%0$N(B
 $BIU$$$?%a%C%;!<%8$r=8$a$?2>A[%U%)%k%@$G$9!#(B
 
-$B8=:_$O!"(B@var{$B%0%m!<%P%k%U%i%0(B} $B$H$7$F(B @samp{important} $B%U%i%0$,%5%]!<%H(B
-$B$5$l$F$$$^$9!#$3$N%U%i%0$O!"8e=R$N=EMW%^!<%/(B(@samp{$})$B$rIU$1$k$3$H$G%a%C(B
-$B%;!<%8$KIU2C$5$l$^$9!#=EMW%^!<%/$r%a%C%;!<%8$K$D$1$F$*$$$F!"$"$H$+$i8+D>(B
-$B$7$?$$$H$-$J$I$KJXMx$G$9!#(B
+$B%G%U%)%k%H$GDj5A$5$l$F$$$k(B@var{$B%0%m!<%P%k%U%i%0(B}$B$H$7$F(B @samp{important} 
+$B%U%i%0$,$"$j$^$9!#$3$N%U%i%0$O!"8e=R$N=EMW%^!<%/(B(@samp{$})$B$rIU$1$k$3$H$G(B
+$B%a%C%;!<%8$KIU2C$5$l$^$9!#=EMW%^!<%/$r%a%C%;!<%8$K$D$1$F$*$$$F!"$"$H$+$i(B
+$B8+D>$7$?$$$H$-$J$I$KJXMx$G$9!#(B@var{$B%0%m!<%P%k%U%i%0(B}$B$r>JN,$7$?>l9g$O!"$3(B
+$B$N(B @samp{important} $B%U%i%0$r;XDj$7$?$b$N$H4GJo$5$l$^$9!#(B
+
+$B$^$?!"8e=R$N%5%^%j%b!<%I$K$*$$$F!"<+M3$K%0%m!<%P%k%U%i%0$rDj5A$7$F%a%C%;!<(B
+$B%8$KIU2C$9$k$3$H$b=PMh$^$9!#(B@xref{Usage of Summary mode}
 
 $B$3$N%U%)%k%@$G%a%C%;!<%8$r:o=|$9$k$H!"$=$N%a%C%;!<%8$K$D$$$F$$$?(B 
 @var{$B%0%m!<%P%k%U%i%0(B} $B$,:o=|$5$l$^$9!#$^$?!"$3$N%U%)%k%@$K%a%C%;!<%8(B
@@ -1718,6 +1757,11 @@ Wanderlust $B$NFbIt$KJ];}$7$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 @samp{'cache/00} $B!A(B @samp{'cache/1F} $B$O%M%C%H%o!<%/7PM3$GFI$s$@%a%C%;!<(B
 $B%8$N%-%c%C%7%e$K%"%/%;%9$9$k$?$a$N%U%)%k%@$G$9!#(B00 $B!A(B 1F $B$K$O!"%-%c%C%7%e(B
 $B%G%#%l%/%H%j(B (@file{~/.elmo/cache})$B$N%5%V%G%#%l%/%H%jL>$r;XDj$7$^$9!#(B
+
+
+@node File Folder,  , Internal Folder, Folders
+@section $B%U%!%$%k%U%)%k%@(B
+@cindex File Folder
 
 
 @node Folder, Summary, Folders, Top
@@ -2617,10 +2661,11 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 $BJV?.:Q$_%a%C%;!<%8$KIU$-$^$9!#(B@samp{A} $B$H$O0[$J$j!"(B@samp{&} $B$N%a%C%;!<%8(B
 $B$O%-%c%C%7%e$5$l$F$$$^$9!#(B
 @item $
-@kbd{$} $B%-!<$r2!$9$H!"(B@samp{$} $B%^!<%/$,IU$-$^$9!#$3$N%^!<%/$O(B Emacs $B$r=*N;(B
-$B$7$F$bJ]B8$5$l$k$?$a!"$"$H$GJV;v$r=q$-$?$$>l9g$J$I!"3P$($F$*$-$?$$=EMW$J(B
-$B%a%C%;!<%8$KIU$1$F$*$/$HJXMx$G$9!#(B@samp{$} $B$NIU$$$?%a%C%;!<%8$O!"(B
-($B<B:]$N%a%C%;!<%8$,>C$5$l$?$H$7$F$b(B) @samp{'mark} $B%U%)%k%@$G1\Mw$G$-$^$9!#(B
+$B%0%m!<%P%k%U%i%0$N@_Dj$5$l$?%a%C%;!<%8$KIU$-$^$9!#$3$N%^!<%/$O(B Emacs $B$r(B
+$B=*N;$7$F$bJ]B8$5$l$k$?$a!"$"$H$GJV;v$r=q$-$?$$>l9g$J$I!"3P$($F$*$-$?$$=E(B
+$BMW$J%a%C%;!<%8$KIU$1$F$*$/$HJXMx$G$9!#(B@samp{$} $B$NIU$$$?%a%C%;!<%8$O!"(B($B<B(B
+$B:]$N%a%C%;!<%8$,>C$5$l$?$H$7$F$b(B) @samp{'flag} $B%U%)%k%@$G1\Mw$G$-$^$9!#(B
+$B%0%m!<%P%k%U%i%0$O!"(B@kbd{$} $B$^$?$O!"(B@kbd{F} $B$GIU$1$k$3$H=PMh$^$9!#(B
 
 @item $B$J$7(B
 $B4{FI%a%C%;!<%8$K$O%^!<%/$,B8:_$7$^$;$s!#(B
@@ -3108,8 +3153,18 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @item $
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
-@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
+@samp{important} $B%U%i%0$r$D$1$^$9!#4{$K(B @samp{important} $B%U%i%0$,$"$l$P(B
+$B%U%i%0$r<h$j=|$-$^$9!#(Bprefix argument $B$r$D$1$F<B9T$7$?>l9g$O!"(B@kbd{F} $B$H(B
+$BF1MM$KIU2C$9$k%0%m!<%P%k%U%i%0$r?R$$$F$-$^$9!#(B
 (@code{wl-summary-mark-as-important})
+
+@item F
+@kindex F (Summary)
+@findex wl-summary-set-flags
+$B%_%K%P%C%U%!$GF~NO$7$?G$0U$N%0%m!<%P%k%U%i%0$r$D$1$^$9!#(BEmacs 21$B0J9_$J$i(B 
+@samp{,} $B$G6h@Z$C$FJ#?t$N%U%i%0$rF1;~$K@_Dj=PMh$^$9!#(Bprefix argument $B$r(B
+$B$D$1$F<B9T$7$?>l9g$O!"4{$K$D$$$F$$$k%0%m!<%P%k%U%i%0$r<h$j=|$-$^$9!#(B
+(@code{wl-summary-set-flags})
 
 @item y
 @itemx e
@@ -3446,9 +3501,16 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 @item r $
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8A4$F$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8A4$F$K(B @samp{important} $B%U%i%0$r$D$1$^$9!#(B
+$B$9$G$K(B @samp{important} $B%U%i%0$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-mark-as-important-region})
+
+@item r F
+@kindex r F (Summary)
+@findex wl-summary-set-flags-region
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8A4$F$K%_%K%P%C%U%!$GF~NO$7$?G$0U$N%0%m!<%P(B
+$B%k%U%i%0$r$D$1$^$9!#(B
+(@code{wl-summary-set-flags-region})
 
 @item r !
 @kindex r ! (Summary)
@@ -3515,11 +3577,18 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rFI$s$
 @item t $
 @kindex t $ (Summary)
 @findex wl-thread-mark-as-important
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
-$BE,MQ$7$^$9!#(B
-(@code{wl-thread-mark-as-important})
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K(B @samp{important} $B%U%i%0(B
+$B$r$D$1$^$9!#4{$K(B @samp{important} $B%U%i%0$,$"$l$P<h$j=|$-$^$9!#(Bprefix
+argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$KE,MQ$7(B
+$B$^$9!#(B(@code{wl-thread-mark-as-important})
+
+@item t F
+@kindex t F (Summary)
+@findex wl-thread-set-flags
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%_%K%P%C%U%!$GF~NO$7$?G$(B
+$B0U$N%0%m!<%P%k%U%i%0$r$D$1$^$9!#(Bprefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"(B
+$B$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$KE,MQ$7$^$9!#(B
+(@code{wl-thread-set-flags})
 
 @item t !
 @kindex t ! (Summary)
@@ -3600,9 +3669,16 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$rJ]B8$
 @item m $
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
-$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K(B @samp{important} $B%U%i%0(B
+$B$r$D$1$^$9!#$9$G$K(B @samp{important} $B%U%i%0$,$"$l$P<h$j=|$-$^$9!#(B
 (@code{wl-summary-target-mark-mark-as-important})
+
+@item m F
+@kindex m F (Summary)
+@findex wl-summary-target-mark-set-flags
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K%_%K%P%C%U%!$GF~NO$7$?G$(B
+$B0U$N%0%m!<%P%k%U%i%0$r$D$1$^$9!#(B
+(@code{wl-summary-target-mark-set-flags})
 
 @item m !
 @kindex m ! (Summary)
@@ -4065,6 +4141,20 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
                    ("^\\*.*" . hide) (".*" . read)))
 @end group
 @end lisp
+
+@item wl-summary-flag-alist
+@vindex wl-summary-flag-alist
+$B=i4|@_Dj$O0J2<$NDL$j!#(B
+
+@lisp
+@group
+((important "orange"))
+@end group
+@end lisp
+
+$B%5%^%j$G$N%U%i%0$D$-%a%C%;!<%8$N?'$r;XDj$7$^$9!#0l$D$N%a%C%;!<%8$KJ#?t$N(B
+$B%0%m!<%P%k%U%i%0$,@_Dj$5$l$F$$$k>l9g$K$O!"$3$N%j%9%H$NA0J}$K$"$k%U%i%0$,(B
+$BM%@h$5$l$^$9!#$^$?!"%5%^%j$G%U%i%0$rF~NO$9$k>l9g$NJd408uJd$K;H$o$l$^$9!#(B
 @end table
 
 
@@ -6624,7 +6714,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @end table
 
 
-@node Spam Filter, Customization, Address Book, Top
+@node Spam Filter, Migration, Address Book, Top
 @chapter Spam $B%U%#%k%?(B
 @cindex Spam Filter
 
@@ -7039,7 +7129,7 @@ bsfilter $B$r5/F0$9$k%7%'%k$KM?$($k0z?t$r;XDj$7$^$9!#(B
 
 @end table
 
-@node SpamAssassin, , bsfilter, Spam Filter Processors
+@node SpamAssassin, Regular Expressions Header Matching, bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
@@ -7141,7 +7231,11 @@ overview $B>pJs$K4^$^$l$J$$%U%#!<%k%I$r8!::$NBP>]$H$9$k>l9g!"(B
 @end table
 
 
-@node Customization, Terminology, Spam Filter, Top
+@node Migration, Customization, Spam Filter, Top
+@chapter $B5l%P!<%8%g%s$+$i$N0\9T(B
+
+
+@node Customization, Terminology, Migration, Top
 @chapter Wanderlust $B$N%+%9%?%^%$%:(B
 @cindex Customization
 
