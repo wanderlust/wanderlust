@@ -75,7 +75,7 @@
 				     "cache/"
 				     (file-name-nondirectory f))))
 	     (directory-files (elmo-cache-folder-directory-internal folder)
-			      t "^[0-9A-F][0-9A-F]$"))))
+			      t "^[01][0-9A-F]$"))))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-cache-folder))
   t)
