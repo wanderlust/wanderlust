@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust $B$N(B texinfo
-@set Time-stamp: <00/04/12 00:01:23 teranisi>
+@set Time-stamp: <00/04/24 17:28:05 teranisi>
 @set version 1.1.1
 @synindex pg cp
 @finalout
@@ -2667,6 +2667,9 @@ Date($BF|IU(B) From($BH/?.<T(B) Number($B%a%C%;!<%8HV9f(B) Subject($B%5%V
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
 $B%9%l%C%II=<($r%H%0%k$7$^$9!#(B
+$B8=:_$N%9%l%C%II=<(>uBV$O%b!<%I%i%$%s$KI=<($5$l$^$9!%(B
+{S} $B$O%9%l%C%I!&%*%U(B(Sequence)$B$N>uBV!$(B
+{T} $B$O%9%l%C%I!&%*%s(B(Thread)$B$N>uBV$r<($7$^$9!%(B
 (@code{wl-summary-toggle-thread})
 
 @item l
