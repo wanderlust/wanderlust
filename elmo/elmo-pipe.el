@@ -208,26 +208,6 @@
   (elmo-folder-message-make-temp-files
    (elmo-pipe-folder-dst-internal folder) numbers start-number))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-pipe-folder)
-					      numbers)
-  (elmo-folder-mark-as-read (elmo-pipe-folder-dst-internal folder)
-			    numbers))
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-pipe-folder)
-					      numbers)
-  (elmo-folder-unmark-read (elmo-pipe-folder-dst-internal folder)
-			   numbers))
-
-(luna-define-method elmo-folder-unmark-important ((folder elmo-pipe-folder)
-						  numbers)
-  (elmo-folder-unmark-important (elmo-pipe-folder-dst-internal folder)
-				numbers))
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-pipe-folder)
-						   numbers)
-  (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
-				 numbers))
-
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
 

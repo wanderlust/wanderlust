@@ -192,7 +192,7 @@
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-localdir-folder)
 						 &optional one-level)
-  (elmo-mapcar-list-of-list
+  (mapcar
    (lambda (x) (concat (elmo-folder-prefix-internal folder) x))
    (elmo-list-subdirectories
     (elmo-localdir-folder-path folder)

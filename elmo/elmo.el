@@ -104,7 +104,6 @@ If a folder name begins with PREFIX, use BACKEND."
 				     persistent   ; non-nil if persistent.
 				     message-modified ; message is modified.
 				     mark-modified    ; mark is modified.
-				     process-duplicates  ; read or hide
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 
@@ -990,7 +989,7 @@ FIELD is a symbol of the field."
 					 (elmo-folder-msgdb folder))
 					number-alist)))
 	     (cur number-alist)
-	     pair overview
+	     pair
 	     to-be-deleted
 	     mark-alist)
 	(while cur
@@ -999,25 +998,13 @@ FIELD is a symbol of the field."
 	  (if (setq pair (rassoc (cdr (car cur)) all-alist))
 	      (setq to-be-deleted (nconc to-be-deleted (list (car pair)))))
 	  (setq cur (cdr cur)))
-	(cond ((eq (elmo-folder-process-duplicates-internal folder)
-		   'hide)
-	       ;; Hide duplicates.
-	       (setq overview (elmo-delete-if
-			       (lambda (x)
-				 (memq (elmo-msgdb-overview-entity-get-number
-					x)
-				       to-be-deleted))
-			       (elmo-msgdb-get-overview append-msgdb)))
-	       ;; Should be mark as read.
-	       (elmo-folder-mark-as-read folder to-be-deleted)
-	       (elmo-msgdb-set-overview append-msgdb overview))
-	      ((eq (elmo-folder-process-duplicates-internal folder)
-		   'read)
-	       ;; Mark as read duplicates.
-	       (elmo-folder-mark-as-read folder to-be-deleted))
-	      (t 
-	       ;; Do nothing.
-	       (setq to-be-deleted nil)))
+	;; XXXX If caching is enabled, read-uncached mark should be set.
+	(setq mark-alist (elmo-delete-if
+			  (function
+			   (lambda (x)
+			     (memq (car x) to-be-deleted)))
+			  (elmo-msgdb-get-mark-alist append-msgdb)))
+	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
 					 (elmo-folder-msgdb folder)

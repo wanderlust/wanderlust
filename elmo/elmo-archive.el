@@ -511,8 +511,8 @@ TYPE specifies the archiver's symbol."
 		       (elmo-concat-path base-folder (elmo-match-string 1 x))
 		       suffix prefix)))
 	  flist)))
-    (elmo-mapcar-list-of-list
-     (function (lambda (x) (concat (elmo-folder-prefix-internal folder) x)))
+    (mapcar
+     (lambda (x) (concat (elmo-folder-prefix-internal folder) x))
      (elmo-list-subdirectories
       (elmo-archive-get-archive-directory folder)
       ""
