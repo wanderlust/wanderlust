@@ -1,3 +1,12 @@
+2000-08-28   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-summary.el (wl-summary-default-from): Use
+	`wl-address-get-petname-1'.
+	(wl-summary-simple-from): Ditto.
+
+	* wl-address.el (wl-address-get-petname-1): New inline function.
+	(wl-address-get-petname): Use it.
+
 2000-08-27   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-summary.el (wl-summary-default-from): Return full-name part

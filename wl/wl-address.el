@@ -540,9 +540,13 @@ Matched address lists are append to CL."
 	    (forward-line))
 	  ret))))
 
-(defsubst wl-address-get-petname (string)
+(defsubst wl-address-get-petname-1 (string)
   (let ((address (downcase (wl-address-header-extract-address string))))
     (elmo-get-hash-val address wl-address-petname-hash)))
+
+(defsubst wl-address-get-petname (string)
+  (or (wl-address-get-petname-1 string)
+      string))
 
 (defsubst wl-address-user-mail-address-p (address)
   "Judge whether ADDRESS is user's or not."
