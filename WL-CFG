@@ -20,9 +20,6 @@
 ;; If you want to install utils, uncomment following line.
 ;(setq wl-install-utils t)
 
-;; If you want to install sasl package, uncomment following line.
-;(setq wl-install-sasl t)
-
 ;; Set lauguage for info file ("ja" or "en"). Default is "ja".
 ;; By following setting, English info is installed.
 ;(setq wl-info-lang "en")

@@ -1,5 +1,10 @@
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-ELS: Remove sasl.
+	* WL-CFG: Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* WL-MK: Remove sasl.
 
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>

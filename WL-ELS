@@ -72,11 +72,6 @@
 (if (module-installed-p 'base64)
     (add-to-list 'UTILS-MODULES 'ssl))
 
-(defconst SASL-MODULES '(hmac-def hmac-md5 hmac-sha1
-			 hex-util md5-dl md5-el md5
-			 sha1-dl sha1-el sha1 sasl
-			 scram-md5 digest-md5 unique-id))
-
 (defvar modules-alist
   (list
    (cons ELMODIR ELMO-MODULES)
@@ -86,9 +81,4 @@
    (if (exec-installed-p "imput")
        (cons UTILSDIR (list 'im-wl)))
    (if wl-install-utils
-       (cons UTILSDIR UTILS-MODULES))
-   ;; sasl does not work under Nemacs.
-   (if (and wl-install-sasl
-	    (not (fboundp 'nemacs-version)))
-       (cons SASLDIR SASL-MODULES))
-    ))
+       (cons UTILSDIR UTILS-MODULES))))
