@@ -2024,6 +2024,7 @@ If ARG is non-nil, checking is omitted."
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
+	 (elmo-folder-update-threshold wl-summary-update-confirm-threshold)
 	 gc-message
 	 overview number-alist mark-alist 
 	 curp num i new-msgdb
@@ -4102,11 +4103,11 @@ If ARG, exit virtual folder."
 	    (if (string= mark wl-summary-important-mark)
 		(progn
 		  ;; server side mark
-		  (unless no-server-update
-		    (elmo-folder-unmark-important folder (list number))
-		    (elmo-msgdb-global-mark-delete message-id))
-		  ;; Remove cache if local folder.
 		  (save-match-data
+		    (unless no-server-update
+		      (elmo-folder-unmark-important folder (list number))
+		      (elmo-msgdb-global-mark-delete message-id))
+		    ;; Remove cache if local folder.
 		    (if (and (elmo-folder-local-p folder)
 			     (not (eq 'mark
 				      (elmo-folder-type-internal folder))))
@@ -4120,8 +4121,9 @@ If ARG, exit virtual folder."
 					     number
 					     nil)))
 	      ;; server side mark
-	      (unless no-server-update
-		(elmo-folder-mark-as-important folder (list number)))
+	      (save-match-data
+		(unless no-server-update
+		  (elmo-folder-mark-as-important folder (list number))))
 	      (when visible
 		(delete-region (match-beginning 2) (match-end 2))
 		(insert wl-summary-important-mark))

@@ -234,7 +234,8 @@ set as non-nil.")
   (save-excursion
     (set-buffer (process-buffer process))
     (goto-char (point-max))
-    (insert output)))
+    (insert output)
+    (message "Retrieving...(%d bytes)." (buffer-size))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))

@@ -1,3 +1,27 @@
+2001-06-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update): Bind
+	elmo-folder-update-threshold.
+	(wl-summary-mark-as-important): Enclosed server mark processing
+	with `save-match-data'.
+
+	* wl-mime.el (wl-mime-setup): Set mime-setup-signature-key-alist
+	only when it is already defined.
+
+2001-05-24  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-expire.el (wl-expire-archive-get-folder): Fixed problem that
+	name of folder exclude localdir is wrong.
+	* wl-folder.el (wl-folder-sync-entity):
+	Set `wl-summary-always-sticky-folder-list' as nil.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
+2001-05-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft): use `wl-summary-write-current-folder'
+	instead of `wl-summary-write-current-newsgroup'.
+
 2001-05-19  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-summary.el (wl-summary-auto-select-msg-p): New function.

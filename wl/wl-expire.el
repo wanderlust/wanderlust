@@ -241,6 +241,9 @@ If REFILE-LIST includes reserve mark message, so copy."
 (defun wl-expire-archive-get-folder (src-folder &optional fmt dst-folder-arg)
   "Get archive folder name from SRC-FOLDER."
   (let* ((fmt (or fmt wl-expire-archive-folder-name-fmt))
+	 (src-folde-name (substring
+			  (elmo-folder-name-internal src-folder)
+			  (length (elmo-folder-prefix-internal src-folder))))
 	 (archive-spec (char-to-string
 			(car (rassq 'archive elmo-folder-type-alist))))
 	 dst-folder-base dst-folder-fmt prefix)
@@ -248,16 +251,13 @@ If REFILE-LIST includes reserve mark message, so copy."
 	   (setq dst-folder-base (concat archive-spec dst-folder-arg)))
 	  ((eq (elmo-folder-type-internal src-folder) 'localdir)
 	   (setq dst-folder-base
-		 (concat archive-spec
-			 (substring
-			  (elmo-folder-name-internal src-folder) 1))))
+		 (concat archive-spec src-folde-name)))
 	  (t
 	   (setq dst-folder-base
 		 (elmo-concat-path
 		  (format "%s%s" archive-spec (elmo-folder-type-internal
 					       src-folder))
-		  (substring (substring (elmo-folder-name-internal src-folder) 1)
-			     (length (elmo-folder-prefix-internal src-folder)))))))
+		  src-folde-name))))
     (setq dst-folder-fmt (format fmt
 				 dst-folder-base
 				 wl-expire-archive-folder-type))
@@ -267,11 +267,9 @@ If REFILE-LIST includes reserve mark message, so copy."
     (when wl-expire-archive-folder-prefix
       (cond ((eq wl-expire-archive-folder-prefix 'short)
 	     (setq prefix (file-name-nondirectory
-			   (substring
-			    (elmo-folder-name-internal src-folder) 1))))
+			   src-folde-name)))
 	    (t
-	     (setq prefix (substring
-			   (elmo-folder-name-internal src-folder) 1))))
+	     (setq prefix src-folde-name)))
       (setq dst-folder-fmt (concat dst-folder-fmt ";" prefix))
       (setq dst-folder-base (concat dst-folder-base ";" prefix)))
     (cons dst-folder-base dst-folder-fmt)))
