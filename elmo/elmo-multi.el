@@ -201,7 +201,8 @@
 			 (/ (car same) 
 			    (elmo-multi-folder-divide-number-internal folder)))
 		;; base is also same...delete it!
-		(setq to-be-deleted (append to-be-deleted (list (car cur))))))
+		(setq to-be-deleted
+		      (append to-be-deleted (list (car (car cur)))))))
 	  (setq cur (cdr cur)))
 	(cond ((eq (elmo-folder-process-duplicates-internal folder)
 		   'hide)

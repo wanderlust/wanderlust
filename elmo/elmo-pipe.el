@@ -218,11 +218,12 @@
   (elmo-folder-unmark-read (elmo-pipe-folder-dst-internal folder)
 			   numbers))
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-folder) numbers)
+(luna-define-method elmo-folder-unmark-important ((folder elmo-pipe-folder)
+						  numbers)
   (elmo-folder-unmark-important (elmo-pipe-folder-dst-internal folder)
 				numbers))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-folder)
+(luna-define-method elmo-folder-mark-as-important ((folder elmo-pipe-folder)
 						   numbers)
   (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
 				 numbers))
