@@ -4845,7 +4845,7 @@ The initial setting is @code{nil}. If the value is non-nil and
 @item wl-fcc-force-as-read
 @vindex wl-fcc-force-as-read
 The initial setting is @code{nil}. If the value is non-nil,
-Mark as read the message saved by @samp{Fcc:} (only for IMAP folders).
+Mark as read the message saved by @samp{Fcc:}.
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
