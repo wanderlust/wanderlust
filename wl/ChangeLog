@@ -1,5 +1,7 @@
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.9.10.
+	
 	* wl-message.el (wl-message-redisplay): Ignore errors while
 	wl-message-redisplay-hook.
 

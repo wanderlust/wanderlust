@@ -1,8 +1,6 @@
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-util.el (elmo-get-hash-val): Check the 1st argument is string.
-
-	* elmo-msgdb.el (elmo-msgdb-get-parent-entity): New inline function.
+	* elmo-version.el (elmo-version): Up to 2.9.10.
 
 2002-04-26  Kenichi OKADA  <okada@opaopa.org>
 
