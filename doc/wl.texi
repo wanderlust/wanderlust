@@ -6370,11 +6370,11 @@ The basic unit of the rule is a combination like
 (@samp{CONDITION} @samp{FOLDER} [@code{continue}])
 @end lisp
 
-The 1st element @samp{CONDITION} is a sexp. Its grammar will be
-explained below. The 2nd element @samp{FOLDER} is the name of the folder
-to split messages into. When the 3rd element @code{continue} is
-specified as symbol, evaluating rules is not stopped even when the
-condition is satisfied.
+The 1st element @samp{CONDITION} is a balanced expression (sexp). Its
+grammar will be explained below. The 2nd element @samp{FOLDER} is the
+name of the folder to split messages into. When the 3rd element
+@code{continue} is specified as symbol, evaluating rules is not stopped
+even when the condition is satisfied.
 
 The grammar for @samp{CONDITION} is as follows. See example above to
 learn how to write the condition practically.
