@@ -603,7 +603,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-save ()
   "Save summary and folder status."
   (interactive)
-  (wl-save-status 'keep-summary))
+  (wl-save-status 'keep-summary)
+  (run-hooks 'wl-save-hook))
 
 (defun wl-save-status (&optional keep-summary)
   (message "Saving summary and folder status...")
