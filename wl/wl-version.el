@@ -1,7 +1,7 @@
 ;;; wl-version.el -- Version information for Wanderlust.
 
-;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -51,19 +51,16 @@
 ;; set version-string
 (product-version-as-string 'wl-version)
 
-(defun wl-version (&optional with-codename)
-  "Return Wanderlust version.
-If WITH-CODENAME add codename."
-  (product-string-1 'wl-version with-codename))
-
-(defun wl-version-show (&optional arg)
-  "Print Wanderlust version.
-If ARG insert string at point."
-  (interactive "P")
+;; Don't support insert string at-point (C-u M-x wl-version).
+;; For bug report, use `wl-generate-user-agent-string-1' instead.
+;; When non-interactive, use `product-string-1' instead.
+(defun wl-version ()
+  "Print Wanderlust version."
+  (interactive)
   (let ((product-info (product-string-1 'wl-version t)))
-    (if arg
-	(insert product-info)
-      (message "%s" product-info))))
+    (if (interactive-p)
+	(message "%s" product-info)
+      product-info)))
 
 (defvar wl-version-status-alist
   '(((zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))
