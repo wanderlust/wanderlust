@@ -2030,7 +2030,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   "Return Newsgroups field value string for FOLDER newsgroup.
 If FOLDER is multi, return comma separated string (cross post)."
   (list nil nil (mapconcat 'identity
-			   (elmo-folder-newsgroups folder)
+			   (elmo-folder-newsgroups
+			    (wl-folder-get-elmo-folder folder))
 			   ",")))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule (entity)
