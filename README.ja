@@ -44,16 +44,23 @@ Web Page:
 
 メーリングリスト:
 
- Wanderlust Mailing List <wl@lists.airs.net> 
-
- Wanderlust に関する議論はこのメイリングリストで行われます。
+ Wanderlust に関する議論はメイリングリストで行われています。
  最新バージョンのアナウンスもこちらに流れます。
 
- wl-ctl@lists.airs.net 宛のメールの本文に、
+ Wanderlust Mailing List <wl@lists.airs.net> 
+
+ また、英語専用のリストとして
+
+ Wanderlust List in English <wl-en@@lists.airs.net>
+
+ もあります(こちらに投稿されたメッセージは前者にも配送されます)。
+
+ メーリングリストのガイドを得るには、wl-ctl@lists.airs.net 宛 (英語の方は
+ wl-en-ctl@lists.airs.net 宛) で、本文に
 
  # guide
 
- と書いたメールを送ると入会のガイドが自動的にもらえます。
+ と書いたメールを送って下さい。
 
 CVS:
 
