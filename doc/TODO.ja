@@ -1,11 +1,7 @@
-* 2.11.x の TODO 
-
+** フォワード済みマーク
+** History Folder (proposal by Tomotaka SUWA)
 ** elmo.el でフォルダのアイコンを定義できるようにする
-** msgdb の構造を見直し、高速化をはかる
-** フォワード済みマークを増やす
-
-* その他の TODO
-
+** サマリのリバースソート、ソート状態を保持したまま Update
 ** .addresses エントリについて hash table を使う
 ** wl-folder-check-entity-async のあたりで NNTP が特別扱いになっているのを
    どうにかする

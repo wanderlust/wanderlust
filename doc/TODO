@@ -1,11 +1,7 @@
-* tasks in 2.11.x
-
-** enable to define folder icons in elmo.el
-** reconsider the structure of msgdb and make behavior faster
 ** organize the mark for already forwarded messages
-
-* other tasks
-
+** History Folder (proposal by Tomotaka SUWA)
+** enable to define folder icons in elmo.el
+** reverse sort, sorted update in summary mode
 ** use hash table for entries in .addresses
 ** mitigate special treatment of NNTP around wl-folder-check-entity-async
 ** organize variable like wl-summary-other-frame-list so as to open
