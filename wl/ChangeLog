@@ -1,3 +1,18 @@
+2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): 
+	Switch to no-mime following method according to wl-message-display-type
+	property.
+	(wl-mime-preview-follow-no-mime): Use wl-message-mime-analysis-p.
+
+	* wl-message.el (wl-message-display-internal): 
+	Put wl-message-display-type property on message buffer.
+
+	* wl-message.el (wl-message-mime-analysis-p): Fixed misspelling.
+	(wl-message-display-internal): Ditto;
+
+	* wl-summary.el (wl-summary-toggle-mime): Ditto.
+
 2004-12-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-message.el (wl-message-make-display-type): New function.

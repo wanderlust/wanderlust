@@ -430,7 +430,7 @@ Returns non-nil if bottom of message."
 (defun wl-message-display-type-property (display-type prop)
   (plist-get (get display-type 'wl-message-display-type) prop))
 
-(defun wl-message-mime-analysys-p (display-type &optional header-or-body)
+(defun wl-message-mime-analysis-p (display-type &optional header-or-body)
   (let ((mode (wl-message-display-type-property display-type :mime)))
     (case header-or-body
       (header
@@ -576,7 +576,7 @@ Returns non-nil if bottom of message."
     (setq wl-message-buffer-require-all-header
 	  (wl-message-display-all-header-p display-type))
     (prog1
-	(if (wl-message-mime-analysys-p display-type)
+	(if (wl-message-mime-analysis-p display-type)
 	    (elmo-mime-message-display folder number
 				       (current-buffer)
 				       (wl-message-get-original-buffer)
@@ -585,7 +585,7 @@ Returns non-nil if bottom of message."
 				       unread
 				       (wl-message-define-keymap))
 	  (let* ((elmo-mime-display-header-analysis
-		  (wl-message-mime-analysys-p display-type 'header))
+		  (wl-message-mime-analysis-p display-type 'header))
 		 (wl-highlight-x-face-function
 		  (and elmo-mime-display-header-analysis
 		       wl-highlight-x-face-function)))
@@ -598,6 +598,9 @@ Returns non-nil if bottom of message."
 					    (wl-message-define-keymap))
 	      (let (buffer-read-only)
 		(wl-highlight-message (point-min) (point-max) t)))))
+      (let (buffer-read-only)
+	(put-text-property (point-min) (point-max)
+			   'wl-message-display-type display-type))
       (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 

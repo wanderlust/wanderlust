@@ -69,18 +69,18 @@ has Non-nil value\)"
 	    (cond
 	     ((wl-region-exists-p)
 	      (wl-mime-preview-follow-current-region))
-	     ((not (eq (get-text-property (point-min)
-					  'wl-message-display-mime-mode)
-		       'mime))
+	     ((not (wl-message-mime-analysis-p
+		    (get-text-property (point-min)
+				       'wl-message-display-type)))
 	      (wl-mime-preview-follow-no-mime
 	       (get-text-property (point-min)
-				  'wl-message-display-mime-mode)))
+				  'wl-message-display-type)))
 	     (t
 	      (mime-preview-follow-current-entity)))))
       (error "No message."))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
-(defun wl-mime-preview-follow-no-mime (display-mode)
+(defun wl-mime-preview-follow-no-mime (display-type)
   "Write follow message to current message, without mime.
 It calls following-method selected from variable
 `mime-preview-following-method-alist'."
@@ -102,7 +102,8 @@ It calls following-method selected from variable
       (insert-buffer-substring the-buf beg end)
       (goto-char (point-min))
       ;; Insert all headers.
-      (let ((elmo-mime-display-header-analysis (not (eq display-mode 'as-is))))
+      (let ((elmo-mime-display-header-analysis
+	     (wl-message-mime-analysis-p display-type)))
 	(elmo-mime-insert-sorted-header entity))
       (let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	(if (functionp f)

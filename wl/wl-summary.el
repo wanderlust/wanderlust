@@ -4441,7 +4441,7 @@ If ARG is numeric number, decode message as following:
 	;; Specify coding-system (doesn't change the MIME mode).
 	(setq elmo-mime-display-as-is-coding-system
 	      (if (and arg
-		       (not (wl-message-mime-analysys-p
+		       (not (wl-message-mime-analysis-p
 			     (wl-summary-message-display-type))))
 		  (or (read-coding-system "Coding system: ")
 		      elmo-mime-display-as-is-coding-system)
