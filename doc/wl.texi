@@ -84,9 +84,6 @@ into another language, under the above conditions for modified versions.
 @end titlepage
 
 
-@c
-@c  Top
-@c 
 @ifinfo
 @node Top, Introduction, (dir), (dir)
 @top Wanderlust User's Manual
@@ -123,9 +120,6 @@ This manual is for Wanderlust @value{VERSION}.
 @end menu
 
 
-@c
-@c  Introduction
-@c 
 @node Introduction, Start Me Up, Top, Top
 @chapter Introduction of Wanderlust
 @cindex Introduction
@@ -194,9 +188,6 @@ Wanderlust:
 @c Wanderlust:
 
 
-@c
-@c  Start Me Up
-@c 
 @node Start Me Up, Folders, Introduction, Top
 @chapter Start up Wanderlust
 @cindex Start up
@@ -229,7 +220,7 @@ SEMI or tm must be installed to make Wanderlust work correctly.
 
 SEMI does not run on Emacs19.28 or earlier
 @footnote{SEMI runs on Emacs 19.34. @*
-@samp{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
+@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
 so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
 is needed.)
 
@@ -343,10 +334,10 @@ the connection establishment (generic way).
 The other one is to start SSL negotiation by invoking STARTTLS command in
 the each session.
 
-To use the formar SSL (generic SSL), you must install @file{ssl.el} in the 
-@file{utils} directory. OpenSSL command @file{openssl} is also required
-to use @file{ssl.el}. You must set PATH to the directory that OpenSSL
-commands are installed.
+To use the formar SSL (generic SSL), you must install @file{ssl.el} in
+the @file{utils} directory. OpenSSL command @command{openssl} is also
+required to use @file{ssl.el}. You must set PATH to the directory that
+OpenSSL commands are installed.
 
 To use the latter SSL(STARTTLS), you must install starttls package in
 addition to above. 
@@ -391,7 +382,7 @@ Cannot open load file: mime-setup
 
 @noindent
 In this case, either add destination directories of custom, APEL, FLIM
-and SEMI to environmental variable @code{EMACSLOADPATH}, or define
+and SEMI to environmental variable @env{EMACSLOADPATH}, or define
 @code{load-path} in @file{WL-CFG} in extracted directory.
 
 If you want to use BBDB, then the necessary modules are byte-compiled and
@@ -711,9 +702,7 @@ That means the folders you defined in the @file{~/.folders} are listed
 If you start Wanderlust with prefix argument like @kbd{C-u M-x wl}, you
 can skip folder checking.
 
-@c
-@c  Folders
-@c
+
 @node Folders, Folder, Start Me Up, Top
 @chapter Wanderlust's folders 
 @cindex Folder Type
@@ -766,8 +755,8 @@ default:
 
 @example
 @var{username}  -> The value of @code{elmo-default-imap4-user}.
-             Initial setting is `USER' environment variable or
-             `LOGNAME' environment variable or return value of
+             Initial setting is @env{USER} environment variable or
+             @env{LOGNAME} environment variable or return value of
              @code{(user-login-name)}.
 @var{authenticate-type} -> The value of @code{elmo-default-imap4-authenticate-type}.
              Initial setting is "auth".
@@ -945,7 +934,7 @@ message files in the @file{new} directory are moved to @file{cur}
 directory when you access to the folder. All message files contained in
 the @file{tmp} directory and not accessed for 36 hours are deleted.
 
-This behavior conforms to the @samp{http://cr.yp.to/proto/maildir.html}.
+This behavior conforms to the @uref{http://cr.yp.to/proto/maildir.html}.
 
 @example
 @group
@@ -1101,7 +1090,7 @@ In Win32, LHa32 is only supported (DOS version is no good).
 You have to take care about GNU tar's version because
 many version has problem on deleting file from archive.
 
-Please test @samp{--delete} @samp{-f} options work. Otherwise, your
+Please test @option{--delete} @option{-f} options work. Otherwise, your
 archive will be destroyed. No problem is reported on above versions of
 GNU tar.
 
@@ -1232,8 +1221,8 @@ as @var{authenticate-type}.
 default:
 @example
 @var{username}   -> The value of @code{elmo-default-pop3-user}.
-              Initial setting is @code{USER} environment variable or
-             @code{LOGNAME} environment variable or return value of
+              Initial setting is @env{USER} environment variable or
+             @env{LOGNAME} environment variable or return value of
              @code{(user-login-name)}.
 @var{authenticate-type} -> The value of @code{elmo-default-pop3-authenticate-type}.
               Initial setting is "user".
@@ -1490,9 +1479,7 @@ You can access to the cached messages fetched via network by accessing
 to the folders named 'cache/00 - 1F. 00 - 1F are the name of the
 subdirectories of the cache directory (@file{~/.elmo/cache}).
 
-@c
-@c  Folder
-@c
+
 @node Folder, Summary, Folders, Top
 @chapter Folder mode
 @cindex Folder
@@ -2223,9 +2210,6 @@ You cannot put same nickname to the different folders.
 @end enumerate
 
 
-@c
-@c  Summary
-@c
 @node Summary, Message, Folder, Top
 @chapter Summary Mode
 
@@ -3458,9 +3442,7 @@ The initial setting is t.
 If non-nil, messages read via POP3 are cached.
 @end table
 
-@c
-@c  Message
-@c
+
 @node Message, Draft, Summary, Top
 @chapter Message Buffer
 
@@ -3515,9 +3497,7 @@ its car and cdr value corresponds to the ratio of Summary and Message
 windows.
 @end table
 
-@c
-@c  Draft
-@c
+
 @node Draft, Disconnected Operations, Message, Top
 @chapter Draft Buffer
 
@@ -4175,9 +4155,6 @@ the size specified by this variable.
 @end table
 
 
-@c
-@c  Disconnected Operations
-@c
 @node Disconnected Operations, Expire and Archive, Draft, Top
 @chapter Off-line Management
 @cindex Disconnected Operations
@@ -4442,9 +4419,7 @@ In other words, they are initialized when Emacs is restarted even if the
 value is nil.
 @end table
 
-@c
-@c  Expire and Archive
-@c
+
 @node Expire and Archive, Scoring, Disconnected Operations, Top
 @chapter Automatic Expiration and Archiving of Messages
 @cindex Expire and Archive
@@ -4993,9 +4968,6 @@ Needless to say, you can use your own function.
 @end table
 
 
-@c
-@c  Scoring
-@c
 @node Scoring, Customization, Expire and Archive, Top
 @chapter Score of the Messages
 @cindex Scoring
@@ -5487,9 +5459,6 @@ pop3                      N     E     E     E
 @end example
 
 
-@c
-@c  Customization
-@c
 @node Customization, Mailing List, Scoring, Top
 @chapter Customizing Wanderlust
 @cindex Customization
@@ -6291,11 +6260,10 @@ this value, display progress gauge.
 (Not yet written)
 
 
-@c
-@c  Mailing List
-@c
 @node Mailing List, Addition, Customization, Top
 @chapter Wanderlust Mailing List
+@cindex Bug report
+@cindex Backtrace
 
 @display
 Wanderlust Mailing List @t{<wl@@lists.airs.net>}
@@ -6314,15 +6282,12 @@ Please send bug reports or patches to the mailing list.
 You can post to the mailing list even though you are not a member of it.
 
 If you send a bug report, please attach Backtrace with it.
-@footnote{@samp{http://www.jpl.org/elips/BUGS-ja.html} describes how to in Japanese.}
+@footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to in Japanese.}
 
 I would like to express my thanks to the members of the mailing list for 
 valuable advice and many pieces of code they contributed.
 
 
-@c
-@c  Addition
-@c
 @node Addition, Index, Mailing List, Top
 @chapter Additional Information
 
@@ -6386,7 +6351,7 @@ Each versions has code names (they are almost jokes).
 Currently they are picked up alphabetically from the top 40 hits of
 U.S. Billboard magazines in 1980s.
 
-(@samp{http://www.summer.com.br/~pfilho/html/top40/index.html})
+(@uref{http://www.summer.com.br/~pfilho/html/top40/index.html})
 
 
 @node Index,  , Addition, Top
