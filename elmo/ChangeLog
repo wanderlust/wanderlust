@@ -39,7 +39,7 @@
 	* elmo-flag.el (elmo-get-global-flags): New function.
 
 	* elmo-filter.el (elmo-folder-diff): Fix total number for filter
-	filters.
+	folders.
 
 	* elmo-version.el (elmo-version): Up to 2.11.24.
 
