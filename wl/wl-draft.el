@@ -389,13 +389,13 @@ the `wl-smtp-features' variable."
     (and to (setq to (mapconcat
 		      '(lambda (addr)
 			 (if wl-draft-reply-use-address-with-full-name
-			     (cdr (assoc addr addr-alist))
+			     (or (cdr (assoc addr addr-alist)) addr)
 			   addr))
 		      to ",\n\t")))
     (and cc (setq cc (mapconcat
 		      '(lambda (addr)
 			 (if wl-draft-reply-use-address-with-full-name
-			     (cdr (assoc addr addr-alist))
+			     (or (cdr (assoc addr addr-alist)) addr)
 			   addr))
 		      cc ",\n\t")))
     (and mail-followup-to
@@ -403,8 +403,7 @@ the `wl-smtp-features' variable."
 	       (mapconcat
 		'(lambda (addr)
 		   (if wl-draft-reply-use-address-with-full-name
-		       (or (cdr (assoc addr addr-alist))
-			   addr)
+		       (or (cdr (assoc addr addr-alist)) addr)
 		     addr))
 		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))

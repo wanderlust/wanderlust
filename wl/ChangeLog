@@ -1,3 +1,8 @@
+2000-08-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): Fixed problem when to or cc
+	contains invalid address syntax.
+
 2000-07-26	Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-folder.el (wl-folder-check-entity-async): Use
