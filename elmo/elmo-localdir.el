@@ -363,10 +363,12 @@
 (defun elmo-localdir-search (spec condition &optional from-msgs)
   (let* ((msgs (or from-msgs (elmo-localdir-list-folder spec)))
 	 (num (length msgs))
-	 (i 0) case-fold-search ret-val)
+	 (i 0)
+	 number-list case-fold-search ret-val)
+    (setq number-list msgs)
     (while msgs
       (if (elmo-localdir-field-condition-match spec condition
-					       (car msgs) msgs)
+					       (car msgs) number-list)
 	  (setq ret-val (cons (car msgs) ret-val)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))

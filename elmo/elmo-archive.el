@@ -990,9 +990,10 @@ TYPE specifies the archiver's symbol."
 	 (num (length msgs))
 	 (i 0)
 	 (case-fold-search nil)
-	 ret-val)
+	 number-list ret-val)
+    (setq number-list msgs)
     (while msgs
-      (if (elmo-archive-field-condition-match spec (car msgs) msgs
+      (if (elmo-archive-field-condition-match spec (car msgs) number-list
 					      condition
 					      (nth 3 spec))
 	  (setq ret-val (cons (car msgs) ret-val)))

@@ -1,3 +1,24 @@
+2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Fixed.
+
+	* elmo-nntp.el (elmo-nntp-default-use-xhdr): New variable.
+	(elmo-nntp-xhdr-p): New macro.
+	(elmo-nntp-set-xhdr): Ditto.
+	(elmo-nntp-parse-xhdr-response): New function.
+	(elmo-nntp-retrieve-field): Ditto.
+	(elmo-nntp-search-primitive): Ditto.
+	(elmo-nntp-search): Implemented.
+
+	* elmo-date.el (elmo-date-make-sortable-string): New macro.
+
+	* elmo-archive.el (elmo-archive-search): Set all number list to
+	`elmo-archive-field-condition-match'
+
+	* elmo-localdir.el (elmo-localdir-search): Likewise.
+
+	* elmo-maildir.el (elmo-maildir-search): Likewise.
+
 2000-10-01  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-msgdb.el (elmo-living-messages): New function.

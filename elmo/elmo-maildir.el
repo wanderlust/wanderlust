@@ -429,13 +429,14 @@ file name for maildir directories."
 	   case-fold-search ret-val
 	   percent num
 	   (num (length msgs))
-	   msg-num)
+	   number-list msg-num)
+      (setq number-list msgs)
       (while msgs
 	(setq msg-num (car msgs))
 	(if (elmo-file-field-condition-match
 	     (elmo-maildir-number-to-filename
 	      dir (car msgs) loc-alist)
-	     condition (car msgs) msgs)
+	     condition (car msgs) number-list)
 	    (setq ret-val (append ret-val (list msg-num))))
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))

@@ -71,6 +71,8 @@ Don't cache if nil.")
 
 (defvar elmo-nntp-default-use-list-active t)
 
+(defvar elmo-nntp-default-use-xhdr t)
+
 (defvar elmo-nntp-server-command-alist nil)
 
 
@@ -140,6 +142,16 @@ Don't cache if nil.")
 
 (defmacro elmo-nntp-set-list-active (server port value)
   (` (elmo-nntp-set-server-command (, server) (, port) 'list-active (, value))))
+
+(defmacro elmo-nntp-xhdr-p (server port)
+  (` (let ((entry (elmo-nntp-get-server-command (, server) (, port))))
+       (if entry
+	   (aref (cdr entry)
+		 (cdr (assq 'xhdr elmo-nntp-server-command-index)))
+	 elmo-nntp-default-use-xhdr))))
+
+(defmacro elmo-nntp-set-xhdr (server port value)
+  (` (elmo-nntp-set-server-command (, server) (, port) 'xhdr (, value))))
 
 (defsubst elmo-nntp-max-number-precedes-list-active-p ()
   elmo-nntp-max-number-precedes-list-active)
@@ -818,6 +830,19 @@ Don't cache if nil.")
     (kill-buffer tmp-buffer)
     ret-val))
 
+(defun elmo-nntp-parse-xhdr-response (string)
+  (let (response)
+    (with-temp-buffer
+      (insert string)
+      (goto-char (point-min))
+      (while (not (eobp))
+	(if (looking-at "^\\([0-9]+\\) \\(.*\\)$")
+	    (setq response (cons (cons (string-to-int (elmo-match-buffer 1))
+				       (elmo-match-buffer 2))
+				 response)))
+	(forward-line 1)))
+    (nreverse response)))
+
 (defun elmo-nntp-parse-overview-string (string)
   (save-excursion
     (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
@@ -1122,9 +1147,119 @@ Return nil if connection failed."
 (defun elmo-nntp-create-folder (spec)
   nil) ; noop
 
+(defun elmo-nntp-retrieve-field (spec field from-msgs)
+  "Retrieve FIELD values from FROM-MSGS.
+Returns a list of cons cells like (NUMBER . VALUE)"
+  (let* ((type (elmo-nntp-spec-stream-type spec))
+	 (port (elmo-nntp-spec-port spec))
+	 (user (elmo-nntp-spec-username spec))
+	 (server (elmo-nntp-spec-hostname spec))
+	 (folder (elmo-nntp-spec-group spec))
+	 (connection (elmo-nntp-get-connection server user port type))
+	 (cwf     (caddr connection))
+	 (buffer  (car connection))
+	 (process (cadr connection)))  
+    (if (elmo-nntp-xhdr-p server port)
+	(progn
+	  (if (and folder
+		   (not (string= cwf folder))
+		   (null (elmo-nntp-goto-folder
+			  server folder user port type)))
+	      (error "group %s not found" folder))	  
+	  (elmo-nntp-send-command buffer process
+				  (format "xhdr %s %s"
+					  field
+					  (if from-msgs
+					      (format
+					       "%d-%d"
+					       (car from-msgs)
+					       (nth
+						(max
+						 (- (length from-msgs) 1) 0)
+						from-msgs))
+					    "0-")))
+	  (if (elmo-nntp-read-response buffer process t)
+	      (elmo-nntp-parse-xhdr-response
+	       (elmo-nntp-read-contents buffer process))
+	    (elmo-nntp-set-xhdr server port nil)
+	    (error "NNTP XHDR command failed"))))))
+
+(defun elmo-nntp-search-primitive (spec condition &optional from-msgs)
+  (let ((search-key (elmo-filter-key condition)))
+    (cond
+     ((string= "last" search-key)
+      (let ((numbers (or from-msgs (elmo-nntp-list-folder spec))))
+	(nthcdr (max (- (length numbers)
+			(string-to-int (elmo-filter-value condition)))
+		     0)
+		numbers)))
+     ((string= "first" search-key)
+      (let* ((numbers (or from-msgs (elmo-nntp-list-folder spec)))
+	     (rest (nthcdr (string-to-int (elmo-filter-value condition) )
+			   numbers)))
+	(mapcar '(lambda (x) (delete x numbers)) rest)
+	numbers))
+     ((or (string= "since" search-key)
+	  (string= "before" search-key))
+      (let* ((key-date (elmo-date-get-datevec (elmo-filter-value condition)))
+	     (key-datestr (elmo-date-make-sortable-string key-date))
+	     (since (string= "since" search-key))
+	     result)
+	(setq result
+	      (delq nil
+		    (mapcar
+		     (lambda (pair)
+		       (if (if since
+			       (string< key-datestr
+					(elmo-date-make-sortable-string
+					 (timezone-fix-time
+					  (cdr pair)
+					  (current-time-zone) nil)))
+			     (not (string< key-datestr
+					   (elmo-date-make-sortable-string
+					    (timezone-fix-time
+					     (cdr pair)
+					     (current-time-zone) nil)))))
+			   (car pair)))
+		     (elmo-nntp-retrieve-field spec "date" from-msgs))))
+	(if from-msgs
+	    (elmo-list-filter from-msgs result)
+	  result)))
+     (t 
+      (let ((val (elmo-filter-value condition))
+	    (case-fold-search t)
+	    result)
+	(setq result
+	      (delq nil
+		    (mapcar
+		     (lambda (pair)
+		       (if (string-match val (cdr pair))
+			   (car pair)))
+		     (elmo-nntp-retrieve-field spec search-key
+					       from-msgs))))
+	(if from-msgs
+	    (elmo-list-filter from-msgs result)
+	  result))))))
+
 (defun elmo-nntp-search (spec condition &optional from-msgs)
-  (error "Search by %s for %s is not implemented yet." condition (car spec))
-  nil)
+  (let (result)
+    (cond
+     ((vectorp condition)
+      (setq result (elmo-nntp-search-primitive
+		    spec condition from-msgs)))
+     ((eq (car condition) 'and)
+      (setq result (elmo-nntp-search spec (nth 1 condition) from-msgs)
+	    result (elmo-list-filter result
+				     (elmo-nntp-search
+				      spec (nth 2 condition)
+				      from-msgs))))
+     ((eq (car condition) 'or)
+      (setq result (elmo-nntp-search spec (nth 1 condition) from-msgs)
+	    result (elmo-uniq-list
+		    (nconc result
+			   (elmo-nntp-search spec (nth 2 condition)
+					     from-msgs)))
+	    result (sort result '<))))))
 
 (defun elmo-nntp-get-folders-info-prepare (spec connection-keys)
   (condition-case ()

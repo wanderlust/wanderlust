@@ -1216,8 +1216,8 @@ Otherwise treat \\ in NEWTEXT string as special:
     (goto-char (point-min))
     (cond
      ((string= (elmo-filter-key condition) "last")
-      (setq result (> (length (memq number number-list))
-		      (string-to-int (elmo-filter-value condition)))))
+      (setq result (<= (length (memq number number-list))
+		       (string-to-int (elmo-filter-value condition)))))
      ((string= (elmo-filter-key condition) "first")
       (setq result (< (- (length number-list)
 			 (length (memq number number-list)))
