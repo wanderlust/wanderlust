@@ -1,5 +1,9 @@
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* utils/sasl: Remove.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* utils/sasl/sasl.el: sync up to flim-1_14.
 	* utils/sasl/sasl-cram.el: New file.
 	* utils/sasl/sasl-digest.el: New file.
