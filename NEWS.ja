@@ -3,12 +3,31 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 * 2.10.0 から 2.10.1 への変更点
   2.10.1 は 2.10.0 のバグ修正版です。
 
-** print-length や print-level が Non-nil のときに msgdb が壊れる問題が
+** メッセージバッファで kill-buffer した場合に、プリフェッチの挙動
+   がおかしくなる不具合が修正されました。
+
+** wl-delete-folder-alist, wl-folder-hierarchy-access-folders のデ
+   フォルト値が変更されました。
+
+** localdir とパイプフォルダの rename に対応しました。
+
+** message と error の第一引数の見直しをしました。%s が必要な場合
+   は修正されました。
+
+** IMAP サーバからの返答 \Noselect や \Flagged の大文字小文字
+   の違いを無視するようになりました。
+
+** elmo-msgdb-extra-fields に設定したフィールドの取り扱いにおいて、
+   大文字小文字を区別してしまう問題が修正されました。
+
+** IMAP フォルダの表記に ~ が含まれる場合に展開されてしまう問題が
    修正されました。
 
-** パイプフォルダにおいて wl-summary-pack-number がうまく動かなかった
-   ため効かなくしてあります。必要であれば取り込み先フォルダの方で実行
-   して下さい。
+** パイプフォルダで wl-summary-pack-number がうまく動かなかった問
+   題が修正されました。
+
+** print-length や print-level が Non-nil のときに msgdb が壊れる問題が
+   修正されました。
 
 ** wl-folder-move-cur-folder が効いていなかった問題が修正されました。
 
