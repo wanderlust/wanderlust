@@ -827,6 +827,8 @@ to find out how to use this."
 		      )
 	    (setq dest (cons (car ret) dest))
 	    (setq lal (cdr ret)))
+	  (while (eq 'spaces (car (car lal)))
+	    (setq lal (cdr lal)))
 	  (if lal (error "Error while parsing address"))
 	  (nreverse dest)))))
 
@@ -1600,26 +1602,24 @@ If optional argument is non-nil, current draft buffer is killed"
     (while clist
       (setq config (car clist))
       (cond
+       ((functionp config)
+	(funcall config))
        ((consp config)
 	(let ((field (car config))
 	      (content (cdr config))
 	      ret-val)
- 	  (cond
- 	   ((stringp field)
- 	    (wl-draft-replace-field field (eval content) t))
- 	   ((setq ret-val (wl-draft-config-sub-func field content))
+	  (cond
+	   ((stringp field)
+	    (wl-draft-replace-field field (eval content) t))
+	   ((setq ret-val (wl-draft-config-sub-func field content))
 	    (if (cdr ret-val) ;; for wl-draft-config-sub-template
 		(wl-append local-variables (cdr ret-val))))
- 	   ((boundp field) ;; variable
- 	    (make-local-variable field)
- 	    (set field (eval content))
- 	    (wl-append local-variables (list field)))
- 	   (t
- 	    (error "%s: not variable" field)))))
-       ((or (functionp config)
-	    (and (symbolp config)
-		 (fboundp config)))
-	(funcall config))
+	   ((boundp field) ;; variable
+	    (make-local-variable field)
+	    (set field (eval content))
+	    (wl-append local-variables (list field)))
+	   (t
+	    (error "%s: not variable" field)))))
        (t
 	(error "%s: not supported type" config)))
       (setq clist (cdr clist)))

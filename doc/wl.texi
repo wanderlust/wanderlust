@@ -138,7 +138,7 @@ The main features of Wanderlust:
 @item Folder Mode shows the list of subscribed folders.
 @item Message Cache, Disconnected Operation (Read Only).
 @item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
-@item MIME compliant (by SEMI or tm).
+@item MIME compliant (by SEMI).
 @item Transmission of news and mail are unified by Message transmitting draft.
 @item Graphical list of folders (XEmacs and Emacs 21).
 @item View a part of message without retrieving the whole message (IMAP4).
@@ -160,7 +160,6 @@ Wanderlust is supposed to run on following Emacsen:
 @item Emacs 20.2 or later
 @item XEmacs 20.4 or later
 @item Meadow 1.00 or later
-@item Mule for Windows v1.22
 @item NTEmacs 20.4 or later
 @item PMMule
 @end itemize
@@ -170,15 +169,20 @@ Wanderlust:
 
 @itemize @bullet
 @item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c, 2000 or later
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 or later
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22--1.6.24, 2.0.5 or later
+@item Courier-IMAP 1.3.2 or later
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 4.0
+@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
 @end itemize
 
-@c LDAP connectivity with following LDAPd are confirmed to work with
-@c Wanderlust:
+LDAP connectivity with following LDAPd are confirmed to work with
+Wanderlust:
+
+@itemize @bullet
+@item OpenLDAP 2.0.6 or later
+@end itemize
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -308,10 +312,8 @@ There are two ways to use SSL. One is to start SSL negotiation just
 after the connection establishment (generic way). The other one is to
 start SSL negotiation by invoking STARTTLS command in the each session.
 
-To use the formal SSL (generic SSL), you must install @file{ssl.el} in
-the @file{utils} directory. OpenSSL command @command{openssl} is also
-required to use @file{ssl.el}. You must set @env{PATH} to the directory
-that OpenSSL commands are installed.
+To use the formal SSL (generic SSL), you must set @env{PATH} to the
+directory that OpenSSL commands are installed.
 
 To use the latter SSL(STARTTLS), you must install starttls package in
 addition to above. 
@@ -484,7 +486,7 @@ The minimal requirement for settings is as the following.
 
 @lisp
 @group
-;; @r{The setting to use SEMI/tm}
+;; @r{The setting to use SEMI}
 (load "mime-setup")
 
 ;; @r{autoload configuration}
@@ -648,24 +650,27 @@ IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP, Multi, Filter,
 Pipe and Internal folder types.
 
 @menu
-* IMAP Folder::              @samp{%} -- IMAP folder
-* NNTP Folder::              @samp{-} -- NNTP folder
-* MH Folder::                @samp{+} -- MH folder
-* Maildir Folder::           @samp{.} -- Maildir folder
-* News Spool Folder::        @samp{=} -- News spool folder
-* Archive Folder::           @samp{$} -- Archive folder
-* POP Folder::               @samp{&} -- POP folder
-* Multi Folder::             @samp{*} -- Multi folder
-* Filter Folder::            @samp{/} -- Filter folder
-* Pipe Folder::              @samp{|} -- Pipe folder
-* Internal Folder::          @samp{'} -- Internal folder
+* IMAP Folder::                 @samp{%} -- IMAP folder
+* NNTP Folder::                 @samp{-} -- NNTP folder
+* MH Folder::                   @samp{+} -- MH folder
+* Maildir Folder::              @samp{.} -- Maildir folder
+* News Spool Folder::           @samp{=} -- News spool folder
+* Archive Folder::              @samp{$} -- Archive folder
+* POP Folder::                  @samp{&} -- POP folder
+* Shimbun Folder::              @samp{@@} -- Shimbun Folder
+* Namazu Folder::               @samp{[} -- Namazu Folder
+* Multi Folder::                @samp{*} -- Multi folder
+* Filter Folder::               @samp{/} -- Filter folder
+* Pipe Folder::                 @samp{|} -- Pipe folder
+* Internal Folder::             @samp{'} -- Internal folder
 @end menu
 
 
 @node IMAP Folder, NNTP Folder, Folders, Folders
 @section IMAP Folder
-@cindex IMAP Folder
 @cindex @samp{%}
+@cindex IMAP Folder
+@cindex Folder, IMAP
 @cindex RFC 2060
 @cindex IMAP4rev1
 
@@ -682,44 +687,47 @@ Format:
 You can specify @code{login} (encoded password transmission),
 @code{cram-md5} (CRAM-MD5 authentication), @code{digest-md5} (DIGEST-MD5
 authentication) or @code{clear} (or @code{nil}, plain password
-transmission) as @var{authenticate-type}.  (To use CRAM-MD5 or
-DIGEST-MD5 authentication, you must install @file{utils/sasl} package if FLIM version is earlier than 1.14.0. If FLIM version is 1.14.0 or later, you need not install @file{utils/sasl})
+transmission) as @var{authenticate-type}.
 
 default:
 
 @example
-@var{username}  -> The value of @code{elmo-default-imap4-user}.
+@var{username}  -> The value of @code{elmo-imap4-default-user}.
              Initial setting is @env{USER} environment variable or
              @env{LOGNAME} environment variable or return value of
              @code{(user-login-name)}.
-@var{authenticate-type} -> The value of @code{elmo-default-imap4-authenticate-type}.
+@var{authenticate-type} -> The value of @code{elmo-imap4-default-authenticate-type}.
              Initial setting is "auth".
-@var{hostname}  -> The value of @code{elmo-default-imap4-server}.
+@var{hostname}  -> The value of @code{elmo-imap4-default-server}.
              Initial setting is "localhost".
-@var{port} -> The value of @code{elmo-default-imap4-port}.
+@var{port} -> The value of @code{elmo-imap4-default-port}.
              Initial setting is 143.
 @end example
 
 You can omit the @var{hostname} from folder names if you set
-@code{elmo-default-imap4-server} as your main IMAP server.
+@code{elmo-imap4-default-server} as your main IMAP server.
 For example, you can specify a folder as @samp{foo%imap@@gateway} even
 if you have to go through a firewall.
 
 @lisp
-;; Example: imap4.exaple.org as main IMAP server
-(setq elmo-default-imap4-server "imap4.example.org")
+@group
+;; @r{Example: imap4.exaple.org as main IMAP server}
+(setq elmo-imap4-default-server "imap4.example.org")
+@end group
 @end lisp
 
 SSL (Secure Socket Layer) connection will be used if a folder name ends
-with @samp{!}. Or, if the value of @code{elmo-default-imap4-stream-type}
+with @samp{!}. Or, if the value of @code{elmo-imap4-default-stream-type}
 is @code{ssl}, SSL will be the default connection.  If a folder name
 ends with @samp{!!}, STARTTLS connection will be established.  If the
-value of @code{elmo-default-imap4-stream-type} is @code{starttls},
+value of @code{elmo-imap4-default-stream-type} is @code{starttls},
 STARTTLS will be the default connection.
 
 @lisp
-;; Example: Use SSL connection
-(setq elmo-default-imap4-stream-type 'ssl)
+@group
+;; @r{Example: Use SSL connection}
+(setq elmo-imap4-default-stream-type 'ssl)
+@end group
 @end lisp
 
 If you specify @code{login}, @code{cram-md5} or @code{digest-md5} as
@@ -731,8 +739,10 @@ authentication will fall back to @code{clear} without confirmation
 (default value is @code{nil}).
 
 @lisp
-;; Example: password in raw format
-(setq elmo-default-imap4-authenticate-type 'clear)
+@group
+;; @r{Example: password in raw format}
+(setq elmo-imap4-default-authenticate-type 'clear)
+@end group
 @end lisp
 
 Example:
@@ -799,10 +809,17 @@ ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
 @end example
 @end itemize
 
+
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP Folder
-@cindex NNTP Folder
 @cindex @samp{-}
+@cindex NNTP Folder
+@cindex Folder, NNTP
+@cindex Folder, News
+@cindex NetNews
+@cindex News
+@cindex Newsgroup
+@cindex RFC 977
 
 A folder to access USENET news via NNTP protocol (RFC 977).
 One newsgroup is treated as a folder.
@@ -817,20 +834,21 @@ Format:
 
 default:
 @example
-@var{hostname}  -> The value of @code{elmo-default-nntp-server}.
+@var{hostname}  -> The value of @code{elmo-nntp-default-server}.
              Initial setting is @samp{localhost}.
-@var{username}  -> The value of @code{elmo-default-nntp-user}. 
+@var{username}  -> The value of @code{elmo-nntp-default-user}. 
              Initial setting is @code{nil}.
-@var{port}      -> The value of @code{elmo-default-nntp-port}.
+@var{port}      -> The value of @code{elmo-nntp-default-port}.
              Initial setting is 119.
 @end example
 
-AUTHINFO is used as authentication method if the @var{username} is non-nil.
-SSL will be default method if @code{elmo-default-nntp-stream-type} is non-nil even
-if the folder name doesn't end with @samp{!}.
-If a folder name ends with @samp{!!}, STARTTLS connection will be established.
-if the value of @code{elmo-default-nntp-stream-type} is @code{starttls},
-STARTTLS will be the default connection.
+AUTHINFO is used as authentication method if the @var{username} is
+non-nil.  SSL will be default method if
+@code{elmo-nntp-default-stream-type} is non-nil even if the folder name
+doesn't end with @samp{!}.  If a folder name ends with @samp{!!},
+STARTTLS connection will be established.  if the value of
+@code{elmo-nntp-default-stream-type} is @code{starttls}, STARTTLS will
+be the default connection.
 
 Example:
 
@@ -841,10 +859,12 @@ Example:
 @end group
 @end example
 
+
 @node MH Folder, Maildir Folder, NNTP Folder, Folders
 @section MH Folder
-@cindex MH Folder
 @cindex @samp{+}
+@cindex MH Folder
+@cindex Folder, MH
 @pindex MH
 
 A folder to access MH format mail (1 file is 1 mail).
@@ -872,11 +892,13 @@ Example:
 @end group
 @end example
 
+
 @node Maildir Folder, News Spool Folder, MH Folder, Folders
 @section Maildir Folder
-@cindex Maildir Folder
 @cindex @samp{.}
+@cindex Maildir Folder
 @pindex Maildir
+@pindex qmail
 
 A folder to access to Maildir format (1 file is 1 mail).
 
@@ -913,8 +935,8 @@ Example:
 
 @node News Spool Folder, Archive Folder, Maildir Folder, Folders
 @section News Spool Folder
-@cindex News spool Folder
 @cindex @samp{=}
+@cindex News spool Folder
 @pindex gnspool
 
 This folder handles locally saved news articles which are proposed by
@@ -943,8 +965,8 @@ Example:
 
 @node Archive Folder, POP Folder, News Spool Folder, Folders
 @section Archive Folder
-@cindex Archive Folder
 @cindex @samp{$}
+@cindex Archive Folder
 @c @pindex ange-ftp
 
 This method can handle archive files, which are compressed by utilities
@@ -1175,10 +1197,11 @@ if the archiver has `actions' to receive target file information from
 standard input (@code{rm-pipe}, @code{mv-pipe}, @code{cat-headers} action).
 @end table
 
-@node POP Folder, Multi Folder, Archive Folder, Folders
+
+@node POP Folder, Shimbun Folder, Archive Folder, Folders
 @section POP Folder
-@cindex POP Folder
 @cindex @samp{&}
+@cindex POP Folder
 @cindex RFC 1939
 @cindex POP3
 @cindex APOP
@@ -1199,15 +1222,15 @@ as @var{authenticate-type}.
 
 default:
 @example
-@var{username}   -> The value of @code{elmo-default-pop3-user}.
+@var{username}   -> The value of @code{elmo-pop3-default-user}.
               Initial setting is @env{USER} environment variable or
              @env{LOGNAME} environment variable or return value of
              @code{(user-login-name)}.
-@var{authenticate-type} -> The value of @code{elmo-default-pop3-authenticate-type}.
+@var{authenticate-type} -> The value of @code{elmo-pop3-default-authenticate-type}.
               Initial setting is @samp{user}.
-@var{hostname}   -> The value of @code{elmo-default-pop3-server}.
+@var{hostname}   -> The value of @code{elmo-pop3-default-server}.
               Initial setting is @samp{localhost}.
-@var{port}       -> The value of @code{elmo-default-pop3-port}.
+@var{port}       -> The value of @code{elmo-pop3-default-port}.
               Initial setting is 110.
 @end example
 
@@ -1229,16 +1252,37 @@ To use apop as an @var{authenticate-type}, @file{md5.el} is needed
 
 If the last character of the folder name is @samp{!}, Wanderlust
 connects to the POP server via SSL (Secure Socket Layer).  If you set
-non-nil value to @code{elmo-default-pop3-stream-type}, you don't have to put
+non-nil value to @code{elmo-pop3-default-stream-type}, you don't have to put
 @samp{!} in the end of the folder name to use SSL. If a folder name ends
 with @samp{!!}, STARTTLS connection will be established.  if the value
-of @code{elmo-default-pop3-stream-type} is @code{starttls}, STARTTLS will be the
+of @code{elmo-pop3-default-stream-type} is @code{starttls}, STARTTLS will be the
 default connection.
 
-@node Multi Folder, Filter Folder, POP Folder, Folders
+
+@node Shimbun Folder, Namazu Folder, POP Folder, Folders
+@section Shimbun Folder
+@cindex @samp{@@}
+@cindex Shimbun Folder
+@cindex Folder, Shimbun
+@cindex Folder, Web
+@pindex w3m
+@pindex emacs-w3m
+
+
+@node Namazu Folder, Multi Folder, Shimbun Folder, Folders
+@section Namazu Folder
+@cindex @samp{[}
+@cindex Namazu Folder
+@cindex Folder, Namazu
+@cindex Folder, Text Search
+@pindex Namazu
+@pindex nmz
+
+
+@node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section Multi Folder
-@cindex Multi Folder
 @cindex @samp{*}
+@cindex Multi Folder
 @cindex Folder, Multiple
 @cindex Folder, Marge
 
@@ -1273,10 +1317,11 @@ Example:
 
 @node Filter Folder, Pipe Folder, Multi Folder, Folders
 @section Filter Folder
-@cindex Filter Folder
 @cindex @samp{/}
+@cindex Filter Folder
 @cindex Folder, Filtering
 @cindex Folder, Virtual
+@cindex Folder, Conditional
 
 A folder to access to a folder which collects all messages that 
 satisfy a condition virtually.
@@ -1412,8 +1457,8 @@ Advanced example:
 
 @node Pipe Folder, Internal Folder, Filter Folder, Folders
 @section Pipe Folder
-@cindex Pipe Folder
 @cindex @samp{|}
+@cindex Pipe Folder
 @cindex Get Message
 @cindex Download Message
 @cindex Incorporate Message
@@ -1454,9 +1499,11 @@ After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
 
 @node Internal Folder,  , Pipe Folder, Folders
 @section Internal folder
-@cindex Internal Folder
 @cindex @samp{'}
+@cindex Internal Folder
 @cindex Folder, @samp{$} mark
+@cindex Cache
+@c @cindex Folder, Null
 
 A folder to access to internal messages of Wanderlust.
 
@@ -3475,9 +3522,9 @@ The initial setting is @code{confirm}.
 
 If non-nil and @code{wl-summary-jump-to-msg-by-message-id} failed, call
 @code{wl-summary-jump-to-msg-by-message-id-via-nntp} and search message
-from the NNTP server @code{elmo-default-nntp-server}.  The value of
-@code{elmo-default-nntp-user}, @code{elmo-default-nntp-port},
-@code{elmo-default-nntp-stream-type} are used.
+from the NNTP server @code{elmo-nntp-default-server}.  The value of
+@code{elmo-nntp-default-user}, @code{elmo-nntp-default-port},
+@code{elmo-nntp-default-stream-type} are used.
 
 If @code{confirm}, server name can be specified. You can specify NNTP
 folder format like @samp{-:username@@servername:119!}.
@@ -3607,7 +3654,7 @@ Following is an example (hide duplicated messages in multi folders)
 @node Message, Draft, Summary, Top
 @chapter Message Buffer
 
-Message Buffers utilize MIME-View mode of SEMI/tm.  For operational
+Message Buffers utilize MIME-View mode of SEMI.  For operational
 procedures and key bindings, refer to respective documents.
 @xref{MIME-View, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
@@ -3705,9 +3752,9 @@ the message is saved when it is sent.
 
 @subsection Editing Messages
 
-Multi-part editing utilize MIME edit mode of SEMI/tm.  For procedures of
-editing, refer to respective documents.
-@xref{MIME-Edit, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
+Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
+editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
+a MIME user interface for GNU Emacs}.
 
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
@@ -3919,28 +3966,28 @@ Configure the following variables if you need.
 @table @code
 @item wl-pop-before-smtp-user
 The POP user name for POP-before-SMTP authentication.
-If unset, @code{elmo-default-pop3-user} is used.
+If unset, @code{elmo-pop3-default-user} is used.
 
 @item wl-pop-before-smtp-server
 The POP server name for POP-before-SMTP authentication.
-If unset, @code{elmo-default-pop3-server} is used.
+If unset, @code{elmo-pop3-default-server} is used.
 
 @item wl-pop-before-smtp-authenticate-type
 The POP authentication method for POP-before-SMTP authentication.
-If unset, @code{elmo-default-pop3-authenticate-type} is used.
+If unset, @code{elmo-pop3-default-authenticate-type} is used.
 
 @item wl-pop-before-smtp-port
 The POP port number for POP-before-SMTP authentication.
-If unset, @code{elmo-default-pop3-port} is used.
+If unset, @code{elmo-pop3-default-port} is used.
 
 @item wl-pop-before-smtp-stream-type
 If non-nil, POP connection is established using SSL.  If
 @code{starttls}, STARTTLS (RFC2595) connection will be established.  If
-unset, @code{elmo-default-pop3-stream-type} is used.
+unset, @code{elmo-pop3-default-stream-type} is used.
 @end table
 
 If variables for POP-before-SMTP (@code{wl-pop-before-smtp-*}) are 
-unset, settings for POP folders (@code{elmo-default-pop3-*}) are
+unset, settings for POP folders (@code{elmo-pop3-default-*}) are
 used.
 Therefore, if SMTP server and POP server are actually the same, and if
 POP folder per default (such as @samp{&}) is available, no settings are
@@ -4049,12 +4096,11 @@ Selects a template.
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-draft-insert-x-face-field
-Inserts the content of a file @file{~/.xface} (the value of the variable
-@code{wl-x-face-file}) as an @samp{X-Face:} field in the draft buffer.
+@findex wl-addrmgr
+Enter Address Manager.
+@xref{Address Manager}.
 
-There should be encoded X-Face strings as a content of a file @file{~/.xface}.
-(@code{wl-draft-insert-x-face-field})
+(@code{wl-addrmgr})
 @end table
 
 @section Customizable Variables
@@ -4096,8 +4142,7 @@ field is automatically inserted in the draft buffer.
 The initial setting is @code{t}.  If non-nil and there is an encoded
 X-Face string in a file @file{~/.xface} (the value of the variable
 @code{wl-x-face-file}), inserts it as an @samp{X-Face:} field in the
-draft buffer.  If @code{nil}, it is not automatically inserted. Press
-@kbd{C-c C-a} to insert.
+draft buffer.  If @code{nil}, it is not automatically inserted.
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -4300,25 +4345,25 @@ If it is @code{starttls}, STARTTLS (RFC2595) is used.
 @vindex wl-nntp-posting-server
 The initial setting is @code{nil}.
 This is the NNTP server name used for news submission.
-If @code{nil}, @code{elmo-default-nntp-server} is used.
+If @code{nil}, @code{elmo-nntp-default-server} is used.
 
 @item wl-nntp-posting-user
 @vindex wl-nntp-posting-user
 The initial setting is @code{nil}.
 This is the user name for AUTHINFO authentication on news submission.
-If @code{nil}, @code{elmo-default-nntp-user} is used.
+If @code{nil}, @code{elmo-nntp-default-user} is used.
 If it is still @code{nil}, AUTHINFO authentication will not be carried out.
 
 @item wl-nntp-posting-port
 @vindex wl-nntp-posting-port
 The initial setting is @code{nil}.
 This is the port number of the NNTP server used for news submission.
-If @code{nil}, @code{elmo-default-nntp-server} is used.
+If @code{nil}, @code{elmo-nntp-default-server} is used.
 
 @item wl-nntp-posting-stream-type
 @vindex wl-nntp-posting-stream-type
 The initial setting is @code{nil}.
-If @code{nil}, @code{elmo-default-nntp-stream-type} is evaluated.  If non-nil,
+If @code{nil}, @code{elmo-nntp-default-stream-type} is evaluated.  If non-nil,
 SSL is used for news submission.  If @code{starttls}, STARTTLS (RFC2595)
 connection will be established.
 
@@ -4326,31 +4371,31 @@ connection will be established.
 @vindex wl-pop-before-smtp-user
 The initial setting is @code{nil}.
 This is the POP user name for POP-before-SMTP.
-If it is @code{nil}, @code{elmo-default-pop3-user} is used.
+If it is @code{nil}, @code{elmo-pop3-default-user} is used.
 
 @item wl-pop-before-smtp-server
 @vindex wl-pop-before-smtp-server
 The initial setting is @code{nil}.
 This is the POP server name for POP-before-SMTP.
-If it is @code{nil}, @code{elmo-default-pop3-server} is used.
+If it is @code{nil}, @code{elmo-pop3-default-server} is used.
 
 @item wl-pop-before-smtp-authenticate-type
 @vindex wl-pop-before-smtp-authenticate-type
 The initial setting is @code{nil}.
 This is the authentication method for POP-before-SMTP authentication.
-If it is @code{nil}, @code{elmo-default-pop3-authenticate} is used.
+If it is @code{nil}, @code{elmo-pop3-default-authenticate} is used.
 
 @item wl-pop-before-smtp-port
 @vindex wl-pop-before-smtp-port
 The initial setting is @code{nil}.
 This is the POP port number for POP-before-SMTP.  If it is @code{nil},
-@code{elmo-default-pop3-port} is used.
+@code{elmo-pop3-default-port} is used.
 
 @item wl-pop-before-smtp-stream-type
 @vindex wl-pop-before-smtp-stream-type
 The initial setting is @code{nil}.
 This flag controls the use of SSL for POP-before-SMTP.  If it is
-@code{nil}, @code{elmo-default-pop3-stream-type} is used.  If @code{starttls},
+@code{nil}, @code{elmo-pop3-default-stream-type} is used.  If @code{starttls},
 STARTTLS (RFC2595) connection will be established.
 
 @item wl-draft-queue-save-variables
@@ -6071,7 +6116,7 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 If you embed @file{dired-dd-mime.el} in the dired-dd package, you can
 compose multi-part by simple Drag-and-Drop from dired to the draft
 buffer being edited in GNU Emacs (this feature is not Wanderlust
-specific, but general-purpose for tm/SEMI).
+specific, but general-purpose for SEMI).
 
 @lisp
 @group

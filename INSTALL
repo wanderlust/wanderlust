@@ -15,31 +15,32 @@ Select MIME Module
   SEMI requires APEL and FLIM packages.  For each Emacsen, Recommended
   combination of MIME module package following.
 
-(a) XEmacs 21.1 or later
+  (a) XEmacs 21.1 or later
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-  Installation as a XEmacs package, If possible.
+    Installation as a XEmacs package, If possible.
 
-(b) Emacs 20.4 or later
+  (b) Emacs 20.4 or later
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-(c) Emacs 20.1 to 20.3
+ (c) Emacs 20.1 to 20.3
 
 	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
-  Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
-  earlier.
+    Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
+    earlier.
 
-(d) Emacs 19.34 (Mule 2.3)
+  (d) Emacs 19.34 (Mule 2.3)
 
 	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
-  Mule based on Emacs 19.34 can also run SEMI.  See the following web
-  page to get more information (in Japanese).
+    Mule based on Emacs 19.34 can also run SEMI.  See the following web
+    page to get more information (in Japanese).
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+
 
 Install MIME Module
 ===================
@@ -62,6 +63,8 @@ Install MIME Module
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
 	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 
+  You have to re-install Wanderlust if you upgraded APEL, FLIM, or SEMI.
+
 
 Installation
 ============
@@ -83,8 +86,8 @@ Installation
 	% make
 	% make install
 
-  If you use Emacs without subdirs.el (e.g. Mule 2.3 based on Emacs
-  19.28), the following error message occasionally appears.
+  If you use Emacs without subdirs.el, the following error message
+  occasionally appears.
 
 	Cannot open load file: mime-setup
 

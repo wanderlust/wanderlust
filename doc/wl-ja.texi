@@ -163,7 +163,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 @item $B9XFI%U%)%k%@$N0lMw$rI=<($9$k%U%)%k%@%b!<%I!#(B
 @item $B%a%C%;!<%8%-%c%C%7%e!"(BDisconnected Operation ($B8=:_$OI=<($N$_(B)$B!#(B
 @item MH $BE*(B FCC$B!#(B(@samp{FCC: %Backup} $B$d(B @samp{FCC: $Backup} $B$b2D(B)$B!#(B
-@item MIME $BBP1~(B (by SEMI or tm)$B!#(B
+@item MIME $BBP1~(B (by SEMI)$B!#(B
 @item $B%K%e!<%9(B/$B%a!<%k$NAw?.$rE}9g$7$?%a%C%;!<%8Aw?.%I%i%U%H!#(B
 @item $B%U%)%k%@0lMw$N%"%$%3%sI=<((B (XEmacs $B$H(B Emacs 21)$B!#(B
 @item $BBg$-$J%Q!<%H$r<h$j4s$;$:$KI=<((B(IMAP4)$B!#(B
@@ -185,7 +185,6 @@ Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
 @item Emacs 20.2 $B0J9_(B
 @item XEmacs 20.4 $B0J9_(B
 @item Meadow 1.00 $B0J9_(B
-@item Mule for Windows v1.22
 @item NTEmacs 20.4 $B0J9_(B
 @item PMMule
 @end itemize
@@ -195,15 +194,20 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 
 @itemize @bullet
 @item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c, 2000 $B0J9_(B
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 $B0J9_(B
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22$B!A(B1.6.24, 2.0.5 $B0J9_(B
+@item Courier-IMAP 1.3.2 $B0J9_(B
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 4.0
+@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
 @end itemize
 
-@c Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
-@c $B$j$G$9!#(B
+Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
+$B$j$G$9!#(B
+
+@itemize @bullet
+@item OpenLDAP 2.0.6 $B0J9_(B
+@end itemize
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -212,7 +216,8 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 
 Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 
-($BEvA3$N$3$H$J$,$i!"$3$l$i$h$j$b@h$K!"%a!<%k(B/$B%K%e!<%9$rFI$`$3$H$N$G$-$k4D6-$,$"$i$+$8$aI,MW$G$9!#(B)
+($BEvA3$N$3$H$J$,$i!"$3$l$i$h$j$b@h$K!"%a!<%k(B/$B%K%e!<%9$rFI$`$3$H$N$G$-$k4D(B
+$B6-$,$"$i$+$8$aI,MW$G$9!#(B)
 
 @menu
 * MIME Modules::      MIME $BMQ%b%8%e!<%k$N%$%s%9%H!<%k(B
@@ -516,7 +521,7 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 
 @lisp
 @group
-;; @r{SEMI/tm $B$r;H$&$?$a$N@_Dj(B}
+;; @r{SEMI $B$r;H$&$?$a$N@_Dj(B}
 (load "mime-setup")
 
 ;; @r{autoload $B$N@_Dj(B}
@@ -679,6 +684,8 @@ Internal $B$N(B 11 $B<oN`$G$9!#(B
 * News Spool Folder::        @samp{=} -- News Spool $B%U%)%k%@(B
 * Archive Folder::           @samp{$} -- $B%"!<%+%$%V%U%)%k%@(B
 * POP Folder::               @samp{&} -- POP $B%U%)%k%@(B
+* Shimbun Folder::           @samp{@@} -- $B?7J9%U%)%k%@(B
+* Namazu Folder::            @samp{[} -- Namazu $B%U%)%k%@(B
 * Multi Folder::             @samp{*} -- $B%^%k%A%U%)%k%@(B
 * Filter Folder::            @samp{/} -- $B%U%#%k%?%U%)%k%@(B
 * Pipe Folder::              @samp{|} -- $B%Q%$%W%U%)%k%@(B
@@ -688,8 +695,9 @@ Internal $B$N(B 11 $B<oN`$G$9!#(B
 
 @node IMAP Folder, NNTP Folder, Folders, Folders
 @section IMAP $B%U%)%k%@(B
-@cindex IMAP Folder
 @cindex @samp{%}
+@cindex IMAP Folder
+@cindex Folder, IMAP
 @cindex RFC 2060
 @cindex IMAP4rev1
 
@@ -710,47 +718,48 @@ RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$
            @code{clear} ($B$^$?$O(B @code{nil}$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
 @end example
 
-(1.14.0 $B$h$j0JA0$N%P!<%8%g%s$N(B FLIM $B$G(B CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B1.14.0 $B0J9_$N%P!<%8%g%s$N(B FLIM $B$G$"$l$P!"K\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$O$"$j$^$;$s!#(B)
-
 default $BCM(B:
 
 @example
-$B%f!<%6L>(B  -> $BJQ?t(B @code{elmo-default-imap4-user} $B$NCM!#(B
+$B%f!<%6L>(B  -> $BJQ?t(B @code{elmo-imap4-default-user} $B$NCM!#(B
              $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
              @code{(user-login-name)} $B$NJV$jCM!#(B
-$BG'>ZK!(B    -> $BJQ?t(B @code{elmo-default-imap4-authenticate-type} $B$NCM!#(B
+$BG'>ZK!(B    -> $BJQ?t(B @code{elmo-imap4-default-authenticate-type} $B$NCM!#(B
              $B=i4|@_Dj$O(B @code{login}$B!#(B
-$B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-default-imap4-server} $B$NCM!#(B
+$B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-imap4-default-server} $B$NCM!#(B
              $B=i4|@_Dj$O(B @samp{localhost}$B!#(B
-$B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-default-imap4-port} $B$NCM!#(B
+$B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-imap4-default-port} $B$NCM!#(B
              $B=i4|@_Dj$O(B 143$B!#(B
 @end example
 
-$B%a%$%s$G;HMQ$9$k(B IMAP $B%5!<%P$rJQ?t(B @code{elmo-default-imap4-server} 
+$B%a%$%s$G;HMQ$9$k(B IMAP $B%5!<%P$rJQ?t(B @code{elmo-imap4-default-server} 
 $B$K;XDj$9$k$H!"$$$A$$$A%U%)%k%@L>$K%[%9%HL>$r=q$+$:$K:Q$_$^$9!#Nc$($P%U%!(B
 $B%$%"%&%)!<%k$r1[$($J$1$l$P$J$i$J$$>l9g$G$b(B @samp{foo%imap@@gateway} $B$N$h(B
 $B$&$K;XDj$G$-$^$9!#(B
 
 @lisp
-;; $BNc(B: imap4.exaple.org $B$r%a%$%s$G;HMQ$9$k(B IMAP $B%5!<%P$H$7$F@_Dj(B
-(setq elmo-default-imap4-server "imap4.example.org")
+@group
+;; @r{$BNc(B: imap4.exaple.org $B$r%a%$%s$G;HMQ$9$k(B IMAP $B%5!<%P$H$7$F@_Dj(B}
+(setq elmo-imap4-default-server "imap4.example.org")
+@end group
 @end lisp
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL (Secure Socket Layer)$B$r(B
-$BMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B@samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(BSSL $B%3%M%/(B
-$B%7%g%s$rD%$j$^$9!#JQ?t(B @code{elmo-default-imap4-stream-type} $B$NCM$,(B 
+$BMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B@samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(BSSL $B%3%M(B
+$B%/%7%g%s$rD%$j$^$9!#JQ?t(B @code{elmo-imap4-default-stream-type} $B$NCM$,(B 
 @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} 
 $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
 
 @lisp
-;; $BNc(B: SSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$k(B
-(setq elmo-default-imap4-stream-type 'ssl) 
+@group
+;; @r{$BNc(B: SSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$k(B}
+(setq elmo-imap4-default-stream-type 'ssl) 
+@end group
 @end lisp
 
-(SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9(B
-$B$kI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @command{openssl} $B$K%Q%9$,(B
-$BDL$C$F$$$kI,MW$,$"$j$^$9!#(BSTARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C(B
-$B%1!<%8$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
+(OpenSSL $B$K4^$^$l$k(B @command{openssl} $B$K%Q%9$,DL$C$F$$$kI,MW$,$"$j$^$9!#(B
+STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k$9$kI,(B
+$BMW$,$"$j$^$9!#(B)
 
 $BG'>ZK!$H$7$F!"(B@code{login}$B!"(B@code{cram-md5} $B$b$7$/$O(B @code{digest-md5} 
 $B$r;XDj$7$?>l9g!"%Q%9%o!<%I$r%(%s%3!<%I$7$FAw?.$7$^$9!#$?$@$7!"%5!<%PB&$,(B
@@ -760,8 +769,8 @@ default $BCM(B:
 $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B @code{nil})$B!#(B
 
 @lisp
-;; $BNc(B: $B@8%Q%9%o!<%I$GG'>Z(B
-(setq elmo-default-imap4-authenticate-type 'clear) 
+;; @r{$BNc(B: $B@8%Q%9%o!<%I$GG'>Z(B}
+(setq elmo-imap4-default-authenticate-type 'clear) 
 @end lisp
 
 $BNc(B:
@@ -826,10 +835,17 @@ ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
 @end example
 @end itemize
 
+
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP $B%U%)%k%@(B
-@cindex NNTP Folder
 @cindex @samp{-}
+@cindex NNTP Folder
+@cindex Folder, NNTP
+@cindex Folder, News
+@cindex NetNews
+@cindex News
+@cindex Newsgroup
+@cindex RFC 977
 
 $B%M%C%H%K%e!<%9$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 $B0l$D$N%K%e!<%9%0%k!<%W$,0l$D$N%U%)%k%@$H$7$F07$o$l$^$9!#(B
@@ -844,22 +860,17 @@ ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
 
 default $BCM(B:
 @example
-$B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-default-nntp-server} $B$NCM!#=i4|@_Dj$O(B "localhost"$B!#(B
-$B%f!<%6L>(B  -> $BJQ?t(B @code{elmo-default-nntp-user} $B$NCM!#=i4|@_Dj$O(B @code{nil}$B!#(B
-$B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-default-nntp-port} $B$NCM!#(B
+$B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-nntp-default-server} $B$NCM!#=i4|@_Dj$O(B "localhost"$B!#(B
+$B%f!<%6L>(B  -> $BJQ?t(B @code{elmo-nntp-default-user} $B$NCM!#=i4|@_Dj$O(B @code{nil}$B!#(B
+$B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-nntp-default-port} $B$NCM!#(B
              $B=i4|@_Dj$O(B 119$B!#(B
 @end example
 
 @var{$B%f!<%6L>(B}$B$,(B non-nil $B$N>l9g$O(B AUTHINFO $B$K$h$kG'>Z$r9T$J$$$^$9!#(B
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 @samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(B SSL $B%3%M%/%7%g%s$rD%$j$^$9!#(B
-$BJQ?t(B @code{elmo-default-nntp-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
+$BJQ?t(B @code{elmo-nntp-default-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
-
-(SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9(B
-$B$kI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @command{openssl} $B$K%Q%9$,(B
-$BDL$C$F$$$kI,MW$,$"$j$^$9!#(BSTARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C(B
-$B%1!<%8$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
 
 $BNc(B:
 
@@ -873,10 +884,10 @@ default $BCM(B:
 
 @node MH Folder, Maildir Folder, NNTP Folder, Folders
 @section MH $B%U%)%k%@(B
-@cindex MH Folder
 @cindex @samp{+}
+@cindex MH Folder
+@cindex Folder, MH
 @pindex MH
-@cindex Maildir
 
 MH $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
@@ -906,9 +917,10 @@ MH $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)
 
 @node Maildir Folder, News Spool Folder, MH Folder, Folders
 @section Maildir $B%U%)%k%@(B
-@cindex Maildir Folder
 @cindex @samp{.}
+@cindex Maildir Folder
 @pindex Maildir
+@pindex qmail
 
 Maildir $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
@@ -946,8 +958,8 @@ Maildir $B$O!"(B@file{cur}, @file{new}, @file{tmp} $B$N%G%#%l%/%H%j$r4^$s$G$$
 
 @node News Spool Folder, Archive Folder, Maildir Folder, Folders
 @section News Spool $B%U%)%k%@(B
-@cindex News spool Folder
 @cindex @samp{=}
+@cindex News spool Folder
 @pindex gnspool
 
 Mew/IM $B$,Ds>'$9$k!"%m!<%+%k$KJ]B8$5$l$?%K%e!<%95-;v$rFI$_=q$-$9$k$?$a$N(B
@@ -1206,10 +1218,10 @@ OS/2 $B$G$O%7%'%k$r2p$5$:$KH/9T$G$-$k%3%^%s%IJ8;zNs$O(B 8190 $B%P%$%H$^$G$J$N
 @end table
 
 
-@node POP Folder, Multi Folder, Archive Folder, Folders
+@node POP Folder, Shimbun Folder, Archive Folder, Folders
 @section POP $B%U%)%k%@(B
-@cindex POP Folder
 @cindex @samp{&}
+@cindex POP Folder
 @cindex RFC 1939
 @cindex POP3
 @cindex APOP
@@ -1230,14 +1242,14 @@ RFC 1939 $B$G5,Dj$5$l$?(B POP3 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(
 default $BCM(B:
 
 @example
-$B%f!<%6L>(B   -> $BJQ?t(B @code{elmo-default-pop3-user} $B$NCM!#(B
+$B%f!<%6L>(B   -> $BJQ?t(B @code{elmo-pop3-default-user} $B$NCM!#(B
               $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
               @code{(user-login-name)} $B$NJV$jCM!#(B
-$BG'>ZK!(B     -> $BJQ?t(B @code{elmo-default-pop3-authenticate-type} $B$NCM!#(B
+$BG'>ZK!(B     -> $BJQ?t(B @code{elmo-pop3-default-authenticate-type} $B$NCM!#(B
               $B=i4|@_Dj$O(B "user"$B!#(B
-$B%[%9%HL>(B   -> $BJQ?t(B @code{elmo-default-pop3-server} $B$NCM!#(B
+$B%[%9%HL>(B   -> $BJQ?t(B @code{elmo-pop3-default-server} $B$NCM!#(B
               $B=i4|@_Dj$O(B "localhost"$B!#(B
-$B%]!<%HHV9f(B -> $BJQ?t(B @code{elmo-default-pop3-port} $B$NCM!#(B
+$B%]!<%HHV9f(B -> $BJQ?t(B @code{elmo-pop3-default-port} $B$NCM!#(B
               $B=i4|@_Dj$O(B 110$B!#(B
 @end example
 
@@ -1257,7 +1269,7 @@ APOP $B$rMxMQ$9$k$K$O!"(B@file{md5.el} $B$,I,MW$G$9!#(B(XEmacs $B$G$OI,MW$"
 archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
-$BJQ?t(B @code{elmo-default-pop3-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
+$BJQ?t(B @code{elmo-pop3-default-stream-type} $B$NCM$,(B non-nil $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
 (SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9$k(B
 $BI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @file{openssl} $B$K%Q%9$,DL$C$F$$$k(B
@@ -1265,10 +1277,31 @@ archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 $B$9$kI,MW$,$"$j$^$9!#(B)
 
-@node Multi Folder, Filter Folder, POP Folder, Folders
+
+@node Shimbun Folder, Namazu Folder, POP Folder, Folders
+@section $B?7J9%U%)%k%@(B
+@cindex @samp{@@}
+@cindex Shimbun Folder
+@cindex Folder, Shimbun
+@cindex Folder, Web
+@pindex w3m
+@pindex emacs-w3m
+
+
+@node Namazu Folder, Multi Folder, Shimbun Folder, Folders
+@section Namazu $B%U%)%k%@(B
+@cindex Namazu Folder
+@cindex @samp{[}
+@cindex Folder, Namazu
+@cindex Folder, Text Search
+@pindex Namazu
+@pindex nmz
+
+
+@node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section $B%^%k%A%U%)%k%@(B
-@cindex Multi Folder
 @cindex @samp{*}
+@cindex Multi Folder
 @cindex Folder, Multiple
 @cindex Folder, Marge
 
@@ -1302,10 +1335,11 @@ STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 
 @node Filter Folder, Pipe Folder, Multi Folder, Folders
 @section $B%U%#%k%?%U%)%k%@(B
-@cindex Filter Folder
 @cindex @samp{/}
+@cindex Filter Folder
 @cindex Folder, Filtering
 @cindex Folder, Virtual
+@cindex Folder, Conditional
 
 $B;XDj$7$?>r7o$rK~$?$9%a%C%;!<%8$N$_$r4^$`2>A[E*$J%U%)%k%@$G$9!#(B
 
@@ -1444,8 +1478,8 @@ lastyear  ->  $B5nG/$N:#F|(B
 
 @node Pipe Folder, Internal Folder, Filter Folder, Folders
 @section $B%Q%$%W%U%)%k%@(B
-@cindex Pipe Folder
 @cindex @samp{|}
+@cindex Pipe Folder
 @cindex Get Message
 @cindex Download Message
 @cindex Incorporate Message
@@ -1488,10 +1522,11 @@ lastyear  ->  $B5nG/$N:#F|(B
 
 @node Internal Folder,  , Pipe Folder, Folders
 @section $BFbIt%U%)%k%@(B
-@cindex Internal Folder
 @cindex @samp{'}
+@cindex Internal Folder
 @cindex Folder, @samp{$} mark
 @cindex Cache
+@c @cindex Folder, Null
 
 Wanderlust $B$NFbIt$GJ];}$5$l$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 
@@ -3473,11 +3508,11 @@ Non-nil $B$J$i%5%V%8%'%/%H$,JQ$o$C$?$H$-$K%9%l%C%I$r@Z$j$^$9!#(B
 Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8(B
 $B$r8+$D$1$k$3$H$,$G$-$J$+$C$?$H$-$K!"(B
 @code{wl-summary-jump-to-msg-by-message-id-via-nntp} $B$r8F$S!"(B
-@code{elmo-default-nntp-server} $B$G;XDj$5$l$?%5!<%P$+$i8!:w$7$^$9!#$3$N$H(B
-$B$-(B @code{elmo-default-nntp-user}, @code{elmo-default-nntp-port},
-@code{elmo-default-nntp-stream-type} $B$G;XDj$7$?>r7o$G%5!<%P$H@\B3$7$^$9!#(B
+@code{elmo-nntp-default-server} $B$G;XDj$5$l$?%5!<%P$+$i8!:w$7$^$9!#$3$N$H(B
+$B$-(B @code{elmo-nntp-default-user}, @code{elmo-nntp-default-port},
+@code{elmo-nntp-default-stream-type} $B$G;XDj$7$?>r7o$G%5!<%P$H@\B3$7$^$9!#(B
 
-@code{confirm} $B$J$i(B @code{elmo-default-nntp-*} $B$G;XDj$5$l$?%5!<%P$+$i8!(B
+@code{confirm} $B$J$i(B @code{elmo-nntp-default-*} $B$G;XDj$5$l$?%5!<%P$+$i8!(B
 $B:w$9$k$+!"%5!<%P$r;XDj$9$k$+$r3NG'$7$^$9!#$3$N>l9g!"%5!<%P$N%[%9%HL>!"$b(B
 $B$7$/$O(B @samp{-:username@@servername:119!}  $B$N$h$&$K(B NTTP $B%U%)%k%@7A<0$G$N(B
 $B;XDj$,2DG=$G$9!#(B
@@ -3599,7 +3634,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @node Message, Draft, Summary, Top
 @chapter $B%a%C%;!<%8%P%C%U%!(B
 
-$B%a%C%;!<%8%P%C%U%!$O(B SEMI/tm $B$N(B MIME-View mode $B$G$9!#(B
+$B%a%C%;!<%8%P%C%U%!$O(B SEMI $B$N(B MIME-View mode $B$G$9!#(B
 $BA`:n$NJ}K!!"%-!<%P%$%s%I$O$=$l$>$l$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
 
@@ -3696,7 +3731,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @subsection $B%a%C%;!<%8$NJT=8(B
 
-$B%^%k%A%Q!<%H$NJT=8$O(B SEMI/tm $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
+$B%^%k%A%Q!<%H$NJT=8$O(B SEMI $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
 $BJT=8$NJ}K!$O3F%Q%C%1!<%8IUB0$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-Edit, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
 
@@ -3904,29 +3939,29 @@ POP-before-SMTP $B$K$h$k%a!<%k$NAw?.$,$G$-$^$9!#(B
 @table @code
 @item wl-pop-before-smtp-user
 POP-before-SMTP $B$GG'>Z$r9T$J$&$H$-$N(B POP $B%f!<%6L>$G$9!#(B
-$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-default-pop3-user} $B$,;H$o$l$^$9!#(B
+$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-pop3-default-user} $B$,;H$o$l$^$9!#(B
 
 @item wl-pop-before-smtp-server
 POP-before-SMTP $B$GG'>Z$r9T$J$&$H$-$N(B POP $B%5!<%PL>$G$9!#(B
-$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-default-pop3-server} $B$,;H$o$l$^$9!#(B
+$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-pop3-default-server} $B$,;H$o$l$^$9!#(B
 
 @item wl-pop-before-smtp-authenticate-type
 POP-before-SMTP $B$GG'>Z$r9T$J$&$H$-$N(B POP $BG'>ZJ}<0$G$9!#(B
-$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-default-pop3-authenticate-type}
+$B@_Dj$5$l$F$$$J$$>l9g$O(B @code{elmo-pop3-default-authenticate-type}
 $B$,;H$o$l$^$9!#(B
 
 @item wl-pop-before-smtp-port
 POP-before-SMTP $B$GG'>Z$r9T$J$&$H$-$N(B POP $B%]!<%HHV9f$G$9!#(B
-$B@_Dj$5$l$F$$$J$$>l9g$O(B  @code{elmo-default-pop3-port} $B$,;H$o$l$^$9!#(B
+$B@_Dj$5$l$F$$$J$$>l9g$O(B  @code{elmo-pop3-default-port} $B$,;H$o$l$^$9!#(B
 
 @item wl-pop-before-smtp-stream-type
 Non-nil $B$J$i(B SSL $B$rMxMQ$7$F(B POP $B%3%M%/%7%g%s$rD%$j$^$9!#(B@code{starttls} 
 $B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$,D%$i$l$^$9!#@_Dj$5$l$F$$$J(B
-$B$$>l9g$O(B @code{elmo-default-pop3-stream-type} $B$,;H$o$l$^$9!#(B
+$B$$>l9g$O(B @code{elmo-pop3-default-stream-type} $B$,;H$o$l$^$9!#(B
 @end table
 
 POP-before-SMTP $BMQ$NJQ?t(B (@code{wl-pop-before-smtp-*})$B$,@_Dj$5$l$F$$$J$$(B
-$B>l9g$O!"(BPOP $B%U%)%k%@$N@_Dj(B (@code{elmo-default-pop3-*}) $B$,MQ$$$i$l$^$9!#(B
+$B>l9g$O!"(BPOP $B%U%)%k%@$N@_Dj(B (@code{elmo-pop3-default-*}) $B$,MQ$$$i$l$^$9!#(B
 $B$=$N$?$a!"(BSMTP $B%5!<%P$H(B POP $B%5!<%P$N<BBN$,F1$8$G!"%G%U%)%k%H@_Dj$N(B POP $B%U%)%k(B
 $B%@(B(@samp{&} $B$J$I(B)$B$,MxMQ2DG=$J$i!"@_Dj$OITMW$G$9!#(B
 
@@ -4032,13 +4067,11 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-draft-insert-x-face-field
-$B%U%!%$%k(B @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B) $B$NFbMF$r(B
-$B%I%i%U%H%P%C%U%!$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$7$^$9!#(B
+@findex wl-addrmgr
+$B%"%I%l%9%^%M!<%8%c$r5/F0$7$^$9!#(B
+@xref{Address Manager}.
 
-$B%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r$"$i$+$8$a%U%!%$%k(B @file{~/.xface}
-$B$NFbMF$KMQ0U$7$F$*$/I,MW$,$"$j$^$9!#(B
-(@code{wl-draft-insert-x-face-field})
+(@code{wl-addrmgr})
 @end table
 
 @section $B%+%9%?%^%$%:JQ?t(B
@@ -4078,8 +4111,7 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$G$+$D!"%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r(B 
 @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B)$B$NFbMF$KMQ0U$7$F$*$/$H!"(B
 $B%I%i%U%H$,=`Hw$5$l$k$H$-$K<+F0E*$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$5(B
-$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s$,!"(B@kbd{C-c C-a} $B$r(B
-$B2!$9$H%X%C%@It$KA^F~$5$l$^$9!#(B
+$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s!#(B
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -4262,25 +4294,25 @@ SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
 @vindex wl-nntp-posting-server
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%PL>$G$9!#(B
-@code{nil} $B$J$i(B @code{elmo-default-nntp-server} $B$r;H$$$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-nntp-default-server} $B$r;H$$$^$9!#(B
 
 @item wl-nntp-posting-user
 @vindex wl-nntp-posting-user
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$K(B AUTHINFO $B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
-@code{nil} $B$J$i(B @code{elmo-default-nntp-user} $B$r;H$$$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-nntp-default-user} $B$r;H$$$^$9!#(B
 $B$=$l$G$b(B @code{nil} $B$J$i(B AUTHINFO $B$K$h$kG'>Z$r9T$J$$$^$;$s!#(B
 
 @item wl-nntp-posting-port
 @vindex wl-nntp-posting-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%P$N%]!<%HHV9f!#(B
-@code{nil} $B$J$i(B @code{elmo-default-nntp-server} $B$r;H$$$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-nntp-default-server} $B$r;H$$$^$9!#(B
 
 @item wl-nntp-posting-stream-type
 @vindex wl-nntp-posting-stream-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-@code{nil} $B$J$i(B @code{elmo-default-nntp-stream-type} $B$rI>2A$7$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-nntp-default-stream-type} $B$rI>2A$7$^$9!#(B
 Non-nil $B$J$i%K%e!<%9Ej9F;~$K(B SSL $B$rMxMQ$7$^$9!#(B
 @code{starttls}$B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$,D%$i$l$^$9!#(B
 
@@ -4288,31 +4320,31 @@ Non-nil $B$J$i%K%e!<%9Ej9F;~$K(B SSL $B$rMxMQ$7$^$9!#(B
 @vindex wl-pop-before-smtp-user
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
-@code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-user}$B$rMxMQ$7$^$9!#(B
+@code{nil} $B$N$^$^$J$i(B @code{elmo-pop3-default-user}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-server
 @vindex wl-pop-before-smtp-server
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%5!<%PL>$G$9!#(B
-@code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-server}$B$rMxMQ$7$^$9!#(B
+@code{nil} $B$N$^$^$J$i(B @code{elmo-pop3-default-server}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-authenticate-type
 @vindex wl-pop-before-smtp-authenticate-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
-@code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-authenticate}$B$rMxMQ$7$^$9!#(B
+@code{nil} $B$N$^$^$J$i(B @code{elmo-pop3-default-authenticate}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-port
 @vindex wl-pop-before-smtp-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B POP $B$r9T$J$&$H$-$N%]!<%HHV9f$G$9!#(B
-@code{nil} $B$N$^$^$J$i(B @code{elmo-default-pop3-port}$B$rMxMQ$7$^$9!#(B
+@code{nil} $B$N$^$^$J$i(B @code{elmo-pop3-default-port}$B$rMxMQ$7$^$9!#(B
 
 @item wl-pop-before-smtp-stream-type
 @vindex wl-pop-before-smtp-stream-type
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 POP-before-SMTP $B$G(B SSL $B$rMxMQ$9$k$+$I$&$+$r<($9%U%i%0$G$9!#(B@code{nil} $B$N(B
-$B$^$^$J$i(B @code{elmo-default-pop3-stream-type}$B$rMxMQ$7$^$9!#(B
+$B$^$^$J$i(B @code{elmo-pop3-default-stream-type}$B$rMxMQ$7$^$9!#(B
 @code{starttls}$B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$,D%$i$l$^$9!#(B
 
 @item wl-draft-queue-save-variables
@@ -5759,9 +5791,9 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @section $B%"%I%l%9%^%M!<%8%c(B
 @cindex Address Manager
 
-@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c$G$O(B
-$B%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;XDj$7$?%"%I%l%9$r(B
-$B%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
+@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c(B
+$B$G$O%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;X(B
+$BDj$7$?%"%I%l%9$r%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
 
 @subsection $B%-!<%P%$%s%I(B
 
@@ -5999,8 +6031,8 @@ bitmap-mule 8.0$B0J9_$KIUB0$N(B @file{x-face-mule.el}
 
 dired-dd $B%Q%C%1!<%8$K4^$^$l$k(B @file{dired-dd-mime.el} $B$rAH$_9~$a$P!"(BGNU
 Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$1$G4JC1(B
-$B$K%^%k%A%Q!<%H$r:n@.$G$-$^$9(B($B$b$C$H$b!"(BWanderlust $B@lMQ$G$O$J$/(B tm/SEMI 
-$BHFMQ$G$9$,(B)$B!#(B
+$B$K%^%k%A%Q!<%H$r:n@.$G$-$^$9(B($B$b$C$H$b!"(BWanderlust $B@lMQ$G$O$J$/(B SEMI $BHFMQ(B
+$B$G$9$,(B)$B!#(B
 
 @lisp
 @group
