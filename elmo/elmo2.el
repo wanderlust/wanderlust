@@ -271,10 +271,13 @@ without cacheing."
 	   (len (length msgs))
 	   (all-msg-num (or all len))
 	   (done-msg-num (or done 0))
+	   (progress-message (if no-delete
+				 "Copying messages..."
+			       "Moving messages..."))
 	   (tmp-buf (get-buffer-create " *elmo-move-msg*"))
 	   ;elmo-no-cache-flag
 	   ret-val real-fld-num done-copy dir pair
-	   mes-string message-id src-cache i percent unseen seen-list)
+	   mes-string message-id src-cache i unseen seen-list)
       (setq i done-msg-num)
       (set-buffer tmp-buf)
       (when (and (not (eq dst-folder 'null))
@@ -334,17 +337,12 @@ without cacheing."
 	      (error "move: append message to %s failed" dst-folder))))
 	;; delete src cache if it is partial.
 	(elmo-cache-delete-partial message-id src-folder (car messages))
-	(setq ret-val (append ret-val (list (car messages))))
+	(setq ret-val (nconc ret-val (list (car messages))))
 	(when (> all-msg-num elmo-display-progress-threshold)
 	  (setq i (+ i 1))
-	  (setq percent (/ (* i 100) all-msg-num))
-	  (if no-delete 
-	      (elmo-display-progress
-	       'elmo-move-msgs "Copying messages..."
-	       percent)
-	    (elmo-display-progress
-	     'elmo-move-msgs "Moving messages..."
-	     percent)))
+	  (elmo-display-progress
+	   'elmo-move-msgs progress-message
+	   (/ (* i 100) all-msg-num)))
 	(setq messages (cdr messages)))
       ;; Save seen-list.
       (unless (eq dst-folder 'null)
