@@ -302,10 +302,10 @@ Don't cache if nil.")
   (run-hooks 'elmo-nntp-opened-hook))
 
 (defun elmo-nntp-process-filter (process output)
-  (save-excursion
-    (set-buffer (process-buffer process))
-    (goto-char (point-max))
-    (insert output)))
+  (when (buffer-live-p (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (goto-char (point-max))
+      (insert output))))
 
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
@@ -1142,6 +1142,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	(if from-msgs
 	    (elmo-list-filter from-msgs result)
 	  result)))
+     ((string= "body" search-key)
+      (error
+"Search by BODY is not supported (Toggle the plug off to search from caches)"))
      (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))

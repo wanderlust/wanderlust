@@ -255,7 +255,7 @@ may help you.}.
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.4 and SEMI 1.14.4
+@item APEL 10.4, FLIM 1.14.4 and SEMI 1.14.5
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
@@ -263,7 +263,7 @@ latest versions should work.  For example, the following combination are
 confirmed to work.
 
 @itemize @minus
-@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.4
+@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.5
 @item APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
 @end itemize
 
@@ -3078,8 +3078,8 @@ If the message at current cursor point is your own netnews article,
 a draft for `supersedes message' for the message is prepared.
 (@code{wl-summary-reedit})
 
-@item M-e
-@kindex M-e (Summary)
+@item M-E
+@kindex M-E (Summary)
 @findex wl-summary-resend-bounced-mail
 If the message at current cursor point is a bounced message,
 a draft for re-sending original message is prepared.
@@ -5227,7 +5227,7 @@ manually, press @kbd{F} in the folder mode.
 
 @item elmo-enable-disconnected-operation
 @vindex elmo-enable-disconnected-operation
-The initial setting is @code{nil}.  Controls off-line operations
+The initial setting is @code{t}.  Controls off-line operations
 regarding IMAP4.  If non-nil, off-line operations are carried out.
 
 @item elmo-lost+found-folder
@@ -6665,8 +6665,9 @@ If @command{imput} is on the @code{exec-path} at the installation,
 @subsection bbdb.el
 @pindex BBDB
 
-Place @file{util/bbdb-wl.el} on the @code{load-path} and do the following
-settings.
+To use The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
+with Wanderlust, place @file{util/bbdb-wl.el} on the @code{load-path}
+and do the following settings.
 
 If BBDB is on the @code{load-path} at the installation, @file{bbdb-wl.el} is
 byte-compiled and installed.
@@ -6701,7 +6702,9 @@ in draft buffer.
 @subsection lsdb.el
 @pindex LSDB
 
-The following is an example of settings:
+The following is an example setting to use
+The Lovely Sister Database (@uref{http://sourceforge.jp/projects/lsdb/})
+with Wanderlust.
 
 @lisp
 @group

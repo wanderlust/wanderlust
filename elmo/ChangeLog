@@ -1,8 +1,32 @@
+2002-11-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Revert the last change.
+
+	* elmo-multi.el (elmo-folder-search): Ignore errors while search.
+
+	* elmo-imap4.el (elmo-imap4-response-garbage-p): New macro.
+	(elmo-imap4-read-response): Take care of garbage response.
+
+2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Fix the last change,
+	just return nil instead of error.
+
+2002-11-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Cause error when the
+	search-key is "body".
+
 2002-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Check the return value
 	of elmo-string-matched-assoc to use match-data.
 	(Thanks to Mito <mito@mxa.nes.nec.co.jp>)
+
+2002-11-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-split.el (elmo-split->): New function.
+	(elmo-split-<): Ditto.
 
 2002-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -152,6 +152,12 @@ Example:
 	(throw 'done nil)))
     t))
 
+(defun elmo-split-> (buffer size)
+  (> (buffer-size buffer) size))
+
+(defun elmo-split-< (buffer size)
+  (< (buffer-size buffer) size))
+
 (defun elmo-split-address-equal (buffer field value)
   (with-current-buffer buffer
     (let ((addrs (mapcar

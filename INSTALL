@@ -34,24 +34,24 @@ Select MIME Module
 
   (a) XEmacs 21.1 or later
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.4
+	APEL 10.4, FLIM 1.14.4, SEMI 1.14.5
 
     Installation as a XEmacs package, If possible.
 
   (b) Emacs 20.4 or later
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.4
+	APEL 10.4, FLIM 1.14.4, SEMI 1.14.5
 
  (c) Emacs 20.1 to 20.3
 
-	APEL 10.4, CLIME 1.14.5, SEMI 1.14.4
+	APEL 10.4, CLIME 1.14.5, SEMI 1.14.5
 
     Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
     earlier.
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.4, CLIME 1.14.5, SEMI 1.14.4
+	APEL 10.4, CLIME 1.14.5, SEMI 1.14.5
 
     Mule based on Emacs 19.34 can also run SEMI.  See the following web
     page to get more information (in Japanese).
@@ -77,7 +77,7 @@ Install MIME Module
   latest versions should work.  For example, the following combinations
   are confirmed to work:
 
-	APEL 10.4, SLIM 1.14.9, SEMI 1.14.4
+	APEL 10.4, SLIM 1.14.9, SEMI 1.14.5
 	APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
 
   You have to re-install Wanderlust if you upgraded APEL, FLIM, or SEMI.

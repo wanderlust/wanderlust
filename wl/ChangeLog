@@ -1,3 +1,19 @@
+2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-get-prev-folder): Ignore nemacs.
+	(wl-folder-get-next-folder): Ditto.
+	(wl-folder-get-path): Ditto.
+
+2002-11-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): With arg, ask coding
+	system and encode the region with it before verifying.
+
+2002-11-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): Encode by the coding
+	system of the echo buffer before decoding.
+
 2002-11-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-message-verify-pgp-nonmime): Verify sign in the
