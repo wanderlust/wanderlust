@@ -357,37 +357,34 @@ TYPE specifies the archiver's symbol."
 				     folder)
 				    suffix)
 			    elmo-archive-folder-path))
-      (if (and (let ((handler
-		      (find-file-name-handler dir 'copy-file))) ; dir is local.
-		 (or (not handler)
-		     (if (featurep 'xemacs)
-			 (eq handler 'dired-handler-fn))))
-	       (or (not (file-exists-p dir))
-		   (file-directory-p dir)))
-	  (expand-file-name
-	   (concat elmo-archive-basename suffix)
-	   dir)
-	;; for full-path specification.
-	(if (find-file-name-handler dir 'copy-file) ; ange-ftp, efs
-	    (progn
-	      (setq filename (expand-file-name
-			      (concat elmo-archive-basename suffix)
-			      (setq dbdir
-				    (elmo-folder-msgdb-path folder))))
-	      (if (file-directory-p dbdir)
-		  (); ok.
-		(if (file-exists-p dbdir)
-		    (error "File %s already exists" dbdir)
-		  (elmo-make-directory dbdir)))
-	      (if (not (file-exists-p filename))
-		  (copy-file
-		   (if (file-directory-p dir)
-		       (expand-file-name
-			(concat elmo-archive-basename suffix)
-			dir)
-		     dir)
-		   filename))
-	      filename)
+      (if (string-match
+	   "^\\(ange-ftp\\|efs\\)-"
+	   (symbol-name (find-file-name-handler dir 'copy-file)))
+	  ;; ange-ftp, efs
+	  (progn
+	    (setq filename (expand-file-name
+			    (concat elmo-archive-basename suffix)
+			    (setq dbdir
+				  (elmo-folder-msgdb-path folder))))
+	    (if (file-directory-p dbdir)
+		(); ok.
+	      (if (file-exists-p dbdir)
+		  (error "File %s already exists" dbdir)
+		(elmo-make-directory dbdir)))
+	    (if (not (file-exists-p filename))
+		(copy-file
+		 (if (file-directory-p dir)
+		     (expand-file-name
+		      (concat elmo-archive-basename suffix)
+		      dir)
+		   dir)
+		 filename))
+	    filename)
+	(if (or (not (file-exists-p dir))
+		(file-directory-p dir))
+	    (expand-file-name
+	     (concat elmo-archive-basename suffix)
+	     dir)
 	  dir)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-archive-folder))

@@ -1,3 +1,28 @@
+2001-08-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-plugged-dop-queue-info): Use elmo-dop-queue-method-name
+	instead of elmo-dop-queue-method.
+
+2001-08-06  SAITO Atsunori <sai@yedo.com>
+
+	* wl-vars.el (wl-ldap-objectclass): New user option.
+
+	* wl-address.el (wl-ldap-make-filter): Use it.
+
+2001-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-fldmgr.el (wl-fldmgr-rename): Fixed second argument.
+
+2001-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder): redisplay after folder insertion.
+
+	* wl-demo.el (wl-demo): Don't delete toolbar on emacs-21.
+
+	* wl-summary.el (wl-summary-sync-update):
+	Change status mark only when new-msgdb exists.
+	(Advised by Akihiro MOTOKI <mokkun@iname.com>.)
+
 2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-open-folder): New function.

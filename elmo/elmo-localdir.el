@@ -302,7 +302,7 @@
 (luna-define-method elmo-folder-rename-internal ((folder elmo-localdir-folder)
 						 new-folder)
   (let* ((old (elmo-localdir-folder-directory-internal folder))
-	 (new (elmo-localdir-folder-directory-internal folder))
+	 (new (elmo-localdir-folder-directory-internal new-folder))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	(error "No such directory: %s" old)
