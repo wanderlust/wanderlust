@@ -35,6 +35,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    mark-and-actions can be define by the new variable, 
    'wl-summary-mark-action-list'. See its docstring for more in detail.
 
+** The function wl-summary-resend-message is abolished. Instead of it,
+   you can put mark for resending by wl-summary-resend.
+
 ** New face
 
    wl-highlight-summary-disposed-face

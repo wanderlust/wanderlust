@@ -290,6 +290,7 @@ See also variable `wl-use-petname'."
      ["Set dispose mark" wl-summary-dispose t]
      ["Set refile mark" wl-summary-refile t]
      ["Set copy mark"   wl-summary-copy t]
+     ["Set resend mark" wl-summary-resend t]
      ["Prefetch"        wl-summary-prefetch t]
      ["Set target mark" wl-summary-target-mark t]
      ["Unmark"          wl-summary-unmark t]
@@ -297,7 +298,6 @@ See also variable `wl-use-petname'."
      ["Cancel posted news" wl-summary-cancel-message t]
      ["Supersedes message" wl-summary-supersedes-message t]
      ["Resend bounced mail" wl-summary-resend-bounced-mail t]
-     ["Resend message" wl-summary-resend-message t]
      ["Enter the message" wl-summary-jump-to-current-message t]
      ["Pipe message" wl-summary-pipe-message t]
      ["Print message" wl-summary-print-message t])
@@ -658,55 +658,6 @@ you."
 	(wl-draft-edit-string (buffer-substring (point) (point-max))))
        (t
 	(message "Does not appear to be a rejected letter."))))))
-
-(defun wl-summary-resend-message (address)
-  "Resend the current message to ADDRESS."
-  (interactive "sResend message to: ")
-  (if (or (null address) (string-match "^[ \t]*$" address))
-      (message "No address specified.")
-    (message "Resending message to %s..." address)
-    (save-excursion
-      (let ((original (wl-summary-get-original-buffer)))
-	;; We first set up a normal mail buffer.
-	(set-buffer (get-buffer-create " *wl-draft-resend*"))
-	(buffer-disable-undo (current-buffer))
-	(erase-buffer)
-	(setq wl-sent-message-via nil)
-	;; Insert our usual headers.
-	(wl-draft-insert-from-field)
-	(wl-draft-insert-date-field)
-	(insert "to: " address "\n")
-	(goto-char (point-min))
-	;; Rename them all to "Resent-*".
-	(while (re-search-forward "^[A-Za-z]" nil t)
-	  (forward-char -1)
-	  (insert "Resent-"))
-	(widen)
-	(forward-line)
-	(delete-region (point) (point-max))
-	(let ((beg  (point)))
-	  ;; Insert the message to be resent.
-	  (insert-buffer-substring original)
-	  (goto-char (point-min))
-	  (search-forward "\n\n")
-	  (forward-char -1)
-	  (save-restriction
-	    (narrow-to-region beg (point))
-	    (wl-draft-delete-fields wl-ignored-resent-headers)
-	    (goto-char (point-max)))
-	  (insert mail-header-separator)
-	  ;; Rename all old ("Previous-")Resent headers.
-	  (while (re-search-backward "^\\(Previous-\\)*Resent-" beg t)
-	    (beginning-of-line)
-	    (insert "Previous-"))
-	  ;; Quote any "From " lines at the beginning.
-	  (goto-char beg)
-	  (when (looking-at "From ")
-	    (replace-match "X-From-Line: ")))
-	;; Send it.
-	(wl-draft-dispatch-message)
-	(kill-buffer (current-buffer)))
-      (message "Resending message to %s...done" address))))
 
 (defun wl-summary-detect-mark-position ()
   (let ((column wl-summary-buffer-number-column)

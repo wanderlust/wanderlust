@@ -1,3 +1,8 @@
+2003-07-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-resend-message): Abolished, the
+	feature is inherited by wl-summary-resend (put resend mark).
+
 2003-07-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-toggle-disp-msg): Set

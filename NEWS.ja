@@ -32,6 +32,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    マークとアクションは、新規変数 wl-summary-mark-action-list によって定義
    できます。詳しくは同変数の docstring を参照してください。
 
+** 関数 wl-summary-resend-message は廃止されました。その代わりに
+   wl-summary-resend を使えば再送マークを付けることができます。
+
 ** 新規 face
 
    wl-highlight-summary-disposed-face
