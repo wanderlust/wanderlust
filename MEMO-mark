@@ -4,6 +4,8 @@
 
 * elmo-folder-list-messages に引数 in-msgdb を追加。
 
+* answered マークの追加
+
 answered-uncached なら A
 answered-cached   なら &
 unread-uncached   なら U

@@ -1,3 +1,37 @@
+2002-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-msgdb): Define as generic function.
+	(elmo-folder-list-messages): Added argument `in-msgdb'.
+	(elmo-folder-list-unreads): Define as generic function.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-list-messages-with-global-mark): New function.
+	(elmo-folder-msgdb-create): Removed mark arguments.
+	(elmo-folder-unmark-answered): New generic function.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-append-messages): Removed argunment `unread-marks'
+	(elmo-folder-list-unreads-internal): Abolish.
+	(elmo-folder-list-importants-internal): Ditto.
+	(elmo-folder-search-requires-msgdb-p): New generic function.
+	(elmo-folder-search-requires-msgdb-p-internal): New function.
+	(elmo-generic-folder-open): Call elmo-folder-msgdb instead of
+	elmo-msgdb-load.
+	(elmo-folder-search-fast): Added key 'mark'.
+	(elmo-generic-folder-append-messages): Use elmo-msgdb-unread-marks
+	instead of unread-marks argument.
+	(elmo-folder-move-messages): Removed argunment `unread-marks'
+	(elmo-folder-unmark-important): Define.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-replace-marks): Abolish.
+	(elmo-generic-folder-append-msgdb): Append msgdb before checking
+	duplicates.
+	(elmo-folder-synchronize): Removed mark arguments;
+	return crosspost only number.
+
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-dop.el (elmo-dop-queue-flush): Remove unused argument.
