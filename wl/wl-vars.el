@@ -2973,6 +2973,8 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   "*Icon file for file folder.")
 (defvar wl-maildir-folder-icon "maildir.xpm"
   "*Icon file for maildir folder.")
+(defvar wl-access-folder-icon "access.xpm"
+  "*Icon file for access folder.")
 (defvar wl-empty-trash-folder-icon "trash-e.xpm"
   "*Icon file for emptied trash folder.")
 (defvar wl-trash-folder-icon "trash.xpm"

@@ -441,6 +441,7 @@
     (wl-folder-nmz-image	  . wl-nmz-folder-icon)
     (wl-folder-shimbun-image      . wl-shimbun-folder-icon)
     (wl-folder-file-image	  . wl-file-folder-icon)
+    (wl-folder-access-image	  . wl-access-folder-icon)
     (wl-folder-trash-empty-image  . wl-empty-trash-folder-icon)
     (wl-folder-draft-image	  . wl-draft-folder-icon)
     (wl-folder-queue-image	  . wl-queue-folder-icon)

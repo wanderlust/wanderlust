@@ -1,3 +1,10 @@
+2005-03-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-access-folder-icon): New user option.
+
+	* wl-e21.el (wl-folder-internal-icon-list): Added entry for
+	`Access folder'.
+
 2005-03-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-buffer-set-folder): Use
