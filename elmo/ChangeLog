@@ -1,3 +1,58 @@
+2000-05-10  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-utils.el (elmo-get-passwd): Set timeout of password.
+	(elmo-remove-passwd): Fill password with 0 before erase.
+	* elmo-vars.el (elmo-passwd-life-time): New variable.
+
+2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-cache.el (elmo-buffer-cache-add):
+	Set message cache buffer as unibyte.
+
+2000-05-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-archive.el (elmo-archive-list-folders): Fix base-folder
+	become nil.
+
+2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders): Remove progress gauge
+	when display is finished.
+	(elmo-nntp-msgdb-create): Ditto.
+	(elmo-nntp-groups-read-response): Ditto.
+	(elmo-nntp-retrieve-headers): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+	* elmo-pop3.el (elmo-pop3-retrieve-headers): Ditto.
+	(elmo-pop3-msgdb-create-message): Ditto.
+
+2000-04-24  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
+
+	* elmo-maildir.el (elmo-maildir-msgdb-create):
+	Use `elmo-msgdb-sort-by-date'.
+
+2000-04-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-read-msg-no-cache):
+	Eliminated arguments after `outbuf'.
+	Don't use cache even if it exists.
+	(elmo-read-msg): Don't pass arguments after `outbuf' to
+	`elmo-read-msg-no-cache'.
+
+2000-04-15  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
+
+	* elmo-archive.el (elmo-archive-list-folders):
+	Use `file-name-directory' if base folder does not exist.
+
+2000-04-14  Nishimoto Masaki <nishimoto@gaju.org>
+
+	* elmo-archive.el (elmo-archive-list-folders): Don't use
+	`file-name-directory'.
+
+2000-04-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-queue-flush): Add optional argument `force'.
+	If `force' is non-nil, try flushing all operation queues.
+
 2000-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-open-connection): Enclose with

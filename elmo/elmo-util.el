@@ -770,14 +770,20 @@ File content is encoded with MIME-CHARSET."
 	    (append elmo-passwd-alist
 		    (list (cons user-at-host 
 				(elmo-base64-encode-string pass)))))
+      (if elmo-passwd-life-time
+	  (run-with-timer elmo-passwd-life-time nil
+			  `(lambda () (elmo-remove-passwd ,user-at-host))))
       pass)))
 
 (defun elmo-remove-passwd (user-at-host)
   "Remove password from password pool (for failure)."
-  (setq elmo-passwd-alist
-	(delete (assoc user-at-host elmo-passwd-alist)
-		elmo-passwd-alist
-		)))
+  (let (pass-cons)
+    (if (setq pass-cons (assoc user-at-host elmo-passwd-alist))
+	(progn
+	  (unwind-protect
+	      (fillarray (cdr pass-cons) 0))
+	  (setq elmo-passwd-alist
+		(delete pass-cons elmo-passwd-alist))))))
 
 (defmacro elmo-read-char-exclusive ()
   (cond ((featurep 'xemacs)

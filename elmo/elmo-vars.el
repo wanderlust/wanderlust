@@ -95,6 +95,8 @@ Each elements are regexp of folder name (This is obsolete).")
   "*ELMO Message Database path.")
 (defvar elmo-passwd-alist-file-name "passwd"
   "*ELMO Password filename.")
+(defvar elmo-passwd-life-time nil
+  "*ELMO Life of Password.(s)")
 (defvar elmo-warning-threshold 30000
   "*Display warning when the bytes of message exceeds this value.")
 (defvar elmo-msg-appended-hook nil

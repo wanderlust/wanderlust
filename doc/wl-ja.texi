@@ -5,8 +5,8 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust $B$N(B texinfo
-@set Time-stamp: <2000-04-03 14:29:40 teranisi>
-@set version 1.1.0
+@set Time-stamp: <00/04/26 17:31:17 teranisi>
+@set version 1.1.1
 @synindex pg cp
 @finalout
 
@@ -522,7 +522,8 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B
 @file{~/.wl} $B$K=q$$$F$/$@$5$$!#(B
 @xref{Highlights}.
 
-($B>e5-$N$&$A!"(B@samp{(load "mime-setup")} $B0J30$O(B @file{~/.wl} $B$K5-=R$G$-$^$9!#(B)
+($B>e5-$N$&$A!"(B@samp{(load "mime-setup")} $B$H(B autoload $B$N@_Dj0J30$O(B @file{~/.wl} 
+$B$K5-=R$G$-$^$9!#(B)
 
 @subsection mail-user-agent
 @cindex Default Mailer
@@ -2257,6 +2258,9 @@ imap4 $B$N%a%C%;!<%8$@$1$,@hFI$_$5$l$^$9!#(B
 @end table
 
 @subsection $B<+F0%j%U%!%$%k(B
+@vindex elmo-msgdb-extra-fields
+@vindex wl-refile-rule-alist
+@findex wl-summary-auto-refile
 
 $B%a%C%;!<%8$N%X%C%@>pJs$+$iG$0U$N%U%)%k%@$X?6$jJ,$1$k<+F0%j%U%!%$%k5!G=$,(B
 @kbd{C-o} (@code{wl-summary-auto-refile}) $B$G;HMQ$G$-$^$9!#<+F0%j%U%!%$%k$O(B 
@@ -2267,10 +2271,10 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 @lisp
 (setq elmo-msgdb-extra-fields
       '("x-ml-name"
-      "reply-to"
-      "sender"
-      "mailing-list"
-      "newsgroups"))
+        "reply-to"
+        "sender"
+        "mailing-list"
+        "newsgroups"))
 @end lisp
 
 @noindent
@@ -2279,20 +2283,53 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 $B$,$"$j$^$9!#(B
 
 $B<!$K?6$jJ,$1$9$k%k!<%k$r@_Dj$7$^$9!#(B
+$B<+F0?6$jJ,$1$O!$JQ?t(B @code{wl-refile-rule-alist} $B$NCM$K4p$E$$$F9T$o$l$^$9!#(B
+@code{wl-refile-rule-alist} $B$O!"(B
+
+@example
+        ($B%U%#!<%k%I(B ($B@55,I=8=(B . $B?6$jJ,$1@h(B)
+                    ($B@55,I=8=(B . $B?6$jJ,$1@h(B)
+                    @dots{})
+@end example
+
+$B$N$h$&$J%k!<%k$N%j%9%H$H$J$C$F$$$^$9!#3F%k!<%k$O!"!X%U%#!<%k%I!Y$NCM$,(B
+$B!X@55,I=8=!Y$K%^%C%A$9$k$H$-$K!X?6$jJ,$1@h!Y$K?6$jJ,$1$k$H$$$&0UL#$r;}$A(B
+$B$^$9!#A0J}$K;XDj$5$l$?%k!<%k$,M%@h$5$l$^$9!#(B
+
+$B!X%U%#!<%k%I!YItJ,$K$O!"%U%#!<%k%IL>$NJ8;zNs$r;XDj$7$^$9!#$^$?!"%U%#!<%k(B
+$B%IL>$NJ8;zNs$N%j%9%H$r;XDj$9$k$3$H$b$G$-$^$9!#$3$N>l9g!"%j%9%H$N$$$:$l$+(B
+$B$N%U%#!<%k%I$NCM$,%^%C%A$7$?$H$-$KH/2P$7$^$9(B(OR $B>r7o$H$J$j$^$9(B)$B!#(B
+
+$B!X@55,I=8=!Y$K$O%U%#!<%k%I$NCM$K%^%C%A$5$;$k@55,I=8=J8;zNs$r;XDj$7$^$9!#(B
+$B!X?6$jJ,$1@h!Y$K$O?6$jJ,$1@h$N%U%)%k%@L>$NJ8;zNs$r;XDj$7$^$9!#!X?6$jJ,$1(B
+$B@h!YItJ,$K$O!":F$S%k!<%k$r=q$/$3$H$b$G$-!"$=$N>l9g!"$=$N%k!<%k$N%U%#!<%k(B
+$B%I$NCM$N>r7o$H8=:_$N%k!<%k$N%U%#!<%k%I$NCM$N>r7o$,K~$?$5$l$?$H$-$KH/2P$7(B
+$B$^$9(B(AND $B>r7o$H$J$j$^$9(B)$B!#(B
+
+$B$^$?!"!X@55,I=8=!Y$G%^%C%A$7$?ItJ,J8;zNs$O!"!X?6$jJ,$1@h!Y$K0J2<$N(B
+$B;XDj$r$9$k$3$H$G;2>H$G$-$^$9!#(B
+
+@example
+\&            $B%^%C%A$7$?J8;zNsA4BN$r;2>H$7$^$9!#(B
+\N (N $B$O?t;z(B) N $BHVL\$N(B `\(...\)' $B$K%^%C%A$7$?J8;zNs$r;2>H$7$^$9!#(B
+@end example
+
+$B0J2<$O(B @code{wl-refile-rule-alist} $B$N0lNc$G$9!#(B
 
 @lisp
 (setq wl-refile-rule-alist
-      '(
-        ("x-ml-name"
+      '(("x-ml-name"
          ("^Wanderlust" . "+wl")
          ("^Elisp" . "+elisp"))
+        (("To" "Cc")
+         ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
         ("From"
-         ("teranisi@@isl.ntt.co.jp" . "+teranisi"))))
+         ("me@@gohome.org" . ("To" ("you@@gohome.org" . 
+                                    "+from-me-to-you"))))))
 @end lisp
 
-$B$3$N$h$&$J@_Dj$r$7(B @kbd{C-o} (@code{wl-summary-auto-refile}) $B$G>r7o$K(B
-$B%^%C%A$7$?%a%C%;!<%8$K%j%U%!%$%k%^!<%/$,IU2C$5$l$^$9!#(B@kbd{x} $B$G%j%U%!%$(B
-$B%k$r<B9T$7$^$9!#%k!<%k$NA0J}$K$"$k?6$jJ,$1>r7o$,M%@h$5$l$^$9!#(B
+@kbd{C-o} (@code{wl-summary-auto-refile}) $B$G>r7o$K%^%C%A$7$?%a%C%;!<%8$K(B
+$B%j%U%!%$%k%^!<%/$,IU2C$5$l$^$9!#(B@kbd{x} $B$G%j%U%!%$%k$r<B9T$7$^$9!#(B
 
 @code{wl-summary-auto-refile-skip-marks} $B$r@_Dj$9$k$3$H$K$h$j!"(B
 $B<+F0%j%U%!%$%k$NBP>]$H$9$k%a%C%;!<%8$rJQ99$9$k$3$H$,$G$-$^$9!#(B
@@ -2307,7 +2344,6 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 
 @noindent
 $B$NMM$K(B @code{wl-summary-auto-refile-skip-marks} $B$r(B nil $B$K$7$^$9!#(B
-
 
 @subsection $B%9%F%#%C%-!<%5%^%j(B
 @cindex Summary, Sticky
@@ -2469,24 +2505,32 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @kindex n (Summary)
 @findex wl-summary-next
 $B0l$D2<$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+@code{wl-summary-skip-mark-list} $B$K$"$k0l;~%^!<%/$,IU$$$?%a%C%;!<%8$X$O(B
+$B0\F0$7$^$;$s!#%*%U%i%$%s%b!<%I$N$H$-$K$O!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K$b0\F0$7$^$;$s!#(B
 (@code{wl-summary-next})
 
 @item p
 @kindex p (Summary)
 @findex wl-summary-prev
 $B0l$D>e$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+@code{wl-summary-skip-mark-list} $B$K$"$k0l;~%^!<%/$,IU$$$?%a%C%;!<%8$X$O(B
+$B0\F0$7$^$;$s!#%*%U%i%$%s%b!<%I$N$H$-$K$O!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K$b0\F0$7$^$;$s!#(B
 (@code{wl-summary-prev})
 
 @item N
 @kindex N (Summary)
 @findex wl-summary-down
 $B2<J}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+$B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
 (@code{wl-summary-down})
 
 @item P
 @kindex P (Summary)
 @findex wl-summary-up
 $B>eJ}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+$B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
 (@code{wl-summary-up})
 
 @item w
@@ -2624,6 +2668,9 @@ Date($BF|IU(B) From($BH/?.<T(B) Number($B%a%C%;!<%8HV9f(B) Subject($B%5%V
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
 $B%9%l%C%II=<($r%H%0%k$7$^$9!#(B
+$B8=:_$N%9%l%C%II=<(>uBV$O%b!<%I%i%$%s$KI=<($5$l$^$9!%(B
+@{S@} $B$O%9%l%C%I!&%*%U(B(Sequence)$B$N>uBV!$(B
+@{T@} $B$O%9%l%C%I!&%*%s(B(Thread)$B$N>uBV$r<($7$^$9!%(B
 (@code{wl-summary-toggle-thread})
 
 @item l
@@ -3890,6 +3937,9 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#(B
 $B%b!<%I%i%$%s$K(B @samp{[--]} $B$H=P$F$$$k$H$-$O%*%U%i%$%s%b!<%I$G$9!#(B
 $B%U%)%k%@%b!<%I!"%5%^%j%b!<%I$G(B @kbd{M-t} $B$r2!$9$H%*%U%i%$%s(B/$B%*%s%i%$%s$N@Z$jBX$($,$G$-$^$9!#(B
 
+$B%*%U%i%$%s%b!<%I$G$O%5%^%j%b!<%I$N(B @kbd{n} $B$H(B @kbd{p} $B$NF0:n$,JQ$o$j!"(B
+$B%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$X$O0\F0$7$J$/$J$j$^$9!#(B
+
 @file{~/.wl} $B$J$I$GJQ?t(B @code{wl-plugged} $B$r(B nil $B$K@_Dj$7$F$+$i5/F0$9$k$H!"(B
 $B5/F0;~$+$i%*%U%i%$%s%b!<%I$H$J$j$^$9!#(B
 
@@ -4917,7 +4967,7 @@ nil $B$N>l9g$O>C5n$7$^$;$s!#(B
 
 @item wl-summary-score-marks
 @vindex wl-summary-score-marks
-$B=i4|@_Dj$O(B '("N" "!" "U")$B!#(B
+$B=i4|@_Dj$O(B '("N")$B!#(B
 $B%9%3%"$r$D$1$k%a%C%;!<%8$N%^!<%/$r;XDj$7$^$9!#(B
 
 @item wl-use-scoring
@@ -5806,6 +5856,13 @@ Non-nil $B$J$i$P(B dbm $B$r;H$C$F(B Message-ID $B$N4IM}$r9T$J$$$^$9!#(B
 $B%Q%9%o!<%I$r%;!<%V$7$F$*$/%U%!%$%k$NL>A0$G$9!#(B
 $B%3%^%s%I(B @code{elmo-passwd-alist-save} $B$r<B9T$9$k$H$3$N%U%!%$%k$K8=:_@_Dj(B
 $B$5$l$F$$$k%Q%9%o!<%I$,%;!<%V$5$l$^$9!#(B
+
+@item elmo-passwd-life-time
+@vindex  elmo-passwd-life-time
+$B=i4|@_Dj$O(B nil$B!#(B
+Non-nil $B$JCM$,@_Dj$5$l$?>l9g$O!"?75,$K%Q%9%o!<%I$,F~NO$5$l$F$+$i(B
+@code{elmo-passwd-life-time} $BIC8e$K%Q%9%o!<%I$r>C5n$9$k%?%$%^$,!"(B
+$B%;%C%H$5$l$^$9!#(B
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache
