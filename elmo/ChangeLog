@@ -1,5 +1,7 @@
 2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-pop3-folder-exists-p): Don't use UIDL.
+
 	* elmo-internal.el (elmo-internal-search): Fix last change.
 
 2000-11-08  Yuuichi Teranishi  <teranisi@gohome.org>

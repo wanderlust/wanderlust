@@ -391,6 +391,7 @@
 	   (elmo-pop3-plugged-p spec))
       (save-excursion
 	(let (elmo-auto-change-plugged ; don't change plug status.
+	      elmo-pop3-use-uidl       ; No need to use uidl.
 	      session)
 	  (prog1
 	      (setq session (elmo-pop3-get-session spec))
