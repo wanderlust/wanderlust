@@ -2705,17 +2705,15 @@ only imap4 messages.  This variable precedes the value of
 @vindex wl-message-buffer-prefetch-folder-list
 The initial setting is @code{nil}.
 A list of regexp of folders to enable message prefetching.
-@end table
 
-@table @code
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-The initial setting is 5. The number of messages to be prefetched.
+The initial setting is 5. The number of messages to prefetch.
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
 The initial setting is 0.2 (in seconds). The period of prefetching.
-@table @code
+@end table
 
 
 @node Auto Refile, Sticky Summary, Cache, Summary

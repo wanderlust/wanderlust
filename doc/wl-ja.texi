@@ -2699,9 +2699,7 @@ IMAP のメッセージだけが先読みされます。この変数は
 @vindex wl-message-buffer-prefetch-folder-list
 初期設定は @code{nil}。
 先読み機能を有効にするフォルダをフォルダ名(正規表現)のリストで指定します。
-@end table
 
-@table @code
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
 初期設定は 5。先読み機能するメッセージの数。
