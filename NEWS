@@ -14,6 +14,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
    /flag:digest/%inbox
 
+** In the multi-folder, status of messages are synchronized with original
+   folder.
+   For example, unread status of '+inbox' is updated to '*+inbox,+outbox'.
+
 ** The temporary mark and corresponding action is now customizable.
 
    By default, follwoing mark-and-actions are defined.

@@ -13,6 +13,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    メッセージのみが出現します。
    /flag:digest/%inbox
 
+** マルチフォルダとオリジナルフォルダの状態が同期されるようになりました。
+   例えば，+inbox の未読情報が，*+inbox,+outbox にも反映されます。
+
 ** 一時マークと、それに対するアクションを自由に定義できるようになりました。
 
    デフォルトでは以下のマークとアクションを定義しています。
