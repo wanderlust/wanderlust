@@ -268,28 +268,40 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-plugged-dop-queue-info ()
   ;; dop queue status
   (let* ((count 0)
-	 elmo-dop-queue dop-queue last alist server-info
+	 (elmo-dop-queue (copy-sequence elmo-dop-queue))
+	 dop-queue last alist server-info
 	 ope operation)
-    (elmo-dop-queue-load)
+    ;(elmo-dop-queue-load)
     (elmo-dop-queue-merge)
     (setq dop-queue (sort elmo-dop-queue '(lambda (a b)
-					    (string< (car a) (car b)))))
+					    (string< (elmo-dop-queue-fname a)
+						     (elmo-dop-queue-fname b)))))
     (wl-append dop-queue (list nil)) ;; terminate(dummy)
-    (setq last (caar dop-queue)) ;; first
+    (when (car dop-queue)
+      (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
     (while dop-queue
-      (setq ope (cons (nth 1 (car dop-queue))
-		      (length (nth 2 (car dop-queue)))))
-      (if (string= last (caar dop-queue))
+      (when (car dop-queue)
+	(setq ope (cons (elmo-dop-queue-method (car dop-queue))
+			(length 
+			 (if (listp
+			      (car 
+			       (elmo-dop-queue-arguments (car dop-queue))))
+			     (car (elmo-dop-queue-arguments
+				   (car dop-queue))))))))
+      (if (and (car dop-queue)
+	       (string= last (elmo-dop-queue-fname (car dop-queue))))
 	  (wl-append operation (list ope))
 	;;(setq count (1+ count))
-	(when (and last (setq server-info (elmo-net-port-info last)))
+	(when (and last (setq server-info (elmo-net-port-info
+					   (wl-folder-get-elmo-folder last))))
 	  (setq alist
 		(wl-append-assoc-list
 		 (cons (car server-info) (nth 1 server-info)) ;; server port
 		 (cons last operation)
 		 alist)))
-	(setq last (caar dop-queue)
-	      operation (list ope)))
+	(when (car dop-queue)
+	  (setq last (elmo-dop-queue-fname (car dop-queue))
+		operation (list ope))))
       (setq dop-queue (cdr dop-queue)))
     alist))
 
@@ -757,13 +769,14 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (unless wl-init
       (setq demo-buf (wl-demo)))
     (wl-init)
-    (condition-case nil
-	(progn
-	  (message "Checking environment...")
-	  (wl-check-environment arg)
-	  (message "Checking environment...done"))
-      (error)
-      (quit))
+    (unless wl-init
+      (condition-case nil
+	  (progn
+	    (message "Checking environment...")
+	    (wl-check-environment arg)
+	    (message "Checking environment...done"))
+	(error)
+	(quit)))
     (condition-case obj
 	(progn
 	  (wl-plugged-init (wl-folder arg))
