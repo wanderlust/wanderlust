@@ -1,3 +1,15 @@
+2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-cache.el (toplevel): Fixed multiple Author header format.
+	* elmo-imap4.el (toplevel): Ditto.
+	* elmo-localdir.el (toplevel): Ditto.
+	* elmo-msgdb.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-version.el (toplevel): Ditto.
+
+	* elmo-localnews.el (toplevel): Added Keyword header.
+
 2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (product-version-as-string): Defined using

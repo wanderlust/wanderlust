@@ -4,6 +4,7 @@
 ;;                          Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author:  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 

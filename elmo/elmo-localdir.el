@@ -4,9 +4,9 @@
 ;;                          Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 ;; Copyright 1999,2000      Kenichi OKADA  <okada@opaopa.org>
 
-;; Author: Yuuichi Teranishi <teranisi@gohome.org>,
-;;         Masahiro MURATA  <muse@ba2.so-net.ne.jp>,
-;;         Kenichi OKADA  <okada@opaopa.org>
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;	Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+;;	Kenichi OKADA  <okada@opaopa.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
