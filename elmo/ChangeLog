@@ -1,3 +1,7 @@
+2000-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info): Fixed last change.
+
 2000-12-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-get-folders-info):
