@@ -418,7 +418,8 @@
 (luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
 						 numbers)
   (elmo-filter-folder-countup-message-flags folder numbers -1)
-  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq))
+  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq)
+  t)
 
 (luna-define-method elmo-folder-length ((folder elmo-filter-folder))
   (length (elmo-filter-folder-number-list-internal folder)))
