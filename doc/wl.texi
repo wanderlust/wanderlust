@@ -2213,6 +2213,16 @@ You cannot put same nickname to the different folders.
 @node Summary, Message, Folder, Top
 @chapter Summary Mode
 
+@menu
+* Usage of Summary Mode::       TIPS
+* Thread Oparations::           Thread oparations
+* Cache::                       File cache, Buffer cache, and Prefetch
+* Auto Refile::                 Auto refile settings
+* Sticky Summary::              Summary make sticky
+@end menu
+
+
+@node Usage of Summary Mode, Thread Oparations, Summary, Summary
 @section Usage (Tips)
 
 @subsection Summary Content
@@ -2338,7 +2348,9 @@ moves cursor to the next message.
 Enter message buffer by typing @kbd{j} key.
 To operate multipart, you have to enter to the message buffer.
 
-@subsection Thread Operations
+
+@node Thread Oparations, Cache, Usage of Summary Mode, Summary
+@section Thread Operations
 
 For example, the following line indicates one thread (a context of a topic).
 
@@ -2363,6 +2375,10 @@ With prefix argument, @kbd{/} opens all children threads.
 
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
+
+
+@node Cache, Auto Refile, Thread Oparations, Summary
+@section Cache
 
 @subsection Cache File
 
@@ -2416,7 +2432,9 @@ The initial setting is nil.
 A list of regexp of folders to enable message prefetching.
 @end table
 
-@subsection Auto Refile
+
+@node Auto Refile, Sticky Summary, Cache, Summary
+@section Auto Refile
 @vindex elmo-msgdb-extra-fields
 @vindex wl-refile-rule-alist
 @findex wl-summary-auto-refile
@@ -2513,7 +2531,9 @@ To execute auto refile on all messages, set following.
 (setq wl-summary-auto-refile-skip-marks nil)
 @end lisp
 
-@subsection Sticky Summary
+
+@node Sticky Summary,  , Auto Refile, Summary
+@section Sticky Summary
 @cindex Summary, Sticky
 @cindex Sticky Summary
 

@@ -2233,6 +2233,16 @@ Non-nil ならメッセージが削除されたときにフォルダモードで未読数をチェック
 @node Summary, Message, Folder, Top
 @chapter サマリモード
 
+@menu
+* Usage of Summary mode::       使用方法
+* Thread Oparations::            スレッドの操作
+* Cache::                       キャッシュと先読み機能
+* Auto Refile::                 自動リファイル
+* Sticky Summary::              スティッキーサマリ
+@end menu
+
+
+@node Usage of Summary mode, Thread Oparations, Summary, Summary
 @section 使用方法(TIPS)
 
 @subsection サマリの表示内容
@@ -2348,7 +2358,9 @@ NNTP フォルダのニュース記事を読むことができます。
 @kbd{j} を押すと現在表示中のメッセージのバッファに移動します。
 マルチパートの操作はメッセージバッファに移動してから行います。
 
-@subsection スレッドの操作
+
+@node Thread Oparations, Cache, Usage of Summary mode, Summary
+@section スレッドの操作
 
 例えば、
 
@@ -2372,6 +2384,10 @@ NNTP フォルダのニュース記事を読むことができます。
 prefix argument つきで @kbd{/} を押すと、全ての子スレッドを開きます。
 
 @kbd{t} から始まるコマンドで、そのスレッドに属するメッセージに対して一括して処理を行うことができます。
+
+
+@node Cache, Auto Refile, Thread Oparations, Summary
+@section キャッシュ
 
 @subsection キャッシュファイル
 
@@ -2423,7 +2439,9 @@ imap4 のメッセージだけが先読みされます。
 先読み機能を有効にするフォルダをフォルダ名(正規表現)のリストで指定します。
 @end table
 
-@subsection 自動リファイル
+
+@node Auto Refile, Sticky Summary, Cache, Summary
+@section 自動リファイル
 @vindex elmo-msgdb-extra-fields
 @vindex wl-refile-rule-alist
 @findex wl-summary-auto-refile
@@ -2521,7 +2539,9 @@ msgdb の overview 情報を元に振り分けします。
 @noindent
 の様に @code{wl-summary-auto-refile-skip-marks} を nil にします。
 
-@subsection スティッキーサマリ
+
+@node Sticky Summary,  , Auto Refile, Summary
+@section スティッキーサマリ
 @cindex Summary, Sticky
 @cindex Sticky Summary
 
