@@ -5533,7 +5533,14 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if (setq message-buf (wl-message-get-original-buffer))
 	  (set-buffer message-buf))
       (unless (wl-message-news-p)
-	(error "This is not a news article; canceling is impossible"))
+	(set-buffer summary-buf)
+	(if (and (eq (elmo-folder-get-type wl-summary-buffer-folder-name)
+		     'nntp)
+		 (y-or-n-p "Cannot get Newsgroups. Fetch again? "))
+	    (progn
+	      (wl-summary-redisplay t)
+	      (wl-summary-supersedes-message))
+	  (error "This is not a news article; supersedes is impossible")))
       (when (yes-or-no-p "Do you really want to cancel this article? ")
 	(let (from newsgroups message-id distribution buf)
 	  (save-excursion
@@ -5575,7 +5582,14 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (if (setq message-buf (wl-message-get-original-buffer))
 	(set-buffer message-buf))
     (unless (wl-message-news-p)
-      (error "This is not a news article; supersedes is impossible"))
+      (set-buffer summary-buf)
+      (if (and (eq (elmo-folder-get-type wl-summary-buffer-folder-name)
+		   'nntp)
+	       (y-or-n-p "Cannot get Newsgroups. Fetch again? "))
+	  (progn
+	    (wl-summary-redisplay t)
+	    (wl-summary-supersedes-message))
+	(error "This is not a news article; supersedes is impossible")))
     (save-excursion
       (setq from (std11-field-body "from"))
       ;; Make sure that this article was written by the user.
