@@ -1,3 +1,47 @@
+2001-04-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-version-status): New variable.
+	(wl-version-status-alist): Removed.
+	(wl-version-status): Rule included.
+
+2001-04-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-folder-mime-charset-alist): Setup default value for
+	@sponichi.
+
+	* wl-draft.el (wl-draft-insert-current-message): Fixed problem
+	when `mail-reply-buffer' is buffer-local variable.
+	(Reported by <kita@coe.nttdata.co.jp>).
+
+2001-04-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (toplevel): Require 'elmo-util.
+
+2001-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-message-regexp): Fixed number regexp.
+	(All other related portions are changed)
+
+	* wl.el (wl-plugged-change): Use '<' instead of '<='.
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed last change again.
+
+2001-04-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed last change.
+
+2001-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-target-mark-reply-with-citation): Fixed.
+	Delete other windows to avoid an error.
+	Use `point-marker' instead of `point' to remember the start point
+	of body.
+
+	* wl.el (wl-plugged-toggle-all): Fixed argument for `elmo-set-plugged'.
+
+	* wl-folder.el (wl-folder-check-one-entity): Adjust unread message
+	number not to exceed all message number.
+
 2001-04-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-e21.el (wl-biff-init-icons): Don't use `call-interactively' to
