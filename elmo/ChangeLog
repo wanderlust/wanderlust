@@ -1,3 +1,23 @@
+2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-debug): New variable.
+	(elmo-pop3-debug-inhibit-logging): Ditto.
+	(elmo-pop3-debug): New function.
+	(elmo-pop3-send-command): Call elmo-pop3-debug.
+	(elmo-pop3-read-response): Added keep-lock optional argument;
+	Don't unlock if keep-lock is non-nil.
+	(elmo-pop3-process-filter): Call elmo-pop3-debug.
+	(elmo-network-authenticate-session): Bind
+	elmo-pop3-debug-inhibit-logging as t.
+	(elmo-network-setup-session): Call elmo-pop3-read-response with
+	keep-lock argument.
+	(elmo-pop3-read-msg): Ditto.
+	(elmo-pop3-locked-p): Call elmo-pop3-debug.
+	(elmo-pop3-read-body): Call elmo-pop3-unlock.
+	(elmo-network-initialize-session): Call elmo-pop3-lock.
+	(elmo-folder-close-internal): Don't clear location-alist slot.
+	(elmo-folder-check): Clear location-alist slot.
+
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-lock): New buffer local variable.
