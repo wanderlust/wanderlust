@@ -1765,6 +1765,8 @@ If optional argument is non-nil, current draft buffer is killed"
 	(message-id (std11-field-body "Message-ID")))
     (if (elmo-folder-append-buffer folder t)
 	(progn
+	  (if message-id
+	      (elmo-dop-lock-message message-id))
 	  (wl-draft-queue-info-operation
 	   (car (elmo-folder-status folder))
 	   'save wl-sent-message-via)
@@ -1833,6 +1835,7 @@ If optional argument is non-nil, current draft buffer is killed"
 		  (elmo-folder-delete-messages
 		   queue-folder (cons (car msgs) nil))
 		  (wl-draft-queue-info-operation (car msgs) 'delete)
+		  (elmo-dop-unlock-message (std11-field-body "Message-ID"))
 		  (setq performed (+ 1 performed)))
 		(setq msgs (cdr msgs)))
 	      (kill-buffer buffer)

@@ -87,13 +87,8 @@
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localdir-folder))
   (expand-file-name 
-   (mapconcat
-    'identity
-    (mapcar 
-     'elmo-replace-string-as-filename
-     (split-string (elmo-localdir-folder-dir-name-internal folder)
-		   "/"))
-    "/")
+   (elmo-replace-string-as-filename 
+    (elmo-localdir-folder-dir-name-internal folder))
    (expand-file-name ;;"localdir"
     (symbol-name (elmo-folder-type-internal folder))
     elmo-msgdb-dir)))
