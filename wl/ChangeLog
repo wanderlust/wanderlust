@@ -1,3 +1,10 @@
+2003-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-erase-subr): New function. Use
+	elmo-folder-move-messages.
+	(wl-summary-erase): Call it.
+	(wl-summary-target-mark-erase): Ditto.
+
 2003-01-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-exec-subr): Unset wl-message-buffer if

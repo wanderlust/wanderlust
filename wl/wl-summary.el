@@ -3160,10 +3160,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		   (format "Erase \"%s\" without moving it to trash? "
 			   (truncate-string subject 30)))
 	      (wl-summary-unmark msg-num)
-	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
-					   (list msg-num))
-	      (wl-summary-delete-messages-on-buffer (list msg-num))
-	      (save-excursion (wl-summary-sync nil "update"))))))
+	      (wl-summary-erase-subr (list msg-num))))))
     (message "Read-only folder.")))
 
 (defun wl-summary-target-mark-erase ()
@@ -3173,13 +3170,20 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (message "No marked message.")
 	(when (yes-or-no-p
 	       "Erase all marked messages without moving them to trash? ")
-	  (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
-				       wl-summary-buffer-target-mark-list)
-	  (wl-summary-delete-messages-on-buffer
-	   wl-summary-buffer-target-mark-list)
-	  (setq wl-summary-buffer-target-mark-list nil)
-	  (save-excursion (wl-summary-sync nil "update"))))
+	  (wl-summary-erase-subr wl-summary-buffer-target-mark-list)
+	  (setq wl-summary-buffer-target-mark-list nil)))
     (message "Read-only folder.")))
+
+(defun wl-summary-erase-subr (msgs)
+  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
+  (wl-summary-delete-messages-on-buffer msgs)
+  ;; message buffer is not up-to-date
+  (unless (and wl-message-buffer
+	       (eq (wl-summary-message-number)
+		   (with-current-buffer wl-message-buffer
+		     wl-message-buffer-cur-number)))
+    (wl-summary-toggle-disp-msg 'off)
+    (setq wl-message-buffer nil)))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
