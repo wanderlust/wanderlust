@@ -1,5 +1,14 @@
 2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-forward): Get references field from
+	original buffer.
+
+2000-10-02  A. SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-draft.el (wl-draft-forward): Add references field.
+
+2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* wl-draft.el (wl-draft-parse-msg-id-list-string): New function.
 	(wl-draft-reply): Use it.
 

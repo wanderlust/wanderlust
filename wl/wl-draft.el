@@ -263,8 +263,19 @@ the `wl-smtp-features' variable."
 	cc))))
 
 (defun wl-draft-forward (original-subject summary-buf)
-  (wl-draft "" (concat "Forward: " original-subject)
-	    nil nil nil nil nil nil nil nil nil summary-buf)
+  (let (references)
+    (with-current-buffer (wl-message-get-original-buffer)
+      (setq references (nconc
+			(std11-field-bodies '("References" "In-Reply-To"))
+			(list (std11-field-body "Message-Id"))))
+      (setq references (delq nil references)
+	    references (mapconcat 'identity references " ")
+	    references (wl-draft-parse-msg-id-list-string references)
+	    references (wl-delete-duplicates references)
+	    references (if references
+			   (mapconcat 'identity references "\n\t"))))
+    (wl-draft "" (concat "Forward: " original-subject)
+	      nil nil references nil nil nil nil nil nil summary-buf))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
