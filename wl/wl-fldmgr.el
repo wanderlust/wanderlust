@@ -1015,18 +1015,25 @@ return value is diffs '(-new -unread -all)."
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (if (looking-at wl-folder-group-regexp)
-	(message "This folder is group")
-      (let ((tmp (wl-fldmgr-get-path-from-buffer))
-	    entity)
-	(if (eq (cdr (nth 2 tmp)) 'access)
-	    (message "Can't change access group")
-	  (setq entity (nth 4 tmp))
-	  (unless entity (error "No folder"))
-	  (wl-fldmgr-add (concat "/"
-				 (elmo-read-search-condition
-				  wl-fldmgr-make-filter-default)
-				 "/" entity)))))))
+    (let ((tmp (wl-fldmgr-get-path-from-buffer))
+	  entity)
+      (if (eq (cdr (nth 2 tmp)) 'access)
+	  (message "Can't change access group")
+	(if (wl-folder-buffer-group-p)
+	    (setq entity
+		  (concat
+		   "*"
+		   (mapconcat 'identity
+			      (wl-folder-get-entity-list
+			       (wl-folder-search-group-entity-by-name
+				(nth 4 tmp)
+				wl-folder-entity)) ",")))
+	  (setq entity (nth 4 tmp)))
+	(unless entity (error "No folder"))
+	(wl-fldmgr-add (concat "/"
+			       (elmo-read-search-condition
+				wl-fldmgr-make-filter-default)
+			       "/" entity))))))
 
 (defun wl-fldmgr-sort ()
   (interactive)

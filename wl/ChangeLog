@@ -1,5 +1,10 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-fldmgr.el (wl-fldmgr-make-filter): Make filter folder of
+	multi folder if entity is group.
+
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-message.el (wl-message-buffer-prefetch-debug): Default value
 	is nil.
 
