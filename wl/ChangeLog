@@ -1,7 +1,8 @@
-2003-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+2004-07-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
-	* wl-summary.el (wl-summary-insert-thread): Fixed the logic to
-	detect thread loop.
+	* wl-summary.el (wl-summary-insert-thread-entity): Fixed the logic
+	to detect thread loop.
+	(merge the change at 2003-10-31 by Hiroya Murata in cvs trunk)
 
 2004-02-19  Katsumi Yamaoka  <yamaoka@jpl.org>
 
