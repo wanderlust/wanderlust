@@ -637,17 +637,22 @@ Reply to author if WITH-ARG is non-nil."
 	mail-citation-hook mail-yank-hooks
 	wl-draft-add-references wl-draft-add-in-reply-to
 	wl-draft-cite-function)
-    (with-current-buffer wl-draft-buffer-cur-summary-buffer
-      (when (or (not wl-message-buffer)
-		(with-current-buffer wl-message-buffer
-		  (setq original-buffer (wl-message-get-original-buffer))
-		  (zerop (with-current-buffer original-buffer
-			   (buffer-size)))))
-	(error "No current message")))
-    (setq mail-reply-buffer original-buffer)
-    (wl-draft-yank-from-mail-reply-buffer
-     nil
-     wl-ignored-forwarded-headers)))
+    (if (and wl-draft-buffer-cur-summary-buffer
+	     (with-current-buffer wl-draft-buffer-cur-summary-buffer
+	       (and wl-message-buffer
+		    (with-current-buffer wl-message-buffer
+		      (setq original-buffer (wl-message-get-original-buffer))
+		      (not (zerop (with-current-buffer original-buffer
+				    (buffer-size))))))))
+	(progn
+	  (setq mail-reply-buffer original-buffer)
+	  (wl-draft-yank-from-mail-reply-buffer
+	   nil
+	   wl-ignored-forwarded-headers))
+      (when (string= (mime-make-tag "message" "rfc822")
+		     (buffer-substring-no-properties (point-at-bol 0)(point-at-eol 0)))
+	(delete-region (point-at-bol 0) (1+ (point-at-eol 0))))
+      (error "No current message"))))
 
 (defun wl-draft-insert-get-message (dummy)
   (let ((fld (completing-read

@@ -1,3 +1,8 @@
+2004-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-insert-current-message): Also check
+	summary buffer, remove unnecessary tag.
+
 2004-05-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-insert-current-message): Cause error also
