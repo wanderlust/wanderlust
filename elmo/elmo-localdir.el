@@ -311,7 +311,7 @@
 	(error "No such directory: %s" old)
       (if (file-exists-p new)
 	  (error "Already exists directory: %s" new)
-	(if (not (file-exists-p new-dir))
+	(if (not (file-directory-p new-dir))
 	    (elmo-make-directory new-dir))
 	(rename-file old new)
 	t))))

@@ -457,7 +457,11 @@ TYPE specifies the archiver's symbol."
 (luna-define-method elmo-folder-rename-internal ((folder elmo-archive-folder)
 						 new-folder)
   (let* ((old-arc (elmo-archive-get-archive-name folder))
-	 (new-arc (elmo-archive-get-archive-name new-folder)))
+	 (new-arc (elmo-archive-get-archive-name new-folder))
+	 (new-dir (directory-file-name
+		   (elmo-archive-get-archive-directory new-folder))))
+    (if elmo-archive-treat-file
+	(setq new-dir (directory-file-name (file-name-directory new-dir))))
     (unless (and (eq (elmo-archive-folder-archive-type-internal folder)
 		     (elmo-archive-folder-archive-type-internal new-folder))
 		 (equal (elmo-archive-folder-archive-prefix-internal
@@ -469,6 +473,8 @@ TYPE specifies the archiver's symbol."
 	(error "No such file: %s" old-arc)
       (if (file-exists-p new-arc)
 	  (error "Already exists: %s" new-arc)
+	(if (not (file-directory-p new-dir))
+	    (elmo-make-directory new-dir))
 	(rename-file old-arc new-arc)
 	t))))
 
