@@ -3139,9 +3139,10 @@ dispose (@samp{d}), delete (@samp{D}), prefetch (@samp{i}), resend (@samp{~})
 @item .
 @kindex . (Summary)
 @findex wl-summary-redisplay
-$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r:FI=<($7$^$9!#(B
-prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!#(B
-(@code{wl-summary-redisplay})
+$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r%G%U%)%k%H$NI=<(7A<0$G:FI=<($7$^$9!#(B
+prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7(B
+$B$^$9!#(B@kbd{C-u C-u M} $B$N$h$&$K(B 2$B2s$N(B @kbd{C-u} $B$rIU$1$F<B9T$7$?>l9g!"8=:_(B
+$B$NI=<(7A<0$r0];}$7$F:FFI$_9~$_$7D>$7$^$9!#(B(@code{wl-summary-redisplay})
 
 @item <
 @kindex < (Summary)
@@ -3329,15 +3330,30 @@ prefix argument $B$D$-$J$i$P!"%+!<%=%k9T$N;R%9%l%C%I$rA4$F3+$-$^$9!#(B
 
 @item H
 @kindex H (Summary)
-@findex wl-summary-redisplay-all-header
-$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r!"$9$Y$F$N%X%C%@>pJs$H$H$b$KI=<($7$^$9!#(B
-(@code{wl-summary-redisplay-all-header})
+@findex wl-summary-toggle-all-header
+$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r!"A4$F%X%C%@>pJs$rI=<($9$k$+$I$&$+$r@Z(B
+$B$j49$($F:FI=<($7$^$9!#(B@kbd{C-u C-u H} $B$N$h$&$K(B 2$B2s$N(B @kbd{C-u} $B$rIU$1$F<B(B
+$B9T$7$?>l9g!"8=:_$N%X%C%@$NI=<(7A<0$r%5%^%j$N%G%U%)%k%HCM$H$7$F@_Dj$7$^$9!#(B
+(@code{wl-summary-toggle-all-header})
 
 @item M
 @kindex M (Summary)
-@findex wl-summary-redisplay-no-mime
-$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r!"(BMIME $B2r@O$9$k$3$H$J$/I=<($7$^$9!#(B
-(@code{wl-summary-redisplay-no-mime})
+@findex wl-summary-toggle-mime
+$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r!"(BMIME $B2r@O$N;XDj$r@Z$j49$($F:FI=<($7$^(B
+$B$9!#@Z$j49$($O!"(B@code{wl-summary-display-mime-mode-list} $B$K;XDj$5$l$?=g$K(B
+$B9T$o$l$^$9!#$^$?!"?tCM$N(B prefix argument $B$D$-$G<B9T$7$?>l9g!"0J2<$N$h$&$K(B
+$BD>@\@Z$j49$($k$3$H$,=PMh$^$9!#(B
+
+@example
+@group
+1: MIME $B2r@O$rM-8z$K$7$^$9(B
+2: $B%X%C%@$N$_(B MIME $B2r@O$rM-8z$K$7$^$9(B
+3: MIME $B2r@O$rL58z$K$7$^$9(B
+@end group
+@end example
+
+@kbd{C-u C-u M} $B$N$h$&$K(B 2$B2s$N(B @kbd{C-u} $B$rIU$1$F<B9T$7$?>l9g!"8=:_$N;XDj(B
+$B$r%5%^%j$N%G%U%)%k%HCM$H$7$F@_Dj$7$^$9!#(B(@code{wl-summary-toggle-mime})
 
 @item C-c C-f
 @kindex C-c C-f (Summary)
@@ -3454,6 +3470,8 @@ update-entirely  $BJ];}$7$F$$$k(B msgdb $B$N>pJs$H:G?7>pJs$N:9J,$r99?7$7$^$9!
 rescan           $B8=:_$N(B msgdb $B$K4p$E$$$F:FI=<($r9T$$$^$9!#(B
 rescan-noscore   $B8=:_$N(B msgdb $B$K4p$E$$$F:FI=<($r9T$$$^$9!#(B
                  $B%9%3%"$K$h$j>C$($?%a%C%;!<%8$bI=<($7$^$9!#(B
+rescan-thread    $B8=:_$N(B msgdb $B$K4p$E$$$F:FI=<($r9T$$$^$9!#(B
+                 $B%9%l%C%I$N>pJs$b:F9=C[$7$^$9!#(B
 cache-status     $B%-%c%C%7%e$N>uBV$r%^!<%/$KH?1G$7$^$9!#(B
 mark             $B%^!<%/$N>uBV$r:G?7$K$7$^$9!#(B
 no-sync          $B2?$b$7$^$;$s!#(B
@@ -4299,6 +4317,26 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
         (private "blue" "X")))
 @end group
 @end lisp
+
+@item wl-summary-display-mime-mode-list
+@vindex wl-summary-display-mime-mode-list
+$B=i4|@_Dj$O0J2<$N%j%9%H!#(B
+
+@lisp
+@group
+(mime as-is)
+@end group
+@end lisp
+
+@noindent
+@code{wl-summary-toggle-mime} $B$O$3$N%j%9%H$N=g$K(B MIME $B2r@O$N;XDj$r@Z$j49(B
+$B$($^$9!#(BMIME $B2r@O$NJ}<0$K$O0J2<$N$b$N$,;XDj$G$-$^$9!#(B
+
+@example
+@code{mime}       : MIME $B2r@O$r9T$$$^$9(B
+@code{heder-only} : $B%X%C%@$N$_(B MIME $B2r@O$r9T$$$^$9(B
+@code{as-is}      : MIME $B2r@O$r9T$$$^$;$s(B
+@end example
 @end table
 
 
