@@ -1,3 +1,12 @@
+2002-01-22  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-vars.el (elmo-localnews-folder-path): Make customizable.
+	(elmo-maildir-folder-path): Ditto.
+	(elmo-msgdb-directory): Ditto.
+	(elmo-passwd-life-time): Ditto.
+	(elmo-msgdb-extra-fields): Ditto.
+	(elmo-enable-disconnected-operation): Ditto.
+
 2002-01-22  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-vars.el (elmo-imap4-default-authenticate-type): Give

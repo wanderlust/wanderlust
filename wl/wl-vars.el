@@ -2312,7 +2312,11 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 ;; For disconnected operations.
 (defvar wl-plugged-hook nil)
 (defvar wl-unplugged-hook nil)
-(defvar wl-plugged t)
+(defcustom wl-plugged t
+  "*Plugged state at the startup.  Nil means off-line."
+  :type 'boolean
+  :group 'wl
+  :group 'wl-setting)
 
 ;; Internal variables used to modeline identifiers.
 (defvar wl-modeline-plug-status nil)

@@ -48,10 +48,14 @@
   :group 'elmo)
 
 ;; Local
-(defvar elmo-localnews-folder-path "~/News"
-  "*Local news folder path.")
-(defvar elmo-maildir-folder-path "~/Maildir"
-  "*Maildir folder path.")
+(defcustom elmo-localnews-folder-path "~/News"
+  "*Local news folder path."
+  :type 'directory
+  :group 'elmo)
+(defcustom elmo-maildir-folder-path "~/Maildir"
+  "*Maildir folder path."
+  :type 'directory
+  :group 'elmo)
 (defvar elmo-maildir-list '("\\+~/Maildir")
   "*All Folders that match this list will be treated as Maildir.
 Each elements are regexp of folder name (This is obsolete).")
@@ -59,12 +63,19 @@ Each elements are regexp of folder name (This is obsolete).")
 (defvar elmo-msgdb-file-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
 
-(defvar elmo-msgdb-directory "~/.elmo"
-  "*ELMO Message Database path.")
+(defcustom elmo-msgdb-directory "~/.elmo"
+  "*ELMO Message Database path."
+  :type 'directory
+  :group 'elmo
+  :group 'elmo-setting)
 (defvar elmo-passwd-alist-file-name "passwd"
   "*ELMO Password filename.")
-(defvar elmo-passwd-life-time nil
-  "*Duration of ELMO Password in seconds.  nil means infinity.")
+(defcustom elmo-passwd-life-time nil
+  "*Duration of ELMO Password in seconds.  nil means infinity."
+  :type '(choice (const :tag "Infinity" nil)
+		 number)
+  :group 'elmo
+  :group 'elmo-setting)
 
 (defvar elmo-warning-threshold 30000
   "*Display warning when the bytes of message exceeds this value.")
@@ -242,11 +253,17 @@ For disconnected operations.")
 (defvar elmo-strict-diff-folder-list nil
   "List of regexps of folder name which should be checked its diff strictly.")
 
-(defvar elmo-msgdb-extra-fields nil
-  "Extra fields for msgdb.")
+(defcustom elmo-msgdb-extra-fields nil
+  "Extra fields for msgdb."
+  :type '(repeat string)
+  :group 'elmo
+  :group 'elmo-setting)
 
-(defvar elmo-enable-disconnected-operation t
-  "*Enable disconnected operations.")
+(defcustom elmo-enable-disconnected-operation t
+  "*Non-nil enables disconnected operations."
+  :type 'boolean
+  :group 'elmo
+  :group 'elmo-setting)
 
 (defvar elmo-auto-change-plugged 600
   "*Time to expire change plugged state automatically, as the number of seconds.
