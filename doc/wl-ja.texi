@@ -1337,6 +1337,16 @@ emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
 @end group
 @end example
 
+@subsection 新聞フォルダに関する変数
+
+@table @code
+@item elmo-shimbun-update-overview-folder-list
+@vindex elmo-shimbun-update-overview-folder-list
+初期設定は @code{nil}。メッセージをフェッチしたときに overview を更新
+したい新聞フォルダを、フォルダ名の正規表現からなるリストで指定します。
+サマリを更新するには、フェッチした後に @kbd{s rescan} して下さい。
+@end table
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu フォルダ

@@ -1320,6 +1320,17 @@ Example:
 @end group
 @end example
 
+@subsection Variables About Shimbun Folder
+
+@table @code
+@item elmo-shimbun-update-overview-folder-list
+@vindex elmo-shimbun-update-overview-folder-list
+The initial setting is @code{nil}. You can specify a list of regular
+expressions of shimbun folder names. The overview of matched shimbun
+folder is updated when messages are fetched.
+You should @kbd{s rescan} after fetching to update summary.
+@end table
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu Folder
