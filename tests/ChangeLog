@@ -1,3 +1,14 @@
+2001-11-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el (check-modules-flim-mime-entity)
+	(check-modules-flim-mime-content-information)
+	(check-modules-flim-encoded-word)
+	(check-modules-flim-content-transfer-encoding)
+	(check-modules-flim-mailcap, check-modules-flim-std11)
+	(check-modules-flim-smtp)
+	(check-modules-semi-mime-edit, check-modules-semi-mime-view)
+	(check-modules-semi-mime-play): New testcases.
+
 2001-10-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el
