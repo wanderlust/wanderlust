@@ -59,46 +59,45 @@ Return number if put mark succeed"
 	 (current (wl-summary-message-number))
 	 (action (assoc set-mark wl-summary-mark-action-list))
 	 visible mark cur-mark)
-    (save-excursion
-      ;; Put mark
-      (setq visible (or
-		     ;; not-interactive and visible
-		     (and number (wl-summary-jump-to-msg number))
-		     ;; interactive
-		     (and (null number) current))
-	    number (or number current)
-	    cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
-      (if (and cur-mark
-	       (wl-summary-reserve-temp-mark-p cur-mark))
-	  (if interactive
-	      (error "Already marked as `%s'" cur-mark)
-	    (setq number nil))
-	(when (and interactive
-		   (null data)
-		   (wl-summary-action-argument-function action))
-	  (setq data (funcall (wl-summary-action-argument-function action)
-			      (wl-summary-action-symbol action)
-			      number)))
-	(wl-summary-unset-mark number)
-	(when visible
-	  (wl-summary-mark-line set-mark)
-	  (when wl-summary-highlight
-	    (wl-highlight-summary-current-line))
-	  (when data
-	    (wl-summary-print-destination number data)))
-	;; Set action.
-	(funcall (wl-summary-action-set-function action)
-		 number
-		 (wl-summary-action-mark action)
-		 data)
-	(set-buffer-modified-p nil)))
-    ;; Move the cursor.
-    (if (or interactive (interactive-p))
-	(if (eq wl-summary-move-direction-downward nil)
-	    (wl-summary-prev)
-	  (wl-summary-next)))
-    ;; Return value.
-    number))
+    (prog1
+	(save-excursion
+	  ;; Put mark
+	  (setq visible (or
+			 ;; not-interactive and visible
+			 (and number (wl-summary-jump-to-msg number))
+			 ;; interactive
+			 (and (null number) current))
+		number (or number current)
+		cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	  (if (wl-summary-reserve-temp-mark-p cur-mark)
+	      (when interactive
+		(error "Already marked as `%s'" cur-mark))
+	    (when (and interactive
+		       (null data)
+		       (wl-summary-action-argument-function action))
+	      (setq data (funcall (wl-summary-action-argument-function action)
+				  (wl-summary-action-symbol action)
+				  number)))
+	    (wl-summary-unset-mark number)
+	    (when visible
+	      (wl-summary-mark-line set-mark)
+	      (when wl-summary-highlight
+		(wl-highlight-summary-current-line))
+	      (when data
+		(wl-summary-print-destination number data)))
+	    ;; Set action.
+	    (funcall (wl-summary-action-set-function action)
+		     number
+		     (wl-summary-action-mark action)
+		     data)
+	    (set-buffer-modified-p nil)
+	    ;; Return value.
+	    number))
+      ;; Move the cursor.
+      (if (or interactive (interactive-p))
+	  (if (eq wl-summary-move-direction-downward nil)
+	      (wl-summary-prev)
+	    (wl-summary-next))))))
 
 (defun wl-summary-register-target-mark (number mark data)
   (or (memq number wl-summary-buffer-target-mark-list)

@@ -1,3 +1,7 @@
+2003-07-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-set-mark): Fixed last change.
+
 2003-07-20  Yuuichi Teranishi  <teranisi@ns.templewest.net>
 
 	* wl-summary.el (wl-summary-mark-as-read-internal): Fixed the
