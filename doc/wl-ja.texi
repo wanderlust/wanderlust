@@ -143,11 +143,9 @@ into another language, under the above conditions for modified versions.
 * Disconnected Operations::  $B%*%U%i%$%s=hM}(B
 * Expire and Archive::       $B%a%C%;!<%8$N<+F0:o=|$H%"!<%+%$%V(B
 * Scoring::                  $B%a%C%;!<%8$N%9%3%"(B
-* Split messages::           $B%a%C%;!<%8$N?6$jJ,$1(B
 * Address Book::             $B%"%I%l%9D"(B
 * Spam Filter::              Spam $B%U%#%k%?(B
-* Batch Processing::         $B%P%C%A=hM}(B
-* Customization::            $B%+%9%?%^%$%:(B
+* Advanced Issues::           $B$h$j?J$s$@;H$$J}(B
 * Migration::                $B5l%P!<%8%g%s$+$i$N0\9T(B
 * Terminology::              $BMQ8l$N2r@b(B
 * Mailing List::             $B%a!<%j%s%0%j%9%H(B
@@ -6133,7 +6131,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @end table
 
 
-@node Scoring, Split messages, Expire and Archive, Top
+@node Scoring, Address Book, Expire and Archive, Top
 @chapter $B%9%3%"(B
 @cindex Scoring
 @c @cindex Kill File
@@ -6621,156 +6619,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @end example
 
 
-@node Split messages, Address Book, Scoring, Top
-@chapter $B%a%C%;!<%8$N?6$jJ,$1(B
-@cindex Split messages
-
-@code{elmo-split} $B$r;H$&$H!"JQ?t(B @code{elmo-split-folder} $B$G;XDj$7$?%U(B
-$B%)%k%@Fb$N%a%C%;!<%8$rFCDj$N5,B'$K=>$C$F(B @command{procmail} $BIw$K?6$jJ,(B
-$B$1$k$3$H$,$G$-$^$9!#(B
-$B$3$N5!G=$r;H$&$K$O!"$^$:(B @file{~/.emacs} $B$K0J2<$N$h$&$K@_Dj$7$F2<$5$$!#(B
-
-@lisp
-(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
-@end lisp
-
-$B?6$jJ,$185$N%U%)%k%@$r0J2<$N$h$&$K@_Dj$7$^$9!#(B
-
-@lisp
-(setq elmo-split-folder "%inbox")
-@end lisp
-
-$B?6$jJ,$1$N%k!<%k$OJQ?t(B @code{elmo-split-rule} $B$K5-=R$7$^$9(B($B=q$-J}$O8e$G(B
-$B@bL@$7$^$9(B)$B!#(B
-$B0J>e$N@_Dj$r$7$?>e$G(B @kbd{M-x elmo-split} $B$9$k$H(B @code{elmo-split-rule}
-$B$K=>$C$F?6$jJ,$1$r<B9T$7$^$9!#(B @kbd{C-u M-x elmo-split} $B$H$9$k$H<B:]$K$O(B
-$B?6$jJ,$1$O$;$:$K%j%O!<%5%k$r9T$J$$!"$=$N7k2L$rI=<($7$^$9!#(B
-
-
-$B0J2<$G$O%k!<%k$N5-=R$N;EJ}$r@bL@$7$^$9!#$^$:$O<!$NNc$r8+$F2<$5$$!#(B
-
-@lisp
-@group
-(setq elmo-split-rule
-      ;; @r{SPAM $B$O(B @samp{+junk} $B$X(B}
-      '(((or (address-equal from "i.am@@spammer")
-	     (address-equal from "dull-work@@dull-boy")
-	     (address-equal from "death-march@@software")
-	     (address-equal from "ares@@aon.at")
-	     (address-equal from "get-money@@richman"))
-	 "+junk")
-	;; @r{mule $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%mule} $B$X(B}
-	((equal x-ml-name "mule") "%mule")
-	;; @r{wanderlust $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%wanderlust} $B$X(B}
-	;; @r{$B$=$7$FB3$1$F$=$l0J2<$N5,B'$bI>2A$9$k!#(B}
-	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Yahoo $BMxMQ<T$+$i$N%a%C%;!<%8$r(B @samp{+yahoo-@{username@}} $B$X(B}
-	((match from "\\(.*\\)@@yahoo\\.com")
-	 "+yahoo-\\1")
-	;; @r{$B%^%C%A$7$J$+$C$?;D$j$r(B @samp{+inbox} $B$X(B}
-	(t "+inbox")))
-@end group
-@end lisp
-
-$B5,B'$N4pK\C10L$O(B
-
-@lisp
-(@samp{CONDITION} @samp{ACTION} [@code{continue}])
-@end lisp
-
-$B$NAH$G!"(B@samp{CONDITION} $B$,??$N>l9g$K(B @samp{ACTION} $B$r<B9T$7$^$9!#(B
-$BBh0l$NMWAG(B @samp{CONDITION} $B$K$O>r7o$r(B S $B<0$G5-=R$7$^$9!#=q<0$K$D$$$F$O(B
-$B$9$08e$G@bL@$7$^$9!#BhFs$NMWAG(B @samp{ACTION} $B$K$O%a%C%;!<%8$N?6$jJ,$1@h(B
-$B$N%U%)%k%@L>!"$b$7$/$O%7%s%\%k$r;XDj$7$^$9!#(B
-$BBh;0$NMWAG(B @code{continue} $B$r%7%s%\%k$H$7$FM?$($k$H!"(B@samp{CONDITION} $B$,(B
-$BK~$?$5$l$?>l9g$K$b?6$jJ,$15,B'$NI>2A$r7QB3$7$^$9!#(B
-
-@samp{CONDITION} $B$N5-K!$O0J2<$N$h$&$K$J$j$^$9!#<B:]$N=q$-J}$O>e$G5s$2$?(B
-$BNc$r;29M$K$7$F2<$5$$!#(B
-
-@enumerate
-@item
-@samp{$B%U%#!<%k%IL>(B} $B$*$h$S(B @samp{$BCM(B} $B$r0z?t$H$7$F<h$k4X?t!#(B
-(@samp{$B%U%#!<%k%IL>(B} $B$O%U%#!<%k%IL>$rI=$9%7%s%\%k$G$9(B)
-
-@table @code
-@item @code{equal}
-$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
-$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
-@item @code{match}
-$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
-@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
-$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
-$BCV$-49$($i$l$^$9!#(B
-@item @code{address-equal}
-$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
-$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
-@item @code{address-match}
-$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
-@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
-$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
-$BCV$-49$($i$l$^$9!#(B
-@end table
-
-@item
-1 $B$D$N@0?t(B (@samp{SIZE}) $B$r0z?t$H$7$F$H$k4X?t!#(B
-
-@table @code
-@item @code{<}
-$B%a%C%;!<%8$N%5%$%:$,(B @samp{SIZE} $B$h$j>.$5$1$l$P??!#(B
-@item @code{>}
-$B%a%C%;!<%8$N%5%$%:$,(B @samp{SIZE} $B$h$jBg$-$1$l$P??!#(B
-@end table
-
-@item
-$BG$0U?t$N0z?t$r<h$k4X?t!#(B
-
-@table @code
-@item @code{or}
-$B0z?t$N$$$:$l$+$,??$rJV$9$J$i$P??!#(B
-@item @code{and}
-$B0z?t$N$9$Y$F$,??$rJV$9$J$i$P??!#(B
-@end table
-
-@item
-$B%7%s%\%k!#(B
-
-$B%7%s%\%k$,;XDj$5$l$k$H!"$=$l$rI>2A$7$^$9!#(B
-@end enumerate
-
-@samp{ACTION} $B$NCM$H$7$F;XDj$G$-$k$N$O0J2<$N$$$:$l$+$G$9!#(B
-
-@enumerate
-@item
-$B%U%)%k%@L>(B
-
-$BJ8;zNs$,;XDj$5$l$k$H$=$l$r?6$jJ,$1@h$N%U%)%k%@L>$H$_$J$7$F!"$=$N%U%)%k%@(B
-$B$X%a%C%;!<%8$rDI2C$7$^$9!#(B
-
-@item
-@samp{delete}
-
-$B%7%s%\%k(B @samp{delete} $B$,;XDj$5$l$k$H(B @code{elmo-split-folder} $BFb$K$"$k(B
-$B%a%C%;!<%8$N<BBN$r:o=|$7$^$9!#(B
-
-@item
-@samp{noop}
-
-$B%7%s%\%k(B @samp{noop} $B$,;XDj$5$l$?>l9g!"$=$N%a%C%;!<%8$KBP$7$F$O2?$b$;$:!"(B
-$B$=$N$^$^$N>uBV$KJ]$A$^$9!#(B
-
-@item
-$B4X?t(B
-
-$B4X?t$,;XDj$5$l$?>l9g!"$=$l$r<B9T$7$^$9!#(B
-@end enumerate
-
-$BA4$F$N?6$jJ,$15,B'$rDL2a$7$?%a%C%;!<%8$O!"JQ?t(B
-@code{elmo-split-default-action} $B$G;XDj$7$?(B @samp{ACTION} $B$K1h$C$F=hM}$5(B
-$B$l$^$9!#(B
-
-
-@node Address Book, Spam Filter, Split messages, Top
+@node Address Book, Spam Filter, Scoring, Top
 @chapter $B%"%I%l%9D"(B
 @cindex Address Book
 
@@ -6894,7 +6743,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @end table
 
 
-@node Spam Filter, Batch Processing, Address Book, Top
+@node Spam Filter, Advanced Issues, Address Book, Top
 @chapter Spam $B%U%#%k%?(B
 @cindex Spam Filter
 
@@ -7411,48 +7260,24 @@ overview $B>pJs$K4^$^$l$J$$%U%#!<%k%I$r8!::$NBP>]$H$9$k>l9g!"(B
 @end table
 
 
-@node Batch Processing, Customization, Spam Filter, Top
-@chapter $B%P%C%A=hM}(B
-@cindex Batch Processing
-
-$B%3%^%s%I%i%$%s$+$i(B wanderlust $B$K;E;v$r$5$;$k$3$H$,$G$-$^$9!#(B
-$B8=:_$G$-$k=hM}$O;XDj$7$?%U%)%k%@$N?7Ce%a%C%;!<%8$N%W%j%U%'%C%A$G$9!#(B
-
-@code{wl-batch-prefetch-folder-list} $B$K%W%j%U%'%C%A$r9T$&%U%)%k%@$r(B
-$B;XDj$7$F%3%^%s%I%i%$%s$+$i0J2<$N$h$&$K$9$k$H%W%j%U%'%C%A$r9T$$$^$9!#(B
-
-@example
-@group
-% emacs -batch -l wl-batch -f wl-batch-prefetch
-@end group
-@end example
-
-@section $B%+%9%?%^%$%:JQ?t(B
-
-@table @code
-@item wl-batch-prefetch-folder-list
-@vindex wl-batch-prefetch-folder-list
-@code{wl-batch-prefetch} $B$G%W%j%U%'%C%A$r9T$&%U%)%k%@$r!"%U%)%k%@L>$N%j%9%H(B
-$B$G;XDj$7$^$9!#(B
-@end table
-
-
-@node Customization, Migration, Batch Processing, Top
-@chapter Wanderlust $B$N%+%9%?%^%$%:(B
-@cindex Customization
+@node Advanced Issues, Migration, Spam Filter, Top
+@chapter $B$h$j?J$s$@;H$$J}(B
+@cindex Advanced Issues
 
 @menu
 * Living with other packages::  $B%Q%C%1!<%8$N$"$k@83h(B
 * Highlights::                  $B%O%$%i%$%H$N@_Dj(B
 * Biff::                        $B%a!<%k$NCe?.$rCN$i$;$k(B
 * Password Management::         $B%Q%9%o!<%I$N4IM}(B
+* Split messages::              $B%a%C%;!<%8$N?6$jJ,$1(B
+* Batch Processing::            $B%P%C%A=hM}(B
 * Advanced Settings::           $B%+%9%?%^%$%:!A1~MQJT!A(B
 * Customizable Valiables::      $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
 * Hooks::                       $B%U%C%/(B
 @end menu
 
 
-@node Living with other packages, Highlights, Customization, Customization
+@node Living with other packages, Highlights, Advanced Issues, Advanced Issues
 @section $B%Q%C%1!<%8$N$"$k@83h(B
 
 $BB>$N%Q%C%1!<%8$r;H$&$?$a$N@_DjNc$G$9!#(B
@@ -7736,7 +7561,7 @@ emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) $B$KIUB0$N(B
 $B@hF,$N%3%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 
 
-@node Highlights, Biff, Living with other packages, Customization
+@node Highlights, Biff, Living with other packages, Advanced Issues
 @section $B%O%$%i%$%H$N@_Dj(B
 
 @subsection $B%+%9%?%^%$%:JQ?t(B
@@ -7972,7 +7797,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end table
 
 
-@node Biff, Password Management, Highlights, Customization
+@node Biff, Password Management, Highlights, Advanced Issues
 @section $B%a!<%k$NCe?.$rCN$i$;$k(B
 @cindex Biff
 
@@ -8015,7 +7840,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end table
 
 
-@node Password Management, Advanced Settings, Biff, Customization
+@node Password Management, Split messages, Biff, Advanced Issues
 @section $B%Q%9%o!<%I$N4IM}(B
 
 $B%5!<%P$K@\B3$9$k0Y$KF~NO$7$?%Q%9%o!<%I$OJQ?t(B @code{elmo-passwd-alist} $B$K(B
@@ -8047,7 +7872,182 @@ Non-nil $B$JCM$,@_Dj$5$l$?>l9g$O!"?75,$K%Q%9%o!<%I$,F~NO$5$l$F$+$i(B
 @end table
 
 
-@node Advanced Settings, Customizable Valiables, Password Management, Customization
+@node Split messages, Batch Processing, Password Management, Advanced Issues
+@section $B%a%C%;!<%8$N?6$jJ,$1(B
+@cindex Split messages
+
+@code{elmo-split} $B$r;H$&$H!"JQ?t(B @code{elmo-split-folder} $B$G;XDj$7$?%U(B
+$B%)%k%@Fb$N%a%C%;!<%8$rFCDj$N5,B'$K=>$C$F(B @command{procmail} $BIw$K?6$jJ,(B
+$B$1$k$3$H$,$G$-$^$9!#(B
+$B$3$N5!G=$r;H$&$K$O!"$^$:(B @file{~/.emacs} $B$K0J2<$N$h$&$K@_Dj$7$F2<$5$$!#(B
+
+@lisp
+(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
+@end lisp
+
+$B?6$jJ,$185$N%U%)%k%@$r0J2<$N$h$&$K@_Dj$7$^$9!#(B
+
+@lisp
+(setq elmo-split-folder "%inbox")
+@end lisp
+
+$B?6$jJ,$1$N%k!<%k$OJQ?t(B @code{elmo-split-rule} $B$K5-=R$7$^$9(B($B=q$-J}$O8e$G(B
+$B@bL@$7$^$9(B)$B!#(B
+$B0J>e$N@_Dj$r$7$?>e$G(B @kbd{M-x elmo-split} $B$9$k$H(B @code{elmo-split-rule}
+$B$K=>$C$F?6$jJ,$1$r<B9T$7$^$9!#(B @kbd{C-u M-x elmo-split} $B$H$9$k$H<B:]$K$O(B
+$B?6$jJ,$1$O$;$:$K%j%O!<%5%k$r9T$J$$!"$=$N7k2L$rI=<($7$^$9!#(B
+
+
+$B0J2<$G$O%k!<%k$N5-=R$N;EJ}$r@bL@$7$^$9!#$^$:$O<!$NNc$r8+$F2<$5$$!#(B
+
+@lisp
+@group
+(setq elmo-split-rule
+      ;; @r{SPAM $B$O(B @samp{+junk} $B$X(B}
+      '(((or (address-equal from "i.am@@spammer")
+	     (address-equal from "dull-work@@dull-boy")
+	     (address-equal from "death-march@@software")
+	     (address-equal from "ares@@aon.at")
+	     (address-equal from "get-money@@richman"))
+	 "+junk")
+	;; @r{mule $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%mule} $B$X(B}
+	((equal x-ml-name "mule") "%mule")
+	;; @r{wanderlust $B%a!<%j%s%0%j%9%H$+$i$N%a!<%k$r(B @samp{%wanderlust} $B$X(B}
+	;; @r{$B$=$7$FB3$1$F$=$l0J2<$N5,B'$bI>2A$9$k!#(B}
+	((equal x-ml-name "wanderlust") "%wanderlust" continue)
+	;; @r{Yahoo $BMxMQ<T$+$i$N%a%C%;!<%8$r(B @samp{+yahoo-@{username@}} $B$X(B}
+	((match from "\\(.*\\)@@yahoo\\.com")
+	 "+yahoo-\\1")
+	;; @r{$B%^%C%A$7$J$+$C$?;D$j$r(B @samp{+inbox} $B$X(B}
+	(t "+inbox")))
+@end group
+@end lisp
+
+$B5,B'$N4pK\C10L$O(B
+
+@lisp
+(@samp{CONDITION} @samp{ACTION} [@code{continue}])
+@end lisp
+
+$B$NAH$G!"(B@samp{CONDITION} $B$,??$N>l9g$K(B @samp{ACTION} $B$r<B9T$7$^$9!#(B
+$BBh0l$NMWAG(B @samp{CONDITION} $B$K$O>r7o$r(B S $B<0$G5-=R$7$^$9!#=q<0$K$D$$$F$O(B
+$B$9$08e$G@bL@$7$^$9!#BhFs$NMWAG(B @samp{ACTION} $B$K$O%a%C%;!<%8$N?6$jJ,$1@h(B
+$B$N%U%)%k%@L>!"$b$7$/$O%7%s%\%k$r;XDj$7$^$9!#(B
+$BBh;0$NMWAG(B @code{continue} $B$r%7%s%\%k$H$7$FM?$($k$H!"(B@samp{CONDITION} $B$,(B
+$BK~$?$5$l$?>l9g$K$b?6$jJ,$15,B'$NI>2A$r7QB3$7$^$9!#(B
+
+@samp{CONDITION} $B$N5-K!$O0J2<$N$h$&$K$J$j$^$9!#<B:]$N=q$-J}$O>e$G5s$2$?(B
+$BNc$r;29M$K$7$F2<$5$$!#(B
+
+@enumerate
+@item
+@samp{$B%U%#!<%k%IL>(B} $B$*$h$S(B @samp{$BCM(B} $B$r0z?t$H$7$F<h$k4X?t!#(B
+(@samp{$B%U%#!<%k%IL>(B} $B$O%U%#!<%k%IL>$rI=$9%7%s%\%k$G$9(B)
+
+@table @code
+@item @code{equal}
+$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
+$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
+@item @code{match}
+$B%U%#!<%k%I$NCM$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
+@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
+$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
+$BCV$-49$($i$l$^$9!#(B
+@item @code{address-equal}
+$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$KEy$7$1$l$P??!#(B
+$BBgJ8;z>.J8;z$N:9$OL5;k$5$l$^$9!#(B
+@item @code{address-match}
+$B$=$N%U%#!<%k%I$K$"$k%"%I%l%9$N$$$:$l$+$,(B @samp{$BCM(B} $B$K%^%C%A$9$l$P??!#(B
+@samp{$BCM(B} $B$O(B @code{\&} $B$d(B @code{\N} $B$r4^$`$3$H$,$G$-$^$9!#(B
+$B$=$l$i$O$=$NA0$N(B @samp{$BCM(B} $B$G(B @code{\(\)} $B$K%^%C%A$7$?%Q%?!<%s$K(B
+$BCV$-49$($i$l$^$9!#(B
+@end table
+
+@item
+1 $B$D$N@0?t(B (@samp{SIZE}) $B$r0z?t$H$7$F$H$k4X?t!#(B
+
+@table @code
+@item @code{<}
+$B%a%C%;!<%8$N%5%$%:$,(B @samp{SIZE} $B$h$j>.$5$1$l$P??!#(B
+@item @code{>}
+$B%a%C%;!<%8$N%5%$%:$,(B @samp{SIZE} $B$h$jBg$-$1$l$P??!#(B
+@end table
+
+@item
+$BG$0U?t$N0z?t$r<h$k4X?t!#(B
+
+@table @code
+@item @code{or}
+$B0z?t$N$$$:$l$+$,??$rJV$9$J$i$P??!#(B
+@item @code{and}
+$B0z?t$N$9$Y$F$,??$rJV$9$J$i$P??!#(B
+@end table
+
+@item
+$B%7%s%\%k!#(B
+
+$B%7%s%\%k$,;XDj$5$l$k$H!"$=$l$rI>2A$7$^$9!#(B
+@end enumerate
+
+@samp{ACTION} $B$NCM$H$7$F;XDj$G$-$k$N$O0J2<$N$$$:$l$+$G$9!#(B
+
+@enumerate
+@item
+$B%U%)%k%@L>(B
+
+$BJ8;zNs$,;XDj$5$l$k$H$=$l$r?6$jJ,$1@h$N%U%)%k%@L>$H$_$J$7$F!"$=$N%U%)%k%@(B
+$B$X%a%C%;!<%8$rDI2C$7$^$9!#(B
+
+@item
+@samp{delete}
+
+$B%7%s%\%k(B @samp{delete} $B$,;XDj$5$l$k$H(B @code{elmo-split-folder} $BFb$K$"$k(B
+$B%a%C%;!<%8$N<BBN$r:o=|$7$^$9!#(B
+
+@item
+@samp{noop}
+
+$B%7%s%\%k(B @samp{noop} $B$,;XDj$5$l$?>l9g!"$=$N%a%C%;!<%8$KBP$7$F$O2?$b$;$:!"(B
+$B$=$N$^$^$N>uBV$KJ]$A$^$9!#(B
+
+@item
+$B4X?t(B
+
+$B4X?t$,;XDj$5$l$?>l9g!"$=$l$r<B9T$7$^$9!#(B
+@end enumerate
+
+$BA4$F$N?6$jJ,$15,B'$rDL2a$7$?%a%C%;!<%8$O!"JQ?t(B
+@code{elmo-split-default-action} $B$G;XDj$7$?(B @samp{ACTION} $B$K1h$C$F=hM}$5(B
+$B$l$^$9!#(B
+
+
+@node Batch Processing, Advanced Settings, Split messages, Advanced Issues
+@section $B%P%C%A=hM}(B
+@cindex Batch Processing
+
+$B%3%^%s%I%i%$%s$+$i(B wanderlust $B$K;E;v$r$5$;$k$3$H$,$G$-$^$9!#(B
+$B8=:_$G$-$k=hM}$O;XDj$7$?%U%)%k%@$N?7Ce%a%C%;!<%8$N%W%j%U%'%C%A$G$9!#(B
+
+@code{wl-batch-prefetch-folder-list} $B$K%W%j%U%'%C%A$r9T$&%U%)%k%@$r(B
+$B;XDj$7$F%3%^%s%I%i%$%s$+$i0J2<$N$h$&$K$9$k$H%W%j%U%'%C%A$r9T$$$^$9!#(B
+
+@example
+@group
+% emacs -batch -l wl-batch -f wl-batch-prefetch
+@end group
+@end example
+
+@subsection $B%+%9%?%^%$%:JQ?t(B
+
+@table @code
+@item wl-batch-prefetch-folder-list
+@vindex wl-batch-prefetch-folder-list
+@code{wl-batch-prefetch} $B$G%W%j%U%'%C%A$r9T$&%U%)%k%@$r!"%U%)%k%@L>$N%j%9%H(B
+$B$G;XDj$7$^$9!#(B
+@end table
+
+
+@node Advanced Settings, Customizable Valiables, Batch Processing, Advanced Issues
 @section $B%+%9%?%^%$%:!A1~MQJT!A(B
 
 @menu
@@ -8235,7 +8235,7 @@ Non-nil $B$JCM$,@_Dj$5$l$?>l9g$O!"?75,$K%Q%9%o!<%I$,F~NO$5$l$F$+$i(B
 
 
 
-@node Customizable Valiables, Hooks, Advanced Settings, Customization
+@node Customizable Valiables, Hooks, Advanced Settings, Advanced Issues
 @section $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
 
 $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw!#(B
@@ -8494,13 +8494,13 @@ Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
 @end table
 
 
-@node Hooks,  , Customizable Valiables, Customization
+@node Hooks,  , Customizable Valiables, Advanced Issues
 @section $B%U%C%/(B
 
 (Not yet written)
 
 
-@node Migration, Terminology, Customization, Top
+@node Migration, Terminology, Advanced Issues, Top
 @chapter $B5l%P!<%8%g%s$+$i$N0\9T(B
 @cindex Migration
 

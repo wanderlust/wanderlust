@@ -118,11 +118,9 @@ This manual is for Wanderlust @value{VERSION}.
 * Disconnected Operations::  Off-Line management
 * Expire and Archive::       Automatic expiration and archiving of messages
 * Scoring::                  Score of the messages
-* Split messages::           Splitting messages
 * Address Book::             Management of Address Book
 * Spam Filter::              Spam filtering
-* Batch Processing::         Invoke commands in batch mode
-* Customization::            Customizing Wanderlust
+* Advanced Issues::          Advanced Issues
 * Migration::                Switch from older version of Wanderlust
 * Terminology::              Terminologies
 * Mailing List::             Wanderlust mailing list
@@ -6148,7 +6146,7 @@ Needless to say, you can use your own function.
 @end table
 
 
-@node Scoring, Split messages, Expire and Archive, Top
+@node Scoring, Address Book, Expire and Archive, Top
 @chapter Score of the Messages
 @cindex Scoring
 @c @cindex Kill File
@@ -6647,156 +6645,7 @@ pop3                      N     E     E     E
 @end example
 
 
-@node Split messages, Address Book, Scoring, Top
-@chapter Message splitting
-@cindex Split messages
-
-You can use @code{elmo-split} to split message in folder specified by
-the variable @code{elmo-split-folder} a la @command{procmail} according
-to some specified rules. To use this feature, set as follows in your
-@file{~/.emacs} at first.
-
-@lisp
-(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
-@end lisp
-
-Set source folder like following.
-
-@lisp
-(setq elmo-split-folder "%inbox")
-@end lisp
-
-And specify the rule in the variable @code{elmo-split-rule} (its format
-will be is described below).
-Then you can invoke @kbd{M-x elmo-split} to split messages according to
-@code{elmo-split-rule}. On the other hand, invoke @kbd{C-u M-x elmo-split}
-to do a rehearsal and show result (do not split actually).
-
-
-We will describe how to specify the rule. First of all, see following
-example, please.
-
-@lisp
-@group
-(setq elmo-split-rule
-      ;; @r{Store messages from spammers into @samp{+junk}}
-      '(((or (address-equal from "i.am@@spammer")
-	     (address-equal from "dull-work@@dull-boy")
-	     (address-equal from "death-march@@software")
-	     (address-equal from "ares@@aon.at")
-	     (address-equal from "get-money@@richman"))
-	 "+junk")
-	;; @r{Store messages from mule mailing list into @samp{%mule}}
-	((equal x-ml-name "mule") "%mule")
-	;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
-	;; @r{and continue evaluating following rules}
-	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Store messages from Yahoo user into @samp{+yahoo-@{username@}}}
-	((match from "\\(.*\\)@@yahoo\\.com")
-	 "+yahoo-\\1")
-	;; @r{Store unmatched mails into @samp{+inbox}}
-	(t "+inbox")))
-@end group
-@end lisp
-
-The basic unit of the rule is a combination like
-
-@lisp
-(@samp{CONDITION} @samp{ACTION} [@code{continue}])
-@end lisp
-
-If @samp{CONDITION} is true, @samp{ACTION} is performed.
-The 1st element @samp{CONDITION} is a condition represented by a
-balanced expression (sexp). Its grammar will be explained below.
-The 2nd element @samp{ACTION} is the name of the folder to split
-messages into, or a symbol. When the 3rd element @code{continue} is
-specified as symbol, evaluating rules is not stopped even when the
-condition is satisfied.
-
-The grammar for @samp{CONDITION} is as follows. See example above to
-learn how to write the condition practically.
-
-@enumerate
-@item
-Functions which accept arguments @samp{FIELD-NAME} and @samp{VALUE}.
-(@samp{FIELD-NAME} is a symbol that describes the field name)
-
-@table @code
-@item @code{equal}
-True if the field value equals to @samp{VALUE}.
-Case of the letters are ignored.
-@item @code{match}
-True if the field value matches to VALUE.
-@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
-from matching @code{\(\)} patterns in the previous @samp{VALUE}.
-@item @code{address-equal}
-True if one of the addresses in the field equals to
-@samp{VALUE}. Case of the letters are ignored.
-@item @code{address-match}
-True if one of the addresses in the field matches to
-@samp{VALUE}.
-@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
-from matching @code{\(\)} patterns in the previous @samp{VALUE}.
-@end table
-
-@item
-Functions which accept an integer argument (@samp{SIZE}).
-
-@table @code
-@item @code{<}
-True if the size of the message is less than @samp{SIZE}.
-@item @code{>}
-True if the size of the message is greater than @samp{SIZE}.
-@end table
-
-@item
-Functions which accept any number of arguments.
-
-@table @code
-@item @code{or}
-True if one of the argument returns true.
-@item @code{and}
-True if all of the arguments return true.
-@end table
-
-@item
-A symbol.
-
-When a symbol is specified, it is evaluated.
-@end enumerate
-
-You can specify followings as 2nd @samp{ACTION}.
-
-@enumerate
-@item
-folder name
-
-If some string is specified, it will be regarded as the destination
-folder, and the message will be appended to it.
-
-@item
-@samp{delete}
-
-If the symbol  @samp{delete} is specified, delete the substance of the
-message in @code{elmo-split-folder}
-
-@item
-@samp{noop}
-
-If the symbol @samp{noop} is specified, do nothing on the message and
-keep it as it is.
-
-@item
-function
-
-If some function is specified, execute it.
-@end enumerate
-
-If the message passes all rules, it will be dealed along @samp{ACTION}
-specified by @code{elmo-split-default-action}.
-
-
-@node Address Book, Spam Filter, Split messages, Top
+@node Address Book, Spam Filter, Scoring, Top
 @chapter Address Book
 @cindex Address Book
 
@@ -6927,7 +6776,7 @@ Edit entry.
 @end table
 
 
-@node Spam Filter, Batch Processing, Address Book, Top
+@node Spam Filter, Advanced Issues, Address Book, Top
 @chapter Spam Filter
 @cindex Spam Filter
 
@@ -7449,48 +7298,24 @@ for making spam decision.
 @end table
 
 
-@node Batch Processing, Customization, Spam Filter, Top
-@chapter Batch Processing
-@cindex Batch Processing
-
-You can request wanderlust to do some job on the command line.
-For now, you can invoke prefetching new messages in specified folders.
-
-Specify target folders in @code{wl-batch-prefetch-folder-list} then
-invoke as follows to execute prefetching:
-
-@example
-@group
-% emacs -batch -l wl-batch -f wl-batch-prefetch
-@end group
-@end example
-
-@section Customize Variables
-
-@table @code
-@item wl-batch-prefetch-folder-list
-@vindex wl-batch-prefetch-folder-list
-Target folders of prefetching by @code{wl-batch-prefetch}, specified as
-a list of folder names.
-@end table
-
-
-@node Customization, Migration, Batch Processing, Top
-@chapter Customizing Wanderlust
-@cindex Customization
+@node Advanced Issues, Migration, Spam Filter, Top
+@chapter Advanced Issues
+@cindex Advanced Issues
 
 @menu
 * Living with other packages:: Cooperating with other packages
 * Highlights::                 Highlights
 * Biff::                       Notify Mail arrival
 * Password Management::        Manage Passwords
+* Split messages::             Splitting messages
+* Batch Processing::           Invoke commands in batch mode
 * Advanced Settings::          Advanced Settings
 * Customizable Variables::     Customizable Variables
 * Hooks::                      Hooks
 @end menu
 
 
-@node Living with other packages, Highlights, Customization, Customization
+@node Living with other packages, Highlights, Advanced Issues, Advanced Issues
 @section Living with other packages
 
 Examples with other packages.
@@ -7769,7 +7594,7 @@ distributed with emacs-w3m (@uref{http://emacs-w3m.namazu.org/}).
 You can find the usage in comment region at the head of @file{mime-w3m.el}.
 
 
-@node Highlights, Biff, Living with other packages, Customization
+@node Highlights, Biff, Living with other packages, Advanced Issues
 @section Highlights
 
 @subsection Customizable Variables
@@ -8015,7 +7840,7 @@ The face for strings (for example, a version number) in the demo.
 @end table
 
 
-@node Biff, Password Management, Highlights, Customization
+@node Biff, Password Management, Highlights, Advanced Issues
 @section Notify Mail arrival
 @cindex Biff
 
@@ -8057,7 +7882,7 @@ For silence, set to @code{nil}.
 @end table
 
 
-@node Password Management, Advanced Settings, Biff, Customization
+@node Password Management, Split messages, Biff, Advanced Issues
 @section Manage Passwords
 
 If you input passwords to connect servers, they are stored in the
@@ -8089,7 +7914,182 @@ If the value is some number, timer is set to remove password entry after
 @end table
 
 
-@node Advanced Settings, Customizable Variables, Password Management, Customization
+@node Split messages, Batch Processing, Password Management, Advanced Issues
+@section Message splitting
+@cindex Split messages
+
+You can use @code{elmo-split} to split message in folder specified by
+the variable @code{elmo-split-folder} a la @command{procmail} according
+to some specified rules. To use this feature, set as follows in your
+@file{~/.emacs} at first.
+
+@lisp
+(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
+@end lisp
+
+Set source folder like following.
+
+@lisp
+(setq elmo-split-folder "%inbox")
+@end lisp
+
+And specify the rule in the variable @code{elmo-split-rule} (its format
+will be is described below).
+Then you can invoke @kbd{M-x elmo-split} to split messages according to
+@code{elmo-split-rule}. On the other hand, invoke @kbd{C-u M-x elmo-split}
+to do a rehearsal and show result (do not split actually).
+
+
+We will describe how to specify the rule. First of all, see following
+example, please.
+
+@lisp
+@group
+(setq elmo-split-rule
+      ;; @r{Store messages from spammers into @samp{+junk}}
+      '(((or (address-equal from "i.am@@spammer")
+	     (address-equal from "dull-work@@dull-boy")
+	     (address-equal from "death-march@@software")
+	     (address-equal from "ares@@aon.at")
+	     (address-equal from "get-money@@richman"))
+	 "+junk")
+	;; @r{Store messages from mule mailing list into @samp{%mule}}
+	((equal x-ml-name "mule") "%mule")
+	;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
+	;; @r{and continue evaluating following rules}
+	((equal x-ml-name "wanderlust") "%wanderlust" continue)
+	;; @r{Store messages from Yahoo user into @samp{+yahoo-@{username@}}}
+	((match from "\\(.*\\)@@yahoo\\.com")
+	 "+yahoo-\\1")
+	;; @r{Store unmatched mails into @samp{+inbox}}
+	(t "+inbox")))
+@end group
+@end lisp
+
+The basic unit of the rule is a combination like
+
+@lisp
+(@samp{CONDITION} @samp{ACTION} [@code{continue}])
+@end lisp
+
+If @samp{CONDITION} is true, @samp{ACTION} is performed.
+The 1st element @samp{CONDITION} is a condition represented by a
+balanced expression (sexp). Its grammar will be explained below.
+The 2nd element @samp{ACTION} is the name of the folder to split
+messages into, or a symbol. When the 3rd element @code{continue} is
+specified as symbol, evaluating rules is not stopped even when the
+condition is satisfied.
+
+The grammar for @samp{CONDITION} is as follows. See example above to
+learn how to write the condition practically.
+
+@enumerate
+@item
+Functions which accept arguments @samp{FIELD-NAME} and @samp{VALUE}.
+(@samp{FIELD-NAME} is a symbol that describes the field name)
+
+@table @code
+@item @code{equal}
+True if the field value equals to @samp{VALUE}.
+Case of the letters are ignored.
+@item @code{match}
+True if the field value matches to VALUE.
+@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
+from matching @code{\(\)} patterns in the previous @samp{VALUE}.
+@item @code{address-equal}
+True if one of the addresses in the field equals to
+@samp{VALUE}. Case of the letters are ignored.
+@item @code{address-match}
+True if one of the addresses in the field matches to
+@samp{VALUE}.
+@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
+from matching @code{\(\)} patterns in the previous @samp{VALUE}.
+@end table
+
+@item
+Functions which accept an integer argument (@samp{SIZE}).
+
+@table @code
+@item @code{<}
+True if the size of the message is less than @samp{SIZE}.
+@item @code{>}
+True if the size of the message is greater than @samp{SIZE}.
+@end table
+
+@item
+Functions which accept any number of arguments.
+
+@table @code
+@item @code{or}
+True if one of the argument returns true.
+@item @code{and}
+True if all of the arguments return true.
+@end table
+
+@item
+A symbol.
+
+When a symbol is specified, it is evaluated.
+@end enumerate
+
+You can specify followings as 2nd @samp{ACTION}.
+
+@enumerate
+@item
+folder name
+
+If some string is specified, it will be regarded as the destination
+folder, and the message will be appended to it.
+
+@item
+@samp{delete}
+
+If the symbol  @samp{delete} is specified, delete the substance of the
+message in @code{elmo-split-folder}
+
+@item
+@samp{noop}
+
+If the symbol @samp{noop} is specified, do nothing on the message and
+keep it as it is.
+
+@item
+function
+
+If some function is specified, execute it.
+@end enumerate
+
+If the message passes all rules, it will be dealed along @samp{ACTION}
+specified by @code{elmo-split-default-action}.
+
+
+@node Batch Processing, Advanced Settings, Split messages, Advanced Issues
+@section Batch Processing
+@cindex Batch Processing
+
+You can request wanderlust to do some job on the command line.
+For now, you can invoke prefetching new messages in specified folders.
+
+Specify target folders in @code{wl-batch-prefetch-folder-list} then
+invoke as follows to execute prefetching:
+
+@example
+@group
+% emacs -batch -l wl-batch -f wl-batch-prefetch
+@end group
+@end example
+
+@subsection Customize Variables
+
+@table @code
+@item wl-batch-prefetch-folder-list
+@vindex wl-batch-prefetch-folder-list
+Target folders of prefetching by @code{wl-batch-prefetch}, specified as
+a list of folder names.
+@end table
+
+
+@node Advanced Settings, Customizable Variables, Batch Processing, Advanced Issues
 @section Advanced Settings
 
 @menu
@@ -8277,7 +8277,7 @@ The following is a example:
 @end lisp
 
 
-@node Customizable Variables, Hooks, Advanced Settings, Customization
+@node Customizable Variables, Hooks, Advanced Settings, Advanced Issues
 @section Customizable Variables
 
 Customizable variables that have not been described yet:
@@ -8545,13 +8545,13 @@ this value, display progress gauge.
 @end table
 
 
-@node Hooks,  , Customizable Variables, Customization
+@node Hooks,  , Customizable Variables, Advanced Issues
 @section Hooks
 
 (Not yet written)
 
 
-@node Migration, Terminology, Customization, Top
+@node Migration, Terminology, Advanced Issues, Top
 @chapter Switch from older version of Wanderlust
 @cindex Migration
 
