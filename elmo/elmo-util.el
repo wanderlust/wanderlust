@@ -1419,13 +1419,6 @@ Otherwise treat \\ in NEWTEXT string as special:
   (` (when (elmo-buffer-exists-p (, buffer))
        (kill-buffer (, buffer)))))
 
-(defun elmo-delete-lists (keys list)
-  "Delete all entries in LIST that equal to KEYS."
-  (while keys
-    (setq list (delete (car keys) list))
-    (setq keys (cdr keys)))
-  list)
-
 (defun elmo-delete-if (pred lst)
   "Returns new list contains items which don't satisfy PRED in LST."
   (let (result)
@@ -1436,7 +1429,10 @@ Otherwise treat \\ in NEWTEXT string as special:
     result))
 
 (defun elmo-list-delete (list1 list2)
-  "Any element of list1 is deleted from list2."
+  "Delete by side effect any occurrences equal to elements of LIST1 from LIST2.
+Return the modified LIST2.  Deletion is done with `delete'.
+Write `(setq foo (elmo-list-delete bar foo))' to be sure of changing
+the value of `foo'."
   (while list1
     (setq list2 (delete (car list1) list2))
     (setq list1 (cdr list1)))
