@@ -20,6 +20,11 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
    Format:  '[' 'search condition' ']' [ 'absolute path of namazu index' ]
 
+** With pipe folder, now you can preserve messages on the server.
+   At the next time you access it, only new messages will be copied.
+
+   Format:  '|' 'source folder' '|:' 'destination folder'
+
 ** Address manager is now available (start by C-c C-a).
    You can edit address book and import recipients to draft from it.
 
