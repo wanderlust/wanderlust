@@ -759,9 +759,8 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-draft-write-sendlog (status proto server to id)
   "Write send log file, if `wl-draft-sendlog' is non-nil."
   (when wl-draft-sendlog
-    (save-excursion
-      (let* ((tmp-buf (get-buffer-create " *wl-draft-sendlog*"))
-	     (filename (expand-file-name wl-draft-sendlog-filename
+    (with-temp-buffer
+      (let* ((filename (expand-file-name wl-draft-sendlog-filename
 					 elmo-msgdb-dir))
 	     (filesize (nth 7 (file-attributes filename)))
 	     (server (if server (concat " server=" server) ""))
@@ -779,18 +778,15 @@ Reply to author if WITH-ARG is non-nil."
 		   ""))
 	     (id (if id (concat " id=" id) ""))
 	     (time (wl-sendlog-time)))
-	(set-buffer tmp-buf)
-	(erase-buffer)
 	(insert (format "%s proto=%s stat=%s%s%s%s\n"
 			time proto status server to id))
 	(if (and wl-draft-sendlog-max-size filesize
 		 (> filesize wl-draft-sendlog-max-size))
 	    (rename-file filename (concat filename ".old") t))
 	(if (file-writable-p filename)
-	    (write-region (point-min) (point-max)
-			  filename t 'no-msg)
-	  (message (format "%s is not writable." filename)))
-	(kill-buffer tmp-buf)))))
+	    (write-region-as-binary (point-min) (point-max)
+				    filename t 'no-msg)
+	  (message (format "%s is not writable." filename)))))))
 
 (defun wl-draft-get-header-delimiter (&optional delete)
   ;; If DELETE is non-nil, replace the header delimiter with a blank line

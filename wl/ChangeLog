@@ -1,3 +1,8 @@
+2001-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-write-sendlog): Use `write-region-as-binary';
+	Use `with-temp-buffer'.
+
 2001-12-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-get-entity-id): Ignore nemacs (rewrite
