@@ -2024,7 +2024,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (concat "<"
 	      (if (elmo-unfold-field-body "date")
 		  (timezone-make-date-sortable (elmo-unfold-field-body "date"))
-		 (md5 (current-buffer) (point-min) (point-max) nil t))
+		 (md5 (current-buffer) (point-min) (point-max)))
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
 

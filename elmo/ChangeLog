@@ -1,3 +1,8 @@
+2004-04-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Don't use
+	md5's 4th and 5th argument (non-existent in flim one).
+
 2004-04-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-split.el (elmo-split-subr): Flag of a non-registered
