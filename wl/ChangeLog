@@ -1,8 +1,3 @@
-2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-version-show): Removed.
-	(wl-version): Add `interactive'.
-
 2001-01-22  YAMASHITA Junji <ysjj@unixuser.org>
 
 	* wl-summary.el (wl-summary-get-petname-func): New variable.
