@@ -706,8 +706,9 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-draft-hide (editing-buffer)
   "Hide the editing draft buffer if possible."
   (when (and editing-buffer
-	     (buffer-live-p editing-buffer))
-    (set-buffer editing-buffer)
+	     (buffer-live-p editing-buffer)
+	     (get-buffer-window editing-buffer))
+    (select-window (get-buffer-window editing-buffer))
     (let ((sum-buf wl-draft-buffer-cur-summary-buffer)
 	  fld-buf sum-win fld-win)
       (if (and wl-draft-use-frame
