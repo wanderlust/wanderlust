@@ -1,3 +1,7 @@
+2002-02-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Check error.
+
 2002-02-15  Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-demo.el (wl-demo-insert-image): Don't touch the specifiers
