@@ -286,13 +286,12 @@ FOLDER is the folder structure."
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
-  (let* ((number-alist (elmo-msgdb-number-load
-			(elmo-folder-msgdb-path folder)))
-	 (number-list (mapcar 'car number-alist))
-	 (spool-folder (elmo-dop-spool-folder folder))
-	 spool-length
-	 (i 0)
-	 max-num)
+  (let ((number-list (elmo-msgdb-list-messages
+		      (elmo-folder-msgdb-path folder)))
+	(spool-folder (elmo-dop-spool-folder folder))
+	spool-length
+	(i 0)
+	max-num)
     (setq spool-length (or (car (if (elmo-folder-exists-p spool-folder)
 				    (elmo-folder-status spool-folder))) 0))
     (setq max-num

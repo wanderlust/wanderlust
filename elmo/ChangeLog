@@ -1,3 +1,10 @@
+2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): If argument is a string,
+	use it as a the path for loading message entities.
+
+	* elmo-dop.el (elmo-folder-status-dop): Use elmo-msgdb-list-messages.
+
 2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-filter.el (elmo-folder-set-message-modified): Set 

@@ -181,10 +181,14 @@
     (elmo-msgdb-make-index msgdb)
     msgdb))
 
-(defun elmo-msgdb-list-messages (msgdb)
-  "List message numbers in the MSGDB."
+(defun elmo-msgdb-list-messages (msgdb-or-path)
+  "Return a list of message numbers in the msgdb.
+If MSGDB-OR-PATH is a msgdb structure, use it as a msgdb.
+If argument is a string, use it as a path to load message entities."
   (mapcar 'elmo-msgdb-overview-entity-get-number
-	  (elmo-msgdb-get-overview msgdb)))
+	  (if (stringp msgdb)
+	      (elmo-msgdb-overview-load msgdb)
+	    (elmo-msgdb-get-overview msgdb))))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
