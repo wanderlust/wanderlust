@@ -235,7 +235,7 @@ Returns a TAG string which is assigned to the COMAND."
 			  command
 			 (list command)))
 	 (process (elmo-network-session-process-internal session))
-	 cmdstr tag token kind formatter)    
+	 cmdstr tag token kind)
     (with-current-buffer (process-buffer process)
       (setq tag (concat elmo-imap4-seq-prefix
 			(number-to-string
