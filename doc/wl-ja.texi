@@ -3141,7 +3141,7 @@ dispose (@samp{d}), delete (@samp{D}), prefetch (@samp{i}), resend (@samp{~})
 @findex wl-summary-redisplay
 $B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r%G%U%)%k%H$NI=<(7A<0$G:FI=<($7$^$9!#(B
 prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7(B
-$B$^$9!#(B@kbd{C-u C-u M} $B$N$h$&$K(B 2$B2s$N(B @kbd{C-u} $B$rIU$1$F<B9T$7$?>l9g!"8=:_(B
+$B$^$9!#(B@kbd{C-u C-u .} $B$N$h$&$K(B 2$B2s$N(B @kbd{C-u} $B$rIU$1$F<B9T$7$?>l9g!"8=:_(B
 $B$NI=<(7A<0$r0];}$7$F:FFI$_9~$_$7D>$7$^$9!#(B(@code{wl-summary-redisplay})
 
 @item <
@@ -4333,9 +4333,9 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B$($^$9!#(BMIME $B2r@O$NJ}<0$K$O0J2<$N$b$N$,;XDj$G$-$^$9!#(B
 
 @example
-@code{mime}       : MIME $B2r@O$r9T$$$^$9(B
-@code{heder-only} : $B%X%C%@$N$_(B MIME $B2r@O$r9T$$$^$9(B
-@code{as-is}      : MIME $B2r@O$r9T$$$^$;$s(B
+@code{mime}        : MIME $B2r@O$r9T$$$^$9(B
+@code{header-only} : $B%X%C%@$N$_(B MIME $B2r@O$r9T$$$^$9(B
+@code{as-is}       : MIME $B2r@O$r9T$$$^$;$s(B
 @end example
 @end table
 
