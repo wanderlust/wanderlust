@@ -174,7 +174,6 @@ For disconnected operations.")
 (defvar elmo-imap4-use-select-to-update-status nil
   "*Some imapd have to send select command to update status.
 (ex. UW imapd 4.5-BETA?).  For these imapd, you must set this variable t.")
-
 (defvar elmo-imap4-use-modified-utf7 nil
   "*Use mofidied UTF-7 (rfc2060) encoding for IMAP4 folder name.")
 

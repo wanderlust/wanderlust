@@ -41,17 +41,6 @@
 	(require 'sasl))
     (error))
   (defun-maybe md5 (a))
-  (defun-maybe sasl-digest-md5-digest-response
-    (digest-challenge username passwd serv-type host &optional realm))
-  (defun-maybe sasl-scram-md5-client-msg-1
-    (authenticate-id &optional authorize-id))
-  (defun-maybe sasl-scram-md5-client-msg-2
-    (server-msg-1 client-msg-1 salted-pass))
-  (defun-maybe sasl-scram-md5-make-salted-pass
-    (server-msg-1 passphrase))
-  (defun-maybe sasl-cram-md5 (username passphrase challenge))
-  (defun-maybe sasl-scram-md5-authenticate-server
-    (server-msg-1 server-msg-2 client-msg-1 salted-pass))
   (defun-maybe starttls-negotiate (a)))
 (condition-case nil
     (progn
@@ -62,14 +51,6 @@
   "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
-
-(defvar elmo-pop3-authenticator-alist
-  '((user        elmo-pop3-auth-user)
-    (apop        elmo-pop3-auth-apop)
-    (cram-md5    elmo-pop3-auth-cram-md5)
-    (scram-md5   elmo-pop3-auth-scram-md5)
-    (digest-md5  elmo-pop3-auth-digest-md5))
-  "Definition of authenticators.")
 
 (eval-and-compile
   (luna-define-class elmo-pop3-session (elmo-network-session) ()))
@@ -362,19 +343,6 @@
 	    (starttls-negotiate process)
 	  (signal 'elmo-open-error
 		  '(elmo-pop3-starttls-error)))))))
-
-;(luna-define-method elmo-network-authenticate-session ((session
-;							elmo-pop3-session))
-;  (let (authenticator)
-;    ;; defaults to 'user.
-;    (unless (elmo-network-session-auth-internal session)
-;      (elmo-network-session-set-auth-internal session 'user))
-;    (setq authenticator
-;	  (nth 1 (assq (elmo-network-session-auth-internal session)
-;		       elmo-pop3-authenticator-alist)))
-;    (unless authenticator (error "There's no authenticator for %s"
-;				 (elmo-network-session-auth-internal session)))
-;    (funcall authenticator session)))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))

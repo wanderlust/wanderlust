@@ -1,5 +1,9 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-smtp-extension-bind): Rewrite for new SASL API.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* Version number is increased to 2.5.2.
 
 2000-11-17  Yuuichi Teranishi  <teranisi@gohome.org>

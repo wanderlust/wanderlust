@@ -1,5 +1,16 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-pop3.el (toplevel): Delete defun-maybe for sasl-*.
+	Delete `elmo-pop3-authenticator-alist'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-network-authenticate-session): Rewrite for
+	new SASL API.
+	* elmo-imap4.el (elmo-network-authenticate-session): Ditto.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-version.el (elmo-version): Up to 2.5.2.
 
 2000-11-15  Yuuichi Teranishi  <teranisi@gohome.org>
