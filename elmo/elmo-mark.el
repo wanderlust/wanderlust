@@ -146,26 +146,17 @@
   (dolist (location locations)
     (elmo-msgdb-global-mark-delete location)))
 
-(luna-define-method elmo-map-message-fetch ((folder elmo-mark-folder)
-					    location strategy &optional
-					    section outbuf unseen)
-  (elmo-mark-folder-map-message-fetch folder location strategy
-				      section outbuf unseen))
+(luna-define-method elmo-message-fetch-with-cache-process
+  ((folder elmo-cache-folder) number strategy &optional section unseen)
+  ;; disbable cache process
+  (elmo-message-fetch-internal folder number strategy section unseen))
 
-(defun elmo-mark-folder-map-message-fetch (folder location strategy
-						  section outbuf unseen)
+(luna-define-method elmo-map-message-fetch ((folder elmo-mark-folder)
+					    location strategy
+					    &optional section unseen)
   (let ((file (elmo-file-cache-get-path location)))
     (when (file-exists-p file)
-      (if outbuf
-	  (with-current-buffer outbuf
-	    (erase-buffer)
-	    (insert-file-contents-as-binary file)
-	    (elmo-delete-cr-buffer)
-	    t)
-	(with-temp-buffer
-	  (insert-file-contents-as-binary file)
-	  (elmo-delete-cr-buffer)
-	  (buffer-string))))))
+      (insert-file-contents-as-binary file))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-mark-folder))
   t)
