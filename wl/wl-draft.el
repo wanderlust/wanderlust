@@ -260,8 +260,11 @@
 	    references (wl-delete-duplicates references)
 	    references (when references
 			 (mapconcat 'identity references "\n\t"))))
-    (wl-draft "" (concat "Forward: " original-subject)
-	      nil nil references nil nil nil nil nil nil nil parent-folder))
+    (wl-draft (list (cons 'To "")
+		    (cons 'Subject
+			  (concat "Forward: " original-subject))
+		    (cons 'References references))
+	      nil nil nil nil parent-folder))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
@@ -289,7 +292,7 @@ Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
   (let (r-list
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from to-alist cc-alist decoder parent-folder)
+	to-alist cc-alist decoder parent-folder)
     (set-buffer summary-buf)
     (setq parent-folder (wl-summary-buffer-folder-name))
     (set-buffer buf)
@@ -422,9 +425,14 @@ Reply to author if WITH-ARG is non-nil."
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
-    (wl-draft
-     to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil nil nil parent-folder)
+    (wl-draft (list (cons 'To to)
+		    (cons 'Cc cc)
+		    (cons 'Newsgroups newsgroups)
+		    (cons 'Subject subject)
+		    (cons 'In-Reply-To in-reply-to)
+		    (cons 'References references)
+		    (cons 'Mail-Followup-To mail-followup-to))
+	      nil nil nil nil parent-folder)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
@@ -570,14 +578,22 @@ Reply to author if WITH-ARG is non-nil."
 	(search-forward (concat mail-header-separator "\n") nil t))
     (unwind-protect
 	(set-buffer
-	 (wl-draft to subject in-reply-to cc references newsgroups
-		   mail-followup-to
+	 (wl-draft (list
+		    (cons 'From
+			  (if (member
+			       (nth 1 (std11-extract-address-components from))
+			       wl-user-mail-address-list)
+			      from))
+		    (cons 'To to)
+		    (cons 'Cc cc)
+		    (cons 'Subject subject)
+		    (cons 'Newsgroups newsgroups)
+		    (cons 'Mail-Followup-To mail-followup-to)
+		    (cons 'In-Reply-To in-reply-to)
+		    (cons 'References references))
 		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
-		   'edit-again
-		   (if (member (nth 1 (std11-extract-address-components from))
-			       wl-user-mail-address-list)
-		       from)))
+		   'edit-again))
       (and to (mail-position-on-field "To"))
       (delete-other-windows)
       (kill-buffer tmp-buf)))
@@ -1425,10 +1441,10 @@ Derived from `message-save-drafts' in T-gnus."
 
 ;;;;;;;;;;;;;;;;
 ;;;###autoload
-(defun wl-draft (&optional to subject in-reply-to cc references newsgroups
-			   mail-followup-to
+(defun wl-draft (&optional header-alist
 			   content-type content-transfer-encoding
-			   body edit-again from parent-folder)
+			   body edit-again
+			   parent-folder)
   "Write and send mail/news message with Wanderlust."
   (interactive)
   (require 'wl)
@@ -1440,7 +1456,8 @@ Derived from `message-save-drafts' in T-gnus."
   (let (wl-demo)
     (wl-init)) ; returns immediately if already initialized.
 
-  (let (buf-name header-alist)
+
+  (let (buf-name header-alist-internal)
     (setq buf-name
 	  (wl-draft-create-buffer
 	   (or
@@ -1448,20 +1465,21 @@ Derived from `message-save-drafts' in T-gnus."
 	    (eq this-command 'wl-summary-write)
 	    (eq this-command 'wl-summary-write-current-folder))
 	   parent-folder))
-    (setq header-alist
-	  (list
-	   (cons "From: " (or from wl-from))
-	   (cons "To: " (or to
-			    (and
-			     (or (interactive-p)
-				 (eq this-command 'wl-summary-write))
-			     "")))
-	   (cons "Cc: " cc)
-	   (cons "Subject: " (or subject ""))
-	   (cons "Newsgroups: " newsgroups)
-	   (cons "Mail-Followup-To: " mail-followup-to)
-	   (cons "In-Reply-To: " in-reply-to)
-	   (cons "References: " references)))
+
+    (unless (cdr (assq 'From header-alist))
+      (setq header-alist
+	    (append (list (cons 'From wl-from)) header-alist)))
+    (unless (cdr (assq 'To header-alist))
+      (setq header-alist
+	    (append header-alist
+		    (list (cons 'To
+				(and
+				 (or (interactive-p)
+				       (eq this-command 'wl-summary-write))
+				 ""))))))
+    (or (assoc 'Subject header-alist)
+	(setq header-alist
+	      (append header-alist (list (cons 'Subject "")))))
     (setq header-alist (append header-alist
 			       (wl-draft-default-headers)
 			       (if body (list "" body))))
@@ -1477,7 +1495,8 @@ Derived from `message-save-drafts' in T-gnus."
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((eq this-command 'wl-summary-write-current-newsgroup)
 	   (mail-position-on-field "Subject"))
-	  ((and (interactive-p) (null to))
+	  ((and (interactive-p)
+		(null (assq 'To header-alist)))
 	   (mail-position-on-field "To"))
 	  (t
 	   (goto-char (point-max))))
@@ -1529,6 +1548,7 @@ Derived from `message-save-drafts' in T-gnus."
   "header-alist' sample
 '(function  ;; funcall
   string    ;; insert string
+  (string . function)  ;;  insert string (funcall)
   (string . string)    ;;  insert string string
   (string . function)  ;;  insert string (funcall)
   (string . nil)       ;;  insert nothing
@@ -1551,6 +1571,14 @@ Derived from `message-save-drafts' in T-gnus."
 	(setq value (cdr (car halist)))
 	(cond
 	 ((functionp field) (apply field value))
+	 ((symbolp field)
+	  (cond
+	   ((stringp value) (insert (symbol-name field) ": " value "\n"))
+	   ((functionp value)
+	    (insert (symbol-name field) ": " (funcall value) "\n"))
+	   ((not value))
+	   (t
+	    (debug))))
 	 ((stringp field)
 	  (cond
 	   ((stringp value) (insert field value "\n"))

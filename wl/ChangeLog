@@ -1,5 +1,14 @@
 2002-03-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-create-contents): Treat symbol as a name
+	of header.
+	(wl-draft): Collect arguments for the header as header-alist.
+	(wl-draft-forward): Arrange arguments for wl-draft.
+	(wl-draft-reply): Ditto.
+	(wl-draft-edit-string): Ditto.
+	* wl-summary.el (wl-summary-write): Ditto.
+	(wl-summary-write-current-folder): Ditto.
+
 	* Version number is increased to 2.9.8.
 
 2002-03-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

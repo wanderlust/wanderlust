@@ -4988,8 +4988,7 @@ Reply to author if invoked with ARG."
   "Write a new draft from Summary."
   (interactive)
   (wl-draft nil nil nil nil nil
-	    nil nil nil nil nil nil
-	    nil (wl-summary-buffer-folder-name))
+	    (wl-summary-buffer-folder-name))
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 
@@ -5022,11 +5021,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		  (stringp (nth 2 guess-list)))
 	(error "Invalid value return guess function `%s'"
 	       (symbol-name guess-func)))
-      (wl-draft (nth 0 guess-list) nil nil ; To:
-		(nth 1 guess-list) nil	; Cc:
-		(nth 2 guess-list)	; Newsgroups:
-		nil nil nil nil nil nil
-		folder)
+      (wl-draft (list (cons 'To (nth 0 guess-list))
+		      (cons 'Cc (nth 1 guess-list))
+		      (cons 'Newsgroups (nth 2 guess-list)))
+		nil nil nil nil folder)
       (run-hooks 'wl-mail-setup-hook)
       (mail-position-on-field "Subject"))))
 
