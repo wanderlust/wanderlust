@@ -1,3 +1,8 @@
+2000-05-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
+	Bind wl-highlight-x-face-func as nil while highlighting header.
+
 2000-05-21  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-folder.el (wl-folder-buffer-cur-path): Make buffer-local.
