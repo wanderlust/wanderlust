@@ -42,8 +42,6 @@
   :type 'directory
   :group 'elmo)
 
-(defvar elmo-localdir-lockfile-list nil)
-
 ;;; ELMO Local directory folder
 (eval-and-compile
   (luna-define-class elmo-localdir-folder (elmo-folder)

@@ -759,9 +759,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 					wl-summary-buffer-folder-indicator
 					wl-summary-buffer-unread-status))
   (easy-menu-add wl-summary-mode-menu)
-  (when wl-summary-lazy-highlight
-    (make-local-variable 'window-scroll-functions)
-    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))  
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -2573,7 +2570,7 @@ If ARG, without confirm."
       (wl-summary-buffer-number-column-detect t)
       (wl-summary-toggle-disp-msg 'on)
       (unless (and reuse-buf keep-cursor)
-	;(setq hilit wl-summary-highlight)
+	(setq hilit wl-summary-highlight)
 	(unwind-protect
 	    (let ((wl-summary-highlight (if reuse-buf wl-summary-highlight))
 		  (wl-use-scoring
@@ -2614,9 +2611,8 @@ If ARG, without confirm."
 		(forward-line -1)
 	      (wl-summary-prev))
 	    (setq retval 'more-next))
-	  ;(setq wl-summary-highlight hilit)
+	  (setq wl-summary-highlight hilit)
 	  (if (and wl-summary-highlight
-		   (not wl-summary-lazy-highlight)
 		   (not reuse-buf))
 	      (if (and wl-summary-highlight-partial-threshold
 		       (> (count-lines (point-min) (point-max))
@@ -2629,9 +2625,6 @@ If ARG, without confirm."
 				    wl-summary-highlight-partial-threshold)))
 		    (wl-highlight-summary (point) (point-max)))
 		(wl-highlight-summary (point-min) (point-max))))
-	  (if (null wl-summary-buffer-msgdb) ;; one more try.
-	      (setq wl-summary-buffer-msgdb
-		    (elmo-msgdb-load (elmo-string fld))))
 	  (if (eq retval 'disp-msg)
 	      (wl-summary-redisplay))
 	  (if mes (message "%s" mes))
@@ -4724,7 +4717,7 @@ Return t if message exists."
 	     (wl-summary-buffer-folder-name) original 'no-sync))
 	(cond ((eq wl-summary-search-via-nntp 'confirm)
 	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>?"
-			elmo-nntp-default-server)
+			elmo-default-nntp-server)
 	       (setq schar (read-char))
 	       (cond ((eq schar ?y)
 		      (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
@@ -4756,10 +4749,10 @@ Return t if message exists."
 	  (setq server server-spec)))
     (when (setq ret (elmo-nntp-get-newsgroup-by-msgid
 		     msgid
-		     (or server elmo-nntp-default-server)
-		     (or user elmo-nntp-default-user)
-		     (or port elmo-nntp-default-port)
-		     (or type elmo-nntp-default-stream-type)))
+		     (or server elmo-default-nntp-server)
+		     (or user elmo-default-nntp-user)
+		     (or port elmo-default-nntp-port)
+		     (or type elmo-default-nntp-stream-type)))
       (setq newsgroups (elmo-nntp-parse-newsgroups ret))
       (setq folder (concat "-" (car newsgroups)
 			   (elmo-nntp-folder-postfix user server port type)))
@@ -4775,7 +4768,7 @@ Return t if message exists."
     (if ret
 	(wl-summary-jump-to-msg-internal folder nil 'update msgid)
       (message "No message id \"%s\" in nntp server \"%s\"."
-	       msgid (or server elmo-nntp-default-server))
+	       msgid (or server elmo-default-nntp-server))
       nil)))
 
 (defun wl-summary-jump-to-msg-internal (folder msg scan-type &optional msgid)

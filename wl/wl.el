@@ -667,6 +667,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (wl-address-init)
 	    (wl-draft-setup)
 	    (wl-refile-alist-setup)
+	    (elmo-crosspost-message-alist-load)
 	    (if wl-use-semi
 		(progn
 		  (require 'wl-mime)
@@ -766,18 +767,15 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (let (demo-buf)
     (unwind-protect
 	(setq demo-buf (wl-init arg))
-      (wl-plugged-init (wl-folder arg))
-      (elmo-init)
-      (unwind-protect
-	  (unless arg
-	    (run-hooks 'wl-auto-check-folder-pre-hook)
-	    (wl-folder-auto-check)
-	    (run-hooks 'wl-auto-check-folder-hook))
-	(unless arg (wl-biff-start))
-	(if (buffer-live-p demo-buf)
-	    (kill-buffer demo-buf)))
+      (wl-plugged-init (wl-folder arg)))
+    (unwind-protect
+	(unless arg
+	  (run-hooks 'wl-auto-check-folder-pre-hook)
+	  (wl-folder-auto-check)
+	  (run-hooks 'wl-auto-check-folder-hook))
       (if (buffer-live-p demo-buf)
 	  (kill-buffer demo-buf))
+      (unless arg (wl-biff-start))
       (run-hooks 'wl-hook))))
 
 ;; Define some autoload functions WL might use.

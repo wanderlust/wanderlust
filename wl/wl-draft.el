@@ -955,15 +955,15 @@ non-nil."
       (let ((session (elmo-pop3-get-session
 		      (list 'pop3
 			    (or wl-pop-before-smtp-user
-				elmo-pop3-default-user)
+				elmo-default-pop3-user)
 			    (or wl-pop-before-smtp-authenticate-type
-				elmo-pop3-default-authenticate-type)
+				elmo-default-pop3-authenticate-type)
 			    (or wl-pop-before-smtp-server
-				elmo-pop3-default-server)
+				elmo-default-pop3-server)
 			    (or wl-pop-before-smtp-port
-				elmo-pop3-default-port)
+				elmo-default-pop3-port)
 			    (or wl-pop-before-smtp-stream-type
-				elmo-pop3-default-stream-type)))))
+				elmo-default-pop3-stream-type)))))
 	(when session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
@@ -1426,21 +1426,21 @@ If optional argument is non-nil, current draft buffer is killed"
 
 (defun wl-draft-elmo-nntp-send ()
   (let ((elmo-nntp-post-pre-hook wl-news-send-pre-hook)
-	(elmo-nntp-default-user
-	 (or wl-nntp-posting-user elmo-nntp-default-user))
-	(elmo-nntp-default-server
-	 (or wl-nntp-posting-server elmo-nntp-default-server))
-	(elmo-nntp-default-port
-	 (or wl-nntp-posting-port elmo-nntp-default-port))
-	(elmo-nntp-default-stream-type
-	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
-    (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
+	(elmo-default-nntp-user
+	 (or wl-nntp-posting-user elmo-default-nntp-user))
+	(elmo-default-nntp-server
+	 (or wl-nntp-posting-server elmo-default-nntp-server))
+	(elmo-default-nntp-port
+	 (or wl-nntp-posting-port elmo-default-nntp-port))
+	(elmo-default-nntp-stream-type
+	 (or wl-nntp-posting-stream-type elmo-default-nntp-stream-type)))
+    (if (not (elmo-plugged-p elmo-default-nntp-server elmo-default-nntp-port))
  	(wl-draft-set-sent-message 'news 'unplugged
- 				   (cons elmo-nntp-default-server
- 					 elmo-nntp-default-port))
-      (elmo-nntp-post elmo-nntp-default-server (current-buffer))
+ 				   (cons elmo-default-nntp-server
+ 					 elmo-default-nntp-port))
+      (elmo-nntp-post elmo-default-nntp-server (current-buffer))
       (wl-draft-set-sent-message 'news 'sent)
-      (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
+      (wl-draft-write-sendlog 'ok 'nntp elmo-default-nntp-server
  			      (std11-field-body "Newsgroups")
  			      (std11-field-body "Message-ID")))))
 

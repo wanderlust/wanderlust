@@ -645,11 +645,11 @@ Header region is supposed to be narrowed."
 	(copy-sequence (cdr entity))))
 
 (static-if (boundp 'nemacs-version)
-    (defsubst elmo-msgdb-insert-file-header (file)
+    (defsubst elmo-localdir-insert-header (file)
       "Insert the header of the article (Does not work on nemacs)."
       (as-binary-input-file
        (insert-file-contents file)))
-  (defsubst elmo-msgdb-insert-file-header (file)
+  (defsubst elmo-localdir-insert-header (file)
     "Insert the header of the article."
     (let ((beg 0)
 	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
@@ -657,11 +657,11 @@ Header region is supposed to be narrowed."
 	  format-alist)
       (when (file-exists-p file)
 	;; Read until header separator is found.
-	(while (and (eq elmo-msgdb-file-header-chop-length
+	(while (and (eq elmo-localdir-header-chop-length
 			(nth 1
 			     (insert-file-contents-as-binary
 			      file nil beg
-			      (incf beg elmo-msgdb-file-header-chop-length)))))
+			      (incf beg elmo-localdir-header-chop-length)))))
 	  (prog1 (not (search-forward "\n\n" nil t))
 	    (goto-char (point-max))))))))
 
@@ -679,7 +679,7 @@ Header region is supposed to be narrowed."
 	;; insert header from file.
 	(catch 'done
 	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
+	      (elmo-localdir-insert-header file)
 	    (error (throw 'done nil)))
 	  (goto-char (point-min))
 	  (setq header-end
