@@ -1,6 +1,7 @@
 2001-09-17  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-summary-width): Fix type to accept nil.
+	(wl-fcc): Fix to accept function.
 	(Reported by Reuben Thomas <rrt@dcs.gla.ac.uk>).
 
 2001-09-11  Katsumi Yamaoka  <yamaoka@jpl.org>

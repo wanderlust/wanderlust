@@ -1206,7 +1206,7 @@ with wl-highlight-folder-many-face."
 (defcustom wl-fcc nil
   "*Folder Carbon Copy."
   :type '(choice (const :tag "disable" nil)
-                 string)
+                 string function)
   :group 'wl-draft
   :group 'wl-pref)
 
