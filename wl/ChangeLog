@@ -1,3 +1,8 @@
+2000-10-11  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-util.el (toplevel): Use `wl-on-xemacs' instead of
+	`running-xemacs'.
+
 2000-10-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (toplevel): Use `product-version-as-string' for
