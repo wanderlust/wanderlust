@@ -1,3 +1,8 @@
+2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-passwd-alist-load, elmo-passwd-alist-save):
+	Use `with-temp-buffer'.
+
 2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-flag.el (elmo-folder-initialize): Fixed the last change.

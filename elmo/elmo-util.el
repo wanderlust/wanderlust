@@ -364,23 +364,18 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defvar elmo-passwd-alist nil)
 
 (defun elmo-passwd-alist-load ()
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
 	  insert-file-contents-post-hook
 	  ret-val)
       (if (not (file-readable-p filename))
 	  ()
-	(set-buffer tmp-buffer)
 	(insert-file-contents filename)
-	(setq ret-val
-	      (condition-case nil
-		  (read (current-buffer))
-		(error nil nil))))
-      (kill-buffer tmp-buffer)
-      ret-val)))
+	(condition-case nil
+	    (read (current-buffer))
+	  (error nil nil))))))
 
 (defun elmo-passwd-alist-clear ()
   "Clear password cache."
@@ -393,15 +388,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
-  (save-excursion
+  (with-temp-buffer
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  print-length print-level)
-      (set-buffer tmp-buffer)
-      (erase-buffer)
-      (prin1 elmo-passwd-alist tmp-buffer)
-      (princ "\n" tmp-buffer)
+      (prin1 elmo-passwd-alist (current-buffer))
+      (princ "\n" (current-buffer))
 ;;;   (if (and (file-exists-p filename)
 ;;;	       (not (equal 384 (file-modes filename))))
 ;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
@@ -410,8 +402,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	    (write-region (point-min) (point-max)
 			  filename nil 'no-msg)
 	    (set-file-modes filename 384))
-	(message "%s is not writable." filename))
-      (kill-buffer tmp-buffer))))
+	(message "%s is not writable." filename)))))
 
 (defun elmo-get-passwd (key)
   "Get password from password pool."
