@@ -114,7 +114,6 @@
       (error
  "non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
   (with-temp-buffer
-    (buffer-disable-undo (current-buffer))
     (while numbers
       (let ((count 0))
 	(while (and numbers
