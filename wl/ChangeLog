@@ -1,5 +1,9 @@
 2001-05-08  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-summary.el (wl-summary-supersedes-message): Use 'message-buf'
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-folder.el (wl-folder-prefetch-entity): Use
 	`wl-folder-get-elmo-folder'.
 	(wl-folder-count-incorporates): Do not use
