@@ -415,6 +415,19 @@ If response is not `OK' response, causes error with IMAP response text."
    (mime-elmo-imap-location-number-internal location)
    (mime-elmo-imap-location-strategy-internal location)))
 
+(luna-define-method mime-imap-location-fetch-entity-p
+  ((location mime-elmo-imap-location) entity)
+  (or (not elmo-message-displaying) ; Fetching entity to save or force display.
+      ;; cache exists
+      (file-exists-p
+       (expand-file-name
+	(mmimap-entity-section (mime-entity-node-id-internal entity))
+	(elmo-fetch-strategy-cache-path
+	 (mime-elmo-imap-location-strategy-internal location))))
+      ;; not too large to fetch.
+      (> elmo-message-fetch-threshold
+	 (or (mime-imap-entity-size-internal entity) 0))))
+
 ;;;
 
 (defun elmo-imap4-session-check (session)
