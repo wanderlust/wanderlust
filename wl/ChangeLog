@@ -1,3 +1,10 @@
+2000-11-08  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name): New
+	function.
+	* wl-summary.el (wl-summary-write-current-folder-functions):
+	Change default value.  Use it.
+
 2000-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.4.0.
