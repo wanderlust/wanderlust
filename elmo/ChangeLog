@@ -1,5 +1,8 @@
 2004-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-mime.el (elmo-mime-display-as-is-coding-system): Moved
+	to elmo-vars.el.
+
 	* elmo.el (elmo-message-match-condition): Use elmo-message-fetch
 	instead of insert-file-contents-as-binary.
 	(elmo-message-set-field): New generic function.

@@ -415,6 +415,12 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-dop-queue nil
   "Global variable for storing disconnected operation queues.")
 
+(defcustom elmo-mime-display-as-is-coding-system (if (boundp 'MULE)
+						     '*autoconv* 'undecided)
+  "*Coding system used when message is displayed as is."
+  :type 'symbol
+  :group 'elmo)
+
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

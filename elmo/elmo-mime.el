@@ -53,12 +53,6 @@ value is used."
 		 (function :tag "Function"))
   :group 'elmo)
 
-(defcustom elmo-mime-display-as-is-coding-system (if (boundp 'MULE)
-						     '*autoconv* 'undecided)
-  "*Coding system used when message is displayed as is."
-  :type 'symbol
-  :group 'elmo)
-
 (luna-define-method initialize-instance :after ((entity mime-elmo-buffer-entity)
 						&rest init-args)
   entity)
