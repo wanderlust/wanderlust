@@ -1,3 +1,8 @@
+2003-07-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-normal-send-func): Fixed bug for removing
+	empty lines.
+
 2003-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-thread-indent-level, wl-thread-*-str): Choose

@@ -1132,15 +1132,23 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 (defun wl-draft-normal-send-func (editing-buffer kill-when-done)
   "Send the message in the current buffer."
   (save-restriction
-    (std11-narrow-to-header mail-header-separator)
-    (wl-draft-insert-required-fields)
-    ;; Delete null fields.
-    (goto-char (point-min))
-    (while (re-search-forward "^[^ \t\n:]+:[ \t]*\n" nil t)
-      (replace-match ""))
+    (narrow-to-region (goto-char (point-min))
+		      (if (re-search-forward
+			   (concat
+			    "^" (regexp-quote mail-header-separator) "$")
+			   nil t)
+			  (match-beginning 0)
+			(point-max)))
     ;; ignore any blank lines in the header
-    (while (re-search-forward "\n\n\n*" nil t)
-      (replace-match "\n")))
+    (while (progn (goto-char (point-min))
+		  (re-search-forward "\n[ \t]*\n\n*" nil t))
+      (replace-match "\n"))
+    (goto-char (point-min))
+    (while (re-search-forward 
+	    "^[^ \t\n:]+:[ \t]*\\(.*\\(\n[ \t].*\\)*\\)\n"
+	    nil t)
+      (when (string= "" (match-string 1))
+	(replace-match ""))))
 ;;;  (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
   (wl-draft-dispatch-message)
   (when kill-when-done
