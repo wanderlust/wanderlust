@@ -1040,7 +1040,7 @@ return value is diffs '(-new -unread -all)."
 	  (setq entity (nth 4 tmp)))
 	(unless entity (error "No folder"))
 	(wl-fldmgr-add (concat "/"
-			       (elmo-read-search-condition
+			       (wl-read-search-condition
 				wl-fldmgr-make-filter-default)
 			       "/" entity))))))
 

@@ -44,6 +44,16 @@
   "Internal variable to hold global-flag-folder structures.")
 
 (eval-and-compile
+  (defconst elmo-flag-char-regexp "]!#$&'+,./0-9:;<=>?@A-Z[^_`a-z|}~-"))
+
+(defun elmo-flag-valid-p (flag)
+  (unless (stringp flag)
+    (setq flag (symbol-name flag)))
+  (string-match (eval-when-compile
+		  (concat "^[" elmo-flag-char-regexp "]+$"))
+		flag))
+
+(eval-and-compile
   (luna-define-class elmo-flag-folder (elmo-localdir-folder)
 		     (flag minfo minfo-hash max-number))
   (luna-define-internal-accessors 'elmo-flag-folder))
@@ -51,8 +61,14 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-flag-folder)
 					    name)
-  (if (string-match "flag/\\([a-z]+\\)" name)
-      (setq name (match-string 1 name))
+  (unless (string-match (eval-when-compile
+			  (concat "^flag\\(/\\(["
+				  elmo-flag-char-regexp
+				  "]+\\)\\)?"))
+			name)
+    (error "Error in folder name `%s'" (elmo-folder-name-internal folder)))
+  (if (match-beginning 1)
+      (setq name (match-string 2 name))
     (setq name (symbol-name (car elmo-global-flags)))
     (elmo-folder-set-name-internal
      folder

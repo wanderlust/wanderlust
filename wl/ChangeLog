@@ -1,3 +1,21 @@
+2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (toplevel): Require 'elmo-flag'.
+	(wl-read-search-condition): New function (Renamed from
+	`elmo-read-search-condition').
+	(wl-read-search-condition-internal): Likewise.
+
+	* wl-summary.el (wl-summary-decide-flag): Cause error if flag is
+	invalid.
+	(wl-summary-pick): Use `wl-read-search-condition' instead of
+	`elmo-read-search-condition'.
+	(wl-summary-virtual): Ditto.
+
+	* wl-folder.el (wl-folder-virtual): Ditto.
+	(wl-folder-pick): Ditto.
+
+	* wl-fldmgr.el (wl-fldmgr-make-filter): Ditto.
+
 2005-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-reedit): Call

@@ -2831,7 +2831,7 @@ If ARG, without confirm."
 			  'in-msgdb)
 			 (error "No messages")))
 	   (condition (car (elmo-parse-search-condition
-			    (elmo-read-search-condition
+			    (wl-read-search-condition
 			     wl-summary-pick-field-default))))
 	   (result (elmo-folder-search wl-summary-buffer-elmo-folder
 				       condition
@@ -2872,7 +2872,7 @@ If ARG, exit virtual folder."
   (if arg
       (wl-summary-unvirtual)
     (wl-summary-goto-folder-subr (concat "/"
-					 (elmo-read-search-condition
+					 (wl-read-search-condition
 					  wl-summary-pick-field-default)
 					 "/"
 					 (wl-summary-buffer-folder-name))
@@ -3337,6 +3337,8 @@ Return non-nil if the mark is updated"
       (unless (memq flag elmo-global-flags)
 	(when (elmo-local-flag-p flag)
 	  (error "Cannot treat `%s'." flag))
+	(unless (elmo-flag-valid-p flag)
+	  (error "Invalid char in `%s'" flag))
 	(if (y-or-n-p (format "Flag `%s' is not registered yet. Register?"
 			      (capitalize (symbol-name flag))))
 	    (setq elmo-global-flags (append

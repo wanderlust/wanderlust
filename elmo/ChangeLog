@@ -1,3 +1,13 @@
+2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-read-search-condition): Eliminate (renamed to
+	`wl-read-search-condition').
+	(elmo-read-search-condition-internal): Likewise.
+
+	* elmo-flag.el (elmo-flag-char-regexp): New constant.
+	(elmo-flag-valid-p): New function.
+	(elmo-folder-initialize): Check flag name is valid.
+
 2005-01-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Use root mailbox without
