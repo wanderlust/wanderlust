@@ -2574,7 +2574,7 @@ key (if already exists, the mark is deleted).  It is convenient to put
 this mark on the messages to remember (If you want to remember to write
 a reply for the message, for example) because this mark remains after
 you exited Emacs.  Messages with the @samp{$} mark can be reviewed in the
-@{'mark} folder even the message itself is deleted in the actual folder.
+@samp{'mark} folder even the message itself is deleted in the actual folder.
 
 @item None
 If the message is read and cached (or local message),there are no
@@ -2587,7 +2587,7 @@ the offline status even they are in the IMAP folder or netnews folder.
 
 Among messages with persistent marks, ones with marks specified by 
 @code{wl-summary-expire-reserve-marks} are excluded from the expiration
-(as a function of wanderlust) explained later. @xref{Expire and Archive}
+(as a function of wanderlust) explained later. @xref{Expire and Archive}.
 
 @subsection How To Read
 
