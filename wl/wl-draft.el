@@ -279,10 +279,10 @@ e.g.
     (with-current-buffer summary-buf
       (setq parent-folder (wl-summary-buffer-folder-name)))
     (let ((decoder (mime-find-field-decoder 'Subject 'plain)))
-      (setq subject (wl-draft-forward-make-subject
-		     (if (and original-subject decoder)
-			 (funcall decoder original-subject) original-subject))))
+      (setq subject (if (and original-subject decoder)
+			(funcall decoder original-subject) original-subject)))
     (with-current-buffer (wl-message-get-original-buffer)
+      (setq subject (wl-draft-forward-make-subject subject))
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
 			(list (std11-field-body "Message-Id"))))
@@ -383,9 +383,8 @@ Reply to author if WITH-ARG is non-nil."
     (with-temp-buffer			; to keep raw buffer unibyte.
       (set-buffer-multibyte default-enable-multibyte-characters)
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
-      (setq subject (wl-draft-reply-make-subject
-		     (if (and subject decoder)
-			 (funcall decoder subject) subject)))
+      (setq subject (if (and subject decoder)
+			(funcall decoder subject) subject))
       (setq to-alist
 	    (mapcar
 	     (lambda (addr)
@@ -400,6 +399,7 @@ Reply to author if WITH-ARG is non-nil."
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
+    (setq subject (wl-draft-reply-make-subject subject))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))

@@ -1,3 +1,10 @@
+2004-12-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-forward):  Call wl-draft-forward-make-subject
+	in original message buffer.
+	(wl-draft-reply): Call wl-draft-reply-make-subject in original message
+	buffer.
+
 2004-12-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-forward): Don't jump into temp-buffer.
