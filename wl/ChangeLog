@@ -1,3 +1,9 @@
+2002-02-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl.el (wl-check-environment): Also cause error when (system-name)
+	returns "localhost.localdomain". (Although it doesn't affect because
+	of condition-case, see change in 2002-01-23 by Teranisi-san.)
+
 2002-02-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-update-newest): Use wl-string-match-member
