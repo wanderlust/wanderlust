@@ -227,6 +227,10 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   "Returns non-nil if RESPONSE is an 'BYE' response."
   (` (assq 'bye (, response))))
 
+(defmacro elmo-imap4-response-garbage-p (response)
+  "Returns non-nil if RESPONSE is an 'garbage' response."
+  (` (assq 'garbage (, response))))
+
 (defmacro elmo-imap4-response-value (response symbol)
   "Get value of the SYMBOL from RESPONSE."
   (` (nth 1 (assq (, symbol) (, response)))))
@@ -347,7 +351,14 @@ TAG is the tag of the command"
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (while (not (or (string= tag elmo-imap4-reached-tag)
-		    (elmo-imap4-response-bye-p elmo-imap4-current-response)))
+		    (elmo-imap4-response-bye-p elmo-imap4-current-response)
+		    (when (elmo-imap4-response-garbage-p
+			   elmo-imap4-current-response)
+		      (message "Garbage response: %s" 
+			       (elmo-imap4-response-value
+				elmo-imap4-current-response
+				'garbage))
+		      t)))
       (when (memq (process-status
 		   (elmo-network-session-process-internal session))
 		  '(open run))

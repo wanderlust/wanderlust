@@ -1164,7 +1164,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result)))
      ((string= "body" search-key)
-      nil)
+      (error
+"Search by BODY is not supported (Toggle the plug off to search from caches)"))
      (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))
