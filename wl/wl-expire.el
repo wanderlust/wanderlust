@@ -697,13 +697,13 @@ Refile to archive folder followed message date."
 					wl-folder-entity))
       (message "Archiving %s is done" entity-name))))
 
-(defun wl-archive-number1 (folder archive-list msgdb dst-folder-arg)
+(defun wl-archive-number1 (folder archive-list msgdb &optional dst-folder-arg)
   (wl-expire-archive-number1 folder archive-list msgdb t dst-folder-arg t))
 
-(defun wl-archive-number2 (folder archive-list msgdb dst-folder-arg)
+(defun wl-archive-number2 (folder archive-list msgdb &optional dst-folder-arg)
   (wl-expire-archive-number2 folder archive-list msgdb t dst-folder-arg t))
 
-(defun wl-archive-date (folder archive-list msgdb dst-folder-arg)
+(defun wl-archive-date (folder archive-list msgdb &optional dst-folder-arg)
   (wl-expire-archive-date folder archive-list msgdb t dst-folder-arg t))
 
 (defun wl-archive-folder (folder archive-list msgdb dst-folder)
@@ -757,7 +757,7 @@ Refile to archive folder followed message date."
 	      (apply func (append (list folder msgs msgdb) args)))
 	(run-hooks 'wl-summary-archive-hook)
 	(if archive-list
-	    (message "Archiving %s is done" folder)
+	    (message "Archiving %s is done" (elmo-folder-name-internal folder))
 	  (and (interactive-p)
 	       (message "No archive")))))))
 
