@@ -1,3 +1,8 @@
+2000-07-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-msgdb-load-async): Call
+	`elmo-imap4-spec-mailbox' instead of `elmo-imap4-spec-folder'.
+
 2000-06-30  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Don't show scroll bars, gutter tabs or
