@@ -448,20 +448,21 @@
     (dolist (number numbers)
       (setq key (modb-standard-key number)
 	    entity (elmo-get-hash-val key entity-map))
-      ;; number-list
-      (setq number-list (delq number number-list))
-      ;; entity-map
-      (elmo-clear-hash-val key entity-map)
-      (elmo-clear-hash-val (modb-standard-entity-id entity) entity-map)
-      ;; flag-count (must be BEFORE flag-map)
-      (modb-standard-countup-flags
-       msgdb
-       (modb-standard-message-flags msgdb number)
-       -1)
-      ;; flag-map
-      (elmo-clear-hash-val key flag-map)
-      (modb-standard-set-message-modified msgdb number)
-      (modb-standard-set-flag-modified msgdb number))
+      (when entity
+	;; number-list
+	(setq number-list (delq number number-list))
+	;; entity-map
+	(elmo-clear-hash-val key entity-map)
+	(elmo-clear-hash-val (modb-standard-entity-id entity) entity-map)
+	;; flag-count (must be BEFORE flag-map)
+	(modb-standard-countup-flags
+	 msgdb
+	 (modb-standard-message-flags msgdb number)
+	 -1)
+	;; flag-map
+	(elmo-clear-hash-val key flag-map)
+	(modb-standard-set-message-modified msgdb number)
+	(modb-standard-set-flag-modified msgdb number)))
     (modb-standard-set-number-list-internal msgdb number-list)
     (modb-standard-set-entity-map-internal msgdb entity-map)
     (modb-standard-set-flag-map-internal msgdb flag-map)))

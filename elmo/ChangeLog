@@ -1,3 +1,8 @@
+2003-11-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (elmo-msgdb-delete-messages): Dose not process
+	if the message dose not exist.
+
 2003-11-18  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-version.el (elmo-version): Up to 2.11.21.

@@ -1,3 +1,8 @@
+2003-11-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-detect-mark-position): Set
+	`wl-summary-buffer-weekday-name-lang'.
+
 2003-11-19  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-prefetch-msg): Undo the last change.

@@ -706,11 +706,13 @@ you."
 	;; bind only for the check.
 	(wl-summary-new-uncached-mark (char-to-string 201))
 	(wl-summary-flag-priority-list '(new))     ; ditto.
+	(lang wl-summary-buffer-weekday-name-lang)
 	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
       (setq wl-summary-buffer-number-column column
-	    wl-summary-buffer-line-formatter formatter)
+	    wl-summary-buffer-line-formatter formatter
+	    wl-summary-buffer-weekday-name-lang lang)
       (insert
        (wl-summary-create-line
 	(elmo-msgdb-make-message-entity
