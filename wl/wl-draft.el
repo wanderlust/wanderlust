@@ -1022,7 +1022,7 @@ non-nil."
 				elmo-default-pop3-port)
 			    (or wl-pop-before-smtp-stream-type
 				elmo-default-pop3-stream-type)))))
-	(when session (elmo-network-close-session session)))
+	(and session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
 

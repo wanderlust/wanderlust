@@ -93,11 +93,10 @@ If ARG insert string at point."
 Insert User-Agent field instead of X-Mailer field."
   (concat "User-Agent: "
 	  (wl-generate-user-agent-string-1
-	   ;; for backward compatibility
 	   (or (and (boundp 'mime-edit-insert-user-agent-field)
-		    mime-edit-insert-user-agent-field) ; SEMI
+		    mime-edit-insert-user-agent-field)
 	       (and (boundp 'mime-editor/version)
-		    mime-editor/version))))) ; verbose User-Agent when tm
+		    mime-editor/version)))))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
@@ -116,14 +115,17 @@ If VERBOSE return with SEMI, FLIM and APEL version."
      ((and (boundp 'mime-editor/version) mime-editor/version)
       (concat (product-string-verbose 'wl-version) " "
 	      "tm/" mime-editor/version
-	      (when (and (boundp 'mime-editor/codename) mime-editor/codename)
-		(concat " (" mime-editor/codename ")"))
-	      (when (and (boundp 'mime-library-product) mime-library-product)
-		(concat " " (aref mime-library-product 0)
-			"/" (mapconcat 'int-to-string
-				       (aref mime-library-product 1)
-				       ".")
-			" (" (aref mime-library-product 2) ")"))
+	      (if (and (boundp 'mime-editor/codename)
+		       mime-editor/codename)
+		  (concat " (" mime-editor/codename ")"))
+	      (if (and (boundp 'mime-library-product)
+		       mime-library-product)
+		  (concat " " (aref mime-library-product 0)
+			  "/"
+			  (mapconcat 'int-to-string
+				     (aref mime-library-product 1)
+				     ".")
+			  " (" (aref mime-library-product 2) ")"))
 	      (condition-case nil
 		  (progn
 		    (require 'apel-ver)
@@ -141,23 +143,25 @@ If WITH-CODENAME add XEmacs codename."
   (cond
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (concat "Emacs " (wl-match-string 1 emacs-version)
-	    (when (boundp 'mule-version) (concat "/Mule " mule-version))))
+	    (and (boundp 'mule-version)(concat "/Mule " mule-version))))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (wl-match-string 1 emacs-version)
 	    (format " %d.%d" emacs-major-version emacs-minor-version)
-	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
-	      (format "b%d" emacs-beta-version))
-	    (when (and with-codename
-		       (boundp 'xemacs-codename) xemacs-codename)
-	      (concat " - \"" xemacs-codename "\""))))
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if with-codename
+		(if (boundp 'xemacs-codename)
+		    (concat " - \"" xemacs-codename "\"")))))
    (t emacs-version)))
 
 (defun wl-extended-emacs-version2 (&optional delimiter with-codename)
   "Stringified Emacs version.
 Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
-   ((and (boundp 'mule-version) mule-version
+   ((and (boundp 'mule-version)
+	 mule-version
 	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
     (format "Mule%s%s@%d.%d%s"
 	    (or delimiter " ")
@@ -182,18 +186,21 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
     (concat (wl-match-string 1 emacs-version)
 	    (or delimiter " ")
 	    (format "%d.%d" emacs-major-version emacs-minor-version)
-	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
-	      (format "b%d" emacs-beta-version))
-	    (when (and with-codename
-		       (boundp 'xemacs-codename) xemacs-codename)
-	      (format " (%s)" xemacs-codename))))
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if (and with-codename
+		     (boundp 'xemacs-codename)
+		     xemacs-codename)
+		(format " (%s)" xemacs-codename))))
    (t emacs-version)))
 
 (defun wl-extended-emacs-version3 (&optional delimiter with-codename)
   "Stringified Emacs version.
 Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
-   ((and (boundp 'mule-version) mule-version
+   ((and (boundp 'mule-version)
+	 mule-version
 	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
     (format "Emacs%s%d.%d Mule%s%s%s"
 	    (or delimiter " ")
@@ -225,11 +232,13 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
     (concat (wl-match-string 1 emacs-version)
 	    (or delimiter " ")
 	    (format "%d.%d" emacs-major-version emacs-minor-version)
-	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
-	      (format "b%d" emacs-beta-version))
-	    (when (and with-codename
-		       (boundp 'xemacs-codename) xemacs-codename)
-	      (format " (%s)" xemacs-codename))))
+	    (if (and (boundp 'emacs-beta-version)
+		     emacs-beta-version)
+		(format "b%d" emacs-beta-version))
+	    (if (and with-codename
+		     (boundp 'xemacs-codename)
+		     xemacs-codename)
+		(format " (%s)" xemacs-codename))))
    (t emacs-version)))
 
 
