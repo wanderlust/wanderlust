@@ -132,7 +132,8 @@ LOCATION."
   (elmo-maildir-folder-flagged-locations-internal folder))
 
 (luna-define-method elmo-folder-msgdb-create 
-  ((folder elmo-maildir-folder) numbers seen-list)
+  ((folder elmo-maildir-folder)
+   numbers new-mark already-mark seen-mark important-mark seen-list)
   (let* ((unread-list (elmo-maildir-folder-unread-locations-internal folder))
 	 (flagged-list (elmo-maildir-folder-flagged-locations-internal folder))
 	 (len (length numbers))
@@ -158,9 +159,9 @@ LOCATION."
 				      entity)))
 	(cond 
 	 ((member location unread-list)
-	  (setq mark elmo-msgdb-new-mark)) ; unread!
+	  (setq mark new-mark)) ; unread!
 	 ((member location flagged-list)
-	  (setq mark elmo-msgdb-important-mark)))
+	  (setq mark important-mark)))
 	(if (setq mark (or (elmo-msgdb-global-mark-get
 			    (elmo-msgdb-overview-entity-get-id
 			     entity))
@@ -396,7 +397,7 @@ file name for maildir directories."
 
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-maildir-folder)
-   src-folder numbers &optional same-number)
+   src-folder numbers unread-marks &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-maildir-folder-directory-internal folder))
 	    (succeeds numbers)

@@ -33,7 +33,7 @@
 ;;; ELMO filter folder
 (eval-and-compile
   (luna-define-class elmo-filter-folder (elmo-folder)
-		     (condition target require-msgdb))
+		     (condition target))
   (luna-define-internal-accessors 'elmo-filter-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-filter-folder)
@@ -47,40 +47,16 @@
 	 folder
 	 (elmo-make-folder (elmo-match-string 1 (cdr pair))))
       (error "Folder syntax error `%s'" (elmo-folder-name-internal folder)))
-    (elmo-filter-folder-set-require-msgdb-internal
-     folder
-     (elmo-folder-search-requires-msgdb-p
-      (elmo-filter-folder-target-internal folder)
-      (elmo-filter-folder-condition-internal folder)))
     folder))
 
-;(luna-define-method elmo-folder-open-internal ((folder elmo-filter-folder))
-;  (elmo-folder-open-internal (elmo-filter-folder-target-internal folder)))
-
-(luna-define-method elmo-folder-msgdb :around ((folder elmo-filter-folder))
-  ;; Load target's msgdb if required.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-msgdb (elmo-filter-folder-target-internal folder)))
-  ;; Load msgdb of itself.
-  (luna-call-next-method))
+(luna-define-method elmo-folder-open-internal ((folder elmo-filter-folder))
+  (elmo-folder-open-internal (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-check ((folder elmo-filter-folder))
-  (elmo-folder-synchronize (elmo-filter-folder-target-internal folder)))
+  (elmo-folder-check (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-filter-folder))
   (elmo-folder-close-internal (elmo-filter-folder-target-internal folder)))
-
-(luna-define-method elmo-folder-close :around ((folder elmo-filter-folder))
-  ;; Save target msgdb if it is used.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-close (elmo-filter-folder-target-internal folder)))
-  (luna-call-next-method))
-
-(luna-define-method elmo-folder-commit :around ((folder elmo-filter-folder))
-  ;; Save target msgdb if it is used.
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-commit (elmo-filter-folder-target-internal folder)))
-  (luna-call-next-method))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-filter-folder))
@@ -108,30 +84,51 @@
    type))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-filter-folder)
-					      numlist seen-list)
-  (let* ((target-folder (elmo-filter-folder-target-internal folder))
-	 (len (length numlist))
-	 (msgdb (elmo-folder-msgdb target-folder))
-	 overview number-alist mark-alist message-id entity)
-    (when (> len elmo-display-progress-threshold)
-      (elmo-progress-set 'elmo-folder-msgdb-create
-			 len "Creating msgdb..."))
-    (unwind-protect
-	(dolist (number numlist)
-	  (setq entity (elmo-msgdb-overview-get-entity number msgdb))
-	  (when entity
-	    (setq overview (elmo-msgdb-append-element overview entity)
-		  message-id (elmo-msgdb-overview-entity-get-id entity)
-		  number-alist (elmo-msgdb-number-add number-alist
-						      number
-						      message-id)
-		  mark-alist (elmo-msgdb-mark-append
-			      mark-alist
-			      number
-			      (elmo-msgdb-get-mark msgdb number))))
-	  (elmo-progress-notify 'elmo-folder-msgdb-create))
-      (elmo-progress-clear 'elmo-folder-msgdb-create))
-    (list overview number-alist mark-alist)))
+					      numlist new-mark already-mark
+					      seen-mark important-mark
+					      seen-list)
+  (let ((target-folder (elmo-filter-folder-target-internal folder)))
+    (if (elmo-folder-plugged-p target-folder)
+	(elmo-folder-msgdb-create target-folder
+				  numlist
+				  new-mark
+				  already-mark
+				  seen-mark important-mark seen-list)
+      ;; Copy from msgdb of target folder if it is unplugged.
+      (let ((len (length numlist))
+	    (msgdb (elmo-folder-msgdb target-folder))
+	    overview number-alist mark-alist
+	    message-id seen gmark)
+	(when (> len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-msgdb-create
+			     len "Creating msgdb..."))
+	(unwind-protect
+	    (dolist (number numlist)
+	      (let ((entity (elmo-msgdb-overview-get-entity number msgdb)))
+		(when entity
+		  (setq entity (elmo-msgdb-copy-overview-entity entity)
+			overview (elmo-msgdb-append-element overview entity)
+			message-id (elmo-msgdb-overview-entity-get-id entity)
+			number-alist (elmo-msgdb-number-add number-alist
+							    number
+							    message-id)
+			seen (member message-id seen-list))
+		  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
+				      (if (elmo-file-cache-exists-p message-id)
+					  (if seen
+					      nil
+					    already-mark)
+					(if seen
+					    nil ;;seen-mark
+					  new-mark))))
+		      (setq mark-alist
+			    (elmo-msgdb-mark-append
+			     mark-alist
+			     number
+			     gmark)))))
+	      (elmo-progress-notify 'elmo-folder-msgdb-create))
+	  (elmo-progress-clear 'elmo-folder-msgdb-create))
+	(list overview number-alist mark-alist)))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
 					       unread &optional number)
@@ -163,27 +160,48 @@
       ;; not available
       t)))
 
-(defsubst elmo-filter-folder-list-unreads (folder)
-  (elmo-list-filter
-   (elmo-folder-list-messages folder nil 'in-msgdb)
-   (elmo-folder-list-unreads
-    (elmo-filter-folder-target-internal folder))))
-
-(luna-define-method elmo-folder-list-unreads ((folder elmo-filter-folder))
-  (elmo-filter-folder-list-unreads folder))
-
-(defsubst elmo-filter-folder-list-importants (folder)
-  (elmo-uniq-list
-   (nconc
+(defsubst elmo-filter-folder-list-unreads-internal (folder unread-marks
+							   mark-alist)
+  (let ((unreads (elmo-folder-list-unreads-internal
+		  (elmo-filter-folder-target-internal folder)
+		  unread-marks
+		  (or mark-alist
+		      (elmo-msgdb-get-mark-alist
+		       (elmo-folder-msgdb folder))))))
+    (unless (listp unreads)
+      (setq unreads
+	    (delq nil
+		  (mapcar
+		   (function
+		    (lambda (x)
+		      (if (member (cadr x) unread-marks)
+			  (car x))))
+		   (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))))))
     (elmo-list-filter
-     (elmo-folder-list-messages folder nil 'in-msgdb)
-     (elmo-folder-list-importants
-      (elmo-filter-folder-target-internal folder)))
-    (elmo-folder-list-messages-with-global-mark
-     folder elmo-msgdb-important-mark))))
+     (mapcar 'car (elmo-msgdb-get-number-alist
+		   (elmo-folder-msgdb folder)))
+     unreads)))
 
-(luna-define-method elmo-folder-list-importants ((folder elmo-filter-folder))
-  (elmo-filter-folder-list-importants folder))
+(luna-define-method elmo-folder-list-unreads-internal
+  ((folder elmo-filter-folder)
+   unread-marks &optional mark-alist)
+  (elmo-filter-folder-list-unreads-internal folder unread-marks mark-alist))
+
+(defsubst elmo-filter-folder-list-importants-internal (folder important-mark)
+  (let ((importants (elmo-folder-list-importants-internal
+		     (elmo-filter-folder-target-internal folder)
+		     important-mark)))
+    (if (listp importants)
+	(elmo-list-filter
+	 (mapcar 'car (elmo-msgdb-get-number-alist
+		       (elmo-folder-msgdb folder)))
+	 importants)
+      t)))
+
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-filter-folder)
+   important-mark)
+  (elmo-filter-folder-list-importants-internal folder important-mark))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-filter-folder)
 						 &optional one-level)
@@ -259,49 +277,26 @@
   (elmo-message-file-name (elmo-filter-folder-target-internal folder)
 			  number))
 
-(luna-define-method elmo-folder-mark-as-read :around ((folder
-						       elmo-filter-folder)
-						      numbers)
+(luna-define-method elmo-folder-mark-as-read ((folder elmo-filter-folder)
+					      numbers)
   (elmo-folder-mark-as-read (elmo-filter-folder-target-internal folder)
-			    numbers)
-  (luna-call-next-method))
+			    numbers))
 
-(luna-define-method elmo-folder-unmark-read :around ((folder
-						      elmo-filter-folder)
-						     numbers)
+(luna-define-method elmo-folder-unmark-read ((folder elmo-filter-folder)
+					      numbers)
   (elmo-folder-unmark-read (elmo-filter-folder-target-internal folder)
-			   numbers)
-  (luna-call-next-method))
+			   numbers))
 
-(luna-define-method elmo-folder-mark-as-important :around ((folder
-							    elmo-filter-folder)
-							   numbers)
+(luna-define-method elmo-folder-mark-as-important ((folder elmo-filter-folder)
+						   numbers)
   (elmo-folder-mark-as-important (elmo-filter-folder-target-internal folder)
-				 numbers)
-    (luna-call-next-method))
+				 numbers))
 
-
-(luna-define-method elmo-folder-unmark-important :around ((folder
-							   elmo-filter-folder)
-							  numbers)
+(luna-define-method elmo-folder-unmark-important ((folder elmo-filter-folder)
+						  numbers)
   (elmo-folder-unmark-important (elmo-filter-folder-target-internal folder)
-				numbers)
-  (luna-call-next-method))
+				numbers))
 
-(luna-define-method elmo-folder-mark-as-answered :around ((folder
-							   elmo-filter-folder)
-							  numbers)
-  (elmo-folder-mark-as-answered (elmo-filter-folder-target-internal folder)
-				numbers)
-  (luna-call-next-method))
-
-
-(luna-define-method elmo-folder-unmark-answered :around ((folder
-							  elmo-filter-folder)
-							 numbers)
-  (elmo-folder-unmark-answered (elmo-filter-folder-target-internal folder)
-			       numbers)
-  (luna-call-next-method))
 
 (require 'product)
 (product-provide (provide 'elmo-filter) (require 'elmo-version))

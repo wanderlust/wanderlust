@@ -66,15 +66,20 @@
       (elmo-folder-contains-type (elmo-pipe-folder-dst-internal folder) type)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-pipe-folder)
-					      numlist seen-list)
+					      numlist new-mark already-mark
+					      seen-mark important-mark
+					      seen-list)
   (elmo-folder-msgdb-create (elmo-pipe-folder-dst-internal folder)
-			    numlist seen-list))
+			    numlist new-mark already-mark
+			    seen-mark important-mark seen-list))
 
 (luna-define-method elmo-folder-append-messages ((folder elmo-pipe-folder)
 						 src-folder numbers
+						 unread-marks
 						 &optional same-number)
   (elmo-folder-append-messages (elmo-pipe-folder-dst-internal folder)
 			       src-folder numbers
+			       unread-marks
 			       same-number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-pipe-folder)
@@ -172,14 +177,15 @@
   (elmo-folder-list-messages-internal (elmo-pipe-folder-dst-internal
 				       folder) nohide))
 
-(luna-define-method elmo-folder-list-unreads ((folder elmo-pipe-folder))
-  (elmo-folder-list-unreads (elmo-pipe-folder-dst-internal folder)))
+(luna-define-method elmo-folder-list-unreads-internal
+  ((folder elmo-pipe-folder) unread-marks &optional mark-alist)
+  (elmo-folder-list-unreads-internal (elmo-pipe-folder-dst-internal folder)
+				     unread-marks mark-alist))
 
-(luna-define-method elmo-folder-list-importants ((folder elmo-pipe-folder))
-  (elmo-folder-list-importants (elmo-pipe-folder-dst-internal folder)))
-
-(luna-define-method elmo-folder-list-answereds ((folder elmo-pipe-folder))
-  (elmo-folder-list-answereds (elmo-pipe-folder-dst-internal folder)))
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-pipe-folder) important-mark)
+  (elmo-folder-list-importants-internal (elmo-pipe-folder-dst-internal folder)
+					important-mark))
 
 (luna-define-method elmo-folder-status ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-src-internal folder))

@@ -38,42 +38,6 @@
 (require 'std11)
 (require 'mime)
 
-(defcustom elmo-msgdb-new-mark "N"
-  "Mark for new message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-(defcustom elmo-msgdb-unread-uncached-mark "U"
-  "Mark for unread and uncached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-(defcustom elmo-msgdb-unread-cached-mark "!"
-  "Mark for unread but already cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-(defcustom elmo-msgdb-read-uncached-mark "u"
-  "Mark for read but uncached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-;; Not implemented yet.
-(defcustom elmo-msgdb-answered-cached-mark "&"
-  "Mark for answered and cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-(defcustom elmo-msgdb-answered-uncached-mark "A"
-  "Mark for answered but cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
-(defcustom elmo-msgdb-important-mark"$"
-  "Mark for important message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
-
 ;;; MSGDB interface.
 (defun elmo-load-msgdb (path)
   "Load the MSGDB from PATH."
@@ -96,175 +60,25 @@
 (defsubst elmo-msgdb-set-mark (msgdb number mark)
   "Set MARK of the message with NUMBER in the MSGDB.
 if MARK is nil, mark is removed."
-  (let ((elem (elmo-get-hash-val (format "#%d" number)
-				 (elmo-msgdb-get-mark-hashtb msgdb))))
-    (if elem
-	(if mark
-	    ;; Set mark of the elem
-	    (setcar (cdr elem) mark)
-	  ;; Delete elem from mark-alist
-	  (elmo-msgdb-set-mark-alist
-	   msgdb
-	   (delq elem (elmo-msgdb-get-mark-alist msgdb)))
-	  (elmo-clear-hash-val (format "#%d" number)
-			       (elmo-msgdb-get-mark-hashtb msgdb)))
-      (when mark
-	;; Append new element.
-	(elmo-msgdb-set-mark-alist
-	 msgdb
-	 (nconc
-	  (elmo-msgdb-get-mark-alist msgdb)
-	  (list (setq elem (list number mark)))))
-	(elmo-set-hash-val (format "#%d" number) elem
-			   (elmo-msgdb-get-mark-hashtb msgdb))))))
+  (elmo-msgdb-set-mark-alist
+   msgdb
+   (elmo-msgdb-mark-alist-set (elmo-msgdb-get-mark-alist msgdb)
+			      number
+			      mark msgdb))
+  (unless mark
+    (elmo-clear-hash-val (format "#%d" number)
+			 (elmo-msgdb-get-mark-hashtb msgdb))))
 
-(defun elmo-msgdb-set-cached (msgdb number cached)
-  "Set message cache status."
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (cur-status (cond
-		      ((string= cur-mark elmo-msgdb-important-mark)
-		       'important)
-		      ((member cur-mark (elmo-msgdb-answered-marks))
-		       'answered)
-		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
-    (unless (eq (not cached) (not cur-cached))
-      (case cur-status
-	(read
-	 (elmo-msgdb-set-mark msgdb number
-			      (unless cached
-				elmo-msgdb-read-uncached-mark)))
-	(important nil)
-	(answered
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cached
-				  elmo-msgdb-answered-cached-mark
-				elmo-msgdb-answered-uncached-mark)))
-	(t
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cached
-				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark)))))))
-
-(defun elmo-msgdb-set-status (msgdb folder number status)
-  "Set message status.
-MSGDB is the ELMO msgdb.
-FOLDER is a ELMO folder structure.
-NUMBER is a message number to be set status.
-STATUS is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered."
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (use-cache (elmo-message-use-cache-p folder number))
-	 (cur-status (cond
-		      ((string= cur-mark elmo-msgdb-important-mark)
-		       'important)
-		      ((member cur-mark (elmo-msgdb-answered-marks))
-		       'answered)
-		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
-	 mark-modified)
-    (case status
-      (read
-       (case cur-status
-	 ((read important answered))
-	 (t (elmo-msgdb-set-mark msgdb number
-				 (if (and use-cache cur-cached)
-				     (elmo-msgdb-set-mark
-				      msgdb number
-				      elmo-msgdb-read-uncached-mark)))
-	    (setq mark-modified t))))
-      (important
-       (unless (eq cur-status 'important)
-	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)
-	 (setq mark-modified t)))
-      (answered
-       (unless (or (eq cur-status 'answered) (eq cur-status 'important))
-	 (elmo-msgdb-set-mark msgdb number
-			      (if cur-cached
-				  (if use-cache
-				      elmo-msgdb-answered-cached-mark
-				    elmo-msgdb-answered-uncached-mark)
-				elmo-msgdb-answered-uncached-mark)))
-       (setq mark-modified t)))
-    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
-
-(defun elmo-msgdb-unset-status (msgdb folder number status)
-  "Unset message status.
-MSGDB is the ELMO msgdb.
-FOLDER is a ELMO folder structure.
-NUMBER is a message number to be set status.
-STATUS is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered."
-  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (use-cache (elmo-message-use-cache-p folder number))
-	 (cur-status (cond
-		      ((string= cur-mark elmo-msgdb-important-mark)
-		       'important)
-		      ((member cur-mark (elmo-msgdb-answered-marks))
-		       'answered)
-		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
-    (case status
-      (read
-       (if (eq cur-status 'read)
-	   (elmo-msgdb-set-mark msgdb number
-				(if (and cur-cached use-cache)
-				    elmo-msgdb-unread-cached-mark
-				  elmo-msgdb-unread-uncached-mark))))
-      (important
-       (if (eq cur-status 'important)
-	   (elmo-msgdb-set-mark msgdb number nil)))
-      (answered
-       (if (eq cur-status 'answered)
-	   (elmo-msgdb-set-mark msgdb number
-				(if (and cur-cached (not use-cache))
-				    elmo-msgdb-read-uncached-mark)))))))
-
-(defvar elmo-msgdb-unread-marks-internal nil)
-(defsubst elmo-msgdb-unread-marks ()
-  "Return an unread mark list"
-  (or elmo-msgdb-unread-marks-internal
-      (setq elmo-msgdb-unread-marks-internal
-	    (list elmo-msgdb-new-mark
-		  elmo-msgdb-unread-uncached-mark
-		  elmo-msgdb-unread-cached-mark))))
-
-(defvar elmo-msgdb-answered-marks-internal nil)
-(defsubst elmo-msgdb-answered-marks ()
-  "Return an answered mark list"
-  (or elmo-msgdb-answered-marks-internal
-      (setq elmo-msgdb-answered-marks-internal
-	    (list elmo-msgdb-answered-cached-mark
-		  elmo-msgdb-answered-uncached-mark))))
-
-(defvar elmo-msgdb-uncached-marks-internal nil)
-(defsubst elmo-msgdb-uncached-marks ()
-  (or elmo-msgdb-uncached-marks-internal
-      (setq elmo-msgdb-uncached-marks-internal
-	    (list elmo-msgdb-answered-uncached-mark
-		  elmo-msgdb-unread-uncached-mark
-		  elmo-msgdb-read-uncached-mark))))
-
-(defsubst elmo-msgdb-count-marks (msgdb)
+(defsubst elmo-msgdb-count-marks (msgdb new-mark unread-marks)
   (let ((new 0)
-	(unreads 0)
-	(answered 0))
+	(unreads 0))
     (dolist (elem (elmo-msgdb-get-mark-alist msgdb))
       (cond
-       ((string= (cadr elem) elmo-msgdb-new-mark)
+       ((string= (cadr elem) new-mark)
 	(incf new))
-       ((member (cadr elem) (elmo-msgdb-unread-marks))
-	(incf unreads))
-       ((member (cadr elem) (elmo-msgdb-answered-marks))
-	(incf answered))))
-    (list new unreads answered)))
+       ((member (cadr elem) unread-marks)
+	(incf unreads))))
+    (cons new unreads)))
 
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."
@@ -439,13 +253,30 @@ content of MSGDB is changed."
 ;;;
 ;; persistent mark handling
 ;; (for each folder)
+(defun elmo-msgdb-mark-alist-set (alist id mark msgdb)
+  (let ((ret-val alist)
+	entity)
+    (setq entity (assq id alist))
+    (if entity
+	(if (eq mark nil)
+	    ;; delete this entity
+	    (setq ret-val (delq entity alist))
+	  ;; set mark
+	  (setcar (cdr entity) mark))
+      (when mark
+	(setq ret-val (elmo-msgdb-append-element ret-val
+						 (setq entity
+						       (list id mark))))
+	(elmo-set-hash-val (format "#%d" id) entity
+			   (elmo-msgdb-get-mark-hashtb msgdb))))
+    ret-val))
 
 (defun elmo-msgdb-mark-append (alist id mark)
   "Append mark."
   (setq alist (elmo-msgdb-append-element alist
 					 (list id mark))))
 
-(defun elmo-msgdb-seen-list (msgdb)
+(defun elmo-msgdb-seen-list (msgdb seen-marks)
   "Get SEEN-MSGID-LIST from MSGDB."
   (let ((ov (elmo-msgdb-get-overview msgdb))
 	mark seen-list)
@@ -453,8 +284,7 @@ content of MSGDB is changed."
       (if (setq mark (elmo-msgdb-get-mark
 		      msgdb
 		      (elmo-msgdb-overview-entity-get-number (car ov))))
-	  (if (and mark (member mark (list elmo-msgdb-important-mark
-					   elmo-msgdb-read-uncached-mark)))
+	  (if (and mark (member mark seen-marks))
 	      (setq seen-list (cons
 			       (elmo-msgdb-overview-entity-get-id (car ov))
 			       seen-list)))
@@ -919,12 +749,12 @@ header separator."
 		     elmo-msgdb-directory)
 		    alist))
 
-(defun elmo-msgdb-add-msgs-to-seen-list (msgs msgdb seen-list)
+(defun elmo-msgdb-add-msgs-to-seen-list (msgs msgdb unread-marks seen-list)
   ;; Add to seen list.
   (let (mark)
     (while msgs
       (if (setq mark (elmo-msgdb-get-mark msgdb (car msgs)))
-	  (unless (member mark (elmo-msgdb-unread-marks)) ;; not unread mark
+	  (unless (member mark unread-marks) ;; not unread mark
 	    (setq seen-list
 		  (cons
 		   (elmo-msgdb-get-field msgdb (car msgs) 'message-id)

@@ -148,13 +148,11 @@ If optional argument NON-PERSISTENT is non-nil, folder is treated as
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
-(luna-define-generic elmo-folder-msgdb (folder)
-  "Return the msgdb of FOLDER (on-demand loading).")
-
-(luna-define-method elmo-folder-msgdb ((folder elmo-folder))
-  (or (elmo-folder-msgdb-internal folder)
-      (elmo-folder-set-msgdb-internal folder
-				      (elmo-msgdb-load folder))))
+(defmacro elmo-folder-msgdb (folder)
+  "Return the msgdb of FOLDER (on-demand loading)."
+  (` (or (elmo-folder-msgdb-internal (, folder))
+	 (elmo-folder-set-msgdb-internal (, folder)
+					 (elmo-msgdb-load (, folder))))))
 
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
@@ -206,72 +204,56 @@ Return value is cons cell or list:
 (luna-define-generic elmo-folder-reserve-status-p (folder)
   "If non-nil, the folder should not close folder after `elmo-folder-status'.")
 
-(defun elmo-folder-list-messages (folder &optional visible-only in-msgdb)
+(defun elmo-folder-list-messages (folder &optional visible-only)
   "Return a list of message numbers contained in FOLDER.
-If optional VISIBLE-ONLY is non-nil, killed messages are not listed.
-If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
-  (let ((list (if in-msgdb
-		  t
-		(elmo-folder-list-messages-internal folder visible-only))))
-    (elmo-living-messages
-     (if (listp list)
-	 list
-       ;; Use current list.
-       (mapcar
-	'car
-	(elmo-msgdb-get-number-alist (elmo-folder-msgdb folder))))
-     (elmo-folder-killed-list-internal folder))))
+If optional VISIBLE-ONLY is non-nil, killed messages are not listed."
+  (let ((list (elmo-folder-list-messages-internal folder visible-only))
+	(killed (elmo-folder-killed-list-internal folder))
+	numbers)
+    (setq numbers
+	  (if (listp list)
+	      list
+	    ;; Not available, use current list.
+	    (mapcar
+	     'car
+	     (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))))
+    (elmo-living-messages numbers killed)))
 
-(luna-define-generic elmo-folder-list-unreads (folder)
-  "Return a list of unread message numbers contained in FOLDER.")
-(luna-define-generic elmo-folder-list-importants (folder)
-  "Return a list of important message numbers contained in FOLDER.")
-(luna-define-generic elmo-folder-list-answereds (folder)
-  "Return a list of answered message numbers contained in FOLDER.")
+(defun elmo-folder-list-unreads (folder unread-marks)
+  "Return a list of unread message numbers contained in FOLDER.
+UNREAD-MARKS is the unread marks."
+  (let ((list (elmo-folder-list-unreads-internal folder
+						 unread-marks)))
+    (if (listp list)
+	list
+      ;; Not available, use current mark.
+      (delq nil
+	    (mapcar
+	     (function
+	      (lambda (x)
+		(if (member (cadr x) unread-marks)
+		    (car x))))
+	     (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))))
 
-(luna-define-method elmo-folder-list-unreads ((folder elmo-folder))
-  (delq nil
-	(mapcar
-	 (lambda (x)
-	   (if (member (cadr x) (elmo-msgdb-unread-marks))
-	       (car x)))
-	 (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
-
-;; TODO: Should reconsider the structure of global mark.
-(defun elmo-folder-list-messages-with-global-mark (folder mark)
-  (let (entity msgs)
+(defun elmo-folder-list-importants (folder important-mark)
+  "Returns a list of important message numbers contained in FOLDER.
+IMPORTANT-MARK is the important mark."
+  (let ((importants (elmo-folder-list-importants-internal folder important-mark))
+	(number-alist (elmo-msgdb-get-number-alist
+		       (elmo-folder-msgdb folder)))
+	num-pair result)
     (dolist (mark-pair (or elmo-msgdb-global-mark-alist
 			   (setq elmo-msgdb-global-mark-alist
 				 (elmo-object-load
 				  (expand-file-name
 				   elmo-msgdb-global-mark-filename
 				   elmo-msgdb-directory)))))
-      (if (and (string= mark (cdr mark-pair))
-	       (setq entity
-		     (elmo-msgdb-overview-get-entity (car mark-pair)
-						     (elmo-folder-msgdb
-						      folder))))
-	  (setq msgs (cons (elmo-msgdb-overview-entity-get-number entity)
-			   msgs))))
-    msgs))
-
-(luna-define-method elmo-folder-list-importants ((folder elmo-folder))
-  (elmo-uniq-list
-   (nconc
-    (elmo-folder-list-messages-with-global-mark folder
-						elmo-msgdb-important-mark)
-    (elmo-folder-list-messages-mark-match folder
-					  (regexp-quote
-					   elmo-msgdb-important-mark)))))
-
-(luna-define-method elmo-folder-list-answereds ((folder elmo-folder))
-  (delq nil
-	(mapcar
-	 (function
-	  (lambda (x)
-	    (if (member (cadr x) (elmo-msgdb-answered-marks))
-		(car x))))
-	 (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
+      (if (and (string= important-mark (cdr mark-pair))
+	       (setq num-pair (rassoc (car mark-pair) number-alist)))
+	  (setq result (cons (car num-pair) result))))
+    (if (listp importants)
+	(elmo-uniq-list (nconc result importants))
+      result)))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional
 								visible-only)
@@ -279,10 +261,24 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
   ;; Return t if the message list is not available.
   )
 
+(luna-define-generic elmo-folder-list-unreads-internal (folder
+							unread-marks
+							&optional mark-alist)
+  ;; Return a list of unread message numbers contained in FOLDER.
+  ;; If optional MARK-ALIST is set, it is used as mark-alist.
+  ;; Return t if this feature is not available.
+  )
+
+(luna-define-generic elmo-folder-list-importants-internal (folder
+							   important-mark)
+  ;; Return a list of important message numbers contained in FOLDER.
+  ;; Return t if this feature is not available.
+  )
+
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
 If optional argument ONE-LEVEL is non-nil, only children of FOLDER is returned.
-\(a folder which have children is returned as a list\)
+(a folder which have children is returned as a list)
 Otherwise, all descendent folders are returned.")
 
 (luna-define-generic elmo-folder-have-subfolder-p (folder)
@@ -332,10 +328,13 @@ CONDITION is a condition structure for testing.
 NUMBERS is a list of message numbers,
 use to be test for \"last\" and \"first\" predicates.")
 
-(luna-define-generic elmo-folder-msgdb-create (folder numbers seen-list)
+(luna-define-generic elmo-folder-msgdb-create
+  (folder numbers new-mark already-mark seen-mark important-mark seen-list)
   "Create a message database (implemented in each backends).
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to create msgdb.
+NEW-MARK, ALREADY-MARK, SEEN-MARK, and IMPORTANT-MARK are mark string for
+new message, unread but cached message, read message and important message.
 SEEN-LIST is a list of message-id string which should be treated as read.")
 
 (luna-define-generic elmo-folder-unmark-important (folder numbers)
@@ -358,34 +357,6 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.")
 
-(luna-define-generic elmo-folder-unmark-answered (folder numbers)
-  "Un-mark messages as answered.
-FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
-
-(luna-define-generic elmo-folder-mark-as-answered (folder numbers)
-  "Mark messages as answered.
-FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
-
-(luna-define-generic elmo-folder-set-status (folder numbers status)
-  "Set message status.
-FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be set status.
-STATUS is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered.")
-
-(luna-define-generic elmo-folder-unset-status (folder numbers status)
-  "Unset message status.
-FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be unset status.
-STATUS is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered.")
-
 (luna-define-generic elmo-folder-append-buffer (folder unread &optional number)
   "Append current buffer as a new message.
 FOLDER is the destination folder(ELMO folder structure).
@@ -396,6 +367,7 @@ If optional argument NUMBER is specified, the new message number is set
 (luna-define-generic elmo-folder-append-messages (folder
 						  src-folder
 						  numbers
+						  unread-marks
 						  &optional
 						  same-number)
   "Append messages from folder.
@@ -404,6 +376,7 @@ Caller should make sure FOLDER is `writable'.
 (Can be checked with `elmo-folder-writable-p').
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
+UNREAD-MARKS is a list of unread mark string.
 If second optional argument SAME-NUMBER is specified,
 message number is preserved (if possible).")
 
@@ -548,6 +521,14 @@ Return newly created temporary directory name which contains temporary files.")
   ((folder elmo-folder) &optional visible-only)
   t)
 
+(luna-define-method elmo-folder-list-unreads-internal
+  ((folder elmo-folder) unread-marks &optional mark-alist)
+  t)
+
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-folder) important-mark)
+  t)
+
 (defun elmo-folder-encache (folder numbers &optional unread)
   "Encache messages in the FOLDER with NUMBERS.
 If UNREAD is non-nil, messages are not marked as read."
@@ -635,22 +616,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (luna-define-generic elmo-folder-newsgroups (folder)
   "Return list of newsgroup name of FOLDER.")
 
-(luna-define-generic elmo-folder-search-requires-msgdb-p (folder condition)
-  "Return non-nil if searching in FOLDER by CONDITION requires msgdb fetch.")
-
-(defun elmo-folder-search-requires-msgdb-p-internal (folder condition)
-  (if (listp condition)
-      (or (elmo-folder-search-requires-msgdb-p-internal
-	   folder (nth 1 condition))
-	  (elmo-folder-search-requires-msgdb-p-internal
-	   folder (nth 2 condition)))
-    (and (not (string= (elmo-filter-key condition) "last"))
-	 (not (string= (elmo-filter-key condition) "first")))))
-
-(luna-define-method elmo-folder-search-requires-msgdb-p ((folder elmo-folder)
-							 condition)
-  (elmo-folder-search-requires-msgdb-p-internal folder condition))
-
 (luna-define-method elmo-folder-newsgroups ((folder elmo-folder))
   nil)
 
@@ -660,7 +625,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (defun elmo-generic-folder-open (folder load-msgdb)
   (let ((inhibit-quit t))
-    (if load-msgdb (elmo-folder-msgdb folder))
+    (if load-msgdb
+	(elmo-folder-set-msgdb-internal folder (elmo-msgdb-load folder)))
     (elmo-folder-set-killed-list-internal
      folder
      (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
@@ -748,34 +714,20 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (defsubst elmo-folder-search-fast (folder condition numbers)
   (when (and numbers
 	     (vectorp condition)
-	     (member (elmo-filter-key condition) '("first" "last" "mark")))
-    (if (string= (elmo-filter-key condition) "mark")
-	(let ((msgdb (elmo-folder-msgdb folder)))
-	  ;; msgdb should be synchronized at this point.
-	  (cond
-	   ((string= (elmo-filter-value condition) "unread")
-	    (elmo-folder-list-unreads folder))
-	   ((string= (elmo-filter-value condition) "important")
-	    (elmo-folder-list-importants folder))
-	   ((string= (elmo-filter-value condition) "answered")
-	    (elmo-folder-list-answereds folder))
-	   ((string= (elmo-filter-value condition) "any")
-	    (nconc (elmo-folder-list-unreads folder)
-		   (elmo-folder-list-importants folder)
-		   (elmo-folder-list-answereds folder)))))
-      (let ((len (length numbers))
-	    (lastp (string= (elmo-filter-key condition) "last"))
-	    (value (string-to-number (elmo-filter-value condition))))
-	(when (eq (elmo-filter-type condition) 'unmatch)
-	  (setq lastp (not lastp)
-		value  (- len value)))
-	(if lastp
-	    (nthcdr (max (- len value) 0) numbers)
-	  (when (> value 0)
-	    (let ((last (nthcdr (1- value) numbers)))
-	      (when last
-		(setcdr last nil))
-	      numbers)))))))
+	     (member (elmo-filter-key condition) '("first" "last")))
+    (let ((len (length numbers))
+	  (lastp (string= (elmo-filter-key condition) "last"))
+	  (value (string-to-number (elmo-filter-value condition))))
+      (when (eq (elmo-filter-type condition) 'unmatch)
+	(setq lastp (not lastp)
+	      value  (- len value)))
+      (if lastp
+	  (nthcdr (max (- len value) 0) numbers)
+	(when (> value 0)
+	  (let ((last (nthcdr (1- value) numbers)))
+	    (when last
+	      (setcdr last nil))
+	    numbers))))))
 
 (luna-define-method elmo-folder-search ((folder elmo-folder)
 					condition
@@ -1002,13 +954,14 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (luna-define-method elmo-folder-append-messages ((folder elmo-folder)
 						 src-folder
 						 numbers
+						 unread-marks
 						 &optional
 						 same-number)
   (elmo-generic-folder-append-messages folder src-folder numbers
-				       same-number))
+				       unread-marks same-number))
 
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
-						   same-number)
+						   unread-marks same-number)
   (let (unseen seen-list succeed-numbers failure cache)
     (with-temp-buffer
       (set-buffer-multibyte nil)
@@ -1042,7 +995,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 		     folder
 		     (setq unseen (member (elmo-message-mark
 					   src-folder (car numbers))
-					  (elmo-msgdb-unread-marks)))
+					  unread-marks))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
@@ -1068,6 +1021,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 					     no-delete-info
 					     no-delete
 					     same-number
+					     unread-marks
 					     save-unread)
   (save-excursion
     (let* ((messages msgs)
@@ -1085,6 +1039,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (unless (setq succeeds (elmo-folder-append-messages dst-folder
 							      src-folder
 							      messages
+							      unread-marks
 							      same-number))
 	    (error "move: append message to %s failed"
 		   (elmo-folder-name-internal dst-folder)))
@@ -1097,7 +1052,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	    (setq seen-list
 		  (elmo-msgdb-add-msgs-to-seen-list
 		   msgs (elmo-folder-msgdb src-folder)
-		   seen-list))
+		   unread-marks seen-list))
 	    (elmo-msgdb-seen-save dir seen-list))))
       (if (and (not no-delete) succeeds)
 	  (progn
@@ -1155,7 +1110,7 @@ FIELD is a symbol of the field."
   (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
 
 (defun elmo-message-set-mark (folder number mark)
-  ;; Set mark for the message in the FOLDER with NUMBER as MARK.
+  "Set mark for the message in the FOLDER with NUMBER as MARK."
   (elmo-msgdb-set-mark
    (elmo-folder-msgdb folder)
    number mark))
@@ -1166,61 +1121,37 @@ FIELD is a symbol of the field."
 (luna-define-method elmo-message-folder ((folder elmo-folder) number)
   folder) ; default is folder
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-folder)
-						  numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'important))))
+(luna-define-method elmo-folder-unmark-important ((folder elmo-folder) numbers)
+  t)
 
 (luna-define-method elmo-folder-mark-as-important ((folder elmo-folder)
 						   numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'important))))
+  t)
 
 (luna-define-method elmo-folder-unmark-read ((folder elmo-folder) numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'read))))
+  t)
 
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-folder) numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'read))))
-
-(luna-define-method elmo-folder-unmark-answered ((folder elmo-folder) numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'answered))))
-
-(luna-define-method elmo-folder-mark-as-answered ((folder elmo-folder) numbers)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'answered))))
+  t)
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-folder)
 						   &optional
 						   number-alist)
   ;; Do nothing.
   )
+
+(defsubst elmo-folder-replace-marks (folder alist)
+  "Replace marks of the FOLDER according to ALIST."
+  (let (pair)
+    (dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
+      (when (setq pair (assoc (cadr elem) alist))
+	(if (elmo-message-use-cache-p folder (car elem))
+	    (elmo-msgdb-set-mark (elmo-folder-msgdb folder)
+				 (car elem)
+				 (cdr pair))
+	  (elmo-msgdb-set-mark (elmo-folder-msgdb folder)
+			       (car elem)
+			       nil))))))
 
 (defun elmo-generic-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb
@@ -1233,10 +1164,6 @@ FIELD is a symbol of the field."
 	     pair overview
 	     to-be-deleted
 	     mark-alist)
-	(elmo-folder-set-msgdb-internal folder
-					(elmo-msgdb-append
-					 (elmo-folder-msgdb folder)
-					 append-msgdb))
 	(while cur
 	  (setq all-alist (delq (car cur) all-alist))
 	  ;; same message id exists.
@@ -1262,6 +1189,10 @@ FIELD is a symbol of the field."
 	      (t
 	       ;; Do nothing.
 	       (setq to-be-deleted nil)))
+	(elmo-folder-set-msgdb-internal folder
+					(elmo-msgdb-append
+					 (elmo-folder-msgdb folder)
+					 append-msgdb))
 	(length to-be-deleted))
     0))
 
@@ -1354,17 +1285,29 @@ FIELD is a symbol of the field."
   (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
 
 (defun elmo-folder-synchronize (folder
+				new-mark	     ;"N"
+				unread-uncached-mark ;"U"
+				unread-cached-mark   ;"!"
+				read-uncached-mark   ;"u"
+				important-mark       ;"$"
 				&optional ignore-msgdb
 				no-check)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
+NEW-MARK, UNREAD-CACHED-MARK, READ-UNCACHED-MARK, and IMPORTANT-MARK
+are mark strings for new messages, unread but cached messages,
+read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
 \(the messages which are not in the killed-list\) are thrown away and
 synchronized.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 
-Return a list of a cross-posted message number.
+Return a list of
+\(NEW-MSGDB DELETE-LIST CROSSED\)
+NEW-MSGDB is the newly appended msgdb.
+DELETE-LIST is a list of deleted message number.
+CROSSED is cross-posted message number.
 If update process is interrupted, return nil."
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
@@ -1380,9 +1323,11 @@ If update process is interrupted, return nil."
 		      (elmo-folder-msgdb folder)))
     (if ignore-msgdb
 	(progn
-	  (setq seen-list (nconc (elmo-msgdb-seen-list
-				  (elmo-folder-msgdb folder))
-				 seen-list))
+	  (setq seen-list (nconc
+			   (elmo-msgdb-seen-list
+			    (elmo-folder-msgdb folder)
+			    (list important-mark read-uncached-mark))
+			   seen-list))
 	  (elmo-folder-clear folder (eq ignore-msgdb 'visible-only))))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
@@ -1413,16 +1358,19 @@ If update process is interrupted, return nil."
 	      (progn
 		(elmo-folder-update-number folder)
 		(elmo-folder-process-crosspost folder)
-		0 ; no updates.
+		(list nil nil nil) ; no updates.
 		)
 	    (if delete-list (elmo-msgdb-delete-msgs
 			     (elmo-folder-msgdb folder) delete-list))
 	    (when new-list
 	      (setq new-msgdb (elmo-folder-msgdb-create
-			       folder new-list seen-list))
+			       folder
+			       new-list
+			       new-mark unread-cached-mark
+			       read-uncached-mark important-mark
+			       seen-list))
 	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
-				      elmo-msgdb-new-mark
-				      elmo-msgdb-unread-uncached-mark)
+				      new-mark unread-uncached-mark)
 	      ;; Clear seen-list.
 	      (if (elmo-folder-persistent-p folder)
 		  (setq seen-list (elmo-msgdb-seen-save
@@ -1435,7 +1383,7 @@ If update process is interrupted, return nil."
 	      (elmo-folder-set-message-modified-internal folder t)
 	      (elmo-folder-set-mark-modified-internal folder t))
 	    ;; return value.
-	    (or crossed 0)))
+	    (list new-msgdb delete-list crossed)))
       (quit
        ;; Resume to the original status.
        (if before-append
@@ -1449,6 +1397,7 @@ If update process is interrupted, return nil."
    (elmo-msgdb-get-number-alist
     (elmo-folder-msgdb folder))))
 
+;;;
 (defun elmo-msgdb-load (folder &optional silent)
   (unless silent
     (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))

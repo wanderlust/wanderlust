@@ -117,7 +117,10 @@ If the value is a list, all elements are used as index paths for namazu."
     entity))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
-					      numlist seen-list)
+					      numlist new-mark
+					      already-mark seen-mark
+					      important-mark
+					      seen-list)
   (let* (overview number-alist mark-alist entity
 		  i percent num pair)
     (setq num (length numlist))
@@ -145,7 +148,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	       (or (elmo-msgdb-global-mark-get
 		    (elmo-msgdb-overview-entity-get-id
 		     entity))
-		   elmo-msgdb-new-mark))))
+		   new-mark))))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))
@@ -249,6 +252,25 @@ If the value is a list, all elements are used as index paths for namazu."
       (nreverse locations))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-nmz-folder))
+  t)
+
+;;; To override elmo-map-folder methods.
+(luna-define-method elmo-folder-list-unreads-internal
+  ((folder elmo-nmz-folder) unread-marks &optional mark-alist)
+  t)
+
+(luna-define-method elmo-folder-unmark-important ((folder elmo-nmz-folder)
+						  numbers)
+  t)
+
+(luna-define-method elmo-folder-mark-as-important ((folder elmo-nmz-folder)
+						   numbers)
+  t)
+
+(luna-define-method elmo-folder-unmark-read ((folder elmo-nmz-folder) numbers)
+  t)
+
+(luna-define-method elmo-folder-mark-as-read ((folder elmo-nmz-folder) numbers)
   t)
 
 (require 'product)
