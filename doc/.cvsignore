@@ -1,1 +1,17 @@
 *.info
+*.dvi
+*.aux
+*.log
+*.toc
+*.cp
+*.fn
+*.ky
+*.pg
+*.tp
+*.vr
+*.cps
+*.fns
+*.kys
+*.pgs
+*.tps
+*.vrs
