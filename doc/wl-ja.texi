@@ -953,7 +953,7 @@ Maildir $B$O!"(B@file{cur}, @file{new}, @file{tmp} $B$N%G%#%l%/%H%j$r4^$s$G$$
 $B%;!<%8%U%!%$%k$O:o=|$5$l$^$9!#(B
 
 $B$3$NF0:n$O(B @uref{http://cr.yp.to/proto/maildir.html} $B$K=>$C$F$$$^$9!#(B@*
-($BF|K\8lLu$O(B @uref{http://www.jp.qmail.org/q103/jman5/maildir.html})
+($BF|K\8lLu$O(B @uref{http://man.qmail.jp/jman5/maildir.html})
 
 $BNc(B:
 
