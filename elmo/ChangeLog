@@ -1,3 +1,7 @@
+2000-05-15  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-vars.el: Doc fixes. Trim trailing whitespace.
+
 2000-05-12  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-vars.el (elmo-display-progress-threshold): New variable.
