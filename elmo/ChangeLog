@@ -1,5 +1,7 @@
 2001-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-shimbun.el (elmo-shimbun-msgdb-to-headers): Inverted logic.
+
 	* elmo-util.el (elmo-file-field-primitive-condition-match):
 	New inline function (Don't fetch file content if "first" or "last").
 	(elmo-file-field-condition-match): Use
