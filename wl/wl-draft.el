@@ -1684,7 +1684,7 @@ Derived from `message-save-drafts' in T-gnus."
     (setq file-name (elmo-message-file-name draft-folder number))
     (unless (file-exists-p file-name)
       (error "File %s does not exist" file-name))
-    (if (setq buffer (get-buffer 
+    (if (setq buffer (get-buffer
 		      (concat wl-draft-folder "/"
 			      (number-to-string number))))
 	(progn
@@ -1714,8 +1714,8 @@ Derived from `message-save-drafts' in T-gnus."
       ;; Don't care about supersession.
       (make-local-variable 'truncate-partial-width-windows)
       (setq truncate-partial-width-windows nil)
-      (setq truncate-lines wl-draft-truncate-lines)    
-      (setq buffer-file-name nil)    
+      (setq truncate-lines wl-draft-truncate-lines)
+      (setq buffer-file-name nil)
       (setq wl-sent-message-via nil)
       (setq wl-sent-message-queued nil)
       (setq wl-draft-buffer-file-name file-name)
