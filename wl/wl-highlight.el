@@ -854,8 +854,10 @@
 				  (intern (format
 					   "wl-highlight-summary-%s-flag-face"
 					   (car (car fl)))))
-			    (when (facep face)
-			      (list face)))
+			     (unless (facep face)
+			       (make-face face 'no-init)
+			       (set-face-foreground face (nth 1 (car fl))))
+			     (list face))
 			  fl nil))
 		  (setq fl (cdr fl)))
 	      (when (memq (car priorities) flags)

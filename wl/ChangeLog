@@ -1,3 +1,8 @@
+2004-02-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-highlight.el (wl-highlight-summary-line-face-spec): Make face
+	for flag if it is not defined.
+
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-e21.el (wl-highlight-folder-current-line): Use
