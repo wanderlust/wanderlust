@@ -67,7 +67,7 @@
   (concat ldap-ldif-safe-init-char-regexp ldap-ldif-safe-char-regexp "*")
   "A Regexp for safe-string.")
 
-(defconst ldap-ldif-field-name-regexp "[a-zA-Z][a-zA-Z0-9-]*"
+(defconst ldap-ldif-field-name-regexp "[a-zA-Z][a-zA-Z0-9-;]*"
   "A Regexp for field name.")
 
 (defconst ldap-ldif-field-head-regexp
@@ -99,11 +99,13 @@
 (defvar ldap-modify-program "ldapmodify"
   "LDAP modify program.")
 
-(defcustom ldap-search-program-arguments '("-L" "-B")
+(defcustom ldap-search-program-arguments '("-LL" "-x")
   "*A list of additional arguments to pass to `ldapsearch'.
 It is recommended to use the `-T' switch with Nescape's
 implementation to avoid line wrapping.
 `-L' is needed to get LDIF outout.
+(`-LL' is needed to get rid of comments from OpenLDAP's ldapsearch.)
+`-x' is needed to use simple authentication.
 The `-B' switch should be used to enable the retrieval of
 binary values."
   :type '(repeat :tag "`ldapsearch' Arguments"
@@ -688,7 +690,10 @@ entry according to the value of WITHDN."
 			       (list filter)
 			       attrs)))
       (if (and (integerp ret)
-	       (not (zerop ret)))
+	       (not (zerop ret))
+	       ;; When openldap's `ldapsearch' exceeds response size limit,
+	       ;; it's exit status becomes `4'.
+               (/= ret 4))
 	  (error "LDAP error: \"No such object\""))
       (goto-char (point-min))
       (setq start (point))
@@ -746,7 +751,9 @@ entry according to the value of WITHDN."
     (let ((case-fold-search t)
 	  (field-body nil)
 	  body)
-      (while (re-search-forward (concat "^" name ":[ \t]*") nil t)
+      ;; search for the line which have name with options.
+      (while (re-search-forward (concat "^" name
+					"\\(;[a-zA-Z0-9-]+\\)?:[ \t]*") nil t)
 	;; Base64
 	(if (string-match "^:[ \t]*" (setq body
 					   (buffer-substring-no-properties
@@ -760,10 +767,15 @@ entry according to the value of WITHDN."
   "Collect fields without WITHOUT."
   (goto-char (point-min))
   (let ((regexp (concat "\\(" ldap-ldif-field-head-regexp "\\)[ \t]*"))
-	dest name body entry)
+	dest name name-option body entry)
     (while (re-search-forward regexp nil t)
-      (setq name (downcase (buffer-substring-no-properties
-			    (match-beginning 1)(1- (match-end 1)))))
+      ;; name with options.
+      (setq name-option (split-string (downcase (buffer-substring-no-properties
+						 (match-beginning 1)
+						 (1- (match-end 1))))
+				      ";"))
+      ;; XXX options are discarded.
+      (setq name (car name-option))
       (setq body (buffer-substring-no-properties
 		  (match-end 0) (ldap/field-end)))
       (if (string-match "^:[ \t]*" body)

@@ -1,5 +1,12 @@
 2001-12-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* pldap.el (ldap-ldif-field-name-regexp): Changed regexp.
+	(ldap-search-program-arguments): Changed default value.
+	(ldap-search-basic): Accept exit status 4.
+	(ldap/field-body): Parse options.
+	(ldap/collect-field): Ditto.
+	(According to the advise from Mito <mito@mxa.nes.nec.co.jp>)
+
 	* elmo-imap4.el (elmo-imap4-process-bye): New function.
 	(elmo-imap4-send-command): Call elmo-imap4-process-bye.
 	(elmo-imap4-accept-ok): Ditto.
