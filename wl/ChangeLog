@@ -1,3 +1,8 @@
+2003-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Use actual value for
+	attributes; Fix for small window.
+
 2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-refile.el (wl-refile-get-field-value): Call

@@ -148,6 +148,12 @@ It calls following-method selected from variable
   (interactive)
   (let* (wl-recipients
 	 (orig-buffer (current-buffer))
+	 (wl-envelope-from (or wl-envelope-from
+			       (wl-address-header-extract-address wl-from)))
+	 (wl-smtp-posting-server
+	  (or wl-smtp-posting-server (progn (require 'smtp) smtp-server)
+	      "localhost"))
+	 (wl-smtp-posting-port (or wl-smtp-posting-port smtp-service))
 	 (current-point (point))
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (parent-folder wl-draft-parent-folder)
@@ -207,7 +213,7 @@ It calls following-method selected from variable
 				wl-draft-preview-attributes-buffer-name)))))
     (if (not wl-draft-preview-attributes)
 	(message (concat "Recipients: " wl-recipients))
-;      (ignore-errors ; in case when the window is too small
+      (ignore-errors ; in case when the window is too small
 	(let* ((cur-win (selected-window))
 	       (size (min
 		      (- (window-height cur-win)
@@ -238,7 +244,7 @@ It calls following-method selected from variable
 			"\n"))
 	      (goto-char (point-min))
 	      (wl-highlight-headers)))
-	  (select-window cur-win)))));)
+	  (select-window cur-win))))))
 
 (defalias 'wl-draft-caesar-region  'mule-caesar-region)
 
