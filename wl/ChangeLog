@@ -1,5 +1,10 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-smtp-extension-bind): Use `smtp-sasl-properties'
+	instead of `smtp-sasl-user-realm'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-smtp-extension-bind): Rewrite for new SASL API.
 
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>

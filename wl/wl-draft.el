@@ -151,15 +151,16 @@
 			   (list wl-smtp-authenticate-type)))))
 	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
 	    (smtp-use-starttls wl-smtp-connection-type)
-	    smtp-sasl-user-name smtp-sasl-user-realm sasl-read-passphrase)
+	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
        (if (and (string= (car smtp-sasl-mechanisms) "DIGEST-MD5")
 		;; sendmail bug?
 		(string-match "^\\([^@]*\\)@\\([^@]*\\)"
 			      wl-smtp-posting-user))
 	   (setq smtp-sasl-user-name (match-string 1 wl-smtp-posting-user)
-		 smtp-sasl-user-realm (match-string 2 wl-smtp-posting-user))
+		 smtp-sasl-properties (list 'realm 
+					    (match-string 2 wl-smtp-posting-user)))
 	 (setq smtp-sasl-user-name wl-smtp-posting-user
-	       smtp-sasl-user-realm nil))
+	       smtp-sasl-properties nil))
 	 (setq sasl-read-passphrase
 	     (function
 	      (lambda (prompt)
