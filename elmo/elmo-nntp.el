@@ -185,7 +185,15 @@ Don't cache if nil.")
   (with-current-buffer (elmo-network-session-buffer session)
     (setq elmo-nntp-read-point (point-min))
     (or (elmo-nntp-read-response session t)
-	(error "cannot open network"))))
+	(error "cannot open network"))
+    (when (eq (elmo-network-stream-type-symbol
+	       (elmo-network-session-stream-type-internal session))
+	      'starttls)
+      (elmo-nntp-send-command session "starttls")
+      (or (elmo-nntp-read-response session)
+	  (error "cannot open starttls session"))
+      (starttls-negotiate process))))
+
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-nntp-session))

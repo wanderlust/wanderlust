@@ -1,3 +1,8 @@
+2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session):
+	Add starttls negotiation.
+
 2000-10-15  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Read greeting
