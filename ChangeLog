@@ -1,3 +1,7 @@
+2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: Support @letterpaper and @afivepaper.
+
 2000-12-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK (config-wl-package-subr): Don't try load `WL-ELS.el'.
