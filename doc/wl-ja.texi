@@ -6151,6 +6151,8 @@ OK です。
 (setq bbdb-use-pop-up t)
 ;; @r{自動収集}
 (setq bbdb/mail-auto-create-p t)
+;; @r{自動収集しないフォルダの指定}
+(setq bbdb-wl-ignore-folder-regexp "^@@")
 (setq signature-use-bbdb t)
 (setq bbdb-north-american-phone-numbers-p nil)
 ;; @r{サマリに bbdb の名前を表示} :-)。

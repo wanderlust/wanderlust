@@ -6245,6 +6245,8 @@ byte-compiled and installed.
 (setq bbdb-use-pop-up t)
 ;; @r{auto collection}
 (setq bbdb/mail-auto-create-p t)
+;; @r{exceptional folders against auto collection}
+(setq bbdb-wl-ignore-folder-regexp "^@@")
 (setq signature-use-bbdb t)
 (setq bbdb-north-american-phone-numbers-p nil)
 ;; @r{shows the name of bbdb in the summary} :-)
