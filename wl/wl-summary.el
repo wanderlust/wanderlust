@@ -1619,11 +1619,7 @@ If ARG is non-nil, checking is omitted."
       ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
-      (wl-folder-set-folder-updated
-       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
-       (list 0
-	     (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)
-	     (elmo-folder-length wl-summary-buffer-elmo-folder))))))
+      (wl-summary-folder-info-update))))
 
 (defun wl-summary-update-status-marks ()
   "Synchronize status marks on current buffer to the msgdb."
