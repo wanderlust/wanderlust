@@ -1,3 +1,10 @@
+2004-12-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-forward): Put subject in original
+	message buffer as argument of wl-draft-forward.
+	* wl-draft.el (wl-draft-forward): Decode subject as in
+	wl-draft-reply.
+
 2004-12-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-unsubscribe): Show message if it is not

@@ -4224,15 +4224,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(wl-summary-redisplay-internal folder number))
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer mes-buf)
-      ;; get original subject.
-      (if summary-buf
-	  (save-excursion
-	    (set-buffer summary-buf)
-	    (setq subject
-		  (or (elmo-message-entity-field
-		       (elmo-message-entity folder number) 'subject 'decode)
-		      ""))))
       (set-buffer mes-buf)
+      (setq subject (with-current-buffer
+			wl-message-buffer-original-buffer
+		      (std11-field-body "Subject")))
       (wl-draft-forward subject summary-buf number)
       (with-current-buffer summary-buf (run-hooks 'wl-summary-forward-hook))
       (unless without-setup-hook
