@@ -50,6 +50,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** xxx-func という名前の変数は xxx-function という名前に変更 されました。
 
+** X-Face utility 1.3.6.12 以前はサポートされなくなりました。
+   必要なら X-Face utility 1.3.6.13 以降をインストールしてください。
+
 ** plugged モードで、stream-type が違うものは別エントリとして扱われるように
    なりました。
 

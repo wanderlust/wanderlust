@@ -1,5 +1,7 @@
 2001-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* NEWS, NEWS.ja: Added description about X-Face utility support.
+
 	* WL-MK (toplevel): Use = instead of `eq' for numeric value.
 	(config-wl-package-subr, config-wl-package-xmas): Removed last
 	period from error messages.
