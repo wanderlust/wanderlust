@@ -1,3 +1,9 @@
+2001-12-06  Hiroshi Tsutsui  <tsutsui@easter.kuee.kyoto-u.ac.jp>
+
+	* elmo.el (elmo-folder-confirm-appends): Check whether the value
+	of elmo-folder-update-threshold is nil, which can be set by
+	wl-summary-update-confirm-threshold.
+
 2001-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nmz.el (elmo-nmz-default-index-path): Allow path list.
