@@ -9,6 +9,12 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Starting Wanderlust on the new frame is possible now. Set as
    (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 
+** In Folder mode, you can go into virtual folder which consists of messages
+   with some specified condition (wl-folder-virtual). It is binded to "V".
+
+** In Folder mode, you can search folders containing messages with some
+   specified condition (wl-folder-pick). It is binded to "?".
+
 ** Now you can rename access group folders.
 
 ** Temporary marks are kept when you exit from sticky summary by q or g. 

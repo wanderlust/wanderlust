@@ -10,6 +10,12 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
    のように設定して下さい。
 
+** フォルダモードから、与えられた条件を満たすメッセージからなる仮想フォルダ
+   へ移動できます (wl-folder-virtual)。"V" にバインドされています。
+
+** フォルダモードで、与えられた条件を満たすメッセージを含むフォルダを探せる
+   ようになりました (wl-folder-pick)。"?" にバインドされています。 
+
 ** アクセスグループフォルダの改名が出来るようになりました。
 
 ** スティッキーサマリを q や g で抜ける際に、一時的マークを保持するように
