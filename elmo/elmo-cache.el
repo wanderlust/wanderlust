@@ -141,11 +141,7 @@ If KBYTES is kilo bytes (This value must be float)."
       (while (and (<= size total)
 		  (setq oldest (elmo-cache-get-oldest-cache-file-entity cfl)))
 	(setq cur-file (expand-file-name (car (cdr oldest)) (car oldest)))
-	(if (file-directory-p cur-file)
-	    (setq cur-size (elmo-disk-usage cur-file))
-	  (setq cur-size
-		(/ (float (nth 7 (file-attributes cur-file)))
-		   Kbytes)))
+	(setq cur-size (/ (elmo-disk-usage cur-file) Kbytes))
 	(when (elmo-cache-force-delete cur-file locked)
 	  (setq count (+ count 1))
 	  (message "%d cache(s) are expired." count))
