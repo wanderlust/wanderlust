@@ -1,5 +1,7 @@
 2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* Version number is increased to 2.11.9.
+
 	* wl-summary.el (wl-summary-buffer-msgdb): Abolish.
 	(wl-summary-sync-update): Follow the change above.
 	(wl-summary-switch-to-clone-buffer): Ditto.
