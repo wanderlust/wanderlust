@@ -1840,14 +1840,14 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-update-unread (folder unread)
   (let ((buf (get-buffer wl-folder-buffer-name))
+	(value (wl-folder-get-entity-info folder))
 	cur-unread
 	(unread-diff 0)
-	value newvalue entity-list)
+	newvalue)
 ;;; Update folder-info
 ;;;    (elmo-folder-set-info-hashtb fld nil nil nil unread)
-    (setq cur-unread (or (nth 1 (wl-folder-get-entity-info folder)) 0))
+    (setq cur-unread (or (nth 1 value) 0))
     (setq unread-diff (- (or unread 0) cur-unread))
-    (setq value (wl-folder-get-entity-info folder))
     (setq newvalue (list (nth 0 value)
 			 unread
 			 (nth 2 value)))
@@ -1858,13 +1858,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (save-match-data
 	(with-current-buffer buf
 	  (save-excursion
-	    (setq entity-list (wl-folder-search-entity-list-by-name
-			       folder wl-folder-entity))
-	    (while entity-list
-	      (wl-folder-update-group (car entity-list) (list 0
-							      unread-diff
-							      0))
-	      (setq entity-list (cdr entity-list)))
+	    (let ((entity-list (wl-folder-search-entity-list-by-name
+				folder wl-folder-entity)))
+	      (while entity-list
+		(wl-folder-update-group (car entity-list) (list 0
+								unread-diff
+								0))
+		(setq entity-list (cdr entity-list))))
 	    (goto-char (point-min))
 	    (while (wl-folder-buffer-search-entity folder)
 	      (wl-folder-update-line newvalue))))))))
