@@ -1,3 +1,9 @@
+2000-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-mark-set-on-msgs):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'
+	before STORE command.
+
 2000-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-multi-folder-diff): Fixed problem of filter folder.

@@ -912,6 +912,9 @@ If optional argument UNMARK is non-nil, unmark."
 				       (elmo-imap4-spec-mailbox spec))
     (setq set-list (elmo-imap4-make-number-set-list msgs))
     (when set-list
+      (with-current-buffer (elmo-network-session-buffer session)
+	(setq elmo-imap4-fetch-callback nil)
+	(setq elmo-imap4-fetch-callback-data nil))
       (elmo-imap4-send-command-wait
        session
        (format
