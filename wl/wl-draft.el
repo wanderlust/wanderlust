@@ -1874,6 +1874,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (switch-to-buffer-other-frame buffer)
 	(switch-to-buffer buffer))
       (set-buffer buffer)
+      (setq wl-draft-parent-folder "")
       (insert-file-contents-as-binary file-name)
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
