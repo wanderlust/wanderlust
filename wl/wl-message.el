@@ -583,9 +583,6 @@ Returns non-nil if bottom of message."
 	       (size (elmo-message-field folder next 'size))
 	       (threshold (or wl-cache-prefetch-threshold
 			      elmo-message-fetch-threshold)))
-	  (unless (and (integerp size)
-		       (integerp threshold))
-	    (debug))
 	  (if next
 	      (cond
 	       ((not (wl-message-buffer-prefetch-p folder next))
