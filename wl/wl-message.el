@@ -506,7 +506,8 @@ Returns non-nil if bottom of message."
 
 (defun wl-message-display-internal (folder number flag
 					   &optional force-reload unread)
-  (let ((default-mime-charset wl-mime-charset))
+  (let ((default-mime-charset wl-mime-charset)
+	(elmo-mime-charset wl-mime-charset))
     (setq wl-message-buffer-all-header-flag (eq flag 'all-header))
     (prog1
 	(if (eq flag 'as-is)

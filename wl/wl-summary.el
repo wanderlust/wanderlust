@@ -2710,12 +2710,6 @@ If ARG, without confirm."
 	(forward-char))
       (/ depth wl-thread-indent-level-internal))))
 
-(defun wl-summary-goto-bottom-of-current-thread ()
-  (if (re-search-forward (concat "^" wl-summary-buffer-number-regexp
-				 "..../..\(.*\)..:.. [[<]") nil t)
-      ()
-    (goto-char (point-max))))
-
 (defun wl-summary-goto-top-of-current-thread ()
   (wl-summary-jump-to-msg
    (wl-thread-entity-get-number
@@ -3705,17 +3699,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-target-mark-thread ()
   (interactive)
-  (let (beg end)
-    (end-of-line)
-    (wl-summary-goto-top-of-current-thread)
-    (wl-thread-force-open)
-    (setq beg (point))
-    (end-of-line)
-    (wl-summary-goto-bottom-of-current-thread)
-;;; (forward-line -1)
-    (beginning-of-line)
-    (setq end (point))
-    (wl-summary-target-mark-region beg end)))
+  (wl-thread-call-region-func 'wl-summary-target-mark-region t))
 
 (defun wl-summary-target-mark-msgs (msgs)
   "Return the number of marked messages."
