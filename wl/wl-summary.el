@@ -200,8 +200,9 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (wl-address-get-petname to)
-				    (car 
-				     (std11-extract-address-components to))))))
+				    (or
+				     (car (std11-extract-address-components to))
+				     to)))))
 			      (wl-parse-addresses tos)
 			      ","))))
 	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field

@@ -1,3 +1,8 @@
+2000-05-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-default-from): Fix probrem when
+	std11-extract-address-components return (nil "foo@bar").
+
 2000-05-24  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-draft.el (wl-draft-clone-local-variables):
