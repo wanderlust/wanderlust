@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-map)
 (require 'mime-edit)
@@ -52,6 +52,12 @@
   :type '(repeat string)
   :group 'elmo)
 
+(defcustom elmo-nmz-index-alias-alist nil
+  "*Alist of ALIAS and INDEX-PATH."
+  :type '(repeat (cons (string :tag "Alias Name")
+		       (directory :tag "Index Path")))
+  :group 'elmo)
+
 ;;; "namazu search"
 (eval-and-compile
   (luna-define-class elmo-nmz-folder
@@ -69,12 +75,14 @@
 					  (buffer-substring
 					   (+ 1 (point-min))
 					   (- (point) 1)))
-    (elmo-nmz-folder-set-index-path-internal folder
-					     (buffer-substring (point)
-							       (point-max)))
-    (if (eq (length (elmo-nmz-folder-index-path-internal folder)) 0)
-	(elmo-nmz-folder-set-index-path-internal folder
-						 elmo-nmz-default-index-path))
+    (let ((index (buffer-substring (point) (point-max))))
+      (elmo-nmz-folder-set-index-path-internal
+       folder
+       (cond ((cdr (assoc index elmo-nmz-index-alias-alist)))
+	     ((eq (length index) 0)
+	      elmo-nmz-default-index-path)
+	     (t
+	      index))))
     folder))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
@@ -96,7 +104,7 @@
       (elmo-msgdb-overview-entity-set-subject entity location)
       (setq uid (nth 2 (file-attributes location)))
       (elmo-msgdb-overview-entity-set-from entity
-					   (concat 
+					   (concat
 					    (user-full-name uid)
 					    " <"(user-login-name uid) "@"
 					    (system-name) ">")))

@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo-vars)
 (require 'mmbuffer)
 (require 'mmimap)
@@ -77,7 +77,7 @@ value is used."
 	(mode-obj (mime-find-field-presentation-method 'wide))
 	field-decoder
 	f-b p f-e field-name field field-body
-        vf-alist (sl sort-fields))
+	vf-alist (sl sort-fields))
     (save-excursion
       (set-buffer buffer)
       (save-restriction
@@ -95,42 +95,42 @@ value is used."
 		  field-body (buffer-substring p f-e)
 		  field-decoder (inline (mime-find-field-decoder-internal
 					 field mode-obj)))
-            (setq vf-alist (append (list
-                                    (cons field-name
-                                          (list field-body field-decoder)))
-                                   vf-alist))))
-        (and vf-alist
-             (setq vf-alist
-                   (sort vf-alist
-                         (function (lambda (s d)
-                                     (let ((n 0) re
-                                           (sf (car s))
-                                           (df (car d)))
-                                       (catch 'done
-                                         (while (setq re (nth n sl))
-                                           (setq n (1+ n))
-                                           (and (string-match re sf)
-                                                (throw 'done t))
-                                           (and (string-match re df)
-                                                (throw 'done nil)))
-                                         t)))))))
-        (with-current-buffer the-buf
-          (while vf-alist
-            (let* ((vf (car vf-alist))
-                   (field-name (car vf))
-                   (field-body (car (cdr vf)))
-                   (field-decoder (car (cdr (cdr vf)))))
-              (insert field-name)
+	    (setq vf-alist (append (list
+				    (cons field-name
+					  (list field-body field-decoder)))
+				   vf-alist))))
+	(and vf-alist
+	     (setq vf-alist
+		   (sort vf-alist
+			 (function (lambda (s d)
+				     (let ((n 0) re
+					   (sf (car s))
+					   (df (car d)))
+				       (catch 'done
+					 (while (setq re (nth n sl))
+					   (setq n (1+ n))
+					   (and (string-match re sf)
+						(throw 'done t))
+					   (and (string-match re df)
+						(throw 'done nil)))
+					 t)))))))
+	(with-current-buffer the-buf
+	  (while vf-alist
+	    (let* ((vf (car vf-alist))
+		   (field-name (car vf))
+		   (field-body (car (cdr vf)))
+		   (field-decoder (car (cdr (cdr vf)))))
+	      (insert field-name)
 	      (insert (if field-decoder
 			  (funcall field-decoder field-body
-                                   (string-width field-name)
+				   (string-width field-name)
 				   (if (functionp elmo-mime-header-max-column)
 				       (funcall elmo-mime-header-max-column)
 				     elmo-mime-header-max-column))
 			;; Don't decode
 			field-body))
-              (insert "\n"))
-            (setq vf-alist (cdr vf-alist)))
+	      (insert "\n"))
+	    (setq vf-alist (cdr vf-alist)))
 	  (run-hooks 'mmelmo-header-inserted-hook))))))
 
 (luna-define-generic elmo-mime-insert-sorted-header (entity
@@ -164,7 +164,9 @@ value is used."
 	    p-max (point-max))
       (set-buffer the-buf)
       (elmo-mime-insert-header-from-buffer buf p-min p-max
-					   invisible-fields visible-fields))))
+					   invisible-fields
+					   visible-fields
+					   sorted-fields))))
 
 (luna-define-method mime-insert-text-content :around
   ((entity mime-elmo-buffer-entity))

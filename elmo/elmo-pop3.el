@@ -889,8 +889,8 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	      (error "Deleting message failed")))
 	(error "Deleting message failed")))))
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-pop3-folder)
-						      msgs)
+(luna-define-method elmo-folder-delete-messages-plugged
+  ((folder elmo-pop3-folder) msgs)
   (let ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
 	(process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
