@@ -765,6 +765,24 @@ Reply to author if WITH-ARG is non-nil."
       (set-buffer-modified-p nil)		; force kill
       (kill-buffer editing-buffer))))
 
+(defun wl-draft-kill-flags ()
+  "Remove flags on parent message when current draft is killed."
+  (let ((buffer (wl-summary-get-buffer wl-draft-parent-folder))
+	(number wl-draft-parent-number)
+	folder)
+    (if buffer
+	(with-current-buffer buffer
+	  (dolist (flag wl-draft-kill-flags)
+	    (wl-summary-unset-persistent-mark flag number)))
+      ;; Parent buffer does not exist.
+      (when (setq folder (and wl-draft-parent-folder
+			      (wl-folder-get-elmo-folder
+			       wl-draft-parent-folder)))
+	(elmo-folder-open folder 'load-msgdb)
+	(dolist (flag wl-draft-kill-flags)
+	  (elmo-folder-unset-flag folder (list wl-draft-parent-number) flag))
+	(elmo-folder-close folder)))))
+
 (defun wl-draft-kill (&optional force-kill)
   "Kill current draft buffer and quit editing."
   (interactive "P")
@@ -774,24 +792,7 @@ Reply to author if WITH-ARG is non-nil."
 	       (or force-kill
 		   (yes-or-no-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
-	(when (and wl-draft-parent-number
-		   (not (string= wl-draft-parent-folder "")))
-	  (let* ((number wl-draft-parent-number)
-		 (folder-name wl-draft-parent-folder)
-		 (folder (wl-folder-get-elmo-folder folder-name))
-		 buffer)
-	    (if (and (setq buffer (wl-summary-get-buffer folder-name))
-		     (with-current-buffer buffer
-		       (string= (wl-summary-buffer-folder-name)
-				folder-name)))
-		(with-current-buffer buffer
-		  (dolist (flag wl-draft-kill-flags)
-		    (elmo-folder-unset-flag folder (list number) flag))
-		  (when (wl-summary-jump-to-msg number)
-		    (wl-summary-update-persistent-mark)))
-	      (elmo-folder-open folder 'load-msgdb)
-	      (elmo-folder-unset-flag folder (list number) 'answered)
-	      (elmo-folder-close folder))))
+	(run-hooks 'wl-draft-kill-pre-hook)
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
     (message "")))

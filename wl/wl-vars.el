@@ -763,6 +763,9 @@ This hook runs on the draft buffer.")
   "A hook called when forwarded.
 This hook runs on the draft buffer.")
 
+(defvar wl-draft-kill-pre-hook '(wl-draft-kill-flags)
+  "A hook called just before the draft buffer is killed.")
+
 (defvar wl-summary-reply-hook
   '((lambda () (wl-summary-set-persistent-mark 'answered)))
   "A hook called when `wl-summary-reply' is called.
@@ -1780,7 +1783,7 @@ message buffer."
   :group 'wl-draft)
 
 (defcustom wl-draft-kill-flags '(answered)
-  "Remove specified flags when parent message of current draft is killed."
+  "Remove specified flags on parent message when current draft is killed."
   :type '(repeat (symbol :tag "flag"))
   :group 'wl-draft)
 
