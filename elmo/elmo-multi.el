@@ -65,7 +65,7 @@
 
 (luna-define-method elmo-folder-check ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
-    (elmo-folder-synchronize fld)))
+    (elmo-folder-check fld)))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
@@ -74,6 +74,12 @@
 (luna-define-method elmo-folder-close :after ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
     (elmo-folder-set-msgdb-internal fld nil)))
+
+(luna-define-method elmo-folder-synchronize ((folder elmo-multi-folder)
+					     &optional ignore-msgdb
+					     no-check)
+  (dolist (fld (elmo-multi-folder-children-internal folder))
+    (elmo-folder-synchronize fld ignore-msgdb no-check)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-multi-folder))
@@ -112,6 +118,21 @@
 					 number)
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
        (elmo-multi-folder-children-internal folder)))
+
+(luna-define-method elmo-message-entity ((folder elmo-folder) key)
+  (cond
+   ((numberp key)
+    (elmo-msgdb-message-entity (elmo-folder-msgdb
+				(elmo-message-folder folder key))
+			       key))
+   ((stringp key)
+    (let ((children (elmo-multi-folder-children-internal folder))
+	  match)
+      (while children
+	(when (setq match (elmo-message-entity (car children) key))
+	  (setq children nil))
+	(setq children (cdr children)))
+      match))))
 
 (defun elmo-multi-msgdb (msgdb base)
   (list (mapcar (function

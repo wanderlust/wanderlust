@@ -1050,7 +1050,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-set-message-modified ()
   (elmo-folder-set-message-modified-internal
    wl-summary-buffer-elmo-folder t)
-  (setq wl-summary-buffer-message-modified t))
+  (setq wl-summary-buffer-message-modified t)
+  (wl-summary-set-mark-modified))
 (defun wl-summary-message-modified-p ()
   wl-summary-buffer-message-modified)
 (defun wl-summary-set-mark-modified ()
@@ -1725,9 +1726,11 @@ If ARG is non-nil, checking is omitted."
       ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
-      (wl-folder-update-unread
-       (wl-summary-buffer-folder-name)
-       (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)))))
+      (wl-folder-set-folder-updated
+       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
+       (list 0
+	     (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)
+	     (elmo-folder-length wl-summary-buffer-elmo-folder))))))
 
 (defun wl-summary-replace-status-marks (before after)
   "Replace the status marks on buffer."
@@ -1966,7 +1969,7 @@ If ARG is non-nil, checking is omitted."
        (list 0
 	     (let ((lst (wl-summary-count-unread)))
 	       (+ (car lst) (nth 1 lst)))
-	     (elmo-folder-messages folder)))
+	     (elmo-folder-length folder)))
       (wl-summary-update-modeline)
       ;;
       (unless unset-cursor
@@ -2525,14 +2528,14 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (folder func mime-decode)
-  (let ((entities (elmo-folder-list-message-entities folder nil t))
+  (let ((numbers (elmo-folder-list-messages folder t t))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
-    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length entities) 2)))
+    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
     (when mime-decode
       (elmo-set-buffer-multibyte default-enable-multibyte-characters))
-    (while (setq ov (pop entities))
+    (while (setq ov (elmo-message-entity folder (pop numbers)))
       (setq this (funcall func ov))
       (and this (setq this (std11-unfold-string this)))
       (if (equal last this)

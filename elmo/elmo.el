@@ -1092,8 +1092,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (elmo-folder-close dst-folder)))
       (if (and (not no-delete) succeeds)
 	  (progn
-	    ;;(if (not no-delete-info)
-	    ;;(message "Cleaning up src folder..."))
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
 		     (elmo-msgdb-delete-msgs
 		      (elmo-folder-msgdb src-folder) succeeds))
@@ -1101,9 +1099,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))
 	      (setq result nil))
-	    ;;(if (and result
-	    ;;(not no-delete-info))
-	    ;;(message "Cleaning up src folder...done"))
 	    result)
 	(if no-delete
 	    (progn
@@ -1140,22 +1135,6 @@ If CACHED is t, message is set as cached."
 			       (elmo-message-use-cache-p folder number))
     (elmo-folder-set-mark-modified-internal folder t)))
 
-(luna-define-generic elmo-folder-list-message-entities (folder
-							&optional numbers
-							in-msgdb)
-  "List message-entity structure of FOLDER.
-If optional NUMBERS is specified, only the corresponding entities are
-retrieved.
-If second optional IN-MSGDB is specified, only entities in the msgdb are
-retreived (don't retrieve entities from folder).")
-
-(luna-define-method elmo-folder-list-message-entities ((folder elmo-folder)
-						       &optional numbers
-						       in-msgdb)
-  (if numbers
-      (mapcar (lambda (x) (elmo-message-entity folder x)) numbers)
-    (elmo-msgdb-get-overview (elmo-folder-msgdb folder))))
-
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
@@ -1175,6 +1154,12 @@ ENTITY is the message-entity to get the parent.")
 (put 'elmo-folder-do-each-message-entity 'lisp-indent-function '1)
 (def-edebug-spec elmo-folder-do-each-message-entity
   ((symbolp form &rest form) &rest form))
+
+(defsubst elmo-folder-list-message-entities (folder)
+  ;; List all message entities in the FOLDER.
+  (mapcar
+   (lambda (number) (elmo-message-entity folder number))
+   (elmo-folder-list-messages folder t t)))
 
 (defmacro elmo-folder-do-each-message-entity (spec &rest form)
   "Iterator for message entity in the folder.
@@ -1538,12 +1523,6 @@ If update process is interrupted, return nil.")
        (if before-append (elmo-folder-set-msgdb-internal folder old-msgdb))
        (elmo-folder-set-killed-list-internal folder killed-list)
        nil))))
-
-(defun elmo-folder-messages (folder)
-  "Return number of messages in the FOLDER."
-  (length
-   (elmo-msgdb-get-number-alist
-    (elmo-folder-msgdb folder))))
 
 (luna-define-generic elmo-folder-length (folder)
   "Return number of messages in the FOLDER.")
