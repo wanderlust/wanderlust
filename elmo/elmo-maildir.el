@@ -417,23 +417,17 @@ file name for maildir directories."
     filename))
 
 (defun elmo-maildir-move-file (src dst)
-  (or (and (fboundp 'make-symbolic-link)
-	   ;; 1. If make-symbolic-link is defined, then assume the system has
-	   ;;    hardlinks and try add-link-to-file, then delete the original.
-	   ;;    This is safe on NFS.
-	   (condition-case nil
-	       (progn
-		 (add-name-to-file src dst)
-		 t)
-	     (error))
-	   ;; It's ok if the delete-file fails;
-	   ;; elmo-maildir-cleanup-temporal will catch it later.
-	   (progn
-	     (condition-case nil
-		 (delete-file src)
-	       (error))
-	     ;; Exit this function anyway.
-	     t))
+  (or (condition-case nil
+	  (progn
+	    ;; 1. Try add-link-to-file, then delete the original.
+	    ;;    This is safe on NFS.
+	    (add-name-to-file src dst)
+	    (ignore-errors
+	      ;; It's ok if the delete-file fails;
+	      ;; elmo-maildir-cleanup-temporal will catch it later.
+	      (delete-file src))
+	    t)
+	(error))
       ;; 2. Even on systems with hardlinks, some filesystems (like AFS)
       ;;    might not support them, so fall back on rename-file. This is
       ;;    our best shot at atomic when add-name-to-file fails.
