@@ -1,3 +1,9 @@
+2000-08-28  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-refile.el (wl-refile-learn): Simplified.  Use `memq'
+	instead of `member' for `wl-refile-guess-func-list' look-ups.
+	Use `cons' instead of `add-to-list' to update `wl-refile-alist'.
+
 2000-08-28   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-mime.el (wl-message-button-dispatcher-internal): Rename from
