@@ -1,3 +1,16 @@
+2000-06-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-jump-to-parent-message):
+	Consider prefix argument.
+
+	* wl-thread.el (wl-thread-update-line-msgs): Fixed problem
+	when closed thread is deleted.
+
+2000-05-31  Yasushi ABE <yasushi@stbbs.net>
+
+	* wl-summary.el (wl-summary-jump-to-parent-message):
+	Consider thread modification.
+
 2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-message.el (wl-message-normal-get-original-buffer): Use
