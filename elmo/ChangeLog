@@ -1,3 +1,11 @@
+2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-field-primitive-condition-match): Fixed
+	unmatch condition checking.
+
+	* elmo-localdir.el (elmo-folder-search): Don't short cut if unmatch
+	condition.
+
 2001-12-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo.el (elmo-folder-confirm-appends): Fixed docstring.

@@ -897,11 +897,15 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (cond
      ((string= (elmo-filter-key condition) "last")
       (setq result (<= (length (memq number number-list))
-		       (string-to-int (elmo-filter-value condition)))))
+		       (string-to-int (elmo-filter-value condition))))
+      (if (eq (elmo-filter-type condition) 'unmatch)
+	  (setq result (not result))))
      ((string= (elmo-filter-key condition) "first")
       (setq result (< (- (length number-list)
 			 (length (memq number number-list)))
-		      (string-to-int (elmo-filter-value condition)))))
+		      (string-to-int (elmo-filter-value condition))))
+      (if (eq (elmo-filter-type condition) 'unmatch)
+	  (setq result (not result))))
      (t
       (elmo-set-work-buf
        (as-binary-input-file (insert-file-contents file))
@@ -911,8 +915,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (setq result
 	     (elmo-buffer-field-primitive-condition-match
 	      condition number number-list)))))
-    (if (eq (elmo-filter-type condition) 'unmatch)
-	(setq result (not result)))
     result))
 
 (defun elmo-file-field-condition-match (file condition number number-list)
