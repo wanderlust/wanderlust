@@ -1,3 +1,15 @@
+2002-03-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-save-status
+	to `C-x C-s'.
+	(wl-summary-save-status): New command.
+	(wl-summary-exit): Don't clean-up temp marks when sticky.
+	(Applied patch from Nakayama-san [wl: 09548])
+	(wl-summary-delete-all-temp-marks): Added optional argument no-msg;
+	Do nothing when no mark data.
+	(wl-summary-save-view-cache): Copy local variables to the temp buffer;
+	Call `wl-summary-delete-all-temp-marks' before saving.
+
 2002-03-04  Mito  <mito@mxa.nes.nec.co.jp>
 
 	* wl-mime.el (wl-mime-save-content): Don't save if answered "no".

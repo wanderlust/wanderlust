@@ -521,6 +521,7 @@
   (define-key wl-summary-mode-map "\M-t" 'wl-toggle-plugged)
   (define-key wl-summary-mode-map "\C-t" 'wl-plugged-change)
   ;;
+  (define-key wl-summary-mode-map "\C-x\C-s" 'wl-summary-save-status)
   (wl-summary-setup-mouse)
   (easy-menu-define
    wl-summary-mode-menu
@@ -1006,6 +1007,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		 (wl-summary-thread-modified-p)))
 	(wl-summary-save-view-cache))))
 
+(defun wl-summary-save-status ()
+  "Save summary view and msgdb."
+  (interactive)
+  (if (interactive-p) (message "Saving summary status..."))
+  (wl-summary-save-view)
+  (elmo-folder-commit wl-summary-buffer-elmo-folder)
+  (elmo-folder-check wl-summary-buffer-elmo-folder)
+  (if wl-use-scoring (wl-score-save))
+  (if (interactive-p) (message "Saving summary status...done.")))
+
 (defun wl-summary-force-exit ()
   "Exit current summary.  Buffer is deleted even the buffer is sticky."
   (interactive)
@@ -1022,7 +1033,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (run-hooks 'wl-summary-exit-pre-hook)
     (if wl-summary-buffer-exit-function
 	(funcall wl-summary-buffer-exit-function)
-      (wl-summary-cleanup-temp-marks sticky)
+      (if (or force-exit (not sticky))
+	  (wl-summary-cleanup-temp-marks sticky))
       (unwind-protect
 	  ;; save summary status
 	  (progn
@@ -3742,19 +3754,26 @@ If ARG, exit virtual folder."
 					 (wl-summary-buffer-folder-name))
 				 'update nil nil t)))
 
-(defun wl-summary-delete-all-temp-marks ()
+(defun wl-summary-delete-all-temp-marks (&optional no-msg)
+  "Erase all temp marks from buffer."
   (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (message "Unmarking...")
-    (while (not (eobp))
-      (wl-summary-unmark)
-      (forward-line))
-    (message "Unmarking...done")
-    (setq wl-summary-buffer-target-mark-list nil)
-    (setq wl-summary-buffer-delete-list nil)
-    (setq wl-summary-buffer-refile-list nil)
-    (setq wl-summary-buffer-copy-list nil)))
+  (when (or wl-summary-buffer-target-mark-list
+	    wl-summary-buffer-delete-list
+	    wl-summary-buffer-refile-list
+	    wl-summary-buffer-copy-list)
+    (save-excursion
+      (goto-char (point-min))
+      (unless no-msg
+	(message "Unmarking..."))
+      (while (not (eobp))
+	(wl-summary-unmark)
+	(forward-line))
+      (unless no-msg
+	(message "Unmarking...done"))
+      (setq wl-summary-buffer-target-mark-list nil)
+      (setq wl-summary-buffer-delete-list nil)
+      (setq wl-summary-buffer-refile-list nil)
+      (setq wl-summary-buffer-copy-list nil))))
 
 (defun wl-summary-delete-mark (number)
   "Delete temporary mark of the message specified by NUMBER."
@@ -4400,6 +4419,10 @@ If ARG, exit virtual folder."
 	   (cache (expand-file-name wl-summary-cache-file dir))
 	   (view (expand-file-name wl-summary-view-file dir))
 	   (save-view wl-summary-buffer-view)
+	   (mark-list wl-summary-buffer-target-mark-list)
+	   (refile-list wl-summary-buffer-refile-list)
+	   (copy-list wl-summary-buffer-copy-list)
+	   (delete-list wl-summary-buffer-delete-list)
 	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
 	   (charset wl-summary-buffer-mime-charset))
       (if (file-directory-p dir)
@@ -4415,6 +4438,11 @@ If ARG, exit virtual folder."
 	      (copy-to-buffer tmp-buffer (point-min) (point-max))
 	      (with-current-buffer tmp-buffer
 		(widen)
+		(setq wl-summary-buffer-target-mark-list mark-list
+		      wl-summary-buffer-refile-list refile-list
+		      wl-summary-buffer-copy-list copy-list
+		      wl-summary-buffer-delete-list delete-list)
+		(wl-summary-delete-all-temp-marks 'no-msg)
 		(encode-mime-charset-region
 		 (point-min) (point-max) charset)
 		(write-region-as-binary (point-min)(point-max)
