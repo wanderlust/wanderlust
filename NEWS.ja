@@ -1,5 +1,22 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust. 10 May 2000
 
+* 2.4.1 は 2.4.0 の修正版です。
+
+** FLIM 1.14.x 上でも動作するようになりました。
+
+** POP before SMTP で POP コネクションが切れない不具合が修正されました。
+
+** IMAP4 での生パスワードによる認証の指定方法が変更になりました。
+
+これまで、IMAP4 で生パスワードの認証(LOGIN コマンドによるログイン)をするには、
+変数 elmo-default-imap4-authenticate-type に 'plain (または nil) 
+を設定することになっていましたが、'clear (または nil)に変更されました。
+例えば、
+(setq elmo-default-imap4-authenticate-type 'plain)
+という設定は
+(setq elmo-default-imap4-authenticate-type 'clear)
+に変更する必要があります。
+
 * 1.1.1 から version 2.4.0 への変更点
 
 ** バージョン番号
