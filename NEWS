@@ -9,11 +9,11 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Now available `make check' environment test for user.
 
-** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
-   messages and urge you to change settings.
-   Please change your settings according to the messages.
-   To suppress warning messages, set elmo-obsolete-variable-show-warnings to
-   nil.
+** If you set obsolete variables (e.g. renamed ones) in .wl etc, Wanderlust
+   shows warning messages and urge you to change settings.
+   Change your settings according to the messages, please.
+   If you want to suppress warnings, set elmo-obsolete-variable-show-warnings
+   to nil.
 
 ** Added new internal folders: 'sendlog folder
 
@@ -74,12 +74,15 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** elmo-cache-dirname is abolished and elmo-cache-directory is newly created.
    You can put cache directory to another place by setting
-   elmo-cache-directory (e.g. for whom put symbolic link for ~/.elmo/cache
-   on NFS environment).
+   elmo-cache-directory.
 
 ** Default value of elmo-enable-disconnected-operation is now `t'.
    When the relevant messages are cached, you can do some operations
    even in the off-line state.
+
+** Now messages with "$" mark is not remained in the summary buffer when
+   the actual message itself is deleted.
+   Please visit the 'mark folder to review the messages with the "$" mark.
 
 * Version 2.6.1 is basically a bug fix version of 2.6.0.
 

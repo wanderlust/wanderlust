@@ -816,37 +816,26 @@ Return value is a cons cell of (STRUCTURE . REST)"
 			 (length (memq number number-list)))
 		      (string-to-int (elmo-filter-value condition)))))
      ((string= (elmo-filter-key condition) "since")
-      (let* ((date (elmo-date-get-datevec (elmo-filter-value condition)))
-	     (field-date (elmo-date-make-sortable-string
-			  (timezone-fix-time
-			   (std11-field-body "date")
-			   (current-time-zone) nil)))
-	     (specified-date (timezone-make-sortable-date
-			      (aref date 0)
-			      (aref date 1)
-			      (aref date 2)
-			      (timezone-make-time-string
-			       (aref date 3)
-			       (aref date 4)
-			       (aref date 5)))))
+      (let ((field-date (elmo-date-make-sortable-string
+			 (timezone-fix-time
+			  (std11-field-body "date")
+			  (current-time-zone) nil)))
+	    (specified-date (elmo-date-make-sortable-string
+			     (elmo-date-get-datevec
+			      (elmo-filter-value condition)))))
 	(setq result
 	      (or (string= field-date specified-date)
 		  (string< specified-date field-date)))))
      ((string= (elmo-filter-key condition) "before")
-      (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
-	(setq result
-	      (string<
-	       (timezone-make-date-sortable
-		(timezone-fix-time
-		 (std11-field-body "date")
-		 (current-time-zone) nil))
-	       (timezone-make-sortable-date (aref date 0)
-					    (aref date 1)
-					    (aref date 2)
-					    (timezone-make-time-string
-					     (aref date 3)
-					     (aref date 4)
-					     (aref date 5)))))))
+      (setq result
+	    (string<
+	     (elmo-date-make-sortable-string
+	      (timezone-fix-time
+	       (std11-field-body "date")
+	       (current-time-zone) nil))
+	     (elmo-date-make-sortable-string
+	      (elmo-date-get-datevec
+	       (elmo-filter-value condition))))))
      ((string= (elmo-filter-key condition) "body")
       (and (re-search-forward "^$" nil t)	   ; goto body
 	   (setq result (search-forward (elmo-filter-value condition)
@@ -1184,7 +1173,9 @@ the value of `foo'."
 (defun elmo-progress-clear (label)
   (let ((counter (assq label elmo-progress-counter-alist)))
     (when counter
-      (elmo-display-progress label "" 100)
+      (elmo-display-progress label
+			     (elmo-progress-counter-format counter)
+			     100)
       (setq elmo-progress-counter-alist
 	    (delq counter elmo-progress-counter-alist)))))
 

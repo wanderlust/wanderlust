@@ -1,4 +1,4 @@
-;;; elmo-date.el -- Date processing module for ELMO.
+;;; elmo-date.el --- Date processing module for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 
 (require 'path-util)
@@ -128,8 +128,8 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (error "%s is not supported yet" suffix)))))
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
     (timezone-fix-time
-     (concat (elmo-replace-in-string description "-" " ") " 0:00")
-     nil nil))))
+     (concat (elmo-replace-in-string description "-" " ") " 0:0")
+     (current-time-zone) nil))))
 
 (defun elmo-datevec-substitute (datevec1 datevec2)
   (if (/= (aref datevec2 2) 0)
@@ -157,8 +157,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     (setq p 1)
     (while (< p month)
       (setq days (+ days (timezone-last-day-of-month p year)))
-      (setq p (+ p 1))
-      )
+      (setq p (+ p 1)))
     (setq days (+ days mday))
     (aref wday (% days 7))))
 
@@ -201,7 +200,10 @@ Otherwise treat \\ in NEWTEXT string as special:
       (aref (, datevec) 0)
       (aref (, datevec) 1)
       (aref (, datevec) 2)
-      (aref (, datevec) 3))))
+      (timezone-make-time-string
+       (aref (, datevec) 3)
+       (aref (, datevec) 4)
+       (aref (, datevec) 5)))))
 
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))
