@@ -1,3 +1,9 @@
+2000-10-26  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-message-overload-functions): Do nothing if
+	`current-local-map' is not available.
+	(wl-e21-setup-message-toolbar): Allow the argument `keymap'.
+
 2000-10-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-fldmgr.el (wl-fldmgr-save-folders): Fixed permission lateral

@@ -222,11 +222,11 @@
        (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
 (eval-when-compile
-  (defsubst wl-e21-setup-message-toolbar ()
+  (defsubst wl-e21-setup-message-toolbar (keymap)
     (and wl-use-toolbar
 	 (display-graphic-p)
 	 (wl-e21-setup-toolbar wl-message-toolbar)
-	 (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
+	 (wl-e21-make-toolbar-buttons keymap wl-message-toolbar)))
 
   (defsubst wl-e21-setup-draft-toolbar ()
     (and wl-use-toolbar
@@ -508,16 +508,18 @@
 (defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
 (defun wl-message-overload-functions ()
-  (wl-e21-setup-message-toolbar)
   (let ((keymap (current-local-map)))
-    (define-key keymap "l" 'wl-message-toggle-disp-summary)
-    (define-key keymap [mouse-2] 'wl-message-refer-article-or-url)
-    (define-key keymap [mouse-4] 'wl-message-wheel-down)
-    (define-key keymap [mouse-5] 'wl-message-wheel-up)
-    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
-    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-    (set-keymap-parent wl-message-button-map keymap))
-  (define-key wl-message-button-map [mouse-2] 'wl-message-button-dispatcher))
+    (when keymap
+      (wl-e21-setup-message-toolbar keymap)
+      (define-key keymap "l" 'wl-message-toggle-disp-summary)
+      (define-key keymap [mouse-2] 'wl-message-refer-article-or-url)
+      (define-key keymap [mouse-4] 'wl-message-wheel-down)
+      (define-key keymap [mouse-5] 'wl-message-wheel-up)
+      (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
+      (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+      (set-keymap-parent wl-message-button-map keymap)
+      (define-key wl-message-button-map
+	[mouse-2] 'wl-message-button-dispatcher))))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
