@@ -1,5 +1,8 @@
 2000-07-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-nntp.el (elmo-nntp-max-of-folder): Use killed list in
+	asynchronous folder check.
+
 	* elmo2.el (elmo-move-msgs): Don't move message when buffer-size is 0.
 
 	* elmo-nntp.el (elmo-nntp-delete-msgs): Check the value of
