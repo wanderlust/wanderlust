@@ -3983,7 +3983,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @lisp
 @group
-("o" "O" "D")
+("o" "O" "D" "d" "i")
 @end group
 @end lisp
 
@@ -3996,7 +3996,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @lisp
 @group
-("D")
+("D" "d")
 @end group
 @end lisp
 
@@ -6652,6 +6652,16 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @end group
 @end lisp
 
+@subsection spam $B%^!<%/(B
+
+$B0l;~E*%^!<%/$K(B spam $B%^!<%/(B (@samp{s}) $B$,DI2C$5$l$^$9!#$3$N%^!<%/$NIU$$$?(B
+$B%a%C%;!<%8$O!"%"%/%7%g%s$N<B9T;~$K(B @code{wl-spam-folder} $B$K%j%U%!%$%k$5(B
+$B$l$^$9!#$^$?!"%G%U%)%k%H$N@_Dj$G$O%5%^%j$G$NDL>o$N0\F0$G%9%-%C%W$5$l$k$h(B
+$B$&$K$J$j$^$9!#(B
+
+spam $B%^!<%/$O!"8e=R$9$k(B spam $B$NH=Dj=hM}$G<+F0E*$KIU$/B>!"(B@samp{k m} $B$H2!(B
+$B$7$FG$0U$KIU$1$k$3$H$b=PMh$^$9!#(B
+
 @subsection spam $B$NH=Dj(B
 
 $B0J2<$NJ}K!$G(B spam $B$NH=Dj$r9T$&$3$H$,=PMh$^$9!#(B
@@ -6706,6 +6716,45 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @end enumerate
 
 @subsection spam $B$N3X=,(B
+
+@code{wl-spam} $B$O!"%a%C%;!<%8$r%j%U%!%$%k$9$k$3$H$G!"<+F0E*$K(B spam $B$r3X(B
+$B=,$7$^$9!#(B
+
+$B$^$:!"(B@code{wl-spam} $B$O(B Wanderlust $B$N4IM}$9$k%U%)%k%@$r$=$3$K4^$^$l$k%a%C(B
+$B%;!<%8$N6hJ,$K$h$C$F!"0J2<$N(B 4$B$D$NNN0h$KJ,N`$7$^$9!#(B
+
+@table @samp
+@item spam
+spam $B$HH=Dj$5$l$?%a%C%;!<%8$,$"$k%U%)%k%@!#(B
+(@code{wl-spam-folder} $B$K@_Dj$5$l$?%U%)%k%@(B)
+@item good
+non-spam $B$HH=Dj$5$l$?%a%C%;!<%8$,$"$k%U%)%k%@!#(B
+@item undecide
+$BL$H=Dj$N%a%C%;!<%8$,$"$k%U%)%k%@!#(B@samp{+inbox} $BEy!"<+?H$G?6$jJ,$1$F$$$J(B
+$B$$%a%C%;!<%8$,$"$k%U%)%k%@$,3:Ev$7$^$9!#(B
+(@code{wl-spam-undecided-folder-regexp-list} $B$G@_Dj(B)
+@item ignored
+@code{wl-trash-folder} $B$d(B @code{wl-draft-folder} $BEy!"(Bspam $B$N=hM}$H$O4X78(B
+$B$N$J$$%U%)%k%@!#(B(@code{wl-spam-ignored-folder-regexp-list} $B$G@_Dj(B)
+@end table
+
+$B%a%C%;!<%8$r%j%U%!%$%k$7$?;~!"$=$N%a%C%;!<%8$NB0$9$kNN0h$,JQ$o$C$?>l9g!"(B
+$BA08e$NNN0h$K=>$C$F(B @samp{spam} $B$^$?$O!"(B@samp{non-spam} $B$H$7$F3X=,$7$^$9!#(B
+
+$B6qBNE*$K$O0J2<$NDL$j$G$9!#(B
+
+@table @samp
+@item undecide -> spam
+spam $B$H$7$F3X=,!#(B
+@item good -> spam
+spam $B$H$7$F$N3X=,$K2C$($F!"(Bnon-spam $B$K9T$J$C$?3X=,$r:o=|$7$^$9!#(B
+@item undecide -> good
+non-spam $B$H$7$F3X=,!#(B
+@item spam -> good
+non-spam $B$H$7$F$N3X=,$K2C$($F!"(Bspam $B$K9T$J$C$?3X=,$r:o=|$7$^$9!#(B
+@end table
+
+$B>e5-0J30$N%j%U%!%$%k$G$O!"3X=,$O9T$o$l$^$;$s!#(B
 
 @subsection $B%-!<%P%$%s%I(B
 @cindex Keybind, spam filter

@@ -3989,7 +3989,7 @@ The initial setting is the list shown below:
 
 @lisp
 @group
-("o" "O" "D")
+("o" "O" "D" "d" "i")
 @end group
 @end lisp
 
@@ -4003,7 +4003,7 @@ The initial setting is the list shown below:
 
 @lisp
 @group
-("D")
+("D" "d")
 @end group
 @end lisp
 
