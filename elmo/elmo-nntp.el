@@ -582,6 +582,7 @@ Don't cache if nil.")
 
     (setq username (elmo-net-folder-user-internal folder))
     (when (and username
+	       elmo-nntp-default-user
 	       (string= username elmo-nntp-default-user))
       (setq username nil))
 
