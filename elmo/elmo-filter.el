@@ -106,7 +106,7 @@
 
 (luna-define-method elmo-folder-get-primitive-list ((folder
 						     elmo-filter-folder))
-  (list (elmo-filter-folder-target-internal folder)))
+  (elmo-folder-get-primitive-list (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-contains-type ((folder elmo-filter-folder)
 					       type)

@@ -101,14 +101,10 @@
 				      elmo-msgdb-directory)))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-multi-folder))
-  (delq nil
-	(elmo-flatten
-	 (mapcar
-	  'elmo-folder-newsgroups
-	  (elmo-flatten
-	   (mapcar
-	    'elmo-folder-get-primitive-list
-	    (elmo-multi-folder-children-internal folder)))))))
+  (apply  #'nconc
+	  (mapcar
+	   'elmo-folder-newsgroups
+	   (elmo-multi-folder-children-internal folder))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-multi-folder))
   (elmo-flatten

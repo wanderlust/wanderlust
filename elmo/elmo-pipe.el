@@ -55,11 +55,9 @@
   folder)
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))
-  (elmo-flatten
-   (mapcar
-    'elmo-folder-get-primitive-list
-    (list (elmo-pipe-folder-src-internal folder)
-	  (elmo-pipe-folder-dst-internal folder)))))
+  (nconc
+   (elmo-folder-get-primitive-list (elmo-pipe-folder-src-internal folder))
+   (elmo-folder-get-primitive-list (elmo-pipe-folder-dst-internal folder))))
 
 (luna-define-method elmo-folder-contains-type ((folder elmo-pipe-folder)
 					       type)
