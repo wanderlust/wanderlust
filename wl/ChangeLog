@@ -1,3 +1,12 @@
+2003-08-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-preview-attributes): New user option.
+	(wl-draft-preview-attributes-list): Ditto.
+	(wl-draft-preview-attributes-buffer-lines): Ditto.
+	(wl-draft-preview-attributes-buffer-name): Ditto.
+
+	* wl-mime.el (wl-draft-preview-message): Display attributes.
+
 2003-08-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Bind
