@@ -1,3 +1,13 @@
+2003-11-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (toplevel): Remove setting of autoloding for
+	elmo-global-flag-initialize.
+	(elmo-init): Don't call elmo-global-flag-initialize.
+
+	* elmo-flag.el (elmo-global-flag-initialize): Abolish.
+	(elmo-global-mark-migrate): Don't call it.
+	(elmo-global-mark-upgrade): Ditto.
+
 2003-11-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-internal.el (elmo-internal-obsolete-folder-list): New variable.

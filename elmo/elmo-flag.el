@@ -196,16 +196,6 @@ NUMBER is the number of the message."
 			     folder)))))
 
 ;;; Global-Flag API
-(defun elmo-global-flag-initialize ()
-  "Initialize flag folders.
-This function is necessary to be called before using `elmo-flag-folder'."
-  (unless elmo-global-flag-folder-alist
-    (dolist (flag elmo-global-flag-list)
-      (setq elmo-global-flag-folder-alist
-	    (cons (elmo-make-folder
-		   (concat "'flag/" (symbol-name flag)))
-		  elmo-global-flag-folder-alist)))))
-
 (defun elmo-global-flag-p (flag)
   "Return non-nil when FLAG is global."
   (memq flag elmo-global-flag-list))
@@ -374,7 +364,6 @@ the message is not flagged in any folder."
 
 (defun elmo-global-mark-migrate ()
   "Migrate from 'mark to 'flag. For automatic migration."
-  (elmo-global-flag-initialize)
   (when (and (file-exists-p (expand-file-name elmo-global-mark-filename
 					      elmo-msgdb-directory))
 	     (elmo-global-flag-p 'important)
@@ -388,7 +377,6 @@ the message is not flagged in any folder."
   (when (file-exists-p (expand-file-name
 			elmo-global-mark-filename elmo-msgdb-directory))
     (message "Upgrading flag structure...")
-    (elmo-global-flag-initialize)
     (when (elmo-global-flag-p 'important)
       (let ((global-marks
 	     (elmo-object-load

@@ -83,7 +83,6 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (eval-and-compile
   (autoload 'elmo-dop-queue-flush "elmo-dop")
   (autoload 'elmo-nntp-post "elmo-nntp")
-  (autoload 'elmo-global-flag-initialize "elmo-flag")
   (autoload 'elmo-global-flag-p "elmo-flag")
   (autoload 'elmo-global-flag-detach "elmo-flag")
   (autoload 'elmo-global-flag-detach-messages "elmo-flag")
@@ -1596,7 +1595,6 @@ Return a hashtable for newsgroups."
   "Initialize ELMO module."
   (elmo-crosspost-message-alist-load)
   (elmo-resque-obsolete-variables)
-  (elmo-global-flag-initialize)
   (elmo-dop-queue-load)
   (run-hooks 'elmo-init-hook))
 
