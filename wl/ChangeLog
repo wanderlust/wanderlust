@@ -1,3 +1,8 @@
+2003-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-prev-page): Use save-selected-window.
+	(wl-message-next-page): Ditto.
+
 2003-09-26  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-action.el (wl-summary-collect-numbers-region): Remove unused
