@@ -472,7 +472,6 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-message-mail-p ()
   "If exist To, Cc or Bcc field, return non-nil."
   (or (wl-message-field-exists-p "To")
-      (wl-message-field-exists-p "Resent-to")      
       (wl-message-field-exists-p "Cc")
       (wl-message-field-exists-p "Bcc")
 ;;; This may be needed..
@@ -492,8 +491,9 @@ Reply to author if WITH-ARG is non-nil."
   (let ((cur-buf (current-buffer))
 	(tmp-buf (get-buffer-create " *wl-draft-edit-string*"))
 	to subject in-reply-to cc references newsgroups mail-followup-to
-	content-type content-transfer-encoding from
-	body-beg buffer-read-only)
+	content-type content-transfer-encoding
+	body-beg buffer-read-only
+	)
     (set-buffer tmp-buf)
     (erase-buffer)
     (insert string)
@@ -509,12 +509,6 @@ Reply to author if WITH-ARG is non-nil."
 			(decode-mime-charset-string
 			 subject
 			 wl-mime-charset))))
-    (setq from (std11-field-body "From")
-	  from (and from
-		    (eword-decode-string
-		     (decode-mime-charset-string
-		      from
-		      wl-mime-charset))))    
     (setq in-reply-to (std11-field-body "In-Reply-To"))
     (setq cc (std11-field-body "Cc"))
     (setq cc (and cc
@@ -536,10 +530,8 @@ Reply to author if WITH-ARG is non-nil."
 		   mail-followup-to
 		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
-		   'edit-again nil
-		   (if (member (nth 1 (std11-extract-address-components from))
-			       wl-user-mail-address-list)
-		       from)))
+		   'edit-again
+		   ))
       (and to (mail-position-on-field "To"))
       (delete-other-windows)
       (kill-buffer tmp-buf)))
@@ -1282,7 +1274,7 @@ If optional argument is non-nil, current draft buffer is killed"
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
 			   content-type content-transfer-encoding
-			   body edit-again summary-buf from)
+			   body edit-again summary-buf)
   "Write and send mail/news message with Wanderlust."
   (interactive)
   (unless (featurep 'wl)
@@ -1320,8 +1312,8 @@ If optional argument is non-nil, current draft buffer is killed"
     (auto-save-mode -1)
     (wl-draft-mode)
     (setq wl-sent-message-via nil)
-    (if (stringp (or from wl-from))
-	(insert "From: " (or from wl-from) "\n"))
+    (if (stringp wl-from)
+	(insert "From: " wl-from "\n"))
     (and (or (interactive-p)
 	     (eq this-command 'wl-summary-write)
 	     to)
