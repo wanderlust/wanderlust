@@ -1,3 +1,8 @@
+2002-06-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-beginning-of-line): Keep the region
+	active in XEmacs.
+
 2002-06-13  KAMO Tomoyuki  <kamo@i-manage.co.jp>
 
 	* wl-draft.el (wl-draft-beginning-of-line): Treat the header with

@@ -788,6 +788,8 @@ text was killed."
 (defun wl-draft-beginning-of-line (&optional n)
   "Move point to beginning of header value or to beginning of line."
   (interactive "p")
+  (when (boundp 'zmacs-region-stays)
+    (setq zmacs-region-stays t))
   (if (wl-draft-point-in-header-p)
       (let* ((here (point))
 	     (bol (progn (beginning-of-line n) (point)))
