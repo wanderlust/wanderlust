@@ -250,8 +250,7 @@ Returns a TAG string which is assigned to the COMAND."
       (goto-char (point-min))
       (if (elmo-imap4-response-bye-p elmo-imap4-current-response)
 	  (signal 'elmo-imap4-bye-error
-		  (list
-		   (elmo-imap4-response-error-text response))))
+		  (list (elmo-imap4-response-error-text response))))
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
 	  (error "IMAP process is running. Please wait (or plug again.)"))
@@ -1603,10 +1602,8 @@ Return nil if no complete line has arrived."
 		      (EXPUNGE (list 'expunge t))
 		      (FETCH   (elmo-imap4-parse-fetch token))
 		      (t       (list 'garbage (buffer-string)))))))
-      (t (if (not (string= token
-			   (concat elmo-imap4-seq-prefix
-				   (number-to-string elmo-imap4-seqno))))
-	     (message "Garbage token(%s): %s" token (buffer-string))
+      (t (if (not (string-match elmo-imap4-seq-prefix (symbol-name token)))
+	     (list 'garbage (buffer-string))
 	   (case (prog1 (elmo-imap4-read (current-buffer))
 		   (elmo-imap4-forward))
 	     (OK  (progn
