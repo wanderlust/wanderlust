@@ -103,20 +103,20 @@
 	  (wl-expire-delete-reserve-marked-msgs-from-list
 	   delete-list (elmo-msgdb-get-mark-alist msgdb))))
   (when delete-list
-   (let ((mess
-	 (format "Expiring (delete) %s msgs..."
-		 (length delete-list))))
-    (message "%s" mess)
-    (if (elmo-folder-delete-messages folder
-				     delete-list)
-	(progn
-	  (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
-				  delete-list)
-	  (wl-expire-append-log
-	   (elmo-folder-name-internal folder)
-	   delete-list nil 'delete)
-	  (message "%sdone" mess))
-      (error "%sfailed!" mess))))
+    (let ((mess
+	   (format "Expiring (delete) %s msgs..."
+		   (length delete-list))))
+      (message "%s" mess)
+      (if (elmo-folder-delete-messages folder
+				       delete-list)
+	  (progn
+	    (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
+				    delete-list)
+	    (wl-expire-append-log
+	     (elmo-folder-name-internal folder)
+	     delete-list nil 'delete)
+	    (message "%sdone" mess))
+	(error "%sfailed!" mess))))
   (cons delete-list (length delete-list)))
 
 (defun wl-expire-refile (folder refile-list msgdb dst-folder
