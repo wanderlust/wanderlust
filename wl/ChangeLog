@@ -1,3 +1,8 @@
+2000-09-24  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-set-crosspost): Use `elmo-list-delete'
+	instead of `elmo-delete-lists'.
+
 2000-09-22  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl.el (wl-plugged-toggle-all): Set the value of

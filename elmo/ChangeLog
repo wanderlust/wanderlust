@@ -1,3 +1,10 @@
+2000-09-24  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-list-delete): Doc fix.
+	(elmo-delete-lists): Abolish.
+	* elmo2.el (elmo-crosspost-message-delete): Use `elmo-list-delete'
+	instead of `elmo-delete-lists'.
+
 2000-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-make-number-set-list): Copy `msg-list'
