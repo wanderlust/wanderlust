@@ -1353,8 +1353,10 @@ If ARG is non-nil, checking is omitted."
 			       ?\"
 			       (or
 				(elmo-message-field
-				 wl-summary-buffer-elmo-folder
-				 number 'from t)
+				 (elmo-message-entity
+				  wl-summary-buffer-elmo-folder
+				  number)
+				 'from t)
 				"??")))))) " ]")
 			size))))
 	      (message ""))		; flush.
