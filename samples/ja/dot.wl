@@ -297,21 +297,21 @@
 ;; "a" (without-argument)では Reply-To: や From: などで指定された唯一人
 ;; または唯一つの投稿先に返信する。また，X-ML-Name: と Reply-To: がつい
 ;; ているなら Reply-To: 宛にする。
-(setq wl-draft-reply-without-argument-list
-      '((("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
-	("X-ML-Name" . (("To" "Cc") nil nil))
-	("Followup-To" . (nil nil ("Followup-To")))
-	("Newsgroups" . (nil nil ("Newsgroups")))
-	("Reply-To" . (("Reply-To") nil nil))
-	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-	("From" . (("From") nil nil))))
+;(setq wl-draft-reply-without-argument-list
+;      '((("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+;	("X-ML-Name" . (("To" "Cc") nil nil))
+;	("Followup-To" . (nil nil ("Followup-To")))
+;	("Newsgroups" . (nil nil ("Newsgroups")))
+;	("Reply-To" . (("Reply-To") nil nil))
+;	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+;	("From" . (("From") nil nil))))
 
 ;; "C-u a" (with-argument)であれば関係する全ての人・投稿先に返信する。
-(setq wl-draft-reply-with-argument-list
-      '(("Followup-To" . (("From") nil ("Followup-To")))
-	("Newsgroups" . (("From") nil ("Newsgroups")))
-	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
-	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+;(setq wl-draft-reply-with-argument-list
+;      '(("Followup-To" . (("From") nil ("Followup-To")))
+;	("Newsgroups" . (("From") nil ("Newsgroups")))
+;	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+;	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
 
 
 ;;; [[ メッセージ表示の設定 ]]

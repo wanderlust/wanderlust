@@ -291,21 +291,21 @@
 
 ;; "a" (without-argument) reply to author (Reply-To or From).
 ;; if 'X-ML-Name' and 'Reply-To' exists, reply to 'Reply-To'.
-(setq wl-draft-reply-without-argument-list
-      '((("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
-	("X-ML-Name" . (("To" "Cc") nil nil))
-	("Followup-To" . (nil nil ("Followup-To")))
-	("Newsgroups" . (nil nil ("Newsgroups")))
-	("Reply-To" . (("Reply-To") nil nil))
-	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-	("From" . (("From") nil nil))))
+;(setq wl-draft-reply-without-argument-list
+;      '((("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+;	("X-ML-Name" . (("To" "Cc") nil nil))
+;	("Followup-To" . (nil nil ("Followup-To")))
+;	("Newsgroups" . (nil nil ("Newsgroups")))
+;	("Reply-To" . (("Reply-To") nil nil))
+;	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+;	("From" . (("From") nil nil))))
 
 ;; "C-u a" (with-argument) reply to all.
-(setq wl-draft-reply-with-argument-list
-      '(("Followup-To" . (("From") nil ("Followup-To")))
-	("Newsgroups" . (("From") nil ("Newsgroups")))
-	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
-	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+;(setq wl-draft-reply-with-argument-list
+;      '(("Followup-To" . (("From") nil ("Followup-To")))
+;	("Newsgroups" . (("From") nil ("Newsgroups")))
+;	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+;	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
 
 
 ;;; [[ Message Display Settings ]]
