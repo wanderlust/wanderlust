@@ -538,19 +538,21 @@ Reply to author if WITH-ARG is non-nil."
 
 (defun wl-draft-insert-current-message (dummy)
   (interactive)
-  (let (mail-reply-buffer
+  (let (original-buffer
+	mail-reply-buffer
 	mail-citation-hook mail-yank-hooks
 	wl-draft-add-references wl-draft-cite-function)
     (with-current-buffer wl-draft-buffer-cur-summary-buffer
       (with-current-buffer wl-message-buffer
-	(setq mail-reply-buffer (wl-message-get-original-buffer))))
-    (if (zerop
-	    (with-current-buffer mail-reply-buffer
-	      (buffer-size)))
-	(error "No current message")
-      (wl-draft-yank-from-mail-reply-buffer
-       nil
-       wl-ignored-forwarded-headers))))
+	(setq original-buffer (wl-message-get-original-buffer))
+	(if (zerop
+	     (with-current-buffer original-buffer
+	       (buffer-size)))
+	    (error "No current message"))))
+    (setq mail-reply-buffer original-buffer)
+    (wl-draft-yank-from-mail-reply-buffer
+     nil
+     wl-ignored-forwarded-headers)))
 
 (defun wl-draft-insert-get-message (dummy)
   (let ((fld (completing-read

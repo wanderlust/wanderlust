@@ -1552,7 +1552,8 @@ Each elements are regexp of folder name."
   '(("^-alt\\.chinese" . big5)
     ("^-relcom\\." . koi8-r)
     ("^-tw\\." . big5)
-    ("^-han\\." . euc-kr))
+    ("^-han\\." . euc-kr)
+    ("@sponichi" . shift_jis))
   "Charset alist.  If no match, `wl-mime-charset' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp") (symbol :tag "Charset")))
   :group 'wl-summary
