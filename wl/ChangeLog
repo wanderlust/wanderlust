@@ -1,3 +1,11 @@
+2002-01-24  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-message.el (wl-message-buffer-prefetch-move-spec-plugged-alist):
+	New variable.
+	(wl-message-buffer-prefetch-move-spec-unplugged-alist): New variable.
+	(wl-message-buffer-prefetch-get-next): Use them.
+	* wl-demo.el (wl-demo-copyright-notice): Add 2002.
+
 2002-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-reedit): Don't enclose wl-draft-reedit
