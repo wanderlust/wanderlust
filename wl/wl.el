@@ -844,32 +844,34 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 (defun wl-other-frame (&optional arg)
   "Pop up a frame to read messages via Wanderlust."
   (interactive)
-  (let ((focusing-functions (append '(raise-frame select-frame)
-				    (if (fboundp 'x-focus-frame)
-					'(x-focus-frame)
-				      '(focus-frame))))
-	(folder (get-buffer wl-folder-buffer-name))
-	window frame wl-folder-use-frame)
-    (if (and folder
-	     (setq window (get-buffer-window folder t))
-	     (window-live-p window)
-	     (setq frame (window-frame window)))
-	(progn
-	  (while focusing-functions
-	    (funcall (car focusing-functions) frame)
-	    (setq focusing-functions (cdr focusing-functions)))
-	  (wl arg))
-      (setq frame (make-frame))
-      (while focusing-functions
-	(funcall (car focusing-functions) frame)
-	(setq focusing-functions (cdr focusing-functions)))
-      (setq wl-delete-startup-frame-function
-	    `(lambda ()
-	       (setq wl-delete-startup-frame-function nil)
-	       (let ((frame ,frame))
-		 (if (eq (selected-frame) frame)
-		     (delete-frame frame)))))
-      (wl arg))))
+  (if wl-folder-use-frame
+      (wl arg)
+    (let ((focusing-functions (append '(raise-frame select-frame)
+				      (if (fboundp 'x-focus-frame)
+					  '(x-focus-frame)
+					'(focus-frame))))
+	  (folder (get-buffer wl-folder-buffer-name))
+	  window frame wl-folder-use-frame)
+      (if (and folder
+	       (setq window (get-buffer-window folder t))
+	       (window-live-p window)
+	       (setq frame (window-frame window)))
+	  (progn
+	    (while focusing-functions
+	      (funcall (car focusing-functions) frame)
+	      (setq focusing-functions (cdr focusing-functions)))
+	    (wl arg))
+	(setq frame (make-frame))
+	(while focusing-functions
+	  (funcall (car focusing-functions) frame)
+	  (setq focusing-functions (cdr focusing-functions)))
+	(setq wl-delete-startup-frame-function
+	      `(lambda ()
+		 (setq wl-delete-startup-frame-function nil)
+		 (let ((frame ,frame))
+		   (if (eq (selected-frame) frame)
+		       (delete-frame frame)))))
+	(wl arg)))))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile
