@@ -1,3 +1,8 @@
+2003-10-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-spam.el (wl-spam-setup): Modify wl-summary-reserve-mark-list
+	and wl-summary-skip-mark-list.
+
 2003-10-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el (wl-summary-exec-action-spam): Fixed.

@@ -319,7 +319,14 @@ See `wl-summary-mark-action-list' for the detail of element."
   (when wl-spam-mark-action-list
     (setq wl-summary-mark-action-list (append
 				       wl-summary-mark-action-list
-				       wl-spam-mark-action-list)))
+				       wl-spam-mark-action-list))
+    (dolist (action wl-spam-mark-action-list)
+      (setq wl-summary-reserve-mark-list
+	    (cons (wl-summary-action-mark action)
+		  wl-summary-reserve-mark-list))
+      (setq wl-summary-skip-mark-list
+	    (cons (wl-summary-action-mark action)
+		  wl-summary-skip-mark-list))))
   (define-key wl-summary-mode-map "k" wl-summary-spam-map)
   (define-key wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
   (define-key wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good))

@@ -400,7 +400,7 @@
 ;    (setq action  (car actions)
 ;	  actions (cdr actions))
 ;    (when (eq (wl-summary-action-symbol action) 'refile)
-;      (setf (nth 4 action) 'wl-summary-exec-action-refile-with-register)
+;      (setcar (nthcdr 4 action) 'wl-summary-exec-action-refile-with-register)
 ;      (setq actions nil))))
 
 ;;; dot.wl ends here

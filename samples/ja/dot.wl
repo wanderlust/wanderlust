@@ -378,17 +378,17 @@
 ;; うかを判定する様にする
 ;(unless (memq 'wl-refile-guess-by-spam wl-refile-guess-functions)
 ;  (setq wl-refile-guess-functions
-;	(cons #'wl-refile-guess-by-spam 
+;	(cons #'wl-refile-guess-by-spam
 ;	      wl-refile-guess-functions)))
 
-;; サマリバッファで `C-o' (wl-summary-auto-refile) した時, *最初*に 
+;; サマリバッファで `C-o' (wl-summary-auto-refile) した時, *最初*に
 ;; spam かどうかを判定する様にする
 ;(unless (memq 'wl-refile-guess-by-spam wl-auto-refile-guess-functions)
 ;  (setq wl-auto-refile-guess-functions
-;	(cons #'wl-refile-guess-by-spam 
+;	(cons #'wl-refile-guess-by-spam
 ;	      wl-auto-refile-guess-functions)))
 
-;; refile-rule を優先したい場合 (spamfilter-wl.el や bogofilter-wl.el 
+;; refile-rule を優先したい場合 (spamfilter-wl.el や bogofilter-wl.el
 ;; と同じ設定) は, こっちの設定を有効にする
 ;(unless (memq 'wl-refile-guess-by-spam wl-auto-refile-guess-functions)
 ;  (setq wl-auto-refile-guess-functions
@@ -401,7 +401,7 @@
 
 ;; refile の実行時に学習させる為の設定
 ;; 以下の設定をしたからと言って常に学習する訳ではありません. 詳しくは,
-;; wl-spam.el の wl-spam-undecided-folder-regexp-list と 
+;; wl-spam.el の wl-spam-undecided-folder-regexp-list と
 ;; wl-spam-ignored-folder-regexp-list の docstring を参照して下さい.
 ;(let ((actions wl-summary-mark-action-list)
 ;      action)
@@ -409,7 +409,7 @@
 ;    (setq action  (car actions)
 ;	  actions (cdr actions))
 ;    (when (eq (wl-summary-action-symbol action) 'refile)
-;      (setf (nth 4 action) 'wl-summary-exec-action-refile-with-register)
+;      (setcar (nthcdr 4 action) 'wl-summary-exec-action-refile-with-register)
 ;      (setq actions nil))))
 
 ;;; dot.wl ends here
