@@ -491,7 +491,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 ;; If support @anchor for Mule 2.3, We must fix informat.el and info.el:
 ;;  - Info-tagify suport @anthor-*-refill.
 ;;  - info.el support Ref in Tag table.
-(unless (eq 'texinfo-anchor (get 'anchor 'texinfo-format))
+(unless (get 'anchor 'texinfo-format)
   (put 'anchor 'texinfo-format 'texinfo-discard-command-and-arg))
 
 
