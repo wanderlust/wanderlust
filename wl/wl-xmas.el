@@ -1,7 +1,8 @@
 ;;; wl-xmas.el --- Wanderlust modules for XEmacsen.
 
-;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
+;; Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
+;;  Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000, 2001, 2002, 2003 Katsumi Yamaoka <yamaoka@jpl.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Katsumi Yamaoka <yamaoka@jpl.org>
@@ -201,13 +202,13 @@
   (defsubst wl-xmas-highlight-folder-group-line (glyph text-face numbers)
     (let ((start (match-beginning 1))
 	  (end (match-end 1)))
-      (let (extent)
-	(while (and (setq extent (extent-at start nil nil extent 'at))
-		    (not (and (eq start (extent-start-position extent))
-			      (eq end (extent-end-position extent))
-			      (extent-end-glyph extent)))))
-	(unless extent
-	  (setq extent (make-extent start end)))
+      (let ((extent (or (map-extents
+			 (lambda (extent maparg)
+			   (and (eq start (extent-start-position extent))
+				(eq end (extent-end-position extent))
+				extent))
+			 nil start start nil nil 'end-glyph)
+			(make-extent start end))))
 	(set-extent-properties extent `(end-open t start-closed t invisible t))
 	(set-extent-end-glyph
 	 extent
@@ -266,13 +267,13 @@
 			     (get-text-property (point) 'wl-folder-entity-id)))
 	     (looking-at "[ \t]+\\([^ \t]+\\)"))
 	(let ((start (match-beginning 1)))
-	  (let (extent)
-	    (while (and (setq extent (extent-at start nil nil extent 'at))
-			(not (and (eq start (extent-start-position extent))
-				  (eq start (extent-end-position extent))
-				  (extent-begin-glyph extent)))))
-	    (unless extent
-	      (setq extent (make-extent start start)))
+	  (let ((extent (or (map-extents
+			     (lambda (extent maparg)
+			       (and (eq start (extent-start-position extent))
+				    (eq start (extent-end-position extent))
+				    extent))
+			     nil start start nil nil 'begin-glyph)
+			    (make-extent start start))))
 	    (let (type)
 	      (set-extent-begin-glyph
 	       extent
