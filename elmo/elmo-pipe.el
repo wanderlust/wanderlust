@@ -66,10 +66,12 @@
   (let ((msgdb (elmo-msgdb-load src))
 	elmo-nntp-use-cache 
 	elmo-imap4-use-cache
-	elmo-pop3-use-cache) ; Inhibit caching while moving messages.
+	elmo-pop3-use-cache ; Inhibit caching while moving messages.
+	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
     (elmo-move-msgs src (elmo-list-folder src) dst msgdb)
     (elmo-msgdb-save src msgdb)
+    (elmo-commit src)
     (run-hooks 'elmo-pipe-drained-hook)))
 
 (defun elmo-pipe-list-folder (spec)
@@ -94,8 +96,9 @@
   (elmo-list-folder-important (elmo-pipe-spec-dst spec) overview))
 
 (defun elmo-pipe-max-of-folder (spec)
-  (let ((src-length (length (elmo-list-folder (elmo-pipe-spec-src spec))))
-	(dst-list (elmo-list-folder (elmo-pipe-spec-dst spec))))
+  (let* (elmo-pop3-use-uidl
+	 (src-length (length (elmo-list-folder (elmo-pipe-spec-src spec))))
+	 (dst-list (elmo-list-folder (elmo-pipe-spec-dst spec))))
     (cons (+ src-length (elmo-max-of-list dst-list))
 	  (+ src-length (length dst-list)))))
 

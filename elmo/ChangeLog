@@ -1,3 +1,51 @@
+2000-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-use-uidl): New variable.
+	(elmo-pop3-number-uidl-hash): New buffer-local variable.
+	(elmo-pop3-uidl-number-hash): Ditto.
+	(elmo-pop3-size-hash): Ditto.
+	(elmo-pop3-uidl-done): Ditto.
+	(elmo-pop3-list-done): Ditto.
+	(elmo-pop3-connection-get-process): New defmacro.
+	(elmo-pop3-connection-get-buffer): Ditto.
+	(elmo-pop3-close-connection): Delete buffer and process.
+	(elmo-pop3-flush-connection): Don't delete buffer and process.
+	(elmo-pop3-get-connection): Added optional argument `if-exists'.
+	Setup UIDL and size hash.
+	(elmo-pop3-send-command-no-erase): Deleted
+	(elmo-pop3-send-command): Added optional argument `no-erase'.
+	(elmo-pop3-parse-uidl-response): New function.
+	(elmo-pop3-parse-list-response): Set size hash.
+	(elmo-pop3-list-location): New function.
+	(elmo-pop3-list-by-uidl-subr): Ditto.
+	(elmo-pop3-list-by-list): Ditto.
+	(elmo-pop3-list-folder): Call `elmo-pop3-commit'.
+	Call `elmo-pop3-list-by-uidl-subr' or `elmo-pop3-list-by-list'.
+	(elmo-pop3-max-of-folder): Call `elmo-pop3-commit'.
+	Call `elmo-pop3-list-by-uidl-subr' if `elmo-pop3-use-uidl' is non-nil.
+	(elmo-pop3-msgdb-create-as-numlist): Added optional argument `msgdb'.
+	Use uidl.
+	(elmo-pop3-uidl-to-number): New function.
+	(elmo-pop3-number-to-uidl): Ditto.
+	(elmo-pop3-number-to-size): Ditto.
+	(elmo-pop3-msgdb-create-by-header): Added argument `loc-alist'.
+	Set number by use of uidl.
+	(elmo-pop3-msgdb-create-message): Likewise.
+	Set size, loc-alist in msgdb.
+	(elmo-pop3-read-msg): Set number by use of uidl.
+	Added optional argument `msgdb'.
+	(elmo-pop3-delete-msg): Ditto.
+	(elmo-pop3-delete-msgs): Added optional argument `msgdb'.
+	(elmo-pop3-commit): Close connection.
+
+	* elmo-pipe.el (elmo-pipe-max-of-folder):
+	Bind `elmo-pop3-use-uidl' as nil.
+	(elmo-pipe-drain): Ditto.
+	Call `elmo-commit'.
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Delete location too.
+	(elmo-msgdb-overview-entity-set-size): New defsubst.
+
 2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-vars.el (elmo-use-killed-list): New variable

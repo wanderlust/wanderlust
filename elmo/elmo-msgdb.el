@@ -419,6 +419,8 @@ content of MSGDB is changed."
 			     (elmo-msgdb-number-load dir)))
 	   (mark-alist (or (caddr msgdb)
 			   (elmo-msgdb-mark-load dir)))
+	   (loc-alist (or (elmo-msgdb-get-location msgdb)
+			  (elmo-msgdb-location-load dir)))
 	   (hashtb (or (elmo-msgdb-get-overviewht msgdb)
 		       (elmo-msgdb-make-overview-hashtb overview)))
 	   (newmsgdb (list overview number-alist mark-alist (nth 3 msgdb) hashtb))
@@ -441,6 +443,7 @@ content of MSGDB is changed."
 	(setq number-alist
 	      (delq (assq (car msg-list) number-alist) number-alist))
 	(setq mark-alist (delq (assq (car msg-list) mark-alist) mark-alist))
+	(setq loc-alist (delq (assq (car msg-list) loc-alist) loc-alist))
 	(setq msg-list (cdr msg-list)))
       (setcar msgdb overview)
       (setcar (cdr msgdb) number-alist)
@@ -509,6 +512,10 @@ content of MSGDB is changed."
 
 (defsubst elmo-msgdb-overview-entity-get-size (entity)
   (and entity (aref (cdr entity) 7)))
+
+(defsubst elmo-msgdb-overview-entity-set-size (entity size)
+  (and entity (aset (cdr entity) 7 size))
+  entity)
 
 (defsubst elmo-msgdb-overview-entity-get-id (entity)
   (and entity (car entity)))

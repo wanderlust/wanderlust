@@ -54,18 +54,39 @@
       (require 'sasl))
   (error))
 
+(defvar elmo-pop3-use-uidl t
+  "*If non-nil, use UIDL.")
+
 (defvar elmo-pop3-exists-exactly t)
 (defvar elmo-pop3-read-point nil)
 (defvar elmo-pop3-connection-cache nil
   "Cache of pop3 connection.")
 
+;; buffer-local
+(defvar elmo-pop3-number-uidl-hash nil) ; number -> uidl
+(defvar elmo-pop3-uidl-number-hash nil) ; uidl -> number
+(defvar elmo-pop3-size-hash nil) ; number -> size
+(defvar elmo-pop3-uidl-done nil)
+(defvar elmo-pop3-list-done nil)
+
+(defmacro elmo-pop3-connection-get-process (connection)
+  (` (nth 1 (, connection))))
+
+(defmacro elmo-pop3-connection-get-buffer (connection)
+  (` (nth 0 (, connection))))
+
 (defun elmo-pop3-close-connection (connection &optional process buffer)
-  (save-excursion
-    (let* ((buffer  (or buffer (nth 0 connection)))
-	   (process (or process (nth 1 connection))))
-      (elmo-pop3-send-command buffer process "quit")
-      (when (null (elmo-pop3-read-response buffer process t))
-	(error "POP error: QUIT failed")))))
+  (and (or connection process)
+       (save-excursion
+	 (let ((buffer  (or buffer
+			    (elmo-pop3-connection-get-buffer connection)))
+	       (process (or process 
+			    (elmo-pop3-connection-get-process connection))))
+	   (elmo-pop3-send-command buffer process "quit")
+	   (when (null (elmo-pop3-read-response buffer process t))
+	     (error "POP error: QUIT failed"))
+	   (if buffer (kill-buffer buffer))
+	   (if process (delete-process process))))))
 
 (defun elmo-pop3-flush-connection ()
   (interactive)
@@ -82,74 +103,91 @@
 	  (condition-case ()
 	      (elmo-pop3-close-connection nil process buffer)
 	    (error)))
-      (if buffer (kill-buffer buffer))
-      ;;(setq process (car (cdr (cdr (car cache)))))
-      (if process (delete-process process))
       (setq cache (cdr cache)))
     (setq elmo-pop3-connection-cache nil)))
 
-(defun elmo-pop3-get-connection (spec)
+(defun elmo-pop3-get-connection (spec &optional if-exists)
   (let* ((user   (elmo-pop3-spec-username spec))
 	 (server (elmo-pop3-spec-hostname spec))
 	 (port   (elmo-pop3-spec-port spec))
 	 (auth   (elmo-pop3-spec-auth spec))
 	 (ssl    (elmo-pop3-spec-ssl spec))
 	 (user-at-host (format "%s@%s" user server))
-	 ret-val result buffer process errmsg proc-stat
+	 connection result buffer process errmsg proc-stat response
 	 user-at-host-on-port)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
     (setq user-at-host-on-port 
 	  (concat user-at-host ":" (int-to-string port)
 		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
-    (setq ret-val (assoc user-at-host-on-port elmo-pop3-connection-cache))
-    (if (and ret-val 
+    (setq connection (assoc user-at-host-on-port elmo-pop3-connection-cache))
+    (if (and connection 
 	     (or (eq (setq proc-stat 
-			   (process-status (cadr (cdr ret-val)))) 
+			   (process-status (cadr (cdr connection)))) 
 		     'closed)
 		 (eq proc-stat 'exit)))
 	;; connection is closed...
 	(progn
-	  (kill-buffer (car (cdr ret-val)))
+	  (kill-buffer (car (cdr connection)))
 	  (setq elmo-pop3-connection-cache 
-		(delete ret-val elmo-pop3-connection-cache))
-	  (setq ret-val nil)
-	  ))
-    (if ret-val
-	(cdr ret-val)
-      (setq result
-	    (elmo-pop3-open-connection 
-	     server user port auth
-	     (elmo-get-passwd user-at-host) ssl))
-      (if (null result)
-	  (error "Connection failed"))
-      (setq buffer (car result))
-      (setq process (cdr result))
-      (when (and process (null buffer))
-	(elmo-remove-passwd user-at-host)
-	(delete-process process)
-	(error "Login failed")
-	)
-      (setq elmo-pop3-connection-cache 
-	    (append elmo-pop3-connection-cache 
-		    (list 
-		     (cons user-at-host-on-port
-			   (setq ret-val (list buffer process))))))
-      ret-val)))
+		(delete connection elmo-pop3-connection-cache))
+	  (setq connection nil)))
+    (if connection
+	(cdr connection)
+      (unless if-exists
+	(setq result
+	      (elmo-pop3-open-connection 
+	       server user port auth
+	       (elmo-get-passwd user-at-host) ssl))
+	(if (null result)
+	    (error "Connection failed"))
+	(setq buffer (car result))
+	(setq process (cdr result))
+	(when (and process (null buffer))
+	  (elmo-remove-passwd user-at-host)
+	  (delete-process process)
+	  (error "Login failed"))
+	(setq elmo-pop3-connection-cache 
+	      (append elmo-pop3-connection-cache 
+		      (list 
+		       (cons user-at-host-on-port
+			     (setq connection (list buffer process))))))
+	;; initialization of list
+	(with-current-buffer buffer
+	  (make-variable-buffer-local 'elmo-pop3-uidl-number-hash)
+	  (make-variable-buffer-local 'elmo-pop3-number-uidl-hash)
+	  (make-variable-buffer-local 'elmo-pop3-uidl-done)
+	  (make-variable-buffer-local 'elmo-pop3-size-hash)
+	  (make-variable-buffer-local 'elmo-pop3-list-done)
+	  (setq elmo-pop3-size-hash (make-vector 31 0))
+	  ;; To get obarray of uidl and size
+	  ;; List
+	  (elmo-pop3-send-command buffer process "list")
+	  (if (null (elmo-pop3-read-response buffer process))
+	      (error "POP List folder failed"))
+	  (if (null (setq response
+			  (elmo-pop3-read-contents buffer process)))
+	      (error "POP List folder failed"))
+	  ;; POP server always returns a sequence of serial numbers.
+	  (elmo-pop3-parse-list-response response)
+	  ;; UIDL
+	  (when elmo-pop3-use-uidl
+	    (setq elmo-pop3-uidl-number-hash (make-vector 31 0))
+	    (setq elmo-pop3-number-uidl-hash (make-vector 31 0))
+	    ;; UIDL
+	    (elmo-pop3-send-command buffer process "uidl")
+	    (unless (elmo-pop3-read-response buffer process)
+	      (error "UIDL failed."))
+	    (unless (setq response (elmo-pop3-read-contents buffer process))
+	      (error "UIDL failed."))
+	    (elmo-pop3-parse-uidl-response response)
+	    elmo-pop3-uidl-done))
+	connection))))
 
-(defun elmo-pop3-send-command (buffer process command)
-  (save-excursion
-    (set-buffer buffer)
-    (erase-buffer)
-    (goto-char (point-min))
-    (setq elmo-pop3-read-point (point))
-    (process-send-string process command)
-    (process-send-string process "\r\n")))
-
-(defun elmo-pop3-send-command-no-erase (buffer process command)
-  (save-excursion
-    (set-buffer buffer)
-    ;(erase-buffer)
+(defun elmo-pop3-send-command (buffer process command &optional no-erase)
+  (with-current-buffer buffer
+    (unless no-erase
+      (erase-buffer))
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
     (process-send-string process command)
@@ -179,8 +217,7 @@
 	      (setq return-value 
 		    (if return-value 
 			(concat return-value "\n" response-string)
-		      response-string
-		      )))
+		      response-string)))
 	  (if (looking-at "\\-.*$")
 	      (progn 
 		(setq response-continue nil)
@@ -326,7 +363,7 @@
 			     salted-pass))
 		      (throw 'done nil))
 		  (elmo-pop3-send-command
-		   process-buffer process "") ))
+		   process-buffer process "")))
 	       (t
 		;; try USER/PASS
 		(elmo-pop3-send-command  process-buffer process 
@@ -371,48 +408,93 @@
 	  (condition-case nil
 	      (prog1
 		  (elmo-pop3-get-connection spec)
-		(elmo-pop3-flush-connection))
+		(elmo-pop3-close-connection
+		 (elmo-pop3-get-connection spec 'if-exists)))
 	    (error nil))))
     t))
 
-(defun elmo-pop3-parse-list-response (string)
-  (save-excursion
-    (let ((tmp-buffer (get-buffer-create " *ELMO PARSE TMP*"))
-	  ret-val)
-      (set-buffer tmp-buffer)
-      (let ((case-fold-search t))
-	(erase-buffer)
+(defun elmo-pop3-parse-uidl-response (string)
+  (let ((buffer (current-buffer))
+	number list size)
+    (with-temp-buffer
+      (let (number uid list)
 	(insert string)
 	(goto-char (point-min))
-	(while (re-search-forward "^\\([0-9]*\\)[\t ].*$" nil t)
-	  (setq ret-val
-		(cons
-		 (string-to-int
-		  (elmo-match-buffer 1))
-		 ret-val)))
-	(kill-buffer tmp-buffer)
-	(nreverse ret-val)))))
+	(while (re-search-forward "^\\([0-9]+\\)[\t ]\\([^ \n]+\\)$" nil t)
+	  (setq number  (elmo-match-buffer 1))
+	  (setq uid (elmo-match-buffer 2))
+	  (with-current-buffer buffer
+	    (elmo-set-hash-val uid number elmo-pop3-uidl-number-hash)
+	    (elmo-set-hash-val (concat "#" number) uid
+			       elmo-pop3-number-uidl-hash))
+	  (setq list (cons uid list)))
+	(with-current-buffer buffer (setq elmo-pop3-uidl-done t))
+	(nreverse list)))))
+
+(defun elmo-pop3-parse-list-response (string)
+  (let ((buffer (current-buffer))
+	number list size)
+    (with-temp-buffer
+      (insert string)
+      (goto-char (point-min))
+      (while (re-search-forward "^\\([0-9]+\\)[\t ]\\([0-9]+\\)$" nil t)
+	(setq list
+	      (cons
+	       (string-to-int (setq number (elmo-match-buffer 1)))
+	       list))
+	(setq size (elmo-match-buffer 2))
+	(with-current-buffer buffer
+	  (elmo-set-hash-val (concat "#" number)
+			     size
+			     elmo-pop3-size-hash)))
+      (with-current-buffer buffer (setq elmo-pop3-list-done t))
+      (nreverse list))))
+
+(defun elmo-pop3-list-location (spec)
+  (with-current-buffer (elmo-pop3-connection-get-buffer
+			(elmo-pop3-get-connection spec))
+    (let (list)
+      (if elmo-pop3-uidl-done
+	  (progn
+	    (mapatoms
+	     (lambda (atom)
+	       (setq list (cons (symbol-name atom) list)))
+	     elmo-pop3-uidl-number-hash)
+	    (nreverse list))
+	(error "POP3: Error in UIDL")))))
+
+(defun elmo-pop3-list-by-uidl-subr (spec &optional nonsort)
+  (let ((flist (elmo-list-folder-by-location
+		spec
+		(elmo-pop3-list-location spec))))
+    (if nonsort
+	(cons (elmo-max-of-list flist) (length flist))
+      (sort flist '<))))
+
+(defun elmo-pop3-list-by-list (spec)
+  (with-current-buffer (elmo-pop3-connection-get-buffer
+			(elmo-pop3-get-connection spec))
+    (let (list)
+      (if elmo-pop3-list-done
+	  (progn
+	    (mapatoms (lambda (atom)
+			(setq list (cons (string-to-int
+					  (substring (symbol-name atom) 1))
+					 list)))
+		      elmo-pop3-size-hash)
+	    (sort list '<))
+	(error "POP3: Error in list")))))
 
 (defun elmo-pop3-list-folder (spec)
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
 		      (elmo-msgdb-expand-path nil spec))))
 	numbers)
-    (setq numbers
-	  (save-excursion
-	    (elmo-pop3-flush-connection)
-	    (let* ((connection (elmo-pop3-get-connection spec))
-		   (buffer  (nth 0 connection))
-		   (process (nth 1 connection))
-		   response errmsg ret-val)
-	      (elmo-pop3-send-command buffer process "list")
-	      (if (null (elmo-pop3-read-response buffer process))
-		  (error "POP List folder failed"))
-	      (if (null (setq response
-			      (elmo-pop3-read-contents buffer process)))
-		  (error "POP List folder failed"))
-	      ;; POP server always returns a sequence of serial numbers.
-	      (elmo-pop3-parse-list-response response))))
+    (elmo-pop3-commit spec)
+    (setq numbers (if elmo-pop3-use-uidl
+		      (progn
+			(elmo-pop3-list-by-uidl-subr spec))
+		    (elmo-pop3-list-by-list spec)))
     (if killed
 	(delq nil
 	      (mapcar (lambda (number)
@@ -421,22 +503,24 @@
       numbers)))
 
 (defun elmo-pop3-max-of-folder (spec)
-  (save-excursion
-    (elmo-pop3-flush-connection)
+  (elmo-pop3-commit spec)
+  (if elmo-pop3-use-uidl
+      (elmo-pop3-list-by-uidl-subr spec 'nonsort)
     (let* ((connection (elmo-pop3-get-connection spec))
 	   (buffer  (nth 0 connection))
 	   (process (nth 1 connection))
 	   (total 0)
 	   response)
-      (elmo-pop3-send-command buffer process "STAT")
-      (setq response (elmo-pop3-read-response buffer process))
-      ;; response: "^\+OK 2 7570$"
-      (if (not (string-match "^\+OK[ \t]*\\([0-9]*\\)" response))
-	  (error "POP STAT command failed")
-	(setq total
-	      (string-to-int
-	       (substring response (match-beginning 1)(match-end 1 ))))
-	(cons total total)))))
+      (with-current-buffer buffer
+	(elmo-pop3-send-command buffer process "STAT")
+	(setq response (elmo-pop3-read-response buffer process))
+	;; response: "^\+OK 2 7570$"
+	(if (not (string-match "^\+OK[ \t]*\\([0-9]*\\)" response))
+	    (error "POP STAT command failed")
+	  (setq total
+		(string-to-int
+		 (substring response (match-beginning 1)(match-end 1 ))))
+	  (cons total total))))))
 
 (defvar elmo-pop3-header-fetch-chop-length 200)
 
@@ -463,12 +547,10 @@
 	  (last-point (point-min)))
       ;; Send HEAD commands.
       (while articles
-	(elmo-pop3-send-command-no-erase
-	 buffer
-	 process
-	 (format "top %s 0" (car articles))
-	 )
-	; (accept-process-output process 1)
+	(elmo-pop3-send-command buffer process (format
+						"top %s 0" (car articles))
+				'no-erase)
+	;; (accept-process-output process 1)
 	(setq articles (cdr articles))
 	(setq count (1+ count))
 	;; Every 200 requests we have to read the stream in
@@ -494,54 +576,80 @@
 		   (/ (* received 100) number))))
 	    (accept-process-output process 1)
 	    ;(accept-process-output process)
-	    (discard-input)
-	    )))
+	    (discard-input))))
       ;; Remove all "\r"'s.
       (goto-char (point-min))
       (while (search-forward "\r\n" nil t)
 	(replace-match "\n"))
-      (copy-to-buffer tobuffer (point-min) (point-max))
-      ;(elmo-pop3-close-connection nil process buffer) ; close connection
-      )))
+      (copy-to-buffer tobuffer (point-min) (point-max)))))
 
 (defalias 'elmo-pop3-msgdb-create 'elmo-pop3-msgdb-create-as-numlist)
+
 (defun elmo-pop3-msgdb-create-as-numlist (spec numlist new-mark
 					       already-mark seen-mark
-					       important-mark seen-list)
+					       important-mark seen-list
+					       &optional msgdb)
   (when numlist
     (let* ((connection (elmo-pop3-get-connection spec))
-	   (buffer (nth 0 connection))
-	   (process (nth 1 connection))
-	   response errmsg ret-val)
+	   (buffer (elmo-pop3-connection-get-buffer connection))
+	   (process (elmo-pop3-connection-get-process connection))
+	   loc-alist)
+      (if elmo-pop3-use-uidl
+	  (setq loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
+			    (elmo-msgdb-location-load
+			     (elmo-msgdb-expand-path nil spec)))))
       (elmo-pop3-msgdb-create-by-header buffer process numlist
 					new-mark already-mark 
-					seen-mark seen-list))))
+					seen-mark seen-list
+					loc-alist))))
+
+(defun elmo-pop3-uidl-to-number (uidl)
+  (string-to-number (elmo-get-hash-val uidl
+				       elmo-pop3-uidl-number-hash)))
+
+(defun elmo-pop3-number-to-uidl (number)
+  (elmo-get-hash-val (format "#%d" number)
+		     elmo-pop3-number-uidl-hash))
+
+(defun elmo-pop3-number-to-size (number)
+  (elmo-get-hash-val (format "#%d" number)
+		     elmo-pop3-size-hash))
 
 (defun elmo-pop3-msgdb-create-by-header (buffer process numlist
 						new-mark already-mark 
 						seen-mark
-						seen-list)
-  (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
-	ret-val)
-    (elmo-pop3-retrieve-headers
-     buffer tmp-buffer process numlist)
-    (setq ret-val
+						seen-list
+						loc-alist)
+  (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*")))
+    (with-current-buffer buffer
+      (if loc-alist ; use uidl.
+	  (setq numlist
+		(delq 
+		 nil
+		 (mapcar 
+		  (lambda (number)
+		    (elmo-pop3-uidl-to-number (cdr (assq number loc-alist))))
+		  numlist))))
+      (elmo-pop3-retrieve-headers buffer tmp-buffer process numlist)
+      (prog1
 	  (elmo-pop3-msgdb-create-message
 	   tmp-buffer 
+	   process
 	   (length numlist)
 	   numlist
-	   new-mark already-mark seen-mark seen-list))
-    (kill-buffer tmp-buffer)
-    ret-val))
+	   new-mark already-mark seen-mark seen-list loc-alist)
+	(kill-buffer tmp-buffer)))))
 
 (defun elmo-pop3-msgdb-create-message (buffer 
-				       num numlist new-mark already-mark 
+				       process
+				       num
+				       numlist new-mark already-mark 
 				       seen-mark
-				       seen-list)
+				       seen-list
+				       loc-alist)
   (save-excursion
-    (let (beg
-	  overview number-alist mark-alist
-	  entity i number message-id gmark seen)
+    (let (beg overview number-alist mark-alist
+	      entity i number message-id gmark seen size)
       (set-buffer buffer)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
@@ -562,10 +670,24 @@
 	      (setq overview 
 		    (elmo-msgdb-append-element
 		     overview entity))
+	      (with-current-buffer (process-buffer process)
+		(elmo-msgdb-overview-entity-set-size
+		 entity
+		 (string-to-number
+		  (elmo-pop3-number-to-size
+		   (elmo-msgdb-overview-entity-get-number entity))))
+		(if (setq number
+			  (car
+			   (rassoc
+			    (elmo-pop3-number-to-uidl
+			     (elmo-msgdb-overview-entity-get-number entity))
+			    loc-alist)))
+		    (elmo-msgdb-overview-entity-set-number entity number)))
 	      (setq number-alist
-		    (elmo-msgdb-number-add number-alist
-					   (elmo-msgdb-overview-entity-get-number entity)
-					   (car entity)))
+		    (elmo-msgdb-number-add
+		     number-alist
+		     (elmo-msgdb-overview-entity-get-number entity)
+		     (car entity)))
 	      (setq message-id (car entity))
 	      (setq seen (member message-id seen-list))
 	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
@@ -582,15 +704,14 @@
 			(elmo-msgdb-mark-append 
 			 mark-alist
 			 (elmo-msgdb-overview-entity-get-number entity)
-			 gmark)))
-	      )))
+			 gmark))))))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i num))
 	      (elmo-display-progress
 	       'elmo-pop3-msgdb-create-message "Creating msgdb..."
 	       (/ (* i 100) num)))))
-      (list overview number-alist mark-alist))))
+      (list overview number-alist mark-alist loc-alist))))
 
 (defun elmo-pop3-read-body (buffer process outbuf)
   (with-current-buffer buffer
@@ -606,42 +727,62 @@
 	(insert-buffer-substring buffer start (- end 3))
 	(elmo-delete-cr-get-content-type)))))
 
-(defun elmo-pop3-read-msg (spec number outbuf)
-  (save-excursion
-    (let* ((connection (elmo-pop3-get-connection spec))
-	   (buffer  (car connection))
-	   (process (cadr connection))
-	   (cwf     (caddr connection))	 
-	   response errmsg msg)
-      (elmo-pop3-send-command buffer process 
-			      (format "retr %s" number))
-      (when (null (setq response (elmo-pop3-read-response
-				  buffer process t)))
-	(error "Fetching message failed"))
-      (setq response (elmo-pop3-read-body buffer process outbuf))
-      (set-buffer outbuf)
-      (goto-char (point-min))
-      (while (re-search-forward "^\\." nil t)
-	(replace-match "")
-	(forward-line))
-      response)))
+(defun elmo-pop3-read-msg (spec number outbuf &optional msgdb)
+  (let* ((loc-alist (if elmo-pop3-use-uidl
+			(if msgdb
+			    (elmo-msgdb-get-location msgdb)
+			  (elmo-msgdb-location-load
+			   (elmo-msgdb-expand-path nil spec)))))
+	 (connection (elmo-pop3-get-connection spec))
+	 (buffer  (elmo-pop3-connection-get-buffer connection))
+	 (process (elmo-pop3-connection-get-process connection))
+	 response errmsg msg)
+    (with-current-buffer buffer
+      (if loc-alist
+	  (setq number (elmo-pop3-uidl-to-number
+			(cdr (assq number loc-alist)))))
+      (when number
+	(elmo-pop3-send-command buffer process 
+				(format "retr %s" number))
+	(when (null (setq response (elmo-pop3-read-response
+				    buffer process t)))
+	  (error "Fetching message failed"))
+	(setq response (elmo-pop3-read-body buffer process outbuf))
+	(set-buffer outbuf)
+	(goto-char (point-min))
+	(while (re-search-forward "^\\." nil t)
+	  (replace-match "")
+	  (forward-line))
+	response))))
 
-(defun elmo-pop3-delete-msg (buffer process number)
-  (let (response errmsg msg)
-    (elmo-pop3-send-command buffer process 
-			    (format "dele %s" number))
-    (when (null (setq response (elmo-pop3-read-response
-				buffer process t)))
-      (error "Deleting message failed"))))
+(defun elmo-pop3-delete-msg (buffer process number loc-alist)
+  (with-current-buffer buffer
+    (let (response errmsg msg)
+      (if loc-alist
+	  (setq number (elmo-pop3-uidl-to-number
+			(cdr (assq number loc-alist)))))
+      (if number
+	  (progn
+	    (elmo-pop3-send-command buffer process 
+				    (format "dele %s" number))
+	    (when (null (setq response (elmo-pop3-read-response
+					buffer process t)))
+	      (error "Deleting message failed")))
+	(error "Deleting message failed")))))
+	
 
-(defun elmo-pop3-delete-msgs (spec msgs)
-  (save-excursion
-    (let* ((connection (elmo-pop3-get-connection spec))
-	   (buffer  (car connection))
-	   (process (cadr connection)))
-      (mapcar '(lambda (msg) (elmo-pop3-delete-msg 
-			      buffer process msg))
-	      msgs))))
+(defun elmo-pop3-delete-msgs (spec msgs &optional msgdb)
+  (let* ((loc-alist (if elmo-pop3-use-uidl
+			(if msgdb
+			    (elmo-msgdb-get-location msgdb)
+			  (elmo-msgdb-location-load
+			   (elmo-msgdb-expand-path nil spec)))))
+	 (connection (elmo-pop3-get-connection spec))
+	 (buffer  (elmo-pop3-connection-get-buffer connection))
+	 (process (elmo-pop3-connection-get-process connection)))
+    (mapcar '(lambda (msg) (elmo-pop3-delete-msg 
+			    buffer process msg loc-alist))
+	    msgs)))
 
 (defun elmo-pop3-search (spec condition &optional numlist)
   (error "Searching in pop3 folder is not implemented yet"))
@@ -676,7 +817,10 @@
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)
-(defalias 'elmo-pop3-commit 'elmo-generic-commit)
+
+(defun elmo-pop3-commit (spec)
+  (elmo-pop3-close-connection
+   (elmo-pop3-get-connection spec 'if-exists)))
 
 (provide 'elmo-pop3)
 
