@@ -4489,26 +4489,28 @@ If ARG, exit virtual folder."
       (elmo-date-get-week year month mday))))
 
 (defvar wl-summary-move-spec-plugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, wl-summary-new-mark))
-	      (p . (, (wl-regexp-opt
-		       (list wl-summary-unread-uncached-mark
-			     wl-summary-unread-cached-mark))))
-	      (p . (, (regexp-quote wl-summary-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, (wl-regexp-opt
-			  (list wl-summary-new-mark
-				wl-summary-unread-uncached-mark
-				wl-summary-unread-cached-mark))))
-		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+  (list (cons 'new (list (cons 't nil)
+			 (cons 'p wl-summary-new-mark)
+			 (cons 'p (wl-regexp-opt
+				   (list wl-summary-unread-uncached-mark
+					 wl-summary-unread-cached-mark)))
+			 (cons 'p (regexp-quote wl-summary-important-mark))))
+	(cons 'unread (list (cons 't nil)
+			    (cons 'p (wl-regexp-opt
+				      (list wl-summary-new-mark
+					    wl-summary-unread-uncached-mark
+					    wl-summary-unread-cached-mark)))
+			    (cons 'p (regexp-quote
+				      wl-summary-important-mark))))))
 
 (defvar wl-summary-move-spec-unplugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, wl-summary-unread-cached-mark))
-	      (p . (, (regexp-quote wl-summary-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, wl-summary-unread-cached-mark))
-		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+  (list (cons 'new (list (cons 't nil)
+			 (cons 'p wl-summary-unread-cached-mark)
+			 (cons 'p (regexp-quote wl-summary-important-mark))))
+	(cons 'unread (list (cons 't nil)
+			    (cons 'p wl-summary-unread-cached-mark)
+			    (cons 'p (regexp-quote
+				      wl-summary-important-mark))))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 
