@@ -47,16 +47,6 @@
 ;; require wl-util after product-provide.
 (eval-when-compile (require 'wl-util))	; wl-match-string
 
-;; compile warning
-(defvar mule-version)
-(defvar nemacs-version)
-(defvar emacs-beta-version)
-(defvar xemacs-codename)
-(defvar mime-edit-insert-user-agent-field)
-(defvar mime-edit-user-agent-value)
-(defvar mime-editor/version)
-(defvar mime-editor/codename)
-
 (defun wl-version (&optional with-codename)
   "Return Wanderlust version.
 If WITH-CODENAME add codename."
@@ -85,6 +75,16 @@ If ARG insert string at point."
 	(setq salist nil))
       (setq salist (cdr salist)))
     status))
+
+;; compile warning
+(defvar mule-version)
+(defvar nemacs-version)
+(defvar emacs-beta-version)
+(defvar xemacs-codename)
+(defvar mime-edit-insert-user-agent-field)
+(defvar mime-edit-user-agent-value)
+(defvar mime-editor/version)
+(defvar mime-editor/codename)
 
 (defun wl-generate-user-agent-string ()
   "A candidate of `wl-generate-mailer-string-func'.
