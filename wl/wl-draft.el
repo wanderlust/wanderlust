@@ -264,15 +264,17 @@
   ""
 ;;;(save-excursion
   (let (r-list
-	(eword-lexical-analyzer '(eword-analyze-quoted-string
-				  eword-analyze-domain-literal
-				  eword-analyze-comment
-				  eword-analyze-spaces
-				  eword-analyze-special
-				  eword-analyze-encoded-word
-				  eword-analyze-atom))
+	(mime-header-lexical-analyzer '(eword-analyze-quoted-string
+					eword-analyze-domain-literal
+					eword-analyze-comment
+					eword-analyze-spaces
+					eword-analyze-special
+					eword-analyze-encoded-word
+					eword-analyze-atom))
+	eword-lexical-analyzer
 	to mail-followup-to cc subject in-reply-to references newsgroups
 	from to-alist cc-alist)
+    (setq eword-lexical-analyzer mime-header-lexical-analyzer)
     (set-buffer buf)
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
     (setq r-list 
