@@ -73,6 +73,7 @@
 (defvar wl-draft-reedit nil)
 (defvar wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
+(defvar wl-draft-parent-folder nil)
 
 (defvar wl-draft-config-sub-func-alist
   '((body          . wl-draft-config-sub-body)
@@ -95,6 +96,7 @@
 (make-variable-buffer-local 'wl-sent-message-via)
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
+(make-variable-buffer-local 'wl-draft-parent-folder)
 
 (defmacro wl-smtp-extension-bind (&rest body)
   (` (let* ((smtp-sasl-mechanisms
@@ -1320,7 +1322,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
 			   content-type content-transfer-encoding
-			   body edit-again summary-buf from)
+			   body edit-again summary-buf from parent-folder)
   "Write and send mail/news message with Wanderlust."
   (interactive)
   (unless (featurep 'wl)
@@ -1366,6 +1368,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
+    (setq wl-draft-parent-folder parent-folder)
     (if (stringp (or from wl-from))
 	(insert "From: " (or from wl-from) "\n"))
     (and (or (interactive-p)

@@ -1,3 +1,10 @@
+2001-11-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Added 14th argument `parent-folder'.
+
+	* wl-summary.el (wl-summary-write): Call wl-draft with 14th argument.
+	(wl-summary-write-current-folder): Ditto.
+
 2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-get-newsgroups): Use

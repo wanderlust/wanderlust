@@ -4896,7 +4896,8 @@ Reply to author if invoked with ARG."
   "Write a new draft from Summary."
   (interactive)
   (wl-draft nil nil nil nil nil
-	    nil nil nil nil nil nil (current-buffer))
+	    nil nil nil nil nil nil (current-buffer)
+	    nil (wl-summary-buffer-folder-name))
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 
@@ -4927,7 +4928,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(error "Can't guess by folder %s" folder))
       (wl-draft (nth 0 guess-list) nil nil ; To:
 		(nth 1 guess-list) nil	; Cc:
-		(nth 2 guess-list))	; Newsgroups:
+		(nth 2 guess-list)	; Newsgroups:
+		nil nil nil nil nil nil nil
+		folder)
       (run-hooks 'wl-mail-setup-hook)
       (mail-position-on-field "Subject"))))
 
