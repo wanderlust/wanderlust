@@ -1,3 +1,7 @@
+2004-06-23  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-sort-by-size): New command.
+
 2004-06-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-number-list-from-region): New
