@@ -46,6 +46,7 @@
 		 (const :tag "Bogofilter" bogofilter)
 		 (const :tag "Spamfilter" spamfilter)
 		 (const :tag "SpamAssassin" sa)
+		 (const :tag "Header" header)
 		 (const :tag "Bsfilter" bsfilter))
   :group 'elmo-spam)
 
@@ -90,7 +91,7 @@ register according to the classification.")
 
 (luna-define-generic elmo-spam-list-spam-messages (processor
 						   folder &optional numbers)
-  "Return a list of message numbers which is gussed spam.
+  "Return a list of message numbers which is classified as spam.
 PROCESSOR is spam processor structure.
 FOLDER is the ELMO folder structure.
 If optional argument NUMBERS is specified and is a list of message numbers,
@@ -182,6 +183,81 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 	  (require class)
 	  (setq elmo-spam-processor-internal
 		(luna-make-entity class))))))
+
+;; Backend for header match
+(eval-and-compile
+  (luna-define-class elsp-header (elsp-generic)))
+
+(defgroup elmo-spam-header nil
+  "Spam header configuration."
+  :group 'elmo-spam)
+
+(defcustom elmo-spam-header-good-alist '(("X-Spam-Flag" . "No"))
+  "*Regular expression for positive header good matches."
+  :type '(repeat (cons (string :tag "Header name")
+		       (regexp :tag "Regular expression to match good header")))
+  :group 'elmo-spam-header)
+
+(defcustom elmo-spam-header-spam-alist '(("X-Spam-Flag" . "Yes"))
+  "*Regular expression for positive header spam matches."
+  :type '(repeat (cons (string :tag "Header name")
+		       (regexp :tag "Regular expression to match spam header")))
+  :group 'elmo-spam-header)
+
+(defun elmo-spam-header-check-headers (fetch-field-function)
+  (catch 'done
+    (dolist (pair elmo-spam-header-good-alist)
+      (let ((field-body (funcall fetch-field-function (car pair))))
+	(when (and field-body (string-match (cdr pair) field-body))
+	  (throw 'done nil))))
+    (dolist (pair elmo-spam-header-spam-alist)
+      (let ((field-body (funcall fetch-field-function (car pair))))
+	(when (and field-body (string-match (cdr pair) field-body))
+	  (throw 'done t))))))
+
+(luna-define-method elmo-spam-buffer-spam-p ((processor elsp-header)
+					     buffer &optional register)
+  (with-current-buffer buffer
+    (save-restriction
+      (std11-narrow-to-header)
+      (elmo-spam-header-check-headers #'elmo-decoded-field-body))))
+
+(luna-define-method elmo-spam-message-spam-p ((processor elsp-header)
+					      folder number &optional register)
+  (let ((entity (elmo-message-entity folder number))
+	buffer)
+    (unwind-protect
+	(save-excursion
+	  (elmo-spam-header-check-headers
+	   (lambda (field-name)
+	     (or (elmo-message-entity-field entity
+					    (intern (downcase field-name))
+					    'decode)
+		 (progn
+		   (unless buffer
+		     (setq buffer (get-buffer-create
+				   (generate-new-buffer-name
+				    " *elmo-spam-work*")))
+		     (set-buffer buffer)
+		     (elmo-spam-message-fetch folder number)
+		     (std11-narrow-to-header))
+		   (elmo-decoded-field-body field-name))))))
+      (and buffer (kill-buffer buffer)))))
+
+(luna-define-method elmo-spam-register-spam-messages ((processor elsp-header)
+						      folder
+						      &optional
+						      numbers restore)
+  (elmo-progress-notify 'elmo-spam-register (length numbers)))
+
+(luna-define-method elmo-spam-register-good-messages ((processor elsp-header)
+						      folder
+						      &optional
+						      numbers restore)
+  (elmo-progress-notify 'elmo-spam-register (length numbers)))
+
+(provide 'elsp-header)
+
 
 (require 'product)
 (product-provide (provide 'elmo-spam) (require 'elmo-version))

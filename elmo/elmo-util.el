@@ -1276,6 +1276,12 @@ SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
     (and value
 	 (std11-unfold-string value))))
 
+(defun elmo-decoded-field-body (field-name &optional mode)
+  (let ((field-body (elmo-field-body field-name)))
+    (and field-body
+	 (elmo-set-work-buf
+	  (mime-decode-field-body field-body field-name mode)))))
+
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
   (let ((lal (std11-lexical-analyze word)))
