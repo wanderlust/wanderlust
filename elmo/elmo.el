@@ -1138,16 +1138,16 @@ FIELD is a symbol of the field."
 							   number strategy
 							   &optional
 							   section unread)
-  (let (cache-path cache-file)
+  (let (cache-file)
     (if (and (elmo-fetch-strategy-use-cache strategy)
-	     (setq cache-path (elmo-fetch-strategy-cache-path strategy))
 	     (setq cache-file (elmo-file-cache-expand-path
-			       cache-path
+			       (elmo-fetch-strategy-cache-path strategy)
 			       section))
-	     (file-exists-p cache-file)
-	     (or (not (elmo-cache-path-section-p cache-file))
-		 (not (eq (elmo-fetch-strategy-entireness strategy) 'entire))))
-	(insert-file-contents-as-binary cache-file)
+	     (file-exists-p cache-file))
+	(if (and (elmo-cache-path-section-p cache-file)
+		 (eq (elmo-fetch-strategy-entireness strategy) 'entire))
+	    (error "Entire message is not cached.")
+	  (insert-file-contents-as-binary cache-file))
       (elmo-message-fetch-internal folder number strategy section unread)
       (elmo-delete-cr-buffer)
       (when (and (> (buffer-size) 0)

@@ -1,23 +1,4 @@
-2001-08-20  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-vars.el (elmo-use-semi): Eliminated.
-
-	* elmo-util.el (elmo-string-assoc-all): New function.
-
-2001-08-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* elmo-mime.el (elmo-mime-display-as-is-internal): Put text
-	property 'mime-preview-situation for `mime-preview-quit'.
-
-2001-08-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* elmo.el (elmo-message-fetch-with-cache-process): Call
-	elmo-message-fetch-internal instead of causing an error when fetch
-	strategy is 'entire but only 'section cache is available.
-
 2001-08-15  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-version.el (elmo-version): Up to 2.7.2.
 
 	* elmo.el (elmo-generic-folder-append-messages): Make 
 	fetch-strategy with `use-cache'.
