@@ -1308,9 +1308,16 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defmacro elmo-set-hash-val (string value hashtable)
   (list 'set (list 'intern string hashtable) value))
 
+(defmacro elmo-clear-hash-val (string hashtable)
+  (static-if (fboundp 'unintern)
+      (list 'unintern string hashtable)
+    (list 'makunbound (list 'intern string hashtable))))
+
 ;; Make a hash table (default and minimum size is 1024).
 (defun elmo-make-hash (&optional hashsize)
-  (make-vector (if hashsize (max (elmo-create-hash-size hashsize) 1024) 1024) 0))
+  (make-vector
+   (if hashsize (max (min (elmo-create-hash-size hashsize)
+			  elmo-hash-maximum-size) 1024) 1024) 0))
 
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded string."

@@ -330,8 +330,14 @@ If function, return value of function.")
 If server doesn't accept asynchronous commands, this variable should be
 set as non-nil.")
 
-(defvar elmo-use-decoded-cache t
+(defvar elmo-hash-maximum-size 4096
+  "Maximum size of hash table.")
+
+(defvar elmo-use-decoded-cache (featurep 'xemacs)
   "Use cache of decoded mime charset string.")
+
+(defvar elmo-use-overview-hashtb t
+  "Use hash table of overview.")
 
 (defvar elmo-display-progress-threshold 20
   "*Displaying progress gauge if number of messages are more than this value.")

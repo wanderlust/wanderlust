@@ -209,9 +209,11 @@ without cacheing."
 (defun elmo-read-msg (folder msg outbuf msgdb &optional force-reload)
   "Read message into outbuf."
   (let ((inhibit-read-only t))
-    (if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf)
-      (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
+    ;;Only use elmo-read-msg-with-cache, because if folder is network and
+    ;;elmo-use-cache-p is nil, cannot read important msg. (by muse)
+    ;;(if (not (elmo-use-cache-p folder msg))
+    ;;  (elmo-read-msg-no-cache folder msg outbuf)
+    (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload)))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb 
 					&optional force-reload)
@@ -235,7 +237,8 @@ without cacheing."
       (if (setq ret-val (elmo-call-func (car real-fld-num) 
 					"read-msg" 
 					(cdr real-fld-num) outbuf))
-	  (if (not (elmo-local-file-p folder msg))
+	  (if (and (not (elmo-local-file-p folder msg))
+		   (elmo-use-cache-p folder msg))
 	      (elmo-cache-save message-id
 			       (elmo-string-partial-p ret-val)
 			       folder msg)))
@@ -463,7 +466,9 @@ without cacheing."
 	  (list (elmo-msgdb-overview-load path)
 		(elmo-msgdb-number-load path)
 		(elmo-msgdb-mark-load path)
-		(elmo-msgdb-location-load path))))
+		(elmo-msgdb-location-load path)
+		elmo-msgdb-overview-hashtb
+		)))
     (message "Loading msgdb for %s...done." folder)
     (elmo-folder-set-info-max-by-numdb folder (nth 1 ret-val))
     ret-val))
@@ -533,9 +538,10 @@ without cacheing."
 		   (elmo-msgdb-expand-path folder))))
 
 (defun elmo-pack-number (folder msgdb arg)
-  (if (string-match "^[\\+=].*" folder)
-      (elmo-call-func folder "pack-number" msgdb arg)
-    (error "pack-number not supported")))
+  (let ((type (elmo-folder-get-type folder)))
+    (if (memq type '(localdir localnews))
+	(elmo-call-func folder "pack-number" msgdb arg)
+      (error "pack-number not supported"))))
 
 (defun elmo-sync-validity (folder)
   (elmo-call-func folder "sync-validity" 

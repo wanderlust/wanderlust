@@ -398,6 +398,7 @@
 	(onum-alist (elmo-msgdb-get-number-alist msgdb))
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
 	(oov (elmo-msgdb-get-overview msgdb))
+	(oovht (elmo-msgdb-get-overviewht msgdb))
 	i flist onum mark new-mark-alist total)
     (setq i 0)
     (setq flist
@@ -420,7 +421,7 @@
         ;; update overview
         (elmo-msgdb-overview-entity-set-number
 	 (elmo-msgdb-overview-get-entity-by-number
-	  oov onum) i)
+	  oov onum oovht) i)
 	;; update number-alist
 	(setcar (assq onum onum-alist) i))
       ;; update mark-alist
@@ -434,7 +435,9 @@
     (list (elmo-msgdb-get-overview msgdb)
 	  onum-alist
 	  new-mark-alist
-	  (elmo-msgdb-get-location msgdb))))
+	  (elmo-msgdb-get-location msgdb)
+	  ;; remake hash table
+	  (elmo-msgdb-make-overview-hashtb (elmo-msgdb-get-overview msgdb)))))
 
 (defun elmo-localdir-use-cache-p (spec number)
   nil)

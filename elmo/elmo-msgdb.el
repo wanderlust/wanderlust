@@ -37,6 +37,9 @@
 (require 'std11)
 (require 'elmo-cache)
 
+(defvar elmo-msgdb-overview-hashtb nil)
+(make-variable-buffer-local 'elmo-msgdb-overview-hashtb)
+
 (defun elmo-msgdb-expand-path (folder &optional spec)
   (convert-standard-filename
    (let* ((spec (or spec (elmo-folder-get-spec folder)))
@@ -141,6 +144,8 @@
   (caddr msgdb))
 (defsubst elmo-msgdb-get-location (msgdb)
   (cadddr msgdb))
+(defsubst elmo-msgdb-get-overviewht (msgdb)
+  (nth 4 msgdb))
 
 ;;
 ;; number <-> Message-ID handling
@@ -373,8 +378,10 @@ header separator."
    (expand-file-name elmo-msgdb-number-filename dir)))
 
 (defun elmo-msgdb-overview-load (dir)
-  (elmo-object-load 
-   (expand-file-name elmo-msgdb-overview-filename dir)))
+  (let ((overview (elmo-object-load 
+		   (expand-file-name elmo-msgdb-overview-filename dir))))
+    (elmo-msgdb-make-overview-hashtb overview)
+    overview))
 
 (defun elmo-msgdb-mark-load (dir)
   (elmo-object-load 
@@ -417,7 +424,9 @@ content of MSGDB is changed."
 			     (elmo-msgdb-number-load dir)))
 	   (mark-alist (or (caddr msgdb)
 			   (elmo-msgdb-mark-load dir)))
-	   message-id)
+	   (hashtb (or (elmo-msgdb-get-overviewht msgdb)
+		       (elmo-msgdb-make-overview-hashtb overview)))
+	   ov-entity message-id)
       ;; remove from current database.
       (while msg-list
 	(setq message-id (cdr (assq (car msg-list) number-alist)))
@@ -428,16 +437,20 @@ content of MSGDB is changed."
 	;(setq overview (delete (assoc message-id overview) overview))
 	(setq overview 
 	      (delq
-	       (elmo-msgdb-overview-get-entity-by-number overview 
-							 (car msg-list))
+	       (setq ov-entity
+		     (elmo-msgdb-overview-get-entity-by-number
+		      overview (car msg-list) hashtb))
 	       overview))
+	(when (and elmo-use-overview-hashtb hashtb)
+	  (elmo-msgdb-clear-overview-hashtb ov-entity hashtb))
 	(setq number-alist
 	      (delq (assq (car msg-list) number-alist) number-alist))
 	(setq mark-alist (delq (assq (car msg-list) mark-alist) mark-alist))
 	(setq msg-list (cdr msg-list)))
       (setcar msgdb overview)
       (setcar (cdr msgdb) number-alist)
-      (setcar (cddr msgdb) mark-alist))
+      (setcar (cddr msgdb) mark-alist)
+      (setcar (nthcdr 4 msgdb) hashtb))
     t)) ;return value
 
 (defsubst elmo-msgdb-set-overview (msgdb overview)
@@ -510,17 +523,27 @@ content of MSGDB is changed."
     (and extra
 	 (cdr (assoc field-name extra)))))
 
-(defun elmo-msgdb-overview-get-entity-by-number (database number)
-  (let ((db database)
-	entity)
-    (catch 'loop
-      (while db
-	(if (eq (elmo-msgdb-overview-entity-get-number (car db)) number)
-	    (progn
-	      (setq entity (car db))
-	      (throw 'loop nil))
-	  (setq db (cdr db)))))
-    entity))
+(defun elmo-msgdb-overview-get-entity-by-number (database number &optional ht)
+  (when number
+    (if (or ht elmo-msgdb-overview-hashtb)
+	(elmo-get-hash-val (format "#%d" number)
+			   (or ht elmo-msgdb-overview-hashtb))
+      (let ((db database)
+	    entity)
+	(catch 'loop
+	  (while db
+	    (if (eq (elmo-msgdb-overview-entity-get-number (car db)) number)
+		(progn
+		  (setq entity (car db))
+		  (throw 'loop nil))
+	      (setq db (cdr db)))))
+	entity))))
+
+(defsubst elmo-msgdb-overview-get-entity (database message-id &optional ht)
+  (if (or ht elmo-msgdb-overview-hashtb)
+      (and message-id
+	   (elmo-get-hash-val message-id (or ht elmo-msgdb-overview-hashtb)))
+    (assoc message-id database)))
 
 ;;
 ;; deleted message handling
@@ -704,19 +727,63 @@ Header region is supposed to be narrowed."
     (message "Sorting...done.")
     (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb))))
 
-(defsubst elmo-msgdb-search-overview-entity (number number-alist overview)
-  (let ((message-id (cdr (assq number number-alist)))
-	ovs)
-    (if message-id
-	(assoc message-id overview)
-      (elmo-msgdb-overview-get-entity-by-number overview number))))
+(defsubst elmo-msgdb-search-overview-entity (number number-alist overview
+						    &optional ht)
+  (when number
+    (if (or ht elmo-msgdb-overview-hashtb)
+	(elmo-get-hash-val (format "#%d" number)
+			   (or ht elmo-msgdb-overview-hashtb))
+      (let ((message-id (cdr (assq number number-alist))))
+	(if message-id
+	    (assoc message-id overview)
+	  (elmo-msgdb-overview-get-entity-by-number overview number))))))
 
-(defsubst elmo-msgdb-append (msgdb msgdb-append)
+(defun elmo-msgdb-clear-overview-hashtb (entity &optional hashtb)
+  (let ((hashtb (or hashtb elmo-msgdb-overview-hashtb))
+	number)
+    (when (and entity
+	       elmo-use-overview-hashtb
+	       hashtb)
+      (and (setq number (elmo-msgdb-overview-entity-get-number entity))
+	   (elmo-clear-hash-val (format "#%d" number) hashtb))
+      (and (car entity) ;; message-id
+	   (elmo-clear-hash-val (car entity) hashtb)))))
+
+(defun elmo-msgdb-make-overview-hashtb (overview &optional hashtb)
+  (if elmo-use-overview-hashtb
+      (let ((hashtb (or hashtb ;; append
+			(setq elmo-msgdb-overview-hashtb
+			      (elmo-make-hash (length overview))))))
+	(while overview
+	  ;; key is message-id
+	  (if (caar overview)
+	      (elmo-set-hash-val (caar overview) (car overview) hashtb))
+	  ;; key is number
+	  (elmo-set-hash-val
+	   (format "#%d" (elmo-msgdb-overview-entity-get-number (car overview)))
+	   (car overview) hashtb)
+	  (setq overview (cdr overview)))
+	hashtb)
+    (setq elmo-msgdb-overview-hashtb nil)))
+
+(defsubst elmo-msgdb-append (msgdb msgdb-append &optional set-hash)
   (list 
    (nconc (car msgdb) (car msgdb-append))
    (nconc (cadr msgdb) (cadr msgdb-append))
    (nconc (caddr msgdb) (caddr msgdb-append))
-   (nconc (cadddr msgdb) (cadddr msgdb-append))))
+   (nconc (cadddr msgdb) (cadddr msgdb-append))
+   (and set-hash
+	(elmo-msgdb-make-overview-hashtb (car msgdb-append) (nth 4 msgdb)))))
+
+(defsubst elmo-msgdb-clear (&optional msgdb)
+  (if msgdb
+      (list
+       (setcar msgdb nil)
+       (setcar (cdr msgdb) nil)
+       (setcar (cddr msgdb) nil)
+       (setcar (cdddr msgdb) nil)
+       (setcar (nthcdr 4 msgdb) (elmo-msgdb-make-overview-hashtb nil)))
+    (list nil nil nil nil (elmo-msgdb-make-overview-hashtb nil))))
 
 (defun elmo-msgdb-delete-path (folder &optional spec)
   (let ((path (elmo-msgdb-expand-path folder spec)))
