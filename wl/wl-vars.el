@@ -476,7 +476,7 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
   "A hook called when suspend wanderlust.")
-(defvar wl-biff-notify-hook '(beep)
+(defvar wl-biff-notify-hook '(ding)
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")

@@ -1089,14 +1089,14 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.
-If optional argument is non-nil, current draft buffer is killed"
+If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (interactive)
   ;; Don't call this explicitly.
   ;; Added to 'wl-draft-send-hook (by teranisi)
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (y-or-n-p "Send current draft. OK?"))
+	    (y-or-n-p "Do you really want to send current draft? "))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
