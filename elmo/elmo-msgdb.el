@@ -526,9 +526,13 @@ content of MSGDB is changed."
 (defun elmo-flag-table-save (dir flag-table)
   (elmo-object-save
    (expand-file-name elmo-flag-table-filename dir)
-   (mapatoms (lambda (atom)
-	       (cons (symbol-name atom) (symbol-value atom)))
-	     flag-table)))
+   (let (list)
+     (mapatoms (lambda (atom)
+		 (setq list (cons (cons (symbol-name atom)
+					(symbol-value atom))
+				  list)))
+	       flag-table)
+     list)))
 ;;;
 ;; persistent mark handling
 ;; (for each folder)
