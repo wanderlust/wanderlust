@@ -900,17 +900,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   "Get mark of the message.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message."
-  (cadr (assq number (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
-
-(defun elmo-folder-list-messages-mark-match (folder mark-regexp)
-  "List messages in the FOLDER which have a mark that matches MARK-REGEXP"
-  (let ((case-fold-search nil)
-	matched)
-    (if mark-regexp
-	(dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
-	  (if (string-match mark-regexp (cadr elem))
-	      (setq matched (cons (car elem) matched)))))
-    matched))
+  (cdr (assq number (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
 
 (defun elmo-message-field (folder number field)
   "Get message field value in the msgdb.

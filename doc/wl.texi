@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.5.8
+@set VERSION 2.5.7
 @synindex pg cp
 @finalout
 
