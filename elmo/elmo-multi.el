@@ -309,7 +309,7 @@
 	(unsync 0)
 	(messages 0)
 	num-list
-	diffs)
+	diffs nums)
     ;; If first time, dummy numbers is used as current number list.
     (unless numbers
       (let ((i 0)
@@ -325,9 +325,9 @@
 				      (elmo-number-set-to-number-list killed)
 				      numbers))))
     (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff
-				      (car flds)
-				      (car num-list)))))
+      (setq nums (elmo-folder-diff (car flds) (car num-list))
+	    nums (cons (elmo-diff-unread nums) (elmo-diff-all nums)))
+      (setq diffs (nconc diffs (list nums)))
       (setq count (+ 1 count))
       (setq num-list (cdr num-list))
       (setq flds (cdr flds)))

@@ -1,5 +1,8 @@
 2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-multi.el (elmo-multi-folder-diff): Fixed problem when
+	recent value is returned from imap folder.
+
 	* elmo.el (elmo-folder-newsgroups): New generic function.
 
 	* elmo-localnews.el (elmo-localnews-folder): Added `group' slot.
