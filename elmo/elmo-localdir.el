@@ -412,12 +412,14 @@
     (cond
      ;; short cut.
      ((and (vectorp condition)
+	   (not (eq (elmo-filter-type condition) 'unmatch))
 	   (string= (elmo-filter-key condition) "last"))
       (nthcdr (max (- (length msgs)
 		      (string-to-int (elmo-filter-value condition)))
 		   0)
 	      msgs))
      ((and (vectorp condition)
+	   (not (eq (elmo-filter-type condition) 'unmatch))
 	   (string= (elmo-filter-key condition) "first"))
       (let ((rest (nthcdr (string-to-int (elmo-filter-value condition) )
 			  msgs)))

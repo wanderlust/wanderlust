@@ -398,7 +398,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (with-temp-buffer
       (insert string)
       (goto-char (point-min))
-      (while (re-search-forward "^\\([0-9]+\\)[\t ]\\([0-9]+\\)$" nil t)
+      (while (re-search-forward "^\\([0-9]+\\)[\t ]+\\([0-9]+\\)$" nil t)
 	(setq alist
 	      (cons
 	       (cons (elmo-match-buffer 1)

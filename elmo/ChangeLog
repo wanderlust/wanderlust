@@ -1,3 +1,16 @@
+2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-field-primitive-condition-match): Fixed
+	unmatch condition checking.
+
+	* elmo-localdir.el (elmo-folder-search): Don't short cut if unmatch
+	condition.
+
+2001-11-30  Tatsuya Kinoshita  <tats@iris.ne.jp>
+
+	* elmo-pop3.el (elmo-pop3-parse-list-response): Allow multiple
+	space delimiter for list response.
+
 2001-12-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.6.1 is released.
