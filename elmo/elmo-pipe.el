@@ -70,7 +70,7 @@
       (elmo-commit src))
     (run-hooks 'elmo-pipe-drained-hook)))
 
-(defun elmo-pipe-list-folder (spec &optional nohide)
+(defun elmo-pipe-list-folder (spec)
   (elmo-pipe-drain (elmo-pipe-spec-src spec)
 		   (elmo-pipe-spec-dst spec))
   (let ((killed (and elmo-use-killed-list
