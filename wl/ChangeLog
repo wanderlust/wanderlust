@@ -1,3 +1,11 @@
+2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-mark-as-answered
+	to "&".
+	(wl-summary-mark-as-answered-internal): New inline function.
+	(wl-summary-mark-as-answered): New function.
+	(wl-summary-sync-marks): Modified for answered-mark synching.
+
 2003-07-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-set-mark): Fixed last change.

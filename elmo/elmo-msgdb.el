@@ -278,7 +278,7 @@ FLAG is a symbol which is one of the following:
     (case flag
       (read
        (case cur-flag
-	 ((read important answered))
+	 ((read important)) ; answered mark is overriden.
 	 (t (elmo-msgdb-set-mark msgdb number
 				 (if (and use-cache (not cur-cached))
 				     elmo-msgdb-read-uncached-mark))
@@ -319,7 +319,7 @@ FLAG is a symbol which is one of the following:
 	 mark-modified)
     (case flag
       (read
-       (when (eq cur-flag 'read)
+       (when (or (eq cur-flag 'read) (eq cur-flag 'answered))
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cur-cached
 				  elmo-msgdb-unread-cached-mark
@@ -1317,7 +1317,7 @@ Return the updated INDEX."
       (unread
        (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
       (answered
-       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-answered-marks))))
       (important
        (setq mark-regexp (regexp-quote elmo-msgdb-important-mark)))
       (read

@@ -791,20 +791,23 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (setq mark (or (if (elmo-file-cache-status
 			  (elmo-file-cache-get (car entity)))
 			 ;; cached.
-			 (if (elmo-string-member-ignore-case
-			      "\\Answered" flags)
-			     elmo-msgdb-answered-cached-mark
-			   (if (and use-flag
-				    (member "\\Seen" flags))
-			       nil
-			     elmo-msgdb-unread-cached-mark))
+			 (if (and use-flag (member "\\Seen" flags))
+			     (if (elmo-string-member-ignore-case
+				  "\\Answered" flags)
+				 elmo-msgdb-answered-cached-mark
+			       nil)
+			   elmo-msgdb-unread-cached-mark)
+		       ;; uncached.
 		       (if (elmo-string-member-ignore-case "\\Answered" flags)
 			   elmo-msgdb-answered-uncached-mark
 			 (if (and use-flag
 				  (elmo-string-member-ignore-case
 				   "\\Seen" flags))
-			     (if elmo-imap4-use-cache
-				 elmo-msgdb-read-uncached-mark)
+			     (if (elmo-string-member-ignore-case
+				  "\\Answered" flags)
+				 elmo-msgdb-answered-uncached-mark
+			       (if elmo-imap4-use-cache
+				   elmo-msgdb-read-uncached-mark))
 			   elmo-msgdb-new-mark))))))
     (setq elmo-imap4-current-msgdb
 	  (elmo-msgdb-append

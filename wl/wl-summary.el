@@ -405,6 +405,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\eE"  'wl-summary-resend-bounced-mail)
   (define-key wl-summary-mode-map "f"    'wl-summary-forward)
   (define-key wl-summary-mode-map "$"    'wl-summary-mark-as-important)
+  (define-key wl-summary-mode-map "&"    'wl-summary-mark-as-answered)
   (define-key wl-summary-mode-map "@"    'wl-summary-edit-addresses)
 
   (define-key wl-summary-mode-map "y"    'wl-summary-save)
@@ -1787,24 +1788,14 @@ If ARG is non-nil, checking is omitted."
   (let ((last-progress 0)
 	(folder wl-summary-buffer-elmo-folder)
 	(i 0)
-	answereds importants unreads answereds-in-db
-	importants-in-db unreads-in-db diff diffs
+	answereds importants unreads diff diffs
 	mes progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-type-internal
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq importants-in-db (elmo-folder-list-flagged
-			      wl-summary-buffer-elmo-folder
-			      'important 'in-msgdb)
-	    unreads-in-db (elmo-folder-list-flagged
-			   wl-summary-buffer-elmo-folder
-			   'unread 'in-msgdb)
-	    answereds-in-db (elmo-folder-list-flagged
-			     wl-summary-buffer-elmo-folder
-			     'answered 'in-msgdb)
-	    importants (elmo-uniq-list
+      (setq importants (elmo-uniq-list
 			(nconc
 			 (elmo-folder-list-importants
 			  wl-summary-buffer-elmo-folder)
@@ -1812,8 +1803,13 @@ If ARG is non-nil, checking is omitted."
 			  wl-summary-buffer-elmo-folder
 			  elmo-msgdb-important-mark)))
 	    unreads (elmo-folder-list-unreads
-		     wl-summary-buffer-elmo-folder))
-      (setq diff (elmo-list-diff importants importants-in-db))
+		     wl-summary-buffer-elmo-folder)
+	    answereds (elmo-folder-list-answereds
+		       wl-summary-buffer-elmo-folder))
+      (setq diff (elmo-list-diff importants
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'important 'in-msgdb)))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
       (while diffs
@@ -1826,7 +1822,26 @@ If ARG is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-important (car diffs) " " 'no-server)
 	(setq diffs (cdr diffs)))
-      (setq diff (elmo-list-diff unreads unreads-in-db))
+
+      (setq diff (elmo-list-diff answereds
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'answered 'in-msgdb)))
+      (setq diffs (cadr diff))
+      (setq mes (concat mes (format "(-%d" (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-unanswered (car diffs) 'no-modeline)
+	(setq diffs (cdr diffs)))
+      (setq diffs (car diff)) ; unread-appends
+      (setq mes (concat mes (format "/+%d) answered mark(s)." (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
+	(setq diffs (cdr diffs)))
+
+      (setq diff (elmo-list-diff unreads
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'unread 'in-msgdb)))
       (setq diffs (cadr diff))
       (setq mes (concat mes (format "(-%d" (length diffs))))
       (while diffs
@@ -3027,6 +3042,60 @@ If ARG, exit virtual folder."
 				    number-or-numbers
 				    no-folder-mark
 				    no-modeline-update))
+
+(defsubst wl-summary-mark-as-answered-internal (inverse
+						number-or-numbers
+						no-modeline-update)
+  (save-excursion
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  (folder wl-summary-buffer-elmo-folder)
+	  (case-fold-search nil)
+	  number number-list mark visible new-mark)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq number (wl-summary-message-number))
+			       ;; interactive
+			       (list number))))
+      (if (null number-list)
+	  (message "No message.")
+	(if inverse
+	    (elmo-folder-unmark-answered folder number-list)
+	  (elmo-folder-mark-as-answered folder number-list))
+	(dolist (number number-list)
+	  (setq visible (wl-summary-jump-to-msg number)
+		new-mark (elmo-message-mark folder number))
+	  ;; set mark on buffer
+	  (when visible
+	    (unless (string= (wl-summary-persistent-mark) (or new-mark " "))
+	      (delete-backward-char 1)
+	      (insert (or new-mark " ")))
+	    (if (and visible wl-summary-highlight)
+		(wl-highlight-summary-current-line))
+	    (set-buffer-modified-p nil)))
+	(unless no-modeline-update
+	  ;; Update unread numbers.
+	  ;; should elmo-folder-mark-as-read return unread numbers?
+	  (wl-summary-count-unread)
+	  (wl-summary-update-modeline)
+	  (wl-folder-update-unread
+	   (wl-summary-buffer-folder-name)
+	   (+ wl-summary-buffer-unread-count
+	      wl-summary-buffer-new-count)))))))
+
+(defun wl-summary-mark-as-answered (&optional number-or-numbers
+					      no-modeline-update)
+  (interactive)
+  (wl-summary-mark-as-answered-internal
+   (and (interactive-p)
+	(member (elmo-message-mark wl-summary-buffer-elmo-folder
+				   (wl-summary-message-number))
+		(elmo-msgdb-answered-marks)))
+   number-or-numbers
+   no-modeline-update))
 
 (defun wl-summary-mark-as-important (&optional number
 					       mark

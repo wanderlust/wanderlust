@@ -1,3 +1,10 @@
+2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-set-flag): Overwrite answered flag.
+	(elmo-msgdb-unset-flag): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Precedes Seen flag.
+
 2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-folder-msgdb-create): Don't define.

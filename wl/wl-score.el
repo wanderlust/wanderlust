@@ -164,13 +164,12 @@ Remove Re, Was, Fwd etc."
 ;;
 
 (defun wl-score-overview-entity-get-lines (entity)
-  (let ((lines
-	 (elmo-msgdb-overview-entity-get-extra-field entity "lines")))
+  (let ((lines (elmo-message-entity-field entity 'lines)))
     (and lines
 	 (string-to-int lines))))
 
 (defun wl-score-overview-entity-get-xref (entity)
-  (or (elmo-msgdb-overview-entity-get-extra-field entity "xref")
+  (or (elmo-message-entity-field entity 'xref)
       ""))
 
 (defun wl-score-overview-entity-get-extra (entity header &optional decode)
@@ -1237,25 +1236,22 @@ Set `wl-score-cache' nil."
       (when dels
 	(let ((marks dels))
 	  (while marks
-	    (elmo-msgdb-set-mark (wl-summary-buffer-msgdb)
-				 (pop marks) nil)))
-	(elmo-folder-mark-as-read wl-summary-buffer-elmo-folder
-				  dels)
+	    (elmo-message-set-flag wl-summary-buffer-elmo-folder
+				   (pop marks) 'read)))
+	;; XXX Does this work?? XXX
+	;; XXX should it be in the killed list?
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
-	(let ((num-db (elmo-msgdb-get-number-alist
-		       (wl-summary-buffer-msgdb)))
-	      (mark-alist (elmo-msgdb-get-mark-alist
-			   (wl-summary-buffer-msgdb))))
-	  ;; Update Folder mode
-	  (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
-					(list 
-					 0
-					 (let ((pair
-						(wl-summary-count-unread)))
-					   (+ (car pair) (cdr pair)))
-					 (length num-db)))
-	  (wl-summary-update-modeline)))
+	;; Update Folder mode
+	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
+				      (list 
+				       0
+				       (let ((pair
+					      (wl-summary-count-unread)))
+					 (+ (car pair) (cdr pair)))
+				       (elmo-folder-length
+					wl-summary-buffer-elmo-folder)))
+	(wl-summary-update-modeline))
       (message "Updating score...done")
       dels)))
 
