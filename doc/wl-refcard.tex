@@ -320,6 +320,7 @@ are preserved on all copies.
 \key{Compose reply message with citation}{A}
 \key{Forward current message}{f}
 \key{(Re-)Edit current message}{E}
+\key{Print current message}{\#}
 \key{Jump to message buffer}{j}
 \key{Reload address book}{Z}
 
@@ -336,6 +337,8 @@ are preserved on all copies.
 \key{Pick messages from marked ones}{m *}
 \key{Mark target messages for refiling}{m o}
 \key{Mark target messages for deleting}{m d}
+\key{Print target messages}{m \#}
+\key{Send each target message to a pipe}{m |}
 \key{Execute refile/delete/copy}{x}
 
 \section{prefix arguments for marking}
@@ -344,13 +347,13 @@ are preserved on all copies.
 \key{Apply command for thread after cursor point}{t}
 \key{Apply command for region}{r}
 
+\newcolumn
 \section{prefetching}
 
 \key{Prefetch current message}{i}
 \key{Prefetch target messages}{m i}
 \key{Prefetch region}{r i}
 
-\newcolumn
 \section{sticky summary}
 
 \key{Stick current summary}{M-s}
