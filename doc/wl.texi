@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-06-16 02:01:17 kaoru>
+@set Time-stamp: <2000-06-16 02:43:37 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -681,6 +681,7 @@ A folder to access e-mails via IMAP4rev1 protocol (RFC 2060).
 
 @example
 Format: '%' 'IMAP mailbox'[':' 'username' ['/' 'authenticate-type']]['@@' 'hostname'][':' 'port']['!']
+@end example
 
 You can specify
 "auth" (encoded password transmission), "cram-md5" (cram-md5 authentication)
@@ -689,6 +690,7 @@ and "login" (plain password transmission) as authenticate-type.
 
 default:
 
+@example
 username  -> The value of @code{elmo-default-imap4-user}.
              Initial setting is `USER' environment variable or
              `LOGNAME' environment variable or return value of
@@ -699,6 +701,7 @@ hostname  -> The value of @code{elmo-default-imap4-server}.
              Initial setting is "localhost".
 port -> The value of @code{elmo-default-imap4-port}.
              Initial setting is 143.
+@end example
 
 You can omit the hostname from folder names if you set
 @code{elmo-default-imap4-server} as your main IMAP server.
@@ -719,6 +722,7 @@ in raw format) after confirmation to user. If @code{elmo-imap4-force-login}
 is non-nil, authentication will fall back to "login" without confirmation
 (default value is nil).
 
+@example
 Example: %inbox     -> IMAP mailbox "inbox"
          %#mh/inbox -> IMAP mailbox "#mh/inbox"
 
@@ -784,14 +788,17 @@ One newsgroup is treated as a folder.
 
 @example
 Format: '-' 'newsgroup'[[':' 'username']['@@' 'hostname'][':' 'port']]['!']
+@end example
 
 default:
+@example
 hostname  -> The value of @code{elmo-default-nntp-server}.
              Initial setting is "localhost".
 username  -> The value of @code{elmo-default-nntp-user}. 
              Initial setting is nil.
 port      -> The value of @code{elmo-default-nntp-port}.
              Initial setting is 119.
+@end example
 
 AUTHINFO is used as authentication method if the username is non-nil.
 SSL will be default method if @code{elmo-default-nntp-ssl} is non-nil even
@@ -800,6 +807,7 @@ If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 if the value of @code{elmo-default-nntp-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
+@example
 Example: -fj.rec.tv            -> Newsgroup `fj.rec.tv'.
          -fj.rec.tv@@newsserver -> Newsgroup `fj.rec.tv' on newsserver.
 @end example
@@ -814,6 +822,7 @@ A folder to access MH format mail (1 file is 1 mail).
 
 @example
 Format: '+' 'directory-name'
+@end example
 
 Normally, directory paths are relative to variable
 @code{elmo-localdir-folder-path} (default is @file{~/Mail}), but if it
@@ -822,6 +831,7 @@ starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 
 Message number is used for the name of the message file.
 
+@example
 Example: +inbox         -> "~/Mail/inbox"
          +from/teranisi -> "~/Mail/from/teranisi"
          +~/test        -> "~/test"
@@ -837,6 +847,7 @@ A folder to access to Maildir format (1 file is 1 mail).
 
 @example
 Format: '.' 'directory-name'
+@end example
 
 Normally, directory paths are relative to variable
 @code{elmo-maildir-folder-path} (default is @file{~/Maildir}), but if it
@@ -851,6 +862,7 @@ the @file{tmp} directory and not accessed for 36 hours are deleted.
 
 These behaviors are defined the @samp{http://cr.yp.to/proto/maildir.html}.
 
+@example
 Example: .              -> "~/Maildir"
          .inbox         -> "~/Maildir/inbox"
          .from/teranisi -> "~/Maildir/from/teranisi"
@@ -869,11 +881,13 @@ by an utility like gnspool.
 
 @example
 Format: '=' 'directory-name'
+@end example
 
 directory-name is sub-directory to the directory defined by variable
-@code{elmo-localnews-folder-path} (default is "~/News")
+@code{elmo-localnews-folder-path} (default is @file{~/News})
 You can use @samp{.} as directory delimiter as well as @samp{/}.
 
+@example
 Example: =fj/os/os2         -> "~/News/fj/os/os2"
          =fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
 @end example
@@ -889,6 +903,7 @@ such as Info-ZIP or LHA, as one folder.
 
 @example
 Format: '$' 'path-name' [';' archiver-type ';' prefix]
+@end example
 
 `path-name' is the relative path from @code{elmo-archive-folder-path}
 (initial setting is @file{~/Mail}).
@@ -908,6 +923,7 @@ If `archiver-type' is omitted, @code{elmo-archive-default-type}
 For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
 @file{spool/1}, so you have to specify "spool" as `prefix'.
 
+@example
 Example: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
          $bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
          $/foo@@server:~/bar;zoo     -> "~/bar/elmo-archive.zoo" on ftp server
@@ -976,6 +992,7 @@ Behaviors of the following archivers are confirmed by further experiences.
          GNU tar 1.11.8 + 1.5(WIN32)
          GZIP 1.2.4
          RAR 2.06
+@end example
 
 * Caution about LHA
 
@@ -990,7 +1007,6 @@ many version has problem on deleting file from archive.
 
 Please test --delete -f options work. Otherwise, your archive will be
 destroyed. No problem is reported on above versions of GNU tar.
-@end example
 
 
 @node Archive Tips, Archive Vars, Archiver, Archive Folder
@@ -1102,12 +1118,14 @@ A folder to access e-mails via POP3 protocol (RFC 1939).
 
 @example
 Format: '&' ['username'][['/' 'authenticate-type']['@@' 'hostname'][':' 'port']]['!']
+@end example
 
 You can specify
 "user"  (plain password transmission) or "apop"  (APOP authentication)
 as authenticate-type.
 
 default:
+@example
 username   -> The value of @code{elmo-default-pop3-user}.
               Initial setting is @code{USER} environment variable or
              @code{LOGNAME} environment variable or return value of
@@ -1118,7 +1136,9 @@ hostname   -> The value of @code{elmo-default-pop3-server}.
               Initial setting is "localhost".
 port       -> The value of @code{elmo-pop3-default-port}.
               Initial setting is 110.
+@end example
 
+@example
 Example: &hoge@@localhost -> access to localhost as user "hoge".
          &hoge@@popserver:109 -> access to the server "popserver" on port 109
                                  as user "hoge".
@@ -1154,11 +1174,13 @@ multiple folders virtually.
 
 @example
 Format: '*' 'folder' [',' 'folder'] ... [',' 'folder']
+@end example
 
 After @samp{*} character, specify multiple folders you want to collect 
 separated by ',' like folder1,folder2,@dots{},folderN.
 
 Example:
+@example
   *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
   -> -fj.editor.xemacs, -fj.editor.mule and -fj.editor.emacs are
      treated as one folder.
@@ -1180,6 +1202,7 @@ satisfy a condition virtually.
 
 @example
 Format: '/' 'condition' '/' 'target-folder'
+@end example
 
 In the 'condition' part, you can specify following.
 
@@ -1189,8 +1212,10 @@ first: 'NUMBER' messages are picked from top of folder.
 last:  'NUMBER' messages are picked from bottom of folder.
 
 Example:
+@example
   /last:10/-fj.os.linux -> Latest 10 messages from -fj.os.linux are picked.
   /first:20/%inbox      -> First 20 messages from %inbox are picked.
+@end example
 
 2. Date filter: "since:DATE" "before:DATE"
 
@@ -1199,18 +1224,22 @@ before: only messages arrived before 'DATE' are picked.
 
 You can specify following as 'DATE'.
 
+@example
 yesterday ->  a day before today.
 lastweek  ->  same day of last week.
 lastmonth ->  same day of last month.
 lastyear  ->  same day of last year.
 'NUMBER'daysago -> 'NUMBER' days ago. (e.x. '3daysago')
 'DAY'-'MONTH'-'YEAR' -> specify date directly (ex. 1-Nov-1998)
+@end example
 
 Example:
+@example
   /since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
                             are picked.
   /before:yesterday/+inbox -> messages arrived before yesterday in +inbox
                             are picked. 
+@end example
 
 3. Field filter: "FIELD=VALUE"
 
@@ -1218,16 +1247,18 @@ All messages that have FIELD and its value is VALUE are picked.
 'FIELD' and 'VALUE' are case insensitive.
 
 Example:
+@example
   /from=teranisi/+inbox -> In +inbox, messages which have From: field
                            and its value includes "teranisi" string are picked.
   /body=foo/%inbox      -> In %inbox, messages which have "foo" text
                            are picked.
+@end example
 
 If you can split conditions by character "|", it is considered as OR condition.
 /tocc=xxxx/ is an abbreviation of /to=xxxx|cc=xxxx/.
 
 Example:
-
+@example
   /from=teranisi|to=teranisi/+inbox
                         -> In +inbox, messages are picked if
                            the message's To: field includes
@@ -1235,9 +1266,11 @@ Example:
   /tocc=teranisi/+inbox -> In +inbox, messages are picked if
                            the message's To: field or Cc: field includes
                           "teranisi".
+@end example
 
 Advanced example:
 
+@example
   %inbox,/from=teranisi/%inbox@@server
          -> Messages in %inbox or
             message is in the %inbox@@server folder and it's From field
@@ -1251,15 +1284,17 @@ Advanced example:
          -> Pick messages which have From: field and it includes "hogehoge"
             from latest 20 messages in the %#mh/inbox@@localhost
             and To: or Cc: field includes "teranisi".
-
-;;; --- Limit of implementation ---
-;;; In the current implementation, NNTP folder does not treat date filter and
-;;; field filter.
-;;; In IMAP4 folder, field filter only supports fields which can be 
-;;; passed directly to rfc2060's search command.
-;;; (i.e. to,cc,from,subject and body)
-;;; Localdir folder treats arbitrary field name.
 @end example
+
+ --- Limit of implementation ---
+
+In the current implementation, NNTP folder does not treat date filter and
+field filter.
+In IMAP4 folder, field filter only supports fields which can be 
+passed directly to rfc2060's search command.
+(i.e. to,cc,from,subject and body)
+Localdir folder treats arbitrary field name.
+
 
 @node Pipe Folder, Internal Folder, Filter Folder, Folders
 @section Pipe Folder
@@ -1274,17 +1309,21 @@ folder to destination folder.
 
 @example
 Format: '|' source-folder '|' destination-folder
+@end example
 
 When you access to the pipe folder, messages are automatically transferred
 from source-folder to destination-folder.
 It is convenient if you want to download messages to local disk via POP.
 For example, if you specify following
 
+@example
 |&username@@popserver|+inbox
+@end example
 
 and access to it, messages are downloaded automatically from
-&username@@popserver to +inbox.
+&username@@popserver to @samp{+inbox}.
 
+@example
 Example: %inbox|%myinbox   -> Download %inbox to %myinbox.
          *&user@@popserver1,&user@@popserver2|+inbox
          -> Download from &user@@popserver1 and &user@@popserver2 to +inbox.
@@ -1304,6 +1343,7 @@ A folder to access to internal messages of Wanderlust.
 Format: 'mark
         or
         'cache/00 - 1F
+@end example
 
 A folder named 'mark is a special virtual folder which collects messages
 which have important mark @samp{$}.
@@ -1318,7 +1358,6 @@ message will have @samp{$} mark.
 You can access to the cached messages fetched via network by accessing
 to the folders named 'cache/00 - 1F. 00 - 1F are the name of the
 subdirectories of the cache directory (@file{~/.elmo/cache}).
-@end example
 
 @c
 @c  Folder
