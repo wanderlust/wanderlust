@@ -1186,7 +1186,7 @@ FIELD is a symbol of the field.")
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
   (elmo-message-entity-field (elmo-message-entity folder number) field))
 
-(luna-define-generic elmo-message-field (folder number field value)
+(luna-define-generic elmo-message-set-field (folder number field value)
   "Set message field value in the msgdb.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
