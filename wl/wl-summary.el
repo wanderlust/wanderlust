@@ -634,6 +634,19 @@ See also variable `wl-use-petname'."
 	(wl-summary-lazy-update-mark
 	 (list 'wl-summary-update-mark-window))))
 
+(defun wl-summary-after-resize-function (frame)
+  "Called from `window-size-change-functions'."
+  (save-excursion
+    (save-selected-window
+      (select-frame frame)
+      (walk-windows
+       (lambda (window)
+	 (set-buffer (window-buffer window))
+	 (when (eq major-mode 'wl-summary-mode)
+	   (run-hook-with-args 'wl-summary-buffer-window-scroll-functions
+			       window)))
+       'nomini frame))))
+
 ;; Handler of event from elmo-folder
 (eval-and-compile
   (luna-define-class wl-summary-event-handler (elmo-event-handler)
@@ -903,7 +916,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (let ((hook (if wl-on-xemacs 'pre-idle-hook 'window-scroll-functions)))
       (make-local-hook hook)
       (dolist (function wl-summary-buffer-window-scroll-functions)
-	(add-hook hook function nil t))))
+	(add-hook hook function nil t)))
+    (add-hook 'window-size-change-functions
+	      #'wl-summary-after-resize-function))
   (make-local-hook 'change-major-mode-hook)
   (add-hook 'change-major-mode-hook #'wl-summary-buffer-detach nil t)
   (add-hook 'kill-buffer-hook #'wl-summary-buffer-detach)
