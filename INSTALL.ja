@@ -33,9 +33,9 @@ MIME用モジュールのインストール
 
   APEL, FLIM, SEMI, パッケージはそれぞれ以下の URL で入手可能です。
 
-	APEL:     ftp://ftp.m17n.org/mule/apel/
-	FLIM:     ftp://ftp.m17n.org/mule/flim/
-	SEMI:     ftp://ftp.m17n.org/mule/semi/
+	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
+	FLIM:     ftp://ftp.m17n.org/pub/mule/flim/
+	SEMI:     ftp://ftp.m17n.org/pub/mule/semi/
 
   APEL, FLIM, SEMI の順にインストールしてください。基本的にすべて
   make install の実行で済むはずです。
@@ -67,7 +67,7 @@ MIME用モジュールのインストール
   というエラーがでることがあります。この場合、APEL 10.2 以降をイ
   ンストールしてください。
 
-	APEL:     ftp://ftp.m17n.org/mule/apel/
+	APEL:     ftp://ftp.m17n.org/pub/mule/apel/
 
 
 通常のインストール
