@@ -222,7 +222,8 @@ When non-nil, redundunt message-id string are not saved."
 		     (= section (/ number modb-standard-divide-number)))
 		 (setq entity (elmo-msgdb-message-entity modb number)))
 	(when modb-standard-economize-entity-size
-	  (when (stringp (car entity)) (setcar entity t)))
+	  (when (stringp (car entity))
+	    (setq entity (cons t (cdr entity)))))
 	(setq entities (cons entity entities))))
     (if entities
 	(elmo-object-save filename entities)

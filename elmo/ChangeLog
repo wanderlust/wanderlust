@@ -2,6 +2,7 @@
 
 	* modb-standard.el (modb-standard-loaded-message-id): Return nil
 	when entity is garbaged.
+	(modb-standard-save-entity-1): Don't modify the original entity.
 
 2004-09-13  Tetsurou Okazaki  <okazaki@be.to>
 
