@@ -2864,6 +2864,18 @@ Return number if put mark succeed"
   ;;	(wl-summary-next))))
   )
 
+(defun wl-summary-make-destination-numbers-list (mark-list)
+  (let (dest-numbers dest-number)
+    (dolist (elem mark-list)
+      (setq dest-number (assoc (nth 2 elem) dest-numbers))
+      (if dest-number
+	  (unless (memq (car elem) (cdr dest-number))
+	    (nconc dest-number (list (car elem))))
+	(setq dest-numbers (nconc dest-numbers
+				  (list
+				   (list (nth 2 elem)
+					 (car elem)))))))
+    dest-numbers))
 ;;; Actions
 
 ;; Target mark handling.
@@ -2891,6 +2903,14 @@ Return number if put mark succeed"
 (defun wl-summary-delete (&optional number)
   (interactive)
   (wl-summary-set-mark "d" number (interactive-p)))
+
+(defun wl-summary-delete-region (beg end)
+  (interactive "r")
+  (wl-summary-mark-region-subr 'wl-summary-delete beg end))
+
+(defun wl-summary-target-mark-delete ()
+  (interactive)
+  (wl-summary-target-mark-replace "d"))
 
 (defun wl-summary-set-action-generic (mark number visible interactive data)
   (when visible
@@ -3010,6 +3030,34 @@ Return number if put mark succeed"
 	    0
 	  (length refiles))))))
 
+;; Refile action
+(defun wl-summary-refile (&optional dst number)
+  "Put refile mark on current line message.
+If optional argument DST is specified, put mark without asking
+destination folder.
+If optional argument NUMBER is specified, mark message specified by NUMBER.
+
+If folder is read-only, message should be copied.
+See `wl-refile-policy-alist' for more details."
+  (interactive)
+  (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
+					 (wl-summary-buffer-folder-name))))
+    (cond ((eq policy 'copy)
+	   (wl-summary-set-mark "O" number (interactive-p) dst)
+	   (run-hooks 'wl-summary-copy-hook))
+	  (t
+	   (wl-summary-set-mark "o" number (interactive-p) dst)
+	   (run-hooks 'wl-summary-refile-hook)))))
+
+(defun wl-summary-refile-region (beg end)
+  "Put refile mark on messages in the region specified by BEG and END."
+  (interactive "r")
+  (wl-summary-refile-region-subr "refile" beg end))
+
+(defun wl-summary-target-mark-refile ()
+  (interactive)
+  (wl-summary-target-mark-refile-subr "refile" "o"))
+
 (defun wl-summary-set-action-refile (mark number visible interactive data)
   (wl-summary-set-action-refile-subr
    'refile mark number visible interactive data))
@@ -3082,19 +3130,6 @@ Return number if put mark succeed"
     (wl-highlight-summary-current-line))
   (wl-summary-remove-destination))
 
-(defun wl-summary-make-destination-numbers-list (mark-list)
-  (let (dest-numbers dest-number)
-    (dolist (elem mark-list)
-      (setq dest-number (assoc (nth 2 elem) dest-numbers))
-      (if dest-number
-	  (unless (memq (car elem) (cdr dest-number))
-	    (nconc dest-number (list (car elem))))
-	(setq dest-numbers (nconc dest-numbers
-				  (list
-				   (list (nth 2 elem)
-					 (car elem)))))))
-    dest-numbers))
-
 (defun wl-summary-exec-action-refile (mark-list)
   (save-excursion
     (let ((del-fld (wl-summary-get-delete-folder
@@ -3140,6 +3175,23 @@ Return number if put mark succeed"
       failures)))
 
 ;; Copy action
+(defun wl-summary-copy (&optional dst number)
+  "Put copy mark on current line message.
+If optional argument DST is specified, put mark without asking
+destination folder.
+If optional argument NUMBER is specified, mark message specified by NUMBER."
+  (interactive)
+  (wl-summary-set-mark "O" number (interactive-p) dst))
+
+(defun wl-summary-target-mark-copy ()
+  (interactive)
+  (wl-summary-target-mark-refile-subr "copy" "O"))
+
+(defun wl-summary-copy-region (beg end)
+  "Put copy mark on messages in the region specified by BEG and END."
+  (interactive "r")
+  (wl-summary-refile-region-subr "copy" beg end))
+
 (defun wl-summary-set-action-copy (mark number visible interactive data)
   (wl-summary-set-action-refile-subr
    'copy mark number visible interactive data))
@@ -3195,6 +3247,10 @@ Return number if put mark succeed"
       failures)))
 
 ;; Prefetch.
+(defun wl-summary-target-mark-prefetch ()
+  (interactive)
+  (wl-summary-target-mark-replace "i"))
+
 (defun wl-summary-exec-action-prefetch (mark-list)
   (save-excursion
     (let* ((buffer-read-only nil)
@@ -3419,32 +3475,6 @@ Return number if put mark succeed"
   "Return t if temporal MARK should be reserved."
   (member mark wl-summary-reserve-mark-list))
 
-(defun wl-summary-refile (&optional dst number)
-  "Put refile mark on current line message.
-If optional argument DST is specified, put mark without asking
-destination folder.
-If optional argument NUMBER is specified, mark message specified by NUMBER.
-
-If folder is read-only, message should be copied.
-See `wl-refile-policy-alist' for more details."
-  (interactive)
-  (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
-					 (wl-summary-buffer-folder-name))))
-    (cond ((eq policy 'copy)
-	   (wl-summary-set-mark "O" number (interactive-p) dst)
-	   (run-hooks 'wl-summary-copy-hook))
-	  (t
-	   (wl-summary-set-mark "o" number (interactive-p) dst)
-	   (run-hooks 'wl-summary-refile-hook)))))
-
-(defun wl-summary-copy (&optional dst number)
-  "Put copy mark on current line message.
-If optional argument DST is specified, put mark without asking
-destination folder.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (wl-summary-set-mark "O" number (interactive-p) dst))
-
 (defun wl-summary-refile-prev-destination ()
   "Refile message to previously refiled destination."
   (interactive)
@@ -3521,16 +3551,6 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
 If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
   (wl-summary-set-mark "*" number (interactive-p)))
-
-(defun wl-summary-refile-region (beg end)
-  "Put refile mark on messages in the region specified by BEG and END."
-  (interactive "r")
-  (wl-summary-refile-region-subr "refile" beg end))
-
-(defun wl-summary-copy-region (beg end)
-  "Put copy mark on messages in the region specified by BEG and END."
-  (interactive "r")
-  (wl-summary-refile-region-subr "copy" beg end))
 
 (defun wl-summary-refile-region-subr (copy-or-refile beg end)
   (save-excursion
@@ -3612,10 +3632,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(while (not (eobp))
 	  (funcall function (wl-summary-message-number))
 	  (forward-line 1))))))
-
-(defun wl-summary-delete-region (beg end)
-  (interactive "r")
-  (wl-summary-mark-region-subr 'wl-summary-delete beg end))
 
 (defun wl-summary-target-mark-region (beg end)
   (interactive "r")
@@ -3760,8 +3776,7 @@ If ARG, exit virtual folder."
       (delete-backward-char 1)
       (insert mark))))
 
-(defun wl-summary-target-mark-delete ()
-  (interactive)
+(defun wl-summary-target-mark-replace (mark)
   (save-excursion
     (goto-char (point-min))
     (let (number mlist)
@@ -3769,33 +3784,13 @@ If ARG, exit virtual folder."
 	(when (string= (wl-summary-temp-mark) "*")
 	  (let (wl-summary-buffer-disp-msg)
 	    (when (setq number (wl-summary-message-number))
-	      (wl-summary-delete number)
+	      (wl-summary-set-mark mark number)
 	      (setq wl-summary-buffer-target-mark-list
 		    (delq number wl-summary-buffer-target-mark-list)))))
 	(forward-line 1))
       (setq mlist wl-summary-buffer-target-mark-list)
       (while mlist
-	(wl-summary-register-temp-mark (car mlist) "d" nil)
-	(setq wl-summary-buffer-target-mark-list
-	      (delq (car mlist) wl-summary-buffer-target-mark-list))
-	(setq mlist (cdr mlist))))))
-
-(defun wl-summary-target-mark-prefetch ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let (number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  (let (wl-summary-buffer-disp-msg)
-	    (when (setq number (wl-summary-message-number))
-	      (wl-summary-prefetch number)
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list)))))
-	(forward-line 1))
-      (setq mlist wl-summary-buffer-target-mark-list)
-      (while mlist
-	(wl-summary-register-temp-mark (car mlist) "i" nil)
+	(wl-summary-register-temp-mark (car mlist) mark nil)
 	(setq wl-summary-buffer-target-mark-list
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist))))))
@@ -3860,14 +3855,6 @@ If ARG, exit virtual folder."
     (switch-to-buffer
      (or (cadr (memq (current-buffer) buffers))
 	 (car buffers)))))
-
-(defun wl-summary-target-mark-copy ()
-  (interactive)
-  (wl-summary-target-mark-refile-subr "copy" "O"))
-
-(defun wl-summary-target-mark-refile ()
-  (interactive)
-  (wl-summary-target-mark-refile-subr "refile" "o"))
 
 (defun wl-summary-target-mark-mark-as-read ()
   (interactive)

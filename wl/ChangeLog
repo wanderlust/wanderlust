@@ -1,5 +1,10 @@
 2003-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-target-mark-replace): New function.
+	(wl-summary-target-mark-prefetch): Use it.
+	(wl-summary-target-mark-delete): Ditto.
+	(toplevel): Rearranged definition order.
+
 	* wl-vars.el (wl-summary-reserve-mark-list): Added "d" and "i".
 	(wl-summary-skip-mark-list): Added "d".
 
