@@ -4308,6 +4308,11 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 $B%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#$?$@$7(B @code{wl-insert-message-id}$B$,(B
 nil $B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
 
+@item wl-fcc-force-as-read
+@vindex wl-fcc-force-as-read
+$B=i4|@_Dj$O(B @code{nil}$B!#(BNon-nil $B$J$i(B @samp{Fcc:} $B$GJ]B8$7$?%a%C%;!<%8$r(B
+$B4{FI$K$7$^$9(B($BJ]B8@h$,(B IMAP folder $B$N>l9g$N$_(B)$B!#(B
+
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
 $B=i4|@_Dj$O(B @code{t}$B!#(B
