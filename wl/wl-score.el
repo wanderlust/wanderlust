@@ -1253,10 +1253,9 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	(setq alist (cdr alist))
 	(when (> count elmo-display-progress-threshold)
 	  (setq i (1+ i))
-	  (if (or (zerop (% i 10)) (= i count))
-	      (elmo-display-progress
-	       'wl-summary-score-update-all-lines "Updating score..."
-	       (/ (* i 100) count)))))
+	  (elmo-display-progress
+	   'wl-summary-score-update-all-lines "Updating score..."
+	   (/ (* i 100) count))))
       (when dels
 ;	(elmo-msgdb-delete-msgs wl-summary-buffer-folder-name
 ;				dels wl-summary-buffer-msgdb t)
