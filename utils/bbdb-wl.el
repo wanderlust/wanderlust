@@ -32,6 +32,7 @@
 (defvar bbdb-wl-get-update-record-hook nil)
 (defvar bbdb-wl-folder-regexp nil)
 
+;;;###autoload
 (defun bbdb-wl-setup ()
   (add-hook 'wl-message-redisplay-hook 'bbdb-wl-get-update-record)
   (add-hook 'wl-summary-exit-hook 'bbdb-wl-hide-bbdb-buffer)

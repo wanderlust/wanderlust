@@ -1,3 +1,7 @@
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-setup): Added autoload magic.
+
 2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* bbdb-wl.el (bbdb-wl-setup): require bbdb-autoloads if exists.

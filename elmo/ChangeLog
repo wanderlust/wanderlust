@@ -1,3 +1,10 @@
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-read-response): Set timeout argument
+	of accept-process-output as 1.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-read-body): Ditto.
+
 2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (product-version-as-string): Remove define.
