@@ -5013,20 +5013,20 @@ Use function list is `wl-summary-write-current-folder-functions'."
 				 elmo-msgdb-unread-cached-mark
 				 elmo-msgdb-important-mark))))
     (beginning-of-line)
-    (while (and skip
-		(not (if downward (eobp) (bobp))))
-      (if downward
-	  (forward-line 1)
-	(forward-line -1))
-      (setq skip (or (string-match skip-tmark-regexp
-				   (save-excursion
-				     (wl-summary-temp-mark)))
-		     (and skip-pmark-regexp
-			  (not (string-match
-				skip-pmark-regexp
-				(save-excursion
-				  (wl-summary-persistent-mark))))))))
-
+    (let (case-fold-search)
+      (while (and skip
+		  (not (if downward (eobp) (bobp))))
+	(if downward
+	    (forward-line 1)
+	  (forward-line -1))
+	(setq skip (or (string-match skip-tmark-regexp
+				     (save-excursion
+				       (wl-summary-temp-mark)))
+		       (and skip-pmark-regexp
+			    (not (string-match
+				  skip-pmark-regexp
+				  (save-excursion
+				    (wl-summary-persistent-mark)))))))))
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
