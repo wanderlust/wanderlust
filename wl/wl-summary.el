@@ -253,6 +253,9 @@
 	  string)
     string))
 
+(defvar wl-summary-sort-specs '(number date subject from list-info))
+(defvar wl-summary-default-sort-spec 'date)
+
 (defvar wl-summary-mode-menu-spec
   '("Summary"
     ["Read" wl-summary-read t]
@@ -280,7 +283,8 @@
      ["By Number" wl-summary-sort-by-number t]
      ["By Date" wl-summary-sort-by-date t]
      ["By From" wl-summary-sort-by-from t]
-     ["By Subject" wl-summary-sort-by-subject t])
+     ["By Subject" wl-summary-sort-by-subject t]
+     ["By List Info" wl-summary-sort-by-list-info t])
     "----"
     ("Message Operation"
      ["Mark as read"    wl-summary-mark-as-read t]
@@ -858,6 +862,49 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (string< (elmo-msgdb-overview-entity-get-subject-no-decode x)
 	   (elmo-msgdb-overview-entity-get-subject-no-decode y)))
 
+(defun wl-summary-get-list-info (entity)
+  "Returns (\"ML-name\" . ML-count) of ENTITY."
+  (let (sequence ml-name ml-count subject return-path)
+    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
+		    entity "x-sequence")
+	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
+		       entity "x-ml-name")
+		      (and sequence
+			   (car (split-string sequence " "))))
+	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
+			entity "x-mail-count")
+		       (elmo-msgdb-overview-entity-get-extra-field
+			entity "x-ml-count")
+		       (and sequence
+			    (cadr (split-string sequence " ")))))
+    (and (setq subject (elmo-msgdb-overview-entity-get-subject
+			entity))
+	 (setq subject (elmo-delete-char ?\n subject))
+	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
+	 (progn
+	   (or ml-name (setq ml-name (match-string 1 subject)))
+	   (or ml-count (setq ml-count (match-string 2 subject)))))
+    (and (setq return-path
+	       (elmo-msgdb-overview-entity-get-extra-field
+		entity "return-path"))
+	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
+	 (progn
+	   (or ml-name (setq ml-name (match-string 1 return-path)))
+	   (or ml-count (setq ml-count (match-string 2 return-path)))))
+    (cons (and ml-name (car (split-string ml-name " ")))
+	  (and ml-count (string-to-int ml-count)))))
+
+(defun wl-summary-overview-entity-compare-by-list-info (x y)
+  "Compare entity X and Y by mailing-list info."
+  (let* ((list-info-x (wl-summary-get-list-info x))
+	 (list-info-y (wl-summary-get-list-info y)))
+    (if (equal list-info-x list-info-y)
+	(wl-summary-overview-entity-compare-by-date x y)
+      (if (string= (car list-info-x) (car list-info-y))
+	  (< (or (cdr list-info-x) 0)
+	     (or (cdr list-info-y) 0))
+	(string< (car list-info-x) (car list-info-y))))))
+
 (defun wl-summary-sort-by-date ()
   (interactive)
   (wl-summary-rescan "date"))
@@ -870,6 +917,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-sort-by-from ()
   (interactive)
   (wl-summary-rescan "from"))
+(defun wl-summary-sort-by-list-info ()
+  (interactive)
+  (wl-summary-rescan "list-info"))
 
 (defun wl-summary-rescan (&optional sort-by)
   "Rescan current folder without updating."
@@ -1822,21 +1872,13 @@ If ARG is non-nil, checking is omitted."
 
 (defun wl-summary-sort ()
   (interactive)
-  (let ((sort-by (let ((input-range-list '("number" "date" "subject" "from"))
-		       (default "date")
-		       in)
-		   (setq in
-			 (completing-read
-			  (format "Sort by (%s): " default)
-			  (mapcar
-			   (function (lambda (x) (cons x x)))
-			   input-range-list)))
-		   (if (string= in "")
-		       default
-		     in))))
-    (if (not (member sort-by '("number" "date" "subject" "from")))
-	(error "Sort by %s is not implemented"  sort-by))
-    (wl-summary-rescan sort-by)))
+  (wl-summary-rescan
+   (completing-read
+    (format "Sort by (%s): " (symbol-name wl-summary-default-sort-spec))
+    (mapcar (lambda (spec)
+	      (list (symbol-name spec)))
+	    wl-summary-sort-specs)
+    nil t nil nil (symbol-name wl-summary-default-sort-spec))))
 
 (defun wl-summary-sync-marks ()
   "Update marks in summary."
@@ -4132,67 +4174,15 @@ If ARG, exit virtual folder."
 			      wl-message-entity))))
 
 (defun wl-summary-line-list-info ()
-  (let (sequence ml-name ml-count subject return-path)
-    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-		    wl-message-entity "x-sequence")
-	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
-		       wl-message-entity "x-ml-name")
-		      (and sequence
-			   (car (split-string sequence " "))))
-	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
-			wl-message-entity "x-mail-count")
-		       (elmo-msgdb-overview-entity-get-extra-field
-			wl-message-entity "x-ml-count")
-		       (and sequence
-			    (cadr (split-string sequence " ")))))
-    (and (setq subject (elmo-msgdb-overview-entity-get-subject
-			wl-message-entity))
-	 (setq subject (elmo-delete-char ?\n subject))
-	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
-	 (progn
-	   (or ml-name (setq ml-name (match-string 1 subject)))
-	   (or ml-count (setq ml-count (match-string 2 subject)))))
-    (and (setq return-path
-	       (elmo-msgdb-overview-entity-get-extra-field
-		wl-message-entity "return-path"))
-	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
-	 (progn
-	   (or ml-name (setq ml-name (match-string 1 return-path)))
-	   (or ml-count (setq ml-count (match-string 2 return-path)))))
-    (condition-case nil
-	(if (and ml-name ml-count)
-	    (format "(%s %05d)"
-		    (car (split-string ml-name " "))
-		    (string-to-int ml-count))
-	  "")
-      (error ""))))
+  (let ((list-info (wl-summary-get-list-info wl-message-entity)))
+    (if (and (car list-info) (cdr list-info))
+	(format "(%s %05d)" (car list-info) (cdr list-info))
+      "")))
 
 (defun wl-summary-line-list-count ()
-  (let (sequence ml-count subject-string return-path)
-    (setq ml-count
-	  (or (elmo-msgdb-overview-entity-get-extra-field
-	       wl-message-entity "x-mail-count")
-	      (elmo-msgdb-overview-entity-get-extra-field
-	       wl-message-entity "x-ml-count")
-	      (and (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-				   wl-message-entity "x-sequence"))
-		   (cadr (split-string sequence " ")))
-	      (and (setq subject-string
-			 (elmo-msgdb-overview-entity-get-subject
-			  wl-message-entity))
-		   (setq subject-string
-			 (elmo-delete-char ?\n subject-string))
-		   (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-				 subject-string)
-		   (match-string 2 subject-string))
-	      (and (setq return-path
-			 (elmo-msgdb-overview-entity-get-extra-field
-			  wl-message-entity "return-path"))
-		   (string-match "^<[^@>]+-return-\\([0-9]+\\)-"
-				 return-path)
-		   (match-string 1 return-path))))
+  (let ((ml-count (cdr (wl-summary-get-list-info wl-message-entity))))
     (if ml-count
-	(format "%.0f" (string-to-number ml-count))
+	(format "%.0f" ml-count)
       "")))
 
 (defun wl-summary-line-attached ()

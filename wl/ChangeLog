@@ -1,3 +1,17 @@
+2002-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sort-specs): New variable.
+	(wl-summary-default-sort-spec): Ditto.
+	(wl-summary-sort): Rewrite.
+	(wl-summary-sort-by-list-info): New function.
+
+2002-06-18  KAMO Tomoyuki  <kamo@i-manage.co.jp>
+	
+	* wl-summary.el (wl-summary-get-list-info): New function.
+	(wl-summary-sort): Rewrite.
+	(wl-summary-line-list-info): Ditto.
+	(wl-summary-line-list-count): Ditto.
+
 2002-06-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-read-folder): Use copy-sequence 
