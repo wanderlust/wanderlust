@@ -1,3 +1,10 @@
+2000-08-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-imap4.el (elmo-imap4-make-address): Abolish.
+	(elmo-imap4-msgdb-create): Don't request ENVELOPE.
+	(elmo-imap4-create-msgdb-from-overview-string): Use
+	`elmo-msgdb-create-overview-from-buffer'.
+
 2000-08-26   Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-imap4.el (elmo-imap4-parse-namespace): Tolerate INBOX regexp.

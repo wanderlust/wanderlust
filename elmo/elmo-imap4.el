@@ -703,12 +703,6 @@ BUFFER must be a single-byte buffer."
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-spec-mailbox spec))))
 
-(defsubst elmo-imap4-make-address (name mbox host)
-  (cond (name
-	 (concat name " <" mbox "@" host ">"))
-	(t
-	 (concat mbox "@" host))))
-
 (static-cond 
  ((fboundp 'float)
   ;; Emacs can parse dot symbol.
@@ -794,13 +788,10 @@ BUFFER must be a single-byte buffer."
 						     seen-list
 						     &optional numlist)
   (let ((case-fold-search t)
-	(size-sym (intern elmo-imap4-rfc822-size))
-	overview attr-list attr pair section
-	number important message-id from-list from-string
-	to-string cc-string
-	number-alist mark-alist
-	reference subject date-string size flags gmark seen
-	index extras extra-fields sym value)
+	overview entity attr-list attr pair section
+	number important number-alist mark-alist
+	size flags gmark seen
+	index fields sym value)
     (setq attr-list (elmo-imap4-parse-overview-string str))
     (while attr-list
       (setq attr (car attr-list))
@@ -812,80 +803,20 @@ BUFFER must be a single-byte buffer."
       (setq number (cadr (memq 'UID attr)))
       (when (or (null numlist)
 		(memq number numlist))
-	(while attr
-	  (setq sym (car attr))
-	  (setq value (cadr attr))
-	  (setq attr (cdr (cdr attr)))
-	  (cond
-	   ((eq sym 'UID))
-	   ;; noop
-	   ((eq sym 'FLAGS)
-	    (setq flags value))
-	   ((eq sym size-sym)
-	    (setq size value))
-	   ((eq sym 'BODY)
-	    (setq extra-fields (elmo-collect-field-from-string value t)))
-	   ((eq sym 'ENVELOPE)
-	    ;; According to rfc2060, 
-	    ;; 0 date, 1 subject, 2 from, 3 sender,
-	    ;; 4 reply-to, 5 to, 6 cc, 7 bcc, 8 in-reply-to, 9 message-id.
-	    (setq date-string (elmo-imap4-nth 0 value))
-	    (setq subject (elmo-mime-string (or (elmo-imap4-nth 1 value)
-						elmo-no-subject)))
-	    (setq from-list (car (elmo-imap4-nth 2 value)))
-	    (setq from-string (or
-			       (and (or (elmo-imap4-nth 0 from-list)
-					(elmo-imap4-nth 2 from-list)
-					(elmo-imap4-nth 3 from-list))
-				    (elmo-delete-char 
-				     ?\"
-				     (elmo-imap4-make-address
-				      (elmo-imap4-nth 0 from-list)
-				      (elmo-imap4-nth 2 from-list)
-				      (elmo-imap4-nth 3 from-list))
-				     'uni))
-			       elmo-no-from))
-	    (setq to-string (mapconcat
-			     (lambda (to)
-			       (elmo-imap4-make-address
-				(elmo-imap4-nth 0 to)
-				(elmo-imap4-nth 2 to)
-				(elmo-imap4-nth 3 to)))
-			     (elmo-imap4-nth 5 value) ","))
-	    (setq cc-string (mapconcat
-			     (lambda (cc)
-			       (elmo-imap4-make-address
-				(elmo-imap4-nth 0 cc)
-				(elmo-imap4-nth 2 cc)
-				(elmo-imap4-nth 3 cc)))
-			     (elmo-imap4-nth 6 value) ","))	
-	    (setq reference (elmo-msgdb-get-last-message-id
-			     (elmo-imap4-nth 8 value)))
-	    (setq message-id (elmo-imap4-nth 9 value)))))
-	(when (setq pair (assoc "references" extra-fields))
-	  (setq extra-fields (delq pair extra-fields)))
-	(unless reference
-	  (setq reference (elmo-msgdb-get-last-message-id (cdr pair))))
-	(setq overview
-	      (elmo-msgdb-append-element
-	       overview
-	       (cons message-id
-		     (vector number
-			     reference
-			     (elmo-mime-string from-string)
-			     (elmo-mime-string subject)
-			     date-string
-			     to-string
-			     cc-string
-			     size
-			     extra-fields))))
+	(with-temp-buffer
+	  (insert (plist-get attr 'BODY))
+	  (setq entity
+		(elmo-msgdb-create-overview-from-buffer
+		 number (plist-get attr (intern elmo-imap4-rfc822-size)))
+		overview (elmo-msgdb-append-element overview entity)))
+	(setq flags (plist-get attr 'FLAGS))
 	(if (memq 'Flagged flags)
-	    (elmo-msgdb-global-mark-set message-id important-mark))
+	    (elmo-msgdb-global-mark-set (car entity) important-mark))
 	(setq number-alist
-	      (elmo-msgdb-number-add number-alist number message-id))
-	(setq seen (member message-id seen-list))
-	(if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			    (if (elmo-cache-exists-p message-id) ;; XXX
+	      (elmo-msgdb-number-add number-alist number (car entity)))
+	(setq seen (member (car entity) seen-list))
+	(if (setq gmark (or (elmo-msgdb-global-mark-get (car entity))
+			    (if (elmo-cache-exists-p (car entity)) ;; XXX
 				(if (or (memq 'Seen flags) seen)
 				    nil
 				  already-mark)
@@ -1035,22 +966,16 @@ If optional argument UNMARK is non-nil, unmark."
 	     (process    (elmo-network-session-process-internal session))
 	     (filter     (and as-num numlist))
 	     (case-fold-search t)
-	     (extra-fields (if elmo-msgdb-extra-fields
-			       (concat " " (mapconcat
-					    'identity
-					    elmo-msgdb-extra-fields " "))
-			     ""))
+	     (headers
+	      (append
+	       '("Subject" "From" "To" "Cc" "Date"
+		 "Message-Id" "References" "In-Reply-To")
+	       elmo-msgdb-extra-fields))
 	     rfc2060 count ret-val set-list ov-str length)
 	(setq rfc2060 (with-current-buffer (process-buffer process)
-			(if (memq 'imap4rev1
-				  (elmo-imap4-session-capability-internal
-				   session))
-			    t
-			  (if (memq 'imap4
-				    (elmo-imap4-session-capability-internal
-				     session))
-			      nil
-			    (error "No IMAP4 capability!!")))))
+			(memq 'imap4rev1
+			      (elmo-imap4-session-capability-internal
+			       session))))
 	(setq count 0)
 	(setq length (length numlist))
 	(setq set-list (elmo-imap4-make-number-set-list 
@@ -1063,17 +988,12 @@ If optional argument UNMARK is non-nil, unmark."
 	  (elmo-imap4-send-command 
 	   process
 	   ;; get overview entity from IMAP4
-	   (format 
-	    (if rfc2060
-		(concat
-		 (if elmo-imap4-use-uid "uid " "")
-		 "fetch %s (envelope body.peek[header.fields (references"
-		 extra-fields
-		 ")] rfc822.size flags)")
-	      (concat
-	       (if elmo-imap4-use-uid "uid " "")
-	       "fetch %s (envelope rfc822.size flags)"))
-	    (cdr (car set-list))))
+	   (format "%sfetch %s (%s rfc822.size flags)"
+		   (if elmo-imap4-use-uid "uid " "")
+		   (cdr (car set-list))
+		   (if rfc2060
+		       (format "body.peek[header.fields %s]" headers)
+		     (format "%s" headers))))
 	  ;; process string while waiting for response
 	  (with-current-buffer (process-buffer process)
 	    (if ov-str
