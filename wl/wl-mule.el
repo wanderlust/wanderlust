@@ -156,7 +156,7 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-e" 'wl-draft-config-exec)
   (define-key wl-draft-mode-map "\C-c\C-j" 'wl-template-select)
   (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
-  (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
+;;   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
   (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
   (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer)
   (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))

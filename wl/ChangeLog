@@ -1,10 +1,19 @@
 2002-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-e21.el (wl-draft-key-setup): Don't bind C-x C-s
+
+	* wl-xmas.el (wl-draft-key-setup): Ditto.
+
+	* wl-mule.el (wl-draft-key-setup): Ditto.
+
 	* wl-draft.el (wl-draft-create-buffer): Don't clear buffer-file-name.
 	(wl-draft-reedit): Ditto.
 	(wl-draft-prepare-edit): Add `wl-draft-save' to
 	`local-write-file-hooks'.
 	(wl-draft-prepare-edit): Call clear-visited-file-modtime.
+	(wl-draft-reedit): Set buffer-file-name.
+	(wl-draft-reedit): Add `wl-draft-save' to `local-write-file-hooks'.
+
 
 	* wl.el (wl-exit): If wl-delete-startup-frame-function is non-nil,
 	call it.
