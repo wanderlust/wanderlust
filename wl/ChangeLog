@@ -1,3 +1,13 @@
+2000-10-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-biff-init-icons): Use `propertize' instead of
+	`add-text-properties'
+	(wl-plugged-init-icons): Ditto.
+	(wl-folder-init-icons): Use `propertize' instead of
+	`put-text-property'.
+	(wl-plugged-set-folder-icon): Ditto.
+	(wl-e21-highlight-folder-group-line): Ditto.
+
 2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version-status-alist): New variable.
@@ -13,7 +23,6 @@
 	(wl-logo-xpm): Use it.
 	(wl-logo-xbm): Ditto.
 	(wl-logo-bitmap): Ditto.
-
 
 2000-10-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

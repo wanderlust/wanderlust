@@ -29,21 +29,30 @@
 ;; images instead of `insert-image', so don't delete such overlays
 ;; sloppily.  Here is a sample code to show icons in the buffer.
 ;;
-;;(let* ((load-path (cons wl-icon-dir load-path))
-;;       (image (find-image `((:type xpm :file ,wl-nntp-folder-icon
-;;				   :ascent center))))
-;;       (icon (copy-sequence wl-nntp-folder-icon))
-;;       (folder "-fj.wanderlust:0/0/0")
-;;       overlay)
-;;  (put-text-property 0 (length icon) 'display image icon)
+;;(let (image from to icon overlay)
+;;  ;; The function `find-image' will look for an image first on `load-path'
+;;  ;; and then in `data-directory'.
+;;  (let ((load-path (cons wl-icon-dir load-path)))
+;;    (setq image (find-image (list (list :type 'xpm :file wl-nntp-folder-icon
+;;					:ascent 'center)))))
+;;  ;; `propertize' is a convenient function in such a case.
+;;  ;; String must have one or more length to wear an image.
+;;  (setq icon (propertize "any string" 'display image))
 ;;  (pop-to-buffer (get-buffer-create "*wl-e21-demo*"))
 ;;  (erase-buffer)
 ;;  (insert "   ")
-;;  (setq overlay (make-overlay (point) (progn (insert folder) (point))))
+;;  (setq from (point))
+;;  (insert "-fj.wanderlust:0/0/0")
+;;  (setq to (point))
+;;  (insert "\n")
+;;  (setq overlay (make-overlay from to))
+;;  ;; Put an image.
 ;;  (overlay-put overlay 'before-string icon)
+;;  ;; Put a mark that this overlay is made by `wl-e21'.  It is not always
+;;  ;; necessarily.
 ;;  (overlay-put overlay 'wl-e21-icon t)
-;;  (overlay-put overlay 'evaporate t)
-;;  (insert "\n"))
+;;  ;; Make it can be removable.
+;;  (overlay-put overlay 'evaporate t))
 
 ;;; Code:
 ;;
@@ -242,14 +251,13 @@
 	  (overlay-put overlay 'evaporate t))
 	(let ((image (get icon 'image)))
 	  (unless image
-	    (let ((name (copy-sequence
-			 (symbol-value
-			  (cdr (assq icon wl-folder-toggle-icon-list)))))
+	    (let ((name (symbol-value
+			 (cdr (assq icon wl-folder-toggle-icon-list))))
 		  (load-path (cons wl-icon-dir load-path)))
 	      (when (setq image (find-image `((:type xpm :file ,name
 						     :ascent center))))
-		(put-text-property 0 (length name) 'display image name)
-		(setq image (put icon 'image name)))))
+		(setq image (put icon 'image (propertize name
+							 'display image))))))
 	  (overlay-put overlay 'before-string image)
 	  (overlay-put overlay 'invisible (and image t))
 	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
@@ -392,19 +400,17 @@
 
 (defun wl-plugged-set-folder-icon (folder string)
   (if (display-graphic-p)
-      (let ((istring (concat " " string))
-	    type)
+      (let (type)
 	(cond ((string= folder wl-queue-folder)
-	       (put-text-property 0 1 'display
-				  (get 'wl-folder-queue-image 'image) istring)
-	       istring)
+	       (concat (propertize " " 'display
+				   (get 'wl-folder-queue-image 'image))
+		       string))
 	      ((setq type (elmo-folder-get-type folder))
-	       (put-text-property 0 1 'display
-				  (get (intern (format "wl-folder-%s-image"
-						       type))
-				       'image)
-				  istring)
-	       istring)
+	       (concat (propertize " " 'display
+				   (get (intern (format "wl-folder-%s-image"
+							type))
+					'image))
+		       string))
 	      (t
 	       string)))
     string))
@@ -436,10 +442,7 @@
 	(setq name (symbol-value (cdr icon))
 	      image (find-image `((:type xpm :file ,name :ascent center))))
 	(when image
-	  (let* ((str (copy-sequence name))
-		 (len (length str)))
-	    (put-text-property 0 len 'display image str)
-	    (put (car icon) 'image str)))))))
+	  (put (car icon) 'image (propertize name 'display image)))))))
 
 (defun wl-plugged-init-icons ()
   (unless wl-plugged-image
@@ -449,23 +452,22 @@
 						  :ascent center)))
 	    wl-unplugged-image (find-image `((:type xpm
 						    :file ,wl-unplugged-icon
-						    :ascent center)))))
-    (setq wl-modeline-plug-state-on (copy-sequence
-				     wl-plug-state-indicator-on)
-	  wl-modeline-plug-state-off (copy-sequence
-				      wl-plug-state-indicator-off)))
+						    :ascent center))))))
   (let ((props (when (display-mouse-p)
 		 (list 'local-map (purecopy (make-mode-line-mouse2-map
 					     #'wl-toggle-plugged))
 		       'help-echo "mouse-2 toggles plugged status"))))
-    (add-text-properties 0 (length wl-modeline-plug-state-on)
-			 (nconc props (when (display-graphic-p)
-					(list 'display wl-plugged-image)))
-			 wl-modeline-plug-state-on)
-    (add-text-properties 0 (length wl-modeline-plug-state-off)
-			 (nconc props (when (display-graphic-p)
-					(list 'display wl-unplugged-image)))
-			 wl-modeline-plug-state-off)))
+    (if (display-graphic-p)
+	(setq wl-modeline-plug-state-on
+	      (apply 'propertize wl-plug-state-indicator-on
+		     `(,@props display ,wl-plugged-image))
+	      wl-modeline-plug-state-off
+	      (apply 'propertize wl-plug-state-indicator-off
+		     `(,@props display ,wl-unplugged-image)))
+      (setq wl-modeline-plug-state-on
+	    (apply 'propertize wl-plug-state-indicator-on props)
+	    wl-modeline-plug-state-off
+	    (apply 'propertize wl-plug-state-indicator-off props)))))
 
 (defun wl-biff-init-icons ()
   (unless wl-biff-mail-image
@@ -475,25 +477,24 @@
 					 :ascent center)))
 	    wl-biff-nomail-image (find-image
 				  `((:type xpm :file ,wl-biff-nomail-icon
-					   :ascent center)))))
-    (setq wl-modeline-biff-state-on (copy-sequence
-				     wl-biff-state-indicator-on)
-	  wl-modeline-biff-state-off (copy-sequence
-				      wl-biff-state-indicator-off)))
+					   :ascent center))))))
   (let ((props (when (display-mouse-p)
 		 (list 'local-map (purecopy (make-mode-line-mouse2-map
 					     (lambda nil
 					       (call-interactively
 						'wl-biff-check-folders))))
 		       'help-echo "mouse-2 checks new mails"))))
-    (add-text-properties 0 (length wl-modeline-biff-state-on)
-			 (nconc props (when (display-graphic-p)
-					(list 'display wl-biff-mail-image)))
-			 wl-modeline-biff-state-on)
-    (add-text-properties 0 (length wl-modeline-biff-state-off)
-			 (nconc props (when (display-graphic-p)
-					(list 'display wl-biff-nomail-image)))
-			 wl-modeline-biff-state-off)))
+    (if (display-graphic-p)
+	(setq wl-modeline-biff-state-on
+	      (apply 'propertize wl-biff-state-indicator-on
+		     `(,@props display ,wl-biff-mail-image))
+	      wl-modeline-biff-state-off
+	      (apply 'propertize wl-biff-state-indicator-off
+		     `(,@props display ,wl-biff-nomail-image)))
+      (setq wl-modeline-biff-state-on
+	    (apply 'propertize wl-biff-state-indicator-on props)
+	    wl-modeline-biff-state-off
+	    (apply 'propertize wl-biff-state-indicator-off props)))))
 
 (defun wl-make-date-string ()
   (format-time-string "%a, %d %b %Y %T %z"))
