@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/06 13:24:13 teranisi>
+;; Time-stamp: <00/05/11 09:20:11 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -702,7 +702,7 @@ Header region is supposed to be narrowed."
   (let ((overview (elmo-msgdb-get-overview msgdb)))
     (setq overview (elmo-msgdb-overview-sort-by-date overview))
     (message "Sorting...done.")
-    (list overview (nth 1 msgdb)(nth 2 msgdb))))
+    (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb))))
 
 (defsubst elmo-msgdb-search-overview-entity (number number-alist overview)
   (let ((message-id (cdr (assq number number-alist)))
