@@ -793,9 +793,9 @@ text was killed."
 	     (bol (progn (beginning-of-line n) (point)))
 	     (eol (line-end-position))
 	     (eoh (re-search-forward ": *" eol t)))
-	(if (or (not eoh) (equal here eoh))
-	    (goto-char bol)
-	  (goto-char eoh)))
+	(if (and eoh (or (> here eoh) (= here bol)))
+	    (goto-char eoh)
+	  (goto-char bol)))
     (beginning-of-line n)))
 
 (defun wl-draft-point-in-header-p ()
