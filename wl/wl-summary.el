@@ -4378,7 +4378,8 @@ If ARG, exit virtual folder."
 		(wl-summary-delete-all-temp-marks)
 		(encode-coding-region
 		 (point-min) (point-max)
-		 (or (mime-charset-to-coding-system charset 'LF)
+		 (or (and wl-on-mule ; one in mcs-ltn1 cannot take 2 arg.
+			  (mime-charset-to-coding-system charset 'LF))
 		     ;; Mule 2 doesn't have `*ctext*unix'.
 		     (mime-charset-to-coding-system charset)))
 		(write-region-as-binary (point-min)(point-max)
