@@ -1,5 +1,9 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-MK (make-wl-news): Fix coding system.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* WL-MK (wl-news-parse-news-subr): Decide
 	coding-system.
 
