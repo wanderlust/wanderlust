@@ -2075,9 +2075,10 @@ If ARG is non-nil, checking is omitted."
 	  (when delete-list
 	    (wl-summary-delete-messages-on-buffer delete-list "Deleting...")
 	    (message "Deleting...done"))
-	  (wl-summary-set-status-marks-on-buffer
-	   wl-summary-new-mark
-	   wl-summary-unread-uncached-mark)
+	  (when new-msgdb
+	    (wl-summary-set-status-marks-on-buffer
+	     wl-summary-new-mark
+	     wl-summary-unread-uncached-mark))
 	  (setq append-list (elmo-msgdb-get-overview new-msgdb))
 	  (setq curp append-list)
 	  (setq num (length curp))
