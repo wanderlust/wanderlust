@@ -5,6 +5,7 @@
 	(elmo-folder-initialize): Setup `dir-name' slot.
 	(elmo-archive-folder-list-subfolders): Fixed problem when `name' is "".
 	Use `dir-name' as prefix of each subfolders.
+	(Applyed patch from Takaaki MORIYAMA <taka@arcadia.co.jp>)
 
 2001-12-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
