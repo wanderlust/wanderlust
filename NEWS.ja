@@ -69,7 +69,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    wl-highlight-refile-destination-face
    (wl-highlight-action-argument-face に変名)
 
-** 変数 wl-summary-delete-folder-alist は wl-summary-dispose-folder-alist に
+** 変数 wl-delete-folder-alist は wl-dispose-folder-alist に
    名前が変更されました。
 
 ** POP3 フォルダの存在チェックのデフォルト挙動を簡略化

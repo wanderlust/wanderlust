@@ -73,8 +73,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    (renamed to wl-highlight-action-argument-face)
 
 ** Variables renamed
-   wl-summary-delete-folder-alist is renamed to
-   wl-summary-dispose-folder-alist.
+   wl-delete-folder-alist is renamed to wl-dispose-folder-alist.
 
 ** POP3 folder existence check is simplifyed (by default).
    The default value for elmo-pop3-exists-exactly is changed to nil.
