@@ -91,6 +91,7 @@
 ;(setq wl-draft-use-frame t)
 
 ;; Disable inline display HTML part.
+;; Put before (require 'mime-setup)
 ;(setq mime-setup-enable-inline-html nil)
 
 ;; Don't split large message.
@@ -158,10 +159,10 @@
 ;; Change summary display function.
 
 ;; get extra field values as overview information (only localdir folder).
-(setq elmo-msgdb-extra-fields '("newsgroups"
-				"x-ml-name" "list-id"
-				"x-mail-count" "x-ml-count" "x-sequence"
-				"mailing-list"))
+(setq elmo-msgdb-extra-fields
+      '("newsgroups"
+	"list-id" "x-ml-name" "mailing-list"
+	"x-mail-count" "x-ml-count" "x-sequence"))
 
 ;; ML message displays ML name and ML sequence number in subject.
 (setq wl-summary-subject-func 'my-wl-summary-subject-func-ml)
@@ -182,7 +183,7 @@
 			    (cadr (split-string sequence " ")))))
     (if (string-match
 ;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-         "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
 	  (setq subj (substring subject-string (match-end 0)))
@@ -285,22 +286,22 @@
 	       'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
-	 ;; x-face-mule 0.20以後
+	 ;; x-face-mule 0.20 or later
 	 (setq wl-highlight-x-face-func
 	       (function
 		(lambda (&rest dummy)
 		  (x-face-decode-message-header))))
-	 (require 'x-face-mule)
-	 )))
+	 (require 'x-face-mule))
+	))
 
 ;; rule for auto refile.
 ;(setq wl-refile-rule-alist
 ;      '(
-;     	("x-ml-name"
-;     	 ("^Wanderlust" . "+wl")
-;     	 ("^Elisp" . "+elisp"))
-;     	("From"
-;     	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
+;	("x-ml-name"
+;	 ("^Wanderlust" . "+wl")
+;	 ("^Elisp" . "+elisp"))
+;	("From"
+;	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
 
 ;; Marks to skip auto-refile (default is "N" "U" "!").
 ;; nil means all message is auto-refiled.
