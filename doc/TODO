@@ -1,4 +1,4 @@
-* tasks in 2.9.x
+* tasks in 2.11.x
 
 ** enable to define folder icons in elmo.el
 ** reconsider the structure of msgdb and make behavior faster
