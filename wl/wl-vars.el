@@ -1278,7 +1278,10 @@ See also variable `wl-draft-parent-folder'."
   :group 'wl-draft)
 
 (defcustom wl-template-alist nil
-  "Alist of template."
+  "Alist of template.
+First element of each list is a string specifies the name of the template.
+Remaining elements indicate actions. The format of actions is same as that
+of `wl-draft-config-alist'."
   :type '(repeat (list (string :tag "Name")
 		       (repeat
 			:inline t
@@ -1404,7 +1407,8 @@ You can also set it to a list of setting.
 
 (defcustom wl-draft-sendlog-max-size 20000
   "*Max file size of sendlog."
-  :type 'integer
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-draft)
 
 (defcustom wl-summary-default-number-column 5

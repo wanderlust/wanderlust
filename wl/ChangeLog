@@ -1,3 +1,7 @@
+2004-04-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-draft-sendlog-max-size): Add nil to range.
+
 2004-04-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Fix
