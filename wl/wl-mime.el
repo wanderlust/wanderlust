@@ -280,7 +280,7 @@ It calls following-method selected from variable
 			  (wl-mime-node-id-to-string node-id))))
 	(with-temp-buffer
 	  (insert-buffer orig-buf)
-	  (kill-region header-start body-end)
+	  (delete-region header-start body-end)
 	  (goto-char header-start)
 	  (insert "Content-Type: text/plain; charset=US-ASCII\n\n")
 	  (insert "** This part has been removed by Wanderlust **\n\n")
