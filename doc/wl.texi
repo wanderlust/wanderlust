@@ -2580,6 +2580,10 @@ persistent mark.
 cache.  Messages with the marks other than these, you can read them in
 the offline status even they are in the IMAP folder or netnews folder.
 
+Among messages with persistent marks, ones with marks specified by 
+@code{wl-summary-expire-reserve-marks} are excluded from the expiration
+(as a function of wanderlust) explained later. @xref{Expire and Archive}
+
 @subsection How To Read
 
 Basically, you can read messages only typing space key again and again.

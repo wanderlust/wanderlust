@@ -2578,6 +2578,10 @@ News フォルダでは article 番号、IMAP フォルダでは UID、M
 IMAP フォルダのメッセージや NNTP フォルダのニュース記事を読むことができ
 ます。
 
+永続的マークのうち、@code{wl-summary-expire-reserve-marks} で指定された
+マークの付いたメッセージは、後で説明する (Wanderlust の機能としての)
+expire の対象からは除外されます。@xref{Expire and Archive}
+
 @subsection メッセージの読み進めかた
 
 基本的にスペースキーを押すだけで読み進めることができます。
