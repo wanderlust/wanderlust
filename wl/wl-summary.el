@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-06-05 17:52:20 teranisi>
+;; Time-stamp: <2000-06-05 18:05:53 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -5080,8 +5080,10 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(message "No message.")
       (when (eq wl-summary-buffer-view 'thread)
 	(cond ((and arg (not (numberp arg)))
-	       (setq msg-num (wl-thread-entity-get-top-entity
-			      (wl-thread-get-entity number))))
+	       (setq msg-num 
+		     (wl-thread-entity-get-number 
+		      (wl-thread-entity-get-top-entity
+		       (wl-thread-get-entity number)))))
 	      ((and arg (numberp arg))
 	       (setq i 0)
 	       (setq msg-num number)
