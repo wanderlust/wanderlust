@@ -217,7 +217,7 @@ By setting following-method as yank-content."
 				     filename)))
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
-	    (error "Not saved")))
+	    (message "Not saved")))
     (setq wl-mime-save-directory (file-name-directory filename))
     (mime-write-entity-content entity filename)))
 
