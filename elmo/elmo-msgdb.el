@@ -664,20 +664,6 @@ content of MSGDB is changed."
       (setq killed (cdr killed)))
     ret-val))
 
-(defun elmo-msgdb-max-of-killed (killed-list)
-  (let ((klist killed-list)
-	(max 0)
-	k)
-    (while (car klist)
-      (if (< max
-	     (setq k
-		   (if (consp (car klist))
-		       (cdar klist)
-		     (car klist))))
-	  (setq max k))
-      (setq klist (cdr klist)))
-    max))
-
 (defun elmo-living-messages (messages killed-list)
   (if killed-list
       (delq nil
@@ -831,8 +817,8 @@ Header region is supposed to be narrowed."
 	(elmo-delete-directory path t))))
 
 (defun elmo-msgdb-rename-path (old-folder new-folder &optional old-spec new-spec)
-  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-folder)))
-	 (new (directory-file-name (elmo-msgdb-expand-path new-folder)))
+  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-spec)))
+	 (new (directory-file-name (elmo-msgdb-expand-path new-spec)))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	()

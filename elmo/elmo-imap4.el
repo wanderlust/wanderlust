@@ -622,8 +622,6 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
   (let ((session (elmo-imap4-get-session old-spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox old-spec))
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
@@ -750,15 +748,11 @@ Returns response value if selecting folder succeed. "
      'search)))
 
 (defun elmo-imap4-list-folder (spec)
-  (let* ((killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path spec))))
-	 (max (elmo-msgdb-max-of-killed killed))
-	 numbers)
-    (setq numbers (elmo-imap4-list spec
-				   (if (null (eq max 0))
-				       (format "%d:*" (1+ max))
-				     "all")))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path spec))))
+	numbers)
+    (setq numbers (elmo-imap4-list spec "all"))
     (elmo-living-messages numbers killed)))
 
 (defun elmo-imap4-list-folder-unread (spec number-alist mark-alist
