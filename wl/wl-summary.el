@@ -2960,26 +2960,34 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
       (dolist (number wl-summary-buffer-target-mark-list)
 	(wl-summary-unset-mark number)))))
 
-(defun wl-summary-target-mark-operation (flag)
+(defun wl-summary-target-mark-operation (flag &optional inverse)
   (save-excursion
-    (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg)
       (funcall
        (intern (format "wl-summary-mark-as-%s-internal" flag))
-       nil
+       inverse
        wl-summary-buffer-target-mark-list)
-      (dolist (number wl-summary-buffer-target-mark-list)
-	(wl-summary-unset-mark number)))))
+      (wl-summary-delete-all-target-marks))))
 
 (defun wl-summary-target-mark-mark-as-important ()
   (interactive)
-  (wl-summary-target-mark-operation 'important))
+  (wl-summary-target-mark-operation
+   'important
+   (and (interactive-p)
+	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				(car wl-summary-buffer-target-mark-list)
+				'important))))
 
 (defun wl-summary-target-mark-mark-as-answered ()
   (interactive)
-  (wl-summary-target-mark-operation 'answered))
+  (wl-summary-target-mark-operation
+   'answered
+   (and (interactive-p)
+	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				(car wl-summary-buffer-target-mark-list)
+				'answered))))
 
 (defun wl-summary-target-mark-set-flags ()
   (interactive)

@@ -1,3 +1,10 @@
+2004-06-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-operation): Add optional
+	argument `inverse' and use `wl-summary-delete-all-target-marks'.
+	(wl-summary-target-mark-mark-as-important): Refine to toggle mark.
+	(wl-summary-target-mark-mark-as-answered): Likewise.
+
 2004-06-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-target-mark-forward): Use
