@@ -1574,8 +1574,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (if (and wl-draft-fcc-append-read-folder-hist
 		   (boundp 'wl-read-folder-hist))
-	      (setq wl-read-folder-hist
-		    (append (list (car fcc-list)) wl-read-folder-hist)))
+	      (or (equal (car fcc-list) (car wl-read-folder-hist))
+		  (setq wl-read-folder-hist
+			(append (list (car fcc-list)) wl-read-folder-hist))))
 	  (setq fcc-list (cdr fcc-list)))))
     (kill-buffer tembuf)))
 
