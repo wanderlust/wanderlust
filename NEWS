@@ -1,8 +1,10 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
-** Default values of wl-draft-reply-with-argument-list and
-   wl-draft-reply-without-argument-list are changed. 
-   See samples/en/dot.wl.
+** Default values of wl-draft-reply-*-list are changed. 
+   See samples/en/dot.wl for old values.
+
+** wl-draft-reply-myself-*-list are abolished and integrated into
+   wl-draft-reply-*-list.
 
 ** Changed the way to specify configuration of draft buffer window.
    You can choose keep, full or split as values of wl-draft-buffer-style
