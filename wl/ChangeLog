@@ -1,3 +1,10 @@
+2003-09-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder.el (wl-folder-confirm-existence): Don't call
+	file-exists-p if msgdb-path is nil.
+	* wl-summary.el, wl-draft.el, wl-action.el: Rename
+	`wl-read-folder-hist' to `wl-read-folder-history'.
+
 2003-09-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-kill): Use `yes-or-no-p' instead of

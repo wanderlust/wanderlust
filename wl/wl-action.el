@@ -711,7 +711,7 @@ Return number if put mark succeed"
 		      default)
 	      'wl-folder-complete-folder
 	      nil nil (or init wl-default-spec)
-	      'wl-read-folder-hist)))
+	      'wl-read-folder-history)))
     (if (or (string= fld wl-default-spec)
 	    (string= fld ""))
 	(setq fld default))

@@ -114,7 +114,7 @@
 (defvar wl-thread-horizontal-str-internal nil)
 (defvar wl-thread-space-str-internal nil)
 (defvar wl-summary-last-visited-folder nil)
-(defvar wl-read-folder-hist nil)
+(defvar wl-read-folder-history nil)
 (defvar wl-summary-scored nil)
 (defvar wl-crosspost-alist-modified nil)
 (defvar wl-summary-alike-hashtb nil)

@@ -642,7 +642,7 @@ Reply to author if WITH-ARG is non-nil."
 		  (wl-folder-get-entity-with-petname)
 		wl-folder-entity-hashtb)
 	      nil nil wl-default-spec
-	      'wl-read-folder-hist))
+	      'wl-read-folder-history))
 	(number (call-interactively
 		 (function (lambda (num)
 			     (interactive "nNumber: ")
@@ -1536,8 +1536,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			 (progn (forward-line 1) (point)))))
       fcc-list)))
 
-(defcustom wl-draft-fcc-append-read-folder-hist t
-  "Non-nil to append fcc'ed folder to `wl-read-folder-hist'."
+(defcustom wl-draft-fcc-append-read-folder-history t
+  "Non-nil to append fcc'ed folder to `wl-read-folder-history'."
   :type 'boolean
   :group 'wl-draft)
 
@@ -1574,10 +1574,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (if (and wl-draft-fcc-append-read-folder-hist
-		   (boundp 'wl-read-folder-hist))
-	      (or (equal (car fcc-list) (car wl-read-folder-hist))
-		  (setq wl-read-folder-hist
-			(append (list (car fcc-list)) wl-read-folder-hist))))
+		   (boundp 'wl-read-folder-history))
+	      (or (equal (car fcc-list) (car wl-read-folder-history))
+		  (setq wl-read-folder-history
+			(append (list (car fcc-list)) wl-read-folder-history))))
 	  (setq fcc-list (cdr fcc-list)))))
     (kill-buffer tembuf)))
 
@@ -2455,8 +2455,8 @@ Automatically applied in draft sending time."
 		   (forward-line -1))
 		 (cond
 		  ((looking-at wl-folder-complete-header-regexp)
-		   (and (boundp 'wl-read-folder-hist)
-			(setq history wl-read-folder-hist)))
+		   (and (boundp 'wl-read-folder-history)
+			(setq history wl-read-folder-history)))
 		  ;; ((looking-at wl-address-complete-header-regexp)
 		  ;;  (setq history .....))
 		  (t

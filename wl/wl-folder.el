@@ -2856,7 +2856,8 @@ Call `wl-summary-write-current-folder' with current folder name."
       (unless (elmo-folder-exists-p folder)
 	(wl-folder-create-subr folder))
     (unless (or (wl-folder-entity-exists-p (elmo-folder-name-internal folder))
-		(file-exists-p (elmo-folder-msgdb-path folder))
+		(and (elmo-folder-msgdb-path folder)
+		     (file-exists-p (elmo-folder-msgdb-path folder)))
 		(elmo-folder-exists-p folder))
       (wl-folder-create-subr folder))))
 
