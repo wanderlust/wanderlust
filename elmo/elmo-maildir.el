@@ -393,7 +393,7 @@ file name for maildir directories."
     filename))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       &optional status number)
+					       &optional flag number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
 	dst-buf filename)

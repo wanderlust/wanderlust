@@ -197,8 +197,7 @@
       (sort flist '<))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-localdir-folder)
-					       unread
-					       &optional number)
+					       &optional flag number)
   (let ((filename (elmo-message-file-name
 		   folder
 		   (or number
