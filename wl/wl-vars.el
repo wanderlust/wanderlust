@@ -2072,6 +2072,11 @@ every intervals specified by wl-biff-check-interval."
   :type 'integer
   :group 'wl-highlight)
 
+(defcustom wl-biff-use-idle-timer nil
+  "Non-nil to use idle timer instead of strict timer for wl-biff"
+  :type 'boolean
+  :group 'wl-highlight)
+
 (defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
 					       (not (featurep 'mule)))
 					  "[Mail]"

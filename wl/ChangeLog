@@ -1,3 +1,14 @@
+2004-07-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-biff-start): Don't call `wl-biff-check-folders'
+	immediately.
+	* wl.el (wl): Call `wl-biff-check-folders' explicitly.
+	(wl-toggle-plugged): Ditto.
+
+	* wl-vars.el (wl-biff-use-idle-timer): New variable.
+	* wl-util.el (wl-biff-start): Use idle timer if
+	`wl-biff-use-idle-timer' is non-nil.
+
 2004-07-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-highlight.el (wl-highlight-message): Fix description.

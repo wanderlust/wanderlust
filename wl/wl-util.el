@@ -717,9 +717,9 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (wl-biff-stop)
     (when wl-biff-check-folder-list
-      (wl-biff-check-folders)
       (start-itimer wl-biff-timer-name 'wl-biff-check-folders
-		    wl-biff-check-interval wl-biff-check-interval))))
+		    wl-biff-check-interval wl-biff-check-interval
+		    wl-biff-use-idle-timer))))
 
  ((and (condition-case nil (require 'timer) (error nil));; FSFmacs 19+
        (fboundp 'timer-activate))
@@ -731,14 +731,27 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (require 'timer)
     (when wl-biff-check-folder-list
-      (wl-biff-check-folders)
-      (if (get 'wl-biff 'timer)
-	  (timer-activate (get 'wl-biff 'timer))
-	(put 'wl-biff 'timer (run-at-time
+      (if wl-biff-use-idle-timer
+	  (if (get 'wl-biff 'timer)
+	      (progn (timer-set-idle-time (get 'wl-biff 'timer)
+					  wl-biff-check-interval t)
+		     (timer-activate-when-idle (get 'wl-biff 'timer)))
+	    (put 'wl-biff 'timer
+		 (run-with-idle-timer
+		  wl-biff-check-interval t 'wl-biff-event-handler)))
+	(if (get 'wl-biff 'timer)
+	    (progn
+	      (timer-set-time (get 'wl-biff 'timer)
 			      (timer-next-integral-multiple-of-time
 			       (current-time) wl-biff-check-interval)
-			      wl-biff-check-interval
-			      'wl-biff-event-handler)))))
+			      wl-biff-check-interval)
+	      (timer-activate (get 'wl-biff 'timer)))
+	  (put 'wl-biff 'timer
+	       (run-at-time
+		(timer-next-integral-multiple-of-time
+		 (current-time) wl-biff-check-interval)
+		wl-biff-check-interval
+		'wl-biff-event-handler))))))
 
   (defun-maybe timer-next-integral-multiple-of-time (time secs)
     "Yield the next value after TIME that is an integral multiple of SECS.

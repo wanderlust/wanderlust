@@ -112,7 +112,10 @@
       (progn
 	;; flush queue!!
 	(elmo-dop-queue-flush)
-	(unless queue-flush-only (wl-biff-start))
+	(unless queue-flush-only
+	  (when wl-biff-check-folder-list
+	    (wl-biff-check-folders)
+	    (wl-biff-start)))
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))
@@ -831,13 +834,15 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
-	    (run-hooks 'wl-auto-check-folder-hook))
-	  (unless arg (wl-biff-start)))
+	    (run-hooks 'wl-auto-check-folder-hook)))
       (error
        (if (buffer-live-p demo-buf)
 	   (kill-buffer demo-buf))
        (signal (car obj)(cdr obj)))
       (quit))
+    (when wl-biff-check-folder-list
+      (unless arg (wl-biff-check-folders))
+      (wl-biff-start))
     (if (buffer-live-p demo-buf)
 	(kill-buffer demo-buf)))
   (run-hooks 'wl-hook))
