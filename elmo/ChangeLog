@@ -1,4 +1,25 @@
+2002-10-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-list-unreads): Call generic method
+	if require-msgdb slot is nil.
+	(elmo-folder-list-importants): Likewise.
+
+2002-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-set-cached): Set mark-modified slot if
+	mark is changed.
+
+	* elmo-msgdb.el (elmo-msgdb-set-mark): Return t.
+	(elmo-msgdb-set-cached): Undo last change; return non-nil if mark
+	is changed.
+
+2002-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-set-cached): Set mark-modified slot.
+
 2002-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-unset-status): Set mark-modified slot.
 
 	* elmo-multi.el (elmo-folder-close): Set msgdb of children as nil.
 
