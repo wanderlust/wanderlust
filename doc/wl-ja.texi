@@ -3177,6 +3177,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @kindex / (Summary)
 @findex wl-thread-open-close
 $B%+!<%=%k9T$N%9%l%C%I$N3+JD$r%H%0%k$7$^$9!#(B
+prefix argument $B$D$-$J$i$P!"%+!<%=%k9T$N;R%9%l%C%I$rA4$F3+$-$^$9!#(B
 (@code{wl-thread-open-close})
 
 @item [
@@ -3464,7 +3465,9 @@ last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 $B%5%^%j$NI=<(=g=x$rJB$SBX$($^$9!#(B@samp{date} ($BF|IU(B)$B!"(B@samp{from} ($BH/?.<T(B)$B!"(B
 @samp{number} ($B%a%C%;!<%8HV9f(B)$B!"(B@samp{subject} ($B%5%V%8%'%/%H(B)$B!"(B
 @samp{size} ($B%a%C%;!<%8$N%5%$%:(B)$B!"(B@samp{list-info} ($B%a!<%j%s%0%j%9%H$NL>A0$H%a%C%;!<%8HV9f(B)
-$B$N$$$:$l$+$r85$KJB$SBX$($^$9!#(B(@code{wl-summary-sort})
+$B$N$$$:$l$+$r85$KJB$SBX$($^$9!#(B
+prefix argument $B$D$-$J$i$P!"A*$s$@=g=x$N5U=g$G%5%^%j$rJB$SBX$($^$9!#(B
+(@code{wl-summary-sort})
 
 @item T
 @kindex T (Summary)
