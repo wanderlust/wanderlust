@@ -596,16 +596,17 @@ See also variable `wl-use-petname'."
 					      number))
 	      (let (wl-summary-highlight)
 		(wl-summary-update-persistent-mark number flags))
-	      (if wl-summary-highlight
-		  (wl-highlight-summary-current-line number flags)))
+	      (wl-highlight-summary-current-line number flags))
 	    (forward-line 1)))))
     (set-buffer-modified-p nil)))
 
 (defun wl-summary-window-scroll-functions ()
-  (cond ((and wl-summary-lazy-highlight
+  (cond ((and wl-summary-highlight
+	      wl-summary-lazy-highlight
 	      wl-summary-lazy-update-mark)
 	 (list 'wl-summary-update-mark-and-highlight-window))
-	(wl-summary-lazy-highlight
+	((and wl-summary-highlight
+	      wl-summary-lazy-highlight)
 	 (list 'wl-highlight-summary-window))
 	(wl-summary-lazy-update-mark
 	 (list 'wl-summary-update-mark-window))))
@@ -2035,9 +2036,7 @@ This function is defined for `window-scroll-functions'"
 				wl-summary-highlight-partial-threshold)))
 	      (wl-highlight-summary (point) (point-max))))))
       (wl-delete-all-overlays)
-      (when (and wl-summary-highlight
-		 wl-summary-lazy-highlight)
-	(run-hooks 'wl-summary-buffer-window-scroll-functions))
+      (run-hooks 'wl-summary-buffer-window-scroll-functions)
       (set-buffer-modified-p nil)
       (if mes (message "%s" mes)))))
 

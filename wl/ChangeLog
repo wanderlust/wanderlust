@@ -1,3 +1,12 @@
+2004-06-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window): No
+	check `wl-summary-highlight'.
+	(wl-summary-window-scroll-functions): Respect value of
+	`wl-summary-highlight'.
+	(wl-summary-sync-update): Run hooks
+	`wl-summary-buffer-window-scroll-functions' at any time.
+
 2004-06-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-exec-with-confirmation): Extracted
@@ -1052,7 +1061,7 @@
 	wl-summary-buffer-unsync-mark-number-list.
 	(wl-summary-goto-folder-subr): Set
 	wl-summary-buffer-unsync-mark-number-list and
-	use wl-summary-window-scroll-functions insteaf of
+	use wl-summary-window-scroll-functions instead of
 	wl-summary-lazy-highlight.
 
 	* wl-vars.el (wl-summary-lazy-update-mark): New user option.
