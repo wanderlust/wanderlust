@@ -1,3 +1,13 @@
+2000-06-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-prev-folder-func):
+	New buffer-local variable.
+	(wl-summary-buffer-next-folder-func): Ditto.
+	(wl-summary-down): Call `wl-summary-buffer-next-folder-func'
+	if non-nil.
+	(wl-summary-up): Call `wl-summary-buffer-prev-folder-func'
+	if non-nil.
+
 2000-06-23  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Don't set the value of `fill-column'
