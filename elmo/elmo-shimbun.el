@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-map)
 (require 'elmo-dop)
@@ -62,12 +62,12 @@ See `shimbun-headers' for more detail about RANGE."
   :group 'elmo)
 
 ;; Shimbun mua.
-(eval-and-compile 
+(eval-and-compile
   (luna-define-class shimbun-elmo-mua (shimbun-mua) (folder))
   (luna-define-internal-accessors 'shimbun-elmo-mua))
 
 (luna-define-method shimbun-mua-search-id ((mua shimbun-elmo-mua) id)
-  (elmo-msgdb-overview-get-entity id 
+  (elmo-msgdb-overview-get-entity id
 				  (elmo-folder-msgdb
 				   (shimbun-elmo-mua-folder-internal mua))))
 
@@ -139,9 +139,6 @@ See `shimbun-headers' for more detail about RANGE."
      (elmo-shimbun-folder-header-hash-internal folder))))
 
 (defun elmo-shimbun-get-headers (folder)
-  (shimbun-open-group
-   (elmo-shimbun-folder-shimbun-internal folder)
-   (elmo-shimbun-folder-group-internal folder))
   (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
 	 (key (concat (shimbun-server-internal shimbun)
 		      "." (shimbun-current-group-internal shimbun)))
@@ -152,7 +149,7 @@ See `shimbun-headers' for more detail about RANGE."
 	  (delq nil
 		(mapcar
 		 (lambda (x)
-		   (unless (elmo-msgdb-overview-get-entity 
+		   (unless (elmo-msgdb-overview-get-entity
 			    (shimbun-header-id x)
 			    (elmo-folder-msgdb folder))
 		     x))
@@ -202,18 +199,23 @@ See `shimbun-headers' for more detail about RANGE."
     folder))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
-  (when (elmo-folder-plugged-p folder)
-    (when (elmo-shimbun-headers-check-p folder)
-      (let ((inhibit-quit t))
-	(elmo-map-folder-location-setup
-	 folder 
-	 (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
-	;; Resume headers from existing msgdb.
-	(elmo-shimbun-folder-setup folder))
-      (elmo-shimbun-get-headers folder))
-    (elmo-map-folder-update-locations
-     folder
-     (elmo-map-folder-list-message-locations folder))))
+  (shimbun-open-group
+   (elmo-shimbun-folder-shimbun-internal folder)
+   (elmo-shimbun-folder-group-internal folder))
+  (let ((inhibit-quit t))
+    (unless (elmo-map-folder-location-alist-internal folder)
+      (elmo-map-folder-location-setup
+       folder
+       (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
+  (cond ((and (elmo-folder-plugged-p folder)
+	      (elmo-shimbun-headers-check-p folder))
+	 (elmo-shimbun-get-headers folder)
+	 (elmo-map-folder-update-locations
+	  folder
+	  (elmo-map-folder-list-message-locations folder)))
+	((null (elmo-shimbun-folder-headers-internal folder))
+	 ;; Resume headers from existing msgdb.
+	 (elmo-shimbun-folder-setup folder))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
@@ -235,11 +237,11 @@ See `shimbun-headers' for more detail about RANGE."
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
   (elmo-plugged-p
-   "shimbun" 
+   "shimbun"
    (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))
    nil nil
    (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))))
-			    
+
 (luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
 					     plugged &optional add)
   (elmo-set-plugged plugged
@@ -258,7 +260,7 @@ See `shimbun-headers' for more detail about RANGE."
 	nil))
 
 (luna-define-method elmo-folder-check :around ((folder elmo-shimbun-folder))
-  (when (shimbun-current-group-internal 
+  (when (shimbun-current-group-internal
 	 (elmo-shimbun-folder-shimbun-internal folder))
     (when (and (elmo-folder-plugged-p folder)
 	       (elmo-shimbun-headers-check-p folder))
@@ -280,7 +282,7 @@ See `shimbun-headers' for more detail about RANGE."
 	   "/"
 	   (elmo-shimbun-folder-group-internal folder))
    (expand-file-name "shimbun" elmo-msgdb-dir)))
-		     
+
 (defun elmo-shimbun-msgdb-create-entity (folder number)
   (let ((header (elmo-get-hash-val
 		 (elmo-map-message-location folder number)
@@ -350,10 +352,12 @@ See `shimbun-headers' for more detail about RANGE."
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
 					    location strategy
 					    &optional section unseen)
-  (shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
-		   (elmo-get-hash-val
-		    location
-		    (elmo-shimbun-folder-header-hash-internal folder))))
+  (if (elmo-folder-plugged-p folder)
+      (shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
+		       (elmo-get-hash-val
+			location
+			(elmo-shimbun-folder-header-hash-internal folder)))
+    (error "Unplugged")))
 
 (luna-define-method elmo-message-encache :around ((folder
 						   elmo-shimbun-folder)
@@ -391,7 +395,7 @@ See `shimbun-headers' for more detail about RANGE."
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
       (progn
-	(member 
+	(member
 	 (elmo-shimbun-folder-group-internal folder)
 	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
 			  folder))))
