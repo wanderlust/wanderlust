@@ -1392,10 +1392,12 @@ FIELD is a symbol of the field.")
     (or result
 	(and err (signal (car err) (cdr err))))))
 
-(defun elmo-folder-kill-messages-before (folder msg)
+(defun elmo-folder-kill-messages-range (folder beg end)
   (elmo-folder-set-killed-list-internal
    folder
-   (list (cons 1 msg))))
+   (nconc
+    (elmo-folder-killed-list-internal folder)
+    (list (cons beg end)))))
 
 (defun elmo-folder-kill-messages (folder numbers)
   "Kill(hide) messages in the FOLDER with NUMBERS."
@@ -1461,9 +1463,10 @@ If update process is interrupted, return nil.")
 	  (when (and (not (eq (length (car diff))
 			      (length new-list)))
 		     (setq diff-2 (elmo-list-diff (car diff) new-list)))
-	    (elmo-folder-kill-messages-before folder
-					      (nth (- (length (car diff-2)) 1)
-						   (car diff-2))))
+	    (elmo-folder-kill-messages-range
+	     folder
+	     (car (car diff-2))
+	     (nth (- (length (car diff-2)) 1) (car diff-2))))
 	  (setq delete-list (cadr diff))
 	  (if (or (equal diff '(nil nil))
 		  (equal diff '(nil))
