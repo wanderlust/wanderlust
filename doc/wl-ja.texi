@@ -6176,6 +6176,10 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
 @subsection $BJV;vMQ%I%i%U%H(B
+@vindex wl-draft-reply-with-argument-list
+@vindex wl-draft-reply-without-argument-list
+@vindex wl-draft-reply-myself-with-argument-list
+@vindex wl-draft-reply-myself-without-argument-list
 
 $B%a!<%j%s%0%j%9%H$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7(B
 $B$?$@$1$G855-;v$N(B @samp{Reply-To:} $B$K$"$k%"%I%l%9$r(B @samp{To:} $B$KMQ0U$7$F(B
