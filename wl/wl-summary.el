@@ -1775,6 +1775,15 @@ This function is defined for `window-scroll-functions'"
 	    wl-summary-sort-specs)
     nil t nil nil (symbol-name wl-summary-default-sort-spec))))
 
+(defun wl-summary-get-available-flags (&optional include-specials)
+  (if include-specials
+      (elmo-uniq-list (append elmo-global-flag-list elmo-preserved-flags))
+    (delq 'new (delq 'cached
+		     (elmo-uniq-list
+		      (append elmo-global-flag-list
+			      elmo-preserved-flags
+			      nil))))))
+
 (defun wl-summary-sync-marks ()
   "Update persistent marks in summary."
   (interactive)
@@ -1786,29 +1795,7 @@ This function is defined for `window-scroll-functions'"
 		   'internal))
 
       (message "Updating marks...")
-      (dolist (flag elmo-global-flag-list)
-	(unless (memq flag elmo-preserved-flags)
-	  (setq diff (elmo-list-diff (elmo-folder-list-flagged
-				      wl-summary-buffer-elmo-folder
-				      flag)
-				     (elmo-folder-list-flagged
-				      wl-summary-buffer-elmo-folder
-				      flag 'in-msgdb)))
-	  (setq diffs (cadr diff)) ; deletes
-	  (setq mes (concat mes (format "-%d" (length diffs))))
-	  (while diffs
-	    (wl-summary-remove-flags-internal (car diffs)
-					     (list flag) 'no-server)
-	    (setq diffs (cdr diffs)))
-	  (setq diffs (car diff)) ; appends
-	  (setq mes (concat mes (format "/+%d %s," (length diffs) flag)))
-	  (while diffs
-	    (wl-summary-add-flags-internal (car diffs)
-					  (list flag) 'no-server)
-	    (setq diffs (cdr diffs)))))
-
-      (dolist (flag (delete 'new (delete 'cached
-					 (copy-sequence elmo-preserved-flags))))
+      (dolist (flag (wl-summary-get-available-flags))
 	(setq diff (elmo-list-diff (elmo-folder-list-flagged
 				    wl-summary-buffer-elmo-folder
 				    flag)
@@ -1817,14 +1804,12 @@ This function is defined for `window-scroll-functions'"
 				    flag 'in-msgdb)))
 	(setq diffs (cadr diff))
 	(setq mes (concat mes (format "-%d" (length diffs))))
-	(while diffs
-	  (wl-summary-unset-persistent-mark flag (car diffs) 'no-modeline)
-	  (setq diffs (cdr diffs)))
+	(when diffs
+	  (wl-summary-unset-persistent-mark flag diffs 'no-modeline))
 	(setq diffs (car diff)
 	      mes (concat mes (format "/+%d %s " (length diffs) flag)))
-	(while diffs
-	  (wl-summary-set-persistent-mark flag (car diffs) 'no-modeline)
-	  (setq diffs (cdr diffs))))
+	(when diffs
+	  (wl-summary-set-persistent-mark flag diffs 'no-modeline)))
       (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor
@@ -3094,12 +3079,7 @@ Return non-nil if the mark is updated"
 			   "Flag: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
-				   (delq
-				    'cached
-				    (delq 'new
-					  (elmo-uniq-list
-					   (append elmo-global-flag-list
-						   elmo-preserved-flags)))))
+				   (wl-summary-get-available-flags))
 			   nil
 			   'require-match))))))
   (wl-summary-set-persistent-mark-internal 'inverse
@@ -3119,12 +3099,7 @@ Return non-nil if the mark is updated"
 			   "Flag: "
 			   (mapcar (lambda (flag)
 				     (list (capitalize (symbol-name flag))))
-				    (delq
-				     'cached
-				     (delq 'new
-					   (elmo-uniq-list
-					    (append elmo-global-flag-list
-						    elmo-preserved-flags)))))
+				   (wl-summary-get-available-flags))
 			   nil
 			   'require-match))))))
   (wl-summary-set-persistent-mark-internal

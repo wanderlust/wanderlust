@@ -1,3 +1,11 @@
+2004-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-get-available-flags): New function.
+	(wl-summary-sync-marks): Use it and simplified.
+	(wl-summary-unset-persistent-mark): Use
+	`wl-summary-get-available-flags'.
+	(wl-summary-set-persistent-mark): Ditto.
+
 2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-entity-assign-id): Fix for folder entity
