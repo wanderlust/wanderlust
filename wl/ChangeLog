@@ -1,5 +1,10 @@
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-edit-string): Fetch From: field value and
+	Call wl-draft with `from' argument if its address is included in
+	`wl-user-mail-address-list'.
+	(wl-draft): Added `from' argument.
+
 	* wl.el (wl-exit): Delete current frame if wl-folder-use-frame is
 	non-nil.
 
