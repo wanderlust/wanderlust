@@ -593,7 +593,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
      ;; Case 3: Trouble
      (t
       (error
-       "You probably need to specify column widths for @multitable correctly.")))
+       "You probably need to specify column widths for @multitable correctly")))
     ;; Check whether columns fit on page.
     (let ((desired-columns
            (+
@@ -658,7 +658,7 @@ This command is executed when texinfmt sees @item inside @multitable."
       (while (search-forward "@tab" nil t)
         (setq tab-number (1+ tab-number)))
       (if (/= tab-number (length table-widths))
-          (error "Wrong number of @tab's in a @multitable row.")))
+          (error "Wrong number of @tab's in a @multitable row")))
     (goto-char (point-min))
 ;; 2. Format each cell, and copy to a rectangle
     ;; buffer looks like this:    A1  @tab  A2  @tab  A3
