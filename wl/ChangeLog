@@ -1,3 +1,8 @@
+2003-11-14  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-folder.el (wl-folder-update-unread): Re-indent.
+	Narrow the scope of a local variable.
+
 2003-11-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-addrmgr.el (wl-addrmgr-pickup-entry-list): New function.
