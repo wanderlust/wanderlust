@@ -42,7 +42,7 @@
 
 (eval-when-compile
   ;; Avoid compile warnings
-  (defun-maybe elmo-spam-processor)
+  (defun-maybe elmo-spam-processor ())
   (defun-maybe elmo-spam-buffer-spam-p (processor buffer)))
 
 (defcustom elmo-split-rule nil
