@@ -1,3 +1,11 @@
+2000-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Call `elmo-commit'.
+
+	* wl-folder.el (wl-folder-confirm-existence): Added optional
+	argument `force'.
+	(wl-folder-sync-entity): Call `wl-folder-confirm-existence'.
+
 2000-08-30  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-refile-subr): Assume

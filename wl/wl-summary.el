@@ -2171,6 +2171,7 @@ If optional argument is non-nil, checking is omitted."
 	  (wl-summary-flush-pending-append-operations seen-list))
     (goto-char (point-max))
     (message "Checking folder diff...")
+    (elmo-commit folder)
     (setq in-folder (elmo-list-folder folder))
     (setq in-db (sort (mapcar 'car number-alist) '<))
     (when (or (eq msgdb nil) ; trick for unplugged...

@@ -989,6 +989,7 @@ If current line is group folder, check all sub entries."
 	(wl-folder-sync-entity (car flist) unread-only)
 	(setq flist (cdr flist)))))
    ((stringp entity)
+    (wl-folder-confirm-existence entity 'force)
     (let ((nums (wl-folder-get-entity-info entity))
 	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
 					(wl-summary-always-sticky-folder-p
@@ -2675,11 +2676,14 @@ If optional arg exists, don't check any folders."
 	    (error "Create folder failed")))
       (error "Folder %s is not created" entity))))
 
-(defun wl-folder-confirm-existence (folder)
-  (unless (or (wl-folder-entity-exists-p folder)
-	      (file-exists-p (elmo-msgdb-expand-path folder))
-	      (elmo-folder-exists-p folder))
-    (wl-folder-create-subr folder)))
+(defun wl-folder-confirm-existence (folder &optional force)
+  (if force
+      (unless (elmo-folder-exists-p folder)
+	(wl-folder-create-subr folder))
+    (unless (or (wl-folder-entity-exists-p folder)
+		(file-exists-p (elmo-msgdb-expand-path folder))
+		(elmo-folder-exists-p folder))
+      (wl-folder-create-subr folder))))
 
 (provide 'wl-folder)
 
