@@ -65,7 +65,7 @@ even an operation concerns the unplugged folder."
       (setq queue (cdr queue)))
     (when (> count 0)
       (if (elmo-y-or-n-p
-	   (format "%d pending operation(s) exists. Perform now?" count)
+	   (format "%d pending operation(s) exists.  Perform now? " count)
 	   (not elmo-dop-flush-confirm) t)
 	  (progn
 	    (message "")
@@ -107,7 +107,7 @@ even an operation concerns the unplugged folder."
 		    (when (and (string= func "create-folder-maybe")
 			       (elmo-y-or-n-p
 				(format
-				 "Create folder %s failed. Abort creating?"
+				 "Create folder %s failed.  Abort creating? "
 				 folder)
 				(not elmo-dop-flush-confirm) t))
 		      (elmo-dop-save-pending-messages folder)
@@ -119,7 +119,7 @@ even an operation concerns the unplugged folder."
 		       performed num)
 	      (sit-for 1) ; 
 	      (elmo-dop-queue-save)))
-	(if (elmo-y-or-n-p "Clear all pending operations?"
+	(if (elmo-y-or-n-p "Clear all pending operations? "
 			   (not elmo-dop-flush-confirm) t)
 	    (let ((queue elmo-dop-queue))
 	      (while queue
@@ -315,10 +315,10 @@ even an operation concerns the unplugged folder."
 	matched)
     (if (eq (elmo-folder-get-type folder) 'imap4)
 	(progn
-;;	  (while append-list
-;;	    (if (setq matched (car (rassoc (car append-list) number-alist)))
-;;		(setq msgs (delete matched msgs)))
-;;	    (setq append-list (cdr append-list)))
+;;;	  (while append-list
+;;;	    (if (setq matched (car (rassoc (car append-list) number-alist)))
+;;;		(setq msgs (delete matched msgs)))
+;;;	    (setq append-list (cdr append-list)))
 	  (if msgs
 	      (elmo-dop-queue-append folder func-name msgs)))
       ;; maildir... XXX hard coding.....
@@ -379,7 +379,7 @@ even an operation concerns the unplugged folder."
     (when resume
       ;; Resume msgdb changed by elmo-dop-msgdb-create.
       (let* ((resumed-list (elmo-dop-append-list-load folder t))
-	     (number-alist (elmo-msgdb-number-load 
+	     (number-alist (elmo-msgdb-number-load
 			    (elmo-msgdb-expand-path folder)))
 	     (appendings append-list)
 	     pair dels)
@@ -390,7 +390,7 @@ even an operation concerns the unplugged folder."
 	  (setq appendings (cdr appendings)))
 	(elmo-dop-append-list-save folder resumed-list t)))
     (while appendings
-      (let* ((seen-list (elmo-msgdb-seen-load 
+      (let* ((seen-list (elmo-msgdb-seen-load
 			 (elmo-msgdb-expand-path folder))))
 	(setq failure nil)
 	(setq file-string (elmo-get-file-string  ; message string

@@ -97,7 +97,7 @@ Don't cache if nil.")
 	 (setq elmo-nntp-server-command-alist
 	       (nconc elmo-nntp-server-command-alist
 		      (list (cons
-			     (cons 
+			     (cons
 			      (elmo-network-session-host-internal (, session))
 			      (elmo-network-session-port-internal (, session)))
 			     (setq entry
@@ -185,13 +185,13 @@ Don't cache if nil.")
   (with-current-buffer (elmo-network-session-buffer session)
     (setq elmo-nntp-read-point (point-min))
     (or (elmo-nntp-read-response session t)
-	(error "cannot open network"))
+	(error "Cannot open network"))
     (when (eq (elmo-network-stream-type-symbol
 	       (elmo-network-session-stream-type-internal session))
 	      'starttls)
       (elmo-nntp-send-command session "starttls")
       (or (elmo-nntp-read-response session)
-	  (error "cannot open starttls session"))
+	  (error "Cannot open starttls session"))
       (starttls-negotiate
        (elmo-network-session-process-internal session)))))
 
@@ -228,7 +228,7 @@ Don't cache if nil.")
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
   (if (null (elmo-nntp-read-response session t))
-      (error "mode reader failed")))
+      (error "Mode reader failed")))
   
 (defun elmo-nntp-send-command (session command &optional noerase)
   (with-current-buffer (elmo-network-session-buffer session)
@@ -260,8 +260,8 @@ Don't cache if nil.")
 	(if (looking-at "[23][0-9]+ .*$")
 	    (progn (setq response-continue nil)
 		   (setq elmo-nntp-read-point match-end)
-		   (setq response 
-			 (if response 
+		   (setq response
+			 (if response
 			     (concat response "\n" response-string)
 			   response-string)))
 	  (if (looking-at "[^23][0-9]+ .*$")
@@ -272,7 +272,7 @@ Don't cache if nil.")
 	    (if not-command
 		(setq response-continue nil))
 	    (setq response
-		  (if response 
+		  (if response
 		      (concat response "\n" response-string)
 		    response-string)))
 	  (setq elmo-nntp-read-point match-end)))
@@ -295,7 +295,7 @@ Don't cache if nil.")
 			      session))
       (goto-char elmo-nntp-read-point))
     (elmo-delete-cr
-     (buffer-substring elmo-nntp-read-point 
+     (buffer-substring elmo-nntp-read-point
 		       (- (point) 3)))))
 
 (defun elmo-nntp-read-body (session outbuf)
@@ -415,7 +415,7 @@ Don't cache if nil.")
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
 			    (if (and (elmo-nntp-spec-group spec)
-				     (null (string= 
+				     (null (string=
 					    (elmo-nntp-spec-group spec) "")))
 				(concat (elmo-nntp-spec-group spec)
 					"\\.") "")))
@@ -455,7 +455,7 @@ Don't cache if nil.")
       (setq append-serv (concat append-serv
 				":" (int-to-string
 				     (elmo-nntp-spec-port spec)))))
-    (unless (eq (elmo-network-stream-type-symbol 
+    (unless (eq (elmo-network-stream-type-symbol
 		 (elmo-nntp-spec-stream-type spec))
 		elmo-default-nntp-stream-type)
       (setq append-serv
@@ -466,7 +466,7 @@ Don't cache if nil.")
 	       (if (consp fld)
 		   (list (concat "-" (car fld)
 				 (and (elmo-nntp-spec-username spec)
-				      (concat 
+				      (concat
 				       ":" (elmo-nntp-spec-username spec)))
 				 (and append-serv
 				      (concat append-serv))))
@@ -527,12 +527,12 @@ Don't cache if nil.")
 
 (defun elmo-nntp-max-of-folder (spec)
   (let ((killed-list (and elmo-use-killed-list
-			  (elmo-msgdb-killed-list-load 
+			  (elmo-msgdb-killed-list-load
 			   (elmo-msgdb-expand-path spec))))
 	end-num entry)
     (if elmo-nntp-groups-async
 	(if (setq entry
-		  (elmo-get-hash-val 
+		  (elmo-get-hash-val
 		   (concat (elmo-nntp-spec-group spec)
 			   (elmo-nntp-folder-postfix
 			    (elmo-nntp-spec-username spec)
@@ -557,9 +557,9 @@ Don't cache if nil.")
 				  (format "group %s"
 					  (elmo-nntp-spec-group spec)))
 	  (setq response (elmo-nntp-read-response session))
-	  (if (and response 
-		   (string-match 
-		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
+	  (if (and response
+		   (string-match
+		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		    response))
 	      (progn
 		(setq end-num (string-to-int
@@ -601,12 +601,12 @@ Don't cache if nil.")
     (setq ov-list (elmo-nntp-parse-overview-string str))
     (while ov-list
       (setq ov-entity (car ov-list))
-      ;; INN bug??
-;      (if (or (> (setq num (string-to-int (aref ov-entity 0)))
-;		 99999)
-;	      (<= num 0))
-;	  (setq num 0))
-;     (setq num (int-to-string num))
+;;; INN bug??
+;;;   (if (or (> (setq num (string-to-int (aref ov-entity 0)))
+;;;		 99999)
+;;;	      (<= num 0))
+;;;	  (setq num 0))
+;;;  (setq num (int-to-string num))
       (setq num (string-to-int (aref ov-entity 0)))
       (when (or (null numlist)
 		(memq num numlist))
@@ -840,7 +840,7 @@ Don't cache if nil.")
 	(forward-line 1)
 	(setq beg (point))
 	(setq ret-val (nconc ret-val (list ret-list))))
-;      (kill-buffer tmp-buffer)
+;;;   (kill-buffer tmp-buffer)
       ret-val)))
 
 (defun elmo-nntp-get-newsgroup-by-msgid (msgid server user port type)
@@ -872,11 +872,11 @@ Don't cache if nil.")
 	      (replace-match "")
 	      (forward-line))))))))
 
-;(defun elmo-msgdb-nntp-overview-create-range (spec beg end mark)
-;    (elmo-nntp-overview-create-range hostname beg end mark folder)))
+;;(defun elmo-msgdb-nntp-overview-create-range (spec beg end mark)
+;;  (elmo-nntp-overview-create-range hostname beg end mark folder)))
 
-;(defun elmo-msgdb-nntp-max-of-folder (spec)
-;    (elmo-nntp-max-of-folder hostname folder)))
+;;(defun elmo-msgdb-nntp-max-of-folder (spec)
+;;  (elmo-nntp-max-of-folder hostname folder)))
 
 (defun elmo-nntp-append-msg (spec string &optional msg no-see))
 
@@ -905,7 +905,7 @@ Don't cache if nil.")
       (run-hooks 'elmo-nntp-post-pre-hook)
       (elmo-nntp-send-buffer session content-buf)
       (elmo-nntp-send-command session ".")
-      ;;(elmo-nntp-read-response buffer process t)
+;;;   (elmo-nntp-read-response buffer process t)
       (if (not (string-match
 		"^2" (setq response (elmo-nntp-read-raw-response
 				     session))))
@@ -1037,7 +1037,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	(if from-msgs
 	    (elmo-list-filter from-msgs result)
 	  result)))
-     (t 
+     (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))
 	    (case-fold-search t)
@@ -1152,7 +1152,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   (let* ((received 0)
 	 (last-point (point-min)))
     (with-current-buffer (elmo-network-session-buffer session)
-      (accept-process-output 
+      (accept-process-output
        (elmo-network-session-process-internal session) 1)
       (discard-input)
       ;; Wait for all replies.
@@ -1237,7 +1237,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	;; order to avoid deadlocks.
 	(when (or (null articles)	;All requests have been sent.
 		  (zerop (% count elmo-nntp-header-fetch-chop-length)))
-	  (accept-process-output 
+	  (accept-process-output
 	   (elmo-network-session-process-internal session) 1)
 	  (discard-input)
 	  (while (progn

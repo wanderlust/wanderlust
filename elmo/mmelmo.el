@@ -253,11 +253,11 @@ size:   size of the entity."
     (buffer-substring (mime-buffer-entity-body-start-internal entity)
 		      (mime-buffer-entity-body-end-internal entity))))
 
-;(luna-define-method mime-entity-content ((entity mime-elmo-entity))
-;  (mime-decode-string
-;   (with-current-buffer (mime-buffer-entity-buffer-internal entity)
-;     (buffer-substring (mime-buffer-entity-body-start-internal entity)
-;		       (mime-buffer-entity-body-end-internal entity)))
-;   (mime-entity-encoding entity)))
+;;(luna-define-method mime-entity-content ((entity mime-elmo-entity))
+;;  (mime-decode-string
+;;   (with-current-buffer (mime-buffer-entity-buffer-internal entity)
+;;     (buffer-substring (mime-buffer-entity-body-start-internal entity)
+;;		       (mime-buffer-entity-body-end-internal entity)))
+;;   (mime-entity-encoding entity)))
 
 ;;; mmelmo.el ends here

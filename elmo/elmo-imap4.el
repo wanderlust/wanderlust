@@ -79,7 +79,7 @@
 
 (defvar elmo-imap4-extra-namespace-alist
   '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
-  "Extra namespace alist. A list of cons cell like: (REGEXP . DELIMITER) ")
+  "Extra namespace alist.  A list of cons cell like: (REGEXP . DELIMITER).")
 (defvar elmo-imap4-default-hierarchy-delimiter "/")
 
 (defvar elmo-imap4-server-capability nil)
@@ -221,7 +221,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 		(elmo-imap4-response-value (, response) 'bye)))))
 
 (defmacro elmo-imap4-response-bodydetail-text (response)
-  "Returns text of BODY[section]<partial>"
+  "Returns text of BODY[section]<partial>."
   (` (nth 3 (assq 'bodydetail (, response)))))
 
 ;;; Session commands.
@@ -604,7 +604,7 @@ BUFFER must be a single-byte buffer."
 	     (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec)))))))
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
-  ;;(elmo-imap4-send-command-wait session "close")
+;;;(elmo-imap4-send-command-wait session "close")
   (elmo-imap4-send-command-wait
    (elmo-imap4-get-session old-spec)
    (list "rename "
@@ -705,13 +705,13 @@ Returns t if selecting folder succeed. Otherwise, nil is returned."
       result)))
 
 (defun elmo-imap4-check-validity (spec validity-file)
-  ;; Not used.
-;  (elmo-imap4-send-command-wait
-;   (elmo-imap4-get-session spec)
-;   (list "status "
-;	 (elmo-imap4-mailbox
-;	  (elmo-imap4-spec-mailbox spec))
-;	 " (uidvalidity)")))
+;;; Not used.
+;;;(elmo-imap4-send-command-wait
+;;;(elmo-imap4-get-session spec)
+;;;(list "status "
+;;;	 (elmo-imap4-mailbox
+;;;	  (elmo-imap4-spec-mailbox spec))
+;;;	 " (uidvalidity)")))
   )
 
 (defun elmo-imap4-sync-validity  (spec validity-file)
@@ -1196,11 +1196,11 @@ If optional argument UNMARK is non-nil, unmark."
 	(accept-process-output process 1))
       (set-process-filter process 'elmo-imap4-arrival-filter)
       (set-process-sentinel process 'elmo-imap4-sentinel)
-;;      (while (and (memq (process-status process) '(open run))
-;;		  (eq elmo-imap4-status 'initial))
-;;        (message "Waiting for server response...")
-;;	  (accept-process-output process 1))
-;;      (message "")
+;;;   (while (and (memq (process-status process) '(open run))
+;;;		  (eq elmo-imap4-status 'initial))
+;;;	(message "Waiting for server response...")
+;;;	(accept-process-output process 1))
+;;;   (message "")
       (unless (memq elmo-imap4-status '(nonauth auth))
 	(signal 'elmo-open-error
 		(list 'elmo-network-initialize-session)))
@@ -1452,7 +1452,7 @@ If optional argument UNMARK is non-nil, unmark."
   (let ((session (elmo-imap4-get-session spec))
 	response)
     ;; commit.
-;    (elmo-imap4-commit spec)
+;;; (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
@@ -1570,7 +1570,7 @@ Return nil if no complete line has arrived."
 	  nil
 	(goto-char (+ pos len))
 	(buffer-substring pos (+ pos len))))))
-	;(list ' pos (+ pos len))))))
+;;;	(list ' pos (+ pos len))))))
 
 (defsubst elmo-imap4-parse-string ()
   (cond ((eq (char-after (point)) ?\")

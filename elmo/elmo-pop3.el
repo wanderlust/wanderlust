@@ -358,10 +358,10 @@
 	;; UIDL
 	(elmo-pop3-send-command process "uidl")
 	(unless (elmo-pop3-read-response process)
-	  (error "UIDL failed."))
+	  (error "UIDL failed"))
 	(unless (setq response (elmo-pop3-read-contents
 				(current-buffer) process))
-	  (error "UIDL failed."))
+	  (error "UIDL failed"))
 	(elmo-pop3-parse-uidl-response response)))))
 
 (defun elmo-pop3-read-contents (buffer process)
@@ -530,7 +530,7 @@
 	(elmo-pop3-send-command process (format
 					 "top %s 0" (car articles))
 				'no-erase)
-	;; (accept-process-output process 1)
+;;;	(accept-process-output process 1)
 	(setq articles (cdr articles))
 	(setq count (1+ count))
 	;; Every 200 requests we have to read the stream in
@@ -555,7 +555,7 @@
 		   'elmo-pop3-retrieve-headers "Getting headers..."
 		   (/ (* received 100) number))))
 	    (accept-process-output process 1)
-	    ;(accept-process-output process)
+;;;	    (accept-process-output process)
 	    (discard-input))))
       ;; Remove all "\r"'s.
       (goto-char (point-min))

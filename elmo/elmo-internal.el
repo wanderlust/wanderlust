@@ -139,7 +139,7 @@
 		   mark-alist
 		   (elmo-msgdb-overview-entity-get-number
 		    entity)
-					;(nth 0 entity)
+;;;		   (nth 0 entity)
 		   (or (elmo-msgdb-global-mark-get
 			(elmo-msgdb-overview-entity-get-id
 			 entity))

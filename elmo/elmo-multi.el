@@ -272,7 +272,7 @@
 			 (function
 			  (lambda (x)
 			    (+ (* elmo-multi-divide-number cur-number) x)))
-			 (elmo-list-folder-important 
+			 (elmo-list-folder-important
 			  (car folders)
 			  (car split-number-alist))))
 	    folders (cdr folders)))

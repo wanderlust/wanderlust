@@ -132,7 +132,7 @@ FOLDER should be a sring of folder name or folder spec."
 
 (defsubst elmo-msgdb-append-element (list element)
   (if list
-      ;(append list (list element))
+;;;   (append list (list element))
       (nconc list (list element))
     ;; list is nil
     (list element)))
@@ -272,12 +272,12 @@ FOLDER should be a sring of folder name or folder spec."
     ret-val))
 
 (defun elmo-msgdb-mark-append (alist id mark)
-  "Append mark"
+  "Append mark."
   (setq alist (elmo-msgdb-append-element alist
 					 (list id mark))))
 
 (defun elmo-msgdb-mark-alist-to-seen-list (number-alist mark-alist seen-marks)
-  "Make seen-list from mark-alist"
+  "Make seen-list from MARK-ALIST."
   (let ((seen-mark-list (string-to-char-list seen-marks))
 	ret-val ent)
     (while number-alist
@@ -421,18 +421,18 @@ header separator."
 				number-list))
 		       (string-to-int (elmo-filter-value condition)))))
      ((string= key "first")
-      (setq result (< (- 
+      (setq result (< (-
 		       (length number-list)
 		       (length (memq
 				(elmo-msgdb-overview-entity-get-number entity)
 				number-list)))
 		      (string-to-int (elmo-filter-value condition)))))
      ((string= key "from")
-      (setq result (string-match 
+      (setq result (string-match
 		    (elmo-filter-value condition)
 		    (elmo-msgdb-overview-entity-get-from entity))))
      ((string= key "subject")
-      (setq result (string-match 
+      (setq result (string-match
 		    (elmo-filter-value condition)
 		    (elmo-msgdb-overview-entity-get-subject entity))))
      ((string= key "to")
@@ -500,8 +500,8 @@ content of MSGDB is changed."
 	(if (and (not reserve-cache) message-id)
 	    (elmo-cache-delete message-id
 			       folder (car msg-list)))
-	;; This is no good!!!!
-	;(setq overview (delete (assoc message-id overview) overview))
+;;;	This is no good!!!!
+;;;	(setq overview (delete (assoc message-id overview) overview))
 	(setq overview
 	      (delq
 	       (setq ov-entity
@@ -554,7 +554,7 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-set-number (entity number)
   (and entity (aset (cdr entity) 0 number))
   entity)
-  ;(setcar (cadr entity) number) entity)
+;;;(setcar (cadr entity) number) entity)
 
 (defsubst elmo-msgdb-overview-entity-set-from (entity from)
   (and entity (aset (cdr entity) 2 from))
@@ -821,7 +821,7 @@ Header region is supposed to be narrowed."
     (if (not (file-directory-p old))
 	()
       (if (file-exists-p new)
-	  (error "already exists directory: %s" new)
+	  (error "Already exists directory: %s" new)
 	(if (not (file-exists-p new-dir))
 	    (elmo-make-directory new-dir))
 	(rename-file old new)))))

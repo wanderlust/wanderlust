@@ -105,7 +105,7 @@ This variable should not be used in elsewhere.")
 			     "^[^.].*$" t))))
 
 (defun elmo-maildir-update-current (spec)
-  "Move all new msgs to cur in the maildir"
+  "Move all new msgs to cur in the maildir."
   (let* ((maildir (elmo-maildir-get-folder-directory spec))
 	 (news (directory-files (expand-file-name "new"
 						  maildir)
@@ -122,7 +122,7 @@ This variable should not be used in elsewhere.")
       (setq news (cdr news)))))
 
 (defun elmo-maildir-set-mark (filename mark)
-  "Mark the file in the maildir. MARK is a character."
+  "Mark the FILENAME file in the maildir.  MARK is a character."
   (if (string-match "^\\([^:]+:[12],\\)\\(.*\\)$" filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
@@ -136,7 +136,7 @@ This variable should not be used in elsewhere.")
 		 (concat filename ":2," (char-to-string mark)))))
 
 (defun elmo-maildir-delete-mark (filename mark)
-  "Mark the file in the maildir. MARK is a character."
+  "Mark the FILENAME file in the maildir.  MARK is a character."
   (if (string-match "^\\([^:]+:2,\\)\\(.*\\)$" filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
@@ -293,7 +293,8 @@ file name for maildir directories."
     (unless (file-exists-p (file-name-directory filename))
       (make-directory (file-name-directory filename)))
     (while (file-exists-p filename)
-      ;; (sleep-for 2) ; I don't want to wait.
+;;; I don't want to wait.
+;;;   (sleep-for 2)
       (setq filename
 	    (expand-file-name
 	     (concat "tmp/" (elmo-maildir-make-unique-string))

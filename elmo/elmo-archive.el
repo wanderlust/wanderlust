@@ -83,26 +83,26 @@
   "*Regular expression of UNIX Mail delimiter.")
 
 (defvar elmo-archive-header-regexp "^[ \t]*[-=][-=][-=][-=]"
-  "*Common regexp of the delimiter in listing archive.") ;; marche
+  "*Common regexp of the delimiter in listing archive.") ; marche
 
 (defvar elmo-archive-file-regexp-alist
   (append
    (if elmo-archive-lha-dos-compatible
-       '((lha . "^%s\\([0-9]+\\)$"))		; OS/2,DOS w/  "-x"
+       '((lha . "^%s\\([0-9]+\\)$"))	; OS/2,DOS w/  "-x"
      '((lha . "^.*[ \t]%s\\([0-9]+\\)$")))
    '((zip . "^.*[ \t]%s\\([0-9]+\\)$")
      (zoo . "^.*[ \t]%s\\([0-9]+\\)$")
-     (tar . "^%s\\([0-9]+\\)$") ; ok
-     (tgz . "^%s\\([0-9]+\\)$") ; ok
+     (tar . "^%s\\([0-9]+\\)$")		; ok
+     (tgz . "^%s\\([0-9]+\\)$")		; ok
      (rar . "^[ \t]%s\\([0-9]+\\)$"))))
 
 (defvar elmo-archive-suffix-alist
    '((lha . ".lzh")  ; default
-;    (lha . ".lzs")
+;;;  (lha . ".lzs")
      (zip . ".zip")
      (zoo . ".zoo")
-;    (arc . ".arc")
-;    (arj . ".arj")
+;;;  (arc . ".arc")
+;;;  (arj . ".arj")
      (rar . ".rar")
      (tar . ".tar")
      (tgz . ".tar.gz")))
@@ -116,7 +116,7 @@
 	(rm  . ("lha" "d"))
 	(ls  . ("lha" "l" "-x"))
 	(cat . ("lha" "p" "-n"))
-	(ext . ("lha" "x")) ; "-x"
+	(ext . ("lha" "x"))		; "-x"
 	)
     ;; some UN|X
     '((cp  . ("lha" "u"))
@@ -146,7 +146,7 @@
     (mv       . ("zoo" "aMq"))
     (mv-pipe  . ("zoo" "aMqI"))
     (rm       . ("zoo" "Dq"))
-    (ls       . ("zoo" "l"))  ; normal
+    (ls       . ("zoo" "l"))		; normal
     (cat      . ("zoo" "xpq"))
     (ext      . ("zoo" "xq"))))
 
@@ -165,20 +165,20 @@
       '((ls   . ("gtar" "-tf"))
 	(cat  . ("gtar" "--posix Oxf"))
 	(ext  . ("gtar" "-xf"))
-	;;(rm   . ("gtar" "--posix" "--delete" "-f")) ;; well not work
+;;;	(rm   . ("gtar" "--posix" "--delete" "-f")) ; well not work
 	)
-  '((ls    . ("gtar" "-tf"))
-    (cat   . ("gtar" "-Oxf"))
-    (ext   . ("gtar" "-xf"))
-    ;;(rm    . ("gtar" "--delete" "-f")) ;; well not work
-    )))
+    '((ls    . ("gtar" "-tf"))
+      (cat   . ("gtar" "-Oxf"))
+      (ext   . ("gtar" "-xf"))
+;;;	(rm    . ("gtar" "--delete" "-f")) ;; well not work
+      )))
 
 ;;; GNU tar (*.tar.gz, *.tar.Z, *.tar.bz2)
 (defvar elmo-archive-tgz-method-alist
   '((ls         . ("gtar" "-ztf"))
     (cat        . ("gtar" "-Ozxf"))
     (create     . ("gtar" "-zcf"))
-    ;;(rm       . elmo-archive-tgz-rm-func)
+;;; (rm         . elmo-archive-tgz-rm-func)
     (cp         . elmo-archive-tgz-cp-func)
     (mv         . elmo-archive-tgz-mv-func)
     (ext        . ("gtar" "-zxf"))
@@ -186,17 +186,17 @@
     (decompress . ("gzip" "-d"))
     (compress   . ("gzip"))
     (append     . ("gtar" "-uf"))
-    ;;(delete     . ("gtar" "--delete" "-f")) ;; well not work
+;;; (delete     . ("gtar" "--delete" "-f")) ; well not work
     ))
 
 (defvar elmo-archive-method-list
   '(elmo-archive-lha-method-alist
     elmo-archive-zip-method-alist
     elmo-archive-zoo-method-alist
-;   elmo-archive-tar-method-alist
+;;; elmo-archive-tar-method-alist
     elmo-archive-tgz-method-alist
-;   elmo-archive-arc-method-alist
-;   elmo-archive-arj-method-alist
+;;; elmo-archive-arc-method-alist
+;;; elmo-archive-arj-method-alist
     elmo-archive-rar-method-alist))
 
 ;;; Internal vars.
@@ -342,7 +342,7 @@ TYPE specifies the archiver's symbol."
   t)
 
 (defun elmo-archive-create-folder (spec)
-  (let* ((dir (directory-file-name ;; remove tail slash.
+  (let* ((dir (directory-file-name	; remove tail slash.
 	       (elmo-archive-get-archive-directory (nth 1 spec))))
          (type (nth 2 spec))
          (arc (elmo-archive-get-archive-name (nth 1 spec) type)))
@@ -354,7 +354,7 @@ TYPE specifies the archiver's symbol."
            (error "Create folder failed; File \"%s\" exists" dir))
           ((file-directory-p dir)
            (if (file-exists-p arc)
-               t  ; return value
+               t			; return value
 	     (elmo-archive-create-file arc type spec)))
           (t
 	   (elmo-make-directory dir)
@@ -392,7 +392,7 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-delete-folder (spec)
   (let* ((arc (elmo-archive-get-archive-name (nth 1 spec) (nth 2 spec))))
     (if (not (file-exists-p arc))
-	(error "no such file: %s" arc)
+	(error "No such file: %s" arc)
       (delete-file arc)
       t)))
 
@@ -403,11 +403,11 @@ TYPE specifies the archiver's symbol."
 		   (nth 1 new-spec) (nth 2 new-spec))))
     (unless (and (eq (nth 2 old-spec) (nth 2 new-spec))
 		 (equal (nth 3 old-spec) (nth 3 new-spec)))
-      (error "not same archive type and prefix"))
+      (error "Not same archive type and prefix"))
     (if (not (file-exists-p old-arc))
-	(error "no such file: %s" old-arc)
+	(error "No such file: %s" old-arc)
       (if (file-exists-p new-arc)
-	  (error "already exists: %s" new-arc)
+	  (error "Already exists: %s" new-arc)
 	(rename-file old-arc new-arc)
 	t))))
 
@@ -472,7 +472,8 @@ TYPE specifies the archiver's symbol."
 	  (elmo-archive-call-method method args t))
 	 (elmo-delete-cr-get-content-type))))))
 
-(defun elmo-archive-append-msg (spec string &optional msg no-see) ;;; verrrrrry slow!!
+;; verrrrrry slow!!
+(defun elmo-archive-append-msg (spec string &optional msg no-see)
   (let* ((type (nth 2 spec))
 	 (prefix (nth 3 spec))
 	 (arc (elmo-archive-get-archive-name (nth 1 spec) type))
@@ -508,7 +509,7 @@ TYPE specifies the archiver's symbol."
 	     nil))
 	(kill-buffer tmp-buffer)))))
 
-;;; (localdir, maildir, localnews, archive) -> archive
+;; (localdir, maildir, localnews, archive) -> archive
 (defun elmo-archive-copy-msgs (dst-spec msgs src-spec
 					&optional loc-alist same-number)
   (let* ((dst-type (nth 2 dst-spec))
@@ -689,8 +690,8 @@ TYPE specifies the archiver's symbol."
 
 (defsubst elmo-archive-article-exists-p (arc msg type)
   (if (not elmo-archive-check-existance-strict)
-      t  ; nop
-    (save-excursion ;; added 980915
+      t ; nop
+    (save-excursion ; added 980915
       (let* ((method (elmo-archive-get-method type 'ls))
 	     (args (list arc msg))
 	     (buf (get-buffer-create " *ELMO ARCHIVE query*"))
@@ -770,7 +771,8 @@ TYPE specifies the archiver's symbol."
     (narrow-to-region (point-min) header-end)
     (elmo-msgdb-create-overview-from-buffer number)))
 
-(defsubst elmo-archive-msgdb-create-entity (method archive number type &optional prefix) ;; verrrry slow!!
+;; verrrry slow!!
+(defsubst elmo-archive-msgdb-create-entity (method archive number type &optional prefix)
   (let* ((msg (elmo-concat-path prefix (int-to-string number)))
 	 (arg-list (list archive msg)))
     (when (elmo-archive-article-exists-p archive msg type)
@@ -897,13 +899,13 @@ TYPE specifies the archiver's symbol."
 	(setq overview (append overview (nth 0 result)))
 	(setq number-alist (append number-alist (nth 1 result)))
 	(setq mark-alist (append mark-alist (nth 2 result))))
-;      ((looking-at delim2)	;; UNIX MAIL
-;	(setq result (elmo-archive-parse-unixmail msgs))
-;	(setq overview (append overview (nth 0 result)))
-;	(setq number-alist (append number-alist (nth 1 result)))
-;	(setq mark-alist (append mark-alist (nth 2 result))))
+;;;    ((looking-at delim2)	;; UNIX MAIL
+;;;	(setq result (elmo-archive-parse-unixmail msgs))
+;;;	(setq overview (append overview (nth 0 result)))
+;;;	(setq number-alist (append number-alist (nth 1 result)))
+;;;	(setq mark-alist (append mark-alist (nth 2 result))))
        (t			;; unknown format
-	(error "unknown format!")))
+	(error "Unknown format!")))
       (when (> num elmo-display-progress-threshold)
 	(setq i (+ n i))
 	(setq percent (/ (* i 100) num))
@@ -928,8 +930,8 @@ TYPE specifies the archiver's symbol."
       (setq sp (1+ (point)))
       (setq ep (prog2 (re-search-forward delim)
 		   (1+ (- (point) (length delim)))))
-      (if (>= sp ep) ; no article!
-	  ()  ; nop
+      (if (>= sp ep)			; no article!
+	  ()				; nop
         (save-excursion
           (narrow-to-region sp ep)
           (setq entity (elmo-archive-msgdb-create-entity-subr number))

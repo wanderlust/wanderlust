@@ -30,6 +30,8 @@
 (require 'elmo-util)
 (require 'elmo-vars)
 
+;;; Code:
+;;
 (eval-and-compile
   (luna-define-class elmo-network-session () (name
 					      host
@@ -65,8 +67,8 @@
 
 (luna-define-method elmo-network-close-session ((session elmo-network-session))
   (when (elmo-network-session-process-internal session)
-;       (memq (process-status (elmo-network-session-process-internal session))
-;	     '(open run))
+;;; (memq (process-status (elmo-network-session-process-internal session))
+;;;	  '(open run))
     (kill-buffer (process-buffer
 		  (elmo-network-session-process-internal session)))
     (delete-process (elmo-network-session-process-internal session))))
@@ -164,7 +166,7 @@ PORT is the port number of the service.
 USER is the user-id for the authenticate.
 AUTH is the authenticate method name (symbol).
 STREAM-TYPE is the stream type (See also `elmo-network-stream-type-alist').
-Returns a process object. if making session failed, returns nil."
+Returns a process object.  if making session failed, returns nil."
   (let ((session
 	 (luna-make-entity class
 			   :name name

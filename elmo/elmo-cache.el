@@ -51,7 +51,7 @@
 	     (setq message-id
 		   (elmo-cache-to-msgid (file-name-nondirectory path))))
 	    (member message-id locked))
-	nil ;; Don't delete caches with mark (or locked message).
+	nil;; Don't delete caches with mark (or locked message).
       (if (and path
 	       (file-directory-p path))
 	  (progn
@@ -81,7 +81,7 @@
 		    (delete-directory path1))))))))
 
 (defun elmo-cache-read (msgid &optional folder number outbuf)
-  "Read cache contents to outbuf"
+  "Read cache contents to OUTBUF."
   (save-excursion
     (let ((path (elmo-cache-exists-p msgid folder number)))
       (when path
@@ -166,7 +166,7 @@ If KBYTES is kilo bytes (This value must be float)."
 				   (cons (car (car cfl))
 					 (car flist)))))
       (setq cfl (cdr cfl)))
-;    (prin1 firsts)
+;;; (prin1 firsts)
     (while firsts
       (if (and (not oldest-entity)
 	       (cdr (cdr (car firsts))))
@@ -243,22 +243,22 @@ If KBYTES is kilo bytes (This value must be float)."
       (setq dirs (cdr dirs)))))
 
 (defun elmo-cache-save (msgid partial folder number &optional inbuf)
-  "If partial is non-nil, save current buffer (or INBUF) as partial cache."
+  "If PARTIAL is non-nil, save current buffer (or INBUF) as partial cache."
   (condition-case nil
-  (save-excursion
-    (let* ((path (if partial
-		     (elmo-cache-get-path msgid folder number)
-		   (elmo-cache-get-path msgid)))
-	   dir tmp-buf)
-      (when path
-	(setq dir (directory-file-name (file-name-directory path)))
-	(if (not (file-exists-p dir))
-	    (elmo-make-directory dir))
-	(if inbuf (set-buffer inbuf))
-	(goto-char (point-min))
-	(as-binary-output-file (write-region (point-min) (point-max)
-					     path nil 'no-msg)))))
-  (error)))
+      (save-excursion
+	(let* ((path (if partial
+			 (elmo-cache-get-path msgid folder number)
+		       (elmo-cache-get-path msgid)))
+	       dir tmp-buf)
+	  (when path
+	    (setq dir (directory-file-name (file-name-directory path)))
+	    (if (not (file-exists-p dir))
+		(elmo-make-directory dir))
+	    (if inbuf (set-buffer inbuf))
+	    (goto-char (point-min))
+	    (as-binary-output-file (write-region (point-min) (point-max)
+						 path nil 'no-msg)))))
+    (error)))
 
 (defun elmo-cache-exists-p (msgid &optional folder number)
   "Returns the path if the cache exists."
@@ -311,7 +311,7 @@ If KBYTES is kilo bytes (This value must be float)."
     ret-val))
 
 (defun elmo-cache-collect-sub-directories (init dir &optional recursively)
-  "Collect subdirectories under 'dir'"
+  "Collect subdirectories under DIR."
   (let ((dirs
 	 (delete (expand-file-name elmo-cache-dirname
 				   elmo-msgdb-dir)
@@ -362,13 +362,13 @@ If KBYTES is kilo bytes (This value must be float)."
   
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; buffer cache module
+;; buffer cache module
 
 (defconst elmo-buffer-cache-name " *elmo cache*")
 
 (defvar elmo-buffer-cache nil
-  "Message cache. (old ... new) order alist with association
- ((\"folder\" message \"message-id\") . cache-buffer)")
+  "Message cache.  (old ... new) order alist.
+With association ((\"folder\" message \"message-id\") . cache-buffer).")
 
 (defmacro elmo-buffer-cache-buffer-get (entry)
   (` (cdr (, entry))))
@@ -398,7 +398,7 @@ If KBYTES is kilo bytes (This value must be float)."
     (setq elmo-buffer-cache (cdr top))))
 
 (defun elmo-buffer-cache-add (fld-msg-id)
-  "Adding (fld-msg-id . buf) to the top of \"elmo-buffer-cache\".
+  "Adding (FLD-MSG-ID . buf) to the top of `elmo-buffer-cache'.
 Returning its cache buffer."
   (let ((len (length elmo-buffer-cache))
 	(buf nil))
@@ -431,9 +431,9 @@ Returning its cache buffer."
       (setq n (1+ n))))
   (setq elmo-buffer-cache nil))
 
-;;;
-;;; cache backend by Kenichi OKADA <okada@opaopa.org>
-;;;
+;;
+;; cache backend by Kenichi OKADA <okada@opaopa.org>
+;;
 
 (defsubst elmo-cache-get-folder-directory (spec)
   (if (file-name-absolute-p (nth 1 spec))
@@ -461,7 +461,7 @@ Returning its cache buffer."
   (defsubst elmo-cache-insert-header (file)
     "Insert the header of the article."
     (let ((beg 0)
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
 	  insert-file-contents-post-hook
 	  format-alist)
       (when (file-exists-p file)
@@ -566,7 +566,7 @@ Returning its cache buffer."
 		(expand-file-name
 		 (nth 1 (elmo-folder-get-spec folder))
 		 (expand-file-name elmo-cache-dirname elmo-msgdb-dir)))
-	  (if (string-match "^[+=$!]$" folder) ;; localdir, archive, localnews
+	  (if (string-match "^[+=$!]$" folder) ; localdir, archive, localnews
 	      (setq subprefix folder)
 	    (setq subprefix (concat folder elmo-path-sep)))
 	    ;; include parent
@@ -659,7 +659,7 @@ Returning its cache buffer."
 	       (mapcar '(lambda (msg) (elmo-cache-delete-msg spec msg locked))
 		       msgs)))))
 
-(defun elmo-cache-list-folder (spec); called by elmo-cache-search()
+(defun elmo-cache-list-folder (spec)	; called by elmo-cache-search()
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
 		      (elmo-msgdb-expand-path spec))))
@@ -726,7 +726,7 @@ Returning its cache buffer."
        (expand-file-name
 	(elmo-msgid-to-cache
 	 (cdr (assq (if same-number (car msgs) next-num) number-alist)))
-	 dst-dir))
+	dst-dir))
       (if (and (setq msgs (cdr msgs))
 	       (not same-number))
 	  (setq next-num (1+ next-num))))

@@ -51,7 +51,7 @@
 (defun elmo-date-get-datevec (description)
   (cond
    ((not elmo-date-match)
-    (error "date match is not available"))
+    (error "Date match is not available"))
    ((string-match "^[ \t]*\\([0-9]+\\)?[ \t]*\\([a-zA-Z]+\\)$" description)
     (let ((today
 	   (save-match-data

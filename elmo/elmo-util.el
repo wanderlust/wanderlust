@@ -157,7 +157,7 @@ File content is encoded with MIME-CHARSET."
     (if (file-writable-p filename)
 	(progn
 	  (when mime-charset
-	    ;;(elmo-set-buffer-multibyte default-enable-multibyte-characters)
+;;;	    (elmo-set-buffer-multibyte default-enable-multibyte-characters)
 	    (encode-mime-charset-region (point-min) (point-max) mime-charset))
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg)))
@@ -169,7 +169,7 @@ Directory of the file is created if it doesn't exist.
 File content is encoded with MIME-CHARSET."
   (elmo-set-work-buf
    (prin1 object (current-buffer))
-   ;;(princ "\n" (current-buffer))
+;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
 (defsubst elmo-imap4-decode-folder-string (string)
@@ -324,9 +324,9 @@ File content is encoded with MIME-CHARSET."
 	)
       (if (file-name-absolute-p fld-name)
 	  (setq path (expand-file-name fld-name))
+;;;	(setq path (expand-file-name fld-name
+;;;				     elmo-localdir-folder-path))
 	(setq path fld-name))
-	;(setq path (expand-file-name fld-name
-	;elmo-localdir-folder-path)))
       (list (if (elmo-folder-maildir-p folder)
 		'maildir
 	      'localdir) path))))
@@ -749,9 +749,9 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (erase-buffer)
       (prin1 elmo-passwd-alist tmp-buffer)
       (princ "\n" tmp-buffer)
-;      (if (and (file-exists-p filename)
-;             (not (equal 384 (file-modes filename))))
-;        (error "%s is not safe.chmod 600 %s!" filename filename))
+;;;   (if (and (file-exists-p filename)
+;;;	       (not (equal 384 (file-modes filename))))
+;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
       (if (file-writable-p filename)
          (progn
            (write-region (point-min) (point-max)
@@ -844,7 +844,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 ;; from subr.el
 (defun elmo-replace-in-string (str regexp newtext &optional literal)
-  "Replaces all matches in STR for REGEXP with NEWTEXT string.
+  "Replace all matches in STR for REGEXP with NEWTEXT string.
 And returns the new string.
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
@@ -1191,10 +1191,12 @@ Otherwise treat \\ in NEWTEXT string as special:
   (cond ((eq (elmo-folder-get-type folder1) 'imap4)
 	 (let ((spec1 (elmo-folder-get-spec folder1))
 	       (spec2 (elmo-folder-get-spec folder2)))
-	   (and ;(elmo-imap4-identical-name-space-p ;; No use.
-		; (nth 1 spec1) (nth 1 spec2))
+	   (and 
+;;; No use.	    
+;;;	    (elmo-imap4-identical-name-space-p 
+;;;	     (nth 1 spec1) (nth 1 spec2))
 	    (string= (elmo-imap4-spec-hostname spec1)
-		     (elmo-imap4-spec-hostname spec2))    ; hostname
+		     (elmo-imap4-spec-hostname spec2)) ; hostname
 	    (string= (elmo-imap4-spec-username spec1)
 		     (elmo-imap4-spec-username spec2))))) ; username
 	(t
@@ -1327,7 +1329,8 @@ Otherwise treat \\ in NEWTEXT string as special:
     (list 'makunbound (list 'intern string hashtable))))
 
 (defmacro elmo-unintern (string)
-  ;; Emacs 19.28 or earlier does not have unintern.
+  "`unintern' symbol named STRING,  When can use `unintern'.
+Emacs 19.28 or earlier does not have `unintern'."
   (static-if (fboundp 'unintern)
       (list 'unintern string)))
 
