@@ -1482,8 +1482,7 @@ If ARG is non-nil, checking is omitted."
 		  (wl-summary-update-modeline)
 		  (wl-folder-update-unread
 		   (wl-summary-buffer-folder-name)
-		   (+ wl-summary-buffer-unread-count
-		      wl-summary-buffer-new-count))))
+		   wl-summary-buffer-unread-count)))
 	      t)
 	  nil)))))
 
@@ -1968,12 +1967,7 @@ This function is defined for `window-scroll-functions'"
       (wl-folder-set-folder-updated
        (elmo-folder-name-internal folder)
        (list 0
-	     (let ((flag-count (wl-summary-count-unread)))
-	       (+
-		(or (cdr (assq 'new flag-count))
-		    0)
-		(or (cdr (assq 'unread flag-count))
-		    0)))
+	     (or (cdr (assq 'unread (wl-summary-count-unread))) 0)
 	     (elmo-folder-length folder)))
       (wl-summary-update-modeline)
       ;;
@@ -3032,8 +3026,7 @@ Return non-nil if the mark is updated"
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
 	   (wl-summary-buffer-folder-name)
-	   (+ wl-summary-buffer-unread-count
-	      wl-summary-buffer-new-count)))))))
+	   wl-summary-buffer-unread-count))))))
 
 (defun wl-summary-mark-as-read (&optional number-or-numbers
 					  no-folder-mark
@@ -3086,8 +3079,7 @@ Return non-nil if the mark is updated"
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
 	   (wl-summary-buffer-folder-name)
-	   (+ wl-summary-buffer-unread-count
-	      wl-summary-buffer-new-count)))))))
+	   wl-summary-buffer-unread-count))))))
 
 (defun wl-summary-unset-persistent-mark (&optional flag
 						   number-or-numbers
@@ -4753,8 +4745,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
   (wl-folder-set-folder-updated
    (elmo-string (wl-summary-buffer-folder-name))
    (list 0
-	 (+ wl-summary-buffer-unread-count
-	    wl-summary-buffer-new-count)
+	 wl-summary-buffer-unread-count
 	 (elmo-folder-length
 	  wl-summary-buffer-elmo-folder))))
 

@@ -202,8 +202,7 @@ If no match, `wl-summary-default-view' is used."
 	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
     (?t (if (eq wl-summary-buffer-view 'thread) "T" "S"))
     (?n wl-summary-buffer-new-count)
-    (?u (+ wl-summary-buffer-new-count
-	   wl-summary-buffer-unread-count))
+    (?u wl-summary-buffer-unread-count)
     (?a (length wl-summary-buffer-number-list)))
   "An alist of format specifications that can appear in summary mode-lines.
 Each element is a list of following:

@@ -1,3 +1,16 @@
+2004-08-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Follow the
+	change of return value of elmo-folder-count-flags.
+
+	* wl-summary.el (wl-summary-prefetch-msg): Ditto.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-set-persistent-mark-internal): Ditto.
+	(wl-summary-folder-info-update): Ditto.
+	(wl-summary-sync-update): Fixed the last change.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
 2004-09-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-kill-pre-hook): New hook.
