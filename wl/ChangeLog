@@ -1,5 +1,8 @@
 2004-07-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl.el (wl): Set timer for biff process even if prefix argument
+	is given or auto-checking is quitted.
+
 	* wl-util.el (wl-biff-start): Don't call `wl-biff-check-folders'
 	immediately.
 	* wl.el (wl): Call `wl-biff-check-folders' explicitly.
