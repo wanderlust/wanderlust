@@ -1,3 +1,8 @@
+2001-09-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (wl-acap-init): Remove period from error message.
+	(wl-acap-find-acap-service): Remove period from message.
+
 2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-check-environment): Undo last change.

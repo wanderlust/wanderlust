@@ -100,7 +100,7 @@ If nil, default acap port is used."
   "A candidate for `wl-folder-init-function'."
   (let ((service (wl-acap-find-acap-service))
 	proc entries settings folder-top type)
-    (unless (car service) (error "No ACAP service found."))
+    (unless (car service) (error "No ACAP service found"))
     (setq proc (acap-open (car service)
 			  wl-acap-user
 			  (upcase (symbol-name wl-acap-authenticate-type))
@@ -148,7 +148,7 @@ If nil, default acap port is used."
 				   (if (memq sym
 					     wl-acap-base64-encode-options)
 				       (wl-acap-base64-decode-string (cadr x))
-				      (read (concat 
+				      (read (concat
 					     "\""
 					     (decode-coding-string
 					      (cadr x)
@@ -194,7 +194,7 @@ If nil, default acap port is used."
 		   (setq response (car (slp-response-body response)))
 		   (cons (slp-response-srv-url-host response)
 			 (slp-response-srv-url-port response))))
-	  (message "Searching ACAP server...done.")))
+	  (message "Searching ACAP server...done")))
       (cons "localhost" nil)))
 
 (defun wl-acap-name (option)
