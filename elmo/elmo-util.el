@@ -305,12 +305,17 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-condition-optimize (condition)
   (cond
    ((vectorp condition)
-    (or (cdr (assoc (elmo-filter-key condition)
-		    '(("first"	. 0)
-		      ("last"	. 0)
-		      ("flag"	. 1)
-		      ("body"	. 3))))
-	2))
+    (let ((key (elmo-filter-key condition)))
+      (cond ((cdr (assoc key '(("first"	. 0)
+			       ("last"	. 0)
+			       ("flag"	. 1)
+			       ("body"	. 5)))))
+	    ((member key '("since" "before" "from" "subject" "to" "cc"))
+	     2)
+	    ((member key elmo-msgdb-extra-fields)
+	     3)
+	    (t
+	     4))))
    (t
     (let ((weight-l (elmo-condition-optimize (nth 1 condition)))
 	  (weight-r (elmo-condition-optimize (nth 2 condition))))
