@@ -1,3 +1,8 @@
+2003-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Bind print-level,
+	print-depth.
+
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-util.el (elmo-object-save): Bind print-level, print-length.
