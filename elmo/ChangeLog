@@ -1,3 +1,7 @@
+2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed logic.
+
 2002-02-18   Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-nntp.el (elmo-nntp-send-mode-reader): Don't throw an error.
