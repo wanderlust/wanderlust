@@ -1256,7 +1256,7 @@ default:
               Initial setting is "user".
 @var{hostname}   -> The value of @code{elmo-default-pop3-server}.
               Initial setting is "localhost".
-@var{port}       -> The value of @code{elmo-pop3-default-port}.
+@var{port}       -> The value of @code{elmo-default-pop3-port}.
               Initial setting is 110.
 @end example
 

@@ -1286,7 +1286,7 @@ default 値:
               初期設定は "user"。
 ホスト名   -> 変数 @code{elmo-default-pop3-server} の値。
               初期設定は "localhost"。
-ポート番号 -> 変数 @code{elmo-pop3-default-port} の値。
+ポート番号 -> 変数 @code{elmo-default-pop3-port} の値。
               初期設定は 110。
 @end example
 
