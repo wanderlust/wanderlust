@@ -6794,10 +6794,10 @@ For silence, set to @code{nil}.
 @vindex wl-draft-reply-myself-with-argument-list
 @vindex wl-draft-reply-myself-without-argument-list
 
-If you want, when you replying to articles in mailing lists, the address
-in Reply-To field of the original message to be prepared to To field of
-the reply draft by simply pressing @kbd{a} in the summary mode, try the
-following settings:
+If you type @kbd{a} in the Summary Buffer, a draft for reply is prepared.
+The addressee for the draft is decided by following rules.
+
+For example, you can set as follows:
 
 @lisp
 @group
@@ -6809,18 +6809,83 @@ following settings:
 @end group
 @end lisp
 
-@noindent
-(Only if there are both of @samp{X-ML-Name:} and @samp{Reply-To:} fields
-in the original message, @samp{Reply-To:} field in the original is
-copied to @samp{To:} field.)
+Where each element of the list  @code{wl-draft-reply-without-argument-list}
+is in the form
+
+@example
+(key . (to-list cc-list newsgroup-list))
+@end example
+
+and if the field designated by @samp{key} exist in the parent message,
+parent's field values designated by @samp{to-list} are copied to @samp{To:}
+in the draft. Similarly, parent's fields designated by @samp{cc-list} and
+@samp{newsgroup-list} are copied to @samp{Cc:} and @samp{Newsgroups:} in
+the draft respectively.
+
+Examples:
+
+@lisp
+("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+@end lisp
+
+Match if the parent has @samp{Mail-Followup-To} field.
+The components of parent's @samp{Mail-Followup-To} and @samp{Newsgroups}
+fields are copied to @samp{To} and @samp{Newsgroups} in the draft
+respectively.
+
+@lisp
+(("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+@end lisp
+
+Match if the parent has both @samp{X-ML-Name} and @samp{Reply-To} fields.
+Parent's @samp{Reply-To} is copied to @samp{To} in the draft.
+
+@lisp
+("From" . (("From") ("To" "Cc") ("Newsgroups")))
+@end lisp
+
+Copy parent's @samp{From} to @samp{To} in the draft, parent's @samp{To} and
+@samp{Cc} to @samp{Cc}, parent's @samp{Newsgroups} to @samp{Newsgroups}
+respectively.
+
+These are evaluated in order and first matched one is used.
 
 Moreover, the behavior of @kbd{a} with prefix argument can
 be directed by @code{wl-draft-reply-with-argument-list} as well.
 
-Note: To set the behavior when you reply to the message written by yourself, use
-@code{wl-draft-reply-myself-without-argument-list} and
-@code{wl-draft-reply-myself-with-argument-list}
-instead of them.
+By the way, you can use some function (will be evaluated in the parent
+message buffer) in the place of @samp{key} or @samp{to-list} etc.
+For example, if you only want to reply to mailing lists in
+@code{wl-subscribed-mailing-list} if the parent has some of them,
+set as follows:
+
+@lisp
+@group
+(defun wl-mailing-list-addresses ()
+  (let (list-addrs)
+    (dolist (to (mapcar
+		 (lambda (addr)
+		   (nth 1 (std11-extract-address-components addr)))
+		 (wl-parse-addresses
+		  (wl-concat-list
+		   (elmo-multiple-fields-body-list (list "To" "Cc"))
+		   ","))))
+      (when (elmo-string-matched-member to wl-subscribed-mailing-list t)
+	(setq list-addrs (cons to list-addrs))))
+    (nreverse list-addrs)))
+
+(setq wl-draft-reply-with-argument-list
+      '((wl-mailing-list-addresses . (wl-mailing-list-addresses nil nil))
+	("Reply-To" . (("Reply-To") nil nil))
+	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+	("From" . (("From") nil nil))))
+@end group
+@end lisp
+
+
+Note: To set the behavior when you reply to the message written by yourself,
+use @code{wl-draft-reply-myself-without-argument-list} and
+@code{wl-draft-reply-myself-with-argument-list} instead of them.
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection Appearance of Threads

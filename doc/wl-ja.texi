@@ -6699,9 +6699,10 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @vindex wl-draft-reply-myself-with-argument-list
 @vindex wl-draft-reply-myself-without-argument-list
 
-$B%a!<%j%s%0%j%9%H$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7(B
-$B$?$@$1$G855-;v$N(B @samp{Reply-To:} $B$K$"$k%"%I%l%9$r(B @samp{To:} $B$KMQ0U$7$F(B
-$BM_$7$$!"$H$$$&>l9g$O0J2<$N$h$&$K$7$?$iNI$$$G$7$g$&!#(B
+$B%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$9$HJV;vMQ$N%I%i%U%H$,MQ0U$5$l$^$9!#(B
+$BMQ0U$5$l$kAp9F$N08@h$O!"0J2<$N$h$&$K$7$F@_Dj$9$k$3$H$,$G$-$^$9!#(B
+
+$BNc$($P!"(B
 
 @lisp
 @group
@@ -6713,19 +6714,79 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end group
 @end lisp
 
-@noindent
-(@samp{X-ML-Name:} $B%U%#!<%k%I5Z$S(B @samp{Reply-To:} $B%U%#!<%k%I$NN>J}$,85(B
-$B5-;v$KB8:_$9$k>l9g$@$1!"(B@samp{To:} $B$K855-;vCf$N(B @samp{Reply-To:} $B%U%#!<(B
-$B%k%I$,=`Hw$5$l$^$9!#(B)
+$B$N$h$&$K@_Dj$7$^$9!#$3$3$G%j%9%H(B @code{wl-draft-reply-without-argument-list}
+$B$N3FMWAG$O(B
 
-@c ($B:G8e$N9T$N0UL#$O!"%I%i%U%H$N(B @samp{To:} $B$K855-;vCf$N(B @samp{From:} $B%U%#!<(B
-@c $B%k%I$,!"%I%i%U%H$N(B @samp{Cc:} $B$K855-;v$N(B @samp{To:} $B%U%#!<%k%I$*$h$S(B 
-@c @samp{Cc:} $B%U%#!<%k%I!"$=$7$F(B @samp{Newsgroups:} $B$K855-;v$N(B c
-@c @samp{Newsgroups:} $B%U%#!<%k%I$,$=$l$>$l(B ($B$"$l$P(B) $B=`Hw$5$l$k$H$$$&$3$H$G(B
-@c $B$9!#(B)
+@example
+(key . (to-list cc-list newsgroup-list))
+@end example
+
+$B$H$J$C$F$*$j!"(B@samp{key} $B$G;XDj$7$?%U%#!<%k%I$,B8:_$9$k$H$-$K!"?F%a%C%;!<%8(B
+$B$N(B @samp{to-list} $B$G;XDj$5$l$k%X%C%@$r!"Ap9F$N(B @samp{To:} $B$K%3%T!<$7$^$9!#(B
+$B$^$?F1MM$K!"?F$N(B @samp{cc-list}, @samp{newsgroup-list} $B$OAp9F$N(B @samp{Cc:},
+@samp{Newsgroups:} $B$K%3%T!<$5$l$^$9!#(B
+
+$BNc$r5s$2$F@bL@$7$^$9!#(B
+
+@lisp
+("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+@end lisp
+
+$B?F%a%C%;!<%8$K(B @samp{Mail-Followup-To} $B%U%#!<%k%I$,B8:_$7$?$H$-$K%^%C%A$7$^$9!#(B
+$B?F%a%C%;!<%8$N(B @samp{Mail-Followup-To} $B$*$h$S(B @samp{Newsgroups} 
+$B%U%#!<%k%I$NFbMF$r!"Ap9F$N(B @samp{To} $B$*$h$S(B @samp{Newsgroups} $B$K%3%T!<$7$^$9!#(B
+
+@lisp
+(("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
+@end lisp
+
+$B?F%a%C%;!<%8$K(B @samp{X-ML-Name} $B$*$h$S(B @samp{Reply-To} $B$NN>J}$,B8:_$7$?(B
+$B$H$-$K%^%C%A$7$^$9!#(B
+$B?F%a%C%;!<%8$N(B @samp{Reply-To} $B$rAp9F$N(B @samp{To} $B$K%3%T!<$7$^$9!#(B
+
+@lisp
+("From" . (("From") ("To" "Cc") ("Newsgroups")))
+@end lisp
+
+$B?F%a%C%;!<%8$N(B @samp{From} $B$rAp9F$N(B @samp{To} $B$K!"?F$N(B @samp{To} $B$*$h$S(B
+@samp{Cc} $B$rAp9F$N(B @samp{Cc} $B$K!"(B@samp{Newsgroups} $B$r(B @samp{Newsgroups}
+$B$K$=$l$>$l%3%T!<$7$^$9!#(B
+
+$B$3$l$i$O=gHV$KI>2A$5$l!":G=i$K%^%C%A$7$?$b$N$,;H$o$l$^$9!#(B
 
 $BF1MM$K$7$F!"(Bprefix argument $BIU$-$G(B  @kbd{a} $B$r2!$7$?$H$-$NF0:n$,!"(B
 @code{wl-draft-reply-with-argument-list} $B$G@_Dj$G$-$^$9!#(B
+
+
+$B$^$?!"4X?t(B($B?F%a%C%;!<%8$N%P%C%U%!$GI>2A$5$l$k(B)$B$r(B @samp{key} $B$d(B
+@samp{to-list} $BEy$NJQ$o$j$KMQ$$$k$3$H$b$G$-$^$9!#(B
+$BNc$($P(B @kbd{C-u a} $B$7$?$H$-$K!"(B@code{wl-subscribed-mailing-list} $B$N(B
+$B%"%I%l%9$,4^$^$l$k%a!<%k$KBP$7$F$O%a!<%j%s%0%j%9%H$K$N$_JV?.$7$?$$>l9g!"(B
+$B<!$N$h$&$J@_Dj$,$G$-$^$9!#(B
+
+@lisp
+@group
+(defun wl-mailing-list-addresses ()
+  (let (list-addrs)
+    (dolist (to (mapcar
+		 (lambda (addr)
+		   (nth 1 (std11-extract-address-components addr)))
+		 (wl-parse-addresses
+		  (wl-concat-list
+		   (elmo-multiple-fields-body-list (list "To" "Cc"))
+		   ","))))
+      (when (elmo-string-matched-member to wl-subscribed-mailing-list t)
+	(setq list-addrs (cons to list-addrs))))
+    (nreverse list-addrs)))
+
+(setq wl-draft-reply-with-argument-list
+      '((wl-mailing-list-addresses . (wl-mailing-list-addresses nil nil))
+	("Reply-To" . (("Reply-To") nil nil))
+	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+	("From" . (("From") nil nil))))
+@end group
+@end lisp
+
 
 $BCm!'(B $B<+J,$,=P$7$?%a!<%k$KJV?.$9$k:]$NF0:n$O!"$=$l$i$KBe$o$C$F(B
 @code{wl-draft-reply-myself-without-argument-list},
