@@ -403,7 +403,6 @@ Returns non-nil if bottom of message."
 			(point-max)))
 	    (goto-char start)
 	    (while (re-search-forward (nth 1 entry) end t)
-	      (goto-char (match-end 0))
 	      (wl-message-add-button
 	       (match-beginning (nth 2 entry))
 	       (match-end (nth 2 entry))

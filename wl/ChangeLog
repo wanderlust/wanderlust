@@ -1,5 +1,8 @@
 2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-message.el (wl-message-add-buttons-to-header): Eliminated
+	needless `goto-char'.
+
 	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay): Call
 	`wl-summary-redisplay-no-mime-internal' instead of
 	`wl-summary-redisplay-no-mime'.
