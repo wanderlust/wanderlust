@@ -1,3 +1,7 @@
+2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.11.31.
+
 2004-09-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (wl-biff-check-folders): Ignore non-existent folder.

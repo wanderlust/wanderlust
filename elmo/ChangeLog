@@ -1,3 +1,7 @@
+2004-09-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.31.
+
 2004-09-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Use
