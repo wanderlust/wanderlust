@@ -1028,8 +1028,8 @@ interpreted as cited text.)"
     (wl-highlight-message beg end nil)
     (unless for-draft
       (wl-highlight-message-add-buttons-to-header beg end)
-      (and wl-highlight-x-face-func
-	   (funcall wl-highlight-x-face-func beg end)))
+      (when wl-highlight-x-face-func
+	(funcall wl-highlight-x-face-func)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)

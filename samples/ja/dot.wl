@@ -1,6 +1,5 @@
 ;;;							-*- emacs-lisp -*-
 ;;; ~/.wl (setting file for Wanderlust)
-;;;						Last-Modified: 1999-11-07
 ;;;
 
 ;; まず，次の設定を ~/.emacs などに書いてください。
@@ -351,10 +350,7 @@
 	       'x-face-xmas-wl-display-x-face))
 	((module-installed-p 'x-face-mule)	;; for Mule (GNU Emacs)
 	 ;; x-face-mule 0.20以後
-	 (setq wl-highlight-x-face-func
-	       (function
-		(lambda (beg end)
-		  (x-face-mule-x-face-decode-message-header beg end))))
+	 (setq wl-highlight-x-face-func 'x-face-decode-message-header)
 	 (setq x-face-mule-highlight-x-face-style 'xmas)
 	 (require 'x-face-mule)
 	 )))
