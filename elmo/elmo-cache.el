@@ -1,7 +1,7 @@
 ;;; elmo-cache.el -- Cache modules for Elmo.
 
-;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright 2000 Kenichi OKADA <okada@opaopa.org>
+;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000 Kenichi OKADA <okada@opaopa.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Kenichi OKADA <okada@opaopa.org>

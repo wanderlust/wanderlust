@@ -1,9 +1,10 @@
 ;;; elmo-localnews.el -- Local News Spool Interface for ELMO.
 
-;; Copyright 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;;                          Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author:  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;;	Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).

@@ -1,12 +1,12 @@
 ;;; elmo-archive.el -- Archive folder of ELMO.
 
-;; Copyright 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;;                          Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
-;; Author:  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;; Author: OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+;;	Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
 ;; Created: Sep 13, 1998
-;; Revised: Dec 15, 1998
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 

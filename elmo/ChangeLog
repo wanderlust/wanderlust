@@ -1,5 +1,29 @@
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-archive.el (toplevel): Added (C) to copyright notice, and
+	sync Author header.
+	* elmo-cache.el (toplevel): Ditto.
+	* elmo-database.el (toplevel): Ditto.
+	* elmo-date.el (toplevel): Ditto.
+	* elmo-dop.el (toplevel): Ditto.
+	* elmo-filter.el (toplevel): Ditto.
+	* elmo-imap4.el (toplevel): Ditto.
+	* elmo-internal.el (toplevel): Ditto.
+	* elmo-localdir.el (toplevel): Ditto.
+	* elmo-localnews.el (toplevel): Ditto.
+	* elmo-maildir.el (toplevel): Ditto.
+	* elmo-msgdb.el (toplevel): Ditto.
+	* elmo-multi.el (toplevel): Ditto.
+	* elmo-net.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+	* elmo-pipe.el (toplevel): Ditto.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-util.el (toplevel): Ditto.
+	* elmo-vars.el (toplevel): Ditto.
+	* elmo2.el (toplevel): Ditto.
+	* mmelmo-imap4.el (toplevel): Ditto.
+	* mmelmo.el (toplevel): Ditto.
+
 	* elmo-version.el (elmo-version): Move to top.
 
 	* elmo-cache.el (toplevel): Fixed multiple Author header format.
