@@ -1,3 +1,14 @@
+2000-05-20  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-vars.el (elmo-use-overview-hashtb): New variable. If
+	non-nil, use hash table for overview.
+	(elmo-hash-maximum-size): New variable.
+	* elmo-msgdb.el (elmo-msgdb-overview-hashtb): New variable.
+	(elmo-msgdb-make-overview-hashtb): New function.
+	(elmo-msgdb-clear-overview-hashtb): New function.
+	(elmo-clear-hash-val): New macro.
+	All other related modules are changed.
+
 2000-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-move-msgs): If there's other message with
