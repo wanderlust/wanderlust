@@ -551,7 +551,7 @@ content of MSGDB is changed."
 		     (expand-file-name
 		      (elmo-safe-filename fname)
 		      (expand-file-name "folder" elmo-msgdb-dir)))))
-    (elmo-object-load flist-file elmo-mime-charset t)))
+    (elmo-object-load flist-file nil t)))
 
 (defun elmo-msgdb-flist-save (fname flist)
   (let ((flist-file (expand-file-name
@@ -559,7 +559,7 @@ content of MSGDB is changed."
 		     (expand-file-name
 		      (elmo-safe-filename fname)
 		      (expand-file-name "folder" elmo-msgdb-dir)))))
-    (elmo-object-save flist-file flist elmo-mime-charset)))
+    (elmo-object-save flist-file flist)))
 
 (defun elmo-crosspost-alist-load ()
   (elmo-object-load (expand-file-name
