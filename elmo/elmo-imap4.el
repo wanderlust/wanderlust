@@ -567,11 +567,40 @@ BUFFER must be a single-byte buffer."
 	  (setq append-serv (concat append-serv
 				    (elmo-network-stream-type-spec-string
 				     type)))))
-    (mapcar (lambda (fld)
-	      (concat "%" (elmo-imap4-decode-folder-string fld)
-		      (and append-serv
-			   (eval append-serv))))
-	    result)))
+    (if hierarchy
+	(let (folder folders ret)
+	  (while (setq folders (car result))
+	    (if (prog1 
+		    (string-match
+		     (concat "^\\(" root "[^" delim "]" "+\\)" delim)
+			  folders)
+		  (setq folder (match-string 1 folders)))
+		(progn
+		  (setq ret 
+			(append ret (list (list
+					   (concat "%" (elmo-imap4-decode-folder-string folder)
+						   (and append-serv
+							(eval append-serv)))))))
+		  (setq result
+			(delq nil
+			      (mapcar '(lambda (fld)
+					 (unless
+					     (string-match
+					      (concat "^" (regexp-quote folder))
+					      fld)
+					   fld))
+				      result))))
+	      (setq ret (append ret (list 
+				     (concat "%" (elmo-imap4-decode-folder-string folders)
+					     (and append-serv
+						  (eval append-serv))))))
+	      (setq result (cdr result))))
+	  ret)
+      (mapcar (lambda (fld)
+		(concat "%" (elmo-imap4-decode-folder-string fld)
+			(and append-serv
+			     (eval append-serv))))
+	      result))))
 
 (defun elmo-imap4-folder-exists-p (spec)
   (let ((session (elmo-imap4-get-session spec)))

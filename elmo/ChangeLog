@@ -1,3 +1,8 @@
+2000-11-06  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-imap4-list-folders): When hierarchy is
+	non-nil, make hierarchy.
+
 2000-11-05  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-pipe.el (elmo-pipe-drain): When calling `elmo-list-folder',
