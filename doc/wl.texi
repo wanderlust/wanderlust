@@ -312,7 +312,7 @@ There are two ways to use SSL. One is to start SSL negotiation just
 after the connection establishment (generic way). The other one is to
 start SSL negotiation by invoking STARTTLS command in the each session.
 
-To use the formar SSL (generic SSL), you must install @file{ssl.el} in
+To use the formal SSL (generic SSL), you must install @file{ssl.el} in
 the @file{utils} directory. OpenSSL command @command{openssl} is also
 required to use @file{ssl.el}. You must set @env{PATH} to the directory
 that OpenSSL commands are installed.
@@ -2286,7 +2286,7 @@ mode.
 
 @menu
 * Usage of Summary Mode::       TIPS.
-* Thread Oparations::           Thread oparations.
+* Thread Operations::           Thread operations.
 * Cache::                       File cache, Buffer cache, and Prefetch.
 * Auto Refile::                 Auto refile settings.
 * Sticky Summary::              Summary make sticky.
@@ -2295,7 +2295,7 @@ mode.
 @end menu
 
 
-@node Usage of Summary Mode, Thread Oparations, Summary, Summary
+@node Usage of Summary Mode, Thread Operations, Summary, Summary
 @section Usage (Tips)
 
 @subsection Summary Content
@@ -2424,7 +2424,7 @@ To operate multipart, you have to enter to the message buffer.
 @xref{Message}.
 
 
-@node Thread Oparations, Cache, Usage of Summary Mode, Summary
+@node Thread Operations, Cache, Usage of Summary Mode, Summary
 @section Thread Operations
 
 For example, the following line indicates one thread (a context of a topic).
@@ -2452,7 +2452,7 @@ Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
 
 
-@node Cache, Auto Refile, Thread Oparations, Summary
+@node Cache, Auto Refile, Thread Operations, Summary
 @section Cache
 
 @subsection Cache File
@@ -4327,7 +4327,7 @@ Wanderlust has on-line and off-line states.
 
 @menu
 * Off-line State::              Wanderlust has on-line and off-line states.
-* Enable Operations::           Enable Disconeected Oparations.
+* Enable Operations::           Enable Disconeected Operations.
 * Plugged Mode::                Switching On-line/Off-line per Server/Port.
 * Off-line State settings::     Invoking Wanderlust in the Off-line State.
 * Variables of Plugged Mode::   Customize Plugged Mode.
@@ -4352,11 +4352,11 @@ ignores uncached messages.
 
 
 @node Enable Operations, Plugged Mode, Off-line State, Disconnected Operations
-@section Enable Disconeected Oparations
+@section Enable Disconeected Operations
 
 Even in the off-line state, provided that relevant messages are cached,
 and the variable @code{elmo-enable-disconnected-operation} (described
-later) is non-nil, you can following oparations:
+later) is non-nil, you can following operations:
 @xref{Plugged Mode}, @xref{Off-line State settings}.
 
 @menu

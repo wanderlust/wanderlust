@@ -2309,7 +2309,7 @@ Non-nil $B$J$i%a%C%;!<%8$,:o=|$5$l$?$H$-$K%U%)%k%@%b!<%I$GL$FI?t$r%A%'%C%/(B
 
 @menu
 * Usage of Summary mode::       $B;HMQJ}K!(B
-* Thread Oparations::           $B%9%l%C%I$NA`:n(B
+* Thread Operations::           $B%9%l%C%I$NA`:n(B
 * Cache::                       $B%-%c%C%7%e$H@hFI$_5!G=(B
 * Auto Refile::                 $B<+F0%j%U%!%$%k(B
 * Sticky Summary::              $B%9%F%#%C%-!<%5%^%j(B
@@ -2318,7 +2318,7 @@ Non-nil $B$J$i%a%C%;!<%8$,:o=|$5$l$?$H$-$K%U%)%k%@%b!<%I$GL$FI?t$r%A%'%C%/(B
 @end menu
 
 
-@node Usage of Summary mode, Thread Oparations, Summary, Summary
+@node Usage of Summary mode, Thread Operations, Summary, Summary
 @section $B;HMQJ}K!(B(TIPS)
 
 @subsection $B%5%^%j$NI=<(FbMF(B
@@ -2440,7 +2440,7 @@ IMAP $B%U%)%k%@$N%a%C%;!<%8$d(B NNTP $B%U%)%k%@$N%K%e!<%95-;v$rFI$`$3$H$,$G$-
 @xref{Message}.
 
 
-@node Thread Oparations, Cache, Usage of Summary mode, Summary
+@node Thread Operations, Cache, Usage of Summary mode, Summary
 @section $B%9%l%C%I$NA`:n(B
 
 $BNc$($P!"(B
@@ -2467,7 +2467,7 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @kbd{t} $B$+$i;O$^$k%3%^%s%I$G!"$=$N%9%l%C%I$KB0$9$k%a%C%;!<%8$KBP$7$F0l3g$7$F=hM}$r9T$&$3$H$,$G$-$^$9!#(B
 
 
-@node Cache, Auto Refile, Thread Oparations, Summary
+@node Cache, Auto Refile, Thread Operations, Summary
 @section $B%-%c%C%7%e(B
 
 @subsection $B%-%c%C%7%e%U%!%$%k(B
