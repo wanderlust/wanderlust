@@ -2,6 +2,7 @@
 
 	* elmo-imap4.el (elmo-imap4-folder-exists-p): Don't cause an error when
 	the mailbox does not exist.
+	(elmo-imap4-parse-namespace): Copy `elmo-imap4-extra-namespace-alist'.
 
 2000-08-30  OKAZAKI Tetsurou  <okazaki@be.to>
 
