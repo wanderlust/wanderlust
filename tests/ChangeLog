@@ -1,3 +1,8 @@
+2002-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-dist.el (test-version-readme): New testcase.
+	(test-wl-demo-copyright-notice): Ditto.
+
 2002-10-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el (check-modules-flim-content-transfer-encoding):

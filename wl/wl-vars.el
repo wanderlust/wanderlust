@@ -1200,10 +1200,26 @@ See also variable `wl-draft-parent-folder'."
   :group 'wl-draft
   :group 'wl-pref)
 
+(defcustom wl-draft-buffer-style 'full
+  "Style of draft buffer except for `wl-summary-reply' and `wl-summary-forward'
+'keep is to use current window, 'full is to use full frame window and
+'split is to split current window.
+If it is a function, it is called with the draft buffer as an argument."
+  :type '(choice (const :tag "Keep window" keep)
+		 (const :tag "Split window" split)
+		 (const :tag "Full window"full)
+		 (sexp :tag "Use Function"))
+  :group 'wl-draft)
+
 (defcustom wl-draft-reply-buffer-style 'split
-  "'split or 'full."
-  :type '(radio (const split)
-		(const full))
+  "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'
+'keep is to use message buffer window, 'full is to use full frame window and
+'split is to split message buffer window.
+If it is a function, it is called with the draft buffer as an argument."
+  :type '(choice (const :tag "Keep window" keep)
+		 (const :tag "Split window" split)
+		 (const :tag "Full window"full)
+		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
 (defcustom wl-draft-queue-save-variables

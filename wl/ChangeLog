@@ -1,7 +1,18 @@
-2002-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
+2002-11-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-message.el (wl-message-get-original-buffer): Avoid
-	'Selecting deleted buffer' error when original buffer is killed.
+	* wl-summary.el (wl-summary-reply): Don't treat switch buffer here.
+	(wl-summary-forward): Ditto.
+
+	* wl-vars.el (wl-draft-buffer-style): Added choice of keep and
+	function.
+	(wl-draft-buffer-style): New use option.
+
+	* wl-draft.el (wl-draft-create-buffer): Abolish argument `full'.
+	(wl-draft): Follow the change above.
+	(wl-draft-create-buffer): Use wl-draft-reply-buffer-style and
+	wl-draft-buffer-style.
+	(wl-user-agent-compose): Bind wl-draft-buffer-style with
+	switch-function.
 
 2002-10-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
@@ -30,6 +41,20 @@
 	(wl-message-buffer-prefetch-move-spec-plugged-alist,
 	wl-message-buffer-prefetch-move-spec-unplugged-alist): Abolish.
 	(wl-message-buffer-prefetch-get-next): Follow the change above.
+
+2002-11-01  Tomotaka SUWA  <cooper@saitama.fujimic.fujisankei-g.co.jp>
+
+	* wl-address.el (wl-address-make-completion-entry): Extracted from
+	`wl-address-make-completion-list'.
+	(wl-address-enable-strict-loading): New variable.
+	(wl-address-make-completion-list): Revive petname duplication
+	inquiry, and enable it if `wl-address-enable-strict-loading'.
+	(Note: this should be fixed in future. Ref: [wl:10773],[wl:10455])
+
+2002-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-get-original-buffer): Avoid
+	'Selecting deleted buffer' error when original buffer is killed.
 
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 

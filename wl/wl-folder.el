@@ -811,7 +811,7 @@ Optional argument ARG is repeart count."
 	 (t
 	  (message "Uncheck(unplugged) \"%s\"" entity)))))
     (if ret-val
-	(message "Checking \"%s\" is done."
+	(message "Checking \"%s\" is done"
 		 (if (consp entity) (car entity) entity)))
     (run-hooks 'wl-folder-check-entity-hook)
     ret-val))

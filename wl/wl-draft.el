@@ -1571,13 +1571,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
   (let (buf-name header-alist-internal)
     (setq buf-name
-	  (wl-draft-create-buffer
-	   (or
-	    (eq this-command 'wl-draft)
-	    (eq this-command 'wl-summary-write)
-	    (eq this-command 'wl-summary-write-current-folder)
-	    (eq this-command 'wl-folder-write-current-folder))
-	   parent-folder))
+	  (wl-draft-create-buffer parent-folder))
 
     (unless (cdr (assq 'From header-alist))
       (setq header-alist
@@ -1619,11 +1613,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (goto-char (point-max))))
     buf-name))
 
-(defun wl-draft-create-buffer (&optional full parent-folder)
+(defun wl-draft-create-buffer (&optional parent-folder)
   (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
 	 (summary-buf (wl-summary-get-buffer parent-folder))
-	buf-name file-name num change-major-mode-hook)
+	buf-name file-name num change-major-mode-hook
+	(reply-or-forward (or (eq this-command 'wl-summary-reply)
+			      (eq this-command 'wl-summary-forward))))
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
     (setq num (elmo-max-of-list
@@ -1637,16 +1633,46 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			  (elmo-message-file-name
 			   (wl-folder-get-elmo-folder wl-draft-folder)
 			   num))))
+    ;; switch-buffer according to draft buffer style.
     (if wl-draft-use-frame
 	(switch-to-buffer-other-frame buf-name)
-      (switch-to-buffer buf-name))
+      (if reply-or-forward
+	  (case wl-draft-reply-buffer-style
+	    (split
+	     (split-window-vertically)
+	     (other-window 1)
+	     (switch-to-buffer buf-name))
+	    (keep
+	     (switch-to-buffer buf-name))
+	    (full
+	     (delete-other-windows)
+	     (switch-to-buffer buf-name))
+	    (t
+	     (if (functionp wl-draft-reply-buffer-style)
+		 (funcall wl-draft-reply-buffer-style buf-name)
+	       (error "Invalid value for wl-draft-reply-buffer-style"))))
+	(case wl-draft-buffer-style
+	  (split
+	   (when (and (eq major-mode 'wl-summary-mode)
+		      wl-message-buffer
+		      (buffer-live-p wl-message-buffer)
+		      (get-buffer-window wl-message-buffer))
+	     (delete-window (get-buffer-window wl-message-buffer)))
+	   (split-window-vertically)
+	   (other-window 1)
+	   (switch-to-buffer buf-name))
+	  (keep
+	   (switch-to-buffer buf-name))
+	  (full
+	   (delete-other-windows)
+	   (switch-to-buffer buf-name))
+	  (t (if (functionp wl-draft-buffer-style)
+		 (funcall wl-draft-buffer-style buf-name)
+	       (error "Invalid value for wl-draft-buffer-style"))))))
     (set-buffer buf-name)
     (if (not (string-match (regexp-quote wl-draft-folder)
 			   (buffer-name)))
 	(rename-buffer (concat wl-draft-folder "/" (int-to-string num))))
-    (if (or (eq wl-draft-reply-buffer-style 'full)
-	    full)
-	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
     (make-local-variable 'truncate-partial-width-windows)
@@ -2386,7 +2412,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
 	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
-	(wl-draft-reply-buffer-style 'split))
+	(wl-draft-buffer-style switch-function))
     (when (eq switch-function 'switch-to-buffer-other-window)
       (when (one-window-p t)
 	(if (window-minibuffer-p) (other-window 1))

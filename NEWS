@@ -61,6 +61,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** The uses of wl-generate-mailer-string-function has been changed.
    Specify a function which returns some string to appear in User-Agent header.
 
+** The Reference Card (doc/wl-refcard.tex) describes important key bindings.
+
 * Changes in 2.8.0 from 2.6.1
 
 ** Nemacs, Mule 2.3 based on Emacs 19.28 are not supported any longer.

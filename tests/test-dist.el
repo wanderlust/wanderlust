@@ -137,3 +137,29 @@
        (string=
 	(product-code-name (product-find 'wl-version))
 	(match-string 2))))))
+
+;; README, README.ja (toplevel)
+(luna-define-method test-version-readme ((case test-dist))
+  (require 'wl-version)
+  (when (string= (wl-version-status) "stable")
+    (mapc
+     (lambda (file)
+       (with-temp-buffer
+	 (insert-file-contents (expand-file-name file "./"))
+	 (re-search-forward "checkout -r wl-\\([0-9]+\\)_\\([0-9]+\\) wanderlust")
+	 (lunit-assert
+	  (= (string-to-number (match-string 1))
+	     (nth 0 (product-version (product-find 'wl-version)))))
+	 (lunit-assert
+	  (= (string-to-number (match-string 2))
+	     (nth 1 (product-version (product-find 'wl-version)))))))
+     '("README" "README.ja"))))
+
+;; copyright notice (beta only)
+(luna-define-method test-wl-demo-copyright-notice ((case test-dist))
+  (require 'wl-demo)
+  (when (string= (wl-version-status) "beta")
+    (lunit-assert
+     (string-match
+      (format-time-string "%Y" (current-time))
+      wl-demo-copyright-notice))))
