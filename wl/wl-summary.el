@@ -3657,26 +3657,26 @@ Return t if message exists."
 	start-point
 	draft-buf)
     (wl-summary-jump-to-msg (car mlist))
-    (wl-summary-reply arg t)
-    (goto-char (point-max))
-    (setq start-point (point-marker))
-    (setq draft-buf (current-buffer))
-    (save-window-excursion
-      (while mlist
-	(set-buffer summary-buf)
-	(delete-other-windows)
-	(wl-summary-jump-to-msg (car mlist))
-	(wl-summary-redisplay)
-	(set-buffer draft-buf)
-	(goto-char (point-max))
-	(wl-draft-yank-original)
-	(setq mlist (cdr mlist)))
-      (goto-char start-point)
-      (save-excursion
-	(set-buffer summary-buf)
-	(wl-summary-delete-all-temp-marks)))
-    (wl-draft-reply-position wl-draft-reply-default-position)
-    (run-hooks 'wl-mail-setup-hook)))
+    (when (wl-summary-reply arg t)
+      (goto-char (point-max))
+      (setq start-point (point-marker))
+      (setq draft-buf (current-buffer))
+      (save-window-excursion
+	(while mlist
+	  (set-buffer summary-buf)
+	  (delete-other-windows)
+	  (wl-summary-jump-to-msg (car mlist))
+	  (wl-summary-redisplay)
+	  (set-buffer draft-buf)
+	  (goto-char (point-max))
+	  (wl-draft-yank-original)
+	  (setq mlist (cdr mlist)))
+	(goto-char start-point)
+	(save-excursion
+	  (set-buffer summary-buf)
+	  (wl-summary-delete-all-temp-marks)))
+      (wl-draft-reply-position wl-draft-reply-default-position)
+      (run-hooks 'wl-mail-setup-hook))))
 
 (defun wl-summary-reply-with-citation (&optional arg)
   (interactive "P")
@@ -3880,21 +3880,26 @@ Reply to author if invoked with ARG."
   (let ((folder wl-summary-buffer-elmo-folder)
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
+	(winconf (current-window-configuration))
 	mes-buf)
     (when number
       (save-excursion
 	(wl-summary-redisplay-internal folder number))
-      (elmo-folder-mark-as-answered folder (list number))
-      (wl-summary-update-mark number)
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
-      (when (setq mes-buf (wl-message-get-original-buffer))
-	(wl-draft-reply mes-buf arg summary-buf number)
-	(wl-draft-reply-position wl-draft-reply-default-position)
-	(unless without-setup-hook
-	  (run-hooks 'wl-mail-setup-hook)))
+      (condition-case err
+	  (when (setq mes-buf (wl-message-get-original-buffer))
+	    (wl-draft-reply mes-buf arg summary-buf number)
+	    (wl-draft-reply-position wl-draft-reply-default-position)
+	    (unless without-setup-hook
+	      (run-hooks 'wl-mail-setup-hook)))
+	(error (set-window-configuration winconf)
+	       (signal (car err)(cdr err))))
+      (with-current-buffer summary-buf
+	(elmo-folder-mark-as-answered folder (list number))
+	(wl-summary-update-mark number))
       t)))
 
 (defun wl-summary-write ()

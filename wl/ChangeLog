@@ -1,3 +1,9 @@
+2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-target-mark-reply-with-citation): 
+	Check return value of wl-summary-reply.
+	(wl-summary-reply): Recover window configuration when an error occured.
+
 2003-07-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-resend-message): Abolished, the
