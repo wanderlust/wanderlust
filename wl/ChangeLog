@@ -1,3 +1,10 @@
+2002-01-17  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-smtp-password-key): New function.
+	(wl-smtp-extension-bind): Use `wl-smtp-password-key'
+	(wl-draft-send-mail-with-smtp): Ditto.
+	(wl-draft-send-mail-with-pop-before-smtp): Fix.
+
 2002-01-12  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-vars.el (wl-unique-id-suffix): Move from `wl-utils.el'

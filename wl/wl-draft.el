@@ -102,6 +102,10 @@
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
 
+(defsubst wl-smtp-password-key (user mechnism server)
+  (format "SMTP:%s/%s@%s"
+	  user mechnism server))
+
 (defmacro wl-smtp-extension-bind (&rest body)
   (` (let* ((smtp-sasl-mechanisms
 	     (if wl-smtp-authenticate-type
@@ -125,9 +129,10 @@
 	     (function
 	      (lambda (prompt)
 		(elmo-get-passwd
-		 (format "%s@%s"
-			 smtp-sasl-user-name
-			 smtp-server)))))
+		 (wl-smtp-password-key
+		  smtp-sasl-user-name
+		  (car smtp-sasl-mechanisms)
+		  smtp-server)))))
        (,@ body))))
 
 (defun wl-draft-insert-date-field ()
@@ -995,6 +1000,12 @@ non-nil."
 		    (error
 		     (wl-draft-write-sendlog 'failed 'smtp smtp-server
 					     recipients id)
+		     (if (/= (nth 1 err) 334)
+			 (elmo-remove-passwd
+			  (wl-smtp-password-key
+			   smtp-sasl-user-name
+			   (car smtp-sasl-mechanisms)
+			   smtp-server)))
 		     (signal (car err) (cdr err)))))
 		 (wl-draft-set-sent-message 'mail 'sent)
 		 (wl-draft-write-sendlog
@@ -1005,22 +1016,26 @@ non-nil."
 (defun wl-draft-send-mail-with-pop-before-smtp ()
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
-  (condition-case ()
-      (let ((session (elmo-pop3-get-session
-		      (luna-make-entity
-		       'elmo-pop3-folder
-		       :user (or wl-pop-before-smtp-user
-				 elmo-pop3-default-user)
-		       :server (or wl-pop-before-smtp-server
-				   elmo-pop3-default-server)
-		       :port (or wl-pop-before-smtp-port
-				 elmo-pop3-default-port)
-		       :auth (or wl-pop-before-smtp-authenticate-type
-				 elmo-pop3-default-authenticate-type)
-		       :stream-type (or wl-pop-before-smtp-stream-type
-					elmo-pop3-default-stream-type)))))
-	(when session (elmo-network-close-session session)))
-    (error))
+  (let ((session
+	 (luna-make-entity
+	  'elmo-pop3-folder
+	  :user   (or wl-pop-before-smtp-user
+		      elmo-pop3-default-user)
+	  :server (or wl-pop-before-smtp-server
+		      elmo-pop3-default-server)
+	  :port   (or wl-pop-before-smtp-port
+		      elmo-pop3-default-port)
+	  :auth   (or wl-pop-before-smtp-authenticate-type
+		      elmo-pop3-default-authenticate-type)
+	  :stream-type (or wl-pop-before-smtp-stream-type
+			   elmo-pop3-default-stream-type))))
+    (condition-case error
+	(progn
+	  (elmo-pop3-get-session session)
+	  (when session (elmo-network-close-session session)))
+      (error
+       (elmo-network-close-session session)
+       (signal (car error)(cdr error)))))
   (wl-draft-send-mail-with-smtp))
 
 (defun wl-draft-insert-required-fields (&optional force-msgid)
