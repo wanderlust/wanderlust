@@ -493,6 +493,18 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
 		       (symbol :tag "file name")))
   :group 'wl-pref)
 
+(defcustom wl-demo-image-filter-alist
+  '((xpm . wl-demo-xpm-set-background))
+  "An alist of image type and filter function."
+  :type '(repeat (cons symbol function))
+  :group 'wl-pref)
+
+(defcustom wl-demo-background-color "None"
+  "The color name for demo background.
+Used in the filter function `wl-demo-filter-xpm-background'."
+  :type '(string :tag "Color name")
+  :group 'wl-pref)
+
 (defcustom wl-envelope-from nil
   "*Envelope From used in SMTP.
 If nil, `wl-from' is used."

@@ -1,5 +1,12 @@
 2003-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-demo-image-filter-alist): New variable
+	(wl-demo-background-color): Ditto.
+
+	* wl-demo.el (wl-demo-xpm-set-background): New function.
+	(wl-demo-image-filter): Ditto.
+	(wl-demo-insert-image)[XEmacs,Emacs21]: Use it.
+
 	* wl-vars.el (wl-demo-icon-name-alist): New variable.
 
 	* wl-demo.el (wl-demo-icon-name): Define as function.

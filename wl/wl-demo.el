@@ -128,6 +128,28 @@ Yet Another Message Interface On Emacsen"
 	  (delq nil (list xpm bitmap xbm '("ascii")))))
     '(("ascii"))))
 
+(defun wl-demo-xpm-set-background ()
+  "A filter function to set xpm background.
+`wl-demo-background-color' is used for the background color."
+  (when (search-forward "None" nil t)
+    (replace-match wl-demo-background-color)))
+
+(defun wl-demo-image-filter (file type)
+  "Get filtered image data.
+FILE is the image file name.
+TYPE is the filter function."
+  (let ((filter (catch 'found
+		  (dolist (pair wl-demo-image-filter-alist)
+		    (when (eq (car pair) type)
+		      (throw 'found (cdr pair)))))))
+    (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (insert-file-contents file)
+      (goto-char (point-min))
+      (when filter
+	(funcall filter))
+      (buffer-string))))
+
 (defun wl-demo-insert-image (image-type)
   "Insert a logo image at the point and position it to be centered.
 IMAGE-TYPE specifies what a type of image should be displayed.
@@ -163,7 +185,9 @@ Return a number of lines that an image occupies in the buffer."
 	  (cond ((featurep 'xemacs)
 		 (setq width (window-pixel-width)
 		       height (window-pixel-height)
-		       image (make-glyph (vector image-type ':file file)))
+		       image (make-glyph (vector image-type ':data
+						 (wl-demo-image-filter
+						  file image-type))))
 		 (when (eq 'xbm image-type)
 		   (set-glyph-face image 'wl-highlight-logo-face))
 		 (insert-char ?\  (max 0 (/ (+ (* (- width (glyph-width image))
@@ -178,7 +202,9 @@ Return a number of lines that an image occupies in the buffer."
 			  (and (eq 'xbm image-type)
 			       (image-type-available-p 'xbm))))
 		 ;; Use the new redisplay engine on Emacs 21.
-		 (setq image (create-image file image-type)
+		 (setq image (create-image (wl-demo-image-filter file
+								 image-type)
+					   image-type t)
 		       width (image-size image)
 		       height (cdr width)
 		       width (car width))
