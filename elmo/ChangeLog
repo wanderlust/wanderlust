@@ -1,3 +1,8 @@
+2000-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): If there's other message with
+	same message-id, don't use cache.
+
 2000-05-18  Nishimoto Masaki <nishimoto@gaju.org>
 
 	* elmo-localdir.el (elmo-localdir-pack-number): Fixed problem when
