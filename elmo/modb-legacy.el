@@ -59,6 +59,10 @@
 (defconst modb-legacy-important-mark "$"
   "Mark for important message.")
 
+(defconst modb-legacy-flag-list
+  '(new unread important answered cached read uncached)
+  "A list of flag symbol which is suppoted by legacy msgdb.")
+
 (eval-and-compile
   (luna-define-class modb-legacy (modb-generic)
 		     (overview number-alist mark-alist index))
@@ -140,6 +144,8 @@
 
 ;;;
 
+(defsubst modb-legacy-suppoted-flag-p (flag)
+  (memq flag modb-legacy-flag-list))
 
 (defvar modb-legacy-unread-marks-internal nil)
 (defsubst modb-legacy-unread-marks ()
@@ -363,6 +369,9 @@ Return a list of message numbers which have duplicated message-ids."
 
 (luna-define-method elmo-msgdb-set-flag ((msgdb modb-legacy)
 					 number flag)
+  (unless (modb-legacy-suppoted-flag-p flag)
+    (error "Flag `%s' is not supproted by this msgdb type"
+	   (capitalize (symbol-name flag))))
   (case flag
     (read
      (elmo-msgdb-unset-flag msgdb number 'unread))
@@ -385,6 +394,9 @@ Return a list of message numbers which have duplicated message-ids."
 
 (luna-define-method elmo-msgdb-unset-flag ((msgdb modb-legacy)
 					   number flag)
+  (unless (modb-legacy-suppoted-flag-p flag)
+    (error "Flag `%s' is not supproted by this msgdb type"
+	   (capitalize (symbol-name flag))))
   (case flag
     (read
      (elmo-msgdb-set-flag msgdb number 'unread))

@@ -80,7 +80,7 @@ FLAG is a symbol which is one of the following:
   `important' ... Message which is important.
   `answered'  ... Message which is answered.
   `cached'    ... Message which is cached.
-'sugar' falg:
+'sugar' flag:
   `read'      ... Message which is already read.
   `uncached'  ... Message which is not cached.")
 
@@ -94,7 +94,7 @@ FLAG is a symbol which is one of the following:
   `important' ... Message which is important.
   `answered'  ... Message which is answered.
   `cached'    ... Message which is cached.
-'sugar' falg:
+'sugar' flag:
   `read'      ... Message which is already read.
   `uncached'  ... Message which is not cached.
   `all'       ... Remove all flags.")

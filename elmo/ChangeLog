@@ -1,3 +1,10 @@
+2004-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-legacy.el (modb-legacy-flag-list): New constant.
+	(modb-legacy-suppoted-flag-p): New internal function.
+	(elmo-msgdb-set-flag): Check flag by `modb-legacy-suppoted-flag-p'.
+	(elmo-msgdb-unset-flag): Ditto.
+
 2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-make-folder): Remove text properties for prefix.
