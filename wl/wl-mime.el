@@ -39,6 +39,8 @@
   (defalias-maybe 'pgg-display-output-buffer 'ignore)
   (defalias-maybe 'pgg-verify-region 'ignore))
 
+(defvar mime-edit-temp-message-buffer)
+
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -185,6 +187,18 @@ It calls following-method selected from variable
 	  ((boundp attr)
 	   (symbol-value attr)))))
 
+(defun wl-mime-quit-preview ()
+  "Quitting method for mime-view."
+  (let* ((temp mime-edit-temp-message-buffer)
+	 (window (selected-window))
+	 buf)
+    (mime-preview-kill-buffer)
+    (set-buffer temp)
+    (setq buf mime-edit-buffer)
+    (kill-buffer temp)
+    (select-window window)
+    (switch-to-buffer buf)))
+
 (defun wl-draft-preview-message ()
   "Preview editing message."
   (interactive)
@@ -227,6 +241,9 @@ It calls following-method selected from variable
 		   (signal (car err) (cdr err)))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
+    (make-local-variable 'mime-preview-quitting-method-alist)
+    (setq mime-preview-quitting-method-alist
+	  '((mime-temp-message-mode . wl-mime-quit-preview)))
     (let ((buffer-read-only nil))
       (when wl-highlight-body-too
 	(wl-highlight-body))

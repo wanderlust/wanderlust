@@ -2017,7 +2017,7 @@ This function is defined for `window-scroll-functions'"
 	(funcall wl-summary-buffer-mode-line-formatter)))
 
 (defun wl-summary-jump-to-msg (&optional number)
-  (interactive)
+  (interactive "NJump to Number:")
   (let ((num (or number
 		 (string-to-int
 		  (read-from-minibuffer "Jump to Message(No.): ")))))
@@ -2028,10 +2028,6 @@ This function is defined for `window-scroll-functions'"
 	    (re-search-backward (concat "\r" num "[^0-9]") nil t))
 	(progn (beginning-of-line) t)
       nil)))
-
-(defun wl-summary-digit-jump (number)
-  (interactive "NJump to Number: ")
-  (wl-summary-jump-to-msg number))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion

@@ -1282,18 +1282,6 @@ This variable is valid when `wl-interactive-send' has non-nil value."
   :type 'boolean
   :group 'wl-draft)
 
-(defun wl-draft-quit-preview ()
-  "Quitting method for mime-view."
-  (let* ((temp mime-edit-temp-message-buffer)
-	 (window (selected-window))
-	 buf)
-    (mime-preview-kill-buffer)
-    (set-buffer temp)
-    (setq buf mime-edit-buffer)
-    (kill-buffer temp)
-    (select-window window)
-    (switch-to-buffer buf)))
-
 (defun wl-draft-send-confirm ()
   (let (answer)
     (unwind-protect
@@ -1329,7 +1317,7 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 		      (throw 'done nil)))))))
 	  (quit nil))
       (when wl-draft-send-confirm-with-preview
-	(wl-draft-quit-preview)))))
+	(wl-mime-quit-preview)))))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.

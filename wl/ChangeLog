@@ -1,5 +1,16 @@
 2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-send-confirm): Call `wl-mime-quit-preview'
+	instead of `wl-draft-quit-preview'.
+
+	* wl-mime.el (toplevel): Avoid compile warning.
+	(wl-mime-quit-preview): New function
+	(formarly defined as `wl-draft-quit-preview').
+	(wl-draft-preview-message): Use `wl-mime-quit-preview' for
+	quitting method.
+
+	* wl-draft.el: Move wl-draft-quit-preview to wl-mime.el.
+
 	* wl-folder.el (wl-folder-set-flag): Renamed from
 	`wl-draft-set-flag-on-parent'.
 
