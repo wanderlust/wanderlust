@@ -120,7 +120,7 @@ if MARK is nil, mark is removed."
     ;; return value.
     t))
 
-(defun elmo-msgdb-set-cached (msgdb number cached)
+(defun elmo-msgdb-set-cached (msgdb number cached use-cache)
   "Set message cache status.
 If mark is changed, return non-nil."
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
@@ -131,13 +131,14 @@ If mark is changed, return non-nil."
 		       'answered)
 		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id))))
     (unless (eq cached cur-cached)
       (case cur-flag
 	(read
 	 (elmo-msgdb-set-mark msgdb number
-			      (unless cached
-				elmo-msgdb-read-uncached-mark)))
+			      (if (and use-cache (not cached))
+				  elmo-msgdb-read-uncached-mark)))
 	(important nil)
 	(answered
 	 (elmo-msgdb-set-mark msgdb number
@@ -168,7 +169,8 @@ FLAG is a symbol which is one of the following:
 		     'answered)
 		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		     'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id)))
 	 mark-modified)
     (case flag
       (read
@@ -186,9 +188,7 @@ FLAG is a symbol which is one of the following:
        (unless (or (eq cur-flag 'answered) (eq cur-flag 'important))
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cur-cached
-				  (if use-cache
-				      elmo-msgdb-answered-cached-mark
-				    elmo-msgdb-answered-uncached-mark)
+				  elmo-msgdb-answered-cached-mark
 				elmo-msgdb-answered-uncached-mark)))
        (setq mark-modified t)))
     (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
@@ -211,13 +211,14 @@ FLAG is a symbol which is one of the following:
 		     'answered)
 		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		     'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id)))
 	 mark-modified)
     (case flag
       (read
        (when (eq cur-flag 'read)
 	 (elmo-msgdb-set-mark msgdb number
-			      (if (and cur-cached use-cache)
+			      (if cur-cached
 				  elmo-msgdb-unread-cached-mark
 				elmo-msgdb-unread-uncached-mark))
 	 (setq mark-modified t)))
@@ -228,7 +229,7 @@ FLAG is a symbol which is one of the following:
       (answered
        (when (eq cur-flag 'answered)
 	 (elmo-msgdb-set-mark msgdb number
-			      (if (and cur-cached (not use-cache))
+			      (if (and use-cache (not cur-cached))
 				  elmo-msgdb-read-uncached-mark))
 	 (setq mark-modified t))))
     (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
