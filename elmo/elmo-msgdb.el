@@ -828,6 +828,95 @@ Header region is supposed to be narrowed."
 	    (elmo-make-directory new-dir))
 	(rename-file old new)))))
 
+(defun elmo-generic-folder-diff (spec folder &optional number-list)
+  (let ((cached-in-db-max (elmo-folder-get-info-max folder))
+	(in-folder (elmo-call-func folder "max-of-folder"))
+	(in-db t)
+	unsync messages
+	in-db-max)
+    (if (or number-list (not cached-in-db-max))
+	(let ((number-list (or number-list
+			       (mapcar 'car
+				       (elmo-msgdb-number-load
+					(elmo-msgdb-expand-path folder))))))
+	  ;; No info-cache.
+	  (setq in-db (sort number-list '<))
+	  (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
+			      0))
+	  (if (not number-list)
+	      (elmo-folder-set-info-hashtb folder in-db-max nil)))
+      (setq in-db-max cached-in-db-max))
+    (setq unsync (if (and in-db
+			  (car in-folder))
+		     (- (car in-folder) in-db-max)
+		   (if (and in-folder
+			    (null in-db))
+		       (cdr in-folder)
+		     (if (null (car in-folder))
+			 nil))))
+    (setq messages (cdr in-folder))
+    (if (and unsync messages (> unsync messages))
+	(setq unsync messages))
+    (cons (or unsync 0) (or messages 0))))
+
+(defun elmo-generic-list-folder-unread (spec number-alist mark-alist
+					     unread-marks)
+  (delq nil
+	(mapcar
+	 (function (lambda (x)
+		     (if (member (cadr (assq (car x) mark-alist)) unread-marks)
+			 (car x))))
+	 mark-alist)))
+
+(defsubst elmo-folder-get-info (folder &optional hashtb)
+  (elmo-get-hash-val folder
+		     (or hashtb elmo-folder-info-hashtb)))
+
+(defun elmo-folder-set-info-hashtb (folder max numbers &optional new unread)
+  (let ((info (elmo-folder-get-info folder)))
+    (when info
+      (or new     (setq new     (nth 0 info)))
+      (or unread  (setq unread  (nth 1 info)))
+      (or numbers (setq numbers (nth 2 info)))
+      (or max     (setq max     (nth 3 info))))
+    (elmo-set-hash-val folder
+		       (list new unread numbers max)
+		       elmo-folder-info-hashtb)))
+
+(defun elmo-folder-set-info-max-by-numdb (folder msgdb-number)
+  (let ((num-db (sort (mapcar 'car msgdb-number) '<)))
+    (elmo-folder-set-info-hashtb
+     folder
+     (or (nth (max 0 (1- (length num-db))) num-db) 0)
+     nil ;;(length num-db)
+     )))
+
+(defun elmo-folder-get-info-max (folder)
+  "Get folder info from cache."
+  (nth 3 (elmo-folder-get-info folder)))
+
+(defun elmo-folder-get-info-length (folder)
+  (nth 2 (elmo-folder-get-info folder)))
+
+(defun elmo-folder-get-info-unread (folder)
+  (nth 1 (elmo-folder-get-info folder)))
+
+(defun elmo-folder-info-make-hashtb (info-alist hashtb)
+  (let* ((hashtb (or hashtb
+		     (elmo-make-hash (length info-alist)))))
+    (mapcar
+     '(lambda (x)
+	(let ((info (cadr x)))
+	  (and (intern-soft (car x) hashtb)
+	       (elmo-set-hash-val (car x)
+				  (list (nth 2 info)   ;; new
+					(nth 3 info)   ;; unread
+					(nth 1 info)   ;; length
+					(nth 0 info))  ;; max
+				  hashtb))))
+     info-alist)
+    (setq elmo-folder-info-hashtb hashtb)))
+
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))
 

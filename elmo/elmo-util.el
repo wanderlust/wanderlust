@@ -899,6 +899,31 @@ Otherwise treat \\ in NEWTEXT string as special:
    (goto-char (point-min))
    (read (current-buffer))))
 
+(defun elmo-list-to-string (list)
+  (let ((tlist list)
+	str)
+    (if (listp tlist)
+	(progn
+	  (setq str "(")
+	  (while (car tlist)
+	    (setq str
+		  (concat str
+			  (if (symbolp (car tlist))
+			      (symbol-name (car tlist))
+			    (car tlist))))
+	    (if (cdr tlist)
+		(setq str
+		      (concat str " ")))
+	    (setq tlist (cdr tlist)))
+	  (setq str
+		(concat str ")")))
+      (setq str 
+	    (if (symbolp tlist)
+		(symbol-name tlist)
+	      tlist)))
+    str))
+ 
+
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
     (catch 'plugged
