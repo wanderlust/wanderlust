@@ -2719,27 +2719,10 @@ If ARG, exit virtual folder."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg
-	  number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  ;; delete target-mark from buffer.
-	  (wl-summary-put-temp-mark " ")
-	  (setq number (wl-summary-message-number))
-	  (setq mlist (append mlist (list number)))
-	  (if wl-summary-highlight
-	      (wl-highlight-summary-current-line))
-	  (if number
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list))))
-	(forward-line 1))
-      (wl-summary-mark-as-read mlist)
-      ;; closed
-      (when (setq mlist wl-summary-buffer-target-mark-list)
-	(wl-summary-mark-as-read mlist)
-	(while mlist
-	  (setq wl-summary-buffer-target-mark-list
-		(delq (car mlist) wl-summary-buffer-target-mark-list))
-	  (setq mlist (cdr mlist)))))))
+	  (mlist wl-summary-buffer-temp-mark-list))
+      (dolist (number mlist)
+	(wl-summary-unset-mark number))
+      (wl-summary-mark-as-read mlist))))
 
 (defun wl-summary-target-mark-mark-as-unread ()
   (interactive)
@@ -2748,26 +2731,10 @@ If ARG, exit virtual folder."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg
-	  number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  (wl-summary-put-temp-mark " ")
-	  (setq number (wl-summary-message-number))
-	  (setq mlist (append mlist (list number)))
-	  (if wl-summary-highlight
-	      (wl-highlight-summary-current-line))
-	  (if number
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list))))
-	(forward-line 1))
-      (wl-summary-mark-as-unread mlist)
-      ;; closed
-      (when (setq mlist wl-summary-buffer-target-mark-list)
-	(wl-summary-mark-as-unread mlist)
-	(while mlist
-	  (setq wl-summary-buffer-target-mark-list
-		(delq (car mlist) wl-summary-buffer-target-mark-list))
-	  (setq mlist (cdr mlist)))))))
+	  (mlist wl-summary-buffer-target-mark-list))
+      (dolist (number mlist)
+	(wl-summary-unset-mark number))
+      (wl-summary-mark-as-unread mlist))))
 
 (defun wl-summary-target-mark-mark-as-important ()
   (interactive)
@@ -2776,19 +2743,10 @@ If ARG, exit virtual folder."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg
-	  number
 	  (mlist wl-summary-buffer-target-mark-list))
-      (while mlist
-	(if (wl-summary-jump-to-msg (car mlist))
-	    (progn
-	      (wl-summary-put-temp-mark " ")
-	      (wl-summary-mark-as-important (car mlist))
-	      (when wl-summary-highlight
-		(wl-highlight-summary-current-line)))
-	  (wl-summary-mark-as-important (car mlist)))
-	(setq wl-summary-buffer-target-mark-list
-	      (delq (car mlist) wl-summary-buffer-target-mark-list))
-	(setq mlist (cdr mlist)))
+      (dolist (number mlist)
+	(wl-summary-unset-mark number)
+	(wl-summary-mark-as-important number))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 

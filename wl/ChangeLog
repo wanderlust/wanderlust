@@ -1,3 +1,10 @@
+2003-08-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-mark-as-read): Fixed and
+	simplified.
+	(wl-summary-target-mark-mark-as-unread): Likewise.
+	(wl-summary-target-mark-mark-as-important): Likewise.
+
 2003-08-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-msg-mark-as-important): Abolished.
