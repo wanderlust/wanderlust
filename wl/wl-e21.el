@@ -453,21 +453,23 @@
 	    wl-unplugged-image (find-image `((:type xpm
 						    :file ,wl-unplugged-icon
 						    :ascent center))))))
-  (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-toggle-plugged))
-		       'help-echo "mouse-2 toggles plugged status"))))
-    (if (display-graphic-p)
-	(setq wl-modeline-plug-state-on
-	      (apply 'propertize wl-plug-state-indicator-on
-		     `(,@props display ,wl-plugged-image))
-	      wl-modeline-plug-state-off
-	      (apply 'propertize wl-plug-state-indicator-off
-		     `(,@props display ,wl-unplugged-image)))
-      (setq wl-modeline-plug-state-on
-	    (apply 'propertize wl-plug-state-indicator-on props)
-	    wl-modeline-plug-state-off
-	    (apply 'propertize wl-plug-state-indicator-off props)))))
+  (if (display-mouse-p)
+      (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
+					       #'wl-toggle-plugged))
+			 'help-echo "mouse-2 toggles plugged status")))
+	(if (display-graphic-p)
+	    (setq wl-modeline-plug-state-on
+		  (apply 'propertize wl-plug-state-indicator-on
+			 `(display ,wl-plugged-image ,@props))
+		  wl-modeline-plug-state-off
+		  (apply 'propertize wl-plug-state-indicator-off
+			 `(display ,wl-unplugged-image ,@props)))
+	  (setq wl-modeline-plug-state-on
+		(apply 'propertize wl-plug-state-indicator-on props)
+		wl-modeline-plug-state-off
+		(apply 'propertize wl-plug-state-indicator-off props))))
+    (setq wl-modeline-plug-state-on wl-plug-state-indicator-on
+	  wl-modeline-plug-state-off wl-plug-state-indicator-off)))
 
 (defun wl-biff-init-icons ()
   (unless wl-biff-mail-image
@@ -478,23 +480,25 @@
 	    wl-biff-nomail-image (find-image
 				  `((:type xpm :file ,wl-biff-nomail-icon
 					   :ascent center))))))
-  (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     (lambda nil
-					       (call-interactively
-						'wl-biff-check-folders))))
-		       'help-echo "mouse-2 checks new mails"))))
-    (if (display-graphic-p)
-	(setq wl-modeline-biff-state-on
-	      (apply 'propertize wl-biff-state-indicator-on
-		     `(,@props display ,wl-biff-mail-image))
-	      wl-modeline-biff-state-off
-	      (apply 'propertize wl-biff-state-indicator-off
-		     `(,@props display ,wl-biff-nomail-image)))
-      (setq wl-modeline-biff-state-on
-	    (apply 'propertize wl-biff-state-indicator-on props)
-	    wl-modeline-biff-state-off
-	    (apply 'propertize wl-biff-state-indicator-off props)))))
+  (if (display-mouse-p)
+      (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
+					       (lambda nil
+						 (call-interactively
+						  'wl-biff-check-folders))))
+			 'help-echo "mouse-2 checks new mails")))
+	(if (display-graphic-p)
+	    (setq wl-modeline-biff-state-on
+		  (apply 'propertize wl-biff-state-indicator-on
+			 `(display ,wl-biff-mail-image ,@props))
+		  wl-modeline-biff-state-off
+		  (apply 'propertize wl-biff-state-indicator-off
+			 `(display ,wl-biff-nomail-image ,@props)))
+	  (setq wl-modeline-biff-state-on
+		(apply 'propertize wl-biff-state-indicator-on props)
+		wl-modeline-biff-state-off
+		(apply 'propertize wl-biff-state-indicator-off props))))
+    (setq wl-modeline-biff-state-on wl-biff-state-indicator-on
+	  wl-modeline-biff-state-off wl-biff-state-indicator-off)))
 
 (defun wl-make-date-string ()
   (format-time-string "%a, %d %b %Y %T %z"))

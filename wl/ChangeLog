@@ -1,3 +1,12 @@
+2000-10-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Use `fancy-splash-insert' for inserting a
+	title text, use `display' property for left margin under Emacs 21.
+
+	* wl-e21.el (wl-biff-init-icons): Don't use `propertize' without
+	properties.
+	(wl-plugged-init-icons): Ditto.
+
 2000-10-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (wl-save-status, wl-init): Remove last period in
