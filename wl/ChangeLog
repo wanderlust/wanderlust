@@ -1,3 +1,7 @@
+2000-10-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* tm-wl.el (toplevel): Use product-provide.
+
 2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.3.92.

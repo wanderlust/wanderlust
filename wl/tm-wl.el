@@ -289,6 +289,7 @@ By setting following-method as yank-content."
 	 mime-viewer/code-converter-alist))
   (defvar-maybe mime::preview/mother-buffer nil))
   
-(provide 'tm-wl)
+(require 'product)
+(product-provide (provide 'tm-wl) (require 'wl-version))
 
 ;;; tm-wl.el ends here
