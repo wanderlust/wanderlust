@@ -1499,15 +1499,9 @@ Derived from `message-save-drafts' in T-gnus."
     (goto-char (point-min))
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((and
-	    (or (interactive-p)
-		(eq this-command 'wl-summary-write)
-		(eq this-command 'wl-summary-write-current-folder)
-		(eq this-command 'wl-folder-write-current-folder))
+	    (interactive-p)
 	    (string= (cdr (assq 'To header-alist)) ""))
 	   (mail-position-on-field "To"))
-	  ((or (eq this-command 'wl-summary-write-current-folder)
-		(eq this-command 'wl-folder-write-current-folder))
-	   (mail-position-on-field "Subject"))
 	  (t
 	   (goto-char (point-max))))
     buf-name))

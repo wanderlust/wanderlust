@@ -2,8 +2,7 @@
 
 	* wl-summary.el (wl-summary-write-current-folder): If it cannot
 	guess anything, call wl-summary-write interactively.
-	* wl-draft.el (wl-draft): Undo corresponding part of the last
-	change (the blank To header).
+	* wl-draft.el (wl-draft): Undo unnecessary part of the last change.
 
 2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
