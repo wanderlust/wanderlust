@@ -48,8 +48,6 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    wl-highlight-refile-destination-face
    (wl-highlight-action-argument-face に変名)
 
-** 変数 wl-summary-*-mark は、elmo-msgdb-*-mark に変更されました。
-
 ** 変数 wl-summary-delete-folder-alist は wl-summary-dispose-folder-alist に
    名前が変更されました。
 

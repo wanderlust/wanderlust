@@ -52,7 +52,6 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    (renamed to wl-highlight-action-argument-face)
 
 ** Variables renamed
-   wl-summary-*-mark are renamed to elmo-msgdb-*-mark.
    wl-summary-delete-folder-alist is renamed to
    wl-summary-dispose-folder-alist.
 
