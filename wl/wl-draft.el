@@ -1313,9 +1313,7 @@ If optional argument is non-nil, current draft buffer is killed"
   (unless (featurep 'wl)
     (require 'wl))
   (unless wl-init
-    (wl-load-profile)
-    (elmo-init)
-    (wl-folder-init))
+    (wl-load-profile))
   (wl-init) ;; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
