@@ -903,6 +903,8 @@ non-nil."
 		      (point-marker)))
 	 (smtp-server
 	  (or wl-smtp-posting-server
+	      ;; Compatibility stuff for FLIM 1.12.5 or earlier.
+	      ;; They don't accept a function as the value of `smtp-server'.
 	      (if (functionp smtp-server)
 		  (funcall
 		   smtp-server
