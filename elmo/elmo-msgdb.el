@@ -383,12 +383,16 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
   (and entity (aref (cdr entity) 1)))
 
+(defsubst elmo-msgdb-overview-entity-set-references (entity references)
+  (and entity (aset (cdr entity) 1 references))
+  entity)
+
 ;; entity -> parent-entity
 (defsubst elmo-msgdb-overview-get-parent-entity (entity database)
   (setq entity (elmo-msgdb-overview-entity-get-references entity))
   ;; entity is parent-id.
   (and entity (assoc entity database)))
-  
+
 (defsubst elmo-msgdb-overview-entity-get-number (entity)
   (and entity (aref (cdr entity) 0)))
 
@@ -424,6 +428,10 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-overview-entity-get-date (entity)
   (and entity (aref (cdr entity) 4)))
 
+(defsubst elmo-msgdb-overview-entity-set-date (entity date)
+  (and entity (aset (cdr entity) 4 date))
+  entity)
+
 (defsubst elmo-msgdb-overview-entity-get-to (entity)
   (and entity (aref (cdr entity) 5)))
 
@@ -444,6 +452,15 @@ content of MSGDB is changed."
   (let ((extra (and entity (aref (cdr entity) 8))))
     (and extra
 	 (cdr (assoc field-name extra)))))
+
+(defsubst elmo-msgdb-overview-entity-set-extra-field (entity field-name value)
+  (let ((extras (and entity (aref (cdr entity) 8)))
+	extra)
+    (if (setq extra (assoc field-name extras))
+	(setcdr extra value)
+      (elmo-msgdb-overview-entity-set-extra
+       entity
+       (cons (cons field-name value) extras)))))
 
 (defsubst elmo-msgdb-overview-entity-get-extra (entity)
   (and entity (aref (cdr entity) 8)))

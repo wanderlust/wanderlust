@@ -1,3 +1,25 @@
+2001-11-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview-folder-list): New
+	user option.
+	(elmo-shimbun-header-extra-field): New inline function.
+	(elmo-shimbun-header-set-extra-field): Ditto.
+	(elmo-shimbun-folder-header-hash-setup): Ditto.
+	(elmo-shimbun-update-overview): Ditto.
+	(elmo-shimbun-msgdb-to-headers): Set extra field `x-shimbun-id'.
+	(elmo-shimbun-folder-setup): Use
+	`elmo-shimbun-folder-header-hash-setup' to be setup hash table.
+	(elmo-shimbun-get-headers): Ditto.
+	(elmo-map-message-fetch): Call `elmo-shimbun-update-overview';
+	Insert `X-Shimbun-Id:' header if extra field is set.
+	(elmo-map-folder-list-message-locations): Return `x-shimbun-id'
+	field's value instead of `shimbun-header-id'.
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-set-references): New
+	inline function.
+	(elmo-msgdb-overview-entity-set-date): Ditto.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+
 2001-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmimap.el (mmimap-entity-section): Changed body node number from
