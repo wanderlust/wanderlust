@@ -1,5 +1,7 @@
 2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.9.7.
+
 	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed logic.
 
 2002-02-18   Daiki Ueno  <ueno@unixuser.org>
