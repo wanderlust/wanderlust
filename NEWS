@@ -2,6 +2,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** New sort spec 'size' is added in the summary mode.
+   Now you can sort the summary by message size.
+
 ** The variable wl-refile-policy-alist is abolished.
 
 ** SPAM filter module is added.
