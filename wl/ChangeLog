@@ -1,3 +1,11 @@
+2003-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-thread-indent-level, wl-thread-*-str): Choose
+	default values along the value of wl-on-mule.
+	(from Tatsuya Kinoshita <tats@vega.ocn.ne.jp> [wl-en:421])
+	* wl-vars.el (wl-highlight-thread-indent-string-regexp): Remove.
+	It is not used anywhere.
+
 2003-06-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-print-destination): Keep position.
