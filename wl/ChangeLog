@@ -1,3 +1,8 @@
+2000-10-16  Akihiro MOTOKI  <motoki@da.jp.nec.com>
+
+	* wl-highlight.el (wl-highlight-message-add-buttons-to-header):
+	Enclose with `save-excursion'.
+
 2000-10-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-version): Remove interactive.
