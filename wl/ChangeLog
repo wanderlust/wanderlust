@@ -1,3 +1,8 @@
+2000-06-29  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-with-temp-file-buffer): New macro.
+	(wl-logo-bitmap, wl-logo-xbm, wl-logo-xpm): Use it.
+
 2000-06-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-buffer-prev-folder-func):

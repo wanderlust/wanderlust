@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-06-23 12:33:18 yamaoka>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -70,12 +69,29 @@ $$$$\"\"       \"$$oo$    o          o$\"
 Yet Another Message Interface On Emacsen")
 
 (eval-when-compile
+  (defmacro wl-demo-with-temp-file-buffer (file &rest forms)
+    "Create a temporary buffer, insert FILE's contents without
+any conversions and evaluate FORMS there like `progn'."
+    ( `(with-temp-buffer
+	 (let ((coding-system-for-read 'binary)
+	       (input-coding-system '*noconv*)
+	       auto-mode-alist
+	       file-name-handler-alist
+	       format-alist
+	       insert-file-contents-access-hook
+	       insert-file-contents-post-hook
+	       insert-file-contents-pre-hook
+	       interpreter-mode-alist)
+	   (insert-file-contents (, file))
+	   (,@ forms)))))
+  (put 'wl-demo-with-temp-file-buffer 'lisp-indent-function 1))
+
+(eval-when-compile
   (defmacro wl-logo-xpm ()
     ;; (WIDTH HEIGHT DATA)
     (let ((file (expand-file-name "wl-logo.xpm" wl-icon-dir)))
       (if (file-exists-p file)
-	  (with-temp-buffer
-	    (insert-file-contents file)
+	  (wl-demo-with-temp-file-buffer file
 	    (re-search-forward
 	     (concat "\"[\t ]*\\([0-9]+\\)[\t ]+\\([0-9]+\\)"
 		     "[\t ]+[0-9]+[\t ]+[0-9]+[\t ]*\""))
@@ -87,8 +103,7 @@ Yet Another Message Interface On Emacsen")
     ;; (WIDTH HEIGHT DATA)
     (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
       (if (file-exists-p file)
-	  (with-temp-buffer
-	    (insert-file-contents file)
+	  (wl-demo-with-temp-file-buffer file
 	    (let ((case-fold-search t)
 		  width height)
 	      (search-forward "width")
@@ -116,8 +131,7 @@ Yet Another Message Interface On Emacsen")
 	  (if (condition-case nil (require 'bitmap) (error nil))
 	      (list 'cons t (bitmap-decode-xbm
 			     (bitmap-read-xbm-file file)))
-	    (with-temp-buffer
-	      (insert-file-contents file)
+	    (wl-demo-with-temp-file-buffer file
 	      (list 'cons nil (buffer-string))))))))
 
 (let ((xpm (wl-logo-xpm)))
