@@ -1,5 +1,9 @@
 2000-11-06  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-imap4.el (elmo-imap4-list-folders): Append authenticate-type.
+
+2000-11-06  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-imap4.el (elmo-imap4-list-folders): When hierarchy is
 	non-nil, make hierarchy.
 
