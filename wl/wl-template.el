@@ -85,10 +85,12 @@ Entering WL-Template mode calls the value of `wl-template-mode-hook'."
   (setq buffer-read-only t)
   (run-hooks 'wl-template-mode-hook))
 
-(defun wl-template-select ()
+(defun wl-template-select (&optional arg)
   "Select template from `wl-template-alist'."
-  (interactive)
-  (if (not wl-template-visible-select)
+  (interactive "P")
+  (if (not (if arg
+	       (not wl-template-visible-select)
+	     wl-template-visible-select))
       (wl-template-apply
        (completing-read (format "Template (%s): " wl-template-default-name)
 			wl-template-alist))

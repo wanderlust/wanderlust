@@ -3182,6 +3182,8 @@ Redisplay the message at current cursor point without MIME analysis.
 If the message at current cursor point has
 encapsulates multiple messages using MIME,
 de-capsulate and extract them on the current folder.
+If it is invoked in non-writable folder or it is called with prefix
+argument, it asks the destination folder.
 (@code{wl-summary-burst})
 
 @item @@
@@ -3844,11 +3846,6 @@ Width of summary line. If @code{nil}, summary line's width is as is.
 @vindex wl-summary-from-width
 The initial setting is 17.
 Width of sender part of summary line.
-
-@item wl-summary-subject-length-limit
-@vindex wl-summary-subject-length-limit
-The initial setting is @code{nil}. Specify the limit for the length of
-subject parts in summary. @code{nil} means unlimited.
 
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit

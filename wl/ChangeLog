@@ -1,3 +1,23 @@
+2002-10-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-line-format): Undo last change.
+	* wl-summary.el (wl-summary-print-destination): Do not put
+	invisible property when `wl-summary-width' is nil.
+	(wl-summary-line-subject-minimum-length): Abolished.
+	(wl-summary-line-subject): Ditto.
+
+2002-10-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-line-format): Change default value.
+	(wl-summary-subject-length-limit): Abolished.
+	* wl-summary.el (wl-summary-line-subject): Ditto.
+
+2002-10-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-template.el (wl-template-select): Added optional argument.
+	If optional argument is specified, reverse
+	`wl-template-visible-select'.
+
 2002-10-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-summary-burst): Get elmo folder correctly.
