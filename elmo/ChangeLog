@@ -1,3 +1,10 @@
+2000-05-27  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-overview-get-entity): Use
+	elmo-msgdb-overview-get-entity-by-number.
+	(elmo-msgdb-overview-get-entity-by-number): Don't use catch and
+	throw.
+
 2000-05-26  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-localdir.el (elmo-localdir-pack-number): Renamed
