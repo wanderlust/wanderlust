@@ -561,7 +561,7 @@ See also variable `wl-use-petname'."
   "A function to be called as window-scroll-functions."
   (with-current-buffer (window-buffer win)
     (when (eq major-mode 'wl-summary-mode)
-      (let ((start (window-start win))
+      (let ((beg (or beg (window-start win)))
 	    (end (condition-case nil
 		     (window-end win t)	; old emacsen doesn't support 2nd arg.
 		   (error (window-end win))))

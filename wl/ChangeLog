@@ -1,3 +1,7 @@
+2003-09-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window): Fixed.
+
 2003-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-window-scroll-functions): No use
