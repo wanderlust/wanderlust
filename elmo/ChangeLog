@@ -1,3 +1,162 @@
+2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Eliminated needless bindings;
+	Use `elmo-close-internal' instead of `elmo-close'.
+
+2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mark.el: New file.
+
+	* elmo-internal.el: Rewrite (Almost empty).
+
+2001-02-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmimap.el (mmimap-make-mime-entity): Consider message/rfc822.
+	(mime-imap-entity-header-string): Ditto.
+	(mmimap-entity-section): Rewrite.
+
+2001-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el: New file.
+
+	* elmo-pipe.el: Rewrite with luna.
+
+2001-01-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el: Rewrite with luna.
+
+	* elmo-multi.el (elmo-folder-list-unreads-internal): Fixed.
+	(elmo-folder-list-importants-internal): Ditto.
+
+2001-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-version): Abolish.
+	(toplevel) Removed `boso' comment.
+
+2001-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-add-msgs-to-seen-list): Renamed from
+	elmo-msgdb-add-msgs-to-seen-list-subr;
+	Changed argument seen-marks to unread-marks.
+
+	* elmo-nntp.el: Rewrite with luna.
+
+2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el: Rewrite with luna.
+
+2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el: Rewrite with luna.
+
+2001-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el: Rewrite with luna.
+
+	* elmo-vars.el (elmo-use-killed-list): Abolish.
+	All other related portions are changed.
+	(elmo-filename-replace-string-alist): Renamed from
+	elmo-msgid-replace-string-alist.
+
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Changed argument.
+
+	* elmo-map.el: New file.
+	* elmo-maildir.el: Rewrite with luna.
+
+2001-01-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el: Changed meaning of `elmo-folder-commit'.
+	* elmo-mime.el (elmo-mime-display-as-is-internal): New function.
+
+2001-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-buffer): New function.
+	(Renamed from `elmo-append-msg')
+
+2000-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el: New file.
+
+2000-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-cache.el: Rewrite.
+
+2000-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo): New group.
+	(elmo-strict-diff-folder-regexp): New variable.
+
+	* elmo-util.el (elmo-call-func): Abolish.
+	(elmo-folder-get-type): Ditto.
+	(elmo-*-get-spec): Ditto.
+	(elmo-*-spec-*): Ditto.
+	(elmo-imap4-identical-name-space-p): Ditto.
+	(elmo-folder-identical-system-p): Ditto.
+	(elmo-folder-direct-copy-alist): Ditto.
+	(elmo-folder-direct-copy-p): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-folder): New luna class.
+	(elmo-folder-initialize): Define.
+	(elmo-folder-get-primitive-list): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-folder): New luna class.
+	(elmo-folder-initialize): Define.
+	Renamed `elmo-network-session-host-internal' to
+	`elmo-network-session-server-internal'.
+
+	* elmo-multi.el (elmo-multi-folder): New luna class.
+	(elmo-folder-initialize): Define.
+	(elmo-folder-get-primitive-list): Ditto.
+	(elmo-folder-contains-type): Ditto.
+	(elmo-message-use-cache-p): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): Abolish.
+	Use `elmo-folder-msgdb-path' instead of `elmo-msgdb-expand-path'.
+
+	* elmo-maildir.el (elmo-maildir-folder): New luna class.
+	(elmo-folder-initialize): Define.
+
+	* elmo-filter.el (elmo-filter-folder): New luna class.
+	(elmo-folder-initialize): Define.
+	(elmo-folder-get-primitive-list): Ditto.
+	(elmo-folder-contains-type): Ditto.
+
+2000-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el: Rewrite with luna.
+
+	* mmimap.el: New file.
+
+	* mmelmo.el, mmelmo-imap4.el: Removed.
+
+	* elmo-net.el: Ditto.
+
+	* elmo-pop3.el (elmo-pop3-folder): New luna class.
+	(elmo-folder-initialize): Define.
+
+	* elmo-archive.el (elmo-archive-folder): New luna class.
+	(elmo-folder-initialize): Define.
+
+	* elmo-dop.el: Rename `elmo-msgdb-expand-path' to
+	`elmo-folder-msgdb-path'.
+	(elmo-dop-queue-append): Use `elmo-folder-name-internal' and
+	`elmo-make-folder'.
+
+2000-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el: New file.
+
+	* elmo2.el: Renamed to elmo.el.
+
+
+2001-02-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-cache.el (elmo-cache-expire-by-size): Count
+	a disk usage for a cache file entry in KB even when
+	its kind is a directory.
+
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.5.7.
