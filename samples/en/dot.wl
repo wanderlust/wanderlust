@@ -257,9 +257,9 @@
 ;; Change headers in draft sending time.
 (setq wl-draft-config-alist
       '((reply		;; see reply buffer
-	 "^To: .*\\(test-notsend-wl@lists.airs.net\\)"
+	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
 	 (template . "default"))		;; template
-	("^To: .*\\(test-notsend-wl@lists.airs.net\\)"
+	("^To: .*test-notsend-wl@lists\\.airs\\.net"
 	 wl-ml-draft-config-function		;; function
 	 ("From" . wl-from)			;; variable
 	 ("Organization" . "~/.wl sample"))	;; string
@@ -353,7 +353,7 @@
 ;	 ("^Wanderlust" . "+wl")
 ;	 ("^Elisp" . "+elisp"))
 ;	("From"
-;	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
+;	 ("foo@example\\.com" . "+foo"))))
 
 ;; Marks to skip auto-refile (default is "N" "U" "!").
 ;; nil means all message is auto-refiled.

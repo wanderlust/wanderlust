@@ -258,9 +258,9 @@
 ;; 動的に変更する
 (setq wl-draft-config-alist
       '((reply			;; 返信元のバッファを見る
-	 "^To: .*\\(test-notsend-wl@lists.airs.net\\)"
+	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
 	 (template . "default"))	; テンプレート
-	("^To: .*\\(test-notsend-wl@lists.airs.net\\)"
+	("^To: .*test-notsend-wl@lists\\.airs\\.net"
 	 wl-ml-draft-config-function	; 関数
 	 ("From" . wl-from)		; 変数
 	 ("Organization" . "~/.wl sample")) ; 文字列
@@ -361,7 +361,7 @@
 ;	 ("^Wanderlust" . "+wl")
 ;	 ("^Elisp" . "+elisp"))
 ;	("From"
-;	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
+;	 ("foo@example\\.com" . "+foo"))))
 
 ;; 自動リファイルしない永続マークを設定
 ;; 標準では "N" "U" "!" になっており、未読メッセージを自動リファイルし
