@@ -1,3 +1,12 @@
+2005-03-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-draft.el (wl-draft-forward): Call `wl-draft' with number.
+	(wl-draft-reply): Ditto.
+	(wl-draft): Add optional argument `parent-number' and call
+	`wl-draft-create-buffer' with it.
+	(wl-draft-create-buffer): Add optional argument
+	`parent-number'. Set wl-draft-parent-number as it.
+
 2005-03-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-folder.el (wl-folder-set-persistent-mark): If summary
