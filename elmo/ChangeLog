@@ -1,3 +1,8 @@
+2002-04-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-util.el (elmo-read-search-condition-internal): Give default
+	value for date.
+
 2002-04-04  Mito  <mito@mxa.nes.nec.co.jp>
 
 	* elmo-util.el (elmo-condition-parse-search-value): Accept

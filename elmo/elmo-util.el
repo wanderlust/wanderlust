@@ -170,12 +170,15 @@ File content is encoded with MIME-CHARSET."
 	       (concat field "(2) Search by") default)
 	      ")"))
      ((string-match "Since\\|Before" field)
-      (concat (downcase field) ":"
-	      (completing-read (format "Value for '%s': " field)
-			       (mapcar (function
-					(lambda (x)
-					  (list (format "%s" (car x)))))
-				       elmo-date-descriptions))))
+      (let ((default (format-time-string "%Y-%m-%d" (current-time))))
+	(setq value (completing-read
+		     (format "Value for '%s' [%s]: " field default)
+		     (mapcar (function
+			      (lambda (x)
+				(list (format "%s" (car x)))))
+			     elmo-date-descriptions)))
+	(concat (downcase field) ":"
+		(if (equal value "") default value))))
      (t
       (setq value (read-from-minibuffer (format "Value for '%s': " field)))
       (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
