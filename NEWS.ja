@@ -1,5 +1,10 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+* 2.8.1 は 2.8.0 の修正版です。
+
+** 2.8.0 には POP, PIPE フォルダ等でメールが消失してしまう致命的な
+   バグがありました。修正版である 2.8.1 をお使いください。
+
 * 2.6.1 から 2.8.0 への変更点
 
 ** Nemacs, Mule 2.3 based on Emacs 19.28 はサポートされなくなりました。

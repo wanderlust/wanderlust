@@ -1,5 +1,10 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* 2.8.1 is a bug fix version of 2.8.0.
+
+** 2.8.0 has a critical bug which may cause a mail lost in POP, PIPE.
+   Please don't use it and use 2.8.1 instead.
+
 * Changes in 2.8.0 from 2.6.1
 
 ** Nemacs, Mule 2.3 based on Emacs 19.28 are not supported any longer.
