@@ -4795,6 +4795,12 @@ or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{Fcc:} field.
 The initial setting is @code{nil}.
 This is the SMTP server name for mail transmission.
 
+@item wl-smtp-posting-port
+@vindex wl-smtp-posting-port
+The initial setting is @code{nil}.
+This is the SMTP port number for mail transmission.
+If @code{nil}, default SMTP port number (25) is used.
+
 @item wl-smtp-posting-user
 @vindex wl-smtp-posting-user
 The initial setting is @code{nil}.

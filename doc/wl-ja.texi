@@ -4741,6 +4741,12 @@ Non-nil で、@samp{To:}, @samp{Cc:} が 変数 @code{wl-subscribed
 初期設定は @code{nil}。
 メール送信時の SMTP サーバ名です。
 
+@item wl-smtp-posting-port
+@vindex wl-smtp-posting-port
+初期設定は @code{nil}。
+メール送信時の SMTP ポート番号です。
+@code{nil} ならデフォルトの SMTP ポート番号(25)を使います。
+
 @item wl-smtp-posting-user
 @vindex wl-smtp-posting-user
 初期設定は @code{nil}。
