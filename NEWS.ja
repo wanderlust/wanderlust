@@ -62,7 +62,7 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
    $B%a%C%;!<%8%P%C%U%!$G(B "D" $B$K%P%$%s%I$5$l$F$$$^$9!#(B
 
 ** $B%K%e!<%95-;v$rEj9F$9$k%5!<%P$r4JC1$K@_Dj$G$-$k$h$&$K$J$j$^$7$?!#(B
-   info $B$NNc$K=,$C$F(B wl-nntp-posting-config-alist $B$r@_Dj$7$F2<$5$$!#(B
+   Info $B$NNc$K=,$C$F(B wl-nntp-posting-config-alist $B$r@_Dj$7$F2<$5$$!#(B
 
 ** $BJQ?t(B wl-draft-reply-with-argument-list $BEy$G!"4X?t$NJV$jCM$+$i08@h$r(B
    $B7h$a$i$l$k$h$&$K$J$j$^$7$?!#(B
@@ -290,7 +290,7 @@ Maildir $B$N%5%^%j$G(B M-x wl-summary-pack-number $B$r<B9T$9$k$H%a%C%;!<%8HV9
 *** $B%U%#%k%?%U%)%k%@$KJ#;($J>r7o;XDj$r;XDj$G$-$k$h$&$K$J$j$^$7$?!#(B
 AND $B>r7o!"(BOR $B>r7o!"H]Dj>r7o!"$*$h$S$=$l$i$NAH9g$;$r;XDj$G$-$^$9!#(B
 $B$3$l$K$H$b$J$$!">r7o;XDjItJ,$N%7%s%?%C%/%9$,JQ99$5$l$^$7$?!#(B
-$B$/$o$7$/$O(B info $B$r8fMw2<$5$$!#(B
+$B$/$o$7$/$O(B Info $B$r8fMw2<$5$$!#(B
 
 $BCm0U!'(B1.1.1 $B$+$i0\9T$5$l$kJ}$X(B
 $B>e5-JQ99$KH<$$!"%U%#%k%?%U%)%k%@$N(B msgdb $B$NCV$->l=j$,JQ$o$j$^$7$?!#(B

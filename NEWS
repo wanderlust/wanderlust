@@ -61,7 +61,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    It is binded as "D" in message buffer.
 
 ** You can easily configure server settings to post news article.
-   Set wl-nntp-posting-config-alist appropriately. See info for an example.
+   Set wl-nntp-posting-config-alist appropriately. See Info for an example.
 
 ** You can specify some function in wl-draft-reply-with-argument-list etc.
    for setting the recipients in draft by the return value of it.
@@ -295,7 +295,7 @@ re-numbers the messages.
 
 *** Complex condition can be specified for filter folder
 AND condition, OR condition, NOT condition, and their combination can be
- specified. Syntax of the condition part is changed. See info for details.
+ specified. Syntax of the condition part is changed. See Info for details.
 
 Caution for those who upgrade from 1.1.1:
 By this change, saving directory for the msgdb of filter folder is altered.
