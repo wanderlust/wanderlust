@@ -75,8 +75,6 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
-(defalias 'elmo-read 'read)
-
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
   (` (save-excursion
