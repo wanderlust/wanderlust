@@ -1745,14 +1745,12 @@ This function is defined for `window-scroll-functions'"
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
       (while diffs
-	(wl-summary-mark-as-important (car diffs)
-				      wl-summary-important-mark
-				      'no-server)
+	(wl-summary-mark-as-unimportant (car diffs) 'no-server)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; important-appends
       (setq mes (concat mes (format "/+%d) important," (length diffs))))
       (while diffs
-	(wl-summary-mark-as-important (car diffs) " " 'no-server)
+	(wl-summary-mark-as-important (car diffs) 'no-server)
 	(setq diffs (cdr diffs)))
 
       (setq diff (elmo-list-diff answereds
@@ -3026,58 +3024,56 @@ Return non-nil if the mark is updated"
    no-modeline-update))
 
 (defun wl-summary-mark-as-unanswered (&optional number-or-numbers
-					      no-modeline-update)
+						no-modeline-update)
   (wl-summary-mark-as-answered-internal 'inverse
 					number-or-numbers
 					no-modeline-update))
 
-(defun wl-summary-mark-as-important (&optional number
-					       mark
-					       no-server-update)
-  (interactive)
+(defsubst wl-summary-mark-as-important-internal (inverse
+						 number-or-numbers
+						 no-server-update)
   (if (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
 	  'flag)
       (error "Cannot process mark in this folder"))
   (save-excursion
-    (let* ((folder wl-summary-buffer-elmo-folder)
-	   message-id visible cur-mark)
-      (cond (number
-	     (setq visible (wl-summary-jump-to-msg number))
-	     (setq cur-mark (or mark
-				(wl-summary-message-mark
-				 wl-summary-buffer-elmo-folder number)
-				" ")))
-	    ((setq number (wl-summary-message-number))
-	     (setq visible t)
-	     (setq cur-mark (or mark (wl-summary-persistent-mark))))
-	    (t
-	     (error "No message")))
-      (when (or visible
-		;; already exists in msgdb.
-		(elmo-message-entity wl-summary-buffer-elmo-folder
-				     number))
-	(setq message-id (elmo-message-field
-			  wl-summary-buffer-elmo-folder
-			  number
-			  'message-id))
-	(if (string= cur-mark wl-summary-important-mark)
-	    (progn
-	      ;; server side mark
-	      (save-match-data
-		(elmo-folder-unflag-important folder (list number)
-					      no-server-update)
-		;; Remove cache if local folder.
-		(if (and (elmo-folder-local-p folder)
-			 (not (eq 'mark
-				  (elmo-folder-type-internal folder))))
-		    (elmo-file-cache-delete
-		     (elmo-file-cache-get-path message-id)))))
-	  ;; server side mark
-	  (elmo-folder-flag-as-important folder (list number)
-					 no-server-update)))
-      (when visible
-	(wl-summary-update-persistent-mark))))
-  number)
+    (let ((folder wl-summary-buffer-elmo-folder)
+	  number number-list visible)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq number (wl-summary-message-number))
+			       ;; interactive
+			       (list number))))
+      (if (null number-list)
+	  (message "No message.")
+	(if inverse
+	    (elmo-folder-unflag-important folder number-list no-server-update)
+	  (elmo-folder-flag-as-important folder number-list no-server-update))
+	(dolist (number number-list)
+	  (setq visible (wl-summary-jump-to-msg number))
+	  ;; set mark on buffer
+	  (when visible
+	    (wl-summary-update-persistent-mark)))))))
+
+(defun wl-summary-mark-as-important (&optional number-or-numbers
+					       no-server-update)
+  (interactive)
+  (wl-summary-mark-as-important-internal
+   (and (interactive-p)
+	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				(wl-summary-message-number)
+				'important))
+   number-or-numbers
+   no-server-update))
+
+(defun wl-summary-mark-as-unimportant (&optional number-or-numbers
+						 no-server-update)
+  (interactive)
+  (wl-summary-mark-as-important-internal 'inverse
+					 number-or-numbers
+					 no-server-update))
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)

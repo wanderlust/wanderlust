@@ -1,5 +1,13 @@
 2003-11-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-mark-as-important-internal): New
+	internal function.
+	(wl-summary-mark-as-important): Use it.
+	(wl-summary-mark-as-unimportant): New function.
+	(wl-summary-sync-marks): Follow the API change.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
 	* wl-mime.el (wl-summary-burst): Check target folder is writable.
 
 2003-11-14  Tetsurou Okazaki  <okazaki@be.to>
