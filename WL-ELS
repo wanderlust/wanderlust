@@ -75,8 +75,7 @@
 (defconst SASL-MODULES '(hmac-def hmac-md5 hmac-sha1
 			 hex-util md5-dl md5-el md5
 			 sha1-dl sha1-el sha1 sasl
-			 sasl-cram sasl-digest sasl-scram
-			 md4 ntlm sasl-ntlm))
+			 sasl-cram sasl-digest))
 
 (defvar modules-alist
   (list
