@@ -345,6 +345,8 @@
       (error "Cannot format info on Nemacs. Please use another formatter."))
   ;; INFODIR check.
   (require 'info)
+  (if (fboundp 'info-initialize)
+      (info-initialize))
   (let ((infodir (car command-line-args-left))
 	(info (wl-primary-info-file))
 	previous INFODIR)
