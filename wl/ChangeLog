@@ -1,3 +1,11 @@
+2001-12-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-update-confirm-threshold): Defined as
+	obsolete variable using `elmo-define-obsolete-variable'.
+	(wl-fetch-confirm-threshold): Ditto.
+	(wl-cache-prefetch-folder-type-list): Ditto.
+	(wl-cache-prefetch-folder-list): Ditto.
+
 2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-demo.el: Rewrote to make it read a logo file at the run-time.

@@ -2336,6 +2336,17 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 
 ;;;; Obsolete variables.
 
+;; 2001-12-10
+(elmo-define-obsolete-variable 'wl-summary-update-confirm-threshold
+			       'elmo-folder-update-threshold)
+(elmo-define-obsolete-variable 'wl-fetch-confirm-threshold
+			       'elmo-message-fetch-threshold)
+
+(elmo-define-obsolete-variable 'wl-cache-prefetch-folder-type-list
+			       'wl-message-buffer-prefetch-folder-type-list)
+(elmo-define-obsolete-variable 'wl-cache-prefetch-folder-list
+			       'wl-message-buffer-prefetch-folder-list)
+
 ;; 2001-02-27: *-func -> *-function
 (elmo-define-obsolete-variable 'wl-summary-from-func
 			       'wl-summary-from-function)
