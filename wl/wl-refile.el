@@ -45,7 +45,7 @@
 (defvar wl-refile-alist-max-length 1000)
 
 (defun wl-refile-alist-setup ()
-  (let ((flist wl-refile-guess-func-list))
+  (let ((flist wl-refile-guess-functions))
     (while flist
       (cond
        ((eq (car flist) 'wl-refile-guess-by-history)
@@ -111,11 +111,11 @@
 	  (setq key from))
       (if (or wl-refile-msgid-alist
 	      (memq 'wl-refile-guess-by-msgid
-		    wl-refile-guess-func-list))
+		    wl-refile-guess-functions))
 	  (wl-refile-msgid-learn entity dst))
       (if (or wl-refile-subject-alist
 	      (memq 'wl-refile-guess-by-subject
-		    wl-refile-guess-func-list))
+		    wl-refile-guess-functions))
 	  (wl-refile-subject-learn entity dst)))
     (when key
       (if (setq hit (assoc key wl-refile-alist))
@@ -147,15 +147,18 @@
 ;;
 ;; refile guess
 ;;
-(defvar wl-refile-guess-func-list
+(defvar wl-refile-guess-functions
   '(wl-refile-guess-by-rule
     wl-refile-guess-by-msgid
     wl-refile-guess-by-subject
     wl-refile-guess-by-history)
   "*Functions in this list are used for guessing refile destination folder.")
 
+(defvar wl-refile-guess-func-list wl-refile-guess-functions)
+(make-obsolete-variable 'wl-refile-guess-func-list 'wl-refile-guess-functions)
+
 (defun wl-refile-guess (entity)
-  (let ((flist wl-refile-guess-func-list) guess)
+  (let ((flist wl-refile-guess-functions) guess)
     (while flist
       (if (setq guess (funcall (car flist) entity))
 	  (setq flist nil)

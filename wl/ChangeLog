@@ -1,3 +1,8 @@
+2000-11-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-refile.el (wl-refile-guess-functions): Renamed from
+	`wl-refile-guess-func-list'.
+
 2000-11-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule):
