@@ -1,3 +1,10 @@
+2003-09-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-previous-history-element): New function.
+	(wl-draft-next-history-element): Ditto.
+	* wl-e21.el, wl-xmas.el, wl-mule.el (wl-draft-key-setup): Bind
+	them to M-p and M-n.
+
 2003-09-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.12.

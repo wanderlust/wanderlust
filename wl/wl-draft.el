@@ -2435,6 +2435,80 @@ Automatically applied in draft sending time."
 	(set-buffer-modified-p modified))))
   (recenter n))
 
+;; insert element from history
+(defvar wl-draft-current-history-position nil)
+(defvar wl-draft-history-backup-word "")
+
+(defun wl-draft-previous-history-element (n)
+  (interactive "p")
+  (let (bol history)
+    (when (and (not (wl-draft-on-field-p))
+	       (< (point)
+		  (save-excursion
+		    (goto-char (point-min))
+		    (search-forward (concat "\n" mail-header-separator "\n") nil 0)
+		    (point)))
+	       (save-excursion
+		 (beginning-of-line)
+		 (while (and (looking-at "^[ \t]")
+			     (not (= (point) (point-min))))
+		   (forward-line -1))
+		 (cond
+		  ((looking-at wl-folder-complete-header-regexp)
+		   (and (boundp 'wl-read-folder-hist)
+			(setq history wl-read-folder-hist)))
+		  ;; ((looking-at wl-address-complete-header-regexp)
+		  ;;  (setq history .....))
+		  (t
+		   nil)))
+	       (eolp))
+      (setq bol (save-excursion (beginning-of-line) (point)))
+      (cond ((and (or (eq last-command 'wl-draft-previous-history-element)
+		      (eq last-command 'wl-draft-next-history-element))
+		  wl-draft-current-history-position)
+	     (setq end (point))
+	     (or (search-backward-regexp ",[ \t]*\\(.*\\)" bol t)
+		 (search-backward-regexp "^[ \t]\\(.*\\)" bol t)
+		 (search-backward-regexp "^[^ \t]*: \\(.*\\)" bol t))
+	     (setq prev (match-string 1))
+	     (goto-char (match-beginning 1))
+	     (setq beg (point))
+	     (if (cond ((< n 0)
+			(>= (+ n wl-draft-current-history-position) 0))
+		       ((> n 0)
+			(<= (+ n wl-draft-current-history-position)
+			    (length history))))
+		 (progn
+		   (setq wl-draft-current-history-position
+			 (+ n wl-draft-current-history-position))
+		   (setq new
+			 (nth wl-draft-current-history-position
+			      (append (list wl-draft-history-backup-word)
+				      history)))
+		   (delete-region beg end)
+		   (insert new))
+	       (goto-char end)
+	       (cond ((< n 0)
+		      (message "End of history; no next item"))
+		     ((> n 0)
+		      (message "Beginning of history; no preceding item")))))
+	    ((and (> n 0)
+		  (save-excursion
+		    (or (search-backward-regexp ",[ \t]*\\(.*\\)" bol t)
+			(search-backward-regexp "^[ \t]\\(.*\\)" bol t)
+			(search-backward-regexp "^[^ \t]*: \\(.*\\)" bol t)))
+		  (car history))
+	     (setq wl-draft-current-history-position 1)
+	     (setq wl-draft-history-backup-word (match-string 1))
+	     (delete-region (match-beginning 1) (match-end 1))
+	     (insert (car history)))
+	    (t
+	     (setq wl-draft-current-history-position nil)))))))
+
+(defun wl-draft-next-history-element (n)
+  (interactive "p")
+  (wl-draft-previous-history-element (- n)))
+
 ;;;; user-agent support by Sen Nagata
 
 ;; this appears to be necessarily global...

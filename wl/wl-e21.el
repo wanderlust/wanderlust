@@ -630,7 +630,9 @@ Special commands:
 ;;  (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer)
   (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region)
-  (define-key wl-draft-mode-map "\C-a" 'wl-draft-beginning-of-line))
+  (define-key wl-draft-mode-map "\C-a" 'wl-draft-beginning-of-line)
+  (define-key wl-draft-mode-map "\M-p" 'wl-draft-previous-history-element)
+  (define-key wl-draft-mode-map "\M-n" 'wl-draft-next-history-element))
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)
