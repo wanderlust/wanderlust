@@ -181,6 +181,13 @@
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-line-formatter)
 
+(defvar wl-datevec)
+(defvar wl-thr-indent-string)
+(defvar wl-thr-children-number)
+(defvar wl-thr-linked)
+(defvar wl-message-entity)
+(defvar wl-parent-message-entity)
+
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
   (defun wl-summary-append-message-func-internal (entity msgdb update
@@ -194,7 +201,6 @@
       (substring subject-string (match-end 0))
     subject-string))
 
-(eval-when-compile (defvar-maybe entity nil)) ; silence byte compiler.
 (defun wl-summary-default-from (from)
   (let (retval tos ng)
     (unless
@@ -204,7 +210,8 @@
 			   (wl-summary-buffer-folder-name))
 	     (wl-address-user-mail-address-p from)
 	     (cond
-	      ((and (setq tos (elmo-msgdb-overview-entity-get-to entity))
+	      ((and (setq tos (elmo-msgdb-overview-entity-get-to
+			       wl-message-entity))
 		    (not (string= "" tos)))
 	       (setq retval
 		     (concat "To:"
@@ -222,7 +229,7 @@
 			      (wl-parse-addresses tos)
 			      ","))))
 	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field
-			 entity "newsgroups"))
+			 wl-message-entity "newsgroups"))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
 	  (setq retval (or (funcall wl-summary-get-petname-function from)
@@ -1879,7 +1886,7 @@ If ARG is non-nil, checking is omitted."
 	 curp num i new-msgdb
 	 append-list delete-list crossed
 	 update-thread update-top-list
-	 expunged mes sync-result)
+	 expunged mes sync-result entity)
     (unwind-protect
 	(progn
 	  (unless wl-summary-buffer-elmo-folder
@@ -4015,13 +4022,6 @@ If ARG, exit virtual folder."
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)
-
-(defvar wl-datevec)
-(defvar wl-thr-indent-string)
-(defvar wl-thr-children-number)
-(defvar wl-thr-linked)
-(defvar wl-message-entity)
-(defvar wl-parent-message-entity)
 
 (defun wl-summary-line-year ()
   (aref wl-datevec 0))

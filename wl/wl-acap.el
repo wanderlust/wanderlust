@@ -235,7 +235,7 @@ If nil, default acap port is used."
 (defun wl-acap-create-folder-entity (string)
   (with-temp-buffer
     (message "Initializing folder...")
-    (let (folders)
+    (let (folders entity)
       (setq string (elmo-base64-decode-string string))
       (setq string (decode-coding-string string wl-acap-coding-system))
       (insert string)

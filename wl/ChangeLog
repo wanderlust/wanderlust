@@ -1,5 +1,11 @@
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-acap.el (wl-acap-create-folder-entity): Bind unbound variable.
+
+	* wl-summary.el (wl-summary-sync-update): Ditto.
+	(wl-summary-default-from): Use wl-message-entity
+	instead of entity.
+
 	* wl-summary.el (wl-summary-create-line): Fix.
 
 	* wl-vars.el (wl-summary-line-format-spec-alist): New variable.
