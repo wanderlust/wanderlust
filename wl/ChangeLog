@@ -1,5 +1,8 @@
 2002-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-decode-body): Give an argument for delete-char.
+	(wl-draft-insert-mail-header-separator): Ditto.
+
 	* wl.el (wl): Enclose `wl-check-environment' with `condition-case'
 	again (Reverted the change on 2002-01-17 by OKADA san).
 

@@ -1541,7 +1541,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (if (search-forward "\n\n" nil t)
 	(progn
 	  (goto-char (1- (point)))
-	  (delete-char))
+	  (delete-char 1))
       (goto-char (point-max)))
     (setq delimline (point))
     (save-excursion
@@ -1614,7 +1614,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (if (search-forward "\n\n" nil t)
 	  (progn
 	    (goto-char (1- (point)))
-	    (delete-char))
+	    (delete-char 1))
 	(goto-char (point-max))))
     (wl-draft-check-new-line)
     (put-text-property (point)

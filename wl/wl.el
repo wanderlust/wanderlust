@@ -814,8 +814,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 		  (progn
 		    (message "Checking environment...")
 		    (wl-check-environment arg)
-		    (message "Checking environment...done")
-		    (error quit))))
+		    (message "Checking environment...done"))
+		((error quit))))
 	  (message "Checking type of variables...")
 	  (wl-check-variables)
 	  (wl-check-variables-2)
