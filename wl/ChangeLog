@@ -1,3 +1,8 @@
+2000-07-26	Kenichi OKADA	<okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-check-entity-async): Use
+	`elmo-nntp-spec-hostname'.
+
 2000-08-02  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-msgdb-load-async): Use

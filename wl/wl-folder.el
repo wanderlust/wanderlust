@@ -876,8 +876,8 @@
 	       (wl-append net-elist (list (car elist)))
 	       (while spec-list
 		 (when (eq (caar spec-list) 'nntp)
-		   (when (not (string= server (nth 2 (car spec-list))))
-		     (setq server (nth 2 (car spec-list)))
+		   (when (not (string= server (elmo-nntp-spec-hostname (car spec-list))))
+		     (setq server (elmo-nntp-spec-hostname (car spec-list)))
 		     (message "Checking on \"%s\"" server))
 		   (setq nntp-connection-keys
 			 (elmo-nntp-get-folders-info-prepare
