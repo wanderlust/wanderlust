@@ -4860,9 +4860,10 @@ re-filed or copied to the specified folders are appended to the folder
 @subsection Creation of Folders (IMAP4)
 
 You can create IMAP folders off-line.  The creation of folders are
-reflected in the servers when Wanderlust becomes on-line.  At that time,
-if folders failed to be created on the servers for any reasons, messages
-re-filed to such folders are appended to the folder @samp{+lost+found}.
+reflected in the servers when Wanderlust becomes on-line.  If the creation
+of those folders fails at that time for some reasons, messages
+to be re-filed into those are appended to the folder @samp{+lost+found}
+instead.
 
 
 @node Marking, Pre-fetching Reservations, Creation of Folders, Enable Operations
