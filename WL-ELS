@@ -10,7 +10,7 @@
    wl wl-folder wl-summary wl-message
    wl-vars wl-draft wl-util wl-version wl-address wl-addrmgr
    wl-highlight wl-demo wl-refile wl-thread
-   wl-fldmgr wl-expire wl-template wl-score
+   wl-fldmgr wl-expire wl-template wl-score wl-acap
    ))
 
 (defconst ELMO-MODULES '(

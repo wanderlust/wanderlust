@@ -41,33 +41,6 @@
 (require 'elmo)
 (require 'elmo-net)
 
-;; User options
-(defcustom elmo-nntp-default-server "localhost"
-  "*Default NNTP server."
-  :type 'string
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-user nil
-  "*Default User of NNTP.  nil means no user authentication."
-  :type 'string
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-port 119
-  "*Default Port number of NNTP."
-  :type 'integer
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-stream-type nil
-  "*Default stream type for NNTP.
-Any symbol value of `elmo-network-stream-type-alist' or
-`elmo-nntp-stream-type-alist'."
-  :type 'symbol
-  :group 'elmo)
-
-(defvar elmo-nntp-stream-type-alist nil
-  "*Stream bindings for NNTP.
-This is taken precedence over `elmo-network-stream-type-alist'.")
-
 (defvar elmo-nntp-overview-fetch-chop-length 200
  "*Number of overviews to fetch in one request in nntp.")
 
