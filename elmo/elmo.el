@@ -1484,7 +1484,7 @@ Return a hashtable for newsgroups."
 
 ;; Obsolete functions.
 ;; 2001-12-11: *-dir -> *-directory
-(defalias 'elmo-folder-make-temporary-directory 'elmo-folder-make-temp-dir)
+(defalias 'elmo-folder-make-temp-dir 'elmo-folder-make-temporary-directory)
 (make-obsolete 'elmo-folder-make-temp-dir
 	       'elmo-folder-make-temporary-directory)
 
