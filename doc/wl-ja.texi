@@ -1341,6 +1341,23 @@ namazu (@uref{http://www.namazu.org/}) を用いて、検索式にマッチした
 @end group
 @end example
 
+namazu index のパスのデフォルト値は @code{elmo-nmz-default-index-path} で指定できます。
+
+例:
+
+@example
+@group
+[wanderlust]           -> デフォルトの index から "wanderlust"
+                          にマッチするものを探す
+[semi flim]~/Mail/semi -> ディレクトリ "~/Mail/semi" にある index
+                          から "semi flim" を探す
+@end group
+@end example
+
+Tips
+
+フォルダ名入力時に空白を入力したい場合、@kbd{C-q @key{SPC}} でできます。
+
 
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section マルチフォルダ

@@ -1322,6 +1322,23 @@ Format:
 @end group
 @end example
 
+Default value of the path of namazu index can be assigned by @code{elmo-nmz-default-index-path}.
+
+Example:
+
+@example
+@group
+[wanderlust]           -> search messages matched with
+                       "wanderlust" from the default index
+[semi flim]~/Mail/semi -> search "semi flim" from the index
+                       in the directory "~/Mail/semi"
+@end group
+@end example
+
+Tips
+
+If you want to use space in folder entry, @kbd{C-q @key{SPC}} will help you.
+
 
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
 @section Multi Folder
