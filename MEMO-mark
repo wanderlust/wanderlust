@@ -77,11 +77,9 @@ nil なら original は利用しない。
 
 * 仮想フォルダの msgdb の扱い
   pipe, filter, multi では、オリジナルフォルダの msgdb を操作する。
-  elmo-folder-check でオリジナルを sync する。
   elmo-folder-pack-number でオリジナルの番号入れ換えをする。
   (--> 次にオリジナルを visit したときに sync-all が必要)
-
-  msgdb への操作をなるべく抽象化する。
+  msgdb はフォルダメソッドを介して操作する．  
 
 * global mark の管理
 
