@@ -63,13 +63,13 @@
   (require 'wl-demo)
   (lunit-assert
    (file-exists-p
-    (expand-file-name (concat wl-demo-icon-name ".xpm") ICONDIR))))
+    (expand-file-name (concat (wl-demo-icon-name) ".xpm") ICONDIR))))
 
 (luna-define-method test-version-status-icon-xbm ((case test-dist))
   (require 'wl-demo)
   (lunit-assert
    (file-exists-p
-    (expand-file-name (concat wl-demo-icon-name ".xbm") ICONDIR))))
+    (expand-file-name (concat (wl-demo-icon-name) ".xbm") ICONDIR))))
 
 ;; verstion.texi
 (luna-define-method test-texi-version ((case test-dist))
