@@ -1416,8 +1416,7 @@ If ARG is non-nil, checking is omitted."
 		  (wl-summary-update-modeline)
 		  (wl-folder-update-unread
 		   (wl-summary-buffer-folder-name)
-		   (+ wl-summary-buffer-unread-count
-		      wl-summary-buffer-new-count))))
+		   wl-summary-buffer-unread-count)))
 	      t)
 	  nil)))))
 
@@ -1668,7 +1667,7 @@ If ARG is non-nil, checking is omitted."
       ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
-      (wl-summary-folder-info-update))))
+      (wl-summary-update-folder-info))))
 
 (defun wl-summary-update-status-marks (beg end &optional check)
   "Synchronize status marks on current buffer to the msgdb."
@@ -1922,13 +1921,9 @@ This function is defined for `window-scroll-functions'"
 		  (format "%d crosspost message(s)" crossed)))
 	(and mes (setq mes (concat mes "."))))
       ;; Update Folder mode
-      (wl-folder-set-folder-updated
-       (elmo-folder-name-internal folder)
-       (list 0
-	     (let ((lst (wl-summary-count-unread)))
-	       (+ (car lst) (nth 1 lst)))
-	     (elmo-folder-length folder)))
+      (wl-summary-count-unread)
       (wl-summary-update-modeline)
+      (wl-summary-update-folder-info)
       ;;
       (unless unset-cursor
 	(goto-char (point-min))
@@ -2955,10 +2950,7 @@ Return non-nil if the mark is updated"
 	  ;; should elmo-folder-flag-as-read return unread numbers?
 	  (wl-summary-count-unread)
 	  (wl-summary-update-modeline)
-	  (wl-folder-update-unread
-	   (wl-summary-buffer-folder-name)
-	   (+ wl-summary-buffer-unread-count
-	      wl-summary-buffer-new-count)))))))
+	  (wl-summary-update-folder-info))))))
 
 (defun wl-summary-mark-as-read (&optional number-or-numbers
 					  no-folder-mark
@@ -3009,8 +3001,7 @@ Return non-nil if the mark is updated"
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
 	   (wl-summary-buffer-folder-name)
-	   (+ wl-summary-buffer-unread-count
-	      wl-summary-buffer-new-count)))))))
+	   wl-summary-buffer-unread-count))))))
 
 (defun wl-summary-mark-as-answered (&optional number-or-numbers
 					      no-modeline-update)
@@ -4528,6 +4519,14 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-thread-jump-to-msg num)
 	  (wl-summary-print-message)
 	  (wl-summary-unmark))))))
+
+(defun wl-summary-update-folder-info ()
+  (wl-folder-set-folder-updated
+   (elmo-string (wl-summary-buffer-folder-name))
+   (list wl-summary-buffer-new-count
+	 wl-summary-buffer-unread-count
+	 (elmo-folder-length
+	  wl-summary-buffer-elmo-folder))))
 
 (defun wl-summary-folder-info-update ()
   (wl-folder-set-folder-updated
