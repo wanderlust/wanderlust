@@ -1143,22 +1143,15 @@ Message is inserted to the summary buffer."
       (wl-summary-set-message-modified)
       (set-buffer-modified-p nil))))
 
-
 (defun wl-thread-get-depth-of-current-line ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (let ((depth 0))
-      (if (re-search-forward (concat "^" wl-summary-buffer-number-regexp
-				     "..../..\(.*\)..:.. ")
-			     nil t)
-	  (while (string-match wl-thread-indent-regexp
-			       (char-to-string
-				(char-after (point))))
-	    (setq depth (1+ depth))
-	    (forward-char)))
-      (/ depth wl-thread-indent-level-internal))))
-
+  (let ((entity (wl-thread-get-entity (wl-summary-message-number)))
+	(depth 0)
+	number)
+    (while (setq number (wl-thread-entity-get-parent entity))
+      (incf depth)
+      (setq entity (wl-thread-get-entity number)))
+    depth))
+  
 (defun wl-thread-update-indent-string-region (beg end)
   (interactive "r")
   (save-excursion

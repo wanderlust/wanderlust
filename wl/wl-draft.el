@@ -1215,14 +1215,28 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (kill-buffer sending-buffer))))))
 
 (defun wl-draft-save ()
-  "Save current draft."
+  "Save current draft.
+Derived from `message-save-drafts' in T-gnus."
   (interactive)
-  (save-buffer)
-  (wl-draft-config-info-operation
-   (and (string-match "[0-9]+$" wl-draft-buffer-file-name)
-	(string-to-int
-	 (match-string 0 wl-draft-buffer-file-name)))
-   'save))
+  (if (buffer-modified-p)
+      (progn
+	(message "Saving %s..." wl-draft-buffer-file-name)
+	(let ((msg (buffer-substring-no-properties (point-min) (point-max))))
+	  (with-temp-file wl-draft-buffer-file-name
+	    (insert msg)
+	    ;; XXX Discard error to ignore invalid content. Is it dangerous?
+	    (condition-case nil
+		(mime-edit-translate-buffer)
+	      (error))
+	    (wl-draft-get-header-delimiter t)))
+	(set-buffer-modified-p nil)
+	(wl-draft-config-info-operation
+	 (and (string-match "[0-9]+$" wl-draft-buffer-file-name)
+	      (string-to-int
+	       (match-string 0 wl-draft-buffer-file-name)))
+	 'save)
+	(message "Saving %s...done" wl-draft-buffer-file-name))
+    (message "(No changes need to be saved)")))
 
 (defun wl-draft-mimic-kill-buffer ()
   "Kill the current (draft) buffer with query."
@@ -1461,6 +1475,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)
+    ;; Don't care about supersession.
+    (setq buffer-file-name nil)
     (setq wl-sent-message-via nil)
     (setq wl-sent-message-queued nil)
     (setq wl-draft-buffer-file-name file-name)

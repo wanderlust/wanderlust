@@ -1,3 +1,15 @@
+2002-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-save): Rewrite.
+	(wl-draft-create-buffer): Set buffer-file-name as nil.
+
+	* wl-summary.el (wl-summary-reedit): Don't care about draft folder.
+
+	* wl-thread.el (wl-thread-get-depth-of-current-line): Rewrite.
+
+	* wl-vars.el (wl-summary-no-mime-folder-list): Changed default value to
+	nil.
+
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-message.el (wl-message-buffer-prefetch): Require `count'.

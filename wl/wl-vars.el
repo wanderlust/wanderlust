@@ -767,8 +767,7 @@ Default is for 'followup-to-me'."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-no-mime-folder-list
-  (list (concat "^" (regexp-quote wl-draft-folder) "$"))
+(defcustom wl-summary-no-mime-folder-list nil
   "*All folders that match this list don't analysis mime."
   :type '(repeat string)
   :group 'wl-summary)

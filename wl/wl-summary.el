@@ -593,15 +593,7 @@ If ARG is non-nil, Supersedes message"
   (interactive "P")
   (if arg
       (wl-summary-supersedes-message)
-    (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
-	(if (wl-summary-message-number)
-	    (unwind-protect
-		(wl-draft-reedit (wl-summary-message-number))
-	      (if (wl-message-news-p)
-		  (mail-position-on-field "Newsgroups")
-		(mail-position-on-field "To"))
-	      (delete-other-windows)))
-      (wl-draft-edit-string (wl-summary-message-string)))))
+    (wl-draft-edit-string (wl-summary-message-string))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
@@ -5383,7 +5375,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		      "Supersedes: " message-id "\n"
 		      (and followup-to
 			   (concat "Followup-To: " followup-to "\n")))))
-    (if message-buf (set-buffer message-buf))
+	(if message-buf (set-buffer message-buf))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
 (defun wl-summary-save (&optional arg wl-save-dir)
