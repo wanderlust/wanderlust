@@ -3437,11 +3437,9 @@ The initial setting is @samp{ja}.  Specify language of the weekday.
 displays Deutsch.
 
 @item wl-summary-fix-timezone
-@vindex wl-summary-fix-timezone
-The initial setting is @samp{nil}. 
-Time zone of the date string in summary mode is adjusted using this value.
-If @code{nil}, it is adjust to the default time zone information
-(system's default time zone or environment variable @samp{TZ}).
+@vindex  wl-summary-fix-timezone
+The initial setting is @samp{JST}.  Timezone to adjust summary's
+timezone.  If @code{nil}, adjust to GMT.
 
 @item wl-use-petname
 @vindex  wl-use-petname
@@ -4295,7 +4293,7 @@ sent off-line.
 @item wl-draft-use-cache
 @vindex wl-draft-use-cache
 The initial setting is @code{nil}. If the value is non-nil and
-@code{wl-insert-message-id} is nil, cache the message which is sent.
+@code{wl-insert-message-id} is non-nil, cache the message which is sent.
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
