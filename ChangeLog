@@ -1,3 +1,8 @@
+2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/bbdb-wl.el (toplevel): Fixed copyright notice.
+	* utils/rfc2368.el (toplevel): Ditto.
+
 2000-10-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (ptexinfmt-disable-broken-notice-flag):
