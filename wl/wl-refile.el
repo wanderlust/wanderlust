@@ -247,7 +247,7 @@ If RULE does not match ENTITY, returns nil."
       (if (setq guess (wl-refile-evaluate-rule (car rules) entity))
 	  (setq rules nil)
 	(setq rules (cdr rules))))
-    (wl-folder-get-realname guess)))
+    guess))
 
 (defun wl-refile-guess-by-history (entity)
   (let ((tocc-list
