@@ -1,3 +1,8 @@
+2005-03-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Avoid
+	duplicate call of `wl-summary-print-argument' on the wrong line.
+
 2005-03-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-jump-to-msg): Don't interactive input
