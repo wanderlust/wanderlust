@@ -1,3 +1,7 @@
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-version.el (elmo-version): Up to 2.9.6.
+
 2002-01-22  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-vars.el (elmo-localnews-folder-path): Make customizable.

@@ -1,5 +1,9 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* Version number is increased to 2.9.6.
+
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-delete-field): Optional argument.
 	(wl-draft-delete-fields): Ditto.
 
