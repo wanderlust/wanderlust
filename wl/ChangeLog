@@ -1,3 +1,10 @@
+2001-11-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-config-sub-func-alist): Added
+	`part-top' and `part-bottom'.
+	(wl-draft-config-sub-part-top): New function.
+	(wl-draft-config-sub-part-bottom): New function.
+
 2001-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-reply): Call wl-draft with parent folder.

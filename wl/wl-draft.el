@@ -82,6 +82,8 @@
     (header        . wl-draft-config-sub-header)
     (header-top    . wl-draft-config-sub-header-top)
     (header-bottom . wl-draft-config-sub-header)
+    (part-top      . wl-draft-config-sub-part-top)
+    (part-bottom   . wl-draft-config-sub-part-bottom)
     (body-file     . wl-draft-config-sub-body-file)
     (top-file      . wl-draft-config-sub-top-file)
     (bottom-file   . wl-draft-config-sub-bottom-file)
@@ -1569,12 +1571,20 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (wl-draft-body-goto-bottom)
   (if content (insert (eval content))))
 
+(defun wl-draft-config-sub-header (content)
+  (wl-draft-config-body-goto-header)
+  (if content (insert (concat (eval content) "\n"))))
+
 (defun wl-draft-config-sub-header-top (content)
   (goto-char (point-min))
   (if content (insert (concat (eval content) "\n"))))
 
-(defun wl-draft-config-sub-header (content)
-  (wl-draft-config-body-goto-header)
+(defun wl-draft-config-sub-part-top (content)
+  (goto-char (mime-edit-content-beginning))
+  (if content (insert (concat (eval content) "\n"))))
+
+(defun wl-draft-config-sub-part-bottom (content)
+  (goto-char (mime-edit-content-end))
   (if content (insert (concat (eval content) "\n"))))
 
 (defsubst wl-draft-config-sub-file (content)
