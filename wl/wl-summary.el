@@ -777,9 +777,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 					wl-summary-buffer-folder-indicator
 					wl-summary-buffer-unread-status))
   (easy-menu-add wl-summary-mode-menu)
-  (when wl-summary-lazy-highlight
-    (make-local-variable 'window-scroll-functions)
-    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))  
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -2753,7 +2750,7 @@ If ARG, without confirm."
       (wl-summary-buffer-number-column-detect t)
       (wl-summary-disp-msg fld (and reuse-buf keep-cursor))
       (unless (and reuse-buf keep-cursor)
-	;(setq hilit wl-summary-highlight)
+	(setq hilit wl-summary-highlight)
 	(unwind-protect
 	    (let ((wl-summary-highlight (if reuse-buf wl-summary-highlight))
 		  (wl-use-scoring
@@ -2794,9 +2791,8 @@ If ARG, without confirm."
 		(forward-line -1)
 	      (wl-summary-prev))
 	    (setq retval 'more-next))
-	  ;(setq wl-summary-highlight hilit)
+	  (setq wl-summary-highlight hilit)
 	  (if (and wl-summary-highlight
-		   (not wl-summary-lazy-highlight)
 		   (not reuse-buf))
 	      (if (and wl-summary-highlight-partial-threshold
 		       (> (count-lines (point-min) (point-max))
