@@ -1,3 +1,10 @@
+2001-10-30  Nishimoto Masaki <nishimoto@gaju.org>
+
+	* wl-expire.el (wl-expire-localdir-date-folder-name-fmt): New variable.
+	(wl-expire-localdir-get-folder-function): New user option.
+	(wl-expire-localdir-get-folder): New function.
+	(wl-expire-localdir-date): Ditto.
+
 2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-check-one-entity): Fixed car of return

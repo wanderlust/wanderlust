@@ -497,6 +497,93 @@ Refile to archive folder followed message date."
       (setq arcmsg-alist (cdr arcmsg-alist)))
     deleted-list))
 
+;;; wl-expire-localdir-date
+(defvar wl-expire-localdir-date-folder-name-fmt "%s/%%04d_%%02d")
+
+(defcustom wl-expire-localdir-get-folder-function
+  'wl-expire-localdir-get-folder
+  "*A function to get localdir folder name."
+  :type 'function
+  :group 'wl-expire)
+
+(defun wl-expire-localdir-get-folder (src-folder fmt dst-folder-arg)
+  "Get localdir folder name from src-folder."
+  (let* ((src-folder-name (substring
+			   (elmo-folder-name-internal src-folder)
+			   (length (elmo-folder-prefix-internal src-folder))))
+	 (dst-folder-spec (char-to-string
+			   (car (rassq 'localdir elmo-folder-type-alist))))
+	 dst-folder-base dst-folder-fmt)
+    (cond (dst-folder-arg
+	   (setq dst-folder-base (concat dst-folder-spec dst-folder-arg)))
+	  ((eq (elmo-folder-type-internal src-folder) 'localdir)
+	   (setq dst-folder-base (concat dst-folder-spec src-folder-name)))
+	  (t
+	   (setq dst-folder-base
+		 (elmo-concat-path
+		  (format "%s%s"
+			  dst-folder-spec
+			  (elmo-folder-type-internal src-folder))
+		  src-folder-name))))
+    (setq dst-folder-fmt
+	  (format fmt dst-folder-base))
+    (cons dst-folder-base dst-folder-fmt)))
+
+(defun wl-expire-localdir-date (folder delete-list msgdb
+				       &optional preserve-number dst-folder-arg
+				       no-delete)
+  "Function for `wl-summary-expire'.
+Refile to localdir folder by message date.
+ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
+  (let* ((number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (overview (elmo-msgdb-get-overview msgdb))
+	 (dst-folder-expand (and dst-folder-arg
+				 (wl-expand-newtext
+				  dst-folder-arg
+				  (elmo-folder-name-internal folder))))
+	 (dst-folder-fmt (funcall
+			  wl-expire-localdir-get-folder-function
+			  folder
+			  wl-expire-localdir-date-folder-name-fmt
+			  dst-folder-expand))
+	 (dst-folder-base (car dst-folder-fmt))
+	 (dst-folder-fmt (cdr dst-folder-fmt))
+	 (refile-func (if no-delete
+			  'wl-expire-refile
+			'wl-expire-refile-with-copy-reserve-msg))
+	 tmp dels dst-folder date time
+	 msg arcmsg-alist arcmsg-list
+	 deleted-list ret-val)
+    (while (setq msg (wl-pop delete-list))
+      (setq date (elmo-msgdb-overview-entity-get-date
+		  (assoc (cdr (assq msg number-alist)) overview)))
+      (setq time
+	    (condition-case nil
+		(timezone-fix-time date nil nil)
+	      (error [0 0 0 0 0 0 0])))
+      (if (= (aref time 1) 0)	;; if (month == 0)
+	  (aset time 0 0))	;;    year = 0
+      (setq dst-folder (format dst-folder-fmt
+			       (aref time 0);; year
+			       (aref time 1);; month
+			       ))
+      (setq arcmsg-alist
+	    (wl-append-assoc-list
+	     dst-folder
+	     msg
+	     arcmsg-alist)))
+    (while arcmsg-alist
+      (setq dst-folder (caar arcmsg-alist))
+      (setq arcmsg-list (cdar arcmsg-alist))
+      (and (setq ret-val
+		 (funcall
+		  refile-func
+		  folder arcmsg-list msgdb dst-folder t preserve-number
+		  no-delete))
+	   (wl-append deleted-list (car ret-val)))
+      (setq arcmsg-alist (cdr arcmsg-alist)))
+    deleted-list))
+
 (defun wl-expire-hide (folder hide-list msgdb &optional no-reserve-marks)
   "Hide message for expire."
   (unless no-reserve-marks
