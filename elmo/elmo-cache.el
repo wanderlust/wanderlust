@@ -140,7 +140,7 @@
 
 (luna-define-method elmo-message-fetch
   ((folder elmo-cache-folder) number strategy &optional unseen section)
-  ;; disbable cache process
+  ;; disable cache process
   (erase-buffer)
   (when (elmo-message-fetch-internal folder number strategy section unseen)
     (when (and (not unseen)

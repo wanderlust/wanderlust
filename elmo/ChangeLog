@@ -1,5 +1,9 @@
 2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* 2.12.1 is released.
+
+	* modb-standard.el (elmo-msgdb-unset-flag): Bind inhibit-quit.
+
 	* elmo-maildir.el (elmo-folder-append-messages): Fix the problem
 	that only the first flag is used.
 
@@ -70,6 +74,8 @@
 	(elmo-maildir-set-mark): Ditto.
 	(elmo-maildir-delete-mark): Ditto.
 	(These changes are based on Hiroya Murata's patch [wl: 13437])
+
+	* elmo-version.el (elmo-version): Up to 2.12.1.
 
 2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

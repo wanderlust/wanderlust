@@ -350,6 +350,7 @@ When non-nil, redundunt message-id string are not saved."
 			  (modb-standard-flag-map msgdb)))
     (t
      (let ((cur-flags (modb-standard-message-flags msgdb number))
+	   (inhibit-quit t)
 	   new-flags diff)
        (when (memq flag cur-flags)
 	 (setq new-flags (delq flag (copy-sequence cur-flags)))
