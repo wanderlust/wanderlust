@@ -140,10 +140,6 @@
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers
-					      new-mark
-					      already-mark
-					      seen-mark
-					      important-mark
 					      seen-list)
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
@@ -172,10 +168,10 @@
 			      (if (elmo-file-cache-exists-p message-id) ; XXX
 				  (if seen
 				      nil
-				    already-mark)
+				    elmo-msgdb-unread-cached-mark)
 				(if seen
 				    nil ;;seen-mark
-				  new-mark))))
+				  elmo-msgdb-new-mark))))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist
@@ -227,7 +223,7 @@
 
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-localdir-folder)
-   src-folder numbers unread-marks &optional same-number)
+   src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-localdir-folder-directory-internal folder))
 	    (succeeds numbers)

@@ -291,18 +291,21 @@
    (elmo-map-message-location folder number)
    strategy section unread))
 
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-map-folder) unread-marks &optional mark-alist)
-  (elmo-map-folder-locations-to-numbers
-   folder
-   (elmo-map-folder-list-unreads folder)))
+(luna-define-method elmo-folder-list-unreads ((folder elmo-map-folder))
+  (let ((locations (elmo-map-folder-list-unreads folder)))
+    (if (listp locations)
+	(elmo-map-folder-locations-to-numbers
+	 folder
+	 (elmo-map-folder-list-unreads folder)))))
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-map-folder) important-mark)
+(luna-define-method elmo-folder-list-importants ((folder elmo-map-folder))
   (let ((locations (elmo-map-folder-list-importants folder)))
     (if (listp locations)
-	(elmo-map-folder-locations-to-numbers folder locations)
-      t)))
+	(elmo-uniq-list
+	 (nconc (elmo-map-folder-locations-to-numbers folder locations)
+		(elmo-folder-list-messages-with-global-mark
+		 folder elmo-msgdb-important-mark)))
+      (luna-call-next-method))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-map-folder)
 						 numbers)
@@ -318,7 +321,6 @@
 	     folder))
 	   (elmo-map-folder-location-alist-internal folder))))
   t) ; success
-  
 
 (require 'product)
 (product-provide (provide 'elmo-map) (require 'elmo-version))

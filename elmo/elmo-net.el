@@ -393,25 +393,40 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 		 (elmo-dop-spool-folder-list-messages folder))))
     t))
 
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-net-folder) unread-marks &optional mark-alist)
+(luna-define-method elmo-folder-list-unreads :around ((folder
+						       elmo-net-folder))
   (if (and (elmo-folder-plugged-p folder)
 	   (elmo-folder-use-flag-p folder))
       (elmo-folder-send folder 'elmo-folder-list-unreads-plugged)
-    t))
+    (luna-call-next-method)))
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-net-folder) important-mark)
+(luna-define-method elmo-folder-list-importants :around ((folder
+							  elmo-net-folder))
   (if (and (elmo-folder-plugged-p folder)
 	   (elmo-folder-use-flag-p folder))
-      (elmo-folder-send folder 'elmo-folder-list-importants-plugged)
-    t))
+      (elmo-uniq-list
+       (nconc
+	(elmo-folder-send folder 'elmo-folder-list-importants-plugged)
+	(elmo-folder-list-messages-with-global-mark
+	 folder elmo-msgdb-important-mark)))
+    (luna-call-next-method)))
+
+(luna-define-method elmo-folder-list-answereds :around ((folder
+							 elmo-net-folder))
+  (if (and (elmo-folder-plugged-p folder)
+	   (elmo-folder-use-flag-p folder))
+      (elmo-folder-send folder 'elmo-folder-list-answereds-plugged)
+    (luna-call-next-method)))
 
 (luna-define-method elmo-folder-list-unreads-plugged
   ((folder elmo-net-folder))
   t)
 
 (luna-define-method elmo-folder-list-importants-plugged
+  ((folder elmo-net-folder))
+  t)
+
+(luna-define-method elmo-folder-list-answereds-plugged
   ((folder elmo-net-folder))
   t)
 
@@ -427,34 +442,21 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (elmo-folder-delete-messages-dop folder numbers))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-net-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark seen-list)
+					      numbers seen-list)
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-msgdb-create-plugged
-			numbers
-			new-mark
-			already-mark seen-mark
-			important-mark seen-list)
+			numbers seen-list)
     (elmo-folder-send folder 'elmo-folder-msgdb-create-unplugged
-		      numbers
-		      new-mark already-mark seen-mark
-		      important-mark seen-list)))
+		      numbers seen-list)))
 
 (luna-define-method elmo-folder-msgdb-create-unplugged ((folder
 							 elmo-net-folder)
 							numbers
-							new-mark already-mark
-							seen-mark
-							important-mark
 							seen-list)
   ;; XXXX should be appended to already existing msgdb.
   (elmo-dop-msgdb
    (elmo-folder-msgdb-create (elmo-dop-spool-folder folder)
 			     (mapcar 'abs numbers)
-			     new-mark already-mark
-			     seen-mark
-			     important-mark
 			     seen-list)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-net-folder)
@@ -494,6 +496,26 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	 folder 'elmo-folder-mark-as-read-unplugged numbers))
     t))
 
+(luna-define-method elmo-folder-unmark-answered ((folder elmo-net-folder)
+						 numbers)
+  (if (elmo-folder-use-flag-p folder)
+      (if (elmo-folder-plugged-p folder)
+	  (elmo-folder-send folder 'elmo-folder-unmark-answered-plugged
+			    numbers)
+	(elmo-folder-send folder
+			  'elmo-folder-unmark-answered-unplugged numbers))
+    (luna-call-next-method)))
+
+(luna-define-method elmo-folder-mark-as-answered ((folder elmo-net-folder)
+						  numbers)
+  (if (elmo-folder-use-flag-p folder)
+      (if (elmo-folder-plugged-p folder)
+	  (elmo-folder-send folder 'elmo-folder-mark-as-answered-plugged
+			    numbers)
+	(elmo-folder-send folder 'elmo-folder-mark-as-answered-unplugged
+			  numbers))
+    (luna-call-next-method)))
+
 (luna-define-method elmo-folder-mark-as-read-unplugged ((folder
 							 elmo-net-folder)
 							numbers)
@@ -512,6 +534,15 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 							     elmo-net-folder)
 							    numbers)
   (elmo-folder-unmark-important-dop folder numbers))
+
+(luna-define-method elmo-folder-mark-as-answered-unplugged ((folder
+							     elmo-net-folder)
+							    numbers)
+  (elmo-folder-mark-as-answered-dop folder numbers))
+
+(luna-define-method elmo-folder-unmark-answered-unplugged
+  ((folder elmo-net-folder) numbers)
+  (elmo-folder-unmark-answered-dop folder numbers))
 
 (luna-define-method elmo-message-encache :around ((folder elmo-net-folder)
 						  number &optional read)
