@@ -38,7 +38,7 @@
 
 (eval-when-compile (require 'static))
 
-(static-if (and (not (boundp 'pldap-version))
+(static-if (and (not (featurep 'pldap))
 		(fboundp 'ldap-open))
     ;; You have built-in ldap feature (XEmacs).
     (require 'ldap)
@@ -48,8 +48,8 @@
 (require 'poe)
 (require 'std11)
 
-(defconst pldap-version "1.0"
-  "Version name of pldap.")
+(defconst pldap-version "1.1"
+  "Version number of pldap.")
 
 (defgroup ldap nil
   "Lightweight Directory Access Protocol"
@@ -467,11 +467,18 @@ DN is the distinguished name of the entry to delete."
     (if (and passwd
 	     (not (equal "" passwd)))
 	(setq arglist (nconc arglist (list (format "-w%s" passwd)))))
-    (apply 'call-process
-	   ldap-delete-program
-	   nil (current-buffer) t
-	   (append arglist
-		   (list dn)))))
+    (with-temp-buffer
+      (setq ret (apply 'call-process
+		       ldap-delete-program
+		       nil (current-buffer) t
+		       (append arglist
+			       (list dn))))
+      (if (integerp ret)
+	  (if (not (zerop ret))
+	      (error (car (split-string (buffer-string) "\n"))))
+	(if (and (setq ret (buffer-string)); Nemacs
+		 (string-match "ldap_delete:" ret))
+	    (error (car (split-string ret "\n"))))))))
 
 (defun ldap-modify (ldap dn mods)
   "Add an entry to an LDAP directory.
@@ -488,7 +495,7 @@ or `replace'.  ATTR is the LDAP attribute type to modify."
 	 (port   (plist-get plist 'port))
 	 (binddn (plist-get plist 'binddn))
 	 (passwd (plist-get plist 'passwd))
-	 arglist)
+	 arglist ret)
     (setq arglist (list (format "-h%s" (ldap-host ldap))))
     (if (and port (not (equal 389 port)))
 	(setq arglist (nconc arglist (list (format "-p%d" port)))))
@@ -512,11 +519,17 @@ or `replace'.  ATTR is the LDAP attribute type to modify."
 	  (insert "replace: " (nth 1 (car mods)) "\n")
 	  (insert (nth 1 (car mods)) ": " (nth 2 (car mods)) "\n-\n")))
 	(setq mods (cdr mods)))
-      (apply 'call-process-region
-	     (point-min) (point-max)
-	     ldap-modify-program
-	     t '(t nil) nil
-	     arglist))))
+      (setq ret (apply 'call-process-region
+		       (point-min) (point-max)
+		       ldap-modify-program
+		       t t nil
+		       arglist))
+      (if (integerp ret)
+	  (if (not (zerop ret))
+	      (error (car (split-string (buffer-string) "\n"))))
+	(if (and (setq ret (buffer-string)); Nemacs
+		 (string-match "ldap_modify:" ret))
+	    (error (car (split-string ret "\n"))))))))
 
 (defun ldap-add (ldap dn entry)
   "Add an entry to an LDAP directory.
@@ -530,7 +543,7 @@ containing attribute/value string pairs."
 	 (port   (plist-get plist 'port))
 	 (binddn (plist-get plist 'binddn))
 	 (passwd (plist-get plist 'passwd))
-	 arglist)
+	 arglist ret)
     (setq arglist (list (format "-h%s" (ldap-host ldap))))
     (if (and port (not (equal 389 port)))
 	(setq arglist (nconc arglist (list (format "-p%d" port)))))
@@ -545,11 +558,17 @@ containing attribute/value string pairs."
       (while entry
 	(insert (car (car entry)) ": " (cdr (car entry)) "\n")
 	(setq entry (cdr entry)))
-      (apply 'call-process-region
-	     (point-min) (point-max)
-	     ldap-add-program
-	     t '(t nil) nil
-	     arglist))))
+      (setq ret (apply 'call-process-region
+		       (point-min) (point-max)
+		       ldap-add-program
+		       t t nil
+		       arglist))
+      (if (integerp ret)
+	  (if (not (zerop ret))
+	      (error (car (split-string (buffer-string) "\n"))))
+	(if (and (setq ret (buffer-string)) ; Nemacs
+		 (string-match "ldap_add:" ret))
+	    (error (car (split-string ret "\n"))))))))
 
 (defun ldap-search-basic (ldap filter base scope
 			       &optional attrs attrsonly withdn verbose)
@@ -582,7 +601,7 @@ entry according to the value of WITHDN."
 	 (sizelimit (plist-get plist 'sizelimit))
 	 start value dn attrs-result
 	 (i 0)
-	 result arglist)
+	 result arglist ret)
     (setq arglist (list (format "-h%s" (ldap-host ldap))))
     (if (and port (not (equal 389 port)))
 	(setq arglist (nconc arglist (list (format "-p%d" port)))))
@@ -617,15 +636,16 @@ entry according to the value of WITHDN."
 	     (not (equal "" sizelimit)))
 	(setq arglist (nconc arglist (list (format "-z%s" sizelimit)))))
     (with-temp-buffer
-      (unless (zerop (or (apply 'call-process
-				ldap-search-program
-				nil (current-buffer) t
-				(append arglist
-					ldap-search-program-arguments
-					(list filter)
-					attrs))
-			 0)) ; Nemacs returns nil.
-	(error "LDAP error: \"No such object\""))
+      (setq ret (apply 'call-process
+		       ldap-search-program
+		       nil (current-buffer) t
+		       (append arglist
+			       ldap-search-program-arguments
+			       (list filter)
+			       attrs)))
+      (if (and (integerp ret)
+	       (not (zerop ret)))
+	  (error "LDAP error: \"No such object\""))
       (goto-char (point-min))
       (setq start (point))
       (while (and (not (eobp))
