@@ -302,20 +302,17 @@
 ;; This value precedes `wl-message-ignored-field-list'
 (setq wl-message-visible-field-list '("^Message-Id:"))
 
-;; X-Face (requires x-face (and x-face-mule))
-(when (and window-system
-	   (module-installed-p 'x-face))
-  (cond ((featurep 'xemacs)		; for XEmacs
+;; X-Face (requires x-face or bitmap-mule)
+(when window-system
+  (cond ((and (featurep 'xemacs)		; for XEmacs
+	      (module-installed-p 'x-face))
 	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
 	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
-	 ;; x-face-mule 0.20 or later
-	 (setq wl-highlight-x-face-function
-	       (function
-		(lambda (&rest dummy)
-		  (x-face-decode-message-header))))
-	 (require 'x-face-mule))
+	 ;; for x-face-mule distributed with bitmap-mule 8.0 or later
+	 (autoload 'x-face-decode-message-header "x-face-mule")
+	 (setq wl-highlight-x-face-function 'x-face-decode-message-header))
 	))
 
 ;; Scoring.

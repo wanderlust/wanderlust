@@ -311,20 +311,17 @@
 (setq wl-view-visible-field-list '("^Message-Id:"))
 
 
-;; X-Face を表示する (要 x-face (and x-face-mule))
-(when (and window-system
-	   (module-installed-p 'x-face))
-  (cond ((featurep 'xemacs)		; for XEmacs
+;; X-Face を表示する (要 x-face or bitamap-mule)
+(when window-system
+  (cond ((and (featurep 'xemacs)		; for XEmacs
+	      (module-installed-p 'x-face))
 	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
 	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
-	 ;; x-face-mule 0.20以降
-	 (setq wl-highlight-x-face-function
-	       (function
-		(lambda (&rest dummy)
-		  (x-face-decode-message-header))))
-	 (require 'x-face-mule))
+	 ;; for x-face-mule distributed with bitmap-mule 8.0 or later
+	 (autoload 'x-face-decode-message-header "x-face-mule")
+	 (setq wl-highlight-x-face-function 'x-face-decode-message-header))
 	))
 
 ;; スコア機能の設定
