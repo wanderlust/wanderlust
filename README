@@ -70,6 +70,12 @@ CVS:
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
 
+  If you want to receive CVS commit log via e-mail, send empty mail to
+
+	cvs-info-help@cvs.m17n.org
+
+Development:
+
   If you would like to join CVS based development, please send mail to
 
 	cvs@cvs.m17n.org

@@ -72,6 +72,13 @@ CVS:
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
 
+  CVS の commit log をメールで受け取りたいときは、以下のアドレスに空の
+  メールを送ってください。
+
+	cvs-info-help@cvs.m17n.org
+
+Development:
+
   CVS に基づいた開発に参加したいときは、
 
 	cvs@cvs.m17n.org
