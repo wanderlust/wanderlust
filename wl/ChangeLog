@@ -1,3 +1,8 @@
+2004-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Don't give 'no-check
+	argument for wl-summary-sync-force-update.
+
 2004-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Revival of

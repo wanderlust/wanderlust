@@ -2408,7 +2408,7 @@ If ARG, without confirm."
 	       ((or (eq scan-type 'force-update)
 		    (eq scan-type 'update))
 		(setq mes (wl-summary-sync-force-update
-			   'unset-cursor 'no-check)))))
+			   'unset-cursor)))))
 	  (if interactive
 	      (switch-to-buffer buf)
 	    (set-buffer buf))
