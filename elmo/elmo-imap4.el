@@ -852,14 +852,14 @@ BUFFER must be a single-byte buffer."
       (insert string)
       (goto-char (point-min))
       (setq beg (point))
-      (if (re-search-forward "^\* \\([0-9]+\\) FETCH" 
+      (if (re-search-forward "^\\* \\([0-9]+\\) FETCH"
 			     nil t)
 	  (progn
 	    (setq beg (point))
 	    (unless elmo-imap4-use-uid
 	      (setq number (string-to-int (elmo-match-buffer 1))))
 	    (while (re-search-forward 
-		    "^\* \\([0-9]+\\) FETCH" 
+		    "^\\* \\([0-9]+\\) FETCH"
 		    nil t)
 	      (setq attr (elmo-imap4-make-attributes-object
 			  (buffer-substring beg (match-beginning 0))))
