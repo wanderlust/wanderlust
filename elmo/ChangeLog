@@ -1,5 +1,9 @@
 2002-07-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-split.el (elmo-split): Moved to run hooks and to show
+	message from elmo-split-subr.
+	(elmo-split-subr): Follow the change above.
+
 	* elmo-split.el (elmo-split-subr): New function (renamed from
 	elmo-split-subr).
 	(elmo-split): Changed to call elmo-split-subr by element of

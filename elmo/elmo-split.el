@@ -209,9 +209,27 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
     (error "Split rule doest not exist. Set `elmo-split-rule' first."))
   (let ((folders (if (listp elmo-split-folder)
 		     elmo-split-folder
-		   (list elmo-split-folder))))
+		   (list elmo-split-folder)))
+	(count 0)
+	(fcount 0)
+	ret)
     (dolist (folder folders)
-      (elmo-split-subr (elmo-make-folder folder) arg))))
+      (setq ret (elmo-split-subr (elmo-make-folder folder) arg)
+	    count (+ count (car ret))
+	    fcount (+ fcount (cdr ret))))
+    (run-hooks 'elmo-split-hook)
+    (message
+     (concat
+      (cond
+       ((eq count 0)
+	"No message is splitted")
+       ((eq count 1)
+	"1 message is splitted")
+       (t
+	(format "%d messages are splitted" count)))
+      (if (eq fcount 0)
+	  "."
+	(format " (%d failure)." fcount))))))
 
 (defun elmo-split-subr (folder &optional reharsal)
   (let ((elmo-inhibit-display-retrieval-progress t)
@@ -283,19 +301,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 	      (elmo-progress-notify 'elmo-split)))
 	  (elmo-folder-close-internal folder))
       (elmo-progress-clear 'elmo-split))
-    (run-hooks 'elmo-split-hook)
-    (message
-     (concat
-      (cond
-       ((eq count 0)
-	"No message is splitted")
-       ((eq count 1)
-	"1 message is splitted")
-       (t
-	(format "%d messages are splitted" count)))
-      (if (eq fcount 0)
-	  "."
-	(format " (%d failure)." fcount))))))
+    (cons count fcount)))
 
 (provide 'elmo-split)
 
