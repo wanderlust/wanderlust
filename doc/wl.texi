@@ -6946,10 +6946,10 @@ variable.  The initial setting is @code{t}.
 @item wl-auto-check-folder-name
 @vindex wl-auto-check-folder-name
 The initial setting is @code{nil}.
-If non-nil, the folder with the name of the value is checked for unread
-messages at the start.
+You can specify a folder or a group which is checked for unread message
+at the start. You can also specify a list of folders (groups) to be checked.
+If the value is @code{nil}, whole Desktop is checked at the start.
 If it is @code{none}, no folders are checked.
-If it is a list, all folders in the list are checked at the start.
 
 @item wl-auto-uncheck-folder-list
 @vindex wl-auto-uncheck-folder-list
@@ -6962,17 +6962,15 @@ The initial setting is the list shown below:
 @end lisp
 
 @noindent
-Folders with the name matching this variable are not checked for unread
-messages at the start, even if they are included in the groups in
-@code{wl-auto-check-folder-name}.
+You can set a list of regular expressions to specify folders
+which are not automatically checked even if they are included
+in some groups assigned by @code{wl-auto-check-folder-name}.
 
 @item wl-auto-check-folder-list
 @vindex wl-auto-check-folder-list
 The initial setting is @code{nil}.
-Folders with the name matching this variable are always checked for
-unread messages at the start, if they are included in the groups in
-@code{wl-auto-check-folder-name}.
-This takes precedence over @code{wl-auto-uncheck-folder-list}.
+You can set a list of regular expressions to specify exceptions
+for @code{wl-auto-uncheck-folder-list}.
 
 @item wl-no-save-folder-list
 @vindex wl-no-save-folder-list

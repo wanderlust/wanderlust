@@ -6847,9 +6847,10 @@ IMAP4 $B%U%)%k%@$KBP$9$k>r7o%U%#%k%?%U%)%k%@$N$h$&$J>l9g$K$O!"(B
 @item wl-auto-check-folder-name
 @vindex wl-auto-check-folder-name
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-Non-nil $B$J$i$P!"@_Dj$5$l$?CM$r;}$D%U%)%k%@$NL$FI?t$r5/F0;~$K%A%'%C%/$7$^$9!#(B
-@code{none} $B$J$i$P!"5/F0;~$K%A%'%C%/$7$^$;$s!#(B
-$B%j%9%H$J$i$P!"%j%9%H$K@_Dj$5$l$?A4$F$N%U%)%k%@$r5/F0;~$K%A%'%C%/$7$^$9!#(B
+$B5/F0;~$KL$FI?t$r%A%'%C%/$9$k%U%)%k%@$d%0%k!<%W$r;XDj$7$^$9!#(B
+$B%A%'%C%/$r9T$J$$$?$$%U%)%k%@(B($B%0%k!<%W(B)$B$N%j%9%H$r;XDj$9$k$3$H$b$G$-$^$9!#(B
+@code{nil} $B$J$i$P5/F0;~$K(B Desktop $BA4BN$r%A%'%C%/$7$^$9!#(B
+@code{none} $B$J$i$P!"5/F0;~$K2?$b%A%'%C%/$7$^$;$s!#(B
 
 @item wl-auto-uncheck-folder-list
 @vindex wl-auto-uncheck-folder-list
@@ -6862,15 +6863,15 @@ Non-nil $B$J$i$P!"@_Dj$5$l$?CM$r;}$D%U%)%k%@$NL$FI?t$r5/F0;~$K%A%'%C%/$7$^$9!#
 @end lisp
 
 @noindent
-@code{wl-auto-check-folder-name} $B$K;XDj$5$l$?%0%k!<%W$K4^$^$l$F$$$F$b(B
+@code{wl-auto-check-folder-name} $B$G;XDj$5$l$?%0%k!<%W$K4^$^$l$F$$$F$b(B
 $B5/F0;~$KL$FI%A%'%C%/$7$J$$%U%)%k%@L>$N@55,I=8=$N%j%9%H$G$9!#(B
+$B$^$?!"(BDesktop $B$KBP$7$FL$FI%A%'%C%/$r$9$k:]$K$b!"$3$l$i$N%U%)%k%@$O%9%-%C%W$5$l$^$9!#(B
 
 @item wl-auto-check-folder-list
 @vindex wl-auto-check-folder-list
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
-@code{wl-auto-check-folder-name} $B$K;XDj$5$l$?%0%k!<%W$K4^$^$l$F$$$?$i(B
-$B5/F0;~$KI,$:L$FI%A%'%C%/$9$k%U%)%k%@L>$N@55,I=8=$N%j%9%H$G$9!#(B
-@code{wl-auto-uncheck-folder-list} $B$h$j$bM%@h$7$^$9!#(B
+@code{wl-auto-uncheck-folder-list} $B$K;XDj$5$l$F$$$?$H$7$F$b(B
+$BNc30E*$KL$FI%A%'%C%/$7$?$$%U%)%k%@L>$N@55,I=8=$N%j%9%H$r;XDj$7$^$9!#(B
 
 @item wl-no-save-folder-list
 @vindex wl-no-save-folder-list

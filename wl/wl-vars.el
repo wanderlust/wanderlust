@@ -1518,25 +1518,26 @@ Only IMAP4 folders have an effect."
   :group 'wl-folder)
 
 (defcustom wl-auto-check-folder-name nil
-  "*The folder specified by this variable will be automatically checked
-at start time."
+  "*A folder, a group or a list of folders and groups specified which
+will be automatically checked at the startup time."
   :type '(choice (string :tag "Folder")
 		 (repeat (string :tag "Folder"))
 		 (const none))
   :group 'wl-folder)
 
 (defcustom wl-auto-uncheck-folder-list '("\\$.*")
-  "All folders that match this list won't be checked when group is
-automatically checked (or desktop is checked).
+  "All folders that match this list won't be checked at the startup
+time even if they are embedded in some groups specified by
+wl-auto-check-folder-name.
+Those folders are also skipped when you check on the Desktop.
 This value is preceded by wl-auto-check-folder-list.
 Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-folder)
 
 (defcustom wl-auto-check-folder-list nil
-  "All folders that match this list are checked when group is
-automatically checked (or desktop is checked).
-This value precedes wl-auto-uncheck-folder-list.
+  "A list of patterns for exceptional folders against
+wl-auto-uncheck-folder-list.
 Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-folder)
