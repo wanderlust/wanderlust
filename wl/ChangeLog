@@ -1,5 +1,9 @@
 2002-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-create-contents): Treat 'Body field as draft
+	content.
+	(wl-draft): Follow the change above.
+
 	* wl-vars.el (wl-summary-line-format-spec-alist): Added @.
 
 	* wl.el (wl-check-variables-2): Check whether wl-summary-line-format

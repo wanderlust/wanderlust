@@ -1518,7 +1518,7 @@ Derived from `message-save-drafts' in T-gnus."
     (setq header-alist (append header-alist
 			       (wl-draft-default-headers)
 			       wl-draft-additional-header-alist
-			       (if body (list "" body))))
+			       (if body (list "" (cons 'Body body)))))
     (wl-draft-create-contents header-alist)
     (if edit-again
 	(wl-draft-decode-body
@@ -1607,6 +1607,8 @@ Derived from `message-save-drafts' in T-gnus."
 	(cond
 	 ((symbolp field)
 	  (cond
+	   ((eq field 'Body) ; body
+	    (insert value))
 	   ((stringp value) (insert (symbol-name field) ": " value "\n"))
 	   ((functionp value)
 	    (let ((value-return (funcall value)))
