@@ -8,7 +8,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    You can choose keep, full or split as values of wl-draft-buffer-style
    and wl-draft-reply-buffer-style.
 
-* Changes in 2.10.0 from 2.8.1.
+* Changes in 2.10.0 from 2.8.1
 
 ** You can alter the format of summary lines.
    Specify format by wl-summary-line-format. If you want to change ones
@@ -160,7 +160,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    the actual message itself is deleted.
    Please visit the 'mark folder to review the messages with the "$" mark.
 
-* Version 2.6.1 is basically a bug fix version of 2.6.0.
+* Changes in 2.6.1 from 2.6.0
+  Version 2.6.1 is basically a bug fix version of 2.6.0.
 
 ** Fixed a problem that Emacs 21 causes `Recursive load...' error.
 
@@ -173,7 +174,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Some other fixes.
 
-* Changes in 2.6.0 from 2.4.1.
+* Changes in 2.6.0 from 2.4.1
 
 ** FLIM 1.13.x is not supported any longer.
    Please install FLIM 1.14.1 or later.
@@ -201,7 +202,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Many bug fixes.
 
-* Version 2.4.1 is basically a bug fix version of 2.4.0.
+* Changes in 2.4.1 from 2.4.0
+  Version 2.4.1 is basically a bug fix version of 2.4.0.
 
 ** Wanderlust 2.4.1 now works on FLIM 1.14.x. 
 
@@ -219,7 +221,7 @@ Example:
 should be changed to
 (setq elmo-default-imap4-authenticate-type 'clear)
 
-* Changes in 2.4.0 from 1.1.1.
+* Changes in 2.4.0 from 1.1.1
 
 ** Version Number
 The version numbering convention for Wanderlust is changed. 
@@ -386,7 +388,8 @@ Less colors are used by DEMO pixmap.
 Emacsen on character based terminal also display suitable DEMO.
 
 
-* Version 1.1.1 is a bug fix version of 1.1.0 with minor user-visible changes.
+* Changes in 1.1.1 from 1.1.0
+  Version 1.1.1 is a bug fix version of 1.1.0 with minor user-visible changes.
 
 ** Development on the CVS server is started.
 
@@ -405,7 +408,7 @@ Emacsen on character based terminal also display suitable DEMO.
 Progress gauge is displayed while processing in the Emacsen with
 progress gauge feature.
 
-* Changes in version 1.1.0 from 1.0.3.
+* Changes in 1.1.0 from 1.0.3
 
 ** Install
 

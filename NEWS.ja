@@ -162,7 +162,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    "$" マークの付いたメッセージを見直したい場合は 'mark フォルダを参照して
    ください。
 
-* 2.6.1 は 2.6.0 の修正版です。
+* 2.6.0 から 2.6.1 への変更点
+  2.6.1 は 2.6.0 の修正版です。
 
 ** Emacs 21 で Recursive load... と出る不具合が修正されました。
 
@@ -202,7 +203,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** 多くのバグフィックス
 
-* 2.4.1 は 2.4.0 の修正版です。
+* 2.4.0 から 2.4.1 への変更点
+  2.4.1 は 2.4.0 の修正版です。
 
 ** FLIM 1.14.x 上でも動作するようになりました。
 
@@ -219,7 +221,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 (setq elmo-default-imap4-authenticate-type 'clear)
 に変更する必要があります。
 
-* 1.1.1 から version 2.4.0 への変更点
+* 1.1.1 から 2.4.0 への変更点
 
 ** バージョン番号
 バージョン番号の付け方が変わりました。
@@ -381,7 +383,8 @@ wl-message-visible-field-list で、Wanderlust レベルで設定が可能
 なりました。
 
 
-* 1.1.1 は 1.1.0 のバグ修正版です。いくつかの細かい修正が加わっています。
+* 1.1.0 から 1.1.1 への変更点
+  1.1.1 は 1.1.0 のバグ修正版です。いくつかの細かい修正が加わっています。
 
 ** CVS サーバ上での開発が始められました。
 
@@ -397,7 +400,7 @@ wl-message-visible-field-list で、Wanderlust レベルで設定が可能
 progress gauge の表示機能をもつ Emacs では、処理の進捗が progress gauge に
 表示されるようになりました。
 
-* 1.0.3 から version 1.1.0 への変更点 
+* 1.0.3 から 1.1.0 への変更点 
 
 ** インストール
 
