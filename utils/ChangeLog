@@ -1,3 +1,8 @@
+2004-01-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* ssl.el (toplevel): Don't include cl at run time.
+	(ref. Emacs Lisp Coding Conventions section in elisp-info)
+
 2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* im-wl.el (wl-draft-send-with-imput-async): Follow the changes
