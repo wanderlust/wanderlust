@@ -1,8 +1,17 @@
+2001-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Push mark
+	with third argument t.
+	(wl-draft): Set first argument for wl-plugged-init as t.
+
+	* wl-vars.el (wl-biff-state-indicator-off): Fixed default value
+	definition.
+
 2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el: Tabify.
 	(wl-biff-notify-hook): Use `ding' instead of `beep'.
- 
+
 	* wl-draft.el (wl-draft-send): Fixed docstring and confirm
 	message.
 
