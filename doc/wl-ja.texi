@@ -2554,7 +2554,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 
 $B0l;~E*%^!<%/$O!"%a%C%;!<%8$rA`:n$9$k$?$a%^!<%/$G$9!#(B
 
-$B0l;~E*%^!<%/$K$O!"(B@samp{*}, @samp{D}, @samp{o}, @samp{O} $B$,$"$j$^$9!#(B
+$B0l;~E*%^!<%/$K$O!"(B@samp{*}, @samp{d}, @samp{o}, @samp{O} $B$,$"$j$^$9!#(B
 
 @table @samp
 @item *
@@ -2562,8 +2562,8 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 @kbd{m} $B$G;O$^$k%3%^%s%I$G(B @samp{*}$B%^!<%/$N$D$$$?%a%C%;!<%8BP$7$F0l3g$7$?=hM}(B
 $B$,$G$-$^$9!#(B
 
-@item D
-$B:o=|$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{d} $B$r2!$9$HIU$-$^$9!#(B
+@item d
+$B=hJ,$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{d} $B$r2!$9$HIU$-$^$9!#(B
 
 @item o
 $B%j%U%!%$%k$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{o}$B$r2!$9$H!"%j%U%!%$%k@h(B
@@ -2574,8 +2574,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 $BMh$^$9!#$=$l$KEz$($k$H!"%3%T!<@h$N%U%)%k%@>pJs$,IU$12C$o$j$^$9!#(B
 @end table
 
-@kbd{x} $B$r2!$9$H!"(B@samp{D}, @samp{o}, @samp{O} $B$N%^!<%/$,IU$$$F$$$k(B
-$B%a%C%;!<%8$N:o=|!"%j%U%!%$%k!"%3%T!<$r<B9T$7$^$9!#(B
+@kbd{x} $B$r2!$9$H!"$=$l$>$l$N0l;~E*%^!<%/$KBP1~$7$?%"%/%7%g%s$r<B9T$7$^$9!#(B
 
 @subsection $B1JB3E*%^!<%/(B
 
@@ -3341,7 +3340,8 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item x
 @kindex x (Summary)
-$B$9$Y$F$N(B @samp{d}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B%5%^%j%P%C%U%!$N$9$Y$F$N%a%C%;!<%8$KBP$7$F!"0l;~E*%^!<%/$KBP1~$9$k%"%/%7%g%s(B
+$B$r<B9T$7$^$9!#(B
 @findex wl-summary-exec
 (@code{wl-summary-exec})
 
@@ -3422,7 +3422,8 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$KBP$7$F!"0l;~E*%^!<%/$KBP1~$9$k%"%/%7%g%s(B
+$B$r<B9T$7$^$9!#(B
 (@code{wl-summary-exec-region})
 
 @item r *
@@ -3494,7 +3495,8 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$r%W%j%
 @item t x
 @kindex t x (Summary)
 @findex wl-thread-exec
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$N%a%C%;!<%8$KBP$7$F!"0l;~(B
+$BE*%^!<%/$KBP1~$9$k%"%/%7%g%s$r<B9T$7$^$9!#(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K(B
 $BE,MQ$7$^$9!#(B
 (@code{wl-thread-exec})

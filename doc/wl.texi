@@ -2553,8 +2553,8 @@ Target mark.
 You can execute a command on the all messages that have @samp{*} mark,
 with the key bindings which begins with @kbd{m}.
 
-@item D
-The mark to delete. You can put @samp{D} by typing @kbd{d} key.
+@item d
+The mark to dispose. You can put @samp{d} by typing @kbd{d} key.
 
 @item o
 The mark to refile.
@@ -2568,7 +2568,7 @@ The difference between this mark and refile mark is,
 this mark does not delete the message while latter does.
 @end table
 
-@kbd{x} key executes @samp{D}, @samp{o} and @samp{O} marks.
+@kbd{x} key executes action for temporary marks, respectively.
 
 @subsection Persistent Marks
 
@@ -3350,7 +3350,7 @@ With prefix argument, prefetch the message even if it is cached.
 
 @item x
 @kindex x (Summary)
-Execute @samp{D}, @samp{o} and @samp{O} marks.
+Execute action for all temporary marks in the summary buffer.
 @findex wl-summary-exec
 (@code{wl-summary-exec})
 
@@ -3431,7 +3431,7 @@ Prefetch messages in the specified region.
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
-Execute @samp{D}, @samp{o} and @samp{O} marks on the messages in the
+Execute action for each temporary marks on the messages in the
 specified region.
 (@code{wl-summary-exec-region})
 
@@ -3504,7 +3504,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @item t x
 @kindex t x (Summary)
 @findex wl-thread-exec
-Execute @samp{D}, @samp{o} and @samp{O} marks on the messages which are
+Execute action for temporary marks on the messages which are
 the descendant of the current thread.  With prefix argument, it affects
 on the all messages in the thread tree.
 (@code{wl-thread-exec})
