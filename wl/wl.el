@@ -721,7 +721,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	     (format "Queue Folder %s does not exist, create it?"
 		     wl-queue-folder))
 	    (elmo-create-folder wl-queue-folder)
-	  (error "Queue Folder is not created")))
+	  (error "Queue Folder is not created"))))
+  (when (not (eq no-check-folder 'wl-draft))
     (unless (elmo-folder-exists-p wl-trash-folder)
       (if (y-or-n-p
 	   (format "Trash Folder %s does not exist, create it?"

@@ -1309,7 +1309,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (require 'wl))
   (unless wl-init
     (wl-load-profile))
-  (wl-init) ;; returns immediately if already initialized.
+  (wl-init 'wl-draft) ;; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer wl-summary-buffer-folder-name)))
   (let ((draft-folder-spec (elmo-folder-get-spec wl-draft-folder))
