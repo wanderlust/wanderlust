@@ -1,7 +1,7 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-folder.el (wl-folder-virtual): New function.
-	Define key "V".
+	Define key as "V".
 
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
