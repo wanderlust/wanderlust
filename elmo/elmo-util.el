@@ -939,9 +939,10 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	 file (nth 2 condition) number number-list)))))
 
 (defmacro elmo-get-hash-val (string hashtable)
-  (let ((sym (list 'intern-soft string hashtable)))
-    (list 'if (list 'boundp sym)
-       (list 'symbol-value sym))))
+  `(and (stringp ,string)
+	(let ((sym (intern-soft ,string ,hashtable)))
+	  (if (boundp sym)
+	      (symbol-value sym)))))
 
 (defmacro elmo-set-hash-val (string value hashtable)
   (list 'set (list 'intern string hashtable) value))

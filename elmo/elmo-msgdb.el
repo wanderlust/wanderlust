@@ -426,6 +426,11 @@ content of MSGDB is changed."
   ;; entity is parent-id.
   (and entity (assoc entity database)))
 
+(defsubst elmo-msgdb-get-parent-entity (entity msgdb)
+  (setq entity (elmo-msgdb-overview-entity-get-references entity))
+  ;; entity is parent-id.
+  (and entity (elmo-msgdb-overview-get-entity entity msgdb)))
+
 (defsubst elmo-msgdb-overview-entity-get-number (entity)
   (and entity (aref (cdr entity) 0)))
 
