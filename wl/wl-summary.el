@@ -2850,7 +2850,15 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
     (while (and (null mark) priorities)
       (if (and (eq (car priorities) 'flag)
 	       (elmo-get-global-flags flags 'ignore-preserved))
-	  (setq mark wl-summary-flag-mark)
+	  (let ((specs wl-summary-flag-alist)
+		spec)
+	    (while (setq spec (car specs))
+	      (if (memq (car spec) flags)
+		  (setq mark (or (nth 2 spec) wl-summary-flag-mark)
+			specs nil)
+		(setq specs (cdr specs))))
+	    (unless mark
+	      (setq mark wl-summary-flag-mark)))
 	(when (memq (car priorities) flags)
 	  (setq mark
 		(or (case (car priorities)

@@ -1,3 +1,10 @@
+2004-06-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-persistent-mark-string): Decide mark
+	according to 3rd element of wl-summary-flag-mark.
+
+	* wl-vars.el (wl-summary-flag-alist): Add description for mark.
+
 2004-06-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-target-mark-all): Don't set

@@ -996,14 +996,16 @@ cdr of each cons cell is used for draft message."
   '((important "orange"))
   "An alist to define the flags for the summary mode.
 Each element is a form like:
-\(SYMBOL-OF-FLAG COLOR\)
+\(SYMBOL-OF-FLAG COLOR [MARK]\)
 Example:
 \((important \"orange\"\)
- \(todo \"red\"\)
- \(business \"green\"\)
+ \(todo \"red\" \"T\"\)
+ \(business \"green\" \"B\"\)
  \(private \"blue\"\)\)"
   :type '(repeat (list (symbol :tag "flag")
-		       (string :tag "color")))
+		       (string :tag "color")
+		       (choice (string :tag "mark")
+			       (const :tag "Default mark" nil))))
   :group 'wl-summary)
 
 (defcustom wl-summary-new-uncached-mark "N"
