@@ -874,12 +874,13 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	       nil (current-buffer)
 	       'unread)
 	      (unless (eq (buffer-size) 0)
-		(elmo-folder-append-buffer
-		 folder
-		 (setq unseen (member (elmo-message-mark
-				       src-folder (car numbers))
-				      unread-marks))
-		 (if same-number (car numbers)))))
+		(setq failure (not
+			       (elmo-folder-append-buffer
+				folder
+				(setq unseen (member (elmo-message-mark
+						      src-folder (car numbers))
+						     unread-marks))
+				(if same-number (car numbers)))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure

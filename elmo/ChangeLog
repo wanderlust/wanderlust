@@ -1,3 +1,15 @@
+2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-append-messages): Check return value of
+	elmo-folder-append-buffer.
+
+	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Ditto.
+
+	* elmo-archive.el (elmo-archive-folder-append-buffer): Return t
+	if append buffer content succeds.
+
 2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-message-fetch-plugged): Fixed label for

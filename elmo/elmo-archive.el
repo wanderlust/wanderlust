@@ -586,7 +586,8 @@ TYPE specifies the archiver's symbol."
 		   (copy-to-buffer dst-buffer (point-min) (point-max)))
 		 (as-binary-output-file
 		  (write-region (point-min) (point-max) newfile nil 'no-msg))
-		 (elmo-archive-call-method method (list arc newfile)))
+		 (elmo-archive-call-method method (list arc newfile))
+		 t)
 	     nil))))))
 
 (luna-define-method elmo-folder-append-messages :around

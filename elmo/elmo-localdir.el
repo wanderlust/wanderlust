@@ -220,12 +220,13 @@
 		   folder
 		   (or number
 		       (1+ (car (elmo-folder-status folder)))))))
-    (if (file-writable-p filename)
-	(write-region-as-binary
-	 (point-min) (point-max) filename nil 'no-msg))
-    t))
+    (when (file-writable-p filename)
+      (write-region-as-binary
+       (point-min) (point-max) filename nil 'no-msg)
+      t)))
 
-(luna-define-method elmo-folder-append-messages :around ((folder elmo-localdir-folder)
+(luna-define-method elmo-folder-append-messages :around ((folder
+							  elmo-localdir-folder)
 							 src-folder numbers
 							 unread-marks
 							 &optional same-number)
