@@ -1,5 +1,7 @@
 2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-standard.el (elmo-msgdb-unset-flag): Bind inhibit-quit.
+
 	* elmo-maildir.el (elmo-folder-append-messages): Fix the problem
 	that only the first flag is used.
 
