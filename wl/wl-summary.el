@@ -182,8 +182,7 @@
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
-  (defun wl-summary-append-message-func-internal (entity overview
-							 mark-alist update
+  (defun wl-summary-append-message-func-internal (entity msgdb update
 							 &optional force-insert)))
 (unless (fboundp 'wl-summary-from-func-internal)
   (defun wl-summary-from-func-internal (from)

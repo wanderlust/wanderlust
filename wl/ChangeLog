@@ -1,5 +1,10 @@
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-append-message-func-internal): Removed
+	argument `overview', `mark-alist' and added `msgdb'.
+
+	* wl-thread.el (wl-thread-insert-message): Remove argument `overview'.
+
 	* wl-summary.el (wl-summary-insert-summary): Changed argument.
 	(wl-summary-rescan): Follow the change above.
 	(wl-summary-sync-update): Ditto.

@@ -430,7 +430,6 @@ ENTITY is returned."
 		     (wl-thread-entity-parent-invisible-p entity)))
 	  (wl-summary-update-thread
 	   (elmo-msgdb-overview-get-entity msg (wl-summary-buffer-msgdb))
-	   overview
 	   mark-alist
 	   entity
 	   (and parent-msg
