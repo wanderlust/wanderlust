@@ -1,3 +1,7 @@
+2004-06-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.30.
+
 2004-06-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-synchronize): Add 5th optional argument

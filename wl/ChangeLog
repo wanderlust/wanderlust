@@ -1,5 +1,7 @@
 2004-06-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* Version number is increased to 2.11.30.
+
 	* wl-vars.el (wl-draft-reply-with-argument-list): Fix
 	customization type and docstring.
 	(wl-draft-reply-without-argument-list): Ditto.
