@@ -1,3 +1,32 @@
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-open-internal): Fixed.
+
+	* elmo.el (elmo-generic-folder-open): Bind inhibit-quit as t
+	while loading msgdb.
+
+	* elmo-shimbun.el (elmo-shimbun-folder-setup): New function.
+	(elmo-folder-open-internal): Rewrite.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-display-as-is-internal):
+	Adjust buffer-multibyte status.
+
+2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-msgdb-search): Use elmo-condition-in-msgdb-p instead
+	of elmo-condition-find-key.
+
+	* elmo-util.el (elmo-condition-in-msgdb-p-internal): New function.
+	(elmo-condition-in-msgdb-p): Ditto.
+	(elmo-read-search-condition-internal): Don't set REQUIRE-MATCH
+	argument.
+
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-folder-pack-numbers): Define.
+
 2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-find-next-line): Fixed
