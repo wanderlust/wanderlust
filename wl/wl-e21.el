@@ -29,7 +29,7 @@
 ;; images instead of `insert-image', so don't delete such overlays
 ;; sloppily.  Here is a sample code to show icons in the buffer.
 ;;
-;;(let (image from to icon overlay)
+;;(let (image icon from to overlay)
 ;;  ;; The function `find-image' will look for an image first on `load-path'
 ;;  ;; and then in `data-directory'.
 ;;  (let ((load-path (cons wl-icon-dir load-path)))
@@ -51,7 +51,7 @@
 ;;  ;; Put a mark to indicate that this overlay is made by `wl-e21'.
 ;;  ;; It is not always necessarily.
 ;;  (overlay-put overlay 'wl-e21-icon t)
-;;  ;; Make it can be removable.
+;;  ;; Make it to be removable.
 ;;  (overlay-put overlay 'evaporate t))
 
 ;;; Code:
