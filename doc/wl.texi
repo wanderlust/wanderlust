@@ -2710,11 +2710,11 @@ A list of regexp of folders to enable message prefetching.
 @table @code
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-The initial settionf is 5. The number of prefetching messages.
+The initial setting is 5. The number of messages to be prefetched.
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
-The initial settionf is 0.2 (in seconds). The period of prefetching.
+The initial setting is 0.2 (in seconds). The period of prefetching.
 @table @code
 
 
