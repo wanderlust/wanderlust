@@ -334,11 +334,10 @@ By setting following-method as yank-content."
 	     'wl-original-message-mode
 	     (function elmo-mime-insert-header))
   ;; To avoid overriding wl-draft-mode-map.
-  (when (boundp 'mime-setup-signature-key-alist)
-    (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
-      (setq mime-setup-signature-key-alist
-	    (cons '(wl-draft-mode . "\C-c\C-w")
-		  mime-setup-signature-key-alist))))
+  (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
+    (setq mime-setup-signature-key-alist
+	  (cons '(wl-draft-mode . "\C-c\C-w")
+		mime-setup-signature-key-alist)))
   (add-hook 'elmo-message-text-content-inserted-hook 'wl-highlight-body-all)
   (add-hook 'elmo-message-header-inserted-hook 'wl-highlight-headers))
 
