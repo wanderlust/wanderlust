@@ -1,3 +1,68 @@
+2000-08-02  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-quoted-specials-list): New constant.
+	(elmo-imap4-non-atom-char-regex): Ditto.
+	(elmo-imap4-non-text-char-regex): Ditto.
+	(elmo-imap4-literal-threshold): Ditto.
+	(elmo-imap4-atom-p): New function.
+	(elmo-imap4-quotable-p): Ditto.
+	(elmo-imap4-nil): Ditto.
+	(elmo-imap4-atom): Ditto.
+	(elmo-imap4-quoted): Ditto.
+	(elmo-imap4-literal-subr): Ditto.
+	(elmo-imap4-literal): Ditto.
+	(elmo-imap4-buffer-literal): Ditto.
+	(elmo-imap4-string-subr): Ditto.
+	(elmo-imap4-string): Ditto.
+	(elmo-imap4-buffer-string): Ditto.
+	(elmo-imap4-astring-subr): Ditto.
+	(elmo-imap4-astring): Ditto.
+	(elmo-imap4-buffer-astring): Ditto.
+	(elmo-imap4-nstring): Ditto.
+	(elmo-imap4-buffer-nstring): Ditto.
+	(elmo-imap4-mailbox): New alias.
+	(elmo-imap4-field-body): Ditto.
+	(elmo-imap4-userid): Ditto.
+	(elmo-imap4-password): Ditto.
+	(elmo-imap4-format-quoted): New function.
+	(elmo-imap4-send-command): Rewritten.  Accept a list of command
+	arguments and handle "atom", "quoted" and "literal" string here.
+	(elmo-imap4-list-folders): Use `elmo-imap4-mailbox' for
+	`elmo-imap4-send-command'.
+	(elmo-imap4-folder-exists-p): Likewise.
+	(elmo-imap4-create-folder): Likewise.
+	(elmo-imap4-delete-folder): Likewise.
+	(elmo-imap4-rename-folder): Likewise.
+	(elmo-imap4-max-of-folder): Likewise.
+	(elmo-imap4-check-validity): Likewise.
+	(elmo-imap4-sync-validity): Likewise.
+	(elmo-imap4-server-diff): Likewise.
+	(elmo-imap4-select-folder): Likewise.
+	(elmo-imap4-copy-msgs): Likewise.
+	(elmo-imap4-search-internal): Use `elmo-imap4-astring'.
+	(elmo-imap4-mark-set-on-msgs): Likewise.
+	(elmo-imap4-read-part): Likewise.
+	(elmo-imap4-read-msg): Likewise.
+	(elmo-imap4-open-connection): Use `elmo-imap4-userid' and
+	`elmo-imap4-password' for `elmo-imap4-send-command'.
+	(elmo-imap4-delete-msg-by-id): Use `elmo-imap4-field-body'.
+	(elmo-imap4-append-msg-by-id): Use `elmo-imap4-mailbox' and
+	`elmo-imap4-buffer-literal'.
+	(elmo-imap4-append-msg): Likewise.
+
+	* elmo-imap4.el (elmo-imap4-get-connection): Use `delq' instead of
+	`delete' for removing dead connection from the connection cache.
+	Move deletion of the process buffer after that.
+	(elmo-imap4-list): Change `defsubst' to `defun'.
+	(elmo-imap4-commit): Make error message verbose.
+	(elmo-imap4-search): Ditto.
+	(elmo-imap4-list): Ditto.
+	(elmo-imap4-select-folder): Ditto.
+	(elmo-imap4-copy-msgs): Ditto.
+	(elmo-imap4-delete-msg-by-id): Ditto.
+	(elmo-imap4-append-msg-by-id): Ditto.
+	(elmo-imap4-append-msg): Ditto.
+
 2000-07-26  Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
 
 	* elmo-archive.el (elmo-archive-get-archive-name): Fixed problem
