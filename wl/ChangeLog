@@ -1,5 +1,10 @@
 2002-01-17  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl.el (wl-check-type): New function.
+	(wl-check-type-variables): New variable.
+
+2002-01-17  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-pop-before-smtp-authenticate-type): Fix.
 
 2002-01-17  Kenichi OKADA  <okada@opaopa.org>

@@ -758,6 +758,27 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (make-directory wl-temporary-file-directory)
 	  (error "Temp directory is not created"))))))
 
+(defconst wl-check-type-variables
+  '((numberp . elmo-pop3-default-port)
+    (symbolp . elmo-pop3-default-authenticate-type)
+    (numberp . elmo-imap4-default-port)
+    (symbolp . elmo-imap4-default-authenticate-type)
+    (numberp . elmo-nntp-default-port)
+    (numberp . wl-pop-before-smtp-port)
+    (symbolp . wl-pop-before-smtp-authenticate-type)))
+
+(defun wl-check-type ()
+  (let ((type-variables wl-check-type-variables))
+    (while (setq type (car type-variables))
+      (if (and (eval (cdr type))
+	       (not (funcall (car type)
+			     (eval (cdr type)))))
+	  (error "%s must be %s: %S"
+		 (cdr type)
+		 (substring (format "%s" (car type)) 0 -1)
+		 (eval (cdr type))))
+      (setq type-variables (cdr type-variables)))))
+
 ;;;###autoload
 (defun wl (&optional arg)
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
