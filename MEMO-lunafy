@@ -130,8 +130,6 @@ archive, multi フォルダ用の msgdb path を変更。
 * 懸案
 
 ** オフライン処理
-** expire がうまく動かない
-** obsolete な設定でも動くようにする
 ** tm 対応
 ** NNTP 関連
    wl-folder-check-entity-async
