@@ -1,3 +1,8 @@
+2002-11-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utf7.el (toplevel): Check the ucs features dynamically.
+	(Advice from Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>)
+
 2002-11-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-search-primitive): Revert the last change.

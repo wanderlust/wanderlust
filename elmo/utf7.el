@@ -86,9 +86,48 @@
   "Return required length of padding for IMAP modified base64 fragment."
   (mod (- len) modulus))
 
-(static-cond
+(cond
+ ((or (find-coding-system 'utf-7)
+      (module-installed-p 'un-define))
+  (defun utf7-fragment-decode (start end &optional imap)
+    "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
+Use IMAP modification if IMAP is non-nil."
+    (require 'un-define)
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (insert "+")
+      (when imap
+	(goto-char start)
+	(while (search-forward "," nil 'move-to-end) (replace-match "/")))
+      (decode-coding-region (point-min) (point-max) 'utf-7)))
+
+  (defun utf7-fragment-encode (start end &optional imap)
+    "Encode text from START to END in buffer as UTF-7 escape fragment.
+Use IMAP modification if IMAP is non-nil."
+    (require 'un-define)
+    (let ((buffer (current-buffer))
+	  encoded-string)
+      (setq encoded-string
+	    (with-temp-buffer
+	      (insert-buffer-substring buffer start end)
+	      (encode-coding-region (point-min) 
+				    (point-max) 'utf-7)
+	      (goto-char (point-min))
+	      (when imap
+		(skip-chars-forward "+")
+		(delete-region (point-min) (point))
+		(insert "&")
+		(while (search-forward "/" nil t)
+		  (replace-match ",")))
+	      (skip-chars-forward "^= \t\n" (point-max))
+	      (delete-region (point) (point-max))
+	      (buffer-string)))
+      (delete-region start end)
+      (insert encoded-string))))
  ((and (featurep 'xemacs) 
-       (module-installed-p 'xemacs-ucs))
+       (or (find-coding-system 'utf-8)
+	   (module-installed-p 'xemacs-ucs)))
   (defun utf7-fragment-decode (start end &optional imap)
     "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
 Use IMAP modification if IMAP is non-nil."  
@@ -105,7 +144,7 @@ Use IMAP modification if IMAP is non-nil."
 			    utf7-utf7-to-utf8-program
 			    t (current-buffer)))
       (decode-coding-region (point-min) (point-max) 'utf-8)))
-
+  
   (defun utf7-fragment-encode (start end &optional imap)
     "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
 Use IMAP modification if IMAP is non-nil."  
@@ -136,54 +175,17 @@ Use IMAP modification if IMAP is non-nil."
 	      (buffer-string)))
       (delete-region start end)
       (insert encoded-string))))
- ((module-installed-p 'un-define) ;; Emacs
-  (defun utf7-fragment-decode (start end &optional imap)
-    "Decode base64 encoded fragment from START to END of UTF-7 text in buffer.
-Use IMAP modification if IMAP is non-nil."
-    (require 'un-define)
-    (save-restriction
-      (narrow-to-region start end)
-      (goto-char (point-min))
-      (insert "+")
-      (when imap
-	(goto-char start)
-	(while (search-forward "," nil 'move-to-end) (replace-match "/")))
-      (decode-coding-region (point-min) (point-max) 'utf-7)
-      ))
-
-  (defun utf7-fragment-encode (start end &optional imap)
-    "Encode text from START to END in buffer as UTF-7 escape fragment.
-Use IMAP modification if IMAP is non-nil."
-    (require 'un-define)
-    (let ((buffer (current-buffer))
-	  encoded-string)
-      (setq encoded-string
-	    (with-temp-buffer
-	      (insert-buffer-substring buffer start end)
-	      (encode-coding-region (point-min) 
-				    (point-max) 'utf-7)
-	      (goto-char (point-min))
-	      (when imap
-		(skip-chars-forward "+")
-		(delete-region (point-min) (point))
-		(insert "&")
-		(while (search-forward "/" nil t)
-		  (replace-match ",")))
-	      (skip-chars-forward "^= \t\n" (point-max))
-	      (delete-region (point) (point-max))
-	      (buffer-string)))
-      (delete-region start end)
-      (insert encoded-string))))
  (t
-  ;; Define as null function.
   (defun utf7-fragment-decode (start end &optional imap)
     "Encode text from START to END in buffer as UTF-7 escape fragment.
 Use IMAP modification if IMAP is non-nil."
+    ;; Define as a null function.
     )
 
   (defun utf7-fragment-encode (start end &optional imap)
     "Encode text from START to END in buffer as UTF-7 escape fragment.
 Use IMAP modification if IMAP is non-nil."
+    ;; Define as a null function.
     )))
 
 (defun utf7-encode-region (start end &optional imap)
