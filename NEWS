@@ -3,21 +3,21 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.12.1 from 2.12.0
   Version 2.12.1 is a bug fix version of 2.12.0.
 
-** Fixed the problem in display module for partially fetched IMAP messages.
-   Now partially fetched messages are displayed accurately.
-   If a message includes child messages, their headers were not displayed.
+** Fixed the problem in display module for IMAP messages.
+   Now partially fetched messages are displayed correctly.
+   If a message included child messages, their headers were not displayed.
 
 ** Fixed the problem that %INBOX is not appeared as a subfolder of %INBOX.
-   In cyrus-imapd, this problem occured.
+   In cyrus-imapd, this problem occurred.
 
 ** Now user defined flags are appeared in the completions for search conditions.
 
 ** Fixed the problem that a wrong flag folders are created by some flag names.
-   If a flag contains a character other than [a-z], the problem occured.
+   If a flag contains a character other than [a-z], the problem occurred.
 
 ** Now expansion of the access group "@/" works correctly.
 
-** Fixed the problem to cause an error on automatical draft saving.
+** Fixed the problem to cause an error on automatic draft saving.
 
 ** Fixed the problem to cause an error on invoking address manager.
    A message which includes a string "To:" etc. caused an error.
