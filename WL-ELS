@@ -23,7 +23,7 @@
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-flag elmo-sendlog
    elmo-dop elmo-nmz elmo-split
-   elmo-spam elsp-bogofilter
+   elmo-spam elsp-bogofilter elsp-sa
    modb modb-entity modb-legacy modb-standard
    ))
 

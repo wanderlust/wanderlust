@@ -1,3 +1,7 @@
+2004-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added elsp-sa.
+
 2003-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (WL-MODULES): Added wl-batch.
