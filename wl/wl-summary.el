@@ -3902,6 +3902,8 @@ If ARG, exit virtual folder."
 	(setq stat 'unread))
        ((string= mark wl-summary-unread-cached-mark)  ; !
 	(setq stat 'unread))
+       ((string= mark wl-summary-read-uncached-mark)  ; u
+	(setq stat 'read))
        (t
 	;; no need to mark server.
 	(setq no-folder-mark t)))
