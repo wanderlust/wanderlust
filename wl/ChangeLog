@@ -1,3 +1,9 @@
+2003-07-20  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+
+	* wl-summary.el (wl-summary-mark-as-read-internal): Fixed the
+	behavior of wl-summary-unread-message-hook
+	(Pointed out by akira yamada <akira@arika.org>).
+
 2003-07-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-e21.el (wl-summary-toolbar): Follow the rename of

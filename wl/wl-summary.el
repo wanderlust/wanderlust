@@ -2963,12 +2963,24 @@ If ARG, exit virtual folder."
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
 	  (case-fold-search nil)
+	  unread-message unread-messages number
 	  number-list mark visible new-mark)
-      (setq number-list (or (and (numberp number-or-numbers)
-				 (list number-or-numbers))
-			    number-or-numbers ; list of numbers
-			    (and (wl-summary-message-number) ; interactive
-				 (list (wl-summary-message-number)))))      
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (setq unread-message
+				     (member (elmo-message-mark 
+					      folder
+					      number-or-numbers)
+					     (elmo-msgdb-unread-marks)))
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq number (wl-summary-message-number))
+			       ;; interactive
+			       (setq unread-message
+				     (member (elmo-message-mark folder number)
+					     (elmo-msgdb-unread-marks)))
+			       (list number))))
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
@@ -2977,6 +2989,9 @@ If ARG, exit virtual folder."
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number)
 		new-mark (elmo-message-mark folder number))
+	  (unless inverse
+	    (when unread-message
+	      (run-hooks 'wl-summary-unread-message-hook)))
 	  ;; set mark on buffer
 	  (when visible
 	    (unless (string= (wl-summary-persistent-mark) (or new-mark " "))
@@ -2984,11 +2999,7 @@ If ARG, exit virtual folder."
 	      (insert (or new-mark " ")))
 	    (if (and visible wl-summary-highlight)
 		(wl-highlight-summary-current-line))
-	    (set-buffer-modified-p nil))
-	  (unless inverse
-	    (if (member (elmo-message-mark folder number)
-			(elmo-msgdb-unread-marks))
-		(run-hooks 'wl-summary-unread-message-hook))))
+	    (set-buffer-modified-p nil)))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
 	  ;; should elmo-folder-mark-as-read return unread numbers?
