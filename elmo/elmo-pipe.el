@@ -99,7 +99,7 @@
 
 (defun elmo-pipe-drain (src dst copy)
   "Move all messages of SRC to DST."
-  (let ((elmo-inhibit-number-mapping t) ; No need to use UIDL
+  (let ((elmo-inhibit-number-mapping (not copy)) ; No need to use UIDL
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
     ;; Warnnig: some function requires msgdb
