@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <00/04/24 19:29:55 teranisi>
+@set Time-stamp: <00/04/26 17:31:25 teranisi>
 @set version 1.1.1
 @synindex pg cp
 @finalout
@@ -4997,7 +4997,7 @@ If nil, they are not deleted.
 
 @item wl-summary-score-marks
 @vindex wl-summary-score-marks
-The initial setting is '("N" "!" "U").
+The initial setting is '("N").
 Messages with these marks are scored.
 
 @item wl-use-scoring

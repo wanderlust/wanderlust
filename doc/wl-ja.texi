@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust の texinfo
-@set Time-stamp: <00/04/24 17:28:05 teranisi>
+@set Time-stamp: <00/04/26 17:31:17 teranisi>
 @set version 1.1.1
 @synindex pg cp
 @finalout
@@ -4966,7 +4966,7 @@ nil の場合は消去しません。
 
 @item wl-summary-score-marks
 @vindex wl-summary-score-marks
-初期設定は '("N" "!" "U")。
+初期設定は '("N")。
 スコアをつけるメッセージのマークを指定します。
 
 @item wl-use-scoring
