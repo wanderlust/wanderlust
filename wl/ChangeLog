@@ -1,3 +1,9 @@
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-message.el (wl-message-buffer-prefetch-get-next): Check the
+	size of article.
+	(wl-message-buffer-prefetch-subr): Remove size check.
+
 2002-01-22  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-plugged): Make customizable.

@@ -578,14 +578,24 @@ Returns non-nil if bottom of message."
 (defun wl-message-buffer-prefetch-get-next (folder number summary)
   (if (buffer-live-p summary)
       (with-current-buffer summary
-	(let ((next (funcall wl-message-buffer-prefetch-get-next-function
-			     number)))
+	(let* ((next (funcall wl-message-buffer-prefetch-get-next-function
+			      number))
+	       (size (elmo-message-field folder next 'size)))
 	  (if next
-	      (if (wl-message-buffer-prefetch-p folder next)
-		  next
+	      (cond
+	       ((not (wl-message-buffer-prefetch-p folder next))
 		;; for Multi folder
 		(wl-message-buffer-prefetch-get-next
-		 folder next summary)))))))
+		 folder next summary))
+	       ((and (not (elmo-message-file-p folder next))
+		     (integerp size)
+		     elmo-message-fetch-threshold
+		     (>= size
+			 elmo-message-fetch-threshold))
+		(wl-message-buffer-prefetch-get-next
+		 folder next summary))
+	       (t
+		next)))))))
 
 (defun wl-message-buffer-prefetch (folder number &optional
 					  count summary charset)
@@ -625,9 +635,10 @@ Returns non-nil if bottom of message."
 		   (message-id (elmo-message-field folder number 'message-id))
 		   (key (list (elmo-folder-name-internal folder)
 			      number message-id))
-		   (hit (wl-message-buffer-cache-hit key)))
+		   (hit (wl-message-buffer-cache-hit key))
+		   result time1 time2 sec micro)
 	      (when wl-message-buffer-prefetch-debug
-		(message "%S: count %S, hit %S" number count hit))
+		(message "%d: count %d, hit %s" number count (buffer-name hit)))
 	      (if (and hit (buffer-live-p hit))
 		  (progn
 		    (wl-message-buffer-cache-sort
@@ -637,38 +648,30 @@ Returns non-nil if bottom of message."
 		     (wl-message-buffer-prefetch-get-next
 		      folder number summary)
 		     count summary charset))
-		(let* ((size (elmo-message-field folder number 'size))
-		       result time1 time2 sec micro)
-		  (when (or (elmo-message-file-p folder number)
-			    (not (and (integerp size)
-				      elmo-message-fetch-threshold
-				      (>= size
-					  elmo-message-fetch-threshold))))
-		    (when wl-message-buffer-prefetch-debug
-		      (setq time1 (current-time))
-		      (message "Prefetching %d..." number))
-		    (setq result (wl-message-buffer-display
-				  folder number 'mime nil 'unread))
-		    (when wl-message-buffer-prefetch-debug
-		      (setq time2 (current-time))
-		      (setq sec  (- (nth 1 time2)(nth 1 time1)))
-		      (setq micro (- (nth 2 time2)(nth 2 time1)))
-		      (setq micro (+ micro (* 1000000 sec)))
-		      (message "Prefetching %d...done(%f msec)."
-			       number
-			       (/ micro 1000.0))
-		      (sit-for 0))
-		    ;; set next prefetch
-		    (wl-message-buffer-prefetch-set-timer
-		     folder
-		     (wl-message-buffer-prefetch-get-next
-		      folder number summary)
-		     count summary charset)
-		    ;(wl-message-buffer-prefetch-next
-		    ;folder next count summary charset)
-		    (sit-for 0)
-		    ;; success prefetch
-		    )))))
+		;; prefetching
+		(when wl-message-buffer-prefetch-debug
+		  (setq time1 (current-time))
+		  (message "Prefetching %d..." number))
+		(setq result (wl-message-buffer-display
+			      folder number 'mime nil 'unread))
+		(when wl-message-buffer-prefetch-debug
+		  (setq time2 (current-time))
+		  (setq sec  (- (nth 1 time2)(nth 1 time1)))
+		  (setq micro (- (nth 2 time2)(nth 2 time1)))
+		  (setq micro (+ micro (* 1000000 sec)))
+		  (message "Prefetching %d...done(%f msec)."
+			   number
+			   (/ micro 1000.0))
+		  (sit-for 0))
+		;; set next prefetch
+		(wl-message-buffer-prefetch-set-timer
+		 folder
+		 (wl-message-buffer-prefetch-get-next
+		  folder number summary)
+		 count summary charset)
+		(sit-for 0)
+		;; success prefetch
+		)))
 	;; finish prefetch
 	(when wl-message-buffer-prefetch-debug
 	  (message "Buffer Cached Messages: %s"
