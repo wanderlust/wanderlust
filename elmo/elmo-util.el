@@ -398,9 +398,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
-      (if (string= elmo-path-sep (substring path (- (length path) 1)))
-	  (concat path filename)
-	(concat path elmo-path-sep filename))
+      (elmo-replace-in-string
+       (if (string= elmo-path-sep (substring path (- (length path) 1)))
+	   (concat path filename)
+	 (concat path elmo-path-sep filename))
+       (concat (regexp-quote elmo-path-sep)(regexp-quote elmo-path-sep))
+       elmo-path-sep)
     filename))
 
 (defvar elmo-passwd-alist nil)
