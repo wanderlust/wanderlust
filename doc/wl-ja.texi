@@ -3437,9 +3437,11 @@ Non-nil ならフォルダに移動した時に最初のメッセージを自動的に表示します。
 英語、@samp{fr} ならフランス語、@samp{de} ならドイツ語となります。
 
 @item wl-summary-fix-timezone
-@vindex  wl-summary-fix-timezone
-初期設定は @samp{JST}。サマリの日時表示を指定したタイムゾーンに直します。
-@code{nil} なら GMT に直します。
+@vindex wl-summary-fix-timezone
+初期設定は @samp{nil}。サマリの日時表示を指定したタイムゾーンに直します。
+@code{nil} ならば、デフォルトのタイムゾーンを参照して直します。
+デフォルトのタイムゾーンとは、システムにあらかじめ設定されたタイムゾーンか、
+環境変数 @samp{TZ} の値です。
 
 @item wl-use-petname
 @vindex  wl-use-petname

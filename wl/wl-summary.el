@@ -2061,8 +2061,7 @@ If ARG is non-nil, checking is omitted."
     (setq new-msgdb (nth 0 sync-result))
     (setq delete-list (nth 1 sync-result))
     (setq crossed (nth 2 sync-result))
-    (if (or (and sync-all sync-result)
-	    sync-result)
+    (if sync-result
 	(progn
 	  ;; Setup sync-all
 	  (if sync-all (wl-summary-sync-all-init))
@@ -2142,12 +2141,17 @@ If ARG is non-nil, checking is omitted."
 	  (if elmo-use-database
 	      (elmo-database-close))
 	  (run-hooks 'wl-summary-sync-updated-hook)
-	  (setq mes (format "Updated (-%d/+%d) message(s)"
-			    (length delete-list) num)))
-      (setq mes (format
-		 "No updates for \"%s\"" (elmo-folder-name-internal folder))))
+	  (setq mes 
+		(if (and (eq (length delete-list) 0)
+			 (eq num 0))
+		    (format
+		     "No updates for \"%s\"" (elmo-folder-name-internal
+					      folder))
+		  (format "Updated (-%d/+%d) message(s)"
+			  (length delete-list) num))))
+      (setq mes "Quit updating."))
     ;; synchronize marks.
-    (if wl-summary-auto-sync-marks
+    (if (and wl-summary-auto-sync-marks sync-result)
 	(wl-summary-sync-marks))
     ;; scoring
     (when wl-use-scoring
@@ -2758,11 +2762,11 @@ If ARG, without confirm."
     (run-hooks 'wl-summary-insert-headers-hook)))
 
 (defun wl-summary-search-by-subject (entity overview)
-  (let ((buf (get-buffer-create wl-summary-search-buf-name))
+  (let ((summary-buf (current-buffer))
+	(buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name (wl-summary-buffer-folder-name))
 	match founds found-entity)
-    (save-excursion
-      (set-buffer buf)
+    (with-current-buffer buf
       (let ((case-fold-search t))
 	(when (or (not (string= wl-summary-search-buf-folder-name folder-name))
 		  (zerop (buffer-size)))
@@ -2778,23 +2782,26 @@ If ARG, without confirm."
 		     (elmo-msgdb-overview-entity-get-subject entity)))
 	(if (string= match "")
 	    (setq match "\n"))
-	(goto-char (point-max))
+	(goto-char (point-min))
 	(while (and (not founds)
-		    (not (= (point) (point-min)))
-		    (search-backward match nil t))
+		    (not (= (point) (point-max)))
+		    (search-forward match nil t))
 	  ;; check exactly match
-	  (when (and (bolp)
-		     (= (point-at-eol)
-			(match-end 0)))
+	  (when (and (eolp)
+		     (= (point-at-bol)
+			(match-beginning 0)))
 	    (setq found-entity (wl-summary-get-alike))
 	    (if (and found-entity
 		     ;; Is founded entity myself or children?
 		     (not (string=
 			   (elmo-msgdb-overview-entity-get-id entity)
-			   (elmo-msgdb-overview-entity-get-id (car found-entity))))
-		     (not (wl-thread-descendant-p
-			   (elmo-msgdb-overview-entity-get-number entity)
-			   (elmo-msgdb-overview-entity-get-number (car found-entity)))))
+			   (elmo-msgdb-overview-entity-get-id 
+			    (car found-entity))))
+		     (with-current-buffer summary-buf
+		       (not (wl-thread-descendant-p
+			     (elmo-msgdb-overview-entity-get-number entity)
+			     (elmo-msgdb-overview-entity-get-number
+			      (car found-entity))))))
 		;; return matching entity
 		(setq founds found-entity))))
 	(if founds
@@ -2823,8 +2830,9 @@ If ARG, without confirm."
 	  ;; Search parent by subject.
 	  (when (and (null parent-number)
 		     wl-summary-search-parent-by-subject-regexp
-		     (string-match wl-summary-search-parent-by-subject-regexp
-				   (elmo-msgdb-overview-entity-get-subject entity)))
+		     (string-match
+		      wl-summary-search-parent-by-subject-regexp
+		      (elmo-msgdb-overview-entity-get-subject entity)))
 	    (let ((found (wl-summary-search-by-subject entity overview)))
 	      (when (and found
 			 (not (member found wl-summary-delayed-update)))
@@ -3171,11 +3179,18 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		  (+ copy-failures (length (cdr (car dst-msgs))))))
 	  (setq copy-executed (+ copy-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
+	;; Hide progress bar.
+	(elmo-display-progress 'elmo-folder-move-messages "" 100)
 	;; end cOpy
 	(wl-summary-folder-info-update)
 	(wl-summary-set-message-modified)
 	(wl-summary-set-mark-modified)
 	(run-hooks 'wl-summary-exec-hook)
+	(unless (and wl-message-buffer
+		     (eq (wl-summary-message-number)
+			 (with-current-buffer wl-message-buffer
+			   wl-message-buffer-cur-number)))
+	  (wl-summary-toggle-disp-msg 'off))
 	(set-buffer-modified-p nil)
 	(message (concat "Executing ... done"
 			 (if (> refile-failures 0)
