@@ -34,6 +34,19 @@
 (require 'mime-play)
 (require 'elmo)
 
+;; avoid compile warnings
+(eval-when-compile
+  (defalias-maybe 'Meadow-version 'ignore)
+  (defvar-maybe zmacs-regions)
+  (defvar-maybe zmacs-region-active-p)
+  (defvar-maybe transient-mark-mode)
+  (defvar-maybe mark-active))
+
+(defvar xemacs-betaname)
+(defvar xemacs-codename)
+(defvar enable-multibyte-characters)
+(defvar mule-version)
+
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -60,9 +73,12 @@ has Non-nil value\)"
 	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction
 	    (widen)
-	    (if (wl-region-exists-p)
-		(wl-mime-preview-follow-current-region)
-	      (mime-preview-follow-current-entity)))))))
+	      (if (or (and wl-on-xemacs
+			   zmacs-regions zmacs-region-active-p)
+		      (and (not wl-on-xemacs)
+			   transient-mark-mode mark-active))
+		  (wl-mime-preview-follow-current-region)
+		(mime-preview-follow-current-entity)))))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
 (defun wl-mime-preview-follow-current-region ()

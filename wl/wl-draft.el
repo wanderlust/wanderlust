@@ -2305,13 +2305,11 @@ Automatically applied in draft sending time."
 
 (defun wl-draft-highlight-and-recenter (&optional n)
   (interactive "P")
-  (when wl-highlight-body-too
-    (let ((modified (buffer-modified-p)))
-      (unwind-protect
-	  (progn
-	    (put-text-property (point-min) (point-max) 'face nil)
-	    (wl-highlight-message (point-min) (point-max) t))
-	(set-buffer-modified-p modified))))
+  (if wl-highlight-body-too
+      (let ((beg (point-min))
+	    (end (point-max)))
+	(put-text-property beg end 'face nil)
+	(wl-highlight-message beg end t)))
   (recenter n))
 
 ;;;; user-agent support by Sen Nagata
