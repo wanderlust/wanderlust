@@ -15,13 +15,16 @@
 
 (defconst ELMO-MODULES '(
    utf7 pldap mmimap
+   shimbun sb-text sb-asahi sb-mhonarc sb-mew sb-fml sb-bbdb-ml
+   sb-xemacs sb-zdnet sb-sponichi sb-lump sb-wired sb-cnet
+   sb-yomiuri sb-airs sb-netbsd
    elmo-date elmo-util elmo-version elmo-vars elmo elmo-msgdb
    elmo-net elmo-imap4 elmo-pop3 elmo-nntp
    elmo-localdir elmo-localnews elmo-map elmo-maildir
    elmo-multi elmo-filter
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-mark
-   elmo-dop elmo-nmz
+   elmo-dop elmo-nmz elmo-shimbun
    ))
 
 

@@ -1,3 +1,7 @@
+2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added shimbun related modules.
+
 2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS (ELMO-MODULES): Added elmo-mark.

@@ -8,6 +8,14 @@ elmo-lunafy メモ
 
 書式:  '[' 'namazu 検索式' ']' [ 'namazu index のパス（絶対パス）' ]
 
+* elmo-shimbun.el
+
+書式: '@' '仮想サーバ名' '.' 'グループ名'
+
+例:
+  @mew.mew-dist
+  @asahi.sports
+
 * elmo-buffer-cache => wl-message-buffer-cache
 
 * (elmo-make-folder "フォルダ名") で folder 構造を作る。
