@@ -1,3 +1,8 @@
+2004-06-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-reply): Decode subject before removing
+	Re: prefix.
+
 2004-06-23  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-sort-by-size): New command.
