@@ -146,7 +146,7 @@ The main features of Wanderlust:
 @item Interactive thread display.
 @item Folder Mode shows the list of subscribed folders.
 @item Message Cache, Disconnected Operation (Read Only).
-@item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
+@item MH-like FCC. (Fcc: %Backup and Fcc: $Backup is allowed).
 @item MIME compliant (by SEMI).
 @item Transmission of news and mail are unified by Message transmitting draft.
 @item Graphical list of folders (XEmacs and Emacs 21).
@@ -4037,7 +4037,7 @@ yourself.  Field names can be completed by @kbd{@key{TAB}}.
 If you save the draft buffer you are editing, it is appended to the
 folder specified by @code{wl-draft-folder}.
 
-Using @samp{FCC:} field, you can specify the folder to which a copy of
+Using @samp{Fcc:} field, you can specify the folder to which a copy of
 the message is saved when it is sent.
 
 @subsection Editing Messages
@@ -4634,7 +4634,7 @@ If non-nil, always removes your own address from @samp{To:} and
 @item wl-draft-delete-myself-from-bcc-fcc
 @vindex wl-draft-delete-myself-from-bcc-fcc
 If any of @code{wl-subscribed-mailing-list} are contained in @samp{To:}
-or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{FCC:} field.
+or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{Fcc:} field.
 
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
