@@ -132,9 +132,9 @@
   "*Use SEMI or not.")
 
 (defcustom wl-from (and user-mail-address
-			(concat (and user-full-name
+			(concat (and (user-full-name)
 				     (concat (elmo-address-quote-specials
-					      user-full-name)
+					      (user-full-name))
 					     " "))
 				"<" user-mail-address ">"))
   "*From string used in draft."

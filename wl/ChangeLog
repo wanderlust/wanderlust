@@ -1,3 +1,9 @@
+2002-01-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-from): Use return value of function
+	user-full-name instead of the variable user-full-name since
+	XEmacs-20.4 doesn't set this variable.
+
 2002-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-other-frame): If wl-folder-use-frame is non-nil,
