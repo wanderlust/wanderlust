@@ -994,19 +994,20 @@ Set `wl-score-cache' nil."
 	  (setq format (concat "%c: %-" (int-to-string pad) "s"))
 	  (insert (format format (caar alist) (nth idx (car alist))))
 	  (setq alist (cdr alist))
-	  (setq i (1+ i))
-	  (set-buffer-modified-p nil)))
-      (when (and (get-buffer wl-message-buffer)
-		 (setq mes-win (get-buffer-window
-				(get-buffer wl-message-buffer))))
-	(select-window mes-win)
-	(unless (eq (next-window) cur-win)
-	  (delete-window (next-window))))
-      (split-window)
-      (pop-to-buffer "*Score Help*")
-      (let ((window-min-height 1))
-	(shrink-window-if-larger-than-buffer))
-      (select-window cur-win))))
+	  (setq i (1+ i)))
+	(set-buffer-modified-p nil)))
+    (when (and wl-message-buffer
+	       (get-buffer wl-message-buffer)
+	       (setq mes-win (get-buffer-window
+			      (get-buffer wl-message-buffer))))
+      (select-window mes-win)
+      (unless (eq (next-window) cur-win)
+	(delete-window (next-window))))
+    (split-window)
+    (pop-to-buffer "*Score Help*")
+    (let ((window-min-height 1))
+      (shrink-window-if-larger-than-buffer))
+    (select-window cur-win)))
 
 (defun wl-score-get-header-entry (&optional match-func increase)
   (let (hchar tchar pchar
@@ -1089,8 +1090,9 @@ Set `wl-score-cache' nil."
 
 	  ;; read the score.
 	  (unless (or score increase)
-	    (setq score (string-to-int (read-string "Set score: "))))
-	  (message "")))
+	    (setq score (string-to-int (read-string "Set score: ")))))
+      (message "")
+      (wl-score-kill-help-buffer))
 
     (let* ((match-header (or (nth 2 hentry) header))
 	   (match (if match-func
@@ -1447,6 +1449,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 				    wl-score-edit-header-char))
 	    (error "Invalid match type")))
       (message "")
+      (wl-score-kill-help-buffer)
       (let* ((header (nth 1 entry))
 	     (value (wl-score-edit-get-header header)))
 	(and value (prin1 value (current-buffer)))))))
