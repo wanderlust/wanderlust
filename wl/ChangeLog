@@ -1,3 +1,14 @@
+2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-init): Require mime-setup.
+	(wl-check-environment): Don't require mime-setup.
+
+	* wl-util.el (wl-biff-check-folder): Use elmo-folder-type-internal
+	instead of elmo-folder-type.
+
+	* wl-message.el (wl-message-buffer-prefetch-debug): Set default
+	value as nil.
+
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.7.0.

@@ -826,7 +826,7 @@ This function is imported from Emacs 20.7."
 	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder (folder)
-  (if (eq (elmo-folder-type folder) 'pop3)
+  (if (eq (elmo-folder-type-internal folder) 'pop3)
       ;; pop3 biff should share the session.
       (prog2
 	  (elmo-folder-check folder)

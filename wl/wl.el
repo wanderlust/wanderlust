@@ -671,6 +671,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-init ()
   (when (not wl-init)
+    (unless (featurep 'mime-setup)
+      (require 'mime-setup))
     (setq elmo-plugged wl-plugged)
     (unless wl-on-nemacs
       (add-hook 'kill-emacs-hook 'wl-save-status))
@@ -700,8 +702,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless (featurep 'mime-setup)
-    (require 'mime-setup))
   (unless wl-from
     (error "Please set `wl-from'"))
   ;; Message-ID
