@@ -1384,7 +1384,7 @@ Allowed situations are:
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-message-id-use-wl-from nil
+(defcustom wl-message-id-use-wl-from t
   "*Use `wl-from' for domain part of Message-ID if non-nil."
   :type 'boolean
   :group 'wl-pref)

@@ -1,3 +1,7 @@
+2003-01-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-message-id-use-wl-from): Change defalut to t.
+
 2003-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-message-delete-current-part): Avoid error on
