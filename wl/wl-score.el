@@ -562,11 +562,6 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	  (setq entries rest)))))
   nil)
 
-(defsubst wl-score-lines ()
-  (save-excursion
-    (beginning-of-line)
-    (count-lines 1 (point))))
-
 (defun wl-score-extra (scores header now expire)
   (let ((score-list scores)
 	entries alist extra extras)
@@ -584,17 +579,13 @@ See `wl-score-simplify-buffer-fuzzy' for details."
     nil))
 
 (defmacro wl-score-put-alike ()
-  (` (elmo-set-hash-val (format "#%d" (wl-score-lines))
+  (` (elmo-set-hash-val (format "#%d" (wl-count-lines))
 			alike
 			wl-score-alike-hashtb)))
-;;(push (cons (wl-score-lines) alike) wl-score-alike-alist)
-;;(put-text-property (1- (point)) (point) 'messages alike)
 
 (defmacro wl-score-get-alike ()
-  (` (elmo-get-hash-val (format "#%d" (wl-score-lines))
+  (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
 			wl-score-alike-hashtb)))
-;;(cdr (assq (wl-score-lines) wl-score-alike-alist))
-;;(get-text-property (point) 'messages)))
 
 (defun wl-score-insert-header (header messages &optional extra-header)
   (let ((mime-decode (nth 3 (assoc header wl-score-header-index)))
