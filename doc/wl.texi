@@ -123,6 +123,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Spam Filter::              Spam filtering
 * Batch Processing::         Invoke commands in batch mode
 * Customization::            Customizing Wanderlust
+* Migration::                Switch from older version of Wanderlust
 * Terminology::              Terminologies
 * Mailing List::             Wanderlust mailing list
 * Addition::                 Additional Information
@@ -672,9 +673,9 @@ This chapter describes the folder types which Wanderlust is able to handle.
 Wanderlust uses ELMO as it's interface, so you can use every folder types
 supported by ELMO.
 
-As of version @value{VERSION}, 13 types of folders are predefined. These
+As of version @value{VERSION}, 14 types of folders are predefined. These
 are IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP,
-Shimbun, Namazu, Multi, Filter, Pipe and Internal folder types.
+Shimbun, Namazu, Multi, Filter, Pipe, Internal and File folder types.
 
 @menu
 * IMAP Folder::                 @samp{%} -- IMAP folder
@@ -690,6 +691,7 @@ Shimbun, Namazu, Multi, Filter, Pipe and Internal folder types.
 * Filter Folder::               @samp{/} -- Filter folder
 * Pipe Folder::                 @samp{|} -- Pipe folder
 * Internal Folder::             @samp{'} -- Internal folder
+* File Folder::                          -- File folder
 @end menu
 
 
@@ -1453,6 +1455,7 @@ Example:
 @cindex Folder, Filtering
 @cindex Folder, Virtual
 @cindex Folder, Conditional
+@cindex Flag
 
 A folder to access virtual folder which collects all messages that
 satisfy a condition.
@@ -1529,9 +1532,42 @@ Example:
 @end example
 
 @item
+Flag filter: @samp{flag:@var{flag-name}}
+
+Pick up messages with flag specified by @var{flag-name}.
+
+You can specify following flag names:
+
+@example
+@group
+unread    -> unread
+important -> important
+answered  -> replied
+digest    -> unread or important
+any       -> unread or important or replied
+@end group
+@end example
+
+You can also use flags which you have set as global flag.
+@xref{Internal Folder}.
+
+Example:
+
+@example
+@group
+/flag:digest/%inbox     -> a folder consist of unread or important
+                           message in %inbox.
+/flag:wl/+ML/Wanderlust -> a folder consist of messages with global flag
+                           wl in +ML/Wanderlust.
+@end group
+@end example
+
+@item
 Compound condition
 
-If you combine conditions by character @samp{|}, it is considered as OR condition. @samp{&} is considered as AND condition, likewise.
+A condition starting with @samp{!} indicates a negation.
+If you combine conditions by character @samp{|}, it is considered as OR condition.
+@samp{&} is considered as AND condition, likewise.
 Condition can be grouped by parentheses (@samp{(}, and @samp{)}).
 
 @samp{/tocc:xxxx/} is an abbreviation of @samp{/to:xxxx|cc:xxxx/}.
@@ -1653,6 +1689,7 @@ After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
 @cindex @samp{'}
 @cindex Internal Folder
 @cindex Folder, @samp{$} mark
+@cindex Flag
 @cindex Cache
 @c @cindex Folder, Null
 
@@ -7244,7 +7281,7 @@ a list of folder names.
 @end table
 
 
-@node Customization, Terminology, Batch Processing, Top
+@node Customization, Migration, Batch Processing, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 
@@ -8285,7 +8322,12 @@ this value, display progress gauge.
 
 (Not yet written)
 
-@node Terminology, Mailing List, Customization, Top
+
+@node Migration, Terminology, Customization, Top
+@chapter Switch from older version of Wanderlust
+
+
+@node Terminology, Mailing List, Migration, Top
 @chapter Terminology around Wanderlust
 @cindex Terminology
 
