@@ -3767,14 +3767,20 @@ Return non-nil if the mark is updated"
 	)))
     (run-hooks 'wl-summary-buffer-window-scroll-functions)))
 
-(defun wl-summary-enter-handler (&optional number)
+(defun wl-summary-enter-handler (&optional arg)
   "A command for `enter' key in the summary.
 Basically, it shows next line of the message.
-If optional argument NUMBER is specified, jump to the message."
+If optional argument ARG is specified, behave as followed.
+If ARG is number, jump to the message.
+Otherwise it shows previous line of th message."
   (interactive "P")
-  (if number
-      (wl-summary-jump-to-msg number)
-    (wl-summary-next-line-content)))
+  (cond ((numberp arg)
+	 (unless (wl-summary-jump-to-msg arg)
+	   (message "Message (#%d) was not found." arg)))
+	(arg
+	 (wl-summary-prev-line-content))
+	(t
+	 (wl-summary-next-line-content))))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."

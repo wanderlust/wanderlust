@@ -1,3 +1,9 @@
+2004-09-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-enter-handler): If argument is not a
+	number, call `wl-summary-prev-line-content'. Show message when the
+	message is not found.
+
 2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Bind enter key to the
