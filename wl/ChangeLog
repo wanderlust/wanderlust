@@ -1,3 +1,29 @@
+2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (toplevel): Added (C) to copyright notice, and
+	sync Author header.
+	* tm-wl.el (toplevel): Ditto.
+	* wl-address.el (toplevel): Ditto.
+	* wl-demo.el (toplevel): Ditto.
+	* wl-dnd.el (toplevel): Ditto.
+	* wl-draft.el (toplevel): Ditto.
+	* wl-e21.el (toplevel): Ditto.
+	* wl-expire.el (toplevel): Ditto.
+	* wl-folder.el (toplevel): Ditto.
+	* wl-highlight.el (toplevel): Ditto.
+	* wl-message.el (toplevel): Ditto.
+	* wl-mime.el (toplevel): Ditto.
+	* wl-mule.el (toplevel): Ditto.
+	* wl-nemacs.el (toplevel): Ditto.
+	* wl-refile.el (toplevel): Ditto.
+	* wl-score.el (toplevel): Ditto.
+	* wl-summary.el (toplevel): Ditto.
+	* wl-template.el (toplevel): Ditto.
+	* wl-thread.el (toplevel): Ditto.
+	* wl-util.el (toplevel): Ditto.
+	* wl-vars.el (toplevel): Ditto.
+	* wl-xmas.el (toplevel): Ditto.
+
 2000-10-31  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl.el (wl-init): Added comment about `wl-init-hook'.

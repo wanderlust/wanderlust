@@ -1,7 +1,7 @@
 ;;; wl-e21.el -- Wanderlust modules for Emacs 21.
 
-;; Copyright 2000 Katsumi Yamaoka <yamaoka@jpl.org>
-;;                Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
+;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news

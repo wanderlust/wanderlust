@@ -1,7 +1,7 @@
 ;;; wl-folder.el -- Folder mode for Wanderlust.
 
-;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-;;                          Masahiro MURATA <muse@ba2.so-net.ne.jp>
+;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Masahiro MURATA <muse@ba2.so-net.ne.jp>

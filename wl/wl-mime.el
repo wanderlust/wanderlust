@@ -1,6 +1,6 @@
 ;;; wl-mime.el -- SEMI implementations of MIME processing on Wanderlust.
 
-;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
