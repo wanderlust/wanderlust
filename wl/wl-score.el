@@ -1262,8 +1262,10 @@ Set `wl-score-cache' nil."
 	  ;; Update Folder mode
 	  (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					(list 0
-					      (wl-summary-count-unread
-					       mark-alist)
+					      (let ((pair
+						     (wl-summary-count-unread
+						      mark-alist)))
+						(+ (car pair) (cdr pair)))
 					      (length num-db)))
 	  (wl-summary-update-modeline)))
       (message "Updating score...done")

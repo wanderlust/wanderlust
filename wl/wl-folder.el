@@ -815,44 +815,38 @@ Optional argument ARG is repeart count."
 			   (not (elmo-folder-exists-p folder)))
 		      (wl-folder-create-subr folder)
 		    (signal (car err) (cdr err))))))
-	 (new (elmo-diff-new nums))
-	 (nums (cons (elmo-diff-unread nums) (elmo-diff-all nums)))
-	 unread unsync nomif)
+	 (new    (elmo-diff-new nums))
+	 (unread (elmo-diff-unread nums))
+	 (all    (elmo-diff-all nums))
+	 unsync nomif)
     (if (and (eq wl-folder-notify-deleted 'sync)
-	     (car nums)
-	     (or (> 0 (car nums)) (> 0 (cdr nums))))
+	     (or (and new    (> 0 new))
+		 (and unread (> 0 unread))
+		 (and all    (> 0 all))))
 	(progn
 	  (wl-folder-sync-entity entity)
-	  (setq nums (elmo-folder-diff folder)))
+	  (setq nums (elmo-folder-diff folder)
+		new    (elmo-diff-new nums)
+		unread (elmo-diff-unread nums)
+		all    (elmo-diff-all nums)))
       (unless wl-folder-notify-deleted
-	(setq unsync (if (car nums)
-			 (max 0 (car nums))
-		       nil))
-	(setq nomif (if (cdr nums)
-			(max 0 (cdr nums))
-		      nil))
-	(setq nums (cons unsync nomif)))
+	(setq new    (and new    (max 0 new))
+	      unread (and unread (max 0 unread))
+	      all    (and all    (max 0 all))))
       (setq unread (or ;; If server diff, All unreads are
 			; treated as unsync.
-		    (if (elmo-folder-use-flag-p folder)
-			(car nums))
+		    (and (elmo-folder-use-flag-p folder)
+			 (- unread (or new 0)))
 		    (elmo-folder-get-info-unread folder)
-		    (wl-summary-count-unread (elmo-msgdb-mark-load
-					      (elmo-folder-msgdb-path
-					       folder)))))
-      (when new (setq unread (- unread new)))
+		    (cdr (wl-summary-count-unread
+			  (elmo-msgdb-get-mark-alist
+			   (elmo-folder-msgdb folder))))))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
-				   (list (or new (car nums))
-					 unread
-					 (cdr nums))
+				   (list new unread all)
 				   (get-buffer wl-folder-buffer-name)))
     (setq wl-folder-info-alist-modified t)
     (sit-for 0)
-    (list (if wl-folder-notify-deleted
-	      (or new (car nums) 0)
-	    (max 0 (or new (car nums) 0)))
-	  unread
-	  (cdr nums))))
+    (list new unread all)))
 
 (defun wl-folder-check-entity-async (entity &optional auto)
   (let ((elmo-nntp-groups-async t)

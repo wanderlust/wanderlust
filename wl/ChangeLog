@@ -1,3 +1,15 @@
+2002-01-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed problem;
+	The number of the messages of new and unread does not count
+	correctly.
+
+	* wl-summary.el (wl-summary-count-unread): Changed to return
+	`(new . unread)' instead of total.
+	(wl-summary-sync-update): Follow the change above.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Likewise.
+
 2002-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-address.el (wl-address-make-completion-list): Do not enclose

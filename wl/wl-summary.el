@@ -562,7 +562,7 @@
     (if (eq major-mode 'wl-summary-mode)
 	(setq wl-summary-buffer-new-count new
 	      wl-summary-buffer-unread-count unread))
-    (+ new unread)))
+    (cons new unread)))
 
 (defun wl-summary-message-string (&optional use-cache)
   "Return full body string of current message.
@@ -2170,9 +2170,10 @@ If ARG is non-nil, checking is omitted."
       (wl-folder-set-folder-updated
        (elmo-folder-name-internal folder)
        (list 0
-	     (wl-summary-count-unread
-	      (elmo-msgdb-get-mark-alist
-	       (elmo-folder-msgdb folder)))
+	     (let ((pair (wl-summary-count-unread
+			  (elmo-msgdb-get-mark-alist
+			   (elmo-folder-msgdb folder)))))
+	       (+ (car pair) (cdr pair)))
 	     (elmo-folder-messages folder)))
       (wl-summary-update-modeline)
       (wl-summary-buffer-number-column-detect t)
