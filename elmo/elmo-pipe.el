@@ -102,8 +102,12 @@
   (let ((elmo-inhibit-number-mapping t) ; No need to use UIDL
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
-    ;; for load killed-list
-    (elmo-folder-open src)
+    ;; Warnnig: some function requires msgdb
+    ;;  but elmo-folder-open-internal do not load msgdb.
+    (elmo-folder-open-internal src)
+    (elmo-folder-set-killed-list-internal
+     src
+     (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path src)))
     (setq msgs (elmo-folder-list-messages src)
 	  len (length msgs))
     (when (> len elmo-display-progress-threshold)
@@ -123,6 +127,7 @@
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)
+  (elmo-folder-set-killed-list-internal src nil)
   (run-hooks 'elmo-pipe-drained-hook))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))

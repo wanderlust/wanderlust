@@ -3003,8 +3003,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-          (buf (current-buffer))
-          sol eol rs re)
+	  (buf (current-buffer))
+	  sol eol rs re)
       (beginning-of-line)
       (setq sol (point))
       (end-of-line)
@@ -3215,7 +3215,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(setq fld default))
     (setq fld (elmo-string (wl-folder-get-realname fld)))
     (if (string-match "\n" fld)
-	(error "Not supported folder name: %s" fld))    
+	(error "Not supported folder name: %s" fld))
     (unless no-create
       (if ignore-error
 	  (condition-case nil
@@ -4315,7 +4315,7 @@ If ARG, exit virtual folder."
 (defsubst wl-summary-next-message (num direction hereto)
   (if wl-summary-buffer-next-message-function
       (funcall wl-summary-buffer-next-message-function num direction hereto)
-    (let ((cur-spec (cdr (assq wl-summary-move-order 
+    (let ((cur-spec (cdr (assq wl-summary-move-order
 			       (if (elmo-folder-plugged-p
 				    wl-summary-buffer-elmo-folder)
 				   wl-summary-move-spec-plugged-alist
@@ -4348,7 +4348,7 @@ If ARG, exit virtual folder."
 			   (setq nums (cdr nums))))))
 	      (setq cur-spec (cdr cur-spec))))
 	(car nums)))))
-  
+
 (defsubst wl-summary-cursor-move (direction hereto)
   (when (and (eq direction 'up)
 	     (eobp))
@@ -4491,8 +4491,7 @@ If ARG, exit virtual folder."
 	    (when mes-win
 	      (wl-message-select-buffer wl-message-buffer)
 	      (run-hooks 'wl-summary-toggle-disp-folder-message-resumed-hook)
-	      (select-window (get-buffer-window cur-buf)))
-	    )
+	      (select-window (get-buffer-window cur-buf))))
 	;; hide message window
 	(let ((wl-stay-folder-window t)
 	      (mes-win (and wl-message-buffer
@@ -4516,8 +4515,7 @@ If ARG, exit virtual folder."
 	  (when mes-win
 	    (wl-message-select-buffer wl-message-buffer)
 	    (run-hooks 'wl-summary-toggle-disp-folder-message-resumed-hook)
-	    (select-window (get-buffer-window cur-buf))))
-	))))
+	    (select-window (get-buffer-window cur-buf))))))))
   (run-hooks 'wl-summary-toggle-disp-folder-hook))
 
 (defun wl-summary-toggle-disp-msg (&optional arg)
@@ -4544,7 +4542,7 @@ If ARG, exit virtual folder."
 	  (delete-window)
 	  (and (get-buffer-window cur-buf)
 	       (select-window (get-buffer-window cur-buf))))
-        (run-hooks 'wl-summary-toggle-disp-off-hook)))
+	(run-hooks 'wl-summary-toggle-disp-off-hook)))
      (t
       (if (and wl-message-buffer
 	       (get-buffer-window wl-message-buffer)) ; already displayed
@@ -4962,7 +4960,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if summary-buf
 	  (save-excursion
 	    (set-buffer summary-buf)
-	    (setq subject 
+	    (setq subject
 		  (or (elmo-message-field folder number 'subject) ""))))
       (set-buffer mes-buf)
       (wl-draft-forward subject summary-buf)
@@ -5190,7 +5188,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		   (setq fld-buf (get-buffer wl-folder-buffer-name)))
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
-          (setq wl-current-summary-buffer (current-buffer))
+	  (setq wl-current-summary-buffer (current-buffer))
 	  (wl-summary-mark-as-read
 	   nil
 	   ;; not fetched, then change server-mark.

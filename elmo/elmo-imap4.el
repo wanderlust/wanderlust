@@ -1779,7 +1779,7 @@ Return nil if no complete line has arrived."
        folder
        (elmo-get-network-stream-type elmo-imap4-default-stream-type)))
     folder))
-  
+ 
 ;;; ELMO IMAP4 folder
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-imap4-folder))

@@ -1201,7 +1201,7 @@ are mark strings for new messages, unread but cached messages,
 read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
-\(the messages which are not in the killed-list\) are thrown away and 
+\(the messages which are not in the killed-list\) are thrown away and
 synchronized.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 
