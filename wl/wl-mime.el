@@ -189,17 +189,18 @@ By setting following-method as yank-content."
 	      (mime-entity-fetch-field entity "Message-ID")))))
     number))
 
-(defun wl-summary-burst ()
-  ""
-  (interactive)
+(defun wl-summary-burst (&optional arg)
+  "De-capsulate embedded messages in MIME format.
+With ARG, ask destination folder."
+  (interactive "P")
   (let ((raw-buf (wl-summary-get-original-buffer))
 	(view-buf wl-message-buffer)
 	children message-entity content-type target)
     (save-excursion
       (setq target wl-summary-buffer-elmo-folder)
-      (while (not (elmo-folder-writable-p target))
-	(setq target
-	      (wl-summary-read-folder wl-default-folder "to extract to")))
+      (when (or arg (not (elmo-folder-writable-p target)))
+	(let ((fld (wl-summary-read-folder wl-default-folder "to extract to")))
+	  (setq target (wl-folder-get-elmo-folder fld))))
       (wl-summary-set-message-buffer-or-redisplay)
       (with-current-buffer view-buf
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
