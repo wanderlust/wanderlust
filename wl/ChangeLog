@@ -1,3 +1,8 @@
+2001-03-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
+	Fixed `match-beginning' argument mismatch.
+
 2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to
