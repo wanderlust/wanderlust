@@ -232,7 +232,7 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
       (setq list (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
     (if visible-only
 	(elmo-living-messages list killed-list)
-      (if in-msgdb
+      (if (and in-msgdb killed-list)
 	  (elmo-uniq-sorted-list
 	   (sort (nconc (elmo-number-set-to-number-list killed-list) list) #'<)
 	   #'eq)
