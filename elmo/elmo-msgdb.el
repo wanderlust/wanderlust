@@ -784,10 +784,10 @@ Header region is supposed to be narrowed."
 	  default-mime-charset
 	  extra field-body charset)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-      (setq message-id (elmo-msgdb-get-message-id-from-buffer)
-	    charset (intern-soft (cdr (assoc "charset"
-					     (mime-read-Content-Type)))))
-      (if charset (setq default-mime-charset charset))
+      (setq message-id (elmo-msgdb-get-message-id-from-buffer))
+      (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
+	   (setq charset (intern-soft charset))
+	   (setq default-mime-charset charset))
       (setq references
 	    (or (elmo-msgdb-get-last-message-id
 		 (elmo-field-body "in-reply-to"))
