@@ -42,7 +42,7 @@
 ;; POP サーバの設定
 (setq elmo-pop3-default-server "localhost")
 ;; SMTP サーバの設定
-(setq wl-smtp-posting-server "localhost")
+(setq wl-posting-smtp-server "localhost")
 ;; ニュースサーバの設定
 (setq elmo-nntp-default-server "localhost")
 ;; 投稿先のニュースサーバ
