@@ -1,4 +1,100 @@
-Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
+Wanderlust NEWS -- User-visible changes in Wanderlust.
+
+* Changes in 2.8.0 from 2.6.1
+
+** Nemacs, Mule 2.3 based on Emacs 19.28 are no longer supported.
+
+** Wanderlust might not work with FLIM 1.14.2 and older.
+   It is recommended to use FLIM 1.14.3 or newer and associated SEMI.
+
+** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
+   messages and urge you to change settings.
+   To suppress warning messages, set elmo-obsolete-variable-show-warnings to
+   nil.
+
+** Added new type of folders: shimbun folder
+
+   Format: '@' 'virtual server name' '.' 'group name'
+
+** Added new type of folders: namazu folder
+
+   Format:  '[' 'search condition' ']' [ 'absolute path of namazu index' ]
+
+** With pipe folder, now you can preserve messages on the server.
+   At the next time you access it, only new messages will be copied.
+
+   Format:  '|' 'source folder' '|:' 'destination folder'
+
+** Address manager is now available (start by C-c C-a).
+   You can edit address book and import recipients to draft from it.
+
+** ACAP (RFC2244) is supported(experimental).
+
+** Now you can preserve IMAP4 message by part as a cache.
+   If you skipped enormous part, you can read other than skipped part when
+   you are off line.
+
+** Wanderlust also creates message view through prefetching.
+   Displaying of prefetched messages speeded up because of this.
+
+** Truncation of lines in message buffer or draft buffer is now controllable.
+   Non-nil value of wl-message-truncate-lines or wl-draft-truncate-lines
+   means truncating long lines at window width.
+
+** Overall elmo module are rewritten.
+
+** Variables depending on elmo backends are renamed to "elmo-backend-*".
+   e.g. elmo-default-imap4-server is renamed to elmo-imap4-default-server.
+
+** Variables named xxx-func are renamed to xxx-function.
+
+** X-Face utility 1.3.6.12 or older is not supported any longer.
+   Please install X-Face utility 1.3.6.13 or later, if necessary.
+
+** Wanderlust distinguishes stream-type on plugged mode. They are treated as
+   different entries.
+
+** msgdb path for archive and multi folders are changed.
+   No problem for running wanderlust even if you do not deal with them.
+   But if you don't want to leave useless data on the disk, delete under
+   .elmo/multi and .elmo/archive in advance.
+
+** Variables named xxx-dir are renamed to xxx-directory.
+   e.g. wl-icon-dir is renamed to wl-icon-directory.
+   Take attention if you set for display of startup logo, etc.
+
+** elmo-cache-dirname is abolished and elmo-cache-directory is newly created.
+   You can put cache directory to another place by setting
+   elmo-cache-directory (e.g. for whom put symbolic link for ~/.elmo/cache
+   on NFS environment).
+
+* Changes in 2.6.0 from 2.4.1.
+
+** FLIM 1.13.x is not supported any longer.
+   Please install FLIM 1.14.1 or later.
+
+** Now folder and summary buffer can be opened in a separate frame.
+   If `wl-folder-use-frame' is set as t, `M-x wl' creates a new frame
+   for folder mode. If `wl-summary-use-frame' is set as t, new frames
+   are created for each summary window.
+
+** Cursor moving speed ('N' or 'P' in summary) is greatly improved.
+
+** Folder checking speed for filter folder of localdir
+   folder using `last' or `first' (Ex. /last:100/+inbox) is improved.
+
+** Retrieval progress of each message is displayed in POP and IMAP folder.
+
+** Coloring of summary buffer is processed on demand (only on Emacs).
+   If `wl-summary-lazy-highlight' is non-nil, 
+   only visible portion of the buffer is colored.
+
+** Customizable biff notify.
+   New hook `wl-biff-notify-hook' and `wl-biff-unnotify-hook' is
+   now available.
+   e.g. (add-hook wl-biff-notify-hook 'ding)
+
+** Many bug fixes.
 
 * Version 2.4.1 is basically a bug fix version of 2.4.0.
 
