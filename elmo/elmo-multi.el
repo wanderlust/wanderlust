@@ -270,26 +270,24 @@
   (elmo-multi-folder-diff folder))
 
 (defun elmo-multi-folder-diff (folder)
-  (let ((flds (elmo-multi-folder-children-internal folder))
-	(news 0)
+  (let ((news 0)
 	(unreads 0)
 	(alls 0)
-	no-unreads diff)
-    (while flds
-      (setq diff (elmo-folder-diff (car flds)))
-      (cond
-       ((consp (cdr diff)) ; (new unread all)
-	(setq news    (+ news (nth 0 diff))
-	      unreads (+ unreads (nth 1 diff))
-	      alls    (+ alls (nth 2 diff))))
-       (t
-	(setq no-unreads t)
-	(setq news    (+ news (car diff))
-	      alls    (+ alls (cdr diff)))))
-      (setq flds (cdr flds)))
-    (if no-unreads
-	(cons news alls)
-      (list news unreads alls))))
+	diff value)
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq diff (elmo-folder-diff child))
+      (setq news    (and news
+			 (setq value (elmo-diff-new diff))
+			 (+ news value))
+	    unreads (and unreads
+			 (setq value (elmo-diff-unread diff))
+			 (+ unreads value))
+	    alls    (and alls
+			 (setq value (elmo-diff-all diff))
+			 (+ alls value))))
+    (if unreads
+	(list news unreads alls)
+      (cons news alls))))
 
 (luna-define-method elmo-folder-list-messages
   ((folder elmo-multi-folder) &optional visible-only in-msgdb)
