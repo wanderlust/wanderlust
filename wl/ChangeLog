@@ -1,3 +1,8 @@
+2004-07-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-message.el (wl-message-exit): Switch to mime-mother-buffer if
+	the buffer is generated from another message buffer.
+
 2004-07-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-save-access-list): New function
