@@ -2637,7 +2637,7 @@ message has empty subject field.
 @subsection Temporary Marks
 @cindex Mark, Temporary
 
-There are four temporary marks,
+There are seven temporary marks,
 @samp{*}, @samp{d}, @samp{D}, @samp{o}, @samp{O}, @samp{i} and @samp{~}.
 Temporary marks indicates message operations.
 
@@ -2678,8 +2678,8 @@ Your answer is printed in the summary line.
 
 @subsection Persistent Marks
 
-There are five persistent marks, @samp{!}, @samp{N}, @samp{n}, @samp{U},
-@samp{u}, @samp{A}, @samp{a} and @samp{$}.
+There are ten persistent marks, @samp{!}, @samp{N}, @samp{n}, @samp{U},
+@samp{u}, @samp{A}, @samp{a}, @samp{F}, @samp{f} and @samp{$}.
 
 The persistent mark indicates the message's status and it is saved.
 Each persistent mark indicates:
@@ -3027,8 +3027,8 @@ are displayed in the following list.
 @example
 @group
 %n  message number
-%T  temporary mark (mandatory)
-%P  persistent mark (mandatory)
+%T  temporary mark
+%P  persistent mark
 %Y  year
 %M  month
 %D  day
@@ -5491,23 +5491,12 @@ are also reflected in the servers when Wanderlust becomes on-line.
 
 
 @node Pre-fetching Reservations,  , Marking, Enable Operations
-@subsection Pre-fetching (IMAP4, NNTP)
+@subsection Pre-fetching
 
 You can make reservations for pre-fetching messages in networking
 folders (IMAP, NNTP, POP3, shimbun).  Reserved messages are marked with
 @samp{u} but not cached yet.  When Wanderlust becomes on-line, they are
 pre-fetched from servers.
-
-If the variable @code{elmo-enable-disconnected-operation} is @code{nil},
-these off-line operations for IMAP4 and NNTP do not take place, and
-off-line re-file, copy or suchlike simply results in error.
-
-Because off-line operations use cache files, it is a bad idea to erase
-them by hand; it may cause Wanderlust to malfunction.
-
-If you want to remove caches, be sure to execute @kbd{M-x
-elmo-cache-expire-by-size}.  @code{elmo-cache-expire-by-size} does not
-remove caches for messages relevant to off-line operations.
 
 
 @node Plugged Mode, Off-line State settings, Enable Operations, Disconnected Operations
@@ -8757,7 +8746,8 @@ But you will have following limitations.
 @item
 You cannot use forwarded mark (@samp{F}, @samp{f}).
 @item
-You may only use @samp{important} flag. The other flags may not be available.
+You may only use @samp{important} flag. The other global flags may not
+be available.
 @end enumerate
 
 @subsection Changes from @samp{'mark} folder to  @samp{'flag}.

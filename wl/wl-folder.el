@@ -248,11 +248,17 @@
 
 (defun wl-folder-buffer-search-entity (folder &optional searchname)
   (let ((search (or searchname (wl-folder-get-petname folder)))
-	case-fold-search)
-    (re-search-forward
-     (concat
-      "^[ \t]*"
-      (regexp-quote search) ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+") nil t)))
+	case-fold-search
+	result)
+    (catch 'found
+      (while (setq result
+		   (re-search-forward
+		    (concat
+		     "^[ \t]*"
+		     (regexp-quote search) ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+")
+		    nil t))
+	(when (string= (wl-folder-get-entity-from-buffer) folder)
+	  (throw 'found result))))))
 
 (defsubst wl-folder-get-folder-name-by-id (entity-id &optional hashtb)
   (and (numberp entity-id)
@@ -1507,15 +1513,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (run-hooks 'wl-folder-mode-hook))
 
 (defun wl-folder-append-petname (realname petname)
-  (let (pentry)
-    ;; check group name.
-    (if (wl-folder-search-group-entity-by-name petname wl-folder-entity)
-	(error "%s already defined as group name" petname))
-    (when (setq pentry (wl-string-assoc realname wl-folder-petname-alist))
+  (let ((pentry (wl-string-assoc realname wl-folder-petname-alist)))
+    (when pentry
       (setq wl-folder-petname-alist
-	    (delete pentry wl-folder-petname-alist)))
-    (wl-append wl-folder-petname-alist
-	       (list (cons realname petname)))))
+	    (delete pentry wl-folder-petname-alist))))
+  (wl-append wl-folder-petname-alist
+	     (list (cons realname petname))))
 
 (defun wl-folder ()
   (let (initialize folder-buf)
