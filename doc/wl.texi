@@ -7294,6 +7294,22 @@ A special group consists of automatically collected folders under
 some specified path.
 @xref{Folder Definition}.
 
+@item summary buffer
+A buffer for displaying list of messages in some folder.
+
+@item sticky summary
+Compared with ordinary summary buffer which will be destroyed after
+exiting from it, this type of summary will be remain even after exiting
+by @kbd{q} or @kbd{g}.
+@xref{Sticky Summary}.
+
+@item expire
+To delete or put into the archive expired messages.
+@xref{Expire}.
+
+@item score
+@xref{Scoring}.
+
 @item prefetch
 To cache messages beforehand in order to read messages after you will be
 disconnected from the server.

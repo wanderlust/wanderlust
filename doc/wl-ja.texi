@@ -7191,18 +7191,34 @@ Non-nil ならばオフライン処理で溜った処理を実行するかどうかを確認します。
 このマニュアルで使われている用語についての説明をします。
 
 @table @samp
-@item フォルダ
+@item フォルダ (folder)
 メッセージが格納されているいれものです。
 
-@item グループ
+@item グループ (group)
 複数のフォルダをまとめた集合です。
 
-@item アクセスグループ
+@item アクセスグループ (access group)
 指定したパス以下のフォルダを自動的に集めてできる、特別なグループを
 指します。
 @xref{Folder Definition}.
 
-@item プリフェッチ
+@item サマリ (summary buffer)
+メッセージの一覧を表示するバッファです。
+
+@item スティッキーサマリ (sticky summary)
+サマリを抜けると、通常のサマリは破棄されますが、
+@kbd{q} や @kbd{g} でサマリを抜けても破棄されずに残る、
+特別なサマリを指します。
+@xref{Sticky Summary}.
+
+@item エクスパイア (expire)
+期限切れメッセージを自動的に削除したりアーカイブしたりすること。
+@xref{Expire}.
+
+@item スコア (score)
+@xref{Scoring}.
+
+@item プリフェッチ (prefetch)
 オフラインでメッセージを読むために、あらかじめメッセージをキャッシュ
 しておくことをいいます。
 @end table
