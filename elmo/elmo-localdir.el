@@ -1,4 +1,4 @@
-;;; elmo-localdir.el -- Localdir Interface for ELMO.
+;;; elmo-localdir.el --- Localdir Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -28,10 +28,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (eval-when-compile (require 'cl))
 
 (require 'elmo-msgdb)
@@ -86,17 +86,17 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localdir-folder))
-  (expand-file-name 
+  (expand-file-name
    (mapconcat
     'identity
-    (mapcar 
+    (mapcar
      'elmo-replace-string-as-filename
      (split-string (elmo-localdir-folder-dir-name-internal folder)
 		   "/"))
     "/")
    (expand-file-name ;;"localdir"
     (symbol-name (elmo-folder-type-internal folder))
-    elmo-msgdb-dir)))
+    elmo-msgdb-directory)))
 
 (luna-define-method elmo-message-file-name ((folder
 					     elmo-localdir-folder)
@@ -121,10 +121,10 @@
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (or start-number 0)))
     (dolist (number numbers)
-      (elmo-add-name-to-file
+      (elmo-copy-file
        (expand-file-name
 	(int-to-string number)
 	(elmo-localdir-folder-directory-internal folder))
@@ -163,10 +163,10 @@
 		(elmo-msgdb-append-element
 		 overview entity))
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-  	  (setq number-alist
-  		(elmo-msgdb-number-add number-alist
-  				       num
-  				       message-id))
+	  (setq number-alist
+		(elmo-msgdb-number-add number-alist
+				       num
+				       message-id))
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-file-cache-exists-p message-id) ; XXX
@@ -201,7 +201,7 @@
 
 (defsubst elmo-localdir-list-subr (folder &optional nonsort)
   (let ((flist (mapcar 'string-to-int
-		       (directory-files 
+		       (directory-files
 			(elmo-localdir-folder-directory-internal folder)
 			nil "^[0-9]+$" t)))
 	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
@@ -220,15 +220,14 @@
 		   folder
 		   (or number
 		       (1+ (car (elmo-folder-status folder)))))))
-    (if (file-writable-p filename)
-	(write-region-as-binary
-	 (point-min) (point-max) filename nil 'no-msg))
-    t))
+    (when (file-writable-p filename)
+      (write-region-as-binary
+       (point-min) (point-max) filename nil 'no-msg)
+      t)))
 
-(luna-define-method elmo-folder-append-messages :around ((folder elmo-localdir-folder)
-							 src-folder numbers
-							 unread-marks
-							 &optional same-number)
+(luna-define-method elmo-folder-append-messages :around
+  ((folder elmo-localdir-folder)
+   src-folder numbers unread-marks &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-localdir-folder-directory-internal folder))
 	    (succeeds numbers)
@@ -240,6 +239,7 @@
 	    (int-to-string
 	     (if same-number (car numbers) next-num))
 	    dir))
+	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))
 		   (not same-number))
 	      (setq next-num
@@ -283,6 +283,9 @@
 (luna-define-method elmo-folder-creatable-p ((folder elmo-localdir-folder))
   t)
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-localdir-folder))
+  t)
+
 (luna-define-method elmo-folder-create ((folder elmo-localdir-folder))
   (let ((dir (elmo-localdir-folder-directory-internal folder)))
     (if (file-directory-p dir)
@@ -302,7 +305,7 @@
 (luna-define-method elmo-folder-rename-internal ((folder elmo-localdir-folder)
 						 new-folder)
   (let* ((old (elmo-localdir-folder-directory-internal folder))
-	 (new (elmo-localdir-folder-directory-internal folder))
+	 (new (elmo-localdir-folder-directory-internal new-folder))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	(error "No such directory: %s" old)
@@ -319,7 +322,7 @@
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-folder-directory-internal folder))
    condition number number-list))
-  
+
 (luna-define-method elmo-folder-search ((folder elmo-localdir-folder)
 					condition &optional numbers)
   (let* ((msgs (or numbers (elmo-folder-list-messages folder)))
@@ -329,12 +332,14 @@
     (cond
      ;; short cut.
      ((and (vectorp condition)
+	   (not (eq (elmo-filter-type condition) 'unmatch))
 	   (string= (elmo-filter-key condition) "last"))
       (nthcdr (max (- (length msgs)
 		      (string-to-int (elmo-filter-value condition)))
 		   0)
 	      msgs))
      ((and (vectorp condition)
+	   (not (eq (elmo-filter-type condition) 'unmatch))
 	   (string= (elmo-filter-key condition) "first"))
       (let ((rest (nthcdr (string-to-int (elmo-filter-value condition) )
 			  msgs)))
@@ -377,12 +382,12 @@
 	 (/ (* new-number 100) total)))
       (setq onum (car flist))
       (when (not (eq onum new-number))		; why \=() is wrong..
-        (elmo-bind-directory
+	(elmo-bind-directory
 	 dir
 	 ;; xxx  nfs,hardlink
 	 (rename-file (int-to-string onum) (int-to-string new-number) t))
-        ;; update overview
-        (elmo-msgdb-overview-entity-set-number
+	;; update overview
+	(elmo-msgdb-overview-entity-set-number
 	 (elmo-msgdb-overview-get-entity onum msgdb)
 	 new-number)
 	;; update number-alist

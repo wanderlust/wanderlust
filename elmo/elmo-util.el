@@ -1,4 +1,4 @@
-;;; elmo-util.el -- Utilities for Elmo.
+;;; elmo-util.el --- Utilities for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
@@ -42,13 +42,13 @@
 (defmacro elmo-set-buffer-multibyte (flag)
   "Set the multibyte flag of the current buffer to FLAG."
   (cond ((boundp 'MULE)
-         (list 'setq 'mc-flag flag))
-        ((featurep 'xemacs)
-         flag)
-        ((and (boundp 'emacs-major-version) (>= emacs-major-version 20))
-         (list 'set-buffer-multibyte flag))
-        (t
-         flag)))
+	 (list 'setq 'mc-flag flag))
+	((featurep 'xemacs)
+	 flag)
+	((and (boundp 'emacs-major-version) (>= emacs-major-version 20))
+	 (list 'set-buffer-multibyte flag))
+	(t
+	 flag)))
 
 (defvar elmo-work-buf-name " *elmo work*")
 (defvar elmo-temp-buf-name " *elmo temp*")
@@ -75,13 +75,7 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
-;; Nemacs's `read' is different.
-(static-if (fboundp 'nemacs-version)
-    (defun elmo-read (obj)
-      (prog1 (read obj)
-	(if (bufferp obj)
-	    (or (bobp) (forward-char -1)))))
-  (defalias 'elmo-read 'read))
+(defalias 'elmo-read 'read)
 
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
@@ -142,13 +136,6 @@ File content is encoded with MIME-CHARSET."
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
-(defun elmo-get-network-stream-type (stream-type stream-type-alist)
-  (catch 'found
-    (while stream-type-alist
-      (if (eq (nth 1 (car stream-type-alist)) stream-type)
-	  (throw 'found (car stream-type-alist)))
-      (setq stream-type-alist (cdr stream-type-alist)))))
-
 ;;; Search Condition
 
 (defconst elmo-condition-atom-regexp "[^/ \")|&]*")
@@ -168,7 +155,7 @@ File content is encoded with MIME-CHARSET."
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
 				   "!Since" "!Before" "!ToCc")
-				 elmo-msgdb-extra-fields)) nil t))
+				 elmo-msgdb-extra-fields))))
 	 value)
     (setq field (if (string= field "")
 		    (setq field default)
@@ -213,7 +200,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (elmo-condition-parse-error)))
 
 ;; or-expr      ::= and-expr /
-;; 	            and-expr "|" or-expr
+;;	            and-expr "|" or-expr
 (defun elmo-condition-parse-or-expr ()
   (let ((left (elmo-condition-parse-and-expr)))
     (if (looking-at "| *")
@@ -403,19 +390,19 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-load ()
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-                                      elmo-msgdb-dir))
-          (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-          insert-file-contents-post-hook
-          ret-val)
+				      elmo-msgdb-directory))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
+	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook
+	  ret-val)
       (if (not (file-readable-p filename))
-          ()
-        (set-buffer tmp-buffer)
-        (insert-file-contents filename)
-        (setq ret-val
-              (condition-case nil
-                  (read (current-buffer))
-                (error nil nil))))
+	  ()
+	(set-buffer tmp-buffer)
+	(insert-file-contents filename)
+	(setq ret-val
+	      (condition-case nil
+		  (read (current-buffer))
+		(error nil nil))))
       (kill-buffer tmp-buffer)
       ret-val)))
 
@@ -423,14 +410,14 @@ Return value is a cons cell of (STRUCTURE . REST)"
   "Clear password cache."
   (interactive)
   (setq elmo-passwd-alist nil))
-  
+
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-                                      elmo-msgdb-dir))
-          (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
+				      elmo-msgdb-directory))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
       (set-buffer tmp-buffer)
       (erase-buffer)
       (prin1 elmo-passwd-alist tmp-buffer)
@@ -439,11 +426,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 ;;;	       (not (equal 384 (file-modes filename))))
 ;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
       (if (file-writable-p filename)
-         (progn
-           (write-region (point-min) (point-max)
-                         filename nil 'no-msg)
-           (set-file-modes filename 384))
-        (message (format "%s is not writable." filename)))
+	  (progn
+	    (write-region (point-min) (point-max)
+			  filename nil 'no-msg)
+	    (set-file-modes filename 384))
+	(message (format "%s is not writable." filename)))
       (kill-buffer tmp-buffer))))
 
 (defun elmo-get-passwd (key)
@@ -477,19 +464,19 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defmacro elmo-read-char-exclusive ()
   (cond ((featurep 'xemacs)
-         '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
-                               (left . ?\C-h))))
-                event key)
-            (while (not
-                    (and
-                     (key-press-event-p (setq event (next-command-event)))
-                     (setq key (or (event-to-character event)
-                                   (cdr (assq (event-key event) table)))))))
-            key))
-        ((fboundp 'read-char-exclusive)
-         '(read-char-exclusive))
-        (t
-         '(read-char))))
+	 '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
+			       (left . ?\C-h))))
+		event key)
+	    (while (not
+		    (and
+		     (key-press-event-p (setq event (next-command-event)))
+		     (setq key (or (event-to-character event)
+				   (cdr (assq (event-key event) table)))))))
+	    key))
+	((fboundp 'read-char-exclusive)
+	 '(read-char-exclusive))
+	(t
+	 '(read-char))))
 
 (defun elmo-read-passwd (prompt &optional stars)
   "Read a single line of text from user without echoing, and return it."
@@ -556,12 +543,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	    (setq tlist (cdr tlist)))
 	  (setq str
 		(concat str ")")))
-      (setq str 
+      (setq str
 	    (if (symbolp tlist)
 		(symbol-name tlist)
 	      tlist)))
     str))
- 
+
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
@@ -724,7 +711,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (if (null (file-directory-p parent))
 	(elmo-make-directory parent))
     (make-directory path)
-    (if (string= path (expand-file-name elmo-msgdb-dir))
+    (if (string= path (expand-file-name elmo-msgdb-directory))
 	(set-file-modes path (+ (* 64 7) (* 8 0) 0))))) ; chmod 0700
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
@@ -866,19 +853,24 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(setq result (not result)))
     result))
 
-(defun elmo-condition-find-key-internal (condition key)
+(defun elmo-condition-in-msgdb-p-internal (condition fields)
   (cond
    ((vectorp condition)
-    (if (string= (elmo-filter-key condition) key)
+    (if (not (member (elmo-filter-key condition) fields))
 	(throw 'found t)))
    ((or (eq (car condition) 'and)
 	(eq (car condition) 'or))
-    (elmo-condition-find-key-internal (nth 1 condition) key)
-    (elmo-condition-find-key-internal (nth 2 condition) key))))
+    (elmo-condition-in-msgdb-p-internal (nth 1 condition) fields)
+    (elmo-condition-in-msgdb-p-internal (nth 2 condition) fields))))
 
-(defun elmo-condition-find-key (condition key)
-  (catch 'found
-    (elmo-condition-find-key-internal condition key)))
+(defun elmo-condition-in-msgdb-p (condition)
+  (not (catch 'found
+	 (elmo-condition-in-msgdb-p-internal condition
+					     (append
+					      elmo-msgdb-extra-fields
+					      '("last" "first" "from"
+						"subject" "to" "cc" "since"
+						"before"))))))
 
 (defun elmo-buffer-field-condition-match (condition number number-list)
   (cond
@@ -905,11 +897,15 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (cond
      ((string= (elmo-filter-key condition) "last")
       (setq result (<= (length (memq number number-list))
-		       (string-to-int (elmo-filter-value condition)))))
+		       (string-to-int (elmo-filter-value condition))))
+      (if (eq (elmo-filter-type condition) 'unmatch)
+	  (setq result (not result))))
      ((string= (elmo-filter-key condition) "first")
       (setq result (< (- (length number-list)
 			 (length (memq number number-list)))
-		      (string-to-int (elmo-filter-value condition)))))
+		      (string-to-int (elmo-filter-value condition))))
+      (if (eq (elmo-filter-type condition) 'unmatch)
+	  (setq result (not result))))
      (t
       (elmo-set-work-buf
        (as-binary-input-file (insert-file-contents file))
@@ -919,8 +915,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (setq result
 	     (elmo-buffer-field-primitive-condition-match
 	      condition number number-list)))))
-    (if (eq (elmo-filter-type condition) 'unmatch)
-	(setq result (not result)))
     result))
 
 (defun elmo-file-field-condition-match (file condition number number-list)
@@ -961,10 +955,10 @@ Emacs 19.28 or earlier does not have `unintern'."
 (defun elmo-make-hash (&optional hashsize)
   "Make a new hash table which have HASHSIZE size."
   (make-vector
-   (if hashsize 
+   (if hashsize
        (max
 	;; Prime numbers as lengths tend to result in good
-	;; hashing; lengths one less than a power of two are 
+	;; hashing; lengths one less than a power of two are
 	;; also good.
 	(min
 	 (let ((i 1))
@@ -1068,10 +1062,10 @@ Emacs 19.28 or earlier does not have `unintern'."
       (setq filename (substring filename (+ (match-end 0) 1))))
     (concat result filename)))
 
-(defsubst elmo-copy-file (src dst)
+(defsubst elmo-copy-file (src dst &optional ok-if-already-exists)
   (condition-case err
-      (elmo-add-name-to-file src dst t)
-    (error (copy-file src dst t))))
+      (elmo-add-name-to-file src dst ok-if-already-exists)
+    (error (copy-file src dst ok-if-already-exists t))))
 
 (defsubst elmo-buffer-exists-p (buffer)
   (if (bufferp buffer)
@@ -1128,9 +1122,8 @@ the value of `foo'."
 	(setq err-mes (concat err-mes (format
 				       (if (stringp (car errobj))
 					   "%s"
-					 (if (boundp 'nemacs-version)
-					     "%s"
-					   "%S")) (car errobj))))
+					 "%S")
+				       (car errobj))))
 	(setq errobj (cdr errobj))
 	(if errobj (setq err-mes (concat err-mes (if first ": " ", "))))
 	(setq first nil))
@@ -1160,6 +1153,52 @@ the value of `foo'."
 	   (apply (function message) (concat format " %d%%")
 		  (nconc args (list value)))))))
 
+(defvar elmo-progress-counter-alist nil)
+
+(defmacro elmo-progress-counter-value (counter)
+  (` (aref (cdr (, counter)) 0)))
+
+(defmacro elmo-progress-counter-all-value (counter)
+  (` (aref (cdr (, counter)) 1)))
+
+(defmacro elmo-progress-counter-format (counter)
+  (` (aref (cdr (, counter)) 2)))
+
+(defmacro elmo-progress-counter-set-value (counter value)
+  (` (aset (cdr (, counter)) 0 (, value))))
+
+(defun elmo-progress-set (label all-value &optional format)
+  (unless (assq label elmo-progress-counter-alist)
+    (setq elmo-progress-counter-alist
+	  (cons (cons label (vector 0 all-value (or format "")))
+		elmo-progress-counter-alist))))
+
+(defun elmo-progress-clear (label)
+  (let ((counter (assq label elmo-progress-counter-alist)))
+    (when counter
+      (elmo-display-progress label "" 100)
+      (setq elmo-progress-counter-alist
+	    (delq counter elmo-progress-counter-alist)))))
+
+(defun elmo-progress-notify (label &optional value op &rest args)
+  (let ((counter (assq label elmo-progress-counter-alist)))
+    (when counter
+      (let* ((value (or value 1))
+	     (cur-value (elmo-progress-counter-value counter))
+	     (all-value (elmo-progress-counter-all-value counter))
+	     (new-value (if (eq op 'set) value (+ cur-value value)))
+	     (cur-rate (/ (* cur-value 100) all-value))
+	     (new-rate (/ (* new-value 100) all-value)))
+	(elmo-progress-counter-set-value counter new-value)
+	(unless (= cur-rate new-rate)
+	  (apply 'elmo-display-progress
+		 label
+		 (elmo-progress-counter-format counter)
+		 new-rate
+		 args))
+	(when (>= new-rate 100)
+	  (elmo-progress-clear label))))))
+
 (defun elmo-time-expire (before-time diff-time)
   (let* ((current (current-time))
 	 (rest (when (< (nth 1 current) (nth 1 before-time))
@@ -1174,6 +1213,14 @@ the value of `foo'."
 (if (fboundp 'std11-fetch-field)
     (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
   (defalias 'elmo-field-body 'std11-field-body))
+
+(defun elmo-address-quote-specials (word)
+  "Make quoted string of WORD if needed."
+  (let ((lal (std11-lexical-analyze word)))
+    (if (or (assq 'specials lal)
+	    (assq 'domain-literal lal))
+	(prin1-to-string word)
+      word)))
 
 (defmacro elmo-string (string)
   "STRING without text property."
@@ -1264,6 +1311,16 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	    (throw 'loop a))
 	(setq alist (cdr alist))))))
 
+(defun elmo-string-assoc-all (key alist)
+  (let (matches)
+    (while alist
+      (if (string= key (car (car alist)))
+	  (setq matches
+		(cons (car alist)
+		      matches)))
+      (setq alist (cdr alist)))
+    matches))
+
 (defun elmo-string-rassoc (key alist)
   (let (a)
     (catch 'loop
@@ -1285,8 +1342,44 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
       (setq alist (cdr alist)))
     matches))
 
+;;; Folder parser utils.
+(defun elmo-parse-token (string &optional seps)
+  "Parse atom from STRING using SEPS as a string of separator char list."
+  (let ((len (length string))
+	(seps (and seps (string-to-char-list seps)))
+	(i 0)
+	(sep nil)
+	content c in)
+    (if (eq len 0)
+	(cons "" "")
+      (while (and (< i len) (or in (null sep)))
+	(setq c (aref string i))
+	(cond
+	 ((and in (eq c ?\\))
+	  (setq i (1+ i)
+		content (cons (aref string i) content)
+		i (1+ i)))
+	 ((eq c ?\")
+	  (setq in (not in)
+		i (1+ i)))
+	 (in (setq content (cons c content)
+		   i (1+ i)))
+	 ((memq c seps)
+	  (setq sep c))
+	 (t (setq content (cons c content)
+		  i (1+ i)))))
+      (if in (error "Parse error in quoted"))
+      (cons (if (null content) "" (char-list-to-string (nreverse content)))
+	    (substring string i)))))
+
+(defun elmo-parse-prefixed-element (prefix string &optional seps)
+  (if (and (not (eq (length string) 0))
+	   (eq (aref string 0) prefix))
+      (elmo-parse-token (substring string 1) seps)
+    (cons "" string)))
+
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
-;; 
+;;
 ;; number          ::= [0-9]+
 ;; beg             ::= number
 ;; end             ::= number
@@ -1415,7 +1508,7 @@ NUMBER-SET is altered."
     (store-match-data nil)
     (while (string-match regexp string (match-end 0))
       (setq list (cons (substring string (match-beginning matchn)
-                                  (match-end matchn)) list)))
+				  (match-end matchn)) list)))
     (nreverse list)))
 
 ;;; File cache.
@@ -1456,15 +1549,13 @@ If optional argument SECTION is specified, partial cache path is returned."
   (if (setq msgid (elmo-msgid-to-cache msgid))
       (expand-file-name
        (if section
-	   (format "%s/%s/%s/%s/%s"
-		   elmo-msgdb-dir
-		   elmo-cache-dirname
+	   (format "%s/%s/%s/%s"
+		   elmo-cache-directory
 		   (elmo-cache-get-path-subr msgid)
 		   msgid
 		   section)
-	 (format "%s/%s/%s/%s"
-		 elmo-msgdb-dir
-		 elmo-cache-dirname
+	 (format "%s/%s/%s"
+		 elmo-cache-directory
 		 (elmo-cache-get-path-subr msgid)
 		 msgid)))))
 
@@ -1586,8 +1677,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	total beginning)
     (message "Checking disk usage...")
     (setq total (/ (elmo-disk-usage
-		    (expand-file-name
-		     elmo-cache-dirname elmo-msgdb-dir)) Kbytes))
+		    elmo-cache-directory) Kbytes))
     (setq beginning total)
     (message "Checking disk usage...done")
     (let ((cfl (elmo-cache-get-sorted-cache-file-list))
@@ -1635,7 +1725,7 @@ If KBYTES is kilo bytes (This value must be float)."
 
 (defun elmo-cache-get-sorted-cache-file-list ()
   (let ((dirs (directory-files
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       elmo-cache-directory
 	       t "^[^\\.]"))
 	(i 0) num
 	elist
@@ -1671,7 +1761,7 @@ If KBYTES is kilo bytes (This value must be float)."
 			       elmo-cache-expire-default-age)))
 		 (int-to-string elmo-cache-expire-default-age)))
 	(dirs (directory-files
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       elmo-cache-directory
 	       t "^[^\\.]"))
 	(count 0)
 	curtime)
@@ -1696,9 +1786,10 @@ If KBYTES is kilo bytes (This value must be float)."
 ;;;
 ;; msgid to path.
 (defun elmo-msgid-to-cache (msgid)
-  (when (and msgid
-	     (string-match "<\\(.+\\)>$" msgid))
-    (elmo-replace-string-as-filename (elmo-match-string 1 msgid))))
+  (save-match-data
+    (when (and msgid
+	       (string-match "<\\(.+\\)>$" msgid))
+      (elmo-replace-string-as-filename (elmo-match-string 1 msgid)))))
 
 (defun elmo-cache-get-path (msgid &optional folder number)
   "Get path for cache file associated with MSGID, FOLDER, and NUMBER."
@@ -1714,8 +1805,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	  (format "%s/%s"
 		  (elmo-cache-get-path-subr msgid)
 		  msgid))
-	(expand-file-name elmo-cache-dirname
-			  elmo-msgdb-dir)))))
+	elmo-cache-directory))))
 
 ;;;
 ;; Warnings.
@@ -1731,7 +1821,11 @@ If KBYTES is kilo bytes (This value must be float)."
   (display-buffer elmo-warning-buffer-name))
 
 (defvar elmo-obsolete-variable-alist nil)
-(defvar elmo-obsolete-variable-show-warnings nil)
+
+(defcustom elmo-obsolete-variable-show-warnings t
+  "Show warning window if obsolete variable is treated."
+  :type 'boolean
+  :group 'elmo)
 
 (defun elmo-define-obsolete-variable (obsolete var)
   "Define obsolete variable.
@@ -1775,12 +1869,12 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (setq elmo-dop-queue
 	(elmo-object-load
 	 (expand-file-name elmo-dop-queue-filename
-			   elmo-msgdb-dir))))
+			   elmo-msgdb-directory))))
 
 (defun elmo-dop-queue-save ()
   (elmo-object-save
    (expand-file-name elmo-dop-queue-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
    elmo-dop-queue))
 
 (require 'product)
