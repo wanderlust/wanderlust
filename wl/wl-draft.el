@@ -540,16 +540,20 @@ Reply to author if WITH-ARG is non-nil."
 
 (defun wl-draft-insert-current-message (dummy)
   (interactive)
-  (let ((mail-reply-buffer (wl-message-get-original-buffer))
+  (let (mail-reply-buffer
 	mail-citation-hook mail-yank-hooks
 	wl-draft-add-references wl-draft-cite-func)
+    (with-current-buffer wl-draft-buffer-cur-summary-buffer
+      (with-current-buffer wl-message-buffer
+	(setq mail-reply-buffer (wl-message-get-original-buffer))))
     (if (eq 0
 	    (save-excursion
 	      (set-buffer mail-reply-buffer)
 	      (buffer-size)))
 	(error "No current message")
-      (wl-draft-yank-from-mail-reply-buffer nil
-					    wl-ignored-forwarded-headers))))
+      (wl-draft-yank-from-mail-reply-buffer
+       nil
+       wl-ignored-forwarded-headers))))
 
 (defun wl-draft-insert-get-message (dummy)
   (let ((fld (completing-read
@@ -568,8 +572,11 @@ Reply to author if WITH-ARG is non-nil."
 	wl-draft-cite-func)
     (unwind-protect
 	(progn
-	  (save-excursion
-	    (elmo-read-msg-with-cache fld number mail-reply-buffer nil))
+	  (elmo-message-fetch (wl-folder-get-elmo-folder fld)
+			      number
+			      ;; No cache.
+			      (elmo-make-fetch-strategy 'entire)
+			      nil mail-reply-buffer)
 	  (wl-draft-yank-from-mail-reply-buffer nil))
       (kill-buffer mail-reply-buffer))))
 
@@ -593,11 +600,8 @@ Reply to author if WITH-ARG is non-nil."
 		  (save-excursion
 		    (set-buffer message-buf)
 		    wl-message-buffer-cur-number))
-	    (setq entity (assoc (cdr (assq num
-					   (elmo-msgdb-get-number-alist
-					    wl-summary-buffer-msgdb)))
-				(elmo-msgdb-get-overview
-				 wl-summary-buffer-msgdb)))
+	    (setq entity (elmo-msgdb-overview-get-entity
+			  num (wl-summary-buffer-msgdb)))
 	    (setq from (elmo-msgdb-overview-entity-get-from entity))
 	    (setq date (elmo-msgdb-overview-entity-get-date entity)))
 	  (setq cite-title (format "At %s,\n%s wrote:"
@@ -798,20 +802,11 @@ to find out how to use this."
 
 (defun wl-draft-parse-msg-id-list-string (string)
   "Get msg-id list from STRING."
-  (let ((parsed (std11-parse-msg-ids-string string))
-	tokens msg-id msg-id-list)
-    (while parsed
-      (setq msg-id nil)
-      (when (eq (car (car parsed)) 'msg-id)
-	(setq tokens (cdr (car parsed)))
-	(while tokens
-	  (if (or (eq (car (car tokens)) 'atom)
-		  (eq (car (car tokens)) 'specials))
-	      (setq msg-id (concat msg-id (cdr (car tokens)))))
-	  (setq tokens (cdr tokens))))
-      (if msg-id (setq msg-id-list (cons (concat "<" msg-id ">")
-					 msg-id-list)))
-      (setq parsed (cdr parsed)))
+  (let (msg-id-list)
+    (dolist (parsed-id (std11-parse-msg-ids-string string))
+      (when (eq (car parsed-id) 'msg-id)
+	(setq msg-id-list (cons (std11-msg-id-string parsed-id)
+				msg-id-list))))
     (nreverse msg-id-list)))
 
 (defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
@@ -1046,7 +1041,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	  (if wl-draft-use-cache
 	      (let ((id (std11-field-body "Message-ID"))
 		    (elmo-enable-disconnected-operation t))
-		(elmo-cache-save id nil nil nil))))
+		(elmo-file-cache-save id nil))))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)
@@ -1220,7 +1215,8 @@ If optional argument is non-nil, current draft buffer is killed"
 		       (point)))
 		    fcc-list))
 	(save-match-data
-	  (wl-folder-confirm-existence (eword-decode-string (car fcc-list))))
+	  (wl-folder-confirm-existence
+	   (wl-folder-get-elmo-folder (eword-decode-string (car fcc-list)))))
 	(delete-region (match-beginning 0)
 		       (progn (forward-line 1) (point)))))
     fcc-list))
@@ -1247,13 +1243,14 @@ If optional argument is non-nil, current draft buffer is killed"
 	    cache-saved)
 	(while fcc-list
 	  (unless (or cache-saved
-		      (elmo-folder-plugged-p (car fcc-list)))
-	    (elmo-cache-save id nil nil nil) ;; for disconnected operation
+		      (elmo-folder-plugged-p
+		       (wl-folder-get-elmo-folder (car fcc-list))))
+	    (elmo-file-cache-save id nil) ;; for disconnected operation
 	    (setq cache-saved t))
-	  (if (elmo-append-msg (eword-decode-string (car fcc-list))
-			       (buffer-substring
-				(point-min) (point-max))
-			       id)
+	  (if (elmo-folder-append-buffer
+	       (wl-folder-get-elmo-folder
+		(eword-decode-string (car fcc-list)))
+	       id)
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (setq fcc-list (cdr fcc-list)))))
@@ -1297,20 +1294,22 @@ If optional argument is non-nil, current draft buffer is killed"
     (wl-load-profile))
   (wl-init 'wl-draft) ;; returns immediately if already initialized.
   (if (interactive-p)
-      (setq summary-buf (wl-summary-get-buffer wl-summary-buffer-folder-name)))
-  (let ((draft-folder-spec (elmo-folder-get-spec wl-draft-folder))
+      (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
+  (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	buf-name file-name num wl-demo change-major-mode-hook)
-    (if (not (eq (car draft-folder-spec) 'localdir))
+    (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
-    (setq num (elmo-max-of-list (or (elmo-list-folder wl-draft-folder) '(0))))
+    (setq num (elmo-max-of-list
+	       (or (elmo-folder-list-messages draft-folder) '(0))))
     (setq num (+ 1 num))
     ;; To get unused buffer name.
     (while (get-buffer (concat wl-draft-folder "/" (int-to-string num)))
       (setq num (+ 1 num)))
     (setq buf-name (find-file-noselect
 		    (setq file-name
-			  (elmo-get-msg-filename wl-draft-folder
-						 num))))
+			  (elmo-message-file-name
+			   (wl-folder-get-elmo-folder wl-draft-folder)
+			   num))))
     (if wl-draft-use-frame
 	(switch-to-buffer-other-frame buf-name)
       (switch-to-buffer buf-name))
@@ -1452,14 +1451,10 @@ If optional argument is non-nil, current draft buffer is killed"
       (current-buffer))))
 
 (defun wl-draft-reedit (number)
-  (let ((draft-folder-spec (elmo-folder-get-spec wl-draft-folder))
+  (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	(wl-draft-reedit t)
 	buf-name file-name change-major-mode-hook)
-    (setq file-name (expand-file-name
-		     (int-to-string number)
-		     (expand-file-name
-		      (nth 1 draft-folder-spec)
-		      elmo-localdir-folder-path)))
+    (setq file-name (elmo-message-file-name draft-folder number))
     (unless (file-exists-p file-name)
       (error "File %s does not exist" file-name))
     (setq buf-name (find-file-noselect file-name))
@@ -1692,7 +1687,8 @@ If optional argument is non-nil, current draft buffer is killed"
 	    (insert (concat field ": " content "\n"))))))))
 
 (defun wl-draft-config-info-operation (msg operation)
-  (let* ((msgdb-dir (elmo-msgdb-expand-path wl-draft-folder))
+  (let* ((msgdb-dir (elmo-folder-msgdb-path (wl-folder-get-elmo-folder
+					     wl-draft-folder)))
 	 (filename
 	  (expand-file-name
 	   (format "%s-%d" wl-draft-config-save-filename msg)
@@ -1717,7 +1713,8 @@ If optional argument is non-nil, current draft buffer is killed"
 
 (defun wl-draft-queue-info-operation (msg operation
 					  &optional add-sent-message-via)
-  (let* ((msgdb-dir (elmo-msgdb-expand-path wl-queue-folder))
+  (let* ((msgdb-dir (elmo-folder-msgdb-path
+		     (wl-folder-get-elmo-folder wl-queue-folder)))
 	 (filename
 	  (expand-file-name
 	   (format "%s-%d" wl-draft-queue-save-filename msg)
@@ -1751,15 +1748,14 @@ If optional argument is non-nil, current draft buffer is killed"
   (if wl-draft-verbose-send
       (message "Queuing..."))
   (let ((send-buffer (current-buffer))
+	(folder (wl-folder-get-elmo-folder wl-queue-folder))
 	(message-id (std11-field-body "Message-ID")))
-    (if (elmo-append-msg wl-queue-folder
-			 (buffer-substring (point-min) (point-max))
-			 message-id)
+    (if (elmo-folder-append-buffer folder t)
 	(progn
 	  (if message-id
 	      (elmo-dop-lock-message message-id))
 	  (wl-draft-queue-info-operation
-	   (car (elmo-max-of-folder wl-queue-folder))
+	   (car (elmo-folder-status folder))
 	   'save wl-sent-message-via)
 	  (wl-draft-write-sendlog 'ok 'queue nil wl-queue-folder message-id)
 	  (when wl-draft-verbose-send
@@ -1771,11 +1767,12 @@ If optional argument is non-nil, current draft buffer is killed"
 (defun wl-draft-queue-flush ()
   "Flush draft queue."
   (interactive)
-  (let ((msgs2 (elmo-list-folder wl-queue-folder))
-	(i 0)
-	(performed 0)
-	(wl-draft-queue-flushing t)
-	msgs failure len buffer msgid sent-via)
+  (let* ((queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
+	 (msgs2 (elmo-folder-list-messages queue-folder))
+	 (i 0)
+	 (performed 0)
+	 (wl-draft-queue-flushing t)
+	 msgs failure len buffer msgid sent-via)
     ;; get plugged send message
     (while msgs2
       (setq sent-via (wl-draft-queue-info-operation (car msgs2) 'get-sent-via))
@@ -1806,8 +1803,9 @@ If optional argument is non-nil, current draft buffer is killed"
 		      failure nil)
 		(setq wl-sent-message-via nil)
 		(wl-draft-queue-info-operation (car msgs) 'load)
-		(elmo-read-msg-no-cache wl-queue-folder (car msgs)
-					(current-buffer))
+		(elmo-message-fetch queue-folder
+				    (car msgs)
+				    (elmo-make-fetch-strategy 'entire))
 		(condition-case err
 		    (setq failure (funcall
 				   wl-draft-queue-flush-send-func
@@ -1820,7 +1818,8 @@ If optional argument is non-nil, current draft buffer is killed"
 		  (quit
 		   (setq failure t)))
 		(unless failure
-		  (elmo-delete-msgs wl-queue-folder (cons (car msgs) nil))
+		  (elmo-folder-delete-messages
+		   queue-folder (cons (car msgs) nil))
 		  (wl-draft-queue-info-operation (car msgs) 'delete)
 		  (elmo-dop-unlock-message (std11-field-body "Message-ID"))
 		  (setq performed (+ 1 performed)))
@@ -1838,10 +1837,8 @@ If optional argument is non-nil, current draft buffer is killed"
     (let ((bufs (buffer-list))
 	  (draft-regexp (concat
 			 "^" (regexp-quote
-			      (expand-file-name
-			       (nth 1 (elmo-folder-get-spec wl-draft-folder))
-			       (expand-file-name
-				elmo-localdir-folder-path)))))
+			      (elmo-localdir-folder-directory-internal
+			       (wl-folder-get-elmo-folder wl-draft-folder)))))
 	  buf draft-bufs)
       (while bufs
 	(if (and
@@ -1861,7 +1858,8 @@ If optional argument is non-nil, current draft buffer is killed"
 	(switch-to-buffer buf))))))
 
 (defun wl-jump-to-draft-folder ()
-  (let ((msgs (reverse (elmo-list-folder wl-draft-folder)))
+  (let ((msgs (reverse (elmo-folder-list-messages (wl-folder-get-elmo-folder
+						   wl-draft-folder))))
 	(mybuf (buffer-name))
 	msg buf)
     (if (not msgs)

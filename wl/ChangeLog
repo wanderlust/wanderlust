@@ -1,3 +1,115 @@
+2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-parse-msg-id-list-string): Fix.
+
+2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-save-view): Renamed from
+	`wl-summary-save-status'.
+
+2001-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-expire.el (wl-expire-refile): Don't call
+	elmo-msgdb-add-msgs-to-seen-list;
+	Pass wl-expire-add-seen-list to elmo-folder-move-messages.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+
+2001-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-prev-page): Ignore errors while
+	scroll-down.
+
+2001-01-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el: Use elmo-original-message-mode instead of
+	mmelmo-original-mode.
+
+	* wl-fldmgr.el: Use `wl-folder-get-elmo-folder' instead of
+	`elmo-folder-get-spec';
+	(wl-fldmgr-add-completion-all-completions):
+	Use `elmo-folder-list-subfolders' instead of `elmo-list-folders'.
+
+	* wl-e21.el (wl-plugged-set-folder-icon): Use `elmo-folder-type' instead
+	of `elmo-folder-get-type'.
+
+	* wl-draft.el: Use `wl-folder-get-elmo-folder' instead of
+	`elmo-folder-get-spec';
+	Use `elmo-folder-msgdb-path' instead of `elmo-msgdb-expand-path';
+	Use `elmo-folder-append-message' instead of `elmo-append-msg';
+	Use `elmo-folder-list-messages' instead of `elmo-list-folder';
+	Use `elmo-message-fetch' instead of `elmo-read-msg-with-cache' or
+	`elmo-read-msg-no-cache';
+	Use `elmo-message-file-name' instead of `elmo-get-msg-filename';
+	Use `elmo-folder-delete-messages' instead of `elmo-delete-msgs'.
+	(wl-default-draft-cite): Use `elmo-msgdb-overview-get-entity'.
+	(wl-draft-dispatch-message): Use `elmo-file-cache-save' instead of
+	`elmo-cache-save';
+	(wl-draft-reedit): Use `elmo-message-file-name'.
+
+	* wl-expire.el: Use `elmo-folder-name-internal';
+	Use `elmo-folder-list-messages' instead of `elmo-list-folder';
+	Use macro `wl-summary-buffer-msgdb' instead of variable
+	`wl-summary-buffer-msgdb';
+	Use `wl-folder-get-elmo-folder' instead of `elmo-folder-get-spec';
+	Use macro `wl-summary-buffer-folder-name' instead of variable
+	`wl-summary-buffer-folder-name'.
+	* wl-score.el: Likewise.
+
+	* wl-message.el: Rewrite for new message buffer cache mechanism.
+	(wl-message-buffer-cache-buffer-get): New macro.
+	(wl-message-buffer-cache-folder-get): Ditto.
+	(wl-message-buffer-cache-message-get): Ditto.
+	(wl-message-buffer-cache-entry-make): Ditto.
+	(wl-message-buffer-cache-hit): Ditto.
+	(wl-message-buffer-cache-sort): New function.
+	(wl-message-buffer-cache-add): Ditto.
+	(wl-message-buffer-cache-delete): Ditto.
+	(wl-message-buffer-cache-clean-up): Ditto.
+	(wl-message-buffer-window): Rewrite.
+	(wl-message-select-buffer): Renamed from `wl-select-buffer'.
+	(wl-message-buffer-display): New function.
+	(wl-message-display-internal): New function.
+
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el:	Use `elmo-folder-name-internal';
+	Use `wl-folder-get-elmo-folder';
+	Use `elmo-folder-list-messages' instead of
+	`elmo-list-folder';
+	Use `elmo-folder-get-primitive-list' instead of
+	`elmo-folder-get-primitive-spec-list';
+	Use `elmo-folder-list-subfolders' instead of `elmo-list-folders';
+	Use `elmo-folder-msgdb-path' instead of `elmo-msgdb-expand-path';
+	Use `elmo-folder-create' instead of `elmo-create-folder'.
+	(wl-folder-create-newsgroups-from-nntp-access2): Abolish.
+	(wl-folder-get-elmo-folder): New macro.
+	(wl-folder-elmo-folder-cache-get): Ditto.
+	(wl-folder-elmo-folder-cache-put): Ditto.
+	(wl-folder-suspend): Call `elmo-quit'.
+
+	* wl.el: Use `elmo-folder-msgdb-path' instead of `elmo-msgdb-expand-path';
+	Use `elmo-folder-list-messages' instead of `elmo-list-folder';
+	Use `elmo-net-port-info' instead of `elmo-folder-portinfo';
+	Use `wl-folder-get-elmo-folder' instead of `elmo-folder-get-spec'.
+	(toplevel): require 'cl.
+	(wl-exit): Call `wl-message-buffer-cache-clean-up' and `elmo-quit'.
+
+	* wl-summary.el: Rewrite to use new elmo interface.
+
+
+2001-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message):
+	Run `wl-draft-send-hook' before collecting recipients information;
+	Bind `wl-draft-config-exec-flag' while running `wl-draft-send-hook'.
+
+	* tm-wl.el (wl-draft-preview-message): Ditto.
+
+2001-02-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Fixed problem that
+	wrong receipients are displayed when forwarded message.
+
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.5.7.
