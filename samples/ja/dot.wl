@@ -204,17 +204,6 @@
 ;(setq wl-generate-mailer-string-function
 ;      'wl-generate-user-agent-string-1)
 
-
-;; 変更されたドラフトがあれば 20 秒ごとに自動保存する。
-;(defun my-wl-auto-save-draft-buffers ()
-;  (let ((buffers (wl-collect-draft)))
-;    (save-excursion
-;      (while buffers
-;	(set-buffer (car buffers))
-;	(if (buffer-modified-p) (wl-draft-save))
-;	(setq buffers (cdr buffers))))))
-;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
-
 ;; PGP で暗号化する時に自分の公開鍵も含める。
 ;; (そのメッセージを自分でも読めるように)
 ;(setq pgg-encrypt-for-me t)

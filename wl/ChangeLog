@@ -1,3 +1,12 @@
+2004-11-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (toplevel): Don't check existence of `timer-activate'.
+
+	* wl-util.el (wl-save-drafts): Moved from sample setting.
+	(wl-set-save-drafts): New function to set idle timer.
+	* wl-draft.el (wl-draft): Call it.
+	* wl-vars.el (wl-auto-save-drafts-interval): New variable.
+
 2004-11-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-current-message-buffer): Fixed bug when yank from

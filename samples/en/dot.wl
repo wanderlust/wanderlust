@@ -205,16 +205,6 @@
 ;      'wl-generate-user-agent-string-1)
 
 
-;; Automatically save modified draft buffers in every 20 seconds.
-;(defun my-wl-auto-save-draft-buffers ()
-;  (let ((buffers (wl-collect-draft)))
-;    (save-excursion
-;      (while buffers
-;	(set-buffer (car buffers))
-;	(if (buffer-modified-p) (wl-draft-save))
-;	(setq buffers (cdr buffers))))))
-;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
-
 ;; When you encrypt message by PGP, include your public key.
 ;; (to make the message visible from yourself)
 ;(setq pgg-encrypt-for-me t)

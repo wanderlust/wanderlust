@@ -578,6 +578,14 @@ that `read' can handle, whenever this is possible."
      (buffer-list))
     result))
 
+(defun wl-save-drafts ()
+  (let ((buffers (wl-collect-draft)))
+    (save-excursion
+      (while buffers
+	(set-buffer (car buffers))
+	(if (buffer-modified-p) (wl-draft-save))
+	(setq buffers (cdr buffers))))))
+
 (static-if (fboundp 'read-directory-name)
     (defun wl-read-directory-name (prompt dir)
       (read-directory-name prompt dir dir))
@@ -707,6 +715,34 @@ that `read' can handle, whenever this is possible."
 	  (set-window-hscroll (get-buffer-window (current-buffer) t) 0))
 	max))))
 
+;; Draft auto-save
+(static-cond
+ (wl-on-xemacs
+  (defvar wl-save-drafts-timer-name "wl-save-drafts")
+
+  (defun wl-set-save-drafts ()
+    (if (numberp wl-auto-save-drafts-interval)
+	(unless (get-itimer wl-save-drafts-timer-name)
+	  (start-itimer wl-save-drafts-timer-name 'wl-save-drafts
+			wl-save-drafts-interval wl-save-drafts-interval
+			t))
+      (when (get-itimer wl-save-drafts-timer-name)
+	(delete-itimer wl-save-drafts-timer-name)))))
+ (t
+  (defun wl-set-save-drafts ()
+    (if (numberp wl-auto-save-drafts-interval)
+	(progn
+	  (require 'timer)
+	  (if (get 'wl-save-drafts 'timer)
+	      (progn (timer-set-idle-time (get 'wl-save-drafts 'timer)
+					  wl-auto-save-drafts-interval t)
+		     (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
+	    (put 'wl-save-drafts 'timer
+		 (run-with-idle-timer
+		  wl-auto-save-drafts-interval t 'wl-save-drafts))))
+      (when (get 'wl-save-drafts 'timer)
+	(cancel-timer (get 'wl-save-drafts 'timer)))))))
+
 ;; Biff
 (static-cond
  (wl-on-xemacs
@@ -723,9 +759,7 @@ that `read' can handle, whenever this is possible."
 		    wl-biff-check-interval wl-biff-check-interval
 		    wl-biff-use-idle-timer))))
 
- ((and (condition-case nil (require 'timer) (error nil));; FSFmacs 19+
-       (fboundp 'timer-activate))
-
+ (t
   (defun wl-biff-stop ()
     (when (get 'wl-biff 'timer)
       (cancel-timer (get 'wl-biff 'timer))))
@@ -811,10 +845,7 @@ This function is imported from Emacs 20.7."
 	    (timer-set-time timer (timer-next-integral-multiple-of-time
 				   current wl-biff-check-interval)
 			    wl-biff-check-interval)
-	    (timer-activate timer))))))
- (t
-  (fset 'wl-biff-stop 'ignore)
-  (fset 'wl-biff-start 'ignore)))
+	    (timer-activate timer)))))))
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (when (and (not wl-modeline-biff-status) (> new-mails 0))

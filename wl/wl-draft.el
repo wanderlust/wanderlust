@@ -1645,7 +1645,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let (wl-demo)
     (wl-init)) ; returns immediately if already initialized.
 
-
+  (wl-set-save-drafts)
   (let (buffer header-alist-internal)
     (setq buffer (wl-draft-create-buffer parent-folder))
     (unless (cdr (assq 'From header-alist))
