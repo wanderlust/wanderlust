@@ -1167,7 +1167,7 @@ interpreted as cited text.)"
 				    "^$\\|%s"
 				    (regexp-quote mail-header-separator))
 				   nil t)
-		(narrow-to-region (point-min) (point)))
+		(narrow-to-region (point-min) (match-beginning 0)))
 	    ;; highlight only when header is not too-big.
 	    (when (or (null wl-highlight-max-header-size)
 		      (< (point) wl-highlight-max-header-size))
@@ -1195,15 +1195,15 @@ interpreted as cited text.)"
 		    (put-text-property
 		     p hend 'face 'wl-highlight-message-header-contents)))
 		  (goto-char hend))
-		 ((looking-at mail-header-separator)
-		  (put-text-property (match-beginning 0) (match-end 0)
-				     'face 'wl-highlight-header-separator-face)
-		  (goto-char (match-end 0)))
 		 ;; ignore non-header field name lines
 		 (t (forward-line 1))))))
 	  (let (prefix prefix-face-alist pair end)
 	    (while (not (eobp))
 	      (cond
+	       ((looking-at mail-header-separator)
+		(put-text-property (match-beginning 0) (match-end 0)
+				   'face 'wl-highlight-header-separator-face)
+		(goto-char (match-end 0)))
 	       ((null wl-highlight-force-citation-header-regexp)
 		nil)
 	       ((looking-at wl-highlight-force-citation-header-regexp)

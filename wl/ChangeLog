@@ -1,5 +1,9 @@
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-highlight.el (wl-highlight-message): Fixed problem of
+	highlighting failure which occured when the last field contains
+	multiple lines in the draft buffer.
+
 	* wl.el (wl-toggle-plugged): Call `wl-biff-stop' if unplugged,
 	`wl-biff-start' if plugged.
 
