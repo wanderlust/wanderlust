@@ -1,3 +1,7 @@
+2002-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.10.0 is released.
+
 2002-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-process-filter): Check whether the pop3

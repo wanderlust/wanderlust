@@ -1,5 +1,7 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.10.0 from 2.8.1.
+
 ** You can alter the format of summary lines.
    Specify format by wl-summary-line-format. If you want to change ones
    according to folder names, use wl-folder-summary-line-format-alist.
@@ -63,6 +65,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    Specify a function which returns some string to appear in User-Agent header.
 
 ** The Reference Card (doc/wl-refcard.tex) describes important key bindings.
+
+** Many bug fixes.
 
 * Changes in 2.8.0 from 2.6.1
 

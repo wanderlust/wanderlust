@@ -1,5 +1,7 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+* 2.8.1 から 2.10.0 への変更点
+
 ** サマリ行の表示形式を変更できるようになりました。
    wl-summary-line-format で書式を設定できます。フォルダ毎に書式を変えたい
    場合は wl-folder-summary-line-format-alist を用いて下さい。
@@ -65,6 +67,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    User-Agent フィールドに入る文字列を返す関数を指定して下さい。
 
 ** Reference Card (doc/wl-refcard-ja.tex) に主なキー操作を列挙しました。
+
+** その他いくつかの修正。
 
 * 2.6.1 から 2.8.0 への変更点
 
