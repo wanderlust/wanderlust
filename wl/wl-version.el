@@ -59,7 +59,6 @@
 
 (defun wl-version (&optional with-codename)
   "Return Wanderlust version.  If WITH-CODENAME is non-nil, add codename."
-  (interactive)
   (product-string-1 'wl-version with-codename))
 
 (defun wl-version-show (&optional arg)

@@ -1,3 +1,7 @@
+2000-10-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-version): Remove interactive.
+
 2000-10-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-generate-user-agent-string): Use
