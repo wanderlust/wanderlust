@@ -1,3 +1,8 @@
+2001-03-08  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el (wl-score-get-score-alist): Abolish `temp' key in
+	score file.  Use `target' instead.
+
 2001-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
