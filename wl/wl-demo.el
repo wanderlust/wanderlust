@@ -98,31 +98,34 @@ Yet Another Message Interface On Emacsen"
   (if (or (and (featurep 'xemacs)
 	       (device-on-window-system-p))
 	  window-system)
-      (append
-       (when (or (and (featurep 'xemacs)
-		      (featurep 'xpm))
-		 (and wl-on-emacs21
-		      (display-images-p)
-		      (image-type-available-p 'xpm)))
-	 '(("xpm" . xpm)))
-       (when (and (not (or (featurep 'xemacs)
-			   ;; *.img files won't fit for Emacs 21.
-			   wl-on-emacs21))
-		  (or (eq t wl-demo-bitmap-mule-available-p)
-		      (and (eq 'unknown wl-demo-bitmap-mule-available-p)
-			   (module-installed-p 'bitmap)
-			   (setq wl-demo-bitmap-mule-available-p t))))
-	 '(("bitmap" . bitmap)))
-       (when (or (featurep 'xemacs)
-		 (and wl-on-emacs21
-		      (display-images-p)
-		      (image-type-available-p 'xbm))
-		 (eq t wl-demo-bitmap-mule-available-p)
-		 (and (eq 'unknown wl-demo-bitmap-mule-available-p)
-		      (module-installed-p 'bitmap)
-		      (setq wl-demo-bitmap-mule-available-p t)))
-	 '(("xbm" . xbm)))
-       '(("ascii")))
+      (let ((xpm
+	     (when (or (and (featurep 'xemacs)
+			    (featurep 'xpm))
+		       (and wl-on-emacs21
+			    (display-images-p)
+			    (image-type-available-p 'xpm)))
+	       '("xpm" . xpm)))
+	    (xbm
+	     (when (or (featurep 'xemacs)
+		       (and wl-on-emacs21
+			    (display-images-p)
+			    (image-type-available-p 'xbm))
+		       (eq t wl-demo-bitmap-mule-available-p)
+		       (and (eq 'unknown wl-demo-bitmap-mule-available-p)
+			    (module-installed-p 'bitmap)
+			    (setq wl-demo-bitmap-mule-available-p t)))
+	       '("xbm" . xbm)))
+	    (bitmap
+	     (when (and (not (featurep 'xemacs))
+			(or (eq t wl-demo-bitmap-mule-available-p)
+			    (and (eq 'unknown wl-demo-bitmap-mule-available-p)
+				 (module-installed-p 'bitmap)
+				 (setq wl-demo-bitmap-mule-available-p t))))
+	       '("bitmap" . bitmap))))
+	(if wl-on-emacs21
+	    ;; Prefer xbm rather than bitmap on Emacs 21.
+	    (delq nil (list xpm xbm bitmap '("ascii")))
+	  (delq nil (list xpm bitmap xbm '("ascii")))))
     '(("ascii"))))
 
 (defun wl-demo-insert-image (image-type)
@@ -171,9 +174,20 @@ Return a number of lines that an image occupies in the buffer."
 		    (* 2 height)))
 		((eq 'bitmap image-type)
 		 (require 'bitmap)
-		 (let ((coding-system-for-read 'iso-2022-7bit)
-		       (input-coding-system '*iso-2022-jp*))
-		   (insert-file-contents file))
+		 (if wl-on-emacs21
+		     (progn
+		       ;; Decode bitmap data line by line.
+		       (let ((coding-system-for-read 'raw-text))
+			 (insert-file-contents file))
+		       (set-buffer-multibyte t)
+		       (while (not (eobp))
+			 (decode-coding-region (point) (line-end-position)
+					       'iso-2022-7bit)
+			 (forward-line 1))
+		       (goto-char (point-min)))
+		   (let ((coding-system-for-read 'iso-2022-7bit)
+			 (input-coding-system '*iso-2022-jp*))
+		     (insert-file-contents file)))
 		 (end-of-line)
 		 (indent-rigidly (point-min) (point-max)
 				 (max 0 (/ (1+ (- (window-width)

@@ -1,3 +1,9 @@
+2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-image-type-alist): Add bitmap for Emacs 21.
+	(wl-demo-insert-image): Decode bitmap data line by line when Emacs
+	21 is running (cf. mule-ja:08245).
+
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-folder-init-hook): New hook.
