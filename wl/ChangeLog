@@ -5,6 +5,7 @@
 	duplicate definition.
 	(wl-summary-define-mark-action): Functions wl-summary-*-region
 	keep current position.
+	(wl-summary-unregister-target-mark): Store result to the variable.
 
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 

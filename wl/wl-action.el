@@ -110,7 +110,8 @@ Return number if put mark succeed"
 	    (cons number wl-summary-buffer-target-mark-list))))
 
 (defun wl-summary-unregister-target-mark (number)
-  (delq number wl-summary-buffer-target-mark-list))
+  (setq wl-summary-buffer-target-mark-list
+	(delq number wl-summary-buffer-target-mark-list)))
 
 (defun wl-summary-have-target-mark-p (number)
   (memq number wl-summary-buffer-target-mark-list))
@@ -217,7 +218,7 @@ Return number if put mark succeed"
     (let ((buffer-read-only nil)
 	  visible mark action)
       (if number
-	  (setq visible (wl-summary-jump-to-msg number))
+	  (setq visible (wl-summary-jump-to-msg number)) ; can be nil
 	(setq visible t))
       (setq number (or number (wl-summary-message-number)))
       ;; Delete mark on buffer.
