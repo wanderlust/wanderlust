@@ -78,14 +78,12 @@ Insert User-Agent field instead of X-Mailer field."
 			      mime-edit-user-agent-value)))
     (if mime-user-agent
 	(concat "User-Agent: "
-		wl-appname "/" wl-version
-		" (" wl-codename ") "
+		(product-string-1 'wl-version t) " "
 		mime-user-agent)
       (if (and (boundp 'mime-editor/version)
 	       mime-editor/version)
 	  (concat "User-Agent: "
-		  wl-appname "/" wl-version
-		  " (" wl-codename ") "
+		  (product-string-1 'wl-version t) " "
 		  "tm/" mime-editor/version
 		  (if (and (boundp 'mime-editor/codename)
 			   mime-editor/codename)
@@ -104,7 +102,7 @@ Insert User-Agent field instead of X-Mailer field."
 			(concat " " (apel-version)))
 		    (file-error nil))
 		  " " (wl-extended-emacs-version3 "/" t))
-	(concat "User-Agent: " wl-appname "/" wl-version " (" wl-codename ") "
+	(concat "User-Agent: " (product-string-1 'wl-version t) " "
 		(wl-extended-emacs-version3 "/" t))))))
 
 ;; from gnus
