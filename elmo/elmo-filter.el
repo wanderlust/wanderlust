@@ -176,11 +176,8 @@
    (elmo-folder-list-unreads
     (elmo-filter-folder-target-internal folder))))
 
-(luna-define-method elmo-folder-list-unreads :around ((folder
-						       elmo-filter-folder))
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-filter-folder-list-unreads folder)
-    (luna-call-next-method)))
+(luna-define-method elmo-folder-list-unreads ((folder elmo-filter-folder))
+  (elmo-filter-folder-list-unreads folder))
 
 (defsubst elmo-filter-folder-list-importants (folder)
   (elmo-list-filter
@@ -188,11 +185,8 @@
    (elmo-folder-list-importants
     (elmo-filter-folder-target-internal folder))))
 
-(luna-define-method elmo-folder-list-importants :around ((folder
-							  elmo-filter-folder))
-  (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-filter-folder-list-importants folder)
-    (luna-call-next-method)))
+(luna-define-method elmo-folder-list-importants ((folder elmo-filter-folder))
+  (elmo-filter-folder-list-importants folder))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-filter-folder)
 						 &optional one-level)

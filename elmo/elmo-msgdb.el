@@ -116,13 +116,10 @@ if MARK is nil, mark is removed."
 	  (elmo-msgdb-get-mark-alist msgdb)
 	  (list (setq elem (list number mark)))))
 	(elmo-set-hash-val (format "#%d" number) elem
-			   (elmo-msgdb-get-mark-hashtb msgdb))))
-    ;; return value.
-    t))
+			   (elmo-msgdb-get-mark-hashtb msgdb))))))
 
 (defun elmo-msgdb-set-cached (msgdb number cached)
-  "Set message cache status.
-If mark is changed, return non-nil."
+  "Set message cache status."
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
 	 (cur-status (cond
 		      ((string= cur-mark elmo-msgdb-important-mark)
@@ -132,7 +129,7 @@ If mark is changed, return non-nil."
 		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		       'read)))
 	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
-    (unless (eq cached cur-cached)
+    (unless (eq (not cached) (not cur-cached))
       (case cur-status
 	(read
 	 (elmo-msgdb-set-mark msgdb number
