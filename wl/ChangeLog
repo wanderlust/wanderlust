@@ -1,3 +1,8 @@
+2003-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-window-scroll-functions): No use
+	`append'.
+
 2003-09-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-update-mark-and-highlight-window): New

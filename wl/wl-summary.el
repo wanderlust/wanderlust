@@ -587,12 +587,10 @@ See also variable `wl-use-petname'."
 	     ((and wl-summary-lazy-highlight
 		   wl-summary-lazy-update-mark)
 	      (list 'wl-summary-update-mark-and-highlight-window))
-	     (t
-	      (append
-	       (and wl-summary-lazy-highlight
-		    '(wl-highlight-summary-window))
-	       (and wl-summary-lazy-update-mark
-		    '(wl-summary-update-mark-window))))))))
+	     (wl-summary-lazy-highlight
+	      (list 'wl-highlight-summary-window))
+	     (wl-summary-lazy-update-mark
+	      (list 'wl-summary-update-mark-window))))))
 
 (defun wl-status-update ()
   (interactive)
