@@ -2,6 +2,7 @@
 
 	* wl-draft.el (wl-draft-forward): Get references field from
 	original buffer.
+	(wl-draft-forward): Use `wl-draft-parse-msg-id-list-string'.
 
 2000-10-02  A. SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
 
