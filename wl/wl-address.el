@@ -72,7 +72,7 @@
 		    (setq skip-chars "^, "))
 		   ((looking-at wl-newsgroups-complete-header-regexp)
 		    (setq completion-list wl-folder-newsgroups-hashtb)))))
-	  (wl-complete-field-body completion-list 
+	  (wl-complete-field-body completion-list
 				  epand-char skip-chars)
 	(indent-for-tab-command)))))
 
@@ -113,7 +113,7 @@
 	 (cl wl-draft-field-completion-list))
     (if (null cl)
 	nil
-      (setq completion 
+      (setq completion
             (let ((completion-ignore-case t))
               (try-completion pattern cl)))
       (cond ((eq completion t)
@@ -154,7 +154,7 @@
   (let* ((end (point))
 	 (start (save-excursion
 ;		  (skip-chars-backward "_a-zA-Z0-9+@%.!\\-")
-		  (skip-chars-backward (or skip-chars 
+		  (skip-chars-backward (or skip-chars
 					   "_a-zA-Z0-9+@%.!\\-/"))
 		  (point)))
 	 (completion)
@@ -193,16 +193,16 @@
 
 (defun wl-local-address-init ()
   (message "Updating addresses...")
-  (setq wl-address-list 
+  (setq wl-address-list
 	(wl-address-make-address-list wl-address-file))
-  (setq wl-address-completion-list 
+  (setq wl-address-completion-list
 	(wl-address-make-completion-list wl-address-list))
   (if (file-readable-p wl-alias-file)
-      (setq wl-address-completion-list 
-	    (append wl-address-completion-list 
+      (setq wl-address-completion-list
+	    (append wl-address-completion-list
 		    (wl-address-make-alist-from-alias-file wl-alias-file))))
   (setq wl-address-petname-hash (elmo-make-hash))
-  (mapcar 
+  (mapcar
    (function
 	(lambda (x)
 	  (elmo-set-hash-val (downcase (car x))
@@ -261,10 +261,10 @@
 	  (insert-file-contents path)
 	  (goto-char (point-min))
 	  (while (not (eobp))
-	    (if (looking-at 
+	    (if (looking-at
  "^\\([^#\n][^ \t\n]+\\)[ \t]+\"\\(.*\\)\"[ \t]+\"\\(.*\\)\"[ \t]*.*$")
-		(setq ret 
-		      (wl-append-element 
+		(setq ret
+		      (wl-append-element
 		       ret
 		       (list (wl-match-buffer 1)
 			     (wl-match-buffer 2)
@@ -286,7 +286,7 @@
   "Judge whether ADDRESS is user's or not."
   (member (downcase (wl-address-header-extract-address address))
 	  (or (mapcar 'downcase wl-user-mail-address-list)
-	      (list (downcase 
+	      (list (downcase
 		     (wl-address-header-extract-address
 		      wl-from))))))
 
@@ -313,7 +313,7 @@ e.g. \"Mr. bar <hoge@foo.com>\"
 (defun wl-address-petname-delete (the-email)
   "Delete petname in wl-address-file."
   (let* ( (tmp-buf (get-buffer-create " *wl-petname-tmp*"))
-	  (output-coding-system 
+	  (output-coding-system
 	   (mime-charset-to-coding-system wl-mime-charset)))
     (set-buffer tmp-buf)
     (message "Deleting Petname...")
@@ -326,9 +326,9 @@ e.g. \"Mr. bar <hoge@foo.com>\"
     (kill-buffer tmp-buf)))
 
 
-(defun wl-address-petname-add-or-change (the-email 
-					 default-petname 
-					 default-realname 
+(defun wl-address-petname-add-or-change (the-email
+					 default-petname
+					 default-realname
 					 &optional change-petname)
   "Add petname to wl-address-file, if not registerd.
 If already registerd, change it."

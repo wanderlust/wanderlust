@@ -37,17 +37,17 @@
 (defalias 'wl-draft-editor-mode 'mime/editor-mode)
 
 (defun wl-draft-decode-message-in-buffer (&optional default-content-type)
-  (when default-content-type 
+  (when default-content-type
     (insert "Content-type: " default-content-type "\n")
     (insert "\n"))
   (mime-editor::edit-again 'code-conversion))
 
 (defun wl-draft-yank-current-message-entity ()
-  "Yank currently displayed message entity. 
-By setting following-method as yank-content."  
+  "Yank currently displayed message entity.
+By setting following-method as yank-content."
   (let ((wl-draft-buffer (current-buffer))
-	(mime-viewer/following-method-alist 
-	 (list (cons 'wl-message-original-mode 
+	(mime-viewer/following-method-alist
+	 (list (cons 'wl-message-original-mode
 		     (function wl-draft-yank-to-draft-buffer)))))
     (if (get-buffer (wl-current-message-buffer))
 	(save-excursion
@@ -64,14 +64,14 @@ By setting following-method as yank-content."
   (interactive)
   (let ((mime-viewer/content-header-filter-hook 'wl-highlight-headers)
 	(mime-viewer/ignored-field-regexp "^:$")
-	(mime-editor/translate-buffer-hook 
+	(mime-editor/translate-buffer-hook
 	 (append
 	  (list 'wl-draft-config-exec)
 	  mime-editor/translate-buffer-hook)))
     (mime-editor/preview-message)
     (let ((buffer-read-only nil))
     (let ((buffer-read-only nil))
-      (when wl-highlight-body-too 
+      (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook)))))
 
@@ -125,7 +125,7 @@ By setting following-method as yank-content."
 			number))
 	(when (string= "message/rfc822" (downcase content-type))
 	  (message (format "Bursting...%s" (setq number (+ 1 number))))
-	  (setq message-entity 
+	  (setq message-entity
 		(car (mime::content-info/children (car children))))
 	  (save-restriction
 	    (narrow-to-region (mime::content-info/point-min message-entity)
@@ -138,12 +138,12 @@ By setting following-method as yank-content."
 (defun wl-summary-burst ()
   (interactive)
   (let ((raw-buf (wl-message-get-original-buffer))
-	target 
+	target
 	children message-entity content-type)
     (save-excursion
       (setq target wl-summary-buffer-folder-name)
       (while (not (elmo-folder-writable-p target))
-	(setq target 
+	(setq target
 	      (wl-summary-read-folder wl-default-folder "to extract to ")))
       (wl-summary-set-message-buffer-or-redisplay)
       (set-buffer raw-buf)
@@ -169,7 +169,7 @@ By setting following-method as yank-content."
 	 (filename (read-file-name "Save to file: "
 				   (expand-file-name
 				    (or name ".")
-				    (or wl-mime-save-dir 
+				    (or wl-mime-save-dir
 					wl-tmp-dir))))
 	 tmp-buf)
     (while (file-directory-p filename)
@@ -215,9 +215,9 @@ By setting following-method as yank-content."
 	(mime-article/decode-message/partial beg end cal)
       (message "Merging...")
       (let (cinfo the-id parameters)
-	(setq subject-id 
+	(setq subject-id
 	      (eword-decode-string
-	       (decode-mime-charset-string 
+	       (decode-mime-charset-string
 		(std11-field-body "Subject")
 		wl-summary-buffer-mime-charset)))
 	(if (string-match "[0-9\n]+" subject-id)
@@ -253,7 +253,7 @@ By setting following-method as yank-content."
 	     'wl-message-original-mode 'wl-message-exit)
   (set-alist 'mime-viewer/over-to-previous-method-alist
 	     'wl-message-original-mode 'wl-message-exit)
-  (set-alist 'mime-viewer/over-to-next-method-alist 
+  (set-alist 'mime-viewer/over-to-next-method-alist
 	     'wl-message-original-mode  'wl-message-exit)
   (add-hook 'wl-summary-redisplay-hook 'wl-message-delete-mime-out-buf)
   (add-hook 'wl-message-exit-hook      'wl-message-delete-mime-out-buf)
@@ -279,10 +279,10 @@ By setting following-method as yank-content."
   (set-alist 'mime-editor/mail-inserter-alist
 	     'wl-draft-mode (function wl-draft-insert-get-message))
   (set-alist 'mime-editor/split-message-sender-alist
-	     'wl-draft-mode 
-	     (cdr (assq 'mail-mode 
+	     'wl-draft-mode
+	     (cdr (assq 'mail-mode
 			mime-editor/split-message-sender-alist)))
-  (setq mime-viewer/code-converter-alist 
+  (setq mime-viewer/code-converter-alist
 	(append
 	 (list (cons 'wl-message-original-mode 'mime-charset/decode-buffer))
 	 mime-viewer/code-converter-alist))

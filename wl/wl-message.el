@@ -60,7 +60,7 @@
 (defvar wl-original-buffer-cur-number nil)
 (defvar wl-original-buffer-cur-msgdb  nil)
 
-(mapcar 
+(mapcar
  (function make-variable-buffer-local)
  (list 'wl-message-buffer-cur-folder
        'wl-message-buffer-cur-number))
@@ -126,7 +126,7 @@
     (if (bobp)
 	()
       (scroll-down))
-    (select-window (get-buffer-window cur-buf))))  
+    (select-window (get-buffer-window cur-buf))))
 
 (defun wl-message-scroll-up (amount)
   (let ((view-message-buffer (get-buffer-create wl-message-buf-name))
@@ -196,7 +196,7 @@
     (save-excursion
       (set-buffer inbuf)
       (let ((buffer-read-only nil))
-	(decode-mime-charset-region (point-min) 
+	(decode-mime-charset-region (point-min)
 				    (save-excursion
 				      (goto-char (point-min))
 				      (re-search-forward "^$" nil t)
@@ -207,7 +207,7 @@
     (save-excursion
       (set-buffer inbuf)
       (let ((buffer-read-only nil))
-	(save-excursion 
+	(save-excursion
 	  (set-buffer outbuf)
 	  (elmo-set-buffer-multibyte nil))
 	(copy-to-buffer outbuf (point-min) (point-max))
@@ -227,7 +227,7 @@
     (save-excursion
       (set-buffer inbuf)
       (let ((buffer-read-only nil))
-	(decode-mime-charset-region (point-min) 
+	(decode-mime-charset-region (point-min)
 				    (save-excursion
 				      (goto-char (point-min))
 				      (re-search-forward "^$" nil t)
@@ -240,7 +240,7 @@
   (interactive)
   (let ((cur-buf (current-buffer))
 	(view-message-buffer (get-buffer-create wl-message-buf-name))
-	ret-val)  
+	ret-val)
     (wl-select-buffer view-message-buffer)
     (move-to-window-line 0)
     (if (and wl-break-pages
@@ -259,9 +259,9 @@
 (static-if (fboundp 'luna-make-entity)
     (defsubst wl-message-make-mime-entity (backend number backend folder msgdb)
       (luna-make-entity (mm-expand-class-name 'elmo)
-			:location (get-buffer-create 
+			:location (get-buffer-create
 				   (concat mmelmo-entity-buffer-name "0"))
-			:imap (eq backend 'elmo-imap4) 
+			:imap (eq backend 'elmo-imap4)
 			:folder folder
 			:number number
 			:msgdb msgdb :size 0))
@@ -339,16 +339,16 @@
   (let (ret-val)
     (if (setq ret-val (get-buffer wl-original-buf-name))
 	ret-val
-      (set-buffer (setq ret-val 
+      (set-buffer (setq ret-val
 			(get-buffer-create wl-original-buf-name)))
       (wl-message-original-mode)
       ret-val)))
 
 
 (if wl-use-semi
-    (defalias 'wl-message-get-original-buffer 
+    (defalias 'wl-message-get-original-buffer
       'mmelmo-get-original-buffer)
-  (defalias 'wl-message-get-original-buffer 
+  (defalias 'wl-message-get-original-buffer
     'wl-message-normal-get-original-buffer))
 
 (defvar wl-message-redisplay-func 'wl-normal-message-redisplay)
@@ -364,19 +364,19 @@
 
 ;; nil means don't fetch all.
 (defun wl-message-decide-backend (folder number message-id size)
-  (let ((dont-do-that (and 
+  (let ((dont-do-that (and
 		       (not (setq wl-message-cache-used
 				  (or
 				   (elmo-buffer-cache-hit
 				    (list folder number message-id))
-				   (elmo-cache-exists-p message-id 
+				   (elmo-cache-exists-p message-id
 							folder number))))
 		       (integerp size)
 		       (not (elmo-local-file-p folder number))
 		       wl-fetch-confirm-threshold
 		       (>= size wl-fetch-confirm-threshold)
-		       (not (y-or-n-p 
-			     (format "Fetch entire message? (%dbytes)" 
+		       (not (y-or-n-p
+			     (format "Fetch entire message? (%dbytes)"
 				     size))))))
     (message "")
     (cond ((and dont-do-that
@@ -403,10 +403,10 @@
 					   &optional force-reload)
   (let* ((cur-buf (current-buffer))
 	 (view-message-buffer (wl-message-get-buffer-create))
-	 (message-id (cdr (assq number 
+	 (message-id (cdr (assq number
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id 
+		(assoc message-id
 		       (elmo-msgdb-get-overview msgdb))))
 	 (backend (wl-message-decide-backend folder number message-id size))
 	 cur-entity ret-val header-end real-fld-num summary-win)
@@ -422,7 +422,7 @@
 	  (erase-buffer)
 	  (if backend
 	      (let (mime-display-header-hook ;; bind to nil...
-		    (mime-view-ignored-field-list 
+		    (mime-view-ignored-field-list
 		     (if (eq flag 'all-header)
 			 nil
 		       mime-view-ignored-field-list))
@@ -432,7 +432,7 @@
 				    folder number))
 		(setq cur-entity
 		      (wl-message-make-mime-entity
-		       backend 
+		       backend
 		       (if (eq backend 'elmo-imap4)
 			   (cdr real-fld-num)
 			 number)
@@ -449,7 +449,7 @@
 		(if mmelmo-imap4-skipped-parts
 		    (progn
 		      (message "Skipped fetching of %s."
-			       (mapconcat 
+			       (mapconcat
 				(lambda (x)
 				  (format "[%s]" x))
 				mmelmo-imap4-skipped-parts ","))))
@@ -487,16 +487,16 @@
     ret-val
     ))
 
-(defun wl-normal-message-redisplay (folder number flag msgdb 
+(defun wl-normal-message-redisplay (folder number flag msgdb
 					   &optional force-reload)
   (interactive)
   (let* ((cur-buf (current-buffer))
 	 (original-message-buffer (wl-message-get-original-buffer))
 	 (view-message-buffer (wl-message-get-buffer-create))
-	 (message-id (cdr (assq number 
+	 (message-id (cdr (assq number
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id 
+		(assoc message-id
 		       (elmo-msgdb-get-overview msgdb))))
 	 header-end ret-val summary-win
 	 )
@@ -512,10 +512,10 @@
 		  (not (and (integerp size)
 			    wl-fetch-confirm-threshold
 			    (>= size wl-fetch-confirm-threshold)
-			    (not (elmo-cache-exists-p message-id 
+			    (not (elmo-cache-exists-p message-id
 						      folder number))
 			    (not (y-or-n-p
-				  (format "Fetch entire message? (%dbytes)" 
+				  (format "Fetch entire message? (%dbytes)"
 					  size))))))
 	      (progn
 		(save-excursion
@@ -524,8 +524,8 @@
 		    (elmo-read-msg-with-buffer-cache
 		     folder number original-message-buffer msgdb force-reload)))
 		;; decode MIME message.
-		(wl-message-decode 
-		 view-message-buffer 
+		(wl-message-decode
+		 view-message-buffer
 		 original-message-buffer flag)
 		(setq ret-val t))
 	    (save-excursion
@@ -540,7 +540,7 @@
 	  (wl-message-narrow-to-page)
 	(error nil)) ; ignore errors.
       (setq mode-line-buffer-identification
-	    (format "Wanderlust: << %s / %s >>" 
+	    (format "Wanderlust: << %s / %s >>"
 		    (if (memq 'modeline wl-use-folder-petname)
 			(wl-folder-get-petname folder)
 		      folder)
@@ -549,7 +549,7 @@
       (unwind-protect
 	  (run-hooks 'wl-message-redisplay-hook)
 	;; go back to summary mode
-	(set-buffer-modified-p nil)      
+	(set-buffer-modified-p nil)
 	(setq buffer-read-only t)
 	(set-buffer cur-buf)
 	(setq summary-win (get-buffer-window cur-buf))
@@ -572,13 +572,13 @@
 	  (setq beg (save-excursion (beginning-of-line) (point)))
 	  (setq end (save-excursion (end-of-line) (point)))
 	  (search-forward ">" end t)      ;Move point to end of "<....>".
-	  (if (and (re-search-backward "\\(<[^<> \t\n]+@[^<> \t\n]+>\\)" 
+	  (if (and (re-search-backward "\\(<[^<> \t\n]+@[^<> \t\n]+>\\)"
 				       beg t)
-		   (not (string-match "mailto:" 
+		   (not (string-match "mailto:"
 				      (setq msg-id (wl-match-buffer 1)))))
 	      (progn
 		(goto-char point)
-		(switch-to-buffer-other-window 
+		(switch-to-buffer-other-window
 		 wl-message-buffer-cur-summary-buffer)
 		(if (wl-summary-jump-to-msg-by-message-id msg-id)
 		    (wl-summary-redisplay)))

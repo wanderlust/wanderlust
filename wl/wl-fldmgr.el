@@ -128,7 +128,7 @@
 (defmacro wl-fldmgr-assign-id (entity &optional id)
   (` (let ((entity-id (or (, id) wl-folder-entity-id)))
        (put-text-property 0 (length (, entity))
-			  'wl-folder-entity-id 
+			  'wl-folder-entity-id
 			  entity-id
 			  (, entity)))))
 
@@ -454,7 +454,7 @@ return value is diffs '(-new -unread -all)."
 ;; return value is
 ;; (path indent-level (group . type) previous-entity-id target-entity)
 ;; previous-entity-id is (id-name-alist-prev-id . entity-alist-prev-id)
-;; example: 
+;; example:
 ;; '((("Desktop" group) ("ML" group) "+ml/wl") '(3 2) ("ML" . group) nil "+ml/wl")
 
 (defun wl-fldmgr-get-path-from-buffer (&optional prev)
@@ -879,7 +879,7 @@ return value is diffs '(-new -unread -all)."
        ((looking-at wl-folder-group-regexp) ;; group
 	(let* ((indent (wl-match-buffer 1))
 	       (old-group (wl-folder-get-realname (wl-match-buffer 3)))
-	       (group-entity (wl-folder-search-group-entity-by-name 
+	       (group-entity (wl-folder-search-group-entity-by-name
 			      old-group wl-folder-entity))
 	       group)
 	  (if (eq (nth 1 group-entity) 'access)
@@ -950,7 +950,7 @@ return value is diffs '(-new -unread -all)."
 	    (message "Can't insert access group")
 	  (setq group (or group-name
 			  (wl-fldmgr-read-string
-			   (read-from-minibuffer 
+			   (read-from-minibuffer
 			    (if access "Access Type Group: " "Group: ")))))
 	  (when (or access (string-match "[\t ]*/$" group))
 	    (setq group (if access group
@@ -1272,19 +1272,19 @@ return value is diffs '(-new -unread -all)."
 		(progn
 		  (if (string= old-petname "")
 		      (setq old-petname name))
-		  (while (wl-folder-buffer-search-group old-petname) 
-		    (beginning-of-line)		  
+		  (while (wl-folder-buffer-search-group old-petname)
+		    (beginning-of-line)
 		    (and (looking-at "^\\([ ]*\\)")
 			 (setq indent (wl-match-buffer 1)))
 		    (wl-fldmgr-delete-line)
 		    (wl-folder-insert-entity
 		     indent
-		     (wl-folder-search-group-entity-by-name 
-		      name wl-folder-entity) 
+		     (wl-folder-search-group-entity-by-name
+		      name wl-folder-entity)
 		     t)))
 	      (while (wl-folder-buffer-search-entity name searchname)
 		(save-excursion
-		  (beginning-of-line)		  
+		  (beginning-of-line)
 		  (and (looking-at "^\\([ ]*\\)")
 		       (setq indent (wl-match-buffer 1)))
 		  (wl-fldmgr-delete-line))
@@ -1361,7 +1361,7 @@ return value is diffs '(-new -unread -all)."
     (if (and wl-fldmgr-make-backup
 	     (file-exists-p wl-folders-file))
 	(rename-file wl-folders-file (concat wl-folders-file ".bak") t))
-    (let ((output-coding-system (mime-charset-to-coding-system 
+    (let ((output-coding-system (mime-charset-to-coding-system
 				 wl-mime-charset)))
       (write-region
        (point-min)

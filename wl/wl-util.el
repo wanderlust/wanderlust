@@ -45,8 +45,8 @@
     (lambda (symbol)
       (unless (boundp symbol)
 	(set (make-local-variable symbol) nil))))
-   '(mule-version 
-     nemacs-version 
+   '(mule-version
+     nemacs-version
      emacs-beta-version
      xemacs-codename
      mime-edit-insert-user-agent-field
@@ -158,8 +158,8 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
      )))
 
 (defun wl-version (&optional with-codename)
-  (format "%s %s%s" wl-appname wl-version 
-	  (if with-codename 
+  (format "%s %s%s" wl-appname wl-version
+	  (if with-codename
 	      (format " - \"%s\"" wl-codename) "")))
 
 (defun wl-version-show ()
@@ -193,7 +193,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
    ((and (boundp 'mule-version)
 	 mule-version
 	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
-    (format "Mule%s%s@%d.%d%s" 
+    (format "Mule%s%s@%d.%d%s"
 	    (or delimiter " ")
 	    (wl-match-string 1 mule-version)
 	    emacs-major-version
@@ -203,7 +203,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (if (boundp 'nemacs-version)
-	(concat "Nemacs" (or delimiter " ") 
+	(concat "Nemacs" (or delimiter " ")
 		nemacs-version
 		"@"
 		(substring emacs-version
@@ -232,7 +232,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
    ((and (boundp 'mule-version)
 	 mule-version
 	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
-    (format "Emacs%s%d.%d Mule%s%s%s" 
+    (format "Emacs%s%d.%d Mule%s%s%s"
 	    (or delimiter " ")
 	    emacs-major-version
 	    emacs-minor-version
@@ -247,9 +247,9 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 				       ("3.3.1" . " (HINAMATSURI)")
 				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
 	  (format "Emacs%s%s Nemacs%s%s%s"
-		  (or delimiter " ") 		  
+		  (or delimiter " ")
 		  (wl-match-string 1 emacs-version)
-		  (or delimiter " ") 		  
+		  (or delimiter " ")
 		  nemacs-version
 		  (or (and with-codename
 			   (cdr (assoc nemacs-version
@@ -335,7 +335,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
    (if (> (current-column) width)
        (if (> (move-to-column width) width)
 	   (progn
-	     (condition-case nil ; ignore error 
+	     (condition-case nil ; ignore error
 		 (backward-char 1)
 	       (error))
 	     (concat (buffer-substring (point-min) (point)) " "))
@@ -343,7 +343,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
      (if (= (current-column) width)
 	 string
        (concat string
-	       (format (format "%%%ds" 
+	       (format (format "%%%ds"
 			       (- width (current-column)))
 		       " "))))))
 
@@ -363,7 +363,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
      (t (format "%dB" result)))))
 
 (defun wl-generate-user-agent-string ()
-  "A candidate of wl-generate-mailer-string-func. 
+  "A candidate of wl-generate-mailer-string-func.
 Insert User-Agent field instead of X-Mailer field."
   (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
 			      mime-edit-insert-user-agent-field
@@ -408,13 +408,13 @@ Insert User-Agent field instead of X-Mailer field."
       (catch 'done
 	(while cur-entry
 	  (if (or (and (symbolp (car cur-entry))
-		       (eq 'mode-line-buffer-identification 
+		       (eq 'mode-line-buffer-identification
 			      (car cur-entry)))
 		  (and (consp (car cur-entry))
-		       (or 
-			(eq 'modeline-buffer-identification 
+		       (or
+			(eq 'modeline-buffer-identification
 			       (car (car cur-entry)))
-			(eq 'modeline-buffer-identification 
+			(eq 'modeline-buffer-identification
 			       (cdr (car cur-entry))))))
 	      (progn
 		(setq return-modeline (append return-modeline
@@ -558,7 +558,7 @@ or between BEG and END."
       (setq alist (delq entry alist)))
     alist))
 
-(eval-when-compile 
+(eval-when-compile
   (require 'static))
 (static-unless (fboundp 'pp)
   (defvar pp-escape-newlines t)
@@ -602,7 +602,7 @@ that `read' can handle, whenever this is possible."
 		(if (looking-at "[ \t]*\)")
 		    (delete-region (match-beginning 0) (match-end 0))
 		  (error "Malformed quote"))
-		(backward-sexp 1))	      
+		(backward-sexp 1))
 	       ((condition-case err-var
 		    (prog1 t (down-list 1))
 		  (error nil))
@@ -716,7 +716,7 @@ that `read' can handle, whenever this is possible."
     (let ((date (current-time-string)))
       (format "%s/%02d/%02d %s"
  	      (substring date -4)
- 	      (cdr (assoc (upcase (substring date 4 7)) 
+ 	      (cdr (assoc (upcase (substring date 4 7))
 			  timezone-months-assoc))
  	      (string-to-int (substring date 8 10))
  	      (substring date 11 19)))))

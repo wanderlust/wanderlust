@@ -63,14 +63,14 @@ Special commands:
       (save-excursion (end-of-line) (setq eol (point)))
       (if (and numbers (nth 0 numbers) (nth 1 numbers))
 	  (progn
-	    (setq fsymbol 
+	    (setq fsymbol
 		  (let ((unsync (nth 0 numbers))
 			(unread (nth 1 numbers)))
 		    (cond ((and unsync (eq unsync 0))
 			   (if (and unread (> unread 0))
 			       'wl-highlight-folder-unread-face
 			     'wl-highlight-folder-zero-face))
-			  ((and unsync 
+			  ((and unsync
 				(>= unsync wl-folder-many-unsync-threshold))
 			   'wl-highlight-folder-many-face)
 			  (t
@@ -79,8 +79,8 @@ Special commands:
 	    (setq matched t)))
       (catch 'highlighted
 	(while highlights
-	  (setq fregexp (symbol-value 
-			 (intern (format "wl-highlight-folder-%s-regexp" 
+	  (setq fregexp (symbol-value
+			 (intern (format "wl-highlight-folder-%s-regexp"
 					 (car highlights)))))
 	  (if (not wl-highlight-group-folder-by-numbers)
 	      (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
@@ -98,7 +98,7 @@ Special commands:
 				 'wl-highlight-folder-killed-face)
 	    (put-text-property bol eol 'face
 			       'wl-highlight-folder-unknown-face)))
-      (if wl-use-highlight-mouse-line 
+      (if wl-use-highlight-mouse-line
 	  (wl-highlight-folder-mouse-line)))))
   
 (defun wl-highlight-plugged-current-line ())
@@ -195,7 +195,7 @@ Special commands:
 ;; for "ja-mule-canna-2.3.mini" on PocketBSD
 (defun-maybe make-face (a))
 
-(eval-when-compile 
+(eval-when-compile
   (require 'static))
 (static-cond
  ((and (fboundp 'defface)
@@ -232,7 +232,7 @@ Special commands:
 Each keyword should be listed in `custom-face-attributes'.
 
 If FRAME is nil, set the default face."
-    (while atts 
+    (while atts
       (let* ((name (nth 0 atts))
 	     (value (nth 1 atts))
 	     (fun (nth 1 (assq name wl-face-attributes))))

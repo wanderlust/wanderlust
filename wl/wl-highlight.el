@@ -746,14 +746,14 @@
 	(beginning-of-line)
 	(setq bol (point))
 	(save-excursion (end-of-line) (setq eol (point)))
-	(setq fsymbol 
+	(setq fsymbol
 	      (let ((unsync (nth 0 numbers))
 		    (unread (nth 1 numbers)))
 		(cond ((and unsync (eq unsync 0))
 		       (if (and unread (> unread 0))
 			   'wl-highlight-folder-unread-face
 			 'wl-highlight-folder-zero-face))
-		      ((and unsync 
+		      ((and unsync
 			    (>= unsync wl-folder-many-unsync-threshold))
 		       'wl-highlight-folder-many-face)
 		      (t
@@ -767,7 +767,7 @@
       (catch 'highlighted
 	(while highlights
 	  (setq fregexp (symbol-value
-			 (intern (format "wl-highlight-folder-%s-regexp" 
+			 (intern (format "wl-highlight-folder-%s-regexp"
 					 (car highlights)))))
 	  (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
 					(car highlights))))
@@ -796,7 +796,7 @@
 	  ((string= temp-mark "D")
 	   (setq fsymbol 'wl-highlight-summary-deleted-face))
 	  ((string= temp-mark "*")
-	   (setq fsymbol 'wl-highlight-summary-temp-face))	  
+	   (setq fsymbol 'wl-highlight-summary-temp-face))
 	  ((string= mark wl-summary-new-mark)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
 	  ((member mark (list wl-summary-unread-cached-mark
@@ -812,7 +812,7 @@
 		 (setq fsymbol 'wl-highlight-summary-thread-top-face)
 	       (setq fsymbol 'wl-highlight-summary-normal-face))))
     (put-text-property 0 (length line) 'face fsymbol line))
-  (if wl-use-highlight-mouse-line 
+  (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
   
 (defun-hilit2 wl-highlight-summary-current-line (&optional smark regexp temp-too)
@@ -820,9 +820,9 @@
   (save-excursion
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
-	  (sregexp (concat 
-		    "^" 
-		    wl-summary-buffer-number-regexp 
+	  (sregexp (concat
+		    "^"
+		    wl-summary-buffer-number-regexp
 		    "\\(.\\)\\(.\\)../..\(.*\)..:.. \\("
 		    wl-highlight-thread-indent-string-regexp
 		    "\\)\\["))
@@ -830,7 +830,7 @@
       (beginning-of-line)
       (setq bol (point))
       (save-excursion (end-of-line) (setq eol (point)))
-      (if smark 
+      (if smark
 	  (setq status-mark smark)
 	(setq looked-at (looking-at sregexp))
 	(setq status-mark (buffer-substring (match-beginning 2)
@@ -851,7 +851,7 @@
 	   ((string= temp-mark "o")
 	    (setq fsymbol 'wl-highlight-summary-refiled-face)))))
       (if (not fsymbol)
-	  (cond 
+	  (cond
 	   ((and (string= temp-mark "+")
 		 (member status-mark (list wl-summary-unread-cached-mark
 					   wl-summary-unread-uncached-mark
@@ -877,12 +877,12 @@
 	   ;;
 	   (t (if (and looked-at
 		       (string= (buffer-substring
-				 (match-beginning 3) 
+				 (match-beginning 3)
 				 (match-end 3)) ""))
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
-      (if wl-use-highlight-mouse-line 
+      (if wl-use-highlight-mouse-line
 	  (put-text-property bol;(1- (match-end 0))
 			     eol 'mouse-face 'highlight))
 ;      (put-text-property (match-beginning 3) (match-end 3)
@@ -923,7 +923,7 @@ Variables used:
 
 (if (not wl-on-nemacs)
     (defsubst wl-delete-all-overlays ()
-      (mapcar (lambda (x) 
+      (mapcar (lambda (x)
 		(delete-overlay x))
 	      (overlays-in (point-min) (point-max)))))
 
@@ -942,7 +942,7 @@ Variables used:
 	       (get-text-property (point) 'wl-folder-entity-id)
 	       (car fp))
 	  (setq fp (cdr fp))
-	  (setq ov (make-overlay 
+	  (setq ov (make-overlay
 		    (match-beginning 1)
 		    (match-end 1)))
 	  (setq wl-folder-buffer-cur-point (point))
@@ -950,7 +950,7 @@ Variables used:
 	(forward-line 1)))))
 
 (defun-hilit2 wl-highlight-refile-destination-string (string)
-  (put-text-property 0 (length string) 'face 
+  (put-text-property 0 (length string) 'face
 		     'wl-highlight-refile-destination-face
 		     string))
 
@@ -964,7 +964,7 @@ Variables used:
 Faces used:
   wl-highlight-summary-unread-face      unread messages
   wl-highlight-summary-important-face   important messages
-  wl-highlight-summary-deleted-face     messages mark as deleted 
+  wl-highlight-summary-deleted-face     messages mark as deleted
   wl-highlight-summary-refiled-face     messages mark as refiled
   wl-highlight-summary-copied-face      messages mark as copied
   wl-highlight-summary-new-face         new messages
@@ -972,7 +972,7 @@ Faces used:
 Variables used:
   wl-highlight-summary-unread-regexp    matches unread messages
   wl-highlight-summary-important-regexp matches important messages
-  wl-highlight-summary-deleted-regexp   matches messages mark as deleted 
+  wl-highlight-summary-deleted-regexp   matches messages mark as deleted
   wl-highlight-summary-refiled-regexp   matches messages mark as refiled
   wl-highlight-summary-copied-regexp    matches messages mark as copied
   wl-highlight-summary-new-regexp       matches new messages
@@ -1055,9 +1055,9 @@ Returns start point of signature."
        (and
 	(re-search-backward "^[^A-Za-z0-9> \t\n]+ *$" beg t)
 	(> (- (match-end 0) (match-beginning 0)) 10);; "10" is a magic number.
-	(re-search-backward 
-	 (concat "^" 
-		 (regexp-quote (buffer-substring (match-beginning 0) (match-end 0))) 
+	(re-search-backward
+	 (concat "^"
+		 (regexp-quote (buffer-substring (match-beginning 0) (match-end 0)))
 		 "$") beg t)))
 
      ;; look for user specified signature-separator
@@ -1075,13 +1075,13 @@ Returns start point of signature."
 Faces used:
   wl-highlight-message-headers			  the part before the colon
   wl-highlight-message-header-contents		  the part after the colon
-  wl-highlight-message-important-header-contents  contents of \"special\" 
+  wl-highlight-message-important-header-contents  contents of \"special\"
                                                   headers
-  wl-highlight-message-important-header-contents2 contents of \"special\" 
+  wl-highlight-message-important-header-contents2 contents of \"special\"
                                                   headers
-  wl-highlight-message-unimportant-header-contents contents of unimportant 
+  wl-highlight-message-unimportant-header-contents contents of unimportant
                                                    headers
-  wl-highlight-message-cited-text	           quoted text from other 
+  wl-highlight-message-cited-text	           quoted text from other
                                                    messages
   wl-highlight-message-citation-header             header of quoted texts
   wl-highlight-message-signature                   signature
@@ -1110,7 +1110,7 @@ interpreted as cited text.)"
 	(widen)
 	;; take off signature
 	(if (and hack-sig (not too-big))
-	    (setq end (funcall wl-highlight-signature-search-func 
+	    (setq end (funcall wl-highlight-signature-search-func
 			       (- end wl-max-signature-size) end)))
 	(if hack-sig
 	    (put-text-property end (point-max)
@@ -1122,8 +1122,8 @@ interpreted as cited text.)"
 	  (goto-char start)
 	  ;; If this search fails then the narrowing performed above
 	  ;; is sufficient
-	  (if (re-search-forward (format 
-				  "^$\\|%s" 
+	  (if (re-search-forward (format
+				  "^$\\|%s"
 				  (regexp-quote mail-header-separator)) nil t)
 	      (narrow-to-region (point-min) (point)))
 	  (goto-char start)
@@ -1164,9 +1164,9 @@ interpreted as cited text.)"
 	    nil
 	  (let (prefix prefix-face-alist pair end)
 	  (while (not (eobp))
-	    (cond 
+	    (cond
 	     ((null wl-highlight-force-citation-header-regexp)
-	      nil) 
+	      nil)
 	     ((looking-at wl-highlight-force-citation-header-regexp)
 	      (setq current 'wl-highlight-message-citation-header)
 	      (setq end (match-end 0)))
@@ -1179,11 +1179,11 @@ interpreted as cited text.)"
 	      (unless pair
 		(setq prefix-face-alist
 		      (append prefix-face-alist
-			      (list 
-			       (setq pair 
-				     (cons 
+			      (list
+			       (setq pair
+				     (cons
 				      prefix
-				      (nth 
+				      (nth
 				       (% (length prefix-face-alist)
 					  (length
 					   wl-highlight-citation-face-list))

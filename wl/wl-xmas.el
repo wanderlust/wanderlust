@@ -32,7 +32,7 @@
 (eval-when-compile
   (require 'wl-folder)
   (require 'wl-summary)
-  (require 'wl-draft)  
+  (require 'wl-draft)
   (require 'wl-message)
   (require 'wl-highlight)
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
@@ -107,7 +107,7 @@
     [wl-summary-forward
      wl-summary-forward t "Forward Current Message"]
     [wl-summary-exit
-     wl-summary-exit t "Exit Current Summary"]    
+     wl-summary-exit t "Exit Current Summary"]
     )
   "The Summary buffer toolbar.")
 
@@ -185,7 +185,7 @@
 	 ((string= fld-name wl-trash-folder) ;; set trash folder icon
 	  (setq num (nth 2 numbers)) ;; number of messages
 	  (set-extent-begin-glyph extent
-				  (if (or (null num) 
+				  (if (or (null num)
 					  (eq num 0))
 				      wl-folder-trash-empty-glyph
 				    wl-folder-trash-glyph)))
@@ -197,19 +197,19 @@
 	       (or numbers ;; XXX dirty...!!
 		   (not (assoc fld-name wl-folder-group-alist))))
 	  ;; not group folder.
-	  (set-extent-begin-glyph extent 
+	  (set-extent-begin-glyph extent
 				  (symbol-value
 				   (intern (format "wl-folder-%s-glyph"
 						   type)))))))
       (when (and numbers (nth 0 numbers) (nth 1 numbers))
-	(setq fsymbol 
+	(setq fsymbol
 	      (let ((unsync (nth 0 numbers))
 		    (unread (nth 1 numbers)))
 		(cond ((and unsync (eq unsync 0))
 		       (if (and unread (> unread 0))
 			   'wl-highlight-folder-unread-face
 			 'wl-highlight-folder-zero-face))
-		      ((and unsync 
+		      ((and unsync
 			    (>= unsync wl-folder-many-unsync-threshold))
 		       'wl-highlight-folder-many-face)
 		      (t
@@ -218,8 +218,8 @@
 	(put-text-property bol eol 'face fsymbol)
 	(setq matched t))
       (while highlights
-	(setq fregexp (symbol-value 
-		       (intern (format "wl-highlight-folder-%s-regexp" 
+	(setq fregexp (symbol-value
+		       (intern (format "wl-highlight-folder-%s-regexp"
 				       (car highlights)))))
 	(if (not wl-highlight-group-folder-by-numbers)
 	    (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
@@ -251,7 +251,7 @@
 			       'wl-highlight-folder-killed-face)
 	  (put-text-property bol eol 'face
 			     'wl-highlight-folder-unknown-face)))
-      (if wl-use-highlight-mouse-line 
+      (if wl-use-highlight-mouse-line
 	  (wl-highlight-folder-mouse-line))
       (if (and (featurep 'dragdrop) wl-use-dnd)
 	  (wl-dnd-set-drop-target bol eol)))))
@@ -320,7 +320,7 @@
 			 locale tag-set 'prepend))
     glyph))
 
-(defun wl-folder-init-icons ()  
+(defun wl-folder-init-icons ()
   (mapcar
    (lambda (x)
      (if (null (symbol-value (car x)))
@@ -350,7 +350,7 @@
     (set-extent-property extent 'help-echo "button2 toggles plugged status")
     (setq wl-plug-state-indicator-on (cons extent wl-plugged-glyph))
     (setq wl-plug-state-indicator-off (cons extent wl-unplugged-glyph))
-    (setq wl-plug-state-indicator (if wl-plugged 
+    (setq wl-plug-state-indicator (if wl-plugged
 				      wl-plug-state-indicator-on
 				    wl-plug-state-indicator-off)))
   (wl-make-modeline-subr))
@@ -411,9 +411,9 @@
 	  (wl-summary-prev t)))))
 
 (defun wl-draft-overload-menubar ()
-  (add-menu-item '("Mail") "Send, Keep Editing" 
+  (add-menu-item '("Mail") "Send, Keep Editing"
 		 'wl-draft-send t "Send Mail")
-  (add-menu-item '("Mail") "Send Message" 
+  (add-menu-item '("Mail") "Send Message"
 		 'wl-draft-send-and-exit t "Send and Exit")
   (delete-menu-item '("Mail" "Send Mail"))
   (delete-menu-item '("Mail" "Send and Exit"))

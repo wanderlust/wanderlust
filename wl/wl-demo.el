@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'wl-vars)
 (provide 'wl-demo)
@@ -158,10 +158,10 @@
                 (setq pixel-width (string-to-int (match-string 1))
                       pixel-height (string-to-int (match-string 2)))))
             (insert-char ?\n (max 1 (/ (- (window-height) 6
-                                          (/ pixel-height 
+                                          (/ pixel-height
                                              (frame-char-height))) 2)))
             (insert-char ?\  (max 0 (/ (- (window-width)
-                                          (/ pixel-width 
+                                          (/ pixel-width
                                              (frame-char-width))) 2)))
             (wl-insert-image wl-logo)
             (insert "\n")))

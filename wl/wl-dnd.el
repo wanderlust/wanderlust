@@ -40,7 +40,7 @@
  ((featurep 'cde)
   (defun start-drag (event what &optional typ)
     (if (not typ)
-	(funcall (intern "cde-start-drag-internal") event nil 
+	(funcall (intern "cde-start-drag-internal") event nil
 		 (list what))
       (funcall (intern "cde-start-drag-internal") event t what))))
  (t (defun start-drag (event what &optional typ))))
@@ -48,7 +48,7 @@
 (defun wl-dnd-start-drag (event)
   (interactive "@e")
   (mouse-set-point event)
-  (start-drag event (concat 
+  (start-drag event (concat
 		     wl-summary-buffer-folder-name " "
 		     (int-to-string (wl-summary-message-number)))))
 
@@ -64,7 +64,7 @@
 	   (number  (string-to-int (nth 1 src-spec)))
 	   target)
       (setq target
-	    (wl-folder-get-folder-name-by-id (get-text-property 
+	    (wl-folder-get-folder-name-by-id (get-text-property
 					      (point)
 					      'wl-folder-entity-id)))
       (message "%s is dropped at %s." number
@@ -85,7 +85,7 @@
 (defun wl-dnd-set-drop-target (beg end)
   (let (ext substr)
     (setq ext (make-extent beg end))
-    (set-extent-property 
+    (set-extent-property
      ext
      'experimental-dragdrop-drop-functions
      '((wl-dnd-drop-func t t (buffer-substring beg end))))))
