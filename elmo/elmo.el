@@ -1124,7 +1124,7 @@ FIELD is a symbol of the field."
     (if (and elmo-folder-update-threshold
 	     (> len elmo-folder-update-threshold)
 	     elmo-folder-update-confirm)
-	(if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
+	(if (y-or-n-p (format "Too many messages(%d).  Update all? " len))
 	    appends
 	  (setq in elmo-folder-update-threshold)
 	  (catch 'end
