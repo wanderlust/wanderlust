@@ -1,3 +1,8 @@
+2002-05-05  David Smith <ultrasoul@ultrasoul.com>
+
+	* elmo-imap4.el (elmo-imap4-folder-diff-plugged):
+	Use SELECT when elmo-imap4-use-select-to-update-status is t.
+
 2003-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.1 is released.
