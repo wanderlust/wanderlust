@@ -1,3 +1,12 @@
+2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* bbdb-wl.el (bbdb-wl-extract-field-value-internal): Enclose the
+	function definition with `eval-and-compile'.
+	(bbdb-wl-pop-up-bbdb-buffer): Use `bbdb-display-layout' and
+	`bbdb-pop-up-display-layout' instead of the macro
+	`bbdb-pop-up-elided-display' for the development version of BBDB.
+	(bbdb-get-addresses-headers): Define it before it is referred to.
+
 2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* bbdb-wl.el (bbdb-wl-exit): Use `bbdb-offer-save' instead of

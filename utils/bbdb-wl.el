@@ -8,7 +8,7 @@
 ;;; Commentary:
 ;;
 ;;  Insert the following lines in your ~/.wl
-;; 
+;;
 ;;  (require 'bbdb-wl)
 ;;  (bbdb-wl-setup)
 
@@ -26,8 +26,7 @@
   (require 'wl-address)
   (require 'bbdb-com)
   (defvar bbdb-pop-up-elided-display nil))
-;;  (or (fboundp 'bbdb-wl-extract-field-value-internal)
-;;      (defun bbdb-wl-extract-field-value-internal (field))))
+
 (require 'bbdb)
 
 (defvar bbdb-wl-get-update-record-hook nil)
@@ -131,6 +130,18 @@
 		 (setq from-str (or first-name last-name))))
 	  from-str)
       string)))
+
+(if (not (boundp 'bbdb-get-addresses-from-headers))
+    (defvar bbdb-get-addresses-from-headers
+      '("From" "Resent-From" "Reply-To")))
+
+(if (not (boundp 'bbdb-get-addresses-to-headers))
+    (defvar bbdb-get-addresses-to-headers
+      '("Resent-To" "Resent-CC" "To" "CC" "BCC")))
+
+(if (not (boundp 'bbdb-get-addresses-headers))
+    (defvar bbdb-get-addresses-headers
+      (append bbdb-get-addresses-from-headers bbdb-get-addresses-to-headers)))
 
 (defun bbdb-wl-get-addresses (&optional only-first-address)
   "Return real name and email address of sender respectively recipients.
@@ -260,18 +271,6 @@ of the BBDB record corresponding to the sender of this message."
 	(bbdb-record-edit-property record nil t)
       (bbdb-record-edit-notes record t))))
 
-(if (not (boundp 'bbdb-get-addresses-from-headers))
-    (defvar bbdb-get-addresses-from-headers
-      '("From" "Resent-From" "Reply-To")))
-
-(if (not (boundp 'bbdb-get-addresses-to-headers))
-    (defvar bbdb-get-addresses-to-headers
-      '("Resent-To" "Resent-CC" "To" "CC" "BCC")))
-
-(if (not (boundp 'bbdb-get-addresses-headers))
-    (defvar bbdb-get-addresses-headers
-      (append bbdb-get-addresses-from-headers bbdb-get-addresses-to-headers)))
-
 (defun bbdb-wl-show-records (&optional headers)
   "Display the contents of the BBDB for the sender of this message.
 This buffer will be in `bbdb-mode', with associated keybindings."
@@ -279,10 +278,10 @@ This buffer will be in `bbdb-mode', with associated keybindings."
   (wl-summary-set-message-buffer-or-redisplay)
   (set-buffer (wl-message-get-original-buffer))
   (let ((bbdb-get-addresses-headers (or headers bbdb-get-addresses-headers))
-        (bbdb-update-records-mode 'annotating)
-        (bbdb-message-cache nil)
-        (bbdb-user-mail-names nil)
-        records bbdb-win)
+	(bbdb-update-records-mode 'annotating)
+	(bbdb-message-cache nil)
+	(bbdb-user-mail-names nil)
+	records bbdb-win)
     (setq records (bbdb-wl-update-records t))
     (if records
 	(progn
@@ -307,12 +306,12 @@ with two prefix arguments show all records.
 This buffer will be in `bbdb-mode', with associated keybindings."
   (interactive "p")
   (cond ((= 4 show-recipients)
-         (bbdb-wl-show-all-recipients))
-        ((= 16 show-recipients)
-         (bbdb-wl-show-records))
-        (t 
-         (if (null (bbdb-wl-show-records bbdb-get-addresses-from-headers))
-             (bbdb-wl-show-all-recipients)))))
+	 (bbdb-wl-show-all-recipients))
+	((= 16 show-recipients)
+	 (bbdb-wl-show-records))
+	(t
+	 (if (null (bbdb-wl-show-records bbdb-get-addresses-from-headers))
+	     (bbdb-wl-show-all-recipients)))))
 
 (defun bbdb-wl-pop-up-bbdb-buffer (&optional offer-to-create)
   "Make the *BBDB* buffer be displayed along with the WL window(s),
@@ -347,11 +346,18 @@ displaying the record corresponding to the sender of the current message."
   (let ((bbdb-gag-messages t)
 	(bbdb-use-pop-up nil)
 	(bbdb-electric-p nil))
-    (let ((records (static-if (fboundp 'bbdb-update-records)
-		       (bbdb-wl-update-records offer-to-create)
-		     (bbdb-wl-update-record offer-to-create)))
-	  (bbdb-elided-display (bbdb-pop-up-elided-display))
-	  (b (current-buffer)))
+    (let* ((records (static-if (fboundp 'bbdb-update-records)
+			(bbdb-wl-update-records offer-to-create)
+		      (bbdb-wl-update-record offer-to-create)))
+	   ;; BBDB versions v2.33 and later.
+	   (bbdb-display-layout
+	    (cond ((boundp 'bbdb-pop-up-display-layout)
+		   (symbol-value 'bbdb-pop-up-display-layout))
+		  ((boundp 'bbdb-pop-up-elided-display)
+		   (symbol-value 'bbdb-pop-up-elided-display))))
+	   ;; BBDB versions prior to v2.33,
+	   (bbdb-elided-display bbdb-display-layout)
+	   (b (current-buffer)))
       (bbdb-display-records (if (listp records) records
 			      (list records)))
       (set-buffer b)
@@ -364,27 +370,28 @@ displaying the record corresponding to the sender of the current message."
 
 ;;; @ bbdb-extract-field-value -- stolen from tm-bbdb.
 ;;;
-(and (not (fboundp 'bbdb-wl-extract-field-value-internal))
-;;;  (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
-    (progn
-      (if (and (string< bbdb-version "1.58")
-	       ;; (not (fboundp 'bbdb-extract-field-value) ; defined as autoload
-	       (not (fboundp 'bbdb-header-start)))
-	  (load "bbdb-hooks")
-	(require 'bbdb-hooks))
-      (fset 'bbdb-wl-extract-field-value-internal
-	    (cond
-	     ((fboundp 'tm:bbdb-extract-field-value)
-	      (symbol-function 'tm:bbdb-extract-field-value))
-	     (t (symbol-function 'bbdb-extract-field-value))))
-      (defun bbdb-extract-field-value (field)
-	(let ((value (bbdb-wl-extract-field-value-internal field)))
-	  (with-temp-buffer ; to keep raw buffer unibyte.
-	    (elmo-set-buffer-multibyte
-	     default-enable-multibyte-characters)
-	    (and value
-		 (eword-decode-string value)))))
-      ))
+(eval-and-compile
+  (if (fboundp 'bbdb-wl-extract-field-value-internal)
+;;(if (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
+      nil
+    (if (and (string< bbdb-version "1.58")
+	     ;;(not (fboundp 'bbdb-extract-field-value) ;; defined as autoload
+	     (not (fboundp 'bbdb-header-start)))
+	(load "bbdb-hooks")
+      (require 'bbdb-hooks))
+    (fset 'bbdb-wl-extract-field-value-internal
+	  (cond
+	   ((fboundp 'tm:bbdb-extract-field-value)
+	    (symbol-function 'tm:bbdb-extract-field-value))
+	   (t (symbol-function 'bbdb-extract-field-value))))
+    (defun bbdb-extract-field-value (field)
+      (let ((value (bbdb-wl-extract-field-value-internal field)))
+	(with-temp-buffer ; to keep raw buffer unibyte.
+	  (elmo-set-buffer-multibyte
+	   default-enable-multibyte-characters)
+	  (and value
+	       (eword-decode-string value)))))
+    ))
 
 
 (provide 'bbdb-wl)

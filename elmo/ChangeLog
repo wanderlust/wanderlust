@@ -1,3 +1,8 @@
+2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* acap.el (acap-read-passphrase): Always autoload ange-ftp for
+	both compile-time and run-time to avoid byte-compile warning.
+
 2001-09-13  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-post): Fix for `elmo-nntp-default-stream-type'.
@@ -124,7 +129,7 @@
 
 	* elmo-version.el (elmo-version): Up to 2.7.2.
 
-	* elmo.el (elmo-generic-folder-append-messages): Make 
+	* elmo.el (elmo-generic-folder-append-messages): Make
 	fetch-strategy with `use-cache'.
 
 	* elmo-dop.el (elmo-dop-queue-method-name-alist): New variable.
@@ -559,7 +564,7 @@
 	* elmo.el (elmo-message-fetch): Define.
 	(elmo-message-fetch-with-cache-process): New generic method.
 	(elmo-message-fetch-internal): New generic method.
-	(elmo-folder-synchronize): 
+	(elmo-folder-synchronize):
 
 	* elmo-archive.el (elmo-message-fetch-internal): Define.
 	(elmo-message-fetch): Eliminated.

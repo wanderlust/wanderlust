@@ -26,8 +26,8 @@
 ;;; Commentary:
 ;;
 ;; acap.el is an elisp library providing an interface for talking to
-;; ACAP (RFC2244) servers. 
-;; 
+;; ACAP (RFC2244) servers.
+;;
 ;; This is a transcript of short interactive session for demonstration
 ;; purposes.
 
@@ -160,6 +160,9 @@ Valid states are `closed', `initial', `auth'.")
 
 (defvar acap-passphrase-alist nil)
 
+(eval-and-compile
+  (autoload 'ange-ftp-read-passwd "ange-ftp"))
+
 (defun acap-read-passphrase (prompt)
   "Prompt is not used."
   (or acap-passphrase
@@ -170,7 +173,6 @@ Valid states are `closed', `initial', `auth'.")
 	    (read-passwd prompt)
 	  (if (load "passwd" t)
 	      (read-passwd prompt)
-	    (autoload 'ange-ftp-read-passwd "ange-ftp")
 	    (ange-ftp-read-passwd prompt))))))
 
 ;;; Debug.
@@ -208,7 +210,7 @@ Valid states are `closed', `initial', `auth'.")
 	  (delq (assoc key acap-passphrase-alist)
 		acap-passphrase-alist))))
 
-;;; Open, Close 
+;;; Open, Close
 (defun acap-open (server &optional user auth port type)
   (let* ((user (or user acap-default-user))
 	 (buffer (get-buffer-create (concat " *acap on " user " at " server)))
@@ -370,7 +372,7 @@ ENTRIES is a store-entry list."
 	    (replace-match "\\\\\\\\"))
 	  (goto-char beg)
 	  (while (re-search-forward "\"" nil t)
-	    (replace-match "\\\\\""))	  
+	    (replace-match "\\\\\""))
 	  (goto-char beg)
 	  (insert "\"")
 	  (goto-char (point-max))
@@ -536,11 +538,11 @@ ENTRIES is a store-entry list."
 		(< acap-reached-tag tag))
       (or (and (not (memq (process-status process) '(open run)))
 	       (sit-for 1))
- 	  (let ((len (/ (point-max) 1024))
+	  (let ((len (/ (point-max) 1024))
 		message-log-max)
- 	    (unless (< len 10)
- 	      (message "acap read: %dk" len))
- 	    (accept-process-output process 1))))
+	    (unless (< len 10)
+	      (message "acap read: %dk" len))
+	    (accept-process-output process 1))))
     (message "")
     acap-response))
 
