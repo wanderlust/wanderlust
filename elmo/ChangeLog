@@ -1,3 +1,8 @@
+2000-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-make-number-set-list): Copy `msg-list'
+	before `sort'.
+
 2000-09-18  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-literal-1): Renamed from

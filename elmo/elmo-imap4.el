@@ -869,7 +869,7 @@ NUMBER is contained message number in SET-STRING.
 Every SET-STRING does not contain number of messages longer than CHOP-LENGTH.
 If CHOP-LENGTH is not specified, message set is not chopped."
   (let (count cont-list set-list)
-    (setq msg-list (sort msg-list '<))
+    (setq msg-list (sort (copy-sequence msg-list) '<))
     (while msg-list
       (setq cont-list nil)
       (setq count 0)
