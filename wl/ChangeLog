@@ -1,3 +1,12 @@
+2000-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-add-references): New user option.
+
+	* wl-draft.el (wl-draft-add-references): New function.
+	(wl-draft-yank-from-mail-reply-buffer): Use it.
+	(wl-draft-insert-current-message): Bind `wl-draft-add-references'
+	as nil.
+
 2000-05-12  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-thread.el (wl-thread-update-line-msgs): Called
