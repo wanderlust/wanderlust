@@ -67,6 +67,9 @@ FIELD-NAME is a symbol of the field name.
                         VALUE can contain \\& and \\N which will substitute
                         from matching \\(\\) patterns in the previous VALUE.
 
+FIELD-NAME can be a list of field names, return true if any of the fields
+satisfy the condition.
+
 2. Functions which accept an argument SIZE, SIZE is some number.
 
 `<'                 ... True if the size of the message is less than SIZE.
@@ -177,36 +180,42 @@ It can be some ACTION as in `elmo-split-rule'."
 (defun elmo-split-< (buffer size)
   (< (buffer-size buffer) size))
 
-(defun elmo-split-address-equal (buffer field value)
+(defun elmo-split-address-equal (buffer field-or-fields value)
   (with-current-buffer buffer
-    (let ((addrs (mapcar
-		  'std11-address-string
-		  (std11-parse-addresses-string
-		   (std11-field-body (symbol-name field)))))
-	  (case-fold-search t)
-	  result)
-      (while addrs
-	(when (string-match (concat "^"
-				    (regexp-quote value)
-				    "$") (car addrs))
-	  (setq addrs nil
-		result t))
-	(setq addrs (cdr addrs)))
+    (let (result)
+      (dolist (field (if (listp field-or-fields)
+			 field-or-fields
+		       (list field)))
+	(let ((addrs (mapcar
+		      'std11-address-string
+		      (std11-parse-addresses-string
+		       (std11-field-body (symbol-name field)))))
+	      (case-fold-search t))
+	  (while addrs
+	    (when (string-match (concat "^"
+					(regexp-quote value)
+					"$") (car addrs))
+	      (setq addrs nil
+		    result t))
+	    (setq addrs (cdr addrs)))))
       result)))
 
-(defun elmo-split-address-match (buffer field value)
+(defun elmo-split-address-match (buffer field-or-fields value)
   (with-current-buffer buffer
-    (let ((addrs (mapcar
-		  'std11-address-string
-		  (std11-parse-addresses-string
-		   (std11-field-body (symbol-name field)))))
-	  result)
-      (while addrs
-	(when (string-match value (car addrs))
-	  (setq elmo-split-match-string-internal (car addrs)
-		addrs nil
-		result t))
-	(setq addrs (cdr addrs)))
+    (let (result)
+      (dolist (field (if (listp field-or-fields)
+			 field-or-fields
+		       (list field)))
+	(let ((addrs (mapcar
+		      'std11-address-string
+		      (std11-parse-addresses-string
+		       (std11-field-body (symbol-name field))))))
+	  (while addrs
+	    (when (string-match value (car addrs))
+	      (setq elmo-split-match-string-internal (car addrs)
+		    addrs nil
+		    result t))
+	    (setq addrs (cdr addrs)))))
       result)))
 
 (defun elmo-split-fetch-decoded-field (entity field-name)
@@ -215,14 +224,20 @@ It can be some ACTION as in `elmo-split-rule'."
     (when field-body
       (mime-decode-field-body field-body sym 'plain))))
 
-(defun elmo-split-equal (buffer field value)
+(defun elmo-split-equal (buffer field-or-fields value)
   (with-current-buffer buffer
-    (let ((field-value (and
-			elmo-split-message-entity
-			(elmo-split-fetch-decoded-field
-			 elmo-split-message-entity
-			 (symbol-name field)))))
-      (equal field-value value))))
+    (let (result)
+      (dolist (field (if (listp field-or-fields)
+			 field-or-fields
+		       (list field)))
+	(let ((field-value (and
+			    elmo-split-message-entity
+			    (elmo-split-fetch-decoded-field
+			     elmo-split-message-entity
+			     (symbol-name field)))))
+	  (setq result (or result
+			   (equal field-value value)))))
+      result)))
 
 (defun elmo-split-spam-p (buffer &rest plist)
   (require 'elmo-spam)
@@ -230,15 +245,21 @@ It can be some ACTION as in `elmo-split-rule'."
 			   buffer
 			   (plist-get plist :register)))
 
-(defun elmo-split-match (buffer field value)
+(defun elmo-split-match (buffer field-or-fields value)
   (with-current-buffer buffer
-    (let ((field-value (and elmo-split-message-entity
-			    (elmo-split-fetch-decoded-field
-			     elmo-split-message-entity
-			     (symbol-name field)))))
-      (and field-value
-	   (when (string-match value field-value)
-	     (setq elmo-split-match-string-internal field-value))))))
+    (let (result)
+      (dolist (field (if (listp field-or-fields)
+			 field-or-fields
+		       (list field)))
+	(let ((field-value (and elmo-split-message-entity
+				(elmo-split-fetch-decoded-field
+				 elmo-split-message-entity
+				 (symbol-name field)))))
+	  (and field-value
+	       (when (string-match value field-value)
+		 (setq result t)
+		 (setq elmo-split-match-string-internal field-value)))))
+      result)))
 
 (defun elmo-split-eval (buffer sexp)
   (cond
