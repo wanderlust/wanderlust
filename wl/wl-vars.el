@@ -671,8 +671,8 @@ This variable is local to the summary buffers."
 		 integer)
   :group 'wl-score)
 
-(defcustom wl-summary-temp-above nil
-  "*Mark all messages with a score above this variable as temp.
+(defcustom wl-summary-target-above nil
+  "*Mark all messages with a score above this variable as target.
 This variable is local to the summary buffers."
   :type '(choice (const :tag "off" nil)
 		 integer)
@@ -1990,6 +1990,10 @@ This variable can also be a regex. "
 (make-obsolete-variable 'wl-draft-prepared-config-alist 'wl-draft-config-alist)
 (defvar wl-score-files-directory wl-score-files-dir)
 (make-obsolete-variable 'wl-score-files-directory 'wl-score-files-dir)
+(defvar wl-summary-temp-above wl-summary-target-above)
+(make-obsolete-variable 'wl-summary-temp-above 'wl-summary-target-above)
+
+
 
 ;; plug
 (defvar wl-plugged-plug-on "ON")
