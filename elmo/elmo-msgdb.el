@@ -1314,14 +1314,15 @@ Return a list of message numbers which have duplicated message-ids."
 	;; key is message-id
 	(if (elmo-get-hash-val (caar overview) ehash) ; duplicated.
 	    (setq duplicates (cons
-			      (elmo-message-entity-number (car overview))
+			      (elmo-msgdb-overview-entity-get-number
+			       (car overview))
 			      duplicates)))
 	(if (caar overview)
 	    (elmo-set-hash-val (caar overview) (car overview) ehash))
 	;; key is number
 	(elmo-set-hash-val
 	 (format "#%d"
-		 (elmo-message-entity-number (car overview)))
+		 (elmo-msgdb-overview-entity-get-number (car overview)))
 	 (car overview) ehash)
 	(setq overview (cdr overview)))
       (while mark-alist
