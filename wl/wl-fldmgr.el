@@ -852,7 +852,8 @@ return value is diffs '(-new -unread -all)."
 	   (entity (elmo-string (nth 4 tmp)))
 	   (folder (wl-folder-get-elmo-folder entity)))
       (when (elmo-folder-delete folder)
-	(wl-fldmgr-cut tmp nil t)))))
+	(wl-fldmgr-cut tmp nil t)
+	(wl-fldmgr-save-access-list)))))
 
 (defun wl-fldmgr-rename ()
   (interactive)
@@ -1338,8 +1339,6 @@ return value is diffs '(-new -unread -all)."
 (defun wl-fldmgr-save-folders ()
   (interactive)
   (let ((tmp-buf (get-buffer-create " *wl-fldmgr-tmp*"))
-	(access-list wl-fldmgr-modified-access-list)
-	entity
 	save-petname-entities)
     (message "Saving folders...")
     (set-buffer tmp-buf)
@@ -1364,6 +1363,13 @@ return value is diffs '(-new -unread -all)."
        'no-msg)
       (set-file-modes wl-folders-file (+ (* 64 6) (* 8 0) 0))) ; chmod 0600
     (kill-buffer tmp-buf)
+    (wl-fldmgr-save-access-list)
+    (setq wl-fldmgr-modified nil)
+    (message "Saving folders...done")))
+
+(defun wl-fldmgr-save-access-list ()
+  (let ((access-list wl-fldmgr-modified-access-list)
+	entity)
     (while access-list
       (setq entity (wl-folder-search-group-entity-by-name
 		    (car access-list) wl-folder-entity))
@@ -1373,9 +1379,7 @@ return value is diffs '(-new -unread -all)."
 	(wl-folder-make-save-access-list (nth 2 entity))
 	(wl-folder-make-save-access-list (nth 3 entity))))
       (setq access-list (cdr access-list)))
-    (setq wl-fldmgr-modified nil)
-    (setq wl-fldmgr-modified-access-list nil)
-    (message "Saving folders...done")))
+    (setq wl-fldmgr-modified-access-list nil)))
 
 (require 'product)
 (product-provide (provide 'wl-fldmgr) (require 'wl-version))
