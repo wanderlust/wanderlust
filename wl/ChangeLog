@@ -1,3 +1,10 @@
+2000-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-summary-target-above): Renamed from
+	wl-summary-temp-above.
+	* wl-score.el (wl-score-get-score-alist): Use it.
+	(wl-summary-score-update-all-lines): Use it.
+
 2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-ldap-port): New user option.
