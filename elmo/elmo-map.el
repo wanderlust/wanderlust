@@ -244,15 +244,6 @@
    folder
    (elmo-map-folder-list-message-locations folder)))
 
-(luna-define-method elmo-folder-clear :around ((folder elmo-map-folder)
-					       &optional keep-killed)
-  (unless keep-killed
-    (elmo-map-folder-set-number-max-internal folder 0)
-    (elmo-map-folder-set-location-alist-internal folder nil)
-    ;; clear hashtable.
-    (elmo-map-folder-set-location-hash-internal folder (elmo-make-hash)))
-  (luna-call-next-method))
-
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-map-folder) &optional nohide)
   (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
