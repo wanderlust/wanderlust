@@ -1,26 +1,3 @@
-2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-msgdb.el (elmo-msgdb-match-condition-primitive): Added argument
-	`mark'; evaluate mark condition.
-	(elmo-msgdb-match-condition-internal): New function.
-	(elmo-msgdb-match-condition): Call it; changed argument.
-
-	* elmo.el (elmo-folder-search): Follow the API change on
-	`elmo-msgdb-match-condition'.
-
-2002-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* elmo-filter.el (elmo-folder-msgdb-create): Add to mark-alist if
-	original mark is non-nil.
-
-2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-map.el (elmo-map-folder-list-unreads): Define default behavior.
-	(elmo-map-folder-list-answereds): New method.
-	(elmo-folder-list-unreads): Add :around qualifier.
-	(elmo-folder-list-importants): Ditto.
-	(elmo-folder-list-answereds): Ditto.
-
 2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-mark): New inline function.

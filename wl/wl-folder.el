@@ -851,7 +851,7 @@ Optional argument ARG is repeart count."
 	      all    (and all    (max 0 all))))
       (setq unread (or (and unread (- unread (or new 0)))
 		       (elmo-folder-get-info-unread folder)
-		       (nth 1 (wl-summary-count-unread))))
+		       (cdr (wl-summary-count-unread))))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list new unread all)
 				   (get-buffer wl-folder-buffer-name)))
