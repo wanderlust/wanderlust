@@ -288,8 +288,6 @@ Mirrored ftp/http sites:
 http://www.jpl.org/elips/wl/
 http://www.ring.gr.jp/archives/text/elisp/wl/
 ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
-@c ftp://opaopa.org/pub/mirror/elisp/wl/
-@c ftp://roguelife.org/pub/tsumura/wl/
 @end group
 @end example
 
