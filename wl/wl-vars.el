@@ -2464,6 +2464,12 @@ Sender information in summary mode."
   :type 'string
   :group 'wl-summary)
 
+(defcustom wl-summary-resend-use-cache nil
+  "*Non-nil to enable offline resending by using file cache.
+Note that strict message identity is not guaranteed when cache is used."
+  :type 'boolean
+  :group 'wl-summary)
+
 (defcustom wl-folder-removed-mark "#<removed>"
   "Mark for removed folder."
   :type 'string

@@ -589,7 +589,13 @@ Return number if put mark succeed"
 	(insert
 	 (with-temp-buffer
 	   (elmo-message-fetch folder number
-			       (elmo-make-fetch-strategy 'entire)
+			       (if wl-summary-resend-use-cache
+				   (elmo-make-fetch-strategy
+				    'entire 'maybe nil
+				    (elmo-file-cache-get-path
+				     (elmo-message-field
+				      folder number 'message-id)))
+				 (elmo-make-fetch-strategy 'entire))
 			       nil (current-buffer) 'unread)
 	   (buffer-string)))
 	(goto-char (point-min))

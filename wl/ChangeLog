@@ -1,3 +1,9 @@
+2005-01-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-summary-resend-use-cache): New variable.
+	* wl-action.el (wl-summary-exec-action-resend-subr): Use file
+	cache if `wl-summary-resend-use-cache' is non-nil.
+
 2005-01-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-pop-before-smtp-stream-type): Fix range.
