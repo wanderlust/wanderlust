@@ -1598,11 +1598,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
 	 (summary-buf (wl-summary-get-buffer parent-folder))
-	buf-name file-name num change-major-mode-hook
-	(reply-or-forward (or (eq this-command 'wl-summary-reply)
-			      (eq this-command 'wl-summary-forward)
-			      (eq this-command 'wl-summary-target-mark-forward)
-			      (eq this-command 'wl-summary-target-mark-reply-with-citation))))
+	 (reply-or-forward
+	  (or (eq this-command 'wl-summary-reply)
+	      (eq this-command 'wl-summary-forward)
+	      (eq this-command 'wl-summary-target-mark-forward)
+	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
+	 buf-name file-name num change-major-mode-hook)
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
     (setq num (elmo-max-of-list
@@ -1815,7 +1816,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		       (progn
 			 (insert mail-header-separator "\n")
 			 (1- (point)))
-		       'category 'mail-header-separator)))
+		       'category 'mail-header-separator)
+    (point)))
 
 ;;;;;;;;;;;;;;;;
 
@@ -1910,7 +1912,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 	(wl-draft-decode-message-in-buffer))
-      (wl-draft-insert-mail-header-separator)
+      (goto-char (wl-draft-insert-mail-header-separator))
+      ;; If the first part is text/plain, the mime-edit tag is useless.
+      (if (looking-at "^--\\[\\[text/plain\\]\\]")
+	  (delete-region (point-at-bol)(1+ (point-at-eol))))
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
 	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))

@@ -1,3 +1,11 @@
+2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-create-buffer): Cosmetic fix.
+	(wl-draft-insert-mail-header-separator): Return the body beginning
+	point.
+	(wl-draft-reedit): Remove the mime-edit tag if the first part is
+	text/plain.
+
 2002-11-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-erase): New function to erase message
