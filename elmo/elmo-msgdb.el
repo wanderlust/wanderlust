@@ -586,19 +586,6 @@ header separator."
 	(setcar (cdr entity) after))
       (setq mark-alist (cdr mark-alist)))))
 
-(defsubst elmo-msgdb-mark (status cached)
-  (case status
-    (unread
-     (if cached
-	 elmo-msgdb-unread-cached-mark
-       elmo-msgdb-unread-uncached-mark))
-    (important
-     elmo-msgdb-important-mark)
-    (answered
-     (if cached
-	 elmo-msgdb-answered-cached-mark
-       elmo-msgdb-answered-uncached-mark))))
-
 (defsubst elmo-msgdb-seen-save (dir obj)
   (elmo-object-save
    (expand-file-name elmo-msgdb-seen-filename dir)

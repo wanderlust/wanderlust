@@ -404,7 +404,11 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 							  elmo-net-folder))
   (if (and (elmo-folder-plugged-p folder)
 	   (elmo-folder-use-flag-p folder))
-      (elmo-folder-send folder 'elmo-folder-list-importants-plugged)
+      (elmo-uniq-list
+       (nconc
+	(elmo-folder-send folder 'elmo-folder-list-importants-plugged)
+	(elmo-folder-list-messages-with-global-mark
+	 folder elmo-msgdb-important-mark)))
     (luna-call-next-method)))
 
 (luna-define-method elmo-folder-list-answereds :around ((folder
