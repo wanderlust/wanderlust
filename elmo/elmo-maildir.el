@@ -457,7 +457,7 @@ file name for maildir directories."
 	  t)
       (error))))
 
-(luna-define-method elmo-folder-delete ((folder elmo-maildir-folder))
+(luna-define-method elmo-folder-delete :before ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))
     (condition-case nil
 	(let ((tmp-files (directory-files

@@ -447,7 +447,7 @@ TYPE specifies the archiver's symbol."
 	     (delete-file dummy)))
        ))))
 
-(luna-define-method elmo-folder-delete ((folder elmo-archive-folder))
+(luna-define-method elmo-folder-delete :before ((folder elmo-archive-folder))
   (let ((arc (elmo-archive-get-archive-name folder)))
     (if (not (file-exists-p arc))
 	(error "No such file: %s" arc)

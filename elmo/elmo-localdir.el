@@ -295,7 +295,7 @@
 	(elmo-make-directory dir))
       t)))
 
-(luna-define-method elmo-folder-delete ((folder elmo-localdir-folder))
+(luna-define-method elmo-folder-delete :before ((folder elmo-localdir-folder))
   (let ((dir (elmo-localdir-folder-directory-internal folder)))
     (if (not (file-directory-p dir))
 	(error "No such directory: %s" dir)
