@@ -1,3 +1,8 @@
+2001-09-24  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el: (wl-biff-state-indicator-off): Changed default value
+	for xemacs with non-mule environment.
+
 2001-09-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-strip-subject-re, wl-draft-kill)
