@@ -4128,8 +4128,7 @@ If ARG, exit virtual folder."
 			      wl-message-entity))))
 
 (defun wl-summary-line-list-info ()
-  (let ((folder wl-summary-buffer-folder-name)
-	(sequence) (ml-name) (ml-count) (subject-string))
+  (let (sequence ml-name ml-count subject return-path)
     (setq sequence (elmo-msgdb-overview-entity-get-extra-field
 		    wl-message-entity "x-sequence")
 	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
@@ -4141,18 +4140,21 @@ If ARG, exit virtual folder."
 		       (elmo-msgdb-overview-entity-get-extra-field
 			wl-message-entity "x-ml-count")
 		       (and sequence
-			    (cadr (split-string sequence " "))))
-	  subject-string
-	  (elmo-delete-char ?\n
-			    (or (elmo-msgdb-overview-entity-get-subject
-				 wl-message-entity)
-				wl-summary-no-subject-message)))
-    (if (string-match
-	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-	 subject-string)
-	(progn
-	  (if (not ml-name) (setq ml-name (match-string 1 subject-string)))
-	  (if (not ml-count) (setq ml-count (match-string 2 subject-string)))))
+			    (cadr (split-string sequence " ")))))
+    (and (setq subject (elmo-msgdb-overview-entity-get-subject
+			wl-message-entity))
+	 (setq subject (elmo-delete-char ?\n subject))
+	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
+	 (progn
+	   (or ml-name (setq ml-name (match-string 1 subject)))
+	   (or ml-count (setq ml-count (match-string 2 subject)))))
+    (and (setq return-path
+	       (elmo-msgdb-overview-entity-get-extra-field
+		wl-message-entity "return-path"))
+	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
+	 (progn
+	   (or ml-name (setq ml-name (match-string 1 return-path)))
+	   (or ml-count (setq ml-count (match-string 2 return-path)))))
     (condition-case nil
 	(if (and ml-name ml-count)
 	    (format "(%s %05d)"
@@ -4162,28 +4164,32 @@ If ARG, exit virtual folder."
       (error ""))))
 
 (defun wl-summary-line-list-count ()
-  (let ((folder wl-summary-buffer-folder-name)
-	(sequence) (ml-count) (subject-string))
-    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-		    wl-message-entity "x-sequence")
-	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
-			wl-message-entity "x-mail-count")
-		       (elmo-msgdb-overview-entity-get-extra-field
-			wl-message-entity "x-ml-count")
-		       (and sequence
-			    (cadr (split-string sequence " ")))))
+  (let (sequence ml-count subject-string return-path)
+    (setq ml-count
+	  (or (elmo-msgdb-overview-entity-get-extra-field
+	       wl-message-entity "x-mail-count")
+	      (elmo-msgdb-overview-entity-get-extra-field
+	       wl-message-entity "x-ml-count")
+	      (and (setq sequence (elmo-msgdb-overview-entity-get-extra-field
+				   wl-message-entity "x-sequence"))
+		   (cadr (split-string sequence " ")))
+	      (and (setq subject-string
+			 (elmo-msgdb-overview-entity-get-subject
+			  wl-message-entity))
+		   (setq subject-string
+			 (elmo-delete-char ?\n subject-string))
+		   (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+				 subject-string)
+		   (match-string 2 subject-string))
+	      (and (setq return-path
+			 (elmo-msgdb-overview-entity-get-extra-field
+			  wl-message-entity "return-path"))
+		   (string-match "^<[^@>]+-return-\\([0-9]+\\)-"
+				 return-path)
+		   (match-string 1 return-path))))
     (if ml-count
 	(format "%d" (string-to-int ml-count))
-      (setq subject-string
-	    (elmo-delete-char ?\n
-			      (or (elmo-msgdb-overview-entity-get-subject
-				   wl-message-entity)
-				  "")))
-      (if (string-match
-	   "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-	   subject-string)
-	  (match-string 2 subject-string)
-	""))))
+      "")))
 
 (defun wl-summary-line-attached ()
   (let ((content-type (elmo-msgdb-overview-entity-get-extra-field

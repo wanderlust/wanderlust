@@ -1,3 +1,8 @@
+2002-05-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-line-list-info): Rewrite.
+	(wl-summary-line-list-count): Ditto.
+
 2002-05-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-vars.el (wl-nntp-posting-config-alist): New variable.
