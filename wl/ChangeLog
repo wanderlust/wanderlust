@@ -1,3 +1,15 @@
+2002-11-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): New function.
+	(wl-message-verify-pgp-nonmime): Ditto.
+	* wl-e21.el, wl-mule.el, wl-xmas.el (wl-message-define-keymap):
+	Bind them to C-c:d and C-c:v respectively.
+
+	Merge following code by Teranishi-san from [wl-en:00167].
+	* wl-mime.el (wl-mime-preview-application/pgp): New function.
+	(wl-mime-preview-application/pgp-encrypted): Ditto.
+	(wl-mime-setup): Add entry.
+
 2002-11-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-target-mark-erase): New function.

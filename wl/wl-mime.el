@@ -34,6 +34,11 @@
 (require 'mime-play)
 (require 'elmo)
 
+(eval-when-compile
+  (defalias-maybe 'pgg-decrypt-region 'ignore)
+  (defalias-maybe 'pgg-display-output-buffer 'ignore)
+  (defalias-maybe 'pgg-verify-region 'ignore))
+
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -288,6 +293,110 @@ It calls following-method selected from variable
 	(wl-summary-toggle-disp-msg 'off)
 	(wl-summary-sync nil "update")))))
 
+(defun wl-message-decrypt-pgp-nonmime ()
+  "Decrypt PGP encrypted region"
+  (interactive)
+  (require 'pgg)
+  (save-excursion
+    (beginning-of-line)
+    (if (or (re-search-forward "^-+END PGP MESSAGE-+$" nil t)
+	    (re-search-backward "^-+END PGP MESSAGE-+$" nil t))
+	(let (beg end status)
+	  (setq end (match-end 0))
+	  (if (setq beg (re-search-backward "^-+BEGIN PGP MESSAGE-+$" nil t))
+	      (let ((inhibit-read-only t))
+		(setq status (pgg-decrypt-region beg end))
+		(pgg-display-output-buffer beg end status))
+	    (message "Cannot find pgp encrypted region")))
+      (message "Cannot find pgp encrypted region"))))
+
+(defun wl-message-verify-pgp-nonmime ()
+  "Verify PGP signed region"
+  (interactive)
+  (require 'pgg)
+  (save-excursion
+    (beginning-of-line)
+    (if (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
+	    (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
+	(let (beg end status)
+	  (setq end (match-end 0))
+	  (if (setq beg (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
+	      (progn
+		(save-excursion
+		  (mime-show-echo-buffer)
+		  (set-buffer mime-echo-buffer-name)
+		  (set-window-start
+		   (get-buffer-window mime-echo-buffer-name)
+		   (point-max)))
+		(setq status (pgg-verify-region beg end nil 'fetch))
+		(set-buffer mime-echo-buffer-name)
+		(insert-buffer-substring
+		 (if status pgg-output-buffer pgg-errors-buffer)))
+	    (message "Cannot find pgp signed region")))
+      (message "Cannot find pgp signed region"))))
+
+;; XXX: encrypted multipart isn't represented as multipart
+(defun wl-mime-preview-application/pgp (parent-entity entity situation)
+  (require 'pgg)
+  (goto-char (point-max))
+  (let ((p (point))
+	raw-buf to-buf representation-type child-entity)
+    (goto-char p)
+    (save-restriction
+      (narrow-to-region p p)
+      (setq to-buf (current-buffer))
+      (with-temp-buffer
+	(setq raw-buf (current-buffer))
+	(mime-insert-entity entity)
+	(cond ((progn
+		 (goto-char (point-min))
+		 (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
+	       (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
+	       (goto-char (point-min))
+	       (delete-region
+		(point-min)
+		(and
+		 (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
+		 (match-end 0)))
+	       (delete-region
+		(and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
+		     (match-beginning 0))
+		(point-max))
+	       (goto-char (point-min))
+	       (while (re-search-forward "^- -" nil t)
+		 (replace-match "-"))
+	       (setq representation-type (if (mime-entity-cooked-p entity)
+					     'cooked)))
+	      ((progn
+		 (goto-char (point-min))
+		 (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
+	       (pgg-decrypt-region (point-min)(point-max))
+	       (delete-region (point-min) (point-max))
+	       (insert-buffer pgg-output-buffer)
+	       (setq representation-type 'elmo-buffer)))
+	(setq child-entity (mime-parse-message
+			    (mm-expand-class-name representation-type)
+			    nil
+			    parent-entity
+			    (mime-entity-node-id-internal parent-entity)))
+	(mime-display-entity
+	 child-entity
+	 nil
+	 `((header . visible)
+	   (body . visible)
+	   (entity-button . invisible))
+	 to-buf)))))
+
+(defun wl-mime-preview-application/pgp-encrypted (entity situation)
+  (let* ((entity-node-id (mime-entity-node-id entity))
+	 (mother (mime-entity-parent entity))
+	 (knum (car entity-node-id))
+	 (onum (if (> knum 0)
+		   (1- knum)
+		 (1+ knum)))
+	 (orig-entity (nth onum (mime-entity-children mother))))
+    (wl-mime-preview-application/pgp entity orig-entity situation)))
+
 ;;; Summary
 (defun wl-summary-burst-subr (message-entity target number)
   ;; returns new number.
@@ -460,6 +569,14 @@ With ARG, ask destination folder."
    '((type . text) (subtype . plain)
      (body . visible)
      (body-presentation-method . wl-mime-display-text/plain)
+     (major-mode . wl-original-message-mode)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((type . application)(subtype . pgp-encrypted)
+     (encoding . t)
+     (body . invisible)
+     (body-presentation-method . wl-mime-preview-application/pgp-encrypted)
      (major-mode . wl-original-message-mode)))
 
   (ctree-set-calist-strictly
