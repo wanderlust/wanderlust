@@ -4064,11 +4064,11 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 
 @menu
 * Usage of Draft Mode::         基本的な使い方
-* Keybind in Draft Mode::       キーバインド
+* Key Bindings of Draft::       キーバインド
 * Variables of Draft Mode::     カスタマイズ変数
 @end menu
 
-@node Usage of Draft Mode, Keybind in Draft Mode, Draft, Draft
+@node Usage of Draft Mode, Key Bindings of Draft, Draft, Draft
 @section 使い方(TIPS)
 
 基本は Emacs 標準のメールモードです。
@@ -4095,20 +4095,20 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 @item @samp{Newsgroups:}
 ニュース記事として出す場合の投稿先を指定します。
 
-@item @samp{Cc:} 
+@item @samp{Cc:}
 メッセージのコピー(Carbon Copy)を送付するアドレス。
 @end table
 
 以下のヘッダは、送信されるメッセージからは削除されます。
 
 @table @asis
-@item @samp{Bcc:} 
+@item @samp{Bcc:}
 メッセージのコピー(Blind Carbon Copy)を送付するアドレス。
 
-@item @samp{Fcc:} 
+@item @samp{Fcc:}
 送信したメッセージを保存するフォルダを指定します。
 
-@item @samp{Ecc:} 
+@item @samp{Ecc:}
 送信したメッセージをカプセル化して転送します。
 @end table
 
@@ -4388,7 +4388,7 @@ http://www.iecc.com/pop-before-smtp.html
 @end group
 @end example
 
-@node Keybind in Draft Mode, Variables of Draft Mode, Usage of Draft Mode, Draft
+@node Key Bindings of Draft, Variables of Draft Mode, Usage of Draft Mode, Draft
 @section キーバインド
 @cindex Keybind, Draft Mode
 @cindex Keybind, Draft Buffer
@@ -4501,7 +4501,7 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 れます。デフォルトの省略符号として使われる値は (@samp{[...]}) です。
 @end table
 
-@node Variables of Draft Mode,  , Keybind in Draft Mode, Draft
+@node Variables of Draft Mode,  , Key Bindings of Draft, Draft
 @section カスタマイズ変数
 
 @table @code

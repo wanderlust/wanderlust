@@ -4102,24 +4102,74 @@ buffer.  You can edit and send mail and news articles in this buffer.
 By pressing @kbd{W}, Wanderlust guess addressees and prepare draft buffer
 with those if possible.
 
+@menu
+* Usage of Draft Mode::         TIPS
+* Key Bindings of Draft::       Key bindings
+* Variables of Draft Mode::     Customize Draft Mode
+@end menu
+
+@node Usage of Draft Mode, Key Bindings of Draft, Draft, Draft
 @section Tips
 
 Basically it is Emacs-standard mail mode.
 
-@subsection Address Completion
+@menu
+* Editing Header::
+* Editing Message Body::
+* Dynamical Message Re-arrangement::
+* Template::
+* POP-before-SMTP::
+@end menu
+
+@node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
+@subsection Editing Message Header
 
 Initially, the cursor is at the @samp{To:} field.  Fill in recipients
 addresses.  @kbd{@key{TAB}} completes them.
 
-If you want to submit a news article, add @samp{Newsgroups:} field by
-yourself.  Field names can be completed by @kbd{@key{TAB}}.
+You can use following headers to specify recipients. Add some of them
+by yourself. Field names can be completed by @kbd{@key{TAB}}.
 
-If you save the draft buffer you are editing, it is appended to the
-folder specified by @code{wl-draft-folder}.
+@table @asis
+@item @samp{Newsgroups:}
+Specify newsgroups to which you post the news article.
 
-Using @samp{Fcc:} field, you can specify the folder to which a copy of
-the message is saved when it is sent.
+@item @samp{Cc:}
+Specify addresses to send a copy (Carbon Copy) of the message.
+@end table
 
+Following ones are removed from the header contents before sending.
+
+@table @asis
+@item @samp{Bcc:}
+Specify addresses to send a copy (Blind Carbon Copy) of the message.
+
+@item @samp{Fcc:}
+Specify folders in which a copy of the message is saved.
+
+@item @samp{Ecc:}
+Specify recipients to send encapsulated copy of the message.
+@end table
+
+You can add initial headers by following variables.
+
+@table @code
+
+@item wl-fcc
+@vindex wl-fcc
+The initial setting is @code{nil}.
+If non-nil, the value of this variable is inserted as a @samp{Fcc:} of
+the draft when it is prepared.  If function is specified, its return
+value is used.
+
+@item wl-bcc
+@vindex wl-bcc
+The initial setting is @code{nil}.
+If non-nil, the value of this variable is inserted as a @samp{Bcc:} of
+the draft when it is prepared.
+@end table
+
+@node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
 @subsection Editing Messages
 
 Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
@@ -4127,6 +4177,10 @@ editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
 a MIME user interface for GNU Emacs}.
 You can also see help by @kbd{C-c C-x ?} in draft buffer.
 
+If you save the draft buffer you are editing, it is appended to the
+folder specified by @code{wl-draft-folder}.
+
+@node Dynamical Message Re-arrangement, Template, Editing Message Body, Usage of Draft Mode
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
 @c @cindex Change Message
@@ -4274,6 +4328,7 @@ following:
 (add-hook 'wl-draft-reedit-hook 'wl-draft-config-exec)
 @end lisp
 
+@node Template, POP-before-SMTP, Dynamical Message Re-arrangement, Usage of Draft Mode
 @subsection Inserting Templates
 @cindex Template
 @cindex Apply Template
@@ -4328,6 +4383,7 @@ As shown in the example in @code{wl-draft-config-alist}, you can select
 (template . "default")
 @end lisp
 
+@node POP-before-SMTP,  , Template, Usage of Draft Mode
 @subsection Sending mail by POP-before-SMTP
 @cindex POP-before-SMTP
 
@@ -4379,6 +4435,8 @@ http://www.iecc.com/pop-before-smtp.html
 @end group
 @end example
 
+
+@node Key Bindings of Draft, Variables of Draft Mode, Usage of Draft Mode, Draft
 @section Key Bindings
 @cindex Keybind, Draft Mode
 @cindex Keybind, Draft Buffer
@@ -4493,6 +4551,7 @@ The text is killed and replaced with the contents of the variable
 (@samp{[...]}).
 @end table
 
+@node Variables of Draft Mode,  , Key Bindings of Draft, Draft
 @section Customizable Variables
 
 @table @code
@@ -4647,19 +4706,6 @@ If @code{nil}, the address part of @code{wl-from} is used.
 The initial setting is @code{nil}.
 This is the User's address list.  If you have multiple addresses,
 set this variable.
-
-@item wl-fcc
-@vindex wl-fcc
-The initial setting is @code{nil}.
-If non-nil, the value of this variable is inserted as a @samp{Fcc:} of
-the draft when it is prepared.  If function is specified, its return
-value is used.
-
-@item wl-bcc
-@vindex wl-bcc
-The initial setting is @code{nil}.
-If non-nil, the value of this variable is inserted as a @samp{Bcc:} of
-the draft when it is prepared.
 
 @item wl-reply-subject-prefix
 @vindex wl-reply-subject-prefix
