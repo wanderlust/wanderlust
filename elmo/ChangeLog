@@ -1,3 +1,13 @@
+2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Bind `elmo-inhibit-read-cache' as t
+	while moving messages.
+
+	* elmo2.el (elmo-read-msg): Don't use cache if
+	`elmo-inhibit-read-cache' is non-nil.
+
+	* elmo-vars.el (elmo-inhibit-read-cache): New global switch.
+
 2001-02-01  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-cache.el (elmo-cache-expire-by-size): Count
