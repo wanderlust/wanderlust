@@ -97,8 +97,6 @@
 (defvar wl-summary-buffer-prev-folder-func nil)
 (defvar wl-summary-buffer-next-folder-func nil)
 (defvar wl-summary-buffer-exit-func nil)
-(defvar wl-summary-buffer-number-list nil)
-
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
 (defvar wl-thread-youngest-child-str-internal nil)
@@ -165,7 +163,6 @@
 (make-variable-buffer-local 'wl-summary-buffer-prev-folder-func)
 (make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
 (make-variable-buffer-local 'wl-summary-buffer-exit-func)
-(make-variable-buffer-local 'wl-summary-buffer-number-list)
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -867,7 +864,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (setq wl-thread-entity-hashtb (elmo-make-hash (* (length overview) 2)))
     (setq wl-thread-entity-list nil)
     (setq wl-thread-entities nil)
-    (setq wl-summary-buffer-number-list nil)
     (setq wl-summary-buffer-target-mark-list nil)
     (setq wl-summary-buffer-refile-list nil)
     (setq wl-summary-buffer-delete-list nil)
@@ -897,12 +893,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(setq wl-summary-delayed-update (cdr wl-summary-delayed-update))))
     (message "Constructing summary structure...done")
     (set-buffer cur-buf)
-    (if (eq wl-summary-buffer-view 'thread)
-	(progn
-	  (message "Inserting thread...")
-	  (wl-thread-insert-top)
-	  (message "Inserting thread...done"))
-      (wl-summary-make-number-list))
+    (when (eq wl-summary-buffer-view 'thread)
+      (message "Inserting thread...")
+      (wl-thread-insert-top)
+      (message "Inserting thread...done"))
     (when wl-use-scoring
       (setq wl-summary-scored nil)
       (wl-summary-score-headers nil msgdb
@@ -1147,7 +1141,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (setq wl-summary-buffer-msgdb (elmo-msgdb-clear)) ;;'(nil nil nil nil))
   (setq wl-thread-entity-list nil)
   (setq wl-thread-entities nil)
-  (setq wl-summary-buffer-number-list nil)
   (setq wl-summary-buffer-target-mark-list nil)
   (setq wl-summary-buffer-refile-list nil)
   (setq wl-summary-buffer-copy-list nil)
@@ -2301,8 +2294,6 @@ If ARG is non-nil, checking is omitted."
 	    (message "Updating thread...done")
 ;;;	    (set-buffer cur-buf)
 	    ))
-      (unless (eq wl-summary-buffer-view 'thread)
-	(wl-summary-make-number-list))
       (wl-summary-set-message-modified)
       (wl-summary-set-mark-modified)
       (when (and sync-all (eq wl-summary-buffer-view 'thread))
@@ -2615,8 +2606,7 @@ If ARG, without confirm."
 		   wl-summary-buffer-number-regexp
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-mark-modified
-		   wl-summary-buffer-thread-modified
-		   wl-summary-buffer-number-list)
+		   wl-summary-buffer-thread-modified)
 		 (and (eq wl-summary-buffer-view 'thread)
 		      '(wl-thread-entity-hashtb
 			wl-thread-entities
@@ -2692,12 +2682,6 @@ If ARG, without confirm."
       (delete-window mes-win)
       (run-hooks 'wl-summary-toggle-disp-off-hook))))
 
-(defun wl-summary-make-number-list ()
-  (setq wl-summary-buffer-number-list
-	(mapcar
-	 (lambda (x) (elmo-msgdb-overview-entity-get-number x))
-	 (elmo-msgdb-get-overview wl-summary-buffer-msgdb))))
-
 (defun wl-summary-goto-folder-subr (&optional folder scan-type other-window
 					      sticky interactive scoring)
   "Display target folder on summary."
@@ -2744,7 +2728,8 @@ If ARG, without confirm."
 		       (cache (expand-file-name wl-summary-cache-file dir))
 		       (view (expand-file-name wl-summary-view-file dir)))
 		  (when (file-exists-p cache)
-		    (insert-file-contents-as-binary cache)
+		    (as-binary-input-file
+		     (insert-file-contents cache))
 		    (elmo-set-buffer-multibyte
 		     default-enable-multibyte-characters)
 		    (decode-mime-charset-region
@@ -2754,8 +2739,7 @@ If ARG, without confirm."
 		    (setq wl-summary-buffer-view
 			  (wl-summary-load-file-object view)))
 		  (if (eq wl-summary-buffer-view 'thread)
-		      (wl-thread-resume-entity fld)
- 		    (wl-summary-make-number-list))))
+		      (wl-thread-resume-entity fld))))
 	    ;; Load msgdb
 	    (setq wl-summary-buffer-msgdb nil) ; new msgdb
 	    (setq wl-summary-buffer-msgdb
@@ -2797,9 +2781,10 @@ If ARG, without confirm."
 	  (set-buffer-modified-p nil)
 	  (goto-char (point-min))
 	  (if (wl-summary-cursor-down t)
-	      (let ((unreadp (wl-summary-next-message 
-			      (wl-summary-message-number)
-			      'down nil)))
+	      (let ((unreadp (wl-thread-next-mark-p
+			      (wl-thread-entity-get-mark
+			       (wl-summary-message-number))
+			      wl-summary-move-order)))
 		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
 		      ((not unreadp)
@@ -4482,62 +4467,107 @@ If ARG, exit virtual folder."
 	(wl-match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
-(defvar wl-summary-move-spec-alist
-  '((new . ((p . "\\(N\\|\\$\\)")
-	    (p . "\\(U\\|!\\)")
-	    (t . nil)))
-    (unread . ((p . "\\(N\\|\\$\\|U\\|!\\)")
-	       (t . nil)))))
+(defmacro wl-summary-cursor-move-regex ()
+  (` (let ((mark-alist
+	    (if (elmo-folder-plugged-p wl-summary-buffer-folder-name)
+		(cond ((eq wl-summary-move-order 'new)
+		       (list
+			(list
+			 wl-summary-new-mark)
+			(list
+			 wl-summary-unread-uncached-mark
+			 wl-summary-unread-cached-mark
+			 wl-summary-important-mark)))
+		      ((eq wl-summary-move-order 'unread)
+		       (list
+		       (list
+			wl-summary-unread-uncached-mark
+			wl-summary-unread-cached-mark
+			wl-summary-new-mark)
+		       (list
+			wl-summary-important-mark)))
+		      (t
+		       (list
+		       (list
+			wl-summary-unread-uncached-mark
+			wl-summary-unread-cached-mark
+			wl-summary-new-mark
+			wl-summary-important-mark))))
+	      (cond ((eq wl-summary-move-order 'unread)
+		     (list
+		     (list
+		      wl-summary-unread-cached-mark)
+		     (list
+		      wl-summary-important-mark)))
+		    (t
+		     (list
+		     (list
+		      wl-summary-unread-cached-mark
+		      wl-summary-important-mark)))))))
+       (mapcar
+	(function
+	 (lambda (mark-list)
+	   (concat wl-summary-message-regexp
+		   ".\\("
+		   (mapconcat 'regexp-quote
+			      mark-list
+			      "\\|")
+		   "\\)\\|"
+		   wl-summary-message-regexp "\\*")))
+	mark-alist))))
 
-(defsubst wl-summary-next-message (num direction hereto)
-  (let ((cur-spec (cdr (assq wl-summary-move-order 
-			     wl-summary-move-spec-alist)))
-	(nums (memq num (if (eq direction 'up)
-			    (reverse wl-summary-buffer-number-list)
-			  wl-summary-buffer-number-list)))
-	marked-list nums2)
-    (unless hereto (setq nums (cdr nums)))
-    (setq nums2 nums)
-    (catch 'done
-      (while cur-spec
-	(setq nums nums2)
-	(cond ((eq (car (car cur-spec)) 'p)
-	       (if (setq marked-list (elmo-msgdb-list-messages-mark-match
-				      wl-summary-buffer-msgdb
-				      (cdr (car cur-spec))))
-		   (while nums
-		     (if (memq (car nums) marked-list)
-			 (throw 'done (car nums)))
-		     (setq nums (cdr nums)))))
-	      ((eq (car (car cur-spec)) 't)
-	       (while nums
-		 (if (and wl-summary-buffer-target-mark-list
-			  (memq (car nums)
-				wl-summary-buffer-target-mark-list))
-		     (throw 'done (car nums)))
-		 (setq nums (cdr nums)))))
-	(setq cur-spec (cdr cur-spec))))))
+;;
+;; Goto unread or important
+;;
+(defun wl-summary-cursor-up (&optional hereto)
+  (interactive "P")
+  (if (and (not wl-summary-buffer-target-mark-list)
+	   (eq wl-summary-buffer-view 'thread))
+      (progn
+	(if (eobp)
+	    (forward-line -1))
+	(wl-thread-jump-to-prev-unread hereto))
+    (if hereto
+	(end-of-line)
+      (beginning-of-line))
+    (let ((case-fold-search nil)
+	  regex-list)
+      (setq regex-list (wl-summary-cursor-move-regex))
+      (catch 'done
+	(while regex-list
+	  (when (re-search-backward
+		 (car regex-list)
+		 nil t nil)
+	    (beginning-of-line)
+	    (throw 'done t))
+	  (setq regex-list (cdr regex-list)))
+	(beginning-of-line)
+	(throw 'done nil)))))
 
-(defsubst wl-summary-cursor-move (direction hereto)
-  (when (and (eq direction 'up)
-	     (eobp))
-    (forward-line -1)
-    (setq hereto t))
-  (let (num)
-    (when (setq num (wl-summary-next-message (wl-summary-message-number)
-					     direction hereto))
-      (wl-thread-jump-to-msg num)
-      t)))
 ;;
 ;; Goto unread or important
 ;; returns t if next message exists in this folder.
 (defun wl-summary-cursor-down (&optional hereto)
   (interactive "P")
-  (wl-summary-cursor-move 'down hereto))
-
-(defun wl-summary-cursor-up (&optional hereto)
-  (interactive "P")
-  (wl-summary-cursor-move 'up hereto))
+  (if (and (null wl-summary-buffer-target-mark-list)
+	   (eq wl-summary-buffer-view 'thread))
+      (wl-thread-jump-to-next-unread hereto)
+    (if hereto
+	(beginning-of-line)
+      (end-of-line))
+    (let ((case-fold-search nil)
+	  regex-list)
+      (setq regex-list (wl-summary-cursor-move-regex))
+      (catch 'done
+	(while regex-list
+	  (when (re-search-forward
+		 (car regex-list)
+		 nil t nil)
+	    (beginning-of-line)
+	    (throw 'done t))
+	  (setq regex-list (cdr regex-list)))
+	(beginning-of-line)
+	(throw 'done nil)))))
 
 (defun wl-summary-save-view-cache ()
   (save-excursion
@@ -5917,13 +5947,22 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(message "Dropping...done"))))
 
 (defun wl-summary-default-get-next-msg (msg)
-  (or (wl-summary-next-message msg
-			       (if wl-summary-move-direction-downward 'down
-				 'up)
-			       nil)
-      (cadr (memq msg (if wl-summary-move-direction-downward
-			  wl-summary-buffer-number-list
-			(reverse wl-summary-buffer-number-list))))))
+  (let (next)
+    (if (and (not wl-summary-buffer-target-mark-list)
+	     (eq wl-summary-buffer-view 'thread)
+	     (if (eq wl-summary-move-direction-downward nil)
+		 (setq next (wl-thread-get-prev-unread msg))
+	       (setq next (wl-thread-get-next-unread msg))))
+	next
+      (save-excursion
+	(wl-summary-jump-to-msg msg)
+	(let (wl-summary-buffer-disp-msg)
+	  (if (eq wl-summary-move-direction-downward nil)
+	      (unless (wl-summary-cursor-up)
+		(wl-summary-prev))
+	    (unless (wl-summary-cursor-down)
+	      (wl-summary-next)))
+	  (wl-summary-message-number))))))
 
 (defsubst wl-cache-prefetch-p (fld &optional num)
   (cond ((and num wl-cache-prefetch-folder-type-list)

@@ -803,13 +803,11 @@ This function is imported from Emacs 20.7."
   (fset 'wl-biff-start 'ignore)))
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
-  (when (and (not wl-modeline-biff-status) (> new-mails 0))
-    (run-hooks 'wl-biff-notify-hook))
   (setq wl-modeline-biff-status (> new-mails 0))
   (force-mode-line-update t)
   (when notify-minibuf
     (cond ((zerop new-mails) (message "No mail."))
-	  ((= 1 new-mails) (message "You have a new mail."))
+	  ((eq 1 new-mails) (message "You have a new mail."))
 	  (t (message "You have %d new mails." new-mails)))))
 
 ;; Internal variable.

@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.5.8
+@set VERSION 2.5.7
 @synindex pg cp
 @finalout
 
@@ -639,7 +639,6 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 
 $B5/F0$7$?$"$H$G%U%)%k%@0lMw$N%P%C%U%!$+$i9XFI%U%)%k%@$rDI2C(B/$BJT=8$9$k$3$H(B
 $B$b2DG=$G$9$N$G!"$3$N9`$OHt$P$7$F$b9=$$$^$;$s!#(B
-@xref{Folder Manager}.
 
 @file{~/.folders} $B$N=q$-J}$O$H$F$bC1=c$G$9!#$3$s$J$+$s$8$G$9!#(B
 
@@ -5727,7 +5726,6 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 * mu-cite::                     mu-cite.el
 * x-face-mule::                 x-face-mule.el
 * dired-dd::                    dired-dd.el
-* MHC::                         MHC
 @end menu
 
 
@@ -5876,7 +5874,7 @@ bitmap-mule 8.0$B0J9_$KIUB0$N(B @file{x-face-mule.el}
 ($BJQ?t(B @code{wl-auto-insert-x-face} $B$,(B non-nil $B$N>l9g(B)
 
 
-@node dired-dd, MHC, x-face-mule, Living with other packages
+@node dired-dd,  , x-face-mule, Living with other packages
 @subsection dired-dd(Dired-DragDrop)
 @pindex Dired-DragDrop
 @pindex Dired-DD
@@ -5902,34 +5900,6 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
-@subsection mhc.el
-@pindex MHC
-
-Message Harmonized Calendaring system
-(@uref{http://www.quickhack.net/mhc/})
-
-MHC $B$rMQ$$$k$H!"%a%C%;!<%8$r85$KM=DjI=$r:n$l$^$9!#(B
-
-mhc-0.25 $B$N>l9g!'(B
-
-@lisp
-@group
-(setq mhc-mailer-package 'wl)
-(autoload 'mhc-mode "mhc" nil t)
-(add-hook 'wl-summary-mode-hook 'mhc-mode)
-(add-hook 'wl-folder-mode-hook 'mhc-mode)
-@end group
-@end lisp
-
-mhc-current $B$N>l9g!'(B
-
-@lisp
-@group
-(autoload 'mhc-wl-setup "mhc-wl")
-(add-hook 'wl-init-hook 'mhc-wl-setup)
-@end group
-@end lisp
 
 @node Highlights, Biff, Living with other packages, Customization
 @section $B%O%$%i%$%H$N@_Dj(B
@@ -6191,16 +6161,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @vindex wl-biff-check-interval
 $B=i4|@_Dj$O(B 40 ($BC10L(B:$BIC(B)$B!#(B
 $B$3$NCM$4$H$K%a!<%kCe?.$N%A%'%C%/$r9T$J$$$^$9!#(B
-
-@item wl-biff-notify-hook
-@vindex wl-biff-notify-hook
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
-$B?7$7$$%a!<%k$,FO$$$?:]$K<B9T$5$l$k%U%C%/!#(B
-$BNc$($P%S!<%W2;$rLD$i$9$J$i(B
-@lisp
-(setq wl-biff-notify-hook '(beep))
-@end lisp
-$B$N$h$&$K@_Dj$7$^$9!#(B
 @end table
 
 

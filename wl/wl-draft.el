@@ -690,11 +690,11 @@ Reply to author if WITH-ARG is non-nil."
     (message "")))
 
 (defun wl-draft-fcc ()
-  "Add a new Fcc field, with file name completion."
+  "Add a new FCC field, with file name completion."
   (interactive)
-  (or (mail-position-on-field "fcc" t)  ;Put new field after exiting Fcc.
+  (or (mail-position-on-field "fcc" t)  ;Put new field after exiting FCC.
       (mail-position-on-field "to"))
-  (insert "\nFcc: "))
+  (insert "\nFCC: "))
 
 ;; function for wl-sent-message-via
 
@@ -1200,7 +1200,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (or (markerp header-end) (error "header-end must be a marker"))
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^Fcc:[ \t]*" header-end t)
+      (while (re-search-forward "^FCC:[ \t]*" header-end t)
 	(setq fcc-list
 	      (cons (buffer-substring-no-properties
 		     (point)
@@ -1339,7 +1339,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	(insert "Reply-To: " mail-default-reply-to "\n"))
     (wl-draft-insert-ccs "Bcc: " (or wl-bcc
 			       (and mail-self-blind (user-login-name))))
-    (wl-draft-insert-ccs "Fcc: " wl-fcc)
+    (wl-draft-insert-ccs "FCC: " wl-fcc)
     (if wl-organization
 	(insert "Organization: " wl-organization "\n"))
     (and wl-auto-insert-x-face

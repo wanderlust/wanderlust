@@ -33,7 +33,6 @@
 
 (require 'wl-summary)
 (require 'wl-highlight)
-(eval-when-compile (require 'cl))
 
 ;; buffer local variables.
 ;;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
@@ -54,6 +53,49 @@
 
 ;;;;;; each entity is (number opened-or-not children parent) ;;;;;;;
 
+(defun wl-meaning-of-mark (mark)
+  (if (not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+      (cond
+       ((string= mark wl-summary-unread-cached-mark)
+	'unread)
+       ((string= mark wl-summary-important-mark)
+	'important))
+    (cond
+     ((string= mark wl-summary-new-mark)
+      'new)
+     ((or (string= mark wl-summary-unread-uncached-mark)
+	  (string= mark wl-summary-unread-cached-mark))
+      'unread)
+     ((string= mark wl-summary-important-mark)
+      'important))))
+  
+(defun wl-thread-next-mark-p (mark next)
+  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+	 (or (string= mark wl-summary-unread-cached-mark)
+	     (string= mark wl-summary-important-mark)))
+	((eq next 'new)
+	 (string= mark wl-summary-new-mark))
+	((eq next 'unread)
+	 (or (string= mark wl-summary-unread-uncached-mark)
+	     (string= mark wl-summary-unread-cached-mark)
+	     (string= mark wl-summary-new-mark)))
+	(t
+	 (or (string= mark wl-summary-unread-uncached-mark)
+	     (string= mark wl-summary-unread-cached-mark)
+	     (string= mark wl-summary-new-mark)
+	     (string= mark wl-summary-important-mark)))))
+
+(defun wl-thread-next-failure-mark-p (mark next)
+  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+	 (string= mark wl-summary-unread-cached-mark))
+	((or (eq next 'new)
+	     (eq next 'unread))
+	 (or (string= mark wl-summary-unread-uncached-mark)
+	     (string= mark wl-summary-unread-cached-mark)
+	     (string= mark wl-summary-new-mark)
+	     (string= mark wl-summary-important-mark)))
+	(t t)))
+
 (defun wl-thread-resume-entity (fld)
   (let (entities top-list)
     (setq entities (wl-summary-load-file-object
@@ -63,6 +105,7 @@
 	  (wl-summary-load-file-object
 	   (expand-file-name wl-thread-entity-list-file
 			     (elmo-msgdb-expand-path fld))))
+    (current-buffer)
     (message "Resuming thread structure...")
     ;; set obarray value.
     (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
@@ -73,47 +116,7 @@
       (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
 			 wl-thread-entity-hashtb)
       (setq entities (cdr entities)))
-    (wl-thread-make-number-list)
     (message "Resuming thread structure...done")))
-
-(defun wl-thread-make-number-list ()
-  "Make `wl-summary-buffer-number-list', a list of message numbers."
-  (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
-	 (children (wl-thread-entity-get-children node))
-	 parent sibling)
-    (setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
-    (while children
-      (wl-thread-entity-make-number-list-from-children
-       (wl-thread-get-entity (car children)))
-      (setq children (cdr children)))
-    (while node
-      (setq parent (wl-thread-entity-get-parent-entity node)
-	    sibling (wl-thread-entity-get-younger-brothers
-		     node parent))
-      (while sibling
-	(wl-thread-entity-make-number-list-from-children
-	 (wl-thread-get-entity (car sibling)))
-	(setq sibling (cdr sibling)))
-      (setq node parent))
-    (setq wl-summary-buffer-number-list (nreverse
-					 wl-summary-buffer-number-list))))
-
-(defun wl-thread-entity-make-number-list-from-children (entity)
-  (let ((msgs (list (car entity)))
-	msgs-stack children)
-    (while msgs
-      (setq wl-summary-buffer-number-list (cons (car entity)
-					wl-summary-buffer-number-list))
-      (setq msgs (cdr msgs))
-      (setq children (wl-thread-entity-get-children entity))
-      (if children
-	  (progn
-	    (wl-push msgs msgs-stack)
-	    (setq msgs children))
-	(unless msgs
-	  (while (and (null msgs) msgs-stack)
-	    (setq msgs (wl-pop msgs-stack)))))
-      (setq entity (wl-thread-get-entity (car msgs))))))
 
 (defun wl-thread-save-entity (dir)
   (wl-thread-save-entities dir)
@@ -189,24 +192,11 @@
 	     (car entity))
     (wl-append wl-thread-entity-list (list (car entity)))
     (setq wl-thread-entities (cons entity wl-thread-entities))
-    (setq wl-summary-buffer-number-list
-	  (nconc wl-summary-buffer-number-list (list (car entity))))
     (elmo-set-hash-val (format "#%d" (car entity)) entity
 		       wl-thread-entity-hashtb)))
 
 (defsubst wl-thread-entity-insert-as-children (to entity)
-  (let ((children (wl-thread-entity-get-children to))
-	curp curc)
-    (setq curp to)
-    (elmo-list-insert wl-summary-buffer-number-list
-		      (wl-thread-entity-get-number entity)
-		      (progn
-			(while (setq curc 
-				     (wl-thread-entity-get-children curp))
-			  (setq curp (wl-thread-get-entity 
-				      (nth (- (length curc) 1) 
-					   curc))))
-			(wl-thread-entity-get-number curp)))
+  (let ((children (nth 2 to)))
     (setcar (cddr to) (wl-append children
 				 (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
@@ -277,6 +267,82 @@ ENTITY is returned."
     ;; top of closed entity in the path.
     ret-val))
 
+(defun wl-thread-entity-get-mark (number)
+  (let ((mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+	mark)
+    (setq mark (cadr (assq number mark-alist)))
+    (if (string= mark wl-summary-read-uncached-mark)
+	()
+      mark)))
+
+(defun wl-thread-meaning-alist-get-result (meaning-alist)
+  (let ((malist meaning-alist)
+	ret-val)
+    (catch 'done
+      (while malist
+	(if (setq ret-val (cdr (car malist)))
+	    (throw 'done ret-val))
+	(setq malist (cdr malist))))))
+
+(defun wl-thread-entity-check-prev-mark (entity prev-marks)
+  "Check prev mark. Result is stored in PREV-MARK."
+  (let ((msgs (list (car entity)))
+	(succeed-list (car prev-marks))
+	(failure-list (cdr prev-marks))
+	msgs-stack children
+	mark meaning success failure parents)
+  (catch 'done
+    (while msgs
+      (if (and (not (memq (car msgs) parents))
+	       (setq children (reverse (wl-thread-entity-get-children entity))))
+	  (progn
+	    (wl-append parents (list (car msgs)))
+	    (wl-push msgs msgs-stack)
+	    (setq msgs children))
+	(if (setq mark (wl-thread-entity-get-mark (car entity)))
+	    (if (setq meaning (wl-meaning-of-mark mark))
+		(if (setq success (assq meaning succeed-list))
+		    (progn
+		      (setcdr success entity)
+		      (throw 'done nil))
+		  (setq failure (assq meaning failure-list))
+		  (unless (cdr failure)
+		    (setcdr (assq meaning failure-list) entity)))))
+	(setq msgs (cdr msgs)))
+	(unless msgs
+	  (while (and (null msgs) msgs-stack)
+	    (setq msgs (wl-pop msgs-stack))))
+      (setq entity (wl-thread-get-entity (car msgs)))))))
+
+(defun wl-thread-entity-check-next-mark (entity next-marks)
+  "Check next mark. Result is stored in NEXT-MARK."
+  (let ((msgs (list (car entity)))
+	(succeed-list (car next-marks))
+	(failure-list (cdr next-marks))
+	msgs-stack children
+	mark meaning success failure)
+  (catch 'done
+    (while msgs
+      (if (setq mark (wl-thread-entity-get-mark (car entity)))
+	  (if (setq meaning (wl-meaning-of-mark mark))
+	      (if (setq success (assq meaning succeed-list))
+		  (progn
+		    (setcdr success entity)
+		    (throw 'done nil))
+		(setq failure (assq meaning failure-list))
+		(unless (cdr failure)
+		  (setcdr (assq meaning failure-list) entity)))))
+      (setq msgs (cdr msgs))
+      (setq children (wl-thread-entity-get-children entity))
+      (if children
+	  (progn
+	    (wl-push msgs msgs-stack)
+	    (setq msgs children))
+	(unless msgs
+	  (while (and (null msgs) msgs-stack)
+	    (setq msgs (wl-pop msgs-stack)))))
+      (setq entity (wl-thread-get-entity (car msgs)))))))
+
 (defun wl-thread-entity-get-nearly-older-brother (entity &optional parent)
   (let ((brothers (wl-thread-entity-get-older-brothers entity parent)))
     (when brothers
@@ -307,6 +373,114 @@ ENTITY is returned."
       ;; top!!
       (cdr (memq (car entity) wl-thread-entity-list)))))
 
+(defun wl-thread-entity-check-prev-mark-from-older-brother (entity prev-marks)
+  (let* (older-brother)
+  (catch 'done
+    (while entity
+      (setq older-brother
+	    (reverse (wl-thread-entity-get-older-brothers entity)))
+      ;; check itself
+      (let ((succeed-list (car prev-marks))
+ 	    (failure-list (cdr prev-marks))
+ 	    mark meaning success failure)
+ 	(if (setq mark (wl-thread-entity-get-mark (car entity)))
+ 	    (if (setq meaning (wl-meaning-of-mark mark))
+ 		(if (setq success (assq meaning succeed-list))
+ 		    (progn
+ 		      (setcdr success entity)
+ 		      (throw 'done nil))
+ 		  (setq failure (assq meaning failure-list))
+ 		  (unless (cdr failure)
+ 		    (setcdr (assq meaning failure-list) entity))))))
+      ;; check older brothers
+      (while older-brother
+	(wl-thread-entity-check-prev-mark (wl-thread-get-entity
+					   (car older-brother))
+					  prev-marks)
+	(if (wl-thread-meaning-alist-get-result
+	     (car prev-marks))
+	    (throw 'done nil))
+	(setq older-brother (cdr older-brother)))
+      (setq entity (wl-thread-entity-get-parent-entity entity))))))
+
+(defun wl-thread-entity-get-prev-marked-entity (entity prev-marks)
+  (let ((older-brothers (reverse
+			 (wl-thread-entity-get-older-brothers entity)))
+	marked)
+    (or (catch 'done
+	  (while older-brothers
+	    (wl-thread-entity-check-prev-mark
+	     (wl-thread-get-entity (car older-brothers)) prev-marks)
+	    (if (setq marked
+		      (wl-thread-meaning-alist-get-result
+		       (car prev-marks)))
+		(throw 'done marked))
+	    (setq older-brothers (cdr older-brothers))))
+	(wl-thread-entity-check-prev-mark-from-older-brother
+	 (wl-thread-entity-get-parent-entity entity) prev-marks)
+	(if (setq marked
+		  (wl-thread-meaning-alist-get-result
+		   (car prev-marks)))
+	    marked
+	  (if (setq marked
+		    (wl-thread-meaning-alist-get-result
+		     (cdr prev-marks)))
+	      marked)))))
+
+(defun wl-thread-get-prev-unread (msg &optional hereto)
+  (let ((cur-entity (wl-thread-get-entity msg))
+	(prev-marks (cond ((eq wl-summary-move-order 'new)
+			   (cons (list (cons 'new nil))
+				 (list (cons 'unread nil)
+				       (cons 'important nil))))
+			  ((eq wl-summary-move-order 'unread)
+			   (cons (list (cons 'unread nil)
+				       (cons 'new nil))
+				 (list (cons 'important nil))))
+			  (t
+			   (cons (list (cons 'unread nil)
+				       (cons 'new nil)
+				       (cons 'important nil))
+				 nil))))
+	mark ret-val)
+    (if hereto
+	(when (wl-thread-next-mark-p (setq mark
+					   (wl-thread-entity-get-mark
+					    (car cur-entity)))
+				     (caaar prev-marks))
+	  ;;(setq mark (cons cur-entity
+	  ;;(wl-thread-entity-get-mark cur-entity)))
+	  (setq ret-val msg)))
+    (when (and (not ret-val)
+	       (or (setq cur-entity
+			 (wl-thread-entity-get-prev-marked-entity
+			  cur-entity prev-marks))
+		   (and hereto mark)))
+      (if (and hereto
+	       (catch 'done
+		 (let ((success-list (car prev-marks)))
+		   (while success-list
+		     (if (cdr (car success-list))
+			 (throw 'done nil))
+		     (setq success-list (cdr success-list)))
+		   t))
+	       (wl-thread-next-failure-mark-p mark (caaar prev-marks)))
+	  (setq ret-val msg)
+	(when cur-entity
+	  (setq ret-val (car cur-entity)))))
+    ret-val))
+    
+(defun wl-thread-jump-to-prev-unread (&optional hereto)
+  "If prev unread is a children of a closed message.
+The closed parent will be opened."
+  (interactive "P")
+  (let ((msg (wl-thread-get-prev-unread
+	      (wl-summary-message-number) hereto)))
+    (when msg
+      (wl-thread-entity-force-open (wl-thread-get-entity msg))
+      (wl-summary-jump-to-msg msg)
+      t)))
+
 (defun wl-thread-jump-to-msg (&optional number)
   (interactive)
   (let ((num (or number
@@ -314,6 +488,63 @@ ENTITY is returned."
                   (read-from-minibuffer "Jump to Message(No.): ")))))
     (wl-thread-entity-force-open (wl-thread-get-entity num))
     (wl-summary-jump-to-msg num)))
+
+(defun wl-thread-get-next-unread (msg &optional hereto)
+  (let ((cur-entity (wl-thread-get-entity msg))
+	(next-marks (cond ((not (elmo-folder-plugged-p
+				 wl-summary-buffer-folder-name))
+			   (cons (list (cons 'unread nil))
+				 (list (cons 'important nil))))
+			  ((eq wl-summary-move-order 'new)
+			   (cons (list (cons 'new nil))
+				 (list (cons 'unread nil)
+				       (cons 'important nil))))
+			  ((eq wl-summary-move-order 'unread)
+			   (cons (list (cons 'unread nil)
+				       (cons 'new nil))
+				 (list (cons 'important nil))))
+			  (t
+			   (cons (list (cons 'unread nil)
+				       (cons 'new nil)
+				       (cons 'important nil))
+				 nil))))
+	mark ret-val)
+    (if hereto
+	(when (wl-thread-next-mark-p (setq mark
+					   (wl-thread-entity-get-mark
+					    (car cur-entity)))
+				     (caaar next-marks))
+	  (setq ret-val msg)))
+    (when (and (not ret-val)
+	       (or (setq cur-entity
+			 (wl-thread-entity-get-next-marked-entity
+			  cur-entity next-marks))
+		   (and hereto mark)))
+      (if (and hereto
+	       ;; all success-list is nil
+	       (catch 'done
+		 (let ((success-list (car next-marks)))
+		   (while success-list
+		     (if (cdr (car success-list))
+		       (throw 'done nil))
+		     (setq success-list (cdr success-list)))
+		   t))
+	       (wl-thread-next-failure-mark-p mark (caaar next-marks)))
+	  (setq ret-val msg)
+	(when cur-entity
+	  (setq ret-val (car cur-entity)))))
+    ret-val))
+
+(defun wl-thread-jump-to-next-unread (&optional hereto)
+  "If next unread is a children of a closed message.
+The closed parent will be opened."
+  (interactive "P")
+  (let ((msg (wl-thread-get-next-unread
+	      (wl-summary-message-number) hereto)))
+    (when msg
+      (wl-thread-entity-force-open (wl-thread-get-entity msg))
+      (wl-summary-jump-to-msg msg)
+      t)))
 
 (defun wl-thread-close-all ()
   "Close all top threads."
@@ -378,6 +609,50 @@ ENTITY is returned."
 	      (wl-thread-entity-force-open (wl-thread-get-entity
 					    (nth 0 (car mark-alist))))))
       (setq mark-alist (cdr mark-alist)))))
+
+;;; a subroutine for wl-thread-entity-get-next-marked-entity.
+(defun wl-thread-entity-check-next-mark-from-younger-brother
+  (entity next-marks)
+  (let* (parent younger-brother)
+    (catch 'done
+      (while entity
+	(setq parent (wl-thread-entity-get-parent-entity entity)
+	      younger-brother
+	      (wl-thread-entity-get-younger-brothers entity parent))
+	;; check my brother!
+	(while younger-brother
+	  (wl-thread-entity-check-next-mark
+	   (wl-thread-get-entity (car younger-brother))
+	   next-marks)
+	  (if  (wl-thread-meaning-alist-get-result
+		(car next-marks))
+	      (throw 'done nil))
+	  (setq younger-brother (cdr younger-brother)))
+	(setq entity parent)))))
+
+(defun wl-thread-entity-get-next-marked-entity (entity next-marks)
+  (let ((children (wl-thread-entity-get-children entity))
+	marked)
+    (or (catch 'done
+	  (while children
+	    (wl-thread-entity-check-next-mark
+	     (wl-thread-get-entity (car children)) next-marks)
+	    (if (setq marked
+		      (wl-thread-meaning-alist-get-result
+		       (car next-marks)))
+		(throw 'done marked))
+	    (setq children (cdr children))))
+	;; check younger brother
+	(wl-thread-entity-check-next-mark-from-younger-brother
+	 entity next-marks)
+	(if (setq marked
+		  (wl-thread-meaning-alist-get-result
+		   (car next-marks)))
+	    marked
+	  (if (setq marked
+		    (wl-thread-meaning-alist-get-result
+		     (cdr next-marks)))
+	      marked)))))
 
 (defsubst wl-thread-maybe-get-children-num (msg)
   (let ((entity (wl-thread-get-entity msg)))
@@ -588,8 +863,6 @@ ENTITY is returned."
 	      (wl-thread-reparent-children children top-child)
 	      (wl-append update-msgs children)))
 	  ;; delete myself from top list.
-	  (setq wl-summary-buffer-number-list
-		(delq msg wl-summary-buffer-number-list))
 	  (setq older-brothers (wl-thread-entity-get-older-brothers
 				entity nil))
 	  (setq younger-brothers (wl-thread-entity-get-younger-brothers

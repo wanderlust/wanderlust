@@ -921,16 +921,6 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 	 (fld (nth (- (/ number elmo-multi-divide-number) 1) flds)))
     (elmo-folder-number-get-spec fld number)))
 
-(defun elmo-msgdb-list-messages-mark-match (msgdb mark-regexp)
-  "List messages in the FOLDER which have a mark that matches MARK-REGEXP"
-  (let ((case-fold-search nil)
-	matched)
-    (if mark-regexp
-	(dolist (elem (elmo-msgdb-get-mark-alist msgdb))
-	  (if (string-match mark-regexp (cadr elem))
-	      (setq matched (cons (car elem) matched)))))
-    matched))
-
 ;; autoloads
 (autoload 'elmo-nntp-make-groups-hashtb "elmo-nntp")
 (autoload 'elmo-nntp-post "elmo-nntp")
