@@ -230,6 +230,10 @@
 ;	(setq buffers (cdr buffers))))))
 ;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
 
+;; PGP で暗号化する時に自分の公開鍵も含める。
+;; (そのメッセージを自分でも読めるように)
+;(setq pgg-encrypt-for-me t)
+
 
 ;;; [[ テンプレート ]]
 

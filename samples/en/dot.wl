@@ -230,6 +230,10 @@
 ;	(setq buffers (cdr buffers))))))
 ;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
 
+;; When you encrypt message by PGP, include your public key.
+;; (to make the message visible from yourself)
+;(setq pgg-encrypt-for-me t)
+
 
 ;;; [[ Template ]]
 
