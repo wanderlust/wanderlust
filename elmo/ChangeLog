@@ -1,5 +1,115 @@
 2002-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pop3.el (elmo-folder-msgdb-create): Follow the API change.
+	(elmo-pop3-msgdb-create-by-header): Ditto.
+	(elmo-pop3-msgdb-create-message): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-nmz.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Ditto.
+	(elmo-folder-msgdb-create): Ditto.
+	(elmo-nntp-folder-msgdb-create): Ditto.
+	(elmo-nntp-msgdb-create-by-header): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+	(elmo-folder-list-unreads): Define.
+
+	* elmo-pipe.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-append-messages): Ditto.
+	(elmo-folder-list-unreads): Define.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+
+	* elmo-net.el (elmo-folder-list-unreads): Define.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-list-answereds-plugged): Ditto.
+	(elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-msgdb-create-unplugged): Ditto.
+	(elmo-folder-unmark-answered): Define.
+	(elmo-folder-mark-as-answered-unplugged): Ditto.
+	(elmo-folder-unmark-answered-unplugged): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-new-mark): New user option.
+	(elmo-msgdb-unread-uncached-mark): Ditto.
+	(elmo-msgdb-unread-cached-mark): Ditto.
+	(elmo-msgdb-read-uncached-mark): Ditto.
+	(elmo-msgdb-answered-cached-mark): Ditto.
+	(elmo-msgdb-answered-uncached-mark): Ditto.
+	(elmo-msgdb-important-mark): Ditto.
+	(elmo-msgdb-set-mark): Rewrite.
+	(elmo-msgdb-count-marks): Rewrite.
+	(elmo-msgdb-mark-alist-set): Abolish.
+	(elmo-msgdb-seen-list): Removed argument `seen-marks'.
+	(elmo-msgdb-add-msgs-to-seen-list): Likewise.
+
+	* elmo-multi.el (elmo-folder-check): Call elmo-folder-synchronize.
+	(elmo-folder-close): Define.
+	(elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-list-unreads): Rewrite.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Define.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-localdir.el (elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-append-messages): Ditto.
+
+	* elmo-mark.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-map.el (elmo-folder-list-unreads): Ditto.
+	(elmo-folder-list-importants): Ditto.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-append-messages): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Follow the API
+	change.
+	(elmo-folder-msgdb-create-plugged): Ditto.
+	(elmo-folder-append-messages): Ditto.
+	(elmo-folder-list-answereds-plugged): Define.
+	(elmo-imap4-search-internal-primitive): Add `mark' processing.
+	(elmo-folder-unmark-answered-plugged): Define.
+	(elmo-folder-mark-as-answered-plugged): Ditto.
+	(elmo-folder-search-requires-msgdb-p): Ditto.
+
+	* elmo-filter.el (elmo-filter-folder): Added new slot 'require-msgdb'.
+	(elmo-folder-initialize): Set it.
+	(elmo-folder-msgdb): Define.
+	(elmo-folder-check): Call elmo-folder-synchronize.
+	(elmo-folder-close): Define.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-msgdb-create): Rewrite.
+	(elmo-folder-list-unreads): Ditto.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-answered): Define.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-merge-method-list): Added
+	elmo-folder-mark-as-answered, elmo-folder-unmark-answered.
+	(elmo-dop-queue-method-name-alist): Likewise.
+	(elmo-folder-mark-as-answered-dop): New inline function.
+	(elmo-folder-unmark-answered-dop): Ditto.
+	(elmo-folder-status-dop): Treat spool-length as 0 if it does not exist.
+
+	* elmo-archive.el (elmo-folder-append-messages): Follow the API change.
+	(elmo-folder-msgdb-create): Ditto.
+	(elmo-archive-msgdb-create-as-numlist-subr1): Ditto.
+	(elmo-archive-msgdb-create-as-numlist-subr2): Ditto.
+	(elmo-archive-parse-mmdf): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-list-unreads-internal): Ditto.
+
 	* elmo.el (elmo-folder-msgdb): Define as generic function.
 	(elmo-folder-list-messages): Added argument `in-msgdb'.
 	(elmo-folder-list-unreads): Define as generic function.
