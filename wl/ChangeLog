@@ -1,3 +1,17 @@
+2003-10-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-window-scroll-functions):
+	Renamed from wl-summary-window-scroll-functions.
+	(wl-summary-window-scroll-functions): Don't set to variable.
+	(wl-summary-display-top): Use run-hooks.
+	(wl-summary-display-bottom): Ditto.
+	(wl-summary-toggle-disp-msg): Ditto.
+	(wl-summary-mode): Set wl-summary-buffer-window-scroll-functions;
+	Use it instead of wl-summary-window-scroll-functions.
+	(wl-summary-goto-folder-subr): Don't call
+	wl-summary-window-scroll-functions, use
+	wl-summary-buffer-window-scroll-functions instead.
+
 2003-09-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mode): Use make-local-hook instead of

@@ -102,6 +102,7 @@
 (defvar wl-summary-buffer-next-folder-function nil)
 (defvar wl-summary-buffer-exit-function nil)
 (defvar wl-summary-buffer-next-message-function nil)
+(defvar wl-summary-buffer-window-scroll-functions nil)
 (defvar wl-summary-buffer-number-list nil)
 (defvar wl-summary-buffer-folder-name nil)
 (defvar wl-summary-buffer-line-formatter nil)
@@ -172,6 +173,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-next-folder-function)
 (make-variable-buffer-local 'wl-summary-buffer-exit-function)
 (make-variable-buffer-local 'wl-summary-buffer-next-message-function)
+(make-variable-buffer-local 'wl-summary-buffer-window-scroll-functions)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-line-formatter)
@@ -555,8 +557,6 @@ See also variable `wl-use-petname'."
       (not (wl-thread-entity-parent-invisible-p
 	    (wl-thread-get-entity number)))))
 
-(defvar wl-summary-window-scroll-functions nil)
-
 (defun wl-summary-update-mark-and-highlight-window (&optional win beg)
   "A function to be called as window-scroll-functions."
   (with-current-buffer (window-buffer win)
@@ -582,16 +582,13 @@ See also variable `wl-use-petname'."
     (set-buffer-modified-p nil)))
 
 (defun wl-summary-window-scroll-functions ()
-  (or wl-summary-window-scroll-functions
-      (setq wl-summary-window-scroll-functions
-	    (cond
-	     ((and wl-summary-lazy-highlight
-		   wl-summary-lazy-update-mark)
-	      (list 'wl-summary-update-mark-and-highlight-window))
-	     (wl-summary-lazy-highlight
-	      (list 'wl-highlight-summary-window))
-	     (wl-summary-lazy-update-mark
-	      (list 'wl-summary-update-mark-window))))))
+  (cond ((and wl-summary-lazy-highlight
+	      wl-summary-lazy-update-mark)
+	 (list 'wl-summary-update-mark-and-highlight-window))
+	(wl-summary-lazy-highlight
+	 (list 'wl-highlight-summary-window))
+	(wl-summary-lazy-update-mark
+	 (list 'wl-summary-update-mark-window))))
 
 (defun wl-status-update ()
   (interactive)
@@ -600,9 +597,7 @@ See also variable `wl-use-petname'."
 (defun wl-summary-display-top ()
   (interactive)
   (goto-char (point-min))
-  (when wl-summary-window-scroll-functions
-    (dolist (function wl-summary-window-scroll-functions)
-      (funcall function)))
+  (run-hooks 'wl-summary-buffer-window-scroll-functions)
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -610,9 +605,7 @@ See also variable `wl-use-petname'."
   (interactive)
   (goto-char (point-max))
   (forward-line -1)
-  (when wl-summary-window-scroll-functions
-    (dolist (function wl-summary-window-scroll-functions)
-      (funcall function)))
+  (run-hooks 'wl-summary-buffer-window-scroll-functions)
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -823,11 +816,13 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	selective-display-ellipses nil)
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
-  (when (wl-summary-window-scroll-functions)
+  (setq wl-summary-buffer-window-scroll-functions
+	(wl-summary-window-scroll-functions))
+  (when wl-summary-buffer-window-scroll-functions
     (let ((hook (make-local-hook (if wl-on-xemacs
 				     'pre-idle-hook
 				   'window-scroll-functions))))
-      (dolist (function (wl-summary-window-scroll-functions))
+      (dolist (function wl-summary-buffer-window-scroll-functions)
 	(add-hook hook function nil t))))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
@@ -2387,7 +2382,7 @@ If ARG, without confirm."
       ;; entity-id is unknown.
       (wl-folder-set-current-entity-id
        (wl-folder-get-entity-id entity)))
-    (when (and (wl-summary-window-scroll-functions)
+    (when (and wl-summary-buffer-window-scroll-functions
 	       wl-on-xemacs)
       (sit-for 0))
     (unwind-protect
@@ -3525,9 +3520,7 @@ Return non-nil if the mark is updated"
 	  (run-hooks 'wl-summary-toggle-disp-off-hook))
 ;;;	(switch-to-buffer cur-buf)
 	)))
-    (when wl-summary-window-scroll-functions
-      (dolist (function wl-summary-window-scroll-functions)
-	(funcall function)))))
+    (run-hooks 'wl-summary-buffer-window-scroll-functions)))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."
