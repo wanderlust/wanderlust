@@ -3270,6 +3270,12 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 $B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$r!"(BMIME $B2r@O$9$k$3$H$J$/I=<($7$^$9!#(B
 (@code{wl-summary-redisplay-no-mime})
 
+@item C-c C-f
+@kindex C-c C-f (Summary)
+@findex wl-summary-toggle-header-narrowing
+$B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$N%X%C%@$N>JN,I=<($r%H%0%k$7$^$9!#(B
+(@code{wl-summary-toggle-header-narrowing})
+
 @item B
 @kindex B (Summary)
 @findex wl-summary-burst
@@ -4200,9 +4206,22 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @end group
 @end lisp
 
-$B%5%^%j$G$N%U%i%0$D$-%a%C%;!<%8$N?'$r;XDj$7$^$9!#0l$D$N%a%C%;!<%8$KJ#?t$N(B
-$B%0%m!<%P%k%U%i%0$,@_Dj$5$l$F$$$k>l9g$K$O!"$3$N%j%9%H$NA0J}$K$"$k%U%i%0$,(B
-$BM%@h$5$l$^$9!#(B
+$B%5%^%j$G$N%U%i%0$D$-%a%C%;!<%8$N?'$H%^!<%/$r;XDj$7$^$9!#%^!<%/$r>JN,$7$?(B
+$B>l9g$O!"(B@code{wl-summary-flag-mark} $B$K;XDj$5$l$?%^!<%/$,;HMQ$5$l$^$9!#0l(B
+$B$D$N%a%C%;!<%8$KJ#?t$N%0%m!<%P%k%U%i%0$,@_Dj$5$l$F$$$k>l9g$K$O!"$3$N%j%9(B
+$B%H$NA0J}$K$"$k%U%i%0$,M%@h$5$l$^$9!#(B
+
+$B@_DjNc(B:
+
+@lisp
+@group
+(setq wl-summary-flag-alist
+      '((important "purple")
+        (todo "red")
+        (business "green" "B")
+        (private "blue" "X")))
+@end group
+@end lisp
 @end table
 
 
@@ -4230,10 +4249,14 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 (@code{wl-message-toggle-disp-summary})
 
 @item Button-2
-@findex wl-message-refer-article-or-url
 @kindex Button-2 (Message)
+@findex wl-message-button-refer-article
+@findex wl-message-header-narrowing
 $B%^%&%9%]%$%s%?$N0LCV$K(B @samp{Message-ID:} $B$,$"$C$?$H$-$KBP1~$9$k%a%C%;!<(B
-$B%8$,8+$D$+$l$PI=<($7$^$9!#(B(@code{wl-message-refer-article-or-url})
+$B%8$,8+$D$+$l$PI=<($7$^$9!#(B(@code{wl-message-button-refer-article})
+
+$B%^%&%9%]%$%s%?$N0LCV$N%X%C%@$,>JN,I=<($5$l$F$$$?>l9g$K$O!"A4$F$NFbMF$rI=(B
+$B<($7$^$9!#$b$&0lEY2!$9$H:FEY>JN,I=<($7$^$9!#(B
 
 @item Button-4 ($B%[%$!<%k$D$-%^%&%9$N%[%$!<%k$r>e$X(B)
 @kindex Button-4 (Message)
@@ -4291,6 +4314,32 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex wl-message-truncate-lines
 $B=i4|@_Dj$G$O(B @code{default-truncate-lines} $B$NCM$r;H$$$^$9!#(B
 Non-nil $B$J$i%a%C%;!<%8%P%C%U%!$GD9$$9T$N@^$jJV$7$r$7$^$;$s!#(B
+
+@item wl-message-use-header-narrowing
+@vindex wl-message-use-header-narrowing
+$B=i4|@_Dj$O(B @code{t}$B!#(B
+Non-nil $B$J$i%X%C%@$N>JN,I=<($rM-8z$K$7$^$9!#(B
+
+@item wl-message-header-narrowing-fields
+@vindex wl-message-header-narrowing-fields
+$B=i4|@_Dj$O0J2<$N%j%9%H!#(B
+
+@lisp
+("to" "cc")
+@end lisp
+
+@noindent
+$B>JN,I=<($9$k%U%#!<%k%I$r;XDj$7$^$9!#(B
+
+@item wl-message-header-narrowing-lines
+@vindex wl-message-header-narrowing-lines
+$B=i4|@_Dj$O(B 4$B!#(B
+$B;XDj9T?t0J>e$"$k>l9g$K>JN,I=<($7$^$9!#(B
+
+@item wl-message-header-narrowing-string
+@vindex wl-message-header-narrowing-string
+$B=i4|@_Dj$O(B @samp{...}$B!#(B
+$B%X%C%@$NFbMF$r>JN,$7$?;~$KI=<($9$kJ8;zNs$r;XDj$7$^$9!#(B
 @end table
 
 
