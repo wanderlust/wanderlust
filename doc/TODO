@@ -1,0 +1,22 @@
+* tasks in 2.9.x
+
+** enable to define folder icons in elmo.el
+** make summary line format more flexible(WL:8748)
+** reconsider the structure of msgdb and make behavior faster
+** organize the mark for pre-fetch reservation 
+** organize the marks for already replied (forwarded) messages
+** manage important marks more strictly
+   e.g. remove '$' mark in the original message after deleting message
+   in 'mark folder
+
+* other tasks
+
+** mitigate special treatment of NNTP around wl-folder-check-entity-async
+** support for sending message as MIME Bcc (like mew)
+** organize variable like wl-summary-other-frame-list so as to open
+   matched summary in the new frame
+** organize optional setting for pipe folders to download messages at once
+   when one checks new messages
+** support for rfc2192, rfc2193, rfc2221 (managing imap referral)
+** deletion of attached file part in received mail
+** putting codes in order
