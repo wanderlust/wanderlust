@@ -1,3 +1,7 @@
+2000-10-11  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el: Doc fixes.
+
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-archive.el (toplevel): Use product-provide.
