@@ -278,6 +278,8 @@ Don't cache if nil.")
       (setq elmo-nntp-read-point (point))
       (or (elmo-nntp-read-response session t)
 	  (error "Cannot open network"))
+      (if elmo-nntp-send-mode-reader
+	  (elmo-nntp-send-mode-reader session))
       (when (eq (elmo-network-stream-type-symbol
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
@@ -305,8 +307,6 @@ Don't cache if nil.")
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-nntp-session))
-  (if elmo-nntp-send-mode-reader
-      (elmo-nntp-send-mode-reader session))
   (run-hooks 'elmo-nntp-opened-hook))
 
 (defun elmo-nntp-process-filter (process output)

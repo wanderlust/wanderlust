@@ -46,11 +46,11 @@
   :group 'elmo)
 
 (defcustom elmo-shimbun-index-range-alist nil
-  "*Alist of FOLDER and RANGE.
-FOLDER is the shimbun folder name.
+  "*Alist of FOLDER-REGEXP and RANGE.
+FOLDER-REGEXP is the regexp for shimbun folder name.
 RANGE is the range of the header indices .
 See `shimbun-headers' for more detail about RANGE."
-  :type '(repeat (cons (string :tag "Folder Name")
+  :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const :tag "all" all)
 			       (const :tag "last" last)
 			       (integer :tag "number"))))
@@ -119,6 +119,20 @@ See `shimbun-headers' for more detail about RANGE."
 		    headers))))
     (nreverse headers)))
 
+(defun elmo-shimbun-folder-setup (folder)
+  ;; Resume headers from existing msgdb.
+  (elmo-shimbun-folder-set-headers-internal
+   folder
+   (elmo-shimbun-msgdb-to-headers folder nil))
+  (elmo-shimbun-folder-set-header-hash-internal
+   folder
+   (elmo-make-hash
+    (length (elmo-shimbun-folder-headers-internal folder))))
+  (dolist (header (elmo-shimbun-folder-headers-internal folder))
+    (elmo-set-hash-val
+     (shimbun-header-id header) header
+     (elmo-shimbun-folder-header-hash-internal folder))))
+
 (defun elmo-shimbun-get-headers (folder)
   (shimbun-open-group
    (elmo-shimbun-folder-shimbun-internal folder)
@@ -137,6 +151,7 @@ See `shimbun-headers' for more detail about RANGE."
 			    (shimbun-header-id x)
 			    (elmo-folder-msgdb folder))
 		     x))
+		 ;; This takes much time.
 		 (shimbun-headers
 		  (elmo-shimbun-folder-shimbun-internal folder)
 		  (elmo-shimbun-folder-range-internal folder)))))
@@ -176,16 +191,24 @@ See `shimbun-headers' for more detail about RANGE."
        (nth 1 server-group)))
     (elmo-shimbun-folder-set-range-internal
      folder
-     (or (cdr (assoc (elmo-folder-name-internal folder)
-		     elmo-shimbun-index-range-alist))
+     (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
+					 elmo-shimbun-index-range-alist))
 	 elmo-shimbun-default-index-range))
     folder))
 
-(luna-define-method elmo-folder-open-internal :before ((folder
-							elmo-shimbun-folder))
+(luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
   (when (elmo-folder-plugged-p folder)
-    (if (elmo-shimbun-headers-check-p folder)
-	(elmo-shimbun-get-headers folder))))
+    (when (elmo-shimbun-headers-check-p folder)
+      (let ((inhibit-quit t))
+	(elmo-map-folder-location-setup
+	 folder 
+	 (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
+	;; Resume headers from existing msgdb.
+	(elmo-shimbun-folder-setup folder))
+      (elmo-shimbun-get-headers folder))
+    (elmo-map-folder-update-locations
+     folder
+     (elmo-map-folder-list-message-locations folder))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)

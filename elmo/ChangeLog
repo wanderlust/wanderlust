@@ -1,3 +1,40 @@
+2001-07-28  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Call
+	`elmo-nntp-send-mode-reader'.
+	(elmo-network-setup-session): Remove `elmo-nntp-send-mode-reader'.
+
+2001-07-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-index-range-alist): Changed to regexp
+	alist.
+	(elmo-folder-initialize): Use elmo-string-matched-assoc instead of
+	assoc.
+
+	* elmo-net.el (elmo-network-get-session): Set stream-type argument
+	for `elmo-plugged-p'.
+	(elmo-open-network-stream): Fixed stream-type argument.
+
+2001-07-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Cause an error when
+	unknown archive type is specified.
+
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-open-internal): Fixed.
+
+	* elmo.el (elmo-generic-folder-open): Bind inhibit-quit as t
+	while loading msgdb.
+
+	* elmo-shimbun.el (elmo-shimbun-folder-setup): New function.
+	(elmo-folder-open-internal): Rewrite.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-display-as-is-internal):
+	Adjust buffer-multibyte status.
+
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-msgdb-search): Use elmo-condition-in-msgdb-p instead
