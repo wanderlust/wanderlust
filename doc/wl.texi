@@ -1905,7 +1905,7 @@ Flush queue.
 @item V
 @kindex V (Folder)
 @findex wl-folder-virtual
-Move to the virtual folder with the condition specified.
+Move to the virtual folder (filter folder) with the condition specified.
 (@code{wl-folder-virtual})
 
 @item ?
@@ -3268,18 +3268,29 @@ Mark as unread the message at current cursor point.
 @item s
 @kindex s (Summary)
 @findex wl-summary-sync
-Synchronize summary view after prompting the update range
-(@samp{all}, @samp{update}, @samp{rescan}, @samp{first}, @samp{last}).
+Synchronize summary view after prompting the update range.
+You can specify one of the follows.
 
 @example
 @group
-all            ...Discard current summary and update all message.
-all-visible    ...Discard current summary and update all visible message.
-update         ...Update the difference between summary and the folder itself.
-rescan         ...Rescan the msgdb and display again.
-rescan-noscore ...Rescan the msgdb and display again (without scoring).
-cache-status   ...Sync the all marks with the real status of cache.
-first, last    ...Move to the filter folder(partial filter).
+all              Discard present msgdb and retrieve all informations.
+                 Do not retrieve killed messages.
+all-entirely     Discard present msgdb and retrieve all informations.
+                 Retrieve killed messages, too.
+update           Update the difference between informations in present
+                 msgdb and in current folder instance.
+                 Do not retrieve killed messages.
+update-entirely  Update the difference between informations in present
+                 msgdb and in current folder instance.
+                 Retrieve killed messages, too.
+rescan           Redisplay summary by rescanning present msgdb.
+rescan-noscore   Redisplay summary by rescanning present msgdb.
+                 Display messages killed by score, too.
+cache-status     Sync the all marks with the real status of cache.
+mark             Update marks.
+no-sync          Do nothing.
+first:NUM        Move to the filter folder(partial filter).
+last:NUM         Move to the filter folder(partial filter).
 @end group
 @end example
 
@@ -3318,7 +3329,7 @@ Toggle displaying of message window.
 
 @item V
 @kindex V (Summary)
-Move to the virtual folder with the condition specified.
+Move to the virtual folder (filter folder) with the condition specified.
 If called with prefix argument and current folder is virtual, exit it.
 @findex wl-summary-virtual
 (@code{wl-summary-virtual})
@@ -7461,6 +7472,13 @@ If non-nil, you are asked for confirmation when Wanderlust terminates.
 The initial setting is @code{t}.
 If non-nil, you are asked for confirmation when mail is sent.
 
+@item wl-default-sync-range
+@vindex wl-default-sync-range
+The initial setting is @samp{update}.
+Default update range of the summary. You can specify
+@samp{all}, @samp{update}, @samp{rescan} or @samp{no-sync}.
+See description of @code{wl-summary-sync} for the meaning of ranges.
+
 @item wl-folder-sync-range-alist
 @vindex wl-folder-sync-range-alist
 The initial setting is the alist shown below:
@@ -7475,9 +7493,10 @@ The initial setting is the alist shown below:
 @noindent
 This is an associative list of regular expressions of folder names and
 update range of the summary.  Update range is one of the @samp{all},
-@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first},
-@samp{last} and @samp{no-sync}. If a folder do not match, @samp{update}
-is used.
+@samp{update}, @samp{rescan} or @samp{no-sync}. If the folder do not
+match any of them, the value of @code{wl-default-sync-range} is used
+(@samp{update} by default).
+See description of @code{wl-summary-sync} for the meaning of ranges.
 
 @item wl-ask-range
 @vindex wl-ask-range
