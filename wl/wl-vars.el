@@ -1187,7 +1187,8 @@ This can either be a regular expression or list of regular expressions."
 (defcustom wl-draft-mime-bcc-body nil
   "Body string for MIME-encapsulated Bcc.
 If nil, a string `This is a blind carbon copy.' is used."
-  :type '(string :tag "Body")
+  :type '(choice (const :tag "default" nil)
+		 (string :tag "Body"))
   :group 'wl-draft)
 
 (defcustom wl-draft-disable-bcc-for-mime-bcc t
