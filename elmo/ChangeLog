@@ -1,3 +1,8 @@
+2000-05-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-archive.el (elmo-archive-list-folders): Fix base-folder
+	become nil.
+
 2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-list-folders): Remove progress gauge
