@@ -329,6 +329,7 @@
 ;; from SEMI-MK
 (defun compile-wl-package-xmas ()
   (config-wl-package-xmas)
+  (make-wl-news)
   (setq autoload-package-name "wl")
   (add-to-list 'command-line-args-left WLDIR)
   (batch-update-directory)
