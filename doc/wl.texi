@@ -4140,7 +4140,7 @@ The format of @code{wl-template-alist} is almost the same as
 (setq wl-template-alist
       '(("default"
          ("From" . wl-from)
-         ("Organization" . "~/.wl sample")
+         ("Organization" . "Example Co.Ltd.")
          (body . "Hello.\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}

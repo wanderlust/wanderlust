@@ -4106,7 +4106,7 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 (setq wl-template-alist
       '(("default"
          ("From" . wl-from)
-         ("Organization" . "~/.wl sample")
+         ("Organization" . "組織名")
          (body . "  ○○です。\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}
