@@ -674,7 +674,6 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-list (spec flag)
   (let ((session (elmo-imap4-get-session spec)))
-    (elmo-imap4-commit spec)
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (elmo-imap4-response-value
@@ -1349,7 +1348,7 @@ If optional argument UNMARK is non-nil, unmark."
   "Get server status"
   (let (response)
     ;; commit.
-    (elmo-imap4-commit spec)
+;    (elmo-imap4-commit spec)
     (setq response
 	  (elmo-imap4-send-command-wait (elmo-imap4-get-session spec)
 					(list
