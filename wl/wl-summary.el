@@ -3827,7 +3827,7 @@ Return t if message exists."
 
 (defun wl-summary-target-mark-forward (&optional arg)
   (interactive "P")
-  (let ((mlist (nreverse wl-summary-buffer-target-mark-list))
+  (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
 	(summary-buf (current-buffer))
 	(wl-draft-forward t)
 	start-point
@@ -3857,7 +3857,7 @@ Return t if message exists."
 
 (defun wl-summary-target-mark-reply-with-citation (&optional arg)
   (interactive "P")
-  (let ((mlist (nreverse wl-summary-buffer-target-mark-list))
+  (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
 	(summary-buf (current-buffer))
 	change-major-mode-hook
 	start-point

@@ -1,3 +1,9 @@
+2004-06-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-target-mark-forward): Protect
+	wl-summary-buffer-target-mark-list from nreverse.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+
 2004-06-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-update-indent-string-thread): Use
