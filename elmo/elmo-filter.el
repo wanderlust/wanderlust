@@ -270,6 +270,10 @@
   (elmo-folder-unset-flag (elmo-filter-folder-target-internal folder)
 			  numbers flag is-local))
 
+(luna-define-method elmo-message-folder ((folder elmo-filter-folder)
+					 number)
+  (elmo-message-folder (elmo-filter-folder-target-internal folder) number))
+
 (require 'product)
 (product-provide (provide 'elmo-filter) (require 'elmo-version))
 
