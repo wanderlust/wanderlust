@@ -1,3 +1,10 @@
+2004-06-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-set-flags-region): Call
+	`wl-summary-set-flags-internal' with number list instead of call
+	one by each message.
+	(wl-summary-target-mark-set-flags): Likewise.
+
 2004-06-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-target-mark-operation): Add optional

@@ -1585,7 +1585,7 @@ If ARG is non-nil, checking is omitted."
     (save-restriction
       (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
-      (let (flags)
+      (let (numbers)
 	(if (eq wl-summary-buffer-view 'thread)
 	    (while (not (eobp))
 	      (let* ((number (wl-summary-message-number))
@@ -1593,19 +1593,16 @@ If ARG is non-nil, checking is omitted."
 		     children)
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...mark line.
-		    ;; Crossposts are not processed
-		    (setq flags (wl-summary-set-flags-internal
-				number
-				flags))
+		    (setq numbers (nconc numbers (list number)))
 		  ;; closed
-		  (setq flags (wl-summary-set-flags-internal
-			      (wl-thread-get-children-msgs number)
-			      flags)))
+		  (setq numbers
+			(nconc numbers
+			       (wl-thread-get-children-msgs number))))
 		(forward-line 1)))
 	  (while (not (eobp))
-	    (setq flags (wl-summary-set-flags-internal
-			(wl-summary-message-number) flags))
-	    (forward-line 1))))))
+	    (setq numbers (nconc numbers (list (wl-summary-message-number))))
+	    (forward-line 1)))
+	(wl-summary-set-flags-internal numbers))))
   (wl-summary-count-unread)
   (wl-summary-update-modeline))
 
@@ -2994,10 +2991,8 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
-	  wl-summary-buffer-disp-msg
-	  flags)
-      (dolist (number wl-summary-buffer-target-mark-list)
-	(setq flags (wl-summary-set-flags-internal number flags)))
+	  wl-summary-buffer-disp-msg)
+      (wl-summary-set-flags-internal wl-summary-buffer-target-mark-list)
       (wl-summary-delete-all-target-marks)
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
