@@ -1,3 +1,55 @@
+2000-05-10  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-summary.el (wl-summary-insert-thread-entity): Search same
+	subject faster. If thread number is reverse, delayed updating
+	thread.
+	(wl-summary-search-by-subject): Ditto.
+	(wl-summary-put-alike): Ditto.
+	(wl-summary-get-alike): Ditto.
+	(wl-summary-insert-headers): Insert header of all overview in
+	buffer.
+	(wl-summary-rescan): Delayed updating thread. Kill search subject
+	buffer for wl-summary-search-by-subject.
+	(wl-summary-sync-update3): Ditto.
+	(wl-summary-exit): Ditto.
+	(wl-summary-goto-bottom-of-current-thread): Change for linked
+	thread.
+	(wl-summary-overview-create-summary-line): Change line for linked
+	thread.
+
+	* wl-summary.el (wl-summary-update-thread): Use
+	wl-thread-maybe-get-children-num.
+	(wl-summary-set-parent): If change parent, move sub thread.
+	(wl-summary-redisplay-internal): Add horizontal recenter.
+	(wl-summary-redisplay-no-mime): Add horizontal recenter.
+
+	* wl-thread.el (wl-thread-entity-get-linked): New function.
+	(wl-thread-entity-set-linked): New function.
+	(wl-thread-create-entity): Add linked element.
+	(wl-thread-entity-insert-as-top): Use wl-append.
+	(wl-thread-maybe-get-children-num): If closing thread, return
+	children msgs.
+	(wl-thread-update-line-msgs): Displaying progress message.
+	(wl-thread-update-line-on-buffer-sub): Use
+	wl-thread-maybe-get-children-num.
+	(wl-thread-update-line-on-buffer): If update line is not exists,
+	insert thread.
+	(wl-thread-delete-message): If delete top msg of thread, search
+	parent by subject.
+	(wl-thread-insert-entity): Use
+	wl-thread-maybe-get-children-num.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): change
+	sregexp for linked thread.
+	* wl-util.el (wl-count-lines): Count lines.
+	(wl-horizontal-recenter): horizontal recenter.
+	* wl-score.el (wl-score-put-alike): Use wl-count-lines
+	(wl-score-get-alike): Ditto.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): Changed.
+	(wl-subject-length-limit): New variable.
+	(wl-highlight-thread-indent-string-regexp): Changed for linked
+	thread.
+
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
