@@ -1,3 +1,8 @@
+2004-03-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-persistent-mark-priority-list): Changed
+	order of flag and new.
+
 2004-02-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-refile-policy-alist): Abolished.

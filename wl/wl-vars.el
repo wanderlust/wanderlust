@@ -971,8 +971,8 @@ cdr of each cons cell is used for draft message."
   :type 'boolean
   :group 'wl-folder)
 
-(defcustom wl-summary-persistent-mark-priority-list '(new
-						      flag
+(defcustom wl-summary-persistent-mark-priority-list '(flag
+						      new
 						      answered
 						      unread)
   "List of flags reflected with the priority to persistent marks and faces."
