@@ -1,3 +1,9 @@
+2002-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Check the return value
+	of elmo-string-matched-assoc to use match-data.
+	(Thanks to Mito <mito@mxa.nes.nec.co.jp>)
+
 2002-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Added
