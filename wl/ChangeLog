@@ -1,3 +1,7 @@
+2004-12-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-set-save-drafts): Fix typo.
+
 2004-12-01  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo-insert-image): Use :file instead of :data to

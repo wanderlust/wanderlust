@@ -724,7 +724,7 @@ that `read' can handle, whenever this is possible."
     (if (numberp wl-auto-save-drafts-interval)
 	(unless (get-itimer wl-save-drafts-timer-name)
 	  (start-itimer wl-save-drafts-timer-name 'wl-save-drafts
-			wl-save-drafts-interval wl-save-drafts-interval
+			wl-auto-save-drafts-interval wl-auto-save-drafts-interval
 			t))
       (when (get-itimer wl-save-drafts-timer-name)
 	(delete-itimer wl-save-drafts-timer-name)))))
