@@ -248,7 +248,7 @@
 	  (find-file (expand-file-name texifile DOCDIR))
 	  (setq obuf (current-buffer))
 	  ;; Support old texinfmt.el
-	  (require 'ptexinfmt)
+	  (require 'ptexinfmt (expand-file-name "ptexinfmt.el" UTILSDIR))
 	  ;; We can't know file names if splitted.
 	  (texinfo-format-buffer t)
 	  ;; Emacs20.2's default is 'raw-text-unix.
