@@ -284,11 +284,11 @@ Mirrored ftp/http sites:
 
 @example
 @group
-ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
+@c ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
 http://www.jpl.org/elips/wl/
 http://www.ring.gr.jp/archives/text/elisp/wl/
 ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
-ftp://opaopa.org/pub/mirror/elisp/wl/
+@c ftp://opaopa.org/pub/mirror/elisp/wl/
 @c ftp://roguelife.org/pub/tsumura/wl/
 @end group
 @end example
