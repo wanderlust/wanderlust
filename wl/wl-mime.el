@@ -68,86 +68,6 @@ By setting following-method as yank-content."
 
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
-;; SEMI 1.13.5 or later.
-;; (mime-display-message
-;;  MESSAGE &optional
-;;  PREVIEW-BUFFER MOTHER DEFAULT-KEYMAP-OR-FUNCTION ORIGINAL-MAJOR-MODE)
-;; SEMI 1.13.4 or earlier.
-;; (mime-display-message
-;;  MESSAGE &optional
-;;  PREVIEW-BUFFER MOTHER DEFAULT-KEYMAP-OR-FUNCTION)
-(static-if (or (and mime-user-interface-product
-		    (eq (nth 0 (aref mime-user-interface-product 1)) 1)
-		    (>= (nth 1 (aref mime-user-interface-product 1)) 14))
-	       (and mime-user-interface-product
-		    (eq (nth 0 (aref mime-user-interface-product 1)) 1)
-		    (eq (nth 1 (aref mime-user-interface-product 1)) 13)
-		    (>= (nth 2 (aref mime-user-interface-product 1)) 5)))
-    ;; Has original-major-mode optional argument.
-    (defalias 'wl-mime-display-message 'mime-display-message)
-  (defmacro wl-mime-display-message (message &optional
-					     preview-buffer mother
-					     default-keymap-or-function
-					     original-major-mode)
-    (` (mime-display-message (, message) (, preview-buffer) (, mother)
-			     (, default-keymap-or-function))))
-  ;; User agent field of XEmacs has problem on SEMI 1.13.4 or earlier.
-  (setq mime-edit-user-agent-value
-	(concat
-	 (mime-product-name mime-user-interface-product) "/"
-	 (mapconcat
-	  #'number-to-string
-	  (mime-product-version mime-user-interface-product) ".")
-	 " (" (mime-product-code-name mime-user-interface-product)
-	 ") " (mime-product-name mime-library-product)
-	 "/" (mapconcat #'number-to-string
-			(mime-product-version mime-library-product) ".")
-	 " (" (mime-product-code-name mime-library-product) ") "
-	 (if (featurep 'xemacs)
-	     (concat
-	      (if (featurep 'mule) "MULE")
-	      " XEmacs"
-	      (if (string-match "\\s +\\((\\|\\\"\\)" emacs-version)
-		  (concat "/" (substring emacs-version 0
-					 (match-beginning 0))
-			  (if (and (boundp 'xemacs-betaname)
-				   ;; It does not exist in XEmacs
-				   ;; versions prior to 20.3.
-				   xemacs-betaname)
-			      (concat " " xemacs-betaname)
-			    "")
-			  " (" xemacs-codename ") ("
-			  system-configuration ")")
-		" (" emacs-version ")"))
-	   (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
-			  (substring emacs-version 0 (match-beginning 0))
-			emacs-version)))
-	     (if (featurep 'mule)
-		 (if (boundp 'enable-multibyte-characters)
-		     (concat "Emacs/" ver
-			     " (" system-configuration ")"
-			     (if enable-multibyte-characters
-				 (concat " MULE/" mule-version)
-			       " (with unibyte mode)")
-			     (if (featurep 'meadow)
-				 (let ((mver (Meadow-version)))
-				   (if (string-match "^Meadow-" mver)
-				       (concat " Meadow/"
-					       (substring mver
-							  (match-end 0)))))))
-		   (concat "MULE/" mule-version
-			   " (based on Emacs " ver ")"))
-	       (concat "Emacs/" ver " (" system-configuration ")")))))))
-
-;; FLIM 1.12.7
-;; (mime-read-field FIELD-NAME &optional ENTITY)
-;; FLIM 1.13.2 or later
-;; (mime-entity-read-field ENTITY FIELD-NAME)
-(static-if (fboundp 'mime-entity-read-field)
-    (defalias 'wl-mime-entity-read-field 'mime-entity-read-field)
-  (defmacro wl-mime-entity-read-field (entity field-name)
-    (` (mime-read-field (, field-name) (, entity)))))
-
 (defun wl-draft-preview-message ()
   ""
   (interactive)
@@ -294,7 +214,7 @@ By setting following-method as yank-content."
       (setq subject-id
 	    (eword-decode-string
 	     (decode-mime-charset-string
-	      (wl-mime-entity-read-field entity 'Subject)
+	      (mime-entity-read-field entity 'Subject)
 	      wl-summary-buffer-mime-charset)))
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0))))

@@ -1,3 +1,15 @@
+2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-mmelmo-message-redisplay): Use
+	`mime-display-message' instead of `wl-mime-display-message'.
+
+	* wl-mime.el (toplevel): Removed compatibility workaround
+	for SEMI 1.13.4. or earlier and FLIM 1.12.7 or earlier.
+	(wl-mime-display-message): Abolished.
+	(wl-mime-entity-read-field): Ditto.
+	(wl-mime-combine-message/partial-pieces): Use
+	`mime-entity-read-field' instead of `wl-mime-entity-read-field'.
+
 2000-10-27  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-template.el: Doc fixes.

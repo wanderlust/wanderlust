@@ -438,8 +438,8 @@
 		(setq mmelmo-imap4-skipped-parts nil)
 		;; mime-display-message sets buffer-read-only variable as t.
 		;; which makes buffer read-only status confused...
-		(wl-mime-display-message cur-entity view-message-buffer
-					 nil nil 'mmelmo-original-mode)
+		(mime-display-message cur-entity view-message-buffer
+				      nil nil 'mmelmo-original-mode)
 		(if mmelmo-imap4-skipped-parts
 		    (progn
 		      (message "Skipped fetching of %s."
