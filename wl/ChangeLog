@@ -1,3 +1,7 @@
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* Version number is increased to 2.11.2.
+
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-news.el.in (wl-news-previous-version-save): Bind
