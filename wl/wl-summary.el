@@ -4300,7 +4300,7 @@ If ARG, exit virtual folder."
 		  (unless no-server-update
 		    (elmo-unmark-important folder (list number) msgdb)
 		    (elmo-msgdb-global-mark-delete message-id))
-		  ;; Remove cache if local folder.
+		  ;; Remove cache if local it is folder.
 		  (if (elmo-folder-local-p folder)
 		      (elmo-cache-delete message-id folder number))
 		  (when visible
@@ -5979,7 +5979,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 
 (defun wl-cache-prefetch-next (fld msg &optional summary)
   (if (wl-cache-prefetch-p fld)
-      (if elmo-use-buffer-cache
+      (if (not elmo-use-buffer-cache)
 ;;;	  (message "`elmo-use-buffer-cache' is nil, cache prefetch is disable.")
 	(save-excursion
 	  (set-buffer (or summary (get-buffer wl-summary-buffer-name)))
