@@ -182,14 +182,6 @@
 	  (select-window (get-buffer-window summary-buf))))
     (run-hooks 'wl-message-exit-hook)))
 
-(defvar wl-message-mode-map nil)
-(if wl-message-mode-map
-    ()
-  (setq wl-message-mode-map (make-sparse-keymap))
-  (define-key wl-message-mode-map "q" 'wl-message-exit)
-  (define-key wl-message-mode-map "n" 'wl-message-exit)
-  (define-key wl-message-mode-map "p" 'wl-message-exit))
-
 (defun wl-message-decode (outbuf inbuf flag)
   (cond
    ((eq flag 'all-header)
@@ -212,7 +204,9 @@
 	  (elmo-set-buffer-multibyte nil))
 	(copy-to-buffer outbuf (point-min) (point-max))
 	(set-buffer outbuf)
-	(use-local-map wl-message-mode-map)
+	(local-set-key "q" 'wl-message-exit)
+	(local-set-key "p" 'wl-message-exit)
+	(local-set-key "n" 'wl-message-exit)
 	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
 ;;;	(decode-mime-charset-region (point-min) (point-max) wl-mime-charset)
 	;; we can call decode-coding-region() directly, because multibyte flag is t.
