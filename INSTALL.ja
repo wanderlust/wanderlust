@@ -30,13 +30,13 @@ MIME用モジュールの選択
 
 (c) Emacs 20.1〜20.3
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
   FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
 (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
   Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記の
   ページが参考になります。
@@ -45,7 +45,7 @@ MIME用モジュールの選択
 
 (e) Emacs 19.28 以前 (Mule 2.3, Nemacs)
 
-	APEL 10.3, CLIME 1.14.0, tm 8.8
+	APEL 10.3, CLIME 1.14.3, tm 8.8
 
   SEMI は動きませんので、tm をインストールしてください。APEL, CLIME を最
   新版に入れ替える必要もあります。
@@ -58,7 +58,7 @@ MIME用モジュールのインストール
 
 	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
 	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:
+	CLIME:	ftp://ftp.jpl.org/pub/m17n/
 	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
 	tm:	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 
@@ -188,6 +188,10 @@ load-path の設定
 
   マニュアルのインストール先は自動検出されます。(Makefile 中の INFODIR 
   でも設定可能です)
+
+  下記の URL で見ることもできます。
+
+	http://www.gohome.org/wl/doc/wl-euc_toc.html
 
 
 サンプル設定
