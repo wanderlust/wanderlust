@@ -5850,8 +5850,6 @@ byte-compiled and installed.
 ;; @r{automatically add mailing list fields}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
-;; @r{folder regexp for auto collection}
-(setq bbdb-wl-folder-regexp "^%\\|^-")
 @end group
 @end lisp
 

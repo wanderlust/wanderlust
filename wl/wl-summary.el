@@ -5305,7 +5305,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		      "Supersedes: " message-id "\n"
 		      (and followup-to
 			   (concat "Followup-To: " followup-to "\n")))))
-    (if message-buf (set-buffer message-buf))
+	(set-buffer (wl-message-get-original-buffer))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
 (defun wl-summary-save (&optional arg wl-save-dir)

@@ -1118,9 +1118,9 @@ If optional argument is non-nil, current draft buffer is killed"
 			 (cdr (car mail-send-actions)))
 		(error))
 	      (setq mail-send-actions (cdr mail-send-actions)))
-;;	    (if (or (eq major-mode 'wl-draft-mode)
-;;		    (eq major-mode 'mail-mode))
-;;		(local-set-key "\C-c\C-s" 'wl-draft-send)) ; override
+	    (if (or (eq major-mode 'wl-draft-mode)
+		    (eq major-mode 'mail-mode))
+		(local-set-key "\C-c\C-s" 'wl-draft-send)) ; override
 	    (if wl-draft-verbose-send
 		(message (concat (or wl-draft-verbose-msg
 				     mes-string "Sending...")

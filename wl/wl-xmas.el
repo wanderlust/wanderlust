@@ -350,7 +350,7 @@
 	(put-text-property 0 len 'begin-glyph
 			   (get 'wl-folder-queue-glyph 'glyph)
 			   string)
-      (if (setq type (elmo-folder-type folder))
+      (if (setq type (elmo-folder-get-type folder))
 	  (put-text-property 0 len
 			     'begin-glyph
 			     (get (intern (format "wl-folder-%s-glyph" type))
@@ -514,7 +514,7 @@ Special commands:
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)
-  ;; (local-set-key "\C-c\C-s" 'wl-draft-send);; override
+  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
   (wl-draft-overload-menubar))
 

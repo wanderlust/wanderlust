@@ -202,6 +202,10 @@
   ((folder elmo-cache-folder) unread-marks &optional mark-alist)
   t)
 
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-cache-folder) important-mark)
+  t)
+
 (luna-define-method elmo-folder-unmark-important ((folder elmo-cache-folder)
 						  numbers)
   t)
