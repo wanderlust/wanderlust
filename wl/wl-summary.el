@@ -3890,7 +3890,6 @@ If ARG, exit virtual folder."
 					    number-or-numbers
 					    no-folder-mark
 					    no-modeline-update)
-  (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)

@@ -2,7 +2,7 @@
 
 	* wl-summary.el (wl-summary-mark-as-read-internal): New inline
 	function.
-	(wl-summary-mark-as-read, wl-summary-mark-as-read): Use it.
+	(wl-summary-mark-as-read, wl-summary-mark-as-unread): Use it.
 
 2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
