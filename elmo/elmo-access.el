@@ -53,6 +53,7 @@
    folder
    elmo-multi-divide-number)
   (elmo-access-folder-update-children folder)
+  (elmo-multi-connect-signals folder)
   folder)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-access-folder))
