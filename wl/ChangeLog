@@ -1,3 +1,12 @@
+2001-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-message-mail-p): Test resent-to: field.
+	(Fix by Peter Møller Neergaard <turtle@bu.edu>)
+	(wl-default-draft-cite): Fix.
+
+	* wl-score.el (wl-score-insert-help): Fixed parenthesis.
+	(Pointed out by ABE Yasushi <yasushi@stbbs.net>)
+
 2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-prev-page): Do same bahavior
