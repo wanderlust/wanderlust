@@ -6525,12 +6525,12 @@ Check mail arrival in this period.
 
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
-The initial setting is @code{nil}.
-This is a hook run at the arrival of the new mail.
-To beep, set as:
+This hook is run at the arrival of new mail.
+To beep with mail arrival(initial setting), set as follows.
 @lisp
 (setq wl-biff-notify-hook '(beep))
 @end lisp
+For silence, set to @code{nil}.
 @end table
 
 

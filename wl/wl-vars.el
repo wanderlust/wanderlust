@@ -498,7 +498,7 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
   "A hook called when suspend wanderlust.")
-(defvar wl-biff-notify-hook nil
+(defvar wl-biff-notify-hook '(beep)
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")
@@ -538,8 +538,6 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
   "A hook called when make plugged alist.")
-(defvar wl-biff-notify-hook '(beep)
-  "A hook called when a biff-notification is invoked.")
 
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")
