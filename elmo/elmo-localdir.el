@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 00:03:39 teranisi>
+;; Time-stamp: <2000-05-18 17:09:15 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -399,7 +399,7 @@
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
 	(oov (elmo-msgdb-get-overview msgdb))
 	i flist onum mark new-mark-alist total)
-    (setq i 1)
+    (setq i 0)
     (setq flist
 	  (if elmo-pack-number-check-strict
 	      (elmo-call-func spec "list-folder") ;; allow localnews
