@@ -1,11 +1,3 @@
-2000-11-26  Kenichi OKADA  <okada@opaopa.org>
-
-	* elmo-nntp.el (elmo-network-initialize-session): Accept response 20[01].
-
-2000-11-24  Kenichi OKADA  <okada@opaopa.org>
-
-	* elmo-nntp.el (elmo-network-initialize-session): omitted.
-
 2000-11-22  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Skip garbage output
