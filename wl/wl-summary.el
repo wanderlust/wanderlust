@@ -586,8 +586,7 @@ See also variable `wl-use-petname'."
 	    (end (condition-case nil
 		     (window-end win t)	; old emacsen doesn't support 2nd arg.
 		   (error (window-end win))))
-	    number flags
-	    wl-summary-highlight)
+	    number flags)
 	(save-excursion
 	  (goto-char beg)
 	  (while (and (< (point) end) (not (eobp)))
@@ -595,10 +594,10 @@ See also variable `wl-use-petname'."
 	      (setq number (wl-summary-message-number)
 		    flags (elmo-message-flags wl-summary-buffer-elmo-folder
 					      number))
-	      (setq wl-summary-highlight nil)
-	      (wl-summary-update-persistent-mark number flags)
-	      (setq wl-summary-highlight t)
-	      (wl-highlight-summary-current-line number flags))
+	      (let (wl-summary-highlight)
+		(wl-summary-update-persistent-mark number flags))
+	      (if wl-summary-highlight
+		  (wl-highlight-summary-current-line number flags)))
 	    (forward-line 1)))))
     (set-buffer-modified-p nil)))
 
