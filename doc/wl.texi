@@ -119,7 +119,6 @@ This manual is for Wanderlust @value{VERSION}.
 * Disconnected Operations::  Off-Line management
 * Expire and Archive::       Automatic expiration and archiving of messages
 * Scoring::                  Score of the messages
-* Split messages::           Splitting messages
 * Address Book::             Management of Address Book
 * Customization::            Customizing Wanderlust
 * Terminology::              Terminologies
@@ -5823,7 +5822,7 @@ Needless to say, you can use your own function.
 @end table
 
 
-@node Scoring, Split messages, Expire and Archive, Top
+@node Scoring, Address Book, Expire and Archive, Top
 @chapter Score of the Messages
 @cindex Scoring
 @c @cindex Kill File
@@ -6321,104 +6320,7 @@ pop3                      N     E     E     E
 @end example
 
 
-@node Split messages, Address Book, Scoring, Top
-@chapter Message splitting
-@cindex Split messages
-
-You can use @code{elmo-split} to split message in folder
-@code{elmo-split-folder} a la procmail according to some specified rules.
-To use this feature, set as follows in your @file{~/.emacs} at first.
-
-@lisp
-(autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
-@end lisp
-
-Then you can invoke @kbd{M-x elmo-split} to split messages according to
-@code{elmo-split-rule}. On the other hand, invoke @kbd{C-u M-x elmo-split}
-to do a rehearsal (do not split actually).
-
-We will describe how to specify the rule. First of all, see following
-example, please.
-
-@lisp
-@group
-(setq elmo-split-rule
-      ;; @r{Store messages from spammers into @samp{+junk}}
-      '(((or (address-equal from "i.am@@spammer")
-	     (address-equal from "dull-work@@dull-boy")
-	     (address-equal from "death-march@@software")
-	     (address-equal from "ares@@aon.at")
-	     (address-equal from "get-money@@richman"))
-	 "+junk")
-	;; @r{Store messages from mule mailing list into @samp{%mule}}
-	((equal x-ml-name "mule") "%mule")
-	;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
-	;; @r{and continue evaluating following rules}
-	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Store messages from Yahoo user into @samp{+yahoo-{username}}}
-	((match from "\\(.*\\)@@yahoo\\.com")
-	 "+yahoo-\\1")
-	;; @r{Store unmatched mails into @samp{+inbox}}
-	(t "+inbox")))
-@end group
-@end lisp
-
-The basic unit of the rule is a combination like
-
-@lisp
-(@samp{CONDITION} @samp{FOLDER} [@code{continue}])
-@end lisp
-
-The 1st element @samp{CONDITION} is a sexp. Its grammar will be
-explained below. The 2nd element @samp{FOLDER} is the name of the folder
-to split messages into. When the 3rd element @code{continue} is
-specified as symbol, evaluating rules is not stopped even when the
-condition is satisfied.
-
-The grammar for @samp{CONDITION} is as follows. See example above to
-learn how to write the condition practically.
-
-@enumerate
-@item
-Functions which accept argument @samp{FIELD-NAME} and @samp{VALUE}.
-(@samp{FIELD-NAME} is a symbol that describes the field name)
-
-@table @code
-@item @code{equal}
-True if the field value equals to @samp{VALUE}.
-Case of the letters are ignored.
-@item @code{match}
-True if the field value matches to VALUE.
-@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
-from matching @code{\(\)} patterns in the previous @samp{VALUE}.
-@item @code{address-equal}
-True if one of the addresses in the field equals to
-@samp{VALUE}. Case of the letters are ignored.
-@item @code{address-match}
-True if one of the addresses in the field matches to
-@samp{VALUE}.
-@samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
-from matching @code{\(\)} patterns in the previous @samp{VALUE}.
-@end table
-
-@item
-Functions which accept any number of arguments.
-
-@table @code
-@item @code{or}
-True if one of the argument returns true.
-@item @code{and}
-True if all of the arguments return true.
-@end table
-
-@item
-A symbol.
-
-When a symbol is specified, it is evaluated.
-@end enumerate
-
-
-@node Address Book, Customization, Split messages, Top
+@node Address Book, Customization, Scoring, Top
 @chapter Address Book
 @cindex Address Book
 
