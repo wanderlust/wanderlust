@@ -1,3 +1,8 @@
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* etc/icons/*.xbm: Replaced "-" with "_" to make them can be
+	handled by Emacs 21.
+
 2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* etc/icons/wl-alpha-logo.img: New file.
