@@ -204,21 +204,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 				 (- width (current-column)))
 			 " "))))))))
 
-(defun wl-display-bytes (num)
-  (let (result remain)
-    (cond
-     ((> (setq result (/ num 1000000)) 0)
-      (setq remain (% num 1000000))
-      (if (> remain 400000)
-	  (setq result (+ 1 result)))
-      (format "%dM" result))
-     ((> (setq result (/ num 1000)) 0)
-      (setq remain (% num 1000))
-      (if (> remain 400)
-	  (setq result (+ 1 result)))
-      (format "%dK" result))
-     (t (format "%dB" num)))))
-
 (defun wl-mode-line-buffer-identification (&optional id)
   (let ((priorities '(biff plug title)))
     (let ((items (reverse wl-mode-line-display-priority-list))
