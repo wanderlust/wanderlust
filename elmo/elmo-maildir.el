@@ -370,7 +370,7 @@ file name for maildir directories."
       (setq numbers (sort flist '<))
       (elmo-living-messages numbers killed))))
 
-(defun elmo-maildir-list-folder (spec &optional nohide)
+(defun elmo-maildir-list-folder (spec)
   (elmo-maildir-update-current spec)
   (elmo-maildir-list-folder-subr spec))
 

@@ -291,7 +291,7 @@ even an operation concerns the unplugged folder."
   (save-match-data
     (elmo-dop-queue-append folder "prefetch-msgs" msgs)))
 
-(defun elmo-dop-list-folder (folder &optional nohide)
+(defun elmo-dop-list-folder (folder)
   (if (or (memq (elmo-folder-get-type folder)
 		'(imap4 nntp pop3 filter pipe))
 	  (and (elmo-multi-p folder) (not (elmo-folder-local-p folder))))

@@ -1153,8 +1153,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		     folder))
 	 (range (or force-range (wl-summary-input-range folder)))
 	 mes seen-list killed-list)
-    (cond ((or (string= range "all")
-	       (string= range "all-shown"))
+    (cond ((string= range "all")
 	   ;; initialize buffer local databases.
 	   (unless (elmo-folder-plugged-p folder) ; forbidden
 	     (error "Unplugged"))
@@ -1172,7 +1171,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	   (elmo-clear-killed wl-summary-buffer-folder-name)
 	   (condition-case nil
 	       (setq mes (wl-summary-sync-update3 seen-list unset-cursor
-						  (string= range "all")))
+						  'sync-all))
 	     (quit
 	      ;; Resume killed-list if quit.
 	      (message "") ; clear minibuffer.
@@ -2164,7 +2163,7 @@ If ARG is non-nil, checking is omitted."
     (wl-folder-confirm-existence folder 'force)
     (message "Checking folder diff...")
     (elmo-commit folder)
-    (setq in-folder (elmo-list-folder folder sync-all))
+    (setq in-folder (elmo-list-folder folder))
     (setq in-db (unless sync-all (sort (mapcar 'car number-alist) '<)))
     (if (not elmo-use-killed-list)
 	(setq diff (if (eq (elmo-folder-get-type folder) 'multi)
@@ -4613,7 +4612,7 @@ If ARG, exit virtual folder."
   "returns update or all or rescan."
   ;; for the case when parts are expanded in the bottom of the folder
   (let ((input-range-list '("update" "all" "rescan" "first:" "last:"
-			    "no-sync" "rescan-noscore" "all-shown"))
+			    "no-sync" "rescan-noscore"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)
