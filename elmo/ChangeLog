@@ -1,6 +1,6 @@
 2005-02-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-maildir.el (elmo-maildir-separator): Added OS/2, emx, ms-dos
+	* elmo-maildir.el (elmo-maildir-separator): Added some OS types
 	to the check logic of file systems which are weak in colon character.
 
 2005-02-11  Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
