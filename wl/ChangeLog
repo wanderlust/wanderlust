@@ -1,3 +1,8 @@
+2004-04-03  Colin Rafferty  <colin.rafferty@morganstanley.com>
+
+	* wl-highlight.el (wl-highlight-message): Change to strict regexp
+	for the separator line and quote mail-header-separator.
+
 2004-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2004.
