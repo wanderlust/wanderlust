@@ -1,3 +1,9 @@
+2000-09-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el (texinfo-multitable-widths): Add
+	broken-facility check.
+	(texinfo-multitable-item): Use it, when broken-facility check.
+
 2000-09-14  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* doc/wl.texi, doc/wl-ja.texi: Replace
