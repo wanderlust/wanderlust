@@ -781,8 +781,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 					wl-summary-buffer-unread-status))
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
-    (make-local-hook 'window-scroll-functions)
-    (add-hook 'window-scroll-functions 'wl-highlight-summary-window nil t))
+    (make-local-variable 'window-scroll-functions)
+    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))  
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -2805,7 +2805,7 @@ If ARG, without confirm."
 	  (if (wl-summary-cursor-down t)
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
-			      'down t)))
+			      'down nil)))
 		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
 		      ((not unreadp)
@@ -4489,28 +4489,26 @@ If ARG, exit virtual folder."
       (elmo-date-get-week year month mday))))
 
 (defvar wl-summary-move-spec-plugged-alist
-  (list (cons 'new (list (cons 't nil)
-			 (cons 'p wl-summary-new-mark)
-			 (cons 'p (wl-regexp-opt
-				   (list wl-summary-unread-uncached-mark
-					 wl-summary-unread-cached-mark)))
-			 (cons 'p (regexp-quote wl-summary-important-mark))))
-	(cons 'unread (list (cons 't nil)
-			    (cons 'p (wl-regexp-opt
-				      (list wl-summary-new-mark
-					    wl-summary-unread-uncached-mark
-					    wl-summary-unread-cached-mark)))
-			    (cons 'p (regexp-quote
-				      wl-summary-important-mark))))))
+  (` ((new . ((t . nil)
+	      (p . (, wl-summary-new-mark))
+	      (p . (, (wl-regexp-opt
+		       (list wl-summary-unread-uncached-mark
+			     wl-summary-unread-cached-mark))))
+	      (p . (, (regexp-quote wl-summary-important-mark)))))
+      (unread . ((t . nil)
+		 (p . (, (wl-regexp-opt
+			  (list wl-summary-new-mark
+				wl-summary-unread-uncached-mark
+				wl-summary-unread-cached-mark))))
+		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
 (defvar wl-summary-move-spec-unplugged-alist
-  (list (cons 'new (list (cons 't nil)
-			 (cons 'p wl-summary-unread-cached-mark)
-			 (cons 'p (regexp-quote wl-summary-important-mark))))
-	(cons 'unread (list (cons 't nil)
-			    (cons 'p wl-summary-unread-cached-mark)
-			    (cons 'p (regexp-quote
-				      wl-summary-important-mark))))))
+  (` ((new . ((t . nil)
+	      (p . (, wl-summary-unread-cached-mark))
+	      (p . (, (regexp-quote wl-summary-important-mark)))))
+      (unread . ((t . nil)
+		 (p . (, wl-summary-unread-cached-mark))
+		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 

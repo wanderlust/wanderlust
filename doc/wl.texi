@@ -4253,8 +4253,8 @@ sent off-line.
 
 @item wl-draft-use-cache
 @vindex wl-draft-use-cache
-The initial setting is @code{nil}. If the value is non-nil and
-@code{wl-insert-message-id} is non-nil, cache the message which is sent.
+The initial setting is @code{nil}.
+If non-nil, cache the message which is sent.
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue

@@ -268,10 +268,7 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 		    (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer demo-buf)
     (erase-buffer)
-    (setq truncate-lines t
-	  tab-width 8)
-    (set (make-local-variable 'tab-stop-list)
-	 '(8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
+    (setq truncate-lines t)
     (cond ((featurep 'xemacs)
 	   (if (device-on-window-system-p)
 	       (progn
