@@ -2000,10 +2000,12 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
     (if msgid
 	(if (string-match "<\\(.+\\)>$" msgid)
 	    msgid
-	  (concat "<" msgid ">")) ; Invaild message-id.
+	  (concat "<" msgid ">"))	; Invaild message-id.
       ;; no message-id, so put dummy msgid.
-      (concat "<" (timezone-make-date-sortable
-		   (elmo-unfold-field-body "date"))
+      (concat "<"
+	      (if (elmo-unfold-field-body "date")
+		  (timezone-make-date-sortable (elmo-unfold-field-body "date"))
+		 (md5 (current-buffer) (point-min) (point-max) nil t))
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
 

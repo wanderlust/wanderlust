@@ -1,3 +1,8 @@
+2004-04-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): If date
+	field not exists in message, Use md5 message digest of header.
+
 2004-04-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo.el (elmo-folder-append-buffer): Add note on return value.
