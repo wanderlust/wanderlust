@@ -2811,11 +2811,11 @@ Return non-nil if the mark is updated"
 	      (new-mark (wl-summary-persistent-mark)))
 	  (unless (string= new-mark mark)
 	    (delete-backward-char 1)
-	    (insert new-mark)
-	    (when wl-summary-highlight
-	      (wl-highlight-summary-current-line))
-	    (set-buffer-modified-p nil)
-	    t)))
+	    (insert new-mark))
+	  (when wl-summary-highlight
+	    (wl-highlight-summary-current-line))
+	  (set-buffer-modified-p nil)
+	  t))
     (when wl-summary-highlight
       (wl-highlight-summary-current-line))
     (set-buffer-modified-p nil)))
@@ -3148,7 +3148,7 @@ Return non-nil if the mark is updated"
     (setq line (concat line
 		       "\r"
 		       (number-to-string
-			(elmo-msgdb-overview-entity-get-number 
+			(elmo-msgdb-overview-entity-get-number
 			 wl-message-entity))))
     (if wl-summary-highlight
 	(wl-highlight-summary-line-string line

@@ -1,5 +1,8 @@
 2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-update-persistent-mark): Highlight the
+	line even when the mark string is not changed.
+
 	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the
 	argument change in the wl-summary-create-line.
 	(wl-thread-insert-entity-sub): Ditto.
