@@ -1,3 +1,40 @@
+2001-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-file-field-primitive-condition-match):
+	New inline function (Don't fetch file content if "first" or "last").
+	(elmo-file-field-condition-match): Use
+	elmo-file-field-primitive-condition-match.
+
+	* elmo-localdir.el (elmo-localdir-field-primitive-condition-match):
+	New inline function.
+	(elmo-localdir-field-condition-match):
+	Use elmo-localdir-field-primitive-condition-match.
+	(elmo-localdir-search): Speed up simple "last" and "first".
+
+	* elmo2.el (elmo-move-msgs): Bind
+	elmo-inhibit-display-retrieval-progress as t while moving messages.
+
+	* elmo-vars.el (elmo-display-retrieval-progress-threshold):
+	New variable.
+	(elmo-inhibit-display-retrieval-progress): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-process-filter): Use elmo-display-progress
+	for retrieval progress;
+	Don't display progress when total buffer size is smaller than
+	elmo-display-retrieval-progress-threshold.
+	(elmo-pop3-read-msg): Don't display progress when
+	elmo-inhibit-display-retrieval-progress is non-nil;
+	Remove progress bar after retrieval.
+
+	* elmo-imap4.el (elmo-imap4-find-next-line): Use elmo-display-progress
+	for retrieval progress;
+	Don't display progress when literal size is smaller than
+	elmo-display-retrieval-progress-threshold.
+	(elmo-imap4-read-msg): Don't display progress when
+	elmo-inhibit-display-retrieval-progress is non-nil;
+	Remove progress bar after retrieval.
+	* elmo-imap4.el (elmo-imap4-read-part): Ditto.
+
 2001-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-display-literal-progress): New variable.
