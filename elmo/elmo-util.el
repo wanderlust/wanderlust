@@ -1484,10 +1484,6 @@ Return t if cache is saved successfully."
     ;; ignore error
     (error)))
 
-(defun elmo-cache-path-section-p (path)
-  "Return non-nil when PATH is `section' cache path."
-  (file-directory-p path))
-
 (defun elmo-file-cache-get (msgid &optional section)
   "Returns the current file-cache object associated with MSGID.
 MSGID is the message-id of the message.
@@ -1496,7 +1492,7 @@ associated with SECTION."
   (if msgid
       (let ((path (elmo-cache-get-path msgid)))
 	(if (and path (file-exists-p path))
-	    (if (elmo-cache-path-section-p path)
+	    (if (file-directory-p path)
 		(if section
 		    (if (file-exists-p (setq path (expand-file-name
 						   section path)))
@@ -1732,21 +1728,6 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
     (elmo-resque-obsolete-variable (cdr pair)
 				   (car pair))))
 
-;;; Queue.
-(defvar elmo-dop-queue-filename "queue"
-  "*Disconnected operation queue is saved in this file.")
-
-(defun elmo-dop-queue-load ()
-  (setq elmo-dop-queue
-	(elmo-object-load
-	 (expand-file-name elmo-dop-queue-filename
-			   elmo-msgdb-dir))))
-
-(defun elmo-dop-queue-save ()
-  (elmo-object-save
-   (expand-file-name elmo-dop-queue-filename
-		     elmo-msgdb-dir)
-   elmo-dop-queue))
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))
