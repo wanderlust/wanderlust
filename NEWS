@@ -11,6 +11,12 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Now you can rename access group folders.
 
+** Temporary marks are kept when you exit from sticky summary by q or g. 
+
+** Key bindings concerning the sticky summary have been changed.
+   By C-u g, the sticky summary is destroyed as well as C-u q. In summary or
+   folder mode, G opens the sticky summary.
+
 ** Members of the list wl-folder-hierarchy-access-folders is now some REGEXP
    for access group names instead of exact group names.
 
