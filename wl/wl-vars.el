@@ -1180,8 +1180,8 @@ Set this if (system-name) does not return FQDN."
   :group 'wl-pref)
 
 (defcustom wl-unique-id-suffix ".wl"
-  "*Specific the string on the right neighbor
-of @ in generated Message-ID."
+  "*Specific string in generated Message-ID
+which appear just before @."
   :type 'string
   :group 'wl-pref)
 
