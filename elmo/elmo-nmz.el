@@ -51,6 +51,9 @@
   :type '(repeat string)
   :group 'elmo)
 
+(defvar elmo-nmz-content-type-alist '(("\.html?\\'" . "text/html"))
+  "*An alist of (REGEXP . Content-Type) related filename.")
+
 ;;; "namazu search"
 (eval-and-compile
   (luna-define-class elmo-nmz-folder
@@ -82,7 +85,7 @@
    (elmo-replace-string-as-filename
     (elmo-folder-name-internal folder))
    (expand-file-name "nmz" elmo-msgdb-dir)))
-		     
+
 (defun elmo-nmz-msgdb-create-entity (folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
   (elmo-msgdb-create-overview-entity-from-file
@@ -166,7 +169,25 @@
 					    location strategy
 					    &optional section unseen)
   (when (file-exists-p location)
-    (insert-file-contents-as-binary location)))
+    (insert-file-contents-as-binary location)
+    (unless (or (std11-field-body "To")
+		(std11-field-body "Resent-To")
+		(std11-field-body "Cc")
+		(std11-field-body "Bcc")
+		(std11-field-body "Newsgroups"))
+      (erase-buffer)
+      (set-buffer-multibyte t)
+      (insert-file-contents location)
+      (goto-char (point-min))
+      (insert "Content-Type: "
+	      (or (cdr (elmo-string-matched-assoc
+			location
+			elmo-nmz-content-type-alist))
+		  "text/plain")
+	      "; charset=ISO-2022-JP\nMIME-Version: 1.0\n\n")
+      (encode-coding-region (point-min) (point-max)
+			    (mime-charset-to-coding-system "ISO-2022-JP"))
+      (set-buffer-multibyte nil))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-nmz-folder))
