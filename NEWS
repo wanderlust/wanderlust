@@ -1,7 +1,7 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
-* Changes in 2.12.1 from 2.12.0
-  Version 2.12.1 is a bug fix version of 2.12.0.
+* Changes in 2.12.2 from 2.12.0
+  Version 2.12.2 is a bug fix version of 2.12.0.
 
 ** Now Maildir is usable on Windows systems.
    Note that it does not conform to the Maildir standard.

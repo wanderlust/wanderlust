@@ -1,7 +1,9 @@
 2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* 2.12.1 is released.
-	
+	* 2.12.2 is released.
+
+	* Version number is increased to 2.12.2.
+
 	* wl-version.el (wl-version): Changed codename.
 
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

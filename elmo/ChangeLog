@@ -1,3 +1,9 @@
+2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.12.2 is released.
+
+	* elmo-version.el (elmo-version): Up to 2.12.2.
+
 2005-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-maildir.el (elmo-folder-append-messages): Fixed mismatch
