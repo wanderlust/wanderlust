@@ -1,3 +1,21 @@
+2000-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-delete-folder):
+	Send "close" before "delete" (Use commented out line).
+	(elmo-imap4-rename-folder): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-append): Use `elmo-string' to get
+	folder string itself.
+	(elmo-dop-list-deleted): New function.
+	(elmo-dop-list-folder): Treat result of `elmo-dop-list-deleted' as
+	killed.
+
+	* elmo-util.el (elmo-string-rassoc-all): New function.
+
+2000-11-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Accept response 20[01].
+
 2000-11-22  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Skip garbage output
