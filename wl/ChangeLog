@@ -25,6 +25,11 @@
 	* wl-version.el (wl-generate-user-agent-string-1): New function.
 	(wl-generate-user-agent-string): Use it.
 
+	* wl-version.el (wl-generate-user-agent-string-1): Ignore
+	`mime-edit-insert-user-agent-field'.
+	(wl-generate-user-agent-string): Check
+	`mime-edit-insert-user-agent-field' and `mime-editor/version'.
+
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-expire.el (wl-summary-expire): Fix.

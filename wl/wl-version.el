@@ -90,13 +90,17 @@ If ARG insert string at point."
 (defun wl-generate-user-agent-string ()
   "A candidate of `wl-generate-mailer-string-func'.
 Insert User-Agent field instead of X-Mailer field."
-  (concat "User-Agent: " (wl-generate-user-agent-string-1 t)))
+  (concat "User-Agent: "
+	  (wl-generate-user-agent-string-1
+	   (or (and (boundp 'mime-edit-insert-user-agent-field)
+		    mime-edit-insert-user-agent-field)
+	       (and (boundp 'mime-editor/version)
+		    mime-editor/version)))))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
 If VERBOSE return with SEMI, FLIM and APEL version"
-  (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
-			      mime-edit-insert-user-agent-field
+  (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-value)
 			      mime-edit-user-agent-value)))
     (if (and verbose mime-user-agent)
 	(concat (product-string-verbose 'wl-version) " "
