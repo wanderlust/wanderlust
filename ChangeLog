@@ -1,5 +1,7 @@
 2005-01-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* etc/icons/access.xpm: New file.
+
 	* WL-ELS (ELMO-MODULES): Added elmo-access and elmo-null.
 
 2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
