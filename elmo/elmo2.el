@@ -54,6 +54,10 @@
 	(featurep 'berkeley-db))
     (require 'elmo-database))
 
+(elmo-define-error 'elmo-error "error" 'error)
+(elmo-define-error 'elmo-open-error "Cannot open" 'elmo-error)
+(elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
+
 (defun elmo-quit ()
   (interactive)
   (if (featurep 'elmo-imap4)
