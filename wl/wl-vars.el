@@ -1896,12 +1896,18 @@ This variable can also be a regex. "
   :group 'wl-pref)
 
 (defcustom wl-demo-display-logo (or (and (featurep 'xemacs)
-					 (featurep 'xpm))
+					 (if (featurep 'xpm)
+					     'xpm 'xbm))
 				    (and (module-installed-p 'image)
-					 (image-type-available-p 'xpm))
-				    (module-installed-p 'bitmap))
-  "If non-nil, display image (or bitmap) logo in th Wanderlust opening demo."
-  :type 'boolean
+					 (if (image-type-available-p 'xpm)
+					     'xpm 'xbm))
+				    (and (module-installed-p 'bitmap)
+					 'xbm))
+  "If non-nil, show graphic logo in the startup screen.  You can set it to
+a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
+  :type '(radio (const :tag "OFF" nil)
+		(const :tag "XBM (possibly BITMAP-MULE)" xbm)
+		(sexp :format "ON  (any format)" :value t))
   :group 'wl-pref)
 
 ;;; Internal variables
