@@ -377,9 +377,6 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-use-decoded-cache (featurep 'xemacs)
   "Use cache of decoded mime charset string.")
 
-(defvar elmo-use-overview-hashtb t
-  "Use hash table of overview.")
-
 (defvar elmo-display-progress-threshold 20
   "*Displaying progress gauge if number of messages are more than this value.")
 

@@ -1091,7 +1091,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   "Get mark of the message.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message."
-  (cadr (assq number (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
+  (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
 
 (defun elmo-folder-list-messages-mark-match (folder mark-regexp)
   "List messages in the FOLDER which have a mark that matches MARK-REGEXP"
@@ -1108,33 +1108,13 @@ NUMBER is a number of the message."
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
 FIELD is a symbol of the field."
-  (case field
-    (message-id (elmo-msgdb-overview-entity-get-id
-		 (elmo-msgdb-overview-get-entity
-		  number (elmo-folder-msgdb folder))))
-    (subject (elmo-msgdb-overview-entity-get-subject
-	      (elmo-msgdb-overview-get-entity
-	       number (elmo-folder-msgdb folder))))
-    (size (elmo-msgdb-overview-entity-get-size
-	   (elmo-msgdb-overview-get-entity
-	    number (elmo-folder-msgdb folder))))
-    (date (elmo-msgdb-overview-entity-get-date
-	   (elmo-msgdb-overview-get-entity
-	    number (elmo-folder-msgdb folder))))
-    (to (elmo-msgdb-overview-entity-get-to
-	 (elmo-msgdb-overview-get-entity
-	  number (elmo-folder-msgdb folder))))
-    (cc (elmo-msgdb-overview-entity-get-cc
-	 (elmo-msgdb-overview-get-entity
-	  number (elmo-folder-msgdb folder))))))
+  (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
 
 (defun elmo-message-set-mark (folder number mark)
   "Set mark for the message in the FOLDER with NUMBER as MARK."
-  (elmo-msgdb-set-mark-alist
+  (elmo-msgdb-set-mark
    (elmo-folder-msgdb folder)
-   (elmo-msgdb-mark-set
-    (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))
-    number mark)))
+   number mark))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
   nil) ; default is not use cache.
@@ -1160,6 +1140,19 @@ FIELD is a symbol of the field."
 						   number-alist)
   ;; Do nothing.
   )
+
+(defsubst elmo-folder-replace-marks (folder alist)
+  "Replace marks of the FOLDER according to ALIST."
+  (let (pair)
+    (dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
+      (when (setq pair (assoc (cadr elem) alist))
+	(if (elmo-message-use-cache-p folder (car elem))
+	    (elmo-msgdb-set-mark (elmo-folder-msgdb folder)
+				 (car elem)
+				 (cdr pair))
+	  (elmo-msgdb-set-mark (elmo-folder-msgdb folder)
+			       (car elem)
+			       nil))))))
 
 (defun elmo-generic-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb
@@ -1200,7 +1193,7 @@ FIELD is a symbol of the field."
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
 					 (elmo-folder-msgdb folder)
-					 append-msgdb t))
+					 append-msgdb))
 	(length to-be-deleted))
     0))
 
@@ -1332,9 +1325,9 @@ If update process is interrupted, return nil."
     (if ignore-msgdb
 	(progn
 	  (setq seen-list (nconc
-			   (elmo-msgdb-mark-alist-to-seen-list
-			    number-alist mark-alist
-			    (concat important-mark read-uncached-mark))
+			   (elmo-msgdb-seen-list
+			    (elmo-folder-msgdb folder)
+			    (list important-mark read-uncached-mark))
 			   seen-list))
 	  (elmo-folder-clear folder (eq ignore-msgdb 'visible-only))))
     (unless no-check (elmo-folder-check folder))
@@ -1406,19 +1399,18 @@ If update process is interrupted, return nil."
     (elmo-folder-msgdb folder))))
 
 ;;;
-(defun elmo-msgdb-load (folder)
-  (message "Loading msgdb for %s..." (elmo-folder-name-internal folder))
-  (let* ((path (elmo-folder-msgdb-path folder))
-	 (overview (elmo-msgdb-overview-load path))
-	 (msgdb (list overview
-		      (elmo-msgdb-number-load path)
-		      (elmo-msgdb-mark-load path)
-		      (elmo-msgdb-make-overview-hashtb overview))))
-    (message "Loading msgdb for %s...done" (elmo-folder-name-internal folder))
+(defun elmo-msgdb-load (folder &optional silent)
+  (unless silent
+    (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))
+  (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
     (elmo-folder-set-info-max-by-numdb folder
 				       (elmo-msgdb-get-number-alist msgdb))
+    
+    (unless silent
+      (message "Loading msgdb for %s...done"
+	       (elmo-folder-name-internal folder)))
     msgdb))
-
+  
 (defun elmo-msgdb-delete-path (folder)
   (let ((path (elmo-folder-msgdb-path folder)))
     (if (file-directory-p path)

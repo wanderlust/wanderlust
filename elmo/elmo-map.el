@@ -150,10 +150,9 @@
     (elmo-map-folder-location-setup folder (nreverse location))
     (elmo-folder-set-msgdb-internal
      folder
-     (list overview
-	   (nreverse number-alist)
-	   (nreverse mark-alist)
-	   (elmo-msgdb-make-overview-hashtb overview)))))
+     (elmo-make-msgdb overview
+		      (nreverse number-alist)
+		      (nreverse mark-alist)))))
 
 (defun elmo-map-folder-location-setup (folder locations)
   (elmo-map-folder-set-location-alist-internal

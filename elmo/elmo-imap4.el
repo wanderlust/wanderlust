@@ -2363,7 +2363,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-open :around ((folder elmo-imap4-folder)
 					      &optional load-msgdb)
   (if (elmo-folder-plugged-p folder)
-      (let (session mailbox msgdb response tag)
+      (let (session mailbox msgdb result response tag)
 	(condition-case err
 	    (progn
 	      (setq session (elmo-imap4-get-session folder)
@@ -2372,12 +2372,32 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						 (list "select "
 						       (elmo-imap4-mailbox
 							mailbox))))
+	      (message "Selecting %s..."
+		       (elmo-folder-name-internal folder))
 	      (if load-msgdb
-		  (setq msgdb (elmo-msgdb-load folder)))
+		  (setq msgdb (elmo-msgdb-load folder 'silent)))
 	      (elmo-folder-set-killed-list-internal
 	       folder
 	       (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-	      (setq response (elmo-imap4-read-response session tag)))
+	      (if (setq result (elmo-imap4-response-ok-p
+				(setq response
+				      (elmo-imap4-read-response session tag))))
+		  (progn
+		    (elmo-imap4-session-set-current-mailbox-internal
+		     session mailbox)
+		    (elmo-imap4-session-set-read-only-internal
+		     session
+		     (nth 1 (assq 'read-only (assq 'ok response)))))
+		(elmo-imap4-session-set-current-mailbox-internal session nil)
+		(if (elmo-imap4-response-bye-p response)
+		    (elmo-imap4-process-bye session)
+		  (error (or
+			  (elmo-imap4-response-error-text response)
+			  (format "Select %s failed" mailbox)))))
+	      (message "Selecting %s...done"
+		       (elmo-folder-name-internal folder))
+	      (elmo-folder-set-msgdb-internal
+	       folder msgdb))
 	  (quit
 	   (if response
 	       (elmo-imap4-session-set-current-mailbox-internal
@@ -2391,11 +2411,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
-		   session nil)))))
-	(if load-msgdb
-	    (elmo-folder-set-msgdb-internal
-	     folder
-	     (or msgdb (elmo-msgdb-load folder)))))
+		   session nil))))))
     (luna-call-next-method)))
 
 ;; elmo-folder-open-internal: do nothing.

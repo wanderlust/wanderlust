@@ -237,7 +237,7 @@
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
 					 (elmo-folder-msgdb folder)
-					 append-msgdb t))
+					 append-msgdb))
 	(length to-be-deleted))
     0))
 

@@ -363,12 +363,10 @@
     (message "Packing...done")
     (elmo-folder-set-msgdb-internal
      folder
-     (list (elmo-msgdb-get-overview msgdb)
-	   onum-alist
-	   new-mark-alist
-	   ;; remake hash table
-	   (elmo-msgdb-make-overview-hashtb
-	    (elmo-msgdb-get-overview msgdb))))))
+     (elmo-make-msgdb
+      (elmo-msgdb-get-overview msgdb)
+      onum-alist
+      new-mark-alist))))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
   t)

@@ -1,3 +1,53 @@
+2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-open): Fix.
+
+	* elmo.el (elmo-message-mark): Rewrite.
+	(elmo-message-field): Ditto.
+	(elmo-message-set-mark): Ditto.
+	(elmo-folder-replace-marks): New function.
+	(elmo-generic-folder-append-msgdb): Removed third argument for
+	elmo-msgdb-append.
+	(elmo-folder-synchronize): Use elmo-msgdb-seen-list.
+	(elmo-msgdb-load): New implementation.
+
+	* elmo-vars.el (elmo-use-overview-hashtb): Removed.
+
+	* elmo-util.el (elmo-list-insert): New implementation.
+
+	* elmo-multi.el (elmo-multi-folder-append-msgdb): Removed third
+	argument for elmo-msgdb-append.
+	
+
+	* elmo-msgdb.el	(elmo-load-msgdb): New function.
+	(elmo-make-msgdb): Ditto.
+	(elmo-msgdb-get-index): New inline function.
+	(elmo-msgdb-set-index): Ditto.
+	(elmo-msgdb-get-entity-hashtb): Ditto.
+	(elmo-msgdb-get-mark-hashtb): Ditto.
+	(elmo-msgdb-get-mark): Ditto.
+	(elmo-msgdb-set-mark): Ditto.
+	(elmo-msgdb-count-marks): Ditto.
+	(elmo-msgdb-get-number): Ditto.
+	(elmo-msgdb-get-field): Ditto.
+	(elmo-msgdb-seen-list): Ditto.
+	(elmo-msgdb-mark-alist-set): Renamed from elmo-msgdb-mark-set.
+	(elmo-msgdb-delete-msgs): Follow the changes above.
+	(elmo-msgdb-overview-get-entity): Ditto.
+	(elmo-msgdb-add-msgs-to-seen-list): Ditto.
+	(elmo-msgdb-clear-index): Renamed from elmo-msgdb-clear-overview-hastb
+	and rewritten.
+	(elmo-msgdb-make-index): Likewise.
+	(elmo-msgdb-append): Removed third argument.
+	(elmo-msgdb-clear): Clear index as nil.
+	(elmo-folder-set-info-hashtb): Removed.
+	(elmo-folder-set-info-max-by-numdb): Ditto.
+	(elmo-folder-info-make-hashtb): Ditto.
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Use elmo-make-msgdb.
+
+	* elmo-map.el (elmo-folder-pack-number): Ditto.
+
 2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.9.10.
