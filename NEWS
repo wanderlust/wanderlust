@@ -1,34 +1,5 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
 
-* Changes in 2.6.0 from 2.4.1.
-
-** FLIM 1.13.x is not supported any longer.
-   Please install FLIM 1.14.1 or later.
-
-** Now folder and summary buffer can be opened in a separate frame.
-   If `wl-folder-use-frame' is set as t, `M-x wl' creates a new frame
-   for folder mode. If `wl-summary-use-frame' is set as t, new frames
-   are created for each summary window.
-
-** Cursor moving speed ('N' or 'P' in summary) is greatly improved.
-
-** Folder checking speed for filter folder of localdir
-   folder using `last' or `first' (Ex. /last:100/+inbox) is improved.
-
-** Retrieval progress of each message is displayed in POP and IMAP folder.
-
-** Coloring of summary buffer is processed on demand (only on Emacs).
-   If `wl-summary-lazy-highlight' is non-nil, 
-   only visible portion of the buffer is colored.
-
-** Customizable biff notify.
-   New hook `wl-biff-notify-hook' and `wl-biff-unnotify-hook' is
-   now available.
-   e.g. (add-hook wl-biff-notify-hook 'ding)
-
-
-** Many bug fixes.
-
 * Version 2.4.1 is basically a bug fix version of 2.4.0.
 
 ** Wanderlust 2.4.1 now works on FLIM 1.14.x. 
