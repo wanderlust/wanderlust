@@ -14,7 +14,7 @@
 	(elmo-folder-clear): Likewise.
 
 	* elmo-imap4.el (elmo-folder-open): Use `elmo-folder-msgdb-load'
-	instead of `elo-msgdb-load' (renamed).
+	instead of `elmo-msgdb-load' (renamed).
 
 	* elmo-version.el (elmo-version): Up to 2.11.12.
 
