@@ -622,8 +622,6 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
   (let ((session (elmo-imap4-get-session old-spec)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-spec-mailbox old-spec))
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
@@ -1358,7 +1356,7 @@ If optional argument UNMARK is non-nil, unmark."
        'fetch)))))
 
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
-  (elmo-imap4-read-msg spec msg outbuf nil 'unseen))
+  (elmo-imap4-read-msg spec msg outbuf 'unseen))
 
 (defun elmo-imap4-read-msg (spec msg outbuf
 				 &optional msgdb leave-seen-flag-untouched)

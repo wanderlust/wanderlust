@@ -223,7 +223,6 @@
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
-	   (sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	   client name step response mechanism
 	   sasl-read-passphrase)
       (or (and (string= "USER" (car auth))
@@ -255,7 +254,7 @@
 	     process
 	     (concat "AUTH " name
 		     (and (sasl-step-data step)
-			  (concat
+			  (concat 
 			   " "
 			   (elmo-base64-encode-string
 			    (sasl-step-data step) 'no-line-break))))) ;)
