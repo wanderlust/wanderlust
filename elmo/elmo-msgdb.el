@@ -522,37 +522,30 @@ content of MSGDB is changed."
   (when number
     (let ((db database)
 	  entity)
-      (catch 'loop
-	(while db
-	  (if (eq (elmo-msgdb-overview-entity-get-number (car db)) number)
-	      (progn
-		(setq entity (car db))
-		(throw 'loop nil))
-	    (setq db (cdr db)))))
+      (while db
+	(if (eq (elmo-msgdb-overview-entity-get-number (car db)) number)
+	    (setq entity (car db)
+		  db nil) ; exit loop
+	  (setq db (cdr db))))
       entity)))
 
 (defun elmo-msgdb-overview-get-entity (id msgdb)
   (when id
     (let ((ovht (elmo-msgdb-get-overviewht msgdb)))
       (if ovht ;; use overview hash
-	  (if (stringp id) ;; message-id
+	  (if (stringp id) ;; ID is message-id
 	      (elmo-get-hash-val id ovht)
 	    (elmo-get-hash-val (format "#%d" id) ovht))
 	(let* ((overview (elmo-msgdb-get-overview msgdb))
 	       (number-alist (elmo-msgdb-get-number-alist msgdb))
 	       (message-id (if (stringp id)
-			       id ;; message-id
+			       id ;; ID is message-id
 			     (cdr (assq id number-alist))))
 	       entity)
 	  (if message-id
 	      (assoc message-id overview)
 	    ;; ID is number. message-id is nil or no exists in number-alist.
-	    (while overview
-	      (if (eq (elmo-msgdb-overview-entity-get-number (car overview)) id)
-		  (setq entity (car overview)
-			overview nil) ;;exit loop
-		(setq overview (cdr overview))))
-	    entity))))))
+	    (elmo-msgdb-overview-get-entity-by-number overview id)))))))
 
 ;;
 ;; deleted message handling
