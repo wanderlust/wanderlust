@@ -2,6 +2,9 @@
 
 	* wl-expire.el (wl-summary-expire): Fixed 2nd argument for `wl-append'.
 	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
+	(wl-expire-refile-with-copy-reserve-msg): Follow the change in the
+	order of the arguments for `wl-expire-message-p'.
+	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
 
 	* wl-summary.el (wl-summary-target-mark-reply-with-citation): 
 	Check return value of wl-summary-reply.

@@ -196,7 +196,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 	(error "%s: create folder failed" (elmo-folder-name-internal
 					   dst-folder)))
 	(while (setq msg (wl-pop msglist))
-	  (unless (wl-expire-message-p msg folder)
+	  (unless (wl-expire-message-p folder msg)
 	    (setq msg-id (elmo-message-field folder msg 'message-id))
 	    (if (assoc msg-id wl-expired-alist)
 		;; reserve mark message already refiled or expired
