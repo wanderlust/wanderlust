@@ -165,3 +165,58 @@
      (string= "\0\0\0\0\0\0\0\0" password1))
     (lunit-assert
      (string= "\0\0\0\0\0\0\0\0" password2))))
+
+(luna-define-method test-elmo-address-quote-specials-1 ((case test-elmo-util))
+  ""
+  (lunit-assert
+   (string= "\"dot.atom.text\""
+	    (elmo-address-quote-specials "dot.atom.text")))
+  (lunit-assert
+   (string= "\"...\""
+	    (elmo-address-quote-specials "..."))))
+
+(luna-define-method test-elmo-address-quote-specials-2 ((case test-elmo-util))
+  ""
+  (lunit-assert
+   (string=
+    "atext!#$%&'*+-/=?^_`{|}~"
+    (elmo-address-quote-specials "atext!#$%&'*+-/=?^_`{|}~"))))
+
+(luna-define-method test-elmo-elmo-flatten-1 ((case test-elmo-util))
+  ""
+  (lunit-assert
+   (equal
+    '(1 2 3 4 5)
+    (elmo-flatten '(1 2 (3 4 5))))))
+
+(luna-define-method test-elmo-number-set-member-1 ((case test-elmo-util))
+  "Check edge"
+  (lunit-assert
+   (elmo-number-set-member 1 '((1 . 99))))
+  (lunit-assert
+   (elmo-number-set-member 99 '((1 . 99))))
+  (lunit-assert
+   (not (elmo-number-set-member 0 '((1 . 99)))))
+  (lunit-assert
+   (not (elmo-number-set-member 100 '((1 . 99))))))
+
+(luna-define-method test-elmo-number-set-append-list-1 ((case test-elmo-util))
+  "Simple testcase."
+  (lunit-assert
+   (equal '((1 . 100))
+	  (elmo-number-set-append-list '((1 . 99)) '(100)))))
+
+(luna-define-method test-elmo-number-set-append-1 ((case test-elmo-util))
+  "Simple testcase."
+  (lunit-assert
+   (equal '((1 . 100))
+	  (elmo-number-set-append '((1 . 99)) 100))))
+
+(luna-define-method test-elmo-number-set-to-number-list-1 ((case test-elmo-util))
+  "Simple testcase."
+  (lunit-assert
+   (equal '(1 2 3 4 5 6 7 8 9)
+	  (elmo-number-set-to-number-list '((1 . 9)))))
+  (lunit-assert
+   (equal '(1)
+	  (elmo-number-set-to-number-list '(1)))))

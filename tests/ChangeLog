@@ -9,8 +9,13 @@
 	(test-elmo-list-insert-2, test-elmo-delete-char-1)
 	(test-elmo-concat-path-1)
 	(test-elmo-remove-passwd-1, test-elmo-remove-passwd-2)
-	(test-elmo-remove-passwd-3, test-elmo-passwd-alist-clear-1): New
-	testcases.  Add docstring.
+	(test-elmo-remove-passwd-3, test-elmo-passwd-alist-clear-1)
+	(test-elmo-address-quote-specials-1)
+	(test-elmo-address-quote-specials-2, test-elmo-elmo-flatten-1)
+	(test-elmo-number-set-member-1, test-elmo-number-set-append-list-1)
+	(test-elmo-number-set-append-1)
+	(test-elmo-number-set-to-number-list-1): New testcases.  Add
+	docstring.
 
 2004-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
