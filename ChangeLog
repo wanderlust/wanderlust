@@ -1,3 +1,9 @@
+2000-10-13  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* WL-MK: (byte-compile-file-form-custom-declare-variable): Define
+	function if bytecomp doesn't have it; warn if "new custom" isn't
+	detected; don't require `backquote' because it's always autoloaded.
+
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-ELS (WL-MODULES): Add wl-version.
