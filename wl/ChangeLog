@@ -1,3 +1,8 @@
+2000-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-folder-group-line): Remove previous
+	face.
+
 2000-10-11  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-util.el (toplevel): Use `wl-on-xemacs' instead of

@@ -785,6 +785,8 @@
 		  (put-text-property bol (match-beginning 0) 'face text-face)
 		  (put-text-property (match-beginning 0) (match-end 0)
 				     'face face))
+	      ;; Remove previous face.
+	      (put-text-property bol (match-end 0) 'face nil)
 	      (put-text-property bol (match-end 0) 'face face)))
 	(put-text-property bol eol 'face text-face)))))
 
