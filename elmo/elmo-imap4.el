@@ -2071,7 +2071,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
 	(total 0)
 	(length (length from-msgs))
-	charset set-list results)
+	charset set-list end results)
     (message "Searching...")
     (cond
      ((string= "last" search-key)
@@ -2091,8 +2091,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (setq search-key (concat "sent" search-key)
 	    set-list (elmo-imap4-make-number-set-list
 		      from-msgs
-		      elmo-imap4-number-set-chop-length))
-      (while set-list
+		      elmo-imap4-number-set-chop-length)
+	    end nil)
+      (while (not end)
 	(setq results
 	      (append
 	       results
@@ -2122,7 +2123,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (elmo-display-progress
 	   'elmo-imap4-search "Searching..."
 	   (/ (* total 100) length)))
-	(setq set-list (cdr set-list)))
+	(setq set-list (cdr set-list)
+	      end (null set-list)))
       results)
      (t
       (setq charset
@@ -2132,8 +2134,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	       (elmo-filter-value filter)))
 	    set-list (elmo-imap4-make-number-set-list
 		      from-msgs
-		      elmo-imap4-number-set-chop-length))
-      (while set-list
+		      elmo-imap4-number-set-chop-length)
+	    end nil)
+      (while (not end)
 	(setq results
 	      (append
 	       results
@@ -2172,7 +2175,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (elmo-display-progress
 	   'elmo-imap4-search "Searching..."
 	   (/ (* total 100) length)))
-	(setq set-list (cdr set-list)))
+	(setq set-list (cdr set-list)
+	      end (null set-list)))
       results))))
 
 (defun elmo-imap4-search-internal (folder session condition from-msgs)

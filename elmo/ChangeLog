@@ -1,3 +1,8 @@
+2001-12-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Fixed
+	test for while loop to execute at least one SEARCH command.
+
 2001-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.9.0.
