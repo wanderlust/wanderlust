@@ -710,7 +710,9 @@ Optional argument ARG is repeart count."
 
 (defun wl-folder-update-recursive-current-entity (&optional entity)
   (interactive)
-  (when (wl-folder-buffer-group-p)
+  (beginning-of-line)
+  (when (and (wl-folder-buffer-group-p)
+	     (looking-at wl-folder-group-regexp))
     (cond
      ((string= (wl-match-buffer 2) "+")
       (save-excursion

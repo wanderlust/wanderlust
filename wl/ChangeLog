@@ -1,7 +1,13 @@
+2003-02-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-update-recursive-current-entity): Fix
+	along the last change in `wl-folder-buffer-group-p'.
+
 2003-02-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-buffer-search-group): Ignore non-group
 	folder.
+	(wl-folder-get-petname): Do not return petname for ordinal group.
 
 	* wl-vars.el (wl-delete-folder-alist): Add shimbun folder to
 	the default value.
