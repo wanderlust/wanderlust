@@ -2,11 +2,7 @@
 
 ** enable to define folder icons in elmo.el
 ** reconsider the structure of msgdb and make behavior faster
-** organize the mark for pre-fetch reservation 
 ** organize the marks for already replied (forwarded) messages
-** manage important marks more strictly
-   e.g. remove '$' mark in the original message after deleting message
-   in 'mark folder
 
 * other tasks
 
