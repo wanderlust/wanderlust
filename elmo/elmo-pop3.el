@@ -44,9 +44,8 @@
   "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
-(defvar sasl-mechanism-alist)
 
-(luna-define-class elmo-pop3-session (elmo-network-session))
+(luna-define-class elmo-pop3-session (elmo-network-session) ())
 
 ;; buffer-local
 (defvar elmo-pop3-read-point nil)
@@ -224,7 +223,7 @@
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
-	   sasl-mechanisms
+	   (sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	   client name step response mechanism
 	   sasl-read-passphrase)
       (or (and (string= "USER" (car auth))
@@ -232,8 +231,6 @@
 	  (and (string= "APOP" (car auth))
 	       (elmo-pop3-auth-apop session))
 	  (progn
-	    (require 'sasl)
-	    (setq sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	    (setq mechanism (sasl-find-mechanism auth))
 	    (unless mechanism
 	      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
