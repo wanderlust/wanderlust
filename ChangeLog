@@ -1,5 +1,9 @@
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* utils/ptexinfmt.el (texinfo-format-direntry): Fixed broken
+	direntry generate probrem.
+	(Advised by Tetsuo Tsukamoto <czkmt@remus.dti.ne.jp>)
+
 	* utils/bbdb-wl.el (toplevel): Fixed copyright notice.
 	* utils/rfc2368.el (toplevel): Ditto.
 
