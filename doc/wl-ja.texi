@@ -6182,13 +6182,12 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B?7$7$$%a!<%k$,FO$$$?:]$K<B9T$5$l$k%U%C%/!#(B
-$BNc$($P%S!<%W2;$rLD$i$9$J$i(B
+$BCe?.;~$K%S!<%W2;$rLD$i$9!J=i4|@_Dj!K$J$i0J2<$N$h$&$K@_Dj$7$^$9!#(B
 @lisp
 (setq wl-biff-notify-hook '(beep))
 @end lisp
-$B$N$h$&$K@_Dj$7$^$9!#(B
+$B2;$rLD$i$5$J$$>l9g$O(B @code{nil} $B$K@_Dj$7$F$/$@$5$$!#(B
 @end table
 
 
