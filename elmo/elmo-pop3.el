@@ -209,19 +209,19 @@
 (provide 'sasl-pop3-user)
 
 (defconst sasl-pop3-apop-steps
-  '(sasl-pop3-apop-response))
+  '(ignore
+    sasl-pop3-apop-response))
 
 (defun sasl-pop3-apop-response (client step)
   (require 'md5)
   (format "%s %s"
 	  (sasl-client-name client)
 	  (md5
-	   (concat (match-string
-		    1
-		    (elmo-network-session-greeting-internal session))
-		   (sasl-read-passphrase
-		    (format "LOGIN passphrase for %s: "
-			    (sasl-client-name client)))))))
+	   (concat
+	    (sasl-step-data step)
+	    (sasl-read-passphrase
+	     (format "LOGIN passphrase for %s: "
+		     (sasl-client-name client)))))))
 
 (put 'sasl-pop3-apop 'sasl-mechanism
      (sasl-make-mechanism "APOP" sasl-pop3-apop-steps))
@@ -274,31 +274,42 @@
 	    (sasl-find-mechanism auth))
 	 client name step response
 	 sasl-read-passphrase)
-    (unless mechanism
-      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
-    (setq client
-	  (sasl-make-client
-	   mechanism
-	   (elmo-network-session-user-internal session)
-	   "pop"
-	   (elmo-network-session-host-internal session)))
+      (unless mechanism
+	(signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
+      (setq client
+	    (sasl-make-client
+	     mechanism
+	     (elmo-network-session-user-internal session)
+	     "pop"
+	     (elmo-network-session-host-internal session)))
 ;;;	    (if elmo-pop3-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-pop3-auth-user-realm))
-    (setq name (sasl-mechanism-name mechanism)
-	  step (sasl-next-step client nil))
-    (elmo-network-session-set-auth-internal session
-					    (intern (downcase name)))
-    (setq sasl-read-passphrase
-	  (function
-	   (lambda (prompt)
-	     (elmo-get-passwd
-	      (elmo-network-session-password-key session)))))
-    (if (or (string= name "USER")
-	    (string= name "APOP"))
-	(elmo-pop3-send-command
-	 process
-	 (format "%s %s" name
-		 (sasl-step-data step)))
+      (setq name (sasl-mechanism-name mechanism))
+;      (elmo-network-session-set-auth-internal session
+;					      (intern (downcase name)))
+      (setq sasl-read-passphrase
+	    (function
+	     (lambda (prompt)
+	       (elmo-get-passwd
+		(elmo-network-session-password-key session)))))
+      (setq step (sasl-next-step client nil))
+      (if (string= "APOP" name)
+	  (if (string-match "^\+OK .*\\(<[^\>]+>\\)"
+			    (elmo-network-session-greeting-internal session))
+	      (sasl-step-set-data
+	       step
+	       (match-string
+		1
+		(elmo-network-session-greeting-internal session)))
+	    (signal 'elmo-authenticate-error '(elmo-pop3-no-capability-apop))))
+      (if (or (string= name "USER")
+	      (string= name "APOP"))
+	  (progn
+	    (setq step (sasl-next-step client step))
+	    (elmo-pop3-send-command
+	     process
+	     (format "%s %s" name
+		     (sasl-step-data step))))
       (elmo-pop3-send-command
        process
        (concat "AUTH " name
