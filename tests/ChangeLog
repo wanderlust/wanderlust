@@ -1,3 +1,11 @@
+2004-05-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* test-elmo-localdir.el
+	(test-elmo-folder-expand-msgdb-path-4): Remove.
+
+	* test-utf7.el (toplevel): Setup utf-translate-cjk-mode or
+	require 'un-define if available.
+
 2004-02-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-rfc2368.el: New file.

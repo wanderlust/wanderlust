@@ -1,6 +1,12 @@
 (require 'lunit)
 (require 'utf7)
 
+;; Emacs 21.3.50 or later
+(if (boundp 'utf-translate-cjk-mode)
+    (utf-translate-cjk-mode)
+  ;; Use Mule-UCS if installed
+  (ignore-errors (require 'un-define)))
+
 (luna-define-class test-utf7 (lunit-test-case))
 
 (luna-define-method test-utf7-encode-string ((case test-utf7))
