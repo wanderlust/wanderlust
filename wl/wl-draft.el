@@ -150,18 +150,15 @@ e.g.
   "Insert Date field."
   (insert "Date: " (wl-make-date-string) "\n"))
 
-(defun wl-draft-check-wl-from ()
-  (or wl-from (error "Please set `wl-from' to your mail address"))
-  (condition-case err
-      (wl-draft-eword-encode-address-list wl-from)
-    (error (error "Please look at `wl-from' again"))))
-
 (defun wl-draft-insert-from-field ()
   "Insert From field."
   ;; Put the "From:" field in unless for some odd reason
   ;; they put one in themselves.
-  (wl-draft-check-wl-from)
-  (insert "From: " wl-from "\n"))
+  (let (from)
+    (condition-case err
+	(setq from (wl-draft-eword-encode-address-list wl-from))
+      (error (error "Please look at `wl-from' again")))
+    (insert "From: " from "\n")))
 
 (defun wl-draft-insert-x-face-field ()
   "Insert X-Face header."
