@@ -1,3 +1,7 @@
+2001-09-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Fixed.
+
 2001-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-switch-to-clone-buffer): Use

@@ -977,17 +977,18 @@ non-nil."
   (require 'elmo-pop3)
   (condition-case ()
       (let ((session (elmo-pop3-get-session
-		      (list 'pop3
-			    (or wl-pop-before-smtp-user
-				elmo-pop3-default-user)
-			    (or wl-pop-before-smtp-authenticate-type
-				elmo-pop3-default-authenticate-type)
-			    (or wl-pop-before-smtp-server
-				elmo-pop3-default-server)
-			    (or wl-pop-before-smtp-port
-				elmo-pop3-default-port)
-			    (or wl-pop-before-smtp-stream-type
-				elmo-pop3-default-stream-type)))))
+		      (luna-make-entity
+		       'elmo-pop3-folder
+		       :user (or wl-pop-before-smtp-user
+				 elmo-pop3-default-user)
+		       :server (or wl-pop-before-smtp-server
+				   elmo-pop3-default-server)
+		       :port (or wl-pop-before-smtp-port
+				 elmo-pop3-default-port)
+		       :auth (or wl-pop-before-smtp-authenticate-type
+				 elmo-pop3-default-authenticate-type)
+		       :stream-type (or wl-pop-before-smtp-stream-type
+					elmo-pop3-default-stream-type)))))
 	(when session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
