@@ -1113,9 +1113,9 @@ Emacs 19.28 or earlier does not have `unintern'."
   (let (result)
     (while lst
       (unless (funcall pred (car lst))
-	(setq result (nconc result (list (car lst)))))
+	(setq result (cons (car lst) result)))
       (setq lst (cdr lst)))
-    result))
+    (nreverse result)))
 
 (defun elmo-list-delete (list1 list2 &optional delete-function)
   "Delete by side effect any occurrences equal to elements of LIST1 from LIST2.
