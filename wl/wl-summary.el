@@ -3975,7 +3975,7 @@ If ARG, exit virtual folder."
 			 (elmo-file-cache-get-path message-id))))
 		  (when visible
 		    (delete-backward-char 1)
-		    (elmo-message-mark folder number)))
+		    (insert (or (elmo-message-mark folder number) " "))))
 	      ;; server side mark
 	      (elmo-folder-mark-as-important folder (list number)
 					     no-server-update)
