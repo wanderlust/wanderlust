@@ -162,22 +162,31 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
 
 (defun wl-draft-overload-menubar ()
-;  (local-set-key [menu-bar mail preview]
-;    '("Preview Message" . wl-draft-preview-message))
-  (local-set-key [menu-bar mail send]
-    '("Send Message" . wl-draft-send-and-exit))
-  (local-set-key [menu-bar mail send-stay]
-    '("Send, Keep Editing" . wl-draft-send))
-  (local-set-key [menu-bar mail cancel]
-    '("Kill Current Draft" . wl-draft-kill))
-;  (local-set-key [menu-bar mail save]
-;    '("Save Draft and Exit" . wl-draft-save-and-exit))
-  (local-set-key [menu-bar mail yank]
-    '("Cite Message" . wl-draft-yank-original))
-  (local-set-key [menu-bar mail signature]
-    '("Insert Signature" . insert-signature))
-  (local-set-key [menu-bar headers fcc]
-    '("Fcc" . wl-draft-fcc)))
+  (let ((keymap (current-local-map)))
+    (define-key keymap [menu-bar mail send]
+      '("Send Message" . wl-draft-send-and-exit))
+    (define-key keymap [menu-bar mail send-stay]
+      '("Send, Keep Editing" . wl-draft-send))
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [mail-sep-send] '("--")
+      'send-stay)
+    (define-key keymap [menu-bar mail cancel]
+      '("Kill Current Draft" . wl-draft-kill))
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [save] '("Save Draft and Exit" . wl-draft-save-and-exit)
+      'cancel)
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [mail-sep-exit] '("--")
+      'save)
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [preview] '("Preview Message" . wl-draft-preview-message)
+      'mail-sep-exit)
+    (define-key keymap [menu-bar mail yank]
+      '("Cite Message" . wl-draft-yank-original))
+    (define-key keymap [menu-bar mail signature]
+      '("Insert Signature" . insert-signature))
+    (define-key keymap [menu-bar headers fcc]
+      '("Fcc" . wl-draft-fcc))))
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)
