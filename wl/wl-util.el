@@ -154,7 +154,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	     (cmd (if (featurep 'xemacs)
 		      (event-to-character last-command-event)
 		    (string-to-char (format "%s" (this-command-keys))))))
-    (message mes-string)
+    (message "%s" mes-string)
     (setq key (car (setq keve (wl-read-event-char))))
     (if (or (equal key ?\ )
 	    (and cmd

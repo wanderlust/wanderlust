@@ -133,9 +133,8 @@ It calls following-method selected from variable
 	(if (functionp f)
 	    (funcall f new-buf)
 	  (message
-	   (format
-	    "Sorry, following method for %s is not implemented yet."
-	    mode))
+	   "Sorry, following method for %s is not implemented yet."
+	   mode)
 	  ))
       )))
 
@@ -192,7 +191,7 @@ It calls following-method selected from variable
       (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
-    (message recipients-message)))
+    (message "%s" recipients-message)))
 
 (defalias 'wl-draft-caesar-region  'mule-caesar-region)
 

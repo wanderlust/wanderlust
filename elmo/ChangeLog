@@ -1,3 +1,8 @@
+2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* acap.el, elmo-imap4.el, elmo-nntp.el, elmo-util.el, pldap.el:
+	`message' and `error' take format string.
+
 2003-04-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-pipe.el (elmo-folder-clear): Implemented clear copied-list.

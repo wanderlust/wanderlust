@@ -765,7 +765,7 @@ the directory becomes empty after deletion."
 
 (defun elmo-list-diff (list1 list2 &optional mes)
   (if mes
-      (message mes))
+      (message "%s" mes))
   (let ((clist1 (copy-sequence list1))
 	(clist2 (copy-sequence list2)))
     (while list2
@@ -775,7 +775,7 @@ the directory becomes empty after deletion."
       (setq clist2 (delq (car list1) clist2))
       (setq list1 (cdr list1)))
     (if mes
-	(message (concat mes "done")))
+	(message "%sdone" mes))
     (list clist1 clist2)))
 
 (defun elmo-list-bigger-diff (list1 list2 &optional mes)

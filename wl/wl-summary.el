@@ -1941,7 +1941,7 @@ If ARG is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-unread (car diffs) 'no-server)
 	(setq diffs (cdr diffs)))
-      (if (interactive-p) (message mes)))))
+      (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
   "Update the summary view to the newest folder status."
@@ -3109,14 +3109,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (wl-summary-toggle-disp-msg 'off)
 	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
-	(message (concat "Executing...done"
-			 (if (> refile-failures 0)
-			     (format " (%d refiling failed)" refile-failures)
-			   "")
-			 (if (> copy-failures 0)
-			     (format " (%d copying failed)" copy-failures)
-			   "")
-			 "."))))))
+	(message "Executing...done%s%s"
+		 (if (> refile-failures 0)
+		     (format " (%d refiling failed)" refile-failures)
+		   "")
+		 (if (> copy-failures 0)
+		     (format " (%d copying failed)" copy-failures)
+		   ""))))))
 
 (defun wl-summary-erase (&optional number)
   "Erase message actually, without moving it to trash."
@@ -4739,7 +4738,7 @@ Return t if message exists."
 		       msgid
 		       (read-from-minibuffer "NNTP Server: ")))
 		     (t
-		      (message errmsg)
+		      (message "%s" errmsg)
 		      nil)))
 	      ((or (eq wl-summary-search-via-nntp 'force)
 		   (and
@@ -4748,7 +4747,7 @@ Return t if message exists."
 		    wl-summary-search-via-nntp))
 	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 	      (t
-	       (message errmsg)
+	       (message "%s" errmsg)
 	       nil))))))
 
 (defun wl-summary-jump-to-msg-by-message-id-via-nntp (&optional id server-spec)

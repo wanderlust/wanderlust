@@ -1048,7 +1048,7 @@ Don't cache if nil.")
       (if (not (string-match
 		"^2" (setq response (elmo-nntp-read-raw-response
 				     session))))
-	  (error (concat "NNTP error: " response))))))
+	  (error "NNTP error: %s" response)))))
 
 (defsubst elmo-nntp-send-data-line (session line)
   "Send LINE to SESSION."

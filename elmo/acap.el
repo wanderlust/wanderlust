@@ -550,7 +550,8 @@ ENTRIES is a store-entry list."
       (when (acap-response-bye-p acap-response)
 	(if acap-logging-out
 	    (setq acap-response nil)
-	  (error (prog1 (acap-response-bye-message acap-response)
+	  (error "%s"
+		 (prog1 (acap-response-bye-message acap-response)
 		   (setq acap-response nil)))))
       (or (and (not (memq (process-status process) '(open run)))
 	       (sit-for 1))
@@ -814,8 +815,8 @@ ENTRIES is a store-entry list."
 			       (acap-forward)
 			       (acap-parse-return-data-list)))))
 	  (ALERT ;(cons 'alert (acap-parse-resp-body))
-	   (message (nth 1 (acap-parse-resp-body))))
-	  ((BYE Bye bye)  
+	   (message "%s" (nth 1 (acap-parse-resp-body))))
+	  ((BYE Bye bye)
 	   (cons 'bye (acap-parse-resp-body)))
 	  (CHANGE (cons 'change
 			(list (acap-parse-quoted)
@@ -837,7 +838,7 @@ ENTRIES is a store-entry list."
 	  (NO   (cons 'stat-no (acap-parse-resp-body)))
 	  (BAD  ;(cons 'stat-bad (acap-parse-resp-body))
 	   ;; XXX cyrus-sml-acap does not return tagged bad response?
-	   (error (nth 1 (acap-parse-resp-body))))))
+	   (error "%s" (nth 1 (acap-parse-resp-body))))))
        ((integerp token)
 	;; tagged response.
 	(setq tag token)
