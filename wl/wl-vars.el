@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/25 00:19:06 teranisi>
+;; Time-stamp: <00/05/10 10:20:17 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -37,7 +37,7 @@
 
 (defconst wl-appname  "Wanderlust")
 (defconst wl-version  elmo-version) ; equals to ELMO version.
-(defconst wl-codename "Purple Rain")
+(defconst wl-codename "Roam")
 
 ;;; Customizable Variables
 
@@ -174,6 +174,12 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   "*A filter function for comparing subjects."
   :type 'function
   :group 'wl-summary)
+
+;(defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re"
+;   "*If message does not have in-reply-to field nor references field and
+; subject matches this regexp, search parent message by subject matching."
+;   :type 'string
+;   :group 'wl-summary)
 
 (defcustom wl-summary-update-confirm-threshold 500
   "*Confirm updating summary if message number is larger than this value."
@@ -1145,6 +1151,11 @@ might set this variable to '(\"-f\" \"you@some.where\")."
   :type 'regexp
   :group 'wl-draft)
 
+(defcustom wl-ignored-forwarded-headers "\\(received\\|return-path\\|x-uidl\\)"
+  "*All headers that match this regexp will be deleted when forwarding a message."
+  :type 'regexp
+  :group 'wl-draft)
+
 (defcustom wl-ignored-resent-headers "\\(return-receipt\\|[bdf]cc\\)"
   "*All headers that match this regexp will be deleted when resending a message."
   :type 'regexp
@@ -1575,6 +1586,11 @@ ex.
 (defcustom wl-fldmgr-sort-group-first t
   "*Non-nil Group folder is first when sort."
   :type 'function
+  :group 'wl-folder)
+
+(defcustom wl-fldmgr-add-complete-with-current-folder-list nil
+  "*If non-nil, completion for adding folder refers current folder list."
+  :type 'boolean
   :group 'wl-folder)
 
 ;;; For Expire and Archive

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-24 14:46:43 teranisi>
+;; Time-stamp: <00/05/10 10:15:20 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -36,7 +36,7 @@
   (defun-maybe dynamic-call (a b)))
 
 ;; Version info.
-(defconst elmo-version "1.1.1")
+(defconst elmo-version "2.3.0")
 (defconst elmo-appname "ELMO")
 
 (defun elmo-version ()
