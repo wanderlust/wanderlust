@@ -2745,14 +2745,11 @@ Use `wl-subscribed-mailing-list'."
 	(cons 0 0))))))
 
 (defun wl-folder-count-incorporates (folder)
-  (let ((marks (elmo-msgdb-mark-load
-		(elmo-folder-msgdb-path folder)))
-	(sum 0))
-    (while marks
-      (if (member (cadr (car marks))
-		  wl-summary-incorporate-marks)
-	  (incf sum))
-      (setq marks (cdr marks)))
+  (let ((sum 0))
+    (dolist (number (elmo-folder-list-flagged folder 'any))
+      (when (member (wl-summary-message-mark folder number)
+		    wl-summary-incorporate-marks)
+	(incf sum)))
     sum))
 
 (defun wl-folder-prefetch-current-entity (&optional no-check)

@@ -85,7 +85,7 @@
   (let ((i 0)
 	(len (length numbers))
 	(new-msgdb (elmo-make-msgdb))
-	entity message-id mark)
+	entity message-id)
     (message "Creating msgdb...")
     (while numbers
       (setq entity
@@ -98,13 +98,8 @@
 	    (elmo-folder-killed-list-internal folder)
 	    (list (car numbers))))
 	(setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	(setq mark (or (elmo-msgdb-global-mark-get message-id)
-		       (elmo-msgdb-mark
-			(elmo-flag-table-get flag-table message-id)
-			(elmo-file-cache-status
-			 (elmo-file-cache-get message-id))
-			'new)))
-	(elmo-msgdb-append-entity new-msgdb entity mark))
+	(elmo-msgdb-append-entity new-msgdb entity
+				  (elmo-flag-table-get flag-table message-id)))
       (when (> len elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(elmo-display-progress

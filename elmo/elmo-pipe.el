@@ -369,9 +369,6 @@
 (luna-define-method elmo-folder-count-flags ((folder elmo-pipe-folder))
   (elmo-folder-count-flags (elmo-pipe-folder-dst-internal folder)))
 
-(luna-define-method elmo-message-mark ((folder elmo-pipe-folder) number)
-  (elmo-message-mark (elmo-pipe-folder-dst-internal folder) number))
-
 (luna-define-method elmo-message-flags ((folder elmo-pipe-folder) number)
   (elmo-message-flags (elmo-pipe-folder-dst-internal folder) number))
 

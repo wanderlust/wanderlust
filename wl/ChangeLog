@@ -1,5 +1,8 @@
 2003-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-folder.el (wl-folder-count-incorporates): Don't use
+	`elmo-msgdb-mark-load'
+
 	* Version number is increased to 2.11.11.
 
 2003-09-13  Yoichi NAKAYAMA  <yoichi@geiin.org>

@@ -761,7 +761,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 				       loc-alist)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg entity i number message-id gmark)
+	  beg entity i number message-id)
       (set-buffer buffer)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
@@ -793,13 +793,10 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 			    loc-alist)))
 		    (elmo-msgdb-overview-entity-set-number entity number)))
 	      (setq message-id (elmo-message-entity-field entity 'message-id))
-	      (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (elmo-msgdb-mark
-			       (elmo-flag-table-get flag-table message-id)
-			       (elmo-file-cache-status
-				(elmo-file-cache-get message-id))
-			       'new)))
-	      (elmo-msgdb-append-entity new-msgdb entity gmark))))
+	      (elmo-msgdb-append-entity
+	       new-msgdb
+	       entity
+	       (elmo-flag-table-get flag-table message-id)))))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i num))

@@ -38,40 +38,26 @@
 (require 'std11)
 (require 'mime)
 
-(defcustom elmo-msgdb-new-mark "N"
-  "Mark for new message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-new-mark "N"
+  "Mark for new message.")
 
-(defcustom elmo-msgdb-unread-uncached-mark "U"
-  "Mark for unread and uncached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-unread-uncached-mark "U"
+  "Mark for unread and uncached message.")
 
-(defcustom elmo-msgdb-unread-cached-mark "!"
-  "Mark for unread but already cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-unread-cached-mark "!"
+  "Mark for unread but already cached message.")
 
-(defcustom elmo-msgdb-read-uncached-mark "u"
-  "Mark for read but uncached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-read-uncached-mark "u"
+  "Mark for read but uncached message.")
 
-(defcustom elmo-msgdb-answered-cached-mark "&"
-  "Mark for answered and cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-answered-cached-mark "&"
+  "Mark for answered and cached message.")
 
-(defcustom elmo-msgdb-answered-uncached-mark "A"
-  "Mark for answered but cached message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-answered-uncached-mark "A"
+  "Mark for answered but cached message.")
 
-(defcustom elmo-msgdb-important-mark "$"
-  "Mark for important message."
-  :type '(string :tag "Mark")
-  :group 'elmo)
+(defconst elmo-msgdb-important-mark "$"
+  "Mark for important message.")
 
 ;;; MSGDB interface.
 ;;
@@ -196,21 +182,21 @@
    (and (not (member mark (elmo-msgdb-uncached-marks)))
 	'(cached))))
 
-(defsubst elmo-msgdb-flags-to-mark (flags cached use-cache)
+(defsubst elmo-msgdb-flags-to-mark (flags)
   (cond ((memq 'new flags)
 	 elmo-msgdb-new-mark)
 	((memq 'important flags)
 	 elmo-msgdb-important-mark)
 	((memq 'answered flags)
-	 (if cached
+	 (if (memq 'cached flags)
 	     elmo-msgdb-answered-cached-mark
 	   elmo-msgdb-answered-uncached-mark))
 	((memq 'unread flags)
-	 (if cached
+	 (if (memq 'cached flags)
 	     elmo-msgdb-unread-cached-mark
 	   elmo-msgdb-unread-uncached-mark))
 	(t
-	 (if (or cached (not use-cache))
+	 (if (memq 'cached flags)
 	     nil
 	   elmo-msgdb-read-uncached-mark))))
 
@@ -394,10 +380,11 @@ FLAG is a symbol which is one of the following:
 		  elmo-msgdb-unread-uncached-mark
 		  elmo-msgdb-read-uncached-mark))))
 
-(defun elmo-msgdb-append-entity (msgdb entity &optional mark)
+(defun elmo-msgdb-append-entity (msgdb entity &optional flags)
   (when entity
     (let ((number (elmo-msgdb-overview-entity-get-number entity))
-	  (message-id (elmo-msgdb-overview-entity-get-id entity)))
+	  (message-id (elmo-msgdb-overview-entity-get-id entity))
+	  mark)
       (elmo-msgdb-set-overview
        msgdb
        (nconc (elmo-msgdb-get-overview msgdb)
@@ -406,7 +393,7 @@ FLAG is a symbol which is one of the following:
        msgdb
        (nconc (elmo-msgdb-get-number-alist msgdb)
 	      (list (cons number message-id))))
-      (when mark
+      (when (setq mark (elmo-msgdb-flags-to-mark flags))
 	(elmo-msgdb-set-mark-alist
 	 msgdb
 	 (nconc (elmo-msgdb-get-mark-alist msgdb)
@@ -583,22 +570,40 @@ content of MSGDB is changed."
   (let ((table (elmo-make-hash))
 	;; For backward compatibility
 	(seen-file (expand-file-name elmo-msgdb-seen-filename dir))
-	seen-list)
+	value)
     (when (file-exists-p seen-file)
-      (setq seen-list (elmo-object-load seen-file))
+      (dolist (msgid (elmo-object-load seen-file))
+	(elmo-set-hash-val msgid '(read) table))
       (delete-file seen-file))
-    (dolist (msgid seen-list)
-      (elmo-set-hash-val msgid 'read table))
     (dolist (pair (elmo-object-load
 		   (expand-file-name elmo-flag-table-filename dir)))
-      (elmo-set-hash-val (car pair) (cdr pair) table))
+      (setq value (cdr pair))
+      (elmo-set-hash-val (car pair)
+			 (cond ((consp value)
+				value)
+			       ;; Following cases for backward compatibility.
+			       (value
+				(list value))
+			       (t
+				'(unread)))
+			 table))
     table))
 
-(defun elmo-flag-table-set (flag-table msg-id flag)
-  (elmo-set-hash-val msg-id flag flag-table))
+(defun elmo-flag-table-set (flag-table msg-id flags)
+  (elmo-set-hash-val msg-id (or flags '(read)) flag-table))
 
 (defun elmo-flag-table-get (flag-table msg-id)
-  (elmo-get-hash-val msg-id flag-table))
+  (let ((flags (elmo-get-hash-val msg-id flag-table)))
+    (if flags
+	(append
+	 (and (elmo-msgdb-global-mark-get msg-id)
+	      '(important))
+	 (and (elmo-file-cache-exists-p msg-id)
+	      '(cached))
+	 (elmo-list-delete '(important cached read)
+			   (copy-sequence flags)
+			   #'delq))
+      '(new unread))))
 
 (defun elmo-flag-table-save (dir flag-table)
   (elmo-object-save
@@ -625,29 +630,15 @@ content of MSGDB is changed."
 
 (defun elmo-msgdb-flag-table (msgdb &optional flag-table)
   ;; Make a table of msgid flag (read, answered)
-  (let ((flag-table (or flag-table (elmo-make-hash (elmo-msgdb-length msgdb))))
-	mark)
-    (dolist (ov (elmo-msgdb-get-overview msgdb))
-      (setq mark (elmo-msgdb-get-mark
-		  msgdb
-		  (elmo-msgdb-overview-entity-get-number ov)))
-      (cond 
-       ((null mark)
-	(elmo-set-hash-val
-	 (elmo-msgdb-overview-entity-get-id ov)
-	 'read
-	 flag-table))
-       ((and mark (member mark (elmo-msgdb-answered-marks)))
-	(elmo-set-hash-val
-	 (elmo-msgdb-overview-entity-get-id ov)
-	 'answered
-	 flag-table))
-       ((and mark (not (member mark
-			       (elmo-msgdb-unread-marks))))
-	(elmo-set-hash-val
-	 (elmo-msgdb-overview-entity-get-id ov)
-	 'read
-	 flag-table))))
+  (let ((flag-table (or flag-table
+			(elmo-make-hash (elmo-msgdb-length msgdb))))
+	entity)
+    (dolist (number (elmo-msgdb-list-messages msgdb))
+      (setq entity (elmo-msgdb-message-entity msgdb number))
+      (elmo-flag-table-set
+       flag-table
+       (elmo-msgdb-overview-entity-get-id entity)
+       (elmo-msgdb-flags msgdb number)))
     flag-table))
 
 ;;
@@ -763,6 +754,11 @@ header separator."
       (when (string= (cadr entity) before)
 	(setcar (cdr entity) after))
       (setq mark-alist (cdr mark-alist)))))
+
+(defsubst elmo-msgdb-out-of-date-messages (msgdb)
+  (elmo-msgdb-change-mark msgdb
+			  elmo-msgdb-new-mark
+			  elmo-msgdb-unread-uncached-mark))
 
 (defsubst elmo-msgdb-mark (flag cached &optional new)
   (if new

@@ -931,7 +931,7 @@ TYPE specifies the archiver's symbol."
 	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
 	 (new-msgdb (elmo-make-msgdb))
-	 entity i percent num message-id gmark)
+	 entity i percent num message-id)
     (with-temp-buffer
       (setq num (length numlist))
       (setq i 0)
@@ -944,14 +944,10 @@ TYPE specifies the archiver's symbol."
 	       (elmo-archive-folder-archive-prefix-internal folder)))
 	(when entity
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (setq gmark
-		(or (elmo-msgdb-global-mark-get message-id)
-		    (elmo-msgdb-mark
-		     (elmo-flag-table-get flag-table message-id)
-		     (elmo-file-cache-status
-		      (elmo-file-cache-get message-id))
-		     'new)))
-	  (elmo-msgdb-append-entity new-msgdb entity gmark))
+	  (elmo-msgdb-append-entity
+	   new-msgdb
+	   entity
+	   (elmo-flag-table-get flag-table message-id)))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (setq percent (/ (* i 100) num))
@@ -1019,7 +1015,7 @@ TYPE specifies the archiver's symbol."
   (let ((delim elmo-mmdf-delimiter)
 	(new-msgdb (elmo-make-msgdb))
 	number sp ep rest entity
-	message-id gmark)
+	message-id)
     (goto-char (point-min))
     (setq rest msgs)
     (while (and rest (re-search-forward delim nil t)
@@ -1034,14 +1030,10 @@ TYPE specifies the archiver's symbol."
 	  (narrow-to-region sp ep)
 	  (setq entity (elmo-archive-msgdb-create-entity-subr number))
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (setq gmark
-		(or (elmo-msgdb-global-mark-get message-id)
-		    (elmo-msgdb-mark
-		     (elmo-flag-table-get flag-table message-id)
-		     (elmo-file-cache-status
-		      (elmo-file-cache-get message-id))
-		     'new)))
-	  (elmo-msgdb-append-entity new-msgdb entity gmark)
+	  (elmo-msgdb-append-entity
+	   new-msgdb
+	   entity
+	   (elmo-flag-table-get flag-table message-id))
 	  (widen)))
       (forward-line 1)
       (setq rest (cdr rest)))

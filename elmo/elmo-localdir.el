@@ -148,7 +148,7 @@
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  (new-msgdb (elmo-make-msgdb))
-	  entity message-id gmark
+	  entity message-id
 	  (i 0)
 	  (len (length numbers)))
       (message "Creating msgdb...")
@@ -158,15 +158,10 @@
 	       dir (car numbers)))
 	(when entity
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			  (unless (eq 'read (elmo-flag-table-get 
-					     flag-table message-id))
-			    (elmo-msgdb-mark
-			     (elmo-flag-table-get flag-table message-id)
-			     (elmo-file-cache-status
-			      (elmo-file-cache-get message-id))
-			     'new))))
-	  (elmo-msgdb-append-entity new-msgdb entity gmark))
+	  (elmo-msgdb-append-entity
+	   new-msgdb
+	   entity
+	   (elmo-flag-table-get flag-table message-id)))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (elmo-display-progress
@@ -220,17 +215,9 @@
 	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
 	    (next-num (1+ (car (elmo-folder-status folder))))
-	    mark flag id)
+	    flags id)
 	(while numbers
-	  (setq mark (and src-msgdb-exists
-			  (elmo-message-mark src-folder (car numbers)))
-		flag (cond
-		      ((null mark) 'read)
-		      ((member mark (elmo-msgdb-answered-marks))
-		       'answered)
-		      ;;
-		      ((not (member mark (elmo-msgdb-unread-marks)))
-		       'read)))
+	  (setq flags (elmo-message-flags src-folder (car numbers)))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder (car numbers))
 	   (expand-file-name
@@ -241,7 +228,7 @@
 	  (when (setq id (and src-msgdb-exists
 			      (elmo-message-field src-folder (car numbers)
 						  'message-id)))
-	    (elmo-flag-table-set table id flag))
+	    (elmo-flag-table-set table id flags))
 	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))
 		   (not same-number))
@@ -361,7 +348,7 @@
 			(int-to-string new-number) t))
 	  (elmo-msgdb-overview-entity-set-number entity new-number))
 	(elmo-msgdb-append-entity new-msgdb entity
-				  (elmo-msgdb-get-mark msgdb old-number))
+				  (elmo-msgdb-flags msgdb old-number))
 	(setq new-number (1+ new-number))))
     (message "Packing...done")
     (elmo-folder-set-msgdb-internal folder new-msgdb)))

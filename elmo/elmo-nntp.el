@@ -741,7 +741,7 @@ Don't cache if nil.")
 						    flag-table
 						    &optional numlist)
   (let ((new-msgdb (elmo-make-msgdb))
-	ov-list gmark message-id entity
+	ov-list message-id entity
 	ov-entity num
 	extras extra ext field field-index)
     (setq ov-list (elmo-nntp-parse-overview-string str))
@@ -761,11 +761,11 @@ Don't cache if nil.")
 	(while extras
 	  (setq ext (downcase (car extras)))
 	  (when (setq field-index (cdr (assoc ext elmo-nntp-overview-index)))
-            (when (> (length ov-entity) field-index)
+	    (when (> (length ov-entity) field-index)
 	      (setq field (aref ov-entity field-index))
 	      (when (eq field-index 8) ;; xref
 		(setq field (elmo-msgdb-remove-field-string field)))
-              (setq extra (cons (cons ext field) extra))))
+	      (setq extra (cons (cons ext field) extra))))
 	  (setq extras (cdr extras)))
 	(setq entity (elmo-msgdb-make-message-entity
 		      :message-id (aref ov-entity 4)
@@ -783,13 +783,8 @@ Don't cache if nil.")
 		      :size       (string-to-int (aref ov-entity 6))
 		      :extra      extra))
 	(setq message-id (elmo-message-entity-field entity 'message-id))
-	(setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			(elmo-msgdb-mark
-			 (elmo-flag-table-get flag-table message-id)
-			 (elmo-file-cache-status
-			  (elmo-file-cache-get message-id))
-			 'new)))
-	(elmo-msgdb-append-entity new-msgdb entity gmark))
+	(elmo-msgdb-append-entity new-msgdb entity
+				  (elmo-flag-table-get flag-table message-id)))
       (setq ov-list (cdr ov-list)))
     new-msgdb))
 
@@ -1400,7 +1395,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg entity i num gmark message-id)
+	  beg entity i num message-id)
       (elmo-set-buffer-multibyte nil)
       (goto-char (point-min))
       (setq i 0)
@@ -1421,15 +1416,11 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		    (elmo-msgdb-create-overview-from-buffer num))
 	      (when entity
 		(setq message-id
-		      (elmo-message-entity-field entity 'message-id)
-		      gmark
-		      (or (elmo-msgdb-global-mark-get message-id)
-			  (elmo-msgdb-mark
-			   (elmo-flag-table-get flag-table message-id)
-			   (elmo-file-cache-status
-			    (elmo-file-cache-get message-id))
-			   'new)))
-		(elmo-msgdb-append-entity new-msgdb entity gmark)))))
+		      (elmo-message-entity-field entity 'message-id))
+		(elmo-msgdb-append-entity
+		 new-msgdb
+		 entity
+		 (elmo-flag-table-get flag-table message-id))))))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 20)) (= i len))

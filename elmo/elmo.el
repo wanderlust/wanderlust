@@ -1013,7 +1013,7 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	unseen table flag mark
+	unseen table flags
 	succeed-numbers failure cache id)
     (setq table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (with-temp-buffer
@@ -1023,16 +1023,7 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	      id (and src-msgdb-exists
 		      (elmo-message-field src-folder (car numbers)
 					  'message-id))
-	      mark (and src-msgdb-exists
-			(elmo-message-mark src-folder (car numbers)))
-	      flag (and id
-			(cond
-			 ((null mark) 'read)
-			 ((member mark (elmo-msgdb-answered-marks))
-			  'answered)
-			 ;;
-			 ((not (member mark (elmo-msgdb-unread-marks)))
-			  'read))))
+	      flags (elmo-message-flags src-folder (car numbers)))
 	(condition-case nil
 	    (setq cache (elmo-file-cache-get id)
 		  failure
@@ -1056,13 +1047,13 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     flag
+		     flags
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
 	  (when id
-	    (elmo-flag-table-set table id flag))
+	    (elmo-flag-table-set table id flags))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(elmo-progress-notify 'elmo-folder-move-messages)
 	(setq numbers (cdr numbers)))
@@ -1268,16 +1259,6 @@ FLAG is a symbol which is one of the following:
   `important' (remove important flag)
 'sugar' flag:
   `read'      (set unread flag)")
-
-(luna-define-generic elmo-message-mark (folder number)
-  "Get mark of the message.
-FOLDER is the ELMO folder structure.
-NUMBER is a number of the message.")
-
-(luna-define-method elmo-message-mark ((folder elmo-folder) number)
-  (when (zerop (elmo-folder-length folder))
-    (error "Cannot treat this folder correctly."))
-  (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
 
 (luna-define-generic elmo-message-field (folder number field)
   "Get message field value in the msgdb.
@@ -1540,9 +1521,7 @@ If update process is interrupted, return nil.")
 	    (when delete-list
 	      (elmo-folder-detach-messages folder delete-list))
 	    (when new-list
-	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
-				      elmo-msgdb-new-mark
-				      elmo-msgdb-unread-uncached-mark)
+	      (elmo-msgdb-out-of-date-messages (elmo-folder-msgdb folder))
 	      (setq new-msgdb (elmo-folder-msgdb-create
 			       folder new-list flag-table))
 	      ;; Clear flag-table

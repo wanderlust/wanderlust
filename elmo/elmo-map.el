@@ -150,7 +150,7 @@
 	(setq entity (elmo-msgdb-message-entity msgdb old-number))
 	(elmo-msgdb-overview-entity-set-number entity number)
 	(elmo-msgdb-append-entity new-msgdb entity
-				  (elmo-msgdb-get-mark msgdb old-number))
+				  (elmo-msgdb-flags msgdb old-number))
 	(setq location
 	      (cons (cons number
 			  (elmo-map-message-location folder old-number))

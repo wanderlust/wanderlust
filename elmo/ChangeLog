@@ -1,5 +1,61 @@
 2003-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-generic-folder-append-messages): Follow the API
+	change.
+	(elmo-message-mark): Abolish.
+	(elmo-folder-synchronize): Use `elmo-msgdb-out-of-date-messages'
+	instead of `elmo-msgdb-change-mark'.
+
+	* elmo-pipe.el (elmo-message-mark): Abolish.
+
+	* elmo-multi.el (elmo-message-mark): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-new-mark): Changed to constant.
+	(elmo-msgdb-unread-uncached-mark): Ditto.
+	(elmo-msgdb-unread-cached-mark): Ditto.
+	(elmo-msgdb-read-uncached-mark): Ditto.
+	(elmo-msgdb-answered-cached-mark): Ditto.
+	(elmo-msgdb-answered-uncached-mark): Ditto.
+	(elmo-msgdb-important-mark): Ditto.
+	(elmo-msgdb-flags-to-mark): Remove arguments `cached' and
+	`use-cache'.
+	(elmo-msgdb-append-entity): Changed 3rd arg from `mark' to
+	`flags'.
+	(elmo-flag-table-load): Changed flag to list of flag.
+	(elmo-flag-table-set): If flags is nil, set read flag.
+	(elmo-flag-table-get): Return derived flags from global mark,
+	cache status and saved flags.
+	(elmo-msgdb-flag-table): Follow the change above.
+	(elmo-msgdb-out-of-date-messages): New function.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Follow the API change.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+
+	* elmo-map.el (elmo-folder-pack-numbers): Ditto.
+
+	* elmo-maildir.el (elmo-maildir-list-location): Treat flags as
+	independent.
+	(elmo-folder-msgdb-create): Follow the API change.
+
+	* elmo-localdir.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-append-messages): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Ditto.
+	(elmo-folder-append-buffer): Ditto.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-as-numlist-subr1): Ditto.
+	(elmo-archive-parse-mmdf): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.11.
 
 2003-09-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

@@ -776,42 +776,36 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 ;; cons of flag-table and result of use-flag-p.
 (defsubst elmo-imap4-fetch-callback-1-subr (entity flags app-data)
   "A msgdb entity callback function."
-  (let* ((use-flag (cdr app-data))
-	 (app-data (car app-data))
-	 mark)
-    (if (elmo-string-member-ignore-case "\\Flagged" flags)
-	(elmo-msgdb-global-mark-set (car entity)
-				    elmo-msgdb-important-mark))
-    (if (setq mark (elmo-msgdb-global-mark-get (car entity)))
-	(unless (elmo-string-member-ignore-case "\\Seen" flags)
-	  (setq elmo-imap4-seen-messages
-		(cons
-		 (elmo-msgdb-overview-entity-get-number entity)
-		 elmo-imap4-seen-messages)))
-      (setq mark (or (if (elmo-file-cache-status
-			  (elmo-file-cache-get (car entity)))
-			 ;; cached.
-			 (if (and use-flag (member "\\Seen" flags))
-			     (if (elmo-string-member-ignore-case
-				  "\\Answered" flags)
-				 elmo-msgdb-answered-cached-mark
-			       nil)
-			   elmo-msgdb-unread-cached-mark)
-		       ;; uncached.
-		       (if (elmo-string-member-ignore-case "\\Answered" flags)
-			   elmo-msgdb-answered-uncached-mark
-			 (if (and use-flag
-				  (elmo-string-member-ignore-case
-				   "\\Seen" flags))
-			     (if (elmo-string-member-ignore-case
-				  "\\Answered" flags)
-				 elmo-msgdb-answered-uncached-mark
-			       (if elmo-imap4-use-cache
-				   elmo-msgdb-read-uncached-mark))
-			   elmo-msgdb-new-mark))))))
+  (let ((use-flag (cdr app-data))
+	(flag-table (car app-data))
+	(msg-id (elmo-msgdb-overview-entity-get-id entity))
+	saved-flags flag-list)
+    (when (elmo-string-member-ignore-case "\\Flagged" flags)
+      (elmo-msgdb-global-mark-set msg-id elmo-msgdb-important-mark))
+    (setq saved-flags (elmo-flag-table-get flag-table msg-id)
+	  flag-list
+	  (if use-flag
+	      (append
+	       (and (elmo-string-member-ignore-case "\\Recent" flags)
+		    '(new))
+	       (and (elmo-string-member-ignore-case "\\Flagged" flags)
+		    '(important))
+	       (and (not (elmo-string-member-ignore-case "\\Seen" flags))
+		    '(unread))
+	       (and (elmo-string-member-ignore-case "\\Answered" flags)
+		    '(answered))
+	       (and (elmo-file-cache-exists-p msg-id)
+		    '(cached))))
+	    saved-flags)
+    (when (and (or (memq 'important flag-list)
+		   (memq 'answered flag-list))
+	       (memq 'unread flag-list))
+      (setq elmo-imap4-seen-messages
+	    (cons (elmo-msgdb-overview-entity-get-number entity)
+		  elmo-imap4-seen-messages)))
     (elmo-msgdb-append-entity elmo-imap4-current-msgdb
 			      entity
-			      mark)))
+			      flag-list)))
 
 ;; Current buffer is process buffer.
 (defun elmo-imap4-fetch-callback-1 (element app-data)
@@ -2512,7 +2506,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (elmo-imap4-folder-mailbox-internal folder)))))
 
 (luna-define-method elmo-folder-append-buffer
-  ((folder elmo-imap4-folder) &optional flag number)
+  ((folder elmo-imap4-folder) &optional flags number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
 	    send-buffer result)
@@ -2528,16 +2522,26 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    "append "
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
-		    (cond 
-		     ((eq flag 'read) " (\\Seen) ")
-		     ((eq flag 'answered) " (\\Answered)")
-		     (t " () "))
+		    (if (and flags (elmo-folder-use-flag-p folder))
+			(concat " ("
+				(mapconcat
+				 'identity
+				 (append
+				  (and (memq 'important flags)
+				       '("\\Flagged"))
+				  (and (not (memq 'unread flags))
+				       '("\\Seen"))
+				  (and (memq 'answered flags)
+				       '("\\Answered")))
+				 " ")
+				") ")
+		      " () ")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	result)
     ;; Unplugged
     (if elmo-enable-disconnected-operation
-	(elmo-folder-append-buffer-dop folder flag number)
+	(elmo-folder-append-buffer-dop folder flags number)
       (error "Unplugged"))))
 
 (eval-when-compile
