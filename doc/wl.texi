@@ -1282,7 +1282,7 @@ Example:
 @end group
 @end example
 
-To use apop as an @var{authenticate-type}, @file{md5.el} is needed
+To use APOP as an @var{authenticate-type}, @file{md5.el} is needed
 (XEmacs doesn't need @file{md5.el}).  @file{md5.el} is included in
 @file{utils/sasl/lisp/} or Emacs/W3 package
 (@uref{http://www.cs.indiana.edu/elisp/w3/docs.html}) or LCD archive
