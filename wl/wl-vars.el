@@ -883,7 +883,7 @@ cdr of each cons cell is used for draft message."
   :group 'wl-draft)
 
 (defcustom wl-draft-always-delete-myself nil
-  "*Always delete myself from reciepient if non-nil."
+  "*Always delete myself from recipient if non-nil."
   :type 'boolean
   :group 'wl-draft)
 

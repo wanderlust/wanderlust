@@ -1,3 +1,9 @@
+2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Fixed typo.
+
+	* wl-vars.el (wl-draft-always-delete-myself): Ditto.
+
 2004-02-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-highlight.el (wl-highlight-summary-line-face-spec): Make face
@@ -6290,7 +6296,7 @@
 2001-02-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-draft-preview-message): Fixed problem that
-	wrong receipients are displayed when forwarded message.
+	wrong recipients are displayed when forwarded message.
 
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 

@@ -244,7 +244,7 @@ It calls following-method selected from variable
 				wl-draft-preview-attributes-buffer-name)))))
     (if (not wl-draft-preview-attributes)
 	(message (concat "Recipients: "
-			 (cdr (assq 'reciepient attribute-list))))
+			 (cdr (assq 'recipients attribute-list))))
       (ignore-errors ; in case when the window is too small
 	(let* ((cur-win (selected-window))
 	       (size (min
