@@ -1437,32 +1437,26 @@ SECTION is the section string."
   (elmo-file-cache-status (elmo-file-cache-get msgid)))
 
 (defun elmo-file-cache-save (cache-path section)
-  "Save current buffer as cache on PATH.
-Return t if cache is saved successfully."
-  (condition-case nil
-      (let ((path (if section (expand-file-name section cache-path)
-		    cache-path))
-	    files dir)
-	(if (and (null section)
-		 (file-directory-p path))
-	    (progn
-	      (setq files (directory-files path t "^[^\\.]"))
-	      (while files
-		(delete-file (car files))
-		(setq files (cdr files)))
-	      (delete-directory path))
-	  (if (and section
-		   (not (file-directory-p cache-path)))
-	      (delete-file cache-path)))
-	(when path
-	  (setq dir (directory-file-name (file-name-directory path)))
-	  (if (not (file-exists-p dir))
-	      (elmo-make-directory dir))
-	  (write-region-as-binary (point-min) (point-max)
-				  path nil 'no-msg)
-	  t))
-    ;; ignore error
-    (error)))
+  "Save current buffer as cache on PATH."
+  (let ((path (if section (expand-file-name section cache-path) cache-path))
+	files dir)
+    (if (and (null section)
+	     (file-directory-p path))
+	(progn
+	  (setq files (directory-files path t "^[^\\.]"))
+	  (while files
+	    (delete-file (car files))
+	    (setq files (cdr files)))
+	  (delete-directory path))
+      (if (and section
+	       (not (file-directory-p cache-path)))
+	  (delete-file cache-path)))
+    (when path
+      (setq dir (directory-file-name (file-name-directory path)))
+      (if (not (file-exists-p dir))
+	  (elmo-make-directory dir))
+      (write-region-as-binary (point-min) (point-max)
+			      path nil 'no-msg))))
 
 (defun elmo-file-cache-get (msgid &optional section)
   "Returns the current file-cache object associated with MSGID.
@@ -1692,7 +1686,7 @@ If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
   (when (boundp obsolete)
     (static-if (and (fboundp 'defvaralias)
 		    (subrp (symbol-function 'defvaralias)))
-	(defvaralias var obsolete)
+	(defvaralias obsolete var)
       (set var (symbol-value obsolete)))
     (if elmo-obsolete-variable-show-warnings
 	(elmo-warning (format "%s is obsolete. Use %s instead."

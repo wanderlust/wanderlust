@@ -488,7 +488,9 @@
 (defun wl-biff-init-icons ()
   (let ((props (when (display-mouse-p)
 		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-biff-check-folders))
+					     (lambda nil
+					       (call-interactively
+						'wl-biff-check-folders))))
 		       'help-echo "mouse-2 checks new mails"))))
     (if (wl-e21-display-image-p)
 	(progn
