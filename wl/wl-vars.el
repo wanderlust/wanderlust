@@ -2339,6 +2339,11 @@ Sender information in summary mode."
 		 regexp)
   :group 'wl-summary)
 
+(defcustom wl-summary-save-file-suffix ".eml"
+  "Suffix for the saved file name."
+  :type 'string
+  :group 'wl-summary)
+
 (defcustom wl-folder-removed-mark "#<removed>"
   "Mark for removed folder."
   :type 'string

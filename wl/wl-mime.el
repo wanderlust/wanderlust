@@ -535,12 +535,13 @@ With ARG, ask destination folder."
 (defvar wl-mime-save-directory nil "Last saved directory.")
 ;;; Yet another save method.
 (defun wl-mime-save-content (entity situation)
-  (let ((filename (read-file-name "Save to file: "
-				  (expand-file-name
-				   (or (mime-entity-safe-filename entity)
-				       ".")
-				   (or wl-mime-save-directory
-				       wl-temporary-file-directory)))))
+  (let ((filename (expand-file-name
+		   (read-file-name "Save to file: "
+				   (expand-file-name
+				    (or (mime-entity-safe-filename entity)
+					".")
+				    (or wl-mime-save-directory
+					wl-temporary-file-directory))))))
     (while (file-directory-p filename)
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))

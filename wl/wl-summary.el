@@ -251,7 +251,7 @@ See also variable `wl-use-petname'."
 	  string)
     string))
 
-(defvar wl-summary-sort-specs '(number date subject from list-info))
+(defvar wl-summary-sort-specs '(number date subject from list-info size))
 (defvar wl-summary-default-sort-spec 'date)
 
 (defvar wl-summary-mode-menu-spec
@@ -279,6 +279,7 @@ See also variable `wl-use-petname'."
     ["Stick" wl-summary-stick t]
     ("Sort"
      ["By Number" wl-summary-sort-by-number t]
+     ["By Size" wl-summary-sort-by-size t]
      ["By Date" wl-summary-sort-by-date t]
      ["By From" wl-summary-sort-by-from t]
      ["By Subject" wl-summary-sort-by-subject t]
@@ -847,6 +848,12 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (run-hooks 'wl-summary-mode-hook))
 
 ;;;
+(defun wl-summary-overview-entity-compare-by-size (x y)
+   "Compare entity X and Y by size."
+   (< (elmo-message-entity-field x 'size)
+      (elmo-message-entity-field y 'size)))
+
+
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
   (condition-case nil
@@ -4493,7 +4500,8 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
     (if num
 	(save-excursion
 	  (setq filename (expand-file-name
-			  (int-to-string num)
+			  (concat (int-to-string num)
+				  wl-summary-save-file-suffix)
 			  wl-save-dir))
 	  (if (null (and arg
 			 (null (file-exists-p filename))))

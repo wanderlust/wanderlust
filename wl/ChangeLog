@@ -1,5 +1,21 @@
 2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-save-file-suffix): New user option.
+
+	* wl-summary.el (wl-summary-save): Use it.
+	(wl-summary-mode-menu-spec): Added wl-summary-sort-by-size.
+
+	* wl-mime.el (wl-mime-save-content): Fix last change.
+
+2004-02-10  Len Trigg <lenbok@myrealbox.com>
+
+	* wl-summary.el (wl-summary-overview-entity-compare-by-size):
+	New function.
+	(wl-summary-sort-specs): Added sort.
+	* wl-mime.el (wl-mime-save-content): Expand file name.
+
+2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* wl-mime.el (wl-draft-preview-message): Fixed typo.
 
 	* wl-vars.el (wl-draft-always-delete-myself): Ditto.
