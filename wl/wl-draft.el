@@ -1282,6 +1282,18 @@ This variable is valid when `wl-interactive-send' has non-nil value."
   :type 'boolean
   :group 'wl-draft)
 
+(defun wl-draft-quit-preview ()
+  "Quitting method for mime-view."
+  (let* ((temp mime-edit-temp-message-buffer)
+	 (window (selected-window))
+	 buf)
+    (mime-preview-kill-buffer)
+    (set-buffer temp)
+    (setq buf mime-edit-buffer)
+    (kill-buffer temp)
+    (select-window window)
+    (switch-to-buffer buf)))
+
 (defun wl-draft-send-confirm ()
   (let (answer)
     (unwind-protect
@@ -1317,7 +1329,7 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 		      (throw 'done nil)))))))
 	  (quit nil))
       (when wl-draft-send-confirm-with-preview
-	(mime-preview-quit)))))
+	(wl-draft-quit-preview)))))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.
@@ -1335,6 +1347,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			   " *wl-draft-sending-buffer*"
 			   (append wl-draft-config-variables
 				   (wl-draft-clone-local-variables))))
+	  (parent-flag wl-draft-parent-flag)
+	  (parent-number wl-draft-parent-number)
+	  (parent-folder wl-draft-parent-folder)
 	  (wl-draft-verbose-msg nil)
 	  err)
       (unwind-protect
@@ -1355,6 +1370,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    ;;
 	    (if wl-draft-verbose-send
 		(message "%s" (or mes-string "Sending...")))
+	    ;; Set flag before send-function because
+	    ;; there's no need to change current mailbox at this time.
+	    ;; If flag is set after send-function, the current mailbox
+	    ;; might changed by Fcc.
+	    ;; It causes a huge loss in the IMAP folder.
+	    (when (and parent-flag parent-number parent-folder)
+	      (wl-folder-set-flag parent-folder parent-number parent-flag))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
 	    ;; Now perform actions on successful sending.
 	    (while mail-send-actions
@@ -1367,12 +1389,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		(message "%sdone"
 			 (or wl-draft-verbose-msg
 			     mes-string
-			     "Sending...")))
-	    (with-current-buffer sending-buffer
-	      (when (and wl-draft-parent-flag
-			 wl-draft-parent-number
-			 wl-draft-parent-folder
-		(wl-draft-set-flag-on-parent wl-draft-parent-flag)))))
+			     "Sending..."))))
 	;; kill sending buffer, anyway.
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))
@@ -2630,22 +2647,6 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 		   "body"
 		   wl-user-agent-headers-and-body-alist 'ignore-case)))))
     t))
-
-(defun wl-draft-set-flag-on-parent (flag)
-  "Set FLAG on parent message."
-  (let ((buffer (wl-summary-get-buffer wl-draft-parent-folder))
-	(number wl-draft-parent-number)
-	folder)
-    (if buffer
-	(with-current-buffer buffer
-	  (wl-summary-set-persistent-mark flag number))
-      ;; Parent buffer does not exist.
-      (when (setq folder (and wl-draft-parent-folder
-			      (wl-folder-get-elmo-folder
-			       wl-draft-parent-folder)))
-	(elmo-folder-open folder 'load-msgdb)
-	(elmo-folder-set-flag folder (list wl-draft-parent-number) flag)
-	(elmo-folder-close folder)))))
 
 (defun wl-draft-setup-parent-flag (flag)
   "Setup a FLAG for parent message."

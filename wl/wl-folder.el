@@ -505,6 +505,20 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	    (wl-folder-toggle-disp-summary 'off wl-queue-folder)
 	  (switch-to-buffer cur-buf))))))
 
+(defun wl-folder-set-flag (folder number flag)
+  "Set FLAG on the message."
+  (let ((buffer (wl-summary-get-buffer folder))
+	elmo-folder)
+    (if buffer
+	(with-current-buffer buffer
+	  (wl-summary-set-persistent-mark flag number))
+      ;; Parent buffer does not exist.
+      (when (setq elmo-folder (and folder
+				   (wl-folder-get-elmo-folder folder)))
+	(elmo-folder-open elmo-folder 'load-msgdb)
+	(elmo-folder-set-flag elmo-folder (list wl-draft-parent-number) flag)
+	(elmo-folder-close elmo-folder)))))
+
 (defun wl-folder-empty-trash ()
   "Empty trash."
   (interactive)

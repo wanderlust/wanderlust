@@ -1,3 +1,14 @@
+2004-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-set-flag): Renamed from
+	`wl-draft-set-flag-on-parent'.
+
+	* wl-draft.el (wl-draft-quit-preview): New function.
+	(wl-draft-send-confirm): Call it instead of `mime-preview-quit'.
+	(wl-draft-send): Call `wl-folder-set-flag' instead of
+	`wl-draft-set-flag-on-parent'.
+	(wl-draft-set-flag-on-parent): Renamed to `wl-folder-set-flag'.
+
 2004-09-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-forward): Fixed parenthesis.
