@@ -1504,9 +1504,6 @@ If optional argument UNMARK is non-nil, unmark."
 (defvar elmo-imap4-client-eol "\r\n"
   "The EOL string we send to the server.")
 
-(defvar elmo-imap4-status nil)
-(defvar elmo-imap4-reached-tag nil)
-
 (defun elmo-imap4-find-next-line ()
   "Return point at end of current line, taking into account literals.
 Return nil if no complete line has arrived."
