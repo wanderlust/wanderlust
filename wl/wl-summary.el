@@ -603,7 +603,7 @@ you."
 	(cond
 	 ((and
 	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
+	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/report\\)") nil t)
 	   (not (bolp))
 	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
 	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
@@ -611,7 +611,6 @@ you."
 	    (cond
 	     ((and (setq start (re-search-forward
 			   (concat "^--" boundary "\n"
-				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				   "[Cc]ontent-[Tt]ype:[ \t]+"
 				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
 				   "\\(.+\n\\)*\n") nil t))
@@ -1078,11 +1077,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(if (setq message-buf (get-buffer wl-message-buf-name))
 	    (if (setq message-win (get-buffer-window message-buf))
 		(delete-window message-win)))
-	(if (and wl-summary-use-frame
+	(if (and wl-folder-use-frame
 		 (> (length (visible-frame-list)) 1))
 	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if wl-summary-use-frame
+	    (if wl-folder-use-frame
 		(let (select-frame)
 		  (save-selected-window
 		    (dolist (frame (visible-frame-list))

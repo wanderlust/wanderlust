@@ -1153,12 +1153,7 @@ Each elements are regexp of field-name."
   :group 'wl-pref)
 
 (defcustom wl-folder-use-frame nil
-  "*Use dedicated frame for folder mode if non-nil."
-  :type 'boolean
-  :group 'wl-pref)
-
-(defcustom wl-summary-use-frame nil
-  "*Use dedicated frame for each folder summary if non-nil."
+  "*Use dedicated frame for each folder if non-nil."
   :type 'boolean
   :group 'wl-pref)
 
