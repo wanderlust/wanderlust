@@ -1,3 +1,10 @@
+2001-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el (check-modules-x-face-xmas): New testcase. For
+	old x-face utility.
+	(check-modules-x-face-xmas-wl-display-x-face-was-argument-required):
+	New function.
+
 2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* test-env.el: Removed (Separated to check-*.el).
