@@ -3,6 +3,8 @@
 	* elmo-nmz.el (elmo-nmz-use-drive-letter): New variable.
 	(elmo-map-folder-list-message-locations): Do drive letter conversion
 	on Windows environment.
+	(elmo-nmz-msgdb-create-entity): Use expand-file-name.
+	(elmo-map-message-fetch): Ditto.
 
 2001-12-27  Kenichi OKADA  <okada@opaopa.org>
 
