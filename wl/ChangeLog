@@ -1,6 +1,10 @@
+2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.7.1.
+
 2001-06-28  OHASHI Akira  <bg66@koka-in.org>
 
-        * wl-vars.el: Fix file coding system to ISO-2022-JP.
+	* wl-vars.el: Fix file coding system to ISO-2022-JP.
 
 2001-06-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
