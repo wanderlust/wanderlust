@@ -1,5 +1,14 @@
 2004-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-fetch-with-cache-process): Don't call
+	elmo-delete-cr-buffer.
+
+	* elmo-imap4.el (elmo-imap4-message-fetch): Call elmo-delete-cr-buffer.
+
+	* elmo-pop3.el (elmo-message-fetch-plugged): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-read-body): Ditto.
+
 	* elmo-file.el (elmo-map-message-fetch): Decode body only when content
 	type seems to be a text.
 

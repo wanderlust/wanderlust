@@ -2684,6 +2684,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(with-current-buffer outbuf
 	  (erase-buffer)
 	  (insert response)
+	  (elmo-delete-cr-buffer)
 	  t))))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-imap4-folder)

@@ -417,7 +417,8 @@ Don't cache if nil.")
       (with-current-buffer outbuf
 	(erase-buffer)
 	(insert-buffer-substring (elmo-network-session-buffer session)
-				 start (- end 3))))
+				 start (- end 3))
+	(elmo-delete-cr-buffer)))
     t))
 
 (defun elmo-nntp-select-group (session group &optional force)

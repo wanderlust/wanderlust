@@ -1339,7 +1339,6 @@ If Optional LOCAL is non-nil, don't update server flag."
 							   unread)
 			    (error (setq err error) nil))
 			  (> (buffer-size) 0))
-		 (elmo-delete-cr-buffer)
 		 (when (and (elmo-fetch-strategy-save-cache strategy)
 			    cache-path)
 		   (elmo-file-cache-save cache-path section))

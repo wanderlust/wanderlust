@@ -880,6 +880,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	(while (re-search-forward "^\\." nil t)
 	  (replace-match "")
 	  (forward-line))
+	(elmo-delete-cr-buffer)
 	response))))
 
 (defun elmo-pop3-delete-msg (process number loc-alist)
