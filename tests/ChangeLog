@@ -1,3 +1,9 @@
+2001-10-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el
+	(check-modules-x-face-xmas-wl-display-x-face-was-argument-required):
+	Fixed docstring.
+
 2001-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el (check-modules-x-face-xmas): New testcase. For

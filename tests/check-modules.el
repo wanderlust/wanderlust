@@ -20,7 +20,7 @@
      (check-modules-x-face-xmas-wl-display-x-face-was-argument-required))))
 
 (defun check-modules-x-face-xmas-wl-display-x-face-was-argument-required ()
-  "When `x-face-xmas-wl-display-x-face' has non-optional argument, return `t'."
+  "When `x-face-xmas-wl-display-x-face' has non-optional argument, return nil."
   (require 'x-face-xmas)
   (condition-case nil
       (with-temp-buffer
