@@ -1,13 +1,10 @@
 2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
 
-	* wl-demo.el (wl-demo-insert-image): Make Emacs 21 use BITMAP-MULE
-	for xbm if the new redisplay engine is not available.
-
-2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-demo.el (wl-demo-image-type-alist): Add bitmap for Emacs 21.
+	* wl-demo.el (wl-demo-image-type-alist): Add bitmap, prefer xbm
+	rather than bitmap on Emacs 21.
 	(wl-demo-insert-image): Decode bitmap data line by line when Emacs
-	21 is running (cf. mule-ja:08245).
+	21 is running (cf. mule-ja:08245); make Emacs 21 use BITMAP-MULE
+	for xbm if the new redisplay engine is not available.
 
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 

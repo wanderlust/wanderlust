@@ -122,7 +122,8 @@ Yet Another Message Interface On Emacsen"
 				 (module-installed-p 'bitmap)
 				 (setq wl-demo-bitmap-mule-available-p t))))
 	       '("bitmap" . bitmap))))
-	(if wl-on-emacs21
+	(if (and wl-on-emacs21
+		 (image-type-available-p 'xbm))
 	    ;; Prefer xbm rather than bitmap on Emacs 21.
 	    (delq nil (list xpm xbm bitmap '("ascii")))
 	  (delq nil (list xpm bitmap xbm '("ascii")))))
