@@ -34,10 +34,6 @@
 (if (module-installed-p 'custom)
     (require 'custom))
 
-(defconst wl-appname  "Wanderlust")
-(defconst wl-version  elmo-version) ; equals to ELMO version.
-(defconst wl-codename "Roam")
-
 ;;; Customizable Variables
 
 (defgroup wl nil

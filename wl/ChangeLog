@@ -1,15 +1,24 @@
+
 2000-10-10  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-sync-force-update): Append queue
 	`mark-as-read'if unplugged.
 
-2000-10-09  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-summary.el (wl-summary-refile-subr): Fix.
-
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el: New file.  Use product.el.
+	* wl.el: add (require 'wl-version).
+	* wl-fldmgr.el (wl-fldmgr-save-folders): Use `product-string-1'
+	for ~/.folders header.
+	(wl-fldmgr-folders-header): Changed.
+
+	* wl-vars.el (wl-appname, wl-version, wl-codename): Move to
+	wl-version.el.
+	* wl-util.el (wl-version, wl-version-show): Ditto.
+
+2000-10-09  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-refile-subr): Fix.
 
 2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
 

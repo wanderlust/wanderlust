@@ -150,15 +150,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
        (nreverse list)) ; jwz: fixed order
      )))
 
-(defun wl-version (&optional with-codename)
-  (format "%s %s%s" wl-appname wl-version
-	  (if with-codename
-	      (format " - \"%s\"" wl-codename) "")))
-
-(defun wl-version-show ()
-  (interactive)
-  (message "%s" (wl-version t)))
-
 ;; from gnus
 (defun wl-extended-emacs-version (&optional with-codename)
   "Stringified Emacs version"

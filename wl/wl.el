@@ -41,6 +41,7 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'wl-version)
 
 (cond (wl-on-xemacs
        (require 'wl-xmas))

@@ -33,6 +33,7 @@
 (require 'wl-folder)
 (require 'wl-summary)
 (require 'wl-highlight)
+(require 'wl-version)
 (eval-when-compile
   (require 'wl-util))
 
@@ -47,7 +48,7 @@
 (defconst wl-fldmgr-folders-header
   "#
 # Folder definition file
-# This file is generated automatically by %s %s (%s).
+# This file is generated automatically by %s.
 #
 
 ")
@@ -1309,7 +1310,7 @@ return value is diffs '(-new -unread -all)."
     (set-buffer tmp-buf)
     (erase-buffer)
     (insert (format wl-fldmgr-folders-header
-		    wl-appname wl-version wl-codename))
+		    (product-string-1 'wl-version 'verbose)))
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))
