@@ -887,12 +887,11 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 
 (defun elmo-folder-set-info-max-by-numdb (folder numbers)
   "Set FOLDER info by MSGDB-NUMBER in msgdb."
-  (let ((numbers (sort numbers '<)))
-    (elmo-folder-set-info-hashtb
-     folder
-     (or (nth (max 0 (1- (length numbers))) numbers) 0)
-     nil ;;(length num-db)
-     )))
+  (elmo-folder-set-info-hashtb
+   folder
+   (or (car (sort numbers '>)) 0)
+   nil ;;(length num-db)
+   ))
 
 (defun elmo-folder-get-info-max (folder)
   "Return max number of FODLER from folder info."
@@ -937,11 +936,10 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 
 (defsubst elmo-strict-folder-diff (folder)
   "Return folder diff information strictly from FOLDER."
-  (let* ((dir (elmo-folder-msgdb-path folder))
-	 (nalist (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))
-	 (in-db (sort (mapcar 'car nalist) '<))
-	 (in-folder  (elmo-folder-list-messages folder))
-	 append-list delete-list diff)
+  (let ((in-db (sort (elmo-msgdb-list-messages (elmo-folder-msgdb folder))
+		     '<))
+	(in-folder  (elmo-folder-list-messages folder))
+	append-list delete-list diff)
     (cons (if (equal in-folder in-db)
 	      0
 	    (setq diff (elmo-list-diff in-folder in-db nil))
@@ -1587,8 +1585,7 @@ If update process is interrupted, return nil.")
   (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
     (elmo-folder-set-info-max-by-numdb
      folder
-     (mapcar 'elmo-msgdb-overview-entity-get-number
-	     (elmo-msgdb-get-overview msgdb)))
+     (elmo-msgdb-list-messages msgdb))
     (unless silent
       (message "Loading msgdb for %s...done"
 	       (elmo-folder-name-internal folder)))

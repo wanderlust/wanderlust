@@ -871,9 +871,7 @@ Don't cache if nil.")
       (elmo-folder-killed-list-internal folder)
       (car (elmo-list-diff
 	    numbers
-	    (mapcar 'car
-		    (elmo-msgdb-get-number-alist
-		     ret-val))))))
+	    (elmo-msgdb-list-messages ret-val)))))
     ;; If there are canceled messages, overviews are not obtained
     ;; to max-number(inn 2.3?).
     (when (and (elmo-nntp-max-number-precedes-list-active-p)

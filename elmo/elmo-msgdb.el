@@ -116,7 +116,6 @@
 ;; LIST-OF-MARKS elmo-msgdb-unread-marks 
 ;; LIST-OF-MARKS elmo-msgdb-answered-marks 
 ;; LIST-OF-MARKS elmo-msgdb-uncached-marks 
-;; elmo-msgdb-seen-save DIR OBJ
 ;; elmo-msgdb-overview-save DIR OBJ
 
 ;; elmo-msgdb-message-entity MSGDB KEY
@@ -702,11 +701,6 @@ header separator."
        (if cached
 	   elmo-msgdb-answered-cached-mark
 	 elmo-msgdb-answered-uncached-mark)))))
-
-(defsubst elmo-msgdb-seen-save (dir obj)
-  (elmo-object-save
-   (expand-file-name elmo-msgdb-seen-filename dir)
-   obj))
 
 (defsubst elmo-msgdb-overview-save (dir overview)
   (elmo-object-save
@@ -1328,10 +1322,10 @@ Return the updated INDEX."
 			   (list elmo-msgdb-important-mark))))))
     (when mark-regexp
       (if (eq flag 'read)
-	  (dolist (number (elmo-msgdb-get-number-alist msgdb))
-	    (unless (string-match mark-regexp (elmo-msgdb-get-mark
-					       msgdb number))
-	      (setq matched (cons number matched))))
+	  (dolist (number (elmo-msgdb-list-messages msgdb))
+	    (let ((mark (elmo-msgdb-get-mark msgdb number)))
+	      (unless (and mark (string-match mark-regexp mark))
+		(setq matched (cons number matched)))))
 	(dolist (elem (elmo-msgdb-get-mark-alist msgdb))
 	  (if (string-match mark-regexp (cadr elem))
 	      (setq matched (cons (car elem) matched))))))

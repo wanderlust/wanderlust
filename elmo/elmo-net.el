@@ -385,9 +385,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	 (elmo-delete-if
 	  (lambda (number) (memq number deleting))
 	  ;; current number-list.
-	  (mapcar
-	   'car
-	   (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder))))
+	  (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
 	 ;; append appending messages
 	 (mapcar (lambda (x) (* -1 x))
 		 (elmo-dop-spool-folder-list-messages folder))))
