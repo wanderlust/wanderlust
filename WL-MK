@@ -54,10 +54,10 @@
 	     (>= emacs-minor-version 29))
     (message "%s" "
   Warning: You don't seem to have \"new custom\" package installed.
-  It is recommended to use it if you are using old Emacs, such as
-  Mule 2.3.  Get it from  http://www.dina.kvl.dk/~abraham/custom/
-  and then apply the patch which is included in README file of APEL
-  package.
+  It is recommended to use \"new custom\" package if you are using
+  old Emacs, such as Mule 2.3.
+  Get it from http://www.dina.kvl.dk/~abraham/custom/ and then apply
+  the patch which is included in README file of APEL package.
 "))
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
