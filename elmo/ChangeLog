@@ -1,3 +1,9 @@
+2002-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-update-current): Don't append
+	info part to the cur files when the new files already have it.
+	(Adviced by Jared Rhine <jared@wordzoo.com>)
+
 2002-11-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-split.el (elmo-split-default-action): New variable.
