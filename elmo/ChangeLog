@@ -1,5 +1,11 @@
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-shimbun.el (elmo-shimbun-get-headers): Bind
+	elmo-hash-minimun-size as 63.
+
+	* elmo-multi.el (elmo-multi-folder-diff): Use elmo-diff-new if
+	elmo-diff-unread is nil.
+
 	* elmo-imap4.el (elmo-folder-open): Fix.
 
 	* elmo.el (elmo-message-mark): Rewrite.

@@ -319,7 +319,9 @@
 				      numbers))))
     (while flds
       (setq nums (elmo-folder-diff (car flds) (car num-list))
-	    nums (cons (elmo-diff-unread nums) (elmo-diff-all nums)))
+	    nums (cons (or (elmo-diff-unread nums)
+			   (elmo-diff-new nums))
+		       (elmo-diff-all nums)))
       (setq diffs (nconc diffs (list nums)))
       (setq count (+ 1 count))
       (setq num-list (cdr num-list))

@@ -192,7 +192,7 @@ update overview when message is fetched."
   (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
 	 (key (concat (shimbun-server-internal shimbun)
 		      "." (shimbun-current-group-internal shimbun)))
-	 (elmo-hash-minimum-size 0)
+	 (elmo-hash-minimum-size 63)
 	 headers)
     ;; new headers.
     (setq headers
