@@ -609,10 +609,10 @@ line and you have to write it that way (It is because the parser sucks).
 There are two types of groups. One is like @samp{Emacsen} from above
 example which the user chooses his favorite folders as a group.
 
-The other one is @dfn{access group} like @samp{+} from above example.
+The other one is @dfn{access group} like @samp{+ /} from above example.
 It makes all the sub-folders in a folder to a group.  (It differs from
-the type of the folder. For example, @samp{+} makes entire MH
-sub-directories to one group)
+the type of the folder. For example, @samp{+} followed by @samp{/}
+makes entire MH sub-directories to one group)
 
 This behavior is better understood if you try it and confirmed the
 function first. You can write and try a small folder definition, so you
