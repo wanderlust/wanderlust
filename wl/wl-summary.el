@@ -111,6 +111,7 @@
 (defvar wl-summary-buffer-mode-line nil)
 (defvar wl-summary-buffer-display-mime-mode 'mime)
 (defvar wl-summary-buffer-display-all-header nil)
+(defvar wl-summary-buffer-event-handler nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -186,6 +187,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
 (make-variable-buffer-local 'wl-summary-buffer-display-mime-mode)
 (make-variable-buffer-local 'wl-summary-buffer-display-all-header)
+(make-variable-buffer-local 'wl-summary-buffer-event-handler)
 
 (defvar wl-datevec)
 (defvar wl-thr-indent-string)
@@ -618,6 +620,22 @@ See also variable `wl-use-petname'."
 	(wl-summary-lazy-update-mark
 	 (list 'wl-summary-update-mark-window))))
 
+;; Handler of event from elmo-folder
+(eval-and-compile
+  (luna-define-class wl-summary-event-handler (elmo-event-handler)
+		     (buffer))
+  (luna-define-internal-accessors 'wl-summary-event-handler))
+
+(luna-define-method elmo-event-handler-flag-changed ((handler
+						      wl-summary-event-handler)
+						     numbers)
+  (with-current-buffer (wl-summary-event-handler-buffer-internal handler)
+    (save-excursion
+      (dolist (number numbers)
+	(when (and (wl-summary-message-visible-p number)
+		   (wl-summary-jump-to-msg number))
+	  (wl-summary-update-persistent-mark number))))))
+
 (defun wl-status-update ()
   (interactive)
   (wl-address-init))
@@ -801,6 +819,11 @@ you."
   (setq wl-summary-buffer-persistent
 	(wl-folder-persistent-p (elmo-folder-name-internal folder)))
   (elmo-folder-set-persistent-internal folder wl-summary-buffer-persistent)
+  (elmo-folder-add-handler folder
+			   (setq wl-summary-buffer-event-handler
+				 (luna-make-entity
+				  'wl-summary-event-handler
+				  :buffer (current-buffer))))
   ;; process duplicates.
   (elmo-folder-set-process-duplicates-internal
    folder (cdr (elmo-string-matched-assoc
@@ -1173,7 +1196,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  (progn
 	    (wl-summary-save-view)
 	    (if (or force-exit (not sticky))
-		(elmo-folder-close wl-summary-buffer-elmo-folder)
+		(progn
+		  (elmo-folder-close wl-summary-buffer-elmo-folder)
+		  (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
+					      wl-summary-buffer-event-handler))
 	      (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	      (elmo-folder-check wl-summary-buffer-elmo-folder))
 	    (if wl-use-scoring (wl-score-save)))
@@ -1663,11 +1689,6 @@ If ARG is non-nil, checking is omitted."
 	 folder
 	 (elmo-folder-list-flagged folder 'unread 'in-msgdb)
 	 'unread)
-	(save-excursion
-	  (goto-char (point-min))
-	  (while (not (eobp))
-	    (wl-summary-update-persistent-mark)
-	    (forward-line 1)))
 	(wl-folder-update-unread (wl-summary-buffer-folder-name) 0)
 	(setq wl-summary-buffer-unread-count 0)
 	(setq wl-summary-buffer-new-count    0)
@@ -2299,6 +2320,9 @@ If ARG, without confirm."
 	  (if other-window
 	      (delete-other-windows))
 	  (set-buffer buf)
+	  (when wl-summary-buffer-event-handler
+	    (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
+					wl-summary-buffer-event-handler))
 	  (unless (eq major-mode 'wl-summary-mode)
 	    (wl-summary-mode))
 	  (wl-summary-buffer-set-folder folder)
@@ -3015,7 +3039,7 @@ Return non-nil if the mark is updated"
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
 	  unread-message number
-	  number-list visible)
+	  number-list)
       (setq number-list (cond ((numberp number-or-numbers)
 			       (setq unread-message
 				     (elmo-message-flagged-p
@@ -3039,14 +3063,11 @@ Return non-nil if the mark is updated"
 	(if inverse
 	    (elmo-folder-set-flag folder number-list 'unread no-folder-mark)
 	  (elmo-folder-unset-flag folder number-list 'unread no-folder-mark))
-	(dolist (number number-list)
-	  (setq visible (wl-summary-jump-to-msg number))
-	  (unless inverse
-	    (when unread-message
-	      (run-hooks 'wl-summary-unread-message-hook)))
-	  ;; set mark on buffer
-	  (when visible
-	    (wl-summary-update-persistent-mark)))
+	(when (and unread-message
+		   (not inverse))
+	  (dolist (number number-list)
+	    (wl-summary-jump-to-msg number)
+	    (run-hooks 'wl-summary-unread-message-hook)))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
 	  (wl-summary-count-unread)
@@ -3082,7 +3103,7 @@ Return non-nil if the mark is updated"
   "Set persistent mark."
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
-	  number number-list visible)
+	  number number-list)
       (setq number-list (cond ((numberp number-or-numbers)
 			       (list number-or-numbers))
 			      ((and (not (null number-or-numbers))
@@ -3099,10 +3120,6 @@ Return non-nil if the mark is updated"
 	      (if inverse
 		  (elmo-folder-unset-flag folder number-list flag no-server)
 		(elmo-folder-set-flag folder number-list flag no-server))
-	      (dolist (number number-list)
-		;; set mark on buffer
-		(when (wl-summary-jump-to-msg number)
-		  (wl-summary-update-persistent-mark)))
 	      (unless no-modeline-update
 		;; Update unread numbers.
 		;; should elmo-flag-mark-as-read return unread numbers?
@@ -3241,7 +3258,7 @@ Return non-nil if the mark is updated"
 					remove-all)
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
-	  number number-list visible)
+	  number number-list)
       (setq number-list (cond ((numberp number-or-numbers)
 			       (list number-or-numbers))
 			      ((and (not (null number-or-numbers))
@@ -3257,11 +3274,7 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(dolist (number number-list)
-	  (elmo-message-set-global-flags folder number flags local)
-	  (setq visible (wl-summary-jump-to-msg number))
-	  ;; set mark on buffer
-	  (when visible
-	    (wl-summary-update-persistent-mark))))
+	  (elmo-message-set-global-flags folder number flags local)))
       flags)))
 
 (defun wl-summary-set-flags (&optional remove)

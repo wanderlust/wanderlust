@@ -123,6 +123,7 @@ If a folder name begins with PREFIX, use BACKEND."
 				     persistent   ; non-nil if persistent.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
+				     handlers     ; list of event handler.
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 
@@ -1282,7 +1283,8 @@ VALUE is a value to set.")
 	  (elmo-global-flag-set flag folder number message-id)))
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
 			   number
-			   flag))))
+			   flag))
+    (elmo-folder-notify-event folder 'flag-changed numbers)))
 
 (defun elmo-message-has-global-flag-p (folder number)
   "Return non-nil when the message in the FOLDER with NUMBER has global flag."
@@ -1320,7 +1322,8 @@ If Optional LOCAL is non-nil, don't update server flag."
 	(elmo-global-flag-detach flag folder number 'always))
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
 			     number
-			     flag))))
+			     flag))
+    (elmo-folder-notify-event folder 'flag-changed numbers)))
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-folder))
   ;; Do nothing.
@@ -1650,6 +1653,31 @@ Return a hashtable for newsgroups."
     (elmo-make-directory temp-dir)
     temp-dir))
 
+;; Event notification/observer framework
+(eval-and-compile
+  (luna-define-class elmo-event-handler ()))
+
+(luna-define-generic elmo-event-handler-flag-changed (handler numbers)
+  "Notify flag of the messages with NUMBERS is changed.")
+
+(defun elmo-folder-add-handler (folder handler)
+  (unless (memq handler (elmo-folder-handlers-internal folder))
+    (elmo-folder-set-handlers-internal
+     folder
+     (cons handler (elmo-folder-handlers-internal folder)))))
+
+(defun elmo-folder-remove-handler (folder handler)
+  (elmo-folder-set-handlers-internal
+   folder
+   (delq handler (elmo-folder-handlers-internal folder))))
+
+(defun elmo-folder-notify-event (folder event &rest args)
+  (when (elmo-folder-handlers-internal folder)
+    (let ((message (format "elmo-event-handler-%s" event)))
+      (dolist (handler (elmo-folder-handlers-internal folder))
+	(apply #'luna-send handler message handler args)))))
+
+;;;
 (defun elmo-init ()
   "Initialize ELMO module."
   (elmo-crosspost-message-alist-load)

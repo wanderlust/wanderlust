@@ -1,5 +1,20 @@
 2004-11-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-buffer-event-handler): New internal
+	variable.
+	(wl-summary-event-handler): New class.
+	(elmo-event-handler-flag-changed): Define to update persistent
+	mark.
+	(wl-summary-buffer-set-folder): Register event handler to
+	elmo-folder.
+	(wl-summary-exit): Unregister event handler.
+	(wl-summary-goto-folder-subr): Ditto.
+	(wl-summary-mark-as-read-all): Does not call
+	`wl-summary-update-persistent-mark' directly.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-set-persistent-mark-internal): Ditto.
+	(wl-summary-set-flags-internal): Ditto.
+
 	* Version number is increased to 2.11.33.
 
 2004-10-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>

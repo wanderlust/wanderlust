@@ -264,14 +264,16 @@
 					  flag
 					  &optional is-local)
   (elmo-folder-set-flag (elmo-pipe-folder-dst-internal folder)
-			numbers flag is-local))
+			numbers flag is-local)
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-pipe-folder)
 					    numbers
 					    flag
 					    &optional is-local)
   (elmo-folder-unset-flag (elmo-pipe-folder-dst-internal folder)
-			  numbers flag is-local))
+			  numbers flag is-local)
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))

@@ -374,7 +374,8 @@
   (elmo-filter-folder-countup-message-flags folder numbers -1)
   (elmo-folder-set-flag (elmo-filter-folder-target-internal folder)
 			numbers flag is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers))
+  (elmo-filter-folder-countup-message-flags folder numbers)
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-filter-folder)
 					    numbers
@@ -383,7 +384,8 @@
   (elmo-filter-folder-countup-message-flags folder numbers -1)
   (elmo-folder-unset-flag (elmo-filter-folder-target-internal folder)
 			  numbers flag is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers))
+  (elmo-filter-folder-countup-message-flags folder numbers)
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-message-folder ((folder elmo-filter-folder)
 					 number)

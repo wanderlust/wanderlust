@@ -1,5 +1,24 @@
 2004-11-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder): Added handlers slot.
+	(elmo-event-handler): New class.
+	(elmo-event-handler-flag-changed): New API.
+	(elmo-folder-add-handler): New function.
+	(elmo-folder-remove-handler): Ditto.
+	(elmo-folder-notify-event): Ditto.
+	(elmo-folder-set-flag): Call `elmo-folder-notify-event' with event
+	`flag-changed'.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-pipe.el (elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-multi.el (elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-filter.el (elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.33.
 
 2004-10-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

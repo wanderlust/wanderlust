@@ -419,7 +419,8 @@
 					  flag
 					  &optional is-local)
   (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-set-flag (car pair) (cdr pair) flag is-local)))
+    (elmo-folder-set-flag (car pair) (cdr pair) flag is-local))
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-multi-folder)
 					    numbers
@@ -427,7 +428,8 @@
 					    &optional is-local)
   (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
     (ignore-errors
-     (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local))))
+     (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local)))
+  (elmo-folder-notify-event folder 'flag-changed numbers))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
 					      flag
