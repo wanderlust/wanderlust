@@ -33,6 +33,15 @@
 (defvar bbdb-wl-folder-regexp nil)
 (defvar bbdb-wl-ignore-folder-regexp nil)
 
+(defvar bbdb-wl-canonicalize-full-name-function
+  #'bbdb-wl-canonicalize-spaces-and-dots
+  "Way to canonicalize full name.")
+
+(defun bbdb-wl-canonicalize-spaces-and-dots (string)
+  (while (string-match "  +\\|[\f\t\n\r\v]+\\|\\." string)
+    (setq string (replace-match " " nil t string)))
+  string)
+
 ;;;###autoload
 (defun bbdb-wl-setup ()
   (add-hook 'wl-message-redisplay-hook 'bbdb-wl-get-update-record)
@@ -168,7 +177,8 @@ For BBDB 2.33 or earlier."
 			      (std11-unfold-string header)))
 	    (while (and (setq structure (car structures))
 			(eq (car structure) 'mailbox))
-	      (setq fn (std11-full-name-string structure)
+	      (setq fn (funcall bbdb-wl-canonicalize-full-name-function
+				(std11-full-name-string structure))
 		    fn (and fn
 			    (with-temp-buffer ; to keep raw buffer unibyte.
 			      (elmo-set-buffer-multibyte
@@ -212,7 +222,8 @@ For BBDB 2.34 or later."
 				(std11-unfold-string header-content)))
 	      (while (and (setq structure (car structures))
 			  (eq (car structure) 'mailbox))
-		(setq fn (std11-full-name-string structure)
+		(setq fn (funcall bbdb-wl-canonicalize-full-name-function
+				  (std11-full-name-string structure))
 		      fn (and fn
 			      (with-temp-buffer ; to keep raw buffer unibyte.
 				(elmo-set-buffer-multibyte

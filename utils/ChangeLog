@@ -1,3 +1,10 @@
+2002-05-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-canonicalize-full-name-function): New variable.
+	(bbdb-wl-canonicalize-spaces-and-dots): New function.
+	(bbdb-wl-get-addresses-1): Use bbdb-wl-canonicalize-full-name-function.
+	(bbdb-wl-get-addresses-2): Ditto.
+
 2002-05-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* im-wl.el: wl-draft-send-func -> wl-draft-send-function
