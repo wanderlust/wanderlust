@@ -1,8 +1,5 @@
 2001-02-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-highlight.el (wl-highlight-summary-window):
-	Call `set-buffer-modified-p'.
-
 	* wl-vars.el (wl-summary-lazy-highlight): New variable.
 
 	* wl-summary.el (wl-summary-mode): Set up window-scroll-functions
