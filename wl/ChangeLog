@@ -1,11 +1,36 @@
 2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
 
+	* wl-e21.el (wl-e21-setup-draft-toolbar): Don't refer to
+	`wl-use-toolbar' nor `display-graphic-p'.
+	(wl-e21-setup-message-toolbar): Ditto.
+	(wl-e21-setup-summary-toolbar): Ditto.
+	(wl-e21-setup-folder-toolbar): Ditto.
+
+	(wl-biff-init-icons): Rewrite using `wl-e21-display-image-p'.
+	(wl-plugged-init-icons): Ditto.
+
+	(wl-folder-init-icons): Use `wl-e21-display-image-p' instead of
+	`display-graphic-p'.
+	(wl-plugged-set-folder-icon): Ditto.
+	(wl-highlight-plugged-current-line): Ditto.
+	(wl-highlight-folder-current-line): Ditto.
+	(wl-e21-highlight-folder-group-line): Ditto.
+	(wl-e21-setup-toolbar): Ditto.
+	(wl-e21-display-image-p): New macro.
+
+	* wl-demo.el (wl-demo): Simplified.
+	(wl-demo-image-type-alist): Use `image-type-available-p' for
+	checking whether the image type `xbm' is available.
+
+2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
 	* wl-e21.el (wl-highlight-folder-current-line): Call
 	`wl-folder-init-icons' when folder icons have not been initialized.
 
 	* wl-vars.el (wl-demo-display-logo): Add `bitmap' to the selection.
 
 	* wl-demo.el: Work also with BITMAP-MULE under Emacs 21.
+	(wl-demo-image-type-alist): New macro.
 
 2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
