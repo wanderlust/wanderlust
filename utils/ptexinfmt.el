@@ -3,7 +3,7 @@
 ;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993,
 ;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
 ;; Copyright (C) 1999 Yoshiki Hayashi <yoshiki@xemacs.org>
-;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000, 2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;;	Yoshiki Hayashi <yoshiki@xemacs.org>
@@ -37,8 +37,6 @@
 (require 'texinfmt)
 (require 'poe)
 (require 'broken)
-
-(provide 'ptexinfmt)
 
 ;;; Broken
 (defvar ptexinfmt-disable-broken-notice-flag t
@@ -487,7 +485,8 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 ;; @image{FILENAME, [WIDTH], [HEIGHT]}
 (put 'image 'texinfo-format 'texinfo-format-image)
 (defun-maybe texinfo-format-image ()
-  (let ((args (texinfo-format-parse-args)) ; parse FILENAME?
+  ;; I don't know makeinfo parse FILENAME.
+  (let ((args (texinfo-format-parse-args))
 	filename)
     (when (null (nth 0 args))
       (error "Invalid image command"))
@@ -757,5 +756,7 @@ This command is executed when texinfmt sees @item inside @multitable."
     (if (memq system-type '(vax-vms windows-nt ms-dos))
         (texinfo-sort-region opoint (point))
       (shell-command-on-region opoint (point) "sort -fd" 1))))
+
+(provide 'ptexinfmt)
 
 ;;; ptexinfmt.el ends here
