@@ -1,3 +1,11 @@
+2003-11-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-init-hook): New user option.
+
+	* elmo.el (elmo-init): Run the elmo-init-hook.
+
+	* elmo-flag.el (elmo-global-mark-migrate): New function.
+
 2003-11-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (elmo-msgdb-set-flag): Simplify;

@@ -75,6 +75,11 @@
   :group 'elmo
   :group 'elmo-setting)
 
+(defcustom elmo-init-hook '(elmo-global-mark-migrate)
+  "*A hook called when elmo is initialized."
+  :type 'hook
+  :group 'elmo)
+
 (defvar elmo-msgdb-file-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
 

@@ -1597,7 +1597,8 @@ Return a hashtable for newsgroups."
   (elmo-crosspost-message-alist-load)
   (elmo-resque-obsolete-variables)
   (elmo-global-flag-initialize)
-  (elmo-dop-queue-load))
+  (elmo-dop-queue-load)
+  (run-hooks 'elmo-init-hook))
 
 (defun elmo-quit ()
   "Quit and cleanup ELMO."

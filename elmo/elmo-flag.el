@@ -372,6 +372,16 @@ the message is not flagged in any folder."
 (defvar elmo-global-mark-filename "global-mark"
   "Obsolete variable. (Just for migration)")
 
+(defun elmo-global-mark-migrate ()
+  "Migrate from 'mark to 'flag. For automatic migration."
+  (elmo-global-flag-initialize)
+  (when (and (file-exists-p (expand-file-name elmo-global-mark-filename
+					      elmo-msgdb-directory))
+	     (elmo-global-flag-p 'important)
+	     (not (file-exists-p (elmo-folder-expand-msgdb-path
+				  (elmo-flag-get-folder 'important)))))
+    (elmo-global-mark-upgrade)))
+
 (defun elmo-global-mark-upgrade ()
   "Upgrade old `global-mark' structure."
   (interactive)
