@@ -108,6 +108,10 @@
 ;; ドラフトを新しいフレームで書く
 ;(setq wl-draft-use-frame t)
 
+;; スレッド表示のインデントを無制限にする。
+;(setq wl-summary-indent-length-limit nil)
+;(setq wl-summary-width nil)
+
 ;; サブジェクトが変わったらスレッドを切って表示
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 

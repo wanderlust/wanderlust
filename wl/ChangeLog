@@ -1,3 +1,19 @@
+2001-12-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-from-width): Rename from wl-from-width.
+	(wl-summary-subject-length-limit): Rename from wl-subject-length-limit.
+	Change default value to nil.
+	(wl-summary-indent-length-limit): The value can be nil, nil means
+	unlimited.
+
+	* wl-summary.el: Don't set limit for indent length if the value of
+	wl-summary-indent-length-limit is nil.
+	If the value of wl-summary-width is nil, it means only that the	width
+	of summary is unlimited (nil doesn't mean that the indent length is
+	unlimited).
+
+	* wl-thread.el: Ditto.
+
 2001-12-06  Hiroshi Tsutsui  <tsutsui@easter.kuee.kyoto-u.ac.jp>
 
 	* wl-vars.el (wl-summary-update-confirm-threshold): The value can

@@ -1327,8 +1327,9 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-summary-indent-length-limit 46
-  "*Limit of indent length for thread."
-  :type 'integer
+  "*Limit of indent length for thread. Nil means unlimited"
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
@@ -1368,13 +1369,13 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-from-width 17
+(defcustom wl-summary-from-width 17
   "*From width in summary."
   :type 'integer
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-subject-length-limit 35
+(defcustom wl-summary-subject-length-limit nil
   "*Set subject width in summary when wl-summary-width is nil.
 Nil means unlimited"
   :type '(choice (const :tag "Unlimited" nil)

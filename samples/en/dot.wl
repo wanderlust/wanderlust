@@ -109,10 +109,14 @@
 ;; Open new frame for draft buffer.
 ;(setq wl-draft-use-frame t)
 
+;; Don't limit indent for thread view
+;(setq wl-summary-indent-length-limit nil)
+;(setq wl-summary-width nil)
+
 ;; Divide thread by change of subject.
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
-;; Thread view
+;; Change format of thread view
 ;(setq wl-thread-indent-level 2)
 ;(setq wl-thread-have-younger-brother-str "+"
 ;      wl-thread-youngest-child-str	 "+"

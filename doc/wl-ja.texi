@@ -3510,16 +3510,6 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
 初期設定は '(1 . 4)。
 サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を cons で指定します。car:cdr が サマリ:メッセージ です。
 
-@item wl-summary-recenter
-@vindex  wl-summary-recenter
-初期設定は @code{t}。Non-nil ならば表示したときに表示中のメッセージのサ
-マリ行をウィンドウの中央付近に移動させます。
-
-@item wl-summary-indent-length-limit
-@vindex  wl-summary-indent-length-limit
-初期設定は 46。設定された値以上サマリをインデントしません。@code{nil} な
-らサマリのインデントを無制限にします。
-
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
 初期設定は @samp{nobody@@nowhere?}。
@@ -3529,11 +3519,6 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
 @vindex  wl-summary-no-subject-message
 初期設定は @samp{(WL:No Subject in original.)}。メッセージに 
 @samp{Subject:} が無かった場合にサマリに表示する文字列です。
-
-@item wl-summary-width
-@vindex  wl-summary-width
-初期設定は 80。サマリの表示幅を設定された値に切り詰めます。@code{nil} な
-ら表示幅を切り詰めません。
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
@@ -3571,9 +3556,31 @@ petname でも補完ができます。
 @kbd{n}, @kbd{N} の結果で、次のメッセージが上か下かを切り替える。読んで
 いる方向を意識したいときは @code{t} にすると良いでしょう。
 
-@item wl-from-width
-@vindex wl-from-width
+@item wl-summary-width
+@vindex  wl-summary-width
+初期設定は 80。サマリの表示幅を設定された値に切り詰めます。@code{nil} な
+ら表示幅を切り詰めません。
+
+@item wl-summary-from-width
+@vindex wl-summary-from-width
 初期設定は 17。サマリの From 部分の表示幅です。
+
+@item wl-summary-subject-length-limit
+@vindex wl-summary-subject-length-limit
+初期設定は @code{nil}。サマリの Subject 部分の表示幅の上限です。
+@code{nil} の場合、Subject 部分の長さの制限をしません。
+
+@item wl-summary-indent-length-limit
+@vindex  wl-summary-indent-length-limit
+初期設定は 46。設定された値以上サマリをインデントしません。@code{nil} な
+らサマリのインデントを無制限にします。
+値を @code{nil} にするときは、@code{wl-summary-width} も @code{nil} に設定
+するとよいでしょう。
+
+@item wl-summary-recenter
+@vindex  wl-summary-recenter
+初期設定は @code{t}。Non-nil ならば表示したときに表示中のメッセージのサ
+マリ行をウィンドウの中央付近に移動させます。
 
 @item wl-summary-divide-thread-when-subject-changed
 @vindex wl-summary-divide-thread-when-subject-changed

@@ -751,12 +751,12 @@ Message is inserted to the summary buffer."
 	(goto-char (match-end 0))
 	(setq beg (current-column))
 	(setq from-end (save-excursion
-			 (move-to-column (+ 1 beg wl-from-width))
+			 (move-to-column (+ 1 beg wl-summary-from-width))
 			 (point)))
 	(setq from (buffer-substring (match-end 0) from-end))
 	(delete-region (match-end 0) from-end)
 	(setq str (wl-set-string-width
-		   (1+ wl-from-width)
+		   (1+ wl-summary-from-width)
 		   (format
 		    "+%s:%s"
 		    (wl-thread-entity-get-children-num
@@ -1213,8 +1213,7 @@ Message is inserted to the summary buffer."
 	(setq thr-str
 	      (wl-thread-make-indent-string
 	       (wl-thread-get-entity (string-to-int (wl-match-buffer 1)))))
-	(if (and wl-summary-width
-		 wl-summary-indent-length-limit
+	(if (and wl-summary-indent-length-limit
 		 (< wl-summary-indent-length-limit
 		    (string-width thr-str)))
 	    (setq thr-str (wl-set-string-width

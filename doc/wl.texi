@@ -3521,17 +3521,6 @@ The initial setting is '(1 . 4).
 A cons cell to specify the rate of summary and message window.
 car:cdr corresponds summary:message.
 
-@item wl-summary-recenter
-@vindex  wl-summary-recenter
-The initial setting is t.
-If non-nil, cursor point is moved to the center of the summary window.
-
-@item wl-summary-indent-length-limit
-@vindex  wl-summary-indent-length-limit
-The initial setting is 46.
-Specify the limit of thread indent level.
-If nil, max indent level is unlimited.
-
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
 The initial setting is @samp{nobody@@nowhere?}.  A string which is
@@ -3541,11 +3530,6 @@ displayed when there's no @samp{From:} field in the message.
 @vindex  wl-summary-no-subject-message
 The initial setting is @samp{(WL:No Subject in original.)}.  A string
 which is displayed when there's no @samp{Subject:} field in the message.
-
-@item wl-summary-width
-@vindex  wl-summary-width
-The initial setting is 80.
-Width of summary line. If @code{nil}, summary line's width is as is.
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
@@ -3583,10 +3567,33 @@ The initial setting is @code{t}.  If non-nil, last executed @kbd{p},
 @kbd{P}, @kbd{n}, @kbd{N} toggles the direction of cursor move.  If you
 want to aware of reading direction, set this to @code{t}.
 
-@item wl-from-width
-@vindex wl-from-width
+@item wl-summary-width
+@vindex  wl-summary-width
+The initial setting is 80.
+Width of summary line. If @code{nil}, summary line's width is as is.
+
+@item wl-summary-from-width
+@vindex wl-summary-from-width
 The initial setting is 17.
 Width of sender part of summary line.
+
+@item wl-summary-subject-length-limit
+@vindex wl-summary-subject-length-limit
+The initial setting is @code{nil}. Specify the limit for the length of
+subject parts in summary. @code{nil} means unlimited.
+
+@item wl-summary-indent-length-limit
+@vindex  wl-summary-indent-length-limit
+The initial setting is 46.
+Specify the limit of thread indent level. @code{nil} means unlimited
+indent level.
+If you set this to @code{nil} you should set @code{wl-summary-width}
+to @code{nil}, too.
+
+@item wl-summary-recenter
+@vindex  wl-summary-recenter
+The initial setting is t.
+If non-nil, cursor point is moved to the center of the summary window.
 
 @item wl-summary-divide-thread-when-subject-changed
 @vindex wl-summary-divide-thread-when-subject-changed

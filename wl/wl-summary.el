@@ -1288,7 +1288,7 @@ If ARG is non-nil, checking is omitted."
 			     "[ "
 			     (save-match-data
 			       (wl-set-string-width
-				wl-from-width
+				wl-summary-from-width
 				(wl-summary-from-func-internal
 				 (eword-decode-string
 				  (elmo-delete-char
@@ -4218,8 +4218,7 @@ If ARG, exit virtual folder."
       (setq linked (wl-thread-entity-get-linked thr-entity)))
     (if (string= thr-str "")
 	(setq no-parent t)) ; no parent
-    (if (and wl-summary-width
-	     wl-summary-indent-length-limit
+    (if (and wl-summary-indent-length-limit
 	     (< wl-summary-indent-length-limit
 		(string-width thr-str)))
 	(setq thr-str (wl-set-string-width
@@ -4228,8 +4227,8 @@ If ARG, exit virtual folder."
     (setq from
 	  (wl-set-string-width
 	   (if children-num
-	       (- wl-from-width (length children-num) 2)
-	     wl-from-width)
+	       (- wl-summary-from-width (length children-num) 2)
+	     wl-summary-from-width)
 	   (elmo-delete-char ?\n
 			     (wl-summary-from-func-internal
 			      (elmo-msgdb-overview-entity-get-from entity)))))
@@ -4271,8 +4270,8 @@ If ARG, exit virtual folder."
 					 subject parent-subject)))
 			       (wl-summary-subject-func-internal subject) ""))
 		     (if (and (not wl-summary-width)
-			      wl-subject-length-limit)
-			 (truncate-string subject wl-subject-length-limit)
+			      wl-summary-subject-length-limit)
+			 (truncate-string subject wl-summary-subject-length-limit)
 		       subject)))))
     (if wl-summary-width (setq line
 			       (wl-set-string-width
@@ -5234,7 +5233,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
-	    (if (not wl-summary-width)
+	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
 	  (wl-message-buffer-prefetch-next folder num (current-buffer)
@@ -5260,7 +5259,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
-	    (if (not wl-summary-width)
+	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
 	  (run-hooks 'wl-summary-redisplay-hook))
@@ -5287,7 +5286,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
-	    (if (not wl-summary-width)
+	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
 	  (run-hooks 'wl-summary-redisplay-hook))
