@@ -100,7 +100,7 @@
   (unwind-protect
       (progn
 	(elmo-folder-set-killed-list-internal src ignore-list)
-	(elmo-folder-list-messages src))
+	(elmo-folder-list-messages src t))
     (elmo-folder-set-killed-list-internal src nil)))
 
 (defun elmo-pipe-drain (src dst &optional copy ignore-list)

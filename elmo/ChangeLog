@@ -1,5 +1,8 @@
 2003-10-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pipe.el (elmo-pipe-folder-list-target-messages): Call
+	elmo-folder-list-messages with argument `visible-only' as t.
+
 	* elmo-filter.el (elmo-folder-search-requires-msgdb-p): Define.
 	(elmo-folder-msgdb-create): Check the target folder.
 
