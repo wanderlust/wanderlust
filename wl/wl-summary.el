@@ -104,7 +104,6 @@
 (defvar wl-summary-buffer-prev-folder-function nil)
 (defvar wl-summary-buffer-next-folder-function nil)
 (defvar wl-summary-buffer-exit-function nil)
-(defvar wl-summary-buffer-next-message-function nil)
 (defvar wl-summary-buffer-number-list nil)
 (defvar wl-summary-buffer-msgdb nil)
 (defvar wl-summary-buffer-folder-name nil)
@@ -175,7 +174,6 @@
 (make-variable-buffer-local 'wl-summary-buffer-prev-folder-function)
 (make-variable-buffer-local 'wl-summary-buffer-next-folder-function)
 (make-variable-buffer-local 'wl-summary-buffer-exit-function)
-(make-variable-buffer-local 'wl-summary-buffer-next-message-function)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
 (make-variable-buffer-local 'wl-summary-buffer-msgdb)
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
@@ -4308,42 +4306,39 @@ If ARG, exit virtual folder."
 		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
 (defsubst wl-summary-next-message (num direction hereto)
-  (if wl-summary-buffer-next-message-function
-      (funcall wl-summary-buffer-next-message-function num direction hereto)
-    (let ((cur-spec (cdr (assq wl-summary-move-order 
-			       (if (elmo-folder-plugged-p
-				    wl-summary-buffer-elmo-folder)
-				   wl-summary-move-spec-plugged-alist
-				 wl-summary-move-spec-unplugged-alist))))
-	  (nums (memq num (if (eq direction 'up)
-			      (reverse wl-summary-buffer-number-list)
-			    wl-summary-buffer-number-list)))
-	  marked-list nums2)
-      (unless hereto (setq nums (cdr nums)))
-      (setq nums2 nums)
-      (if cur-spec
-	  (catch 'done
-	    (while cur-spec
-	      (setq nums nums2)
-	      (cond ((eq (car (car cur-spec)) 'p)
-		     (if (setq marked-list
-			       (elmo-folder-list-messages-mark-match
-				wl-summary-buffer-elmo-folder
-				(cdr (car cur-spec))))
-			 (while nums
-			   (if (memq (car nums) marked-list)
-			       (throw 'done (car nums)))
-			   (setq nums (cdr nums)))))
-		    ((eq (car (car cur-spec)) 't)
-		     (if wl-summary-buffer-target-mark-list
-			 (while nums
-			   (if (memq (car nums)
-				     wl-summary-buffer-target-mark-list)
-			       (throw 'done (car nums)))
-			   (setq nums (cdr nums))))))
-	      (setq cur-spec (cdr cur-spec))))
-	(car nums)))))
-  
+  (let ((cur-spec (cdr (assq wl-summary-move-order 
+			     (if (elmo-folder-plugged-p
+				  wl-summary-buffer-elmo-folder)
+				 wl-summary-move-spec-plugged-alist
+			       wl-summary-move-spec-unplugged-alist))))
+	(nums (memq num (if (eq direction 'up)
+			    (reverse wl-summary-buffer-number-list)
+			  wl-summary-buffer-number-list)))
+	marked-list nums2)
+    (unless hereto (setq nums (cdr nums)))
+    (setq nums2 nums)
+    (if cur-spec
+	(catch 'done
+	  (while cur-spec
+	    (setq nums nums2)
+	    (cond ((eq (car (car cur-spec)) 'p)
+		   (if (setq marked-list (elmo-folder-list-messages-mark-match
+					  wl-summary-buffer-elmo-folder
+					  (cdr (car cur-spec))))
+		       (while nums
+			 (if (memq (car nums) marked-list)
+			     (throw 'done (car nums)))
+			 (setq nums (cdr nums)))))
+		  ((eq (car (car cur-spec)) 't)
+		   (if wl-summary-buffer-target-mark-list
+		       (while nums
+			 (if (memq (car nums)
+				   wl-summary-buffer-target-mark-list)
+			     (throw 'done (car nums)))
+			 (setq nums (cdr nums))))))
+	    (setq cur-spec (cdr cur-spec))))
+      (car nums))))
+
 (defsubst wl-summary-cursor-move (direction hereto)
   (when (and (eq direction 'up)
 	     (eobp))

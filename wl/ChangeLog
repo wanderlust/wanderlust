@@ -1,32 +1,3 @@
-2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-buffer-next-message-function): New
-	variable.
-	(wl-summary-next-message): Call wl-summary-buffer-next-message-function
-	if it is bound.
-
-	* wl-e21.el (wl-plugged-set-folder-icon): Don't propertize image
-	string.
-
-	* wl.el (wl-plugged-dop-queue-info): Fix to check stream-type.
-	(wl-plugged-drawing): Ditto.
-
-2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-util.el (wl-biff-check-folder): Use own buffer for pop3 biff
-	process.
-	(wl-biff-check-folder-async): Enclose wl-biff-check-folder
-	with unwind-protect.
-
-	* wl.el (wl-init): Require mime-setup.
-	(wl-check-environment): Don't require mime-setup.
-
-	* wl-util.el (wl-biff-check-folder): Use elmo-folder-type-internal
-	instead of elmo-folder-type.
-
-	* wl-message.el (wl-message-buffer-prefetch-debug): Set default
-	value as nil.
-
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.7.0.
