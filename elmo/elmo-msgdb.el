@@ -407,6 +407,90 @@ header separator."
    (expand-file-name elmo-msgdb-overview-filename dir)
    overview))
 
+(defun elmo-msgdb-search-internal-primitive (condition entity number-list)
+  (let ((key (elmo-filter-key condition))
+	result)
+    (cond
+     ((string= key "last")
+      (setq result (<= (length (memq
+				(elmo-msgdb-overview-entity-get-number entity)
+				number-list))
+		       (string-to-int (elmo-filter-value condition)))))
+     ((string= key "first")
+      (setq result (< (- 
+		       (length number-list)
+		       (length (memq
+				(elmo-msgdb-overview-entity-get-number entity)
+				number-list)))
+		      (string-to-int (elmo-filter-value condition)))))
+     ((string= key "from")
+      (setq result (string-match 
+		    (elmo-filter-value condition)
+		    (elmo-msgdb-overview-entity-get-from entity))))
+     ((string= key "subject")
+      (setq result (string-match 
+		    (elmo-filter-value condition)
+		    (elmo-msgdb-overview-entity-get-subject entity))))
+     ((string= key "to")
+      (setq result (string-match
+		    (elmo-filter-value condition)
+		    (elmo-msgdb-overview-entity-get-to entity))))
+     ((string= key "cc")
+      (setq result (string-match
+		    (elmo-filter-value condition)
+		    (elmo-msgdb-overview-entity-get-cc entity))))
+     ((or (string= key "since")
+	  (string= key "before"))
+      (let ((res (string< (elmo-date-make-sortable-string
+			   (elmo-date-get-datevec
+			    (elmo-msgdb-overview-entity-get-date entity)))
+			  (elmo-date-make-sortable-string
+			   (elmo-date-get-datevec
+			    (elmo-filter-value condition))))))
+	(setq result (if (string= key "since") res (not res))))))
+    (if (eq (elmo-filter-type condition) 'unmatch)
+	(setq result (not result)))
+    result))
+
+(defun elmo-msgdb-search-internal (condition entity number-list)
+  (cond
+   ((vectorp condition)
+    (elmo-msgdb-search-internal-primitive condition entity number-list))
+   ((eq (car condition) 'and)
+    (and (elmo-msgdb-search-internal-primitive
+	  (nth 1 condition) entity number-list)
+	 (elmo-msgdb-search-internal-primitive
+	  (nth 2 condition) entity number-list)))
+   ((eq (car condition) 'or)
+    (or (elmo-msgdb-search-internal-primitive
+	 (nth 1 condition) entity number-list)
+	(elmo-msgdb-search-internal-primitive
+	 (nth 2 condition) entity number-list)))))
+
+(defun elmo-msgdb-search (folder condition msgdb)
+  "Search messages from MSGDB which satisfy CONDITION."
+  (let* ((condition (car (elmo-parse-search-condition condition)))
+	 (overview (elmo-msgdb-get-overview msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (number-list (mapcar 'car number-alist))
+	 (length (length overview))
+	 (i 0)
+	 result)
+    (if (elmo-condition-find-key condition "body")
+	(elmo-search folder condition number-list)
+      (while overview
+	(if (elmo-msgdb-search-internal condition (car overview)
+					number-list)
+	    (setq result
+		  (cons
+		   (elmo-msgdb-overview-entity-get-number (car overview))
+		   result)))
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-msgdb-search "Searching..." (/ (* i 100) length))
+	(setq overview (cdr overview)))
+      (nreverse result))))
+
 (defun elmo-msgdb-delete-msgs (folder msgs msgdb &optional reserve-cache)
   "Delete MSGS from FOLDER in MSGDB.
 content of MSGDB is changed."

@@ -1260,6 +1260,20 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(setq result (not result)))
     result))
 
+(defun elmo-condition-find-key-internal (condition key)
+  (cond
+   ((vectorp condition)
+    (if (string= (elmo-filter-key condition) key)
+	(throw 'found t)))
+   ((or (eq (car condition) 'and)
+	(eq (car condition) 'or))
+    (elmo-condition-find-key-internal (nth 1 condition) key)
+    (elmo-condition-find-key-internal (nth 2 condition) key))))
+
+(defun elmo-condition-find-key (condition key)
+  (catch 'found
+    (elmo-condition-find-key-internal condition key)))
+
 (defun elmo-buffer-field-condition-match (condition number number-list)
   (cond
    ((vectorp condition)

@@ -1,3 +1,12 @@
+2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-condition-find-key-internal): New function.
+	(elmo-condition-find-key): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): New function.
+	(elmo-msgdb-search-internal): Ditto.
+	(elmo-msgdb-search): Ditto.
+
 2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-cross-device-link-error-p): Abolished.
