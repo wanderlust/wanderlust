@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 10:30:51 teranisi>
+;; Time-stamp: <00/07/11 09:46:12 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -469,43 +469,54 @@ Don't cache if nil.")
 
 (defun elmo-nntp-list-folder (spec)
   (elmo-nntp-setting spec
-   (let* ((server (format "%s" server)) ;; delete text property
-	  response retval use-listgroup)
-    (save-excursion
-      (when (setq use-listgroup (elmo-nntp-listgroup-p server port))
-	(elmo-nntp-send-command buffer
-				process
-				(format "listgroup %s" folder))
-	(if (not (elmo-nntp-read-response buffer process t))
-	    (progn
-	      (elmo-nntp-set-listgroup server port nil)
-	      (setq use-listgroup nil))
-	  (if (null (setq response (elmo-nntp-read-contents buffer process)))
-	      (error "Fetching listgroup failed"))
-	  (setq retval (elmo-string-to-list response))))
-      (if use-listgroup
-	  retval
-	(elmo-nntp-send-command buffer 
-				process 
-				(format "group %s" folder))
-	(if (null (setq response (elmo-nntp-read-response buffer process)))
-	    (error "Select folder failed"))
-	(setcar (cddr connection) folder)
-	(if (and
-	     (string-match "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
-			   response)
-	     (> (string-to-int (elmo-match-string 1 response)) 0))
-	    (elmo-nntp-make-msglist
-	     (elmo-match-string 2 response)
-	     (elmo-match-string 3 response))
-	  nil))))))
+    (let* ((server (format "%s" server)) ;; delete text property
+	   (killed (and elmo-nntp-use-killed-list
+			(elmo-msgdb-killed-list-load
+			 (elmo-msgdb-expand-path nil spec))))
+	   response numbers use-listgroup)
+      (save-excursion
+	(when (setq use-listgroup (elmo-nntp-listgroup-p server port))
+	  (elmo-nntp-send-command buffer
+				  process
+				  (format "listgroup %s" folder))
+	  (if (not (elmo-nntp-read-response buffer process t))
+	      (progn
+		(elmo-nntp-set-listgroup server port nil)
+		(setq use-listgroup nil))
+	    (if (null (setq response (elmo-nntp-read-contents buffer process)))
+		(error "Fetching listgroup failed"))
+	    (setq numbers (elmo-string-to-list response))))
+	(unless use-listgroup
+	  (elmo-nntp-send-command buffer 
+				  process 
+				  (format "group %s" folder))
+	  (if (null (setq response (elmo-nntp-read-response buffer process)))
+	      (error "Select folder failed"))
+	  (setcar (cddr connection) folder)
+	  (if (and
+	       (string-match 
+		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
+		response)
+	       (> (string-to-int (elmo-match-string 1 response)) 0))
+	      (setq numbers (elmo-nntp-make-msglist
+			     (elmo-match-string 2 response)
+			     (elmo-match-string 3 response)))))
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed)
+			  number))
+		      numbers))))))
 
 (defun elmo-nntp-max-of-folder (spec)
   (let* ((port (elmo-nntp-spec-port spec))
 	 (user (elmo-nntp-spec-username spec))
 	 (server (elmo-nntp-spec-hostname spec))
 	 (ssl (elmo-nntp-spec-ssl spec))
-	 (folder (elmo-nntp-spec-group spec)))
+	 (folder (elmo-nntp-spec-group spec))
+	 (dir (elmo-msgdb-expand-path nil spec))
+	 (killed-list (and elmo-nntp-use-killed-list
+			   (elmo-msgdb-killed-list-load dir)))
+	 number-alist)
     (if elmo-nntp-groups-async
 	(let* ((fld (concat folder
 			    (elmo-nntp-folder-postfix user server port ssl)))
@@ -534,6 +545,20 @@ Don't cache if nil.")
 			       (elmo-match-string 3 response)))
 		(setq e-num (string-to-int
 			     (elmo-match-string 1 response)))
+		(when (and killed-list elmo-nntp-use-killed-list)
+		  (setq killed-list (nreverse (sort killed-list '<)))
+		  (cond
+		   ;; XXX biggest number in server is killed,
+		   ;; so max number is unknown (treated as no unsync).
+		   ((eq end-num (car killed-list))
+		    (setq end-num nil))
+		   ;; killed number is obsolete.
+		   ((< end-num (car killed-list))
+		    (while killed-list
+		      (when (>= end-num (car killed-list))
+			(elmo-msgdb-killed-list-save dir killed-list)
+			(setq killed-list nil))
+		      (setq killed-list (cdr killed-list))))))
 		(cons end-num e-num))
 	    (if (null response)
 		(error "Selecting newsgroup \"%s\" failed" folder)
@@ -643,7 +668,7 @@ Don't cache if nil.")
       (let* ((cwf     (caddr connection))
 	     (filter  (and as-num numlist))
 	     beg-num end-num cur length
-	     ret-val ov-str use-xover)
+	     ret-val ov-str use-xover dir)
 	(if (and folder
 		 (not (string= cwf folder))
 		 (null (elmo-nntp-goto-folder server folder user port ssl)))
@@ -711,6 +736,17 @@ Don't cache if nil.")
 			important-mark
 			seen-list
 			filter))))))
+	(when elmo-nntp-use-killed-list
+	  (setq dir (elmo-msgdb-expand-path nil spec))
+	  (elmo-msgdb-killed-list-save
+	   dir
+	   (nconc
+	    (elmo-msgdb-killed-list-load dir)
+	    (car (elmo-list-diff
+		  numlist
+		  (mapcar 'car
+			  (elmo-msgdb-get-number-alist
+			   ret-val)))))))
 	;; If there are canceled messages, overviews are not obtained
 	;; to max-number(inn 2.3?).
 	(when (and (elmo-nntp-max-number-precedes-list-active-p)
@@ -853,7 +889,7 @@ Returns message string."
 	      (setq errmsg "Fetching message failed")
 	      (set-buffer outbuf)
 	      (erase-buffer)
-	      (insert "\n\n")
+	      ;(insert "\n\n")
 	      (throw 'done nil)))
 	(setq response (elmo-nntp-read-body buffer process outbuf))
 	(set-buffer outbuf)
@@ -1044,18 +1080,20 @@ Return nil if connection failed."
 
       (elmo-nntp-send-data-line process sending-data))))
 
+(defun elmo-nntp-clear-killed (spec)
+  (elmo-msgdb-killed-list-save (elmo-msgdb-expand-path nil spec) nil))
 
 (defun elmo-nntp-delete-msgs (spec msgs)
   "MSGS on FOLDER at SERVER pretended as Deleted. Returns nil if failed."
-  (let* ((dir (elmo-msgdb-expand-path nil spec))
-;	 (msgs (mapcar 'string-to-int msgs))
-	 (killed-list (elmo-msgdb-killed-list-load dir)))
-    (mapcar '(lambda (msg)
-	       (setq killed-list
-		     (elmo-msgdb-set-as-killed killed-list msg)))
-	    msgs)
-    (elmo-msgdb-killed-list-save dir killed-list)
-    t))
+  (if elmo-nntp-use-killed-list
+      (let* ((dir (elmo-msgdb-expand-path nil spec))
+	     (killed-list (elmo-msgdb-killed-list-load dir)))
+	(mapcar '(lambda (msg)
+		   (setq killed-list
+			 (elmo-msgdb-set-as-killed killed-list msg)))
+		msgs)
+	(elmo-msgdb-killed-list-save dir killed-list)))
+  t)
 
 (defun elmo-nntp-check-validity (spec validity-file)
   t)
@@ -1300,9 +1338,10 @@ Return nil if connection failed."
 		      (elmo-msgdb-append-element
 		       overview entity))
 		(setq number-alist
-		      (elmo-msgdb-number-add number-alist
-					     (elmo-msgdb-overview-entity-get-number entity)
-					     (car entity)))
+		      (elmo-msgdb-number-add 
+		       number-alist
+		       (elmo-msgdb-overview-entity-get-number entity)
+		       (car entity)))
 		(setq message-id (car entity))
 		(setq seen (member message-id seen-list))
 		(if (setq gmark 

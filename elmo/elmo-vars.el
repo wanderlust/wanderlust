@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/10 10:15:20 teranisi>
+;; Time-stamp: <00/07/10 10:35:15 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -324,6 +324,10 @@ If function, return value of function.")
 (defvar elmo-nntp-max-number-precedes-list-active nil
   "Non-nil means max number of msgdb is set as the max number of `list active'.
 (Needed for inn 2.3 or later?).")
+
+(defvar elmo-nntp-use-killed-list t
+  "If non-nil, deleted messages are saved as `killed'
+and do not appear again.")
 
 (defvar elmo-pop3-send-command-synchronously nil
   "If non-nil, commands are send synchronously.

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-03 14:06:56 teranisi>
+;; Time-stamp: <00/07/10 17:58:38 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -115,6 +115,9 @@
 (defun elmo-pipe-commit (spec)
   (elmo-commit (elmo-pipe-spec-src spec))
   (elmo-commit (elmo-pipe-spec-dst spec)))
+
+(defun elmo-pipe-clear-killed (spec)
+  (elmo-clear-killed (elmo-pipe-spec-src spec)))
 
 (defun elmo-pipe-plugged-p (spec)
   (and (elmo-folder-plugged-p (elmo-pipe-spec-src spec))

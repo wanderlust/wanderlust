@@ -1053,6 +1053,7 @@ TYPE specifies the archiver's symbol."
 (defalias 'elmo-archive-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-archive-commit 'elmo-generic-commit)
+(defalias 'elmo-archive-clear-killed 'elmo-generic-clear-killed)
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)

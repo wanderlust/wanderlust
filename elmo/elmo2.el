@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-18 17:49:09 teranisi>
+;; Time-stamp: <00/07/10 20:24:29 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -237,7 +237,8 @@ without cacheing."
       (if (setq ret-val (elmo-call-func (car real-fld-num) 
 					"read-msg" 
 					(cdr real-fld-num) outbuf))
-	  (if (and (not (elmo-local-file-p folder msg))
+	  (if (and message-id
+		   (not (elmo-local-file-p folder msg))
 		   (elmo-use-cache-p folder msg))
 	      (elmo-cache-save message-id
 			       (elmo-string-partial-p ret-val)
@@ -329,12 +330,13 @@ without cacheing."
 				      (not (eq pair
 					       (rassoc message-id
 						       number-alist)))))))
-	    (unless (elmo-append-msg dst-folder (buffer-string) message-id
-				     (if same-number (car messages))
-				     ;; null means all unread.
-				     (or (null unread-marks)
-					 unseen))
-	      (error "move: append message to %s failed" dst-folder))))
+	    (unless (eq (buffer-size) 0)
+	      (unless (elmo-append-msg dst-folder (buffer-string) message-id
+				       (if same-number (car messages))
+				       ;; null means all unread.
+				       (or (null unread-marks)
+					   unseen))
+		(error "move: append message to %s failed" dst-folder)))))
 	;; delete src cache if it is partial.
 	(elmo-cache-delete-partial message-id src-folder (car messages))
 	(setq ret-val (nconc ret-val (list (car messages))))
@@ -583,6 +585,9 @@ without cacheing."
 		    (car x))))
     mark-alist)))
 
+(defun elmo-generic-clear-killed (spec)
+  nil)
+
 (defun elmo-generic-list-folder-important (spec overview)
   nil)
 
@@ -658,6 +663,9 @@ without cacheing."
 
 (defun elmo-commit (folder)
   (elmo-call-func folder "commit"))
+
+(defun elmo-clear-killed (folder)
+  (elmo-call-func folder "clear-killed"))
 
 ;; returns cons cell of (unsync . number-of-messages-in-folder)
 (defun elmo-folder-diff (fld &optional number-alist)

@@ -4,7 +4,7 @@
 ;;                          Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author:  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
-;; Time-stamp: <2000-01-24 12:20:07 teranisi>
+;; Time-stamp: <00/07/10 17:57:30 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -127,6 +127,7 @@
 (defalias 'elmo-localnews-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-localnews-commit 'elmo-generic-commit)
+(defalias 'elmo-localnews-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-localnews)
 

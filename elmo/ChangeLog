@@ -1,3 +1,18 @@
+2000-07-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): Don't move message when buffer-size is 0.
+
+	* elmo-nntp.el (elmo-nntp-delete-msgs): Check the value of
+	`elmo-nntp-use-killed-list'.
+	(elmo-nntp-list-folder): Use killed list.
+	(elmo-nntp-max-of-folder): Ditto.
+	(elmo-nntp-msgdb-create): Set killed list.
+
+	* elmo-vars.el (elmo-nntp-use-killed-list): New user option.
+
+	* elmo2.el (elmo-clear-killed): New backend function.
+	All other related modules are changed.
+
 2000-07-07  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-util.el (elmo-imap4-spec-folder): Use

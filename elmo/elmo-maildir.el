@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/24 10:19:24 teranisi>
+;; Time-stamp: <00/07/10 17:57:40 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -474,6 +474,7 @@ file name for maildir directories."
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-maildir-list-folder-important
   'elmo-generic-list-folder-important)
+(defalias 'elmo-maildir-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-maildir)
 

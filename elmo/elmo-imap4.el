@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:40:38 teranisi>
+;; Time-stamp: <00/07/10 17:52:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -1583,6 +1583,8 @@ Return nil if connection failed."
 		 (list nil nil (quote (elmo-imap4-port-label spec)) add))))
 
 (defalias 'elmo-imap4-sync-number-alist 'elmo-generic-sync-number-alist)
+
+(defalias 'elmo-imap4-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-imap4)
 

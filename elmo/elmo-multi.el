@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:41:07 teranisi>
+;; Time-stamp: <00/07/10 17:54:06 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -315,6 +315,9 @@
 
 (defun elmo-multi-commit (spec)
   (mapcar 'elmo-commit (cdr spec)))
+
+(defun elmo-multi-clear-killed (spec)
+  (mapcar 'elmo-clear-killed (cdr spec)))
 
 (defun elmo-multi-plugged-p (spec)
   (let* ((flds (cdr spec)))

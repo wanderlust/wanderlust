@@ -739,6 +739,7 @@ Returning its cache buffer."
 (defalias 'elmo-cache-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-cache-commit 'elmo-generic-commit)
+(defalias 'elmo-cache-clear-killed 'elmo-cache-clear-killed)
 
 (provide 'elmo-cache)
 

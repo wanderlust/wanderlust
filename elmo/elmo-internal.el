@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-03 11:12:17 teranisi>
+;; Time-stamp: <00/07/10 17:57:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -258,6 +258,7 @@
 (defalias 'elmo-internal-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-internal-commit 'elmo-generic-commit)
+(defalias 'elmo-internal-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-internal)
 
