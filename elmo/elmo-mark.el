@@ -189,10 +189,6 @@
   ((folder elmo-mark-folder) unread-marks &optional mark-alist)
   t)
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-mark-folder) important-mark)
-  t)
-
 (luna-define-method elmo-folder-unmark-important ((folder elmo-mark-folder)
 						  numbers)
   t)

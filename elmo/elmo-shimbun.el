@@ -293,10 +293,6 @@
   ((folder elmo-shimbun-folder) unread-marks &optional mark-alist)
   t)
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-shimbun-folder) important-mark)
-  t)
-
 (luna-define-method elmo-folder-unmark-important ((folder elmo-shimbun-folder)
 						  numbers)
   t)

@@ -141,19 +141,12 @@
   (let ((importants (elmo-folder-list-importants-internal
 		     (elmo-filter-folder-target-internal folder)
 		     important-mark)))
-    (unless (listp importants)
-      (setq importants
-	    (delq nil
-		  (mapcar
-		   (function
-		    (lambda (x)
-		      (if (string= (cadr x) important-mark)
-			  (car x))))
-		   (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))))))
-    (elmo-list-filter
-     (mapcar 'car (elmo-msgdb-get-number-alist
-		   (elmo-folder-msgdb folder)))
-     importants)))
+    (if (listp importants)
+	(elmo-list-filter
+	 (mapcar 'car (elmo-msgdb-get-number-alist
+		       (elmo-folder-msgdb folder)))
+	 importants)
+      t)))
 
 (luna-define-method elmo-folder-list-importants-internal
   ((folder elmo-filter-folder)

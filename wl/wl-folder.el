@@ -2034,17 +2034,29 @@ If FOLDER is multi, return comma separated string (cross post)."
       (setq flist (cdr flist)))
     (list nil nil newsgroups)))
 
-(defun wl-folder-guess-mailing-list-by-refile-rule (folder)
+(defun wl-folder-guess-mailing-list-by-refile-rule (entity)
   "Return ML address guess by FOLDER.
-Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'.
-Don't care multi."
-  (setq folder (car
-		(elmo-folder-get-primitive-list
-		 (wl-folder-get-elmo-folder folder))))
-  (unless (memq (elmo-folder-type-internal folder)
+Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
+  (let ((flist
+	 (elmo-folder-get-primitive-list
+	  (wl-folder-get-elmo-folder entity)))
+	fld ret mlist)
+    (while (setq fld (car flist))
+      (if (setq ret
+		(wl-folder-guess-mailing-list-by-refile-rule-subr
+		 (elmo-folder-name-internal fld)))
+	  (setq mlist (if (stringp mlist)
+			  (concat mlist ", " ret)
+			ret)))
+      (setq flist (cdr flist)))
+    (if mlist
+	(list mlist nil nil))))
+
+(defun wl-folder-guess-mailing-list-by-refile-rule-subr (entity)
+  (unless (memq (elmo-folder-type entity)
 		'(localnews nntp))
     (let ((rules wl-refile-rule-alist)
-	  mladdress tokey toalist histkey)
+	  tokey toalist)
       (while rules
 	(if (or (and (stringp (car (car rules)))
 		     (string-match "[Tt]o" (car (car rules))))
@@ -2053,35 +2065,41 @@ Don't care multi."
 						 'case-ignore)))
 	    (setq toalist (append toalist (cdr (car rules)))))
 	(setq rules (cdr rules)))
-      (setq tokey (car (rassoc folder toalist)))
+      (setq tokey (car (rassoc entity toalist)))
 ;;;     (setq histkey (car (rassoc folder wl-refile-alist)))
       ;; case-ignore search `wl-subscribed-mailing-list'
       (if (stringp tokey)
-	  (list
-	   (elmo-string-matched-member tokey wl-subscribed-mailing-list t)
-	   nil nil)
-	nil))))
+	  (elmo-string-matched-member tokey wl-subscribed-mailing-list t)))))
 
-(defun wl-folder-guess-mailing-list-by-folder-name (folder)
+(defun wl-folder-guess-mailing-list-by-folder-name (entity)
   "Return ML address guess by FOLDER name's last hierarchy.
 Use `wl-subscribed-mailing-list'."
-  ;; Don't care multi folder.  FIX ME
-  (setq folder (car (elmo-folder-get-primitive-list
-		     (wl-folder-get-elmo-folder folder))))
-  (when (memq (elmo-folder-type-internal folder)
+  (let ((flist
+	 (elmo-folder-get-primitive-list
+	  (wl-folder-get-elmo-folder entity)))
+	fld ret mlist)
+    (while (setq fld (car flist))
+      (if (setq ret
+		(wl-folder-guess-mailing-list-by-folder-name-subr
+		 (elmo-folder-name-internal fld)))
+	  (setq mlist (if (stringp mlist)
+			  (concat mlist ", " ret)
+			ret)))
+      (setq flist (cdr flist)))
+    (if mlist
+	(list mlist nil nil))))
+
+(defun wl-folder-guess-mailing-list-by-folder-name-subr (entity)
+  (when (memq (elmo-folder-type entity)
 	      '(localdir imap4 maildir))
-    (let (key mladdress foldername)
+    (let (key foldername)
       ;; Get foldername and Remove folder type symbol.
-      (setq foldername (substring (elmo-folder-name-internal folder) 1))
+      (setq foldername (substring entity 1))
       (when (string-match "[^\\./]+$" foldername)
 	(setq key (regexp-quote
 		   (concat (substring foldername (match-beginning 0)) "@")))
-	(setq mladdress
-	      (elmo-string-matched-member
-	       key wl-subscribed-mailing-list 'case-ignore))
-	(if (stringp mladdress)
-	    (list mladdress nil nil)
-	  nil)))))
+	(elmo-string-matched-member
+	 key wl-subscribed-mailing-list 'case-ignore)))))
 
 (defun wl-folder-update-diff-line (diffs)
   (let ((inhibit-read-only t)
@@ -2613,16 +2631,17 @@ Use `wl-subscribed-mailing-list'."
 	       (wl-folder-get-petname (car entity)))
       (cons sum-done sum-all)))
    ((stringp entity)
-    (let ((nums (wl-folder-get-entity-info entity))
-	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
-					(wl-summary-always-sticky-folder-p
-					 entity))
-				    wl-summary-highlight))
-	  wl-summary-exit-next-move
-	  wl-auto-select-first ret-val
-	  count)
+    (let* ((folder (wl-folder-get-elmo-folder entity))
+	   (nums (wl-folder-get-entity-info entity))
+	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
+					 (wl-summary-always-sticky-folder-p
+					  folder))
+				     wl-summary-highlight))
+	   wl-summary-exit-next-move
+	   wl-auto-select-first ret-val
+	   count)
       (setq count (or (car nums) 0))
-      (setq count (+ count (wl-folder-count-incorporates entity)))
+      (setq count (+ count (wl-folder-count-incorporates folder)))
       (if (or (null (car nums)) ; unknown
 	      (< 0 count))
 	  (save-window-excursion
@@ -2632,7 +2651,7 @@ Use `wl-subscribed-mailing-list'."
 					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range
-					      (wl-folder-get-elmo-folder entity))
+					      folder)
 					     nil)
 		(setq ret-val (wl-summary-incorporate))
 		(wl-summary-exit)
@@ -2641,8 +2660,7 @@ Use `wl-subscribed-mailing-list'."
 
 (defun wl-folder-count-incorporates (folder)
   (let ((marks (elmo-msgdb-mark-load
-		(elmo-folder-msgdb-path
-		 (wl-folder-get-elmo-folder folder))))
+		(elmo-folder-msgdb-path folder)))
 	(sum 0))
     (while marks
       (if (member (cadr (car marks))
