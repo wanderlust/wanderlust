@@ -1548,7 +1548,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (if (elmo-folder-append-buffer
 	       (wl-folder-get-elmo-folder
 		(eword-decode-string (car fcc-list)))
-	       (not wl-fcc-force-as-read))
+	       (and wl-fcc-force-as-read 'read))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (setq fcc-list (cdr fcc-list)))))
@@ -2273,7 +2273,7 @@ Automatically applied in draft sending time."
   (let ((send-buffer (current-buffer))
 	(folder (wl-folder-get-elmo-folder wl-queue-folder))
 	(message-id (std11-field-body "Message-ID")))
-    (if (elmo-folder-append-buffer folder t)
+    (if (elmo-folder-append-buffer folder)
 	(progn
 	  (wl-draft-queue-info-operation
 	   (car (elmo-folder-status folder))

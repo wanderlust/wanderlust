@@ -173,7 +173,7 @@
 	    (and (elmo-folder-writable-p
 		  (wl-folder-get-elmo-folder folder))
 		 (elmo-folder-append-buffer
-		  (wl-folder-get-elmo-folder folder) t)))
+		  (wl-folder-get-elmo-folder folder))))
       (wl-draft-hide send-buffer)
       (wl-draft-delete send-buffer))
     ret))

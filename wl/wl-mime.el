@@ -279,7 +279,7 @@ It calls following-method selected from variable
 		(goto-char header-start)
 		(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
 		(insert "** This part has been removed by Wanderlust **\n\n")
-		(elmo-folder-append-buffer folder t))
+		(elmo-folder-append-buffer folder))
 
 	  (elmo-folder-move-messages
 	   folder (list number)
@@ -417,9 +417,7 @@ It calls following-method selected from variable
 		 (car (mime-entity-children message-entity)))
 	   (with-temp-buffer
 	     (insert (mime-entity-body message-entity))
-	     (elmo-folder-append-buffer
-	      target
-	      (mime-entity-fetch-field entity "Message-ID")))))
+	     (elmo-folder-append-buffer target))))
     number))
 
 (defun wl-summary-burst (&optional arg)

@@ -1,3 +1,14 @@
+2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-do-fcc): Follow the changes in
+	elmo-folder-append-buffer.
+	(wl-draft-queue-append): Likewise.
+
+	* wl-mime.el (wl-message-delete-current-part): Ditto.
+	(wl-summary-burst-subr): Ditto.
+
+	* wl-news.el.in (wl-news-send-news): Ditto.
+
 2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-read-internal): New inline
