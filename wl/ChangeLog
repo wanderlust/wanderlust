@@ -1,5 +1,9 @@
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-cleanup-temp-marks): Use
+	wl-summary-delete-all-temp-marks.
+	(wl-summary-delete-all-temp-marks-on-buffer): Abolish.
+
 	* wl-action.el (wl-summary-set-mark): Changed terminology
 	refile-destination -> action-argument.
 	(wl-summary-unset-mark): Ditto.

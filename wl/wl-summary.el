@@ -1075,12 +1075,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  (wl-summary-exec)
 	  (if wl-summary-buffer-temp-mark-list
 	      (error "Some execution was failed")))
-      ;; delete temp-marks
-      (message "")
-      (setq wl-summary-buffer-temp-mark-list nil)))
-  (when wl-summary-buffer-target-mark-list
-    (setq wl-summary-buffer-target-mark-list nil))
-  (wl-summary-delete-all-temp-marks-on-buffer sticky)
+      ;; temp-mark-list is remained.
+      (message "")))
+  (wl-summary-delete-all-temp-marks 'no-msg)
   (setq wl-summary-scored nil))
 
 ;; a subroutine for wl-summary-exit/wl-save-status
@@ -1504,18 +1501,6 @@ If ARG is non-nil, checking is omitted."
 ;;;
 (defun wl-summary-delete-all-target-marks ()
   (wl-summary-delete-marks-on-buffer wl-summary-buffer-target-mark-list))
-
-(defun wl-summary-delete-all-temp-marks-on-buffer (&optional sticky)
-  ;; for summary view cache saving.
-  (save-excursion
-    (goto-char (point-min))
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil))
-       (while (not (eobp))
-	(unless (string= (wl-summary-temp-mark) " ")
-	  (delete-backward-char 1)
-	  (insert " "))
-	(forward-line 1)))))
 
 (defun wl-summary-mark-as-read-region (beg end)
   (interactive "r")
