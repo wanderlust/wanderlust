@@ -1,7 +1,6 @@
 * tasks in 2.9.x
 
 ** enable to define folder icons in elmo.el
-** make summary line format more flexible(WL:8748)
 ** reconsider the structure of msgdb and make behavior faster
 ** organize the mark for pre-fetch reservation 
 ** organize the marks for already replied (forwarded) messages
