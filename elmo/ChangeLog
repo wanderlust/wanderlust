@@ -1,14 +1,3 @@
-2002-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* elmo-msgdb.el (elmo-msgdb-set-flag): Use
-	`elmo-file-cache-exists-p'; use proper mark that depends on
-	`use-cache'.
-	(elmo-msgdb-unset-flag): Ditto.
-	(elmo-msgdb-set-cached): Ditto. added argument `use-cache'.
-
-	* elmo.el (elmo-message-set-cached): Call `elmo-msgdb-set-cached'
-	with 4th argument `use-cache'.
-
 2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-unmark-important): Follow the changes above.
