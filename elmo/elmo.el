@@ -278,7 +278,7 @@ IMPORTANT-MARK is the important mark."
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
 If optional argument ONE-LEVEL is non-nil, only children of FOLDER is returned.
-(a folder which have children is returned as a list)
+\(a folder which have children is returned as a list\)
 Otherwise, all descendent folders are returned.")
 
 (luna-define-generic elmo-folder-have-subfolder-p (folder)
@@ -362,7 +362,7 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the destination folder(ELMO folder structure).
 If UNREAD is non-nil, message is appended as unread.
 If optional argument NUMBER is specified, the new message number is set
-(if possible).")
+\(if possible\).")
 
 (luna-define-generic elmo-folder-append-messages (folder
 						  src-folder
