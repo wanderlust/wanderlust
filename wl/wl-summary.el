@@ -4427,6 +4427,8 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-message-redisplay fld num 'as-is
 				(string= (elmo-folder-name-internal fld)
 					 wl-draft-folder))
+	  (when (elmo-message-use-cache-p fld num)
+	    (elmo-message-set-cached fld num t))
 	  (ignore-errors
 	    (if (elmo-message-flagged-p fld num 'unread)
 		(wl-summary-mark-as-read num); no-folder-mark)
@@ -4454,6 +4456,8 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (setq wl-summary-buffer-last-displayed-msg
 		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
+	  (when (elmo-message-use-cache-p fld num)
+	    (elmo-message-set-cached fld num t))
 	  (if (wl-message-redisplay fld num 'all-header
 				    (string= (elmo-folder-name-internal fld)
 					     wl-draft-folder))
