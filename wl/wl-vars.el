@@ -1392,7 +1392,11 @@ Allowed situations are:
   :type '(repeat (cons (string :tag "Realname") (string :tag "Petname")))
   :group 'wl-folder)
 
-(defcustom wl-summary-weekday-name-lang "ja"
+(defcustom wl-summary-weekday-name-lang
+  (if (and (boundp 'current-language-environment)
+	   (string-equal "Japanese"
+			 (symbol-value 'current-language-environment)))
+      "ja" "en")
   "*Language to display week day."
   :type '(choice (const "ja")
 		 (const "en")

@@ -192,10 +192,11 @@
   (setq mode-name "NEWS")
   (setq buffer-read-only t))
 
-(defun wl-news ()
-  (interactive)
+(defun wl-news (&optional arg)
+  (interactive "P")
   (remove-hook 'wl-hook 'wl-news)
-  (let* ((previous-version (cdr (wl-news-previous-version-load)))
+  (let* ((previous-version (if arg wl-news-default-previous-version
+			     (cdr (wl-news-previous-version-load))))
 	 (lang wl-news-lang)
 	 window-lines lines)
     (if (or (get-buffer wl-news-buf-name)

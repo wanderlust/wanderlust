@@ -1,3 +1,11 @@
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-weekday-name-lang): Set default value
+	according to current-language-environment.
+
+	* wl-news.el.in (wl-news): If arg, show all NEWS after
+	wl-news-default-previous-version.
+
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-news.el.in (wl-news-check): 
