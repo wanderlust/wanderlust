@@ -543,10 +543,9 @@ Reply to author if WITH-ARG is non-nil."
   (let ((mail-reply-buffer (wl-message-get-original-buffer))
 	mail-citation-hook mail-yank-hooks
 	wl-draft-add-references wl-draft-cite-func)
-    (if (eq 0
-	    (save-excursion
-	      (set-buffer mail-reply-buffer)
-	      (buffer-size)))
+    (if (zerop
+	 (with-current-buffer mail-reply-buffer
+	   (buffer-size)))
 	(error "No current message")
       (wl-draft-yank-from-mail-reply-buffer nil
 					    wl-ignored-forwarded-headers))))
