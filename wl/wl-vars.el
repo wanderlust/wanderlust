@@ -1165,8 +1165,14 @@ Set this if (system-name) does not return FQDN."
   :group 'wl-pref)
 
 (defcustom wl-message-truncate-lines default-truncate-lines
-  "*Truncate lines in Message/Draft Buffer."
+  "*Truncate lines in Message Buffer."
   :type 'boolean
+  :group 'wl-pref)
+
+(defcustom wl-draft-truncate-lines default-truncate-lines
+  "*Truncate lines in Draft Buffer."
+  :type 'boolean
+  :group 'wl-draft
   :group 'wl-pref)
 
 (defcustom wl-message-scroll-amount 5

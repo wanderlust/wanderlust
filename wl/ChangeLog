@@ -1,3 +1,10 @@
+2001-09-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-truncate-lines): New variable.
+
+	* wl-draft.el (wl-draft): Use wl-draft-truncate-lines
+	instead of wl-message-truncate-lines for truncate-lines.
+
 2001-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-display-internal): Call
