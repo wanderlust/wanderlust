@@ -95,7 +95,12 @@
 (defun wl-fldmgr-exit ()
   (when (and wl-fldmgr-modified
 	     (or (not wl-interactive-save-folders)
-		 (y-or-n-p "Folder view was modified.  Save current folders? ")))
+		 (y-or-n-p
+		  (concat "Folder view was modified"
+			  (and wl-fldmgr-cut-entity-list
+			       (format " (%s in cut stack)"
+				       (length wl-fldmgr-cut-entity-list)))
+			  ".  Save current folders? "))))
     (wl-fldmgr-save-folders)))
 
 ;;; Macro and misc Function
