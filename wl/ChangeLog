@@ -2,6 +2,10 @@
 
 	* wl-draft.el (wl-draft-edit-string): Don't set buffer-read-only.
 
+	* wl-draft.el (wl-draft-confirm): Abolished since not used.
+	(wl-draft-open-file): Ditto.
+	(wl-draft-random-alphabet): Ditto.
+
 	* wl-summary.el (wl-summary-mode-map): Remove already abolished
 	bindings.
 

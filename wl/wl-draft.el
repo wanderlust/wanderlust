@@ -504,15 +504,6 @@ Reply to author if WITH-ARG is non-nil."
     (when wl-highlight-body-too
       (wl-highlight-body-region beg (point-max)))))
 
-(defun wl-draft-confirm ()
-  "Confirm send message."
-  (interactive)
-  (y-or-n-p (format "Send current draft as %s? "
-		    (cond ((and (wl-message-mail-p) (wl-message-news-p))
-			   "Mail and News")
-			  ((wl-message-mail-p) "Mail")
-			  ((wl-message-news-p) "News")))))
-
 (defun wl-message-news-p ()
   "If exist valid Newsgroups field, return non-nil."
   (std11-field-body "Newsgroups"))
@@ -533,16 +524,6 @@ Reply to author if WITH-ARG is non-nil."
 ;;; This may be needed..
 ;;;   (wl-message-field-exists-p "Fcc")
       ))
-
-(defun wl-draft-open-file (&optional file)
-  "Open FILE for edit."
-  (interactive)
-;;;(interactive "*fFile to edit: ")
-  (wl-draft-edit-string (elmo-get-file-string
-			 (or file
-			     (read-file-name "File to edit: "
-					     (or wl-temporary-file-directory
-						 "~/"))))))
 
 (defun wl-draft-edit-string (string)
   (let ((cur-buf (current-buffer))
@@ -1515,10 +1496,6 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (if (looking-at "^[ \t]")
 		nil
 	      (if (re-search-forward ":" pos t) nil t)))))))
-
-(defun wl-draft-random-alphabet ()
-  (let ((alphabet '(?A ?B ?C ?D ?E ?F ?G ?H ?I ?J ?K ?L ?M ?N ?O ?P ?Q ?R ?S ?T ?U ?V ?W ?X ?Y ?Z)))
-    (nth (abs (% (random) 26)) alphabet)))
 
 ;;;;;;;;;;;;;;;;
 ;;;###autoload
