@@ -3574,6 +3574,12 @@ Wanderlust のサーバ・ポート別のオフライン/オンラインを変更します。
 @code{wl-summary-save-current-message} で保存されたメッセージを
 スレッドに繋ぎます。
 (@code{wl-summary-yank-saved-message})
+
+@item C-x C-s
+@kindex C-x C-s (Summary)
+@findex wl-summary-save-status
+現在のサマリをセーブします。
+(@code{wl-summary-save-status})
 @end table
 
 

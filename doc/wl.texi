@@ -3592,6 +3592,12 @@ parent, connect the message saved by
 @code{wl-summary-save-current-message}
 to the thread.
 (@code{wl-summary-yank-saved-message})
+
+@item C-x C-s
+@kindex C-x C-s (Summary)
+@findex wl-summary-save-status
+Save the current summary.
+(@code{wl-summary-save-status})
 @end table
 
 
