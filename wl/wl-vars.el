@@ -897,9 +897,13 @@ ex.
   :group 'wl-draft)
 
 (defcustom wl-draft-queue-save-variables
-  '(wl-envelope-from
-    wl-smtp-posting-server smtp-service
-    wl-nntp-posting-server elmo-default-nntp-port)
+  '(wl-envelope-from wl-from
+    wl-smtp-posting-server wl-smtp-posting-user wl-smtp-posting-port
+    wl-smtp-authenticate-type wl-smtp-connection-type 
+    wl-pop-before-smtp-server wl-pop-before-smtp-user wl-pop-before-smtp-port
+    wl-pop-before-smtp-stream-type wl-pop-before-smtp-authenticate-type
+    wl-nntp-posting-server wl-nntp-posting-server
+    wl-nntp-posting-user wl-nntp-posting-port wl-nntp-posting-stream-type)
   "*Saving variables in queue info."
   :type '(repeat (sexp :tag "Variable"))
   :group 'wl-draft)

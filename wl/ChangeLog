@@ -1,5 +1,9 @@
 2000-10-06  Kenichi OKADA	<okada@opaopa.org>
 
+	* wl-vars.el (wl-draft-queue-save-variables): Add variables.
+
+2000-10-06  Kenichi OKADA	<okada@opaopa.org>
+
 	* wl-score.el (wl-score-headers): Fix for the confusing macro
 	`elmo-kill-buffer'.
 
