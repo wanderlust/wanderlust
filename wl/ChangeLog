@@ -1,5 +1,9 @@
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.6.0.
+
+	* wl-version.el (wl-version): Changed codename.
+
 	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
 	Workaround for net folders.
 	(According to the patch from ABE Yasushi <yasushi@stbbs.net>)

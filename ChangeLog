@@ -3,18 +3,6 @@
 	* WL-MK (wl-detect-info-directory): Call `info-initialize' for
 	Emacs21.
 
-2001-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use
-	`with-current-buffer'.
-
-2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* utils/bbdb-wl.el: Applied patch from
-	Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp> for bbdb 2.33
-	(X-Mail-Count: 07190, 07195 in the ML);
-	Added workaround for older version of bbdb.
-
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.4.1 - "Stand By Me"

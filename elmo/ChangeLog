@@ -1,5 +1,7 @@
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.6.0.
+
 	* elmo-pop3.el (elmo-pop3-debug): New variable.
 	(elmo-pop3-debug-inhibit-logging): Ditto.
 	(elmo-pop3-debug): New function.
