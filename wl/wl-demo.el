@@ -1,7 +1,7 @@
 ;;; wl-demo.el -- Opening demo on Wanderlust.
 
-;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
+;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Katsumi Yamaoka <yamaoka@jpl.org>
@@ -60,7 +60,6 @@
   (defalias-maybe 'set-extent-end-glyph 'ignore)
   (defalias-maybe 'set-glyph-face 'ignore)
   (defalias-maybe 'set-specifier 'ignore)
-  (defalias-maybe 'tool-bar-mode 'ignore)
   (defalias-maybe 'window-pixel-height 'ignore)
   (defalias-maybe 'window-pixel-width 'ignore))
 
@@ -204,11 +203,36 @@ any conversions and evaluate FORMS there like `progn'."
   "Demo on the startup screen.
 Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
   (interactive "P")
+  (if (and image-type (interactive-p))
+      (let* ((selection (append
+			 (if (and (get 'wl-logo-xbm 'width)
+				  (cond ((featurep 'xemacs)
+					 (device-on-window-system-p))
+					(wl-on-emacs21
+					 (display-graphic-p))
+					(t window-system)))
+			     '(("xbm" . xbm)))
+			 (if (and (get 'wl-logo-xpm 'width)
+				  (or (and (featurep 'xemacs)
+					   (featurep 'xpm)
+					   (device-on-window-system-p))
+				      (and wl-on-emacs21
+					   (display-graphic-p)
+					   (featurep 'image)
+					   (image-type-available-p 'xpm))))
+			     '(("xpm" . xpm)))
+			 '(("ascii"))))
+	     (type (completing-read "Image type: " selection nil t)))
+	(setq image-type (if (assoc type selection)
+			     (cdr (assoc type selection)))))
+    (setq image-type (or image-type wl-demo-display-logo)))
   (let ((demo-buf (let ((default-enable-multibyte-characters t)
 			(default-mc-flag t)
 			(default-line-spacing 0))
 		    (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer demo-buf)
+    (erase-buffer)
+    (setq truncate-lines t)
     (cond ((featurep 'xemacs)
 	   (if (device-on-window-system-p)
 	       (progn
@@ -217,7 +241,7 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 				    nil demo-buf))
 		 (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
 		 (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))))
-	  ((and (> emacs-major-version 20) (display-graphic-p))
+	  ((and wl-on-emacs21 (display-graphic-p))
 	   (make-local-hook 'kill-buffer-hook)
 	   (let* ((frame (selected-frame))
 		  (toolbar (frame-parameter frame 'tool-bar-lines)))
@@ -235,32 +259,27 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      nil t)
 	     (set-face-background 'fringe (face-background 'default frame)
 				  frame))))
-    (erase-buffer)
-    (setq truncate-lines t)
-    (let* ((wl-demo-display-logo
-	    (if (and image-type (interactive-p))
-		(let* ((selection '(("xbm" . xbm) ("xpm" . xpm) ("ascii")))
-		       (type (completing-read "Image type: " selection nil t)))
-		  (if (assoc type selection)
-		      (cdr (assoc type selection))
-		    t))
-	      (or image-type wl-demo-display-logo)))
-	   (logo (if (cond ((featurep 'xemacs)
-			    (device-on-window-system-p))
-			   ((featurep 'image)
-			    (display-graphic-p))
-			   (t window-system))
-		     (cond ((and (eq 'xbm wl-demo-display-logo)
-				 (get 'wl-logo-xbm 'width))
-			    'wl-logo-xbm)
-			   (wl-demo-display-logo
-			    (cond ((get 'wl-logo-xpm 'width)
-				   'wl-logo-xpm)
-				  ((get 'wl-logo-xbm 'width)
-				   'wl-logo-xbm))))))
-	   (ww (window-width))
-	   (wh (window-height))
-	   rest)
+    (let ((logo (cond ((eq 'xbm image-type)
+		       (if (and (get 'wl-logo-xbm 'width)
+				(cond ((featurep 'xemacs)
+				       (device-on-window-system-p))
+				      (wl-on-emacs21
+				       (display-graphic-p))
+				      (t window-system)))
+			   'wl-logo-xbm))
+		      ((eq 'xpm image-type)
+		       (if (and (get 'wl-logo-xpm 'width)
+				(or (and (featurep 'xemacs)
+					 (featurep 'xpm)
+					 (device-on-window-system-p))
+				    (and wl-on-emacs21
+					 (display-graphic-p)
+					 (featurep 'image)
+					 (image-type-available-p 'xpm))))
+			   'wl-logo-xpm))))
+	  (ww (window-width))
+	  (wh (window-height))
+	  rest)
       (if logo
 	  (let ((lw (get logo 'width))
 		(lh (get logo 'height))
@@ -275,7 +294,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 					    (* lw ww))
 					 2 (window-pixel-width))))
 	      (set-extent-end-glyph (make-extent (point) (point)) image))
-	     ((featurep 'image)
+	     ((and wl-on-emacs21
+		   (display-graphic-p))
 	      (if (eq 'wl-logo-xbm logo)
 		  (let ((bg (face-background 'wl-highlight-logo-face))
 			(fg (face-foreground 'wl-highlight-logo-face)))
