@@ -1,3 +1,7 @@
+2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+        * Version number is increased to 2.9.11.
+
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-e21.el (wl-modeline-biff-state-on): Put risky-local-variable
@@ -27,15 +31,11 @@
 	(wl-summary-target-mark-mark-as-read): Ditto.
 	(wl-summary-target-mark-mark-as-unread): Ditto.
 	(wl-summary-target-mark-mark-as-important): Ditto.
-
 	(wl-summary-insert-thread-entity): Removed argument `mark-alist'.
 	(wl-summary-update-thread): Removed argument `mark-alist'.
-
 	(wl-summary-sync-marks): Use elmo-folder-list-messages-mark-match.
-
 	(wl-summary-mark-as-read-all): Use elmo-folder-replace-marks.
 	(wl-summary-resume-cache-status): Likewise.
-
 	(wl-summary-prefetch-msg): Use elmo-msgdb-get-mark and
 	elmo-msgdb-set-mark.
 	(wl-summary-mark-as-read-all): Likewise.
@@ -45,22 +45,17 @@
 	(wl-summary-no-auto-refile-message-p): Ditto.
 	(wl-summary-mark-as-read): Ditto.
 	(wl-summary-mark-as-important): Ditto.
-
 	(wl-summary-auto-refile): Follow the change above.
-
 	(wl-summary-delete-all-marks): Removed.
 	(wl-summary-resume-marks-and-highlight): Ditto.
 	(wl-summary-resume-marks): Ditto.
 	(wl-summary-delete-important-msgs-from-list): Ditto.
 	(wl-summary-delete-canceled-msgs-from-list): Ditto.
 
-
-	
-
 	* wl-folder.el (wl-folder-check-one-entity): Removed argument for
 	wl-summary-count-unread.
 
-	* wl-score.el 	(wl-summary-score-update-all-lines): Ditto.
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
 	(wl-summary-score-update-all-lines): Use
 	elmo-msgdb-set-mark.
 
