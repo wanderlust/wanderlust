@@ -1,5 +1,11 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-nntp.el (elmo-folder-search): Body search is to search from
+	cache even if the folder is plugged.
+	(elmo-nntp-search-primitive): Do nothing when body search is
+	invoked (although it is not used by the change above).
+	(elmo-nntp-get-folders-info): Don't use replace-regexp.
+	
 	* elmo-multi.el (elmo-folder-search): Don't ignore error anymore.
 
 	* elmo-localdir.el (elmo-folder-pack-numbers): onum, a member of

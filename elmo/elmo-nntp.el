@@ -1164,8 +1164,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result)))
      ((string= "body" search-key)
-      (error
-"Search by BODY is not supported (Toggle the plug off to search from caches)"))
+      nil)
      (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))
@@ -1214,7 +1213,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 (luna-define-method elmo-folder-search :around ((folder elmo-nntp-folder)
 						condition &optional from-msgs)
-  (if (elmo-folder-plugged-p folder)
+  (if (and (elmo-folder-plugged-p folder)
+	   (not (string= "body" (elmo-filter-key condition))))
       (elmo-nntp-search-internal folder condition from-msgs)
     (luna-call-next-method)))
 
@@ -1272,11 +1272,11 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		(postfix (elmo-nntp-folder-postfix user server port type)))
 	    (if (not (string= postfix ""))
 		(save-excursion
-		  (replace-regexp "^\\(211 [0-9]+ [0-9]+ [0-9]+ [^ \n]+\\).*$"
-				  (concat "\\1"
-					  (elmo-replace-in-string
-					   postfix
-					   "\\\\" "\\\\\\\\\\\\\\\\"))))))
+		  (while (re-search-forward "^\\(211 [0-9]+ [0-9]+ [0-9]+ [^ \n]+\\)\\(.*\\)$" nil t)
+		    (replace-match (concat (match-string 1)
+					   (elmo-replace-in-string
+					    postfix
+					    "\\\\" "\\\\\\\\\\\\\\\\")))))))
 	  (let (len min max group)
 	    (while (not (eobp))
 	      (condition-case ()
