@@ -46,11 +46,11 @@
   :group 'elmo)
 
 (defcustom elmo-shimbun-index-range-alist nil
-  "*Alist of FOLDER and RANGE.
-FOLDER is the shimbun folder name.
+  "*Alist of FOLDER-REGEXP and RANGE.
+FOLDER-REGEXP is the regexp for shimbun folder name.
 RANGE is the range of the header indices .
 See `shimbun-headers' for more detail about RANGE."
-  :type '(repeat (cons (string :tag "Folder Name")
+  :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const :tag "all" all)
 			       (const :tag "last" last)
 			       (integer :tag "number"))))
@@ -191,8 +191,8 @@ See `shimbun-headers' for more detail about RANGE."
        (nth 1 server-group)))
     (elmo-shimbun-folder-set-range-internal
      folder
-     (or (cdr (assoc (elmo-folder-name-internal folder)
-		     elmo-shimbun-index-range-alist))
+     (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
+					 elmo-shimbun-index-range-alist))
 	 elmo-shimbun-default-index-range))
     folder))
 
