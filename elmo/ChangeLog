@@ -1,3 +1,8 @@
+2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-find-next-line): Fixed
+	label for elmo-display-progress.
+
 2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-clear): New method.
