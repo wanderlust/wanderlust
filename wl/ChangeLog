@@ -1,3 +1,9 @@
+2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-close-all): Fixed typo in display-progress
+	message.
+
+
 2000-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-reply): Return t if there was a
