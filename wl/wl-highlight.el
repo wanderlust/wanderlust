@@ -1018,15 +1018,16 @@ interpreted as cited text.)"
 		(forward-line 1))
 	      (message "Highlighting...done")))))))
 
-(defun wl-highlight-headers ()
+(defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))
 	(end (or (save-excursion (re-search-forward "^$" nil t)
 				 (point))
 		 (point-max))))
     (wl-highlight-message beg end nil)
-    (wl-highlight-message-add-buttons-to-header beg end)
-    (and wl-highlight-x-face-func
-	 (funcall wl-highlight-x-face-func beg end))
+    (unless for-draft
+      (wl-highlight-message-add-buttons-to-header beg end)
+      (and wl-highlight-x-face-func
+	   (funcall wl-highlight-x-face-func beg end)))
     (run-hooks 'wl-highlight-headers-hook)))
 
 (defun wl-highlight-message-add-buttons-to-header (start end)

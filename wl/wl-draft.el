@@ -478,8 +478,7 @@ the `wl-smtp-features' variable."
     (run-hooks 'wl-draft-cited-hook)
     (and wl-draft-add-references
 	 (if (wl-draft-add-references)
-	     (let (wl-highlight-x-face-func)
-	       (wl-highlight-headers))))
+	     (wl-highlight-headers 'for-draft)))
     (if wl-highlight-body-too
 	(wl-highlight-body-region beg (point-max)))))
 
@@ -1415,8 +1414,7 @@ If optional argument is non-nil, current draft buffer is killed"
 		   nil t))
     (wl-draft-editor-mode)
     (wl-draft-overload-functions)
-    (let (wl-highlight-x-face-func)
-      (wl-highlight-headers))
+    (wl-highlight-headers 'for-draft)
     (goto-char (point-min))
     (if (interactive-p)
 	(run-hooks 'wl-mail-setup-hook))
@@ -1506,8 +1504,7 @@ If optional argument is non-nil, current draft buffer is killed"
 		  nil t)
     (wl-draft-overload-functions)
     (wl-draft-editor-mode)
-    (let (wl-highlight-x-face-func)
-      (wl-highlight-headers))
+    (wl-highlight-headers 'for-draft)
     (run-hooks 'wl-draft-reedit-hook)
     (goto-char (point-max))
     buf-name
@@ -2013,8 +2010,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	      t)
 	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
-	(let (wl-highlight-x-face-func)
-	  (wl-highlight-headers))
+	(wl-highlight-headers 'for-draft)
 	;; insert body
 	(if (wl-string-match-assoc "body" wl-user-agent-headers-and-body-alist
 				   'ignore-case)

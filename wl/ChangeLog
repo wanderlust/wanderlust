@@ -1,3 +1,13 @@
+2000-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-headers): Added argument `for-draft'.
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
+	Set `for-draft' argument of wl-highlight-headers.
+	(wl-draft): Ditto.
+	(wl-draft-reedit): Ditto.
+	(wl-user-agent-compose-internal): Ditto.
+
 2000-10-24   Daiki Ueno <ueno@unixuser.org>
 
 	* wl-message.el (wl-message-add-button): Use overlay.
