@@ -1,5 +1,7 @@
 2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* slp.el: New file.
+
 	* acap.el: New file.
 	(acap-network-stream-open): Show "Connecting..." message.
 	(acap-parse-response): Fixed problem for BYE untagged response.
