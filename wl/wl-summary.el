@@ -205,25 +205,28 @@
 			      (function
 			       (lambda (to)
 				 (eword-decode-string
-				  (if wl-use-petname
-				      (wl-address-get-petname to)
-				    (or
-				     (car (std11-extract-address-components to))
-				     to)))))
+				  (or (if wl-use-petname
+					  (wl-address-get-petname to))
+				      (car
+				       (std11-extract-address-components to))
+				      to))))
 			      (wl-parse-addresses tos)
 			      ","))))
 	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field
 			 entity "newsgroups"))
 	       (setq retval (concat "Ng:" ng)))))
-      (if wl-use-petname
-	  (setq retval (wl-address-get-petname from))
-	(setq retval from)))
+      (setq retval
+	    (or (if wl-use-petname
+		    (wl-address-get-petname from))
+		(car (std11-extract-address-components from))
+		from)))
     retval))
 
 (defun wl-summary-simple-from (string)
-  (if wl-use-petname
-      (wl-address-get-petname string)
-    string))
+  (or (if wl-use-petname
+	  (wl-address-get-petname string))
+      (car (std11-extract-address-components string))
+      string))
 
 (defvar wl-summary-mode-menu-spec
   '("Summary"

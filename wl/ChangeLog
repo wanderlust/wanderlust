@@ -1,3 +1,12 @@
+2000-08-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-summary.el (wl-summary-default-from): Return full-name part
+	from the address if no petname was found.
+	(wl-summary-simple-from): Ditto.
+
+	* wl-address.el (wl-address-get-petname): Return nil if no petname
+	associated with the address was found.
+
 2000-08-23  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-folder.el (wl-folder-open-all): Remove progress gauge when
