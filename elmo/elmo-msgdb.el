@@ -124,7 +124,7 @@ if MARK is nil, mark is removed."
   "Set message cache status.
 If mark is changed, return non-nil."
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (cur-flag (cond
+	 (cur-status (cond
 		      ((string= cur-mark elmo-msgdb-important-mark)
 		       'important)
 		      ((member cur-mark (elmo-msgdb-answered-marks))
@@ -133,7 +133,7 @@ If mark is changed, return non-nil."
 		       'read)))
 	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
     (unless (eq cached cur-cached)
-      (case cur-flag
+      (case cur-status
 	(read
 	 (elmo-msgdb-set-mark msgdb number
 			      (unless cached
@@ -150,40 +150,40 @@ If mark is changed, return non-nil."
 				  elmo-msgdb-unread-cached-mark
 				elmo-msgdb-unread-uncached-mark)))))))
 
-(defun elmo-msgdb-set-flag (msgdb folder number flag)
-  "Set message flag.
+(defun elmo-msgdb-set-status (msgdb folder number status)
+  "Set message status.
 MSGDB is the ELMO msgdb.
 FOLDER is a ELMO folder structure.
-NUMBER is a message number to set flag.
-FLAG is a symbol which is one of the following:
+NUMBER is a message number to be set status.
+STATUS is a symbol which is one of the following:
 `read'      ... Messages which are already read.
 `important' ... Messages which are marked as important.
 `answered'  ... Messages which are marked as answered."
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
 	 (use-cache (elmo-message-use-cache-p folder number))
-	 (cur-flag (cond
-		    ((string= cur-mark elmo-msgdb-important-mark)
-		     'important)
-		    ((member cur-mark (elmo-msgdb-answered-marks))
-		     'answered)
-		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		     'read)))
+	 (cur-status (cond
+		      ((string= cur-mark elmo-msgdb-important-mark)
+		       'important)
+		      ((member cur-mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
+		       'read)))
 	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
 	 mark-modified)
-    (case flag
+    (case status
       (read
-       (case cur-flag
+       (case cur-status
 	 ((read important answered))
 	 (t (elmo-msgdb-set-mark msgdb number
 				 (if (and use-cache (not cur-cached))
 				     elmo-msgdb-read-uncached-mark))
 	    (setq mark-modified t))))
       (important
-       (unless (eq cur-flag 'important)
+       (unless (eq cur-status 'important)
 	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)
 	 (setq mark-modified t)))
       (answered
-       (unless (or (eq cur-flag 'answered) (eq cur-flag 'important))
+       (unless (or (eq cur-status 'answered) (eq cur-status 'important))
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cur-cached
 				  (if use-cache
@@ -193,40 +193,40 @@ FLAG is a symbol which is one of the following:
        (setq mark-modified t)))
     (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
 
-(defun elmo-msgdb-unset-flag (msgdb folder number flag)
-  "Unset message flag.
+(defun elmo-msgdb-unset-status (msgdb folder number status)
+  "Unset message status.
 MSGDB is the ELMO msgdb.
 FOLDER is a ELMO folder structure.
-NUMBER is a message number to be set flag.
-FLAG is a symbol which is one of the following:
+NUMBER is a message number to be set status.
+STATUS is a symbol which is one of the following:
 `read'      ... Messages which are already read.
 `important' ... Messages which are marked as important.
 `answered'  ... Messages which are marked as answered."
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
 	 (use-cache (elmo-message-use-cache-p folder number))
-	 (cur-flag (cond
-		    ((string= cur-mark elmo-msgdb-important-mark)
-		     'important)
-		    ((member cur-mark (elmo-msgdb-answered-marks))
-		     'answered)
-		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
-		     'read)))
+	 (cur-status (cond
+		      ((string= cur-mark elmo-msgdb-important-mark)
+		       'important)
+		      ((member cur-mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
+		       'read)))
 	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
 	 mark-modified)
-    (case flag
+    (case status
       (read
-       (when (eq cur-flag 'read)
+       (when (eq cur-status 'read)
 	 (elmo-msgdb-set-mark msgdb number
 			      (if (and cur-cached use-cache)
 				  elmo-msgdb-unread-cached-mark
 				elmo-msgdb-unread-uncached-mark))
 	 (setq mark-modified t)))
       (important
-       (when (eq cur-flag 'important)
+       (when (eq cur-status 'important)
 	 (elmo-msgdb-set-mark msgdb number nil)
 	 (setq mark-modified t)))
       (answered
-       (when (eq cur-flag 'answered)
+       (when (eq cur-status 'answered)
 	 (elmo-msgdb-set-mark msgdb number
 			      (if (and cur-cached (not use-cache))
 				  elmo-msgdb-read-uncached-mark))
@@ -593,8 +593,8 @@ header separator."
 	(setcar (cdr entity) after))
       (setq mark-alist (cdr mark-alist)))))
 
-(defsubst elmo-msgdb-mark (flag cached)
-  (case flag
+(defsubst elmo-msgdb-mark (status cached)
+  (case status
     (unread
      (if cached
 	 elmo-msgdb-unread-cached-mark

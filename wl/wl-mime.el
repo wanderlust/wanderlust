@@ -184,8 +184,6 @@ By setting following-method as yank-content."
 	 (number wl-message-buffer-cur-number)
 	 (msgid (elmo-message-field folder number 'message-id))
 	 (orig-buf wl-message-buffer-original-buffer))
-    (if (eq (luna-class-name entity) 'mime-elmo-imap-entity)
-	(error "Please fetch the entire message (by typing 'C-u .') and try again"))
     (with-current-buffer orig-buf
       (unless (string-equal
 	       (buffer-string)
