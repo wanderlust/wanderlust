@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.4.1
+@set VERSION 2.4.0
 @synindex pg cp
 @finalout
 
@@ -2457,12 +2457,8 @@ the appearance like following.
 If you type @kbd{/} key once again, the thread is closed.
 With prefix argument, @kbd{/} opens all children threads.
 
-If you type @kbd{[}, opens all threads in summary.  @kbd{]} closes all
-threads.
-
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
-@xref{Key Bindings of Summary}.
 
 @subsection reconstruct thread by hand
 
