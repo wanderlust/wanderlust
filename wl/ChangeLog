@@ -1,3 +1,16 @@
+2001-02-25  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-summary-displaying): Optimize;
+	Eliminate redundant `save-excursion'.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Avoid
+	accessing match data when `looking-at' failed.
+
+	* wl-draft.el (wl-draft-delete): Use `match-string' instead of
+	`elmo-match-string' where users don't care about the speed.
+	(wl-draft-save): Ditto.
+
 2001-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-regexp-opt): New function.
