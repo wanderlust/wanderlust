@@ -1,5 +1,11 @@
 2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-draft-write-file-function): New user option.
+
+	* wl-draft.el (wl-draft-prepare-edit): Use it for
+	local-write-file-hooks.
+	(wl-draft-reedit): Ditto; use exact match for text/plain tag.
+
 	* wl-draft.el (wl-draft-create-buffer): Cosmetic fix.
 	(wl-draft-insert-mail-header-separator): Return the body beginning
 	point.
