@@ -1,3 +1,12 @@
+2002-11-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Revert the last change.
+
+	* elmo-multi.el (elmo-folder-search): Ignore errors while search.
+
+	* elmo-imap4.el (elmo-imap4-response-garbage-p): New macro.
+	(elmo-imap4-read-response): Take care of garbage response.
+
 2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-nntp.el (elmo-nntp-search-primitive): Fix the last change,
