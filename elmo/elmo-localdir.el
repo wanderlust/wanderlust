@@ -272,7 +272,7 @@
 	(progn (delete-file file)
 	       t))))
 
-(defun elmo-localdir-read-msg (spec number outbuf &optional msgdb unread)
+(defun elmo-localdir-read-msg (spec number outbuf &optional set-mark)
   (save-excursion
     (let* ((number (int-to-string number))
 	   (dir (elmo-localdir-get-folder-directory spec))

@@ -685,7 +685,7 @@
 	(insert-buffer-substring (process-buffer process) start (- end 3))
 	(elmo-delete-cr-get-content-type)))))
 
-(defun elmo-pop3-read-msg (spec number outbuf &optional msgdb unread)
+(defun elmo-pop3-read-msg (spec number outbuf &optional msgdb)
   (let* ((loc-alist (if elmo-pop3-use-uidl
 			(if msgdb
 			    (elmo-msgdb-get-location msgdb)

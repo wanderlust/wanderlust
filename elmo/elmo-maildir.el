@@ -329,7 +329,7 @@ file name for maildir directories."
 	(progn (delete-file file)
 	       t))))
 
-(defun elmo-maildir-read-msg (spec number outbuf &optional msgdb unread)
+(defun elmo-maildir-read-msg (spec number outbuf &optional msgdb)
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path

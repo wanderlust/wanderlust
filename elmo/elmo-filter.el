@@ -59,8 +59,8 @@
 (defun elmo-filter-append-msg (spec string &optional msg no-see)
   (elmo-call-func (nth 2 spec) "append" string))
 
-(defun elmo-filter-read-msg (spec number outbuf &optional msgdb unread)
-  (elmo-call-func (nth 2 spec) "read-msg" number outbuf msgdb unread))
+(defun elmo-filter-read-msg (spec number outbuf)
+  (elmo-call-func (nth 2 spec) "read-msg" number outbuf))
 
 (defun elmo-filter-delete-msgs (spec msgs)
   (elmo-call-func (nth 2 spec) "delete-msgs" msgs))
