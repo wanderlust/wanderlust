@@ -306,7 +306,7 @@
 (when window-system
   (cond ((and (featurep 'xemacs)		; for XEmacs
 	      (module-installed-p 'x-face))
-	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
+	 (autoload 'x-face-xmas-wl-display-x-face "x-face")
 	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
