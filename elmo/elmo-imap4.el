@@ -727,43 +727,12 @@ Returns response value if selecting folder succeed. "
 		"search %s") flag))
      'search)))
 
-(static-cond
- ((fboundp 'float)
-  ;; Emacs can parse dot symbol.
-  (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
-  (defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
-  (defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
-  (defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
-  (defvar elmo-imap4-header-fields "HEADER\.FIELDS")
-  (defmacro elmo-imap4-replace-dot-symbols ()) ;; noop
-  (defalias 'elmo-imap4-fetch-read 'read)
-  )
- (t
-  ;;; For Nemacs.
-  ;; Cannot parse dot symbol.
-  (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
-  (defvar elmo-imap4-header-fields "HEADER_FIELDS")
-  (defvar elmo-imap4-rfc822-size "RFC822_SIZE")
-  (defvar elmo-imap4-rfc822-text "RFC822_TEXT")
-  (defvar elmo-imap4-rfc822-header "RFC822_HEADER")
-  (defvar elmo-imap4-header-fields "HEADER_FIELDS")
-  (defun elmo-imap4-fetch-read (buffer)
-    (with-current-buffer buffer
-      (let ((beg (point))
-	    token)
-	(when (re-search-forward "[[ ]" nil t)
-	  (goto-char (match-beginning 0))
-	  (setq token (buffer-substring beg (point)))
-	  (cond ((string= token "RFC822.SIZE")
-		 (intern elmo-imap4-rfc822-size))
-		((string= token "RFC822.HEADER")
-		 (intern elmo-imap4-rfc822-header))
-		((string= token "RFC822.TEXT")
-		 (intern elmo-imap4-rfc822-text))
-		((string= token "HEADER\.FIELDS")
-		 (intern elmo-imap4-header-fields))
-		(t (goto-char beg)
-		   (elmo-read (current-buffer))))))))))
+(defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
+(defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
+(defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
+(defvar elmo-imap4-header-fields "HEADER\.FIELDS")
+(defmacro elmo-imap4-replace-dot-symbols ()) ;; noop
+(defalias 'elmo-imap4-fetch-read 'read)
 
 (defun elmo-imap4-make-number-set-list (msg-list &optional chop-length)
   "Make RFC2060's message set specifier from MSG-LIST.

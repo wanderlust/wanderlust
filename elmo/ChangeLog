@@ -1,3 +1,7 @@
+2003-01-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (toplevel): Ignore Nemacs.
+
 2003-01-10  Tsutomu OKADA  <okada@furuno.co.jp>
 
 	* elmo-map.el (elmo-folder-pack-numbers): Fix name of the function.
