@@ -2919,6 +2919,7 @@ are displayed in the following list.
 %t  branch of the thread
 %[  [ (< for re-connected child)
 %]  ] (> for re-connected child)
+%f  sender
 %s  subject
 %S  size
 %c  +number-of-children: (display only for opened thread)
