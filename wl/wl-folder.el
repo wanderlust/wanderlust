@@ -171,6 +171,7 @@
   (define-key wl-folder-mode-map "E"    'wl-folder-empty-trash)
   (define-key wl-folder-mode-map "F"    'wl-folder-flush-queue)
   (define-key wl-folder-mode-map "V"    'wl-folder-virtual)
+  (define-key wl-folder-mode-map "?"    'wl-folder-pick)
   (define-key wl-folder-mode-map "q"    'wl-exit)
   (define-key wl-folder-mode-map "z"    'wl-folder-suspend)
   (define-key wl-folder-mode-map "\M-t" 'wl-toggle-plugged)
@@ -2811,6 +2812,40 @@ Call `wl-summary-write-current-folder' with current folder name."
 	     (elmo-read-search-condition
 	      wl-fldmgr-make-filter-default)
 	     "/" entity))))
+
+(defun wl-folder-pick ()
+  (interactive)
+  (save-excursion
+    (let* ((condition (car (elmo-parse-search-condition
+			    (elmo-read-search-condition
+			     wl-summary-pick-field-default))))
+	   (entity (wl-folder-get-entity-from-buffer))
+	   (folder-list
+	    (if (wl-folder-buffer-group-p)
+		(wl-folder-get-entity-list
+		 (wl-folder-search-group-entity-by-name
+		  entity
+		  wl-folder-entity))
+	      (list entity)))
+	   results ret)
+      (while (car folder-list)
+	(setq ret (elmo-folder-search
+		   (wl-folder-get-elmo-folder (car folder-list))
+		   condition))
+	(if ret
+	    (setq results
+		  (append results
+			  (list (cons (car folder-list) ret)))))
+	(setq folder-list (cdr folder-list)))
+      (if results
+	  (message "%s are picked."
+		   (mapconcat '(lambda (res)
+				 (format "%s(%d)"
+					 (car res)
+					 (length (cdr res))))
+			      results
+			      ","))
+	(message "No message was picked.")))))
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))
