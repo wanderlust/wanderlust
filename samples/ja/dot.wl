@@ -193,7 +193,7 @@
 
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する
-(setq wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %] %# %s")
+(setq wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %]%#%s")
 
 ;; imput により非同期で送信する
 ;; (utils/im-wl.el をインストールしておく必要があります。

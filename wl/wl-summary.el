@@ -4128,12 +4128,12 @@ If ARG, exit virtual folder."
     (condition-case nil
 	(if (and ml-name ml-count)
 	    (if (string= folder wl-default-folder)
-		(format "(%s %05d)"
+		(format " (%s %05d) "
 			(car (split-string ml-name " "))
 			(string-to-int ml-count))
-	      (format "#%05d" (string-to-int ml-count)))
-	  "")
-      (error ""))))
+	      (format " #%05d " (string-to-int ml-count)))
+	  " ")
+      (error " "))))
 
 (defun wl-summary-create-line (wl-message-entity
 			       wl-parent-message-entity
