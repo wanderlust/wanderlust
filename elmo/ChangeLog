@@ -1,3 +1,8 @@
+2000-08-21  Kaoru Takahashi  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (elmo-imap4-open-connection-1): Fixed probrem
+	wrong-type-argument error when auth is nil.
+
 2000-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-vars.el (elmo-default-imap4-stream-type): New variable.

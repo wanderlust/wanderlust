@@ -1408,7 +1408,7 @@ Return nil if connection failed."
     (make-local-variable 'elmo-imap4-password-key)
     (setq elmo-imap4-password-key (format "IMAP4:%s/%s@%s:%d"
  					  user
-					  (symbol-name (or auth "plain"))
+					  (symbol-name (or auth 'plain))
 					  host
 					  port
 					  (elmo-network-stream-type-spec-string
