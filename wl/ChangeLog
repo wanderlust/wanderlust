@@ -1,3 +1,10 @@
+2000-06-17  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-thread.el (wl-thread-delete-msgs): Fixed problem when closed
+	thread is deleted.
+	(wl-thread-delete-line-from-buffer): Ditto.
+	(wl-thread-get-exist-children): New function.
+
 2000-06-15  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Made it to select various image types.
