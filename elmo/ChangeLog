@@ -1,3 +1,10 @@
+2005-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-sequence-number): New function.
+	(elmo-maildir-make-unique-string): Throw Emacs 18 away.
+	(elmo-maildir-list-location): Use `elmo-maildir-sequence-number' to
+	compare sequence number when last modified time is nil.
+
 2005-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-folder-msgdb-create): Don't sort by date.

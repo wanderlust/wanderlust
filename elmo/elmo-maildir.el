@@ -113,13 +113,19 @@ LOCATION."
 	 (cur (directory-files cur-dir
 			       nil "^[^.].*$" t))
 	 unread-locations flagged-locations answered-locations
-	 sym locations flag-list)
+	 sym locations flag-list x-time y-time)
     (setq cur (sort cur
 		    (lambda (x y)
-		      (< (elmo-get-last-modification-time
-			  (expand-file-name x cur-dir))
-			 (elmo-get-last-modification-time
-			  (expand-file-name y cur-dir))))))
+		      (setq x-time (elmo-get-last-modification-time
+				    (expand-file-name x cur-dir))
+			    y-time (elmo-get-last-modification-time
+				    (expand-file-name y cur-dir)))
+		      (cond
+		       ((< x-time y-time)
+			t)
+		       ((eq x-time y-time)
+			(< (elmo-maildir-sequence-number x)
+			   (elmo-maildir-sequence-number y)))))))
     (setq locations
 	  (mapcar
 	   (lambda (x)
@@ -377,36 +383,24 @@ LOCATION."
 
 (defvar elmo-maildir-sequence-number-internal 0)
 
-(static-cond
- ((>= emacs-major-version 19)
-  (defun elmo-maildir-make-unique-string ()
-    "This function generates a string that can be used as a unique
+(defun elmo-maildir-sequence-number (file)
+  "Get `elmo-maildir' specific sequence number from FILE.
+Not that FILE is the name without directory."
+  ;; elmo-maildir specific.
+  (if (string-match "^.*_\\([0-9]+\\)\\..*" file)
+      (string-to-number (match-string 1 file))
+    -1))
+
+(defun elmo-maildir-make-unique-string ()
+  "This function generates a string that can be used as a unique
 file name for maildir directories."
-     (let ((cur-time (current-time)))
-       (format "%.0f.%d_%d.%s"
- 	      (+ (* (car cur-time)
-                    (float 65536)) (cadr cur-time))
-	      (emacs-pid)
-	      (incf elmo-maildir-sequence-number-internal)
-	      (system-name)))))
- ((eq emacs-major-version 18)
-  ;; A fake function for v18
-  (defun elmo-maildir-make-unique-string ()
-    "This function generates a string that can be used as a unique
-file name for maildir directories."
-    (unless (fboundp 'float-to-string)
-      (load-library "float"))
-    (let ((time (current-time)))
-      (format "%s%d.%d.%s"
-	      (substring
-	       (float-to-string
-		(f+ (f* (f (car time))
-			(f 65536))
-		    (f (cadr time))))
-	       0 5)
-	      (cadr time)
-	      (% (abs (random t)) 10000); dummy pid
-	      (system-name))))))
+  (let ((cur-time (current-time)))
+    (format "%.0f.%d_%d.%s"
+	    (+ (* (car cur-time)
+		  (float 65536)) (cadr cur-time))
+	    (emacs-pid)
+	    (incf elmo-maildir-sequence-number-internal)
+	    (system-name))))
 
 (defun elmo-maildir-temporal-filename (basedir)
   (let ((filename (expand-file-name
