@@ -1,7 +1,17 @@
+2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added `pldap'.
+
+2000-06-12  Yasushi ABE <yasushi@stbbs.net>
+
+	* utils/bbdb-wl.el (bbdb-extract-field-value): Decode with
+	multibyte-buffer.
+
 2000-05-15  Katsumi Yamaoka <yamaoka@jpl.org>
 
 	* etc/icons/wl-logo.xpm: Reduced color.
 
+
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 1.1.1 - "Purple Rain"

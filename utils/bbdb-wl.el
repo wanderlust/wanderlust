@@ -235,7 +235,6 @@ displaying the record corresponding to the sender of the current message."
 ;;; @ bbdb-extract-field-value -- stolen from tm-bbdb.
 ;;;
 (and (not (fboundp 'bbdb-extract-field-value-internal))
-     (not (fboundp 'tm:bbdb-extract-field-value)) ;; tm-bbdb
 ;;   (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
     (progn
       ;; (require 'bbdb-hooks) ; not provided.
@@ -243,11 +242,17 @@ displaying the record corresponding to the sender of the current message."
       (or (fboundp 'bbdb-header-start)
           (load "bbdb-hooks"))
       (fset 'bbdb-extract-field-value-internal
-            (symbol-function 'bbdb-extract-field-value))
+	    (cond 
+	     ((fboundp 'tm:bbdb-extract-field-value)
+	      (symbol-function 'tm:bbdb-extract-field-value))
+	     (t (symbol-function 'bbdb-extract-field-value))))
       (defun bbdb-extract-field-value (field)
 	(let ((value (bbdb-extract-field-value-internal field)))
-	  (and value
-	       (eword-decode-string value))))
+	  (with-temp-buffer ; to keep raw buffer unibyte.
+	    (elmo-set-buffer-multibyte
+	     default-enable-multibyte-characters)
+	    (and value
+		 (eword-decode-string value)))))
       ))
 
 
