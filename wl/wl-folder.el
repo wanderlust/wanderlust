@@ -662,7 +662,7 @@ Optional argument ARG is repeart count."
 			wl-folder-buffer-cur-entity-id)))
       (let ((summary-buf (wl-summary-get-buffer-create fld-name arg))
 	    error-selecting)
-	(if (or wl-stay-folder-window wl-summary-use-frame)
+	(if wl-stay-folder-window
 	    (wl-folder-select-buffer summary-buf)
 	  (if (and summary-buf
 		   (get-buffer-window summary-buf))
@@ -998,7 +998,6 @@ If current line is group folder, check all sub entries."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-summary-always-sticky-folder-list nil))
 	    (save-window-excursion
 	      (save-excursion
@@ -1049,7 +1048,6 @@ If current line is group folder, check all subfolders."
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
 					     (symbol-name this-command)))
-		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range folder)
@@ -2204,7 +2202,7 @@ Use `wl-subscribed-mailing-list'."
 	     (setq id (wl-folder-get-entity-id entity)))
 	(wl-folder-set-current-entity-id id))
     (setq summary-buf (wl-summary-get-buffer-create fld-name sticky))
-    (if (or wl-stay-folder-window wl-summary-use-frame)
+    (if wl-stay-folder-window
 	(wl-folder-select-buffer summary-buf)
       (if (and summary-buf
 	       (get-buffer-window summary-buf))
@@ -2670,7 +2668,6 @@ Use `wl-subscribed-mailing-list'."
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
 					     (symbol-name this-command)))
-		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range

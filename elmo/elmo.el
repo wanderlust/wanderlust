@@ -854,14 +854,16 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	      (elmo-message-fetch
 	       src-folder (car numbers)
 	       (if (and (not (elmo-folder-plugged-p src-folder))
-			elmo-enable-disconnected-operation
-			(setq cache (elmo-file-cache-get
-				     (elmo-message-field
-				      src-folder (car numbers)
-				      'message-id)))
-			(eq (elmo-file-cache-status cache) 'entire))
-		   (elmo-make-fetch-strategy
-		    'entire t nil (elmo-file-cache-path cache))
+			elmo-enable-disconnected-operation)
+		   (if (and (setq cache (elmo-file-cache-get
+					 (elmo-message-field
+					  src-folder (car numbers)
+					  'message-id)))
+			    (eq (elmo-file-cache-status cache) 'entire))
+		       (elmo-make-fetch-strategy
+			'entire
+			t
+			nil (elmo-file-cache-path cache)))
 		 (elmo-make-fetch-strategy 'entire))
 	       nil (current-buffer)
 	       'unread)
@@ -1174,8 +1176,7 @@ Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
 NEW-MSGDB is the newly appended msgdb.
 DELETE-LIST is a list of deleted message number.
-CROSSED is cross-posted message number.
-If update process is interrupted, return nil."
+CROSSED is cross-posted message number."
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
 	number-alist mark-alist 
@@ -1238,7 +1239,7 @@ If update process is interrupted, return nil."
 	      (progn
 		(elmo-folder-update-number folder)
 		(elmo-folder-process-crosspost folder)
-		(list nil nil nil) ; no updates.
+		nil ; no update.
 		)
 	    (if delete-list (elmo-msgdb-delete-msgs
 			     (elmo-folder-msgdb folder) delete-list))

@@ -4257,7 +4257,7 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 @vindex wl-draft-use-cache
 $B=i4|@_Dj$O(B @code{nil}$B!#Aw?.$9$k%a%C%;!<%8$r%-%c%C%7%e$9$k$+$I$&$+$r<($9%U(B
 $B%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#$?$@$7(B @code{wl-insert-message-id}$B$,(B
-nil $B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
+non-nil$B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
