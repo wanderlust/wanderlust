@@ -827,7 +827,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	  flag-list
 	  (if use-flag
 	      (append
-	       (and (elmo-string-member-ignore-case "\\Recent" flags)
+	       (and (memq 'new saved-flags)
 		    '(new))
 	       (and (elmo-string-member-ignore-case "\\Flagged" flags)
 		    '(important))
