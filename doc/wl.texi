@@ -6613,8 +6613,9 @@ If @command{imput} is on the @code{exec-path} at the installation,
 @subsection bbdb.el
 @pindex BBDB
 
-Place @file{util/bbdb-wl.el} on the @code{load-path} and do the following
-settings.
+To use The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
+with Wanderlust, place @file{util/bbdb-wl.el} on the @code{load-path}
+and do the following settings.
 
 If BBDB is on the @code{load-path} at the installation, @file{bbdb-wl.el} is
 byte-compiled and installed.
@@ -6649,7 +6650,9 @@ in draft buffer.
 @subsection lsdb.el
 @pindex LSDB
 
-The following is an example of settings:
+The following is an example setting to use
+The Lovely Sister Database (@uref{http://sourceforge.jp/projects/lsdb/})
+with Wanderlust.
 
 @lisp
 @group
