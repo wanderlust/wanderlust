@@ -100,7 +100,8 @@
   (format "%s:%s/%s@%s:%d"
 	  (elmo-network-session-name-internal session)
 	  (elmo-network-session-user-internal session)
-	  (elmo-network-session-auth-internal session)
+	  (symbol-name (or (elmo-network-session-auth-internal session)
+			   'plain))
 	  (elmo-network-session-host-internal session)
 	  (elmo-network-session-port-internal session)))
 

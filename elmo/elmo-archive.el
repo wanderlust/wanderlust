@@ -217,12 +217,8 @@
   (` (cdr (assq (, type)
 		elmo-archive-file-regexp-alist))))
 
-(if (boundp 'NEMACS)
-    (defsubst elmo-archive-call-process (prog args &optional output)
-      (apply 'call-process prog nil output nil args)
-      0)
-  (defsubst elmo-archive-call-process (prog args &optional output)
-    (= (apply 'call-process prog nil output nil args) 0)))
+(defsubst elmo-archive-call-process (prog args &optional output)
+  (= (apply 'call-process prog nil output nil args) 0))
 
 (defsubst elmo-archive-call-method (method args &optional output)
   (cond
