@@ -27,6 +27,10 @@
 
 ;;; Commentary:
 ;; 
+;; Put the following lines to each file of ELMO package.
+;;
+;; (require 'product)
+;; (product-provide (provide FEATURE) (require 'elmo-version))
 
 ;;; Code:
 ;; 

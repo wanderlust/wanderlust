@@ -33,8 +33,7 @@
 	 (featurep 'dragdrop))
     (require 'wl-dnd))
 (require 'wl-vars)
-(require 'product)
-(product-provide (provide 'wl-highlight) (require 'wl-version))
+(provide 'wl-highlight)			; circular dependency
 
 (eval-when-compile
   (cond (wl-on-xemacs
@@ -1259,5 +1258,8 @@ interpreted as cited text.)"
 		(1- (point))))
 	 (inhibit-read-only t))
     (put-text-property beg end 'mouse-face 'highlight)))
+
+(require 'product)
+(product-provide (provide 'wl-highlight) (require 'wl-version))
 
 ;;; wl-highlight.el ends here

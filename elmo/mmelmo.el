@@ -33,8 +33,7 @@
 (require 'mime-parse)
 (require 'mmbuffer)
 
-(require 'product)
-(product-provide (provide 'mmelmo) (require 'elmo-version))
+(provide 'mmelmo)			; circular dependency
 (require 'mmelmo-imap4)
 
 (eval-and-compile
@@ -259,5 +258,8 @@ size:   size of the entity."
 ;;     (buffer-substring (mime-buffer-entity-body-start-internal entity)
 ;;		       (mime-buffer-entity-body-end-internal entity)))
 ;;   (mime-entity-encoding entity)))
+
+(require 'product)
+(product-provide (provide 'mmelmo) (require 'elmo-version))
 
 ;;; mmelmo.el ends here

@@ -1,3 +1,8 @@
+2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo2.el (toplevel): Move `product-provide' declare.
+	* mmelmo.el (toplevel): Ditto.
+
 2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-folder-get-store-type): Rewrite.
