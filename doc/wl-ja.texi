@@ -5152,7 +5152,7 @@ plug 状態により 2行目の @samp{(wl-plugged)} が変化します。
 
 @item elmo-enable-disconnected-operation
 @vindex elmo-enable-disconnected-operation
-初期設定は @code{nil}。IMAP4 に関するオフライン処理を実行するかどうか。
+初期設定は @code{t}。IMAP4 に関するオフライン処理を実行するかどうか。
 Non-nil ならオフライン処理を実行します。
 
 @item elmo-lost+found-folder
