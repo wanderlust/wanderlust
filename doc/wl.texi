@@ -908,7 +908,7 @@ Example:
 @pindex Maildir
 @pindex qmail
 
-A folder to access to Maildir format (1 file is 1 mail).
+A folder to access Maildir format (1 file is 1 mail).
 
 Format:
 
@@ -924,7 +924,7 @@ starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 Maildir contains @file{cur}, @file{new} and @file{tmp} subdirectories.
 Messages are contained in the @file{cur} directory.  All message files
 in the @file{new} directory are moved to @file{cur} directory when you
-access to the folder. All message files contained in the @file{tmp}
+access the folder. All message files contained in the @file{tmp}
 directory and not accessed for 36 hours are deleted.
 
 This behavior conforms to the @uref{http://cr.yp.to/proto/maildir.html}.
@@ -1116,7 +1116,7 @@ in processing speed. For comfortable use, Emacs20 is recommended.
 (If re-search's performance is the problem, 19.3x or later may be okay.)
 
 If many files are included in one archive,
-it takes long time to access to the archive folder because
+it takes long time to access the archive folder because
 archiver starting overhead is increased (especially LHA).
 150-200 messages in one archive is recommended.
 
@@ -1246,8 +1246,8 @@ Example:
 
 @example
 @group
-&hoge@@localhost -> access to localhost as user @samp{hoge}.
-&hoge@@popserver:109 -> access to the server "popserver" on port 109
+&hoge@@localhost     -> access localhost as user @samp{hoge}.
+&hoge@@popserver:109 -> access the server "popserver" on port 109
                         as user @samp{hoge}.
 @end group
 @end example
@@ -1311,6 +1311,16 @@ Example:
 @cindex Folder, Text Search
 @pindex Namazu
 @pindex nmz
+A folder to access messages found in namazu-index with some condition.
+It uses namazu (@uref{http://www.namazu.org/}) for search.
+
+Format:
+
+@example
+@group
+@samp{[} @var{search condition} @samp{]} [ @var{absolute path of namazu index} ]
+@end group
+@end example
 
 
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
@@ -1320,8 +1330,8 @@ Example:
 @cindex Folder, Multiple
 @cindex Folder, Marge
 
-A folder to access to a folder which collects messages from
-multiple folders virtually.
+A folder to access virtual folder which collects messages from
+multiple folders.
 
 Format:
 
@@ -1357,8 +1367,8 @@ Example:
 @cindex Folder, Virtual
 @cindex Folder, Conditional
 
-A folder to access to a folder which collects all messages that
-satisfy a condition virtually.
+A folder to access virtual folder which collects all messages that
+satisfy a condition.
 
 Format:
 
@@ -1506,7 +1516,7 @@ Format:
 @samp{|} @var{source-folder} @samp{|} @var{destination-folder}
 @end example
 
-When you access to the pipe folder, messages are automatically transferred
+When you access the pipe folder, messages are automatically transferred
 from @var{source-folder} to @var{destination-folder}.
 It is convenient if you want to download messages to local disk via POP.
 For example, if you specify following
@@ -1516,7 +1526,7 @@ For example, if you specify following
 @end example
 
 @noindent
-and access to it, messages are downloaded automatically from
+and access it, messages are downloaded automatically from
 @samp{&username@@popserver} to @samp{+inbox}.
 
 Example:
@@ -1539,7 +1549,7 @@ After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
 @cindex Cache
 @c @cindex Folder, Null
 
-A folder to access to internal messages of Wanderlust.
+A folder to access internal messages of Wanderlust.
 
 Format:
 
@@ -1565,8 +1575,8 @@ message will have @samp{$} mark.
 folder.  If you want IMAP folder's message remove from @samp{'mark}
 folder, remove important mark at IMAP Folder.)
 
-You can access to the cached messages fetched via network by accessing
-to the folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
+You can access cached messages fetched via network by accessing
+folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
 the name of the subdirectories of the cache directory
 (@file{~/.elmo/cache}).
 

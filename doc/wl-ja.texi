@@ -1330,6 +1330,16 @@ emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
 @cindex Folder, Text Search
 @pindex Namazu
 @pindex nmz
+namazu (@uref{http://www.namazu.org/}) を用いて、検索式にマッチした
+メッセージを集めた仮想的なフォルダを構成します。
+
+書式:
+
+@example
+@group
+@samp{[} @var{namazu 検索式} @samp{]} [ @var{namazu index のパス（絶対パス）} ]
+@end group
+@end example
 
 
 @node Multi Folder, Filter Folder, Namazu Folder, Folders
