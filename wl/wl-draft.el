@@ -1625,6 +1625,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 (summary-buf (wl-summary-get-buffer parent-folder))
 	 (reply-or-forward
 	  (or (eq this-command 'wl-summary-reply)
+	      (eq this-command 'wl-summary-reply-with-citation)
 	      (eq this-command 'wl-summary-forward)
 	      (eq this-command 'wl-summary-target-mark-forward)
 	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))

@@ -1,3 +1,8 @@
+2003-03-06  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-create-buffer): Add
+	`wl-summary-reply-with-citation'
+
 2003-03-02  Jeremy Shaw  <jeremy.shaw@lindows.com>
 
 	* wl-draft.el (wl-draft-reply): Fixed.
