@@ -1,3 +1,8 @@
+2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-network-initialize-session): Erase buffer
+	after parsing greeting string.
+
 2004-11-23  Daishi Kato <daishi@axlight.com>
 
 	* elsp-spamoracle.el (elmo-spam-spamoracle-spam-header-regexp):

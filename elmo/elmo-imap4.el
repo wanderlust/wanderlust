@@ -970,6 +970,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		  (forward-line -1)
 		  (not (elmo-imap4-parse-greeting)))
 	(accept-process-output process 1))
+      (erase-buffer)
       (set-process-filter process 'elmo-imap4-arrival-filter)
       (set-process-sentinel process 'elmo-imap4-sentinel)
 ;;;   (while (and (memq (process-status process) '(open run))
