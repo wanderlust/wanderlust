@@ -277,12 +277,11 @@ ENTITY is returned."
       (car (last brothers)))))
 
 (defun wl-thread-entity-get-older-brothers (entity &optional parent)
-  (let* ((parent (or parent
-		     (wl-thread-entity-get-parent-entity entity)))
-	 (brothers (wl-thread-entity-get-children parent))
-	 ret-val)
+  (let ((parent (or parent
+		    (wl-thread-entity-get-parent-entity entity)))
+	brothers ret-val)
     (if parent
-	brothers
+	(setq brothers (wl-thread-entity-get-children parent))
       (setq brothers wl-thread-entity-list))
     (while (and brothers
 		(not (eq (wl-thread-entity-get-number entity)
@@ -513,80 +512,76 @@ ENTITY is returned."
 (defun wl-thread-delete-message (msg &optional deep update)
   "Delete MSG from entity and buffer."
   (save-excursion
-    (let* ((entity (wl-thread-get-entity msg))
-	   children older-brothers younger-brothers top-child ;;grandchildren
-	   top-entity parent update-msgs beg invisible-top)
+    (let ((entity (wl-thread-get-entity msg))
+	  top-child top-entity update-msgs invisible-top)
       (setq wl-summary-buffer-number-list
 	    (delq msg wl-summary-buffer-number-list))	      
       (when entity
-	(setq parent (wl-thread-entity-get-parent-entity entity))
-	(if parent
-	    (progn
-;;; has parent.
-;;;	      (setq brothers (wl-thread-entity-get-children parent))
-	      (setq older-brothers (wl-thread-entity-get-older-brothers
-				    entity parent))
-	      (setq younger-brothers (wl-thread-entity-get-younger-brothers
-				      entity parent))
-	      ;;
-	      (unless deep
-		(setq children (wl-thread-entity-get-children entity))
-		(wl-thread-reparent-children
-		 children (wl-thread-entity-get-number parent))
-		(setq update-msgs
-		      (apply (function nconc)
-			     update-msgs
-			     (mapcar
-			      (function
-			       (lambda (message)
-				 (wl-thread-get-children-msgs message t)))
-			      children))))
-	      (wl-thread-entity-set-children
-	       parent (append older-brothers children younger-brothers))
-	      ;; If chidren and younger-brothers not exists,
-	      ;; update nearly older brother.
-	      (when (and older-brothers
-			 (not younger-brothers)
-			 (not children))
-		(wl-append
-		 update-msgs
-		 (wl-thread-get-children-msgs (car (last older-brothers))))))
-
-	  ;; top...oldest child becomes top.
-	  (unless deep
-	    (setq children (wl-thread-entity-get-children entity))
-	    (when children
-	      (setq top-child (car children)
-		    children (cdr children))
-	      (setq top-entity (wl-thread-get-entity top-child))
-	      (wl-thread-entity-set-parent top-entity nil)
-	      (wl-thread-entity-set-linked top-entity nil)
-	      (wl-append update-msgs
-			 (wl-thread-get-children-msgs top-child t)))
-	    (when children
-	      (wl-thread-entity-set-children
-	       top-entity
-	       (append
-		(wl-thread-entity-get-children top-entity)
-		children))
-	      (wl-thread-reparent-children children top-child)
-	      (wl-append update-msgs children)))
-	  ;; delete myself from top list.
-	  (setq older-brothers (wl-thread-entity-get-older-brothers
-				entity nil))
-	  (setq younger-brothers (wl-thread-entity-get-younger-brothers
-				  entity nil))
-	  (setq wl-thread-entity-list
-		(append (append older-brothers
-				(and top-child (list top-child)))
-			younger-brothers))))
-
+	(let ((parent (wl-thread-entity-get-parent-entity entity)))
+	  (if parent
+	      ;; has parent.
+	      (let (children
+		    (older-brothers (wl-thread-entity-get-older-brothers
+				     entity parent))
+		    (younger-brothers (wl-thread-entity-get-younger-brothers
+				       entity parent)))
+		(unless deep
+		  (setq children (wl-thread-entity-get-children entity))
+		  (wl-thread-reparent-children
+		   children (wl-thread-entity-get-number parent))
+		  (setq update-msgs
+			(apply (function nconc)
+			       update-msgs
+			       (mapcar
+				(function
+				 (lambda (message)
+				   (wl-thread-get-children-msgs message t)))
+				children))))
+		(wl-thread-entity-set-children
+		 parent (append older-brothers children younger-brothers))
+		;; If chidren and younger-brothers do not exist,
+		;; update nearly older brother.
+		(when (and older-brothers
+			   (not younger-brothers)
+			   (not children))
+		  (wl-append
+		   update-msgs
+		   (wl-thread-get-children-msgs (car (last older-brothers))))))
+	    ;; top...oldest child becomes top.
+	    (unless deep
+	      (let ((children (wl-thread-entity-get-children entity)))
+		(when children
+		  (setq top-child (car children)
+			children (cdr children))
+		  (setq top-entity (wl-thread-get-entity top-child))
+		  (wl-thread-entity-set-parent top-entity nil)
+		  (wl-thread-entity-set-linked top-entity nil)
+		  (wl-append update-msgs
+			     (wl-thread-get-children-msgs top-child t)))
+		(when children
+		  (wl-thread-entity-set-children
+		   top-entity
+		   (append
+		    (wl-thread-entity-get-children top-entity)
+		    children))
+		  (wl-thread-reparent-children children top-child)
+		  (wl-append update-msgs children))))
+	    ;; delete myself from top list.
+	    (let ((older-brothers (wl-thread-entity-get-older-brothers
+				   entity nil))
+		  (younger-brothers (wl-thread-entity-get-younger-brothers
+				     entity nil)))
+	      (setq wl-thread-entity-list
+		    (append (append older-brothers
+				    (and top-child (list top-child)))
+			    younger-brothers))))))
+      ;;
       (if deep
 	  ;; delete thread on buffer
 	  (when (wl-summary-jump-to-msg msg)
-	    (setq beg (point))
-	    (wl-thread-goto-bottom-of-sub-thread)
-	    (delete-region beg (point)))
+	    (let ((beg (point)))
+	      (wl-thread-goto-bottom-of-sub-thread)
+	      (delete-region beg (point))))
 	;; delete myself from buffer.
 	(unless (wl-thread-delete-line-from-buffer msg)
 	  ;; jump to suitable point.
@@ -602,7 +597,7 @@ ENTITY is returned."
 	;; insert children if thread is closed or delete top.
 	(when (or top-child
 		  (not (wl-thread-entity-get-opened entity)))
-	  (let* (next-top insert-msgs ent e grandchildren)
+	  (let (next-top insert-msgs ent grandchildren)
 	    (if top-child
 		(progn
 		  (setq insert-msgs (wl-thread-get-exist-children
