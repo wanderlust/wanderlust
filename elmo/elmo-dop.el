@@ -301,12 +301,7 @@ even an operation concerns the unplugged folder."
 		    (append number-list
 			    (list (+ max-num i 1))))
 	      (setq i (+ 1 i)))
-	    (if killed
-		(delq nil
-		      (mapcar (lambda (number)
-				(unless (memq number killed) number))
-			      number-list))
-	      number-list))
+	    (elmo-living-messages number-list killed))
 	(error "Unplugged"))
     ;; not imap4 folder...list folder
     (elmo-call-func folder "list-folder")))

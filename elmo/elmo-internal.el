@@ -46,12 +46,7 @@
 		  (- (length flist) (length killed))
 		(length flist)))
       (setq numbers (sort flist '<))
-      (if killed
-	  (delq nil
-		(mapcar (lambda (number)
-			  (unless (memq number killed) number))
-			numbers))
-	numbers))))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-internal-list-folder (spec)
   (elmo-internal-list-folder-subr spec))

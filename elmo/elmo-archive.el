@@ -269,12 +269,7 @@ TYPE specifies the archiver's symbol."
 		  (- (length file-list) (length killed))
 		(length file-list)))
       (setq numbers (sort file-list '<))
-      (if killed
-	  (delq nil
-		(mapcar (lambda (number)
-			  (unless (memq number killed) number))
-			numbers))
-      numbers))))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-archive-list-folder (spec)
   (elmo-archive-list-folder-subr spec))

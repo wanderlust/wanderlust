@@ -582,6 +582,14 @@ content of MSGDB is changed."
      (nconc (elmo-msgdb-killed-list-load dir)
 	    msgs))))
 
+(defun elmo-living-messages (messages killed-list)
+  (if killed-list
+      (delq nil
+	    (mapcar (lambda (number)
+		      (unless (memq number killed-list) number))
+		    messages))
+    messages))
+
 (defun elmo-msgdb-finfo-load ()
   (elmo-object-load (expand-file-name
 		     elmo-msgdb-finfo-filename

@@ -499,12 +499,7 @@ Don't cache if nil.")
 	      (setq numbers (elmo-nntp-make-msglist
 			     (elmo-match-string 2 response)
 			     (elmo-match-string 3 response)))))
-	(if killed
-	    (delq nil
-		  (mapcar (lambda (number)
-			    (unless (memq number killed) number))
-			  numbers))
-	  numbers)))))
+	(elmo-living-messages numbers killed)))))
 
 (defun elmo-nntp-max-of-folder (spec)
   (let* ((port (elmo-nntp-spec-port spec))

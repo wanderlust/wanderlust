@@ -363,12 +363,7 @@ file name for maildir directories."
 		     (- (length flist) (length killed))
 		   (length flist))))
       (setq numbers (sort flist '<))
-      (if killed
-	  (delq nil
-		(mapcar (lambda (number)
-			  (unless (memq number killed) number))
-			numbers))
-	numbers))))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-maildir-list-folder (spec)
   (elmo-maildir-update-current spec)

@@ -723,12 +723,7 @@ BUFFER must be a single-byte buffer."
 		      (elmo-msgdb-expand-path nil spec))))
 	numbers)
     (setq numbers (elmo-imap4-list spec "all"))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-imap4-list-folder-unread (spec msgdb unread-marks)
   (if (elmo-imap4-use-flag-p spec)

@@ -665,12 +665,7 @@ Returning its cache buffer."
 		      (elmo-msgdb-expand-path nil spec))))
 	numbers)
     (setq numbers (elmo-cache-list-folder-subr spec))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-cache-max-of-folder (spec)
   (elmo-cache-list-folder-subr spec t))

@@ -241,12 +241,7 @@
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder (car flds)))))
       (setq flds (cdr flds)))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-multi-folder-exists-p (spec)
   (let* ((flds (cdr spec)))

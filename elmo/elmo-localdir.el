@@ -229,12 +229,7 @@
 		  (- (length flist) (length killed))
 		(length flist)))
       (setq numbers (sort flist '<))
-      (if killed
-	  (delq nil
-		(mapcar (lambda (number)
-			  (unless (memq number killed) number))
-			numbers))
-	numbers))))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-localdir-append-msg (spec string &optional msg no-see)
   (let ((dir (elmo-localdir-get-folder-directory spec))

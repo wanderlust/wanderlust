@@ -482,12 +482,7 @@
 		      (progn
 			(elmo-pop3-list-by-uidl-subr spec))
 		    (elmo-pop3-list-by-list spec)))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-pop3-max-of-folder (spec)
   (elmo-pop3-commit spec)

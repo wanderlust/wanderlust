@@ -82,12 +82,7 @@
 		      (elmo-msgdb-expand-path nil spec))))
 	numbers)
     (setq numbers (elmo-list-folder (elmo-pipe-spec-dst spec)))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-pipe-list-folder-unread (spec msgdb unread-marks)
   (elmo-list-folder-unread (elmo-pipe-spec-dst spec)
