@@ -417,13 +417,12 @@
 
 (defun wl-primary-info-file ()
   "Get primary info file (for wl-detect-info-directory)."
-  (cond
-   ((null wl-info-lang))
-   ((listp wl-info-lang)
-    (let ((wl-info-lang (car wl-info-lang)))
-      (wl-primary-info-file)))
-   ((stringp wl-info-lang)
-    (symbol-value (intern (format "wl-%s-info" wl-info-lang))))))
+  (cond ((null wl-info-lang))
+	((listp wl-info-lang)
+	 (let ((wl-info-lang (car wl-info-lang)))
+	   (wl-primary-info-file)))
+	((stringp wl-info-lang)
+	 (symbol-value (intern (format "wl-%s-info" wl-info-lang))))))
 
 (defun wl-detect-info-directory ()
   (config-wl-package-subr)
@@ -441,9 +440,7 @@
 		  (if (setq previous
 			    (exec-installed-p info Info-directory-list
 					      COMPRESS-SUFFIX-LIST))
-		      ;;(progn
-		      ;;(condition-case nil (delete-file previous))
-		      (directory-file-name (file-name-directory previous));)
+		      (directory-file-name (file-name-directory previous))
 		    (car Info-directory-list))
 		infodir))
 	(setq command-line-args-left (cdr command-line-args-left))))
