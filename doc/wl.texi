@@ -7050,6 +7050,7 @@ Supported spam filtering libraries are following ones.
 * spamfilter::                          spamfilter.el
 * bsfilter::                            bsfilter
 * SpamAssassin::                        SpamAssassin
+* SpamOracle::                          SpamOracle
 * Regular Expressions Header Matching:: Header regexp
 @end menu
 
@@ -7196,7 +7197,7 @@ Specify options to give to @command{bsfilter} for learning messages.
 
 @end table
 
-@node SpamAssassin, Regular Expressions Header Matching, bsfilter, Spam Filter Processors
+@node SpamAssassin, SpamOracle, bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
@@ -7251,6 +7252,50 @@ Specify the arguments to be supplied for @command{sa-learn}.
 The initial setting is @code{nil}.
 If you specify @code{t}, the output from @command{spamassassin} is
 stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
+
+@end table
+
+@node SpamOracle, Regular Expressions Header Matching, SpamAssassin, Spam Filter Processors
+@subsection SpamOracle
+@cindex SpamOracle
+
+SpamOracle (`http://pauillac.inria.fr/~xleroy/software.html#spamoracle')
+is a spam filter implemented by Objective Caml language.
+
+To use spam filter with @file{spamoracle}, write following setting in
+@file{~/.wl} or somewhere else.
+(Of course, you have to install SpamOracle beforehand.)
+
+@lisp
+@group
+(setq elmo-spam-scheme 'spamoracle)
+@end group
+@end lisp
+
+@subsubsection Customizable Variables
+
+@table @code
+@item elmo-spam-spamoracle-program
+@vindex elmo-spam-spamoracle-program
+The initial setting is @file{spamoracle}.  Specify the name of
+executable of spamoracle. If the executable is not in your
+environmental variable @env{PATH}, you should set this by full path.
+
+@item elmo-spam-spamoracle-config-filename
+@vindex elmo-spam-spamoracle-config-filename
+Specify the name of config file.  @code{nil} to use default file
+(@file{~/.spamoracle.conf}).  The initial setting is @code{nil}.
+
+@item elmo-spam-spamoracle-database-filename
+@vindex elmo-spam-spamoracle-database-filename
+The initial setting is @file{~/.elmo/.spamoracle.db}.
+It specifies the name of database file.
+
+@item elmo-spam-spamoracle-spam-header-regexp
+@vindex elmo-spam-spamoracle-spam-header-regexp
+The initial setting is @code{"^X-Spam: yes;"}.  It specifies the regular
+expression of the header that indicates spam mail.  Use this setting
+when you change the @code{spam_header} parameter in the config file.
 
 @end table
 

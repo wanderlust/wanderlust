@@ -7020,6 +7020,7 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
 * spamfilter::                          spamfilter.el
 * bsfilter::                            bsfilter
 * SpamAssassin::                        SpamAssassin
+* SpamOracle::                          SpamOracle
 * Regular Expressions Header Matching:: 正規表現によるヘッダ検査
 @end menu
 
@@ -7161,7 +7162,7 @@ bsfilter を起動するシェルに与える引数を指定します。
 
 @end table
 
-@node SpamAssassin, Regular Expressions Header Matching, bsfilter, Spam Filter Processors
+@node SpamAssassin, SpamOracle, bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
@@ -7215,6 +7216,53 @@ SpamAssassin の学習用プログラム @command{sa-learn} 実行時に与える
 @vindex elmo-spamassassin-debug
 初期設定は、@code{nil}。@code{t} を指定すると、@command{spamassassin}
 からの出力が @code{"*Debug ELMO SpamAssassin*"}というバッファに出力されます。
+
+@end table
+
+@node SpamOracle, Regular Expressions Header Matching, SpamAssassin, Spam Filter Processors
+@subsection SpamOracle
+@cindex SpamOracle
+
+SpamOracle (`http://pauillac.inria.fr/~xleroy/software.html#spamoracle')
+は、Objective Caml で実装された spam フィルタです.
+
+@file{SpamOracle} を使用するには、@file{~/.wl}などに以下の設定を記述します。
+(もちろん、あらかじめ SpamOracle がインストールされ、正常に動作することを
+確認してください)
+
+@lisp
+@group
+(setq elmo-spam-scheme 'spamoracle)
+@end group
+@end lisp
+
+@subsubsection カスタマイズ変数
+
+@table @code
+@item elmo-spam-spamoracle-program
+@vindex elmo-spam-spamoracle-program
+初期設定は @file{spamoracle}。
+@command{spamoracle} の実行ファイルの名前を設定します。実行ファイルが、
+環境変数 @env{PATH} 上にない場合は、フルパスを設定する必要があります。
+
+@item elmo-spam-spamoracle-config-filename
+@vindex elmo-spam-spamoracle-config-filename
+初期設定は @code{nil}。
+@command{spamoracle} の設定ファイルを指定します. 
+@code{nil} を指定すると、デフォルトの設定ファイル
+(@file{~/.spamoracle.conf})が使用されます。
+
+@item elmo-spam-spamoracle-database-filename
+@vindex elmo-spam-spamoracle-database-filename
+初期設定は @file{~/.elmo/.spamoracle.db}。
+@command{spamoracle} で使用するデータベースファイルのパスを指定します。
+
+@item elmo-spam-spamoracle-spam-header-regexp
+@vindex elmo-spam-spamoracle-spam-header-regexp
+初期設定は @code{"^X-Spam: yes;"}。
+spam メールであることを示すヘッダの正規表現を指定します。
+@command{spamoracle} の設定ファイル内で、 @code{spam_header} パラメータの
+設定を変更した場合は、この変数の値を設定してください。
 
 @end table
 
