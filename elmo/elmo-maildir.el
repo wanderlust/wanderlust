@@ -157,14 +157,15 @@ LOCATION."
 	  (setq mark new-mark)) ; unread!
 	 ((member location flagged-list)
 	  (setq mark important-mark)))
-	(setq mark-alist
-	      (elmo-msgdb-mark-append
-	       mark-alist
-	       (elmo-msgdb-overview-entity-get-number
-		entity)
-	       (or (elmo-msgdb-global-mark-get
-		    (elmo-msgdb-overview-entity-get-id
-		     entity))
+	(if (setq mark (or (elmo-msgdb-global-mark-get
+			    (elmo-msgdb-overview-entity-get-id
+			     entity))
+			   mark))
+	    (setq mark-alist
+		  (elmo-msgdb-mark-append
+		   mark-alist
+		   (elmo-msgdb-overview-entity-get-number
+		    entity)
 		   mark)))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))

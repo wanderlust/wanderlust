@@ -66,8 +66,6 @@
 (defvar wl-summary-mode-map nil)
 (defvar wl-current-summary-buffer nil)
 
-;; (defvar wl-summary-buffer-msgdb       nil) obsolete.
-;; (defvar wl-summary-buffer-folder-name nil) obsolete.
 (defvar wl-summary-buffer-elmo-folder nil)
 
 (defmacro wl-summary-buffer-folder-name ()
@@ -105,10 +103,12 @@
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
 (defvar wl-summary-buffer-saved-message nil)
-(defvar wl-summary-buffer-prev-folder-func nil)
-(defvar wl-summary-buffer-next-folder-func nil)
-(defvar wl-summary-buffer-exit-func nil)
+(defvar wl-summary-buffer-prev-folder-function nil)
+(defvar wl-summary-buffer-next-folder-function nil)
+(defvar wl-summary-buffer-exit-function nil)
 (defvar wl-summary-buffer-number-list nil)
+(defvar wl-summary-buffer-msgdb nil)
+(defvar wl-summary-buffer-folder-name nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -125,9 +125,9 @@
 (defvar wl-summary-delayed-update nil)
 (defvar wl-summary-search-buf-folder-name nil)
 
-(defvar wl-summary-get-petname-func 'wl-address-get-petname-1)
+(defvar wl-summary-get-petname-function 'wl-address-get-petname-1)
 
-(defvar wl-summary-message-regexp "^ *\\([0-9]+\\)")
+(defvar wl-summary-message-regexp "^ *\\([0-9-]+\\)")
 
 (defvar wl-summary-shell-command-last "")
 
@@ -173,10 +173,12 @@
 (make-variable-buffer-local 'wl-thread-vertical-str-internal)
 (make-variable-buffer-local 'wl-thread-horizontal-str-internal)
 (make-variable-buffer-local 'wl-thread-space-str-internal)
-(make-variable-buffer-local 'wl-summary-buffer-prev-folder-func)
-(make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
-(make-variable-buffer-local 'wl-summary-buffer-exit-func)
+(make-variable-buffer-local 'wl-summary-buffer-prev-folder-function)
+(make-variable-buffer-local 'wl-summary-buffer-next-folder-function)
+(make-variable-buffer-local 'wl-summary-buffer-exit-function)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
+(make-variable-buffer-local 'wl-summary-buffer-msgdb)
+(make-variable-buffer-local 'wl-summary-buffer-folder-name)
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -221,7 +223,7 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (or
-				       (funcall wl-summary-get-petname-func to)
+				       (funcall wl-summary-get-petname-function to)
 				       (car
 					(std11-extract-address-components to))
 				       to)
@@ -232,7 +234,7 @@
 			 entity "newsgroups"))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
-	  (setq retval (or (funcall wl-summary-get-petname-func from)
+	  (setq retval (or (funcall wl-summary-get-petname-function from)
 			   (car (std11-extract-address-components from))
 			   from))
 	(setq retval from)))
@@ -240,7 +242,7 @@
 
 (defun wl-summary-simple-from (string)
   (if wl-use-petname
-      (or (funcall wl-summary-get-petname-func string)
+      (or (funcall wl-summary-get-petname-function string)
 	  (car (std11-extract-address-components string))
 	  string)
     string))
@@ -1010,8 +1012,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	summary-win
 	message-buf message-win
 	folder-buf folder-win)
-    (if wl-summary-buffer-exit-func
-	(funcall wl-summary-buffer-exit-func)
+    (if wl-summary-buffer-exit-function
+	(funcall wl-summary-buffer-exit-function)
       (wl-summary-cleanup-temp-marks sticky)
       (unwind-protect
 	  ;; save summary status
@@ -1357,7 +1359,7 @@ If ARG is non-nil, checking is omitted."
 	(goto-char (point-min))
 	(while (not (eobp))
 	  (beginning-of-line)
-	  (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+	  (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	    (setq mark (wl-match-buffer 2))
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (if (or (and (null prefetch-marks)
@@ -1411,7 +1413,7 @@ If ARG is non-nil, checking is omitted."
   (save-excursion
     (save-match-data
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	(goto-char (match-beginning 2))
 	(let ((inhibit-read-only t)
 	      (buffer-read-only nil)
@@ -1605,7 +1607,7 @@ If ARG is non-nil, checking is omitted."
 	(elmo-folder-mark-as-read folder (wl-summary-collect-unread mark-alist))
 	(save-excursion
 	  (goto-char (point-min))
-	  (while (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
+	  (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (setq mark (wl-match-buffer 2))
 	    (when (and (not (string= mark wl-summary-important-mark))
@@ -1656,7 +1658,7 @@ If ARG is non-nil, checking is omitted."
 	   mark number unread new-mark)
 ;;;   (re-search-backward "^ *[0-9]+..[0-9]+/[0-9]+" nil t) ; set cursor line
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	(progn
 	  (setq mark (wl-match-buffer 2))
 	  (cond
@@ -1701,7 +1703,7 @@ If ARG is non-nil, checking is omitted."
     (message "Resuming cache status...")
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)" nil t)
+      (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)" nil t)
 	(setq msg (string-to-int
 		   (wl-match-buffer 1)))
 	(setq mark (wl-match-buffer 2))
@@ -2215,7 +2217,7 @@ If ARG is non-nil, checking is omitted."
 	  (buffer-read-only nil)
 	  msg-num
 	  cur-mark)
-      (when (looking-at "^ *\\([0-9]+\\)\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)\\([^0-9]\\)")
 	(setq msg-num  (string-to-int (wl-match-buffer 1)))
 	(setq cur-mark (wl-match-buffer 2))
 	(when (member cur-mark (list " "
@@ -2282,7 +2284,7 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-message-number ()
   (save-excursion
     (beginning-of-line)
-    (if (looking-at "^ *\\([0-9]+\\)")
+    (if (looking-at "^ *\\([0-9-]+\\)")
 	(string-to-int (wl-match-buffer 1))
       nil)))
 
@@ -2460,7 +2462,9 @@ If ARG, without confirm."
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-mark-modified
 		   wl-summary-buffer-thread-modified
-		   wl-summary-buffer-number-list)
+		   wl-summary-buffer-number-list
+		   wl-summary-buffer-msgdb
+		   wl-summary-buffer-folder-name)
 		 (and (eq wl-summary-buffer-view 'thread)
 		      '(wl-thread-entity-hashtb
 			wl-thread-entities
@@ -2565,6 +2569,10 @@ If ARG, without confirm."
 		(buffer-read-only nil))
 	    ;; Select folder
 	    (elmo-folder-open folder)
+	    ;; For compatibility
+	    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
+	    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal
+						 folder))
 	    (erase-buffer)
 	    ;; Resume summary view
 	    (if wl-summary-cache-use
@@ -3215,7 +3223,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (let ((fld (completing-read
 	      (format "Folder name %s(%s): " (or purpose "")
 		      default)
-	      (or wl-folder-completion-func
+	      (or wl-folder-completion-function
 		  (if (memq 'read-folder wl-use-folder-petname)
 		      (wl-folder-get-entity-with-petname)
 		    wl-folder-entity-hashtb))
@@ -4285,7 +4293,7 @@ If ARG, exit virtual folder."
       (setq wl-summary-buffer-number-column
 	    (or
 	     (if (and update
-		      (setq end (if (re-search-forward "^ *[0-9]+[^0-9]" nil t)
+		      (setq end (if (re-search-forward "^ *[0-9-]+[^0-9]" nil t)
 				    (point))))
 		 (- end (progn (beginning-of-line) (point)) 1))
 	     (wl-get-assoc-list-value wl-summary-number-column-alist
@@ -4994,8 +5002,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (if wl-summary-buffer-disp-msg
 	      (wl-summary-redisplay)))
       (if (or interactive (interactive-p))
-	  (if wl-summary-buffer-prev-folder-func
-	      (funcall wl-summary-buffer-prev-folder-func)
+	  (if wl-summary-buffer-prev-folder-function
+	      (funcall wl-summary-buffer-prev-folder-function)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-prev-folder))
 	      (if next-entity
@@ -5033,8 +5041,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(if wl-summary-buffer-disp-msg
 	    (wl-summary-redisplay))
       (if (or interactive (interactive-p))
-	  (if wl-summary-buffer-next-folder-func
-	      (funcall wl-summary-buffer-next-folder-func)
+	  (if wl-summary-buffer-next-folder-function
+	      (funcall wl-summary-buffer-next-folder-function)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-next-folder))
 	      (if next-entity
@@ -5055,8 +5063,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(if wl-summary-buffer-prev-folder-func
-	    (funcall wl-summary-buffer-prev-folder-func)
+	(if wl-summary-buffer-prev-folder-function
+	    (funcall wl-summary-buffer-prev-folder-function)
 	  (let (next-entity finfo)
 	    (when wl-auto-select-next
 	      (progn
@@ -5113,8 +5121,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-summary-redisplay))
     (if (or interactive
 	    (interactive-p))
-	(if wl-summary-buffer-next-folder-func
-	    (funcall wl-summary-buffer-next-folder-func)
+	(if wl-summary-buffer-next-folder-function
+	    (funcall wl-summary-buffer-next-folder-function)
 	  (let (next-entity finfo)
 	    (when wl-auto-select-next
 	      (setq next-entity (wl-summary-get-next-unread-folder)))
@@ -5427,7 +5435,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (let ((buffer (generate-new-buffer " *print*")))
 	      (copy-to-buffer buffer (point-min) (point-max))
 	      (set-buffer buffer)
-	      (funcall wl-print-buffer-func)
+	      (funcall wl-print-buffer-function)
 	      (kill-buffer buffer)))
 	(message "")))))
 
@@ -5474,7 +5482,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 			 (list "/pagenumberstring load"
 			       (concat "(" wl-ps-date ")"))))
 		    (run-hooks 'wl-ps-print-hook)
-		    (funcall wl-ps-print-buffer-func filename))
+		    (funcall wl-ps-print-buffer-function filename))
 		(kill-buffer buffer)))))
       (message ""))))
 

@@ -51,7 +51,7 @@
 
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-caesar-region-func nil)
-(defvar wl-draft-cite-func 'wl-default-draft-cite)
+(defvar wl-draft-cite-function 'wl-default-draft-cite)
 (defvar wl-draft-buffer-file-name nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)
@@ -64,7 +64,7 @@
 (defvar wl-draft-sendlog-filename "sendlog")
 (defvar wl-draft-queue-save-filename "qinfo")
 (defvar wl-draft-config-save-filename "config")
-(defvar wl-draft-queue-flush-send-func 'wl-draft-dispatch-message)
+(defvar wl-draft-queue-flush-send-function 'wl-draft-dispatch-message)
 (defvar wl-sent-message-via nil)
 (defvar wl-sent-message-modified nil)
 (defvar wl-draft-fcc-list nil)
@@ -441,8 +441,7 @@ Reply to author if WITH-ARG is non-nil."
   (let ((beg (point)))
     (cond (mail-citation-hook (run-hooks 'mail-citation-hook))
 	  (mail-yank-hooks (run-hooks 'mail-yank-hooks))
-	  (t (and wl-draft-cite-func
-		  (funcall wl-draft-cite-func)))) ; default cite
+	  (wl-draft-cite-function (funcall wl-draft-cite-function))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
     (when (and wl-draft-add-references
 	       (wl-draft-add-references))
@@ -542,7 +541,7 @@ Reply to author if WITH-ARG is non-nil."
   (interactive)
   (let (mail-reply-buffer
 	mail-citation-hook mail-yank-hooks
-	wl-draft-add-references wl-draft-cite-func)
+	wl-draft-add-references wl-draft-cite-function)
     (with-current-buffer wl-draft-buffer-cur-summary-buffer
       (with-current-buffer wl-message-buffer
 	(setq mail-reply-buffer (wl-message-get-original-buffer))))
@@ -568,7 +567,7 @@ Reply to author if WITH-ARG is non-nil."
 			     num))))
 	(mail-reply-buffer (get-buffer-create "*wl-draft-insert-get-message*"))
 	mail-citation-hook mail-yank-hooks
-	wl-draft-cite-func)
+	wl-draft-cite-function)
     (unwind-protect
 	(progn
 	  (elmo-message-fetch (wl-folder-get-elmo-folder fld)
@@ -1023,11 +1022,11 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(progn
 	  (if (and (wl-message-mail-p)
 		   (not (wl-draft-sent-message-p 'mail)))
-	      (funcall wl-draft-send-mail-func))
+	      (funcall wl-draft-send-mail-function))
 	  (if (and (wl-message-news-p)
 		   (not (wl-draft-sent-message-p 'news))
 		   (not (wl-message-field-exists-p "Resent-to")))
-	      (funcall wl-draft-send-news-func)))
+	      (funcall wl-draft-send-news-function)))
       ;;
       (let* ((status (wl-draft-sent-message-results))
 	     (unplugged-via (car status))
@@ -1110,7 +1109,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	    (run-hooks 'mail-send-hook) ; translate buffer
 	    (if wl-draft-verbose-send
 		(message (or mes-string "Sending...")))
-	    (funcall wl-draft-send-func editing-buffer kill-when-done)
+	    (funcall wl-draft-send-function editing-buffer kill-when-done)
 	    ;; Now perform actions on successful sending.
 	    (while mail-send-actions
 	      (condition-case ()
@@ -1340,8 +1339,7 @@ If optional argument is non-nil, current draft buffer is killed"
 		  wl-from) "\n"))
     (and in-reply-to (insert "In-Reply-To: " in-reply-to "\n"))
     (and references (insert "References: " references "\n"))
-    (insert (funcall wl-generate-mailer-string-func)
-	    "\n")
+    (insert (funcall wl-generate-mailer-string-function) "\n")
     (setq wl-draft-buffer-file-name file-name)
     (if mail-default-reply-to
 	(insert "Reply-To: " mail-default-reply-to "\n"))
@@ -1765,8 +1763,6 @@ If optional argument is non-nil, current draft buffer is killed"
 	(message-id (std11-field-body "Message-ID")))
     (if (elmo-folder-append-buffer folder t)
 	(progn
-	  (if message-id
-	      (elmo-dop-lock-message message-id))
 	  (wl-draft-queue-info-operation
 	   (car (elmo-folder-status folder))
 	   'save wl-sent-message-via)
@@ -1822,7 +1818,7 @@ If optional argument is non-nil, current draft buffer is killed"
 				    nil (current-buffer))
 		(condition-case err
 		    (setq failure (funcall
-				   wl-draft-queue-flush-send-func
+				   wl-draft-queue-flush-send-function
 				   (format "Sending (%d/%d)..." i len)))
 ;;;		  (wl-draft-raw-send nil nil
 ;;;				     (format "Sending (%d/%d)..." i len))
@@ -1835,7 +1831,6 @@ If optional argument is non-nil, current draft buffer is killed"
 		  (elmo-folder-delete-messages
 		   queue-folder (cons (car msgs) nil))
 		  (wl-draft-queue-info-operation (car msgs) 'delete)
-		  (elmo-dop-unlock-message (std11-field-body "Message-ID"))
 		  (setq performed (+ 1 performed)))
 		(setq msgs (cdr msgs)))
 	      (kill-buffer buffer)

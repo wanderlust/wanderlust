@@ -47,7 +47,7 @@
 
 (defconst wl-message-buffer-prefetch-idle-time
   (if (featurep 'lisp-float-type) (/ (float 1) (float 5)) 1))
-(defvar wl-message-buffer-prefetch-get-next-func
+(defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
 
 (defvar wl-message-buffer-prefetch-folder-type-list t)
@@ -457,7 +457,7 @@ Returns non-nil if bottom of message."
 	(elmo-fetch-threshold wl-fetch-confirm-threshold))
     (prog1 
 	(if (eq flag 'as-is)
-	    (let (wl-highlight-x-face-func)
+	    (let (wl-highlight-x-face-function)
 	      (elmo-mime-display-as-is folder number
 				       (current-buffer)
 				       (wl-message-get-original-buffer)
@@ -496,7 +496,7 @@ Returns non-nil if bottom of message."
 					       summary charset)
   (if (wl-message-buffer-prefetch-p folder)
       (with-current-buffer (or summary (get-buffer wl-summary-buffer-name))
-	(let* ((next (funcall wl-message-buffer-prefetch-get-next-func
+	(let* ((next (funcall wl-message-buffer-prefetch-get-next-function
 			      number)))
 	  (when (and next (wl-message-buffer-prefetch-p folder next))
 	    (if (not (fboundp 'run-with-idle-timer))

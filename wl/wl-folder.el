@@ -56,7 +56,7 @@
 
 (defvar wl-folder-newsgroups-hashtb nil)
 (defvar wl-folder-info-alist-modified nil)
-(defvar wl-folder-completion-func nil)
+(defvar wl-folder-completion-function nil)
 
 (defvar wl-folder-mode-map nil)
 
@@ -845,7 +845,7 @@ Optional argument ARG is repeart count."
 					     (elmo-folder-msgdb-path
 					      folder)))))
 					 (cdr nums))
-				   (current-buffer)))
+				   (get-buffer wl-folder-buffer-name)))
     (setq wl-folder-info-alist-modified t)
     (sit-for 0)
     (list (if wl-folder-notify-deleted
@@ -1969,12 +1969,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
 
-(defvar wl-folder-init-func 'wl-local-folder-init)
+(defvar wl-folder-init-function 'wl-local-folder-init)
 
 (defun wl-folder-init ()
-  "Call `wl-folder-init-func' function."
+  "Call `wl-folder-init-function' function."
   (interactive)
-  (funcall wl-folder-init-func))
+  (funcall wl-folder-init-function))
 
 (defun wl-local-folder-init ()
   "Initialize local folder."

@@ -789,29 +789,13 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	     set-list)))
     (nreverse set-list)))
 
-;; Current buffer is process buffer.
-(defun elmo-imap4-fetch-callback (element app-data)
-  (funcall elmo-imap4-fetch-callback
-	   (with-temp-buffer
-	     (insert (or (elmo-imap4-response-bodydetail-text element)
-			 ""))
-	     ;; Delete CR.
-	     (goto-char (point-min))
-	     (while (search-forward "\r\n" nil t)
-	       (replace-match "\n"))
-	     (elmo-msgdb-create-overview-from-buffer
-	      (elmo-imap4-response-value element 'uid)
-	      (elmo-imap4-response-value element 'rfc822size)))
-	   (elmo-imap4-response-value element 'flags)
-	   app-data))
-
 ;;
 ;; app-data:
 ;; cons of list
 ;; 0: new-mark 1: already-mark 2: seen-mark 3: important-mark
 ;; 4: seen-list
 ;; and result of use-flag-p.
-(defun elmo-imap4-fetch-callback-1 (entity flags app-data)
+(defsubst elmo-imap4-fetch-callback-1-subr (entity flags app-data)
   "A msgdb entity callback function."
   (let* ((use-flag (cdr app-data))
 	 (app-data (car app-data))
@@ -843,6 +827,22 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		     (list
 		      (list (elmo-msgdb-overview-entity-get-number entity)
 			    mark))))))))
+
+;; Current buffer is process buffer.
+(defun elmo-imap4-fetch-callback-1 (element app-data)
+  (elmo-imap4-fetch-callback-1-subr
+   (with-temp-buffer
+     (insert (or (elmo-imap4-response-bodydetail-text element)
+		 ""))
+     ;; Delete CR.
+     (goto-char (point-min))
+     (while (search-forward "\r\n" nil t)
+       (replace-match "\n"))
+     (elmo-msgdb-create-overview-from-buffer
+      (elmo-imap4-response-value element 'uid)
+      (elmo-imap4-response-value element 'rfc822size)))
+   (elmo-imap4-response-value element 'flags)
+   app-data))
 
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
@@ -1492,7 +1492,8 @@ Return nil if no complete line has arrived."
 		       (list 'bodystructure (elmo-imap4-parse-body)))))
 	  (setq list (cons element list))))
       (and elmo-imap4-fetch-callback
-	   (elmo-imap4-fetch-callback list elmo-imap4-fetch-callback-data))
+	   (funcall elmo-imap4-fetch-callback 
+		    list elmo-imap4-fetch-callback-data))
       (list 'fetch list))))
 
 (defun elmo-imap4-parse-status ()
@@ -1789,7 +1790,7 @@ Return nil if no complete line has arrived."
 	 folder
 	 (if (match-beginning 3)
 	     (intern (elmo-match-substring 3 name 1))
-	   elmo-imap4-default-authenticate-type))
+	   (or elmo-imap4-default-authenticate-type 'clear)))
 	(unless (elmo-net-folder-server-internal folder)
 	  (elmo-net-folder-set-server-internal folder default-server))
 	(unless (elmo-net-folder-port-internal folder)
@@ -1899,7 +1900,7 @@ Return nil if no complete line has arrived."
 		     elmo-imap4-default-user)
       (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
     (unless (eq (elmo-net-folder-auth-internal folder)
-		elmo-imap4-default-authenticate-type)
+		(or elmo-imap4-default-authenticate-type 'clear))
       (setq append-serv 
 	    (concat append-serv "/"
 		    (symbol-name (elmo-net-folder-auth-internal folder)))))
