@@ -293,8 +293,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(spam (setq spam-list nil))
 	(good (setq good-list nil)))
       (when (or spam-list good-list)
-	(setq total (+ (length spam-list) (length good-list)))
 	(when spam-list
+	  (setq total (length spam-list))
 	  (message "Registering spam...")
 	  (elmo-with-progress-display (> total elmo-display-progress-threshold)
 	      (elmo-spam-register total "Registering spam...")
@@ -302,6 +302,7 @@ See `wl-summary-mark-action-list' for the detail of element."
 					      (eq domain 'good)))
 	  (message "Registering spam...done"))
 	(when good-list
+	  (setq total (length good-list))
 	  (message "Registering good...")
 	  (elmo-with-progress-display (> total elmo-display-progress-threshold)
 	      (elmo-spam-register total "Registering good...")

@@ -1,6 +1,12 @@
+2004-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-spam.el (wl-summary-exec-action-refile-with-register): Fixed
+	the last change.
+
 2004-01-11  Kenichi Okada  <okada@opaopa.org>
 
-	* wl-spam.el (wl-summary-exec-action-refile-with-register): Specify "spam" or "good".
+	* wl-spam.el (wl-summary-exec-action-refile-with-register):
+	Specify "spam" or "good".
 
 2004-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
