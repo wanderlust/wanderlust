@@ -175,10 +175,7 @@ Wanderlust:
 
 @itemize @bullet
 @item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c
-@item Cyrus imapd 1.4
-@item Cyrus imapd 1.5.19
-@item Cyrus imapd 1.6.22
-@item Cyrus imapd 2.0.5
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
@@ -255,34 +252,16 @@ Generally @samp{make install} will do the job.
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.2, FLIM 1.12.7 and SEMI 1.13.4
 @item APEL 10.2, FLIM 1.13.2 and SEMI 1.13.7
 @end itemize
-
-Combination of APEL 10.2 and FLIM 1.12.7 makes following error
-while compiling FLIM 1.12.7.
-
-@example
-Please install latest APEL 7.3 or later.
-@end example
-
-In this case, please comment out following lines in @file{FLIM-CFG}.
-
-@lisp
-@group
-(or (fboundp 'write-region-as-binary)
-    (error "Please install latest APEL 7.3 or later."))
-(or (fboundp 'insert-file-contents-as-binary)
-    (error "Please install latest APEL 7.3 or later."))
-@end group
-@end lisp
 
 You can also use many other FLIM/SEMI variants. Combination of the
 latest versions should work.  For example, following combination is
 confirmed to work.
 
 @itemize @minus
-@item APEL 10.2, Chao 1.14.1 and REMI 1.14.1
+@item APEL 10.2, Chao 1.14.1, REMI 1.14.2
+@item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
 @c You have to re-install Wanderlust
@@ -623,19 +602,19 @@ If you use LDAP, you have to set @code{wl-ldap-server},
 @code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
 not have LDAP feature as built-in feature (Currently only XEmacs can
 have built-in LDAP feature), you have to set command exec PATH to the
-program `ldapsearch'.
+program @command{ldapsearch}.
 
 @node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section Folder Definition
 @cindex Folder Definition
 @cindex .folders
 
-Define the folders you want to subscribe in file @file{~/.folders}.
-The contents written in @file{~/.folders} become the folders which
-you subscribe to as it is.
-
 You can skip this section because it is possible to add/edit the
 subscribe folders from the buffer for list of folders.
+
+Define the folders you want to subscribe in file @file{~/.folders}.  The
+contents written in @file{~/.folders} become the folders which you
+subscribe to as it is.
 
 Format for @file{~/.folders} is very simple. Here is an example:
 
@@ -671,13 +650,13 @@ Emacsen@{
 @end group
 @end example
 
-Each line contains one folder you want to read. The definition of folders
-will be explained in detail in the next section.
+Each line contains one folder you want to read. The definition of
+folders will be explained in detail in the next section.
 
-The part surrounded by @samp{@var{group name}@{} and @samp{@}} will become one folder group.
-One folder group is treated as a directory which can bed opened and closed in
-folder mode. It is convenient for collecting some folders and putting them
-in order.
+The part surrounded by @samp{@var{group name}@{} and @samp{@}} will
+become one folder group.  One folder group is treated as a directory
+which can bed opened and closed in folder mode. It is convenient for
+collecting some folders and putting them in order.
 
 Please note that @samp{@var{group name}@{} and @samp{@}} occupies one
 line and you have to write it that way (It is because the parser sucks).
@@ -686,13 +665,13 @@ There are two types of groups. One is like @samp{Emacsen} from above
 example which the user chooses his favorite folders as a group.
 
 The other one is @dfn{access group} like @samp{+} from above example.
-It makes all the sub-folders in a folder to a group.
-(It differs from the type of the folder. For example, @samp{+} makes entire
- MH sub-directories to one group)
+It makes all the sub-folders in a folder to a group.  (It differs from
+the type of the folder. For example, @samp{+} makes entire MH
+sub-directories to one group)
 
-This behavior is better understood if you try it and confirmed the function
-first. You can write and try a small folder definition, so you will know the
-idea of the folder function before writing the real one.
+This behavior is better understood if you try it and confirmed the
+function first. You can write and try a small folder definition, so you
+will know the idea of the folder function before writing the real one.
 
 @node Start Wanderlust,  , Folder Definition, Start Me Up
 @section Start Wanderlust
@@ -817,13 +796,14 @@ Example:
 @cindex Modified UTF7
 @cindex UTF7
 @cindex UTF8
-@pindex Mule-UCS
+@cindex Unicode
+pindex Mule-UCS
 @pindex ucs-conv
 
 You can use international mailbox names in @var{mailbox} part, if you
 are using Emacs which can treat unicode and
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
-value is nil).
+value is @code{nil}).
 
 Currently, following Emacsen can treat unicode.
 
@@ -851,10 +831,10 @@ cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
 @end group
 @end example
 
-You also need utf7 conversion programs, @code{u7tou8} and @code{u8tou7}
-to use international mailbox name in the current XEmacs.  These programs
-are included in the UTF7 package which can be obtained from following
-URL.
+You also need utf7 conversion programs, @command{u7tou8} and
+@command{u8tou7} to use international mailbox name in the current
+XEmacs.  These programs are included in the UTF7 package which can be
+obtained from following URL.
 
 @example
 ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
@@ -880,9 +860,9 @@ Format:
 default:
 @example
 @var{hostname}  -> The value of @code{elmo-default-nntp-server}.
-             Initial setting is "localhost".
+             Initial setting is @samp{localhost}.
 @var{username}  -> The value of @code{elmo-default-nntp-user}. 
-             Initial setting is nil.
+             Initial setting is @code{nil}.
 @var{port}      -> The value of @code{elmo-default-nntp-port}.
              Initial setting is 119.
 @end example
@@ -928,9 +908,9 @@ Example:
 
 @example
 @group
-+inbox         -> "~/Mail/inbox"
-+from/teranisi -> "~/Mail/from/teranisi"
-+~/test        -> "~/test"
++inbox         -> @file{~/Mail/inbox}
++from/teranisi -> @file{~/Mail/from/teranisi}
++~/test        -> @file{~/test}
 @end group
 @end example
 
@@ -954,10 +934,10 @@ starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 (this is also true for drive-letters).
 
 Maildir contains @file{cur}, @file{new} and @file{tmp} subdirectories.
-Messages are contained in the @file{cur} directory.  All
-message files in the @file{new} directory are moved to @file{cur}
-directory when you access to the folder. All message files contained in
-the @file{tmp} directory and not accessed for 36 hours are deleted.
+Messages are contained in the @file{cur} directory.  All message files
+in the @file{new} directory are moved to @file{cur} directory when you
+access to the folder. All message files contained in the @file{tmp}
+directory and not accessed for 36 hours are deleted.
 
 This behavior conforms to the @uref{http://cr.yp.to/proto/maildir.html}.
 
@@ -965,10 +945,10 @@ Example:
 
 @example
 @group
-.              -> "~/Maildir"
-.inbox         -> "~/Maildir/inbox"
-.from/teranisi -> "~/Maildir/from/teranisi"
-.~/test        -> "~/test"
+.              -> @file{~/Maildir}
+.inbox         -> @file{~/Maildir/inbox}
+.from/teranisi -> @file{~/Maildir/from/teranisi}
+.~/test        -> @file{~/test}
 @end group
 @end example
 
@@ -979,9 +959,9 @@ Example:
 @cindex @samp{=}
 @pindex gnspool
 
-This folder handles locally saved news articles which are proposed by Mew/IM.
-You can also read articles directly from a spool-file which is retrieved
-by an utility like gnspool.
+This folder handles locally saved news articles which are proposed by
+Mew/IM.  You can also read articles directly from a spool-file which is
+retrieved by an utility like @command{gnspool}.
 
 Format:
 
@@ -989,16 +969,16 @@ Format:
 @samp{=} @var{directory-name}
 @end example
 
-@var{directory-name} is a sub-directory to the directory defined by variable
-@code{elmo-localnews-folder-path} (default is @file{~/News})
+@var{directory-name} is a sub-directory to the directory defined by
+variable @code{elmo-localnews-folder-path} (default is @file{~/News})
 You can use @samp{.} as directory delimiter as well as @samp{/}.
 
 Example:
 
 @example
 @group
-=fj/os/os2         -> "~/News/fj/os/os2"
-=fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
+=fj/os/os2         -> @file{~/News/fj/os/os2}
+=fj.os.bsd.freebsd -> @file{~/News/fj/os/bsd/freebsd}
 @end group
 @end example
 
@@ -1036,17 +1016,18 @@ If @var{archiver-type} is omitted, @code{elmo-archive-default-type}
 (Initial setting is @code{zip}) is referred.
 
 @var{prefix} specifies the internal directory structure of the archive.
-For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
-@file{spool/1}, so you have to specify @samp{spool} as @var{prefix}.
+For example, if the ML server is fml, @file{msend.tar.gz} has a
+structure like @file{spool/1}, so you have to specify @samp{spool} as
+@var{prefix}.
 
 Example:
 
 @example
 @group
-$teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
-$bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
-$/foo@@server:~/bar;zoo     -> "~/bar/elmo-archive.zoo" on ftp server
-$d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
+$teranisi         -> @file{~/Mail/teranisi/elmo-archive.zip}
+$bsd/freebsd;lha  -> @file{~/Mail/bsd/freebsd/elmo-archive.lzh}
+$/foo@@server:~/bar;zoo     -> @file{~/bar/elmo-archive.zoo} on ftp server
+$d:/msend.tar.gz;tgz;spool -> @file{d:/msend.tar.gz}
 @end group
 @end example
 
@@ -1080,11 +1061,12 @@ By default, following archives are supported.
 If your archiver can include multiple files in one archive, you have a
 possibility use it as an archiver of Wanderlust (ARJ/UNARJ, ARC is one
 of the candidate. TAR is supported read-only because it cannot delete
-file in the archive ('mv)).
+file in the archive (@code{mv})).
 
-gzip, bzip, bzip2 cannot be used as an archiver of Wanderlust because
-they cannot include multiple files. Archivers that cannot extract files
-to standard output are also not supported.
+@command{gzip}, @command{bzip}, @command{bzip2} cannot be used as an
+archiver of Wanderlust because they cannot include multiple
+files. Archivers that cannot extract files to standard output are also
+not supported.
 
 @subsection OS specific information about archiver.
 
@@ -1124,8 +1106,8 @@ In Win32, LHa32 is only supported (DOS version is no good).
 
 * Caution about GNU tar
 
-You have to take care about GNU tar's version because
-many version has problem on deleting file from archive.
+You have to take care about GNU tar's version because many version has
+problem on deleting file from archive.
 
 Please test @option{--delete} @option{-f} options work. Otherwise, your
 archive will be destroyed. No problem is reported on above versions of
@@ -1214,8 +1196,8 @@ A list of elmo-archive-@var{type}-method-alist
 
 @item elmo-archive-lha-dos-compatible
 @vindex elmo-archive-lha-dos-compatible
-The initial setting is t on OS/2 and Win32.
-If non-nil, LHA is DOS (Mr. Yoshizaki original) compatible.
+The initial setting is @code{t} on OS/2 and Win32.  If non-nil, LHA is
+DOS (Mr. Yoshizaki original) compatible.
 
 @item elmo-archive-cmdstr-max-length
 @vindex elmo-archive-cmdstr-max-length
@@ -1264,9 +1246,9 @@ default:
              @env{LOGNAME} environment variable or return value of
              @code{(user-login-name)}.
 @var{authenticate-type} -> The value of @code{elmo-default-pop3-authenticate-type}.
-              Initial setting is "user".
+              Initial setting is @samp{user}.
 @var{hostname}   -> The value of @code{elmo-default-pop3-server}.
-              Initial setting is "localhost".
+              Initial setting is @samp{localhost}.
 @var{port}       -> The value of @code{elmo-default-pop3-port}.
               Initial setting is 110.
 @end example
@@ -1275,9 +1257,9 @@ Example:
 
 @example
 @group
-&hoge@@localhost -> access to localhost as user "hoge".
+&hoge@@localhost -> access to localhost as user @samp{hoge}.
 &hoge@@popserver:109 -> access to the server "popserver" on port 109
-                        as user "hoge".
+                        as user @samp{hoge}.
 @end group
 @end example
 
@@ -6115,6 +6097,7 @@ The face for strings (for example, a version number) in the demo.
 
 @node Biff, Advanced Settings, Highlights, Customization
 @section Notify Mail arrival
+@cindex Biff
 
 Following setting is to notify mail arrival of @samp{%inbox}
 by the indicator on the modeline
@@ -6224,6 +6207,8 @@ If you do not want to see branches, do the following:
 
 @node User-Agent Field,  , Thread Format, Advanced Settings
 @subsection User-Agent Field
+@cindex X-Mailer
+@cindex User-Agent
 
 If you are eccentric enough to elaborate @samp{X-Mailer:} or
 @samp{User-Agent:} fields, define a function that generate appropriate
@@ -6237,8 +6222,8 @@ If you do not want verbose @samp{User-Agent:} field, do the following:
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
-         (let ((mime-edit-insert-user-agent-field nil))
-           (wl-generate-user-agent-string)))))
+         (concat "User-Agent: "
+                 (wl-generate-user-agent-string-1 nil)))))
 @end group
 @end lisp
 
