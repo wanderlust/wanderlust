@@ -771,7 +771,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (symbolp . wl-pop-before-smtp-authenticate-type)))
 
 (defun wl-check-type ()
-  (let ((type-variables wl-check-type-variables))
+  (let ((type-variables wl-check-type-variables)
+	type)
     (while (setq type (car type-variables))
       (if (and (eval (cdr type))
 	       (not (funcall (car type)
