@@ -3127,15 +3127,17 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @kindex s (Summary)
 @findex wl-summary-sync
 $B%a%C%;!<%8$N0lMwI=<($N99?7%l%s%8(B(@samp{all}, @samp{update},
-@samp{rescan}, @samp{first}, @samp{last})$B$NF~NO$r<u$1IU$1$?8e!"$=$l$K(B
-$B4p$E$$$F%a%C%;!<%8$N0lMwI=<($r99?7$7$^$9!#(B
+@samp{rescan}, @samp{cache-status}, @samp{first}, @samp{last})
+$B$NF~NO$r<u$1IU$1$?8e!"$=$l$K4p$E$$$F%a%C%;!<%8$N0lMwI=<($r99?7$7$^$9!#(B
 
 @example
 @group
 all            ...$B$9$Y$F99?7(B
+all-visible    ...$B8+$($F$$$k%a!<%C%;!<%8$K$D$$$F$9$Y$F99?7(B
 update         ...$B8=:_$NI=<($r99?7(B
 rescan         ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B
 rescan-noscore ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B($B%9%3%"$J$7(B)
+cache-status   ...$B%-%c%C%7%e$N>uBV$r%^!<%/$KH?1G(B
 first, last    ...$B%U%#%k%?%U%)%k%@$K0\F0(B
 @end group
 @end example

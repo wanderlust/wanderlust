@@ -3147,9 +3147,11 @@ Synchronize summary view after prompting the update range
 @example
 @group
 all            ...Discard current summary and update all message.
+all-visible    ...Discard current summary and update all visible message.
 update         ...Update the difference between summary and the folder itself.
 rescan         ...Rescan the msgdb and display again.
 rescan-noscore ...Rescan the msgdb and display again (without scoring).
+cache-status   ...Sync the all marks with the real status of cache.
 first, last    ...Move to the filter folder(partial filter).
 @end group
 @end example
