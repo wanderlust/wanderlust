@@ -95,7 +95,9 @@ Each elements are regexp of folder name (This is obsolete).")
   :type '(radio (const :tag "encoded password transmission (login)" login)
 		(const :tag "CRAM-MD5 authentication (cram-md5)" cram-md5)
 		(const :tag "DIGEST-MD5 authentication (digest-md5)" digest-md5)
-		(const :tag "plain password transmission (clear)" clear))
+		(const :tag "plain password transmission (clear)" clear)
+		(const :tag "NTLM authentication (ntlm)" ntlm)
+		(function :tag "Other"))
   :group 'elmo)
 
 (defcustom elmo-imap4-default-user (or (getenv "USER")
@@ -176,7 +178,11 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 (defcustom elmo-pop3-default-authenticate-type 'user
   "*Default Authentication type for POP3."
   :type '(radio (const :tag "plain password transmission (user)" user)
-		(const :tag "APOP authentication (apop)" apop))
+		(const :tag "APOP authentication (apop)" apop)
+		(const :tag "CRAM-MD5 authentication (cram-md5)" cram-md5)
+		(const :tag "DIGEST-MD5 authentication (digest-md5)" digest-md5)
+		(const :tag "NTLM authentication (ntlm)" ntlm)
+		(function :tag "Other"))
   :group 'elmo)
 
 (defcustom elmo-pop3-default-port 110

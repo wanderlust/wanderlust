@@ -1,3 +1,9 @@
+2002-01-22  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-vars.el (elmo-imap4-default-authenticate-type): Give
+	other choices.
+	(elmo-pop3-default-authenticate-type): Ditto.
+
 2002-01-22  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-vars.el (elmo-imap4-default-authenticate-type): Give
