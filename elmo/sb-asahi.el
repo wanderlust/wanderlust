@@ -45,7 +45,7 @@
 (defvar shimbun-asahi-content-end "\n<!-- End of kiji -->\n")
 
 (luna-define-method shimbun-index-url ((shimbun shimbun-asahi))
-  (format "%s/%s/update/list.html"
+  (format "%s%s/update/list.html"
 	  (shimbun-url-internal shimbun)
 	  (shimbun-current-group-internal shimbun)))
 
@@ -77,7 +77,7 @@
 				"\\(<[^>]+>\\|\r\\)")
 			       ""))
 		   (shimbun-from-address-internal shimbun)
-		   "" id "" 0 0 (format "%s/%s/update/%s"
+		   "" id "" 0 0 (format "%s%s/update/%s"
 					(shimbun-url-internal shimbun)
 					(shimbun-current-group-internal
 					 shimbun)

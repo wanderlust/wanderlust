@@ -1,5 +1,8 @@
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* sb-asahi.el (shimbun-index-url): Removed redundant '/' in URL string.
+	(shimbun-get-headers): Ditto.
+
 	* elmo.el: Moved obsolete variable definitions from
 	elmo-imap4.el, elmo-nntp.el and elmo-pop3.el.
 
