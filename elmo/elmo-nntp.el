@@ -104,7 +104,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
       ;; Setup slots for elmo-net-folder
       (elmo-net-folder-set-user-internal folder
 					 (if (match-beginning 2)
-					     (elmo-match-substring 2 folder 1)
+					     (elmo-match-substring 2 name 1)
 					   elmo-nntp-default-user))
       (unless (elmo-net-folder-server-internal folder)
 	(elmo-net-folder-set-server-internal folder 
