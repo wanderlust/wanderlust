@@ -395,13 +395,9 @@
 ;	(append wl-auto-refile-guess-functions
 ;		'(wl-refile-guess-by-spam))))
 
-;; wl-spam-auto-check-policy-alist の設定に従って各サマリに移動した時
-;; に spam かどうかチェックする
+;; wl-spam-auto-check-folder-regexp-list に合致するフォルダに移動した
+;; 時に spam かどうかチェックする
 ;(add-hook 'wl-summary-prepared-pre-hook #'wl-summary-auto-check-spam)
-
-;; +inbox に入った時, spam と判定されたメッセージにリファイルマークを
-;; 付ける場合の設定
-;(setq wl-spam-auto-check-policy-alist '(("\\+inbox" . refile)))
 
 ;; refile の実行時に学習させる為の設定
 ;; 以下の設定をしたからと言って常に学習する訳ではありません. 詳しくは,

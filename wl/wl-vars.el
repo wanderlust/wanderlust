@@ -413,7 +413,8 @@ FACE is a face for highlighting."
 		 (symbol :tag "Set mark function")
 		 (symbol :tag "Unset mark function")
 		 (symbol :tag "Exec function")
-		 (symbol :tag "Face symbol"))
+		 (symbol :tag "Face symbol")
+		 (string :tag "Document string"))
   :group 'wl-summary)
 
 ;; Important folders

@@ -35,6 +35,7 @@
 (require 'elmo-spam)
 (require 'wl-summary)
 (require 'wl-action)
+(require 'wl-highlight)
 
 (defgroup wl-spam nil
   "Spam configuration for wanderlust."
@@ -58,12 +59,46 @@
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-spam)
 
-(defcustom wl-spam-auto-check-policy-alist '(("inbox" . mark))
-  "*Alist of Folder regexp which check spam automatically and policy."
-  :type '(repeat (cons (regexp :tag "Folder Regexp")
-		       (choice (const :tag "Target mark" mark)
-			       (const :tag "Refile mark" refile)
-			       (const :tag "none" nil))))
+(defcustom wl-spam-auto-check-folder-regexp-list '("[+.]inbox")
+  "*List of Folder regexp which check spam automatically."
+  :type '(repeat (regexp :tag "Folder Regexp"))
+  :group 'wl-spam)
+
+(defcustom wl-spam-auto-check-marks
+  (list wl-summary-new-mark)
+  "Persistent marks to check spam automatically."
+  :type '(choice (const :tag "All marks" all)
+		 (repeat (string :tag "Mark")))
+  :group 'wl-spam)
+
+(wl-defface wl-highlight-summary-spam-face
+  '((((type tty)
+      (background dark))
+     (:foreground "blue"))
+    (((class color))
+     (:foreground "LightSlateGray")))
+  "Face used for displaying messages mark as spam."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
+(defcustom wl-spam-mark-action-list
+  '(("s"
+     spam
+     nil
+     wl-summary-register-temp-mark
+     wl-summary-exec-action-spam
+     wl-highlight-summary-spam-face
+     "Mark messages as spam."))
+  "A variable to define Mark & Action for spam.
+Append this value to `wl-summary-mark-action-list' by `wl-spam-setup'.
+
+See `wl-summary-mark-action-list' for the detail of element."
+  :type '(repeat (string :tag "Temporary mark")
+		 (symbol :tag "Set mark function")
+		 (symbol :tag "Unset mark function")
+		 (symbol :tag "Exec function")
+		 (symbol :tag "Face symbol")
+		 (string :tag "Document string"))
   :group 'wl-spam)
 
 (defun wl-spam-folder-guess-domain (folder-name)
@@ -78,8 +113,14 @@
 	(t
 	 'good)))
 
+(defsubst wl-spam-auto-check-message-p (folder number)
+  (or (eq wl-spam-auto-check-marks 'all)
+      (member (wl-summary-message-mark folder number)
+	      wl-spam-auto-check-marks)))
+
 (defsubst wl-spam-map-spam-messages (folder numbers function &rest args)
   (let ((total (length numbers)))
+    (message "Checking spam...")
     (elmo-with-progress-display (> total elmo-display-progress-threshold)
 	(elmo-spam-check-spam total "Checking spam...")
       (dolist (number (elmo-spam-list-spam-messages (elmo-spam-processor)
@@ -90,21 +131,23 @@
 
 (defun wl-spam-register-spam-messages (folder numbers)
   (let ((total (length numbers)))
+    (message "Registering spam...")
     (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-spam-register total "Register spam messages...")
+	(elmo-spam-register total "Registering spam...")
       (elmo-spam-register-spam-messages (elmo-spam-processor)
 					wl-summary-buffer-elmo-folder
 					numbers))
-    (message "Register spam messages...done")))
+    (message "Registering spam...done")))
 
 (defun wl-spam-register-good-messages (folder numbers)
   (let ((total (length numbers)))
+    (message "Registering good...")
     (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-spam-register total "Register good messages...")
+	(elmo-spam-register total "Registering good...")
       (elmo-spam-register-good-messages (elmo-spam-processor)
 					wl-summary-buffer-elmo-folder
 					numbers))
-    (message "Register good messages...done")))
+    (message "Registering good...done")))
 
 (defun wl-spam-save-status (&optional force)
   (interactive "P")
@@ -117,38 +160,47 @@
 
 (unless wl-summary-spam-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "*" 'wl-summary-target-mark-spam)
-    (define-key map "o" 'wl-summary-refile-spam)
+    (define-key map "m" 'wl-summary-spam)
+    (define-key map "c" 'wl-summary-test-spam)
+    (define-key map "C" 'wl-summary-mark-spam)
     (define-key map "s" 'wl-summary-register-as-spam)
     (define-key map "S" 'wl-summary-register-as-spam-all)
     (define-key map "n" 'wl-summary-register-as-good)
     (define-key map "N" 'wl-summary-register-as-good-all)
     (setq wl-summary-spam-map map)))
 
-(define-key wl-summary-mode-map "k" wl-summary-spam-map)
-
-(define-key wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
-(define-key wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good)
-
 (eval-when-compile
   ;; Avoid compile warnings
-  (defalias-maybe 'wl-summary-target-mark 'ignore)
-  (defalias-maybe 'wl-summary-refile-mark 'ignore))
+  (defalias-maybe 'wl-summary-spam 'ignore))
 
-(defun wl-summary-target-mark-spam (&optional folder)
-  "Set target mark to messages which is guessed spam in FOLDER."
+(defun wl-summary-test-spam (&optional folder number)
   (interactive)
-  (wl-spam-map-spam-messages (or folder wl-summary-buffer-elmo-folder)
-			     wl-summary-buffer-number-list
-			     #'wl-summary-target-mark))
+  (let ((folder (or folder wl-summary-buffer-elmo-folder))
+	(number (or number (wl-summary-message-number)))
+	spam)
+    (message "Cheking spam...")
+    (when (setq spam (elmo-spam-message-spam-p (elmo-spam-processor)
+					       folder number))
+      (wl-summary-spam number))
+    (message "Cheking spam...done")
+    (when (interactive-p)
+      (message "No: %d is %sa spam message." number (if spam "" "not ")))))
 
-(defun wl-summary-refile-spam (&optional folder)
-  "Set refile mark to messages which is guessed spam in FOLDER."
-  (interactive)
-  (wl-spam-map-spam-messages (or folder wl-summary-buffer-elmo-folder)
-			     wl-summary-buffer-number-list
-			     #'wl-summary-refile
-			     wl-spam-folder-name))
+(defun wl-summary-mark-spam (&optional all)
+  "Set spam mark to messages which is spam classification."
+  (interactive "P")
+  (let (numbers)
+    (if all
+	(setq numbers wl-summary-buffer-number-list)
+      (dolist (number wl-summary-buffer-number-list)
+	(when (wl-spam-auto-check-message-p wl-summary-buffer-elmo-folder
+					    number)
+	  (setq numbers (cons number numbers)))))
+    (if numbers
+	(wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
+				   numbers
+				   #'wl-summary-spam)
+      (message "No message to test."))))
 
 (defun wl-summary-register-as-spam ()
   (interactive)
@@ -200,36 +252,62 @@
 
 ;; hook functions and other
 (defun wl-summary-auto-check-spam ()
-  (case (cdr (elmo-string-matched-assoc (wl-summary-buffer-folder-name)
-					wl-spam-auto-check-policy-alist))
-    (mark
-     (wl-summary-target-mark-spam))
-    (refile
-     (wl-summary-refile-spam))))
+  (when (elmo-string-match-member (wl-summary-buffer-folder-name)
+				  wl-spam-auto-check-folder-regexp-list)
+    (wl-summary-mark-spam)))
+
+(defun wl-summary-exec-action-spam (mark-list)
+  (let ((folder wl-summary-buffer-elmo-folder)
+	(total (length mark-list)))
+    (when (eq (wl-spam-folder-guess-domain (elmo-folder-name-internal folder))
+	      'undecided)
+      (message "Registering spam...")
+      (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	  (elmo-spam-register total "Registering spam...")
+	(elmo-spam-register-spam-messages (elmo-spam-processor)
+					  folder
+					  (mapcar #'car mark-list)))
+      (message "Registering spam...done")
+      (wl-summary-move-mark-list-messages mark-list
+					  wl-spam-folder-name
+					  "Refiling spam..."))))
 
 (defun wl-summary-exec-action-refile-with-register (mark-list)
   (let ((processor (elmo-spam-processor))
 	(folder wl-summary-buffer-elmo-folder)
-	spam-list good-list)
+	spam-list good-list total)
     (when (eq (wl-spam-folder-guess-domain
 	       (elmo-folder-name-internal folder))
 	      'undecided)
+      (message "Registering spam...")
       (dolist (info mark-list)
 	(case (wl-spam-folder-guess-domain (nth 2 info))
 	  (spam
 	   (setq spam-list (cons (car info) spam-list)))
 	  (good
 	   (setq good-list (cons (car info) good-list)))))
-      (let ((total (+ (length spam-list) (length good-list))))
-	(elmo-with-progress-display (> total elmo-display-progress-threshold)
-	    (elmo-spam-register total "Register spam...")
-	  (when spam-list
-	    (elmo-spam-register-spam-messages processor folder spam-list))
-	  (when good-list
-	    (elmo-spam-register-good-messages processor folder good-list)))
-	(message "Register spam...done")))
+      (setq total (+ (length spam-list) (length good-list)))
+      (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	  (elmo-spam-register total "Registering spam...")
+	(when spam-list
+	  (elmo-spam-register-spam-messages processor folder spam-list))
+	(when good-list
+	  (elmo-spam-register-good-messages processor folder good-list)))
+      (message "Registering spam...done"))
     ;; execute refile messages
     (wl-summary-exec-action-refile mark-list)))
+
+(defun wl-message-check-spam ()
+  (let ((original (wl-message-get-original-buffer))
+	(number wl-message-buffer-cur-number)
+	spam)
+    (message "Cheking spam...")
+    (when (elmo-spam-buffer-spam-p (elmo-spam-processor) original)
+      (with-current-buffer wl-message-buffer-cur-summary-buffer
+	(wl-summary-spam number)))
+    (message "Cheking spam...done")
+    (when (interactive-p)
+      (message "No: %d is %sa spam message." number (if spam "" "not ")))))
 
 (defun wl-refile-guess-by-spam (entity)
   (when (elmo-spam-message-spam-p (elmo-spam-processor)
@@ -237,7 +315,19 @@
 				  (elmo-message-entity-number entity))
     wl-spam-folder-name))
 
+(defun wl-spam-setup ()
+  (when wl-spam-mark-action-list
+    (setq wl-summary-mark-action-list (append
+				       wl-summary-mark-action-list
+				       wl-spam-mark-action-list)))
+  (define-key wl-summary-mode-map "k" wl-summary-spam-map)
+  (define-key wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
+  (define-key wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good))
+
 (require 'product)
 (product-provide (provide 'wl-spam) (require 'wl-version))
 
-;;; wl-sapm.el ends here
+(unless noninteractive
+  (wl-spam-setup))
+
+;;; wl-spam.el ends here

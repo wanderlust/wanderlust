@@ -1,5 +1,29 @@
 2003-10-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-vars.el (wl-summary-mark-action-list): Fixed type spec.
+
+	* wl-spam.el (toplevel): Require wl-highlight.
+	(wl-spam-auto-check-policy-alist): Abolish.
+	(wl-spam-auto-check-folder-regexp-list): New user option.
+	(wl-spam-auto-check-marks): Ditto.
+	(wl-spam-mark-action-list): Ditto.
+	(wl-highlight-summary-spam-face): New face.
+	(wl-spam-auto-check-message-p): New function.
+	(wl-spam-map-spam-messages): Fixed message.
+	(wl-spam-register-spam-messages): Ditto.
+	(wl-spam-register-good-messages): Ditto.
+	(wl-summary-spam-map): Add and remove keybind.
+	(wl-summary-target-mark-spam): Abolish.
+	(wl-summary-refile-spam): Ditto.
+	(wl-summary-test-spam): New function.
+	(wl-summary-mark-spam): Ditto.
+	(wl-summary-auto-check-spam): Follow the above change.
+	(wl-summary-exec-action-spam): New function.
+	(wl-summary-exec-action-refile-with-register): Fixed message.
+	(wl-message-check-spam): New function.
+	(wl-spam-setup): Ditto.
+	(toplevel): Call it if this file is loaded interactivity.
+
 	* Version number is increased to 2.11.20.
 
 2003-10-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

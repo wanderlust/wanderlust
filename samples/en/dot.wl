@@ -387,11 +387,8 @@
 ;		'(wl-refile-guess-by-spam))))
 
 ;; In moving to each summary, judge whether a message is a spam
-;; according to a setup of wl-spam-auto-check-policy-alist.
+;; according to wl-spam-auto-check-folder-regexp-list.
 ;(add-hook 'wl-summary-prepared-pre-hook #'wl-summary-auto-check-spam)
-
-;; Attach a refile mark to the message judged to be spam after going into +inbox.
-;(setq wl-spam-auto-check-policy-alist '(("\\+inbox" . refile)))
 
 ;; Make the spam processor learn at the time of execution of refile.
 ;; Even if the following setup was carried out, it does not always learn.
