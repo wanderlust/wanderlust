@@ -1,3 +1,9 @@
+2003-07-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-nntp.el (elmo-nntp-debug): New function.
+	(elmo-nntp-send-command, elmo-nntp-process-filter): Call it.
+	(elmo-network-authenticate-session): Hide auth-info from the log.
+
 2003-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-shimbun-get-headers): Use shimbun-server

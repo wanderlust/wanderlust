@@ -64,6 +64,22 @@
       (decode-coding-string string elmo-nntp-group-coding-system)
     string))
 
+;; For debugging.
+(defvar elmo-nntp-debug nil
+  "Non-nil forces NNTP folder as debug mode.
+Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
+
+;;; Debug
+(defsubst elmo-nntp-debug (message &rest args)
+  (if elmo-nntp-debug
+      (let ((biff (string-match "BIFF-" (buffer-name)))
+	    pos)
+	(with-current-buffer (get-buffer-create (concat "*NNTP DEBUG*"
+							(if biff "BIFF")))
+	  (goto-char (point-max))
+	  (setq pos (point))
+	  (insert (apply 'format message args) "\n")))))
+
 ;;; ELMO NNTP folder
 (eval-and-compile
   (luna-define-class elmo-nntp-folder (elmo-net-folder)
@@ -287,13 +303,17 @@ Don't cache if nil.")
       (elmo-nntp-send-command session
 			      (format "authinfo user %s"
 				      (elmo-network-session-user-internal
-				       session)))
+				       session))
+			      nil
+			      'no-log)
       (or (elmo-nntp-read-response session)
 	  (signal 'elmo-authenticate-error '(authinfo)))
       (elmo-nntp-send-command
        session
        (format "authinfo pass %s"
-	       (elmo-get-passwd (elmo-network-session-password-key session))))
+	       (elmo-get-passwd (elmo-network-session-password-key session)))
+       nil
+       'no-log)
       (or (elmo-nntp-read-response session)
 	  (signal 'elmo-authenticate-error '(authinfo))))))
 
@@ -305,19 +325,21 @@ Don't cache if nil.")
   (save-excursion
     (set-buffer (process-buffer process))
     (goto-char (point-max))
-    (insert output)))
+    (insert output)
+    (elmo-nntp-debug "RECEIVED: %s\n" output)))
 
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
   (if (null (elmo-nntp-read-response session t))
       (message "Mode reader failed")))
 
-(defun elmo-nntp-send-command (session command &optional noerase)
+(defun elmo-nntp-send-command (session command &optional noerase no-log)
   (with-current-buffer (elmo-network-session-buffer session)
     (unless noerase
       (erase-buffer)
       (goto-char (point-min)))
     (setq elmo-nntp-read-point (point))
+    (elmo-nntp-debug "SEND: %s\n" (if no-log "<NO LOGGING>" command))
     (process-send-string (elmo-network-session-process-internal
 			  session) command)
     (process-send-string (elmo-network-session-process-internal
