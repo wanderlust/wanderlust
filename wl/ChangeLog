@@ -1,3 +1,8 @@
+2001-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): Use `mime-find-field-decoder' to
+	find decoder for To, Cc, and Subject.
+
 2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.4.1.
