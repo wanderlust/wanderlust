@@ -486,7 +486,7 @@
       (when proceed
 	(if (memq 'shift (event-modifiers event))
 	    (wl-summary-up t)
-	  (wl-summary-prev t)))))
+	  (wl-summary-prev t))))))
 
 (defun wl-draft-overload-menubar ()
   (when (featurep 'menubar)
