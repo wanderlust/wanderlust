@@ -1,7 +1,7 @@
 2000-10-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-biff-init-icons): Use `propertize' instead of
-	`add-text-properties'
+	`add-text-properties'.
 	(wl-plugged-init-icons): Ditto.
 	(wl-folder-init-icons): Use `propertize' instead of
 	`put-text-property'.
