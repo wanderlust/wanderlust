@@ -1,3 +1,8 @@
+2004-06-27  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-rescan): Remove unused variables.
+	(wl-summary-sync-update): Ditto.  Narrow the scope of local variables.
+
 2004-06-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-fldmgr.el (wl-delete-entity-sub): Add folder name to
