@@ -173,12 +173,15 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 ;;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
 ;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
-(defsubst wl-set-string-width (width string &optional padding)
+(defsubst wl-set-string-width (width string &optional padding ignore-invalid)
   "Make a new string which have specified WIDTH and content of STRING.
+`wl-invalid-character-message' is used when invalid character is contained.
 If WIDTH is negative number, padding chars are added to the head and
 otherwise, padding chars are added to the tail of the string.
 The optional 3rd arg PADDING, if non-nil, specifies a padding character
-to add the result instead of white space."
+to add the result instead of white space.
+If optional 4th argument is non-nil, don't use `wl-invalid-character-message'
+even when invalid character is contained."
   (static-cond
    ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
 	 (not (featurep 'xemacs)))
@@ -186,16 +189,17 @@ to add the result instead of white space."
 	(setq string (truncate-string-to-width string (abs width))))
     (if (= (string-width string) (abs width))
 	string
-      (if (< (abs width) (string-width string))
-	  (wl-set-string-width width
-			       wl-invalid-character-message
-			       padding)
-	(let ((paddings (make-string
-			 (max 0 (- (abs width) (string-width string)))
-			 (or padding ?\ ))))
-	  (if (< width 0)
-	      (concat paddings string)
-	    (concat string paddings))))))
+      (when (and (not ignore-invalid)
+		 (< (abs width) (string-width string)))
+	(setq string
+	      (truncate-string-to-width wl-invalid-character-message
+					(abs width))))
+      (let ((paddings (make-string
+		       (max 0 (- (abs width) (string-width string)))
+		       (or padding ?\ ))))
+	(if (< width 0)
+	    (concat paddings string)
+	  (concat string paddings)))))
    (t
     (elmo-set-work-buf
      (elmo-set-buffer-multibyte default-enable-multibyte-characters)

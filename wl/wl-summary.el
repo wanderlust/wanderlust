@@ -228,9 +228,9 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (or
-				       (funcall wl-summary-get-petname-function to)
-				       (car
-					(std11-extract-address-components to))
+				       (funcall
+					wl-summary-get-petname-function to)
+				       (wl-address-header-extract-address to)
 				       to)
 				    to))))
 			      (wl-parse-addresses tos)
@@ -240,7 +240,7 @@
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
 	  (setq retval (or (funcall wl-summary-get-petname-function from)
-			   (car (std11-extract-address-components from))
+			   (wl-address-header-extract-address from)
 			   from))
 	(setq retval from)))
     retval))
@@ -248,7 +248,7 @@
 (defun wl-summary-simple-from (string)
   (if wl-use-petname
       (or (funcall wl-summary-get-petname-function string)
-	  (car (std11-extract-address-components string))
+	  (wl-address-header-extract-address string)
 	  string)
     string))
 
@@ -913,7 +913,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (setq wl-summary-buffer-delete-list nil)
     (setq wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
-    (message "Constructing summary structure...")
     (while curp
       (setq entity (car curp))
       (wl-summary-append-message-func-internal entity msgdb nil)
@@ -2433,9 +2432,10 @@ If ARG, without confirm."
 	    (wl-summary-update-modeline)))
       (unless (eq wl-summary-buffer-view 'thread)
 	(wl-summary-make-number-list))
-      (when (or (and wl-summary-check-line-format
-		     (wl-summary-line-format-changed-p))
-		(wl-summary-view-old-p))
+      (when (and wl-summary-cache-use
+		 (or (and wl-summary-check-line-format
+			  (wl-summary-line-format-changed-p))
+		     (wl-summary-view-old-p)))
 	(wl-summary-rescan))
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
@@ -2605,6 +2605,7 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (overview func mime-decode)
+  (message "Creating subject cache...")
   (let (ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
@@ -2629,6 +2630,7 @@ If ARG, without confirm."
 				  elmo-mime-charset)
       (when (eq mime-decode 'mime)
 	(eword-decode-region (point-min) (point-max))))
+    (message "Creating subject cache...done")
     (run-hooks 'wl-summary-insert-headers-hook)))
 
 (defun wl-summary-search-by-subject (entity overview)
@@ -4246,7 +4248,8 @@ If ARG, exit virtual folder."
     (setq line (funcall wl-summary-buffer-line-formatter))
     (if wl-summary-width (setq line
 			       (wl-set-string-width
-				(- wl-summary-width 1) line)))
+				(- wl-summary-width 1) line nil
+				'ignore-invalid)))
     (setq line (concat line
 		       "\r"
 		       (number-to-string

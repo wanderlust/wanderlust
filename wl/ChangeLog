@@ -1,3 +1,17 @@
+2002-05-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-default-from): Use
+	wl-address-header-extract-address instead of
+	std11-extract-address-components.
+	(wl-summary-simple-from): Ditto.
+	(wl-summary-goto-folder-subr): Check wl-summary-cache-use.
+	(wl-summary-insert-headers): Show message.
+	(wl-summary-create-line): Set 4th argument of wl-set-string-width
+	for whole line.
+
+	* wl-util.el (wl-set-string-width): Added 4th argument ignore-invalid;
+	Don't call itself recursively (Adviced by Yamaoka-san).
+
 2002-05-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-save-view-cache): In temporary buffer,
