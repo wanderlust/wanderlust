@@ -3154,6 +3154,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (wl-summary-unmark msg-num)
 	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
 					   (list msg-num))
+	      (wl-summary-delete-messages-on-buffer (list msg-num))
 	      (save-excursion (wl-summary-sync nil "update"))))))
     (message "Read-only folder.")))
 
@@ -3166,6 +3167,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	       "Erase all marked messages without moving them to trash? ")
 	  (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
 				       wl-summary-buffer-target-mark-list)
+	  (wl-summary-delete-messages-on-buffer
+	   wl-summary-buffer-target-mark-list)
 	  (setq wl-summary-buffer-target-mark-list nil)
 	  (save-excursion (wl-summary-sync nil "update"))))
     (message "Read-only folder.")))
