@@ -1,5 +1,21 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-copy-entity): New function.
+	(elmo-message-entity-set-number): Ditto.
+	(elmo-message-mark): Define as method.
+
+	* elmo-multi.el (elmo-multi-real-folder-number): Changed position.
+	(elmo-folder-synchronize): Return 0 (Should be reconsider).
+	(elmo-message-entity): Fixed last change.
+	(elmo-message-mark): Define.
+	(elmo-folder-msgdb-create): Abolish.
+	(elmo-multi-folder-append-msgdb): Ditto.
+	(elmo-multi-folder-diff): Fixed.
+	(elmo-multi-split-number-alist): Removed.
+	(elmo-multi-split-mark-alist): Removed.
+	(elmo-folder-list-messages): Define.
+	(elmo-folder-list-messages-internal): Removed.
+
 	* elmo-localdir.el (elmo-folder-append-messages): Treat flags for
 	local file messages.
 	(elmo-folder-msgdb-create): Fixed read mark.

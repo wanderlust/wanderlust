@@ -374,10 +374,9 @@ ENTITY is returned."
 (defsubst wl-thread-update-line-on-buffer-sub (entity msg &optional parent-msg)
   (let* ((entity (or entity (wl-thread-get-entity msg)))
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
-	 (overview (elmo-msgdb-get-overview (wl-summary-buffer-msgdb)))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
-	 overview-entity temp-mark summary-line invisible-top dest-pair)
+	 message-entity temp-mark summary-line invisible-top dest-pair)
     (if (wl-thread-delete-line-from-buffer msg)
 	(progn
 	  (cond
@@ -387,16 +386,16 @@ ENTITY is returned."
 	    (setq dest-pair (cons (nth 0 temp-mark)(nth 2 temp-mark))
 		  temp-mark (nth 1 temp-mark)))
 	   (t (setq temp-mark (wl-summary-get-score-mark msg))))
-	  (when (setq overview-entity
-		      (elmo-msgdb-overview-get-entity
-		       msg (wl-summary-buffer-msgdb)))
+	  (when (setq message-entity
+		      (elmo-message-entity wl-summary-buffer-elmo-folder
+					   msg))
 	    (wl-summary-insert-line 
 	     (wl-summary-create-line
-	      overview-entity
-	      (elmo-msgdb-overview-get-entity
-	       parent-msg (wl-summary-buffer-msgdb))
+	      message-entity
+	      (elmo-message-entity wl-summary-buffer-elmo-folder
+				   parent-msg)
 	      temp-mark
-	      (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg)
+	      (elmo-message-mark wl-summary-buffer-elmo-folder msg)
 	      (if wl-thread-insert-force-opened
 		  nil
 		(wl-thread-maybe-get-children-num msg))
@@ -409,11 +408,11 @@ ENTITY is returned."
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))
 	  (wl-summary-update-thread
-	   (elmo-msgdb-overview-get-entity msg (wl-summary-buffer-msgdb))
+	   (elmo-message-entity wl-summary-buffer-elmo-folder msg)
 	   entity
 	   (and parent-msg
-		(elmo-msgdb-overview-get-entity
-		 parent-msg (wl-summary-buffer-msgdb))))
+		(elmo-message-entity wl-summary-buffer-elmo-folder
+				     parent-msg)))
 	;; currently invisible.. update closed line.
 	(wl-thread-update-children-number invisible-top)))))
 
@@ -496,8 +495,8 @@ ENTITY is returned."
     (while msgs
       (setq children (wl-thread-entity-get-children
 		      (setq entity (wl-thread-get-entity (car msgs)))))
-      (when (elmo-msgdb-overview-get-entity (car msgs)
-					    (wl-summary-buffer-msgdb))
+      (when (elmo-message-entity wl-summary-buffer-elmo-folder
+				 (car msgs))
 	(wl-append ret-val (list (car msgs)))
 	(setq children nil))
       (setq msgs (cdr msgs))
@@ -675,8 +674,8 @@ Message is inserted to the summary buffer."
 	      (wl-summary-update-thread
 	       overview-entity
 	       child-entity
-	       (elmo-msgdb-overview-get-entity
-		parent-msg (wl-summary-buffer-msgdb)))
+	       (elmo-message-entity wl-summary-buffer-elmo-folder
+				    parent-msg))
 	      (when parent
 		;; use thread structure.
 		;;(wl-thread-entity-get-nearly-older-brother
@@ -735,14 +734,10 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-msg-mark-as-important (msg)
   "Set mark as important for invisible MSG. Modeline is not changed."
-  (let ((msgdb (wl-summary-buffer-msgdb))
+  (let ((folder wl-summary-buffer-elmo-folder)
 	cur-mark)
-    (setq cur-mark (elmo-msgdb-get-mark msgdb msg))
-    (elmo-msgdb-set-mark msgdb
-			 msg
-			 (if (string= cur-mark elmo-msgdb-important-mark)
-			     nil
-			   elmo-msgdb-important-mark))
+    (setq cur-mark (elmo-message-mark folder msg))
+    (elmo-folder-mark-as-important folder (list msg))
     (wl-summary-set-mark-modified)))
 
 (defun wl-thread-mark-as-read (&optional arg)
@@ -808,7 +803,7 @@ Message is inserted to the summary buffer."
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
   (let (msg-num
-	overview-entity
+	message-entity
 	temp-mark
 	summary-line)
     (when (setq msg-num (wl-thread-entity-get-number entity))
@@ -819,18 +814,18 @@ Message is inserted to the summary buffer."
 	       (setq temp-mark (nth 1 temp-mark)))))
       (unless temp-mark
 	(setq temp-mark (wl-summary-get-score-mark msg-num)))
-      (setq overview-entity
-	    (elmo-msgdb-overview-get-entity
-	     (nth 0 entity) (wl-summary-buffer-msgdb)))
+      (setq message-entity
+	    (elmo-message-entity wl-summary-buffer-elmo-folder
+				 (nth 0 entity)))
 ;;;   (wl-delete-all-overlays)
-      (when overview-entity
+      (when message-entity
 	(wl-summary-insert-line
 	 (wl-summary-create-line
-	  overview-entity
-	  (elmo-msgdb-overview-get-entity
-	   (nth 0 parent-entity) (wl-summary-buffer-msgdb))
+	  message-entity
+	  (elmo-message-entity wl-summary-buffer-elmo-folder
+			       (nth 0 parent-entity))
 	  temp-mark
-	  (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg-num)
+	  (elmo-message-mark wl-summary-buffer-elmo-folder msg-num)
 	  (if wl-thread-insert-force-opened
 	      nil
 	    (wl-thread-maybe-get-children-num msg-num))
@@ -940,14 +935,12 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-get-children-msgs-uncached (msg &optional uncached-marks)
   (let ((children-msgs (wl-thread-get-children-msgs msg))
-	(number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
-	mark
-	uncached-list)
+	mark uncached-list)
     (while children-msgs
       (if (and (not (eq msg (car children-msgs))) ; except itself
 	       (or (and uncached-marks
-			(setq mark (elmo-msgdb-get-mark
-				    (wl-summary-buffer-msgdb)
+			(setq mark (elmo-message-mark
+				    wl-summary-buffer-elmo-folder
 				    (car children-msgs)))
 			(member mark uncached-marks))
 		   (and (not uncached-marks)

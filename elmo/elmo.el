@@ -1136,6 +1136,13 @@ If CACHED is t, message is set as cached."
 			       (elmo-message-use-cache-p folder number))
     (elmo-folder-set-mark-modified-internal folder t)))
 
+(defun elmo-message-copy-entity (entity)
+  ;; 
+  (elmo-msgdb-copy-overview-entity entity))
+
+(defun elmo-message-entity-set-number (entity number)  
+  (elmo-msgdb-overview-entity-set-number entity number))
+
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
@@ -1229,10 +1236,12 @@ FLAG is a symbol which is one of the following:
 'sugar' flag:
   `read'      (set unread flag)")
 
-(defun elmo-message-mark (folder number)
+(luna-define-generic elmo-message-mark (folder number)
   "Get mark of the message.
 FOLDER is the ELMO folder structure.
-NUMBER is a number of the message."
+NUMBER is a number of the message.")
+
+(luna-define-method elmo-message-mark ((folder elmo-folder) number)
   (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
 
 (defun elmo-message-field (folder number field)

@@ -1190,8 +1190,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (erase-buffer)
   (wl-summary-set-message-modified)
   (setq wl-thread-entity-hashtb (elmo-make-hash
-				 (* (length (elmo-msgdb-get-number-alist
-					     (wl-summary-buffer-msgdb))) 2)))
+				 (* (elmo-folder-length
+				     wl-summary-buffer-elmo-folder)
+				    2)))
   (setq wl-thread-entity-list nil)
   (setq wl-thread-entities nil)
   (setq wl-summary-buffer-number-list nil)
@@ -1361,16 +1362,13 @@ If ARG is non-nil, checking is omitted."
   "Returns status-mark. if skipped, returns nil."
   ;; prefetching procedure.
   (save-excursion
-    (let* ((msgdb (wl-summary-buffer-msgdb))
-	   (number-alist (elmo-msgdb-get-number-alist msgdb))
-	   (message-id (cdr (assq number number-alist)))
-	   (ov (elmo-msgdb-overview-get-entity message-id msgdb))
-	   (wl-message-entity ov)
-	   (entity ov)			; backward compatibility.
-	   (size (elmo-msgdb-overview-entity-get-size ov))
+    (let* ((size (elmo-message-field wl-summary-buffer-elmo-folder
+				     number 'size))
 	   (inhibit-read-only t)
 	   (buffer-read-only nil)
-	   (file-cached (elmo-file-cache-exists-p message-id))
+	   (file-cached (elmo-file-cache-exists-p
+			 (elmo-message-field wl-summary-buffer-elmo-folder
+					     number 'message-id)))
 	   (force-read (and size
 			    (or file-cached
 				(and (null wl-prefetch-confirm) arg)
@@ -1397,11 +1395,14 @@ If ARG is non-nil, checking is omitted."
 			      (elmo-delete-char
 			       ?\"
 			       (or
-				(elmo-msgdb-overview-entity-get-from ov)
+				(elmo-message-field
+				 wl-summary-buffer-elmo-folder
+				 number 'from)
 				"??")))))) " ]")
 			size))))
 	      (message ""))		; flush.
-	    (setq mark (or (elmo-msgdb-get-mark msgdb number) " "))
+	    (setq mark (or (elmo-message-mark wl-summary-buffer-elmo-folder
+					      number) " "))
 	    (if force-read
 		(save-excursion
 		  (save-match-data
@@ -1598,7 +1599,6 @@ If ARG is non-nil, checking is omitted."
 	  (y-or-n-p "Mark all messages as read? "))
       (let* ((folder wl-summary-buffer-elmo-folder)
 	     (cur-buf (current-buffer))
-	     (msgdb (wl-summary-buffer-msgdb))
 	     (inhibit-read-only t)
 	     (buffer-read-only nil)
 	     (case-fold-search nil)
@@ -1634,8 +1634,6 @@ If ARG is non-nil, checking is omitted."
     (let* ((inhibit-read-only t)
 	   (buffer-read-only nil)
 	   (folder wl-summary-buffer-elmo-folder)
-	   (msgdb (wl-summary-buffer-msgdb))
-	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (case-fold-search nil)
 	   new-mark mark number unread)
       (setq number (wl-summary-message-number))
@@ -1847,7 +1845,7 @@ If ARG is non-nil, checking is omitted."
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
 	 gc-message
-	 overview number-alist
+	 overview
 	 curp num i diff
 	 append-list delete-list crossed
 	 update-thread update-top-list
@@ -1949,7 +1947,8 @@ If ARG is non-nil, checking is omitted."
       (when wl-use-scoring
 	(setq wl-summary-scored nil)
 	(wl-summary-score-headers (and sync-all
-				       (wl-summary-rescore-msgs number-alist))
+				       (wl-summary-rescore-msgs
+					wl-summary-buffer-number-list))
 				  sync-all)
 	(when (and wl-summary-scored
 		   (setq expunged (wl-summary-score-update-all-lines)))
@@ -2075,9 +2074,9 @@ If ARG is non-nil, checking is omitted."
 	    (message "Deleting...")
 	    (elmo-folder-delete-messages
 	     wl-summary-buffer-elmo-folder dels)
+	    ;; XXXX
 	    (elmo-msgdb-delete-msgs (wl-summary-buffer-msgdb)
 				    dels)
-;;;	    (elmo-msgdb-save (wl-summary-buffer-folder-name) nil)
 	    (wl-summary-set-message-modified)
 	    (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					  (list 0 0 0))
@@ -2256,8 +2255,8 @@ If ARG, without confirm."
 (defun wl-summary-auto-select-msg-p (unread-msg)
   (and unread-msg
        (not (string=
-	     (elmo-msgdb-get-mark
-	      (wl-summary-buffer-msgdb)
+	     (elmo-message-mark
+	      wl-summary-buffer-elmo-folder
 	      unread-msg)
 	     elmo-msgdb-important-mark))))
 
@@ -2704,7 +2703,7 @@ If ARG, without confirm."
 	  entity
 	  parent-entity
 	  nil
-	  (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) number)
+	  (elmo-message-mark wl-summary-buffer-elmo-folder number)
 	  (wl-thread-maybe-get-children-num number)
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
@@ -3029,13 +3028,12 @@ If ARG, exit virtual folder."
 	  (inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
-	  (msgdb (wl-summary-buffer-msgdb))
-	  (number-alist (elmo-msgdb-get-number-alist msgdb))
 	  message-id visible cur-mark)
       (if number
 	  (progn
 	    (setq visible (wl-summary-jump-to-msg number))
-	    (setq mark (or mark (elmo-msgdb-get-mark msgdb number))))
+	    (setq mark (or mark (elmo-message-mark 
+				 wl-summary-buffer-elmo-folder number))))
 	(setq visible t))
       (when visible
 	(if (null (setq number (wl-summary-message-number)))
@@ -3047,7 +3045,8 @@ If ARG, exit virtual folder."
 	  (wl-summary-goto-previous-message-beginning)))
       (if (or (and (not visible)
 		   ;; already exists in msgdb.
-		   (elmo-msgdb-overview-get-entity number msgdb))
+		   (elmo-message-entity wl-summary-buffer-elmo-folder
+					number))
 	      (setq cur-mark (wl-summary-persistent-mark)))
 	  (progn
 	    (setq number (or number (wl-summary-message-number)))
@@ -3759,9 +3758,10 @@ Return t if message exists."
 	       folder scan-type nil nil t)
 	    (if msgid
 		(setq msg
-		      (car (rassoc msgid
-				   (elmo-msgdb-get-number-alist
-				    (wl-summary-buffer-msgdb))))))
+		      (elmo-message-entity-number
+		       (elmo-message-entity
+			wl-summary-buffer-elmo-folder
+			msgid))))
 	    (setq entity (wl-folder-search-entity-by-name folder
 							  wl-folder-entity
 							  'folder))
@@ -4133,8 +4133,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 
 (defsubst wl-summary-redisplay-internal (&optional folder number force-reload)
   (interactive)
-  (let* ((msgdb (wl-summary-buffer-msgdb))
-	 (folder (or folder wl-summary-buffer-elmo-folder))
+  (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
@@ -4470,12 +4469,9 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	    (let* ((buffer (generate-new-buffer " *print*"))
 		   (entity (progn
 			     (set-buffer summary-buffer)
-			     (assoc (cdr (assq
-					  (wl-summary-message-number)
-					  (elmo-msgdb-get-number-alist
-					   (wl-summary-buffer-msgdb))))
-				    (elmo-msgdb-get-overview
-				     (wl-summary-buffer-msgdb)))))
+			     (elmo-message-entity
+			      wl-summary-buffer-elmo-folder
+			      (wl-summary-message-number))))
 		   (wl-ps-subject
 		    (and entity
 			 (or (elmo-msgdb-overview-entity-get-subject entity)
@@ -4517,14 +4513,13 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-summary-unmark num))))))
 
 (defun wl-summary-folder-info-update ()
-  (let ((folder (elmo-string (wl-summary-buffer-folder-name)))
-	(num-db (elmo-msgdb-get-number-alist
-		 (wl-summary-buffer-msgdb))))
-    (wl-folder-set-folder-updated folder
-				  (list 0
-					(+ wl-summary-buffer-unread-count
-					   wl-summary-buffer-new-count)
-					(length num-db)))))
+  (wl-folder-set-folder-updated
+   (elmo-string (wl-summary-buffer-folder-name))
+   (list 0
+	 (+ wl-summary-buffer-unread-count
+	    wl-summary-buffer-new-count)
+	 (elmo-folder-length
+	  wl-summary-buffer-elmo-folder))))
 
 (defun wl-summary-get-original-buffer ()
   "Get original buffer for the current summary."

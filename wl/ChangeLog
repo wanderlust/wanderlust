@@ -1,5 +1,27 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Don't use
+	elmo-msgdb interface.
+	(wl-thread-get-exist-children): Likewise.
+	(wl-thread-insert-message): Likewise.
+	(wl-thread-msg-mark-as-important): Likewise.
+	(wl-thread-insert-entity-sub): Likewise.
+	(wl-thread-get-children-msgs-uncached): Likewise.
+
+	* wl-summary.el (wl-summary-sync-all-init): Use elmo-folder-length.
+	(wl-summary-prefetch-msg): Don't use elmo-msgdb interface.
+	(wl-summary-sync-update): Likewise.
+	(wl-summary-auto-select-msg-p): Likewise.
+	(wl-summary-update-thread): Likewise.
+	(wl-summary-mark-as-important): Likewise.
+	(wl-summary-jump-to-msg-internal): Likewise.
+	(wl-summary-redisplay-internal): Likewise.
+	(wl-summary-print-message-with-ps-print): Likewise.
+	(wl-summary-folder-info-update): Likewise.
+
+	* wl-folder.el (wl-folder-check-one-entity):
+	elmo-folder-count-flags instead of wl-summary-count-unread.
+
 	* wl-draft.el (wl-draft-normal-send-func): Fixed last change.
 
 	* wl-action.el (wl-summary-define-mark-action): Fixed region function.
