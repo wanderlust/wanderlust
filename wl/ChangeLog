@@ -1,4 +1,4 @@
-2004-03-27  Yuuichi Teranishi  <teranisi@rosita>
+2004-03-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-list-diff): Remove unused function.
 
