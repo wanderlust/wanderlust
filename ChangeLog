@@ -1,3 +1,7 @@
+2003-07-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* doc/.cvsignore: New file.
+
 2003-07-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* etc/icons/wl-summary-dispose-up.xpm: New file.

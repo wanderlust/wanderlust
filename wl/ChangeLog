@@ -1,3 +1,7 @@
+2003-07-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* .cvsignore: New file.
+
 2003-07-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-action-docstring): Add more info.
