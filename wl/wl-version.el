@@ -87,11 +87,10 @@ If variable `wl-version-status' is non-nil, override default rule."
 (defun wl-generate-user-agent-string ()
   "A candidate of `wl-generate-mailer-string-function'.
 Insert User-Agent field instead of X-Mailer field."
-  (concat "User-Agent: "
-	  (wl-generate-user-agent-string-1
-	   ;; for backward compatibility
-	   (and (boundp 'mime-edit-insert-user-agent-field)
-		mime-edit-insert-user-agent-field))))
+  (wl-generate-user-agent-string-1
+   ;; for backward compatibility
+   (and (boundp 'mime-edit-insert-user-agent-field)
+	mime-edit-insert-user-agent-field)))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.

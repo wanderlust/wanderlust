@@ -1556,9 +1556,8 @@ Derived from `message-save-drafts' in T-gnus."
   (symbol . string)    ;;  insert symbol-value: string
   (symbol . function)  ;;  (funcall) and if it returns string,
                        ;;  insert symbol-value: string
-  (symbol . nil)       ;;  insert nothing
-  (function . (arg1 arg2 ..))  ;; call function with argument
-  nil                  ;;  insert nothing
+  (symbol . nil)       ;;  do nothing
+  nil                  ;;  do nothing
   )
 "
   (unless (eq major-mode 'wl-draft-mode)
@@ -1576,7 +1575,6 @@ Derived from `message-save-drafts' in T-gnus."
 	(setq field (car (car halist)))
 	(setq value (cdr (car halist)))
 	(cond
-	 ((functionp field) (apply field value))
 	 ((symbolp field)
 	  (cond
 	   ((stringp value) (insert (symbol-name field) ": " value "\n"))
@@ -1584,16 +1582,6 @@ Derived from `message-save-drafts' in T-gnus."
 	    (let ((value-return (funcall value)))
 	      (when (stringp value-return)
 		(insert (symbol-name field) ": " value-return "\n"))))
-	   ((not value))
-	   (t
-	    (debug))))
-	 ((stringp field)
-	  (cond
-	   ((stringp value) (insert field value "\n"))
-	   ((functionp value)
-	    (let ((value-return (funcall value)))
-	      (when (stringp value-return)
-		(insert field value-return "\n"))))
 	   ((not value))
 	   (t
 	    (debug))))
@@ -1676,7 +1664,7 @@ Derived from `message-save-drafts' in T-gnus."
    (cons 'Mail-Reply-To (and wl-insert-mail-reply-to
 			     (wl-address-header-extract-address
 			      wl-from)))
-   (cons "" wl-generate-mailer-string-function)
+   (cons 'User-Agent wl-generate-mailer-string-function)
    (cons 'Reply-To mail-default-reply-to)
    (cons 'Bcc (function
 	       (lambda ()
