@@ -1,3 +1,7 @@
+2003-11-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.22.
+
 2003-11-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Set
@@ -32,6 +36,8 @@
 	(wl-summary-mark-as-answered-internal, wl-summary-prefetch-msg): Pass
 	the value of `wl-summary-buffer-unread-count' for the second parameter of
 	`wl-folder-update-unread'.
+
+	* Version number is increased to 2.11.21.
 
 2003-11-17  Tetsurou Okazaki  <okazaki@be.to>
 
