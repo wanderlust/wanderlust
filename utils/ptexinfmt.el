@@ -1,6 +1,6 @@
 ;;; ptexinfmt.el -- portable Texinfo formatter.
 
-;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993, 
+;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993,
 ;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
 ;; Copyright (C) 1999 Yoshiki Hayashi <yoshiki@xemacs.org>
 ;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -415,7 +415,7 @@ Insert ` ... ' around URL if no URL-TITLE argument;
 otherwise, insert URL-TITLE followed by URL in parentheses."
   (let ((args (texinfo-format-parse-args)))
     (texinfo-discard-command)
-    ;; if url-title 
+    ;; if url-title
     (if (nth 1 args)
         (insert  (nth 1 args) " (" (nth 0 args) ")")
       (insert "`" (nth 0 args) "'"))))
@@ -512,7 +512,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
     ;;  @multitable {Column 1 template} {Column 2} {Column 3 example}
     ;; Place point before first argument
     (skip-chars-forward " \t")
-    (cond 
+    (cond
      ;; Check for common misspelling
      ((looking-at "@columnfraction ")
       (error "In @multitable, @columnfractions misspelled"))

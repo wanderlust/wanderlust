@@ -61,8 +61,8 @@
 (defun bbdb-wl-show-bbdb-buffer ()
   (save-selected-window
     (if (get-buffer-window bbdb-buffer-name)
-	nil  
-      (let ((mes-win (get-buffer-window 
+	nil
+      (let ((mes-win (get-buffer-window
 		      (save-excursion
 			(if (buffer-live-p  wl-current-summary-buffer)
 			    (set-buffer wl-current-summary-buffer))
@@ -75,7 +75,7 @@
 			window-min-height 1)
 		     (- (window-height mes-win)
 			(max window-min-height
-			     (1+ bbdb-pop-up-target-lines))))))    
+			     (1+ bbdb-pop-up-target-lines))))))
 	  (split-window mes-win (if (> size 0) size window-min-height)))
 	;; goto the bottom of the two...
 	(select-window (next-window))
@@ -88,7 +88,7 @@
   (let ((hit (bbdb-search-simple nil (wl-address-header-extract-address
 				      string)))
 	first-name last-name from-str)
-    (if hit 
+    (if hit
 	(progn
 	  (setq first-name (aref hit 0))
 	  (setq last-name (aref hit 1))
@@ -103,16 +103,16 @@
       string)))
 
 (defun bbdb-wl-update-record (&optional offer-to-create)
-  "Returns the record corresponding to the current WL message, 
-creating or modifying it as necessary.  A record will be created if 
+  "Returns the record corresponding to the current WL message,
+creating or modifying it as necessary.  A record will be created if
 bbdb/mail-auto-create-p is non-nil, or if OFFER-TO-CREATE is true and
 the user confirms the creation."
   (save-excursion
     (if bbdb-use-pop-up
 	(bbdb-wl-pop-up-bbdb-buffer offer-to-create)
-      (let ((key 
+      (let ((key
 	     (save-excursion
-	       (set-buffer 
+	       (set-buffer
 		(save-excursion
 		  (if (buffer-live-p wl-current-summary-buffer)
 		      (set-buffer wl-current-summary-buffer))
@@ -149,7 +149,7 @@ the user confirms the creation."
 			 offer-to-create))))))))))
 
 (defun bbdb-wl-annotate-sender (string)
-  "Add a line to the end of the Notes field of the BBDB record 
+  "Add a line to the end of the Notes field of the BBDB record
 corresponding to the sender of this message."
   (interactive (list (if bbdb-readonly-p
 			 (error "The Insidious Big Brother Database is read-only.")
@@ -191,8 +191,8 @@ This buffer will be in bbdb-mode, with associated keybindings."
   "Make the *BBDB* buffer be displayed along with the WL window(s),
 displaying the record corresponding to the sender of the current message."
   (if (get-buffer-window bbdb-buffer-name)
-      nil  
-    (let ((mes-win (get-buffer-window 
+      nil
+    (let ((mes-win (get-buffer-window
 		    (save-excursion
 		      (if (buffer-live-p  wl-current-summary-buffer)
 			  (set-buffer wl-current-summary-buffer))
@@ -206,7 +206,7 @@ displaying the record corresponding to the sender of the current message."
 		      window-min-height 1)
 		   (- (window-height mes-win)
 		      (max window-min-height
-			   (1+ bbdb-pop-up-target-lines))))))    
+			   (1+ bbdb-pop-up-target-lines))))))
 	(split-window mes-win (if (> size 0) size window-min-height)))
       ;; goto the bottom of the two...
       (select-window (next-window))
@@ -242,7 +242,7 @@ displaying the record corresponding to the sender of the current message."
       (or (fboundp 'bbdb-header-start)
           (load "bbdb-hooks"))
       (fset 'bbdb-extract-field-value-internal
-	    (cond 
+	    (cond
 	     ((fboundp 'tm:bbdb-extract-field-value)
 	      (symbol-function 'tm:bbdb-extract-field-value))
 	     (t (symbol-function 'bbdb-extract-field-value))))
