@@ -50,7 +50,8 @@
 
 (defun elmo-database-msgid-put (msgid folder number)
   (let ((db (elmo-database-get 'elmo-database-msgid
-			       elmo-database-msgid-filename)))
+			       elmo-database-msgid-filename))
+	print-length)
     (and msgid db
 	 (progn
 	   (remove-database msgid db)
