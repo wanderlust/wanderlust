@@ -1,27 +1,4 @@
-2001-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* wl-summary.el (wl-summary-prefetch-msg): Fiexd. Call
-	`elmo-msgdb-overview-get-entity' with `msgdb' instead of
-	`(elmo-msgdb-get-overview msgdb)'.
-	(wl-summary-prefetch): Bind match data before call
-	`wl-summay-prefetch-msg'.
-	(wl-summary-goto-folder-subr): Call `wl-summary-toggle-disp-msg' with
-	'off if `wl-summary-buffer-disp-msg' is non-nil.
-	Fixed problem that couldn't show only one new or unread message when
-	enter folder.
-	(wl-summary-reply): Don't call `split-window-vertically' and other
-	window.
-
-2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-expire.el (wl-expire-refile): Fixed.
-
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-vars.el (wl-biff-unnotify-hook): New variable.
-
-	* wl-util.el (wl-biff-notify): Run `wl-biff-unnotify-hook' when
-	biff notification is removed.
 
 	* wl.el (wl): Changed position of `elmo-init'.
 
