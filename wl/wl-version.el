@@ -32,19 +32,18 @@
 ;;
 (require 'product)
 (provide 'wl-version)			; have to declare in the top.
+(require 'elmo-version)			; product-version-as-string
 
 (product-provide 'wl-version
   (product-define
    "Wanderlust" nil
    (eval-when-compile
-     (require 'elmo-version)
+;;;  (require 'elmo-version)
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Roam"))
 
 ;; set version-string
-(if (fboundp 'product-version-as-string)
-    (product-version-as-string 'wl-version)
-  (product-string-1 'wl-version))	; APEL 10.2 or earlier.
+(product-version-as-string 'wl-version)
 
 ;; require wl-util after product-provide.
 (eval-when-compile (require 'wl-util))	; wl-match-string
