@@ -1,3 +1,7 @@
+2003-11-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (toplevel): Don't require mime.
+
 2003-11-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bogofilter.el (toplevel): Don't require path-util.
