@@ -1,5 +1,8 @@
 ;;; ptexinfmt.el -- portable Texinfo formatter.
 
+;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993, 
+;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+;; Copyright (C) 1999 Yoshiki Hayashi <yoshiki@xemacs.org>
 ;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -81,6 +84,22 @@
 	      (insert "(" (nth 3 args) ")"))
 	  (and (car args) (insert (car args))))))))
 
+;; @uref
+(broken-facility texinfo-format-uref
+  "Parse 2 times argument."
+  (condition-case nil
+      (with-temp-buffer
+	(let (texinfo-enclosure-list texinfo-alias-list)
+	  (texinfo-mode)
+	  (insert "@uref{mailto:foo@@bar.com}\n")
+	  (texinfo-format-expand-region (point-min) (point-max))
+	  t))
+    (error nil)))
+
+(when-broken texinfo-format-uref
+  (fmakunbound 'texinfo-format-uref))	; after defun-maybe
+
+
 ;;; Directory File
 ;; @direcategory
 (put 'dircategory 'texinfo-format 'texinfo-format-dircategory)
@@ -124,21 +143,33 @@
 ;;; Marking
 ;; @url, @env, @command
 (put 'url 'texinfo-format 'texinfo-format-code)
-(put 'command 'texinfo-format 'texinfo-format-code)
 (put 'env 'texinfo-format 'texinfo-format-code)
+(put 'command 'texinfo-format 'texinfo-format-code)
 
 ;; @acronym
 (put 'acronym 'texinfo-format 'texinfo-format-var)
 
-;; @email
-(put 'email 'texinfo-format 'texinfo-format-key)
+;; @key
+(put 'key 'texinfo-format 'texinfo-format-key)
 (defun-maybe texinfo-format-key ()
   (insert (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
+;; @email{EMAIL-ADDRESS[, DISPLAYED-TEXT]}
+(put 'email 'texinfo-format 'texinfo-format-email)
+(defun texinfo-format-email ()
+  "Format EMAIL-ADDRESS and optional DISPLAYED-TXT.
+Insert < ... > around EMAIL-ADDRESS."
+  (let ((args (texinfo-format-parse-args)))
+  (texinfo-discard-command)
+    ;; if displayed-text
+    (if (nth 1 args)
+	(insert (nth 1 args) " <" (nth 0 args) ">")
+      (insert "<" (nth 0 args) ">"))))
+
 ;; @option
 (put 'option 'texinfo-format 'texinfo-format-option)
-(defun-maybe texinfo-format-option ()
+(defun texinfo-format-option ()
   "Insert ` ... ' around arg unless inside a table; in that case, no quotes."
   ;; `looking-at-backward' not available in v. 18.57, 20.2
   ;; searched-for character is a control-H
@@ -146,7 +177,7 @@
 			    (save-excursion (beginning-of-line) (point))
 			    t))
       (insert "`" (texinfo-parse-arg-discard) "'")
-    (insert  (texinfo-parse-arg-discard)))
+    (insert (texinfo-parse-arg-discard)))
   (goto-char texinfo-command-start))
 
 
@@ -162,9 +193,9 @@ Insert ` ... ' around URL if no URL-TITLE argument;
 otherwise, insert URL-TITLE followed by URL in parentheses."
   (let ((args (texinfo-format-parse-args)))
     (texinfo-discard-command)
-    ;; if url-title
+    ;; if url-title 
     (if (nth 1 args)
-	(insert  (nth 1 args) " (" (nth 0 args) ")")
+        (insert  (nth 1 args) " (" (nth 0 args) ")")
       (insert "`" (nth 0 args) "'"))
     (goto-char texinfo-command-start)))
 
@@ -185,9 +216,52 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 		 (progn (re-search-forward "@end ifnotinfo[ \t]*\n")
 			(point))))
 
+;; @html ... @end html
+(put 'html 'texinfo-format 'texinfo-format-html)
+(put 'endhtml 'texinfo-format 'texinfo-discard-line)
+(defun texinfo-format-html ()
+  (delete-region texinfo-command-start
+                 (progn (re-search-forward "@end html[ \t]*\n")
+                        (point))))
 
-;;; Defining New Texinfo Commands
-;; @alias (maybe invalid)
+;;; Hardcopy and HTML (discard)
+;; I18N
+(put 'documentlanguage 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'documentencoding 'texinfo-format 'texinfo-discard-line-with-args)
+
+;; size
+(put 'smallbook 'texinfo-format 'texinfo-discard-line)
+(put 'afourpaper 'texinfo-format 'texinfo-discard-line)
+(put 'afourlatex 'texinfo-format 'texinfo-discard-line)
+(put 'afourwide 'texinfo-format 'texinfo-discard-line)
+(put 'pagesizes 'texinfo-format 'texinfo-discard-line-with-args)
+
+;; style
+(put 'setchapternewpage 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'kbdinputstyle 'texinfo-format 'texinfo-discard-line-with-args)
+
+;; flags
+(put 'setcontentsaftertitlepage 'texinfo-format 'texinfo-discard-line)
+(put 'setshortcontentsaftertitlepage 'texinfo-format 'texinfo-discard-line)
+(put 'novalidate 'texinfo-format 'texinfo-discard-line-with-args)
+
+;; head & foot
+(put 'headings 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'evenfooting 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'evenheading 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'oddfooting 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'oddheading 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'everyfooting 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'everyheading 'texinfo-format 'texinfo-discard-line-with-args)
+
+;; misc
+(put 'page 'texinfo-format 'texinfo-discard-line)
+(put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
+
+;;; Special
+;; @exampleindent
+
+;; @alias NEW=EXISTING  (maybe invalid)
 (put 'alias 'texinfo-format 'texinfo-alias)
 (defun-maybe texinfo-alias ()
   (let ((start (1- (point)))
@@ -204,22 +278,26 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 	     texinfo-alias-list))
       (texinfo-discard-command))))
 
-;;; misc.
-(put 'documentlanguage 'texinfo-format 'texinfo-discard-line-with-args)
-(put 'documentencoding 'texinfo-format 'texinfo-discard-line-with-args)
-(put 'smallbook 'texinfo-format 'texinfo-discard-line)
-(put 'overfullrule 'texinfo-format 'texinfo-discard-line)
-(put 'smallbreak 'texinfo-format 'texinfo-discard-line)
-(put 'medbreak 'texinfo-format 'texinfo-discard-line)
-(put 'bigbreak 'texinfo-format 'texinfo-discard-line)
+;; @definfoenclose NEWCMD, BEFORE, AFTER
 
-(put 'setchapterstyle 'texinfo-format 'texinfo-discard-line-with-args)
-(put 'novalidate 'texinfo-format 'texinfo-discard-line-with-args)
-(put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
-(put 'pagesizes 'texinfo-format 'texinfo-discard-line-with-args)
+;; @image{FILENAME, [WIDTH], [HEIGHT]}
+(put 'image 'texinfo-format 'texinfo-format-image)
+(defun-maybe texinfo-format-image ()
+  (let ((args (texinfo-format-parse-args)) ; parse FILENAME?
+	filename)
+    (when (null (nth 0 args))
+      (error "Invalid image command"))
+    (texinfo-discard-command)
+    ;; makeinfo uses FILENAME.txt
+    (setq filename (format "%s.txt" (nth 0 args)))
+    (message "Reading included file: %s" filename)
+    ;; verbatim for Info output
+    (goto-char (+ (point) (cadr (insert-file-contents filename))))))
+
+;; @multitable COLUMN-WIDTH-SPEC'
 
 
-;;; Accents and so on
+;;; Accents and Special characters
 ;; @pounds{}	==>	#	Pounds Sterling
 (put 'pounds 'texinfo-format 'texinfo-format-pounds)
 (defun-maybe texinfo-format-pounds ()
@@ -364,5 +442,15 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 (defun-maybe texinfo-format-dotless ()
   (insert  (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
+
+
+;;; Obsolete Texinfo command (backward compatibility)
+;; Removed Texinfo 3.8
+(put 'overfullrule 'texinfo-format 'texinfo-discard-line)
+(put 'smallbreak 'texinfo-format 'texinfo-discard-line)
+(put 'medbreak 'texinfo-format 'texinfo-discard-line)
+(put 'bigbreak 'texinfo-format 'texinfo-discard-line)
+;; Removed Texinfo 3.9
+(put 'setchapterstyle 'texinfo-format 'texinfo-discard-line-with-args)
 
 ;;; ptexinfmt.el ends here

@@ -1,3 +1,9 @@
+2000-07-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: Support @image. Fix broken @uref.
+	(texinfo-format-image) New function.
+	(texinfo-format-uref): Fixed 2times parse probrem.
+
 2000-07-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK (wl-texinfo-format-file): require ptexinfmt.
