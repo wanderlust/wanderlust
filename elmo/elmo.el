@@ -1020,25 +1020,24 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
   (let (unseen table flag mark
-	       succeed-numbers failure cache)
+	       succeed-numbers failure cache id)
     (setq table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (while numbers
 	(setq failure nil
+	      id (elmo-message-field src-folder (car numbers) 'message-id)
 	      mark (elmo-message-mark src-folder (car numbers))
-	      flag (cond
-		    ((null mark) nil)
-		    ((member mark (elmo-msgdb-answered-marks))
-		     'answered)
-		    ;;
-		    ((not (member mark (elmo-msgdb-unread-marks)))
-		     'read)))
+	      flag (and id
+			(cond
+			 ((null mark) 'read)
+			 ((member mark (elmo-msgdb-answered-marks))
+			  'answered)
+			 ;;
+			 ((not (member mark (elmo-msgdb-unread-marks)))
+			  'read))))
 	(condition-case nil
-	    (setq cache (elmo-file-cache-get
-			 (elmo-message-field src-folder
-					     (car numbers)
-					     'message-id))
+	    (setq cache (elmo-file-cache-get id)
 		  failure
 		  (not
 		   (and
@@ -1065,12 +1064,8 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (when flag
-	    (elmo-flag-table-set table
-				 (elmo-message-field
-				  src-folder (car numbers)
-				  'message-id)
-				 flag))
+	  (when id
+	    (elmo-flag-table-set table id flag))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(elmo-progress-notify 'elmo-folder-move-messages)
 	(setq numbers (cdr numbers)))

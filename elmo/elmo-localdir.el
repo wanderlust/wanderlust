@@ -236,7 +236,7 @@
 	(while numbers
 	  (setq mark (elmo-message-mark src-folder (car numbers))
 		flag (cond
-		      ((null mark) nil)
+		      ((null mark) 'read)
 		      ((member mark (elmo-msgdb-answered-marks))
 		       'answered)
 		      ;;
