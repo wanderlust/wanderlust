@@ -3568,6 +3568,19 @@ That is, @samp{*} marks on the messages are remained
 if the specified condition is satisfied.
 (@code{wl-summary-target-mark-pick})
 
+@item m #
+@kindex m # (Summary)
+@findex wl-summary-target-mark-print
+Print out all messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-print})
+
+@item m |
+@kindex m | (Summary)
+@findex wl-summary-target-mark-pipe
+Pipe content of each message with target mark @samp{*} to some specified
+external process.
+(@code{wl-summary-target-mark-pipe})
+
 @item M-t
 @kindex M-t (Summary)
 @findex wl-toggle-plugged

@@ -3552,6 +3552,19 @@ prefix argument つきならば既にキャッシュされているメッセージも
 条件にマッチするメッセージの @samp{*} マークのみを残します。
 (@code{wl-summary-target-mark-pick})
 
+@item m #
+@kindex m # (Summary)
+@findex wl-summary-target-mark-print
+まとめ処理用マーク @samp{*} のついたメッセージを印刷します。
+(@code{wl-summary-target-mark-print})
+
+@item m |
+@kindex m | (Summary)
+@findex wl-summary-target-mark-pipe
+まとめ処理用マーク @samp{*} のついたメッセージそれぞれを、
+指定した他のプロセスにパイプ経由で引き渡します。
+(@code{wl-summary-target-mark-pipe})
+
 @item M-t
 @kindex M-t (Summary)
 @findex wl-toggle-plugged
