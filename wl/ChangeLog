@@ -2,6 +2,7 @@
 
 	* wl-highlight.el (wl-highlight-summary-line-string): Use
 	wl-summary-score-below-mark, wl-summary-score-over-mark.
+	(wl-highlight-summary-current-line): Ditto.
 
 2003-01-27  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
