@@ -282,7 +282,7 @@ APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
 $B?d>)$5$l$k(B APEL, FLIM, SEMI $B$N%P!<%8%g%s$NAH9g$;$O!"0J2<$NDL$j$G$9!#(B
 
 @itemize @minus
-@item APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
+@item APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 @end itemize
 
 $B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"(B
@@ -4190,6 +4190,16 @@ Non-nil $B$J$i%&%#%s%I%&$rI=<($7$J$,$i%F%s%W%l!<%H$rA*Br$9$k>l9g!"%j%?!<%s(B
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 Non-nil $B$J$i%I%i%U%HMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
 
+@item wl-folder-use-frame
+@vindex wl-folder-use-frame
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+Non-nil $B$J$i%U%)%k%@0lMwMQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
+
+@item wl-summary-use-frame
+@vindex wl-summary-use-frame
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+Non-nil $B$J$i%5%^%jI=<(MQ$K?7$7$$%U%l!<%`$r3+$-$^$9!#(B
+
 @item wl-from
 @vindex wl-from
 $B=i4|@_Dj$OJQ?t(B @code{user-mail-address} $B$NCM!#(B
@@ -4239,7 +4249,7 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 @vindex wl-draft-use-cache
 $B=i4|@_Dj$O(B @code{nil}$B!#Aw?.$9$k%a%C%;!<%8$r%-%c%C%7%e$9$k$+$I$&$+$r<($9%U(B
 $B%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#$?$@$7(B @code{wl-insert-message-id}$B$,(B
-non-nil$B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
+nil $B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
