@@ -1533,9 +1533,9 @@ If update process is interrupted, return nil.")
 	(flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	(before-append t))
     (when ignore-msgdb
-      (unwind-protect
-	  (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
-	(elmo-folder-clear folder (not disable-killed))))
+      (ignore-errors
+	(elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table))
+      (elmo-folder-clear folder (not disable-killed)))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(let ((killed-list (elmo-folder-killed-list-internal folder))

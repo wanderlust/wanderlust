@@ -1,5 +1,13 @@
 2005-04-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-synchronize): Ignore errors while updating
+	flag table.
+
+	* elmo-maildir.el (elmo-maildir-list-location): Sort by last
+	modification time of the file.
+
+	* elmo-version.el (elmo-version): Up to 2.14.1.
+
 	* elmo.el (elmo-folder-synchronize): Clear msgdb even when an
 	error occured while updating flag table.
 
