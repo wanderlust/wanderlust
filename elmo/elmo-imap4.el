@@ -1221,7 +1221,7 @@ If optional argument UNMARK is non-nil, unmark."
 				       (elmo-imap4-spec-mailbox spec))
     (elmo-delete-cr
      (elmo-imap4-response-bodydetail-text
-      (elmo-imap4-response-value
+      (elmo-imap4-response-value-all
        (elmo-imap4-send-command-wait session
 				     (format
 				      (if elmo-imap4-use-uid
@@ -1599,7 +1599,7 @@ Return nil if no complete line has arrived."
 			    (elmo-imap4-forward))
 		      (EXISTS  (list 'exists token))
 		      (RECENT  (list 'recent token))
-		      (EXPUNGE (list 'expunge t))
+		      (EXPUNGE (list 'expunge token))
 		      (FETCH   (elmo-imap4-parse-fetch token))
 		      (t       (list 'garbage (buffer-string)))))))
       (t (if (not (string-match elmo-imap4-seq-prefix (symbol-name token)))

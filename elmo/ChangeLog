@@ -2,6 +2,9 @@
 
 	* elmo-imap4.el (elmo-imap4-parse-response): Use string-match for
 	garbage checking.
+	(elmo-imap4-read-part): Use `elmo-imap4-response-value-all' instead of
+	`elmo-imap4-response-value'.
+	(elmo-imap4-parse-response): Return value of `EXPUNGE'.
 
 2000-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
