@@ -424,7 +424,8 @@ Reply to author if WITH-ARG is non-nil."
   (save-restriction
     (narrow-to-region (point)(point))
     (insert
-     (with-current-buffer mail-reply-buffer
+     (save-excursion
+       (set-buffer mail-reply-buffer)
        (when decode-it
 	 (decode-mime-charset-region (point-min) (point-max)
 				     wl-mime-charset))

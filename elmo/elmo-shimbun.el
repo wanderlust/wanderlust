@@ -45,17 +45,12 @@
 		 (integer :tag "number"))
   :group 'elmo)
 
-(defcustom elmo-shimbun-use-cache t
-  "*If non-nil, use cache for each article."
-  :type :boolean
-  :group 'elmo)
-
 (defcustom elmo-shimbun-index-range-alist nil
-  "*Alist of FOLDER-REGEXP and RANGE.
-FOLDER-REGEXP is the regexp for shimbun folder name.
+  "*Alist of FOLDER and RANGE.
+FOLDER is the shimbun folder name.
 RANGE is the range of the header indices .
 See `shimbun-headers' for more detail about RANGE."
-  :type '(repeat (cons (regexp :tag "Folder Regexp")
+  :type '(repeat (cons (string :tag "Folder Name")
 		       (choice (const :tag "all" all)
 			       (const :tag "last" last)
 			       (integer :tag "number"))))
@@ -124,20 +119,6 @@ See `shimbun-headers' for more detail about RANGE."
 		    headers))))
     (nreverse headers)))
 
-(defun elmo-shimbun-folder-setup (folder)
-  ;; Resume headers from existing msgdb.
-  (elmo-shimbun-folder-set-headers-internal
-   folder
-   (elmo-shimbun-msgdb-to-headers folder nil))
-  (elmo-shimbun-folder-set-header-hash-internal
-   folder
-   (elmo-make-hash
-    (length (elmo-shimbun-folder-headers-internal folder))))
-  (dolist (header (elmo-shimbun-folder-headers-internal folder))
-    (elmo-set-hash-val
-     (shimbun-header-id header) header
-     (elmo-shimbun-folder-header-hash-internal folder))))
-
 (defun elmo-shimbun-get-headers (folder)
   (shimbun-open-group
    (elmo-shimbun-folder-shimbun-internal folder)
@@ -156,7 +137,6 @@ See `shimbun-headers' for more detail about RANGE."
 			    (shimbun-header-id x)
 			    (elmo-folder-msgdb folder))
 		     x))
-		 ;; This takes much time.
 		 (shimbun-headers
 		  (elmo-shimbun-folder-shimbun-internal folder)
 		  (elmo-shimbun-folder-range-internal folder)))))
@@ -196,31 +176,19 @@ See `shimbun-headers' for more detail about RANGE."
        (nth 1 server-group)))
     (elmo-shimbun-folder-set-range-internal
      folder
-     (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
-					 elmo-shimbun-index-range-alist))
+     (or (cdr (assoc (elmo-folder-name-internal folder)
+		     elmo-shimbun-index-range-alist))
 	 elmo-shimbun-default-index-range))
     folder))
 
-(luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
+(luna-define-method elmo-folder-open-internal :before ((folder
+							elmo-shimbun-folder))
   (when (elmo-folder-plugged-p folder)
-    (when (elmo-shimbun-headers-check-p folder)
-      (let ((inhibit-quit t))
-	(elmo-map-folder-location-setup
-	 folder 
-	 (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
-	;; Resume headers from existing msgdb.
-	(elmo-shimbun-folder-setup folder))
-      (elmo-shimbun-get-headers folder))
-    (elmo-map-folder-update-locations
-     folder
-     (elmo-map-folder-list-message-locations folder))))
+    (if (elmo-shimbun-headers-check-p folder)
+	(elmo-shimbun-get-headers folder))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
-
-(luna-define-method elmo-message-use-cache-p ((folder elmo-shimbun-folder)
-					      number)
-  elmo-shimbun-use-cache)
 
 (luna-define-method elmo-folder-close-internal :after ((folder
 							elmo-shimbun-folder))
@@ -304,8 +272,8 @@ See `shimbun-headers' for more detail about RANGE."
 					      important-mark
 					      seen-list)
   (let* (overview number-alist mark-alist entity
-		  i percent number length pair msgid)
-    (setq length (length numlist))
+		  i percent num pair)
+    (setq num (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
     (while numlist
@@ -316,26 +284,24 @@ See `shimbun-headers' for more detail about RANGE."
 	(setq overview
 	      (elmo-msgdb-append-element
 	       overview entity))
-	(setq number (elmo-msgdb-overview-entity-get-number entity))
-	(setq msgid (elmo-msgdb-overview-entity-get-id entity))
 	(setq number-alist
 	      (elmo-msgdb-number-add number-alist
-				     number msgid))
-	(setq seen (member msgid seen-list))
-	(if (setq gmark (or (elmo-msgdb-global-mark-get msgid)
-			    (if (elmo-file-cache-status
-				 (elmo-file-cache-get msgid))
-				(if seen nil already-mark)
-			      (if seen
-				  (if elmo-shimbun-use-cache
-				      seen-mark)
-				new-mark))))
-	    (setq mark-alist
-		  (elmo-msgdb-mark-append mark-alist
-					  number gmark))))
-      (when (> length elmo-display-progress-threshold)
+				     (elmo-msgdb-overview-entity-get-number
+				      entity)
+				     (elmo-msgdb-overview-entity-get-id
+				      entity)))
+	(setq mark-alist
+	      (elmo-msgdb-mark-append
+	       mark-alist
+	       (elmo-msgdb-overview-entity-get-number
+		entity)
+	       (or (elmo-msgdb-global-mark-get
+		    (elmo-msgdb-overview-entity-get-id
+		     entity))
+		   new-mark))))
+      (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
-	(setq percent (/ (* i 100) length))
+	(setq percent (/ (* i 100) num))
 	(elmo-display-progress
 	 'elmo-folder-msgdb-create "Creating msgdb..."
 	 percent))
