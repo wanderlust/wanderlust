@@ -121,7 +121,7 @@
    (elmo-localdir-get-msg-filename spec number loc-alist)))
 
 (defalias 'elmo-localnews-sync-number-alist 'elmo-generic-sync-number-alist)
-(defalias 'elmo-localnews-list-folder-unread 
+(defalias 'elmo-localnews-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-localnews-list-folder-important
   'elmo-generic-list-folder-important)

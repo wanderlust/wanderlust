@@ -30,11 +30,11 @@
 ;; 
 (require 'elmo-msgdb)
 
-(defun elmo-filter-msgdb-create (spec numlist new-mark already-mark 
+(defun elmo-filter-msgdb-create (spec numlist new-mark already-mark
 				      seen-mark important-mark seen-list)
   (if (eq (nth 2 spec) 'partial)
       (elmo-msgdb-create (nth 2 spec)
-			 numlist 
+			 numlist
 			 new-mark
 			 already-mark
 			 seen-mark important-mark seen-list)
@@ -45,7 +45,7 @@
 				  seen-mark important-mark seen-list)))
 
 (defun elmo-filter-msgdb-create-as-numlist (spec numlist new-mark already-mark
-						 seen-mark important-mark 
+						 seen-mark important-mark
 						 seen-list)
   (elmo-msgdb-create-as-numlist (nth 2 spec)
 				numlist
@@ -69,12 +69,12 @@
   (let ((filter (nth 1 spec))
 	(folder (nth 2 spec))
 	msgs)
-    (cond 
+    (cond
      ((vectorp filter)
       (cond ((string= (elmo-filter-key filter)
 		      "last")
 	     (setq msgs (elmo-list-folder folder))
-	     (nthcdr (max (- (length msgs) 
+	     (nthcdr (max (- (length msgs)
 			     (string-to-int (elmo-filter-value filter)))
 			  0)
 		     msgs))
@@ -83,7 +83,7 @@
 	     (setq msgs (elmo-list-folder folder))
 	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
 				 msgs)))
-	       (mapcar '(lambda (x) 
+	       (mapcar '(lambda (x)
 			  (delete x msgs)) rest))
 	     msgs)))
      ((listp filter)
@@ -93,13 +93,13 @@
   (let ((filter (nth 1 spec))
 	(folder (nth 2 spec))
 	msgs pair)
-    (cond 
+    (cond
      ((vectorp filter)
       (cond ((string= (elmo-filter-key filter)
 		      "last")
-	     (setq msgs (elmo-list-folder-unread folder mark-alist 
+	     (setq msgs (elmo-list-folder-unread folder mark-alist
 						 unread-marks))
-	     (nthcdr (max (- (length msgs) 
+	     (nthcdr (max (- (length msgs)
 			     (string-to-int (elmo-filter-value filter)))
 			  0)
 		     msgs))
@@ -110,11 +110,11 @@
 						 unread-marks))
 	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
 				 msgs)))
-	       (mapcar '(lambda (x) 
+	       (mapcar '(lambda (x)
 			  (delete x msgs)) rest))
 	     msgs)))
      ((listp filter)
-      (elmo-list-filter 
+      (elmo-list-filter
        (elmo-search folder filter)
        (elmo-list-folder-unread folder mark-alist unread-marks))))))
 
@@ -122,12 +122,12 @@
   (let ((filter (nth 1 spec))
 	(folder (nth 2 spec))
 	msgs pair)
-    (cond 
+    (cond
      ((vectorp filter)
       (cond ((string= (elmo-filter-key filter)
 		      "last")
 	     (setq msgs (elmo-list-folder-important folder overview))
-	     (nthcdr (max (- (length msgs) 
+	     (nthcdr (max (- (length msgs)
 			     (string-to-int (elmo-filter-value filter)))
 			  0)
 		     msgs))
@@ -136,11 +136,11 @@
 	     (setq msgs (elmo-list-folder-important folder overview))
 	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
 				 msgs)))
-	       (mapcar '(lambda (x) 
+	       (mapcar '(lambda (x)
 			  (delete x msgs)) rest))
 	     msgs)))
      ((listp filter)
-      (elmo-list-filter 
+      (elmo-list-filter
        (mapcar
 	'(lambda (x) (elmo-msgdb-overview-entity-get-number x))
 	overview)
@@ -160,9 +160,9 @@
 
 (defun elmo-filter-search (spec condition &optional numlist)
   ;; search from messages in this folder
-  (elmo-list-filter 
-   numlist 
-   (elmo-call-func (nth 2 spec) "search" condition 
+  (elmo-list-filter
+   numlist
+   (elmo-call-func (nth 2 spec) "search" condition
 		   (elmo-filter-list-folder spec))))
 
 (defun elmo-filter-use-cache-p (spec number)

@@ -47,12 +47,12 @@
   (unless (string-match elmo-cache-dirname path)
     (error "%s is not cache file!" path))
   (let (message-id)
-    (if (or (elmo-msgdb-global-mark-get 
+    (if (or (elmo-msgdb-global-mark-get
 	     (setq message-id
 		   (elmo-cache-to-msgid (file-name-nondirectory path))))
 	    (member message-id locked))
 	nil ;; Don't delete caches with mark (or locked message).
-      (if (and path 
+      (if (and path
 	       (file-directory-p path))
 	  (progn
 	    (mapcar 'delete-file (directory-files path t "^[^\\.]"))
@@ -65,13 +65,13 @@
   (if msgid
       (let ((path1 (elmo-cache-get-path msgid))
 	    path2)
-	(if (and path1 
+	(if (and path1
 		 (file-exists-p path1))
 	    (if (and folder
 		     (file-directory-p path1))
-		(when (file-exists-p (setq path2 
+		(when (file-exists-p (setq path2
 					   (expand-file-name
-					    (format "%s@%s" 
+					    (format "%s@%s"
 						    number
 						    (elmo-safe-filename
 						     folder))
@@ -103,7 +103,7 @@
 
 (defun elmo-read-float-value-from-minibuffer (prompt &optional initial)
   (let ((str (read-from-minibuffer prompt initial)))
-    (cond 
+    (cond
      ((string-match "[0-9]*\\.[0-9]+" str)
       (string-to-number str))
      ((string-match "[0-9]+" str)
@@ -111,7 +111,7 @@
      (t (error "%s is not number" str)))))
 
 (defun elmo-cache-expire-by-size (&optional kbytes)
-  "Expire cache file by size. 
+  "Expire cache file by size.
 If KBYTES is kilo bytes (This value must be float)."
   (interactive)
   (let ((size (or kbytes
@@ -136,14 +136,14 @@ If KBYTES is kilo bytes (This value must be float)."
     (message "Checking disk usage...done.")
     (let ((cfl (elmo-cache-get-sorted-cache-file-list))
 	  (deleted 0)
-	  oldest 
+	  oldest
 	  cur-size cur-file)
       (while (and (<= size total)
 		  (setq oldest (elmo-cache-get-oldest-cache-file-entity cfl)))
 	(setq cur-file (expand-file-name (car (cdr oldest)) (car oldest)))
 	(if (file-directory-p cur-file)
 	    (setq cur-size (elmo-disk-usage cur-file))
-	  (setq cur-size 
+	  (setq cur-size
 		(/ (float (nth 7 (file-attributes cur-file)))
 		   Kbytes)))
 	(when (elmo-cache-force-delete cur-file locked)
@@ -151,7 +151,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	  (message "%d cache(s) are expired." count))
 	(setq deleted (+ deleted cur-size))
 	(setq total (- total cur-size)))
-      (message "%d cache(s) are expired from disk (%d Kbytes/%d Kbytes)." 
+      (message "%d cache(s) are expired from disk (%d Kbytes/%d Kbytes)."
 	       count deleted beginning))))
 
 (defun elmo-cache-make-file-entity (filename path)
@@ -162,8 +162,8 @@ If KBYTES is kilo bytes (This value must be float)."
 	flist firsts oldest-entity wonlist)
     (while cfl
       (setq flist (cdr (car cfl)))
-      (setq firsts (append firsts (list 
-				   (cons (car (car cfl)) 
+      (setq firsts (append firsts (list
+				   (cons (car (car cfl))
 					 (car flist)))))
       (setq cfl (cdr cfl)))
 ;    (prin1 firsts)
@@ -182,8 +182,8 @@ If KBYTES is kilo bytes (This value must be float)."
     oldest-entity))
 
 (defun elmo-cache-get-sorted-cache-file-list ()
-  (let ((dirs (directory-files 
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir) 
+  (let ((dirs (directory-files
+	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
 	       t "^[^\\.]"))
 	(i 0) num
 	elist
@@ -191,13 +191,13 @@ If KBYTES is kilo bytes (This value must be float)."
     (setq num (length dirs))
     (message "Collecting cache info...")
     (while dirs
-      (setq elist (mapcar (lambda (x) 
+      (setq elist (mapcar (lambda (x)
 			    (elmo-cache-make-file-entity x (car dirs)))
 			  (directory-files (car dirs) nil "^[^\\.]")))
       (setq ret-val (append ret-val
 			    (list (cons
 				   (car dirs)
-				   (sort 
+				   (sort
 				    elist
 				    (lambda (x y)
 				      (< (cdr x)
@@ -212,12 +212,12 @@ If KBYTES is kilo bytes (This value must be float)."
 (defun elmo-cache-expire-by-age (&optional days)
   (let ((age (or (and days (int-to-string days))
 		 (and (interactive-p)
-		      (read-from-minibuffer 
+		      (read-from-minibuffer
 		       (format "Enter days (%s): "
 			       elmo-cache-expire-default-age)))
 		 (int-to-string elmo-cache-expire-default-age)))
-	(dirs (directory-files 
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir) 
+	(dirs (directory-files
+	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
 	       t "^[^\\.]"))
 	(locked (elmo-dop-lock-list-load))
 	(count 0)
@@ -226,7 +226,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	(setq age elmo-cache-expire-default-age)
       (setq age (string-to-int age)))
     (setq curtime (current-time))
-    (setq curtime (+ (* (nth 0 curtime) 
+    (setq curtime (+ (* (nth 0 curtime)
 			(float 65536)) (nth 1 curtime)))
     (while dirs
       (let ((files (directory-files (car dirs) t "^[^\\.]"))
@@ -248,7 +248,7 @@ If KBYTES is kilo bytes (This value must be float)."
 		     (elmo-cache-get-path msgid folder number)
 		   (elmo-cache-get-path msgid)))
 	   dir tmp-buf)
-      (when path 
+      (when path
 	(setq dir (directory-file-name (file-name-directory path)))
 	(if (not (file-exists-p dir))
 	    (elmo-make-directory dir))
@@ -268,8 +268,8 @@ If KBYTES is kilo bytes (This value must be float)."
 	      (if (and folder
 		       (file-directory-p path))
 		  (if (file-exists-p (setq path (expand-file-name
-						 (format "%s@%s" 
-							 (or number "") 
+						 (format "%s@%s"
+							 (or number "")
 							 (elmo-safe-filename
 							  folder))
 						 path)))
@@ -287,10 +287,10 @@ If KBYTES is kilo bytes (This value must be float)."
 	 ret-val
 	 case-fold-search msg
 	 percent i)
-    (setq i 0)    
+    (setq i 0)
     (while nalist
       (if (and (setq cache-file (elmo-cache-exists-p (cdr (car nalist))
-						     folder 
+						     folder
 						     (car (car nalist))))
 	       (elmo-file-field-condition-match cache-file condition))
 	  (setq ret-val (append ret-val (list (caar nalist)))))
@@ -304,7 +304,7 @@ If KBYTES is kilo bytes (This value must be float)."
 
 (defun elmo-cache-collect-sub-directories (init dir &optional recursively)
   "Collect subdirectories under 'dir'"
-  (let ((dirs 
+  (let ((dirs
 	 (delete (expand-file-name elmo-cache-dirname
 				   elmo-msgdb-dir)
 		 (directory-files dir t "^[^\\.]")))
@@ -313,14 +313,14 @@ If KBYTES is kilo bytes (This value must be float)."
     (setq ret-val (append init dirs))
     (while (and recursively dirs)
       (setq ret-val
-	    (elmo-cache-collect-sub-directories 
+	    (elmo-cache-collect-sub-directories
 	     ret-val
 	     (car dirs) recursively))
       (setq dirs (cdr dirs)))
     ret-val))
 
 (defun elmo-msgid-to-cache (msgid)
-  (when (and msgid 
+  (when (and msgid
 	     (string-match "<\\(.+\\)>$" msgid))
     (elmo-replace-msgid-as-filename (elmo-match-string 1 msgid))))
 
@@ -330,12 +330,12 @@ If KBYTES is kilo bytes (This value must be float)."
       (expand-file-name
        (expand-file-name
 	(if folder
-	    (format "%s/%s/%s@%s" 
+	    (format "%s/%s/%s@%s"
 		    (elmo-cache-get-path-subr msgid)
 		    msgid
 		    (or number "")
 		    (elmo-safe-filename folder))
-	  (format "%s/%s" 
+	  (format "%s/%s"
 		  (elmo-cache-get-path-subr msgid)
 		  msgid))
 	(expand-file-name elmo-cache-dirname
@@ -459,8 +459,8 @@ Returning its cache buffer."
       (when (file-exists-p file)
 	;; Read until header separator is found.
 	(while (and (eq elmo-localdir-header-chop-length
-			(nth 1 
-			     (as-binary-input-file 
+			(nth 1
+			     (as-binary-input-file
 			      (insert-file-contents
 			       file nil beg
 			       (incf beg elmo-localdir-header-chop-length)))))
@@ -528,8 +528,8 @@ Returning its cache buffer."
 				  nil
 				new-mark)))
 	      (setq mark-alist
-		    (elmo-msgdb-mark-append 
-		     mark-alist 
+		    (elmo-msgdb-mark-append
+		     mark-alist
 		     num
 		     gmark))))
 	(setq i (1+ i))
@@ -579,10 +579,10 @@ Returning its cache buffer."
   (let* ((dir (elmo-cache-get-folder-directory spec))
 	 (flist (mapcar 'file-name-nondirectory
 			(elmo-delete-if 'file-directory-p
-					(directory-files 
+					(directory-files
 					 dir t "^[^@]+@[^@]+$" t))))
 	 (folder (concat "'cache/" (nth 1 spec)))
-	 (number-alist (or (elmo-msgdb-number-load 
+	 (number-alist (or (elmo-msgdb-number-load
 			    (elmo-msgdb-expand-path folder))
 			   (list nil)))
 	 nlist)
@@ -636,7 +636,7 @@ Returning its cache buffer."
 (defun elmo-cache-read-msg (spec number outbuf &optional set-mark)
   (save-excursion
     (let* ((dir (elmo-cache-get-folder-directory spec))
-	   (file (expand-file-name 
+	   (file (expand-file-name
 		  (elmo-cache-number-to-filename spec number) dir)))
       (set-buffer outbuf)
       (erase-buffer)
@@ -678,7 +678,7 @@ Returning its cache buffer."
 	 (i 0) case-fold-search ret-val)
     (while msgs
       (if (elmo-file-field-condition-match
-	   (expand-file-name 
+	   (expand-file-name
 	    (elmo-msgid-to-cache
 	     (cdr (assq (car msgs) number-alist)))
 	    (elmo-cache-get-folder-directory spec))
@@ -726,9 +726,9 @@ Returning its cache buffer."
    (elmo-cache-number-to-filename spec number)
    (elmo-cache-get-folder-directory spec)))
 
-(defalias 'elmo-cache-sync-number-alist 
+(defalias 'elmo-cache-sync-number-alist
   'elmo-generic-sync-number-alist)
-(defalias 'elmo-cache-list-folder-unread 
+(defalias 'elmo-cache-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-cache-list-folder-important
   'elmo-generic-list-folder-important)

@@ -307,7 +307,7 @@ TYPE specifies the archiver's symbol."
 	(if (and (find-file-name-handler dir 'copy-file) ; ange-ftp, efs
 		 spec)
 	    (progn
-	      (setq filename (expand-file-name 
+	      (setq filename (expand-file-name
 			      (concat elmo-archive-basename suffix)
 			      (setq dbdir (elmo-msgdb-expand-path nil spec))))
 	      (if (file-directory-p dbdir)
@@ -454,7 +454,7 @@ TYPE specifies the archiver's symbol."
 	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
 	   (prefix (nth 3 spec))
 	   (method (elmo-archive-get-method type 'cat))
-	   (args (list arc (elmo-concat-path 
+	   (args (list arc (elmo-concat-path
 			    prefix (int-to-string number)))))
       (set-buffer outbuf)
       (erase-buffer)
@@ -529,7 +529,7 @@ TYPE specifies the archiver's symbol."
       (setq tmp-dir (substring src-dir 0 (match-beginning 0)))
       (setq p-method (elmo-archive-get-method dst-type 'cp-pipe)
 	    n-method (elmo-archive-get-method dst-type 'cp))
-      (setq tmp-msgs (mapcar '(lambda (x) 
+      (setq tmp-msgs (mapcar '(lambda (x)
 				(elmo-concat-path prefix (int-to-string x)))
 			     msgs))
       (setq do-link nil))
@@ -779,7 +779,7 @@ TYPE specifies the archiver's symbol."
       (if (and elmo-archive-use-izip-agent
 	       (elmo-archive-get-method (nth 2 spec) 'cat-headers))
 	  (elmo-archive-msgdb-create-as-numlist-subr2
-           spec numlist new-mark already-mark seen-mark important-mark 
+           spec numlist new-mark already-mark seen-mark important-mark
 	   seen-list)
 	(elmo-archive-msgdb-create-as-numlist-subr1
          spec numlist new-mark already-mark seen-mark important-mark
@@ -790,7 +790,7 @@ TYPE specifies the archiver's symbol."
 
 (defun elmo-archive-msgdb-create-as-numlist-subr1 (spec numlist new-mark
 							already-mark seen-mark
-							important-mark 
+							important-mark
 							seen-list)
   (let* ((type (nth 2 spec))
 	 (file (elmo-archive-get-archive-name (nth 1 spec) type spec))
@@ -829,7 +829,7 @@ TYPE specifies the archiver's symbol."
 			      seen-mark
 			    new-mark))))
 	      (setq mark-alist
-		    (elmo-msgdb-mark-append 
+		    (elmo-msgdb-mark-append
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark))))
@@ -904,8 +904,8 @@ TYPE specifies the archiver's symbol."
     (list overview number-alist mark-alist)) )
 
 (defun elmo-archive-parse-mmdf (msgs new-mark
-				     already-mark 
-				     seen-mark 
+				     already-mark
+				     seen-mark
 				     seen-list)
   (let ((delim elmo-mmdf-delimiter)
 	number sp ep rest entity overview number-alist mark-alist ret-val
@@ -933,7 +933,7 @@ TYPE specifies the archiver's symbol."
 		 (car entity)))
 	  (setq message-id (car entity))
 	  (setq seen (member message-id seen-list))
-	  (if (setq gmark 
+	  (if (setq gmark
 		    (or (elmo-msgdb-global-mark-get message-id)
 			(if (elmo-cache-exists-p message-id) ; XXX
 			    (if seen
@@ -943,7 +943,7 @@ TYPE specifies the archiver's symbol."
 			      seen-mark
 			    new-mark))))
 	      (setq mark-alist
-		    (elmo-msgdb-mark-append 
+		    (elmo-msgdb-mark-append
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark)))
@@ -1043,9 +1043,9 @@ TYPE specifies the archiver's symbol."
      (elmo-concat-path prefix (int-to-string number))
      tmp-dir)))
 
-(defalias 'elmo-archive-sync-number-alist 
+(defalias 'elmo-archive-sync-number-alist
   'elmo-generic-sync-number-alist)
-(defalias 'elmo-archive-list-folder-unread 
+(defalias 'elmo-archive-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-archive-list-folder-important
   'elmo-generic-list-folder-important)

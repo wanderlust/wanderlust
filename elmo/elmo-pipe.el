@@ -40,7 +40,7 @@
 (defalias 'elmo-pipe-msgdb-create 'elmo-pipe-msgdb-create-as-numlist)
 
 (defun elmo-pipe-msgdb-create-as-numlist (spec numlist new-mark already-mark
-					       seen-mark important-mark 
+					       seen-mark important-mark
 					       seen-list)
   (elmo-msgdb-create-as-numlist (elmo-pipe-spec-dst spec)
 				numlist new-mark already-mark
@@ -54,7 +54,7 @@
 
 (defun elmo-pipe-read-msg (spec number outbuf)
   (elmo-call-func (elmo-pipe-spec-dst spec)
-		  "read-msg" 
+		  "read-msg"
 		  number outbuf))
 
 (defun elmo-pipe-delete-msgs (spec msgs)
@@ -64,7 +64,7 @@
 
 (defun elmo-pipe-drain (src dst)
   (let ((msgdb (elmo-msgdb-load src))
-	elmo-nntp-use-cache 
+	elmo-nntp-use-cache
 	elmo-imap4-use-cache
 	elmo-pop3-use-cache) ; Inhibit caching while moving messages.
     (message "Checking %s..." src)
@@ -130,7 +130,7 @@
   (elmo-get-msg-filename (elmo-pipe-spec-dst spec) number loc-alist))
 
 (defun elmo-pipe-sync-number-alist (spec number-alist)
-  (elmo-call-func (elmo-pipe-spec-src spec) 
+  (elmo-call-func (elmo-pipe-spec-src spec)
 		  "sync-number-alist" number-alist)) ; ??
 
 (defun elmo-pipe-server-diff (spec)

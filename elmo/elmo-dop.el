@@ -45,7 +45,7 @@ Automatically loaded/saved.")
   (let ((operation (list (format "%s" folder) function argument)))
     (elmo-dop-queue-load)
     (unless (member operation elmo-dop-queue) ;; don't append same operation
-      (setq elmo-dop-queue 
+      (setq elmo-dop-queue
 	    (append elmo-dop-queue
 		    (list operation)))
       (elmo-dop-queue-save))))
@@ -64,7 +64,7 @@ even an operation concerns the unplugged folder."
 	  (setq count (1+ count)))
       (setq queue (cdr queue)))
     (when (> count 0)
-      (if (elmo-y-or-n-p 
+      (if (elmo-y-or-n-p
 	   (format "%d pending operation(s) exists. Perform now?" count)
 	   (not elmo-dop-flush-confirm) t)
 	  (progn
@@ -102,11 +102,11 @@ even an operation concerns the unplugged folder."
 			 ))))
 		  (quit  (setq failure t))
 		  (error (setq failure err)))
-		(if failure 
+		(if failure
 		    ;; create-folder was failed.
 		    (when (and (string= func "create-folder-maybe")
-			       (elmo-y-or-n-p 
-				(format 
+			       (elmo-y-or-n-p
+				(format
 				 "Create folder %s failed. Abort creating?"
 				 folder)
 				(not elmo-dop-flush-confirm) t))
@@ -144,12 +144,12 @@ even an operation concerns the unplugged folder."
   (let ((queue elmo-dop-queue)
         new-queue match-queue que)
     (while (setq que (car queue))
-      (if (and 
+      (if (and
 	   (member (cadr que) elmo-dop-merge-funcs)
 	   (setq match-queue
 		 (car (delete nil
 			      (mapcar '(lambda (new-queue)
-					 (if (and 
+					 (if (and
 					      (string= (car que) (car new-queue))
 					      (string= (cadr que) (cadr new-queue)))
 					     new-queue))
@@ -162,7 +162,7 @@ even an operation concerns the unplugged folder."
 
 (defun elmo-dop-queue-load ()
   (save-excursion
-    (setq elmo-dop-queue 
+    (setq elmo-dop-queue
 	  (elmo-object-load
 	   (expand-file-name elmo-queue-filename
 			     elmo-msgdb-dir)))))
@@ -176,7 +176,7 @@ even an operation concerns the unplugged folder."
 
 (defun elmo-dop-lock-message (message-id &optional lock-list)
   (let ((locked (or lock-list
-		    (elmo-object-load 
+		    (elmo-object-load
 		     (expand-file-name
 		      elmo-msgdb-lock-list-filename
 		      elmo-msgdb-dir)))))
@@ -188,7 +188,7 @@ even an operation concerns the unplugged folder."
 
 (defun elmo-dop-unlock-message (message-id &optional lock-list)
   (let ((locked (or lock-list
-		    (elmo-object-load 
+		    (elmo-object-load
 		     (expand-file-name elmo-msgdb-lock-list-filename
 				       elmo-msgdb-dir)))))
     (setq locked (delete message-id locked))
@@ -198,7 +198,7 @@ even an operation concerns the unplugged folder."
      locked)))
 
 (defun elmo-dop-lock-list-load ()
-  (elmo-object-load 
+  (elmo-object-load
    (expand-file-name elmo-msgdb-lock-list-filename
 		     elmo-msgdb-dir)))
 
@@ -209,7 +209,7 @@ even an operation concerns the unplugged folder."
    lock-list))
 
 (defun elmo-dop-append-list-load (folder &optional resume)
-  (elmo-object-load 
+  (elmo-object-load
    (expand-file-name (if resume
 			 elmo-msgdb-resume-list-filename
 		       elmo-msgdb-append-list-filename)
@@ -246,7 +246,7 @@ even an operation concerns the unplugged folder."
     (let ((folder-numbers (elmo-make-folder-numbers-list folder msgs))
 	  appended-deleting)
       (while folder-numbers
-	(if (eq (elmo-folder-get-type (car (car folder-numbers))) 
+	(if (eq (elmo-folder-get-type (car (car folder-numbers)))
 		'imap4)
 	    (if elmo-enable-disconnected-operation
 		(progn
@@ -256,7 +256,7 @@ even an operation concerns the unplugged folder."
 			 msgs ; virtual number
 			 (elmo-dop-append-list-load folder)))
 		  (if (cdr appended-deleting)
-		      (elmo-dop-queue-append 
+		      (elmo-dop-queue-append
 		       (car (car folder-numbers)) ; real folder
 		       "delete-msgids" ;; for secure removal.
 		       (cdr appended-deleting)))
@@ -287,12 +287,12 @@ even an operation concerns the unplugged folder."
 		 max-num)
 	    (while append-list
 	      (if (rassoc (car append-list) number-alist)
-		  (setq alreadies (append alreadies 
+		  (setq alreadies (append alreadies
 					  (list (car append-list)))))
 	      (setq append-list (cdr append-list)))
 	    (setq append-num (- append-num (length alreadies)))
-	    (setq max-num 
-		  (or (nth (max (- (length number-list) 1) 0) 
+	    (setq max-num
+		  (or (nth (max (- (length number-list) 1) 0)
 			   number-list) 0))
 	    (while (< i append-num)
 	      (setq number-list
@@ -329,7 +329,7 @@ even an operation concerns the unplugged folder."
 (defun elmo-dop-max-of-folder (folder)
   (if (eq (elmo-folder-get-type folder) 'imap4)
       (if elmo-enable-disconnected-operation
-	  (let* ((number-alist (elmo-msgdb-number-load 
+	  (let* ((number-alist (elmo-msgdb-number-load
 				       (elmo-msgdb-expand-path folder)))
 		 (number-list (mapcar 'car number-alist))
 		 (append-list (elmo-dop-append-list-load folder))
@@ -339,10 +339,10 @@ even an operation concerns the unplugged folder."
 		 max-num)
 	    (while append-list
 	      (if (rassoc (car append-list) number-alist)
-		  (setq alreadies (append alreadies 
+		  (setq alreadies (append alreadies
 					  (list (car append-list)))))
 	      (setq append-list (cdr append-list)))
-	    (setq max-num 
+	    (setq max-num
 		  (or (nth (max (- (length number-list) 1) 0) number-list)
 		      0))
 	    (cons (- (+ max-num append-num) (length alreadies))
@@ -357,18 +357,18 @@ even an operation concerns the unplugged folder."
 	 file-string)
     (while append-list
       (when (setq file-string (elmo-get-file-string  ; message string
-			       (elmo-cache-get-path 
+			       (elmo-cache-get-path
 				(car append-list))))
 	(elmo-append-msg elmo-lost+found-folder file-string)
 	(elmo-dop-unlock-message (car append-list)))
       (setq append-list (cdr append-list))
       (elmo-dop-append-list-save folder nil)))
-  (message (format "Saving queued message in %s...done." 
+  (message (format "Saving queued message in %s...done."
 		   elmo-lost+found-folder)))
 
 (defun elmo-dop-flush-pending-append-operations (folder &optional appends resume)
   (message "Appending queued messages...")
-  (let* ((append-list (or appends 
+  (let* ((append-list (or appends
 			  (elmo-dop-append-list-load folder)))
 	 (appendings append-list)
 	 (i 0)
@@ -377,7 +377,7 @@ even an operation concerns the unplugged folder."
     (when resume
       ;; Resume msgdb changed by elmo-dop-msgdb-create.
       (let* ((resumed-list (elmo-dop-append-list-load folder t))
-	     (number-alist (elmo-msgdb-number-load 
+	     (number-alist (elmo-msgdb-number-load
 			    (elmo-msgdb-expand-path folder)))
 	     (appendings append-list)
 	     pair dels)
@@ -390,7 +390,7 @@ even an operation concerns the unplugged folder."
     (while appendings
       (setq failure nil)
       (setq file-string (elmo-get-file-string  ; message string
-			 (elmo-cache-get-path 
+			 (elmo-cache-get-path
 			  (car appendings))))
       (when file-string
 	(condition-case ()
@@ -444,7 +444,7 @@ even an operation concerns the unplugged folder."
 	       (insert string)
 	       (elmo-cache-save message-id nil folder msg (current-buffer))))
 	    (let ((append-list (elmo-dop-append-list-load folder))
-		  (number-alist (elmo-msgdb-number-load 
+		  (number-alist (elmo-msgdb-number-load
 				 (elmo-msgdb-expand-path folder))))
 	      (when (and ; not in current folder.
 		     (not (rassoc message-id number-alist))
@@ -466,7 +466,7 @@ even an operation concerns the unplugged folder."
   (if (or (eq (elmo-folder-get-type folder) 'imap4)
 	  (eq (elmo-folder-get-type folder) 'nntp))
       (if elmo-enable-disconnected-operation
-	  (let* ((num-alist (elmo-msgdb-number-load 
+	  (let* ((num-alist (elmo-msgdb-number-load
 			     (elmo-msgdb-expand-path folder)))
 		 (number-list (mapcar 'car num-alist))
 		 (ov (elmo-msgdb-overview-load
@@ -481,7 +481,7 @@ even an operation concerns the unplugged folder."
 		      0))
 	    (while numlist
 	      (if (setq msgid
-			(nth (+ (length append-list) 
+			(nth (+ (length append-list)
 				(- (car numlist) max-num 1 num))
 			     append-list))
 		  (progn
@@ -497,7 +497,7 @@ even an operation concerns the unplugged folder."
 		    (setq seen (member msgid seen-list))
 		    (if (setq gmark
 			      (or (elmo-msgdb-global-mark-get msgid)
-				  (if (elmo-cache-exists-p 
+				  (if (elmo-cache-exists-p
 				       msgid
 				       folder
 				       (car number-alist))
@@ -511,7 +511,7 @@ even an operation concerns the unplugged folder."
 			      (elmo-msgdb-mark-append
 			       mark-alist (car numlist) gmark))))
 		
-		(when (setq ov-entity (assoc 
+		(when (setq ov-entity (assoc
 				       (cdr (assq (car numlist) num-alist))
 				       ov))
 		  (setq overview

@@ -68,8 +68,8 @@
       (when (file-exists-p file)
 	;; Read until header separator is found.
 	(while (and (eq elmo-localdir-header-chop-length
-			(nth 1 
-			     (as-binary-input-file 
+			(nth 1
+			     (as-binary-input-file
 			      (insert-file-contents
 			       file nil beg
 			       (incf beg elmo-localdir-header-chop-length)))))
@@ -97,7 +97,7 @@
 	      (elmo-localdir-insert-header file)
 	    (error (throw 'done nil)))
 	  (goto-char (point-min))
-	  (setq header-end 
+	  (setq header-end
 		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
 		    (point)
 		  (point-max)))
@@ -111,8 +111,8 @@
   (elmo-localdir-msgdb-create-overview-entity-from-file
    number (expand-file-name (int-to-string number) dir)))
 
-(defun elmo-localdir-msgdb-create-as-numlist (spec numlist new-mark 
-						   already-mark seen-mark 
+(defun elmo-localdir-msgdb-create-as-numlist (spec numlist new-mark
+						   already-mark seen-mark
 						   important-mark seen-list)
   (when numlist
     (let ((dir (elmo-localdir-get-folder-directory spec))
@@ -123,12 +123,12 @@
       (message "Creating msgdb...")
       (while numlist
 	(setq entity
-	      (elmo-localdir-msgdb-create-entity 
+	      (elmo-localdir-msgdb-create-entity
 	       dir (car numlist)))
 	(if (null entity)
 	    ()
 	  (setq num (elmo-msgdb-overview-entity-get-number entity))
-	  (setq overview 
+	  (setq overview
 		(elmo-msgdb-append-element
 		 overview entity))
 	  (setq number-alist
@@ -140,15 +140,15 @@
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-cache-exists-p message-id) ; XXX
-				  (if seen 
+				  (if seen
 				      nil
 				    already-mark)
-				(if seen 
+				(if seen
 				    nil ;;seen-mark
 				  new-mark))))
 	      (setq mark-alist
-		    (elmo-msgdb-mark-append 
-		     mark-alist 
+		    (elmo-msgdb-mark-append
+		     mark-alist
 		     num
 		     gmark))))
 	(setq i (1+ i))
@@ -190,7 +190,7 @@
 	    (setq dirent (cdr dirent))
 	    (setq abspath (expand-file-name relpath curdir))
 	    (and
-	     (not (string-match 
+	     (not (string-match
 		   elmo-localdir-list-folders-filter-regexp
 		   relpath))
 	     (eq (nth 0 (setq attr (file-attributes abspath))) t)
@@ -254,7 +254,7 @@
     (setq file (expand-file-name number dir))
     (if (and (string-match "[0-9]+" number) ; for safety.
 	     (file-exists-p file)
-	     (file-writable-p file) 
+	     (file-writable-p file)
 	     (not (file-directory-p file)))
 	(progn (delete-file file)
 	       t))))
@@ -283,7 +283,7 @@
 (defun elmo-localdir-check-validity (spec validity-file)
   (let* ((dir (elmo-localdir-get-folder-directory spec))
 	 (cur-val (nth 5 (file-attributes dir)))
-	 (file-val (read 
+	 (file-val (read
 		    (or (elmo-get-file-string validity-file)
 			"nil"))))
     (cond
@@ -303,7 +303,7 @@
       (prin1 (nth 5 (file-attributes dir)) tmp-buffer)
       (princ "\n" tmp-buffer)
       (if (file-writable-p validity-file)
-	  (write-region (point-min) (point-max) 
+	  (write-region (point-min) (point-max)
 			validity-file nil 'no-msg)
 	(message (format "%s is not writable." number-file)))
       (kill-buffer tmp-buffer))))
@@ -346,7 +346,7 @@
 	t))))
 
 (defsubst elmo-localdir-field-condition-match (spec number condition)
-  (elmo-file-field-condition-match 
+  (elmo-file-field-condition-match
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-get-folder-directory spec))
    condition))
@@ -439,7 +439,7 @@
   t)
 
 (defun elmo-localdir-get-msg-filename (spec number &optional loc-alist)
-  (expand-file-name 
+  (expand-file-name
    (int-to-string number)
    (elmo-localdir-get-folder-directory spec)))
 
@@ -452,9 +452,9 @@
 		(throw 'found t))
 	    (setq lock (cdr lock)))))))
 
-(defalias 'elmo-localdir-sync-number-alist 
+(defalias 'elmo-localdir-sync-number-alist
   'elmo-generic-sync-number-alist)
-(defalias 'elmo-localdir-list-folder-unread 
+(defalias 'elmo-localdir-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-localdir-list-folder-important
   'elmo-generic-list-folder-important)

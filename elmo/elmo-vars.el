@@ -48,18 +48,18 @@
   "*Default IMAP4 server.")
 (defvar elmo-default-imap4-authenticate-type "auth"
   "*Default Authentication type for IMAP4.") ; "auth" or "login"
-(defvar elmo-default-imap4-user (or (getenv "USER") 
-				    (getenv "LOGNAME") 
+(defvar elmo-default-imap4-user (or (getenv "USER")
+				    (getenv "LOGNAME")
 				    (user-login-name))
   "*Default username for IMAP4")
-(defvar elmo-default-imap4-port 143 
+(defvar elmo-default-imap4-port 143
   "*Default Port number of IMAP.")
 (defvar elmo-default-imap4-ssl nil
   "*Non-nil forces using SSL by default.")
 
 ;; POP3
-(defvar elmo-default-pop3-user (or (getenv "USER") 
-				   (getenv "LOGNAME") 
+(defvar elmo-default-pop3-user (or (getenv "USER")
+				   (getenv "LOGNAME")
 				   (user-login-name))
   "*Default username for POP3")
 (defvar elmo-default-pop3-server  "localhost"
@@ -76,7 +76,7 @@
   "*Default NNTP server.")
 (defvar elmo-default-nntp-user nil
   "*Default User of NNTP. nil means no user authentication.")
-(defvar elmo-default-nntp-port 119 
+(defvar elmo-default-nntp-port 119
   "*Default Port number of NNTP")
 (defvar elmo-default-nntp-ssl nil
   "*Non-nil forces using SSL by default.")
@@ -126,12 +126,12 @@ Each elements are regexp of folder name (This is obsolete).")
 (defvar elmo-msgdb-finfo-filename "finfo"
   "Folder information cache...list of '(filename . '(new unread all)).")
 (defvar elmo-msgdb-append-list-filename "append"
-  "Appended messages...Structure is same as number-alist. 
+  "Appended messages...Structure is same as number-alist.
 For disconnected operations.")
 (defvar elmo-msgdb-resume-list-filename "resume"
   "Resumed messages. For disconnected operations.")
 (defvar elmo-msgdb-lock-list-filename "lock"
-  "Locked messages...list of message-id. 
+  "Locked messages...list of message-id.
 For disconnected operations.")
 (defvar elmo-msgdb-global-mark-filename "global-mark"
   "Alist of global mark .")
@@ -158,7 +158,7 @@ For disconnected operations.")
 (defvar elmo-imap4-overview-fetch-chop-length 200
   "*Number of overviews to fetch in one request in imap4.")
 (defvar elmo-nntp-overview-fetch-chop-length 200
- "*Number of overviews to fetch in one request in nntp.") 
+ "*Number of overviews to fetch in one request in nntp.")
 (defvar elmo-localdir-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
 (defvar elmo-imap4-force-login nil
@@ -316,12 +316,12 @@ If function, return value of function.")
 (defvar elmo-localdir-lockfile-list nil)
 
 (defvar elmo-nntp-max-number-precedes-list-active nil
-  "If non-nil, max number of the msgdb is set as the max number of 
+  "If non-nil, max number of the msgdb is set as the max number of
 'list active' (needed for inn 2.3 or later?). ")
 
 (defvar elmo-pop3-send-command-synchronously nil
   "If non-nil, commands are send synchronously.
-If server doesn't accept asynchronous commands, this variable should be 
+If server doesn't accept asynchronous commands, this variable should be
 set as non-nil.")
 
 (provide 'elmo-vars)

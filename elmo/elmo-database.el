@@ -54,16 +54,16 @@
     (and msgid db
 	 (progn
 	   (remove-database msgid db)
-	   (put-database msgid (prin1-to-string 
+	   (put-database msgid (prin1-to-string
 				(list folder number)) db)))))
 
 (defun elmo-database-msgid-delete (msgid)
-  (remove-database msgid (elmo-database-get 
+  (remove-database msgid (elmo-database-get
 			  'elmo-database-msgid
 			  elmo-database-msgid-filename)))
 
 (defun elmo-database-msgid-get (msgid)
-  (let ((match (get-database msgid (elmo-database-get 
+  (let ((match (get-database msgid (elmo-database-get
 				    'elmo-database-msgid
 				    elmo-database-msgid-filename))))
     (and match (read match))))

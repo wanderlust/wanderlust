@@ -38,8 +38,8 @@
 	(require 'sasl))
     (error))
   (defun-maybe md5 (a))
-  (defun-maybe sasl-digest-md5-digest-response 
-    (digest-challenge username passwd serv-type host &optional realm))  
+  (defun-maybe sasl-digest-md5-digest-response
+    (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe sasl-scram-md5-client-msg-1
     (authenticate-id &optional authorize-id))
   (defun-maybe sasl-scram-md5-client-msg-2
@@ -75,8 +75,8 @@
       (setq buffer (car (cdr (car cache))))
       (setq process (car (cdr (cdr (car cache)))))
       (if (and process
-	       (not (or (eq (setq proc-stat 
-				  (process-status process)) 
+	       (not (or (eq (setq proc-stat
+				  (process-status process))
 			    'closed)
 			(eq proc-stat 'exit))))
 	  (condition-case ()
@@ -99,26 +99,26 @@
 	 user-at-host-on-port)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
-    (setq user-at-host-on-port 
+    (setq user-at-host-on-port
 	  (concat user-at-host ":" (int-to-string port)
 		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
     (setq ret-val (assoc user-at-host-on-port elmo-pop3-connection-cache))
-    (if (and ret-val 
-	     (or (eq (setq proc-stat 
-			   (process-status (cadr (cdr ret-val)))) 
+    (if (and ret-val
+	     (or (eq (setq proc-stat
+			   (process-status (cadr (cdr ret-val))))
 		     'closed)
 		 (eq proc-stat 'exit)))
 	;; connection is closed...
 	(progn
 	  (kill-buffer (car (cdr ret-val)))
-	  (setq elmo-pop3-connection-cache 
+	  (setq elmo-pop3-connection-cache
 		(delete ret-val elmo-pop3-connection-cache))
 	  (setq ret-val nil)
 	  ))
     (if ret-val
 	(cdr ret-val)
       (setq result
-	    (elmo-pop3-open-connection 
+	    (elmo-pop3-open-connection
 	     server user port auth
 	     (elmo-get-passwd user-at-host) ssl))
       (if (null result)
@@ -130,9 +130,9 @@
 	(delete-process process)
 	(error "Login failed")
 	)
-      (setq elmo-pop3-connection-cache 
-	    (append elmo-pop3-connection-cache 
-		    (list 
+      (setq elmo-pop3-connection-cache
+	    (append elmo-pop3-connection-cache
+		    (list
 		     (cons user-at-host-on-port
 			   (setq ret-val (list buffer process))))))
       ret-val)))
@@ -173,24 +173,24 @@
 	      (buffer-substring elmo-pop3-read-point (- match-end 2)))
 	(goto-char elmo-pop3-read-point)
 	(if (looking-at "\\+.*$")
-	    (progn 
+	    (progn
 	      (setq response-continue nil)
 	      (setq elmo-pop3-read-point match-end)
-	      (setq return-value 
-		    (if return-value 
+	      (setq return-value
+		    (if return-value
 			(concat return-value "\n" response-string)
 		      response-string
 		      )))
 	  (if (looking-at "\\-.*$")
-	      (progn 
+	      (progn
 		(setq response-continue nil)
 		(setq elmo-pop3-read-point match-end)
 		(setq return-value nil))
 	    (setq elmo-pop3-read-point match-end)
 	    (if not-command
 		(setq response-continue nil))
-	    (setq return-value 
-		  (if return-value 
+	    (setq return-value
+		  (if return-value
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
@@ -212,7 +212,7 @@
 	     (get-buffer-create (format " *POP session to %s:%d" host port)))
        (save-excursion
 	 (set-buffer process-buffer)
-	 (elmo-set-buffer-multibyte nil)       	 
+	 (elmo-set-buffer-multibyte nil)
 	 (erase-buffer))
        (setq process
 	     (elmo-open-network-stream "POP" process-buffer host port ssl))
@@ -229,8 +229,8 @@
 	   (throw 'done nil))
 	 (when (eq ssl 'starttls)
 	   (elmo-pop3-send-command process-buffer process "stls")
-	   (string-match "^\+OK" 
-			 (elmo-pop3-read-response 
+	   (string-match "^\+OK"
+			 (elmo-pop3-read-response
 			  process-buffer process))
 	   (starttls-negotiate process))
 	 (cond ((string= auth "apop")
@@ -239,18 +239,18 @@
 		    ;; good, APOP ready server
 		    (progn
 		      (require 'md5)
-		      (elmo-pop3-send-command  
-		       process-buffer process 
-		       (format "apop %s %s" 
+		      (elmo-pop3-send-command
+		       process-buffer process
+		       (format "apop %s %s"
 			       user
-			       (md5 
+			       (md5
 				(concat (match-string 1 response)
 					    passphrase)))))
 		  ;; otherwise, fail (only APOP authentication)
 		  (setq ret-val (cons nil process))
 		  (throw 'done nil)))
 	       ((string= auth "cram-md5")
-		(elmo-pop3-send-command  
+		(elmo-pop3-send-command
 		 process-buffer process "auth cram-md5")
 		(when (null (setq response
 				  (elmo-pop3-read-response
@@ -260,11 +260,11 @@
 		(elmo-pop3-send-command
 		 process-buffer process
 		 (elmo-base64-encode-string
-		  (sasl-cram-md5 user passphrase 
+		  (sasl-cram-md5 user passphrase
 				 (elmo-base64-decode-string
 				  (cadr (split-string response " ")))))))
 	       ((string= auth "digest-md5")
-		(elmo-pop3-send-command  
+		(elmo-pop3-send-command
 		 process-buffer process "auth digest-md5")
 		(when (null (setq response
 				  (elmo-pop3-read-response
@@ -309,7 +309,7 @@
 		     server-msg-1
 		     client-msg-1
 		     (setq salted-pass
-			   (sasl-scram-md5-make-salted-pass 
+			   (sasl-scram-md5-make-salted-pass
 			    server-msg-1 passphrase)))))
 		  (when (null (setq response
 				    (elmo-pop3-read-response
@@ -329,12 +329,12 @@
 		   process-buffer process "") ))
 	       (t
 		;; try USER/PASS
-		(elmo-pop3-send-command  process-buffer process 
+		(elmo-pop3-send-command  process-buffer process
 					 (format "user %s" user))
 		(when (null (elmo-pop3-read-response process-buffer process t))
 		  (setq ret-val (cons nil process))
 		  (throw 'done nil))
-		(elmo-pop3-send-command  process-buffer process 
+		(elmo-pop3-send-command  process-buffer process
 					 (format "pass %s" passphrase))))
 	 ;; read PASS or APOP response
 	 (when (null (elmo-pop3-read-response process-buffer process t))
@@ -354,7 +354,7 @@
 	(goto-char elmo-pop3-read-point))
       (setq match-end (point))
       (elmo-delete-cr
-       (buffer-substring elmo-pop3-read-point 
+       (buffer-substring elmo-pop3-read-point
 			 (- match-end 3))))))
 
 ;; dummy functions
@@ -503,11 +503,11 @@
 	   (process (nth 1 connection))
 	   response errmsg ret-val)
       (elmo-pop3-msgdb-create-by-header buffer process numlist
-					new-mark already-mark 
+					new-mark already-mark
 					seen-mark seen-list))))
 
 (defun elmo-pop3-msgdb-create-by-header (buffer process numlist
-						new-mark already-mark 
+						new-mark already-mark
 						seen-mark
 						seen-list)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
@@ -516,15 +516,15 @@
      buffer tmp-buffer process numlist)
     (setq ret-val
 	  (elmo-pop3-msgdb-create-message
-	   tmp-buffer 
+	   tmp-buffer
 	   (length numlist)
 	   numlist
 	   new-mark already-mark seen-mark seen-list))
     (kill-buffer tmp-buffer)
     ret-val))
 
-(defun elmo-pop3-msgdb-create-message (buffer 
-				       num numlist new-mark already-mark 
+(defun elmo-pop3-msgdb-create-message (buffer
+				       num numlist new-mark already-mark
 				       seen-mark
 				       seen-list)
   (save-excursion
@@ -544,11 +544,11 @@
 	  (save-restriction
 	    (narrow-to-region beg (point))
 	    (setq entity
-		  (elmo-msgdb-create-overview-from-buffer 
+		  (elmo-msgdb-create-overview-from-buffer
 		   (car numlist)))
 	    (setq numlist (cdr numlist))
 	    (when entity
-	      (setq overview 
+	      (setq overview
 		    (elmo-msgdb-append-element
 		     overview entity))
 	      (setq number-alist
@@ -558,7 +558,7 @@
 	      (setq message-id (car entity))
 	      (setq seen (member message-id seen-list))
 	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-				  (if (elmo-cache-exists-p 
+				  (if (elmo-cache-exists-p
 				       message-id) ; XXX
 				      (if seen
 					  nil
@@ -568,7 +568,7 @@
 					    seen-mark)
 				      new-mark))))
 		  (setq mark-alist
-			(elmo-msgdb-mark-append 
+			(elmo-msgdb-mark-append
 			 mark-alist
 			 (elmo-msgdb-overview-entity-get-number entity)
 			 gmark)))
@@ -602,9 +602,9 @@
     (let* ((connection (elmo-pop3-get-connection spec))
 	   (buffer  (car connection))
 	   (process (cadr connection))
-	   (cwf     (caddr connection))	 
+	   (cwf     (caddr connection))
 	   response errmsg msg)
-      (elmo-pop3-send-command buffer process 
+      (elmo-pop3-send-command buffer process
 			      (format "retr %s" number))
       (when (null (setq response (elmo-pop3-read-response
 				  buffer process t)))
@@ -619,7 +619,7 @@
 
 (defun elmo-pop3-delete-msg (buffer process number)
   (let (response errmsg msg)
-    (elmo-pop3-send-command buffer process 
+    (elmo-pop3-send-command buffer process
 			    (format "dele %s" number))
     (when (null (setq response (elmo-pop3-read-response
 				buffer process t)))
@@ -630,7 +630,7 @@
     (let* ((connection (elmo-pop3-get-connection spec))
 	   (buffer  (car connection))
 	   (process (cadr connection)))
-      (mapcar '(lambda (msg) (elmo-pop3-delete-msg 
+      (mapcar '(lambda (msg) (elmo-pop3-delete-msg
 			      buffer process msg))
 	      msgs))))
 
@@ -648,7 +648,7 @@
 	  (if (elmo-pop3-spec-ssl spec) "!ssl" "")))
 
 (defsubst elmo-pop3-portinfo (spec)
-  (list (elmo-pop3-spec-hostname spec) 
+  (list (elmo-pop3-spec-hostname spec)
 	(elmo-pop3-spec-port spec)))
 
 (defun elmo-pop3-plugged-p (spec)
@@ -661,9 +661,9 @@
 	 (append (elmo-pop3-portinfo spec)
 		 (list nil nil (quote (elmo-pop3-port-label spec)) add))))
 
-(defalias 'elmo-pop3-sync-number-alist 
+(defalias 'elmo-pop3-sync-number-alist
   'elmo-generic-sync-number-alist)
-(defalias 'elmo-pop3-list-folder-unread 
+(defalias 'elmo-pop3-list-folder-unread
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)
