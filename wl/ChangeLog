@@ -1,5 +1,12 @@
 2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp):
+	New variable.
+	* wl-summary.el (wl-summary-insert-thread-entity): Search parent
+	by subject matching if there's no in-reply-to nor references field.
+
+	* wl-summary.el (wl-summary-set-parent): New command (No key binding).
+
 	* wl-folder.el (wl-folder-insert-entity): Remove progress gauge
 	when display is finished.
 	(wl-folder-open-all): Ditto.
@@ -9,6 +16,7 @@
 
 	* wl-summary.el (wl-summary-delete-messages-on-buffer): Remove
 	progress gauge only when it was displayed.
+	* wl-folder.el (wl-folder-insert-entity): Ditto.
 
 2000-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
