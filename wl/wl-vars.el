@@ -493,15 +493,14 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
 		       (symbol :tag "file name")))
   :group 'wl-pref)
 
-(defcustom wl-demo-image-filter-alist
-  '((xpm . wl-demo-xpm-set-background))
+(defcustom wl-demo-image-filter-alist nil
   "An alist of image type and filter function."
   :type '(repeat (cons symbol function))
   :group 'wl-pref)
 
-(defcustom wl-demo-background-color "None"
+(defcustom wl-demo-background-color "#d9ffd9"
   "The color name for demo background.
-Used in the filter function `wl-demo-filter-xpm-background'."
+If nil, the default face background is used."
   :type '(string :tag "Color name")
   :group 'wl-pref)
 

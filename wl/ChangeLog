@@ -1,3 +1,14 @@
+2004-01-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-demo-image-filter-alist): Set default value to nil.
+	(wl-demo-background-color): Changed default value.
+
+	* wl-highlight.el (wl-highlight-demo-face): Changed default foreground
+	color.
+
+	* wl-demo.el (wl-demo-set-background-color): New function.
+	(wl-demo): Call it.
+
 2004-01-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-address.el (wl-address-delete): Avoid mis-deleting.

@@ -600,10 +600,10 @@
      (:foreground "green"))
     (((class color)
       (background dark))
-     (:foreground "GreenYellow"))
+     (:foreground "#006600"))
     (((class color)
       (background light))
-     (:foreground "blue2")))
+     (:foreground "#006600")))
   "Face used for displaying demo."
   :group 'wl-faces)
 

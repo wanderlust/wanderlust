@@ -287,6 +287,24 @@ Return a number of lines that an image occupies in the buffer."
 		      (max 0 (/ (1+ (- (window-width) width)) 2)))
       (count-lines (point-min) (goto-char (point-max))))))
 
+(defun wl-demo-set-background-color ()
+  "Set background color of the demo buffer."
+  (cond
+   (wl-on-emacs21
+    ;; I think there should be a better way to set face background in the
+    ;; buffer local way. But I don't know how to do it on Emacs21.
+    (goto-char (point-max))
+    (dotimes (i (- (window-height)
+		   (count-lines (point-min) (point)) 1)) ; 1 means modeline
+      (insert ?\n))
+    (put-text-property (point-min) (point-max)
+		       'face 'wl-highlight-demo-face)
+    (set-face-background 'wl-highlight-demo-face
+			 wl-demo-background-color))
+   ((featurep 'xemacs)
+    (set-face-background 'default wl-demo-background-color
+			 (current-buffer)))))
+
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
 should be a number of lines that an image occupies in the buffer."
@@ -348,6 +366,8 @@ argument."
     (set (make-local-variable 'tab-stop-list)
 	 '(8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
     (wl-demo-insert-text (wl-demo-insert-image image-type))
+    (when wl-demo-background-color
+      (wl-demo-set-background-color))
     (set-buffer-modified-p nil)
     (goto-char (point-min))
     (sit-for (if (featurep 'lisp-float-type)
