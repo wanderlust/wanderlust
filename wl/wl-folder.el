@@ -33,7 +33,7 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
-(require 'elmo2)
+(require 'elmo)
 (require 'wl-vars)
 (condition-case ()
     (require 'easymenu) ; needed here.
@@ -44,12 +44,7 @@
   (require 'wl-util)
   (provide 'wl-folder)
   (require 'wl)
-  (require 'elmo-nntp)
-  (if wl-use-semi
-      (require 'mmelmo))
-  (unless (boundp ':file)
-    (set (make-local-variable ':file) nil))
-  (defun-maybe mmelmo-cleanup-entity-buffers ()))
+  (require 'elmo-nntp))
 
 (defvar wl-folder-buffer-name "Folder")
 (defvar wl-folder-entity nil)		; desktop entity.
@@ -57,6 +52,8 @@
 (defvar wl-folder-entity-id nil) ; id
 (defvar wl-folder-entity-hashtb nil)
 (defvar wl-folder-entity-id-name-hashtb nil)
+(defvar wl-folder-elmo-folder-hashtb nil)  ; name => elmo folder structure
+
 (defvar wl-folder-newsgroups-hashtb nil)
 (defvar wl-folder-info-alist-modified nil)
 (defvar wl-folder-completion-func nil)
@@ -85,7 +82,7 @@
     ["Next Folder"          wl-folder-next-entity t]
     ["Check Current Folder" wl-folder-check-current-entity t]
     ["Sync Current Folder"  wl-folder-sync-current-entity t]
-    ["Drop Current Folder" wl-folder-drop-unsync-current-entity t]
+;    ["Drop Current Folder" wl-folder-drop-unsync-current-entity t]
     ["Prefetch Current Folder" wl-folder-prefetch-current-entity t]
     ["Mark as Read all Current Folder" wl-folder-mark-as-read-all-current-entity t]
     ["Expire Current Folder" wl-folder-expire-current-entity t]
@@ -155,7 +152,7 @@
   (define-key wl-folder-mode-map "rs"   'wl-folder-check-region)
   (define-key wl-folder-mode-map "s"    'wl-folder-check-current-entity)
   (define-key wl-folder-mode-map "I"    'wl-folder-prefetch-current-entity)
-  (define-key wl-folder-mode-map "D"    'wl-folder-drop-unsync-current-entity)
+;  (define-key wl-folder-mode-map "D"    'wl-folder-drop-unsync-current-entity)
   (define-key wl-folder-mode-map "p"    'wl-folder-prev-entity)
   (define-key wl-folder-mode-map "n"    'wl-folder-next-entity)
   (define-key wl-folder-mode-map "v"    'wl-folder-toggle-disp-summary)
@@ -293,7 +290,9 @@
 			  hashtb))))
 
 (defun wl-folder-persistent-p (folder)
-  (or (elmo-get-hash-val folder wl-folder-entity-hashtb) ; on Folder mode.
+  (or (and (wl-folder-search-entity-by-name folder wl-folder-entity
+					    'folder)
+	   t) 	; on Folder mode.
       (catch 'found
 	(let ((li wl-save-folder-list))
 	  (while li
@@ -306,6 +305,27 @@
 		 (if (string-match (car li) folder)
 		     (throw 'found t))
 		 (setq li (cdr li))))))))
+
+;;; ELMO folder structure with cache.
+(defmacro wl-folder-get-elmo-folder (entity)
+  "Get elmo folder structure from entity."
+  (` (or (wl-folder-elmo-folder-cache-get (, entity))
+	 (let* ((name (elmo-string (, entity)))
+		(folder (elmo-make-folder name)))
+	   (wl-folder-elmo-folder-cache-put name folder)
+	   folder))))
+
+(defmacro wl-folder-elmo-folder-cache-get (name &optional hashtb)
+  "Returns a elmo folder structure associated with NAME from HASHTB.
+Default HASHTB is `wl-folder-elmo-folder-hashtb'."
+  (` (elmo-get-hash-val (, name)
+			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
+
+(defmacro wl-folder-elmo-folder-cache-put (name folder &optional hashtb)
+  "Get folder elmo folder structure on HASHTB for folder with NAME.
+Default HASHTB is `wl-folder-elmo-folder-hashtb'."
+  (` (elmo-set-hash-val (, name) (, folder)
+			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
 
 (defun wl-folder-prev-entity ()
   (interactive)
@@ -447,7 +467,8 @@
 	emptied)
     (if elmo-enable-disconnected-operation
 	(elmo-dop-queue-flush 'force)) ; Try flushing all queue.
-    (if (not (elmo-list-folder wl-queue-folder))
+    (if (not (elmo-folder-list-messages
+	      (wl-folder-get-elmo-folder wl-queue-folder)))
 	(message "No sending queue exists.")
       (if wl-stay-folder-window
 	  (wl-folder-select-buffer
@@ -479,7 +500,7 @@
 	(setq wl-thread-entities nil
 	      wl-thread-entity-list nil)
 	(if wl-summary-cache-use (wl-summary-save-view-cache))
-	(wl-summary-msgdb-save))
+	(elmo-folder-commit wl-summary-buffer-elmo-folder))
       (if (get-buffer-window cur-buf)
 	  (select-window (get-buffer-window cur-buf)))
       (set-buffer cur-buf)
@@ -519,28 +540,29 @@ Optional argument ARG is repeart count."
       (goto-char (point-max))))
 
 (defsubst wl-folder-update-group (entity diffs &optional is-group)
-  (let ((path (wl-folder-get-path
-	       wl-folder-entity
-	       (wl-folder-get-entity-id entity)
-	       entity)))
-    (if (not is-group)
-	;; delete itself from path
-	(setq path (delete (nth (- (length path) 1) path) path)))
-    (goto-char (point-min))
-    (catch 'done
-      (while path
-	;; goto the path line.
-	(if (or (eq (car path) 0) ; update desktop
-		(wl-folder-buffer-search-group
-		 (wl-folder-get-petname
-		  (if (stringp (car path))
-		      (car path)
-		    (wl-folder-get-folder-name-by-id
-		     (car path))))))
-	    ;; update it.
-	    (wl-folder-update-diff-line diffs)
-	  (throw 'done t))
-	(setq path (cdr path))))))
+  (save-excursion
+    (let ((path (wl-folder-get-path
+		 wl-folder-entity
+		 (wl-folder-get-entity-id entity)
+		 entity)))
+      (if (not is-group)
+	  ;; delete itself from path
+	  (setq path (delete (nth (- (length path) 1) path) path)))
+      (goto-char (point-min))
+      (catch 'done
+	(while path
+	  ;; goto the path line.
+	  (if (or (eq (car path) 0) ; update desktop
+		  (wl-folder-buffer-search-group
+		   (wl-folder-get-petname
+		    (if (stringp (car path))
+			(car path)
+		      (wl-folder-get-folder-name-by-id
+		       (car path))))))
+	      ;; update it.
+	      (wl-folder-update-diff-line diffs)
+	    (throw 'done t))
+	  (setq path (cdr path)))))))
 
 (defun wl-folder-maybe-load-folder-list (entity)
   (when (null (caddr entity))
@@ -582,33 +604,33 @@ Optional argument ARG is repeart count."
 	      (setq beg (point))
 	      (if arg
 		  (wl-folder-update-recursive-current-entity entity)
-	      ;; insert as opened
-	      (setcdr (assoc (car entity) wl-folder-group-alist) t)
-	      (if (eq 'access (cadr entity))
-		  (wl-folder-maybe-load-folder-list entity))
-	      (condition-case errobj
-		  (progn
-		    (if (or (wl-folder-force-fetch-p (car entity))
-			    (and
-			     (eq 'access (cadr entity))
-			     (null (caddr entity))))
-			(wl-folder-update-newest indent entity)
-		      (wl-folder-insert-entity indent entity))
-		    (wl-highlight-folder-path wl-folder-buffer-cur-path))
-		(quit
-		 (setq err t)
-		 (setcdr (assoc fname wl-folder-group-alist) nil))
-		(error
-		 (elmo-display-error errobj t)
-		 (ding)
-		 (setq err t)
-		 (setcdr (assoc fname wl-folder-group-alist) nil)))
-	      (if (not err)
-		  (let ((buffer-read-only nil))
-		    (delete-region (save-excursion (beginning-of-line)
-						   (point))
-				   (save-excursion (end-of-line)
-						   (+ 1 (point))))))))
+		;; insert as opened
+		(setcdr (assoc (car entity) wl-folder-group-alist) t)
+		(if (eq 'access (cadr entity))
+		    (wl-folder-maybe-load-folder-list entity))
+		;(condition-case errobj
+		    (progn
+		      (if (or (wl-folder-force-fetch-p (car entity))
+			      (and
+			       (eq 'access (cadr entity))
+			       (null (caddr entity))))
+			  (wl-folder-update-newest indent entity)
+			(wl-folder-insert-entity indent entity))
+		      (wl-highlight-folder-path wl-folder-buffer-cur-path))
+		 ; (quit
+		 ;  (setq err t)
+		 ;  (setcdr (assoc fname wl-folder-group-alist) nil))
+		 ; (error
+		 ;  (elmo-display-error errobj t)
+		 ;  (ding)
+		 ;  (setq err t)
+		 ;  (setcdr (assoc fname wl-folder-group-alist) nil)))
+		(if (not err)
+		    (let ((buffer-read-only nil))
+		      (delete-region (save-excursion (beginning-of-line)
+						     (point))
+				     (save-excursion (end-of-line)
+						     (+ 1 (point))))))))
 	  (setq beg (point))
 	  (end-of-line)
 	  (save-match-data
@@ -646,7 +668,8 @@ Optional argument ARG is repeart count."
 		   (get-buffer-window summary-buf))
 	      (delete-window)))
 	(wl-summary-goto-folder-subr fld-name
-				     (wl-summary-get-sync-range fld-name)
+				     (wl-summary-get-sync-range
+				      (wl-folder-get-elmo-folder fld-name))
 				     nil arg t)))))
   (set-buffer-modified-p nil))
 
@@ -768,10 +791,10 @@ Optional argument ARG is repeart count."
 	    ;(wl-folder-buffer-search-entity (car entity))
 	    ;(wl-folder-update-line ret-val)
 	    ))
-	 ((and (stringp entity)
-	       (elmo-folder-plugged-p entity))
+	 ((stringp entity)
 	  (message "Checking \"%s\"" entity)
-	  (setq ret-val (wl-folder-check-one-entity entity))
+	  (setq ret-val (wl-folder-check-one-entity
+			 entity))
 	  (goto-char start-pos)
 	  (sit-for 0))
 	 (t
@@ -782,38 +805,18 @@ Optional argument ARG is repeart count."
     (run-hooks 'wl-folder-check-entity-hook)
     ret-val))
 
-;; All contained folders are imap4 and persistent flag, then
-;; use server diff.
-(defun wl-folder-use-server-diff-p (folder)
-  (let ((spec (elmo-folder-get-spec folder)))
-    (cond
-     ((eq (car spec) 'multi)
-      (let ((folders (cdr spec)))
-	(catch 'done
-	  (while folders
-	    (if (wl-folder-use-server-diff-p (car folders))
-		(throw 'done t))
-	    (setq folders (cdr folders)))
-	  nil)))
-    ((eq (car spec) 'filter)
-     (wl-folder-use-server-diff-p (nth 2 spec)))
-    ((eq (car spec) 'imap4)
-     (and wl-folder-use-server-diff
-	  (elmo-imap4-use-flag-p spec)))
-    (t nil))))
-
 (defun wl-folder-check-one-entity (entity)
-  (let* ((elmo-use-server-diff (wl-folder-use-server-diff-p entity))
+  (let* ((folder (wl-folder-get-elmo-folder entity))
 	 (nums (condition-case err
 		   (if (wl-string-match-member entity wl-strict-diff-folders)
-		       (elmo-strict-folder-diff entity)
-		     (elmo-folder-diff entity))
+		       (elmo-strict-folder-diff folder)
+		     (elmo-folder-diff folder))
 		 (error
 		  ;; maybe not exist folder.
 		  (if (and (not (memq 'elmo-open-error
 				      (get (car err) 'error-conditions)))
-			   (not (elmo-folder-exists-p entity)))
-		      (wl-folder-create-subr entity)
+			   (not (elmo-folder-exists-p folder)))
+		      (wl-folder-create-subr folder)
 		    (signal (car err) (cdr err))))))
 	 unread unsync nomif)
     (if (and (eq wl-folder-notify-deleted 'sync)
@@ -821,7 +824,7 @@ Optional argument ARG is repeart count."
 	     (or (> 0 (car nums)) (> 0 (cdr nums))))
 	(progn
 	  (wl-folder-sync-entity entity)
-	  (setq nums (elmo-folder-diff entity)))
+	  (setq nums (elmo-folder-diff folder)))
       (unless wl-folder-notify-deleted
 	(setq unsync (if (and (car nums) (> 0 (car nums))) 0 (car nums)))
 	(setq nomif (if (and (car nums) (> 0 (cdr nums))) 0 (cdr nums)))
@@ -833,12 +836,14 @@ Optional argument ARG is repeart count."
 					  (or
 					   ;; If server diff, All unreads are
 					   ;; treated as unsync.
-					   (if elmo-use-server-diff 0)
-					   (elmo-folder-get-info-unread entity)
+					   (if (elmo-folder-use-flag-p folder)
+					       0)
+					   (elmo-folder-get-info-unread
+					    folder)
 					   (wl-summary-count-unread
 					    (elmo-msgdb-mark-load
-					     (elmo-msgdb-expand-path entity))
-					    entity)))
+					     (elmo-folder-msgdb-path
+					      folder)))))
 					 (cdr nums))
 				   (current-buffer)))
     (setq wl-folder-info-alist-modified t)
@@ -855,50 +860,61 @@ Optional argument ARG is repeart count."
 		    (wl-folder-get-entity-list entity))
 		 (wl-folder-get-entity-list entity)))
 	(nntp-connection-keys nil)
-	folder spec-list local-elist net-elist server
+	name folder folder-list
+	sync-folder-list
+	async-folder-list
+	server
 	ret-val)
     (while elist
-      (if (not (elmo-folder-plugged-p (car elist)))
+      (setq folder (wl-folder-get-elmo-folder (car elist)))
+      (if (not (elmo-folder-plugged-p folder))
 	  (message "Uncheck \"%s\"" (car elist))
-	(setq spec-list
-	      (elmo-folder-get-primitive-spec-list (elmo-string (car elist))))
-	(cond ((assq 'nntp spec-list)
-	       (wl-append net-elist (list (car elist)))
-	       (while spec-list
-		 (when (eq (caar spec-list) 'nntp)
-		   (when (not (string= server (elmo-nntp-spec-hostname (car spec-list))))
-		     (setq server (elmo-nntp-spec-hostname (car spec-list)))
+	(setq folder-list
+	      (elmo-folder-get-primitive-list folder))
+	(cond ((elmo-folder-contains-type folder 'nntp)
+	       (wl-append async-folder-list (list folder))
+	       (while folder-list
+		 (when (eq (elmo-folder-type-internal (car folder-list))
+			   'nntp)
+		   (when (not (string=
+			       server
+			       (elmo-net-folder-server-internal
+				(car folder-list))))
+		     (setq server (elmo-net-folder-server-internal
+				   (car folder-list)))
 		     (message "Checking on \"%s\"" server))
 		   (setq nntp-connection-keys
 			 (elmo-nntp-get-folders-info-prepare
-			  (car spec-list)
+			  (car folder-list)
 			  nntp-connection-keys)))
-		 (setq spec-list (cdr spec-list))))
+		 (setq folder-list (cdr folder-list))))
 	      (t
-	       (wl-append local-elist (list (car elist))))))
+	       (wl-append sync-folder-list (list folder)))))
       (setq elist (cdr elist)))
     ;; check local entity at first
-    (while (setq folder (pop local-elist))
+    (while (setq folder (pop sync-folder-list))
       (if (not (elmo-folder-plugged-p folder))
-	  (message "Uncheck \"%s\"" folder)
-	(message "Checking \"%s\"" folder)
+	  (message "Uncheck \"%s\"" (elmo-folder-name-internal folder))
+	(message "Checking \"%s\"" (elmo-folder-name-internal folder))
 	(setq ret-val
 	      (wl-folder-add-folder-info
 	       ret-val
-	       (wl-folder-check-one-entity folder)))
+	       (wl-folder-check-one-entity (elmo-folder-name-internal 
+					    folder))))
 	;;(sit-for 0)
 	))
     ;; check network entity at last
-    (when net-elist
+    (when async-folder-list
       (elmo-nntp-get-folders-info nntp-connection-keys)
-      (while (setq folder (pop net-elist))
+      (while (setq folder (pop async-folder-list))
 	(if (not (elmo-folder-plugged-p folder))
-	    (message "Uncheck \"%s\"" folder)
-	  (message "Checking \"%s\"" folder)
+	    (message "Uncheck \"%s\"" (elmo-folder-name-internal folder))
+	  (message "Checking \"%s\"" (elmo-folder-name-internal folder))
 	  (setq ret-val
 		(wl-folder-add-folder-info
 		 ret-val
-		 (wl-folder-check-one-entity folder)))
+		 (wl-folder-check-one-entity (elmo-folder-name-internal
+					      folder))))
 	  ;;(sit-for 0)
 	  )))
     ret-val))
@@ -971,12 +987,13 @@ If current line is group folder, check all sub entries."
 	(wl-folder-sync-entity (car flist) unread-only)
 	(setq flist (cdr flist)))))
    ((stringp entity)
-    (let ((nums (wl-folder-get-entity-info entity))
-	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
-					(wl-summary-always-sticky-folder-p
-					 entity))
-				    wl-summary-highlight))
-	  wl-auto-select-first new unread)
+    (let* ((folder (wl-folder-get-elmo-folder entity))
+	   (nums (wl-folder-get-entity-info entity))
+	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
+					 (wl-summary-always-sticky-folder-p
+					  folder))
+				     wl-summary-highlight))
+	   wl-auto-select-first new unread)
       (setq new (or (car nums) 0))
       (setq unread (or (cadr nums) 0))
       (if (or (not unread-only)
@@ -985,11 +1002,10 @@ If current line is group folder, check all sub entries."
 	    (save-excursion
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
+					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range entity)
+					     (wl-summary-get-sync-range
+					      folder)
 					     nil nil nil t)
 		(wl-summary-exit)))))))))
 
@@ -1019,27 +1035,26 @@ If current line is group folder, check all subfolders."
 	(wl-folder-mark-as-read-all-entity (car flist))
 	(setq flist (cdr flist)))))
    ((stringp entity)
-    (let ((nums (wl-folder-get-entity-info entity))
-	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
-					(wl-summary-always-sticky-folder-p
-					 entity))
-				    wl-summary-highlight))
-	  wl-auto-select-first new unread)
+    (let* ((nums (wl-folder-get-entity-info entity))
+	   (folder (wl-folder-get-elmo-folder entity))
+	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
+					 (wl-summary-always-sticky-folder-p
+					  folder))
+				     wl-summary-highlight))
+	   wl-auto-select-first new unread)
       (setq new (or (car nums) 0))
       (setq unread (or (cadr nums) 0))
       (if (or (< 0 new) (< 0 unread))
-	(save-window-excursion
-	  (save-excursion
-	    (let ((wl-summary-buffer-name (concat
+	  (save-window-excursion
+	    (save-excursion
+	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-	      (wl-summary-goto-folder-subr entity
-					   (wl-summary-get-sync-range entity)
-					   nil)
-	      (wl-summary-mark-as-read-all)
-	      (wl-summary-exit))))
+					     (symbol-name this-command))))
+		(wl-summary-goto-folder-subr entity
+					     (wl-summary-get-sync-range folder)
+					     nil)
+		(wl-summary-mark-as-read-all)
+		(wl-summary-exit))))
 	(sit-for 0))))))
 
 (defun wl-folder-mark-as-read-all-current-entity ()
@@ -1075,7 +1090,8 @@ If current line is group folder, all subfolders are marked."
       (if (looking-at "^[\t ]*\\([^\\[]+\\):\\(.*\\)\n")
 	  (save-excursion
 	    (setq entity (wl-folder-get-entity-from-buffer))
-	    (if (not (elmo-folder-plugged-p entity))
+	    (if (not (elmo-folder-plugged-p (wl-folder-get-elmo-folder
+					     entity)))
 		(message "Uncheck %s" entity)
 	      (message "Checking %s" entity)
 	      (wl-folder-check-one-entity entity)
@@ -1306,7 +1322,8 @@ If current line is group folder, all subfolders are marked."
 	  (and (interactive-p) (wl-folder-buffer-group-p)))
       (error "This command is not available on Group"))
   (beginning-of-line)
-  (let (wl-auto-select-first)
+  (let (wl-auto-select-first
+	(wl-stay-folder-window t))
     (cond
      ((eq arg 'on)
       (setq wl-folder-buffer-disp-summary t))
@@ -1446,8 +1463,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(setcdr (assoc (car wl-folder-entity) wl-folder-group-alist) t)
 	(save-excursion
 	  (wl-folder-insert-entity " " wl-folder-entity)))
+      (sit-for 0)
       (set-buffer-modified-p nil)
-      ;(sit-for 0)
       (setq initialize t))
     initialize))
 
@@ -1479,11 +1496,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (if (setq buf (get-buffer wl-folder-buffer-name))
 	  (wl-folder-entity-hashtb-set
 	   wl-folder-entity-hashtb name value buf))
-;;;   (elmo-folder-set-info-hashtb (elmo-string name)
-;;;				   nil
-;;;				   (nth 2 value)
-;;;				   (nth 0 value)
-;;;				   (nth 1 value))
       (setq wl-folder-info-alist-modified t))))
 
 (defun wl-folder-calc-finfo (entity)
@@ -1532,11 +1544,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(if as-opened
 	    (let (update-flist flist-unsub new-flist removed group-name-end)
 	      (when (and (eq (cadr entity) 'access)
-			 (elmo-folder-plugged-p (car entity)))
+			 (elmo-folder-plugged-p
+			  (wl-folder-get-elmo-folder (car entity))))
 		(message "Fetching folder entries...")
 		(when (setq new-flist
-			    (elmo-list-folders
-			     (elmo-string (car entity))
+			    (elmo-folder-list-subfolders
+			     (wl-folder-get-elmo-folder (car entity))
 			     (wl-string-member
 			      (car entity)
 			      wl-folder-hierarchy-access-folders)))
@@ -1726,19 +1739,19 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		 (equal diffs '(0 0 0)))
       (wl-folder-set-entity-info name value entity-hashtb)
       (save-match-data
-	(save-excursion
-	  (set-buffer buffer)
-	  (setq entity-list (wl-folder-search-entity-list-by-name
-			     name wl-folder-entity))
-	  (while entity-list
-	    (wl-folder-update-group (car entity-list) diffs)
-	    (setq entity-list (cdr entity-list)))
-	  (goto-char (point-min))
-	  (while (wl-folder-buffer-search-entity name)
-	    (wl-folder-update-line value)))))))
-
+	(with-current-buffer buffer
+	  (save-excursion
+	    (setq entity-list (wl-folder-search-entity-list-by-name
+			       name wl-folder-entity))
+	    (while entity-list
+	      (wl-folder-update-group (car entity-list) diffs)
+	      (setq entity-list (cdr entity-list)))
+	    (goto-char (point-min))
+	    (while (wl-folder-buffer-search-entity name)
+	      (wl-folder-update-line value))))))))
+  
 (defun wl-folder-update-unread (folder unread)
-  (save-window-excursion
+;  (save-window-excursion
     (let ((buf (get-buffer wl-folder-buffer-name))
 	  cur-unread
 	  (unread-diff 0)
@@ -1749,7 +1762,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (setq cur-unread (or (nth 1 (wl-folder-get-entity-info folder)) 0))
       (setq unread-diff (- (or unread 0) cur-unread))
       (setq value (wl-folder-get-entity-info folder))
-
       (setq newvalue (list (nth 0 value)
 			   unread
 			   (nth 2 value)))
@@ -1758,8 +1770,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (when (and buf
 		 (not (eq unread-diff 0)))
 	(save-match-data
-	  (save-excursion
-	    (set-buffer buf)
+	  (with-current-buffer buf
 	    (save-excursion
 	      (setq entity-list (wl-folder-search-entity-list-by-name
 				 folder wl-folder-entity))
@@ -1770,7 +1781,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(setq entity-list (cdr entity-list)))
 	      (goto-char (point-min))
 	      (while (wl-folder-buffer-search-entity folder)
-		(wl-folder-update-line newvalue)))))))))
+		(wl-folder-update-line newvalue))))))));)
 
 (defun wl-folder-create-entity-hashtb (entity &optional hashtb reconst)
   (let ((hashtb (or hashtb (elmo-make-hash wl-folder-entity-id)))
@@ -1820,22 +1831,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 ;;	(setq entities (wl-pop entity-stack))))
 ;;    hashtb))
 
-(defun wl-folder-create-newsgroups-from-nntp-access2 (entity)
-  (let ((flist (nth 2 entity))
-	folders)
-    (and
-     (setq folders
-	   (delq
-	    nil
-	    (mapcar
-	     '(lambda (fld)
-		(if (consp fld)
-		    (wl-folder-create-newsgroups-from-nntp-access2 fld)
-		  (nth 1 (elmo-folder-get-spec fld))))
-	     flist)))
-     (elmo-nntp-make-groups-hashtb folders 1024))
-    nil))
-
 (defun wl-folder-create-newsgroups-from-nntp-access (entity)
   (let ((flist (nth 2 entity))
 	folders)
@@ -1845,38 +1840,45 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		  ((consp (car flist))
 		   (wl-folder-create-newsgroups-from-nntp-access (car flist)))
 		  (t
-		   (list (nth 1 (elmo-folder-get-spec (car flist)))))))
+		   (list
+		    (elmo-nntp-folder-group-internal
+		     (wl-folder-get-elmo-folder (car flist)))))))
       (setq flist (cdr flist)))
     folders))
 
 (defun wl-folder-create-newsgroups-hashtb (entity &optional is-list info)
+  "Create NNTP group hashtable for ENTITY."
   (let ((entities (if is-list entity (list entity)))
-	entity-stack spec-list folders fld make-hashtb)
+	entity-stack folder-list newsgroups newsgroup make-hashtb)
     (and info (message "Creating newsgroups..."))
     (while entities
       (setq entity (wl-pop entities))
       (cond
        ((consp entity)
 	(if (eq (nth 1 entity) 'access)
-	    (when (eq (elmo-folder-get-type (car entity)) 'nntp)
-	      (wl-append folders
+	    (when (eq (elmo-folder-type-internal
+		       (elmo-make-folder (car entity))) 'nntp)
+	      (wl-append newsgroups
 			 (wl-folder-create-newsgroups-from-nntp-access entity))
 	      (setq make-hashtb t))
 	  (and entities
 	       (wl-push entities entity-stack))
 	  (setq entities (nth 2 entity))))
        ((stringp entity)
-	(setq spec-list (elmo-folder-get-primitive-spec-list entity))
-	(while spec-list
-	  (when (and (eq (caar spec-list) 'nntp)
-		     (setq fld (nth 1 (car spec-list))))
-	    (wl-append folders (list (elmo-string fld))))
-	  (setq spec-list (cdr spec-list)))))
+	(setq folder-list (elmo-folder-get-primitive-list
+			   (elmo-make-folder entity)))
+	(while folder-list
+	  (when (and (eq (elmo-folder-type-internal (car folder-list))
+			 'nntp)
+		     (setq newsgroup (elmo-nntp-folder-group-internal
+				      (car folder-list))))
+	    (wl-append newsgroups (list (elmo-string newsgroup))))
+	  (setq folder-list (cdr folder-list)))))
       (unless entities
 	(setq entities (wl-pop entity-stack))))
     (and info (message "Creating newsgroups...done"))
-    (if (or folders make-hashtb)
-	(elmo-nntp-make-groups-hashtb folders))))
+    (if (or newsgroups make-hashtb)
+	(elmo-nntp-make-groups-hashtb newsgroups))))
 
 (defun wl-folder-get-path (entity target-id &optional string)
   (let ((entities (list entity))
@@ -1947,7 +1949,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(add (not wl-reset-plugged-alist)))
     (while entity-list
       (elmo-folder-set-plugged
-       (elmo-string (car entity-list)) wl-plugged add)
+       (wl-folder-get-elmo-folder (car entity-list)) wl-plugged add)
       (setq entity-list (cdr entity-list)))
     ;; smtp posting server
     (when wl-smtp-posting-server
@@ -1955,11 +1957,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			wl-smtp-posting-server  ; server
 			(or (and (boundp 'smtp-service) smtp-service)
 			    "smtp")	; port
+			wl-smtp-connection-type
 			nil nil "smtp" add))
     ;; nntp posting server
     (when wl-nntp-posting-server
       (elmo-set-plugged wl-plugged
 			wl-nntp-posting-server
+			wl-nntp-posting-stream-type
 			elmo-default-nntp-port
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
@@ -1983,6 +1987,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (wl-folder-entity-assign-id wl-folder-entity)
       (setq wl-folder-entity-hashtb
 	    (wl-folder-create-entity-hashtb entity))
+      (setq wl-folder-elmo-folder-hashtb (elmo-make-hash wl-folder-entity-id))
       (setq wl-folder-group-alist
 	    (wl-folder-create-group-alist entity))
       (setq wl-folder-newsgroups-hashtb
@@ -1997,12 +2002,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	wl-folder-petname-alist))
       petname))
 
-(defun wl-folder-get-petname (folder)
+(defun wl-folder-get-petname (name)
   (or (cdr
        (wl-string-assoc
-	folder
+	name
 	wl-folder-petname-alist))
-      folder))
+      name))
 
 (defun wl-folder-get-entity-with-petname ()
   (let ((alist wl-folder-petname-alist)
@@ -2015,15 +2020,17 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-folder-get-newsgroups (folder)
   "Return Newsgroups field value string for FOLDER newsgroup.
 If FOLDER is multi, return comma separated string (cross post)."
-  (let ((flist (elmo-folder-get-primitive-folder-list folder)) ; multi
+  (let ((flist (elmo-folder-get-primitive-list
+		(wl-folder-get-elmo-folder folder))) ; multi
 	newsgroups fld ret)
     (while (setq fld (car flist))
       (if (setq ret
-		(cond ((eq 'nntp (elmo-folder-get-type fld))
-		       (nth 1 (elmo-folder-get-spec fld)))
-		      ((eq 'localnews (elmo-folder-get-type fld))
+		(cond ((eq 'nntp (elmo-folder-type-internal fld))
+		       (elmo-nntp-folder-group-internal fld))
+		      ((eq 'localnews (elmo-folder-type-internal fld))
 		       (elmo-replace-in-string
-			(nth 1 (elmo-folder-get-spec fld)) "/" "\\."))))
+			(elmo-nntp-folder-group-internal fld)
+			"/" "\\."))))
 	  ;; append newsgroup
 	  (setq newsgroups (if (stringp newsgroups)
 			       (concat newsgroups "," ret)
@@ -2035,8 +2042,10 @@ If FOLDER is multi, return comma separated string (cross post)."
   "Return ML address guess by FOLDER.
 Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'.
 Don't care multi."
-  (setq folder (car (elmo-folder-get-primitive-folder-list folder)))
-  (unless (memq (elmo-folder-get-type folder)
+  (setq folder (car
+		(elmo-folder-get-primitive-list
+		 (wl-folder-get-elmo-folder folder))))
+  (unless (memq (elmo-folder-type-internal folder)
 		'(localnews nntp))
     (let ((rules wl-refile-rule-alist)
 	  mladdress tokey toalist histkey)
@@ -2060,11 +2069,12 @@ Don't care multi."
 (defun wl-folder-guess-mailing-list-by-folder-name (folder)
   "Return ML address guess by FOLDER name's last hierarchy.
 Use `wl-subscribed-mailing-list'."
-  (setq folder (car (elmo-folder-get-primitive-folder-list folder)))
-  (when (memq (elmo-folder-get-type folder)
+  (setq folder (car (elmo-folder-get-primitive-list
+		     (wl-folder-get-elmo-folder folder))))
+  (when (memq (elmo-folder-type-internal folder)
 	      '(localdir imap4 maildir))
     (let (key mladdress)
-      (when (string-match "[^\\./]+$" folder)
+      (when (string-match "[^\\./]+$" (elmo-folder-name-internal folder))
 	(setq key (regexp-quote
 		   (concat (substring folder (match-beginning 0)) "@")))
 	(setq mladdress
@@ -2133,6 +2143,7 @@ Use `wl-subscribed-mailing-list'."
 		;; update only colors
 		(wl-highlight-folder-group-line nums)
 	      (wl-highlight-folder-current-line nums))
+	    (beginning-of-line)
 	    (set-buffer-modified-p nil))))))
 
 (defun wl-folder-goto-folder (&optional arg)
@@ -2161,23 +2172,18 @@ Use `wl-subscribed-mailing-list'."
 	       (get-buffer-window summary-buf))
 	  (delete-window)))
     (wl-summary-goto-folder-subr fld-name
-				 (wl-summary-get-sync-range fld-name)
+				 (wl-summary-get-sync-range
+				  (wl-folder-get-elmo-folder fld-name))
 				 nil sticky t)))
-
+  
 (defun wl-folder-suspend ()
   (interactive)
   (run-hooks 'wl-folder-suspend-hook)
   (wl-folder-info-save)
   (wl-crosspost-alist-save)
-  (wl-kill-buffers
-   (format "^\\(%s\\)$"
-	   (mapconcat 'identity
-		      (list (format "%s\\(:.*\\)?"
-				    (default-value 'wl-message-buf-name))
-			    wl-original-buf-name)
-		      "\\|")))
-  (if (fboundp 'mmelmo-cleanup-entity-buffers)
-      (mmelmo-cleanup-entity-buffers))
+  (elmo-quit)
+  ;(if (fboundp 'mmelmo-cleanup-entity-buffers)
+  ;(mmelmo-cleanup-entity-buffers))
   (bury-buffer wl-folder-buffer-name)
   (delete-windows-on wl-folder-buffer-name t))
 
@@ -2194,7 +2200,8 @@ Use `wl-subscribed-mailing-list'."
 	       (wl-push entities entity-stack))
 	  (setq entities (nth 2 entity)))
 	 ((stringp entity)
-	  (when (and (setq info (elmo-folder-get-info entity))
+	  (when (and (setq info (elmo-folder-get-info
+				 (wl-folder-get-elmo-folder entity)))
 		     (not (equal info '(nil))))
 	    (wl-append info-alist (list (list (elmo-string entity)
 					      (list (nth 3 info)  ;; max
@@ -2622,9 +2629,7 @@ Use `wl-subscribed-mailing-list'."
 	    (save-excursion
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
+					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range entity)
 					     nil)
@@ -2634,7 +2639,9 @@ Use `wl-subscribed-mailing-list'."
 	(cons 0 0))))))
 
 (defun wl-folder-count-incorporates (folder)
-  (let ((marks (elmo-msgdb-mark-load (elmo-msgdb-expand-path folder)))
+  (let ((marks (elmo-msgdb-mark-load
+		(elmo-folder-msgdb-path
+		 (wl-folder-get-elmo-folder folder))))
 	(sum 0))
     (while marks
       (if (member (cadr (car marks))
@@ -2662,52 +2669,50 @@ If current line is group folder, all subfolders are prefetched."
 	    (wl-folder-check-entity entity))
 	(wl-folder-prefetch-entity entity)))))
 
-(defun wl-folder-drop-unsync-entity (entity)
-  "Drop all unsync messages in the ENTITY."
-  (cond
-   ((consp entity)
-    (let ((flist (nth 2 entity)))
-      (while flist
-	(wl-folder-drop-unsync-entity (car flist))
-	(setq flist (cdr flist)))))
-   ((stringp entity)
-    (let ((nums (wl-folder-get-entity-info entity))
-	  wl-summary-highlight wl-auto-select-first new)
-      (setq new (or (car nums) 0))
-      (if (< 0 new)
-	  (save-window-excursion
-	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-		(wl-summary-goto-folder-subr entity 'no-sync nil)
-		(wl-summary-drop-unsync)
-		(wl-summary-exit)))))))))
+;(defun wl-folder-drop-unsync-entity (entity)
+;  "Drop all unsync messages in the ENTITY."
+;  (cond
+;   ((consp entity)
+;    (let ((flist (nth 2 entity)))
+;      (while flist
+;	(wl-folder-drop-unsync-entity (car flist))
+;	(setq flist (cdr flist)))))
+;   ((stringp entity)
+;    (let ((nums (wl-folder-get-entity-info entity))
+;	  wl-summary-highlight wl-auto-select-first new)
+;      (setq new (or (car nums) 0))
+;      (if (< 0 new)
+;	  (save-window-excursion
+;	    (save-excursion
+;	      (let ((wl-summary-buffer-name (concat
+;					     wl-summary-buffer-name
+;					     (symbol-name this-command))))
+;		(wl-summary-goto-folder-subr entity 'no-sync nil)
+;		(wl-summary-drop-unsync)
+;		(wl-summary-exit)))))))))
 
-(defun wl-folder-drop-unsync-current-entity (&optional force-check)
-  "Drop all unsync messages in the folder at position.
-If current line is group folder, all subfolders are dropped.
-If optional arg exists, don't check any folders."
-  (interactive "P")
-  (save-excursion
-    (let ((entity-name (wl-folder-get-entity-from-buffer))
-	  (group (wl-folder-buffer-group-p))
-	  wl-folder-check-entity-hook
-	  summary-buf entity)
-      (when (and entity-name
-		 (y-or-n-p (format
-			    "Drop all unsync messages in %s?" entity-name)))
-	(setq entity
-	      (if group
-		  (wl-folder-search-group-entity-by-name entity-name
-							 wl-folder-entity)
-		entity-name))
-	(if (null force-check)
-	    (wl-folder-check-entity entity))
-	(wl-folder-drop-unsync-entity entity)
-	(message "All unsync messages in %s are dropped!" entity-name)))))
+;(defun wl-folder-drop-unsync-current-entity (&optional force-check)
+;  "Drop all unsync messages in the folder at position.
+;If current line is group folder, all subfolders are dropped.
+;If optional arg exists, don't check any folders."
+;  (interactive "P")
+;  (save-excursion
+;    (let ((entity-name (wl-folder-get-entity-from-buffer))
+;	  (group (wl-folder-buffer-group-p))
+;	  wl-folder-check-entity-hook
+;	  summary-buf entity)
+;      (when (and entity-name
+;		 (y-or-n-p (format
+;			    "Drop all unsync messages in %s?" entity-name)))
+;	(setq entity
+;	      (if group
+;		  (wl-folder-search-group-entity-by-name entity-name
+;							 wl-folder-entity)
+;		entity-name))
+;	(if (null force-check)
+;	    (wl-folder-check-entity entity))
+;	(wl-folder-drop-unsync-entity entity)
+;	(message "All unsync messages in %s are dropped!" entity-name)))))
 
 (defun wl-folder-write-current-folder ()
   ""
@@ -2727,26 +2732,27 @@ If optional arg exists, don't check any folders."
 	(wl-exit)
       (kill-buffer bufname))))
 
-(defun wl-folder-create-subr (entity)
-  (if (not (elmo-folder-creatable-p entity))
-      (error "Folder %s is not found" entity)
+(defun wl-folder-create-subr (folder)
+  (if (not (elmo-folder-creatable-p folder))
+      (error "Folder %s is not found" (elmo-folder-name-internal folder))
     (if (y-or-n-p
 	 (format "Folder %s does not exist, create it?"
-		 entity))
+		 (elmo-folder-name-internal folder)))
 	(progn
 	  (setq wl-folder-entity-hashtb
 		(wl-folder-create-entity-hashtb
-		 entity wl-folder-entity-hashtb))
-	  (unless (elmo-create-folder entity)
+		 (elmo-folder-name-internal folder)
+		 wl-folder-entity-hashtb))
+	  (unless (elmo-folder-create folder)
 	    (error "Create folder failed")))
-      (error "Folder %s is not created" entity))))
+      (error "Folder %s is not created" (elmo-folder-name-internal folder)))))
 
 (defun wl-folder-confirm-existence (folder &optional force)
   (if force
       (unless (elmo-folder-exists-p folder)
 	(wl-folder-create-subr folder))
-    (unless (or (wl-folder-entity-exists-p folder)
-		(file-exists-p (elmo-msgdb-expand-path folder))
+    (unless (or (wl-folder-entity-exists-p (elmo-folder-name-internal folder))
+		(file-exists-p (elmo-folder-msgdb-path folder))
 		(elmo-folder-exists-p folder))
       (wl-folder-create-subr folder))))
 
