@@ -1,3 +1,14 @@
+2002-08-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-imap4-default-mailbox): Abolished.
+
+	* elmo-util.el (elmo-warning): Ignore errors while recenter.
+
+	* elmo-msgdb.el (elmo-msgdb-do-each-entity): New macro.
+
+	* elmo-imap4.el (elmo-folder-initialize): Don't use
+	elmo-imap4-default-mailbox.
+
 2002-07-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-split.el (toplevel): Use `product-provide'.

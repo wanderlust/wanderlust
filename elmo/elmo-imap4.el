@@ -1787,9 +1787,7 @@ Return nil if no complete line has arrived."
     (setq parse (elmo-parse-token name ":"))
     (elmo-imap4-folder-set-mailbox-internal folder
 					    (elmo-imap4-encode-folder-string
-					     (if (eq (length (car parse)) 0)
-						 elmo-imap4-default-mailbox
-					       (car parse))))
+					     (car parse)))
     ;; user
     (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/"))
     (elmo-net-folder-set-user-internal folder

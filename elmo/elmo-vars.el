@@ -88,12 +88,6 @@
 
 ;;; IMAP4
 
-(defcustom elmo-imap4-default-mailbox "inbox"
-  "*Default IMAP4 mailbox."
-  :type 'string
-  :group 'elmo
-  :group 'elmo-setting)
-
 (defcustom elmo-imap4-default-server "localhost"
   "*Default IMAP4 server."
   :type 'string

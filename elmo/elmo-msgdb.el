@@ -951,6 +951,13 @@ Return the updated INDEX."
     elmo-msgdb-location-filename
     dir) alist))
 
+(put 'elmo-msgdb-do-each-entity 'lisp-indent-function '1)
+(def-edebug-spec elmo-msgdb-do-each-entity
+  ((symbolp form &rest form) &rest form))
+(defmacro elmo-msgdb-do-each-entity (spec &rest form)
+  `(dolist (,(car spec) (elmo-msgdb-get-overview ,(car (cdr spec))))
+     ,@form))
+
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))
 

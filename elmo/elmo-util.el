@@ -1883,8 +1883,8 @@ If KBYTES is kilo bytes (This value must be float)."
   (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
     (goto-char (point-max))
     (apply 'insert (append args '("\n")))
-    (recenter 1))
-  (display-buffer elmo-warning-buffer-name))
+    (ignore-errors (recenter 1))
+    (display-buffer elmo-warning-buffer-name)))
 
 (defvar elmo-obsolete-variable-alist nil)
 
