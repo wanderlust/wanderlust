@@ -3647,6 +3647,24 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex wl-message-window-size
 $B=i4|@_Dj$O(B @code{(1 . 4)}$B!#(Bcons $B%;%k$G!"(Bcar $BCM(B: cdr $BCM$,%5%^%j$N%&%#%s%I(B
 $B%&I}!'%a%C%;!<%8$N%&%#%s%I%&I}$H$J$j$^$9!#(B
+@item wl-message-ignored-field-list
+@vindex wl-message-ignored-field-list
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
+$B%a%C%;!<%8%P%C%U%!$KI=<($7$J$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
+$B;XDj$7$^$9!#(B
+nil $B$J$i!"(Bmime-view-ignored-field-list $B$NCM$,;H$o$l$^$9!#(B
+@item wl-message-visible-field-list
+@vindex wl-message-visible-field-list
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B nil$B!#(B
+$B%a%C%;!<%8%P%C%U%!$KI,$:I=<($7$?$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
+$B;XDj$7$^$9!#(Bwl-message-ignored-field-list $B$h$jM%@h$5$l$^$9!#(B
+nil $B$J$i!"(Bmime-view-visible-field-list $B$NCM$,;H$o$l$^$9!#(B
+@item wl-message-sort-field-list
+@vindex wl-message-sort-field-list
+(SEMI $B$N$_(B) $B=i4|@_Dj$O(B 
+'("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From")$B!#(B
+$B%a%C%;!<%8%P%C%U%!$KI=<($9$k%X%C%@%U%#!<%k%I$N=gHV$r@55,I=8=$N%j%9%H$G(B
+$B;XDj$7$^$9!#(B
 @end table
 
 
@@ -4192,6 +4210,15 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B$$$A$*$&(B @code{y-or-n-p} $B$G3NG'$7$^$9(B)$B!#(B
 $B<jF0$G%-%e!<$rAw?.$9$k$K$O!"%U%)%k%@%b!<%I$G(B @kbd{F} $B$r2!$7$F$/$@$5$$!#(B
 
+@item wl-ignored-forwarded-headers
+@vindex wl-ignored-forwarded-headers
+$B=i4|@_Dj$O(B @samp{\\(received\\|return-path\\|x-uidl\\)}$B!#(B
+$BE>Aw;~$K:o=|$9$k%X%C%@%U%#!<%k%IL>$r@55,I=8=$G;XDj$7$^$9!#(B
+
+@item wl-ignored-resent-headers
+$B=i4|@_Dj$O(B @samp{\\(return-receipt\\|[bdf]cc\\)}$B!#(B
+$B:FAw;~$K:o=|$9$k%X%C%@%U%#!<%k%IL>$r@55,I=8=$G;XDj$7$^$9!#(B
+
 @item wl-draft-always-delete-myself
 @vindex wl-draft-always-delete-myself
 Non-nil $B$J$i!"<+J,08$F$N%a!<%k$KJV?.$9$k>l9g!">o$K(B @samp{To:},
@@ -4729,6 +4756,9 @@ expire $B$r<B9T$7$F$b2?$b$7$^$;$s!#$^$?!"(B2,3 $BHVL\$NMWAG$N$$$:$l$+$,(B
 @table @asis
 @item @code{remove}
 $BB(%a%C%;!<%8$r:o=|$7$^$9!#(B
+
+@item @code{hide}
+$B%a%C%;!<%8$r%5%^%j$+$i8+$($J$/$7$^$9(B($B:o=|$O$5$l$^$;$s(B)$B!#(B
 
 @item @code{trash}
 $B%a%C%;!<%8$r(B @code{wl-trash-folder} $B$K0\F0$7$^$9!#(B
