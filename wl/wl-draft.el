@@ -224,45 +224,20 @@ e.g.
 		   (list (concat wl-draft-mime-bcc-field-name  ":")))))))
 
 (defun wl-draft-make-mail-followup-to (recipients)
-  (if (elmo-list-member
-       (or wl-user-mail-address-list
-	   (list (wl-address-header-extract-address wl-from)))
-       recipients)
-      (let ((rlist (elmo-list-delete
-		    (or wl-user-mail-address-list
-			(list (wl-address-header-extract-address wl-from)))
-		    recipients
-		    (lambda (elem list)
-		      (elmo-delete-if
-		       (lambda (item) (string= (downcase elem)
-					       (downcase item)))
-		       list)))))
-	(if (elmo-list-member rlist (mapcar 'downcase
-					    wl-subscribed-mailing-list))
-	    rlist
-	  (append rlist (list (wl-address-header-extract-address
-			       wl-from)))))
-    recipients))
+  (let ((rlist (wl-address-delete-user-mail-addresses recipients)))
+    (if (elmo-list-member rlist (mapcar 'downcase
+					wl-subscribed-mailing-list))
+	rlist
+      (append rlist (list (wl-address-header-extract-address
+			   wl-from))))))
 
 (defun wl-draft-delete-myself-from-cc (to cc)
-  (let ((myself (or wl-user-mail-address-list
-		    (list (wl-address-header-extract-address wl-from)))))
-    (cond (wl-draft-always-delete-myself ; always-delete option
-	   (elmo-list-delete myself cc
-			     (lambda (elem list)
-			       (elmo-delete-if
-				(lambda (item) (string= (downcase elem)
-							(downcase item)))
-				list))))
-	  ((elmo-list-member (append to cc) ; subscribed mailing-list
-			     (mapcar 'downcase wl-subscribed-mailing-list))
-	   (elmo-list-delete myself cc
-			     (lambda (elem list)
-			       (elmo-delete-if
-				(lambda (item) (string= (downcase elem)
-							(downcase item)))
-				list))))
-	  (t cc))))
+  (cond (wl-draft-always-delete-myself ; always-delete option
+	 (wl-address-delete-user-mail-addresses cc))
+	((elmo-list-member (append to cc) ; subscribed mailing-list
+			   (mapcar 'downcase wl-subscribed-mailing-list))
+	 (wl-address-delete-user-mail-addresses cc))
+	(t cc)))
 
 (defun wl-draft-forward (original-subject summary-buf)
   (let (references parent-folder)

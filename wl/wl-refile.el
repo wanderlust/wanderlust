@@ -220,10 +220,7 @@ If RULE does not match ENTITY, returns nil."
 		   (elmo-message-entity-field entity 'to) ","
 		   (elmo-message-entity-field entity 'cc)))))
 	ret-val)
-    (setq tocc-list (elmo-list-delete
-		     (or wl-user-mail-address-list
-			 (list (wl-address-header-extract-address wl-from)))
-		     tocc-list))
+    (setq tocc-list (wl-address-delete-user-mail-addresses tocc-list))
     (while tocc-list
       (if (setq ret-val (cdr (assoc (car tocc-list) wl-refile-alist)))
 	  (setq tocc-list nil)

@@ -560,21 +560,6 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	   (forward-line))
 	 (nreverse ret)))))
 
-(defun wl-address-get-petname-1 (string)
-  (let ((address (downcase (wl-address-header-extract-address string))))
-    (elmo-get-hash-val address wl-address-petname-hash)))
-
-(defsubst wl-address-get-petname (string)
-  (or (wl-address-get-petname-1 string)
-      string))
-
-(defsubst wl-address-user-mail-address-p (address)
-  "Judge whether ADDRESS is user's or not."
-  (member (downcase (wl-address-header-extract-address address))
-	  (or (mapcar 'downcase wl-user-mail-address-list)
-	      (list (downcase
-		     (wl-address-header-extract-address
-		      wl-from))))))
 
 (defsubst wl-address-header-extract-address (str)
   "Extracts a real e-mail address from STR and return it.
@@ -595,6 +580,35 @@ e.g. \"Mr. bar <hoge@foo.com>\"
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
 	 (wl-match-string 1 str))
 	(t "")))
+
+
+(defun wl-address-get-petname-1 (string)
+  (let ((address (downcase (wl-address-header-extract-address string))))
+    (elmo-get-hash-val address wl-address-petname-hash)))
+
+(defsubst wl-address-get-petname (string)
+  (or (wl-address-get-petname-1 string)
+      string))
+
+(defsubst wl-address-user-mail-address-p (address)
+  "Judge whether ADDRESS is user's or not."
+  (member (downcase (wl-address-header-extract-address address))
+	  (or (mapcar 'downcase wl-user-mail-address-list)
+	      (list (downcase
+		     (wl-address-header-extract-address
+		      wl-from))))))
+
+(defsubst wl-address-delete-user-mail-addresses (address-list)
+  "Delete user mail addresses from list by side effect.
+Deletion is done by using `elmo-list-delete'."
+  (let ((myself (or wl-user-mail-address-list
+		    (list (wl-address-header-extract-address wl-from)))))
+    (elmo-list-delete myself address-list
+		      (lambda (elem list)
+			(elmo-delete-if
+			 (lambda (item) (string= (downcase elem)
+						 (downcase item)))
+			 list)))))
 
 (defmacro wl-address-concat-token (string token)
   (` (cond

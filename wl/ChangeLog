@@ -1,5 +1,11 @@
 2004-05-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-address.el (wl-address-delete-user-mail-addresses): New
+	function.
+	* wl-refile.el (wl-refile-guess-by-history): Use it.
+	* wl-draft.el (wl-draft-delete-myself-from-cc): Ditto.
+	(wl-draft-make-mail-followup-to): Ditto and fix logic.
+
 	* wl-draft.el (wl-draft-edit-string): To judge sender address,
 	use wl-address-user-mail-address-p.
 
