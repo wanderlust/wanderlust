@@ -1747,6 +1747,24 @@ the name of the subdirectories of the cache directory
 @section File folder
 @cindex File Folder
 
+File Folder gives the view for local file system. 
+The one File Folder corresponds to the one directory.
+
+Format:
+
+@example
+@samp{file:} @var{Path-of-the-directory}
+@end example
+
+Example:
+
+@example
+@group
+file:~/work     -> @file{~/work}
+file:/etc       -> @file{/etc}
+@end group
+@end example
+
 
 @node Folder, Summary, Folders, Top
 @chapter Folder mode
@@ -6440,7 +6458,7 @@ If non-nil, unread/important marks are synchronized when the summary
 does.
 Unread marks reflect information on the IMAP4 server.
 Important marks reflect information on the IMAP4 server (flagged or
-not), and contents of @samp{'mark} folder.
+not), and contents of @samp{'flag} folder.
 The initial setting is @code{t}.
 @end table
 
@@ -8484,6 +8502,83 @@ this value, display progress gauge.
 
 @node Migration, Terminology, Customization, Top
 @chapter Switch from older version of Wanderlust
+@cindex Migration
+
+This chapter explains the important thing for the upgrade,
+or migration from the previous version.
+It includes the changes of the setup, limitations etc.
+
+@menu
+* Before 2.12.0::       From prior to the version 2.12.0 
+@end menu
+
+@node Before 2.12.0,  , Migration, Migration
+@section Migration from prior to the version 2.12.0 
+
+@subsection The conversion of msgdb 
+
+From version 2.12.0 on, the structure of msgdb is changed.
+The msgdb for newly created folder will use this new format when created and saved.
+But by writing following line, you may use the old format of the msgdb as it was.
+
+@lisp
+@group
+(setq elmo-msgdb-default-type 'legacy)
+@end group
+@end lisp
+
+With the default setup,
+the old msgdb format will be used as it was. 
+You may convert the format 
+by writing following lines in @file{~/.wl} or so.
+
+@lisp
+@group
+;; @r{If the format of msgdb is different from} @code{elmo-msgdb-default-type},
+;; @r{the format will be converted automatically when}
+;; @r{the msgdb is being loaded.}
+(setq elmo-msgdb-convert-type 'auto)
+
+;; @r{Convert msgdb when hitting @kbd{s all} in Summary mode}
+(setq elmo-msgdb-convert-type 'sync)
+@end group
+@end lisp
+
+As is explained in above section, you may continue to use the old format.
+But you will have following limitations.
+
+@enumerate
+@item
+You may only use @samp{important} flag. The other flags may not be available.
+@end enumerate
+
+@subsection Changes from @samp{'mark} folder to  @samp{'flag}.
+
+The folder @samp{'mark} will be automatically converted to @samp{'flag}
+folder when you first start the new version of Wanderlust.
+But there are some restrictions on this type of migrated folder.
+
+@enumerate
+@item
+@samp{important} flag attached will not be
+removed by deleting the associated message in @samp{'flag} folder.
+
+@item
+The messsage won't be deleted by removing
+@samp{important} flag in @samp{'flag} folder.
+
+@item
+help-echo will not show you the old message.
+
+@end enumerate
+
+If you have problem with migrating 
+from @samp{'mark} folder to the @samp{'flag} folder,
+invoking
+@kbd{M-x elmo-global-mark-upgrade} will transfer the message
+from @samp{'mark} folder to the @samp{'flag} folder.
+The duplicated message will not be processed, 
+you may issue that command repeatedly.
 
 
 @node Terminology, Mailing List, Migration, Top
