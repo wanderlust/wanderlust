@@ -1040,20 +1040,28 @@ If optional argument UNMARK is non-nil, unmark."
 
 ;;
 ;; app-data:
+;; cons of list
 ;; 0: new-mark 1: already-mark 2: seen-mark 3: important-mark
-;; 4: seen-list 5: as-number
+;; 4: seen-list
+;; and result of use-flag-p.
 (defun elmo-imap4-fetch-callback-1 (entity flags app-data)
   "A msgdb entity callback function."
-  (let ((seen (member (car entity) (nth 4 app-data)))
-	mark)
+  (let* ((use-flag (cdr app-data))
+	 (app-data (car app-data))
+	 (seen (member (car entity) (nth 4 app-data)))
+	 mark)
     (if (member "\\Flagged" flags)
 	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
     (setq mark (or (elmo-msgdb-global-mark-get (car entity))
 		   (if (elmo-cache-exists-p (car entity)) ;; XXX
-		       (if (or (member "\\Seen" flags) seen)
+		       (if (or seen
+			       (and use-flag
+				    (member "\\Seen" flags)))
 			   nil
 			 (nth 1 app-data))
-		     (if (or (member "\\Seen" flags) seen)
+		     (if (or seen
+			     (and use-flag
+				  (member "\\Seen" flags)))
 			 (if elmo-imap4-use-cache
 			     (nth 2 app-data))
 		       (nth 0 app-data)))))
@@ -1093,7 +1101,9 @@ If optional argument UNMARK is non-nil, unmark."
       (with-current-buffer (elmo-network-session-buffer session)
 	(setq elmo-imap4-current-msgdb nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data args)
+	      elmo-imap4-fetch-callback-data (cons args
+						   (elmo-imap4-use-flag-p
+						    spec)))
 	(while set-list
 	  (elmo-imap4-send-command-wait
 	   session
