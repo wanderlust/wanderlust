@@ -1,3 +1,9 @@
+2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* modb.el (elmo-msgdb-make-message-entity): Define simple one.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-number): Ditto.
+
 2003-09-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (elmo-msgdb-create-message-entity-from-buffer): 

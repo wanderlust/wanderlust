@@ -1,5 +1,22 @@
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-detect-mark-position): Use generic msgdb
+	for dummy entity.
+	(wl-summary-insert-thread): Use elmo-message-entity-field.
+	(wl-summary-update-thread): Use elmo-message-entity-field and
+	elmo-message-entity-number.
+	(wl-summary-line-number):  Use elmo-message-entity-number.
+	(wl-summary-line-size): Use elmo-message-entity-field.
+	(wl-summary-line-subject): Ditto.
+	(wl-summary-line-from): Ditto.
+	(wl-summary-line-attached): Ditto.
+	(wl-summary-create-line): Ditto.
+	(wl-summary-create-line): Use elmo-message-entity-number.
+	(wl-summary-print-message-with-ps-print): Use
+	elmo-message-entity-field.
+
+2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* wl-summary.el (wl-summary-detect-mark-position): Follow the API
 	change in elmo-msgdb-make-message-entity.
 	(wl-summary-buffer-set-folder): Don't call

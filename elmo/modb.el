@@ -223,6 +223,19 @@ Header region is supposed to be narrowed.")
 (luna-define-method elmo-msgdb-length ((msgdb modb-generic))
   0)
 
+(luna-define-method elmo-msgdb-make-message-entity ((msgdb modb-generic)
+						    args)
+  (cons msgdb args))
+
+(luna-define-method elmo-msgdb-message-entity-field ((msgdb modb-generic)
+						     entity field
+						     &optional decode)
+  (plist-get (cdr entity) (intern (concat ":" (symbol-name field)))))
+
+(luna-define-method elmo-msgdb-message-entity-number ((msgdb modb-generic)
+						      entity)
+  (plist-get (cdr entity) :number))
+
 ;; for on demand loading
 (provide 'modb-generic)
 

@@ -667,7 +667,6 @@ you."
 	(dummy-temp (char-to-string 200))
 	(wl-summary-new-mark (char-to-string 201)) ; bind only for the check.
 	(wl-summary-flag-priority-list '(new))     ; ditto.
-	(msgdb (elmo-folder-msgdb-internal wl-summary-buffer-elmo-folder))
 	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
@@ -676,7 +675,7 @@ you."
       (insert
        (wl-summary-create-line
 	(elmo-msgdb-make-message-entity
-	 msgdb
+	 (luna-make-entity 'modb-generic)
 	 :number 10000
 	 :from "foo"
 	 :subject "bar"
@@ -2535,7 +2534,7 @@ If ARG, without confirm."
 		   wl-summary-search-parent-by-subject-regexp
 		   (string-match
 		    wl-summary-search-parent-by-subject-regexp
-		    (elmo-msgdb-overview-entity-get-subject entity)))
+		    (elmo-message-entity-field entity 'subject)))
 	  (let ((found (wl-summary-search-by-subject entity folder)))
 	    (when (and found
 		       (not (member found wl-summary-delayed-update)))
@@ -2571,11 +2570,11 @@ If ARG, without confirm."
 (defun wl-summary-update-thread (entity
 				 thr-entity
 				 parent-entity)
-  (let* ((this-id (elmo-msgdb-overview-entity-get-id entity))
+  (let* ((this-id (elmo-message-entity-field entity 'message-id))
 	 (overview-entity entity)
-	 (parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
-	 (number (elmo-msgdb-overview-entity-get-number entity))
-	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
+	 (parent-id (elmo-message-entity-field parent-entity 'message-id))
+	 (number (elmo-message-entity-number entity))
+	 (parent-number (elmo-message-entity-number parent-entity))
 	 insert-line)
     (cond
      ((or (not parent-id)
@@ -3036,7 +3035,7 @@ Return non-nil if the mark is updated"
   (wl-set-string-width
    (- wl-summary-buffer-number-column)
    (number-to-string
-    (elmo-msgdb-overview-entity-get-number wl-message-entity))))
+    (elmo-message-entity-number wl-message-entity))))
 
 (defun wl-summary-line-year ()
   (aref wl-datevec 0))
@@ -3056,7 +3055,7 @@ Return non-nil if the mark is updated"
   (format "%02d" (aref wl-datevec 4)))
 
 (defun wl-summary-line-size ()
-  (let ((size (elmo-msgdb-overview-entity-get-size wl-message-entity)))
+  (let ((size (elmo-message-entity-field wl-message-entity 'size)))
     (if size
 	(cond
 	 ((<= 1 (/ size 1048576))
@@ -3072,11 +3071,13 @@ Return non-nil if the mark is updated"
 	(setq no-parent t)) ; no parent
     (setq subject
 	  (elmo-delete-char ?\n
-			    (or (elmo-msgdb-overview-entity-get-subject
-				 wl-message-entity)
+			    (or (elmo-message-entity-field
+				 wl-message-entity
+				 'subject)
 				wl-summary-no-subject-message)))
     (setq parent-raw-subject
-	  (elmo-msgdb-overview-entity-get-subject wl-parent-message-entity))
+	  (elmo-message-entity-field wl-parent-message-entity
+				     'subject))
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
@@ -3090,8 +3091,9 @@ Return non-nil if the mark is updated"
 (defun wl-summary-line-from ()
   (elmo-delete-char ?\n
 		    (funcall wl-summary-from-function
-			     (elmo-msgdb-overview-entity-get-from
-			      wl-message-entity))))
+			     (elmo-message-entity-field
+			      wl-message-entity
+			      'from))))
 
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
@@ -3107,8 +3109,8 @@ Return non-nil if the mark is updated"
       "")))
 
 (defun wl-summary-line-attached ()
-  (let ((content-type (elmo-msgdb-overview-entity-get-extra-field
-		       wl-message-entity "content-type"))
+  (let ((content-type (elmo-message-entity-field
+		       wl-message-entity 'content-type))
 	(case-fold-search t))
     (if (and content-type
 	     (string-match "multipart/mixed" content-type))
@@ -3140,8 +3142,9 @@ Return non-nil if the mark is updated"
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
 	(wl-datevec (or (ignore-errors (timezone-fix-time
-					(elmo-msgdb-overview-entity-get-date
-					 wl-message-entity)
+					(elmo-message-entity-field
+					 wl-message-entity
+					 'date)
 					nil
 					wl-summary-fix-timezone))
 			(make-vector 5 0)))
@@ -3162,11 +3165,11 @@ Return non-nil if the mark is updated"
     (setq line (concat line
 		       "\r"
 		       (number-to-string
-			(elmo-msgdb-overview-entity-get-number
+			(elmo-message-entity-number
 			 wl-message-entity))))
     (if wl-summary-highlight
 	(wl-highlight-summary-line-string
-	 (elmo-msgdb-overview-entity-get-number wl-message-entity)
+	 (elmo-message-entity-number wl-message-entity)
 	 line
 	 wl-flags
 	 wl-temp-mark
@@ -4409,14 +4412,14 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 			      (wl-summary-message-number))))
 		   (wl-ps-subject
 		    (and entity
-			 (or (elmo-msgdb-overview-entity-get-subject entity)
+			 (or (elmo-message-entity-field entity 'subject)
 			     "")))
 		   (wl-ps-from
 		    (and entity
-			 (or (elmo-msgdb-overview-entity-get-from entity) "")))
+			 (or (elmo-message-entity-field entity 'from) "")))
 		   (wl-ps-date
 		    (and entity
-			 (or (elmo-msgdb-overview-entity-get-date entity) ""))))
+			 (or (elmo-message-entity-field entity 'date) ""))))
 	      (run-hooks 'wl-ps-preprint-hook)
 	      (set-buffer wl-message-buffer)
 	      (copy-to-buffer buffer (point-min) (point-max))
