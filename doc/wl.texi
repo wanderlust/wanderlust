@@ -2069,12 +2069,13 @@ The initial setting is the list shown below:
 
 @lisp
 @group
-("-" "-alt")
+("^-$" "^-alt$")
 @end group
 @end lisp
 
 @noindent
-A list of access groups which creates children folder list hierarchically.
+A list of regular expressions for access groups which creates children
+folder list hierarchically.
 
 For example, if you specify
 @code{wl-folder-hierarchy-access-folders} like following,
@@ -2082,7 +2083,7 @@ For example, if you specify
 @lisp
 @group
 (setq wl-folder-hierarchy-access-folders
-     '("-" "-alt" "-japan" "-comp" "-comp.unix"))
+     '("^-$" "^-alt$" "^-japan$" "^-comp$" "^-comp.unix$"))
 @end group
 @end lisp
 

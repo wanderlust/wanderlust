@@ -2074,12 +2074,12 @@ Non-nil ならフォルダ一覧用に新しいフレームを開きます。
 
 @lisp
 @group
-("-" "-alt")
+("^-$" "^-alt$")
 @end group
 @end lisp
 
 @noindent
-階層構造に作成するアクセスグループフォルダのリスト。
+階層構造に作成するアクセスグループの正規表現からなるリストです。
 
 例えば、以下のように 
 @code{wl-folder-hierarchy-access-folders} を設定すると、
@@ -2087,7 +2087,7 @@ Non-nil ならフォルダ一覧用に新しいフレームを開きます。
 @lisp
 @group
 (setq wl-folder-hierarchy-access-folders
-     '("-" "-alt" "-japan" "-comp" "-comp.unix"))
+     '("^-$" "^-alt$" "^-japan$" "^-comp$" "^-comp.unix$"))
 @end group
 @end lisp
 
