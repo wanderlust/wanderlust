@@ -43,6 +43,12 @@
   :type 'symbol
   :group 'elmo)
 
+(defcustom elmo-msgdb-prefer-in-reply-to-for-parent nil
+  "*Non-nil to prefer In-Reply-To header for finding parent message on thread,
+rather than References header."
+  :type 'boolean
+  :group 'elmo)
+
 (defvar modb-entity-default-cache-internal nil)
 
 (defun elmo-message-entity-handler (&optional entity)
@@ -213,10 +219,15 @@ Header region is supposed to be narrowed.")
 	   (setq charset (intern-soft charset))
 	   (setq default-mime-charset charset))
       (setq references
-	    (or (elmo-msgdb-get-last-message-id
-		 (elmo-field-body "in-reply-to"))
-		(elmo-msgdb-get-last-message-id
-		 (elmo-field-body "references")))
+	    (if elmo-msgdb-prefer-in-reply-to-for-parent
+		(or (elmo-msgdb-get-last-message-id
+		     (elmo-field-body "in-reply-to"))
+		    (elmo-msgdb-get-last-message-id
+		     (elmo-field-body "references")))
+	      (or (elmo-msgdb-get-last-message-id
+		   (elmo-field-body "references"))
+		  (elmo-msgdb-get-last-message-id
+		   (elmo-field-body "in-reply-to"))))
 	    from (elmo-replace-in-string
 		  (elmo-mime-string (or (elmo-field-body "from")
 					elmo-no-from))
