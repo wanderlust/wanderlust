@@ -1,5 +1,9 @@
 2000-07-04  Katsumi Yamaoka    <yamaoka@jpl.org>
 
+	* wl-demo.el (wl-demo): Simplified `fringe' face manipulation.
+
+2000-07-04  Katsumi Yamaoka    <yamaoka@jpl.org>
+
 	* wl-demo.el (wl-demo): Make `kill-buffer-hook' buffer-local;
 	don't hide scroll bars under FSF Emacsen because it may incur an
 	undesirable redrawing.

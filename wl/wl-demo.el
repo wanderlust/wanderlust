@@ -194,24 +194,19 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 			      nil demo-buf))
 	   (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
 	   (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))
-	  ((and (> emacs-major-version 20) window-system (find-face 'fringe))
-	   (let* ((frame (selected-frame))
-		  (unspecified nil)
-		  (bg (eval (face-background 'default frame)))
-		  (fbg (eval (face-background 'fringe frame))))
-	     (if bg
-		 (progn
-		   (set-face-background 'fringe bg frame)
-		   (if fbg
-		       (progn
-			 (make-local-hook 'kill-buffer-hook)
-			 (add-hook 'kill-buffer-hook
-				   (` (lambda ()
-					(if (frame-live-p (, frame))
-					    (set-face-background 'fringe
-								 (, fbg)
-								 (, frame)))))
-				   nil t))))))))
+	  ((and (> emacs-major-version 20) window-system)
+	   (make-local-hook 'kill-buffer-hook)
+	   (let ((frame (selected-frame)))
+	     (add-hook 'kill-buffer-hook
+		       (` (lambda ()
+			    (if (frame-live-p (, frame))
+				(set-face-background
+				 'fringe
+				 (, (face-background 'fringe frame))
+				 (, frame)))))
+		       nil t)
+	     (set-face-background 'fringe (face-background 'default frame)
+				  frame))))
     (erase-buffer)
     (setq truncate-lines t)
     (let* ((wl-demo-display-logo
