@@ -2,6 +2,7 @@
 
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Catch quitting and
 	write sendlog.
+	(wl-draft-reply): List in r-list can contain function.
 
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
