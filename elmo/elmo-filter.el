@@ -30,6 +30,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-signal)
 (require 'elmo-msgdb)
 
 (defvar elmo-filter-number-filename "number-list"
@@ -45,8 +46,7 @@
 					    name)
   (let (pair)
     (setq pair (elmo-parse-search-condition name))
-    (elmo-filter-folder-set-condition-internal folder
-					       (car pair))
+    (elmo-filter-folder-set-condition-internal folder (car pair))
     (if (string-match "^ */\\(.*\\)$" (cdr pair))
 	(elmo-filter-folder-set-target-internal
 	 folder
@@ -57,7 +57,34 @@
      (elmo-folder-search-requires-msgdb-p
       (elmo-filter-folder-target-internal folder)
       (elmo-filter-folder-condition-internal folder)))
+    (elmo-filter-connect-signals
+     folder
+     (elmo-filter-folder-target-internal folder))
     folder))
+
+(defun elmo-filter-connect-signals (folder target)
+  (elmo-connect-signal
+   target 'flag-changing folder
+   (elmo-define-signal-handler (folder target number old-flags new-flags)
+     (elmo-filter-add-flag-count folder number old-flags -1)
+     (elmo-filter-add-flag-count folder number new-flags)
+     (elmo-emit-signal 'flag-changing folder number old-flags new-flags))
+   (elmo-define-signal-filter (folder target number)
+     (memq number (elmo-folder-list-messages folder nil t))))
+  (elmo-connect-signal
+   target 'flag-changed folder
+   (elmo-define-signal-handler (folder target numbers)
+     (let ((filterd (elmo-list-filter
+		     (elmo-folder-list-messages folder nil t)
+		     numbers)))
+       (when filterd
+	 (elmo-emit-signal 'flag-changed folder filterd)))))
+  (elmo-connect-signal
+   target 'cache-changed folder
+   (elmo-define-signal-handler (folder target number)
+     (elmo-emit-signal 'cache-changed folder number))
+   (elmo-define-signal-filter (folder target number)
+     (memq number (elmo-folder-list-messages folder nil t)))))
 
 (defun elmo-filter-number-list-load (dir)
   (elmo-object-load
@@ -84,6 +111,16 @@
 	(if (setq elem (assq flag flag-count))
 	    (setcdr elem (+ (cdr elem) delta))
 	  (setq flag-count (cons (cons flag delta) flag-count)))))
+    (elmo-filter-folder-set-flag-count-internal folder flag-count)))
+
+(defun elmo-filter-add-flag-count (folder number flags &optional delta)
+  (let ((flag-count (elmo-filter-folder-flag-count-internal folder))
+	(delta (or delta 1))
+	elem)
+    (dolist (flag flags)
+      (if (setq elem (assq flag flag-count))
+	  (setcdr elem (+ (cdr elem) delta))
+	(setq flag-count (cons (cons flag delta) flag-count))))
     (elmo-filter-folder-set-flag-count-internal folder flag-count)))
 
 (defun elmo-filter-folder-flag-count (folder)
@@ -181,14 +218,8 @@
 (luna-define-method elmo-message-fetch ((folder elmo-filter-folder)
 					number strategy
 					&optional unseen section)
-  (unless unseen
-    (elmo-filter-folder-countup-message-flags folder (list number) -1))
-  (when (elmo-message-fetch (elmo-filter-folder-target-internal folder)
-			    number strategy unseen section)
-    (unless unseen
-      (elmo-filter-folder-countup-message-flags folder (list number))
-      (elmo-folder-notify-event folder 'flag-changed (list number)))
-    t))
+  (elmo-message-fetch (elmo-filter-folder-target-internal folder)
+		      number strategy unseen section))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-filter-folder)
 						 numbers)
@@ -345,8 +376,7 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-filter-folder)
 					     number cached)
   (elmo-message-set-cached
-   (elmo-filter-folder-target-internal folder) number cached)
-  (elmo-folder-notify-event folder 'cache-changed number))
+   (elmo-filter-folder-target-internal folder) number cached))
 
 (luna-define-method elmo-message-number ((folder elmo-filter-folder)
 					 message-id)
@@ -380,21 +410,15 @@
 					  numbers
 					  flag
 					  &optional is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers -1)
   (elmo-folder-set-flag (elmo-filter-folder-target-internal folder)
-			numbers flag is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers)
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+			numbers flag is-local))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-filter-folder)
 					    numbers
 					    flag
 					    &optional is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers -1)
   (elmo-folder-unset-flag (elmo-filter-folder-target-internal folder)
-			  numbers flag is-local)
-  (elmo-filter-folder-countup-message-flags folder numbers)
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+			  numbers flag is-local))
 
 (luna-define-method elmo-message-folder ((folder elmo-filter-folder)
 					 number)

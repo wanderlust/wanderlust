@@ -111,7 +111,6 @@
 (defvar wl-summary-buffer-mode-line nil)
 (defvar wl-summary-buffer-display-mime-mode 'mime)
 (defvar wl-summary-buffer-display-header-mode 'partial)
-(defvar wl-summary-buffer-event-handler nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -187,7 +186,6 @@
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
 (make-variable-buffer-local 'wl-summary-buffer-display-mime-mode)
 (make-variable-buffer-local 'wl-summary-buffer-display-header-mode)
-(make-variable-buffer-local 'wl-summary-buffer-event-handler)
 
 (defvar wl-datevec)
 (defvar wl-thr-indent-string)
@@ -649,16 +647,9 @@ See also variable `wl-use-petname'."
        'nomini frame))))
 
 ;; Handler of event from elmo-folder
-(eval-and-compile
-  (luna-define-class wl-summary-event-handler (elmo-event-handler)
-		     (buffer))
-  (luna-define-internal-accessors 'wl-summary-event-handler))
-
-(luna-define-method elmo-event-handler-flag-changed ((handler
-						      wl-summary-event-handler)
-						     numbers)
+(defun wl-summary-update-persistent-mark-on-event (buffer numbers)
   (save-excursion
-    (set-buffer (wl-summary-event-handler-buffer-internal handler))
+    (set-buffer buffer)
     (if wl-summary-lazy-update-mark
 	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
 	      invalidate)
@@ -686,38 +677,26 @@ See also variable `wl-use-petname'."
 		   (wl-summary-jump-to-msg number))
 	  (wl-summary-update-persistent-mark number))))))
 
-(luna-define-method elmo-event-handler-cache-changed
-  ((handler wl-summary-event-handler) number)
-  (save-excursion
-    (set-buffer (wl-summary-event-handler-buffer-internal handler))
-    (if wl-summary-lazy-update-mark
-	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t)))
-	  (when (wl-summary-message-visible-p number)
-	    (if (catch 'visible
-		  (let ((window-list window-list)
-			win)
-		    (while (setq win (car window-list))
-		      (when (wl-summary-jump-to-msg number
-						    (window-start win)
-						    (window-end win))
-			(throw 'visible t))
-		      (setq window-list (cdr window-list)))))
-		(wl-summary-update-persistent-mark number)
-	      (wl-summary-invalidate-persistent-mark)
-	      (dolist (win window-list)
-		(wl-summary-validate-persistent-mark
-		 (window-start win)
-		 (window-end win))))))
-      (when (and (wl-summary-message-visible-p number)
-		 (wl-summary-jump-to-msg number))
-	(wl-summary-update-persistent-mark number)))))
+(defun wl-summary-buffer-attach ()
+  (when wl-summary-buffer-elmo-folder
+    (elmo-connect-signal
+     wl-summary-buffer-elmo-folder
+     'flag-changed
+     (current-buffer)
+     (elmo-define-signal-handler (buffer folder numbers)
+       (wl-summary-update-persistent-mark-on-event buffer numbers)))
+    (elmo-connect-signal
+     wl-summary-buffer-elmo-folder
+     'cache-changed
+     (current-buffer)
+     (elmo-define-signal-handler (buffer folder number)
+       (wl-summary-update-persistent-mark-on-event buffer (list number))))))
 
 (defun wl-summary-buffer-detach ()
   (when (and (eq major-mode 'wl-summary-mode)
-	     wl-summary-buffer-elmo-folder
-	     wl-summary-buffer-event-handler)
-    (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
-				wl-summary-buffer-event-handler)))
+	     wl-summary-buffer-elmo-folder)
+    (elmo-disconnect-signal 'flag-changed (current-buffer))
+    (elmo-disconnect-signal 'cache-changed (current-buffer))))
 
 (defun wl-status-update ()
   (interactive)
@@ -900,11 +879,7 @@ you."
   (setq wl-summary-buffer-persistent
 	(wl-folder-persistent-p (elmo-folder-name-internal folder)))
   (elmo-folder-set-persistent-internal folder wl-summary-buffer-persistent)
-  (elmo-folder-add-handler folder
-			   (setq wl-summary-buffer-event-handler
-				 (luna-make-entity
-				  'wl-summary-event-handler
-				  :buffer (current-buffer))))
+  (wl-summary-buffer-attach)
   ;; process duplicates.
   (elmo-folder-set-process-duplicates-internal
    folder (cdr (elmo-string-matched-assoc

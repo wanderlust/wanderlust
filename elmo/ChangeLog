@@ -1,5 +1,49 @@
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-signal.el: New file.
+
+	* elmo.el (toplevel): Require elmo-signal.
+	(flag-changing, flag-changed, cache-changed): New signal.
+	(elmo-folder): Remove slog `handlers'.
+	(elmo-message-set-cached): Use `elmo-emit-signal' instead of
+	`elmo-folder-notify-event'.
+	(elmo-folder-set-flag): Likewise. Emit signal `flag-changing'.
+	(elmo-folder-unset-flag): Ditto.
+	(elmo-event-handler): Abolish.
+	(elmo-event-handler-flag-changed): Ditto.
+	(elmo-event-handler-cache-changed): Ditto.
+	(elmo-folder-add-handler): Ditto.
+	(elmo-folder-remove-handler): Ditto.
+	(elmo-folder-notify-event): Ditto.
+
+	* elmo-pipe.el (toplevel): Require elmo-signal.
+	(elmo-folder-initialize): Call `elmo-pipe-connect-signals'.
+	(elmo-pipe-connect-signals): New function.
+	(elmo-message-fetch): Does not call `elmo-folder-notify-event'.
+	(elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+	(elmo-message-set-cached): Ditto.
+
+	* elmo-multi.el (toplevel): Require elmo-signal.
+	(elmo-folder-initialize): Call `elmo-multi-connect-signals'.
+	(elmo-multi-connect-signals): New function.
+	(elmo-multi-map-numbers): Ditto.
+	(elmo-message-set-cached): Does not call `elmo-folder-notify-event'.
+	(elmo-message-fetch): Ditto.
+	(elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+
+	* elmo-filter.el (toplevel): Require elmo-signal.
+	(elmo-folder-initialize): Call `elmo-filter-connect-signals'.
+	(elmo-filter-connect-signals): New function.
+	(elmo-filter-add-flag-count): Ditto.
+	(elmo-message-fetch): Does not call
+	`elmo-filter-folder-countup-message-flags' and
+	`elmo-folder-notify-event'.
+	(elmo-message-set-cached): Ditto.
+	(elmo-folder-set-flag): Ditto.
+	(elmo-folder-unset-flag): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.13.2.
 
 2005-02-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

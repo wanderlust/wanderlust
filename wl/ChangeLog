@@ -1,5 +1,16 @@
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl.el (wl-exit): Call `elmo-clear-signal-slots'.
+
+	* wl-summary.el (wl-summary-buffer-event-handler): Abolish.
+	(wl-summary-event-handler): Ditto.
+	(wl-summary-update-persistent-mark-on-event): New
+	function (renamed from `elmo-event-handler-flag-changed').
+	(wl-summary-buffer-attach): New function.
+	(wl-summary-buffer-detach): Rewrite by `elmo-signal'.
+	(wl-summary-buffer-set-folder): Use `wl-summary-buffer-attach'
+	instead of `elmo-folder-add-handler'.
+
 	* Version number is increased to 2.13.2.
 
 2005-02-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

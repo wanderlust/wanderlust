@@ -31,6 +31,7 @@
 (eval-when-compile (require 'cl))
 
 (require 'elmo)
+(require 'elmo-signal)
 (require 'luna)
 
 (defvar elmo-multi-divide-number 100000
@@ -67,7 +68,49 @@
   (elmo-multi-folder-set-divide-number-internal
    folder
    elmo-multi-divide-number)
+  (elmo-multi-connect-signals folder)
   folder)
+
+(defun elmo-multi-connect-signals (folder)
+  (elmo-connect-signal
+   nil 'flag-changing folder
+   (elmo-define-signal-handler (folder child number old-flags new-flags)
+     (elmo-emit-signal 'flag-changing folder
+		       (car (elmo-multi-map-numbers folder child (list number)))
+		       old-flags new-flags))
+   (elmo-define-signal-filter (folder sender)
+     (memq sender (elmo-multi-folder-children-internal folder))))
+  (elmo-connect-signal
+   nil 'flag-changed folder
+   (elmo-define-signal-handler (folder child numbers)
+     (elmo-emit-signal 'flag-changed folder
+		       (elmo-multi-map-numbers folder child numbers)))
+   (elmo-define-signal-filter (folder sender)
+     (memq sender (elmo-multi-folder-children-internal folder))))
+  (elmo-connect-signal
+   nil 'cache-changed folder
+   (elmo-define-signal-handler (folder child number)
+     (elmo-emit-signal
+      'flag-changed folder
+      (car (elmo-multi-map-numbers folder child (list number)))))
+   (elmo-define-signal-filter (folder sender)
+     (memq sender (elmo-multi-folder-children-internal folder)))))
+
+(defun elmo-multi-map-numbers (folder child numbers)
+  (let ((multi (catch 'found
+		 (let ((children (elmo-multi-folder-children-internal folder))
+		       (index 0))
+		   (while children
+		     (setq index (1+ index))
+		     (when (eq (car children) child)
+		       (throw 'found index))
+		     (setq children (cdr children)))))))
+    (when multi
+      (let ((offset (* (elmo-multi-folder-divide-number-internal folder)
+		       multi)))
+      (mapcar (lambda (number) (+ offset number))
+	      numbers)))))
+
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
@@ -144,8 +187,7 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-multi-folder)
 					     number cached)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (elmo-message-set-cached (car pair) (cdr pair) cached))
-  (elmo-folder-notify-event folder 'cache-changed number))
+    (elmo-message-set-cached (car pair) (cdr pair) cached)))
 
 (luna-define-method elmo-find-fetch-strategy ((folder elmo-multi-folder)
 					      number
@@ -247,11 +289,7 @@
 					number strategy
 					&optional unseen section)
   (let ((pair (elmo-multi-real-folder-number folder number)))
-    (when (elmo-message-fetch (car pair) (cdr pair)
-			      strategy unseen section)
-      (unless unseen
-	(elmo-folder-notify-event folder 'flag-changed (list number)))
-      t)))
+    (elmo-message-fetch (car pair) (cdr pair) strategy unseen section)))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-multi-folder)
 						 numbers)
@@ -425,8 +463,7 @@
 					  flag
 					  &optional is-local)
   (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-set-flag (car pair) (cdr pair) flag is-local))
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+    (elmo-folder-set-flag (car pair) (cdr pair) flag is-local)))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-multi-folder)
 					    numbers
@@ -434,8 +471,7 @@
 					    &optional is-local)
   (dolist (pair (elmo-multi-make-folder-numbers-list folder numbers))
     (ignore-errors
-     (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local)))
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+     (elmo-folder-unset-flag (car pair) (cdr pair) flag is-local))))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
 					      flag

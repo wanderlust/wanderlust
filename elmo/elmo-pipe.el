@@ -30,6 +30,7 @@
 ;;
 
 (require 'elmo)
+(require 'elmo-signal)
 
 (defvar elmo-pipe-folder-copied-filename "copied"
   "Copied messages number set.")
@@ -52,7 +53,22 @@
     (elmo-pipe-folder-set-copy-internal folder
 					(string= ":"
 						 (elmo-match-string 2 name))))
+  (elmo-pipe-connect-signals folder (elmo-pipe-folder-dst-internal folder))
   folder)
+
+(defun elmo-pipe-connect-signals (folder destination)
+  (elmo-connect-signal
+   destination 'flag-changing folder
+   (elmo-define-signal-handler (folder dst number old-flags new-flags)
+     (elmo-emit-signal 'flag-changing folder number old-flags new-flags)))
+  (elmo-connect-signal
+   destination 'flag-changed folder
+   (elmo-define-signal-handler (folder dst numbers)
+     (elmo-emit-signal 'flag-changed folder numbers)))
+  (elmo-connect-signal
+   destination 'cache-changed folder
+   (elmo-define-signal-handler (folder dst number)
+     (elmo-emit-signal 'cache-changed folder number))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))
   (nconc
@@ -79,11 +95,8 @@
 (luna-define-method elmo-message-fetch ((folder elmo-pipe-folder)
 					number strategy
 					&optional unseen section)
-  (when (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
-			    number strategy unseen section)
-    (unless unseen
-      (elmo-folder-notify-event folder 'flag-changed (list number)))
-    t))
+  (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
+		      number strategy unseen section))
 
 (luna-define-method elmo-folder-clear :after ((folder elmo-pipe-folder)
 					      &optional keep-killed)
@@ -272,16 +285,14 @@
 					  flag
 					  &optional is-local)
   (elmo-folder-set-flag (elmo-pipe-folder-dst-internal folder)
-			numbers flag is-local)
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+			numbers flag is-local))
 
 (luna-define-method elmo-folder-unset-flag ((folder elmo-pipe-folder)
 					    numbers
 					    flag
 					    &optional is-local)
   (elmo-folder-unset-flag (elmo-pipe-folder-dst-internal folder)
-			  numbers flag is-local)
-  (elmo-folder-notify-event folder 'flag-changed numbers))
+			  numbers flag is-local))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))
@@ -363,8 +374,7 @@
 (luna-define-method elmo-message-set-cached ((folder elmo-pipe-folder)
 					     number cached)
   (elmo-message-set-cached (elmo-pipe-folder-dst-internal folder)
-			   number cached)
-  (elmo-folder-notify-event folder 'cache-changed number))
+			   number cached))
 
 (luna-define-method elmo-find-fetch-strategy ((folder elmo-pipe-folder)
 					      number

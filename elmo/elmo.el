@@ -35,6 +35,7 @@
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo-msgdb)
+(require 'elmo-signal)
 
 (eval-when-compile (require 'cl))
 
@@ -87,6 +88,16 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
 (elmo-define-error 'elmo-imap4-bye-error "IMAP4 session was terminated" 'elmo-open-error)
 
+;; Event declarations
+(elmo-define-signal flag-changing (number old-flags new-flags)
+  "Notify the changing flag of the messages with NUMBER.")
+
+(elmo-define-signal flag-changed (numbers)
+  "Notify the change flag of the messages with NUMBERS.")
+
+(elmo-define-signal cache-changed (number)
+  "Notify the change cache status of the message with NUMBER.")
+
 ;; autoloads
 (eval-and-compile
   (autoload 'md5 "md5")
@@ -131,7 +142,6 @@ If a folder name begins with PREFIX, use BACKEND."
 				     persistent   ; non-nil if persistent.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
-				     handlers     ; list of event handler.
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 
@@ -1167,7 +1177,7 @@ If CACHED is t, message is set as cached.")
   (if cached
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder) number 'cached)
     (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached))
-  (elmo-folder-notify-event folder 'cache-changed number))
+  (elmo-emit-signal 'cache-changed folder number))
 
 (defun elmo-message-copy-entity (entity)
   (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
@@ -1287,13 +1297,17 @@ VALUE is a value to set.")
 					  &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (when (elmo-global-flag-p flag)
-	(let ((message-id (elmo-message-field folder number 'message-id)))
-	  (elmo-global-flag-set flag folder number message-id)))
-      (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
-			   number
-			   flag))
-    (elmo-folder-notify-event folder 'flag-changed numbers)))
+      (let ((old-flags (elmo-message-flags folder number)))
+	(when (elmo-global-flag-p flag)
+	  (let ((message-id (elmo-message-field folder number 'message-id)))
+	    (elmo-global-flag-set flag folder number message-id)))
+	(elmo-msgdb-set-flag (elmo-folder-msgdb folder) number flag)
+	(elmo-emit-signal 'flag-changing
+			  folder
+			  number
+			  old-flags
+			  (elmo-message-flags folder number))))
+    (elmo-emit-signal 'flag-changed folder numbers)))
 
 (defun elmo-message-has-global-flag-p (folder number)
   "Return non-nil when the message in the FOLDER with NUMBER has global flag."
@@ -1327,12 +1341,16 @@ If Optional LOCAL is non-nil, don't update server flag."
 					    &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (when (elmo-global-flag-p flag)
-	(elmo-global-flag-detach flag folder number 'always))
-      (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
-			     number
-			     flag))
-    (elmo-folder-notify-event folder 'flag-changed numbers)))
+      (let ((old-flags (elmo-message-flags folder number)))
+	(when (elmo-global-flag-p flag)
+	  (elmo-global-flag-detach flag folder number 'always))
+	(elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number flag)
+	(elmo-emit-signal 'flag-changing
+			  folder
+			  number
+			  old-flags
+			  (elmo-message-flags folder number))))
+    (elmo-emit-signal 'flag-changed folder numbers)))
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-folder))
   ;; Do nothing.
@@ -1660,33 +1678,6 @@ Return a hashtable for newsgroups."
 		    "elmo"))))
     (elmo-make-directory temp-dir)
     temp-dir))
-
-;; Event notification/observer framework
-(eval-and-compile
-  (luna-define-class elmo-event-handler ()))
-
-(luna-define-generic elmo-event-handler-flag-changed (handler numbers)
-  "Notify flag of the messages with NUMBERS is changed.")
-
-(luna-define-generic elmo-event-handler-cache-changed (handler number)
-  "Called when cache status of the message with NUMBER is changed.")
-
-(defun elmo-folder-add-handler (folder handler)
-  (unless (memq handler (elmo-folder-handlers-internal folder))
-    (elmo-folder-set-handlers-internal
-     folder
-     (cons handler (elmo-folder-handlers-internal folder)))))
-
-(defun elmo-folder-remove-handler (folder handler)
-  (elmo-folder-set-handlers-internal
-   folder
-   (delq handler (elmo-folder-handlers-internal folder))))
-
-(defun elmo-folder-notify-event (folder event &rest args)
-  (when (elmo-folder-handlers-internal folder)
-    (let ((message (format "elmo-event-handler-%s" event)))
-      (dolist (handler (elmo-folder-handlers-internal folder))
-	(apply #'luna-send handler message handler args)))))
 
 ;;;
 (defun elmo-init ()
