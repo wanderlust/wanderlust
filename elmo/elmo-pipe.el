@@ -369,7 +369,7 @@
 (luna-define-method elmo-message-entity ((folder elmo-pipe-folder) key)
   (elmo-message-entity (elmo-pipe-folder-dst-internal folder) key))
 
-(luna-define-method elmo-message-folder ((folder elmo-multi-folder)
+(luna-define-method elmo-message-folder ((folder elmo-pipe-folder)
 					 number)
   (elmo-pipe-folder-dst-internal folder))
 					     

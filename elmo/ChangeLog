@@ -1,3 +1,7 @@
+2003-08-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-message-folder): Fixed definition.
+
 2003-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-list-messages): Use number of overviews
