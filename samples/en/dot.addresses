@@ -1,14 +1,15 @@
 #
-# ~/.addresses sample file.
+# "~/.addresses" sample file.
+#                    by Yuuichi Teranishi <teranisi@gohome.org>
+# Time-stamp: <99/09/10 15:45:37 teranisi>
 #
 # Lines begin with '#' are comment.
 # Empty lines are ignored.
-#
 # Format of each line:
 # email-address  "petname" "realname"
-#
-# petname is used for Summary displaying.  realname is used for To: field.
+# petname is used for Summary displaying.
+# realname is used for To: field.
 #
 teranisi@gohome.org	"YT"	"Yuuichi Teranishi"
-foo@example.com		"Mr. Foo"	"John Foo"
-bar@example.org		"Mr. Bar"	"Michael Bar"
+foo@bar.com		"Mr. Foo"	"John Foo"
+bar@foo.com		"Mr. Bar"	"Michael Bar"
