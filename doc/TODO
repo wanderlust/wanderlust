@@ -2,7 +2,7 @@
 
 ** enable to define folder icons in elmo.el
 ** reconsider the structure of msgdb and make behavior faster
-** organize the marks for already replied (forwarded) messages
+** organize the mark for already forwarded messages
 
 * other tasks
 
