@@ -1,3 +1,9 @@
+2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-completing-read-multiple): Define as function.
+
+	* wl-mule.el (wl-completing-read-multiple): Ditto.
+
 2004-02-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-demo.el (face-background-name): Defalias to avoid compile
