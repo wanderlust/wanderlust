@@ -1,3 +1,103 @@
+2001-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-encache): Define as generic function.
+	(elmo-message-fetch-field): New generic function.
+	(elmo-message-fetch-with-cache-process): Cause an error when
+	fetch strategy is 'entire but only 'section cache is available.
+	(toplevel): Fixed nmz folder definition.
+
+	* elmo-vars.el (elmo-msgdb-lock-list-filename): Removed.
+	(elmo-msgdb-resume-list-filename): Ditto.
+	(elmo-queue-filename): Ditto.
+	(elmo-enable-disconnected-operation): Changed default value to t.
+
+	* elmo-util.el (elmo-cache-path-section-p): New function.
+	(elmo-file-cache-get): Use it.
+	(elmo-dop-queue-filename): Moved from elmo-dop.el.
+	(elmo-dop-queue-load): Moved from elmo-msgdb.el.
+	(elmo-dop-queue-save): Ditto.
+
+	* elmo-net.el (elmo-folder-status-unplugged): Call
+	elmo-folder-status-dop.
+	(elmo-folder-list-messages-unplugged): Implemented.
+	(elmo-folder-delete-messages-unplugged): Define.
+	(elmo-folder-msgdb-create): Define.
+	(elmo-folder-msgdb-create-unplugged): Define.
+	(elmo-folder-mark-as-read-unplugged): Ditto.
+	(elmo-folder-unmark-read-unplugged): Ditto.
+	(elmo-folder-mark-as-important-unplugged): Ditto.
+	(elmo-folder-unmark-important-unplugged): Ditto.
+	(elmo-message-encache): Ditto.
+
+	* elmo-msgdb.el (elmo-dop-queue-load): Moved to elmo-util.el.
+	(elmo-dop-queue-save): Ditto.
+
+	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Renamed from
+	`elmo-folder-msgdb-create'.
+	(elmo-folder-append-buffer): Implemented unplugged operation.
+	(elmo-folder-append-messages): Call parent method in unplugged status.
+	(elmo-message-fetch-unplugged): Removed definition.
+	(elmo-message-fetch-field): Implemented.
+
+	* elmo-dop.el (toplevel): Require 'elmo-localdir.
+	(elmo-dop-folder): Removed variable definition.
+	(elmo-dop-queue-append): Changed argument `fname' to `folder'.
+	(elmo-dop-queue-flush): Implemented.
+	(elmo-dop-queue-merge): Removed definition (TODO).
+	(elmo-dop-spool-folder): New function.
+	(elmo-dop-spool-folder-append-buffer): Ditto.
+	(elmo-dop-spool-folder-list-messages): Ditto.
+	(elmo-dop-list-deleting-messages): Ditto.
+	(elmo-folder-append-buffer-dop): Ditto.
+	(elmo-folder-delete-messages-dop): Ditto.
+	(elmo-message-encache-dop): New inline function.
+	(elmo-create-folder-dop): Ditto.
+	(elmo-folder-mark-as-read-dop): Ditto.
+	(elmo-folder-unmark-read-dop): Ditto.
+	(elmo-folder-mark-as-important-dop): Ditto.
+	(elmo-folder-unmark-important-dop): Ditto.
+	(elmo-folder-status-dop): Fixed.
+	(elmo-folder-append-buffer-dop-delayed): New function.
+	(elmo-folder-delete-messages-dop-delayed): Ditto.
+	(elmo-dop-msgdb): Ditto.
+
+2001-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Fixed.
+
+2001-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-move-messages): Fixed problem when
+	`dst-folder' is 'null.
+
+2001-05-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-list-importants): Rewirte. Use global mark
+	instead of current mark.
+
+	* elmo-multi.el (elmo-folder-list-importants-internal): No
+	operation if importants is not list.
+
+	* elmo-filter.el (elmo-filter-folder-list-importants-internal):
+	Return t if importants is not list.
+
+	* elmo-map.el (elmo-map-folder-list-importants): Define.
+	(elmo-folder-list-importants-internal): Check return value of
+	`elmo-map-folder-list-importants-internal'.
+
+	* elmo-cache.el (elmo-folder-list-importants-internal): Eliminated.
+
+	* elmo-mark.el (elmo-folder-list-importants-internal): Ditto.
+
+	* elmo-nmz.el (elmo-folder-list-importants-internal): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-list-importants-internal): Ditto.
+
+2001-05-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-fetch-confirm): Fixed docstring.
+	(Patch is provided by <kita@coe.nttdata.co.jp>).
+
 2001-05-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-synchronize): Don't check important mark in
