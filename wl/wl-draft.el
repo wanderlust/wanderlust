@@ -717,13 +717,14 @@ Reply to author if WITH-ARG is non-nil."
   "Yank original message."
   (interactive "P")
   (if arg
-      (let (buf mail-reply-buffer)
-	(elmo-set-work-buf
-	 (insert "\n")
-	 (yank)
-	 (setq buf (current-buffer)))
-	(setq mail-reply-buffer buf)
-	(wl-draft-yank-from-mail-reply-buffer nil))
+      (let ((draft-buffer (current-buffer))
+	    mail-reply-buffer)
+	(with-temp-buffer
+	  (insert "\n")
+	  (yank)
+	  (setq mail-reply-buffer (current-buffer))
+	  (with-current-buffer draft-buffer
+	    (wl-draft-yank-from-mail-reply-buffer nil))))
     (wl-draft-yank-current-message-entity)))
 
 (defun wl-draft-hide (editing-buffer)

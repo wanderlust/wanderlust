@@ -91,10 +91,9 @@
 (defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
 
 (defmacro elmo-with-enable-multibyte (&rest body)
-  "Evaluate BODY with `enable-multibyte-character' as non-nil."
-  `(let ((default-enable-multibyte-characters t))
-     (with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
-       ,@body)))
+  "Evaluate BODY with `default-enable-multibyte-character'."
+  `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
+     ,@body))
 
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
 (def-edebug-spec elmo-with-enable-multibyte t)
@@ -102,21 +101,21 @@
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
 File content is decoded with MIME-CHARSET."
-    (if (not (file-readable-p filename))
-	nil
-      (elmo-set-work-buf
-       (as-binary-input-file
-	(insert-file-contents filename))
-       (when mime-charset
-	 (set-buffer-multibyte default-enable-multibyte-characters)
-	 (decode-mime-charset-region (point-min) (point-max) mime-charset))
-       (condition-case nil
-	   (read (current-buffer))
-	 (error (unless no-err
-		  (message "Warning: Loading object from %s failed."
-			   filename)
-		  (elmo-object-save filename nil))
-		nil)))))
+  (if (not (file-readable-p filename))
+      nil
+    (with-temp-buffer
+      (as-binary-input-file
+       (insert-file-contents filename))
+      (when mime-charset
+	(set-buffer-multibyte default-enable-multibyte-characters)
+	(decode-mime-charset-region (point-min) (point-max) mime-charset))
+      (condition-case nil
+	  (read (current-buffer))
+	(error (unless no-err
+		 (message "Warning: Loading object from %s failed."
+			  filename)
+		 (elmo-object-save filename nil))
+	       nil)))))
 
 (defsubst elmo-save-buffer (filename &optional mime-charset)
   "Save current buffer to the file specified by FILENAME.
@@ -140,11 +139,11 @@ File content is encoded with MIME-CHARSET."
   "Save OBJECT to the file specified by FILENAME.
 Directory of the file is created if it doesn't exist.
 File content is encoded with MIME-CHARSET."
-  (elmo-set-work-buf
-   (let (print-length print-level)
-     (prin1 object (current-buffer)))
-;;;(princ "\n" (current-buffer))
-   (elmo-save-buffer filename mime-charset)))
+  (with-temp-buffer
+    (let (print-length print-level)
+      (prin1 object (current-buffer)))
+;;;    (princ "\n" (current-buffer))
+    (elmo-save-buffer filename mime-charset)))
 
 ;;; Search Condition
 
@@ -987,15 +986,10 @@ Emacs 19.28 or earlier does not have `unintern'."
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
   (and string
-       (elmo-set-work-buf
-	(set-buffer-multibyte default-enable-multibyte-characters)
-	(setq string
-	      (encode-mime-charset-string
-	       (eword-decode-and-unfold-unstructured-field-body
-		string)
-	       elmo-mime-charset))
-	(set-buffer-multibyte nil)
-	string)))
+       (elmo-with-enable-multibyte
+	 (encode-mime-charset-string
+	  (eword-decode-and-unfold-unstructured-field-body string)
+	  elmo-mime-charset))))
 
 (defsubst elmo-collect-field (beg end downcase-field-name)
   (save-excursion
@@ -1258,8 +1252,8 @@ SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
 (defun elmo-decoded-field-body (field-name &optional mode)
   (let ((field-body (elmo-field-body field-name)))
     (and field-body
-	 (elmo-set-work-buf
-	  (mime-decode-field-body field-body field-name mode)))))
+	 (elmo-with-enable-multibyte
+	   (mime-decode-field-body field-body field-name mode)))))
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."

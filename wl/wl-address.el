@@ -524,7 +524,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	   (wl-address-expand-aliases alist (1+ nest-count))))))
 
 (defun wl-address-make-alist-from-alias-file (file)
-  (elmo-set-work-buf
+  (with-temp-buffer
     (let ((case-fold-search t)
 	  alias expn alist)
       (insert-file-contents file)
@@ -542,23 +542,23 @@ Refresh `wl-address-list', `wl-address-completion-list', and
       )))
 
 (defun wl-address-make-address-list (path)
-  (if (and path (file-readable-p path))
-      (elmo-set-work-buf
-       (let (ret
-	     (coding-system-for-read wl-cs-autoconv))
-	 (insert-file-contents path)
-	 (goto-char (point-min))
-	 (while (not (eobp))
-	   (if (looking-at
-		"^\\([^#\n][^ \t\n]+\\)[ \t]+\\(\".*\"\\)[ \t]+\\(\".*\"\\)[ \t]*.*$")
-	       (setq ret
-		     (cons
-		      (list (wl-match-buffer 1)
-			    (read (wl-match-buffer 2))
-			    (read (wl-match-buffer 3)))
-		      ret)))
-	   (forward-line))
-	 (nreverse ret)))))
+  (when (and path (file-readable-p path))
+    (with-temp-buffer
+      (let (ret
+	    (coding-system-for-read wl-cs-autoconv))
+	(insert-file-contents path)
+	(goto-char (point-min))
+	(while (not (eobp))
+	  (if (looking-at "\
+^\\([^#\n][^ \t\n]+\\)[ \t]+\\(\".*\"\\)[ \t]+\\(\".*\"\\)[ \t]*.*$")
+	      (setq ret
+		    (cons
+		     (list (wl-match-buffer 1)
+			   (read (wl-match-buffer 2))
+			   (read (wl-match-buffer 3)))
+		     ret)))
+	  (forward-line))
+	(nreverse ret)))))
 
 
 (defsubst wl-address-header-extract-address (str)

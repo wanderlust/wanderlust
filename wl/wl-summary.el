@@ -1385,18 +1385,17 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (if body (setq candidates (append candidates body)))
       (setq fields (cdr fields)))
     (setq candidates (elmo-uniq-list candidates))
-    (elmo-set-work-buf
-     (set-buffer-multibyte default-enable-multibyte-characters)
-     (mapcar (function
-	      (lambda (x)
-		(setq components (std11-extract-address-components x))
-		(cons (nth 1 components)
-		      (and (car components)
-			   (eword-decode-string
-			    (decode-mime-charset-string
-			     (car components)
-			     mime-charset))))))
-	     candidates))))
+    (elmo-with-enable-multibyte
+      (mapcar (function
+	       (lambda (x)
+		 (setq components (std11-extract-address-components x))
+		 (cons (nth 1 components)
+		       (and (car components)
+			    (eword-decode-string
+			     (decode-mime-charset-string
+			      (car components)
+			      mime-charset))))))
+	      candidates))))
 
 (defun wl-summary-edit-addresses-subr (the-email name-in-addr)
   ;; returns nil if there's no change.

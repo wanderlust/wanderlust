@@ -1,5 +1,15 @@
 2005-02-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el
+	(wl-summary-edit-addresses-collect-candidate-fields): Use
+	`elmo-with-enable-multibyte' instead of `elmo-set-work-buf'.
+
+	* wl-draft.el (wl-draft-yank-original): Use `with-temp-buffer'
+	instead of `elmo-set-work-buf'.
+
+	* wl-address.el (wl-address-make-alist-from-alias-file): Ditto.
+	(wl-address-make-address-list): Ditto.
+
 	* Version number is increased to 2.13.3.
 
 2005-02-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

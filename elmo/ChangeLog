@@ -1,5 +1,19 @@
 2005-02-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-util.el (elmo-with-enable-multibyte): Don't bind
+	`default-enable-multibyte-characters'.
+	(elmo-object-load): Use `with-temp-buffer' instead of
+	`elmo-set-work-buf'.
+	(elmo-object-save): Ditto.
+	(elmo-mime-string): Use `elmo-with-enable-multibyte' instead of
+	`elmo-set-work-buf'.
+	(elmo-decoded-field-body): Ditto.
+
+	* elmo-shimbun.el (elmo-shimbun-entity-to-header): Ditto.
+
+	* elmo-sendlog.el (elmo-sendlog-folder-list-message-locations):
+	Use `with-temp-buffer' instead of `elmo-set-work-buf'.
+
 	* elmo-version.el (elmo-version): Up to 2.13.3.
 
 2005-02-27  Tetsurou Okazaki  <okazaki@be.to>

@@ -162,22 +162,21 @@ If it is the symbol `all', update overview for all shimbun folders."
 	(setq shimbun-id (elmo-message-entity-field entity 'message-id))
       (setq message-id (elmo-message-entity-field entity 'message-id)
 	    shimbun-id nil))
-    (elmo-set-work-buf
-     (set-buffer-multibyte t)
-     (shimbun-make-header
-      (elmo-message-entity-number entity)
-      (shimbun-mime-encode-string
-       (elmo-message-entity-field entity 'subject 'decode))
-      (shimbun-mime-encode-string
-       (elmo-message-entity-field entity 'from 'decode))
-      (elmo-message-entity-field entity 'date)
-      message-id
-      (elmo-message-entity-field entity 'references)
-      0
-      0
-      (elmo-message-entity-field entity 'xref)
-      (and shimbun-id
-	   (list (cons "x-shimbun-id" shimbun-id)))))))
+    (elmo-with-enable-multibyte
+      (shimbun-make-header
+       (elmo-message-entity-number entity)
+       (shimbun-mime-encode-string
+	(elmo-message-entity-field entity 'subject 'decode))
+       (shimbun-mime-encode-string
+	(elmo-message-entity-field entity 'from 'decode))
+       (elmo-message-entity-field entity 'date)
+       message-id
+       (elmo-message-entity-field entity 'references)
+       0
+       0
+       (elmo-message-entity-field entity 'xref)
+       (and shimbun-id
+	    (list (cons "x-shimbun-id" shimbun-id)))))))
 
 (defsubst elmo-shimbun-folder-header-hash-setup (folder headers)
   (let ((hash (or (elmo-shimbun-folder-header-hash-internal folder)

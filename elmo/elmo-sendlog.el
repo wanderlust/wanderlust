@@ -59,17 +59,17 @@
 	result)
     (if (not (file-readable-p filename))
 	nil
-      (elmo-set-work-buf
-       (as-binary-input-file
-	(insert-file-contents filename))
-       (goto-char (point-min))
-       (catch 'done
-	 (while t
-	   (re-search-forward "id=\\([^@]+@[^@]+\\)$" (point-at-eol) t)
-	   (setq result (append result (list (match-string 1))))
-	   (if (eq (1+ (point-at-eol)) (point-max))
-	       (throw 'done nil)
-	     (beginning-of-line 2))))))
+      (with-temp-buffer
+	(as-binary-input-file
+	 (insert-file-contents filename))
+	(goto-char (point-min))
+	(catch 'done
+	  (while t
+	    (re-search-forward "id=\\([^@]+@[^@]+\\)$" (point-at-eol) t)
+	    (setq result (append result (list (match-string 1))))
+	    (if (eq (1+ (point-at-eol)) (point-max))
+		(throw 'done nil)
+	      (beginning-of-line 2))))))
     result))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-sendlog-folder))
