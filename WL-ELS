@@ -55,7 +55,7 @@
 (setq WL-MODULES (append WL-MODULES (list 'wl-mime)))
 (setq ELMO-MODULES (append ELMO-MODULES (list 'elmo-mime)))
 (if (not (module-installed-p 'luna))
-    (error "Use new FLIM & SEMI.  See INSTALL or INSTALL.ja"))
+    (error "Use FLIM-1.13.2 or later and SEMI 1.13.7 or later."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils
