@@ -468,6 +468,8 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
   "A hook called when suspend wanderlust.")
+(defvar wl-biff-notify-hook nil
+  "A hook called when a biff-notification is invoked.")
 (defvar wl-auto-check-folder-pre-hook nil
   "A hook called before auto check folders.")
 (defvar wl-auto-check-folder-hook nil
