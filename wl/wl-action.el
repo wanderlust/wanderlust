@@ -760,7 +760,8 @@ Return number if put mark succeed"
 	  (search-forward "\r")
 	  (forward-char -1)
 	  (setq re (point))
-	  (let ((width (cond (wl-summary-width)
+	  (let ((width (cond (wl-summary-width
+			      (1- wl-summary-width))
 			     (wl-summary-print-argument-within-window
 			      (1- (window-width)))))
 		(c (current-column))
