@@ -913,13 +913,15 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
     (when (string= (wl-summary-temp-mark) mark)
       (wl-summary-unmark))
     (forward-line 1))
-  (let (deleted)
-    (dolist (mark-info wl-summary-buffer-temp-mark-list)
-      (when (string= (nth 1 mark-info) mark)
-	(setq deleted (cons mark-info deleted))))
-    (dolist (delete deleted)
-      (setq wl-summary-buffer-temp-mark-list
-	    (delq delete wl-summary-buffer-temp-mark-list)))))
+  (if (string= mark "*")
+      (setq wl-summary-buffer-target-mark-list nil)
+    (let (deleted)
+      (dolist (mark-info wl-summary-buffer-temp-mark-list)
+	(when (string= (nth 1 mark-info) mark)
+	  (setq deleted (cons mark-info deleted))))
+      (dolist (delete deleted)
+	(setq wl-summary-buffer-temp-mark-list
+	      (delq delete wl-summary-buffer-temp-mark-list))))))
 
 (defun wl-summary-unmark-all ()
   "Unmark all according to what you input."
