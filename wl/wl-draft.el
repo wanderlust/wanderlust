@@ -659,13 +659,14 @@ Reply to author if WITH-ARG is non-nil."
 	     (buffer-live-p message-buf))
 	(progn
 	  (with-current-buffer summary-buf
-	    (setq num (save-excursion
-			(set-buffer message-buf)
-			wl-message-buffer-cur-number))
-	    (setq entity (elmo-msgdb-overview-get-entity
-			  num (wl-summary-buffer-msgdb)))
-	    (setq date (elmo-msgdb-overview-entity-get-date entity))
-	    (setq from (elmo-msgdb-overview-entity-get-from entity)))
+	    (let ((elmo-mime-charset wl-summary-buffer-mime-charset))
+	      (setq num (save-excursion
+			  (set-buffer message-buf)
+			  wl-message-buffer-cur-number))
+	      (setq entity (elmo-msgdb-overview-get-entity
+			    num (wl-summary-buffer-msgdb)))
+	      (setq date (elmo-msgdb-overview-entity-get-date entity))
+	      (setq from (elmo-msgdb-overview-entity-get-from entity))))
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
 				   (if wl-default-draft-cite-decorate-author
