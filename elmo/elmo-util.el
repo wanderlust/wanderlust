@@ -899,7 +899,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (t
 	   ;; delete plugged one port of server
 	   (setq alist
-		 (delete (assoc (cons server port) alist)) alist)))
+		 (delete (assoc (cons server port) alist) alist))))
     alist))
 
 (defun elmo-disk-usage (path)

@@ -1,3 +1,7 @@
+2000-09-12  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* elmo-util.el (elmo-delete-plugged): Fix parenthesis.
+
 2000-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity):
