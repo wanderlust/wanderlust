@@ -2655,7 +2655,7 @@ If optional arg exists, don't check any folders."
 (defun wl-folder-confirm-existence (folder)
   (unless (or (wl-folder-entity-exists-p folder)
 	      (file-exists-p (elmo-msgdb-expand-path folder))
-	      (elmo-folder-exists-p entity))
+	      (elmo-folder-exists-p folder))
     (wl-folder-create-subr folder)))
 
 (provide 'wl-folder)
