@@ -506,6 +506,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
   (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
   (define-key wl-summary-mode-map "m|"   'wl-summary-target-mark-pipe)
+  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-erase)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -1111,7 +1112,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (elmo-folder-commit wl-summary-buffer-elmo-folder)
   (elmo-folder-check wl-summary-buffer-elmo-folder)
   (if wl-use-scoring (wl-score-save))
-  (if (interactive-p) (message "Saving summary status...done.")))
+  (if (interactive-p) (message "Saving summary status...done")))
 
 (defun wl-summary-force-exit ()
   "Exit current summary.  Buffer is deleted even the buffer is sticky."
@@ -2931,7 +2932,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-exec-region (beg end)
   (interactive "r")
-  (message "Collecting marks ...")
+  (message "Collecting marks...")
   (save-excursion
     (goto-char beg)
     (beginning-of-line)
@@ -2957,7 +2958,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    refile-len
 	    dst-msgs			; loop counter
 	    result)
-	(message "Executing ...")
+	(message "Executing...")
 	(while dels
 	  (when (not (assq (car dels) wl-summary-buffer-refile-list))
 	    (wl-append wl-summary-buffer-refile-list
@@ -3045,7 +3046,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			   wl-message-buffer-cur-number)))
 	  (wl-summary-toggle-disp-msg 'off))
 	(set-buffer-modified-p nil)
-	(message (concat "Executing ... done"
+	(message (concat "Executing...done"
 			 (if (> refile-failures 0)
 			     (format " (%d refiling failed)" refile-failures)
 			   "")
@@ -3075,6 +3076,21 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
 					   (list msg-num))
 	      (save-excursion (wl-summary-sync nil "update"))))))
+    (message "Read-only folder.")))
+
+(defun wl-summary-target-mark-erase ()
+  (interactive)
+  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
+      (if (null wl-summary-buffer-target-mark-list)
+	  (message "No marked message.")
+	(when (yes-or-no-p
+	       "Erase all marked messages without moving them to trash? ")
+	  (while (car wl-summary-buffer-target-mark-list)
+	    (let ((num (car wl-summary-buffer-target-mark-list)))
+	      (wl-summary-unmark num)
+	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
+					   (list num))))
+	  (save-excursion (wl-summary-sync nil "update"))))
     (message "Read-only folder.")))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
@@ -3709,7 +3725,7 @@ If ARG, exit virtual folder."
 	  (setq skipped (cons (car mlist) skipped)))
 	(setq mlist (cdr mlist)))
       (setq wl-summary-buffer-target-mark-list skipped)
-      (message "Prefetching... %d/%d message(s)." count length)
+      (message "Prefetching... %d/%d message(s)" count length)
       (set-buffer-modified-p nil))))
 
 (defun wl-summary-target-mark-refile-subr (copy-or-refile)

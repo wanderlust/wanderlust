@@ -379,7 +379,7 @@ update overview when message is fetched."
 	 'elmo-folder-msgdb-create "Creating msgdb..."
 	 percent))
       (setq numlist (cdr numlist)))
-    (message "Creating msgdb...done.")
+    (message "Creating msgdb...done")
     (elmo-msgdb-sort-by-date
      (list overview number-alist mark-alist))))
 

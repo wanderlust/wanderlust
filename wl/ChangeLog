@@ -1,7 +1,37 @@
+2002-11-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): Verify sign in the
+	original contents.
+
 2002-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folder): Call elmo-pop3-get-session
 	with argument 'any-exists.
+
+2002-11-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Fix the last change.
+	Use `wl-cs-autoconv'.
+
+2002-11-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Decode PGP output
+	by `mime-view-automatic-conversion'.
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): New function.
+	(wl-message-verify-pgp-nonmime): Ditto.
+	* wl-e21.el, wl-mule.el, wl-xmas.el (wl-message-define-keymap):
+	Bind them to C-c:d and C-c:v respectively.
+
+	Merge following code by Teranishi-san from [wl-en:00167].
+	* wl-mime.el (wl-mime-preview-application/pgp): New function.
+	(wl-mime-preview-application/pgp-encrypted): Ditto.
+	(wl-mime-setup): Add entry.
+
+2002-11-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-target-mark-erase): New function.
+	Bind it to "mD".
 
 2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 

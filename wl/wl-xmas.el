@@ -448,6 +448,8 @@
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "D" 'wl-message-delete-current-part)
     (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap "\C-c:d" 'wl-message-decrypt-pgp-nonmime)
+    (define-key keymap "\C-c:v" 'wl-message-verify-pgp-nonmime)
     (define-key keymap 'button4 'wl-message-wheel-down)
     (define-key keymap 'button5 'wl-message-wheel-up)
     (define-key keymap [(shift button4)] 'wl-message-wheel-down)

@@ -368,7 +368,7 @@ Matched address lists are append to CL."
     (with-output-to-temp-buffer
 	wl-completion-buf-name
       (display-completion-list all))
-    (message "Making completion list... done")))
+    (message "Making completion list...done")))
 
 (defun wl-complete-window-delete ()
   (let (comp-buf comp-win)

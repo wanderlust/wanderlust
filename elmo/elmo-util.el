@@ -773,7 +773,7 @@ the directory becomes empty after deletion."
       (setq clist2 (delq (car list1) clist2))
       (setq list1 (cdr list1)))
     (if mes
-	(message (concat mes "done.")))
+	(message (concat mes "done")))
     (list clist1 clist2)))
 
 (defun elmo-list-bigger-diff (list1 list2 &optional mes)

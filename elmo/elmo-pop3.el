@@ -883,7 +883,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	  (elmo-display-progress
 	   'elmo-display-retrieval-progress
 	   "Retrieving..." 100)  ; remove progress bar.
-	  (message "Retrieving...done."))
+	  (message "Retrieving...done"))
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)

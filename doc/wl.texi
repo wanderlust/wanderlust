@@ -3665,6 +3665,12 @@ Pipe content of each message with target mark @samp{*} to some specified
 external process.
 (@code{wl-summary-target-mark-pipe})
 
+@item D
+@kindex D (Summary)
+@findex wl-summary-erase
+Actually erase the message at once, without moving it to trash.
+(@code{wl-summary-erase})
+
 @item M-t
 @kindex M-t (Summary)
 @findex wl-toggle-plugged
@@ -4704,11 +4710,25 @@ The initial setting is 7.
 If @code{wl-template-visible-select} is non-nil, this variable specifies
 the size of the preview window.
 
+@item wl-draft-buffer-style
+@vindex wl-draft-buffer-style
+The initial setting is @code{full}.
+Style of draft buffer window (except for replying and forwarding).
+@code{keep} is to use current window,
+@code{full} is to use full frame window,
+@code{split} is to split current window and use it.
+If some function is specified, it is called with the draft buffer
+as an argument.
+
 @item wl-draft-reply-buffer-style
 @vindex wl-draft-reply-buffer-style
-The initial setting is @code{split}.  @code{split} or @code{full} can be
-specified.  In the case of @code{full}, the whole frame will be used for
-a reply draft buffer when it is prepared.
+The initial setting is @code{split}.
+Style of draft buffer for replying and forwarding.
+@code{keep} is to use message buffer window,
+@code{full} is to use full frame window,
+@code{split} is to split message buffer window and use it.
+If some function is specified, it is called with the draft buffer
+as an argument.
 
 @item wl-draft-use-frame
 @vindex wl-draft-use-frame
@@ -6375,14 +6395,16 @@ example, please.
 The basic unit of the rule is a combination like
 
 @lisp
-(@samp{CONDITION} @samp{FOLDER} [@code{continue}])
+(@samp{CONDITION} @samp{ACTION} [@code{continue}])
 @end lisp
 
-The 1st element @samp{CONDITION} is a balanced expression (sexp). Its
-grammar will be explained below. The 2nd element @samp{FOLDER} is the
-name of the folder to split messages into. When the 3rd element
-@code{continue} is specified as symbol, evaluating rules is not stopped
-even when the condition is satisfied.
+If @samp{CONDITION} is true, @samp{ACTION} is performed.
+The 1st element @samp{CONDITION} is a condition represented by a
+balanced expression (sexp). Its grammar will be explained below.
+The 2nd element @samp{ACTION} is the name of the folder to split
+messages into, or a symbol. When the 3rd element @code{continue} is
+specified as symbol, evaluating rules is not stopped even when the
+condition is satisfied.
 
 The grammar for @samp{CONDITION} is as follows. See example above to
 learn how to write the condition practically.
@@ -6425,6 +6447,36 @@ A symbol.
 
 When a symbol is specified, it is evaluated.
 @end enumerate
+
+You can specify followings as 2nd @samp{ACTION}.
+
+@enumerate
+@item
+folder name
+
+If some string is specified, it will be regarded as the destination
+folder, and the message will be appended to it.
+
+@item
+@samp{delete}
+
+If the symbol  @samp{delete} is specified, delete the substance of the
+message in @code{elmo-split-folder}
+
+@item
+@samp{noop}
+
+If the symbol @samp{noop} is specified, do nothing on the message and
+keep it as it is.
+
+@item
+function
+
+If some function is specified, execute it.
+@end enumerate
+
+If the message passes all rules, it will be dealed along @samp{ACTION}
+specified by @code{elmo-split-default-action}.
 
 
 @node Address Book, Customization, Split messages, Top

@@ -667,7 +667,7 @@ that `read' can handle, whenever this is possible."
 (defvar wl-load-profile-function 'wl-local-load-profile)
 (defun wl-local-load-profile ()
   "Load `wl-init-file'."
-  (message "Initializing ...")
+  (message "Initializing...")
   (load wl-init-file 'noerror 'nomessage))
 
 (defun wl-load-profile ()
