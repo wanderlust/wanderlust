@@ -1486,9 +1486,9 @@ lastyear  ->  去年の今日
 
 @example
 @group
-%inbox|%myinbox   -> %inbox から %myinbox へメッセージを取り込んで
+|%inbox|%myinbox   -> %inbox から %myinbox へメッセージを取り込んで
                        閲覧するフォルダ。
-*&user@@popserver1,&user@@popserver2|+inbox
+|*&user@@popserver1,&user@@popserver2|+inbox
   -> &user@@popserver1 と &user@@popserver2 から +inbox へメッセージを
   取り込んで閲覧するフォルダ。
 @end group

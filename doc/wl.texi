@@ -1460,8 +1460,8 @@ Example:
 
 @example
 @group
-%inbox|%myinbox   -> Download %inbox to %myinbox.
-*&user@@popserver1,&user@@popserver2|+inbox
+|%inbox|%myinbox   -> Download %inbox to %myinbox.
+|*&user@@popserver1,&user@@popserver2|+inbox
          -> Download from &user@@popserver1 and &user@@popserver2 to +inbox.
 @end group
 @end example
