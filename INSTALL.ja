@@ -33,23 +33,23 @@ MIME用モジュールの選択
 
   (a) XEmacs 21.1 以降
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.4
+	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
     可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
   (b) Emacs 20.4 以降
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.4
+	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
   (c) Emacs 20.1〜20.3
 
-	APEL 10.3, CLIME 1.14.5, SEMI 1.14.4
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.3, CLIME 1.14.5, SEMI 1.14.4
+	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
     Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
     のページが参考になります。
@@ -79,8 +79,8 @@ MIME用モジュールのインストール
 
   例えば、以下の組合せの動作が確認されています。
 
-	APEL 10.4, SLIM 1.14.9, SEMI 1.14.4
-	APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+	APEL 10.3, SLIM 1.14.7, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.3, EMIKO 1.14.1
 
   APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
   トールし直してください。
