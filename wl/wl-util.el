@@ -282,7 +282,13 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	(defmacro wl-as-coding-system (coding-system &rest body)
 	  (` (let ((file-coding-system-for-read (, coding-system))
 		   (file-coding-system (, coding-system)))
-	       (,@ body)))))))
+	       (,@ body))))
+      (if wl-on-nemacs
+	  (defmacro wl-as-coding-system (coding-system &rest body)
+	    (` (let ((default-kanji-fileio-code (, coding-system))
+		     (kanji-fileio-code (, coding-system))
+		     kanji-expected-code)
+		 (,@ body))))))))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
   (` (wl-as-coding-system (mime-charset-to-coding-system (, mime-charset))

@@ -35,8 +35,11 @@
 (require 'elmo-mime)
 
 (eval-when-compile
-  (require 'wl-mime)
-  (require 'mime-view)
+  (if wl-use-semi
+      (progn
+	(require 'wl-mime)
+	(require 'mime-view))
+    (require 'tm-wl))
   (defalias-maybe 'event-window 'ignore)
   (defalias-maybe 'posn-window 'ignore)
   (defalias-maybe 'event-start 'ignore)
