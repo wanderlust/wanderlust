@@ -1,3 +1,8 @@
+2003-01-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-pipe.el (elmo-folder-pack-numbers): Disabled since msgdb of
+	dst-folder is not synchronized. [wl:11272]
+
 2003-01-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Expand
