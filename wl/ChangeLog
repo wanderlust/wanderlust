@@ -1,3 +1,12 @@
+2001-08-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-addrmgr.el (wl-addrmgr-apply-exec): Fix for already-list.
+
+2001-08-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-addrmgr.el (wl-addrmgr-draw): Fix for already-list.
+	(wl-addrmgr-address-entry-list): Ditto.
+
 2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-e21.el (wl-draft-mode-map): Removed binding for
@@ -3471,4 +3480,3 @@
 
 	* wl-draft.el (wl-draft): Put category property on
 	mail-header-separator.
-                                                                                                                                                                                                                                     
