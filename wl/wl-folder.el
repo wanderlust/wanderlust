@@ -2064,11 +2064,8 @@ Use `wl-subscribed-mailing-list'."
   (when (memq (elmo-folder-get-type folder)
 	      '(localdir imap4 maildir))
     (let (key mladdress)
-      (setq folder			; make folder name simple
-	    (if (eq 'imap4 (elmo-folder-get-type folder))
-		(elmo-imap4-spec-mailbox (elmo-imap4-get-spec folder))
-	      (substring folder 1)))
-      (when (string-match "[^\\./]+$" folder) ; last hierarchy
+      (setq folder (substring folder 1)) ; remove folder type symbol
+      (when (string-match "[^\\./]+$" folder)
 	(setq key (regexp-quote
 		   (concat (substring folder (match-beginning 0)) "@")))
 	(setq mladdress

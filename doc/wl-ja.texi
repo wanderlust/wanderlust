@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@include version.texi
+@set VERSION 2.5.8
 @synindex pg cp
 @finalout
 
@@ -198,20 +198,15 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 
 @itemize @bullet
 @item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c, 2000 $B0J9_(B
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22$B!A(B1.6.24, 2.0.5 $B0J9_(B
-@item Courier-IMAP 1.3.2 $B0J9_(B
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 $B0J9_(B
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
+@item Sun Internet Mail Server 4.0
 @end itemize
 
-Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
-$B$j$G$9!#(B
-
-@itemize @bullet
-@item OpenLDAP 2.0.6 $B0J9_(B
-@end itemize
+@c Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
+@c $B$j$G$9!#(B
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -608,8 +603,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 # @var{$B%a!<%k%"%I%l%9(B}  "@var{$B$"$@L>(B}"  "@var{$BK\L>(B}"
 #
 teranisi@@gohome.org            "$B$F$i$K$7(B"      "$B;{@>M50l(B"
-foo@@example.com                "$B$U!<$5$s(B"      "John Foo"
-bar@@example.org                "$B$P!<$5$s(B"      "Michael Bar"
+foo@@bar.gohome.org             "Foo $B$5$s(B"      "John Foo"
+bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
 @end group
 @end example
 

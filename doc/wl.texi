@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@include version.texi
+@set VERSION 2.5.8
 @synindex pg cp
 @finalout
 
@@ -173,20 +173,15 @@ Wanderlust:
 
 @itemize @bullet
 @item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c, 2000 or later
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22--1.6.24, 2.0.5 or later
-@item Courier-IMAP 1.3.2 or later
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 or later
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
+@item Sun Internet Mail Server 4.0
 @end itemize
 
-LDAP connectivity with following LDAPd are confirmed to work with
-Wanderlust:
-
-@itemize @bullet
-@item OpenLDAP 2.0.6 or later
-@end itemize
+@c LDAP connectivity with following LDAPd are confirmed to work with
+@c Wanderlust:
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -581,9 +576,9 @@ The format is very simple. Like this. @refill
 # @r{Format of each line:}
 # @var{email-address}  "@var{nickname} "@var{realname}"
 #
-teranisi@@gohome.org            "YT"            "Yuuichi Teranishi"
-foo@@example.com                "Mr. Foo"       "John Foo"
-bar@@example.org                "Mr. Bar"       "Michael Bar"
+teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
+foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
+bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
 @end group
 @end example
 
@@ -1283,7 +1278,7 @@ Example:
 @end group
 @end example
 
-To use APOP as an @var{authenticate-type}, @file{md5.el} is needed
+To use apop as an @var{authenticate-type}, @file{md5.el} is needed
 (XEmacs doesn't need @file{md5.el}).  @file{md5.el} is included in
 @file{utils/sasl/lisp/} or Emacs/W3 package
 (@uref{http://www.cs.indiana.edu/elisp/w3/docs.html}) or LCD archive
