@@ -733,6 +733,31 @@ If already registerd, change it."
 	(wl-address-init)
 	(list (or new-addr address) the-petname the-realname)))))
 
+;; Read addresses from minibuffer with completion.
+(defvar wl-address-minibuffer-history nil)
+(defvar wl-address-minibuffer-local-map nil
+  "Keymap to use when reading address from the minibuffer.")
+
+(unless wl-address-minibuffer-local-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map minibuffer-local-map)
+    (define-key map "\C-i"
+      (lambda ()
+	(interactive)
+	(wl-complete-field-body wl-address-completion-list
+				?@ nil wl-use-ldap)))
+    (setq wl-address-minibuffer-local-map map)))
+
+(defun wl-address-read-from-minibuffer (prompt &optional
+					       initial-contents
+					       default-value)
+  (read-from-minibuffer prompt
+			initial-contents
+			wl-address-minibuffer-local-map
+			nil
+			'wl-address-minibuffer-history
+			default-value))
+
 (require 'product)
 (product-provide (provide 'wl-address) (require 'wl-version))
 

@@ -543,7 +543,7 @@ Return number if put mark succeed"
 ;; Resend.
 (defun wl-summary-get-resend-address (action number)
   "Decide resend address."
-  (completing-read "Resend message to: " 'wl-complete-address))
+  (wl-address-read-from-minibuffer "Resend message to: "))
 
 (defun wl-summary-exec-action-resend (mark-list)
   (let ((failure 0))

@@ -1,3 +1,12 @@
+2004-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-address.el (wl-address-minibuffer-history): New variable.
+	(wl-address-minibuffer-local-map): New keymap.
+	(wl-address-read-from-minibuffer): New function.
+
+	* wl-action.el (wl-summary-get-resend-address): Use
+	`wl-address-read-from-minibuffer' instead of `completing-read'.
+
 2004-10-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.32.
@@ -4636,7 +4645,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 
-2002-03-11  J.ANirNtme Marant <jerome.marant@free.fr>
+2002-03-11  J,Ai(Br,At(Bme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 
