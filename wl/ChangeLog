@@ -1,7 +1,7 @@
 2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-write-current-folder): If it cannot
-	guess anything, call wl-summary-write interactively.
+	guess anything, call wl-summary-write.
 	* wl-draft.el (wl-draft): Undo unnecessary part of the last change.
 
 2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

@@ -5015,7 +5015,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(setq guess-func (car func-list))
 	(setq func-list nil)))
     (if (null guess-func)
-	(call-interactively 'wl-summary-write)
+	(wl-summary-write)
       (unless (or (stringp (nth 0 guess-list))
 		  (stringp (nth 1 guess-list))
 		  (stringp (nth 2 guess-list)))
