@@ -283,7 +283,8 @@ Set `wl-score-cache' nil."
 	  (setq score (setcdr entry (wl-delete-alist 'touched score)))
 	  (erase-buffer)
 	  (let (emacs-lisp-mode-hook
-		(lisp-mode-syntax-table wl-score-mode-syntax-table))
+		(lisp-mode-syntax-table wl-score-mode-syntax-table)
+		print-length print-level)
 	    (pp score (current-buffer)))
 	  (setq dir (file-name-directory file))
 	  (if (file-directory-p dir)
@@ -1371,7 +1372,8 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
   (goto-char (point-min))
   (let ((form (read (current-buffer))))
     (erase-buffer)
-    (let ((emacs-lisp-mode-syntax-table wl-score-mode-syntax-table))
+    (let ((emacs-lisp-mode-syntax-table wl-score-mode-syntax-table)
+	  print-length print-level)
       (pp form (current-buffer))))
   (goto-char (point-min)))
 
@@ -1468,7 +1470,8 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 	  (wl-score-update-score-entry (car entry) (nth 1 entry) form)
 	(setq form (list entry)))
       (erase-buffer)
-      (let ((emacs-lisp-mode-syntax-table wl-score-mode-syntax-table))
+      (let ((emacs-lisp-mode-syntax-table wl-score-mode-syntax-table)
+	    print-length print-level)
 	(pp form (current-buffer)))
       (goto-char (point-min)))))
 

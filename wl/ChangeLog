@@ -1,3 +1,13 @@
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-score.el (wl-score-save): Bind print-length and print-level.
+	(wl-score-pretty-print): Ditto.
+	(wl-score-edit-insert-header-entry): Ditto.
+
+	* wl-draft.el (wl-draft-send): Remove duplicate "Bcc" and add
+	"From" entry to be treated with wl-draft-eword-encode-address-list.
+	* wl-mime.el (wl-draft-preview-message): Ditto.
+
 2003-02-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-get-prev-folder): Ignore Nemacs; Use `eq'
