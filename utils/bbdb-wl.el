@@ -183,7 +183,7 @@ For BBDB 2.33 or earlier."
 		    ad (std11-address-string structure))
 	      ;; ignore uninteresting addresses, this is kinda gross!
 	      (when (or (not (stringp uninteresting-senders))
-			(not 
+			(not
 			 (or
 			  (and fn (string-match uninteresting-senders fn))
 			  (and ad (string-match uninteresting-senders ad)))))
@@ -205,7 +205,7 @@ For BBDB 2.34 or later."
       (let ((headers bbdb-get-addresses-headers)
 	    (uninteresting-senders bbdb-user-mail-names)
 	    addrlist header structures structure fn ad
-	    header-type header-fields)
+	    header-type header-fields header-content)
 	(while headers
 	  (setq header-type (caar headers)
 		header-fields (cdar headers))
@@ -225,10 +225,9 @@ For BBDB 2.34 or later."
 				 (decode-mime-charset-string
 				  fn wl-mime-charset))))
 		      ad (std11-address-string structure))
-		
 		;; ignore uninteresting addresses, this is kinda gross!
 		(when (or (not (stringp uninteresting-senders))
-			  (not 
+			  (not
 			   (or
 			    (and fn
 				 (string-match uninteresting-senders fn))

@@ -1,3 +1,8 @@
+2002-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* bbdb-wl.el (bbdb-wl-get-addresses-2): Bind unbound local
+	variable.
+
 2002-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* bbdb-wl.el (bbdb-wl-get-addresses-1): New function.
