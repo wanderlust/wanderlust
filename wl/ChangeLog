@@ -1,3 +1,22 @@
+2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-next-message):
+	Return next message number when wl-summary-move-order is nil.
+
+2001-02-28  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-summary.el (wl-summary-move-spec-plugged-alist): Renamed from
+	`wl-summary-move-spec-alist'.
+	(wl-summary-move-spec-unplugged-alist): New variable
+	(Move spec for unplugged status).
+	(wl-summary-next-message): Use `wl-summary-move-spec-plugged-alist'
+	if plugged, `wl-summary-move-spec-unplugged-alist' is unplugged.
+
+2001-03-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-e21.el (wl-draft-overload-menubar): "FCC" -> "Fcc".
+	* wl-mule.el (wl-draft-overload-menubar): Ditto.
+
 2001-02-28  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-mime.el (wl-draft-preview-message): Use `function' instead of
