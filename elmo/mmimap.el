@@ -61,6 +61,8 @@ SECTION is a section string which is defined in RFC2060.")
 (defun mmimap-entity-section (node-id)
   "Return a section string from NODE-ID"
   (cond
+   ((null node-id)
+    "0")
    ((numberp node-id)
     (number-to-string (1+ node-id)))
    ((listp node-id)

@@ -771,6 +771,20 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
      info-alist)
     (setq elmo-folder-info-hashtb hashtb)))
 
+(defsubst elmo-diff-new (diff)
+  (when (consp (cdr diff))
+    (car diff)))
+
+(defsubst elmo-diff-unread (diff)
+  (if (consp (cdr diff))
+      (nth 1 diff)
+    (car diff)))
+
+(defsubst elmo-diff-all (diff)
+  (if (consp (cdr diff))
+      (nth 2 diff)
+    (cdr diff)))
+
 (defsubst elmo-strict-folder-diff (folder)
   "Return folder diff information strictly from FOLDER."
   (let* ((dir (elmo-folder-msgdb-path folder))

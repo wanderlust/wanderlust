@@ -1,8 +1,19 @@
 2001-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-version.el (elmo-version): Up to 2.7.6.
-
 	* mmimap.el (mmimap-entity-section): If node-id is nil, return "0".
+
+	* elmo.el (elmo-diff-new): New inline function.
+	(elmo-diff-unread): Ditto.
+	(elmo-diff-all): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-server-diff-async-callback-1): Get recent
+	value from responseb.
+	(elmo-imap4-folder-diff-plugged): Ditto.
+	(elmo-imap4-server-diff-async): Added recent argument.
+	(elmo-server-diff-async): Ditto.
+	(elmo-imap4-folder-diff-plugged): Ditto.
+
+	* elmo-version.el (elmo-version): Up to 2.7.6.
 
 2001-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

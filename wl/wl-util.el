@@ -833,7 +833,9 @@ This function is imported from Emacs 20.7."
       (with-current-buffer (nth 1 data)
 	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb
 				     (nth 0 data)
-				     (list (car diff) 0 (cdr diff))
+				     (list (nth 0 diff)
+					   (nth 1 diff)
+					   (nth 2 diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)
   (setq wl-biff-check-folders-running nil)

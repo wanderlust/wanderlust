@@ -1070,7 +1070,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 (defun elmo-imap4-server-diff-async-callback-1 (status data)
   (funcall elmo-imap4-server-diff-async-callback
-	   (cons (elmo-imap4-response-value status 'unseen)
+	   (list (elmo-imap4-response-value status 'recent)
+		 (elmo-imap4-response-value status 'unseen)
 		 (elmo-imap4-response-value status 'messages))
 	   data))
 
@@ -1089,7 +1090,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			      "status "
 			      (elmo-imap4-mailbox
 			       (elmo-imap4-folder-mailbox-internal folder))
-			      " (unseen messages)"))))
+			      " (recent unseen messages)"))))
 
 (luna-define-method elmo-server-diff-async ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder)))
@@ -1105,7 +1106,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			      "status "
 			      (elmo-imap4-mailbox
 			       (elmo-imap4-folder-mailbox-internal folder))
-			      " (unseen messages)"))))
+			      " (recent unseen messages)"))))
 
 ;;; IMAP parser.
 
@@ -2247,7 +2248,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
 					   folder))
-					 " (unseen messages)")))
+					 " (recent unseen messages)")))
     (setq response (elmo-imap4-response-value response 'status))
     (setq messages (elmo-imap4-response-value response 'messages))
     (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
@@ -2255,7 +2256,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(setq messages (- messages
 			  (elmo-msgdb-killed-list-length
 			   killed))))
-    (cons (elmo-imap4-response-value response 'unseen)
+    (list (elmo-imap4-response-value response 'recent)
+	  (elmo-imap4-response-value response 'unseen)
 	  messages)))
 
 (luna-define-method elmo-folder-diff-plugged ((folder elmo-imap4-folder))
