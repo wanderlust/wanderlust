@@ -459,7 +459,7 @@ configured by @code{INFODIR} in @file{Makefile}.
 You can read manual at the following URL:
 
 @example
-http://www.gohome.org/wl/doc/wl-euc_toc.html
+http://www.gohome.org/wl/doc/wl_toc.html
 @end example
 
 @node Minimal Settings, Folder Definition, Install, Start Me Up
