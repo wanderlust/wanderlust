@@ -1,3 +1,10 @@
+2000-10-15  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Read greeting
+	response.
+	(elmo-network-setup-session): Define.
+	Call `elmo-nntp-send-mode-reader' when session opened.
+
 2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-multi.el (elmo-multi-list-folder-unread): Fixed.
