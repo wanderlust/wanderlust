@@ -185,7 +185,7 @@ It can be some ACTION as in `elmo-split-rule'."
     (let (result)
       (dolist (field (if (listp field-or-fields)
 			 field-or-fields
-		       (list field)))
+		       (list field-or-fields)))
 	(let ((addrs (mapcar
 		      'std11-address-string
 		      (std11-parse-addresses-string
@@ -205,7 +205,7 @@ It can be some ACTION as in `elmo-split-rule'."
     (let (result)
       (dolist (field (if (listp field-or-fields)
 			 field-or-fields
-		       (list field)))
+		       (list field-or-fields)))
 	(let ((addrs (mapcar
 		      'std11-address-string
 		      (std11-parse-addresses-string
@@ -229,7 +229,7 @@ It can be some ACTION as in `elmo-split-rule'."
     (let (result)
       (dolist (field (if (listp field-or-fields)
 			 field-or-fields
-		       (list field)))
+		       (list field-or-fields)))
 	(let ((field-value (and
 			    elmo-split-message-entity
 			    (elmo-split-fetch-decoded-field
@@ -250,7 +250,7 @@ It can be some ACTION as in `elmo-split-rule'."
     (let (result)
       (dolist (field (if (listp field-or-fields)
 			 field-or-fields
-		       (list field)))
+		       (list field-or-fields)))
 	(let ((field-value (and elmo-split-message-entity
 				(elmo-split-fetch-decoded-field
 				 elmo-split-message-entity
