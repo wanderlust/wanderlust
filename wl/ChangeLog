@@ -1,3 +1,7 @@
+2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* Version number is increased to 2.11.3.
+
 2003-02-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-mark-as-read): Run hook within dolist.
