@@ -17,7 +17,7 @@ Select MIME Module
   SEMI requires APEL and FLIM packages.  For each Emacsen, Recommended
   combination of MIME module package following.
 
-(a) XEmacs 21.0 or later
+(a) XEmacs 21.1 or later
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
@@ -43,9 +43,9 @@ Select MIME Module
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
-(e) Emacs 19.28 or earlier
+(e) Emacs 19.28 or earlier (Mule 2.3, Nemacs)
 
-	APEL 10.3, CLIME 1.14.0, tm-8.8
+	APEL 10.3, CLIME 1.14.0, tm 8.8
 
   If you use Mule based on Emacs 19.28 or earlier, please install tm.
   SEMI does not support Emacs 19.28 or earlier.  You need upgrade APEL

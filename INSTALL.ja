@@ -18,7 +18,7 @@ MIME用モジュールの選択
   SEMI には APEL, FLIM と呼ばれるパッケージも必要です。主な Emacsen につ
   いて推奨される APEL, FLIM, SEMI の組合せを以下に示します。
 
-(a) XEmacs 21.0 以降
+(a) XEmacs 21.1 以降
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
@@ -43,9 +43,9 @@ MIME用モジュールの選択
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
-(e) Emacs 19.28 以前
+(e) Emacs 19.28 以前 (Mule 2.3, Nemacs)
 
-	APEL 10.3, CLIME 1.14.0, tm-8.8
+	APEL 10.3, CLIME 1.14.0, tm 8.8
 
   SEMI は動きませんので、tm をインストールしてください。APEL, CLIME を最
   新版に入れ替える必要もあります。
