@@ -1,5 +1,11 @@
 2000-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-reply):	Insert address with full-name.
+	(Thanks to MAKINO Takashi <makino@cyber.office.ne.jp>)
+
+	* wl-vars.el (wl-draft-reply-use-address-with-full-name):
+	New user option.
+
 	* wl-summary.el (wl-summary-sync-update3): Use `elmo-list-bigger-diff'
 	if elmo-nntp-use-killed-list is nil.
 	Use `elmo-msgdb-append-to-killed-list'.

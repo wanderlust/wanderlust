@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-19 10:23:11 teranisi>
+;; Time-stamp: <00/07/13 12:41:30 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -275,7 +275,7 @@ the `wl-smtp-features' variable."
   (let ((r-list (if no-arg wl-draft-reply-without-argument-list
 		  wl-draft-reply-with-argument-list))
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from)
+	from addr-alist)
     (set-buffer buf)
     (if (wl-address-user-mail-address-p 
 	 (setq from
@@ -320,13 +320,25 @@ the `wl-smtp-features' variable."
 	  (setq r-list (cdr r-list)))
 	(error "No match field: check your `wl-draft-reply-without-argument-list'")))
     (setq subject (std11-field-body "Subject"))
+    (setq to (wl-parse-addresses to)
+	  cc (wl-parse-addresses cc))
     (with-temp-buffer ; to keep raw buffer unibyte.
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq subject (or (and subject
 			     (eword-decode-string
 			      (decode-mime-charset-string
 			       subject
-			       wl-mime-charset))))))
+			       wl-mime-charset)))))
+      (if wl-draft-reply-use-address-with-full-name
+	  (setq addr-alist
+		(mapcar
+		 '(lambda (addr)
+		    (setq addr (eword-extract-address-components addr))
+		    (cons (nth 1 addr)
+			  (if (nth 0 addr)
+			      (concat (nth 0 addr) " <" (nth 1 addr) ">")
+			    (nth 1 addr))))
+		 (append to cc)))))
     (and subject wl-reply-subject-prefix
 	 (let ((case-fold-search t))
 	   (not
@@ -343,8 +355,6 @@ the `wl-smtp-features' variable."
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
-    (setq to (wl-parse-addresses to)
-	  cc (wl-parse-addresses cc))
     (setq to (mapcar '(lambda (addr)
 			(wl-address-header-extract-address
 			 addr)) to))
@@ -370,11 +380,26 @@ the `wl-smtp-features' variable."
 	      (append (wl-delete-duplicates cc nil t)
 		      to (copy-sequence to))
 	      t t))
-    (and to (setq to (mapconcat 'identity to ",\n\t")))
-    (and cc (setq cc (mapconcat 'identity cc ",\n\t")))
-    (and mail-followup-to (setq mail-followup-to 
-				(mapconcat 'identity 
-					   mail-followup-to ",\n\t")))
+    (and to (setq to (mapconcat
+		      '(lambda (addr)
+			 (if wl-draft-reply-use-address-with-full-name
+			     (cdr (assoc addr addr-alist))
+			   addr))
+		      to ",\n\t")))
+    (and cc (setq cc (mapconcat
+		      '(lambda (addr)
+			 (if wl-draft-reply-use-address-with-full-name
+			     (cdr (assoc addr addr-alist))
+			   addr))
+		      cc ",\n\t")))
+    (and mail-followup-to
+	 (setq mail-followup-to
+	       (mapconcat
+		'(lambda (addr)
+		   (if wl-draft-reply-use-address-with-full-name
+		       (cdr (assoc addr addr-alist))
+		     addr))
+		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))
     (setq references (delq nil references)
 	  references (mapconcat 'identity references " ")

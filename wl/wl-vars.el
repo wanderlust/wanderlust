@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/14 23:38:57 teranisi>
+;; Time-stamp: <00/07/13 12:39:53 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1063,6 +1063,12 @@ Set this if (system-name) does not return FQDN."
   :type 'string
   :group 'wl-draft
   :group 'wl-pref)
+
+(defcustom wl-draft-reply-use-address-with-full-name t
+  "*Use address with full-name in the draft of replied message."
+  :type 'boolean
+  :group 'wl-pref
+  :group 'wl-draft)
 
 (defcustom wl-folder-many-unsync-threshold 70
   "*Folders which contains messages more than this number are highlighted
