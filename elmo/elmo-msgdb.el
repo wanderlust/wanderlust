@@ -413,6 +413,72 @@ header separator."
     elmo-msgdb-location-filename
     dir) alist))
 
+;;; For backward compatibility.
+(defsubst elmo-msgdb-overview-entity-get-number (entity)
+  (elmo-message-entity-number entity))
+
+(defsubst elmo-msgdb-overview-entity-set-number (entity number)
+  (elmo-message-entity-set-number entity number))
+
+(defsubst elmo-msgdb-overview-entity-get-references (entity)
+  (elmo-message-entity-field entity 'references))
+
+(defsubst elmo-msgdb-overview-entity-set-references (entity references)
+  (elmo-message-entity-set-field entity 'references references))
+
+(defsubst elmo-msgdb-overview-entity-get-from-no-decode (entity)
+  (elmo-message-entity-field entity 'from))
+
+(defsubst elmo-msgdb-overview-entity-get-from (entity)
+  (elmo-message-entity-field entity 'from t))
+
+(defsubst elmo-msgdb-overview-entity-set-from (entity from)
+  (elmo-message-entity-set-field entity 'from from))
+
+(defsubst elmo-msgdb-overview-entity-get-subject (entity)
+  (elmo-message-entity-field entity 'subject t))
+
+(defsubst elmo-msgdb-overview-entity-get-subject-no-decode (entity)
+  (elmo-message-entity-field entity 'subject))
+
+(defsubst elmo-msgdb-overview-entity-set-subject (entity subject)
+  (elmo-message-entity-set-field entity 'subject subject))
+
+(defsubst elmo-msgdb-overview-entity-get-date (entity)
+  (elmo-message-entity-field entity 'date))
+
+(defsubst elmo-msgdb-overview-entity-set-date (entity date)
+  (elmo-message-entity-set-field entity 'date date))
+
+(defsubst elmo-msgdb-overview-entity-get-to (entity)
+  (elmo-message-entity-field entity 'to))
+
+(defsubst elmo-msgdb-overview-entity-get-cc (entity)
+  (elmo-message-entity-field entity 'cc))
+
+(defsubst elmo-msgdb-overview-entity-get-size (entity)
+  (elmo-message-entity-field entity 'size))
+
+(defsubst elmo-msgdb-overview-entity-set-size (entity size)
+  (elmo-message-entity-set-field entity 'size size))
+
+(defsubst elmo-msgdb-overview-entity-get-extra (entity)
+  ;; Truely obsolete.
+  )
+
+(defsubst elmo-msgdb-overview-entity-set-extra (entity extra)
+  ;; Truely obsolete.
+  )
+
+(defsubst elmo-msgdb-overview-entity-get-extra-field (entity
+						      field-name)
+  (elmo-message-entity-field entity (intern field-name)))
+
+(defsubst elmo-msgdb-overview-entity-set-extra-field (entity
+						      field-name
+						      value)
+  (elmo-message-entity-set-field entity (intern field-name) value))
+
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))
 

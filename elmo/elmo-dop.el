@@ -348,24 +348,26 @@ FOLDER is the folder structure."
   (unless (elmo-folder-exists-p folder)
     (elmo-folder-create folder)))
 
-;;; Util XXX Oh my god...
+;;; Util
 (defun elmo-dop-msgdb (msgdb)
-  (list (mapcar (function
-		 (lambda (x)
-		   (elmo-message-entity-set-number
-		    x
-		    (* -1
-		       (elmo-message-entity-number x)))))
-		(nth 0 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (* -1 (car x))
-			      (cdr x))))
-		(nth 1 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (* -1 (car x))
-			      (cdr x)))) (nth 2 msgdb))))
+  (let ((new-db (elmo-make-msgdb))
+	entity)
+    (dolist (dop-entity (mapcar
+			 (lambda (number)
+			   (setq entity (elmo-msgdb-message-entity
+					 msgdb number))
+			   (elmo-message-entity-set-number
+			    entity
+			    (* -1 (elmo-message-entity-number entity)))
+			   entity)
+			 (elmo-msgdb-list-messages msgdb)))
+      (elmo-msgdb-append-entity new-db
+				dop-entity
+				(elmo-msgdb-flags
+				 msgdb
+				 (abs (elmo-message-entity-number
+				       dop-entity)))))
+    new-db))
 
 (require 'product)
 (product-provide (provide 'elmo-dop) (require 'elmo-version))

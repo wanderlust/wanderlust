@@ -104,89 +104,11 @@
 ;;;
 ;; Internal use only (obsolete interface)
 ;;
-(defsubst elmo-msgdb-overview-entity-get-id (entity)
+(defsubst elmo-msgdb-overview-entity-get-id-internal (entity)
   (and entity (car entity)))
 
-(defsubst elmo-msgdb-overview-entity-get-number (entity)
+(defsubst elmo-msgdb-overview-entity-get-number-internal (entity)
   (and entity (aref (cdr entity) 0)))
-
-(defsubst elmo-msgdb-overview-entity-set-number (entity number)
-  (and entity (aset (cdr entity) 0 number))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-references (entity)
-  (and entity (aref (cdr entity) 1)))
-
-(defsubst elmo-msgdb-overview-entity-set-references (entity references)
-  (and entity (aset (cdr entity) 1 references))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-from-no-decode (entity)
-  (and entity (aref (cdr entity) 2)))
-
-(defsubst elmo-msgdb-overview-entity-get-from (entity)
-  (and entity
-       (aref (cdr entity) 2)
-       (elmo-msgdb-get-decoded-cache (aref (cdr entity) 2))))
-
-(defsubst elmo-msgdb-overview-entity-set-from (entity from)
-  (and entity (aset (cdr entity) 2 from))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-subject (entity)
-  (and entity
-       (aref (cdr entity) 3)
-       (elmo-msgdb-get-decoded-cache (aref (cdr entity) 3))))
-
-(defsubst elmo-msgdb-overview-entity-get-subject-no-decode (entity)
-  (and entity (aref (cdr entity) 3)))
-
-(defsubst elmo-msgdb-overview-entity-set-subject (entity subject)
-  (and entity (aset (cdr entity) 3 subject))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-date (entity)
-  (and entity (aref (cdr entity) 4)))
-
-(defsubst elmo-msgdb-overview-entity-set-date (entity date)
-  (and entity (aset (cdr entity) 4 date))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-to (entity)
-  (and entity (aref (cdr entity) 5)))
-
-(defsubst elmo-msgdb-overview-entity-get-cc (entity)
-  (and entity (aref (cdr entity) 6)))
-
-(defsubst elmo-msgdb-overview-entity-get-size (entity)
-  (and entity (aref (cdr entity) 7)))
-
-(defsubst elmo-msgdb-overview-entity-set-size (entity size)
-  (and entity (aset (cdr entity) 7 size))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-extra (entity)
-  (and entity (aref (cdr entity) 8)))
-
-(defsubst elmo-msgdb-overview-entity-set-extra (entity extra)
-  (and entity (aset (cdr entity) 8 extra))
-  entity)
-
-(defsubst elmo-msgdb-overview-entity-get-extra-field (entity field-name)
-  (let ((field-name (downcase field-name))
-	(extra (and entity (aref (cdr entity) 8))))
-    (and extra
-	 (cdr (assoc field-name extra)))))
-
-(defsubst elmo-msgdb-overview-entity-set-extra-field (entity field-name value)
-  (let ((field-name (downcase field-name))
-	(extras (and entity (aref (cdr entity) 8)))
-	extra)
-    (if (setq extra (assoc field-name extras))
-	(setcdr extra value)
-      (elmo-msgdb-overview-entity-set-extra
-       entity
-       (cons (cons field-name value) extras)))))
 
 ;;; load & save
 (defun elmo-msgdb-number-load (dir)
@@ -326,7 +248,7 @@ Return a list of message numbers which have duplicated message-ids."
 	;; key is message-id
 	(if (elmo-get-hash-val (caar overview) ehash) ; duplicated.
 	    (setq duplicates (cons
-			      (elmo-msgdb-overview-entity-get-number
+			      (elmo-msgdb-overview-entity-get-number-internal
 			       (car overview))
 			      duplicates)))
 	(if (caar overview)
@@ -334,7 +256,8 @@ Return a list of message numbers which have duplicated message-ids."
 	;; key is number
 	(elmo-set-hash-val
 	 (format "#%d"
-		 (elmo-msgdb-overview-entity-get-number (car overview)))
+		 (elmo-msgdb-overview-entity-get-number-internal
+		  (car overview)))
 	 (car overview) ehash)
 	(setq overview (cdr overview)))
       (while mark-alist
@@ -352,12 +275,14 @@ Return a list of message numbers which have duplicated message-ids."
 	(mhash (elmo-msgdb-get-mark-hashtb msgdb))
 	number)
     (when (and entity ehash)
-      (and (setq number (elmo-msgdb-overview-entity-get-number entity))
+      (and (setq number (elmo-msgdb-overview-entity-get-number-internal
+			 entity))
 	   (elmo-clear-hash-val (format "#%d" number) ehash))
       (and (car entity) ;; message-id
 	   (elmo-clear-hash-val (car entity) ehash)))
     (when (and entity mhash)
-      (and (setq number (elmo-msgdb-overview-entity-get-number entity))
+      (and (setq number (elmo-msgdb-overview-entity-get-number-internal
+			 entity))
 	   (elmo-clear-hash-val (format "#%d" number) mhash)))))
 
 ;;; Implement
@@ -481,7 +406,7 @@ Return a list of message numbers which have duplicated message-ids."
 	 (elmo-msgdb-set-mark msgdb number new-mark))))))
 
 (luna-define-method elmo-msgdb-list-messages ((msgdb modb-legacy))
-  (mapcar 'elmo-msgdb-overview-entity-get-number
+  (mapcar 'elmo-msgdb-overview-entity-get-number-internal
 	  (elmo-msgdb-get-overview msgdb)))
 
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-legacy) flag)
@@ -556,8 +481,8 @@ Return a list of message numbers which have duplicated message-ids."
 (luna-define-method elmo-msgdb-append-entity ((msgdb modb-legacy)
 					      entity &optional flags)
   (when entity
-    (let ((number (elmo-msgdb-overview-entity-get-number entity))
-	  (message-id (elmo-msgdb-overview-entity-get-id entity))
+    (let ((number (elmo-msgdb-overview-entity-get-number-internal entity))
+	  (message-id (elmo-msgdb-overview-entity-get-id-internal entity))
 	  mark)
       (elmo-msgdb-set-overview
        msgdb

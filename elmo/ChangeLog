@@ -1,3 +1,57 @@
+2003-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-msgdb): Rewrite.
+
+	* modb-legacy.el (elmo-msgdb-overview-entity-get-id-internal): New
+	inline function.
+	(elmo-msgdb-overview-entity-get-number-internal): Ditto.
+	(elmo-msgdb-overview-entity-set-number,
+	elmo-msgdb-overview-entity-get-references,
+	elmo-msgdb-overview-entity-set-references,
+	elmo-msgdb-overview-entity-get-from-no-decode,
+	elmo-msgdb-overview-entity-get-from,
+	elmo-msgdb-overview-entity-set-from,
+	elmo-msgdb-overview-entity-get-subject,
+	elmo-msgdb-overview-entity-get-subject-no-decode,
+	elmo-msgdb-overview-entity-set-subject,
+	elmo-msgdb-overview-entity-get-date,
+	elmo-msgdb-overview-entity-set-date,
+	elmo-msgdb-overview-entity-get-to,
+	elmo-msgdb-overview-entity-get-cc,
+	elmo-msgdb-overview-entity-get-size,
+	elmo-msgdb-overview-entity-set-size,
+	elmo-msgdb-overview-entity-get-extra,
+	elmo-msgdb-overview-entity-set-extra,
+	elmo-msgdb-overview-entity-get-extra-field,
+	elmo-msgdb-overview-entity-set-extra-field): Moved to elmo-msgdb.el.
+	(elmo-msgdb-make-index): Use
+	`elmo-msgdb-overview-entity-get-number-internal'.
+	(elmo-msgdb-clear-index): Ditto.
+	(elmo-msgdb-append-entity): Ditto;
+	Use `elmo-msgdb-overview-entity-get-id-internal'.
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-number,
+	elmo-msgdb-overview-entity-set-number,
+	elmo-msgdb-overview-entity-get-references,
+	elmo-msgdb-overview-entity-set-references,
+	elmo-msgdb-overview-entity-get-from-no-decode,
+	elmo-msgdb-overview-entity-get-from,
+	elmo-msgdb-overview-entity-set-from,
+	elmo-msgdb-overview-entity-get-subject,
+	elmo-msgdb-overview-entity-get-subject-no-decode,
+	elmo-msgdb-overview-entity-set-subject,
+	elmo-msgdb-overview-entity-get-date,
+	elmo-msgdb-overview-entity-set-date,
+	elmo-msgdb-overview-entity-get-to,
+	elmo-msgdb-overview-entity-get-cc,
+	elmo-msgdb-overview-entity-get-size,
+	elmo-msgdb-overview-entity-set-size,
+	elmo-msgdb-overview-entity-get-extra,
+	elmo-msgdb-overview-entity-set-extra,
+	elmo-msgdb-overview-entity-get-extra-field,
+	elmo-msgdb-overview-entity-set-extra-field): Moved from modb-legacy.el
+	and rewrote for backward compatibility.
+
 2003-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-message-entity-number,
