@@ -432,9 +432,10 @@ Don't cache if nil.")
 	  (erase-buffer)
 	  (insert (nth 3 elmo-nntp-list-folders-cache))
 	  (goto-char (point-min))
-	  (or (string= folder "")
-	      (and folder
-		   (keep-lines (concat "^" (regexp-quote folder) "\\."))))
+	  (debug)
+	  (or (string= group "")
+	      (and group
+		   (keep-lines (concat "^" (regexp-quote group) "\\."))))
 	  t
 	  )))))
 
