@@ -290,10 +290,12 @@
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
 (luna-define-method elmo-folder-unmark-read :before ((folder elmo-map-folder)
-						     numbers)
-  (elmo-map-folder-unmark-read
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
+						     numbers
+						     &optional ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-unmark-read
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
 
 (luna-define-method elmo-folder-mark-as-read :before ((folder
 						       elmo-map-folder)
