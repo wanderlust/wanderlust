@@ -128,7 +128,8 @@
 
 ;; 着信通知の設定
 ;(setq wl-biff-check-folder-list '("%inbox"))
-;(setq wl-biff-notify-hook '(beep))
+;(setq wl-biff-notify-hook '(ding))
+
 
 ;;; [[ ネットワーク ]]
 

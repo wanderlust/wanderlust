@@ -129,7 +129,8 @@
 
 ;; notify mail arrival
 ;(setq wl-biff-check-folder-list '("%inbox"))
-;(setq wl-biff-notify-hook '(beep))
+;(setq wl-biff-notify-hook '(ding))
+
 
 ;;; [[ Network ]]
 

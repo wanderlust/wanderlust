@@ -6528,7 +6528,7 @@ Check mail arrival in this period.
 This hook is run at the arrival of new mail.
 To beep with mail arrival(initial setting), set as follows.
 @lisp
-(setq wl-biff-notify-hook '(beep))
+(setq wl-biff-notify-hook '(ding))
 @end lisp
 For silence, set to @code{nil}.
 @end table
