@@ -1709,7 +1709,7 @@ This variable overwhelm `wl-message-ignored-field-list' settings."
 
 (defcustom wl-message-header-button-alist
   (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):"
-       "<[^>]+>"
+       "<[^>\n ]+>"
        0 wl-message-button-refer-article  0)
       ("^[^:]+:"
        "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
@@ -1727,7 +1727,7 @@ This variable overwhelm `wl-message-ignored-field-list' settings."
 
 (defcustom wl-message-body-button-alist
   '(("<mailto:[^>]+>" 0 'ignore 0 1024)
-    ("<[^>]+@[^>]+>" 0 wl-message-button-refer-article 0 1024))
+    ("<[^>\n ]+@[^>\n ]+>" 0 wl-message-button-refer-article 0 1024))
   "Alist of regexps to match buttons in message body."
   :type '(repeat
 	  (list regexp

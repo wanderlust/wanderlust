@@ -1,3 +1,9 @@
+2004-09-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-message-header-button-alist): Change default
+	value.
+	(wl-message-body-button-alist): Ditto.
+
 2004-09-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl.el (wl-exit): Run elmo-passwd-alist-clear.
