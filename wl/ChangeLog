@@ -1,3 +1,7 @@
+2001-03-12  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-summary): Use `save-match-data'.
+
 2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-move-spec-plugged-alist,
