@@ -57,7 +57,8 @@
   (defun-maybe sasl-digest-md5-digest-response
     (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe starttls-negotiate (a))
-  (defun-maybe elmo-generic-list-folder-unread (spec msgdb unread-marks))
+  (defun-maybe elmo-generic-list-folder-unread (spec number-alist mark-alist unread-marks))
+  (defun-maybe elmo-generic-folder-diff (spec folder number-list))
   (defsubst-maybe utf7-decode-string (string &optional imap) string))
 
 (defvar elmo-imap4-use-lock t
@@ -633,12 +634,11 @@ BUFFER must be a single-byte buffer."
      (- (elmo-imap4-response-value status 'uidnext) 1)
      (elmo-imap4-response-value status 'messages))))
 
-;      (when (and response (string-match
-;			   "\\* STATUS [^(]* \\(([^)]*)\\)" response))
-;	(setq response (read (downcase (elmo-match-string 1 response))))
-;	(cons (- (cadr (memq 'uidnext response)) 1)
-;	      (cadr (memq 'messages response)))))))
-
+(defun elmo-imap4-folder-diff (spec folder &optional number-list)
+  (if elmo-use-server-diff
+      (elmo-imap4-server-diff spec)
+    (elmo-generic-folder-diff spec folder number-list)))
+    
 (defun elmo-imap4-get-session (spec &optional if-exists)
   (elmo-network-get-session
    'elmo-imap4-session
@@ -718,17 +718,19 @@ BUFFER must be a single-byte buffer."
 (defun elmo-imap4-list-folder (spec)
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
+		      (elmo-msgdb-expand-path spec))))
 	numbers)
     (setq numbers (elmo-imap4-list spec "all"))
     (elmo-living-messages numbers killed)))
 
-(defun elmo-imap4-list-folder-unread (spec msgdb unread-marks)
+(defun elmo-imap4-list-folder-unread (spec number-alist mark-alist
+					   unread-marks)
   (if (elmo-imap4-use-flag-p spec)
       (elmo-imap4-list spec "unseen")
-    (elmo-generic-list-folder-unread spec msgdb unread-marks)))
+    (elmo-generic-list-folder-unread spec number-alist mark-alist
+				     unread-marks)))
 
-(defun elmo-imap4-list-folder-important (spec msgdb)
+(defun elmo-imap4-list-folder-important (spec number-alist)
   (and (elmo-imap4-use-flag-p spec)
        (elmo-imap4-list spec "flagged")))
 

@@ -36,9 +36,13 @@
 (require 'std11)
 (require 'elmo-cache)
 
-(defun elmo-msgdb-expand-path (folder &optional spec)
+(defun elmo-msgdb-expand-path (folder)
+  "Expand msgdb path for FOLDER.
+FOLDER should be a sring of folder name or folder spec."
   (convert-standard-filename
-   (let* ((spec (or spec (elmo-folder-get-spec folder)))
+   (let* ((spec (if (stringp folder)
+		    (elmo-folder-get-spec folder)
+		  folder))
 	  (type (car spec))
 	  fld)
      (cond
@@ -217,7 +221,7 @@
     dir) alist))
 
 (defun elmo-list-folder-by-location (spec locations &optional msgdb)
-  (let* ((path (elmo-msgdb-expand-path nil spec))
+  (let* ((path (elmo-msgdb-expand-path spec))
 	 (location-alist (if msgdb
 			     (elmo-msgdb-get-location msgdb)
 			   (elmo-msgdb-location-load path)))
@@ -667,13 +671,13 @@ content of MSGDB is changed."
 (defun elmo-msgdb-flist-load (folder)
   (let ((flist-file (expand-file-name
 		     elmo-msgdb-flist-filename
-		     (elmo-msgdb-expand-path folder (list 'folder folder)))))
+		     (elmo-msgdb-expand-path (list 'folder folder)))))
     (elmo-object-load flist-file nil t)))
 
 (defun elmo-msgdb-flist-save (folder flist)
   (let ((flist-file (expand-file-name
 		     elmo-msgdb-flist-filename
-		     (elmo-msgdb-expand-path folder (list 'folder folder)))))
+		     (elmo-msgdb-expand-path (list 'folder folder)))))
     (elmo-object-save flist-file flist)))
 
 (defun elmo-crosspost-alist-load ()
@@ -791,13 +795,13 @@ Header region is supposed to be narrowed."
     (list nil nil nil nil (elmo-msgdb-make-overview-hashtb nil))))
 
 (defun elmo-msgdb-delete-path (folder &optional spec)
-  (let ((path (elmo-msgdb-expand-path folder spec)))
+  (let ((path (elmo-msgdb-expand-path (or spec folder))))
     (if (file-directory-p path)
 	(elmo-delete-directory path t))))
 
 (defun elmo-msgdb-rename-path (old-folder new-folder &optional old-spec new-spec)
-  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-folder old-spec)))
-	 (new (directory-file-name (elmo-msgdb-expand-path new-folder new-spec)))
+  (let* ((old (directory-file-name (elmo-msgdb-expand-path old-spec)))
+	 (new (directory-file-name (elmo-msgdb-expand-path new-spec)))
 	 (new-dir (directory-file-name (file-name-directory new))))
     (if (not (file-directory-p old))
 	()

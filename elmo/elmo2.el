@@ -251,7 +251,7 @@ without cacheing."
 	 (loc-alist (if msgdb
 			(elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load
-		       (elmo-msgdb-expand-path nil src-spec)))))
+		       (elmo-msgdb-expand-path src-spec)))))
     (if (eq (car src-spec) 'archive)
 	(elmo-archive-copy-msgs-froms
 	 (elmo-folder-get-spec dst-folder)
@@ -481,9 +481,9 @@ without cacheing."
      seen-mark important-mark seen-list)))
 
 ;;   msgdb elmo-msgdb-load        (folder)
-(defun elmo-msgdb-load (folder &optional spec)
+(defun elmo-msgdb-load (folder)
   (message "Loading msgdb for %s..." folder)
-  (let* ((path (elmo-msgdb-expand-path folder spec))
+  (let* ((path (elmo-msgdb-expand-path folder))
 	 (overview (elmo-msgdb-overview-load path))
 	 (ret-val
 	  (list overview
@@ -598,17 +598,16 @@ without cacheing."
   "Just return number-alist."
   number-alist)
 
-(defun elmo-generic-list-folder-unread (spec msgdb unread-marks)
-  (let ((mark-alist (elmo-msgdb-get-mark-alist msgdb)))
-    (elmo-delete-if
-     'null
-     (mapcar
-      (function (lambda (x)
-		  (if (member (cadr (assq (car x) mark-alist)) unread-marks)
-		      (car x))))
-      mark-alist))))
+(defun elmo-generic-list-folder-unread (spec number-alist mark-alist
+					     unread-marks)
+  (delq nil
+	(mapcar
+	 (function (lambda (x)
+		     (if (member (cadr (assq (car x) mark-alist)) unread-marks)
+			 (car x))))
+	 mark-alist)))
 
-(defun elmo-generic-list-folder-important (spec msgdb)
+(defun elmo-generic-list-folder-important (spec number-alist)
   nil)
 
 (defun elmo-update-number (folder msgdb)
@@ -653,29 +652,26 @@ without cacheing."
 		0)))
 	  (length in-folder))))
 
-(defun elmo-list-folder-unread (folder msgdb unread-marks)
-  (elmo-call-func folder "list-folder-unread" msgdb unread-marks))
+(defun elmo-list-folder-unread (folder number-alist mark-alist unread-marks)
+  (elmo-call-func folder "list-folder-unread"
+		  number-alist mark-alist unread-marks))
 
-(defun elmo-list-folder-important (folder msgdb)
-  (let (importants 
-	(overview (elmo-msgdb-get-overview msgdb)))
-    ;; server side importants...(append only.)
+(defun elmo-list-folder-important (folder number-alist)
+  (let (importants)
+    ;; Server side importants...(append only.)
     (if (elmo-folder-plugged-p folder)
 	(setq importants (elmo-call-func folder "list-folder-important"
-					 msgdb)))
+					 number-alist)))
     (or elmo-msgdb-global-mark-alist
 	(setq elmo-msgdb-global-mark-alist
 	      (elmo-object-load (expand-file-name
 				 elmo-msgdb-global-mark-filename
 				 elmo-msgdb-dir))))
-    (while overview
-      (if (assoc (elmo-msgdb-overview-entity-get-id (car overview))
+    (while number-alist
+      (if (assoc (cdr (car number-alist))
 		 elmo-msgdb-global-mark-alist)
-	  (setq importants (cons
-			    (elmo-msgdb-overview-entity-get-number
-			     (car overview))
-			    importants)))
-      (setq overview (cdr overview)))
+	  (setq importants (cons (car (car number-alist)) importants)))
+      (setq number-alist (cdr number-alist)))
     importants))
 
 (defun elmo-generic-commit (folder)
@@ -708,64 +704,44 @@ Currently works on IMAP4 folder only."
 		  folder
 		  (elmo-folder-diff folder)))))
 
-;; returns cons cell of (unsync . number-of-messages-in-folder)
-(defun elmo-folder-diff (fld &optional number-alist)
-  (interactive)
-  (let ((type (elmo-folder-get-type fld)))
-    (cond ((eq type 'multi)
-	   (elmo-multi-folder-diff fld))
-	  ((and (eq type 'filter)
-		(or (elmo-multi-p fld)
-		    (not (and (vectorp (nth 1 (elmo-folder-get-spec fld)))
-			      (string-match
-			       "^first$\\|^last$"
-			       (elmo-filter-key
-				(nth 1 (elmo-folder-get-spec fld)))))))
-		;; not partial...unsync number is unknown.
-		(cons nil
-		      (cdr (elmo-folder-diff
-			    (nth 2 (elmo-folder-get-spec fld)))))))
-	  ((and (eq type 'imap4)
-		elmo-use-server-diff)
-	   (elmo-call-func fld "server-diff")) ;; imap4 server side diff.
-	  (t
-	   (let ((cached-in-db-max (elmo-folder-get-info-max fld))
-		 (in-folder (elmo-max-of-folder fld))
-		 (in-db t)
-		 unsync nomif
-		 in-db-max)
-	     (if (or number-alist
-		     (not cached-in-db-max))
-		 (let* ((dir (elmo-msgdb-expand-path fld))
-			(nalist (or number-alist
-				    (elmo-msgdb-number-load dir))))
-		   ;; No info-cache.
-		   (setq in-db (sort (mapcar 'car nalist) '<))
-		   (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
-				       0))
-		   (if (not number-alist)
-		       ;; Number-alist is not used.
-		       (elmo-folder-set-info-hashtb fld in-db-max
-						    nil))
-;; 						   (or
-;; 						    (and in-db (length in-db))
-;; 						    0)))
-		   )
-	       ;; info-cache exists.
-	       (setq in-db-max cached-in-db-max))
-	     (setq unsync (if (and in-db
-				   (car in-folder))
-			      (- (car in-folder) in-db-max)
-			    (if (and in-folder
-				     (null in-db))
-				(cdr in-folder)
-			      (if (null (car in-folder))
-				  nil))))
-	     (setq nomif (cdr in-folder))
-	     (if (and unsync nomif (> unsync nomif))
-		 (setq unsync nomif))
-	     (cons (or unsync 0) (or nomif 0)))))))
-    
+(defun elmo-folder-diff (folder &optional number-list)
+  "Get diff of FOLDER.
+Return value is a cons cell of NEW and MESSAGES.
+If optional argumnet NUMBER-LIST is set, it is used as a 
+message list in msgdb. Otherwise, number-list is load from msgdb."
+  (elmo-call-func folder "folder-diff" folder number-list))
+
+(defun elmo-generic-folder-diff (spec folder &optional number-list)
+  (let ((cached-in-db-max (elmo-folder-get-info-max folder))
+	(in-folder (elmo-max-of-folder folder))
+	(in-db t)
+	unsync messages
+	in-db-max)
+    (if (or number-list (not cached-in-db-max))
+	(let ((number-list (or number-list
+			       (mapcar 'car
+				       (elmo-msgdb-number-load
+					(elmo-msgdb-expand-path spec))))))
+	  ;; No info-cache.
+	  (setq in-db (sort number-list '<))
+	  (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
+			      0))
+	  (if (not number-list)
+	      (elmo-folder-set-info-hashtb folder in-db-max nil)))
+      (setq in-db-max cached-in-db-max))
+    (setq unsync (if (and in-db
+			  (car in-folder))
+		     (- (car in-folder) in-db-max)
+		   (if (and in-folder
+			    (null in-db))
+		       (cdr in-folder)
+		     (if (null (car in-folder))
+			 nil))))
+    (setq messages (cdr in-folder))
+    (if (and unsync messages (> unsync messages))
+	(setq unsync messages))
+    (cons (or unsync 0) (or messages 0))))
+
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder
 		     (or hashtb elmo-folder-info-hashtb)))
@@ -780,51 +756,6 @@ Currently works on IMAP4 folder only."
     (elmo-set-hash-val folder
 		       (list new unread numbers max)
 		       elmo-folder-info-hashtb)))
-
-(defun elmo-multi-get-number-alist-list (number-alist)
-  (let ((alist (sort number-alist (function (lambda (x y) (< (car x)
-							     (car y))))))
-	(cur-number 0)
-	one-alist ret-val num)
-    (while alist
-      (setq cur-number (+ cur-number 1))
-      (setq one-alist nil)
-      (while (and alist
-		  (eq 0
-		      (/ (- (setq num (car (car alist)))
-			    (* elmo-multi-divide-number cur-number))
-			 elmo-multi-divide-number)))
-	(setq one-alist (nconc
-			 one-alist
-			 (list
-			  (cons
-			   (% num (* elmo-multi-divide-number cur-number))
-			   (cdr (car alist))))))
-	(setq alist (cdr alist)))
-      (setq ret-val (nconc ret-val (list one-alist))))
-    ret-val))
-
-(defun elmo-multi-folder-diff (fld)
-  (let ((flds (cdr (elmo-folder-get-spec fld)))
-	(num-alist-list
-	 (elmo-multi-get-number-alist-list
-	  (elmo-msgdb-number-load (elmo-msgdb-expand-path fld))))
-	(count 0)
-	diffs (unsync 0) (nomif 0))
-    (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff (car flds)
-						       (nth count
-							    num-alist-list)
-						       ))))
-      (setq count (+ 1 count))
-      (setq flds (cdr flds)))
-    (while diffs
-      (and (car (car diffs))
-	   (setq unsync (+ unsync (car (car diffs)))))
-      (setq nomif  (+ nomif (cdr (car diffs))))
-      (setq diffs (cdr diffs)))
-    (elmo-folder-set-info-hashtb fld nil nomif)
-    (cons unsync nomif)))
 
 (defun elmo-folder-set-info-max-by-numdb (folder msgdb-number)
   (let ((num-db (sort (mapcar 'car msgdb-number) '<)))
@@ -1077,7 +1008,6 @@ Currently works on IMAP4 folder only."
 (autoload 'elmo-nntp-post "elmo-nntp")
 (autoload 'elmo-localdir-max-of-folder "elmo-localdir")
 (autoload 'elmo-localdir-msgdb-create-overview-entity-from-file "elmo-localdir")
-(autoload 'elmo-multi-folder-diff "elmo-multi")
 (autoload 'elmo-archive-copy-msgs-froms "elmo-archive")
 
 ;;; elmo2.el ends here

@@ -243,7 +243,7 @@ TYPE specifies the archiver's symbol."
 			      (elmo-concat-path (regexp-quote prefix) "")))
 	 (killed (and elmo-use-killed-list
 		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path nil spec))))
+		       (elmo-msgdb-expand-path spec))))
 	 numbers buf file-list header-end)
     (when (file-exists-p file)
       (save-excursion
@@ -316,7 +316,7 @@ TYPE specifies the archiver's symbol."
 	    (progn
 	      (setq filename (expand-file-name
 			      (concat elmo-archive-basename suffix)
-			      (setq dbdir (elmo-msgdb-expand-path nil spec))))
+			      (setq dbdir (elmo-msgdb-expand-path spec))))
 	      (if (file-directory-p dbdir)
 		  (); ok.
 		(if (file-exists-p dbdir)
@@ -363,7 +363,7 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-create-file (archive type spec)
   (save-excursion
     (let* ((tmp-dir (directory-file-name
-		     (elmo-msgdb-expand-path nil spec)))
+		     (elmo-msgdb-expand-path spec)))
            (dummy elmo-archive-dummy-file)
            (method (or (elmo-archive-get-method type 'create)
 		       (elmo-archive-get-method type 'mv)))
@@ -480,7 +480,7 @@ TYPE specifies the archiver's symbol."
 	 (next-num (or msg
 		       (1+ (if (file-exists-p arc)
 			       (car (elmo-archive-max-of-folder spec)) 0))))
-	 (tmp-dir (elmo-msgdb-expand-path nil spec))
+	 (tmp-dir (elmo-msgdb-expand-path spec))
 	 newfile)
     (when (null method)
       (ding)
@@ -519,7 +519,7 @@ TYPE specifies the archiver's symbol."
 		(1+ (car (elmo-archive-max-of-folder dst-spec)))))
 	 (src-dir (elmo-localdir-get-folder-directory src-spec))
 	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path nil dst-spec)))
+	  (file-name-as-directory (elmo-msgdb-expand-path dst-spec)))
 	 (do-link t)
 	 src tmp newfile tmp-msgs)
     (when (not (elmo-archive-folder-exists-p dst-spec))
@@ -583,7 +583,7 @@ TYPE specifies the archiver's symbol."
 	 (p-method (elmo-archive-get-method src-type 'ext-pipe))
 	 (n-method (elmo-archive-get-method src-type 'ext))
 	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path nil src-spec)))
+	  (file-name-as-directory (elmo-msgdb-expand-path src-spec)))
 	 (tmp-msgs (mapcar '(lambda (x) (elmo-concat-path
 					 prefix
 					 (int-to-string x)))
@@ -1049,7 +1049,7 @@ TYPE specifies the archiver's symbol."
   nil)
 
 (defun elmo-archive-get-msg-filename (spec number &optional loc-alist)
-  (let ((tmp-dir (file-name-as-directory (elmo-msgdb-expand-path nil spec)))
+  (let ((tmp-dir (file-name-as-directory (elmo-msgdb-expand-path spec)))
 	(prefix (nth 3 spec)))
     (expand-file-name
      (elmo-concat-path prefix (int-to-string number))
@@ -1062,6 +1062,7 @@ TYPE specifies the archiver's symbol."
 (defalias 'elmo-archive-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-archive-commit 'elmo-generic-commit)
+(defalias 'elmo-archive-folder-diff 'elmo-generic-folder-diff)
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)

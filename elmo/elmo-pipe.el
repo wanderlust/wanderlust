@@ -79,17 +79,17 @@
 		   (elmo-pipe-spec-dst spec))
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
+		      (elmo-msgdb-expand-path spec))))
 	numbers)
     (setq numbers (elmo-list-folder (elmo-pipe-spec-dst spec)))
     (elmo-living-messages numbers killed)))
 
-(defun elmo-pipe-list-folder-unread (spec msgdb unread-marks)
+(defun elmo-pipe-list-folder-unread (spec number-alist mark-alist unread-marks)
   (elmo-list-folder-unread (elmo-pipe-spec-dst spec)
-			   msgdb unread-marks))
+			   number-alist mark-alist unread-marks))
   
-(defun elmo-pipe-list-folder-important (spec msgdb)
-  (elmo-list-folder-important (elmo-pipe-spec-dst spec) msgdb))
+(defun elmo-pipe-list-folder-important (spec number-alist)
+  (elmo-list-folder-important (elmo-pipe-spec-dst spec) number-alist))
 
 (defun elmo-pipe-max-of-folder (spec)
   (let* (elmo-pop3-use-uidl
@@ -144,6 +144,8 @@
 
 (defun elmo-pipe-server-diff (spec)
   nil)
+
+(defalias 'elmo-pipe-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-pipe)
 

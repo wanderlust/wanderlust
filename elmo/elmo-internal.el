@@ -38,7 +38,7 @@
 		 (elmo-internal-list-location directive arg)))
 	 (killed (and elmo-use-killed-list
 		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path nil spec))))
+		       (elmo-msgdb-expand-path spec))))
 	 numbers)
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
@@ -52,7 +52,7 @@
   (elmo-internal-list-folder-subr spec))
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
-  (let* ((path (elmo-msgdb-expand-path nil spec))
+  (let* ((path (elmo-msgdb-expand-path spec))
 	 (location-alist
 	  (if msgdb
 	      (elmo-msgdb-get-location msgdb)
@@ -109,7 +109,7 @@
 	   (arg       (nth 2 spec))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (loc-list (elmo-internal-list-location directive arg))
 	   overview number-alist mark-alist entity
 	   i percent num location pair)
@@ -183,7 +183,7 @@
 (defun elmo-internal-delete-msgs (spec msgs &optional msgdb)
   (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						nil spec)))))
+						spec)))))
     (mapcar '(lambda (msg) (elmo-internal-delete-msg spec msg
 						     loc-alist))
 	    msgs)))
@@ -196,7 +196,7 @@
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (file (elmo-cache-get-path (cdr (assq number loc-alist)))))
       (set-buffer outbuf)
       (erase-buffer)
@@ -231,7 +231,7 @@
 				      elmo-msgdb-dir)))))
 	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						 nil spec))))
+						 spec))))
 	 (number-list (mapcar 'car loc-alist))
 	 cache-file
 	 ret-val
@@ -267,6 +267,7 @@
 (defalias 'elmo-internal-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-internal-commit 'elmo-generic-commit)
+(defalias 'elmo-internal-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-internal)
 

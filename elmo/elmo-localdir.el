@@ -221,7 +221,7 @@
 			(directory-files dir nil "^[0-9]+$" t)))
 	 (killed (and elmo-use-killed-list
 		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path nil spec))))
+		       (elmo-msgdb-expand-path spec))))
 	 numbers)
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
@@ -473,6 +473,7 @@
 (defalias 'elmo-localdir-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-localdir-commit 'elmo-generic-commit)
+(defalias 'elmo-localdir-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-localdir)
 

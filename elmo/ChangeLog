@@ -1,3 +1,114 @@
+2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-copy-msgs): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-msgdb-load): Ditto.
+	Abolished 2nd argument.	If 1st argument is not string, treat as spec.
+	(elmo-generic-list-folder-unread): Rewrite.
+	(elmo-generic-list-folder-important): Changed argument.
+	(elmo-list-folder-unread): Ditto.
+	(elmo-list-folder-important): Ditto.
+	(elmo-folder-diff): Rewrite.
+	(elmo-generic-folder-diff): New function.
+	(elmo-multi-get-number-alist-list): Abolished
+	(Renamed to elmo-multi-split-number-alist and moved to elmo-multi.el)
+	(elmo-multi-folder-diff): Moved to elmo-multi.el
+	(toplevel): Removed autoload setting of `elmo-multi-folder-diff'.
+
+	* elmo-pop3.el (elmo-pop3-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-pop3-msgdb-create-as-numlist): Ditto.
+	(elmo-pop3-read-msg): Ditto.
+	(elmo-pop3-delete-msgs): Ditto.
+	(elmo-pop3-folder-diff): New alias.
+
+	* elmo-pipe.el (elmo-pipe-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-pipe-list-folder-unread): Changed arguments.
+	(elmo-pipe-list-folder-important): Ditto.
+	(elmo-pipe-folder-diff): New alias.
+
+	* elmo-nntp.el (elmo-nntp-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-nntp-max-of-folder): Ditto.
+	(elmo-nntp-msgdb-create): Ditto.
+	(elmo-nntp-delete-msgs): Ditto.
+	(elmo-nntp-folder-diff): New alias.
+
+	* elmo-multi.el (elmo-multi-folder-diff): New function.
+	(elmo-multi-split-mark-alist): Ditto.
+	(elmo-multi-split-number-alist): Ditto.
+	(elmo-multi-mark-alist-list): Abolished (Renamed to
+	elmo-multi-split-mark-alist).
+	(elmo-multi-list-folder-unread): Rewrite.
+	(elmo-multi-list-folder-important): Ditto.
+	(elmo-multi-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-multi-sync-number-alist): Use `elmo-multi-split-number-alist'
+	instead of `elmo-multi-get-number-alist-list'.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): Abolished 2nd argument.
+	If 1st argument is not string, treat as spec.
+	(elmo-list-folder-by-location): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-msgdb-flist-load): Ditto.
+	(elmo-msgdb-flist-save): Ditto.
+	(elmo-msgdb-delete-path): Ditto.
+	(elmo-msgdb-rename-path): Ditto.
+
+	* elmo-maildir.el (elmo-maildir-set-mark-msgs):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-maildir-delete-mark-msgs): Ditto.
+	(elmo-maildir-msgdb-create): Ditto.
+	(elmo-maildir-read-msg): Ditto.
+	(elmo-maildir-delete-msgs): Ditto.
+	(elmo-maildir-list-folder-subr): Ditto.
+	(elmo-maildir-search): Ditto.
+	(elmo-maildir-get-msg-filename): Ditto.
+	(elmo-maildir-pack-number): Ditto.
+	(elmo-maildir-folder-diff): New alias.
+
+	* elmo-localnews.el (elmo-localnews-folder-diff): New alias.
+
+	* elmo-localdir.el (elmo-localdir-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-localdir-folder-diff): New alias.
+
+	* elmo-internal.el (elmo-internal-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-internal-list-folder-by-location): Ditto.
+	(elmo-internal-msgdb-create): Ditto.
+	(elmo-internal-delete-msgs): Ditto.
+	(elmo-internal-read-msg): Ditto.
+	(elmo-internal-folder-diff): New alias.
+
+	* elmo-imap4.el (elmo-imap4-folder-diff): New function.
+	(elmo-imap4-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-imap4-list-folder-unread): Changed arguments.
+	(elmo-imap4-list-folder-important): Ditto.
+
+	* elmo-filter.el (elmo-filter-list-folder-unread): Changed arguments.
+	(elmo-filter-list-folder-important): Ditto.
+	(elmo-filter-folder-diff): New function.
+
+	* elmo-dop.el (elmo-dop-folder-exists-p): Check elmo directory first.
+
+	* elmo-cache.el (elmo-cache-list-folder):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-cache-copy-msgs): Ditto.
+	(elmo-cache-folder-diff): New alias.
+
+	* elmo-archive.el (elmo-archive-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-archive-get-archive-name): Ditto.
+	(elmo-archive-create-file): Ditto.
+	(elmo-archive-append-msg): Ditto.
+	(elmo-archive-copy-msgs): Ditto.
+	(elmo-archive-copy-msgs-froms): Ditto.
+	(elmo-archive-get-msg-filename): Ditto.
+	(elmo-archive-folder-diff): New alias.
+
 2000-10-06   Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-vars.el (elmo-imap4-stream-type-alist): New variable.

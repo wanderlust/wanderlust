@@ -475,7 +475,7 @@
 (defun elmo-pop3-list-folder (spec)
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
+		      (elmo-msgdb-expand-path spec))))
 	numbers)
     (elmo-pop3-commit spec)
     (setq numbers (if elmo-pop3-use-uidl
@@ -578,7 +578,7 @@
       (if elmo-pop3-use-uidl
 	  (setq loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			    (elmo-msgdb-location-load
-			     (elmo-msgdb-expand-path nil spec)))))
+			     (elmo-msgdb-expand-path spec)))))
       (elmo-pop3-msgdb-create-by-header process numlist
 					new-mark already-mark
 					seen-mark seen-list
@@ -714,7 +714,7 @@
 			(if msgdb
 			    (elmo-msgdb-get-location msgdb)
 			  (elmo-msgdb-location-load
-			   (elmo-msgdb-expand-path nil spec)))))
+			   (elmo-msgdb-expand-path spec)))))
 	 (process (elmo-network-session-process-internal
 		   (elmo-pop3-get-session spec)))
 	 response errmsg msg)
@@ -756,7 +756,7 @@
 		       (if msgdb
 			   (elmo-msgdb-get-location msgdb)
 			 (elmo-msgdb-location-load
-			  (elmo-msgdb-expand-path nil spec)))))
+			  (elmo-msgdb-expand-path spec)))))
 	(process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session spec))))
     (mapcar '(lambda (msg) (elmo-pop3-delete-msg
@@ -799,6 +799,7 @@
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)
+(defalias 'elmo-pop3-folder-diff 'elmo-generic-folder-diff)
 
 (defun elmo-pop3-commit (spec)
   (if (elmo-pop3-plugged-p spec)

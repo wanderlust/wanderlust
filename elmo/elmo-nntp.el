@@ -484,7 +484,7 @@ Don't cache if nil.")
     (let* ((server (format "%s" server)) ;; delete text property
 	   (killed (and elmo-use-killed-list
 			(elmo-msgdb-killed-list-load
-			 (elmo-msgdb-expand-path nil spec))))
+			 (elmo-msgdb-expand-path spec))))
 	   response numbers use-listgroup)
       (save-excursion
 	(when (setq use-listgroup (elmo-nntp-listgroup-p server port))
@@ -522,7 +522,7 @@ Don't cache if nil.")
 	 (server (elmo-nntp-spec-hostname spec))
 	 (type  (elmo-nntp-spec-stream-type spec))
 	 (folder (elmo-nntp-spec-group spec))
-	 (dir (elmo-msgdb-expand-path nil spec))
+	 (dir (elmo-msgdb-expand-path spec))
 	 (killed-list (and elmo-use-killed-list
 			   (elmo-msgdb-killed-list-load dir)))
 	 number-alist end-num)
@@ -742,7 +742,7 @@ Don't cache if nil.")
 			seen-list
 			filter))))))
 	(when elmo-use-killed-list
-	  (setq dir (elmo-msgdb-expand-path nil spec))
+	  (setq dir (elmo-msgdb-expand-path spec))
 	  (elmo-msgdb-killed-list-save
 	   dir
 	   (nconc
@@ -1101,7 +1101,7 @@ Return nil if connection failed."
 (defun elmo-nntp-delete-msgs (spec msgs)
   "MSGS on FOLDER at SERVER pretended as Deleted. Returns nil if failed."
   (if elmo-use-killed-list
-      (let* ((dir (elmo-msgdb-expand-path nil spec))
+      (let* ((dir (elmo-msgdb-expand-path spec))
 	     (killed-list (elmo-msgdb-killed-list-load dir)))
 	(mapcar '(lambda (msg)
 		   (setq killed-list
@@ -1534,6 +1534,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (defalias 'elmo-nntp-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-nntp-commit 'elmo-generic-commit)
+(defalias 'elmo-nntp-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-nntp)
 

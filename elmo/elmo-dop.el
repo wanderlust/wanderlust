@@ -419,10 +419,11 @@ even an operation concerns the unplugged folder."
   (message "Appending queued messages...done."))
 
 (defun elmo-dop-folder-exists-p (folder)
-  (if (and elmo-enable-disconnected-operation
-	   (eq (elmo-folder-get-type folder) 'imap4))
-      (file-exists-p (elmo-msgdb-expand-path folder))
-    (elmo-call-func folder "folder-exists-p")))
+  (or (file-exists-p (elmo-msgdb-expand-path folder))
+      (if (and elmo-enable-disconnected-operation
+	       (eq (elmo-folder-get-type folder) 'imap4))
+	  (file-exists-p (elmo-msgdb-expand-path folder))
+	(elmo-call-func folder "folder-exists-p"))))
 
 (defun elmo-dop-create-folder (folder)
   (if (eq (elmo-folder-get-type folder) 'imap4)

@@ -148,7 +148,7 @@ This variable should not be used in elsewhere.")
   (let ((dir (elmo-maildir-get-folder-directory spec))
 	(locs (if msgdb
 		  (elmo-msgdb-get-location msgdb)
-		(elmo-msgdb-location-load (elmo-msgdb-expand-path nil spec))))
+		(elmo-msgdb-location-load (elmo-msgdb-expand-path spec))))
 	file)
     (while msgs
       (if (setq file (elmo-maildir-number-to-filename dir (car msgs) locs))
@@ -159,7 +159,7 @@ This variable should not be used in elsewhere.")
   (let ((dir (elmo-maildir-get-folder-directory spec))
 	(locs (if msgdb
 		  (elmo-msgdb-get-location msgdb)
-		(elmo-msgdb-location-load (elmo-msgdb-expand-path nil spec))))
+		(elmo-msgdb-location-load (elmo-msgdb-expand-path spec))))
 	file)
     (while msgs
       (if (setq file (elmo-maildir-number-to-filename dir (car msgs) locs))
@@ -187,7 +187,7 @@ This variable should not be used in elsewhere.")
     (let* ((dir (elmo-maildir-get-folder-directory spec))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (loc-seen (elmo-maildir-list-location dir))
 	   (loc-list  (car loc-seen))
 	   (seen-list (cdr loc-seen))
@@ -329,7 +329,7 @@ file name for maildir directories."
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (dir (elmo-maildir-get-folder-directory spec))
 	   (file (elmo-maildir-number-to-filename dir number loc-alist)))
       (set-buffer outbuf)
@@ -341,7 +341,7 @@ file name for maildir directories."
 (defun elmo-maildir-delete-msgs (spec msgs &optional msgdb)
   (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						nil spec)))))
+						spec)))))
     (mapcar '(lambda (msg) (elmo-maildir-delete-msg spec msg
 						    loc-alist))
 	    msgs)))
@@ -353,7 +353,7 @@ file name for maildir directories."
 		 (car (elmo-maildir-list-location dir))))
 	 (killed (and elmo-use-killed-list
 		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path nil spec))))
+		       (elmo-msgdb-expand-path spec))))
 	 (news (car (elmo-maildir-list-location dir "new")))
 	 numbers)
     (if nonsort
@@ -423,7 +423,7 @@ file name for maildir directories."
     (let* ((msgs (or from-msgs (elmo-maildir-list-folder spec)))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (dir (elmo-maildir-get-folder-directory spec))
 	   (i 0)
 	   case-fold-search ret-val
@@ -474,7 +474,7 @@ file name for maildir directories."
    (elmo-maildir-get-folder-directory spec)
    number (or loc-alist (elmo-msgdb-location-load
 			 (elmo-msgdb-expand-path
-			  nil spec)))))
+			  spec)))))
 
 (defun elmo-maildir-pack-number (spec msgdb arg)
   (let ((old-number-alist (elmo-msgdb-get-number-alist msgdb))
@@ -501,7 +501,7 @@ file name for maildir directories."
       (setq number (1+ number))
       (setq old-overview (cdr old-overview)))
     ;; XXX Should consider when folder is not persistent.
-    (elmo-msgdb-location-save (elmo-msgdb-expand-path nil spec) location)
+    (elmo-msgdb-location-save (elmo-msgdb-expand-path spec) location)
     (list overview
 	  (nreverse number-alist)
 	  (nreverse mark-alist)
@@ -515,6 +515,7 @@ file name for maildir directories."
 (defalias 'elmo-maildir-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-maildir-commit 'elmo-generic-commit)
+(defalias 'elmo-maildir-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-maildir)
 

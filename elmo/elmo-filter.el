@@ -68,18 +68,25 @@
 (defun elmo-filter-list-folder (spec)
   (elmo-search (nth 2 spec) (nth 1 spec)))
 
-(defun elmo-filter-list-folder-unread (spec msgdb unread-marks)
+(defun elmo-filter-list-folder-unread (spec number-alist mark-alist
+					    unread-marks)
   (elmo-list-filter
-   (mapcar 'car (elmo-msgdb-get-number-alist msgdb))
+   (mapcar 'car number-alist)
    (elmo-list-folder-unread
-    (nth 2 spec) msgdb unread-marks)))
+    (nth 2 spec) number-alist mark-alist unread-marks)))
 
-(defun elmo-filter-list-folder-important (spec msgdb)
+(defun elmo-filter-list-folder-important (spec number-alist)
   (elmo-list-filter
-   (mapcar 'car (elmo-msgdb-get-number-alist msgdb))
-   (elmo-list-folder-important
-    (nth 2 spec)
-    msgdb)))
+   (mapcar 'car number-alist)
+   (elmo-list-folder-important (nth 2 spec) number-alist)))
+
+(defun elmo-filter-folder-diff (spec folder &optional number-list)
+  (if (or (elmo-multi-p folder)
+	  (not (and (vectorp (nth 1 spec))
+		    (string-match "^first$\\|^last$"
+				  (elmo-filter-key (nth 1 spec))))))
+      (cons nil (cdr (elmo-folder-diff (nth 2 spec))))
+    (elmo-generic-folder-diff spec folder number-list)))
 
 (defun elmo-filter-max-of-folder (spec)
   (elmo-max-of-folder (nth 2 spec)))

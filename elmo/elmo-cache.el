@@ -662,7 +662,7 @@ Returning its cache buffer."
 (defun elmo-cache-list-folder (spec); called by elmo-cache-search()
   (let ((killed (and elmo-use-killed-list
 		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
+		      (elmo-msgdb-expand-path spec))))
 	numbers)
     (setq numbers (elmo-cache-list-folder-subr spec))
     (elmo-living-messages numbers killed)))
@@ -716,7 +716,7 @@ Returning its cache buffer."
 	(next-num (1+ (car (elmo-cache-list-folder-subr dst-spec t))))
 	(number-alist
 	 (elmo-msgdb-number-load
-	  (elmo-msgdb-expand-path nil src-spec))))
+	  (elmo-msgdb-expand-path src-spec))))
     (if same-number (error "Not implemented"))
     (while msgs
       (elmo-copy-file
@@ -750,6 +750,7 @@ Returning its cache buffer."
 (defalias 'elmo-cache-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-cache-commit 'elmo-generic-commit)
+(defalias 'elmo-cache-folder-diff 'elmo-generic-folder-diff)
 
 (provide 'elmo-cache)
 
