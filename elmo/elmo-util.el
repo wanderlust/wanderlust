@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-29 09:42:41 teranisi>
+;; Time-stamp: <00/06/15 15:30:58 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -1187,12 +1187,12 @@ Otherwise treat \\ in NEWTEXT string as special:
   (cond ((eq (elmo-folder-get-type folder1) 'imap4)
 	 (let ((spec1 (elmo-folder-get-spec folder1))
 	       (spec2 (elmo-folder-get-spec folder2)))
-	   (and (elmo-imap4-identical-name-space-p
-		 (nth 1 spec1) (nth 1 spec2))
-		(string= (elmo-imap4-spec-hostname spec1)
-			 (elmo-imap4-spec-hostname spec2))    ; hostname
-		(string= (elmo-imap4-spec-username spec1)
-			 (elmo-imap4-spec-username spec2))))) ; username
+	   (and ;(elmo-imap4-identical-name-space-p ;; No use.
+		; (nth 1 spec1) (nth 1 spec2))
+	    (string= (elmo-imap4-spec-hostname spec1)
+		     (elmo-imap4-spec-hostname spec2))    ; hostname
+	    (string= (elmo-imap4-spec-username spec1)
+		     (elmo-imap4-spec-username spec2))))) ; username
 	(t
 	 (elmo-folder-direct-copy-p folder1 folder2))))
 

@@ -1,5 +1,15 @@
 2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* pldap.el (ldap-default-attribute-encoder): New user option.
+	(ldap/field-body): Decode base64 string.
+	(ldap/collect-field): Ditto.
+	(ldap-encode-attribute): New function.
+	(ldap-add-entries): Use it.
+	(ldap-modify-entries): Ditto.
+
+	* elmo-util.el (elmo-folder-identical-system-p):
+	Eliminated name space checking.
+
 	* pldap.el: New module.
 	toplevel: Changed condition to detect built-in ldap feature.
 	(ldap-delete): Enclosed call-process with `with-temp-buffer'.

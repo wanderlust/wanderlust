@@ -193,6 +193,11 @@ Valid properties include:
   :type 'boolean
   :group 'ldap)
 
+(defcustom ldap-default-attribute-encoder nil
+  "*Encoder function to use for attributes whose syntax is unknown."
+  :type 'symbol
+  :group 'ldap)
+
 (defcustom ldap-default-attribute-decoder nil
   "*Decoder function to use for attributes whose syntax is unknown."
   :type 'symbol
@@ -686,12 +691,14 @@ entry according to the value of WITHDN."
   (save-excursion
     (goto-char (point-min))
     (let ((case-fold-search t)
-	  (field-body nil))
+	  (field-body nil)
+	  body)
       (while (re-search-forward (concat "^" name ":[ \t]*") nil t)
-	(setq field-body
-	      (nconc field-body
-		     (list (buffer-substring-no-properties
-			    (match-end 0) (std11-field-end))))))
+	;; Base64
+	(if (string-match "^:[ \t]*" (setq body (buffer-substring-no-properties
+					    (match-end 0) (std11-field-end))))
+	    (setq body (base64-decode-string (substring body (match-end 0)))))
+	(setq field-body (nconc field-body (list body))))
       field-body)))
 
 (defun ldap/collect-field (without)
@@ -704,6 +711,8 @@ entry according to the value of WITHDN."
 			    (match-beginning 1)(1- (match-end 1)))))
       (setq body (buffer-substring-no-properties
 		  (match-end 0) (std11-field-end)))
+      (if (string-match "^:[ \t]*" body)
+	  (setq body (base64-decode-string (substring body (match-end 0)))))
       (unless (string= name without)
 	(if (setq entry (assoc name dest))
 	    (nconc entry (list body))
@@ -741,8 +750,8 @@ entry according to the value of WITHDN."
 
 (defun ldap-encode-string (str)
   "Encode LDAP STR."
-   (if (fboundp 'encode-coding-string)
-       (encode-coding-string str ldap-coding-system)))
+  (if (fboundp 'encode-coding-string)
+      (encode-coding-string str ldap-coding-system)))
 
 (defun ldap-decode-address (str)
   "Decode LDAP address STR."
@@ -762,6 +771,24 @@ entry according to the value of WITHDN."
   "Get HOST's PARAMETER in `ldap-host-parameters-alist'."
   (plist-get (cdr (assoc host ldap-host-parameters-alist))
 	     parameter))
+
+(defun ldap-encode-attribute (attr)
+  "Encode the attribute/value pair ATTR according to LDAP rules.
+The attribute name is looked up in `ldap-attribute-syntaxes-alist'
+and the corresponding decoder is then retrieved from
+`ldap-attribute-syntax-encoders' and applied on the value(s)."
+  (let* ((name (car attr))
+	 (values (cdr attr))
+	 (syntax-id (cdr (assq (intern (downcase name))
+			       ldap-attribute-syntaxes-alist)))
+	 encoder)
+    (if syntax-id
+	(setq encoder (aref ldap-attribute-syntax-encoders
+			    (1- syntax-id)))
+      (setq encoder ldap-default-attribute-encoder))
+    (if encoder
+	(cons name (mapcar encoder values))
+      attr)))
 	
 (defun ldap-decode-attribute (attr)
   "Decode the attribute/value pair ATTR according to LDAP rules.
@@ -858,22 +885,31 @@ PASSWD is the corresponding password"
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Adding LDAP entries..."))
-    (mapcar (function
-	     (lambda (thisentry)
-	       (ldap-add ldap (car thisentry) (cdr thisentry))
-	       (if ldap-verbose
-		   (message "%d added" i))
-	       (setq i (1+ i))))
+    (mapcar (lambda (thisentry)
+	      (setcdr thisentry
+		      (mapcar
+		       (lambda (add-spec)
+			 (setq add-spec (ldap-encode-attribute
+					 (list (car add-spec)
+					       (cdr add-spec))))
+			 (cons (nth 0 add-spec)
+			       (nth 1 add-spec)))
+		       (cdr thisentry)))
+	      (setq thisentry (ldap-encode-attribute thisentry))
+	      (ldap-add ldap (car thisentry) (cdr thisentry))
+	      (if ldap-verbose
+		  (message "%d added" i))
+	      (setq i (1+ i)))
 	    entries)
     (ldap-close ldap)))
 
 (defun ldap-modify-entries (entry-mods &optional host binddn passwd)
   "Modify entries of an LDAP directory.
 ENTRY-MODS is a list of entry modifications of the form
-  (DN MOD-SPEC1 MOD-SPEC2 ...) where DN is the distinguished name of
+  \(DN MOD-SPEC1 MOD-SPEC2 ...\) where DN is the distinguished name of
 the entry to modify, the following are modification specifications.
 A modification specification is itself a list of the form
-(MOD-OP ATTR VALUE1 VALUE2 ...) MOD-OP and ATTR are mandatory,
+\(MOD-OP ATTR VALUE1 VALUE2 ...\) MOD-OP and ATTR are mandatory,
 VALUEs are optional depending on MOD-OP.
 MOD-OP is the type of modification, one of the symbols `add', `delete'
 or `replace'.  ATTR is the LDAP attribute type to modify.
@@ -897,12 +933,20 @@ PASSWD is the corresponding password"
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Modifying LDAP entries..."))
-    (mapcar (function
-	     (lambda (thisentry)
-	       (ldap-modify ldap (car thisentry) (cdr thisentry))
-	       (if ldap-verbose
-		   (message "%d modified" i))
-	       (setq i (1+ i))))
+    (mapcar (lambda (thisentry)
+	      (setcdr thisentry
+		      (mapcar
+		       (lambda (mod-spec)
+			 (if (or (eq (car mod-spec) 'add)
+				 (eq (car mod-spec) 'replace))
+			     (append (list (nth 0 mod-spec))
+				     (ldap-encode-attribute
+				      (cdr mod-spec)))))
+		       (cdr thisentry)))
+	      (ldap-modify ldap (car thisentry) (cdr thisentry))
+	      (if ldap-verbose
+		  (message "%d modified" i))
+	      (setq i (1+ i)))
 	    entry-mods)
     (ldap-close ldap)))
 
