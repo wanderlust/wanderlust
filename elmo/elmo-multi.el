@@ -540,9 +540,8 @@
 			  (+
 			   (* (elmo-multi-folder-divide-number-internal
 			       folder) cur-number) x)))
-		       (ignore-errors
-			 (elmo-folder-search
-			  (car flds) condition))))))
+		       (elmo-folder-search
+			(car flds) condition)))))
       (when numlist
 	(setq numlist-list (cdr numlist-list)))
       (setq flds (cdr flds)))

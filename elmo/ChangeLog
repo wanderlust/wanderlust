@@ -1,3 +1,11 @@
+2002-12-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (elmo-folder-search): Body search is to search from
+	cache even if the folder is plugged.
+	(elmo-nntp-search-primitive): Do nothing when body search is
+	invoked (although it is not used by the change above).
+	* elmo-multi.el (elmo-folder-search): Don't ignore error anymore.
+
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-version.el (elmo-version): Up to 2.11.1.
