@@ -1,3 +1,8 @@
+2004-04-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Support @indicateurl, @LaTeX.
+	@url is now a synonym for @uref.
+
 2004-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el: Support @docbook, @ifdocbook, @ifnotdocbook, and

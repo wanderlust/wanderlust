@@ -313,10 +313,12 @@ DOCSTRING will be printed if ASSERTION is nil and
 
 
 ;;; Marking
-;; @url, @env, @command
-(put 'url 'texinfo-format 'texinfo-format-code)
+;; @indicateurl, @url, @env, @command, 
 (put 'env 'texinfo-format 'texinfo-format-code)
 (put 'command 'texinfo-format 'texinfo-format-code)
+
+(put 'indicateurl 'texinfo-format 'texinfo-format-code)
+(put 'url 'texinfo-format 'texinfo-format-uref)	; Texinfo 4.7
 
 ;; @acronym
 (put 'acronym 'texinfo-format 'texinfo-format-var)
@@ -379,13 +381,18 @@ For example, @verb\{|@|\} results in @ and
   (delete-char 1))
 
 
-;;; Accents and Special characters
-;; @registeredsymbol{}	==>	(R)
-(put 'pounds 'texinfo-format 'texinfo-format-registeredsymbol)
+;;; @LaTeX, @registeredsymbol{}
+(put 'LaTeX 'texinfo-format 'texinfo-format-LaTeX)
+(ptexinfmt-defun-if-void texinfo-format-LaTeX ()
+  (texinfo-parse-arg-discard)
+  (insert "LaTeX"))
+
+(put 'registeredsymbol 'texinfo-format 'texinfo-format-registeredsymbol)
 (ptexinfmt-defun-if-void texinfo-format-registeredsymbol ()
   (texinfo-parse-arg-discard)
   (insert "(R)"))
 
+;;; Accents and Special characters
 ;; @pounds{}	==>	#	Pounds Sterling
 (put 'pounds 'texinfo-format 'texinfo-format-pounds)
 (ptexinfmt-defun-if-void texinfo-format-pounds ()
