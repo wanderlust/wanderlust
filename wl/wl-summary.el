@@ -2896,15 +2896,18 @@ If ARG, exit virtual folder."
   "Synch up persistent mark of current line with msgdb's."
   (let ((number (or number (wl-summary-message-number)))
 	buffer-read-only cur-mark)
-    (setq cur-mark (elmo-message-mark wl-summary-buffer-elmo-folder number))
-    (save-excursion
-      ;; set mark on buffer
-      (unless (string= (wl-summary-persistent-mark) cur-mark)
-	(delete-backward-char 1)
-	(insert (or cur-mark " ")))
-      (when wl-summary-highlight
-	(wl-highlight-summary-current-line))
-      (set-buffer-modified-p nil))))
+    (ignore-errors
+      (setq cur-mark
+	    (elmo-message-mark wl-summary-buffer-elmo-folder number))
+      (save-excursion
+	;; set mark on buffer
+	(unless (string= (wl-summary-persistent-mark) cur-mark)
+	  (delete-backward-char 1)
+	  (insert (or cur-mark " ")))
+	(when wl-summary-highlight
+	  (wl-highlight-summary-current-line))))
+    (set-buffer-modified-p nil)))
+      
 
 (defsubst wl-summary-mark-as-read-internal (inverse
 					    number-or-numbers
@@ -4204,11 +4207,12 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		      'leave)))
 	  (when (elmo-message-use-cache-p folder num)
 	    (elmo-message-set-cached folder num t))
-	  (if (member (elmo-message-mark wl-summary-buffer-elmo-folder
-					 num)
-		      (elmo-msgdb-unread-marks))
-	      (wl-summary-mark-as-read num no-folder-mark)
-	    (wl-summary-update-mark))
+	  (ignore-errors
+	    (if (member (elmo-message-mark wl-summary-buffer-elmo-folder
+					   num)
+			(elmo-msgdb-unread-marks))
+		(wl-summary-mark-as-read num no-folder-mark)
+	      (wl-summary-update-mark)))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))

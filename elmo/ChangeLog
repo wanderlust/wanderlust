@@ -1,5 +1,8 @@
 2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-mark): Cause an error when empty folder.
+	(elmo-message-field): Ditto.
+
 	* elmo-maildir.el (luna-define-class): Added slot `answered-locations'.
 	(elmo-map-folder-list-message-locations): Setup `answered-locations'
 	slot.

@@ -1,5 +1,12 @@
 2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-update-mark): Ignore errors while
+	retrieving message mark.
+	(wl-summary-redisplay-internal): Ditto.
+
+	* wl-message.el (wl-message-buffer-display): Ignore errors while
+	retrieving message-id field.
+
 	* wl-expire.el (wl-summary-expire): Fixed 2nd argument for `wl-append'.
 	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
 	(wl-expire-refile-with-copy-reserve-msg): Follow the change in the

@@ -468,7 +468,8 @@ Returns non-nil if bottom of message."
 ;; Use message buffer cache.
 (defun wl-message-buffer-display (folder number flag
 					 &optional force-reload unread)
-  (let* ((msg-id (elmo-message-field folder number 'message-id))
+  (let* ((msg-id (ignore-errors (elmo-message-field folder number
+						    'message-id)))
 	 (fname (elmo-folder-name-internal folder))
 	 (hit (wl-message-buffer-cache-hit (list fname number msg-id)))
 	 (read nil)

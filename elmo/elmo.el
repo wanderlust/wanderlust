@@ -1250,6 +1250,8 @@ FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.")
 
 (luna-define-method elmo-message-mark ((folder elmo-folder) number)
+  (when (zerop (elmo-folder-length folder))
+    (error "Cannot treat this folder correctly."))
   (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
 
 (luna-define-generic elmo-message-field (folder number field)
@@ -1259,6 +1261,8 @@ NUMBER is a number of the message.
 FIELD is a symbol of the field.")
 
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
+  (when (zerop (elmo-folder-length folder))
+    (error "Cannot treat this folder correctly."))
   (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
