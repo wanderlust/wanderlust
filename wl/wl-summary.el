@@ -4244,6 +4244,7 @@ If ARG, exit virtual folder."
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(folder wl-summary-buffer-elmo-folder)
 	(number (elmo-msgdb-overview-entity-get-number entity))
+	(thr-indent-string (or thr-indent-string ""))
 	no-parent from subject parent-raw-subject parent-subject
 	line mark
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
