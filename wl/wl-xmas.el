@@ -135,6 +135,8 @@
      wl-draft-insert-signature t "Insert Signature"]
     [wl-draft-kill
      wl-draft-kill t "Kill Current Draft"]
+    [wl-draft-save-and-exit
+     wl-draft-save-and-exit t "Save Draft and Exit"]
     )
   "The Draft buffer toolbar.")
 
@@ -484,10 +486,14 @@
 
 (defun wl-draft-overload-menubar ()
   (when (featurep 'menubar)
+    (add-menu-item '("Mail") "Preview Message"
+		   'wl-draft-preview-message t "Preview Message")
     (add-menu-item '("Mail") "Send, Keep Editing"
 		   'wl-draft-send t "Send Mail")
     (add-menu-item '("Mail") "Send Message"
 		   'wl-draft-send-and-exit t "Send and Exit")
+    (add-menu-item '("Mail") "Save Draft and Exit"
+		   'wl-draft-save-and-exit t "Save Draft and Exit")
     (delete-menu-item '("Mail" "Send Mail"))
     (delete-menu-item '("Mail" "Send and Exit"))))
 

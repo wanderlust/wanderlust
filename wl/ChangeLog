@@ -1,5 +1,11 @@
 2002-03-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-e21.el (wl-draft-overload-menubar): Add wl-draft-preview-message
+	and wl-draft-save-and-exit.
+	(wl-draft-toolbar): Add wl-draft-save-and-exit.
+	* wl-xmas.el: Ditto.
+	* wl-mule.el: Ditto.
+
 	* wl-folder.el (wl-folder-goto-draft-folder): New function.
 	(wl-folder-mode-menu-spec): Add wl-folder-goto-draft-folder entry.
 

@@ -167,6 +167,8 @@
      wl-draft-insert-signature t "Insert Signature"]
     [wl-draft-kill
      wl-draft-kill t "Kill Current Draft"]
+    [wl-draft-save-and-exit
+     wl-draft-save-and-exit t "Save Draft and Exit"]
     )
   "The Draft buffer toolbar.")
 
@@ -574,12 +576,16 @@
 
 (defun wl-draft-overload-menubar ()
   (let ((keymap (current-local-map)))
+    (define-key keymap [menu-bar mail preview]
+      '("Preview Message" . wl-draft-preview-message))
     (define-key keymap [menu-bar mail send]
       '("Send Message" . wl-draft-send-and-exit))
     (define-key keymap [menu-bar mail send-stay]
       '("Send, Keep Editing" . wl-draft-send))
     (define-key keymap [menu-bar mail cancel]
       '("Kill Current Draft" . wl-draft-kill))
+    (define-key keymap [menu-bar mail save]
+      '("Save Draft and Exit" . wl-draft-save-and-exit))
     (define-key keymap [menu-bar mail yank]
       '("Cite Message" . wl-draft-yank-original))
     (define-key keymap [menu-bar mail signature]
