@@ -187,7 +187,9 @@ See info under Wanderlust for full documentation.
        (wl-parse-addresses
 	(mapconcat
 	 'identity
-	 (elmo-multiple-fields-body-list '("to" "cc" "bcc")) ","))))))
+	 (elmo-multiple-fields-body-list '("to" "cc" "bcc")
+					 mail-header-separator)
+	 ","))))))
 
 (defun wl-addrmgr-merge-entries (base-list append-list)
   "Return a merged list of address entiry."
