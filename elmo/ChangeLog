@@ -1,5 +1,7 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-multi.el (elmo-folder-search): Don't ignore error anymore.
+
 	* elmo-localdir.el (elmo-folder-pack-numbers): onum, a member of
 	flist, is not always a member of onum-alist.
 
