@@ -5994,7 +5994,7 @@ Examples with other packages.
 * BBDB::                        BBDB
 * supercite::                   supercite.el
 * mu-cite::                     mu-cite.el
-* x-face-mule::                 x-face-mule.el
+* X-Face::                      x-face,bitmap-mule
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
 @end menu
@@ -6070,7 +6070,7 @@ example of settings:
 @end lisp
 
 
-@node mu-cite, x-face-mule, supercite, Living with other packages
+@node mu-cite, X-Face, supercite, Living with other packages
 @subsection mu-cite.el
 @pindex mu-cite
 
@@ -6095,38 +6095,45 @@ If you use mu-cite version 8.1 or later:
 @end group
 @end lisp
 
-@node x-face-mule, dired-dd, mu-cite, Living with other packages
-@subsection x-face-mule.el
+@node X-Face, dired-dd, mu-cite, Living with other packages
+@subsection x-face
+@pindex x-face
+
+If you have installed one of the following, you can decode
+@samp{X-Face:} field in message buffer and you will see face image.
+
+@menu
+* x-face-xmas::                       XEmacs case
+* x-face-mule::                       Emacs 19.34, 20.x case
+* x-face-e21::                        Emacs 21.x case
+@end menu
+
+If there is an encoded X-Face string in a file @file{~/.xface} (the
+value of the variable @code{wl-x-face-file}), it is inserted as a
+@samp{X-Face:} field in the draft buffer (if
+@code{wl-auto-insert-x-face} is non-nil).
+
+@node x-face-xmas, x-face-mule, X-Face, X-Face
+@subsubsection x-face-xmas (for XEmacs)
+@pindex x-face-xmas
+
+If you use @file{x-face-xmas.el} in x-face (@uref{ftp://jpl.org/pub/elisp/})
+1.3.6.13 or later, do the following:
+
+@lisp
+@group
+(autoload 'x-face-xmas-wl-display-x-face "x-face")
+(setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face)
+@end group
+@end lisp
+
+@node x-face-mule, x-face-e21, x-face-xmas, X-Face
+@subsubsection x-face-mule (for Emacs 19.34, 20.x)
 @pindex x-face-mule
 @pindex bitmap-mule
 
-It depends on the version of x-face-mule.
-If you use x-face-mule 0.19 or older, do the following:
-
-@lisp
-@group
-(setq wl-highlight-x-face-function
-      (function
-       (lambda (&optional beg end)
-         (x-face-mule:x-face-decode-message-header))))
-(require 'x-face-mule)
-@end group
-@end lisp
-
-If you use x-face-mule 0.20 or later, try the following:
-
-@lisp
-@group
-(setq wl-highlight-x-face-function
-      (function
-       (lambda (&optional beg end)
-         (x-face-mule-x-face-decode-message-header))))
-(require 'x-face-mule)
-@end group
-@end lisp
-
-Use these settings when you use @file{x-face-mule.el} attached to
-bitmap-mule 8.0 or later:
+If you use @file{x-face-mule.el} in bitmap-mule
+(@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0 or later, do the following:
 
 @lisp
 @group
@@ -6135,13 +6142,24 @@ bitmap-mule 8.0 or later:
 @end group
 @end lisp
 
-If there is an encoded X-Face string in a file @file{~/.xface} (the
-value of the variable @code{wl-x-face-file}), it is inserted as a
-@samp{X-Face:} field in the draft buffer (if
-@code{wl-auto-insert-x-face} is non-nil).
+@node x-face-e21,  , x-face-mule, X-Face
+@subsubsection x-face-e21 (for Emacs 21.x)
+@pindex x-face-e21
+
+If you use @file{x-face-e21.el} (@uref{ftp://jpl.org/pub/elisp/})
+with bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}),
+do the following:
+
+@lisp
+@group
+(require 'bitmap)
+(autoload 'x-face-decode-message-header "x-face-e21")
+(setq wl-highlight-x-face-function 'x-face-decode-message-header)
+@end group
+@end lisp
 
 
-@node dired-dd, MHC, x-face-mule, Living with other packages
+@node dired-dd, MHC, X-Face, Living with other packages
 @subsection dired-dd(Dired-DragDrop)
 @pindex Dired-DragDrop
 @pindex Dired-DD
