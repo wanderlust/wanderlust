@@ -344,6 +344,9 @@ TYPE specifies the archiver's symbol."
 		 (elmo-archive-folder-archive-type-internal
 		  folder)))
 	filename dbdir)
+    (unless suffix
+      (error "Unknown archiver type: %s"
+	     (elmo-archive-folder-archive-type-internal folder)))
     (if elmo-archive-treat-file
 	(if (string-match (concat (regexp-quote suffix) "$")
 			  (elmo-archive-folder-archive-name-internal folder))
