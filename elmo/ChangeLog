@@ -1,5 +1,13 @@
 2002-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-mime-string): Eliminate needless binding;
+	Use eword-decode-and-unfold-unstructured-field-body.
+
+	* elmo-msgdb.el (elmo-msgdb-make-entity): New function.
+	(elmo-msgdb-create-overview-from-buffer): Use document charset if
+	exists to decode raw subject string.
+	(toplevel): Require 'mime.
+
 	* elmo-version.el (elmo-version): Up to 2.9.12.
 
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>

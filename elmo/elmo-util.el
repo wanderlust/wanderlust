@@ -985,15 +985,16 @@ Emacs 19.28 or earlier does not have `unintern'."
 
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
-    (and string
-	 (let (str)
-	   (elmo-set-work-buf
-	    (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-	    (setq str (eword-decode-string
-		       (decode-mime-charset-string string elmo-mime-charset)))
-	    (setq str (encode-mime-charset-string str elmo-mime-charset))
-	    (elmo-set-buffer-multibyte nil)
-	    str))))
+  (and string
+       (elmo-set-work-buf
+	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
+	(setq string
+	      (encode-mime-charset-string
+	       (eword-decode-and-unfold-unstructured-field-body
+		string)
+	       elmo-mime-charset))
+	(elmo-set-buffer-multibyte nil)
+	string)))
 
 (defsubst elmo-collect-field (beg end downcase-field-name)
   (save-excursion

@@ -36,6 +36,7 @@
 (require 'elmo-util)
 (require 'emu)
 (require 'std11)
+(require 'mime)
 
 ;;; MSGDB interface.
 (defun elmo-load-msgdb (path)
@@ -158,6 +159,19 @@ content of MSGDB is changed."
     (setq overview (elmo-msgdb-overview-sort-by-date overview))
     (message "Sorting...done")
     (list overview (nth 1 msgdb)(nth 2 msgdb))))
+
+(defun elmo-msgdb-make-entity (&rest args)
+  "Make an msgdb entity."
+  (cons (plist-get args :message-id)
+	(vector (plist-get args :number)
+		(plist-get args :references)
+		(plist-get args :from)
+		(plist-get args :subject)
+		(plist-get args :date)
+		(plist-get args :to)
+		(plist-get args :cc)
+		(plist-get args :size)
+		(plist-get args :extra))))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -767,9 +781,13 @@ Header region is supposed to be narrowed."
   (save-excursion
     (let ((extras elmo-msgdb-extra-fields)
 	  message-id references from subject to cc date
-	  extra field-body)
+	  default-mime-charset
+	  extra field-body charset)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-      (setq message-id (elmo-msgdb-get-message-id-from-buffer))
+      (setq message-id (elmo-msgdb-get-message-id-from-buffer)
+	    charset (intern-soft (cdr (assoc "charset"
+					     (mime-read-Content-Type)))))
+      (if charset (setq default-mime-charset charset))
       (setq references
 	    (or (elmo-msgdb-get-last-message-id
 		 (elmo-field-body "in-reply-to"))
@@ -779,8 +797,8 @@ Header region is supposed to be narrowed."
 				    ?\"
 				    (or
 				     (elmo-field-body "from")
-				     elmo-no-from))))
-      (setq subject (elmo-mime-string (or (elmo-field-body "subject")
+				     elmo-no-from)))
+	    subject (elmo-mime-string (or (elmo-field-body "subject")
 					  elmo-no-subject)))
       (setq date (or (elmo-field-body "date") time))
       (setq to   (mapconcat 'identity (elmo-multiple-field-body "to") ","))
