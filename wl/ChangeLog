@@ -1,3 +1,10 @@
+2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-msgdb-load-async): Rewrite.
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp):
+	Use `elmo-pop3-get-session' instead of `elmo-pop3-get-connection'.
+
 2000-08-22   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-folder.el (wl-folder-create-subr): New function.

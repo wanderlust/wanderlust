@@ -703,28 +703,25 @@ Returns nil if selecting folder was in failure."
   (if (and (elmo-folder-plugged-p folder)
 	   (eq (elmo-folder-get-type folder) 'imap4))
       (let* ((spec (elmo-folder-get-spec folder))
-	     (connection (elmo-imap4-get-connection spec))
-	     (process (elmo-imap4-connection-get-process connection))
+	     (session (elmo-imap4-get-session spec))
+	     (process (elmo-network-session-process-internal session))
+	     (mailbox (elmo-imap4-spec-mailbox spec))
 	     msgdb response)
-	(save-excursion
-	  (unwind-protect
-	      (progn
-		(elmo-imap4-send-command (process-buffer process)
-					 process
-					 (list "select "
-					       (elmo-imap4-mailbox
-						(elmo-imap4-spec-mailbox spec))
-					       ))
-		(setq msgdb (elmo-msgdb-load (elmo-string folder)))
-		(setq response (elmo-imap4-read-response 
-				(process-buffer process)
-				process)))
-	    (if (null response)
-		(progn
-		  (setcar (cddr connection) nil)
-		  (error "Select folder failed"))
-	      (setcar (cddr connection) (elmo-imap4-spec-mailbox spec))))
-	  (if response msgdb)))
+	(unwind-protect
+	    (progn
+	      (elmo-imap4-send-command process
+				       (list "select "
+					     (elmo-imap4-mailbox
+					      mailbox)))
+	      (setq msgdb (elmo-msgdb-load (elmo-string folder)))
+	      (setq response (elmo-imap4-read-response 
+			      process)))
+	  (if response
+	      (elmo-imap4-session-set-current-mailbox-internal
+	       session mailbox)
+	    (elmo-imap4-session-set-current-mailbox-internal session nil)
+	    (error "Select mailbox %s failed" mailbox)))
+	msgdb)
     (elmo-msgdb-load (elmo-string folder))))
 
 (defun wl-summary-buffer-set-folder (folder)

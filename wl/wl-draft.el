@@ -957,7 +957,7 @@ non-nil."
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
   (condition-case ()
-      (elmo-pop3-get-connection 
+      (elmo-pop3-get-session
        (list 'pop3
 	     (or wl-pop-before-smtp-user
 		 elmo-default-pop3-user)
