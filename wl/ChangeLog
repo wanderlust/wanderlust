@@ -1,3 +1,9 @@
+2002-11-04  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-reedit): Do not decode part in
+	`mime-edit-decode-single-part-in-buffer' unless it is text part.
+	(Although it seems semi issue. [wl:10790])
+
 2002-11-01  Tomotaka SUWA  <cooper@saitama.fujimic.fujisankei-g.co.jp>
 
 	* wl-address.el (wl-address-make-completion-entry): Extracted from

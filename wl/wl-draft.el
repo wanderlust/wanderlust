@@ -1872,7 +1872,20 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (insert-file-contents-as-binary file-name)
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
-	(wl-draft-decode-message-in-buffer))
+;	(wl-draft-decode-message-in-buffer))
+	;;;; From gnus-article-mime-edit-article-setup in T-gnus
+	;;;; XXX: it is semi issue, perhaps [wl:10790]
+	(let ((ofn (symbol-function 'mime-edit-decode-single-part-in-buffer)))
+	  (fset 'mime-edit-decode-single-part-in-buffer
+		(lambda (&rest args)
+		  (unless (let ((content-type (car args)))
+			    (eq 'text (mime-content-type-primary-type
+				       content-type)))
+		    (setcar (cdr args) 'not-decode-text))
+		  (apply ofn args)))
+	  (unwind-protect
+	      (wl-draft-decode-message-in-buffer)
+	    (fset 'mime-edit-decode-single-part-in-buffer ofn))))
       (wl-draft-insert-mail-header-separator)
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
