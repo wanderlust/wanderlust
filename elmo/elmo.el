@@ -186,6 +186,9 @@ Return value is a cons cell of NEWS and MESSAGES.")
 (luna-define-generic elmo-folder-status (folder)
   "Returns a cons cell of (MAX-NUMBER . MESSAGES) in the FOLDER.")
 
+(luna-define-generic elmo-folder-reserve-status-p (folder)
+  "If non-nil, the folder should not close folder after `elmo-folder-status'.")
+
 (defun elmo-folder-list-messages (folder &optional visible-only)
   "Return a list of message numbers contained in FOLDER.
 If optional VISIBLE-ONLY is non-nil, killed messages are not listed."
