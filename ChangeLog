@@ -1,5 +1,10 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-MK (wl-news-parse-news-subr): Decide
+	coding-system.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* WL-MK (wl-news-lang): New variable.
 	(wl-news-news-file): Merge `wl-news-news-file'
 	and `wl-news-news-file-ja'.

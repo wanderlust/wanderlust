@@ -1,5 +1,10 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.in (wl-news-send-news): Delete
+	Organization and X-Face.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-news.el.in (wl-news-check): Fix for `wl-news-lang'.
 	(wl-news-append-news): New function.
 	(wl-news-send-news): New function.

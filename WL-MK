@@ -484,7 +484,8 @@
 	    (insert "(defconst wl-news-news-alist\n  '")
 	    (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
 	    (insert ")\n")
-	    (write-region (point-min) (point-max) out-filename))))))
+	    (let ((buffer-file-coding-system 'x-ctext))
+	      (write-region (point-min) (point-max) out-filename)))))))
 
 (defun wl-news-parse-news (lang)
   (let (news-list)

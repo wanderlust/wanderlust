@@ -113,11 +113,7 @@
 	   (list (cons 'From "WL Release 'Bot <wl@lists.airs.net>")
 		 (cons 'To (wl-draft-eword-encode-address-list wl-from) )
 		 (cons 'Subject "Wanderlust NEWS")
-		 (cons 'User-Agent wl-generate-mailer-string-function)
-		 (cons 'Organization wl-organization)
-		 (and wl-auto-insert-x-face
-		      (file-exists-p wl-x-face-file)
-		      'wl-draft-insert-x-face-field-here)))
+		 (cons 'User-Agent wl-generate-mailer-string-function)))
       (wl-draft-insert-mail-header-separator)
       (wl-draft-prepare-edit)
       (goto-char (point-max))
