@@ -827,7 +827,7 @@ without cacheing."
   (let* ((id-fld (assoc message-id elmo-crosspost-message-alist))
 	 (folder-list (nth 1 id-fld)))
     (when id-fld
-      (if (setq folder-list (elmo-delete-lists folders folder-list))
+      (if (setq folder-list (elmo-list-delete folders folder-list))
 	  (setcar (cdr id-fld) folder-list)
 	(setq elmo-crosspost-message-alist
 	      (delete id-fld elmo-crosspost-message-alist))))))
