@@ -409,14 +409,12 @@
   (if (wl-e21-display-image-p)
       (let (type)
 	(cond ((string= folder wl-queue-folder)
-	       (concat (propertize " " 'display
-				   (get 'wl-folder-queue-image 'image))
+	       (concat (get 'wl-folder-queue-image 'image)
 		       string))
 	      ((setq type (elmo-folder-type folder))
-	       (concat (propertize " " 'display
-				   (get (intern (format "wl-folder-%s-image"
-							type))
-					'image))
+	       (concat (get (intern (format "wl-folder-%s-image"
+					    type))
+			    'image)
 		       string))
 	      (t
 	       string)))

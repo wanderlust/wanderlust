@@ -1,4 +1,38 @@
+2001-06-25  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+
+	* wl.el (wl): Check environment before wl-init.
+
+	* wl-summary.el (wl-summary-collect-unread): Eliminated.
+	(wl-summary-mark-as-read-all): Use elmo-folder-list-unreads
+	instead of wl-summary-collect-unread.
+	(wl-summary-reply): Split message window.
+
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl): Set custom-manual link as "wl-ja"
+	only if current language environment is japanese,
+
+	* wl-folder.el (wl-folder-jump-to-current-entity): Call
+	wl-folder-select-buffer when wl-summary-use-frame is non-nil.
+	(wl-folder-goto-folder-subr): Ditto.
+
+	* wl-draft.el (wl-draft-dispatch-message): Call
+	`elmo-file-cache-get-path'.
+
+2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-cursor-move): If return value of
+	wl-summary-next-message is not number, don't jump.
+
 2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-next-message-function): New
+	variable.
+	(wl-summary-next-message): Call wl-summary-buffer-next-message-function
+	if it is bound.
+
+	* wl-e21.el (wl-plugged-set-folder-icon): Don't propertize image
+	string.
 
 	* wl.el (wl-plugged-dop-queue-info): Fix to check stream-type.
 	(wl-plugged-drawing): Ditto.

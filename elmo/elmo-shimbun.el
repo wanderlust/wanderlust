@@ -30,6 +30,7 @@
 ;; 
 (require 'elmo)
 (require 'elmo-map)
+(require 'elmo-dop)
 (require 'shimbun)
 
 (defcustom elmo-shimbun-check-interval 60
@@ -218,6 +219,12 @@ See `shimbun-headers' for more detail about RANGE."
 		     (elmo-shimbun-folder-shimbun-internal folder))
 		    add))
 
+(luna-define-method elmo-net-port-info ((folder elmo-shimbun-folder))
+  (list "shimbun"
+	(shimbun-server-internal
+	 (elmo-shimbun-folder-shimbun-internal folder))
+	nil))
+
 (luna-define-method elmo-folder-check :after ((folder elmo-shimbun-folder))
   (when (shimbun-current-group-internal 
 	 (elmo-shimbun-folder-shimbun-internal folder))
@@ -306,6 +313,15 @@ See `shimbun-headers' for more detail about RANGE."
 		   (elmo-get-hash-val
 		    location
 		    (elmo-shimbun-folder-header-hash-internal folder))))
+
+(luna-define-method elmo-message-encache :around ((folder
+						   elmo-shimbun-folder)
+						  number)
+  (if (elmo-folder-plugged-p folder)
+      (luna-call-next-method)
+    (if elmo-enable-disconnected-operation
+	(elmo-message-encache-dop folder number)
+      (error "Unplugged"))))
 
 (luna-define-method elmo-folder-list-messages-internal :around
   ((folder elmo-shimbun-folder) &optional nohide)
