@@ -5002,7 +5002,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if downward
 	  (forward-line 1)
 	(forward-line -1))
-      (setq skip (or (string-match skip-tmark-regexp 
+      (setq skip (or (string-match skip-tmark-regexp
 				   (save-excursion
 				     (wl-summary-temp-mark)))
 		     (and skip-pmark-regexp
@@ -5021,8 +5021,12 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(if wl-summary-buffer-disp-msg
 	    (wl-summary-redisplay))
       (if interactive
-	  (if wl-summary-buffer-next-folder-function
-	      (funcall wl-summary-buffer-next-folder-function)
+	  (cond
+	   ((and (not downward) wl-summary-buffer-prev-folder-function)
+	    (funcall wl-summary-buffer-prev-folder-function))
+	   ((and downward wl-summary-buffer-next-folder-function)
+	    (funcall wl-summary-buffer-next-folder-function))
+	   (t
 	    (when wl-auto-select-next
 	      (setq next-entity
 		    (if downward
@@ -5034,7 +5038,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	     '(lambda () (wl-summary-next-folder-or-exit next-entity))
 	     (format
 	      "No more messages. Type SPC to go to %s."
-	      (wl-summary-entity-info-msg next-entity finfo))))))))
+	      (wl-summary-entity-info-msg next-entity finfo)))))))))
 
 (defun wl-summary-prev (&optional interactive)
   (interactive)
