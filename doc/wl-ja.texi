@@ -7445,6 +7445,7 @@ overview $B>pJs$K4^$^$l$J$$%U%#!<%k%I$r8!::$NBP>]$H$9$k>l9g!"(B
 * Living with other packages::  $B%Q%C%1!<%8$N$"$k@83h(B
 * Highlights::                  $B%O%$%i%$%H$N@_Dj(B
 * Biff::                        $B%a!<%k$NCe?.$rCN$i$;$k(B
+* Password Management::         $B%Q%9%o!<%I$N4IM}(B
 * Advanced Settings::           $B%+%9%?%^%$%:!A1~MQJT!A(B
 * Customizable Valiables::      $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
 * Hooks::                       $B%U%C%/(B
@@ -7971,7 +7972,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end table
 
 
-@node Biff, Advanced Settings, Highlights, Customization
+@node Biff, Password Management, Highlights, Customization
 @section $B%a!<%k$NCe?.$rCN$i$;$k(B
 @cindex Biff
 
@@ -8014,7 +8015,39 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @end table
 
 
-@node Advanced Settings, Customizable Valiables, Biff, Customization
+@node Password Management, Advanced Settings, Biff, Customization
+@section $B%Q%9%o!<%I$N4IM}(B
+
+$B%5!<%P$K@\B3$9$k0Y$KF~NO$7$?%Q%9%o!<%I$OJQ?t(B @code{elmo-passwd-alist} $B$K(B
+$B@\B3Kh$KJ];}$5$l$^$9!#$3$NJQ?t$K$O%(%s%3!<%I$5$l$?@8$N%Q%9%o!<%I$,J];}$5(B
+$B$l$F$*$j!"(BEmacs $B$rB>?M$K?($i$l$k$H%Q%9%o!<%I$r8+$i$l$k4m81@-$,$"$k$N$G==(B
+$BJ,$KCm0U$7$F2<$5$$!#(B
+
+$B%Q%9%o!<%I$,J];}$5$l$F$$$k>uBV$G(B @kbd{M-x elmo-passwd-alist-save} $B$r<B9T(B
+$B$9$k$H%Q%9%o!<%I$,%U%!%$%k$KJ]B8$5$l!"%Q%9%o!<%I$NF~NO$,ITMW$K$J$j$^$9!#(B
+$B$3$N>l9g!"%-!<F~NO$rEp$_8+$i$l$k4m81@-$O8:$k$+$b$7$l$^$;$s$,!"@8$N%Q%9%o(B
+$B!<%I$,%U%!%$%k$KJ]B8$5$l$k$N$G!"$=$N07$$$K$O==J,Cm0U$7$F2<$5$$!#%U%!%$%k(B
+$B$KJ]B8$5$l$?%Q%9%o!<%I$r>C5n$9$k$K$O(B @kbd{M-x elmo-passwd-alist-clear}
+$B$N8e!"(B@kbd{M-x elmo-passwd-alist-save} $B$r<B9T$7$F2<$5$$!#(B
+
+@table @code
+@item elmo-passwd-alist-file-name
+@vindex  elmo-passwd-alist-file-name
+$B=i4|@_Dj$O(B @file{passwd}$B!#(B
+$B%Q%9%o!<%I$r%;!<%V$7$F$*$/%U%!%$%k$NL>A0$G$9!#(B
+$B%3%^%s%I(B @code{elmo-passwd-alist-save} $B$r<B9T$9$k$H$3$N%U%!%$%k$K8=:_@_Dj(B
+$B$5$l$F$$$k%Q%9%o!<%I$,%;!<%V$5$l$^$9!#(B
+
+@item elmo-passwd-life-time
+@vindex  elmo-passwd-life-time
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
+Non-nil $B$JCM$,@_Dj$5$l$?>l9g$O!"?75,$K%Q%9%o!<%I$,F~NO$5$l$F$+$i(B
+@code{elmo-passwd-life-time} $BIC8e$K%Q%9%o!<%I$r>C5n$9$k%?%$%^$,!"(B
+$B%;%C%H$5$l$^$9!#(B@code{nil} $B$N>l9g$OF~NO$5$l$?%Q%9%o!<%I$r>C5n$7$^$;$s!#(B
+@end table
+
+
+@node Advanced Settings, Customizable Valiables, Password Management, Customization
 @section $B%+%9%?%^%$%:!A1~MQJT!A(B
 
 @menu
@@ -8418,20 +8451,6 @@ Non-nil $B$J$i$P%*!<%W%K%s%0%G%b$G%S%C%H%^%C%W$N%$%a!<%8$rI=<($7$^$9!#(B
 XEmacs $B$N$_M-8z$G$9!#=i4|@_Dj$O!"(BXEmacs $B$K0MB8$7$^$9!#(B
 (dbm $B$N5!G=$r$b$D(B XEmacs $B$J$i$P(B @code{t} $B$H$J$j$^$9!#(B)
 Non-nil $B$J$i$P(B dbm $B$r;H$C$F(B Message-ID $B$N4IM}$r9T$J$$$^$9!#(B
-
-@item elmo-passwd-alist-file-name
-@vindex  elmo-passwd-alist-file-name
-$B=i4|@_Dj$O(B @file{passwd}$B!#(B
-$B%Q%9%o!<%I$r%;!<%V$7$F$*$/%U%!%$%k$NL>A0$G$9!#(B
-$B%3%^%s%I(B @code{elmo-passwd-alist-save} $B$r<B9T$9$k$H$3$N%U%!%$%k$K8=:_@_Dj(B
-$B$5$l$F$$$k%Q%9%o!<%I$,%;!<%V$5$l$^$9!#(B
-
-@item elmo-passwd-life-time
-@vindex  elmo-passwd-life-time
-$B=i4|@_Dj$O(B @code{nil}$B!#(B
-Non-nil $B$JCM$,@_Dj$5$l$?>l9g$O!"?75,$K%Q%9%o!<%I$,F~NO$5$l$F$+$i(B
-@code{elmo-passwd-life-time} $BIC8e$K%Q%9%o!<%I$r>C5n$9$k%?%$%^$,!"(B
-$B%;%C%H$5$l$^$9!#(B
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache

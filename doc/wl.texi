@@ -7483,6 +7483,7 @@ a list of folder names.
 * Living with other packages:: Cooperating with other packages
 * Highlights::                 Highlights
 * Biff::                       Notify Mail arrival
+* Password Management::        Manage Passwords
 * Advanced Settings::          Advanced Settings
 * Customizable Variables::     Customizable Variables
 * Hooks::                      Hooks
@@ -8014,7 +8015,7 @@ The face for strings (for example, a version number) in the demo.
 @end table
 
 
-@node Biff, Advanced Settings, Highlights, Customization
+@node Biff, Password Management, Highlights, Customization
 @section Notify Mail arrival
 @cindex Biff
 
@@ -8056,7 +8057,39 @@ For silence, set to @code{nil}.
 @end table
 
 
-@node Advanced Settings, Customizable Variables, Biff, Customization
+@node Password Management, Advanced Settings, Biff, Customization
+@section Manage Passwords
+
+If you input passwords to connect servers, they are stored in the
+variable @code{elmo-passwd-alist} per connection. You should be careful
+that others might read your passwords if they can touch your Emacs,
+since encoded plain passwords are there.
+
+If you invoke @kbd{M-x elmo-passwd-alist-save} while you have stored
+passwords, then they are saved on the file, and it will save you to
+input passwords. In this case, the risk that someone reads your
+keystroke might decrease, but please not that plain passwords are
+stored on a file. You should treat them very carefully.
+To remove saved passwords on file, invoke @kbd{M-x elmo-passwd-alist-clear}
+and then @kbd{M-x elmo-passwd-alist-save}.
+
+@table @code
+@item elmo-passwd-alist-file-name
+@vindex elmo-passwd-alist-file-name
+The initial setting is @file{passwd}.
+This is the name of the file in which passwords are saved.
+@code{elmo-passwd-alist-save} saves current passwords to the file.
+
+@item elmo-passwd-life-time
+@vindex  elmo-passwd-life-time
+The initial setting is @code{nil}.
+If the value is some number, timer is set to remove password entry after
+@code{elmo-passwd-life-time} seconds since you input the password.
+@code{nil} means never to remove passwords.
+@end table
+
+
+@node Advanced Settings, Customizable Variables, Password Management, Customization
 @section Advanced Settings
 
 @menu
@@ -8466,12 +8499,6 @@ logo.
 This is meaningful for XEmacs only.  The initial setting depends on
 XEmacs (@code{t} for XEmacs with dbm).
 If non-nil, Message-ID is controlled by dbm.
-
-@item elmo-passwd-alist-file-name
-@vindex elmo-passwd-alist-file-name
-The initial setting is @file{passwd}.
-This is the name of the file in which passwords are saved.
-@code{elmo-passwd-alist-save} saves current passwords to the file.
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache
