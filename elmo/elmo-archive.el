@@ -849,7 +849,7 @@ TYPE specifies the archiver's symbol."
 	   percent))
 	(setq numlist (cdr numlist)))
       (kill-buffer tmp-buf)
-      (message "Creating msgdb...done.")
+      (message "Creating msgdb...done")
       (list overview number-alist mark-alist)) ))
 
 ;;; info-zip agent

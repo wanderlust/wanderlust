@@ -155,7 +155,7 @@
 	   'elmo-internal-msgdb-create "Creating msgdb..."
 	   percent))
 	(setq numlist (cdr numlist)))
-      (message "Creating msgdb...done.")
+      (message "Creating msgdb...done")
       (list overview number-alist mark-alist loc-alist))))
 
 (defalias 'elmo-internal-msgdb-create-as-numlist 'elmo-internal-msgdb-create)

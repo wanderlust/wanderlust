@@ -365,7 +365,7 @@ even an operation concerns the unplugged folder."
 	(elmo-dop-unlock-message (car append-list)))
       (setq append-list (cdr append-list))
       (elmo-dop-append-list-save folder nil)))
-  (message (format "Saving queued message in %s...done."
+  (message (format "Saving queued message in %s...done"
 		   elmo-lost+found-folder)))
 
 (defun elmo-dop-flush-pending-append-operations (folder &optional appends resume)
@@ -420,7 +420,7 @@ even an operation concerns the unplugged folder."
 	(setq elmo-dop-queue (delete (list folder "append-operations" nil)
 				     elmo-dop-queue))
 	(elmo-dop-queue-save))))
-  (message "Appending queued messages...done."))
+  (message "Appending queued messages...done"))
 
 (defun elmo-dop-folder-exists-p (folder)
   (or (file-exists-p (elmo-msgdb-expand-path folder))

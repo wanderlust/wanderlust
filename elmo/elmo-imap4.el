@@ -1088,7 +1088,7 @@ If optional argument UNMARK is non-nil, unmark."
 	     'elmo-imap4-msgdb-create "Getting overview..."
 	     (/ (* total 100) length)))
 	  (setq set-list (cdr set-list)))
-	(message "Getting overview...done.")
+	(message "Getting overview...done")
 	elmo-imap4-current-msgdb))))
 
 (defun elmo-imap4-parse-capability (string)

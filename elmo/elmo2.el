@@ -364,12 +364,12 @@ without cacheing."
 	      )
 	    (if (and ret-val
 		     (not no-delete-info))
-		(message "Cleaning up src folder...done.")
+		(message "Cleaning up src folder...done")
 	      )
 	    ret-val)
 	(if no-delete
 	    (progn
-	      (message "Copying messages...done.")
+	      (message "Copying messages...done")
 	      t)
 	  (if (eq len 0)
 	      (message "No message was moved.")
@@ -492,7 +492,7 @@ without cacheing."
 		(elmo-msgdb-location-load path)
 		(elmo-msgdb-make-overview-hashtb overview)
 		)))
-    (message "Loading msgdb for %s...done." folder)
+    (message "Loading msgdb for %s...done" folder)
     (elmo-folder-set-info-max-by-numdb folder (nth 1 ret-val))
     ret-val))
 
@@ -507,7 +507,7 @@ without cacheing."
       (elmo-msgdb-location-save path (cadddr msgdb))
     ;(elmo-sync-validity folder);; for validity check!!
       ))
-  (message "Saving msgdb for %s...done." folder)
+  (message "Saving msgdb for %s...done" folder)
   (elmo-folder-set-info-max-by-numdb folder (cadr msgdb)))
 
 (defun elmo-msgdb-add-msgs-to-seen-list-subr (msgs msgdb seen-marks seen-list)
@@ -622,7 +622,7 @@ without cacheing."
 	      len)
 	  nil
 	(elmo-msgdb-set-number-alist msgdb new-numlist)
-	(message "Synchronize number...done.")
+	(message "Synchronize number...done")
 	new-numlist))))
 
 (defun elmo-get-msg-filename (folder number &optional loc-alist)

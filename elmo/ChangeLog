@@ -1,3 +1,24 @@
+2000-10-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo2.el (elmo-move-msgs, elmo-msgdb-load, elmo-msgdb-save,
+	elmo-update-number): Remove last period in "...done." message.
+	* elmo-archive.el (elmo-archive-msgdb-create-as-numlist-subr1):
+	Ditto.
+	* elmo-cache.el (elmo-cache-expire-by-size,
+	elmo-cache-get-sorted-cache-file-list,
+	elmo-cache-msgdb-create-as-numlist): Ditto.
+	* elmo-dop.el (elmo-dop-save-pending-messages,
+	(elmo-dop-flush-pending-append-operations): Ditto.
+	* elmo-imap4.el (elmo-imap4-msgdb-create): Ditto.
+	* elmo-internal.el (elmo-internal-msgdb-create): Ditto.
+	* elmo-localdir.el (elmo-localdir-msgdb-create-as-numlist,
+	(elmo-localdir-pack-number): Ditto.
+	* elmo-maildir.el (elmo-maildir-msgdb-create): Ditto.
+	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Ditto.
+	* mmelmo-imap4-2.el (mmelmo-imap4-mime-entity-buffer,
+	mime-write-entity-content): Ditto.
+	* pldap.el (ldap-search-basic): Ditto.
+
 2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.3.91.

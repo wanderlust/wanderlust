@@ -761,7 +761,7 @@ Header region is supposed to be narrowed."
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
     (setq overview (elmo-msgdb-overview-sort-by-date overview))
-    (message "Sorting...done.")
+    (message "Sorting...done")
     (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb)(nth 4 msgdb))))
 
 (defun elmo-msgdb-clear-overview-hashtb (entity hashtb)

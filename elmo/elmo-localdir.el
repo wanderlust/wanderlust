@@ -156,7 +156,7 @@
 	   'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
 	   (/ (* i 100) len)))
 	(setq numlist (cdr numlist)))
-      (message "Creating msgdb...done.")
+      (message "Creating msgdb...done")
       (list overview number-alist mark-alist))))
 
 (defalias 'elmo-localdir-msgdb-create 'elmo-localdir-msgdb-create-as-numlist)
@@ -440,7 +440,7 @@
 	       new-number mark)))
       (setq new-number (1+ new-number))
       (setq flist (cdr flist)))
-    (message "Packing...done.")
+    (message "Packing...done")
     (list (elmo-msgdb-get-overview msgdb)
 	  onum-alist
 	  new-mark-alist

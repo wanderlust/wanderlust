@@ -727,7 +727,7 @@ entry according to the value of WITHDN."
 	(if (not (eobp)) (forward-char 1))
 	(setq start (point)))
       (if verbose
-	  (message "Parsing ldap results...done."))
+	  (message "Parsing ldap results...done"))
       (delq nil (nreverse result)))))
 
 (defun ldap/field-end ()

@@ -133,7 +133,7 @@ If KBYTES is kilo bytes (This value must be float)."
 		    (expand-file-name
 		     elmo-cache-dirname elmo-msgdb-dir)) Kbytes))
     (setq beginning total)
-    (message "Checking disk usage...done.")
+    (message "Checking disk usage...done")
     (let ((cfl (elmo-cache-get-sorted-cache-file-list))
 	  (deleted 0)
 	  oldest
@@ -208,7 +208,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	 'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
 	 (/ (* i 100) num)))
       (setq dirs (cdr dirs)))
-    (message "Collecting cache info...done.")
+    (message "Collecting cache info...done")
     ret-val))
 
 (defun elmo-cache-expire-by-age (&optional days)
@@ -547,7 +547,7 @@ Returning its cache buffer."
 	   'elmo-cache-msgdb-create-as-numlist "Creating msgdb..."
 	   percent))
 	(setq numlist (cdr numlist)))
-      (message "Creating msgdb...done.")
+      (message "Creating msgdb...done")
       (list overview number-alist mark-alist))))
 
 (defalias 'elmo-cache-msgdb-create 'elmo-cache-msgdb-create-as-numlist)

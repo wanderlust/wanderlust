@@ -230,7 +230,7 @@ These value must be specified as argument for `luna-make-entity'."
 	      (mime-buffer-entity-set-buffer-internal entity nil)
 	      (message "Fetching skipped part...")
 	      (mmelmo-imap4-mime-entity-buffer entity)
-	      (message "Fetching skipped part...done."))
+	      (message "Fetching skipped part...done"))
 	    (setq mmelmo-imap4-fetched t)))
 	(mime-buffer-entity-buffer-internal entity))
     ;; No buffer exist.
@@ -342,7 +342,7 @@ These value must be specified as argument for `luna-make-entity'."
 	  (mime-buffer-entity-set-buffer-internal
 	   entity
 	   (mmelmo-imap4-mime-entity-buffer entity))
-	  (message "Fetching skipped part...done.")))
+	  (message "Fetching skipped part...done")))
       (with-current-buffer (mime-buffer-entity-buffer-internal entity)
 	(mime-write-decoded-region
 	 (mime-buffer-entity-body-start-internal entity)
