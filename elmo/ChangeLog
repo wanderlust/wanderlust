@@ -1,5 +1,8 @@
 2003-11-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-internal.el (elmo-internal-obsolete-folder-list): New variable.
+	(elmo-folder-initialize): Raise a warning when obsolete folder is used.
+
 	* elmo-vars.el (elmo-init-hook): New user option.
 
 	* elmo.el (elmo-init): Run the elmo-init-hook.

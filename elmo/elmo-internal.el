@@ -33,12 +33,18 @@
 ;;; ELMO internal folder
 (luna-define-class elmo-internal-folder (elmo-folder) ())
 
+(defvar elmo-internal-folder-list '(flag cache sendlog))
+(defvar elmo-internal-obsolete-folder-list '((mark flag)))
+
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-internal-folder)
 					    name)
+  (when (assq (intern name) elmo-internal-obsolete-folder-list)
+    (elmo-warning
+     "Folder '%s is now obsolete. Use '%s instead."
+     name
+     (cadr (assq (intern name) elmo-internal-obsolete-folder-list))))
   (elmo-internal-folder-initialize folder name))
-
-(defvar elmo-internal-folder-list '(flag cache sendlog))
 
 (defun elmo-internal-folder-initialize (folder name)
   (let ((fsyms elmo-internal-folder-list)
