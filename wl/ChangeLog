@@ -1,3 +1,8 @@
+2000-04-17  HARAGUCHI Shuugou <haraguti@nd.net.fujitsu.co.jp>
+
+	* wl-summary.el (wl-summary-goto-folder-subr):
+	Fix problem when wl-summary-partial-highlight-above-lines is nil.
+
 2000-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-prefetch-region): Redisplay only
