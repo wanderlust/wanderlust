@@ -1,3 +1,7 @@
+2001-09-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-interactive-send): Set default value as t.
+
 2001-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-addrmgr.el (wl-addrmgr-method-list): New variable.

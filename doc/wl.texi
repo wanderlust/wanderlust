@@ -6662,7 +6662,7 @@ If non-nil, you are asked for confirmation when Wanderlust terminates.
 
 @item wl-interactive-send
 @vindex wl-interactive-send
-The initial setting is @code{nil}.
+The initial setting is @code{t}.
 If non-nil, you are asked for confirmation when mail is sent.
 
 @item wl-folder-sync-range-alist
