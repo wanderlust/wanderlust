@@ -1,3 +1,13 @@
+2001-06-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Return list of nil when no
+	updates.
+
+2001-06-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-append-messages): Fixed logic.
+	(Detected by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>)
+
 2001-06-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-get-network-stream-type): Moved to elmo-net.el.
