@@ -1,3 +1,8 @@
+2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-message-entity-parent): Define.
+	(elmo-folder-search): Rewrite.
+
 2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-multi.el (elmo-message-cached-p): Define.

@@ -174,6 +174,12 @@
 	(setq children (cdr children)))
       match))))
 
+(luna-define-method elmo-message-entity-parent ((folder
+						 elmo-multi-folder) entity)
+  (elmo-message-entity
+   folder
+   (elmo-message-entity-field entity 'references)))
+
 (luna-define-method elmo-message-field ((folder elmo-multi-folder)
 					number field)
   (let ((pair (elmo-multi-real-folder-number folder number)))
@@ -367,34 +373,28 @@
       t)))
 
 (luna-define-method elmo-folder-search ((folder elmo-multi-folder)
-					condition &optional numlist)
+					condition &optional numbers)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
-	 numlist-list cur-numlist ; for filtered search.
-	 ret-val)
-    (if numlist
-	(setq numlist-list
-	      (elmo-multi-split-numbers folder numlist t)))
+	 numlist
+	 matches)
+    (setq numbers (or numbers
+		      (elmo-folder-list-messages folder)))
     (while flds
       (setq cur-number (+ cur-number 1))
-      (when numlist
-	(setq cur-numlist (car numlist-list)))
-      (setq ret-val (append
-		     ret-val
-		     (elmo-list-filter
-		      cur-numlist
-		      (mapcar
-		       (function
-			(lambda (x)
-			  (+
-			   (* (elmo-multi-folder-divide-number-internal
-			       folder) cur-number) x)))
-		       (elmo-folder-search
-			(car flds) condition)))))
-      (when numlist
-	(setq numlist-list (cdr numlist-list)))
+      (setq matches (append matches
+			    (mapcar
+			     (function
+			      (lambda (x)
+				(+
+				 (* (elmo-multi-folder-divide-number-internal
+				     folder)
+				    cur-number)
+				 x)))
+			     (elmo-folder-search
+			      (car flds) condition))))
       (setq flds (cdr flds)))
-    ret-val))
+    (elmo-list-filter numbers matches)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
 					      number)
