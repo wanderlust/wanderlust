@@ -709,6 +709,24 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
 
+(defsubst elmo-folder-search-fast (folder condition numbers)
+  (when (and numbers
+	     (vectorp condition)
+	     (member (elmo-filter-key condition) '("first" "last")))
+    (let ((len (length numbers))
+	  (lastp (string= (elmo-filter-key condition) "last"))
+	  (value (string-to-number (elmo-filter-value condition))))
+      (when (eq (elmo-filter-type condition) 'unmatch)
+	(setq lastp (not lastp)
+	      value  (- len value)))
+      (if lastp
+	  (nthcdr (max (- len value) 0) numbers)
+	(when (> value 0)
+	  (let ((last (nthcdr (1- value) numbers)))
+	    (when last
+	      (setcdr last nil))
+	    numbers))))))
+
 (luna-define-method elmo-folder-search ((folder elmo-folder)
 					condition
 					&optional numbers)
@@ -740,24 +758,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 		(elmo-progress-notify 'elmo-folder-search))
 	    (elmo-progress-clear 'elmo-folder-search))
 	  (nreverse matched)))))
-
-(defsubst elmo-folder-search-fast (folder condition numbers)
-  (when (and numbers
-	     (vectorp condition)
-	     (member (elmo-filter-key condition) '("first" "last")))
-    (let ((len (length numbers))
-	  (lastp (string= (elmo-filter-key condition) "last"))
-	  (value (string-to-number (elmo-filter-value condition))))
-      (when (eq (elmo-filter-type condition) 'unmatch)
-	(setq lastp (not lastp)
-	      value  (- len value)))
-      (if lastp
-	  (nthcdr (max (- len value) 0) numbers)
-	(when (> value 0)
-	  (let ((last (nthcdr (1- value) numbers)))
-	    (when last
-	      (setcdr last nil))
-	    numbers))))))
 
 (luna-define-method elmo-message-match-condition ((folder elmo-folder)
 						  number condition
