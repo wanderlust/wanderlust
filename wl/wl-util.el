@@ -834,7 +834,7 @@ This function is imported from Emacs 20.7."
 	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb
 				     (nth 0 data)
 				     (list (nth 0 diff)
-					   (nth 1 diff)
+					   (- (nth 1 diff) (nth 0 diff))
 					   (nth 2 diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)

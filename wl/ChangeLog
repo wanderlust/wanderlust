@@ -1,5 +1,8 @@
 2001-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-util.el (wl-biff-check-folder-async-callback): Fixed unread
+	number.
+
 	* wl-folder.el (wl-folder-check-one-entity): Use `new' value of diff.
 
 	* wl-util.el (wl-biff-check-folder-async-callback): Ditto.
