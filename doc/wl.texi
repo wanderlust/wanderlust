@@ -6504,6 +6504,7 @@ summary displayed with nicknames.
 * Address Manager::  Address Manager
 @end menu
 
+
 @node Mail Addresses, Address Manager, Address Book, Address Book
 @section Address book
 @cindex Address book Definition
