@@ -1632,7 +1632,7 @@ If ARG is non-nil, checking is omitted."
 					    'important))))
     (if (null number-list)
 	(message "No message.")
-      (wl-summary-mark-as-important-internal remove number-list)
+      (wl-summary-set-persistent-mark-internal remove 'important number-list)
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -1805,11 +1805,11 @@ This function is defined for `window-scroll-functions'"
 	(setq diffs (cadr diff))
 	(setq mes (concat mes (format "-%d" (length diffs))))
 	(when diffs
-	  (wl-summary-unset-persistent-mark flag diffs 'no-modeline))
+	  (wl-summary-unset-persistent-mark flag diffs 'no-modeline 'no-server))
 	(setq diffs (car diff)
 	      mes (concat mes (format "/+%d %s " (length diffs) flag)))
 	(when diffs
-	  (wl-summary-set-persistent-mark flag diffs 'no-modeline)))
+	  (wl-summary-set-persistent-mark flag diffs 'no-modeline 'no-server)))
       (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor
@@ -3035,7 +3035,8 @@ Return non-nil if the mark is updated"
 (defsubst wl-summary-set-persistent-mark-internal (inverse
 						   &optional flag
 						   number-or-numbers
-						   no-modeline-update)
+						   no-modeline-update
+						   no-server)
   "Set persistent mark."
   (save-excursion
     (let ((folder wl-summary-buffer-elmo-folder)
@@ -3051,8 +3052,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unset-flag folder number-list flag)
-	  (elmo-folder-set-flag folder number-list flag))
+	    (elmo-folder-unset-flag folder number-list flag no-server)
+	  (elmo-folder-set-flag folder number-list flag no-server))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
@@ -3069,7 +3070,8 @@ Return non-nil if the mark is updated"
 
 (defun wl-summary-unset-persistent-mark (&optional flag
 						   number-or-numbers
-						   no-modeline-update)
+						   no-modeline-update
+						   no-server)
   "Unset persistent mark."
   (interactive)
   (when (interactive-p)
@@ -3085,11 +3087,13 @@ Return non-nil if the mark is updated"
   (wl-summary-set-persistent-mark-internal 'inverse
 					   flag
 					   number-or-numbers
-					   no-modeline-update))
+					   no-modeline-update
+					   no-server))
 
 (defun wl-summary-set-persistent-mark (&optional flag
 						 number-or-numbers
-						 no-modeline-update)
+						 no-modeline-update
+						 no-server)
   "Set persistent mark."
   (interactive)
   (when (interactive-p)
@@ -3102,11 +3106,11 @@ Return non-nil if the mark is updated"
 				   (wl-summary-get-available-flags))
 			   nil
 			   'require-match))))))
-  (wl-summary-set-persistent-mark-internal
-   nil
-   flag
-   number-or-numbers
-   no-modeline-update))
+  (wl-summary-set-persistent-mark-internal nil
+					   flag
+					   number-or-numbers
+					   no-modeline-update
+					   no-server))
 
 (defun wl-summary-mark-as-answered (&optional number-or-numbers
 					      no-modeline-update)
@@ -3188,73 +3192,11 @@ Return non-nil if the mark is updated"
 	    (wl-summary-update-persistent-mark))))
       flags)))
 
-(defsubst wl-summary-add-flags-internal (&optional
-					 number-or-numbers
-					 flags
-					 local)
-  (save-excursion
-    (let ((folder wl-summary-buffer-elmo-folder)
-	  set-flags msg number-list visible)
-      (setq number-list (cond ((numberp number-or-numbers)
-			       (list number-or-numbers))
-			      ((and (not (null number-or-numbers))
-				    (listp number-or-numbers))
-			       number-or-numbers)
-			      ((setq msg (wl-summary-message-number))
-			       ;; interactive
-			       (list msg))))
-      (if (null number-list)
-	  (message "No message.")
-	(dolist (number number-list)
-	  (setq set-flags
-		(elmo-get-global-flags
-		 (elmo-message-flags folder number)))
-	  (setq set-flags (nconc flags set-flags))
-	  (elmo-message-set-global-flags folder number set-flags local)
-	  (setq visible (wl-summary-jump-to-msg number))
-	  ;; set mark on buffer
-	  (when visible
-	    (wl-summary-update-persistent-mark)))))))
-
-(defsubst wl-summary-remove-flags-internal (&optional
-					    number-or-numbers
-					    flags
-					    local)
-  (save-excursion
-    (let ((folder wl-summary-buffer-elmo-folder)
-	  set-flags msg number-list visible)
-      (setq number-list (cond ((numberp number-or-numbers)
-			       (list number-or-numbers))
-			      ((and (not (null number-or-numbers))
-				    (listp number-or-numbers))
-			       number-or-numbers)
-			      ((setq msg (wl-summary-message-number))
-			       ;; interactive
-			       (list msg))))
-      (if (null number-list)
-	  (message "No message.")
-	(dolist (number number-list)
-	  (setq set-flags (elmo-get-global-flags
-			   (elmo-message-flags folder number)))
-	  (dolist (flag flags)
-	    (setq set-flags (delq flag set-flags)))
-	  (elmo-message-set-global-flags folder number set-flags local)
-	  (setq visible (wl-summary-jump-to-msg number))
-	  ;; set mark on buffer
-	  (when visible
-	    (wl-summary-update-persistent-mark)))))))
-
 (defun wl-summary-set-flags (&optional remove)
   (interactive "P")
   (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
       (error "Cannot process flags in this folder"))
   (wl-summary-set-flags-internal nil nil nil remove))
-
-(defun wl-summary-mark-as-important-internal (inverse
-					      &optional number-or-numbers)
-  (if inverse
-      (wl-summary-remove-flags-internal number-or-numbers '(important))
-    (wl-summary-add-flags-internal number-or-numbers '(important))))
 
 (defun wl-summary-mark-as-important (&optional prompt)
   (interactive "P")
@@ -3262,11 +3204,12 @@ Return non-nil if the mark is updated"
       (error "Cannot process flags in this folder"))
   (if prompt
       (wl-summary-set-flags-internal)
-    (wl-summary-mark-as-important-internal
+    (wl-summary-set-persistent-mark-internal
      (and (interactive-p)
 	  (elmo-message-flagged-p wl-summary-buffer-elmo-folder
 				  (wl-summary-message-number)
-				  'important)))))
+				  'important))
+     'important)))
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)

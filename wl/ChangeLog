@@ -1,5 +1,22 @@
 2004-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-sync-marks): Call
+	`wl-summary-set-persistent-mark' and
+	`wl-summary-unset-persistent-mark' with 4th argument `no-server'.
+	(wl-summary-set-persistent-mark-internal): Add 4th argument
+	`no-server'.
+	(wl-summary-unset-persistent-mark): Ditto.
+	(wl-summary-set-persistent-mark): Ditto.
+	(wl-summary-add-flags-internal): Abolish.
+	(wl-summary-remove-flags-internal): Ditto.
+	(wl-summary-mark-as-important-internal): Ditto.
+	(wl-summary-mark-as-important): Use
+	`wl-summary-set-persistent-mark' instead of
+	`wl-summary-add-flags-internal'.
+	(wl-summary-mark-as-important-region): Ditto.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
 	* wl-summary.el (wl-summary-get-available-flags): New function.
 	(wl-summary-sync-marks): Use it and simplified.
 	(wl-summary-unset-persistent-mark): Use
