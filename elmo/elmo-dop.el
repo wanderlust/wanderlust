@@ -129,7 +129,9 @@ Saved queue is old version(2.6). Clear all pending operations? ")
 				 (setq folder
 				       (elmo-make-folder
 					(elmo-dop-queue-fname (car queue))))
-			       (elmo-folder-open folder))
+			       (elmo-folder-open folder)
+			       (unless (elmo-folder-plugged-p folder)
+				 (error "Unplugged.")))
 			     (elmo-dop-queue-arguments (car queue)))
 		      (elmo-folder-close folder))
 		  (quit  (setq failure t))
