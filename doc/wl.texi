@@ -5802,6 +5802,7 @@ Examples with other packages.
 * x-face-mule::                 x-face-mule.el
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
+* mime-w3m::                    mime-w3m.el
 @end menu
 
 
@@ -5973,7 +5974,7 @@ specific, but general-purpose for tm/SEMI).
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
+@node MHC, mime-w3m, dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -6001,6 +6002,15 @@ For mhc-current:
 (add-hook 'wl-init-hook 'mhc-wl-setup)
 @end group
 @end lisp
+
+@node mime-w3m,  , MHC, Living with other packages
+@subsection mime-w3m.el
+@pindex mime-w3m
+
+You can display html part by using @file{mime-w3m.el}
+distributed with emacs-w3m (@uref{http://emacs-w3m.namazu.org/}).
+You can find the usage in comment region at the head of @file{mime-w3m.el}.
+
 
 @node Highlights, Biff, Living with other packages, Customization
 @section Highlights

@@ -5731,6 +5731,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 * x-face-mule::                 x-face-mule.el
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
+* mime-w3m::                    mime-w3m.el
 @end menu
 
 
@@ -5905,7 +5906,7 @@ Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
+@node MHC, mime-w3m, dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
@@ -5933,6 +5934,16 @@ mhc-current $B$N>l9g!'(B
 (add-hook 'wl-init-hook 'mhc-wl-setup)
 @end group
 @end lisp
+
+@node mime-w3m,  , MHC, Living with other packages
+@subsection mime-w3m.el
+@pindex mime-w3m
+
+emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) $B$KIUB0$N(B
+@file{mime-w3m.el} $B$r;H$C$F!"%a%C%;!<%8$N(B html $B%Q!<%H$r(B
+$BI=<($5$;$k$3$H$,=PMh$^$9!#@_DjK!$O(B @file{mime-w3m.el} $B$N(B
+$B@hF,$N%3%a%s%H$r;2>H$7$F$/$@$5$$!#(B
+
 
 @node Highlights, Biff, Living with other packages, Customization
 @section $B%O%$%i%$%H$N@_Dj(B
