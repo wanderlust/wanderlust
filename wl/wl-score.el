@@ -69,20 +69,20 @@
 
 (defconst wl-score-header-index
   ;; Name to function alist.
-  '(("number"     wl-score-integer  elmo-msgdb-overview-entity-get-number) ;;0
-    ("subject"    wl-score-string   3 charset)
-    ("from"       wl-score-string   2 charset)
-    ("date"       wl-score-date     elmo-msgdb-overview-entity-get-date) ;;4
-    ("message-id" wl-score-string   elmo-msgdb-overview-entity-get-id)
-    ("references" wl-score-string   1)
-    ("to"         wl-score-string   5)
-    ("cc"         wl-score-string   6)
-    ("chars"      wl-score-integer  elmo-msgdb-overview-entity-get-size) ;;7
-    ("lines"      wl-score-integer  wl-score-overview-entity-get-lines)
-    ("xref"       wl-score-string   wl-score-overview-entity-get-xref)
-    ("extra"      wl-score-extra    wl-score-overview-entity-get-extra mime)
-    ("followup"   wl-score-followup 2 charset)
-    ("thread"     wl-score-thread   1)))
+  '(("number"     wl-score-integer  number)
+    ("subject"    wl-score-string   subject charset)
+    ("from"       wl-score-string   from charset)
+    ("date"       wl-score-date     date)
+    ("message-id" wl-score-string   message-id)
+    ("references" wl-score-string   references)
+    ("to"	  wl-score-string   to)
+    ("cc"	  wl-score-string   cc)
+    ("chars"      wl-score-integer  size)
+    ("lines"      wl-score-integer  lines)
+    ("xref"       wl-score-string   xref)
+    ("extra"      wl-score-extra    extra mime)
+    ("followup"   wl-score-followup from charset)
+    ("thread"     wl-score-thread   references)))
 
 (defvar wl-score-auto-make-followup-entry nil)
 (defvar wl-score-debug nil)
@@ -172,45 +172,19 @@ Remove Re, Was, Fwd etc."
   (or (elmo-message-entity-field entity 'xref)
       ""))
 
-(defun wl-score-overview-entity-get-extra (entity header &optional decode)
-  (let ((extra (elmo-msgdb-overview-entity-get-extra-field entity header)))
-    (if (and extra decode)
-	(eword-decode-string
-	 (decode-mime-charset-string extra elmo-mime-charset))
-      (or extra ""))))
-
 (defun wl-string> (s1 s2)
   (not (or (string< s1 s2)
 	   (string= s1 s2))))
 
-(defmacro wl-score-ov-entity-get-by-index (entity index)
-  (` (aref (cdr (, entity)) (, index))))
-
 (defsubst wl-score-ov-entity-get (entity index &optional extra decode)
-  (let ((str (cond ((integerp index)
-		    (wl-score-ov-entity-get-by-index entity index))
-		   (extra
-		    (funcall index entity extra decode))
-		   (t
-		    (funcall index entity)))))
-    (if (and decode (not extra))
-	(decode-mime-charset-string str elmo-mime-charset)
-      str)))
+  (elmo-message-entity-field entity index decode))
 
-(defun wl-score-string-index< (a1 a2)
-  (string-lessp (wl-score-ov-entity-get-by-index (car a1) wl-score-index)
-		(wl-score-ov-entity-get-by-index (car a2) wl-score-index)))
-
-(defun wl-score-string-func< (a1 a2)
-  (string-lessp (funcall wl-score-index (car a1))
-		(funcall wl-score-index (car a2))))
+(defun wl-score-string< (a1 a2)
+  (string-lessp (wl-score-ov-entity-get (car a1) wl-score-index)
+		(wl-score-ov-entity-get (car a2) wl-score-index)))
 
 (defun wl-score-string-sort (messages index)
-  (let ((func (cond ((integerp index)
-		     'wl-score-string-index<)
-		    (t
-		     'wl-score-string-func<))))
-    (sort messages func)))
+  (sort messages 'wl-score-string<))
 
 (defsubst wl-score-get (symbol &optional alist)
   "Get SYMBOL's definition in ALIST."

@@ -110,10 +110,9 @@ update overview when message is fetched."
 	(when overviews
 	  (setq hash (elmo-make-hash (length overviews)))
 	  (dolist (entity overviews)
-	    (elmo-set-hash-val (elmo-msgdb-overview-entity-get-id entity)
+	    (elmo-set-hash-val (elmo-message-entity-field entity 'message-id)
 			       entity hash)
-	    (when (setq id (elmo-msgdb-overview-entity-get-extra-field
-			    entity "x-original-id"))
+	    (when (setq id (elmo-message-entity-field entity 'x-original-id))
 	      (elmo-set-hash-val id entity hash)))
 	  (elmo-shimbun-folder-set-entity-hash-internal folder hash)))))
 
@@ -131,7 +130,8 @@ update overview when message is fetched."
 	      (elmo-shimbun-folder-set-header-hash-internal
 	       folder
 	       (setq hash (elmo-make-hash))))
-	    (elmo-set-hash-val (elmo-msgdb-overview-entity-get-id entity)
+	    (elmo-set-hash-val (elmo-message-entity-field entity
+							  'message-id)
 			       header
 			       hash)
 	    header)))))
@@ -158,29 +158,25 @@ update overview when message is fetched."
 
 (defun elmo-shimbun-entity-to-header (entity)
   (let (message-id shimbun-id)
-    (if (setq message-id (elmo-msgdb-overview-entity-get-extra-field
-			  entity "x-original-id"))
-	(setq shimbun-id (elmo-msgdb-overview-entity-get-id entity))
-      (setq message-id (elmo-msgdb-overview-entity-get-id entity)
+    (if (setq message-id (elmo-message-entity-field
+			  entity 'x-original-id))
+	(setq shimbun-id (elmo-message-entity-field entity 'message-id))
+      (setq message-id (elmo-message-entity-field entity 'message-id)
 	    shimbun-id nil))
     (elmo-set-work-buf
      (set-buffer-multibyte t)
      (shimbun-make-header
-      (elmo-msgdb-overview-entity-get-number entity)
+      (elmo-message-entity-number entity)
       (shimbun-mime-encode-string
-       (decode-mime-charset-string
-	(elmo-msgdb-overview-entity-get-subject-no-decode entity)
-	elmo-mime-charset))
+       (elmo-message-entity-field entity 'subject 'decode))
       (shimbun-mime-encode-string
-       (decode-mime-charset-string
-	(elmo-msgdb-overview-entity-get-from-no-decode entity)
-	elmo-mime-charset))
-      (elmo-msgdb-overview-entity-get-date entity)
+       (elmo-message-entity-field entity 'from 'decode))
+      (elmo-message-entity-field entity 'date)
       message-id
-      (elmo-msgdb-overview-entity-get-references entity)
+      (elmo-message-entity-field entity 'references)
       0
       0
-      (elmo-msgdb-overview-entity-get-extra-field entity "xref")
+      (elmo-message-entity-field entity 'xref)
       (and shimbun-id
 	   (list (cons "x-shimbun-id" shimbun-id)))))))
 
@@ -341,12 +337,12 @@ update overview when message is fetched."
 	(shimbun-header-insert
 	 (elmo-shimbun-folder-shimbun-internal folder)
 	 header)
-	(setq ov (elmo-msgdb-create-overview-from-buffer number))
-	(elmo-msgdb-overview-entity-set-extra
+	(setq ov (elmo-msgdb-create-message-entity-from-buffer
+		  (elmo-folder-msgdb-internal folder) number))
+	(elmo-message-entity-set-field
 	 ov
-	 (nconc
-	  (elmo-msgdb-overview-entity-get-extra ov)
-	  (list (cons "xref" (shimbun-header-xref header)))))))))
+	 'xref (shimbun-header-xref header)))
+      ov)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
 					      numlist flag-table)
@@ -360,7 +356,7 @@ update overview when message is fetched."
 	    (elmo-shimbun-msgdb-create-entity
 	     folder (car numlist)))
       (when entity
-	(setq msgid (elmo-msgdb-overview-entity-get-id entity)
+	(setq msgid (elmo-message-entity-field entity 'message-id)
 	      flags (elmo-flag-table-get flag-table msgid))
 	(elmo-global-flags-set flags folder (car numlist) msgid)
 	(elmo-msgdb-append-entity new-msgdb entity flags))
@@ -383,8 +379,8 @@ update overview when message is fetched."
 	(message-id (shimbun-header-id header))
 	references)
     (unless (string= shimbun-id message-id)
-      (elmo-msgdb-overview-entity-set-extra-field
-       entity "x-original-id" message-id)
+      (elmo-message-entity-set-field
+       entity 'x-original-id message-id)
       (elmo-shimbun-header-set-extra-field
        header "x-shimbun-id" shimbun-id)
       (elmo-set-hash-val message-id
@@ -393,25 +389,30 @@ update overview when message is fetched."
       (elmo-set-hash-val shimbun-id
 			 entity
 			 (elmo-shimbun-folder-entity-hash folder)))
-    (elmo-msgdb-overview-entity-set-from
+    (elmo-message-entity-set-field
      entity
+     'from
      (elmo-mime-string (shimbun-header-from header)))
-    (elmo-msgdb-overview-entity-set-subject
+    (elmo-message-entity-set-field
      entity
+     'subject
      (elmo-mime-string (shimbun-header-subject header)))
-    (elmo-msgdb-overview-entity-set-date
-     entity (shimbun-header-date header))
+    (elmo-message-entity-set-field
+     entity
+     'date
+     (shimbun-header-date header))
     (when (setq references
 		(or (elmo-msgdb-get-last-message-id
 		     (elmo-field-body "in-reply-to"))
 		    (elmo-msgdb-get-last-message-id
 		     (elmo-field-body "references"))))
-      (elmo-msgdb-overview-entity-set-references
+      (elmo-message-entity-set-field
        entity
-       (or (elmo-msgdb-overview-entity-get-id
-	    (elmo-get-hash-val
-	     references
-	     (elmo-shimbun-folder-entity-hash folder)))
+       'references
+       (or (elmo-message-entity-field entity 'message-id)
+	   (elmo-get-hash-val
+	    references
+	    (elmo-shimbun-folder-entity-hash folder))
 	   references)))))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
@@ -459,16 +460,15 @@ update overview when message is fetched."
       (delq nil
 	    (mapcar
 	     (lambda (ov)
-	       (when (and (elmo-msgdb-overview-entity-get-extra-field
-			   ov "xref")
+	       (when (and (elmo-message-entity-field ov 'xref)
 			  (if expire-days
 			      (< (elmo-shimbun-lapse-seconds
 				  (elmo-shimbun-parse-time-string
-				   (elmo-msgdb-overview-entity-get-date ov)))
+				   (elmo-message-entity-field ov 'date)))
 				 (* expire-days 86400 ; seconds per day
 				    ))
 			    t))
-		 (elmo-msgdb-overview-entity-get-id ov)))
+		 (elmo-message-entity-field ov 'message-id)))
 	     (elmo-folder-list-message-entities folder)))
       (mapcar
        (lambda (header)

@@ -98,22 +98,23 @@ If the value is a list, all elements are used as index paths for namazu."
     (elmo-folder-name-internal folder))
    (expand-file-name "nmz" elmo-msgdb-directory)))
 
-(defun elmo-nmz-msgdb-create-entity (folder number)
+(defun elmo-nmz-msgdb-create-entity (msgdb folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
   (let ((location (expand-file-name (elmo-map-message-location folder number)))
 	entity uid)
-    (setq entity (elmo-msgdb-create-overview-entity-from-file number location))
-    (unless (or (> (length (elmo-msgdb-overview-entity-get-to entity)) 0)
-		(> (length (elmo-msgdb-overview-entity-get-cc entity)) 0)
-		(not (string= (elmo-msgdb-overview-entity-get-subject entity)
+    (setq entity (elmo-msgdb-create-message-entity-from-file
+		  msgdb number location))
+    (unless (or (> (length (elmo-message-entity-field entity 'to)) 0)
+		(> (length (elmo-message-entity-field entity 'cc)) 0)
+		(not (string= (elmo-message-entity-field entity 'subject)
 			      elmo-no-subject)))
-      (elmo-msgdb-overview-entity-set-subject entity location)
+      (elmo-message-entity-set-field entity 'subject location)
       (setq uid (nth 2 (file-attributes location)))
-      (elmo-msgdb-overview-entity-set-from entity
-					   (concat
-					    (user-full-name uid)
-					    " <"(user-login-name uid) "@"
-					    (system-name) ">")))
+      (elmo-message-entity-set-field entity 'from
+				     (concat
+				      (user-full-name uid)
+				      " <"(user-login-name uid) "@"
+				      (system-name) ">")))
     entity))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nmz-folder)
@@ -126,7 +127,7 @@ If the value is a list, all elements are used as index paths for namazu."
     (while numlist
       (setq entity
 	    (elmo-nmz-msgdb-create-entity
-	     folder (car numlist)))
+	     new-msgdb folder (car numlist)))
       (when entity
 	(elmo-msgdb-append-entity new-msgdb entity '(new)))
       (when (> num elmo-display-progress-threshold)

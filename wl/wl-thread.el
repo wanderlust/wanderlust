@@ -640,7 +640,7 @@ ENTITY is returned."
 	;; don't update buffer
 	update-msgs)))) ; return value
 
-(defun wl-thread-insert-message (overview-entity
+(defun wl-thread-insert-message (message-entity
 				 msg parent-msg &optional update linked)
   "Insert MSG to the entity.
 When optional argument UPDATE is non-nil,
@@ -674,7 +674,7 @@ Message is inserted to the summary buffer."
 	    ;; visible.
 	    (progn
 	      (wl-summary-update-thread
-	       overview-entity
+	       message-entity
 	       child-entity
 	       (elmo-message-entity wl-summary-buffer-elmo-folder
 				    parent-msg))

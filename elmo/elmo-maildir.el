@@ -152,7 +152,8 @@ LOCATION."
     (dolist (number numbers)
       (setq location (elmo-map-message-location folder number))
       (setq entity
-	    (elmo-msgdb-create-overview-entity-from-file
+	    (elmo-msgdb-create-message-entity-from-file
+	     new-msgdb
 	     number
 	     (elmo-maildir-message-file-name folder location)))
       (when entity

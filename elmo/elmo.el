@@ -498,9 +498,9 @@ Return newly created temporary directory name which contains temporary files.")
 (luna-define-method elmo-find-fetch-strategy
   ((folder elmo-folder) entity &optional ignore-cache)
   (let (cache-file size message-id number)
-    (setq size (elmo-msgdb-overview-entity-get-size entity))
-    (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-    (setq number (elmo-msgdb-overview-entity-get-number entity))
+    (setq size (elmo-message-entity-field entity 'size))
+    (setq message-id (elmo-message-entity-field entity 'message-id))
+    (setq number (elmo-message-entity-number entity))
     (setq cache-file (elmo-file-cache-get message-id))
     (setq ignore-cache (or ignore-cache
 			   (null (elmo-message-use-cache-p folder number))))
@@ -1121,11 +1121,8 @@ If CACHED is t, message is set as cached.")
     (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached)))
 
 (defun elmo-message-copy-entity (entity)
-  ;; 
-  (elmo-msgdb-copy-overview-entity entity))
-
-(defun elmo-message-entity-set-number (entity number)
-  (elmo-msgdb-overview-entity-set-number entity number))
+  (elmo-msgdb-copy-message-entity (elmo-message-entity-db entity)
+				  entity))
 
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
@@ -1162,21 +1159,31 @@ ENTITY is the message-entity to get the parent.")
      ,@form))
 
 (defmacro elmo-message-entity-number (entity)
-  `(elmo-msgdb-overview-entity-get-number ,entity))
+  `(elmo-msgdb-message-entity-number (elmo-message-entity-db ,entity)
+				     ,entity))
+
+(defmacro elmo-message-entity-set-number (entity number)
+  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-db ,entity)
+					 ,entity
+					 ,number))
 
 (defun elmo-message-entity-field (entity field &optional decode)
   "Get message entity field value.
 ENTITY is the message entity structure obtained by `elmo-message-entity'.
 FIELD is the symbol of the field name.
 if optional DECODE is non-nil, returned value is decoded."
-  (elmo-msgdb-message-entity-field entity field decode))
+  (elmo-msgdb-message-entity-field
+   (elmo-message-entity-db entity)
+   entity field decode))
 
 (defun elmo-message-entity-set-field (entity field value)
   "Set message entity field value.
 ENTITY is the message entity structure.
 FIELD is the symbol of the field name.
 VALUE is the field value (raw)."
-  (elmo-msgdb-message-entity-set-field entity field value))
+  (elmo-msgdb-message-entity-set-field
+   (elmo-message-entity-db entity)
+   entity field value))
 
 (luna-define-generic elmo-folder-count-flags (folder)
   "Count flagged message number in the msgdb of the FOLDER.
@@ -1272,7 +1279,9 @@ FIELD is a symbol of the field.")
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
   (when (zerop (elmo-folder-length folder))
     (error "Cannot treat this folder correctly."))
-  (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
+  (elmo-msgdb-message-entity-field (elmo-folder-msgdb folder)
+				   (elmo-message-entity folder number)
+				   field))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
   nil) ; default is not use cache.

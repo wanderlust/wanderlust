@@ -769,6 +769,7 @@ Don't cache if nil.")
 	      (setq extra (cons (cons ext field) extra))))
 	  (setq extras (cdr extras)))
 	(setq entity (elmo-msgdb-make-message-entity
+		      new-msgdb
 		      :message-id (aref ov-entity 4)
 		      :number     num
 		      :references (elmo-msgdb-get-last-message-id
@@ -1417,7 +1418,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (save-restriction
 	      (narrow-to-region beg (point))
 	      (setq entity
-		    (elmo-msgdb-create-overview-from-buffer num))
+		    (elmo-msgdb-create-message-entity-from-buffer
+		     new-msgdb num))
 	      (when entity
 		(setq message-id
 		      (elmo-message-entity-field entity 'message-id))

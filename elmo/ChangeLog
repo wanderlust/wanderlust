@@ -1,5 +1,168 @@
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb.el (elmo-message-entity-db): New function.
+	(elmo-msgdb-make-message-entity): New API.
+	(elmo-msgdb-message-entity-number): Ditto.
+	(elmo-msgdb-message-entity-set-number): Ditto.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Ditto.
+	(elmo-msgdb-create-message-entity-from-file): Ditto.
+	(elmo-msgdb-create-message-entity-from-buffer): Ditto.
+	(elmo-msgdb-match-condition-internal): Ditto.
+
+	* modb-standard.el (modb-legacy): Require modb-legacy.
+	(modb-standard-make-message-entity): New inline function.
+	(elmo-msgdb-make-message-entity): Define.
+	(elmo-msgdb-create-message-entity-from-file): Ditto.
+	(elmo-msgdb-create-message-entity-from-buffer): Ditto.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Ditto.
+	(elmo-msgdb-match-condition-internal): Ditto.
+
+	* modb-legacy.el: Don't require modb-entity.
+	(elmo-msgdb-decoded-cache-hashtb): Moved from elmo-msgdb.el
+	(elmo-msgdb-match-condition-primitive): Ditto.
+	(elmo-msgdb-get-decoded-cache): Ditto.
+	(elmo-msgdb-overview-entity-get-id): Ditto.
+	(elmo-msgdb-overview-entity-get-number): Ditto.
+	(elmo-msgdb-overview-entity-set-number): Ditto.
+	(elmo-msgdb-overview-entity-get-references): Ditto.
+	(elmo-msgdb-overview-entity-set-references): Ditto.
+	(elmo-msgdb-overview-entity-get-from-no-decode): Ditto.
+	(elmo-msgdb-overview-entity-get-from): Ditto.
+	(elmo-msgdb-overview-entity-set-from): Ditto.
+	(elmo-msgdb-overview-entity-get-subject): Ditto.
+	(elmo-msgdb-overview-entity-get-subject-no-decode): Ditto.
+	(elmo-msgdb-overview-entity-set-subject): Ditto.
+	(elmo-msgdb-overview-entity-get-date): Ditto.
+	(elmo-msgdb-overview-entity-set-date): Ditto.
+	(elmo-msgdb-overview-entity-get-to): Ditto.
+	(elmo-msgdb-overview-entity-get-cc): Ditto.
+	(elmo-msgdb-overview-entity-get-size): Ditto.
+	(elmo-msgdb-overview-entity-set-size): Ditto.
+	(elmo-msgdb-overview-entity-get-extra): Ditto.
+	(elmo-msgdb-overview-entity-set-extra): Ditto.
+	(elmo-msgdb-overview-entity-get-extra-field): Ditto.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+	(elmo-msgdb-number-load): Ditto.
+	(elmo-msgdb-overview-load): Ditto.
+	(elmo-msgdb-mark-load): Ditto.
+	(elmo-msgdb-number-save): Ditto.
+	(elmo-msgdb-mark-save): Ditto.
+	(elmo-msgdb-overview-save): Ditto.
+	(modb-legacy-make-message-entity): New inline function.
+	(elmo-msgdb-insert-file-header): Ditto.
+	(elmo-msgdb-make-message-entity): Define.
+	(elmo-msgdb-create-message-entity-from-file): Ditto.
+	(elmo-msgdb-create-message-entity-from-buffer): Ditto.
+	(elmo-msgdb-message-entity-number): Ditto.
+	(elmo-msgdb-message-entity-set-number): Ditto.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Ditto.
+	(elmo-msgdb-match-condition-internal): Ditto.
+
+	* elmo.el (elmo-find-fetch-strategy): Use elmo-message-entity-field.
+	(elmo-message-copy-entity): Rewrite.
+	(elmo-message-entity-number): Ditto.
+	(elmo-message-entity-set-number): Ditto.
+	(elmo-message-entity-field): Use elmo-message-entity-db.
+	(elmo-message-entity-set-field): Ditto.
+	(elmo-message-field): Rewrite.
+
+	* elmo-util.el (elmo-msgdb-get-last-message-id): Moved from
+	elmo-msgdb.el
+	(elmo-msgdb-get-message-id-from-buffer): Ditto.
+
+	* elmo-shimbun.el (elmo-shimbun-folder-entity-hash): Use
+	elmo-message-entity-field.
+	(elmo-shimbun-folder-shimbun-header): Ditto.
+	(elmo-shimbun-entity-to-header): Ditto.
+	(elmo-folder-msgdb-create): Ditto.
+	(elmo-shimbun-msgdb-create-entity): Ditto;
+	Use elmo-msgdb-create-message-entity-from-buffer.
+	(elmo-shimbun-update-overview): Use elmo-message-entity-set-field.
+	(elmo-map-folder-list-message-locations): elmo-message-entity-field.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Use
+	elmo-msgdb-create-message-entity-from-file and 
+	elmo-message-entity-field.
+
+	* elmo-pop3.el (elmo-pop3-sort-msgdb-by-original-number): Use
+	elmo-message-entity-number.
+	(elmo-pop3-msgdb-create-message): Use
+	elmo-msgdb-create-message-entity-from-buffer,
+	elmo-message-entity-set-field, elmo-message-entity-number and
+	elmo-message-entity-set-number.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Follow
+	the API change in elmo-msgdb-make-message-entity.
+	(elmo-nntp-msgdb-create-message): Use
+	elmo-msgdb-create-message-entity-from-buffer.
+
+	* elmo-nmz.el (elmo-nmz-msgdb-create-entity): Use
+	elmo-message-entity-field and
+	elmo-msgdb-create-message-entity-from-file.
+
+	* elmo-msgdb.el (toplevel): Don't require modb-entity.
+	(elmo-msgdb-get-field): Abolish.
+	(elmo-msgdb-get-number): Rewrite.
+	(elmo-msgdb-sort-by-date): Use elmo-message-entity-field.
+	(elmo-msgdb-flag-table): Ditto.
+	(elmo-msgdb-get-last-message-id,
+	elmo-msgdb-number-load, elmo-msgdb-overview-load,
+	elmo-msgdb-mark-load, elmo-msgdb-number-save,
+	elmo-msgdb-mark-save, elmo-msgdb-overview-save): Moved to modb-legacy.
+	(elmo-msgdb-create-overview-from-buffer,
+	elmo-msgdb-overview-get-parent-entity): Abolish.
+
+	* elmo-mime.el (elmo-mime-display-as-is): Use
+	elmo-message-entity-field.
+
+	* elmo-map.el (elmo-folder-pack-numbers): Use
+	elmo-message-entity-set-number.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): 
+	elmo-msgdb-create-message-entity-from-file instead of
+	elmo-msgdb-create-overview-entity-from-file.
+
+	* elmo-localdir.el (elmo-localdir-msgdb-create-entity): Added argument
+	msgdb.
+	(elmo-folder-msgdb-create): Use elmo-message-entity-field.
+	(elmo-folder-pack-numbers): Use elmo-message-entity-set-number.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Use
+	elmo-messge-entity-field and elmo-message-entity-number.
+	(elmo-imap4-fetch-callback-1): Call
+	elmo-msgdb-create-message-entity-from-buffer instead of
+	elmo-msgdb-create-overview-from-buffer.	
+	(elmo-folder-msgdb-create-plugged): Use elmo-messge-entity-field.
+	(elmo-find-fetch-strategy): Likewise.
+
+	* elmo-flag.el (elmo-folder-msgdb-create): Call 
+	elmo-localdir-msgdb-create-entity with argument msgdb.
+
+	* elmo-dop.el (elmo-dop-msgdb): Use elmo-message-entity-number
+	and elmo-message-entity-set-number.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Use
+	elmo-message-entity-field.
+	(elmo-folder-msgdb-create): Call
+	elmo-msgdb-create-message-entity-from-file instead of
+	elmo-msgdb-create-overview-entity-from-file.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-entity-subr): Added
+	argument msgdb; Call elmo-msgdb-create-message-from-buffer
+	instead of elmo-msgdb-create-overview-from-buffer.
+	(elmo-archive-msgdb-create-entity): Ditto.
+	(elmo-archive-msgdb-create-as-numlist-subr1): Use
+	elmo-message-entity-field.
+	(elmo-archive-parse-mmdf): Ditto.
+
+	* modb-entity.el: Removed.
+
 	* elmo-version.el (elmo-version): Up to 2.11.16.
 
 2003-09-20  Yuuichi Teranishi  <teranisi@gohome.org>

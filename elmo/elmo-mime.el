@@ -259,7 +259,7 @@ Return non-nil if cache is used."
 	cache-file strategy use-cache)
     (when entity
       (setq cache-file (elmo-file-cache-get
-			(elmo-msgdb-overview-entity-get-id entity)))
+			(elmo-message-entity-field entity 'message-id)))
       (setq use-cache (and (elmo-message-use-cache-p folder number)
 			   (eq (elmo-file-cache-status cache-file) 'entire))))
     (setq strategy (elmo-make-fetch-strategy

@@ -89,15 +89,16 @@
     (message "Creating msgdb...")
     (while numbers
       (setq entity
-	    (elmo-msgdb-create-overview-entity-from-file
-	     (car numbers) (elmo-message-file-name folder (car numbers))))
+	    (elmo-msgdb-create-message-entity-from-filea
+	     new-msgdb (car numbers)
+	     (elmo-message-file-name folder (car numbers))))
       (if (null entity)
 	  (elmo-folder-set-killed-list-internal
 	   folder
 	   (nconc
 	    (elmo-folder-killed-list-internal folder)
 	    (list (car numbers))))
-	(setq message-id (elmo-msgdb-overview-entity-get-id entity)
+	(setq message-id (elmo-message-entity-field entity 'message-id)
 	      flags (elmo-flag-table-get flag-table message-id))
 	(elmo-global-flags-set flags folder (car numbers) message-id)
 	(elmo-msgdb-append-entity new-msgdb entity flags))

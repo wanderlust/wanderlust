@@ -667,6 +667,7 @@ you."
 	(dummy-temp (char-to-string 200))
 	(wl-summary-new-mark (char-to-string 201)) ; bind only for the check.
 	(wl-summary-flag-priority-list '(new))     ; ditto.
+	(msgdb (elmo-folder-msgdb-internal wl-summary-buffer-elmo-folder))
 	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
@@ -675,6 +676,7 @@ you."
       (insert
        (wl-summary-create-line
 	(elmo-msgdb-make-message-entity
+	 msgdb
 	 :number 10000
 	 :from "foo"
 	 :subject "bar"
@@ -727,7 +729,6 @@ you."
    wl-summary-buffer-mode-line-formatter
    wl-summary-mode-line-format
    wl-summary-mode-line-format-spec-alist)
-  (wl-summary-detect-mark-position)
   (setq wl-summary-buffer-persistent
 	(wl-folder-persistent-p (elmo-folder-name-internal folder)))
   (elmo-folder-set-persistent-internal folder wl-summary-buffer-persistent)
@@ -939,7 +940,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (while wl-summary-delayed-update
 	(message "Parent (%d) of message %d is no entity"
 		 (caar wl-summary-delayed-update)
-		 (elmo-msgdb-overview-entity-get-number
+		 (elmo-message-entity-number
 		  (cdar wl-summary-delayed-update)))
 	(wl-summary-insert-message
 	 (cdar wl-summary-delayed-update)
@@ -1790,7 +1791,7 @@ If ARG is non-nil, checking is omitted."
 		  (if elmo-use-database
 		      (elmo-database-msgid-put
 		       (car entity) (elmo-folder-name-internal folder)
-		       (elmo-msgdb-overview-entity-get-number entity)))
+		       (elmo-message-entity-number entity)))
 		  (when (> num elmo-display-progress-threshold)
 		    (setq i (+ i 1))
 		    (if (or (zerop (% i 5)) (= i num))
@@ -1804,7 +1805,7 @@ If ARG is non-nil, checking is omitted."
 		  (while wl-summary-delayed-update
 		    (message "Parent (%d) of message %d is no entity"
 			     (caar wl-summary-delayed-update)
-			     (elmo-msgdb-overview-entity-get-number
+			     (elmo-message-entity-number
 			      (cdar wl-summary-delayed-update)))
 		    (when (setq update-thread
 				(wl-summary-insert-message
@@ -2227,12 +2228,14 @@ If ARG, without confirm."
 			       (elmo-folder-name-internal folder))
 			      wl-summary-default-view)))
 		  (wl-thread-resume-entity folder)
-		  (wl-summary-open-folder folder))
+		  (wl-summary-open-folder folder)
+		  (wl-summary-detect-mark-position))
 	      (setq wl-summary-buffer-view
 		    (wl-summary-load-file-object
 		     (expand-file-name wl-summary-view-file
 				       (elmo-folder-msgdb-path folder))))
 	      (wl-summary-open-folder folder)
+	      (wl-summary-detect-mark-position)
 	      (wl-summary-rescan))
 	    (wl-summary-count-unread)
 	    (wl-summary-update-modeline)))

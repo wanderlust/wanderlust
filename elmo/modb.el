@@ -111,7 +111,8 @@ Return non-nil if message-id of entity is duplicated.")
 (luna-define-generic elmo-msgdb-delete-messages (msgdb numbers)
   "Delete messages which are contained NUMBERS from MSGDB.")
 
-(luna-define-generic elmo-msgdb-sort-entities (msgdb predicate &optional app-data)
+(luna-define-generic elmo-msgdb-sort-entities (msgdb predicate
+						     &optional app-data)
   "Sort entities of MSGDB, comparing with PREDICATE.
 PREDICATE is called with two entities and APP-DATA.
 Should return non-nil if the first entity is \"less\" than the second.")
@@ -121,6 +122,75 @@ Should return non-nil if the first entity is \"less\" than the second.")
 KEY is a number or a string.
 A number is for message number in the MSGDB.
 A string is for message-id of the message.")
+
+;; Message entity handling.
+(defvar modb-cache-internal nil)
+(defun elmo-message-entity-db (entity)
+  "Get modb instance which corresponds to the ENTITY."
+  (if (or (null (car entity))
+	  (stringp (car entity)))
+      ;; Transitional implementation for modb-legacy.
+      (or modb-cache-internal
+	  (progn
+	    (require 'modb-legacy)
+	    (setq modb-cache-internal (luna-make-entity 'modb-legacy))))
+    ;; XXX Next generation entity structure...not decided yet.
+    (car entity)))
+
+(luna-define-generic elmo-msgdb-make-message-entity (msgdb
+						     &rest args)
+  "Make a message entity for MSGDB.")
+
+(luna-define-generic elmo-msgdb-message-entity-number (msgdb entity)
+  "Number of the ENTITY.")
+
+(luna-define-generic elmo-msgdb-message-entity-set-number (msgdb entity number)
+  "Set number of the ENTITY.")
+
+(luna-define-generic elmo-msgdb-message-entity-field (msgdb
+						      entity field
+						      &optional decode)
+  "Retrieve field value of the message entity.
+MSGDB is the msgdb structure.
+ENTITY is the message entity structure.
+FIELD is a symbol of the field.
+If optional DECODE is no-nil, the field value is decoded.")
+
+(luna-define-generic elmo-msgdb-message-entity-set-field (msgdb
+							  entity field value)
+  "Set the field value of the message entity.
+MSGDB is the msgdb structure.
+ENTITY is the message entity structure.
+FIELD is a symbol of the field.
+VALUE is the field value to set.")
+
+(luna-define-generic elmo-msgdb-copy-message-entity (msgdb entity)
+  "Copy message entity.
+MSGDB is the msgdb structure.
+ENTITY is the message entity structure.")
+
+(luna-define-generic elmo-msgdb-create-message-entity-from-file (msgdb number
+								       file)
+  "Create message entity from file.
+MSGDB is the msgdb structure.
+NUMBER is the number of the newly created message entity.
+FILE is the message file.")
+
+(luna-define-generic elmo-msgdb-create-message-entity-from-buffer (msgdb
+								   number
+								   &rest args)
+  "Create message entity from current buffer.
+NUMBER is the number of the newly created message entity.
+Rest of the ARGS is a plist of message entity field for initial value.
+Header region is supposed to be narrowed.")
+
+;; Transitional interface.
+(luna-define-generic elmo-msgdb-match-condition-internal (msgdb
+							  condition
+							  entity
+							  flags
+							  numbers)
+  "Return non-nil when the entity matches the condition.")
 
 ;;; generic implement
 ;;

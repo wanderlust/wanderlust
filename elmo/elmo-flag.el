@@ -147,7 +147,7 @@
       (message "Creating msgdb...")
       (while numbers
 	(when (setq entity (elmo-localdir-msgdb-create-entity
-			    dir (car numbers)))
+			    new-msgdb dir (car numbers)))
 	  (elmo-msgdb-append-entity new-msgdb entity
 				    (list (elmo-flag-folder-flag-internal
 					   folder))))

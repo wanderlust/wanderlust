@@ -1,5 +1,25 @@
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-detect-mark-position): Follow the API
+	change in elmo-msgdb-make-message-entity.
+	(wl-summary-buffer-set-folder): Don't call
+	wl-summary-detect-mark-position here.
+	(wl-summary-rescan): Call elmo-message-entity-number.
+	(wl-summary-sync-update): Ditto.
+	(wl-summary-goto-folder-subr): Call wl-summary-detect-mark-position.
+
+	* wl-score.el (wl-score-header-index): Redefine 2th element.
+	(wl-score-overview-entity-get-extra): Abolish.
+	(wl-score-ov-entity-get): Rewrite.
+	(wl-score-string-index<, wl-score-string-func<): Abolish.
+	(wl-score-string<): New function.
+	(wl-score-string-sort): Use it.
+
+	* wl-refile.el (wl-refile-guess-by-history): Use
+	elmo-message-entity-field.
+	(wl-refile-guess-by-from): Ditto.
+	(wl-refile-guess-by-msgid): Ditto.
+
 	* Version number is increased to 2.11.16.
 
 2003-09-21  Yoichi NAKAYAMA  <yoichi@geiin.org>

@@ -138,9 +138,9 @@
       (incf cur-number))
     temp-dir))
 
-(defun elmo-localdir-msgdb-create-entity (dir number)
-  (elmo-msgdb-create-overview-entity-from-file
-   number (expand-file-name (int-to-string number) dir)))
+(defun elmo-localdir-msgdb-create-entity (msgdb dir number)
+  (elmo-msgdb-create-message-entity-from-file
+   msgdb number (expand-file-name (int-to-string number) dir)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers
@@ -156,9 +156,9 @@
       (while numbers
 	(setq entity
 	      (elmo-localdir-msgdb-create-entity
-	       dir (car numbers)))
+	       new-msgdb dir (car numbers)))
 	(when entity
-	  (setq message-id (elmo-msgdb-overview-entity-get-id entity)
+	  (setq message-id (elmo-message-entity-field entity 'message-id)
 		flags (elmo-flag-table-get flag-table message-id))
 	  (elmo-global-flags-set flags folder (car numbers) message-id)
 	  (elmo-msgdb-append-entity new-msgdb entity flags))
@@ -345,7 +345,7 @@
 	   ;; xxx  nfs,hardlink
 	   (rename-file (int-to-string old-number)
 			(int-to-string new-number) t))
-	  (elmo-msgdb-overview-entity-set-number entity new-number))
+	  (elmo-message-entity-set-number entity new-number))
 	(elmo-msgdb-append-entity new-msgdb entity
 				  (elmo-msgdb-flags msgdb old-number))
 	(setq new-number (1+ new-number))))

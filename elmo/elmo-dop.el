@@ -348,14 +348,14 @@ FOLDER is the folder structure."
   (unless (elmo-folder-exists-p folder)
     (elmo-folder-create folder)))
 
-;;; Util
+;;; Util XXX Oh my god...
 (defun elmo-dop-msgdb (msgdb)
   (list (mapcar (function
 		 (lambda (x)
-		   (elmo-msgdb-overview-entity-set-number
+		   (elmo-message-entity-set-number
 		    x
 		    (* -1
-		       (elmo-msgdb-overview-entity-get-number x)))))
+		       (elmo-message-entity-number x)))))
 		(nth 0 msgdb))
 	(mapcar (function
 		 (lambda (x) (cons

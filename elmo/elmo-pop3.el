@@ -710,10 +710,10 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
        msgdb
        (lambda (ent1 ent2 loc-alist)
 	 (< (elmo-pop3-uidl-to-number
-	     (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
+	     (cdr (assq (elmo-message-entity-number ent1)
 			loc-alist)))
 	    (elmo-pop3-uidl-to-number
-	     (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
+	     (cdr (assq (elmo-message-entity-number ent2)
 			loc-alist)))))
        location-alist))
     msgdb))
@@ -778,23 +778,24 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	  (save-restriction
 	    (narrow-to-region beg (point))
 	    (setq entity
-		  (elmo-msgdb-create-overview-from-buffer
-		   (car numlist)))
+		  (elmo-msgdb-create-message-entity-from-buffer
+		   new-msgdb (car numlist)))
 	    (setq numlist (cdr numlist))
 	    (when entity
 	      (with-current-buffer (process-buffer process)
-		(elmo-msgdb-overview-entity-set-size
+		(elmo-message-entity-set-field
 		 entity
+		 'size
 		 (string-to-number
 		  (elmo-pop3-number-to-size
-		   (elmo-msgdb-overview-entity-get-number entity))))
+		   (elmo-message-entity-number entity))))
 		(if (setq number
 			  (car
 			   (rassoc
 			    (elmo-pop3-number-to-uidl
-			     (elmo-msgdb-overview-entity-get-number entity))
+			     (elmo-message-entity-number entity))
 			    loc-alist)))
-		    (elmo-msgdb-overview-entity-set-number entity number)))
+		    (elmo-message-entity-set-number entity number)))
 	      (setq message-id (elmo-message-entity-field entity 'message-id)
 		    flags (elmo-flag-table-get flag-table message-id))
 	      (elmo-global-flags-set flags folder number message-id)

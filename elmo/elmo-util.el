@@ -1972,6 +1972,31 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
     (elmo-resque-obsolete-variable (cdr pair)
 				   (car pair))))
 
+(defsubst elmo-msgdb-get-last-message-id (string)
+  (if string
+      (save-match-data
+	(let (beg)
+	  (elmo-set-work-buf
+	   (insert string)
+	   (goto-char (point-max))
+	   (when (search-backward "<" nil t)
+	     (setq beg (point))
+	     (if (search-forward ">" nil t)
+		 (elmo-replace-in-string
+		  (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
+
+(defun elmo-msgdb-get-message-id-from-buffer ()
+  (let ((msgid (elmo-field-body "message-id")))
+    (if msgid
+	(if (string-match "<\\(.+\\)>$" msgid)
+	    msgid
+	  (concat "<" msgid ">")) ; Invaild message-id.
+      ;; no message-id, so put dummy msgid.
+      (concat "<" (timezone-make-date-sortable
+		   (elmo-field-body "date"))
+	      (nth 1 (eword-extract-address-components
+		      (or (elmo-field-body "from") "nobody"))) ">"))))
+
 ;;; Queue.
 (defvar elmo-dop-queue-filename "queue"
   "*Disconnected operation queue is saved in this file.")

@@ -893,7 +893,7 @@ TYPE specifies the archiver's symbol."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; MessageDB functions (from elmo-localdir.el)
 
-(defsubst elmo-archive-msgdb-create-entity-subr (number)
+(defsubst elmo-archive-msgdb-create-entity-subr (msgdb number)
   (let (header-end)
     (elmo-set-buffer-multibyte default-enable-multibyte-characters)
     (goto-char (point-min))
@@ -901,17 +901,20 @@ TYPE specifies the archiver's symbol."
 	(setq header-end (point))
       (setq header-end (point-max)))
     (narrow-to-region (point-min) header-end)
-    (elmo-msgdb-create-overview-from-buffer number)))
+    (elmo-msgdb-create-message-entity-from-buffer msgdb number)))
 
 ;; verrrry slow!!
-(defsubst elmo-archive-msgdb-create-entity (method archive number type &optional prefix)
+(defsubst elmo-archive-msgdb-create-entity (msgdb
+					    method
+					    archive number type
+					    &optional prefix)
   (let* ((msg (elmo-concat-path prefix (int-to-string number)))
 	 (arg-list (list archive msg)))
     (when (elmo-archive-article-exists-p archive msg type)
       ;; insert article.
       (as-binary-process
        (elmo-archive-call-method method arg-list t))
-      (elmo-archive-msgdb-create-entity-subr number))))
+      (elmo-archive-msgdb-create-entity-subr msgdb number))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-archive-folder)
 					      numbers flag-table)
@@ -940,10 +943,11 @@ TYPE specifies the archiver's symbol."
 	(erase-buffer)
 	(setq entity
 	      (elmo-archive-msgdb-create-entity
+	       new-msgdb
 	       method file (car numlist) type
 	       (elmo-archive-folder-archive-prefix-internal folder)))
 	(when entity
-	  (setq message-id (elmo-msgdb-overview-entity-get-id entity)
+	  (setq message-id (elmo-message-entity-field entity 'message-id)
 		flags (elmo-flag-table-get flag-table message-id))
 	  (elmo-global-flags-set flags folder (car numlist) message-id)
 	  (elmo-msgdb-append-entity new-msgdb entity flags))
@@ -1027,8 +1031,8 @@ TYPE specifies the archiver's symbol."
 	  ()				; nop
 	(save-excursion
 	  (narrow-to-region sp ep)
-	  (setq entity (elmo-archive-msgdb-create-entity-subr number)
-		message-id (elmo-msgdb-overview-entity-get-id entity)
+	  (setq entity (elmo-archive-msgdb-create-entity-subr new-msgdb number)
+		message-id (elmo-message-entity-field entity 'message-id)
 		flags (elmo-flag-table-get flag-table message-id))
 	  (elmo-global-flags-set flags folder number message-id)
 	  (elmo-msgdb-append-entity new-msgdb entity flags)

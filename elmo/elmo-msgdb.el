@@ -38,14 +38,12 @@
 (require 'std11)
 (require 'mime)
 (require 'modb)
-(require 'modb-entity)
 
 ;;; MSGDB interface.
 ;;
 ;; MSGDB elmo-load-msgdb PATH
 
 ;; NUMBER elmo-msgdb-get-number MSGDB MESSAGE-ID
-;; FIELD-VALUE elmo-msgdb-get-field MSGDB NUMBER FIELD
 ;; elmo-msgdb-sort-by-date MSGDB
 
 ;; elmo-flag-table-load
@@ -116,30 +114,8 @@
 
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."
-  (elmo-msgdb-overview-entity-get-number
-   (elmo-msgdb-message-entity msgdb message-id)))
-
-(defsubst elmo-msgdb-get-field (msgdb number field)
-  "Get FIELD value of the message with NUMBER from MSGDB."
-  (case field
-    (message-id (elmo-msgdb-overview-entity-get-id
-		 (elmo-msgdb-message-entity
-		  msgdb number)))
-    (subject (elmo-msgdb-overview-entity-get-subject
-	      (elmo-msgdb-message-entity
-	       msgdb number)))
-    (size (elmo-msgdb-overview-entity-get-size
-	   (elmo-msgdb-message-entity
-	    msgdb number)))
-    (date (elmo-msgdb-overview-entity-get-date
-	   (elmo-msgdb-message-entity
-	    msgdb number)))
-    (to (elmo-msgdb-overview-entity-get-to
-	 (elmo-msgdb-message-entity
-	  msgdb number)))
-    (cc (elmo-msgdb-overview-entity-get-cc
-	 (elmo-msgdb-message-entity
-	  msgdb number)))))
+  (elmo-msgdb-message-entity-number
+   msgdb (elmo-msgdb-message-entity msgdb message-id)))
 
 (defun elmo-msgdb-sort-by-date (msgdb)
   (elmo-msgdb-sort-entities
@@ -148,10 +124,16 @@
      (condition-case nil
 	 (string<
 	  (timezone-make-date-sortable
-	   (elmo-msgdb-overview-entity-get-date x))
+	   (elmo-msgdb-message-entity-field msgdb x 'date))
 	  (timezone-make-date-sortable
-	   (elmo-msgdb-overview-entity-get-date y)))
+	   (elmo-msgdb-message-entity-field msgdb y 'date)))
        (error)))))
+
+
+(defsubst elmo-msgdb-get-parent-entity (entity msgdb)
+  (setq entity (elmo-msgdb-message-entity-field msgdb entity 'references))
+  ;; entity is parent-id.
+  (and entity (elmo-msgdb-message-entity msgdb entity)))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -240,7 +222,7 @@
       (setq entity (elmo-msgdb-message-entity msgdb number))
       (elmo-flag-table-set
        flag-table
-       (elmo-msgdb-overview-entity-get-id entity)
+       (elmo-msgdb-message-entity-field msgdb entity 'message-id)
        (elmo-msgdb-flags msgdb number)))
     flag-table))
 
@@ -286,54 +268,14 @@ header separator."
       (substring string (match-end 0))
     string))
 
-(defsubst elmo-msgdb-get-last-message-id (string)
-  (if string
-      (save-match-data
-	(let (beg)
-	  (elmo-set-work-buf
-	   (insert string)
-	   (goto-char (point-max))
-	   (when (search-backward "<" nil t)
-	     (setq beg (point))
-	     (if (search-forward ">" nil t)
-		 (elmo-replace-in-string
-		  (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
-
-(defun elmo-msgdb-number-load (dir)
-  (elmo-object-load
-   (expand-file-name elmo-msgdb-number-filename dir)))
-
-(defun elmo-msgdb-overview-load (dir)
-  (elmo-object-load
-   (expand-file-name elmo-msgdb-overview-filename dir)))
-
-(defun elmo-msgdb-mark-load (dir)
-  (elmo-object-load
-   (expand-file-name elmo-msgdb-mark-filename dir)))
-
 (defsubst elmo-msgdb-seen-load (dir)
   (elmo-object-load (expand-file-name
 		     elmo-msgdb-seen-filename
 		     dir)))
 
-(defun elmo-msgdb-number-save (dir obj)
-  (elmo-object-save
-   (expand-file-name elmo-msgdb-number-filename dir)
-   obj))
-
-(defun elmo-msgdb-mark-save (dir obj)
-  (elmo-object-save
-   (expand-file-name elmo-msgdb-mark-filename dir)
-   obj))
-
 (defsubst elmo-msgdb-out-of-date-messages (msgdb)
   (dolist (number (elmo-msgdb-list-flagged msgdb 'new))
     (elmo-msgdb-unset-flag msgdb number 'new)))
-
-(defsubst elmo-msgdb-overview-save (dir overview)
-  (elmo-object-save
-   (expand-file-name elmo-msgdb-overview-filename dir)
-   overview))
 
 (defun elmo-msgdb-match-condition (msgdb condition number numbers)
   "Check whether the condition of the message is satisfied or not.
@@ -344,22 +286,12 @@ NUMBERS is the target message number list.
 Return CONDITION itself if no entity exists in msgdb."
   (let ((entity (elmo-msgdb-message-entity msgdb number)))
     (if entity
-	(elmo-msgdb-match-condition-internal condition
+	(elmo-msgdb-match-condition-internal msgdb
+					     condition
 					     entity
 					     (elmo-msgdb-flags msgdb number)
 					     numbers)
       condition)))
-
-;; entity -> parent-entity
-(defsubst elmo-msgdb-overview-get-parent-entity (entity database)
-  (setq entity (elmo-msgdb-overview-entity-get-references entity))
-  ;; entity is parent-id.
-  (and entity (assoc entity database)))
-
-(defsubst elmo-msgdb-get-parent-entity (entity msgdb)
-  (setq entity (elmo-msgdb-overview-entity-get-references entity))
-  ;; entity is parent-id.
-  (and entity (elmo-msgdb-message-entity msgdb entity)))
 
 ;;
 ;; deleted message handling
@@ -464,89 +396,6 @@ Return CONDITION itself if no entity exists in msgdb."
 		   (elmo-field-body "date"))
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
-
-(defsubst elmo-msgdb-create-overview-from-buffer (number &optional size time)
-  "Create overview entity from current buffer.
-Header region is supposed to be narrowed."
-  (save-excursion
-    (let ((extras elmo-msgdb-extra-fields)
-	  (default-mime-charset default-mime-charset)
-	  message-id references from subject to cc date
-	  extra field-body charset)
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-      (setq message-id (elmo-msgdb-get-message-id-from-buffer))
-      (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
-	   (setq charset (intern-soft charset))
-	   (setq default-mime-charset charset))
-      (setq references
-	    (or (elmo-msgdb-get-last-message-id
-		 (elmo-field-body "in-reply-to"))
-		(elmo-msgdb-get-last-message-id
-		 (elmo-field-body "references"))))
-      (setq from (elmo-replace-in-string
-		  (elmo-mime-string (or (elmo-field-body "from")
-					elmo-no-from))
-		  "\t" " ")
-	    subject (elmo-replace-in-string
-		     (elmo-mime-string (or (elmo-field-body "subject")
-					   elmo-no-subject))
-		     "\t" " "))
-      (setq date (or (elmo-field-body "date") time))
-      (setq to   (mapconcat 'identity (elmo-multiple-field-body "to") ","))
-      (setq cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
-      (or size
-	  (if (setq size (elmo-field-body "content-length"))
-	      (setq size (string-to-int size))
-	    (setq size 0)));; No mean...
-      (while extras
-	(if (setq field-body (elmo-field-body (car extras)))
-	    (setq extra (cons (cons (downcase (car extras))
-				    field-body) extra)))
-	(setq extras (cdr extras)))
-      (cons message-id (vector number references
-			       from subject date to cc
-			       size extra))
-      )))
-
-(defsubst elmo-msgdb-insert-file-header (file)
-  "Insert the header of the article."
-  (let ((beg 0)
-	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook
-	format-alist)
-    (when (file-exists-p file)
-      ;; Read until header separator is found.
-      (while (and (eq elmo-msgdb-file-header-chop-length
-		      (nth 1
-			   (insert-file-contents-as-binary
-			    file nil beg
-			    (incf beg elmo-msgdb-file-header-chop-length))))
-		  (prog1 (not (search-forward "\n\n" nil t))
-		    (goto-char (point-max))))))))
-
-(defsubst elmo-msgdb-create-overview-entity-from-file (number file)
-  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook header-end
-	(attrib (file-attributes file))
-	ret-val size mtime)
-    (with-temp-buffer
-      (if (not (file-exists-p file))
-	  ()
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (goto-char (point-min))
-	  (setq header-end
-		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
-		    (point)
-		  (point-max)))
-	  (narrow-to-region (point-min) header-end)
-	  (elmo-msgdb-create-overview-from-buffer number size mtime))))))
 
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder

@@ -778,7 +778,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   "A msgdb entity callback function."
   (let ((use-flag (elmo-folder-use-flag-p (cdr app-data)))
 	(flag-table (car app-data))
-	(msg-id (elmo-msgdb-overview-entity-get-id entity))
+	(msg-id (elmo-message-entity-field entity 'message-id))
 	saved-flags flag-list)
 ;;    (when (elmo-string-member-ignore-case "\\Flagged" flags)
 ;;      (elmo-msgdb-global-mark-set msg-id elmo-msgdb-important-mark))
@@ -801,7 +801,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		   (memq 'answered flag-list))
 	       (memq 'unread flag-list))
       (setq elmo-imap4-seen-messages
-	    (cons (elmo-msgdb-overview-entity-get-number entity)
+	    (cons (elmo-message-entity-number entity)
 		  elmo-imap4-seen-messages)))
     (elmo-msgdb-append-entity elmo-imap4-current-msgdb
 			      entity
@@ -817,9 +817,10 @@ If CHOP-LENGTH is not specified, message set is not chopped."
      (goto-char (point-min))
      (while (search-forward "\r\n" nil t)
        (replace-match "\n"))
-     (elmo-msgdb-create-overview-from-buffer
+     (elmo-msgdb-create-message-entity-from-buffer
+      (elmo-folder-msgdb-internal (cdr app-data))
       (elmo-imap4-response-value element 'uid)
-      (elmo-imap4-response-value element 'rfc822size)))
+      :size (elmo-imap4-response-value element 'rfc822size)))
    (elmo-imap4-response-value element 'flags)
    app-data))
 
@@ -2304,7 +2305,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (elmo-global-flags-set (elmo-msgdb-flags elmo-imap4-current-msgdb
 						   number)
 				 folder number
-				 (elmo-msgdb-message-entity-field
+				 (elmo-message-entity-field
 				  (elmo-msgdb-message-entity
 				   elmo-imap4-current-msgdb number)
 				  'message-id)))
@@ -2460,10 +2461,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (luna-define-method elmo-find-fetch-strategy
   ((folder elmo-imap4-folder) entity &optional ignore-cache)
-  (let ((number (elmo-msgdb-overview-entity-get-number entity))
+  (let ((number (elmo-message-entity-number entity))
 	cache-file size message-id)
-    (setq size (elmo-msgdb-overview-entity-get-size entity))
-    (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+    (setq size (elmo-message-entity-field entity 'size))
+    (setq message-id (elmo-message-entity-field entity 'message-id))
     (setq cache-file (elmo-file-cache-get message-id))
     (if (or ignore-cache
 	    (null (elmo-file-cache-status cache-file)))

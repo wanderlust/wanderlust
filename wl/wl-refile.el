@@ -216,8 +216,8 @@ If RULE does not match ENTITY, returns nil."
 		    (downcase (wl-address-header-extract-address entity))))
 		 (wl-parse-addresses
 		  (concat
-		   (elmo-msgdb-overview-entity-get-to entity) ","
-		   (elmo-msgdb-overview-entity-get-cc entity)))))
+		   (elmo-message-entity-field entity 'to) ","
+		   (elmo-message-entity-field entity 'cc)))))
 	ret-val)
     (setq tocc-list (elmo-list-delete
 		     (or wl-user-mail-address-list
@@ -238,14 +238,14 @@ If RULE does not match ENTITY, returns nil."
 (defun wl-refile-guess-by-from (entity)
   (let ((from
 	 (downcase (wl-address-header-extract-address
-		    (elmo-msgdb-overview-entity-get-from entity)))))
+		    (elmo-message-entity-field entity 'from)))))
     ;; search from alist
     (or (cdr (assoc from wl-refile-alist))
 	(format "%s/%s" wl-refile-default-from-folder
 		(wl-refile-get-account-part-from-address from)))))
 
 (defun wl-refile-guess-by-msgid (entity)
-  (cdr (assoc (elmo-msgdb-overview-entity-get-references entity)
+  (cdr (assoc (elmo-message-entity-field entity 'references)
 	      wl-refile-msgid-alist)))
 
 (defun wl-refile-guess-by-subject (entity)
