@@ -2699,14 +2699,6 @@ If ARG, without confirm."
 	 (lambda (x) (elmo-msgdb-overview-entity-get-number x))
 	 (elmo-msgdb-get-overview wl-summary-buffer-msgdb))))
 
-(defun wl-summary-auto-select-msg-p (unread-msg)
-  (and unread-msg
-       (not (string=
-	     (cadr (assoc unread-msg
-			  (elmo-msgdb-get-mark-alist
-			   wl-summary-buffer-msgdb)))
-	     wl-summary-important-mark))))
-
 (defun wl-summary-goto-folder-subr (&optional folder scan-type other-window
 					      sticky interactive scoring)
   "Display target folder on summary."
@@ -2814,13 +2806,9 @@ If ARG, without confirm."
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
 			      'down t)))
-		(cond ((and wl-auto-select-first
-			    (wl-summary-auto-select-msg-p unreadp))
-		       ;; wl-auto-select-first is non-nil and
-		       ;; unreadp is non-nil but not important
+		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
-		      ((not (wl-summary-auto-select-msg-p unreadp))
-		       ;; unreadp is nil or important
+		      ((not unreadp)
 		       (setq retval 'more-next))))
 	    (goto-char (point-max))
 	    (if (elmo-folder-plugged-p folder)

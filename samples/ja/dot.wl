@@ -56,13 +56,6 @@
 ;; Message-ID のドメインパートを強制的に指定
 ;(setq wl-message-id-domain "hostname.example.com")
 
-;; IMAP サーバの認証方式の設定
-(setq elmo-default-imap4-authenticate-type 'clear) ; 生パスワード
-;(setq elmo-default-imap4-authenticate-type 'cram-md5) ; CRAM-MD5
-
-;; POP-before-SMTP
-;(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
-
 
 ;;; [[ 基本的な設定 ]]
 
