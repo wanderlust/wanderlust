@@ -1,5 +1,7 @@
 2002-03-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-xmas.el (wl-draft-overload-menubar): Add menu properly.
+
 	* wl-mule.el (wl-draft-overload-menubar): Taken from wl-e21.el.
 
 	* wl-summary.el (wl-summary-write-current-folder): Call wl-draft
