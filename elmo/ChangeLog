@@ -1,4 +1,8 @@
-2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+2000-10-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Fix.
+
+2000-10-16  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-read-msg): Don't error.
 

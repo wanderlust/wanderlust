@@ -192,7 +192,8 @@ Don't cache if nil.")
       (elmo-nntp-send-command session "starttls")
       (or (elmo-nntp-read-response session)
 	  (error "cannot open starttls session"))
-      (starttls-negotiate process))))
+      (starttls-negotiate
+       (elmo-network-session-process-internal session)))))
 
 
 (luna-define-method elmo-network-authenticate-session ((session
