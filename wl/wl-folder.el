@@ -187,7 +187,7 @@
   (define-key wl-folder-mode-map "?"    'wl-folder-pick)
   (define-key wl-folder-mode-map "q"    'wl-exit)
   (define-key wl-folder-mode-map "z"    'wl-folder-suspend)
-  (define-key wl-folder-mode-map "x"    'wl-folder-save-and-exec-marks)
+  (define-key wl-folder-mode-map "x"    'wl-execute-temp-marks)
   (define-key wl-folder-mode-map "\M-t" 'wl-toggle-plugged)
   (define-key wl-folder-mode-map "\C-t" 'wl-plugged-change)
   (define-key wl-folder-mode-map "<"    'beginning-of-buffer)
@@ -2287,10 +2287,6 @@ Use `wl-subscribed-mailing-list'."
 				 (wl-summary-get-sync-range
 				  (wl-folder-get-elmo-folder fld-name))
 				 nil sticky t)))
-
-(defun wl-folder-save-and-exec-marks ()
-  (interactive)
-  (wl-save 'exec-marks))
 
 (defun wl-folder-suspend ()
   (interactive)

@@ -1088,20 +1088,23 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-thread-modified-p ()
   wl-summary-buffer-thread-modified)
 
-(defun wl-summary-cleanup-temp-marks (&optional default-keep)
+(defun wl-summary-exec-with-confirmation (&optional message)
   (when wl-summary-buffer-temp-mark-list
-    (if (y-or-n-p (format "Execute marks in %s?%s "
-			  (wl-summary-buffer-folder-name)
-			  (if default-keep
-			      ""
-			    " (answer \"n\" to discard them)")))
+    (if (y-or-n-p (or message
+		      (format "Execute marks in %s? "
+			      (wl-summary-buffer-folder-name))))
 	(progn
 	  (wl-summary-exec)
 	  (if wl-summary-buffer-temp-mark-list
 	      (error "Some execution was failed")))
       ;; temp-mark-list is remained.
-      (message "")))
-  (unless default-keep
+      (message ""))))
+
+(defun wl-summary-cleanup-temp-marks ()
+  (when wl-summary-buffer-temp-mark-list
+    (wl-summary-exec-with-confirmation
+     (format "Execute marks in %s? (answer \"n\" to discard them) "
+	     (wl-summary-buffer-folder-name)))
     (wl-summary-delete-all-temp-marks 'no-msg)
     (setq wl-summary-scored nil)))
 

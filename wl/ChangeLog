@@ -1,3 +1,14 @@
+2004-06-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-exec-with-confirmation): Extracted
+	from `wl-summary-cleanup-temp-marks'.
+	(wl-summary-cleanup-temp-marks): Abolish argument.
+	* wl.el (wl-save-status): Revert previous change.
+	(wl-execute-temp-marks): New function, call
+	`wl-summary-exec-with-confirmation'.
+	* wl-folder.el (wl-folder-mode-map): Bind "x" to it.
+	(wl-folder-save-and-exec-marks): Abolished.
+
 2004-06-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-e21.el (wl-e21-display-image-p): Respect

@@ -626,20 +626,30 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 ;;; end of wl-plugged-mode
 
-(defun wl-save (&optional exec-marks)
+(defun wl-save ()
   "Save summary and folder status."
-  (interactive "P")
-  (wl-save-status 'keep-summary (not exec-marks))
+  (interactive)
+  (wl-save-status 'keep-summary)
   (run-hooks 'wl-save-hook))
 
-(defun wl-save-status (&optional keep-summary leave-marks)
+(defun wl-execute-temp-marks ()
+  "Execute temporary marks in summary buffers."
+  (interactive)
+  (let ((summaries (wl-collect-summary)))
+    (while summaries
+      (with-current-buffer (car summaries)
+	(wl-summary-exec-with-confirmation)
+	(wl-summary-save-status))
+      (setq summaries (cdr summaries)))))
+
+(defun wl-save-status (&optional keep-summary)
   (message "Saving summary and folder status...")
   (save-excursion
     (let ((summaries (wl-collect-summary)))
       (while summaries
 	(with-current-buffer (car summaries)
-	  (unless leave-marks
-	    (wl-summary-cleanup-temp-marks keep-summary))
+	  (unless keep-summary
+	    (wl-summary-cleanup-temp-marks))
 	  (wl-summary-save-view)
 	  (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	  (unless keep-summary
