@@ -1,6 +1,7 @@
 2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* bbdb-wl.el (bbdb-wl-setup): require bbdb-autoloads if exists.
+	Use `load' instead of `require' bbdb-autoloads for BBDB 2.20.
 
 2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

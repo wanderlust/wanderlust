@@ -54,10 +54,13 @@
 	     (lambda ()
 ;;;	       (local-set-key "\M-\t" 'bbdb-complete-name)
 	       (define-key (current-local-map) "\M-\t" 'bbdb-complete-name))))
-  ;; BBDB 2.00.06 or earlier: (provide 'bbdb-autoloads) in auto-autoloads.el
+  ;; BBDB 2.00.06 or earlier:
+  ;;  auto-autoloads.el includes (provide 'bbdb-autoloads)
+  ;;  Don't exist bbdb-autoloads.el
   (when (and (not (featurep 'bbdb-autoloads))
 	     (module-installed-p 'bbdb-autoloads))
-    (require 'bbdb-autoloads)))
+    ;; BBDB 2.20: bbdb-autoloads.el NOT includes (provide 'bbdb-autoloads)
+    (load "bbdb-autoloads")))
 
 (defun bbdb-wl-exit ()
   (let (bbdb-buf)
