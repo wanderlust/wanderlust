@@ -4176,11 +4176,7 @@ If ARG, exit virtual folder."
       (while (< (string-width subject)
 		wl-summary-line-subject-minimum-length)
 	(setq subject (concat subject " "))))
-    (if (and (not wl-summary-width)
-	     wl-summary-subject-length-limit)
-	(truncate-string subject
-			 wl-summary-subject-length-limit)
-      subject)))
+    subject))
 
 (defun wl-summary-line-from ()
   (elmo-delete-char ?\n
