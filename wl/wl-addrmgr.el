@@ -217,7 +217,9 @@ See info under Wanderlust for full documentation.
   (interactive)
   (goto-char (point-min))
   (forward-line 2)
-  (forward-char 4))
+  (condition-case nil
+      (forward-char 4)
+    (error)))
 
 (defun wl-addrmgr-goto-bottom ()
   (interactive)
@@ -313,6 +315,7 @@ Return nil if no ADDRESS exists."
 	      " "
 	      (make-string wl-addrmgr-petname-width ?-)
 	      " ---------------")
+      (unless wl-addrmgr-list (insert "\n"))
       (dolist (entry (wl-addrmgr-sort-list wl-addrmgr-sort-key
 					   (copy-sequence wl-addrmgr-list)
 					   wl-addrmgr-sort-order))
