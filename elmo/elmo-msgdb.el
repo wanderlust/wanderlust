@@ -569,12 +569,14 @@ header separator."
   (and entity (car entity)))
 
 (defsubst elmo-msgdb-overview-entity-get-extra-field (entity field-name)
-  (let ((extra (and entity (aref (cdr entity) 8))))
+  (let ((field-name (downcase field-name))
+	(extra (and entity (aref (cdr entity) 8))))
     (and extra
 	 (cdr (assoc field-name extra)))))
 
 (defsubst elmo-msgdb-overview-entity-set-extra-field (entity field-name value)
-  (let ((extras (and entity (aref (cdr entity) 8)))
+  (let ((field-name (downcase field-name))
+	(extras (and entity (aref (cdr entity) 8)))
 	extra)
     (if (setq extra (assoc field-name extras))
 	(setcdr extra value)

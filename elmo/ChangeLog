@@ -1,5 +1,9 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-extra-field):
+	Convert field-name to lower case.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+
 	* elmo-util.el (elmo-string-member-ignore-case): New function.
 	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Use it.
 	(elmo-imap4-fetch-callback-1-subr): Likewise.
