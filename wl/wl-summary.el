@@ -1437,11 +1437,6 @@ If ARG is non-nil, checking is omitted."
 			wl-summary-buffer-new-count)))
 		  new-mark)))))))
 
-;;(defvar wl-summary-message-uncached-marks
-;;  (list elmo-msgdb-new-mark
-;;	elmo-msgdb-unread-uncached-mark
-;;	elmo-msgdb-read-uncached-mark))
-
 (defun wl-summary-prefetch-region (beg end &optional prefetch-marks)
   (interactive "r")
   (let ((count 0)
@@ -1723,44 +1718,31 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-resume-cache-status ()
   "Resume the cache status of all messages in the current folder."
   (interactive)
-  (let* ((folder wl-summary-buffer-elmo-folder)
-	 (cur-buf (current-buffer))
-	 (msgdb (wl-summary-buffer-msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (inhibit-read-only t)
-	 (buffer-read-only nil)
-	 (case-fold-search nil)
-	 msg mark msgid set-mark)
+  (let ((folder wl-summary-buffer-elmo-folder)
+	(buffer-read-only nil)
+	(case-fold-search nil)
+	number msgid set-mark mark)
     (message "Resuming cache status...")
     (save-excursion
       (goto-char (point-min))
       (while (not (eobp))
-	(setq msg (wl-summary-message-number))
+	(setq number (wl-summary-message-number))
 	(setq mark (wl-summary-persistent-mark))
-	(setq msgid (elmo-msgdb-get-field msgdb msg 'message-id))
+	(setq msgid (elmo-message-field folder number 'message-id))
 	(setq set-mark nil)
 	(if (elmo-file-cache-exists-p msgid)
-	    (if (or
-		 (string= mark elmo-msgdb-unread-uncached-mark) ; U -> !
-		 (string= mark elmo-msgdb-new-mark)		; N -> !
-		 )
-		(setq set-mark elmo-msgdb-unread-cached-mark)
-	      (if (string= mark elmo-msgdb-read-uncached-mark)  ; u -> ' '
-		  (setq set-mark " ")))
-	  (if (string= mark " ")
-	      (setq set-mark elmo-msgdb-read-uncached-mark)     ;' ' -> u
-	    (if (string= mark elmo-msgdb-unread-cached-mark)
-		(setq set-mark elmo-msgdb-unread-uncached-mark) ; !  -> U
-	      )))
+	    (when (member mark (elmo-msgdb-uncached-marks))
+	      (elmo-message-set-cached folder number t)
+	      (setq set-mark (elmo-message-mark folder number)))
+	  (unless (member mark (elmo-msgdb-uncached-marks))
+	    (elmo-message-set-cached folder number nil)
+	    (setq set-mark (or (elmo-message-mark folder number) " "))))
 	(when set-mark
 	  (delete-backward-char 1)
 	  (insert set-mark)
-	  (elmo-msgdb-set-mark msgdb msg
-			       (if (string= set-mark " ") nil set-mark))
 	  (if wl-summary-highlight
 	      (wl-highlight-summary-current-line)))
 	(forward-line 1))
-      (wl-summary-set-mark-modified)
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (message "Resuming cache status...done")
@@ -2972,9 +2954,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (let ((del-fld (wl-summary-get-delete-folder
 		      (wl-summary-buffer-folder-name)))
 	    (start (point))
-	    (unread-marks (list elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark
-				elmo-msgdb-new-mark))
 	    (refiles (append moves dels))
 	    (refile-failures 0)
 	    (copy-failures 0)
