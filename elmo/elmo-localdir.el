@@ -307,14 +307,14 @@
   (let* ((old (elmo-localdir-folder-directory-internal folder))
 	 (new (elmo-localdir-folder-directory-internal new-folder))
 	 (new-dir (directory-file-name (file-name-directory new))))
-    (if (not (file-directory-p old))
-	(error "No such directory: %s" old)
-      (if (file-exists-p new)
-	  (error "Already exists directory: %s" new)
-	(if (not (file-directory-p new-dir))
-	    (elmo-make-directory new-dir))
-	(rename-file old new)
-	t))))
+    (unless (file-directory-p old)
+      (error "No such directory: %s" old))
+    (when (file-exists-p new)
+      (error "Already exists directory: %s" new))
+    (unless (file-directory-p new-dir)
+      (elmo-make-directory new-dir))
+    (rename-file old new)
+    t))
 
 (defsubst elmo-localdir-field-condition-match (folder condition
 						      number number-list)
@@ -351,7 +351,8 @@
 	 (elmo-msgdb-overview-get-entity onum msgdb)
 	 new-number)
 	;; update number-alist
-	(setcar (assq onum onum-alist) new-number))
+	(and (assq onum onum-alist)
+	     (setcar (assq onum onum-alist) new-number)))
       ;; update mark-alist
       (when (setq mark (cadr (assq onum omark-alist)))
 	(setq new-mark-alist

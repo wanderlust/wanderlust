@@ -6,6 +6,163 @@
 
 	* wl-highlight.el: Remove useless dummy functions.
 
+2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-sort, wl-fldmgr-access-display-all):
+	Fixed the last change, search group entity by its real name.
+	(Thanks to: KOBAYASHI Shinji)
+
+2003-03-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-rename,wl-fldmgr-sort)
+	(wl-fldmgr-access-display-all): Don't refer visible name.
+	* wl-expire.el (wl-folder-archive-current-entity)
+	(wl-folder-expire-current-entity): Ditto.
+	* wl-folder.el (wl-folder-jump-to-current-entity)
+	(wl-folder-update-recursive-current-entity,wl-folder-next-unsync)
+	(wl-folder-open-folder-sub,wl-folder-open-all)
+	(wl-folder-write-current-folder): Ditto.
+	(wl-folder-insert-entity): Don't use petname for normal group.
+	* wl-fldmgr.el (wl-fldmgr-insert-folders-buffer): car of the name
+	is the real name.
+	* wl-folder.el (wl-folder-folder-name, wl-folder-entity-name):
+	Abolished.
+
+2003-03-06  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-create-buffer): Add
+	`wl-summary-reply-with-citation'
+
+2003-03-02  Jeremy Shaw  <jeremy.shaw@lindows.com>
+
+	* wl-draft.el (wl-draft-reply): Fixed.
+
+2003-02-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-send-confirm): Rewritten. Invoke preview
+	when `wl-draft-send-confirm-with-preview' is non-nil.
+	You can scroll up/down by j/k.
+	(wl-draft-send-confirm-with-preview): New variable (default=t).
+
+2003-02-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-folders-header): Add more comment.
+	(wl-fldmgr-save-folders): Fix comment.
+
+2003-02-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-update-recursive-current-entity): Fix
+	along the last change in `wl-folder-buffer-group-p'.
+
+2003-02-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-buffer-search-group): Ignore non-group
+	folder.
+
+	* wl-vars.el (wl-delete-folder-alist): Add shimbun folder to
+	the default value.
+
+	* wl-mime.el (wl-summary-burst): Update summary only when target
+	folder equals current folder.
+
+2003-02-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-thread.el (wl-thread-set-parent): Reconstruct number-list.
+
+2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-folder-hierarchy-access-folders): Change default
+	value.
+
+2003-02-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-xmas.el (wl-xmas-highlight-folder-group-line): Use
+	`map-extents' instead of `extent-at' repeatedly.
+	(wl-highlight-folder-current-line): Ditto.
+
+	* wl-highlight.el: Remove useless dummy functions.
+
+2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-buffer-group-p): Rewritten.
+	(wl-folder-put-folder-property): New function to put text property.
+	(wl-folder-jump-to-current-entity, wl-folder-entity-assign-id)
+	(wl-folder-insert-entity, wl-folder-update-diff-line)
+	(wl-folder-update-diff-line, wl-folder-pick): Change accordingly.
+	* wl-e21.el, wl-xmas.el, wl-mule.el
+	(wl-highlight-folder-current-line): Ditto.
+	* wl-fldmgr.el (wl-fldmgr-get-path-from-buffer, wl-fldmgr-cut)
+	(wl-fldmgr-copy-region, wl-fldmgr-copy, wl-fldmgr-delete)
+	(wl-fldmgr-rename, wl-fldmgr-sort, wl-fldmgr-unsubscribe)
+	(wl-fldmgr-access-display-all, wl-fldmgr-set-petname): Ditto.
+
+2003-02-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* Version number is increased to 2.11.3.
+
+2003-02-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-mark-as-read): Run hook within dolist.
+	Resume current-buffer since it is assumed by remaining tasks.
+
+2003-02-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-complete-folder-candidate): New variable.
+	(wl-folder-completion-function): Abolished.
+	(wl-folder-complete-folder): New function.
+	(wl-folder-complete-filter-condition): Ditto.
+	* wl-summary.el (wl-summary-read-folder): Change accordingly.
+	* wl-fldmgr.el (wl-fldmgr-add): Ditto.
+
+2003-02-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-send-confirm): New function.
+	(wl-draft-send): Use it.
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id): Bind
+	cursor-in-echo-area while confirming.
+
+	* wl-summary.el (wl-summary-virtual): Call wl-summary-virtual-hook.
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id): Force
+	searching via nntp if wl-summary-search-via-nntp is 'force.
+	Otherwise, invoke searching in nntp folder only.
+	* wl-vars.el (wl-summary-search-via-nntp): Change accordingly.
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Specify subtype
+	explicitly for mime-make-text-tag.
+
+2003-02-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
+	`mime-make-text-tag' instead of `mime-create-tag'.
+
+2003-02-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-rename): Do nothing on the last line.
+	(wl-fldmgr-add-completion-subr): Rewrite conditional.
+
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-score.el (wl-score-save): Bind print-length and print-level.
+	(wl-score-pretty-print): Ditto.
+	(wl-score-edit-insert-header-entry): Ditto.
+
+	* wl-draft.el (wl-draft-send): Remove duplicate "Bcc" and add
+	"From" entry to be treated with wl-draft-eword-encode-address-list.
+	* wl-mime.el (wl-draft-preview-message): Ditto.
+
+	* wl-summary.el (wl-summary-mark-as-read): Take list of numbers.
+	(wl-summary-mark-as-unread): Ditto.
+	(wl-summary-mark-as-read-region): Change accordingly.
+	(wl-summary-mark-as-unread-region): Ditto.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* Version number is increased to 2.11.2.
+
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-news.el.in (wl-news-previous-version-save): Bind

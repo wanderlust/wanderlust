@@ -6303,18 +6303,27 @@ pop3                    ×    △    △    △
 @chapter メッセージの振り分け
 @cindex Split messages
 
-@code{elmo-split} を使うと、フォルダ @code{elmo-split-folder} 内の
-メッセージを特定の規則に従って @command{procmail} 風に振り分けることが
-できます。 この機能を使うには、まず @file{~/.emacs} に以下のように設定
-して下さい。
+@code{elmo-split} を使うと、変数 @code{elmo-split-folder} で指定したフ
+ォルダ内のメッセージを特定の規則に従って @command{procmail} 風に振り分
+けることができます。
+この機能を使うには、まず @file{~/.emacs} に以下のように設定して下さい。
 
 @lisp
 (autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
 @end lisp
 
-@kbd{M-x elmo-split} すると @code{elmo-split-rule} に従って振り分けを
-実行します。 @kbd{C-u M-x elmo-split} とすると実際には振り分けを行わずに
-リハーサルを行ないます。
+振り分け元のフォルダを以下のように設定します。
+
+@lisp
+(setq elmo-split-folder "%inbox")
+@end lisp
+
+振り分けのルールは変数 @code{elmo-split-rule} に記述します(書き方は後で
+説明します)。
+以上の設定をした上で @kbd{M-x elmo-split} すると @code{elmo-split-rule}
+に従って振り分けを実行します。 @kbd{C-u M-x elmo-split} とすると実際には
+振り分けはせずにリハーサルを行ない、その結果を表示します。
+
 
 以下ではルールの記述の仕方を説明します。まずは次の例を見て下さい。
 

@@ -2088,8 +2088,13 @@ or 'skip-no-unread."
   :group 'wl-summary)
 
 (defcustom wl-summary-search-via-nntp 'confirm
-  "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.  If the value is 'confirm, confirm before search."
-  :type 'boolean
+  "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.
+If the value is 'confirm, confirm before search, 'force to search via nntp
+regardless of current folder type."
+  :type '(choice (const :tag "confirm" confirm)
+		 (const :tag "always" force)
+		 (const :tag "in nntp folder" t)
+		 (const :tag "never" nil))
   :group 'wl-summary)
 
 (defcustom wl-summary-keep-cursor-command
@@ -2116,7 +2121,8 @@ Sender information in summary mode."
   :type 'string
   :group 'wl-folder)
 
-(defcustom wl-delete-folder-alist '(("^-" . remove))
+(defcustom wl-delete-folder-alist '(("^-" . remove)
+				    ("^@" . remove))
   "*Alist of folder and delete policy.
 Each element is (folder-regexp . policy).
 
@@ -2149,9 +2155,10 @@ POLICY is copy or move."
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-folder-hierarchy-access-folders '("^-$" "^-alt$")
+(defcustom wl-folder-hierarchy-access-folders '("^-[^\\.]*\\(:\\|@\\|$\\)"
+						"^@$")
   "*Access group REGEXPs to make hierarchy structure."
-  :type '(repeat (string :tag "Folder"))
+  :type '(repeat (string :tag "Regexp"))
   :group 'wl-folder)
 
 (defcustom wl-folder-init-load-access-folders nil

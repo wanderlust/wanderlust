@@ -57,9 +57,11 @@ Special commands:
 	  (start (progn (beginning-of-line) (point)))
 	  (inhibit-read-only t)
 	  (text-face
-	   (cond ((looking-at wl-highlight-folder-opened-regexp)
+	   (cond ((and (wl-folder-buffer-group-p)
+		       (looking-at wl-highlight-folder-opened-regexp))
 		  'wl-highlight-folder-opened-face)
-		 ((looking-at wl-highlight-folder-closed-regexp)
+		 ((and (wl-folder-buffer-group-p)
+		       (looking-at wl-highlight-folder-closed-regexp))
 		  'wl-highlight-folder-closed-face)
 		 (t
 		  (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"

@@ -152,7 +152,7 @@ It calls following-method selected from variable
 	 (mime-header-encode-method-alist
 	  (append
 	   '((wl-draft-eword-encode-address-list
-	      .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+	      .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
 	   (if (boundp 'mime-header-encode-method-alist)
 	       (symbol-value 'mime-header-encode-method-alist))))
 	 mime-view-ignored-field-list	; all header.
@@ -428,12 +428,12 @@ With ARG, ask destination folder."
   (interactive "P")
   (let ((raw-buf (wl-summary-get-original-buffer))
 	(view-buf wl-message-buffer)
-	children message-entity content-type target)
+	children message-entity content-type target-name target)
     (save-excursion
       (setq target wl-summary-buffer-elmo-folder)
       (when (or arg (not (elmo-folder-writable-p target)))
-	(let ((fld (wl-summary-read-folder wl-default-folder "to extract to")))
-	  (setq target (wl-folder-get-elmo-folder fld))))
+	(setq target-name (wl-summary-read-folder wl-default-folder "to extract to"))
+	(setq target (wl-folder-get-elmo-folder target-name)))
       (wl-summary-set-message-buffer-or-redisplay)
       (with-current-buffer view-buf
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
@@ -444,7 +444,9 @@ With ARG, ask destination folder."
 	(message "Bursting...done"))
       (if (elmo-folder-plugged-p target)
 	  (elmo-folder-check target)))
-    (wl-summary-sync-update)))
+    (when (or (not target-name)
+	      (string= wl-summary-buffer-folder-name target-name))
+      (save-excursion (wl-summary-sync-update)))))
 
 ;; internal variable.
 (defvar wl-mime-save-directory nil "Last saved directory.")

@@ -51,6 +51,9 @@
 # Folder definition file
 # This file is generated automatically by %s.
 #
+# If you edit this file by hand, be sure that comment lines
+# will be washed out by wl-fldmgr.
+#
 
 " (product-string-1 'wl-version t)))
 
@@ -458,6 +461,7 @@ return value is diffs '(-new -unread -all)."
 ;;;			 (wl-fldmgr-get-entity-id (cdr previous-entity))))))
 	(wl-folder-prev-entity-skip-invalid))
       (if (and prev
+	       (wl-folder-buffer-group-p)
 	       (looking-at wl-folder-group-regexp)
 	       (string= (wl-match-buffer 2) "-"))
 	  (setq group-target nil)
@@ -593,7 +597,8 @@ return value is diffs '(-new -unread -all)."
 		    (wl-delete-entity path nil wl-folder-entity clear)))
 	  (setq wl-fldmgr-modified t)
 	  ;;
-	  (if (looking-at wl-folder-group-regexp)
+	  (if (and (wl-folder-buffer-group-p)
+		   (looking-at wl-folder-group-regexp))
 	      ;; group
 	      (let (beg end indent opened)
 		(setq indent (wl-match-buffer 1))
@@ -647,7 +652,7 @@ return value is diffs '(-new -unread -all)."
 	(while (< (point) to)
 	  (and (looking-at "^\\([ ]*\\)")
 	       (setq indent (wl-match-buffer 1)))
-	  (if (looking-at wl-folder-group-regexp)
+	  (if (wl-folder-buffer-group-p)
 	      (progn
 		(setq errmes "can't copy group folder")
 		(throw 'err t)))
@@ -685,7 +690,7 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil))
       (if (and (not ename)
-	       (looking-at wl-folder-group-regexp))
+	       (wl-folder-buffer-group-p))
 	  (message "Can't copy group folder")
 	(let* ((name (or ename (wl-folder-get-entity-from-buffer)))
 	       (entity (elmo-string name)))
@@ -796,12 +801,13 @@ return value is diffs '(-new -unread -all)."
 			(condition-case nil
 			    (wl-fldmgr-add-completion-all-completions string)
 			  (error nil))))))))
-    (if (null flag)
-	(try-completion string table predicate)
-      (if (eq flag 'lambda)
-	  (eq t (try-completion string table predicate))
-	(if flag
-	    (all-completions string table predicate))))))
+    (cond
+     ((null flag)
+      (try-completion string table predicate))
+     ((eq flag 'lambda)
+      (eq t (try-completion string table predicate)))
+     (t
+      (all-completions string table predicate)))))
 
 (defun wl-fldmgr-add (&optional name)
   (interactive)
@@ -809,7 +815,7 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil)
 	  (inhibit-read-only t)
-	  (wl-folder-completion-function
+	  (wl-folder-complete-folder-candidate
 	   (if wl-fldmgr-add-complete-with-current-folder-list
 	       (function wl-fldmgr-add-completion-subr)))
 	  tmp indent path diffs)
@@ -839,7 +845,7 @@ return value is diffs '(-new -unread -all)."
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (if (looking-at wl-folder-group-regexp)
+    (if (wl-folder-buffer-group-p)
 	(error "Can't delete group folder"))
     (let* ((inhibit-read-only t)
 	   (tmp (wl-fldmgr-get-path-from-buffer))
@@ -862,9 +868,10 @@ return value is diffs '(-new -unread -all)."
     (if (bobp)
 	(message "Can't rename desktop group")
       (cond
-       ((looking-at wl-folder-group-regexp) ;; group
+       ((and (wl-folder-buffer-group-p)
+	     (looking-at wl-folder-group-regexp)) ;; group
 	(let* ((indent (wl-match-buffer 1))
-	       (old-group (wl-folder-get-realname (wl-match-buffer 3)))
+	       (old-group (wl-folder-get-entity-from-buffer))
 	       (group-entity (wl-folder-search-group-entity-by-name
 			      old-group wl-folder-entity))
 	       group)
@@ -900,6 +907,7 @@ return value is diffs '(-new -unread -all)."
 	(let* ((tmp (wl-fldmgr-get-path-from-buffer))
 	       (old-folder (nth 4 tmp))
 	       new-folder)
+	  (unless old-folder (error "No folder"))
 	  (setq new-folder
 		(wl-fldmgr-read-string
 		 (wl-summary-read-folder old-folder "to rename" t t old-folder)))
@@ -1041,11 +1049,12 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((inhibit-read-only t)
 	  entity flist indent opened)
-      (when (looking-at wl-folder-group-regexp)
+      (when (and (wl-folder-buffer-group-p)
+		 (looking-at wl-folder-group-regexp))
 	(setq indent (wl-match-buffer 1))
 	(setq opened (wl-match-buffer 2))
 	(setq entity (wl-folder-search-group-entity-by-name
-		      (wl-folder-get-realname (wl-match-buffer 3))
+		      (wl-folder-get-entity-from-buffer)
 		      wl-folder-entity))
 	(message "Sorting...")
 	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
@@ -1144,7 +1153,7 @@ return value is diffs '(-new -unread -all)."
 	 (t
 	  (if (and type (< type 0))
 	      nil
-	    (setq is-group (looking-at wl-folder-group-regexp))
+	    (setq is-group (wl-folder-buffer-group-p))
 	    (setq tmp (wl-fldmgr-get-path-from-buffer))
 	    (setq indent (wl-fldmgr-make-indent (nth 1 tmp)))
 	    (if (eq (cdr (nth 2 tmp)) 'access)
@@ -1180,13 +1189,15 @@ return value is diffs '(-new -unread -all)."
     (let ((inhibit-read-only t)
 	  entity indent opened
 	  unsubscribes beg)
-      (when (not (looking-at wl-folder-group-regexp))
+      (when (not
+	     (and (wl-folder-buffer-group-p)
+		  (looking-at wl-folder-group-regexp)))
 	(wl-folder-goto-top-of-current-folder)
 	(looking-at wl-folder-group-regexp))
       (setq indent (wl-match-buffer 1))
       (setq opened (wl-match-buffer 2))
       (setq entity (wl-folder-search-group-entity-by-name
-		    (wl-folder-get-realname (wl-match-buffer 3))
+		    (wl-folder-get-entity-from-buffer)
 		    wl-folder-entity))
       (when (eq (nth 1 entity) 'access)
 	(save-excursion
@@ -1225,7 +1236,7 @@ return value is diffs '(-new -unread -all)."
   (interactive)
   (save-excursion
     (beginning-of-line)
-      (let* ((is-group (looking-at wl-folder-group-regexp))
+      (let* ((is-group (wl-folder-buffer-group-p))
 	     (name (wl-folder-get-entity-from-buffer))
 	     (searchname (wl-folder-get-petname name))
 	     (pentry (wl-string-assoc name wl-folder-petname-alist))
@@ -1299,10 +1310,8 @@ return value is diffs '(-new -unread -all)."
 		       "")
 		     "\n"))
 	    ((consp name)
-	     (let ((group (wl-folder-get-realname (car name)))
+	     (let ((group (car name))
 		   (type (nth 1 name)))
-	       (if (not (string= group (car name))) ; petname.
-		   (wl-append pet-entities (list (car name))))
 	       (cond ((eq type 'group)
 		      (insert indent group "{\n")
 		      (setq pet-entities
@@ -1344,7 +1353,7 @@ return value is diffs '(-new -unread -all)."
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))
-    (insert "\n# petname definition (group, folder in access group)\n")
+    (insert "\n# petname definition (access group, folder in access group)\n")
     (wl-fldmgr-insert-petname-buffer save-petname-entities)
     (insert "\n# end of file.\n")
     (if (and wl-fldmgr-make-backup

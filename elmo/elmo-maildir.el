@@ -491,6 +491,20 @@ file name for maildir directories."
 	  t)
       (error nil))))
 
+(luna-define-method elmo-folder-rename-internal ((folder elmo-maildir-folder)
+						 new-folder)
+  (let* ((old (elmo-maildir-folder-directory-internal folder))
+	 (new (elmo-maildir-folder-directory-internal new-folder))
+	 (new-dir (directory-file-name (file-name-directory new))))
+    (unless (file-directory-p old)
+      (error "No such directory: %s" old))
+    (when (file-exists-p new)
+      (error "Already exists directory: %s" new))
+    (unless (file-directory-p new-dir)
+      (elmo-make-directory new-dir))
+    (rename-file old new)
+    t))
+
 (require 'product)
 (product-provide (provide 'elmo-maildir) (require 'elmo-version))
 

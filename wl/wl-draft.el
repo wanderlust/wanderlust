@@ -336,7 +336,7 @@ Reply to author if WITH-ARG is non-nil."
 					      r-to-list))
 				       ",")))
 	    (if (and r-cc-list (symbolp r-cc-list))
-		(setq cc (wl-concat-list (funcall r-to-list) ","))
+		(setq cc (wl-concat-list (funcall r-cc-list) ","))
 	      (setq cc (wl-concat-list (cons cc
 					     (elmo-multiple-fields-body-list
 					      r-cc-list))
@@ -1255,6 +1255,48 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
       (setq locals (cdr locals)))
     result))
 
+(defcustom wl-draft-send-confirm-with-preview t
+  "Non-nil to invoke preview through confirmation of sending.
+This variable is valid when `wl-interactive-send' has non-nil value."
+  :type 'boolean
+  :group 'wl-draft)
+
+(defun wl-draft-send-confirm ()
+  (let (answer)
+    (unwind-protect
+	(condition-case quit
+	    (progn
+	      (when wl-draft-send-confirm-with-preview
+		(wl-draft-preview-message))
+	      (save-excursion
+		(goto-char (point-min)) ; to show recipients in header
+		(catch 'done
+		  (while t
+		    (message "Send current draft? <y/n> ")
+		    (setq answer (let ((cursor-in-echo-area t)) (read-char)))
+		    (cond
+		     ((or (eq answer ?y)
+			  (eq answer ?Y)
+			  (eq answer ? ))
+		  (throw 'done t))
+		     ((or (eq answer ?v)
+			  (eq answer ?j)
+			  (eq answer ?J))
+		      (condition-case err
+			  (scroll-up)
+			(error nil)))
+		     ((or (eq answer ?^)
+			  (eq answer ?k)
+			  (eq answer ?K))
+		      (condition-case err
+			  (scroll-down)
+			(error nil)))
+		     (t
+		      (throw 'done nil)))))))
+	  (quit nil))
+      (when wl-draft-send-confirm-with-preview
+	(mime-preview-quit)))))
+
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.
 If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
@@ -1264,17 +1306,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (let (result)
-	      (wl-draft-preview-message)
-	      (goto-char (point-min))
-	      (condition-case nil
-		  (setq result
-			(y-or-n-p "Do you really want to send current draft? "))
-		(quit
-		 (mime-preview-quit)
-		 (signal 'quit nil)))
-	      (mime-preview-quit)
-	      result))
+	    (wl-draft-send-confirm))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
@@ -1292,7 +1324,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (let ((mime-header-encode-method-alist
 		   (append
 		    '((wl-draft-eword-encode-address-list
-		       .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+		       .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
 		    (if (boundp 'mime-header-encode-method-alist)
 			(symbol-value 'mime-header-encode-method-alist)))))
 	      (run-hooks 'mail-send-hook) ; translate buffer
@@ -1611,6 +1643,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 (summary-buf (wl-summary-get-buffer parent-folder))
 	 (reply-or-forward
 	  (or (eq this-command 'wl-summary-reply)
+	      (eq this-command 'wl-summary-reply-with-citation)
 	      (eq this-command 'wl-summary-forward)
 	      (eq this-command 'wl-summary-target-mark-forward)
 	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
@@ -1888,7 +1921,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-remove-text-plain-tag ()
   "Remove text/plain tag of mime-edit."
-  (when (string= (mime-create-tag "text" "plain")
+  (when (string= (mime-make-text-tag "plain")
 		 (buffer-substring-no-properties (point-at-bol)(point-at-eol)))
     (delete-region (point-at-bol)(1+ (point-at-eol)))))
 

@@ -1178,6 +1178,7 @@ Message is inserted to the summary buffer."
       (setq update-msgs (elmo-uniq-list update-msgs))
       (wl-thread-entity-set-parent entity dst-parent)
       ;; update thread on buffer
+      (wl-thread-make-number-list)
       (wl-thread-update-line-msgs update-msgs t))))
 
 (require 'product)

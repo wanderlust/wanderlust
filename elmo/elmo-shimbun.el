@@ -33,6 +33,9 @@
 (require 'elmo-dop)
 (require 'shimbun)
 
+(eval-when-compile
+  (defun-maybe shimbun-servers-list ()))
+
 (defcustom elmo-shimbun-check-interval 60
   "*Check interval for shimbun."
   :type 'integer
@@ -215,41 +218,44 @@ update overview when message is fetched."
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-shimbun-folder)
 					    name)
-  (let ((server-group (if (string-match "\\([^.]+\\)\\." name)
-			  (list (elmo-match-string 1 name)
-				(substring name (match-end 0)))
-			(list name))))
-    (when (nth 0 server-group) ; server
-      (elmo-shimbun-folder-set-shimbun-internal
+  (if (string= name "")
+      folder
+    (let ((server-group (if (string-match "\\([^.]+\\)\\." name)
+			    (list (elmo-match-string 1 name)
+				  (substring name (match-end 0)))
+			  (list name))))
+      (when (nth 0 server-group) ; server
+	(elmo-shimbun-folder-set-shimbun-internal
+	 folder
+	 (shimbun-open (nth 0 server-group)
+		       (luna-make-entity 'shimbun-elmo-mua :folder folder))))
+      (when (nth 1 server-group)
+	(elmo-shimbun-folder-set-group-internal
+	 folder
+	 (nth 1 server-group)))
+      (elmo-shimbun-folder-set-range-internal
        folder
-       (shimbun-open (nth 0 server-group)
-		     (luna-make-entity 'shimbun-elmo-mua :folder folder))))
-    (when (nth 1 server-group)
-      (elmo-shimbun-folder-set-group-internal
-       folder
-       (nth 1 server-group)))
-    (elmo-shimbun-folder-set-range-internal
-     folder
-     (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
-					 elmo-shimbun-index-range-alist))
-	 elmo-shimbun-default-index-range))
-    folder))
+       (or (cdr (elmo-string-matched-assoc (elmo-folder-name-internal folder)
+					   elmo-shimbun-index-range-alist))
+	   elmo-shimbun-default-index-range))
+      folder)))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
-  (shimbun-open-group
-   (elmo-shimbun-folder-shimbun-internal folder)
-   (elmo-shimbun-folder-group-internal folder))
-  (let ((inhibit-quit t))
-    (unless (elmo-map-folder-location-alist-internal folder)
-      (elmo-map-folder-location-setup
-       folder
-       (elmo-msgdb-location-load (elmo-folder-msgdb-path folder))))
-    (when (and (elmo-folder-plugged-p folder)
-	       (elmo-shimbun-headers-check-p folder))
-      (elmo-shimbun-get-headers folder)
-      (elmo-map-folder-update-locations
-       folder
-       (elmo-map-folder-list-message-locations folder)))))
+  (when (elmo-shimbun-folder-shimbun-internal folder)
+    (shimbun-open-group
+     (elmo-shimbun-folder-shimbun-internal folder)
+     (elmo-shimbun-folder-group-internal folder))
+    (let ((inhibit-quit t))
+      (unless (elmo-map-folder-location-alist-internal folder)
+	(elmo-map-folder-location-setup
+	 folder
+	 (elmo-msgdb-location-load (elmo-folder-msgdb-path folder))))
+      (when (and (elmo-folder-plugged-p folder)
+		 (elmo-shimbun-headers-check-p folder))
+	(elmo-shimbun-get-headers folder)
+	(elmo-map-folder-update-locations
+	 folder
+	 (elmo-map-folder-list-message-locations folder))))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
@@ -277,9 +283,11 @@ update overview when message is fetched."
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
   (elmo-plugged-p
    "shimbun"
-   (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))
+   (and (elmo-shimbun-folder-shimbun-internal folder)
+	(shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder)))
    nil nil
-   (shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder))))
+   (and (elmo-shimbun-folder-shimbun-internal folder)
+	(shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder)))))
 
 (luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
 					     plugged &optional add)
@@ -487,15 +495,37 @@ update overview when message is fetched."
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-shimbun-folder)
 						 &optional one-level)
-  (unless (elmo-shimbun-folder-group-internal folder)
-    (mapcar
-     (lambda (x)
-       (concat (elmo-folder-prefix-internal folder)
-	       (shimbun-server-internal
-		(elmo-shimbun-folder-shimbun-internal folder))
-	       "."
-	       x))
-     (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder)))))
+  (let ((prefix (elmo-folder-prefix-internal folder)))
+    (cond ((elmo-shimbun-folder-shimbun-internal folder)
+	   (unless (elmo-shimbun-folder-group-internal folder)
+	     (mapcar
+	      (lambda (fld)
+		(concat prefix
+			(shimbun-server-internal
+			 (elmo-shimbun-folder-shimbun-internal folder))
+			"." fld))
+	      (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder)))))
+	  ;; the rest are for "@/" group
+	  (one-level
+	   (mapcar
+	    (lambda (server) (list (concat prefix server)))
+	    (shimbun-servers-list)))
+	  (t
+	   (let (folders)
+	     (dolist (server (shimbun-servers-list))
+	       (setq folders
+		     (append folders
+			     (mapcar
+			      (lambda (fld) (concat prefix server "." fld))
+			      (shimbun-groups
+			       (shimbun-open server
+					     (let ((fld
+						    (elmo-make-folder
+						     (concat prefix server))))
+					       (luna-make-entity
+						'shimbun-elmo-mua
+						:folder fld))))))))
+	     folders)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
