@@ -1362,8 +1362,8 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	(cond
 	 ((and in (eq c ?\\))
 	  (setq i (1+ i)
-		i (1+ i)
-		content (cons (aref string i) content)))
+		content (cons (aref string i) content)
+		i (1+ i)))
 	 ((eq c ?\")
 	  (setq in (not in)
 		i (1+ i)))
@@ -1384,7 +1384,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
     (cons "" string)))
 
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
-;; 
+;;
 ;; number          ::= [0-9]+
 ;; beg             ::= number
 ;; end             ::= number
