@@ -4131,6 +4131,9 @@ Basically it is Emacs-standard mail mode.
 @node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
 @subsection Editing Message Header
 
+You can freely edit header region above @samp{--text follows this line--},
+until you invoke the sending operation.
+
 Initially, the cursor is at the @samp{To:} field.  Fill in recipients
 addresses.  @kbd{@key{TAB}} completes them.
 
@@ -4178,6 +4181,11 @@ the draft when it is prepared.
 
 @node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
 @subsection Editing Messages
+
+As a matter of course, editing message body can be performed in the same
+way as usual writing. You may write message body under
+@samp{--text follows this line--} line. (NOTE: Be sure to leave the line
+@samp{--text follows this line--} intact.)
 
 Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
 editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
