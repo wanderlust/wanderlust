@@ -6313,6 +6313,9 @@ A guide can be obtained automatically by sending mail to
 Please send bug reports or patches to the mailing list.
 You can post to the mailing list even though you are not a member of it.
 
+If you send a bug report, please attach Backtrace with it.
+@footnote{@samp{http://www.jpl.org/elips/BUGS-ja.html} describes how to in Japanese.}
+
 I would like to express my thanks to the members of the mailing list for 
 valuable advice and many pieces of code they contributed.
 
