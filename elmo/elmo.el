@@ -867,7 +867,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 			(eq (elmo-file-cache-status cache) 'entire))
 		   (elmo-make-fetch-strategy
 		    'entire t nil (elmo-file-cache-path cache))
-		 (elmo-make-fetch-strategy 'entire t))
+		 (elmo-make-fetch-strategy 'entire))
 	       nil (current-buffer)
 	       'unread)
 	      (unless (eq (buffer-size) 0)
