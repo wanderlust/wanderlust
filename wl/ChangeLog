@@ -1,3 +1,8 @@
+2004-04-16  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-sync-update): Remove duplicated period
+	in a quit message.
+
 2004-04-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-redisplay-all-header): Set cached.
