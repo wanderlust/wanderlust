@@ -670,9 +670,9 @@ This chapter describes the folder types which Wanderlust is able to handle.
 Wanderlust uses ELMO as it's interface, so you can use every folder types
 supported by ELMO.
 
-As of version @value{VERSION}, 11 types of folders are predefined. These are
-IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP, Multi, Filter,
-Pipe and Internal folder types.
+As of version @value{VERSION}, 13 types of folders are predefined. These
+are IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP,
+Shimbun, Namazu, Multi, Filter, Pipe and Internal folder types.
 
 @menu
 * IMAP Folder::                 @samp{%} -- IMAP folder
@@ -2542,7 +2542,7 @@ message has empty subject field.
 @cindex Mark, Temporary
 
 There are four temporary marks,
-@samp{*}, @samp{d}, @samp{o} and @samp{O}.
+@samp{*}, @samp{d}, @samp{D}, @samp{o}, @samp{O}, @samp{i} and @samp{~}.
 Temporary marks indicates message operations.
 
 @table @samp
@@ -2554,6 +2554,9 @@ with the key bindings which begins with @kbd{m}.
 @item d
 The mark to dispose. You can put @samp{d} by typing @kbd{d} key.
 
+@item D
+The mark to force delete. You can put @samp{D} by typing @kbd{D} key.
+
 @item o
 The mark to refile.
 After you type @kbd{o} key, prompt appears to input refile destination.
@@ -2564,14 +2567,23 @@ The mark to refile.
 You can put this mark by typing @kbd{O} key.
 The difference between this mark and refile mark is,
 this mark does not delete the message while latter does.
+
+@item i
+The mark to prefetch reserved.
+You can put this mark by typing @kbd{i} key.
+
+@item ~
+The mark to resend reserved.
+After you type @kbd{~} key, prompt appears to input address to resend.
+Your answer is printed in the summary line.
 @end table
 
 @kbd{x} key executes action for temporary marks, respectively.
 
 @subsection Persistent Marks
 
-There are five persistent marks,
-@samp{N}, @samp{U}, @samp{!}, @samp{u} and @samp{$}.
+There are five persistent marks, @samp{N}, @samp{?}, @samp{U}, @samp{!},
+@samp{u}, @samp{A}, @samp{&} and @samp{$}.
 
 The persistent mark indicates the message's status and it is saved.
 Each persistent mark indicates:
@@ -2579,12 +2591,18 @@ Each persistent mark indicates:
 @table @samp
 @item N
 It is new message.
+@item ?
+It is new but cached message.
 @item U
 It is unread message.
 @item !
 It is unread but cached message.
 @item u
 It is read but it is not cached.
+@item A
+It is already replied message.
+@item &
+It is already replied but cached message.
 @item $
 It is important message.  You can put @samp{$} mark by typing @kbd{$}
 key (if already exists, the mark is deleted).  It is convenient to put
@@ -2598,9 +2616,10 @@ If the message is read and cached (or local message),there are no
 persistent mark.
 @end table
 
-@samp{N}, @samp{U} and @samp{u} indicates that the message have no
-cache.  Messages with the marks other than these, you can read them in
-the offline status even they are in the IMAP folder or netnews folder.
+@samp{N}, @samp{U}, @samp{u}, @samp{A} indicates that the message have
+no cache.  Messages with the marks other than these, you can read them
+in the offline status even they are in the IMAP folder or netnews
+folder.
 
 Among messages with persistent marks, ones with marks specified by 
 @code{wl-summary-expire-reserve-marks} are excluded from the expiration
@@ -4297,7 +4316,7 @@ The format of @code{wl-draft-config-alist} is:
 @end group
 @end example
 
-Per default, there are 10 following sub-functions.
+Per default, there are 13 following sub-functions.
 
 @example
 'header:      Inserts the specified string at the bottom of the header.
