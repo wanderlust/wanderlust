@@ -1,5 +1,9 @@
 2000-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-internal.el (elmo-internal-search): Rewrite.
+	(Fixed problem which is pointed out by Akihiro MOTOKI
+	<motoki@da.jp.nec.com>)
+
 	* elmo-version.el (elmo-version): Up to 2.4.0.
 
 2000-11-06  Kenichi OKADA  <okada@opaopa.org>

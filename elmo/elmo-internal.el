@@ -224,36 +224,29 @@
   nil)
 
 (defun elmo-internal-search (spec condition &optional from-msgs msgdb)
-  (let* ((mark-alist
-	 (or elmo-msgdb-global-mark-alist
-	     (setq elmo-msgdb-global-mark-alist
-		   (elmo-object-load (expand-file-name
-				      elmo-msgdb-global-mark-filename
-				      elmo-msgdb-dir)))))
+  (let* ((msgs (or from-msgs (elmo-internal-list-folder spec)))
 	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
 						 spec))))
 	 (number-list (mapcar 'car loc-alist))
+	 (i 0)
+	 (num (length msgs))
 	 cache-file
-	 ret-val
-	 case-fold-search msg
-	 percent i num)
-    (setq num (length loc-alist))
-    (setq i 0)
-    (while loc-alist
+	 matched
+	 case-fold-search)
+    (setq num (length msgs))
+    (while msgs
       (if (and (setq cache-file (elmo-cache-exists-p (cdr (car loc-alist))))
 	       (elmo-file-field-condition-match cache-file
 						condition
-						(car (car loc-alist))
+						(car msgs)
 						number-list))
-	  (setq ret-val (append ret-val (list (car (car loc-alist))))))
-      (setq i (1+ i))
-      (setq percent (/ (* i 100) num))
+	  (setq matched (nconc matched (list (car msgs)))))
       (elmo-display-progress
        'elmo-internal-search "Searching..."
-       percent)
-      (setq loc-alist (cdr loc-alist)))
-    ret-val))
+       (/ (* (setq i (1+ i)) 100) num))
+      (setq msgs (cdr msgs)))
+    matched))
 
 (defun elmo-internal-use-cache-p (spec number)
   nil)
