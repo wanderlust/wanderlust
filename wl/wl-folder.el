@@ -835,7 +835,8 @@ Optional argument ARG is repeart count."
 	      all    (and all    (max 0 all))))
       (setq unread (or ;; If server diff, All unreads are
 			; treated as unsync.
-		    (and (elmo-folder-use-flag-p folder)
+		    (and unread
+			 (elmo-folder-use-flag-p folder)
 			 (- unread (or new 0)))
 		    (elmo-folder-get-info-unread folder)
 		    (cdr (wl-summary-count-unread
