@@ -6881,10 +6881,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @lisp
 @group
 (setq wl-generate-mailer-string-function
-      (function
-       (lambda ()
-         (concat "User-Agent: "
-                 (wl-generate-user-agent-string-1 nil)))))
+      'wl-generate-user-agent-string-1)
 @end group
 @end lisp
 
@@ -6892,11 +6889,10 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @lisp
 @group
-(setq mime-edit-insert-user-agent-field nil)
-(setq wl-generate-mailer-string-function
-      (function
-       (lambda ()
-         (format "X-Mailer: %s" (product-string-1 'wl-version)))))
+(setq wl-generate-mailer-string-function nil)
+(setq wl-draft-additional-header-alist
+      (list
+       (cons 'X-Mailer (lambda () (product-string-1 'wl-version)))))
 @end group
 @end lisp
 
