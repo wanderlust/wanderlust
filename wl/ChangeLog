@@ -1,3 +1,8 @@
+2002-04-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-util.el (wl-sendlog-time): Merge into wl-draft-write-sendlog.
+	* wl-draft.el (wl-draft-write-sendlog): Ditto.
+
 2002-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-refile-subr): Cause an error if FOLDER

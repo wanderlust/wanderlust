@@ -551,17 +551,6 @@ that `read' can handle, whenever this is possible."
 			 (kill-buffer x)))))
 	     (buffer-list))))
 
-(defun wl-sendlog-time ()
-  (static-if (fboundp 'format-time-string)
-      (format-time-string "%Y/%m/%d %T")
-    (let ((date (current-time-string)))
-      (format "%s/%02d/%02d %s"
-	      (substring date -4)
-	      (cdr (assoc (upcase (substring date 4 7))
-			  timezone-months-assoc))
-	      (string-to-int (substring date 8 10))
-	      (substring date 11 19)))))
-
 (defun wl-collect-summary ()
   (let (result)
     (mapcar

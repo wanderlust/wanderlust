@@ -819,7 +819,7 @@ text was killed."
 				   ","))))
 		   ""))
 	     (id (if id (concat " id=" id) ""))
-	     (time (wl-sendlog-time)))
+	     (time (format-time-string "%Y/%m/%d %T")))
 	(insert (format "%s proto=%s stat=%s%s%s%s\n"
 			time proto status server to id))
 	(if (and wl-draft-sendlog-max-size filesize
