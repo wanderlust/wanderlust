@@ -1,3 +1,8 @@
+2002-01-26  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* wl-summary.el (wl-summary-sync): Fixed problem when "last:" or
+	"first:" is specified.
+
 2002-01-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-from): Use return value of function

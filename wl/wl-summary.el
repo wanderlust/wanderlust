@@ -1122,10 +1122,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((or (string-match "last:" range)
 	       (string-match "first:" range))
-	   (wl-summary-goto-folder-subr
-	    (wl-folder-get-elmo-folder (concat "/" range "/"
-					       (elmo-folder-name-internal
-						folder)))
+	   (wl-summary-goto-folder-subr (concat "/" range "/"
+						(elmo-folder-name-internal
+						 folder))
 	    'force-update nil nil t))
 	  (t
 	   (wl-summary-sync-update unset-cursor
