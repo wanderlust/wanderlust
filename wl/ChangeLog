@@ -1,5 +1,21 @@
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.in (wl-news-check): 
+	(wl-news-previous-version-load): Change data type.
+	(wl-news-previous-version-save): Change data type.
+	(wl-news-append-news): Add return value.
+	(wl-news-check-news): New function.
+	(wl-news-already-current-p): New function.
+	(wl-news-send-news): Rewritten.
+	(wl-news-mode-map): Add new keybind.
+	(wl-news): Rewritten.
+	(wl-news-exit): Rewritten.
+	(wl-news-discard-and-mail): New function.
+	(wl-news-send-to-address): Abolished.
+	* wl.el (wl-init): Delete a message.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-news.el.in (wl-news-exit): Update previous version.
 	* wl.el (wl-folder-mode-menu-spec): Add 'Wanderlust NEWS'.
 

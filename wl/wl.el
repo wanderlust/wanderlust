@@ -697,8 +697,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (symbol-value 'wl-summary-subject-filter-function))
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
-    (and (wl-news-check)
-	 (message "Wanderlust is updated, please read NEWS(.ja) for changes."))
+    (wl-news-check)
     (setq wl-init t)
     ;; This hook may contain the functions `wl-plugged-init-icons' and
     ;; `wl-biff-init-icons' for reasons of system internal to accord
