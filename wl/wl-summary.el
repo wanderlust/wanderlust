@@ -847,7 +847,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 (or ml-name (setq ml-name (match-string 1 delivered-to))))
     (and (setq mailing-list
 	       (elmo-message-entity-field entity 'mailing-list))
-	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)	; *-help@, *-owner@, etc.
+	 ;; *-help@, *-owner@, etc.
+	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)
 	 (or ml-name (setq ml-name (match-string 2 mailing-list))))
     (cons (and ml-name (car (split-string ml-name " ")))
 	  (and ml-count (string-to-int ml-count)))))
@@ -880,7 +881,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (interactive)
   (wl-summary-rescan "list-info"))
 
-(defun wl-summary-rescan (&optional sort-by)
+(defun wl-summary-rescan (&optional sort-by disable-killed)
   "Rescan current folder without updating."
   (interactive)
   (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
@@ -890,7 +891,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(inhibit-read-only t)
 	(buffer-read-only nil)
 	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
-					    nil t)) ; in-msgdb
+					    (not disable-killed) t)) ; in-msgdb
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
@@ -910,6 +911,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
 	  wl-thread-entity-list nil
 	  wl-thread-entities nil
+	  wl-summary-scored nil
 	  wl-summary-buffer-number-list nil
 	  wl-summary-buffer-target-mark-list nil
 	  wl-summary-buffer-temp-mark-list nil
@@ -945,7 +947,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  (wl-thread-insert-top)
 	  (message "Inserting thread...done")))
     (when wl-use-scoring
-      (setq wl-summary-scored nil)
       (wl-summary-score-headers (wl-summary-rescore-msgs
 				 wl-summary-buffer-number-list)
 				t)
@@ -1133,7 +1134,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 
 (defun wl-summary-sync-force-update (&optional unset-cursor no-check)
   (interactive)
-  (wl-summary-sync-update unset-cursor nil no-check))
+  (wl-summary-sync-update unset-cursor nil nil no-check))
 
 (defsubst wl-summary-sync-all-init ()
   (wl-summary-cleanup-temp-marks)
@@ -1164,7 +1165,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  ((string= range "rescan-noscore")
 	   (let ((msg (wl-summary-message-number))
 		 wl-use-scoring)
-	     (wl-summary-rescan)
+	     (wl-summary-rescan nil t)
+	     (and msg (wl-summary-jump-to-msg msg))))
+	  ((string= range "mark")
+	   (let ((msg (wl-summary-message-number)))
+	     (wl-summary-sync-marks)
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "cache-status")
 	   (let ((msg (wl-summary-message-number)))
@@ -1175,12 +1180,15 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	   (wl-summary-goto-folder-subr (concat "/" range "/"
 						(elmo-folder-name-internal
 						 folder))
-	    'force-update nil nil t))
+					'force-update nil nil t))
 	  (t
-	   (wl-summary-sync-update unset-cursor
-				   (cond ((string= range "all") 'all)
-					 ((string= range "all-visible")
-					  'visible-only)))))))
+	   (let ((wl-use-scoring (if (string-match "noscore" range)
+				     nil
+				   wl-use-scoring)))
+	     (wl-summary-sync-update unset-cursor
+				     (or (string-match "nokill" range)
+					 (string-match "noscore" range))
+				     (string-match "all" range)))))))
 
 (defvar wl-summary-edit-addresses-candidate-fields
   ;; First element becomes default.
@@ -1710,7 +1718,10 @@ If ARG is non-nil, checking is omitted."
 	(setq diffs (cdr diffs)))
       (if (interactive-p) (message "%s" mes)))))
 
-(defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
+(defun wl-summary-sync-update (&optional unset-cursor
+					 disable-killed
+					 sync-all
+					 no-check)
   "Update the summary view to the newest folder status."
   (interactive)
   (let* ((folder wl-summary-buffer-elmo-folder)
@@ -1733,14 +1744,17 @@ If ARG is non-nil, checking is omitted."
 	  ;;(wl-summary-flush-pending-append-operations seen-list))
 	  (goto-char (point-max))
 	  (wl-folder-confirm-existence folder (elmo-folder-plugged-p folder))
-	  (setq crossed (elmo-folder-synchronize folder sync-all no-check))
+	  (setq crossed (elmo-folder-synchronize folder
+						 disable-killed
+						 sync-all
+						 no-check))
 	  (if crossed
 	      (progn
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
 		(setq diff (elmo-list-diff (elmo-folder-list-messages
 					    folder
-					    'visible-only
+					    (not disable-killed)
 					    'in-msgdb)
 					   wl-summary-buffer-number-list))
 		(setq append-list (car diff))
@@ -2395,7 +2409,7 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (folder func mime-decode)
-  (let ((numbers (elmo-folder-list-messages folder t t))
+  (let ((numbers (elmo-folder-list-messages folder nil t))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
@@ -3299,9 +3313,18 @@ Return non-nil if the mark is updated"
 (defun wl-summary-input-range (folder)
   "returns update or all or rescan."
   ;; for the case when parts are expanded in the bottom of the folder
-  (let ((input-range-list '("update" "all" "rescan" "first:" "last:"
+  (let ((input-range-list '("no-sync"
+			    "first:"
+			    "last:"
 			    "cache-status"
-			    "no-sync" "rescan-noscore" "all-visible"))
+			    "rescan"
+			    "rescan-noscore"
+			    "update"
+			    "update-nokill"
+			    "update-noscore"
+			    "all"
+			    "all-nokill"
+			    "all-noscore"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)

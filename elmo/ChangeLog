@@ -1,5 +1,15 @@
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-list-messages): Treat killed-list only when
+	visible-only is non-nil.
+	(elmo-folder-confirm-appends): Changed message.
+	(elmo-folder-synchronize): Added argument disable-killed.
+
+	* elmo-multi.el (elmo-folder-synchronize): Added argument
+	disable-killed.
+
+	* elmo-pipe.el (elmo-folder-synchronize): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.5.
 
 	* elmo-multi.el (elmo-folder-search): Use nil for 1st argument of

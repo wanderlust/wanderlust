@@ -1,5 +1,15 @@
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-rescan): Added argument disable-kill
+	(wl-summary-rescan): Set wl-summary-scored as nil.
+	(wl-summary-sync-force-update): Follow the change above.
+	(wl-summary-sync): Ditto.
+	(wl-summary-sync-update): Added argument disable-killed.
+	(wl-summary-insert-headers): Set visible-only argument for
+	elmo-folder-list-messages.
+	(wl-summary-input-range): Added update-nokill, update-noscore,
+	all-nokill, all-noscore and mark.
+
 	* Version number is increased to 2.11.5.
 
 	* wl-draft.el (wl-draft): Set buffer-undo-list as nil.

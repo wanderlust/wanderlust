@@ -85,10 +85,12 @@
     (elmo-folder-set-msgdb-internal fld nil)))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-multi-folder)
-					     &optional ignore-msgdb
+					     &optional
+					     disable-killed
+					     ignore-msgdb
 					     no-check)
   (dolist (fld (elmo-multi-folder-children-internal folder))
-    (elmo-folder-synchronize fld ignore-msgdb no-check))
+    (elmo-folder-synchronize fld disable-killed ignore-msgdb no-check))
   0)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder

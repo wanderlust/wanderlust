@@ -214,12 +214,14 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
   (let ((list (if in-msgdb
 		  t
 		(elmo-folder-list-messages-internal folder visible-only))))
-    (elmo-living-messages
-     (if (listp list)
-	 list
-       ;; Use current list.
-       (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
-     (elmo-folder-killed-list-internal folder))))
+    (setq list
+	  (if (listp list)
+	      list
+	    ;; Use current list.
+	    (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
+    (if visible-only
+	(elmo-living-messages list (elmo-folder-killed-list-internal folder))
+      list)))
 
 (luna-define-generic elmo-folder-list-unreads (folder)
   "Return a list of unread message numbers contained in FOLDER.")
@@ -1395,8 +1397,9 @@ FIELD is a symbol of the field.")
 		    in (string-to-int in))
 	      (if (< len in)
 		  (throw 'end len))
-	      (if (y-or-n-p (format "%d messages are not appeared.  OK? "
-				    (max (- len in) 0)))
+	      (if (y-or-n-p (format
+			     "%d messages are killed (not appeared). OK? "
+			     (max (- len in) 0)))
 		  (throw 'end in))))
 	  (nthcdr (max (- len in) 0) appends))
       (if (and elmo-folder-update-threshold
@@ -1477,40 +1480,46 @@ FIELD is a symbol of the field.")
   (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
 
 (luna-define-generic elmo-folder-synchronize (folder
-					      &optional ignore-msgdb
+					      &optional
+					      disable-killed
+					      ignore-msgdb
 					      no-check)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 
+If optional DISABLE-KILLED is non-nil, killed messages are also synchronized.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
-flag status. If IGNORE-MSGDB is 'visible-only, only visible messages
-\(the messages which are not in the killed-list\) are thrown away and
-synchronized.
+flag status.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 Return a list of a cross-posted message number.
 If update process is interrupted, return nil.")
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-folder)
-					     &optional ignore-msgdb no-check)
+					     &optional
+					     disable-killed
+					     ignore-msgdb
+					     no-check)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
 	number-alist
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
-	flag-table crossed after-append numbers)
+	flag-table crossed after-append)
     (setq old-msgdb (elmo-folder-msgdb folder))
     (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (when ignore-msgdb
       (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
-      (elmo-folder-clear folder (eq ignore-msgdb 'visible-only)))
-    (setq numbers (sort (elmo-folder-list-messages folder nil t) '<))
+      (elmo-folder-clear folder (not disable-killed)))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(progn
 	  (message "Checking folder diff...")
 	  (setq diff (elmo-list-diff (elmo-folder-list-messages
 				      folder
-				      (eq 'visible-only ignore-msgdb))
-				     numbers))
+				      (not disable-killed))
+				     (elmo-folder-list-messages
+				      folder
+				      (not disable-killed)
+				      'in-msgdb)))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends (car diff)))
 	  ;; Set killed list as ((1 . MAX-OF-DISAPPEARED))
