@@ -6,7 +6,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust. 10 May 2000
 
 ** Fixed a problem that POP connection remains after POP before SMTP.
 
-** The specification for IMAP4 authentication method with clear password
+** The specification of IMAP4 authentication method for clear password
    is changed.
 
 In 2.4.0, To use clear password authentication method in IMAP4
