@@ -1,5 +1,9 @@
 2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
 
+	* WL-MK (install-wl-icons): Don't install *.img files for Emacs 21.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
 	* WL-MK (config-wl-pixmap-dir): Set a value to `PIXMAPDIR' even if
 	Emacs version is less than 21.
 	(install-wl-icons): Install icon files which might be used for the
