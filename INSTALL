@@ -180,10 +180,6 @@ Manual
   Manual directory is automatically detected. Of course, it can be
   configured by INFODIR in Makefile.
 
-  And you can view manual on following URL:
-
-	http://www.gohome.org/wl/doc/wl_toc.html
-
 
 Sample configuration file
 =========================
