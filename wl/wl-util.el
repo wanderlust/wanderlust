@@ -931,8 +931,7 @@ is enclosed by at least one regexp grouping construct."
       newtext)))
 
 (defun wl-line-parse-format (format spec-alist)
-  "Make a formatter from FORMAT and SPEC-ALIST.
-WIDTH is the width of the result string."
+  "Make a formatter from FORMAT and SPEC-ALIST."
   (let (f spec specs stack)
     (setq f
 	  (with-temp-buffer
@@ -946,7 +945,7 @@ WIDTH is the width of the result string."
 		(cond
 		 ((string= (match-string 2) "(")
 		  (if (zerop (length (match-string 1)))
-		      (error "No number specification for %( line format"))
+		      (error "No number specification for %%( line format"))
 		  (push (list 
 			 (match-beginning 0) ; start
 			 (match-end 0)       ; start-content
@@ -960,7 +959,7 @@ WIDTH is the width of the result string."
 			form)
 		    (unless entry
 		      (error
-		       "No matching %( parenthesis in summary line format"))
+		       "No matching %%( parenthesis in summary line format"))
 		    (goto-char (car entry)) ; start
 		    (setq form (buffer-substring (nth 1 entry) ; start-content
 						 (- (match-beginning 0) 1)))
