@@ -346,14 +346,6 @@ or between BEG and END."
       (setq loop (- loop 1)))
     ret-val))
 
-(defun wl-list-diff (list1 list2)
-  "Return a list of elements of LIST1 that do not appear in LIST2."
-  (let ((list1 (copy-sequence list1)))
-    (while list2
-      (setq list1 (delq (car list2) list1))
-      (setq list2 (cdr list2)))
-    list1))
-
 (defun wl-append-assoc-list (item value alist)
   "make assoc list '((item1 value1-1 value1-2 ...)) (item2 value2-1 ...)))"
   (let ((entry (assoc item alist)))

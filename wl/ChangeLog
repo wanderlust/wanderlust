@@ -1,3 +1,10 @@
+2004-03-27  Yuuichi Teranishi  <teranisi@rosita>
+
+	* wl-util.el (wl-list-diff): Remove unused function.
+
+	* wl-draft.el (wl-draft-send-confirm): Discard input before
+	confirmation.
+
 2004-03-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-persistent-mark-priority-list): Changed
