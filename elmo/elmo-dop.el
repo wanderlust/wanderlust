@@ -157,8 +157,8 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 			   (not elmo-dop-flush-confirm) t)
 	    (progn
 	      (while queue
-		(when (string= (elmo-dop-queue-method-name (car queue))
-			       "Append")
+		(when (eq (elmo-dop-queue-method (car queue))
+			  'elmo-folder-append-buffer-dop-delayed)
 		  (elmo-folder-delete-messages
 		   (elmo-dop-spool-folder
 		    (elmo-make-folder (elmo-dop-queue-fname (car queue))))
