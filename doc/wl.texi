@@ -210,6 +210,7 @@ here.
 * Minimal Settings::  @file{.emacs} setup
 * Folder Definition:: Folder definition
 * Start Wanderlust::  Starting Wanderlust
+* Overview::          Basic components of Wanderlust
 @end menu
 
 
@@ -363,9 +364,10 @@ In this case, either add destination directories of custom, APEL, FLIM
 and SEMI to environmental variable @env{EMACSLOADPATH}, or define
 @code{load-path} in @file{WL-CFG} in extracted directory.
 
-If you want to use BBDB, then the necessary modules are byte-compiled
-and installed when BBDB directory is added to @code{load-path}.
-@xref{BBDB}.
+If you want to handle shimbun folders or to use BBDB, add directory
+where emacs-w3m or BBDB is installed to @code{load-path}. Then necessary
+modules will be byte-compiled and installed.
+@xref{Shimbun Folder}, @xref{BBDB}.
 
 @subsection @file{WL-CFG}
 
@@ -488,9 +490,6 @@ The minimal requirement for settings is as the following.
 
 @lisp
 @group
-;; @r{The setting to use SEMI}
-(require 'mime-setup)
-
 ;; @r{autoload configuration}
 ;; @r{(Not required if you have installed Wanderlust as XEmacs package)}
 (autoload 'wl "wl" "Wanderlust" t)
@@ -516,9 +515,8 @@ because you can't write them in @file{.emacs}
 (if you write it to @file{.emacs}, you'll get an error).
 @xref{Highlights}.
 
-All above described settings except @samp{(require 'mime-setup)} and autoload
-configuration can be written in
-@file{~/.wl}).
+All above described settings except autoload configuration can be written
+in @file{~/.wl}).
 
 @subsection @code{mail-user-agent}
 @cindex Default Mailer
@@ -526,7 +524,7 @@ configuration can be written in
 @vindex mail-user-agent
 @findex compose-mail
 
-If you write following setting in you @file{.emacs}, you can
+If you write following setting in your @file{~/.emacs}, you can
 start Wanderlust draft mode by typing @kbd{C-x m} (@code{compose-mail}).
 This means it enables you to run Wanderlust as a default mail composer
  of Emacsen.
@@ -613,15 +611,15 @@ There are two types of groups. One is like @samp{Emacsen} from above
 example which the user chooses his favorite folders as a group.
 
 The other one is @dfn{access group} like @samp{+ /} from above example.
-It makes all the sub-folders in a folder to a group.  (It differs from
-the type of the folder. For example, @samp{+} followed by @samp{/}
-makes entire MH sub-directories to one group)
+It collects all sub-folders in the folder to make a group.  (Its
+behavior differs by the type of the folder. For example, @samp{+}
+followed by @samp{/} makes entire MH sub-directories to one group)
 
 This behavior is better understood if you try it and confirmed the
 function first. You can write and try a small folder definition, so you
 will know the idea of the folder function before writing the real one.
 
-@node Start Wanderlust,  , Folder Definition, Start Me Up
+@node Start Wanderlust, Overview, Folder Definition, Start Me Up
 @section Start Wanderlust
 @cindex Start Wanderlust
 
@@ -633,30 +631,36 @@ M-x wl
 @end example
 
 @noindent
-After initialization, Folder Mode which shows the list of folders will appear.
-That means the folders you defined in the @file{~/.folders} are listed
+After initialization, Folder Mode which shows the list of folders will
+appear. That means the folders you defined in the @file{~/.folders} are
+listed.
+
 If you start Wanderlust with prefix argument like @kbd{C-u M-x wl}, you
 can skip folder checking.
 
+
+@node Overview,  , Start Wanderlust, Start Me Up
+@section Overview
+@cindex Overview
+
 Basically, you will handle messages in wanderlust while you come and go
-from/to each of the following buffers.
+from/to each of the following buffers.  Details of each ones are
+explained in following chapters.
 
 @table @samp
 @item Folder Buffer
 You can see the list of folders. You can select some folder and go into the summary
 of it. You can subscribe new folder or edit subscription list.
 @item Summary Buffer
-You can see the list of messages in the folder. You can select message and view its
-contents, and reply to some message. You can delete ones or move ones to another
-folder.
+You can see the list of messages in the folder. You can select message
+and view its contents, and reply to some message. You can delete ones or
+move ones to another folder.
 @item Message Buffer
-You can see the contents of the message. You can save part to disk or open in external
-programs.
+You can see the contents of the message. You can save part to disk or
+open in external programs.
 @item Draft Buffer
 You can edit message.
 @end table
-
-Details of each ones are explained later.
 
 
 @node Folders, Folder, Start Me Up, Top
@@ -2529,7 +2533,9 @@ Each line displays:
 @end example
 
 @noindent
-You cannot change this in the current version.
+If you want to know how to change the format for this, please refer
+the section format of Summary lines.
+@xref{Summary View}.
 
 @var{Message number} is the message's unique number in the folder. In
 the NNTP folder, it is article number, in the IMAP folder, it is UID and
@@ -4031,7 +4037,7 @@ mode buffer.
 @item l
 @kindex l (Message)
 @findex wl-message-toggle-disp-summary
-Toggles display of Summary mode buffer.
+Toggles display of Summary buffer.
 (@code{wl-message-toggle-disp-summary})
 
 @item Button-2
@@ -4986,10 +4992,12 @@ are reflected in the servers via network.
 @node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
 @subsection Transmission of Messages
 
-You can send mail/news messages off-line (if you are using
-@file{im-wl.el}, it is irrelevant).  Messages sent off-line are
-accumulated in the queue folder, @samp{+queue}.  These messages are
-transmitted at once when Wanderlust becomes on-line.
+You can proceed sending operation for  mail/news messages while you are
+off-line, then it will be reserved for sending (if you are using
+@file{im-wl.el}, it is irrelevant).
+Messages reserved for sending while off-line are accumulated in the
+queue folder, @samp{+queue}. These messages are transmitted at once when
+Wanderlust becomes on-line.
 
 You can visit @samp{+queue} in the off-line state and confirm content of
 messages in the queue.  You can also remove messages.  Removed messages

@@ -233,6 +233,7 @@ Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 * Minimal Settings::  @file{.emacs} $B$N@_Dj(B
 * Folder Definition:: $B9XFI$9$k%U%)%k%@$NDj5A(B
 * Start Wanderlust::  Wanderlust $B$N5/F0(B
+* Overview::          $B354Q(B
 @end menu
 
 
@@ -364,7 +365,7 @@ ftp://opaopa.org/pub/elisp/
 
 @subsection $BDL>o$N%$%s%9%H!<%k(B
 
-@file{Makefile} $B$O(B @code{LISPDIR}, @code{EMACS} $B$N$"$?$j$rJT=8$7$^$9!#(B
+@file{Makefile} $B$N(B @code{LISPDIR}, @code{EMACS} $B$N$"$?$j$rJT=8$7$^$9!#(B
 @code{LISPDIR} $B$K$O%Q%C%1!<%8$N%$%s%9%H!<%k@h!"(B
 @code{EMACS} $B$K$OMxMQ$9$k(B Emacs $B$N%3%^%s%IL>$r;XDj$7$^$9!#(B
 
@@ -377,7 +378,7 @@ ftp://opaopa.org/pub/elisp/
 
 @file{Makefile} $BCf$N(B @code{LISPDIR} $B$rJQ99$;$:!"(B
 $B$=$N$^$^(B(@samp{NONE} $B$N$^$^$G$b(B)$B%$%s%9%H!<%k$7$?>l9g!"(B
-$B<+F0E*$K%$%s%9%H!<%k@h$rE,Ev$K8!=P$7$^$9!#(B
+$BE,Ev$J%$%s%9%H!<%k@h$r<+F0E*$K8!=P$7$^$9!#(B
 $B<B:]$N%$%s%9%H!<%k@h$K$D$$$F$O8e=R$7$^$9!#(B
 
 Mule 2.3 $B$J$I!"(B@file{subdirs.el} $B$,L5$/!"(B@code{load-path} $B$K%5%V%G%#%l%/%H%j$,(B
@@ -393,8 +394,10 @@ Cannot open load file: mime-setup
 $B%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B@code{load-path} $B$rDL$7$F$*$/$HNI$$(B
 $B$G$7$g$&!#(B
 
-$B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B @code{load-path} $B$rDL$7$F$*$/$HI,(B
-$BMW$J%b%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B@xref{BBDB}.
+$B$^$?!"?7J9%U%)%k%@$rMxMQ$9$k>l9g$d!"(BBBDB $B$rMxMQ$9$k>l9g$K$O!"$=$l$>$l(B
+emacs-w3m$B!"(BBBDB $B$,%$%s%9%H!<%k$5$l$F$$$k%G%#%l%/%H%j$K(B @code{load-path}
+$B$rDL$7$F$*$/$HI,MW$J%b%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
+@xref{Shimbun Folder}, @xref{BBDB}.
 
 @subsection @file{WL-CFG}
 
@@ -520,9 +523,6 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 
 @lisp
 @group
-;; @r{SEMI $B$r;H$&$?$a$N@_Dj(B}
-(require 'mime-setup)
-
 ;; @r{autoload $B$N@_Dj(B}
 ;; @r{(XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$OI,MW$"$j$^$;$s(B)}
 (autoload 'wl "wl" "Wanderlust" t)
@@ -545,9 +545,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$/$H@0M}$7$d$9$$$G$7
 $B$&!#(Bface $B$N@_Dj$O(B @file{~/.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B@file{~/.wl} 
 $B$K=q$$$F$/$@$5$$!#(B@xref{Highlights}.
 
-$B>e5-$N$&$A!"(B@samp{(require 'mime-setup)} $B$H(B @code{autoload} $B$N@_Dj$O(B
-@file{~/.emacs} $B$K=q$/I,MW$,$"$j$^$9!#$=$l0J30$N@_Dj$O(B @file{~/.wl} $B$K5-(B
-$B=R$G$-$^$9!#(B
+$B>e5-$N$&$A!"(B@code{autoload} $B$N@_Dj$O(B @file{~/.emacs} $B$K=q$/I,MW$,$"$j$^$9!#(B
+$B$=$l0J30$N@_Dj$O(B @file{~/.wl} $B$K5-=R$G$-$^$9!#(B
 
 @subsection @code{mail-user-agent}
 @cindex Default Mailer
@@ -555,8 +554,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$/$H@0M}$7$d$9$$$G$7
 @vindex mail-user-agent
 @findex compose-mail
 
-$B0J2<$N$h$&$J@_Dj$r(B @file{.emacs} $BEy$K$7$F$*$/$H!"(B@kbd{C-x m}
-(@code{compose-mail}) $BEy$K$h$C$F(B Wanderlust $B$N%I%i%U%H%b!<%I$r5/F0$9$k(B
+$B0J2<$N$h$&$J@_Dj$r(B @file{~/.emacs} $B$K$7$F$*$/$H!"(B@kbd{C-x m}
+(@code{compose-mail}) $B$K$h$C$F(B Wanderlust $B$N%I%i%U%H%b!<%I$r5/F0$9$k(B
 $B$h$&$K$J$j$^$9!#(BWanderlust $B$r(B Emacs $B>e$NI8=`%a!<%i$H$7$F;H$$$?$$>l9g$O@_(B
 $BDj$7$F$*$/$HNI$$$G$7$g$&!#$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,(B
 $B2DG=$J(B Emacsen $B$N>l9g$N$_M-8z$G$9!#(B
@@ -637,15 +636,15 @@ Emacsen@{
 $B$&$KD>@\<+J,$G9%$-$J%U%)%k%@$r%0%k!<%W$H$7$FDj5A$9$k%?%$%W$G$9!#(B
 
 $B$b$&0l$D$O!">e$NNc$N(B @samp{+ /} $B$N$h$&$J(B @dfn{$B%"%/%;%9%0%k!<%W(B} $B$G$9!#$3$l(B
-$B$O!"$"$k%U%)%k%@$K4^$^$l$k%5%V%U%)%k%@A4$F$r0l$D$N%0%k!<%W$H$9$k$b$N$G$9!#(B
-($B$3$l$O%U%)%k%@$N%?%$%W$K$h$C$F0c$$$^$9!#Nc$($P(B @samp{+ /} $B$J$i(B MH $B$N%5%V(B
-$B%G%#%l%/%H%j$9$Y$F$,$R$H$D$N%0%k!<%W$H$J$j$^$9!#(B)
+$B$O!"$"$k%U%)%k%@$K4^$^$l$k%5%V%U%)%k%@A4$F$r$^$H$a$F0l$D$N%0%k!<%W$H$9$k$b$N(B
+$B$G$9!#(B($B$=$NF0:n$O%U%)%k%@$N%?%$%W$K$h$C$F0[$J$j$^$9!#Nc$($P(B @samp{+ /} $B$J$i(B
+MH $B$N%5%V%G%#%l%/%H%j$9$Y$F$,$R$H$D$N%0%k!<%W$H$J$j$^$9!#(B)
 
 $B<B:]$K;n$7$F$_$F!"3NG'$7$F$+$i$NJ}$,$o$+$j$d$9$$$+$b$7$l$^$;$s!#(B
 $B$A$g$C$H=q$$$F;n$7$F$_$F$+$i!"$^$?%U%)%k%@$NDj5A$r$d$jD>$9$HNI$$$G$7$g$&!#(B
 
 
-@node Start Wanderlust,  , Folder Definition, Start Me Up
+@node Start Wanderlust, Overview, Folder Definition, Start Me Up
 @section Wanderlust $B$N5/F0(B
 @cindex Start Wanderlust
 
@@ -662,8 +661,13 @@ M-x wl
 @kbd{C-u M-x wl} $B$N$h$&$K(B prefix argument $B$D$-$G<B9T$9$k$H!"(B
 $B%U%)%k%@$N%A%'%C%/$r>JN,$7$F5/F0$7$^$9!#(B
 
-Wanderlust $B$G$O4pK\E*$K<!$K5s$2$k%P%C%U%!$r8_$$$K9T$-Mh$7$J$,$i%a%C%;!<%8$r(B
-$B<h$j07$$$^$9!#(B
+
+@node Overview,  , Start Wanderlust, Start Me Up
+@section $B354Q(B
+@cindex Overview
+
+Wanderlust $B$G$O4pK\E*$K!"<!$K5s$2$k%P%C%U%!$r8_$$$K9T$-Mh$7$J$,$i%a%C%;!<%8(B
+$B$r<h$j07$$$^$9!#$=$l$>$l$N>\:Y$K$D$$$F$O0J2<$N3F>O$G@bL@$7$^$9!#(B
 
 @table @samp
 @item $B%U%)%k%@%P%C%U%!(B
@@ -678,8 +682,6 @@ Wanderlust $B$G$O4pK\E*$K<!$K5s$2$k%P%C%U%!$r8_$$$K9T$-Mh$7$J$,$i%a%C%;!<%8$r(
 @item $B%I%i%U%H%P%C%U%!(B
 $B%a%C%;!<%8$NJT=8$r9T$$$^$9!#(B
 @end table
-
-$B$=$l$>$l$N>\:Y$K$D$$$F$O0J2<$G@bL@$7$^$9!#(B
 
 
 @node Folders, Folder, Start Me Up, Top
@@ -2527,7 +2529,8 @@ Non-nil $B$J$i(B @code{wl-fldmgr-add} $B$NJd408uJd$r(B
 @end example
 
 @noindent
-$B$r=g$KI=<($7$F$$$^$9!#8=:_$N%P!<%8%g%s$G$OI=<($NJQ99$O$G$-$^$;$s!#(B
+$B$r=g$KI=<($7$F$$$^$9!#I=<(7A<0$NJQ99$K$D$$$F$O!"%5%^%j9T$N7A<0$N@a$r(B
+$B;2>H$7$F2<$5$$!#(B@xref{Summary View}.
 
 @var{$B%a%C%;!<%8HV9f(B}$B$O$=$N%U%)%k%@Cf$K$"$k%a%C%;!<%8$KBP$9$k%i%Y%k$G$9!#(B
 News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BMH $B%U%)%k%@$G$O%U%!(B
@@ -3994,7 +3997,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @item l
 @kindex l (Message)
 @findex wl-message-toggle-disp-summary
-$B%5%^%j%b!<%I%P%C%U%!$rI=<($9$k$+$I$&$+$r%H%0%k$7$^$9!#(B
+$B%5%^%j%P%C%U%!$rI=<($9$k$+$I$&$+$r%H%0%k$7$^$9!#(B
 (@code{wl-message-toggle-disp-summary})
 
 @item Button-2
@@ -4929,10 +4932,10 @@ Wanderlust $B$K$O%*%s%i%$%s%b!<%I$H%*%U%i%$%s%b!<%I$,$"$j$^$9!#%*%U%i%$%s(B
 @node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
 @subsection $B%a%C%;!<%8$NAw?.(B
 
-$B%*%U%i%$%s>uBV$G%a!<%k(B/$B%K%e!<%95-;v$rAw?.$G$-$^$9!#(B(@file{im-wl.el} $B$r$*(B
-$B;H$$$N>l9g$O!"4X78$"$j$^$;$s!#(B)$B%*%U%i%$%s$N$H$-$KAw?.$5$l$?%a%C%;!<%8$O(B
-$B%-%e!<%U%)%k%@(B @samp{+queue} $B$KN/$j$^$9!#N/$C$?%a%C%;!<%8$O!"%*%s%i%$%s(B
-$B$K$J$C$?$H$-$K0l5$$KAw?.$5$l$^$9!#(B
+$B%*%U%i%$%s>uBV$G%a!<%k(B/$B%K%e!<%95-;v$NAw?.A`:n$r$9$k$H!"Aw?.$NM=Ls$,$5$l(B
+$B$^$9!#(B(@file{im-wl.el} $B$r$*;H$$$N>l9g$O!"4X78$"$j$^$;$s!#(B) $B%*%U%i%$%s$N(B
+$B$H$-$KAw?.M=Ls$5$l$?%a%C%;!<%8$O%-%e!<%U%)%k%@(B @samp{+queue} $B$KN/$j$^$9!#(B
+$BN/$C$?%a%C%;!<%8$O!"%*%s%i%$%s$K$J$C$?$H$-$K0l5$$KAw?.$5$l$^$9!#(B
 
 $B%*%U%i%$%s$N$&$A$K(B @samp{+queue} $B$rK,$l$F!"%-%e!<$K$"$k%a%C%;!<%8$NFbMF(B
 $B$r3NG'$G$-$^$9!#%a%C%;!<%8$r:o=|$9$k$3$H$b2DG=$G$9!#(B($B:o=|$5$l$?%a%C%;!<(B
