@@ -1,14 +1,5 @@
 2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl-summary.el (wl-summary-mode): Use \\{wl-summary-mode-map} in
-	docstring.
-
-2000-12-10  Hironori Fukuchi <nory@valis.co.jp>
-
-	* wl-summary.el (wl-summary-toggle-thread): Docstring typo fix.
-
-2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
 	* wl-highlight.el (wl-highlight-headers): Remove
 	`wl-highlight-x-face-func' argument (`beg' and `end').
 
