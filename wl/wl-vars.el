@@ -2111,9 +2111,11 @@ or 'skip-no-unread."
 
 (defcustom wl-summary-search-via-nntp 'confirm
   "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.
-If the value is 'confirm, confirm before search."
-  :type '(choice (const confirm)
-		 (const :tag "always" t)
+If the value is 'confirm, confirm before search, 'force to search via nntp
+regardless of current folder type."
+  :type '(choice (const :tag "confirm" confirm)
+		 (const :tag "always" force)
+		 (const :tag "in nntp folder" t)
 		 (const :tag "never" nil))
   :group 'wl-summary)
 

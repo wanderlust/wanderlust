@@ -1,5 +1,12 @@
 2003-02-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-summary.el (wl-summary-virtual): Call wl-summary-virtual-hook.
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id): Force
+	searching via nntp if wl-summary-search-via-nntp is 'force.
+	Otherwise, invoke searching in nntp folder only.
+	* wl-vars.el (wl-summary-search-via-nntp): Change accordingly.
+
 	* wl-draft.el (wl-draft-remove-text-plain-tag): Specify subtype
 	explicitly for mime-make-text-tag.
 

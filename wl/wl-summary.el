@@ -3675,7 +3675,8 @@ If ARG, exit virtual folder."
 					  wl-summary-pick-field-default)
 					 "/"
 					 (wl-summary-buffer-folder-name))
-				 'update nil nil t)))
+				 'update nil nil t)
+    (run-hooks 'wl-summary-virtual-hook)))
 
 (defun wl-summary-delete-all-temp-marks (&optional no-msg)
   "Erase all temp marks from buffer."
@@ -4741,7 +4742,11 @@ Return t if message exists."
 		     (t
 		      (message errmsg)
 		      nil)))
-	      (wl-summary-search-via-nntp
+	      ((or (eq wl-summary-search-via-nntp 'force)
+		   (and
+		    (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
+			'nntp)
+		    wl-summary-search-via-nntp)
 	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 	      (t
 	       (message errmsg)
