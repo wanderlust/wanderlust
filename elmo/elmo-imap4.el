@@ -394,15 +394,14 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   (save-excursion
     (set-buffer buffer)
     (let ((case-fold-search nil)
-	  (return-value nil)
-	  start gc-message)
+	  start gc-message return-value)
       (setq start elmo-imap4-read-point);; starting point
       (while (< (point-max) (+ start bytes))
 	(accept-process-output process))
       (setq return-value (buffer-substring
 			  start (+ start bytes)))
       (setq return-value (elmo-delete-cr return-value))
-      (setq elmo-imap4-read-point bytes)
+      (setq elmo-imap4-read-point (+ start bytes))
       return-value)))
 
 (defun elmo-imap4-read-body (buffer process bytes outbuf)
