@@ -341,6 +341,8 @@
 		(overlay-put overlay 'wl-e21-icon t)
 		(overlay-put overlay 'evaporate t))
 	      (let (type)
+		(unless (get (caar wl-folder-internal-icon-list) 'image)
+		  (wl-folder-init-icons))
 		(setq image
 		      (cond ((string= fld-name wl-trash-folder);; trash folder
 			     (let ((num (nth 2 numbers)));; number of messages

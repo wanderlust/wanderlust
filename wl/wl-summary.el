@@ -1178,10 +1178,9 @@ Optional argument ADDR-STR is used as a target address if specified."
   (if (null (wl-summary-message-number))
       (message "No message.")
     (save-excursion
-      (wl-summary-set-message-buffer-or-redisplay)
       (let* ((charset wl-summary-buffer-mime-charset)
 	     (candidates
-	      (with-current-buffer (wl-message-get-original-buffer)
+	      (with-current-buffer (wl-summary-get-original-buffer)
 		(wl-summary-edit-addresses-collect-candidate-fields
 		 charset)))
 	     address pair result)
@@ -4059,11 +4058,7 @@ If ARG, exit virtual folder."
 		    (elmo-msgdb-set-mark-alist msgdb mark-alist)
 		    (wl-summary-set-mark-modified))
 		  (if (and visible wl-summary-highlight)
-		      (wl-highlight-summary-current-line nil nil t))
-		  (if (not notcrosses)
-		      (wl-summary-set-crosspost
-		       wl-summary-buffer-elmo-folder
-		       number)))
+		      (wl-highlight-summary-current-line nil nil t)))
 	      (if mark (message "Warning: Changing mark failed.")))))
       (set-buffer-modified-p nil)
       (if stat
@@ -4756,7 +4751,7 @@ Return t if message exists."
 		     (or user elmo-default-nntp-user)
 		     (or port elmo-default-nntp-port)
 		     (or type elmo-default-nntp-stream-type)))
-      (setq newsgroups (wl-parse-newsgroups ret))
+      (setq newsgroups (elmo-nntp-parse-newsgroups ret))
       (setq folder (concat "-" (car newsgroups)
 			   (elmo-nntp-folder-postfix user server port type)))
       (catch 'found
@@ -5512,71 +5507,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
   (save-excursion
     (wl-summary-set-message-buffer-or-redisplay)
     (wl-message-get-original-buffer)))
-
-;; This function will be needless in the future.
-;; (After when Newsgroups: field is saved in msgdb)
-(defun wl-summary-get-newsgroups ()
-  (let ((folder-list (elmo-folder-get-primitive-list
-		      wl-summary-buffer-elmo-folder))
-	ng-list)
-    (while folder-list
-      (when (eq (elmo-folder-type-internal (car folder-list)) 'nntp)
-	(wl-append ng-list (list (elmo-nntp-folder-group-internal
-				  (car folder-list)))))
-      (setq folder-list (cdr folder-list)))
-    ng-list))
-
-;; This function will be moved to elmo in the future.
-;; (After when Newsgroups: field is saved in msgdb)
-(defun wl-summary-set-crosspost (folder number)
-  (let (newsgroups)
-    (when (eq (elmo-folder-type-internal folder) 'nntp)
-      (with-current-buffer (wl-summary-get-original-buffer)
-	(setq newsgroups (std11-field-body "newsgroups")))
-      (when newsgroups
-	(let* ((ng-list (wl-summary-get-newsgroups)) ;; for multi folder
-	       crosspost-newsgroups)
-	  (when (setq crosspost-newsgroups
-		      (elmo-list-delete ng-list
-					(wl-parse-newsgroups newsgroups t)))
-	    (elmo-crosspost-message-set
-	     (elmo-message-field folder number 'message-id)
-	     crosspost-newsgroups)
-	    (setq wl-crosspost-alist-modified t)))))))
-
-(defun wl-summary-is-crosspost-folder (folder-list groups)
-  "Returns newsgroup string list of FOLDER-LIST which are contained in GROUPS."
-  (let (group crosses)
-    (while folder-list
-      (if (and (eq (elmo-folder-type-internal (car folder-list)) 'nntp)
-	       (member (setq group (elmo-nntp-folder-group-internal
-				    (car folder-list))) groups))
-	  (wl-append crosses (list group)))
-      (setq folder-list (cdr folder-list)))
-    crosses))
-
-(defun wl-crosspost-alist-load ()
-  (setq elmo-crosspost-message-alist (elmo-crosspost-alist-load))
-  (setq wl-crosspost-alist-modified nil))
-
-(defun wl-crosspost-alist-save ()
-  (when wl-crosspost-alist-modified
-    ;; delete non-exists newsgroups
-    (let ((alist elmo-crosspost-message-alist)
-	  newsgroups)
-      (while alist
-	(setq newsgroups
-	      (elmo-delete-if
-	       '(lambda (x)
-		  (not (intern-soft x wl-folder-newsgroups-hashtb)))
-	       (nth 1 (car alist))))
-	(if newsgroups
-	    (setcar (cdar alist) newsgroups)
-	  (setq elmo-crosspost-message-alist
-		(delete (car alist) elmo-crosspost-message-alist)))
-	(setq alist (cdr alist)))
-      (elmo-crosspost-alist-save elmo-crosspost-message-alist)
-      (setq wl-crosspost-alist-modified nil))))
 
 (defun wl-summary-pack-number (&optional arg)
   (interactive "P")

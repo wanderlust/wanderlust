@@ -1805,7 +1805,8 @@ If optional argument is non-nil, current draft buffer is killed"
 		(wl-draft-queue-info-operation (car msgs) 'load)
 		(elmo-message-fetch queue-folder
 				    (car msgs)
-				    (elmo-make-fetch-strategy 'entire))
+				    (elmo-make-fetch-strategy 'entire)
+				    nil (current-buffer))
 		(condition-case err
 		    (setq failure (funcall
 				   wl-draft-queue-flush-send-func

@@ -271,7 +271,7 @@
    strategy section outbuf unread))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-map-folder) unread-marks)
+  ((folder elmo-map-folder) unread-marks &optional mark-alist)
   (elmo-map-folder-locations-to-numbers
    folder
    (elmo-map-folder-list-unreads folder)))

@@ -226,7 +226,7 @@
 
 ;;; To override elmo-map-folder methods.
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-nmz-folder) unread-marks)
+  ((folder elmo-nmz-folder) unread-marks &optional mark-alist)
   t)
 
 (luna-define-method elmo-folder-list-importants-internal

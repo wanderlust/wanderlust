@@ -57,14 +57,8 @@
       (list 'nconc val func)
     (list 'setq val func)))
 
-(defun wl-parse (string regexp &optional matchn)
-  (or matchn (setq matchn 1))
-  (let (list)
-    (store-match-data nil)
-    (while (string-match regexp string (match-end 0))
-      (setq list (cons (substring string (match-beginning matchn)
-                                  (match-end matchn)) list)))
-    (nreverse list)))
+(defalias 'wl-parse 'elmo-parse)
+(make-obsolete 'wl-parse 'elmo-parse)
 
 (defun wl-delete-duplicates (list &optional all hack-addresses)
   "Delete duplicate equivalent strings from the LIST.
@@ -302,17 +296,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 
 (defalias 'wl-string 'elmo-string)
 (make-obsolete 'wl-string 'elmo-string)
-
-(defun wl-parse-newsgroups (string &optional subscribe-only)
-  (let* ((nglist (wl-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
-	 ret-val)
-    (if (not subscribe-only)
-	nglist
-      (while nglist
-	(if (intern-soft (car nglist) wl-folder-newsgroups-hashtb)
-	    (wl-append ret-val (list (car nglist))))
-	(setq nglist (cdr nglist)))
-      ret-val)))
 
 ;; Check if active region exists or not.
 (if (boundp 'mark-active)
@@ -803,6 +786,8 @@ This function is imported from Emacs 20.7."
   (fset 'wl-biff-start 'ignore)))
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
+  (if (and (not wl-modeline-biff-status) (> new-mails 0))
+      (run-hooks 'wl-biff-notify-hook))
   (setq wl-modeline-biff-status (> new-mails 0))
   (force-mode-line-update t)
   (when notify-minibuf

@@ -1,3 +1,50 @@
+2001-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-edit-addresses): Use
+	`wl-summary-get-original-buffer'
+	(wl-summary-mark-as-unread): Don't call `wl-summary-set-crosspost'.
+	(wl-summary-jump-to-msg-by-message-id-via-nntp):
+	Use `elmo-nntp-parse-newsgroup' instead of `wl-parse-newsgroups'.
+	(wl-summary-get-newsgroups): Eliminated.
+	(wl-summary-set-crosspost): Ditto.
+	(wl-summary-is-crosspost-folder): Ditto.
+	(wl-crosspost-alist-load): Ditto.
+	(wl-crosspost-alist-save): Ditto.
+
+	* wl-folder.el (wl-folder-create-newsgroups-hashtb): Call
+	`elmo-setup-subscribed-newsgroups' instead of
+	`elmo-nntp-make-groups-hashtb'.
+	(wl-folder-suspend): Call `elmo-crosspost-message-alist-save'
+	instead of `wl-crosspost-alist-save'.
+
+	* wl-mime.el (wl-summary-burst): Use `elmo-folder-writable-p' instead
+	of `elmo-folder-message-appendable-p'.
+	(wl-mime-header-presentation-method): Eliminated.
+
+	* wl-message.el (wl-message-prev-page): Don't pass -1 to `recenter'.
+	(Error occurs in emacs21).
+
+	* wl-draft.el (wl-draft-queue-flush): Fix (fetch message to
+	the current buffer).
+
+	* wl.el (wl-save-status): Call `elmo-crosspost-message-alist-save'
+	instead of `wl-crosspost-alist-save'.
+	(wl-init): `elmo-crosspost-message-alist-load'
+	instead of `wl-crosspost-alist-load'
+
+	* wl-util.el (wl-parse): Eliminated (Renamed to `elmo-parse').
+	(wl-parse-newsgroups): Likewise.
+	(wl-biff-notify): Run `wl-biff-notify-hook'.
+
+2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-highlight-folder-current-line): Call
+	`wl-folder-init-icons' when folder icons have not been initialized.
+
+	* wl-vars.el (wl-demo-display-logo): Add `bitmap' to the selection.
+
+	* wl-demo.el: Work also with BITMAP-MULE under Emacs 21.
+
 2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-biff-init-icons): Don't generate icons if the

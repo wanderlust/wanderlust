@@ -30,7 +30,6 @@
 (require 'wl-summary)
 (require 'wl-thread)
 (require 'wl-folder)
-(require 'elmo)
 
 ;;; Code:
 
@@ -106,11 +105,14 @@
 	 (format "Expiring (delete) %s msgs..."
 		 (length delete-list))))
     (message "%s" mess)
-    (if (elmo-folder-delete-messages folder
-				     delete-list)
+    (if (elmo-delete-msgs folder
+			  delete-list
+			  msgdb)
 	(progn
 	  (elmo-msgdb-delete-msgs folder
-				  delete-list)
+				  delete-list
+				  msgdb
+				  t)
 	  (wl-expire-append-log folder delete-list nil 'delete)
 	  (message "%s" (concat mess "done")))
       (error (concat mess "failed!")))))
@@ -126,29 +128,32 @@
 	     refile-list (elmo-msgdb-get-mark-alist msgdb))))
     (when refile-list
      (let* ((doingmes (if copy
-			  "Copying %s"
-			"Expiring (move %s)"))
-	    (mess (format (concat doingmes " %s msgs...")
-			  (elmo-folder-name-internal dst-folder)
-			  (length refile-list))))
-       (message "%s" mess)
-       (unless (or (elmo-folder-exists-p dst-folder)
-		   (elmo-folder-create dst-folder))
-	 (error "%s: create folder failed" dst-folder))
-       (if (elmo-folder-move-messages folder
-				      refile-list
-				      dst-folder
-				      msgdb
-				      nil nil t
-				      copy
-				      preserve-number
-				      nil
-				      wl-expire-add-seen-list)
-	   (progn
-	     (wl-expire-append-log
-	      folder refile-list dst-folder (if copy 'copy 'move))
-	     (message "%s" (concat mess "done")))
-	 (error (concat mess "failed!")))))
+			 "Copying %s"
+		       "Expiring (move %s)"))
+	   (mess (format (concat doingmes " %s msgs...")
+			 dst-folder (length refile-list))))
+      (message "%s" mess)
+      (unless (or (elmo-folder-exists-p dst-folder)
+		  (elmo-create-folder dst-folder))
+	(error "%s: create folder failed" dst-folder))
+      (if wl-expire-add-seen-list
+	  (elmo-msgdb-add-msgs-to-seen-list
+	   dst-folder
+	   refile-list
+	   msgdb
+	   (concat wl-summary-important-mark
+		   wl-summary-read-uncached-mark)))
+      (if (elmo-move-msgs folder
+			  refile-list
+			  dst-folder
+			  msgdb
+			  nil nil t
+			  copy
+			  preserve-number)
+	  (progn
+	    (wl-expire-append-log folder refile-list dst-folder (if copy 'copy 'move))
+	    (message "%s" (concat mess "done")))
+	(error (concat mess "failed!")))))
     (cons refile-list (length refile-list))))
 
 (defun wl-expire-refile-with-copy-reserve-msg
@@ -156,21 +161,19 @@
 	  &optional no-reserve-marks preserve-number copy)
   "Refile message for expire.
 If REFILE-LIST includes reserve mark message, so copy."
-  (when (not (string= (elmo-folder-name-internal folder) dst-folder))
+  (when (not (string= folder dst-folder))
     (let ((msglist refile-list)
-	  (mark-alist (elmo-msgdb-get-mark-alist (elmo-folder-msgdb-internal folder)))
-	  (number-alist (elmo-msgdb-get-number-alist (elmo-folder-msgdb-internal folder)))
-	  (dst-folder (wl-folder-get-elmo-folder dst-folder))
+	  (mark-alist (elmo-msgdb-get-mark-alist msgdb))
+	  (number-alist (elmo-msgdb-get-number-alist msgdb))
 	  (ret-val t)
 	  (copy-reserve-message)
 	  (copy-len 0)
 	  msg msg-id)
       (message "Expiring (move %s) %s msgs..."
-	       (elmo-folder-name-internal dst-folder) (length refile-list))
+	       dst-folder (length refile-list))
       (unless (or (elmo-folder-exists-p dst-folder)
-		  (elmo-folder-create dst-folder))
-	(error "%s: create folder failed" (elmo-folder-name-internal 
-					   dst-folder)))
+		  (elmo-create-folder dst-folder))
+	(error "%s: create folder failed" dst-folder))
       (while (setq msg (wl-pop msglist))
 	(unless (wl-expire-msg-p msg mark-alist)
 	  (setq msg-id (cdr (assq msg number-alist)))
@@ -178,29 +181,28 @@ If REFILE-LIST includes reserve mark message, so copy."
 	      ;; reserve mark message already refiled or expired
 	      (setq refile-list (delq msg refile-list))
 	    ;; reserve mark message not refiled
-	    (wl-append wl-expired-alist (list (cons msg-id
-						    (elmo-folder-name-internal
-						     dst-folder))))
+	    (wl-append wl-expired-alist (list (cons msg-id dst-folder)))
 	    (setq copy-reserve-message t))))
       (when refile-list
+	(if wl-expire-add-seen-list
+	    (elmo-msgdb-add-msgs-to-seen-list
+	     dst-folder
+	     refile-list
+	     msgdb
+	     (concat wl-summary-important-mark
+		     wl-summary-read-uncached-mark)))
 	(unless
 	    (setq ret-val
-		  (elmo-folder-move-messages folder
-					     refile-list
-					     dst-folder
-					     msgdb
-					     nil nil t
-					     copy-reserve-message
-					     preserve-number
-					     nil
-					     wl-expire-add-seen-list
-					     ))
-	  (error "Expire: move msgs to %s failed"
-		 (elmo-folder-name-internal dst-folder)))
-	(wl-expire-append-log (elmo-folder-name-internal folder)
-			      refile-list
-			      (elmo-folder-name-internal dst-folder)
-			      (if copy-reserve-message 'copy 'move))
+		  (elmo-move-msgs folder
+				  refile-list
+				  dst-folder
+				  msgdb
+				  nil nil t
+				  copy-reserve-message
+				  preserve-number))
+	  (error "Expire: move msgs to %s failed" dst-folder))
+	(wl-expire-append-log folder refile-list dst-folder
+			   (if copy-reserve-message 'copy 'move))
 	(setq copy-len (length refile-list))
 	(when copy-reserve-message
 	  (setq refile-list
@@ -209,15 +211,17 @@ If REFILE-LIST includes reserve mark message, so copy."
 		 mark-alist))
 	  (when refile-list
 	   (if (setq ret-val
-		     (elmo-folder-delete-messages folder
-						  refile-list))
-	       (progn
-		 (elmo-msgdb-delete-msgs folder
-					 refile-list)
-		 (wl-expire-append-log folder refile-list nil 'delete))))))
+		    (elmo-delete-msgs folder
+				      refile-list
+				      msgdb))
+	      (progn
+		(elmo-msgdb-delete-msgs folder
+					refile-list
+					msgdb
+					t)
+		(wl-expire-append-log folder refile-list nil 'delete))))))
       (let ((mes (format "Expiring (move %s) %s msgs..."
-			 (elmo-folder-name-internal dst-folder)
-			 (length refile-list))))
+			 dst-folder (length refile-list))))
 	(if ret-val
 	    (message (concat mes "done"))
 	  (error (concat mes "failed!"))))
@@ -225,40 +229,40 @@ If REFILE-LIST includes reserve mark message, so copy."
 
 (defun wl-expire-archive-get-folder (src-folder &optional fmt)
   "Get archive folder name from SRC-FOLDER."
-  (let* ((fmt (or fmt wl-expire-archive-folder-name-fmt))
+  (let* ((spec (elmo-folder-get-spec src-folder))
+	 (fmt (or fmt wl-expire-archive-folder-name-fmt))
 	 (archive-spec (char-to-string
-			(car (rassq 'archive elmo-folder-type-alist))))
+			(car (rassq 'archive elmo-spec-alist))))
 	 dst-folder-base dst-folder-fmt prefix)
-    (cond ((eq (elmo-folder-type-internal src-folder) 'localdir)
+    (cond ((eq (car spec) 'localdir)
+	   (setq dst-folder-base (concat archive-spec (nth 1 spec))))
+	  ((stringp (nth 1 spec))
 	   (setq dst-folder-base
-		 (concat archive-spec
-			 (elmo-folder-name-internal src-folder))))
+		 (elmo-concat-path (format "%s%s" archive-spec (car spec))
+				   (nth 1 spec))))
 	  (t
 	   (setq dst-folder-base
-		 (elmo-concat-path
-		  (format "%s%s" archive-spec (elmo-folder-type-internal
-					       src-folder))
-		  (substring (elmo-folder-name-internal src-folder)
-			     (length (elmo-folder-prefix-internal src-folder)))))))
+		 (elmo-concat-path (format "%s%s" archive-spec (car spec))
+				   (elmo-replace-msgid-as-filename
+				    src-folder)))))
     (setq dst-folder-fmt (format fmt
 				 dst-folder-base
 				 wl-expire-archive-folder-type))
     (setq dst-folder-base (format "%s;%s"
 				  dst-folder-base
 				  wl-expire-archive-folder-type))
-    (when wl-expire-archive-folder-prefix
+    (when (and wl-expire-archive-folder-prefix
+	       (stringp (nth 1 spec)))
       (cond ((eq wl-expire-archive-folder-prefix 'short)
-	     (setq prefix (file-name-nondirectory
-			   (elmo-folder-name-internal src-folder))))
+	     (setq prefix (file-name-nondirectory (nth 1 spec))))
 	    (t
-	     (setq prefix (elmo-folder-name-internal src-folder))))
+	     (setq prefix (nth 1 spec))))
       (setq dst-folder-fmt (concat dst-folder-fmt ";" prefix))
       (setq dst-folder-base (concat dst-folder-base ";" prefix)))
     (cons dst-folder-base dst-folder-fmt)))
 
 (defsubst wl-expire-archive-get-max-number (dst-folder-base &optional regexp)
-  (let ((files (reverse (sort (elmo-folder-list-subfolders
-			       (elmo-make-folder dst-folder-base))
+  (let ((files (reverse (sort (elmo-list-folders dst-folder-base)
 			      'string<)))
 	(regexp (or regexp wl-expire-archive-folder-num-regexp))
 	filenum in-folder)
@@ -266,8 +270,7 @@ If REFILE-LIST includes reserve mark message, so copy."
       (while files
 	(when (string-match regexp (car files))
 	  (setq filenum (elmo-match-string 1 (car files)))
-	  (setq in-folder (elmo-folder-status
-			   (wl-folder-get-elmo-folder (car files))))
+	  (setq in-folder (elmo-max-of-folder (car files)))
 	  (throw 'done (cons in-folder filenum)))
 	(setq files (cdr files))))))
 
@@ -277,12 +280,9 @@ If REFILE-LIST includes reserve mark message, so copy."
   (let ((len 0) (max-num 0)
 	folder-info dels)
     (if (or (and file (setq folder-info
-			    (cons (elmo-folder-status
-				   (wl-folder-get-elmo-folder file))
-				  nil)))
-	    (setq folder-info (wl-expire-archive-get-max-number
-			       dst-folder-base
-			       regexp)))
+			    (cons (elmo-max-of-folder file) nil)))
+	    (setq folder-info (wl-expire-archive-get-max-number dst-folder-base
+								regexp)))
 	(progn
 	  (setq len (cdar folder-info))
 	  (when preserve-number
@@ -473,32 +473,32 @@ Refile to archive folder followed message date."
 	   hide-list (elmo-msgdb-get-mark-alist msgdb))))
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
     (message mess)
-    (elmo-msgdb-delete-msgs folder hide-list)
+    (elmo-msgdb-delete-msgs folder hide-list msgdb t)
     (elmo-msgdb-append-to-killed-list folder hide-list)
-    (elmo-folder-commit folder)
+    (elmo-msgdb-save folder msgdb)
     (message (concat mess "done"))
     (cons hide-list (length hide-list))))
 
-(defsubst wl-expire-folder-p (entity)
-  "Return non-nil, when ENTITY matched `wl-expire-alist'."
-  (wl-get-assoc-list-value wl-expire-alist entity))
+(defsubst wl-expire-folder-p (folder)
+  "Return non-nil, when FOLDER matched `wl-expire-alist'."
+  (wl-get-assoc-list-value wl-expire-alist folder))
 
-(defun wl-summary-expire (&optional folder notsummary nolist)
+(defun wl-summary-expire (&optional folder-name notsummary nolist)
   ""
   (interactive)
-  (let ((folder (or folder wl-summary-buffer-elmo-folder))
+  (let ((folder (or folder-name wl-summary-buffer-folder-name))
+	(alist wl-expire-alist)
 	(deleting-info "Expiring...")
 	expires)
-    (when (and (or (setq expires (wl-expire-folder-p
-				  (elmo-folder-name-internal folder)))
+    (when (and (or (setq expires (wl-expire-folder-p folder))
 		   (progn (and (interactive-p)
 			       (message "no match %s in wl-expire-alist"
 					folder))
 			  nil))
 	       (or (not (interactive-p))
-		   (y-or-n-p (format "Expire %s? " (elmo-folder-name-internal
-						    folder)))))
-      (let* ((msgdb (wl-summary-buffer-msgdb))
+		   (y-or-n-p (format "Expire %s? " folder))))
+      (let* ((msgdb (or wl-summary-buffer-msgdb
+			(elmo-msgdb-load folder)))
 	     (number-alist (elmo-msgdb-get-number-alist msgdb))
 	     (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	     expval rm-type val-type value more args
@@ -515,7 +515,7 @@ Refile to archive folder followed message date."
 	   ((eq val-type nil))
 	   ((eq val-type 'number)
 	    (let* ((msgs (if (not nolist)
-			     (elmo-folder-list-messages folder)
+			     (elmo-list-folder folder)
 			   (mapcar 'car number-alist)))
 		   (msglen (length msgs))
 		   (more (or more (1+ value)))
@@ -578,13 +578,9 @@ Refile to archive folder followed message date."
 	    (wl-expired-alist-save))
 	  (run-hooks 'wl-summary-expire-hook)
 	  (if delete-list
-	      (message "Expiring %s is done" (elmo-folder-name-internal
-					      folder))
+	      (message "Expiring %s is done" folder)
 	    (and (interactive-p)
 		 (message "No expire"))))
-
-
-
 	delete-list
 	))))
 
@@ -597,28 +593,25 @@ Refile to archive folder followed message date."
 	(setq flist (cdr flist)))))
    ((stringp entity)
     (when (wl-expire-folder-p entity)
-      (let* ((folder (wl-folder-get-elmo-folder entity))
-	     (update-msgdb (cond
+      (let ((update-msgdb (cond
 			   ((consp wl-expire-folder-update-msgdb)
 			    (wl-string-match-member
 			     entity
 			     wl-expire-folder-update-msgdb))
 			   (t
 			    wl-expire-folder-update-msgdb)))
-	    (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
+	    (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
 					  (wl-summary-always-sticky-folder-p
-					   folder))
+					   entity))
 				      wl-summary-highlight))
 	    wl-auto-select-first ret-val)
 	(save-window-excursion
 	  (save-excursion
 	    (and update-msgdb
 		 (wl-summary-goto-folder-subr entity 'force-update nil))
-	    (setq ret-val (wl-summary-expire folder (not update-msgdb)))
+	    (setq ret-val (wl-summary-expire entity (not update-msgdb)))
 	    (if update-msgdb
-		(progn
-		  (wl-summary-save-view 'keep)
-		  (elmo-folder-commit wl-summary-buffer-elmo-folder))
+		(wl-summary-save-status 'keep)
 	      (if ret-val
 		  (wl-folder-check-entity entity))))))))))
 
@@ -682,19 +675,19 @@ Refile to archive folder followed message date."
     copied-list
     ))
 
-(defun wl-summary-archive (&optional arg folder notsummary nolist)
+(defun wl-summary-archive (&optional arg folder-name notsummary nolist)
   (interactive "P")
-  (let* ((folder (or folder wl-summary-buffer-elmo-folder))
-	 (msgdb (or (wl-summary-buffer-msgdb)
+  (let* ((folder (or folder-name wl-summary-buffer-folder-name))
+	 (msgdb (or wl-summary-buffer-msgdb
 		    (elmo-msgdb-load folder)))
 	 (msgs (if (not nolist)
-		   (elmo-folder-list-messages folder)
+		   (elmo-list-folder folder)
 		 (mapcar 'car (elmo-msgdb-get-number-alist msgdb))))
 	 (alist wl-archive-alist)
 	 func dst-folder archive-list)
     (if arg
 	(let ((wl-default-spec (char-to-string
-				(car (rassq 'archive elmo-folder-type-alist)))))
+				(car (rassq 'archive elmo-spec-alist)))))
 	  (setq dst-folder (wl-summary-read-folder
 			    (concat wl-default-spec (substring folder 1))
 			    "for archive"))))
@@ -728,7 +721,7 @@ Refile to archive folder followed message date."
 	(wl-folder-archive-entity (car flist))
 	(setq flist (cdr flist)))))
    ((stringp entity)
-    (wl-summary-archive nil (wl-folder-get-elmo-folder entity) t))))
+    (wl-summary-archive nil entity t))))
 
 ;; append log
 

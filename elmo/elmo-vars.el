@@ -277,7 +277,10 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 If server doesn't accept asynchronous commands, this variable should be
 set as non-nil.")
 
-(defvar elmo-hash-maximum-size 4096
+(defvar elmo-hash-minimum-size 1023
+  "Minimum size of hash table.")
+
+(defvar elmo-hash-maximum-size 4095
   "Maximum size of hash table.")
 
 (defvar elmo-use-decoded-cache (featurep 'xemacs)

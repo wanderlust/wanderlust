@@ -178,13 +178,13 @@ value is used."
    elmo-message-sorted-field-list)
   (run-hooks 'elmo-message-header-inserted-hook))
 
-(defun elmo-make-mime-message-location (folder number strategy rawbuf unseen)
+(defun elmo-make-mime-message-location (folder number strategy rawbuf unread)
 ;; Return the MIME message location structure.
 ;; FOLDER is the ELMO folder structure.
 ;; NUMBER is the number of the message in the FOLDER.
 ;; STRATEGY is the message fetching strategy.
 ;; RAWBUF is the output buffer for original message.
-;; If second optional argument UNSEEN is non-nil, message is not marked
+;; If second optional argument UNREAD is non-nil, message is not marked
 ;; as read.
   (if (and strategy
 	   (eq (elmo-fetch-strategy-entireness strategy) 'section))
@@ -200,7 +200,7 @@ value is used."
 	(if strategy
 	    (elmo-message-fetch folder number strategy
 				nil (current-buffer)
-				unseen))))
+				unread))))
     rawbuf))
 
 (defun elmo-mime-message-display (folder number viewbuf rawbuf original-mode
