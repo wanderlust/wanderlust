@@ -1316,7 +1316,8 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 		     (t
 		      (throw 'done nil)))))))
 	  (quit nil))
-      (when wl-draft-send-confirm-with-preview
+      (when (and wl-draft-send-confirm-with-preview
+		 (eq major-mode 'mime-view-mode))
 	(wl-mime-quit-preview)))))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
