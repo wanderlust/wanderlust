@@ -13,6 +13,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust. 21 Mar 2000
 
 *** All wl-* files are moved to the directory 'wl'.
 
+** Syntax of wl-refile-rule-alist is extended (compatible with older one).
+
 * Changes in version 1.1.0 from 1.0.3.
 
 ** Install

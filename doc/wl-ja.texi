@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust $B$N(B texinfo
-@set Time-stamp: <2000-04-10 09:51:22 teranisi>
+@set Time-stamp: <00/04/12 00:01:23 teranisi>
 @set version 1.1.1
 @synindex pg cp
 @finalout
@@ -2257,6 +2257,9 @@ imap4 $B$N%a%C%;!<%8$@$1$,@hFI$_$5$l$^$9!#(B
 @end table
 
 @subsection $B<+F0%j%U%!%$%k(B
+@vindex elmo-msgdb-extra-fields
+@vindex wl-refile-rule-alist
+@findex wl-summary-auto-refile
 
 $B%a%C%;!<%8$N%X%C%@>pJs$+$iG$0U$N%U%)%k%@$X?6$jJ,$1$k<+F0%j%U%!%$%k5!G=$,(B
 @kbd{C-o} (@code{wl-summary-auto-refile}) $B$G;HMQ$G$-$^$9!#<+F0%j%U%!%$%k$O(B 
@@ -2267,10 +2270,10 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 @lisp
 (setq elmo-msgdb-extra-fields
       '("x-ml-name"
-      "reply-to"
-      "sender"
-      "mailing-list"
-      "newsgroups"))
+        "reply-to"
+        "sender"
+        "mailing-list"
+        "newsgroups"))
 @end lisp
 
 @noindent
@@ -2279,20 +2282,53 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 $B$,$"$j$^$9!#(B
 
 $B<!$K?6$jJ,$1$9$k%k!<%k$r@_Dj$7$^$9!#(B
+$B<+F0?6$jJ,$1$O!$JQ?t(B @code{wl-refile-rule-alist} $B$NCM$K4p$E$$$F9T$o$l$^$9!#(B
+@code{wl-refile-rule-alist} $B$O!"(B
+
+@example
+        ($B%U%#!<%k%I(B ($B@55,I=8=(B . $B?6$jJ,$1@h(B)
+                    ($B@55,I=8=(B . $B?6$jJ,$1@h(B)
+                    @dots{})
+@end example
+
+$B$N$h$&$J%k!<%k$N%j%9%H$H$J$C$F$$$^$9!#3F%k!<%k$O!"!X%U%#!<%k%I!Y$NCM$,(B
+$B!X@55,I=8=!Y$K%^%C%A$9$k$H$-$K!X?6$jJ,$1@h!Y$K?6$jJ,$1$k$H$$$&0UL#$r;}$A(B
+$B$^$9!#A0J}$K;XDj$5$l$?%k!<%k$,M%@h$5$l$^$9!#(B
+
+$B!X%U%#!<%k%I!YItJ,$K$O!"%U%#!<%k%IL>$NJ8;zNs$r;XDj$7$^$9!#$^$?!"%U%#!<%k(B
+$B%IL>$NJ8;zNs$N%j%9%H$r;XDj$9$k$3$H$b$G$-$^$9!#$3$N>l9g!"%j%9%H$N$$$:$l$+(B
+$B$N%U%#!<%k%I$NCM$,%^%C%A$7$?$H$-$KH/2P$7$^$9(B(OR $B>r7o$H$J$j$^$9(B)$B!#(B
+
+$B!X@55,I=8=!Y$K$O%U%#!<%k%I$NCM$K%^%C%A$5$;$k@55,I=8=J8;zNs$r;XDj$7$^$9!#(B
+$B!X?6$jJ,$1@h!Y$K$O?6$jJ,$1@h$N%U%)%k%@L>$NJ8;zNs$r;XDj$7$^$9!#!X?6$jJ,$1(B
+$B@h!YItJ,$K$O!":F$S%k!<%k$r=q$/$3$H$b$G$-!"$=$N>l9g!"$=$N%k!<%k$N%U%#!<%k(B
+$B%I$NCM$N>r7o$H8=:_$N%k!<%k$N%U%#!<%k%I$NCM$N>r7o$,K~$?$5$l$?$H$-$KH/2P$7(B
+$B$^$9(B(AND $B>r7o$H$J$j$^$9(B)$B!#(B
+
+$B$^$?!"!X@55,I=8=!Y$G%^%C%A$7$?ItJ,J8;zNs$O!"!X?6$jJ,$1@h!Y$K0J2<$N(B
+$B;XDj$r$9$k$3$H$G;2>H$G$-$^$9!#(B
+
+@example
+\&            $B%^%C%A$7$?J8;zNsA4BN$r;2>H$7$^$9!#(B
+\N (N $B$O?t;z(B) N $BHVL\$N(B `\(...\)' $B$K%^%C%A$7$?J8;zNs$r;2>H$7$^$9!#(B
+@end example
+
+$B0J2<$O(B @code{wl-refile-rule-alist} $B$N0lNc$G$9!#(B
 
 @lisp
 (setq wl-refile-rule-alist
-      '(
-        ("x-ml-name"
+      '(("x-ml-name"
          ("^Wanderlust" . "+wl")
          ("^Elisp" . "+elisp"))
+        (("To" "Cc")
+         ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
         ("From"
-         ("teranisi@@isl.ntt.co.jp" . "+teranisi"))))
+         ("me@@gohome.org" . ("To" ("you@@gohome.org" . 
+                                    "+from-me-to-you"))))))
 @end lisp
 
-$B$3$N$h$&$J@_Dj$r$7(B @kbd{C-o} (@code{wl-summary-auto-refile}) $B$G>r7o$K(B
-$B%^%C%A$7$?%a%C%;!<%8$K%j%U%!%$%k%^!<%/$,IU2C$5$l$^$9!#(B@kbd{x} $B$G%j%U%!%$(B
-$B%k$r<B9T$7$^$9!#%k!<%k$NA0J}$K$"$k?6$jJ,$1>r7o$,M%@h$5$l$^$9!#(B
+@kbd{C-o} (@code{wl-summary-auto-refile}) $B$G>r7o$K%^%C%A$7$?%a%C%;!<%8$K(B
+$B%j%U%!%$%k%^!<%/$,IU2C$5$l$^$9!#(B@kbd{x} $B$G%j%U%!%$%k$r<B9T$7$^$9!#(B
 
 @code{wl-summary-auto-refile-skip-marks} $B$r@_Dj$9$k$3$H$K$h$j!"(B
 $B<+F0%j%U%!%$%k$NBP>]$H$9$k%a%C%;!<%8$rJQ99$9$k$3$H$,$G$-$^$9!#(B
@@ -2307,7 +2343,6 @@ msgdb $B$N(B overview $B>pJs$r85$K?6$jJ,$1$7$^$9!#(B
 
 @noindent
 $B$NMM$K(B @code{wl-summary-auto-refile-skip-marks} $B$r(B nil $B$K$7$^$9!#(B
-
 
 @subsection $B%9%F%#%C%-!<%5%^%j(B
 @cindex Summary, Sticky
@@ -2487,12 +2522,14 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @kindex N (Summary)
 @findex wl-summary-down
 $B2<J}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+$B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
 (@code{wl-summary-down})
 
 @item P
 @kindex P (Summary)
 @findex wl-summary-up
 $B>eJ}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
+$B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
 (@code{wl-summary-up})
 
 @item w
