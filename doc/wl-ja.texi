@@ -6773,8 +6773,8 @@ non-spam としての学習に加えて、spam に行なった学習を削除します。
 @findex wl-summary-mark-spam
 @code{wl-spam-auto-check-marks} に含まれるマークを持つメッセージについて 
 spam かどうかのテストを行います。spam と判定されたメッセージには、spam 
-マークが付けられます。prefix argument をつけた場合は、全てのメッセージを
-対象とします。
+マークが付けられます。prefix argument をつけた場合は、マークにかかわらず
+全てのメッセージを対象とします。
 
 @item k s
 @kindex k s (Summary)
@@ -6795,6 +6795,12 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @kindex k N (Summary)
 @findex wl-summary-register-as-good-all
 フォルダ内の全てのメッセージを non-spam として登録します。
+
+@item m k
+@kindex m k (Summary)
+@findex wl-summary-target-mark-spam
+まとめ処理用マーク @samp{*} のついたメッセージに spam マーク(@samp{s})を
+付けます。
 
 @item m s
 @kindex m s (Summary)
