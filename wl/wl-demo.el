@@ -102,9 +102,8 @@ any conversions and evaluate FORMS there like `progn'."
 (eval-when-compile
   (defmacro wl-logo-xpm ()
     ;; (WIDTH HEIGHT DATA)
-    (let ((file (expand-file-name
-		 (concat wl-demo-icon-name ".xpm")
-		 wl-icon-dir)))
+    (let ((file (expand-file-name (concat wl-demo-icon-name ".xpm")
+				  wl-icon-dir)))
       (if (file-exists-p file)
 	  (wl-demo-with-temp-file-buffer file
 	    (re-search-forward
@@ -116,9 +115,8 @@ any conversions and evaluate FORMS there like `progn'."
 		  (buffer-string))))))
   (defmacro wl-logo-xbm ()
     ;; (WIDTH HEIGHT DATA)
-    (let ((file (expand-file-name
-		 (concat wl-demo-icon-name ".xbm")
-		 wl-icon-dir)))
+    (let ((file (expand-file-name (concat wl-demo-icon-name ".xbm")
+				  wl-icon-dir)))
       (if (file-exists-p file)
 	  (wl-demo-with-temp-file-buffer file
 	    (let ((case-fold-search t)
@@ -146,17 +144,21 @@ any conversions and evaluate FORMS there like `progn'."
     (let ((file (expand-file-name (concat wl-demo-icon-name ".xbm")
 				  wl-icon-dir)))
       (if (file-exists-p file)
-	  (if (condition-case nil (require 'bitmap) (error nil))
-	      (list 'cons t (bitmap-decode-xbm
-			     (bitmap-read-xbm-file file)))
+	  (if (condition-case nil
+		  (require 'bitmap)
+		(error nil))
+	      (list 'cons t (bitmap-decode-xbm (bitmap-read-xbm-file file)))
 	    (wl-demo-with-temp-file-buffer file
 	      (list 'cons nil (buffer-string))))))))
 
 (let ((xpm (wl-logo-xpm)))
-  (if (and xpm (or (and (featurep 'xemacs)
-			(featurep 'xpm))
-		   (and (condition-case nil (require 'image) (error nil))
-			(image-type-available-p 'xpm))))
+  (if (and xpm
+	   (or (and (featurep 'xemacs)
+		    (featurep 'xpm))
+	       (and (condition-case nil
+			(require 'image)
+		      (error nil))
+		    (image-type-available-p 'xpm))))
       (progn
 	(put 'wl-logo-xpm 'width (car xpm))
 	(put 'wl-logo-xpm 'height (nth 1 xpm))
@@ -165,67 +167,87 @@ any conversions and evaluate FORMS there like `progn'."
 		 (make-glyph (vector 'xpm ':data (nth 2 xpm)))
 	       (create-image (nth 2 xpm) 'xpm t))))))
 
-(let ((xbm (wl-logo-xbm))
-      (bm (wl-logo-bitmap)))
-  (if (and xbm (or (featurep 'xemacs)
-		   (featurep 'image)
-		   (condition-case nil (require 'bitmap) (error nil))))
+(let (width height)
+  (let ((xbm (wl-logo-xbm)))
+    (setq width (car xbm)
+	  height (nth 1 xbm))
+    (if (and xbm
+	     (or (featurep 'xemacs)
+		 (condition-case nil
+		     (require 'image)
+		   (error nil))))
+	(progn
+	  (put 'wl-logo-xbm 'width width)
+	  (put 'wl-logo-xbm 'height height)
+	  (put 'wl-logo-xbm 'image
+	       (if (featurep 'xemacs)
+		   (make-glyph (vector 'xbm ':data xbm))
+		 (create-image (nth 2 xbm) 'xbm t
+			       ':width (car xbm) ':height (nth 1 xbm)))))))
+  (if (and width
+	   (not (featurep 'xemacs))
+	   (condition-case nil
+	       (require 'bitmap)
+	     (error nil)))
       (progn
-	(put 'wl-logo-xbm 'width (car xbm))
-	(put 'wl-logo-xbm 'height (nth 1 xbm))
-	(put 'wl-logo-xbm 'image
-	     (cond
-	      ((featurep 'xemacs)
-	       (make-glyph (vector 'xbm ':data xbm)))
-	      ((featurep 'image)
-	       (create-image (nth 2 xbm) 'xbm t
-			     ':width (car xbm) ':height (nth 1 xbm)))
-	      (t
-	       (let ((default-enable-multibyte-characters t)
-		     (default-mc-flag t))
-		 (with-temp-buffer
-		   (let* ((cmp (if (car bm)
-				   (cdr bm)
-				 (insert (cdr bm))
-				 (prog1
-				     (bitmap-decode-xbm (bitmap-read-xbm-buffer
-							 (current-buffer)))
-				   (erase-buffer))))
-			  (len (length cmp))
-			  (i 1))
-		     (insert (bitmap-compose (aref cmp 0)))
-		     (while (< i len)
-		       (insert "\n" (bitmap-compose (aref cmp i)))
-		       (setq i (1+ i)))
-		     (buffer-string))))))))))
+	(put 'wl-logo-bitmap 'width width)
+	(put 'wl-logo-bitmap 'height height)
+	(let ((default-enable-multibyte-characters t)
+	      (default-mc-flag t))
+	  (with-temp-buffer
+	    (let* ((bm (wl-logo-bitmap))
+		   (cmp (if (car bm)
+			    (cdr bm)
+			  (insert (cdr bm))
+			  (prog1
+			      (bitmap-decode-xbm (bitmap-read-xbm-buffer
+						  (current-buffer)))
+			    (erase-buffer))))
+		   (len (length cmp))
+		   (i 1))
+	      (insert (bitmap-compose (aref cmp 0)))
+	      (while (< i len)
+		(insert "\n" (bitmap-compose (aref cmp i)))
+		(setq i (1+ i)))
+	      (put 'wl-logo-bitmap 'image (buffer-string))))))))
+
+(eval-when-compile
+  (defmacro wl-demo-image-type-alist ()
+    (` (append (if (and (get 'wl-logo-xpm 'width)
+			(or (and (featurep 'xemacs)
+				 (featurep 'xpm)
+				 (device-on-window-system-p))
+			    (and wl-on-emacs21
+				 (display-graphic-p)
+				 (image-type-available-p 'xpm))))
+		   '(("xpm" . xpm)))
+	       (if (and (get 'wl-logo-xbm 'width)
+			(or (and (featurep 'xemacs)
+				 (device-on-window-system-p))
+			    (and wl-on-emacs21
+				 (display-graphic-p))))
+		   '(("xbm" . xbm)))
+	       (if (and (get 'wl-logo-bitmap 'width)
+			(not (featurep 'xemacs))
+			window-system
+			(featurep 'bitmap))
+		   '(("bitmap" . bitmap)))
+	       '(("ascii"))))))
 
 (defun wl-demo (&optional image-type)
   "Demo on the startup screen.
 Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
   (interactive "P")
-  (if (and image-type (interactive-p))
-      (let* ((selection (append
-			 (if (and (get 'wl-logo-xbm 'width)
-				  (cond ((featurep 'xemacs)
-					 (device-on-window-system-p))
-					(wl-on-emacs21
-					 (display-graphic-p))
-					(t window-system)))
-			     '(("xbm" . xbm)))
-			 (if (and (get 'wl-logo-xpm 'width)
-				  (or (and (featurep 'xemacs)
-					   (featurep 'xpm)
-					   (device-on-window-system-p))
-				      (and wl-on-emacs21
-					   (display-graphic-p)
-					   (featurep 'image)
-					   (image-type-available-p 'xpm))))
-			     '(("xpm" . xpm)))
-			 '(("ascii"))))
-	     (type (completing-read "Image type: " selection nil t)))
-	(setq image-type (if (assoc type selection)
-			     (cdr (assoc type selection)))))
-    (setq image-type (or image-type wl-demo-display-logo)))
+  (let ((selection (wl-demo-image-type-alist))
+	type)
+    (if (and image-type (interactive-p))
+	(setq type (completing-read "Image type: " selection nil t)
+	      image-type (if (assoc type selection)
+			     (cdr (assoc type selection))))
+      (if (setq type (assoc (format "%s" (or image-type wl-demo-display-logo))
+			    selection))
+	  (setq image-type (cdr type))
+	(setq image-type (cdr (car selection))))))
   (let ((demo-buf (let ((default-enable-multibyte-characters t)
 			(default-mc-flag t)
 			(default-line-spacing 0))
@@ -241,7 +263,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 				    nil demo-buf))
 		 (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
 		 (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))))
-	  ((and wl-on-emacs21 (display-graphic-p))
+	  ((and wl-on-emacs21
+		(display-graphic-p))
 	   (make-local-hook 'kill-buffer-hook)
 	   (let* ((frame (selected-frame))
 		  (toolbar (frame-parameter frame 'tool-bar-lines)))
@@ -259,7 +282,12 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      nil t)
 	     (set-face-background 'fringe (face-background 'default frame)
 				  frame))))
-    (let ((logo (cond ((eq 'xbm image-type)
+    (let ((logo (cond ((eq 'bitmap image-type)
+		       (if (and (get 'wl-logo-bitmap 'width)
+				(not (featurep 'xemacs))
+				(featurep 'bitmap))
+			   'wl-logo-bitmap))
+		      ((eq 'xbm image-type)
 		       (if (and (get 'wl-logo-xbm 'width)
 				(cond ((featurep 'xemacs)
 				       (device-on-window-system-p))
@@ -274,7 +302,6 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 					 (device-on-window-system-p))
 				    (and wl-on-emacs21
 					 (display-graphic-p)
-					 (featurep 'image)
 					 (image-type-available-p 'xpm))))
 			   'wl-logo-xpm))))
 	  (ww (window-width))
@@ -295,7 +322,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 					 2 (window-pixel-width))))
 	      (set-extent-end-glyph (make-extent (point) (point)) image))
 	     ((and wl-on-emacs21
-		   (display-graphic-p))
+		   (display-graphic-p)
+		   (not (eq 'wl-logo-bitmap logo)))
 	      (if (eq 'wl-logo-xbm logo)
 		  (let ((bg (face-background 'wl-highlight-logo-face))
 			(fg (face-foreground 'wl-highlight-logo-face)))

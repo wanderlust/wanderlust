@@ -1,7 +1,7 @@
 ;;; wl-vars.el -- Variable definitions for Wanderlust.
 
-;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
+;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -2081,20 +2081,17 @@ If it is a number, only numbers will be highlighted."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-demo-display-logo (or (and (featurep 'xemacs)
-					 (if (featurep 'xpm)
-					     'xpm 'xbm))
-				    (and (module-installed-p 'image)
-					 (if (image-type-available-p 'xpm)
-					     'xpm 'xbm))
-				    (and (module-installed-p 'bitmap)
-					 'xbm))
-  "If non-nil, show graphic logo in the startup screen.
-You can set it to a symbol `xbm' to limit the image format to
-XBM even if XPM can be shown."
-  :type '(radio (const :tag "OFF" nil)
-		(const :tag "XBM (possibly BITMAP-MULE)" xbm)
-		(sexp :format "ON  (any format)" :value t))
+(defcustom wl-demo-display-logo (if (or (featurep 'xemacs)
+					(module-installed-p 'image)
+					(module-installed-p 'bitmap))
+				    t)
+  "If it is T, show graphic logo in the startup screen.  You can set it to
+a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
+  :type '(radio (const :tag "Off" nil)
+		(const :tag "On (any format)" t)
+		(const xpm)
+		(const xbm)
+		(const :tag "bitmap (using BITMAP-MULE)" bitmap))
   :group 'wl-pref)
 
 ;;; Internal variables
