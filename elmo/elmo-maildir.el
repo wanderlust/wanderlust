@@ -45,6 +45,22 @@
 				    (unread ?S 'remove)
 				    (answered ?R)))
 
+(defcustom elmo-maildir-separator
+  (if (memq system-type
+	    '(windows-nt OS/2 emx ms-dos win32 w32 mswindows cygwin))
+      ?\- ?:)
+  "Character separating the id section from the flags section.
+According to the maildir specification, this should be a colon (?:),
+but some file systems don't support colons in filenames."
+  :type 'character
+  :group 'elmo)
+
+(defmacro elmo-maildir-adjust-separator (string)
+  `(if (= elmo-maildir-separator ?:)
+       ,string
+     (elmo-replace-in-string
+      ,string ":" (char-to-string elmo-maildir-separator))))
+
 ;;; ELMO Maildir folder
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
@@ -101,7 +117,9 @@ LOCATION."
     (setq locations
 	  (mapcar
 	   (lambda (x)
-	     (if (string-match "^\\([^:]+\\):\\([^:]+\\)$" x)
+	     (if (string-match
+		  (elmo-maildir-adjust-separator "^\\([^:]+\\):\\([^:]+\\)$")
+		  x)
 		 (progn
 		   (setq sym (elmo-match-string 1 x)
 			 flag-list (string-to-char-list
@@ -260,14 +278,18 @@ LOCATION."
        (expand-file-name (car news) (expand-file-name "new" maildir))
        (expand-file-name (concat
 			  (car news)
-			  (unless (string-match ":2,[A-Z]*$" (car news))
-			    ":2,"))
+			  (unless (string-match
+				   (elmo-maildir-adjust-separator ":2,[A-Z]*$")
+				   (car news))
+			    (elmo-maildir-adjust-separator  ":2,")))
 			 (expand-file-name "cur" maildir)))
       (setq news (cdr news)))))
 
 (defun elmo-maildir-set-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
-  (if (string-match "^\\([^:]+:[12],\\)\\(.*\\)$" filename)
+  (if (string-match
+       (elmo-maildir-adjust-separator "^\\([^:]+:[12],\\)\\(.*\\)$")
+       filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
 	(unless (memq mark flaglist)
@@ -277,12 +299,15 @@ LOCATION."
 			       (char-list-to-string flaglist)))))
     ;; Rescue no info file in maildir.
     (rename-file filename
-		 (concat filename ":2," (char-to-string mark))))
+		 (concat filename
+			 (elmo-maildir-adjust-separator ":2,")
+			 (char-to-string mark))))
   t)
 
 (defun elmo-maildir-delete-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
-  (if (string-match "^\\([^:]+:2,\\)\\(.*\\)$" filename)
+  (if (string-match (elmo-maildir-adjust-separator "^\\([^:]+:2,\\)\\(.*\\)$")
+		    filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
 	(when (memq mark flaglist)
@@ -392,6 +417,23 @@ file name for maildir directories."
 	     basedir)))
     filename))
 
+(defun elmo-maildir-move-file (src dst)
+  (or (condition-case nil
+	  (progn
+	    ;; 1. Try add-link-to-file, then delete the original.
+	    ;;    This is safe on NFS.
+	    (add-name-to-file src dst)
+	    (ignore-errors
+	      ;; It's ok if the delete-file fails;
+	      ;; elmo-maildir-cleanup-temporal will catch it later.
+	      (delete-file src))
+	    t)
+	(error))
+      ;; 2. Even on systems with hardlinks, some filesystems (like AFS)
+      ;;    might not support them, so fall back on rename-file. This is
+      ;;    our best shot at atomic when add-name-to-file fails.
+      (rename-file src dst)))
+
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
 					       &optional flags number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
@@ -405,10 +447,7 @@ file name for maildir directories."
 	    (copy-to-buffer dst-buf (point-min) (point-max)))
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg))
-	  ;; add link from new.
-	  ;; Some filesystem (like AFS) does not have hard-link.
-	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
-	  (elmo-copy-file
+	  (elmo-maildir-move-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
@@ -462,9 +501,7 @@ file name for maildir directories."
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)
-	  ;; Some filesystem (like AFS) does not have hard-link.
-	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
-	  (elmo-copy-file
+	  (elmo-maildir-move-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))

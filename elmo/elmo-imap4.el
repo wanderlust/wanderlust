@@ -214,12 +214,12 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defsubst elmo-imap4-decode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (utf7-decode-string string 'imap)
+      (utf7-decode string 'imap)
     string))
 
 (defsubst elmo-imap4-encode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (utf7-encode-string string 'imap)
+      (utf7-encode string 'imap)
     string))
 
 ;;; Response

@@ -4708,25 +4708,23 @@ If ARG is numeric number, decode message as following:
   (interactive)
   (let ((filename)
 	(num (wl-summary-message-number)))
-    (if (null wl-save-dir)
-	(setq wl-save-dir wl-temporary-file-directory))
+    (unless wl-save-dir
+      (setq wl-save-dir wl-temporary-file-directory))
     (if num
 	(save-excursion
 	  (setq filename (expand-file-name
 			  (concat (int-to-string num)
 				  wl-summary-save-file-suffix)
 			  wl-save-dir))
-	  (if (null (and arg
-			 (null (file-exists-p filename))))
-	      (setq filename
-		    (read-file-name "Save to file: " filename)))
-
+	  (when (or (null arg)
+		    (file-exists-p filename))
+	    (setq filename (read-file-name "Save to file: " filename)))
 	  (wl-summary-set-message-buffer-or-redisplay)
 	  (set-buffer (wl-message-get-original-buffer))
-	  (if (and (null arg) (file-exists-p filename))
-	      (if (y-or-n-p "File already exists.  override it? ")
-		  (write-region (point-min) (point-max) filename))
-	    (write-region (point-min) (point-max) filename)))
+	  (when (or arg
+		    (not (file-exists-p filename))
+		    (y-or-n-p "File already exists.  override it? "))
+	    (write-region-as-binary (point-min) (point-max) filename)))
       (message "No message to save."))
     num))
 
