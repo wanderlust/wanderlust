@@ -2488,10 +2488,8 @@ If ARG, without confirm."
 	(wl-summary-rescan))
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
-	;(setq hilit wl-summary-highlight)
 	(unwind-protect
-	    (let ((wl-summary-highlight (if reuse-buf wl-summary-highlight))
-		  (wl-use-scoring
+	    (let ((wl-use-scoring
 		   (if (or scoring interactive) wl-use-scoring)))
 	      (if (and (not scan-type)
 		       interactive
