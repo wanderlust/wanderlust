@@ -1761,9 +1761,10 @@ associated with SECTION."
 	 (method (completing-read (format "Expire by (%s): "
 					  elmo-cache-expire-default-method)
 				  '(("size" . "size")
-				    ("age" . "age")))))
-    (if (string= method "")
-	(setq method elmo-cache-expire-default-method))
+				    ("age" . "age"))
+				  nil t)))
+    (when (string= method "")
+      (setq method elmo-cache-expire-default-method))
     (funcall (intern (concat "elmo-cache-expire-by-" method)))))
 
 (defun elmo-read-float-value-from-minibuffer (prompt &optional initial)
