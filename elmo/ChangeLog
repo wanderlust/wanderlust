@@ -1,3 +1,11 @@
+2000-10-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-session-select-mailbox): Added argument
+	`no-error'.
+	Added docstring.
+	Return non-nil if selecting folder succeeded.
+	(elmo-imap4-folder-exists-p): Call with argument 'no-error.
+
 2000-10-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-maildir-get-filename): Fixed problem when

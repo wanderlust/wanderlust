@@ -576,7 +576,7 @@ BUFFER must be a single-byte buffer."
       (elmo-imap4-session-select-mailbox
        session
        (elmo-imap4-spec-mailbox spec)
-       'force))))
+       'force 'no-error))))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)
@@ -669,12 +669,19 @@ BUFFER must be a single-byte buffer."
 		   'force)	      
 		(elmo-imap4-session-check session)))))))
   
-(defun elmo-imap4-session-select-mailbox (session mailbox &optional force)
+(defun elmo-imap4-session-select-mailbox (session mailbox
+						  &optional force no-error)
+  "Select MAILBOX in SESSION.
+If optional argument FORCE is non-nil, select mailbox even if current mailbox
+is same as MAILBOX.
+If second optional argument NO-ERROR is non-nil, don't cause an error when
+selecting folder was failed.
+Returns t if selecting folder succeed. Otherwise, nil is returned."
   (when (or force
 	    (not (string=
 		  (elmo-imap4-session-current-mailbox-internal session)
 		  mailbox)))
-    (let (response)
+    (let (response result)
       (unwind-protect
 	  (setq response
 		(elmo-imap4-read-response
@@ -684,16 +691,18 @@ BUFFER must be a single-byte buffer."
 		  (list
 		   "select "
 		   (elmo-imap4-mailbox mailbox)))))
-	(if (elmo-imap4-response-ok-p response)
+	(if (setq result (elmo-imap4-response-ok-p response))
 	    (progn
 	      (elmo-imap4-session-set-current-mailbox-internal session mailbox)
 	      (elmo-imap4-session-set-read-only-internal
 	       session
 	       (nth 1 (assq 'read-only (assq 'ok response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
-	  (error (or
-		  (elmo-imap4-response-error-text response)
-		  (format "Select %s failed" mailbox))))))))
+	  (unless no-error
+	    (error (or
+		    (elmo-imap4-response-error-text response)
+		    (format "Select %s failed" mailbox))))))
+      result)))
 
 (defun elmo-imap4-check-validity (spec validity-file)
   ;; Not used.
