@@ -31,6 +31,10 @@
 ;; From: の設定
 ;(setq wl-from "Your Name <e-mail@example.com>")
 
+;; (system-name) が FQDN を返さない場合、
+;; `wl-local-domain' にホスト名を除いたドメイン名を設定してください。
+;(setq wl-local-domain "example.com")
+
 ;; 自分のメールアドレスのリスト
 (setq wl-user-mail-address-list
       (list (wl-address-header-extract-address wl-from)
@@ -45,19 +49,6 @@
 	"emacs-mime-ja@m17n.org"
 	;; "ml@example.com" ...
 	))
-
-;; (system-name) が FQDN を返さない場合、
-;; `wl-local-domain' にホスト名を除いたドメイン名を設定してください。
-;; (system-name)  "." wl-local-domain が Message-ID に使用されます。
-;(setq wl-local-domain "example.com")
-
-;; Message-ID のドメインパートを強制的に指定
-;(setq wl-message-id-domain "hostname.example.com")
-
-;; Message-ID のドメインパートを wl-from から生成します。
-;; globalなIPを持たない場合に使ってください。
-;; wl-local-domain, wl-message-id-domainに優先します。
-;(setq wl-message-id-use-wl-from t)
 
 ;;; [[ サーバの設定 ]]
 

@@ -31,6 +31,10 @@
 ;; Header From:
 ;(setq wl-from "Your Name <e-mail@example.com>")
 
+;; If (system-name) does not return FQDN,
+;; set following as a local domain name without hostname.
+;(setq wl-local-domain "example.com")
+
 ;; User's mail addresses.
 (setq wl-user-mail-address-list
       (list (wl-address-header-extract-address wl-from)
@@ -45,19 +49,6 @@
 	"emacs-mime-ja@m17n.org"
 	;; "ml@example.com" ...
 	))
-
-;; If (system-name) does not return FQDN,
-;; set following as a local domain name without hostname.
-;; ((system-name) "." wl-local-domain is used as domain part of Message-ID
-;; and an argument of HELO in SMTP.
-;(setq wl-local-domain "example.com")
-
-;; Specific domain part for message-id.
-;(setq wl-message-id-domain "hostname.example.com")
-
-;; Use wl-from for generating message-id.
-;; wl-message-id-use-wl-from precedes wl-local-domain and wl-message-id-domain.
-;(setq wl-message-id-use-wl-from t)
 
 ;;; [[ Server Setting ]]
 
