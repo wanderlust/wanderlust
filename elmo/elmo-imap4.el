@@ -545,10 +545,13 @@ BUFFER must be a single-byte buffer."
 	    result)))
 
 (defun elmo-imap4-folder-exists-p (spec)
-  (elmo-imap4-send-command-wait
-   (elmo-imap4-get-session spec)
-   (list "status " (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-	 " (messages)")))
+  (let ((session (elmo-imap4-get-session spec)))
+    (elmo-imap4-read-ok
+     session
+     (elmo-imap4-send-command
+      session
+      (list "status " (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+	    " (messages)")))))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)
