@@ -1,3 +1,12 @@
+2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-delete-messages): Added notice in docstring.
+	(elmo-folder-move-messages): Call elmo-global-flag-detach-messages
+	with argument `delete-if-none' when dst-folder is 'null.
+
+	* elmo-flag.el (elmo-folder-append-messages): Defined.
+	(elmo-global-flag-detach-messages): Added argumnet `delete-if-none'.
+
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-flag.el (elmo-folder-initialize): Fixed ("/.minfo"->".minfo").

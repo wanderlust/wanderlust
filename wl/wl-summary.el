@@ -1958,8 +1958,8 @@ If ARG is non-nil, checking is omitted."
 			    (length dels)))
 	  (progn
 	    (message "Deleting...")
-	    (elmo-folder-delete-messages wl-summary-buffer-elmo-folder dels)
-	    (elmo-folder-detach-messages wl-summary-buffer-elmo-folder dels)
+	    (elmo-folder-move-messages wl-summary-buffer-elmo-folder dels
+				       'null)
 	    (wl-summary-set-message-modified)
 	    (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					  (list 0 0 0))

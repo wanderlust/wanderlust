@@ -1,3 +1,12 @@
+2003-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-delete-all-msgs): Use
+	elmo-folder-move-messages instead of elmo-folder-delete-messages
+	and elmo-folder-detach-messages.
+
+	* wl-expire.el (wl-expire-delete): Ditto.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-message-use-header-narrowing): New user option.

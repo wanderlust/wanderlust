@@ -125,9 +125,8 @@
 	   (format "Expiring (delete) %s msgs..."
 		   (length delete-list))))
       (message "%s" mess)
-      (if (elmo-folder-delete-messages folder delete-list)
+      (if (elmo-folder-move-messages folder delete-list 'null)
 	  (progn
-	    (elmo-folder-detach-messages folder delete-list)
 	    (wl-expire-append-log
 	     (elmo-folder-name-internal folder)
 	     delete-list nil 'delete)
@@ -224,9 +223,8 @@ If REFILE-LIST includes reserve mark message, so copy."
 		  (wl-expire-delete-reserved-messages refile-list folder))
 	    (when refile-list
 	      (if (setq ret-val
-			(elmo-folder-delete-messages folder refile-list))
+			(elmo-folder-move-messages folder refile-list 'null))
 		  (progn
-		    (elmo-folder-detach-messages folder refile-list)
 		    (wl-expire-append-log
 		     (elmo-folder-name-internal folder)
 		     refile-list nil 'delete))))))

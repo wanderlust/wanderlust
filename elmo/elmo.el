@@ -308,7 +308,9 @@ Otherwise, all descendent folders are returned.")
 (luna-define-generic elmo-folder-delete-messages (folder numbers)
   "Delete messages.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be deleted.")
+NUMBERS is a list of message numbers to be deleted.
+It is not recommended to use this function other than internal use.
+Use `elmo-folder-move-messages' with dst-folder 'null instead.")
 
 (luna-define-generic elmo-folder-search (folder condition &optional numbers)
   "Search and return list of message numbers.
@@ -1069,7 +1071,8 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
 		     (elmo-folder-detach-messages src-folder succeeds))
 		(progn
-		  (elmo-global-flag-detach-messages src-folder succeeds)
+		  (elmo-global-flag-detach-messages
+		   src-folder succeeds (eq dst-folder 'null))
 		  (setq result t))
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))

@@ -160,6 +160,18 @@
       (message "Creating msgdb...done")
       new-msgdb)))
 
+(luna-define-method elmo-folder-append-messages ((folder elmo-flag-folder)
+						 src-folder
+						 numbers
+						 &optional same-number)
+  (dolist (number numbers)
+    (elmo-global-flag-set (elmo-flag-folder-flag-internal folder)
+			  src-folder number (elmo-message-field
+					     src-folder
+					     number
+					     'message-id)))
+  numbers)
+
 (luna-define-method elmo-folder-append-buffer ((folder elmo-flag-folder)
 					       unread
 					       &optional number)
@@ -326,14 +338,17 @@ the message is not flagged in any folder."
 	    (elmo-localdir-delete-message flag-folder (nth 2 elem))
 	    (elmo-folder-commit flag-folder)))))))
 
-(defun elmo-global-flag-detach-messages (folder numbers)
+(defun elmo-global-flag-detach-messages (folder numbers &optional
+						delete-if-none)
   "Detach all messages specified from all global flags.
 FOLDER is the folder structure.
-NUMBERS is the message number list."
+NUMBERS is the message number list.
+If optional DELETE-IF-NONE is non-nil, delete message from flag folder when
+the message is not flagged in any folder."
   (unless (eq (elmo-folder-type-internal folder) 'flag)
     (dolist (flag elmo-global-flag-list)
       (dolist (number numbers)
-	(elmo-global-flag-detach flag folder number)))))
+	(elmo-global-flag-detach flag folder number delete-if-none)))))
 
 ;;; To migrate from global mark folder
 (defvar elmo-global-mark-filename "global-mark"
