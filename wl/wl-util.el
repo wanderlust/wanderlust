@@ -32,7 +32,7 @@
 
 ;;; Code:
 ;;
-
+(require 'bytecomp)
 (eval-when-compile
   (require 'elmo-util))
 
@@ -914,6 +914,43 @@ is enclosed by at least one regexp grouping construct."
     (if did-expand
 	(apply (function concat) (nreverse expanded))
       newtext)))
+
+(defun wl-line-parse-format (format spec-alist)
+  "Make a formatter from FORMAT and SPEC-ALIST."
+  (let (f spec specs)
+    (setq f
+	  (with-temp-buffer
+	    (insert format)
+	    (goto-char (point-min))
+	    (while (search-forward "%" nil t)
+	      (cond
+	       ((looking-at "%")
+		(goto-char (match-end 0)))
+	       ((looking-at "\\([0-9]*\\)\\([^0-9]\\)")
+		(setq spec
+		      (if (setq spec (assq (string-to-char (match-string 2))
+					   spec-alist))
+			  (nth 1 spec)
+			(match-string 2)))
+		(unless (string= "" (match-string 1))
+		  (setq spec (list 'wl-set-string-width
+				   (string-to-number (match-string 1))
+				   spec)))
+		(setq specs (cons spec specs))
+		(replace-match "s" 'fixed))))
+	    (buffer-string)))
+    (append (list 'format f) (nreverse specs))))
+
+(defmacro wl-line-formatter-setup (formatter format alist)
+  (` (let (byte-compile-warnings)
+       (setq (, formatter)
+	     (byte-compile
+	      (list 'lambda ()
+		    (wl-line-parse-format (, format) (, alist)))))
+       (when (get-buffer "*Compile-Log*")
+	 (bury-buffer "*Compile-Log*"))
+       (when (get-buffer "*Compile-Log-Show*")
+	 (bury-buffer "*Compile-Log-Show*")))))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))

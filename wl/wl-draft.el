@@ -670,8 +670,8 @@ Reply to author if WITH-ARG is non-nil."
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
 				   (if wl-default-draft-cite-decorate-author
-				     (wl-summary-from-func-internal
-				      (or from "you"))
+				       (funcall wl-summary-from-function
+						(or from "you"))
 				     (or from "you"))))))
     (and cite-title
 	 (insert cite-title "\n"))

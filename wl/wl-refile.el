@@ -132,8 +132,8 @@
 					    wl-refile-msgid-alist))))))
 
 (defun wl-refile-subject-learn (entity dst)
-  (let ((subject (wl-summary-subject-filter-func-internal
-		  (elmo-msgdb-overview-entity-get-subject entity)))
+  (let ((subject (funcall wl-summary-subject-filter-function
+			  (elmo-msgdb-overview-entity-get-subject entity)))
 	hit)
     (setq dst (elmo-string dst))
     (if (and subject (not (string= subject "")))
@@ -258,8 +258,8 @@ If RULE does not match ENTITY, returns nil."
 	      wl-refile-msgid-alist)))
 
 (defun wl-refile-guess-by-subject (entity)
-  (cdr (assoc (wl-summary-subject-filter-func-internal
-	       (elmo-msgdb-overview-entity-get-subject entity))
+  (cdr (assoc (funcall wl-summary-subject-filter-function
+		       (elmo-msgdb-overview-entity-get-subject entity))
 	      wl-refile-subject-alist)))
 
 (require 'product)

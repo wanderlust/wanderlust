@@ -202,8 +202,8 @@
 (defvar wl-e21-toolbar-configurations
   '((auto-resize-tool-bars       . t)
     (auto-raise-tool-bar-buttons . t)
-    (tool-bar-button-margin      . 0)
-    (tool-bar-button-relief      . 2)))
+    (tool-bar-button-margin      . 2)
+    (tool-bar-button-relief      . 1)))
 
 (defun wl-e21-make-toolbar-buttons (keymap defs)
   (let ((configs wl-e21-toolbar-configurations)

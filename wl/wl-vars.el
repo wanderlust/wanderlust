@@ -174,6 +174,61 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 		 string)
   :group 'wl)
 
+(defvar wl-summary-line-format-spec-alist
+  '((?Y (wl-summary-line-year))
+    (?M (wl-summary-line-month))
+    (?D (wl-summary-line-day))
+    (?W (wl-summary-line-day-of-week))
+    (?h (wl-summary-line-hour))
+    (?m (wl-summary-line-minute))
+    (?\[ (wl-summary-line-open-bracket))
+    (?\] (wl-summary-line-close-bracket))
+    (?t (wl-summary-line-thread-indent))
+    (?s (wl-summary-line-subject))
+    (?S (wl-summary-line-size))
+    (?c (wl-summary-line-children-number))
+    (?f (wl-summary-line-from))
+    (?F (wl-summary-line-children-and-from)))
+  "An alist of format specifications that can appear in summary lines.
+Each element is a list of following:
+\(SPEC STRING-EXP\)
+SPEC is a character for format specification.
+STRING is an expression to get string to insert.")
+
+(defcustom wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %] %s"
+  "*A default format string for summary line of Wanderlust.
+It may include any of the following format specifications
+which are replaced by the given information:
+
+%Y The year of the date field of the message (zero padded).
+%M The month of the date field of the message (zero padded).
+%D The day of the date field of the message (zero padded).
+%W The weekday name of the date field of the message (zero padded).
+%h The hour of the date field of the message (zero padded).
+%m The minute of the date field of the message (zero padded).
+%[ An open bracket.  If the message thread is linked,
+   it is replaced with '<'.
+%] A close bracket.  If the message thread is linked,
+   it is replaced with '>'.
+%c The children number of the closed message thread.
+%f The from: field string of the message.
+%F The children number of the closed message thread and 
+   the from: field string of the message are concatenated.
+%s The subject: field string of the message.
+%S the size of the message (if available)."
+  :group 'wl-summary
+  :type 'string)
+
+(defcustom wl-folder-summary-line-format-alist nil
+  "An alist of folder name and a summary line format.
+If no match, `wl-summary-line-format' is used.
+e.x.
+      '((\"^%\" . \"%M/%D(%W)%h:%m %t%[%14F %](%S) %s\")
+	(\"^@2ch\" . \"%M%/%D/%h:%m %t[%9F ]%s\")))"
+  :type '(repeat (cons (regexp :tag "Folder Regexp")
+		       (string :tag "line format")))
+  :group 'wl-summary)
+
 (defcustom wl-summary-from-function 'wl-summary-default-from
   "*A function for displaying sender (From: field) information."
   :type 'function
@@ -1401,12 +1456,6 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-summary-from-width 17
-  "*From width in summary."
-  :type 'integer
-  :group 'wl-summary
-  :group 'wl-pref)
-
 (defcustom wl-summary-subject-length-limit nil
   "*Set subject width in summary when wl-summary-width is nil.
 Nil means unlimited"
@@ -2424,8 +2473,6 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 			       'wl-temporary-file-directory)
 
 ;; 2001-12-07
-(elmo-define-obsolete-variable 'wl-from-width
-			       'wl-summary-from-width)
 (elmo-define-obsolete-variable 'wl-subject-length-limit
 			       'wl-summary-subject-length-limit)
 

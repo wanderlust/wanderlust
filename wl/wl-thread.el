@@ -720,48 +720,7 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-update-children-number (entity)
   "Update the children number."
-  (save-excursion
-    (wl-summary-jump-to-msg (wl-thread-entity-get-number entity))
-    (beginning-of-line)
-    (let ((text-prop (get-text-property (point) 'face))
-	  from from-end beg str)
-      (cond
-       ((looking-at (concat "^" wl-summary-buffer-number-regexp
-			    "..../..\(.*\)..:.. ["
-			    wl-thread-indent-regexp
-			    "]*[[<]\\+\\([0-9]+\\):"))
-	(delete-region (match-beginning 1)(match-end 1))
-	(goto-char (match-beginning 1))
-	(setq str (format "%s" (wl-thread-entity-get-children-num entity)))
-	(if wl-summary-highlight
-	    (put-text-property 0 (length str) 'face text-prop str))
-	(insert str))
-       ((looking-at (concat "^" wl-summary-buffer-number-regexp
-			    "..../..\(.*\)..:.. ["
-			    wl-thread-indent-regexp
-			    "]*[[<]"))
-	(goto-char (match-end 0))
-	(setq beg (current-column))
-	(setq from-end (save-excursion
-			 (move-to-column (+ 1 beg wl-summary-from-width))
-			 (point)))
-	(setq from (buffer-substring (match-end 0) from-end))
-	(delete-region (match-end 0) from-end)
-	(setq str (wl-set-string-width
-		   (1+ wl-summary-from-width)
-		   (format
-		    "+%s:%s"
-		    (wl-thread-entity-get-children-num
-		     entity)
-		    from)))
-	(if wl-summary-highlight
-	    (put-text-property 0 (length str) 'face text-prop str))
-	(insert str)
-	(condition-case nil ; it's dangerous, so ignore error.
-	    (run-hooks 'wl-thread-update-children-number-hook)
-	  (error
-	   (ding)
-	   (message "Error in wl-thread-update-children-number-hook."))))))))
+  (wl-thread-update-line-on-buffer (wl-thread-entity-get-number entity)))
 
 ;;
 ;; Thread oriented commands.
@@ -1143,7 +1102,8 @@ Message is inserted to the summary buffer."
   (save-excursion
     (goto-char beg)
     (while (< (point) end)
-      (wl-thread-update-indent-string)
+      ;(wl-thread-update-indent-string)
+      (wl-thread-update-line-on-buffer)
       (forward-line 1))))
 
 (defsubst wl-thread-make-indent-string (entity)
@@ -1173,34 +1133,6 @@ Message is inserted to the summary buffer."
 				ret-val)))
 	(setq cur (wl-thread-entity-get-parent-entity cur))))
     ret-val))
-
-(defun wl-thread-update-indent-string ()
-  "Update indent string of current line."
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  thr-str)
-      (when (looking-at (concat "^ *\\([0-9]+\\)"
-				"..../..\(.*\)..:.. \\("
-				wl-highlight-thread-indent-string-regexp
-				"\\)[[<]"))
-	(goto-char (match-beginning 2))
-	(delete-region (match-beginning 2)
-		       (match-end 2))
-	(setq thr-str
-	      (wl-thread-make-indent-string
-	       (wl-thread-get-entity (string-to-int (wl-match-buffer 1)))))
-	(if (and wl-summary-indent-length-limit
-		 (< wl-summary-indent-length-limit
-		    (string-width thr-str)))
-	    (setq thr-str (wl-set-string-width
-			   wl-summary-indent-length-limit
-			   thr-str)))
-	(insert thr-str)
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line))))))
 
 (defun wl-thread-set-parent (&optional parent-number)
   "Set current message's parent interactively."

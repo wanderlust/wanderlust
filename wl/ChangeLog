@@ -1,5 +1,83 @@
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-line-format-spec-alist): New variable.
+	(wl-summary-line-format): New user option.
+	(wl-folder-summary-line-format-alist): Ditto.
+	(wl-summary-from-width): Abolished.
+
+	* wl-util.el (toplevel): Require 'bytecomp.
+	(wl-line-parse-format): New function.
+	(wl-line-formatter-setup): New macro.
+
+	* wl-summary.el (wl-summary-buffer-number-regexp): Abolished.
+	(wl-summary-buffer-line-formatter): New buffer local variable.
+	(wl-summary-switch-to-clone-buffer): Follow the change above.
+	(wl-summary-message-regexp): Fix.
+	(wl-summary-from-func-internal): Abolished.
+	(wl-summary-subject-func-internal): Ditto.
+	(wl-summary-subject-filter-func-internal): Ditto.
+	(All other related portions are changed.)
+	(wl-summary-buffer-set-folder):
+	Set up wl-summary-buffer-number-column and 
+	wl-summary-buffer-line-formatter
+	(All other related portions are changed.)
+	(wl-summary-buffer-number-column-detect): Abolished.
+	(All other related portions are changed.)
+	(wl-summary-delete-all-status-marks-on-buffer): Removed.
+	(wl-summary-delete-all-temp-marks-on-buffer): Use
+	wl-summary-message-regexp instead of wl-summary-buffer-number-regexp.
+	(wl-summary-target-mark-delete): Ditto.
+	(wl-summary-target-mark-refile-subr): Ditto.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+	(wl-summary-target-mark-save): Ditto.
+	(wl-summary-replace-status-marks): Renamed from
+	wl-summary-set-status-marks-on-buffer;
+	Use wl-summary-message-regexp instead of
+	wl-summary-buffer-number-regexp.
+	(wl-summary-sync-update): Follow the change above.
+	(wl-summary-goto-previous-message-beginning): New function.
+	(wl-summary-mark-as-unread): Use it.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-line-formatter): New variable.
+	(wl-summary-line-year): New function.
+	(wl-summary-line-day): Ditto.
+	(wl-summary-line-day-of-week): Ditto.
+	(wl-summary-line-hour): Ditto.
+	(wl-summary-line-minute): Ditto.
+	(wl-summary-line-open-bracket): Ditto.
+	(wl-summary-line-close-bracket): Ditto.
+	(wl-summary-line-children-number): Ditto.
+	(wl-summary-line-thread-indent): Ditto.
+	(wl-summary-line-size): Ditto.
+	(wl-summary-line-subject): Ditto.
+	(wl-summary-line-from): Ditto.
+	(wl-summary-line-children-and-from): Ditto.
+	(wl-summary-create-line): Rewritten.
+	(wl-summary-format-date): Abolished.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Use
+	wl-summary-message-regexp instead of wl-summary-buffer-number-regexp;
+	Use thread structure to detect thread top message.
+
+	* wl-draft.el (wl-default-draft-cite): Don't use
+	wl-summary-from-func-internal.
+
+	* wl-refile.el (wl-refile-subject-learn): Don't use
+	wl-summary-subject-filter-func-internal.
+	(wl-refile-guess-by-subject): Ditto.
+
+	* wl-e21.el (wl-e21-toolbar-configurations): Changed default
+	parameters.
+
+	* wl-thread.el (wl-thread-update-indent-string-region):
+	Use wl-thread-update-line-on-buffer instead of
+	wl-thread-update-indent-string.
+	(wl-thread-update-children-number): Redefine using
+	wl-thread-update-line-on-buffer.
+	(wl-thread-update-indent-string): Abolished.
+
         * Version number is increased to 2.9.11.
 
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>

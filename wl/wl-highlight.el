@@ -818,12 +818,7 @@
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  (sregexp (concat
-		    "^"
-		    wl-summary-buffer-number-regexp
-		    "\\(.\\)\\(.\\)../..\(.*\)..:.. \\("
-		    wl-highlight-thread-indent-string-regexp
-		    "\\)[[<]"))
+	  (sregexp (concat "\\("wl-summary-message-regexp "\\)\\(.\\)\\(.\\)"))
 	  fregexp fsymbol bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
@@ -833,14 +828,14 @@
 	  (setq status-mark smark)
 	(setq looked-at (looking-at sregexp))
 	(when looked-at
-	  (setq status-mark (buffer-substring (match-beginning 2)
-					      (match-end 2)))))
+	  (setq status-mark (buffer-substring (match-beginning 3)
+					      (match-end 3)))))
       (when temp-too
 	(unless looked-at
 	  (setq looked-at (looking-at sregexp)))
 	(when looked-at
-	  (setq temp-mark (buffer-substring (match-beginning 1)
-					    (match-end 1)))
+	  (setq temp-mark (buffer-substring (match-beginning 2)
+					    (match-end 2)))
 	  (cond
 	   ((string= temp-mark "*")
 	    (setq fsymbol 'wl-highlight-summary-temp-face))
@@ -877,10 +872,10 @@
 	   ((string= temp-mark "+")
 	    (setq fsymbol 'wl-highlight-summary-high-read-face))
 	   ;;
-	   (t (if (and looked-at
-		       (string= (buffer-substring
-				 (match-beginning 3)
-				 (match-end 3)) ""))
+	   (t (if (null
+		   (wl-thread-entity-get-parent-entity
+		    (wl-thread-get-entity (string-to-number
+					   (match-string 1)))))
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)

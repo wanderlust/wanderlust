@@ -52,12 +52,13 @@
     msgdb))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
-  "Get mark from MSGDB which corresponds to the message with NUMBER."
+  "Get mark string from MSGDB which corresponds to the message with NUMBER."
   (cadr (elmo-get-hash-val (format "#%d" number)
 			   (elmo-msgdb-get-mark-hashtb msgdb))))
 
 (defsubst elmo-msgdb-set-mark (msgdb number mark)
-  "Set MARK of the message with NUMBER in the MSGDB."
+  "Set MARK of the message with NUMBER in the MSGDB.
+if MARK is nil, mark is removed."
   (elmo-msgdb-set-mark-alist
    msgdb
    (elmo-msgdb-mark-alist-set (elmo-msgdb-get-mark-alist msgdb)
