@@ -1,3 +1,10 @@
+2004-02-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-refile-policy-alist): Abolished.
+
+	* wl-action.el (wl-summary-set-action-refile): Follow the change
+	above.
+
 2004-02-19  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-highlight.el (wl-highlight-signature-search): Don't use

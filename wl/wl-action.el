@@ -436,19 +436,8 @@ Return number if put mark succeed"
 (defun wl-summary-set-action-refile (number mark data)
   (when (null data)
     (error "Destination folder is empty"))
-  (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
-					 (wl-summary-buffer-folder-name)))
-	(elem wl-summary-mark-action-list))
-    (if (eq policy 'copy)
-	(while elem
-	  (when (eq (wl-summary-action-symbol (car elem)) 'copy)
-	    (wl-summary-register-temp-mark number
-					   (wl-summary-action-mark (car elem))
-					   data)
-	    (setq elem nil))
-	  (setq elem (cdr elem)))
-      (wl-summary-register-temp-mark number mark data)
-      (setq wl-summary-buffer-prev-refile-destination data))))
+  (wl-summary-register-temp-mark number mark data)
+  (setq wl-summary-buffer-prev-refile-destination data))
 
 (defun wl-summary-get-refile-destination (action number)
   "Decide refile destination."

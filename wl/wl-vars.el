@@ -2378,16 +2378,6 @@ ex.
 			       (string :tag "Folder"))))
   :group 'wl-folder)
 
-(defcustom wl-refile-policy-alist '(("^[-=']" . copy)
-				    (".*" . move))
-  "*List of refile policy.  Each element is (FOLDER-REGEXP . POLICY).
-POLICY is copy or move."
-  :type '(repeat (cons (regexp :tag "Folder Regexp")
-		       (choice (const copy)
-			       (const move))))
-  :group 'wl-summary
-  :group 'wl-pref)
-
 (defcustom wl-folder-hierarchy-access-folders '("^-[^\\.]*\\(:\\|@\\|$\\)"
 						"^@$" "^'$")
   "*Access group REGEXPs to make hierarchy structure."

@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** The variable wl-refile-policy-alist is abolished.
+
 ** SPAM filter module is added.
 
 ** Batch processing module is added.

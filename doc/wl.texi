@@ -8055,22 +8055,6 @@ string             : moves the messages to the specific folder.
 @code{trash} or others  : moves the messages to @code{wl-trash-folder}.
 @end example
 
-@item wl-refile-policy-alist
-@vindex wl-refile-policy-alist
-The initial setting is the list shown below:
-
-@lisp
-@group
-(("^[-=]" . copy)
- (".*" . move))
-@end group
-@end lisp
-
-@noindent
-This list determines whether messages with re-file marks are moved or
-copied.  Each item in the list is a cons cell of a folder and
-@code{copy} or @code{move}.
-
 @item wl-x-face-file
 @vindex wl-x-face-file
 The initial setting is @file{~/.xface}.

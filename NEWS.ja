@@ -2,6 +2,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.10.1 から 2.12.0 への変更点
 
+** 変数 wl-refile-policy-alist は廃止されました．
+
 ** スパムフィルタモジュールが新たに追加されました．
 
 ** バッチ処理用のモジュールが新たに追加されました．

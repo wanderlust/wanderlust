@@ -7973,22 +7973,6 @@ string             : 指定したフォルダに移動する。
 @code{trash} or その他  : @code{wl-trash-folder} に移動する。
 @end example
 
-@item wl-refile-policy-alist
-@vindex wl-refile-policy-alist
-初期設定は以下のリスト。
-
-@lisp
-@group
-(("^[-=]" . copy)
- (".*" . move))
-@end group
-@end lisp
-
-@noindent
-リファイルマーク @samp{o} をつける際、メッセージを移動するかコピーするか
-を指定します。リストの各要素にはフォルダと @code{copy} または 
-@code{move} との cons cell を指定します。
-
 @item wl-x-face-file
 @vindex wl-x-face-file
 初期設定は @file{~/.xface}。
