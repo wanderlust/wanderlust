@@ -1100,13 +1100,15 @@ Emacs 19.28 or earlier does not have `unintern'."
       (setq lst (cdr lst)))
     result))
 
-(defun elmo-list-delete (list1 list2)
+(defun elmo-list-delete (list1 list2 &optional delete-function)
   "Delete by side effect any occurrences equal to elements of LIST1 from LIST2.
 Return the modified LIST2.  Deletion is done with `delete'.
 Write `(setq foo (elmo-list-delete bar foo))' to be sure of changing
-the value of `foo'."
+the value of `foo'.
+If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
+  (setq delete-function (or delete-function 'delete))
   (while list1
-    (setq list2 (delete (car list1) list2))
+    (setq list2 (funcall delete-function (car list1) list2))
     (setq list1 (cdr list1)))
   list2)
 
