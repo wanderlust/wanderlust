@@ -434,7 +434,7 @@ FACE is a face for highlighting."
   :group 'wl)
 
 (defcustom wl-default-spec "%"
-  "*Default spec"
+  "*Default prefix for folder name initially added in minibuffer"
   :type 'string
   :group 'wl)
 
