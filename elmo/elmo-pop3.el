@@ -236,7 +236,7 @@ CODE is one of the following:
 		      response-string)))
 	  (if (looking-at "\\-.*$")
 	      (progn
-		(when (looking-at "[^ ]+ \\[\\(.*\\)\\]")
+		(when (looking-at "[^ ]+ \\[\\([^]]+\\)\\]")
 		  (setq return-value
 			(intern
 			 (downcase

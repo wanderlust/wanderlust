@@ -1,6 +1,11 @@
 2004-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-pop3.el (elmo-pop3-read-response): Treat return code.
+	* elmo-pop3.el (elmo-pop3-read-response): Refined the regexp for
+	response codes.
+
+2004-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-read-response): Treat response codes.
 	(elmo-network-close-session): Follow the changes in
 	`elmo-pop3-read-response'.
 	(elmo-pop3-auth-user): Ditto.
