@@ -3844,6 +3844,10 @@ petname でも補完ができます。
 値を @code{nil} にするときは、@code{wl-summary-width} も @code{nil} に設定
 するとよいでしょう。
 
+@item wl-summary-max-thread-depth
+@vindex wl-summary-max-thread-depth
+初期設定は 30。設定された値以上の深さのスレッドを分割します。
+
 @item wl-summary-recenter
 @vindex  wl-summary-recenter
 初期設定は @code{t}。Non-nil ならば表示したときに表示中のメッセージのサ

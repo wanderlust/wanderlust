@@ -3861,6 +3861,12 @@ indent level.
 If you set this to @code{nil} you should set @code{wl-summary-width}
 to @code{nil}, too.
 
+@item wl-summary-max-thread-depth
+@vindex wl-summary-max-thread-depth
+The initial setting is 15.
+If thread depth of the message is larger than this value,
+the thread is divided.
+
 @item wl-summary-recenter
 @vindex  wl-summary-recenter
 The initial setting is t.
