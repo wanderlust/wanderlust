@@ -1,3 +1,11 @@
+2001-11-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-mode): Locally set
+	truncate-partial-window-width to nil.
+	(for XEmacs)
+
+	* wl-folder.el (wl-folder-mode): Ditto.
+
 2001-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-set-string-width) [Emacs]: New implementation.

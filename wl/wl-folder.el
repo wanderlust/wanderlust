@@ -1424,6 +1424,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (use-local-map wl-folder-mode-map)
   (setq buffer-read-only t)
   (setq inhibit-read-only nil)
+  (make-local-variable 'truncate-partial-width-windows)
+  (setq truncate-partial-width-windows nil)
   (setq truncate-lines t)
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
