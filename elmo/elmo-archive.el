@@ -238,7 +238,10 @@ TYPE specifies the archiver's symbol."
 	 (args (list file))
 	 (file-regexp (format (elmo-archive-get-regexp type)
 			      (elmo-concat-path (regexp-quote prefix) "")))
-	 buf file-list header-end)
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 numbers buf file-list header-end)
     (when (file-exists-p file)
       (save-excursion
 	(set-buffer (setq buf (get-buffer-create " *ELMO ARCHIVE ls*")))
@@ -258,24 +261,23 @@ TYPE specifies the archiver's symbol."
 						  (match-string 1))))))
 	(kill-buffer buf)))
     (if nonsort
-	(cons (or (elmo-max-of-list file-list) 0) (length file-list))
-      (sort file-list '<))))
+	(cons (or (elmo-max-of-list file-list) 0)
+	      (if killed
+		  (- (length file-list) (length killed))
+		(length file-list)))
+      (setq numbers (sort file-list '<))
+      (if killed
+	  (delq nil
+		(mapcar (lambda (number)
+			  (unless (memq number killed) number))
+			numbers))
+      numbers))))
 
 (defun elmo-archive-list-folder (spec)
   (let* ((type (nth 2 spec))
 	 (prefix (nth 3 spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
-	 (killed (and elmo-use-killed-list
-		      (elmo-msgdb-killed-list-load
-		       (elmo-msgdb-expand-path nil spec))))
-	 numbers)
-    (setq numbers (elmo-archive-list-folder-subr arc type prefix))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
+    (elmo-archive-list-folder-subr arc type prefix)))
 
 (defun elmo-archive-max-of-folder (spec)
   (let* ((type (nth 2 spec))

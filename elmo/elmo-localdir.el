@@ -223,22 +223,24 @@
 		      (elmo-msgdb-killed-list-load
 		       (elmo-msgdb-expand-path nil spec))))
 	 numbers)
-    (setq numbers
-	  (if nonsort
-	      (cons (or (elmo-max-of-list flist) 0) (length flist))
-	    (sort flist '<)))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+    (if nonsort
+	(cons (or (elmo-max-of-list flist) 0)
+	      (if killed
+		  (- (length flist) (length killed))
+		(length flist)))
+      (setq numbers (sort flist '<))
+      (if killed
+	  (delq nil
+		(mapcar (lambda (number)
+			  (unless (memq number killed) number))
+			numbers))
+	numbers))))
 
 (defun elmo-localdir-append-msg (spec string &optional msg no-see)
   (let ((dir (elmo-localdir-get-folder-directory spec))
 	(tmp-buffer (get-buffer-create " *ELMO Temp buffer*"))
 	(next-num (or msg
-		      (1+ (car (elmo-localdir-list-folder-subr spec t)))))
+		      (1+ (car (elmo-localdir-max-of-folder spec)))))
 	filename)
     (save-excursion
       (set-buffer tmp-buffer)
@@ -382,7 +384,7 @@
 					 &optional loc-alist same-number)
   (let ((dst-dir
 	 (elmo-localdir-get-folder-directory dst-spec))
-	(next-num (1+ (car (elmo-localdir-list-folder-subr dst-spec t)))))
+	(next-num (1+ (car (elmo-localdir-max-of-folder dst-spec)))))
     (while msgs
       (elmo-copy-file
        ;; src file
@@ -397,7 +399,7 @@
 		(if (and (eq (car dst-spec) 'localdir)
 			 (elmo-localdir-locked-p))
 		    ;; MDA is running.
-		    (1+ (car (elmo-localdir-list-folder-subr dst-spec t)))
+		    (1+ (car (elmo-localdir-max-of-folder dst-spec)))
 		  (1+ next-num)))))
     t))
 

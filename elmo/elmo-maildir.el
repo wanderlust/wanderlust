@@ -351,25 +351,28 @@ file name for maildir directories."
 	 (flist (elmo-list-folder-by-location
 		 spec
 		 (car (elmo-maildir-list-location dir))))
-	 (news (car (elmo-maildir-list-location dir "new"))))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 (news (car (elmo-maildir-list-location dir "new")))
+	 numbers)
     (if nonsort
 	(cons (+ (or (elmo-max-of-list flist) 0) (length news))
-	      (+ (length flist) (length news)))
-      (sort flist '<))))
+	      (+ (length news)
+		 (if killed
+		     (- (length flist) (length killed))
+		   (length flist))))
+      (setq numbers (sort flist '<))
+      (if killed
+	  (delq nil
+		(mapcar (lambda (number)
+			  (unless (memq number killed) number))
+			numbers))
+	numbers))))
 
 (defun elmo-maildir-list-folder (spec)
   (elmo-maildir-update-current spec)
-  (let ((killed (and elmo-use-killed-list
-		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
-	numbers)
-    (setq numbers (elmo-maildir-list-folder-subr spec))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+  (elmo-maildir-list-folder-subr spec))
 
 (defun elmo-maildir-max-of-folder (spec)
   (elmo-maildir-list-folder-subr spec t))

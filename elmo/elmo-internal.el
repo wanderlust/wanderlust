@@ -35,24 +35,26 @@
 	 (arg (nth 2 spec))
 	 (flist (elmo-list-folder-by-location
 		 spec
-		 (elmo-internal-list-location directive arg))))
+		 (elmo-internal-list-location directive arg)))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 numbers)
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
-	      (length flist))
-      (sort flist '<))))
+	      (if killed
+		  (- (length flist) (length killed))
+		(length flist)))
+      (setq numbers (sort flist '<))
+      (if killed
+	  (delq nil
+		(mapcar (lambda (number)
+			  (unless (memq number killed) number))
+			numbers))
+	numbers))))
 
 (defun elmo-internal-list-folder (spec)
-    (let ((killed (and elmo-use-killed-list
-		     (elmo-msgdb-killed-list-load
-		      (elmo-msgdb-expand-path nil spec))))
-	numbers)
-    (setq numbers (elmo-internal-list-folder-subr spec))
-    (if killed
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed) number))
-		      numbers))
-      numbers)))
+  (elmo-internal-list-folder-subr spec))
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
   (let* ((path (elmo-msgdb-expand-path nil spec))
