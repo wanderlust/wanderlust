@@ -1303,11 +1303,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (wl-draft-verbose-msg nil)
 	  err)
       (unwind-protect
-	  (save-excursion (set-buffer sending-buffer)
+	  (save-excursion
+	    (set-buffer sending-buffer)
 	    (if (and (not (wl-message-mail-p))
 		     (not (wl-message-news-p)))
 		(error "No recipient is specified"))
-	    (expand-abbrev) ; for mail-abbrevs
+	    (expand-abbrev)		; for mail-abbrevs
 	    (let ((mime-header-encode-method-alist
 		   (append
 		    '((wl-draft-eword-encode-address-list
