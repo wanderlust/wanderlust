@@ -31,6 +31,9 @@
 
 (require 'elmo)
 
+(defvar elmo-pipe-folder-copied-filename "copied"
+  "Copied messages number set.")
+
 ;;; ELMO pipe folder
 (eval-and-compile
   (luna-define-class elmo-pipe-folder (elmo-folder)
@@ -97,47 +100,74 @@
 
 (defvar elmo-pipe-drained-hook nil "A hook called when the pipe is flushed.")
 
-(defun elmo-pipe-drain (src dst copy)
-  "Move all messages of SRC to DST."
+(defsubst elmo-pipe-folder-list-target-messages (src &optional ignore-list)
+  (unwind-protect
+      (progn
+	(elmo-folder-set-killed-list-internal src ignore-list)
+	(elmo-folder-list-messages src))
+    (elmo-folder-set-killed-list-internal src nil)))
+
+(defun elmo-pipe-drain (src dst &optional copy ignore-list)
+  "Move or copy all messages of SRC to DST."
   (let ((elmo-inhibit-number-mapping (not copy)) ; No need to use UIDL
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
     ;; Warnnig: some function requires msgdb
     ;;  but elmo-folder-open-internal do not load msgdb.
     (elmo-folder-open-internal src)
-    (elmo-folder-set-killed-list-internal
-     src
-     (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path src)))
-    (setq msgs (elmo-folder-list-messages src)
+    (setq msgs (elmo-pipe-folder-list-target-messages src ignore-list)
 	  len (length msgs))
     (when (> len elmo-display-progress-threshold)
       (elmo-progress-set 'elmo-folder-move-messages
-			 len "Moving messages..."))
+			 len
+			 (if copy
+			     "Copying messages..."
+			   "Moving messages...")))
     (unwind-protect
 	(elmo-folder-move-messages src msgs dst
 				   nil nil copy)
       (elmo-progress-clear 'elmo-folder-move-messages))
-    (if (and copy msgs)
-	(progn
-	  (elmo-msgdb-append-to-killed-list src msgs)
-	  ;; for save killed-list instead of elmo-folder-close-internal
-	  (elmo-msgdb-killed-list-save
-	   (elmo-folder-msgdb-path src)
-	   (elmo-folder-killed-list-internal src)))))
-  ;; Don't save msgdb here.
-  ;; Because summary view of original folder is not updated yet.
-  (elmo-folder-close-internal src)
-  (elmo-folder-set-killed-list-internal src nil)
-  (run-hooks 'elmo-pipe-drained-hook))
+    (when (and copy msgs)
+      (setq ignore-list (elmo-number-set-append-list ignore-list
+						     msgs)))
+    ;; Don't save msgdb here.
+    ;; Because summary view of original folder is not updated yet.
+    (elmo-folder-close-internal src)
+    (run-hooks 'elmo-pipe-drained-hook)
+    ignore-list))
+
+(defun elmo-pipe-folder-copied-list-load (folder)
+  (elmo-object-load
+   (expand-file-name elmo-pipe-folder-copied-filename
+		     (expand-file-name
+		      (elmo-replace-string-as-filename
+		       (elmo-folder-name-internal folder))
+		      (expand-file-name "pipe" elmo-msgdb-directory)))
+   nil t))
+
+(defun elmo-pipe-folder-copied-list-save (folder copied-list)
+  (elmo-object-save
+   (expand-file-name elmo-pipe-folder-copied-filename
+		     (expand-file-name
+		      (elmo-replace-string-as-filename
+		       (elmo-folder-name-internal folder))
+		      (expand-file-name "pipe" elmo-msgdb-directory)))
+   copied-list))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
   (let ((src-folder (elmo-pipe-folder-src-internal folder))
-	(dst-folder (elmo-pipe-folder-dst-internal folder))
-	(copy (elmo-pipe-folder-copy-internal folder)))
+	(dst-folder (elmo-pipe-folder-dst-internal folder)))
     (when (and (elmo-folder-plugged-p src-folder)
 	       (elmo-folder-plugged-p dst-folder))
-      (elmo-pipe-drain src-folder dst-folder copy))))
+      (if (elmo-pipe-folder-copy-internal folder)
+	  (elmo-pipe-folder-copied-list-save
+	   folder
+	   (elmo-pipe-drain src-folder
+			    dst-folder
+			    'copy
+			    (elmo-pipe-folder-copied-list-load folder)))
+	(elmo-pipe-drain src-folder dst-folder)))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
@@ -160,9 +190,11 @@
 (luna-define-method elmo-folder-status ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-src-internal folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
-  (let* ((elmo-inhibit-number-mapping t)
-	 (src-length (length (elmo-folder-list-messages
-			      (elmo-pipe-folder-src-internal folder))))
+  (let* ((elmo-inhibit-number-mapping
+	  (not (elmo-pipe-folder-copy-internal folder)))
+	 (src-length (length (elmo-pipe-folder-list-target-messages
+			      (elmo-pipe-folder-src-internal folder)
+			      (elmo-pipe-folder-copied-list-load folder))))
 	 (dst-list (elmo-folder-list-messages
 		    (elmo-pipe-folder-dst-internal folder))))
     (prog1 (cons (+ src-length (elmo-max-of-list dst-list))
