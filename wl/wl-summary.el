@@ -1377,17 +1377,18 @@ If ARG is non-nil, checking is omitted."
 			 (save-match-data
 			   (wl-set-string-width
 			    17
-			    (funcall wl-summary-from-function
-			     (eword-decode-string
-			      (elmo-delete-char
-			       ?\"
-			       (or
-				(elmo-message-field
-				 (elmo-message-entity
-				  wl-summary-buffer-elmo-folder
-				  number)
-				 'from t)
-				"??")))))) " ]")
+			    (funcall
+			     wl-summary-from-function
+			     (elmo-delete-char
+			      ?\"
+			      (or
+			       (elmo-message-entity-field
+				(elmo-message-entity
+				 wl-summary-buffer-elmo-folder
+				 number)
+				'from t)
+			       "??")))))
+			 " ]")
 			size))))
 	      (message ""))		; flush.
 	    (if force-read
@@ -3938,7 +3939,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (save-excursion
 	    (set-buffer summary-buf)
 	    (setq subject
-		  (or (elmo-message-field folder number 'subject) ""))))
+		  (or (elmo-message-entity-field
+		       (elmo-message-entity folder number) 'subject 'decode)
+		      ""))))
       (set-buffer mes-buf)
       (wl-draft-forward subject summary-buf)
       (unless without-setup-hook
