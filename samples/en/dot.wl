@@ -3,10 +3,9 @@
 ;; [[ Requirement Setting ]]
 
 ;; Following must be included in ~/.emacs
-;; for .emacs begin
+;; (No need if installed as XEmacs package.)
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-;; for .emacs end
 
 ;; Icon directory
 ;; (No need if installed as XEmacs package.)
@@ -151,7 +150,7 @@
 ;(setq elmo-pop3-use-cache t)
 
 ;; Enable disconnected operation in IMAP folder.
-;(setq elmo-enable-disconnected-operation t)
+(setq elmo-enable-disconnected-operation t)
 
 ;; Store draft message in queue folder if message is sent in unplugged status.
 (setq wl-draft-enable-queuing t)
@@ -244,30 +243,31 @@
 ;;; [[ Template ]]
 
 ;; template
-(setq wl-template-alist
-      '(("default"
-	 ("From" . wl-from)
-	 ("Organization" . "~/.wl sample")
-	 (body . "Hello, this is XXX \n"))		;; body
-	("report"
-	 ("To" . "boss@example.com")
-	 ("Subject" . "Report")
-	 (top . "Sir, here is my report\n")		;; insert in top.
-;;	 (bottom-file . "~/work/report.txt")	;; insert file in bottom
-	 )
-	))
+;(setq wl-template-alist
+;      '(("default"
+;	 ("From" . wl-from)
+;	 ("Organization" . "organization for default")
+;	 (body . "Hello, this is XXX \n")) ; body
+;	("report"
+;	 ("To" . "boss@example.com")
+;	 ("Subject" . "Report")
+;	 (top . "Sir, here is my report\n") ; insert in top.
+;	 (bottom-file . "~/work/report.txt") ; insert file in bottom
+;	 )
+;	))
+
 ;; Change headers in draft sending time.
-(setq wl-draft-config-alist
-      '((reply				; see reply buffer
-	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 (template . "default"))	; template
-	("^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 ding				; function
-	 ("From" . wl-from)		; variable
-	 ("Organization" . "CHANGE THIS!!")) ; string
-	("^Newsgroups: test.*"
-	 ("Organization" . "organization for nntp."))
-	))
+;(setq wl-draft-config-alist
+;      '((reply				; see reply buffer
+;	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
+;	 (template . "default"))	; template
+;	("^To: .*test-notsend-wl@lists\\.airs\\.net"
+;	 ding				; function
+;	 ("From" . wl-from)		; variable
+;	 ("Organization" . "organization")) ; string
+;	("^Newsgroups: test.*"
+;	 ("Organization" . "organization for nntp."))
+;	))
 
 ;; Change headers in draft preparation time.
 ;(add-hook 'wl-mail-setup-hook

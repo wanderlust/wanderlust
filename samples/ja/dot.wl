@@ -3,10 +3,9 @@
 ;; [[ 動作に必要な設定 ]]
 
 ;; まず、次の設定を ~/.emacs などに書いてください。
-;; ここから
+;; XEmacs の package としてインストールされている場合は必要ありません。
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
-;; ここまで
 
 ;; アイコンを置くディレクトリ
 ;; XEmacs の package としてインストールされている場合は必要ありません。
@@ -150,7 +149,7 @@
 ;(setq elmo-pop3-use-cache t)
 
 ;; オフライン(unplugged)操作を有効にする(現在はIMAPフォルダのみ)
-;(setq elmo-enable-disconnected-operation t)
+(setq elmo-enable-disconnected-operation t)
 
 ;; unplugged 状態で送信すると，キュー(`wl-queue-folder')に格納する
 (setq wl-draft-enable-queuing t)
@@ -243,32 +242,32 @@
 ;;; [[ テンプレート ]]
 
 ;; テンプレートの設定
-(setq wl-template-alist
-      '(("default"
-	 ("From" . wl-from)
-	 ("Organization" . "~/.wl sample")
-	 (body . "  ○○です。\n"))	; 本文
-	("report"
-	 ("To" . "boss@example.com")
-	 ("Subject" . "報告")
-	 (top . "今週の報告です。\n")	; 本文先頭への挿入
-;;	 (bottom-file . "~/work/report.txt") ; 本文末尾へファイルの挿入
-	 )
-	))
+;(setq wl-template-alist
+;      '(("default"
+;	 ("From" . wl-from)
+;	 ("Organization" . "デフォルトの組織名")
+;	 (body . "  ○○です。\n"))	; 本文
+;	("report"
+;	 ("To" . "boss@example.com")
+;	 ("Subject" . "報告")
+;	 (top . "今週の報告です。\n")	; 本文先頭への挿入
+;	 (bottom-file . "~/work/report.txt") ; 本文末尾へファイルの挿入
+;	 )
+;	))
 
 ;; ドラフトバッファの内容により From や Organization などのヘッダを自
 ;; 動的に変更する
-(setq wl-draft-config-alist
-      '((reply				; 返信元のバッファを見る
-	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 (template . "default"))	; テンプレート
-	("^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 ding				; 関数
-	 ("From" . wl-from)		; 変数
-	 ("Organization" . "CHANGE THIS!!")) ; 文字列
-	("^Newsgroups: test.*"
-	 ("Organization" . "ニュース投稿時の組織名"))
-	))
+;(setq wl-draft-config-alist
+;      '((reply				; 返信元のバッファを見る
+;	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
+;	 (template . "default"))	; テンプレート
+;	("^To: .*test-notsend-wl@lists\\.airs\\.net"
+;	 ding				; 関数
+;	 ("From" . wl-from)		; 変数
+;	 ("Organization" . "組織名"))	; 文字列
+;	("^Newsgroups: test.*"
+;	 ("Organization" . "ニュース投稿時の組織名"))
+;	))
 
 ;; ドラフト作成時(返信時)に，自動的にヘッダを変更する
 ;(add-hook 'wl-mail-setup-hook
