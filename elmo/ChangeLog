@@ -1,3 +1,7 @@
+2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (product-version-as-string): Remove define.
+
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-number-set-chop-length): New variable.

@@ -42,27 +42,12 @@
   ;; Don't forget to check `wl-version.el' and Info.
   (product-define "ELMO" nil '(2 7 7)))
 
-;; For APEL 10.2 or earlier.
-(defun-maybe product-version-as-string (product)
-  "Return version number of product as a string.
-PRODUCT is a product structure which returned by `product-define'.
-If optional argument UPDATE is non-nil, then regenerate
-`produce-version-string' from `product-version'."
-  (setq product (product-find product))
-  (or (product-version-string product)
-      (and (product-version product)
-	   (product-set-version-string product
-				       (mapconcat (function int-to-string)
-						  (product-version product)
-						  ".")))))
-
 ;; set version-string
 (product-version-as-string 'elmo-version)
 
 (defun elmo-version ()
   "Return ELMO version."
   (product-string-1 'elmo-version))
-
 
 ;; for backward compatibility
 (defconst elmo-appname (product-name (product-find 'elmo-version)))
