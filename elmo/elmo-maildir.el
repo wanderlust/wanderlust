@@ -247,7 +247,7 @@ LOCATION."
 	   'elmo-maildir-msgdb-create "Creating msgdb..."
 	   (/ (* i 100) len)))))
     (message "Creating msgdb...done")
-    (elmo-msgdb-sort-by-date new-msgdb)))
+    new-msgdb))
 
 (defun elmo-maildir-cleanup-temporal (dir)
   ;; Delete files in the tmp dir which are not accessed

@@ -1,3 +1,9 @@
+2005-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Don't sort by date.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Ditto.
+
 2005-04-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-maildir.el (elmo-maildir-list-location): Sort by last

@@ -357,7 +357,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	 percent))
       (setq numlist (cdr numlist)))
     (message "Creating msgdb...done")
-    (elmo-msgdb-sort-by-date new-msgdb)))
+    new-msgdb))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))
   nil)
