@@ -126,6 +126,9 @@
 ;; 未読メッセージを優先的に読む
 ;(setq wl-summary-move-order 'unread)
 
+;; 着信通知の設定
+;(setq wl-biff-check-folder-list '("%inbox"))
+;(setq wl-biff-notify-hook '(beep))
 
 ;;; [[ ネットワーク ]]
 

@@ -127,6 +127,9 @@
 ;; jump to unread message in 'N' or 'P'.
 ;(setq wl-summary-move-order 'unread)
 
+;; notify mail arrival
+;(setq wl-biff-check-folder-list '("%inbox"))
+;(setq wl-biff-notify-hook '(beep))
 
 ;;; [[ Network ]]
 
