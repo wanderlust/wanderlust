@@ -1,1 +1,1 @@
-@set VERSION 2.11.24
+@set VERSION 2.11.25

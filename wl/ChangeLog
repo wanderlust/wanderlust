@@ -1,3 +1,7 @@
+2004-04-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.25.
+
 2004-04-16  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-sync-update): Remove duplicated period
