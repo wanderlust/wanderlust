@@ -230,8 +230,7 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
       (setq list (elmo-msgdb-list-messages (elmo-folder-msgdb folder))))
     (if visible-only
 	(elmo-living-messages list killed-list)
-      (elmo-uniq-list
-       (nconc (elmo-number-set-to-number-list killed-list) list)))))
+      list)))
 
 (luna-define-generic elmo-folder-list-unreads (folder)
   "Return a list of unread message numbers contained in FOLDER.")
@@ -1133,20 +1132,11 @@ ENTITY is the message-entity to get the parent.")
 Return a list of numbers (`new' `unread' `answered')")
 
 (luna-define-method elmo-folder-count-flags ((folder elmo-folder))
-  (let ((new 0)
-	(unreads 0)
-	(answered 0)
-	flags)
-    (dolist (number (elmo-folder-list-messages folder 'visible 'in-msgdb))
-      (setq flags (elmo-message-flags folder number))
-      (cond
-       ((memq 'new flags)
-	(incf new))
-       ((memq 'unread flags)
-	(incf unreads))
-       ((memq 'answered flags)
-	(incf answered))))
-    (list new unreads answered)))
+  (let* ((flag-count (elmo-msgdb-flag-count (elmo-folder-msgdb folder)))
+	 (new (or (cdr (assq 'new flag-count)) 0))
+	 (unread (or (cdr (assq 'unread flag-count)) 0))
+	 (answered(or (cdr (assq 'answered flag-count)) 0)))
+    (list new (- unread new) answered)))
 
 (defun elmo-message-set-flag (folder number flag &optional is-local)
   "Set message flag.
@@ -1401,10 +1391,12 @@ FIELD is a symbol of the field.")
 
 (defun elmo-folder-kill-messages (folder numbers)
   "Kill(hide) messages in the FOLDER with NUMBERS."
-  (elmo-folder-set-killed-list-internal
-   folder
-   (elmo-number-set-append-list (elmo-folder-killed-list-internal
-				 folder) numbers)))
+  (let ((msgdb (elmo-folder-msgdb folder))
+	(killed (elmo-folder-killed-list-internal folder)))
+    (dolist (number numbers)
+      (elmo-number-set-append killed number)
+      (elmo-msgdb-unset-flag msgdb number 'all))
+    (elmo-folder-set-killed-list-internal folder killed)))
 
 
 (luna-define-method elmo-folder-clear ((folder elmo-folder)

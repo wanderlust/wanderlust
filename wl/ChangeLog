@@ -1,5 +1,8 @@
 2003-09-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-sync-update): Don't call
+	wl-summary-update-status-marks.
+
 	* Version number is increased to 2.11.18.
 
 2003-09-26  Yuuichi Teranishi  <teranisi@gohome.org>

@@ -1073,14 +1073,7 @@ Don't cache if nil.")
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)
 						 numbers)
-  (elmo-nntp-folder-delete-messages folder numbers))
-
-(defun elmo-nntp-folder-delete-messages (folder numbers)
-  (let ((killed-list (elmo-folder-killed-list-internal folder)))
-    (dolist (number numbers)
-      (setq killed-list
-	    (elmo-msgdb-set-as-killed killed-list number)))
-    (elmo-folder-set-killed-list-internal folder killed-list))
+  (elmo-folder-kill-messages folder numbers)
   t)
 
 (luna-define-method elmo-folder-exists-p-plugged ((folder elmo-nntp-folder))

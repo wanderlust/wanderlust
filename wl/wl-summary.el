@@ -1763,7 +1763,6 @@ If ARG is non-nil, checking is omitted."
 
 		(when delete-list
 		  (wl-summary-delete-messages-on-buffer delete-list))
-		(wl-summary-update-status-marks)
 		(setq num (length append-list))
 		(setq i 0)
 		(setq wl-summary-delayed-update nil)

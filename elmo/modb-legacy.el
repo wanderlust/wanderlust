@@ -390,6 +390,8 @@ Return a list of message numbers which have duplicated message-ids."
      (elmo-msgdb-set-flag msgdb number 'unread))
     (uncached
      (elmo-msgdb-set-flag msgdb number 'cached))
+    (all
+     (elmo-msgdb-set-mark msgdb number nil))
     (t
      (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
 	    (flags (modb-legacy-mark-to-flags cur-mark))
@@ -404,6 +406,23 @@ Return a list of message numbers which have duplicated message-ids."
        (setq new-mark (modb-legacy-flags-to-mark flags))
        (unless (string= new-mark cur-mark)
 	 (elmo-msgdb-set-mark msgdb number new-mark))))))
+
+(luna-define-method elmo-msgdb-flag-count ((msgdb modb-legacy))
+  (let ((new 0)
+	(unread 0)
+	(answered 0))
+    (dolist (elem (elmo-msgdb-get-mark-alist msgdb))
+      (cond
+       ((string= (cadr elem) modb-legacy-new-mark)
+	(incf new)
+	(incf unread))
+       ((member (cadr elem) (modb-legacy-unread-marks))
+	(incf unread))
+       ((member (cadr elem) (modb-legacy-answered-marks))
+	(incf answered))))
+    (list (cons 'new new)
+	  (cons 'unread unread)
+	  (cons 'answered answered))))
 
 (luna-define-method elmo-msgdb-list-messages ((msgdb modb-legacy))
   (mapcar 'elmo-msgdb-overview-entity-get-number-internal

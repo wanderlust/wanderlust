@@ -55,6 +55,7 @@
 		     (number-list	; sorted list of message numbers.
 		      entity-map	; number, msg-id -> entity mapping.
 		      flag-map		; number -> flag-list mapping
+		      flag-count	; list of (FLAG . COUNT)
 		      ))
   (luna-define-internal-accessors 'modb-standard))
 
@@ -104,6 +105,15 @@
 	(throw 'done t))
       (setq check-flags (cdr check-flags)))))
 
+(defsubst modb-standard-countup-flags (modb flags &optional delta)
+  (let ((flag-count (modb-standard-flag-count-internal modb))
+	(delta (or delta 1))
+	elem)
+    (dolist (flag flags)
+      (if (setq elem (assq flag flag-count))
+	  (setcdr elem (+ (cdr elem) delta))
+	(setq flag-count (cons (cons flag delta) flag-count))))
+    (modb-standard-set-flag-count-internal modb flag-count)))
 
 ;; save and load functions
 (defun modb-standard-load-msgid (modb path)
@@ -136,6 +146,7 @@
 		   (elmo-make-hash (elmo-msgdb-length modb)))))
     (dolist (info (elmo-object-load
 		   (expand-file-name modb-standard-flag-filename path)))
+      (modb-standard-countup-flags modb (cdr info))
       (elmo-set-hash-val (modb-standard-key (car info)) info table))
     (modb-standard-set-flag-map-internal modb table)))
 
@@ -254,6 +265,9 @@
 				  (symbol-value atom)
 				  table))
 	     (modb-standard-flag-map msgdb-append)))
+	  ;; flag-count
+	  (dolist (pair (modb-standard-flag-count-internal msgdb-append))
+	    (modb-standard-countup-flags msgdb (list (car pair)) (cdr pair)))
 	  ;; modification flags
 	  (dolist (number (modb-standard-number-list-internal msgdb-append))
 	    (modb-standard-set-message-modified msgdb number)
@@ -264,7 +278,8 @@
 (luna-define-method elmo-msgdb-clear :after ((msgdb modb-standard))
   (modb-standard-set-number-list-internal msgdb nil)
   (modb-standard-set-entity-map-internal msgdb nil)
-  (modb-standard-set-flag-map-internal msgdb nil))
+  (modb-standard-set-flag-map-internal msgdb nil)
+  (modb-standard-set-flag-count-internal msgdb nil))
 
 (luna-define-method elmo-msgdb-length ((msgdb modb-standard))
   (length (modb-standard-number-list-internal msgdb)))
@@ -281,7 +296,8 @@
      (elmo-msgdb-unset-flag msgdb number 'cached))
     (t
      (let* ((cur-flags (modb-standard-message-flags msgdb number))
-	    (new-flags (copy-sequence cur-flags)))
+	    (new-flags (copy-sequence cur-flags))
+	    diff)
        (and (memq 'new new-flags)
 	    (setq new-flags (delq 'new new-flags)))
        (or (memq flag new-flags)
@@ -290,6 +306,9 @@
 		  (memq 'answered new-flags))
 	 (setq new-flags (delq 'answered new-flags)))
        (unless (equal new-flags cur-flags)
+	 (setq diff (elmo-list-diff new-flags cur-flags))
+	 (modb-standard-countup-flags msgdb (car diff))
+	 (modb-standard-countup-flags msgdb (cadr diff) -1)
 	 (elmo-set-hash-val (modb-standard-key number)
 			    (cons number new-flags)
 			    (modb-standard-flag-map msgdb))
@@ -302,9 +321,16 @@
      (elmo-msgdb-set-flag msgdb number 'unread))
     (uncached
      (elmo-msgdb-set-flag msgdb number 'cached))
+    (all
+     (modb-standard-countup-flags msgdb
+				  (modb-standard-message-flags msgdb number)
+				  -1)
+     (elmo-clear-hash-val (modb-standard-key number)
+			  (modb-standard-flag-map msgdb)))
     (t
      (let* ((cur-flags (modb-standard-message-flags msgdb number))
-	    (new-flags (copy-sequence cur-flags)))
+	    (new-flags (copy-sequence cur-flags))
+	    diff)
        (and (memq 'new new-flags)
 	    (setq new-flags (delq 'new new-flags)))
        (and (memq flag new-flags)
@@ -313,10 +339,16 @@
 		  (memq 'answered new-flags))
 	 (setq new-flags (delq 'answered new-flags)))
        (unless (equal new-flags cur-flags)
+	 (setq diff (elmo-list-diff new-flags cur-flags))
+	 (modb-standard-countup-flags msgdb (car diff))
+	 (modb-standard-countup-flags msgdb (cadr diff) -1)
 	 (elmo-set-hash-val (modb-standard-key number)
 			    (cons number new-flags)
 			    (modb-standard-flag-map msgdb))
 	 (modb-standard-set-flag-modified msgdb number))))))
+
+(luna-define-method elmo-msgdb-flag-count ((msgdb modb-standard))
+  (modb-standard-flag-count-internal msgdb))
 
 (luna-define-method elmo-msgdb-list-messages ((msgdb modb-standard))
   (copy-sequence
@@ -414,6 +446,7 @@
        (modb-standard-key number)
        (cons number flags)
        (modb-standard-flag-map msgdb))
+      (modb-standard-countup-flags msgdb flags)
       (modb-standard-set-flag-modified msgdb number))
     duplicate))
 
@@ -431,6 +464,11 @@
       ;; entity-map
       (elmo-clear-hash-val key entity-map)
       (elmo-clear-hash-val (modb-standard-entity-id entity) entity-map)
+      ;; flag-count (must be BEFORE flag-map)
+      (modb-standard-countup-flags
+       msgdb
+       (modb-standard-message-flags msgdb number)
+       -1)
       ;; flag-map
       (elmo-clear-hash-val key flag-map)
       (modb-standard-set-message-modified msgdb number)

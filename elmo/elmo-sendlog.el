@@ -129,11 +129,7 @@
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-sendlog-folder)
 						 numbers)
-  (let ((killed-list (elmo-folder-killed-list-internal folder)))
-    (dolist (number numbers)
-      (setq killed-list
-	    (elmo-msgdb-set-as-killed killed-list number)))
-    (elmo-folder-set-killed-list-internal folder killed-list))
+  (elmo-folder-kill-messages folder numbers)
   t)
 
 (luna-define-method elmo-message-file-p ((folder elmo-sendlog-folder) number)

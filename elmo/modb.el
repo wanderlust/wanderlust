@@ -92,6 +92,10 @@ FLAG is a symbol which is one of the following:
 `answered'  ... Message which is answered.
 `cached'    ... Message which is cached.")
 
+(luna-define-generic elmo-msgdb-flag-count (msgdb)
+  "Return a list of cons cell as (flag . count).
+The count is number of message which is set flag in the MSGDB.")
+
 (luna-define-generic elmo-msgdb-list-messages (msgdb)
   "Return a list of message numbers in the MSGDB.")
 

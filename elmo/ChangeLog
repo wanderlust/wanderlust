@@ -1,5 +1,32 @@
 2003-09-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb.el (elmo-msgdb-flag-count): New API.
+
+	* modb-standard.el (modb-standard): Added slot flag-count.
+	(modb-standard-countup-flags): New function.
+	(modb-standard-load-flag): Call it.
+	(elmo-msgdb-append): Ditto.
+	(elmo-msgdb-clear): Clear slot flag-count.
+	(elmo-msgdb-set-flag): Call modb-standard-countup-flags.
+	(elmo-msgdb-unset-flag): Treat `all' flag and call
+	modb-standard-countup-flags.
+	(elmo-msgdb-flag-count): Define.
+	(elmo-msgdb-append-entity): Call modb-standard-countup-flags.
+	(elmo-msgdb-delete-messages): Ditto.
+
+	* modb-legacy.el (elmo-msgdb-unset-flag): Treat `all' flag.
+	(elmo-msgdb-flag-count): Define.
+
+	* elmo.el (elmo-folder-list-messages): Undo last change.
+	(elmo-folder-count-flags): Use elmo-msgdb-flag-count.
+	(elmo-folder-kill-messages): Unset all flags to numbers.
+
+	* elmo-sendlog.el (elmo-folder-delete-messages): Rewrite; use
+	elmo-folder-kill-messages.
+
+	* elmo-nntp.el (elmo-folder-delete-messages): Ditto.
+	(elmo-nntp-folder-delete-messages): Abolish.
+
 	* elmo-version.el (elmo-version): Up to 2.11.18.
 
 2003-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
