@@ -1639,7 +1639,7 @@ See also variable `wl-summary-next-no-unread-command'."
 (defcustom wl-message-buffer-prefetch-folder-type-list t
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."
-  :type '(choice (const :tag "all" t)
+  :type `(choice (const :tag "all" t)
 		 (const :tag "never" nil)
 		 (set (const localdir)
 		      (const localnews)
@@ -1650,7 +1650,8 @@ and reserved buffer cache."
 		      (const shimbun)
 		      (const nmz)
 		      (const archive)
-		      (const internal)))
+		      (const mark)
+		      (const cache)))
   :group 'wl-pref)
 
 (defcustom wl-message-buffer-prefetch-folder-list nil
@@ -1775,7 +1776,7 @@ TYPE is one of the symbols `hide' or `read'.
 `read' means mark as read duplicated messages.
 If TYPE is nil, do nothing for duplicated messages."
   :type '(repeat (cons (regexp :tag "Folder regexp")
-		       (choice (const :tag "Hide" kill)
+		       (choice (const :tag "Hide" hide)
 			       (const :tag "Mark as read" read))))
   :group 'wl-folder)
 

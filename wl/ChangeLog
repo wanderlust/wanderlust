@@ -1,3 +1,10 @@
+2001-12-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-folder-process-duplicates-alist): Fixed
+	typo (kill->hide).
+	(wl-message-buffer-prefetch-folder-type-list): Added elements
+	`mark' and `cache' instead of `internal'.
+
 2001-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-acap.el (wl-acap-init): If initialization via ACAP is interrupted,
