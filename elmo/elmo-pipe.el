@@ -111,7 +111,9 @@
     (unwind-protect
 	(elmo-folder-move-messages src msgs dst
 				   nil nil copy)
-      (elmo-progress-clear 'elmo-folder-move-messages)))
+      (elmo-progress-clear 'elmo-folder-move-messages))
+    (if copy
+	(elmo-msgdb-append-to-killed-list src msgs)))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)
@@ -216,7 +218,7 @@
 
 (luna-define-method elmo-folder-message-file-directory ((folder
 							 elmo-pipe-folder))
-  (elmo-folder-message-file-directory 
+  (elmo-folder-message-file-directory
    (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
