@@ -1,3 +1,10 @@
+2004-09-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* modb-standard.el (modb-standard-load-entity): Don't bind inhibit-quit
+	here.
+	(elmo-msgdb-save): Bind inhibit-quit.
+	(modb-standard-message-entity): Ditto.
+
 2004-09-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-database.el: No need to require elmo-msgdb.
@@ -7498,4 +7505,3 @@
 
 	* elmo-util.el (elmo-display-progress): New function.
 	All other related modules are changed.
-

@@ -196,7 +196,6 @@ When non-nil, redundunt message-id string are not saved."
 (defun modb-standard-load-entity (modb path &optional section)
   (let ((table (or (modb-standard-entity-map-internal modb)
 		   (elmo-make-hash (elmo-msgdb-length modb))))
-	(inhibit-quit t)
 	number msgid)
     (dolist (entity (elmo-object-load
 		     (expand-file-name
@@ -250,7 +249,8 @@ When non-nil, redundunt message-id string are not saved."
       t)))
 
 (luna-define-method elmo-msgdb-save ((msgdb modb-standard))
-  (let ((path (elmo-msgdb-location msgdb)))
+  (let ((path (elmo-msgdb-location msgdb))
+	(inhibit-quit t))
     (when (elmo-msgdb-message-modified-p msgdb)
       (modb-standard-save-msgid  msgdb path)
       (modb-standard-save-entity msgdb path)
@@ -521,7 +521,8 @@ When non-nil, redundunt message-id string are not saved."
 (defun modb-standard-message-entity (msgdb key load)
   (let ((ret (elmo-get-hash-val
 	      key
-	      (modb-standard-entity-map-internal msgdb))))
+	      (modb-standard-entity-map-internal msgdb)))
+	(inhibit-quit t))
     (if (eq 'autoload (car-safe ret))
 	(when (and load modb-standard-divide-number)
 	  (modb-standard-load-entity
