@@ -52,6 +52,7 @@
   (define-key wl-template-mode-map "\n"    'wl-template-set))
 
 (defun wl-template-apply (name)
+  "Apply NAME templete to draft."
   (let (template)
     (when name
       (if (string= name "")
@@ -85,6 +86,7 @@ Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
   (run-hooks 'wl-template-mode-hook))
 
 (defun wl-template-select ()
+  "Select templete from `wl-template-alist'."
   (interactive)
   (if (not wl-template-visible-select)
       (wl-template-apply
@@ -120,7 +122,8 @@ Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
       (wl-template-show))))
 
 (defun wl-template-show (&optional arg)
-  "Show reference INDEX in wl-template-alist."
+  "Show reference INDEX in `wl-template-alist'.
+ARG is ignored."			; ARG ignored this version (?)
   (save-excursion
     (set-buffer wl-template-buffer-name)
     (let ((buffer-read-only nil)
@@ -180,6 +183,8 @@ Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
 	(if win (select-window win))))))
 
 (defun wl-template-insert (name &optional mail-header)
+  "Insert NAME templete.
+Set header-separator is MAIL-HEADER."
   (let ((template (cdr (assoc name wl-template-alist)))
 	(mail-header-separator (or mail-header
 				   mail-header-separator)))

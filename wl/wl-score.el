@@ -115,7 +115,7 @@ The string in the accessible portion of the current buffer is simplified.
 It is assumed to be a single-line subject.
 Whitespace is generally cleaned up, and miscellaneous leading/trailing
 matter is removed.  Additional things can be deleted by setting
-wl-score-simplify-fuzzy-regexp."
+`wl-score-simplify-fuzzy-regexp'."
   (let ((regexp
 	 (if (listp wl-score-simplify-fuzzy-regexp)
 	     (mapconcat (function identity) wl-score-simplify-fuzzy-regexp
@@ -137,7 +137,7 @@ wl-score-simplify-fuzzy-regexp."
     (elmo-buffer-replace "^ +")))
 
 (defun wl-score-simplify-string-fuzzy (string)
-  "Simplify a string fuzzily.
+  "Simplify a STRING fuzzily.
 See `wl-score-simplify-buffer-fuzzy' for details."
   (elmo-set-work-buf
    (let ((case-fold-search t))
@@ -146,6 +146,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
      (buffer-string))))
 
 (defun wl-score-simplify-subject (subject)
+  "Simplify a SUBJECT fuzzily.
+Remove Re, Was, Fwd etc."
   (elmo-set-work-buf
    (let ((regexp
 	  (if (listp wl-score-simplify-fuzzy-regexp)
@@ -212,12 +214,14 @@ See `wl-score-simplify-buffer-fuzzy' for details."
     (sort messages func)))
 
 (defsubst wl-score-get (symbol &optional alist)
+  "Get SYMBOL's definition in ALIST."
   ;; Get SYMBOL's definition in ALIST.
   (cdr (assoc symbol
 	      (or alist
 		  wl-score-alist))))
 
 (defun wl-score-set (symbol value &optional alist warn)
+  "Set SYMBOL to VALUE in ALIST."
   ;; Set SYMBOL to VALUE in ALIST.
   (let* ((alist (or alist wl-score-alist))
 	 (entry (assoc symbol alist)))
@@ -234,6 +238,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 		   (cons (cons symbol value) (cdr alist)))))))
 
 (defun wl-score-cache-clean ()
+  "Cleaning score cache.
+Set `wl-score-cache' nil."
   (interactive)
   (setq wl-score-cache nil))
 
@@ -260,6 +266,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	  (setq wl-score-alist alist)))))))
 
 (defun wl-score-save ()
+  "Save all score information."
   ;; Save all score information.
   (let ((cache wl-score-cache)
 	entry score file dir)
@@ -624,6 +631,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	    (eword-decode-region (point-min) (point-max))))))))
 
 (defun wl-score-string (scores header now expire &optional extra-header)
+  "Insert the unique message headers in the buffer."
   ;; Insert the unique message headers in the buffer.
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
 	entries alist messages
@@ -678,7 +686,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 			  (and (eolp)
 			       (= (save-excursion (forward-line 0) (point))
 				  (match-beginning 0))))
-		  ;;(end-of-line)
+;;;		  (end-of-line)
 		  (setq found (setq arts (wl-score-get-alike)))
 		  ;; Found a match, update scores.
 		  (while (setq art (pop arts))
@@ -743,6 +751,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
   (wl-score-followup scores header now expire t))
 
 (defun wl-score-followup (scores header now expire &optional thread)
+  "Insert the unique message headers in the buffer."
   ;; Insert the unique message headers in the buffer.
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
 	(all-scores scores)
@@ -782,7 +791,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 		      (and (eolp)
 			   (= (progn (beginning-of-line) (point))
 			      (match-beginning 0))))
-	      ;;(end-of-line)
+;;;	      (end-of-line)
 	      (setq found (setq arts (wl-score-get-alike)))
 	      ;; Found a match, update scores.
 	      (while (setq art (pop arts))
@@ -1292,7 +1301,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
     (call-interactively 'wl-score-edit-file)))
 
 (defun wl-score-edit-file (file)
-  "Edit a score file."
+  "Edit a score FILE."
   (interactive
    (list (read-file-name "Edit score file: " wl-score-files-dir)))
   (when (wl-collect-summary)

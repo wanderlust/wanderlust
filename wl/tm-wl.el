@@ -210,7 +210,7 @@ By setting following-method as yank-content."
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
     (if (null target)
-	(error "%s is not supported. Sorry." target))
+	(error "%s is not supported" target))
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?")))
 	(mime-article/decode-message/partial beg end cal)

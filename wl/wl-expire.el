@@ -68,7 +68,7 @@
 	((eq wl-summary-expire-reserve-marks 'none)
 	 t)
 	(t
-	 (error "invalid marks: %s" wl-summary-expire-reserve-marks))))
+	 (error "Invalid marks: %s" wl-summary-expire-reserve-marks))))
 
 (defmacro wl-expire-make-sortable-date (date)
   (` (timezone-make-sortable-date
@@ -200,7 +200,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 				  nil nil t
 				  copy-reserve-message
 				  preserve-number))
-	  (error "expire: move msgs to %s failed" dst-folder))
+	  (error "Expire: move msgs to %s failed" dst-folder))
 	(wl-expire-append-log folder refile-list dst-folder
 			   (if copy-reserve-message 'copy 'move))
 	(setq copy-len (length refile-list))
@@ -228,7 +228,7 @@ If REFILE-LIST includes reserve mark message, so copy."
       (cons refile-list copy-len))))
 
 (defun wl-expire-archive-get-folder (src-folder &optional fmt)
-  "Get archive folder name from src-folder."
+  "Get archive folder name from SRC-FOLDER."
   (let* ((spec (elmo-folder-get-spec src-folder))
 	 (fmt (or fmt wl-expire-archive-folder-name-fmt))
 	 (archive-spec (char-to-string
@@ -466,6 +466,7 @@ Refile to archive folder followed message date."
     ))
 
 (defun wl-expire-hide (folder hide-list msgdb)
+  ""
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
     (message mess)
     (elmo-msgdb-delete-msgs folder hide-list msgdb t)
@@ -475,9 +476,11 @@ Refile to archive folder followed message date."
     (cons hide-list (length hide-list))))
 
 (defsubst wl-expire-folder-p (folder)
+  "Return non-nil, when FOLDER matched `wl-expire-alist'."
   (wl-get-assoc-list-value wl-expire-alist folder))
 
 (defun wl-summary-expire (&optional folder-name notsummary nolist)
+  ""
   (interactive)
   (let ((folder (or folder-name wl-summary-buffer-folder-name))
 	(alist wl-expire-alist)

@@ -163,7 +163,7 @@
     guess))
 
 (defun wl-refile-evaluate-rule (rule entity)
-  "Returns folder string if RULE is matched to ENTITY.
+  "Return folder string if RULE is matched to ENTITY.
 If RULE does not match ENTITY, returns nil."
   (let ((case-fold-search t)
 	fields guess pairs value)

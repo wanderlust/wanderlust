@@ -149,6 +149,7 @@ By setting following-method as yank-content."
     (` (mime-read-field (, field-name) (, entity)))))
 
 (defun wl-draft-preview-message ()
+  ""
   (interactive)
   (let ((mime-display-header-hook 'wl-highlight-headers)
 	mime-view-ignored-field-list ; all header.
@@ -190,7 +191,8 @@ By setting following-method as yank-content."
 (defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
    (elmo-read-msg-no-cache folder number (current-buffer))
-   (mime-parse-buffer nil))); 'mime-buffer-entity)))
+;;;(mime-parse-buffer nil 'mime-buffer-entity)
+   (mime-parse-buffer nil)))
 
 (defalias 'wl-message-read            'mime-preview-scroll-up-entity)
 (defalias 'wl-message-next-content    'mime-preview-move-to-next)
@@ -225,6 +227,7 @@ By setting following-method as yank-content."
     number))
 
 (defun wl-summary-burst ()
+  ""
   (interactive)
   (let ((raw-buf (wl-message-get-original-buffer))
 	children message-entity content-type target)
@@ -268,8 +271,7 @@ By setting following-method as yank-content."
 
 ;;; Yet another combine method.
 (defun wl-mime-combine-message/partial-pieces (entity situation)
-  "Internal method for wl to combine message/partial messages
-automatically."
+  "Internal method for wl to combine message/partial messages automatically."
   (interactive)
   (let* ((msgdb (save-excursion
 		  (set-buffer wl-message-buffer-cur-summary-buffer)
@@ -286,7 +288,7 @@ automatically."
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
     (if (or (file-exists-p full-file)
-	    (not (y-or-n-p "Merge partials?")))
+	    (not (y-or-n-p "Merge partials? ")))
 	(with-current-buffer mother
 	  (mime-store-message/partial-piece entity situation))
       (setq subject-id

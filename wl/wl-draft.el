@@ -142,9 +142,11 @@ the `wl-smtp-features' variable."
        (,@ body))))
 
 (defun wl-draft-insert-date-field ()
+  "Insert Date field."
   (insert "Date: " (wl-make-date-string) "\n"))
 
 (defun wl-draft-insert-from-field ()
+  "Insert From field."
   ;; Put the "From:" field in unless for some odd reason
   ;; they put one in themselves.
   (let* ((login (or user-mail-address (user-login-name)))
@@ -203,7 +205,7 @@ the `wl-smtp-features' variable."
     ))
 
 (defun wl-draft-insert-x-face-field-here ()
-  "insert x-face field at point."
+  "Insert x-face field at point."
   (let ((x-face-string (elmo-get-file-string wl-x-face-file)))
     (if (string-match "^[ \t]*" x-face-string)
 	(setq x-face-string (substring x-face-string (match-end 0))))
@@ -274,7 +276,8 @@ the `wl-smtp-features' variable."
   (mail-position-on-field "To"))
 
 (defun wl-draft-reply (buf no-arg summary-buf)
-;  (save-excursion
+  ""
+;;;(save-excursion
   (let (r-list
 	(eword-lexical-analyzer '(eword-analyze-quoted-string
 				  eword-analyze-domain-literal
@@ -483,6 +486,7 @@ the `wl-smtp-features' variable."
 	(wl-highlight-body-region beg (point-max)))))
 
 (defun wl-draft-confirm ()
+  "Confirm send message."
   (interactive)
   (y-or-n-p (format "Send current draft as %s? "
 		    (if (wl-message-mail-p)
@@ -490,22 +494,28 @@ the `wl-smtp-features' variable."
 		      "News"))))
 
 (defun wl-message-news-p ()
+  "If exist valid Newsgroups field, return non-nil."
   (std11-field-body "Newsgroups"))
 
 (defun wl-message-field-exists-p (field)
+  "If FIELD exist and FIELD value is not empty, return non-nil."
   (let ((value (std11-field-body field)))
     (and value
 	 (not (string= value "")))))
 
 (defun wl-message-mail-p ()
+  "If exist To, Cc or Bcc field, return non-nil."
   (or (wl-message-field-exists-p "To")
       (wl-message-field-exists-p "Cc")
       (wl-message-field-exists-p "Bcc")
-      ;;(wl-message-field-exists-p "Fcc")		; This may be needed..
+;;; This may be needed..
+;;;   (wl-message-field-exists-p "Fcc")
       ))
 
 (defun wl-draft-open-file (&optional file)
-  (interactive)				; "*fFile to edit: ")
+  "Open FILE for edit."
+  (interactive)
+;;;(interactive "*fFile to edit: ")
   (wl-draft-edit-string (elmo-get-file-string
 			 (or file
 			     (read-file-name "File to edit: "
@@ -955,7 +965,7 @@ non-nil."
 	    (goto-char (1+ delimline))
 	    (if (eval mail-mailer-swallows-blank-line)
 		(newline))
-	    ;;(run-hooks 'wl-mail-send-pre-hook)
+;;;	    (run-hooks 'wl-mail-send-pre-hook)
 	    (if mail-interactive
 		(save-excursion
 		  (set-buffer errbuf)
@@ -998,6 +1008,8 @@ non-nil."
   (wl-draft-send-mail-with-smtp))
 
 (defun wl-draft-insert-required-fields (&optional force-msgid)
+  "Insert Message-ID, Date, and From field.
+If FORCE-MSGID, ignore 'wl-insert-message-id'."
   ;; Insert Message-Id field...
   (goto-char (point-min))
   (when (and (or force-msgid
@@ -1016,7 +1028,7 @@ non-nil."
       (wl-draft-insert-from-field)))
 
 (defun wl-draft-normal-send-func (editing-buffer kill-when-done)
-  "Send the message in the current buffer. "
+  "Send the message in the current buffer."
   (save-restriction
     (std11-narrow-to-header mail-header-separator)
     (wl-draft-insert-required-fields)
@@ -1036,7 +1048,7 @@ non-nil."
     (wl-draft-delete editing-buffer)))
 
 (defun wl-draft-dispatch-message (&optional mes-string)
-  "Send the message in the current buffer. Not modified the header fields."
+  "Send the message in the current buffer.  Not modified the header fields."
   (let (delimline)
     (if (and wl-draft-verbose-send mes-string)
 	(message mes-string))
@@ -1083,7 +1095,7 @@ non-nil."
 		(message (concat wl-draft-verbose-msg "done")))
 	    (if mes-string
 		(message (concat mes-string
-				 (if sent-via "done." "failed.")))))))))
+				 (if sent-via "done" "failed")))))))))
   (not wl-sent-message-modified)) ;; return value
 
 (defun wl-draft-raw-send (&optional kill-when-done force-pre-hook mes-string)
@@ -1091,9 +1103,9 @@ non-nil."
   (interactive)
   (save-excursion
     (let (wl-interactive-send
-;	  wl-draft-verbose-send
+;;;	  wl-draft-verbose-send
 	  (wl-mail-send-pre-hook (and force-pre-hook wl-mail-send-pre-hook))
-;	  wl-news-send-pre-hook
+;;;	  wl-news-send-pre-hook
 	  mail-send-hook
 	  mail-send-actions)
       (wl-draft-send kill-when-done mes-string))))
@@ -1831,8 +1843,8 @@ If optional argument is non-nil, current draft buffer is killed"
 		    (setq failure (funcall
 				   wl-draft-queue-flush-send-func
 				   (format "Sending (%d/%d)..." i len)))
-;; 		    (wl-draft-raw-send nil nil
-;; 				       (format "Sending (%d/%d)..." i len))
+;;;		  (wl-draft-raw-send nil nil
+;;;				     (format "Sending (%d/%d)..." i len))
 		  (error
 		   (elmo-display-error err t)
 		   (setq failure t))

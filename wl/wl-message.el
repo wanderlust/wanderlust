@@ -90,9 +90,9 @@
       (setq gbw nil))
     (if gbw
 	(select-window gbw)
-;      (if (or (null mes)
-;	      wl-stay-folder-window)
-;	  (delete-other-windows))
+;;;   (if (or (null mes)
+;;;	      wl-stay-folder-window)
+;;;	  (delete-other-windows))
       (when wl-fixed-window-configuration
         (delete-other-windows)
         (and wl-stay-folder-window
@@ -132,14 +132,14 @@
 	(widen)
 	(forward-page 1)
 	(if (pos-visible-in-window-p (point))
-	    (wl-message-narrow-to-page 1))))		;Go to next page.
+	    (wl-message-narrow-to-page 1)))) ; Go to next page.
     (if (eobp)
 	()
       (scroll-up))
     (select-window (get-buffer-window cur-buf))))
   
 (defun wl-message-follow-current-entity (buffer)
-  "Follow to current message"
+  "Follow to current message."
   (wl-draft-reply (wl-message-get-original-buffer)
 		  'to-all wl-message-buffer-cur-summary-buffer)
   (let ((mail-reply-buffer buffer))
@@ -211,7 +211,7 @@
 	(local-set-key "p" 'wl-message-exit)
 	(local-set-key "n" 'wl-message-exit)
 	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
-	;;(decode-mime-charset-region (point-min) (point-max) wl-mime-charset)
+;;;	(decode-mime-charset-region (point-min) (point-max) wl-mime-charset)
 	;; we can call decode-coding-region() directly, because multibyte flag is t.
 	(decode-coding-region (point-min) (point-max) wl-cs-autoconv)
 	(wl-highlight-message (point-min)
@@ -231,7 +231,7 @@
     (wl-message-decode-mode outbuf inbuf))))
 
 (defun wl-message-prev-page (&optional lines)
-  "Scroll down this message. Returns non-nil if top of message"
+  "Scroll down this message.  Returns non-nil if top of message."
   (interactive)
   (let ((cur-buf (current-buffer))
 	(view-message-buffer (get-buffer-create wl-message-buf-name))
@@ -264,7 +264,7 @@
     (mime-open-entity backend (list folder number msgdb nil))))
 
 (defun wl-message-next-page (&optional lines)
-  "Scroll up this message. Returns non-nil if bottom of message"
+  "Scroll up this message.  Returns non-nil if bottom of message."
   (interactive)
   (let ((cur-buf (current-buffer))
 	(view-message-buffer (get-buffer-create wl-message-buf-name))
@@ -436,8 +436,8 @@
 			 folder)
 		       msgdb))
 		(setq mmelmo-imap4-skipped-parts nil)
-		;;; mime-display-message sets buffer-read-only variable as t.
-		;;; which makes buffer read-only status confused...
+		;; mime-display-message sets buffer-read-only variable as t.
+		;; which makes buffer read-only status confused...
 		(wl-mime-display-message cur-entity view-message-buffer
 					 nil nil 'mmelmo-original-mode)
 		(if mmelmo-imap4-skipped-parts
@@ -582,8 +582,8 @@
       (wl-summary-redisplay)))
 
 (defun wl-message-refer-article-or-url (e)
-  "Read article specified by message-id around point. If failed,
-   attempt to execute button-dispatcher."
+  "Read article specified by message-id around point.
+If failed, attempt to execute button-dispatcher."
   (interactive "e")
   (let ((window (get-buffer-window (current-buffer)))
 	mouse-window point beg end msg-id)

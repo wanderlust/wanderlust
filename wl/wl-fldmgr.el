@@ -91,7 +91,7 @@
 (defun wl-fldmgr-exit ()
   (when (and wl-fldmgr-modified
 	     (or (not wl-interactive-save-folders)
-		 (y-or-n-p "Folder view was modified. Save current folders? ")))
+		 (y-or-n-p "Folder view was modified.  Save current folders? ")))
     (wl-fldmgr-save-folders)))
 
 ;;; Macro and misc Function
@@ -147,8 +147,8 @@
 		wl-folder-group-alist)))
 
 (defun wl-fldmgr-add-entity-hashtb (entities)
-  "update `wl-folder-entity-hashtb', `wl-folder-newsgroups-hashtb'.
-return value is diffs '(new unread all)."
+  "Update `wl-folder-entity-hashtb', `wl-folder-newsgroups-hashtb'.
+Return value is diffs '(new unread all)."
   (let* ((new-diff 0)
 	 (unread-diff 0)
 	 (all-diff 0)
@@ -176,7 +176,7 @@ return value is diffs '(new unread all)."
     (list new-diff unread-diff all-diff)))
 
 (defun wl-fldmgr-delete-entity-hashtb (entities &optional clear)
-  "update `wl-folder-entity-hashtb'.
+  "Update `wl-folder-entity-hashtb'.
 return value is diffs '(-new -unread -all)."
   (let* ((new-diff 0)
 	 (unread-diff 0)
@@ -444,27 +444,27 @@ return value is diffs '(-new -unread -all)."
     (save-excursion
       (beginning-of-line)
       (when prev
-;; 	(wl-folder-next-entity-skip-invalid t)
-;; 	(and (setq previous-entity
-;; 		   (wl-fldmgr-get-previous-entity wl-folder-entity
-;; 						  (wl-fldmgr-get-entity-id)))
-;; 	     ;; change entity to id
-;; 	     (setq previous-entity
-;; 		   (cons
-;; 		    (and (car previous-entity)
-;; 			 (wl-fldmgr-get-entity-id (car previous-entity)))
-;; 		    (and (cdr previous-entity)
-;; 			 (wl-fldmgr-get-entity-id (cdr previous-entity))))))
+;;;	(wl-folder-next-entity-skip-invalid t)
+;;;	(and (setq previous-entity
+;;;		   (wl-fldmgr-get-previous-entity wl-folder-entity
+;;;						  (wl-fldmgr-get-entity-id)))
+;;;	     ;; change entity to id
+;;;	     (setq previous-entity
+;;;		   (cons
+;;;		    (and (car previous-entity)
+;;;			 (wl-fldmgr-get-entity-id (car previous-entity)))
+;;;		    (and (cdr previous-entity)
+;;;			 (wl-fldmgr-get-entity-id (cdr previous-entity))))))
 	(wl-folder-prev-entity-skip-invalid))
       (if (and prev
 	       (looking-at wl-folder-group-regexp)
 	       (string= (wl-match-buffer 2) "-"))
 	  (setq group-target nil)
 	(if (and prev (bobp))
-	    (error "out of desktop group")))
+	    (error "Out of desktop group")))
       (setq folder-path (wl-fldmgr-get-path wl-folder-entity
 					    (wl-folder-get-entity-from-buffer)
-					    ;;(wl-fldmgr-get-entity-id)
+;;;					    (wl-fldmgr-get-entity-id)
 					    group-target))
       (let ((fp folder-path))
 	(while fp
@@ -835,7 +835,7 @@ return value is diffs '(-new -unread -all)."
   (save-excursion
     (beginning-of-line)
     (if (looking-at wl-folder-group-regexp)
-	(error "can't delete group folder"))
+	(error "Can't delete group folder"))
     (let* ((inhibit-read-only t)
 	   (tmp (wl-fldmgr-get-path-from-buffer))
 	   (entity (elmo-string (nth 4 tmp)))
@@ -882,7 +882,7 @@ return value is diffs '(-new -unread -all)."
 		    (setcar group-entity group)
 		    (setcar (wl-string-assoc old-group wl-folder-group-alist)
 			    group)
-		    ;;(setcdr (assq id wl-folder-entity-id-name-alist) group)
+;;;		    (setcdr (assq id wl-folder-entity-id-name-alist) group)
 		    (wl-folder-set-id-name id group)
 		    (wl-fldmgr-delete-line)
  		    (wl-folder-insert-entity
@@ -895,13 +895,13 @@ return value is diffs '(-new -unread -all)."
 	       (old-folder (nth 4 tmp))
 	       new-folder)
 	  (if (eq (cdr (nth 2 tmp)) 'access)
-	      (error "can't rename access folder"))
+	      (error "Can't rename access folder"))
 	  (setq new-folder
 		(wl-fldmgr-read-string
 		 (wl-summary-read-folder old-folder "to rename" t t old-folder)))
 	  (if (or (wl-folder-entity-exists-p new-folder)
 		  (file-exists-p (elmo-msgdb-expand-path new-folder)))
-	      (error "already exists folder: %s" new-folder))
+	      (error "Already exists folder: %s" new-folder))
 	  (elmo-rename-folder old-folder new-folder)
 	  (wl-folder-set-entity-info
 	   new-folder
@@ -997,7 +997,7 @@ return value is diffs '(-new -unread -all)."
 	(if (eq (cdr (nth 2 tmp)) 'access)
 	    (message "Can't change access group")
 	  (setq entity (nth 4 tmp))
-	  (unless entity (error "no folder"))
+	  (unless entity (error "No folder"))
 	  (wl-fldmgr-add (concat "/"
 				 (elmo-read-search-condition
 				  wl-fldmgr-make-filter-default)
@@ -1033,7 +1033,7 @@ return value is diffs '(-new -unread -all)."
 		      (point))))
 	    (delete-region beg end)
 	    (wl-folder-insert-entity indent entity)))
-	;;(wl-fldmgr-reconst-entity-hashtb t t)
+;;;	(wl-fldmgr-reconst-entity-hashtb t t)
 	(message "Sorting...done")
 	(set-buffer-modified-p nil)))))
 
@@ -1100,8 +1100,8 @@ return value is diffs '(-new -unread -all)."
 	      (wl-fldmgr-delete-line)
 	      (when (wl-fldmgr-add folder)
 		(wl-folder-maybe-load-folder-list folder)
-;; 		 (wl-folder-search-group-entity-by-name (car folder)
-;; 							wl-folder-entity))
+;;;		(wl-folder-search-group-entity-by-name (car folder)
+;;;						       wl-folder-entity)
 		(setq execed t)))))
 	 ((looking-at (format "^[ ]*%s\\(.*\\)" wl-folder-unsubscribe-mark))
 	  (if (and type (> type 0))
@@ -1201,7 +1201,7 @@ return value is diffs '(-new -unread -all)."
 	     (old-petname (or (cdr pentry) ""))
 	     (change)
 	     petname)
-	(unless name (error "no folder"))
+	(unless name (error "No folder"))
 	(if (and is-group
 		 (not (eq (nth 1 (wl-folder-search-group-entity-by-name
 				  name wl-folder-entity))

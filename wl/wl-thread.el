@@ -33,7 +33,7 @@
 (require 'wl-highlight)
 
 ;; buffer local variables.
-;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
+;;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
 (defvar wl-thread-tops nil)           ; top number list (number)
 (defvar wl-thread-entities nil)
 (defvar wl-thread-entity-list nil)    ; entity list
@@ -469,8 +469,8 @@ ENTITY is returned."
     ret-val))
     
 (defun wl-thread-jump-to-prev-unread (&optional hereto)
-  "If prev unread is a children of a closed message,
-the closed parent will be opened."
+  "If prev unread is a children of a closed message.
+The closed parent will be opened."
   (interactive "P")
   (let ((msg (wl-thread-get-prev-unread
 	      (wl-summary-message-number) hereto)))
@@ -534,8 +534,8 @@ the closed parent will be opened."
     ret-val))
 
 (defun wl-thread-jump-to-next-unread (&optional hereto)
-  "If next unread is a children of a closed message,
-the closed parent will be opened."
+  "If next unread is a children of a closed message.
+The closed parent will be opened."
   (interactive "P")
   (let ((msg (wl-thread-get-next-unread
 	      (wl-summary-message-number) hereto)))
@@ -735,12 +735,12 @@ the closed parent will be opened."
   (let ((i 0)
 	(updates msgs)
 	len)
-;;     (while msgs
-;;       (setq updates
-;; 	    (append updates
-;; 		    (wl-thread-get-children-msgs (car msgs))))
-;;       (setq msgs (cdr msgs)))
-;;     (setq updates (elmo-uniq-list updates))
+;;; (while msgs
+;;;   (setq updates
+;;;	    (append updates
+;;;		    (wl-thread-get-children-msgs (car msgs))))
+;;;   (setq msgs (cdr msgs)))
+;;; (setq updates (elmo-uniq-list updates))
     (setq len (length updates))
     (while updates
       (wl-thread-update-line-on-buffer-sub nil (car updates))
@@ -803,8 +803,8 @@ the closed parent will be opened."
 	(setq parent (wl-thread-entity-get-parent-entity entity))
 	(if parent
 	    (progn
-	      ;; has parent.
-	      ;;(setq brothers (wl-thread-entity-get-children parent))
+;;; has parent.
+;;;	      (setq brothers (wl-thread-entity-get-children parent))
 	      (setq older-brothers (wl-thread-entity-get-older-brothers
 				    entity parent))
 	      (setq younger-brothers (wl-thread-entity-get-younger-brothers
@@ -927,10 +927,10 @@ When optional argument UPDATE is non-nil,
 Message is inserted to the summary buffer."
   (let ((parent (wl-thread-get-entity parent-msg))
 	child-entity invisible-top)
-;; Update the thread view...not implemented yet.
-;    (when force-insert
-;      (if parent
-;	  (wl-thread-entity-force-open parent))
+;;; Update the thread view...not implemented yet.
+;;;  (when force-insert
+;;;    (if parent
+;;;	  (wl-thread-entity-force-open parent))
     (if parent
 	;; insert as children.
 	(wl-thread-entity-insert-as-children
@@ -955,11 +955,11 @@ Message is inserted to the summary buffer."
 		;; use thread structure.
 		(wl-thread-entity-get-nearly-older-brother
 		 child-entity parent))) ; return value
-;; 		(wl-thread-entity-get-number
-;; 		 (wl-thread-entity-get-top-entity parent)))) ; return value;
-;; 	      (setq beg (point))
-;; 	      (wl-thread-goto-bottom-of-sub-thread)
-;; 	      (wl-thread-update-indent-string-region beg (point)))
+;;; 		(wl-thread-entity-get-number
+;;; 		 (wl-thread-entity-get-top-entity parent)))) ; return value;
+;;; 	      (setq beg (point))
+;;; 	      (wl-thread-goto-bottom-of-sub-thread)
+;;; 	      (wl-thread-update-indent-string-region beg (point)))
 	  ;; currently invisible.. update closed line.
 	  (wl-thread-update-children-number invisible-top)
 	  nil))))
@@ -1177,7 +1177,7 @@ Message is inserted to the summary buffer."
       (setq overview-entity
 	    (elmo-msgdb-overview-get-entity
 	     (nth 0 entity) wl-summary-buffer-msgdb))
-      ;;(wl-delete-all-overlays)
+;;;   (wl-delete-all-overlays)
       (when overview-entity
 	(setq summary-line
 	      (wl-summary-overview-create-summary-line
@@ -1232,15 +1232,15 @@ Message is inserted to the summary buffer."
 	    (throw 'done t)))
       nil)))
 
-; (defun wl-thread-goto-bottom-of-sub-thread ()
-;   (interactive)
-;   (let ((depth (wl-thread-get-depth-of-current-line)))
-;     (forward-line 1)
-;     (while (and (not (eobp))
-; 		(> (wl-thread-get-depth-of-current-line)
-; 		   depth))
-;       (forward-line 1))
-;     (beginning-of-line)))
+;; (defun wl-thread-goto-bottom-of-sub-thread ()
+;;   (interactive)
+;;   (let ((depth (wl-thread-get-depth-of-current-line)))
+;;     (forward-line 1)
+;;     (while (and (not (eobp))
+;; 		(> (wl-thread-get-depth-of-current-line)
+;; 		   depth))
+;;       (forward-line 1))
+;;     (beginning-of-line)))
 
 (defun wl-thread-goto-bottom-of-sub-thread (&optional msg)
   (interactive)
@@ -1369,8 +1369,8 @@ Message is inserted to the summary buffer."
 (defun wl-thread-open-close (&optional force-open)
   (interactive "P")
   (when (eq wl-summary-buffer-view 'thread)
-    ;(if (equal wl-thread-top-entity '(nil t nil nil))
-    ;(error "There's no thread structure."))
+;;; (if (equal wl-thread-top-entity '(nil t nil nil))
+;;;	(error "There's no thread structure"))
     (save-excursion
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil)

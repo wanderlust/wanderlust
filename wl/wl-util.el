@@ -66,8 +66,8 @@
     (nreverse list)))
 
 (defun wl-delete-duplicates (list &optional all hack-addresses)
-  "Delete duplicate equivalent strings from the list.
-If ALL is t, then if there is more than one occurrence of a string in the list,
+  "Delete duplicate equivalent strings from the LIST.
+If ALL is t, then if there is more than one occurrence of a string in the LIST,
  then all occurrences of it are removed instead of just the subsequent ones.
 If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
  and only the address part is compared (so that \"Name <foo>\" and \"foo\"
@@ -170,9 +170,11 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
     (fset 'wl-read-event-char 'wl-xmas-read-event-char))
 
 (defmacro wl-push (v l)
+  "Insert V at the head of the list stored in L."
   (list 'setq l (list 'cons v l)))
 
 (defmacro wl-pop (l)
+  "Remove the head of the list stored in L."
   (list 'car (list 'prog1 l (list 'setq l (list 'cdr l)))))
 
 (defun wl-ask-folder (func mes-string)
@@ -191,13 +193,13 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
       (wl-push (cdr keve) unread-command-events))))
 
 ;(defalias 'wl-make-hash 'elmo-make-hash)
-;(make-obsolete 'wl-make-hash 'elmo-make-hash)
+;;(make-obsolete 'wl-make-hash 'elmo-make-hash)
 
-;(defalias 'wl-get-hash-val 'elmo-get-hash-val)
-;(make-obsolete 'wl-get-hash-val 'elmo-get-hash-val)
+;;(defalias 'wl-get-hash-val 'elmo-get-hash-val)
+;;(make-obsolete 'wl-get-hash-val 'elmo-get-hash-val)
 
-;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
-;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
+;;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
+;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
 (defsubst wl-set-string-width (width string)
   (elmo-set-work-buf
@@ -286,7 +288,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
       value)))
 
 (defmacro wl-match-string (pos string)
-  "Substring POSth matched string."
+  "Substring POSth matched STRING."
   (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
 
 (defmacro wl-match-buffer (pos)
@@ -414,8 +416,9 @@ changing the value of `foo'."
   alist)
 
 (defun wl-inverse-alist (keys alist)
-  "Inverse ALIST, copying.  Return an association list represents
-the inverse mapping of ALIST, from objects to KEYS.
+  "Inverse ALIST, copying.
+Return an association list represents the inverse mapping of ALIST,
+from objects to KEYS.
 The objects mapped (cdrs of elements of the ALIST) are shared."
   (let (x y tmp result)
     (while keys
@@ -671,6 +674,7 @@ that `read' can handle, whenever this is possible."
      ".wl")))
 
 (defun wl-draft-make-message-id-string ()
+  "Return Message-ID field value."
   (concat "<" (wl-unique-id) "@"
 	  (or wl-message-id-domain
 	      (if wl-local-domain
@@ -681,10 +685,12 @@ that `read' can handle, whenever this is possible."
 ;;; Profile loading.
 (defvar wl-load-profile-func 'wl-local-load-profile)
 (defun wl-local-load-profile ()
+  "Load `wl-init-file'."
   (message "Initializing ...")
   (load wl-init-file 'noerror 'nomessage))
 
 (defun wl-load-profile ()
+  "Call `wl-load-profile-func' function."
   (funcall wl-load-profile-func))
 
 ;;;

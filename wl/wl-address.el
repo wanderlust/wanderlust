@@ -49,8 +49,8 @@
 Valid value is nit, t, 1 or larget integer.
 
 If this value nil, minimum alias postfix is made depends on uniqness
-with other candidates. In this implementation, it's same to 1.  If t,
-always append all dn data. If number, always append spcified level of
+with other candidates.  In this implementation, it's same to 1.  If t,
+always append all dn data.  If number, always append spcified level of
 data but maybe appended more uniqness.  If invalid value, treat as
 nil.
 
@@ -74,8 +74,7 @@ If level 3 is required for uniqness with other candidates,
     2 => Goto/Shun-ichi_GOTO/Mew/Emacs    ... appended more
     3 => Goto/Shun-ichi_GOTO/Mew/Emacs
     4 => Goto/Shun-ichi_GOTO/Mew/Emacs/Lisper
-    (so on...)
-")
+    (so on...)")
 
 (defconst wl-ldap-alias-sep "/")
 
@@ -387,7 +386,7 @@ Matched address lists are append to CL."
 		   (progn
 		     (delete-region start end)
 		     (insert (cdr alias))
-		;     (wl-highlight-message (point-min)(point-max) t)
+;;;		     (wl-highlight-message (point-min)(point-max) t)
 		     )))
 	     (wl-complete-window-delete))
 	    ((null completion)
@@ -457,9 +456,13 @@ Matched address lists are append to CL."
 (defvar wl-address-init-func 'wl-local-address-init)
 
 (defun wl-address-init ()
+  "Call `wl-address-init-func'."
   (funcall wl-address-init-func))
 
 (defun wl-local-address-init ()
+  "Reload `wl-address-file'.
+Refresh `wl-address-list', `wl-address-completion-list', and
+`wl-address-petname-hash'."
   (message "Updating addresses...")
   (setq wl-address-list
 	(wl-address-make-address-list wl-address-file))
@@ -556,7 +559,7 @@ Matched address lists are append to CL."
 		      wl-from))))))
 
 (defsubst wl-address-header-extract-address (str)
-  "Extracts a real e-mail address from STR and returns it.
+  "Extracts a real e-mail address from STR and return it.
 e.g. \"Mine Sakurai <m-sakura@ccs.mt.nec.co.jp>\"
   ->  \"m-sakura@ccs.mt.nec.co.jp\".
 e.g. \"m-sakura@ccs.mt.nec.co.jp (Mine Sakurai)\"
@@ -568,7 +571,7 @@ e.g. \"m-sakura@ccs.mt.nec.co.jp (Mine Sakurai)\"
         (t str)))
 
 (defsubst wl-address-header-extract-realname (str)
-  "Extracts a real name from STR and returns it.
+  "Extracts a real name from STR and return it.
 e.g. \"Mr. bar <hoge@foo.com>\"
   ->  \"Mr. bar\"."
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
@@ -621,7 +624,7 @@ Group list contents is not included."
   address-string))
 
 (defun wl-address-petname-delete (the-email)
-  "Delete petname in wl-address-file."
+  "Delete petname in `wl-address-file'."
   (let* ( (tmp-buf (get-buffer-create " *wl-petname-tmp*"))
 	  (output-coding-system
 	   (mime-charset-to-coding-system wl-mime-charset)))
@@ -640,7 +643,7 @@ Group list contents is not included."
 					 default-petname
 					 default-realname
 					 &optional change-petname)
-  "Add petname to wl-address-file, if not registerd.
+  "Add petname to `wl-address-file', if not registerd.
 If already registerd, change it."
   (let (the-realname the-petname)
 
@@ -654,8 +657,8 @@ If already registerd, change it."
     ;; setup output "realname"
     (setq the-realname
 	(read-from-minibuffer (format "Real Name: ") default-realname))
-;;	(if (string= the-realname "")
-;;	    (setq the-realname default-petname))
+;;;	(if (string= the-realname "")
+;;;	    (setq the-realname default-petname))
 
     ;; writing to ~/.address
     (let ( (tmp-buf (get-buffer-create " *wl-petname-tmp*"))

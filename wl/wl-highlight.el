@@ -707,7 +707,7 @@
 (defvar wl-highlight-summary-refiled-regexp " *[0-9]+o")
 (defvar wl-highlight-summary-copied-regexp " *[0-9]+O")
 (defvar wl-highlight-summary-target-regexp " *[0-9]+\\*")
-;(defvar wl-highlight-summary-thread-top-regexp " *[0-9]+[^0-9][^0-9]../..\(.*\)..:.. \\[")
+;;(defvar wl-highlight-summary-thread-top-regexp " *[0-9]+[^0-9][^0-9]../..\(.*\)..:.. \\[")
 
 (defvar wl-highlight-citation-face-list
   '(wl-highlight-message-cited-text-1
@@ -896,10 +896,12 @@
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
       (if wl-use-highlight-mouse-line
-	  (put-text-property bol;(1- (match-end 0))
+	  (put-text-property bol
+;;; Use bol instead of (1- (match-end 0))
+;;;			     (1- (match-end 0))
 			     eol 'mouse-face 'highlight))
-;      (put-text-property (match-beginning 3) (match-end 3)
-;			 'face 'wl-highlight-thread-indent-face)
+;;;   (put-text-property (match-beginning 3) (match-end 3)
+;;;			 'face 'wl-highlight-thread-indent-face)
       ;; Dnd stuff.
       (if wl-use-dnd
 	  (wl-dnd-set-drag-starter bol eol)))))
@@ -1069,7 +1071,7 @@ interpreted as cited text.)"
   (wl-highlight-message beg end t t))
 
 (defun wl-highlight-signature-search-simple (beg end)
-  "Search signature area in the body message between beg and end.
+  "Search signature area in the body message between BEG and END.
 Returns start point of signature."
   (save-excursion
     (goto-char end)
@@ -1080,7 +1082,7 @@ Returns start point of signature."
       end)))
 
 (defun wl-highlight-signature-search (beg end)
-  "Search signature area in the body message between beg and end.
+  "Search signature area in the body message between BEG and END.
 Returns start point of signature."
   (save-excursion
     (goto-char end)
@@ -1144,7 +1146,7 @@ interpreted as cited text.)"
 	current  beg
 	e p hend)
     (if too-big
-	nil    
+	nil
       (save-excursion
 	(save-restriction
 	  (widen)
@@ -1163,7 +1165,7 @@ interpreted as cited text.)"
 	    ;; is sufficient
 	    (if (re-search-forward (format
 				    "^$\\|%s"
-				    (regexp-quote mail-header-separator)) 
+				    (regexp-quote mail-header-separator))
 				   nil t)
 		(narrow-to-region (point-min) (point)))
 	    ;; highlight only when header is not too-big.
@@ -1237,7 +1239,8 @@ interpreted as cited text.)"
 	      (cond (current
 		     (setq p (point))
 		     (forward-line 1) ; this is to put the \n in the face too
-		     (let ();(inhibit-read-only t))
+		     (let ()
+;;;		       ((inhibit-read-only t))
 		       (put-text-property p (or end (point))
 					  'face current)
 		       (setq end nil))

@@ -61,8 +61,8 @@
      wl-folder-prev-entity t "Previous Folder"]
     [wl-folder-check-current-entity
      wl-folder-check-current-entity t "Check Current Folder"]
-    ;;[wl-draft
-    ;; wl-draft t "Write a New Message"]
+;;; [wl-draft
+;;;  wl-draft t "Write a New Message"]
     [wl-folder-sync-current-entity
      wl-folder-sync-current-entity t "Sync Current Folder"]
     [wl-draft
