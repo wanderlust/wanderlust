@@ -1,3 +1,9 @@
+2002-10-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-template.el (wl-template-select): Added optional argument.
+	If optional argument is specified, reverse
+	`wl-template-visible-select'.
+
 2002-10-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-summary-burst): Get elmo folder correctly.
