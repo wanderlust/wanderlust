@@ -3519,11 +3519,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (message "Force refile to %s." folder)))
       (if (string= folder wl-summary-buffer-folder-name)
 	  (error "Same folder"))
-      (if (and
-	   (not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
-	   (or (null msgid)
-	       (not (elmo-cache-exists-p msgid))))
-	  (error "Unplugged (no cache or msgid)"))
+      (unless (or (elmo-folder-plugged-p wl-summary-buffer-folder-name)
+		  (and (eq (elmo-folder-get-type wl-summary-buffer-folder-name) 'pipe)
+		       (elmo-folder-plugged-p
+			(elmo-pipe-spec-dst (elmo-folder-get-spec wl-summary-buffer-folder-name))))
+		  (elmo-cache-exists-p msgid))
+	(error "Unplugged (no cache or msgid)"))
       (if (or (string= folder wl-queue-folder)
 	      (string= folder wl-draft-folder))
 	  (error "Don't %s messages to %s" copy-or-refile folder))
