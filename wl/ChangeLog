@@ -3,6 +3,13 @@
 	* wl-summary.el (wl-summary-mark-as-read-internal): New inline
 	function.
 	(wl-summary-mark-as-read, wl-summary-mark-as-unread): Use it.
+	(wl-summary-update-mark): Enclose with save-excursion.
+	(wl-summary-mark-as-read-internal): Fixed last change.
+	(wl-summary-mark-as-important): Use 3rd argument of
+	elmo-folder-unmark-important, elmo-folder-mark-as-important;
+	Don't use elmo-msgdb-set-mark.
+	(wl-summary-redisplay-internal): If msgdb flag is already read,
+	just update the mark on buffer.
 
 2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

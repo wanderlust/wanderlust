@@ -1,10 +1,21 @@
-2003-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* pldap.el (ldap-search-basic): Don't treat exit status 32 as an
-	error [wl:11327].
+	* elmo.el (elmo-message-set-mark): Abolish.
 
-	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Bind print-level,
-	print-depth.
+	* elmo-msgdb.el (toplevel): Added comment.
+	(elmo-msgdb-set-mark): Abolish.
+	(elmo-load-msgdb): Added 4th element `path'.
+	(elmo-msgdb-append): Follow the change above.
+	(elmo-msgdb-clear): Ditto.
+	(elmo-msgdb-delete-msgs): Ditto.
+	(elmo-msgdb-get-path): New inline function.
+	(elmo-msgdb-set-path): Ditto.
+	(elmo-flag-table-filename): New variable.
+	(elmo-flag-table-load): New function.
+	(elmo-flag-table-set): Ditto.
+	(elmo-flag-table-save): Ditto.
+	(elmo-msgdb-get-field-value): Abolish.
+	(elmo-msgdb-overview-get-entity-by-number): Ditto.
 
 2003-02-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
@@ -51,6 +62,14 @@
 
 	* elmo-localdir.el (elmo-folder-rename-internal): Referctoring;
 	Replace nested conditional with guard clauses.
+
+2003-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-search-basic): Don't treat exit status 32 as an
+	error [wl:11327].
+
+	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Bind print-level,
+	print-depth.
 
 2003-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

@@ -1177,12 +1177,6 @@ NUMBER is a number of the message.
 FIELD is a symbol of the field."
   (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
 
-(defun elmo-message-set-mark (folder number mark)
-  ;; Set mark for the message in the FOLDER with NUMBER as MARK.
-  (elmo-msgdb-set-mark
-   (elmo-folder-msgdb folder)
-   number mark))
-
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
   nil) ; default is not use cache.
 

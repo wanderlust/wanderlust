@@ -3878,13 +3878,14 @@ If ARG, exit virtual folder."
   (let ((number (or number (wl-summary-message-number)))
 	buffer-read-only cur-mark)
     (setq cur-mark (elmo-message-mark wl-summary-buffer-elmo-folder number))
-    ;; set mark on buffer
-    (unless (string= (wl-summary-persistent-mark) cur-mark)
-      (delete-backward-char 1)
-      (insert (or cur-mark " ")))
-    (when wl-summary-highlight
-      (wl-highlight-summary-current-line nil nil t))
-    (set-buffer-modified-p nil)))
+    (save-excursion
+      ;; set mark on buffer
+      (unless (string= (wl-summary-persistent-mark) cur-mark)
+	(delete-backward-char 1)
+	(insert (or cur-mark " ")))
+      (when wl-summary-highlight
+	(wl-highlight-summary-current-line nil nil t))
+      (set-buffer-modified-p nil))))
 
 (defsubst wl-summary-mark-as-read-internal (inverse
 					    number-or-numbers
@@ -3909,18 +3910,18 @@ If ARG, exit virtual folder."
 	  (elmo-folder-mark-as-read folder number-list no-folder-mark))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number)
-		mark (elmo-message-mark folder number))
-	  (setq new-mark (elmo-message-mark folder number))
+		new-mark (elmo-message-mark folder number))
 	  ;; set mark on buffer
 	  (when visible
-	    (unless (string= (wl-summary-persistent-mark) new-mark)
+	    (unless (string= (wl-summary-persistent-mark) (or new-mark " "))
 	      (delete-backward-char 1)
 	      (insert (or new-mark " ")))
 	    (if (and visible wl-summary-highlight)
 		(wl-highlight-summary-current-line nil nil t))
 	    (set-buffer-modified-p nil))
 	  (unless inverse
-	    (if (member mark (elmo-msgdb-unread-marks))
+	    (if (member (elmo-message-mark folder number)
+			(elmo-msgdb-unread-marks))
 		(run-hooks 'wl-summary-unread-message-hook))))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
@@ -3993,8 +3994,9 @@ If ARG, exit virtual folder."
 		(progn
 		  ;; server side mark
 		  (save-match-data
+		    (elmo-folder-unmark-important folder (list number)
+						  no-server-update)
 		    (unless no-server-update
-		      (elmo-folder-unmark-important folder (list number))
 		      (elmo-msgdb-global-mark-delete message-id))
 		    ;; Remove cache if local folder.
 		    (if (and (elmo-folder-local-p folder)
@@ -4004,17 +4006,13 @@ If ARG, exit virtual folder."
 			 (elmo-file-cache-get-path message-id))))
 		  (when visible
 		    (delete-backward-char 1)
-		    (insert " "))
-		  (elmo-msgdb-set-mark msgdb number nil))
+		    (elmo-message-mark folder number)))
 	      ;; server side mark
-	      (save-match-data
-		(unless no-server-update
-		  (elmo-folder-mark-as-important folder (list number))))
+	      (elmo-folder-mark-as-important folder (list number)
+					     no-server-update)
 	      (when visible
 		(delete-backward-char 1)
 		(insert elmo-msgdb-important-mark))
-	      (elmo-msgdb-set-mark msgdb number
-				   elmo-msgdb-important-mark)
 	      (if (eq (elmo-file-cache-exists-p message-id) 'entire)
 		  (elmo-folder-mark-as-read folder (list number))
 		;; Force cache message.
@@ -5113,9 +5111,13 @@ Use function list is `wl-summary-write-current-folder-functions'."
 			   (elmo-folder-plugged-p
 			    wl-summary-buffer-elmo-folder))
 		      'leave)))
-	  (if (elmo-message-use-cache-p folder num)
-	      (elmo-message-set-cached folder num t))
-	  (wl-summary-mark-as-read num no-folder-mark)
+	  (when (elmo-message-use-cache-p folder num)
+	    (elmo-message-set-cached folder num t))
+	  (if (member (elmo-message-mark wl-summary-buffer-elmo-folder
+					 num)
+		      (elmo-msgdb-unread-marks))
+	      (wl-summary-mark-as-read num no-folder-mark)
+	    (wl-summary-update-mark))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
