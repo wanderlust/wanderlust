@@ -335,48 +335,71 @@ If nil, never search search parent by subject."
 ;;; Mark & Action
 (defcustom wl-summary-mark-action-list
   '(("*"
-     wl-summary-set-target-mark
-     wl-summary-unset-target-mark
+     target-mark
      nil
-     wl-highlight-summary-temp-face)
+     wl-summary-register-target-mark
+     nil
+     wl-highlight-summary-temp-face
+     "put target mark.")
     ("d"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
-     wl-summary-exec-action-delete
-     wl-highlight-summary-deleted-face)
+     dispose
+     nil
+     wl-summary-register-temp-mark
+     wl-summary-exec-action-dispose
+     wl-highlight-summary-deleted-face
+     "dispose messages according to `wl-dispose-folder-alist'.")
     ("D"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
-     wl-summary-exec-action-erase
-     wl-highlight-summary-erased-face)
+     delete
+     nil
+     wl-summary-register-temp-mark
+     wl-summary-exec-action-delete
+     wl-highlight-summary-erased-face
+     "delete messages immediately.")
     ("o"
+     refile
+     wl-summary-get-refile-destination
      wl-summary-set-action-refile
-     wl-summary-unset-action-refile
      wl-summary-exec-action-refile
-     wl-highlight-summary-refiled-face)
+     wl-highlight-summary-refiled-face
+     "refile messages to the other folder.")
     ("O"
-     wl-summary-set-action-copy
-     wl-summary-unset-action-copy
+     copy
+     wl-summary-get-copy-destination
+     wl-summary-register-temp-mark
      wl-summary-exec-action-copy
-     wl-highlight-summary-copied-face)
+     wl-highlight-summary-copied-face
+     "copy messages to the other folder.")
     ("i"
-     wl-summary-set-action-generic
-     wl-summary-unset-action-generic
+     prefetch
+     nil
+     wl-summary-register-temp-mark
      wl-summary-exec-action-prefetch
-     wl-highlight-summary-prefetch-face))
+     wl-highlight-summary-prefetch-face
+     "prefetch messages."))
   "A variable to define Mark & Action.
 Each element of the list should be a list of
-\(MARK SET-MARK-FUNCTION UNSET-MARK-FUNCTION EXEC-FUNCTION FACE)
+\(MARK
+  SYMBOL
+  ARGUMENT-FUNCTION
+  SET-MARK-FUNCTION
+  EXEC-FUNCTION
+  FACE)
+
 MARK is a temporal mark string to define.
+SYMBOL is an action name to define.
+ARGUMENT-FUNCTION is a function called to set the argument data for
+SET-MARK-FUNCTION.
+Its argument is (ACTION NUMBER).
+ACTION is same as the SYMBOL.
+NUMBER is the message number to determine the argument data.
 SET-MARK-FUNCTION is a function called to set the mark.
-Its argument is (MARK NUMBER VISIBLE INTERACTIVE DATA).
-UNSET-MARK-FUNCTION is a function called to unset the mark.
-Its argument is (NUMBER).
+Its argument is (NUMBER MARK DATA).
+NUMBER is the target message number.
+MARK is the temporary mark string.
+DATA is given by ARGUMENT-FUNCTION.
 EXEC-FUNCTION is a function called to execute the action.
 Its argument is a list of MARK-INFO.
 MARK-INFO is a list of (NUMBER MARK DATA).
-DATA is the value which should be specified by `wl-summary-register-temp-mark'
-in the SET-MARK-FUNCTION.
 FACE is a face for highlighting."
   :type '(repeat (string :tag "Temporary mark")
 		 (symbol :tag "Set mark function")
@@ -2174,9 +2197,9 @@ Sender information in summary mode."
   :type 'string
   :group 'wl-folder)
 
-(defcustom wl-delete-folder-alist '(("^-" . remove)
-				    ("^@" . remove))
-  "*Alist of folder and delete policy.
+(defcustom wl-dispose-folder-alist '(("^-" . remove)
+				     ("^@" . remove))
+  "*Alist of folder and dispose policy.
 Each element is (folder-regexp . policy).
 
 The policy is one of the followings:

@@ -56,6 +56,7 @@
 (provide 'wl)				; circular dependency
 (require 'wl-folder)
 (require 'wl-summary)
+(require 'wl-action)
 (require 'wl-thread)
 (require 'wl-address)
 (require 'wl-news)
@@ -695,6 +696,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (symbol-value 'wl-summary-subject-function))
     (fset 'wl-summary-subject-filter-func-internal
 	  (symbol-value 'wl-summary-subject-filter-function))
+    (wl-summary-define-mark-action)
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
     (wl-news-check)

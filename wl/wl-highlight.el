@@ -818,7 +818,7 @@
 				   elmo-msgdb-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
 	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
-	   (setq fsymbol (nth 4 action)))
+	   (setq fsymbol (nth 5 action)))
 	  ((string= mark elmo-msgdb-new-mark)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
 	  ((member mark (list elmo-msgdb-unread-cached-mark
@@ -854,7 +854,7 @@
       (setq status-mark (wl-summary-persistent-mark))
       (setq temp-mark (wl-summary-temp-mark))
       (when (setq action (assoc temp-mark wl-summary-mark-action-list))
-	(setq fsymbol (nth 4 action)))
+	(setq fsymbol (nth 5 action)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)

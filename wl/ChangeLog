@@ -1,3 +1,30 @@
+2003-07-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (toplevel): Require wl-action.
+	(wl-init): Call wl-summary-define-mark-action.
+
+	* wl-vars.el (wl-summary-mark-action-list): Changed specification.
+
+	* wl-summary.el (wl-summary-mode-menu-spec): Follow the rename of
+	wl-summary-delete and wl-summary-erase.
+	(wl-summary-mode-map): Ditto.
+
+	* wl-vars.el (wl-dispose-folder-alist): Renamed from
+	wl-delete-folder-alist.
+
+	* wl-summary.el (wl-summary-prefetch-region-no-mark): Use
+	wl-summary-prefetch-msg instead of wl-summary-prefetch.
+	(toplevel): Moved mark & action related functions to the wl-action.el.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Follow the change
+	in wl-summary-mark-action-list.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-draft.el (wl-draft-normal-send-func): Fixed bug for removing
+	empty lines.
+
+	* wl-action.el: New file. 
+
 2003-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-target-mark-replace): New function.
