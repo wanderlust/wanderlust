@@ -3117,6 +3117,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (wl-inverse-alist refiles wl-summary-buffer-refile-list))
 	(goto-char start)		; avoid moving cursor to
 					; the bottom line.
+	(when (> refile-len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-move-messages
+			     refile-len "Moving messages..."))
 	(while dst-msgs
 	  (setq result nil)
 	  (condition-case nil
@@ -3148,9 +3151,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		  (+ refile-failures (length (cdr (car dst-msgs))))))
 	  (setq refile-executed (+ refile-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
+	(elmo-progress-clear 'elmo-folder-move-messages)
 	;; end refile
 	;; begin cOpy...
 	(setq dst-msgs (wl-inverse-alist copies wl-summary-buffer-copy-list))
+	(when (> copy-len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-move-messages
+			     copy-len "Copying messages..."))
 	(while dst-msgs
 	  (setq result nil)
 	  (condition-case nil
@@ -3181,7 +3188,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (setq copy-executed (+ copy-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
 	;; Hide progress bar.
-	(elmo-display-progress 'elmo-folder-move-messages "" 100)
+	(elmo-progress-clear 'elmo-folder-move-messages)
 	;; end cOpy
 	(wl-summary-folder-info-update)
 	(wl-summary-set-message-modified)
