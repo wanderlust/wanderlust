@@ -74,6 +74,12 @@
 (luna-define-generic elmo-map-folder-mark-as-read (folder locations)
   "")
 
+(luna-define-generic elmo-map-folder-unmark-answered (folder locations)
+  "")
+
+(luna-define-generic elmo-map-folder-mark-as-answered (folder locations)
+  "")
+
 (luna-define-generic elmo-map-message-fetch (folder location
 						    strategy
 						    &optional
@@ -84,10 +90,19 @@
 (luna-define-generic elmo-map-folder-list-unreads (folder)
   "")
 
+(luna-define-method elmo-map-folder-list-unreads ((folder elmo-map-folder))
+  t)
+
 (luna-define-generic elmo-map-folder-list-importants (folder)
   "")
 
 (luna-define-method elmo-map-folder-list-importants ((folder elmo-map-folder))
+  t)
+
+(luna-define-generic elmo-map-folder-list-answereds (folder)
+  "")
+
+(luna-define-method elmo-map-folder-list-answereds ((folder elmo-map-folder))
   t)
 
 (luna-define-generic elmo-map-folder-delete-messages (folder locations)
@@ -260,26 +275,54 @@
   ((folder elmo-map-folder) &optional nohide)
   (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-map-folder)
-						  numbers)
-  (elmo-map-folder-unmark-important
+(luna-define-method elmo-folder-unmark-important :before ((folder
+							   elmo-map-folder)
+							  numbers
+							  &optional
+							  ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-unmark-important
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
+
+(luna-define-method elmo-folder-mark-as-important :before ((folder
+							    elmo-map-folder)
+							   numbers
+							   &optional
+							   ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-mark-as-important
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
+
+(luna-define-method elmo-folder-unmark-read :before ((folder elmo-map-folder)
+						     numbers
+						     &optional ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-unmark-read
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
+
+(luna-define-method elmo-folder-mark-as-read :before ((folder
+						       elmo-map-folder)
+						      numbers
+						      &optional ignore-flags)
+  (unless ignore-flags
+    (elmo-map-folder-mark-as-read
+     folder
+     (elmo-map-folder-numbers-to-locations folder numbers))))
+
+(luna-define-method elmo-folder-unmark-answered :before ((folder
+							  elmo-map-folder)
+							 numbers)
+  (elmo-map-folder-unmark-answered
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-map-folder)
-						   numbers)
-  (elmo-map-folder-mark-as-important
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-map-folder)
-					     numbers)
-  (elmo-map-folder-unmark-read
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-map-folder) numbers)
-  (elmo-map-folder-mark-as-read
+(luna-define-method elmo-folder-mark-as-answered :before ((folder
+							  elmo-map-folder)
+							 numbers)
+  (elmo-map-folder-mark-as-answered
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
@@ -291,18 +334,25 @@
    (elmo-map-message-location folder number)
    strategy section unread))
 
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-map-folder) unread-marks &optional mark-alist)
-  (elmo-map-folder-locations-to-numbers
-   folder
-   (elmo-map-folder-list-unreads folder)))
+(luna-define-method elmo-folder-list-unreads :around ((folder elmo-map-folder))
+  (let ((locations (elmo-map-folder-list-unreads folder)))
+    (if (listp locations)
+	(elmo-map-folder-locations-to-numbers folder locations)
+      (luna-call-next-method))))
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-map-folder) important-mark)
+(luna-define-method elmo-folder-list-importants :around ((folder
+							  elmo-map-folder))
   (let ((locations (elmo-map-folder-list-importants folder)))
     (if (listp locations)
 	(elmo-map-folder-locations-to-numbers folder locations)
-      t)))
+      (luna-call-next-method))))
+
+(luna-define-method elmo-folder-list-answereds :around ((folder
+							 elmo-map-folder))
+  (let ((locations (elmo-map-folder-list-answereds folder)))
+    (if (listp locations)
+	(elmo-map-folder-locations-to-numbers folder locations)
+      (luna-call-next-method))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-map-folder)
 						 numbers)
@@ -318,7 +368,6 @@
 	     folder))
 	   (elmo-map-folder-location-alist-internal folder))))
   t) ; success
-  
 
 (require 'product)
 (product-provide (provide 'elmo-map) (require 'elmo-version))

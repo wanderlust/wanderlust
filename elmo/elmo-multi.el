@@ -41,6 +41,15 @@
 		     (children divide-number))
   (luna-define-internal-accessors 'elmo-multi-folder))
 
+(defmacro elmo-multi-real-folder-number (folder number)
+  "Returns a cons cell of real FOLDER and NUMBER."
+  (` (cons (nth (- 
+		 (/ (, number)
+		    (elmo-multi-folder-divide-number-internal (, folder)))
+		 1) (elmo-multi-folder-children-internal (, folder)))
+	   (% (, number) (elmo-multi-folder-divide-number-internal
+			  (, folder))))))
+
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)
 					    name)
@@ -70,6 +79,17 @@
 (luna-define-method elmo-folder-close-internal ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
     (elmo-folder-close-internal fld)))
+
+(luna-define-method elmo-folder-close :after ((folder elmo-multi-folder))
+  (dolist (fld (elmo-multi-folder-children-internal folder))
+    (elmo-folder-set-msgdb-internal fld nil)))
+
+(luna-define-method elmo-folder-synchronize ((folder elmo-multi-folder)
+					     &optional ignore-msgdb
+					     no-check)
+  (dolist (fld (elmo-multi-folder-children-internal folder))
+    (elmo-folder-synchronize fld ignore-msgdb no-check))
+  0)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-multi-folder))
@@ -109,23 +129,39 @@
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
        (elmo-multi-folder-children-internal folder)))
 
-(defun elmo-multi-msgdb (msgdb base)
-  (list (mapcar (function
-		 (lambda (x)
-		   (elmo-msgdb-overview-entity-set-number
-		    x
-		    (+ base
-		       (elmo-msgdb-overview-entity-get-number x)))))
-		(nth 0 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (+ base (car x))
-			      (cdr x))))
-		(nth 1 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (+ base (car x))
-			      (cdr x)))) (nth 2 msgdb))))
+(luna-define-method elmo-message-entity ((folder elmo-multi-folder) key)
+  (cond
+   ((numberp key)
+    (let* ((pair (elmo-multi-real-folder-number folder key))
+	   (entity (elmo-message-entity (car pair) (cdr pair))))
+      (when entity
+	(elmo-message-entity-set-number (elmo-message-copy-entity entity)
+					key))))
+   ((stringp key)
+    (let ((children (elmo-multi-folder-children-internal folder))
+	  (cur-number 0)
+	  match)
+      (while children
+	(setq cur-number (+ cur-number 1))
+	(when (setq match (elmo-message-entity (car children) key))
+	  (setq match (elmo-message-copy-entity match))
+	  (elmo-message-entity-set-number
+	   match
+	   (+ (* (elmo-multi-folder-divide-number-internal folder)
+		 cur-number)
+	      (elmo-message-entity-number match)))
+	  (setq children nil))
+	(setq children (cdr children)))
+      match))))
+
+(luna-define-method elmo-message-field ((folder elmo-multi-folder)
+					number field)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-field (car pair) (cdr pair) field)))
+
+(luna-define-method elmo-message-mark ((folder elmo-multi-folder) number)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-mark (car pair) (cdr pair))))
 
 (defun elmo-multi-split-numbers (folder numlist &optional as-is)
   (let ((numbers (sort numlist '<))
@@ -151,108 +187,9 @@
       (setq numbers-list (nconc numbers-list (list one-list))))
     numbers-list))
 
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-multi-folder)
-					      numbers new-mark already-mark
-					      seen-mark important-mark
-					      seen-list)
-  (let* ((folders (elmo-multi-folder-children-internal folder))
-	 overview number-alist mark-alist entity
-	 numbers-list
-	 cur-number
-	 i percent num
-	 msgdb)
-    (setq numbers-list (elmo-multi-split-numbers folder numbers))
-    (setq cur-number 0)
-    (while (< cur-number (length folders))
-      (if (nth cur-number numbers-list)
-	  (setq msgdb
-		(elmo-msgdb-append
-		 msgdb
-		 (elmo-multi-msgdb
-		  (elmo-folder-msgdb-create (nth cur-number folders)
-					    (nth cur-number numbers-list)
-					    new-mark already-mark
-					    seen-mark important-mark
-					    seen-list)
-		  (* (elmo-multi-folder-divide-number-internal folder)
-		     (1+ cur-number))))))
-      (setq cur-number (1+ cur-number)))
-    (elmo-msgdb-sort-by-date msgdb)))
-
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder)
-						   &optional
-						   number-alist)
-  (let ((number-alists (elmo-multi-split-number-alist
-			folder
-			(elmo-msgdb-get-number-alist
-			 (elmo-folder-msgdb folder))))
-	(cur-number 1))
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (elmo-folder-process-crosspost child (car number-alists))
-      (setq cur-number (+ 1 cur-number)
-	    number-alists (cdr number-alists)))))
-
-(defsubst elmo-multi-folder-append-msgdb (folder append-msgdb)
-  (if append-msgdb
-      (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
-	     (all-alist (copy-sequence (append
-					(elmo-msgdb-get-number-alist
-					 (elmo-folder-msgdb folder))
-					number-alist)))
-	     (cur number-alist)
-	     overview to-be-deleted
-	     mark-alist same)
-	(while cur
-	  (setq all-alist (delq (car cur) all-alist))
-	  ;; same message id exists.
-	  (if (setq same (rassoc (cdr (car cur)) all-alist))
-	      (unless (= (/ (car (car cur))
-			    (elmo-multi-folder-divide-number-internal folder))
-			 (/ (car same)
-			    (elmo-multi-folder-divide-number-internal folder)))
-		;; base is also same...delete it!
-		(setq to-be-deleted
-		      (append to-be-deleted (list (car (car cur)))))))
-	  (setq cur (cdr cur)))
-	(cond ((eq (elmo-folder-process-duplicates-internal folder)
-		   'hide)
-	       ;; Hide duplicates.
-	       (elmo-msgdb-append-to-killed-list folder to-be-deleted)
-	       (setq overview (elmo-delete-if
-			       (lambda (x)
-				 (memq (elmo-msgdb-overview-entity-get-number
-					x)
-				       to-be-deleted))
-			       (elmo-msgdb-get-overview append-msgdb)))
-	       ;; Should be mark as read.
-	       (elmo-folder-mark-as-read folder to-be-deleted)
-	       (elmo-msgdb-set-overview append-msgdb overview))
-	      ((eq (elmo-folder-process-duplicates-internal folder)
-		   'read)
-	       ;; Mark as read duplicates.
-	       (elmo-folder-mark-as-read folder to-be-deleted))
-	      (t
-	       ;; Do nothing.
-	       (setq to-be-deleted nil)))
-	(elmo-folder-set-msgdb-internal folder
-					(elmo-msgdb-append
-					 (elmo-folder-msgdb folder)
-					 append-msgdb))
-	(length to-be-deleted))
-    0))
-
-(luna-define-method elmo-folder-append-msgdb ((folder elmo-multi-folder)
-					      append-msgdb)
-  (elmo-multi-folder-append-msgdb folder append-msgdb))
-
-(defmacro elmo-multi-real-folder-number (folder number)
-  "Returns a cons cell of real FOLDER and NUMBER."
-  (` (cons (nth (- 
-		 (/ (, number)
-		    (elmo-multi-folder-divide-number-internal (, folder)))
-		 1) (elmo-multi-folder-children-internal (, folder)))
-	   (% (, number) (elmo-multi-folder-divide-number-internal
-			  (, folder))))))
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder))
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-process-crosspost child)))
 
 (defsubst elmo-multi-find-fetch-strategy (folder entity ignore-cache)
   (if entity
@@ -288,43 +225,31 @@
       (setq cur-number (+ 1 cur-number)))
     t))
 
+(luna-define-method elmo-folder-detach-messages ((folder elmo-multi-folder)
+						 numbers)
+  (let ((flds (elmo-multi-folder-children-internal folder))
+	one-list-list
+	(cur-number 0))
+    (setq one-list-list (elmo-multi-split-numbers folder numbers))
+    (while (< cur-number (length flds))
+      (elmo-folder-detach-messages (nth cur-number flds)
+				   (nth cur-number one-list-list))
+      (setq cur-number (+ 1 cur-number)))
+    t))
+
 (luna-define-method elmo-folder-diff ((folder elmo-multi-folder)
 				      &optional numbers)
   (elmo-multi-folder-diff folder numbers))
 
 (defun elmo-multi-folder-diff (folder numbers)
   (let ((flds (elmo-multi-folder-children-internal folder))
-	(numbers (mapcar 'car
-			 (elmo-msgdb-number-load
-			  (elmo-folder-msgdb-path folder))))
-	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-	(count 0)
+	(num-list (and numbers (elmo-multi-split-numbers folder numbers)))
 	(unsync 0)
 	(messages 0)
-	num-list
-	diffs nums)
-    ;; If first time, dummy numbers is used as current number list.
-    (unless numbers
-      (let ((i 0)
-	    (divider (elmo-multi-folder-divide-number-internal folder)))
-	(dolist (folder flds)
-	  (setq i (+ i 1))
-	  (setq numbers
-		(cons (* i divider) numbers)))))
-    (setq num-list
-	  (elmo-multi-split-numbers folder
-				    (elmo-uniq-list
-				     (nconc
-				      (elmo-number-set-to-number-list killed)
-				      numbers))))
+	diffs)
     (while flds
-      (setq nums (elmo-folder-diff (car flds) (car num-list))
-	    nums (cons (or (elmo-diff-unread nums)
-			   (elmo-diff-new nums))
-		       (elmo-diff-all nums)))
-      (setq diffs (nconc diffs (list nums)))
-      (setq count (+ 1 count))
-      (setq num-list (cdr num-list))
+      (setq diffs (nconc diffs (list (elmo-folder-diff (car flds)
+						       (car num-list)))))
       (setq flds (cdr flds)))
     (while diffs
       (and (car (car diffs))
@@ -334,152 +259,72 @@
     (elmo-folder-set-info-hashtb folder nil messages)
     (cons unsync messages)))
 
-(defun elmo-multi-split-number-alist (folder number-alist)
-  (let ((alist (sort (copy-sequence number-alist)
-		     (lambda (pair1 pair2)
-		       (< (car pair1)(car pair2)))))
-	(cur-number 0)
-	one-alist split num)
-    (while alist
-      (setq cur-number (+ cur-number 1))
-      (setq one-alist nil)
-      (while (and alist
-		  (eq 0
-		      (/ (- (setq num (car (car alist)))
-			    (* elmo-multi-divide-number cur-number))
-			 (elmo-multi-folder-divide-number-internal folder))))
-	(setq one-alist (nconc
-			 one-alist
-			 (list
-			  (cons
-			   (% num (* (elmo-multi-folder-divide-number-internal
-				      folder) cur-number))
-			   (cdr (car alist))))))
-	(setq alist (cdr alist)))
-      (setq split (nconc split (list one-alist))))
-    split))
-
-(defun elmo-multi-split-mark-alist (folder mark-alist)
+(luna-define-method elmo-folder-list-unreads ((folder elmo-multi-folder))
   (let ((cur-number 0)
-	(alist (sort (copy-sequence mark-alist)
-		     (lambda (pair1 pair2)
-		       (< (car pair1)(car pair2)))))
-	one-alist result)
-    (while alist
+	unreads)
+    (dolist (child (elmo-multi-folder-children-internal folder))
       (setq cur-number (+ cur-number 1))
-      (setq one-alist nil)
-      (while (and alist
-		  (eq 0
-		      (/ (- (car (car alist))
-			    (* (elmo-multi-folder-divide-number-internal
-				folder) cur-number))
-			 (elmo-multi-folder-divide-number-internal folder))))
-	(setq one-alist (nconc
-			 one-alist
-			 (list
-			  (list (% (car (car alist))
-				   (* (elmo-multi-folder-divide-number-internal
-				       folder) cur-number))
-				(cadr (car alist))))))
-	(setq alist (cdr alist)))
-      (setq result (nconc result (list one-alist))))
-    result))
+      (setq unreads
+	    (nconc
+	     unreads
+	     (mapcar (lambda (x)
+		       (+ x (* cur-number
+			       (elmo-multi-folder-divide-number-internal
+				folder))))
+		     (elmo-folder-list-unreads child)))))
+    unreads))
 
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-multi-folder) unread-marks &optional mark-alist)
-  (elmo-multi-folder-list-unreads-internal folder unread-marks))
-
-(defun elmo-multi-folder-list-unreads-internal (folder unread-marks)
-  (let ((folders (elmo-multi-folder-children-internal folder))
-	(mark-alists (elmo-multi-split-mark-alist
-		      folder
-		      (elmo-msgdb-get-mark-alist
-		       (elmo-folder-msgdb folder))))
-	(cur-number 0)
-	unreads
-	all-unreads)
-    (while folders
+(luna-define-method elmo-folder-list-answereds ((folder elmo-multi-folder))
+  (let ((cur-number 0)
+	answereds)
+    (dolist (child (elmo-multi-folder-children-internal folder))
       (setq cur-number (+ cur-number 1))
-      (unless (listp (setq unreads
-			   (elmo-folder-list-unreads-internal
-			    (car folders) unread-marks (car mark-alists))))
-	(setq unreads (delq  nil
-			     (mapcar
-			      (lambda (x)
-				(if (member (cadr x) unread-marks)
-				    (car x)))
-			      (car mark-alists)))))
-      (setq all-unreads
-	    (nconc all-unreads
-		   (mapcar 
-		    (lambda (x)
-		      (+ x
-			 (* cur-number
-			    (elmo-multi-folder-divide-number-internal
-			     folder))))		   
-		    unreads)))
-      (setq mark-alists (cdr mark-alists)
-	    folders (cdr folders)))
-    all-unreads))
+      (setq answereds
+	    (nconc
+	     answereds
+	     (mapcar (lambda (x)
+		       (+ x (* cur-number
+			       (elmo-multi-folder-divide-number-internal
+				folder))))
+		     (elmo-folder-list-answereds child)))))
+    answereds))
 
-(luna-define-method elmo-folder-list-importants-internal
-  ((folder elmo-multi-folder) important-mark)
-  (let ((folders (elmo-multi-folder-children-internal folder))
-	(mark-alists (elmo-multi-split-mark-alist
-		      folder
-		      (elmo-msgdb-get-mark-alist
-		       (elmo-folder-msgdb folder))))
-	(cur-number 0)
-	importants
-	all-importants)
-    (while folders
+(luna-define-method elmo-folder-list-importants ((folder elmo-multi-folder))
+  (let ((cur-number 0)
+	importants)
+    (dolist (child (elmo-multi-folder-children-internal folder))
       (setq cur-number (+ cur-number 1))
-      (when (listp (setq importants
-			 (elmo-folder-list-importants-internal
-			  (car folders) important-mark)))
-	(setq all-importants
-	      (nconc all-importants
-		     (mapcar 
-		      (lambda (x)
-			(+ x
-			   (* cur-number
-			      (elmo-multi-folder-divide-number-internal
-			       folder))))		   
-		      importants))))
-      (setq mark-alists (cdr mark-alists)
-	    folders (cdr folders)))
-    all-importants))
+      (setq importants
+	    (nconc
+	     importants
+	     (mapcar (lambda (x)
+		       (+ x (* cur-number
+			       (elmo-multi-folder-divide-number-internal
+				folder))))
+		     (elmo-folder-list-importants child)))))
+    (elmo-uniq-list
+     (nconc importants
+	    (elmo-folder-list-messages-with-global-mark
+	     folder elmo-msgdb-important-mark)))))
 
-(luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-multi-folder) &optional nohide)
+(luna-define-method elmo-folder-list-messages
+  ((folder elmo-multi-folder) &optional visible-only in-msgdb)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
 	 list numbers)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq list (elmo-folder-list-messages-internal (car flds)))
+      (setq list (elmo-folder-list-messages (car flds) visible-only in-msgdb))
       (setq numbers
-	    (append
+	    (nconc
 	     numbers
-	     (if (listp list)
-		 (mapcar
-		  (function
-		   (lambda (x)
-		     (+
-		      (* (elmo-multi-folder-divide-number-internal
-			  folder) cur-number) x)))
-		  list)
-	       ;; Use current list.
-	       (elmo-delete-if
-		(lambda (num)
-		  (not
-		   (eq cur-number (/ num
-				     (elmo-multi-folder-divide-number-internal
-				      folder)))))
-		(mapcar
-		 'car
-		 (elmo-msgdb-get-number-alist
-		  (elmo-folder-msgdb folder)))))))
+	     (mapcar
+	      (function
+	       (lambda (x)
+		 (+
+		  (* (elmo-multi-folder-divide-number-internal
+		      folder) cur-number) x)))
+	      list)))
       (setq flds (cdr flds)))
     numbers))
 
@@ -601,33 +446,98 @@
       (setq msg-list (cdr msg-list)))
     ret-val))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-multi-folder)
-						   numbers)
+(luna-define-method elmo-folder-mark-as-important ((folder
+						    elmo-multi-folder)
+						   numbers
+						   &optional
+						   ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-important (car folder-numbers)
-				   (cdr folder-numbers)))
-  t)
+				   (cdr folder-numbers)
+				   ignore-flags)))
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-multi-folder)
-						  numbers)
+(luna-define-method elmo-folder-unmark-important ((folder
+						   elmo-multi-folder)
+						  numbers
+						  &optional
+						  ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-important (car folder-numbers)
-				  (cdr folder-numbers)))
-  t)
+				  (cdr folder-numbers)
+				  ignore-flags)))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-multi-folder)
-					      numbers)
+(luna-define-method elmo-folder-mark-as-read ((folder
+					       elmo-multi-folder)
+					      numbers
+					      &optional ignore-flag)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-read (car folder-numbers)
-			      (cdr folder-numbers)))
-  t)
+			      (cdr folder-numbers)
+			      ignore-flag)))
 
-(luna-define-method elmo-folder-unmark-read ((folder elmo-multi-folder)
-					     numbers)
+(luna-define-method elmo-folder-unmark-read ((folder
+					      elmo-multi-folder)
+					     numbers
+					     &optional ignore-flag)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-read (car folder-numbers)
-			     (cdr folder-numbers)))
-  t)
+			     (cdr folder-numbers)
+			     ignore-flag)))
+
+(luna-define-method elmo-folder-mark-as-answered ((folder
+						   elmo-multi-folder)
+						  numbers)
+  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
+    (elmo-folder-mark-as-answered (car folder-numbers)
+				  (cdr folder-numbers))))
+
+(luna-define-method elmo-folder-unmark-answered ((folder
+						  elmo-multi-folder)
+						 numbers)
+  (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
+    (elmo-folder-unmark-answered (car folder-numbers)
+				 (cdr folder-numbers))))
+
+(luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
+					      flag
+					      &optional in-msgdb)
+  (let ((cur-number 0)
+	numbers)
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq cur-number (+ cur-number 1)
+	    numbers
+	    (nconc
+	     numbers
+	     (mapcar
+	      (function
+	       (lambda (x)
+		 (+
+		  (* (elmo-multi-folder-divide-number-internal folder)
+		     cur-number) x)))
+	      (elmo-folder-list-flagged child flag in-msgdb)))))
+    numbers))
+
+(luna-define-method elmo-folder-commit ((folder elmo-multi-folder))
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-commit child)))
+
+(luna-define-method elmo-folder-length ((folder elmo-multi-folder))
+  (let ((sum 0))
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq sum (+ sum (elmo-folder-length child))))
+    sum))
+
+(luna-define-method elmo-folder-count-flags ((folder elmo-multi-folder))
+  (let ((new 0)
+	(unreads 0)
+	(answered 0)
+	flags)
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq flags (elmo-folder-count-flags child))
+      (setq new (+ new (nth 0 flags)))
+      (setq unreads (+ unreads (nth 1 flags)))
+      (setq answered (+ answered (nth 2 flags))))
+    (list new unreads answered)))
 
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))

@@ -90,8 +90,8 @@
      wl-summary-jump-to-current-message t "Jump to Current Message"]
     [wl-summary-sync-force-update
      wl-summary-sync-force-update t "Sync Current Folder"]
-    [wl-summary-delete
-     wl-summary-delete t "Delete Current Message"]
+    [wl-summary-dispose
+     wl-summary-dispose t "Dispose Current Message"]
     [wl-summary-mark-as-important
      wl-summary-mark-as-important t "Mark Current Message as Important"]
     [wl-draft

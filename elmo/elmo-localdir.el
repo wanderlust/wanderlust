@@ -144,15 +144,11 @@
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers
-					      new-mark
-					      already-mark
-					      seen-mark
-					      important-mark
-					      seen-list)
+					      flag-table)
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  overview number-alist mark-alist entity message-id
-	  num seen gmark
+	  num gmark
 	  (i 0)
 	  (len (length numbers)))
       (message "Creating msgdb...")
@@ -171,15 +167,14 @@
 		(elmo-msgdb-number-add number-alist
 				       num
 				       message-id))
-	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-file-cache-exists-p message-id) ; XXX
-				  (if seen
-				      nil
-				    already-mark)
-				(if seen
-				    nil ;;seen-mark
-				  new-mark))))
+			      (unless (eq 'read (elmo-flag-table-get 
+						 flag-table message-id))
+				(elmo-msgdb-mark
+				 (elmo-flag-table-get flag-table message-id)
+				 (elmo-file-cache-status
+				  (elmo-file-cache-get message-id))
+				 'new))))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-append
 		     mark-alist
@@ -231,18 +226,32 @@
 
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-localdir-folder)
-   src-folder numbers unread-marks &optional same-number)
+   src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-localdir-folder-directory-internal folder))
+	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
-	    (next-num (1+ (car (elmo-folder-status folder)))))
+	    (next-num (1+ (car (elmo-folder-status folder))))
+	    mark flag id)
 	(while numbers
+	  (setq mark (elmo-message-mark src-folder (car numbers))
+		flag (cond
+		      ((null mark) nil)
+		      ((member mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ;;
+		      ((not (member mark (elmo-msgdb-unread-marks)))
+		       'read)))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder (car numbers))
 	   (expand-file-name
 	    (int-to-string
 	     (if same-number (car numbers) next-num))
 	    dir))
+	  ;; src folder's msgdb is loaded.
+	  (when (setq id (elmo-message-field src-folder (car numbers)
+					     'message-id))
+	    (elmo-flag-table-set table id flag))
 	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))
 		   (not same-number))
@@ -251,6 +260,8 @@
 			;; MDA is running.
 			(1+ (car (elmo-folder-status folder)))
 		      (1+ next-num)))))
+	(when (elmo-folder-persistent-p folder)
+	  (elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
 	succeeds)
     (luna-call-next-method)))
 

@@ -66,7 +66,9 @@ Automatically loaded/saved.")
   '(elmo-folder-mark-as-read
     elmo-folder-unmark-read
     elmo-folder-mark-as-important
-    elmo-folder-unmark-important))
+    elmo-folder-unmark-important
+    elmo-folder-mark-as-answered
+    elmo-folder-unmark-answered))
 
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
@@ -75,6 +77,8 @@ Automatically loaded/saved.")
     (elmo-folder-create-dop-delayed . "Create")
     (elmo-folder-mark-as-read . "Read")
     (elmo-folder-unmark-read . "Unread")
+    (elmo-folder-mark-as-answered . "Answered")
+    (elmo-folder-unmark-answered . "Unanswered")    
     (elmo-folder-mark-as-important . "Important")
     (elmo-folder-unmark-important . "Unimportant")))
 
@@ -230,10 +234,10 @@ FOLDER is the folder structure."
 				 (car (elmo-dop-queue-arguments queue)))))))))
 
 ;;; DOP operations.
-(defsubst elmo-folder-append-buffer-dop (folder unread &optional number)
+(defsubst elmo-folder-append-buffer-dop (folder &optional flag number)
   (elmo-dop-queue-append
    folder 'elmo-folder-append-buffer-dop-delayed
-   (list unread
+   (list flag
 	 (elmo-dop-spool-folder-append-buffer
 	  folder)
 	 number)))
@@ -274,6 +278,12 @@ FOLDER is the folder structure."
 (defsubst elmo-folder-unmark-important-dop (folder numbers)
   (elmo-dop-queue-append folder 'elmo-folder-unmark-important (list numbers)))
 
+(defsubst elmo-folder-mark-as-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-mark-as-answered (list numbers)))
+
+(defsubst elmo-folder-unmark-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-unmark-answered (list numbers)))
+
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
   (let* ((number-alist (elmo-msgdb-number-load
@@ -283,17 +293,15 @@ FOLDER is the folder structure."
 	 spool-length
 	 (i 0)
 	 max-num)
-    (setq spool-length
-	  (or (car (if (elmo-folder-exists-p spool-folder)
-		       (elmo-folder-status spool-folder)))
-	      0))
+    (setq spool-length (or (car (if (elmo-folder-exists-p spool-folder)
+				    (elmo-folder-status spool-folder))) 0))
     (setq max-num
 	  (or (nth (max (- (length number-list) 1) 0) number-list)
 	      0))
     (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
 
 ;;; Delayed operation (executed at online status).
-(defun elmo-folder-append-buffer-dop-delayed (folder unread number set-number)
+(defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
 	failure saved dequeued)
     (with-temp-buffer
@@ -303,14 +311,17 @@ FOLDER is the folder structure."
 	  (condition-case nil
 	      (setq failure (not
 			     (elmo-folder-append-buffer
-			      folder unread set-number)))
+			      folder
+			      (if (eq flag t) nil flag) ; for compatibility
+			      set-number)))
 	    (error (setq failure t)))
 	(setq dequeued t)) ; Already deletef from queue.
       (when failure
 	;; Append failed...
 	(setq saved (elmo-folder-append-buffer
 		     (elmo-make-folder elmo-lost+found-folder)
-		     unread set-number)))
+		     (if (eq flag t) nil flag) ; for compatibility
+		     set-number)))
       (if (and (not dequeued)    ; if dequeued, no need to delete.
 	       (or (not failure) ; succeed
 		   saved))       ; in lost+found

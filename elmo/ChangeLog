@@ -2,7 +2,164 @@
 
 	* elmo-version.el (elmo-version): Up to 2.11.4.
 
+2003-07-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-folder-unmark-answered): Define.
+	(elmo-folder-mark-as-answered): Ditto.
+
+2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-exists-exactly): Set default value as nil.
+	(elmo-pop3-get-session): Make msgdb directory after session.
+	(elmo-folder-exists-p): Check exactly at the first time even when the
+	elmo-pop3-exists-exactly is nil.
+
+	* elmo-pipe.el (elmo-folder-open-internal): Don't drain here.
+	(elmo-folder-list-messages): Define instead of
+	elmo-folder-list-messages-internal.
+	(elmo-folder-check): Check destination folder.
+	(elmo-folder-synchronize): Drain the pipe.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Don't cause an error
+	when msgdb is not loaded.
+
+	* elmo-msgdb.el (elmo-msgdb-append-to-killed-list): Abolish.
+
+	* elmo-imap4.el (elmo-folder-list-messages-plugged): Fixed.
+	(elmo-imap4-folder-diff-plugged): Use uidnext to calculate number of
+	messages.
+
+	* elmo.el (elmo-folder-kill-messages-before): New function.
+	(elmo-folder-kill-messages): Ditto.
+	(elmo-folder-synchronize): Use elmo-folder-kill-messages-before.
+
+	* elmo-imap4.el (elmo-folder-list-messages-plugged): 
+	Don't use elmo-msgdb-max-of-killed. It is harmful when messages are
+	killed not by synchronize (e.g. scoring).
+
+2003-07-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-search-fast): Return t if condition is not
+	treated.
+	(elmo-folder-search): Follow the change above.
+
+	* elmo-util.el (elmo-read-search-condition-internal): Add `Flag'
+	into the candidates of search field.
+
+2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-set-flag): Overwrite answered flag.
+	(elmo-msgdb-unset-flag): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Precedes Seen flag.
+
+2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-folder-msgdb-create): Don't define.
+	(elmo-folder-commit): Define.
+	(elmo-folder-synchronize): Ditto.
+	(elmo-folder-list-flagged): Ditto.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-length): Ditto.
+	(elmo-folder-count-flags): Ditto.
+	(elmo-message-mark): Ditto.
+	(elmo-message-field): Ditto.
+	(elmo-message-entity): Ditto.
+	(elmo-message-folder): Ditto.
+
+2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-field): Define as a method.
+
+	* elmo-multi.el (elmo-message-entity): Fixed bug when no entity found.
+	(elmo-message-field): Define.
+
+	* elmo.el (elmo-folder-list-unreads): Don't use msgdb API.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+
+	* elmo-multi.el (elmo-folder-mark-as-important): Remove :before
+	qualifier.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-list-flagged): Define.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-length): Ditto.
+	(elmo-folder-count-flags): Ditto.
+
+2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-detach-messages): New method.
+	(elmo-folder-move-messages): Use it.
+	(elmo-folder-synchronize): Ditto.
+
+	* elmo-multi.el (elmo-folder-detach-messages): Define.
+
+	* elmo.el (elmo-message-copy-entity): New function.
+	(elmo-message-entity-set-number): Ditto.
+	(elmo-message-mark): Define as method.
+
+	* elmo-multi.el (elmo-multi-real-folder-number): Changed position.
+	(elmo-folder-synchronize): Return 0 (Should be reconsider).
+	(elmo-message-entity): Fixed last change.
+	(elmo-message-mark): Define.
+	(elmo-folder-msgdb-create): Abolish.
+	(elmo-multi-folder-append-msgdb): Ditto.
+	(elmo-multi-folder-diff): Fixed.
+	(elmo-multi-split-number-alist): Removed.
+	(elmo-multi-split-mark-alist): Removed.
+	(elmo-folder-list-messages): Define.
+	(elmo-folder-list-messages-internal): Removed.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Treat flags for
+	local file messages.
+	(elmo-folder-msgdb-create): Fixed read mark.
+
+2003-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-generic-folder-append-messages): Set flag as nil
+	if mark is nil.
+
+2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-message-entities): Define as inline
+	function.
+	(elmo-folder-messages): Abolish.
+
+	* elmo-multi.el (elmo-folder-check): Call elmo-folder-check for each
+	folder.
+	(elmo-folder-synchronize): Define.
+	(elmo-message-entity): Define.
+
+2003-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-delete-messages-plugged): Call
+	elmo-imap4-session-select-mailbox.
+
+	* elmo.el (elmo-folder-move-messages): Don't display any message.
+
+	* elmo-imap4.el (elmo-imap4-send-command): Accept process output when
+	parsing.
+	(elmo-imap4-session-check): Don't wait CHECK response.
+	(elmo-folder-delete-messages-plugged): Don't wait EXPUNGE response.
+
+2003-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-synchronize): Fixed bug when sync-all.
+
 2003-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-folder-process-crosspost): Follow the change in
+	API.
+	* elmo-nntp.el (elmo-folder-process-crosspost): Ditto.
+
+
+	* elmo.el (elmo-folder-process-crosspost): Remove optional argument.
+	(elmo-folder-list-message-entities): Added argument in-msgdb and
+	numbers.
+	(elmo-folder-synchronize): Define as a method.
 
 	* elmo-nntp.el (elmo-folder-initialize): Don't use
 	elmo-nntp-default-user if zero-length username is specified
@@ -51,6 +208,76 @@
 2003-04-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-pipe.el (elmo-folder-clear): Implemented clear copied-list.
+
+2003-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-message-entity-field): Don't use self
+	recursive call (can't byte compile on emacs 20.7).
+
+2003-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-messages): Redefine as a luna method.
+	(elmo-folder-list-message-entities): New API.
+	(elmo-message-entity): Ditto.
+	(elmo-message-entity-parent): Ditto.
+	(elmo-folder-do-each-message-entity): Ditto.
+	(elmo-message-entity-number): Ditto.
+	(elmo-message-entity-field): Ditto.
+	(elmo-message-entity-set-field): Ditto.
+	(elmo-folder-count-flags): Ditto.
+	(elmo-folder-length): Ditto.
+
+	* elmo-util.el (elmo-get-hash-val): Check whether hashtable is nil or
+	not.
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): New function.
+	(elmo-msgdb-count-marks): Abolish.
+	(elmo-msgdb-make-entity): Ditto.
+	(elmo-msgdb-do-each-entity): Ditto.
+	(elmo-msgdb-message-entity): New inline function.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-make-message-entity): New function.
+
+2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-buffer): Changed argument from unread 
+	to flag. (All other related portions are changed.)
+	(elmo-folder-msgdb-create): Likewise.
+	(elmo-generic-folder-append-messages): Use flag-table instead of
+	seen-list.
+	(elmo-folder-move-messages): Removed redundant process.
+	(elmo-folder-synchronize): Likewise.
+
+	* elmo-msgdb.el (elmo-flag-table-get): New function.
+	(elmo-flag-table-save): Fixed.
+	(elmo-msgdb-length): New inline function.
+	(elmo-msgdb-flag-table): New function.
+	(elmo-msgdb-mark): Add optional argument new.
+	(elmo-msgdb-add-msgs-to-seen-list): Abolish.
+	(elmo-msgdb-seen-list): Ditto.
+	(elmo-msgdb-add-msgs-to-seen-list): Ditto.
+
+
+2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-set-mark): Abolish.
+	(elmo-folder-unmark-important): Added optional argument `ignore-flag'.
+	(All related portions are changed.)
+
+	* elmo-msgdb.el (toplevel): Added comment.
+	(elmo-load-msgdb): Added 4th element `path'.
+	(elmo-msgdb-append): Follow the change above.
+	(elmo-msgdb-clear): Ditto.
+	(elmo-msgdb-delete-msgs): Ditto.
+	(elmo-msgdb-get-path): New inline function.
+	(elmo-msgdb-set-path): Ditto.
+	(elmo-flag-table-filename): New variable.
+	(elmo-flag-table-load): New function.
+	(elmo-flag-table-set): Ditto.
+	(elmo-flag-table-save): Ditto.
+	(elmo-msgdb-get-field-value): Abolish.
+	(elmo-msgdb-overview-get-entity-by-number): Ditto.
 
 2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
@@ -118,11 +345,6 @@
 	* elmo-localdir.el (elmo-folder-rename-internal): Referctoring;
 	Replace nested conditional with guard clauses.
 
-2003-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* elmo-archive.el (elmo-folder-rename-internal): Referctoring;
-	Replace nested conditional with guard clauses.
-
 2003-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pldap.el (ldap-search-basic): Don't treat exit status 32 as an
@@ -130,6 +352,11 @@
 
 	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Bind print-level,
 	print-depth.
+
+2003-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-archive.el (elmo-folder-rename-internal): Referctoring;
+	Replace nested conditional with guard clauses.
 
 2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
@@ -268,13 +495,72 @@
 	* elmo-imap4.el: Remove Nemacs hack, replace `elmo-read' by `read'.
 	* elmo-util.el: Ditto.
 
+2002-10-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-accessible-p): Renamed from
+	elmo-message-cached-p and rewritten.
+
+2002-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-flagged): New generic function.
+	(elmo-folder-list-importants): New implementation.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-search-fast):  Use 'flag' instead of 'mark';
+	Added 'digest'.
+	(elmo-message-cached-p): New function.
+	(elmo-message-set-flag): Ditto (no content).
+	(elmo-message-unset-flag): Ditto.
+	(elmo-folder-list-messages-mark-match): Abolish.
+
+	* elmo-util.el (elmo-regexp-opt): New function.
+
+	* elmo-msgdb.el (elmo-msgdb-get-cached): New function.
+	(elmo-msgdb-match-condition-primitive): Use 'flag' instead of 'mark';
+	Added 'digest'.
+	(elmo-msgdb-list-flagged): New function.
+
+	* elmo-imap4.el (elmo-imap4-folder-list-digest-plugged): New function.
+	(elmo-imap4-search-internal-primitive): Use 'flag' instead of 'mark';
+	Added 'digest'.
+
+	* elmo-filter.el (elmo-folder-diff): Use 'flag' instead of 'mark'.
+
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.11.0.
 
-2002-10-22  Yuuichi Teranishi  <teranisi@gohome.org>
+2002-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-set-flag): Use
+	`elmo-file-cache-exists-p'; use proper mark that depends on
+	`use-cache'.
+	(elmo-msgdb-unset-flag): Ditto.
+	(elmo-msgdb-set-cached): Ditto. added argument `use-cache'.
+
+	* elmo.el (elmo-message-set-cached): Call `elmo-msgdb-set-cached'
+	with 4th argument `use-cache'.
+
+2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-unmark-important): Follow the changes above.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-set-cached): Use the term 'flag' for
+	message status.
+	(elmo-msgdb-mark): Likewise.
+	(elmo-msgdb-set-flag): Renamed from elmo-msgdb-set-status.
+	(elmo-msgdb-unset-flag): Likewise.
 
 	* elmo.el (elmo-generic-folder-diff): Avoid byte-compile warning.
+
+2002-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-diff): Fixed condition checking
+	`last:' filter.
 
 2002-10-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
@@ -286,15 +572,297 @@
 	* elmo-dop.el (elmo-dop-queue-flush): Check obsolete at first.
 	(elmo-dop-queue-flush): Fixed last change.
 
+2002-10-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-list-unreads): Call generic method
+	if require-msgdb slot is nil.
+	(elmo-folder-list-importants): Likewise.
+
+2002-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-set-cached): Set mark-modified slot if
+	mark is changed.
+
+	* elmo-msgdb.el (elmo-msgdb-set-mark): Return t.
+	(elmo-msgdb-set-cached): Undo last change; return non-nil if mark
+	is changed.
+
+2002-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-set-cached): Set mark-modified slot.
+
+2002-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-unset-status): Set mark-modified slot.
+
+	* elmo-multi.el (elmo-folder-close): Set msgdb of children as nil.
+
+2002-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-set-status): Fixed logic (new to read).
+	(elmo-msgdb-uncached-marks): Added elmo-msgdb-new-mark.
+
 2002-09-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo.el: Add autoload setting for elmo-nntp-post, fix against
 	the problem reported by Sean Rima [wl-en:180].
 
+2002-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-folder-diff): Treat 'mark:' filter.
+
+	* elmo.el (elmo-folder-unmark-read): Added argument `ignore-flag'.
+
+	* elmo-filter.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-map.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-multi.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-net.el (elmo-folder-unmark-read): Ditto.
+
+	* elmo-pipe.el (elmo-folder-unmark-read): Ditto.
+
 2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-parse-status): Skip white spaces after
 	status number.
+
+2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-mark-as-read): Added argument `ignore-flag'.
+	(elmo-folder-mark-as-read): Follow the API change.
+	(elmo-message-set-cached): New function.
+
+	* elmo-pipe.el (elmo-folder-mark-as-read): Follow the API change.
+
+	* elmo-nntp.el (elmo-folder-mark-as-read): Set :before qualifier.
+
+	* elmo-net.el (elmo-folder-unmark-important): Set :before qualifier.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-multi.el (elmo-folder-mark-as-important): Set :before qualifier.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-mark.el (toplevel): Removed some mark method definitions.
+
+	* elmo-map.el (elmo-map-folder-unmark-answered): New method.
+	(elmo-map-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-important): Add :before qualifier.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Define.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-maildir.el (elmo-map-folder-mark-as-answered): Define.
+	(elmo-map-folder-unmark-answered): Ditto.
+
+	* elmo-filter.el (elmo-folder-mark-as-read): Follow the API change.
+
+	* elmo-net.el (elmo-folder-unmark-important): Added :around qualifier.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-match-condition-primitive): Added argument
+	`mark'; evaluate mark condition.
+	(elmo-msgdb-match-condition-internal): New function.
+	(elmo-msgdb-match-condition): Call it; changed argument.
+
+	* elmo.el (elmo-folder-search): Follow the API change on
+	`elmo-msgdb-match-condition'.
+
+2002-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Add to mark-alist if
+	original mark is non-nil.
+
+2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-map.el (elmo-map-folder-list-unreads): Define default behavior.
+	(elmo-map-folder-list-answereds): New method.
+	(elmo-folder-list-unreads): Add :around qualifier.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+
+2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-mark): New inline function.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Call target-folder's
+	method if msgdb is not required.
+	(elmo-filter-folder-list-importants): Don't treat global-mark.
+
+	* elmo.el (elmo-folder-list-importants): Ditto.
+
+	* elmo-net.el (elmo-folder-list-importants): Ditto.
+
+	* elmo-map.el (elmo-folder-list-importants): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-seen-list): Use `elmo-msgdb-unread-marks'
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Set answered mark.
+	(elmo-imap4-folder-list-any-plugged): New function.
+	(elmo-imap4-search-internal-primitive): Use it.
+
+	* elmo-filter.el (elmo-folder-check): Synchronize original folder
+	only when require-msgdb slot is non-nil.
+	(elmo-folder-close): Clear target folder's msgdb.
+
+2002-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-folder-msgdb-create): Follow the API change.
+	(elmo-pop3-msgdb-create-by-header): Ditto.
+	(elmo-pop3-msgdb-create-message): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-nmz.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Ditto.
+	(elmo-folder-msgdb-create): Ditto.
+	(elmo-nntp-folder-msgdb-create): Ditto.
+	(elmo-nntp-msgdb-create-by-header): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+	(elmo-folder-list-unreads): Define.
+
+	* elmo-pipe.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-append-messages): Ditto.
+	(elmo-folder-list-unreads): Define.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+
+	* elmo-net.el (elmo-folder-list-unreads): Define.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-list-answereds-plugged): Ditto.
+	(elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-msgdb-create-unplugged): Ditto.
+	(elmo-folder-unmark-answered): Define.
+	(elmo-folder-mark-as-answered-unplugged): Ditto.
+	(elmo-folder-unmark-answered-unplugged): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-new-mark): New user option.
+	(elmo-msgdb-unread-uncached-mark): Ditto.
+	(elmo-msgdb-unread-cached-mark): Ditto.
+	(elmo-msgdb-read-uncached-mark): Ditto.
+	(elmo-msgdb-answered-cached-mark): Ditto.
+	(elmo-msgdb-answered-uncached-mark): Ditto.
+	(elmo-msgdb-important-mark): Ditto.
+	(elmo-msgdb-set-mark): Rewrite.
+	(elmo-msgdb-count-marks): Rewrite.
+	(elmo-msgdb-mark-alist-set): Abolish.
+	(elmo-msgdb-seen-list): Removed argument `seen-marks'.
+	(elmo-msgdb-add-msgs-to-seen-list): Likewise.
+
+	* elmo-multi.el (elmo-folder-check): Call elmo-folder-synchronize.
+	(elmo-folder-close): Define.
+	(elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-list-unreads): Rewrite.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Define.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-localdir.el (elmo-folder-msgdb-create): Follow the API change.
+	(elmo-folder-append-messages): Ditto.
+
+	* elmo-mark.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-map.el (elmo-folder-list-unreads): Ditto.
+	(elmo-folder-list-importants): Ditto.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-append-messages): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Follow the API
+	change.
+	(elmo-folder-msgdb-create-plugged): Ditto.
+	(elmo-folder-append-messages): Ditto.
+	(elmo-folder-list-answereds-plugged): Define.
+	(elmo-imap4-search-internal-primitive): Add `mark' processing.
+	(elmo-folder-unmark-answered-plugged): Define.
+	(elmo-folder-mark-as-answered-plugged): Ditto.
+	(elmo-folder-search-requires-msgdb-p): Ditto.
+
+	* elmo-filter.el (elmo-filter-folder): Added new slot 'require-msgdb'.
+	(elmo-folder-initialize): Set it.
+	(elmo-folder-msgdb): Define.
+	(elmo-folder-check): Call elmo-folder-synchronize.
+	(elmo-folder-close): Define.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-msgdb-create): Rewrite.
+	(elmo-folder-list-unreads): Ditto.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-answered): Define.
+	(elmo-folder-unmark-answered): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-merge-method-list): Added
+	elmo-folder-mark-as-answered, elmo-folder-unmark-answered.
+	(elmo-dop-queue-method-name-alist): Likewise.
+	(elmo-folder-mark-as-answered-dop): New inline function.
+	(elmo-folder-unmark-answered-dop): Ditto.
+	(elmo-folder-status-dop): Treat spool-length as 0 if it does not exist.
+
+	* elmo-archive.el (elmo-folder-append-messages): Follow the API change.
+	(elmo-folder-msgdb-create): Ditto.
+	(elmo-archive-msgdb-create-as-numlist-subr1): Ditto.
+	(elmo-archive-msgdb-create-as-numlist-subr2): Ditto.
+	(elmo-archive-parse-mmdf): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-folder-list-unreads-internal): Ditto.
+
+	* elmo.el (elmo-folder-msgdb): Define as generic function.
+	(elmo-folder-list-messages): Added argument `in-msgdb'.
+	(elmo-folder-list-unreads): Define as generic function.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+	(elmo-folder-list-messages-with-global-mark): New function.
+	(elmo-folder-msgdb-create): Removed mark arguments.
+	(elmo-folder-unmark-answered): New generic function.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-append-messages): Removed argunment `unread-marks'
+	(elmo-folder-list-unreads-internal): Abolish.
+	(elmo-folder-list-importants-internal): Ditto.
+	(elmo-folder-search-requires-msgdb-p): New generic function.
+	(elmo-folder-search-requires-msgdb-p-internal): New function.
+	(elmo-generic-folder-open): Call elmo-folder-msgdb instead of
+	elmo-msgdb-load.
+	(elmo-folder-search-fast): Added key 'mark'.
+	(elmo-generic-folder-append-messages): Use elmo-msgdb-unread-marks
+	instead of unread-marks argument.
+	(elmo-folder-move-messages): Removed argunment `unread-marks'
+	(elmo-folder-unmark-important): Define.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-replace-marks): Abolish.
+	(elmo-generic-folder-append-msgdb): Append msgdb before checking
+	duplicates.
+	(elmo-folder-synchronize): Removed mark arguments;
+	return crosspost only number.
 
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

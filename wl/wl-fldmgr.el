@@ -387,11 +387,11 @@ return value is diffs '(-new -unread -all)."
 	    (cond
 	     ((stringp (car new2)) ;; folder
 	      (cond
-	       ((wl-string-member (car new2) flist)
+	       ((elmo-string-member (car new2) flist)
 		(and errmes (message "%s: already exists" (car new2)))
 		(throw 'success nil))
 	       ((and access
-		     (not (wl-string-member (car new2) unsubscribes)))
+		     (not (elmo-string-member (car new2) unsubscribes)))
 		(and errmes (message "%s: not access group folder" (car new2)))
 		(throw 'success nil))))
 	     (t			   ;; group

@@ -84,15 +84,10 @@
    (elmo-map-message-location folder number)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-mark-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark
-					      seen-list)
-  (elmo-mark-folder-msgdb-create folder numbers new-mark already-mark
-				 seen-mark important-mark))
+					      numbers flag-table)
+  (elmo-mark-folder-msgdb-create folder numbers))
 
-(defun elmo-mark-folder-msgdb-create (folder numbers new-mark already-mark
-					     seen-mark important-mark)
+(defun elmo-mark-folder-msgdb-create (folder numbers)
   (let ((i 0)
 	(len (length numbers))
 	overview number-alist mark-alist entity message-id
@@ -127,7 +122,7 @@
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-mark-folder)
-					       unread &optional number)
+					       &optional flag number)
   (let* ((msgid (elmo-field-body "message-id"))
 	 (path (elmo-file-cache-get-path msgid))
 	 dir)
@@ -162,25 +157,6 @@
   t)
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-mark-folder))
-  t)
-
-;;; To override elmo-map-folder methods.
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-mark-folder) unread-marks &optional mark-alist)
-  t)
-
-(luna-define-method elmo-folder-unmark-important ((folder elmo-mark-folder)
-						  numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-mark-folder)
-						   numbers)
-  t)
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-mark-folder) numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-mark-folder) numbers)
   t)
 
 (require 'product)

@@ -87,10 +87,7 @@
    (elmo-cache-folder-directory-internal folder)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-cache-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark
-					      seen-list)
+					      numbers flag-table)
   (let ((i 0)
 	(len (length numbers))
 	overview number-alist mark-alist entity message-id
@@ -112,7 +109,11 @@
 				     num
 				     message-id))
 	(if (setq mark (or (elmo-msgdb-global-mark-get message-id)
-			   (if (member message-id seen-list) nil new-mark)))
+			   (elmo-msgdb-mark
+			    (elmo-flag-table-get flag-table message-id)
+			    (elmo-file-cache-status
+			     (elmo-file-cache-get message-id))
+			    'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append
 		   mark-alist
@@ -127,8 +128,7 @@
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-cache-folder)
-					       unread
-					       &optional number)
+					       &optional flag number)
   ;; dir-name is changed according to msgid.
   (unless (elmo-cache-folder-dir-name-internal folder)
     (let* ((file (elmo-file-cache-get-path (std11-field-body "message-id")))
@@ -168,27 +168,6 @@
   t)
 
 (luna-define-method elmo-message-file-p ((folder elmo-cache-folder) number)
-  t)
-
-;;; To override elmo-map-folder methods.
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-cache-folder) unread-marks &optional mark-alist)
-  t)
-
-(luna-define-method elmo-folder-unmark-important ((folder elmo-cache-folder)
-						  numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-cache-folder)
-						   numbers)
-  t)
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-cache-folder)
-					     numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-cache-folder)
-					      numbers)
   t)
 
 (require 'product)

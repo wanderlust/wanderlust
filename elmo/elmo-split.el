@@ -294,6 +294,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 		      (elmo-message-fetch folder msg
 					  (elmo-make-fetch-strategy 'entire)
 					  nil (current-buffer) 'unread))
+		(run-hooks 'elmo-split-fetch-hook)
 		(setq elmo-split-message-entity (mime-parse-buffer))
 		(catch 'terminate
 		  (dolist (rule (append elmo-split-rule default-rule))
@@ -326,7 +327,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					 action)))
 				    (elmo-folder-create target-folder)))
 				(elmo-folder-open-internal target-folder)
-				(elmo-folder-append-buffer target-folder 'unread)
+				(elmo-folder-append-buffer target-folder)
 				(elmo-folder-close-internal target-folder))
 			    (error (setq failure t)
 				   (incf fcount)))
@@ -370,7 +371,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 				       "  Test: do nothing\n")
 				      ((function action)
 				       (format "  Test: function:%s\n"
-					       (symbol-name action)))
+					       (prin1-to-string action)))
 				      (t
 				       "  ERROR: wrong action specified\n"))
 				   (cond

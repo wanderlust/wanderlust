@@ -810,7 +810,7 @@ Optional argument ARG is repeart count."
 	 (t
 	  (message "Uncheck(unplugged) \"%s\"" entity)))))
     (if ret-val
-	(message "Checking \"%s\" is done."
+	(message "Checking \"%s\" is done"
 		 (if (consp entity) (car entity) entity)))
     (run-hooks 'wl-folder-check-entity-hook)
     ret-val))
@@ -825,8 +825,10 @@ Optional argument ARG is repeart count."
 		       (elmo-folder-diff folder)))
 		 (error
 		  ;; maybe not exist folder.
-		  (if (and (not (memq 'elmo-open-error
-				      (get (car err) 'error-conditions)))
+		  (if (and (not (or (memq 'elmo-open-error
+					  (get (car err) 'error-conditions))
+				    (memq 'elmo-imap4-bye-error
+					  (get (car err) 'error-conditions))))
 			   (not (elmo-folder-exists-p folder)))
 		      (wl-folder-create-subr folder)
 		    (signal (car err) (cdr err))))))
@@ -850,7 +852,7 @@ Optional argument ARG is repeart count."
 	      all    (and all    (max 0 all))))
       (setq unread (or (and unread (- unread (or new 0)))
 		       (elmo-folder-get-info-unread folder)
-		       (cdr (wl-summary-count-unread))))
+		       (nth 1 (elmo-folder-count-flags folder))))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list new unread all)
 				   (get-buffer wl-folder-buffer-name)))
@@ -1095,7 +1097,8 @@ If current line is group folder, all subfolders are marked."
 	  (group (wl-folder-buffer-group-p))
 	  summary-buf)
       (when (and entity-name
-		 (y-or-n-p (format "Mark all messages in %s as read? " entity-name)))
+		 (y-or-n-p (format "Mark all messages in %s as read? "
+				   entity-name)))
 	(wl-folder-mark-as-read-all-entity
 	 (if group
 	     (wl-folder-search-group-entity-by-name entity-name

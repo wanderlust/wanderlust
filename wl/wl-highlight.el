@@ -250,7 +250,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-deleted-face
+(wl-defface wl-highlight-summary-disposed-face
   '(
     (((type tty)
       (background dark))
@@ -261,7 +261,52 @@
     (((class color)
       (background light))
      (:foreground "DarkKhaki")))
+  "Face used for displaying messages mark as disposed."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
+(wl-defface wl-highlight-summary-deleted-face
+  '(
+    (((type tty)
+      (background dark))
+     (:foreground "blue"))
+    (((class color)
+      (background dark))
+     (:foreground "SteelBlue"))
+    (((class color)
+      (background light))
+     (:foreground "RoyalBlue4")))
   "Face used for displaying messages mark as deleted."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
+(wl-defface wl-highlight-summary-prefetch-face
+  '(
+    (((type tty)
+      (background dark))
+     (:foreground "Green"))
+    (((class color)
+      (background dark))
+     (:foreground "DeepSkyBlue"))
+    (((class color)
+      (background light))
+     (:foreground "brown")))
+  "Face used for displaying messages mark as deleted."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
+(wl-defface wl-highlight-summary-resend-face
+  '(
+    (((type tty)
+      (background dark))
+     (:foreground "Yellow"))
+    (((class color)
+      (background dark))
+     (:foreground "orange3"))
+    (((class color)
+      (background light))
+     (:foreground "orange3")))
+  "Face used for displaying messages mark as resend."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
@@ -294,6 +339,21 @@
   "Face used for displaying messages mark as copied."
   :group 'wl-summary-faces
   :group 'wl-faces)
+
+;; answered 
+(wl-defface wl-highlight-summary-answered-face
+  '((((type tty)
+      (background dark))
+     (:foreground "yellow"))
+    (((class color)
+      (background dark))
+     (:foreground "khaki"))
+    (((class color)
+      (background light))
+     (:foreground "khaki4")))
+  "Face used for displaying answered messages."
+  :group 'wl-summary-faces
+  :group 'wl-faces)  
 
 ;; obsolete.
 (wl-defface wl-highlight-summary-temp-face
@@ -561,14 +621,14 @@
   "Face used for displaying demo."
   :group 'wl-faces)
 
-(wl-defface wl-highlight-refile-destination-face
+(wl-defface wl-highlight-action-argument-face
   '((((class color)
       (background dark))
      (:foreground "pink"))
     (((class color)
       (background light))
      (:foreground "red")))
-  "Face used for displaying refile destination."
+  "Face used for displaying action argument."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
@@ -761,31 +821,28 @@
 	(put-text-property bol eol 'face text-face)))))
 
 (defun wl-highlight-summary-line-string (line mark temp-mark indent)
-  (let (fsymbol)
+  (let (fsymbol action)
     (cond ((and (string= temp-mark wl-summary-score-over-mark)
-		(member mark (list wl-summary-unread-cached-mark
-				   wl-summary-unread-uncached-mark
-				   wl-summary-new-mark)))
+		(member mark (list elmo-msgdb-unread-cached-mark
+				   elmo-msgdb-unread-uncached-mark
+				   elmo-msgdb-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	  ((and (string= temp-mark wl-summary-score-below-mark)
-		(member mark (list wl-summary-unread-cached-mark
-				   wl-summary-unread-uncached-mark
-				   wl-summary-new-mark)))
+		(member mark (list elmo-msgdb-unread-cached-mark
+				   elmo-msgdb-unread-uncached-mark
+				   elmo-msgdb-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	  ((string= temp-mark "o")
-	   (setq fsymbol 'wl-highlight-summary-refiled-face))
-	  ((string= temp-mark "O")
-	   (setq fsymbol 'wl-highlight-summary-copied-face))
-	  ((string= temp-mark "D")
-	   (setq fsymbol 'wl-highlight-summary-deleted-face))
-	  ((string= temp-mark "*")
-	   (setq fsymbol 'wl-highlight-summary-temp-face))
-	  ((string= mark wl-summary-new-mark)
+	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
+	   (setq fsymbol (nth 5 action)))
+	  ((string= mark elmo-msgdb-new-mark)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
-	  ((member mark (list wl-summary-unread-cached-mark
-			      wl-summary-unread-uncached-mark))
+	  ((member mark (list elmo-msgdb-unread-cached-mark
+			      elmo-msgdb-unread-uncached-mark))
 	   (setq fsymbol 'wl-highlight-summary-unread-face))
-	  ((or (string= mark wl-summary-important-mark))
+	  ((member mark (list elmo-msgdb-answered-cached-mark
+			      elmo-msgdb-answered-uncached-mark))
+	   (setq fsymbol 'wl-highlight-summary-answered-face))
+	  ((or (string= mark elmo-msgdb-important-mark))
 	   (setq fsymbol 'wl-highlight-summary-important-face))
 	  ((string= temp-mark wl-summary-score-below-mark)
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
@@ -804,42 +861,37 @@
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  fsymbol bol eol matched thread-top looked-at dest ds)
+	  fsymbol action bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
       (setq status-mark (wl-summary-persistent-mark))
       (setq temp-mark (wl-summary-temp-mark))
-      (cond
-       ((string= temp-mark "*")
-	(setq fsymbol 'wl-highlight-summary-temp-face))
-       ((string= temp-mark "D")
-	(setq fsymbol 'wl-highlight-summary-deleted-face))
-       ((string= temp-mark "O")
-	(setq fsymbol 'wl-highlight-summary-copied-face
-	      dest t))
-       ((string= temp-mark "o")
-	(setq fsymbol 'wl-highlight-summary-refiled-face
-	      dest t)))
+      (when (setq action (assoc temp-mark wl-summary-mark-action-list))
+	(setq fsymbol (nth 5 action))
+	(setq dest (nth 2 action)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
-		 (member status-mark (list wl-summary-unread-cached-mark
-					   wl-summary-unread-uncached-mark
-					   wl-summary-new-mark)))
+		 (member status-mark (list elmo-msgdb-unread-cached-mark
+					   elmo-msgdb-unread-uncached-mark
+					   elmo-msgdb-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	   ((and (string= temp-mark wl-summary-score-below-mark)
-		 (member status-mark (list wl-summary-unread-cached-mark
-					   wl-summary-unread-uncached-mark
-					   wl-summary-new-mark)))
+		 (member status-mark (list elmo-msgdb-unread-cached-mark
+					   elmo-msgdb-unread-uncached-mark
+					   elmo-msgdb-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	   ((string= status-mark wl-summary-new-mark)
+	   ((string= status-mark elmo-msgdb-new-mark)
 	    (setq fsymbol 'wl-highlight-summary-new-face))
-	   ((member status-mark (list wl-summary-unread-cached-mark
-				      wl-summary-unread-uncached-mark))
+	   ((member status-mark (list elmo-msgdb-unread-cached-mark
+				      elmo-msgdb-unread-uncached-mark))
 	    (setq fsymbol 'wl-highlight-summary-unread-face))
-	   ((string= status-mark wl-summary-important-mark)
+	   ((member status-mark (list elmo-msgdb-answered-cached-mark
+				      elmo-msgdb-answered-uncached-mark))
+	    (setq fsymbol 'wl-highlight-summary-answered-face))
+	   ((string= status-mark elmo-msgdb-important-mark)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark
 	   ((string= temp-mark wl-summary-score-below-mark)
@@ -856,20 +908,15 @@
       (when dest
 	(put-text-property (next-single-property-change
 			    (next-single-property-change
-			     bol 'wl-summary-destination
+			     bol 'wl-summary-action-argument
 			     nil eol)
-			    'wl-summary-destination nil eol)
+			    'wl-summary-action-argument nil eol)
 			   eol
 			   'face
-			   'wl-highlight-refile-destination-face))
+			   'wl-highlight-action-argument-face))
       (if wl-use-highlight-mouse-line
 	  (put-text-property bol
-;;; Use bol instead of (1- (match-end 0))
-;;;			     (1- (match-end 0))
 			     eol 'mouse-face 'highlight))
-;;;   (put-text-property (match-beginning 3) (match-end 3)
-;;;			 'face 'wl-highlight-thread-indent-face)
-      ;; Dnd stuff.
       (if wl-use-dnd
 	  (wl-dnd-set-drag-starter bol eol)))))
 
@@ -927,9 +974,9 @@ Variables used:
 	  (overlay-put ov 'wl-momentary-overlay t))
 	(forward-line 1)))))
 
-(defun wl-highlight-refile-destination-string (string)
+(defun wl-highlight-action-argument-string (string)
   (put-text-property 0 (length string) 'face
-		     'wl-highlight-refile-destination-face
+		     'wl-highlight-action-argument-face
 		     string))
 
 (defun wl-highlight-summary-all ()

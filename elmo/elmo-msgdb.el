@@ -38,19 +38,153 @@
 (require 'std11)
 (require 'mime)
 
+(defcustom elmo-msgdb-new-mark "N"
+  "Mark for new message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+(defcustom elmo-msgdb-unread-uncached-mark "U"
+  "Mark for unread and uncached message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+(defcustom elmo-msgdb-unread-cached-mark "!"
+  "Mark for unread but already cached message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+(defcustom elmo-msgdb-read-uncached-mark "u"
+  "Mark for read but uncached message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+;; Not implemented yet.
+(defcustom elmo-msgdb-answered-cached-mark "&"
+  "Mark for answered and cached message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+(defcustom elmo-msgdb-answered-uncached-mark "A"
+  "Mark for answered but cached message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
+(defcustom elmo-msgdb-important-mark"$"
+  "Mark for important message."
+  :type '(string :tag "Mark")
+  :group 'elmo)
+
 ;;; MSGDB interface.
+;;
+;; MSGDB elmo-load-msgdb PATH
+;; MARK elmo-msgdb-get-mark MSGDB NUMBER 
+
+;; CACHED elmo-msgdb-get-cached MSGDB NUMBER
+;; VOID elmo-msgdb-set-cached MSGDB NUMBER CACHED USE-CACHE
+;; VOID elmo-msgdb-set-flag MSGDB FOLDER NUMBER FLAG
+;; VOID elmo-msgdb-unset-flag MSGDB FOLDER NUMBER FLAG
+
+;; LIST-OF-NUMBERS elmo-msgdb-count-marks MSGDB
+;; NUMBER elmo-msgdb-get-number MSGDB MESSAGE-ID
+;; FIELD-VALUE elmo-msgdb-get-field MSGDB NUMBER FIELD
+;; MSGDB elmo-msgdb-append MSGDB MSGDB-APPEND
+;; MSGDB elmo-msgdb-clear MSGDB
+;; elmo-msgdb-delete-msgs MSGDB NUMBERS
+;; elmo-msgdb-sort-by-date MSGDB
+
+;;;
+;; LIST-OF-NUMBERS elmo-msgdb-list-messages MSGDB
+
+;; elmo-flag-table-load
+;; elmo-flag-table-set
+;; elmo-flag-table-get
+;; elmo-flag-table-save
+
+;; elmo-msgdb-append-entity
+;; msgdb entity flag-table
+
+;; ENTITY elmo-msgdb-make-entity ARGS
+;; VALUE elmo-msgdb-entity-field ENTITY
+;; 
+
+;; OVERVIEW elmo-msgdb-get-overview MSGDB
+;; NUMBER-ALIST elmo-msgdb-get-number-alist MSGDB
+;; MARK-ALIST elmo-msgdb-get-mark-alist MSGDB
+;; elmo-msgdb-change-mark MSGDB BEFORE AFTER
+
+;; (for internal use?)
+;; LIST-OF-MARKS elmo-msgdb-unread-marks 
+;; LIST-OF-MARKS elmo-msgdb-answered-marks 
+;; LIST-OF-MARKS elmo-msgdb-uncached-marks 
+;; elmo-msgdb-seen-save DIR OBJ
+;; elmo-msgdb-overview-save DIR OBJ
+
+;; elmo-msgdb-message-entity MSGDB KEY
+
+;;; Abolish
+;; elmo-msgdb-overview-entity-get-references ENTITY
+;; elmo-msgdb-overview-entity-set-references ENTITY
+;; elmo-msgdb-get-parent-entity ENTITY MSGDB
+;; elmo-msgdb-overview-enitty-get-number ENTITY
+;; elmo-msgdb-overview-enitty-get-from-no-decode ENTITY
+;; elmo-msgdb-overview-enitty-get-from ENTITY
+;; elmo-msgdb-overview-enitty-get-subject-no-decode ENTITY
+;; elmo-msgdb-overview-enitty-get-subject ENTITY
+;; elmo-msgdb-overview-enitty-get-date ENTITY
+;; elmo-msgdb-overview-enitty-get-to ENTITY
+;; elmo-msgdb-overview-enitty-get-cc ENTITY
+;; elmo-msgdb-overview-enitty-get-size ENTITY
+;; elmo-msgdb-overview-enitty-get-id ENTITY
+;; elmo-msgdb-overview-enitty-get-extra-field ENTITY
+;; elmo-msgdb-overview-enitty-get-extra ENTITY
+;; elmo-msgdb-overview-get-entity ID MSGDB
+
+;; elmo-msgdb-killed-list-load DIR
+;; elmo-msgdb-killed-list-save DIR
+;; elmo-msgdb-append-to-killed-list FOLDER MSG
+;; elmo-msgdb-killed-list-length KILLED-LIST
+;; elmo-msgdb-max-of-killed KILLED-LIST
+;; elmo-msgdb-killed-message-p KILLED-LIST MSG
+;; elmo-living-messages MESSAGES KILLED-LIST
+;; elmo-msgdb-finfo-load
+;; elmo-msgdb-finfo-save
+;; elmo-msgdb-flist-load
+;; elmo-msgdb-flist-save
+
+;; elmo-crosspost-alist-load
+;; elmo-crosspost-alist-save
+
+;; elmo-msgdb-create-overview-from-buffer NUMBER SIZE TIME
+;; elmo-msgdb-copy-overview-entity ENTITY
+;; elmo-msgdb-create-overview-entity-from-file NUMBER FILE
+;; elmo-msgdb-overview-sort-by-date OVERVIEW
+;; elmo-msgdb-clear-index
+
+;; elmo-folder-get-info
+;; elmo-folder-get-info-max
+;; elmo-folder-get-info-length
+;; elmo-folder-get-info-unread
+
+;; elmo-msgdb-list-flagged MSGDB FLAG
+;; (MACRO) elmo-msgdb-do-each-entity 
+
 (defun elmo-load-msgdb (path)
   "Load the MSGDB from PATH."
   (let ((inhibit-quit t))
     (elmo-make-msgdb (elmo-msgdb-overview-load path)
 		     (elmo-msgdb-number-load path)
-		     (elmo-msgdb-mark-load path))))
+		     (elmo-msgdb-mark-load path)
+		     path)))
 
-(defun elmo-make-msgdb (&optional overview number-alist mark-alist)
+(defun elmo-make-msgdb (&optional overview number-alist mark-alist path)
   "Make a MSGDB."
-  (let ((msgdb (list overview number-alist mark-alist nil)))
+  (let ((msgdb (list overview number-alist mark-alist nil path)))
     (elmo-msgdb-make-index msgdb)
     msgdb))
+
+(defun elmo-msgdb-list-messages (msgdb)
+  "List message numbers in the MSGDB."
+  (mapcar 'car (elmo-msgdb-get-number-alist msgdb)))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
@@ -60,25 +194,174 @@
 (defsubst elmo-msgdb-set-mark (msgdb number mark)
   "Set MARK of the message with NUMBER in the MSGDB.
 if MARK is nil, mark is removed."
-  (elmo-msgdb-set-mark-alist
-   msgdb
-   (elmo-msgdb-mark-alist-set (elmo-msgdb-get-mark-alist msgdb)
-			      number
-			      mark msgdb))
-  (unless mark
-    (elmo-clear-hash-val (format "#%d" number)
-			 (elmo-msgdb-get-mark-hashtb msgdb))))
+  (let ((elem (elmo-get-hash-val (format "#%d" number)
+				 (elmo-msgdb-get-mark-hashtb msgdb))))
+    (if elem
+	(if mark
+	    ;; Set mark of the elem
+	    (setcar (cdr elem) mark)
+	  ;; Delete elem from mark-alist
+	  (elmo-msgdb-set-mark-alist
+	   msgdb
+	   (delq elem (elmo-msgdb-get-mark-alist msgdb)))
+	  (elmo-clear-hash-val (format "#%d" number)
+			       (elmo-msgdb-get-mark-hashtb msgdb)))
+      (when mark
+	;; Append new element.
+	(elmo-msgdb-set-mark-alist
+	 msgdb
+	 (nconc
+	  (elmo-msgdb-get-mark-alist msgdb)
+	  (list (setq elem (list number mark)))))
+	(elmo-set-hash-val (format "#%d" number) elem
+			   (elmo-msgdb-get-mark-hashtb msgdb))))
+    ;; return value.
+    t))
 
-(defsubst elmo-msgdb-count-marks (msgdb new-mark unread-marks)
-  (let ((new 0)
-	(unreads 0))
-    (dolist (elem (elmo-msgdb-get-mark-alist msgdb))
-      (cond
-       ((string= (cadr elem) new-mark)
-	(incf new))
-       ((member (cadr elem) unread-marks)
-	(incf unreads))))
-    (cons new unreads)))
+(defun elmo-msgdb-get-cached (msgdb number)
+  "Return non-nil if message is cached."
+  (not (member (elmo-msgdb-get-mark msgdb number)
+	       (elmo-msgdb-uncached-marks))))
+
+(defun elmo-msgdb-set-cached (msgdb number cached use-cache)
+  "Set message cache status.
+If mark is changed, return non-nil."
+  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
+	 (cur-flag (cond
+		      ((string= cur-mark elmo-msgdb-important-mark)
+		       'important)
+		      ((member cur-mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
+		       'read)))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id))))
+    (unless (eq cached cur-cached)
+      (case cur-flag
+	(read
+	 (elmo-msgdb-set-mark msgdb number
+			      (if (and use-cache (not cached))
+				  elmo-msgdb-read-uncached-mark)))
+	(important nil)
+	(answered
+	 (elmo-msgdb-set-mark msgdb number
+			      (if cached
+				  elmo-msgdb-answered-cached-mark
+				elmo-msgdb-answered-uncached-mark)))
+	(t
+	 (elmo-msgdb-set-mark msgdb number
+			      (if cached
+				  elmo-msgdb-unread-cached-mark
+				elmo-msgdb-unread-uncached-mark)))))))
+
+(defun elmo-msgdb-set-flag (msgdb folder number flag)
+  "Set message flag.
+MSGDB is the ELMO msgdb.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to set flag.
+FLAG is a symbol which is one of the following:
+`read'      ... Messages which are already read.
+`important' ... Messages which are marked as important.
+`answered'  ... Messages which are marked as answered."
+  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
+	 (use-cache (elmo-message-use-cache-p folder number))
+	 (cur-flag (cond
+		    ((string= cur-mark elmo-msgdb-important-mark)
+		     'important)
+		    ((member cur-mark (elmo-msgdb-answered-marks))
+		     'answered)
+		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
+		     'read)))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id)))
+	 mark-modified)
+    (case flag
+      (read
+       (case cur-flag
+	 ((read important)) ; answered mark is overriden.
+	 (t (elmo-msgdb-set-mark msgdb number
+				 (if (and use-cache (not cur-cached))
+				     elmo-msgdb-read-uncached-mark))
+	    (setq mark-modified t))))
+      (important
+       (unless (eq cur-flag 'important)
+	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)
+	 (setq mark-modified t)))
+      (answered
+       (unless (or (eq cur-flag 'answered) (eq cur-flag 'important))
+	 (elmo-msgdb-set-mark msgdb number
+			      (if cur-cached
+				  elmo-msgdb-answered-cached-mark
+				elmo-msgdb-answered-uncached-mark)))
+       (setq mark-modified t)))
+    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
+
+(defun elmo-msgdb-unset-flag (msgdb folder number flag)
+  "Unset message flag.
+MSGDB is the ELMO msgdb.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to be set flag.
+FLAG is a symbol which is one of the following:
+`read'      ... Messages which are already read.
+`important' ... Messages which are marked as important.
+`answered'  ... Messages which are marked as answered."
+  (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
+	 (use-cache (elmo-message-use-cache-p folder number))
+	 (cur-flag (cond
+		    ((string= cur-mark elmo-msgdb-important-mark)
+		     'important)
+		    ((member cur-mark (elmo-msgdb-answered-marks))
+		     'answered)
+		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
+		     'read)))
+	 (cur-cached (elmo-file-cache-exists-p
+		      (elmo-msgdb-get-field msgdb number 'message-id)))
+	 mark-modified)
+    (case flag
+      (read
+       (when (or (eq cur-flag 'read) (eq cur-flag 'answered))
+	 (elmo-msgdb-set-mark msgdb number
+			      (if cur-cached
+				  elmo-msgdb-unread-cached-mark
+				elmo-msgdb-unread-uncached-mark))
+	 (setq mark-modified t)))
+      (important
+       (when (eq cur-flag 'important)
+	 (elmo-msgdb-set-mark msgdb number nil)
+	 (setq mark-modified t)))
+      (answered
+       (when (eq cur-flag 'answered)
+	 (elmo-msgdb-set-mark msgdb number
+			      (if (and use-cache (not cur-cached))
+				  elmo-msgdb-read-uncached-mark))
+	 (setq mark-modified t))))
+    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
+
+(defvar elmo-msgdb-unread-marks-internal nil)
+(defsubst elmo-msgdb-unread-marks ()
+  "Return an unread mark list"
+  (or elmo-msgdb-unread-marks-internal
+      (setq elmo-msgdb-unread-marks-internal
+	    (list elmo-msgdb-new-mark
+		  elmo-msgdb-unread-uncached-mark
+		  elmo-msgdb-unread-cached-mark))))
+
+(defvar elmo-msgdb-answered-marks-internal nil)
+(defsubst elmo-msgdb-answered-marks ()
+  "Return an answered mark list"
+  (or elmo-msgdb-answered-marks-internal
+      (setq elmo-msgdb-answered-marks-internal
+	    (list elmo-msgdb-answered-cached-mark
+		  elmo-msgdb-answered-uncached-mark))))
+
+(defvar elmo-msgdb-uncached-marks-internal nil)
+(defsubst elmo-msgdb-uncached-marks ()
+  (or elmo-msgdb-uncached-marks-internal
+      (setq elmo-msgdb-uncached-marks-internal
+	    (list elmo-msgdb-new-mark
+		  elmo-msgdb-answered-uncached-mark
+		  elmo-msgdb-unread-uncached-mark
+		  elmo-msgdb-read-uncached-mark))))
 
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."
@@ -115,7 +398,8 @@ if MARK is nil, mark is removed."
    (elmo-msgdb-make-index
     msgdb
     (elmo-msgdb-get-overview msgdb-append)
-    (elmo-msgdb-get-mark-alist msgdb-append))))
+    (elmo-msgdb-get-mark-alist msgdb-append))
+   (nth 4 msgdb)))
 
 (defsubst elmo-msgdb-clear (&optional msgdb)
   (if msgdb
@@ -123,8 +407,9 @@ if MARK is nil, mark is removed."
        (setcar msgdb nil)
        (setcar (cdr msgdb) nil)
        (setcar (cddr msgdb) nil)
-       (setcar (nthcdr 3 msgdb) nil))
-    (list nil nil nil nil)))
+       (setcar (nthcdr 3 msgdb) nil)
+       (setcar (nthcdr 4 msgdb) nil))
+    (list nil nil nil nil nil)))
 
 (defun elmo-msgdb-delete-msgs (msgdb msgs)
   "Delete MSGS from MSGDB
@@ -133,7 +418,8 @@ content of MSGDB is changed."
 	 (number-alist (cadr msgdb))
 	 (mark-alist (caddr msgdb))
 	 (index (elmo-msgdb-get-index msgdb))
-	 (newmsgdb (list overview number-alist mark-alist index))
+	 (newmsgdb (list overview number-alist mark-alist index
+			 (nth 4 msgdb)))
 	 ov-entity)
     ;; remove from current database.
     (while msgs
@@ -159,19 +445,6 @@ content of MSGDB is changed."
     (setq overview (elmo-msgdb-overview-sort-by-date overview))
     (message "Sorting...done")
     (list overview (nth 1 msgdb)(nth 2 msgdb))))
-
-(defun elmo-msgdb-make-entity (&rest args)
-  "Make an msgdb entity."
-  (cons (plist-get args :message-id)
-	(vector (plist-get args :number)
-		(plist-get args :references)
-		(plist-get args :from)
-		(plist-get args :subject)
-		(plist-get args :date)
-		(plist-get args :to)
-		(plist-get args :cc)
-		(plist-get args :size)
-		(plist-get args :extra))))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -199,6 +472,9 @@ content of MSGDB is changed."
 (defsubst elmo-msgdb-get-mark-hashtb (msgdb)
   (cdr (nth 3 msgdb)))
 
+(defsubst elmo-msgdb-get-path (msgdb)
+  (nth 4 msgdb))
+
 ;;
 ;; number <-> Message-ID handling
 ;;
@@ -208,49 +484,80 @@ content of MSGDB is changed."
 	  (elmo-msgdb-append-element ret-val (cons number id)))
     ret-val))
 
+;;; flag table
+;;
+(defvar elmo-flag-table-filename "flag-table")
+(defun elmo-flag-table-load (dir)
+  "Load flag hashtable for MSGDB."
+  (let ((table (elmo-make-hash))
+	;; For backward compatibility
+	(seen-file (expand-file-name elmo-msgdb-seen-filename dir))
+	seen-list)
+    (when (file-exists-p seen-file)
+      (setq seen-list (elmo-object-load seen-file))
+      (delete-file seen-file))
+    (dolist (msgid seen-list)
+      (elmo-set-hash-val msgid 'read table))
+    (dolist (pair (elmo-object-load
+		   (expand-file-name elmo-flag-table-filename dir)))
+      (elmo-set-hash-val (car pair) (cdr pair) table))
+    table))
+
+(defun elmo-flag-table-set (flag-table msg-id flag)
+  (elmo-set-hash-val msg-id flag flag-table))
+
+(defun elmo-flag-table-get (flag-table msg-id)
+  (elmo-get-hash-val msg-id flag-table))
+
+(defun elmo-flag-table-save (dir flag-table)
+  (elmo-object-save
+   (expand-file-name elmo-flag-table-filename dir)
+   (if flag-table
+       (let (list)
+	 (mapatoms (lambda (atom)
+		     (setq list (cons (cons (symbol-name atom)
+					    (symbol-value atom))
+				      list)))
+		   flag-table)
+	 list))))
 ;;;
 ;; persistent mark handling
 ;; (for each folder)
-(defun elmo-msgdb-mark-alist-set (alist id mark msgdb)
-  (let ((ret-val alist)
-	entity)
-    (setq entity (assq id alist))
-    (if entity
-	(if (eq mark nil)
-	    ;; delete this entity
-	    (setq ret-val (delq entity alist))
-	  ;; set mark
-	  (setcar (cdr entity) mark))
-      (when mark
-	(setq ret-val (elmo-msgdb-append-element ret-val
-						 (setq entity
-						       (list id mark))))
-	(elmo-set-hash-val (format "#%d" id) entity
-			   (elmo-msgdb-get-mark-hashtb msgdb))))
-    ret-val))
 
 (defun elmo-msgdb-mark-append (alist id mark)
   "Append mark."
   (setq alist (elmo-msgdb-append-element alist
 					 (list id mark))))
 
-(defun elmo-msgdb-seen-list (msgdb seen-marks)
-  "Get SEEN-MSGID-LIST from MSGDB."
-  (let ((ov (elmo-msgdb-get-overview msgdb))
-	mark seen-list)
-    (while ov
-      (if (setq mark (elmo-msgdb-get-mark
-		      msgdb
-		      (elmo-msgdb-overview-entity-get-number (car ov))))
-	  (if (and mark (member mark seen-marks))
-	      (setq seen-list (cons
-			       (elmo-msgdb-overview-entity-get-id (car ov))
-			       seen-list)))
-	(setq seen-list (cons
-			 (elmo-msgdb-overview-entity-get-id (car ov))
-			 seen-list)))
-      (setq ov (cdr ov)))
-    seen-list))
+(defsubst elmo-msgdb-length (msgdb)
+  (length (elmo-msgdb-get-overview msgdb)))
+
+(defun elmo-msgdb-flag-table (msgdb &optional flag-table)
+  ;; Make a table of msgid flag (read, answered)
+  (let ((flag-table (or flag-table (elmo-make-hash (elmo-msgdb-length msgdb))))
+	mark)
+    (dolist (ov (elmo-msgdb-get-overview msgdb))
+      (setq mark (elmo-msgdb-get-mark
+		  msgdb
+		  (elmo-msgdb-overview-entity-get-number ov)))
+      (cond 
+       ((null mark)
+	(elmo-set-hash-val
+	 (elmo-msgdb-overview-entity-get-id ov)
+	 'read
+	 flag-table))
+       ((and mark (member mark (elmo-msgdb-answered-marks)))
+	(elmo-set-hash-val
+	 (elmo-msgdb-overview-entity-get-id ov)
+	 'answered
+	 flag-table))
+       ((and mark (not (member mark
+			       (elmo-msgdb-unread-marks))))
+	(elmo-set-hash-val
+	 (elmo-msgdb-overview-entity-get-id ov)
+	 'read
+	 flag-table))))
+    flag-table))
 
 ;;
 ;; mime decode cache
@@ -277,14 +584,6 @@ content of MSGDB is changed."
 ;;
 ;; overview handling
 ;;
-
-(defsubst elmo-msgdb-get-field-value (field-name beg end buffer)
-  (save-excursion
-    (save-restriction
-      (set-buffer buffer)
-      (narrow-to-region beg end)
-      (elmo-field-body field-name))))
-
 (defun elmo-multiple-field-body (name &optional boundary)
   (save-excursion
     (save-restriction
@@ -374,6 +673,35 @@ header separator."
 	(setcar (cdr entity) after))
       (setq mark-alist (cdr mark-alist)))))
 
+(defsubst elmo-msgdb-mark (flag cached &optional new)
+  (if new
+      (case flag
+	(read
+	 (if cached
+	     nil
+	   elmo-msgdb-read-uncached-mark))
+	(important
+	 elmo-msgdb-important-mark)
+	(answered
+	 (if cached
+	     elmo-msgdb-answered-cached-mark
+	   elmo-msgdb-answered-uncached-mark))
+	(t
+	 (if cached
+	     elmo-msgdb-unread-cached-mark
+	   elmo-msgdb-new-mark)))
+    (case flag
+      (unread
+       (if cached
+	   elmo-msgdb-unread-cached-mark
+	 elmo-msgdb-unread-uncached-mark))
+      (important
+       elmo-msgdb-important-mark)
+      (answered
+       (if cached
+	   elmo-msgdb-answered-cached-mark
+	 elmo-msgdb-answered-uncached-mark)))))
+
 (defsubst elmo-msgdb-seen-save (dir obj)
   (elmo-object-save
    (expand-file-name elmo-msgdb-seen-filename dir)
@@ -384,7 +712,7 @@ header separator."
    (expand-file-name elmo-msgdb-overview-filename dir)
    overview))
 
-(defun elmo-msgdb-match-condition-primitive (condition entity numbers)
+(defun elmo-msgdb-match-condition-primitive (condition mark entity numbers)
   (catch 'unresolved
     (let ((key (elmo-filter-key condition))
 	  (case-fold-search t)
@@ -404,6 +732,26 @@ header separator."
 				   entity)
 				  numbers)))
 			(string-to-int (elmo-filter-value condition)))))
+       ((string= key "flag")
+	(setq result
+	      (cond
+	       ((string= (elmo-filter-value condition) "any")
+		(not (or (null mark)
+			 (string= mark elmo-msgdb-read-uncached-mark))))
+	       ((string= (elmo-filter-value condition) "digest")
+		(not (or (null mark)
+			 (string= mark elmo-msgdb-read-uncached-mark)
+			 (string= mark elmo-msgdb-answered-cached-mark)
+			 (string= mark elmo-msgdb-answered-uncached-mark))))
+;;	  (member mark (append (elmo-msgdb-answered-marks)
+;;			       (list elmo-msgdb-important-mark)
+;;			       (elmo-msgdb-unread-marks))))
+	       ((string= (elmo-filter-value condition) "unread")
+		(member mark (elmo-msgdb-unread-marks)))
+	       ((string= (elmo-filter-value condition) "important")
+		(string= mark elmo-msgdb-important-mark))
+	       ((string= (elmo-filter-value condition) "answered")
+		(member mark (elmo-msgdb-answered-marks))))))
        ((string= key "from")
 	(setq result (string-match
 		      (elmo-filter-value condition)
@@ -446,31 +794,31 @@ header separator."
 	  (not result)
 	result))))
 
-(defun elmo-msgdb-match-condition (condition entity numbers)
+(defun elmo-msgdb-match-condition-internal (condition mark entity numbers)
   (cond
    ((vectorp condition)
-    (elmo-msgdb-match-condition-primitive condition entity numbers))
+    (elmo-msgdb-match-condition-primitive condition mark entity numbers))
    ((eq (car condition) 'and)
-    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
-					   entity numbers)))
+    (let ((lhs (elmo-msgdb-match-condition-internal (nth 1 condition)
+						    mark entity numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
-					       entity numbers)))
+	(let ((rhs (elmo-msgdb-match-condition-internal
+		    (nth 2 condition) mark entity numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'and lhs rhs))
 		(rhs
 		 lhs))))
        (lhs
-	(elmo-msgdb-match-condition (nth 2 condition)
-				    entity numbers)))))
+	(elmo-msgdb-match-condition-internal (nth 2 condition)
+					     mark entity numbers)))))
    ((eq (car condition) 'or)
-    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
-					   entity numbers)))
+    (let ((lhs (elmo-msgdb-match-condition-internal (nth 1 condition)
+						    mark entity numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
-					       entity numbers)))
+	(let ((rhs (elmo-msgdb-match-condition-internal (nth 2 condition)
+							mark entity numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'or lhs rhs))
 		(rhs
@@ -480,8 +828,22 @@ header separator."
        (lhs
 	t)
        (t
-	(elmo-msgdb-match-condition (nth 2 condition)
-				    entity numbers)))))))
+	(elmo-msgdb-match-condition-internal (nth 2 condition)
+					     mark entity numbers)))))))
+
+(defun elmo-msgdb-match-condition (msgdb condition number numbers)
+  "Check whether the condition of the message is satisfied or not.
+MSGDB is the msgdb to search from.
+CONDITION is the search condition.
+NUMBER is the message number to check.
+NUMBERS is the target message number list.
+Return CONDITION itself if no entity exists in msgdb."
+  (let ((entity (elmo-msgdb-overview-get-entity number msgdb)))
+    (if entity
+	(elmo-msgdb-match-condition-internal condition
+					     (elmo-msgdb-get-mark msgdb number)
+					     entity numbers)
+      condition)))
 
 (defsubst elmo-msgdb-set-overview (msgdb overview)
   (setcar msgdb overview))
@@ -494,6 +856,9 @@ header separator."
 
 (defsubst elmo-msgdb-set-index (msgdb index)
   (setcar (cdddr msgdb) index))
+
+(defsubst elmo-msgdb-set-path (msgdb path)
+  (setcar (cddddr msgdb) path))
 
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
   (and entity (aref (cdr entity) 1)))
@@ -591,17 +956,63 @@ header separator."
   (and entity (aset (cdr entity) 8 extra))
   entity)
 
-(defun elmo-msgdb-overview-get-entity-by-number (database number)
-  (when number
-    (let ((db database)
-	  entity)
-      (while db
-	(if (eq (elmo-msgdb-overview-entity-get-number (car db)) number)
-	    (setq entity (car db)
-		  db nil) ; exit loop
-	  (setq db (cdr db))))
-      entity)))
+;;; New APIs
+(defsubst elmo-msgdb-message-entity (msgdb key)
+  (elmo-get-hash-val 
+   (cond ((stringp key) key)
+	 ((numberp key) (format "#%d" key)))
+   (elmo-msgdb-get-entity-hashtb msgdb)))
 
+(defun elmo-msgdb-make-message-entity (&rest args)
+  "Make an message entity."
+  (cons (plist-get args :message-id)
+	(vector (plist-get args :number)
+		(plist-get args :references)
+		(plist-get args :from)
+		(plist-get args :subject)
+		(plist-get args :date)
+		(plist-get args :to)
+		(plist-get args :cc)
+		(plist-get args :size)
+		(plist-get args :extra))))
+
+(defsubst elmo-msgdb-message-entity-field (entity field &optional decode)
+  (and entity
+       (let ((field-value
+	      (case field
+		(to (aref (cdr entity) 5))
+		(cc (aref (cdr entity) 6))
+		(date (aref (cdr entity) 4))
+		(subject (aref (cdr entity) 3))
+		(from (aref (cdr entity) 2))
+		(message-id (car entity))
+		(references (aref (cdr entity) 1))
+		(size (aref (cdr entity) 7))
+		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
+	 (if decode
+	     (elmo-msgdb-get-decoded-cache field-value)
+	   field-value))))
+
+(defsubst elmo-msgdb-message-entity-set-field (entity field value)
+  (and entity
+       (case field
+	 (to (aset (cdr entity) 5 value))
+	 (cc (aset (cdr entity) 6 value))
+	 (date (aset (cdr entity) 4 value))
+	 (subject (aset (cdr entity) 3 value))
+	 (from (aset (cdr entity) 2 value))
+	 (message-id (setcar entity value))
+	 (references (aset (cdr entity) 1 value))
+	 (size (aset (cdr entity) 7 value))
+	 (t
+	  (let ((extras (and entity (aref (cdr entity) 8)))
+		extra)
+	    (if (setq extra (assoc field extras))
+		(setcdr extra value)
+	      (aset (cdr entity) 8 (cons (cons (symbol-name field)
+					       value) extras))))))))
+
+;;; 
 (defun elmo-msgdb-overview-get-entity (id msgdb)
   (when id
     (let ((ht (elmo-msgdb-get-entity-hashtb msgdb)))
@@ -628,13 +1039,6 @@ header separator."
 
 (defun elmo-msgdb-set-as-killed (killed-list msg)
   (elmo-number-set-append killed-list msg))
-
-(defun elmo-msgdb-append-to-killed-list (folder msgs)
-  (elmo-folder-set-killed-list-internal
-   folder
-   (elmo-number-set-append-list
-    (elmo-folder-killed-list-internal folder)
-    msgs)))
 
 (defun elmo-msgdb-killed-list-length (killed-list)
   (let ((killed killed-list)
@@ -708,24 +1112,6 @@ header separator."
 		     elmo-crosspost-alist-filename
 		     elmo-msgdb-directory)
 		    alist))
-
-(defun elmo-msgdb-add-msgs-to-seen-list (msgs msgdb unread-marks seen-list)
-  ;; Add to seen list.
-  (let (mark)
-    (while msgs
-      (if (setq mark (elmo-msgdb-get-mark msgdb (car msgs)))
-	  (unless (member mark unread-marks) ;; not unread mark
-	    (setq seen-list
-		  (cons
-		   (elmo-msgdb-get-field msgdb (car msgs) 'message-id)
-		   seen-list)))
-	;; no mark ... seen...
-	(setq seen-list
-	      (cons 
-	       (elmo-msgdb-get-field msgdb (car msgs) 'message-id)
-	       seen-list)))
-      (setq msgs (cdr msgs)))
-    seen-list))
 
 (defun elmo-msgdb-get-message-id-from-buffer ()
   (let ((msgid (elmo-field-body "message-id")))
@@ -915,12 +1301,40 @@ Return the updated INDEX."
     elmo-msgdb-location-filename
     dir) alist))
 
-(put 'elmo-msgdb-do-each-entity 'lisp-indent-function '1)
-(def-edebug-spec elmo-msgdb-do-each-entity
-  ((symbolp form &rest form) &rest form))
-(defmacro elmo-msgdb-do-each-entity (spec &rest form)
-  `(dolist (,(car spec) (elmo-msgdb-get-overview ,(car (cdr spec))))
-     ,@form))
+(defun elmo-msgdb-list-flagged (msgdb flag)
+  (let ((case-fold-search nil)
+	mark-regexp matched)
+    (case flag
+      (new
+       (setq mark-regexp (regexp-quote elmo-msgdb-new-mark)))
+      (unread
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+      (answered
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-answered-marks))))
+      (important
+       (setq mark-regexp (regexp-quote elmo-msgdb-important-mark)))
+      (read
+       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+      (digest
+       (setq mark-regexp (elmo-regexp-opt
+			  (append (elmo-msgdb-unread-marks)
+				  (list elmo-msgdb-important-mark)))))
+      (any
+       (setq mark-regexp (elmo-regexp-opt
+			  (append
+			   (elmo-msgdb-unread-marks)
+			   (elmo-msgdb-answered-marks)
+			   (list elmo-msgdb-important-mark))))))
+    (when mark-regexp
+      (if (eq flag 'read)
+	  (dolist (number (elmo-msgdb-get-number-alist msgdb))
+	    (unless (string-match mark-regexp (elmo-msgdb-get-mark
+					       msgdb number))
+	      (setq matched (cons number matched))))
+	(dolist (elem (elmo-msgdb-get-mark-alist msgdb))
+	  (if (string-match mark-regexp (cadr elem))
+	      (setq matched (cons (car elem) matched))))))
+    matched))
 
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))

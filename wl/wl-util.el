@@ -902,6 +902,7 @@ is enclosed by at least one regexp grouping construct."
 	      close-paren))))
 
 (defalias 'wl-expand-newtext 'elmo-expand-newtext)
+(defalias 'wl-regexp-opt 'elmo-regexp-opt)
 
 (defun wl-region-exists-p ()
   "Return non-nil if a region exists on current buffer."

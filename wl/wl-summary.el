@@ -77,18 +77,17 @@
 
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
-(defvar wl-summary-buffer-refile-list nil)
-(defvar wl-summary-buffer-delete-list nil)
+(defvar wl-summary-buffer-temp-mark-list nil)
 (defvar wl-summary-buffer-last-displayed-msg nil)
 (defvar wl-summary-buffer-current-msg nil)
 (defvar wl-summary-buffer-unread-count 0)
 (defvar wl-summary-buffer-new-count    0)
+(defvar wl-summary-buffer-answered-count 0)
 (defvar wl-summary-buffer-mime-charset  nil)
 (defvar wl-summary-buffer-weekday-name-lang  nil)
 (defvar wl-summary-buffer-thread-indent-set-alist  nil)
 (defvar wl-summary-buffer-view nil)
 (defvar wl-summary-buffer-message-modified nil)
-(defvar wl-summary-buffer-mark-modified nil)
 (defvar wl-summary-buffer-thread-modified nil)
 
 (defvar wl-summary-buffer-number-column nil)
@@ -98,7 +97,6 @@
 (defvar wl-summary-buffer-persistent nil)
 (defvar wl-summary-buffer-thread-nodes nil)
 (defvar wl-summary-buffer-target-mark-list nil)
-(defvar wl-summary-buffer-copy-list nil)
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
 (defvar wl-summary-buffer-saved-message nil)
@@ -140,19 +138,17 @@
 (make-variable-buffer-local 'wl-summary-search-buf-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-disp-msg)
 (make-variable-buffer-local 'wl-summary-buffer-disp-folder)
-(make-variable-buffer-local 'wl-summary-buffer-refile-list)
-(make-variable-buffer-local 'wl-summary-buffer-copy-list)
 (make-variable-buffer-local 'wl-summary-buffer-target-mark-list)
-(make-variable-buffer-local 'wl-summary-buffer-delete-list)
+(make-variable-buffer-local 'wl-summary-buffer-temp-mark-list)
 (make-variable-buffer-local 'wl-summary-buffer-last-displayed-msg)
 (make-variable-buffer-local 'wl-summary-buffer-unread-count)
 (make-variable-buffer-local 'wl-summary-buffer-new-count)
+(make-variable-buffer-local 'wl-summary-buffer-answered-count)
 (make-variable-buffer-local 'wl-summary-buffer-mime-charset)
 (make-variable-buffer-local 'wl-summary-buffer-weekday-name-lang)
 (make-variable-buffer-local 'wl-summary-buffer-thread-indent-set)
 (make-variable-buffer-local 'wl-summary-buffer-view)
 (make-variable-buffer-local 'wl-summary-buffer-message-modified)
-(make-variable-buffer-local 'wl-summary-buffer-mark-modified)
 (make-variable-buffer-local 'wl-summary-buffer-thread-modified)
 (make-variable-buffer-local 'wl-summary-buffer-number-column)
 (make-variable-buffer-local 'wl-summary-buffer-temp-mark-column)
@@ -195,11 +191,6 @@
 (defvar wl-temp-mark)
 (defvar wl-persistent-mark)
 
-;; internal functions (dummy)
-(unless (fboundp 'wl-summary-append-message-func-internal)
-  (defun wl-summary-append-message-func-internal (entity msgdb update
-							 &optional force-insert)))
-
 (defmacro wl-summary-sticky-buffer-name (name)
   (` (concat wl-summary-buffer-name ":" (, name))))
 
@@ -223,8 +214,8 @@ See also variable `wl-use-petname'."
 			   (wl-summary-buffer-folder-name))
 	     (wl-address-user-mail-address-p from)
 	     (cond
-	      ((and (setq tos (elmo-msgdb-overview-entity-get-to
-			       wl-message-entity))
+	      ((and (setq tos (elmo-message-entity-field
+			       wl-message-entity 'to t))
 		    (not (string= "" tos)))
 	       (setq retval
 		     (concat "To:"
@@ -242,8 +233,8 @@ See also variable `wl-use-petname'."
 				    to))))
 			      (wl-parse-addresses tos)
 			      ","))))
-	      ((setq ng (elmo-msgdb-overview-entity-get-extra-field
-			 wl-message-entity "newsgroups"))
+	      ((setq ng (elmo-message-entity-field
+			 wl-message-entity 'newsgroups))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
 	  (setq retval (or (funcall wl-summary-get-petname-function from)
@@ -296,7 +287,7 @@ See also variable `wl-use-petname'."
      ["Mark as read"    wl-summary-mark-as-read t]
      ["Mark as important" wl-summary-mark-as-important t]
      ["Mark as unread"   wl-summary-mark-as-unread t]
-     ["Set delete mark" wl-summary-delete t]
+     ["Set dispose mark" wl-summary-dispose t]
      ["Set refile mark" wl-summary-refile t]
      ["Set copy mark"   wl-summary-copy t]
      ["Prefetch"        wl-summary-prefetch t]
@@ -329,7 +320,7 @@ See also variable `wl-use-petname'."
      ["Mark as read" wl-summary-mark-as-read-region t]
      ["Mark as important" wl-summary-mark-as-important-region t]
      ["Mark as unread" wl-summary-mark-as-unread-region t]
-     ["Set delete mark" wl-summary-delete-region t]
+     ["Set dispose mark" wl-summary-dispose-region t]
      ["Set refile mark" wl-summary-refile-region t]
      ["Set copy mark" wl-summary-copy-region t]
      ["Prefetch" wl-summary-prefetch-region t]
@@ -414,6 +405,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\eE"  'wl-summary-resend-bounced-mail)
   (define-key wl-summary-mode-map "f"    'wl-summary-forward)
   (define-key wl-summary-mode-map "$"    'wl-summary-mark-as-important)
+  (define-key wl-summary-mode-map "&"    'wl-summary-mark-as-answered)
   (define-key wl-summary-mode-map "@"    'wl-summary-edit-addresses)
 
   (define-key wl-summary-mode-map "y"    'wl-summary-save)
@@ -470,12 +462,12 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "o"    'wl-summary-refile)
   (define-key wl-summary-mode-map "O"    'wl-summary-copy)
   (define-key wl-summary-mode-map "\M-o" 'wl-summary-refile-prev-destination)
-;  (define-key wl-summary-mode-map "\M-O" 'wl-summary-copy-prev-destination)
   (define-key wl-summary-mode-map "\C-o" 'wl-summary-auto-refile)
-  (define-key wl-summary-mode-map "d"    'wl-summary-delete)
+  (define-key wl-summary-mode-map "d"    'wl-summary-dispose)
   (define-key wl-summary-mode-map "u"    'wl-summary-unmark)
   (define-key wl-summary-mode-map "U"    'wl-summary-unmark-all)
-  (define-key wl-summary-mode-map "D"    'wl-summary-erase)
+  (define-key wl-summary-mode-map "D"    'wl-summary-delete)
+  (define-key wl-summary-mode-map "~"    'wl-summary-resend)
 
   ;; thread commands
   (define-key wl-summary-mode-map "t"	(make-sparse-keymap))
@@ -485,7 +477,9 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "t*" 'wl-thread-target-mark)
   (define-key wl-summary-mode-map "to" 'wl-thread-refile)
   (define-key wl-summary-mode-map "tO" 'wl-thread-copy)
-  (define-key wl-summary-mode-map "td" 'wl-thread-delete)
+  (define-key wl-summary-mode-map "td" 'wl-thread-dispose)
+  (define-key wl-summary-mode-map "tD" 'wl-thread-delete)
+  (define-key wl-summary-mode-map "t~" 'wl-thread-resend)
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
   (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
@@ -495,14 +489,18 @@ See also variable `wl-use-petname'."
   ;; target-mark commands
   (define-key wl-summary-mode-map "m"	  (make-sparse-keymap))
   (define-key wl-summary-mode-map "mi"   'wl-summary-target-mark-prefetch)
-  (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "mo"   'wl-summary-target-mark-refile)
   (define-key wl-summary-mode-map "mO"   'wl-summary-target-mark-copy)
-  (define-key wl-summary-mode-map "md"   'wl-summary-target-mark-delete)
+  (define-key wl-summary-mode-map "md"   'wl-summary-target-mark-dispose)
+  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-delete)
+  (define-key wl-summary-mode-map "m~"   'wl-summary-target-mark-resend)
+
+  (define-key wl-summary-mode-map "mu"   'wl-summary-delete-all-temp-marks)
+
   (define-key wl-summary-mode-map "my"   'wl-summary-target-mark-save)
+  (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "m!"   'wl-summary-target-mark-mark-as-unread)
   (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-mark-as-important)
-  (define-key wl-summary-mode-map "mu"   'wl-summary-delete-all-temp-marks)
   (define-key wl-summary-mode-map "mU"   'wl-summary-target-mark-uudecode)
   (define-key wl-summary-mode-map "ma"   'wl-summary-target-mark-all)
   (define-key wl-summary-mode-map "mt"   'wl-summary-target-mark-thread)
@@ -511,7 +509,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
   (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
   (define-key wl-summary-mode-map "m|"   'wl-summary-target-mark-pipe)
-  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-erase)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -522,7 +519,9 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "r*"   'wl-summary-target-mark-region)
   (define-key wl-summary-mode-map "ro"   'wl-summary-refile-region)
   (define-key wl-summary-mode-map "rO"   'wl-summary-copy-region)
-  (define-key wl-summary-mode-map "rd"   'wl-summary-delete-region)
+  (define-key wl-summary-mode-map "rd"   'wl-summary-dispose-region)
+  (define-key wl-summary-mode-map "rD"   'wl-summary-delete-region)
+  (define-key wl-summary-mode-map "r~"   'wl-summary-resend-region)
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
   (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)
@@ -573,15 +572,12 @@ See also variable `wl-use-petname'."
       (wl-summary-redisplay)))
 
 (defun wl-summary-count-unread ()
-  (let ((pair
-	 (elmo-msgdb-count-marks (wl-summary-buffer-msgdb)
-				 wl-summary-new-mark
-				 (list wl-summary-unread-uncached-mark
-				       wl-summary-unread-cached-mark))))
+  (let ((lst (elmo-folder-count-flags wl-summary-buffer-elmo-folder)))
     (if (eq major-mode 'wl-summary-mode)
-	(setq wl-summary-buffer-new-count (car pair)
-	      wl-summary-buffer-unread-count (cdr pair)))
-    pair))
+	(setq wl-summary-buffer-new-count (car lst)
+	      wl-summary-buffer-unread-count (nth 1 lst)
+	      wl-summary-buffer-answered-count (nth 2 lst)))
+    lst))
 
 (defun wl-summary-message-string (&optional use-cache)
   "Return full body string of current message.
@@ -723,7 +719,7 @@ you."
 	    wl-summary-buffer-line-formatter formatter)
       (insert
        (wl-summary-create-line
-	(elmo-msgdb-make-entity
+	(elmo-msgdb-make-message-entity
 	 :number 10000
 	 :from "foo"
 	 :subject "bar"
@@ -839,74 +835,67 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
 
+;;;
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
   (condition-case nil
       (string<
        (timezone-make-date-sortable
-	(elmo-msgdb-overview-entity-get-date x))
+	(elmo-message-entity-field x 'date))
        (timezone-make-date-sortable
-	(elmo-msgdb-overview-entity-get-date y)))
+	(elmo-message-entity-field y 'date)))
     (error))) ;; ignore error.
 
 (defun wl-summary-overview-entity-compare-by-number (x y)
    "Compare entity X and Y by number."
   (<
-   (elmo-msgdb-overview-entity-get-number x)
-   (elmo-msgdb-overview-entity-get-number y)))
+   (elmo-message-entity-number x)
+   (elmo-message-entity-number y)))
 
 (defun wl-summary-overview-entity-compare-by-from (x y)
   "Compare entity X and Y by from."
   (string<
    (wl-address-header-extract-address
-    (or (elmo-msgdb-overview-entity-get-from-no-decode x)
+    (or (elmo-message-entity-field x 'from)
 	wl-summary-no-from-message))
    (wl-address-header-extract-address
-    (or (elmo-msgdb-overview-entity-get-from-no-decode y)
+    (or (elmo-message-entity-field y 'from)
 	wl-summary-no-from-message))))
 
 (defun wl-summary-overview-entity-compare-by-subject (x y)
   "Compare entity X and Y by subject."
-  (string< (elmo-msgdb-overview-entity-get-subject-no-decode x)
-	   (elmo-msgdb-overview-entity-get-subject-no-decode y)))
+  (string< (elmo-message-entity-field x 'subject)
+	   (elmo-message-entity-field y 'subject)))
 
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
   (let (sequence ml-name ml-count subject return-path delivered-to mailing-list)
-    (setq sequence (elmo-msgdb-overview-entity-get-extra-field
-		    entity "x-sequence")
-	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
-		       entity "x-ml-name")
+    (setq sequence (elmo-message-entity-field entity 'x-sequence)
+	  ml-name (or (elmo-message-entity-field entity 'x-ml-name)
 		      (and sequence
 			   (car (split-string sequence " "))))
-	  ml-count (or (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-mail-count")
-		       (elmo-msgdb-overview-entity-get-extra-field
-			entity "x-ml-count")
+	  ml-count (or (elmo-message-entity-field entity 'x-mail-count)
+		       (elmo-message-entity-field entity 'x-ml-count)
 		       (and sequence
 			    (cadr (split-string sequence " ")))))
-    (and (setq subject (elmo-msgdb-overview-entity-get-subject
-			entity))
+    (and (setq subject (elmo-message-entity-field entity 'subject t))
 	 (setq subject (elmo-delete-char ?\n subject))
 	 (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*" subject)
 	 (progn
 	   (or ml-name (setq ml-name (match-string 1 subject)))
 	   (or ml-count (setq ml-count (match-string 2 subject)))))
     (and (setq return-path
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "return-path"))
+	       (elmo-message-entity-field entity 'return-path))
 	 (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
 	 (progn
 	   (or ml-name (setq ml-name (match-string 1 return-path)))
 	   (or ml-count (setq ml-count (match-string 2 return-path)))))
     (and (setq delivered-to
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "delivered-to"))
+	       (elmo-message-entity-field entity 'delivered-to))
 	 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
 	 (or ml-name (setq ml-name (match-string 1 delivered-to))))
     (and (setq mailing-list
-	       (elmo-msgdb-overview-entity-get-extra-field
-		entity "mailing-list"))
+	       (elmo-message-entity-field entity 'mailing-list))
 	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)	; *-help@, *-owner@, etc.
 	 (or ml-name (setq ml-name (match-string 2 mailing-list))))
     (cons (and ml-name (car (split-string ml-name " ")))
@@ -943,47 +932,45 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-rescan (&optional sort-by)
   "Rescan current folder without updating."
   (interactive)
-  (let* ((cur-buf (current-buffer))
-	 (msgdb (wl-summary-buffer-msgdb))
-	 (overview (elmo-msgdb-get-overview msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (elmo-mime-charset wl-summary-buffer-mime-charset)
-	 i percent num
-	 gc-message entity
-	 curp
-	 (inhibit-read-only t)
-	 (buffer-read-only nil)
-	 expunged)
-    (fset 'wl-summary-append-message-func-internal
-	  (wl-summary-get-append-message-func))
+  (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
+	i percent num
+	gc-message entity
+	curp
+	(inhibit-read-only t)
+	(buffer-read-only nil)
+	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
+					    nil t)) ; in-msgdb
+	expunged)
     (erase-buffer)
     (message "Re-scanning...")
     (setq i 0)
-    (setq num (length overview))
     (when sort-by
       (message "Sorting by %s..." sort-by)
-      (setq overview
-	    (sort overview
-		  (intern (format "wl-summary-overview-entity-compare-by-%s"
-				  sort-by))))
-      (message "Sorting by %s...done" sort-by)
-      (elmo-msgdb-set-overview (wl-summary-buffer-msgdb)
-			       overview))
-    (setq curp overview)
-    (set-buffer cur-buf)
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* (length overview) 2)))
-    (setq wl-thread-entity-list nil)
-    (setq wl-thread-entities nil)
-    (setq wl-summary-buffer-number-list nil)
-    (setq wl-summary-buffer-target-mark-list nil)
-    (setq wl-summary-buffer-refile-list nil)
-    (setq wl-summary-buffer-delete-list nil)
-    (setq wl-summary-delayed-update nil)
+      (setq numbers
+	    (sort numbers
+		  (lambda (x y)
+		    (funcall
+		     (intern (format "wl-summary-overview-entity-compare-by-%s"
+				     sort-by))
+		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
+		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
+      (message "Sorting by %s...done" sort-by))
+    (setq num (length numbers))
+    (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
+	  wl-thread-entity-list nil
+	  wl-thread-entities nil
+	  wl-summary-buffer-number-list nil
+	  wl-summary-buffer-target-mark-list nil
+	  wl-summary-buffer-temp-mark-list nil
+	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
-    (while curp
-      (setq entity (car curp))
-      (wl-summary-append-message-func-internal entity msgdb nil)
-      (setq curp (cdr curp))
+    (while numbers
+      (setq entity (elmo-message-entity wl-summary-buffer-elmo-folder
+					(car numbers)))
+      (wl-summary-insert-message entity
+				 wl-summary-buffer-elmo-folder
+				 nil)
+      (setq numbers (cdr numbers))
       (when (> num elmo-display-progress-threshold)
 	(setq i (+ i 1))
 	(if (or (zerop (% i 5)) (= i num))
@@ -996,21 +983,20 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		 (caar wl-summary-delayed-update)
 		 (elmo-msgdb-overview-entity-get-number
 		  (cdar wl-summary-delayed-update)))
-	(wl-summary-append-message-func-internal
-	 (cdar wl-summary-delayed-update) msgdb nil t)
+	(wl-summary-insert-message
+	 (cdar wl-summary-delayed-update)
+	 wl-summary-buffer-elmo-folder nil t)
 	(setq wl-summary-delayed-update (cdr wl-summary-delayed-update))))
     (message "Constructing summary structure...done")
-    (set-buffer cur-buf)
     (if (eq wl-summary-buffer-view 'thread)
 	(progn
 	  (message "Inserting thread...")
 	  (wl-thread-insert-top)
-	  (message "Inserting thread...done"))
-      (wl-summary-make-number-list))
+	  (message "Inserting thread...done")))
     (when wl-use-scoring
       (setq wl-summary-scored nil)
-      (wl-summary-score-headers nil msgdb
-				(wl-summary-rescore-msgs number-alist)
+      (wl-summary-score-headers (wl-summary-rescore-msgs
+				 wl-summary-buffer-number-list)
 				t)
       (when (and wl-summary-scored
 		 (setq expunged (wl-summary-score-update-all-lines)))
@@ -1066,42 +1052,32 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-set-message-modified ()
   (elmo-folder-set-message-modified-internal
    wl-summary-buffer-elmo-folder t)
-  (setq wl-summary-buffer-message-modified t))
+  (setq wl-summary-buffer-message-modified t)
+  (wl-summary-set-mark-modified))
 (defun wl-summary-message-modified-p ()
   wl-summary-buffer-message-modified)
 (defun wl-summary-set-mark-modified ()
   (elmo-folder-set-mark-modified-internal
-   wl-summary-buffer-elmo-folder t)
-  (setq wl-summary-buffer-mark-modified t))
+   wl-summary-buffer-elmo-folder t))
 (defun wl-summary-mark-modified-p ()
-  wl-summary-buffer-mark-modified)
+  (elmo-folder-mark-modified-internal
+   wl-summary-buffer-elmo-folder))
 (defun wl-summary-set-thread-modified ()
   (setq wl-summary-buffer-thread-modified t))
 (defun wl-summary-thread-modified-p ()
   wl-summary-buffer-thread-modified)
 
 (defsubst wl-summary-cleanup-temp-marks (&optional sticky)
-  (if (or wl-summary-buffer-refile-list
-	  wl-summary-buffer-copy-list
-	  wl-summary-buffer-delete-list)
-      (if (y-or-n-p (format "Execute remaining marks in %s? "
-			    (wl-summary-buffer-folder-name)))
-	  (progn
-	    (wl-summary-exec)
-	    (if (or wl-summary-buffer-refile-list
-		    wl-summary-buffer-copy-list
-		    wl-summary-buffer-delete-list)
-		(error "Some execution was failed")))
-	;; delete temp-marks
-	(message "")
-	(wl-summary-delete-all-refile-marks)
-	(wl-summary-delete-all-copy-marks)
-	(wl-summary-delete-all-delete-marks)))
-  (if wl-summary-buffer-target-mark-list
-      (progn
-	(wl-summary-delete-all-target-marks)
-	(setq wl-summary-buffer-target-mark-list nil)))
-  (wl-summary-delete-all-temp-marks-on-buffer sticky)
+  (when wl-summary-buffer-temp-mark-list
+    (if (y-or-n-p (format "Execute remaining marks in %s? "
+			  (wl-summary-buffer-folder-name)))
+	(progn
+	  (wl-summary-exec)
+	  (if wl-summary-buffer-temp-mark-list
+	      (error "Some execution was failed")))
+      ;; temp-mark-list is remained.
+      (message "")))
+  (wl-summary-delete-all-temp-marks 'no-msg)
   (setq wl-summary-scored nil))
 
 ;; a subroutine for wl-summary-exit/wl-save-status
@@ -1212,17 +1188,15 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (wl-summary-cleanup-temp-marks)
   (erase-buffer)
   (wl-summary-set-message-modified)
-  (wl-summary-set-mark-modified)
   (setq wl-thread-entity-hashtb (elmo-make-hash
-				 (* (length (elmo-msgdb-get-number-alist
-					     (wl-summary-buffer-msgdb))) 2)))
+				 (* (elmo-folder-length
+				     wl-summary-buffer-elmo-folder)
+				    2)))
   (setq wl-thread-entity-list nil)
   (setq wl-thread-entities nil)
   (setq wl-summary-buffer-number-list nil)
   (setq wl-summary-buffer-target-mark-list nil)
-  (setq wl-summary-buffer-refile-list nil)
-  (setq wl-summary-buffer-copy-list nil)
-  (setq wl-summary-buffer-delete-list nil))
+  (setq wl-summary-buffer-temp-mark-list nil))
 
 (defun wl-summary-sync (&optional unset-cursor force-range)
   (interactive)
@@ -1380,25 +1354,23 @@ If ARG is non-nil, checking is omitted."
   (unless arg
     (save-excursion
       (wl-summary-sync-force-update)))
-  (wl-summary-prefetch-region (point-min) (point-max)
-			      wl-summary-incorporate-marks))
+  (wl-summary-prefetch-region-no-mark (point-min) (point-max)
+				      wl-summary-incorporate-marks))
 
 (defun wl-summary-prefetch-msg (number &optional arg)
   "Returns status-mark. if skipped, returns nil."
   ;; prefetching procedure.
   (save-excursion
-    (let* ((msgdb (wl-summary-buffer-msgdb))
-	   (number-alist (elmo-msgdb-get-number-alist msgdb))
-	   (message-id (cdr (assq number number-alist)))
-	   (ov (elmo-msgdb-overview-get-entity message-id msgdb))
-	   (wl-message-entity ov)
-	   (entity ov)			; backward compatibility.
-	   (size (elmo-msgdb-overview-entity-get-size ov))
+    (let* ((size (elmo-message-field wl-summary-buffer-elmo-folder
+				     number 'size))
 	   (inhibit-read-only t)
 	   (buffer-read-only nil)
-	   (file-cached (elmo-file-cache-exists-p message-id))
+	   (file-cached (elmo-file-cache-exists-p
+			 (elmo-message-field wl-summary-buffer-elmo-folder
+					     number 'message-id)))
 	   (force-read (and size
-			    (or (and (null wl-prefetch-confirm) arg)
+			    (or file-cached
+				(and (null wl-prefetch-confirm) arg)
 				(null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
@@ -1422,11 +1394,14 @@ If ARG is non-nil, checking is omitted."
 			      (elmo-delete-char
 			       ?\"
 			       (or
-				(elmo-msgdb-overview-entity-get-from ov)
+				(elmo-message-field
+				 wl-summary-buffer-elmo-folder
+				 number 'from)
 				"??")))))) " ]")
 			size))))
 	      (message ""))		; flush.
-	    (setq mark (elmo-msgdb-get-mark msgdb number))
+	    (setq mark (or (elmo-message-mark wl-summary-buffer-elmo-folder
+					      number) " "))
 	    (if force-read
 		(save-excursion
 		  (save-match-data
@@ -1435,36 +1410,22 @@ If ARG is non-nil, checking is omitted."
 			(elmo-message-encache
 			 wl-summary-buffer-elmo-folder
 			 number))
+		    (elmo-message-set-cached wl-summary-buffer-elmo-folder
+					     number t)
 		    (setq new-mark
-			  (cond
-			   ((string= mark
-				     wl-summary-unread-uncached-mark)
-			    wl-summary-unread-cached-mark)
-			   ((string= mark wl-summary-new-mark)
-			    (setq wl-summary-buffer-new-count
-				  (- wl-summary-buffer-new-count 1))
-			    (setq wl-summary-buffer-unread-count
-				  (+ wl-summary-buffer-unread-count 1))
-			    wl-summary-unread-cached-mark)
-			   ((string= mark wl-summary-read-uncached-mark)
-			    nil)
-			   (t mark)))
-		    (elmo-msgdb-set-mark msgdb number new-mark)
-		    (or new-mark (setq new-mark " "))
-		    (wl-summary-set-mark-modified)
-		    (wl-summary-update-modeline)
-		    (wl-folder-update-unread
-		     (wl-summary-buffer-folder-name)
-		     (+ wl-summary-buffer-unread-count
-			wl-summary-buffer-new-count)))
+			  (or (elmo-message-mark wl-summary-buffer-elmo-folder
+						 number)
+			      " "))
+		    (unless (string= new-mark mark)
+		      (wl-summary-count-unread)
+		      (wl-summary-update-modeline)
+		      (wl-folder-update-unread
+		       (wl-summary-buffer-folder-name)
+		       (+ wl-summary-buffer-unread-count
+			  wl-summary-buffer-new-count))))
 		  new-mark)))))))
 
-;;(defvar wl-summary-message-uncached-marks
-;;  (list wl-summary-new-mark
-;;	wl-summary-unread-uncached-mark
-;;	wl-summary-read-uncached-mark))
-
-(defun wl-summary-prefetch-region (beg end &optional prefetch-marks)
+(defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
   (interactive "r")
   (let ((count 0)
 	targets
@@ -1506,41 +1467,29 @@ If ARG is non-nil, checking is omitted."
 			       (wl-thread-get-entity (car targets))))
 			 (progn
 			   (wl-summary-jump-to-msg (car targets))
-			   (wl-summary-prefetch))
+			   (wl-summary-prefetch-msg
+			    (wl-summary-message-number)))
 		       (wl-summary-prefetch-msg (car targets))))
 	  (if (if prefetch-marks
-		  (string= mark wl-summary-unread-cached-mark)
-		(or (string= mark wl-summary-unread-cached-mark)
+		  (string= mark elmo-msgdb-unread-cached-mark)
+		(or (string= mark elmo-msgdb-unread-cached-mark)
 		    (string= mark " ")))
 	      (message "Prefetching... %d/%d message(s)"
 		       (setq count (+ 1 count)) length))
 	  ;; redisplay!
-	  (save-excursion
-	    (setq pos (point))
-	    (goto-char start-pos)
-	    (if (pos-visible-in-window-p pos)
-		(save-restriction
-		  (widen)
-		  (sit-for 0))))
+	  (when mark
+	    (save-excursion
+	      (setq pos (point))
+	      (when (wl-summary-jump-to-msg (car targets))
+		(wl-summary-update-mark (car targets)))
+	      (goto-char start-pos)
+	      (if (pos-visible-in-window-p pos)
+		  (save-restriction
+		    (widen)
+		    (sit-for 0)))))
 	  (setq targets (cdr targets)))
 	(message "Prefetched %d/%d message(s)" count length)
 	(cons count length)))))
-
-(defun wl-summary-prefetch (&optional arg)
-  "Prefetch current message."
-  (interactive "P")
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  (mark (wl-summary-persistent-mark)))
-      (setq mark (wl-summary-prefetch-msg (wl-summary-message-number) arg))
-      (when mark
-	(delete-backward-char 1)
-	(insert mark)
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line)))
-      (set-buffer-modified-p nil)
-      mark)))
 
 (defun wl-summary-delete-marks-on-buffer (marks)
   (while marks
@@ -1549,33 +1498,9 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-delete-copy-marks-on-buffer (copies)
   (wl-summary-delete-marks-on-buffer copies))
 
-(defun wl-summary-delete-all-refile-marks ()
-  (let ((marks wl-summary-buffer-refile-list))
-    (while marks
-      (wl-summary-unmark (car (pop marks))))))
-
-(defun wl-summary-delete-all-copy-marks ()
-  (let ((marks wl-summary-buffer-copy-list))
-    (while marks
-      (wl-summary-unmark (car (pop marks))))))
-
-(defun wl-summary-delete-all-delete-marks ()
-  (wl-summary-delete-marks-on-buffer wl-summary-buffer-delete-list))
-
+;;;
 (defun wl-summary-delete-all-target-marks ()
   (wl-summary-delete-marks-on-buffer wl-summary-buffer-target-mark-list))
-
-(defun wl-summary-delete-all-temp-marks-on-buffer (&optional sticky)
-  ;; for summary view cache saving.
-  (save-excursion
-    (goto-char (point-min))
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil))
-       (while (not (eobp))
-	(unless (string= (wl-summary-temp-mark) " ")
-	  (delete-backward-char 1)
-	  (insert " "))
-	(forward-line 1)))))
 
 (defun wl-summary-mark-as-read-region (beg end)
   (interactive "r")
@@ -1664,48 +1589,27 @@ If ARG is non-nil, checking is omitted."
 	  (y-or-n-p "Mark all messages as read? "))
       (let* ((folder wl-summary-buffer-elmo-folder)
 	     (cur-buf (current-buffer))
-	     (msgdb (wl-summary-buffer-msgdb))
 	     (inhibit-read-only t)
 	     (buffer-read-only nil)
 	     (case-fold-search nil)
-	     msg mark)
+	     msg mark new-mark)
 	(message "Setting all msgs as read...")
 	(elmo-folder-mark-as-read folder
 				  (elmo-folder-list-unreads
-				   folder
-				   (list wl-summary-unread-cached-mark
-					 wl-summary-unread-uncached-mark
-					 wl-summary-new-mark)))
+				   folder))
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (not (eobp))
-	    (setq msg (wl-summary-message-number))
-	    (setq mark (wl-summary-persistent-mark))
-	    (when (and (not (string= mark " "))
-		       (not (string= mark wl-summary-important-mark))
-		       (not (string= mark wl-summary-read-uncached-mark)))
+	    (setq msg (wl-summary-message-number)
+		  mark (wl-summary-persistent-mark)
+		  new-mark (or (elmo-message-mark folder msg) " "))
+	    (unless (string= mark new-mark)
 	      (delete-backward-char 1)
-	      (if (or (not (elmo-message-use-cache-p folder msg))
-		      (string= mark wl-summary-unread-cached-mark))
-		  (progn
-		    (insert " ")
-		    (elmo-msgdb-set-mark msgdb msg nil))
-		;; New mark and unread-uncached mark
-		(insert wl-summary-read-uncached-mark)
-		(elmo-msgdb-set-mark
-		 msgdb msg wl-summary-read-uncached-mark))
+	      ;; New mark and unread-uncached mark
+	      (insert new-mark)
 	      (if wl-summary-highlight
 		  (wl-highlight-summary-current-line)))
 	    (forward-line 1)))
-	(elmo-folder-replace-marks
-	 folder
-	 (list (cons wl-summary-unread-cached-mark
-		     nil)
-	       (cons wl-summary-unread-uncached-mark
-		     wl-summary-read-uncached-mark)
-	       (cons wl-summary-new-mark
-		     wl-summary-read-uncached-mark)))
-	(wl-summary-set-mark-modified)
 	(wl-folder-update-unread (wl-summary-buffer-folder-name) 0)
 	(setq wl-summary-buffer-unread-count 0)
 	(setq wl-summary-buffer-new-count    0)
@@ -1720,23 +1624,13 @@ If ARG is non-nil, checking is omitted."
     (let* ((inhibit-read-only t)
 	   (buffer-read-only nil)
 	   (folder wl-summary-buffer-elmo-folder)
-	   (msgdb (wl-summary-buffer-msgdb))
-	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (case-fold-search nil)
-	   mark number unread new-mark)
-      (setq mark (wl-summary-persistent-mark))
-      (cond
-       ((or (string= mark wl-summary-new-mark)
-	    (string= mark wl-summary-unread-uncached-mark)
-	    (string= mark wl-summary-important-mark))
-	;; noop
-	)
-       ((string= mark wl-summary-unread-cached-mark)
-	(setq new-mark wl-summary-unread-uncached-mark))
-       (t
-	(setq new-mark wl-summary-read-uncached-mark)))
-      (when new-mark
-	(setq number (wl-summary-message-number))
+	   new-mark mark number unread)
+      (setq number (wl-summary-message-number))
+      (elmo-message-set-cached folder number nil)
+      (setq new-mark (elmo-message-mark folder number)
+	    mark (wl-summary-persistent-mark))
+      (unless (string= new-mark mark)
 	(delete-backward-char 1)
 	(insert new-mark)
 	(elmo-file-cache-delete
@@ -1744,8 +1638,6 @@ If ARG is non-nil, checking is omitted."
 	  (elmo-message-field wl-summary-buffer-elmo-folder
 			      number
 			      'message-id)))
-	(elmo-msgdb-set-mark msgdb number new-mark)
-	(wl-summary-set-mark-modified)
 	(if wl-summary-highlight
 	    (wl-highlight-summary-current-line))
 	(set-buffer-modified-p nil)))))
@@ -1753,44 +1645,31 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-resume-cache-status ()
   "Resume the cache status of all messages in the current folder."
   (interactive)
-  (let* ((folder wl-summary-buffer-elmo-folder)
-	 (cur-buf (current-buffer))
-	 (msgdb (wl-summary-buffer-msgdb))
-	 (number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (inhibit-read-only t)
-	 (buffer-read-only nil)
-	 (case-fold-search nil)
-	 msg mark msgid set-mark)
+  (let ((folder wl-summary-buffer-elmo-folder)
+	(buffer-read-only nil)
+	(case-fold-search nil)
+	number msgid set-mark mark)
     (message "Resuming cache status...")
     (save-excursion
       (goto-char (point-min))
       (while (not (eobp))
-	(setq msg (wl-summary-message-number))
+	(setq number (wl-summary-message-number))
 	(setq mark (wl-summary-persistent-mark))
-	(setq msgid (elmo-msgdb-get-field msgdb msg 'message-id))
+	(setq msgid (elmo-message-field folder number 'message-id))
 	(setq set-mark nil)
 	(if (elmo-file-cache-exists-p msgid)
-	    (if (or
-		 (string= mark wl-summary-unread-uncached-mark) ; U -> !
-		 (string= mark wl-summary-new-mark)		; N -> !
-		 )
-		(setq set-mark wl-summary-unread-cached-mark)
-	      (if (string= mark wl-summary-read-uncached-mark)  ; u -> ' '
-		  (setq set-mark " ")))
-	  (if (string= mark " ")
-	      (setq set-mark wl-summary-read-uncached-mark)     ;' ' -> u
-	    (if (string= mark wl-summary-unread-cached-mark)
-		(setq set-mark wl-summary-unread-uncached-mark) ; !  -> U
-	      )))
+	    (when (member mark (elmo-msgdb-uncached-marks))
+	      (elmo-message-set-cached folder number t)
+	      (setq set-mark (elmo-message-mark folder number)))
+	  (unless (member mark (elmo-msgdb-uncached-marks))
+	    (elmo-message-set-cached folder number nil)
+	    (setq set-mark (or (elmo-message-mark folder number) " "))))
 	(when set-mark
 	  (delete-backward-char 1)
 	  (insert set-mark)
-	  (elmo-msgdb-set-mark msgdb msg
-			       (if (string= set-mark " ") nil set-mark))
 	  (if wl-summary-highlight
 	      (wl-highlight-summary-current-line)))
 	(forward-line 1))
-      (wl-summary-set-mark-modified)
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (message "Resuming cache status...done")
@@ -1804,6 +1683,7 @@ If ARG is non-nil, checking is omitted."
 	  (msgs2 msgs)
 	  (len (length msgs))
 	  (i 0)
+	  ;(deleting-info (or deleting-info "Deleting..."))
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
       (while msgs
@@ -1821,23 +1701,24 @@ If ARG is non-nil, checking is omitted."
 		(delete-char 1) ; delete '\n'
 		(setq wl-summary-buffer-number-list
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
-	(when (and deleting-info
-		   (> len elmo-display-progress-threshold))
-	  (setq i (1+ i))
-	  (if (or (zerop (% i 5)) (= i len))
-	      (elmo-display-progress
-	       'wl-summary-delete-messages-on-buffer deleting-info
-	       (/ (* i 100) len))))
+;	(when (> len elmo-display-progress-threshold)
+;	  (setq i (1+ i))
+;	  (if (or (zerop (% i 5)) (= i len))
+;	      (elmo-display-progress
+;	       'wl-summary-delete-messages-on-buffer deleting-info
+;	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
-	(wl-thread-update-line-msgs (elmo-uniq-list update-list)
-				    (unless deleting-info 'no-msg))
+	(wl-thread-update-line-msgs (elmo-uniq-list update-list))
 	(wl-thread-cleanup-symbols msgs2))
+      ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
-      (wl-folder-update-unread
-       (wl-summary-buffer-folder-name)
-       (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)))))
+      (wl-folder-set-folder-updated
+       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
+       (list 0
+	     (+ wl-summary-buffer-unread-count wl-summary-buffer-new-count)
+	     (elmo-folder-length wl-summary-buffer-elmo-folder))))))
 
 (defun wl-summary-replace-status-marks (before after)
   "Replace the status marks on buffer."
@@ -1853,29 +1734,29 @@ If ARG is non-nil, checking is omitted."
 	      (wl-highlight-summary-current-line)))
 	(forward-line 1)))))
 
-(defun wl-summary-get-delete-folder (folder)
-  (if (string= folder wl-trash-folder)
-      'null
-    (let* ((type (or (wl-get-assoc-list-value wl-delete-folder-alist folder)
-		     'trash)))
-      (cond ((stringp type)
-	     type)
-	    ((or (equal type 'remove) (equal type 'null))
-	     'null)
-	    (t;; (equal type 'trash)
-	     (let ((trash-folder (wl-folder-get-elmo-folder wl-trash-folder)))
-	       (unless (elmo-folder-exists-p trash-folder)
-		 (if (y-or-n-p
-		      (format "Trash Folder %s does not exist, create it? "
-			      wl-trash-folder))
-		     (elmo-folder-create trash-folder)
-		   (error "Trash Folder is not created"))))
-	       wl-trash-folder)))))
+(defun wl-summary-update-status-marks ()
+  "Synchronize status marks on current buffer to the msgdb."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  mark)
+      (while (not (eobp))
+	(unless (string= (wl-summary-persistent-mark)
+			 (setq mark (or (elmo-message-mark
+					 wl-summary-buffer-elmo-folder
+					 (wl-summary-message-number))
+					" ")))
+	  (delete-backward-char 1)
+	  (insert mark)
+	  (if wl-summary-highlight (wl-highlight-summary-current-line)))
+	(forward-line 1)))))
 
-(defun wl-summary-get-append-message-func ()
+(defun wl-summary-insert-message (&rest args)
   (if (eq wl-summary-buffer-view 'thread)
-      'wl-summary-insert-thread-entity
-    'wl-summary-insert-sequential))
+      (apply 'wl-summary-insert-thread args)
+    (apply 'wl-summary-insert-sequential args)))
 
 (defun wl-summary-sort ()
   (interactive)
@@ -1888,39 +1769,38 @@ If ARG is non-nil, checking is omitted."
     nil t nil nil (symbol-name wl-summary-default-sort-spec))))
 
 (defun wl-summary-sync-marks ()
-  "Update marks in summary."
+  "Update persistent marks in summary."
   (interactive)
   (let ((last-progress 0)
+	(folder wl-summary-buffer-elmo-folder)
 	(i 0)
-	unread-marks importants unreads
-	importants-in-db unreads-in-db diff diffs
+	answereds importants unreads diff diffs
 	mes progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-type-internal
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq unread-marks (list wl-summary-unread-cached-mark
-			       wl-summary-unread-uncached-mark
-			       wl-summary-new-mark)
-	    importants-in-db (elmo-folder-list-messages-mark-match
-			      wl-summary-buffer-elmo-folder
-			      (regexp-quote wl-summary-important-mark))
-	    unreads-in-db (elmo-folder-list-messages-mark-match
-			   wl-summary-buffer-elmo-folder
-			   (wl-regexp-opt unread-marks))
-	    importants (elmo-folder-list-importants
-			wl-summary-buffer-elmo-folder
-			wl-summary-important-mark)
+      (setq importants (elmo-uniq-list
+			(nconc
+			 (elmo-folder-list-importants
+			  wl-summary-buffer-elmo-folder)
+			 (elmo-folder-list-messages-with-global-mark
+			  wl-summary-buffer-elmo-folder
+			  elmo-msgdb-important-mark)))
 	    unreads (elmo-folder-list-unreads
-		     wl-summary-buffer-elmo-folder
-		     unread-marks))
-      (setq diff (elmo-list-diff importants importants-in-db))
+		     wl-summary-buffer-elmo-folder)
+	    answereds (elmo-folder-list-answereds
+		       wl-summary-buffer-elmo-folder))
+      (setq diff (elmo-list-diff importants
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'important 'in-msgdb)))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
       (while diffs
 	(wl-summary-mark-as-important (car diffs)
-				      wl-summary-important-mark
+				      elmo-msgdb-important-mark
 				      'no-server)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; important-appends
@@ -1928,16 +1808,35 @@ If ARG is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-important (car diffs) " " 'no-server)
 	(setq diffs (cdr diffs)))
-      (setq diff (elmo-list-diff unreads unreads-in-db))
+
+      (setq diff (elmo-list-diff answereds
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'answered 'in-msgdb)))
       (setq diffs (cadr diff))
       (setq mes (concat mes (format "(-%d" (length diffs))))
       (while diffs
-	(wl-summary-mark-as-read (car diffs) 'no-folder)
+	(wl-summary-mark-as-unanswered (car diffs) 'no-modeline)
+	(setq diffs (cdr diffs)))
+      (setq diffs (car diff)) ; unread-appends
+      (setq mes (concat mes (format "/+%d) answered mark(s)." (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-answered (car diffs) 'no-modeline)
+	(setq diffs (cdr diffs)))
+
+      (setq diff (elmo-list-diff unreads
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  'unread 'in-msgdb)))
+      (setq diffs (cadr diff))
+      (setq mes (concat mes (format "(-%d" (length diffs))))
+      (while diffs
+	(wl-summary-mark-as-read (car diffs) 'no-folder 'no-modeline)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; unread-appends
       (setq mes (concat mes (format "/+%d) unread mark(s)." (length diffs))))
       (while diffs
-	(wl-summary-mark-as-unread (car diffs) 'no-server)
+	(wl-summary-mark-as-unread (car diffs) 'no-folder 'no-modeline)
 	(setq diffs (cdr diffs)))
       (if (interactive-p) (message "%s" mes)))))
 
@@ -1950,112 +1849,89 @@ If ARG is non-nil, checking is omitted."
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
 	 gc-message
-	 overview number-alist
-	 curp num i new-msgdb
+	 overview
+	 curp num i diff
 	 append-list delete-list crossed
 	 update-thread update-top-list
-	 expunged mes sync-result entity)
+	 expunged mes entity)
     (unwind-protect
 	(progn
 	  (unless wl-summary-buffer-elmo-folder
 	    (error "(Internal error) Folder is not set:%s" (buffer-name
 							    (current-buffer))))
-	  (fset 'wl-summary-append-message-func-internal
-		(wl-summary-get-append-message-func))
 	  ;; Flush pending append operations (disconnected operation).
 	  ;;(setq seen-list
 	  ;;(wl-summary-flush-pending-append-operations seen-list))
 	  (goto-char (point-max))
 	  (wl-folder-confirm-existence folder (elmo-folder-plugged-p folder))
-	  (setq sync-result (elmo-folder-synchronize
-			     folder
-			     wl-summary-new-mark
-			     wl-summary-unread-uncached-mark
-			     wl-summary-unread-cached-mark
-			     wl-summary-read-uncached-mark
-			     wl-summary-important-mark
-			     sync-all no-check))
-	  (setq new-msgdb (nth 0 sync-result))
-	  (setq delete-list (nth 1 sync-result))
-	  (setq crossed (nth 2 sync-result))
-	  (if sync-result
+	  (setq crossed (elmo-folder-synchronize folder sync-all no-check))
+	  (if crossed
 	      (progn
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
-;    (if (and has-nntp
-;	     (elmo-nntp-max-number-precedes-list-active-p))
-	;; XXX this does not work correctly in rare case.
-;	(setq delete-list
-;	      (wl-summary-delete-canceled-msgs-from-list
-;	       delete-list
-;	       (wl-summary-buffer-msgdb))))
+		(setq diff (elmo-list-diff (elmo-folder-list-messages
+					    folder
+					    'visible-only
+					    'in-msgdb)
+					   wl-summary-buffer-number-list))
+		(setq append-list (car diff))
+		(setq delete-list (cadr diff))
+		
 		(when delete-list
-		  (wl-summary-delete-messages-on-buffer delete-list "Deleting...")
-		  (message "Deleting...done"))
-		(when new-msgdb
-		  (wl-summary-replace-status-marks
-		   wl-summary-new-mark
-		   wl-summary-unread-uncached-mark))
-		(setq append-list (elmo-msgdb-get-overview new-msgdb))
-		(setq curp append-list)
-		(setq num (length curp))
-		(when append-list
-		  (setq i 0)
-
-		  ;; set these value for append-message-func
-		  (setq overview (elmo-msgdb-get-overview
-				  (elmo-folder-msgdb folder)))
-		  (setq number-alist (elmo-msgdb-get-number-alist
-				      (elmo-folder-msgdb folder)))
-
-		  (setq wl-summary-delayed-update nil)
-		  (elmo-kill-buffer wl-summary-search-buf-name)
-		  (while curp
-		    (setq entity (car curp))
+		  (wl-summary-delete-messages-on-buffer delete-list))
+		(wl-summary-update-status-marks)
+		(setq num (length append-list))
+		(setq i 0)
+		(setq wl-summary-delayed-update nil)
+		(elmo-kill-buffer wl-summary-search-buf-name)
+		(dolist (number append-list)
+		  (setq entity (elmo-message-entity folder number))
+		  (when (setq update-thread
+			      (wl-summary-insert-message
+			       entity folder
+			       (not sync-all)))
+		    (wl-append update-top-list update-thread))
+		  (if elmo-use-database
+		      (elmo-database-msgid-put
+		       (car entity) (elmo-folder-name-internal folder)
+		       (elmo-msgdb-overview-entity-get-number entity)))
+		  (when (> num elmo-display-progress-threshold)
+		    (setq i (+ i 1))
+		    (if (or (zerop (% i 5)) (= i num))
+			(elmo-display-progress
+			 'wl-summary-sync-update
+			 (if (eq wl-summary-buffer-view 'thread)
+			     "Making thread..."
+			   "Inserting message...")
+			 (/ (* i 100) num)))))
+		(when wl-summary-delayed-update
+		  (while wl-summary-delayed-update
+		    (message "Parent (%d) of message %d is no entity"
+			     (caar wl-summary-delayed-update)
+			     (elmo-msgdb-overview-entity-get-number
+			      (cdar wl-summary-delayed-update)))
 		    (when (setq update-thread
-				(wl-summary-append-message-func-internal
-				 entity (elmo-folder-msgdb folder)
-				 (not sync-all)))
+				(wl-summary-insert-message
+				 (cdar wl-summary-delayed-update)
+				 wl-summary-buffer-elmo-folder
+				 (not sync-all) t))
 		      (wl-append update-top-list update-thread))
-		    (if elmo-use-database
-			(elmo-database-msgid-put
-			 (car entity) (elmo-folder-name-internal folder)
-			 (elmo-msgdb-overview-entity-get-number entity)))
-		    (setq curp (cdr curp))
-		    (when (> num elmo-display-progress-threshold)
-		      (setq i (+ i 1))
-		      (if (or (zerop (% i 5)) (= i num))
-			  (elmo-display-progress
-			   'wl-summary-sync-update "Updating thread..."
-			   (/ (* i 100) num)))))
-		  (when wl-summary-delayed-update
-		    (while wl-summary-delayed-update
-		      (message "Parent (%d) of message %d is no entity"
-			       (caar wl-summary-delayed-update)
-			       (elmo-msgdb-overview-entity-get-number
-				(cdar wl-summary-delayed-update)))
-		      (when (setq update-thread
-				  (wl-summary-append-message-func-internal
-				   (cdar wl-summary-delayed-update)
-				   (elmo-folder-msgdb folder)
-				   (not sync-all) t))
-			(wl-append update-top-list update-thread))
-		      (setq wl-summary-delayed-update
-			    (cdr wl-summary-delayed-update))))
-		  (when (and (eq wl-summary-buffer-view 'thread)
-			     update-top-list)
-		    (wl-thread-update-indent-string-thread
-		     (elmo-uniq-list update-top-list)))
-		  (message "Updating thread...done"))
-		(unless (eq wl-summary-buffer-view 'thread)
-		  (wl-summary-make-number-list))
-		(wl-summary-set-message-modified)
-		(wl-summary-set-mark-modified)
+		    (setq wl-summary-delayed-update
+			  (cdr wl-summary-delayed-update))))
+		(when (and (eq wl-summary-buffer-view 'thread)
+			   update-top-list)
+		  (wl-thread-update-indent-string-thread
+		   (elmo-uniq-list update-top-list)))
+		(message (if (eq wl-summary-buffer-view 'thread)
+			     "Making thread...done"
+			   "Inserting message...done"))
+		(when (or delete-list append-list)
+		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
-		  (message "Inserting thread...")
+		  (message "Inserting message...")
 		  (wl-thread-insert-top)
-		  (message "Inserting thread...done"))
+		  (message "Inserting message...done"))
 		(if elmo-use-database
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
@@ -2069,14 +1945,14 @@ If ARG is non-nil, checking is omitted."
 				(length delete-list) num))))
 	    (setq mes "Quit updating.")))
       ;; synchronize marks.
-      (if (and wl-summary-auto-sync-marks sync-result)
+      (if (and crossed wl-summary-auto-sync-marks)
 	  (wl-summary-sync-marks))
       ;; scoring
       (when wl-use-scoring
 	(setq wl-summary-scored nil)
-	(wl-summary-score-headers nil (wl-summary-buffer-msgdb)
-				  (and sync-all
-				       (wl-summary-rescore-msgs number-alist))
+	(wl-summary-score-headers (and sync-all
+				       (wl-summary-rescore-msgs
+					wl-summary-buffer-number-list))
 				  sync-all)
 	(when (and wl-summary-scored
 		   (setq expunged (wl-summary-score-update-all-lines)))
@@ -2094,9 +1970,9 @@ If ARG is non-nil, checking is omitted."
       (wl-folder-set-folder-updated
        (elmo-folder-name-internal folder)
        (list 0
-	     (let ((pair (wl-summary-count-unread)))
-	       (+ (car pair) (cdr pair)))
-	     (elmo-folder-messages folder)))
+	     (let ((lst (wl-summary-count-unread)))
+	       (+ (car lst) (nth 1 lst)))
+	     (elmo-folder-length folder)))
       (wl-summary-update-modeline)
       ;;
       (unless unset-cursor
@@ -2202,11 +2078,8 @@ If ARG is non-nil, checking is omitted."
 	    (message "Deleting...")
 	    (elmo-folder-delete-messages
 	     wl-summary-buffer-elmo-folder dels)
-	    (elmo-msgdb-delete-msgs (wl-summary-buffer-msgdb)
-				    dels)
-;;;	    (elmo-msgdb-save (wl-summary-buffer-folder-name) nil)
+	    (elmo-folder-detach-messages wl-summary-buffer-elmo-folder dels)
 	    (wl-summary-set-message-modified)
-	    (wl-summary-set-mark-modified)
 	    (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					  (list 0 0 0))
 ;;; for thread.
@@ -2308,16 +2181,13 @@ If ARG, without confirm."
 	(folder wl-summary-buffer-elmo-folder)
 	(copy-variables
 	 (append '(wl-summary-buffer-view
-		   wl-summary-buffer-refile-list
-		   wl-summary-buffer-delete-list
-		   wl-summary-buffer-copy-list
+		   wl-summary-buffer-temp-mark-list
 		   wl-summary-buffer-target-mark-list
 		   wl-summary-buffer-elmo-folder
 		   wl-summary-buffer-number-column
 		   wl-summary-buffer-temp-mark-column
 		   wl-summary-buffer-persistent-mark-column
 		   wl-summary-buffer-message-modified
-		   wl-summary-buffer-mark-modified
 		   wl-summary-buffer-thread-modified
 		   wl-summary-buffer-number-list
 		   wl-summary-buffer-msgdb
@@ -2373,18 +2243,24 @@ If ARG, without confirm."
 	(get-buffer-create wl-summary-buffer-name))))
 
 (defun wl-summary-make-number-list ()
-  (setq wl-summary-buffer-number-list
-	(mapcar
-	 (lambda (x) (elmo-msgdb-overview-entity-get-number x))
-	 (elmo-msgdb-get-overview (wl-summary-buffer-msgdb)))))
+  (save-excursion
+    (goto-char (point-min))
+    (setq wl-summary-buffer-number-list nil)
+    (while (not (eobp))
+      (setq wl-summary-buffer-number-list
+	    (cons (wl-summary-message-number)
+		  wl-summary-buffer-number-list))
+      (forward-line 1))
+    (setq wl-summary-buffer-number-list
+	  (nreverse wl-summary-buffer-number-list))))
 
 (defun wl-summary-auto-select-msg-p (unread-msg)
   (and unread-msg
        (not (string=
-	     (elmo-msgdb-get-mark
-	      (wl-summary-buffer-msgdb)
+	     (elmo-message-mark
+	      wl-summary-buffer-elmo-folder
 	      unread-msg)
-	     wl-summary-important-mark))))
+	     elmo-msgdb-important-mark))))
 
 (defsubst wl-summary-open-folder (folder)
   ;; Select folder
@@ -2618,16 +2494,20 @@ If ARG, without confirm."
   (ignore-errors
     (run-hooks 'wl-summary-line-inserted-hook)))
 
-(defun wl-summary-insert-sequential (entity msgdb &rest args)
+(defun wl-summary-insert-sequential (entity folder &rest args)
   (let ((inhibit-read-only t)
 	buffer-read-only)
     (goto-char (point-max))
     (wl-summary-insert-line
      (wl-summary-create-line entity nil nil
-			     (elmo-msgdb-get-mark
-			      msgdb
-			      (elmo-msgdb-overview-entity-get-number
-			       entity))))))
+			     (elmo-message-mark
+			      folder
+			      (elmo-message-entity-number
+			       entity))))
+    (setq wl-summary-buffer-number-list
+	  (wl-append wl-summary-buffer-number-list
+		     (list (elmo-message-entity-number entity))))
+    nil))
 
 (defun wl-summary-default-subject-filter (subject)
   (let ((case-fold-search t))
@@ -2648,14 +2528,15 @@ If ARG, without confirm."
   (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
 			wl-summary-alike-hashtb)))
 
-(defun wl-summary-insert-headers (overview func mime-decode)
-  (let (ov this last alike)
+(defun wl-summary-insert-headers (folder func mime-decode)
+  (let ((numbers (elmo-folder-list-messages folder t t))
+	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
-    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length overview) 2)))
+    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
     (when mime-decode
       (elmo-set-buffer-multibyte default-enable-multibyte-characters))
-    (while (setq ov (pop overview))
+    (while (setq ov (elmo-message-entity folder (pop numbers)))
       (setq this (funcall func ov))
       (and this (setq this (std11-unfold-string this)))
       (if (equal last this)
@@ -2675,7 +2556,7 @@ If ARG, without confirm."
 	(eword-decode-region (point-min) (point-max))))
     (run-hooks 'wl-summary-insert-headers-hook)))
 
-(defun wl-summary-search-by-subject (entity overview)
+(defun wl-summary-search-by-subject (entity folder)
   (let ((summary-buf (current-buffer))
 	(buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name (wl-summary-buffer-folder-name))
@@ -2687,15 +2568,16 @@ If ARG, without confirm."
 	  (setq wl-summary-search-buf-folder-name folder-name)
 	  (message "Creating subject cache...")
 	  (wl-summary-insert-headers
-	   overview
+	   folder
 	   (function
 	    (lambda (x)
 	      (funcall wl-summary-subject-filter-function
-		       (elmo-msgdb-overview-entity-get-subject-no-decode x))))
+		       (elmo-message-entity-field x 'subject))))
 	   t)
 	  (message "Creating subject cache...done"))
 	(setq match (funcall wl-summary-subject-filter-function
-			     (elmo-msgdb-overview-entity-get-subject entity)))
+			     (elmo-message-entity-field entity 'subject
+							'decode)))
 	(if (string= match "")
 	    (setq match "\n"))
 	(goto-char (point-max))
@@ -2711,50 +2593,45 @@ If ARG, without confirm."
 		       ;; the first element of found-entity list exists on
 		       ;; thread tree.
 		       (wl-thread-get-entity
-			(elmo-msgdb-overview-entity-get-number
-			 (car founds)))
+			(elmo-message-entity-number (car founds)))
 		       ;; message id is not same as myself.
 		       (not (string=
-			     (elmo-msgdb-overview-entity-get-id entity)
-			     (elmo-msgdb-overview-entity-get-id (car founds))))
+			     (elmo-message-entity-field entity 'message-id)
+			     (elmo-message-entity-field (car founds)
+							'message-id)))
 		       ;; not a descendant.
 		       (not (wl-thread-descendant-p
-			     (elmo-msgdb-overview-entity-get-number entity)
-			     (elmo-msgdb-overview-entity-get-number
-			      (car founds)))))
+			     (elmo-message-entity-number entity)
+			     (elmo-message-entity-number (car founds)))))
 		  (setq result (car founds)
 			founds nil))
 		(setq founds (cdr founds))))))
 	result))))
 
-(defun wl-summary-insert-thread-entity (entity msgdb update
-					       &optional force-insert)
-  (let* ((overview (elmo-msgdb-get-overview msgdb))
-	 this-id
-	 parent-entity
-	 parent-number
-	 (case-fold-search t)
-	 (depth 0) relatives anumber
-	 cur number overview2 cur-entity linked retval delayed-entity
-	 update-list entity-stack)
+(defun wl-summary-insert-thread (entity folder update
+					&optional force-insert)
+  (let ((case-fold-search t)
+	(depth 0)
+	this-id	parent-entity parent-number relatives anumber
+	cur number cur-entity linked retval delayed-entity
+	update-list entity-stack)
     (while entity
-      (setq this-id (elmo-msgdb-overview-entity-get-id entity)
+      (setq this-id (elmo-message-entity-field entity 'message-id)
 	    parent-entity
-	    (elmo-msgdb-get-parent-entity entity msgdb)
-	    parent-number (elmo-msgdb-overview-entity-get-number
-			   parent-entity))
-      (setq number (elmo-msgdb-overview-entity-get-number entity))
+	    (elmo-message-entity-parent folder entity)
+	    parent-number (elmo-message-entity-number parent-entity))
+      (setq number (elmo-message-entity-number entity))
       (setq cur entity)
       ;; If thread loop detected, set parent as nil.
       (while cur
 	(setq anumber
-	      (elmo-msgdb-overview-entity-get-number
-	       (setq cur (elmo-msgdb-get-parent-entity cur msgdb))))
+	      (elmo-message-entity-number
+	       (setq cur (elmo-message-entity-parent folder cur))))
 	(if (memq anumber relatives)
 	    (setq parent-number nil
 		  cur nil))
 	(setq relatives (cons
-			 (elmo-msgdb-overview-entity-get-number cur)
+			 (elmo-message-entity-number cur)
 			 relatives)))
       (if (and parent-number
 	       (not (wl-thread-get-entity parent-number))
@@ -2770,21 +2647,21 @@ If ARG, without confirm."
 		   (string-match
 		    wl-summary-search-parent-by-subject-regexp
 		    (elmo-msgdb-overview-entity-get-subject entity)))
-	  (let ((found (wl-summary-search-by-subject entity overview)))
+	  (let ((found (wl-summary-search-by-subject entity folder)))
 	    (when (and found
 		       (not (member found wl-summary-delayed-update)))
 	      (setq parent-entity found)
 	      (setq parent-number
-		    (elmo-msgdb-overview-entity-get-number parent-entity))
+		    (elmo-message-entity-number parent-entity))
 	      (setq linked t))))
 	;; If subject is change, divide thread.
 	(if (and parent-number
 		 wl-summary-divide-thread-when-subject-changed
 		 (not (wl-summary-subject-equal
-		       (or (elmo-msgdb-overview-entity-get-subject
-			    entity) "")
-		       (or (elmo-msgdb-overview-entity-get-subject
-			    parent-entity) ""))))
+		       (or (elmo-message-entity-field entity
+						      'subject t) "")
+		       (or (elmo-message-entity-field parent-entity
+						      'subject t) ""))))
 	    (setq parent-number nil))
 	(setq retval
 	      (wl-thread-insert-message entity
@@ -2828,781 +2705,10 @@ If ARG, without confirm."
 	  entity
 	  parent-entity
 	  nil
-	  (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) number)
+	  (elmo-message-mark wl-summary-buffer-elmo-folder number)
 	  (wl-thread-maybe-get-children-num number)
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
-
-(defun wl-summary-mark-as-unread (&optional number-or-numbers
-					    no-server-update)
-  (interactive)
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  (folder wl-summary-buffer-elmo-folder)
-	  (msgdb (wl-summary-buffer-msgdb))
-	  number-list visible mark new-mark)
-      (setq number-list (or (and (numberp number-or-numbers)
-				 (list number-or-numbers))
-			    number-or-numbers ; list of numbers
-			    (and (wl-summary-message-number) ; interactive
-				 (list (wl-summary-message-number)))))
-      (if (null number-list)
-	  (message "No message.")
-	(unless no-server-update
-	  (elmo-folder-unmark-read folder number-list))
-	(dolist (number number-list)
-	  (setq visible (wl-summary-jump-to-msg number)
-		mark (or (elmo-msgdb-get-mark msgdb number)))
-	  (when (or (null mark)
-		    (string= mark wl-summary-read-uncached-mark))
-	    (setq new-mark
-		  (cond ((string= mark wl-summary-read-uncached-mark)
-			 wl-summary-unread-uncached-mark)
-			((elmo-message-use-cache-p folder number)
-			 wl-summary-unread-mark)
-			(t
-			 wl-summary-unread-uncached-mark)))
-	    (when visible
-	      (unless (string= (wl-summary-persistent-mark) new-mark)
-		(delete-backward-char 1)
-		(insert (or new-mark " "))))
-	    (unless (string= mark new-mark)
-	      (elmo-msgdb-set-mark msgdb number new-mark)
-	      (wl-summary-set-mark-modified))
-	    (setq wl-summary-buffer-unread-count
-		  (+ 1 wl-summary-buffer-unread-count))
-	    (if (and visible wl-summary-highlight)
-		(wl-highlight-summary-current-line))))
-	(wl-summary-update-modeline)
-	(wl-folder-update-unread
-	 (wl-summary-buffer-folder-name)
-	 (+ wl-summary-buffer-unread-count
-	    wl-summary-buffer-new-count))
-	(set-buffer-modified-p nil)
-	number-or-numbers ;return value
-	))))
-
-(defun wl-summary-delete (&optional number)
-  "Mark a delete mark 'D'.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (let* ((buffer-num (wl-summary-message-number))
-	 (msg-num (or number buffer-num))
-	 mark)
-    (catch 'done
-      (when (null msg-num)
-	(if (interactive-p)
-	    (message "No message."))
-	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if (interactive-p)
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil))
-	(wl-summary-unmark msg-num))
-      (if (or (interactive-p)
-	      (eq number buffer-num))
-	  (wl-summary-mark-line "D"))
-      (setq wl-summary-buffer-delete-list
-	    (cons msg-num wl-summary-buffer-delete-list))
-      (if (interactive-p)
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
-      msg-num)))
-
-(defun wl-summary-remove-destination ()
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  (buf (current-buffer))
-	  sol eol rs re)
-      (beginning-of-line)
-      (setq sol (point))
-      (search-forward "\r")
-      (forward-char -1)
-      (setq eol (point))
-      (setq rs (next-single-property-change sol 'wl-summary-destination
-					    buf eol))
-      (setq re (next-single-property-change rs 'wl-summary-destination
-					    buf eol))
-      (put-text-property rs re 'wl-summary-destination nil)
-      (put-text-property rs re 'invisible nil)
-      (goto-char re)
-      (delete-char (- eol re)))))
-
-(defun wl-summary-check-mark (msg mark)
-  (let ((check-func (cond ((string= mark "o")
-			   'wl-summary-msg-marked-as-refiled)
-			  ((string= mark "O")
-			   'wl-summary-msg-marked-as-copied)
-			  ((string= mark "D")
-			   'wl-summary-msg-marked-as-deleted)
-			  ((string= mark "*")
-			   'wl-summary-msg-marked-as-target))))
-    (if check-func
-	(funcall check-func msg))))
-
-(defun wl-summary-mark-collect (mark &optional begin end)
-  (save-excursion
-    (save-restriction
-      (let (msglist)
-	(narrow-to-region (or begin (point-min))
-			  (or end (point-max)))
-	(goto-char (point-min))
-	;; for thread...
-	(if (eq wl-summary-buffer-view 'thread)
-	    (progn
-	      (while (not (eobp))
-		(let* ((number (wl-summary-message-number))
-		       (entity (wl-thread-get-entity number))
-		       result)
-		  ;; opened...only myself is checked.
-		  (if (wl-summary-check-mark number mark)
-		      (wl-append msglist (list number)))
-		  (unless (wl-thread-entity-get-opened entity)
-		    ;; closed...children is also checked.
-		    (if (setq result (wl-thread-get-children-msgs-with-mark
-				      number
-				      mark))
-			(wl-append msglist result)))
-		  (forward-line 1)))
-	      (elmo-uniq-list msglist))
-	  (while (not (eobp))
-	    (when (string= (wl-summary-temp-mark) mark)
-	      (setq msglist (cons (wl-summary-message-number) msglist)))
-	    (forward-line 1))
-	  (nreverse msglist))))))
-
-(defun wl-summary-exec ()
-  (interactive)
-  (wl-summary-exec-subr (mapcar 'car wl-summary-buffer-refile-list)
-			(reverse wl-summary-buffer-delete-list)
-			(mapcar 'car wl-summary-buffer-copy-list)))
-
-(defun wl-summary-exec-region (beg end)
-  (interactive "r")
-  (message "Collecting marks...")
-  (save-excursion
-    (goto-char beg)
-    (beginning-of-line)
-    (setq beg (point))
-    (goto-char (1- end))
-    (forward-line)
-    (setq end (point))
-    (wl-summary-exec-subr (wl-summary-mark-collect "o" beg end)
-			  (wl-summary-mark-collect "D" beg end)
-			  (wl-summary-mark-collect "O" beg end))))
-
-(defun wl-summary-exec-subr (moves dels copies)
-  (if (not (or moves dels copies))
-      (message "No marks")
-    (save-excursion
-      (let ((del-fld (wl-summary-get-delete-folder
-		      (wl-summary-buffer-folder-name)))
-	    (start (point))
-	    (unread-marks (list wl-summary-unread-cached-mark
-				wl-summary-unread-uncached-mark
-				wl-summary-new-mark))
-	    (refiles (append moves dels))
-	    (refile-failures 0)
-	    (copy-failures 0)
-	    (copy-len (length copies))
-	    refile-len
-	    dst-msgs			; loop counter
-	    result)
-	(message "Executing...")
-	(while dels
-	  (when (not (assq (car dels) wl-summary-buffer-refile-list))
-	    (wl-append wl-summary-buffer-refile-list
-		       (list (cons (car dels) del-fld)))
-	    (setq wl-summary-buffer-delete-list
-		  (delete (car dels) wl-summary-buffer-delete-list)))
-	  (setq dels (cdr dels)))
-	;; begin refile...
-	(setq refile-len (length refiles))
-	(setq dst-msgs
-	      (wl-inverse-alist refiles wl-summary-buffer-refile-list))
-	(goto-char start)		; avoid moving cursor to
-					; the bottom line.
-	(when (> refile-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len "Moving messages..."))
-	(while dst-msgs
-	  (setq result nil)
-	  (condition-case nil
-	      (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (if (eq 'null (car (car dst-msgs)))
-				'null
-			      (wl-folder-get-elmo-folder
-			       (car (car dst-msgs))))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    nil ; no-delete
-			    nil ; same-number
-			    unread-marks
-			    t))
-	    (error nil))
-	  (if result			; succeeded.
-	      (progn
-		;; update buffer.
-		(wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
-		;; update refile-alist.
-		(setq wl-summary-buffer-refile-list
-		      (wl-delete-associations (cdr (car dst-msgs))
-					      wl-summary-buffer-refile-list)))
-	    (setq refile-failures
-		  (+ refile-failures (length (cdr (car dst-msgs))))))
-	  (setq dst-msgs (cdr dst-msgs)))
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	;; end refile
-	;; begin cOpy...
-	(setq dst-msgs (wl-inverse-alist copies wl-summary-buffer-copy-list))
-	(when (> copy-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     copy-len "Copying messages..."))
-	(while dst-msgs
-	  (setq result nil)
-	  (condition-case nil
-	      (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (wl-folder-get-elmo-folder
-			     (car (car dst-msgs)))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    t ; t is no-delete (copy)
-			    nil ; same number
-			    unread-marks
-			    t))
-	    (error nil))
-	  (if result			; succeeded.
-	      (progn
-		;; update buffer.
-		(wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
-		;; update copy-alist
-		(setq wl-summary-buffer-copy-list
-		      (wl-delete-associations (cdr (car dst-msgs))
-					      wl-summary-buffer-copy-list)))
-	    (setq copy-failures
-		  (+ copy-failures (length (cdr (car dst-msgs))))))
-	  (setq dst-msgs (cdr dst-msgs)))
-	;; Hide progress bar.
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	;; end cOpy
-	(wl-summary-folder-info-update)
-	(wl-summary-set-message-modified)
-	(wl-summary-set-mark-modified)
-	(run-hooks 'wl-summary-exec-hook)
-	;; message buffer is not up-to-date
-	(unless (and wl-message-buffer
-		     (eq (wl-summary-message-number)
-			 (with-current-buffer wl-message-buffer
-			   wl-message-buffer-cur-number)))
-	  (wl-summary-toggle-disp-msg 'off)
-	  (setq wl-message-buffer nil))
-	(set-buffer-modified-p nil)
-	(message "Executing...done%s%s"
-		 (if (> refile-failures 0)
-		     (format " (%d refiling failed)" refile-failures)
-		   "")
-		 (if (> copy-failures 0)
-		     (format " (%d copying failed)" copy-failures)
-		   ""))))))
-
-(defun wl-summary-erase (&optional number)
-  "Erase message actually, without moving it to trash."
-  (interactive)
-  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
-      (let* ((buffer-num (wl-summary-message-number))
-	     (msg-num (or number buffer-num)))
-	(if (null msg-num)
-	    (message "No message.")
-	  (let* ((msgdb (wl-summary-buffer-msgdb))
-		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
-		 (subject (elmo-delete-char
-			   ?\n (or (elmo-msgdb-overview-entity-get-subject
-				    entity)
-				   wl-summary-no-subject-message))))
-	    (when (yes-or-no-p
-		   (format "Erase \"%s\" without moving it to trash? "
-			   (truncate-string subject 30)))
-	      (wl-summary-unmark msg-num)
-	      (wl-summary-erase-subr (list msg-num))))))
-    (message "Read-only folder.")))
-
-(defun wl-summary-target-mark-erase ()
-  (interactive)
-  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
-      (if (null wl-summary-buffer-target-mark-list)
-	  (message "No marked message.")
-	(when (yes-or-no-p
-	       "Erase all marked messages without moving them to trash? ")
-	  (wl-summary-erase-subr wl-summary-buffer-target-mark-list)
-	  (setq wl-summary-buffer-target-mark-list nil)))
-    (message "Read-only folder.")))
-
-(defun wl-summary-erase-subr (msgs)
-  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
-  (wl-summary-delete-messages-on-buffer msgs)
-  ;; message buffer is not up-to-date
-  (unless (and wl-message-buffer
-	       (eq (wl-summary-message-number)
-		   (with-current-buffer wl-message-buffer
-		     wl-message-buffer-cur-number)))
-    (wl-summary-toggle-disp-msg 'off)
-    (setq wl-message-buffer nil)))
-
-(defun wl-summary-read-folder (default &optional purpose ignore-error
-				no-create init)
-  (let ((fld (completing-read
-	      (format "Folder name %s(%s): " (or purpose "")
-		      default)
-	      'wl-folder-complete-folder
-	      nil nil (or init wl-default-spec)
-	      'wl-read-folder-hist)))
-    (if (or (string= fld wl-default-spec)
-	    (string= fld ""))
-	(setq fld default))
-    (setq fld (elmo-string (wl-folder-get-realname fld)))
-    (if (string-match "\n" fld)
-	(error "Not supported folder name: %s" fld))
-    (unless no-create
-      (if ignore-error
-	  (condition-case nil
-	      (wl-folder-confirm-existence
-	       (wl-folder-get-elmo-folder
-		fld))
-	    (error))
-	(wl-folder-confirm-existence (wl-folder-get-elmo-folder
-				      fld))))
-    fld))
-
-(defun wl-summary-print-destination (msg-num folder)
-  "Print refile destination on line."
-  (wl-summary-remove-destination)
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (folder (copy-sequence folder))
-	  (buffer-read-only nil)
-	  len rs re c)
-      (setq len (string-width folder))
-      (if (< len 1) ()
-	;;(end-of-line)
-	(beginning-of-line)
-	(search-forward "\r")
-	(forward-char -1)
-	(setq re (point))
-	(setq c 0)
-	(while (< c len)
-	  (forward-char -1)
-	  (setq c (+ c (char-width (following-char)))))
-	(and (> c len) (setq folder (concat " " folder)))
-	(setq rs (point))
-	(when wl-summary-width
-	  (put-text-property rs re 'invisible t))
-	(put-text-property rs re 'wl-summary-destination t)
-	(goto-char re)
-	(wl-highlight-refile-destination-string folder)
-	(insert folder)
-	(set-buffer-modified-p nil)))))
-
-(defsubst wl-summary-get-mark (number)
-  "Return a temporal mark of message specified by NUMBER."
-  (or (and (memq number wl-summary-buffer-delete-list) "D")
-      (and (assq number wl-summary-buffer-copy-list) "O")
-      (and (assq number wl-summary-buffer-refile-list) "o")
-      (and (memq number wl-summary-buffer-target-mark-list) "*")))
-
-(defsubst wl-summary-reserve-temp-mark-p (mark)
-  "Return t if temporal MARK should be reserved."
-  (member mark wl-summary-reserve-mark-list))
-
-(defun wl-summary-refile (&optional dst number)
-  "Put refile mark on current line message.
-If optional argument DST is specified, put mark without asking
-destination folder.
-If optional argument NUMBER is specified, mark message specified by NUMBER.
-
-If folder is read-only, message should be copied.
-See `wl-refile-policy-alist' for more details."
-  (interactive)
-  (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
-					 (wl-summary-buffer-folder-name))))
-    (cond ((eq policy 'copy)
-	   (if (interactive-p)
-	       (call-interactively 'wl-summary-copy)
-	     (wl-summary-copy dst number)))
-	  (t
-	   (wl-summary-refile-subr 'refile (interactive-p) dst number)))))
-
-(defun wl-summary-copy (&optional dst number)
-  "Put copy mark on current line message.
-If optional argument DST is specified, put mark without asking
-destination folder.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (wl-summary-refile-subr 'copy (interactive-p) dst number))
-
-(defun wl-summary-refile-subr (copy-or-refile interactive &optional dst number)
-  (let* ((buffer-num (wl-summary-message-number))
-	 (msg-num (or number buffer-num))
-	 (msgid (and msg-num
-		     (elmo-message-field wl-summary-buffer-elmo-folder
-					 msg-num 'message-id)))
-	 (entity (and msg-num
-		      (elmo-msgdb-overview-get-entity
-		       msg-num (wl-summary-buffer-msgdb))))
-	 (variable
-	  (intern (format "wl-summary-buffer-%s-list" copy-or-refile)))
-	 folder mark already tmp-folder)
-    (catch 'done
-      (when (null entity)
-	;; msgdb is empty?
-	(if interactive
-	    (message "Cannot refile."))
-	(throw 'done nil))
-      (when (null msg-num)
-	(if interactive
-	    (message "No message."))
-	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if interactive
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil)))
-      (setq folder (and msg-num
-			(or dst (wl-summary-read-folder
-				 (or (wl-refile-guess entity) wl-trash-folder)
-				 (format "for %s" copy-or-refile)))))
-      ;; Cache folder hack by okada@opaopa.org
-      (if (and (eq (elmo-folder-type-internal
-		    (wl-folder-get-elmo-folder
-		     (wl-folder-get-realname folder))) 'cache)
-	       (not (string= folder
-			     (setq tmp-folder
-				   (concat "'cache/"
-					   (elmo-cache-get-path-subr
-					    (elmo-msgid-to-cache msgid)))))))
-	  (progn
-	    (setq folder tmp-folder)
-	    (message "Force refile to %s." folder)))
-      (if (string= folder (wl-summary-buffer-folder-name))
-	  (error "Same folder"))
-      (if (or (not (elmo-folder-writable-p (wl-folder-get-elmo-folder folder)))
-	      (string= folder wl-queue-folder)
-	      (string= folder wl-draft-folder))
-	  (error "Don't %s messages to %s" copy-or-refile folder))
-      ;; learn for refile.
-      (if (eq copy-or-refile 'refile)
-	  (wl-refile-learn entity folder))
-      (wl-summary-unmark msg-num)
-      (set variable (append
-		     (symbol-value variable)
-		     (list (cons msg-num folder))))
-      (when (or interactive
-		(eq number buffer-num))
-	(wl-summary-mark-line (if (eq copy-or-refile 'refile)
-				  "o" "O"))
-	;; print refile destination
-	(wl-summary-print-destination msg-num folder))
-      (if interactive
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
-      (run-hooks (intern (format "wl-summary-%s-hook" copy-or-refile)))
-      (setq wl-summary-buffer-prev-refile-destination folder)
-      msg-num)))
-
-(defun wl-summary-refile-prev-destination ()
-  "Refile message to previously refiled destination."
-  (interactive)
-  (wl-summary-refile wl-summary-buffer-prev-refile-destination
-		     (wl-summary-message-number))
-  (if (eq wl-summary-move-direction-downward nil)
-      (wl-summary-prev)
-    (wl-summary-next)))
-
-(defun wl-summary-copy-prev-destination ()
-  "Refile message to previously refiled destination."
-  (interactive)
-  (wl-summary-copy wl-summary-buffer-prev-copy-destination
-		   (wl-summary-message-number))
-  (if (eq wl-summary-move-direction-downward nil)
-      (wl-summary-prev)
-    (wl-summary-next)))
-
-(defsubst wl-summary-no-auto-refile-message-p (msg)
-  (member (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg)
-	  wl-summary-auto-refile-skip-marks))
-
-(defun wl-summary-auto-refile (&optional open-all)
-  "Set refile mark automatically according to 'wl-refile-guess-by-rule'."
-  (interactive "P")
-  (message "Marking...")
-  (save-excursion
-    (if (and (eq wl-summary-buffer-view 'thread)
-	     open-all)
-	(wl-thread-open-all))
-    (let* ((spec (wl-summary-buffer-folder-name))
-	   checked-dsts
-	   (count 0)
-	   number dst thr-entity)
-      (goto-line 1)
-      (while (not (eobp))
-	(setq number (wl-summary-message-number))
-	(dolist (number (cons number
-			      (and (eq wl-summary-buffer-view 'thread)
-				   ;; process invisible children.
-				   (not (wl-thread-entity-get-opened
-					 (setq thr-entity
-					       (wl-thread-get-entity number))))
-				   (wl-thread-entity-get-descendant
-				    thr-entity))))
-	  (when (and (not (wl-summary-no-auto-refile-message-p
-			   number))
-		     (setq dst
-			   (wl-folder-get-realname
-			    (wl-refile-guess-by-rule
-			     (elmo-msgdb-overview-get-entity
-			      number (wl-summary-buffer-msgdb)))))
-		     (not (equal dst spec))
-		     (let ((pair (assoc dst checked-dsts))
-			   ret)
-		       (if pair
-			   (cdr pair)
-			 (setq ret
-			       (condition-case nil
-				   (progn
-				     (wl-folder-confirm-existence
-				      (wl-folder-get-elmo-folder dst))
-				     t)
-				 (error)))
-			 (setq checked-dsts (cons (cons dst ret) checked-dsts))
-			 ret)))
-	    (if (wl-summary-refile dst number)
-		(incf count))
-	    (message "Marking...%d message(s)." count)))
-	(forward-line))
-      (if (eq count 0)
-	  (message "No message was marked.")
-	(message "Marked %d message(s)." count)))))
-
-(defun wl-summary-unmark (&optional number)
-  "Unmark marks (temporary, refile, copy, delete)of current line.
-If optional argument NUMBER is specified, unmark message specified by NUMBER."
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  visible
-	  msg-num
-	  cur-mark)
-      (if number
-	  (setq visible (wl-summary-jump-to-msg number))
-	(setq visible t))
-      ;; Delete mark on buffer.
-      (when visible
-	(setq cur-mark (wl-summary-temp-mark))
-	(unless (string= cur-mark " ")
-	  (delete-backward-char 1)
-	  (or number
-	      (setq number (wl-summary-message-number)))
-	  (insert (or (wl-summary-get-score-mark number)
-		      " ")))
-	(if (or (string= cur-mark "o")
-		(string= cur-mark "O"))
-	    (wl-summary-remove-destination))
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line))
-	(set-buffer-modified-p nil))
-      ;; Remove from temporal mark structure.
-      (and number
-	   (wl-summary-delete-mark number)))))
-
-(defun wl-summary-msg-marked-as-target (msg)
-  (if (memq msg wl-summary-buffer-target-mark-list)
-      t))
-
-(defun wl-summary-msg-marked-as-copied (msg)
-  (assq msg wl-summary-buffer-copy-list))
-
-(defun wl-summary-msg-marked-as-deleted (msg)
-  (if (memq msg wl-summary-buffer-delete-list)
-      t))
-
-(defun wl-summary-msg-marked-as-refiled (msg)
-  (assq msg wl-summary-buffer-refile-list))
-
-(defun wl-summary-target-mark (&optional number)
-  "Put target mark '*' on current message.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (let* ((buffer-num (wl-summary-message-number))
-	 (msg-num (or number buffer-num))
-	 mark)
-    (catch 'done
-      (when (null msg-num)
-	(if (interactive-p)
-	    (message "No message."))
-	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if (interactive-p)
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil))
-	(wl-summary-unmark msg-num))
-      (if (or (interactive-p)
-	      (eq number buffer-num))
-	  (wl-summary-mark-line "*"))
-      (setq wl-summary-buffer-target-mark-list
-	    (cons msg-num wl-summary-buffer-target-mark-list))
-      (if (interactive-p)
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
-      msg-num)))
-
-
-(defun wl-summary-refile-region (beg end)
-  "Put refile mark on messages in the region specified by BEG and END."
-  (interactive "r")
-  (wl-summary-refile-region-subr "refile" beg end))
-
-(defun wl-summary-copy-region (beg end)
-  "Put copy mark on messages in the region specified by BEG and END."
-  (interactive "r")
-  (wl-summary-refile-region-subr "copy" beg end))
-
-(defun wl-summary-refile-region-subr (copy-or-refile beg end)
-  (save-excursion
-    (save-restriction
-      (goto-char beg)
-      ;; guess by first msg
-      (let* ((msgid (cdr (assq (wl-summary-message-number)
-			       (elmo-msgdb-get-number-alist
-				(wl-summary-buffer-msgdb)))))
-	     (function (intern (format "wl-summary-%s" copy-or-refile)))
-	     (entity (assoc msgid (elmo-msgdb-get-overview
-				   (wl-summary-buffer-msgdb))))
-	     folder)
-	(if entity
-	    (setq folder (wl-summary-read-folder (wl-refile-guess entity)
-						 (format "for %s"
-							 copy-or-refile))))
-	(narrow-to-region beg end)
-	(if (eq wl-summary-buffer-view 'thread)
-	    (progn
-	      (while (not (eobp))
-		(let* ((number (wl-summary-message-number))
-		       (entity (wl-thread-get-entity number))
-		       children)
-		  (if (wl-thread-entity-get-opened entity)
-		      ;; opened...refile line.
-		      (funcall function folder number)
-		    ;; closed
-		    (setq children (wl-thread-get-children-msgs number))
-		    (while children
-		      (funcall function folder (pop children))))
-		  (forward-line 1))))
-	  (while (not (eobp))
-	    (funcall function folder (wl-summary-message-number))
-	    (forward-line 1)))))))
-
-(defun wl-summary-unmark-region (beg end)
-  (interactive "r")
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char (point-min))
-      (if (eq wl-summary-buffer-view 'thread)
-	  (progn
-	    (while (not (eobp))
-	      (let* ((number (wl-summary-message-number))
-		     (entity (wl-thread-get-entity number)))
-		(if (wl-thread-entity-get-opened entity)
-		    ;; opened...unmark line.
-		    (wl-summary-unmark)
-		  ;; closed
-		  (wl-summary-delete-marks-on-buffer
-		   (wl-thread-get-children-msgs number))))
-	      (forward-line 1)))
-	(while (not (eobp))
-	  (wl-summary-unmark)
-	  (forward-line 1))))))
-
-(defun wl-summary-mark-region-subr (function beg end)
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char (point-min))
-      (if (eq wl-summary-buffer-view 'thread)
-	  (progn
-	    (while (not (eobp))
-	      (let* ((number (wl-summary-message-number))
-		     (entity (wl-thread-get-entity number))
-		     (wl-summary-move-direction-downward t)
-		     children)
-		(if (wl-thread-entity-get-opened entity)
-		    ;; opened...delete line.
-		    (funcall function number)
-		  ;; closed
-		  (setq children (wl-thread-get-children-msgs number))
-		  (while children
-		    (funcall function (pop children))))
-		(forward-line 1))))
-	(while (not (eobp))
-	  (funcall function (wl-summary-message-number))
-	  (forward-line 1))))))
-
-(defun wl-summary-delete-region (beg end)
-  (interactive "r")
-  (wl-summary-mark-region-subr 'wl-summary-delete beg end))
-
-(defun wl-summary-target-mark-region (beg end)
-  (interactive "r")
-  (wl-summary-mark-region-subr 'wl-summary-target-mark beg end))
-
-(defun wl-summary-target-mark-all ()
-  (interactive)
-  (wl-summary-target-mark-region (point-min) (point-max))
-  (setq wl-summary-buffer-target-mark-list
-	(mapcar 'car
-		(elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))))
-
-(defun wl-summary-delete-all-mark (mark)
-  (goto-char (point-min))
-  (while (not (eobp))
-    (when (string= (wl-summary-temp-mark) mark)
-      (wl-summary-unmark))
-    (forward-line 1))
-  (cond ((string= mark "*")
-	 (setq wl-summary-buffer-target-mark-list nil))
-	((string= mark "D")
-	 (setq wl-summary-buffer-delete-list nil))
-	((string= mark "O")
-	 (setq wl-summary-buffer-copy-list nil))
-	((string= mark "o")
-	 (setq wl-summary-buffer-refile-list nil))))
-
-(defun wl-summary-unmark-all ()
-  "Unmark all according to what you input."
-  (interactive)
-  (let ((unmarks (string-to-char-list (read-from-minibuffer "Unmark: ")))
-	cur-mark)
-    (save-excursion
-      (while unmarks
-	(setq cur-mark (char-to-string (car unmarks)))
-	(wl-summary-delete-all-mark cur-mark)
-	(setq unmarks (cdr unmarks))))))
-
-(defun wl-summary-target-mark-thread ()
-  (interactive)
-  (wl-thread-call-region-func 'wl-summary-target-mark-region t))
 
 (defun wl-summary-target-mark-msgs (msgs)
   "Return the number of marked messages."
@@ -3674,41 +2780,18 @@ If ARG, exit virtual folder."
   "Erase all temp marks from buffer."
   (interactive)
   (when (or wl-summary-buffer-target-mark-list
-	    wl-summary-buffer-delete-list
-	    wl-summary-buffer-refile-list
-	    wl-summary-buffer-copy-list)
+	    wl-summary-buffer-temp-mark-list)
     (save-excursion
       (goto-char (point-min))
       (unless no-msg
 	(message "Unmarking..."))
       (while (not (eobp))
-	(wl-summary-unmark)
+	(wl-summary-unset-mark)
 	(forward-line 1))
       (unless no-msg
 	(message "Unmarking...done"))
       (setq wl-summary-buffer-target-mark-list nil)
-      (setq wl-summary-buffer-delete-list nil)
-      (setq wl-summary-buffer-refile-list nil)
-      (setq wl-summary-buffer-copy-list nil))))
-
-(defun wl-summary-delete-mark (number)
-  "Delete temporary mark of the message specified by NUMBER."
-  (cond
-   ((memq number wl-summary-buffer-target-mark-list)
-    (setq wl-summary-buffer-target-mark-list
-	  (delq number wl-summary-buffer-target-mark-list)))
-   ((memq number wl-summary-buffer-delete-list)
-    (setq wl-summary-buffer-delete-list
-	  (delq number wl-summary-buffer-delete-list)))
-   (t
-    (let (pair)
-      (cond
-       ((setq pair (assq number wl-summary-buffer-copy-list))
-	(setq wl-summary-buffer-copy-list
-	      (delq pair wl-summary-buffer-copy-list)))
-       ((setq pair (assq number wl-summary-buffer-refile-list))
-	(setq wl-summary-buffer-refile-list
-	      (delq pair wl-summary-buffer-refile-list))))))))
+      (setq wl-summary-buffer-temp-mark-list nil))))
 
 (defsubst wl-summary-temp-mark ()
   "Move to the temp-mark column and return mark string."
@@ -3728,107 +2811,7 @@ If ARG, exit virtual folder."
 	  (buffer-read-only nil))
       (wl-summary-temp-mark) ; mark
       (delete-backward-char 1)
-      (insert mark)
-      (if wl-summary-highlight
-	  (wl-highlight-summary-current-line))
-      (set-buffer-modified-p nil))))
-
-(defun wl-summary-target-mark-delete ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let (number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  (let (wl-summary-buffer-disp-msg)
-	    (when (setq number (wl-summary-message-number))
-	      (wl-summary-delete number)
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list)))))
-	(forward-line 1))
-      (setq mlist wl-summary-buffer-target-mark-list)
-      (while mlist
-	(wl-append wl-summary-buffer-delete-list (list (car mlist)))
-	(setq wl-summary-buffer-target-mark-list
-	      (delq (car mlist) wl-summary-buffer-target-mark-list))
-	(setq mlist (cdr mlist))))))
-
-(defun wl-summary-target-mark-prefetch (&optional ignore-cache)
-  (interactive "P")
-  (save-excursion
-    (let* ((mlist (nreverse wl-summary-buffer-target-mark-list))
-	   (inhibit-read-only t)
-	   (buffer-read-only nil)
-	   (count 0)
-	   (length (length mlist))
-	   (pos (point))
-	   skipped
-	   new-mark)
-      (while mlist
-	(setq new-mark (wl-summary-prefetch-msg (car mlist) ignore-cache))
-	(if new-mark
-	    (progn
-	      (message "Prefetching... %d/%d message(s)"
-		       (setq count (+ 1 count)) length)
-	      (when (wl-summary-jump-to-msg (car mlist))
-		(wl-summary-unmark)
-		(when new-mark
-		  (wl-summary-persistent-mark) ; move
-		  (delete-backward-char 1)
-		  (insert new-mark)
-		  (if wl-summary-highlight
-		      (wl-highlight-summary-current-line))
-		  (save-excursion
-		    (goto-char pos)
-		    (sit-for 0)))))
-	  (setq skipped (cons (car mlist) skipped)))
-	(setq mlist (cdr mlist)))
-      (setq wl-summary-buffer-target-mark-list skipped)
-      (message "Prefetching... %d/%d message(s)" count length)
-      (set-buffer-modified-p nil))))
-
-(defun wl-summary-target-mark-refile-subr (copy-or-refile)
-  (let ((variable
-	 (intern (format "wl-summary-buffer-%s-list" copy-or-refile)))
-	(function
-	 (intern (format "wl-summary-%s" copy-or-refile)))
-	(numlist wl-summary-buffer-number-list)
-	regexp number msgid entity folder mlist)
-    (save-excursion
-      ;; guess by first mark
-      (while numlist
-	(if (memq (car numlist) wl-summary-buffer-target-mark-list)
-	    (setq number (car numlist)
-		  numlist nil))
-	(setq numlist (cdr numlist)))
-      (when number
-	(setq msgid (elmo-message-field wl-summary-buffer-elmo-folder
-					number 'message-id)
-	      entity (elmo-msgdb-overview-get-entity
-		      number (wl-summary-buffer-msgdb)))
-	(if (null entity)
-	    (error "Cannot %s" copy-or-refile))
-	(setq folder (wl-summary-read-folder
-		      (wl-refile-guess entity)
-		      (format "for %s" copy-or-refile)))
-	(goto-char (point-min))
-	(while (not (eobp))
-	  (when (string= (wl-summary-temp-mark) "*")
-	    (let (wl-summary-buffer-disp-msg)
-	      (when (setq number (wl-summary-message-number))
-		(funcall function folder number)
-		(setq wl-summary-buffer-target-mark-list
-		      (delq number wl-summary-buffer-target-mark-list)))))
-	  (forward-line 1))
-	;; process invisible messages.
-	(setq mlist wl-summary-buffer-target-mark-list)
-	(while mlist
-	  (set variable
-	       (append (symbol-value variable)
-		       (list (cons (car mlist) folder))))
-	  (setq wl-summary-buffer-target-mark-list
-		(delq (car mlist) wl-summary-buffer-target-mark-list))
-	  (setq mlist (cdr mlist)))))))
+      (insert mark))))
 
 (defun wl-summary-next-buffer ()
   "Switch to next summary buffer."
@@ -3851,14 +2834,6 @@ If ARG, exit virtual folder."
     (switch-to-buffer
      (or (cadr (memq (current-buffer) buffers))
 	 (car buffers)))))
-
-(defun wl-summary-target-mark-copy ()
-  (interactive)
-  (wl-summary-target-mark-refile-subr "copy"))
-
-(defun wl-summary-target-mark-refile ()
-  (interactive)
-  (wl-summary-target-mark-refile-subr "refile"))
 
 (defun wl-summary-target-mark-mark-as-read ()
   (interactive)
@@ -3966,70 +2941,153 @@ If ARG, exit virtual folder."
   (interactive)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
-(defun wl-summary-mark-as-read (&optional number-or-numbers no-folder-mark)
-  (interactive)
+(defun wl-summary-update-mark (&optional number)
+  "Synch up persistent mark of current line with msgdb's."
+  (let ((number (or number (wl-summary-message-number)))
+	buffer-read-only cur-mark)
+    (setq cur-mark (elmo-message-mark wl-summary-buffer-elmo-folder number))
+    (save-excursion
+      ;; set mark on buffer
+      (unless (string= (wl-summary-persistent-mark) cur-mark)
+	(delete-backward-char 1)
+	(insert (or cur-mark " ")))
+      (when wl-summary-highlight
+	(wl-highlight-summary-current-line))
+      (set-buffer-modified-p nil))))
+
+(defsubst wl-summary-mark-as-read-internal (inverse
+					    number-or-numbers
+					    no-folder-mark
+					    no-modeline-update)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
-	  (msgdb (wl-summary-buffer-msgdb))
-	  number-list visible mark stat new-mark)
-      (setq number-list (or (and (numberp number-or-numbers)
-				 (list number-or-numbers))
-			    number-or-numbers ; list of numbers
-			    (and (wl-summary-message-number) ; interactive
-				 (list (wl-summary-message-number)))))
+	  (case-fold-search nil)
+	  unread-message number
+	  number-list mark visible new-mark)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (setq unread-message
+				     (member (elmo-message-mark 
+					      folder
+					      number-or-numbers)
+					     (elmo-msgdb-unread-marks)))
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq number (wl-summary-message-number))
+			       ;; interactive
+			       (setq unread-message
+				     (member (elmo-message-mark folder number)
+					     (elmo-msgdb-unread-marks)))
+			       (list number))))
       (if (null number-list)
 	  (message "No message.")
-	(unless no-folder-mark
-	  (elmo-folder-mark-as-read folder number-list))
+	(if inverse
+	    (elmo-folder-unmark-read folder number-list no-folder-mark)
+	  (elmo-folder-mark-as-read folder number-list no-folder-mark))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number)
-		mark (elmo-msgdb-get-mark msgdb number))
-	  (cond
-	   ((string= mark wl-summary-new-mark) ; N
-	    (setq stat 'new))
-	   ((string= mark wl-summary-unread-uncached-mark) ; U
-	    (setq stat 'unread))
-	   ((string= mark wl-summary-unread-cached-mark)  ; !
-	    (setq stat 'unread))
-	   ((string= mark wl-summary-read-uncached-mark)  ; u
-	    (setq stat 'read)))
-	  (setq new-mark
-		(if (and (elmo-message-use-cache-p folder number)
-			 (not (elmo-folder-local-p folder))
-			 (not (elmo-file-cache-exists-p
-			       (elmo-message-field wl-summary-buffer-elmo-folder
-						   number 'message-id))))
-		    wl-summary-read-uncached-mark
-		  nil))
-	  (cond ((eq stat 'unread)
-		 (setq wl-summary-buffer-unread-count
-		       (1- wl-summary-buffer-unread-count)))
-		((eq stat 'new)
-		 (setq wl-summary-buffer-new-count
-		       (1- wl-summary-buffer-new-count))))
-	  (when stat
-	    (when visible
-	      (unless (string= (wl-summary-persistent-mark) new-mark)
-		(delete-backward-char 1)
-		(insert (or new-mark " "))))
-	    (unless (string= mark new-mark)
-	      (elmo-msgdb-set-mark msgdb number new-mark))
-	    (wl-summary-set-mark-modified))
-	  (if (and visible wl-summary-highlight)
-	      (wl-highlight-summary-current-line))
-	  (if stat
-	      (save-current-buffer ; assumed by remaining
-		(run-hooks 'wl-summary-unread-message-hook))))
-	(wl-summary-update-modeline)
-	(wl-folder-update-unread
-	 (wl-summary-buffer-folder-name)
-	 (+ wl-summary-buffer-unread-count
-	    wl-summary-buffer-new-count))
-	(set-buffer-modified-p nil)
-	number-or-numbers ;return value
-	))))
+		new-mark (elmo-message-mark folder number))
+	  (unless inverse
+	    (when unread-message
+	      (run-hooks 'wl-summary-unread-message-hook)))
+	  ;; set mark on buffer
+	  (when visible
+	    (unless (string= (wl-summary-persistent-mark) (or new-mark " "))
+	      (delete-backward-char 1)
+	      (insert (or new-mark " ")))
+	    (if (and visible wl-summary-highlight)
+		(wl-highlight-summary-current-line))
+	    (set-buffer-modified-p nil)))
+	(unless no-modeline-update
+	  ;; Update unread numbers.
+	  ;; should elmo-folder-mark-as-read return unread numbers?
+	  (wl-summary-count-unread)
+	  (wl-summary-update-modeline)
+	  (wl-folder-update-unread
+	   (wl-summary-buffer-folder-name)
+	   (+ wl-summary-buffer-unread-count
+	      wl-summary-buffer-new-count)))))))
+
+(defun wl-summary-mark-as-read (&optional number-or-numbers
+					  no-folder-mark
+					  no-modeline-update)
+  (interactive)
+  (wl-summary-mark-as-read-internal nil
+				    number-or-numbers
+				    no-folder-mark
+				    no-modeline-update))
+
+(defun wl-summary-mark-as-unread (&optional number-or-numbers
+					    no-folder-mark
+					    no-modeline-update)
+  (interactive)
+  (wl-summary-mark-as-read-internal 'inverse
+				    number-or-numbers
+				    no-folder-mark
+				    no-modeline-update))
+
+(defsubst wl-summary-mark-as-answered-internal (inverse
+						number-or-numbers
+						no-modeline-update)
+  (save-excursion
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  (folder wl-summary-buffer-elmo-folder)
+	  (case-fold-search nil)
+	  number number-list mark visible new-mark)
+      (setq number-list (cond ((numberp number-or-numbers)
+			       (list number-or-numbers))
+			      ((and (not (null number-or-numbers))
+				    (listp number-or-numbers))
+			       number-or-numbers)
+			      ((setq number (wl-summary-message-number))
+			       ;; interactive
+			       (list number))))
+      (if (null number-list)
+	  (message "No message.")
+	(if inverse
+	    (elmo-folder-unmark-answered folder number-list)
+	  (elmo-folder-mark-as-answered folder number-list))
+	(dolist (number number-list)
+	  (setq visible (wl-summary-jump-to-msg number)
+		new-mark (elmo-message-mark folder number))
+	  ;; set mark on buffer
+	  (when visible
+	    (unless (string= (wl-summary-persistent-mark) (or new-mark " "))
+	      (delete-backward-char 1)
+	      (insert (or new-mark " ")))
+	    (if (and visible wl-summary-highlight)
+		(wl-highlight-summary-current-line))
+	    (set-buffer-modified-p nil)))
+	(unless no-modeline-update
+	  ;; Update unread numbers.
+	  ;; should elmo-folder-mark-as-read return unread numbers?
+	  (wl-summary-count-unread)
+	  (wl-summary-update-modeline)
+	  (wl-folder-update-unread
+	   (wl-summary-buffer-folder-name)
+	   (+ wl-summary-buffer-unread-count
+	      wl-summary-buffer-new-count)))))))
+
+(defun wl-summary-mark-as-answered (&optional number-or-numbers
+					      no-modeline-update)
+  (interactive)
+  (wl-summary-mark-as-answered-internal
+   (and (interactive-p)
+	(member (elmo-message-mark wl-summary-buffer-elmo-folder
+				   (wl-summary-message-number))
+		(elmo-msgdb-answered-marks)))
+   number-or-numbers
+   no-modeline-update))
+
+(defun wl-summary-mark-as-unanswered (&optional number-or-numbers
+					      no-modeline-update)
+  (wl-summary-mark-as-answered-internal 'inverse
+					number-or-numbers
+					no-modeline-update))
 
 (defun wl-summary-mark-as-important (&optional number
 					       mark
@@ -4043,13 +3101,12 @@ If ARG, exit virtual folder."
 	  (inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
-	  (msgdb (wl-summary-buffer-msgdb))
-	  (number-alist (elmo-msgdb-get-number-alist msgdb))
 	  message-id visible cur-mark)
       (if number
 	  (progn
 	    (setq visible (wl-summary-jump-to-msg number))
-	    (setq mark (or mark (elmo-msgdb-get-mark msgdb number))))
+	    (setq mark (or mark (elmo-message-mark 
+				 wl-summary-buffer-elmo-folder number))))
 	(setq visible t))
       (when visible
 	(if (null (setq number (wl-summary-message-number)))
@@ -4061,7 +3118,8 @@ If ARG, exit virtual folder."
 	  (wl-summary-goto-previous-message-beginning)))
       (if (or (and (not visible)
 		   ;; already exists in msgdb.
-		   (elmo-msgdb-overview-get-entity number msgdb))
+		   (elmo-message-entity wl-summary-buffer-elmo-folder
+					number))
 	      (setq cur-mark (wl-summary-persistent-mark)))
 	  (progn
 	    (setq number (or number (wl-summary-message-number)))
@@ -4070,12 +3128,13 @@ If ARG, exit virtual folder."
 			      wl-summary-buffer-elmo-folder
 			      number
 			      'message-id))
-	    (if (string= mark wl-summary-important-mark)
+	    (if (string= mark elmo-msgdb-important-mark)
 		(progn
 		  ;; server side mark
 		  (save-match-data
+		    (elmo-folder-unmark-important folder (list number)
+						  no-server-update)
 		    (unless no-server-update
-		      (elmo-folder-unmark-important folder (list number))
 		      (elmo-msgdb-global-mark-delete message-id))
 		    ;; Remove cache if local folder.
 		    (if (and (elmo-folder-local-p folder)
@@ -4085,25 +3144,20 @@ If ARG, exit virtual folder."
 			 (elmo-file-cache-get-path message-id))))
 		  (when visible
 		    (delete-backward-char 1)
-		    (insert " "))
-		  (elmo-msgdb-set-mark msgdb number nil))
+		    (insert (or (elmo-message-mark folder number) " "))))
 	      ;; server side mark
-	      (save-match-data
-		(unless no-server-update
-		  (elmo-folder-mark-as-important folder (list number))))
+	      (elmo-folder-mark-as-important folder (list number)
+					     no-server-update)
 	      (when visible
 		(delete-backward-char 1)
-		(insert wl-summary-important-mark))
-	      (elmo-msgdb-set-mark msgdb number
-				   wl-summary-important-mark)
+		(insert elmo-msgdb-important-mark))
 	      (if (eq (elmo-file-cache-exists-p message-id) 'entire)
 		  (elmo-folder-mark-as-read folder (list number))
 		;; Force cache message.
 		(elmo-message-encache folder number 'read))
 	      (unless no-server-update
 		(elmo-msgdb-global-mark-set message-id
-					    wl-summary-important-mark)))
-	    (wl-summary-set-mark-modified)))
+					    elmo-msgdb-important-mark)))))
       (if (and visible wl-summary-highlight)
 	  (wl-highlight-summary-current-line))))
   (set-buffer-modified-p nil)
@@ -4123,7 +3177,7 @@ If ARG, exit virtual folder."
   "Return non-nil when summary line format is changed."
   (not (string=
 	wl-summary-buffer-line-format
-	(or (elmo-object-load (expand-file-name 
+	(or (elmo-object-load (expand-file-name
 			       wl-summary-line-format-file
 			       (elmo-folder-msgdb-path
 				wl-summary-buffer-elmo-folder))
@@ -4272,40 +3326,24 @@ If ARG, exit virtual folder."
 	(wl-match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
-(defvar wl-summary-move-spec-plugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, wl-summary-new-mark))
-	      (p . (, (wl-regexp-opt
-		       (list wl-summary-unread-uncached-mark
-			     wl-summary-unread-cached-mark))))
-	      (p . (, (regexp-quote wl-summary-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, (wl-regexp-opt
-			  (list wl-summary-new-mark
-				wl-summary-unread-uncached-mark
-				wl-summary-unread-cached-mark))))
-		 (p . (, (regexp-quote wl-summary-important-mark))))))))
-
-(defvar wl-summary-move-spec-unplugged-alist
-  (` ((new . ((t . nil)
-	      (p . (, wl-summary-unread-cached-mark))
-	      (p . (, (regexp-quote wl-summary-important-mark)))))
-      (unread . ((t . nil)
-		 (p . (, wl-summary-unread-cached-mark))
-		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+(defvar wl-summary-move-spec-alist
+  '((new . ((t . nil)
+	    (p . new)
+	    (p . unread)
+	    (p . important)))
+    (unread . ((t . nil)
+	       (p . unread)
+	       (p . important)))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (if wl-summary-buffer-next-message-function
       (funcall wl-summary-buffer-next-message-function num direction hereto)
     (let ((cur-spec (cdr (assq wl-summary-move-order
-			       (if (elmo-folder-plugged-p
-				    wl-summary-buffer-elmo-folder)
-				   wl-summary-move-spec-plugged-alist
-				 wl-summary-move-spec-unplugged-alist))))
+			       wl-summary-move-spec-alist)))
 	  (nums (memq num (if (eq direction 'up)
 			      (reverse wl-summary-buffer-number-list)
 			    wl-summary-buffer-number-list)))
-	  marked-list nums2)
+	  flagged-list nums2)
       (unless hereto (setq nums (cdr nums)))
       (setq nums2 nums)
       (if cur-spec
@@ -4313,12 +3351,15 @@ If ARG, exit virtual folder."
 	    (while cur-spec
 	      (setq nums nums2)
 	      (cond ((eq (car (car cur-spec)) 'p)
-		     (if (setq marked-list
-			       (elmo-folder-list-messages-mark-match
+		     (if (setq flagged-list
+			       (elmo-folder-list-flagged
 				wl-summary-buffer-elmo-folder
 				(cdr (car cur-spec))))
 			 (while nums
-			   (if (memq (car nums) marked-list)
+			   (if (and (memq (car nums) flagged-list)
+				    (elmo-message-accessible-p
+				     wl-summary-buffer-elmo-folder
+				     (car nums)))
 			       (throw 'done (car nums)))
 			   (setq nums (cdr nums)))))
 		    ((eq (car (car cur-spec)) 't)
@@ -4360,9 +3401,7 @@ If ARG, exit virtual folder."
 	   (view (expand-file-name wl-summary-view-file dir))
 	   (save-view wl-summary-buffer-view)
 	   (mark-list (copy-sequence wl-summary-buffer-target-mark-list))
-	   (refile-list (copy-sequence wl-summary-buffer-refile-list))
-	   (copy-list (copy-sequence wl-summary-buffer-copy-list))
-	   (delete-list (copy-sequence wl-summary-buffer-delete-list))
+	   (temp-list (copy-sequence wl-summary-buffer-temp-mark-list))
 	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
 	   (temp-column wl-summary-buffer-temp-mark-column)
 	   (charset wl-summary-buffer-mime-charset))
@@ -4384,11 +3423,9 @@ If ARG, exit virtual folder."
 		(make-local-variable 'wl-summary-highlight)
 		(setq wl-summary-highlight nil
 		      wl-summary-buffer-target-mark-list mark-list
-		      wl-summary-buffer-refile-list refile-list
-		      wl-summary-buffer-copy-list copy-list
-		      wl-summary-buffer-delete-list delete-list
+		      wl-summary-buffer-temp-mark-list temp-list
 		      wl-summary-buffer-temp-mark-column temp-column)
-		(wl-summary-delete-all-temp-marks)
+		(wl-summary-delete-all-temp-marks 'no-msg)
 		(encode-coding-region
 		 (point-min) (point-max)
 		 (or (and wl-on-mule ; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
@@ -4701,13 +3738,10 @@ Return t if message exists."
   (interactive)
   (let* ((original (wl-summary-message-number))
 	 (msgid (elmo-string (or id (read-from-minibuffer "Message-ID: "))))
-	 (number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
+	 (entity (elmo-message-entity wl-summary-buffer-elmo-folder msgid))
 	 msg otherfld schar
-	 (errmsg
-	  (format "No message with id \"%s\" in the folder." msgid)))
-    (if (setq msg (car (rassoc msgid number-alist)))
-;;;	(wl-summary-jump-to-msg-internal
-;;;	 (wl-summary-buffer-folder-name) msg 'no-sync)
+	 (errmsg (format "No message with id \"%s\" in the folder." msgid)))
+    (if (setq msg (elmo-message-entity-number entity))
 	(progn
 	  (wl-thread-jump-to-msg msg)
 	  t)
@@ -4797,9 +3831,10 @@ Return t if message exists."
 	       folder scan-type nil nil t)
 	    (if msgid
 		(setq msg
-		      (car (rassoc msgid
-				   (elmo-msgdb-get-number-alist
-				    (wl-summary-buffer-msgdb))))))
+		      (elmo-message-entity-number
+		       (elmo-message-entity
+			wl-summary-buffer-elmo-folder
+			msgid))))
 	    (setq entity (wl-folder-search-entity-by-name folder
 							  wl-folder-entity
 							  'folder))
@@ -4897,12 +3932,14 @@ Reply to author if invoked with ARG."
     (when number
       (save-excursion
 	(wl-summary-redisplay-internal folder number))
+      (elmo-folder-mark-as-answered folder (list number))
+      (wl-summary-update-mark number)
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
       (when (setq mes-buf (wl-message-get-original-buffer))
-	(wl-draft-reply mes-buf arg summary-buf)
+	(wl-draft-reply mes-buf arg summary-buf number)
 	(wl-draft-reply-position wl-draft-reply-default-position)
 	(unless without-setup-hook
 	  (run-hooks 'wl-mail-setup-hook)))
@@ -5011,23 +4048,23 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	()
       (setq skip-pmark-regexp
 	    (wl-regexp-opt (list " "
-				 wl-summary-unread-cached-mark
-				 wl-summary-important-mark))))
+				 elmo-msgdb-unread-cached-mark
+				 elmo-msgdb-important-mark))))
     (beginning-of-line)
-    (while (and skip
-		(not (if downward (eobp) (bobp))))
-      (if downward
-	  (forward-line 1)
-	(forward-line -1))
-      (setq skip (or (string-match skip-tmark-regexp
-				   (save-excursion
-				     (wl-summary-temp-mark)))
-		     (and skip-pmark-regexp
-			  (not (string-match
-				skip-pmark-regexp
-				(save-excursion
-				  (wl-summary-persistent-mark))))))))
-
+    (let (case-fold-search)
+      (while (and skip
+		  (not (if downward (eobp) (bobp))))
+	(if downward
+	    (forward-line 1)
+	  (forward-line -1))
+	(setq skip (or (string-match skip-tmark-regexp
+				     (save-excursion
+				       (wl-summary-temp-mark)))
+		       (and skip-pmark-regexp
+			    (not (string-match
+				  skip-pmark-regexp
+				  (save-excursion
+				    (wl-summary-persistent-mark)))))))))
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
@@ -5169,12 +4206,11 @@ Use function list is `wl-summary-write-current-folder-functions'."
 
 (defsubst wl-summary-redisplay-internal (&optional folder number force-reload)
   (interactive)
-  (let* ((msgdb (wl-summary-buffer-msgdb))
-	 (folder (or folder wl-summary-buffer-elmo-folder))
+  (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
-	 fld-buf fld-win thr-entity)
+	 no-folder-mark fld-buf fld-win thr-entity)
     (if (and wl-thread-open-reading-thread
 	     (eq wl-summary-buffer-view 'thread)
 	     (not (wl-thread-entity-get-opened
@@ -5193,23 +4229,29 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-summary-mark-as-read
-	   num
-	   ;; not fetched, then change server-mark.
-	   (if (wl-message-redisplay folder num 'mime
-				     (or force-reload
-					 (string= (elmo-folder-name-internal
-						   folder)
-						  wl-draft-folder)))
-	       nil
-	     ;; plugged, then leave server-mark.
-	     (if (and
-		  (not
-		   (elmo-folder-local-p
-		    wl-summary-buffer-elmo-folder))
-		  (elmo-folder-plugged-p
-		   wl-summary-buffer-elmo-folder))
-		 'leave)))
+	  (setq no-folder-mark
+		;; If cache is used, change folder-mark.
+		(if (wl-message-redisplay folder num
+					  'mime
+					  (or
+					   force-reload
+					   (string= (elmo-folder-name-internal
+						     folder)
+						    wl-draft-folder)))
+		    nil
+		  ;; plugged, then leave folder-mark.
+		  (if (and (not (elmo-folder-local-p
+				 wl-summary-buffer-elmo-folder))
+			   (elmo-folder-plugged-p
+			    wl-summary-buffer-elmo-folder))
+		      'leave)))
+	  (when (elmo-message-use-cache-p folder num)
+	    (elmo-message-set-cached folder num t))
+	  (if (member (elmo-message-mark wl-summary-buffer-elmo-folder
+					 num)
+		      (elmo-msgdb-unread-marks))
+	      (wl-summary-mark-as-read num no-folder-mark)
+	    (wl-summary-update-mark))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
@@ -5500,12 +4542,9 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	    (let* ((buffer (generate-new-buffer " *print*"))
 		   (entity (progn
 			     (set-buffer summary-buffer)
-			     (assoc (cdr (assq
-					  (wl-summary-message-number)
-					  (elmo-msgdb-get-number-alist
-					   (wl-summary-buffer-msgdb))))
-				    (elmo-msgdb-get-overview
-				     (wl-summary-buffer-msgdb)))))
+			     (elmo-message-entity
+			      wl-summary-buffer-elmo-folder
+			      (wl-summary-message-number))))
 		   (wl-ps-subject
 		    (and entity
 			 (or (elmo-msgdb-overview-entity-get-subject entity)
@@ -5547,14 +4586,13 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-summary-unmark num))))))
 
 (defun wl-summary-folder-info-update ()
-  (let ((folder (elmo-string (wl-summary-buffer-folder-name)))
-	(num-db (elmo-msgdb-get-number-alist
-		 (wl-summary-buffer-msgdb))))
-    (wl-folder-set-folder-updated folder
-				  (list 0
-					(+ wl-summary-buffer-unread-count
-					   wl-summary-buffer-new-count)
-					(length num-db)))))
+  (wl-folder-set-folder-updated
+   (elmo-string (wl-summary-buffer-folder-name))
+   (list 0
+	 (+ wl-summary-buffer-unread-count
+	    wl-summary-buffer-new-count)
+	 (elmo-folder-length
+	  wl-summary-buffer-elmo-folder))))
 
 (defun wl-summary-get-original-buffer ()
   "Get original buffer for the current summary."

@@ -349,10 +349,7 @@ update overview when message is fetched."
 	  (list (cons "xref" (shimbun-header-xref header)))))))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
-					      numlist new-mark
-					      already-mark seen-mark
-					      important-mark
-					      seen-list)
+					      numlist flag-table)
   (let* (overview number-alist mark-alist entity
 		  i percent number length pair msgid gmark seen)
     (setq length (length numlist))
@@ -371,15 +368,12 @@ update overview when message is fetched."
 	(setq number-alist
 	      (elmo-msgdb-number-add number-alist
 				     number msgid))
-	(setq seen (member msgid seen-list))
 	(if (setq gmark (or (elmo-msgdb-global-mark-get msgid)
-			    (if (elmo-file-cache-status
-				 (elmo-file-cache-get msgid))
-				(if seen nil already-mark)
-			      (if seen
-				  (if elmo-shimbun-use-cache
-				      seen-mark)
-				new-mark))))
+			    (elmo-msgdb-mark
+			     (elmo-flag-table-get flag-table msgid)
+			     (elmo-file-cache-status
+			      (elmo-file-cache-get msgid))
+			     'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append mark-alist
 					  number gmark))))
@@ -538,27 +532,6 @@ update overview when message is fetched."
 	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
 			  folder))))
     t))
-
-;;; To override elmo-map-folder methods.
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-shimbun-folder) unread-marks &optional mark-alist)
-  t)
-
-(luna-define-method elmo-folder-unmark-important ((folder elmo-shimbun-folder)
-						  numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-shimbun-folder)
-						   numbers)
-  t)
-
-(luna-define-method elmo-folder-unmark-read ((folder elmo-shimbun-folder)
-					     numbers)
-  t)
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-shimbun-folder)
-					      numbers)
-  t)
 
 (require 'product)
 (product-provide (provide 'elmo-shimbun) (require 'elmo-version))

@@ -595,18 +595,14 @@ Returns non-nil if bottom of message."
      'wl-message-buffer-prefetch-subr
      folder number count summary charset)))
 
-(defvar wl-message-buffer-prefetch-move-spec-plugged-alist nil)
-(defvar wl-message-buffer-prefetch-move-spec-unplugged-alist nil)
+(defvar wl-message-buffer-prefetch-move-spec-alist nil)
 
 (defun wl-message-buffer-prefetch-get-next (folder number summary)
   (if (buffer-live-p summary)
       (with-current-buffer summary
-	(let ((wl-summary-move-spec-plugged-alist
-	       (or wl-message-buffer-prefetch-move-spec-plugged-alist
-		   wl-summary-move-spec-plugged-alist))
-	      (wl-summary-move-spec-unplugged-alist
-	       (or wl-message-buffer-prefetch-move-spec-unplugged-alist
-		   wl-summary-move-spec-unplugged-alist))
+	(let ((wl-summary-move-spec-alist
+	       (or wl-message-buffer-prefetch-move-spec-alist
+		   wl-summary-move-spec-alist))
 	      (next number))
 	  (while (and (setq next (funcall
 				  wl-message-buffer-prefetch-get-next-function

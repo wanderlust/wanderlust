@@ -101,7 +101,7 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
 					  (car parse)))
-    (setq explicit-user (eq ?: (string-to-char (cdr parse))))    
+    (setq explicit-user (eq ?: (string-to-char (cdr parse))))
     (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
@@ -324,11 +324,11 @@ Don't cache if nil.")
   (run-hooks 'elmo-nntp-opened-hook))
 
 (defun elmo-nntp-process-filter (process output)
-  (save-excursion
-    (set-buffer (process-buffer process))
-    (goto-char (point-max))
-    (insert output)
-    (elmo-nntp-debug "RECEIVED: %s\n" output)))
+  (when (buffer-live-p (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (goto-char (point-max))
+      (insert output)
+      (elmo-nntp-debug "RECEIVED: %s\n" output))))
 
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
@@ -734,11 +734,7 @@ Don't cache if nil.")
     ("xref" . 8)))
 
 (defun elmo-nntp-create-msgdb-from-overview-string (str
-						    new-mark
-						    already-mark
-						    seen-mark
-						    important-mark
-						    seen-list
+						    flag-table
 						    &optional numlist)
   (let (ov-list gmark message-id seen
 	ov-entity overview number-alist mark-alist num
@@ -793,17 +789,12 @@ Don't cache if nil.")
 	      (elmo-msgdb-number-add number-alist num
 				     (aref ov-entity 4)))
 	(setq message-id (aref ov-entity 4))
-	(setq seen (member message-id seen-list))
 	(if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			    (if (elmo-file-cache-status
-				 (elmo-file-cache-get message-id))
-				(if seen
-				    nil
-				  already-mark)
-			      (if seen
-				  (if elmo-nntp-use-cache
-				      seen-mark)
-				new-mark))))
+			    (elmo-msgdb-mark
+			     (elmo-flag-table-get flag-table message-id)
+			     (elmo-file-cache-status
+			      (elmo-file-cache-get message-id))
+			     'new)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append mark-alist
 					  num gmark))))
@@ -811,16 +802,10 @@ Don't cache if nil.")
     (list overview number-alist mark-alist)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nntp-folder)
-					      numbers new-mark already-mark
-					      seen-mark important-mark
-					      seen-list)
-  (elmo-nntp-folder-msgdb-create folder numbers new-mark already-mark
-				 seen-mark important-mark
-				 seen-list))
+					      numbers flag-table)
+  (elmo-nntp-folder-msgdb-create folder numbers flag-table))
 
-(defun elmo-nntp-folder-msgdb-create (folder numbers new-mark already-mark
-					     seen-mark important-mark
-					     seen-list)
+(defun elmo-nntp-folder-msgdb-create (folder numbers flag-table)
   (let ((filter numbers)
 	(session (elmo-nntp-get-session folder))
 	beg-num end-num cur length
@@ -849,11 +834,7 @@ Don't cache if nil.")
 		     ret-val
 		     (elmo-nntp-create-msgdb-from-overview-string
 		      ov-str
-		      new-mark
-		      already-mark
-		      seen-mark
-		      important-mark
-		      seen-list
+		      flag-table
 		      filter
 		      )))))
 	(if (null (elmo-nntp-read-response session t))
@@ -874,8 +855,7 @@ Don't cache if nil.")
 	 'elmo-nntp-msgdb-create "Getting overview..." 100)))
     (if (not use-xover)
 	(setq ret-val (elmo-nntp-msgdb-create-by-header
-		       session numbers
-		       new-mark already-mark seen-mark seen-list))
+		       session numbers flag-table))
       (with-current-buffer (elmo-network-session-buffer session)
 	(if ov-str
 	    (setq ret-val
@@ -883,11 +863,7 @@ Don't cache if nil.")
 		   ret-val
 		   (elmo-nntp-create-msgdb-from-overview-string
 		    ov-str
-		    new-mark
-		    already-mark
-		    seen-mark
-		    important-mark
-		    seen-list
+		    flag-table
 		    filter))))))
     (elmo-folder-set-killed-list-internal
      folder
@@ -947,13 +923,11 @@ Don't cache if nil.")
 		   (nconc number-alist
 			  (list (cons max-number nil))))))))))
 
-(defun elmo-nntp-msgdb-create-by-header (session numbers
-						 new-mark already-mark
-						 seen-mark seen-list)
+(defun elmo-nntp-msgdb-create-by-header (session numbers flag-table)
   (with-temp-buffer
     (elmo-nntp-retrieve-headers session (current-buffer) numbers)
     (elmo-nntp-msgdb-create-message
-     (length numbers) new-mark already-mark seen-mark seen-list)))
+     (length numbers) flag-table)))
 
 (defun elmo-nntp-parse-xhdr-response (string)
   (let (response)
@@ -1432,8 +1406,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 ;; end of from Gnus
 
-(defun elmo-nntp-msgdb-create-message (len new-mark
-					   already-mark seen-mark seen-list)
+(defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
     (let (beg overview number-alist mark-alist
 	      entity i num gmark seen message-id)
@@ -1465,18 +1438,13 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		       (elmo-msgdb-overview-entity-get-number entity)
 		       (car entity)))
 		(setq message-id (car entity))
-		(setq seen (member message-id seen-list))
 		(if (setq gmark
 			  (or (elmo-msgdb-global-mark-get message-id)
-			      (if (elmo-file-cache-status
-				   (elmo-file-cache-get message-id))
-				  (if seen
-				      nil
-				    already-mark)
-				(if seen
-				    (if elmo-nntp-use-cache
-					seen-mark)
-				  new-mark))))
+			      (elmo-msgdb-mark
+			       (elmo-flag-table-get flag-table message-id)
+			       (elmo-file-cache-status
+				(elmo-file-cache-get message-id))
+			       'new)))
 		    (setq mark-alist
 			  (elmo-msgdb-mark-append
 			   mark-alist
@@ -1572,31 +1540,21 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	 folder
 	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-nntp-folder)
-					      numbers)
-  (elmo-nntp-folder-update-crosspost-message-alist folder numbers)
-  t)
+(luna-define-method elmo-folder-mark-as-read :before ((folder
+						       elmo-nntp-folder)
+						      numbers
+						      &optional ignore-flags)
+  (elmo-nntp-folder-update-crosspost-message-alist folder numbers))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder)
-						   &optional
-						   number-alist)
-  (elmo-nntp-folder-process-crosspost folder number-alist))
-
-(defun elmo-nntp-folder-process-crosspost (folder number-alist)
+(defsubst elmo-nntp-folder-process-crosspost (folder)
 ;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
 ;;         `elmo-crosspost-message-alist'.
 ;;    2.2. remove crosspost entry for current newsgroup from
 ;;         `elmo-crosspost-message-alist'.
   (let (cross-deletes reads entity ngs)
     (dolist (cross elmo-crosspost-message-alist)
-      (if number-alist
-	  (when (setq entity (rassoc (nth 0 cross) number-alist))
-	    (setq reads (cons (car entity) reads)))
-	(when (setq entity (elmo-msgdb-overview-get-entity
-			    (nth 0 cross)
-			    (elmo-folder-msgdb folder)))
-	  (setq reads (cons (elmo-msgdb-overview-entity-get-number entity)
-			    reads))))
+      (when (setq entity (elmo-message-entity folder (nth 0 cross)))
+	(setq reads (cons (elmo-message-entity-number entity) reads)))
       (when entity
 	(if (setq ngs (delete (elmo-nntp-folder-group-internal folder)
 			      (nth 1 cross)))
@@ -1609,19 +1567,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 					  elmo-crosspost-message-alist)))
     (elmo-nntp-folder-set-reads-internal folder reads)))
 
-(luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-nntp-folder) unread-marks mark-alist)
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder))
+  (elmo-nntp-folder-process-crosspost folder))
+
+(luna-define-method elmo-folder-list-unreads :around ((folder
+						       elmo-nntp-folder))
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
-  (let ((mark-alist (or mark-alist (elmo-msgdb-get-mark-alist
-				    (elmo-folder-msgdb folder)))))
-    (elmo-living-messages (delq nil
-				(mapcar
-				 (lambda (x)
-				   (if (member (nth 1 x) unread-marks)
-				       (car x)))
-				 mark-alist))
-			  (elmo-nntp-folder-reads-internal folder))))
+  (elmo-living-messages (luna-call-next-method)
+			(elmo-nntp-folder-reads-internal folder)))
 
 (require 'product)
 (product-provide (provide 'elmo-nntp) (require 'elmo-version))

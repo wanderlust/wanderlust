@@ -87,6 +87,12 @@ e.g.
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain2\"))))")
 
+(defvar wl-draft-parent-number nil)
+
+(defconst wl-draft-reply-saved-variables
+  '(wl-draft-parent-folder
+    wl-draft-parent-number))
+
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
     (top		. wl-draft-config-sub-top)
@@ -112,6 +118,7 @@ e.g.
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
+(make-variable-buffer-local 'wl-draft-parent-number)
 
 (defsubst wl-smtp-password-key (user mechanism server)
   (format "SMTP:%s/%s@%s"
@@ -280,7 +287,7 @@ e.g.
   "Return t when From address in the current message is user's self one or not."
   (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
 
-(defun wl-draft-reply (buf with-arg summary-buf)
+(defun wl-draft-reply (buf with-arg summary-buf &optional number)
   "Reply to BUF buffer message.
 Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
@@ -439,8 +446,12 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'References references)
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
+    (setq wl-draft-parent-number number)
     (setq wl-draft-reply-buffer buf)
-    (run-hooks 'wl-reply-hook)))
+    (setq wl-draft-config-variables
+	  (append wl-draft-reply-saved-variables
+		  wl-draft-config-variables)))
+  (run-hooks 'wl-reply-hook))
 
 (defun wl-draft-reply-position (position)
   (cond ((eq position 'body)
@@ -655,31 +666,20 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-default-draft-cite ()
   (let ((mail-yank-ignored-headers "[^:]+:")
 	(mail-yank-prefix "> ")
-	(summary-buf wl-current-summary-buffer)
-	(message-buf (get-buffer (wl-current-message-buffer)))
-	from date cite-title num entity)
-    (if (and summary-buf
-	     (buffer-live-p summary-buf)
-	     message-buf
-	     (buffer-live-p message-buf))
-	(progn
-	  (with-current-buffer summary-buf
-	    (let ((elmo-mime-charset wl-summary-buffer-mime-charset))
-	      (setq num (save-excursion
-			  (set-buffer message-buf)
-			  wl-message-buffer-cur-number))
-	      (setq entity (elmo-msgdb-overview-get-entity
-			    num (wl-summary-buffer-msgdb)))
-	      (setq date (elmo-msgdb-overview-entity-get-date entity))
-	      (setq from (elmo-msgdb-overview-entity-get-from entity))))
-	  (setq cite-title (format "At %s,\n%s wrote:"
-				   (or date "some time ago")
-				   (if wl-default-draft-cite-decorate-author
-				       (funcall wl-summary-from-function
-						(or from "you"))
-				     (or from "you"))))))
-    (and cite-title
-	 (insert cite-title "\n"))
+	date from cite-title)
+    (save-restriction
+      (if (< (mark t) (point))
+	  (exchange-point-and-mark))
+      (narrow-to-region (point)(point-max))
+      (setq date (std11-field-body "date")
+	    from (std11-field-body "from")))
+    (when (or date from)
+      (insert (format "At %s,\n%s wrote:\n"
+		      (or date "some time ago")
+		      (if wl-default-draft-cite-decorate-author
+			  (funcall wl-summary-from-function
+				   (or from "you"))
+			(or from "you")))))
     (mail-indent-citation)))
 
 (defvar wl-draft-buffer nil "Draft buffer to yank content.")
@@ -696,6 +696,7 @@ Reply to author if WITH-ARG is non-nil."
   (if arg
       (let (buf mail-reply-buffer)
 	(elmo-set-work-buf
+	 (insert "\n")
 	 (yank)
 	 (setq buf (current-buffer)))
 	(setq mail-reply-buffer buf)
@@ -759,6 +760,23 @@ Reply to author if WITH-ARG is non-nil."
 	       (or force-kill
 		   (y-or-n-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
+	(when (and wl-draft-parent-number
+		   (not (string= wl-draft-parent-folder "")))
+	  (let* ((number wl-draft-parent-number)
+		 (folder-name wl-draft-parent-folder)
+		 (folder (wl-folder-get-elmo-folder folder-name))
+		 buffer)
+	    (if (and (setq buffer (wl-summary-get-buffer folder-name))
+		     (with-current-buffer buffer
+		       (string= (wl-summary-buffer-folder-name)
+				folder-name)))
+		(with-current-buffer buffer
+		  (elmo-folder-unmark-answered folder (list number))
+		  (wl-summary-jump-to-msg number)
+		  (wl-summary-update-mark number))
+	      (elmo-folder-open folder 'load-msgdb)
+	      (elmo-folder-unmark-answered folder (list number))
+	      (elmo-folder-close folder))))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
     (message "")))
@@ -1546,7 +1564,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (if (elmo-folder-append-buffer
 	       (wl-folder-get-elmo-folder
 		(eword-decode-string (car fcc-list)))
-	       (not wl-fcc-force-as-read))
+	       (and wl-fcc-force-as-read 'read))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (setq fcc-list (cdr fcc-list)))))
@@ -1956,6 +1974,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (funcall wl-draft-buffer-style buffer)
 	       (error "Invalid value for wl-draft-buffer-style")))))
       (set-buffer buffer)
+      (setq wl-draft-parent-folder "")
       (insert-file-contents-as-binary file-name)
       (elmo-delete-cr-buffer)
       (let((mime-edit-again-ignored-field-regexp
@@ -2270,7 +2289,7 @@ Automatically applied in draft sending time."
   (let ((send-buffer (current-buffer))
 	(folder (wl-folder-get-elmo-folder wl-queue-folder))
 	(message-id (std11-field-body "Message-ID")))
-    (if (elmo-folder-append-buffer folder t)
+    (if (elmo-folder-append-buffer folder)
 	(progn
 	  (wl-draft-queue-info-operation
 	   (car (elmo-folder-status folder))

@@ -278,7 +278,7 @@ It calls following-method selected from variable
 		(goto-char header-start)
 		(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
 		(insert "** This part has been removed by Wanderlust **\n\n")
-		(elmo-folder-append-buffer folder t))
+		(elmo-folder-append-buffer folder))
 
 	  (elmo-folder-move-messages
 	   folder (list number)
@@ -311,59 +311,49 @@ It calls following-method selected from variable
 	    (message "Cannot find pgp encrypted region")))
       (message "Cannot find pgp encrypted region"))))
 
-(defun wl-message-verify-pgp-nonmime (&optional arg)
-  "Verify PGP signed region.
-With ARG, ask coding system and encode the region with it before verifying."
-  (interactive "P")
+(defun wl-message-verify-pgp-nonmime ()
+  "Verify PGP signed region"
+  (interactive)
   (require 'pgg)
   (save-excursion
     (beginning-of-line)
-    (let ((msg-buf (current-buffer))
-	  beg end status m-beg)
-      (if (and (when (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
-			 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
-		 (setq end (match-end 0)))
-	       (setq beg (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)))
-	  (progn
-	    (if arg
-		(with-temp-buffer
-		  (insert-buffer-substring msg-buf beg end)
-		  (set-mark (point-min))
-		  (goto-char (point-max))
-		  (call-interactively 'encode-coding-region)
-		  (setq status (pgg-verify-region (point-min) (point-max) nil 'fetch)))
-	      (let* ((situation (mime-preview-find-boundary-info))
-		     (p-end (aref situation 1))
-		     (entity (aref situation 2))
-		     (count 0))
-		(goto-char p-end)
-		(while (< beg (point))
-		  (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-		      (setq count (+ count 1))
-		    (debug)))
-		(with-temp-buffer
-		  (insert (mime-entity-body entity))
-		  (goto-char (point-max))
-		  (while (> count 0)
-		    (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-			(setq count (- count 1))
-		      (debug)))
-		  (let ((r-beg (point))
-			(r-end (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)))
-		    (if r-end
-			(setq status (pgg-verify-region r-beg r-end nil 'fetch))
-		      (debug))))))
-	    (mime-show-echo-buffer)
-	    (set-buffer mime-echo-buffer-name)
-	    (set-window-start
-	     (get-buffer-window mime-echo-buffer-name)
-	     (point-max))
-	    (setq m-beg (point))
-	    (insert-buffer-substring
-	     (if status pgg-output-buffer pgg-errors-buffer))
-	    (encode-coding-region m-beg (point) buffer-file-coding-system)
-	    (decode-coding-region m-beg (point) wl-cs-autoconv))
-	(message "Cannot find pgp signed region")))))
+    (if (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
+		 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
+	     (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
+	(let (status m-beg)
+	  (let* ((beg (point))
+		 (situation (mime-preview-find-boundary-info))
+		 (p-end (aref situation 1))
+		 (entity (aref situation 2))
+		 (count 0))
+	    (goto-char p-end)
+	    (while (< beg (point))
+	      (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
+		  (setq count (+ count 1))
+		(debug)))
+	    (with-temp-buffer
+	      (set-buffer-multibyte nil)
+	      (insert (mime-entity-body entity))
+	      (goto-char (point-max))
+	      (while (> count 0)
+		(if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
+		    (setq count (- count 1))
+		  (debug)))
+	      (let ((r-beg (point))
+		    (r-end (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)))
+		(if r-end
+		    (setq status (pgg-verify-region r-beg r-end nil 'fetch))
+		  (debug)))))
+	  (mime-show-echo-buffer)
+	  (set-buffer mime-echo-buffer-name)
+	  (set-window-start
+	   (get-buffer-window mime-echo-buffer-name)
+	   (point-max))
+	  (setq m-beg (point))
+	  (insert-buffer-substring
+	   (if status pgg-output-buffer pgg-errors-buffer))
+	  (decode-coding-region m-beg (point) wl-cs-autoconv))
+      (message "Cannot find pgp signed region"))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
@@ -426,9 +416,7 @@ With ARG, ask coding system and encode the region with it before verifying."
 		 (car (mime-entity-children message-entity)))
 	   (with-temp-buffer
 	     (insert (mime-entity-body message-entity))
-	     (elmo-folder-append-buffer
-	      target
-	      (mime-entity-fetch-field entity "Message-ID")))))
+	     (elmo-folder-append-buffer target))))
     number))
 
 (defun wl-summary-burst (&optional arg)
@@ -481,9 +469,9 @@ With ARG, ask destination folder."
 (defun wl-mime-combine-message/partial-pieces (entity situation)
   "Internal method for wl to combine message/partial messages automatically."
   (interactive)
-  (let* ((msgdb (save-excursion
-		  (set-buffer wl-message-buffer-cur-summary-buffer)
-		  (wl-summary-buffer-msgdb)))
+  (let* ((folder (save-excursion
+		   (set-buffer wl-message-buffer-cur-summary-buffer)
+		   wl-summary-buffer-elmo-folder))
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 (folder wl-message-buffer-cur-folder)
 	 (id (or (cdr (assoc "id" situation)) ""))
@@ -516,18 +504,16 @@ With ARG, ask destination folder."
 	      wl-summary-buffer-mime-charset)))
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0))))
-      (setq overviews (elmo-msgdb-get-overview msgdb))
       (catch 'tag
-	(while overviews
+	(elmo-folder-do-each-message-entity (entity folder)
 	  (when (string-match
 		 (regexp-quote subject-id)
-		 (elmo-msgdb-overview-entity-get-subject (car overviews)))
+		 (elmo-message-entity-field entity 'subject))
 	    (let* ((message
 		    ;; request message at the cursor in Subject buffer.
 		    (wl-message-request-partial
 		     folder
-		     (elmo-msgdb-overview-entity-get-number
-		      (car overviews))))
+		     (elmo-message-entity-number entity)))
 		   (situation (mime-entity-situation message))
 		   (the-id (or (cdr (assoc "id" situation)) "")))
 	      (when (string= (downcase the-id)
@@ -535,8 +521,7 @@ With ARG, ask destination folder."
 		(with-current-buffer mother
 		  (mime-store-message/partial-piece message situation))
 		(if (file-exists-p full-file)
-		    (throw 'tag nil)))))
-	  (setq overviews (cdr overviews)))
+		    (throw 'tag nil))))))
 	(message "Not all partials found.")))))
 
 (defun wl-mime-display-text/plain (entity situation)

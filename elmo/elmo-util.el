@@ -149,7 +149,7 @@ File content is encoded with MIME-CHARSET."
 		 (format "%s (%s): " prompt default)
 		 (mapcar 'list
 			 (append '("AND" "OR"
-				   "Last" "First"
+				   "Last" "First" "Flag"
 				   "From" "Subject" "To" "Cc" "Body"
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
@@ -178,6 +178,15 @@ File content is encoded with MIME-CHARSET."
 			     elmo-date-descriptions)))
 	(concat (downcase field) ":"
 		(if (equal value "") default value))))
+     ((string= field "Flag")
+      (setq value (completing-read
+		   (format "Value for '%s': " field)
+		   (mapcar 'list
+			   '("unread" "important" "answered" "digest" "any"))))
+      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
+			    value)
+	(setq value (prin1-to-string value)))
+      (concat (downcase field) ":" value))
      (t
       (setq value (read-from-minibuffer (format "Value for '%s': " field)))
       (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
@@ -233,7 +242,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (goto-char (match-end 0))))
 ;; search-key   ::= [A-Za-z-]+
 ;;                 ;; "since" / "before" / "last" / "first" /
-;;                 ;; "body" / field-name
+;;                 ;; "body" / "mark" / field-name
    ((looking-at "\\(!\\)? *\\([A-Za-z-]+\\) *: *")
     (goto-char (match-end 0))
     (let ((search-key (vector
@@ -948,6 +957,7 @@ the directory becomes empty after deletion."
 
 (defmacro elmo-get-hash-val (string hashtable)
   `(and (stringp ,string)
+	,hashtable
 	(let ((sym (intern-soft ,string ,hashtable)))
 	  (if (boundp sym)
 	      (symbol-value sym)))))
@@ -1264,7 +1274,6 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
     (y-or-n-p prompt)))
 
 (defun elmo-string-member (string slist)
-  "Return t if STRING is a member of the SLIST."
   (catch 'found
     (while slist
       (if (and (stringp (car slist))
@@ -1657,6 +1666,7 @@ If the cache is partial file-cache, TYPE is 'partial."
 	    (nth (% (/ sum 16) 2) chars)
 	    (nth (% sum 16) chars))))
 
+;;;
 (defun elmo-file-cache-get-path (msgid &optional section)
   "Get cache path for MSGID.
 If optional argument SECTION is specified, partial cache path is returned."
@@ -2011,6 +2021,18 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
    (expand-file-name elmo-dop-queue-filename
 		     elmo-msgdb-directory)
    elmo-dop-queue))
+
+(if (and (fboundp 'regexp-opt)
+	 (not (featurep 'xemacs)))
+    (defalias 'elmo-regexp-opt 'regexp-opt)
+  (defun elmo-regexp-opt (strings &optional paren)
+    "Return a regexp to match a string in STRINGS.
+Each string should be unique in STRINGS and should not contain any regexps,
+quoted or not.  If optional PAREN is non-nil, ensure that the returned regexp
+is enclosed by at least one regexp grouping construct."
+    (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
+      (concat open-paren (mapconcat 'regexp-quote strings "\\|")
+	      close-paren))))
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

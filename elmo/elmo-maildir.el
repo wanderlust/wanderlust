@@ -132,8 +132,7 @@ LOCATION."
   (elmo-maildir-folder-flagged-locations-internal folder))
 
 (luna-define-method elmo-folder-msgdb-create 
-  ((folder elmo-maildir-folder)
-   numbers new-mark already-mark seen-mark important-mark seen-list)
+  ((folder elmo-maildir-folder) numbers flag-table)
   (let* ((unread-list (elmo-maildir-folder-unread-locations-internal folder))
 	 (flagged-list (elmo-maildir-folder-flagged-locations-internal folder))
 	 (len (length numbers))
@@ -159,9 +158,9 @@ LOCATION."
 				      entity)))
 	(cond 
 	 ((member location unread-list)
-	  (setq mark new-mark)) ; unread!
+	  (setq mark elmo-msgdb-new-mark)) ; unread!
 	 ((member location flagged-list)
-	  (setq mark important-mark)))
+	  (setq mark elmo-msgdb-important-mark)))
 	(if (setq mark (or (elmo-msgdb-global-mark-get
 			    (elmo-msgdb-overview-entity-get-id
 			     entity))
@@ -278,6 +277,16 @@ LOCATION."
 						 locs)
   (elmo-maildir-delete-mark-msgs folder locs ?S))
 
+(luna-define-method elmo-map-folder-mark-as-answered ((folder
+						       elmo-maildir-folder)
+						      locs)
+  (elmo-maildir-set-mark-msgs folder locs ?R))
+
+(luna-define-method elmo-map-folder-unmark-answered ((folder
+						      elmo-maildir-folder)
+						     locs)
+  (elmo-maildir-delete-mark-msgs folder locs ?R))
+
 (luna-define-method elmo-folder-list-subfolders
   ((folder elmo-maildir-folder) &optional one-level)
   (let ((prefix (concat (elmo-folder-name-internal folder)
@@ -345,7 +354,7 @@ file name for maildir directories."
     filename))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       unread &optional number)
+					       &optional status number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
 	dst-buf filename)
@@ -397,7 +406,7 @@ file name for maildir directories."
 
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-maildir-folder)
-   src-folder numbers unread-marks &optional same-number)
+   src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-maildir-folder-directory-internal folder))
 	    (succeeds numbers)
