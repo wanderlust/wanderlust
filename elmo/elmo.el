@@ -1279,9 +1279,7 @@ FIELD is a symbol of the field.")
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
   (when (zerop (elmo-folder-length folder))
     (error "Cannot treat this folder correctly."))
-  (elmo-msgdb-message-entity-field (elmo-folder-msgdb folder)
-				   (elmo-message-entity folder number)
-				   field))
+  (elmo-message-entity-field (elmo-message-entity folder number) field))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
   nil) ; default is not use cache.

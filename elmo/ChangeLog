@@ -1,8 +1,11 @@
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-field): Use elmo-message-entity-field.
+
 	* elmo-msgdb.el (elmo-msgdb-get-number): Abolish.
 	(elmo-msgdb-get-parent-entity): Use elmo-message-entity-field.
 	(elmo-msgdb-flag-table): Ditto.
+	(elmo-msgdb-sort-by-date): Ditto.
 
 	* modb.el (elmo-msgdb-create-message-entity-from-file): Define.
 

@@ -118,9 +118,9 @@
      (condition-case nil
 	 (string<
 	  (timezone-make-date-sortable
-	   (elmo-msgdb-message-entity-field msgdb x 'date))
+	   (elmo-message-entity-field x 'date))
 	  (timezone-make-date-sortable
-	   (elmo-msgdb-message-entity-field msgdb y 'date)))
+	   (elmo-message-entity-field y 'date)))
        (error)))))
 
 
