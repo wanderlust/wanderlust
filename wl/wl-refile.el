@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/23 19:07:28 teranisi>
+;; Time-stamp: <2000-04-04 11:38:57 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -132,35 +132,56 @@
 	(setq flist (cdr flist))))
     guess))
 
+(defun wl-refile-evaluate-rule (rule entity)
+  "Returns folder string if RULE is matched to ENTITY.
+If RULE does not match ENTITY, returns nil."
+  (let ((case-fold-search t)
+	fields guess pairs value)
+    (cond 
+     ((stringp rule) rule)
+     ((listp (car rule))
+      (setq fields (car rule))
+      (while fields
+	(if (setq guess (wl-refile-evaluate-rule (append (list (car fields))
+							 (cdr rule))
+						 entity))
+	    (setq fields nil)
+	  (setq fields (cdr fields))))
+      guess)
+     ((stringp (car rule))
+      (setq pairs (cdr rule))
+      (setq value (wl-refile-get-field-value entity (car rule)))
+      (while pairs
+	(if (and (string-match
+		  (car (car pairs))
+		  value)
+		 (setq guess (wl-refile-evaluate-rule (cdr (car pairs))
+						      entity)))
+	    (setq pairs nil)
+	  (setq pairs (cdr pairs))))
+      guess)
+     (t (error "Invalid structure for wl-refile-rule-alist")))))
+
+(defun wl-refile-get-field-value (entity field)
+  "Get FIELD value from ENTITY."
+  (let ((field (downcase field))
+	(fixed-fields '("from" "subject" "to" "cc")))
+    (if (member field fixed-fields)
+	(funcall (symbol-function
+		  (intern (concat
+			   "elmo-msgdb-overview-entity-get-"
+			   field)))
+		 entity)
+      (elmo-msgdb-overview-entity-get-extra-field entity field))))
+
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)
-	(rule-set) (field) (field-cont))
-    (catch 'found
-      (while rules
-	(setq rule-set (cdr (car rules))
-	      field (car (car rules)))
-	(cond ((string-match field "From")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-from entity)))
-	      ((string-match field "Subject")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-subject entity)))
-	      ((string-match field "To")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-to entity)))
-	      ((string-match field "Cc")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-cc entity)))
-	      (t
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-extra-field
-		      entity (downcase field)))))
-	(if field-cont
-	    (while rule-set
-	      (if (string-match (car (car rule-set)) field-cont)
-		  (throw 'found (cdr (car rule-set)))
-		(setq rule-set (cdr rule-set)))))
-	(setq rules (cdr rules))))))
+	guess)
+    (while rules
+      (if (setq guess (wl-refile-evaluate-rule (car rules) entity))
+	  (setq rules nil)
+	(setq rules (cdr rules))))
+    guess))
 
 (defun wl-refile-guess-by-history (entity)
   (let ((tocc-list 

@@ -1,3 +1,18 @@
+2000-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-print-destination):
+	Duplicate folder string to avoid putting text-property on
+	original string.
+
+	* wl-refile.el (wl-refile-get-field-value): New function.
+	(wl-refile-evaluate-rule): New function;
+	Evaluate refile rule recursively.
+	(wl-refile-guess-by-rule): Use wl-refile-evaluate-rule.
+	* wl-summary.el (wl-summary-auto-refile-check-refile-rule-alist-subr):
+	New function; Check existence of a target folder recursively.
+	(wl-summary-auto-refile-check-refile-rule-alist):
+	Use wl-summary-auto-refile-check-refile-rule-alist-subr.
+
 2000-03-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-demo.el (wl-title-logo): Refer wl-icon-dir.

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/22 01:00:41 teranisi>
+;; Time-stamp: <2000-04-04 13:36:01 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -3247,6 +3247,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   "Print refile destination on line."
   (wl-summary-remove-destination)
   (let ((inhibit-read-only t)
+	(folder (copy-sequence folder))
 	(buffer-read-only nil)
 	len rs re c)
     (setq len (string-width folder))
@@ -3403,18 +3404,34 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defsubst wl-summary-no-auto-refile-message-p (msg mark-alist) 
   (member (cadr (assq msg mark-alist)) wl-summary-auto-refile-skip-marks))
 
+(defun wl-summary-auto-refile-check-refile-rule-alist-subr (rule dsts)
+  "Collect destination folders from rule."
+  (if (stringp rule)
+      (if (member rule dsts)
+	  dsts
+	(setq dsts (cons rule dsts)))
+    ;; A rule.
+    (let (pairs sub-dsts)
+      (setq pairs (cdr rule))
+      (while pairs
+	(setq dsts
+	      (wl-summary-auto-refile-check-refile-rule-alist-subr
+	       (cdr (car pairs)) dsts))
+	(setq pairs (cdr pairs))))
+    dsts))
+
 (defun wl-summary-auto-refile-check-refile-rule-alist ()
   (when wl-refile-rule-alist
     (message "Checking destination folders...")
-    (let ((ralist wl-refile-rule-alist)
-	  pairs dsts)
-      (while ralist
-	(setq pairs (cdr (car ralist)))
-	(while pairs
-	  (if (not (member (cdr (car pairs)) dsts))
-	      (setq dsts (cons (cdr (car pairs)) dsts)))
-	  (setq pairs (cdr pairs)))
-	(setq ralist (cdr ralist)))
+    (let ((rules wl-refile-rule-alist)
+	  dsts)
+      (while rules
+	(setq dsts
+	      (append
+	       (wl-summary-auto-refile-check-refile-rule-alist-subr
+		(car rules) nil)
+	       dsts))
+	(setq rules (cdr rules)))
       (mapcar 
        'wl-folder-confirm-existence
        dsts))
