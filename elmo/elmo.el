@@ -34,12 +34,13 @@
 ;;; Code:
 ;; 
 
+(require 'product)
 (require 'luna)
 
-(require 'elmo-version)			; reduce recursive-load-depth
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo-msgdb)
+(require 'elmo-cache)
 
 (eval-when-compile (require 'cl))
 
@@ -1285,7 +1286,9 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?'  'internal)
 (elmo-define-folder ?[  'nmz)
 
-(require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))
+
+;; elmo.el ends here.
+(provide 'elmo)
 
 ;;; elmo.el ends here

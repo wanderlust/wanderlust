@@ -31,7 +31,6 @@
 (require 'elmo-util)
 (require 'elmo-dop)
 (require 'elmo-vars)
-(require 'elmo-cache)
 (require 'elmo)
 
 ;;; Code:
