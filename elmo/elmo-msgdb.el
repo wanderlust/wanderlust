@@ -43,7 +43,6 @@
 ;;
 ;; MSGDB elmo-load-msgdb PATH
 
-;; NUMBER elmo-msgdb-get-number MSGDB MESSAGE-ID
 ;; elmo-msgdb-sort-by-date MSGDB
 
 ;; elmo-flag-table-load
@@ -112,11 +111,6 @@
     (luna-make-entity class
 		      :location location)))
 
-(defsubst elmo-msgdb-get-number (msgdb message-id)
-  "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."
-  (elmo-msgdb-message-entity-number
-   msgdb (elmo-msgdb-message-entity msgdb message-id)))
-
 (defun elmo-msgdb-sort-by-date (msgdb)
   (elmo-msgdb-sort-entities
    msgdb
@@ -131,7 +125,7 @@
 
 
 (defsubst elmo-msgdb-get-parent-entity (entity msgdb)
-  (setq entity (elmo-msgdb-message-entity-field msgdb entity 'references))
+  (setq entity (elmo-message-entity-field entity 'references))
   ;; entity is parent-id.
   (and entity (elmo-msgdb-message-entity msgdb entity)))
 
@@ -222,7 +216,7 @@
       (setq entity (elmo-msgdb-message-entity msgdb number))
       (elmo-flag-table-set
        flag-table
-       (elmo-msgdb-message-entity-field msgdb entity 'message-id)
+       (elmo-message-entity-field entity 'message-id)
        (elmo-msgdb-flags msgdb number)))
     flag-table))
 
