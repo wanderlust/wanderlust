@@ -1,5 +1,10 @@
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-biff-unnotify-hook): New variable.
+
+	* wl-util.el (wl-biff-notify): Run `wl-biff-unnotify-hook' when
+	biff notification is removed.
+
 	* wl.el (wl): Changed position of `elmo-init'.
 
 	* wl-draft.el (wl-default-draft-cite): Use date field

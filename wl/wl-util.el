@@ -788,6 +788,8 @@ This function is imported from Emacs 20.7."
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (when (and (not wl-modeline-biff-status) (> new-mails 0))
     (run-hooks 'wl-biff-notify-hook))
+  (when (and wl-modeline-biff-status (eq new-mails 0))
+    (run-hooks 'wl-biff-unnotify-hook))
   (setq wl-modeline-biff-status (> new-mails 0))
   (force-mode-line-update t)
   (when notify-minibuf
