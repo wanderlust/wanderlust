@@ -125,7 +125,8 @@
   (lunit-assert (fboundp 'mime-find-file-type))
   (lunit-assert (fboundp 'mime-edit-content-beginning))
   (lunit-assert (fboundp 'mime-edit-content-end))
-  (lunit-assert (fboundp 'mime-edit-preview-message)))
+  (lunit-assert (fboundp 'mime-edit-preview-message))
+  (lunit-assert (fboundp 'mime-create-tag)))
 
 (luna-define-method check-modules-semi-mime-view ((case check-modules))
   (require 'mime-view)

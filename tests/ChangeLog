@@ -1,3 +1,8 @@
+2003-01-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el (check-modules-semi-mime-edit): Check
+	`mime-create-tag'.
+
 2003-01-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el (test-wl-demo-copyright-notice): Check always.
