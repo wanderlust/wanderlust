@@ -110,7 +110,8 @@ By setting following-method as yank-content."
 (defalias 'wl-message-play-content    'mime-viewer/play-content)
 (defalias 'wl-message-extract-content 'mime-viewer/extract-content)
 (defalias 'wl-message-quit            'mime-viewer/quit)
-(defalias 'wl-message-button-dispatcher 'tm:button-dispatcher)
+(defalias 'wl-message-button-dispatcher-internal
+  'tm:button-dispatcher)
 
 ;;; Summary
 (defun wl-summary-burst-subr (children target number)

@@ -1,5 +1,20 @@
 2000-08-28   Daiki Ueno  <ueno@unixuser.org>
 
+	* wl-mime.el (wl-message-button-dispatcher-internal): Rename from
+	`wl-message-button-dispatcher'.
+
+	* tm-wl.el (wl-message-button-dispatcher-internal): Ditto.
+
+	* wl-message.el (wl-message-button-dispatcher): Use it.
+
+	* wl-vars.el (wl-highlight-message-header-button-alist): Add
+	"In-Reply-To".
+
+	* wl-highlight.el (wl-highlight-message-add-buttons-to-header):
+	Bind `case-fold-search' to t.
+
+2000-08-28   Daiki Ueno  <ueno@unixuser.org>
+
 	* wl-xmas.el (wl-message-overload-functions): Initialize
 	`wl-message-button-map'.
 

@@ -1022,7 +1022,8 @@ interpreted as cited text.)"
 (defun wl-highlight-message-add-buttons-to-header (start end)
   (save-restriction
     (narrow-to-region start end)
-    (let ((alist wl-highlight-message-header-button-alist)
+    (let ((case-fold-search t)
+	  (alist wl-highlight-message-header-button-alist)
 	  entry)
       (while alist
 	(setq entry (car alist)

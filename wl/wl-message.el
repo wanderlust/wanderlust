@@ -574,7 +574,8 @@
   (let ((callback (get-text-property (point) 'wl-message-button-callback))
 	(data (get-text-property (point) 'wl-message-button-data)))
     (if callback
-	(funcall callback data))))
+	(funcall callback data)
+      (wl-message-button-dispatcher-internal event))))
 
 (defun wl-message-button-refer-article (data)
   "Read article specified by Message-ID DATA at point."
@@ -607,7 +608,7 @@
 		 wl-message-buffer-cur-summary-buffer)
 		(if (wl-summary-jump-to-msg-by-message-id msg-id)
 		    (wl-summary-redisplay)))
-	    (wl-message-button-dispatcher e)))
+	    (wl-message-button-dispatcher-internal e)))
       (if (eq mouse-window (get-buffer-window (current-buffer)))
 	  (select-window window)))))
 

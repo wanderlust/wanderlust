@@ -202,7 +202,8 @@ By setting following-method as yank-content."
 (defalias 'wl-message-play-content    'mime-preview-play-current-entity)
 (defalias 'wl-message-extract-content 'mime-preview-extract-current-entity)
 (defalias 'wl-message-quit            'mime-preview-quit)
-(defalias 'wl-message-button-dispatcher 'mime-button-dispatcher)
+(defalias 'wl-message-button-dispatcher-internal
+  'mime-button-dispatcher)
 
 ;;; Summary
 (defun wl-summary-burst-subr (children target number)

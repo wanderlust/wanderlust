@@ -1816,7 +1816,7 @@ list  : reserved specified permanent marks."
   :group 'wl-highlight)
 
 (defcustom wl-highlight-message-header-button-alist
-  `(("^\\(References\\|Message-I[Dd]\\):" "<[^>]+>"
+  `(("^\\(References\\|Message-Id\\|In-Reply-To\\):" "<[^>]+>"
      0 wl-message-button-refer-article 0)
     ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
      1 wl-message-button-refer-article 3))
