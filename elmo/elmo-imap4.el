@@ -248,7 +248,7 @@ If response is not `OK', causes error with IMAP response text."
 
 (defun elmo-imap4-send-command (session command)
   "Send COMMAND to the SESSION.
-Returns a TAG string which is assigned to the COMAND."
+Returns a TAG string which is assigned to the COMMAND."
   (let* ((command-args (if (listp command)
 			   command
 			 (list command)))
@@ -261,10 +261,11 @@ Returns a TAG string which is assigned to the COMAND."
       (setq cmdstr (concat tag " "))
       ;; (erase-buffer) No need.
       (goto-char (point-min))
-      (if (elmo-imap4-response-bye-p elmo-imap4-current-response)
-	  (signal 'elmo-imap4-bye-error
-		  (list (elmo-imap4-response-error-text
-			 elmo-imap4-current-response))))
+      (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
+	(elmo-network-close-session session)
+	(signal 'elmo-imap4-bye-error
+		(list (elmo-imap4-response-error-text
+		       elmo-imap4-current-response))))
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
 	  (error "IMAP process is running. Please wait (or plug again.)"))
@@ -376,8 +377,10 @@ If response is not `OK' response, causes error with IMAP response text."
     (if (elmo-imap4-response-ok-p response)
 	response
       (if (elmo-imap4-response-bye-p response)
-	  (signal 'elmo-imap4-bye-error
-		  (list (elmo-imap4-response-error-text response)))
+	  (progn
+	    (elmo-network-close-session session)
+	    (signal 'elmo-imap4-bye-error
+		    (list (elmo-imap4-response-error-text response))))
 	(error "IMAP error: %s"
 	       (or (elmo-imap4-response-error-text response)
 		   "No `OK' response from server."))))))
