@@ -495,10 +495,10 @@ The minimal requirement for settings is as the following.
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; @r{Directory where icons are placed (XEmacs or Emacs 21).}
-;; @r{Default: @code{nil}.}
-;; @r{(This is not required if Wanderlust is installed as XEmacs package)}
-(setq wl-icon-dir "~/work/wl/etc")
+;; @r{Directory where icons are placed.}
+;; @r{Default: the peculiar value to the running version of Emacs.}
+;; @r{(This is not required if the default value has been set properly.)}
+(setq wl-icon-directory "~/work/wl/etc")
 
 ;; @r{SMTP server for mail posting. Default: @code{nil}}
 (setq wl-smtp-posting-server "your.smtp.example.com")
