@@ -1,3 +1,9 @@
+2001-11-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.6.
+
+	* mmimap.el (mmimap-entity-section): If node-id is nil, return "0".
+
 2001-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-parse-token): Fixed how to treat quoted-pair
