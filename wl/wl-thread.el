@@ -769,13 +769,13 @@ the closed parent will be opened."
 (defun wl-thread-cleanup-symbols (msgs)
   (let (sym)
     (while msgs
-      ;; free symbol.
-      (elmo-clear-hash-val (format "#%d" (car msgs))
-			   wl-thread-entity-hashtb)
       ;; delete entity.
       (setq wl-thread-entities 
 	    (delq (wl-thread-get-entity (car msgs))
 		  wl-thread-entities))
+      ;; free symbol.
+      (elmo-clear-hash-val (format "#%d" (car msgs))
+			   wl-thread-entity-hashtb)
       (setq msgs (cdr msgs)))))
 
 (defun wl-thread-delete-message (msg &optional deep update)
@@ -853,10 +853,10 @@ the closed parent will be opened."
 				entity nil))
 	  (setq younger-brothers (wl-thread-entity-get-younger-brothers
 				  entity nil))
-	  (and top-child
-	       (setq wl-thread-entity-list
-		     (append (append older-brothers (list top-child))
-			     younger-brothers)))))
+	  (setq wl-thread-entity-list
+		(append (append older-brothers
+				(and top-child (list top-child)))
+			younger-brothers))))
 
       (if deep
 	  ;; delete thread on buffer
