@@ -1,3 +1,7 @@
+2002-12-04  Yasutaka SHINDOH  <ring@fan.gr.jp>
+
+	* wl-demo.el (wl-demo-icon-name): Cope with Medow.
+
 2002-12-03  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-target-mark-erase): Simplify.
