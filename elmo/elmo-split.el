@@ -76,9 +76,13 @@ FIELD-NAME is a symbol of the field name.
 `or'                ... True if one of the argument returns true.
 `and'               ... True if all of the arguments return true.
 
-4. Functions which accept not argument.
-
 `spam-p'            ... True if contents of the message is guessed as spam.
+                        Rest arguments are property list which consists
+                        following.
+
+                        `:register' ... If this value is non-nil,
+                                        Register according to
+                                        the classification.
 
 5. A symbol.
 
