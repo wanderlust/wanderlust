@@ -69,7 +69,6 @@
   (require 'wl-draft)
   (require 'wl-message)
   (require 'wl-highlight)
-  (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)

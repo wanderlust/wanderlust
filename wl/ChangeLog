@@ -1,3 +1,8 @@
+2002-12-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-e21.el (toplevel): Do not set wl-folder-mode-map.
+	(avoid error for the case without byte-compiling)
+
 2002-12-23  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-news.el.in (wl-news-append-to-folder): New function.
