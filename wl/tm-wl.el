@@ -68,9 +68,7 @@ By setting following-method as yank-content."
 	 (mime-viewer/ignored-field-regexp "^:$")
 	 (mime-editor/translate-buffer-hook
 	  (append
-	   (list
-	    (function
-	     (lambda ()
+	   '((lambda ()
 	       (let ((wl-draft-config-exec-flag config-exec-flag))
 		 (run-hooks 'wl-draft-send-hook)
 		 (setq recipients-message
@@ -88,7 +86,7 @@ By setting following-method as yank-content."
 					    "$")
 				    nil t)
 				   (point)))
-				", ")))))))
+				", "))))))
 	   mime-editor/translate-buffer-hook)))
     (mime-editor/preview-message)
     (let ((buffer-read-only nil))
