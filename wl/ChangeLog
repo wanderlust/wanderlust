@@ -1,3 +1,9 @@
+2000-06-30  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Don't show scroll bars, gutter tabs or
+	fringes in demo buffer; center bitmap logo correctly even if old
+	Mule is used.
+
 2000-06-27  MAKINO Takashi <makino@cyber.office.ne.jp>
 
 	* wl.el (wl-save-status): Call `wl-refile-alist-save' without argument.

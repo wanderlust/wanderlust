@@ -45,10 +45,8 @@
      create-image device-on-window-system-p display-graphic-p
      frame-char-height frame-char-width image-type-available-p
      insert-image make-extent make-glyph set-extent-end-glyph
-     set-glyph-face specifier-instance window-pixel-height
+     set-glyph-face set-specifier window-pixel-height
      window-pixel-width)))
-(defvar scrollbar-width)
-(defvar vertical-scrollbar-visible-p)
 
 ;;
 ;; demo ;-)
@@ -214,6 +212,34 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	 (wh (window-height))
 	 rest)
     (switch-to-buffer demo-buf)
+    (cond ((and (featurep 'xemacs) (device-on-window-system-p))
+	   (if (boundp 'default-gutter-visible-p)
+	       (set-specifier (symbol-value 'default-gutter-visible-p)
+			      nil demo-buf))
+	   (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
+	   (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))
+	  ((and (>= emacs-major-version 19) window-system)
+	   (let* ((frame (selected-frame))
+		  (vbar (cdr (assq 'vertical-scroll-bars
+				   (frame-parameters frame))))
+		  (fbg (if (find-face 'fringe)
+			   (face-background 'fringe frame))))
+	     (make-local-hook 'kill-buffer-hook)
+	     (add-hook 'kill-buffer-hook
+		       (` (lambda ()
+			    (modify-frame-parameters
+			     (, frame) (list (cons 'vertical-scroll-bars
+						   (quote (, vbar)))))
+			    (if (, fbg)
+				(let ((unspecified nil))
+				  (set-face-background 'fringe (eval (, fbg))
+						       (, frame)))))))
+	     (modify-frame-parameters (selected-frame)
+				      '((vertical-scroll-bars)))
+	     (if (find-face 'fringe)
+		 (let* ((unspecified nil)
+			(bg (eval (face-background 'default))))
+		   (set-face-background 'fringe bg frame))))))
     (erase-buffer)
     (setq truncate-lines t)
     (if logo
@@ -226,14 +252,9 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 		(set-glyph-face image 'wl-highlight-logo-face))
 	    (setq rest (- wh 1 (/ (+ (* lh wh) (window-pixel-height) -1)
 				  (window-pixel-height))))
-	    (let ((wpw (- (window-pixel-width)
-			  (if (or (not (boundp 'vertical-scrollbar-visible-p))
-				  (specifier-instance
-				   vertical-scrollbar-visible-p))
-			      (specifier-instance scrollbar-width)
-			    0))))
-	      (insert-char ?\  (max 0 (/ (- (* wpw (1+ ww)) (* lw ww))
-					 2 wpw))))
+	    (insert-char ?\  (max 0 (/ (- (* (window-pixel-width) (1+ ww))
+					  (* lw ww))
+				       2 (window-pixel-width))))
 	    (set-extent-end-glyph (make-extent (point) (point)) image))
 	   ((featurep 'image)
 	    (if (eq 'wl-logo-xbm logo)
@@ -251,9 +272,9 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	    (insert image)
 	    (put-text-property (point-min) (point) 'face
 			       'wl-highlight-logo-face)
-	    (setq rest (- wh (count-lines (point-min) (point)) 1))
+	    (setq rest (/ (- (* 16 wh) lh 8) 16))
 	    (indent-rigidly (point-min) (point-max)
-			    (max 0 (/ (- ww (current-column)) 2)))))
+			    (/ (- (* 8 (1+ ww)) lw) 16))))
 	  (goto-char (point-min)))
       (insert (or wl-logo-ascii wl-appname))
       (put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
@@ -267,15 +288,14 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
     (insert-char ?\n (max 0 (/ (- rest 4) 2)))
     (goto-char (point-max))
     (insert "\n")
-    (let ((start (point))
-	  (text (format (cond ((<= rest 2)
-			       "version %s - \"%s\"\n%s")
-			      ((eq rest 3)
-			       "version %s - \"%s\"\n\n%s")
-			      (t
-			       "\nversion %s - \"%s\"\n\n%s"))
-			wl-version wl-codename wl-demo-copyright-notice)))
-      (insert text)
+    (let ((start (point)))
+      (insert (format (cond ((<= rest 2)
+			     "version %s - \"%s\"\n%s")
+			    ((eq rest 3)
+			     "version %s - \"%s\"\n\n%s")
+			    (t
+			     "\nversion %s - \"%s\"\n\n%s"))
+		      wl-version wl-codename wl-demo-copyright-notice))
       (put-text-property start (point) 'face 'wl-highlight-demo-face)
       (let ((fill-column ww))
 	(center-region start (point))))
