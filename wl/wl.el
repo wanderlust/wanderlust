@@ -50,6 +50,8 @@
        (require 'wl-xmas))
       (wl-on-emacs21
        (require 'wl-e21))
+      (wl-on-nemacs
+       (require 'wl-nemacs))
       (t
        (require 'wl-mule)))
 
@@ -70,8 +72,11 @@
   (require 'cl)
   (require 'smtp)
   (require 'wl-score)
-  (require 'wl-fldmgr)
-  (require 'wl-mime))
+  (unless wl-on-nemacs
+    (require 'wl-fldmgr))
+  (if wl-use-semi
+      (require 'wl-mime)
+    (require 'tm-wl)))
 
 (defun wl-plugged-init (&optional make-alist)
   (setq elmo-plugged wl-plugged)
@@ -164,8 +169,10 @@
   (if wl-on-xemacs
       (defun wl-plugged-setup-mouse ()
 	(define-key wl-plugged-mode-map 'button2 'wl-plugged-click))
-    (defun wl-plugged-setup-mouse ()
-      (define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click))))
+    (if wl-on-nemacs
+	(defun wl-plugged-setup-mouse ())
+      (defun wl-plugged-setup-mouse ()
+	(define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click)))))
 
 (unless wl-plugged-mode-map
   (setq wl-plugged-mode-map (make-sparse-keymap))
@@ -658,7 +665,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	     (> (length (visible-frame-list)) 1))
 	(delete-frame))
     (setq wl-init nil)
-    (remove-hook 'kill-emacs-hook 'wl-save-status)
+    (unless wl-on-nemacs
+      (remove-hook 'kill-emacs-hook 'wl-save-status))
     t)
   (message "") ; empty minibuffer.
   )
@@ -668,11 +676,17 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (unless (featurep 'mime-setup)
       (require 'mime-setup))
     (setq elmo-plugged wl-plugged)
-    (add-hook 'kill-emacs-hook 'wl-save-status)
+    (unless wl-on-nemacs
+      (add-hook 'kill-emacs-hook 'wl-save-status))
     (wl-address-init)
     (wl-draft-setup)
     (wl-refile-alist-setup)
-    (require 'wl-mime)
+    (if wl-use-semi
+	(progn
+	  (require 'wl-mime)
+	  (setq elmo-use-semi t))
+      (require 'tm-wl)
+      (setq elmo-use-semi nil))
     ;; defined above.
     (wl-mime-setup)
     (fset 'wl-summary-from-func-internal

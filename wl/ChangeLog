@@ -1,73 +1,3 @@
-2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-e21.el (wl-draft-mode-map): Removed binding for
-	`wl-draft-insert-x-face-field'.
-
-	* wl-mule.el (wl-draft-mode-map): Ditto.
-
-	* wl-xmas.el (wl-draft-mode-map): Ditto.
-
-	* wl-vars.el (wl-cs-noconv): Ignore nemacs.
-	(wl-cs-autoconv): Ditto.
-	(wl-cs-local): Ditto.
-	(wl-use-scoring): Ditto.
-	(wl-mime-charset): Ditto.
-	(wl-folder-check-async): Ditto.
-
-	* wl.el (toplevel): Ignore nemacs and tm.
-	(wl-exit): Ditto.
-
-	* wl-summary.el (wl-summary-setup-mouse): Ignore nemacs.
-	(wl-summary-mode-map): Added binding for `wl-addrmgr'.
-	(wl-summary-edit-addresses-subr): Use wl-address-add-or-change
-	instead of wl-address-petname-add-or-change.
-	(wl-summary-edit-addresses-subr): Use wl-address-delete
-	instead of wl-address-petname-delete.
-
-	* wl-util.el (wl-as-coding-system): Ignore nemacs.
-
-	* wl-mime.el (wl-draft-preview-message): Kill raw preview buffer
-	if error occured.
-
-	* wl-message.el (require): Remove tm support.
-
-	* wl-highlight.el (defin-hilit, defun-hilit2): Eliminated.
-
-	* wl-folder.el (wl-folder-setup-mouse): Ignore nemacs.
-	(wl-folder-jump-to-current-entity): Ditto.
-	(wl-folder-mode-map): Added binding for `wl-addrmgr'.
-
-	* wl-e21.el (wl-draft-key-setup): Replaced binding (C-cC-a)for
-	`wl-draft-insert-x-face-field' to `wl-addrmgr'.
-	Changed binding for `wl-draft-insert-x-face-field' to C-cC-x.
-
-	* wl-mule.el (wl-draft-key-setup): Ditto.
-
-	* wl-xmas.el (wl-draft-key-setup): Ditto.
-
-	* wl-draft.el (toplevel): Added autoload setting for wl-addrmgr.
-	(wl-draft-std11-parse-addresses): New function.
-	(wl-draft-parse-mailbox-list): Use it.
-	(wl-draft): Ignore nemacs.
-	(wl-draft-reedit): Ditto.
-
-	* wl-addrmgr.el: New file.
-	(Original is wl-rcpt.el written by
-	"Kitamoto Tsuyoshi <tsuyoshi.kitamoto@city.sapporo.jp>".
-	Thanks Kitamoto-san.)
-
-	* wl-address.el (wl-address-make-address-list): Modified parsing
-	process.
-	(wl-address-delete): Renamed from `wl-address-petname-delete';
-	Modify wl-address-list too.
-	(wl-address-add-or-change): Renamed from
-	`wl-address-petname-add-or-change'; Rewote for wl-addrmgr.
-
-2001-08-15  YAMASHITA Junji <ysjj@unixuser.org>
-
-	* wl-highlight.el (wl-highlight-summary-current-line):
-	  Work with transient-mark-mode
-
 2001-08-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.7.2.
@@ -3471,4 +3401,3 @@
 
 	* wl-draft.el (wl-draft): Put category property on
 	mail-header-separator.
-                                                                                                                                                                                                                                     

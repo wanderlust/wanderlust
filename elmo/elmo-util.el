@@ -1262,16 +1262,6 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	    (throw 'loop a))
 	(setq alist (cdr alist))))))
 
-(defun elmo-string-assoc-all (key alist)
-  (let (matches)
-    (while alist
-      (if (string= key (car (car alist)))
-	  (setq matches
-		(cons (car alist)
-		      matches)))
-      (setq alist (cdr alist)))
-    matches))
-
 (defun elmo-string-rassoc (key alist)
   (let (a)
     (catch 'loop
