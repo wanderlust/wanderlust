@@ -1147,6 +1147,12 @@ Each elements are regexp of field-name."
   :group 'wl-pref
   :group 'wl-draft)
 
+(defcustom wl-subject-prefix-regexp "^[ \t]*\\([Rr][Ee][:>][ \t]*\\)*[ \t]*"
+  "*Regexp matching \"Re: \" in the subject line."
+  :type 'regexp
+  :group 'wl-draft
+  :group 'wl-pref)
+
 (defcustom wl-folder-many-unsync-threshold 70
   "*Folders which contains messages more than this number are highlighted
 with wl-highlight-folder-many-face."

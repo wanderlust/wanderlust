@@ -275,6 +275,12 @@ the `wl-smtp-features' variable."
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
 
+(defun wl-draft-strip-subject-re (subject)
+  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus"
+  (if (string-match wl-subject-prefix-regexp subject)
+      (substring subject (match-end 0))
+    subject))
+
 (defun wl-draft-reply (buf no-arg summary-buf)
   ""
 ;;;(save-excursion
@@ -365,13 +371,8 @@ the `wl-smtp-features' variable."
 			(nth 1 addr))))
 	     cc)))
     (and subject wl-reply-subject-prefix
-	 (let ((case-fold-search t))
-	   (not
-	    (equal
-	     (string-match (regexp-quote wl-reply-subject-prefix)
-			   subject)
-	     0)))
-	 (setq subject (concat wl-reply-subject-prefix subject)))
+	 (setq subject (concat wl-reply-subject-prefix
+                               (wl-draft-strip-subject-re subject))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))

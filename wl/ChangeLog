@@ -1,3 +1,11 @@
+2000-10-07  Yasushi Shoji      <yashi@yashi.com>
+
+	* wl-vars.el (wl-subject-prefix-regexp): New variable.
+
+	* wl-draft.el (wl-draft-strip-subject-re): New function.
+
+	* wl-draft.el (wl-draft-reply): Use it.
+
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-mmelmo-message-redisplay): Use
