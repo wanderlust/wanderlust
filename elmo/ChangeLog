@@ -1,6 +1,7 @@
 2003-10-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-filter.el (elmo-folder-search-requires-msgdb-p): Define.
+	(elmo-folder-msgdb-create): Check the target folder.
 
 2003-10-07  Yuuichi Teranishi  <teranisi@gohome.org>
 

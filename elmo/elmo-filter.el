@@ -119,7 +119,9 @@
   (if (elmo-filter-folder-require-msgdb-internal folder)
       (let* ((target-folder (elmo-filter-folder-target-internal folder))
 	     (len (length numlist))
-	     (msgdb (elmo-folder-msgdb target-folder))
+	     (msgdb (progn
+		      (elmo-folder-check target-folder)
+		      (elmo-folder-msgdb target-folder)))
 	     (new-msgdb (elmo-make-msgdb))
 	     message-id entity)
 	(when (> len elmo-display-progress-threshold)
