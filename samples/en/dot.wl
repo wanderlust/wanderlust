@@ -143,10 +143,10 @@
 ;;; [[ Special Setting ]]
 
 ;; open unread group folder after checking.
-(add-hook 'wl-folder-check-entity-hook
-	  '(lambda ()
-	     (wl-folder-open-unread-folder entity)
-	     ))
+;(add-hook 'wl-folder-check-entity-hook
+;	  '(lambda ()
+;	     (wl-folder-open-unread-folder entity)
+;	     ))
 
 ;; Change summary display function.
 
@@ -199,7 +199,7 @@
 
 
 ;; non-verbose User-Agent: field
-;(setq wl-generate-mailer-string-function
+;(setq wl-generate-mailer-string-func
 ;      (function
 ;       (lambda ()
 ;	 (wl-generate-user-agent-string-1 nil))))
