@@ -337,13 +337,13 @@
 	(setq wl-message-buffer-cur-summary-buffer sum-buf)))))
 
 (defun wl-message-normal-get-original-buffer ()
-  (let (ret-val)
-    (if (setq ret-val (get-buffer wl-original-buf-name))
-	ret-val
-      (set-buffer (setq ret-val 
-			(get-buffer-create wl-original-buf-name)))
-      (wl-message-original-mode)
-      ret-val)))
+  (let ((ret-val (get-buffer wl-original-buf-name)))
+    (if (not ret-val)
+	(save-excursion
+	  (set-buffer (setq ret-val 
+			    (get-buffer-create wl-original-buf-name)))
+	  (wl-message-original-mode)))
+    ret-val))
 
 
 (if wl-use-semi
