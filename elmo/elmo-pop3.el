@@ -41,7 +41,13 @@
 	(require 'sasl))
     (error))
   (defun-maybe md5 (a))
-  (defun-maybe starttls-negotiate (a)))
+  (defun-maybe starttls-negotiate (a))
+  (defun-maybe sasl-find-mechanism (mechanisms))
+  (defun-maybe sasl-make-client (mechanism name service server))
+  (defun-maybe sasl-mechanism-name (client))
+  (defun-maybe sasl-next-step (client step))
+  (defun-maybe sasl-step-data (step))
+  (defun-maybe sasl-step-set-data (step data)))
 (condition-case nil
     (progn
       (require 'sasl))

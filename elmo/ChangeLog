@@ -1,5 +1,12 @@
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-imap4.el (toplevel): defun at compile time.
+	sasl-find-mechanism, sasl-make-client, sasl-mechanism-name,
+	sasl-next-step, sasl-step-data, sasl-step-set-data.
+	* elmo-pop3.el (toplevel): Ditto.
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-imap4.el (elmo-network-authenticate-session): Use `elmo-imap4-login'
 
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
