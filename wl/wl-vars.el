@@ -607,6 +607,12 @@ Default is for 'followup-to-me'."
   :type 'boolean
   :group 'wl-draft)
 
+(defcustom wl-draft-delete-myself-from-bcc-fcc nil
+  "*Do not insert bcc or fcc if To and Cc fields is a member of
+`wl-subscribed-mailing-list'"
+  :type 'boolean
+  :group 'wl-draft)
+
 (defcustom wl-draft-resume-folder-window t
   "*Resume folder window in `wl-draft-hide'."
   :type 'boolean

@@ -4267,6 +4267,11 @@ All headers that match this regexp will be deleted when resending a message.
 If non-nil, always removes your own address from @samp{To:} and
 @samp{Cc:} when you are replying to the mail addressed to you.
 
+@item wl-draft-delete-myself-from-bcc-fcc
+@vindex wl-draft-delete-myself-from-bcc-fcc
+If any of @code{wl-subscribed-mailing-list} are contained in @samp{To:}
+or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{FCC:} field.
+
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
 The initial setting is @code{nil}.
@@ -6240,6 +6245,10 @@ Check mail arrival in this period.
 
 @node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
 @subsection Draft for Replay
+@vindex wl-draft-reply-with-argument-list
+@vindex wl-draft-reply-without-argument-list
+@vindex wl-draft-reply-myself-with-argument-list
+@vindex wl-draft-reply-myself-without-argument-list
 
 If you want, when you replying to articles in mailing lists, the address
 in Reply-To field of the original message to be prepared to To field of

@@ -4234,6 +4234,11 @@ Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B$$$A$*$&(B @code{y-or-n-p} $B$G3NG'$7
 Non-nil $B$J$i!"<+J,08$F$N%a!<%k$KJV?.$9$k>l9g!">o$K(B @samp{To:},
 @samp{Cc:} $B$+$i<+J,$N%a!<%k%"%I%l%9$r:o=|$7$^$9!#(B
 
+@item wl-draft-delete-myself-from-bcc-fcc
+@vindex wl-draft-delete-myself-from-bcc-fcc
+Non-nil $B$G!"(B@samp{To:}, @samp{Cc:} $B$,(B $BJQ?t(B @code{wl-subscribed-mailing-list} $B$K(B
+$B4^$^$l$F$$$k>l9g!"(B@samp{Bcc:} , @samp{FCC:} $B$r$D$1$^$;$s!%(B
+
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
@@ -6171,6 +6176,10 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
 @subsection $BJV;vMQ%I%i%U%H(B
+@vindex wl-draft-reply-with-argument-list
+@vindex wl-draft-reply-without-argument-list
+@vindex wl-draft-reply-myself-with-argument-list
+@vindex wl-draft-reply-myself-without-argument-list
 
 $B%a!<%j%s%0%j%9%H$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7(B
 $B$?$@$1$G855-;v$N(B @samp{Reply-To:} $B$K$"$k%"%I%l%9$r(B @samp{To:} $B$KMQ0U$7$F(B
