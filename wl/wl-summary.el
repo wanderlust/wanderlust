@@ -1164,8 +1164,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 				     nil
 				   wl-use-scoring)))
 	     (wl-summary-rescan nil
-				(or (string-match "nokill" range)
-				    (string-match "noscore" range)))
+				(string-match "noscore" range))
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "mark")
 	   (let ((msg (wl-summary-message-number)))
@@ -3314,7 +3313,6 @@ Return non-nil if the mark is updated"
 			    "last:"
 			    "cache-status"
 			    "rescan"
-			    "rescan-nokill"
 			    "rescan-noscore"
 			    "update"
 			    "update-nokill"
