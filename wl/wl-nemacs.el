@@ -70,7 +70,7 @@
   (defalias 'wl-draft-mode 'mail-mode))
 (defun wl-draft-key-setup ())
 
-;; ??? 
+;; ???
 (defvar mime-article/kanji-code-alist
   (list (cons t (mime-charset-to-coding-system default-mime-charset))))
 
@@ -142,7 +142,7 @@ However, if `mail-yank-prefix' is non-nil, insert that prefix on each line."
 (defun-maybe find-file-name-handler (filename operation))
 
 (defun-maybe read-event ()
-  (setq unread-command-events 
+  (setq unread-command-events
 	(if (fboundp 'read-char-exclusive)
 	    (read-char-exclusive)
 	  ;; XXX Emacs18.59 does not have read-char-exclusive().

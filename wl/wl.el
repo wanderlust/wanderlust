@@ -61,7 +61,7 @@
 (require 'wl-demo)
 (require 'wl-highlight)
 
-(eval-when-compile 
+(eval-when-compile
   (require 'smtp)
   (require 'wl-score)
   (unless wl-on-nemacs
@@ -99,8 +99,8 @@
     (elmo-set-plugged wl-plugged))
   (setq elmo-plugged wl-plugged)
   (save-excursion
-    (mapcar 
-     (function 
+    (mapcar
+     (function
       (lambda (x)
 	(set-buffer x)
 	(wl-summary-msgdb-save)
@@ -620,7 +620,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let (summary-buf)
     (save-excursion
       (let ((summaries (wl-collect-summary)))
-	(mapcar 
+	(mapcar
 	 (function
 	  (lambda (x)
 	    (set-buffer x)
@@ -686,11 +686,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	      (setq elmo-use-semi nil))
 	    ;; defined above.
 	    (wl-mime-setup)
-	    (fset 'wl-summary-from-func-internal 
+	    (fset 'wl-summary-from-func-internal
 		  (symbol-value 'wl-summary-from-func))
-	    (fset 'wl-summary-subject-func-internal 
+	    (fset 'wl-summary-subject-func-internal
 		  (symbol-value 'wl-summary-subject-func))
-	    (fset 'wl-summary-subject-filter-func-internal 
+	    (fset 'wl-summary-subject-filter-func-internal
 		  (symbol-value 'wl-summary-subject-filter-func))
 	    (setq elmo-no-from wl-summary-no-from-message)
 	    (setq elmo-no-subject wl-summary-no-subject-message)
@@ -720,29 +720,29 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
 	(error "%s is not allowed for draft folder" wl-draft-folder))
     (unless (elmo-folder-exists-p wl-draft-folder)
-      (if (y-or-n-p 
-	   (format "Draft Folder %s does not exist, create it?" 
+      (if (y-or-n-p
+	   (format "Draft Folder %s does not exist, create it?"
 		   wl-draft-folder))
 	  (elmo-create-folder wl-draft-folder)
 	(error "Draft Folder is not created")))
     (if (and wl-draft-enable-queuing
 	     (not (elmo-folder-exists-p wl-queue-folder)))
-	(if (y-or-n-p 
-	     (format "Queue Folder %s does not exist, create it?" 
+	(if (y-or-n-p
+	     (format "Queue Folder %s does not exist, create it?"
 		     wl-queue-folder))
 	    (elmo-create-folder wl-queue-folder)
 	  (error "Queue Folder is not created")))
     (unless (elmo-folder-exists-p wl-trash-folder)
-      (if (y-or-n-p 
-	   (format "Trash Folder %s does not exist, create it?" 
+      (if (y-or-n-p
+	   (format "Trash Folder %s does not exist, create it?"
 		   wl-trash-folder))
 	  (elmo-create-folder wl-trash-folder)
 	(error "Trash Folder is not created")))
     (unless (elmo-folder-exists-p elmo-lost+found-folder)
       (elmo-create-folder elmo-lost+found-folder)))
   (unless (file-exists-p wl-tmp-dir)
-    (if (y-or-n-p 
-	 (format "Temp directory (to save multipart) %s does not exist, create it now?" 
+    (if (y-or-n-p
+	 (format "Temp directory (to save multipart) %s does not exist, create it now?"
 		 wl-tmp-dir))
 	(make-directory wl-tmp-dir)
       (error "Temp directory is not created"))))

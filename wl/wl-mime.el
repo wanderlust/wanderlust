@@ -50,17 +50,17 @@
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
 
-(defalias 'wl-draft-decode-message-in-buffer 
+(defalias 'wl-draft-decode-message-in-buffer
   'mime-edit-decode-message-in-buffer)
 
 (defun wl-draft-yank-current-message-entity ()
-  "Yank currently displayed message entity. 
+  "Yank currently displayed message entity.
 By setting following-method as yank-content."
   (let ((wl-draft-buffer (current-buffer))
-	(mime-view-following-method-alist 
-	 (list (cons 'mmelmo-original-mode 
+	(mime-view-following-method-alist
+	 (list (cons 'mmelmo-original-mode
 		     (function wl-draft-yank-to-draft-buffer))))
-	(mime-preview-following-method-alist 
+	(mime-preview-following-method-alist
 	 (list (cons 'mmelmo-original-mode
 		     (function wl-draft-yank-to-draft-buffer)))))
     (if (get-buffer (wl-current-message-buffer))
@@ -73,12 +73,12 @@ By setting following-method as yank-content."
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
 ;; SEMI 1.13.5 or later.
-;; (mime-display-message 
-;;  MESSAGE &optional 
+;; (mime-display-message
+;;  MESSAGE &optional
 ;;  PREVIEW-BUFFER MOTHER DEFAULT-KEYMAP-OR-FUNCTION ORIGINAL-MAJOR-MODE)
 ;; SEMI 1.13.4 or earlier.
-;; (mime-display-message 
-;;  MESSAGE &optional 
+;; (mime-display-message
+;;  MESSAGE &optional
 ;;  PREVIEW-BUFFER MOTHER DEFAULT-KEYMAP-OR-FUNCTION)
 (static-if (or (and mime-user-interface-product
 		    (eq (nth 0 (aref mime-user-interface-product 1)) 1)
@@ -97,9 +97,9 @@ By setting following-method as yank-content."
 			     (, default-keymap-or-function))))
   ;; User agent field of XEmacs has problem on SEMI 1.13.4 or earlier.
   (setq mime-edit-user-agent-value
-	(concat 
+	(concat
 	 (mime-product-name mime-user-interface-product) "/"
-	 (mapconcat 
+	 (mapconcat
 	  #'number-to-string
 	  (mime-product-version mime-user-interface-product) ".")
 	 " (" (mime-product-code-name mime-user-interface-product)
@@ -108,7 +108,7 @@ By setting following-method as yank-content."
 			(mime-product-version mime-library-product) ".")
 	 " (" (mime-product-code-name mime-library-product) ") "
 	 (if (featurep 'xemacs)
-	     (concat 
+	     (concat
 	      (if (featurep 'mule) "MULE")
 	      " XEmacs"
 	      (if (string-match "\\s +\\((\\|\\\"\\)" emacs-version)
@@ -161,7 +161,7 @@ By setting following-method as yank-content."
 					  mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
-      (when wl-highlight-body-too 
+      (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))))
 
@@ -212,7 +212,7 @@ By setting following-method as yank-content."
     (while children
       (setq content-type (mime-entity-content-type (car children)))
       (if (eq (cdr (assq 'type content-type)) 'multipart)
-          (setq number (wl-summary-burst-subr 
+          (setq number (wl-summary-burst-subr
 			(mime-entity-children (car children))
 			target
 			number))
@@ -235,7 +235,7 @@ By setting following-method as yank-content."
     (save-excursion
       (setq target wl-summary-buffer-folder-name)
       (while (not (elmo-folder-writable-p target))
-	(setq target 
+	(setq target
 	      (wl-summary-read-folder wl-default-folder "to extract to")))
       (wl-summary-set-message-buffer-or-redisplay)
       (save-excursion
@@ -256,7 +256,7 @@ By setting following-method as yank-content."
 ;;; Yet another save method.
 (defun wl-mime-save-content (entity situation)
   (let ((filename (read-file-name "Save to file: "
-				  (expand-file-name 
+				  (expand-file-name
 				   (or (mime-entity-safe-filename entity)
 				       ".")
 				   (or wl-mime-save-dir
@@ -275,7 +275,7 @@ By setting following-method as yank-content."
   "Internal method for wl to combine message/partial messages
 automatically."
   (interactive)
-  (let* ((msgdb (save-excursion 
+  (let* ((msgdb (save-excursion
 		  (set-buffer wl-message-buffer-cur-summary-buffer)
 		  wl-summary-buffer-msgdb))
 	 (mime-display-header-hook 'wl-highlight-headers)
@@ -293,9 +293,9 @@ automatically."
 	    (not (y-or-n-p "Merge partials?")))
 	(with-current-buffer mother
 	  (mime-store-message/partial-piece entity situation))
-      (setq subject-id 
+      (setq subject-id
 	    (eword-decode-string
-	     (decode-mime-charset-string 
+	     (decode-mime-charset-string
 	      (wl-mime-entity-read-field entity 'Subject)
 	      wl-summary-buffer-mime-charset)))
       (if (string-match "[0-9\n]+" subject-id)
@@ -313,7 +313,7 @@ automatically."
 		     (elmo-msgdb-overview-entity-get-number (car overviews))))
 		   (situation (mime-entity-situation message))
 		   (the-id (or (cdr (assoc "id" situation)) "")))
-	      (when (string= (downcase the-id) 
+	      (when (string= (downcase the-id)
 			     (downcase id))
 		(with-current-buffer mother
 		  (mime-store-message/partial-piece message situation))
@@ -335,7 +335,7 @@ automatically."
 	     'mmelmo-original-mode 'wl-message-exit)
   (set-alist 'mime-view-over-to-previous-method-alist
 	     'mmelmo-original-mode 'wl-message-exit)
-  (set-alist 'mime-view-over-to-next-method-alist 
+  (set-alist 'mime-view-over-to-next-method-alist
 	     'mmelmo-original-mode 'wl-message-exit)
   (set-alist 'mime-preview-over-to-previous-method-alist
 	     'mmelmo-original-mode 'wl-message-exit)
@@ -355,10 +355,10 @@ automatically."
    '((mode . "extract")
      (major-mode . mmelmo-original-mode)
      (method . wl-mime-save-content)))
-  (set-alist 'mime-preview-following-method-alist 
+  (set-alist 'mime-preview-following-method-alist
 	     'mmelmo-original-mode
 	     (function wl-message-follow-current-entity))
-  (set-alist 'mime-view-following-method-alist 
+  (set-alist 'mime-view-following-method-alist
 	     'mmelmo-original-mode
 	     (function wl-message-follow-current-entity))
   (set-alist 'mime-edit-message-inserter-alist
@@ -366,7 +366,7 @@ automatically."
   (set-alist 'mime-edit-mail-inserter-alist
 	     'wl-draft-mode (function wl-draft-insert-get-message))
   (set-alist 'mime-edit-split-message-sender-alist
-	     'wl-draft-mode 
+	     'wl-draft-mode
 	     (cdr (assq 'mail-mode mime-edit-split-message-sender-alist)))
   (set-alist 'mime-raw-representation-type-alist
 	     'mmelmo-original-mode 'binary)

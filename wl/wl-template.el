@@ -132,8 +132,8 @@ Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
        mail-header-separator)
       (wl-highlight-message (point-min) (point-max) t)
       (and wl-highlight-x-face-func
-	   (funcall 
-	    wl-highlight-x-face-func 
+	   (funcall
+	    wl-highlight-x-face-func
 	    (point-min) (re-search-forward mail-header-separator nil t)))
       (setq mode-line-process (concat ":" wl-template))
       (set-buffer-modified-p nil))))

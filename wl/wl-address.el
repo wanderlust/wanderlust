@@ -156,11 +156,11 @@ And remove domain part of mail addr."
 					 (wl-match-string 1 str))))
 				  (split-string dn ",")))))
       ;; prepare candidate for uniq str
-      (if str 
+      (if str
 	  (setq str (concat str wl-ldap-alias-sep (car dn-list))
 		dn-list (cdr dn-list))
 	;; first entry, pre-build with given level
-	(cond 
+	(cond
 	 ((null wl-ldap-alias-dn-level) (setq level 1))
 	 ((eq t wl-ldap-alias-dn-level) (setq level 1000)) ; xxx, big enough
 	 ((numberp wl-ldap-alias-dn-level)
@@ -204,10 +204,10 @@ Matched address lists are append to CL."
 	result cn mails)
     ;; check cache
     (mapatoms (lambda (atom)
-		(if (and (string-match 
+		(if (and (string-match
 			  (concat "^" (symbol-name atom) ".*") pat)
 			 (or (null cache)
-			     (< (car cache) 
+			     (< (car cache)
 				(setq len (length (symbol-name atom))))))
 		    (setq cache (cons
 				 (or len (length (symbol-name atom)))
@@ -216,11 +216,11 @@ Matched address lists are append to CL."
     ;; get matched entries
     (if cache
 	(setq entries (cdr cache))
-      (condition-case nil 
+      (condition-case nil
 	  (progn
 	    (message "Searching in LDAP...")
 	    (setq entries (ldap-search-entries
-			   (wl-ldap-make-filter 
+			   (wl-ldap-make-filter
 			    (concat pat "*")
 			    wl-ldap-search-attribute-type-list)
 			   nil wl-ldap-search-attribute-type-list nil t))
@@ -300,7 +300,7 @@ Matched address lists are append to CL."
 	(setq cl
 	      (cons
 	       (cons (nth 1 addr-tuple)
-		     (concat 
+		     (concat
 		      (wl-address-quote-specials
 		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))
 	       cl)))
@@ -337,7 +337,7 @@ Matched address lists are append to CL."
 		    (setq skip-chars "^, "))
 		   ((looking-at wl-newsgroups-complete-header-regexp)
 		    (setq completion-list wl-folder-newsgroups-hashtb)))))
-	  (wl-complete-field-body completion-list 
+	  (wl-complete-field-body completion-list
 				  epand-char skip-chars use-ldap)
 	(indent-for-tab-command)))))
 
@@ -378,7 +378,7 @@ Matched address lists are append to CL."
 	 (cl wl-draft-field-completion-list))
     (if (null cl)
 	nil
-      (setq completion 
+      (setq completion
             (let ((completion-ignore-case t))
               (try-completion pattern cl)))
       (cond ((eq completion t)
@@ -427,7 +427,7 @@ Matched address lists are append to CL."
 	 (len (length pattern))
 	 (cl completion-list))
     (when use-ldap
-      (setq cl (wl-address-ldap-search pattern cl)))    
+      (setq cl (wl-address-ldap-search pattern cl)))
     (if (null cl)
 	nil
       (setq completion (try-completion pattern cl))
@@ -461,16 +461,16 @@ Matched address lists are append to CL."
 
 (defun wl-local-address-init ()
   (message "Updating addresses...")
-  (setq wl-address-list 
+  (setq wl-address-list
 	(wl-address-make-address-list wl-address-file))
-  (setq wl-address-completion-list 
+  (setq wl-address-completion-list
 	(wl-address-make-completion-list wl-address-list))
   (if (file-readable-p wl-alias-file)
-      (setq wl-address-completion-list 
-	    (append wl-address-completion-list 
+      (setq wl-address-completion-list
+	    (append wl-address-completion-list
 		    (wl-address-make-alist-from-alias-file wl-alias-file))))
   (setq wl-address-petname-hash (elmo-make-hash))
-  (mapcar 
+  (mapcar
    (function
 	(lambda (x)
 	  (elmo-set-hash-val (downcase (car x))
@@ -529,10 +529,10 @@ Matched address lists are append to CL."
 	  (insert-file-contents path)
 	  (goto-char (point-min))
 	  (while (not (eobp))
-	    (if (looking-at 
+	    (if (looking-at
  "^\\([^#\n][^ \t\n]+\\)[ \t]+\"\\(.*\\)\"[ \t]+\"\\(.*\\)\"[ \t]*.*$")
-		(setq ret 
-		      (wl-append-element 
+		(setq ret
+		      (wl-append-element
 		       ret
 		       (list (wl-match-buffer 1)
 			     (wl-match-buffer 2)
@@ -552,7 +552,7 @@ Matched address lists are append to CL."
   "Judge whether ADDRESS is user's or not."
   (member (downcase (wl-address-header-extract-address address))
 	  (or (mapcar 'downcase wl-user-mail-address-list)
-	      (list (downcase 
+	      (list (downcase
 		     (wl-address-header-extract-address
 		      wl-from))))))
 
@@ -582,7 +582,7 @@ e.g. \"Mr. bar <hoge@foo.com>\"
        (concat (, string) "\"" (cdr (, token)) "\""))
       ((eq 'comment (car (, token)))
        (concat (, string) "(" (cdr (, token)) ")"))
-      (t 
+      (t
        (concat (, string) (cdr (, token)))))))
 
 (defun wl-address-string-without-group-list-contents (sequence)
@@ -591,7 +591,7 @@ Group list contents is not included."
   (let (address-string route-addr-end token seq)
   (while sequence
     (setq token (car sequence))
-    (cond 
+    (cond
      ;;   group       =  phrase ":" [#mailbox] ";"
      ((and (eq 'specials (car token))
 	   (string= (cdr token) ":"))
@@ -614,7 +614,7 @@ Group list contents is not included."
 	(setq address-string (wl-address-concat-token address-string
 						      (car sequence)))
 	(setq sequence (cdr sequence))))
-     (t 
+     (t
       (setq address-string (wl-address-concat-token address-string token))
       (setq sequence (cdr sequence)))))
   address-string))
@@ -622,7 +622,7 @@ Group list contents is not included."
 (defun wl-address-petname-delete (the-email)
   "Delete petname in wl-address-file."
   (let* ( (tmp-buf (get-buffer-create " *wl-petname-tmp*"))
-	  (output-coding-system 
+	  (output-coding-system
 	   (mime-charset-to-coding-system wl-mime-charset)))
     (set-buffer tmp-buf)
     (message "Deleting Petname...")
@@ -635,9 +635,9 @@ Group list contents is not included."
     (kill-buffer tmp-buf)))
 
 
-(defun wl-address-petname-add-or-change (the-email 
-					 default-petname 
-					 default-realname 
+(defun wl-address-petname-add-or-change (the-email
+					 default-petname
+					 default-realname
 					 &optional change-petname)
   "Add petname to wl-address-file, if not registerd.
 If already registerd, change it."

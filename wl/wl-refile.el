@@ -85,17 +85,17 @@
 (defun wl-refile-learn (entity dst)
   (let (tocc-list from key hit ml)
     (setq dst (elmo-string dst))
-    (setq tocc-list 
+    (setq tocc-list
 	  (mapcar (function
-		   (lambda (entity) 
+		   (lambda (entity)
 		     (downcase (wl-address-header-extract-address entity))))
-		  (wl-parse-addresses 
+		  (wl-parse-addresses
 		   (concat
 		    (elmo-msgdb-overview-entity-get-to entity) ","
 		    (elmo-msgdb-overview-entity-get-cc entity)))))
     (while tocc-list
-      (if (wl-string-member 
-	   (car tocc-list) 
+      (if (wl-string-member
+	   (car tocc-list)
 	   (mapcar (function downcase) wl-subscribed-mailing-list))
 	  (setq ml (car tocc-list)
 		tocc-list nil)
@@ -103,10 +103,10 @@
     (if ml
 	(setq key ml) ; subscribed entity!!
       (or (wl-address-user-mail-address-p
-	   (setq from 
-		 (downcase 
+	   (setq from
+		 (downcase
 		  (wl-address-header-extract-address
-		   (elmo-msgdb-overview-entity-get-from 
+		   (elmo-msgdb-overview-entity-get-from
 		    entity)))))
 	  (setq key from))
       (if (or wl-refile-msgid-alist
@@ -167,7 +167,7 @@
 If RULE does not match ENTITY, returns nil."
   (let ((case-fold-search t)
 	fields guess pairs value)
-    (cond 
+    (cond
      ((stringp rule) rule)
      ((listp (car rule))
       (setq fields (car rule))
@@ -250,11 +250,11 @@ If RULE does not match ENTITY, returns nil."
     guess))
 
 (defun wl-refile-guess-by-history (entity)
-  (let ((tocc-list 
+  (let ((tocc-list
 	 (mapcar (function
 		  (lambda (entity)
 		    (downcase (wl-address-header-extract-address entity))))
-		 (wl-parse-addresses 
+		 (wl-parse-addresses
 		  (concat
 		   (elmo-msgdb-overview-entity-get-to entity) ","
 		   (elmo-msgdb-overview-entity-get-cc entity)))))
@@ -281,7 +281,7 @@ If RULE does not match ENTITY, returns nil."
 		    (elmo-msgdb-overview-entity-get-from entity)))))
     ;; search from alist
     (or (cdr (assoc from wl-refile-alist))
-	(format "%s/%s" wl-refile-default-from-folder 
+	(format "%s/%s" wl-refile-default-from-folder
 		(wl-refile-get-account-part-from-address from)))))
   
 (defun wl-refile-guess-by-msgid (entity)

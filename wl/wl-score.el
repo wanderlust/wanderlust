@@ -104,12 +104,12 @@
 (defvar wl-score-edit-exit-func nil
   "Function run on exit from the score buffer.")
 
-(mapcar 
+(mapcar
  (function make-variable-buffer-local)
  (list 'wl-current-score-file
        'wl-score-alist))
 
-;; Utility functions 
+;; Utility functions
 
 (defun wl-score-simplify-buffer-fuzzy ()
   "Simplify string in the buffer fuzzily.
@@ -1182,7 +1182,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 (defun wl-summary-rescore-msgs (number-alist)
   (mapcar
    'car
-   (nthcdr 
+   (nthcdr
     (max (- (length number-alist)
 	    wl-summary-rescore-partial-threshold)
 	 0)
@@ -1200,7 +1200,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 			      (unless arg
 				(wl-summary-rescore-msgs number-alist)))
     (setq expunged (wl-summary-score-update-all-lines t))
-    (if expunged 
+    (if expunged
 	(message "%d message(s) are expunged by scoring." (length expunged)))
     (set-buffer-modified-p nil)))
 
@@ -1262,7 +1262,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	;; mark as read.
 	(setq mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
 	(mapcar (function (lambda (x)
-			    (setq mark-alist 
+			    (setq mark-alist
 				  (elmo-msgdb-mark-set mark-alist x nil))))
 		dels)
 	(elmo-mark-as-read wl-summary-buffer-folder-name
@@ -1277,7 +1277,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	  ;; Update Folder mode
 	  (wl-folder-set-folder-updated wl-summary-buffer-folder-name
 					(list 0
-					      (wl-summary-count-unread 
+					      (wl-summary-count-unread
 					       mark-alist)
 					      (length num-db)))
 	  (wl-summary-update-modeline)))

@@ -137,10 +137,10 @@
 		  (elmo-create-folder dst-folder))
 	(error "%s: create folder failed" dst-folder))
       (if wl-expire-add-seen-list
-	  (elmo-msgdb-add-msgs-to-seen-list 
+	  (elmo-msgdb-add-msgs-to-seen-list
 	   dst-folder
 	   refile-list
-	   msgdb 
+	   msgdb
 	   (concat wl-summary-important-mark
 		   wl-summary-read-uncached-mark)))
       (if (elmo-move-msgs folder
@@ -185,10 +185,10 @@ If REFILE-LIST includes reserve mark message, so copy."
 	    (setq copy-reserve-message t))))
       (when refile-list
 	(if wl-expire-add-seen-list
-	    (elmo-msgdb-add-msgs-to-seen-list 
+	    (elmo-msgdb-add-msgs-to-seen-list
 	     dst-folder
 	     refile-list
-	     msgdb 
+	     msgdb
 	     (concat wl-summary-important-mark
 		     wl-summary-read-uncached-mark)))
 	(unless
@@ -207,9 +207,9 @@ If REFILE-LIST includes reserve mark message, so copy."
 	(when copy-reserve-message
 	  (setq refile-list
 		(wl-expire-delete-reserve-marked-msgs-from-list
-		 refile-list 
+		 refile-list
 		 mark-alist))
-	  (when refile-list 
+	  (when refile-list
 	   (if (setq ret-val
 		    (elmo-delete-msgs folder
 				      refile-list
@@ -243,7 +243,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 	  (t
 	   (setq dst-folder-base
 		 (elmo-concat-path (format "%s%s" archive-spec (car spec))
-				   (elmo-replace-msgid-as-filename 
+				   (elmo-replace-msgid-as-filename
 				    src-folder)))))
     (setq dst-folder-fmt (format fmt
 				 dst-folder-base
@@ -475,7 +475,7 @@ Refile to archive folder followed message date."
 	expires)
     (when (and (or (setq expires (wl-expire-folder-p folder))
 		   (progn (and (interactive-p)
-			       (message "no match %s in wl-expire-alist" 
+			       (message "no match %s in wl-expire-alist"
 					folder))
 			  nil))
 	       (or (not (interactive-p))
@@ -514,7 +514,7 @@ Refile to archive folder followed message date."
 		  (setq msgs (cdr msgs))))))
 	   ((eq val-type 'date)
 	    (let* ((overview (elmo-msgdb-get-overview msgdb))
-		   (key-date (elmo-date-get-offset-datevec 
+		   (key-date (elmo-date-get-offset-datevec
 			      (timezone-fix-time (current-time-string)
 						 (current-time-zone) nil)
 			      value t)))
@@ -718,7 +718,7 @@ Refile to archive folder followed message date."
 			  action
 			  src-folder msgs)))
 	(if (file-writable-p filename)
-	    (write-region (point-min) (point-max) 
+	    (write-region (point-min) (point-max)
 			  filename t 'no-msg)
 	  (message (format "%s is not writable." filename)))
 	(kill-buffer tmp-buf)))))
