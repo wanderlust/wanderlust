@@ -4374,7 +4374,9 @@ If ARG, exit virtual folder."
 	      (copy-to-buffer tmp-buffer (point-min) (point-max))
 	      (with-current-buffer tmp-buffer
 		(widen)
-		(setq wl-summary-buffer-target-mark-list mark-list
+		(make-local-variable 'wl-summary-highlight)
+		(setq wl-summary-highlight nil
+		      wl-summary-buffer-target-mark-list mark-list
 		      wl-summary-buffer-refile-list refile-list
 		      wl-summary-buffer-copy-list copy-list
 		      wl-summary-buffer-delete-list delete-list

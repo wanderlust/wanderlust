@@ -1,3 +1,9 @@
+2002-05-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-save-view-cache): In temporary buffer,
+	bind wl-summary-highlight as nil to avoid error caused by missing
+	local variables.
+
 2002-05-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-invalid-character-message): New user option.
