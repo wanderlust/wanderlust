@@ -379,6 +379,7 @@ Returns non-nil if bottom of message."
     (wl-message-select-buffer wl-message-buffer)
 
     (set-buffer message-buf)
+    (setq truncate-lines wl-message-truncate-lines)
     (setq buffer-read-only nil)
     (setq wl-message-buffer-cur-summary-buffer summary-buf)
     (setq wl-message-buffer-cur-folder (elmo-folder-name-internal folder))

@@ -1164,6 +1164,11 @@ Set this if (system-name) does not return FQDN."
   :type 'boolean
   :group 'wl-pref)
 
+(defcustom wl-message-truncate-lines nil
+  "*Truncate lines in Message Buffer."
+  :type 'boolean
+  :group 'wl-pref)
+
 (defcustom wl-message-scroll-amount 5
   "*Scroll amount by SPC key."
   :type 'integer
