@@ -599,12 +599,6 @@ CACHE-PATH is the cache path to be used as a message cache file."
   ((folder elmo-folder) &optional visible-only)
   t)
 
-(defun elmo-folder-encache (folder numbers &optional unread)
-  "Encache messages in the FOLDER with NUMBERS.
-If UNREAD is non-nil, messages are not flaged as read."
-  (dolist (number numbers)
-    (elmo-message-encache folder number unread)))
-
 (luna-define-generic elmo-message-encache (folder number &optional read)
   "Encache message in the FOLDER with NUMBER.
 If READ is non-nil, message is flaged as read.")
