@@ -1,3 +1,7 @@
+2003-10-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-get-assoc-list-value): Fixed last change.
+
 2003-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-thread-saved-entity-hashtb-internal): New

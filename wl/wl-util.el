@@ -274,7 +274,7 @@ even when invalid character is contained."
 		     (setq value (append value (list (cdr pair)))))
 		    ((eq match 'all-list)
 		     (setq value (append value (cdr pair))))
-		    ((not match)
+		    ((or (not match) (eq match 'function))
 		     (throw 'found (cdr pair))))))
 	(setq alist (cdr alist)))
       value)))
