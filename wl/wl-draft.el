@@ -969,7 +969,7 @@ to find out how to use this."
 		   (string-match 
 		    wl-draft-clone-local-variable-regexp
 		    (symbol-name (car local))))
-	  (setq result (wl-append result (list (car local)))))))
+	  (wl-append result (list (car local))))))
      locals)
     result))
 
