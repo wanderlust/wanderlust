@@ -1474,20 +1474,21 @@ If optional argument UNMARK is non-nil, unmark."
 
 (defun elmo-imap4-append-msg (spec string &optional msg no-see)
   (let ((session (elmo-imap4-get-session spec))
-	send-buf)
+	send-buf result)
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-spec-mailbox spec))
     (setq send-buf (elmo-imap4-setup-send-buffer string))
     (unwind-protect
-	(elmo-imap4-send-command-wait
-	 session
-	 (list
-	  "append "
-	  (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-	  (if no-see " " " (\\Seen) ")
-	  (elmo-imap4-buffer-literal send-buf)))
-      (kill-buffer send-buf)))
-  t)
+	(setq result (elmo-imap4-response-ok-p
+		      (elmo-imap4-send-command-wait
+		       session
+		       (list
+			"append "
+			(elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+			(if no-see " " " (\\Seen) ")
+			(elmo-imap4-buffer-literal send-buf)))))
+      (kill-buffer send-buf))
+    result))
 
 (defun elmo-imap4-copy-msgs (dst-spec
 			     msgs src-spec &optional expunge-it same-number)
