@@ -1,3 +1,8 @@
+2002-06-10  Kenichi Sato <ksato@sonycom.com>
+
+	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Fix for
+	message with no message-id field.
+
 2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.9.13.

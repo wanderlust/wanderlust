@@ -770,10 +770,10 @@ header separator."
 (defun elmo-msgdb-get-message-id-from-buffer ()
   (or (elmo-field-body "message-id")
       ;; no message-id, so put dummy msgid.
-      (concat (timezone-make-date-sortable
-	       (elmo-field-body "date"))
+      (concat "<" (timezone-make-date-sortable
+		   (elmo-field-body "date"))
 	      (nth 1 (eword-extract-address-components
-		      (or (elmo-field-body "from") "nobody"))))))
+		      (or (elmo-field-body "from") "nobody"))) ">")))
 
 (defsubst elmo-msgdb-create-overview-from-buffer (number &optional size time)
   "Create overview entity from current buffer.
