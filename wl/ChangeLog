@@ -1,3 +1,32 @@
+2000-09-28  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-highlight.el (wl-highlight-folder-path): Put overlay
+	properties `evaporate' and `wl-momentary-overlay' as well.
+	(wl-highlight-summary-displaying): Ditto.
+	(wl-delete-all-overlays): Don't delete overlay which does not have
+	a property `wl-momentary-overlay'.
+
+	* wl-e21.el (wl-biff-init-icons, wl-plugged-init-icons): Refer to
+	`display-mouse-p' and `display-graphic-p'.
+	(wl-folder-init-icons): Don't search for XBM or the other files.
+	(wl-plugged-set-folder-icon): Make icons if and only if
+	`display-graphic-p' returns non-nil.
+	(wl-highlight-plugged-current-line): Use `before-string' overlay
+	property to show icon images.
+	(wl-highlight-folder-current-line): Ditto.
+	(wl-e21-highlight-folder-group-line): Ditto.
+	(wl-e21-highlight-folder-by-numbers): Ditto.
+	(wl-e21-insert-image): Removed.
+	(wl-e21-setup-*-toolbar): Refer to `display-graphic-p'.
+	(wl-e21-make-toolbar-buttons): Set the value that Emacs itself
+	said.
+	(wl-e21-switch-toolbar-after-make-frame): Renamed from
+	`wl-e21-force-switch-toolbar'.
+	(wl-e21-make-icon-image): Removed.
+	(wl-e21-setup-toolbar): Don't search for XBM files.
+	(wl-use-toolbar): Don't refer to `display-graphic-p' to determine
+	the default value.
+
 2000-09-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folder-async): Set
