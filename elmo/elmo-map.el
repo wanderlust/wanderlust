@@ -138,7 +138,7 @@
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-map-folder))
   (let* ((msgdb (elmo-folder-msgdb folder))
-	 (numbers (sort (elmo-folder-list-messages folder 'in-db) '<))
+	 (numbers (sort (elmo-folder-list-messages folder nil 'in-msgdb) '<))
 	 (new-msgdb (elmo-make-msgdb))
 	 (number 1)
 	 total location entity)

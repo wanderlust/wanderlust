@@ -286,8 +286,7 @@ FOLDER is the folder structure."
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
-  (let ((number-list (elmo-msgdb-list-messages
-		      (elmo-folder-msgdb-path folder)))
+  (let ((number-list (elmo-folder-list-messages folder nil 'in-msgdb))
 	(spool-folder (elmo-dop-spool-folder folder))
 	spool-length
 	(i 0)

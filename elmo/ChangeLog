@@ -1,8 +1,22 @@
+2003-09-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): Undo last change.
+	(elmo-msgdb-flags): New function.
+	(elmo-msgdb-merge): Use elmo-msgdb-append.
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Fixed the last
+	change.
+
+	* elmo-map.el (elmo-folder-pack-numbers): Ditto.
+
+	* elmo-dop.el (elmo-folder-status-dop): Use
+	elmo-folder-list-messages instead of elmo-msgdb-list-messages.
+
 2003-09-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-map.el (elmo-folder-pack-numbers): Rewrite.
 
-	* elmo-localdir.el (elmo-folder-pack-numbers): Fixed last chagne.
+	* elmo-localdir.el (elmo-folder-pack-numbers): Fixed last change.
 
 	* elmo-msgdb.el (elmo-msgdb-append-entity): Fixed.
 

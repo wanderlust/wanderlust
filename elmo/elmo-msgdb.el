@@ -179,14 +179,10 @@
     (elmo-msgdb-make-index msgdb)
     msgdb))
 
-(defun elmo-msgdb-list-messages (msgdb-or-path)
-  "Return a list of message numbers in the msgdb.
-If MSGDB-OR-PATH is a msgdb structure, use it as a msgdb.
-If argument is a string, use it as a path to load message entities."
+(defun elmo-msgdb-list-messages (msgdb)
+  "Return a list of message numbers in the MSGDB."
   (mapcar 'elmo-msgdb-overview-entity-get-number
-	  (if (stringp msgdb-or-path)
-	      (elmo-msgdb-overview-load msgdb-or-path)
-	    (elmo-msgdb-get-overview msgdb-or-path))))
+	  (elmo-msgdb-get-overview msgdb)))
 
 (defsubst elmo-msgdb-mark-to-flags (mark)
   (append
@@ -286,6 +282,9 @@ If mark is changed, return non-nil."
 			      (if cached
 				  elmo-msgdb-unread-cached-mark
 				elmo-msgdb-unread-uncached-mark)))))))
+
+(defsubst elmo-msgdb-flags (msgdb number)
+  (elmo-msgdb-mark-to-flags (elmo-msgdb-get-mark msgdb number)))
 
 (defun elmo-msgdb-set-flag (msgdb folder number flag)
   "Set message flag.
@@ -476,26 +475,7 @@ FLAG is a symbol which is one of the following:
     (setq msgdb (or (elmo-folder-msgdb-internal folder)
 		    (elmo-make-msgdb nil nil nil
 				     (elmo-folder-msgdb-path folder))))
-    (elmo-msgdb-set-overview
-     msgdb
-     (nconc (elmo-msgdb-get-overview msgdb)
-	    (elmo-msgdb-get-overview msgdb-merge)))
-    (elmo-msgdb-set-number-alist
-     msgdb
-     (nconc (elmo-msgdb-get-number-alist msgdb)
-	    (elmo-msgdb-get-number-alist msgdb-merge)))
-    (elmo-msgdb-set-mark-alist
-     msgdb
-     (nconc (elmo-msgdb-get-mark-alist msgdb)
-	    (elmo-msgdb-get-mark-alist msgdb-merge)))
-    (setq duplicates (elmo-msgdb-make-index
-		      msgdb
-		      (elmo-msgdb-get-overview msgdb-merge)
-		      (elmo-msgdb-get-mark-alist msgdb-merge)))
-    (elmo-msgdb-set-path
-     msgdb
-     (or (elmo-msgdb-get-path msgdb)
-	 (elmo-msgdb-get-path msgdb-merge)))
+    (setq duplicates (elmo-msgdb-append msgdb msgdb-merge))
     (elmo-folder-set-msgdb-internal folder msgdb)
     duplicates))
 

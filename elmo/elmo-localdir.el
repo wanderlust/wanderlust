@@ -342,6 +342,7 @@
 	 (new-msgdb (elmo-make-msgdb))
 	 (numbers (sort (elmo-folder-list-messages
 			 folder
+			 nil
 			 (not elmo-pack-number-check-strict))
 			'<))
 	 (new-number 1)		  ; first ordinal position in localdir
