@@ -1,3 +1,8 @@
+2003-02-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-mark-as-read): Run hook within dolist.
+	Resume current-buffer since it is assumed by remaining tasks.
+
 2003-02-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-complete-folder-candidate): New variable.

@@ -4023,9 +4023,10 @@ If ARG, exit virtual folder."
 	      (elmo-msgdb-set-mark msgdb number new-mark))
 	    (wl-summary-set-mark-modified))
 	  (if (and visible wl-summary-highlight)
-	      (wl-highlight-summary-current-line nil nil t)))
-	(if stat
-	    (run-hooks 'wl-summary-unread-message-hook))
+	      (wl-highlight-summary-current-line nil nil t))
+	  (if stat
+	      (save-current-buffer ; assumed by remaining
+		(run-hooks 'wl-summary-unread-message-hook))))
 	(wl-summary-update-modeline)
 	(wl-folder-update-unread
 	 (wl-summary-buffer-folder-name)
