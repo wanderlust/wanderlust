@@ -436,7 +436,7 @@ Reply to author if WITH-ARG is non-nil."
       (goto-char (point-min))
       (wl-draft-delete-fields ignored-fields))
     (goto-char (point-max))
-    (push-mark)
+    (push-mark (point) nil t)
     (goto-char (point-min)))
   (let ((beg (point)))
     (cond (mail-citation-hook (run-hooks 'mail-citation-hook))
@@ -1288,7 +1288,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (unless (featurep 'wl)
     (require 'wl))
   (unless wl-init
-    (wl-load-profile))
+    (wl-load-profile)
+    (wl-plugged-init t))
   (wl-init 'wl-draft) ;; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer wl-summary-buffer-folder-name)))
