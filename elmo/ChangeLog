@@ -1,5 +1,7 @@
 2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.11.6.
+
 	* elmo-msgdb.el (elmo-msgdb-list-messages): If argument is a string,
 	use it as a the path for loading message entities.
 

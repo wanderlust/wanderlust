@@ -1,3 +1,7 @@
+2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.11.6.
+
 2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-current-message-buffer): Define as function;
