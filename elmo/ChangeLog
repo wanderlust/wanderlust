@@ -1,3 +1,12 @@
+2003-07-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-search-fast): Return t if condition is not
+	treated.
+	(elmo-folder-search): Follow the change above.
+
+	* elmo-util.el (elmo-read-search-condition-internal): Add `Flag'
+	into the candidates of search field.
+
 2003-07-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-set-flag): Overwrite answered flag.

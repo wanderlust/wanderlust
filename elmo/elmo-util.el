@@ -149,7 +149,7 @@ File content is encoded with MIME-CHARSET."
 		 (format "%s (%s): " prompt default)
 		 (mapcar 'list
 			 (append '("AND" "OR"
-				   "Last" "First"
+				   "Last" "First" "Flag"
 				   "From" "Subject" "To" "Cc" "Body"
 				   "Since" "Before" "ToCc"
 				   "!From" "!Subject" "!To" "!Cc" "!Body"
@@ -178,6 +178,15 @@ File content is encoded with MIME-CHARSET."
 			     elmo-date-descriptions)))
 	(concat (downcase field) ":"
 		(if (equal value "") default value))))
+     ((string= field "Flag")
+      (setq value (completing-read
+		   (format "Value for '%s': " field)
+		   (mapcar 'list
+			   '("unread" "important" "answered" "digest" "any"))))
+      (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
+			    value)
+	(setq value (prin1-to-string value)))
+      (concat (downcase field) ":" value))
      (t
       (setq value (read-from-minibuffer (format "Value for '%s': " field)))
       (unless (string-match (concat "^" elmo-condition-atom-regexp "$")
