@@ -642,7 +642,7 @@ Returning its cache buffer."
     ;; return nil if failed.
     (elmo-cache-force-delete file locked)))
 
-(defun elmo-cache-read-msg (spec number outbuf &optional set-mark)
+(defun elmo-cache-read-msg (spec number outbuf &optional msgdb unread)
   (save-excursion
     (let* ((dir (elmo-cache-get-folder-directory spec))
 	   (file (expand-file-name
