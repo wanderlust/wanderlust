@@ -326,7 +326,7 @@
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-localdir-folder))
   (let* ((dir (elmo-localdir-folder-directory-internal folder))
 	 (msgdb (elmo-folder-msgdb folder))
-	 (new-msgdb (elmo-make-msgdb))
+	 (new-msgdb (elmo-make-msgdb (elmo-folder-msgdb-path folder)))
 	 (numbers (sort (elmo-folder-list-messages
 			 folder
 			 nil
@@ -334,7 +334,6 @@
 			'<))
 	 (new-number 1)		  ; first ordinal position in localdir
 	 total entity)
-    (elmo-msgdb-set-path new-msgdb (elmo-folder-msgdb-path folder))
     (setq total (length numbers))
     (elmo-with-progress-display (> total elmo-display-progress-threshold)
 	(elmo-folder-pack-numbers total "Packing...")

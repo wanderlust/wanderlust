@@ -129,7 +129,7 @@
 			     len "Creating msgdb..."))
 	(unwind-protect
 	    (dolist (number numlist)
-	      (setq entity (elmo-msgdb-overview-get-entity number msgdb))
+	      (setq entity (elmo-msgdb-message-entity msgdb number))
 	      (when entity
 		(elmo-msgdb-append-entity new-msgdb entity
 					  (elmo-msgdb-flags msgdb number)))

@@ -1,5 +1,47 @@
 2003-09-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb.el: New file.
+
+	* modb-entity.el: Ditto.
+
+	* modb-legacy.el: Ditto.
+
+	* elmo-msgdb.el (elmo-make-msgdb): Added 2nd argument `type'.
+	(elmo-msgdb-get-number): Use `elmo-msgdb-message-entity' instead
+	of `elmo-msgdb-overview-get-entity'.
+	(elmo-msgdb-get-field): Ditto.
+	(elmo-msgdb-merge): Moved to `elmo.el'.
+	(elmo-msgdb-length): Removed; redefine as modb method.
+	(elmo-msgdb-change-mark): Abolish.
+	(elmo-msgdb-out-of-date-messages): Rewrite; don't use it.
+	(elmo-msgdb-match-condition): Don't use mark.
+	(elmo-msgdb-overview-get-entity): Abolish.
+	Split modb part into `modb*.el'.
+
+	* elmo-vars.el (elmo-msgdb-default-type): New user option.
+
+	* elmo-shimbun.el (shimbun-mua-search-id): Use
+	`elmo-msgdb-message-entity' instead of
+	`elmo-msgdb-overview-get-entity'.
+	(elmo-shimbun-folder-shimbun-header): Ditto.
+	(elmo-shimbun-get-headers): Ditto.
+	(elmo-shimbun-update-overview): Ditto.
+
+	* elmo-mime.el (elmo-mime-display-as-is): Ditto.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo.el (elmo-folder-list-messages-with-global-mark): Ditto.
+	(elmo-msgdb-merge): Moved from `elmo-msgdb.el'.
+
+	* elmo-mark.el (elmo-mark-folder-msgdb-create): Don't use
+	`elmo-msgdb-mark-to-flags'.
+
+	* elmo-map.el (elmo-folder-pack-numbers): Don't use
+	`elmo-msgdb-set-path'.
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Ditto.
+ 
 	* elmo-version.el (elmo-version): Up to 2.11.13.
 
 	* elmo.el (elmo-generic-folder-commit): Don't load msgdb.

@@ -254,8 +254,7 @@ If optional argument IGNORE-CACHE is specified, existing cache is ignored.
 If second optional argument UNREAD is specified, message is displayed but
 keep it as unread.
 Return non-nil if cache is used."
-  (let ((entity (elmo-msgdb-overview-get-entity number
-						(elmo-folder-msgdb folder)))
+  (let ((entity (elmo-msgdb-message-entity (elmo-folder-msgdb folder) number))
 	mime-display-header-hook ; Do nothing.
 	cache-file strategy use-cache)
     (when entity

@@ -59,6 +59,13 @@
 
 ;; Message Database
 
+(defcustom elmo-msgdb-default-type 'legacy
+  "*Default type of Message Database for ELMO."
+  :type '(radio (const legacy)
+		(const :tag "No use" generic))
+  :group 'elmo
+  :group 'elmo-setting)
+
 (defvar elmo-msgdb-file-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
 

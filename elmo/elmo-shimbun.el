@@ -92,9 +92,9 @@ update overview when message is fetched."
   (luna-define-internal-accessors 'shimbun-elmo-mua))
 
 (luna-define-method shimbun-mua-search-id ((mua shimbun-elmo-mua) id)
-  (elmo-msgdb-overview-get-entity id
-				  (elmo-folder-msgdb
-				   (shimbun-elmo-mua-folder-internal mua))))
+  (elmo-msgdb-message-entity (elmo-folder-msgdb
+			      (shimbun-elmo-mua-folder-internal mua))
+			     id))
 
 (eval-and-compile
   (luna-define-class elmo-shimbun-folder
@@ -120,9 +120,9 @@ update overview when message is fetched."
 (defsubst elmo-shimbun-folder-shimbun-header (folder location)
   (let ((hash (elmo-shimbun-folder-header-hash-internal folder)))
     (or (and hash (elmo-get-hash-val location hash))
-	(let ((entity (elmo-msgdb-overview-get-entity
-		       location
-		       (elmo-folder-msgdb folder)))
+	(let ((entity (elmo-msgdb-message-entity
+		       (elmo-folder-msgdb folder)
+		       location))
 	      (elmo-hash-minimum-size 63)
 	      header)
 	  (when entity
@@ -202,9 +202,9 @@ update overview when message is fetched."
 	  (delq nil
 		(mapcar
 		 (lambda (x)
-		   (unless (elmo-msgdb-overview-get-entity
-			    (shimbun-header-id x)
-			    (elmo-folder-msgdb folder))
+		   (unless (elmo-msgdb-message-entity
+			    (elmo-folder-msgdb folder)
+			    (shimbun-header-id x))
 		     x))
 		 ;; This takes much time.
 		 (shimbun-headers
@@ -377,8 +377,8 @@ update overview when message is fetched."
   nil)
 
 (defsubst elmo-shimbun-update-overview (folder shimbun-id header)
-  (let ((entity (elmo-msgdb-overview-get-entity shimbun-id
-						(elmo-folder-msgdb folder)))
+  (let ((entity (elmo-msgdb-message-entity (elmo-folder-msgdb folder)
+					   shimbun-id))
 	(message-id (shimbun-header-id header))
 	references)
     (unless (string= shimbun-id message-id)

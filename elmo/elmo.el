@@ -249,9 +249,8 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
 				   elmo-msgdb-directory)))))
       (if (and (string= mark (cdr mark-pair))
 	       (setq entity
-		     (elmo-msgdb-overview-get-entity (car mark-pair)
-						     (elmo-folder-msgdb
-						      folder))))
+		     (elmo-msgdb-message-entity (elmo-folder-msgdb folder)
+						(car mark-pair))))
 	  (setq msgs (cons (elmo-msgdb-overview-entity-get-number entity)
 			   msgs))))
     msgs))
@@ -1325,6 +1324,15 @@ FIELD is a symbol of the field.")
 ;;							       &optional
 ;;							       flag-table)
 ;;  "Append ENTITY to the folder.")
+
+(defun elmo-msgdb-merge (folder msgdb-merge)
+  "Return a list of messages which have duplicated message-id."
+  (let (msgdb duplicates)
+    (setq msgdb (or (elmo-folder-msgdb-internal folder)
+		    (elmo-make-msgdb (elmo-folder-msgdb-path folder))))
+    (setq duplicates (elmo-msgdb-append msgdb msgdb-merge))
+    (elmo-folder-set-msgdb-internal folder msgdb)
+    duplicates))
 
 (defsubst elmo-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb

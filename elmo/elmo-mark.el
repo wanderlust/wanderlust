@@ -100,8 +100,7 @@
       (when entity
 	(elmo-msgdb-append-entity new-msgdb
 				  entity
-				  (elmo-msgdb-mark-to-flags
-				   (elmo-mark-folder-mark-internal folder))))
+				  '(important cached)))
       (when (> len elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(elmo-display-progress
