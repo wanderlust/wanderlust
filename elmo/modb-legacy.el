@@ -518,7 +518,10 @@ Return a list of message numbers which have duplicated message-ids."
 	 msgdb
 	 (nconc (elmo-msgdb-get-mark-alist msgdb) (list cell)))
 	(modb-generic-set-flag-modified-internal msgdb t))
-      (elmo-msgdb-make-index msgdb (list entity) (list cell)))))
+      (elmo-msgdb-make-index
+       msgdb
+       (list entity)
+       (and cell (list cell))))))
 
 (luna-define-method elmo-msgdb-delete-messages ((msgdb modb-legacy)
 						numbers)
