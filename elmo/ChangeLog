@@ -1,3 +1,11 @@
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-number-set-chop-length): New variable.
+	(elmo-imap4-copy-messages): Chop number set using
+	`elmo-imap4-number-set-chop-length'.
+	(elmo-imap4-set-flag): Ditto.
+	(elmo-imap4-search-internal-primitive): Ditto.
+
 2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo.el (elmo-folder-make-temporary-directory): Renamed from

@@ -56,7 +56,26 @@
 (Except `\\Deleted' flag).")
 
 (defvar elmo-imap4-overview-fetch-chop-length 200
-  "*Number of overviews to fetch in one request in imap4.")
+  "*Number of overviews to fetch in one request.")
+
+;; c.f. rfc2683 3.2.1.5 Long Command Lines
+;;
+;; "A client should limit the length of the command lines it generates
+;;  to approximately 1000 octets (including all quoted strings but not
+;;  including literals). If the client is unable to group things into
+;;  ranges so that the command line is within that length, it should
+;;  split the request into multiple commands. The client should use
+;;  literals instead of long quoted strings, in order to keep the command
+;;  length down. 
+;;  For its part, a server should allow for a command line of at least
+;;  8000 octets. This provides plenty of leeway for accepting reasonable
+;;  length commands from clients. The server should send a BAD response
+;;  to a command that does not end within the server's maximum accepted
+;;  command length. "
+
+;; To limit command line length, chop number set.
+(defvar elmo-imap4-number-set-chop-length 1000
+  "*Number of messages to specify as a number-set argument for one request.")
 
 (defvar elmo-imap4-force-login nil
   "*Non-nil forces to try 'login' if there is no 'auth' capability in imapd.")
@@ -1982,11 +2001,14 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-copy-messages (src-folder dst-folder numbers)
   (let ((session (elmo-imap4-get-session src-folder))
-	(set-list (elmo-imap4-make-number-set-list numbers)))
+	(set-list (elmo-imap4-make-number-set-list
+		   numbers
+		   elmo-imap4-number-set-chop-length))
+	succeeds)
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					src-folder))
-    (when set-list
+    (while set-list
       (if (elmo-imap4-send-command-wait session
 					(list
 					 (format
@@ -1997,7 +2019,9 @@ Return nil if no complete line has arrived."
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
 					   dst-folder))))
-	  numbers))))
+	  (setq succeeds (append succeeds numbers)))
+      (setq set-list (cdr set-list)))
+    succeeds))
 
 (defun elmo-imap4-set-flag (folder numbers flag &optional remove)
   "Set flag on messages.
@@ -2006,24 +2030,30 @@ NUMBERS is the message numbers to be flagged.
 FLAG is the flag name.
 If optional argument REMOVE is non-nil, remove FLAG."
   (let ((session (elmo-imap4-get-session folder))
-	set-list)
+	response set-list)
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					folder))
-    (setq set-list (elmo-imap4-make-number-set-list numbers))
-    (when set-list
+    (setq set-list (elmo-imap4-make-number-set-list
+		    numbers
+		    elmo-imap4-number-set-chop-length))
+    (while set-list
       (with-current-buffer (elmo-network-session-buffer session)
 	(setq elmo-imap4-fetch-callback nil)
 	(setq elmo-imap4-fetch-callback-data nil))
-      (elmo-imap4-send-command-wait
-       session
-       (format
-	(if elmo-imap4-use-uid
-	    "uid store %s %sflags.silent (%s)"
-	  "store %s %sflags.silent (%s)")
-	(cdr (car set-list))
-	(if remove "-" "+")
-	flag)))))
+      (unless (elmo-imap4-response-ok-p
+	       (elmo-imap4-send-command-wait
+		session
+		(format
+		 (if elmo-imap4-use-uid
+		     "uid store %s %sflags.silent (%s)"
+		   "store %s %sflags.silent (%s)")
+		 (cdr (car set-list))
+		 (if remove "-" "+")
+		 flag)))
+	(setq response 'fail))
+      (setq set-list (cdr set-list)))
+    (not (eq response 'fail))))
 
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
@@ -2039,7 +2069,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
 	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
-	charset)
+	(total 0)
+	(length (length from-msgs))
+	charset set-list results)
+    (message "Searching...")
     (cond
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
@@ -2055,68 +2088,92 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	numbers))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
-      (setq search-key (concat "sent" search-key))
-      (elmo-imap4-response-value
-       (elmo-imap4-send-command-wait session
-				     (format
-				      (if elmo-imap4-use-uid
-					  "uid search %s%s%s %s"
-					"search %s%s%s %s")
-				      (if from-msgs
-					  (concat
-					   (if elmo-imap4-use-uid "uid ")
-					   (cdr
-					    (car
-					     (elmo-imap4-make-number-set-list
-					      from-msgs)))
-					   " ")
-					"")
-				      (if (eq (elmo-filter-type filter)
-					      'unmatch)
-					  "not " "")
-				      search-key
-				      (elmo-date-get-description
-				       (elmo-date-get-datevec
-					(elmo-filter-value filter)))))
-       'search))
+      (setq search-key (concat "sent" search-key)
+	    set-list (elmo-imap4-make-number-set-list
+		      from-msgs
+		      elmo-imap4-number-set-chop-length))
+      (while set-list
+	(setq results
+	      (append
+	       results
+	       (elmo-imap4-response-value
+		(elmo-imap4-send-command-wait
+		 session
+		 (format
+		  (if elmo-imap4-use-uid
+		      "uid search %s%s%s %s"
+		    "search %s%s%s %s")
+		  (if from-msgs
+		      (concat
+		       (if elmo-imap4-use-uid "uid ")
+		       (cdr (car set-list))
+		       " ")
+		    "")
+		  (if (eq (elmo-filter-type filter)
+			  'unmatch)
+		      "not " "")
+		  search-key
+		  (elmo-date-get-description
+		   (elmo-date-get-datevec
+		    (elmo-filter-value filter)))))
+		'search)))
+	(when (> length elmo-display-progress-threshold)
+	  (setq total (+ total (car (car set-list))))
+	  (elmo-display-progress
+	   'elmo-imap4-search "Searching..."
+	   (/ (* total 100) length)))
+	(setq set-list (cdr set-list)))
+      results)
      (t
       (setq charset
 	    (if (eq (length (elmo-filter-value filter)) 0)
 		(setq charset 'us-ascii)
 	      (elmo-imap4-detect-search-charset
-	       (elmo-filter-value filter))))
-      (elmo-imap4-response-value
-       (elmo-imap4-send-command-wait session
-				     (list
-				      (if elmo-imap4-use-uid "uid ")
-				      "search "
-				      "CHARSET "
-				      (elmo-imap4-astring
-				       (symbol-name charset))
-				      " "
-				      (if from-msgs
-					  (concat
-					   (if elmo-imap4-use-uid "uid ")
-					   (cdr
-					    (car
-					     (elmo-imap4-make-number-set-list
-					      from-msgs)))
-					   " ")
-					"")
-				      (if (eq (elmo-filter-type filter)
-					      'unmatch)
-					  "not " "")
-				      (format "%s%s "
-					      (if (member
-						   (elmo-filter-key filter)
-						   imap-search-keys)
-						  ""
-						"header ")
-					      (elmo-filter-key filter))
-				      (elmo-imap4-astring
-				       (encode-mime-charset-string
-					(elmo-filter-value filter) charset))))
-       'search)))))
+	       (elmo-filter-value filter)))
+	    set-list (elmo-imap4-make-number-set-list
+		      from-msgs
+		      elmo-imap4-number-set-chop-length))
+      (while set-list
+	(setq results
+	      (append
+	       results
+	       (elmo-imap4-response-value
+		(elmo-imap4-send-command-wait
+		 session
+		 (list
+		  (if elmo-imap4-use-uid "uid ")
+		  "search "
+		  "CHARSET "
+		  (elmo-imap4-astring
+		   (symbol-name charset))
+		  " "
+		  (if from-msgs
+		      (concat
+		       (if elmo-imap4-use-uid "uid ")
+		       (cdr (car set-list))
+		       " ")
+		    "")
+		  (if (eq (elmo-filter-type filter)
+			  'unmatch)
+		      "not " "")
+		  (format "%s%s "
+			  (if (member
+			       (elmo-filter-key filter)
+			       imap-search-keys)
+			      ""
+			    "header ")
+			  (elmo-filter-key filter))
+		  (elmo-imap4-astring
+		   (encode-mime-charset-string
+		    (elmo-filter-value filter) charset))))
+		'search)))
+	(when (> length elmo-display-progress-threshold)
+	  (setq total (+ total (car (car set-list))))
+	  (elmo-display-progress
+	   'elmo-imap4-search "Searching..."
+	   (/ (* total 100) length)))
+	(setq set-list (cdr set-list)))
+      results))))
 
 (defun elmo-imap4-search-internal (folder session condition from-msgs)
   (let (result)
