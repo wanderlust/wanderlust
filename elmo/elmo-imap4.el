@@ -2410,7 +2410,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	      (message "Selecting %s..."
 		       (elmo-folder-name-internal folder))
 	      (if load-msgdb
-		  (setq msgdb (elmo-msgdb-load folder 'silent)))
+		  (setq msgdb (elmo-folder-msgdb-load folder 'silent)))
 	      (elmo-folder-set-killed-list-internal
 	       folder
 	       (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))

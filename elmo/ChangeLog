@@ -1,5 +1,21 @@
 2003-09-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-msgdb.el: Rewrite with luna.
+
+	* elmo.el (elmo-folder-msgdb-load): Renamed from `elmo-msgdb-load'.
+	(elmo-folder-msgdb): Follow the change above.
+	(elmo-generic-folder-commit): Use `elmo-msgdb-save'.
+	(elmo-folder-unmark-important): Follow the API change.
+	(elmo-folder-mark-as-important): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-clear): Likewise.
+
+	* elmo-imap4.el (elmo-folder-open): Use `elmo-folder-msgdb-load'
+	instead of `elo-msgdb-load' (renamed).
+
 	* elmo-version.el (elmo-version): Up to 2.11.12.
 
 2003-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

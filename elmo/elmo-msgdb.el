@@ -150,22 +150,208 @@
 ;; elmo-msgdb-list-flagged MSGDB FLAG
 ;; (MACRO) elmo-msgdb-do-each-entity 
 
-(defun elmo-load-msgdb (path)
-  "Load the MSGDB from PATH."
-  (let ((inhibit-quit t))
-    (elmo-make-msgdb (elmo-msgdb-overview-load path)
-		     (elmo-msgdb-number-load path)
-		     (elmo-msgdb-mark-load path)
-		     path)))
+;;; MSGDB interface
+;;
+(eval-and-compile
+  (luna-define-class elmo-msgdb () (location		; location for save.
+				    message-modified	; message is modified.
+				    flag-modified	; flag is modified.
+				    ))
+  (luna-define-internal-accessors 'elmo-msgdb))
 
-(defun elmo-make-msgdb (&optional overview number-alist mark-alist path)
-  "Make a MSGDB."
-  (let ((msgdb (list overview number-alist mark-alist nil path)))
-    (elmo-msgdb-make-index msgdb)
+(luna-define-generic elmo-msgdb-load (msgdb)
+  "Load the MSGDB.")
+
+(luna-define-generic elmo-msgdb-save (msgdb)
+  "Save the MSGDB.")
+
+(luna-define-generic elmo-msgdb-location (msgdb)
+  "Return the location of MSGDB.")
+
+(luna-define-generic elmo-msgdb-message-modified-p (msgdb)
+  "Return non-nil if message is modified.")
+
+(luna-define-generic elmo-msgdb-flag-modified-p (msgdb)
+  "Return non-nil if flag is modified.")
+
+(luna-define-generic elmo-msgdb-append (msgdb msgdb-append)
+  "Append the MSGDB-APPEND to the MSGDB.
+Return a list of messages which have duplicated message-id.")
+
+(luna-define-generic elmo-msgdb-clear (msgdb)
+  "Clear the MSGDB structure.")
+
+(luna-define-generic elmo-msgdb-flags (msgdb number)
+  "Return a list of flag which corresponds to the message with NUMBER.")
+
+(luna-define-generic elmo-msgdb-set-flag (msgdb number flag)
+  "Set message flag.
+MSGDB is the ELMO msgdb.
+NUMBER is a message number to set flag.
+FLAG is a symbol which is one of the following:
+`new'       ... Message which is new.
+`read'      ... Message which is already read.
+`important' ... Message which is marked as important.
+`answered'  ... Message which is marked as answered.
+`cached'    ... Message which is cached.")
+
+(luna-define-generic elmo-msgdb-unset-flag (msgdb number flag)
+  "Unset message flag.
+MSGDB is the ELMO msgdb.
+NUMBER is a message number to set flag.
+FLAG is a symbol which is one of the following:
+`new'       ... Message which is new.
+`read'      ... Message which is already read.
+`important' ... Message which is marked as important.
+`answered'  ... Message which is marked as answered.
+`cached'    ... Message which is cached.")
+
+(luna-define-generic elmo-msgdb-list-messages (msgdb)
+  "Return a list of message numbers in the MSGDB.")
+
+(luna-define-generic elmo-msgdb-list-flagged (msgdb flag)
+  "Return a list of message numbers which is set FLAG in the MSGDB.")
+
+;;; (luna-define-generic elmo-msgdb-search (msgdb condition &optional numbers)
+;;;   "Search and return list of message numbers.
+;;; MSGDB is the ELMO msgdb structure.
+;;; CONDITION is a condition structure for searching.
+;;; If optional argument NUMBERS is specified and is a list of message numbers,
+;;; messages are searched from the list.")
+
+(luna-define-generic elmo-msgdb-append-entity (msgdb entity &optional flags)
+  "Append a ENTITY with FLAGS into the MSGDB.
+Return non-nil if message-id of entity is duplicated.")
+
+(luna-define-generic elmo-msgdb-delete-messages (msgdb numbers)
+  "Delete messages which are contained NUMBERS from MSGDB.")
+
+(luna-define-generic elmo-msgdb-sort-entities (msgdb predicate &optional app-data)
+  "Sort entities of MSGDB, comparing with PREDICATE.
+PREDICATE is called with two entities and APP-DATA.
+Should return non-nil if the first entity is \"less\" than the second.")
+
+(luna-define-generic elmo-msgdb-message-entity (msgdb key)
+  "Return the message-entity structure which matches to the KEY.
+KEY is a number or a string.
+A number is for message number in the MSGDB.
+A string is for message-id of the message.")
+
+;;; generic implement
+;;
+(luna-define-method elmo-msgdb-location ((msgdb elmo-msgdb))
+  (elmo-msgdb-location-internal msgdb))
+
+(luna-define-method elmo-msgdb-message-modified-p ((msgdb elmo-msgdb))
+  (elmo-msgdb-message-modified-internal msgdb))
+
+(luna-define-method elmo-msgdb-flag-modified-p ((msgdb elmo-msgdb))
+  (elmo-msgdb-flag-modified-internal msgdb))
+
+(luna-define-method elmo-msgdb-clear ((msgdb elmo-msgdb))
+  (elmo-msgdb-set-message-modified-internal msgdb nil)
+  (elmo-msgdb-set-flag-modified-internal msgdb nil))
+
+(luna-define-method elmo-msgdb-append ((msgdb elmo-msgdb) msgdb-append)
+  (let (duplicates)
+    (dolist (number (elmo-msgdb-list-messages msgdb-append))
+      (when (elmo-msgdb-append-entity
+	     msgdb
+	     (elmo-msgdb-message-entity msgdb-append number)
+	     (elmo-msgdb-flags msgdb-append number))
+	(setq duplicates (cons number duplicates))))
+    duplicates))
+  
+
+;;; legacy implement
+;;
+(eval-and-compile
+  (luna-define-class elmo-msgdb-legacy (elmo-msgdb)
+		     (overview number-alist mark-alist index))
+  (luna-define-internal-accessors 'elmo-msgdb-legacy))
+
+;; for internal use only
+(defsubst elmo-msgdb-get-overview (msgdb)
+  (elmo-msgdb-legacy-overview-internal msgdb))
+
+(defsubst elmo-msgdb-get-number-alist (msgdb)
+  (elmo-msgdb-legacy-number-alist-internal msgdb))
+
+(defsubst elmo-msgdb-get-mark-alist (msgdb)
+  (elmo-msgdb-legacy-mark-alist-internal msgdb))
+
+(defsubst elmo-msgdb-get-index (msgdb)
+  (elmo-msgdb-legacy-index-internal msgdb))
+
+(defsubst elmo-msgdb-get-entity-hashtb (msgdb)
+  (car (elmo-msgdb-legacy-index-internal msgdb)))
+
+(defsubst elmo-msgdb-get-mark-hashtb (msgdb)
+  (cdr (elmo-msgdb-legacy-index-internal msgdb)))
+
+(defsubst elmo-msgdb-get-path (msgdb)
+  (elmo-msgdb-location msgdb))
+
+(defsubst elmo-msgdb-set-overview (msgdb overview)
+  (elmo-msgdb-legacy-set-overview-internal msgdb overview))
+
+(defsubst elmo-msgdb-set-number-alist (msgdb number-alist)
+  (elmo-msgdb-legacy-set-number-alist-internal msgdb number-alist))
+
+(defsubst elmo-msgdb-set-mark-alist (msgdb mark-alist)
+  (elmo-msgdb-legacy-set-mark-alist-internal msgdb mark-alist))
+
+(defsubst elmo-msgdb-set-index (msgdb index)
+  (elmo-msgdb-legacy-set-index-internal msgdb index))
+
+(defsubst elmo-msgdb-set-path (msgdb path)
+  (elmo-msgdb-set-location-internal msgdb path))
+
+
+;;
+(luna-define-method elmo-msgdb-load ((msgdb elmo-msgdb-legacy))
+  (let ((inhibit-quit t)
+	(path (elmo-msgdb-location msgdb)))
+    (when (file-exists-p (expand-file-name elmo-msgdb-mark-filename path))
+      (elmo-msgdb-legacy-set-overview-internal
+       msgdb
+       (elmo-msgdb-overview-load path))
+      (elmo-msgdb-legacy-set-number-alist-internal
+       msgdb
+       (elmo-msgdb-number-load path))
+      (elmo-msgdb-legacy-set-mark-alist-internal
+       msgdb
+       (elmo-msgdb-mark-load path))
+      (elmo-msgdb-make-index msgdb)
+      t)))
+
+(luna-define-method elmo-msgdb-save ((msgdb elmo-msgdb-legacy))
+  (let ((path (elmo-msgdb-location msgdb)))
+    (when (elmo-msgdb-message-modified-p msgdb)
+      (elmo-msgdb-overview-save
+       path
+       (elmo-msgdb-legacy-overview-internal msgdb))
+      (elmo-msgdb-number-save
+       path
+       (elmo-msgdb-legacy-number-alist-internal msgdb))
+      (elmo-msgdb-set-message-modified-internal msgdb nil))
+    (when (elmo-msgdb-flag-modified-p msgdb)
+      (elmo-msgdb-mark-save
+       path
+       (elmo-msgdb-legacy-mark-alist-internal msgdb))
+      (elmo-msgdb-set-flag-modified-internal msgdb nil))))
+
+(defun elmo-load-msgdb (location)
+  "Load the MSGDB from PATH."
+  (let ((msgdb (elmo-make-msgdb location)))
+    (elmo-msgdb-load msgdb)
     msgdb))
 
-(defun elmo-msgdb-list-messages (msgdb)
-  "Return a list of message numbers in the MSGDB."
+(defun elmo-make-msgdb (&optional location)
+  "Make a MSGDB."
+  (luna-make-entity 'elmo-msgdb-legacy :location location))
+
+(luna-define-method elmo-msgdb-list-messages ((msgdb elmo-msgdb-legacy))
   (mapcar 'elmo-msgdb-overview-entity-get-number
 	  (elmo-msgdb-get-overview msgdb)))
 
@@ -229,6 +415,7 @@ if MARK is nil, mark is removed."
 	  (list (setq elem (list number mark)))))
 	(elmo-set-hash-val (format "#%d" number) elem
 			   (elmo-msgdb-get-mark-hashtb msgdb))))
+    (elmo-msgdb-set-flag-modified-internal msgdb t)
     ;; return value.
     t))
 
@@ -268,20 +455,12 @@ If mark is changed, return non-nil."
 				  elmo-msgdb-unread-cached-mark
 				elmo-msgdb-unread-uncached-mark)))))))
 
-(defsubst elmo-msgdb-flags (msgdb number)
+(luna-define-method elmo-msgdb-flags ((msgdb elmo-msgdb-legacy) number)
   (elmo-msgdb-mark-to-flags (elmo-msgdb-get-mark msgdb number)))
 
-(defun elmo-msgdb-set-flag (msgdb folder number flag)
-  "Set message flag.
-MSGDB is the ELMO msgdb.
-FOLDER is a ELMO folder structure.
-NUMBER is a message number to set flag.
-FLAG is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered."
+(luna-define-method elmo-msgdb-set-flag ((msgdb elmo-msgdb-legacy)
+					 number flag)
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (use-cache (elmo-message-use-cache-p folder number))
 	 (cur-flag (cond
 		    ((string= cur-mark elmo-msgdb-important-mark)
 		     'important)
@@ -290,40 +469,27 @@ FLAG is a symbol which is one of the following:
 		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		     'read)))
 	 (cur-cached (elmo-file-cache-exists-p
-		      (elmo-msgdb-get-field msgdb number 'message-id)))
-	 mark-modified)
+		      (elmo-msgdb-get-field msgdb number 'message-id))))
     (case flag
       (read
        (case cur-flag
 	 ((read important)) ; answered mark is overriden.
 	 (t (elmo-msgdb-set-mark msgdb number
-				 (if (and use-cache (not cur-cached))
-				     elmo-msgdb-read-uncached-mark))
-	    (setq mark-modified t))))
+				 (if (not cur-cached)
+				     elmo-msgdb-read-uncached-mark)))))
       (important
        (unless (eq cur-flag 'important)
-	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)
-	 (setq mark-modified t)))
+	 (elmo-msgdb-set-mark msgdb number elmo-msgdb-important-mark)))
       (answered
        (unless (or (eq cur-flag 'answered) (eq cur-flag 'important))
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cur-cached
 				  elmo-msgdb-answered-cached-mark
-				elmo-msgdb-answered-uncached-mark)))
-       (setq mark-modified t)))
-    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
+				elmo-msgdb-answered-uncached-mark)))))))
 
-(defun elmo-msgdb-unset-flag (msgdb folder number flag)
-  "Unset message flag.
-MSGDB is the ELMO msgdb.
-FOLDER is a ELMO folder structure.
-NUMBER is a message number to be set flag.
-FLAG is a symbol which is one of the following:
-`read'      ... Messages which are already read.
-`important' ... Messages which are marked as important.
-`answered'  ... Messages which are marked as answered."
+(luna-define-method elmo-msgdb-unset-flag ((msgdb elmo-msgdb-legacy)
+					   number flag)
   (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	 (use-cache (elmo-message-use-cache-p folder number))
 	 (cur-flag (cond
 		    ((string= cur-mark elmo-msgdb-important-mark)
 		     'important)
@@ -332,27 +498,22 @@ FLAG is a symbol which is one of the following:
 		    ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		     'read)))
 	 (cur-cached (elmo-file-cache-exists-p
-		      (elmo-msgdb-get-field msgdb number 'message-id)))
-	 mark-modified)
+		      (elmo-msgdb-get-field msgdb number 'message-id))))
     (case flag
       (read
        (when (or (eq cur-flag 'read) (eq cur-flag 'answered))
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cur-cached
 				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark))
-	 (setq mark-modified t)))
+				elmo-msgdb-unread-uncached-mark))))
       (important
        (when (eq cur-flag 'important)
-	 (elmo-msgdb-set-mark msgdb number nil)
-	 (setq mark-modified t)))
+	 (elmo-msgdb-set-mark msgdb number nil)))
       (answered
        (when (eq cur-flag 'answered)
 	 (elmo-msgdb-set-mark msgdb number
-			      (if (and use-cache (not cur-cached))
-				  elmo-msgdb-read-uncached-mark))
-	 (setq mark-modified t))))
-    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
+			      (if (not cur-cached)
+				  elmo-msgdb-read-uncached-mark)))))))
 
 (defvar elmo-msgdb-unread-marks-internal nil)
 (defsubst elmo-msgdb-unread-marks ()
@@ -380,7 +541,8 @@ FLAG is a symbol which is one of the following:
 		  elmo-msgdb-unread-uncached-mark
 		  elmo-msgdb-read-uncached-mark))))
 
-(defun elmo-msgdb-append-entity (msgdb entity &optional flags)
+(luna-define-method elmo-msgdb-append-entity ((msgdb elmo-msgdb-legacy)
+					      entity &optional flags)
   (when entity
     (let ((number (elmo-msgdb-overview-entity-get-number entity))
 	  (message-id (elmo-msgdb-overview-entity-get-id entity))
@@ -393,11 +555,13 @@ FLAG is a symbol which is one of the following:
        msgdb
        (nconc (elmo-msgdb-get-number-alist msgdb)
 	      (list (cons number message-id))))
+      (elmo-msgdb-set-message-modified-internal msgdb t)
       (when (setq mark (elmo-msgdb-flags-to-mark flags))
 	(elmo-msgdb-set-mark-alist
 	 msgdb
 	 (nconc (elmo-msgdb-get-mark-alist msgdb)
-		(list (list number mark)))))
+		(list (list number mark))))
+	(elmo-msgdb-set-flag-modified-internal msgdb t))
       (elmo-msgdb-make-index
        msgdb
        (list entity)
@@ -430,80 +594,79 @@ FLAG is a symbol which is one of the following:
 	 (elmo-msgdb-overview-get-entity
 	  number msgdb)))))
 
-(defun elmo-msgdb-append (msgdb msgdb-append)
-  "Return a list of messages which have duplicated message-id."
-  (let (duplicates)
-    (elmo-msgdb-set-overview
-     msgdb
-     (nconc (elmo-msgdb-get-overview msgdb)
-	    (elmo-msgdb-get-overview msgdb-append)))
-    (elmo-msgdb-set-number-alist
-     msgdb
-     (nconc (elmo-msgdb-get-number-alist msgdb)
-	    (elmo-msgdb-get-number-alist msgdb-append)))
-    (elmo-msgdb-set-mark-alist
-     msgdb
-     (nconc (elmo-msgdb-get-mark-alist msgdb)
-	    (elmo-msgdb-get-mark-alist msgdb-append)))
-    (setq duplicates (elmo-msgdb-make-index
-		      msgdb
-		      (elmo-msgdb-get-overview msgdb-append)
-		      (elmo-msgdb-get-mark-alist msgdb-append)))
-    (elmo-msgdb-set-path
-     msgdb
-     (or (elmo-msgdb-get-path msgdb)
-	 (elmo-msgdb-get-path msgdb-append)))
-    duplicates))
+(luna-define-method elmo-msgdb-append :around ((msgdb elmo-msgdb-legacy)
+					       msgdb-append)
+  (if (eq (luna-class-name msgdb-append)
+	  'elmo-msgdb-legacy)
+      (let (duplicates)
+	(elmo-msgdb-set-overview
+	 msgdb
+	 (nconc (elmo-msgdb-get-overview msgdb)
+		(elmo-msgdb-get-overview msgdb-append)))
+	(elmo-msgdb-set-number-alist
+	 msgdb
+	 (nconc (elmo-msgdb-get-number-alist msgdb)
+		(elmo-msgdb-get-number-alist msgdb-append)))
+	(elmo-msgdb-set-mark-alist
+	 msgdb
+	 (nconc (elmo-msgdb-get-mark-alist msgdb)
+		(elmo-msgdb-get-mark-alist msgdb-append)))
+	(setq duplicates (elmo-msgdb-make-index
+			  msgdb
+			  (elmo-msgdb-get-overview msgdb-append)
+			  (elmo-msgdb-get-mark-alist msgdb-append)))
+	(elmo-msgdb-set-path
+	 msgdb
+	 (or (elmo-msgdb-get-path msgdb)
+	     (elmo-msgdb-get-path msgdb-append)))
+	(elmo-msgdb-set-message-modified-internal msgdb t)
+	(elmo-msgdb-set-flag-modified-internal msgdb t)
+	duplicates)
+    (luna-call-next-method)))
 
 (defun elmo-msgdb-merge (folder msgdb-merge)
   "Return a list of messages which have duplicated message-id."
   (let (msgdb duplicates)
     (setq msgdb (or (elmo-folder-msgdb-internal folder)
-		    (elmo-make-msgdb nil nil nil
-				     (elmo-folder-msgdb-path folder))))
+		    (elmo-make-msgdb (elmo-folder-msgdb-path folder))))
     (setq duplicates (elmo-msgdb-append msgdb msgdb-merge))
     (elmo-folder-set-msgdb-internal folder msgdb)
     duplicates))
 
-(defsubst elmo-msgdb-clear (&optional msgdb)
-  (if msgdb
-      (progn
-	(elmo-msgdb-set-overview msgdb nil)
-	(elmo-msgdb-set-number-alist msgdb nil)
-	(elmo-msgdb-set-mark-alist msgdb nil)
-	(elmo-msgdb-set-index msgdb nil)
-	msgdb)
-    (elmo-make-msgdb)))
+(luna-define-method elmo-msgdb-clear :after ((msgdb elmo-msgdb-legacy))
+  (elmo-msgdb-set-overview msgdb nil)
+  (elmo-msgdb-set-number-alist msgdb nil)
+  (elmo-msgdb-set-mark-alist msgdb nil)
+  (elmo-msgdb-set-index msgdb nil))
 
-(defun elmo-msgdb-delete-messages (msgdb msgs)
-  "Delete MSGS from MSGDB
-content of MSGDB is changed."
-  (let* ((overview (car msgdb))
-	 (number-alist (cadr msgdb))
-	 (mark-alist (caddr msgdb))
+(luna-define-method elmo-msgdb-delete-messages ((msgdb elmo-msgdb-legacy)
+						numbers)
+  (let* ((overview (elmo-msgdb-get-overview msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	 (index (elmo-msgdb-get-index msgdb))
-	 (newmsgdb (list overview number-alist mark-alist index
-			 (nth 4 msgdb)))
 	 ov-entity)
     ;; remove from current database.
-    (while msgs
+    (dolist (number numbers)
       (setq overview
 	    (delq
 	     (setq ov-entity
-		   (elmo-msgdb-overview-get-entity (car msgs) newmsgdb))
+		   (elmo-msgdb-overview-get-entity number msgdb))
 	     overview))
-      (setq number-alist (delq (assq (car msgs) number-alist) number-alist))
-      (setq mark-alist (delq (assq (car msgs) mark-alist) mark-alist))
+      (setq number-alist (delq (assq number number-alist) number-alist))
+      (setq mark-alist (delq (assq number mark-alist) mark-alist))
       ;;
-      (when index (elmo-msgdb-clear-index msgdb ov-entity))
-      (setq msgs (cdr msgs)))
+      (when index (elmo-msgdb-clear-index msgdb ov-entity)))
     (elmo-msgdb-set-overview msgdb overview)
     (elmo-msgdb-set-number-alist msgdb number-alist)
     (elmo-msgdb-set-mark-alist msgdb mark-alist)
     (elmo-msgdb-set-index msgdb index)
+    (elmo-msgdb-set-message-modified-internal msgdb t)
+    (elmo-msgdb-set-flag-modified-internal msgdb t)
     t)) ;return value
 
-(defun elmo-msgdb-sort-entities (msgdb predicate &optional app-data)
+(luna-define-method elmo-msgdb-sort-entities ((msgdb elmo-msgdb-legacy)
+					      predicate &optional app-data)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
     (elmo-msgdb-set-overview
@@ -531,27 +694,6 @@ content of MSGDB is changed."
       (nconc list (list element))
     ;; list is nil
     (list element)))
-
-(defsubst elmo-msgdb-get-overview (msgdb)
-  (car msgdb))
-(defsubst elmo-msgdb-get-number-alist (msgdb)
-  (cadr msgdb))
-(defsubst elmo-msgdb-get-mark-alist (msgdb)
-  (caddr msgdb))
-;(defsubst elmo-msgdb-get-location (msgdb)
-;  (cadddr msgdb))
-
-(defsubst elmo-msgdb-get-index (msgdb)
-  (nth 3 msgdb))
-
-(defsubst elmo-msgdb-get-entity-hashtb (msgdb)
-  (car (nth 3 msgdb)))
-
-(defsubst elmo-msgdb-get-mark-hashtb (msgdb)
-  (cdr (nth 3 msgdb)))
-
-(defsubst elmo-msgdb-get-path (msgdb)
-  (nth 4 msgdb))
 
 ;;
 ;; number <-> Message-ID handling
@@ -760,35 +902,6 @@ header separator."
 			  elmo-msgdb-new-mark
 			  elmo-msgdb-unread-uncached-mark))
 
-(defsubst elmo-msgdb-mark (flag cached &optional new)
-  (if new
-      (case flag
-	(read
-	 (if cached
-	     nil
-	   elmo-msgdb-read-uncached-mark))
-	(important
-	 elmo-msgdb-important-mark)
-	(answered
-	 (if cached
-	     elmo-msgdb-answered-cached-mark
-	   elmo-msgdb-answered-uncached-mark))
-	(t
-	 (if cached
-	     elmo-msgdb-unread-cached-mark
-	   elmo-msgdb-new-mark)))
-    (case flag
-      (unread
-       (if cached
-	   elmo-msgdb-unread-cached-mark
-	 elmo-msgdb-unread-uncached-mark))
-      (important
-       elmo-msgdb-important-mark)
-      (answered
-       (if cached
-	   elmo-msgdb-answered-cached-mark
-	 elmo-msgdb-answered-uncached-mark)))))
-
 (defsubst elmo-msgdb-overview-save (dir overview)
   (elmo-object-save
    (expand-file-name elmo-msgdb-overview-filename dir)
@@ -927,21 +1040,6 @@ Return CONDITION itself if no entity exists in msgdb."
 					     entity numbers)
       condition)))
 
-(defsubst elmo-msgdb-set-overview (msgdb overview)
-  (setcar msgdb overview))
-
-(defsubst elmo-msgdb-set-number-alist (msgdb number-alist)
-  (setcar (cdr msgdb) number-alist))
-
-(defsubst elmo-msgdb-set-mark-alist (msgdb mark-alist)
-  (setcar (cddr msgdb) mark-alist))
-
-(defsubst elmo-msgdb-set-index (msgdb index)
-  (setcar (cdddr msgdb) index))
-
-(defsubst elmo-msgdb-set-path (msgdb path)
-  (setcar (cddddr msgdb) path))
-
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
   (and entity (aref (cdr entity) 1)))
 
@@ -1039,7 +1137,7 @@ Return CONDITION itself if no entity exists in msgdb."
   entity)
 
 ;;; New APIs
-(defsubst elmo-msgdb-message-entity (msgdb key)
+(luna-define-method elmo-msgdb-message-entity ((msgdb elmo-msgdb-legacy) key)
   (elmo-get-hash-val 
    (cond ((stringp key) key)
 	 ((numberp key) (format "#%d" key)))
@@ -1096,12 +1194,7 @@ Return CONDITION itself if no entity exists in msgdb."
 
 ;;; 
 (defun elmo-msgdb-overview-get-entity (id msgdb)
-  (when id
-    (let ((ht (elmo-msgdb-get-entity-hashtb msgdb)))
-      (if ht
-	  (if (stringp id) ;; ID is message-id
-	      (elmo-get-hash-val id ht)
-	    (elmo-get-hash-val (format "#%d" id) ht))))))
+  (elmo-msgdb-message-entity msgdb id))
 
 ;;
 ;; deleted message handling
@@ -1307,38 +1400,6 @@ Header region is supposed to be narrowed."
       (and (setq number (elmo-msgdb-overview-entity-get-number entity))
 	   (elmo-clear-hash-val (format "#%d" number) mhash)))))
 
-(defun elmo-msgdb-make-index-return (msgdb &optional overview mark-alist)
-  "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
-If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
-Return the updated INDEX."
-  (when msgdb
-    (let* ((overview (or overview (elmo-msgdb-get-overview msgdb)))
-	   (mark-alist (or mark-alist (elmo-msgdb-get-mark-alist msgdb)))
-	   (index (elmo-msgdb-get-index msgdb))
-	   (ehash (or (car index) ;; append
-		      (elmo-make-hash (length overview))))
-	   (mhash (or (cdr index) ;; append
-		      (elmo-make-hash (length overview)))))
-      (while overview
-	;; key is message-id
-	(if (caar overview)
-	    (elmo-set-hash-val (caar overview) (car overview) ehash))
-	;; key is number
-	(elmo-set-hash-val
-	 (format "#%d"
-		 (elmo-msgdb-overview-entity-get-number (car overview)))
-	 (car overview) ehash)
-	(setq overview (cdr overview)))
-      (while mark-alist
-	;; key is number
-	(elmo-set-hash-val
-	 (format "#%d" (car (car mark-alist)))
-	 (car mark-alist) mhash)
-	(setq mark-alist (cdr mark-alist)))
-      (setq index (or index (cons ehash mhash)))
-      (elmo-msgdb-set-index msgdb index)
-      index)))
-
 (defun elmo-msgdb-make-index (msgdb &optional overview mark-alist)
   "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
 If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
@@ -1409,7 +1470,7 @@ Return a list of message numbers which have duplicated message-ids."
     elmo-msgdb-location-filename
     dir) alist))
 
-(defun elmo-msgdb-list-flagged (msgdb flag)
+(luna-define-method elmo-msgdb-list-flagged ((msgdb elmo-msgdb-legacy) flag)
   (let ((case-fold-search nil)
 	mark-regexp matched)
     (case flag

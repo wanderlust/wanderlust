@@ -155,7 +155,7 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
 (luna-define-method elmo-folder-msgdb ((folder elmo-folder))
   (or (elmo-folder-msgdb-internal folder)
       (elmo-folder-set-msgdb-internal folder
-				      (elmo-msgdb-load folder))))
+				      (elmo-folder-msgdb-load folder))))
 
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
@@ -676,25 +676,17 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (defun elmo-generic-folder-commit (folder)
   (when (elmo-folder-persistent-p folder)
-    (when (elmo-folder-message-modified-internal folder)
-      (elmo-msgdb-overview-save
-       (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
-      (elmo-msgdb-number-save
-       (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))
-      (elmo-folder-set-info-max-by-numdb
-       folder
-       (elmo-folder-list-messages folder nil 'in-msgdb))
+    (let ((msgdb (elmo-folder-msgdb folder)))
+      (when (elmo-msgdb-message-modified-p msgdb)
+	(elmo-folder-set-info-max-by-numdb
+	 folder
+	 (elmo-folder-list-messages folder nil 'in-msgdb))
+	(elmo-msgdb-killed-list-save
+	 (elmo-folder-msgdb-path folder)
+	 (elmo-folder-killed-list-internal folder)))
       (elmo-folder-set-message-modified folder nil)
-      (elmo-msgdb-killed-list-save
-       (elmo-folder-msgdb-path folder)
-       (elmo-folder-killed-list-internal folder)))
-    (when (elmo-folder-mark-modified-internal folder)
-      (elmo-msgdb-mark-save
-       (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
-      (elmo-folder-set-mark-modified-internal folder nil))))
+      (elmo-folder-set-mark-modified-internal folder nil)
+      (elmo-msgdb-save msgdb))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-folder))
   ;; do nothing.
@@ -1283,7 +1275,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
-			     folder
 			     number
 			     'important))))
 
@@ -1293,7 +1284,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
-			   folder
 			   number
 			   'important))))
 
@@ -1303,7 +1293,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
-			     folder
 			     number
 			     'read))))
 
@@ -1313,7 +1302,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
-			   folder
 			   number
 			   'read))))
 
@@ -1321,7 +1309,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
-			     folder
 			     number
 			     'answered))))
 
@@ -1329,7 +1316,6 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
-			   folder
 			   number
 			   'answered))))
 
@@ -1457,7 +1443,7 @@ FIELD is a symbol of the field.")
 				       &optional keep-killed)
   (unless keep-killed
     (elmo-folder-set-killed-list-internal folder nil))
-  (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
+  (elmo-msgdb-clear (elmo-folder-msgdb folder)))
 
 (luna-define-generic elmo-folder-synchronize (folder
 					      &optional
@@ -1558,7 +1544,7 @@ If update process is interrupted, return nil.")
       (elmo-msgdb-length (elmo-folder-msgdb folder))
     0))
 
-(defun elmo-msgdb-load (folder &optional silent)
+(defun elmo-folder-msgdb-load (folder &optional silent)
   (unless silent
     (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))
   (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
