@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-06-16 18:03:45 kaoru>
+@set Time-stamp: <2000-06-27 23:19:53 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -158,15 +158,40 @@ The main features of Wanderlust:
 @item Template function makes it convenient to send fixed form messages.
 @end itemize
 
-Wanderlust is supposed to run on Mules based on Emacs 19.28, 19.34, 
-Emacs 20.2 or later, XEmacs 20.4 or later, Meadow 1.00 or later(on MS Windows),
-Mule for Windows v1.22 (on MS Windows), NTEmacs(Windows NT).
-PMMule on OS/2 is also supported. Wanderlust runs even on Nemacs 3.3.2
-based on Emacs 18.55, 18.59 (with limited functionality).
 
-IMAP4 connectivity with UW imapd 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.7a, 4.7b, 4.7c,
-Cyrus imapd 1.4, Cyrus imapd 1.5.19, AIR MAIL(AIRCimapd release 2.00)
-and ExpressMail are confirmed to work with Wanderlust.
+@section Environment
+
+Wanderlust is supposed to run on following Emacsen: 
+@c Wanderlust runs even on Nemacs 3.3.2 based on Emacs 18.55, 18.59 (with
+@c limited functionality).
+
+@itemize @bullet
+@item Nemacs 3.3.2 (Caution: limited functionality)
+@item Mule 2.3 based on Emacs 19.28
+@item Mule 2.3 based on Emacs 19.34
+@item Emacs 20.2 or later
+@item XEmacs 20.4 or later
+@item Meadow 1.00 or later
+@item Mule for Windows v1.22
+@item NTEmacs 20.4 or later
+@item PMMule
+@end itemize
+
+IMAP4 connectivity with following imapd are confirmed to work with
+Wanderlust:
+
+@itemize @bullet
+@item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c
+@item Cyrus imapd 1.4
+@item Cyrus imapd 1.5.19
+@item AIR MAIL (AIRC imapd release 2.00)
+@item Express Mail
+@item Microsoft Exchange Server 5.5
+@end itemize
+
+@c LDAP connectivity with following LDAPd are confirmed to work with
+@c Wanderlust:
+
 
 @c
 @c  Start Me Up
@@ -175,7 +200,8 @@ and ExpressMail are confirmed to work with Wanderlust.
 @chapter Start up Wanderlust
 @cindex Start up
 
-The necessary procedure for starting Wanderlust is explained in steps here.
+The necessary procedure for starting Wanderlust is explained in steps
+here.
 
 (Of course, you need a mail/news readable environment in advance)
 
@@ -220,7 +246,7 @@ tm:   http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end example
 
 You need packages named APEL and FLIM to use SEMI.
-You can download APEL and FLIM from following URLs.
+You can download APEL and FLIM from following URLs:
 
 @example
 @group
@@ -233,7 +259,7 @@ You have to install APEL, FLIM and SEMI in this order.
 Generally @samp{make install} will do the job.
 (In XEmacs 21, @samp{make install-package}.)
 
-Recommended combination of APEL, FLIM and SEMI are:
+Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
 @item APEL 10.2, FLIM 1.12.7 and SEMI 1.13.4
@@ -492,6 +518,7 @@ of environmental variables which begins with @code{elmo-} and @code{wl-}.
 The minimal requirement for settings is as the following.
 
 @lisp
+@group
 ;; @r{The setting to use SEMI/tm}
 (load "mime-setup")
 
@@ -508,6 +535,7 @@ The minimal requirement for settings is as the following.
 (setq wl-smtp-posting-server "your.smtp.server.com")
 ;; @r{NNTP server for news posting. Default: @code{nil}}
 (setq wl-nntp-posting-server "your.nntp.server.com")
+@end group
 @end lisp
 
 @file{~/.wl} is automatically loaded when Wanderlust starts up (if such a
@@ -533,7 +561,7 @@ This means it enables you to run Wanderlust as a default mail composer
  of Emacsen.
 
 It is effective only when your Emacs can define @code{mail-user-agent}.
-@c @xref{Mail Methods, , ,emacs}.
+@xref{Mail Methods, , ,emacs-ja, The Emacs Editor}.
 
 @lisp
 @group
@@ -570,26 +598,28 @@ summary buffer after Wanderlust is invoked. @refill
 The format is very simple. Like this. @refill
 
 @example
+@group
 #
 # @r{Lines begin with @samp{#} are comment.}
 # @r{Empty lines are ignored}
 #
 # @r{Format of each line:}
-# @r{email-address  ``nickname'' ``realname''}
+# @var{email-address}  "@var{nickname} "@var{realname}"
 #
 teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
 foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
 bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
+@end group
 @end example
 
 @noindent
 One line defines one persons description.
 
-Actually, in default setup, "nickname" is used in summary-mode and "real name"
-is used in draft preparation mode. This behavior is better understood if you
-try it and confirmed the function first. You can write and try a small
-definition, so you will know the idea of the address book before writing a big
-one.
+Actually, in default setup, @var{nickname} is used in summary-mode and
+@var{realname} is used in draft preparation mode. This behavior is
+better understood if you try it and confirmed the function first. You
+can write and try a small definition, so you will know the idea of the
+address book before writing a big one.
 
 And, if MH alias file is specified in variable @code{wl-alias-file},
 it is used as an address information in the draft preparation mode.
@@ -609,11 +639,12 @@ subscribe folders from the buffer for list of folders.
 Format for @file{~/.folders} is very simple. Here is an example:
 
 @example
+@group
 #
 # @r{Lines begin with @samp{#} are comment.}
 # @r{Empty lines are ignored}
 #
-# @r{folder name}  "@r{folder nickname}"
+# @var{folder name}  "@var{folder nickname}"
 # @r{(nicknames are not necessary)}
 #
 %inbox  "Inbox"
@@ -636,6 +667,7 @@ Emacsen@{
 %#mh/expire@@localhost /
 # @r{All MH folders are included in one folder group.}
 + /
+@end group
 @end example
 
 Each line contains one folder you want to read. The definition of folders
@@ -808,15 +840,16 @@ You can obtain ucs-conv package from following anonymous CVS.
 
 @example
 @group
-:pserver:anonymous@@cvs.m17n.org:/cvs/root
+cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root login
 Password: NULL (Just enter return key)
+cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
 @end group
 @end example
 
-You also need utf7 conversion programs, u7tou8 and u8tou7 to use international
-mailbox name in the current XEmacs. 
-These programs are included in the UTF7 package which can be obtained 
-from following URL.
+You also need utf7 conversion programs, @code{u7tou8} and @code{u8tou7}
+to use international mailbox name in the current XEmacs.  These programs
+are included in the UTF7 package which can be obtained from following
+URL.
 
 @example
 ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
@@ -962,16 +995,17 @@ Format: @samp{$} @var{path-name} [@samp{;} @var{archiver-type} @samp{;} @var{pre
 @end group
 @end example
 
-@var{path-name} is the relative path from @code{elmo-archive-folder-path}
-(initial setting is @file{~/Mail}).
-If @var{path-name} begins with @samp{/} or @samp{~} or `drive-letter of DOS',
-@var{path-name} is treated as absolute path.
-ange-ftp format is also permitted under the environment of ange-ftp, efs.
+@var{path-name} is the relative path from
+@code{elmo-archive-folder-path} (initial setting is @file{~/Mail}).  If
+@var{path-name} begins with @samp{/} or @samp{~} or `drive-letter of
+DOS', @var{path-name} is treated as absolute path.  ange-ftp format is
+also permitted under the environment of ange-ftp, efs.
 
-The actual file name of the archive folder is 
-@code{elmo-archive-basename}(Initial setting is @file{elmo-archive})
-under the @var{path-name}. If a file named @var{path-name} exists, it is treated as
-folder. The suffix is automatically decided for @var{archiver-type}.
+The actual file name of the archive folder is
+@code{elmo-archive-basename} (Initial setting is @file{elmo-archive})
+under the @var{path-name}. If a file named @var{path-name} exists, it is
+treated as folder. The suffix is automatically decided for
+@var{archiver-type}.
 
 If @var{archiver-type} is omitted, @code{elmo-archive-default-type}
 (Initial setting is 'zip) is referred.
@@ -1075,10 +1109,10 @@ GNU tar.
 @subsection TIPS
 @cindex Archive Tips
 
-For comfortable migration, usage of @code{wl-summary-archive} (@pxref{Archive}) or 
-Expire (@pxref{Expire}) is recommended.
-To treat archive folders created by expiration, 
-you must set non-nil value to @code{elmo-archive-treat-file}.
+For comfortable migration, usage of @code{wl-summary-archive}
+(@pxref{Archive}) or Expire (@pxref{Expire}) is recommended.  To treat
+archive folders created by expiration, you must set non-nil value to
+@code{elmo-archive-treat-file}.
 
 On the OS/2, there is a great difference between Mule2.3(19.28) and Emacs20.2
 in processing speed. For comfortable use, Emacs20 is recommended.
@@ -1885,15 +1919,16 @@ Usually, access group displays all children folders, but you can set
 some folders hidden. Following operations are only available on access
 group.
 
-Command @code{wl-fldmgr-unsubscribe} (@kbd{u}) toggles
-the visibility (subscribe/unsubscribe) of the folder at current cursor point.
+Command @code{wl-fldmgr-unsubscribe} (@kbd{u}) toggles the visibility
+(subscribe/unsubscribe) of the folder at current cursor point.  Against
+this, @code{wl-fldmgr-unsubscribe-region} (@kbd{U}) hides folders in the
+specified region.
 
-Against this, @code{wl-fldmgr-unsubscribe-region} (@kbd{U}) hides folders
-in the specified region.  Note that @code{wl-fldmgr-unsubscribe-region}
-does not toggle while @code{wl-fldmgr-unsubscribe} toggles.  These two
-commands accept prefix argument and if the argument has positive number,
-the unsubscribe it.  If the prefix argument has negative value, folder
-becomes visible and if zero, folder visibility is toggled.
+Note that @code{wl-fldmgr-unsubscribe-region} does not toggle while
+@code{wl-fldmgr-unsubscribe} toggles.  These two commands accept prefix
+argument and if the argument has positive number, the unsubscribe it.
+If the prefix argument has negative value, folder becomes visible and if
+zero, folder visibility is toggled.
 
 The other commands, @code{wl-fldmgr-subscribe} and
 @code{wl-fldmgr-subscribe-region} are also prepared (not binded to the
@@ -3523,6 +3558,7 @@ You can set @code{wl-interactive-send} to non-nil so as to confirm
 changes before sending the message.
 
 @lisp
+@group
 (setq wl-draft-config-alist
       '(((string-match "aaa.ne.jp$" (system-name))
          ;; @r{applied if the expression is non-nil}
@@ -3537,11 +3573,13 @@ changes before sending the message.
          (top . "Hello.\n")    ;; @r{inserted at the top of the body}
          (bottom . "\nBye.\n") ;; @r{inserted at the bottom of the body}
         ))
+@end group
 @end lisp
 
 The format of @code{wl-draft-config-alist} is:
 
 @example
+@group
 '(("regexp of the header" or elisp expression
   ("Field" . value(elisp expression))
    (variable . value(elisp expression))
@@ -3551,6 +3589,7 @@ The format of @code{wl-draft-config-alist} is:
   ("regexp of the header" or elisp expression
    ("Field" . value(elisp expression))
    @dots{}))
+@end group
 @end example
 
 Per default, there are 10 following sub-functions.
@@ -3558,7 +3597,7 @@ Per default, there are 10 following sub-functions.
 @example
 'header:      Inserts the specified string at the bottom of the header.
 'header-file: Inserts the specified file at the bottom of the header.
-'x-face:      Inserts "X-Face" field with the content of the specified file.
+'x-face:      Inserts @samp{X-Face:} field with the content of the specified file.
 'top:         Inserts the specified string at the top of the body.
 'top-file:    Inserts the specified file at the top of the body.
 'body:        Replaces the body with the specified string.
@@ -3865,34 +3904,35 @@ draft buffer.
 The initial setting is t.
 If non-nil and there is an encoded X-Face string in a file
 @file{~/.xface} (the value of the variable @code{wl-x-face-file}),
-inserts it as an X-Face field in the draft buffer.
-If nil, it is not automatically inserted. Press @kbd{C-c C-a} to insert.
+inserts it as an @samp{X-Face:} field in the draft buffer.  If nil, it
+is not automatically inserted. Press @kbd{C-c C-a} to insert.
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
 The initial setting is t.
-If non-nil, Message-ID field is automatically inserted on the
+If non-nil, @samp{Message-ID:} field is automatically inserted on the
 transmission.
 
 @item wl-local-domain
 @vindex wl-local-domain
 The initial setting is nil.
 If nil, the return value of the function @code{system-name} will be
-used as the domain part of Message-ID.
+used as the domain part of @samp{Message-ID:}.
 
 If @code{system-name} does not return FQDN (i.e. the full name of the
-host, like @samp{smtp.gohome.org}), you @strong{must} set this variable to the
-string of the local domain name without hostname (like @samp{gohome.org}). 
-That is, a concatenation of @code{system-name} "." @code{wl-local-domain} 
-is used as domain part of the Message-ID.
+host, like @samp{smtp.gohome.org}), you @strong{must} set this variable
+to the string of the local domain name without hostname (like
+@samp{gohome.org}).  That is, a concatenation of @code{system-name}
+@samp{.} @code{wl-local-domain} is used as domain part of the
+@samp{Message-ID:}.
 
 If your terminal does not have global IP, set the value of
-@code{wl-message-id-domain}.
-(You might be beaten up on the Net News if you use invalid Message-ID.)
+@code{wl-message-id-domain}.  (You might be beaten up on the Net News if
+you use invalid @samp{Message-ID:}.)
 
-Moreover, 
-concatenation of @code{system-name} "." @code{wl-local-domain} 
-will be used as an argument to the HELO command in SMTP.
+Moreover, concatenation of @code{system-name} @samp{.}
+@code{wl-local-domain} will be used as an argument to the HELO command
+in SMTP.
 
 @item wl-message-id-domain
 @vindex wl-message-id-domain
@@ -3958,9 +3998,9 @@ buffer when it is prepared.
 
 @item wl-from
 @vindex wl-from
-The initial setting is the value of the variable @code{user-mail-address}.
-The value of this variable is inserted as a From field of the draft when
-it is prepared.
+The initial setting is the value of the variable
+@code{user-mail-address}.  The value of this variable is inserted as a
+@samp{From:} field of the draft when it is prepared.
 
 @item wl-envelope-from
 @vindex wl-envelope-from
@@ -3977,14 +4017,14 @@ set this variable.
 @item wl-fcc
 @vindex wl-fcc
 The initial setting is nil.
-If non-nil, the value of this variable is inserted as a FCC of the draft
-when it is prepared.
+If non-nil, the value of this variable is inserted as a @samp{Fcc:} of
+the draft when it is prepared.
 
 @item wl-bcc
 @vindex wl-bcc
 The initial setting is nil.
-If non-nil, the value of this variable is inserted as a Bcc of the draft
-when it is prepared.
+If non-nil, the value of this variable is inserted as a @samp{Bcc:} of
+the draft when it is prepared.
 
 @item wl-reply-subject-prefix
 @vindex wl-reply-subject-prefix
@@ -4008,8 +4048,8 @@ manually, press @kbd{F} in the folder mode.
 
 @item wl-draft-always-delete-myself
 @vindex wl-draft-always-delete-myself
-If non-nil, always removes your own address from To and CC when you are
-replying to the mail addressed to you.
+If non-nil, always removes your own address from @samp{To:} and
+@samp{Cc:} when you are replying to the mail addressed to you.
 
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
@@ -4025,9 +4065,9 @@ If nil, @code{smtp-authenticate-user} is used.
 @item wl-smtp-authenticate-type
 @vindex wl-smtp-authenticate-type
 The initial setting is nil.
-This is the authentication method for SMTP AUTH authentication.
-If nil, @code{smtp-authenticate-type} is used.
-If it is still nil, authentication will not be carried out.
+This is the authentication method for SMTP AUTH authentication.  If nil,
+@code{smtp-authenticate-type} is used.  If @code{smtp-authenticate-type}
+is still nil, authentication will not be carried out.
 
 @item wl-smtp-connection-type
 @vindex wl-smtp-connection-type
@@ -4426,6 +4466,7 @@ I advise you to set @code{wl-expire-use-log} to t, especially in the
 initial stage.
 
 @lisp
+@group
 (setq wl-expire-alist
       '(("^\\+trash$"   (date 14) remove)
                                   ;; @r{delete}
@@ -4442,6 +4483,7 @@ initial stage.
         ("^\\+diary$"   (date 30) wl-expire-archive-date)
                            ;; @r{archive by year and month (numbers discarded)}
         ))
+@end group
 @end lisp
 
 Items in the list has the format of:
@@ -4487,13 +4529,13 @@ Otherwise, it will have 500 messages except such ones.
 @item (date @var{d1})
 deletes messages depending on the dates.
 
-Messages dated @var{d1} or more days ago are deleted, for example if its value
-is seven, messages seven days old or more are deleted.
-Note that the date is the one in the Date field of the message, not when 
+Messages dated @var{d1} or more days ago are deleted, for example if its
+value is seven, messages seven days old or more are deleted.  Note that
+the date is the one in the @samp{Date:} field of the message, not when
 the message entered the folder.
 
-Messages with no or invalid Date field does not expire; you might have
-to delete them by hand.
+Messages with no or invalid @samp{Date:} field does not expire; you
+might have to delete them by hand.
 @end table
 
 You can use any one of the following in the place of @var{destination}:
@@ -4611,8 +4653,7 @@ in regexp and other settings before you set up this.
 
 @lisp
 @group
-(add-hook 'wl-summary-prepared-pre-hook
-          'wl-summary-expire)
+(add-hook 'wl-summary-prepared-pre-hook 'wl-summary-expire)
 @end group
 @end lisp
 
@@ -4667,11 +4708,11 @@ reserved messages and the like always remain, they are recorded in
 @file{~/.elmo/expired-alist} so that they are not copied over and over
 again.  They are not recorded if copied by @code{wl-summary-archive}.
 
-If you enabled logging, usually "move" is recorded for re-filing, but
-instead "copy" and "delete" are recorded separately if reserved messages
-are involved.
-This is because it actually copies messages including reserved, then
-deletes ones except reserved in that case.
+If you enabled logging, usually @samp{move} is recorded for re-filing,
+but instead @samp{copy} and @samp{delete} are recorded separately if
+reserved messages are involved.  This is because it actually copies
+messages including reserved, then deletes ones except reserved in that
+case.
 
 @section Customizable Variables
 
@@ -4747,21 +4788,20 @@ variables:
 @item wl-expire-archive-folder-name-fmt
 @vindex wl-expire-archive-folder-name-fmt
 The initial setting is @samp{%s-%%05d;%s}.
-This is a format string for archiving folders used in
+This is a @code{format} string for archiving folders used in
 @code{wl-expire-archive-number1} and @code{wl-expire-archive-number2}.
 Note that you must specify the message number by @samp{%%d}, because it
 is parsed twice by @code{format}.
 
-If you modify this, adjust @code{wl-expire-archive-folder-num-regexp} as 
+If you modify this, adjust @code{wl-expire-archive-folder-num-regexp} as
 well.
 
 @item wl-expire-archive-date-folder-name-fmt
 @vindex wl-expire-archive-date-folder-name-fmt
 The initial setting is @samp{%s-%%04d%%02d;%s}.
-This is a format string for archiving folders used in
-@code{wl-expire-archive-date}.
-Note that you must specify the message number by @samp{%%d}, because it
-is parsed twice by @code{format}.
+This is a @code{format} string for archiving folders used in
+@code{wl-expire-archive-date}.  Note that you must specify the message
+number by @samp{%%d}, because it is parsed twice by @code{format}.
 There should be @samp{%%d} twice, one for the year and the other for the
 month.
 
@@ -4957,6 +4997,7 @@ on the ones you do not want to read, for example spam articles.
 This scoring function has a capability and a format similar to the one
 that Gnus has, although there are some unsupported features and
 Wanderlust specifics.
+@xref{Scoring, , ,gnus, The gnus Newsreader}.
 
 @menu
 * Score Commands::             Score Commands
@@ -4974,12 +5015,14 @@ Wanderlust specifics.
 scores are defined, corresponding to folder names.
 
 @lisp
+@group
 (setq wl-score-folder-alist
       '(("^-.*"
          "news.SCORE"
          "my.SCORE")
         (".*"
          "all.SCORE")))
+@end group
 @end lisp
 
 If paths to the score files are omitted, the directory specified in the
@@ -5271,8 +5314,10 @@ The initial setting is t.
 The format of score files are the same as Gnus, and basically you can
 use Gnus score files as they are.  But they are not fully compatible
 because some keys are not supported and there are Wanderlust specifics.
+@xref{Score File Format, , ,gnus, The gnus Newsreader}.
 
 @lisp
+@group
 (("subject"
   ("for sale" -1000 nil s)
   ("profit" -1000 nil s))
@@ -5286,6 +5331,7 @@ because some keys are not supported and there are Wanderlust specifics.
  (target 3000)
  (mark 0)
  (expunge -3000))
+@end group
 @end lisp
 
 @table @code
@@ -5472,8 +5518,10 @@ is byte-compiled and installed.
 @xref{Install}.
 
 @lisp
+@group
 (autoload 'wl-draft-send-with-imput-async "im-wl")
 (setq wl-draft-send-func 'wl-draft-send-with-imput-async)
+@end group
 @end lisp
 
 
@@ -5489,6 +5537,7 @@ byte-compiled and installed.
 @xref{Install}.
 
 @lisp
+@group
 (require 'bbdb-wl)
 
 (bbdb-wl-setup)
@@ -5503,6 +5552,7 @@ byte-compiled and installed.
 ;; @r{automatically add mailing list fields}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
+@end group
 @end lisp
 
 @node supercite, mu-cite, BBDB, Living with other packages
@@ -5511,9 +5561,10 @@ byte-compiled and installed.
 @pindex supercite
 
 The same setting as usual mailers should be OK.  The following is an
-example of settings.
+example of settings:
 
 @lisp
+@group
 (autoload 'sc-cite-original "sc" nil t)
 (setq mail-yank-hooks 'sc-cite-original)
 (setq sc-preferred-header-style 1)
@@ -5521,6 +5572,7 @@ example of settings.
 (setq sc-citation-leader "")
 (setq sc-load-hook '(lambda () (require 'sc-register)))
 (setq sc-preferred-attribution 'registeredname)
+@end group
 @end lisp
 
 
@@ -5534,15 +5586,19 @@ example of settings.
 If you use mu-cite version 8.0 or earlier:
 
 @lisp
+@group
 (autoload 'mu-cite/cite-original "mu-cite" nil t)
 (setq mail-citation-hook 'mu-cite/cite-original)
+@end group
 @end lisp
 
 If you use mu-cite version 8.1 or later:
 
 @lisp
+@group
 (autoload 'mu-cite-original "mu-cite" nil t)
 (add-hook 'mail-citation-hook (function mu-cite-original))
+@end group
 @end lisp
 
 @node x-face-mule, dired-dd, mu-cite, Living with other packages
@@ -5554,32 +5610,40 @@ It depends on the version of x-face-mule.
 If you use x-face-mule 0.19 or older, do the following:
 
 @lisp
+@group
 (setq wl-highlight-x-face-func
       (function
        (lambda (beg end)
         (x-face-mule:x-face-decode-message-header))))
+@end group
+@end lisp
 
-If you use x-face-mule 0.20 or later, try the following.
+If you use x-face-mule 0.20 or later, try the following:
 
+@lisp
+@group
 (setq wl-highlight-x-face-func
       (function
        (lambda (beg end)
         (x-face-mule-x-face-decode-message-header))))
 (require 'x-face-mule)
+@end group
 @end lisp
 
 Use these settings when you use @file{x-face-mule.el} attached to
-bitmap-mule 8.0 or later.
+bitmap-mule 8.0 or later:
 
 @lisp
+@group
 (autoload 'x-face-decode-message-header "x-face-mule")
-(setq wl-highlight-x-face-func
-      (function x-face-decode-message-header))
+(setq wl-highlight-x-face-func 'x-face-decode-message-header)
+@end group
 @end lisp
 
-If there is an encoded X-Face string in a file @file{~/.xface} (the value
-of the variable @code{wl-x-face-file}), it is inserted as a X-Face field
-in the draft buffer (if @code{wl-auto-insert-x-face} is non-nil).
+If there is an encoded X-Face string in a file @file{~/.xface} (the
+value of the variable @code{wl-x-face-file}), it is inserted as a
+@samp{X-Face:} field in the draft buffer (if
+@code{wl-auto-insert-x-face} is non-nil).
 
 
 @node dired-dd,  , x-face-mule, Living with other packages
@@ -5589,11 +5653,12 @@ in the draft buffer (if @code{wl-auto-insert-x-face} is non-nil).
 @cindex Drag and Drop
 
 If you embed @file{dired-dd-mime.el} in the dired-dd package, you can
-compose multi-part by simple Drag&Drop from dired to the draft buffer
-being edited in GNU Emacs (this feature is not Wanderlust specific, but
-general-purpose for tm/SEMI).
+compose multi-part by simple Drag-and-Drop from dired to the draft
+buffer being edited in GNU Emacs (this feature is not Wanderlust
+specific, but general-purpose for tm/SEMI).
 
 @lisp
+@group
 ;; @r{dired-dd:} http://www.asahi-net.or.jp/~pi9s-nnb/dired-dd-home.html
 (add-hook
  'dired-load-hook
@@ -5605,6 +5670,7 @@ general-purpose for tm/SEMI).
     (if window-system
         (progn (require 'dired-dd)
                (require 'dired-dd-mime))))))
+@end group
 @end lisp
 
 
@@ -5706,9 +5772,10 @@ mode, summary mode, and the like.
 @subsection Setting Colors and Fonts of the Characters
 
 If you want to change colors or fonts of the characters, you need to
-modify faces defined in Wanderlust.  Use set-face-font if you want to
-change fonts, and set-face-foreground for colors, and so on.
-You cannot write face settings in @file{.emacs}; write in @file{~/.wl}.
+modify faces defined in Wanderlust.  Use @code{set-face-font} if you
+want to change fonts, and @code{set-face-foreground} for colors, and so
+on.  You cannot write face settings in @file{.emacs}; write in
+@file{~/.wl}.
 
 For example, if you want to change the color for signatures to yellow,
 write
@@ -5731,20 +5798,20 @@ The face for field bodies of message headers.
 
 @item wl-highlight-message-important-header-contents
 The face for important parts of message headers.
-Per default, this face is used for a body of Subject field.
+Per default, this face is used for a body of @samp{Subject:} field.
 You can change its value by editing
 @code{wl-highlight-message-header-alist}.
 
 @item wl-highlight-message-important-header-contents2
 The face for secondly important parts of message headers.
-Per default, this face is used for bodies of @samp{From} and @samp{To} fields.
-You can change its value by editing
+Per default, this face is used for bodies of @samp{From:} and @samp{To:}
+fields.  You can change its value by editing
 @code{wl-highlight-message-header-alist}.
 
 @item wl-highlight-message-unimportant-header-contents
 The face for unimportant parts of message headers.
-Per default, this face is used for bodies of @samp{X-} fields @samp{User-Agent} fields.
-You can change its value by editing
+Per default, this face is used for bodies of @samp{X-} fields
+@samp{User-Agent:} fields.  You can change its value by editing
 @code{wl-highlight-message-header-alist}.
 
 @item wl-highlight-message-citation-header
@@ -5851,7 +5918,7 @@ The face for strings (for example, a version number) in the demo.
 @menu
 * Draft for Reply::             Draft for Reply
 * Thread Format::               Appearance of Thread
-* User-Agent Header::           User-Agent Header
+* User-Agent Field::            @samp{User-Agent:} Header Field
 @end menu
 
 
@@ -5864,11 +5931,13 @@ the reply draft by simply pressing @kbd{a} in the summary mode, try the
 following settings:
 
 @lisp
+@group
 (setq wl-draft-reply-without-argument-list
       '(("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
         ("Followup-To" . (nil nil ("Followup-To")))
         (("X-ML-Name" "Reply-To") . (("Reply-To") nil nil))
         ("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+@end group
 @end lisp
 
 @noindent
@@ -5876,10 +5945,11 @@ following settings:
 original message, @samp{Reply-To} field in the original is copied to @samp{To:}
 field.)
 
-@node Thread Format, User-Agent Header, Draft for Reply, Advanced Settings
+@node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection Appearance of Threads
 
 @example
+@group
   389  09/18(Fri)01:07 [ Teranishi         ] wl-0.6.3
   390  09/18(Fri)07:25 +-[ Tsumura-san       ]
   391  09/18(Fri)19:24 +-[ Murata-san        ]
@@ -5893,47 +5963,68 @@ field.)
   416  09/22(Tue)12:38 |           +-[ Teranishi         ]
   395  09/20(Sun)21:49 +-[ Okunishi-san      ]
   397  09/21(Mon)00:15 +-[ Okunishi-san      ]
+@end group
 @end example
 
 Settings to make appearance of threads like shown above:
 
 @lisp
+@group
 (setq wl-thread-indent-level 2)
 (setq wl-thread-have-younger-brother-str "+")
 (setq wl-thread-youngest-child-str       "+")
 (setq wl-thread-vertical-str             "|")
 (setq wl-thread-horizontal-str           "-")
 (setq wl-thread-space-str                " ")
+@end group
 @end lisp
 
 If you do not want to see branches, do the following:
 
 @lisp
+@group
 (setq wl-thread-indent-level 2)
 (setq wl-thread-have-younger-brother-str " ")
 (setq wl-thread-youngest-child-str       " ")
 (setq wl-thread-vertical-str             " ")
 (setq wl-thread-horizontal-str           " ")
 (setq wl-thread-space-str                " ")
+@end group
 @end lisp
 
 
-@node User-Agent Header,  , Thread Format, Advanced Settings
-@subsection User-Agent
+@node User-Agent Field,  , Thread Format, Advanced Settings
+@subsection User-Agent Field
 
-If you are eccentric enough to elaborate @samp{X-Mailer} or @samp{User-Agent}
-fields, define a function that inserts appropriate strings as you like,
-and set it to @code{wl-generate-mailer-string-func}.
+If you are eccentric enough to elaborate @samp{X-Mailer:} or
+@samp{User-Agent:} fields, define a function that generate appropriate
+strings as you like, and set it to
+@code{wl-generate-mailer-string-func}.
 
-The following is an example.
+If you do not want verbose @samp{User-Agent:} field, do the following:
 
 @lisp
+@group
+(setq wl-generate-mailer-string-func
+      (function
+       (lambda ()
+         (let ((mime-edit-insert-user-agent-field nil))
+           (wl-generate-user-agent-string)))))
+@end group
+@end lisp
+
+The following is a example:
+
+@lisp
+@group
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
          (format "X-Mailer: %s/%s (%s)"
                  wl-appname wl-version wl-codename))))
+@end group
 @end lisp
+
 
 @node Customizable Variables, Hooks, Advanced Settings, Customization
 @section Customizable Variables
@@ -5971,8 +6062,10 @@ If non-nil, you are asked for confirmation when mail is sent.
 The initial setting is the list shown below:
 
 @lisp
+@group
 (("^&.*$" . "all")
  ("^\\+draft$\\|^\\+queue$" . "all"))
+@end group
 @end lisp
 
 This is an associative list of regular expressions of folder names and
@@ -5990,9 +6083,9 @@ updating the summary when you changed folders.
 @vindex wl-mime-charset
 The initial setting is 'x-ctext.
 This is the MIME charset for messages that are not MIME (e.g. without
-Content-Type). This value also used as default charset for summary.
-(If you want to share Summary on Nemacs and other Emacsen,
-set this value as 'iso-2022-jp.)
+@samp{Content-Type:}). This value also used as default charset for
+summary.  (If you want to share Summary on Nemacs and other Emacsen, set
+this value as 'iso-2022-jp.)
 
 @item wl-search-mime-charset
 @vindex wl-search-mime-charset
@@ -6066,10 +6159,12 @@ This takes precedence over @code{wl-no-save-folder-list}.
 The initial setting is the list shown below:
 
 @lisp
+@group
 '(("^-alt\\.chinese" . big5)
   ("^-relcom\\." . koi8-r)
   ("^-tw\\." . big5)
   ("^-han\\." . euc-kr))
+@end group
 @end lisp
 
 This is an associative list of regular expressions of folder names and
@@ -6106,8 +6201,8 @@ string           : moves the messages to the specific folder.
 @vindex wl-refile-policy-alist
 The initial setting is '(("^[-=]" . copy) (".*" . move)).
 This list determines whether messages with re-file marks are moved or
-copied.
-Each item in the list is a cons cell of a folder and copy or move.
+copied.  Each item in the list is a cons cell of a folder and
+@code{copy} or @code{move}.
 
 @item wl-x-face-file
 @vindex wl-x-face-file
@@ -6152,9 +6247,8 @@ and if the number of read messages is not correct.
 @vindex elmo-nntp-default-use-listgroup
 The initial setting is t.
 If non-nil, @samp{listgroup} is used for checking the total number of
-articles.
-If it is nil, @samp{group} is used.  In the latter case, the processing
-will be a little faster at the sacrifice of accuracy.
+articles.  If it is nil, @samp{group} is used.  In the latter case, the
+processing will be a little faster at the sacrifice of accuracy.
 
 @item elmo-pop3-send-command-synchronously
 @vindex elmo-pop3-send-command-synchronously
