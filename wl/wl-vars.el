@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/25 00:19:06 teranisi>
+;; Time-stamp: <2000-04-07 10:40:28 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1575,6 +1575,11 @@ ex.
 (defcustom wl-fldmgr-sort-group-first t
   "*Non-nil Group folder is first when sort."
   :type 'function
+  :group 'wl-folder)
+
+(defcustom wl-fldmgr-add-complete-with-current-folder-list nil
+  "*If non-nil, completion for adding folder refers current folder list."
+  :type 'boolean
   :group 'wl-folder)
 
 ;;; For Expire and Archive
