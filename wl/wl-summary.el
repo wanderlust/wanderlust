@@ -412,6 +412,8 @@
   (define-key wl-summary-mode-map "e"     'wl-summary-save)
   (define-key wl-summary-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
   (define-key wl-summary-mode-map "\C-c\C-a" 'wl-addrmgr)
+  (define-key wl-summary-mode-map "\C-c\C-p" 'wl-summary-next-buffer)
+  (define-key wl-summary-mode-map "\C-c\C-n" 'wl-summary-previous-buffer)
   (define-key wl-summary-mode-map "H"    'wl-summary-redisplay-all-header)
   (define-key wl-summary-mode-map "M"    'wl-summary-redisplay-no-mime)
   (define-key wl-summary-mode-map "B"    'wl-summary-burst)
@@ -3919,6 +3921,28 @@ If ARG, exit virtual folder."
 	  (setq wl-summary-buffer-target-mark-list
 		(delq (car mlist) wl-summary-buffer-target-mark-list))
 	  (setq mlist (cdr mlist)))))))
+
+(defun wl-summary-next-buffer ()
+  "Switch to next summary buffer."
+  (interactive)
+  (let ((buffers (sort (wl-collect-summary)
+		       (lambda (buffer1 buffer2)
+			 (string-lessp (buffer-name buffer1)
+				       (buffer-name buffer2))))))
+    (switch-to-buffer
+     (or (cadr (memq (current-buffer) buffers))
+	 (car buffers)))))
+
+(defun wl-summary-previous-buffer ()
+  "Switch to previous summary buffer."
+  (interactive)
+  (let ((buffers (sort (wl-collect-summary)
+		       (lambda (buffer1 buffer2)
+			 (not (string-lessp (buffer-name buffer1)
+					    (buffer-name buffer2)))))))
+    (switch-to-buffer
+     (or (cadr (memq (current-buffer) buffers))
+	 (car buffers)))))
 
 (defun wl-summary-target-mark-copy ()
   (interactive)

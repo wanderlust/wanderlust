@@ -1,3 +1,10 @@
+2002-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-next-buffer
+	and wl-summary-previous-buffer.
+	(wl-summary-next-buffer): New function.
+	(wl-summary-previous-buffer): Ditto.
+
 2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (toplevel): Bind [(shift return)] to
