@@ -254,7 +254,7 @@ may help you.}.
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.4 and SEMI 1.14.4
+@item APEL 10.3, FLIM 1.14.3 and SEMI 1.14.3
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
@@ -262,8 +262,8 @@ latest versions should work.  For example, the following combination are
 confirmed to work.
 
 @itemize @minus
-@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.4
-@item APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+@item APEL 10.2, Chao 1.14.1, REMI 1.14.2
+@item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
 You have to re-install Wanderlust if you upgraded APEL, FLIM or SEMI.

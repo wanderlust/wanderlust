@@ -278,7 +278,7 @@ APEL, FLIM, SEMI の順にインストールしてください。
 推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.4, SEMI 1.14.4
+@item APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 @end itemize
 
 その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
@@ -287,8 +287,8 @@ APEL, FLIM, SEMI の順にインストールしてください。
 例えば、以下の組合せで動作することが確認されています。
 
 @itemize @minus
-@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.4
-@item APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+@item APEL 10.2, Chao 1.14.1, REMI 1.14.2
+@item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
 APEL, FLIM もしくは SEMI のバージョンアップを行った場合は、Wanderlust を

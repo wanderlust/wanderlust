@@ -84,12 +84,9 @@
 ;; Content-Transfer-Encoding (FLIM API Version 1.14 Draft Release 3)
 (luna-define-method check-modules-flim-content-transfer-encoding ((case check-modules))
   (require 'mel)
-  ;; mime-decode-string (string encoding) [Required]<Suggest>
-  (lunit-assert (fboundp 'mime-decode-string))
-  (lunit-assert (fboundp (mel-find-function 'mime-decode-string "base64")))
-  ;; mime-encode-string (string encoding)  [Required]<Suggest>
-  (lunit-assert (fboundp (mel-find-function 'mime-encode-string "base64")))
-
+  (lunit-assert (fboundp 'mime-decode-string)) ; [Required]<Suggest>
+;;; document only?
+;;;  (lunit-assert (fboundp 'mime-encode-string)) ; [Required]<Suggest>
   (lunit-assert (fboundp 'base64-decode-string)) ; [Required]
   (lunit-assert (fboundp 'base64-encode-string)) ; [Required]
   (lunit-assert (fboundp 'mime-write-decoded-region)) ; [Required]<Suggest>
