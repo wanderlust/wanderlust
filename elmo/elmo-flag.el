@@ -62,10 +62,10 @@
 	(elmo-localdir-folder-set-directory-internal
 	 folder
 	 msgdb-path)
-	(if (file-exists-p (expand-file-name "/.minfo" msgdb-path))
+	(if (file-exists-p (expand-file-name ".minfo" msgdb-path))
 	    (elmo-flag-folder-set-minfo-internal
 	     folder
-	     (elmo-object-load (expand-file-name "/.minfo" msgdb-path))))
+	     (elmo-object-load (expand-file-name ".minfo" msgdb-path))))
 	(elmo-flag-folder-set-minfo-hash-internal
 	 folder
 	 (elmo-make-hash (length (elmo-flag-folder-minfo-internal folder))))
