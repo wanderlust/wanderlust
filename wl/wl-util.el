@@ -840,7 +840,6 @@ This function is imported from Emacs 20.7."
       (message "Checking new mails..."))
     (let ((new-mails 0)
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
-	  (elmo-network-session-name-prefix "BIFF-")
 	  folder)
       (if (eq (length flist) 1)
 	  (wl-biff-check-folder-async (car flist) (interactive-p))
@@ -851,9 +850,19 @@ This function is imported from Emacs 20.7."
 	      (when (elmo-folder-plugged-p folder)
 		(setq new-mails
 		      (+ new-mails
-			 (nth 0 (wl-folder-check-one-entity folder))))))
+			 (nth 0 (wl-biff-check-folder folder))))))
 	  (setq wl-biff-check-folders-running nil)
 	  (wl-biff-notify new-mails (interactive-p)))))))
+
+(defun wl-biff-check-folder (folder)
+  (if (eq (elmo-folder-get-type folder) 'pop3)
+      ;; pop3 biff should share the session.
+      (prog2
+	  (elmo-commit folder) ; Close session.
+	  (wl-folder-check-one-entity folder)
+	(elmo-commit folder))
+    (let ((elmo-network-session-name-prefix "BIFF-"))
+      (wl-folder-check-one-entity folder))))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
@@ -868,18 +877,20 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (when (elmo-folder-plugged-p folder)
-    (if (and (eq (elmo-folder-get-type folder) 'imap4)
-	     (wl-folder-use-server-diff-p folder))
-	;; Check asynchronously only when IMAP4 and use server diff.
-	(progn
-	  (setq elmo-folder-diff-async-callback
-		'wl-biff-check-folder-async-callback)
-	  (setq elmo-folder-diff-async-callback-data
-		(list folder (get-buffer wl-folder-buffer-name)
-		      notify-minibuf))
-	  (elmo-folder-diff-async folder))
-      (wl-biff-notify (car (wl-folder-check-one-entity folder))
-		      notify-minibuf)
+    (let ((type (elmo-folder-get-type folder)))
+      (if (and (eq type 'imap4)
+	       (wl-folder-use-server-diff-p folder))
+	  ;; Check asynchronously only when IMAP4 and use server diff.
+	  (progn
+	    (setq elmo-folder-diff-async-callback
+		  'wl-biff-check-folder-async-callback)
+	    (setq elmo-folder-diff-async-callback-data
+		  (list folder (get-buffer wl-folder-buffer-name)
+			notify-minibuf))
+	    (let ((elmo-network-session-name-prefix "BIFF-"))
+	      (elmo-folder-diff-async folder)))
+	(wl-biff-notify (car (wl-biff-check-folder folder))
+			notify-minibuf))
       (setq wl-biff-check-folders-running nil))))
 
 ;;; wl-util.el ends here

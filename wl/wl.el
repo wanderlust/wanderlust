@@ -111,6 +111,7 @@
       (progn
 	;; flush queue!!
 	(elmo-dop-queue-flush)
+	(wl-biff-start)
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))
@@ -123,6 +124,7 @@
 		  (wl-summary-flush-pending-append-operations seen-list))
 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
+    (wl-biff-stop)
     (run-hooks 'wl-unplugged-hook))
   (force-mode-line-update t))
 

@@ -1,5 +1,13 @@
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-toggle-plugged): Call `wl-biff-stop' if unplugged,
+	`wl-biff-start' if plugged.
+
+	* wl-util.el (wl-biff-check-folder): New function.
+	(wl-biff-check-folders): Don't set session name prefix.
+	Use `wl-biff-check-folder' instead of `wl-folder-check-one-entity'.
+	(wl-biff-check-folder-async): Ditto.
+
 	* wl-address.el (wl-ldap-alias-safe-string): Replace '@' to '/'
 	in email address.
 
