@@ -4822,7 +4822,21 @@ This is the function to post NNTP message.
 @item wl-nntp-posting-config-alist
 @vindex wl-nntp-posting-config-alist
 The initial setting is @code{nil}.
-An alist to define NNTP server.
+The value takes an alist to define NNTP server like following example.
+It takes precedence over @code{wl-nntp-posting-@{server|user|port|function@}}.
+
+@lisp
+@group
+(setq wl-nntp-posting-config-alist
+      '((",?gmane\\." . "news.gmane.org")
+        (",?comp\\." .
+         ((server . "news-server")
+          (user . "newsmaster")
+          (port . 119)
+          (function . elmo-nntp-post)))
+        (".*" . "default-news-server")))
+@end group
+@end lisp
 
 @item wl-pop-before-smtp-user
 @vindex wl-pop-before-smtp-user

@@ -4761,8 +4761,21 @@ Non-nil ならニュース投稿時に SSL を利用します。
 @item wl-nntp-posting-config-alist
 @vindex wl-nntp-posting-config-alist
 初期設定は @code{nil}。
-ニュース投稿時のサーバ選択方法を設定します。
+以下の例のようにして、ニュース投稿時のサーバ選択方法を設定します。
 @code{wl-nntp-posting-@{server|user|port|function@}}より優先されます。
+
+@lisp
+@group
+(setq wl-nntp-posting-config-alist
+      '((",?gmane\\." . "news.gmane.org")
+        (",?comp\\." .
+         ((server . "news-server")
+          (user . "newsmaster")
+          (port . 119)
+          (function . elmo-nntp-post)))
+        (".*" . "default-news-server")))
+@end group
+@end lisp
 
 @item wl-pop-before-smtp-user
 @vindex wl-pop-before-smtp-user
