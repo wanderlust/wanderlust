@@ -457,6 +457,8 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when Message is displayed.")
 (defvar wl-message-exit-hook nil
   "A hook called when quit message.")
+(defvar wl-summary-exit-pre-hook nil
+  "A hook called before exit summary mode.")
 (defvar wl-summary-exit-hook nil
   "A hook called when exit summary mode.")
 (defvar wl-highlight-headers-hook nil
@@ -1552,7 +1554,8 @@ Each elements are regexp of folder name."
   '(("^-alt\\.chinese" . big5)
     ("^-relcom\\." . koi8-r)
     ("^-tw\\." . big5)
-    ("^-han\\." . euc-kr))
+    ("^-han\\." . euc-kr)
+    ("@sponichi" . shift_jis))
   "Charset alist.  If no match, `wl-mime-charset' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp") (symbol :tag "Charset")))
   :group 'wl-summary
@@ -1631,6 +1634,22 @@ e.x.
 If nil, always use default."
   :type 'boolean
   :group 'wl-pref)
+
+(defcustom wl-folder-process-duplicates-alist
+  (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^"
+		      (regexp-quote wl-trash-folder) "$") nil)
+	(cons ".*" 'hide))
+  "Specify process type of duplicated messages.
+It should be a list of cons cell like: (REGEXP . TYPE)
+REGEXP is a regular expression string of folder name.
+TYPE is one of the symbols `hide' or `read'.
+`hide' means hide duplicated messages.
+`read' means mark as read duplicated messages.
+If TYPE is nil, do nothing for duplicated messages."
+  :type '(repeat (cons (regexp :tag "Folder regexp")
+		       (choice (const :tag "Hide" kill)
+			       (const :tag "Mark as read" read))))
+  :group 'wl-folder)
 
 (defcustom wl-folder-move-cur-folder nil
   "*Non-nil, move to current folder on folder-mode when goto folder."
