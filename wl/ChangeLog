@@ -1,4 +1,4 @@
-2001-12-24  Yuuichi Teranishi  <yuuichi@elmo.templewest.net>
+2001-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-hide): Removed `interactive'.
 	(Pointed out by YAMASHITA Junji <ysjj@unixuser.org>)
