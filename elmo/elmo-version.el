@@ -32,7 +32,7 @@
 (provide 'elmo-version)			; have to declare in the top.
 
 (product-provide 'elmo-version
-  (product-define "ELMO" nil '(2 3 90)))
+  (product-define "ELMO" nil '(2 3 91)))
 
 ;; set version-string
 (if (fboundp 'product-version-as-string)

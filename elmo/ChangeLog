@@ -1,5 +1,7 @@
 2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.3.91.
+
 	* elmo-filter.el (elmo-filter-folder-diff): Use target folder's diff
 	Only when filter is 'last'.
 
