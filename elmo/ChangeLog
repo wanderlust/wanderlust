@@ -1,3 +1,27 @@
+2002-12-10  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-archive.el: Specify charset.
+
+2002-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-process-filter): Check whether the pop3
+	process	buffer lives or not.
+
+	* elmo-dop.el (elmo-dop-queue-flush): Don't append to the dop-queue
+	while flushing queues (It causes infinite loop).
+
+2002-11-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed last change.
+
+2002-11-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* utf7.el (toplevel): Check the ucs features dynamically.
+	(Advice from Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>)
+
+	* elmo-pipe.el (elmo-folder-creatable-p): Don't check whether the
+	folder is creatabe or not if it already exists.
+
 2002-11-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-search-primitive): Revert the last change.

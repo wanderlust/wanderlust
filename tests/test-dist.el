@@ -128,7 +128,7 @@
     (with-temp-buffer
       (insert-file-contents (expand-file-name "ChangeLog" "./"))
       (re-search-forward
-       "\\* \\([0-9\\.]+\\) - \"\\([^\"]+\\)\".$")
+       "^\t\\* \\([0-9\\.]+\\) - \"\\([^\"]+\\)\"$")
       (lunit-assert
        (string=
 	(product-version-string (product-find 'wl-version))

@@ -330,7 +330,7 @@ It calls following-method selected from variable
 	    (while (< beg (point))
 	      (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
 		  (setq count (+ count 1))
-		(defbug)))
+		(debug)))
 	    (with-temp-buffer
 	      (set-buffer-multibyte nil)
 	      (insert (mime-entity-body entity))

@@ -47,7 +47,7 @@ The format of this variable is a list of RULEs which has form like:
 
 The 1st element CONDITION is a sexp which consists of following.
 
-1. Functions which accept argument FIELD-NAME and VALUE.
+1. Functions which accept arguments FIELD-NAME and VALUE.
 FIELD-NAME is a symbol of the field name.
 
 `equal'             ... True if the field value equals to VALUE.
@@ -62,12 +62,17 @@ FIELD-NAME is a symbol of the field name.
                         VALUE can contain \\& and \\N which will substitute
                         from matching \\(\\) patterns in the previous VALUE.
 
-2. Functions which accept any number of arguments.
+2. Functions which accept an argument SIZE, SIZE is some number.
+
+`<'                 ... True if the size of the message is less than SIZE.
+`>'                 ... True if the size of the message is greater than SIZE.
+
+3. Functions which accept any number of arguments.
 
 `or'                ... True if one of the argument returns true.
 `and'               ... True if all of the arguments return true.
 
-3. A symbol.
+4. A symbol.
 
 When a symbol is specified, it is evaluated.
 

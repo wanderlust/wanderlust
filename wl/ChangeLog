@@ -1,3 +1,30 @@
+2002-12-08  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Fix logic
+	for elmo-remove-passwd.
+
+2002-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-sync-entity): Fixed problem when the
+	folder is sticky.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
+2002-12-04  Yasutaka SHINDOH  <ring@fan.gr.jp>
+
+	* wl-demo.el (wl-demo-icon-name): Cope with Medow.
+
+2002-12-03  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-target-mark-erase): Simplify.
+	Delete messages on buffer for unplugged operation.
+	(wl-summary-erase): Ditto.
+
+2002-11-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): It can
+	take nil so as not to search parent by subject.
+
 2002-11-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-get-prev-folder): Ignore nemacs.

@@ -1104,7 +1104,7 @@ non-nil."
 		     (wl-draft-write-sendlog 'failed 'smtp smtp-server
 					     recipients id)
 		     (if (and (eq (car err) 'smtp-response-error)
-			      (/= (nth 1 err) 334))
+			      (= (nth 1 err) 535))
 			 (elmo-remove-passwd
 			  (wl-smtp-password-key
 			   smtp-sasl-user-name

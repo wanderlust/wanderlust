@@ -41,7 +41,7 @@
 
 (defconst wl-demo-icon-name
   (concat "wl-" (wl-version-status)
-	  (if (string-match "^... Dec \\([ 1][0-9]\\|2[0-5]\\)"
+	  (if (string-match "^... Dec \\([ 01][0-9]\\|2[0-5]\\)"
 			    (current-time-string))
 	      "-xmas-logo"
 	    "-logo"))

@@ -4,7 +4,6 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
 @documentlanguage en
-@documentencoding us-ascii
 @include version.texi
 @synindex pg cp
 @finalout
@@ -6411,7 +6410,7 @@ learn how to write the condition practically.
 
 @enumerate
 @item
-Functions which accept argument @samp{FIELD-NAME} and @samp{VALUE}.
+Functions which accept arguments @samp{FIELD-NAME} and @samp{VALUE}.
 (@samp{FIELD-NAME} is a symbol that describes the field name)
 
 @table @code
@@ -6430,6 +6429,16 @@ True if one of the addresses in the field matches to
 @samp{VALUE}.
 @samp{VALUE} can contain @code{\&} and @code{\N} which will substitute
 from matching @code{\(\)} patterns in the previous @samp{VALUE}.
+@end table
+
+@item
+Functions which accept an integer argument (@samp{SIZE}).
+
+@table @code
+@item @code{<}
+True if the size of the message is less than @samp{SIZE}.
+@item @code{>}
+True if the size of the message is greater than @samp{SIZE}.
 @end table
 
 @item
@@ -6490,6 +6499,7 @@ summary displayed with nicknames.
 * Mail Addresses::   Definition of Address Book
 * Address Manager::  Address Manager
 @end menu
+
 
 @node Mail Addresses, Address Manager, Address Book, Address Book
 @section Address book

@@ -211,8 +211,12 @@
   (elmo-folder-newsgroups (elmo-pipe-folder-src-internal folder)))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-pipe-folder))
-  (and (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder))
-       (elmo-folder-creatable-p (elmo-pipe-folder-dst-internal folder))))
+  (and (or
+	(elmo-folder-exists-p (elmo-pipe-folder-src-internal folder))
+	(elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder)))
+       (or
+	(elmo-folder-exists-p (elmo-pipe-folder-dst-internal folder))
+	(elmo-folder-creatable-p (elmo-pipe-folder-dst-internal folder)))))
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-pipe-folder))
   (elmo-folder-writable-p (elmo-pipe-folder-dst-internal folder)))
