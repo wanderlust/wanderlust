@@ -1,6 +1,7 @@
 ;;; wl-highlight.el --- Hilight modules for Wanderlust.
 
-;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003
+;;  Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
@@ -42,12 +43,6 @@
 	 (require 'wl-e21))
 	(t
 	 (require 'wl-mule)))
-  (defun-maybe extent-begin-glyph (a))
-  (defun-maybe delete-extent (a))
-  (defun-maybe make-extent (a b))
-  (defun-maybe set-extent-begin-glyph (a b))
-  (defun-maybe set-extent-end-glyph (a b))
-  (defun-maybe extent-at (a b c d e))
   (defun-maybe wl-dnd-set-drop-target (a b))
   (defun-maybe wl-dnd-set-drag-starter (a b)))
 
