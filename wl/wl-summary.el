@@ -3743,7 +3743,7 @@ Return non-nil if the mark is updated"
 Basically, it shows next line of the message.
 If optional argument ARG is specified, behave as followed.
 If ARG is number, jump to the message.
-Otherwise it shows previous line of th message."
+Otherwise it shows previous line of the message."
   (interactive "P")
   (cond ((numberp arg)
 	 (unless (wl-thread-jump-to-msg arg)
