@@ -33,12 +33,15 @@
 (require 'elmo-vars)
 (require 'elmo-msgdb)
 (require 'elmo-util)
-(require 'elmo-localdir)
 
 ;; global variable.
 (defvar elmo-dop-queue nil
   "A list of (folder-name function-to-be-called argument-list).
 Automatically loaded/saved.")
+
+(defvar elmo-dop-folder (concat "+" (expand-file-name "dop"
+						      elmo-msgdb-dir))
+  "A folder for `elmo-folder-append-messages' disconnected operations.")
 
 (defmacro elmo-make-dop-queue (fname method arguments)
   "Make a dop queue."
@@ -56,10 +59,9 @@ Automatically loaded/saved.")
   "Return the arguments of the QUEUE."
   (` (aref (, queue) 2)))
 
-(defun elmo-dop-queue-append (folder method arguments)
+(defun elmo-dop-queue-append (fname method arguments)
   "Append to disconnected operation queue."
-  (let ((queue (elmo-make-dop-queue (elmo-folder-name-internal folder)
-				    method arguments)))
+  (let ((queue (elmo-make-dop-queue fname method arguments)))
     (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
 (defun elmo-dop-queue-flush (&optional force)
@@ -69,16 +71,11 @@ even an operation concerns the unplugged folder."
   (elmo-dop-queue-merge)
   (let ((queue elmo-dop-queue)
 	(count 0)
-	folder
 	len)
-    ;; obsolete
-    (unless (or (null queue)
-		(vectorp (car queue)))
-      (when (y-or-n-p "Saved queue is old version(2.4). Clear all pending operations? ")
-	(setq elmo-dop-queue nil)
-	(message "All pending operations are cleared.")
-	(elmo-dop-queue-save)))
-    (setq count (length queue))
+    (while queue
+      (if (or force (elmo-folder-plugged-p (elmo-make-folder (caar queue))))
+	  (setq count (1+ count)))
+      (setq queue (cdr queue)))
     (when (> count 0)
       (if (elmo-y-or-n-p
 	   (format "%d pending operation(s) exists.  Perform now? " count)
@@ -97,15 +94,9 @@ even an operation concerns the unplugged folder."
 		(setq i (+ 1 i))
 		(message "Flushing queue....%d/%d." i num)
 		(condition-case err
-		    (progn
-		      (apply (elmo-dop-queue-method (car queue))
-			     (prog1
-				 (setq folder 
-				       (elmo-make-folder
-					(elmo-dop-queue-fname (car queue))))
-			       (elmo-folder-open folder))
-			     (elmo-dop-queue-arguments (car queue)))
-		      (elmo-folder-close folder))
+		    (apply (elmo-dop-queue-method (car queue))
+			   (elmo-dop-queue-fname (car queue))
+			   (elmo-dop-queue-arguments queue))
 		  (quit  (setq failure t))
 		  (error (setq failure err)))
 		(if failure
@@ -128,155 +119,61 @@ even an operation concerns the unplugged folder."
 
 (defvar elmo-dop-merge-funcs nil)
 (defun elmo-dop-queue-merge ()
-  ;; XXXX Not implemented yet.
+  (let ((queue elmo-dop-queue)
+        new-queue match-queue que)
+    (while (setq que (car queue))
+      (if (and
+	   (member (cadr que) elmo-dop-merge-funcs)
+	   (setq match-queue
+		 (car (delete nil
+			      (mapcar
+			       (lambda (new-queue)
+				 (if (and
+				      (string= (car que) (car new-queue))
+				      (string= (cadr que) (cadr new-queue)))
+				     new-queue))
+			       new-queue)))))
+	  (setcar (cddr match-queue)
+		  (append (nth 2 match-queue) (nth 2 que)))
+	(setq new-queue (append new-queue (list que))))
+      (setq queue (cdr queue)))
+    (setq elmo-dop-queue new-queue)))
+
+
+;;; Execution is delayed.
+
+
+;;; Offline append:
+;; If appended message is local file or cached, it is saved in
+;; .elmo/dop/1 2 3 4 ...
+;; then msgdb-path/append file is created and contain message number list.
+;; ex. (1 3 5)
+
+(defun elmo-folder-append-buffer-dop (folder unread &optional number)
   )
 
-;;; dop spool folder
-(defmacro elmo-dop-spool-folder (folder)
-  "Return a spool folder for disconnected operations
-which is corresponded to the FOLDER."
-  (` (elmo-make-folder
-      (concat "+" (expand-file-name "spool" (elmo-folder-msgdb-path
-					     (, folder)))))))
+(defun elmo-folder-delete-messages-dop (folder numbers)
+  )
 
-(defun elmo-dop-spool-folder-append-buffer (folder)
-  "Append current buffer content to the dop spool folder.
-FOLDER is the folder structure.
-Return a message number."
-  (setq folder (elmo-dop-spool-folder folder))
-  (let ((new-number (1+ (car (elmo-folder-status folder)))))
-    (unless (elmo-folder-exists-p folder)
-      (elmo-folder-create folder))
-    ;; dop folder is a localdir folder.
-    (write-region-as-binary (point-min) (point-max)
-			  (expand-file-name
-			   (int-to-string new-number)
-			   (elmo-localdir-folder-directory-internal folder))
-			  nil 'no-msg)
-    new-number))
-  
+(defun elmo-folder-encache-dop (folder numbers)
+  )
 
-(defun elmo-dop-spool-folder-list-messages (folder)
-  "List messages in the dop spool folder.
-FOLDER is the folder structure."
-  (setq folder (elmo-dop-spool-folder folder))
-  (if (elmo-folder-exists-p folder)
-      (elmo-folder-list-messages folder)))
-
-(defun elmo-dop-list-deleting-messages (folder)
-  "List messages which are on the deleting queue for the folder.
-FOLDER is the folder structure."
-  (let (messages)
-    (dolist (queue elmo-dop-queue)
-      (if (and (string= (elmo-dop-queue-fname queue)
-			(elmo-folder-name-internal folder))
-	       (eq (elmo-dop-queue-method queue)
-		   'elmo-folder-delete-messages-dop-delayed))
-	  (setq messages (nconc messages
-				(mapcar
-				 'car
-				 (car (elmo-dop-queue-arguments queue)))))))))
-
-;;; DOP operations.
-(defsubst elmo-folder-append-buffer-dop (folder unread &optional number)
-  (elmo-dop-queue-append
-   folder 'elmo-folder-append-buffer-dop-delayed
-   (list unread
-	 (elmo-dop-spool-folder-append-buffer
-	  folder)
-	 number)))
-
-(defsubst elmo-folder-delete-messages-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-delete-messages-dop-delayed
-			 (list
-			  (mapcar
-			   (lambda (number)
-			     (cons number (elmo-message-field
-					   folder number 'message-id)))
-			   numbers)))
-  t)
-
-(defsubst elmo-message-encache-dop (folder number)
-  (elmo-dop-queue-append folder 'elmo-message-encache (list number)))
-
-(defsubst elmo-create-folder-dop (folder)
-  (elmo-dop-queue-append folder 'elmo-folder-create nil))
-
-(defsubst elmo-folder-mark-as-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-mark-as-read (list numbers)))
-
-(defsubst elmo-folder-unmark-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unmark-read (list numbers)))
-
-(defsubst elmo-folder-mark-as-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-mark-as-important (list numbers)))
-
-(defsubst elmo-folder-unmark-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unmark-important (list numbers)))
+(defun elmo-create-folder-dop (folder)
+  )
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-folder-msgdb-path folder)))
 	 (number-list (mapcar 'car number-alist))
-	 (spool-folder (elmo-dop-spool-folder folder))
-	 spool-length
 	 (i 0)
 	 max-num)
-    (setq spool-length (length (car (if (elmo-folder-exists-p spool-folder)
-					(elmo-folder-status spool-folder)))))
+    ;; number of messages which are queued as append should be added
+    ;; to max-num and length.
     (setq max-num
 	  (or (nth (max (- (length number-list) 1) 0) number-list)
 	      0))
-    (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
-
-;;; Delayed operation (executed at online status).
-(defun elmo-folder-append-buffer-dop-delayed (folder unread number set-number)
-  (let ((spool-folder (elmo-dop-spool-folder folder)))
-    (with-temp-buffer
-      (elmo-message-fetch spool-folder number
-			  (elmo-make-fetch-strategy 'entire)
-			  nil (current-buffer) 'unread)
-      (condition-case nil 
-	  (elmo-folder-append-buffer folder unread set-number)
-	(error
-	 ;; Append failed...
-	 (elmo-folder-append-buffer (elmo-make-folder elmo-lost+found-folder)
-				    unread set-number)))
-      (elmo-folder-delete-messages spool-folder (list number))
-      t)))
-
-(defun elmo-folder-delete-messages-dop-delayed (folder number-alist)
-  (elmo-folder-delete-messages
-   folder
-   ;; messages are deleted only if message-id is not changed.
-   (mapcar 'car
-	   (elmo-delete-if 
-	    (lambda (pair)
-	      (not (string=
-		    (cdr pair)
-		    (elmo-message-fetch-field folder (car pair)
-					      'message-id))))
-	    number-alist))))
-
-;;; Util
-(defun elmo-dop-msgdb (msgdb)
-  (list (mapcar (function
-		 (lambda (x)
-		   (elmo-msgdb-overview-entity-set-number
-		    x
-		    (* -1
-		       (elmo-msgdb-overview-entity-get-number x)))))
-		(nth 0 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (* -1 (car x))
-			      (cdr x))))
-		(nth 1 msgdb))
-	(mapcar (function
-		 (lambda (x) (cons
-			      (* -1 (car x))
-			      (cdr x)))) (nth 2 msgdb))))
+    (cons max-num number-list)))
 
 (require 'product)
 (product-provide (provide 'elmo-dop) (require 'elmo-version))

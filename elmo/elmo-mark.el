@@ -147,7 +147,7 @@
     (elmo-msgdb-global-mark-delete location)))
 
 (luna-define-method elmo-message-fetch-with-cache-process
-  ((folder elmo-mark-folder) number strategy &optional section unseen)
+  ((folder elmo-cache-folder) number strategy &optional section unseen)
   ;; disbable cache process
   (elmo-message-fetch-internal folder number strategy section unseen))
 
@@ -187,6 +187,10 @@
 ;;; To override elmo-map-folder methods.
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-mark-folder) unread-marks &optional mark-alist)
+  t)
+
+(luna-define-method elmo-folder-list-importants-internal
+  ((folder elmo-mark-folder) important-mark)
   t)
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-mark-folder)
