@@ -3758,17 +3758,33 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B%A$9$l$PE,MQ$5$l$k$h$&$K$J$j$^$9!#$?$@$7!"(B@code{wl-draft} $B$r<B9T$7$?$H$-(B
 $B$J$IJV?.85$N%P%C%U%!$,$J$$>l9g$OL5;k$5$l$^$9!#(B
 
-$BCm0UE@$H$7$F$O!"$3$N(B @code{wl-draft-config-alist} $B$O!"(B
-@code{wl-draft-send-and-exit} $B$d(B @code{wl-draft-send} $B$r<B9T$7$?;~$K0lEY(B
-$B$@$1E,MQ$5$l$k$3$H$G$9!#$=$N$?$a!"Aw?.$r<h$j$d$a$?8e$K:FEY(B 
+$B2?$bFCJL$J@_Dj$r$7$J$1$l$P!"(B@code{wl-draft-config-alist} $B$O!"(B
+@code{wl-draft-send-and-exit} $B$+(B @code{wl-draft-send} $B$,<B9T$5$l$kD>A0$K(B
+$B0lEY$@$1E,MQ$5$l$^$9!#Aw?.$r<h$j$d$a$?8e$K:FEY(B 
 @code{wl-draft-config-alist} $B$rE,MQ$7$?$$>l9g$O!"(B@kbd{C-c C-e}
 (@code{wl-draft-config-exec}) $B$r<B9T$7$F$/$@$5$$!#(B
 
-$B$^$?!"%I%i%U%H%P%C%U%!$N:n@.;~$K<+F0E*$K$3$N(B 
+@code{wl-draft-send-and-exit}$B!"(B@code{wl-draft-send} $B$N<B9T;~$K<+F0E*$K(B 
+@code{wl-draft-config-alist} $B$rE,MQ$7$?$/$J$$>l9g$O!"<!$N$h$&$K@_Dj$7$F(B
+$B2<$5$$!#(B
+
+@lisp
+(remove-hook 'wl-draft-send-hook 'wl-draft-config-exec)
+@end lisp
+
+$B%I%i%U%H%P%C%U%!$N:n@.;~$K<+F0E*$K(B
 @code{wl-draft-config-alist} $B$rE,MQ$7$?$$>l9g$O!"<!$N$h$&$K@_Dj$7$^$9!#(B
 
 @lisp
 (add-hook 'wl-mail-setup-hook 'wl-draft-config-exec)
+@end lisp
+
+$B%5%^%j%b!<%I$+$i(B 'E'(@code{wl-summary-reedit})$B$r2!$7$F%a!<%k$r(B
+$BJT=8$9$k;~$K$b<+F0E*$K(B @code{wl-draft-config-alist} $B$rE,MQ$7$?$$>l9g$O!"(B
+$B<!$N$h$&$K@_Dj$7$^$9!#(B
+
+@lisp
+(add-hook 'wl-draft-reedit-hook 'wl-draft-config-exec)
 @end lisp
 
 @subsection $B%F%s%W%l!<%H$NA^F~(B

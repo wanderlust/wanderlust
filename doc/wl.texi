@@ -3772,13 +3772,29 @@ Note that @code{wl-draft-config-alist} is applied only once when
 @code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked.
 Therefore, if you want to apply @code{wl-draft-config-alist} again after 
 aborting transmission, execute @kbd{C-c C-e}
-(@code{wl-draft-config-exec}).
+(@code{wl-draft-config-exec}) explicitly.
+
+If you don't want to apply @code{wl-draft-config-alist} when 
+@code{wl-draft-send-and-exit} or @code{wl-draft-send} is invoked,
+do the following:
+
+@lisp
+(remove-hook 'wl-draft-send-hook 'wl-draft-config-exec)
+@end lisp
 
 If you want to apply @code{wl-draft-config-alist} when a draft buffer is 
 prepared, do the following:
 
 @lisp
 (add-hook 'wl-mail-setup-hook 'wl-draft-config-exec)
+@end lisp
+
+If you want to apply @code{wl-draft-config-alist} when you re-edit a mail
+from summary mode by typing @kbd{E}(@code{wl-summary-reedit}), do the
+following:
+
+@lisp
+(add-hook 'wl-draft-reedit-hook 'wl-draft-config-exec)
 @end lisp
 
 @subsection Inserting Templates
