@@ -2,6 +2,7 @@
 
 	* wl.el (wl-check-environment): Don't check Message-ID when
 	`wl-insert-message-id' is nil.
+	Revive checking if `wl-message-id-domain' contains "@".
 
 2002-03-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

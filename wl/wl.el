@@ -709,8 +709,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (let ((message-id (funcall wl-message-id-function))
 	  domain)
       (unless (string-match "^<\\([^@]*\\)@\\([^@]*\\)>$" message-id)
-	(error
-	 "Check around `wl-message-id-function' to get valid Message-ID string."))
+	(cond
+	 ((string-match "@" wl-message-id-domain)
+	  (error "Please remove `@' from `wl-message-id-domain'."))
+	 (t
+	  (error
+	   "Check around `wl-message-id-function' to get valid Message-ID string."))))
       (setq domain (match-string 2 message-id))
       (if (or (not (string-match "[^.]\\.[^.]" domain))
 	      (string= domain "localhost.localdomain"))
