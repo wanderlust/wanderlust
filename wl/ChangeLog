@@ -1,5 +1,10 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-message.el (wl-message-buffer-prefetch-debug): Default value
+	is nil.
+
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-summary.el (wl-summary-pick): Fix for killed messages.
 	(wl-summary-target-mark-msgs): Return the number of marked messages.
 

@@ -49,7 +49,7 @@
 (defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
 
-(defvar wl-message-buffer-prefetch-debug t)
+(defvar wl-message-buffer-prefetch-debug nil)
 (defvar wl-message-buffer-prefetch-timer nil)
 
 (defvar wl-message-buffer nil) ; message buffer.
