@@ -5204,6 +5204,14 @@ AUTH authentication.  You may specify @code{plain}, @code{cram-md5},
 @code{digest-md5}, @code{login}, etc.  If @code{nil}, authentication
 will not be carried out.
 
+@item wl-smtp-authenticate-realm
+@vindex wl-smtp-authenticate-realm
+The initial setting is @code{nil}.
+This string-valued variable specifies the authentication realm for SMTP
+AUTH authentication. You have to set this variable for DIGEST-MD5
+authentication and so on.
+If @code{nil}, authentication realm is not specified in the authentication.
+
 @item wl-smtp-connection-type
 @vindex wl-smtp-connection-type
 The initial setting is @code{nil}.
