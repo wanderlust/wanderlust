@@ -66,8 +66,6 @@ Return number if put mark succeed"
 	 visible mark cur-mark)
     (when (zerop (elmo-folder-length wl-summary-buffer-elmo-folder))
       (error "Set mark failed"))
-    (unless current
-      (error "No message"))
     (prog1
 	(save-excursion
 	  ;; Put mark
@@ -78,6 +76,8 @@ Return number if put mark succeed"
 			 (and (null number) current))
 		number (or number current)
 		cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	  (unless number
+	    (error "No message"))
 	  (if (wl-summary-reserve-temp-mark-p cur-mark)
 	      (when interactive
 		(error "Already marked as `%s'" cur-mark))
