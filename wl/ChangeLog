@@ -1,3 +1,7 @@
+2000-11-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Version number is increased to 2.3.93.
+
 2000-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-address.el (wl-ldap-register-dn-string): Flatten dn-list.
