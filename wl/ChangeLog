@@ -1,3 +1,7 @@
+2000-07-04  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Make `kill-buffer-hook' buffer-local.
+
 2000-07-04  Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-edit-string): Call
