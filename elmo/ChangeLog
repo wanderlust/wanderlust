@@ -1,3 +1,12 @@
+2004-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-file.el (elmo-file-find): Use expand-file-name for return
+	value.
+	(elmo-file-command-argument): Undo last change for cygwin.
+	(elmo-file-detect-content-type): Renamed from elmo-file-detect-format;
+	Don't return nil.
+	(elmo-map-message-fetch): Use elmo-file-detect-content-type.
+
 2004-02-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-file.el (elmo-file-command-argument): Fixed problem when a

@@ -40,7 +40,7 @@
 	(setq file (car files)
 	      files nil))
       (setq files (cdr files)))
-    file))
+    (expand-file-name file)))
 
 (defcustom elmo-file-command (exec-installed-p "file")
   "*Program name of the file type detection command `file'."
@@ -51,7 +51,7 @@
   (let ((magic-file (elmo-file-find
 		     '("/usr/share/magic.mime"
 		       "/usr/share/file/magic.mime"
-		       "c:/cygwin/usr/share/file/magic.mime"))))
+		       "/cygwin/usr/share/file/magic.mime"))))
     (if magic-file (list "-m" magic-file)))
   "*Argument list for the `file' command.
 \(It should return the MIME content type\)"
@@ -86,7 +86,7 @@
     (concat (elmo-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
 
-(defun elmo-file-detect-format (file)
+(defun elmo-file-detect-content-type (file)
   "Return content-type of the FILE."
   (if (or (not (file-exists-p file))
 	  (file-directory-p file))
@@ -95,24 +95,26 @@
       (setq type (mime-find-file-type file))
       (if (and (string= (nth 0 type) "application")
 	       (string= (nth 1 type) "octet-stream"))
-	  (if elmo-file-command
+	  (if (and elmo-file-command
+		   elmo-file-command-argument)
 	      (with-temp-buffer
-		(when
-		    (zerop (apply 'call-process elmo-file-command
+		(if (zerop (apply 'call-process elmo-file-command
 				  nil `(,(current-buffer) nil)
 				  nil (append elmo-file-command-argument
 					      (list (expand-file-name file)))))
-		  (goto-char (point-min))
-		  (when (re-search-forward ": *" nil t)
-		    (setq type (buffer-substring (match-end 0)
-						 (point-at-eol))))
-		  (cond
-		   ((string= "empty" type)
-		    "application/octet-stream")
-		   ((string-match "text" type)
-		    "text/plain")
-		   (t
-		    (car (split-string type))))))
+		    (progn
+		      (goto-char (point-min))
+		      (when (re-search-forward ": *" nil t)
+			(setq type (buffer-substring (match-end 0)
+						     (point-at-eol))))
+		      (cond
+		       ((string= "empty" type)
+			"application/octet-stream")
+		       ((string-match "text" type)
+			"text/plain")
+		       (t
+			(car (split-string type)))))
+		  "application/octet-stream"))
 	    (concat (nth 0 type) "/" (nth 1 type)))
 	(concat (nth 0 type) "/" (nth 1 type))))))
 
@@ -202,7 +204,7 @@
 	(unless (or (std11-field-body "To")
 		    (std11-field-body "Cc")
 		    (std11-field-body "Subject"))
-	  (setq guess (elmo-file-detect-format file))
+	  (setq guess (elmo-file-detect-content-type file))
 	  (setq is-text (string-match "^text/" guess))
 	  (when is-text
 	    (set-buffer-multibyte t)
