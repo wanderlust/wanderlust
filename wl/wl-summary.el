@@ -2526,7 +2526,9 @@ If ARG, without confirm."
       (if (or force-exit (not (wl-summary-sticky-p)))
 	  (wl-summary-cleanup-temp-marks (wl-summary-sticky-p)))
       (wl-summary-save-view)
-      (elmo-folder-commit wl-summary-buffer-elmo-folder))
+      (elmo-folder-commit wl-summary-buffer-elmo-folder)
+      (if (and (wl-summary-sticky-p) force-exit)
+	  (kill-buffer (current-buffer))))
     (setq buf (wl-summary-get-buffer-create (elmo-folder-name-internal folder)
 					    sticky))
     (setq reuse-buf
