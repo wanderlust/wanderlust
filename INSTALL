@@ -93,8 +93,9 @@ Check Environment
 	% make EMACS=xemacs check
 
   to check running environment including the version of APEL, FLIM, and
-  SEMI.  (Note that even if you have installed new APEL/FLIM/SEMI, old
-  ones in load-path may cause trouble.)
+  SEMI.  Note that even if you have installed new APEL/FLIM/SEMI, old
+  ones in load-path may cause trouble.  To find duplicated files in the
+  load-path, M-x list-load-path-shadows will help you.
 
 
 Installation
