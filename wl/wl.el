@@ -754,22 +754,25 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (unless wl-init
-    (wl-load-profile))
-  (elmo-init)
-  (let (demo-buf)
+    (wl-load-profile)
+    (elmo-init)
+    (wl-folder-init))
+  (let (demo-buf check)
     (unless wl-init
       (if wl-demo (setq demo-buf (wl-demo)))
-      (condition-case nil
-	  (progn
-	    (message "Checking environment...")
-	    (wl-check-environment arg)
-	    (message "Checking environment...done"))
-	(error)
-	(quit)))
+      (setq check t))
     (wl-init)
     (condition-case obj
 	(progn
 	  (wl-plugged-init (wl-folder arg))
+	  (if check
+	      (condition-case nil
+		  (progn
+		    (message "Checking environment...")
+		    (wl-check-environment arg)
+		    (message "Checking environment...done"))
+		(error)
+		(quit)))
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
@@ -813,6 +816,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       wl-fldmgr-save-folders wl-fldmgr-set-petname wl-fldmgr-sort
       wl-fldmgr-subscribe wl-fldmgr-subscribe-region
       wl-fldmgr-unsubscribe wl-fldmgr-unsubscribe-region wl-fldmgr-yank )
+     ("wl-acap" wl-acap-init)
+     ("wl-acap" :interactive t wl-acap-store)
      ("wl-fldmgr"
       (wl-fldmgr-mode-map keymap)
       wl-fldmgr-add-entity-hashtb)

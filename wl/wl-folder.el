@@ -1464,7 +1464,17 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(switch-to-buffer (get-buffer-create wl-folder-buffer-name)))
       (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)
-      (wl-folder-init)
+      ;; Initialization.
+      (setq wl-folder-entity-id 0)
+      (wl-folder-entity-assign-id wl-folder-entity)
+      (setq wl-folder-entity-hashtb
+	    (wl-folder-create-entity-hashtb wl-folder-entity))
+      (setq wl-folder-elmo-folder-hashtb (elmo-make-hash wl-folder-entity-id))
+      (setq wl-folder-group-alist
+	    (wl-folder-create-group-alist wl-folder-entity))
+      (setq wl-folder-newsgroups-hashtb
+	    (wl-folder-create-newsgroups-hashtb wl-folder-entity))
+      (wl-folder-init-info-hashtb)
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
 	(erase-buffer)
@@ -1979,28 +1989,16 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defvar wl-folder-init-function 'wl-local-folder-init)
 
 (defun wl-folder-init ()
-  "Call `wl-folder-init-function' function."
+  "Return top-level folder entity."
   (interactive)
-  (funcall wl-folder-init-function))
+  (if wl-use-acap
+      (wl-acap-init)
+    (funcall wl-folder-init-function)))
 
 (defun wl-local-folder-init ()
   "Initialize local folder."
   (message "Initializing folder...")
-  (save-excursion
-    (set-buffer wl-folder-buffer-name)
-    (let ((entity (wl-folder-create-folder-entity))
-	  (inhibit-read-only t))
-      (setq wl-folder-entity entity)
-      (setq wl-folder-entity-id 0)
-      (wl-folder-entity-assign-id wl-folder-entity)
-      (setq wl-folder-entity-hashtb
-	    (wl-folder-create-entity-hashtb entity))
-      (setq wl-folder-elmo-folder-hashtb (elmo-make-hash wl-folder-entity-id))
-      (setq wl-folder-group-alist
-	    (wl-folder-create-group-alist entity))
-      (setq wl-folder-newsgroups-hashtb
-	    (wl-folder-create-newsgroups-hashtb wl-folder-entity))
-      (wl-folder-init-info-hashtb)))
+  (setq wl-folder-entity (wl-folder-create-folder-entity))
   (message "Initializing folder...done"))
 
 (defun wl-folder-get-realname (petname)

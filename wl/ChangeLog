@@ -1,3 +1,67 @@
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (toplevel): Require 'un-define before 'wl;
+	Don't enclose with `eval-and-compile'.
+
+	* wl.el (wl): Call `elmo-init' and `wl-folder-init' unless
+	wl-init is non-nil.
+
+	* wl-draft.el (wl-draft): Ditto.
+
+	* wl-folder.el (wl-folder): Don't call `wl-folder-init' here.
+
+	* wl-acap.el (toplevel): Require 'wl.
+	(wl-acap-store): Call `elmo-init'.
+
+	* wl.el (wl): Changed position of `wl-check-environment'.
+	(toplevel): Added autoload setting for wl-acap.
+
+	* wl-vars.el (wl-setting): New custom group.
+	(wl-from): Added wl-setting group.
+	(wl-user-mail-address-list): Ditto.
+	(wl-organization): Ditto.
+	(wl-subscribed-mailing-list): Ditto.
+	(wl-envelope-from): Ditto.
+	(wl-smtp-posting-user): Ditto.
+	(wl-smtp-posting-server): Ditto.
+	(wl-smtp-posting-port): Ditto.
+	(wl-smtp-authenticate-type): Ditto.
+	(wl-pop-before-smtp-user): Ditto.
+	(wl-pop-before-smtp-server): Ditto.
+	(wl-pop-before-smtp-port): Ditto.
+	(wl-pop-before-smtp-authenticate-type): Ditto.
+	(wl-nntp-posting-server): Ditto.
+	(wl-nntp-posting-user): Ditto.
+	(wl-nntp-posting-port): Ditto.
+	(wl-fetch-confirm-threshold): Ditto.
+	(wl-prefetch-threshold): Ditto.
+	(wl-thread-insert-opened): Ditto.
+	(wl-ldap-server): Ditto.
+	(wl-ldap-port): Ditto.
+	(wl-ldap-base): Ditto.
+	(wl-ldap-objectclass): Ditto.
+	(wl-use-ldap): Ditto.
+	(wl-draft-config-alist): Ditto.
+	(wl-draft-config-matchone): Ditto.
+	(wl-template-alist): Ditto.
+	(wl-message-sort-field-list): Ditto.
+	(wl-message-ignored-field-list): Ditto.
+	(wl-message-visible-field-list): Ditto.
+	(wl-interactive-send): Ditto.
+	(wl-summary-move-order): Ditto.
+	(wl-auto-select-first): Ditto.
+	(wl-auto-select-next): Ditto.
+	(wl-interactive-save-folders): Ditto.
+
+	* wl-folder.el (wl-folder): Moved position of `wl-folder-init';
+	Initialization codes are moved from wl-local-folder-init.
+	(wl-local-folder-init): Follow the change above.
+	(wl-folder-init): Call `wl-acap-init' when `wl-use-acap' is non-nil.
+
+	* wl-acap.el: New file.
+
+	* Version number is increased to 2.7.3.
+
 2001-08-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-addrmgr.el (wl-addrmgr-apply-exec): Fix for already-list.
