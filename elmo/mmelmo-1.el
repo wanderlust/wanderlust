@@ -104,6 +104,7 @@
                                'CRLF))
   (run-hooks 'mmelmo-entity-content-inserted-hook))
 
-(provide 'mmelmo-1)
+(require 'product)
+(product-provide (provide 'mmelmo-1) (require 'elmo-version))
 
 ;;; mmelmo-1.el ends here

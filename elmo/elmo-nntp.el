@@ -1536,6 +1536,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (defalias 'elmo-nntp-commit 'elmo-generic-commit)
 (defalias 'elmo-nntp-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-nntp)
+(require 'product)
+(product-provide (provide 'elmo-nntp) (require 'elmo-version))
 
 ;;; elmo-nntp.el ends here

@@ -557,6 +557,7 @@ even an operation concerns the unplugged folder."
     (elmo-call-func folder "msgdb-create" numlist new-mark already-mark
 		    seen-mark important-mark seen-list)))
 
-(provide 'elmo-dop)
+(require 'product)
+(product-provide (provide 'elmo-dop) (require 'elmo-version))
 
 ;;; elmo-dop.el ends here

@@ -2094,6 +2094,7 @@ Return nil if no complete line has arrived."
 	(elmo-imap4-forward)
 	(nreverse body)))))
 
-(provide 'elmo-imap4)
+(require 'product)
+(product-provide (provide 'elmo-imap4) (require 'elmo-version))
 
 ;;; elmo-imap4.el ends here

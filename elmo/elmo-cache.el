@@ -752,6 +752,7 @@ Returning its cache buffer."
 (defalias 'elmo-cache-commit 'elmo-generic-commit)
 (defalias 'elmo-cache-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-cache)
+(require 'product)
+(product-provide (provide 'elmo-cache) (require 'elmo-version))
 
 ;;; elmo-cache.el ends here

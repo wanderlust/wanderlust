@@ -35,6 +35,7 @@
   ;; FLIM 1.12
   (require 'mmelmo-imap4-1))
 
-(provide 'mmelmo-imap4)
+(require 'product)
+(product-provide (provide 'mmelmo-imap4) (require 'elmo-version))
 
 ;;; mmelmo-imap4.el ends here

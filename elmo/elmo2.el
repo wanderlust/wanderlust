@@ -33,9 +33,9 @@
 (require 'elmo-msgdb)
 (require 'elmo-cache)
 (require 'elmo-util)
-(require 'elmo-version)
 (require 'elmo-dop)
-(provide 'elmo2)
+(require 'product)
+(product-provide (provide 'elmo2) (require 'elmo-version))
 
 (eval-when-compile
   (require 'elmo-localdir)

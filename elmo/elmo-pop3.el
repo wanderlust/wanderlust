@@ -808,6 +808,7 @@
 	     (elmo-network-close-session session)))))
        
 
-(provide 'elmo-pop3)
+(require 'product)
+(product-provide (provide 'elmo-pop3) (require 'elmo-version))
 
 ;;; elmo-pop3.el ends here

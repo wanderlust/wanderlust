@@ -475,6 +475,7 @@
 (defalias 'elmo-localdir-commit 'elmo-generic-commit)
 (defalias 'elmo-localdir-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-localdir)
+(require 'product)
+(product-provide (provide 'elmo-localdir) (require 'elmo-version))
 
 ;;; elmo-localdir.el ends here

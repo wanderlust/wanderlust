@@ -136,6 +136,7 @@ size:   size of the entity."
 ;		       (mime-buffer-entity-body-end-internal entity)))
 ;   (mime-entity-encoding entity)))
 
-(provide 'mmelmo-2)
+(require 'product)
+(product-provide (provide 'mmelmo-2) (require 'elmo-version))
 
 ;;; mmelmo-2.el ends here

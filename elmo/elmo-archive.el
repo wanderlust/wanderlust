@@ -1066,6 +1066,8 @@ TYPE specifies the archiver's symbol."
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)
-(provide 'elmo-archive)
+
+(require 'product)
+(product-provide (provide 'elmo-archive) (require 'elmo-version))
 
 ;;; elmo-archive.el ends here

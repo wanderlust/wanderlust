@@ -145,12 +145,14 @@ If function is specified, its return value is used.")
 	  (setq attrlist (cdr (cdr attrlist))))
 	ret-val)))
 
-(provide 'mmelmo) ; for circular dependency.
+;;;(provide 'mmelmo) ; for circular dependency.
+(require 'product)
+(product-provide (provide 'mmelmo) (require 'elmo-version))
+
 (static-if (fboundp 'luna-define-method)
     ;; FLIM 1.13 or later
     (require 'mmelmo-2)
   ;; FLIM 1.12
   (require 'mmelmo-1))
-
 
 ;;; mmelmo.el ends here

@@ -360,6 +360,7 @@ set as non-nil.")
 (defvar elmo-display-progress-threshold 20
   "*Displaying progress gauge if number of messages are more than this value.")
 
-(provide 'elmo-vars)
+(require 'product)
+(product-provide (provide 'elmo-vars) (require 'elmo-version))
 
 ;;; elmo-vars.el ends here

@@ -147,6 +147,7 @@
 
 (defalias 'elmo-pipe-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-pipe)
+(require 'product)
+(product-provide (provide 'elmo-pipe) (require 'elmo-version))
 
 ;;; elmo-pipe.el ends here

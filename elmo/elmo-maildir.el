@@ -517,6 +517,7 @@ file name for maildir directories."
 (defalias 'elmo-maildir-commit 'elmo-generic-commit)
 (defalias 'elmo-maildir-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-maildir)
+(require 'product)
+(product-provide (provide 'elmo-maildir) (require 'elmo-version))
 
 ;;; elmo-maildir.el ends here

@@ -1667,6 +1667,7 @@ NUMBER-SET is altered."
 	(setq number-set-1 (nconc number-set-1 (list number))))
     number-set-1))
 
-(provide 'elmo-util)
+(require 'product)
+(product-provide (provide 'elmo-util) (require 'elmo-version))
 
 ;;; elmo-util.el ends here

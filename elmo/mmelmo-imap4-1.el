@@ -344,6 +344,7 @@
 		(std11-fetch-field field-name))
 	    nil))))))
 
-(provide 'mmelmo-imap4-1)
+(require 'product)
+(product-provide (provide 'mmelmo-imap4-1) (require 'elmo-version))
 
 ;;; mmelmo-imap4-1.el ends here

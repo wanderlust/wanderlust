@@ -419,6 +419,7 @@
       (setq folder-list (cdr folder-list)))
     result-alist))
 
-(provide 'elmo-multi)
+(require 'product)
+(product-provide (provide 'elmo-multi) (require 'elmo-version))
 
 ;;; elmo-multi.el ends here

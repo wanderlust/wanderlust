@@ -269,6 +269,7 @@
 (defalias 'elmo-internal-commit 'elmo-generic-commit)
 (defalias 'elmo-internal-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-internal)
+(require 'product)
+(product-provide (provide 'elmo-internal) (require 'elmo-version))
 
 ;;; elmo-internal.el ends here

@@ -811,6 +811,7 @@ Header region is supposed to be narrowed."
 	    (elmo-make-directory new-dir))
 	(rename-file old new)))))
 
-(provide 'elmo-msgdb)
+(require 'product)
+(product-provide (provide 'elmo-msgdb) (require 'elmo-version))
 
 ;;; elmo-msgdb.el ends here

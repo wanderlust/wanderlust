@@ -231,6 +231,7 @@ Returns a process object. if making session failed, returns nil."
 	(elmo-set-plugged t host service))
       process)))
 
-(provide 'elmo-net)
+(require 'product)
+(product-provide (provide 'elmo-net) (require 'elmo-version))
 
 ;;; elmo-net.el ends here

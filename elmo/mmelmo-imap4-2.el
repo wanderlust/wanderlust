@@ -350,6 +350,7 @@ These value must be specified as argument for `luna-make-entity'."
 	 filename
 	 (or (mime-entity-encoding entity) "7bit"))))))
 
-(provide 'mmelmo-imap4-2)
+(require 'product)
+(product-provide (provide 'mmelmo-imap4-2) (require 'elmo-version))
 
 ;;; mmelmo-imap4-2.el ends here

@@ -146,6 +146,7 @@
       (aref (, datevec) 2)
       (aref (, datevec) 3))))
 
-(provide 'elmo-date)
+(require 'product)
+(product-provide (provide 'elmo-date) (require 'elmo-version))
 
 ;;; elmo-date.el ends here

@@ -133,6 +133,7 @@
 (defun elmo-filter-server-diff (spec)
   (elmo-call-func (nth 2 spec) "server-diff"))
 
-(provide 'elmo-filter)
+(require 'product)
+(product-provide (provide 'elmo-filter) (require 'elmo-version))
 
 ;;; elmo-filter.el ends here
