@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/21 12:32:28 teranisi>
+;; Time-stamp: <00/04/26 14:03:56 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1310,7 +1310,8 @@ Optional argument ADDR-STR is used as a target address if specified."
 If optional argument is non-nil, checking is omitted."
   (interactive "P")
   (unless arg
-    (wl-summary-sync-force-update))
+    (save-excursion
+      (wl-summary-sync-force-update)))
   (wl-summary-prefetch-region (point-min) (point-max)
 			      wl-summary-incorporate-marks))
 
