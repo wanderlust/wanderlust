@@ -3,9 +3,10 @@
 	* wl-folder.el (wl-folder-jump-to-current-entity): Cosmetic fix.
 	(wl-folder-buffer-last-visited-entity-id): New buffer local
 	variable.
-	(wl-folder-set-current-entity-id): Set last visited folder.
 	(wl-folder-revisit-last-visited-folder): New function.
 	(wl-folder-mode-map): Bind it to "C-i".
+	(wl-folder-set-current-entity-id): Set last visited folder.
+	* wl-summary.el (wl-summary-exit): Ditto.
 
 2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
 

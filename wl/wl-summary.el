@@ -1164,6 +1164,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	     wl-folder-buffer-cur-point
 	     (goto-char wl-folder-buffer-cur-point))
 	(setq wl-folder-buffer-cur-path nil)
+	(setq wl-folder-buffer-last-visited-entity-id wl-folder-buffer-cur-entity-id)
 	(setq wl-folder-buffer-cur-entity-id nil)
 	(wl-delete-all-overlays)
 	(if wl-summary-exit-next-move
