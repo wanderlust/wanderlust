@@ -1,3 +1,7 @@
+2001-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pipe.el (elmo-pipe-drain): Save killed-list.
+
 2001-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Append copied messages

@@ -112,8 +112,12 @@
 	(elmo-folder-move-messages src msgs dst
 				   nil nil copy)
       (elmo-progress-clear 'elmo-folder-move-messages))
-    (if copy
-	(elmo-msgdb-append-to-killed-list src msgs)))
+    (if (and copy msgs)
+	(progn
+	  (elmo-msgdb-append-to-killed-list src msgs)
+	  (elmo-msgdb-killed-list-save
+	   (elmo-folder-msgdb-path folder)
+	   (elmo-folder-killed-list-internal folder)))))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)
