@@ -1295,7 +1295,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      )
 	    ;;
 	    (if wl-draft-verbose-send
-		(message "%s" mes-string "Sending..."))
+		(message "%s" (or mes-string "Sending...")))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
 	    ;; Now perform actions on successful sending.
 	    (while mail-send-actions
