@@ -70,11 +70,9 @@ has Non-nil value\)"
 	     ((wl-region-exists-p)
 	      (wl-mime-preview-follow-current-region))
 	     ((not (wl-message-mime-analysis-p
-		    (get-text-property (point-min)
-				       'wl-message-display-type)))
+		    (wl-message-buffer-display-type)))
 	      (wl-mime-preview-follow-no-mime
-	       (get-text-property (point-min)
-				  'wl-message-display-type)))
+	       (wl-message-buffer-display-type)))
 	     (t
 	      (mime-preview-follow-current-entity)))))
       (error "No message."))))

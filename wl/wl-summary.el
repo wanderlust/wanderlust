@@ -919,10 +919,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(add-hook hook function nil t)))
     (add-hook 'window-size-change-functions
 	      #'wl-summary-after-resize-function))
-  (make-local-hook 'change-major-mode-hook)
-  (add-hook 'change-major-mode-hook #'wl-summary-buffer-detach nil t)
-  (make-local-hook 'kill-buffer-hook)
-  (add-hook 'kill-buffer-hook #'wl-summary-buffer-detach nil t)
+  (dolist (hook '(change-major-mode-hook kill-buffer-hook))
+    (make-local-hook hook)
+    (add-hook hook #'wl-summary-buffer-detach nil t))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -4402,8 +4401,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	     wl-summary-buffer-current-msg
 	     (wl-summary-message-number)
 	     (= (wl-summary-message-number) wl-summary-buffer-current-msg))
-    (with-current-buffer wl-message-buffer
-      wl-message-buffer-cur-display-type)))
+    (wl-message-buffer-display-type wl-message-buffer)))
 
 (defun wl-summary-buffer-display-mime-mode ()
   (or (wl-message-display-type-property (wl-summary-message-display-type)

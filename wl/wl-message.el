@@ -441,6 +441,11 @@ Returns non-nil if bottom of message."
 (defun wl-message-display-all-header-p (display-type)
   (eq (wl-message-display-type-property display-type :header) 'all))
 
+(defun wl-message-buffer-display-type (&optional message-buffer)
+  (if message-buffer
+      (with-current-buffer message-buffer
+	wl-message-buffer-cur-display-type)
+    wl-message-buffer-cur-display-type))
 
 (defun wl-message-redisplay (folder number display-type &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
@@ -598,9 +603,6 @@ Returns non-nil if bottom of message."
 					    (wl-message-define-keymap))
 	      (let (buffer-read-only)
 		(wl-highlight-message (point-min) (point-max) t)))))
-      (let (buffer-read-only)
-	(put-text-property (point-min) (point-max)
-			   'wl-message-display-type display-type))
       (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 
