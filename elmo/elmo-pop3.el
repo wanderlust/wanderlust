@@ -812,8 +812,7 @@ set as non-nil.")
 	(insert-buffer-substring (process-buffer process) start (- end 3))))))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))
-  (if (and (not elmo-inhibit-number-mapping)
-	   (elmo-pop3-folder-use-uidl-internal folder))
+  (if (elmo-pop3-folder-use-uidl-internal folder)
       (elmo-pop3-folder-set-location-alist-internal
        folder (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
 

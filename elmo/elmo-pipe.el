@@ -138,10 +138,10 @@
 	 (dst-list (elmo-folder-list-messages
 		    (elmo-pipe-folder-dst-internal folder))))
     (prog1 (cons (+ src-length (elmo-max-of-list dst-list))
-		 (+ src-length (length dst-list)))
-      ;; No save.
-      (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
-      (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))))
+		 (+ src-length (length dst-list)))))
+  ;; No save.
+  (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
+  (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-pipe-folder))
   (and (elmo-folder-exists-p (elmo-pipe-folder-src-internal folder))
@@ -196,7 +196,7 @@
    (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-pipe-folder))
+  ((folder elmo-localdir-folder))
   (elmo-folder-message-make-temp-file-p
    (elmo-pipe-folder-dst-internal folder)))
 
