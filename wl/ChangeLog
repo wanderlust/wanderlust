@@ -1,5 +1,8 @@
 2000-05-20  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Don't use
+	wl-append(nconc), because update-list is broken on Meadow.
+
 	* wl-summary.el (wl-summary-insert-thread-entity): Changed delayed
 	updating process.
 	(wl-summary-rescan): Ditto.
