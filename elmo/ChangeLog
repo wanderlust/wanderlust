@@ -1,3 +1,7 @@
+2003-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (toplevel): Changed definition orders.
+
 2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb.el (elmo-msgdb-search): New API .

@@ -79,6 +79,16 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
 (elmo-define-error 'elmo-imap4-bye-error "IMAP4 session was terminated" 'elmo-open-error)
 
+;; autoloads
+(eval-and-compile
+  (autoload 'elmo-dop-queue-flush "elmo-dop")
+  (autoload 'elmo-nntp-post "elmo-nntp")
+  (autoload 'elmo-global-flag-initialize "elmo-flag")
+  (autoload 'elmo-global-flag-p "elmo-flag")
+  (autoload 'elmo-global-flag-detach "elmo-flag")
+  (autoload 'elmo-global-flag-detach-messages "elmo-flag")
+  (autoload 'elmo-global-flag-set "elmo-flag"))
+
 (defun elmo-define-folder (prefix backend)
   "Define a folder.
 If a folder name begins with PREFIX, use BACKEND."
@@ -444,6 +454,34 @@ Return newly created temporary directory name which contains temporary files.")
 
 (luna-define-generic elmo-message-file-p (folder number)
   "Return t if message in the FOLDER with NUMBER is a file.")
+
+(defmacro elmo-message-entity-number (entity)
+  `(elmo-msgdb-message-entity-number (elmo-message-entity-handler ,entity)
+				     ,entity))
+
+(defmacro elmo-message-entity-set-number (entity number)
+  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-handler ,entity)
+					 ,entity
+					 ,number))
+
+(luna-define-generic elmo-message-flags (folder number)
+  "Return a list of flags.
+FOLDER is a ELMO folder structure.
+NUMBER is a number of the message.")
+
+(luna-define-method elmo-message-flags ((folder elmo-folder) number)
+  (elmo-msgdb-flags (elmo-folder-msgdb folder) number))
+
+(defsubst elmo-message-flagged-p (folder number flag)
+  "Return non-nil if the message is set FLAG.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to test."
+  (let ((cur-flags (elmo-message-flags folder number)))
+    (case flag
+      (read
+       (not (memq 'unread cur-flags)))
+      (t
+       (memq flag cur-flags)))))
 
 (luna-define-generic elmo-find-fetch-strategy
   (folder entity &optional ignore-cache)
@@ -1099,15 +1137,6 @@ ENTITY is the message-entity to get the parent.")
   `(dolist (,(car spec) (elmo-folder-list-message-entities ,(car (cdr spec))))
      ,@form))
 
-(defmacro elmo-message-entity-number (entity)
-  `(elmo-msgdb-message-entity-number (elmo-message-entity-handler ,entity)
-				     ,entity))
-
-(defmacro elmo-message-entity-set-number (entity number)
-  `(elmo-msgdb-message-entity-set-number (elmo-message-entity-handler ,entity)
-					 ,entity
-					 ,number))
-
 (defun elmo-message-entity-field (entity field &optional decode)
   "Get message entity field value.
 ENTITY is the message entity structure obtained by `elmo-message-entity'.
@@ -1145,25 +1174,6 @@ Return a list of numbers (`new' `unread' `answered')")
        ((memq 'answered flags)
 	(incf answered))))
     (list new unreads answered)))
-
-(luna-define-generic elmo-message-flags (folder number)
-  "Return a list of flags.
-FOLDER is a ELMO folder structure.
-NUMBER is a number of the message.")
-
-(luna-define-method elmo-message-flags ((folder elmo-folder) number)
-  (elmo-msgdb-flags (elmo-folder-msgdb folder) number))
-
-(defsubst elmo-message-flagged-p (folder number flag)
-  "Return non-nil if the message is set FLAG.
-FOLDER is a ELMO folder structure.
-NUMBER is a message number to test."
-  (let ((cur-flags (elmo-message-flags folder number)))
-    (case flag
-      (read
-       (not (memq 'unread cur-flags)))
-      (t
-       (memq flag cur-flags)))))
 
 (defun elmo-message-set-flag (folder number flag &optional is-local)
   "Set message flag.
@@ -1690,16 +1700,6 @@ Return a hashtable for newsgroups."
 (defalias 'elmo-folder-make-temp-dir 'elmo-folder-make-temporary-directory)
 (make-obsolete 'elmo-folder-make-temp-dir
 	       'elmo-folder-make-temporary-directory)
-
-
-;; autoloads
-(autoload 'elmo-dop-queue-flush "elmo-dop")
-(autoload 'elmo-nntp-post "elmo-nntp")
-(autoload 'elmo-global-flag-initialize "elmo-flag")
-(autoload 'elmo-global-flag-p "elmo-flag")
-(autoload 'elmo-global-flag-detach "elmo-flag")
-(autoload 'elmo-global-flag-detach-messages "elmo-flag")
-(autoload 'elmo-global-flag-set "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))
