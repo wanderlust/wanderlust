@@ -501,8 +501,8 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (let ((cur-buf (current-buffer))
 	(wl-auto-select-first nil)
 	trash-buf emptied)
-    (setq trash-buf (wl-summary-get-buffer-create wl-trash-folder))
     (wl-summary-goto-folder-subr wl-trash-folder 'force-update)
+    (setq trash-buf (wl-summary-get-buffer-create wl-trash-folder))
     (if wl-stay-folder-window
 	(wl-folder-select-buffer trash-buf)
       (switch-to-buffer trash-buf))
