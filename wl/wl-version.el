@@ -46,7 +46,7 @@
    "Wanderlust" nil
    (eval-when-compile
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
-   "Venus"))
+   "Watching The Wheels-pre"))
 
 (defconst wl-version-status nil
   "Wanderlust verstion status.  For override default rule.
