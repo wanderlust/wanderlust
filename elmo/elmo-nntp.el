@@ -40,6 +40,11 @@
   (defun-maybe starttls-negotiate (a)))
 (require 'elmo-net)
 
+(eval-and-compile
+  (luna-define-class elmo-nntp-session (elmo-network-session)
+		     (current-group))
+  (luna-define-internal-accessors 'elmo-nntp-session))
+
 ;;
 ;; internal variables
 ;;
@@ -80,78 +85,70 @@ Don't cache if nil.")
 					   (listgroup . 1)
 					   (list-active . 2)))
 
-(put 'elmo-nntp-setting 'lisp-indent-function 1)
+(defmacro elmo-nntp-get-server-command (session)
+  (` (assoc (cons (elmo-network-session-host-internal (, session))
+		  (elmo-network-session-port-internal (, session)))
+	    elmo-nntp-server-command-alist)))
 
-(defmacro elmo-nntp-setting (spec &rest body)
-  (` (let* ((type (elmo-nntp-spec-stream-type (, spec)))
-	    (port (elmo-nntp-spec-port (, spec)))
-	    (user (elmo-nntp-spec-username (, spec)))
-	    (server (elmo-nntp-spec-hostname (, spec)))
-	    (folder (elmo-nntp-spec-group (, spec)))
-	    (connection (elmo-nntp-get-connection server user port type))
-	    (buffer  (car connection))
-	    (process (cadr connection)))
-       (,@ body))))
-
-(defmacro elmo-nntp-get-server-command (server port)
-  (` (assoc (cons (, server) (, port)) elmo-nntp-server-command-alist)))
-
-(defmacro elmo-nntp-set-server-command (server port com value)
+(defmacro elmo-nntp-set-server-command (session com value)
   (` (let (entry)
        (unless (setq entry (cdr (elmo-nntp-get-server-command
-				 (, server) (, port))))
+				 (, session))))
 	 (setq elmo-nntp-server-command-alist
 	       (nconc elmo-nntp-server-command-alist
-		      (list (cons (cons (, server) (, port))
-				  (setq entry
-					(vector
-					 elmo-nntp-default-use-xover
-					 elmo-nntp-default-use-listgroup
-					 elmo-nntp-default-use-list-active))
-				  )))))
+		      (list (cons
+			     (cons 
+			      (elmo-network-session-host-internal (, session))
+			      (elmo-network-session-port-internal (, session)))
+			     (setq entry
+				   (vector
+				    elmo-nntp-default-use-xover
+				    elmo-nntp-default-use-listgroup
+				    elmo-nntp-default-use-list-active
+				    elmo-nntp-default-use-xhdr)))))))
        (aset entry
 	     (cdr (assq (, com) elmo-nntp-server-command-index))
 	     (, value)))))
 
-(defmacro elmo-nntp-xover-p (server port)
-  (` (let ((entry (elmo-nntp-get-server-command (, server) (, port))))
+(defmacro elmo-nntp-xover-p (session)
+  (` (let ((entry (elmo-nntp-get-server-command (, session))))
        (if entry
 	   (aref (cdr entry)
 		 (cdr (assq 'xover elmo-nntp-server-command-index)))
 	 elmo-nntp-default-use-xover))))
 
-(defmacro elmo-nntp-set-xover (server port value)
-  (` (elmo-nntp-set-server-command (, server) (, port) 'xover (, value))))
+(defmacro elmo-nntp-set-xover (session value)
+  (` (elmo-nntp-set-server-command (, session) 'xover (, value))))
 
-(defmacro elmo-nntp-listgroup-p (server port)
-  (` (let ((entry (elmo-nntp-get-server-command (, server) (, port))))
+(defmacro elmo-nntp-listgroup-p (session)
+  (` (let ((entry (elmo-nntp-get-server-command (, session))))
        (if entry
 	   (aref (cdr entry)
 		 (cdr (assq 'listgroup elmo-nntp-server-command-index)))
 	 elmo-nntp-default-use-listgroup))))
 
-(defmacro elmo-nntp-set-listgroup (server port value)
-  (` (elmo-nntp-set-server-command (, server) (, port) 'listgroup (, value))))
+(defmacro elmo-nntp-set-listgroup (session value)
+  (` (elmo-nntp-set-server-command (, session) 'listgroup (, value))))
 
-(defmacro elmo-nntp-list-active-p (server port)
-  (` (let ((entry (elmo-nntp-get-server-command (, server) (, port))))
+(defmacro elmo-nntp-list-active-p (session)
+  (` (let ((entry (elmo-nntp-get-server-command (, session))))
        (if entry
 	   (aref (cdr entry)
 		 (cdr (assq 'list-active elmo-nntp-server-command-index)))
 	 elmo-nntp-default-use-list-active))))
 
-(defmacro elmo-nntp-set-list-active (server port value)
-  (` (elmo-nntp-set-server-command (, server) (, port) 'list-active (, value))))
+(defmacro elmo-nntp-set-list-active (session value)
+  (` (elmo-nntp-set-server-command (, session) 'list-active (, value))))
 
-(defmacro elmo-nntp-xhdr-p (server port)
-  (` (let ((entry (elmo-nntp-get-server-command (, server) (, port))))
+(defmacro elmo-nntp-xhdr-p (session)
+  (` (let ((entry (elmo-nntp-get-server-command (, session))))
        (if entry
 	   (aref (cdr entry)
 		 (cdr (assq 'xhdr elmo-nntp-server-command-index)))
 	 elmo-nntp-default-use-xhdr))))
 
-(defmacro elmo-nntp-set-xhdr (server port value)
-  (` (elmo-nntp-set-server-command (, server) (, port) 'xhdr (, value))))
+(defmacro elmo-nntp-set-xhdr (session value)
+  (` (elmo-nntp-set-server-command (, session) 'xhdr (, value))))
 
 (defsubst elmo-nntp-max-number-precedes-list-active-p ()
   elmo-nntp-max-number-precedes-list-active)
@@ -170,52 +167,39 @@ Don't cache if nil.")
 	       elmo-default-nntp-stream-type)
      (elmo-network-stream-type-spec-string type))))
 
-(defun elmo-nntp-flush-connection ()
-  (interactive)
-  (let ((cache elmo-nntp-connection-cache)
-	buffer process)
-    (while cache
-      (setq buffer (car (cdr (car cache))))
-      (if buffer (kill-buffer buffer))
-      (setq process (car (cdr (cdr (car cache)))))
-      (if process (delete-process process))
-      (setq cache (cdr cache)))
-    (setq elmo-nntp-connection-cache nil)))
+(defun elmo-nntp-get-session (spec &optional if-exists)
+  (elmo-network-get-session
+   'elmo-nntp-session
+   "NNTP"
+   (elmo-nntp-spec-hostname spec)
+   (elmo-nntp-spec-port spec)
+   (elmo-nntp-spec-username spec)
+   nil ; auth type
+   (elmo-nntp-spec-stream-type spec)
+   if-exists))
 
-(defun elmo-nntp-get-connection (server user port type)
-  "Return opened NNTP connection to SERVER on PORT for USER."
-  (let* ((user-at-host (format "%s@%s" user server))
-	 (user-at-host-on-port (concat
-				user-at-host ":" (int-to-string port)
-				(elmo-network-stream-type-spec-string type)))
-	 entry connection result buffer process proc-stat)
-    (if (not (elmo-plugged-p server port))
-	(error "Unplugged"))
-    (setq entry (assoc user-at-host-on-port elmo-nntp-connection-cache))
-    (if (and entry
-	     (memq (setq proc-stat
-			 (process-status (cadr (cdr entry))))
-		   '(closed exit)))
-	;; connection is closed...
-	(let ((buffer (car (cdr entry))))
-	  (if buffer (kill-buffer buffer))
-	  (setq elmo-nntp-connection-cache
-		(delq entry elmo-nntp-connection-cache))
-	  (setq entry nil)))
-    (if entry
-	(cdr entry)
-      (setq result (elmo-nntp-open-connection server user port type))
-      (if (null result)
-	  (error "Connection failed"))
-      (setq buffer (car result))
-      (setq process (cdr result))
-      ;; add a new entry to the top of the cache.
-      (setq elmo-nntp-connection-cache
-	    (cons
-	     (cons user-at-host-on-port
-		   (setq connection (list buffer process nil)))
-	     elmo-nntp-connection-cache))
-      connection)))
+(luna-define-method elmo-network-initialize-session ((session
+						      elmo-nntp-session))
+  (set-process-filter (elmo-network-session-process-internal session)
+		      'elmo-nntp-process-filter))
+
+(luna-define-method elmo-network-authenticate-session ((session
+							elmo-nntp-session))
+  (with-current-buffer (elmo-network-session-buffer session)
+    (when (elmo-network-session-user-internal session)
+      (elmo-nntp-send-command session
+			      (format "authinfo user %s"
+				      (elmo-network-session-user-internal
+				       session)))
+      (or (elmo-nntp-read-response session)
+	  (signal 'elmo-authenticate-error '(authinfo)))
+      (elmo-nntp-send-command
+       session
+       (format "authinfo pass %s"
+	       (elmo-get-passwd (elmo-network-session-password-key session))))
+      (or (elmo-nntp-read-response session)
+	  (signal 'elmo-authenticate-error '(authinfo))))
+    (run-hooks 'elmo-nntp-opened-hook)))
 
 (defun elmo-nntp-process-filter (process output)
   (save-excursion
@@ -223,20 +207,34 @@ Don't cache if nil.")
     (goto-char (point-max))
     (insert output)))
 
-(defun elmo-nntp-read-response (buffer process &optional not-command)
-  (save-excursion
-    (set-buffer buffer)
-    (let ((case-fold-search nil)
+(defun elmo-nntp-send-mode-reader (session)
+  (elmo-nntp-send-command session "mode reader")
+  (if (null (elmo-nntp-read-response session t))
+      (error "mode reader failed")))
+  
+(defun elmo-nntp-send-command (session command &optional noerase)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (unless noerase
+      (erase-buffer)
+      (goto-char (point-min)))
+    (setq elmo-nntp-read-point (point))
+    (process-send-string (elmo-network-session-process-internal
+			  session) command)
+    (process-send-string (elmo-network-session-process-internal
+			  session) "\r\n")))
+
+(defun elmo-nntp-read-response (session &optional not-command)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (let ((process (elmo-network-session-process-internal session))
+	  (case-fold-search nil)
 	  (response-string nil)
 	  (response-continue t)
-	  (return-value nil)
-	  match-end)
+	  response match-end)
       (while response-continue
 	(goto-char elmo-nntp-read-point)
 	(while (not (search-forward "\r\n" nil t))
 	  (accept-process-output process)
 	  (goto-char elmo-nntp-read-point))
-
 	(setq match-end (point))
 	(setq response-string
 	      (buffer-substring elmo-nntp-read-point (- match-end 2)))
@@ -244,79 +242,70 @@ Don't cache if nil.")
 	(if (looking-at "[23][0-9]+ .*$")
 	    (progn (setq response-continue nil)
 		   (setq elmo-nntp-read-point match-end)
-		   (setq return-value
-			 (if return-value
-			     (concat return-value "\n" response-string)
+		   (setq response 
+			 (if response 
+			     (concat response "\n" response-string)
 			   response-string)))
 	  (if (looking-at "[^23][0-9]+ .*$")
 	      (progn (setq response-continue nil)
 		     (setq elmo-nntp-read-point match-end)
-		     (setq return-value nil))
+		     (setq response nil))
 	    (setq elmo-nntp-read-point match-end)
 	    (if not-command
 		(setq response-continue nil))
-	    (setq return-value
-		  (if return-value
-		      (concat return-value "\n" response-string)
+	    (setq response
+		  (if response 
+		      (concat response "\n" response-string)
 		    response-string)))
 	  (setq elmo-nntp-read-point match-end)))
-      return-value)))
+      response)))
 
-(defun elmo-nntp-read-raw-response (buffer process)
-  (save-excursion
-    (set-buffer buffer)
-    (let ((case-fold-search nil))
-      (goto-char elmo-nntp-read-point)
-      (while (not (search-forward "\r\n" nil t))
-	(accept-process-output process)
-	(goto-char elmo-nntp-read-point))
-      (buffer-substring elmo-nntp-read-point (- (point) 2)))))
+(defun elmo-nntp-read-raw-response (session)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (goto-char elmo-nntp-read-point)
+    (while (not (search-forward "\r\n" nil t))
+      (accept-process-output (elmo-network-session-process-internal
+			      session))
+      (goto-char elmo-nntp-read-point))
+    (buffer-substring elmo-nntp-read-point (- (point) 2))))
 
-(defun elmo-nntp-read-contents (buffer process)
-  (save-excursion
-    (set-buffer buffer)
-    (let ((case-fold-search nil)
-	  match-end)
-      (goto-char elmo-nntp-read-point)
-      (while (not (re-search-forward "^\\.\r\n" nil t))
-	(accept-process-output process)
-	(goto-char elmo-nntp-read-point))
-      (setq match-end (point))
-      (elmo-delete-cr
-       (buffer-substring elmo-nntp-read-point
-			 (- match-end 3))))))
+(defun elmo-nntp-read-contents (session)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (goto-char elmo-nntp-read-point)
+    (while (not (re-search-forward "^\\.\r\n" nil t))
+      (accept-process-output (elmo-network-session-process-internal
+			      session))
+      (goto-char elmo-nntp-read-point))
+    (elmo-delete-cr
+     (buffer-substring elmo-nntp-read-point 
+		       (- (point) 3)))))
 
-(defun elmo-nntp-read-body (buffer process outbuf)
-  (with-current-buffer buffer
+(defun elmo-nntp-read-body (session outbuf)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (goto-char elmo-nntp-read-point)
+    (while (not (re-search-forward "^\\.\r\n" nil t))
+      (accept-process-output (elmo-network-session-process-internal session))
+      (goto-char elmo-nntp-read-point))
     (let ((start elmo-nntp-read-point)
-	  end)
-      (goto-char start)
-      (while (not (re-search-forward "^\\.\r\n" nil t))
-	(accept-process-output process)
-	(goto-char start))
-      (setq end (point))
+	  (end  (point)))
       (with-current-buffer outbuf
 	(erase-buffer)
-	(insert-buffer-substring buffer start (- end 3))
+	(insert-buffer-substring (elmo-network-session-buffer session)
+				 start (- end 3))
 	(elmo-delete-cr-get-content-type)))))
 
-(defun elmo-nntp-goto-folder (server folder user port type)
-  (let* ((connection (elmo-nntp-get-connection server user port type))
-	 (buffer  (car connection))
-	 (process (cadr connection))
-	 (cwf     (caddr connection)))
-    (save-excursion
-      (condition-case ()
-	  (if (not (string= cwf folder))
-	      (progn
-		(elmo-nntp-send-command buffer
-					process
-					(format "group %s" folder))
-		(if (elmo-nntp-read-response buffer process)
-		    (setcar (cddr connection) folder)))
-	    t)
-	(error
-	 nil)))))
+(defun elmo-nntp-select-group (session group &optional force)
+  (let (response)
+    (when (or force
+	      (not (string= (elmo-nntp-session-current-group-internal session)
+			    group)))
+      (unwind-protect
+	  (progn
+	    (elmo-nntp-send-command session (format "group %s" group))
+	    (setq response (elmo-nntp-read-response session)))
+	(elmo-nntp-session-set-current-group-internal session
+						      (and response group))
+	response))))
 
 (defun elmo-nntp-list-folders-get-cache (folder buf)
   (when (and elmo-nntp-list-folders-use-cache
@@ -354,41 +343,39 @@ Don't cache if nil.")
 	 (nconc number-alist (list (cons max-number nil)))))))
 
 (defun elmo-nntp-list-folders (spec &optional hierarchy)
-  (elmo-nntp-setting spec
-   (let* ((cwf     (caddr connection))
-	  (tmp-buffer (get-buffer-create " *ELMO NNTP list folders TMP*"))
-	  response ret-val top-ng append-serv use-list-active start)
-    (save-excursion
-      (set-buffer tmp-buffer)
-      (if (and folder
-	       (elmo-nntp-goto-folder server folder user port type))
-	  (setq ret-val (list folder))) ;; add top newsgroups
+  (let ((session (elmo-nntp-get-session spec))
+	response ret-val top-ng append-serv use-list-active start)
+    (with-temp-buffer
+      (if (and (elmo-nntp-spec-group spec)
+	       (elmo-nntp-select-group session (elmo-nntp-spec-group spec)))
+	  ;; add top newsgroups
+	  (setq ret-val (list (elmo-nntp-spec-group spec))))
       (unless (setq response (elmo-nntp-list-folders-get-cache
-			      folder tmp-buffer))
-	(when (setq use-list-active (elmo-nntp-list-active-p server port))
-	  (elmo-nntp-send-command buffer
-				  process
-				  (concat "list"
-					  (if (and folder
-						   (null (string= folder "")))
-					      (concat " active"
-						      (format " %s.*" folder) ""))))
-	  (if (elmo-nntp-read-response buffer process t)
-	      (if (null (setq response (elmo-nntp-read-contents
-					buffer process)))
+			      (elmo-nntp-spec-group spec)(current-buffer)))
+	(when (setq use-list-active (elmo-nntp-list-active-p session))
+	  (elmo-nntp-send-command
+	   session
+	   (concat "list"
+		   (if (and (elmo-nntp-spec-group spec)
+			    (null (string= (elmo-nntp-spec-group spec) "")))
+		       (concat " active"
+			       (format " %s.*" (elmo-nntp-spec-group spec)
+				       "")))))
+	  (if (elmo-nntp-read-response session t)
+	      (if (null (setq response (elmo-nntp-read-contents session)))
 		  (error "NNTP List folders failed")
 		(when elmo-nntp-list-folders-use-cache
 		  (setq elmo-nntp-list-folders-cache
-			(list (current-time) folder response)))
+			(list (current-time) (elmo-nntp-spec-group spec)
+			      response)))
 		(erase-buffer)
 		(insert response))
-	    (elmo-nntp-set-list-active server port nil)
+	    (elmo-nntp-set-list-active session nil)
 	    (setq use-list-active nil)))
 	(when (null use-list-active)
-	  (elmo-nntp-send-command buffer process "list")
-	  (if (null (and (elmo-nntp-read-response buffer process t)
-			 (setq response (elmo-nntp-read-contents
-					 buffer process))))
+	  (elmo-nntp-send-command session "list")
+	  (if (null (and (elmo-nntp-read-response session t)
+			 (setq response (elmo-nntp-read-contents session))))
 	      (error "NNTP List folders failed"))
 	  (when elmo-nntp-list-folders-use-cache
 	    (setq elmo-nntp-list-folders-cache
@@ -397,7 +384,8 @@ Don't cache if nil.")
 	  (setq start nil)
 	  (while (string-match (concat "^"
 				       (regexp-quote
-					(or folder "")) ".*$")
+					(or (elmo-nntp-spec-group spec)
+					    "")) ".*$")
 			       response start)
 	    (insert (match-string 0 response) "\n")
 	    (setq start (match-end 0)))))
@@ -408,9 +396,11 @@ Don't cache if nil.")
 	    (progn
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if (and folder
-				     (null (string= folder "")))
-				(concat folder "\\.") "")))
+			    (if (and (elmo-nntp-spec-group spec)
+				     (null (string= 
+					    (elmo-nntp-spec-group spec) "")))
+				(concat (elmo-nntp-spec-group spec)
+					"\\.") "")))
 	      (while (looking-at regexp)
 		(setq top-ng (elmo-match-buffer 1))
 		(if (string= (elmo-match-buffer 2) " ")
@@ -427,8 +417,7 @@ Don't cache if nil.")
 		      (elmo-display-progress
 		       'elmo-nntp-list-folders "Parsing active..."
 		       (/ (* i 100) len))))
-		(forward-line 1)
-		))
+		(forward-line 1)))
 	  (while (re-search-forward "\\([^ ]+\\) .*\n" nil t)
 	    (setq ret-val (nconc ret-val
 				 (list (elmo-match-buffer 1))))
@@ -440,30 +429,35 @@ Don't cache if nil.")
 		   (/ (* i 100) len))))))
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
-	   'elmo-nntp-list-folders "Parsing active..." 100)))
-      (kill-buffer tmp-buffer)
-      (unless (string= server elmo-default-nntp-server)
-	(setq append-serv (concat "@" server)))
-      (unless (eq port elmo-default-nntp-port)
-	(setq append-serv (concat append-serv ":" (int-to-string port))))
-      (unless (eq (elmo-network-stream-type-symbol type)
-		  elmo-default-nntp-stream-type)
-	(setq append-serv
-	      (concat append-serv
-		      (elmo-network-stream-type-spec-string type))))
-      (mapcar '(lambda (fld)
-		 (if (consp fld)
-		     (list (concat "-" (car fld)
-				   (and user
-					(concat ":" user))
-				   (and append-serv
-					(concat append-serv))))
-		   (concat "-" fld
-			   (and user
-				(concat ":" user))
-			   (and append-serv
-				(concat append-serv)))))
-	      ret-val)))))
+	   'elmo-nntp-list-folders "Parsing active..." 100))))
+    (unless (string= (elmo-nntp-spec-hostname spec)
+		     elmo-default-nntp-server)
+      (setq append-serv (concat "@" (elmo-nntp-spec-hostname spec))))
+    (unless (eq (elmo-nntp-spec-port spec) elmo-default-nntp-port)
+      (setq append-serv (concat append-serv
+				":" (int-to-string
+				     (elmo-nntp-spec-port spec)))))
+    (unless (eq (elmo-network-stream-type-symbol 
+		 (elmo-nntp-spec-stream-type spec))
+		elmo-default-nntp-stream-type)
+      (setq append-serv
+	    (concat append-serv
+		    (elmo-network-stream-type-spec-string
+		     (elmo-nntp-spec-stream-type spec)))))
+    (mapcar '(lambda (fld)
+	       (if (consp fld)
+		   (list (concat "-" (car fld)
+				 (and (elmo-nntp-spec-username spec)
+				      (concat 
+				       ":" (elmo-nntp-spec-username spec)))
+				 (and append-serv
+				      (concat append-serv))))
+		 (concat "-" fld
+			 (and (elmo-nntp-spec-username spec)
+			      (concat ":" (elmo-nntp-spec-username spec)))
+			 (and append-serv
+			      (concat append-serv)))))
+	    ret-val)))
 
 (defun elmo-nntp-make-msglist (beg-str end-str)
   (elmo-set-work-buf
@@ -480,79 +474,74 @@ Don't cache if nil.")
      (read (current-buffer)))))
 
 (defun elmo-nntp-list-folder (spec)
-  (elmo-nntp-setting spec
-    (let* ((server (format "%s" server)) ;; delete text property
-	   (killed (and elmo-use-killed-list
-			(elmo-msgdb-killed-list-load
-			 (elmo-msgdb-expand-path spec))))
-	   response numbers use-listgroup)
-      (save-excursion
-	(when (setq use-listgroup (elmo-nntp-listgroup-p server port))
-	  (elmo-nntp-send-command buffer
-				  process
-				  (format "listgroup %s" folder))
-	  (if (not (elmo-nntp-read-response buffer process t))
-	      (progn
-		(elmo-nntp-set-listgroup server port nil)
-		(setq use-listgroup nil))
-	    (if (null (setq response (elmo-nntp-read-contents buffer process)))
-		(error "Fetching listgroup failed")
-	      (setcar (cddr connection) folder))
-	    (setq numbers (elmo-string-to-list response))))
-	(unless use-listgroup
-	  (elmo-nntp-send-command buffer
-				  process
-				  (format "group %s" folder))
-	  (if (null (setq response (elmo-nntp-read-response buffer process)))
-	      (error "Select folder failed"))
-	  (setcar (cddr connection) folder)
-	  (if (and
+  (let ((session (elmo-nntp-get-session spec))
+	(group   (elmo-nntp-spec-group spec))
+	(killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path spec))))
+	response numbers use-listgroup)
+    (save-excursion
+      (when (setq use-listgroup (elmo-nntp-listgroup-p session))
+	(elmo-nntp-send-command session
+				(format "listgroup %s" group))
+	(if (not (elmo-nntp-read-response session t))
+	    (progn
+	      (elmo-nntp-set-listgroup session nil)
+	      (setq use-listgroup nil))
+	  (if (null (setq response (elmo-nntp-read-contents session)))
+	      (error "Fetching listgroup failed"))
+	  (setq numbers (elmo-string-to-list response))
+	  (elmo-nntp-session-set-current-group-internal session
+							group)))
+      (unless use-listgroup
+	(elmo-nntp-send-command session (format "group %s" group))
+	(if (null (setq response (elmo-nntp-read-response session)))
+	    (error "Select group failed"))
+	(when (and
 	       (string-match
 		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		response)
 	       (> (string-to-int (elmo-match-string 1 response)) 0))
-	      (setq numbers (elmo-nntp-make-msglist
-			     (elmo-match-string 2 response)
-			     (elmo-match-string 3 response)))))
-	(elmo-living-messages numbers killed)))))
+	  (setq numbers (elmo-nntp-make-msglist
+			 (elmo-match-string 2 response)
+			 (elmo-match-string 3 response)))))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-nntp-max-of-folder (spec)
-  (let* ((port (elmo-nntp-spec-port spec))
-	 (user (elmo-nntp-spec-username spec))
-	 (server (elmo-nntp-spec-hostname spec))
-	 (type  (elmo-nntp-spec-stream-type spec))
-	 (folder (elmo-nntp-spec-group spec))
-	 (dir (elmo-msgdb-expand-path spec))
-	 (killed-list (and elmo-use-killed-list
-			   (elmo-msgdb-killed-list-load dir)))
-	 number-alist end-num)
+  (let ((killed-list (and elmo-use-killed-list
+			  (elmo-msgdb-killed-list-load 
+			   (elmo-msgdb-expand-path spec))))
+	end-num entry)
     (if elmo-nntp-groups-async
-	(let* ((fld (concat folder
-			    (elmo-nntp-folder-postfix user server port type)))
-	       (entry (elmo-get-hash-val fld elmo-nntp-groups-hashtb)))
-	  (if entry
-	      (progn
-		(setq end-num (nth 2 entry))
-		(when (and killed-list elmo-use-killed-list
-			   (elmo-number-set-member end-num killed-list))
-		  ;; Max is killed.
-		  (setq end-num nil))
-		(cons end-num (car entry)))
-	    (error "No such newsgroup \"%s\"" fld)))
-      (let* ((connection (elmo-nntp-get-connection server user port type))
-	     (buffer  (car connection))
-	     (process (cadr connection))
-	     response e-num)
-	(if (not connection)
+	(if (setq entry
+		  (elmo-get-hash-val 
+		   (concat (elmo-nntp-spec-group spec)
+			   (elmo-nntp-folder-postfix
+			    (elmo-nntp-spec-username spec)
+			    (elmo-nntp-spec-hostname spec)
+			    (elmo-nntp-spec-port spec)
+			    (elmo-nntp-spec-stream-type spec)))
+		   elmo-nntp-groups-hashtb))
+	    (progn
+	      (setq end-num (nth 2 entry))
+	      (when (and killed-list elmo-use-killed-list
+			 (elmo-number-set-member end-num killed-list))
+		;; Max is killed.
+		(setq end-num nil))
+	      (cons end-num (car entry)))
+	  (error "No such newsgroup \"%s\"" (elmo-nntp-spec-group spec)))
+      (let ((session (elmo-nntp-get-session spec))
+	    response e-num)
+	(if (null session)
 	    (error "Connection failed"))
 	(save-excursion
-	  (elmo-nntp-send-command buffer
-				  process
-				  (format "group %s" folder))
-	  (setq response (elmo-nntp-read-response buffer process))
-	  (if (and response
-		   (string-match
-		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
+	  (elmo-nntp-send-command session
+				  (format "group %s"
+					  (elmo-nntp-spec-group spec)))
+	  (setq response (elmo-nntp-read-response session))
+	  (if (and response 
+		   (string-match 
+		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$" 
 		    response))
 	      (progn
 		(setq end-num (string-to-int
@@ -565,7 +554,8 @@ Don't cache if nil.")
 		  (setq end-num nil))
 		(cons end-num e-num))
 	    (if (null response)
-		(error "Selecting newsgroup \"%s\" failed" folder)
+		(error "Selecting newsgroup \"%s\" failed"
+		       (elmo-nntp-spec-group spec))
 	      nil)))))))
 
 (defconst elmo-nntp-overview-index
@@ -667,127 +657,119 @@ Don't cache if nil.")
 				    seen-mark important-mark
 				    seen-list &optional as-num)
   (when numlist
-    (save-excursion
-     (elmo-nntp-setting spec
-      (let* ((cwf     (caddr connection))
-	     (filter  numlist)
-	     ;(filter  (and as-num numlist))
-	     beg-num end-num cur length
-	     ret-val ov-str use-xover dir)
-	(if (and folder
-		 (not (string= cwf folder))
-		 (null (elmo-nntp-goto-folder server folder user port type)))
-	    (error "group %s not found" folder))
-	(when (setq use-xover (elmo-nntp-xover-p server port))
-	  (setq beg-num (car numlist)
-		cur beg-num
-		end-num (nth (1- (length numlist)) numlist)
-		length  (+ (- end-num beg-num) 1))
-	  (message "Getting overview...")
-	  (while (<= cur end-num)
-	    (elmo-nntp-send-command buffer process
-				    (format
-				     "xover %s-%s"
-				     (int-to-string cur)
-				     (int-to-string
-				      (+ cur
-					 elmo-nntp-overview-fetch-chop-length))))
-	    (with-current-buffer buffer
-	      (if ov-str
-		  (setq ret-val
-			(elmo-msgdb-append
-			 ret-val
-			 (elmo-nntp-create-msgdb-from-overview-string
-			  ov-str
-			  folder
-			  new-mark
-			  already-mark
-			  seen-mark
-			  important-mark
-			  seen-list
-			  filter
-			  )))))
-	    (if (null (elmo-nntp-read-response buffer process t))
-		(progn
-		  (setq cur end-num);; exit while loop
-		  (elmo-nntp-set-xover server port nil)
-		  (setq use-xover nil))
-	      (if (null (setq ov-str (elmo-nntp-read-contents buffer process)))
-		  (error "Fetching overview failed")))
-	    (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
-	    (when (> length elmo-display-progress-threshold)
-	      (elmo-display-progress
-	       'elmo-nntp-msgdb-create "Getting overview..."
-	       (/ (* (+ (- (min cur end-num)
-			   beg-num) 1) 100) length))))
-	  (when (> length elmo-display-progress-threshold)
-	    (elmo-display-progress
-	     'elmo-nntp-msgdb-create "Getting overview..." 100)))
-	(if (not use-xover)
-	    (setq ret-val (elmo-nntp-msgdb-create-by-header
-			   folder buffer process numlist
-			   new-mark already-mark seen-mark seen-list))
-	  (with-current-buffer buffer
+    (let ((filter  numlist)
+	  (session (elmo-nntp-get-session spec))
+	  beg-num end-num cur length
+	  ret-val ov-str use-xover dir)
+      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+      (when (setq use-xover (elmo-nntp-xover-p session))
+	(setq beg-num (car numlist)
+	      cur beg-num
+	      end-num (nth (1- (length numlist)) numlist)
+	      length  (+ (- end-num beg-num) 1))
+	(message "Getting overview...")
+	(while (<= cur end-num)
+	  (elmo-nntp-send-command
+	   session
+	   (format
+	    "xover %s-%s"
+	    (int-to-string cur)
+	    (int-to-string
+	     (+ cur
+		elmo-nntp-overview-fetch-chop-length))))
+	  (with-current-buffer (elmo-network-session-buffer session)
 	    (if ov-str
 		(setq ret-val
 		      (elmo-msgdb-append
 		       ret-val
 		       (elmo-nntp-create-msgdb-from-overview-string
 			ov-str
-			folder
+			(elmo-nntp-spec-group spec)
 			new-mark
 			already-mark
 			seen-mark
 			important-mark
 			seen-list
-			filter))))))
-	(when elmo-use-killed-list
-	  (setq dir (elmo-msgdb-expand-path spec))
-	  (elmo-msgdb-killed-list-save
-	   dir
-	   (nconc
-	    (elmo-msgdb-killed-list-load dir)
-	    (car (elmo-list-diff
-		  numlist
-		  (mapcar 'car
-			  (elmo-msgdb-get-number-alist
-			   ret-val)))))))
-	;; If there are canceled messages, overviews are not obtained
-	;; to max-number(inn 2.3?).
-	(when (and (elmo-nntp-max-number-precedes-list-active-p)
-		   (elmo-nntp-list-active-p server port))
-	  (elmo-nntp-send-command buffer process
-				  (format "list active %s" folder))
-	  (if (null (elmo-nntp-read-response buffer process))
+			filter
+			)))))
+	  (if (null (elmo-nntp-read-response session t))
 	      (progn
-		(elmo-nntp-set-list-active server port nil)
-		(error "NNTP list command failed")))
-	  (elmo-nntp-catchup-msgdb
-	   ret-val
-	   (nth 1 (read (concat "(" (elmo-nntp-read-contents
-				     buffer process) ")")))))
-	ret-val)))))
+		(setq cur end-num);; exit while loop
+		(elmo-nntp-set-xover session nil)
+		(setq use-xover nil))
+	    (if (null (setq ov-str (elmo-nntp-read-contents session)))
+		(error "Fetching overview failed")))
+	  (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
+	  (when (> length elmo-display-progress-threshold)
+	    (elmo-display-progress
+	     'elmo-nntp-msgdb-create "Getting overview..."
+	     (/ (* (+ (- (min cur end-num)
+			 beg-num) 1) 100) length))))
+	(when (> length elmo-display-progress-threshold)
+	  (elmo-display-progress
+	   'elmo-nntp-msgdb-create "Getting overview..." 100)))
+      (if (not use-xover)
+	  (setq ret-val (elmo-nntp-msgdb-create-by-header
+			 session numlist
+			 new-mark already-mark seen-mark seen-list))
+	(with-current-buffer (elmo-network-session-buffer session)
+	  (if ov-str
+	      (setq ret-val
+		    (elmo-msgdb-append
+		     ret-val
+		     (elmo-nntp-create-msgdb-from-overview-string
+		      ov-str
+		      (elmo-nntp-spec-group spec)
+		      new-mark
+		      already-mark
+		      seen-mark
+		      important-mark
+		      seen-list
+		      filter))))))
+      (when elmo-use-killed-list
+	(setq dir (elmo-msgdb-expand-path spec))
+	(elmo-msgdb-killed-list-save
+	 dir
+	 (nconc
+	  (elmo-msgdb-killed-list-load dir)
+	  (car (elmo-list-diff
+		numlist
+		(mapcar 'car
+			(elmo-msgdb-get-number-alist
+			 ret-val)))))))
+      ;; If there are canceled messages, overviews are not obtained
+      ;; to max-number(inn 2.3?).
+      (when (and (elmo-nntp-max-number-precedes-list-active-p)
+		 (elmo-nntp-list-active-p session))
+	(elmo-nntp-send-command session
+				(format "list active %s"
+					(elmo-nntp-spec-group spec)))
+	(if (null (elmo-nntp-read-response session))
+	    (progn
+	      (elmo-nntp-set-list-active session nil)
+	      (error "NNTP list command failed")))
+	(elmo-nntp-catchup-msgdb
+	 ret-val
+	 (nth 1 (read (concat "(" (elmo-nntp-read-contents
+				   session) ")")))))
+      ret-val)))
 
 (defun elmo-nntp-sync-number-alist (spec number-alist)
   (if (elmo-nntp-max-number-precedes-list-active-p)
-      (elmo-nntp-setting spec
-	(if (elmo-nntp-list-active-p server port)
-	    (let* ((cwf (caddr connection))
-		   msgdb-max max-number)
+      (let ((session (elmo-nntp-get-session spec)))
+	(if (elmo-nntp-list-active-p session)
+	    (let (msgdb-max max-number)
 	      ;; If there are canceled messages, overviews are not obtained
 	      ;; to max-number(inn 2.3?).
-	      (if (and folder
-		       (not (string= cwf folder))
-		       (null (elmo-nntp-goto-folder
-			      server folder user port type)))
-		  (error "group %s not found" folder))
-	      (elmo-nntp-send-command buffer process
-				      (format "list active %s" folder))
-	      (if (null (elmo-nntp-read-response buffer process))
+	      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+	      (elmo-nntp-send-command session
+				      (format "list active %s"
+					      (elmo-nntp-spec-group spec)))
+	      (if (null (elmo-nntp-read-response session))
 		  (error "NNTP list command failed"))
 	      (setq max-number
 		    (nth 1 (read (concat "(" (elmo-nntp-read-contents
-					      buffer process) ")"))))
+					      session) ")"))))
 	      (setq msgdb-max
 		    (car (nth (max (- (length number-alist) 1) 0)
 			      number-alist)))
@@ -799,19 +781,13 @@ Don't cache if nil.")
 		number-alist))
 	  number-alist))))
 
-(defun elmo-nntp-msgdb-create-by-header (folder buffer process numlist
-						new-mark already-mark
-						seen-mark seen-list)
-  (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
-	ret-val)
-    (elmo-nntp-retrieve-headers
-     buffer tmp-buffer process numlist)
-    (setq ret-val
-	  (elmo-nntp-msgdb-create-message
-	   tmp-buffer (length numlist) folder new-mark already-mark
-	   seen-mark seen-list))
-    (kill-buffer tmp-buffer)
-    ret-val))
+(defun elmo-nntp-msgdb-create-by-header (session numlist
+						 new-mark already-mark
+						 seen-mark seen-list)
+  (with-temp-buffer
+    (elmo-nntp-retrieve-headers session (current-buffer) numlist)
+    (elmo-nntp-msgdb-create-message
+     (length numlist) new-mark already-mark seen-mark seen-list)))
 
 (defun elmo-nntp-parse-xhdr-response (string)
   (let (response)
@@ -849,174 +825,33 @@ Don't cache if nil.")
 ;      (kill-buffer tmp-buffer)
       ret-val)))
 
-(defun elmo-nntp-get-overview (server beg end folder user port type)
-  (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port type))
-	   (buffer  (car connection))
-	   (process (cadr connection))
-;	   (cwf     (caddr connection))
-	   response errmsg ov-str)
-      (catch 'done
-	(if folder
-	    (if (null (elmo-nntp-goto-folder server folder user port type))
-		(progn
-		  (setq errmsg (format "group %s not found." folder))
-		  (throw 'done nil))))
-	(elmo-nntp-send-command buffer process
-				(format "xover %s-%s" beg end))
-	(if (null (setq response (elmo-nntp-read-response
-				  buffer process t)))
-	    (progn
-	      (setq errmsg "Getting overview failed.")
-	      (throw 'done nil)))
-	(if (null (setq response (elmo-nntp-read-contents
-				  buffer process)))
-	    (progn
-	      ;(setq errmsg "Fetching header failed")
-	      (throw 'done nil)))
-	(setq ov-str response)
-	)
-      (if errmsg
-	  (progn
-	    (message errmsg)
-	    nil)
-	ov-str))))
-
-
-(defun elmo-nntp-get-message (server user number folder outbuf port type)
-  "Get nntp message on FOLDER at SERVER.
-Returns message string."
-  (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port type))
-	   (buffer  (car connection))
-	   (process (cadr connection))
-	   (cwf     (caddr connection))
-	   response errmsg)
-      (catch 'done
-	(if (and folder
-		 (not (string= cwf folder)))
-	    (if (null (elmo-nntp-goto-folder server folder user port type))
-		(progn
-		  (setq errmsg (format "group %s not found." folder))
-		  (throw 'done nil))))
-	(elmo-nntp-send-command buffer process
-				(format "article %s" number))
-	(if (null (setq response (elmo-nntp-read-response
-				  buffer process t)))
-	    (progn
-	      (setq errmsg "Fetching message failed")
-	      (set-buffer outbuf)
-	      (erase-buffer)
-	      ;(insert "\n\n")
-	      (throw 'done nil)))
-	(setq response (elmo-nntp-read-body buffer process outbuf))
-	(set-buffer outbuf)
-	(goto-char (point-min))
-	(while (re-search-forward "^\\." nil t)
-	  (replace-match "")
-	  (forward-line))
-	)
-      (if errmsg
-	  (progn
-	    (message errmsg)
-	    nil))
-      response)))
-
 (defun elmo-nntp-get-newsgroup-by-msgid (msgid server user port type)
   "Get nntp header string."
   (save-excursion
-    (let* ((connection (elmo-nntp-get-connection server user port type))
-	   (buffer  (car connection))
-	   (process (cadr connection)))
-      (elmo-nntp-send-command buffer process
+    (let ((session (elmo-nntp-get-session
+		    (list 'nntp nil user server port type))))
+      (elmo-nntp-send-command session
 			      (format "head %s" msgid))
-      (if (elmo-nntp-read-response buffer process)
-	  (elmo-nntp-read-contents buffer process))
-      (set-buffer buffer)
-      (std11-field-body "Newsgroups"))))
+      (if (elmo-nntp-read-response session)
+	  (elmo-nntp-read-contents session))
+      (with-current-buffer (elmo-network-session-buffer session)
+	(std11-field-body "Newsgroups")))))
 
-(defun elmo-nntp-open-connection (server user portnum type)
-  "Open NNTP connection to SERVER on PORTNUM for USER.
-Return a cons cell of (session-buffer . process).
-Return nil if connection failed."
-  (let ((process nil)
-	(host server)
-	(port (or portnum
-		  elmo-default-nntp-port))
-	(user-at-host (format "%s@%s" user server))
-	process-buffer)
-    (as-binary-process
-     (catch 'done
-       (setq process-buffer
-	     (get-buffer-create (format " *NNTP session to %s:%d" host port)))
-       (save-excursion
-	 (set-buffer process-buffer)
-	 (elmo-set-buffer-multibyte nil)
-	 (erase-buffer))
-       (setq process
-	     (elmo-open-network-stream "NNTP" process-buffer host port type))
-       (and (null process) (throw 'done nil))
-       (set-process-filter process 'elmo-nntp-process-filter)
-       ;; flush connections when exiting...?
-       ;; (add-hook 'kill-emacs-hook 'elmo-nntp-flush-connection)
-       (save-excursion
-	 (set-buffer process-buffer)
-	 (elmo-set-buffer-multibyte nil)
-	 (make-local-variable 'elmo-nntp-read-point)
-	 (setq elmo-nntp-read-point (point-min))
-	 (if (null (elmo-nntp-read-response process-buffer process t))
-	     (throw 'done nil))
-	 (if elmo-nntp-send-mode-reader
-	     (elmo-nntp-send-mode-reader process-buffer process))
- 	 ;; starttls
- 	 (if (eq (elmo-network-stream-type-symbol type) 'starttls)
- 	     (if (progn
-		   (elmo-nntp-send-command process-buffer process "starttls")
-		   (elmo-nntp-read-response process-buffer process))
- 		 (starttls-negotiate process)
- 	       (error "STARTTLS aborted")))
- 	 (if user
- 	     (progn
- 	       (elmo-nntp-send-command process-buffer process
- 				       (format "authinfo user %s" user))
- 	       (if (null (elmo-nntp-read-response process-buffer process))
- 		   (error "Authinfo failed"))
- 	       (elmo-nntp-send-command process-buffer process
- 				       (format "authinfo pass %s"
- 					       (elmo-get-passwd user-at-host)))
- 	       (if (null (elmo-nntp-read-response process-buffer process))
- 		   (progn
- 		     (elmo-remove-passwd user-at-host)
- 		     (error "Authinfo failed")))))
-	 (run-hooks 'elmo-nntp-opened-hook)) ; XXX
-       (cons process-buffer process)))))
-
-(defun elmo-nntp-send-mode-reader (buffer process)
-  (elmo-nntp-send-command buffer
-			  process
-			  "mode reader")
-  (if (null (elmo-nntp-read-response buffer process t))
-      (error "mode reader failed")))
-  
-(defun elmo-nntp-send-command (buffer process command &optional noerase)
-  "Send COMMAND string to server with sequence number."
-  (save-excursion
-    (set-buffer buffer)
-    (when (not noerase)
-      (erase-buffer)
-      (goto-char (point-min)))
-    (setq elmo-nntp-read-point (point))
-    (process-send-string process command)
-    (process-send-string process "\r\n")))
-
-(defun elmo-nntp-read-msg (spec msg outbuf)
-  (elmo-nntp-get-message (elmo-nntp-spec-hostname spec)
-			 (elmo-nntp-spec-username spec)
-			 msg
-			 (elmo-nntp-spec-group spec)
-			 outbuf
-			 (elmo-nntp-spec-port spec)
-			 (elmo-nntp-spec-stream-type spec)))
+(defun elmo-nntp-read-msg (spec number outbuf)
+  (let ((session (elmo-nntp-get-session spec)))
+    (with-current-buffer (elmo-network-session-buffer session)
+      (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+      (elmo-nntp-send-command session (format "article %s" number))
+      (if (null (elmo-nntp-read-response session t))
+	  (progn
+	    (with-current-buffer outbuf (erase-buffer))
+	    (error "Fetching message failed"))
+	(prog1 (elmo-nntp-read-body session outbuf)
+	  (with-current-buffer outbuf
+	    (goto-char (point-min))
+	    (while (re-search-forward "^\\." nil t)
+	      (replace-match "")
+	      (forward-line))))))))
 
 ;(defun elmo-msgdb-nntp-overview-create-range (spec beg end mark)
 ;    (elmo-nntp-overview-create-range hostname beg end mark folder)))
@@ -1027,26 +862,20 @@ Return nil if connection failed."
 (defun elmo-nntp-append-msg (spec string &optional msg no-see))
 
 (defun elmo-nntp-post (hostname content-buf)
-  (let* (;(folder (nth 1 spec))
-	 (connection
-	  (elmo-nntp-get-connection
-	   hostname
-	   elmo-default-nntp-user
-	   elmo-default-nntp-port elmo-default-nntp-stream-type))
-	 (buffer (car connection))
-	 (process (cadr connection))
-	 response has-message-id
-	 )
+  (let ((session (elmo-nntp-get-session
+		  (list 'nntp nil elmo-default-nntp-user
+			hostname elmo-default-nntp-port
+			elmo-default-nntp-stream-type)))
+	response has-message-id)
     (save-excursion
       (set-buffer content-buf)
       (goto-char (point-min))
       (if (search-forward mail-header-separator nil t)
 	  (delete-region (match-beginning 0)(match-end 0)))
       (setq has-message-id (std11-field-body "message-id"))
-      (elmo-nntp-send-command buffer process "post")
+      (elmo-nntp-send-command session "post")
       (if (string-match "^340" (setq response
-				     (elmo-nntp-read-raw-response
-				      buffer process)))
+				     (elmo-nntp-read-raw-response session)))
 	  (if (string-match "recommended ID \\(<[^@]+@[^>]+>\\)" response)
 	      (unless has-message-id
 		(goto-char (point-min))
@@ -1054,49 +883,39 @@ Return nil if connection failed."
 				(elmo-match-string 1 response)
 				"\n"))))
 	(error "POST failed"))
-      (current-buffer)
       (run-hooks 'elmo-nntp-post-pre-hook)
-      (set-buffer buffer)
-      (elmo-nntp-send-data process content-buf)
-      (elmo-nntp-send-command buffer process ".")
-      ;(elmo-nntp-read-response buffer process t)
+      (elmo-nntp-send-buffer session content-buf)
+      (elmo-nntp-send-command session ".")
+      ;;(elmo-nntp-read-response buffer process t)
       (if (not (string-match
 		"^2" (setq response (elmo-nntp-read-raw-response
-				     buffer process))))
+				     session))))
 	  (error (concat "NNTP error: " response))))))
 
-(defun elmo-nntp-send-data-line (process data)
-  (goto-char (point-max))
-
+(defsubst elmo-nntp-send-data-line (session line)
+  "Send LINE to SESSION."
   ;; Escape "." at start of a line
-  (if (eq (string-to-char data) ?.)
-      (process-send-string process "."))
-  (process-send-string process data)
-  (process-send-string process "\r\n"))
+  (if (eq (string-to-char line) ?.)
+      (process-send-string (elmo-network-session-process-internal
+			    session) "."))
+  (process-send-string (elmo-network-session-process-internal
+			session) line)
+  (process-send-string (elmo-network-session-process-internal
+			session) "\r\n"))
 
-(defun elmo-nntp-send-data (process buffer)
-  (let
-      ((data-continue t)
-       (sending-data nil)
-       this-line
-       this-line-end)
-    (save-excursion
-      (set-buffer buffer)
-      (goto-char (point-min)))
-
-    (while data-continue
-      (save-excursion
-	(set-buffer buffer)
+(defun elmo-nntp-send-buffer (session databuf)
+  "Send data content of DATABUF to SESSION."
+  (let ((data-continue t)
+	line bol)
+    (with-current-buffer databuf
+      (goto-char (point-min))
+      (while data-continue
 	(beginning-of-line)
-	(setq this-line (point))
+	(setq bol (point))
 	(end-of-line)
-	(setq this-line-end (point))
-	(setq sending-data nil)
-	(setq sending-data (buffer-substring this-line this-line-end))
-	(if (/= (forward-line 1) 0)
-	    (setq data-continue nil)))
-
-      (elmo-nntp-send-data-line process sending-data))))
+	(setq line (buffer-substring bol (point)))
+	(unless (eq (forward-line 1) 0) (setq data-continue nil))
+	(elmo-nntp-send-data-line session line)))))
 
 (defun elmo-nntp-delete-msgs (spec msgs)
   "MSGS on FOLDER at SERVER pretended as Deleted. Returns nil if failed."
@@ -1116,13 +935,14 @@ Return nil if connection failed."
   t)
 
 (defun elmo-nntp-folder-exists-p (spec)
-  (if (elmo-nntp-plugged-p spec)
-      (elmo-nntp-setting spec
-	(elmo-nntp-send-command buffer
-				process
-				(format "group %s" folder))
-	(elmo-nntp-read-response buffer process))
-    t))
+  (let ((session (elmo-nntp-get-session spec)))
+    (if (elmo-nntp-plugged-p spec)
+	(progn
+	  (elmo-nntp-send-command session
+				  (format "group %s"
+					  (elmo-nntp-spec-group spec)))
+	  (elmo-nntp-read-response session))
+      t)))
 
 (defun elmo-nntp-folder-creatable-p (spec)
   nil)
@@ -1133,23 +953,11 @@ Return nil if connection failed."
 (defun elmo-nntp-retrieve-field (spec field from-msgs)
   "Retrieve FIELD values from FROM-MSGS.
 Returns a list of cons cells like (NUMBER . VALUE)"
-  (let* ((type (elmo-nntp-spec-stream-type spec))
-	 (port (elmo-nntp-spec-port spec))
-	 (user (elmo-nntp-spec-username spec))
-	 (server (elmo-nntp-spec-hostname spec))
-	 (folder (elmo-nntp-spec-group spec))
-	 (connection (elmo-nntp-get-connection server user port type))
-	 (cwf     (caddr connection))
-	 (buffer  (car connection))
-	 (process (cadr connection)))  
-    (if (elmo-nntp-xhdr-p server port)
+  (let ((session (elmo-nntp-get-session spec)))
+    (if (elmo-nntp-xhdr-p session)
 	(progn
-	  (if (and folder
-		   (not (string= cwf folder))
-		   (null (elmo-nntp-goto-folder
-			  server folder user port type)))
-	      (error "group %s not found" folder))	  
-	  (elmo-nntp-send-command buffer process
+	  (elmo-nntp-select-group session (elmo-nntp-spec-group spec))
+	  (elmo-nntp-send-command session
 				  (format "xhdr %s %s"
 					  field
 					  (if from-msgs
@@ -1161,10 +969,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 						 (- (length from-msgs) 1) 0)
 						from-msgs))
 					    "0-")))
-	  (if (elmo-nntp-read-response buffer process t)
+	  (if (elmo-nntp-read-response session t)
 	      (elmo-nntp-parse-xhdr-response
-	       (elmo-nntp-read-contents buffer process))
-	    (elmo-nntp-set-xhdr server port nil)
+	       (elmo-nntp-read-contents session))
+	    (elmo-nntp-set-xhdr session nil)
 	    (error "NNTP XHDR command failed"))))))
 
 (defun elmo-nntp-search-primitive (spec condition &optional from-msgs)
@@ -1251,40 +1059,42 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 					     from-msgs)))
 	    result (sort result '<))))))
 
-(defun elmo-nntp-get-folders-info-prepare (spec connection-keys)
+(defun elmo-nntp-get-folders-info-prepare (spec session-keys)
   (condition-case ()
-      (elmo-nntp-setting spec
-	(let (key count)
-	  (save-excursion
-	    (set-buffer buffer)
-	    (unless (setq key (assoc (cons buffer process) connection-keys))
-	      (erase-buffer)
-	      (setq key (cons (cons buffer process)
-			      (vector 0 server user port type)))
-	      (setq connection-keys (nconc connection-keys (list key))))
-	    (elmo-nntp-send-command buffer
-				    process
-				    (format "group %s" folder)
-				    t ;; don't erase-buffer
-				    )
-	    (if elmo-nntp-get-folders-securely
-		(accept-process-output process 1))
-	    (setq count (aref (cdr key) 0))
-	    (aset (cdr key) 0 (1+ count)))))
+      (let ((session (elmo-nntp-get-session spec))
+	    key count)
+	(with-current-buffer (elmo-network-session-buffer session)
+	  (unless (setq key (assoc session session-keys))
+	    (erase-buffer)
+	    (setq key (cons session
+			    (vector 0
+				    (elmo-nntp-spec-hostname spec)
+				    (elmo-nntp-spec-username spec)
+				    (elmo-nntp-spec-port spec)
+				    (elmo-nntp-spec-stream-type spec))))
+	    (setq session-keys (nconc session-keys (list key))))
+	  (elmo-nntp-send-command session
+				  (format "group %s"
+					  (elmo-nntp-spec-group spec))
+				  'noerase)
+	  (if elmo-nntp-get-folders-securely
+	      (accept-process-output
+	       (elmo-network-session-process-internal session)
+	       1))
+	  (setq count (aref (cdr key) 0))
+	  (aset (cdr key) 0 (1+ count))))
     (error
      (when elmo-auto-change-plugged
        (sit-for 1))
      nil))
-  connection-keys)
+  session-keys)
 
-(defun elmo-nntp-get-folders-info (connection-keys)
-  (let ((connections connection-keys)
+(defun elmo-nntp-get-folders-info (session-keys)
+  (let ((sessions session-keys)
 	(cur (get-buffer-create " *ELMO NNTP Temp*")))
-    (while connections
-      (let* ((connect (caar connections))
-	     (key     (cdar connections))
-	     (buffer  (car connect))
-	     (process (cdr connect))
+    (while sessions
+      (let* ((session (caar sessions))
+	     (key     (cdar sessions))
 	     (count   (aref key 0))
 	     (server  (aref key 1))
 	     (user    (aref key 2))
@@ -1294,7 +1104,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 			 (setq elmo-nntp-groups-hashtb
 			       (elmo-make-hash count)))))
 	(save-excursion
-	  (elmo-nntp-groups-read-response buffer cur process count)
+	  (elmo-nntp-groups-read-response session cur count)
 	  (set-buffer cur)
 	  (goto-char (point-min))
 	  (let ((case-replace nil)
@@ -1315,16 +1125,16 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 			 (list len min max)))
 		(error (and group (symbolp group) (set group nil))))
 	      (forward-line 1))))
-	(setq connections (cdr connections))))
+	(setq sessions (cdr sessions))))
     (kill-buffer cur)))
 
 ;; original is 'nntp-retrieve-groups [Gnus]
-(defun elmo-nntp-groups-read-response (buffer tobuffer process count)
+(defun elmo-nntp-groups-read-response (session outbuf count)
   (let* ((received 0)
 	 (last-point (point-min)))
-    (save-excursion
-      (set-buffer buffer)
-      (accept-process-output process 1)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (accept-process-output 
+       (elmo-network-session-process-internal session) 1)
       (discard-input)
       ;; Wait for all replies.
       (message "Getting folders info...")
@@ -1336,7 +1146,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		       (1+ received)))
 	       (setq last-point (point))
 	       (< received count))
-	(accept-process-output process 1)
+	(accept-process-output (elmo-network-session-process-internal session)
+			       1)
 	(discard-input)
 	(when (> count elmo-display-progress-threshold)
 	  (if (or (zerop (% received 10)) (= received count))
@@ -1353,13 +1164,14 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	(while (progn
 		 (goto-char (point-max))
 		 (not (re-search-backward "\r?\n" (- (point) 3) t)))
-	  (accept-process-output process 1)
+	  (accept-process-output
+	   (elmo-network-session-process-internal session) 1)
 	  (discard-input)))
       ;; Now all replies are received.  We remove CRs.
       (goto-char (point-min))
       (while (search-forward "\r" nil t)
 	(replace-match "" t t))
-      (copy-to-buffer tobuffer (point-min) (point-max)))))
+      (copy-to-buffer outbuf (point-min) (point-max)))))
 
 (defun elmo-nntp-make-groups-hashtb (folders &optional size)
   (let ((hashtb (or elmo-nntp-groups-hashtb
@@ -1387,10 +1199,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
    (t
     nil)))
 
-(defun elmo-nntp-retrieve-headers (buffer tobuffer process articles)
+(defun elmo-nntp-retrieve-headers (session outbuf articles)
   "Retrieve the headers of ARTICLES."
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer (elmo-network-session-buffer session)
     (erase-buffer)
     (let ((number (length articles))
 	  (count 0)
@@ -1399,21 +1210,18 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	  article)
       ;; Send HEAD commands.
       (while (setq article (pop articles))
-	(elmo-nntp-send-command
-	 buffer
-	 process
-	 (format "head %s" article)
-	 t ;; not erase-buffer
-	 )
+	(elmo-nntp-send-command session
+				(format "head %s" article)
+				'noerase)
 	(setq count (1+ count))
 	;; Every 200 requests we have to read the stream in
 	;; order to avoid deadlocks.
 	(when (or (null articles)	;All requests have been sent.
 		  (zerop (% count elmo-nntp-header-fetch-chop-length)))
-	  (accept-process-output process 1)
+	  (accept-process-output 
+	   (elmo-network-session-process-internal session) 1)
 	  (discard-input)
 	  (while (progn
-		   (set-buffer buffer)
 		   (goto-char last-point)
 		   ;; Count replies.
 		   (while (elmo-nntp-next-result-arrived-p)
@@ -1425,9 +1233,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		  (elmo-display-progress
 		   'elmo-nntp-retrieve-headers "Getting headers..."
 		   (/ (* received 100) number))))
-	    (accept-process-output process 1)
-	    (discard-input)
-	    )))
+	    (accept-process-output
+	     (elmo-network-session-process-internal session) 1)
+	    (discard-input))))
       (when (> number elmo-display-progress-threshold)
 	(elmo-display-progress
 	 'elmo-nntp-retrieve-headers "Getting headers..." 100))
@@ -1436,17 +1244,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (goto-char (point-min))
       (while (search-forward "\r\n" nil t)
 	(replace-match "\n"))
-      (copy-to-buffer tobuffer (point-min) (point-max)))))
+      (copy-to-buffer outbuf (point-min) (point-max)))))
 
 ;; end of from Gnus
 
-(defun elmo-nntp-msgdb-create-message (buffer len folder new-mark
-					      already-mark seen-mark seen-list)
+(defun elmo-nntp-msgdb-create-message (len new-mark
+					   already-mark seen-mark seen-list)
   (save-excursion
-    (let (beg
-	  overview number-alist mark-alist
-	  entity i num gmark seen message-id)
-      (set-buffer buffer)
+    (let (beg overview number-alist mark-alist
+	      entity i num gmark seen message-id)
       (elmo-set-buffer-multibyte nil)
       (goto-char (point-min))
       (setq i 0)

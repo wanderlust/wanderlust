@@ -1,3 +1,53 @@
+2000-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-quit): Don't use `elmo-nntp-flush-connection'.
+
+	* elmo-nntp.el (elmo-nntp-session): Define.
+	(elmo-nntp-setting): Abolished.
+	All other related portions are changed.
+	(elmo-nntp-get-server-command): Changed argument.
+	(elmo-nntp-set-server-command): Ditto.
+	(elmo-nntp-xover-p): Ditto.
+	(elmo-nntp-set-xover): Ditto.
+	(elmo-nntp-listgroup-p): Ditto.
+	(elmo-nntp-set-listgroup): Ditto.
+	(elmo-nntp-list-active-p): Ditto.
+	(elmo-nntp-set-list-active): Ditto.
+	(elmo-nntp-xhdr-p): Ditto.
+	(elmo-nntp-set-xhdr): Ditto.
+	(elmo-nntp-flush-connection): Abolished.
+	(elmo-nntp-get-connection): Abolished.
+	(elmo-nntp-get-session): New function.
+	(elmo-network-initialize-session): Defined.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-nntp-send-mode-reader): Changed argument.
+	(elmo-nntp-send-command): Changed argument.
+	All other related portions are changed.
+	(elmo-nntp-read-response): Ditto.
+	(elmo-nntp-read-raw-response): Ditto.
+	(elmo-nntp-read-contents): Ditto.
+	(elmo-nntp-read-body): Ditto.
+	(elmo-nntp-goto-folder): Abolished.
+	(elmo-nntp-select-group): New function.
+	All other related portions are changed.
+	(This function substitutes `elmo-nntp-goto-folder')
+	(elmo-nntp-msgdb-create-by-header): Rewrite.
+	(elmo-nntp-get-overview): Eliminated.
+	(elmo-nntp-get-message): Ditto.
+	(elmo-nntp-open-connection) Abolished.
+	(elmo-nntp-read-msg): Rewrite.
+	(elmo-nntp-post): Ditto.
+	(elmo-nntp-send-data): Abolished.
+	(elmo-nntp-send-buffer): New function.
+	(elmo-nntp-send-data-line): Define as inline function.
+	(elmo-nntp-get-folders-info-prepare): Use session as key.
+	(elmo-nntp-groups-read-response): Changed argument.
+	(elmo-nntp-retrieve-headers): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): Fixed problem
+	when searching by 'since' or 'before'.
+
 2000-10-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (toplevel): Use product-version-as-string for set

@@ -445,13 +445,12 @@ header separator."
 		    (elmo-msgdb-overview-entity-get-cc entity))))
      ((or (string= key "since")
 	  (string= key "before"))
-      (let ((res (string< (elmo-date-make-sortable-string
-			   (elmo-date-get-datevec
-			    (elmo-msgdb-overview-entity-get-date entity)))
+      (let ((res (string< (timezone-make-date-sortable
+			   (elmo-msgdb-overview-entity-get-date entity))
 			  (elmo-date-make-sortable-string
 			   (elmo-date-get-datevec
 			    (elmo-filter-value condition))))))
-	(setq result (if (string= key "since") res (not res))))))
+	(setq result (if (string= key "before") res (not res))))))
     (if (eq (elmo-filter-type condition) 'unmatch)
 	(setq result (not result)))
     result))

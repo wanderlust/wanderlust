@@ -64,11 +64,8 @@
   (interactive)
   (if (featurep 'elmo-net)
       (elmo-network-clear-session-cache))
-  (if (featurep 'elmo-nntp)
-      (elmo-nntp-flush-connection))
   (if (get-buffer elmo-work-buf-name)
-      (kill-buffer elmo-work-buf-name))
-  )
+      (kill-buffer elmo-work-buf-name)))
 
 (defun elmo-cleanup-variables ()
   (setq elmo-folder-info-hashtb nil
