@@ -812,10 +812,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   "Compare entity X and Y by from."
   (string<
    (wl-address-header-extract-address
-    (or (elmo-message-entity-field x 'from)
+    (or (elmo-message-entity-field x 'from t)
 	wl-summary-no-from-message))
    (wl-address-header-extract-address
-    (or (elmo-message-entity-field y 'from)
+    (or (elmo-message-entity-field y 'from t)
 	wl-summary-no-from-message))))
 
 (defun wl-summary-overview-entity-compare-by-subject (x y)
@@ -1354,7 +1354,7 @@ If ARG is non-nil, checking is omitted."
 			       (or
 				(elmo-message-field
 				 wl-summary-buffer-elmo-folder
-				 number 'from)
+				 number 'from t)
 				"??")))))) " ]")
 			size))))
 	      (message ""))		; flush.
@@ -4412,11 +4412,11 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 			      (wl-summary-message-number))))
 		   (wl-ps-subject
 		    (and entity
-			 (or (elmo-message-entity-field entity 'subject)
+			 (or (elmo-message-entity-field entity 'subject t)
 			     "")))
 		   (wl-ps-from
 		    (and entity
-			 (or (elmo-message-entity-field entity 'from) "")))
+			 (or (elmo-message-entity-field entity 'from t) "")))
 		   (wl-ps-date
 		    (and entity
 			 (or (elmo-message-entity-field entity 'date) ""))))

@@ -1,5 +1,12 @@
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-overview-entity-compare-by-from): Decode
+	entity field value.
+	(wl-summary-prefetch-msg): Ditto.
+	(wl-summary-print-message-with-ps-print): Ditto.
+
+2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* wl-summary.el (wl-summary-detect-mark-position): Use generic msgdb
 	for dummy entity.
 	(wl-summary-insert-thread): Use elmo-message-entity-field.
