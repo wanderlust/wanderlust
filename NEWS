@@ -3,6 +3,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.10.1 from 2.10.0
   Version 2.10.1 is a bug fix version of 2.10.0.
 
+** wl-summary-pack-number in pipe folder is disabled temporarily
+   since it didn't work. Invoke it in destination folder instead.
+
 ** Fixed a problem that wl-folder-move-cur-folder doesn't work.
 
 ** Fixed a problem that wl-draft-reedit doesn't work properly on Meadow.

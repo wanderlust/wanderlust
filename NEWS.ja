@@ -3,6 +3,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 * 2.10.0 から 2.10.1 への変更点
   2.10.1 は 2.10.0 のバグ修正版です。
 
+** パイプフォルダにおいて wl-summary-pack-number がうまく動かなかった
+   ため効かなくしてあります。必要であれば取り込み先フォルダの方で実行
+   して下さい。
+
 ** wl-folder-move-cur-folder が効いていなかった問題が修正されました。
 
 ** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
