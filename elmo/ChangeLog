@@ -1,3 +1,11 @@
+2000-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-unintern): New macro.
+	(elmo-number-set-member): Fixed docstring.
+
+	* elmo-imap4.el (elmo-imap4-parse-response): Call `elmo-unintern' for
+	tag token.
+
 2000-10-25  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-client-eol): Remove duplicated defvar

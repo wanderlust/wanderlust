@@ -1326,6 +1326,11 @@ Otherwise treat \\ in NEWTEXT string as special:
       (list 'unintern string hashtable)
     (list 'makunbound (list 'intern string hashtable))))
 
+(defmacro elmo-unintern (string)
+  ;; Emacs 19.28 or earlier does not have unintern.
+  (static-if (fboundp 'unintern)
+      (list 'unintern string)))
+
 ;; Make a hash table (default and minimum size is 1024).
 (defun elmo-make-hash (&optional hashsize)
   (make-vector
@@ -1632,7 +1637,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 
 (defun elmo-number-set-member (number number-set)
   "Return non-nil if NUMBER is an element of NUMBER-SET.
-The value is actuall the tail of SET-LIST whose car contains NUMBER."
+The value is actually the tail of NUMBER-RANGE whose car contains NUMBER."
   (or (memq number number-set)
       (let (found)
 	(while (and number-set (not found))

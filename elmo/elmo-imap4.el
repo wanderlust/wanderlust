@@ -1693,11 +1693,15 @@ Return nil if no complete line has arrived."
 		   (elmo-imap4-forward))
 	     (OK  (progn
 		    (setq elmo-imap4-parsing nil)
+		    (setq token (symbol-name token))
+		    (elmo-unintern token)
 		    (elmo-imap4-debug "*%s* OK arrived" token)
 		    (setq elmo-imap4-reached-tag token)
 		    (list 'ok (elmo-imap4-parse-resp-text-code))))
 	     (NO  (progn
 		    (setq elmo-imap4-parsing nil)
+		    (setq token (symbol-name token))
+		    (elmo-unintern token)
 		    (elmo-imap4-debug "*%s* NO arrived" token)
 		    (setq elmo-imap4-reached-tag token)
 		    (let (code text)
@@ -1710,6 +1714,8 @@ Return nil if no complete line has arrived."
 	     (BAD (progn
 		    (setq elmo-imap4-parsing nil)
 		    (elmo-imap4-debug "*%s* BAD arrived" token)
+		    (setq token (symbol-name token))
+		    (elmo-unintern token)
 		    (setq elmo-imap4-reached-tag token)
 		    (let (code text)
 		      (when (eq (char-after (point)) ?\[)
@@ -1847,9 +1853,7 @@ Return nil if no complete line has arrived."
 		       (list 'bodystructure (elmo-imap4-parse-body)))))
 	  (setq list (cons element list))))
       (and elmo-imap4-fetch-callback
-	   (elmo-imap4-fetch-callback
-	    list
-	    elmo-imap4-fetch-callback-data))
+	   (elmo-imap4-fetch-callback list elmo-imap4-fetch-callback-data))
       (list 'fetch list))))
 
 (defun elmo-imap4-parse-status ()
