@@ -113,7 +113,7 @@
 	(setq msgs (delq (car dlist) msgs)))
       (setq dlist (cdr dlist)))
     msgs))
-nn;; End New functions.
+;; End New functions.
 
 (defun wl-expire-delete (folder delete-list &optional no-reserve-marks)
   "Delete message for expire."

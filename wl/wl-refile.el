@@ -132,7 +132,7 @@
 
 (defun wl-refile-subject-learn (entity dst)
   (let ((subject (funcall wl-summary-subject-filter-function
-n			  (elmo-message-entity-field entity 'subject)))
+			  (elmo-message-entity-field entity 'subject)))
 	hit)
     (setq dst (elmo-string dst))
     (if (and subject (not (string= subject "")))
