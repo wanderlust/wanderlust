@@ -1,3 +1,9 @@
+2004-09-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-reply): Save wl-draft-config-variables
+	after adding wl-draft-parent-variables.
+	(wl-draft-forward): Ditto.
+
 2004-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-sync-marks): Call

@@ -297,13 +297,13 @@ e.g.
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (setq wl-draft-parent-number number)
-  (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To")
   (setq wl-draft-config-variables
 	(append wl-draft-parent-variables
 		wl-draft-config-variables))
+  (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
   (run-hooks 'wl-draft-forward-hook))
 
 (defun wl-draft-self-reply-p ()
@@ -467,11 +467,11 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
     (setq wl-draft-parent-number number)
-    (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
     (setq wl-draft-reply-buffer buf)
     (setq wl-draft-config-variables
 	  (append wl-draft-parent-variables
-		  wl-draft-config-variables)))
+		  wl-draft-config-variables))
+    (wl-draft-config-info-operation wl-draft-buffer-message-number 'save))
   (run-hooks 'wl-draft-reply-hook))
 
 (defun wl-draft-reply-position (position)
