@@ -1,3 +1,10 @@
+2002-08-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-fldmgr.el (wl-fldmgr-sort): Added optional argument.
+	If optional argument is specified, reverse sort order.
+
+	* wl-draft.el (wl-draft-get-fcc-list): Allow multiple Fcc folders.
+
 2002-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-insert-message): Return parent number if

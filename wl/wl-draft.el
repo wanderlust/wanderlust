@@ -1426,17 +1426,20 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (save-excursion
 	(goto-char (point-min))
 	(while (re-search-forward "^Fcc:[ \t]*" header-end t)
-	  (setq fcc-list
-		(cons (buffer-substring-no-properties
-		       (point)
-		       (progn
-			 (end-of-line)
-			 (skip-chars-backward " \t")
-			 (point)))
-		      fcc-list))
 	  (save-match-data
-	    (wl-folder-confirm-existence
-	     (wl-folder-get-elmo-folder (eword-decode-string (car fcc-list)))))
+	    (setq fcc-list
+		  (append fcc-list
+			  (split-string
+			   (buffer-substring-no-properties
+			    (point)
+			    (progn
+			      (end-of-line)
+			      (skip-chars-backward " \t")
+			      (point)))
+			   ",[ \t]*")))
+	    (dolist (folder fcc-list)
+	      (wl-folder-confirm-existence
+	       (wl-folder-get-elmo-folder (eword-decode-string folder)))))
 	  (delete-region (match-beginning 0)
 			 (progn (forward-line 1) (point)))))
       fcc-list)))

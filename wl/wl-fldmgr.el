@@ -1035,8 +1035,8 @@ return value is diffs '(-new -unread -all)."
 				wl-fldmgr-make-filter-default)
 			       "/" entity))))))
 
-(defun wl-fldmgr-sort ()
-  (interactive)
+(defun wl-fldmgr-sort (&optional arg)
+  (interactive "P")
   (save-excursion
     (beginning-of-line)
     (let ((inhibit-read-only t)
@@ -1049,10 +1049,10 @@ return value is diffs '(-new -unread -all)."
 		      wl-folder-entity))
 	(message "Sorting...")
 	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
+	(when arg (setq flist (nreverse flist)))
 	(setcar (cddr entity) flist)
 	(wl-fldmgr-add-modified-access-list (car entity))
 	(setq wl-fldmgr-modified t)
-	;;
 	(when (string= opened "-")
 	  (let (beg end)
 	    (setq beg (point))
@@ -1065,7 +1065,6 @@ return value is diffs '(-new -unread -all)."
 		      (point))))
 	    (delete-region beg end)
 	    (wl-folder-insert-entity indent entity)))
-;;;	(wl-fldmgr-reconst-entity-hashtb t t)
 	(message "Sorting...done")
 	(set-buffer-modified-p nil)))))
 
