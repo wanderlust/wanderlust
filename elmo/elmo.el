@@ -627,11 +627,7 @@ FIELD is a symbol of the field name.")
 
 (luna-define-generic elmo-folder-process-crosspost (folder)
   "Process crosspost for FOLDER.
-If NUMBER-ALIST is set, it is used as number-alist.
 Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
-
-(luna-define-generic elmo-folder-append-msgdb (folder append-msgdb)
-  "Append  APPEND-MSGDB to the current msgdb of the folder.")
 
 (luna-define-generic elmo-folder-newsgroups (folder)
   "Return list of newsgroup name of FOLDER.")
@@ -1339,52 +1335,24 @@ FIELD is a symbol of the field.")
 ;;							       flag-table)
 ;;  "Append ENTITY to the folder.")
 
-(defun elmo-generic-folder-append-msgdb (folder append-msgdb)
+(defsubst elmo-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb
-      (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
-	     (all-alist (copy-sequence (append
-					(elmo-msgdb-get-number-alist
-					 (elmo-folder-msgdb folder))
-					number-alist)))
-	     (cur number-alist)
-	     pair overview
-	     to-be-deleted
-	     mark-alist)
-	(elmo-folder-set-msgdb-internal folder
-					(elmo-msgdb-append
-					 (elmo-folder-msgdb folder)
-					 append-msgdb))
-	(while cur
-	  (setq all-alist (delq (car cur) all-alist))
-	  ;; same message id exists.
-	  (if (setq pair (rassoc (cdr (car cur)) all-alist))
-	      (setq to-be-deleted (nconc to-be-deleted (list (car pair)))))
-	  (setq cur (cdr cur)))
+      (let ((duplicates (elmo-msgdb-merge folder append-msgdb)))
 	(cond ((eq (elmo-folder-process-duplicates-internal folder)
 		   'hide)
-	       ;; Hide duplicates.
-	       (setq overview (elmo-delete-if
-			       (lambda (x)
-				 (memq (elmo-msgdb-overview-entity-get-number
-					x)
-				       to-be-deleted))
-			       (elmo-msgdb-get-overview append-msgdb)))
+	       ;; Let duplicates be a temporary killed message.
+	       (elmo-folder-kill-messages folder duplicates)
 	       ;; Should be mark as read.
-	       (elmo-folder-mark-as-read folder to-be-deleted)
-	       (elmo-msgdb-set-overview append-msgdb overview))
+	       (elmo-folder-mark-as-read folder duplicates))
 	      ((eq (elmo-folder-process-duplicates-internal folder)
 		   'read)
 	       ;; Mark as read duplicates.
-	       (elmo-folder-mark-as-read folder to-be-deleted))
+	       (elmo-folder-mark-as-read folder duplicates))
 	      (t
 	       ;; Do nothing.
-	       (setq to-be-deleted nil)))
-	(length to-be-deleted))
+	       (setq duplicates nil)))
+	(length duplicates))
     0))
-
-(luna-define-method elmo-folder-append-msgdb ((folder elmo-folder)
-					      append-msgdb)
-  (elmo-generic-folder-append-msgdb folder append-msgdb))
 
 (defun elmo-folder-confirm-appends (appends)
   (let ((len (length appends))
@@ -1506,7 +1474,6 @@ If update process is interrupted, return nil.")
 					     no-check)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
-	number-alist
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
 	flag-table crossed after-append)
     (setq old-msgdb (elmo-folder-msgdb folder))

@@ -1,5 +1,13 @@
 2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-append-msgdb): Rewrite and define as an inline
+	function.
+
+	* elmo-msgdb.el (elmo-msgdb-append): Use elmo-msgdb-make-index-return.
+	(elmo-msgdb-merge): New function.
+	(elmo-msgdb-make-index-return): Renamed from elmo-msgdb-make-index.
+	(elmo-msgdb-make-index): Rewrite.
+
 	* elmo-version.el (elmo-version): Up to 2.11.6.
 
 	* elmo-msgdb.el (elmo-msgdb-list-messages): If argument is a string,

@@ -399,11 +399,40 @@ FLAG is a symbol which is one of the following:
    (nconc (car msgdb) (car msgdb-append))
    (nconc (cadr msgdb) (cadr msgdb-append))
    (nconc (caddr msgdb) (caddr msgdb-append))
-   (elmo-msgdb-make-index
+   (elmo-msgdb-make-index-return
     msgdb
     (elmo-msgdb-get-overview msgdb-append)
     (elmo-msgdb-get-mark-alist msgdb-append))
    (nth 4 msgdb)))
+
+(defun elmo-msgdb-merge (folder msgdb-merge)
+  "Return a list of messages which have duplicated message-id."
+  (let (msgdb duplicates)
+    (setq msgdb (or (elmo-folder-msgdb-internal folder)
+		    (elmo-make-msgdb nil nil nil
+				     (elmo-folder-msgdb-path folder))))
+    (elmo-msgdb-set-overview
+     msgdb
+     (nconc (elmo-msgdb-get-overview msgdb)
+	    (elmo-msgdb-get-overview msgdb-merge)))
+    (elmo-msgdb-set-number-alist
+     msgdb
+     (nconc (elmo-msgdb-get-number-alist msgdb)
+	    (elmo-msgdb-get-number-alist msgdb-merge)))
+    (elmo-msgdb-set-mark-alist
+     msgdb
+     (nconc (elmo-msgdb-get-mark-alist msgdb)
+	    (elmo-msgdb-get-mark-alist msgdb-merge)))
+    (setq duplicates (elmo-msgdb-make-index
+		      msgdb
+		      (elmo-msgdb-get-overview msgdb-merge)
+		      (elmo-msgdb-get-mark-alist msgdb-merge)))
+    (elmo-msgdb-set-path
+     msgdb
+     (or (elmo-msgdb-get-path msgdb)
+	 (elmo-msgdb-get-path msgdb-merge)))
+    (elmo-folder-set-msgdb-internal folder msgdb)
+    duplicates))
 
 (defsubst elmo-msgdb-clear (&optional msgdb)
   (if msgdb
@@ -1236,7 +1265,7 @@ Header region is supposed to be narrowed."
       (and (setq number (elmo-msgdb-overview-entity-get-number entity))
 	   (elmo-clear-hash-val (format "#%d" number) mhash)))))
 
-(defun elmo-msgdb-make-index (msgdb &optional overview mark-alist)
+(defun elmo-msgdb-make-index-return (msgdb &optional overview mark-alist)
   "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
 If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
 Return the updated INDEX."
@@ -1267,6 +1296,43 @@ Return the updated INDEX."
       (setq index (or index (cons ehash mhash)))
       (elmo-msgdb-set-index msgdb index)
       index)))
+
+(defun elmo-msgdb-make-index (msgdb &optional overview mark-alist)
+  "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
+If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
+Return a list of message numbers which have duplicated message-ids."
+  (when msgdb
+    (let* ((overview (or overview (elmo-msgdb-get-overview msgdb)))
+	   (mark-alist (or mark-alist (elmo-msgdb-get-mark-alist msgdb)))
+	   (index (elmo-msgdb-get-index msgdb))
+	   (ehash (or (car index) ;; append
+		      (elmo-make-hash (length overview))))
+	   (mhash (or (cdr index) ;; append
+		      (elmo-make-hash (length overview))))
+	   duplicates)
+      (while overview
+	;; key is message-id
+	(if (elmo-get-hash-val (caar overview) ehash) ; duplicated.
+	    (setq duplicates (cons
+			      (elmo-message-entity-number (car overview))
+			      duplicates)))
+	(if (caar overview)
+	    (elmo-set-hash-val (caar overview) (car overview) ehash))
+	;; key is number
+	(elmo-set-hash-val
+	 (format "#%d"
+		 (elmo-message-entity-number (car overview)))
+	 (car overview) ehash)
+	(setq overview (cdr overview)))
+      (while mark-alist
+	;; key is number
+	(elmo-set-hash-val
+	 (format "#%d" (car (car mark-alist)))
+	 (car mark-alist) mhash)
+	(setq mark-alist (cdr mark-alist)))
+      (setq index (or index (cons ehash mhash)))
+      (elmo-msgdb-set-index msgdb index)
+      duplicates)))
 
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder
