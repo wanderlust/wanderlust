@@ -2,10 +2,10 @@
 
 	* etc/icons/wl-folder-goto-draft-folder-up.xpm: Modified.
 	* etc/icons/wl-draft-save-and-exit-up.xpm: Ditto.
-	
+
 2002-03-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
-	* etc/icons/wl-folder-goto-draft-folder-up.xpm : New file.
+	* etc/icons/wl-folder-goto-draft-folder-up.xpm: New file.
 
 2002-03-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
@@ -158,7 +158,7 @@
 
 	* WL-ELS (WL-MODULES): Added wl-acap.
 
-2001-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+2001-08-28  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* WL-MK: Byte-optimize the function `char-after' for old Emacsen.
 
