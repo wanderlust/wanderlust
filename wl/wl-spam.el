@@ -332,7 +332,7 @@ See `wl-summary-mark-action-list' for the detail of element."
     wl-spam-folder))
 
 (defun wl-spam-setup ()
-  (add-hook 'wl-summary-prepared-hook #'wl-summary-auto-check-spam)
+  (add-hook 'wl-summary-sync-updated-hook #'wl-summary-auto-check-spam)
   (let ((actions wl-summary-mark-action-list)
 	action)
     (while actions

@@ -1,5 +1,9 @@
 2004-10-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-spam.el (wl-spam-setup): Add hook
+	`wl-summary-auto-check-spam' to `wl-summary-sync-updated-hook'
+	instead of `wl-summary-prepare-hook'.
+
 	* wl-summary.el (wl-summary-set-flags): Allow flag operation even
 	if folder type is `'flag'.
 	(wl-summary-mark-as-important): Ditto.
