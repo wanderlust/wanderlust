@@ -349,7 +349,7 @@ Returns a process object.  if making session failed, returns nil."
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-net-folder) unread-marks &optional mark-alist)
+  ((folder elmo-net-folder) unread-marks)
   (if (and (elmo-folder-plugged-p folder)
 	   (elmo-folder-use-flag-p folder))
       (elmo-folder-send folder 'elmo-folder-list-unreads-plugged)
@@ -437,8 +437,7 @@ Returns a process object.  if making session failed, returns nil."
 				  number strategy section
 				  (current-buffer) unseen)
 		(elmo-delete-cr-buffer)
-		(when (and (> (buffer-size) 0)
-			   (elmo-fetch-strategy-save-cache strategy))
+		(when (elmo-fetch-strategy-save-cache strategy)
 		  (elmo-file-cache-save
 		   (elmo-fetch-strategy-cache-path strategy)
 		   section))
@@ -448,8 +447,7 @@ Returns a process object.  if making session failed, returns nil."
 				number strategy section
 				(current-buffer) unseen)
 	      (elmo-delete-cr-buffer)
-	      (when (and (> (buffer-size) 0)
-			 (elmo-fetch-strategy-save-cache strategy))
+	      (when (elmo-fetch-strategy-save-cache strategy)
 		(elmo-file-cache-save
 		 (elmo-fetch-strategy-cache-path strategy)
 		 section))

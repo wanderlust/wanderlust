@@ -113,11 +113,10 @@
   (elmo-folder-search (elmo-filter-folder-target-internal folder)
 		      (elmo-filter-folder-condition-internal folder)))
 
-(defsubst elmo-filter-folder-list-unreads-internal (folder unread-marks
-							   mark-alist)
+(defsubst elmo-filter-folder-list-unreads-internal (folder unread-marks)
   (let ((unreads (elmo-folder-list-unreads-internal
 		  (elmo-filter-folder-target-internal folder)
-		  unread-marks mark-alist)))
+		  unread-marks)))
     (unless (listp unreads)
       (setq unreads
 	    (delq nil
@@ -134,8 +133,9 @@
 
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-filter-folder)
-   unread-marks &optional mark-alist)
-  (elmo-filter-folder-list-unreads-internal folder unread-marks mark-alist))
+   unread-marks)
+  (elmo-filter-folder-list-unreads-internal folder unread-marks))
+
 
 (defsubst elmo-filter-folder-list-importants-internal (folder important-mark)
   (let ((importants (elmo-folder-list-importants-internal

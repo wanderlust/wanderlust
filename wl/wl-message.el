@@ -266,7 +266,7 @@ Returns non-nil if top of message."
 	    (progn
 	      (wl-message-narrow-to-page -1)
 	      (goto-char (point-max))
-	      (recenter))
+	      (recenter -1))
 	  (if (not (bobp))
 	      (condition-case nil
 		  (scroll-down lines)

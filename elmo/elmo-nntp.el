@@ -44,7 +44,7 @@
 ;;; ELMO NNTP folder
 (eval-and-compile
   (luna-define-class elmo-nntp-folder (elmo-net-folder)
-		     (group temp-crosses reads))
+		     (group))
   (luna-define-internal-accessors 'elmo-nntp-folder))
 
 (luna-define-method elmo-folder-initialize :around ((folder
@@ -108,7 +108,7 @@
 Don't cache if nil.")
 
 (defvar elmo-nntp-list-folders-cache nil)
-
+(defvar elmo-nntp-groups-hashtb nil)
 (defvar elmo-nntp-groups-async nil)
 (defvar elmo-nntp-header-fetch-chop-length 200)
 
@@ -608,7 +608,7 @@ Don't cache if nil.")
 			    (elmo-net-folder-server-internal folder)
 			    (elmo-net-folder-port-internal folder)
 			    (elmo-net-folder-stream-type-internal folder)))
-		   elmo-newsgroups-hashtb))
+		   elmo-nntp-groups-hashtb))
 	    (progn
 	      (setq end-num (nth 2 entry))
 	      (when(and  killed-list
@@ -930,12 +930,11 @@ Don't cache if nil.")
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
 						number strategy
 						&optional section outbuf
-						unread)
-  (elmo-nntp-message-fetch folder number strategy section outbuf unread))
+						unseen)
+  (elmo-nntp-message-fetch folder number strategy section outbuf unseen))
 
-(defun elmo-nntp-message-fetch (folder number strategy section outbuf unread)
-  (let ((session (elmo-nntp-get-session folder))
-	newsgroups)
+(defun elmo-nntp-message-fetch (folder number strategy section outbuf unseen)
+  (let ((session (elmo-nntp-get-session folder)))
     (with-current-buffer (elmo-network-session-buffer session)
       (elmo-nntp-select-group session (elmo-nntp-folder-group-internal folder))
       (elmo-nntp-send-command session (format "article %s" number))
@@ -949,11 +948,7 @@ Don't cache if nil.")
 	    (goto-char (point-min))
 	    (while (re-search-forward "^\\." nil t)
 	      (replace-match "")
-	      (forward-line))
-	    (elmo-nntp-setup-crosspost-buffer folder number)
-	    (unless unread
-	      (elmo-nntp-folder-update-crosspost-message-alist
-	       folder (list number)))))))))
+	      (forward-line))))))))
 
 (defun elmo-nntp-post (hostname content-buf)
   (let ((session (elmo-nntp-get-session
@@ -1190,8 +1185,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	     (user    (aref key 2))
 	     (port    (aref key 3))
 	     (type    (aref key 4))
-	     (hashtb (or elmo-newsgroups-hashtb
-			 (setq elmo-newsgroups-hashtb
+	     (hashtb (or elmo-nntp-groups-hashtb
+			 (setq elmo-nntp-groups-hashtb
 			       (elmo-make-hash count)))))
 	(save-excursion
 	  (elmo-nntp-groups-read-response session cur count)
@@ -1265,6 +1260,17 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (while (search-forward "\r" nil t)
 	(replace-match "" t t))
       (copy-to-buffer outbuf (point-min) (point-max)))))
+
+(defun elmo-nntp-make-groups-hashtb (groups &optional size)
+  (let ((hashtb (or elmo-nntp-groups-hashtb
+		    (setq elmo-nntp-groups-hashtb
+			  (elmo-make-hash (or size (length groups)))))))
+    (mapcar
+     '(lambda (group)
+	(or (elmo-get-hash-val group hashtb)
+	    (elmo-set-hash-val group nil hashtb)))
+     groups)
+    hashtb))
 
 ;; from nntp.el [Gnus]
 
@@ -1394,138 +1400,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)
   elmo-nntp-use-cache)
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-nntp-folder))
-  nil)
-
-(luna-define-method elmo-folder-writable-p ((folder elmo-nntp-folder))
-  nil)
-
-(defun elmo-nntp-parse-newsgroups (string &optional subscribe-only)
-  (let ((nglist (elmo-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
-	ngs)
-    (if (not subscribe-only)
-	nglist
-      (dolist (ng nglist)
-	(if (intern-soft ng elmo-newsgroups-hashtb)
-	    (setq ngs (cons ng ngs))))
-      ngs)))
-
-;;; Crosspost processing.
-
-;; 1. setup crosspost alist.
-;;    1.1. When message is fetched and is crossposted message,
-;;         it is remembered in `temp-crosses' slot.
-;;         temp-crosses slot is a list of cons cell:
-;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
-;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
-;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
-;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
-
-;; 2. process crosspost alist.
-;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
-;;         `elmo-crosspost-message-alist'.
-;;    2.2. remove crosspost entry for current newsgroup from
-;;         `elmo-crosspost-message-alist'.
-;;    2.3. elmo-folder-list-unreads return unread message list according to
-;;         `reads' slot.
-;;         (There's a problem that if `elmo-folder-list-unreads'
-;;           never executed, crosspost information is thrown away.)
-;;    2.4. In elmo-folder-close, `read' slot is cleared,
-
-(defun elmo-nntp-setup-crosspost-buffer (folder number)
-;;    1.1. When message is fetched and is crossposted message,
-;;         it is remembered in `temp-crosses' slot.
-;;         temp-crosses slot is a list of cons cell:
-;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
-  (let (newsgroups crosspost-newsgroups message-id)
-    (save-restriction
-      (std11-narrow-to-header)
-      (setq newsgroups (std11-fetch-field "newsgroups")
-	    message-id (std11-msg-id-string
-			(car (std11-parse-msg-id-string
-			      (std11-fetch-field "message-id"))))))
-    (when newsgroups 
-      (when (setq crosspost-newsgroups
-		  (delete
-		   (elmo-nntp-folder-group-internal folder)
-		   (elmo-nntp-parse-newsgroups newsgroups t)))
-	(unless (assq number
-		      (elmo-nntp-folder-temp-crosses-internal folder))
-	  (elmo-nntp-folder-set-temp-crosses-internal
-	   folder
-	   (cons (cons number (list message-id crosspost-newsgroups 'ng))
-		 (elmo-nntp-folder-temp-crosses-internal folder))))))))
-
-(luna-define-method elmo-folder-close-internal ((folder elmo-nntp-folder))
-;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
-  (elmo-nntp-folder-set-temp-crosses-internal folder nil)
-  (elmo-nntp-folder-set-reads-internal folder nil)
-  )
-
-(defun elmo-nntp-folder-update-crosspost-message-alist (folder numbers)
-;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
-;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
-  (let (elem)
-    (dolist (number numbers)
-      (when (setq elem (assq number
-			     (elmo-nntp-folder-temp-crosses-internal folder)))
-	(unless (assoc (cdr (cdr elem)) elmo-crosspost-message-alist)
-	  (setq elmo-crosspost-message-alist
-		(cons (cdr elem) elmo-crosspost-message-alist)))
-	(elmo-nntp-folder-set-temp-crosses-internal
-	 folder
-	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
-
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-nntp-folder)
-					      numbers)
-  (elmo-nntp-folder-update-crosspost-message-alist folder numbers)
-  t)
-
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder)
-						   &optional
-						   number-alist)
-  (elmo-nntp-folder-process-crosspost folder number-alist))
-
-(defun elmo-nntp-folder-process-crosspost (folder number-alist)
-;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
-;;         `elmo-crosspost-message-alist'.
-;;    2.2. remove crosspost entry for current newsgroup from
-;;         `elmo-crosspost-message-alist'.
-  (let (cross-deletes reads entity ngs)
-    (dolist (cross elmo-crosspost-message-alist)
-      (if number-alist
-	  (when (setq entity (rassoc (nth 0 cross) number-alist))
-	    (setq reads (cons (car entity) reads)))
-	(when (setq entity (elmo-msgdb-overview-get-entity
-			    (nth 0 cross)
-			    (elmo-folder-msgdb-internal folder)))
-	  (setq reads (cons (elmo-msgdb-overview-entity-get-number entity)
-			    reads))))
-      (when entity
-	(if (setq ngs (delete (elmo-nntp-folder-group-internal folder)
-			      (nth 1 cross)))
-	    (setcar (cdr cross) ngs)
-	  (setq cross-deletes (cons cross cross-deletes)))
-	(setq elmo-crosspost-message-alist-modified t)))
-    (dolist (dele cross-deletes)
-      (setq elmo-crosspost-message-alist (delq
-					  dele 
-					  elmo-crosspost-message-alist)))
-    (elmo-nntp-folder-set-reads-internal folder reads)))
-
-(luna-define-method elmo-folder-list-unreads-internal 
-  ((folder elmo-nntp-folder) unread-marks mark-alist)
-  ;;    2.3. elmo-folder-list-unreads return unread message list according to
-  ;;         `reads' slot.
-  (let ((mark-alist (or mark-alist (elmo-msgdb-get-mark-alist
-				    (elmo-folder-msgdb-internal folder)))))
-    (elmo-living-messages (delq nil
-				(mapcar 
-				 (lambda (x)
-				   (if (member (nth 1 x) unread-marks)
-				       (car x)))
-				 mark-alist))
-			  (elmo-nntp-folder-reads-internal folder))))
+(luna-define-method elmo-folder-append-msgdb :around
+  ((folder elmo-nntp-folder) append-msgdb)
+  ;; IMPLEMENT ME: Process crosspost here instead of following.
+  (luna-call-next-method))
 
 (require 'product)
 (product-provide (provide 'elmo-nntp) (require 'elmo-version))

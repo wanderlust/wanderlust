@@ -628,7 +628,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
-  (elmo-crosspost-message-alist-save)
+  (wl-crosspost-alist-save)
   (message "Saving summary and folder status...done"))
 
 (defun wl-exit ()
@@ -667,7 +667,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (wl-address-init)
 	    (wl-draft-setup)
 	    (wl-refile-alist-setup)
-	    (elmo-crosspost-message-alist-load)
+	    (wl-crosspost-alist-load)
 	    (if wl-use-semi
 		(progn
 		  (require 'wl-mime)

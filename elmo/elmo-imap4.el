@@ -1979,10 +1979,6 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-rename-internal ((folder elmo-imap4-folder)
 						 new-folder)
   (let ((session (elmo-imap4-get-session folder)))
-    ;; make sure the folder is selected.
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-folder-mailbox-internal
-					folder))
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session

@@ -906,23 +906,11 @@ Emacs 19.28 or earlier does not have `unintern'."
   (static-if (fboundp 'unintern)
       (list 'unintern string)))
 
+;; Make a hash table (default and minimum size is 1024).
 (defun elmo-make-hash (&optional hashsize)
-  "Make a new hash table which have HASHSIZE size."
   (make-vector
-   (if hashsize 
-       (max
-	;; Prime numbers as lengths tend to result in good
-	;; hashing; lengths one less than a power of two are 
-	;; also good.
-	(min
-	 (let ((i 1))
-	   (while (< (- i 1) hashsize)
-	     (setq i (* 2 i)))
-	   (- i 1))
-	 elmo-hash-maximum-size)
-	elmo-hash-minimum-size)
-     elmo-hash-minimum-size)
-   0))
+   (if hashsize (max (min (elmo-create-hash-size hashsize)
+			  elmo-hash-maximum-size) 1024) 1024) 0))
 
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
@@ -970,6 +958,12 @@ Emacs 19.28 or earlier does not have `unintern'."
 	(or (assoc name dest)
 	    (setq dest (cons (cons name body) dest))))
       dest)))
+
+(defun elmo-create-hash-size (min)
+  (let ((i 1))
+    (while (< i min)
+      (setq i (* 2 i)))
+    i))
 
 (defun elmo-safe-filename (folder)
   (elmo-replace-in-string
@@ -1338,15 +1332,6 @@ NUMBER-SET is altered."
 				       (car files)))))))
       (setq files (cdr files)))
     (nconc (and (not root) (list file)) dirs)))
-
-(defun elmo-parse (string regexp &optional matchn)
-  (or matchn (setq matchn 1))
-  (let (list)
-    (store-match-data nil)
-    (while (string-match regexp string (match-end 0))
-      (setq list (cons (substring string (match-beginning matchn)
-                                  (match-end matchn)) list)))
-    (nreverse list)))
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

@@ -120,9 +120,9 @@
 				       folder)))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-pipe-folder) unread-marks &optional mark-alist)
+  ((folder elmo-pipe-folder) unread-marks)
   (elmo-folder-list-unreads-internal (elmo-pipe-folder-dst-internal folder)
-				     unread-marks mark-alist))
+				     unread-marks))
   
 (luna-define-method elmo-folder-list-importants-internal
   ((folder elmo-pipe-folder) important-mark)

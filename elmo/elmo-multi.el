@@ -165,52 +165,37 @@
       (setq cur-number (1+ cur-number)))
     (elmo-msgdb-sort-by-date msgdb)))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder)
-						   &optional
-						   number-alist)
-  (let ((number-alists (elmo-multi-split-number-alist
-			folder
-			(elmo-msgdb-get-number-alist
-			 (elmo-folder-msgdb-internal folder))))
-	(cur-number 1))
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (elmo-folder-process-crosspost child (car number-alists))
-      (setq cur-number (+ 1 cur-number)
-	    number-alists (cdr number-alists)))))
-
 (defsubst elmo-multi-folder-append-msgdb (folder append-msgdb)
-  (if append-msgdb
-      (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
-	     (all-alist (copy-sequence (append
-					(elmo-msgdb-get-number-alist
-					 (elmo-folder-msgdb-internal folder))
-					number-alist)))
-	     (cur number-alist)
-	     to-be-deleted
-	     mark-alist same)
-	(while cur
-	  (setq all-alist (delq (car cur) all-alist))
-	  ;; same message id exists.
-	  (if (setq same (rassoc (cdr (car cur)) all-alist))
-	      (unless (= (/ (car (car cur))
-			    (elmo-multi-folder-divide-number-internal folder))
-			 (/ (car same) 
-			    (elmo-multi-folder-divide-number-internal folder)))
-		;; base is also same...delete it!
-		(setq to-be-deleted (append to-be-deleted (list (car cur))))))
-	  (setq cur (cdr cur)))
-	(setq mark-alist (elmo-delete-if
-			  (function
-			   (lambda (x)
-			     (assq (car x) to-be-deleted)))
-			  (elmo-msgdb-get-mark-alist append-msgdb)))
-	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
-	(elmo-folder-set-msgdb-internal folder
-					(elmo-msgdb-append
-					 (elmo-folder-msgdb-internal folder)
-					 append-msgdb t))
-	(length to-be-deleted))
-    0))
+  (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
+	 (all-alist (copy-sequence (append
+				    (elmo-msgdb-get-number-alist
+				     (elmo-folder-msgdb-internal folder))
+				    number-alist)))
+	 (cur number-alist)
+	 to-be-deleted
+	 mark-alist same)
+    (while cur
+      (setq all-alist (delq (car cur) all-alist))
+      ;; same message id exists.
+      (if (setq same (rassoc (cdr (car cur)) all-alist))
+	  (unless (= (/ (car (car cur))
+			(elmo-multi-folder-divide-number-internal folder))
+		     (/ (car same) 
+			(elmo-multi-folder-divide-number-internal folder)))
+	    ;; base is also same...delete it!
+	    (setq to-be-deleted (append to-be-deleted (list (car cur))))))
+      (setq cur (cdr cur)))
+    (setq mark-alist (elmo-delete-if
+		      (function
+		       (lambda (x)
+			 (assq (car x) to-be-deleted)))
+		      (elmo-msgdb-get-mark-alist append-msgdb)))
+    (elmo-msgdb-set-mark-alist append-msgdb mark-alist)
+    (elmo-folder-set-msgdb-internal folder
+				    (elmo-msgdb-append
+				     (elmo-folder-msgdb-internal folder)
+				     append-msgdb t))
+    (length to-be-deleted)))
 
 (luna-define-method elmo-folder-append-msgdb ((folder elmo-multi-folder)
 					      append-msgdb)
@@ -295,31 +280,6 @@
     (elmo-folder-set-info-hashtb folder nil messages)
     (cons unsync messages)))
 
-(defun elmo-multi-split-number-alist (folder number-alist)
-  (let ((alist (sort (copy-sequence number-alist)
-		     (lambda (pair1 pair2)
-		       (< (car pair1)(car pair2)))))
-	(cur-number 0)
-	one-alist split num)
-    (while alist
-      (setq cur-number (+ cur-number 1))
-      (setq one-alist nil)
-      (while (and alist
-		  (eq 0
-		      (/ (- (setq num (car (car alist)))
-			    (* elmo-multi-divide-number cur-number))
-			 (elmo-multi-folder-divide-number-internal folder))))
-	(setq one-alist (nconc
-			 one-alist
-			 (list
-			  (cons
-			   (% num (* (elmo-multi-folder-divide-number-internal
-				      folder) cur-number))
-			   (cdr (car alist))))))
-	(setq alist (cdr alist)))
-      (setq split (nconc split (list one-alist))))
-    split))
-
 (defun elmo-multi-split-mark-alist (folder mark-alist)
   (let ((cur-number 0)
 	(alist (sort (copy-sequence mark-alist)
@@ -347,7 +307,7 @@
     result))
 
 (luna-define-method elmo-folder-list-unreads-internal
-  ((folder elmo-multi-folder) unread-marks &optional mark-alist)
+  ((folder elmo-multi-folder) unread-marks)
   (elmo-multi-folder-list-unreads-internal folder unread-marks))
 
 (defun elmo-multi-folder-list-unreads-internal (folder unread-marks)
@@ -363,7 +323,7 @@
       (setq cur-number (+ cur-number 1))
       (unless (listp (setq unreads
 			   (elmo-folder-list-unreads-internal
-			    (car folders) unread-marks (car mark-alists))))
+			    (car folders) unread-marks)))
 	(setq unreads (delq  nil
 			     (mapcar
 			      (lambda (x)
