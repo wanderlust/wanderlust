@@ -19,7 +19,7 @@
 This file documents Wanderlust, Yet another message interface on
 Emacsen.
 
-Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
+Copyright @copyright{} 1998, 1999, 2000, 2001, 2002 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
 @w{Kaoru Takahashi}, @w{Bun Mizuhara} and @w{Masayuki Osada},
 @w{Katsumi Yamaoka}, @w{Hiroya Murata} and @w{Yoichi Nakayama}.
@@ -65,7 +65,7 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
+Copyright @copyright{} 1998, 1999, 2000, 2001, 2002 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
 @w{Kaoru Takahashi}, @w{Bun Mizuhara}, @w{Masayuki Osada},
 @w{Katsumi Yamaoka}, @w{Hiroya Murata} and @w{Yoichi Nakayama}.
