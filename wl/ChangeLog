@@ -1,3 +1,10 @@
+2003-08-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-subject-learn): Call
+	`elmo-message-entity-field' with 3rd argument is non-nil.
+	(wl-refile-guess-by-subject): Use `elmo-message-entity-field'
+	instead of `elmo-msgdb-overview-entity-get-subject'.
+
 2003-08-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Rescan if
