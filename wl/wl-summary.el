@@ -3693,7 +3693,7 @@ If ARG is number, jump to the message.
 Otherwise it shows previous line of th message."
   (interactive "P")
   (cond ((numberp arg)
-	 (unless (wl-summary-jump-to-msg arg)
+	 (unless (wl-thread-jump-to-msg arg)
 	   (message "Message (#%d) was not found." arg)))
 	(arg
 	 (wl-summary-prev-line-content))

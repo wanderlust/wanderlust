@@ -1,3 +1,8 @@
+2004-09-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-enter-handler): Use
+	`wl-thread-jump-to-msg' instead of `wl-summary-jump-to-msg'.
+
 2004-09-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-reply): Save wl-draft-config-variables
