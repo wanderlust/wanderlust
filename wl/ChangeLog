@@ -1,3 +1,8 @@
+2005-03-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-add): Create folder after testing parent
+	group is access or not (it is not strict, like wl-fldmgr-rename).
+
 2005-03-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Avoid
