@@ -1263,6 +1263,29 @@ If it is a function, it is called with the draft buffer as an argument."
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
+(defcustom wl-draft-reply-default-position 'body
+  "Begining position of reply buffer.
+'body means the top of body.
+'bottom means the bottom of body.
+'top means the top of header.
+\"To\", \"Newsgroups\", \"Subject\" means the position of the header field.
+You can also set it to a list of setting.
+"
+  :type '(choice (repeat
+		  (choice
+		   (const :tag "Top of body" body)
+		   (const :tag "Bottom of body" bottom)
+		   (const :tag "Top of header" top)
+		   (const "To")
+		   (const "Newsgroups")
+		   (const "Subject")
+		   (string :tag "Header Name")))
+		 (const "To")
+		 (const "Newsgroups")
+		 (const "Subject")
+		 (string :tag "Header Name"))
+  :group 'wl-draft)
+
 (defcustom wl-draft-queue-save-variables
   '(wl-envelope-from wl-from
     wl-smtp-posting-server wl-smtp-posting-user wl-smtp-posting-port

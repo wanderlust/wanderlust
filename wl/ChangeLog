@@ -1,5 +1,14 @@
 2002-12-22  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-reply-position): New function.
+	(wl-draft-reply-position): Fix.
+	* wl-summary.el (wl-summary-reply): Use `wl-draft-reply-position'.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+	(wl-summary-reply-with-citation): Ditto.
+	* wl-vars.el (wl-draft-reply-default-position): New variable.
+
+2002-12-22  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-draft.el (wl-draft-send): Preview when interactive send.
 
 2002-12-22  Kenichi OKADA  <okada@opaopa.org>
