@@ -300,19 +300,16 @@ Matched address lists are append to CL."
 		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
 	     cl))
       ;; nickname completion.
-      (unless (or (equal (nth 1 addr-tuple) (nth 0 addr-tuple))
-		  ;; already exists
-		  (assoc (nth 1 addr-tuple) cl))
-	(setq cl
-	      (cons
-	       (cons (nth 1 addr-tuple)
-		     (if (or (string= (nth 2 addr-tuple) "")
-			     (string-match ".*:.*;$" (nth 0 addr-tuple)))
-			 (nth 0 addr-tuple)
-		       (concat
-			(wl-address-quote-specials
-			 (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
-	       cl)))
+      (setq cl
+	    (cons
+	     (cons (nth 1 addr-tuple)
+		   (if (or (string= (nth 2 addr-tuple) "")
+			   (string-match ".*:.*;$" (nth 0 addr-tuple)))
+		       (nth 0 addr-tuple)
+		     (concat
+		      (wl-address-quote-specials
+		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
+	     cl))
       (setq address-list (cdr address-list)))
     cl))
 
@@ -545,13 +542,13 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	   (if (looking-at
 		"^\\([^#\n][^ \t\n]+\\)[ \t]+\\(\".*\"\\)[ \t]+\\(\".*\"\\)[ \t]*.*$")
 	       (setq ret
-		     (wl-append-element
-		      ret
+		     (cons
 		      (list (wl-match-buffer 1)
 			    (read (wl-match-buffer 2))
-			    (read (wl-match-buffer 3))))))
+			    (read (wl-match-buffer 3)))
+		      ret)))
 	   (forward-line))
-	 ret))))
+	 (nreverse ret)))))
 
 (defun wl-address-get-petname-1 (string)
   (let ((address (downcase (wl-address-header-extract-address string))))
