@@ -768,18 +768,20 @@ BUFFER must be a single-byte buffer."
        (elmo-imap4-send-command-wait session
 				     (format
 				      (if elmo-imap4-use-uid
-					  "uid search %s %s %s %s"
-					" search %s %s %s %s")
+					  "uid search%s%s%s %s"
+					" search%s%s%s %s")
 				      (if from-msgs
 					  (concat
-					   (unless elmo-imap4-use-uid "uid ")
+					   (if elmo-imap4-use-uid "uid ")
 					   (cdr
-					    (elmo-imap4-make-number-set-list
-					     from-msgs)))
-					"")
+					    (car 
+					     (elmo-imap4-make-number-set-list
+					      from-msgs)))
+					   " ")
+					" ")
 				      (if (eq (elmo-filter-type filter)
 					      'unmatch)
-					  "not" "")
+					  "not " "")
 				      search-key
 				      (elmo-date-get-description
 				       (elmo-date-get-datevec
@@ -794,21 +796,24 @@ BUFFER must be a single-byte buffer."
       (elmo-imap4-response-value
        (elmo-imap4-send-command-wait session
 				     (list
-				      (if elmo-imap4-use-uid
-					  "uid search CHARSET "
-					"search CHARSET ")
+				      (if elmo-imap4-use-uid "uid ")
+				      "search "
+				      "CHARSET "
 				      (elmo-imap4-astring
 				       (symbol-name charset))
+				      " "
 				      (if from-msgs
 					  (concat
-					   (unless elmo-imap4-use-uid "uid ")
+					   (if elmo-imap4-use-uid "uid ")
 					   (cdr
-					    (elmo-imap4-make-number-set-list
-					     from-msgs)))
+					    (car
+					     (elmo-imap4-make-number-set-list
+					      from-msgs)))
+					   " ")
 					"")
 				      (if (eq (elmo-filter-type filter)
 					      'unmatch)
-					  " not " " ")
+					  "not " "")
 				      (format "%s%s "
 					      (if (member
 						   (elmo-filter-key filter)
@@ -1591,19 +1596,19 @@ Return nil if no complete line has arrived."
 	;(list ' pos (+ pos len))))))
 
 (defsubst elmo-imap4-parse-string ()
-  (cond ((eq (char-after) ?\")
+  (cond ((eq (char-after (point)) ?\")
 	 (forward-char 1)
 	 (let ((p (point)) (name ""))
 	   (skip-chars-forward "^\"\\\\")
 	   (setq name (buffer-substring p (point)))
-	   (while (eq (char-after) ?\\)
+	   (while (eq (char-after (point)) ?\\)
 	     (setq p (1+ (point)))
 	     (forward-char 2)
 	     (skip-chars-forward "^\"\\\\")
 	     (setq name (concat name (buffer-substring p (point)))))
 	   (forward-char 1)
 	   name))
-	((eq (char-after) ?{)
+	((eq (char-after (point)) ?{)
 	 (elmo-imap4-parse-literal))))
 
 (defsubst elmo-imap4-parse-nil ()
@@ -1625,7 +1630,7 @@ Return nil if no complete line has arrived."
 
 (defsubst elmo-imap4-parse-address ()
   (let (address)
-    (when (eq (char-after) ?\()
+    (when (eq (char-after (point)) ?\()
       (elmo-imap4-forward)
       (setq address (vector (prog1 (elmo-imap4-parse-nstring)
 			      (elmo-imap4-forward))
@@ -1634,20 +1639,20 @@ Return nil if no complete line has arrived."
 			    (prog1 (elmo-imap4-parse-nstring)
 			      (elmo-imap4-forward))
 			    (elmo-imap4-parse-nstring)))
-      (when (eq (char-after) ?\))
+      (when (eq (char-after (point)) ?\))
 	(elmo-imap4-forward)
 	address))))
 
 (defsubst elmo-imap4-parse-address-list ()
-  (if (eq (char-after) ?\()
+  (if (eq (char-after (point)) ?\()
       (let (address addresses)
 	(elmo-imap4-forward)
-	(while (and (not (eq (char-after) ?\)))
+	(while (and (not (eq (char-after (point)) ?\)))
 		    ;; next line for MS Exchange bug
-		    (progn (and (eq (char-after) ? ) (elmo-imap4-forward)) t)
+		    (progn (and (eq (char-after (point)) ? ) (elmo-imap4-forward)) t)
 		    (setq address (elmo-imap4-parse-address)))
 	  (setq addresses (cons address addresses)))
-	(when (eq (char-after) ?\))
+	(when (eq (char-after (point)) ?\))
 	  (elmo-imap4-forward)
 	  (nreverse addresses)))
     (assert (elmo-imap4-parse-nil))))
@@ -1719,7 +1724,7 @@ Return nil if no complete line has arrived."
 		    (elmo-imap4-debug "*%s* NO arrived" token)
 		    (setq elmo-imap4-reached-tag token)
 		    (let (code text)
-		      (when (eq (char-after) ?\[)
+		      (when (eq (char-after (point)) ?\[)
 			(setq code (buffer-substring (point)
 						     (search-forward "]")))
 			(elmo-imap4-forward))
@@ -1730,7 +1735,7 @@ Return nil if no complete line has arrived."
 		    (elmo-imap4-debug "*%s* BAD arrived" token)
 		    (setq elmo-imap4-reached-tag token)
 		    (let (code text)
-		      (when (eq (char-after) ?\[)
+		      (when (eq (char-after (point)) ?\[)
 			(setq code (buffer-substring (point)
 						     (search-forward "]")))
 			(elmo-imap4-forward))
@@ -1740,7 +1745,7 @@ Return nil if no complete line has arrived."
 		    
 (defun elmo-imap4-parse-bye ()
   (let (code text)
-    (when (eq (char-after) ?\[)
+    (when (eq (char-after (point)) ?\[)
       (setq code (buffer-substring (point)
 				   (search-forward "]")))
       (elmo-imap4-forward))
@@ -1755,7 +1760,7 @@ Return nil if no complete line has arrived."
   (list 'text (buffer-substring (point) (point-max))))
 
 (defun elmo-imap4-parse-resp-text-code ()
-  (when (eq (char-after) ?\[)
+  (when (eq (char-after (point)) ?\[)
     (elmo-imap4-forward)
     (cond ((search-forward "PERMANENTFLAGS " nil t)
 	   (list 'permanentflags (elmo-imap4-parse-flag-list)))
@@ -1800,9 +1805,9 @@ Return nil if no complete line has arrived."
 	(list mailbox flags delimiter)))))
 
 (defsubst elmo-imap4-parse-header-list ()
-  (when (eq (char-after) ?\()
+  (when (eq (char-after (point)) ?\()
     (let (strlist)
-      (while (not (eq (char-after) ?\)))
+      (while (not (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
 	(push (elmo-imap4-parse-astring) strlist))
       (elmo-imap4-forward)
@@ -1822,9 +1827,9 @@ Return nil if no complete line has arrived."
       section)))
 
 (defun elmo-imap4-parse-fetch (response)
-  (when (eq (char-after) ?\()
+  (when (eq (char-after (point)) ?\()
     (let (element list)
-      (while (not (eq (char-after) ?\)))
+      (while (not (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
 	(let ((token (elmo-imap4-fetch-read (current-buffer))))
 	  (elmo-imap4-forward)
@@ -1853,7 +1858,7 @@ Return nil if no complete line has arrived."
 			    'bodydetail
 			    (upcase (elmo-imap4-parse-fetch-body-section))
 			    (and
-			     (eq (char-after) ?<)
+			     (eq (char-after (point)) ?<)
 			     (buffer-substring (1+ (point))
 					       (progn
 						 (search-forward ">" nil t)
@@ -1874,7 +1879,7 @@ Return nil if no complete line has arrived."
   (let ((mailbox (elmo-imap4-parse-mailbox))
 	status)
     (when (and mailbox (search-forward "(" nil t))
-      (while (not (eq (char-after) ?\)))
+      (while (not (eq (char-after (point)) ?\)))
 	(setq status
 	      (cons
 	       (let ((token (elmo-imap4-read (current-buffer))))
@@ -1955,7 +1960,7 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-acl ()
   (let ((mailbox (elmo-imap4-parse-mailbox))
 	identifier rights acl)
-    (while (eq (char-after) ?\ )
+    (while (eq (char-after (point)) ?\ )
       (elmo-imap4-forward)
       (setq identifier (elmo-imap4-parse-astring))
       (elmo-imap4-forward)
@@ -1971,7 +1976,7 @@ Return nil if no complete line has arrived."
       (split-string str))))
 
 (defun elmo-imap4-parse-envelope ()
-  (when (eq (char-after) ?\()
+  (when (eq (char-after (point)) ?\()
     (elmo-imap4-forward)
     (vector (prog1 (elmo-imap4-parse-nstring);; date
 	      (elmo-imap4-forward))
@@ -1995,7 +2000,7 @@ Return nil if no complete line has arrived."
 	      (elmo-imap4-forward)))))
 
 (defsubst elmo-imap4-parse-string-list ()
-  (cond ((eq (char-after) ?\();; body-fld-param
+  (cond ((eq (char-after (point)) ?\();; body-fld-param
 	 (let (strlist str)
 	   (elmo-imap4-forward)
 	   (while (setq str (elmo-imap4-parse-string))
@@ -2006,14 +2011,14 @@ Return nil if no complete line has arrived."
 	 nil)))
 
 (defun elmo-imap4-parse-body-extension ()
-  (if (eq (char-after) ?\()
+  (if (eq (char-after (point)) ?\()
       (let (b-e)
 	(elmo-imap4-forward)
 	(push (elmo-imap4-parse-body-extension) b-e)
-	(while (eq (char-after) ?\ )
+	(while (eq (char-after (point)) ?\ )
 	  (elmo-imap4-forward)
 	  (push (elmo-imap4-parse-body-extension) b-e))
-	(assert (eq (char-after) ?\)))
+	(assert (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
 	(nreverse b-e))
     (or (elmo-imap4-parse-number)
@@ -2021,10 +2026,10 @@ Return nil if no complete line has arrived."
 
 (defsubst elmo-imap4-parse-body-ext ()
   (let (ext)
-    (when (eq (char-after) ?\ );; body-fld-dsp
+    (when (eq (char-after (point)) ?\ );; body-fld-dsp
       (elmo-imap4-forward)
       (let (dsp)
-	(if (eq (char-after) ?\()
+	(if (eq (char-after (point)) ?\()
 	    (progn
 	      (elmo-imap4-forward)
 	      (push (elmo-imap4-parse-string) dsp)
@@ -2033,35 +2038,35 @@ Return nil if no complete line has arrived."
 	      (elmo-imap4-forward))
 	  (assert (elmo-imap4-parse-nil)))
 	(push (nreverse dsp) ext))
-      (when (eq (char-after) ?\ );; body-fld-lang
+      (when (eq (char-after (point)) ?\ );; body-fld-lang
 	(elmo-imap4-forward)
-	(if (eq (char-after) ?\()
+	(if (eq (char-after (point)) ?\()
 	    (push (elmo-imap4-parse-string-list) ext)
 	  (push (elmo-imap4-parse-nstring) ext))
-	(while (eq (char-after) ?\ );; body-extension
+	(while (eq (char-after (point)) ?\ );; body-extension
 	  (elmo-imap4-forward)
 	  (setq ext (append (elmo-imap4-parse-body-extension) ext)))))
     ext))
 
 (defun elmo-imap4-parse-body ()
   (let (body)
-    (when (eq (char-after) ?\()
+    (when (eq (char-after (point)) ?\()
       (elmo-imap4-forward)
-      (if (eq (char-after) ?\()
+      (if (eq (char-after (point)) ?\()
 	  (let (subbody)
-	    (while (and (eq (char-after) ?\()
+	    (while (and (eq (char-after (point)) ?\()
 			(setq subbody (elmo-imap4-parse-body)))
 	      (push subbody body))
 	    (elmo-imap4-forward)
 	    (push (elmo-imap4-parse-string) body);; media-subtype
-	    (when (eq (char-after) ?\ );; body-ext-mpart:
+	    (when (eq (char-after (point)) ?\ );; body-ext-mpart:
 	      (elmo-imap4-forward)
-	      (if (eq (char-after) ?\();; body-fld-param
+	      (if (eq (char-after (point)) ?\();; body-fld-param
 		  (push (elmo-imap4-parse-string-list) body)
 		(push (and (elmo-imap4-parse-nil) nil) body))
 	      (setq body
 		    (append (elmo-imap4-parse-body-ext) body)));; body-ext-...
-	    (assert (eq (char-after) ?\)))
+	    (assert (eq (char-after (point)) ?\)))
 	    (elmo-imap4-forward)
 	    (nreverse body))
 
@@ -2070,8 +2075,8 @@ Return nil if no complete line has arrived."
 	(push (elmo-imap4-parse-string) body);; media-subtype
 	(elmo-imap4-forward)
 	;; next line for Sun SIMS bug
-	(and (eq (char-after) ? ) (elmo-imap4-forward))
-	(if (eq (char-after) ?\();; body-fld-param
+	(and (eq (char-after (point)) ? ) (elmo-imap4-forward))
+	(if (eq (char-after (point)) ?\();; body-fld-param
 	    (push (elmo-imap4-parse-string-list) body)
 	  (push (and (elmo-imap4-parse-nil) nil) body))
 	(elmo-imap4-forward)
@@ -2093,10 +2098,10 @@ Return nil if no complete line has arrived."
 	;; the problem is that the two first are in turn optionally followed
 	;; by the third.  So we parse the first two here (if there are any)...
 
-	(when (eq (char-after) ?\ )
+	(when (eq (char-after (point)) ?\ )
 	  (elmo-imap4-forward)
 	  (let (lines)
-	    (cond ((eq (char-after) ?\();; body-type-msg:
+	    (cond ((eq (char-after (point)) ?\();; body-type-msg:
 		   (push (elmo-imap4-parse-envelope) body);; envelope
 		   (elmo-imap4-forward)
 		   (push (elmo-imap4-parse-body) body);; body
@@ -2109,13 +2114,13 @@ Return nil if no complete line has arrived."
 
 	;; ...and then parse the third one here...
 
-	(when (eq (char-after) ?\ );; body-ext-1part:
+	(when (eq (char-after (point)) ?\ );; body-ext-1part:
 	  (elmo-imap4-forward)
 	  (push (elmo-imap4-parse-nstring) body);; body-fld-md5
 	  (setq body
 		(append (elmo-imap4-parse-body-ext) body)));; body-ext-1part..
     
-	(assert (eq (char-after) ?\)))
+	(assert (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
 	(nreverse body)))))
 

@@ -1,5 +1,10 @@
 2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Fixed
+	arguments for `SEARCH' command.
+	(elmo-imap4-parse-string): Set `POS' argument for char-after.
+	All other related portions are changed.
+
 	* elmo-cache.el (elmo-cache-search-all): Added argument `from-msgs'.
 
 	* elmo2.el (elmo-generic-list-folder-unread): Rewrite.
