@@ -160,20 +160,26 @@ update overview when message is fetched."
 	(setq shimbun-id (elmo-msgdb-overview-entity-get-id entity))
       (setq message-id (elmo-msgdb-overview-entity-get-id entity)
 	    shimbun-id nil))
-    (shimbun-make-header
-     (elmo-msgdb-overview-entity-get-number entity)
-     (shimbun-mime-encode-string
-      (elmo-msgdb-overview-entity-get-subject entity))
-     (shimbun-mime-encode-string
-      (elmo-msgdb-overview-entity-get-from entity))
-     (elmo-msgdb-overview-entity-get-date entity)
-     message-id
-     (elmo-msgdb-overview-entity-get-references entity)
-     0
-     0
-     (elmo-msgdb-overview-entity-get-extra-field entity "xref")
-     (and shimbun-id
-	  (list (cons "x-shimbun-id" shimbun-id))))))
+    (elmo-set-work-buf
+     (set-buffer-multibyte t)
+     (shimbun-make-header
+      (elmo-msgdb-overview-entity-get-number entity)
+      (shimbun-mime-encode-string
+       (decode-mime-charset-string
+	(elmo-msgdb-overview-entity-get-subject-no-decode entity)
+	elmo-mime-charset))
+      (shimbun-mime-encode-string
+       (decode-mime-charset-string
+	(elmo-msgdb-overview-entity-get-from-no-decode entity)
+	elmo-mime-charset))
+      (elmo-msgdb-overview-entity-get-date entity)
+      message-id
+      (elmo-msgdb-overview-entity-get-references entity)
+      0
+      0
+      (elmo-msgdb-overview-entity-get-extra-field entity "xref")
+      (and shimbun-id
+	   (list (cons "x-shimbun-id" shimbun-id)))))))
 
 (defsubst elmo-shimbun-folder-header-hash-setup (folder headers)
   (let ((hash (or (elmo-shimbun-folder-header-hash-internal folder)

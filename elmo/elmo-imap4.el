@@ -2088,7 +2088,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
-	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
+	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"
+			    "larger" "smaller"))
 	(total 0)
 	(length (length from-msgs))
 	charset set-list end results)
