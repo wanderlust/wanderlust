@@ -1,34 +1,38 @@
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (elmo-network-authenticate-session): Use `elmo-imap4-login'
+
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-pop3-auth-apop): Signal `elmo-pop-auth-apop'
 	if error.
 	(elmo-network-authenticate-session): Use `elmo-pop-auth-user'
 	and `elmo-pop-auth-apop'.
 
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-network-authenticate-session): Fix for `APOP'.
 
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-network-authenticate-session): Split
 	encoded response value.
 
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-network-authenticate-session): Abolish
 	`elmo-pop3-force-login'.
 	Redefine `sasl-mechanisms'.
 	* elmo-vars.el (elmo-pop3-force-login): Ditto.
 
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (toplevel): Delete defun-maybe for sasl-*.
 	Delete `elmo-imap4-authenticator-alist'.
 	(elmo-imap4-auth-cram-md5): Delete.
 	(elmo-imap4-auth-digest-md5): Delete.
 
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-pop3-auth-digest-md5): Delete.
 	(elmo-pop3-auth-scram-md5): Ditto.
