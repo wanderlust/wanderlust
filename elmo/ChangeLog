@@ -1,5 +1,10 @@
 2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-count-flags): Changed return value.
+
+	* elmo-flag.el (elmo-preserved-flags): New variable.
+	(elmo-get-global-flags): Use it.
+
 	* modb-standard.el (modb-standard-digest-flags): New variable.
 	(elmo-msgdb-list-flagged): Use it for `digest'; Add `uncached';
 	Changed behavior of `any'.

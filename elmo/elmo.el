@@ -1186,14 +1186,14 @@ ENTITY is the message-entity to get the parent.")
 
 (luna-define-generic elmo-folder-count-flags (folder)
   "Count flagged message number in the msgdb of the FOLDER.
-Return a list of numbers (`new' `unread' `answered')")
+Return alist of flag and numbers.
+Example:
+\(\(new . 10\)
+  \(unread . 20\)
+  \(answered . 3\)\)")
 
 (luna-define-method elmo-folder-count-flags ((folder elmo-folder))
-  (let* ((flag-count (elmo-msgdb-flag-count (elmo-folder-msgdb folder)))
-	 (new (or (cdr (assq 'new flag-count)) 0))
-	 (unread (or (cdr (assq 'unread flag-count)) 0))
-	 (answered(or (cdr (assq 'answered flag-count)) 0)))
-    (list new (- unread new) answered)))
+  (elmo-msgdb-flag-count (elmo-folder-msgdb folder)))
 
 (defun elmo-message-set-flag (folder number flag &optional is-local)
   "Set message flag.
