@@ -94,9 +94,7 @@ If it is the symbol `all', update overview for all shimbun folders."
   (luna-define-internal-accessors 'shimbun-elmo-mua))
 
 (luna-define-method shimbun-mua-search-id ((mua shimbun-elmo-mua) id)
-  (elmo-msgdb-message-entity (elmo-folder-msgdb
-			      (shimbun-elmo-mua-folder-internal mua))
-			     id))
+  (elmo-message-entity (shimbun-elmo-mua-folder-internal mua) id))
 
 (eval-and-compile
   (luna-define-class elmo-shimbun-folder
@@ -121,9 +119,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 (defsubst elmo-shimbun-folder-shimbun-header (folder location)
   (let ((hash (elmo-shimbun-folder-header-hash-internal folder)))
     (or (and hash (elmo-get-hash-val location hash))
-	(let ((entity (elmo-msgdb-message-entity
-		       (elmo-folder-msgdb folder)
-		       location))
+	(let ((entity (elmo-message-entity folder location))
 	      (elmo-hash-minimum-size 63)
 	      header)
 	  (when entity
@@ -200,9 +196,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	  (delq nil
 		(mapcar
 		 (lambda (x)
-		   (unless (elmo-msgdb-message-entity
-			    (elmo-folder-msgdb folder)
-			    (shimbun-header-id x))
+		   (unless (elmo-message-entity folder (shimbun-header-id x))
 		     x))
 		 ;; This takes much time.
 		 (shimbun-headers
@@ -380,8 +374,7 @@ If it is the symbol `all', update overview for all shimbun folders."
   nil)
 
 (defsubst elmo-shimbun-update-overview (folder shimbun-id header)
-  (let ((entity (elmo-msgdb-message-entity (elmo-folder-msgdb folder)
-					   shimbun-id))
+  (let ((entity (elmo-message-entity folder shimbun-id))
 	(message-id (shimbun-header-id header))
 	references)
     (unless (string= shimbun-id message-id)

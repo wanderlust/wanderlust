@@ -247,7 +247,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (goto-char (match-end 0))
     (let ((search-key (vector
 		       (if (match-beginning 1) 'unmatch 'match)
-		       (elmo-match-buffer 2)
+		       (downcase (elmo-match-buffer 2))
 		       (elmo-condition-parse-search-value))))
       ;; syntax sugar.
       (if (string= (aref search-key 1) "tocc")

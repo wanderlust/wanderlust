@@ -95,6 +95,11 @@
   (elmo-folder-delete-messages (elmo-pipe-folder-dst-internal folder)
 			       numbers))
 
+(luna-define-method elmo-folder-detach-messages ((folder elmo-pipe-folder)
+						 numbers)
+  (elmo-folder-detach-messages (elmo-pipe-folder-dst-internal folder)
+			       numbers))
+
 (defvar elmo-pipe-drained-hook nil "A hook called when the pipe is flushed.")
 
 (defsubst elmo-pipe-folder-list-target-messages (src &optional ignore-list)
