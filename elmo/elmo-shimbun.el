@@ -225,20 +225,13 @@ See `shimbun-headers' for more detail about RANGE."
 	 (elmo-shimbun-folder-shimbun-internal folder))
 	nil))
 
-(luna-define-method elmo-folder-check :around ((folder elmo-shimbun-folder))
+(luna-define-method elmo-folder-check :after ((folder elmo-shimbun-folder))
   (when (shimbun-current-group-internal 
 	 (elmo-shimbun-folder-shimbun-internal folder))
-    (when (and (elmo-folder-plugged-p folder)
-	       (elmo-shimbun-headers-check-p folder))
-      (elmo-shimbun-get-headers folder)
-      (luna-call-next-method))))
-
-(luna-define-method elmo-folder-clear :around ((folder elmo-shimbun-folder)
-					       &optional keep-killed)
-  (elmo-shimbun-folder-set-headers-internal folder nil)
-  (elmo-shimbun-folder-set-header-hash-internal folder nil)
-  (elmo-shimbun-folder-set-last-check-internal folder nil)
-  (luna-call-next-method))
+    (when (elmo-shimbun-headers-check-p folder)    
+      ;; Discard current headers information.
+      (elmo-folder-close-internal folder)
+      (elmo-folder-open-internal folder))))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-shimbun-folder))
