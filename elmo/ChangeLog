@@ -1,3 +1,11 @@
+2003-02-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-shimbun.el (elmo-folder-initialize): Do not call
+	shimbun-open in case of "@".
+	(elmo-folder-open-internal): Cope with shimbun = nil case.
+	(elmo-folder-plugged-p): Ditto.
+	(elmo-folder-list-subfolders): Make list for "@/" group.
+
 2003-01-31  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-imap4.el (elmo-folder-expand-msgdb-path): Don't expand
