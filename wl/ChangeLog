@@ -1,3 +1,8 @@
+2004-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-thread.el (wl-thread-set-parent): If parent is a message
+	which is identified by references, set linked as nil.
+
 2004-09-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-mode-line-format-spec-alist): Added spec "m".

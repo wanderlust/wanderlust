@@ -1144,7 +1144,15 @@ Message is inserted to the summary buffer."
 	    (wl-thread-entity-set-children
 	     dst-parent-entity
 	     (append children (list number)))
-	    (wl-thread-entity-set-linked entity t))
+	    (wl-thread-entity-set-linked
+	     entity
+	     (let ((parent (elmo-message-entity-parent
+			    wl-summary-buffer-elmo-folder
+			    (elmo-message-entity
+			     wl-summary-buffer-elmo-folder
+			     number))))
+	       (or (null parent)
+		   (/= parent-number (elmo-message-entity-number parent))))))
 	;; insert as top
 	(wl-append wl-thread-entity-list (list number))
 	(wl-thread-entity-set-linked entity nil))
