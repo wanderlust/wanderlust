@@ -32,6 +32,7 @@
 (require 'wl-summary)
 
 (eval-when-compile
+  (defalias-maybe 'wl-summary-target-mark 'ignore)
   (defalias-maybe 'wl-summary-target-mark-region 'ignore))
 
 (defsubst wl-summary-action-mark (action)
@@ -849,12 +850,6 @@ Return number if put mark succeed"
 If optional argument NUMBER is specified, unmark message specified by NUMBER."
   (interactive)
   (wl-summary-unset-mark number (interactive-p)))
-
-(defun wl-summary-target-mark (&optional number)
-  "Put target mark '*' on current message.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (wl-summary-set-mark "*" number (interactive-p)))
 
 (defun wl-summary-unmark-region (beg end)
   (interactive "r")
