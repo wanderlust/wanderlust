@@ -856,14 +856,36 @@
 	      '(wl-highlight-summary-normal-face)
 	    '(wl-highlight-summary-thread-top-face)))))))
 
-(defun wl-highlight-summary-line-string (line flags temp-mark indent)
+(defun wl-highlight-summary-line-flag-folder (number beg end &optional string)
+  ;; help-echo for flag folder.
+  (let (flag-info)
+    (current-buffer)
+    (when (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
+	      'flag)
+      (setq flag-info
+	    (elmo-flag-folder-referrer wl-summary-buffer-elmo-folder
+				       number))
+      (if flag-info
+	  (put-text-property beg end 'help-echo
+			     (concat "The message exists in "
+				     (mapconcat
+				      (lambda (pair)
+					(concat (car pair) "/"
+						(number-to-string
+						 (cdr pair))))
+				      flag-info ","))
+			     string)))))
+
+(defun wl-highlight-summary-line-string (number line flags temp-mark indent)
   (let ((fsymbol (car (wl-highlight-summary-line-face-spec
 		       flags
 		       temp-mark
 		       (> (length indent) 0)))))
     (put-text-property 0 (length line) 'face fsymbol line))
-  (if wl-use-highlight-mouse-line
-      (put-text-property 0 (length line) 'mouse-face 'highlight line)))
+  (when wl-use-highlight-mouse-line
+    (put-text-property 0 (length line) 'mouse-face 'highlight line))
+  (when wl-use-flag-folder-help-echo
+    (wl-highlight-summary-line-flag-folder number 0 (length line) line)))
 
 (defun wl-highlight-summary-current-line ()
   (interactive)
@@ -896,6 +918,8 @@
 			   'wl-highlight-action-argument-face))
       (when wl-use-highlight-mouse-line
 	(put-text-property bol eol 'mouse-face 'highlight))
+      (when wl-use-flag-folder-help-echo
+	(wl-highlight-summary-line-flag-folder number bol eol))
       (when wl-use-dnd
 	(wl-dnd-set-drag-starter bol eol)))))
 
@@ -1216,6 +1240,9 @@ interpreted as cited text.)"
 		(1- (point))))
 	 (inhibit-read-only t))
     (put-text-property beg end 'mouse-face 'highlight)))
+
+
+(autoload 'elmo-flag-folder-referrer "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'wl-highlight) (require 'wl-version))

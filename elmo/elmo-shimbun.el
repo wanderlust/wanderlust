@@ -351,7 +351,7 @@ update overview when message is fetched."
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
 					      numlist flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
-	entity i percent length msgid)
+	entity i percent length msgid flags)
     (setq length (length numlist))
     (setq i 0)
     (message "Creating msgdb...")
@@ -360,9 +360,10 @@ update overview when message is fetched."
 	    (elmo-shimbun-msgdb-create-entity
 	     folder (car numlist)))
       (when entity
-	(setq msgid (elmo-msgdb-overview-entity-get-id entity))
-	(elmo-msgdb-append-entity new-msgdb entity
-				  (elmo-flag-table-get flag-table msgid)))
+	(setq msgid (elmo-msgdb-overview-entity-get-id entity)
+	      flags (elmo-flag-table-get flag-table msgid))
+	(elmo-global-flags-set flags folder (car numlist) msgid)
+	(elmo-msgdb-append-entity new-msgdb entity flags))
       (when (> length elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) length))

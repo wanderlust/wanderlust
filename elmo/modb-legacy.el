@@ -38,6 +38,28 @@
 
 ;;; legacy implement
 ;;
+
+(defconst modb-legacy-new-mark "N"
+  "Mark for new message.")
+
+(defconst modb-legacy-unread-uncached-mark "U"
+  "Mark for unread and uncached message.")
+
+(defconst modb-legacy-unread-cached-mark "!"
+  "Mark for unread but already cached message.")
+
+(defconst modb-legacy-read-uncached-mark "u"
+  "Mark for read but uncached message.")
+
+(defconst modb-legacy-answered-cached-mark "&"
+  "Mark for answered and cached message.")
+
+(defconst modb-legacy-answered-uncached-mark "A"
+  "Mark for answered but cached message.")
+
+(defconst modb-legacy-important-mark "$"
+  "Mark for important message.")
+
 (eval-and-compile
   (luna-define-class modb-legacy (modb-generic)
 		     (overview number-alist mark-alist index))
@@ -80,62 +102,62 @@
 (defsubst elmo-msgdb-set-path (msgdb path)
   (modb-generic-set-location-internal msgdb path))
 
-(defvar elmo-msgdb-unread-marks-internal nil)
-(defsubst elmo-msgdb-unread-marks ()
+(defvar modb-legacy-unread-marks-internal nil)
+(defsubst modb-legacy-unread-marks ()
   "Return an unread mark list"
-  (or elmo-msgdb-unread-marks-internal
-      (setq elmo-msgdb-unread-marks-internal
-	    (list elmo-msgdb-new-mark
-		  elmo-msgdb-unread-uncached-mark
-		  elmo-msgdb-unread-cached-mark))))
+  (or modb-legacy-unread-marks-internal
+      (setq modb-legacy-unread-marks-internal
+	    (list modb-legacy-new-mark
+		  modb-legacy-unread-uncached-mark
+		  modb-legacy-unread-cached-mark))))
 
-(defvar elmo-msgdb-answered-marks-internal nil)
-(defsubst elmo-msgdb-answered-marks ()
+(defvar modb-legacy-answered-marks-internal nil)
+(defsubst modb-legacy-answered-marks ()
   "Return an answered mark list"
-  (or elmo-msgdb-answered-marks-internal
-      (setq elmo-msgdb-answered-marks-internal
-	    (list elmo-msgdb-answered-cached-mark
-		  elmo-msgdb-answered-uncached-mark))))
+  (or modb-legacy-answered-marks-internal
+      (setq modb-legacy-answered-marks-internal
+	    (list modb-legacy-answered-cached-mark
+		  modb-legacy-answered-uncached-mark))))
 
-(defvar elmo-msgdb-uncached-marks-internal nil)
-(defsubst elmo-msgdb-uncached-marks ()
-  (or elmo-msgdb-uncached-marks-internal
-      (setq elmo-msgdb-uncached-marks-internal
-	    (list elmo-msgdb-new-mark
-		  elmo-msgdb-answered-uncached-mark
-		  elmo-msgdb-unread-uncached-mark
-		  elmo-msgdb-read-uncached-mark))))
+(defvar modb-legacy-uncached-marks-internal nil)
+(defsubst modb-legacy-uncached-marks ()
+  (or modb-legacy-uncached-marks-internal
+      (setq modb-legacy-uncached-marks-internal
+	    (list modb-legacy-new-mark
+		  modb-legacy-answered-uncached-mark
+		  modb-legacy-unread-uncached-mark
+		  modb-legacy-read-uncached-mark))))
 
-(defsubst elmo-msgdb-mark-to-flags (mark)
+(defsubst modb-legacy-mark-to-flags (mark)
   (append
-   (and (string= mark elmo-msgdb-new-mark)
+   (and (string= mark modb-legacy-new-mark)
 	'(new))
-   (and (string= mark elmo-msgdb-important-mark)
+   (and (string= mark modb-legacy-important-mark)
 	'(important))
-   (and (member mark (elmo-msgdb-unread-marks))
+   (and (member mark (modb-legacy-unread-marks))
 	'(unread))
-   (and (member mark (elmo-msgdb-answered-marks))
+   (and (member mark (modb-legacy-answered-marks))
 	'(answered))
-   (and (not (member mark (elmo-msgdb-uncached-marks)))
+   (and (not (member mark (modb-legacy-uncached-marks)))
 	'(cached))))
 
-(defsubst elmo-msgdb-flags-to-mark (flags)
+(defsubst modb-legacy-flags-to-mark (flags)
   (cond ((memq 'new flags)
-	 elmo-msgdb-new-mark)
+	 modb-legacy-new-mark)
 	((memq 'important flags)
-	 elmo-msgdb-important-mark)
+	 modb-legacy-important-mark)
 	((memq 'answered flags)
 	 (if (memq 'cached flags)
-	     elmo-msgdb-answered-cached-mark
-	   elmo-msgdb-answered-uncached-mark))
+	     modb-legacy-answered-cached-mark
+	   modb-legacy-answered-uncached-mark))
 	((memq 'unread flags)
 	 (if (memq 'cached flags)
-	     elmo-msgdb-unread-cached-mark
-	   elmo-msgdb-unread-uncached-mark))
+	     modb-legacy-unread-cached-mark
+	   modb-legacy-unread-uncached-mark))
 	(t
 	 (if (memq 'cached flags)
 	     nil
-	   elmo-msgdb-read-uncached-mark))))
+	   modb-legacy-read-uncached-mark))))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
@@ -295,7 +317,7 @@ Return a list of message numbers which have duplicated message-ids."
   (length (modb-legacy-overview-internal msgdb)))
 
 (luna-define-method elmo-msgdb-flags ((msgdb modb-legacy) number)
-  (elmo-msgdb-mark-to-flags (elmo-msgdb-get-mark msgdb number)))
+  (modb-legacy-mark-to-flags (elmo-msgdb-get-mark msgdb number)))
 
 (luna-define-method elmo-msgdb-set-flag ((msgdb modb-legacy)
 					 number flag)
@@ -306,7 +328,7 @@ Return a list of message numbers which have duplicated message-ids."
      (elmo-msgdb-unset-flag msgdb number 'cached))
     (t
      (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	    (flags (elmo-msgdb-mark-to-flags cur-mark))
+	    (flags (modb-legacy-mark-to-flags cur-mark))
 	    new-mark)
        (and (memq 'new flags)
 	    (setq flags (delq 'new flags)))
@@ -315,7 +337,7 @@ Return a list of message numbers which have duplicated message-ids."
        (when (and (eq flag 'unread)
 		  (memq 'answered flags))
 	 (setq flags (delq 'answered flags)))
-       (setq new-mark (elmo-msgdb-flags-to-mark flags))
+       (setq new-mark (modb-legacy-flags-to-mark flags))
        (unless (string= new-mark cur-mark)
 	 (elmo-msgdb-set-mark msgdb number new-mark))))))
 
@@ -328,7 +350,7 @@ Return a list of message numbers which have duplicated message-ids."
      (elmo-msgdb-set-flag msgdb number 'cached))
     (t
      (let* ((cur-mark (elmo-msgdb-get-mark msgdb number))
-	    (flags (elmo-msgdb-mark-to-flags cur-mark))
+	    (flags (modb-legacy-mark-to-flags cur-mark))
 	    new-mark)
        (and (memq 'new flags)
 	    (setq flags (delq 'new flags)))
@@ -337,7 +359,7 @@ Return a list of message numbers which have duplicated message-ids."
        (when (and (eq flag 'unread)
 		  (memq 'answered flags))
 	 (setq flags (delq 'answered flags)))
-       (setq new-mark (elmo-msgdb-flags-to-mark flags))
+       (setq new-mark (modb-legacy-flags-to-mark flags))
        (unless (string= new-mark cur-mark)
 	 (elmo-msgdb-set-mark msgdb number new-mark))))))
 
@@ -350,25 +372,25 @@ Return a list of message numbers which have duplicated message-ids."
 	mark-regexp matched)
     (case flag
       (new
-       (setq mark-regexp (regexp-quote elmo-msgdb-new-mark)))
+       (setq mark-regexp (regexp-quote modb-legacy-new-mark)))
       (unread
-       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+       (setq mark-regexp (elmo-regexp-opt (modb-legacy-unread-marks))))
       (answered
-       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-answered-marks))))
+       (setq mark-regexp (elmo-regexp-opt (modb-legacy-answered-marks))))
       (important
-       (setq mark-regexp (regexp-quote elmo-msgdb-important-mark)))
+       (setq mark-regexp (regexp-quote modb-legacy-important-mark)))
       (read
-       (setq mark-regexp (elmo-regexp-opt (elmo-msgdb-unread-marks))))
+       (setq mark-regexp (elmo-regexp-opt (modb-legacy-unread-marks))))
       (digest
        (setq mark-regexp (elmo-regexp-opt
-			  (append (elmo-msgdb-unread-marks)
-				  (list elmo-msgdb-important-mark)))))
+			  (append (modb-legacy-unread-marks)
+				  (list modb-legacy-important-mark)))))
       (any
        (setq mark-regexp (elmo-regexp-opt
 			  (append
-			   (elmo-msgdb-unread-marks)
-			   (elmo-msgdb-answered-marks)
-			   (list elmo-msgdb-important-mark))))))
+			   (modb-legacy-unread-marks)
+			   (modb-legacy-answered-marks)
+			   (list modb-legacy-important-mark))))))
     (when mark-regexp
       (if (eq flag 'read)
 	  (dolist (number (elmo-msgdb-list-messages msgdb))
@@ -395,7 +417,7 @@ Return a list of message numbers which have duplicated message-ids."
        (nconc (elmo-msgdb-get-number-alist msgdb)
 	      (list (cons number message-id))))
       (modb-generic-set-message-modified-internal msgdb t)
-      (when (setq mark (elmo-msgdb-flags-to-mark flags))
+      (when (setq mark (modb-legacy-flags-to-mark flags))
 	(elmo-msgdb-set-mark-alist
 	 msgdb
 	 (nconc (elmo-msgdb-get-mark-alist msgdb)

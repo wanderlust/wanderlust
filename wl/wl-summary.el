@@ -665,6 +665,7 @@ you."
 	(dummy-temp (char-to-string 200))
 	(wl-summary-new-mark (char-to-string 201)) ; bind only for the check.
 	(wl-summary-flag-priority-list '(new))     ; ditto.
+	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
       (setq wl-summary-buffer-number-column column
@@ -1011,10 +1012,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-message-modified-p ()
   wl-summary-buffer-message-modified)
 (defun wl-summary-set-mark-modified ()
-  (elmo-folder-set-mark-modified-internal
+  (elmo-folder-set-flag-modified-internal
    wl-summary-buffer-elmo-folder t))
 (defun wl-summary-mark-modified-p ()
-  (elmo-folder-mark-modified-internal
+  (elmo-folder-flag-modified-internal
    wl-summary-buffer-elmo-folder))
 (defun wl-summary-set-thread-modified ()
   (setq wl-summary-buffer-thread-modified t))
@@ -1537,7 +1538,7 @@ If ARG is non-nil, checking is omitted."
       (let ((folder wl-summary-buffer-elmo-folder)
 	    (cur-buf (current-buffer)))
 	(message "Setting all msgs as read...")
-	(elmo-folder-mark-as-read folder
+	(elmo-folder-flag-as-read folder
 				  (elmo-folder-list-unreads
 				   folder))
 	(save-excursion
@@ -1667,13 +1668,8 @@ If ARG is non-nil, checking is omitted."
 		    wl-summary-buffer-elmo-folder)
 		   'internal))
       (message "Updating marks...")
-      (setq importants (elmo-uniq-list
-			(nconc
-			 (elmo-folder-list-importants
-			  wl-summary-buffer-elmo-folder)
-			 (elmo-folder-list-messages-with-global-mark
-			  wl-summary-buffer-elmo-folder
-			  elmo-msgdb-important-mark)))
+      (setq importants (elmo-folder-list-importants
+			wl-summary-buffer-elmo-folder)
 	    unreads (elmo-folder-list-unreads
 		     wl-summary-buffer-elmo-folder)
 	    answereds (elmo-folder-list-answereds
@@ -2857,8 +2853,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unmark-read folder number-list no-folder-mark)
-	  (elmo-folder-mark-as-read folder number-list no-folder-mark))
+	    (elmo-folder-unflag-read folder number-list no-folder-mark)
+	  (elmo-folder-flag-as-read folder number-list no-folder-mark))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  (unless inverse
@@ -2869,7 +2865,7 @@ Return non-nil if the mark is updated"
 	    (wl-summary-update-persistent-mark)))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
-	  ;; should elmo-folder-mark-as-read return unread numbers?
+	  ;; should elmo-folder-flag-as-read return unread numbers?
 	  (wl-summary-count-unread)
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
@@ -2912,8 +2908,8 @@ Return non-nil if the mark is updated"
       (if (null number-list)
 	  (message "No message.")
 	(if inverse
-	    (elmo-folder-unmark-answered folder number-list)
-	  (elmo-folder-mark-as-answered folder number-list))
+	    (elmo-folder-unflag-answered folder number-list)
+	  (elmo-folder-flag-as-answered folder number-list))
 	(dolist (number number-list)
 	  (setq visible (wl-summary-jump-to-msg number))
 	  ;; set mark on buffer
@@ -2921,7 +2917,7 @@ Return non-nil if the mark is updated"
 	    (wl-summary-update-persistent-mark)))
 	(unless no-modeline-update
 	  ;; Update unread numbers.
-	  ;; should elmo-folder-mark-as-read return unread numbers?
+	  ;; should elmo-flag-mark-as-read return unread numbers?
 	  (wl-summary-count-unread)
 	  (wl-summary-update-modeline)
 	  (wl-folder-update-unread
@@ -2951,7 +2947,7 @@ Return non-nil if the mark is updated"
 					       no-server-update)
   (interactive)
   (if (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
-	  'internal)
+	  'flag)
       (error "Cannot process mark in this folder"))
   (save-excursion
     (let* ((folder wl-summary-buffer-elmo-folder)
@@ -2979,10 +2975,8 @@ Return non-nil if the mark is updated"
 	    (progn
 	      ;; server side mark
 	      (save-match-data
-		(elmo-folder-unmark-important folder (list number)
+		(elmo-folder-unflag-important folder (list number)
 					      no-server-update)
-		(unless no-server-update
-		  (elmo-msgdb-global-mark-delete message-id))
 		;; Remove cache if local folder.
 		(if (and (elmo-folder-local-p folder)
 			 (not (eq 'mark
@@ -2990,15 +2984,8 @@ Return non-nil if the mark is updated"
 		    (elmo-file-cache-delete
 		     (elmo-file-cache-get-path message-id)))))
 	  ;; server side mark
-	  (elmo-folder-mark-as-important folder (list number)
-					 no-server-update)
-	  (if (eq (elmo-file-cache-exists-p message-id) 'entire)
-	      (elmo-folder-mark-as-read folder (list number))
-	    ;; Force cache message.
-	    (elmo-message-encache folder number 'read))
-	  (unless no-server-update
-	    (elmo-msgdb-global-mark-set message-id
-					elmo-msgdb-important-mark))))
+	  (elmo-folder-flag-as-important folder (list number)
+					 no-server-update)))
       (when visible
 	(wl-summary-update-persistent-mark))))
   number)
@@ -3116,6 +3103,13 @@ Return non-nil if the mark is updated"
 	"@"
       "")))
 
+;;; For future use.
+;;(defun wl-summary-line-cached ()
+;;  (if (elmo-message-cached-p wl-summary-buffer-elmo-folder
+;;			     (elmo-message-entity-number wl-message-entity))
+;;      " "
+;;    "u"))
+
 (defun wl-summary-create-line (wl-message-entity
 			       wl-parent-message-entity
 			       wl-temp-mark
@@ -3159,10 +3153,12 @@ Return non-nil if the mark is updated"
 			(elmo-msgdb-overview-entity-get-number
 			 wl-message-entity))))
     (if wl-summary-highlight
-	(wl-highlight-summary-line-string line
-					  wl-flags
-					  wl-temp-mark
-					  wl-thr-indent-string))
+	(wl-highlight-summary-line-string
+	 (elmo-msgdb-overview-entity-get-number wl-message-entity)
+	 line
+	 wl-flags
+	 wl-temp-mark
+	 wl-thr-indent-string))
     line))
 
 (defsubst wl-summary-proc-wday (wday-str year month mday)
@@ -3801,7 +3797,7 @@ Reply to author if invoked with ARG."
 	(error (set-window-configuration winconf)
 	       (signal (car err)(cdr err))))
       (with-current-buffer summary-buf
-	(elmo-folder-mark-as-answered folder (list number))
+	(elmo-folder-flag-as-answered folder (list number))
 	(wl-summary-update-persistent-mark))
       t)))
 

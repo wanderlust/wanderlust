@@ -128,11 +128,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	    (elmo-nmz-msgdb-create-entity
 	     folder (car numlist)))
       (when entity
-	(setq mark (or (elmo-msgdb-global-mark-get
-			(elmo-msgdb-overview-entity-get-id
-			 entity))
-		       elmo-msgdb-new-mark))
-	(elmo-msgdb-append-entity new-msgdb entity mark))
+	(elmo-msgdb-append-entity new-msgdb entity '(new)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))

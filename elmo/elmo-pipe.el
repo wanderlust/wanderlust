@@ -275,38 +275,40 @@
   (elmo-folder-message-make-temp-files
    (elmo-pipe-folder-dst-internal folder) numbers start-number))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-pipe-folder)
-					      numbers &optional ignore-flag)
-  (elmo-folder-mark-as-read (elmo-pipe-folder-dst-internal folder)
-			    numbers ignore-flag))
+(luna-define-method elmo-folder-flag-as-read ((folder elmo-pipe-folder)
+					      numbers &optional is-local)
+  (elmo-folder-flag-as-read (elmo-pipe-folder-dst-internal folder)
+			    numbers is-local))
 
-(luna-define-method elmo-folder-unmark-read ((folder elmo-pipe-folder)
+(luna-define-method elmo-folder-unflag-read ((folder elmo-pipe-folder)
 					     numbers
-					     &optional ignore-flag)
-  (elmo-folder-unmark-read (elmo-pipe-folder-dst-internal folder)
-			   numbers ignore-flag))
+					     &optional is-local)
+  (elmo-folder-unflag-read (elmo-pipe-folder-dst-internal folder)
+			   numbers is-local))
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-pipe-folder)
+(luna-define-method elmo-folder-unflag-important ((folder elmo-pipe-folder)
 						  numbers
-						  &optional ignore-flag)
-  (elmo-folder-unmark-important (elmo-pipe-folder-dst-internal folder)
-				numbers ignore-flag))
+						  &optional is-local)
+  (elmo-folder-unflag-important (elmo-pipe-folder-dst-internal folder)
+				numbers is-local))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-pipe-folder)
+(luna-define-method elmo-folder-flag-as-important ((folder elmo-pipe-folder)
 						   numbers
-						   &optional ignore-flag)
-  (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
-				 numbers ignore-flag))
+						   &optional is-local)
+  (elmo-folder-flag-as-important (elmo-pipe-folder-dst-internal folder)
+				 numbers is-local))
 
-(luna-define-method elmo-folder-unmark-answered ((folder elmo-pipe-folder)
-						 numbers)
-  (elmo-folder-unmark-answered (elmo-pipe-folder-dst-internal folder)
-			       numbers))
+(luna-define-method elmo-folder-unflag-answered ((folder elmo-pipe-folder)
+						 numbers
+						 &optional is-local)
+  (elmo-folder-unflag-answered (elmo-pipe-folder-dst-internal folder)
+			       numbers is-local))
 
-(luna-define-method elmo-folder-mark-as-answered ((folder elmo-pipe-folder)
-						  numbers)
-  (elmo-folder-mark-as-answered (elmo-pipe-folder-dst-internal folder)
-				numbers))
+(luna-define-method elmo-folder-flag-as-answered ((folder elmo-pipe-folder)
+						  numbers
+						  &optional is-local)
+  (elmo-folder-flag-as-answered (elmo-pipe-folder-dst-internal folder)
+				numbers is-local))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))

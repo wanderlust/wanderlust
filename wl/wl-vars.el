@@ -2181,7 +2181,8 @@ e.x.
 (defcustom wl-folder-sync-range-alist
   (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^"
 		      (regexp-quote wl-queue-folder) "$")
-	      "all"))
+	      "all")
+	(cons "^'flag" "all"))
   "*Default sync range alist.  If no matches, `wl-default-sync-range' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const "update")
@@ -2642,7 +2643,12 @@ This variable can also be a regex."
 ;; highilght about mouse
 (defcustom wl-use-highlight-mouse-line (and window-system
 					    (>= emacs-major-version 19))
-  "*Highlight mouse line, if non nil."
+  "*Highlight mouse line, if non-nil."
+  :type 'boolean
+  :group 'wl-highlight)
+
+(defcustom wl-use-flag-folder-help-echo nil
+  "*Display help-echo in the flag folder if non-nil."
   :type 'boolean
   :group 'wl-highlight)
 

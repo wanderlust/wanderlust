@@ -772,11 +772,11 @@ Reply to author if WITH-ARG is non-nil."
 		       (string= (wl-summary-buffer-folder-name)
 				folder-name)))
 		(with-current-buffer buffer
-		  (elmo-folder-unmark-answered folder (list number))
+		  (elmo-folder-unflag-answered folder (list number))
 		  (when (wl-summary-jump-to-msg number)
 		    (wl-summary-update-persistent-mark)))
 	      (elmo-folder-open folder 'load-msgdb)
-	      (elmo-folder-unmark-answered folder (list number))
+	      (elmo-folder-unflag-answered folder (list number))
 	      (elmo-folder-close folder))))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))

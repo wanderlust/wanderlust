@@ -1,5 +1,158 @@
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-flag.el: New file.
+	
+	* elmo-mark.el: Removed.
+
+	* modb-legacy.el (modb-legacy-new-mark,
+	modb-legacy-unread-uncached-mark,
+	modb-legacy-unread-cached-mark,
+	modb-legacy-read-uncached-mark,
+	modb-legacy-answered-cached-mark,
+	modb-legacy-answered-uncached-mark,
+	modb-legacy-important-mark): New constants (Moved from elmo-msgdb.el);
+	All other related portions are changed.
+
+	* elmo.el (luna-define-class): Changed mark-modified to flag-modified.
+	(elmo-folder-list-messages-with-global-mark): Abolish.
+	(elmo-folder-unflag-important): Renamed from `mark' to `flag'.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-flag-as-read): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.
+	(elmo-message-encache): Return the cache path.
+	(elmo-folder-move-messages): Call elmo-global-flag-detach-messages.
+	(elmo-message-set-flag): Transitional implementation.
+	(elmo-message-unset-flag): Ditto.
+	(elmo-folder-unflag-important): Call elmo-global-flag-detach.
+	(elmo-folder-flag-as-important): Call elmo-global-flag-set.
+	(elmo-init): Call elmo-global-flag-initialize.
+	(toplevel): Added autoload settings for elmo-flag.
+
+	* elmo-vars.el (elmo-msgdb-global-mark-filename): Abolished.
+
+	* elmo-util.el: Removed all elmo-msgdb-global-mark stuff.
+	(elmo-file-cache-delete): Don't treat global-mark.
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-msgdb-create): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Call
+	`elmo-global-flags-set'.
+
+	* elmo-pipe.el (elmo-folder-flag-as-read): Renamed from `mark' to
+	`flag'.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-unflag-important): Ditto.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Call
+	`elmo-global-flags-set'.
+	(elmo-folder-flag-as-read): Renamed from `mark' to `flag'.
+
+	* elmo-nmz.el (elmo-folder-msgdb-create): Always put `new' flag.
+
+	* elmo-net.el (elmo-folder-unflag-important): Renamed from `mark' to
+	`flag'.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-important): Ditto.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-flag-as-read): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.	
+
+	* elmo-multi.el (elmo-folder-list-importants): Don't call
+	elmo-folder-list-messages-with-global-mark.
+	(elmo-folder-flag-as-important): Renamed from `mark' to `flag'.
+	(elmo-folder-unflag-important): Ditto.
+	(elmo-folder-flag-as-read): Ditto.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-new-mark,
+	elmo-msgdb-unread-uncached-mark, elmo-msgdb-unread-cached-mark,
+	elmo-msgdb-read-uncached-mark, elmo-msgdb-answered-cached-mark,
+	elmo-msgdb-answered-uncached-mark, elmo-msgdb-important-mark): Removed
+	(Moved to modb-legacy.el).
+	(elmo-flag-table-get): Treat important flag too.
+
+	* elmo-map.el (elmo-map-folder-unflag-important): Renamed from
+	`mark' to `flag'.
+	(elmo-map-folder-flag-as-important): Ditto.
+	(elmo-map-folder-unflag-read): Ditto.
+	(elmo-map-folder-flag-as-read): Ditto.
+	(elmo-map-folder-unflag-answered): Ditto.
+	(elmo-map-folder-flag-as-answered): Ditto.
+	(elmo-folder-unflag-important): Ditto.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-flag-as-read): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Ditto.
+	(elmo-map-folder-flag-as-important): Renamed from `mark' to
+	`flag'.
+	(elmo-map-folder-unflag-important): Ditto.
+	(elmo-map-folder-flag-as-read): Ditto.
+	(elmo-map-folder-unflag-read): Ditto.
+	(elmo-map-folder-flag-as-answered): Ditto.
+	(elmo-map-folder-unflag-answered): Ditto.
+
+	* elmo-localdir.el (elmo-folder-msgdb-create): 	Call
+	`elmo-global-flags-set'.
+	(elmo-global-flags-set): Added autoload setting.
+
+	* elmo-internal.el (elmo-internal-folder-list): Changed `mark' to
+	`flag'.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Don't call
+	`elmo-msgdb-global-mark-set'.
+	(elmo-folder-msgdb-create-plugged): Changed callback-data structure;
+	Call `elmo-global-flags-set'.
+	(elmo-folder-unflag-important-plugged): Renamed from `mark' to
+	`flag'.
+	(elmo-folder-flag-as-important-plugged): Ditto.
+	(elmo-folder-unflag-read-plugged): Ditto.
+	(elmo-folder-flag-as-read-plugged): Ditto.
+	(elmo-folder-unflag-answered-plugged): Ditto.
+	(elmo-folder-flag-as-answered-plugged): Ditto.
+	(elmo-global-flags-set): Added autoload setting.
+
+	* elmo-filter.el (elmo-folder-flag-as-read): Renamed from `mark' to
+	`flag'.
+	(elmo-folder-unflag-read): Ditto.
+	(elmo-folder-flag-as-important): Ditto.
+	(elmo-folder-unflag-important): Ditto.
+	(elmo-folder-flag-as-answered): Ditto.
+	(elmo-folder-unflag-answered): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-merge-method-list): Follow the API
+	change of `mark'->`flag'.
+	(elmo-dop-queue-method-name-alist): Ditto.
+	(elmo-folder-flag-as-read-dop): Renamed from `mark' to `flag'.
+	(elmo-folder-unflag-read-dop): Ditto.
+	(elmo-folder-flag-as-important-dop): Ditto.
+	(elmo-folder-unflag-important-dop): Ditto.
+	(elmo-folder-flag-as-answered-dop): Ditto.
+	(elmo-folder-unflag-answered-dop): Ditto.
+
+	* elmo-cache.el (elmo-folder-msgdb-create): Call
+	`elmo-global-flags-set'.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-as-numlist-subr1):
+	Call `elmo-global-flags-set'.
+	(elmo-archive-msgdb-create-as-numlist-subr2): Call
+	elmo-archive-parse-mmdf with argument `folder'.
+	(elmo-archive-parse-mmdf): Added argument `folder';
+	Call `elmo-global-flags-set'.
+
 	* elmo-version.el (elmo-version): Up to 2.11.14.
 
 2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

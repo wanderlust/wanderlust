@@ -149,6 +149,7 @@
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  (new-msgdb (elmo-make-msgdb))
 	  entity message-id
+	  flags
 	  (i 0)
 	  (len (length numbers)))
       (message "Creating msgdb...")
@@ -157,11 +158,10 @@
 	      (elmo-localdir-msgdb-create-entity
 	       dir (car numbers)))
 	(when entity
-	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (elmo-msgdb-append-entity
-	   new-msgdb
-	   entity
-	   (elmo-flag-table-get flag-table message-id)))
+	  (setq message-id (elmo-msgdb-overview-entity-get-id entity)
+		flags (elmo-flag-table-get flag-table message-id))
+	  (elmo-global-flags-set flags folder (car numbers) message-id)
+	  (elmo-msgdb-append-entity new-msgdb entity flags))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (elmo-display-progress
@@ -369,6 +369,8 @@
 	    (if (file-exists-p (car lock))
 		(throw 'found t))
 	    (setq lock (cdr lock)))))))
+
+(autoload 'elmo-global-flags-set "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'elmo-localdir) (require 'elmo-version))

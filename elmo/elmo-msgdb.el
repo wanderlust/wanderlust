@@ -40,27 +40,6 @@
 (require 'modb)
 (require 'modb-entity)
 
-(defconst elmo-msgdb-new-mark "N"
-  "Mark for new message.")
-
-(defconst elmo-msgdb-unread-uncached-mark "U"
-  "Mark for unread and uncached message.")
-
-(defconst elmo-msgdb-unread-cached-mark "!"
-  "Mark for unread but already cached message.")
-
-(defconst elmo-msgdb-read-uncached-mark "u"
-  "Mark for read but uncached message.")
-
-(defconst elmo-msgdb-answered-cached-mark "&"
-  "Mark for answered and cached message.")
-
-(defconst elmo-msgdb-answered-uncached-mark "A"
-  "Mark for answered but cached message.")
-
-(defconst elmo-msgdb-important-mark "$"
-  "Mark for important message.")
-
 ;;; MSGDB interface.
 ;;
 ;; MSGDB elmo-load-msgdb PATH
@@ -209,11 +188,9 @@
   (let ((flags (elmo-get-hash-val msg-id flag-table)))
     (if flags
 	(append
-	 (and (elmo-msgdb-global-mark-get msg-id)
-	      '(important))
 	 (and (elmo-file-cache-exists-p msg-id)
 	      '(cached))
-	 (elmo-list-delete '(important cached read)
+	 (elmo-list-delete '(cached read)
 			   (copy-sequence flags)
 			   #'delq))
       '(new unread))))

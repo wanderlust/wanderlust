@@ -278,53 +278,57 @@
   (elmo-message-file-name (elmo-filter-folder-target-internal folder)
 			  number))
 
-(luna-define-method elmo-folder-mark-as-read :around ((folder
+(luna-define-method elmo-folder-flag-as-read :around ((folder
 						       elmo-filter-folder)
 						      numbers
-						      &optional ignore-flag)
-  (elmo-folder-mark-as-read (elmo-filter-folder-target-internal folder)
-			    numbers ignore-flag)
+						      &optional is-local)
+  (elmo-folder-flag-as-read (elmo-filter-folder-target-internal folder)
+			    numbers is-local)
   (luna-call-next-method))
 
-(luna-define-method elmo-folder-unmark-read :around ((folder
+(luna-define-method elmo-folder-unflag-read :around ((folder
 						      elmo-filter-folder)
 						     numbers
-						     &optional ignore-flag)
-  (elmo-folder-unmark-read (elmo-filter-folder-target-internal folder)
-			   numbers ignore-flag)
+						     &optional is-local)
+  (elmo-folder-unflag-read (elmo-filter-folder-target-internal folder)
+			   numbers is-local)
   (luna-call-next-method))
 
-(luna-define-method elmo-folder-mark-as-important :around ((folder
+(luna-define-method elmo-folder-flag-as-important :around ((folder
 							    elmo-filter-folder)
 							   numbers
 							   &optional
-							   ignore-flag)
-  (elmo-folder-mark-as-important (elmo-filter-folder-target-internal folder)
-				 numbers ignore-flag)
+							   is-local)
+  (elmo-folder-flag-as-important (elmo-filter-folder-target-internal folder)
+				 numbers is-local)
     (luna-call-next-method))
 
-(luna-define-method elmo-folder-unmark-important :around ((folder
+(luna-define-method elmo-folder-unflag-important :around ((folder
 							   elmo-filter-folder)
 							  numbers
 							  &optional
-							  ignore-flag)
-  (elmo-folder-unmark-important (elmo-filter-folder-target-internal folder)
-				numbers ignore-flag)
+							  is-local)
+  (elmo-folder-unflag-important (elmo-filter-folder-target-internal folder)
+				numbers is-local)
   (luna-call-next-method))
 
-(luna-define-method elmo-folder-mark-as-answered :around ((folder
+(luna-define-method elmo-folder-flag-as-answered :around ((folder
 							   elmo-filter-folder)
-							  numbers)
-  (elmo-folder-mark-as-answered (elmo-filter-folder-target-internal folder)
-				numbers)
+							  numbers
+							  &optional
+							  is-local)
+  (elmo-folder-flag-as-answered (elmo-filter-folder-target-internal folder)
+				numbers is-local)
   (luna-call-next-method))
 
 
-(luna-define-method elmo-folder-unmark-answered :around ((folder
+(luna-define-method elmo-folder-unflag-answered :around ((folder
 							  elmo-filter-folder)
-							 numbers)
-  (elmo-folder-unmark-answered (elmo-filter-folder-target-internal folder)
-			       numbers)
+							 numbers
+							 &optional
+							 is-local)
+  (elmo-folder-unflag-answered (elmo-filter-folder-target-internal folder)
+			       numbers is-local)
   (luna-call-next-method))
 
 (require 'product)

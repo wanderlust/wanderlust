@@ -240,8 +240,6 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 (defvar elmo-msgdb-lock-list-filename "lock"
   "Locked messages...list of message-id.
 For disconnected operations.")
-(defvar elmo-msgdb-global-mark-filename "global-mark"
-  "Alist of global mark.")
 (defvar elmo-lost+found-folder "+lost+found"
   "Lost and found.")
 (defvar elmo-crosspost-alist-filename "crosspost-alist"

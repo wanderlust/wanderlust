@@ -315,10 +315,7 @@
 			       (elmo-multi-folder-divide-number-internal
 				folder))))
 		     (elmo-folder-list-importants child)))))
-    (elmo-uniq-list
-     (nconc importants
-	    (elmo-folder-list-messages-with-global-mark
-	     folder elmo-msgdb-important-mark)))))
+    importants))
 
 (luna-define-method elmo-folder-list-messages
   ((folder elmo-multi-folder) &optional visible-only in-msgdb)
@@ -450,57 +447,61 @@
       (setq msg-list (cdr msg-list)))
     ret-val))
 
-(luna-define-method elmo-folder-mark-as-important ((folder
+(luna-define-method elmo-folder-flag-as-important ((folder
 						    elmo-multi-folder)
 						   numbers
 						   &optional
-						   ignore-flags)
+						   is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-mark-as-important (car folder-numbers)
+    (elmo-folder-flag-as-important (car folder-numbers)
 				   (cdr folder-numbers)
-				   ignore-flags)))
+				   is-local)))
 
-(luna-define-method elmo-folder-unmark-important ((folder
+(luna-define-method elmo-folder-unflag-important ((folder
 						   elmo-multi-folder)
 						  numbers
 						  &optional
-						  ignore-flags)
+						  is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unmark-important (car folder-numbers)
+    (elmo-folder-unflag-important (car folder-numbers)
 				  (cdr folder-numbers)
-				  ignore-flags)))
+				  is-local)))
 
-(luna-define-method elmo-folder-mark-as-read ((folder
+(luna-define-method elmo-folder-flag-as-read ((folder
 					       elmo-multi-folder)
 					      numbers
-					      &optional ignore-flag)
+					      &optional is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-mark-as-read (car folder-numbers)
+    (elmo-folder-flag-as-read (car folder-numbers)
 			      (cdr folder-numbers)
-			      ignore-flag)))
+			      is-local)))
 
-(luna-define-method elmo-folder-unmark-read ((folder
+(luna-define-method elmo-folder-unflag-read ((folder
 					      elmo-multi-folder)
 					     numbers
-					     &optional ignore-flag)
+					     &optional is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unmark-read (car folder-numbers)
+    (elmo-folder-unflag-read (car folder-numbers)
 			     (cdr folder-numbers)
-			     ignore-flag)))
+			     is-local)))
 
-(luna-define-method elmo-folder-mark-as-answered ((folder
+(luna-define-method elmo-folder-flag-as-answered ((folder
 						   elmo-multi-folder)
-						  numbers)
+						  numbers
+						  &optional is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-mark-as-answered (car folder-numbers)
-				  (cdr folder-numbers))))
+    (elmo-folder-flag-as-answered (car folder-numbers)
+				  (cdr folder-numbers)
+				  is-local)))
 
-(luna-define-method elmo-folder-unmark-answered ((folder
+(luna-define-method elmo-folder-unflag-answered ((folder
 						  elmo-multi-folder)
-						 numbers)
+						 numbers
+						 &optional is-local)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
-    (elmo-folder-unmark-answered (car folder-numbers)
-				 (cdr folder-numbers))))
+    (elmo-folder-unflag-answered (car folder-numbers)
+				 (cdr folder-numbers)
+				 is-local)))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
 					      flag

@@ -696,6 +696,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       (elmo-pop3-sort-msgdb-by-original-number
        folder
        (elmo-pop3-msgdb-create-by-header
+	folder
 	process
 	numlist
 	flag-table
@@ -729,9 +730,9 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
   (elmo-get-hash-val (format "#%d" number)
 		     elmo-pop3-size-hash))
 
-(defun elmo-pop3-msgdb-create-by-header (process numlist
-						 flag-table
-						 loc-alist)
+(defun elmo-pop3-msgdb-create-by-header (folder process numlist
+						flag-table
+						loc-alist)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*")))
     (with-current-buffer (process-buffer process)
       (if loc-alist ; use uidl.
@@ -746,6 +747,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 				  tmp-buffer process numlist)
       (prog1
 	  (elmo-pop3-msgdb-create-message
+	   folder
 	   tmp-buffer
 	   process
 	   (length numlist)
@@ -753,7 +755,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	   flag-table loc-alist)
 	(kill-buffer tmp-buffer)))))
 
-(defun elmo-pop3-msgdb-create-message (buffer
+(defun elmo-pop3-msgdb-create-message (folder
+				       buffer
 				       process
 				       num
 				       numlist
@@ -761,7 +764,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 				       loc-alist)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg entity i number message-id)
+	  beg entity i number message-id flags)
       (set-buffer buffer)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
@@ -792,11 +795,10 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 			     (elmo-msgdb-overview-entity-get-number entity))
 			    loc-alist)))
 		    (elmo-msgdb-overview-entity-set-number entity number)))
-	      (setq message-id (elmo-message-entity-field entity 'message-id))
-	      (elmo-msgdb-append-entity
-	       new-msgdb
-	       entity
-	       (elmo-flag-table-get flag-table message-id)))))
+	      (setq message-id (elmo-message-entity-field entity 'message-id)
+		    flags (elmo-flag-table-get flag-table message-id))
+	      (elmo-global-flags-set flags folder number message-id)
+	      (elmo-msgdb-append-entity new-msgdb entity flags))))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 5)) (= i num))

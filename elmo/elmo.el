@@ -107,7 +107,7 @@ If a folder name begins with PREFIX, use BACKEND."
 				     killed-list  ; killed list.
 				     persistent   ; non-nil if persistent.
 				     message-modified ; message is modified.
-				     mark-modified    ; mark is modified.
+				     flag-modified    ; flag is modified.
 				     process-duplicates  ; read or hide
 				     biff   ; folder for biff
 				     ))
@@ -238,23 +238,6 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
 (luna-define-generic elmo-folder-list-answereds (folder)
   "Return a list of answered message numbers contained in FOLDER.")
 
-;; TODO: Should reconsider the structure of global mark.
-(defun elmo-folder-list-messages-with-global-mark (folder mark)
-  (let (entity msgs)
-    (dolist (mark-pair (or elmo-msgdb-global-mark-alist
-			   (setq elmo-msgdb-global-mark-alist
-				 (elmo-object-load
-				  (expand-file-name
-				   elmo-msgdb-global-mark-filename
-				   elmo-msgdb-directory)))))
-      (if (and (string= mark (cdr mark-pair))
-	       (setq entity
-		     (elmo-msgdb-message-entity (elmo-folder-msgdb folder)
-						(car mark-pair))))
-	  (setq msgs (cons (elmo-msgdb-overview-entity-get-number entity)
-			   msgs))))
-    msgs))
-
 (luna-define-generic elmo-folder-list-flagged (folder flag &optional in-msgdb)
   "List messages in the FOLDER with FLAG.
 FLAG is a symbol which is one of the following:
@@ -348,45 +331,47 @@ FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to create msgdb.
 FLAG-TABLE is a hashtable of message-id and flag.")
 
-(luna-define-generic elmo-folder-unmark-important (folder
+(luna-define-generic elmo-folder-unflag-important (folder
 						   numbers
-						   &optional ignore-flags)
-  "Un-mark messages as important.
+						   &optional is-local)
+  "Un-flag messages as important.
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
-(luna-define-generic elmo-folder-mark-as-important (folder
+(luna-define-generic elmo-folder-flag-as-important (folder
 						    numbers
-						    &optional ignore-flags)
-  "Mark messages as important.
+						    &optional is-local)
+  "Flag messages as important.
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
-(luna-define-generic elmo-folder-unmark-read (folder numbers
-						     &optional ignore-flags)
-  "Un-mark messages as read.
+(luna-define-generic elmo-folder-unflag-read (folder numbers
+						     &optional is-local)
+  "Un-flag messages as read.
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
-(luna-define-generic elmo-folder-mark-as-read (folder numbers
-						      &optional ignore-flags)
-  "Mark messages as read.
+(luna-define-generic elmo-folder-flag-as-read (folder numbers
+						      &optional is-local)
+  "Flag messages as read.
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.
-If IGNORE-FLAGS is non-nil, folder flags are not updated.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
-(luna-define-generic elmo-folder-unmark-answered (folder numbers)
-  "Un-mark messages as answered.
+(luna-define-generic elmo-folder-unflag-answered (folder numbers
+							 &optional is-local)
+  "Un-flag messages as answered.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
-(luna-define-generic elmo-folder-mark-as-answered (folder numbers)
-  "Mark messages as answered.
+(luna-define-generic elmo-folder-flag-as-answered (folder numbers
+							  &optional is-local)
+  "Flag messages as answered.
 FOLDER is the ELMO folder structure.
-NUMBERS is a list of message numbers to be processed.")
+If IS-LOCAL is non-nil, only the local flag is updated.")
 
 (luna-define-generic elmo-folder-append-buffer (folder &optional flag
 						       number)
@@ -404,7 +389,7 @@ If optional argument NUMBER is specified, the new message number is set
   "Append messages from folder.
 FOLDER is the ELMO folder structure.
 Caller should make sure FOLDER is `writable'.
-(Can be checked with `elmo-folder-writable-p').
+\(Can be checked with `elmo-folder-writable-p'\).
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
 If second optional argument SAME-NUMBER is specified,
@@ -553,25 +538,27 @@ Return newly created temporary directory name which contains temporary files.")
 
 (defun elmo-folder-encache (folder numbers &optional unread)
   "Encache messages in the FOLDER with NUMBERS.
-If UNREAD is non-nil, messages are not marked as read."
+If UNREAD is non-nil, messages are not flaged as read."
   (dolist (number numbers)
     (elmo-message-encache folder number unread)))
 
 (luna-define-generic elmo-message-encache (folder number &optional read)
   "Encache message in the FOLDER with NUMBER.
-If READ is non-nil, message is marked as read.")
+If READ is non-nil, message is flaged as read.")
 
 (luna-define-method elmo-message-encache ((folder elmo-folder) number
 					  &optional read)
-  (elmo-message-fetch
-   folder number
-   (elmo-make-fetch-strategy 'entire
-			     nil ;use-cache
-			     t   ;save-cache
-			     (elmo-file-cache-get-path
-			      (elmo-message-field
-			       folder number 'message-id)))
-   nil nil (not read)))
+  (let (path)
+    (elmo-message-fetch
+     folder number
+     (elmo-make-fetch-strategy 'entire
+			       nil ;use-cache
+			       t   ;save-cache
+			       (setq path (elmo-file-cache-get-path
+					   (elmo-message-field
+					    folder number 'message-id))))
+     nil nil (not read))
+    path))
 
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional
@@ -586,7 +573,7 @@ If optional argument SECTION is specified, only the SECTION of the message
 is fetched (if possible).
 If second optional argument OUTBUF is specified, fetched message is
 inserted to the buffer and returns t if fetch was ended successfully.
-If third optional argument UNREAD is non-nil, message is not marked as read.
+If third optional argument UNREAD is non-nil, message is not flaged as read.
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-with-cache-process (folder
@@ -600,7 +587,7 @@ NUMBER is the number of the message in the FOLDER.
 STRATEGY is the message fetching strategy.
 If optional argument SECTION is specified, only the SECTION of the message
 is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
+If second optional argument UNREAD is non-nil, message is not flaged as read.
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-internal (folder number strategy
@@ -613,7 +600,7 @@ NUMBER is the number of the message in the FOLDER.
 STRATEGY is the message fetching strategy.
 If optional argument SECTION is specified, only the SECTION of the message
 is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
+If second optional argument UNREAD is non-nil, message is not flaged as read.
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-field (folder number field)
@@ -627,7 +614,7 @@ FIELD is a symbol of the field name.")
 
 (luna-define-generic elmo-folder-process-crosspost (folder)
   "Process crosspost for FOLDER.
-Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
+Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 
 (luna-define-generic elmo-folder-newsgroups (folder)
   "Return list of newsgroup name of FOLDER.")
@@ -684,7 +671,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	 (elmo-folder-msgdb-path folder)
 	 (elmo-folder-killed-list-internal folder)))
       (elmo-folder-set-message-modified folder nil)
-      (elmo-folder-set-mark-modified-internal folder nil)
+      (elmo-folder-set-flag-modified-internal folder nil)
       (elmo-msgdb-save msgdb))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-folder))
@@ -1081,7 +1068,9 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	  (progn
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
 		     (elmo-folder-detach-messages src-folder succeeds))
-		(setq result t)
+		(progn
+		  (elmo-global-flag-detach-messages src-folder succeeds)
+		  (setq result t))
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))
 	      (setq result nil))
@@ -1225,7 +1214,7 @@ NUMBER is a message number to test."
       (t
        (memq flag cur-flags)))))
 
-(defun elmo-message-set-flag (folder number flag)
+(defun elmo-message-set-flag (folder number flag &optional is-local)
   "Set message flag.
 FOLDER is a ELMO folder structure.
 NUMBER is a message number to set flag.
@@ -1235,9 +1224,20 @@ FLAG is a symbol which is one of the following:
   `answered'  (set the message as answered)
   `important' (set the message as important)
 'sugar' flag:
-  `read'      (remove new and unread flags)")
+  `read'      (remove new and unread flags)
+If optional IS-LOCAL is non-nil, update only local (not server) status."
+  ;; XXX Transitional implementation.
+  (case flag
+    (unread
+     (elmo-folder-unflag-read folder (list number) is-local))
+    (read
+     (elmo-folder-flag-as-read folder (list number) is-local))
+    (answered
+     (elmo-folder-flag-as-answered folder (list number) is-local))
+    (important
+     (elmo-folder-flag-as-important folder (list number) is-local))))
 
-(defun elmo-message-unset-flag (folder number flag)
+(defun elmo-message-unset-flag (folder number flag &optional is-local)
   "Unset message flag.
 FOLDER is a ELMO folder structure.
 NUMBER is a message number to set flag.
@@ -1247,7 +1247,18 @@ FLAG is a symbol which is one of the following:
   `answered'  (remove answered flag)
   `important' (remove important flag)
 'sugar' flag:
-  `read'      (set unread flag)")
+  `read'      (set unread flag)
+If optional IS-LOCAL is non-nil, update only local (not server) status."
+  ;; XXX Transitional implementation.
+  (case flag
+    (unread
+     (elmo-folder-flag-as-read folder (list number) is-local))
+    (read
+     (elmo-folder-unflag-read folder (list number) is-local))
+    (answered
+     (elmo-folder-unflag-answered folder (list number) is-local))
+    (important
+     (elmo-folder-unflag-important folder (list number) is-local))))
 
 (luna-define-generic elmo-message-field (folder number field)
   "Get message field value in the msgdb.
@@ -1266,50 +1277,65 @@ FIELD is a symbol of the field.")
 (luna-define-method elmo-message-folder ((folder elmo-folder) number)
   folder) ; default is folder
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-folder)
+(luna-define-method elmo-folder-unflag-important ((folder elmo-folder)
 						  numbers
-						  &optional ignore-flags)
+						  &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
+      (when (elmo-global-flag-p 'important)
+	(elmo-global-flag-detach 'important folder number 'remove-if-none))
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
 			     number
 			     'important))))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-folder)
+(luna-define-method elmo-folder-flag-as-important ((folder elmo-folder)
 						   numbers
-						   &optional ignore-flags)
-  (when (elmo-folder-msgdb-internal folder)
-    (dolist (number numbers)
-      (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
-			   number
-			   'important))))
+						   &optional is-local)
+  (let (path message-id)
+    (when (elmo-folder-msgdb-internal folder)
+      (dolist (number numbers)
+	;; important message should always be a read message.
+	(if (eq (elmo-file-cache-exists-p
+		 (setq message-id
+		       (elmo-message-field folder number 'message-id)))
+		'entire)
+	    (elmo-folder-flag-as-read folder (list number)))
+	(when (elmo-global-flag-p 'important)
+	  (elmo-global-flag-set 'important folder number message-id))
+	(elmo-msgdb-set-flag (elmo-folder-msgdb folder)
+			     number
+			     'important)))))
 
-(luna-define-method elmo-folder-unmark-read ((folder elmo-folder)
+(luna-define-method elmo-folder-unflag-read ((folder elmo-folder)
 					     numbers
-					     &optional ignore-flags)
+					     &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
 			     number
 			     'read))))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-folder)
+(luna-define-method elmo-folder-flag-as-read ((folder elmo-folder)
 					      numbers
-					      &optional ignore-flag)
+					      &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
 			   number
 			   'read))))
 
-(luna-define-method elmo-folder-unmark-answered ((folder elmo-folder) numbers)
+(luna-define-method elmo-folder-unflag-answered ((folder elmo-folder)
+						 numbers
+						 &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
 			     number
 			     'answered))))
 
-(luna-define-method elmo-folder-mark-as-answered ((folder elmo-folder) numbers)
+(luna-define-method elmo-folder-flag-as-answered ((folder elmo-folder)
+						  numbers
+						  &optional is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
@@ -1341,12 +1367,12 @@ FIELD is a symbol of the field.")
 		   'hide)
 	       ;; Let duplicates be a temporary killed message.
 	       (elmo-folder-kill-messages folder duplicates)
-	       ;; Should be mark as read.
-	       (elmo-folder-mark-as-read folder duplicates))
+	       ;; Should be flag as read.
+	       (elmo-folder-flag-as-read folder duplicates))
 	      ((eq (elmo-folder-process-duplicates-internal folder)
 		   'read)
-	       ;; Mark as read duplicates.
-	       (elmo-folder-mark-as-read folder duplicates))
+	       ;; Flag as read duplicates.
+	       (elmo-folder-flag-as-read folder duplicates))
 	      (t
 	       ;; Do nothing.
 	       (setq duplicates nil)))
@@ -1473,7 +1499,7 @@ If update process is interrupted, return nil.")
 					     no-check)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
-	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
+	old-msgdb diff diff-2 delete-list new-list new-msgdb flag
 	flag-table crossed after-append)
     (setq old-msgdb (elmo-folder-msgdb folder))
     (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
@@ -1523,10 +1549,10 @@ If update process is interrupted, return nil.")
 	      (setq before-append nil)
 	      (setq crossed (elmo-folder-append-msgdb folder new-msgdb))
 	      ;; process crosspost.
-	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
+	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).
 	      (elmo-folder-process-crosspost folder)
 	      (elmo-folder-set-message-modified folder t)
-	      (elmo-folder-set-mark-modified-internal folder t))
+	      (elmo-folder-set-flag-modified-internal folder t))
 	    ;; return value.
 	    (or crossed 0)))
       (quit
@@ -1629,6 +1655,7 @@ Return a hashtable for newsgroups."
   "Initialize ELMO module."
   (elmo-crosspost-message-alist-load)
   (elmo-resque-obsolete-variables)
+  (elmo-global-flag-initialize)
   (elmo-dop-queue-load))
 
 (defun elmo-quit ()
@@ -1641,7 +1668,8 @@ Return a hashtable for newsgroups."
     (while types
       (setq class
 	    (luna-find-class
-	     (intern (format "elmo-%s-folder" (symbol-name (cdr (car types)))))))
+	     (intern (format "elmo-%s-folder"
+			     (symbol-name (cdr (car types)))))))
       ;; Call all folder's `elmo-quit' method.
       (if class
 	  (dolist (func (luna-class-find-functions class 'elmo-quit))
@@ -1714,6 +1742,11 @@ Return a hashtable for newsgroups."
 ;; autoloads
 (autoload 'elmo-dop-queue-flush "elmo-dop")
 (autoload 'elmo-nntp-post "elmo-nntp")
+(autoload 'elmo-global-flag-initialize "elmo-flag")
+(autoload 'elmo-global-flag-p "elmo-flag")
+(autoload 'elmo-global-flag-detach "elmo-flag")
+(autoload 'elmo-global-flag-detach-messages "elmo-flag")
+(autoload 'elmo-global-flag-set "elmo-flag")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

@@ -209,6 +209,7 @@ LOCATION."
 		    folder))))
 	(unless (memq 'unread flags)
 	  (setq flags (delq 'new flags)))
+	(elmo-global-flags-set flags folder number message-id)
 	(elmo-msgdb-append-entity new-msgdb entity flags)
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
@@ -299,28 +300,28 @@ LOCATION."
      mark))
   t)
 
-(luna-define-method elmo-map-folder-mark-as-important ((folder elmo-maildir-folder)
+(luna-define-method elmo-map-folder-flag-as-important ((folder elmo-maildir-folder)
 						       locs)
   (elmo-maildir-set-mark-msgs folder locs ?F))
   
-(luna-define-method elmo-map-folder-unmark-important ((folder elmo-maildir-folder)
+(luna-define-method elmo-map-folder-unflag-important ((folder elmo-maildir-folder)
 						      locs)
   (elmo-maildir-delete-mark-msgs folder locs ?F))
 
-(luna-define-method elmo-map-folder-mark-as-read ((folder elmo-maildir-folder)
+(luna-define-method elmo-map-folder-flag-as-read ((folder elmo-maildir-folder)
 						  locs)
   (elmo-maildir-set-mark-msgs folder locs ?S))
 
-(luna-define-method elmo-map-folder-unmark-read ((folder elmo-maildir-folder)
+(luna-define-method elmo-map-folder-unflag-read ((folder elmo-maildir-folder)
 						 locs)
   (elmo-maildir-delete-mark-msgs folder locs ?S))
 
-(luna-define-method elmo-map-folder-mark-as-answered ((folder
+(luna-define-method elmo-map-folder-flag-as-answered ((folder
 						       elmo-maildir-folder)
 						      locs)
   (elmo-maildir-set-mark-msgs folder locs ?R))
 
-(luna-define-method elmo-map-folder-unmark-answered ((folder
+(luna-define-method elmo-map-folder-unflag-answered ((folder
 						      elmo-maildir-folder)
 						     locs)
   (elmo-maildir-delete-mark-msgs folder locs ?R))

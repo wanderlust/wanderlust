@@ -63,24 +63,24 @@ Automatically loaded/saved.")
     (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
 (defvar elmo-dop-queue-merge-method-list
-  '(elmo-folder-mark-as-read
-    elmo-folder-unmark-read
-    elmo-folder-mark-as-important
-    elmo-folder-unmark-important
-    elmo-folder-mark-as-answered
-    elmo-folder-unmark-answered))
+  '(elmo-folder-flag-as-read
+    elmo-folder-unflag-read
+    elmo-folder-flag-as-important
+    elmo-folder-unflag-important
+    elmo-folder-flag-as-answered
+    elmo-folder-unflag-answered))
 
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
     (elmo-folder-delete-messages-dop-delayed . "Delete")
     (elmo-message-encache . "Encache")
     (elmo-folder-create-dop-delayed . "Create")
-    (elmo-folder-mark-as-read . "Read")
-    (elmo-folder-unmark-read . "Unread")
-    (elmo-folder-mark-as-answered . "Answered")
-    (elmo-folder-unmark-answered . "Unanswered")    
-    (elmo-folder-mark-as-important . "Important")
-    (elmo-folder-unmark-important . "Unimportant")))
+    (elmo-folder-flag-as-read . "Read")
+    (elmo-folder-unflag-read . "Unread")
+    (elmo-folder-flag-as-answered . "Answered")
+    (elmo-folder-unflag-answered . "Unanswered")    
+    (elmo-folder-flag-as-important . "Important")
+    (elmo-folder-unflag-important . "Unimportant")))
 
 (defmacro elmo-dop-queue-method-name (queue)
   `(cdr (assq (elmo-dop-queue-method ,queue)
@@ -266,23 +266,23 @@ FOLDER is the folder structure."
 (defsubst elmo-folder-create-dop (folder)
   (elmo-dop-queue-append folder 'elmo-folder-create-dop-delayed nil))
 
-(defsubst elmo-folder-mark-as-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-mark-as-read (list numbers)))
+(defsubst elmo-folder-flag-as-read-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-flag-as-read (list numbers)))
 
-(defsubst elmo-folder-unmark-read-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unmark-read (list numbers)))
+(defsubst elmo-folder-unflag-read-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-unflag-read (list numbers)))
 
-(defsubst elmo-folder-mark-as-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-mark-as-important (list numbers)))
+(defsubst elmo-folder-flag-as-important-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-flag-as-important (list numbers)))
 
-(defsubst elmo-folder-unmark-important-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unmark-important (list numbers)))
+(defsubst elmo-folder-unflag-important-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-unflag-important (list numbers)))
 
-(defsubst elmo-folder-mark-as-answered-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-mark-as-answered (list numbers)))
+(defsubst elmo-folder-flag-as-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-flag-as-answered (list numbers)))
 
-(defsubst elmo-folder-unmark-answered-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-unmark-answered (list numbers)))
+(defsubst elmo-folder-unflag-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-unflag-answered (list numbers)))
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)

@@ -1,5 +1,32 @@
 2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-folder-sync-range-alist): Set default range for
+	'flag as all.
+	(wl-use-flag-folder-help-echo): New user option.
+
+	* wl-summary.el (wl-summary-detect-mark-position): Bind 
+	wl-summary-highlight as nil.
+	(wl-summary-set-mark-modified): Follow the API change.
+	(wl-summary-mark-modified-p): Ditto.
+	(wl-summary-mark-as-read-all): Ditto.
+	(wl-summary-sync-marks): Don't call
+	elmo-folder-list-messages-with-global-mark.
+	(wl-summary-mark-as-read-internal): Follow the API change.
+	(wl-summary-mark-as-answered-internal): Ditto.
+	(wl-summary-mark-as-important): Cause an error when 'flag folder;
+	Follow the API change.
+	(wl-summary-create-line): Call with number argument.
+	(wl-summary-reply): Follow the API change.
+
+	* wl-highlight.el (wl-highlight-summary-line-flag-folder): New
+	function.
+	(wl-highlight-summary-line-string): Call it when
+	wl-use-flag-folder-help-echo is non-nil.
+	(wl-highlight-summary-current-line): Ditto.
+	(elmo-flag-folder-referrer): Added autoload setting.
+
+	* wl-draft.el (wl-draft-kill): Follow the API change.
+
 	* Version number is increased to 2.11.14.
 	
 2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

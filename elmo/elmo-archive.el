@@ -931,7 +931,7 @@ TYPE specifies the archiver's symbol."
 	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
 	 (new-msgdb (elmo-make-msgdb))
-	 entity i percent num message-id)
+	 entity i percent num message-id flags)
     (with-temp-buffer
       (setq num (length numlist))
       (setq i 0)
@@ -943,11 +943,10 @@ TYPE specifies the archiver's symbol."
 	       method file (car numlist) type
 	       (elmo-archive-folder-archive-prefix-internal folder)))
 	(when entity
-	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (elmo-msgdb-append-entity
-	   new-msgdb
-	   entity
-	   (elmo-flag-table-get flag-table message-id)))
+	  (setq message-id (elmo-msgdb-overview-entity-get-id entity)
+		flags (elmo-flag-table-get flag-table message-id))
+	  (elmo-global-flags-set flags folder (car numlist) message-id)
+	  (elmo-msgdb-append-entity new-msgdb entity flags))
 	(when (> num elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (setq percent (/ (* i 100) num))
@@ -996,7 +995,7 @@ TYPE specifies the archiver's symbol."
 	 ((looking-at delim1)	;; MMDF
 	  (elmo-msgdb-append
 	   new-msgdb
-	   (elmo-archive-parse-mmdf msgs flag-table)))
+	   (elmo-archive-parse-mmdf folder msgs flag-table)))
 ;;; 	 ((looking-at delim2)	;; UNIX MAIL
 ;;; 	  (elmo-msgdb-append
 ;;; 	   new-msgdb
@@ -1011,11 +1010,11 @@ TYPE specifies the archiver's symbol."
 	   percent))))
     new-msgdb))
 
-(defun elmo-archive-parse-mmdf (msgs flag-table)
+(defun elmo-archive-parse-mmdf (folder msgs flag-table)
   (let ((delim elmo-mmdf-delimiter)
 	(new-msgdb (elmo-make-msgdb))
 	number sp ep rest entity
-	message-id)
+	message-id flags)
     (goto-char (point-min))
     (setq rest msgs)
     (while (and rest (re-search-forward delim nil t)
@@ -1028,12 +1027,11 @@ TYPE specifies the archiver's symbol."
 	  ()				; nop
 	(save-excursion
 	  (narrow-to-region sp ep)
-	  (setq entity (elmo-archive-msgdb-create-entity-subr number))
-	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
-	  (elmo-msgdb-append-entity
-	   new-msgdb
-	   entity
-	   (elmo-flag-table-get flag-table message-id))
+	  (setq entity (elmo-archive-msgdb-create-entity-subr number)
+		message-id (elmo-msgdb-overview-entity-get-id entity)
+		flags (elmo-flag-table-get flag-table message-id))
+	  (elmo-global-flags-set flags folder number message-id)
+	  (elmo-msgdb-append-entity new-msgdb entity flags)
 	  (widen)))
       (forward-line 1)
       (setq rest (cdr rest)))

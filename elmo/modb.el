@@ -76,8 +76,8 @@ NUMBER is a message number to set flag.
 FLAG is a symbol which is one of the following:
 `new'       ... Message which is new.
 `read'      ... Message which is already read.
-`important' ... Message which is marked as important.
-`answered'  ... Message which is marked as answered.
+`important' ... Message which is important.
+`answered'  ... Message which is answered.
 `cached'    ... Message which is cached.")
 
 (luna-define-generic elmo-msgdb-unset-flag (msgdb number flag)
@@ -87,8 +87,8 @@ NUMBER is a message number to set flag.
 FLAG is a symbol which is one of the following:
 `new'       ... Message which is new.
 `read'      ... Message which is already read.
-`important' ... Message which is marked as important.
-`answered'  ... Message which is marked as answered.
+`important' ... Message which is important.
+`answered'  ... Message which is answered.
 `cached'    ... Message which is cached.")
 
 (luna-define-generic elmo-msgdb-list-messages (msgdb)

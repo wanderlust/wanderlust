@@ -1,3 +1,7 @@
+2003-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Removed elmo-mark and added elmo-flag.
+
 2003-09-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* doc/.cvsignore: Added makeinfo stuff.

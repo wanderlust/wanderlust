@@ -737,13 +737,14 @@ Don't cache if nil.")
     ("lines" . 7)
     ("xref" . 8)))
 
-(defun elmo-nntp-create-msgdb-from-overview-string (str
+(defun elmo-nntp-create-msgdb-from-overview-string (folder
+						    str
 						    flag-table
 						    &optional numlist)
   (let ((new-msgdb (elmo-make-msgdb))
 	ov-list message-id entity
 	ov-entity num
-	extras extra ext field field-index)
+	extras extra ext field field-index flags)
     (setq ov-list (elmo-nntp-parse-overview-string str))
     (while ov-list
       (setq ov-entity (car ov-list))
@@ -782,9 +783,10 @@ Don't cache if nil.")
 		      :date       (aref ov-entity 3)
 		      :size       (string-to-int (aref ov-entity 6))
 		      :extra      extra))
-	(setq message-id (elmo-message-entity-field entity 'message-id))
-	(elmo-msgdb-append-entity new-msgdb entity
-				  (elmo-flag-table-get flag-table message-id)))
+	(setq message-id (elmo-message-entity-field entity 'message-id)
+	      flags (elmo-flag-table-get flag-table message-id))
+	(elmo-global-flags-set flags folder num message-id)
+	(elmo-msgdb-append-entity new-msgdb entity flags))
       (setq ov-list (cdr ov-list)))
     new-msgdb))
 
@@ -820,6 +822,7 @@ Don't cache if nil.")
 	      (elmo-msgdb-append
 	       new-msgdb
 	       (elmo-nntp-create-msgdb-from-overview-string
+		folder
 		ov-str
 		flag-table
 		filter))))
@@ -847,6 +850,7 @@ Don't cache if nil.")
 	    (elmo-msgdb-append
 	     new-msgdb
 	     (elmo-nntp-create-msgdb-from-overview-string
+	      folder
 	      ov-str
 	      flag-table
 	      filter)))))
@@ -1453,7 +1457,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 ;;         temp-crosses slot is a list of cons cell:
 ;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
 ;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
-;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
+;;    1.3. In elmo-folder-flag-as-read, move crosspost entry
 ;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
 
 ;; 2. process crosspost alist.
@@ -1498,7 +1502,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   )
 
 (defun elmo-nntp-folder-update-crosspost-message-alist (folder numbers)
-;;    1.3. In elmo-folder-mark-as-read, move crosspost entry
+;;    1.3. In elmo-folder-flag-as-read, move crosspost entry
 ;;         from `temp-crosses' slot to `elmo-crosspost-message-alist'.
   (let (elem)
     (dolist (number numbers)
@@ -1511,10 +1515,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	 folder
 	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
 
-(luna-define-method elmo-folder-mark-as-read :before ((folder
+(luna-define-method elmo-folder-flag-as-read :before ((folder
 						       elmo-nntp-folder)
 						      numbers
-						      &optional ignore-flags)
+						      &optional is-local)
   (elmo-nntp-folder-update-crosspost-message-alist folder numbers))
 
 (defsubst elmo-nntp-folder-process-crosspost (folder)
