@@ -845,7 +845,7 @@ return value is diffs '(-new -unread -all)."
 	   (folder (wl-folder-get-elmo-folder entity))
 	   (msgs (and (elmo-folder-exists-p folder)
 		      (elmo-folder-list-messages folder))))
-      (when (yes-or-no-p (format "%sDo you really delete \"%s\"? "
+      (when (yes-or-no-p (format "%sDo you really want to delete \"%s\"? "
 				 (if (> (length msgs) 0)
 				     (format "%d msg(s) exists. " (length msgs))
 				   "")
