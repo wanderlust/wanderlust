@@ -6020,7 +6020,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 							      folder next)))))
 		  (if wl-cache-prefetch-debug
 		      (message "Reading %d..." msg))
-		  (elmo-buffer-cache-message folder next msgdb)
+		  (elmo-buffer-cache-message folder next msgdb nil 'unread)
 		  (if wl-cache-prefetch-debug
 		      (message "Reading %d... done" msg))))))))))
 

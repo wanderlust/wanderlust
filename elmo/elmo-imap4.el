@@ -622,6 +622,8 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
   (let ((session (elmo-imap4-get-session old-spec)))
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-spec-mailbox old-spec))
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
