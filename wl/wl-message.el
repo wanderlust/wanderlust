@@ -420,7 +420,7 @@ Returns non-nil if bottom of message."
 	 message-buf
 	 strategy entity
 	 cache-used
-	 header-end real-fld-num summary-win delim)
+	 summary-win delim)
     (setq buffer-read-only nil)
     (setq cache-used (wl-message-buffer-display
 		      folder number flag force-reload))
