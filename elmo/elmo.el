@@ -233,9 +233,9 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
     (if visible-only
 	(elmo-living-messages list killed-list)
       (if in-msgdb
-	  (elmo-uniq-list
-	   (nconc (elmo-number-set-to-number-list killed-list) list)
-	   #'delq)
+	  (elmo-uniq-sorted-list
+	   (sort (nconc (elmo-number-set-to-number-list killed-list) list) #'<)
+	   #'eq)
 	list))))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional

@@ -349,6 +349,16 @@ Return value is a cons cell of (STRUCTURE . REST)"
 				  (cdr tmp)))))))
   lst)
 
+(defun elmo-uniq-sorted-list (list &optional equal-function)
+  "Distractively uniqfy elements of sorted LIST."
+  (setq equal-function (or equal-function #'equal))
+  (let ((list list))
+    (while list
+      (while (funcall equal-function (car list) (cadr list))
+	(setcdr list (cddr list)))
+      (setq list (cdr list))))
+  list)
+
 (defun elmo-list-insert (list element after)
   (let* ((match (memq after list))
 	 (rest (and match (cdr (memq after list)))))
@@ -1538,21 +1548,27 @@ NUMBER-SET is altered."
 	(setq number-set-1 (nconc number-set-1 (list number))))
     number-set-1))
 
+(defun elmo-make-number-list (beg end)
+  (let (number-list i)
+    (setq i end)
+    (while (>= i beg)
+      (setq number-list (cons i number-list))
+      (setq i (1- i)))
+    number-list))
+
 (defun elmo-number-set-to-number-list (number-set)
   "Return a number list which corresponds to NUMBER-SET."
-  (let (number-list elem i)
+  (let ((number-list (list 'dummy))
+	elem)
     (while number-set
       (setq elem (car number-set))
       (cond
        ((consp elem)
-	(setq i (car elem))
-	(while (<= i (cdr elem))
-	  (setq number-list (cons i number-list))
-	  (incf i)))
+	(nconc number-list (elmo-make-number-list (car elem) (cdr elem))))
        ((integerp elem)
-	(setq number-list (cons elem number-list))))
+	(nconc number-list (list elem))))
       (setq number-set (cdr number-set)))
-    (nreverse number-list)))
+    (cdr number-list)))
 
 (defcustom elmo-list-subdirectories-ignore-regexp "^\\(\\.\\.?\\|[0-9]+\\)$"
   "*Regexp to filter subfolders."

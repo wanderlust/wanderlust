@@ -1,3 +1,14 @@
+2004-04-16  YAMASHITA Junji <ysjj@unixuser.org>
+
+	* elmo.el (elmo-folder-list-messages): Use elmo-uniq-sorted-list.
+
+	* elmo-nntp.el (elmo-nntp-make-msglist): Use elmo-make-number-list.
+
+	* elmo-util.el (elmo-uniq-sorted-list): New function.
+	(elmo-make-number-list): Ditto.
+	(elmo-number-set-to-number-list): Use elmo-make-number-list
+	and don't use nreverse.
+
 2004-04-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-version.el (elmo-version): Up to 2.11.25.
