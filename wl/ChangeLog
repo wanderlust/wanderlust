@@ -1,3 +1,8 @@
+2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-refile-subr): Use folder realname while
+	checking cache folder.
+
 2000-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name): Use
