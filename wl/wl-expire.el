@@ -110,8 +110,7 @@
       (if (elmo-folder-delete-messages folder
 				       delete-list)
 	  (progn
-	    (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
-				    delete-list)
+	    (elmo-folder-detach-messages folder delete-list)
 	    (wl-expire-append-log
 	     (elmo-folder-name-internal folder)
 	     delete-list nil 'delete)
@@ -222,8 +221,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 			(elmo-folder-delete-messages folder
 						     refile-list))
 		  (progn
-		    (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
-					    refile-list)
+		    (elmo-folder-detach-messages folder refile-list)
 		    (wl-expire-append-log
 		     (elmo-folder-name-internal folder)
 		     refile-list nil 'delete))))))
@@ -590,7 +588,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	   hide-list (elmo-msgdb-get-mark-alist msgdb))))
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
     (message "%s" mess)
-    (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) hide-list)
+    (elmo-folder-detach-messages folder hide-list)
     (elmo-msgdb-append-to-killed-list folder hide-list)
     (elmo-folder-commit folder)
     (message "%sdone" mess)

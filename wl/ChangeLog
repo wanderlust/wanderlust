@@ -1,5 +1,12 @@
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-expire.el (wl-expire-delete): Use elmo-folder-detach-messages
+	instead of elmo-msgdb-delete-msgs.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+	(wl-expire-hide): Ditto.
+
+	* wl-summary.el (wl-summary-delete-all-msgs): Ditto.
+
 	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Don't use
 	elmo-msgdb interface.
 	(wl-thread-get-exist-children): Likewise.

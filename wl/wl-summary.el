@@ -2074,9 +2074,7 @@ If ARG is non-nil, checking is omitted."
 	    (message "Deleting...")
 	    (elmo-folder-delete-messages
 	     wl-summary-buffer-elmo-folder dels)
-	    ;; XXXX
-	    (elmo-msgdb-delete-msgs (wl-summary-buffer-msgdb)
-				    dels)
+	    (elmo-folder-detach-messages wl-summary-buffer-elmo-folder dels)
 	    (wl-summary-set-message-modified)
 	    (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					  (list 0 0 0))
