@@ -174,6 +174,35 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 		 string)
   :group 'wl)
 
+(defvar wl-summary-mode-line-format-spec-alist
+  '((?f (if (memq 'modeline wl-use-folder-petname)
+	    (wl-folder-get-petname (elmo-folder-name-internal
+				    wl-summary-buffer-elmo-folder))
+	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
+    (?t (if (eq wl-summary-buffer-view 'thread) "T" "S"))
+    (?n wl-summary-buffer-new-count)
+    (?u (+ wl-summary-buffer-new-count
+	   wl-summary-buffer-unread-count))
+    (?a (length wl-summary-buffer-number-list)))
+  "An alist of format specifications that can appear in summary mode-lines.
+Each element is a list of following:
+\(SPEC STRING-EXP\)
+SPEC is a character for format specification.
+STRING-EXP is an expression to get string to insert.")
+
+(defcustom wl-summary-mode-line-format "Wanderlust: %f {%t}(%n/%u/%a)"
+  "*A format string for summary mode-line of Wanderlust.
+It may include any of the following format specifications
+which are replaced by the given information:
+
+%f The folder name.
+%t The thread status of the summary ('T' for thread, 'S' for sequential).
+%n The number of new messages.
+%u The number of unread messages (includes new messages).
+%a The number of all messages."
+  :group 'wl-summary
+  :type 'string)
+
 (defvar wl-summary-line-format-spec-alist
   '((?Y (wl-summary-line-year))
     (?M (wl-summary-line-month))
@@ -196,18 +225,27 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 	    (concat "+" (number-to-string wl-thr-children-number) ":")
 	  ""))
     (?f (wl-summary-line-from))
-    (?# (wl-summary-line-list-count)))
+    (?# (wl-summary-line-list-info))
+    (?l (wl-summary-line-list-count))
+    (?T (or wl-temp-mark " "))
+    (?P (or wl-persistent-mark " "))
+    (?n (wl-summary-line-number)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
 \(SPEC STRING-EXP\)
 SPEC is a character for format specification.
-STRING is an expression to get string to insert.")
+STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s"
+(defcustom wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s"
   "*A default format string for summary line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
 
+%n The number of the message.
+   The width is decided using `wl-summary-default-number-column' and
+   `wl-summary-number-column-alist'.
+%T The temporal mark (*, D, o, O).
+%P The persistent mark (status of the message).
 %Y The year of the date field of the message (zero padded).
 %M The month of the date field of the message (zero padded).
 %D The day of the date field of the message (zero padded).
@@ -237,8 +275,8 @@ them will have the specified number of columns."
   "An alist of folder name and a summary line format.
 If no match, `wl-summary-line-format' is used.
 e.x.
-      '((\"^%\" . \"%M/%D(%W)%h:%m %t%[%14(%c %f%) %](%S) %s\")
-	(\"^@2ch\" . \"%M%/%D/%h:%m %t[%9(%c %f%) ]%s\")))"
+      '((\"^%\" . \"%n%T%P%M/%D(%W)%h:%m %t%[%14(%c %f%) %](%S) %s\")
+	(\"^@2ch\" . \"%n%T%P%M%/%D/%h:%m %t[%9(%c %f%) ]%s\")))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (string :tag "line format")))
   :group 'wl-summary)
@@ -1148,8 +1186,7 @@ ex.
   :group 'wl-summary
   :group 'wl-highlight)
 
-(defcustom wl-summary-lazy-highlight (and (boundp 'window-scroll-functions)
-					  (not wl-on-xemacs))
+(defcustom wl-summary-lazy-highlight (boundp 'window-scroll-functions)
   "Non-nil forces lazy summary highlighting using `window-scroll-functions'."
   :type 'boolean
   :group 'wl-summary
