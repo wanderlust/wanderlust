@@ -1,5 +1,14 @@
 2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-sync-marks): Re-display progress
+	only when there is progress.
+
+2000-04-13  Mito <mit@nines.nec.co.jp>
+
+	* wl-summary.el (wl-summary-sync-marks): Display progress.
+
+2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
 	* wl-summary.el (wl-summary-move-cached-regex): Eliminated.
 	(wl-summary-prev): Move cursor regardless of unread status.
 	(wl-summary-next): Ditto.

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-13 12:03:05 teranisi>
+;; Time-stamp: <2000-04-13 16:03:31 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2012,9 +2012,10 @@ If optional argument is non-nil, checking is omitted."
   "Update marks in summary."
   (interactive)
   (let ((plugged (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+	(last-progress 0)
 	mark-alist unread-marks msgs mark importants unreads 
 	importants-in-db unreads-in-db has-imap4 diff diffs
-	mes)
+	mes num-ma progress)
     ;; synchronize marks.
     (when (not (eq (elmo-folder-get-type 
 		    wl-summary-buffer-folder-name)
@@ -2024,6 +2025,7 @@ If optional argument is non-nil, checking is omitted."
 			       wl-summary-unread-uncached-mark
 			       wl-summary-new-mark)
 	    mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+            num-ma (length mark-alist)
 	    importants (elmo-list-folder-important 
 			wl-summary-buffer-folder-name
 			(elmo-msgdb-get-overview wl-summary-buffer-msgdb))
@@ -2033,15 +2035,21 @@ If optional argument is non-nil, checking is omitted."
 			(elmo-list-folder-unread 
 			 wl-summary-buffer-folder-name
 			 mark-alist unread-marks)))
-      (while mark-alist 
+      (while mark-alist
+	(setq progress (/ (* (- num-ma (length mark-alist)) 100) num-ma))
+	(if (not (eq progress last-progress))
+	    (elmo-display-progress 'wl-summary-sync-marks
+				   "Updating marks..."
+				   progress))
+	(setq last-progress progress)
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
 	    (setq importants-in-db (cons (car (car mark-alist))
 					 importants-in-db))
 	  (if (member (cadr (car mark-alist)) unread-marks)
 	      (setq unreads-in-db (cons (car (car mark-alist))
- 					unreads-in-db))))
-	(setq mark-alist (cdr mark-alist)))      
+					unreads-in-db))))
+	(setq mark-alist (cdr mark-alist)))
       (setq diff (elmo-list-diff importants importants-in-db))
       (setq diffs (cadr diff)) ; important-deletes
       (setq mes (format "Updated (-%d" (length diffs)))
