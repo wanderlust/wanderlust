@@ -178,8 +178,9 @@ Valid states are `closed', `initial', `auth'.")
 		acap-passphrase-alist))))
 
 ;;; Open, Close 
-(defun acap-open (user server &optional auth port type)
-  (let* ((buffer (get-buffer-create (concat " *acap on " user " at " server)))
+(defun acap-open (server &optional user auth port type)
+  (let* ((user (or user acap-default-user))
+	 (buffer (get-buffer-create (concat " *acap on " user " at " server)))
 	 process passphrase mechanism tag)
     (with-current-buffer buffer
       (if acap-process
