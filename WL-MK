@@ -56,6 +56,7 @@
   Warning: You don't seem to have \"new custom\" package installed.
            See README file of APEL package for more information.
 "))
+  (require 'backquote)
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
     (let ((doc (concat "*" (or doc ""))))
