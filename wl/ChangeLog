@@ -1,5 +1,12 @@
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-config-sub-eval-insert): New function.
+	Evaluate content and if the value is string, insert it.
+	(wl-draft-config-sub-body,wl-draft-config-sub-top,
+	wl-draft-config-sub-bottom,wl-draft-config-sub-header,
+	wl-draft-config-sub-header-top,wl-draft-config-sub-part-top,
+	wl-draft-config-sub-part-bottom): Use it.
+
 	* wl-summary.el (wl-summary-cleanup-temp-marks): Ask execution
 	with the folder name. The question was unintelligible when it is
 	called from wl-save-status.

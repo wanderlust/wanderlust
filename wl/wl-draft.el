@@ -1906,34 +1906,41 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (beginning-of-line)
 	 (goto-char (point-max))))))
 
+(defsubst wl-draft-config-sub-eval-insert (content &optional newline)
+  (let (content-value)
+    (when (and content
+	       (stringp (setq content-value (eval content))))
+      (insert content-value)
+      (if newline (insert "\n")))))
+
 (defun wl-draft-config-sub-body (content)
   (wl-draft-body-goto-top)
   (delete-region (point) (point-max))
-  (if content (insert (eval content))))
+  (wl-draft-config-sub-eval-insert content))
 
 (defun wl-draft-config-sub-top (content)
   (wl-draft-body-goto-top)
-  (if content (insert (eval content))))
+  (wl-draft-config-sub-eval-insert content))
 
 (defun wl-draft-config-sub-bottom (content)
   (wl-draft-body-goto-bottom)
-  (if content (insert (eval content))))
+  (wl-draft-config-sub-eval-insert content))
 
 (defun wl-draft-config-sub-header (content)
   (wl-draft-config-body-goto-header)
-  (if content (insert (concat (eval content) "\n"))))
+  (wl-draft-config-sub-eval-insert content 'newline))
 
 (defun wl-draft-config-sub-header-top (content)
   (goto-char (point-min))
-  (if content (insert (concat (eval content) "\n"))))
+  (wl-draft-config-sub-eval-insert content 'newline))
 
 (defun wl-draft-config-sub-part-top (content)
   (goto-char (mime-edit-content-beginning))
-  (if content (insert (concat (eval content) "\n"))))
+  (wl-draft-config-sub-eval-insert content 'newline))
 
 (defun wl-draft-config-sub-part-bottom (content)
   (goto-char (mime-edit-content-end))
-  (if content (insert (concat (eval content) "\n"))))
+  (wl-draft-config-sub-eval-insert content 'newline))
 
 (defsubst wl-draft-config-sub-file (content)
   (let ((coding-system-for-read wl-cs-autoconv)
