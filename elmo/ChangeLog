@@ -1,5 +1,8 @@
 2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-localdir.el (elmo-localdir-list-folders-subr): Bind
+	`w32-get-true-file-link-count' as t.
+
 	* elmo-imap4.el (elmo-imap4-read): Abolished.
 	(Renamed to `elmo-read' and moved to elmo-util.el)
 	All other related portions are changed.

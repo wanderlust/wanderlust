@@ -170,6 +170,7 @@
 
 (defun elmo-localdir-list-folders-subr (folder &optional hierarchy)
   (let ((case-fold-search t)
+	(w32-get-true-file-link-count t) ; for Meadow
 	folders curdir dirent relpath abspath attr
 	subprefix subfolder)
     (condition-case ()
