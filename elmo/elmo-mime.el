@@ -261,7 +261,7 @@ value is used."
 						     &optional
 						     original-major-mode
 						     keymap)
-  (error "Don't support this method."))
+  (error "Does not support this method"))
 
 
 (defun elmo-message-mime-entity (folder number rawbuf
