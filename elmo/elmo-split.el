@@ -256,21 +256,24 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 				 (incf fcount)))
 			(unless failure
 			  (ignore-errors
-			    (elmo-folder-delete-messages folder (list msg)))
-			  (elmo-split-log
-			   (concat "From "
-				   (nth 1 (std11-extract-address-components
-					   (or (std11-field-body "from") "")))
-				   "  " (or (std11-field-body "date") "") "\n"
-				   " Subject: "
-				   (eword-decode-string (or (std11-field-body
-							     "subject") ""))
-				   "\n"
-				   "  Folder: " fname "/0" "\n")
-			   reharsal)
-			  (incf count))
-			(unless (eq (nth 2 rule) 'continue)
-			  (throw 'terminate nil)))))))
+			    (elmo-folder-delete-messages folder (list msg))))
+			(incf count))
+		      (elmo-split-log
+		       (concat "From "
+			       (nth 1 (std11-extract-address-components
+				       (or (std11-field-body "from") "")))
+			       "  " (or (std11-field-body "date") "") "\n"
+			       " Subject: "
+			       (eword-decode-string (or (std11-field-body
+							 "subject") ""))
+			       "\n"
+			       (if reharsal
+				   "  Test: "
+				 "  Folder: ")
+			       fname "/0" "\n")
+		       reharsal)
+		      (unless (eq (nth 2 rule) 'continue)
+			(throw 'terminate nil))))))
 	      (elmo-progress-notify 'elmo-split)))
 	  (elmo-folder-close-internal folder))
       (elmo-progress-clear 'elmo-split))

@@ -1,6 +1,8 @@
 2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-split.el: New file.
+	(elmo-split): Fixed logic.
+	Display "Test:" instead of "Folder:" when reharsal.
 
 	* elmo-imap4.el (elmo-folder-append-buffer): Set flag as empty
 	explicitly.
