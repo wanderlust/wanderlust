@@ -29,13 +29,13 @@
 ;;
 ;; (autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
 ;;
-;; A command elmo-split is provided. If you enter:
+;; A command elmo-split is provided.  If you enter:
 ;;
 ;; M-x elmo-split
 ;;
 ;; Messages in the `elmo-split-folder' are splitted to the folders
 ;; according to the definition of `elmo-split-rule'.
-;; 
+;;
 
 (require 'elmo)
 
@@ -206,7 +206,7 @@ Example:
 If prefix argument ARG is specified, do a reharsal (no harm)."
   (interactive "P")
   (unless elmo-split-rule
-    (error "Split rule doest not exist. Set `elmo-split-rule' first."))
+    (error "Split rule does not exist.  Set `elmo-split-rule' first"))
   (let ((folders (if (listp elmo-split-folder)
 		     elmo-split-folder
 		   (list elmo-split-folder)))
@@ -303,6 +303,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
       (elmo-progress-clear 'elmo-split))
     (cons count fcount)))
 
-(provide 'elmo-split)
+(require 'product)
+(product-provide (provide 'elmo-split) (require 'elmo-version))
 
 ;;; elmo-split.el ends here
