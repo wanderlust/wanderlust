@@ -628,10 +628,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (unless keep-summary
 	      (kill-buffer x))))
 	 summaries))))
-  (wl-refile-alist-save
-   wl-refile-alist-file-name wl-refile-alist)
-  (wl-refile-alist-save
-   wl-refile-msgid-alist-file-name wl-refile-msgid-alist)
+  (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
   (wl-crosspost-alist-save)

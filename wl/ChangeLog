@@ -1,3 +1,13 @@
+2000-06-27  MAKINO Takashi <makino@cyber.office.ne.jp>
+
+	* wl-refile.el (wl-refile-subject-alist): New variable.
+	(wl-refile-subject-alist-file-name): Ditto.
+	(wl-refile-alist-setup): Rewrite.
+	(wl-refile-alist-save): Use `elmo-object-save'.
+	(wl-refile-learn): Check `wl-refile-guess-func-list'.
+	(wl-refile-guess-by-subject): New function.
+	(wl-refile-guess-func-list): Added it.
+
 2000-06-29  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo-with-temp-file-buffer): New macro.

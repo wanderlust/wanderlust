@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/23 19:07:28 teranisi>
+;; Time-stamp: <00/06/30 09:51:03 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -40,35 +40,48 @@
 ;; should be renamed to "refile-from-alist"
 (defvar wl-refile-msgid-alist nil)
 (defvar wl-refile-msgid-alist-file-name "refile-msgid-alist")
+(defvar wl-refile-subject-alist nil)
+(defvar wl-refile-subject-alist-file-name "refile-subject-alist")
 
 (defvar wl-refile-alist-max-length 1000)
 
 (defun wl-refile-alist-setup ()
-  (setq wl-refile-alist
-	(elmo-object-load
-	 (expand-file-name wl-refile-alist-file-name
-			   elmo-msgdb-dir)))
-  (setq wl-refile-msgid-alist
-	(elmo-object-load
-	 (expand-file-name wl-refile-msgid-alist-file-name
-			   elmo-msgdb-dir))))
+  (let ((flist wl-refile-guess-func-list))
+    (while flist
+      (cond
+       ((eq (car flist) 'wl-refile-guess-by-history)
+	(setq wl-refile-alist
+	      (elmo-object-load
+	       (expand-file-name wl-refile-alist-file-name
+				 elmo-msgdb-dir) elmo-mime-charset)))
+       ((eq (car flist) 'wl-refile-guess-by-msgid)
+	(setq wl-refile-msgid-alist
+	      (elmo-object-load
+	       (expand-file-name wl-refile-msgid-alist-file-name
+				 elmo-msgdb-dir) elmo-mime-charset)))
+       ((eq (car flist) 'wl-refile-guess-by-subject)
+	(setq wl-refile-subject-alist
+	      (elmo-object-load
+	       (expand-file-name wl-refile-subject-alist-file-name
+				 elmo-msgdb-dir) elmo-mime-charset))))
+      (setq flist (cdr flist)))))
 
-(defun wl-refile-alist-save (file-name alist)
-  (save-excursion
-    (let ((filename (expand-file-name file-name
-				      elmo-msgdb-dir))
-	  (tmp-buffer (get-buffer-create " *wl-refile-alist-tmp*")))
-      (set-buffer tmp-buffer)
-      (erase-buffer)
-      (if (> (length alist) wl-refile-alist-max-length)
-	  (setcdr (nthcdr (1- wl-refile-alist-max-length) alist) nil))
-      (prin1 alist tmp-buffer)
-      (princ "\n" tmp-buffer)
-      (if (file-writable-p filename)
-	  (write-region (point-min) (point-max) 
-			filename nil 'no-msg)
-	(message (format "%s is not writable." filename)))
-      (kill-buffer tmp-buffer))))
+(defun wl-refile-alist-save ()
+  (if wl-refile-alist
+      (wl-refile-alist-save-file
+       wl-refile-alist-file-name wl-refile-alist))
+  (if wl-refile-msgid-alist
+      (wl-refile-alist-save-file
+       wl-refile-msgid-alist-file-name wl-refile-msgid-alist))
+  (if wl-refile-subject-alist
+      (wl-refile-alist-save-file
+       wl-refile-subject-alist-file-name wl-refile-subject-alist)))
+
+(defun wl-refile-alist-save-file (file-name alist)
+  (if (> (length alist) wl-refile-alist-max-length)
+      (setcdr (nthcdr (1- wl-refile-alist-max-length) alist) nil))
+  (elmo-object-save (expand-file-name file-name elmo-msgdb-dir)
+		    alist elmo-mime-charset))
 
 (defun wl-refile-learn (entity dst)
   (let (tocc-list from key hit ml)
@@ -98,7 +111,15 @@
 		    entity)))))
 	  (setq key from)))
     (if (not ml)
-	(wl-refile-msgid-learn entity dst))
+	(progn
+	  (if (or wl-refile-msgid-alist
+		  (member 'wl-refile-guess-by-msgid
+			  wl-refile-guess-func-list))
+	      (wl-refile-msgid-learn entity dst))
+	  (if (or wl-refile-subject-alist
+		  (member 'wl-refile-guess-by-subject
+			  wl-refile-guess-func-list))
+	      (wl-refile-subject-learn entity dst))))
     (if key
 	(if (setq hit (assoc key wl-refile-alist))
 	    (setcdr hit dst)
@@ -115,12 +136,24 @@
 	  (setq wl-refile-msgid-alist (cons (cons key dst)
 					    wl-refile-msgid-alist))))))
 
+(defun wl-refile-subject-learn (entity dst)
+  (let ((subject (wl-summary-subject-filter-func-internal
+		  (elmo-msgdb-overview-entity-get-subject entity)))
+	hit)
+    (setq dst (elmo-string dst))
+    (if (and subject (not (string= subject "")))
+	(if (setq hit (assoc subject wl-refile-subject-alist))
+	    (setcdr hit dst)
+	  (setq wl-refile-subject-alist (cons (cons subject dst)
+					    wl-refile-subject-alist))))))
+
 ;;
 ;; refile guess
 ;;
 (defvar wl-refile-guess-func-list
   '(wl-refile-guess-by-rule
     wl-refile-guess-by-msgid
+    wl-refile-guess-by-subject
     wl-refile-guess-by-history)
   "*Functions in this list are used for guessing refile destination folder.")
 
@@ -132,35 +165,92 @@
 	(setq flist (cdr flist))))
     guess))
 
+(defun wl-refile-evaluate-rule (rule entity)
+  "Returns folder string if RULE is matched to ENTITY.
+If RULE does not match ENTITY, returns nil."
+  (let ((case-fold-search t)
+	fields guess pairs value)
+    (cond 
+     ((stringp rule) rule)
+     ((listp (car rule))
+      (setq fields (car rule))
+      (while fields
+	(if (setq guess (wl-refile-evaluate-rule (append (list (car fields))
+							 (cdr rule))
+						 entity))
+	    (setq fields nil)
+	  (setq fields (cdr fields))))
+      guess)
+     ((stringp (car rule))
+      (setq pairs (cdr rule))
+      (setq value (wl-refile-get-field-value entity (car rule)))
+      (while pairs
+	(if (and (stringp value)
+		 (string-match
+		  (car (car pairs))
+		  value)
+		 (setq guess (wl-refile-expand-newtext
+			      (wl-refile-evaluate-rule (cdr (car pairs))
+						       entity)
+			      value)))
+	    (setq pairs nil)
+	  (setq pairs (cdr pairs))))
+      guess)
+     (t (error "Invalid structure for wl-refile-rule-alist")))))
+
+(defun wl-refile-get-field-value (entity field)
+  "Get FIELD value from ENTITY."
+  (let ((field (downcase field))
+	(fixed-fields '("from" "subject" "to" "cc")))
+    (if (member field fixed-fields)
+	(funcall (symbol-function
+		  (intern (concat
+			   "elmo-msgdb-overview-entity-get-"
+			   field)))
+		 entity)
+      (elmo-msgdb-overview-entity-get-extra-field entity field))))
+
+(defun wl-refile-expand-newtext (newtext original)
+  (let ((len (length newtext))
+	(pos 0)
+	c expanded beg N did-expand)
+    (while (< pos len)
+      (setq beg pos)
+      (while (and (< pos len)
+		  (not (= (aref newtext pos) ?\\)))
+	(setq pos (1+ pos)))
+      (unless (= beg pos)
+	(push (substring newtext beg pos) expanded))
+      (when (< pos len)
+	;; We hit a \; expand it.
+	(setq did-expand t
+	      pos (1+ pos)
+	      c (aref newtext pos))
+	(if (not (or (= c ?\&)
+		     (and (>= c ?1)
+			  (<= c ?9))))
+	    ;; \ followed by some character we don't expand.
+	    (push (char-to-string c) expanded)
+	  ;; \& or \N
+	  (if (= c ?\&)
+	      (setq N 0)
+	    (setq N (- c ?0)))
+	  (when (match-beginning N)
+	    (push (substring original (match-beginning N) (match-end N))
+		  expanded))))
+      (setq pos (1+ pos)))
+    (if did-expand
+	(apply (function concat) (nreverse expanded))
+      newtext)))
+
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)
-	(rule-set) (field) (field-cont))
-    (catch 'found
-      (while rules
-	(setq rule-set (cdr (car rules))
-	      field (car (car rules)))
-	(cond ((string-match field "From")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-from entity)))
-	      ((string-match field "Subject")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-subject entity)))
-	      ((string-match field "To")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-to entity)))
-	      ((string-match field "Cc")
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-cc entity)))
-	      (t
-	       (setq field-cont
-		     (elmo-msgdb-overview-entity-get-extra-field
-		      entity (downcase field)))))
-	(if field-cont
-	    (while rule-set
-	      (if (string-match (car (car rule-set)) field-cont)
-		  (throw 'found (cdr (car rule-set)))
-		(setq rule-set (cdr rule-set)))))
-	(setq rules (cdr rules))))))
+	guess)
+    (while rules
+      (if (setq guess (wl-refile-evaluate-rule (car rules) entity))
+	  (setq rules nil)
+	(setq rules (cdr rules))))
+    guess))
 
 (defun wl-refile-guess-by-history (entity)
   (let ((tocc-list 
@@ -200,5 +290,10 @@
 (defun wl-refile-guess-by-msgid (entity)
   (cdr (assoc (elmo-msgdb-overview-entity-get-references entity)
 	      wl-refile-msgid-alist)))
+
+(defun wl-refile-guess-by-subject (entity)
+  (cdr (assoc (wl-summary-subject-filter-func-internal
+	       (elmo-msgdb-overview-entity-get-subject entity))
+	      wl-refile-subject-alist)))
 
 ;;; wl-refile.el ends here
