@@ -1764,6 +1764,24 @@ Wanderlust の内部に保持したメッセージを閲覧するためのフォルダです。
 @section ファイルフォルダ
 @cindex File Folder
 
+ローカルファイルシステムのファイルを閲覧するためのフォルダです。一つのディ
+レクトリを一つのフォルダとして扱います。
+
+書式:
+
+@example
+@samp{file:} @var{ディレクトリのパス}
+@end example
+
+例:
+
+@example
+@group
+file:~/work     -> @file{~/work}
+file:/etc       -> @file{/etc}
+@end group
+@end example
+
 
 @node Folder, Summary, Folders, Top
 @chapter フォルダモード
@@ -6308,7 +6326,7 @@ sync-all や rescan が実行されたときに、この値を越えるメッセージが
 Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
 未読マークは、IMAP4 サーバ上の未読情報が反映されます。
 重要マークは IMAP4 サーバ上の重要情報(Flagged フラグがついているか)、
-および @samp{'mark} フォルダの内容が、反映されます。
+および @samp{'flag} フォルダの内容が、反映されます。
 初期設定は @code{t}。
 @end table
 
@@ -8329,6 +8347,80 @@ Non-nil ならばオフライン処理で溜った処理を実行するかどうかを確認します。
 
 @node Migration, Terminology, Customization, Top
 @chapter 旧バージョンからの移行
+@cindex Migration
+
+この章では、以前のバージョンから移行する場合に必要な設定の変更や、制限等
+について説明します。
+
+@menu
+* Before 2.12.0::               2.12.0 より前のバージョンからの移行
+@end menu
+
+
+@node Before 2.12.0,  , Migration, Migration
+@section 2.12.0 より前のバージョンからの移行
+
+@subsection msgdb の変換について
+
+2.12.0 より前のバージョンから、msgdb の構造が変更されています。以後、新
+しく作成したフォルダの msgdb は、この新しい形式で作成/保存されます。以前
+の msgdb の形式をそのまま使い続ける場合には、@file{~/.wl} 等に以下の設定
+を記述します。
+
+@lisp
+@group
+(setq elmo-msgdb-default-type 'legacy)
+@end group
+@end lisp
+
+以前のバージョンで作成された msgdb は、デフォルトの状態ではそのままの形
+式を使う様になっています。この古い msgdb を新しい msgdb に変換する為には、
+以下のいずれかの設定を @file{~/.wl} 等に記述します。
+
+@lisp
+@group
+;; @r{msgdb をロードした時に @code{elmo-msgdb-default-type} と}
+;; @r{異なった形式だった場合に自動的に変換する場合}
+(setq elmo-msgdb-convert-type 'auto)
+
+;; @r{サマリで @kbd{s all} した時に変換する場合}
+(setq elmo-msgdb-convert-type 'sync)
+@end group
+@end lisp
+
+上述の様に以前の msgdb のまま使い続ける事も出来ますが、その場合には以下
+の制限があります。
+
+@enumerate
+@item
+@samp{important} 以外のフラグが使用出来ません。
+
+@end enumerate
+
+@subsection @samp{'mark} フォルダから @samp{'flag} フォルダへの変更
+
+新しいバージョンの Wanderlust を起動した時に @samp{'mark} フォルダにあっ
+たメッセージは、@samp{'flag} フォルダに自動的に引き継がれます。但し、こ
+うやって引き継いだメッセージには、以下の制限があります。
+
+@enumerate
+@item
+@samp{'flag} フォルダでメッセージを消しても元のメッセージの 
+@samp{important} フラグは消えません。
+
+@item
+元のメッセージの @samp{important} フラグを消しても @samp{'flag} フォルダ
+からは削除されません。
+
+@item
+help-echo で、元のメッセージが表示されません。
+
+@end enumerate
+
+もしも、自動での引き継ぎが上手くいかなかった場合は、@kbd{M-x
+elmo-global-mark-upgrade} を実行する事で、再度 @samp{'mark} フォルダから 
+@samp{'flag} フォルダにメッセージを取り込む事が出来ます。(重複したメッセー
+ジは取り込まないので、何回実行しても問題ありません)
 
 
 @node Terminology, Mailing List, Migration, Top
