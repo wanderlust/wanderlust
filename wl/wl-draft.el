@@ -732,6 +732,15 @@ Reply to author if WITH-ARG is non-nil."
       (mail-position-on-field "to"))
   (insert "\nFcc: "))
 
+;; Imported from message.el.
+(defun wl-draft-elide-region (b e)
+  "Elide the text in the region.
+An ellipsis (from `wl-draft-elide-ellipsis') will be inserted where the
+text was killed."
+  (interactive "r")
+  (kill-region b e)
+  (insert wl-draft-elide-ellipsis))
+
 ;; function for wl-sent-message-via
 
 (defmacro wl-draft-sent-message-p (type)

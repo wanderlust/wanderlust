@@ -4306,6 +4306,14 @@ Selects a template.
 Enter Address Manager.
 @xref{Address Manager}.
 (@code{wl-addrmgr})
+
+@item C-c C-d
+@kindex C-c C-d (Draft)
+@findex wl-draft-elide-region
+Elide the text between point and mark (@code{wl-draft-elide-region}).
+The text is killed and replaced with the contents of the variable
+@code{wl-draft-elide-ellipsis}.  The default value is to use an ellipsis
+(@samp{[...]}).
 @end table
 
 @section Customizable Variables

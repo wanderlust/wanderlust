@@ -158,7 +158,8 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
   (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
-  (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer))
+  (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer)
+  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
 
 (defun wl-draft-overload-menubar ()
   (local-set-key [menu-bar mail send]

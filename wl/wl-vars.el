@@ -952,6 +952,11 @@ ex.
   :group 'wl-draft
   :group 'wl-setting)
 
+(defcustom wl-draft-elide-ellipsis "\n[...]\n\n"
+  "*The string which is inserted for elided text."
+  :type 'string
+  :group 'wl-draft)
+
 (defcustom wl-template-alist nil
   "Alist of template."
   :type '(repeat (list (string :tag "Name")

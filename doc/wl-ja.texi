@@ -4272,6 +4272,13 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 アドレスマネージャを起動します。
 @xref{Address Manager}.
 (@code{wl-addrmgr})
+
+@item C-c C-d
+@kindex C-c C-d (Draft)
+@findex wl-draft-elide-region
+ポイントとマークの間の文を省きます (@code{wl-draft-elide-region})。文章
+は切られて (killed) 変数 @code{wl-draft-elide-ellipsis} の値で置き換えら
+れます。デフォルトの省略符号として使われる値は (@samp{[...]}) です。
 @end table
 
 @section カスタマイズ変数
