@@ -1,5 +1,8 @@
 2003-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* pldap.el (ldap-search-basic): Don't treat exit status 32 as an
+	error [wl:11327].
+
 	* elmo-imap4.el (elmo-folder-msgdb-create-plugged): Bind print-level,
 	print-depth.
 
