@@ -3425,12 +3425,6 @@ prefix argument つきで実行すると仮想フォルダから脱出します。
 指定リージョンにあるメッセージを全て読まなかったことにします。
 (@code{wl-summary-mark-as-unread-region})
 
-@item r i
-@kindex r i (Summary)
-@findex wl-summary-prefetch-region
-指定リージョンにあるメッセージを全てプリフェッチします。
-(@code{wl-summary-prefetch-region})
-
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
@@ -3461,6 +3455,12 @@ prefix argument つきで実行すると仮想フォルダから脱出します。
 @findex wl-summary-dispose-region
 指定リージョンにあるメッセージに処分マークをつけます。
 (@code{wl-summary-dispose-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+指定リージョンにあるメッセージにプリフェッチ予約マークを付けます。
+(@code{wl-summary-prefetch-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3496,13 +3496,6 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全体に
 カーソル行があるメッセージを先頭とするスレッドを読まなかったことにします。
 prefix argument つきならばカーソル行があるメッセージを含むスレッド全てを読まなかったことにします。
 (@code{wl-thread-mark-as-unread})
-
-@item t i
-@kindex t i (Summary)
-@findex wl-thread-prefetch
-カーソル行があるメッセージを先頭とするスレッドをプリフェッチします。
-prefix argument つきならばカーソル行があるメッセージを含むスレッド全てをプリフェッチします。
-(@code{wl-thread-prefetch})
 
 @item t x
 @kindex t x (Summary)
@@ -3545,6 +3538,13 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全体に
 適用します。
 (@code{wl-thread-dispose})
 
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+カーソル行があるメッセージを先頭とするスレッドにプリフェッチ予約マークを
+付けます。
+(@code{wl-thread-prefetch})
+
 @item t u
 @kindex t u (Summary)
 @findex wl-thread-unmark
@@ -3559,14 +3559,6 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全体に
 カーソル行があるメッセージを先頭とするスレッドを保存します。
 prefix argument つきならばカーソル行があるメッセージを含むスレッド全体を保存します。
 (@code{wl-thread-save})
-
-@item m i
-@kindex m i (Summary)
-@findex wl-summary-target-mark-prefetch
-まとめ処理用マーク @samp{*} のついたメッセージを全てプリフェッチします。
-prefix argument つきならば既にキャッシュされているメッセージも
-再度プリフェッチします。
-(@code{wl-summary-target-mark-prefetch})
 
 @item m R
 @kindex m R (Summary)
@@ -3604,6 +3596,13 @@ prefix argument つきならば既にキャッシュされているメッセージも
 @findex wl-summary-target-mark-dispose
 まとめ処理用マーク @samp{*} のついたメッセージに処分マークをつけます。
 (@code{wl-summary-target-mark-dispose})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+まとめ処理用マーク @samp{*} のついたメッセージにプリフェッチ予約マークを
+付けます。
+(@code{wl-summary-target-mark-prefetch})
 
 @item m y
 @kindex m y (Summary)

@@ -3435,12 +3435,6 @@ If @samp{$} mark already exists, remove the mark.
 Mark as unread messages in the specified region.
 (@code{wl-summary-mark-as-unread-region})
 
-@item r i
-@kindex r i (Summary)
-@findex wl-summary-prefetch-region
-Prefetch messages in the specified region.
-(@code{wl-summary-prefetch-region})
-
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
@@ -3471,6 +3465,12 @@ Put copy mark on the messages in the specified region.
 @findex wl-summary-dispose-region
 Put disposal mark on the messages in the specified region.
 (@code{wl-summary-dispose-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+Put prefetch reservation mark on messages in the specified region.
+(@code{wl-summary-prefetch-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3506,13 +3506,6 @@ With prefix argument, it affects on the all messages in the thread tree.
 Mark as unread messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-mark-as-unread})
-
-@item t i
-@kindex t i (Summary)
-@findex wl-thread-prefetch
-Prefetch messages which are the descendant of the current thread.
-With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-prefetch})
 
 @item t x
 @kindex t x (Summary)
@@ -3551,6 +3544,13 @@ Put disposal mark on the messages which are the descendant of the current thread
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-dispose})
 
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+Put prefetch reservation mark on messages which are the descendant of
+the current thread.
+(@code{wl-thread-prefetch})
+
 @item t u
 @kindex t u (Summary)
 @findex wl-thread-unmark
@@ -3565,13 +3565,6 @@ the thread tree.
 Save messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-save})
-
-@item m i
-@kindex m i (Summary)
-@findex wl-summary-target-mark-prefetch
-Prefetch all messages which have target mark @samp{*}.
-With prefix argument, prefetch all targets even if some of them are cached.
-(@code{wl-summary-target-mark-prefetch})
 
 @item m R
 @kindex m R (Summary)
@@ -3609,6 +3602,12 @@ Put copy mark on the messages which have target mark @samp{*}.
 @findex wl-summary-target-mark-dispose
 Put disposal mark on the messages which have target mark @samp{*}.
 (@code{wl-summary-target-mark-dispose})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+Put prefetch reservation mark on messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-prefetch})
 
 @item m y
 @kindex m y (Summary)
