@@ -59,7 +59,7 @@
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-spam)
 
-(defcustom wl-spam-auto-check-folder-regexp-list '("[+.]inbox")
+(defcustom wl-spam-auto-check-folder-regexp-list nil
   "*List of Folder regexp which check spam automatically."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-spam)
@@ -324,6 +324,15 @@ See `wl-summary-mark-action-list' for the detail of element."
     wl-spam-folder-name))
 
 (defun wl-spam-setup ()
+  (add-hook 'wl-summary-prepared-hook #'wl-summary-auto-check-spam)
+  (let ((actions wl-summary-mark-action-list)
+	action)
+    (while actions
+      (setq action  (car actions)
+	    actions (cdr actions))
+      (when (eq (wl-summary-action-symbol action) 'refile)
+	(setcar (nthcdr 4 action) 'wl-summary-exec-action-refile-with-register)
+	(setq actions nil))))
   (when wl-spam-mark-action-list
     (setq wl-summary-mark-action-list (append
 				       wl-summary-mark-action-list
@@ -336,8 +345,10 @@ See `wl-summary-mark-action-list' for the detail of element."
 	    (cons (wl-summary-action-mark action)
 		  wl-summary-skip-mark-list))))
   (define-key wl-summary-mode-map "k" wl-summary-spam-map)
-  (define-key wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
-  (define-key wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good))
+  (define-key
+    wl-summary-mode-map "ms" 'wl-summary-target-mark-register-as-spam)
+  (define-key
+    wl-summary-mode-map "mn" 'wl-summary-target-mark-register-as-good))
 
 (require 'product)
 (product-provide (provide 'wl-spam) (require 'wl-version))

@@ -374,6 +374,9 @@
 
 ;(require 'wl-spam)
 
+;; 移動した時に自動で spam かどうかチェックするフォルダを設定
+;(setq wl-spam-auto-check-folder-regexp-list '("\\+inbox"))
+
 ;; サマリバッファで `o' (wl-summary-refile) した時, *最初*に spam かど
 ;; うかを判定する様にする
 ;(unless (memq 'wl-refile-guess-by-spam wl-refile-guess-functions)
@@ -394,22 +397,5 @@
 ;  (setq wl-auto-refile-guess-functions
 ;	(append wl-auto-refile-guess-functions
 ;		'(wl-refile-guess-by-spam))))
-
-;; wl-spam-auto-check-folder-regexp-list に合致するフォルダに移動した
-;; 時に spam かどうかチェックする
-;(add-hook 'wl-summary-prepared-pre-hook #'wl-summary-auto-check-spam)
-
-;; refile の実行時に学習させる為の設定
-;; 以下の設定をしたからと言って常に学習する訳ではありません. 詳しくは,
-;; wl-spam.el の wl-spam-undecided-folder-regexp-list と
-;; wl-spam-ignored-folder-regexp-list の docstring を参照して下さい.
-;(let ((actions wl-summary-mark-action-list)
-;      action)
-;  (while actions
-;    (setq action  (car actions)
-;	  actions (cdr actions))
-;    (when (eq (wl-summary-action-symbol action) 'refile)
-;      (setcar (nthcdr 4 action) 'wl-summary-exec-action-refile-with-register)
-;      (setq actions nil))))
 
 ;;; dot.wl ends here

@@ -365,18 +365,21 @@
 
 ;(require 'wl-spam)
 
+;; In moving to summary, judge whether a message is a spam.
+;(setq wl-spam-auto-check-folder-regexp-list '("\\+inbox"))
+
 ;; Judge *first* whether a message is a spam
 ;; when `o' (wl-summary-refile) is performed in a summary buffer.
 ;(unless (memq 'wl-refile-guess-by-spam wl-refile-guess-functions)
 ;  (setq wl-refile-guess-functions
-;	(cons #'wl-refile-guess-by-spam 
+;	(cons #'wl-refile-guess-by-spam
 ;	      wl-refile-guess-functions)))
 
 ;; Judge *first* whether a message is a spam
 ;; when `C-o' (wl-summary-auto-refile) is performed in a summary buffer.
 ;(unless (memq 'wl-refile-guess-by-spam wl-auto-refile-guess-functions)
 ;  (setq wl-auto-refile-guess-functions
-;	(cons #'wl-refile-guess-by-spam 
+;	(cons #'wl-refile-guess-by-spam
 ;	      wl-auto-refile-guess-functions)))
 
 ;; When you want to give priority to refile-rule (same as spamfilter-wl.el
@@ -385,22 +388,5 @@
 ;  (setq wl-auto-refile-guess-functions
 ;	(append wl-auto-refile-guess-functions
 ;		'(wl-refile-guess-by-spam))))
-
-;; In moving to each summary, judge whether a message is a spam
-;; according to wl-spam-auto-check-folder-regexp-list.
-;(add-hook 'wl-summary-prepared-pre-hook #'wl-summary-auto-check-spam)
-
-;; Make the spam processor learn at the time of execution of refile.
-;; Even if the following setup was carried out, it does not always learn.
-;; See the docstring of wl-spam-undecided-folder-regexp-list and 
-;; wl-spam-ignored-folder-regexp-list in wl-spam.el for details.
-;(let ((actions wl-summary-mark-action-list)
-;      action)
-;  (while actions
-;    (setq action  (car actions)
-;	  actions (cdr actions))
-;    (when (eq (wl-summary-action-symbol action) 'refile)
-;      (setcar (nthcdr 4 action) 'wl-summary-exec-action-refile-with-register)
-;      (setq actions nil))))
 
 ;;; dot.wl ends here
