@@ -444,7 +444,7 @@ XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$9$k$K$O0J2<$N$h$&$K$7$^$9!#(B
 @end example
 
 package $B$N%G%#%l%/%H%j$O(B SEMI $B$,%$%s%9%H!<%k$5$l$F$$$l$P<+F08!=P$5$l$^$9!#(B
-(@file{Makefile} $BCf$N(B PACKAGEDIR $B$G$b@_Dj2D(B)
+(@file{Makefile} $BCf$N(B @code{PACKAGEDIR} $B$G$b@_Dj2D(B)
 
 @subsection $B%$%s%9%H!<%k$7$J$$$GMxMQ(B
 
@@ -735,7 +735,7 @@ default $BCM(B:
 
 @example
 $B%f!<%6L>(B  -> $BJQ?t(B @code{elmo-default-imap4-user} $B$NCM!#(B
-             $B=i4|@_Dj$O(B $B4D6-JQ?t(B USER $B$+!"(BLOGNAME $B$+!"(B(user-login-name) $B$NJV$jCM!#(B
+             $B=i4|@_Dj$O(B $B4D6-JQ?t(B @code{USER} $B$+!"(B@code{LOGNAME} $B$+!"(B(user-login-name) $B$NJV$jCM!#(B
 $BG'>ZK!(B    -> $BJQ?t(B @code{elmo-default-imap4-authenticate-type} $B$NCM!#(B
              $B=i4|@_Dj$O(B "auth"$B!#(B
 $B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-default-imap4-server} $B$NCM!#(B
@@ -963,7 +963,7 @@ Info-ZIP $B$d(B LHA $B$J$I$G05=L$5$l$?%"!<%+%$%V%U%!%$%k$r0l$D$N%U%)%k%@$H$7
 ange-ftp $BI=5-$b(B ange-ftp, efs $B$,;H$($k4D6-$G$O(B OK $B$G$9!#(B
 
 $B%U%)%k%@$N<BBN$H$7$F$N=q8K%U%!%$%k$O!">e=R$N%G%#%l%/%H%j$K$"$k(B
-@code{elmo-archive-basename}($B=i4|CM$O(B "elmo-archive")$B$K$J$j$^$9!#(B
+@code{elmo-archive-basename}($B=i4|CM$O(B @file{elmo-archive})$B$K$J$j$^$9!#(B
 $B$?$@$7!"%G%#%l%/%H%j$G$J$/%U%!%$%k$G$"$C$?>l9g!"$=$N%U%!%$%k$r%U%)%k%@(B
 $B$H8+Pv$7$^$9!#(B
 $B3HD%;R$O%"!<%+%$%PKh$K<+F0E*$K(B($BF0E*$K(B)$BA*Br$5$l$^$9!#(B
@@ -977,7 +977,7 @@ ange-ftp $BI=5-$b(B ange-ftp, efs $B$,;H$($k4D6-$G$O(B OK $B$G$9!#(B
 $B$F$$$k(B ML $B$N=q8K%U%!%$%k$rE83+$9$k$3$H$J$/%^%&%s%H$9$k$?$a$N$b$N!"$D$^$j(B
 $B1\Mw;~$NJX59$N$?$a$N$b$N$G$9!#(B
 $BNc$($P(B ML $B%5!<%P$,(B fml $B$N>l9g!"(B@file{msend.tar.gz} $B$O(B @file{spool/1} $B$N(B
-$B$h$&$J9=B$$J$N$G!"(B"spool" $B$r;XDj$7$^$9!#(B
+$B$h$&$J9=B$$J$N$G!"(B@samp{spool} $B$r;XDj$7$^$9!#(B
 
 @example
 $BNc(B: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
@@ -1058,8 +1058,8 @@ Win32 $B$G$O(B DOS $BHG$G$J$/!"(BLHa32 $B$G$J$$$HF0$+$J$$$H$N$3$H$G$9!#(B
 
 GNU tar $B$O=q8K$+$i$N:o=|$KLdBj$,$"$k$b$N$,B?$$$N$G!"FC$KCm0U$7$F$/$@$5$$!#(B
 $B=q8K$,GK2u$5$l$k4m81@-$,9b$$$N$G!"%U%k%9%Z%C%/$GFI$_=q$-$9$kA0$K(B
---delete -f $B$r=<J,%F%9%H$7$F$*$$$F$/$@$5$$!#$J$*!">e5-$N$b$N$G$O(B
-$B:#$N$H$3$mLdBj$OJs9p$5$l$F$$$^$;$s!#(B
+@samp{--delete} @samp{-f} $B$r=<J,%F%9%H$7$F$*$$$F$/$@$5$$!#(B
+$B$J$*!">e5-$N$b$N$G$O:#$N$H$3$mLdBj$OJs9p$5$l$F$$$^$;$s!#(B
 
 
 @node Archive Tips, Archive Vars, Archiver, Archive Folder
@@ -1152,8 +1152,8 @@ OS/2 $B$G$O%7%'%k$r2p$5$:$KH/9T$G$-$k%3%^%s%IJ8;zNs$O(B 8190 $B%P%$%H$^$G$J$N
 $B%H$J$I$r3z$^$9>l9g!"%7%'%k$N<BAu$K0MB8$9$k$3$H$KCm0U$7$F$/$@$5$$!#(B
 
 $B$J$*!"%"!<%+%$%P$,=hM}BP>]$H$J$k%U%!%$%k$N%j%9%H$rI8=`F~NO$+$i<u$1IU$1$k(B
-($BA0=R$N(B rm-pipe, mv-pipe, cat-headers action $B$,;XDj$5$l$F$$$k(B)$B>l9g!"#1(B
-$B%W%m%;%9$G=hM}$9$k$3$H$,$G$-$^$9!#(B
+($BA0=R$N(B @code{rm-pipe}, @code{mv-pipe}, @code{cat-headers} action
+$B$,;XDj$5$l$F$$$k(B)$B>l9g!"#1%W%m%;%9$G=hM}$9$k$3$H$,$G$-$^$9!#(B
 @end table
 
 
@@ -2635,7 +2635,7 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @kindex # (Summary)
 @findex wl-summary-print-message
 $B8=:_$N%a%C%;!<%8$NFbMF$r0u:~$7$^$9!#(B
-Emacs20 $B!A(B $B$G$O(B ps-print $B$r;H$$$^$9!#(B
+Emacs20 $B!A(B $B$G$O(B @code{ps-print} $B$r;H$$$^$9!#(B
 $BGr9u%W%j%s%?$G$O!"(B@code{wl-ps-print-buffer-func} $B$r(B
 'ps-print-buffer $B$K@_Dj$7$?$[$&$,$h$$$+$b$7$l$^$;$s!#(B
 (@code{wl-summary-print-message})
@@ -2669,7 +2669,7 @@ Emacs20 $B!A(B $B$G$O(B ps-print $B$r;H$$$^$9!#(B
 @item M-j
 @kindex M-j (Summary)
 @findex wl-summary-jump-to-msg-by-message-id
-$BF~NO$7$?%a%C%;!<%8(BID $B$r$b$D%a%C%;!<%8$N9T$K%8%c%s%W$7$^$9!#(B
+$BF~NO$7$?(B Message-ID $B$r$b$D%a%C%;!<%8$N9T$K%8%c%s%W$7$^$9!#(B
 @code{elmo-use-database} $B$,(B non-nil$B$J$i!"8=:_$N%5%^%j0J30$+$i$b(B
 $B8uJd$r8!:w$7$^$9!#(B
 (@code{wl-summary-jump-to-msg-by-message-id})
@@ -2714,8 +2714,8 @@ Date($BF|IU(B) From($BH/?.<T(B) Number($B%a%C%;!<%8HV9f(B) Subject($B%5%V
 @findex wl-summary-toggle-thread
 $B%9%l%C%II=<($r%H%0%k$7$^$9!#(B
 $B8=:_$N%9%l%C%II=<(>uBV$O%b!<%I%i%$%s$KI=<($5$l$^$9!%(B
-@{S@} $B$O%9%l%C%I!&%*%U(B(Sequence)$B$N>uBV!$(B
-@{T@} $B$O%9%l%C%I!&%*%s(B(Thread)$B$N>uBV$r<($7$^$9!%(B
+@samp{@{S@}} $B$O%9%l%C%I!&%*%U(B(Sequence)$B$N>uBV!$(B
+@samp{@{T@}} $B$O%9%l%C%I!&%*%s(B(Thread)$B$N>uBV$r<($7$^$9!%(B
 (@code{wl-summary-toggle-thread})
 
 @item l

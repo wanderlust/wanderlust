@@ -912,7 +912,7 @@ path-name is treated as absolute path.
 ange-ftp format is also permitted under the environment of ange-ftp, efs.
 
 The actual file name of the archive folder is 
-@code{elmo-archive-basename}(Initial setting is "elmo-archive")
+@code{elmo-archive-basename}(Initial setting is @file{elmo-archive})
 under the path-name. If a file named path-name exists, it is treated as
 folder. The suffix is automatically decided for archiver-type.
 
@@ -921,7 +921,7 @@ If `archiver-type' is omitted, @code{elmo-archive-default-type}
 
 `prefix' specifies the internal directory structure of the archive.
 For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
-@file{spool/1}, so you have to specify "spool" as `prefix'.
+@file{spool/1}, so you have to specify @samp{spool} as `prefix'.
 
 @example
 Example: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
@@ -1005,8 +1005,9 @@ In Win32, LHa32 is only supported (DOS version is no good).
 You have to take care about GNU tar's version because
 many version has problem on deleting file from archive.
 
-Please test --delete -f options work. Otherwise, your archive will be
-destroyed. No problem is reported on above versions of GNU tar.
+Please test @samp{--delete} @samp{-f} options work. Otherwise, your
+archive will be destroyed. No problem is reported on above versions of
+GNU tar.
 
 
 @node Archive Tips, Archive Vars, Archiver, Archive Folder
@@ -1103,7 +1104,7 @@ with some margin.
 
 However, you don't have an influence of command line argument limit
 if the archiver has `actions' to receive target file information from
-standard input (rm-pipe, mv-pipe, cat-headers action).
+standard input (@code{rm-pipe}, @code{mv-pipe}, @code{cat-headers} action).
 @end table
 
 @node POP Folder, Multi Folder, Archive Folder, Folders
@@ -2617,7 +2618,7 @@ Pipe current message's content to the external process.
 @kindex # (Summary)
 @findex wl-summary-print-message
 Print out current message's content.
-It uses ps-print module in Emacs 20.x.
+It uses @code{ps-print} module in Emacs 20.x.
 If you don't use color printer, you might want to set
 @code{wl-ps-print-buffer-func} to 'ps-print-buffer.
 (@code{wl-summary-print-message})
@@ -2696,8 +2697,8 @@ You can sort by date, from, number and subject.
 @findex wl-summary-toggle-thread
 Toggle the threading.
 Threading status is displayed on the modeline.
-@{S@} means threading is off (Sequence) and 
-@{T@} means threading is on (Thread).
+@samp{@{S@}} means threading is off (Sequence) and 
+@samp{@{T@}} means threading is on (Thread).
 (@code{wl-summary-toggle-thread})
 
 @item l
