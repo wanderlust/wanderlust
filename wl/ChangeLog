@@ -1,3 +1,7 @@
+2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-as-coding-system): Define for non-mule too.
+
 2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-delete): Move confirmation to elmo side,
