@@ -3,7 +3,6 @@
 	* elmo.el (elmo-message-set-mark): Abolish.
 
 	* elmo-msgdb.el (toplevel): Added comment.
-	(elmo-msgdb-set-mark): Abolish.
 	(elmo-load-msgdb): Added 4th element `path'.
 	(elmo-msgdb-append): Follow the change above.
 	(elmo-msgdb-clear): Ditto.

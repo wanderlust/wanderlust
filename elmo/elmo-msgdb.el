@@ -181,6 +181,33 @@
   (cadr (elmo-get-hash-val (format "#%d" number)
 			   (elmo-msgdb-get-mark-hashtb msgdb))))
 
+(defsubst elmo-msgdb-set-mark (msgdb number mark)
+  "Set MARK of the message with NUMBER in the MSGDB.
+if MARK is nil, mark is removed."
+  (let ((elem (elmo-get-hash-val (format "#%d" number)
+				 (elmo-msgdb-get-mark-hashtb msgdb))))
+    (if elem
+	(if mark
+	    ;; Set mark of the elem
+	    (setcar (cdr elem) mark)
+	  ;; Delete elem from mark-alist
+	  (elmo-msgdb-set-mark-alist
+	   msgdb
+	   (delq elem (elmo-msgdb-get-mark-alist msgdb)))
+	  (elmo-clear-hash-val (format "#%d" number)
+			       (elmo-msgdb-get-mark-hashtb msgdb)))
+      (when mark
+	;; Append new element.
+	(elmo-msgdb-set-mark-alist
+	 msgdb
+	 (nconc
+	  (elmo-msgdb-get-mark-alist msgdb)
+	  (list (setq elem (list number mark)))))
+	(elmo-set-hash-val (format "#%d" number) elem
+			   (elmo-msgdb-get-mark-hashtb msgdb))))
+    ;; return value.
+    t))
+
 (defun elmo-msgdb-get-cached (msgdb number)
   "Return non-nil if message is cached."
   (not (member (elmo-msgdb-get-mark msgdb number)
@@ -498,10 +525,10 @@ content of MSGDB is changed."
 
 (defun elmo-flag-table-save (dir flag-table)
   (elmo-object-save
-   (expand-file-name (expand-file-name elmo-flag-table-filename dir)
-		     (mapatoms (lambda (atom)
-				 (cons (symbol-name atom) (symbol-value atom)))
-			       flag-table))))
+   (expand-file-name elmo-flag-table-filename dir)
+   (mapatoms (lambda (atom)
+	       (cons (symbol-name atom) (symbol-value atom)))
+	     flag-table)))
 ;;;
 ;; persistent mark handling
 ;; (for each folder)
@@ -813,7 +840,7 @@ Return CONDITION itself if no entity exists in msgdb."
   (setcar (cdddr msgdb) index))
 
 (defsubst elmo-msgdb-set-path (msgdb path)
-  (setcar (cddddr msgdb) index))
+  (setcar (cddddr msgdb) path))
 
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
   (and entity (aref (cdr entity) 1)))
