@@ -3174,8 +3174,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(setq c (+ c (char-width (following-char)))))
       (and (> c len) (setq folder (concat " " folder)))
       (setq rs (point))
-      (when wl-summary-width
-	  (put-text-property rs re 'invisible t))
+      (put-text-property rs re 'invisible t)
       (put-text-property rs re 'wl-summary-destination t)
       (goto-char re)
       (wl-highlight-refile-destination-string folder)
@@ -4149,6 +4148,7 @@ If ARG, exit virtual folder."
 	 (t (format "%dB" size)))
       "")))
 
+(defvar wl-summary-line-subject-minimum-length nil)
 (defun wl-summary-line-subject ()
   (let (no-parent subject parent-raw-subject parent-subject)
     (if (string= wl-thr-indent-string "")
@@ -4163,12 +4163,24 @@ If ARG, exit virtual folder."
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
-    (if (or no-parent
-	    (null parent-subject)
-	    (not (wl-summary-subject-equal
-		  subject parent-subject)))
-	(funcall wl-summary-subject-function subject)
-      "")))
+    (setq subject
+	  (if (or no-parent
+		  (null parent-subject)
+		  (not (wl-summary-subject-equal
+			subject parent-subject)))
+	      (funcall wl-summary-subject-function subject)
+	    ""))
+    (when (and wl-summary-line-subject-minimum-length
+	       (< (string-width subject)
+		  wl-summary-line-subject-minimum-length))
+      (while (< (string-width subject)
+		wl-summary-line-subject-minimum-length)
+	(setq subject (concat subject " "))))
+    (if (and (not wl-summary-width)
+	     wl-summary-subject-length-limit)
+	(truncate-string subject
+			 wl-summary-subject-length-limit)
+      subject)))
 
 (defun wl-summary-line-from ()
   (elmo-delete-char ?\n
