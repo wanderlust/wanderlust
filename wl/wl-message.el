@@ -366,7 +366,9 @@ Returns non-nil if bottom of message."
 
 (defun wl-message-get-original-buffer ()
   "Get original buffer for current message buffer."
-  wl-message-buffer-original-buffer)
+  (if (buffer-live-p wl-message-buffer-original-buffer)
+      wl-message-buffer-original-buffer
+    (wl-original-message-buffer-get (buffer-name (current-buffer)))))
 
 (defun wl-message-add-buttons-to-body (start end)
   (save-excursion
