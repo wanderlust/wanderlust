@@ -740,11 +740,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(unless (elmo-folder-exists-p lost+found-folder)
 	  (elmo-folder-create lost+found-folder)))
       ;; tmp dir
-      (unless (file-exists-p wl-tmp-dir)
+      (unless (file-exists-p wl-temporary-file-directory)
 	(if (y-or-n-p
 	     (format "Temp directory (to save multipart) %s does not exist, create it now? "
-		     wl-tmp-dir))
-	    (make-directory wl-tmp-dir)
+		     wl-temporary-file-directory))
+	    (make-directory wl-temporary-file-directory)
 	  (error "Temp directory is not created"))))))
 
 ;;;###autoload

@@ -56,7 +56,7 @@
    (elmo-localnews-folder-group-internal folder)
    (expand-file-name
     (symbol-name (elmo-folder-type-internal folder))
-    elmo-msgdb-dir)))
+    elmo-msgdb-directory)))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-localnews-folder))
   (list (elmo-localnews-folder-group-internal folder)))

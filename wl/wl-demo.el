@@ -143,10 +143,10 @@ Return a number of lines that an image occupies in the buffer."
       (set-specifier (symbol-value 'scrollbar-height) 0 (current-buffer))
       (set-specifier (symbol-value 'scrollbar-width) 0 (current-buffer)))
     (if (and file
-	     (if (and wl-icon-dir
-		      (file-directory-p wl-icon-dir))
-		 (setq file (expand-file-name file wl-icon-dir))
-	       (message "You have to specify the value of `wl-icon-dir'")
+	     (if (and wl-icon-directory
+		      (file-directory-p wl-icon-directory))
+		 (setq file (expand-file-name file wl-icon-directory))
+	       (message "You have to specify the value of `wl-icon-directory'")
 	       nil)
 	     (if (file-exists-p file)
 		 (if (file-readable-p file)

@@ -508,7 +508,8 @@ Reply to author if WITH-ARG is non-nil."
   (wl-draft-edit-string (elmo-get-file-string
 			 (or file
 			     (read-file-name "File to edit: "
-					     (or wl-tmp-dir "~/"))))))
+					     (or wl-temporary-file-directory
+						 "~/"))))))
 
 (defun wl-draft-edit-string (string)
   (let ((cur-buf (current-buffer))
@@ -761,7 +762,7 @@ Reply to author if WITH-ARG is non-nil."
   (when wl-draft-sendlog
     (with-temp-buffer
       (let* ((filename (expand-file-name wl-draft-sendlog-filename
-					 elmo-msgdb-dir))
+					 elmo-msgdb-directory))
 	     (filesize (nth 7 (file-attributes filename)))
 	     (server (if server (concat " server=" server) ""))
 	     (to (if to (cond

@@ -109,7 +109,7 @@
     (elmo-nntp-folder-group-internal folder)
     (expand-file-name (or (elmo-net-folder-server-internal folder) "nowhere")
 		      (expand-file-name "nntp"
-					elmo-msgdb-dir)))))
+					elmo-msgdb-directory)))))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-nntp-folder))
   (list (elmo-nntp-folder-group-internal folder)))

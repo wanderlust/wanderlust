@@ -203,22 +203,22 @@ By setting following-method as yank-content."
     (wl-summary-sync-update)))
 
 ;; internal variable.
-(defvar wl-mime-save-dir nil "Last saved directory.")
+(defvar wl-mime-save-directory nil "Last saved directory.")
 ;;; Yet another save method.
 (defun wl-mime-save-content (entity situation)
   (let ((filename (read-file-name "Save to file: "
 				  (expand-file-name
 				   (or (mime-entity-safe-filename entity)
 				       ".")
-				   (or wl-mime-save-dir
-				       wl-tmp-dir)))))
+				   (or wl-mime-save-directory
+				       wl-temporary-file-directory)))))
     (while (file-directory-p filename)
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "Not saved")))
-    (setq wl-mime-save-dir (file-name-directory filename))
+    (setq wl-mime-save-directory (file-name-directory filename))
     (mime-write-entity-content entity filename)))
 
 ;;; Yet another combine method.

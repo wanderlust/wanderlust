@@ -1802,7 +1802,7 @@ Return nil if no complete line has arrived."
 			     "nowhere")
 			 (expand-file-name
 			  "imap"
-			  elmo-msgdb-dir)))))))
+			  elmo-msgdb-directory)))))))
 
 (luna-define-method elmo-folder-status-plugged ((folder
 						 elmo-imap4-folder))

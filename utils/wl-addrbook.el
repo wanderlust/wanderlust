@@ -151,7 +151,7 @@ If nil,  the old 'user' entry remains.")
 	  (setq wl-alias-auto-alist
 		(elmo-object-load (expand-file-name
 				   wl-alias-auto-file-name
-				   elmo-msgdb-dir)))))
+				   elmo-msgdb-directory)))))
   (setq wl-addrbook-alist (wl-addrbook-make-alist))
   ;; wl-alias-auto-alist is used independently so must use copy-alist
   (if wl-addrbook-alist
@@ -172,7 +172,7 @@ If nil,  the old 'user' entry remains.")
   (when wl-alias-auto-file-name
     (elmo-object-save (expand-file-name
 		       wl-alias-auto-file-name
-		       elmo-msgdb-dir)
+		       elmo-msgdb-directory)
 		      wl-alias-auto-alist)
     (setq wl-alias-auto-alist nil)
     (setq wl-addrbook-hashtb nil)))

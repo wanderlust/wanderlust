@@ -56,7 +56,7 @@
 						    elmo-mark-folder))
   (expand-file-name "mark"
 		    (expand-file-name "internal"
-				      elmo-msgdb-dir)))
+				      elmo-msgdb-directory)))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-mark-folder))
@@ -69,7 +69,7 @@
 			    (elmo-object-load
 			     (expand-file-name
 			      elmo-msgdb-global-mark-filename
-			      elmo-msgdb-dir)))))
+			      elmo-msgdb-directory)))))
       (if (string= (elmo-mark-folder-mark-internal folder)
 		   (cdr pair))
 	  (setq result (cons (car pair) result))))

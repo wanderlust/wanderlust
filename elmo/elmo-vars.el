@@ -59,7 +59,7 @@ Each elements are regexp of folder name (This is obsolete).")
 (defvar elmo-msgdb-file-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
 
-(defvar elmo-msgdb-dir "~/.elmo"
+(defvar elmo-msgdb-directory "~/.elmo"
   "*ELMO Message Database path.")
 (defvar elmo-passwd-alist-file-name "passwd"
   "*ELMO Password filename.")
@@ -321,7 +321,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-cache-expire-default-age 50
   "Cache expiration age (days).")
 
-(defvar elmo-cache-dirname "cache"
+(defvar elmo-cache-directory (expand-file-name "cache" elmo-msgdb-directory)
   "Directory name for cache storage.")
 
 (defvar elmo-pack-number-check-strict t

@@ -116,7 +116,7 @@
 			     (symbol-name
 			      (elmo-archive-folder-archive-type-internal
 			       folder)))
-		     elmo-msgdb-dir)))
+		     elmo-msgdb-directory)))
 
 ;;; MMDF parser -- info-zip agent w/ REXX
 (defvar elmo-mmdf-delimiter "^\01\01\01\01$"
@@ -652,8 +652,8 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-folder-message-make-temp-files (folder
 						    numbers
 						    start-number)
-  (let* ((tmp-dir-src (elmo-folder-make-temp-dir folder))
-	 (tmp-dir-dst (elmo-folder-make-temp-dir folder))
+  (let* ((tmp-dir-src (elmo-folder-make-temporary-directory folder))
+	 (tmp-dir-dst (elmo-folder-make-temporary-directory folder))
 	 (arc     (elmo-archive-get-archive-name folder))
 	 (type    (elmo-archive-folder-archive-type-internal folder))
 	 (prefix  (elmo-archive-folder-archive-prefix-internal folder))

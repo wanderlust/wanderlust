@@ -308,7 +308,7 @@ update overview when message is fetched."
 	    (elmo-shimbun-folder-shimbun-internal folder))
 	   "/"
 	   (elmo-shimbun-folder-group-internal folder))
-   (expand-file-name "shimbun" elmo-msgdb-dir)))
+   (expand-file-name "shimbun" elmo-msgdb-directory)))
 
 (defun elmo-shimbun-msgdb-create-entity (folder number)
   (let ((header (elmo-get-hash-val

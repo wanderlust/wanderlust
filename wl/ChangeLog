@@ -1,3 +1,14 @@
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (wl-acap-original-msgdb-directory): Renamed from
+	`wl-acap-original-msgdb-dir'.
+
+	* wl-vars.el (wl-icon-directory): Renamed from `wl-icon-dir'.
+	(wl-score-files-directory): Renamed from `wl-score-fiels-dir'.
+
+	* wl-mime.el (wl-mime-save-directory): Renamed from
+	`wl-mime-save-directory'.
+
 2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-vars.el (wl-icon-dir): Fixed the docstring.

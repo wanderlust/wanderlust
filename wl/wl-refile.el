@@ -50,17 +50,17 @@
 	(setq wl-refile-alist
 	      (elmo-object-load
 	       (expand-file-name wl-refile-alist-file-name
-				 elmo-msgdb-dir) elmo-mime-charset)))
+				 elmo-msgdb-directory) elmo-mime-charset)))
        ((eq (car flist) 'wl-refile-guess-by-msgid)
 	(setq wl-refile-msgid-alist
 	      (elmo-object-load
 	       (expand-file-name wl-refile-msgid-alist-file-name
-				 elmo-msgdb-dir) elmo-mime-charset)))
+				 elmo-msgdb-directory) elmo-mime-charset)))
        ((eq (car flist) 'wl-refile-guess-by-subject)
 	(setq wl-refile-subject-alist
 	      (elmo-object-load
 	       (expand-file-name wl-refile-subject-alist-file-name
-				 elmo-msgdb-dir) elmo-mime-charset))))
+				 elmo-msgdb-directory) elmo-mime-charset))))
       (setq flist (cdr flist)))))
 
 (defun wl-refile-alist-save ()
@@ -77,7 +77,7 @@
 (defun wl-refile-alist-save-file (file-name alist)
   (if (> (length alist) wl-refile-alist-max-length)
       (setcdr (nthcdr (1- wl-refile-alist-max-length) alist) nil))
-  (elmo-object-save (expand-file-name file-name elmo-msgdb-dir)
+  (elmo-object-save (expand-file-name file-name elmo-msgdb-directory)
 		    alist elmo-mime-charset))
 
 (defun wl-refile-learn (entity dst)

@@ -76,7 +76,7 @@
   (expand-file-name (elmo-replace-string-as-filename
 		     (elmo-folder-name-internal folder))
 		    (expand-file-name "multi"
-				      elmo-msgdb-dir)))
+				      elmo-msgdb-directory)))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-multi-folder))
   (delq nil

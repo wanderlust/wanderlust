@@ -47,7 +47,7 @@
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-sendlog-folder))
   (expand-file-name "sendlog"
 		    (expand-file-name "internal"
-				      elmo-msgdb-dir)))
+				      elmo-msgdb-directory)))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-sendlog-folder))
@@ -55,13 +55,13 @@
 
 (defun elmo-sendlog-folder-list-message-locations (folder)
   (let ((filename (expand-file-name elmo-sendlog-filename
-				    elmo-msgdb-dir))
+				    elmo-msgdb-directory))
 	result)
     (if (not (file-readable-p filename))
-        nil
+	nil
       (elmo-set-work-buf
        (as-binary-input-file
-        (insert-file-contents filename))
+	(insert-file-contents filename))
        (goto-char (point-min))
        (catch 'done
 	 (while t

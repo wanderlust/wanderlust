@@ -92,7 +92,7 @@ If the value is a list, all elements are used as index paths for namazu."
   (expand-file-name
    (elmo-replace-string-as-filename
     (elmo-folder-name-internal folder))
-   (expand-file-name "nmz" elmo-msgdb-dir)))
+   (expand-file-name "nmz" elmo-msgdb-directory)))
 
 (defun elmo-nmz-msgdb-create-entity (folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
@@ -175,7 +175,7 @@ If the value is a list, all elements are used as index paths for namazu."
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (if start-number 0)))
     (dolist (number numbers)
       (elmo-add-name-to-file

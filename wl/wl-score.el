@@ -310,12 +310,12 @@ Set `wl-score-cache' nil."
 		(or (and (string-match
 			  (concat "^" (regexp-quote
 				       (expand-file-name
-					wl-score-files-dir)))
+					wl-score-files-directory)))
 			  (expand-file-name file))
 			 file)
 		    (expand-file-name
 		     file
-		     (file-name-as-directory wl-score-files-dir)))))
+		     (file-name-as-directory wl-score-files-directory)))))
 	 (cached (assoc file wl-score-cache))
 	 alist)
     (if cached
@@ -859,7 +859,7 @@ Set `wl-score-cache' nil."
 (defun wl-score-change-score-file (file)
   "Change current score alist."
   (interactive
-   (list (read-file-name "Change to score file: " wl-score-files-dir)))
+   (list (read-file-name "Change to score file: " wl-score-files-directory)))
   (wl-score-load-file file))
 
 (defun wl-score-default (level)
@@ -1287,7 +1287,7 @@ Set `wl-score-cache' nil."
 (defun wl-score-edit-file (file)
   "Edit a score FILE."
   (interactive
-   (list (read-file-name "Edit score file: " wl-score-files-dir)))
+   (list (read-file-name "Edit score file: " wl-score-files-directory)))
   (when (wl-collect-summary)
     (wl-score-save))
   (let ((winconf (current-window-configuration))

@@ -1,4 +1,11 @@
-2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo.el (elmo-folder-make-temporary-directory): Renamed from
+	`elmo-folder-make-temp-dir'
+
+	* elmo-vars.el (elmo-cache-directory): New variable.
+	(elmo-cache-dir): Abolished.
+	(elmo-msgdb-directory): Renamed from `elmo-msgdb-directory'.
 
 	* elmo-version.el (elmo-version): Up to 2.7.7.
 

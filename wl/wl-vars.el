@@ -158,17 +158,17 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :group 'wl
   :group 'wl-setting)
 
-(defcustom wl-tmp-dir "~/tmp/"
+(defcustom wl-temporary-file-directory "~/tmp/"
   "*Default temporary directory to save message, part."
   :type 'directory
   :group 'wl)
 
-(defcustom wl-icon-dir (if (fboundp 'locate-data-directory)
-			   (locate-data-directory "wl")
-			 (let ((icons (expand-file-name "wl/icons/"
-							data-directory)))
-			   (if (file-directory-p icons)
-			       icons)))
+(defcustom wl-icon-directory (if (fboundp 'locate-data-directory)
+				 (locate-data-directory "wl")
+			       (let ((icons (expand-file-name "wl/icons/"
+							      data-directory)))
+				 (if (file-directory-p icons)
+				     icons)))
   "*Directory to load the icon files from, or nil if none."
   :type '(choice (const :tag "none" nil)
 		 string)
@@ -828,7 +828,7 @@ In sync-all or rescan."
   :type 'integer
   :group 'wl-score)
 
-(defcustom wl-score-files-dir (concat elmo-msgdb-dir elmo-path-sep)
+(defcustom wl-score-files-directory (concat elmo-msgdb-directory elmo-path-sep)
   "*Name of the directory where score files will be stored.
 (default \"~/.elmo\")."
   :type 'directory
@@ -2272,7 +2272,7 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-highlight-thread-indent-string-regexp "[^[<]*"
   "* A regexp string for thread indent...for highlight.")
 
-;; folder icons. filename relative to wl-icon-dir
+;; folder icons. filename relative to wl-icon-directory
 (defvar wl-opened-group-folder-icon "opened.xpm"
   "*Icon file for opened group folder.")
 (defvar wl-closed-group-folder-icon "closed.xpm"
@@ -2336,6 +2336,16 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 
 ;;;; Obsolete variables.
 
+;; 2001-12-11: *-dir -> *-directory
+(elmo-define-obsolete-variable 'wl-icon-dir
+			       'wl-icon-directory)
+(elmo-define-obsolete-variable 'wl-mime-save-dir
+			       'wl-mime-save-directory)
+(elmo-define-obsolete-variable 'wl-score-files-dir
+			       'wl-score-files-directory)
+(elmo-define-obsolete-variable 'wl-tmp-dir
+			       'wl-teporary-file-directory)
+
 ;; 2001-12-10
 (elmo-define-obsolete-variable 'wl-summary-update-confirm-threshold
 			       'elmo-folder-update-threshold)
@@ -2378,10 +2388,6 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 ;; 2000-01-25: temp mark -> target mark
 (elmo-define-obsolete-variable 'wl-summary-temp-above
 			       'wl-summary-target-above)
-
-;; 2000-03-08
-(elmo-define-obsolete-variable 'wl-score-files-directory
-			       'wl-score-files-dir)
 
 ;; 1999-11-07: Unified with `wl-draft-config-alist'.
 (defvar wl-draft-prepared-config-alist nil)

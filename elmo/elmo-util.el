@@ -390,7 +390,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-load ()
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-				      elmo-msgdb-dir))
+				      elmo-msgdb-directory))
 	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
 	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
 	  insert-file-contents-post-hook
@@ -416,7 +416,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (interactive)
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-				      elmo-msgdb-dir))
+				      elmo-msgdb-directory))
 	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
       (set-buffer tmp-buffer)
       (erase-buffer)
@@ -711,7 +711,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (if (null (file-directory-p parent))
 	(elmo-make-directory parent))
     (make-directory path)
-    (if (string= path (expand-file-name elmo-msgdb-dir))
+    (if (string= path (expand-file-name elmo-msgdb-directory))
 	(set-file-modes path (+ (* 64 7) (* 8 0) 0))))) ; chmod 0700
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
@@ -1547,15 +1547,13 @@ If optional argument SECTION is specified, partial cache path is returned."
   (if (setq msgid (elmo-msgid-to-cache msgid))
       (expand-file-name
        (if section
-	   (format "%s/%s/%s/%s/%s"
-		   elmo-msgdb-dir
-		   elmo-cache-dirname
+	   (format "%s/%s/%s/%s"
+		   elmo-cache-directory
 		   (elmo-cache-get-path-subr msgid)
 		   msgid
 		   section)
-	 (format "%s/%s/%s/%s"
-		 elmo-msgdb-dir
-		 elmo-cache-dirname
+	 (format "%s/%s/%s"
+		 elmo-cache-directory
 		 (elmo-cache-get-path-subr msgid)
 		 msgid)))))
 
@@ -1677,8 +1675,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	total beginning)
     (message "Checking disk usage...")
     (setq total (/ (elmo-disk-usage
-		    (expand-file-name
-		     elmo-cache-dirname elmo-msgdb-dir)) Kbytes))
+		    elmo-cache-directory) Kbytes))
     (setq beginning total)
     (message "Checking disk usage...done")
     (let ((cfl (elmo-cache-get-sorted-cache-file-list))
@@ -1726,7 +1723,7 @@ If KBYTES is kilo bytes (This value must be float)."
 
 (defun elmo-cache-get-sorted-cache-file-list ()
   (let ((dirs (directory-files
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       elmo-cache-directory
 	       t "^[^\\.]"))
 	(i 0) num
 	elist
@@ -1762,7 +1759,7 @@ If KBYTES is kilo bytes (This value must be float)."
 			       elmo-cache-expire-default-age)))
 		 (int-to-string elmo-cache-expire-default-age)))
 	(dirs (directory-files
-	       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)
+	       elmo-cache-directory
 	       t "^[^\\.]"))
 	(count 0)
 	curtime)
@@ -1806,8 +1803,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	  (format "%s/%s"
 		  (elmo-cache-get-path-subr msgid)
 		  msgid))
-	(expand-file-name elmo-cache-dirname
-			  elmo-msgdb-dir)))))
+	elmo-cache-directory))))
 
 ;;;
 ;; Warnings.
@@ -1871,12 +1867,12 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (setq elmo-dop-queue
 	(elmo-object-load
 	 (expand-file-name elmo-dop-queue-filename
-			   elmo-msgdb-dir))))
+			   elmo-msgdb-directory))))
 
 (defun elmo-dop-queue-save ()
   (elmo-object-save
    (expand-file-name elmo-dop-queue-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
    elmo-dop-queue))
 
 (require 'product)

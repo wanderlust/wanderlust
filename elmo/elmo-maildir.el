@@ -58,12 +58,12 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-maildir-folder))
-  (expand-file-name 
-   (elmo-replace-string-as-filename 
+  (expand-file-name
+   (elmo-replace-string-as-filename
     (elmo-maildir-folder-directory-internal folder))
    (expand-file-name
     "maildir"
-    elmo-msgdb-dir)))
+    elmo-msgdb-directory)))
 
 (defun elmo-maildir-message-file-name (folder location)
   "Get a file name of the message from FOLDER which corresponded to
@@ -377,7 +377,7 @@ file name for maildir directories."
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (if start-number 0)))
     (dolist (number numbers)
       (elmo-copy-file

@@ -39,7 +39,7 @@
 		(database-live-p (symbol-value dbsym))))
       (set dbsym (open-database (expand-file-name
 				 dbname
-				 elmo-msgdb-dir
+				 elmo-msgdb-directory
 				 )))
     (symbol-value dbsym)))
 

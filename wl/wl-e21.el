@@ -33,7 +33,7 @@
 ;;(let (image icon from to overlay)
 ;;  ;; The function `find-image' will look for an image first on `load-path'
 ;;  ;; and then in `data-directory'.
-;;  (let ((load-path (cons wl-icon-dir load-path)))
+;;  (let ((load-path (cons wl-icon-directory load-path)))
 ;;    (setq image (find-image (list (list :type 'xpm :file wl-nntp-folder-icon
 ;;					:ascent 'center)))))
 ;;  ;; `propertize' is a convenient function in such a case.
@@ -176,7 +176,7 @@
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar
 	     (wl-e21-display-image-p))
-    (let ((load-path (cons wl-icon-dir load-path))
+    (let ((load-path (cons wl-icon-directory load-path))
 	  (props '(:type xpm :ascent center
 			 :color-symbols (("backgroundToolBarColor" . "None"))
 			 :file))
@@ -260,7 +260,7 @@
 	  (unless image
 	    (let ((name (symbol-value
 			 (cdr (assq icon wl-folder-toggle-icon-list))))
-		  (load-path (cons wl-icon-dir load-path)))
+		  (load-path (cons wl-icon-directory load-path)))
 	      (when (setq image (find-image `((:type xpm :file ,name
 						     :ascent center))))
 		(setq image (put icon 'image (propertize name
@@ -444,7 +444,7 @@
 
 (defun wl-folder-init-icons ()
   (when (wl-e21-display-image-p)
-    (let ((load-path (cons wl-icon-dir load-path))
+    (let ((load-path (cons wl-icon-directory load-path))
 	  (icons wl-folder-internal-icon-list)
 	  icon name image)
       (while (setq icon (pop icons))
@@ -462,7 +462,7 @@
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-plugged-image
-	    (let ((load-path (cons wl-icon-dir load-path)))
+	    (let ((load-path (cons wl-icon-directory load-path)))
 	      (setq wl-plugged-image (find-image
 				      `((:type xpm
 					       :file ,wl-plugged-icon
@@ -493,7 +493,7 @@
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-biff-mail-image
-	    (let ((load-path (cons wl-icon-dir load-path)))
+	    (let ((load-path (cons wl-icon-directory load-path)))
 	      (setq wl-biff-mail-image (find-image
 					`((:type xpm
 						 :file ,wl-biff-mail-icon

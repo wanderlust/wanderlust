@@ -246,7 +246,7 @@ IMPORTANT-MARK is the important mark."
 				 (elmo-object-load
 				  (expand-file-name
 				   elmo-msgdb-global-mark-filename
-				   elmo-msgdb-dir)))))
+				   elmo-msgdb-directory)))))
       (if (and (string= important-mark (cdr mark-pair))
 	       (setq num-pair (rassoc (car mark-pair) number-alist)))
 	  (setq result (cons (car num-pair) result))))
@@ -1404,7 +1404,7 @@ Return a hashtable for newsgroups."
       (elmo-crosspost-alist-save elmo-crosspost-message-alist)
       (setq elmo-crosspost-message-alist-modified nil))))
 
-(defun elmo-folder-make-temp-dir (folder)
+(defun elmo-folder-make-temporary-directory (folder)
   ;; Make a temporary directory for FOLDER.
   (let ((temp-dir (make-temp-name
 		   (concat
@@ -1477,6 +1477,17 @@ Return a hashtable for newsgroups."
 			       'elmo-pop3-default-authenticate-type)
 (elmo-define-obsolete-variable 'elmo-default-pop3-port
 			       'elmo-pop3-default-port)
+(elmo-define-obsolete-variable 'elmo-cache-dirname
+			       'elmo-cache-directory)
+(elmo-define-obsolete-variable 'elmo-msgdb-dir
+			       'elmo-msgdb-directory)
+
+;; Obsolete functions.
+;; 2001-12-11: *-dir -> *-directory
+(defalias 'elmo-folder-make-temporary-directory 'elmo-folder-make-temp-dir)
+(make-obsolete 'elmo-folder-make-temp-dir
+	       'elmo-folder-make-temporary-directory)
+
 
 ;; autoloads
 (autoload 'elmo-dop-queue-flush "elmo-dop")

@@ -49,12 +49,12 @@
 (defun wl-expired-alist-load ()
   (elmo-object-load (expand-file-name
 		     wl-expired-alist-file-name
-		     elmo-msgdb-dir)))
+		     elmo-msgdb-directory)))
 
 (defun wl-expired-alist-save (&optional alist)
   (elmo-object-save (expand-file-name
 		     wl-expired-alist-file-name
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    (or alist wl-expired-alist)))
 
 (defsubst wl-expire-msg-p (msg-num mark-alist)
@@ -867,7 +867,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
     (save-excursion
       (let ((tmp-buf (get-buffer-create " *wl-expire work*"))
 	    (filename (expand-file-name wl-expired-log-alist-file-name
-					elmo-msgdb-dir)))
+					elmo-msgdb-directory)))
 	(set-buffer tmp-buf)
 	(erase-buffer)
 	(if dst-folder

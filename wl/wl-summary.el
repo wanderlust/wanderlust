@@ -3966,7 +3966,8 @@ If ARG, exit virtual folder."
   (save-excursion
     (goto-char (point-min))
     (let ((wl-save-dir
-	   (wl-read-directory-name "Save to directory: " wl-tmp-dir))
+	   (wl-read-directory-name "Save to directory: "
+				   wl-temporary-file-directory))
 	  (regexp (concat "^" wl-summary-buffer-number-regexp "\\(\\*\\)"))
 	  number mlist)
       (if (null (file-exists-p wl-save-dir))
@@ -5369,7 +5370,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
   (let ((filename)
 	(num (wl-summary-message-number)))
     (if (null wl-save-dir)
-	(setq wl-save-dir wl-tmp-dir))
+	(setq wl-save-dir wl-temporary-file-directory))
     (if num
 	(save-excursion
 	  (setq filename (expand-file-name
@@ -5396,7 +5397,8 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (narrow-to-region beg end)
       (goto-char (point-min))
       (let ((wl-save-dir
-	     (wl-read-directory-name "Save to directory: " wl-tmp-dir)))
+	     (wl-read-directory-name "Save to directory: "
+				     wl-temporary-file-directory)))
 	(if (null (file-exists-p wl-save-dir))
 	    (make-directory wl-save-dir))
 	(if (eq wl-summary-buffer-view 'thread)
@@ -5553,15 +5555,15 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (set-buffer tmp-buf)
       (message "Exec %s..." wl-prog-uudecode)
       (unwind-protect
-	  (let ((decode-dir wl-tmp-dir))
+	  (let ((decode-dir wl-temporary-file-directory))
 	    (if (not wl-prog-uudecode-no-stdout-option)
 		(setq filename (read-file-name "Save to file: "
 					       (expand-file-name
 						(elmo-safe-filename filename)
-						wl-tmp-dir)))
+						wl-temporary-file-directory)))
 	      (setq decode-dir
 		    (wl-read-directory-name "Save to directory: "
-					    wl-tmp-dir))
+					    wl-temporary-file-directory))
 	      (setq filename (expand-file-name filename decode-dir)))
 	    (if (file-exists-p filename)
 		(or (yes-or-no-p (format "File %s exists. Save anyway? "

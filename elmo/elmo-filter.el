@@ -62,7 +62,7 @@
 						    elmo-filter-folder))
   (expand-file-name
    (elmo-replace-string-as-filename (elmo-folder-name-internal folder))
-   (expand-file-name "filter" elmo-msgdb-dir)))
+   (expand-file-name "filter" elmo-msgdb-directory)))
 
 (luna-define-method elmo-folder-newsgroups ((folder elmo-filter-folder))
   (elmo-folder-newsgroups (elmo-filter-folder-target-internal folder)))

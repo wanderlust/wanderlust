@@ -434,7 +434,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (expand-file-name (elmo-net-folder-server-internal folder)
 		      (expand-file-name
 		       "pop"
-		       elmo-msgdb-dir)))))
+		       elmo-msgdb-directory)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-pop3-folder))
   (if (and elmo-pop3-exists-exactly

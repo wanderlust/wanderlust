@@ -73,7 +73,7 @@
 (defun elmo-msgdb-global-mark-delete (msgid)
   (let* ((path (expand-file-name
 		elmo-msgdb-global-mark-filename
-		elmo-msgdb-dir))
+		elmo-msgdb-directory))
 	 (malist (or elmo-msgdb-global-mark-alist
 		     (setq elmo-msgdb-global-mark-alist
 			   (elmo-object-load path))))
@@ -86,7 +86,7 @@
 (defun elmo-msgdb-global-mark-set (msgid mark)
   (let* ((path (expand-file-name
 		elmo-msgdb-global-mark-filename
-		elmo-msgdb-dir))
+		elmo-msgdb-directory))
 	 (malist (or elmo-msgdb-global-mark-alist
 		     (setq elmo-msgdb-global-mark-alist
 			   (elmo-object-load path))))
@@ -104,7 +104,7 @@
 			      (elmo-object-load
 			       (expand-file-name
 				elmo-msgdb-global-mark-filename
-				elmo-msgdb-dir)))))))
+				elmo-msgdb-directory)))))))
 
 ;;;
 ;; persistent mark handling
@@ -560,13 +560,13 @@ content of MSGDB is changed."
 (defun elmo-msgdb-finfo-load ()
   (elmo-object-load (expand-file-name
 		     elmo-msgdb-finfo-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    elmo-mime-charset t))
 
 (defun elmo-msgdb-finfo-save (finfo)
   (elmo-object-save (expand-file-name
 		     elmo-msgdb-finfo-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    finfo elmo-mime-charset))
 
 (defun elmo-msgdb-flist-load (fname)
@@ -574,7 +574,7 @@ content of MSGDB is changed."
 		     elmo-msgdb-flist-filename
 		     (expand-file-name
 		      (elmo-safe-filename fname)
-		      (expand-file-name "folder" elmo-msgdb-dir)))))
+		      (expand-file-name "folder" elmo-msgdb-directory)))))
     (elmo-object-load flist-file elmo-mime-charset t)))
 
 (defun elmo-msgdb-flist-save (fname flist)
@@ -582,19 +582,19 @@ content of MSGDB is changed."
 		     elmo-msgdb-flist-filename
 		     (expand-file-name
 		      (elmo-safe-filename fname)
-		      (expand-file-name "folder" elmo-msgdb-dir)))))
+		      (expand-file-name "folder" elmo-msgdb-directory)))))
     (elmo-object-save flist-file flist elmo-mime-charset)))
 
 (defun elmo-crosspost-alist-load ()
   (elmo-object-load (expand-file-name
 		     elmo-crosspost-alist-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    nil t))
 
 (defun elmo-crosspost-alist-save (alist)
   (elmo-object-save (expand-file-name
 		     elmo-crosspost-alist-filename
-		     elmo-msgdb-dir)
+		     elmo-msgdb-directory)
 		    alist))
 
 (defun elmo-msgdb-add-msgs-to-seen-list (msgs msgdb unread-marks seen-list)

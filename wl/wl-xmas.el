@@ -137,7 +137,7 @@
   "The Draft buffer toolbar.")
 
 (defun wl-xmas-setup-toolbar (bar)
-  (let ((dir wl-icon-dir)
+  (let ((dir wl-icon-directory)
 	icon up down disabled name)
     (when dir
       (while bar
@@ -162,7 +162,7 @@
     (when wl-highlight-folder-with-icon
       (set-glyph-image glyph
 		       (vector 'xpm :file (expand-file-name
-					   icon-file wl-icon-dir))
+					   icon-file wl-icon-directory))
 		       locale tag-set 'prepend))
     glyph))
 

@@ -96,7 +96,7 @@
     "/")
    (expand-file-name ;;"localdir"
     (symbol-name (elmo-folder-type-internal folder))
-    elmo-msgdb-dir)))
+    elmo-msgdb-directory)))
 
 (luna-define-method elmo-message-file-name ((folder
 					     elmo-localdir-folder)
@@ -121,7 +121,7 @@
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (or start-number 0)))
     (dolist (number numbers)
       (elmo-add-name-to-file

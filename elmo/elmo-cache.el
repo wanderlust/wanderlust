@@ -52,13 +52,13 @@
     (elmo-cache-folder-set-directory-internal
      folder
      (expand-file-name (elmo-match-string 2 name)
-		       (expand-file-name elmo-cache-dirname elmo-msgdb-dir)))
+		       elmo-cache-directory))
     folder))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-cache-folder))
   (expand-file-name (elmo-cache-folder-dir-name-internal folder)
 		    (expand-file-name "internal/cache"
-				      elmo-msgdb-dir)))
+				      elmo-msgdb-directory)))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-cache-folder))
