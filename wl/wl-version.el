@@ -102,7 +102,8 @@ Insert User-Agent field instead of X-Mailer field."
 			(concat " " (apel-version)))
 		    (file-error nil))
 		  " " (wl-extended-emacs-version3 "/" t))
-	(concat "User-Agent: " (product-string-verbose 'wl-version) " "
+	;; Don't use product-string-verbose for short User-Agent field.
+	(concat "User-Agent: " (product-string-1 'wl-version t) " "
 		(wl-extended-emacs-version3 "/" t))))))
 
 ;; from gnus
