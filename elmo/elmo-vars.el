@@ -91,11 +91,6 @@ Each elements are regexp of folder name (This is obsolete).")
   "Folder list cache (for access folder).")
 (defvar elmo-msgdb-finfo-filename "finfo"
   "Folder information cache...list of '(filename . '(new unread all)).")
-(defvar elmo-msgdb-append-list-filename "append"
-  "Appended messages...Structure is same as number-alist.
-For disconnected operations.")
-(defvar elmo-msgdb-resume-list-filename "resume"
-  "Resumed messages.  For disconnected operations.")
 (defvar elmo-msgdb-lock-list-filename "lock"
   "Locked messages...list of message-id.
 For disconnected operations.")
@@ -115,9 +110,7 @@ For disconnected operations.")
 (defvar elmo-msgdb-extra-fields nil
   "Extra fields for msgdb.")
 
-(defvar elmo-queue-filename "queue"
-  "*IMAP pending event queue is saved in this file.")
-(defvar elmo-enable-disconnected-operation nil
+(defvar elmo-enable-disconnected-operation t
   "*Enable disconnected operations.")
 
 (defvar elmo-auto-change-plugged 600
