@@ -297,9 +297,10 @@ without cacheing."
 	;; seen-list.
 	(if (and (not (eq dst-folder 'null))
 		 (not (and unread-marks
-			   (member
-			    (cadr (assq (car messages) mark-alist))
-			    unread-marks))))
+			   (setq unseen
+				 (member
+				  (cadr (assq (car messages) mark-alist))
+				  unread-marks)))))
 	    (setq seen-list (cons message-id seen-list)))
 	(unless (or (eq dst-folder 'null) done-copy)
 	  (if (and (elmo-folder-plugged-p src-folder)
