@@ -1525,6 +1525,10 @@ In this folder, if you delete message, important mark @samp{$} put on
 the message is removed.  If you append messages to this folder, the
 message will have @samp{$} mark.
 
+(Can't remove important mark @samp{$} on IMAP server from @samp{'mark}
+folder.  If you want IMAP folder's message remove from @{'mark} folder,
+remove important mark at IMAP Folder.)
+
 You can access to the cached messages fetched via network by accessing
 to the folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
 the name of the subdirectories of the cache directory
