@@ -1,3 +1,8 @@
+2004-01-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-folder-hierarchy-access-folders): Add "^'$"
+	to the default value.
+
 2004-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mark-as-read-all): Follow the API
