@@ -93,8 +93,6 @@ set as non-nil.")
 (defvar elmo-pop3-exists-exactly t)
 (defvar sasl-mechanism-alist)
 
-(defvar elmo-pop3-total-size nil)
-
 ;;; ELMO POP3 folder
 (eval-and-compile
   (luna-define-class elmo-pop3-folder (elmo-net-folder)
@@ -236,16 +234,7 @@ set as non-nil.")
   (save-excursion
     (set-buffer (process-buffer process))
     (goto-char (point-max))
-    (insert output)
-    (if (and elmo-pop3-total-size
-	     (> elmo-pop3-total-size 
-		(min elmo-display-retrieval-progress-threshold 100)))
-	(elmo-display-progress
-	 'elmo-display-retrieval-progress
-	 (format "Retrieving (%d/%d bytes)..."
-		 (buffer-size)
-		 elmo-pop3-total-size)
-	 (/ (buffer-size) (/ elmo-pop3-total-size 100))))))
+    (insert output)))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))
@@ -845,33 +834,18 @@ set as non-nil.")
   (let* ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
 	 (process (elmo-network-session-process-internal
 		   (elmo-pop3-get-session folder)))
-	size  response errmsg msg)
+	 response errmsg msg)
     (with-current-buffer (process-buffer process)
       (if loc-alist
 	  (setq number (elmo-pop3-uidl-to-number
 			(cdr (assq number loc-alist)))))
-      (setq size (string-to-number
-		  (elmo-pop3-number-to-size number)))
       (when number
 	(elmo-pop3-send-command process
 				(format "retr %s" number))
-	(unless elmo-inhibit-display-retrieval-progress
-	  (setq elmo-pop3-total-size size)
-	  (elmo-display-progress
-	   'elmo-pop3-display-retrieval-progress
-	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)
-	   0))
-	(unwind-protect
-	    (progn
-	      (when (null (setq response (elmo-pop3-read-response
-					  process t)))
-		(error "Fetching message failed"))
-	      (setq response (elmo-pop3-read-body process outbuf)))
-	  (setq elmo-pop3-total-size nil))
-	(unless elmo-inhibit-display-retrieval-progress
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress "" 100)  ; remove progress bar.
-	  (message "Retrieving...done."))
+	(when (null (setq response (elmo-pop3-read-response
+				    process t)))
+	  (error "Fetching message failed"))
+	(setq response (elmo-pop3-read-body process outbuf))
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)
