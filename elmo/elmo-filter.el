@@ -66,8 +66,8 @@
   (elmo-connect-signal
    target 'flag-changing folder
    (elmo-define-signal-handler (folder target number old-flags new-flags)
-     (elmo-filter-add-flag-count folder number old-flags -1)
-     (elmo-filter-add-flag-count folder number new-flags)
+     (elmo-filter-add-flag-count folder old-flags -1)
+     (elmo-filter-add-flag-count folder new-flags)
      (elmo-emit-signal 'flag-changing folder number old-flags new-flags))
    (elmo-define-signal-filter (folder target number)
      (memq number (elmo-folder-list-messages folder nil t))))
@@ -113,7 +113,7 @@
 	  (setq flag-count (cons (cons flag delta) flag-count)))))
     (elmo-filter-folder-set-flag-count-internal folder flag-count)))
 
-(defun elmo-filter-add-flag-count (folder number flags &optional delta)
+(defun elmo-filter-add-flag-count (folder flags &optional delta)
   (let ((flag-count (elmo-filter-folder-flag-count-internal folder))
 	(delta (or delta 1))
 	elem)
