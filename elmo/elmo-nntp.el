@@ -409,7 +409,7 @@ Don't cache if nil.")
 						      (and response group))
 	response))))
 
-(defun elmo-nntp-list-folders-get-cache (folder buf)
+(defun elmo-nntp-list-folders-get-cache (group server buf)
   (when (and elmo-nntp-list-folders-use-cache
 	     elmo-nntp-list-folders-cache
 	     (string-match (concat "^"
@@ -417,14 +417,20 @@ Don't cache if nil.")
 				    (or
 				     (nth 1 elmo-nntp-list-folders-cache)
 				     "")))
-			   (or folder "")))
+			   (or group ""))
+	     (string-match (concat "^"
+				   (regexp-quote
+				    (or
+				     (nth 2 elmo-nntp-list-folders-cache)
+				     "")))
+			   (or server "")))
     (let* ((cache-time (car elmo-nntp-list-folders-cache)))
       (unless (elmo-time-expire cache-time
 				elmo-nntp-list-folders-use-cache)
 	(save-excursion
 	  (set-buffer buf)
 	  (erase-buffer)
-	  (insert (nth 2 elmo-nntp-list-folders-cache))
+	  (insert (nth 3 elmo-nntp-list-folders-cache))
 	  (goto-char (point-min))
 	  (or (string= folder "")
 	      (and folder
@@ -462,6 +468,7 @@ Don't cache if nil.")
 	  (setq ret-val (list (elmo-nntp-folder-group-internal folder))))
       (unless (setq response (elmo-nntp-list-folders-get-cache
 			      (elmo-nntp-folder-group-internal folder)
+			      (elmo-net-folder-server-internal folder)
 			      (current-buffer)))
 	(when (setq use-list-active (elmo-nntp-list-active-p session))
 	  (elmo-nntp-send-command
@@ -481,6 +488,7 @@ Don't cache if nil.")
 		  (setq elmo-nntp-list-folders-cache
 			(list (current-time)
 			      (elmo-nntp-folder-group-internal folder)
+			      (elmo-net-folder-server-internal folder)
 			      response)))
 		(erase-buffer)
 		(insert response))
@@ -493,7 +501,7 @@ Don't cache if nil.")
 	      (error "NNTP List folders failed"))
 	  (when elmo-nntp-list-folders-use-cache
 	    (setq elmo-nntp-list-folders-cache
-		  (list (current-time) nil response)))
+		  (list (current-time) nil nil response)))
 	  (erase-buffer)
 	  (setq start nil)
 	  (while (string-match (concat "^"

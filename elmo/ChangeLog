@@ -1,3 +1,9 @@
+2002-01-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders-get-cache): Use group and server
+	as a key.
+	(elmo-nntp-folder-list-subfolders): Follow the change above.
+
 2002-01-27  Takaaki MORIYAMA  <aka@iris.eonet.ne.jp>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Don't omit user
