@@ -1,5 +1,9 @@
 2004-12-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-draft.el (wl-draft-forward): Don't jump into temp-buffer.
+
+2004-12-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
 	* wl-vars.el (wl-summary-line-format): Add reference to wl-summary-width.
 
 2004-12-07  Tetsurou Okazaki  <okazaki@be.to>
