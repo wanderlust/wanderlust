@@ -1,5 +1,11 @@
 2000-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-highlight.el (wl-highlight-message):
+	Use `std11-field-end' to detect end point of the header field.
+	Refer `wl-highlight-max-header-size'.
+
+	* wl-vars.el (wl-highlight-max-header-size): New variable.
+
 	* wl-highlight.el (wl-highlight-headers): Added argument `for-draft'.
 
 	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):

@@ -2002,6 +2002,12 @@ the `wl-highlight-message-headers' face."
   :type 'regexp
   :group 'wl-highlight)
 
+(defcustom wl-highlight-max-header-size nil
+  "*If the message header is larger than this many chars, don't highlight it.
+If this is nil, all headers will be highlighted."
+  :type 'integer
+  :group 'wl-highlight)  
+
 (defcustom wl-highlight-max-message-size 10000
   "*If the message body is larger than this many chars, don't highlight it.
 This is to prevent us from wasting time trying to fontify things like
