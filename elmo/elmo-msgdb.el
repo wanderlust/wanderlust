@@ -978,19 +978,20 @@ Return CONDITION itself if no entity exists in msgdb."
 
 (defsubst elmo-msgdb-message-entity-field (entity field &optional decode)
   (and entity
-       (if (not decode)
-	   (case field
-	     (to (aref (cdr entity) 5))
-	     (cc (aref (cdr entity) 6))
-	     (date (aref (cdr entity) 4))
-	     (subject (aref (cdr entity) 3))
-	     (from (aref (cdr entity) 2))
-	     (message-id (car entity))
-	     (references (aref (cdr entity) 1))
-	     (size (aref (cdr entity) 7))
-	     (t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))
-	 (elmo-msgdb-get-decoded-cache
-	  (elmo-msgdb-message-entity-field entity field)))))
+       (let ((field-value
+	      (case field
+		(to (aref (cdr entity) 5))
+		(cc (aref (cdr entity) 6))
+		(date (aref (cdr entity) 4))
+		(subject (aref (cdr entity) 3))
+		(from (aref (cdr entity) 2))
+		(message-id (car entity))
+		(references (aref (cdr entity) 1))
+		(size (aref (cdr entity) 7))
+		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
+	 (if decode
+	     (elmo-msgdb-get-decoded-cache field-value)
+	   field-value))))
 
 (defsubst elmo-msgdb-message-entity-set-field (entity field value)
   (and entity
