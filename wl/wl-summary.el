@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 13:03:02 teranisi>
+;; Time-stamp: <00/04/28 16:11:38 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2874,7 +2874,25 @@ If optional argument is non-nil, checking is omitted."
 	  (elmo-msgdb-overview-get-parent-entity entity overview));; temp
 	 ;;(parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
-	 msg)
+	 (case-fold-search t)
+	 msg overview2 cur-entity)
+    ;; Search parent by subject.
+    (when (and (null parent-number)
+	       (string-match wl-summary-search-parent-by-subject-regexp
+			     (elmo-msgdb-overview-entity-get-subject
+			      entity)))
+      (setq overview2 overview)
+      (while overview2
+	(setq cur-entity (car overview2))
+	(when (wl-summary-subject-equal
+	       (or (elmo-msgdb-overview-entity-get-subject cur-entity)
+		   "")
+	       (or (elmo-msgdb-overview-entity-get-subject entity)
+		   ""))
+	  (setq parent-number (elmo-msgdb-overview-entity-get-number
+			       cur-entity))
+	  (setq overview2 nil))
+	(setq overview2 (cdr overview2))))
     (if (and parent-number
 	     wl-summary-divide-thread-when-subject-changed
 	     (not (wl-summary-subject-equal 
@@ -5849,6 +5867,23 @@ Reply to author if invoked with argument."
 		  (elmo-buffer-cache-message folder next msgdb)
 		  (if wl-cache-prefetch-debug
 		      (message "Reading %d... done" msg))))))))))
+
+(defun wl-summary-set-parent ()
+  "Set current message's parent interactively."
+  (interactive)
+  (let ((number (wl-summary-message-number))
+	(parent (read-from-minibuffer "Parent Message (No.): "))
+	buffer-read-only)
+    (when number
+      (wl-thread-delete-message number t)
+      (wl-thread-insert-message 
+       (elmo-msgdb-overview-get-entity-by-number
+	(elmo-msgdb-get-overview wl-summary-buffer-msgdb)
+	number)
+       (elmo-msgdb-get-overview wl-summary-buffer-msgdb)
+       (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb)
+       number
+       (string-to-int parent) t))))
 
 (provide 'wl-summary)
 
