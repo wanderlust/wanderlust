@@ -1,3 +1,7 @@
+2004-02-15  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-message.el (wl-message-buffer-prefetch-p): Change `defsubst' to `defun'.
+
 2004-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Don't give 'no-check

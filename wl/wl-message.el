@@ -569,7 +569,7 @@ Returns non-nil if bottom of message."
       (run-hooks 'wl-message-display-internal-hook)
       (setq buffer-read-only t))))
 
-(defsubst wl-message-buffer-prefetch-p (folder &optional number)
+(defun wl-message-buffer-prefetch-p (folder &optional number)
   (and (or (not number)
 	   (elmo-message-file-p folder number)
 	   (let ((size (elmo-message-field folder number 'size)))
