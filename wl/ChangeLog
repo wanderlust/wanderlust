@@ -1,5 +1,8 @@
 2003-11-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-spam.el (wl-summary-mark-spam): Show message only if call
+	interactively.
+
 	* wl-summary.el (wl-summary-mark-as-important-internal): New
 	internal function.
 	(wl-summary-mark-as-important): Use it.

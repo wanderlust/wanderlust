@@ -197,11 +197,12 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(when (wl-spam-auto-check-message-p wl-summary-buffer-elmo-folder
 					    number)
 	  (setq numbers (cons number numbers)))))
-    (if numbers
-	(wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
-				   numbers
-				   #'wl-summary-spam)
-      (message "No message to test."))))
+    (cond (numbers
+	   (wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
+				      numbers
+				      #'wl-summary-spam))
+	  ((interactive-p)
+	   (message "No message to test.")))))
 
 (defun wl-summary-register-as-spam ()
   (interactive)
