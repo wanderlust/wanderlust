@@ -1,3 +1,8 @@
+2002-09-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-line-attached): Bind case-fold-search
+	as t. Since type and subtype are not case sensitive (RFC 2045).
+
 2002-09-04  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-message-mode-line-format): New variable.
