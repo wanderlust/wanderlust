@@ -4670,11 +4670,19 @@ If ARG, exit virtual folder."
 
 (defun wl-summary-next-page ()
   (interactive)
-  (wl-message-next-page))
+  (let ((cur-buf (current-buffer)))
+    (wl-summary-toggle-disp-msg 'on)
+    (when (wl-summary-set-message-buffer-or-redisplay 'ignore-original)
+      (set-buffer cur-buf)
+      (wl-message-next-page))))
 
 (defun wl-summary-prev-page ()
   (interactive)
-  (wl-message-prev-page))
+  (let ((cur-buf (current-buffer)))
+    (wl-summary-toggle-disp-msg 'on)
+    (when (wl-summary-set-message-buffer-or-redisplay 'ignore-original)
+      (set-buffer cur-buf)
+      (wl-message-prev-page))))
 
 (defsubst wl-summary-no-mime-p (folder)
   (wl-string-match-member (elmo-folder-name-internal folder)
