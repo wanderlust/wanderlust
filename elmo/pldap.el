@@ -812,13 +812,17 @@ entry according to the value of WITHDN."
 
 (defun ldap-decode-string (str)
   "Decode LDAP STR."
-  (if (fboundp 'decode-coding-string)
-      (decode-coding-string str ldap-coding-system)))
+  (if (and (fboundp 'decode-coding-string)
+	   ldap-coding-system)
+      (decode-coding-string str ldap-coding-system)
+    str))
 
 (defun ldap-encode-string (str)
   "Encode LDAP STR."
-  (if (fboundp 'encode-coding-string)
-      (encode-coding-string str ldap-coding-system)))
+  (if (and (fboundp 'encode-coding-string)
+	   ldap-coding-system)
+      (encode-coding-string str ldap-coding-system)
+    str))
 
 (defun ldap-decode-address (str)
   "Decode LDAP address STR."
@@ -915,7 +919,7 @@ entry according to the value of WITHDN."
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Searching with LDAP on %s..." host))
-    (setq result (ldap-search ldap filter
+    (setq result (ldap-search ldap (ldap-encode-string filter)
 			      (plist-get host-plist 'base)
 			      (plist-get host-plist 'scope)
 			      attributes attrsonly withdn
