@@ -1500,8 +1500,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (wl-append wl-folder-petname-alist
 	       (list (cons realname petname)))))
 
-(defun wl-folder (&optional arg)
-  (interactive "P")
+(defun wl-folder ()
   (let (initialize folder-buf)
     (if (setq folder-buf (get-buffer wl-folder-buffer-name))
 	(if wl-folder-use-frame
@@ -1530,6 +1529,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)
       ;; Initialization.
+      (unless wl-folder-entity
+	(wl-folder-init))
       (setq wl-folder-entity-id 0)
       (wl-folder-entity-assign-id wl-folder-entity)
       (setq wl-folder-entity-hashtb

@@ -800,7 +800,6 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (unless wl-init
     (wl-load-profile)
-    (wl-folder-init)
     (elmo-init))
   (let (demo-buf check)
     (unless wl-init
@@ -819,7 +818,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 		(wl-check-variables-2)
 		(message "Checking type of variables...done")))
 	  (let ((inhibit-quit t))
-	    (wl-plugged-init (wl-folder arg)))
+	    (wl-plugged-init (wl-folder)))
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
