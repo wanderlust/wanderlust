@@ -11,11 +11,9 @@
 ;; If you want to install utils, uncomment following line.
 ;(setq wl-install-utils t)
 
-;; Set lauguage for info file ("ja" or "en"). Default is "ja".
-;; By following setting, English info is installed.
+;; Set language for info file ("ja" or "en", both in default).
+;; If you only need manual in English, uncomment following line.
 ;(setq wl-info-lang "en")
-;; By following setting, both Japanese and English info are installed.
-;(setq wl-info-lang '("ja" "en"))
 
 ;; if you want to install wl modules to the subdirectory other than "wl"
 ;; under LISPDIR, set following variables.
