@@ -446,23 +446,13 @@ File content is encoded with MIME-CHARSET."
 	       ",")))))
 
 (defun elmo-filter-get-spec (folder)
-  (save-match-data
-    (when (string-match
-	   "^\\(/\\)\\(.*\\)$"
-	   folder)
-      (let ((spec (elmo-match-string 2 folder))
-	    filter)
-	(when (string-match "\\([^/]+\\)/" spec)
-	  (setq filter (elmo-match-string 1 spec))
-	  (setq spec (substring spec (match-end 0))))
-	(cond
-	 ((string-match "^\\(last\\|first\\):\\(.*\\)$" filter) ; partial
-	  (setq filter (vector 'partial
-			       (elmo-match-string 1 filter)
-			       (elmo-match-string 2 filter))))
-	 (t
-	  (setq filter (elmo-parse-search-condition filter))))
-	(list 'filter filter spec)))))
+  (when (string-match "^\\(/\\)\\(.*\\)$" folder)
+    (let ((folder (elmo-match-string 2 folder))
+	  pair)
+      (setq pair (elmo-parse-search-condition folder))
+      (if (string-match "^ */\\(.*\\)$" (cdr pair))
+	  (list 'filter (car pair) (elmo-match-string 1 (cdr pair)))
+	(error "Folder syntax error `%s'" folder)))))
 
 (defun elmo-pipe-get-spec (folder)
   (when (string-match "^\\(|\\)\\([^|]*\\)|\\(.*\\)$" folder)
@@ -478,46 +468,145 @@ File content is encoded with MIME-CHARSET."
 		 folder)
       (error "%s is not supported folder type" folder))))
 
-(defun elmo-parse-search-condition (condition)
-  (let ((terms (split-string condition "|")) ; split by OR
-	term ret-val)
-    (while terms
-      (setq term (car terms))
-      (cond
-       ((string-match "^\\([a-zA-Z\\-]+\\)=\\(.*\\)$" term)
-	(if (save-match-data
-	      (string-match "tocc" (elmo-match-string 1 term))) ;; syntax sugar
-	    (setq ret-val (nconc
-			   ret-val
-			   (list (vector 'match "to"
-					 (elmo-match-string 2 term))
-				 (vector 'match "cc"
-					 (elmo-match-string 2 term)))))
-	  (setq ret-val (cons (vector 'match
-				      (elmo-match-string 1 term)
-				      (elmo-match-string 2 term))
-			      ret-val))))
-       ((string-match "^\\([a-zA-Z\\-]+\\)!=\\(.*\\)$" term)
-	(if (save-match-data
-	      (string-match "tocc" (elmo-match-string 1 term))) ;; syntax sugar
-	    (setq ret-val (nconc
-			   ret-val
-			   (list (vector 'unmatch "to"
-					 (elmo-match-string 2 term))
-				 (vector 'unmatch "cc"
-					 (elmo-match-string 2 term)))))
-	  (setq ret-val (cons (vector 'unmatch
-				      (elmo-match-string 1 term)
-				      (elmo-match-string 2 term))
-			      ret-val))))
-       ((string-match "^\\(since\\|before\\):\\(.*\\)$" term)
-	(setq ret-val (cons (vector 'date
-				    (elmo-match-string 1 term)
-				    (elmo-match-string 2 term))
-			    ret-val))))
-      (setq terms (cdr terms)))
-    ret-val))
+;;; Search Condition
+(defun elmo-read-search-condition (default)
+  "Read search condition string interactively"
+  (elmo-read-search-condition-internal "Search by" default))
 
+(defun elmo-read-search-condition-internal (prompt default)
+  (let* ((completion-ignore-case t)
+	 (field (completing-read
+		 (format "%s (%s): " prompt default)
+		 (mapcar 'list
+			 (append '("AND" "OR"
+				   "Last" "First"
+				   "From" "Subject" "To" "Cc" "Body"
+				   "Since" "Before" "ToCc"
+				   "!From" "!Subject" "!To" "!Cc" "!Body"
+				   "!Since" "!Before" "!ToCc")
+				 elmo-msgdb-extra-fields)))))
+    (setq field (if (string= field "")
+		    (setq field default)
+		  field))
+    (cond
+     ((or (string= field "AND") (string= field "OR"))
+      (concat "("
+	      (elmo-read-search-condition-internal
+	       (concat field "(1) Search by") default)
+	      (if (string= field "AND") "&" "|")
+	      (elmo-read-search-condition-internal
+	       (concat field "(2) Search by") default)
+	      ")"))
+     ((string-match "Since\\|Before" field)
+      (concat
+       (downcase field) ":"
+       (completing-read (format "Value for '%s': " field)
+			(mapcar (function
+				 (lambda (x)
+				   (list (format "%s" (car x)))))
+				elmo-date-descriptions))))
+     (t
+      (concat
+       (downcase field) ":"
+       (prin1-to-string
+	(read-from-minibuffer
+	 (format "Value for '%s': " field))))))))
+
+(defsubst elmo-condition-parse-error ()
+  (error "Syntax error in '%s'" (buffer-string)))
+
+(defun elmo-parse-search-condition (condition)
+  "Parse CONDITION.
+Return value is a cons cell of (STRUCTURE . REST)"
+  (with-temp-buffer
+    (insert condition)
+    (goto-char (point-min))
+    (cons (elmo-condition-parse) (buffer-substring (point) (point-max)))))
+
+;; condition    ::= or-expr
+(defun elmo-condition-parse ()
+  (or (elmo-condition-parse-or-expr)
+      (elmo-condition-parse-error)))
+
+;; or-expr      ::= and-expr /
+;; 	            and-expr "|" or-expr
+(defun elmo-condition-parse-or-expr ()
+  (let ((left (elmo-condition-parse-and-expr)))
+    (if (looking-at "| *")
+	(progn
+	  (goto-char (match-end 0))
+	  (list 'or left (elmo-condition-parse-or-expr)))
+      left)))
+
+;; and-expr     ::= primitive /
+;;                  primitive "&" and-expr
+(defun elmo-condition-parse-and-expr ()
+  (let ((left (elmo-condition-parse-primitive)))
+    (if (looking-at "& *")
+	(progn
+	  (goto-char (match-end 0))
+	  (list 'and left (elmo-condition-parse-and-expr)))
+      left)))
+
+;; primitive    ::= "(" expr ")" /
+;;                  ["!"] search-key SPACE* ":" SPACE* search-value
+(defun elmo-condition-parse-primitive ()
+  (cond 
+   ((looking-at "( *")
+    (goto-char (match-end 0))
+    (prog1 (elmo-condition-parse)
+      (unless (looking-at ") *")
+	(elmo-condition-parse-error))
+      (goto-char (match-end 0))))
+;; search-key   ::= [A-Za-z-]+
+;;                 ;; "since" / "before" / "last" / "first" /
+;;                 ;; "body" / field-name
+   ((looking-at "\\(!\\)? *\\([A-Za-z-]+\\) *: *")
+    (goto-char (match-end 0))
+    (let ((search-key (vector
+		       (if (match-beginning 1) 'unmatch 'match)
+		       (elmo-match-buffer 2)
+		       (elmo-condition-parse-search-value))))
+      ;; syntax sugar.
+      (if (string= (aref search-key 1) "tocc")
+	  (if (eq (aref search-key 0) 'match)
+	      (list 'or
+		    (vector 'match "to" (aref search-key 2))
+		    (vector 'match "cc" (aref search-key 2)))
+	    (list 'and
+		  (vector 'unmatch "to" (aref search-key 2))
+		  (vector 'unmatch "cc" (aref search-key 2))))
+	search-key)))))
+
+;; search-value ::= quoted / time / number / atom
+;; quoted       ::= <elisp string expression>
+;; time         ::= "yesterday" / "lastweek" / "lastmonth" / "lastyear" /
+;;                   number SPACE* "daysago" /
+;;                   number "-" month "-" number  ; ex. 10-May-2000
+;; number       ::= [0-9]+
+;; month        ::= "Jan" / "Feb" / "Mar" / "Apr" / "May" / "Jun" /
+;;                  "Jul" / "Aug" / "Sep" / "Oct" / "Nov" / "Dec"
+;; atom         ::= ATOM_CHARS*
+;; SPACE        ::= <ascii space character, 0x20>
+;; ATOM_CHARS   ::= <any character except specials>
+;; specials     ::= SPACE / <"> / </> / <)> / <|> / <&>
+;;                  ;; These characters should be quoted.
+(defun elmo-condition-parse-search-value ()
+  (cond
+   ((looking-at "\"")
+    (read (current-buffer)))
+   ((or (looking-at "yesterday") (looking-at "lastweek")
+	(looking-at "lastmonth") (looking-at "lastyear")
+	(looking-at "[0-9]+ *daysago")
+	(looking-at "[0-9]+")
+	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
+	(looking-at "[^/ \")|&]*") ; atom* (except quoted specials).
+	)
+    (prog1 (elmo-match-buffer 0)
+      (goto-char (match-end 0))))
+   (t (error "Syntax error '%s'" (buffer-string)))))
+
+;;;
 (defun elmo-multi-get-real-folder-number (folder number)
   (let* ((spec (elmo-folder-get-spec folder))
 	 (flds (cdr spec))
@@ -1120,73 +1209,80 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defmacro elmo-filter-value (filter)
   (` (aref (, filter) 2)))
 
-(defsubst elmo-buffer-field-condition-match (condition)
-  (let (term)
-    (catch 'done
-      (while condition
-	(goto-char (point-min))
-	(setq term (car condition))
-	(cond
-	 ((and (eq (elmo-filter-type term) 'date)
-	       (string= (elmo-filter-key term) "since"))
-	  (let ((date (elmo-date-get-datevec (elmo-filter-value term))))
-	    (if (string<
-		 (timezone-make-sortable-date (aref date 0)
-					      (aref date 1)
-					      (aref date 2)
-					      (timezone-make-time-string
-					       (aref date 3)
-					       (aref date 4)
-					       (aref date 5)))
-		 (timezone-make-date-sortable (std11-field-body "date")))
-		(throw 'done t))))
-	 ((and (eq (elmo-filter-type term) 'date)
-	       (string= (elmo-filter-key term) "before"))
-	  (let ((date (elmo-date-get-datevec (elmo-filter-value term))))
-	    (if (string<
-		 (timezone-make-date-sortable (std11-field-body "date"))
-		 (timezone-make-sortable-date (aref date 0)
-					      (aref date 1)
-					      (aref date 2)
-					      (timezone-make-time-string
-					       (aref date 3)
-					       (aref date 4)
-					       (aref date 5))))
-		(throw 'done t))))
-	 ((eq (elmo-filter-type term) 'match)
-	  (if (string= "body" (elmo-filter-key term))
-	      (progn
-		(re-search-forward "^$" nil t)	   ; goto body
-		(if (search-forward (elmo-filter-value term) nil t)
-		    (throw 'done t)))
-	    (let ((fval (eword-decode-string
-			 (or (std11-field-body (elmo-filter-key term)) ""))))
-	      (if (and fval (string-match (elmo-filter-value term)
-					  fval))
-		  (throw 'done t)))))
-	 ((eq (elmo-filter-type term) 'unmatch)
-	  (if (string= "body" (elmo-filter-key term))
-	      (progn
-		(re-search-forward "^$" nil t)	   ; goto body
-		(if (not (search-forward (elmo-filter-value term) nil t))
-		    (throw 'done t)))
-	    (let ((fval (eword-decode-string
-			 (or (std11-field-body (elmo-filter-key term)) ""))))
-	      (if fval
-		  (if (not (string-match (elmo-filter-value term)
-					 fval))
-		      (throw 'done t))
-		(throw 'done t)))))) ; OK?
-	(setq condition (cdr condition)))
-      (throw 'done nil))))
+(defsubst elmo-buffer-field-primitive-condition-match (condition
+						       number
+						       number-list)
+  (let (result)
+    (goto-char (point-min))
+    (cond
+     ((string= (elmo-filter-key condition) "last")
+      (setq result (> (length (memq number number-list))
+		      (string-to-int (elmo-filter-value condition)))))
+     ((string= (elmo-filter-key condition) "first")
+      (setq result (< (- (length number-list)
+			 (length (memq number number-list)))
+		      (string-to-int (elmo-filter-value condition)))))
+     ((string= (elmo-filter-key condition) "since")
+      (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
+	(setq result
+	      (string<
+	       (timezone-make-sortable-date (aref date 0)
+					    (aref date 1)
+					    (aref date 2)
+					    (timezone-make-time-string
+					     (aref date 3)
+					     (aref date 4)
+					     (aref date 5)))
+	       (timezone-make-date-sortable (std11-field-body "date"))))))
+     ((string= (elmo-filter-key condition) "before")
+      (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
+	(setq result
+	      (string<
+	       (timezone-make-date-sortable (std11-field-body "date"))
+	       (timezone-make-sortable-date (aref date 0)
+					    (aref date 1)
+					    (aref date 2)
+					    (timezone-make-time-string
+					     (aref date 3)
+					     (aref date 4)
+					     (aref date 5)))))))
+     ((string= (elmo-filter-key condition) "body")
+      (and (re-search-forward "^$" nil t)	   ; goto body
+	   (setq result (search-forward (elmo-filter-value condition)
+					nil t))))
+     (t
+      (let ((fval (std11-field-body (elmo-filter-key condition))))
+	(if (eq (length fval) 0) (setq fval nil))
+	(if fval (setq fval (eword-decode-string fval)))
+	(setq result (and fval (string-match
+				(elmo-filter-value condition) fval))))))
+    (if (eq (elmo-filter-type condition) 'unmatch)
+	(setq result (not result)))
+    result))
 
-(defsubst elmo-file-field-condition-match (file condition)
+(defun elmo-buffer-field-condition-match (condition number number-list)
+  (cond
+   ((vectorp condition)
+    (elmo-buffer-field-primitive-condition-match
+     condition number number-list))
+   ((eq (car condition) 'and)
+    (and (elmo-buffer-field-condition-match
+	  (nth 1 condition) number number-list)
+	 (elmo-buffer-field-condition-match
+	  (nth 2 condition) number number-list)))
+   ((eq (car condition) 'or)
+    (or (elmo-buffer-field-condition-match
+	 (nth 1 condition) number number-list)
+	(elmo-buffer-field-condition-match
+	 (nth 2 condition) number number-list)))))
+
+(defsubst elmo-file-field-condition-match (file condition number number-list)
   (elmo-set-work-buf
-   (as-binary-input-file
-    (insert-file-contents file))
+   (as-binary-input-file (insert-file-contents file))
    (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+   ;; Should consider charset?
    (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-   (elmo-buffer-field-condition-match condition)))
+   (elmo-buffer-field-condition-match condition number number-list)))
 
 (defun elmo-cross-device-link-error-p (err)
   (let ((errobj err)

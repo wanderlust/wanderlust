@@ -66,85 +66,20 @@
   (elmo-call-func (nth 2 spec) "delete-msgs" msgs))
 
 (defun elmo-filter-list-folder (spec)
-  (let ((filter (nth 1 spec))
-	(folder (nth 2 spec))
-	numbers)
-    (cond
-     ((vectorp filter)
-      (cond ((string= (elmo-filter-key filter)
-		      "last")
-	     (setq numbers (elmo-list-folder folder))
-	     (nthcdr (max (- (length numbers)
-			     (string-to-int (elmo-filter-value filter)))
-			  0)
-		     numbers))
-	    ((string= (elmo-filter-key filter)
-		      "first")
-	     (setq numbers (elmo-list-folder folder))
-	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
-				 numbers)))
-	       (mapcar '(lambda (x)
-			  (delete x numbers)) rest))
-	     numbers)))
-     ((listp filter)
-      (elmo-search folder filter)))))
+  (elmo-search (nth 2 spec) (nth 1 spec)))
 
-(defun elmo-filter-list-folder-unread (spec mark-alist unread-marks)
-  (let ((filter (nth 1 spec))
-	(folder (nth 2 spec))
-	msgs pair)
-    (cond
-     ((vectorp filter)
-      (cond ((string= (elmo-filter-key filter)
-		      "last")
-	     (setq msgs (elmo-list-folder-unread folder mark-alist
-						 unread-marks))
-	     (nthcdr (max (- (length msgs)
-			     (string-to-int (elmo-filter-value filter)))
-			  0)
-		     msgs))
-	    ((string= (elmo-filter-key filter)
-		      "first")
-	     (setq msgs (elmo-list-folder-unread folder
-						 mark-alist
-						 unread-marks))
-	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
-				 msgs)))
-	       (mapcar '(lambda (x)
-			  (delete x msgs)) rest))
-	     msgs)))
-     ((listp filter)
-      (elmo-list-filter
-       (elmo-search folder filter)
-       (elmo-list-folder-unread folder mark-alist unread-marks))))))
+(defun elmo-filter-list-folder-unread (spec msgdb unread-marks)
+  (elmo-list-filter
+   (mapcar 'car (elmo-msgdb-get-number-alist msgdb))
+   (elmo-list-folder-unread
+    (nth 2 spec) msgdb unread-marks)))
 
-(defun elmo-filter-list-folder-important (spec overview)
-  (let ((filter (nth 1 spec))
-	(folder (nth 2 spec))
-	msgs pair)
-    (cond
-     ((vectorp filter)
-      (cond ((string= (elmo-filter-key filter)
-		      "last")
-	     (setq msgs (elmo-list-folder-important folder overview))
-	     (nthcdr (max (- (length msgs)
-			     (string-to-int (elmo-filter-value filter)))
-			  0)
-		     msgs))
-	    ((string= (elmo-filter-key filter)
-		      "first")
-	     (setq msgs (elmo-list-folder-important folder overview))
-	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
-				 msgs)))
-	       (mapcar '(lambda (x)
-			  (delete x msgs)) rest))
-	     msgs)))
-     ((listp filter)
-      (elmo-list-filter
-       (mapcar
-	'(lambda (x) (elmo-msgdb-overview-entity-get-number x))
-	overview)
-       (elmo-list-folder-important folder overview))))))
+(defun elmo-filter-list-folder-important (spec msgdb)
+  (elmo-list-filter
+   (mapcar 'car (elmo-msgdb-get-number-alist msgdb))
+   (elmo-list-folder-important
+    (nth 2 spec)
+    msgdb)))
 
 (defun elmo-filter-max-of-folder (spec)
   (elmo-max-of-folder (nth 2 spec)))
@@ -158,12 +93,12 @@
 (defun elmo-filter-create-folder (spec)
   (elmo-create-folder (nth 2 spec)))
 
-(defun elmo-filter-search (spec condition &optional numlist)
+(defun elmo-filter-search (spec condition &optional from-msgs)
   ;; search from messages in this folder
   (elmo-list-filter
-   numlist
-   (elmo-call-func (nth 2 spec) "search" condition
-		   (elmo-filter-list-folder spec))))
+   from-msgs
+   (elmo-search (nth 2 spec) condition
+		(elmo-filter-list-folder spec))))
 
 (defun elmo-filter-use-cache-p (spec number)
   (elmo-call-func (nth 2 spec) "use-cache-p" number))

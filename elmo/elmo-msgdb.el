@@ -78,7 +78,7 @@
 					   elmo-msgdb-dir)))
       ((eq type 'filter)
        (expand-file-name
-	(elmo-safe-filename folder)
+	(elmo-replace-msgid-as-filename folder)
 	(expand-file-name "filter"
 			  elmo-msgdb-dir)))
       ((eq type 'archive)

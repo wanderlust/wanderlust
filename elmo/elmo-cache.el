@@ -280,29 +280,33 @@ If KBYTES is kilo bytes (This value must be float)."
 		;; not directory.
 		path))))))
 
-(defun elmo-cache-search-all (folder condition from-msgs)
+(defun elmo-cache-search-all (folder condition)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-msgdb-expand-path folder)))
-	 (nalist number-alist)
+	 (number-list (mapcar 'car number-alist))
 	 (num (length number-alist))
 	 cache-file
 	 ret-val
 	 case-fold-search msg
 	 percent i)
     (setq i 0)
-    (while nalist
-      (if (and (setq cache-file (elmo-cache-exists-p (cdr (car nalist))
+    (while number-alist
+      (if (and (setq cache-file (elmo-cache-exists-p (cdr (car
+							   number-alist))
 						     folder
-						     (car (car nalist))))
-	       (elmo-file-field-condition-match cache-file condition))
-	  (setq ret-val (append ret-val (list (caar nalist)))))
+						     (car (car
+							   number-alist))))
+	       (elmo-file-field-condition-match cache-file condition
+						(car (car number-alist))
+						number-list))
+	  (setq ret-val (append ret-val (list (caar number-alist)))))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))
 	(elmo-display-progress
 	 'elmo-cache-search-all "Searching..."
 	 percent))
-      (setq nalist (cdr nalist)))
+      (setq number-alist (cdr number-alist)))
     ret-val))
 
 (defun elmo-cache-collect-sub-directories (init dir &optional recursively)
@@ -696,7 +700,9 @@ Returning its cache buffer."
 	    (elmo-msgid-to-cache
 	     (cdr (assq (car msgs) number-alist)))
 	    (elmo-cache-get-folder-directory spec))
-					    condition)
+	   condition
+	   (car msgs)
+	   msgs)
 	  (setq ret-val (cons (car msgs) ret-val)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))

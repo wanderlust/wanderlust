@@ -57,7 +57,7 @@
   (defun-maybe sasl-digest-md5-digest-response
     (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe starttls-negotiate (a))
-  (defun-maybe elmo-generic-list-folder-unread (spec mark-alist unread-marks))
+  (defun-maybe elmo-generic-list-folder-unread (spec msgdb unread-marks))
   (defsubst-maybe utf7-decode-string (string &optional imap) string))
 
 (defvar elmo-imap4-use-lock t
@@ -730,12 +730,12 @@ BUFFER must be a single-byte buffer."
 		      numbers))
       numbers)))
 
-(defun elmo-imap4-list-folder-unread (spec mark-alist unread-marks)
+(defun elmo-imap4-list-folder-unread (spec msgdb unread-marks)
   (if (elmo-imap4-use-flag-p spec)
       (elmo-imap4-list spec "unseen")
-    (elmo-generic-list-folder-unread spec mark-alist unread-marks)))
+    (elmo-generic-list-folder-unread spec msgdb unread-marks)))
 
-(defun elmo-imap4-list-folder-important (spec overview)
+(defun elmo-imap4-list-folder-important (spec msgdb)
   (and (elmo-imap4-use-flag-p spec)
        (elmo-imap4-list spec "flagged")))
 
@@ -744,10 +744,23 @@ BUFFER must be a single-byte buffer."
        (insert (, string))
        (detect-mime-charset-region (point-min) (point-max)))))
 
-(defun elmo-imap4-search-internal (session filter)
+(defun elmo-imap4-search-internal-primitive (spec session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
+	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"))
 	charset)
     (cond
+     ((string= "last" search-key)
+      (let ((numbers (or from-msgs (elmo-imap4-list-folder spec))))
+	(nthcdr (max (- (length numbers)
+			(string-to-int (elmo-filter-value filter)))
+		     0)
+		numbers)))
+     ((string= "first" search-key)
+      (let* ((numbers (or from-msgs (elmo-imap4-list-folder spec)))
+	     (rest (nthcdr (string-to-int (elmo-filter-value filter) )
+			   numbers)))
+	(mapcar '(lambda (x) (delete x numbers)) rest)
+	numbers))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key))
@@ -755,16 +768,29 @@ BUFFER must be a single-byte buffer."
        (elmo-imap4-send-command-wait session
 				     (format
 				      (if elmo-imap4-use-uid
-					  "uid search %s %s"
-					" search %s %s")
+					  "uid search %s %s %s %s"
+					" search %s %s %s %s")
+				      (if from-msgs
+					  (concat
+					   (unless elmo-imap4-use-uid "uid ")
+					   (cdr
+					    (elmo-imap4-make-number-set-list
+					     from-msgs)))
+					"")
+				      (if (eq (elmo-filter-type filter)
+					      'unmatch)
+					  "not" "")
 				      search-key
 				      (elmo-date-get-description
 				       (elmo-date-get-datevec
 					(elmo-filter-value filter)))))
        'search))
      (t
-      (setq charset (elmo-imap4-detect-search-charset
-		     (elmo-filter-value filter)))
+      (setq charset
+	    (if (eq (length (elmo-filter-value filter)) 0)
+		(setq charset 'us-ascii)
+	      (elmo-imap4-detect-search-charset
+	       (elmo-filter-value filter))))
       (elmo-imap4-response-value
        (elmo-imap4-send-command-wait session
 				     (list
@@ -773,33 +799,58 @@ BUFFER must be a single-byte buffer."
 					"search CHARSET ")
 				      (elmo-imap4-astring
 				       (symbol-name charset))
+				      (if from-msgs
+					  (concat
+					   (unless elmo-imap4-use-uid "uid ")
+					   (cdr
+					    (elmo-imap4-make-number-set-list
+					     from-msgs)))
+					"")
 				      (if (eq (elmo-filter-type filter)
 					      'unmatch)
 					  " not " " ")
-				      (format "%s "
+				      (format "%s%s "
+					      (if (member
+						   (elmo-filter-key filter)
+						   imap-search-keys)
+						  ""
+						"header ")
 					      (elmo-filter-key filter))
 				      (elmo-imap4-astring
 				       (encode-mime-charset-string
 					(elmo-filter-value filter) charset))))
        'search)))))
 
+(defun elmo-imap4-search-internal (spec session condition from-msgs)
+  (let (result)
+    (cond
+     ((vectorp condition)
+      (setq result (elmo-imap4-search-internal-primitive
+		    spec session condition from-msgs)))
+     ((eq (car condition) 'and)
+      (setq result (elmo-imap4-search-internal spec session (nth 1 condition)
+					       from-msgs)
+	    result (elmo-list-filter result
+				     (elmo-imap4-search-internal
+				      spec session (nth 2 condition)
+				      from-msgs))))
+     ((eq (car condition) 'or)
+      (setq result (elmo-imap4-search-internal
+		    spec session (nth 1 condition) from-msgs)
+	    result (elmo-uniq-list
+		    (nconc result
+			   (elmo-imap4-search-internal
+			    spec session (nth 2 condition) from-msgs)))
+	    result (sort result '<))))))
+    
+
 (defun elmo-imap4-search (spec condition &optional from-msgs)
   (save-excursion
-    (let* ((session (elmo-imap4-get-session spec))
-	   response matched)
+    (let ((session (elmo-imap4-get-session spec)))
       (elmo-imap4-session-select-mailbox
        session
        (elmo-imap4-spec-mailbox spec))
-      (while condition
-	(setq response (elmo-imap4-search-internal session
-						   (car condition)))
-	(setq matched (nconc matched response))
-	(setq condition (cdr condition)))
-      (if from-msgs
-	  (elmo-list-filter
-	   from-msgs
-	   (elmo-uniq-list (sort matched '<)))
-	(elmo-uniq-list (sort matched '<))))))
+      (elmo-imap4-search-internal spec session condition from-msgs))))
 
 (defun elmo-imap4-use-flag-p (spec)
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp

@@ -357,19 +357,21 @@
 	(rename-file old new)
 	t))))
 
-(defsubst elmo-localdir-field-condition-match (spec number condition)
+(defsubst elmo-localdir-field-condition-match (spec condition
+						    number number-list)
   (elmo-file-field-condition-match
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-get-folder-directory spec))
-   condition))
+   condition
+   number number-list))
 
 (defun elmo-localdir-search (spec condition &optional from-msgs)
   (let* ((msgs (or from-msgs (elmo-localdir-list-folder spec)))
 	 (num (length msgs))
 	 (i 0) case-fold-search ret-val)
     (while msgs
-      (if (elmo-localdir-field-condition-match spec (car msgs)
-					       condition)
+      (if (elmo-localdir-field-condition-match spec condition
+					       (car msgs) msgs)
 	  (setq ret-val (cons (car msgs) ret-val)))
       (when (> num elmo-display-progress-threshold)
 	(setq i (1+ i))

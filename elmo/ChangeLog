@@ -1,3 +1,60 @@
+2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-generic-list-folder-unread): Rewrite.
+	(elmo-list-folder-unread): Rewrite.
+	(elmo-list-folder-important): Ditto.
+
+	* elmo-util.el (elmo-filter-get-spec): Rewrite.
+	(elmo-condition-parse-error): New inline function.
+	(elmo-read-search-condition): New function.
+	(elmo-read-search-condition-internal): Ditto.
+	(elmo-parse-search-condition): Rewrite.
+	(elmo-condition-parse): New function.
+	(elmo-condition-parse-or-expr): Ditto.
+	(elmo-condition-parse-and-expr): Ditto.
+	(elmo-condition-parse-primitive): Ditto.
+	(elmo-condition-parse-search-value): Ditto.
+	(elmo-buffer-field-primitive-condition-match): Ditto.
+	(elmo-buffer-field-condition-match): Rewrite.
+	(elmo-file-field-condition-match): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): Use
+	`elmo-replace-msgid-as-filename' instead of `elmo-safe-filename'.
+
+	* elmo-internal.el (elmo-internal-search): Set `number' and
+	`number-list' argument of `elmo-file-field-condition-match'.
+
+	* elmo-maildir.el (elmo-maildir-search): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-list-folder-unread): Use
+	`msgdb' as argument instead of `mark-alist'.
+	(elmo-imap4-list-folder-important): Use `msgdb' as argument instead of
+	`overview'.
+
+	* elmo-multi.el: Likewise.
+
+	* elmo-pipe.el: Likewise.
+
+	* elmo-imap4.el	(elmo-imap4-search-internal-primitive): New function.
+	(elmo-imap4-search-internal): Rewrite.
+	(elmo-imap4-search): Ditto.
+
+	* elmo-filter.el (elmo-filter-list-folder): Rewrite.
+	(elmo-filter-list-folder-unread): Ditto.
+	(elmo-filter-list-folder-important): Ditto.
+	(elmo-filter-search): Rewrite.
+
+	* elmo-cache.el (elmo-cache-search-all): Set `number' and
+	`number-list' argument of `elmo-file-field-condition-match'.
+	(elmo-cache-search): Ditto.
+
+	* elmo-localdir.el: Likewise.
+
+	* elmo-archive.el (elmo-archive-field-condition-match): Added argument
+	number-list and pass it to `elmo-buffer-field-condition-match'.
+	(elmo-archive-field-condition-match): Pass `number-list' to
+	`elmo-archive-field-condition-match'
+
 2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-list-folder): Set current group after

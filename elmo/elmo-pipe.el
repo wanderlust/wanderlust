@@ -89,11 +89,12 @@
 		      numbers))
       numbers)))
 
-(defun elmo-pipe-list-folder-unread (spec mark-alist unread-marks)
-  (elmo-list-folder-unread (elmo-pipe-spec-dst spec) mark-alist unread-marks))
+(defun elmo-pipe-list-folder-unread (spec msgdb unread-marks)
+  (elmo-list-folder-unread (elmo-pipe-spec-dst spec)
+			   msgdb unread-marks))
   
-(defun elmo-pipe-list-folder-important (spec overview)
-  (elmo-list-folder-important (elmo-pipe-spec-dst spec) overview))
+(defun elmo-pipe-list-folder-important (spec msgdb)
+  (elmo-list-folder-important (elmo-pipe-spec-dst spec) msgdb))
 
 (defun elmo-pipe-max-of-folder (spec)
   (let* (elmo-pop3-use-uidl

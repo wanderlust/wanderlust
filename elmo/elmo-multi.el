@@ -182,9 +182,10 @@
       (setq result (nconc result (list one-alist))))
     result))
 
-(defun elmo-multi-list-folder-unread (spec mark-alist unread-marks)
+(defun elmo-multi-list-folder-unread (spec msgdb unread-marks)
   (let* ((flds (cdr spec))
 	 (cur-number 0)
+	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	 mark-alist-list
 	 ret-val)
     (setq mark-alist-list (elmo-multi-mark-alist-list mark-alist))
@@ -204,7 +205,7 @@
       (setq flds (cdr flds)))
     ret-val))
 
-(defun elmo-multi-list-folder-important (spec overview)
+(defun elmo-multi-list-folder-important (spec msgdb)
   (let* ((flds (cdr spec))
 	 (cur-number 0)
 	 ret-val)
@@ -217,7 +218,8 @@
 		       (lambda (x)
 			 (+
 			  (* elmo-multi-divide-number cur-number) x)))
-		      (elmo-list-folder-important (car flds) overview))))
+		      (elmo-list-folder-important (car flds)
+						  msgdb))))
       (setq flds (cdr flds)))
     ret-val))
 

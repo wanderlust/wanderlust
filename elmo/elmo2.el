@@ -386,14 +386,10 @@ without cacheing."
       (elmo-call-func folder "delete-msgs" msgs)
     (elmo-dop-delete-msgs folder msgs msgdb)))
 
-;;
-;; Server side search.
-;;
 (defun elmo-search (folder condition &optional from-msgs)
-  (let ((type (elmo-folder-get-type folder)))
-    (if (elmo-folder-plugged-p folder)
-	(elmo-call-func folder "search" condition from-msgs)
-      (elmo-cache-search-all folder condition from-msgs))))
+  (if (elmo-folder-plugged-p folder)
+      (elmo-call-func folder "search" condition from-msgs)
+    (elmo-cache-search-all folder condition from-msgs)))
 
 (defun elmo-msgdb-create (folder numlist new-mark already-mark
 				 seen-mark important-mark seen-list)
@@ -578,16 +574,17 @@ without cacheing."
   "Just return number-alist."
   number-alist)
 
-(defun elmo-generic-list-folder-unread (spec mark-alist unread-marks)
-  (elmo-delete-if
-   'null
-   (mapcar
-    (function (lambda (x)
-		(if (member (cadr (assq (car x) mark-alist)) unread-marks)
-		    (car x))))
-    mark-alist)))
+(defun elmo-generic-list-folder-unread (spec msgdb unread-marks)
+  (let ((mark-alist (elmo-msgdb-get-mark-alist msgdb)))
+    (elmo-delete-if
+     'null
+     (mapcar
+      (function (lambda (x)
+		  (if (member (cadr (assq (car x) mark-alist)) unread-marks)
+		      (car x))))
+      mark-alist))))
 
-(defun elmo-generic-list-folder-important (spec overview)
+(defun elmo-generic-list-folder-important (spec msgdb)
   nil)
 
 (defun elmo-update-number (folder msgdb)
@@ -632,22 +629,22 @@ without cacheing."
 		0)))
 	  (length in-folder))))
 
-(defun elmo-list-folder-unread (folder mark-alist unread-marks)
-  (elmo-call-func folder "list-folder-unread" mark-alist unread-marks))
+(defun elmo-list-folder-unread (folder msgdb unread-marks)
+  (elmo-call-func folder "list-folder-unread" msgdb unread-marks))
 
-(defun elmo-list-folder-important (folder overview)
-  (let (importants)
+(defun elmo-list-folder-important (folder msgdb)
+  (let (importants 
+	(overview (elmo-msgdb-get-overview msgdb)))
     ;; server side importants...(append only.)
     (if (elmo-folder-plugged-p folder)
 	(setq importants (elmo-call-func folder "list-folder-important"
-					 overview)))
+					 msgdb)))
     (or elmo-msgdb-global-mark-alist
 	(setq elmo-msgdb-global-mark-alist
 	      (elmo-object-load (expand-file-name
 				 elmo-msgdb-global-mark-filename
 				 elmo-msgdb-dir))))
     (while overview
-      (car overview)
       (if (assoc (elmo-msgdb-overview-entity-get-id (car overview))
 		 elmo-msgdb-global-mark-alist)
 	  (setq importants (cons
@@ -695,8 +692,11 @@ Currently works on IMAP4 folder only."
 	   (elmo-multi-folder-diff fld))
 	  ((and (eq type 'filter)
 		(or (elmo-multi-p fld)
-		    (not
-		     (vectorp (nth 1 (elmo-folder-get-spec fld)))))
+		    (not (and (vectorp (nth 1 (elmo-folder-get-spec fld)))
+			      (string-match
+			       "^first$\\|^last$"
+			       (elmo-filter-key
+				(nth 1 (elmo-folder-get-spec fld)))))))
 		;; not partial...unsync number is unknown.
 		(cons nil
 		      (cdr (elmo-folder-diff

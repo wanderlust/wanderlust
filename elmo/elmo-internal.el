@@ -237,6 +237,7 @@
 	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
 						 nil spec))))
+	 (number-list (mapcar 'car loc-alist))
 	 cache-file
 	 ret-val
 	 case-fold-search msg
@@ -246,7 +247,9 @@
     (while loc-alist
       (if (and (setq cache-file (elmo-cache-exists-p (cdr (car loc-alist))))
 	       (elmo-file-field-condition-match cache-file
-						condition))
+						condition
+						(car (car loc-alist))
+						number-list))
 	  (setq ret-val (append ret-val (list (car (car loc-alist))))))
       (setq i (1+ i))
       (setq percent (/ (* i 100) num))

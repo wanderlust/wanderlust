@@ -440,7 +440,7 @@ file name for maildir directories."
 	(if (elmo-file-field-condition-match
 	     (elmo-maildir-number-to-filename
 	      dir (car msgs) loc-alist)
-	     condition)
+	     condition (car msgs) msgs)
 	    (setq ret-val (append ret-val (list msg-num))))
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))

@@ -971,7 +971,8 @@ TYPE specifies the archiver's symbol."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Search functions
 
-(defsubst elmo-archive-field-condition-match (spec number condition prefix)
+(defsubst elmo-archive-field-condition-match (spec number number-list
+						   condition prefix)
   (save-excursion
     (let* ((type (nth 2 spec))
 	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
@@ -983,7 +984,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-archive-call-method method args t))
 	 (elmo-set-buffer-multibyte default-enable-multibyte-characters)
 	 (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-	 (elmo-buffer-field-condition-match condition))))))
+	 (elmo-buffer-field-condition-match condition number number-list))))))
 
 (defun elmo-archive-search (spec condition &optional from-msgs)
   (let* (;;(args (elmo-string-to-list key))
@@ -996,7 +997,7 @@ TYPE specifies the archiver's symbol."
 	 (case-fold-search nil)
 	 ret-val)
     (while msgs
-      (if (elmo-archive-field-condition-match spec (car msgs)
+      (if (elmo-archive-field-condition-match spec (car msgs) msgs
 					      condition
 					      (nth 3 spec))
 	  (setq ret-val (cons (car msgs) ret-val)))
