@@ -3993,6 +3993,12 @@ MIME のマルチパートメッセージの確認に使うと便利です。
 指定されたリージョンをシーザ暗号でエンコード/デコードします。
 (@code{wl-caesar-region})
 
+@item C-l
+@kindex C-l (Draft)
+@findex wl-draft-highlight-and-recenter
+現在のドラフトをハイライトしなおします。
+(@code{wl-draft-highlight-and-recenter})
+
 @item M-t
 @kindex M-t (Draft)
 @findex wl-toggle-plugged

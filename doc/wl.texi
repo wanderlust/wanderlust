@@ -4014,6 +4014,12 @@ the @samp{+draft} folder.
 Encodes or decodes the specified region in Caesar cipher.
 (@code{wl-caesar-region})
 
+@item C-l
+@kindex C-l (Draft)
+@findex wl-draft-highlight-and-recenter
+Recenter and rehighlight current draft.
+(@code{wl-draft-highlight-and-recenter})
+
 @item M-t
 @kindex M-t (Draft)
 @findex wl-toggle-plugged
