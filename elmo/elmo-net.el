@@ -285,7 +285,7 @@ Returns a process object.  if making session failed, returns nil."
 		elmo-network-stream-type-alist)))
     (substring name 0 (match-beginning 0))))
 
-(defun elmo-net-port-info (folder)
+(luna-define-method elmo-net-port-info ((folder elmo-net-folder))
   (list (elmo-net-folder-server-internal folder)
 	(elmo-net-folder-port-internal folder)
 	(elmo-network-stream-type-symbol

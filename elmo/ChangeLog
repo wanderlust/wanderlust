@@ -1,5 +1,12 @@
 2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-net-port-info): New method.
+
+	* elmo-shimbun.el (elmo-net-port-info): Define.
+	(elmo-message-encache): Ditto.
+
+	* elmo-net.el (elmo-net-port-info): Define as method.
+
 	* elmo.el (elmo-generic-folder-append-messages): Find cache file in
 	unplugged status when elmo-enable-disconnected-operation is t.
 

@@ -174,6 +174,9 @@ If optional LOAD-MSGDB is non-nil, msgdb is loaded.
 (luna-define-generic elmo-folder-set-plugged (folder plugged &optional add)
   "Set FOLDER as plugged.")
 
+(luna-define-generic elmo-net-port-info (folder)
+  "Get port information of FOLDER.")
+
 (luna-define-generic elmo-folder-use-flag-p (folder)
   "Returns t if FOLDER treats unread/important flag itself.")
 
