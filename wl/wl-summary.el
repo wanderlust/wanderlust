@@ -2705,7 +2705,7 @@ If ARG, without confirm."
 	 parent-entity
 	 parent-number
 	 (case-fold-search t)
-	 (depth 0)
+	 (depth 0) relatives anumber
 	 cur number overview2 cur-entity linked retval delayed-entity
 	 update-list entity-stack)
     (while entity
@@ -2715,15 +2715,18 @@ If ARG, without confirm."
 	    parent-number (elmo-msgdb-overview-entity-get-number
 			   parent-entity))
       (setq number (elmo-msgdb-overview-entity-get-number entity))
-      ;; If thread loop detected or reached to max depth, set parent as nil.
       (setq cur entity)
-      (while (and cur (< depth wl-summary-max-thread-depth))
-	(if (eq number (elmo-msgdb-overview-entity-get-number
-			(setq cur
-			      (elmo-msgdb-get-parent-entity cur msgdb))))
+      ;; If thread loop detected, set parent as nil.
+      (while cur
+	(setq anumber
+	      (elmo-msgdb-overview-entity-get-number
+	       (setq cur (elmo-msgdb-get-parent-entity cur msgdb))))
+	(if (memq anumber relatives)
 	    (setq parent-number nil
 		  cur nil))
-	(incf depth))
+	(setq relatives (cons
+			 (elmo-msgdb-overview-entity-get-number cur)
+			 relatives)))
       (if (and parent-number
 	       (not (wl-thread-get-entity parent-number))
 	       (not force-insert))

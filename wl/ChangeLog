@@ -1,3 +1,14 @@
+2002-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-insert-message): Use
+	wl-summary-max-thread-depth.
+
+	* wl-summary.el (wl-summary-insert-thread-entity): Refined
+	loop detection.
+
+	* wl-message.el (wl-message-buffer-display): Back to the first page
+	when cache is hit.
+
 2002-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-max-thread-depth): New user option.
