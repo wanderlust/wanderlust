@@ -1,3 +1,7 @@
+2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.4.
+
 2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-quit): Call `elmo-dop-queue-save'.

@@ -1,5 +1,7 @@
 2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* Version number is increased to 2.7.4.
+
 	* wl-highlight.el (wl-highlight-headers): Remove BEG and END
 	arguments from `wl-highlight-x-face-function' caller.
 	Use x-face-1.3.6.12 or later.
