@@ -5,7 +5,7 @@
 
 ;; Author: Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-14 15:12:52 teranisi>
+;; Time-stamp: <00/04/15 13:53:01 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -263,8 +263,7 @@ If REFILE-LIST includes reserve mark message, so copy."
     (cons dst-folder-base dst-folder-fmt)))
 
 (defsubst wl-expire-archive-get-max-number (dst-folder-base &optional regexp)
-  (let ((files (reverse (sort (elmo-list-folders 
-			       (file-name-directory dst-folder-base))
+  (let ((files (reverse (sort (elmo-list-folders dst-folder-base)
 			      'string<)))
 	(regexp (or regexp wl-expire-archive-folder-num-regexp))
 	filenum in-folder)
