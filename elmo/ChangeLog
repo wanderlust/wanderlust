@@ -1,3 +1,9 @@
+2001-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-use-cache): New user option.
+	(elmo-message-use-cache-p): Define.
+	(elmo-folder-msgdb-create): Treat cache.
+
 2001-07-28  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-network-initialize-session): Call
