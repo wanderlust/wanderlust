@@ -702,27 +702,19 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	(if (elmo-pop3-folder-use-uidl-internal folder)
 	    (elmo-pop3-folder-location-alist-internal folder)))))))
 
-(defun elmo-pop3-sort-overview-by-original-number (overview loc-alist)
-  (if loc-alist
-      (sort overview
-	    (lambda (ent1 ent2)
-	      (< (elmo-pop3-uidl-to-number
-		  (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
-			     loc-alist)))
-		 (elmo-pop3-uidl-to-number
-		  (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
-			     loc-alist))))))
-    overview))
-
 (defun elmo-pop3-sort-msgdb-by-original-number (folder msgdb)
-  (message "Sorting...")
-  (let ((overview (elmo-msgdb-get-overview msgdb)))
-    (elmo-msgdb-set-overview
-     msgdb
-     (elmo-pop3-sort-overview-by-original-number
-      overview
-      (elmo-pop3-folder-location-alist-internal folder)))
-    (message "Sorting...done")
+  (let ((location-alist (elmo-pop3-folder-location-alist-internal folder)))
+    (when location-alist
+      (elmo-msgdb-sort-entities
+       msgdb
+       (lambda (ent1 ent2 loc-alist)
+	 (< (elmo-pop3-uidl-to-number
+	     (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
+			loc-alist)))
+	    (elmo-pop3-uidl-to-number
+	     (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
+			loc-alist)))))
+       location-alist))
     msgdb))
 
 (defun elmo-pop3-uidl-to-number (uidl)

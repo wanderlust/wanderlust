@@ -154,7 +154,6 @@
 ;; elmo-msgdb-create-overview-from-buffer NUMBER SIZE TIME
 ;; elmo-msgdb-copy-overview-entity ENTITY
 ;; elmo-msgdb-create-overview-entity-from-file NUMBER FILE
-;; elmo-msgdb-overview-sort-by-date OVERVIEW
 ;; elmo-msgdb-clear-index
 
 ;; elmo-folder-get-info
@@ -517,14 +516,26 @@ content of MSGDB is changed."
     (elmo-msgdb-set-index msgdb index)
     t)) ;return value
 
-(defun elmo-msgdb-sort-by-date (msgdb)
+(defun elmo-msgdb-sort-entities (msgdb predicate &optional app-data)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
     (elmo-msgdb-set-overview
      msgdb
-     (elmo-msgdb-overview-sort-by-date overview))
+     (sort overview (lambda (a b) (funcall predicate a b app-data))))
     (message "Sorting...done")
     msgdb))
+
+(defun elmo-msgdb-sort-by-date (msgdb)
+  (elmo-msgdb-sort-entities
+   msgdb
+   (lambda (x y app-data)
+     (condition-case nil
+	 (string<
+	  (timezone-make-date-sortable
+	   (elmo-msgdb-overview-entity-get-date x))
+	  (timezone-make-date-sortable
+	   (elmo-msgdb-overview-entity-get-date y)))
+       (error)))))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -1286,18 +1297,6 @@ Header region is supposed to be narrowed."
 		  (point-max)))
 	  (narrow-to-region (point-min) header-end)
 	  (elmo-msgdb-create-overview-from-buffer number size mtime))))))
-
-(defun elmo-msgdb-overview-sort-by-date (overview)
-  (sort overview
-	(function
-	 (lambda (x y)
-	   (condition-case nil
-	       (string<
-		(timezone-make-date-sortable
-		 (elmo-msgdb-overview-entity-get-date x))
-		(timezone-make-date-sortable
-		 (elmo-msgdb-overview-entity-get-date y)))
-	     (error))))))
 
 (defun elmo-msgdb-clear-index (msgdb entity)
   (let ((ehash (elmo-msgdb-get-entity-hashtb msgdb))
