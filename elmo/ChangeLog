@@ -3,8 +3,6 @@
 	* elmo-msgdb.el (elmo-msgdb-flist-load): Use elmo-mime-charset.
 	(elmo-msgdb-flist-save): Ditto.
 
-2001-4-18  Yuuichi Teranishi  <teranisi@gohome.org>
-
 	* elmo-shimbun.el (elmo-folder-list-subfolders):
 	Use `shimbun-groups' instead of `shimbun-groups-internal'.
 	(elmo-folder-exists-p): Ditto.
