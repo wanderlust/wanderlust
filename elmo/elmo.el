@@ -1174,8 +1174,7 @@ Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
 NEW-MSGDB is the newly appended msgdb.
 DELETE-LIST is a list of deleted message number.
-CROSSED is cross-posted message number.
-If update process is interrupted, return nil."
+CROSSED is cross-posted message number."
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
 	number-alist mark-alist 
@@ -1238,7 +1237,7 @@ If update process is interrupted, return nil."
 	      (progn
 		(elmo-folder-update-number folder)
 		(elmo-folder-process-crosspost folder)
-		(list nil nil nil) ; no updates.
+		nil ; no update.
 		)
 	    (if delete-list (elmo-msgdb-delete-msgs
 			     (elmo-folder-msgdb folder) delete-list))
