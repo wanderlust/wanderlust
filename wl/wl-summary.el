@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-10 12:42:18 teranisi>
+;; Time-stamp: <00/05/11 13:13:04 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -435,6 +435,7 @@
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
   (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
   (define-key wl-summary-mode-map "ty" 'wl-thread-save)
+  (define-key wl-summary-mode-map "ts" 'wl-summary-set-parent)
 
   ;; target-mark commands
   (define-key wl-summary-mode-map "m"	  (make-sparse-keymap))
