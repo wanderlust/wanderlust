@@ -491,7 +491,8 @@
 		    (save-excursion
 		      (narrow-to-region p (point))
 		      (goto-char (1+ p))
-		      (replace-regexp "^(" "\\\\(") ; avoid font-lock confusion
+		      (while (re-search-forward "^(" nil t)
+			(replace-match "\\\\(")) ; avoid font-lock confusion
 		      (widen)))
 		  (insert ")\n"))
 	      (insert "(defconst wl-news-news-alist nil)\n\n"))
