@@ -1,3 +1,35 @@
+2001-02-13  OKAZAKI Tetsurou  <refactor@acidrain.localnet>
+
+	* elmo-imap4.el (elmo-imap4-prefetch-msg): Set `msgdb'
+	argument of `elmo-imap4-read-msg' as nil.
+
+2001-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-prefetch-msg): Set `unread' argument of
+	`elmo-read-msg' as 'unread.
+	(elmo-read-msg-with-cache): Set `msgdb' argument as nil.
+
+	* elmo-archive.el (elmo-archive-read-msg): Fixed arguments.
+	* elmo-cache.el (elmo-cache-read-msg): Ditto.
+	* elmo-filter.el (elmo-filter-read-msg): Ditto.
+	* elmo-imap4.el (elmo-imap4-read-msg): Ditto.
+	* elmo-internal.el (elmo-internal-read-msg): Ditto.
+	* elmo-localdir.el (elmo-localdir-read-msg): Ditto.
+	* elmo-localnews.el (elmo-localnews-read-msg): Ditto.
+	* elmo-maildir.el (elmo-maildir-read-msg): Ditto.
+	* elmo-multi.el (elmo-multi-read-msg): Ditto.
+	* elmo-nntp.el (elmo-nntp-read-msg): Ditto.
+	* elmo-pipe.el (elmo-pipe-read-msg): Ditto.
+	* elmo-pop3.el (elmo-pop3-read-msg): Ditto.
+
+2001-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-buffer-cache-message): Call `elmo-read-msg' with
+	argument `unread' as non-nil.
+	(elmo-read-msg-with-cache): Added argument `unread'.
+	(elmo-read-msg-no-cache): Ditto.
+	(elmo-read-msg): Ditto.
+
 2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Bind `elmo-inhibit-read-cache' as t

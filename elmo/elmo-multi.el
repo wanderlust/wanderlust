@@ -144,11 +144,11 @@
 (defun elmo-multi-append-msg (spec string)
   (error "Cannot append messages to multi folder"))
 
-(defun elmo-multi-read-msg (spec number outbuf)
+(defun elmo-multi-read-msg (spec number outbuf &optional msgdb unread)
   (let* ((flds (cdr spec))
 	 (folder (nth (- (/ number elmo-multi-divide-number) 1) flds))
 	 (number (% number elmo-multi-divide-number)))
-    (elmo-call-func folder "read-msg" number outbuf)))
+    (elmo-call-func folder "read-msg" number outbuf msgdb unread)))
 
 (defun elmo-multi-delete-msgs (spec msgs)
   (let ((flds (cdr spec))
