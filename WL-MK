@@ -63,6 +63,9 @@
 	(fboundp 'nemacs-version))
     (setq max-lisp-eval-depth 400))
 
+;; FIXME: it is currently needed to byte-compile with Emacs 21.
+(setq recursive-load-depth-limit nil)
+
 (condition-case () (require 'easymenu) (error nil))
 
 (defvar config-wl-package-done nil)

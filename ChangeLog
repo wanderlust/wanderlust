@@ -1,3 +1,8 @@
+2000-10-03  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* WL-MK: Set `recursive-load-depth-limit' to nil.  It is currently
+	needed to byte-compile with Emacs 21.  FIXME!
+
 2000-10-02  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* Makefile (PIXMAPDIR): New variable.
