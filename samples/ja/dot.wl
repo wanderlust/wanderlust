@@ -100,6 +100,10 @@
 ;; サマリバッファの左にフォルダバッファを表示する (3ペイン表示)
 ;(setq wl-stay-folder-window t)
 
+;; 長い行を切り縮める
+;(setq wl-message-truncate-lines t)
+;(setq wl-draft-truncate-lines t)
+
 ;; ドラフトを新しいフレームで書く
 ;(setq wl-draft-use-frame t)
 
