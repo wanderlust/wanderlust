@@ -703,7 +703,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-check-environment (no-check-folder)
   (unless wl-from (error "Please set `wl-from'"))
   ;; Message-ID
-  (let ((from domain))
+  (let (from domain)
     (if wl-message-id-use-wl-from
 	(if (and (setq from (wl-address-header-extract-address wl-from))
 		 (string-match "^\\(.*\\)@\\(.*\\)$" from))
