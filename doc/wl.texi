@@ -1285,6 +1285,15 @@ Format:
 Admissible values of @var{module-name} and @var{folder-name} are 
 described in @file{README.shimbun.ja} distributed with emacs-w3m.
 
+Example:
+
+@example
+@group
+@@airs.wl  -> archive of wanderlust ML (using module @file{sb-airs.el})
+@@asahi/   -> access group of all folders in module @file{sb-asahi.el}
+@end group
+@end example
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu Folder

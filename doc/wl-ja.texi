@@ -1304,6 +1304,15 @@ w3m および emacs-w3m がインストールされている必要があります。
 @var{モジュール名}、および @var{フォルダ名} に入る値については
 emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
 
+例:
+
+@example
+@group
+@@airs.wl  -> wanderlust ML アーカイブ (モジュール @file{sb-airs.el} 使用)
+@@asahi/   -> @file{sb-asahi.el} モジュールに含まれるフォルダのアクセスグループ
+@end group
+@end example
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu フォルダ
