@@ -1,3 +1,12 @@
+2003-01-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el: Moved global mark handling stuffs to elmo-util.el.
+
+	* elmo-util.el: Moved global mark handling stuffs from elmo-msgdb.el.
+	
+	* elmo-util.el (elmo-file-cache-delete): Check whether the cache file
+	is included in the global-mark or not.
+
 2002-12-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* utf7.el (toplevel): Avoid error when the function
