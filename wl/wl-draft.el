@@ -303,7 +303,7 @@ e.g.
   (mail-position-on-field "To")
   (setq wl-draft-config-variables
 	(append wl-draft-parent-variables
-		wl-draft-config-variables)))
+		wl-draft-config-variables))
   (run-hooks 'wl-draft-forward-hook))
 
 (defun wl-draft-self-reply-p ()
@@ -1372,7 +1372,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (when (and wl-draft-parent-flag
 			 wl-draft-parent-number
 			 wl-draft-parent-folder
-		(wl-draft-set-flag-on-parent wl-draft-parent-flag))))
+		(wl-draft-set-flag-on-parent wl-draft-parent-flag)))))
 	;; kill sending buffer, anyway.
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))
