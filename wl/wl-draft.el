@@ -54,6 +54,7 @@
 
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-draft-cite-function 'wl-default-draft-cite)
+(defvar wl-default-draft-cite-decorate-author t)
 (defvar wl-draft-buffer-file-name nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)
@@ -644,8 +645,10 @@ Reply to author if WITH-ARG is non-nil."
 	    (setq from (elmo-msgdb-overview-entity-get-from entity)))
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
-				   (wl-summary-from-func-internal
-				    (or from "you"))))))
+				   (if wl-default-draft-cite-decorate-author
+				     (wl-summary-from-func-internal
+				      (or from "you"))
+				     (or from "you"))))))
     (and cite-title
 	 (insert cite-title "\n"))
     (mail-indent-citation)))

@@ -1,3 +1,9 @@
+2002-01-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-default-draft-cite-decorate-author): New variable.
+	(wl-default-draft-cite): Do not arrange author name if the value of
+	`wl-default-draft-cite-decorate-author' is nil.
+
 2002-01-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-mime-save-content): Use `message' instead of `error'.
