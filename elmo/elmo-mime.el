@@ -252,26 +252,35 @@ If optional argument IGNORE-CACHE is specified, existing cache is ignored.
 If second optional argument UNREAD is specified, message is displayed but
 keep it as unread.
 Return non-nil if cache is used."
-  (let ((entity (elmo-msgdb-message-entity (elmo-folder-msgdb folder) number))
-	mime-display-header-hook ; Do nothing.
-	cache-file strategy use-cache)
+  (let (mime-display-header-hook ; Do nothing.
+	(elmo-message-displaying t)
+	entity cache-file cache-used)
+    (unless (zerop (elmo-folder-length folder))
+      (setq entity (elmo-message-entity folder number)))
     (when entity
-      (setq cache-file (elmo-file-cache-get
-			(elmo-message-entity-field entity 'message-id)))
-      (setq use-cache (and (elmo-message-use-cache-p folder number)
-			   (eq (elmo-file-cache-status cache-file) 'entire))))
-    (setq strategy (elmo-make-fetch-strategy
-		    'entire use-cache
-		    (elmo-message-use-cache-p folder number)
-		    (elmo-file-cache-path cache-file)))
+      (setq cache-file
+	    (elmo-file-cache-get
+	     (elmo-message-entity-field entity 'message-id)))
+      ;; Required to be an entire cache.
+      (unless (eq (elmo-file-cache-status cache-file) 'entire)
+	(setq ignore-cache t)))
     (elmo-mime-display-as-is-internal
      (mime-open-entity
       'elmo-buffer
       (elmo-make-mime-message-location
-       folder number strategy rawbuf unread))
+       folder number
+       (elmo-make-fetch-strategy 'entire
+				 (unless ignore-cache
+				   (setq
+				    cache-used
+				    (and cache-file
+					 (elmo-file-cache-status cache-file))))
+				 (elmo-message-use-cache-p folder number)
+				 (and cache-file
+				      (elmo-file-cache-path cache-file)))
+       rawbuf unread))
      viewbuf nil keymap original-mode)
-    (when strategy
-      (elmo-fetch-strategy-use-cache strategy))))
+    cache-used))
 
 ;; Replacement of mime-display-message.
 (defun elmo-mime-display-as-is-internal (message
