@@ -31,10 +31,6 @@
 
 (require 'elmo)
 (require 'luna)
-
-(defvar elmo-multi-divide-number 100000
-  "*Multi divider number.")
-
 ;;; ELMO Multi folder
 (eval-and-compile
   (luna-define-class elmo-multi-folder (elmo-folder)

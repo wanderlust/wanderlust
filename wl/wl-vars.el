@@ -504,8 +504,6 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
   "A hook called when make plugged alist.")
-(defvar wl-biff-notify-hook '(beep)
-  "A hook called when a biff-notification is invoked.")
 
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")
@@ -993,24 +991,15 @@ ex.
   :group 'wl-summary
   :group 'wl-highlight)
 
-(defcustom wl-summary-lazy-highlight (and (boundp 'window-scroll-functions)
-					  (not wl-on-xemacs))
-  "Non-nil forces lazy summary highlighting using `window-scroll-functions'."
-  :type 'boolean
-  :group 'wl-summary
-  :group 'wl-highlight)
-
 (defcustom wl-summary-highlight-partial-threshold 1000
-  "Summary is not highlighted entirely if there are lines more than this value.
-Available if only `wl-summary-lazy-highlight' is nil."
+  "Summary is not highlighted entirely if there are lines more than this value."
   :type 'integer
   :group 'wl-summary
   :group 'wl-highlight)
 
 (defcustom wl-summary-partial-highlight-above-lines 30
   "If Summary has lines more than `wl-summary-highlight-partial-threshold',
-Summary lines are highlighted partialy above current position.
-Available if only `wl-summary-lazy-highlight' is nil."
+Summary lines are highlighted partialy above current position."
   :type 'integer
   :group 'wl-summary
   :group 'wl-highlight)

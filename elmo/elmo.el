@@ -1203,7 +1203,7 @@ Return a hashtable for newsgroups."
     (dolist (group groups)
       (or (elmo-get-hash-val group hashtb)
 	  (elmo-set-hash-val group nil hashtb)))
-    (setq elmo-newsgroups-hashtb hashtb)))
+    hashtb))
 
 (defvar elmo-crosspost-message-alist-modified nil)
 (defun elmo-crosspost-message-alist-load ()
@@ -1239,15 +1239,8 @@ Return a hashtable for newsgroups."
     (elmo-make-directory temp-dir)
     temp-dir))
 
-(defun elmo-init ()
-  "Initialize ELMO module."
-  (elmo-crosspost-message-alist-load)
-  (elmo-resque-obsolete-variables))
-
 (defun elmo-quit ()
   "Quit and cleanup ELMO."
-;  (setq elmo-newsgroups-hashtb nil)
-  (elmo-crosspost-message-alist-save)
   ;; Not implemented yet.
   (let ((types elmo-folder-type-alist)
 	class)

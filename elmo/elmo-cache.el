@@ -393,6 +393,28 @@ If KBYTES is kilo bytes (This value must be float)."
     (elmo-msgid-to-cache
      (cdr (assq number number-alist)))))
 
+(if (boundp 'nemacs-version)
+    (defsubst elmo-cache-insert-header (file)
+      "Insert the header of the article (Does not work on nemacs)."
+      (as-binary-input-file
+       (insert-file-contents file)))
+  (defsubst elmo-cache-insert-header (file)
+    "Insert the header of the article."
+    (let ((beg 0)
+	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook
+	  format-alist)
+      (when (file-exists-p file)
+	;; Read until header separator is found.
+	(while (and (eq elmo-localdir-header-chop-length
+			(nth 1
+			     (as-binary-input-file
+			      (insert-file-contents
+			       file nil beg
+			       (incf beg elmo-localdir-header-chop-length)))))
+		    (prog1 (not (search-forward "\n\n" nil t))
+		      (goto-char (point-max)))))))))
+
 (defsubst elmo-cache-msgdb-create-overview-entity-from-file (number file)
   (save-excursion
     (let ((tmp-buffer (get-buffer-create " *ELMO Cache Temp*"))
@@ -410,7 +432,7 @@ If KBYTES is kilo bytes (This value must be float)."
 	;; insert header from file.
 	(catch 'done
 	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
+	      (elmo-cache-insert-header file)
 	    (error (throw 'done nil)))
 	  (goto-char (point-min))
 	  (setq header-end

@@ -1,52 +1,3 @@
-2001-02-21  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo.el (elmo-init): New function.
-	(elmo-quit): Call `elmo-crosspost-message-alist-save'.
-
-	* elmo-vars.el (elmo-msgdb-file-header-chop-length): New variable
-	(Renamed from `elmo-localdir-header-chop-length').
-
-	* elmo-pop3.el (elmo-pop3-use-cache,
-	elmo-pop3-send-command-synchronously): Moved from `elmo-vars.el'.
-
-	* elmo-nntp.el (elmo-message-fetch): Define.
-	(elmo-message-fetch-unplugged): Ditto.
-	(elmo-nntp-overview-fetch-chop-length): Moved from `elmo-vars.el'.
-	(elmo-nntp-use-cache): Ditto.
-	(elmo-nntp-max-number-precedes-list-active): Ditto.
-
-	* elmo-multi.el (elmo-multi-divide-number): Moved from `elmo-vars.el'.
-
-	* elmo-msgdb.el (elmo-localdir-insert-header): Renamed to
-	`elmo-msgdb-insert-file-header'.
-	Use `elmo-msgdb-file-header-chop-length'.
-
-	* elmo-localdir.el (elmo-localdir-lockfile-list): Moved from
-	`elmo-vars.el'.
-
-	* elmo-cache.el (elmo-cache-insert-header): Eliminated.
-	(elmo-cache-msgdb-create-overview-entity-from-file): Use
-	`elmo-msgdb-insert-file-header'.
-
-	* elmo-imap4.el, elmo-nntp.el, elmo-pop3.el:
-	Use new variable;
-	Define obsolete variables with `elmo-define-obsolete-variable',
-
-	* elmo-util.el (elmo-warning-buffer-name): New constant.
-	(elmo-warning): New function.
-	(elmo-obsolete-variable-alist): New variable.
-	(elmo-obsolete-variable-show-warnings): New variable.
-	(elmo-define-obsolete-variable): New function.
-	(elmo-resque-obsolete-variable): Ditto.
-	(elmo-resque-obsolete-variables): Ditto.
-
-2001-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-vars.el (elmo-use-buffer-cache, elmo-buffer-cache-size):
-	Eliminated.
-
-	* elmo-pop3.el, elmo-nntp.el: Use custom.
-
 2000-02-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-network-authenticate-session): Fix.
@@ -58,11 +9,6 @@
 	* elmo.el (elmo-folder-list-messages-internal): Added optional argument
 	`nohide'.
 	(elmo-folder-synchronize): Changed meaning of argument `ignore-msgdb'.
-
-2001-02-21  OKAZAKI Tetsurou  <okazaki@be.to>
-
-	* elmo-util.el (elmo-display-progress): Prefer
-	`progress-feedback-with-label' to `lprogress-display'.
 
 2000-02-20  Kenichi OKADA  <okada@opaopa.org>
 

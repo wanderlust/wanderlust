@@ -41,50 +41,6 @@
 (require 'elmo)
 (require 'elmo-net)
 
-;; User options
-(defcustom elmo-nntp-default-server "localhost"
-  "*Default NNTP server."
-  :type 'string
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-user nil
-  "*Default User of NNTP.  nil means no user authentication."
-  :type 'string
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-port 119
-  "*Default Port number of NNTP."
-  :type 'integer
-  :group 'elmo)
-
-(defcustom elmo-nntp-default-stream-type nil
-  "*Default stream type for NNTP.
-Any symbol value of `elmo-network-stream-type-alist' or
-`elmo-nntp-stream-type-alist'."
-  :type 'symbol
-  :group 'elmo)
-
-(elmo-define-obsolete-variable 'elmo-default-nntp-server
-			       'elmo-nntp-default-server)
-(elmo-define-obsolete-variable 'elmo-default-nntp-user
-			       'elmo-nntp-default-user)
-(elmo-define-obsolete-variable 'elmo-default-nntp-port
-			       'elmo-nntp-default-port)
-
-(defvar elmo-nntp-stream-type-alist nil
-  "*Stream bindings for NNTP.
-This is taken precedence over `elmo-network-stream-type-alist'.")
-
-(defvar elmo-nntp-overview-fetch-chop-length 200
- "*Number of overviews to fetch in one request in nntp.")
-
-(defvar elmo-nntp-use-cache t
-  "Use cache in nntp folder.")
-
-(defvar elmo-nntp-max-number-precedes-list-active nil
-  "Non-nil means max number of msgdb is set as the max number of `list active'.
-(Needed for inn 2.3 or later?).")
-
 ;;; ELMO NNTP folder
 (eval-and-compile
   (luna-define-class elmo-nntp-folder (elmo-net-folder)
@@ -112,17 +68,17 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
       (elmo-net-folder-set-user-internal folder
 					 (if (match-beginning 2)
 					     (elmo-match-substring 2 folder 1)
-					   elmo-nntp-default-user))
+					   elmo-default-nntp-user))
       (unless (elmo-net-folder-server-internal folder)
 	(elmo-net-folder-set-server-internal folder 
-					     elmo-nntp-default-server))
+					     elmo-default-nntp-server))
       (unless (elmo-net-folder-port-internal folder)
 	(elmo-net-folder-set-port-internal folder
-					   elmo-nntp-default-port))
+					   elmo-default-nntp-port))
       (unless (elmo-net-folder-stream-type-internal folder)
 	(elmo-net-folder-set-stream-type-internal
 	 folder
-	 elmo-nntp-default-stream-type))
+	 elmo-default-nntp-stream-type))
       folder)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-nntp-folder))
@@ -251,14 +207,14 @@ Don't cache if nil.")
   (concat
    (and user (concat ":" user))
    (if (and server
-	    (null (string= server elmo-nntp-default-server)))
+	    (null (string= server elmo-default-nntp-server)))
        (concat "@" server))
    (if (and port
-	    (null (eq port elmo-nntp-default-port)))
+	    (null (eq port elmo-default-nntp-port)))
        (concat ":" (if (numberp port)
 		       (int-to-string port) port)))
    (unless (eq (elmo-network-stream-type-symbol type)
-	       elmo-nntp-default-stream-type)
+	       elmo-default-nntp-stream-type)
      (elmo-network-stream-type-spec-string type))))
 
 (defun elmo-nntp-get-session (folder &optional if-exists)
@@ -559,16 +515,16 @@ Don't cache if nil.")
 	  (elmo-display-progress
 	   'elmo-nntp-list-folders "Parsing active..." 100))))
     (unless (string= (elmo-net-folder-server-internal folder)
-		     elmo-nntp-default-server)
+		     elmo-default-nntp-server)
       (setq append-serv (concat "@" (elmo-net-folder-server-internal
 				     folder))))
-    (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
+    (unless (eq (elmo-net-folder-port-internal folder) elmo-default-nntp-port)
       (setq append-serv (concat append-serv
 				":" (int-to-string
 				     (elmo-net-folder-port-internal folder)))))
     (unless (eq (elmo-network-stream-type-symbol
 		 (elmo-net-folder-stream-type-internal folder))
-		elmo-nntp-default-stream-type)
+		elmo-default-nntp-stream-type)
       (setq append-serv
 	    (concat append-serv
 		    (elmo-network-stream-type-spec-string
@@ -972,91 +928,11 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(luna-define-method elmo-message-fetch ((folder elmo-nntp-folder)
-					number strategy
-					&optional section
-					outbuf
-					unread)
-  (if (elmo-folder-plugged-p folder)
-      (let ((cache-file (elmo-file-cache-expand-path
-			 (elmo-fetch-strategy-cache-path strategy)
-			 section)))
-	(if (and (elmo-fetch-strategy-use-cache strategy)
-		 (file-exists-p cache-file))
-	    (if outbuf
-		(with-current-buffer outbuf
-		  (insert-file-contents-as-binary cache-file)
-		  (elmo-nntp-setup-crosspost-buffer folder number)
-		  (unless unread
-		    (elmo-nntp-folder-update-crosspost-message-alist
-		     folder (list number)))
-		  t)
-	      (with-temp-buffer
-		(insert-file-contents-as-binary cache-file)
-		(elmo-nntp-setup-crosspost-buffer folder number)
-		(unless unread
-		  (elmo-nntp-folder-update-crosspost-message-alist
-		   folder (list number)))
-		(buffer-string)))
-	  (if outbuf
-	      (with-current-buffer outbuf
-		(elmo-folder-send folder 'elmo-message-fetch-plugged
-				  number strategy section
-				  (current-buffer) unread)
-		(elmo-delete-cr-buffer)
-		(when (and (> (buffer-size) 0)
-			   (elmo-fetch-strategy-save-cache strategy))
-		  (elmo-file-cache-save
-		   (elmo-fetch-strategy-cache-path strategy)
-		   section))
-		t)
-	    (with-temp-buffer
-	      (elmo-folder-send folder 'elmo-message-fetch-plugged
-				number strategy section
-				(current-buffer) unread)
-	      (elmo-delete-cr-buffer)
-	      (when (and (> (buffer-size) 0)
-			 (elmo-fetch-strategy-save-cache strategy))
-		(elmo-file-cache-save
-		 (elmo-fetch-strategy-cache-path strategy)
-		 section))
-	      (buffer-string)))))
-    (elmo-folder-send folder 'elmo-message-fetch-unplugged
-		      number strategy section outbuf unread)))
-
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
 						number strategy
 						&optional section outbuf
 						unread)
   (elmo-nntp-message-fetch folder number strategy section outbuf unread))
-
-(luna-define-method elmo-message-fetch-unplugged ((folder elmo-nntp-folder)
-						  number strategy
-						  &optional section outbuf
-						  unread)
-  (if (elmo-fetch-strategy-use-cache strategy)
-      (if outbuf
-	  (with-current-buffer outbuf
-	    (insert-file-contents-as-binary
-	     (elmo-file-cache-expand-path
-	      (elmo-fetch-strategy-cache-path strategy)
-	      section))
-	    (elmo-nntp-setup-crosspost-buffer folder number)
-	    (unless unread
-	      (elmo-nntp-folder-update-crosspost-message-alist
-	       folder (list number)))
-	    t)
-	(with-temp-buffer
-	  (insert-file-contents-as-binary
-	   (elmo-file-cache-expand-path
-	    (elmo-fetch-strategy-cache-path strategy)
-	    section))
-	  (elmo-nntp-setup-crosspost-buffer folder number)
-	  (unless unread
-	    (elmo-nntp-folder-update-crosspost-message-alist
-	     folder (list number)))
-	  (buffer-string)))
-    (error "Unplugged")))
 
 (defun elmo-nntp-message-fetch (folder number strategy section outbuf unread)
   (let ((session (elmo-nntp-get-session folder))
@@ -1084,10 +960,10 @@ Don't cache if nil.")
   (let ((session (elmo-nntp-get-session
 		  (luna-make-entity
 		   'elmo-nntp-folder
-		   :user elmo-nntp-default-user
+		   :user elmo-default-nntp-user
 		   :server hostname
-		   :port elmo-nntp-default-port
-		   :stream-type elmo-nntp-default-stream-type)))
+		   :port elmo-default-nntp-port
+		   :stream-type elmo-default-nntp-stream-type)))
 	response has-message-id)
     (save-excursion
       (set-buffer content-buf)
