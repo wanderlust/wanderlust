@@ -32,6 +32,37 @@
 (require 'elmo-map)
 (require 'mime-edit)
 
+(defun elmo-file-find (files)
+  "Return the first existing filename in the FILES."
+  (let (file)
+    (while files
+      (when (file-exists-p (car files))
+	(setq file (car files)
+	      files nil))
+      (setq files (cdr files)))
+    file))
+
+(defcustom elmo-file-command (exec-installed-p "file")
+  "*Program name of the file type detection command `file'."
+  :type '(string :tag "Program name of the file")
+  :group 'elmo)
+
+(defcustom elmo-file-command-argument
+  `("-m"
+    ,(elmo-file-find
+      '("/usr/share/magic.mime"
+	"/usr/share/file/magic.mime"
+	"/cygwin/usr/share/file/magic.mime")))
+  "*Argument list for the `file' command.
+\(It should return the MIME content type\)"
+  :type '(repeat string)
+  :group 'elmo)
+
+(defcustom elmo-file-fetch-max-size (* 1024 1024)
+  "*Max size of the message fetching."
+  :type 'integer
+  :group 'elmo)
+
 (eval-and-compile
   (luna-define-class elmo-file-folder (elmo-map-folder) (file-path))
   (luna-define-internal-accessors 'elmo-file-folder))
@@ -54,6 +85,36 @@
 		  s)
     (concat (elmo-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
+
+(defun elmo-file-detect-format (file)
+  "Return content-type of the FILE."
+  (if (or (not (file-exists-p file))
+	  (file-directory-p file))
+      "application/octet-stream"
+    (let (type)
+      (setq type (mime-find-file-type file))
+      (if (and (string= (nth 0 type) "application")
+	       (string= (nth 1 type) "octet-stream"))
+	  (if elmo-file-command
+	      (with-temp-buffer
+		(when
+		    (zerop (apply 'call-process elmo-file-command
+				  nil `(,(current-buffer) nil)
+				  nil (append elmo-file-command-argument
+					      (list (expand-file-name file)))))
+		  (goto-char (point-min))
+		  (when (re-search-forward ": *" nil t)
+		    (setq type (buffer-substring (match-end 0)
+						 (point-at-eol))))
+		  (cond
+		   ((string= "empty" type)
+		    "application/octet-stream")
+		   ((string-match "text" type)
+		    "text/plain")
+		   (t
+		    (car (split-string type))))))
+	    (concat (nth 0 type) "/" (nth 1 type)))
+	(concat (nth 0 type) "/" (nth 1 type))))))
 
 (defun elmo-file-msgdb-create-entity (msgdb folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
@@ -133,16 +194,17 @@
 					    &optional section unseen)
   (let ((file (expand-file-name (car (split-string location "/"))
 				(elmo-file-folder-file-path-internal folder)))
-	charset guess uid)
+	charset guess uid is-text)
     (when (file-exists-p file)
       (set-buffer-multibyte nil)
       (prog1
-	  (insert-file-contents-as-binary file)
+	  (insert-file-contents-as-binary file nil 0 elmo-file-fetch-max-size)
 	(unless (or (std11-field-body "To")
 		    (std11-field-body "Cc")
 		    (std11-field-body "Subject"))
-	  (setq guess (mime-find-file-type file))
-	  (when (string= (nth 0 guess) "text")
+	  (setq guess (elmo-file-detect-format file))
+	  (setq is-text (string-match "^text/" guess))
+	  (when is-text
 	    (set-buffer-multibyte t)
 	    (decode-coding-region
 	     (point-min) (point-max)
@@ -162,30 +224,32 @@
 		  (concat "<" (elmo-replace-in-string file "/" ":")
 			  "@" (system-name) ">\n"))
 	  (insert "Content-Type: "
-		  (concat (nth 0 guess) "/" (nth 1 guess))
-		  (or (and (string= (nth 0 guess) "text")
+		  guess
+		  (or (and is-text
 			   (concat
 			    "; charset=" (upcase (symbol-name charset))))
 		      "")
 		  "\nMIME-Version: 1.0\n\n")
-	  (when (string= (nth 0 guess) "text")
+	  (when is-text
 	    (encode-mime-charset-region (point-min) (point-max) charset))
 	  (set-buffer-multibyte nil))))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-file-folder))
-  (mapcar
-   (lambda (file)
-     (concat
-      file "/"
-      (mapconcat
-       'number-to-string
-       (nth 5 (file-attributes (expand-file-name
-				file
-				(elmo-file-folder-file-path-internal
-				 folder))))
-       ":")))
-   (directory-files (elmo-file-folder-file-path-internal folder))))
+  (delq nil
+	(mapcar
+	 (lambda (file)
+	   (when (not (file-directory-p file))
+	     (concat
+	      file "/"
+	      (mapconcat
+	       'number-to-string
+	       (nth 5 (file-attributes (expand-file-name
+					file
+					(elmo-file-folder-file-path-internal
+					 folder))))
+	       ":"))))
+	 (directory-files (elmo-file-folder-file-path-internal folder)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-file-folder))
   (file-directory-p (elmo-file-folder-file-path-internal folder)))

@@ -89,14 +89,15 @@
   (expand-file-name
    (mapconcat
     'identity
-    (mapcar
-     'elmo-replace-string-as-filename
-     (split-string
-      (let ((dir-name (elmo-localdir-folder-dir-name-internal folder)))
-	(if (file-name-absolute-p dir-name)
-	    (expand-file-name dir-name)
-	  dir-name))
-      "/"))
+    (delete ""
+	    (mapcar
+	     'elmo-replace-string-as-filename
+	     (split-string
+	      (let ((dir-name (elmo-localdir-folder-dir-name-internal folder)))
+		(if (file-name-absolute-p dir-name)
+		    (expand-file-name dir-name)
+		  dir-name))
+	      "/")))
     "/")
    (expand-file-name ;;"localdir"
     (symbol-name (elmo-folder-type-internal folder))

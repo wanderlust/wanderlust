@@ -774,22 +774,30 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 (luna-define-method elmo-message-match-condition ((folder elmo-folder)
 						  number condition
 						  numbers)
-  (let ((filename (cond
-		   ((elmo-message-file-name folder number))
-		   ((let* ((cache (elmo-file-cache-get
-				   (elmo-message-field folder number
-						       'message-id)))
-			   (cache-path (elmo-file-cache-path cache)))
-		      (when (and cache-path
-				 (not (elmo-cache-path-section-p cache-path)))
-			cache-path))))))
-    (when (and filename
-	       (file-readable-p filename))
+  (let* (cache cache-path
+	 (filename (cond
+		    ((elmo-message-file-name folder number))
+		    ((progn
+		       (setq cache (elmo-file-cache-get
+				    (elmo-message-field folder number
+							'message-id)))
+		       (setq cache-path (elmo-file-cache-path cache))
+		       (and cache-path
+			    (not (elmo-cache-path-section-p cache-path))))
+		     cache-path))))
+    (when (and filename (file-readable-p filename))
       (with-temp-buffer
-	(insert-file-contents-as-binary filename)
+	(elmo-set-buffer-multibyte nil)
+	;;(insert-file-contents-as-binary filename)
+	(elmo-message-fetch folder number
+			    (elmo-make-fetch-strategy 'entire
+						      (and cache t)
+						      nil
+						      cache-path)
+			    nil (current-buffer) t)
 	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
-	;; Should consider charset?
-	(decode-mime-charset-region (point-min) (point-max) elmo-mime-charset)
+	(decode-coding-region (point-min) (point-max)
+			      elmo-mime-display-as-is-coding-system)
 	(elmo-buffer-field-condition-match condition number numbers)))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
@@ -1177,6 +1185,18 @@ FIELD is a symbol of the field.")
 
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
   (elmo-message-entity-field (elmo-message-entity folder number) field))
+
+(luna-define-generic elmo-message-field (folder number field value)
+  "Set message field value in the msgdb.
+FOLDER is the ELMO folder structure.
+NUMBER is a number of the message.
+FIELD is a symbol of the field.
+VALUE is a value to set.")
+
+(luna-define-method elmo-message-set-field ((folder elmo-folder) number
+					    field value)
+  (elmo-message-entity-set-field (elmo-message-entity folder number)
+				 field value))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
   nil) ; default is not use cache.
