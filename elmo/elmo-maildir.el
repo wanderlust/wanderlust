@@ -496,7 +496,7 @@ file name for maildir directories."
 	    (succeeds numbers)
 	    filename flags id)
 	(dolist (number numbers)
-	  (setq flags (elmo-message-flags src-folder number))
+	  (setq flags (elmo-message-flags src-folder number)
 		filename (elmo-maildir-temporal-filename dir))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)

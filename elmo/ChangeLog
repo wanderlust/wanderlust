@@ -1,3 +1,8 @@
+2005-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-maildir.el (elmo-folder-append-messages): Fixed mismatch
+	paren.
+
 2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.12.1 is released.
