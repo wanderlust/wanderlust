@@ -320,7 +320,7 @@
 			  (elmo-pop3-read-response process))
 	    (starttls-negotiate process)
 	  (signal 'elmo-open-error
-		  '(elmo-network-intialize-session)))))))
+		  '(elmo-pop3-starttls-error)))))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
