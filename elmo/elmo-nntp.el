@@ -586,8 +586,9 @@ Don't cache if nil.")
 	       (string= username elmo-nntp-default-user))
       (setq username nil))
 
-    (unless (string= (elmo-net-folder-server-internal folder)
-		     elmo-nntp-default-server)
+    (when (or username ; XXX: ad-hoc fix against username includes "@"
+	      (not (string= (elmo-net-folder-server-internal folder)
+			    elmo-nntp-default-server)))
       (setq append-serv (concat "@" (elmo-net-folder-server-internal
 				     folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)

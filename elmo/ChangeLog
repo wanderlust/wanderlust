@@ -1,3 +1,10 @@
+2003-07-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Don't omit
+	server name in case with username.
+	(XXX: this is ad-hoc fix against username includes "@", it
+	should be solved fundamentally)
+
 2003-07-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-nntp.el (elmo-nntp-debug): New function.
