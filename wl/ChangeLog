@@ -1,3 +1,9 @@
+2003-11-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-current-message-buffer): If wl-message-buffer is
+	non-nil, use it; Don't fetch message if there's no message in the
+	current cursor position.
+
 2003-11-29  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (wl-region-exists-p): Use region-active-p.
