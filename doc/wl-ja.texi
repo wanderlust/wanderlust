@@ -771,9 +771,12 @@ default $BCM(B:
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL (Secure Socket Layer)$B$r(B
 $BMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B@samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(BSSL $B%3%M(B
-$B%/%7%g%s$rD%$j$^$9!#JQ?t(B @code{elmo-imap4-default-stream-type} $B$NCM$,(B 
-@code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} 
-$B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
+$B%/%7%g%s$rD%$j$^$9!#(B
+
+$BJQ?t(B @code{elmo-imap4-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B
+@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!}
+$B$r0UL#$7$^$9!#$3$l$i$N>l9g!"DL>o$N@\B3$r$9$k$K$O%U%)%k%@L>$N:G8e$K(B
+@samp{!direct} $B$rIU$1$^$9!#(B
 
 @lisp
 @group
@@ -882,8 +885,10 @@ default $BCM(B:
 @var{$B%f!<%6L>(B}$B$,(B non-nil $B$N>l9g$O(B AUTHINFO $B$K$h$kG'>Z$r9T$J$$$^$9!#(B
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 @samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(B SSL $B%3%M%/%7%g%s$rD%$j$^$9!#(B
+
 $BJQ?t(B @code{elmo-nntp-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
+$B$3$l$i$N>l9g!"DL>o$N@\B3$r$9$k$K$O%U%)%k%@L>$N:G8e$K(B @samp{!direct} $B$rIU$1$^$9!#(B
 
 $BNc(B:
 
@@ -1289,8 +1294,11 @@ APOP $B$rMxMQ$9$k$K$O!"(B@file{md5.el} $B$,I,MW$G$9!#(B(XEmacs $B$G$OI,MW$"
 archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
+
 $BJQ?t(B @code{elmo-pop3-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
+$B$3$l$i$N>l9g!"DL>o$N@\B3$r$9$k$K$O%U%)%k%@L>$N:G8e$K(B@samp{!direct} $B$rIU$1$^$9!#(B
+
 (SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9$k(B
 $BI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @file{openssl} $B$K%Q%9$,DL$C$F$$$k(B
 $BI,MW$,$"$j$^$9!#(B
@@ -3052,6 +3060,43 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 $B$GDj5A$9$k$3$H$,$G$-$^$9!#=i4|@_Dj$G$O!"(Brefile (@samp{o}), copy (@samp{O}),
 dispose (@samp{d}), delete (@samp{D}), prefetch (@samp{i}), resend (@samp{~})
 $B$,Dj5A$5$l$F$$$^$9!#(B
+
+@code{wl-summary-mark-action-list} $B$N3FMWAG$O(B
+
+@example
+(@samp{MARK} @samp{SYMBOL}
+ @samp{ARGUMENT-FUNCTION} @samp{SET-MARK-FUNCTION} @samp{EXEC-FUNCTION}
+ @samp{FACE} @samp{DOC-STRING})
+@end example
+
+$B$NAH$G$9!#$3$3$G(B @samp{MARK} $B$ODj5A$9$k0l;~%^!<%/$NJ8;zNs$G!"(B
+@samp{SYMBOL} $B$ODj5A$9$k%"%/%7%g%s$NL>A0$G$9!#(B
+@samp{ARGUMENT-FUNCTION} $B$O<!$K@bL@$9$k(B @samp{SET-MARK-FUNCTION} $B$K(B
+$BM?$($k0z?t$r@_Dj$9$k$?$a$N4X?t$G!"$=$N0z?t$H$7$F$O(B
+
+@example
+(@samp{ACTION} @samp{NUMBER})
+@end example
+
+$B$,M?$($i$l$^$9!#(B@samp{ACTION} $B$K$O(B @samp{SYMBOL} $B$HF1$8$b$N$,F~$j!"(B
+@samp{NUMBER} $B$K$O%a%C%;!<%8HV9f$,F~$j$^$9!#(B
+@samp{SET-MARK-FUNCTION} $B$O%^!<%/$r@_Dj$9$k:]$K8F$P$l$k4X?t$G!"0z?t$O(B
+
+@example
+(@samp{NUMBER} @samp{MARK} @samp{DATA})
+@end example
+
+$B$G$9!#(B@samp{NUMBER} $B$OBP>]$H$J$k%a%C%;!<%8$NHV9f!"(B@samp{MARK} $B$O0l;~%^!<(B
+$B%/$NJ8;zNs!"(B@samp{DATA} $B$O(B @samp{ARGUMENT-FUNCTION} $B$GM?$($i$l$k$b$N$G$9!#(B
+
+@samp{EXEC-FUNCTION} $B$O%"%/%7%g%s$r<B9T$9$k:]$K8F$P$l$k4X?t$G!"$=$N0z?t$O(B
+@samp{MARK-INFO} $B$+$i$J$k%j%9%H$G$9!#$3$3$G(B @samp{MARK-INFO} $B$O(B
+
+@example
+(@samp{NUMBER} @samp{MARK} @samp{DATA})
+@end example
+
+$B$+$i$J$k%j%9%H$G$9!#(B@samp{FACE} $B$O%O%$%i%$%H$KMQ$$$k(B face $B$G$9!#(B
 
 
 @node Key Bindings of Summary, Variables of Summary, Mark and Action, Summary
@@ -7938,8 +7983,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @subsection $BJV;vMQ%I%i%U%H(B
 @vindex wl-draft-reply-with-argument-list
 @vindex wl-draft-reply-without-argument-list
-@vindex wl-draft-reply-myself-with-argument-list
-@vindex wl-draft-reply-myself-without-argument-list
 
 $B%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$9$HJV;vMQ$N%I%i%U%H$,MQ0U$5$l$^$9!#(B
 $BMQ0U$5$l$kAp9F$N08@h$O!"0J2<$N$h$&$K$7$F@_Dj$9$k$3$H$,$G$-$^$9!#(B
@@ -8028,12 +8071,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 	("From" . (("From") nil nil))))
 @end group
 @end lisp
-
-
-$BCm!'(B $B<+J,$,=P$7$?%a!<%k$KJV?.$9$k:]$NF0:n$O!"$=$l$i$KBe$o$C$F(B
-@code{wl-draft-reply-myself-without-argument-list},
-@code{wl-draft-reply-myself-with-argument-list}
-$B$G;XDj$7$^$9!#(B
 
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
