@@ -435,9 +435,10 @@ without cacheing."
     ret-val))
 
 (defun elmo-call-func-on-markable-msgs (folder func-name msgs msgdb)
+  "Returns t if marked."
   (save-match-data
     (let ((folder-numbers (elmo-make-folder-numbers-list folder msgs))
-	  type)
+	  type error)
       (while folder-numbers
 	(if (or (eq
 		 (setq type (car
@@ -454,8 +455,9 @@ without cacheing."
 		   func-name
 		   (cdr (car folder-numbers)) ; real number
 		   msgdb)
-		(error "Unplugged"))))
-	(setq folder-numbers (cdr folder-numbers))))))
+		(setq error t))))
+	(setq folder-numbers (cdr folder-numbers)))
+      (not error))))
 
 (defun elmo-unmark-important (folder msgs msgdb)
   (elmo-call-func-on-markable-msgs folder "unmark-important" msgs msgdb))

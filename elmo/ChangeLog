@@ -1,3 +1,10 @@
+2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-call-func-on-markable-msgs): Return t if marking
+	was succeeded.
+
+	* elmo-util.el (elmo-folder-get-spec): Enclose with save-match-data.
+
 2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-localdir.el (elmo-localdir-list-folders-subr): Bind

@@ -476,8 +476,9 @@ File content is encoded with MIME-CHARSET."
   "return spec of folder"
   (let ((type (elmo-folder-get-type folder)))
     (if type
-	(funcall (intern (concat "elmo-" (symbol-name type) "-get-spec"))
-		 folder)
+	(save-match-data
+	  (funcall (intern (concat "elmo-" (symbol-name type) "-get-spec"))
+		   folder))
       (error "%s is not supported folder type" folder))))
 
 ;;; Search Condition
