@@ -1,9 +1,9 @@
-;;; sasl.el --- basic functions for SASL
+;;; sasl.el --- SASL client framework
 
-;; Copyright (C) 1995, 1996, 1998, 1999 Free Software Foundation, Inc.
+;; Copyright (C) 2000 Free Software Foundation, Inc.
 
-;; Author: Kenichi OKADA <okada@opaopa.org>
-;; Keywords: SMTP, SASL, RFC2222
+;; Author: Daiki Ueno <ueno@unixuser.org>
+;; Keywords: SASL
 
 ;; This file is part of FLIM (Faithful Library about Internet Message).
 
@@ -24,132 +24,245 @@
 
 ;;; Commentary:
 
-;; Example.
+;; This module provides common interface functions to share several
+;; SASL mechanism drivers.  The toplevel is designed to be mostly
+;; compatible with [Java-SASL].
 ;;
-;; (base64-encode-string
-;;  (sasl-scram-md5-client-msg-2
-;;   (base64-decode-string "dGVzdHNhbHQBAAAAaW1hcEBlbGVhbm9yLmlubm9zb2Z0LmNvbQBqaGNOWmxSdVBiemlGcCt2TFYrTkN3")
-;;   (base64-decode-string "AGNocmlzADx0NG40UGFiOUhCMEFtL1FMWEI3MmVnQGVsZWFub3IuaW5ub3NvZnQuY29tPg==")
-;;   (scram-md5-make-salted-pass
-;;    "secret stuff" "testsalt")))
-;; => "AQAAAMg9jU8CeB4KOfk7sUhSQPs="
+;; [SASL] J. Myers, "Simple Authentication and Security Layer (SASL)",
+;;	RFC 2222, October 1997.
 ;;
-;; (base64-encode-string
-;;  (scram-md5-make-server-msg-2
-;;   (base64-decode-string "dGVzdHNhbHQBAAAAaW1hcEBlbGVhbm9yLmlubm9zb2Z0LmNvbQBqaGNOWmxSdVBiemlGcCt2TFYrTkN3")
-;;   (base64-decode-string "AGNocmlzADx0NG40UGFiOUhCMEFtL1FMWEI3MmVnQGVsZWFub3IuaW5ub3NvZnQuY29tPg==")
-;;   (scram-make-security-info nil t 0)
-;;   "testsalt"
-;;   (scram-md5-make-salted-pass
-;;    "secret stuff" "testsalt")))
-;; => "U0odqYw3B7XIIW0oSz65OQ=="
+;; [Java-SASL] R. Weltman & R. Lee, "The Java SASL Application Program
+;;	Interface", draft-weltman-java-sasl-03.txt, March 2000.
 
 ;;; Code:
 
-(require 'hmac-md5)
+(defvar sasl-mechanisms
+  '("CRAM-MD5" "DIGEST-MD5" "PLAIN" "LOGIN" "ANONYMOUS"))
 
-(eval-when-compile
-  (require 'scram-md5)
-  (require 'digest-md5))
+(defvar sasl-mechanism-alist
+  '(("CRAM-MD5" sasl-cram)
+    ("DIGEST-MD5" sasl-digest)
+    ("PLAIN" sasl-plain)
+    ("LOGIN" sasl-login)
+    ("ANONYMOUS" sasl-anonymous)))
 
-(eval-and-compile
-  (autoload 'open-ssl-stream "ssl")
-  (autoload 'base64-decode-string "base64")
-  (autoload 'base64-encode-string "base64")
-  (autoload 'starttls-open-stream "starttls")
-  (autoload 'starttls-negotiate "starttls")
-  (autoload 'digest-md5-parse-digest-challenge "digest-md5")
-  (autoload 'digest-md5-digest-response "digest-md5")
-  (autoload 'scram-md5-make-salted-pass "scram-md5")
-  (autoload 'scram-md5-parse-server-msg-1 "scram-md5")
-  (autoload 'scram-md5-make-client-msg-1 "scram-md5"))
+(defvar sasl-unique-id-function #'sasl-unique-id-function)
 
-;;; CRAM-MD5
-(defun sasl-cram-md5 (username passphrase challenge)
-  (let ((secure-word (copy-sequence passphrase)))
-    (setq secure-word (unwind-protect
-			  (hmac-md5 challenge secure-word)
-			(fillarray secure-word 0))
-	  secure-word (unwind-protect
-			  (encode-hex-string secure-word)
-			(fillarray secure-word 0))
-	  secure-word (unwind-protect
-			  (concat username " " secure-word)
-			(fillarray secure-word 0)))))
+(put 'sasl-error 'error-message "SASL error")
+(put 'sasl-error 'error-conditions '(sasl-error error))
 
-;;; PLAIN
-(defun sasl-plain (authorid authenid passphrase)
-  (concat authorid "\0" authenid "\0" passphrase))
+(defun sasl-error (datum)
+  (signal 'sasl-error (list datum)))
 
-;;; SCRAM-MD5
-(defvar sasl-scram-md5-client-security-info
-  (eval-when-compile
-    (scram-make-security-info nil t 0)))
+;;; @ SASL client
+;;;
 
-(defun sasl-scram-md5-make-salted-pass (server-msg-1 passphrase)
-  (scram-md5-make-salted-pass
-   passphrase
-   (car
-    (scram-md5-parse-server-msg-1 server-msg-1))))
+(defun sasl-make-client (mechanism name service server)
+  "Return a newly allocated SASL client.
+NAME is name of the authorization.  SERVICE is name of the service desired.
+SERVER is the fully qualified host name of the server to authenticate to."
+  (vector mechanism name service server (make-symbol "sasl-client-properties")))
 
-(defun sasl-scram-md5-client-msg-1 (authenticate-id &optional authorize-id)
-  (scram-md5-make-client-msg-1 authenticate-id authorize-id))
+(defun sasl-client-mechanism (client)
+  "Return the authentication mechanism driver of CLIENT."
+  (aref client 0))
 
-(defun sasl-scram-md5-client-msg-2 (server-msg-1 client-msg-1 salted-pass)
-  (let (client-proof client-key shared-key client-verifier)
-    (setq client-key
-	  (scram-md5-make-client-key salted-pass))
-    (setq client-verifier
-	  (scram-md5-make-client-verifier client-key))
-    (setq shared-key
-	  (unwind-protect
-	      (scram-md5-make-shared-key
-	       server-msg-1
-	       client-msg-1
-	       sasl-scram-md5-client-security-info
-	       client-verifier)
-	    (fillarray client-verifier 0)))
-    (setq client-proof
-	  (unwind-protect
-	      (scram-md5-make-client-proof
-	       client-key shared-key)
-	    (fillarray client-key 0)
-	    (fillarray shared-key 0)))
+(defun sasl-client-name (client)
+  "Return the authorization name of CLIENT, a string."
+  (aref client 1))
+
+(defun sasl-client-service (client)
+  "Return the service name of CLIENT, a string."
+  (aref client 2))
+
+(defun sasl-client-server (client)
+  "Return the server name of CLIENT, a string."
+  (aref client 3))
+
+(defun sasl-client-set-properties (client plist)
+  "Destructively set the properties of CLIENT.
+The second argument PLIST is the new property list."
+  (setplist (aref client 4) plist))
+
+(defun sasl-client-set-property (client property value)
+  "Add the given property/value to CLIENT."
+  (put (aref client 4) property value))
+
+(defun sasl-client-property (client property)
+  "Return the value of the PROPERTY of CLIENT."
+  (get (aref client 4) property))
+
+(defun sasl-client-properties (client)
+  "Return the properties of CLIENT."
+  (symbol-plist (aref client 4)))
+
+;;; @ SASL mechanism
+;;;
+
+(defun sasl-make-mechanism (name steps)
+  "Make an authentication mechanism.
+NAME is a IANA registered SASL mechanism name.
+STEPS is list of continuation function."
+  (vector name
+	  (mapcar
+	   (lambda (step)
+	     (let ((symbol (make-symbol (symbol-name step))))
+	       (fset symbol (symbol-function step))
+	       symbol))
+	   steps)))
+
+(defun sasl-mechanism-name (mechanism)
+  "Return name of MECHANISM, a string."
+  (aref mechanism 0))
+
+(defun sasl-mechanism-steps (mechanism)
+  "Return the authentication steps of MECHANISM, a list of functions."
+  (aref mechanism 1))
+
+(defun sasl-find-mechanism (mechanisms)
+  "Retrieve an apropriate mechanism object from MECHANISMS hints."
+  (let* ((sasl-mechanisms sasl-mechanisms)
+	 (mechanism
+	  (catch 'done
+	    (while sasl-mechanisms
+	      (if (member (car sasl-mechanisms) mechanisms)
+		  (throw 'done (nth 1 (assoc (car sasl-mechanisms)
+					     sasl-mechanism-alist))))
+	      (setq sasl-mechanisms (cdr sasl-mechanisms))))))
+    (if mechanism
+	(require mechanism))
+    (get mechanism 'sasl-mechanism)))
+
+;;; @ SASL authentication step
+;;;
+
+(defun sasl-step-data (step)
+  "Return the data which STEP holds, a string."
+  (aref step 1))
+
+(defun sasl-step-set-data (step data)
+  "Store DATA string to STEP."
+  (aset step 1 data))
+
+(defun sasl-next-step (client step)
+  "Evaluate the challenge and prepare an appropriate next response.
+The data type of the value and optional 2nd argument STEP is nil or
+opaque authentication step which holds the reference to the next action
+and the current challenge.  At the first time STEP should be set to nil."
+  (let* ((steps
+	  (sasl-mechanism-steps
+	   (sasl-client-mechanism client)))
+	 (function
+	  (if (vectorp step)
+	      (nth 1 (memq (aref step 0) steps))
+	    (car steps))))
+    (if function
+	(vector function (funcall function client step)))))
+
+(defvar sasl-read-passphrase nil)
+(defun sasl-read-passphrase (prompt)
+  (if (not sasl-read-passphrase)
+      (if (functionp 'read-passwd)
+	  (setq sasl-read-passphrase 'read-passwd)
+	(if (load "passwd" t)
+	    (setq sasl-read-passphrase 'read-passwd)
+	  (autoload 'ange-ftp-read-passwd "ange-ftp")
+	  (setq sasl-read-passphrase 'ange-ftp-read-passwd))))
+  (funcall sasl-read-passphrase prompt))
+
+(defun sasl-unique-id ()
+  "Compute a data string which must be different each time.
+It contain at least 64 bits of entropy."
+  (concat (funcall sasl-unique-id-function)(funcall sasl-unique-id-function)))
+
+(defvar sasl-unique-id-char nil)
+
+;; stolen (and renamed) from message.el
+(defun sasl-unique-id-function ()
+  ;; Don't use microseconds from (current-time), they may be unsupported.
+  ;; Instead we use this randomly inited counter.
+  (setq sasl-unique-id-char
+	(% (1+ (or sasl-unique-id-char (logand (random t) (1- (lsh 1 20)))))
+	   ;; (current-time) returns 16-bit ints,
+	   ;; and 2^16*25 just fits into 4 digits i base 36.
+	   (* 25 25)))
+  (let ((tm (current-time)))
+    (concat
+     (sasl-unique-id-number-base36
+      (+ (car   tm)
+	 (lsh (% sasl-unique-id-char 25) 16)) 4)
+     (sasl-unique-id-number-base36
+      (+ (nth 1 tm)
+	 (lsh (/ sasl-unique-id-char 25) 16)) 4))))
+
+(defun sasl-unique-id-number-base36 (num len)
+  (if (if (< len 0)
+	  (<= num 0)
+	(= len 0))
+      ""
+    (concat (sasl-unique-id-number-base36 (/ num 36) (1- len))
+	    (char-to-string (aref "zyxwvutsrqponmlkjihgfedcba9876543210"
+				  (% num 36))))))
+
+;;; PLAIN (RFC2595 Section 6)
+(defconst sasl-plain-steps
+  '(sasl-plain-response))
+
+(defun sasl-plain-response (client step)
+  (let ((passphrase
+	 (sasl-read-passphrase
+	  (format "PLAIN passphrase for %s: " (sasl-client-name client))))
+	(authenticator-name
+	 (sasl-client-property
+	  client 'authenticator-name))
+	(name (sasl-client-name client)))
     (unwind-protect
-	(scram-md5-make-client-msg-2
-	 sasl-scram-md5-client-security-info
-	 client-proof)
-      (fillarray client-proof 0))))
-	     
-(defun sasl-scram-md5-authenticate-server (server-msg-1
-					   server-msg-2
-					   client-msg-1
-					   salted-pass)
-  (string= server-msg-2
-	   (scram-md5-make-server-msg-2
-	    server-msg-1
-	    client-msg-1
-	    sasl-scram-md5-client-security-info
-	    (car
-	     (scram-md5-parse-server-msg-1 server-msg-1))
-	    salted-pass)))
+	(if (and authenticator-name
+		 (not (string= authenticator-name name)))
+	    (concat authenticator-name "\0" name "\0" passphrase)
+	  (concat "\0" name "\0" passphrase))
+      (fillarray passphrase 0))))
 
-;;; DIGEST-MD5
+(put 'sasl-plain 'sasl-mechanism
+     (sasl-make-mechanism "PLAIN" sasl-plain-steps))
 
-(defvar sasl-digest-md5-nonce-count 1)
+(provide 'sasl-plain)
 
-(defun sasl-digest-md5-digest-response (digest-challenge username passwd
-							 serv-type host &optional realm)
-  (digest-md5-parse-digest-challenge digest-challenge)
-  (digest-md5-digest-response
-   username
-   (or realm (digest-md5-challenge 'realm)) ;; need to check.
-   passwd
-   (digest-md5-challenge 'nonce)
-   (digest-md5-cnonce)
-   sasl-digest-md5-nonce-count
-   (digest-md5-digest-uri serv-type host) ;; MX host
-   ))
+;;; LOGIN (No specification exists)
+(defconst sasl-login-steps
+  '(ignore				;no initial response
+    sasl-login-response-1
+    sasl-login-response-2))
+
+(defun sasl-login-response-1 (client step)
+;;;  (unless (string-match "^Username:" (sasl-step-data step))
+;;;    (sasl-error (format "Unexpected response: %s" (sasl-step-data step))))
+  (sasl-client-name client))
+
+(defun sasl-login-response-2 (client step)
+;;;  (unless (string-match "^Password:" (sasl-step-data step))
+;;;    (sasl-error (format "Unexpected response: %s" (sasl-step-data step))))
+  (sasl-read-passphrase
+   (format "LOGIN passphrase for %s: " (sasl-client-name client))))
+
+(put 'sasl-login 'sasl-mechanism
+     (sasl-make-mechanism "LOGIN" sasl-login-steps))
+
+(provide 'sasl-login)
+
+;;; ANONYMOUS (RFC2245)
+(defconst sasl-anonymous-steps
+  '(ignore				;no initial response
+    sasl-anonymous-response))
+
+(defun sasl-anonymous-response (client step)
+  (or (sasl-client-property client 'trace)
+      (sasl-client-name client)))
+
+(put 'sasl-anonymous 'sasl-mechanism
+     (sasl-make-mechanism "ANONYMOUS" sasl-anonymous-steps))
+
+(provide 'sasl-anonymous)
 
 (provide 'sasl)
 
