@@ -766,7 +766,8 @@ RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$
            @code{clear} ($B$^$?$O(B @code{nil}$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
 @end example
 
-(1.14.0 $B$h$j0JA0$N%P!<%8%g%s$N(B FLIM $B$G(B CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B1.14.0 $B0J9_$N%P!<%8%g%s$N(B FLIM $B$G$"$l$P!"K\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$O$"$j$^$;$s!#(B)
+(CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B
+@file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
 
 default $BCM(B:
 
