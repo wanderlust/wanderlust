@@ -270,7 +270,7 @@ Return symbol, not list.  Use symbol-name"
 (defun wl-draft-reply (buf no-arg summary-buf)
   ""
 ;;;(save-excursion
-  (let (r-list
+  (let (r-list r-list-name
 	(mime-header-lexical-analyzer '(eword-analyze-quoted-string
 					eword-analyze-domain-literal
 					eword-analyze-comment

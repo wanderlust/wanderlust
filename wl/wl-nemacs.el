@@ -53,10 +53,6 @@
 (defmacro wl-defface (face spec doc &rest args)
   (` (defvar (, face) (, spec) (, doc))))
 
-(defsubst elmo-archive-call-process (prog args &optional output)
-  (apply 'call-process prog nil output nil args)
-  0)
-
 (defun wl-draft-mode-setup ()
   (defalias 'wl-draft-mode 'mail-mode))
 (defun wl-draft-key-setup ())
