@@ -1,3 +1,21 @@
+2000-08-22   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-util.el (elmo-define-error): New function.
+
+	* elmo2.el (elmo-error): Define.
+	(elmo-open-error): Define.
+	(elmo-authenticate-error): Define.
+
+	* elmo-imap4.el (elmo-imap4-error): Abolish.
+	(elmo-imap4-error-type): Abolish.
+	(elmo-imap4-error-process): Abolish.
+	(elmo-imap4-error-message): Abolish
+	(elmo-imap4-list-folders): Don't quote lambda.
+	(elmo-imap4-create-msgdb-from-overview-string): Ditto.
+	(elmo-imap4-parse-namespace): Ditto.	
+	(elmo-imap4-open-connection): Rewrite.
+	(elmo-imap4-open-connection-1): Simplified (authenticate only).
+
 2000-08-21  Kaoru Takahashi  <kaoru@kaisei.org>
 
 	* elmo-imap4.el (elmo-imap4-open-connection-1): Fixed probrem
