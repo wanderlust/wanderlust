@@ -691,7 +691,10 @@ entry according to the value of WITHDN."
 	       (not (zerop ret))
 	       ;; When openldap's `ldapsearch' exceeds response size limit,
 	       ;; it's exit status becomes `4'.
-               (/= ret 4))
+               (/= ret 4)
+	       ;; When openldap's `ldapsearch' uses referral,
+	       ;; it's exit status becomes `32'.
+	       (/= ret 32))
 	  (error "LDAP error: \"No such object\""))
       (goto-char (point-min))
       (setq start (point))
