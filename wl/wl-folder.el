@@ -89,10 +89,14 @@
     ["Sync Current Folder"  wl-folder-sync-current-entity t]
 ;    ["Drop Current Folder" wl-folder-drop-unsync-current-entity t]
     ["Prefetch Current Folder" wl-folder-prefetch-current-entity t]
+    "----"
     ["Mark as Read all Current Folder" wl-folder-mark-as-read-all-current-entity t]
     ["Expire Current Folder" wl-folder-expire-current-entity t]
+    "----"
+    ["Enter Draft Folder" wl-folder-goto-draft-folder t]
     ["Empty trash" wl-folder-empty-trash t]
     ["Flush queue" wl-folder-flush-queue t]
+    "----"
     ["Open All" wl-folder-open-all t]
     ["Open All Unread folder" wl-folder-open-all-unread-folder t]
     ["Close All" wl-folder-close-all t]
@@ -2193,6 +2197,10 @@ Use `wl-subscribed-mailing-list'."
 (defun wl-folder-goto-folder-sticky ()
   (interactive)
   (wl-folder-goto-folder-subr nil t))
+
+(defun wl-folder-goto-draft-folder (&optional arg)
+  (interactive "P")
+  (wl-folder-goto-folder-subr wl-draft-folder arg))
 
 (defun wl-folder-goto-folder-subr (&optional folder sticky)
   (beginning-of-line)

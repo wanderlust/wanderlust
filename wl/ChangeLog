@@ -1,3 +1,8 @@
+2002-03-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-goto-draft-folder): New function.
+	(wl-folder-mode-menu-spec): Add wl-folder-goto-draft-folder entry.
+
 2002-03-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-save-view-cache): Clone temporal mark
