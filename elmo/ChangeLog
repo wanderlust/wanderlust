@@ -1,5 +1,12 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-pop3.el (elmo-pop3-auth-apop): Signal `elmo-pop-auth-apop'
+	if error.
+	(elmo-network-authenticate-session): Use `elmo-pop-auth-user'
+	and `elmo-pop-auth-apop'.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-pop3.el (elmo-network-authenticate-session): Fix for `APOP'.
 
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
