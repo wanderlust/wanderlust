@@ -4003,6 +4003,12 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 $B=i4|@_Dj$O(B "Re: "$B!#(B
 $BJV?.;~$N%I%i%U%H$N(B Subject $B$G!"855-;v$N(B Subject $B$N@hF,$KIU$12C$($kJ8;zNs$G$9!#(B
 
+@item wl-draft-reply-use-address-with-full-name
+@vindex wl-draft-reply-use-address-with-full-name
+$B=i4|@_Dj$O(B @code{t}$B!#(B
+Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%k(B
+$B%M!<%`$rA^F~$7$^$9!#(Bnil $B$J$i%"%I%l%9$@$1$rA^F~$7$^$9!#(B
+
 @item wl-draft-enable-queuing
 @vindex wl-draft-enable-queuing
 $B=i4|@_Dj$O(B t$B!#(B

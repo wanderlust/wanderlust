@@ -4038,6 +4038,12 @@ The initial setting is "Re: ".
 In the Subject of the reply draft, this string is prepended to the
 Subject of being replied.
 
+@item wl-draft-reply-use-address-with-full-name
+@vindex wl-draft-reply-use-address-with-full-name
+The initial setting is @code{t}.
+If non-nil, insert her full name with address when prepare a draft for
+reply a message.  If it is @code{nil}, insert her address only.
+
 @item wl-draft-enable-queuing
 @vindex wl-draft-enable-queuing
 The initial setting is t.
