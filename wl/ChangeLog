@@ -1,13 +1,4 @@
-2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-vars.el: Changed file coding system to ISO-2022-JP.
-	Removed redundant require of elmo-vars.
-	(wl-biff-state-indicator-on): Changed default value for
-	xemacs with non-mule environment.
-
 2001-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* 2.6.0 is released.
 
 	* wl-vars.el: Changed file coding system to euc-japan.
 	Added -*-coding:-*- magic to the first line.
