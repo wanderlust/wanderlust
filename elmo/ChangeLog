@@ -1,5 +1,10 @@
 2001-06-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-shimbun.el (elmo-shimbun-parse-time-string): New function.
+	(elmo-shimbun-msgdb-to-headers): Added `expire-days' argument.
+	(elmo-shimbun-get-headers): Use return value of
+	`shimbun-article-expiration-days'.
+
 	* elmo-pop3.el (elmo-pop3-process-filter): Show retrieve progress.
 	(elmo-pop3-total-size): New variable.
 	(elmo-message-fetch-plugged): Bind elmo-pop3-total-size while fetching.
