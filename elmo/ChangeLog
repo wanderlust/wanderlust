@@ -1,3 +1,12 @@
+2001-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-default-index-range): New user option.
+	(elmo-shimbun-index-range-alist): Ditto.
+	(elmo-shimbun-use-entire-index): Abolish.
+	(shimbun-mua-use-entire-index): Ditto.
+	(elmo-shimbun-folder): Added new slot `range'.
+	(elmo-folder-initialize): Setup slot `range'.
+
 2001-06-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-shimbun-parse-time-string): New function.

@@ -37,9 +37,22 @@
   :type 'integer
   :group 'elmo)
 
-(defcustom elmo-shimbun-use-entire-index nil
-  "*Nil means that shimbun check only the last index of articles."
-  :type 'boolean
+(defcustom elmo-shimbun-default-index-range 2
+  "*Default value for the range of header indices."
+  :type '(choice (const :tag "all" all)
+		 (const :tag "last" last)
+		 (integer :tag "number"))
+  :group 'elmo)
+
+(defcustom elmo-shimbun-index-range-alist nil
+  "*Alist of FOLDER and RANGE.
+FOLDER is the shimbun folder name.
+RANGE is the range of the header indices .
+See `shimbun-headers' for more detail about RANGE."
+  :type '(repeat (cons (string :tag "Folder Name")
+		       (choice (const :tag "all" all)
+			       (const :tag "last" last)
+			       (integer :tag "number"))))
   :group 'elmo)
 
 ;; Shimbun mua.
@@ -52,13 +65,10 @@
 				  (elmo-folder-msgdb
 				   (shimbun-elmo-mua-folder-internal mua))))
 
-(luna-define-method shimbun-mua-use-entire-index ((mua shimbun-elmo-mua))
-  elmo-shimbun-use-entire-index)
-
 (eval-and-compile
   (luna-define-class elmo-shimbun-folder
 		     (elmo-map-folder) (shimbun headers header-hash
-						group last-check))
+						group range last-check))
   (luna-define-internal-accessors 'elmo-shimbun-folder))
 
 (defsubst elmo-shimbun-lapse-seconds (time)
@@ -127,7 +137,8 @@
 			    (elmo-folder-msgdb folder))
 		     x))
 		 (shimbun-headers
-		  (elmo-shimbun-folder-shimbun-internal folder)))))
+		  (elmo-shimbun-folder-shimbun-internal folder)
+		  (elmo-shimbun-folder-range-internal folder)))))
     (elmo-shimbun-folder-set-headers-internal
      folder
      (nconc (elmo-shimbun-msgdb-to-headers
@@ -153,15 +164,20 @@
 			  (list (elmo-match-string 1 name)
 				(substring name (match-end 0)))
 			(list name))))
-    (if (nth 0 server-group) ; server
-	(elmo-shimbun-folder-set-shimbun-internal
-	 folder
-	 (shimbun-open (nth 0 server-group)
-		       (luna-make-entity 'shimbun-elmo-mua :folder folder))))
-    (if (nth 1 server-group)
-	(elmo-shimbun-folder-set-group-internal
-	 folder
-	 (nth 1 server-group)))
+    (when (nth 0 server-group) ; server
+      (elmo-shimbun-folder-set-shimbun-internal
+       folder
+       (shimbun-open (nth 0 server-group)
+		     (luna-make-entity 'shimbun-elmo-mua :folder folder))))
+    (when (nth 1 server-group)
+      (elmo-shimbun-folder-set-group-internal
+       folder
+       (nth 1 server-group)))
+    (elmo-shimbun-folder-set-range-internal
+     folder
+     (or (cdr (assoc (elmo-folder-name-internal folder)
+		     elmo-shimbun-index-range-alist))
+	 elmo-shimbun-default-index-range))
     folder))
 
 (luna-define-method elmo-folder-open-internal :before ((folder
