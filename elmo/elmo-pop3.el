@@ -107,36 +107,36 @@
     (setq elmo-pop3-connection-cache nil)))
 
 (defun elmo-pop3-get-connection (spec &optional if-exists)
+  "Return opened POP3 connection for SPEC."
   (let* ((user   (elmo-pop3-spec-username spec))
 	 (server (elmo-pop3-spec-hostname spec))
 	 (port   (elmo-pop3-spec-port spec))
 	 (auth   (elmo-pop3-spec-auth spec))
 	 (ssl    (elmo-pop3-spec-ssl spec))
 	 (user-at-host (format "%s@%s" user server))
-	 connection result buffer process errmsg proc-stat response
+	 entry connection result buffer process proc-stat response
 	 user-at-host-on-port)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
-    (setq user-at-host-on-port 
+    (setq user-at-host-on-port
 	  (concat user-at-host ":" (int-to-string port)
 		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
-    (setq connection (assoc user-at-host-on-port elmo-pop3-connection-cache))
-    (if (and connection 
-	     (or (eq (setq proc-stat 
-			   (process-status (cadr (cdr connection)))) 
-		     'closed)
-		 (eq proc-stat 'exit)))
+    (setq entry (assoc user-at-host-on-port elmo-pop3-connection-cache))
+    (if (and entry
+	     (memq (setq proc-stat
+			 (process-status (cadr (cdr entry))))
+		   '(closed exit)))
 	;; connection is closed...
-	(progn
-	  (kill-buffer (car (cdr connection)))
-	  (setq elmo-pop3-connection-cache 
-		(delete connection elmo-pop3-connection-cache))
-	  (setq connection nil)))
-    (if connection
-	(cdr connection)
+	(let ((buffer (car (cdr entry))))
+	  (if buffer (kill-buffer buffer))
+	  (setq elmo-pop3-connection-cache
+		(delete entry elmo-pop3-connection-cache))
+	  (setq entry nil)))
+    (if entry
+	(cdr entry)
       (unless if-exists
 	(setq result
-	      (elmo-pop3-open-connection 
+	      (elmo-pop3-open-connection
 	       server user port auth
 	       (elmo-get-passwd user-at-host) ssl))
 	(if (null result)
@@ -147,11 +147,12 @@
 	  (elmo-remove-passwd user-at-host)
 	  (delete-process process)
 	  (error "Login failed"))
-	(setq elmo-pop3-connection-cache 
-	      (append elmo-pop3-connection-cache 
-		      (list 
-		       (cons user-at-host-on-port
-			     (setq connection (list buffer process))))))
+	;; add a new entry to the top of the cache.
+	(setq elmo-pop3-connection-cache
+	      (cons
+	       (cons user-at-host-on-port
+		     (setq connection (list buffer process)))
+	       elmo-pop3-connection-cache))
 	;; initialization of list
 	(with-current-buffer buffer
 	  (make-variable-buffer-local 'elmo-pop3-uidl-number-hash)
@@ -240,6 +241,9 @@
     (insert output)))
 
 (defun elmo-pop3-open-connection (server user port auth passphrase ssl)
+  "Open POP3 connection to SERVER on PORT for USER.
+Return a cons cell of (session-buffer . process).
+Return nil if connection failed."
   (let ((process nil)
 	(host server)
 	process-buffer ret-val response capability)
@@ -819,7 +823,7 @@
   'elmo-generic-list-folder-important)
 
 (defun elmo-pop3-commit (spec)
-  (if (elmo-plugged-p (elmo-pop3-spec-hostname spec) (elmo-pop3-spec-port spec))
+  (if (elmo-pop3-plugged-p spec)
       (elmo-pop3-close-connection
        (elmo-pop3-get-connection spec 'if-exists))))
 

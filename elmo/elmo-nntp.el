@@ -171,41 +171,39 @@ Don't cache if nil.")
     (setq elmo-nntp-connection-cache nil)))
 
 (defun elmo-nntp-get-connection (server user port ssl)
+  "Return opened NNTP connection to SERVER on PORT for USER."
   (let* ((user-at-host (format "%s@%s" user server))
-	 (user-at-host-on-port (concat 
+	 (user-at-host-on-port (concat
 				user-at-host ":" (int-to-string port)
 				(if (eq ssl 'starttls) "!!" (if ssl "!"))))
-	 ret-val result buffer process errmsg proc-stat)
+	 entry connection result buffer process proc-stat)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
-    (setq ret-val (assoc user-at-host-on-port elmo-nntp-connection-cache))
-    (if (and ret-val 
-	     (or (eq  (setq proc-stat 
-			    (process-status (cadr (cdr ret-val))))
-		      'closed)
-		 (eq proc-stat 'exit)))
+    (setq entry (assoc user-at-host-on-port elmo-nntp-connection-cache))
+    (if (and entry
+	     (memq (setq proc-stat
+			 (process-status (cadr (cdr entry))))
+		   '(closed exit)))
 	;; connection is closed...
-	(progn
-	  (kill-buffer (car (cdr ret-val)))
-	  (setq elmo-nntp-connection-cache 
-		(delete ret-val elmo-nntp-connection-cache))
-	  (setq ret-val nil)))
-    (if ret-val
-	(cdr ret-val)
+	(let ((buffer (car (cdr entry))))
+	  (if buffer (kill-buffer buffer))
+	  (setq elmo-nntp-connection-cache
+		(delq entry elmo-nntp-connection-cache))
+	  (setq entry nil)))
+    (if entry
+	(cdr entry)
       (setq result (elmo-nntp-open-connection server user port ssl))
       (if (null result)
-	  (progn
-	    (if process (delete-process process))
-	    (if buffer (kill-buffer buffer))
-	    (error "Connection failed"))
-	(setq buffer (car result))
-	(setq process (cdr result))
-	(setq elmo-nntp-connection-cache
-	      (nconc elmo-nntp-connection-cache
-		     (list
-		      (cons user-at-host-on-port
-			    (setq ret-val (list buffer process nil))))))
-	ret-val))))
+	  (error "Connection failed"))
+      (setq buffer (car result))
+      (setq process (cdr result))
+      ;; add a new entry to the top of the cache.
+      (setq elmo-nntp-connection-cache
+	    (cons
+	     (cons user-at-host-on-port
+		   (setq connection (list buffer process nil)))
+	     elmo-nntp-connection-cache))
+      connection)))
 
 (defun elmo-nntp-process-filter (process output)
   (save-excursion
@@ -934,8 +932,8 @@ Returns message string."
       (std11-field-body "Newsgroups"))))
 
 (defun elmo-nntp-open-connection (server user portnum ssl)
-  "Open NNTP connection and returns 
-the list of (process session-buffer current-working-folder).
+  "Open NNTP connection to SERVER on PORTNUM for USER.
+Return a cons cell of (session-buffer . process).
 Return nil if connection failed."
   (let ((process nil)
 	(host server)

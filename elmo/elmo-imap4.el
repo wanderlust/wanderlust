@@ -120,7 +120,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 	  (if (string-match "^\"\\(.*\\)\"$" val)
 	      (setq val (match-string 1 val)))	    
 	  (setq mailbox-list 
-		(append mailbox-list 
+		(nconc mailbox-list 
 			(list val)))))
       mailbox-list)))
 
@@ -256,36 +256,33 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 	      (cadr (memq 'messages response)))))))
 
 (defun elmo-imap4-get-connection (spec)
+  "Return opened IMAP connection for SPEC."
   (let* ((user   (elmo-imap4-spec-username spec))
 	 (server (elmo-imap4-spec-hostname spec))
 	 (port   (elmo-imap4-spec-port spec))
 	 (auth   (elmo-imap4-spec-auth spec))
 	 (ssl    (elmo-imap4-spec-ssl spec))
 	 (user-at-host (format "%s@%s" user server))
-	 ret-val result buffer process proc-stat
+	 entry connection result buffer process proc-stat
 	 user-at-host-on-port)
     (if (not (elmo-plugged-p server port))
 	(error "Unplugged"))
     (setq user-at-host-on-port 
 	  (concat user-at-host ":" (int-to-string port)
 		  (if (eq ssl 'starttls) "!!" (if ssl "!"))))
-    (setq ret-val (assoc user-at-host-on-port
-			 elmo-imap4-connection-cache))
-    (if (and ret-val 
-	     (or (eq (setq proc-stat 
-			   (process-status (cadr (cdr ret-val)))) 
-		     'closed)
-		 (eq proc-stat 'exit)))
+    (setq entry (assoc user-at-host-on-port elmo-imap4-connection-cache))
+    (if (and entry
+	     (memq (setq proc-stat
+			 (process-status (cadr (cdr entry))))
+		   '(closed exit)))
 	;; connection is closed...
-	(progn
-	  (kill-buffer (car (cdr ret-val)))
+ 	(let ((buffer (car (cdr entry))))
+	  (if buffer (kill-buffer buffer))
 	  (setq elmo-imap4-connection-cache 
-		(delete ret-val elmo-imap4-connection-cache))
-	  (setq ret-val nil)))
-    (if ret-val
-	(progn 
-	  (setq ret-val (cdr ret-val)) ;; connection cache exists.
-	  ret-val)
+		(delete entry elmo-imap4-connection-cache))
+	  (setq entry nil)))
+    (if entry
+	(cdr entry) ; connection cache exists.
       (setq result
 	    (elmo-imap4-open-connection server user auth port
 					(elmo-get-passwd user-at-host)
@@ -299,14 +296,15 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 	(elmo-remove-passwd user-at-host)
 	(delete-process process)
 	(error "Login failed"))
-      (setq elmo-imap4-connection-cache 
-	    (append elmo-imap4-connection-cache 
-		    (list 
-		     (cons user-at-host-on-port
-			   (setq ret-val (list buffer process 
-					       ""; current-folder..
-					       ))))))
-      ret-val)))
+      ;; add a new entry to the top of the cache.
+      (setq elmo-imap4-connection-cache
+	    (cons
+	     (cons user-at-host-on-port
+		   (setq connection (list buffer process
+				       ""; current-folder..
+				       )))
+	     elmo-imap4-connection-cache))
+      connection)))
 
 (defun elmo-imap4-process-filter (process output)
   (save-match-data 
@@ -426,8 +424,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-read-response buffer process))))
 
 (defun elmo-imap4-commit (spec)
-  (if (elmo-plugged-p (elmo-imap4-spec-hostname spec)
-		      (elmo-imap4-spec-port spec))
+  (if (elmo-imap4-plugged-p spec)
       (save-excursion
 	(let ((connection (elmo-imap4-get-connection spec))
 	      response ret-val beg end)
@@ -1094,8 +1091,8 @@ If optional argument UNMARK is non-nil, unmark."
 		 (length (car y))))))))
 
 (defun elmo-imap4-open-connection (imap4-server user auth port passphrase ssl)
-  "Open Imap connection and returns 
-the list of (process session-buffer current-working-folder).
+  "Open IMAP connection to IMAP4-SERVER on PORT for USER.
+Return a cons cell of (session-buffer . process).
 Return nil if connection failed."
   (let ((process nil)
 	(host imap4-server)
