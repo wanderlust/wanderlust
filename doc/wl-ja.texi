@@ -1662,10 +1662,13 @@ IMAP $B%U%)%k%@$GD>@\>C$7$?>l9g$@$1%5!<%P>e$N%^!<%/$,>C$($^$9!#(B)
 
 @item W
 @kindex W (Folder)
-@findex wl-folder-write-current-newsgroup
-$B8=:_%+!<%=%k$,$"$k%U%)%k%@$,(B NNTP $B%U%)%k%@$J$i!"(B
-Newsgroups $B%U%#!<%k%I$rJd$C$F%I%i%U%H$rMQ0U$7$^$9!#(B
-(@code{wl-folder-write-current-newsgroup})
+@findex wl-folder-write-current-folder
+$B8=:_%+!<%=%k$,$"$k%U%)%k%@$,(B NNTP $B%U%)%k%@$J$i!"(B@samp{Newsgroups:} $B%U%#!<(B
+$B%k%I$rJd$C$F%I%i%U%H$rMQ0U$7$^$9!#%a!<%j%s%0%j%9%H$N%j%U%!%$%k@h$J$i!"%a!<(B
+$B%j%s%0%j%9%H$N%"%I%l%9$r?dB,$7$F!"(B@samp{To:} $B%U%#!<%k%I$rJd$C$F%I%i%U%H(B
+$B$rMQ0U$7$^$9!#JQ?t(B @code{wl-subscribed-mailing-list} $B$r@_Dj$7$F$*$/I,MW(B
+$B$,$"$j$^$9!#(B
+(@code{wl-folder-write-current-folder})
 
 @item C-c C-o
 @kindex C-c C-o (Folder)
@@ -2822,9 +2825,13 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 
 @item W
 @kindex W (Summary)
-@findex wl-draft-write-current-newsgroup
+@findex wl-summary-write-current-folder
 $B8=:_$N%5%^%j$,%K%e!<%9%0%k!<%W$N>l9g!"(B@samp{Newsgroups:} $B%U%#!<%k%I$rJd$C(B
-$B$F%I%i%U%H$rMQ0U$7$^$9!#(B(@code{wl-draft-write-current-newsgroup})
+$B$F%I%i%U%H$rMQ0U$7$^$9!#(B
+$B8=:_$N%5%^%j$,%a!<%j%s%0%j%9%H$N>l9g!"%a!<%j%s%0%j%9%H$N%"%I%l%9$r?dB,$7(B
+$B$F(B @samp{To:} $B%U%#!<%k%I$rJd$C$F%I%i%U%H$rMQ0U$7$^$9!#(B
+@code{wl-subscribed-mailing-list} $B$r@_Dj$7$F$*$/I,MW$,$"$j$^$9!#(B
+(@code{wl-summary-write-current-folder})
 
 @item H
 @kindex H (Summary)

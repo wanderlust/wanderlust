@@ -1635,10 +1635,14 @@ Create a new draft message.
 
 @item W
 @kindex W (Folder)
-@findex wl-folder-write-current-newsgroup
-If the current cursor point is on the NNTP folder,
-create a new draft message which already has newsgroups field.
-(@code{wl-folder-write-current-newsgroup})
+@findex wl-folder-write-current-folder
+If the current cursor point is on the NNTP folder, create a new draft
+message which already has @samp{Newsgroups:} field.  If the current
+cursor point is on the folder for mailing list (refile destination),
+create a new draft message which already has @samp{To:} field with
+guessed mailing list adderss (If @code{wl-subscribed-mailing-list} is
+valid list).
+(@code{wl-folder-write-current-folder})
 
 @item C-c C-o
 @kindex C-c C-o (Folder)
@@ -2816,10 +2820,12 @@ Prepare a new draft.
 
 @item W
 @kindex W (Summary)
-@findex wl-summary-write-current-newsgroup
-Prepare a new draft.  If the current folder is netnews folder,
-@samp{Newsgroups:} field is completed.
-(@code{wl-summary-write-current-newsgroup})
+@findex wl-summary-write-current-folder
+Prepare a new draft.  If the current folder is NNTP folder,
+@samp{Newsgroups:} field is completed.  If the current folder is mailing
+list folder (refile destination), guess @samp{To:} field and completed
+(If @code{wl-subscribed-mailing-list} is valid list)
+(@code{wl-summary-write-current-folder})
 
 @item H
 @kindex H (Summary)
