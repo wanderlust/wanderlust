@@ -399,6 +399,9 @@ Returning its cache buffer."
 	(setq buf (get-buffer-create (format "%s%d" elmo-buffer-cache-name len)))
       (setq buf (elmo-buffer-cache-buffer-get (nth (1- len) elmo-buffer-cache)))
       (setcdr (nthcdr (- len 2) elmo-buffer-cache) nil))
+    (save-excursion
+      (set-buffer buf)
+      (elmo-set-buffer-multibyte nil))
     (setq elmo-buffer-cache
 	  (cons (elmo-buffer-cache-entry-make fld-msg-id buf)
 		elmo-buffer-cache))
