@@ -92,12 +92,12 @@ Automatically loaded/saved.")
   (unless (or (null elmo-dop-queue)
 	      (vectorp (car elmo-dop-queue)))
     (if (y-or-n-p "\
-Saved queue is old version(2.6). Clear all pending operations? ")
+Saved queue is old version(2.6).  Clear all pending operations? ")
 	(progn
 	  (setq elmo-dop-queue nil)
 	  (message "All pending operations are cleared.")
 	  (elmo-dop-queue-save))
-      (error "Please use 2.6 or earlier.")))
+      (error "Please use 2.6 or earlier")))
   (elmo-dop-queue-merge)
   (let ((queue-all elmo-dop-queue)
 	queue
@@ -135,7 +135,7 @@ Saved queue is old version(2.6). Clear all pending operations? ")
 					(elmo-dop-queue-fname (car queue))))
 			       (elmo-folder-open folder)
 			       (unless (elmo-folder-plugged-p folder)
-				 (error "Unplugged.")))
+				 (error "Unplugged")))
 			     (elmo-dop-queue-arguments (car queue)))
 		      (elmo-folder-close folder))
 		  (quit  (setq failure t))
@@ -169,7 +169,7 @@ Saved queue is old version(2.6). Clear all pending operations? ")
 	   (memq (elmo-dop-queue-method que)
 		 elmo-dop-queue-merge-method-list)
 	   (setq match-queue
-		 (car (delete 
+		 (car (delete
 		       nil
 		       (mapcar
 			(lambda (nqueue)

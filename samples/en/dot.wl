@@ -82,9 +82,6 @@
 
 ;;; [[ Basic Setting ]]
 
-;; Language for day of the week in summary
-(setq wl-summary-weekday-name-lang "en")
-
 ;; Default folder for `wl-summary-goto-folder'.
 ;(setq wl-default-folder "+inbox")
 
@@ -233,6 +230,10 @@
 ;	(setq buffers (cdr buffers))))))
 ;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
 
+;; When you encrypt message by PGP, include your public key.
+;; (to make the message visible from yourself)
+;(setq pgg-encrypt-for-me t)
+
 
 ;;; [[ Template ]]
 
@@ -288,14 +289,31 @@
 ;	("Newsgroups" . (nil nil ("Newsgroups")))
 ;	("Reply-To" . (("Reply-To") nil nil))
 ;	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+;	(wl-draft-self-reply-p . (("To") ("Cc") nil))
 ;	("From" . (("From") nil nil))))
 
-;; "C-u a" (with-argument) reply to all.
-;(setq wl-draft-reply-with-argument-list
-;      '(("Followup-To" . (("From") nil ("Followup-To")))
-;	("Newsgroups" . (("From") nil ("Newsgroups")))
+;; old defaults < 2.11.0
+;(setq wl-draft-reply-without-argument-list
+;      '(((wl-draft-self-reply-p
+;	  "Followup-To") . (("To") ("Cc") ("Followup-To")))
+;	((wl-draft-self-reply-p
+;	  "Newsgroups") . (("To") ("Cc") ("Newsgroups")))
+;	((wl-draft-self-reply-p
+;	  "From") . (("To") ("Cc") nil))
+;	("Followup-To" . (nil nil ("Followup-To")))
 ;	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+;	("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
 ;	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+;(setq wl-draft-reply-with-argument-list
+;      '(((wl-draft-self-reply-p
+;	  "Followup-To") . (("To") ("Cc") ("Followup-To")))
+;	((wl-draft-self-reply-p
+;	  "Newsgroups") . (("To") ("Cc") ("Newsgroups")))
+;	((wl-draft-self-reply-p
+;	  "From") . (("To") ("Cc") nil))
+;	("Reply-To" . (("Reply-To") nil nil))
+;	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+;	("From" . (("From") nil nil))))
 
 
 ;;; [[ Message Display Settings ]]

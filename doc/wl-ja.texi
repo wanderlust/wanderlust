@@ -278,7 +278,7 @@ APEL, FLIM, SEMI の順にインストールしてください。
 推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.4, SEMI 1.14.5
+@item APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
 @end itemize
 
 その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
@@ -3285,10 +3285,13 @@ first, last    ...フィルタフォルダに移動
 @item T
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
-スレッド表示をトグルします。
-現在のスレッド表示状態はモードラインに表示されます．
-@samp{@{S@}} はスレッド・オフ(Sequence)の状態，
-@samp{@{T@}} はスレッド・オン(Thread)の状態を示します．
+スレッド表示をトグルします。その状態は Wanderlust を終了しても保存され
+ます。新規に作成されたサマリに対してのデフォルトの状態は
+@code{wl-summary-default-view} や @code{wl-summary-default-view-alist}
+で指定することができます。
+現在のスレッド表示状態はモードラインに表示されます。
+@samp{@{S@}} はスレッド・オフ(Sequence)の状態、
+@samp{@{T@}} はスレッド・オン(Thread)の状態を示します。
 (@code{wl-summary-toggle-thread})
 
 @item l
@@ -3756,7 +3759,7 @@ nil： フォルダモードに戻るか尋ねる
 
 @item wl-summary-weekday-name-lang
 @vindex  wl-summary-weekday-name-lang
-初期設定は @samp{ja}。サマリの曜日表示の言語を指定します。@samp{en} なら
+サマリの曜日表示の言語を指定します。@samp{en} なら
 英語、@samp{fr} ならフランス語、@samp{de} ならドイツ語となります。
 値を変更した後には、サマリを rescan して下さい。
 
@@ -3780,17 +3783,40 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
 @item wl-message-window-size
 @vindex  wl-message-window-size
 初期設定は '(1 . 4)。
-サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を cons で指定します。car:cdr が サマリ:メッセージ です。
+サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を
+cons で指定します。car:cdr が サマリ:メッセージ です。
+
+@item wl-summary-from-function
+@vindex wl-summary-from-function
+サマリの差出人表示の整形に使う関数を指定します。
+初期設定は @code{wl-summary-default-from} です。
 
 @item wl-summary-no-from-message
 @vindex  wl-summary-no-from-message
 初期設定は @samp{nobody@@nowhere?}。
 メッセージに @samp{From:} が無かった場合にサマリに表示する文字列です。
 
+@item wl-summary-subject-function
+@vindex wl-summary-subject-function
+サマリのサブジェクト表示の整形に使う関数を指定します。
+初期設定は @code{wl-summary-default-subject} で、サブジェクト先頭の
+リスト名など部分をカットします。
+サブジェクトをそのまま表示するには以下のように設定します。
+
+@lisp
+(setq wl-summary-subject-function 'identity)
+@end lisp
+
 @item wl-summary-no-subject-message
 @vindex  wl-summary-no-subject-message
 初期設定は @samp{(WL:No Subject in original.)}。メッセージに 
 @samp{Subject:} が無かった場合にサマリに表示する文字列です。
+
+@item wl-summary-default-view
+@vindex wl-summary-default-view
+初期設定は @code{'thread}。
+新規に作成されたサマリの状態をスレッド表示なら @code{'thread}、
+番号順なら @code{'sequence} のいずれかで指定します。
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
@@ -3843,6 +3869,10 @@ petname でも補完ができます。
 らサマリのインデントを無制限にします。
 値を @code{nil} にするときは、@code{wl-summary-width} も @code{nil} に設定
 するとよいでしょう。
+
+@item wl-summary-max-thread-depth
+@vindex wl-summary-max-thread-depth
+初期設定は 30。設定された値以上の深さのスレッドを分割します。
 
 @item wl-summary-recenter
 @vindex  wl-summary-recenter

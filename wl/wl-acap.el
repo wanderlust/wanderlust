@@ -116,7 +116,7 @@ If nil, default acap port is used."
 	    proc entries settings folder-top type caches msgdb-dir)
 	(if (null (car service))
 	    (if (setq caches
-		      (delq 
+		      (delq
 		       nil
 		       (mapcar
 			(lambda (dirent)
@@ -133,7 +133,7 @@ If nil, default acap port is used."
 						   (expand-file-name
 						    "acap"
 						    elmo-msgdb-directory)))))))
-		(if (y-or-n-p "No ACAP service found. Try cache? ")
+		(if (y-or-n-p "No ACAP service found.  Try cache? ")
 		    (let (selected rpath alist)
 		      (setq alist
 			    (mapcar
@@ -149,8 +149,8 @@ If nil, default acap port is used."
 				  alist))
 			    msgdb-dir (file-name-directory selected)
 			    entries (elmo-object-load selected)))
-		  (error "No ACAP service found."))
-	      (error "No ACAP service found."))
+		  (error "No ACAP service found"))
+	      (error "No ACAP service found"))
 	  (setq proc (acap-open (car service)
 				wl-acap-user
 				(upcase (symbol-name
@@ -162,7 +162,7 @@ If nil, default acap port is used."
 						   "/~/")
 				      '((RETURN ("*"))))))
 	  (when entries
-	    (elmo-object-save 
+	    (elmo-object-save
 	     (expand-file-name
 	      (concat "acap/" (car service) "/" wl-acap-user "/"
 		      wl-acap-cache-filename)

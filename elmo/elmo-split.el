@@ -117,7 +117,8 @@ Example:
   :group 'elmo)
 
 (defcustom elmo-split-default-action 'noop
-  "Default action for messages which pass all rules."
+  "Default action for messages which pass all rules.
+It can be some ACTION as in `elmo-split-rule'."
   :type '(choice (const :tag "do not touch" noop)
 		 (const :tag "delete" delete)
 		 (string :tag "folder name")

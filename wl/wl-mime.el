@@ -273,25 +273,26 @@ It calls following-method selected from variable
 		 (yes-or-no-p
 		  (format "Do you really want to delete part %s? "
 			  (wl-mime-node-id-to-string node-id))))
-	(with-temp-buffer
-	  (insert-buffer orig-buf)
-	  (delete-region header-start body-end)
-	  (goto-char header-start)
-	  (insert "Content-Type: text/plain; charset=US-ASCII\n\n")
-	  (insert "** This part has been removed by Wanderlust **\n\n")
-	  (elmo-folder-append-buffer folder t))
+	(when (with-temp-buffer
+		(insert-buffer orig-buf)
+		(delete-region header-start body-end)
+		(goto-char header-start)
+		(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
+		(insert "** This part has been removed by Wanderlust **\n\n")
+		(elmo-folder-append-buffer folder t))
 
-	(elmo-folder-append-messages
-	 (wl-folder-get-elmo-folder wl-trash-folder)
-	 folder (list number) nil)
-	(elmo-folder-delete-messages folder (list number))
+	  (elmo-folder-move-messages
+	   folder (list number)
+	   (wl-folder-get-elmo-folder wl-trash-folder))
+	  (when (and (elmo-cache-get-path msgid)
+		     (file-exists-p (elmo-cache-get-path msgid)))
+	    (delete-file (elmo-cache-get-path msgid)))
 
-	(when (file-exists-p (elmo-cache-get-path msgid))
-	  (delete-file (elmo-cache-get-path msgid)))
-
-	(mime-preview-quit)
-	(wl-summary-toggle-disp-msg 'off)
-	(wl-summary-sync nil "update")))))
+	  (mime-preview-quit)
+	  (wl-summary-delete-messages-on-buffer (list number))
+	  (wl-summary-toggle-disp-msg 'off)
+	  (setq wl-message-buffer nil)
+	  (wl-summary-sync nil "update"))))))
 
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"

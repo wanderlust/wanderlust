@@ -130,7 +130,8 @@ File content is encoded with MIME-CHARSET."
 Directory of the file is created if it doesn't exist.
 File content is encoded with MIME-CHARSET."
   (elmo-set-work-buf
-   (prin1 object (current-buffer))
+   (let (print-length print-level)
+     (prin1 object (current-buffer)))
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
@@ -415,7 +416,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
 				      elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
+	  print-length print-level)
       (set-buffer tmp-buffer)
       (erase-buffer)
       (prin1 elmo-passwd-alist tmp-buffer)
@@ -1561,6 +1563,49 @@ NUMBER-SET is altered."
 				  (match-end matchn)) list)))
     (nreverse list)))
 
+;;;
+;; parsistent mark handling
+;; (for global!)
+;; (FIXME: this should be treated in the msgdb.)
+
+(defvar elmo-msgdb-global-mark-alist nil)
+
+(defun elmo-msgdb-global-mark-delete (msgid)
+  (let* ((path (expand-file-name
+		elmo-msgdb-global-mark-filename
+		elmo-msgdb-directory))
+	 (malist (or elmo-msgdb-global-mark-alist
+		     (setq elmo-msgdb-global-mark-alist
+			   (elmo-object-load path))))
+	 match)
+    (when (setq match (assoc msgid malist))
+      (setq elmo-msgdb-global-mark-alist
+	    (delete match elmo-msgdb-global-mark-alist))
+      (elmo-object-save path elmo-msgdb-global-mark-alist))))
+
+(defun elmo-msgdb-global-mark-set (msgid mark)
+  (let* ((path (expand-file-name
+		elmo-msgdb-global-mark-filename
+		elmo-msgdb-directory))
+	 (malist (or elmo-msgdb-global-mark-alist
+		     (setq elmo-msgdb-global-mark-alist
+			   (elmo-object-load path))))
+	 match)
+    (if (setq match (assoc msgid malist))
+	(setcdr match mark)
+      (setq elmo-msgdb-global-mark-alist
+	    (nconc elmo-msgdb-global-mark-alist
+		   (list (cons msgid mark)))))
+    (elmo-object-save path elmo-msgdb-global-mark-alist)))
+
+(defun elmo-msgdb-global-mark-get (msgid)
+  (cdr (assoc msgid (or elmo-msgdb-global-mark-alist
+			(setq elmo-msgdb-global-mark-alist
+			      (elmo-object-load
+			       (expand-file-name
+				elmo-msgdb-global-mark-filename
+				elmo-msgdb-directory)))))))
+
 ;;; File cache.
 (defmacro elmo-make-file-cache (path status)
   "PATH is the cache file name.
@@ -1593,6 +1638,7 @@ If the cache is partial file-cache, TYPE is 'partial."
 	    (nth (% (/ sum 16) 2) chars)
 	    (nth (% sum 16) chars))))
 
+;;;
 (defun elmo-file-cache-get-path (msgid &optional section)
   "Get cache path for MSGID.
 If optional argument SECTION is specified, partial cache path is returned."
@@ -1617,14 +1663,16 @@ SECTION is the section string."
 
 (defun elmo-file-cache-delete (path)
   "Delete a cache on PATH."
-  (when (file-exists-p path)
-    (if (file-directory-p path)
-	(progn
-	  (dolist (file (directory-files path t "^[^\\.]"))
-	    (delete-file file))
-	  (delete-directory path))
-      (delete-file path))
-    t))
+  (unless (elmo-msgdb-global-mark-get
+	   (elmo-cache-to-msgid (file-name-nondirectory path)))
+    (when (file-exists-p path)
+      (if (file-directory-p path)
+	  (progn
+	    (dolist (file (directory-files path t "^[^\\.]"))
+	      (delete-file file))
+	    (delete-directory path))
+	(delete-file path))
+      t)))
 
 (defun elmo-file-cache-exists-p (msgid)
   "Returns 'section or 'entire if a cache which corresponds to MSGID exists."

@@ -1,3 +1,251 @@
+2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-previous-version-save): Bind
+	print-length and print-level.
+	* wl-thread.el (wl-thread-save-entities): Ditto.
+	(wl-thread-save-top-list): Bind print-length.
+
+2003-01-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Use
+	wl-summary-score-below-mark, wl-summary-score-over-mark.
+	(wl-highlight-summary-current-line): Ditto.
+
+2003-01-27  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-insert-from-field): Encode wl-from and
+	insert it.
+
+2003-01-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-message-id-use-wl-from): Change defalut to t.
+
+2003-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-delete-current-part): Avoid error on
+	message without msgid.
+	Rewrite with elmo-folder-move-messages.
+	Set wl-message-buffer to nil.
+
+	* wl-summary.el (wl-summary-erase-subr): New function. Use
+	elmo-folder-move-messages.
+	(wl-summary-erase): Call it.
+	(wl-summary-target-mark-erase): Ditto.
+
+2003-01-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-exec-subr): Unset wl-message-buffer if
+	it is not up-tp-date.
+
+2003-01-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-empty-trash): Set and show up summary
+	buffer after calling `wl-summary-goto-folder-subr' without the
+	argument `interactive'.
+	(wl-folder-set-current-entity-id): Enclose by save-current-buffer.
+
+2003-01-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
+	`mime-create-tag'. Use `string=' instead of `looking-at'.
+
+2003-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-send-news): Add 3rd argument `folder'
+	to avoid compile warning.
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Fix logic: set
+	entity-id when folder is given.
+	* wl-folder.el (wl-folder-set-current-entity-id): Don't use
+	save-excursion, use save-selected-window instead.
+	Select folder buffer window if exists.
+	(To correct behavior with wl-folder-move-cur-folder.)
+
+2003-01-10  Masahiro Murata  <muse@ba2.so-net.ne.jp>
+
+	* wl-draft.el (wl-draft-reedit): Avoid error on Meadow [wl:11209].
+
+2003-01-06  Mito  <mito@mxa.nes.nec.co.jp>
+
+	* wl-summary.el (wl-summary-line-list-info): Use %f to make
+	list-count instead of %d.
+
+2003-01-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-buffer-oldest-version): New local variable.
+	(wl-news): Set it.
+	(wl-news-append-to-folder): Use it.
+
+	* wl-news.el.in (wl-news-send-news): Append to specified folder
+	instead of wl-default-folder.
+	(wl-news-append-to-folder): Show error message with specified folder.
+
+	* wl-vars.el: Follow "Left Margin Convention" in Emacs Manual.
+		In most major modes, Emacs assumes that any opening
+		delimiter found at the left margin is the start of a
+		top-level definition, or defun. Therefore, *never put an
+		opening delimiter at the left margin unless it should have
+		that significance.*
+
+	* wl-draft.el (wl-draft-reply): List in r-list can contain function.
+
+2003-01-05  NAKAJIMA Mikio  <minakaji@osaka.email.ne.jp>
+
+	* wl-draft.el (wl-draft-self-reply-p): Add doc string.
+
+2003-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2003.
+
+2002-12-31  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
+
+	* wl-summary.el (wl-summary-mark-collect): Revive missing return
+	for sequential numbering case.
+
+2002-12-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-draft-reply-with-argument-list): Change default
+	value.
+	(wl-draft-reply-without-argument-list): Ditto.
+	(wl-draft-reply-myself-with-argument-list): Abolish.
+	(wl-draft-reply-myself-without-argument-list): Ditto.
+	* wl-draft.el (wl-draft-self-reply-p): New function.
+	(wl-draft-reply-list-symbol): Merge into `wl-draft-reply'.
+
+2002-12-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-e21.el (toplevel): Do not set wl-folder-mode-map.
+	(avoid error for the case without byte-compiling)
+
+2002-12-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-append-to-folder): New function.
+	(wl-news-exit): Rewrite.
+	(wl-news-discard-and-mail): Merge to `wl-news-exit'.
+
+2002-12-22  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-reply-position): New function.
+	(wl-draft-reply-position): Fix.
+	* wl-summary.el (wl-summary-reply): Use `wl-draft-reply-position'.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+	(wl-summary-reply-with-citation): Ditto.
+	* wl-vars.el (wl-draft-reply-default-position): New variable.
+
+2002-12-22  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-send): Preview when interactive send.
+
+2002-12-22  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-reply): Set default position.
+	* wl-summary.el (wl-summary-reply): Ditto.
+	(wl-summary-reply-with-citation): Ditto.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-lang): Set default value according to
+	current-language-environment.
+	(wl-news-append-news): Do nothing when news-list is nil.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-mode-map): Add new keybind.
+	(wl-news): Change message.
+	(wl-news-exit): Check buffer.
+	(wl-news-force-exit): New function.
+	(wl-news-show-all): New function.
+	(wl-news-discard-and-exit): Fix.
+
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-weekday-name-lang): Set default value
+	according to current-language-environment.
+
+	* wl-news.el.in (wl-news): If arg, show all NEWS after
+	wl-news-default-previous-version.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-check): Rewritten.
+	(wl-news-previous-version-load): Change data type.
+	(wl-news-previous-version-save): Change data type.
+	(wl-news-append-news): Add return value.
+	(wl-news-check-news): New function.
+	(wl-news-already-current-p): New function.
+	(wl-news-send-news): Rewritten.
+	(wl-news-mode-map): Add new keybind.
+	(wl-news): Rewritten.
+	(wl-news-exit): Rewritten.
+	(wl-news-discard-and-mail): New function.
+	(wl-news-send-to-address): Abolished.
+	* wl.el (wl-init): Delete a message.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-exit): Update previous version.
+	* wl.el (wl-folder-mode-menu-spec): Add 'Wanderlust NEWS'.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news): Add `delete-other-windows'.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news): New function.
+	(wl-news-mode): New function.
+	(wl-news-next-line): New function.
+	(wl-news-next-page): New function.
+	(wl-news-exit): New function.
+	(wl-news-buf-name): New variable.
+	(wl-news-mode-map): New variable.
+	(wl-news-winconf): New variable.
+	(wl-news-append-news): Add an option.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-send-news): Add 'Date' header.
+
+2002-12-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-send-to-address): New variable.
+	(wl-news-send-news): Use it.
+	(wl-news-check): Call wl-news-send-news if wl-news-send-to-address.
+	Return updating status.
+	* wl.el (wl-init): Show message when wl-news-check returns non-nil.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-send-news): Delete
+	Organization and X-Face.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-check): Fix for `wl-news-lang'.
+	(wl-news-append-news): New function.
+	(wl-news-send-news): New function.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* Version number is increased to 2.11.1.
+
+2002-12-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in : New file.
+
+2002-12-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-draft-reply-with-argument-list): Change
+	default value.
+	(wl-draft-reply-without-argument-list): Ditto.
+
+2002-12-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-message-buffer-prefetch-depth): Change default value.
+	(wl-message-buffer-prefetch-idle-time): Ditto.
+	(wl-message-buffer-prefetch-folder-type-list): Ditto.
+
 2002-12-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-insert-message): Use

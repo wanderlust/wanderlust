@@ -1,3 +1,58 @@
+2003-01-29  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-util.el (elmo-object-save): Bind print-level, print-length.
+	(elmo-passwd-alist-save): Ditto.
+	* elmo-database.el (elmo-database-msgid-put): Bind print-length.
+
+2003-01-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Expand
+	dir-name only if it is absolute path.
+	(TODO: distinguish +/something and +something)
+
+2003-01-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Correct msgdb
+	path for "+~/something".
+
+2003-01-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-localdir.el (elmo-folder-rename-internal): If new-dir exist
+	as non-directory, cause error before rename-file.
+	* elmo-archive.el (elmo-folder-rename-internal): Create directory
+	apropriately, mimic localdir's one.
+	Based on the patch from KAMO Tomoyuki <kamo@ITmanage.co.jp>.
+
+2003-01-10  Tsutomu OKADA  <okada@furuno.co.jp>
+
+	* elmo-map.el (elmo-folder-pack-numbers): Fix name of the function.
+
+2003-01-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el: Moved global mark handling stuffs to elmo-util.el.
+
+	* elmo-util.el: Moved global mark handling stuffs from elmo-msgdb.el.
+	
+	* elmo-util.el (elmo-file-cache-delete): Check whether the cache file
+	is included in the global-mark or not.
+
+2002-12-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* utf7.el (toplevel): Avoid error when the function
+	find-coding-system does not exist.
+
+2002-12-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (elmo-folder-search): Body search is to search from
+	cache even if the folder is plugged.
+	(elmo-nntp-search-primitive): Do nothing when body search is
+	invoked (although it is not used by the change above).
+	* elmo-multi.el (elmo-folder-search): Don't ignore error anymore.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.1.
+
 2002-12-10  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-archive.el: Specify charset.

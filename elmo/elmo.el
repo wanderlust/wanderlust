@@ -378,7 +378,7 @@ NUMBERS is a list of message numbers to be processed.")
 FOLDER is the destination folder(ELMO folder structure).
 If UNREAD is non-nil, message is appended as unread.
 If optional argument NUMBER is specified, the new message number is set
-(if possible).")
+\(if possible\).")
 
 (luna-define-generic elmo-folder-append-messages (folder
 						  src-folder

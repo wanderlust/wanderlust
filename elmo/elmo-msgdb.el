@@ -408,48 +408,6 @@ content of MSGDB is changed."
     ret-val))
 
 ;;;
-;; parsistent mark handling
-;; (for global!)
-
-(defvar elmo-msgdb-global-mark-alist nil)
-
-(defun elmo-msgdb-global-mark-delete (msgid)
-  (let* ((path (expand-file-name
-		elmo-msgdb-global-mark-filename
-		elmo-msgdb-directory))
-	 (malist (or elmo-msgdb-global-mark-alist
-		     (setq elmo-msgdb-global-mark-alist
-			   (elmo-object-load path))))
-	 match)
-    (when (setq match (assoc msgid malist))
-      (setq elmo-msgdb-global-mark-alist
-	    (delete match elmo-msgdb-global-mark-alist))
-      (elmo-object-save path elmo-msgdb-global-mark-alist))))
-
-(defun elmo-msgdb-global-mark-set (msgid mark)
-  (let* ((path (expand-file-name
-		elmo-msgdb-global-mark-filename
-		elmo-msgdb-directory))
-	 (malist (or elmo-msgdb-global-mark-alist
-		     (setq elmo-msgdb-global-mark-alist
-			   (elmo-object-load path))))
-	 match)
-    (if (setq match (assoc msgid malist))
-	(setcdr match mark)
-      (setq elmo-msgdb-global-mark-alist
-	    (nconc elmo-msgdb-global-mark-alist
-		   (list (cons msgid mark)))))
-    (elmo-object-save path elmo-msgdb-global-mark-alist)))
-
-(defun elmo-msgdb-global-mark-get (msgid)
-  (cdr (assoc msgid (or elmo-msgdb-global-mark-alist
-			(setq elmo-msgdb-global-mark-alist
-			      (elmo-object-load
-			       (expand-file-name
-				elmo-msgdb-global-mark-filename
-				elmo-msgdb-directory)))))))
-
-;;;
 ;; persistent mark handling
 ;; (for each folder)
 

@@ -161,48 +161,11 @@ e.g.
   "Insert From field."
   ;; Put the "From:" field in unless for some odd reason
   ;; they put one in themselves.
-  (let* ((login (or user-mail-address (user-login-name)))
-	 (fullname (user-full-name)))
-    (cond ((eq mail-from-style 'angles)
-	   (insert "From: " fullname)
-	   (let ((fullname-start (+ (point-min) (length "From: ")))
-		 (fullname-end (point-marker)))
-	     (goto-char fullname-start)
-	     ;; Look for a character that cannot appear unquoted
-	     ;; according to RFC 822.
-	     (if (re-search-forward "[^- !#-'*+/-9=?A-Z^-~]"
-				    fullname-end 1)
-		 (progn
-		   ;; Quote fullname, escaping specials.
-		   (goto-char fullname-start)
-		   (insert "\"")
-		   (while (re-search-forward "[\"\\]"
-					     fullname-end 1)
-		     (replace-match "\\\\\\&" t))
-		   (insert "\""))))
-	   (insert " <" login ">\n"))
-	  ((eq mail-from-style 'parens)
-	   (insert "From: " login " (")
-	   (let ((fullname-start (point)))
-	     (insert fullname)
-	     (let ((fullname-end (point-marker)))
-	       (goto-char fullname-start)
-	       ;; RFC 822 says \ and nonmatching parentheses
-	       ;; must be escaped in comments.
-	       ;; Escape every instance of ()\ ...
-	       (while (re-search-forward "[()\\]" fullname-end 1)
-		 (replace-match "\\\\\\&" t))
-	       ;; ... then undo escaping of matching parentheses,
-	       ;; including matching nested parentheses.
-	       (goto-char fullname-start)
-	       (while (re-search-forward
-		       "\\(\\=\\|[^\\]\\(\\\\\\\\\\)*\\)\\\\(\\(\\([^\\]\\|\\\\\\\\\\)*\\)\\\\)"
-		       fullname-end 1)
-		 (replace-match "\\1(\\3)" t)
-		 (goto-char fullname-start))))
-	   (insert ")\n"))
-	  ((not mail-from-style)
-	   (insert "From: " login "\n")))))
+  (let (from)
+    (condition-case err
+	(setq from (wl-draft-eword-encode-address-list wl-from))
+      (error (error "Please look at `wl-from' again")))
+    (insert "From: " from "\n")))
 
 (defun wl-draft-insert-x-face-field ()
   "Insert X-Face header."
@@ -315,21 +278,14 @@ e.g.
   (mail-position-on-field "To"))
 
 (defun wl-draft-strip-subject-re (subject)
-  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus."
+  "Remove \"Re:\" from SUBJECT string. Shamelessly copied from Gnus."
   (if (string-match wl-subject-prefix-regexp subject)
       (substring subject (match-end 0))
     subject))
 
-(defun wl-draft-reply-list-symbol (with-arg)
-  "Return symbol `wl-draft-reply-*-argument-list' match condition.
-Check WITH-ARG and From: field."
-  (if (wl-address-user-mail-address-p (or (elmo-field-body "From") ""))
-      (if with-arg
-	  'wl-draft-reply-myself-with-argument-list
-	'wl-draft-reply-myself-without-argument-list)
-    (if with-arg
-	'wl-draft-reply-with-argument-list
-      'wl-draft-reply-without-argument-list)))
+(defun wl-draft-self-reply-p ()
+  "Return t when From address in the current message is user's self one or not."
+  (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
 
 (defun wl-draft-reply (buf with-arg summary-buf &optional number)
   "Reply to BUF buffer message.
@@ -342,7 +298,8 @@ Reply to author if WITH-ARG is non-nil."
       (with-current-buffer summary-buf
 	(setq parent-folder (wl-summary-buffer-folder-name))))
     (set-buffer (or buf mime-mother-buffer))
-    (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
+    (setq r-list (if with-arg wl-draft-reply-with-argument-list
+		   wl-draft-reply-without-argument-list))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))
@@ -351,8 +308,15 @@ Reply to author if WITH-ARG is non-nil."
 		      ((listp condition)
 		       (catch 'done
 			 (while condition
-			   (if (not (std11-field-body (car condition)))
-			       (throw 'done nil))
+			   (cond
+			    ((stringp (car condition))
+			     (or (std11-field-body (car condition))
+				 (throw 'done nil)))
+			    ((symbolp (car condition))
+			     (or (funcall (car condition))
+				 (throw 'done nil)))
+			    (t
+			     (debug)))
 			   (setq condition (cdr condition)))
 			 t))
 		      ((symbolp condition)
@@ -385,8 +349,8 @@ Reply to author if WITH-ARG is non-nil."
 					       ","))))
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
-      (error "No match field: check your `%s'"
-	     (symbol-name (wl-draft-reply-list-symbol with-arg))))
+      (error "No match field: check your `wl-draft-reply-%s-argument-list'"
+	     (if with-arg "with" "without")))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
@@ -488,6 +452,22 @@ Reply to author if WITH-ARG is non-nil."
 	  (append wl-draft-reply-saved-variables
 		  wl-draft-config-variables)))
   (run-hooks 'wl-reply-hook))
+
+(defun wl-draft-reply-position (position)
+  (cond ((eq position 'body)
+	 (wl-draft-body-goto-top))
+	((eq position 'bottom)
+	 (wl-draft-body-goto-bottom))
+	((eq position 'top)
+	 (goto-char (point-min)))
+	((and (stringp position)
+	      (std11-field-body position))
+	 (progn (mail-position-on-field position)
+		(wl-draft-beginning-of-line)))
+	((listp position)
+	 (while (car position)
+	   (wl-draft-reply-position (car position))
+	   (setq position (cdr position))))))
 
 (defun wl-draft-add-references ()
   (wl-draft-add-in-reply-to "References"))
@@ -702,7 +682,7 @@ Reply to author if WITH-ARG is non-nil."
 			(or from "you")))))
     (mail-indent-citation)))
 
-(defvar wl-draft-buffer nil "Draft buffer to yank content")
+(defvar wl-draft-buffer nil "Draft buffer to yank content.")
 (defun wl-draft-yank-to-draft-buffer (buffer)
   "Yank BUFFER content to `wl-draft-buffer'."
   (set-buffer wl-draft-buffer)
@@ -755,7 +735,7 @@ Reply to author if WITH-ARG is non-nil."
 		(switch-to-buffer sum-buf))))))))
 
 (defun wl-draft-delete (editing-buffer)
-  "kill the editing draft buffer and delete the file corresponds to it."
+  "Kill the editing draft buffer and delete the file corresponds to it."
   (save-excursion
     (when editing-buffer
       (set-buffer editing-buffer)
@@ -1284,7 +1264,17 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (y-or-n-p "Do you really want to send current draft? "))
+	    (let (result)
+	      (wl-draft-preview-message)
+	      (goto-char (point-min))
+	      (condition-case nil
+		  (setq result
+			(y-or-n-p "Do you really want to send current draft? "))
+		(quit
+		 (mime-preview-quit)
+		 (signal 'quit nil)))
+	      (mime-preview-quit)
+	      result))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
@@ -1327,7 +1317,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (kill-buffer sending-buffer))))))
 
 (defun wl-draft-mime-bcc-field ()
-  "Return the MIME-Bcc field body. The field is deleted."
+  "Return the MIME-Bcc field body.  The field is deleted."
   (prog1 (std11-field-body wl-draft-mime-bcc-field-name)
     (wl-draft-delete-field wl-draft-mime-bcc-field-name)))
 
@@ -1698,10 +1688,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
                        ;;  insert symbol-value: string
   (symbol . nil)       ;;  do nothing
   nil                  ;;  do nothing
-  )
-"
+  )"
   (unless (eq major-mode 'wl-draft-mode)
-    (error "wl-draft-create-header must be use in wl-draft-mode."))
+    (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (let ((halist header-alist)
 	field value)
     (while halist
@@ -1736,7 +1725,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-prepare-edit ()
   (unless (eq major-mode 'wl-draft-mode)
-    (error "wl-draft-create-header must be use in wl-draft-mode."))
+    (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
     (when wl-draft-write-file-function
@@ -1866,7 +1855,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (cdar condition))
 	    (setq condition (cdr condition)))))
     (unless elmo-nntp-default-function
-      (error "wl-draft-nntp-send: posting-function is nil."))
+      (error "wl-draft-nntp-send: posting-function is nil"))
     (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
 	(wl-draft-set-sent-message 'news 'unplugged
 				   (cons elmo-nntp-default-server
@@ -1899,8 +1888,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-remove-text-plain-tag ()
   "Remove text/plain tag of mime-edit."
-  (if (looking-at "^--\\[\\[text/plain\\]\\]$")
-      (delete-region (point-at-bol)(1+ (point-at-eol)))))
+  (when (string= (mime-create-tag "text" "plain")
+		 (buffer-substring-no-properties (point-at-bol)(point-at-eol)))
+    (delete-region (point-at-bol)(1+ (point-at-eol)))))
 
 (defun wl-draft-reedit (number)
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
@@ -1937,6 +1927,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (set-buffer buffer)
       (setq wl-draft-parent-folder "")
       (insert-file-contents-as-binary file-name)
+      (elmo-delete-cr-buffer)
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 	(wl-draft-decode-message-in-buffer))

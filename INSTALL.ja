@@ -33,13 +33,13 @@ MIME用モジュールの選択
 
   (a) XEmacs 21.1 以降
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.5
+	APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
 
     可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
   (b) Emacs 20.4 以降
 
-	APEL 10.4, FLIM 1.14.4, SEMI 1.14.5
+	APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
 
   (c) Emacs 20.1〜20.3
 

@@ -4,21 +4,21 @@
 
 ;; mel-b-ccl on XEmacs 21.1
 ;;  <http://lists.airs.net/wl/archive/200101/msg00075.html>
-(luna-define-method check-base64-encode-1 ((case check-base64))
+(luna-define-method test-base64-encode-1 ((case check-base64))
   (require 'elmo-util)
   (lunit-assert
    (string=
     "QQ=="
     (elmo-base64-encode-string "A"))))
 
-(luna-define-method check-base64-encode-2 ((case check-base64))
+(luna-define-method test-base64-encode-2 ((case check-base64))
   (require 'elmo-util)
   (lunit-assert
    (string=
     "QUE="
     (elmo-base64-encode-string "AA"))))
 
-(luna-define-method check-base64-encode-3 ((case check-base64))
+(luna-define-method test-base64-encode-3 ((case check-base64))
   (require 'elmo-util)
   (lunit-assert
    (string=
@@ -33,7 +33,7 @@
       (elmo-base64-encode-string "" t)
     (wrong-number-of-arguments)))
 
-(luna-define-method check-base64-encode-4 ((case check-base64))
+(luna-define-method test-base64-encode-4 ((case check-base64))
   (lunit-assert
    (check-base64-encode-string-has-no-line-break-argument)))
 
@@ -48,7 +48,6 @@
 	t)
     (wrong-number-of-arguments)))
 
-(luna-define-method check-base64-encode-5 ((case check-base64))
+(luna-define-method test-base64-encode-5 ((case check-base64))
   (lunit-assert
    (check-base64-encode-region-has-no-line-break-argument)))
-

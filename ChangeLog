@@ -1,3 +1,60 @@
+2003-01-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (test-wl): Added `make-wl-news'.
+	(check-wl): Added (provide 'wl-news) before load wl-news.el.in.
+
+2003-01-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-info-lang): Skip "ja" for non-mule.
+	(wl-news-lang): Ditto.
+
+2002-12-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (test-wl, check-wl): Load wl-news.el.in.
+
+2002-12-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL, INSTALL.ja: Updated recommended version of FLIM to 1.14.5.
+
+2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (make-wl-news): Don't add wl-news-lang setting into
+	wl-news.el here.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-MK (make-wl-news): Fix coding system.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-MK (wl-news-parse-news-subr): Decide
+	coding-system.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-MK (wl-news-lang): New variable.
+	(wl-news-news-file): Merge `wl-news-news-file'
+	and `wl-news-news-file-ja'.
+	(wl-news-search-regexp): New variable.
+	(wl-news-news-file): New function.
+	(wl-news-parse-news): Merge `wl-news-parse-news'
+	and `wl-news-parse-news-ja'.
+	(wl-news-parse-news-subr): New function.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-CFG (wl-news-lang): New variable.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-MK (make-wl-news): New function.
+	(wl-news-parse-news): New function.
+	(wl-news-parse-news-ja): New function.
+	(compile-wl-package): Do `make-wl-news'.
+	(wl-news-news-file): New variable.
+	(wl-news-news-file-ja): New variable.
+	(wl-news-filename: New variable.
+
 2002-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.0 - "Venus"

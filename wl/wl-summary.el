@@ -2528,15 +2528,15 @@ If ARG, without confirm."
 	  (if (and interactive wl-summary-recenter)
 	      (recenter (/ (- (window-height) 2) 2))))))
     ;; set current entity-id
-    (if (and (not folder)
-	     (setq entity
-		   (wl-folder-search-entity-by-name (elmo-folder-name-internal
-						     folder)
-						    wl-folder-entity
-						    'folder)))
-	;; entity-id is unknown.
-	(wl-folder-set-current-entity-id
-	 (wl-folder-get-entity-id entity)))
+    (when (and folder
+	       (setq entity
+		     (wl-folder-search-entity-by-name
+		      (elmo-folder-name-internal folder)
+		      wl-folder-entity
+		      'folder)))
+      ;; entity-id is unknown.
+      (wl-folder-set-current-entity-id
+       (wl-folder-get-entity-id entity)))
     (when (and wl-summary-lazy-highlight
 	       wl-on-xemacs)
       (sit-for 0))
@@ -2927,7 +2927,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (while (not (eobp))
 	    (when (string= (wl-summary-temp-mark) mark)
 	      (setq msglist (cons (wl-summary-message-number) msglist)))
-	    (forward-line 1)))))))
+	    (forward-line 1))
+	  (nreverse msglist))))))
 
 (defun wl-summary-exec ()
   (interactive)
@@ -3045,11 +3046,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(wl-summary-folder-info-update)
 	(wl-summary-set-message-modified)
 	(run-hooks 'wl-summary-exec-hook)
+	;; message buffer is not up-to-date
 	(unless (and wl-message-buffer
 		     (eq (wl-summary-message-number)
 			 (with-current-buffer wl-message-buffer
 			   wl-message-buffer-cur-number)))
-	  (wl-summary-toggle-disp-msg 'off))
+	  (wl-summary-toggle-disp-msg 'off)
+	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
 	(message (concat "Executing...done"
 			 (if (> refile-failures 0)
@@ -3078,10 +3081,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		   (format "Erase \"%s\" without moving it to trash? "
 			   (truncate-string subject 30)))
 	      (wl-summary-unmark msg-num)
-	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
-					   (list msg-num))
-	      (wl-summary-delete-messages-on-buffer (list msg-num))
-	      (save-excursion (wl-summary-sync nil "update"))))))
+	      (wl-summary-erase-subr (list msg-num))))))
     (message "Read-only folder.")))
 
 (defun wl-summary-target-mark-erase ()
@@ -3091,13 +3091,20 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (message "No marked message.")
 	(when (yes-or-no-p
 	       "Erase all marked messages without moving them to trash? ")
-	  (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
-				       wl-summary-buffer-target-mark-list)
-	  (wl-summary-delete-messages-on-buffer
-	   wl-summary-buffer-target-mark-list)
-	  (setq wl-summary-buffer-target-mark-list nil)
-	  (save-excursion (wl-summary-sync nil "update"))))
+	  (wl-summary-erase-subr wl-summary-buffer-target-mark-list)
+	  (setq wl-summary-buffer-target-mark-list nil)))
     (message "Read-only folder.")))
+
+(defun wl-summary-erase-subr (msgs)
+  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
+  (wl-summary-delete-messages-on-buffer msgs)
+  ;; message buffer is not up-to-date
+  (unless (and wl-message-buffer
+	       (eq (wl-summary-message-number)
+		   (with-current-buffer wl-message-buffer
+		     wl-message-buffer-cur-number)))
+    (wl-summary-toggle-disp-msg 'off)
+    (setq wl-message-buffer nil)))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
@@ -4139,7 +4146,7 @@ If ARG, exit virtual folder."
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
     (if (car list-info)
-	(format (if (cdr list-info) "(%s %05d)" "(%s)")
+	(format (if (cdr list-info) "(%s %05.0f)" "(%s)")
 		(car list-info) (cdr list-info))
       "")))
 
@@ -4607,6 +4614,7 @@ Return t if message exists."
       (save-excursion
 	(set-buffer summary-buf)
 	(wl-summary-delete-all-temp-marks)))
+    (wl-draft-reply-position wl-draft-reply-default-position)
     (run-hooks 'wl-mail-setup-hook)))
 
 (defun wl-summary-reply-with-citation (&optional arg)
@@ -4614,6 +4622,7 @@ Return t if message exists."
   (when (wl-summary-reply arg t)
     (goto-char (point-max))
     (wl-draft-yank-original)
+    (wl-draft-reply-position wl-draft-reply-default-position)
     (run-hooks 'wl-mail-setup-hook)))
 
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
@@ -4820,6 +4829,7 @@ Reply to author if invoked with ARG."
       (goto-char (point-min))
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf number)
+	(wl-draft-reply-position wl-draft-reply-default-position)
 	(unless without-setup-hook
 	  (run-hooks 'wl-mail-setup-hook)))
       t)))

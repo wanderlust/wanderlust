@@ -712,15 +712,6 @@
 (defvar wl-highlight-folder-closed-regexp " *\\(\\[\\+\\]\\)")
 (defvar wl-highlight-folder-leaf-regexp "[ ]*\\([-%\\+]\\)\\(.*\\):.*$")
 
-(defvar wl-highlight-summary-unread-regexp " *[0-9]+[^0-9]\\(!\\|U\\)")
-(defvar wl-highlight-summary-important-regexp " *[0-9]+[^0-9]\\$")
-(defvar wl-highlight-summary-new-regexp " *[0-9]+[^0-9]N")
-(defvar wl-highlight-summary-deleted-regexp " *[0-9]+D")
-(defvar wl-highlight-summary-refiled-regexp " *[0-9]+o")
-(defvar wl-highlight-summary-copied-regexp " *[0-9]+O")
-(defvar wl-highlight-summary-target-regexp " *[0-9]+\\*")
-;;(defvar wl-highlight-summary-thread-top-regexp " *[0-9]+[^0-9][^0-9]../..\(.*\)..:.. \\[")
-
 (defvar wl-highlight-citation-face-list
   '(wl-highlight-message-cited-text-1
     wl-highlight-message-cited-text-2
@@ -791,12 +782,12 @@
 
 (defun wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol)
-    (cond ((and (string= temp-mark "+")
+    (cond ((and (string= temp-mark wl-summary-score-over-mark)
 		(member mark (list elmo-msgdb-unread-cached-mark
 				   elmo-msgdb-unread-uncached-mark
 				   elmo-msgdb-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	  ((and (string= temp-mark "-")
+	  ((and (string= temp-mark wl-summary-score-below-mark)
 		(member mark (list elmo-msgdb-unread-cached-mark
 				   elmo-msgdb-unread-uncached-mark
 				   elmo-msgdb-new-mark)))
@@ -819,9 +810,9 @@
 	   (setq fsymbol 'wl-highlight-summary-answered-face))
 	  ((or (string= mark elmo-msgdb-important-mark))
 	   (setq fsymbol 'wl-highlight-summary-important-face))
-	  ((string= temp-mark "-")
+	  ((string= temp-mark wl-summary-score-below-mark)
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
-	  ((string= temp-mark "+")
+	  ((string= temp-mark wl-summary-score-over-mark)
 	   (setq fsymbol 'wl-highlight-summary-high-read-face))
 	  (t (if (zerop (length indent))
 		 (setq fsymbol 'wl-highlight-summary-thread-top-face)
@@ -859,12 +850,12 @@
 		dest t))))
       (if (not fsymbol)
 	  (cond
-	   ((and (string= temp-mark "+")
+	   ((and (string= temp-mark wl-summary-score-over-mark)
 		 (member status-mark (list elmo-msgdb-unread-cached-mark
 					   elmo-msgdb-unread-uncached-mark
 					   elmo-msgdb-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	   ((and (string= temp-mark "-")
+	   ((and (string= temp-mark wl-summary-score-below-mark)
 		 (member status-mark (list elmo-msgdb-unread-cached-mark
 					   elmo-msgdb-unread-uncached-mark
 					   elmo-msgdb-new-mark)))
@@ -880,9 +871,9 @@
 	   ((string= status-mark elmo-msgdb-important-mark)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark
-	   ((string= temp-mark "-")
+	   ((string= temp-mark wl-summary-score-below-mark)
 	    (setq fsymbol 'wl-highlight-summary-low-read-face))
-	   ((string= temp-mark "+")
+	   ((string= temp-mark wl-summary-score-over-mark)
 	    (setq fsymbol 'wl-highlight-summary-high-read-face))
 	   ;;
 	   (t (if (null
@@ -983,16 +974,7 @@ Faces used:
   wl-highlight-summary-deleted-face     messages mark as deleted
   wl-highlight-summary-refiled-face     messages mark as refiled
   wl-highlight-summary-copied-face      messages mark as copied
-  wl-highlight-summary-new-face         new messages
-
-Variables used:
-  wl-highlight-summary-unread-regexp    matches unread messages
-  wl-highlight-summary-important-regexp matches important messages
-  wl-highlight-summary-deleted-regexp   matches messages mark as deleted
-  wl-highlight-summary-refiled-regexp   matches messages mark as refiled
-  wl-highlight-summary-copied-regexp    matches messages mark as copied
-  wl-highlight-summary-new-regexp       matches new messages
-"
+  wl-highlight-summary-new-face         new messages"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
   (let (lines too-big gc-message e p hend i percent)

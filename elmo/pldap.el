@@ -104,7 +104,7 @@
 It is recommended to use the `-T' switch with Nescape's
 implementation to avoid line wrapping.
 `-L' is needed to get LDIF outout.
-(`-LL' is needed to get rid of comments from OpenLDAP's ldapsearch.)
+\(`-LL' is needed to get rid of comments from OpenLDAP's ldapsearch.\)
 `-x' is needed to use simple authentication.
 The `-B' switch should be used to enable the retrieval of
 binary values."

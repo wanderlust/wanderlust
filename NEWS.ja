@@ -1,8 +1,20 @@
 Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
 
+** $BA0$K;H$C$F$$$?$b$N$h$j?7$7$$(B Wanderlust $B$r5/F0$9$k$H(B NEWS(.ja) $B$NFbMF$r(B
+   $BI=<($7$^$9!#(B
+
+** wl-draft-reply-*-list $B$N=i4|CM$,JQ99$5$l$^$7$?!#(B
+   $B0JA0$N@_Dj$O!"(Bsamples/ja/dot.wl $B$r;2>H$7$F2<$5$$!#(B
+
+** wl-draft-reply-myself-*-list $B$OGQ;_$5$l!"(Bwl-draft-reply-*-list $B$KE}9g(B
+   $B$5$l$^$7$?!#(B
+
 ** $B%I%i%U%H%P%C%U%!%&%#%s%I%&$NG[CV$N;XDj$N;EJ}$,JQ99$5$l$^$7$?!#(B
    wl-draft-buffer-style $B$H(B wl-draft-reply-buffer-style $B$K(B keep,full,split
    $B$N$$$:$l$+$r;XDj$7$^$9!#(B
+
+** non-MIME PGP $B%a%C%;!<%8$N8!>Z!"I|9f2=$N$?$a$N%3%^%s%I$,DI2C$5$l$^$7$?!#(B
+   $B%a%C%;!<%8%P%C%U%!$K$*$$$F(B C-c:v, C-c:d $B$G$=$l$>$l8!>Z!"I|9f2=$7$^$9!#(B
 
 * 2.8.1 $B$+$i(B 2.10.0 $B$X$NJQ99E@(B
 
@@ -33,6 +45,9 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
 
 ** $B%"%/%;%9%0%k!<%W%U%)%k%@$N2~L>$,=PMh$k$h$&$K$J$j$^$7$?!#(B
 
+** $B?75,%5%^%j$KBP$9$k%9%l%C%II=<($N(B ON/OFF $B$r;XDj$G$-$k$h$&$K$J$j$^$7$?!#(B
+   wl-summary-default-view, wl-summary-default-view-alist $B$r@_Dj$7$F2<$5$$!#(B
+
 ** $B%9%F%#%C%-!<%5%^%j$r(B q $B$d(B g $B$GH4$1$k:]$K!"0l;~E*%^!<%/$rJ];}$9$k$h$&$K(B
    $B$J$j$^$7$?!#(B
 
@@ -59,7 +74,7 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
    $B%a%C%;!<%8%P%C%U%!$G(B "D" $B$K%P%$%s%I$5$l$F$$$^$9!#(B
 
 ** $B%K%e!<%95-;v$rEj9F$9$k%5!<%P$r4JC1$K@_Dj$G$-$k$h$&$K$J$j$^$7$?!#(B
-   info $B$NNc$K=,$C$F(B wl-nntp-posting-config-alist $B$r@_Dj$7$F2<$5$$!#(B
+   Info $B$NNc$K=,$C$F(B wl-nntp-posting-config-alist $B$r@_Dj$7$F2<$5$$!#(B
 
 ** $BJQ?t(B wl-draft-reply-with-argument-list $BEy$G!"4X?t$NJV$jCM$+$i08@h$r(B
    $B7h$a$i$l$k$h$&$K$J$j$^$7$?!#(B
@@ -159,7 +174,8 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
    "$" $B%^!<%/$NIU$$$?%a%C%;!<%8$r8+D>$7$?$$>l9g$O(B 'mark $B%U%)%k%@$r;2>H$7$F(B
    $B$/$@$5$$!#(B
 
-* 2.6.1 $B$O(B 2.6.0 $B$N=$@5HG$G$9!#(B
+* 2.6.0 $B$+$i(B 2.6.1 $B$X$NJQ99E@(B
+  2.6.1 $B$O(B 2.6.0 $B$N=$@5HG$G$9!#(B
 
 ** Emacs 21 $B$G(B Recursive load... $B$H=P$kIT6q9g$,=$@5$5$l$^$7$?!#(B
 
@@ -199,7 +215,8 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
 
 ** $BB?$/$N%P%0%U%#%C%/%9(B
 
-* 2.4.1 $B$O(B 2.4.0 $B$N=$@5HG$G$9!#(B
+* 2.4.0 $B$+$i(B 2.4.1 $B$X$NJQ99E@(B
+  2.4.1 $B$O(B 2.4.0 $B$N=$@5HG$G$9!#(B
 
 ** FLIM 1.14.x $B>e$G$bF0:n$9$k$h$&$K$J$j$^$7$?!#(B
 
@@ -216,7 +233,7 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
 (setq elmo-default-imap4-authenticate-type 'clear)
 $B$KJQ99$9$kI,MW$,$"$j$^$9!#(B
 
-* 1.1.1 $B$+$i(B version 2.4.0 $B$X$NJQ99E@(B
+* 1.1.1 $B$+$i(B 2.4.0 $B$X$NJQ99E@(B
 
 ** $B%P!<%8%g%sHV9f(B
 $B%P!<%8%g%sHV9f$NIU$1J}$,JQ$o$j$^$7$?!#(B
@@ -285,7 +302,7 @@ Maildir $B$N%5%^%j$G(B M-x wl-summary-pack-number $B$r<B9T$9$k$H%a%C%;!<%8HV9
 *** $B%U%#%k%?%U%)%k%@$KJ#;($J>r7o;XDj$r;XDj$G$-$k$h$&$K$J$j$^$7$?!#(B
 AND $B>r7o!"(BOR $B>r7o!"H]Dj>r7o!"$*$h$S$=$l$i$NAH9g$;$r;XDj$G$-$^$9!#(B
 $B$3$l$K$H$b$J$$!">r7o;XDjItJ,$N%7%s%?%C%/%9$,JQ99$5$l$^$7$?!#(B
-$B$/$o$7$/$O(B info $B$r8fMw2<$5$$!#(B
+$B$/$o$7$/$O(B Info $B$r8fMw2<$5$$!#(B
 
 $BCm0U!'(B1.1.1 $B$+$i0\9T$5$l$kJ}$X(B
 $B>e5-JQ99$KH<$$!"%U%#%k%?%U%)%k%@$N(B msgdb $B$NCV$->l=j$,JQ$o$j$^$7$?!#(B
@@ -378,7 +395,8 @@ wl-message-visible-field-list $B$G!"(BWanderlust $B%l%Y%k$G@_Dj$,2DG=(B
 $B$J$j$^$7$?!#(B
 
 
-* 1.1.1 $B$O(B 1.1.0 $B$N%P%0=$@5HG$G$9!#$$$/$D$+$N:Y$+$$=$@5$,2C$o$C$F$$$^$9!#(B
+* 1.1.0 $B$+$i(B 1.1.1 $B$X$NJQ99E@(B
+  1.1.1 $B$O(B 1.1.0 $B$N%P%0=$@5HG$G$9!#$$$/$D$+$N:Y$+$$=$@5$,2C$o$C$F$$$^$9!#(B
 
 ** CVS $B%5!<%P>e$G$N3+H/$,;O$a$i$l$^$7$?!#(B
 
@@ -394,7 +412,7 @@ wl-message-visible-field-list $B$G!"(BWanderlust $B%l%Y%k$G@_Dj$,2DG=(B
 progress gauge $B$NI=<(5!G=$r$b$D(B Emacs $B$G$O!"=hM}$N?JD=$,(B progress gauge $B$K(B
 $BI=<($5$l$k$h$&$K$J$j$^$7$?!#(B
 
-* 1.0.3 $B$+$i(B version 1.1.0 $B$X$NJQ99E@(B 
+* 1.0.3 $B$+$i(B 1.1.0 $B$X$NJQ99E@(B 
 
 ** $B%$%s%9%H!<%k(B
 

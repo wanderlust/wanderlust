@@ -49,7 +49,7 @@
 
 (defvar elmo-nntp-max-number-precedes-list-active nil
   "Non-nil means max number of msgdb is set as the max number of `list active'.
-(Needed for inn 2.3 or later?).")
+\(Needed for inn 2.3 or later?\).")
 
 (defvar elmo-nntp-group-coding-system nil
   "A coding system for newsgroup string.")
@@ -1143,8 +1143,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result)))
      ((string= "body" search-key)
-      (error
-"Search by BODY is not supported (Toggle the plug off to search from caches)"))
+      nil)
      (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))
@@ -1193,7 +1192,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 (luna-define-method elmo-folder-search :around ((folder elmo-nntp-folder)
 						condition &optional from-msgs)
-  (if (elmo-folder-plugged-p folder)
+  (if (and (elmo-folder-plugged-p folder)
+	   (not (string= "body" (elmo-filter-key condition))))
       (elmo-nntp-search-internal folder condition from-msgs)
     (luna-call-next-method)))
 

@@ -182,7 +182,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :group 'wl-summary)
 
 (defcustom wl-summary-default-view-alist nil
-  "An alist of folder name and summary default view.
+  "An alist of regexp for folder name and summary default view.
 If no match, `wl-summary-default-view' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const :tag "Thread" thread)
@@ -201,7 +201,7 @@ If no match, `wl-summary-default-view' is used."
     (?a (length wl-summary-buffer-number-list)))
   "An alist of format specifications that can appear in summary mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -248,7 +248,7 @@ which are replaced by the given information:
     (?@ (wl-summary-line-attached)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -481,7 +481,7 @@ If nil, don't authenticate."
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp\)"
+\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl
@@ -745,30 +745,11 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
   :group 'wl-draft)
 
 (defcustom wl-draft-reply-with-argument-list
-  '(("Reply-To" . (("Reply-To") nil nil))
-    ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-    ("From" . (("From") nil nil)))
+  '(("From" . (("Reply-To" "Mail-Reply-To" "From")
+	       ("Mail-Followup-To" "To" "Cc")
+	       ("Followup-To" "Newsgroups"))))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
-'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
-Default is for 'reply-to-author'."
-  :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
-		       (list (repeat :tag "Fields For To" string)
-			     (repeat :tag "Fields For Cc" string)
-			     (repeat :tag "Fields For Newsgroups" string))))
-  :group 'wl-draft)
-
-(defcustom wl-draft-reply-without-argument-list
-  '(("Followup-To" . (nil nil ("Followup-To")))
-    ("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
-    ("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
-    ("From" . (("From") ("To" "Cc") ("Newsgroups"))))
-  "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -781,35 +762,20 @@ Default is for 'reply-to-all'."
 			     (repeat :tag "Fields For Newsgroups" string))))
   :group 'wl-draft)
 
-(defcustom wl-draft-reply-myself-with-argument-list
-  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
-    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
-    ("From" . (("To") ("Cc") nil)))
+(defcustom wl-draft-reply-without-argument-list
+  '(("Followup-To" . (("Mail-Followup-To" "Mail-Reply-To" "Reply-To") nil ("Followup-To")))
+    ("Mail-Followup-To" . (("Mail-Followup-To") nil nil))
+    ("Newsgroups" . (("Mail-Reply-To" "Reply-To" "To") ("Cc") ("Newsgroups")))
+    ("Mail-Reply-To" . (("Mail-Reply-To" "Reply-To") ("To" "Cc") nil))
+    ("Reply-To" . (("Reply-To") ("To" "Cc") nil))
+    (wl-draft-self-reply-p . (("To") ("Cc") nil))
+    ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
-Default is for 'reply-to-me'."
-  :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
-		       (list (repeat :tag "Fields For To" string)
-			     (repeat :tag "Fields For Cc" string)
-			     (repeat :tag "Fields For Newsgroups" string))))
-  :group 'wl-draft)
-
-(defcustom wl-draft-reply-myself-without-argument-list
-  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
-    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
-    ("From" . (("To") ("Cc") nil)))
-  "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
-'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
-Default is for 'followup-to-me'."
+cdr of each cons cell is used for draft message."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (repeat (string :tag "Field Name")))
 		       (list (repeat :tag "Fields For To" string)
@@ -924,7 +890,7 @@ Default is for 'followup-to-me'."
 (defcustom wl-summary-fix-timezone nil
   "*Time zone of the date string in summary mode.
 If nil, it is adjust to the default time zone information
-\(system's default time zone or environment variable TZ\)."
+\(system's default time zone or environment variable TZ)."
   :type '(choice (const :tag "Default time zone" nil)
 		 string)
   :group 'wl-summary)
@@ -1230,6 +1196,29 @@ If it is a function, it is called with the draft buffer as an argument."
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
+(defcustom wl-draft-reply-default-position 'body
+  "Begining position of reply buffer.
+'body means the top of body.
+'bottom means the bottom of body.
+'top means the top of header.
+\"To\", \"Newsgroups\", \"Subject\" means the position of the header field.
+You can also set it to a list of setting.
+"
+  :type '(choice (repeat
+		  (choice
+		   (const :tag "Top of body" body)
+		   (const :tag "Bottom of body" bottom)
+		   (const :tag "Top of header" top)
+		   (const "To")
+		   (const "Newsgroups")
+		   (const "Subject")
+		   (string :tag "Header Name")))
+		 (const "To")
+		 (const "Newsgroups")
+		 (const "Subject")
+		 (string :tag "Header Name"))
+  :group 'wl-draft)
+
 (defcustom wl-draft-queue-save-variables
   '(wl-envelope-from wl-from
     wl-smtp-posting-server wl-smtp-posting-user wl-smtp-posting-port
@@ -1359,7 +1348,11 @@ Allowed situations are:
   :type '(repeat (cons (string :tag "Realname") (string :tag "Petname")))
   :group 'wl-folder)
 
-(defcustom wl-summary-weekday-name-lang "ja"
+(defcustom wl-summary-weekday-name-lang
+  (if (and (boundp 'current-language-environment)
+	   (string-equal "Japanese"
+			 (symbol-value 'current-language-environment)))
+      "ja" "en")
   "*Language to display week day."
   :type '(choice (const "ja")
 		 (const "en")
@@ -1369,7 +1362,7 @@ Allowed situations are:
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-message-id-use-wl-from nil
+(defcustom wl-message-id-use-wl-from t
   "*Use `wl-from' for domain part of Message-ID if non-nil."
   :type 'boolean
   :group 'wl-pref)
@@ -1405,7 +1398,7 @@ which appear just before @."
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP\)
+\(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -1586,8 +1579,9 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-summary-max-thread-depth 30
-  "*If thread depth is larger than this value, don't treat it as a thread."
-  :type 'integer
+  "*If thread depth of the message is larger than this value, divide it."
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
@@ -1903,7 +1897,7 @@ See also variable `wl-summary-next-no-unread-command'."
   :group 'wl-pref
   :group 'wl-setting)
 
-(defcustom wl-message-buffer-prefetch-folder-type-list t
+(defcustom wl-message-buffer-prefetch-folder-type-list '(imap4 nntp)
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."
   :type `(choice (const :tag "all" t)
@@ -1929,12 +1923,12 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-message-buffer-prefetch-depth 3
+(defcustom wl-message-buffer-prefetch-depth 1
   "*Depth of buffer prefetch in summary mode."
   :type 'integer
   :group 'wl-pref)
 
-(defcustom wl-message-buffer-prefetch-idle-time 0.2
+(defcustom wl-message-buffer-prefetch-idle-time 1
   "*Idle time of buffer prefetch."
   :type 'number
   :group 'wl-pref)
@@ -2001,7 +1995,7 @@ e.x.
     ("^-han\\." . (2 "+" "+" "|" "-" " ")))
   "Thread indent set alist.
 If no match, following indent set is used.
-(wl-thread-indent-level
+\(wl-thread-indent-level
  wl-thread-have-younger-brother-str
  wl-thread-youngest-child-str
  wl-thread-vertical-str
@@ -2064,7 +2058,7 @@ If TYPE is nil, do nothing for duplicated messages."
   :group 'wl-folder)
 
 (defcustom wl-folder-move-cur-folder nil
-  "*Non-nil, move to current folder on folder-mode when goto folder."
+  "*Non-nil, move cursor to current folder on folder buffer when goto folder."
   :type 'boolean
   :group 'wl-folder)
 
@@ -2633,6 +2627,12 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2002-12-25
+(elmo-define-obsolete-variable 'wl-draft-reply-myself-with-argument-list
+			       'wl-draft-reply-with-argument-list)
+(elmo-define-obsolete-variable 'wl-draft-reply-myself-without-argument-list
+			       'wl-draft-reply-without-argument-list)
 
 ;; 2001-12-11: *-dir -> *-directory
 (elmo-define-obsolete-variable 'wl-icon-dir

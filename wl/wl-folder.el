@@ -116,6 +116,8 @@
     ["Write a message" wl-draft t]
     ["Write for current folder" wl-folder-write-current-folder t]
     "----"
+    ["Wanderlust NEWS" wl-news t]
+    "----"
     ["Toggle Plug Status" wl-toggle-plugged t]
     ["Change Plug Status" wl-plugged-change t]
     "----"
@@ -330,7 +332,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
 
 (defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
-  "Get elmo folder structure from entity."
+  "Get elmo folder structure from ENTITY."
   (` (if (, no-cache)
 	 (elmo-make-folder (elmo-string (, entity)))
        (or (wl-folder-elmo-folder-cache-get (, entity))
@@ -348,7 +350,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (forward-line 1))
 
 (defun wl-folder-prev-entity-skip-invalid (&optional hereto)
-  "move to previous entity. skip unsubscribed or removed entity."
+  "Move to previous entity. skip unsubscribed or removed entity."
   (interactive)
   (if hereto
       (end-of-line))
@@ -499,11 +501,11 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (let ((cur-buf (current-buffer))
 	(wl-auto-select-first nil)
 	trash-buf emptied)
+    (wl-summary-goto-folder-subr wl-trash-folder 'force-update)
+    (setq trash-buf (wl-summary-get-buffer-create wl-trash-folder))
     (if wl-stay-folder-window
-	(wl-folder-select-buffer
-	 (wl-summary-get-buffer-create wl-trash-folder)))
-    (wl-summary-goto-folder-subr wl-trash-folder 'force-update nil nil t)
-    (setq trash-buf (current-buffer))
+	(wl-folder-select-buffer trash-buf)
+      (switch-to-buffer trash-buf))
     (unwind-protect
 	(setq emptied (wl-summary-delete-all-msgs))
       (when emptied
@@ -952,21 +954,21 @@ Optional argument ARG is repeart count."
 	 (goto-char wl-folder-buffer-cur-point))))
 
 (defun wl-folder-set-current-entity-id (entity-id)
-  (let ((buf (get-buffer wl-folder-buffer-name)))
+  (let* ((buf (get-buffer wl-folder-buffer-name))
+	 (buf-win (get-buffer-window buf)))
     (if buf
-	(save-excursion
-	  (set-buffer buf)
-	  (setq wl-folder-buffer-cur-entity-id entity-id)
-	  (setq wl-folder-buffer-cur-path (wl-folder-get-path wl-folder-entity
-							      entity-id))
-	  (wl-highlight-folder-path wl-folder-buffer-cur-path)
-	  (and wl-folder-move-cur-folder
-	       wl-folder-buffer-cur-point
-	       (goto-char wl-folder-buffer-cur-point))))
-    (if (eq (current-buffer) buf)
-	(and wl-folder-move-cur-folder
-	     wl-folder-buffer-cur-point
-	     (goto-char wl-folder-buffer-cur-point)))))
+	(save-current-buffer
+	  (save-selected-window
+	    (if buf-win
+		(select-window buf-win)
+	      (set-buffer buf))
+	    (setq wl-folder-buffer-cur-entity-id entity-id)
+	    (setq wl-folder-buffer-cur-path
+		  (wl-folder-get-path wl-folder-entity entity-id))
+	    (wl-highlight-folder-path wl-folder-buffer-cur-path)
+	    (and wl-folder-move-cur-folder
+		 wl-folder-buffer-cur-point
+		 (goto-char wl-folder-buffer-cur-point)))))))
 
 (defun wl-folder-check-current-entity ()
   "Check folder at position.
@@ -2075,7 +2077,7 @@ If FOLDER is multi, return comma separated string (cross post)."
       nil)))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule (entity)
-  "Return ML address guess by FOLDER.
+  "Return ML address guess by ENTITY.
 Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
@@ -2113,7 +2115,7 @@ Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
 	  (elmo-string-matched-member tokey wl-subscribed-mailing-list t)))))
 
 (defun wl-folder-guess-mailing-list-by-folder-name (entity)
-  "Return ML address guess by FOLDER name's last hierarchy.
+  "Return ML address guess by ENTITY name's last hierarchy.
 Use `wl-subscribed-mailing-list'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
@@ -2712,7 +2714,7 @@ Use `wl-subscribed-mailing-list'."
 					 folder))))
 			 ;; Sticky folder exists.
 			 (wl-summary-sticky-buffer-name
-			  (elmo-folder-name-internal folder))		     
+			  (elmo-folder-name-internal folder))
 		       (concat
 			wl-summary-buffer-name
 			(symbol-name this-command))))

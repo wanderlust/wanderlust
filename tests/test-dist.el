@@ -13,7 +13,7 @@
        (lambda (module)
 	 (setq filename (concat (symbol-name module) ".el"))
 	 (unless (file-exists-p (expand-file-name filename WLDIR))
-	   (add-to-list 'lost symbol)))
+	   (add-to-list 'lost filename)))
        WL-MODULES)
       lost))))
 
@@ -26,7 +26,7 @@
        (lambda (module)
 	 (setq filename (concat (symbol-name module) ".el"))
 	 (unless (file-exists-p (expand-file-name filename ELMODIR))
-	   (add-to-list 'lost symbol)))
+	   (add-to-list 'lost filename)))
        ELMO-MODULES)
       lost))))
 
@@ -155,11 +155,10 @@
 	     (nth 1 (product-version (product-find 'wl-version)))))))
      '("README" "README.ja"))))
 
-;; copyright notice (beta only)
+;; copyright notice
 (luna-define-method test-wl-demo-copyright-notice ((case test-dist))
   (require 'wl-demo)
-  (when (string= (wl-version-status) "beta")
-    (lunit-assert
-     (string-match
-      (format-time-string "%Y" (current-time))
-      wl-demo-copyright-notice))))
+  (lunit-assert
+   (string-match
+    (format-time-string "%Y" (current-time))
+    wl-demo-copyright-notice)))
