@@ -1,3 +1,7 @@
+2002-01-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.9.3.
+
 2002-01-05  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-refile-subr): Remove `interactive'.
