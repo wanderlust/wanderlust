@@ -35,7 +35,7 @@
   "The language of info file (\"ja\" or \"en\").")
 
 ;; for Nemacs (dirty!)
-(if (not (fboundp 'file-executable-p))
+(or (fboundp 'file-executable-p)
     (fset 'file-executable-p 'file-exists-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -89,24 +89,24 @@
 
 (defun config-wl-package-subr ()
   (unless config-wl-package-done
-    (setq config-wl-package-done t)
-    (setq load-path (cons (expand-file-name ".") load-path))
-    (setq load-path (cons (expand-file-name WLDIR)
-			  (cons (expand-file-name ELMODIR) load-path)))
-    (setq wl-icon-dir (expand-file-name ICONDIR))
-    ;; load custom file if exists.  `WL-CFG.el' override for committer.
-    (load "./WL-CFG" t nil nil)
-    ;; load-path
-    (if wl-install-utils
-	(setq load-path (cons (expand-file-name UTILSDIR) load-path)))
-    (if wl-install-sasl
-	(setq load-path (cons (expand-file-name SASLDIR) load-path)))
-    (require 'install)
-    (load "./WL-ELS" nil nil t)
-    (condition-case ()
-	(require 'mime-setup)
-      (error (error "No MIME module was detected. Please install SEMI or tm.")))
-    (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
+  (setq config-wl-package-done t)
+  (setq load-path (cons (expand-file-name ".") load-path))
+  (setq load-path (cons (expand-file-name WLDIR)
+			(cons (expand-file-name ELMODIR) load-path)))
+  (setq wl-icon-dir (expand-file-name ICONDIR))
+;;; load custom file if exists.
+  (load "./WL-CFG" t nil t)
+;;; load-path
+  (if wl-install-utils
+      (setq load-path (cons (expand-file-name UTILSDIR) load-path)))
+  (if wl-install-sasl
+      (setq load-path (cons (expand-file-name SASLDIR) load-path)))
+  (require 'install)
+  (load "./WL-ELS")
+  (condition-case ()
+      (require 'mime-setup)
+    (error (error "No MIME module was detected. Please install SEMI or tm.")))
+  (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."

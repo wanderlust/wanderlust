@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2000-12-11.07}
+\def\texinfoversion{2000-11-10.15}
 %
 % Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
 % Free Software Foundation, Inc.
@@ -704,35 +704,20 @@ where each line of input produces a line of output.}
     % if you have multiple lines of stuff to put here, you'll need to
     % make the vbox yourself of the appropriate size.
     \ifx#1l%
-      \llap{\ignorespaces #2\hskip\inmarginspacing}%
+      \llap{#2\hskip\inmarginspacing}%
     \else
-      \rlap{\hskip\hsize \hskip\inmarginspacing \ignorespaces #2}%
+      \rlap{\hskip\hsize\hskip\inmarginspacing#2}%
     \fi
     \null
   }%
 }}
 \def\inleftmargin{\doinmargin l}
 \def\inrightmargin{\doinmargin r}
-%
-% @inmargin{TEXT [, RIGHT-TEXT]}
-% (if RIGHT-TEXT is given, use TEXT for left page, RIGHT-TEXT for right;
-% else use TEXT for both).
-% 
-\def\inmargin#1{\parseinmargin #1,,\finish}
-\def\parseinmargin#1,#2,#3\finish{% not perfect, but better than nothing.
-  \setbox0 = \hbox{\ignorespaces #2}% 
-  \ifdim\wd0 > 0pt
-    \def\lefttext{#1}%  have both texts
-    \def\righttext{#2}%
-  \else
-    \def\lefttext{#1}%  have only one text
-    \def\righttext{#1}%
-  \fi
-  %
+\def\inmargin{% not perfect, but better than nothing.
   \ifodd\pageno
-    \def\temp{\inleftmargin\lefttext}%
+    \let\temp=\inleftmargin
   \else
-    \def\temp{\inrightmargin\righttext}%
+    \let\temp=\inrightmargin
   \fi
   \temp
 }
