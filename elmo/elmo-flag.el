@@ -450,8 +450,12 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 	    (append
 	     elmo-global-flags
 	     additional-flags
-	     (mapcar 'intern
-		     (delete ".." (delete "." (directory-files dir))))))))))
+	     (and (file-directory-p dir)
+		  (mapcar 'intern
+			  (elmo-list-delete
+			   '(".." ".")
+			   (directory-files dir))))))
+	   #'delq))))
 
 ;;; To migrate from global mark folder
 (defvar elmo-global-mark-filename "global-mark"
