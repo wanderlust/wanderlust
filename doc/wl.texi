@@ -7191,20 +7191,30 @@ this value, display progress gauge.
 @cindex Bug report
 @cindex Backtrace
 
+Topics related to Wanderlust are discussed in following mailing lists.
+The latest version is also announced there.
+
 @display
 Wanderlust Mailing List @t{<wl@@lists.airs.net>}
 @end display
 
-Topics related to Wanderlust are discussed in the mailing list.
-The latest version is also announced there (in Japanese, sorry).
+In this list Japanese is mainly used for discussion. We also have a list
+for discussion in English:
+
+@display
+Wanderlust List in English @t{<wl-en@@lists.airs.net>}
+@end display
+(Messages posted to this list are also forwarded to the former one.)
 
 A guide can be obtained automatically by sending mail to
-@t{wl-ctl@@lists.airs.net} with the body
+@t{wl-ctl@@lists.airs.net} (or to @t{wl-en-ctl@@lists.airs.net} for
+the English one) with the body
 
 @example
 # guide
 @end example
-Please send bug reports or patches to the mailing list.  You can post to
+
+Please send bug reports or patches to one of those lists.  You can post to
 the mailing list even though you are not a member of it.
 
 If you send a bug report, please attach Backtrace with it.

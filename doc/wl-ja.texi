@@ -7104,23 +7104,32 @@ Non-nil ならばオフライン処理で溜った処理を実行するかどうかを確認します。
 @cindex Bug report
 @cindex Backtrace
 
+Wanderlust に関する議論は以下のメーリングリストで行われます。
+最新バージョンのアナウンスもこちらに流れます。
+
 @display
 Wanderlust Mailing List @t{<wl@@lists.airs.net>}
 @end display
 
-Wanderlust に関する議論はこのメーリングリストで行われます。
-最新バージョンのアナウンスもこちらに流れます。
+ここでは主に日本語での議論が行われています。また、英語専用のリストとして
 
-@t{wl-ctl@@lists.airs.net} 宛のメールの本文に、
+@display
+Wanderlust List in English @t{<wl-en@@lists.airs.net>}
+@end display
+
+もあります(こちらに投稿されたメッセージは前者にも配送されます)。
+
+これらのメーリングリストのガイドを得るには、@t{wl-ctl@@lists.airs.net} 宛
+(英語の方は @t{wl-en-ctl@@lists.airs.net} 宛) で、本文に
 
 @example
 # guide
 @end example
 
 @noindent
-と書いたメールを送ると入会のガイドが自動的にもらえます。
+と書いたメールを送って下さい。
 
-バグ報告やパッチの送付もこちらのメーリングリストへ送ってください。メーリ
+バグ報告やパッチの送付もこれらのメーリングリストへ送ってください。メーリ
 ングリストのメンバでなくとも、送信できる設定になっています。
 
 また、バグ報告の場合はバックトレースを取って添付すると原因究明しやすくな
