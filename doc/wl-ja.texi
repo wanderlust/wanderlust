@@ -2843,22 +2843,12 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @table @code
 @item wl-message-buffer-prefetch-folder-type-list
 @vindex wl-message-buffer-prefetch-folder-type-list
-$B=i4|@_Dj$O(B @code{t}$B!#$3$N>l9g!"A4$F$N%U%)%k%@$G@hFI$_5!G=$,M-8z$K$J$j$^(B
-$B$9!#FCDj$N%U%)%k%@<oJL$N>l9g$K$@$1@hFI$_5!G=$rM-8z$K$7$?$$>l9g$K$O!"%U%)(B
-$B%k%@<oJL$N%j%9%H$r;XDj$7$^$9!#(B
-$BNc$($P0J2<$N$h$&$K@_Dj$7$^$9!#(B(NNTP $B%U%)%k%@$H(B IMAP $B%U%)%k%@$G$@$1@hFI$_(B
-$B$7$?$$>l9g(B)
-
-@lisp
-@group
-(setq wl-message-buffer-prefetch-folder-type-list
-      '(nntp imap4))
-@end group
-@end lisp
-
-$B$3$N>l9g!"$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)%k%@$G$O(B 
-IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B 
-@code{wl-message-buffer-prefetch-folder-list} $B$h$j$bM%@h$5$l$^$9!#(B
+$B=i4|@_Dj$O(B @code{'(imap4 nntp)}$B!#@hFI$_5!G=$rM-8z$K$7$?$$%U%)%k%@%?%$%W(B
+$B$N%7%s%\%k%j%9%H$r;XDj$7$^$9!#=i4|@_Dj$G$O!"(BIMAP4 $B$H(BNNTP $B%U%)%k%@$G@hFI(B
+$B$_5!G=$,M-8z$K$J$j$^$9!#$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)(B
+$B%k%@$G$O(B IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B 
+@code{wl-message-buffer-prefetch-folder-list} $B$h$j$bM%@h$5$l$^$9!#$9$Y$F(B
+$B$N%U%)%k%@$G@hFI$_5!G=$rM-8z$K$7$?$$>l9g$K$O!"(Bt $B$r;XDj$7$^$9!#(B
 
 @item wl-message-buffer-prefetch-folder-list
 @vindex wl-message-buffer-prefetch-folder-list
@@ -2867,11 +2857,11 @@ IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$NBP>]$H$J$j$^$9!#$3$NJQ?t$O(B
 
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-$B=i4|@_Dj$O(B 3$B!#@hFI$_5!G=$9$k%a%C%;!<%8$N?t!#(B
+$B=i4|@_Dj$O(B 1$B!#@hFI$_5!G=$9$k%a%C%;!<%8$N?t!#(B
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
-$B=i4|@_Dj$O(B 0.2 ($BC10L(B:$BIC(B)$B!#@hFI$_5!G=$9$k;~4V4V3V!#(B
+$B=i4|@_Dj$O(B 1 ($BC10L(B:$BIC(B)$B!#@hFI$_5!G=$9$k;~4V4V3V!#(B
 
 @item wl-message-buffer-prefetch-threshold
 @vindex wl-message-buffer-prefetch-threshold

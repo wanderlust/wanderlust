@@ -2843,22 +2843,13 @@ variables.
 @table @code
 @item wl-message-buffer-prefetch-folder-type-list
 @vindex wl-message-buffer-prefetch-folder-type-list
-The initial setting is @code{t}. In this case, prefetch messages in all
-folders.
-If it is a list of folder types, it specifies the folder types in which
-message prefetching is enabled.
-Following is an example (prefetch messages in nntp and imap4 folders)
-
-@lisp
-@group
-(setq wl-message-buffer-prefetch-folder-type-list
-      '(nntp imap4))
-@end group
-@end lisp
-
-In this case, multi folder that contains localdir and imap4 prefetches
-only imap4 messages.  This variable precedes the value of
+The initial setting is @code{'(imap4 nntp)}.  If it is a list of folder
+types, it specifies the folder types in which message prefetching is
+enabled. In initial setting, messages are prefetch only in the nntp and
+imap4 folders. In this case, multi folder that contains localdir and 
+imap4 prefetches only imap4 messages. This variable precedes the value of
 @code{wl-message-buffer-prefetch-folder-list}.
+To prefetch messages in all folder types, specify @code{t}.
 
 @item wl-message-buffer-prefetch-folder-list
 @vindex wl-message-buffer-prefetch-folder-list
@@ -2867,11 +2858,11 @@ A list of regexp of folders to enable message prefetching.
 
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-The initial setting is 3. The number of messages for automatical prefetch.
+The initial setting is 1. The number of messages for automatical prefetch.
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
-The initial setting is 0.2 (in seconds). The period of automatical prefetch.
+The initial setting is 1 (in seconds). The period of automatical prefetch.
 
 @item wl-message-buffer-prefetch-threshold
 @vindex wl-message-buffer-prefetch-threshold
