@@ -1037,7 +1037,8 @@ non-nil."
 	  (when session (elmo-network-close-session session)))
       (error
        (elmo-network-close-session session)
-       (signal (car error)(cdr error)))))
+       (unless (string= (nth 1 error) "Unplugged")
+	 (signal (car error)(cdr error))))))
   (wl-draft-send-mail-with-smtp))
 
 (defun wl-draft-insert-required-fields (&optional force-msgid)

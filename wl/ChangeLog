@@ -1,5 +1,10 @@
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp):
+	Fix for unplugged.
+
+2002-02-01  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-folder.el (wl-folder-virtual): New function.
 	Define key as "V".
 
