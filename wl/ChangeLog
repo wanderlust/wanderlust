@@ -1,3 +1,14 @@
+2000-06-15  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Made it to select various image types.
+	(wl-logo-bitmap, wl-logo-xbm, wl-logo-xpm): Renamed and divided
+	from `wl-title-logo'.
+	(wl-logo-ascii): New variable.
+	(TopLevel): Require `wl-highlight'; no need to require `wl-xmas'.
+	(wl-demo-copyright-notice): New constant.
+
+	* wl-vars.el (wl-demo-display-logo): Made it can be a image type.
+
 2000-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el (wl-summary-target-above): Renamed from

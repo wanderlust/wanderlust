@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-30 15:56:54 teranisi>
+;; Time-stamp: <2000-06-15 20:04:29 yamaoka>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -25,177 +25,248 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
+
+(defconst wl-demo-copyright-notice
+  "Copyright (C) 1998-2000 Yuuichi Teranishi <teranisi@gohome.org>")
 
 (require 'wl-vars)
+(require 'wl-highlight)
 (provide 'wl-demo)
-(if (featurep 'xemacs)
-    (require 'wl-xmas))
 
+;; Avoid byte compile warnings.
 (eval-when-compile
-  (defun-maybe device-on-window-system-p ())
-  (defun-maybe glyph-height (a))
-  (defun-maybe glyph-width (a))
-  (defun-maybe make-extent (a b))
-  (defun-maybe make-glyph (a))
-  (defun-maybe set-extent-end-glyph (a b))
-  (defun-maybe startup-center-spaces (a))
-  (defun-maybe window-pixel-height ())
-  (defun-maybe window-pixel-width ())
-  (condition-case nil
-      (require 'bitmap)
-    (error nil))
-  (defun-maybe bitmap-compose (a))
-  (defun-maybe bitmap-decode-xbm (a))
-  (defun-maybe bitmap-read-xbm-file (a))
-  (unless (boundp ':data)
-    (set (make-local-variable ':data) nil))
-  (unless (boundp ':type)
-    (set (make-local-variable ':type) nil))
-  (condition-case nil
-      (require 'image)
-    (error nil))
-  (defun-maybe frame-char-height ())
-  (defun-maybe frame-char-width ())
-  (defun-maybe image-type-available-p (a)))
-
-(static-condition-case nil
-    (progn
-      (insert-image '(image))
-      (defalias 'wl-insert-image 'insert-image))
-  (wrong-number-of-arguments
-   (defun wl-insert-image (image)
-     (insert-image image "x")))
-  (void-function
-   (defun wl-insert-image (image))))
+  (mapcar
+   (function (lambda (fn) (or (fboundp fn) (fset fn 'ignore))))
+   '(bitmap-compose
+     bitmap-decode-xbm bitmap-read-xbm-buffer bitmap-read-xbm-file
+     create-image device-on-window-system-p display-graphic-p
+     frame-char-height frame-char-width image-type-available-p
+     insert-image make-extent make-glyph set-extent-end-glyph
+     set-glyph-face specifier-instance window-pixel-height
+     window-pixel-width)))
+(defvar scrollbar-width)
+(defvar vertical-scrollbar-visible-p)
 
 ;;
 ;; demo ;-)
 ;;
+
+(defvar wl-logo-ascii "        o$                  oo$$$$$$ooo
+     oo$$$      o$$      o$$$\"\"\"\"\"\"$$$$$o
+  $$$$$$\"     o$$$\"    o$\"\"          \"$$$
+    $$\"      o$\"\"    o$\"              $$$
+   $\"      oo$\"     $\"                $$$
+ o$     oo\"\"$$     $                  $$
+o$$  oo$\"  \"$$$o  $                 o$$
+$$$$\"\"       \"$$oo$    o          o$\"
+               \"$$o   \"$$$o oooo$\"\"
+                 $$       \"\"\"\"
+	       Wanderlust
+                  \"$
+Yet Another Message Interface On Emacsen")
+
 (eval-when-compile
-  (cond ((or (featurep 'xemacs) (featurep 'image))
-	 (defmacro wl-title-logo ()
-	   (let ((file (expand-file-name "wl-logo.xpm" wl-icon-dir)))
-	     (if (file-exists-p file)
-		 (let ((buffer (generate-new-buffer " *wl-logo*"))
-		       (coding-system-for-read 'binary)
-		       buffer-file-format format-alist
-		       insert-file-contents-post-hook
-		       insert-file-contents-pre-hook)
-		   (prog1
-		       (save-excursion
-			 (set-buffer buffer)
-			 (insert-file-contents file)
-			 (buffer-string))
-		     (kill-buffer buffer)))))))
-	((condition-case nil
-	     (require 'bitmap)
-	   (error nil))
-	 (defmacro wl-title-logo ()
-	   (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
-	     (if (file-exists-p file)
-		 (condition-case nil
-		     (bitmap-decode-xbm (bitmap-read-xbm-file file))
-		   (error (message "Bitmap Logo is not used.")))))))
-	(t
-	 (defmacro wl-title-logo ()))))
+  (defmacro wl-logo-xpm ()
+    ;; (WIDTH HEIGHT DATA)
+    (let ((file (expand-file-name "wl-logo.xpm" wl-icon-dir)))
+      (if (file-exists-p file)
+	  (with-temp-buffer
+	    (insert-file-contents file)
+	    (re-search-forward
+	     (concat "\"[\t ]*\\([0-9]+\\)[\t ]+\\([0-9]+\\)"
+		     "[\t ]+[0-9]+[\t ]+[0-9]+[\t ]*\""))
+	    (list 'list
+		  (string-to-number (match-string 1))
+		  (string-to-number (match-string 2))
+		  (buffer-string))))))
+  (defmacro wl-logo-xbm ()
+    ;; (WIDTH HEIGHT DATA)
+    (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
+      (if (file-exists-p file)
+	  (with-temp-buffer
+	    (insert-file-contents file)
+	    (let ((case-fold-search t)
+		  width height)
+	      (search-forward "width")
+	      (setq width (read (current-buffer)))
+	      (goto-char (point-min))
+	      (search-forward "height")
+	      (setq height (read (current-buffer)))
+	      (goto-char (point-min))
+	      (search-forward "{")
+	      (delete-region (point-min) (point))
+	      (while (re-search-forward "[^0-9a-fx]+" nil t)
+		(replace-match ""))
+	      (goto-char (point-min))
+	      (insert "\"")
+	      (while (search-forward "0x" nil t)
+		(replace-match "\\\\x"))
+	      (goto-char (point-max))
+	      (insert "\"")
+	      (goto-char (point-min))
+	      (list 'list width height (read (current-buffer))))))))
+  (defmacro wl-logo-bitmap ()
+    ;; (DECODED-P . DATA)
+    (let ((file (expand-file-name "wl-logo.xbm" wl-icon-dir)))
+      (if (file-exists-p file)
+	  (if (condition-case nil (require 'bitmap) (error nil))
+	      (list 'cons t (bitmap-decode-xbm
+			     (bitmap-read-xbm-file file)))
+	    (with-temp-buffer
+	      (insert-file-contents file)
+	      (list 'cons nil (buffer-string))))))))
 
-(defconst wl-title-logo
-  (cond ((or (and (featurep 'xemacs)
-                  (featurep 'xpm)
-                  (device-on-window-system-p))
-             (and (eval-when-compile (featurep 'image))
-                  (image-type-available-p 'xpm)))
-	 (wl-title-logo))
-	((and window-system
-	      (condition-case nil
-		  (require 'bitmap)
-		(error nil)))
-	 (let ((cmp (wl-title-logo)))
-	   (if cmp
-	       (condition-case nil
-		   (let ((len (length cmp))
-			 (bitmap (bitmap-compose (aref cmp 0)))
-			 (i 1))
+(let ((xpm (wl-logo-xpm)))
+  (if (and xpm (or (and (featurep 'xemacs)
+			(featurep 'xpm))
+		   (and (condition-case nil (require 'image) (error nil))
+			(image-type-available-p 'xpm))))
+      (progn
+	(put 'wl-logo-xpm 'width (car xpm))
+	(put 'wl-logo-xpm 'height (nth 1 xpm))
+	(put 'wl-logo-xpm 'image
+	     (if (featurep 'xemacs)
+		 (make-glyph (vector 'xpm ':data (nth 2 xpm)))
+	       (create-image (nth 2 xpm) 'xpm t))))))
+
+(let ((xbm (wl-logo-xbm))
+      (bm (wl-logo-bitmap)))
+  (if (and xbm (or (featurep 'xemacs)
+		   (featurep 'image)
+		   (condition-case nil (require 'bitmap) (error nil))))
+      (progn
+	(put 'wl-logo-xbm 'width (car xbm))
+	(put 'wl-logo-xbm 'height (nth 1 xbm))
+	(put 'wl-logo-xbm 'image
+	     (cond
+	      ((featurep 'xemacs)
+	       (make-glyph (vector 'xbm ':data xbm)))
+	      ((featurep 'image)
+	       (create-image (nth 2 xbm) 'xbm t
+			     ':width (car xbm) ':height (nth 1 xbm)))
+	      (t
+	       (let ((default-enable-multibyte-characters t)
+		     (default-mc-flag t))
+		 (with-temp-buffer
+		   (let* ((cmp (if (car bm)
+				   (cdr bm)
+				 (insert (cdr bm))
+				 (prog1
+				     (bitmap-decode-xbm (bitmap-read-xbm-buffer
+							 (current-buffer)))
+				   (erase-buffer))))
+			  (len (length cmp))
+			  (i 1))
+		     (insert (bitmap-compose (aref cmp 0)))
 		     (while (< i len)
-		       (setq bitmap (concat bitmap "\n"
-					    (bitmap-compose (aref cmp i)))
-			     i (1+ i)))
-		     bitmap)
-		 (error nil)))))))
+		       (insert "\n" (bitmap-compose (aref cmp i)))
+		       (setq i (1+ i)))
+		     (buffer-string))))))))))
 
-(defun wl-demo ()
-  (interactive)
-  (let ((demo-buf (get-buffer-create "*WL Demo*"))
-	logo-ext start)
+(defun wl-demo (&optional image-type)
+  "Demo on the startup screen.
+Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
+  (interactive "P")
+  (let* ((wl-demo-display-logo
+	  (if (and image-type (interactive-p))
+	      (let* ((selection '(("xbm" . xbm) ("xpm" . xpm) ("ascii")))
+		     (type (completing-read "Image type: " selection nil t)))
+		(if (assoc type selection)
+		    (cdr (assoc type selection))
+		  t))
+	    (or image-type wl-demo-display-logo)))
+	 (demo-buf (let ((default-enable-multibyte-characters t)
+			 (default-mc-flag t)
+			 (default-line-spacing 0))
+		     (get-buffer-create "*WL Demo*")))
+	 (logo (if (cond ((featurep 'xemacs)
+			  (device-on-window-system-p))
+			 ((featurep 'image)
+			  (display-graphic-p))
+			 (t window-system))
+		   (cond ((and (eq 'xbm wl-demo-display-logo)
+			       (get 'wl-logo-xbm 'width))
+			  'wl-logo-xbm)
+			 (wl-demo-display-logo
+			  (cond ((get 'wl-logo-xpm 'width)
+				 'wl-logo-xpm)
+				((get 'wl-logo-xbm 'width)
+				 'wl-logo-xbm))))))
+	 (ww (window-width))
+	 (wh (window-height))
+	 rest)
     (switch-to-buffer demo-buf)
     (erase-buffer)
-    (if (and wl-demo-display-logo wl-title-logo)
-	(cond
-         ((featurep 'xemacs)
-          (let ((wl-logo (make-glyph (vector 'xpm :data wl-title-logo))))
-            (insert-char ?\n (max 1 (/ (- (window-height) 6
-                                          (/ (glyph-height wl-logo)
-                                             (/ (window-pixel-height)
-                                                (window-height)))) 2)))
-            (indent-to (startup-center-spaces wl-logo))
-            (insert-char ?\ (max 0 (/ (- (window-width)
-                                         (/ (glyph-width wl-logo)
-                                            (/ (window-pixel-width)
-                                               (window-width)))) 2)))
-            (setq logo-ext (make-extent (point)(point)))
-            (set-extent-end-glyph logo-ext wl-logo)))
-         ((featurep 'image)
-          (let ((wl-logo (list 'image :type 'xpm :data wl-title-logo))
-                pixel-width pixel-height)
-            (with-temp-buffer
-              (insert wl-title-logo)
-              (goto-char (point-min))
-              (skip-syntax-forward "^\"")
-              (when (looking-at "\"[ \t]*\\([0-9]+\\)[ \t]*\\([0-9]+\\)")
-                (setq pixel-width (string-to-int (match-string 1))
-                      pixel-height (string-to-int (match-string 2)))))
-            (insert-char ?\n (max 1 (/ (- (window-height) 6
-                                          (/ pixel-height 
-                                             (frame-char-height))) 2)))
-            (insert-char ?\  (max 0 (/ (- (window-width)
-                                          (/ pixel-width 
-                                             (frame-char-width))) 2)))
-            (wl-insert-image wl-logo)
-            (insert "\n")))
-         (t
-	  (insert wl-title-logo)
-	  (indent-rigidly (point-min) (point-max)
-			  (max 0 (/ (- (window-width) (current-column)) 2)))
-	  (insert "\n")
-	  (goto-char (point-min))
-	  (insert-char ?\n (max 0 (/ (- (window-height)
-					(count-lines (point) (point-max))
-					6) 2)))
-	  (goto-char (point-max))))
-      (insert-char ?\n (max 1 (- (/ (window-height) 3) 2))))
-    (setq start (point))
-    (insert "\n" (if (and wl-demo-display-logo wl-title-logo)
-		     ""
-		   (concat wl-appname "\n")))
-    (let ((fill-column (window-width)))
-      (center-region start (point)))
-    (setq start (point))
-    (put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
-    (insert (format "\nversion %s - \"%s\"\n\n"
-		    wl-version wl-codename
-		    ))
-    (insert "Copyright (C) 1998-2000 Yuuichi Teranishi <teranisi@gohome.org>")
-    (put-text-property start (point-max) 'face 'wl-highlight-demo-face)
-    (let ((fill-column (window-width)))
+    (setq fill-column ww
+	  truncate-lines t)
+    (if logo
+	(let ((lw (get logo 'width))
+	      (lh (get logo 'height))
+	      (image (get logo 'image)))
+	  (cond
+	   ((featurep 'xemacs)
+	    (if (eq 'wl-logo-xbm logo)
+		(set-glyph-face image 'wl-highlight-logo-face))
+	    (setq rest (- wh 1 (/ (+ (* lh wh) (window-pixel-height) -1)
+				  (window-pixel-height))))
+	    (let ((wpw (- (window-pixel-width)
+			  (if (or (not (boundp 'vertical-scrollbar-visible-p))
+				  (specifier-instance
+				   vertical-scrollbar-visible-p))
+			      (specifier-instance scrollbar-width)
+			    0))))
+	      (insert-char ?\  (max 0 (/ (- (* wpw (1+ ww)) (* lw ww))
+					 2 wpw))))
+	    (set-extent-end-glyph (make-extent (point) (point)) image))
+	   ((featurep 'image)
+	    (if (eq 'wl-logo-xbm logo)
+		(let* ((unspecified nil)
+		       (bg (eval (face-background 'wl-highlight-logo-face)))
+		       (fg (eval (face-foreground 'wl-highlight-logo-face))))
+		  (if bg (plist-put (cdr image) ':background bg))
+		  (if fg (plist-put (cdr image) ':foreground fg))))
+	    (setq rest (/ (- (* wh (frame-char-height)) lh 1)
+			  (frame-char-height)))
+	    (insert-char ?\  (max 0 (/ (- (* (frame-char-width) (1+ ww)) lw)
+				       2 (frame-char-width))))
+	    (insert-image image))
+	   (t
+	    (insert image)
+	    (put-text-property (point-min) (point) 'face
+			       'wl-highlight-logo-face)
+	    (setq rest (- wh (count-lines (point-min) (point)) 1))
+	    (indent-rigidly (point-min) (point-max)
+			    (max 0 (/ (- ww (current-column)) 2)))))
+	  (goto-char (point-min)))
+      (insert (or wl-logo-ascii wl-appname))
+      (put-text-property (point-min) (point) 'face 'wl-highlight-logo-face)
+      (setq rest (- wh (count-lines (point-min) (point)) 1))
+      (let ((lw (current-column))
+	    (lh (count-lines (point-min) (point))))
+	(while (not (bobp))
+	  (end-of-line 0)
+	  (setq lw (max lw (current-column))))
+	(indent-rigidly (point) (point-max) (max 0 (/ (- ww lw) 2)))))
+    (insert-char ?\n (max 0 (/ (- rest 4) 2)))
+    (goto-char (point-max))
+    (insert "\n")
+    (let ((start (point))
+	  (text (format (cond ((<= rest 2)
+			       "version %s - \"%s\"\n%s")
+			      ((eq rest 3)
+			       "version %s - \"%s\"\n\n%s")
+			      (t
+			       "\nversion %s - \"%s\"\n\n%s"))
+			wl-version wl-codename wl-demo-copyright-notice)))
+      (insert text)
+      (put-text-property start (point) 'face 'wl-highlight-demo-face)
       (center-region start (point)))
     (goto-char (point-min))
-    (sit-for
-     (if (featurep 'lisp-float-type) (/ (float 5) (float 10)) 1))
-    ;;(if (featurep 'xemacs) (delete-extent logo-ext))
+    (sit-for (if (featurep 'lisp-float-type) (/ (float 5) (float 10)) 1))
     demo-buf))
 
 ;;; wl-demo.el ends here
