@@ -2023,17 +2023,19 @@ This function is defined for `window-scroll-functions'"
 	    (progn
 	      (goto-char (point-max))
 	      (forward-line -1))
-	  (when wl-summary-highlight
-	    (if wl-summary-lazy-highlight
-		(run-hooks 'wl-summary-buffer-window-scroll-functions)
-	      (when (not (get-text-property (point) 'face))
-		(save-excursion
-		  (forward-line (- 0
-				   (or
-				    wl-summary-partial-highlight-above-lines
-				    wl-summary-highlight-partial-threshold)))
-		  (wl-highlight-summary (point) (point-max))))))))
+	  (when (and wl-summary-highlight
+		     (not wl-summary-lazy-highlight)
+		     (not (get-text-property (point) 'face)))
+	    (save-excursion
+	      (forward-line (- 0
+			       (or
+				wl-summary-partial-highlight-above-lines
+				wl-summary-highlight-partial-threshold)))
+	      (wl-highlight-summary (point) (point-max))))))
       (wl-delete-all-overlays)
+      (when (and wl-summary-highlight
+		 wl-summary-lazy-highlight)
+	(run-hooks 'wl-summary-buffer-window-scroll-functions))
       (set-buffer-modified-p nil)
       (if mes (message "%s" mes)))))
 
