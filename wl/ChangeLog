@@ -1,5 +1,7 @@
 2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-sync-marks): Treat global-mark here.
+
 	* wl-version.el (wl-version): Set codename for `elmo-mark' branch.
 
 2002-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
@@ -52,6 +54,11 @@
 	(wl-expire-refile-with-copy-reserve-msg): Ditto.
 	(wl-summary-archive): Use elmo-folder-msgdb instead of
 	elmo-msgdb-load.
+
+2002-09-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-draft-preview-message): Revive the position
+	before evaluating wl-draft-send-hook in preview buffer.
 
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

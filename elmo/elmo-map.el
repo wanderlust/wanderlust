@@ -301,10 +301,7 @@
 (luna-define-method elmo-folder-list-importants ((folder elmo-map-folder))
   (let ((locations (elmo-map-folder-list-importants folder)))
     (if (listp locations)
-	(elmo-uniq-list
-	 (nconc (elmo-map-folder-locations-to-numbers folder locations)
-		(elmo-folder-list-messages-with-global-mark
-		 folder elmo-msgdb-important-mark)))
+	(elmo-map-folder-locations-to-numbers folder locations)
       (luna-call-next-method))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-map-folder)
