@@ -172,13 +172,14 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 
 (defvar elmo-spam-processor-internal nil)
 
-(defun elmo-spam-processor ()
+(defun elmo-spam-processor (&optional if-exists)
   (or elmo-spam-processor-internal
-      (let* ((scheme (or elmo-spam-scheme 'generic))
-	     (class (intern (format "elsp-%s" scheme))))
-	(require class)
-	(setq elmo-spam-processor-internal
-	      (luna-make-entity class)))))
+      (unless if-exists
+	(let* ((scheme (or elmo-spam-scheme 'generic))
+	       (class (intern (format "elsp-%s" scheme))))
+	  (require class)
+	  (setq elmo-spam-processor-internal
+		(luna-make-entity class))))))
 
 (require 'product)
 (product-provide (provide 'elmo-spam) (require 'elmo-version))

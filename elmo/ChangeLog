@@ -1,3 +1,8 @@
+2003-11-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-spam.el (elmo-spam-processor): Added 3rd argument
+	`if-exists'.
+
 2003-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-multi.el (elmo-folder-newsgroups): Simplify.

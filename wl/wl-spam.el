@@ -152,8 +152,9 @@ See `wl-summary-mark-action-list' for the detail of element."
 
 (defun wl-spam-save-status (&optional force)
   (interactive "P")
-  (let ((processor (elmo-spam-processor)))
-    (when (or force (elmo-spam-modified-p processor))
+  (let ((processor (elmo-spam-processor (not force))))
+    (when (or force
+	      (and processor (elmo-spam-modified-p processor)))
       (elmo-spam-save-status processor))))
 
 ;; insinuate into summary mode
