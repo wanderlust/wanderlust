@@ -4339,15 +4339,19 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-summary-redisplay)))
     (message "No last message.")))
 
-(defun wl-summary-toggle-mime ()
-  "Toggle MIME decoding."
-  (interactive)
-  (setq wl-summary-buffer-display-as-is
-	(not wl-summary-buffer-display-as-is))
-  (wl-summary-redisplay)
-  (wl-summary-update-modeline)
-  (message "MIME decoding: %s"
-	   (if wl-summary-buffer-display-as-is "OFF" "ON")))
+(defun wl-summary-toggle-mime (&optional no-mime)
+  "Toggle MIME decoding.
+If NO-MIME is non-nil, force displaying the message without MIME decoding
+and ask coding-system for the message."
+  (interactive "P")
+  (if no-mime
+      (wl-summary-redisplay-no-mime 'ask-coding)
+    (setq wl-summary-buffer-display-as-is
+	  (not wl-summary-buffer-display-as-is))
+    (wl-summary-redisplay)
+    (wl-summary-update-modeline)
+    (message "MIME decoding: %s"
+	     (if wl-summary-buffer-display-as-is "OFF" "ON"))))
 
 (defun wl-summary-redisplay (&optional arg)
   "Redisplay message."
@@ -4370,7 +4374,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	     (or (read-coding-system "Coding system: ")
 		 elmo-mime-display-as-is-coding-system)
 	   elmo-mime-display-as-is-coding-system)))
-    (wl-summary-redisplay-internal nil nil nil t 'all-header)))
+    (wl-summary-redisplay-internal nil nil nil 'as-is 'all-header)))
 
 (defun wl-summary-redisplay-internal (&optional folder number force-reload
 						as-is all-header)

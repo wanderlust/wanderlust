@@ -1,3 +1,9 @@
+2004-09-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-toggle-mime): Added optional argument
+	`no-mime'. if it is non-nil, call `wl-summary-redisplay-no-mime'
+	with `ask-coding' is non-nil.
+
 2004-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-thread.el (wl-thread-set-parent): If parent is a message
