@@ -664,6 +664,20 @@ content of MSGDB is changed."
       (setq killed (cdr killed)))
     ret-val))
 
+(defun elmo-msgdb-max-of-killed (killed-list)
+  (let ((klist killed-list)
+	(max 0)
+	k)
+    (while (car klist)
+      (if (< max
+	     (setq k
+		   (if (consp (car klist))
+		       (cdar klist)
+		     (car klist))))
+	  (setq max k))
+      (setq klist (cdr klist)))
+    max))
+
 (defun elmo-living-messages (messages killed-list)
   (if killed-list
       (delq nil
