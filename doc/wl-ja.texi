@@ -3635,10 +3635,15 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B4{$KB8:_$9$k%5%^%j$X0\F0$7$?$H$-$K99?7$;$:!"%+!<%=%k0LCV$rJ]B8$9$k(B
 $B%3%^%s%I$N%j%9%H$G$9!#(B
 
-@item wl-summary-update-confirm-threshold
-@vindex wl-summary-update-confirm-threshold
+@item elmo-folder-update-threshold
+@vindex elmo-folder-update-threshold
 $B=i4|@_Dj$O(B 500$B!#$3$NCM$h$j%5%^%j$N99?7?t$,B?$$>l9g!"0lItJ,$@$199?7$9$k$+(B
-$B$I$&$+!"<ALd$7$^$9!#(B@code{nil} $B$K$9$k$H!"3NG'$;$:$KA4$F$r99?7$7$^$9!#(B
+$B$I$&$+!"<ALd$7$^$9!J(B@code{elmo-folder-update-confirm} $B$,(B non-nil $B$N>l9g!K!#(B
+
+@item elmo-folder-update-confirm
+@vindex elmo-folder-update-confirm
+$B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i$P(B @code{elmo-folder-update-threshold}
+$B$K$h$kH=Dj$r9T$$$^$9!#(B
 
 @item wl-summary-always-sticky-folder-list
 @vindex wl-summary-always-sticky-folder-list
@@ -3672,11 +3677,15 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B$3$N%j%9%H$K$"$k0l;~%^!<%/$,IU$$$?%a%C%;!<%8$O!"%+!<%=%k0\F0$G%9%-%C%W$5(B
 $B$l$^$9!#(B
 
-@item wl-fetch-confirm-threshold
-@vindex wl-fetch-confirm-threshold
-$B=i4|@_Dj$O(B 30000 (bytes)$B!#(B@code{wl-fetch-confirm-threshold} $B$r1[$($k%5%$(B
-$B%:$N%a%C%;!<%8$rI=<($9$k;~$O!"3NG'$r5a$a$^$9!#(B@code{nil} $B$K$9$k$H!"3NG'(B
-$B$;$:$KI=<($7$^$9!#(B
+@item elmo-message-fetch-threshold
+@vindex elmo-message-fetch-threshold
+$B=i4|@_Dj$O(B 30000 (bytes)$B!#$3$NCM$r1[$($k%5%$%:$N%a%C%;!<%8$rI=<($9$k;~$K!"(B
+$B3NG'$r5a$a$^$9!J(B@code{elmo-message-fetch-confirm} $B$,(B non-nil $B$N>l9g!K!#(B
+
+@item elmo-message-fetch-confirm
+@vindex elmo-message-fetch-confirm
+$B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i$P(B @code{elmo-message-fetch-threshold} $B$K(B
+$B$h$kH=Dj$r9T$$$^$9!#(B
 
 @item wl-prefetch-threshold
 @vindex wl-prefetch-threshold
@@ -3689,12 +3698,6 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex wl-prefetch-confirm
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i$P(B @code{wl-prefetch-threshold} $B$r1[$((B
 $B$k%5%$%:$N%a%C%;!<%8$r%W%j%U%'%C%A$7$h$&$H$7$?$H$-$K!"3NG'$r5a$a$^$9!#(B
-
-@item wl-cache-fetch-threshold
-@vindex wl-cache-fetch-threshold
-$B=i4|@_Dj$O(B 30000 (bytes)$B!#(B@code{wl-fetch-confirm-threshold} $B$r1[$($k%5%$(B
-$B%:$N%a%C%;!<%8$O!"%a%C%;!<%8$N@hFI$_$r<B9T$7$^$;$s!#(B@code{nil} $B$K$9$k$H!"(B
-$B$I$s$JBg$-$5$N%a%C%;!<%8$G$b@hFI$_$r<B9T$7$^$9!#(B
 
 @item elmo-imap4-use-cache
 @vindex elmo-imap4-use-cache

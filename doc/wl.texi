@@ -3648,11 +3648,16 @@ When you entered to summary by these commands and the target summary
 buffer already exists, summary status is not automatically updated and
 cursor position is saved.
 
-@item wl-summary-update-confirm-threshold
-@vindex wl-summary-update-confirm-threshold
+@item elmo-folder-update-threshold
+@vindex elmo-folder-update-threshold
 The initial setting is 500.  If updated message number is larger than
-this value, confirm whether drop them or not. If @code{nil}, all the message
-will be updated without confirmation.
+this value, confirm whether drop them or not (in the case where the value
+of @code{elmo-folder-update-confirm} is non-nil).
+
+@item elmo-folder-update-confirm
+@vindex elmo-folder-update-confirm
+The initial setting is @code{t}. If the value is non-nil, do check with
+@code{elmo-folder-update-threshold}.
 
 @item wl-summary-always-sticky-folder-list
 @vindex wl-summary-always-sticky-folder-list
@@ -3688,11 +3693,17 @@ The initial setting is the list shown below:
 If a message is already marked as temporal marks in this list, the
 message is skipped at cursor move.
 
-@item wl-fetch-confirm-threshold
-@vindex wl-fetch-confirm-threshold
+@item elmo-message-fetch-threshold
+@vindex elmo-message-fetch-threshold
 The initial setting is 30000 (bytes).  If displaying message has larger
 size than this value, Wanderlust confirms whether fetch the message or
-not.  If @code{nil}, the message is fetched without confirmation.
+not (in the case where the value of @code{elmo-message-fetch-confirm}
+is non-nil).
+
+@item elmo-message-fetch-confirm
+@vindex elmo-message-fetch-confirm
+The initial setting is @code{t}. If the value is non-nil, do check with
+@code{elmo-message-fetch-threshold}.
 
 @item wl-prefetch-threshold
 @vindex wl-prefetch-threshold
@@ -3707,13 +3718,6 @@ without confirmation.
 The initial setting is @code{t}. If non-nil, Wanderlust confirms whether
 prefetch the message or not if the message has larger size than
 @code{wl-prefetch-threshold}.
-
-@item wl-cache-fetch-threshold
-@vindex wl-cache-fetch-threshold
-The initial setting is 30000 (bytes).  The messages which have larger
-size than @code{wl-fetch-confirm-threshold} are skipped buffer caching
-mechanism. If @code{nil}, any messages are prefetched by buffer caching
-mechanism.
 
 @item elmo-imap4-use-cache
 @vindex elmo-imap4-use-cache
