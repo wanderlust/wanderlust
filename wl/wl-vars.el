@@ -1645,10 +1645,7 @@ If nil, always use default."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-folder-process-duplicates-alist
-  (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^"
-		      (regexp-quote wl-trash-folder) "$") nil)
-	(cons ".*" 'hide))
+(defcustom wl-folder-process-duplicates-alist nil
   "Specify process type of duplicated messages.
 It should be a list of cons cell like: (REGEXP . TYPE)
 REGEXP is a regular expression string of folder name.

@@ -1,3 +1,12 @@
+2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-folder-process-duplicates-alist): Changed default
+	value to nil (According to the patch from
+	Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>).
+
+	* wl-util.el (wl-biff-check-folder): Call elmo-folder-check instead
+	of elmo-folder-close.
+
 2001-06-06  Peter Møller Neergaard <turtle@bu.edu>
 
 	* wl-summary.el (wl-summary-resend-bounced-mail): Modified regexp
