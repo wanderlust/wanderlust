@@ -32,10 +32,8 @@
 (eval-when-compile (require 'cl))
 
 (require 'elmo-util)
+(require 'mime)
 (require 'modb)
-;; Currently, entity structure is same as legacy.
-(require 'modb-legacy)
-
 
 (defcustom modb-standard-divide-number 500
   "*Standard modb divide entity number."
@@ -67,7 +65,9 @@
 (defsubst modb-standard-entity-id (entity)
   (if (eq 'autoload (car-safe entity))
       (cddr entity)
-    (elmo-msgdb-overview-entity-get-id entity)))
+    (elmo-msgdb-message-entity-field
+     (elmo-message-entity-db entity)
+     entity 'message-id)))
 
 (defsubst modb-standard-entity-map (modb)
   (or (modb-standard-entity-map-internal modb)
@@ -167,10 +167,14 @@
 		      (modb-standard-entity-filename section)
 		      path)))
       (elmo-set-hash-val (modb-standard-key
-			  (elmo-msgdb-overview-entity-get-number entity))
+			  (elmo-msgdb-message-entity-number
+			   (elmo-message-entity-db entity)
+			   entity))
 			 entity
 			 table)
-      (elmo-set-hash-val (elmo-msgdb-overview-entity-get-id entity)
+      (elmo-set-hash-val (elmo-msgdb-message-entity-field
+			  (elmo-message-entity-db entity)
+			  entity 'message-id)
 			 entity
 			 table))
     (modb-standard-set-entity-map-internal modb table)))
@@ -352,8 +356,10 @@
 
 (luna-define-method elmo-msgdb-append-entity ((msgdb modb-standard)
 					      entity &optional flags)
-  (let ((number (elmo-msgdb-overview-entity-get-number entity))
-	(msg-id (elmo-msgdb-overview-entity-get-id entity))
+  (let ((number (elmo-msgdb-message-entity-number
+		 (elmo-message-entity-db entity) entity))
+	(msg-id (elmo-msgdb-message-entity-field
+		 (elmo-message-entity-db entity) entity 'message-id))
 	duplicate)
     ;; number-list
     (modb-standard-set-number-list-internal
@@ -447,32 +453,6 @@
 						    args)
   (modb-standard-make-message-entity args))
 
-(luna-define-method elmo-msgdb-create-message-entity-from-file
-  ((msgdb modb-standard) number file)
-  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook header-end
-	(attrib (file-attributes file))
-	ret-val size mtime)
-    (with-temp-buffer
-      (if (not (file-exists-p file))
-	  ()
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (goto-char (point-min))
-	  (setq header-end
-		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
-		    (point)
-		  (point-max)))
-	  (narrow-to-region (point-min) header-end)
-	  (elmo-msgdb-create-message-entity-from-buffer
-	   msgdb number :size size :date mtime))))))
-
 (luna-define-method elmo-msgdb-create-message-entity-from-buffer
   ((msgdb modb-standard) number args)
   (let ((extras elmo-msgdb-extra-fields)
@@ -480,7 +460,9 @@
 	entity message-id references from subject to cc date
 	extra field-body charset size)
     (save-excursion
-      (setq entity (modb-standard-make-message-entity args))
+      (setq entity (modb-standard-make-message-entity args)
+	    ;; For compatibility.
+	    msgdb (elmo-message-entity-db entity))
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq message-id (elmo-msgdb-get-message-id-from-buffer))
       (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
@@ -520,92 +502,38 @@
 
 ;;; Message entity interface
 ;;
+(luna-define-method elmo-msgdb-message-entity-number ((msgdb modb-standard)
+						      entity)
+  ;; To be implemented.
+  )
+
+(luna-define-method elmo-msgdb-message-entity-set-number ((msgdb modb-standard)
+							  entity
+							  number)
+  ;; To be implemented.
+  )
+
 (luna-define-method elmo-msgdb-message-entity-field ((msgdb modb-standard)
 						     entity field
 						     &optional decode)
-  (and entity
-       (let ((field-value
-	      (case field
-		(to (aref (cdr entity) 5))
-		(cc (aref (cdr entity) 6))
-		(date (aref (cdr entity) 4))
-		(subject (aref (cdr entity) 3))
-		(from (aref (cdr entity) 2))
-		(message-id (car entity))
-		(references (aref (cdr entity) 1))
-		(size (aref (cdr entity) 7))
-		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
-	 (if (and decode (memq field '(from subject)))
-	     (elmo-msgdb-get-decoded-cache field-value)
-	   field-value))))
+  ;; To be implemented.
+  )
 
 (luna-define-method elmo-msgdb-message-entity-set-field ((msgdb modb-standard)
 							 entity field value)
-  (and entity
-       (case field
-	 (number (aset (cdr entity) 0 value))
-	 (to (aset (cdr entity) 5 value))
-	 (cc (aset (cdr entity) 6 value))
-	 (date (aset (cdr entity) 4 value))
-	 (subject (aset (cdr entity) 3 value))
-	 (from (aset (cdr entity) 2 value))
-	 (message-id (setcar entity value))
-	 (references (aset (cdr entity) 1 value))
-	 (size (aset (cdr entity) 7 value))
-	 (t
-	  (let ((extras (and entity (aref (cdr entity) 8)))
-		extra)
-	    (if (setq extra (assoc (symbol-name field) extras))
-		(setcdr extra value)
-	      (aset (cdr entity) 8 (cons (cons (symbol-name field)
-					       value) extras))))))))
+  ;; To be implemented.
+  )
 
 (luna-define-method elmo-msgdb-copy-message-entity ((msgdb modb-standard)
 						    entity)
-  (cons (car entity)
-	(copy-sequence (cdr entity))))
+  ;; To be implemented.
+  )
 
 (luna-define-method elmo-msgdb-match-condition-internal ((msgdb modb-standard)
 							 condition
 							 entity flags numbers)
-  (cond
-   ((vectorp condition)
-    (elmo-msgdb-match-condition-primitive condition entity flags numbers))
-   ((eq (car condition) 'and)
-    (let ((lhs (elmo-msgdb-match-condition-internal msgdb
-						    (nth 1 condition)
-						    entity flags numbers)))
-      (cond
-       ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition-internal
-		    msgdb (nth 2 condition) entity flags numbers)))
-	  (cond ((elmo-filter-condition-p rhs)
-		 (list 'and lhs rhs))
-		(rhs
-		 lhs))))
-       (lhs
-	(elmo-msgdb-match-condition-internal msgdb (nth 2 condition)
-					     entity flags numbers)))))
-   ((eq (car condition) 'or)
-    (let ((lhs (elmo-msgdb-match-condition-internal msgdb (nth 1 condition)
-						    entity flags numbers)))
-      (cond
-       ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition-internal msgdb
-							(nth 2 condition)
-							entity flags numbers)))
-	  (cond ((elmo-filter-condition-p rhs)
-		 (list 'or lhs rhs))
-		(rhs
-		 t)
-		(t
-		 lhs))))
-       (lhs
-	t)
-       (t
-	(elmo-msgdb-match-condition-internal msgdb
-					     (nth 2 condition)
-					     entity flags numbers)))))))
+  ;; To be implemented.
+  )
 
 (require 'product)
 (product-provide (provide 'modb-standard) (require 'elmo-version))

@@ -1997,6 +1997,39 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 	      (nth 1 (eword-extract-address-components
 		      (or (elmo-field-body "from") "nobody"))) ">"))))
 
+(defsubst elmo-msgdb-insert-file-header (file)
+  "Insert the header of the article."
+  (let ((beg 0)
+	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	insert-file-contents-post-hook
+	format-alist)
+    (when (file-exists-p file)
+      ;; Read until header separator is found.
+      (while (and (eq elmo-msgdb-file-header-chop-length
+		      (nth 1
+			   (insert-file-contents-as-binary
+			    file nil beg
+			    (incf beg elmo-msgdb-file-header-chop-length))))
+		  (prog1 (not (search-forward "\n\n" nil t))
+		    (goto-char (point-max))))))))
+
+;;
+;; overview handling
+;;
+(defun elmo-multiple-field-body (name &optional boundary)
+  (save-excursion
+    (save-restriction
+      (std11-narrow-to-header boundary)
+      (goto-char (point-min))
+      (let ((case-fold-search t)
+	    (field-body nil))
+	(while (re-search-forward (concat "^" name ":[ \t]*") nil t)
+	  (setq field-body
+		(nconc field-body
+		       (list (buffer-substring-no-properties
+			      (match-end 0) (std11-field-end))))))
+	field-body))))
+
 ;;; Queue.
 (defvar elmo-dop-queue-filename "queue"
   "*Disconnected operation queue is saved in this file.")

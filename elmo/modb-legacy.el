@@ -627,48 +627,6 @@ Return a list of message numbers which have duplicated message-ids."
 						    args)
   (modb-legacy-make-message-entity args))
 
-(defsubst elmo-msgdb-insert-file-header (file)
-  "Insert the header of the article."
-  (let ((beg 0)
-	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook
-	format-alist)
-    (when (file-exists-p file)
-      ;; Read until header separator is found.
-      (while (and (eq elmo-msgdb-file-header-chop-length
-		      (nth 1
-			   (insert-file-contents-as-binary
-			    file nil beg
-			    (incf beg elmo-msgdb-file-header-chop-length))))
-		  (prog1 (not (search-forward "\n\n" nil t))
-		    (goto-char (point-max))))))))
-
-(luna-define-method elmo-msgdb-create-message-entity-from-file
-  ((msgdb modb-legacy) number file)
-  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook header-end
-	(attrib (file-attributes file))
-	ret-val size mtime)
-    (with-temp-buffer
-      (if (not (file-exists-p file))
-	  ()
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (goto-char (point-min))
-	  (setq header-end
-		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
-		    (point)
-		  (point-max)))
-	  (narrow-to-region (point-min) header-end)
-	  (elmo-msgdb-create-message-entity-from-buffer
-	   msgdb number :size size :date mtime))))))
-
 (luna-define-method elmo-msgdb-create-message-entity-from-buffer
   ((msgdb modb-legacy) number args)
   (let ((extras elmo-msgdb-extra-fields)

@@ -1,3 +1,31 @@
+2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* modb.el (elmo-msgdb-create-message-entity-from-file): Define.
+
+	* modb-standard.el (toplevel): Require mime.
+	(modb-standard-entity-id): Use elmo-msgdb-message-entity-field.
+	(modb-standard-load-entity): Use elmo-msgdb-message-entity-field and
+	elmo-msgdb-message-entity-number.
+	(elmo-msgdb-append-entity): Ditto.
+	(elmo-msgdb-create-message-entity-from-file): Remove.
+	(elmo-msgdb-create-message-entity-from-buffer): Use msgdb which 
+	corresponds to the entity.
+	(elmo-msgdb-message-entity-number): Do nothing currently.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-set-field): Ditto.
+	(elmo-msgdb-copy-message-entity): Ditto.
+	(elmo-msgdb-match-condition-internal): Ditto.
+
+	* modb-legacy.el (elmo-msgdb-insert-file-header): Moved to
+	elmo-util.el.
+	(elmo-msgdb-create-message-entity-from-file): Remove.
+
+	* elmo-util.el (elmo-msgdb-insert-file-header): Moved from
+	modb-legacy.el.
+	(elmo-multiple-field-body): Moved from elmo-util.el.
+
+	* elmo-msgdb.el (elmo-multiple-field-body): Moved to elmo-util.el.
+
 2003-09-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* modb.el (elmo-msgdb-make-message-entity): Define simple one.

@@ -226,23 +226,6 @@
        (elmo-msgdb-flags msgdb number)))
     flag-table))
 
-;;
-;; overview handling
-;;
-(defun elmo-multiple-field-body (name &optional boundary)
-  (save-excursion
-    (save-restriction
-      (std11-narrow-to-header boundary)
-      (goto-char (point-min))
-      (let ((case-fold-search t)
-	    (field-body nil))
-	(while (re-search-forward (concat "^" name ":[ \t]*") nil t)
-	  (setq field-body
-		(nconc field-body
-		       (list (buffer-substring-no-properties
-			      (match-end 0) (std11-field-end))))))
-	field-body))))
-
 (defun elmo-multiple-fields-body-list (field-names &optional boundary)
   "Return list of each field-bodies of FIELD-NAMES of the message header
 in current buffer. If BOUNDARY is not nil, it is used as message

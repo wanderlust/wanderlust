@@ -223,6 +223,34 @@ Header region is supposed to be narrowed.")
 (luna-define-method elmo-msgdb-length ((msgdb modb-generic))
   0)
 
+;; Generic method.
+(luna-define-method elmo-msgdb-create-message-entity-from-file
+  ((msgdb modb-generic) number file)
+  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	insert-file-contents-post-hook header-end
+	(attrib (file-attributes file))
+	ret-val size mtime)
+    (with-temp-buffer
+      (if (not (file-exists-p file))
+	  ()
+	(setq size (nth 7 attrib))
+	(setq mtime (timezone-make-date-arpa-standard
+		     (current-time-string (nth 5 attrib)) (current-time-zone)))
+	;; insert header from file.
+	(catch 'done
+	  (condition-case nil
+	      (elmo-msgdb-insert-file-header file)
+	    (error (throw 'done nil)))
+	  (goto-char (point-min))
+	  (setq header-end
+		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
+		    (point)
+		  (point-max)))
+	  (narrow-to-region (point-min) header-end)
+	  (elmo-msgdb-create-message-entity-from-buffer
+	   msgdb number :size size :date mtime))))))
+
+;; Dummy message-entity methods.
 (luna-define-method elmo-msgdb-make-message-entity ((msgdb modb-generic)
 						    args)
   (cons msgdb args))
