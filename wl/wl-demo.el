@@ -43,10 +43,10 @@
    '(bitmap-compose
      bitmap-decode-xbm bitmap-read-xbm-buffer bitmap-read-xbm-file
      create-image device-on-window-system-p display-graphic-p
-     frame-char-height frame-char-width image-type-available-p
-     insert-image make-extent make-glyph set-extent-end-glyph
-     set-glyph-face set-specifier window-pixel-height
-     window-pixel-width)))
+     frame-char-height frame-char-width frame-parameter
+     image-type-available-p insert-image make-extent make-glyph
+     set-extent-end-glyph set-glyph-face set-specifier tool-bar-mode
+     window-pixel-height window-pixel-width)))
 
 ;;
 ;; demo ;-)
@@ -194,17 +194,22 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 			      nil demo-buf))
 	   (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
 	   (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))
-	  ((and (> emacs-major-version 20) window-system)
+	  ((and (> emacs-major-version 20) (display-graphic-p))
 	   (make-local-hook 'kill-buffer-hook)
-	   (let ((frame (selected-frame)))
-	     (add-hook 'kill-buffer-hook
-		       (` (lambda ()
-			    (if (frame-live-p (, frame))
-				(set-face-background
-				 'fringe
-				 (, (face-background 'fringe frame))
-				 (, frame)))))
-		       nil t)
+	   (let* ((frame (selected-frame))
+		  (toolbar (frame-parameter frame 'tool-bar-lines)))
+	     (modify-frame-parameters frame '((tool-bar-lines)))
+	     (add-hook
+	      'kill-buffer-hook
+	      (` (lambda ()
+		   (let ((frame (, frame)))
+		     (when (frame-live-p frame)
+		       (, (if (and toolbar (> toolbar 0))
+			      (` (modify-frame-parameters
+				  frame '((tool-bar-lines . (, toolbar)))))))
+		       (set-face-background
+			'fringe (, (face-background 'fringe frame)) frame)))))
+	      nil t)
 	     (set-face-background 'fringe (face-background 'default frame)
 				  frame))))
     (erase-buffer)
