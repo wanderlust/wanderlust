@@ -1,3 +1,8 @@
+2004-11-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-message-accessible-p): Message in dop spool
+	is accessible.
+
 2004-11-23  Daishi Kato <daishi@axlight.com>
 
 	* elsp-spamoracle.el: New file.

@@ -1153,6 +1153,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 Return non-nil when message is accessible."
   (or (elmo-folder-plugged-p folder)
       (elmo-folder-local-p folder)
+      (< number 0) ; in dop spool
       (elmo-message-cached-p folder number)))
 
 (luna-define-generic elmo-message-set-cached (folder number cached)
