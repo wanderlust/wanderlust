@@ -144,8 +144,9 @@ Return a number of lines that an image occupies in the buffer."
       (when (boundp 'default-gutter-visible-p)
 	(set-specifier (symbol-value 'default-gutter-visible-p)
 		       nil (current-buffer)))
-      (set-specifier (symbol-value 'scrollbar-height) 0 (current-buffer))
-      (set-specifier (symbol-value 'scrollbar-width) 0 (current-buffer)))
+      (when (featurep 'scrollbar)
+	(set-specifier (symbol-value 'scrollbar-height) 0 (current-buffer))
+	(set-specifier (symbol-value 'scrollbar-width) 0 (current-buffer))))
     (if (and file
 	     (if (and wl-icon-directory
 		      (file-directory-p wl-icon-directory))
