@@ -1,5 +1,8 @@
 2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-do-mime-bcc): Use generate-new-buffer and
+	insert-buffer instead of clone-buffer.
+
 	* wl-vars.el (wl-draft-mime-bcc-field-name): New user option.
 	(wl-draft-mime-bcc-body): Ditto.
 

@@ -1294,9 +1294,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   "Send MIME-Bcc (Encapsulated blind carbon copy)."
   (let ((orig-subj (std11-field-body "subject"))
 	(recipients (wl-parse-addresses field-body))
+	(draft-buffer (current-buffer))
 	buffer)
     (when (not (zerop (length field-body)))
-      (setq buffer (clone-buffer " *temporary buffer for mime bcc*"))
+      (with-current-buffer (setq buffer (generate-new-buffer 
+					 " *temporary buffer for mime bcc*"))
+	(insert-buffer draft-buffer))
       (unwind-protect
 	  (dolist (recipient recipients)
 	    (with-temp-buffer
