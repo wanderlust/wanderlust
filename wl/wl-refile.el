@@ -155,8 +155,9 @@
 (elmo-define-obsolete-variable 'wl-refile-guess-func-list
 			       'wl-refile-guess-functions)
 
-(defun wl-refile-guess (entity)
-  (let ((flist wl-refile-guess-functions) guess)
+(defun wl-refile-guess (entity &optional functions)
+  (let ((flist (or functions wl-refile-guess-functions))
+	guess)
     (while flist
       (if (setq guess (funcall (car flist) entity))
 	  (setq flist nil)

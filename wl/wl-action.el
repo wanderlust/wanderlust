@@ -791,6 +791,10 @@ Return number if put mark succeed"
   (member (wl-summary-message-mark wl-summary-buffer-elmo-folder number)
 	  wl-summary-auto-refile-skip-marks))
 
+(defvar wl-auto-refile-guess-functions
+  '(wl-refile-guess-by-rule)
+  "*List of functions which is used for guessing refile destination folder.")
+
 (defun wl-summary-auto-refile (&optional open-all)
   "Set refile mark automatically according to 'wl-refile-guess-by-rule'."
   (interactive "P")
@@ -818,9 +822,10 @@ Return number if put mark succeed"
 			   number))
 		     (setq dst
 			   (wl-folder-get-realname
-			    (wl-refile-guess-by-rule
+			    (wl-refile-guess
 			     (elmo-message-entity wl-summary-buffer-elmo-folder
-						  number))))
+						  number)
+			     wl-auto-refile-guess-functions)))
 		     (not (equal dst spec))
 		     (let ((pair (assoc dst checked-dsts))
 			   ret)

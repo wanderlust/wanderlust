@@ -1,3 +1,11 @@
+2003-10-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-guess): Added second argument `functions'.
+
+	* wl-action.el (wl-auto-refile-guess-functions): New variable.
+	(wl-summary-auto-refile): Call wl-refile-guess with
+	wl-auto-refile-guess-functions instead of wl-refile-guess-by-rule.
+
 2003-10-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-pack-number): Call wl-summary-rescan
