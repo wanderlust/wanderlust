@@ -1,5 +1,8 @@
 2000-11-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-folder.el (wl-folder-write-current-folder): Added group
+	folder check.
+
 	* wl-summary.el (wl-summary-write-current-folder): Renamed from
 	`wl-summary-write-current-newsgroup'.
 	(wl-summary-write-current-folder-functions): New variable.

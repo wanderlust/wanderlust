@@ -2679,7 +2679,8 @@ If optional arg exists, don't check any folders."
 (defun wl-folder-write-current-folder ()
   ""
   (interactive)
-  (wl-summary-write-current-folder (wl-folder-entity-name)))
+  (unless (wl-folder-buffer-group-p)
+    (wl-summary-write-current-folder (wl-folder-entity-name))))
 
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."
