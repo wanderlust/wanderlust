@@ -3899,6 +3899,7 @@ Per default, there are 10 following sub-functions.
 
 @example
 'header:      Inserts the specified string at the bottom of the header.
+'header-top:  Inserts the specified string at the top of the header.
 'header-file: Inserts the specified file at the bottom of the header.
 'x-face:      Inserts @samp{X-Face:} field with the content of the specified file.
 'top:         Inserts the specified string at the top of the body.
