@@ -1089,9 +1089,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-thread-modified-p ()
   wl-summary-buffer-thread-modified)
 
-(defsubst wl-summary-cleanup-temp-marks (&optional sticky)
+(defun wl-summary-cleanup-temp-marks (&optional sticky)
   (when wl-summary-buffer-temp-mark-list
-    (if (y-or-n-p (format "Execute remaining marks in %s? "
+    (if (y-or-n-p (format "Execute remaining marks in %s before cleanup? "
 			  (wl-summary-buffer-folder-name)))
 	(progn
 	  (wl-summary-exec)

@@ -1,3 +1,8 @@
+2004-06-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-cleanup-temp-marks): defsubst->defun.
+	Clarify that marks are going to be cleared.
+
 2004-06-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-persistent-mark-string): Decide mark
