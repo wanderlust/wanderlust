@@ -1,3 +1,7 @@
+2003-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-batch.el: New file.
+
 2003-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el (wl-use-semi): Remove unused variable.
