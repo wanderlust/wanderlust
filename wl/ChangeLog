@@ -1,3 +1,66 @@
+2001-04-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed last change.
+
+2001-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-target-mark-reply-with-citation): Fixed.
+	Delete other windows to avoid an error.
+	Use `point-marker' instead of `point' to remember the start point
+	of body.
+
+	* wl.el (wl-plugged-toggle-all): Fixed argument for `elmo-set-plugged'.
+
+	* wl-folder.el (wl-folder-check-one-entity): Adjust unread message
+	number not to exceed all message number.
+
+2001-04-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-e21.el (wl-biff-init-icons): Don't use `call-interactively' to
+	call the command `wl-biff-check-folders' in `mode-line-mouse2-map'.
+
+2001-04-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-force-update): Added argument
+	no-check.
+	(wl-summary-sync-update): Ditto.
+	(wl-summary-goto-folder-subr): Call wl-summary-sync-force-update
+	with `no-check'.
+
+	* wl-message.el (wl-message-buffer-prefetch-timer): New variable.
+	(wl-message-buffer-prefetch-next): Don't run timer if timer is
+	already running.
+
+2001-04-07  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-expire.el (wl-expire-archive-get-folder): Added argument
+	`dst-folder-arg'.
+	(wl-expire-archive-number1): Diito.
+	(wl-expire-archive-number2): Diito.
+	(wl-expire-archive-Date): Diito.
+	(wl-archive-number1): Diito.
+	(wl-archive-number2): Diito.
+	(wl-archive-date): Diito.
+	(wl-archive-folder-p): New function.
+	(wl-summary-expire): Support of expand folder name at
+	wl-expire-alist.
+	* wl-util.el (wl-expand-newtext): Renamed from
+	`wl-refile-expand-newtext'.
+
+2001-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Fiexd. Call
+	`elmo-msgdb-overview-get-entity' with `msgdb' instead of
+	`(elmo-msgdb-get-overview msgdb)'.
+	(wl-summary-prefetch): Bind match data before call
+	`wl-summay-prefetch-msg'.
+	(wl-summary-goto-folder-subr): Call `wl-summary-toggle-disp-msg' with
+	'off if `wl-summary-buffer-disp-msg' is non-nil.
+	Fixed problem that couldn't show only one new or unread message when
+	enter folder.
+	(wl-summary-reply): Don't call `split-window-vertically' and other
+	window.
+
 2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-expire.el (wl-expire-refile): Fixed.

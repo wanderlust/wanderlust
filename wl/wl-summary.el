@@ -1056,9 +1056,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	      (kill-buffer summary-buf)))
 	(run-hooks 'wl-summary-exit-hook)))))
 
-(defun wl-summary-sync-force-update (&optional unset-cursor)
+(defun wl-summary-sync-force-update (&optional unset-cursor no-check)
   (interactive)
-  (wl-summary-sync-update unset-cursor))
+  (wl-summary-sync-update unset-cursor nil no-check))
 
 (defsubst wl-summary-sync-all-init ()
   (wl-summary-cleanup-temp-marks)
@@ -1243,8 +1243,7 @@ If ARG is non-nil, checking is omitted."
 	   (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (message-id (cdr (assq number number-alist)))
-	   (ov (elmo-msgdb-overview-get-entity
-		message-id (elmo-msgdb-get-overview msgdb)))
+	   (ov (elmo-msgdb-overview-get-entity message-id msgdb))
 	   (entity ov)
 	   (size (elmo-msgdb-overview-entity-get-size ov))
 	   (inhibit-read-only t)
@@ -1391,12 +1390,13 @@ If ARG is non-nil, checking is omitted."
 	(goto-char (match-beginning 2))
 	(let ((inhibit-read-only t)
 	      (buffer-read-only nil)
+	      (beg (match-beginning 2))
+	      (end (match-end 2))
 	      mark)
 	  (setq mark (wl-summary-prefetch-msg
 		      (string-to-int (wl-match-buffer 1)) arg))
 	  (when mark
-	    (delete-region (match-beginning 2)
-			   (match-end 2))
+	    (delete-region beg end)
 	    (insert mark)
 	    (if wl-summary-highlight
 		(wl-highlight-summary-current-line)))
@@ -2010,7 +2010,7 @@ If ARG is non-nil, checking is omitted."
 	  (nthcdr (max (- len in) 0) appends))
       appends)))
 
-(defun wl-summary-sync-update (&optional unset-cursor sync-all)
+(defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
   "Update the summary view to the newest folder status."
   (interactive)
   (let* ((folder wl-summary-buffer-elmo-folder)
@@ -2041,7 +2041,7 @@ If ARG is non-nil, checking is omitted."
 		       wl-summary-unread-cached-mark
 		       wl-summary-read-uncached-mark
 		       wl-summary-important-mark
-		       sync-all))
+		       sync-all no-check))
     (setq new-msgdb (nth 0 sync-result))
     (setq delete-list (nth 1 sync-result))
     (setq crossed (nth 2 sync-result))
@@ -2534,7 +2534,7 @@ If ARG, without confirm."
 	     (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	    (wl-summary-update-modeline)))
       (wl-summary-buffer-number-column-detect t)
-      (wl-summary-toggle-disp-msg 'on)
+      (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
 	;(setq hilit wl-summary-highlight)
 	(unwind-protect
@@ -2553,7 +2553,8 @@ If ARG, without confirm."
 	       ((eq scan-type 'no-sync))
 	       ((or (eq scan-type 'force-update)
 		    (eq scan-type 'update))
-		(setq mes (wl-summary-sync-force-update 'unset-cursor)))))
+		(setq mes (wl-summary-sync-force-update
+			   'unset-cursor 'no-check)))))
 	  (if interactive
 	      (switch-to-buffer buf)
 	    (set-buffer buf))
@@ -2566,7 +2567,7 @@ If ARG, without confirm."
 	  (if (wl-summary-cursor-down t)
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
-			      'down nil)))
+			      'down t)))
 		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
 		      ((not unreadp)
@@ -4609,11 +4610,12 @@ Return t if message exists."
     (wl-summary-jump-to-msg (car mlist))
     (wl-summary-reply arg t)
     (goto-char (point-max))
-    (setq start-point (point))
+    (setq start-point (point-marker))
     (setq draft-buf (current-buffer))
     (save-window-excursion
       (while mlist
 	(set-buffer summary-buf)
+	(delete-other-windows)
 	(wl-summary-jump-to-msg (car mlist))
 	(wl-summary-redisplay)
 	(set-buffer draft-buf)
@@ -4831,9 +4833,6 @@ Reply to author if invoked with ARG."
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
-      (or wl-draft-use-frame
-	  (split-window-vertically))
-      (other-window 1)
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf)
 	(unless without-setup-hook

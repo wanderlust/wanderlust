@@ -187,7 +187,7 @@ If RULE does not match ENTITY, returns nil."
 		 (string-match
 		  (car (car pairs))
 		  value)
-		 (setq guess (wl-refile-expand-newtext
+		 (setq guess (wl-expand-newtext
 			      (wl-refile-evaluate-rule (cdr (car pairs))
 						       entity)
 			      value)))
@@ -207,39 +207,6 @@ If RULE does not match ENTITY, returns nil."
 			   field)))
 		 entity)
       (elmo-msgdb-overview-entity-get-extra-field entity field))))
-
-(defun wl-refile-expand-newtext (newtext original)
-  (let ((len (length newtext))
-	(pos 0)
-	c expanded beg N did-expand)
-    (while (< pos len)
-      (setq beg pos)
-      (while (and (< pos len)
-		  (not (= (aref newtext pos) ?\\)))
-	(setq pos (1+ pos)))
-      (unless (= beg pos)
-	(push (substring newtext beg pos) expanded))
-      (when (< pos len)
-	;; We hit a \; expand it.
-	(setq did-expand t
-	      pos (1+ pos)
-	      c (aref newtext pos))
-	(if (not (or (= c ?\&)
-		     (and (>= c ?1)
-			  (<= c ?9))))
-	    ;; \ followed by some character we don't expand.
-	    (push (char-to-string c) expanded)
-	  ;; \& or \N
-	  (if (= c ?\&)
-	      (setq N 0)
-	    (setq N (- c ?0)))
-	  (when (match-beginning N)
-	    (push (substring original (match-beginning N) (match-end N))
-		  expanded))))
-      (setq pos (1+ pos)))
-    (if did-expand
-	(apply (function concat) (nreverse expanded))
-      newtext)))
 
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)
