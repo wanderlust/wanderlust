@@ -2805,7 +2805,7 @@ If ARG, without confirm."
 	  (if (wl-summary-cursor-down t)
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
-			      'down t)))
+			      'down nil)))
 		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
 		      ((not unreadp)
