@@ -1409,6 +1409,11 @@ Available if only `wl-summary-lazy-highlight' is nil."
   :group 'wl-summary
   :group 'wl-highlight)
 
+(defcustom wl-summary-lazy-update-mark (boundp 'window-scroll-functions)
+  "Non-nil forces lazy update mark using `window-scroll-functions'."
+  :type 'boolean
+  :group 'wl-summary)
+
 (defcustom wl-summary-cache-use t
   "Non-nil forces wl-summary to use cache file."
   :type 'boolean

@@ -1,3 +1,24 @@
+2003-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-unsync-mark-number-list): New
+	internal variable (buffer local).
+	(wl-summary-window-scroll-functions): New function.
+	(wl-summary-mode): Use it insteaf of wl-summary-lazy-highlight.
+	(wl-summary-rescan): Set wl-summary-buffer-unsync-mark-number-list
+	as nil.
+	(wl-summary-update-status-marks): Added arguments beg, end and
+	check.
+	(wl-summary-update-mark-window): Use function.
+	(wl-summary-sync-update): Follow the change above.
+	(wl-summary-switch-to-clone-buffer): Copy
+	wl-summary-buffer-unsync-mark-number-list.
+	(wl-summary-goto-folder-subr): Set
+	wl-summary-buffer-unsync-mark-number-list and
+	use wl-summary-window-scroll-functions insteaf of
+	wl-summary-lazy-highlight.
+
+	* wl-vars.el (wl-summary-lazy-update-mark): New user option.
+
 2003-09-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-sync-update): Undo last chagne.

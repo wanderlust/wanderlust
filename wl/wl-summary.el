@@ -90,6 +90,8 @@
 (defvar wl-summary-buffer-temp-mark-column nil)
 (defvar wl-summary-buffer-persistent-mark-column nil)
 
+(defvar wl-summary-buffer-unsync-mark-number-list nil)
+
 (defvar wl-summary-buffer-persistent nil)
 (defvar wl-summary-buffer-thread-nodes nil)
 (defvar wl-summary-buffer-target-mark-list nil)
@@ -148,6 +150,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-number-column)
 (make-variable-buffer-local 'wl-summary-buffer-temp-mark-column)
 (make-variable-buffer-local 'wl-summary-buffer-persistent-mark-column)
+(make-variable-buffer-local 'wl-summary-buffer-unsync-mark-number-list)
 (make-variable-buffer-local 'wl-summary-buffer-persistent)
 (make-variable-buffer-local 'wl-summary-buffer-thread-nodes)
 (make-variable-buffer-local 'wl-summary-buffer-prev-refile-destination)
@@ -552,6 +555,19 @@ See also variable `wl-use-petname'."
       (not (wl-thread-entity-parent-invisible-p
 	    (wl-thread-get-entity number)))))
 
+(defvar wl-summary-window-scroll-functions nil)
+
+(defun wl-summary-window-scroll-functions ()
+  (when (or wl-summary-lazy-highlight
+	    wl-summary-lazy-update-mark)
+    (or wl-summary-window-scroll-functions
+	(setq wl-summary-window-scroll-functions
+	      (append
+	       (and wl-summary-lazy-highlight
+		    '(wl-highlight-summary-window))
+	       (and wl-summary-lazy-update-mark
+		    '(wl-summary-update-mark-window)))))))
+
 (defun wl-status-update ()
   (interactive)
   (wl-address-init))
@@ -780,13 +796,12 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	selective-display-ellipses nil)
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
-  (when wl-summary-lazy-highlight
-    (if wl-on-xemacs
-	(progn
-	  (make-local-variable 'pre-idle-hook)
-	  (add-hook 'pre-idle-hook 'wl-highlight-summary-window))
-      (make-local-variable 'window-scroll-functions)
-      (add-hook 'window-scroll-functions 'wl-highlight-summary-window)))
+  (when (wl-summary-window-scroll-functions)
+    (let ((variable (if wl-on-xemacs
+			(make-local-variable 'pre-idle-hook)
+		      (make-local-variable 'window-scroll-functions))))
+      (dolist (function (wl-summary-window-scroll-functions))
+	(add-hook variable function))))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -918,6 +933,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  wl-thread-entities nil
 	  wl-summary-scored nil
 	  wl-summary-buffer-number-list nil
+	  wl-summary-buffer-unsync-mark-number-list nil
 	  wl-summary-buffer-target-mark-list nil
 	  wl-summary-buffer-temp-mark-list nil
 	  wl-summary-delayed-update nil)
@@ -1621,14 +1637,32 @@ If ARG is non-nil, checking is omitted."
       (wl-summary-update-modeline)
       (wl-summary-folder-info-update))))
 
-(defun wl-summary-update-status-marks ()
+(defun wl-summary-update-status-marks (beg end &optional check)
   "Synchronize status marks on current buffer to the msgdb."
   (interactive)
   (save-excursion
-    (goto-char (point-min))
-    (while (not (eobp))
-      (wl-summary-update-persistent-mark)
+    (goto-char beg)
+    (while (and (< (point) end) (not (eobp)))
+      (when (or (not check)
+		(let ((number (wl-summary-message-number)))
+		  (when (memq number wl-summary-buffer-unsync-mark-number-list)
+		    (setq wl-summary-buffer-unsync-mark-number-list
+			  (delq number
+				wl-summary-buffer-unsync-mark-number-list))
+		    t)))
+	(wl-summary-update-persistent-mark))
       (forward-line 1))))
+
+(defun wl-summary-update-mark-window (&optional win beg)
+  "Update persistent mark in visible summary window.
+This function is defined for `window-scroll-functions'"
+  (with-current-buffer (window-buffer win)
+    (when (eq major-mode 'wl-summary-mode)
+      (let ((start (window-start win))
+	    (end (condition-case nil
+		     (window-end win t)	; old emacsen doesn't support 2nd arg.
+		   (error (window-end win)))))
+	(wl-summary-update-status-marks start end 'check)))))
 
 (defun wl-summary-insert-message (&rest args)
   (if (eq wl-summary-buffer-view 'thread)
@@ -1763,7 +1797,8 @@ If ARG is non-nil, checking is omitted."
 
 		(when delete-list
 		  (wl-summary-delete-messages-on-buffer delete-list))
-		(wl-summary-update-status-marks)
+		(unless wl-summary-lazy-update-mark
+		  (wl-summary-update-status-marks (point-min) (point-max)))
 		(setq num (length append-list))
 		(setq i 0)
 		(setq wl-summary-delayed-update nil)
@@ -2066,6 +2101,7 @@ If ARG, without confirm."
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-thread-modified
 		   wl-summary-buffer-number-list
+		   wl-summary-buffer-unsync-mark-number-list
 		   wl-summary-buffer-folder-name
 		   wl-summary-buffer-line-formatter)
 		 (and (eq wl-summary-buffer-view 'thread)
@@ -2228,6 +2264,8 @@ If ARG, without confirm."
 	    (wl-summary-update-modeline)))
       (unless (eq wl-summary-buffer-view 'thread)
 	(wl-summary-make-number-list))
+      (setq wl-summary-buffer-unsync-mark-number-list
+	    (copy-sequence wl-summary-buffer-number-list))
       (when (and wl-summary-cache-use
 		 (or (and wl-summary-check-line-format
 			  (wl-summary-line-format-changed-p))
@@ -2321,7 +2359,7 @@ If ARG, without confirm."
       ;; entity-id is unknown.
       (wl-folder-set-current-entity-id
        (wl-folder-get-entity-id entity)))
-    (when (and wl-summary-lazy-highlight
+    (when (and (wl-summary-window-scroll-functions)
 	       wl-on-xemacs)
       (sit-for 0))
     (unwind-protect
