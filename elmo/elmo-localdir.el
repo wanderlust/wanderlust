@@ -397,7 +397,6 @@
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
 	(oov (elmo-msgdb-get-overview msgdb))
 	i flist onum mark new-mark-alist total)
-    (setq i 0)
     (setq flist
 	  (if elmo-pack-number-check-strict
 	      (elmo-call-func spec "list-folder") ;; allow localnews

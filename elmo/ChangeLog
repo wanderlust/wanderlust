@@ -1,8 +1,3 @@
-2000-05-18  Nishimoto Masaki <nishimoto@gaju.org>
-
-	* elmo-localdir.el (elmo-localdir-pack-number): Fixed problem when
-	number is already packed.
-
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Fixed a problem
