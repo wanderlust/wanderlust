@@ -816,8 +816,12 @@ Optional argument ARG is repeart count."
 	  (wl-folder-sync-entity entity)
 	  (setq nums (elmo-folder-diff folder)))
       (unless wl-folder-notify-deleted
-	(setq unsync (if (and (car nums) (> 0 (car nums))) 0 (car nums)))
-	(setq nomif (if (and (car nums) (> 0 (cdr nums))) 0 (cdr nums)))
+	(setq unsync (if (car nums)
+			 (max 0 (car nums))
+		       nil))
+	(setq nomif (if (cdr nums)
+			(max 0 (cdr nums))
+		      nil))
 	(setq nums (cons unsync nomif)))
       (setq unread (or ;; If server diff, All unreads are
 			; treated as unsync.
@@ -837,8 +841,10 @@ Optional argument ARG is repeart count."
     (setq wl-folder-info-alist-modified t)
     (sit-for 0)
     (list (if wl-folder-notify-deleted
-	      (car nums)
-	    (or new (max (or (car nums) 0)))) unread (cdr nums))))
+	      (or new (car nums))
+	    (max 0 (or new (car nums))))
+	  unread
+	  (cdr nums))))
 
 (defun wl-folder-check-entity-async (entity &optional auto)
   (let ((elmo-nntp-groups-async t)
