@@ -3804,7 +3804,7 @@ If ARG, exit virtual folder."
 	  (setq skipped (cons (car mlist) skipped)))
 	(setq mlist (cdr mlist)))
       (setq wl-summary-buffer-target-mark-list skipped)
-      (message "Prefetching... %d/%d message(s)." count length)
+      (message "Prefetching... %d/%d message(s)" count length)
       (set-buffer-modified-p nil))))
 
 (defun wl-summary-target-mark-refile-subr (copy-or-refile)
