@@ -148,6 +148,9 @@
 		      (expand-file-name "pipe" elmo-msgdb-directory)))
    copied-list))
 
+(luna-define-method elmo-folder-msgdb ((folder elmo-pipe-folder))
+  (elmo-folder-msgdb (elmo-pipe-folder-dst-internal folder)))
+
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder)))
 
