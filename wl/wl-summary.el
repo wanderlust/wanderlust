@@ -711,6 +711,11 @@ you."
   (setq wl-summary-buffer-persistent
 	(wl-folder-persistent-p (elmo-folder-name-internal folder)))
   (elmo-folder-set-persistent-internal folder wl-summary-buffer-persistent)
+  ;; process duplicates.
+  (elmo-folder-set-process-duplicates-internal
+   folder (cdr (elmo-string-matched-assoc
+		(elmo-folder-name-internal folder)
+		wl-folder-process-duplicates-alist)))
   (setq
    wl-thread-indent-level-internal
    (or (nth 0 wl-summary-buffer-thread-indent-set)
@@ -4570,7 +4575,8 @@ Return t if message exists."
       (if (wl-summary-no-mime-p folder)
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number))
-      (set-buffer wl-message-buffer)
+      (when (buffer-live-p wl-message-buffer)
+	(set-buffer wl-message-buffer))
       nil)))
 
 (defun wl-summary-target-mark-forward (&optional arg)
@@ -4873,16 +4879,13 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		(nth 2 guess-list))	; Newsgroups:
 	    (setq flist nil)
 	  (setq flist (cdr flist))))
-      (if guess-list
-	  (progn
-	    (wl-draft (nth 0 guess-list) ; To:
-		      nil nil
-		      (nth 1 guess-list) ; Cc:
-		      nil		
-		      (nth 2 guess-list)) ; Newsgroups:
-	    (run-hooks 'wl-mail-setup-hook))
-;;;	(error "%s is not newsgroup" folder)
-	(error "Can't guess by folder %s" folder)))))
+      (when (null guess-list)
+	(error "Can't guess by folder %s" folder))
+      (wl-draft (nth 0 guess-list) nil nil ; To:
+		(nth 1 guess-list) nil	; Cc:
+		(nth 2 guess-list))	; Newsgroups:
+      (run-hooks 'wl-mail-setup-hook)
+      (mail-position-on-field "Subject"))))
 
 (defun wl-summary-forward (&optional without-setup-hook)
   ""

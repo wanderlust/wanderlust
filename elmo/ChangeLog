@@ -1,3 +1,57 @@
+2001-05-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-multi.el (elmo-multi-folder-append-msgdb): Fixed structure
+	of `to-be-deleted' from number-alist to number-list.
+
+2001-04-26  Hiroya Murata  <hiroya@use-ebisu.co.jp>
+
+	* elmo-pipe.el (elmo-folder-unmark-important): Fixed typo.
+	(elmo-folder-mark-as-important): Ditto.
+
+2001-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder): Added process-duplicates slot.
+
+	* elmo-pipe.el (elmo-folder-mark-as-read): Define.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-unmark-important): Ditto.
+	(elmo-folder-mark-as-important): Ditto.
+
+	* elmo-multi.el (elmo-multi-folder-append-msgdb): Implemented
+	duplicated message processing.
+
+	* elmo.el (elmo-generic-folder-append-msgdb): Ditto.
+
+2001-04-24  Hiroya Murata  <hiroya@use-ebisu.co.jp>
+
+	* elmo-util.el (elmo-list-subdirectories-1): New function.
+	(elmo-list-subdirectories): Use `elmo-list-subdirectories-1'.
+	(elmo-mapcar-list-of-list): New function.
+
+	* elmo-archive.el (elmo-archive-folder-list-subfolders): Use
+	`elmo-mapcar-list-of-list' instead of `mapcar'.
+
+	* elmo-localdir.el (elmo-folder-list-subfolders): Ditto.
+
+	* elmo-maildir.el (elmo-folder-list-subfolders): Ditto. Bind
+	`elmo-have-link-count'. Return the fully qualified folder name.
+
+2001-04-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-check-interval): New user option.
+	(elmo-shimbun-headers-cache): New internal variable.
+	(elmo-shimbun-headers-cache-header-list): New inline function.
+	(elmo-shimbun-headers-cache-set-header-list): Ditto.
+	(elmo-shimbun-headers-cache-header-hash): Ditto.
+	(elmo-shimbun-headers-cache-set-header-hash): Ditto.
+	(elmo-shimbun-headers-cache-last-check): Ditto.
+	(elmo-shimbun-headers-cache-set-last-check): Ditto.
+	(elmo-shimbun-lapse-seconds): Ditto.
+	(elmo-shimbun-headers-cache-check-p): Ditto.
+	(elmo-shimbun-get-headers): New function.
+	(elmo-folder-open-internal): Call it.
+	(elmo-quit): Define (Clear headers-cache).
+
 2001-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-folder-initialize): Fixed typo (folder->name).

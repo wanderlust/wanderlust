@@ -190,7 +190,7 @@
 					 (elmo-folder-msgdb folder))
 					number-alist)))
 	     (cur number-alist)
-	     to-be-deleted
+	     overview to-be-deleted
 	     mark-alist same)
 	(while cur
 	  (setq all-alist (delq (car cur) all-alist))
@@ -201,14 +201,29 @@
 			 (/ (car same) 
 			    (elmo-multi-folder-divide-number-internal folder)))
 		;; base is also same...delete it!
-		(setq to-be-deleted (append to-be-deleted (list (car cur))))))
+		(setq to-be-deleted
+		      (append to-be-deleted (list (car (car cur)))))))
 	  (setq cur (cdr cur)))
-	(setq mark-alist (elmo-delete-if
-			  (function
-			   (lambda (x)
-			     (assq (car x) to-be-deleted)))
-			  (elmo-msgdb-get-mark-alist append-msgdb)))
-	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
+	(cond ((eq (elmo-folder-process-duplicates-internal folder)
+		   'hide)
+	       ;; Hide duplicates.
+	       (elmo-msgdb-append-to-killed-list folder to-be-deleted)
+	       (setq overview (elmo-delete-if
+			       (lambda (x)
+				 (memq (elmo-msgdb-overview-entity-get-number
+					x)
+				       to-be-deleted))
+			       (elmo-msgdb-get-overview append-msgdb)))
+	       ;; Should be mark as read.
+	       (elmo-folder-mark-as-read folder to-be-deleted)
+	       (elmo-msgdb-set-overview append-msgdb overview))
+	      ((eq (elmo-folder-process-duplicates-internal folder)
+		   'read)
+	       ;; Mark as read duplicates.
+	       (elmo-folder-mark-as-read folder to-be-deleted))
+	      (t
+	       ;; Do nothing.
+	       (setq to-be-deleted nil)))
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
 					 (elmo-folder-msgdb folder)
