@@ -831,6 +831,7 @@ Optional argument ARG is repeart count."
 		    (wl-summary-count-unread (elmo-msgdb-mark-load
 					      (elmo-folder-msgdb-path
 					       folder)))))
+      (setq unread (min unread (- (or (cdr nums) 0) (or (car nums) 0))))
       (when new (setq unread (- unread new)))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list (or new (car nums))

@@ -2,7 +2,6 @@
 
 	* wl-folder.el (wl-folder-check-one-entity): Fixed car of return
 	value.  Refactoring `wl-folder-notify-deleted' is nil case.
-	Fixed unread number mismatch when all-unread < unread.
 
 2001-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
