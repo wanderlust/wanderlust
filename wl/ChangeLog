@@ -1,3 +1,10 @@
+2002-01-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-vars.el (wl-fldmgr-allow-rename-access-group): New variable.
+	* wl-fldmgr.el (wl-fldmgr-rename): Allow rename for access group.
+	Based on the patch written by
+	Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
 2002-01-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-raw-send): Fix for

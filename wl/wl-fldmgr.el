@@ -900,8 +900,6 @@ return value is diffs '(-new -unread -all)."
 	(let* ((tmp (wl-fldmgr-get-path-from-buffer))
 	       (old-folder (nth 4 tmp))
 	       new-folder)
-	  (if (eq (cdr (nth 2 tmp)) 'access)
-	      (error "Can't rename access folder"))
 	  (setq new-folder
 		(wl-fldmgr-read-string
 		 (wl-summary-read-folder old-folder "to rename" t t old-folder)))
@@ -909,13 +907,29 @@ return value is diffs '(-new -unread -all)."
 		  (file-exists-p (elmo-folder-msgdb-path
 				  (wl-folder-get-elmo-folder new-folder))))
 	      (error "Already exists folder: %s" new-folder))
+	  (if (and (eq (cdr (nth 2 tmp)) 'access)
+		   (null wl-fldmgr-allow-rename-access-group)
+		   (null (string-match
+			  (format "^%s" (regexp-quote (car (nth 2 tmp))))
+			  new-folder)))
+	      (error "Can't rename access folder"))
 	  (elmo-folder-rename (wl-folder-get-elmo-folder old-folder)
 			      new-folder)
 	  (wl-folder-set-entity-info
 	   new-folder
 	   (wl-folder-get-entity-info old-folder))
-	  (when (wl-fldmgr-cut tmp nil t)
-	    (wl-fldmgr-add new-folder))))))))
+	  (wl-folder-clear-entity-info old-folder)
+	  (if (eq (cdr (nth 2 tmp)) 'access)
+
+	      ;; force update access group
+	      (progn
+		(wl-folder-open-close)
+		(wl-folder-jump-to-current-entity t)
+		(message (format "%s is renamed to %s" new-folder old-folder))
+		(sit-for 1))
+	    ;; update folder list
+	    (when (wl-fldmgr-cut tmp nil t)
+	      (wl-fldmgr-add new-folder)))))))))
 
 (defun wl-fldmgr-make-access-group ()
   (interactive)

@@ -1987,6 +1987,11 @@ ex.
 		(string :tag "Other"))
   :group 'wl-folder)
 
+(defcustom wl-fldmgr-allow-rename-access-group nil
+  "*If non-nil, allow to rename folder in access group."
+  :type 'boolean
+  :group 'wl-folder)
+
 ;;; For Expire and Archive
 
 (defcustom wl-expire-alist nil
