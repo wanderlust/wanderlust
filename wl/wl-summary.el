@@ -125,7 +125,7 @@
 
 (defvar wl-summary-get-petname-function 'wl-address-get-petname-1)
 
-(defvar wl-summary-message-regexp "^ *\\([0-9-]+\\)")
+(defvar wl-summary-message-regexp "^ *\\(-?[0-9]+\\)")
 
 (defvar wl-summary-shell-command-last "")
 
@@ -1010,6 +1010,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	summary-win
 	message-buf message-win
 	folder-buf folder-win)
+    (run-hooks 'wl-summary-exit-pre-hook)
     (if wl-summary-buffer-exit-function
 	(funcall wl-summary-buffer-exit-function)
       (wl-summary-cleanup-temp-marks sticky)
@@ -1332,7 +1333,7 @@ If ARG is non-nil, checking is omitted."
 	(goto-char (point-min))
 	(while (not (eobp))
 	  (beginning-of-line)
-	  (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
+	  (when (looking-at "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)")
 	    (setq mark (wl-match-buffer 2))
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (if (or (and (null prefetch-marks)
@@ -1386,7 +1387,7 @@ If ARG is non-nil, checking is omitted."
   (save-excursion
     (save-match-data
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)")
 	(goto-char (match-beginning 2))
 	(let ((inhibit-read-only t)
 	      (buffer-read-only nil)
@@ -1581,7 +1582,7 @@ If ARG is non-nil, checking is omitted."
 	(elmo-folder-mark-as-read folder (wl-summary-collect-unread mark-alist))
 	(save-excursion
 	  (goto-char (point-min))
-	  (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
+	  (while (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (setq mark (wl-match-buffer 2))
 	    (when (and (not (string= mark wl-summary-important-mark))
@@ -1632,7 +1633,7 @@ If ARG is non-nil, checking is omitted."
 	   mark number unread new-mark)
 ;;;   (re-search-backward "^ *[0-9]+..[0-9]+/[0-9]+" nil t) ; set cursor line
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)")
 	(progn
 	  (setq mark (wl-match-buffer 2))
 	  (cond
@@ -1677,7 +1678,7 @@ If ARG is non-nil, checking is omitted."
     (message "Resuming cache status...")
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)" nil t)
+      (while (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)" nil t)
 	(setq msg (string-to-int
 		   (wl-match-buffer 1)))
 	(setq mark (wl-match-buffer 2))
@@ -2189,7 +2190,7 @@ If ARG is non-nil, checking is omitted."
 	  (buffer-read-only nil)
 	  msg-num
 	  cur-mark)
-      (when (looking-at "^ *\\([0-9-]+\\)\\([^0-9]\\)")
+      (when (looking-at "^ *\\(-?[0-9]+\\)\\([^0-9]\\)")
 	(setq msg-num  (string-to-int (wl-match-buffer 1)))
 	(setq cur-mark (wl-match-buffer 2))
 	(when (member cur-mark (list " "
@@ -2256,7 +2257,7 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-message-number ()
   (save-excursion
     (beginning-of-line)
-    (if (looking-at "^ *\\([0-9-]+\\)")
+    (if (looking-at "^ *\\(-?[0-9]+\\)")
 	(string-to-int (wl-match-buffer 1))
       nil)))
 
@@ -2473,6 +2474,7 @@ If ARG, without confirm."
 		     (elmo-folder-name-internal folder))) ; folder is moved.
 	       (eq major-mode 'wl-summary-mode)) ; called in summary.
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
+      (run-hooks 'wl-summary-exit-pre-hook)
       (wl-summary-cleanup-temp-marks (wl-summary-sticky-p))
       (wl-summary-save-view 'keep) ; keep current buffer, anyway.
       (elmo-folder-commit wl-summary-buffer-elmo-folder))
@@ -2894,7 +2896,7 @@ If ARG, without confirm."
 	      (re-search-forward
 	       (format (concat "^ *\\("
 			       (if number (int-to-string number)
-				 "[0-9]+")
+				 "-?[0-9]+")
 			       "\\)[^0-9]\\(%s\\|%s\\)")
 		       wl-summary-read-uncached-mark
 		       " ") eol t))
@@ -3416,7 +3418,7 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
 	(setq visible t))
       ;; Delete mark on buffer.
       (when (and visible
-		 (looking-at "^ *\\([0-9]+\\)\\([^0-9]\\)"))
+		 (looking-at "^ *\\(-?[0-9]+\\)\\([^0-9]\\)"))
 	(goto-char (match-end 2))
 	(or number
 	    (setq number (string-to-int (wl-match-buffer 1))))
@@ -3590,7 +3592,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defun wl-summary-delete-all-mark (mark)
   (goto-char (point-min))
   (let ((case-fold-search nil))
-    (while (re-search-forward (format "^ *[0-9]+%s"
+    (while (re-search-forward (format "^ *-?[0-9]+%s"
 				      (regexp-quote mark)) nil t)
       (wl-summary-unmark))
     (cond ((string= mark "*")
@@ -3721,7 +3723,7 @@ If ARG, exit virtual folder."
 	  (buffer-read-only nil)
 	  msg-num
 	  cur-mark)
-      (when (looking-at "^ *\\([0-9]+\\)\\([^0-9]\\)")
+      (when (looking-at "^ *\\(-?[0-9]+\\)\\([^0-9]\\)")
 	(setq msg-num  (string-to-int (wl-match-buffer 1)))
 	(setq cur-mark (wl-match-buffer 2))
 	(goto-char (match-end 1))
@@ -3772,7 +3774,7 @@ If ARG, exit virtual folder."
 	      (when (wl-summary-jump-to-msg (car mlist))
 		(wl-summary-unmark)
 		(when new-mark
-		  (when (looking-at "^ *[0-9]+[^0-9]\\([^0-9]\\)")
+		  (when (looking-at "^ *-?[0-9]+[^0-9]\\([^0-9]\\)")
 		    (delete-region (match-beginning 1) (match-end 1)))
 		  (goto-char (match-beginning 1))
 		  (insert new-mark)
@@ -3973,7 +3975,7 @@ If ARG, exit virtual folder."
       (beginning-of-line)
       (if (or (not visible)
 	      (looking-at
-	       (format "^ *\\([0-9]+\\)[^0-9]\\(%s\\|%s\\|%s\\|%s\\).*$"
+	       (format "^ *\\(-?[0-9]+\\)[^0-9]\\(%s\\|%s\\|%s\\|%s\\).*$"
 		       (regexp-quote wl-summary-read-uncached-mark)
 		       (regexp-quote wl-summary-unread-uncached-mark)
 		       (regexp-quote wl-summary-unread-cached-mark)
@@ -4070,7 +4072,7 @@ If ARG, exit virtual folder."
 				      "..../..") nil t)) ; set cursor line
 	)
       (beginning-of-line)
-      (if (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)" eol t)
+      (if (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)" eol t)
 	  (progn
 	    (setq number (or number (string-to-int (wl-match-buffer 1))))
 	    (setq mark (or mark (wl-match-buffer 2)))
@@ -4230,7 +4232,8 @@ If ARG, exit virtual folder."
       (setq wl-summary-buffer-number-column
 	    (or
 	     (if (and update
-		      (setq end (if (re-search-forward "^ *[0-9-]+[^0-9]" nil t)
+		      (setq end (if (re-search-forward
+				     "^ *-?[0-9]+[^0-9]" nil t)
 				    (point))))
 		 (- end (progn (beginning-of-line) (point)) 1))
 	     (wl-get-assoc-list-value wl-summary-number-column-alist
@@ -4567,7 +4570,8 @@ Return t if message exists."
       (if (wl-summary-no-mime-p folder)
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number))
-      (set-buffer wl-message-buffer)
+      (when (buffer-live-p wl-message-buffer)
+	(set-buffer wl-message-buffer))
       nil)))
 
 (defun wl-summary-target-mark-forward (&optional arg)
