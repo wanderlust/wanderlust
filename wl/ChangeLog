@@ -1,3 +1,11 @@
+2000-09-26  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	NOTE: This change should be fixed in the future.
+	* wl-e21.el (post-command-hook): Add `wl-e21-switch-toolbar'.
+	(wl-e21-switch-toolbar): New function to switch the toolbar
+	appearance automatically.
+	(wl-e21-tool-bar-lines): New buffer local variable.
+
 2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folders-running): New variable.
