@@ -1,5 +1,18 @@
 2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay): Call
+	`wl-summary-redisplay-no-mime-internal' instead of
+	`wl-summary-redisplay-no-mime'.
+	(wl-summary-redisplay-no-mime): Changed argument;
+	Call `wl-summary-redisplay-no-mime-internal'.
+
+	* wl-mime.el (wl-draft-preview-message): Bind
+	`mime-header-encode-method-alist' locally.
+
+	* wl-draft.el (wl-draft-eword-encode-address-list): New function.
+	(wl-draft-std11-parse-addresses): Added the first address check.
+	(wl-draft-send): Bind `mime-header-encode-method-alist' locally.
+
 	* Version number is increased to 2.9.7.
 
 2002-02-16  Kenichi OKADA  <okada@opaopa.org>

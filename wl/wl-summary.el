@@ -4636,7 +4636,7 @@ Return t if message exists."
 	  (set-buffer wl-message-buffer)
 	  t)
       (if (wl-summary-no-mime-p folder)
-	  (wl-summary-redisplay-no-mime folder number)
+	  (wl-summary-redisplay-no-mime-internal folder number)
 	(wl-summary-redisplay-internal folder number))
       (when (buffer-live-p wl-message-buffer)
 	(set-buffer wl-message-buffer))
@@ -5251,8 +5251,18 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display."))))
 
-(defun wl-summary-redisplay-no-mime (&optional folder number)
-  (interactive)
+(defun wl-summary-redisplay-no-mime (&optional ask-coding)
+  "Display message without MIME decoding.
+If ASK-CODING is non-nil, coding-system for the message is asked."
+  (interactive "P")
+  (let ((elmo-mime-display-as-is-coding-system
+	 (if ask-coding
+	     (or (read-coding-system "Coding system: ")
+		 elmo-mime-display-as-is-coding-system)
+	   elmo-mime-display-as-is-coding-system)))
+    (wl-summary-redisplay-no-mime-internal)))
+
+(defun wl-summary-redisplay-no-mime-internal (&optional folder number)
   (let* ((fld (or folder wl-summary-buffer-elmo-folder))
 	 (num (or number (wl-summary-message-number)))
 	 wl-break-pages)

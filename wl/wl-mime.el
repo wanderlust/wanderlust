@@ -74,6 +74,11 @@ By setting following-method as yank-content."
   (let* (recipients-message
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (mime-display-header-hook 'wl-highlight-headers)
+	 (mime-header-encode-method-alist
+	  (append
+	   '((wl-draft-eword-encode-address-list 
+	      .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+	   mime-header-encode-method-alist))
 	 mime-view-ignored-field-list	; all header.
 	 (mime-edit-translate-buffer-hook
 	  (append

@@ -853,8 +853,21 @@ to find out how to use this."
 				msg-id-list))))
     (nreverse msg-id-list)))
 
+(defun wl-draft-eword-encode-address-list (string &optional column)
+  "Encode header field STRING as list of address, and return the result.
+Cause an error when STRING contains invalid address.
+Optional argument COLUMN is start-position of the field."
+  (car (eword-encode-rword-list
+	(or column eword-encode-default-start-column)
+	(eword-encode-addresses-to-rword-list
+	 (wl-draft-std11-parse-addresses (std11-lexical-analyze string))))))
+
 (defun wl-draft-std11-parse-addresses (lal)
   (let ((ret (std11-parse-address lal)))
+    (when (and (not (and (eq (length lal) 1)
+			 (eq (car (car lal)) 'spaces)))
+	       (null ret))
+      (error "Error while parsing address"))
     (if ret
 	(let ((dest (list (car ret))))
 	  (setq lal (cdr ret))
@@ -1194,7 +1207,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		     (not (wl-message-news-p)))
 		(error "No recipient is specified"))
 	    (expand-abbrev) ; for mail-abbrevs
-	    (run-hooks 'mail-send-hook) ; translate buffer
+	    (let ((mime-header-encode-method-alist
+		   (append
+		    '((wl-draft-eword-encode-address-list 
+		       .  (To Cc Bcc Resent-To Resent-Cc Bcc Resent-Bcc)))
+		    mime-header-encode-method-alist)))
+	      (run-hooks 'mail-send-hook) ; translate buffer
+	      )
 	    (if wl-draft-verbose-send
 		(message (or mes-string "Sending...")))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
@@ -1444,7 +1463,6 @@ Derived from `message-save-drafts' in T-gnus."
     (wl-draft-prepare-edit)
     (if (interactive-p)
 	(run-hooks 'wl-mail-setup-hook))
-
     (goto-char (point-min))
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((eq this-command 'wl-summary-write-current-newsgroup)
