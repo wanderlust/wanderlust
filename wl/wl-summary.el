@@ -5498,6 +5498,8 @@ Reply to author if invoked with argument."
     (if num
 	(progn
 	  (setq wl-summary-buffer-disp-msg t)
+	  (setq wl-summary-buffer-last-displayed-msg 
+		wl-summary-buffer-current-msg)
 	  (setq wl-current-summary-buffer (current-buffer))
 	  (wl-normal-message-redisplay fld num 'no-mime msgdb)
 	  (wl-summary-mark-as-read nil nil t)
@@ -5522,8 +5524,18 @@ Reply to author if invoked with argument."
 	 (wl-message-redisplay-func wl-summary-buffer-message-redisplay-func))
     (if num
 	(progn
+	  (setq wl-summary-buffer-disp-msg t)
+	  (setq wl-summary-buffer-last-displayed-msg 
+		wl-summary-buffer-current-msg)
+	  (setq wl-current-summary-buffer (current-buffer))
 	  (if (wl-message-redisplay fld num 'all-header msgdb); t if displayed.
 	      (wl-summary-mark-as-read nil nil t))
+	  (setq wl-summary-buffer-current-msg num)
+	  (when wl-summary-recenter
+	    (recenter (/ (- (window-height) 2) 2))
+	    (if (not wl-summary-width)
+		(wl-horizontal-recenter)))
+	  (wl-highlight-summary-displaying)
 	  (run-hooks 'wl-summary-redisplay-hook))
       (message "No message to display."))))
 	 
