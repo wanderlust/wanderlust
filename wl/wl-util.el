@@ -1091,8 +1091,8 @@ is enclosed by at least one regexp grouping construct."
 		      (mapcar (lambda (f) (list (capitalize (symbol-name f))))
 			      (elmo-uniq-list
 			       (append
-				'(unread answered forwarded digest any)
-				elmo-global-flags)
+				elmo-global-flags
+				'(unread answered forwarded digest any))
 			       #'delq)))))
 	(unless (elmo-flag-valid-p value)
 	  (message "Invalid char in `%s'" value)

@@ -1,3 +1,8 @@
+2005-02-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-read-search-condition-internal): Protect
+	elmo-global-flags from distraction.
+
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl.el (wl-exit): Call `elmo-clear-signal-slots'.
