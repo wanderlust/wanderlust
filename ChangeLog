@@ -1,3 +1,7 @@
+2004-09-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* doc/TODO, doc/TODO.ja: Updated.
+
 2004-08-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* WL-MK (install-wl-icons): Use install-files to set file mode.

@@ -1,4 +1,6 @@
-** organize the mark for already forwarded messages
+** asynchronous access to the folders
+** improvement of folder mode
+** independent cache mark
 ** History Folder (proposal by Tomotaka SUWA)
 ** enable to define folder icons in elmo.el
 ** reverse sort, sorted update in summary mode
