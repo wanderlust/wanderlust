@@ -2592,7 +2592,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (defun elmo-imap4-flags-to-imap (flags)
   "Convert FLAGS to the IMAP flag string."
   (let ((imap-flag (if (not (memq 'unread flags)) "\\Seen"))
-	(flags (delq 'cached (delq 'unread flags)))
+	(flags (delq 'read (delq 'cached (delq 'unread flags))))
 	spec)
     (dolist (flag flags)
       (setq imap-flag (concat imap-flag (if imap-flag " ")

@@ -381,7 +381,7 @@ FOLDER is the ELMO folder structure.")
 						       number)
   "Append current buffer as a new message.
 FOLDER is the destination folder (ELMO folder structure).
-FLAGS is the status of appended message (list of symbols).
+FLAGS is the flag list for the appended message (list of symbols).
 If it is nil, it is not that there is no flag and what is not defined is meant.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
@@ -1341,11 +1341,11 @@ If Optional LOCAL is non-nil, don't update server flag."
 	       ;; Let duplicates be a temporary killed message.
 	       (elmo-folder-kill-messages folder duplicates)
 	       ;; Should be flag as read.
-	       (elmo-folder-set-flag folder duplicates 'read))
+	       (elmo-folder-unset-flag folder duplicates 'unread))
 	      ((eq (elmo-folder-process-duplicates-internal folder)
 		   'read)
 	       ;; Flag as read duplicates.
-	       (elmo-folder-set-flag folder duplicates 'read))
+	       (elmo-folder-unset-flag folder duplicates 'unread))
 	      (t
 	       ;; Do nothing.
 	       (setq duplicates nil)))

@@ -382,10 +382,10 @@ FOLDER is the folder structure."
   (elmo-folder-unset-flag folder numbers 'important))
 
 (defun elmo-folder-set-read-delayed (folder numbers)
-  (elmo-folder-set-flag folder numbers 'read))
+  (elmo-folder-unset-flag folder numbers 'unread))
 
 (defun elmo-folder-unset-read-delayed (folder numbers)
-  (elmo-folder-unset-flag folder numbers 'read))
+  (elmo-folder-set-flag folder numbers 'unread))
 
 (defun elmo-folder-set-answered-delayed (folder numbers)
   (elmo-folder-set-flag folder numbers 'answered))

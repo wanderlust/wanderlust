@@ -1,3 +1,13 @@
+2004-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-buffer): Fix docstring.
+	(elmo-folder-append-msgdb): Don't treat `read'.
+
+	* elmo-dop.el (elmo-folder-set-read-delayed): Don't treat `read'.
+	(elmo-folder-unset-read-delayed): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-flags-to-imap): Ditto.
+
 2004-09-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-imap4.el (elmo-folder-delete): Clear current-mailbox after
