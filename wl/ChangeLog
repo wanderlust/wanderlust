@@ -1,3 +1,8 @@
+2003-01-27  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-insert-from-field): Use wl-from.
+	(wl-draft-check-wl-from): New function.
+
 2003-01-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-vars.el (wl-message-id-use-wl-from): Change defalut to t.

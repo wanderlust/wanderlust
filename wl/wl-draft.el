@@ -150,52 +150,18 @@ e.g.
   "Insert Date field."
   (insert "Date: " (wl-make-date-string) "\n"))
 
+(defun wl-draft-check-wl-from ()
+  (or wl-from (error "Please set `wl-from' to your mail address"))
+  (condition-case err
+      (wl-draft-eword-encode-address-list wl-from)
+    (error (error "Please look at `wl-from' again"))))
+
 (defun wl-draft-insert-from-field ()
   "Insert From field."
   ;; Put the "From:" field in unless for some odd reason
   ;; they put one in themselves.
-  (let* ((login (or user-mail-address (user-login-name)))
-	 (fullname (user-full-name)))
-    (cond ((eq mail-from-style 'angles)
-	   (insert "From: " fullname)
-	   (let ((fullname-start (+ (point-min) (length "From: ")))
-		 (fullname-end (point-marker)))
-	     (goto-char fullname-start)
-	     ;; Look for a character that cannot appear unquoted
-	     ;; according to RFC 822.
-	     (if (re-search-forward "[^- !#-'*+/-9=?A-Z^-~]"
-				    fullname-end 1)
-		 (progn
-		   ;; Quote fullname, escaping specials.
-		   (goto-char fullname-start)
-		   (insert "\"")
-		   (while (re-search-forward "[\"\\]"
-					     fullname-end 1)
-		     (replace-match "\\\\\\&" t))
-		   (insert "\""))))
-	   (insert " <" login ">\n"))
-	  ((eq mail-from-style 'parens)
-	   (insert "From: " login " (")
-	   (let ((fullname-start (point)))
-	     (insert fullname)
-	     (let ((fullname-end (point-marker)))
-	       (goto-char fullname-start)
-	       ;; RFC 822 says \ and nonmatching parentheses
-	       ;; must be escaped in comments.
-	       ;; Escape every instance of ()\ ...
-	       (while (re-search-forward "[()\\]" fullname-end 1)
-		 (replace-match "\\\\\\&" t))
-	       ;; ... then undo escaping of matching parentheses,
-	       ;; including matching nested parentheses.
-	       (goto-char fullname-start)
-	       (while (re-search-forward
-		       "\\(\\=\\|[^\\]\\(\\\\\\\\\\)*\\)\\\\(\\(\\([^\\]\\|\\\\\\\\\\)*\\)\\\\)"
-		       fullname-end 1)
-		 (replace-match "\\1(\\3)" t)
-		 (goto-char fullname-start))))
-	   (insert ")\n"))
-	  ((not mail-from-style)
-	   (insert "From: " login "\n")))))
+  (wl-draft-check-wl-from)
+  (insert "From: " wl-from "\n"))
 
 (defun wl-draft-insert-x-face-field ()
   "Insert X-Face header."
