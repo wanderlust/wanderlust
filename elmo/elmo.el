@@ -854,14 +854,16 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	      (elmo-message-fetch
 	       src-folder (car numbers)
 	       (if (and (not (elmo-folder-plugged-p src-folder))
-			elmo-enable-disconnected-operation
-			(setq cache (elmo-file-cache-get
-				     (elmo-message-field
-				      src-folder (car numbers)
-				      'message-id)))
-			(eq (elmo-file-cache-status cache) 'entire))
-		   (elmo-make-fetch-strategy
-		    'entire t nil (elmo-file-cache-path cache))
+			elmo-enable-disconnected-operation)
+		   (if (and (setq cache (elmo-file-cache-get
+					 (elmo-message-field
+					  src-folder (car numbers)
+					  'message-id)))
+			    (eq (elmo-file-cache-status cache) 'entire))
+		       (elmo-make-fetch-strategy
+			'entire
+			t
+			nil (elmo-file-cache-path cache)))
 		 (elmo-make-fetch-strategy 'entire))
 	       nil (current-buffer)
 	       'unread)

@@ -547,6 +547,18 @@
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
+(defun wl-summary-collect-unread (mark-alist &optional folder)
+  (let (mark ret-val)
+    (while mark-alist
+      (setq mark (cadr (car mark-alist)))
+      (and mark
+	   (or (string= mark wl-summary-new-mark)
+	       (string= mark wl-summary-unread-uncached-mark)
+	       (string= mark wl-summary-unread-cached-mark))
+	   (setq ret-val (cons (car (car mark-alist)) ret-val)))
+      (setq mark-alist (cdr mark-alist)))
+    ret-val))
+
 (defun wl-summary-count-unread (mark-alist)
   (let ((new 0)
 	(unread 0)
@@ -1587,12 +1599,7 @@ If ARG is non-nil, checking is omitted."
 	     (case-fold-search nil)
 	     msg mark)
 	(message "Setting all msgs as read...")
-	(elmo-folder-mark-as-read folder
-				  (elmo-folder-list-unreads
-				   folder
-				   (list wl-summary-unread-cached-mark
-					 wl-summary-unread-uncached-mark
-					 wl-summary-new-mark)))
+	(elmo-folder-mark-as-read folder (wl-summary-collect-unread mark-alist))
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
@@ -4345,8 +4352,7 @@ If ARG, exit virtual folder."
   (let (num)
     (when (setq num (wl-summary-next-message (wl-summary-message-number)
 					     direction hereto))
-      (if (numberp num)
-	  (wl-thread-jump-to-msg num))
+      (wl-thread-jump-to-msg num)
       t)))
 ;;
 ;; Goto unread or important
@@ -4871,9 +4877,6 @@ Reply to author if invoked with ARG."
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
-      (unless wl-draft-use-frame
-	(split-window-vertically)
-	(other-window 1))
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf)
 	(unless without-setup-hook
@@ -4933,9 +4936,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (wl-summary-redisplay-internal nil nil 'force-reload)
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer mes-buf)
-      (unless wl-draft-use-frame
-	(split-window-vertically)
-	(other-window 1))
+      (or wl-draft-use-frame
+	  (split-window-vertically))
+      (other-window 1)
       ;; get original subject.
       (if summary-buf
 	  (save-excursion

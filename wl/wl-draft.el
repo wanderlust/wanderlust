@@ -1047,8 +1047,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(if wl-draft-use-cache
 	    (let ((id (std11-field-body "Message-ID"))
 		  (elmo-enable-disconnected-operation t))
-	      (elmo-file-cache-save (elmo-file-cache-get-path id)
-				    nil)))
+		(elmo-file-cache-save id nil)))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)

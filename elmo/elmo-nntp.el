@@ -115,8 +115,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
       (unless (elmo-net-folder-stream-type-internal folder)
 	(elmo-net-folder-set-stream-type-internal
 	 folder
-	 (elmo-get-network-stream-type
-	  elmo-nntp-default-stream-type)))
+	 elmo-nntp-default-stream-type))
       folder)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-nntp-folder))
