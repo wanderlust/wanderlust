@@ -4407,6 +4407,7 @@ Field の値が @code{nil} ならばその Field を削除します。
 もしくは @kbd{M-x wl-template-select}と入力することで適用します。
 @code{wl-template-alist} の書式は @code{wl-draft-config-alist} とほぼ同
 じです。
+@xref{Dynamical Message Re-arrangement}.
 
 @lisp
 @group

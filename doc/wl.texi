@@ -4425,6 +4425,7 @@ Set a variable @code{wl-template-alist}, and type @kbd{C-c C-j} or
 
 The format of @code{wl-template-alist} is almost the same as
 @code{wl-draft-config-alist}.
+@xref{Dynamical Message Re-arrangement}.
 
 @lisp
 @group
