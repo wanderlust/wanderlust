@@ -47,7 +47,7 @@
 
 (defcustom elmo-shimbun-use-cache t
   "*If non-nil, use cache for each article."
-  :type :boolean
+  :type 'boolean
   :group 'elmo)
 
 (defcustom elmo-shimbun-index-range-alist nil

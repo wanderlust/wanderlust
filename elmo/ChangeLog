@@ -1,3 +1,8 @@
+2001-10-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-use-cache): Fix typo in the
+	definition.
+
 2001-10-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-localnews.el (elmo-folder-expand-msgdb-path): Define.
