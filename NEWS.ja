@@ -1,5 +1,9 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+** wl-folder-hierarchy-access-folders の初期値が変更されました。
+
+** 新聞フォルダのアクセスグループ "@/" が使えるようになりました。
+
 ** 前に使っていたものより新しい Wanderlust を起動すると NEWS(.ja) の内容を
    表示します。
 
@@ -15,6 +19,38 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** non-MIME PGP メッセージの検証、復号化のためのコマンドが追加されました。
    メッセージバッファにおいて C-c:v, C-c:d でそれぞれ検証、復号化します。
+
+* 2.10.0 から 2.10.1 への変更点
+  2.10.1 は 2.10.0 のバグ修正版です。
+
+** print-length や print-level が Non-nil のときに msgdb が壊れる問題が
+   修正されました。
+
+** パイプフォルダにおいて wl-summary-pack-number がうまく動かなかった
+   ため効かなくしてあります。必要であれば取り込み先フォルダの方で実行
+   して下さい。
+
+** wl-folder-move-cur-folder が効いていなかった問題が修正されました。
+
+** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
+
+** wl-summary-pack-number が Maildir や shimbun フォルダで動かない
+   問題が修正されました。
+
+** 重要マークつきメッセージのキャッシュに対する保護機能が働かない
+   不具合が修正されました。
+
+** wl-summary-line-format の %# で大きな数値を正しく扱えない不具合
+   が修正されました。
+
+** SMTP AUTH で認証以外のエラーでもパスワード消去される不具合が修
+   正されました。
+
+** wl-message-buffer-prefetch-folder-type-list,
+   wl-message-buffer-prefetch-idle-time,
+   wl-message-buffer-prefetch-depth のデフォルト値が変更されました。
+
+** XEmacs without mule でコンパイルできない問題が修正されました。
 
 * 2.8.1 から 2.10.0 への変更点
 

@@ -1,5 +1,9 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+** Default value of wl-folder-hierarchy-access-folders has been changed.
+
+** Access group "@/" of shimbun folders can be used now.
+
 ** Show contents of NEWS(.ja) when you start Wanderlust newer than the
    one you used previously.
 
@@ -15,6 +19,37 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Commands to verify/decrypt non-MIME PGP message are added.
    C-c:v, C-c:d in message buffer to verify or decrypt respectively.
+
+* Changes in 2.10.1 from 2.10.0
+  Version 2.10.1 is a bug fix version of 2.10.0.
+
+** Fixed the problem that msgdb be destroyed when print-length or
+   print-level has Non-nil value.
+
+** wl-summary-pack-number in pipe folder is disabled temporarily
+   since it didn't work. Invoke it in destination folder instead.
+
+** Fixed a problem that wl-folder-move-cur-folder doesn't work.
+
+** Fixed a problem that wl-draft-reedit doesn't work properly on Meadow.
+
+** Fixed a problem that wl-summary-pack-number doesn't work on Maildir and
+   shimbun folders.
+
+** Fixed a problem that cache file is not protected even if it is marked
+   as important.
+
+** Fixed a problem that %# in wl-summary-line-format cannot handle large
+   number.
+
+** Fixed a problem to remove password even if SMTP AUTH failed at non-auth
+   phase.
+
+** Default value of wl-message-buffer-prefetch-folder-type-list,
+   wl-message-buffer-prefetch-idle-time, and
+   wl-message-buffer-prefetch-depth are changed.
+
+** Fixed to compile on XEmacs without mule feature.
 
 * Changes in 2.10.0 from 2.8.1
 
