@@ -5108,9 +5108,10 @@ can specify function-specific arguments after the name of the
 @code{wl-summary-expire-reserve-marks}, be careful in writing your own
 function.
 
-These are three standard functions; they moves messages to an archive
+These are four standard functions; three of them move messages to an archive
 folder in the specified way.  This means old messages can be compressed
 and saved in a file, being deleted from the original folder.
+The last one divides messages to some MH folders.
 
 @table @code
 @item wl-expire-archive-number1
@@ -5160,7 +5161,7 @@ For example, a message dated December 1998 is re-filed to
 @code{$folder-199812;zip}.  The name of the archiving folders except the
 date part are determined in the same way as
 @code{wl-expire-archive-number1}.
-@end table
+
 
 You can set the first argument to these three standard functions to non-nil
 in @code{wl-expire-alist} so as to retain message numbers in the folder.
@@ -5172,6 +5173,11 @@ For example, it can be specified just after the name of the function:
 
 If you omit the argument, consecutive numbers from 1 are assigned for
 each archiving folder.
+
+@item wl-expire-localdir-date
+divedes messages depending on its date (year and month) to MH folders
+e.g. to @samp{+ml/wl/1999_11/}, @samp{+ml/wl/1999_12/}.
+@end table
 @end table
 
 @subsection Treatment for Important or Unread Messages
