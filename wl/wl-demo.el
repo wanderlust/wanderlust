@@ -194,28 +194,24 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 			      nil demo-buf))
 	   (set-specifier (symbol-value 'scrollbar-height) 0 demo-buf)
 	   (set-specifier (symbol-value 'scrollbar-width) 0 demo-buf))
-	  ((and (>= emacs-major-version 19) window-system)
+	  ((and (> emacs-major-version 20) window-system (find-face 'fringe))
 	   (let* ((frame (selected-frame))
-		  (vbar (cdr (assq 'vertical-scroll-bars
-				   (frame-parameters frame))))
-		  (fbg (if (find-face 'fringe)
-			   (face-background 'fringe frame))))
-	     (make-local-hook 'kill-buffer-hook)
-	     (add-hook 'kill-buffer-hook
-		       (` (lambda ()
-			    (modify-frame-parameters
-			     (, frame) (list (cons 'vertical-scroll-bars
-						   (quote (, vbar)))))
-			    (if (, fbg)
-				(let ((unspecified nil))
-				  (set-face-background 'fringe (eval (, fbg))
-						       (, frame))))))
-		       nil t)
-	     (modify-frame-parameters frame '((vertical-scroll-bars)))
-	     (if (find-face 'fringe)
-		 (let* ((unspecified nil)
-			(bg (eval (face-background 'default))))
-		   (set-face-background 'fringe bg frame))))))
+		  (unspecified nil)
+		  (bg (eval (face-background 'default frame)))
+		  (fbg (eval (face-background 'fringe frame))))
+	     (if bg
+		 (progn
+		   (set-face-background 'fringe bg frame)
+		   (if fbg
+		       (progn
+			 (make-local-hook 'kill-buffer-hook)
+			 (add-hook 'kill-buffer-hook
+				   (` (lambda ()
+					(if (frame-live-p (, frame))
+					    (set-face-background 'fringe
+								 (, fbg)
+								 (, frame)))))
+				   nil t))))))))
     (erase-buffer)
     (setq truncate-lines t)
     (let* ((wl-demo-display-logo
