@@ -1,13 +1,3 @@
-2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* utils/sasl: Sync up with flim-1_14.
-
-	* utils/sasl/sasl-cram.el: New file.
-	* utils/sasl/sasl-digest.el: New file.
-	* utils/sasl/digest-md5.el: Delete.
-	* utils/sasl/scram-md5.el: Delete.
-	* utils/sasl/unique-id.el: Delete.
-
 2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.4.0 - "Rio"

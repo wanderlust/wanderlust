@@ -32,8 +32,6 @@
 ;;
 (require 'product)
 (require 'elmo-version)			; product-version-as-string
-(eval-when-compile
-  (require 'elmo-util))			; elmo-match-string
 (provide 'wl-version)			; before product-provide
 
 ;; product-define in the first place
@@ -46,6 +44,9 @@
 
 ;; set version-string
 (product-version-as-string 'wl-version)
+
+;; require wl-util after product-provide.
+(eval-when-compile (require 'wl-util))	; wl-match-string
 
 (defun wl-version (&optional with-codename)
   "Return Wanderlust version.
@@ -139,11 +140,11 @@ If VERBOSE return with SEMI, FLIM and APEL version."
 If WITH-CODENAME add XEmacs codename."
   (cond
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (concat "Emacs " (elmo-match-string 1 emacs-version)
+    (concat "Emacs " (wl-match-string 1 emacs-version)
 	    (when (boundp 'mule-version) (concat "/Mule " mule-version))))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
-    (concat (elmo-match-string 1 emacs-version)
+    (concat (wl-match-string 1 emacs-version)
 	    (format " %d.%d" emacs-major-version emacs-minor-version)
 	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
 	      (format "b%d" emacs-beta-version))
@@ -160,11 +161,11 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
     (format "Mule%s%s@%d.%d%s"
 	    (or delimiter " ")
-	    (elmo-match-string 1 mule-version)
+	    (wl-match-string 1 mule-version)
 	    emacs-major-version
 	    emacs-minor-version
 	    (if with-codename
-		(elmo-match-string 2 mule-version)
+		(wl-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (if (boundp 'nemacs-version)
@@ -175,10 +176,10 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 			   (match-beginning 1)
 			   (match-end 1)))
       (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+	      (wl-match-string 1 emacs-version))))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
-    (concat (elmo-match-string 1 emacs-version)
+    (concat (wl-match-string 1 emacs-version)
 	    (or delimiter " ")
 	    (format "%d.%d" emacs-major-version emacs-minor-version)
 	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
@@ -199,9 +200,9 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 	    emacs-major-version
 	    emacs-minor-version
 	    (or delimiter " ")
-	    (elmo-match-string 1 mule-version)
+	    (wl-match-string 1 mule-version)
 	    (if with-codename
-		(elmo-match-string 2 mule-version)
+		(wl-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (if (boundp 'nemacs-version)
@@ -210,7 +211,7 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
 	  (format "Emacs%s%s Nemacs%s%s%s"
 		  (or delimiter " ")
-		  (elmo-match-string 1 emacs-version)
+		  (wl-match-string 1 emacs-version)
 		  (or delimiter " ")
 		  nemacs-version
 		  (or (and with-codename
@@ -218,10 +219,10 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 				       nemacs-codename-assoc)))
 		      "")))
       (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+	      (wl-match-string 1 emacs-version))))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
-    (concat (elmo-match-string 1 emacs-version)
+    (concat (wl-match-string 1 emacs-version)
 	    (or delimiter " ")
 	    (format "%d.%d" emacs-major-version emacs-minor-version)
 	    (when (and (boundp 'emacs-beta-version) emacs-beta-version)
