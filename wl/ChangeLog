@@ -1,3 +1,8 @@
+2000-04-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-expire.el (wl-expire-archive-get-max-number):
+	Use `file-name-directory'.
+
 2000-04-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync-marks): Re-display progress
