@@ -82,10 +82,8 @@ Automatically loaded/saved.")
   `(cdr (assq (elmo-dop-queue-method ,queue)
 	      elmo-dop-queue-method-name-alist)))
 
-(defun elmo-dop-queue-flush (&optional force)
-  "Flush disconnected operations.
-If optional argument FORCE is non-nil, try flushing all operation queues
-even an operation concerns the unplugged folder."
+(defun elmo-dop-queue-flush ()
+  "Flush disconnected operations that consern plugged folders."
   (elmo-dop-queue-merge)
   (let ((queue-all elmo-dop-queue)
 	queue
@@ -130,9 +128,7 @@ even an operation concerns the unplugged folder."
 				 (setq folder
 				       (elmo-make-folder
 					(elmo-dop-queue-fname (car queue))))
-			       (elmo-folder-open folder)
-			       (unless (elmo-folder-plugged-p folder); redundant?
-				 (error "Unplugged.")))
+			       (elmo-folder-open folder))
 			     (elmo-dop-queue-arguments (car queue)))
 		      (elmo-folder-close folder))
 		  (quit  (setq failure t))

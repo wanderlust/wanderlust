@@ -478,7 +478,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	(wl-plugged t)
 	emptied)
     (if elmo-enable-disconnected-operation
-	(elmo-dop-queue-flush 'force)) ; Try flushing all queue.
+	(elmo-dop-queue-flush))
     (if (not (elmo-folder-list-messages
 	      (wl-folder-get-elmo-folder wl-queue-folder)))
 	(message "No sending queue exists.")

@@ -1,5 +1,8 @@
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-folder.el (wl-folder-flush-queue): Call elmo-dop-queue-flush
+	without argument.
+
 	* wl-draft.el (wl-draft-config-sub-eval-insert): New function.
 	Evaluate content and if the value is string, insert it.
 	(wl-draft-config-sub-body,wl-draft-config-sub-top,
