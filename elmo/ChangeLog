@@ -1,3 +1,8 @@
+2002-01-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-util.el (elmo-save-buffer): The first argument of message
+	is a format control string.
+
 2002-01-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-diff-new): Fixed (Adapted to doc-string of

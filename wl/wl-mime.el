@@ -169,7 +169,7 @@ By setting following-method as yank-content."
 			   number))))
 	  ((and (eq (cdr (assq 'type content-type)) 'message)
 		(eq (cdr (assq 'subtype content-type)) 'rfc822))
-	   (message (format "Bursting...%s" (setq number (+ 1 number))))
+	   (message "Bursting...%s" (setq number (+ 1 number)))
 	   (setq entity
 		 (car (mime-entity-children message-entity)))
 	   (with-temp-buffer

@@ -880,7 +880,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	(if (file-writable-p filename)
 	    (write-region (point-min) (point-max)
 			  filename t 'no-msg)
-	  (message (format "%s is not writable." filename)))
+	  (message "%s is not writable." filename))
 	(kill-buffer tmp-buf)))))
 
 (require 'product)

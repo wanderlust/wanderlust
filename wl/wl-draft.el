@@ -802,7 +802,7 @@ text was killed."
 	(if (file-writable-p filename)
 	    (write-region-as-binary (point-min) (point-max)
 				    filename t 'no-msg)
-	  (message (format "%s is not writable." filename)))))))
+	  (message "%s is not writable." filename))))))
 
 (defun wl-draft-get-header-delimiter (&optional delete)
   ;; If DELETE is non-nil, replace the header delimiter with a blank line

@@ -125,7 +125,7 @@ File content is encoded with MIME-CHARSET."
 	    (encode-mime-charset-region (point-min) (point-max) mime-charset))
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg)))
-      (message (format "%s is not writable." filename)))))
+      (message "%s is not writable." filename))))
 
 (defun elmo-object-save (filename object &optional mime-charset)
   "Save OBJECT to the file specified by FILENAME.
@@ -431,7 +431,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	    (write-region (point-min) (point-max)
 			  filename nil 'no-msg)
 	    (set-file-modes filename 384))
-	(message (format "%s is not writable." filename)))
+	(message "%s is not writable." filename))
       (kill-buffer tmp-buffer))))
 
 (defun elmo-get-passwd (key)

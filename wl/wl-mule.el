@@ -276,8 +276,8 @@ If FRAME is nil, the current FRAME is used."
 			    ((eq req 'background)
 			     (memq background options))
 			    (t
-			     (message (format "\
-Warning: Unknown req `%S' with options `%S'" req options))
+			     (message "\
+Warning: Unknown req `%S' with options `%S'" req options)
 			     nil))))
 	match)))))
 

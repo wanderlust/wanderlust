@@ -1161,8 +1161,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   ;; returns nil if there's no change.
   (if (elmo-get-hash-val (downcase the-email) wl-address-petname-hash)
       (let (char)
-	(message (format "'%s' already exists. (e)dit/(d)elete/(c)ancel?"
-			 the-email))
+	(message "'%s' already exists. (e)dit/(d)elete/(c)ancel?"
+		 the-email)
 	(while (not (or (eq (setq char (read-char)) ?\r)
 			(eq char ?\n)
 			(eq char ? )
