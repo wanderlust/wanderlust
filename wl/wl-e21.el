@@ -153,22 +153,21 @@
 
 (defun wl-e21-setup-toolbar (bar)
   (let ((load-path (cons wl-icon-dir load-path))
+	(props '(:type xpm :ascent center
+		       :color-symbols (("backgroundToolBarColor" . "None"))
+		       :file))
 	(success t)
 	icon up down disabled name success)
     (while bar
       (setq icon (aref (pop bar) 0))
       (unless (boundp icon)
 	(setq name (symbol-name icon)
-	      up (find-image `((:type xpm :file ,(concat name "-up.xpm")
-				      :ascent center))))
+	      up (find-image `((,@props ,(concat name "-up.xpm")))))
 	(if up
 	    (progn
-	      (setq down (find-image
-			  `((:type xpm :file ,(concat name "-down.xpm")
-				   :ascent center)))
-		    disabled (find-image
-			      `((:type xpm :file ,(concat name "-disabled.xpm")
-				       :ascent center))))
+	      (setq down (find-image `((,@props ,(concat name "-down.xpm"))))
+		    disabled (find-image `((,@props
+					    ,(concat name "-disabled.xpm")))))
 	      (set icon (vector down up disabled disabled)))
 	  (setq bar nil
 		success nil))))
@@ -185,11 +184,11 @@
 	config)
     (while (setq config (pop configs))
       (set (make-local-variable (car config)) (cdr config))))
-  (let ((n (1- (length defs)))
+  (let ((n (length defs))
 	def)
     (while (>= n 0)
-      (setq def (nth n defs)
-	    n (1- n))
+      (setq n (1- n)
+	    def (nth n defs))
       (define-key keymap (vector 'tool-bar (aref def 1))
 	(list 'menu-item (aref def 3) (aref def 1)
 	      :enable (aref def 2)
