@@ -1,5 +1,9 @@
 2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-summary.el (wl-summary-goto-folder-subr): Don't restrict
+	`wl-summary-highlight'.
+	(wl-summary-reedit): Use `cond' instead of nested `if'.
+
 	* wl-fldmgr.el (wl-fldmgr-folders-header): Add more comment.
 	(wl-fldmgr-save-folders): Fix comment.
 	(wl-fldmgr-rename): Do nothing on the last line.

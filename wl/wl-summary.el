@@ -608,17 +608,18 @@ If optional USE-CACHE is non-nil, use cache if exists."
   "Re-edit current message.
 If ARG is non-nil, Supersedes message"
   (interactive "P")
-  (if arg
-      (wl-summary-supersedes-message)
-    (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
-	(if (wl-summary-message-number)
-	    (progn
-	      (wl-draft-reedit (wl-summary-message-number))
-	      (if (wl-message-news-p)
-		  (mail-position-on-field "Newsgroups")
-		(mail-position-on-field "To"))
-	      (delete-other-windows)))
-      (wl-draft-edit-string (wl-summary-message-string)))))
+  (cond
+   ((not (wl-summary-message-number))
+    (message "No message."))
+   (arg
+    (wl-summary-supersedes-message))
+   ((string= (wl-summary-buffer-folder-name) wl-draft-folder)
+    (wl-draft-reedit (wl-summary-message-number))
+    (if (wl-message-news-p)
+	(mail-position-on-field "Newsgroups")
+      (mail-position-on-field "To")))
+   (t
+    (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
@@ -2494,10 +2495,8 @@ If ARG, without confirm."
 	(wl-summary-rescan))
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
-	;(setq hilit wl-summary-highlight)
 	(unwind-protect
-	    (let ((wl-summary-highlight (if reuse-buf wl-summary-highlight))
-		  (wl-use-scoring
+	    (let ((wl-use-scoring
 		   (if (or scoring interactive) wl-use-scoring)))
 	      (if (and (not scan-type)
 		       interactive
