@@ -1,3 +1,7 @@
+2002-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (toplevel): require 'eword-encode.
+
 2002-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-add-buttons-to-header): Eliminated

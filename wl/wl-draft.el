@@ -37,6 +37,7 @@
 (condition-case nil (require 'timezone) (error nil))
 (require 'std11)
 (require 'wl-vars)
+(require 'eword-encode)
 
 (defvar x-face-add-x-face-version-header)
 (defvar mail-reply-buffer)
