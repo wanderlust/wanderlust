@@ -2346,6 +2346,12 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (elmo-define-obsolete-variable 'wl-tmp-dir
 			       'wl-temporary-file-directory)
 
+;; 2001-12-07
+(elmo-define-obsolete-variable 'wl-from-width
+			       'wl-summary-from-width)
+(elmo-define-obsolete-variable 'wl-subject-length-limit
+			       'wl-summary-subject-length-limit)
+
 ;; 2001-12-10
 (elmo-define-obsolete-variable 'wl-summary-update-confirm-threshold
 			       'elmo-folder-update-threshold)
