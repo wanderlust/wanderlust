@@ -1,3 +1,10 @@
+2002-03-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-mode-menu-spec): Fix docstring.
+
+	* wl-e21.el (wl-folder-toolbar): Add "Go to draft folder" entry.
+	* wl-xmas.el (wl-folder-toolbar): Ditto.
+
 2002-03-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-e21.el (wl-draft-overload-menubar): Add wl-draft-preview-message

@@ -71,6 +71,8 @@
      wl-draft t "Write a New Message"]
     [wl-write-current-folder
      wl-folder-write-current-folder t "Write for Current Folder"]
+    [wl-folder-goto-draft-folder
+     wl-folder-goto-draft-folder t "Go to Draft Folder"]
     [wl-folder-empty-trash
      wl-folder-empty-trash t "Empty Trash"]
     [wl-exit

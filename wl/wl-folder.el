@@ -93,7 +93,7 @@
     ["Mark as Read all Current Folder" wl-folder-mark-as-read-all-current-entity t]
     ["Expire Current Folder" wl-folder-expire-current-entity t]
     "----"
-    ["Enter Draft Folder" wl-folder-goto-draft-folder t]
+    ["Go to Draft Folder" wl-folder-goto-draft-folder t]
     ["Empty trash" wl-folder-empty-trash t]
     ["Flush queue" wl-folder-flush-queue t]
     "----"
