@@ -310,7 +310,7 @@ Don't cache if nil.")
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
   (if (null (elmo-nntp-read-response session t))
-      (error "Mode reader failed")))
+      (message "Mode reader failed")))
 
 (defun elmo-nntp-send-command (session command &optional noerase)
   (with-current-buffer (elmo-network-session-buffer session)
