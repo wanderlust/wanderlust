@@ -960,9 +960,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   "Rescan current folder without updating."
   (interactive)
   (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
-	i percent num
-	gc-message entity
-	curp
+	gc-message			; for XEmacs
 	(inhibit-read-only t)
 	(buffer-read-only nil)
 	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
@@ -973,18 +971,21 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 (and disable-thread wl-summary-search-parent-by-subject-regexp))
 	(wl-summary-divide-thread-when-subject-changed
 	 (and disable-thread wl-summary-divide-thread-when-subject-changed))
+	(predicate (and sort-by
+			(intern (format "wl-summary-overview-entity-compare-by-%s"
+					sort-by))))
+	(i 0)
+	num
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
-    (setq i 0)
     (when sort-by
       (message "Sorting by %s..." sort-by)
       (setq numbers
 	    (sort numbers
 		  (lambda (x y)
 		    (funcall
-		     (intern (format "wl-summary-overview-entity-compare-by-%s"
-				     sort-by))
+		     predicate
 		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
 		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
       (message "Sorting by %s...done" sort-by))
@@ -1000,9 +1001,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
     (while numbers
-      (setq entity (elmo-message-entity wl-summary-buffer-elmo-folder
-					(car numbers)))
-      (wl-summary-insert-message entity
+      (wl-summary-insert-message (elmo-message-entity
+				  wl-summary-buffer-elmo-folder
+				  (car numbers))
 				 wl-summary-buffer-elmo-folder
 				 nil)
       (setq numbers (cdr numbers))
@@ -1823,12 +1824,8 @@ This function is defined for `window-scroll-functions'"
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
-	 gc-message
-	 overview
-	 curp num i diff
-	 append-list delete-list crossed
-	 update-thread update-top-list
-	 expunged mes entity)
+	 gc-message			; for XEmacs
+	 crossed expunged mes)
     (unwind-protect
 	(progn
 	  (unless wl-summary-buffer-elmo-folder
@@ -1846,7 +1843,11 @@ This function is defined for `window-scroll-functions'"
 	  (if crossed
 	      (let ((wl-summary-highlight
 		     (and wl-summary-highlight
-			  (not wl-summary-lazy-highlight))))
+			  (not wl-summary-lazy-highlight)))
+		    append-list delete-list
+		    update-thread update-top-list
+		    num diff entity
+		    (i 0))
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
 		(setq diff (elmo-list-diff (elmo-folder-list-messages
@@ -1866,7 +1867,6 @@ This function is defined for `window-scroll-functions'"
 		  (let (buffer-read-only)
 		    (put-text-property (point-min) (point-max) 'face nil)))
 		(setq num (length append-list))
-		(setq i 0)
 		(setq wl-summary-delayed-update nil)
 		(elmo-kill-buffer wl-summary-search-buf-name)
 		(dolist (number append-list)
