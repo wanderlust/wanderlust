@@ -1,5 +1,10 @@
 2005-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-maildir.el (elmo-maildir-move-file): New function.
+	(elmo-folder-append-buffer): Use it.
+	(elmo-folder-append-messages): Ditto.
+	(These changes are based on Ron Isaacson's patch [wl-en: 01205])
+
 	* elmo-imap4.el (elmo-imap4-decode-folder-string): Call `utf7-decode'.
 	(elmo-imap4-encode-folder-string): Call `utf7-encode'.
 
@@ -9,7 +14,7 @@
 	(elmo-maildir-update-current): Ditto.
 	(elmo-maildir-set-mark): Ditto.
 	(elmo-maildir-delete-mark): Ditto.
-	(Above changes are based on Hiroya Murata's patch [wl: 13437])
+	(These changes are based on Hiroya Murata's patch [wl: 13437])
 
 2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

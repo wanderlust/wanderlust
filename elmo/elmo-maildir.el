@@ -416,6 +416,29 @@ file name for maildir directories."
 	     basedir)))
     filename))
 
+(defun elmo-maildir-move-file (src dst)
+  (or (and (fboundp 'make-symbolic-link)
+	   ;; 1. If make-symbolic-link is defined, then assume the system has
+	   ;;    hardlinks and try add-link-to-file, then delete the original.
+	   ;;    This is safe on NFS.
+	   (condition-case nil
+	       (progn
+		 (add-name-to-file src dst)
+		 t)
+	     (error))
+	   ;; It's ok if the delete-file fails;
+	   ;; elmo-maildir-cleanup-temporal will catch it later.
+	   (progn
+	     (condition-case nil
+		 (delete-file src)
+	       (error))
+	     ;; Exit this function anyway.
+	     t))
+      ;; 2. Even on systems with hardlinks, some filesystems (like AFS)
+      ;;    might not support them, so fall back on rename-file. This is
+      ;;    our best shot at atomic when add-name-to-file fails.
+      (rename-file src dst)))
+
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
 					       &optional flags number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
@@ -429,10 +452,7 @@ file name for maildir directories."
 	    (copy-to-buffer dst-buf (point-min) (point-max)))
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg))
-	  ;; add link from new.
-	  ;; Some filesystem (like AFS) does not have hard-link.
-	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
-	  (elmo-copy-file
+	  (elmo-maildir-move-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
@@ -486,9 +506,7 @@ file name for maildir directories."
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)
-	  ;; Some filesystem (like AFS) does not have hard-link.
-	  ;; So we use elmo-copy-file instead of elmo-add-name-to-file here.
-	  (elmo-copy-file
+	  (elmo-maildir-move-file
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
