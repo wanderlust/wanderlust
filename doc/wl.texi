@@ -3182,6 +3182,8 @@ Redisplay the message at current cursor point without MIME analysis.
 If the message at current cursor point has
 encapsulates multiple messages using MIME,
 de-capsulate and extract them on the current folder.
+If it is invoked in non-writable folder or it is called with prefix
+argument, it asks the destination folder.
 (@code{wl-summary-burst})
 
 @item @@
