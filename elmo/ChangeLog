@@ -1,5 +1,7 @@
 2001-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-dop-queue-flush): Added autload setting.
+
 	* elmo-shimbun.el (elmo-shimbun-folder): Added `header-hash' slot.
 	(elmo-folder-open-internal): Setup `header-hash' slot.
 	(elmo-shimbun-msgdb-create-entity): Use `header-hash' to get header

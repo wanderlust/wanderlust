@@ -1326,6 +1326,9 @@ Return a hashtable for newsgroups."
 (elmo-define-obsolete-variable 'elmo-default-pop3-port
 			       'elmo-pop3-default-port)
 
+;; autoloads
+(autoload 'elmo-dop-queue-flush "elmo-dop")
+
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))
 
