@@ -1,0 +1,68 @@
+2002-06-03  KOBAYASHI Shinji <kobayashi_shinji@nifty.com>
+
+	* bbdb-wl.el (bbdb-wl-canonicalize-spaces-and-dots): Remove
+	the preceding spaces.
+
+2002-05-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-canonicalize-full-name-function): New variable.
+	(bbdb-wl-canonicalize-spaces-and-dots): New function.
+	(bbdb-wl-get-addresses-1): Use bbdb-wl-canonicalize-full-name-function.
+	(bbdb-wl-get-addresses-2): Ditto.
+
+2002-04-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* bbdb-wl.el (bbdb-wl-setup): Add `bbdb-offer-save' to
+	`wl-save-hook'.  Use `bbdb-initialize' instead of require
+	bbdb-autoloads.
+
+2002-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* bbdb-wl.el (bbdb-wl-get-addresses-2): Bind unbound local
+	variable.
+
+2002-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-get-addresses-1): New function.
+	(bbdb-wl-get-addresses-2): Ditto.
+	(bbdb-wl-get-addresses): Select bbdb-wl-get-addresses-1 or
+	bbdb-wl-get-addresses-2 according to the bbdb-version.
+	(bbdb-wl-address-headers-spec): New function.
+	(bbdb-wl-show-all-recipients): Use it.
+	(bbdb-wl-show-sender): Ditto.
+	(bbdb-wl-setup): Include defvars for bbdb-get-addresses-headers.
+
+2002-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* bbdb-wl.el (bbdb-wl-ignore-folder-regexp): New variable.
+	(bbdb-wl-get-update-record): Changed to check
+	`bbdb-wl-ignore-folder-regexp'.
+
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-setup): Added autoload magic.
+
+2001-12-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* bbdb-wl.el (bbdb-wl-setup): require bbdb-autoloads if exists.
+	Use `load' instead of `require' bbdb-autoloads for BBDB 2.20.
+
+2001-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* bbdb-wl.el (bbdb-wl-get-petname): Fixed docstring.
+	(bbdb-wl-from-func): Ditto.
+
+2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* bbdb-wl.el (bbdb-wl-extract-field-value-internal): Enclose the
+	function definition with `eval-and-compile'.
+	(bbdb-wl-pop-up-bbdb-buffer): Use `bbdb-display-layout' and
+	`bbdb-pop-up-display-layout' instead of the macro
+	`bbdb-pop-up-elided-display' for the development version of BBDB.
+	(bbdb-get-addresses-headers): Define it before it is referred to.
+
+2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* bbdb-wl.el (bbdb-wl-exit): Use `bbdb-offer-save' instead of
+	`bbdb-save-db'.
+
