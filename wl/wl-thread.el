@@ -762,15 +762,14 @@ the closed parent will be opened."
       nil)))
 
 (defun wl-thread-cleanup-symbols (msgs)
-  (let (sym)
+  (let (entity)
     (while msgs
-      ;; delete entity.
-      (setq wl-thread-entities 
-	    (delq (wl-thread-get-entity (car msgs))
-		  wl-thread-entities))
-      ;; free symbol.
-      (elmo-clear-hash-val (format "#%d" (car msgs))
-			   wl-thread-entity-hashtb)
+      (when (setq entity (wl-thread-get-entity (car msgs)))
+	;; delete entity.
+	(setq wl-thread-entities (delq entity wl-thread-entities))
+	;; free symbol.
+	(elmo-clear-hash-val (format "#%d" (car msgs))
+			     wl-thread-entity-hashtb))
       (setq msgs (cdr msgs)))))
 
 (defun wl-thread-delete-message (msg &optional deep update)
@@ -1535,15 +1534,16 @@ Message is inserted to the summary buffer."
 			    (car (last children)) t)))
 	    (wl-thread-entity-set-children
 	     dst-parent-entity
-	     (append children (list number))))
+	     (append children (list number)))
+	    (wl-thread-entity-set-linked entity t))
 	;; insert as top
-	(wl-append wl-thread-entity-list (list number)))
+	(wl-append wl-thread-entity-list (list number))
+	(wl-thread-entity-set-linked entity nil))
 
       ;; update my thread
       (wl-append update-msgs (wl-thread-get-children-msgs number t))
       (setq update-msgs (elmo-uniq-list update-msgs))
       (wl-thread-entity-set-parent entity dst-parent)
-      (wl-thread-entity-set-linked entity t)
       ;; update thread on buffer
       (wl-thread-update-line-msgs update-msgs t))))
 
