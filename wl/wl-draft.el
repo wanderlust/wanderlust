@@ -247,7 +247,9 @@
 	  (t cc))))
 
 (defun wl-draft-forward (original-subject summary-buf)
-  (let (references)
+  (let (references parent-folder)
+    (with-current-buffer summary-buf
+      (setq parent-folder (wl-summary-buffer-folder-name)))
     (with-current-buffer (wl-message-get-original-buffer)
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
@@ -259,7 +261,7 @@
 	    references (when references
 			 (mapconcat 'identity references "\n\t"))))
     (wl-draft "" (concat "Forward: " original-subject)
-	      nil nil references nil nil nil nil nil nil summary-buf))
+	      nil nil references nil nil nil nil nil nil nil parent-folder))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
@@ -422,7 +424,7 @@ Reply to author if WITH-ARG is non-nil."
 			 (mapconcat 'identity references "\n\t")))
     (wl-draft
      to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil nil summary-buf nil parent-folder)
+     nil nil nil nil nil parent-folder)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
@@ -572,7 +574,7 @@ Reply to author if WITH-ARG is non-nil."
 		   mail-followup-to
 		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
-		   'edit-again nil
+		   'edit-again
 		   (if (member (nth 1 (std11-extract-address-components from))
 			       wl-user-mail-address-list)
 		       from)))
@@ -1426,7 +1428,7 @@ Derived from `message-save-drafts' in T-gnus."
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
 			   content-type content-transfer-encoding
-			   body edit-again summary-buf from parent-folder)
+			   body edit-again from parent-folder)
   "Write and send mail/news message with Wanderlust."
   (interactive)
   (require 'wl)
@@ -1445,7 +1447,7 @@ Derived from `message-save-drafts' in T-gnus."
 	    (eq this-command 'wl-draft)
 	    (eq this-command 'wl-summary-write)
 	    (eq this-command 'wl-summary-write-current-folder))
-	   parent-folder summary-buf))
+	   parent-folder))
     (setq header-alist
 	  (list
 	   (cons "From: " (or from wl-from))
@@ -1481,10 +1483,10 @@ Derived from `message-save-drafts' in T-gnus."
 	   (goto-char (point-max))))
     buf-name))
 
-(defun wl-draft-create-buffer (&optional full parent-folder summary-buf)
+(defun wl-draft-create-buffer (&optional full parent-folder)
   (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
-	 (summary-buf (or summary-buf (wl-summary-get-buffer parent-folder)))
+	 (summary-buf (wl-summary-get-buffer parent-folder))
 	buf-name file-name num change-major-mode-hook)
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))

@@ -1,3 +1,13 @@
+2002-03-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft): Abolish summary-buf argument and use
+	parent-folder argument instead of it.
+	(wl-draft-create-buffer): Ditto.
+	(wl-draft-forward): Ditto.
+	(wl-draft-reply): Ditto.
+	* wl-summary.el (wl-summary-write): Ditto.
+	(wl-summary-write-current-folder): Ditto.
+
 2002-03-07  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-draft-insert-x-face-field-here): Strip X-Face
