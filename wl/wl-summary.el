@@ -5043,7 +5043,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
-	 fld-buf fld-win thr-entity)
+	 no-folder-mark fld-buf fld-win thr-entity)
     (if (and wl-thread-open-reading-thread
 	     (eq wl-summary-buffer-view 'thread)
 	     (not (wl-thread-entity-get-opened
@@ -5062,23 +5062,25 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (wl-summary-mark-as-read
-	   num
-	   ;; not fetched, then change server-mark.
-	   (if (wl-message-redisplay folder num 'mime
-				     (or force-reload
-					 (string= (elmo-folder-name-internal
-						   folder)
-						  wl-draft-folder)))
-	       nil
-	     ;; plugged, then leave server-mark.
-	     (if (and
-		  (not
-		   (elmo-folder-local-p
-		    wl-summary-buffer-elmo-folder))
-		  (elmo-folder-plugged-p
-		   wl-summary-buffer-elmo-folder))
-		 'leave)))
+	  (setq no-folder-mark
+		;; If cache is used, change folder-mark.
+		(if (wl-message-redisplay folder num
+					  'mime
+					  (or
+					   force-reload
+					   (string= (elmo-folder-name-internal
+						     folder)
+						    wl-draft-folder)))
+		    nil
+		  ;; plugged, then leave folder-mark.
+		  (if (and (not (elmo-folder-local-p
+				 wl-summary-buffer-elmo-folder))
+			   (elmo-folder-plugged-p
+			    wl-summary-buffer-elmo-folder))
+		      'leave)))
+	  (if (elmo-message-use-cache-p folder num)
+	      (elmo-message-set-cached folder num t))
+	  (wl-summary-mark-as-read num no-folder-mark)
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
