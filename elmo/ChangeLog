@@ -1,5 +1,15 @@
 2003-09-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-standard.el (modb-standard-make-message-entity,
+	elmo-msgdb-make-message-entity,
+	elmo-msgdb-create-message-entity-from-buffer,
+	elmo-msgdb-message-entity-number,
+	elmo-msgdb-message-entity-set-number,
+	elmo-msgdb-message-entity-field,
+	elmo-msgdb-message-entity-set-field,
+	elmo-msgdb-copy-message-entity,
+	elmo-msgdb-match-condition-internal): Remove.
+
 	* modb-entity.el: New file (again).
 
 	* modb.el (toplevel): Require modb-entity.
