@@ -1,5 +1,7 @@
 2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-pipe.el (elmo-folder-message-file-p): Define.
+
 	* elmo.el (elmo-generic-folder-append-messages): Check return value of
 	elmo-folder-append-buffer.
 	(elmo-folder-encache): Added optional argument `read'.
