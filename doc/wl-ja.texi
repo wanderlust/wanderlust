@@ -3503,7 +3503,7 @@ last:数字        フィルタフォルダに移動します。
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
 指定リージョンにあるメッセージ全てに @samp{important} フラグをつけます。
-すでに @samp{important} フラグがあればマークを取り除きます。
+すでに @samp{important} フラグがあればそのフラグを取り除きます。
 (@code{wl-summary-mark-as-important-region})
 
 @item r F
