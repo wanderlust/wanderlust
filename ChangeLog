@@ -1,3 +1,12 @@
+2000-09-11  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* INSTALL: Deleted time-stamp line.
+	* INSTALL.ja: Ditto.
+	* README: Ditto.
+	* README.ja: Ditto.
+	* WL-ELS: Ditto.
+	* WL-MK: Ditto.
+
 2000-05-15  Katsumi Yamaoka <yamaoka@jpl.org>
 
 	* etc/icons/wl-logo.xpm: Reduced color.
