@@ -75,6 +75,15 @@ Any symbol value of `elmo-network-stream-type-alist' or
   :type 'boolean
   :group 'elmo)
 
+(elmo-define-obsolete-variable 'elmo-default-pop3-server
+			       'elmo-pop3-default-server)
+(elmo-define-obsolete-variable 'elmo-default-pop3-user
+			       'elmo-pop3-default-user)
+(elmo-define-obsolete-variable 'elmo-default-pop3-authenticate-type
+			       'elmo-pop3-default-authenticate-type)
+(elmo-define-obsolete-variable 'elmo-default-pop3-port
+			       'elmo-pop3-default-port)
+
 (defvar elmo-pop3-stream-type-alist nil
   "*Stream bindings for POP3.
 This is taken precedence over `elmo-network-stream-type-alist'.")
