@@ -33,7 +33,7 @@
 ;;; ELMO internal folder
 (luna-define-class elmo-internal-folder (elmo-folder) ())
 
-(defvar elmo-internal-folder-list '(flag cache sendlog))
+(defvar elmo-internal-folder-list '(flag cache sendlog null))
 (defvar elmo-internal-obsolete-folder-list '((mark flag)))
 
 (luna-define-method elmo-folder-initialize ((folder

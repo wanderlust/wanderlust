@@ -19,9 +19,9 @@
    elmo-date elmo-util elmo-version elmo-vars elmo elmo-msgdb
    elmo-net elmo-imap4 elmo-pop3 elmo-nntp
    elmo-localdir elmo-localnews elmo-map elmo-maildir
-   elmo-multi elmo-filter
+   elmo-multi elmo-access elmo-filter
    elmo-archive elmo-pipe elmo-cache
-   elmo-internal elmo-flag elmo-sendlog
+   elmo-internal elmo-flag elmo-sendlog elmo-null
    elmo-dop elmo-nmz elmo-file elmo-split
    elmo-spam elsp-bogofilter elsp-sa elsp-bsfilter elsp-spamoracle
    modb modb-entity modb-legacy modb-standard

@@ -671,9 +671,10 @@ This chapter describes the folder types which Wanderlust is able to handle.
 Wanderlust uses ELMO as it's interface, so you can use every folder types
 supported by ELMO.
 
-As of version @value{VERSION}, 14 types of folders are predefined. These
+As of version @value{VERSION}, 15 types of folders are predefined. These
 are IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP,
-Shimbun, Namazu, Multi, Filter, Pipe, Internal and File folder types.
+Shimbun, Namazu, Multi, Filter, Pipe, File, Access and Internal folder
+types.
 
 @menu
 * IMAP Folder::                 @samp{%} -- IMAP folder
@@ -690,6 +691,7 @@ Shimbun, Namazu, Multi, Filter, Pipe, Internal and File folder types.
 * Pipe Folder::                 @samp{|} -- Pipe folder
 * Internal Folder::             @samp{'} -- Internal folder
 * File Folder::                          -- File folder
+* Access Folder::                        -- Access folder
 @end menu
 
 
@@ -1747,7 +1749,7 @@ the name of the subdirectories of the cache directory
 (@file{~/.elmo/cache}).
 
 
-@node File Folder,  , Internal Folder, Folders
+@node File Folder, Access Folder, Internal Folder, Folders
 @section File folder
 @cindex File Folder
 
@@ -1766,6 +1768,31 @@ Example:
 @group
 file:~/work     -> @file{~/work}
 file:/etc       -> @file{/etc}
+@end group
+@end example
+
+
+@node Access Folder,  , File Folder, Folders
+@section Access folder
+@cindex Access Folder
+
+A folder to access virtual folder which collects messages from a root
+folder and subfolders of one.  The add and remove of the subfolder is
+automatically reflected.
+
+
+Format:
+
+@example
+@samp{access:} @var{root-folder}
+@end example
+
+Example:
+
+@example
+@group
+access:%INBOX -> All subfolders of IMAP mailbox "inbox".
+access:'cache -> All of 'cache folder
 @end group
 @end example
 
@@ -7393,7 +7420,7 @@ when you change the @code{spam_header} parameter in the config file.
 
 @end table
 
-@node Regular Expressions Header Matching,  , SpamAssassin, Spam Filter Processors
+@node Regular Expressions Header Matching,  , SpamOracle, Spam Filter Processors
 @subsection Regular Expressions Header Matching
 @cindex Regular Expressions Header Matching
 
