@@ -43,7 +43,8 @@
 (defcustom elmo-spam-scheme nil
   "*Scheme of spam processor implementation. "
   :type '(choice (const :tag "none" nil)
-		 (const :tag "Bogofilter" bogofilter))
+		 (const :tag "Bogofilter" bogofilter)
+		 (const :tag "Spamfilter" spamfilter))
   :group 'elmo-spam)
 
 (eval-and-compile
@@ -82,7 +83,8 @@ If optional argument NUMBERS is specified and is a list of message numbers,
 messages are searched from the list.")
 
 (luna-define-generic elmo-spam-register-spam-messages (processor
-						       folder &optional numbers)
+						       folder
+						       &optional numbers)
   "Register contents of messages as spam.
 PROCESSOR is spam processor structure.
 FOLDER is the ELMO folder structure.
@@ -90,7 +92,8 @@ If optional argument NUMBERS is specified and is a list of message numbers,
 messages are searched from the list.")
 
 (luna-define-generic elmo-spam-register-good-messages (processor
-						       folder &optional numbers)
+						       folder
+						       &optional numbers)
   "Register contents of messages as non spam.
 PROCESSOR is spam processor structure.
 FOLDER is the ELMO folder structure.
@@ -160,4 +163,4 @@ messages are searched from the list.")
 (require 'product)
 (product-provide (provide 'elmo-spam) (require 'elmo-version))
 
-;;; elmo-sapm.el ends here
+;;; elmo-spam.el ends here
