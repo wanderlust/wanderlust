@@ -1870,7 +1870,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-remove-text-plain-tag ()
   "Remove text/plain tag of mime-edit."
-  (when (string= (mime-create-tag "text" "plain")
+  (when (string= (mime-make-text-tag)
 		 (buffer-substring-no-properties (point-at-bol)(point-at-eol)))
     (delete-region (point-at-bol)(1+ (point-at-eol)))))
 

@@ -1,3 +1,8 @@
+2003-02-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
+	`mime-make-text-tag' instead of `mime-create-tag'.
+
 2003-02-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-fldmgr.el (wl-fldmgr-rename): Do nothing on the last line.
