@@ -1,5 +1,8 @@
 2003-02-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* elmo-maildir.el (elmo-folder-rename-internal): New method,
+	copied from localdir's one.
+
 	* elmo-pipe.el (elmo-folder-rename): New method, rename
 	destination folder with leaving source folder as it is.
 
