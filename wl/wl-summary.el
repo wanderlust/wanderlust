@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-04 13:36:01 teranisi>
+;; Time-stamp: <2000-04-05 00:39:28 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -3404,43 +3404,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defsubst wl-summary-no-auto-refile-message-p (msg mark-alist) 
   (member (cadr (assq msg mark-alist)) wl-summary-auto-refile-skip-marks))
 
-(defun wl-summary-auto-refile-check-refile-rule-alist-subr (rule dsts)
-  "Collect destination folders from rule."
-  (if (stringp rule)
-      (if (member rule dsts)
-	  dsts
-	(setq dsts (cons rule dsts)))
-    ;; A rule.
-    (let (pairs sub-dsts)
-      (setq pairs (cdr rule))
-      (while pairs
-	(setq dsts
-	      (wl-summary-auto-refile-check-refile-rule-alist-subr
-	       (cdr (car pairs)) dsts))
-	(setq pairs (cdr pairs))))
-    dsts))
-
-(defun wl-summary-auto-refile-check-refile-rule-alist ()
-  (when wl-refile-rule-alist
-    (message "Checking destination folders...")
-    (let ((rules wl-refile-rule-alist)
-	  dsts)
-      (while rules
-	(setq dsts
-	      (append
-	       (wl-summary-auto-refile-check-refile-rule-alist-subr
-		(car rules) nil)
-	       dsts))
-	(setq rules (cdr rules)))
-      (mapcar 
-       'wl-folder-confirm-existence
-       dsts))
-    (message "Checking destination folders...done.")))
-
 (defun wl-summary-auto-refile (&optional open-all)
   "Set refile mark automatically according to wl-refile-guess-by-rule."
   (interactive "P")
-  (wl-summary-auto-refile-check-refile-rule-alist)
   (message "Marking...")
   (save-excursion
     (if (and (eq wl-summary-buffer-view 'thread)
@@ -3451,6 +3417,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		      wl-summary-buffer-msgdb))
 	   (mark-alist (elmo-msgdb-get-mark-alist
 			wl-summary-buffer-msgdb))
+	   checked-dsts
 	   (count 0)
 	   number dst thr-entity)
       (goto-line 1)
@@ -3463,7 +3430,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			  (elmo-msgdb-overview-get-entity-by-number
 			   overview number)))
 		   (not (equal dst spec)))
-	  ;(wl-folder-confirm-existence dst)
+	  (when (not (member dst checked-dsts))
+	    (wl-folder-confirm-existence dst)
+	    (setq checked-dsts (cons dst checked-dsts)))
 	  (if (wl-summary-refile dst number)
 	      (incf count))
 	  (message "Marking...%d message(s)." count))

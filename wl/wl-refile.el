@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-04 11:38:57 teranisi>
+;; Time-stamp: <00/04/05 01:20:16 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -158,7 +158,8 @@ If RULE does not match ENTITY, returns nil."
 		  value)
 		 (setq guess (wl-refile-expand-newtext
 			      (wl-refile-evaluate-rule (cdr (car pairs))
-						       entity))))
+						       entity)
+			      value)))
 	    (setq pairs nil)
 	  (setq pairs (cdr pairs))))
       guess)
@@ -176,7 +177,7 @@ If RULE does not match ENTITY, returns nil."
 		 entity)
       (elmo-msgdb-overview-entity-get-extra-field entity field))))
 
-(defun wl-refile-expand-newtext (newtext)
+(defun wl-refile-expand-newtext (newtext original)
   (let ((len (length newtext))
 	(pos 0)
 	c expanded beg N did-expand)
@@ -202,7 +203,7 @@ If RULE does not match ENTITY, returns nil."
 	      (setq N 0)
 	    (setq N (- c ?0)))
 	  (when (match-beginning N)
-	    (push (buffer-substring (match-beginning N) (match-end N))
+	    (push (substring original (match-beginning N) (match-end N))
 		  expanded))))
       (setq pos (1+ pos)))
     (if did-expand

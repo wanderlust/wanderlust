@@ -1,3 +1,16 @@
+2000-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-refile.el (wl-refile-expand-newtext): Add `original' argument.
+	Use substring of `original' instead of buffer-substring.
+	(wl-refile-evaluate-rule):
+	Set `original' argument of wl-refile-expand-newtext.
+
+	* wl-summary.el
+	(wl-summary-auto-refile-check-refile-rule-alist-subr,
+	wl-summary-auto-refile-check-refile-rule-alist): Eliminated.
+	(wl-summary-auto-refile): Check existence of destination folder just
+	before marking.
+
 2000-04-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-refile.el (wl-refile-evaluate-rule): Fixed problem
