@@ -3461,15 +3461,15 @@ See `wl-refile-policy-alist' for more details."
 	       (call-interactively 'wl-summary-copy)
 	     (wl-summary-copy dst number)))
 	  (t
-	   (wl-summary-refile-subr "refile" (interactive-p) dst number)))))
+	   (wl-summary-refile-subr 'refile (interactive-p) dst number)))))
 
 (defun wl-summary-copy (&optional dst number)
-  "Put refile mark on current line message.
+  "Put copy mark on current line message.
 If optional argument DST is specified, put mark without asking
 destination folder.
 If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
-  (wl-summary-refile-subr "copy" (interactive-p) dst number))
+  (wl-summary-refile-subr 'copy (interactive-p) dst number))
 
 (defun wl-summary-refile-subr (copy-or-refile interactive &optional dst number)
   (interactive)
@@ -3525,7 +3525,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (string= folder wl-draft-folder))
 	  (error "Don't %s messages to %s" copy-or-refile folder))
       ;; learn for refile.
-      (if (string= "refile" copy-or-refile)
+      (if (eq copy-or-refile 'refile)
 	  (wl-refile-learn entity folder))
       (wl-summary-unmark msg-num)
       (set variable (append
@@ -3533,7 +3533,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		     (list (cons msg-num folder))))
       (when (or interactive
 		(eq number buffer-num))
-	(wl-summary-mark-line (if (string= "refile" copy-or-refile)
+	(wl-summary-mark-line (if (eq copy-or-refile 'refile)
 				  "o" "O"))
 	;; print refile destination
 	(wl-summary-print-destination msg-num folder))
