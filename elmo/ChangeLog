@@ -1,3 +1,8 @@
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (toplevel): Require 'mcharset and 'pces.
+	(Pointed out by Makoto Fujiwara <makoto@ki.nu>)
+
 2001-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-msgdb-search): Use elmo-condition-in-msgdb-p instead
