@@ -18,10 +18,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    Now you can set wl-draft-folder to IMAP folder, Maildir folder, and so on.
 
 ** 'mark folder is renamed to 'flag folder.
-   Related to this, new variable wl-use-flag-folder-help-echo
-   (default value is nil) is added.
-   If it is non-nil, original message location is displayed as help-echo
-   in the 'flag folder.
+   Related to this, original message location is displayed as help-echo on summary
+   line in the 'flag folder (you can control the behavior by
+   wl-highlight-summary-line-help-echo-alist).
 
 ** New mark, 'A' and '&' is added for answered messages.
    Now answered messages have its own mark in the summary mode.

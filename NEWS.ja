@@ -19,9 +19,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    なりました．
 
 ** 'mark フォルダは改名され，'flag フォルダになりました．
-   新規変数 wl-use-flag-folder-help-echo (デフォルトは nil) が追加されました．
-   t にすると，'flag フォルダで，元メッセージがどこにあるか
-   help-echo として表示されます．
+   これに関連して、'flag フォルダのサマリで元メッセージがどこにあるかを
+   help-echo として表示するようになりました(これのふるまいは
+   wl-highlight-summary-line-help-echo-alist で制御できます)．
 
 ** 返信済みマーク A,& が追加されました。
    サマリにおいて，返信したメッセージに A マーク(キャッシュなしの場合)
