@@ -330,7 +330,7 @@ It calls following-method selected from variable
 	    (while (< beg (point))
 	      (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
 		  (setq count (+ count 1))
-		(defbug)))
+		(debug)))
 	    (with-temp-buffer
 	      (set-buffer-multibyte nil)
 	      (insert (mime-entity-body entity))
@@ -352,6 +352,7 @@ It calls following-method selected from variable
 	  (setq m-beg (point))
 	  (insert-buffer-substring
 	   (if status pgg-output-buffer pgg-errors-buffer))
+	  (encode-coding-region m-beg (point) buffer-file-coding-system)
 	  (decode-coding-region m-beg (point) wl-cs-autoconv))
       (message "Cannot find pgp signed region"))))
 
