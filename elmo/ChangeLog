@@ -1,3 +1,8 @@
+2001-07-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Cause an error when
+	unknown archive type is specified.
+
 2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-folder-open-internal): Fixed.
