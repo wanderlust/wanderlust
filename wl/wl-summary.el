@@ -3862,6 +3862,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (setq skip-pmark-regexp
 	    (wl-regexp-opt (list " "
 				 elmo-msgdb-unread-cached-mark
+				 elmo-msgdb-answered-cached-mark
 				 elmo-msgdb-important-mark))))
     (beginning-of-line)
     (while (and skip
