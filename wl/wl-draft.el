@@ -411,7 +411,7 @@ the `wl-smtp-features' variable."
     (and (null to) (setq to cc cc nil))
     (setq references (delq nil references)
 	  references (mapconcat 'identity references " ")
-	  references (wl-parse references "[^<]*\\(<[^>]+>\\)")
+	  references (wl-draft-parse-msg-id-list-string references)
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
@@ -814,6 +814,24 @@ to find out how to use this."
 	(111 (error "qmail-inject reported transient failure"))
 	;; should never happen
 	(t   (error "qmail-inject reported unknown failure"))))))
+
+(defun wl-draft-parse-msg-id-list-string (string)
+  "Get msg-id list from STRING."
+  (let ((parsed (std11-parse-msg-ids-string string))
+	tokens msg-id msg-id-list)
+    (while parsed
+      (setq msg-id nil)
+      (when (eq (car (car parsed)) 'msg-id)
+	(setq tokens (cdr (car parsed)))
+	(while tokens
+	  (if (or (eq (car (car tokens)) 'atom)
+		  (eq (car (car tokens)) 'specials))
+	      (setq msg-id (concat msg-id (cdr (car tokens)))))
+	  (setq tokens (cdr tokens))))
+      (if msg-id (setq msg-id-list (cons (concat "<" msg-id ">")
+					 msg-id-list)))
+      (setq parsed (cdr parsed)))
+    (nreverse msg-id-list)))
 
 (defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
   "Get mailbox list of FIELD from current buffer.
