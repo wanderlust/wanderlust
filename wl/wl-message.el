@@ -135,7 +135,8 @@ If original message buffer already exists, it is re-used."
 	 (name (buffer-name buffer)))
     (with-current-buffer buffer
       (setq wl-message-buffer-original-buffer
-	    (wl-original-message-buffer-get name)))
+	    (wl-original-message-buffer-get name))
+      (run-hooks 'wl-message-buffer-created-hook))
     buffer))
 
 (defun wl-message-buffer-cache-add (key)

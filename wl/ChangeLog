@@ -1,3 +1,8 @@
+2002-06-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-message.el (wl-message-buffer-create): Run
+	wl-message-buffer-created-hook.
+
 2002-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sort-specs): New variable.
