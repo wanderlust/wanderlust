@@ -74,12 +74,6 @@
 (luna-define-generic elmo-map-folder-mark-as-read (folder locations)
   "")
 
-(luna-define-generic elmo-map-folder-unmark-answered (folder locations)
-  "")
-
-(luna-define-generic elmo-map-folder-mark-as-answered (folder locations)
-  "")
-
 (luna-define-generic elmo-map-message-fetch (folder location
 						    strategy
 						    &optional
@@ -275,46 +269,26 @@
   ((folder elmo-map-folder) &optional nohide)
   (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
 
-(luna-define-method elmo-folder-unmark-important :before ((folder
-							   elmo-map-folder)
-							  numbers)
+(luna-define-method elmo-folder-unmark-important ((folder elmo-map-folder)
+						  numbers)
   (elmo-map-folder-unmark-important
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
-(luna-define-method elmo-folder-mark-as-important :before ((folder
-							    elmo-map-folder)
-							   numbers)
+(luna-define-method elmo-folder-mark-as-important ((folder elmo-map-folder)
+						   numbers)
   (elmo-map-folder-mark-as-important
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
-(luna-define-method elmo-folder-unmark-read :before ((folder elmo-map-folder)
-						     numbers)
+(luna-define-method elmo-folder-unmark-read ((folder elmo-map-folder)
+					     numbers)
   (elmo-map-folder-unmark-read
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
-(luna-define-method elmo-folder-mark-as-read :before ((folder
-						       elmo-map-folder)
-						      numbers
-						      &optional ignore-flags)
-  (unless ignore-flags
-    (elmo-map-folder-mark-as-read
-     folder
-     (elmo-map-folder-numbers-to-locations folder numbers))))
-
-(luna-define-method elmo-folder-unmark-answered :before ((folder
-							  elmo-map-folder)
-							 numbers)
-  (elmo-map-folder-unmark-answered
-   folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
-
-(luna-define-method elmo-folder-mark-as-answered :before ((folder
-							  elmo-map-folder)
-							 numbers)
-  (elmo-map-folder-mark-as-answered
+(luna-define-method elmo-folder-mark-as-read ((folder elmo-map-folder) numbers)
+  (elmo-map-folder-mark-as-read
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 

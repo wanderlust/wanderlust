@@ -1516,11 +1516,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	 folder
 	 (delq elem (elmo-nntp-folder-temp-crosses-internal folder)))))))
 
-(luna-define-method elmo-folder-mark-as-read :before ((folder
-						       elmo-nntp-folder)
-						      numbers
-						      &optional ignore-flags)
-  (elmo-nntp-folder-update-crosspost-message-alist folder numbers))
+(luna-define-method elmo-folder-mark-as-read ((folder elmo-nntp-folder)
+					      numbers)
+  (elmo-nntp-folder-update-crosspost-message-alist folder numbers)
+  t)
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder)
 						   &optional

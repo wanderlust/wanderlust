@@ -584,49 +584,53 @@
       (setq msg-list (cdr msg-list)))
     ret-val))
 
-(luna-define-method elmo-folder-mark-as-important :before ((folder
+(luna-define-method elmo-folder-mark-as-important :around ((folder
 							    elmo-multi-folder)
 							   numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-important (car folder-numbers)
-				   (cdr folder-numbers))))
+				   (cdr folder-numbers)))
+  (luna-call-next-method))
 
-(luna-define-method elmo-folder-unmark-important :before ((folder
+(luna-define-method elmo-folder-unmark-important :around ((folder
 							   elmo-multi-folder)
 							  numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-important (car folder-numbers)
-				  (cdr folder-numbers))))
+				  (cdr folder-numbers)))
+  (luna-call-next-method))
 
-(luna-define-method elmo-folder-mark-as-read :before ((folder
+(luna-define-method elmo-folder-mark-as-read :around ((folder
 						       elmo-multi-folder)
-						      numbers
-						      &optional ignore-flag)
+						      numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-read (car folder-numbers)
-			      (cdr folder-numbers)
-			      ignore-flag)))
+			      (cdr folder-numbers)))
+  (luna-call-next-method))
 
-(luna-define-method elmo-folder-unmark-read :before ((folder
+(luna-define-method elmo-folder-unmark-read :around ((folder
 						      elmo-multi-folder)
 						     numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-read (car folder-numbers)
-			     (cdr folder-numbers))))
+			     (cdr folder-numbers)))
+  (luna-call-next-method))
 
-(luna-define-method elmo-folder-mark-as-answered :before ((folder
+(luna-define-method elmo-folder-mark-as-answered :around ((folder
 							   elmo-multi-folder)
 							  numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-answered (car folder-numbers)
-				  (cdr folder-numbers))))
+				  (cdr folder-numbers)))
+  (luna-call-next-method))
 
-(luna-define-method elmo-folder-unmark-answered :before ((folder
+(luna-define-method elmo-folder-unmark-answered :around ((folder
 							  elmo-multi-folder)
 							 numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-answered (car folder-numbers)
-				 (cdr folder-numbers))))
+				 (cdr folder-numbers)))
+  (luna-call-next-method))
 
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))

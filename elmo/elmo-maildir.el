@@ -274,16 +274,6 @@ LOCATION."
 						 locs)
   (elmo-maildir-delete-mark-msgs folder locs ?S))
 
-(luna-define-method elmo-map-folder-mark-as-answered ((folder
-						       elmo-maildir-folder)
-						      locs)
-  (elmo-maildir-set-mark-msgs folder locs ?R))
-
-(luna-define-method elmo-map-folder-unmark-answered ((folder
-						      elmo-maildir-folder)
-						     locs)
-  (elmo-maildir-delete-mark-msgs folder locs ?R))
-
 (luna-define-method elmo-folder-list-subfolders
   ((folder elmo-maildir-folder) &optional one-level)
   (let ((prefix (concat (elmo-folder-name-internal folder)
