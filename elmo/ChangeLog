@@ -1,3 +1,16 @@
+2000-06-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-ldif-safe-char-regexp): New constant.
+	(ldap-ldif-safe-init-char-regexp): Ditto.
+	(ldap-ldif-safe-string-regexp): Ditto.
+	(ldap/ldif-safe-string-p): New macro.
+	(ldap/ldif-insert-field): Ditto.
+	(ldap-modify): Use it.
+	(ldap-add): Ditto.
+	(ldap-search-basic): Consider `attrsonly' also when `attrs' is nil.
+	(ldap-decode-attribute): Decode only when `attr' is consp.
+	(ldap-delete): Bind `ret'.
+
 2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pldap.el (ldap-default-attribute-encoder): New user option.

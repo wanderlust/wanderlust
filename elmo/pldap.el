@@ -51,6 +51,26 @@
 (defconst pldap-version "1.1"
   "Version number of pldap.")
 
+;;; For LDIF encoding.
+;; SAFE-CHAR                = %x01-09 / %x0B-0C / %x0E-7F
+(defconst ldap-ldif-safe-char-regexp
+  "[\000-\011\013\014\016-\177]"
+  "A Regexp for safe-char")
+;; SAFE-INIT-CHAR           = %x01-09 / %x0B-0C / %x0E-1F /
+;;                            %x21-39 / %x3B / %x3D-7F
+(defconst ldap-ldif-safe-init-char-regexp
+  "[\001-\011\013\014\016-\037\038-\071\073\075-\177]"
+  "A Regexp for safe-init-char.")
+;; SAFE-STRING              = [SAFE-INIT-CHAR *SAFE-CHAR]
+(defconst ldap-ldif-safe-string-regexp
+  (concat ldap-ldif-safe-init-char-regexp ldap-ldif-safe-char-regexp "*")
+  "A Regexp for safe-string.")
+
+(defmacro ldap/ldif-safe-string-p (string)
+  "Return t if STRING is a safe-string for LDIF."
+  ;; Need better implentation.
+  (` (string-match ldap-ldif-safe-string-regexp (, string))))
+
 (defgroup ldap nil
   "Lightweight Directory Access Protocol"
   :group 'comm)
@@ -462,7 +482,7 @@ DN is the distinguished name of the entry to delete."
 	 (port   (plist-get plist 'port))
 	 (binddn (plist-get plist 'binddn))
 	 (passwd (plist-get plist 'passwd))
-	 arglist)
+	 arglist ret)
     (setq arglist (list (format "-h%s" (ldap-host ldap))))
     (if (and port (not (equal 389 port)))
 	(setq arglist (nconc arglist (list (format "-p%d" port)))))
@@ -484,6 +504,11 @@ DN is the distinguished name of the entry to delete."
 	(if (and (setq ret (buffer-string)); Nemacs
 		 (string-match "ldap_delete:" ret))
 	    (error (car (split-string ret "\n"))))))))
+
+(defmacro ldap/ldif-insert-field (attr value)
+  (` (if (not (ldap/ldif-safe-string-p (, value)))
+	 (insert (, attr) ":: " (base64-encode-string (, value)) "\n")
+       (insert (, attr) ": " (, value) "\n"))))
 
 (defun ldap-modify (ldap dn mods)
   "Add an entry to an LDAP directory.
@@ -511,18 +536,20 @@ or `replace'.  ATTR is the LDAP attribute type to modify."
 	     (not (equal "" passwd)))
 	(setq arglist (nconc arglist (list (format "-w%s" passwd)))))
     (with-temp-buffer
-      (insert "dn: " dn "\n")
+      (ldap/ldif-insert-field "dn" dn)
       (insert "changetype: modify\n")
       (while mods
 	(cond
 	 ((eq (nth 0 (car mods)) 'add)
 	  (insert "add: " (nth 1 (car mods)) "\n")
-	  (insert (nth 1 (car mods)) ": " (nth 2 (car mods)) "\n-\n"))
+	  (ldap/ldif-insert-field (nth 1 (car mods)) (nth 2 (car mods)))
+	  (insert "-\n"))
 	 ((eq (nth 0 (car mods)) 'delete)
 	  (insert "delete: " (nth 1 (car mods)) "\n-\n"))
 	 ((eq (nth 0 (car mods)) 'replace)
 	  (insert "replace: " (nth 1 (car mods)) "\n")
-	  (insert (nth 1 (car mods)) ": " (nth 2 (car mods)) "\n-\n")))
+	  (ldap/ldif-insert-field (nth 1 (car mods)) (nth 2 (car mods)))
+	  (insert "-\n")))
 	(setq mods (cdr mods)))
       (setq ret (apply 'call-process-region
 		       (point-min) (point-max)
@@ -559,9 +586,10 @@ containing attribute/value string pairs."
 	     (not (equal "" passwd)))
 	(setq arglist (nconc arglist (list (format "-w%s" passwd)))))
     (with-temp-buffer
-      (insert "dn: " dn "\n")
+      (set-buffer-multibyte nil)
+      (ldap/ldif-insert-field "dn" dn)
       (while entry
-	(insert (car (car entry)) ": " (cdr (car entry)) "\n")
+	(ldap/ldif-insert-field (car (car entry)) (cdr (car entry)))
 	(setq entry (cdr entry)))
       (setq ret (apply 'call-process-region
 		       (point-min) (point-max)
@@ -672,7 +700,10 @@ entry according to the value of WITHDN."
 					     (nconc (list attr) value))))
 				     attrs)))
 	      (setq attrs-result
-		    (ldap/collect-field "dn")))
+		    (ldap/collect-field "dn"))
+	      (if attrsonly
+		  (setq attrs-result (mapcar (lambda (x) (list (car x)))
+					     attrs-result))))
 	    (setq result
 		  (cons
 		   (if withdn
@@ -796,18 +827,20 @@ and the corresponding decoder is then retrieved from
 The attribute name is looked up in `ldap-attribute-syntaxes-alist'
 and the corresponding decoder is then retrieved from
 `ldap-attribute-syntax-decoders' and applied on the value(s)."
-  (let* ((name (car attr))
-	 (values (cdr attr))
-	 (syntax-id (cdr (assq (intern (downcase name))
-			       ldap-attribute-syntaxes-alist)))
-	 decoder)
-    (if syntax-id
-	(setq decoder (aref ldap-attribute-syntax-decoders
-			    (1- syntax-id)))
-      (setq decoder ldap-default-attribute-decoder))
-    (if decoder
-	(cons name (mapcar decoder values))
-      attr)))
+  (if (consp attr)
+      (let* ((name (car attr))
+	     (values (cdr attr))
+	     (syntax-id (cdr (assq (intern (downcase name))
+				   ldap-attribute-syntaxes-alist)))
+	     decoder)
+	(if syntax-id
+	    (setq decoder (aref ldap-attribute-syntax-decoders
+				(1- syntax-id)))
+	  (setq decoder ldap-default-attribute-decoder))
+	(if decoder
+	    (cons name (mapcar decoder values))
+	  attr))
+    attr))
     
 (defun ldap-search (arg1 &rest args)
   "Perform an LDAP search.if ARG1 is LDAP object, invoke `ldap-search-basic'.
