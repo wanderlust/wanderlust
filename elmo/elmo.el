@@ -349,7 +349,7 @@ FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be processed.
 If IGNORE-FLAGS is non-nil, folder flags are not updated.")
 
-(luna-define-generic elmo-folder-mark-as-important (folder 
+(luna-define-generic elmo-folder-mark-as-important (folder
 						    numbers
 						    &optional ignore-flags)
   "Mark messages as important.
@@ -1153,14 +1153,14 @@ If CACHED is t, message is set as cached."
   ;; 
   (elmo-msgdb-copy-overview-entity entity))
 
-(defun elmo-message-entity-set-number (entity number)  
+(defun elmo-message-entity-set-number (entity number)
   (elmo-msgdb-overview-entity-set-number entity number))
 
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
 A number is for message number in the FOLDER.
-A string is for message-d of the message.")
+A string is for message-id of the message.")
 
 (luna-define-method elmo-message-entity ((folder elmo-folder) key)
   (elmo-msgdb-message-entity (elmo-folder-msgdb folder) key))
@@ -1473,7 +1473,7 @@ FIELD is a symbol of the field.")
    folder
    (elmo-number-set-append-list (elmo-folder-killed-list-internal
 				 folder) numbers)))
-				
+
 
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)
@@ -1494,7 +1494,7 @@ synchronized.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 Return a list of a cross-posted message number.
 If update process is interrupted, return nil.")
-					      
+
 (luna-define-method elmo-folder-synchronize ((folder elmo-folder)
 					     &optional ignore-msgdb no-check)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
@@ -1522,7 +1522,7 @@ If update process is interrupted, return nil.")
 	  (when (and (not (eq (length (car diff))
 			      (length new-list)))
 		     (setq diff-2 (elmo-list-diff (car diff) new-list)))
-	    (elmo-folder-kill-messages-before folder 
+	    (elmo-folder-kill-messages-before folder
 					      (nth (- (length (car diff-2)) 1)
 						   (car diff-2))))
 	  (setq delete-list (cadr diff))
@@ -1581,12 +1581,12 @@ If update process is interrupted, return nil.")
   (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
     (elmo-folder-set-info-max-by-numdb folder
 				       (elmo-msgdb-get-number-alist msgdb))
-    
+
     (unless silent
       (message "Loading msgdb for %s...done"
 	       (elmo-folder-name-internal folder)))
     msgdb))
-  
+
 (defun elmo-msgdb-delete-path (folder)
   (let ((path (elmo-folder-msgdb-path folder)))
     (if (file-directory-p path)
