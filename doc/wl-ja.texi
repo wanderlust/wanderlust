@@ -24,7 +24,8 @@ Yet another message interface on Emacsen.
 
 Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
-@w{Kenichi Okada} and @w{Kaoru Takahashi}.
+@w{Kenichi Okada}, @w{Kaoru Takahashi}, @w{Katsumi Yamaoka},
+@w{Hiroya Murata} and @w{Yoichi Nakayama}.
 
 This edition is for Wanderlust version @value{VERSION}.
 
@@ -74,12 +75,16 @@ into another language, under the above conditions for modified versions.
 @author 村田全寛
 @author 岡田健一
 @author 高橋  郁
+@author 山岡克美
+@author 村田浩也
+@author 中山洋一
 @page
 
 @vskip 0pt plus 1filll
 Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
-@w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada}, and
-@w{Kaoru Takahashi}.
+@w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
+@w{Kaoru Takahashi}, @w{Katsumi Yamaoka}, @w{Hiroya Murata} and 
+@w{Yoichi Nakayama}.
 
 This manual is for Wanderlust version @value{VERSION}.
 
@@ -119,6 +124,9 @@ into another language, under the above conditions for modified versions.
 村田全寛
 岡田健一
 高橋  郁
+山岡克美
+村田浩也
+中山洋一
 @end flushright
 
 この文書は Wanderlust @value{VERSION} に対応します。
