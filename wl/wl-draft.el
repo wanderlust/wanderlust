@@ -1705,8 +1705,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (eq this-command 'wl-summary-forward)
 	      (eq this-command 'wl-summary-target-mark-forward)
 	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
-	 (buffer (generate-new-buffer "*draft*")) ; Just for initial name.
-	 change-major-mode-hook)
+	 (buffer (generate-new-buffer "*draft*"))) ; Just for initial name.
     (set-buffer buffer)
     ;; switch-buffer according to draft buffer style.
     (if wl-draft-use-frame
@@ -1742,7 +1741,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (funcall wl-draft-buffer-style buffer)
 	       (error "Invalid value for wl-draft-buffer-style"))))))
     (auto-save-mode -1)
-    (wl-draft-mode)
+    (let (change-major-mode-hook)
+      (wl-draft-mode))
     (set-buffer-multibyte t)		; draft buffer is always multibyte.
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
