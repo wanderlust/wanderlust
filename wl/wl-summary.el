@@ -3070,7 +3070,14 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (or wl-folder-completion-function
 		  (if (memq 'read-folder wl-use-folder-petname)
 		      (wl-folder-get-entity-with-petname)
-		    (copy-sequence wl-folder-entity-hashtb)))
+		    (let (alist)
+		      (mapatoms 
+		       (lambda (atom)
+			 (setq alist
+			       (cons (list (elmo-string
+					    (symbol-name atom))) alist)))
+		       wl-folder-entity-hashtb)
+		      alist)))
 	      nil nil (or init wl-default-spec)
 	      'wl-read-folder-hist)))
     (if (or (string= fld wl-default-spec)
