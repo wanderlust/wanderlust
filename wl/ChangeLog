@@ -1,5 +1,7 @@
 2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.12.0.
+
 	* wl-util.el (wl-biff-check-folder-async): Use
 	wl-folder-entity-exists-p instead of elmo-folder-exists-p.
 
