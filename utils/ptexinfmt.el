@@ -44,6 +44,15 @@
 (defvar ptexinfmt-disable-broken-notice t
   "If non-nil disable notice, when call `broken-facility'.")
 
+;; sort -fd
+(broken-facility texinfo-format-printindex
+  "Can't sort on Windows."
+  (if (and (memq system-type '(windows-nt ms-dos))
+	   (string< texinfmt-version "2.37 of 24 May 1997"))
+      nil
+    t)
+  ptexinfmt-disable-broken-notice)
+ 
 ;; @var
 (broken-facility texinfo-format-var
   "Don't perse @var argument."
@@ -723,5 +732,23 @@ This command is executed when texinfmt sees @item inside @multitable."
         (setq column-number (1+ column-number))))
     (kill-buffer texinfo-multitable-buffer-name)
     (setq fill-column existing-fill-column)))
+
+
+(when-broken texinfo-format-printindex
+  (fmakunbound 'texinfo-format-printindex))
+
+(defun-maybe texinfo-format-printindex ()
+  (let ((indexelts (symbol-value
+                    (cdr (assoc (texinfo-parse-arg-discard)
+                                texinfo-indexvar-alist))))
+        opoint)
+    (insert "\n* Menu:\n\n")
+    (setq opoint (point))
+    (texinfo-print-index nil indexelts)
+
+    (if (memq system-type '(vax-vms windows-nt ms-dos))
+        (texinfo-sort-region opoint (point))
+      (shell-command-on-region opoint (point) "sort -fd" 1))))
+
 
 ;;; ptexinfmt.el ends here
