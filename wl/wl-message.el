@@ -462,12 +462,14 @@ Returns non-nil if bottom of message."
     (prog1 
 	(if (eq flag 'as-is)
 	    (let (wl-highlight-x-face-function)
-	      (elmo-mime-display-as-is folder number
-				       (current-buffer)
-				       (wl-message-get-original-buffer)
-				       'wl-original-message-mode
-				       force-reload
-				       unread))
+	      (prog1 (elmo-mime-display-as-is folder number
+					      (current-buffer)
+					      (wl-message-get-original-buffer)
+					      'wl-original-message-mode
+					      force-reload
+					      unread)
+		(let (buffer-read-only)
+		  (wl-highlight-message (point-min) (point-max) t))))
 	  (elmo-mime-message-display folder number
 				     (current-buffer)
 				     (wl-message-get-original-buffer)

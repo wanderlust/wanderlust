@@ -1,5 +1,8 @@
 2001-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-message.el (wl-message-display-internal): Call
+	`wl-highlight-message' after `elmo-mime-display-as-is'.
+
 	* wl-mime.el (wl-mime-display-text/plain): New function.
 	(wl-mime-display-header): Ditto.
 	(wl-mime-setup): Register `wl-mime-display-text/plain' as a
