@@ -223,7 +223,7 @@
      (setq entity (wl-thread-get-entity (car msgs))))
    ret-val))
 
-(defsubst wl-thread-entity-get-descendant (entity)
+(defun wl-thread-entity-get-descendant (entity)
   (let (children
 	ret-val msgs-stack
 	(msgs (list (car entity))))
@@ -233,7 +233,7 @@
      (if (null children)
 	 (while (and (null msgs) msgs-stack)
 	   (setq msgs (wl-pop msgs-stack)))
-       (setq ret-val (append ret-val (copy-sequence children)))
+       (setq ret-val (nconc ret-val (copy-sequence children)))
        (wl-push msgs msgs-stack)
        (setq msgs children))
      (setq entity (wl-thread-get-entity (car msgs))))
