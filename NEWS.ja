@@ -11,6 +11,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** 名前変更等で既に使われなくなった変数が設定されていると warning
    が表示されるようになりました。
+   メッセージを参考にして、新しい設定に変更してください。
    warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を
    nil にしてください。
 
