@@ -408,7 +408,7 @@ TYPE specifies the archiver's symbol."
 	(elmo-localdir-folder-path elmo-archive-folder-path))
     (if elmo-archive-treat-file
 	(let* ((path (elmo-localdir-get-folder-directory spec))
-	       (base-folder (or (file-name-directory (nth 1 spec)) ""))
+	       (base-folder (or (nth 1 spec) ""))
 	       (suffix (nth 2 spec))
 	       (prefix (if (string= (nth 3 spec) "")
 			   "" (concat ";" (nth 3 spec))))
@@ -423,6 +423,11 @@ TYPE specifies the archiver's symbol."
 				'(lambda (x) (regexp-quote (cdr x)))
 				elmo-archive-suffix-alist
 				"\\|"))))
+	  (if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
+	      (setq base-folder (elmo-match-string 1 base-folder))
+	    (unless (file-directory-p path)
+	      (setq base-folder (or (file-name-directory base-folder)
+				    base-folder))))
 	  (delq
 	   nil
 	   (mapcar
@@ -434,8 +439,7 @@ TYPE specifies the archiver's symbol."
 				       elmo-archive-suffix-alist))))
 		 (format "$%s;%s%s"
 			 (elmo-concat-path base-folder (elmo-match-string 1 x))
-			 suffix prefix)
-		 ))
+			 suffix prefix)))
 	    flist)))
       (elmo-localdir-list-folders-subr folder hierarchy))))
 
@@ -829,11 +833,12 @@ TYPE specifies the archiver's symbol."
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
-	 percent)
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (kill-buffer tmp-buf)
       (message "Creating msgdb...done.")
@@ -891,11 +896,12 @@ TYPE specifies the archiver's symbol."
 ;	(setq mark-alist (append mark-alist (nth 2 result))))
        (t			;; unknown format
 	(error "unknown format!")))
-      (setq i (+ n i))
-      (setq percent (/ (* i 100) num))
-      (elmo-display-progress
-       'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
-       percent))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ n i))
+	(setq percent (/ (* i 100) num))
+	(elmo-display-progress
+	 'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
+	 percent)))
     (kill-buffer buf)
     (list overview number-alist mark-alist)) )
 
@@ -982,10 +988,11 @@ TYPE specifies the archiver's symbol."
 					      condition
 					      (nth 3 spec))
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-archive-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-archive-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 

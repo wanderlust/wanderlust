@@ -1025,9 +1025,10 @@ If optional argument UNMARK is non-nil, unmark."
 	  (setq count (+ count (car (car set-list))))
 	  (setq ov-str (elmo-imap4-read-contents (process-buffer process)
 						 process))
-	  (elmo-display-progress
-	   'elmo-imap4-msgdb-create "Getting overview..." 
-	   (/ (* count 100) length))
+	  (when (> length elmo-display-progress-threshold)
+	    (elmo-display-progress
+	     'elmo-imap4-msgdb-create "Getting overview..." 
+	     (/ (* count 100) length)))
 	  (setq set-list (cdr set-list)))
 	;; process last one.
 	(with-current-buffer (process-buffer process)

@@ -330,6 +330,10 @@ set as non-nil.")
 (defvar elmo-use-decoded-cache t
   "Use cache of decode mime charset string.")
 
+(defvar elmo-display-progress-threshold 20
+  "*Displaying progress gauge
+if number of messages are more than this value.")
+
 (provide 'elmo-vars)
 
 ;;; elmo-vars.el ends here

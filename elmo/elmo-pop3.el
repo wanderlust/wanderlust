@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-03 09:29:38 teranisi>
+;; Time-stamp: <00/04/28 10:28:08 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -476,15 +476,15 @@
 		     (setq last-point (point))
 		     (setq received (1+ received)))
 		   (< received count))
-	    (and (zerop (% received 20))
-		 (elmo-display-progress
-		  'elmo-pop3-retrieve-headers "Getting headers..."
-		  (/ (* received 100) number)))
+	    (when (> number elmo-display-progress-threshold)
+	      (if (or (zerop (% received 5)) (= received number))
+		  (elmo-display-progress
+		   'elmo-pop3-retrieve-headers "Getting headers..."
+		   (/ (* received 100) number))))
 	    (accept-process-output process 1)
 	    ;(accept-process-output process)
 	    (discard-input)
 	    )))
-      (message "Getting headers...done")
       ;; Remove all "\r"'s.
       (goto-char (point-min))
       (while (search-forward "\r\n" nil t)
@@ -573,13 +573,12 @@
 			 (elmo-msgdb-overview-entity-get-number entity)
 			 gmark)))
 	      )))
-	(setq i (1+ i))
-	(and (zerop (% i 20))
-	     (elmo-display-progress
-	      'elmo-pop3-msgdb-create-message "Creating msgdb..."
-	      (/ (* i 100) num)))
-	)
-      (message "Creating msgdb...done.")
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (if (or (zerop (% i 5)) (= i num))
+	      (elmo-display-progress
+	       'elmo-pop3-msgdb-create-message "Creating msgdb..."
+	       (/ (* i 100) num)))))
       (list overview number-alist mark-alist))))
 
 (defun elmo-pop3-read-body (buffer process outbuf)

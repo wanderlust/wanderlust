@@ -203,11 +203,13 @@ If KBYTES is kilo bytes (This value must be float)."
 				    (lambda (x y)
 				      (< (cdr x)
 					 (cdr y))))))))
-      (setq i (+ i 1))
-      (elmo-display-progress
-       'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ i 1))
+	(elmo-display-progress
+	 'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
+	 (/ (* i 100) num)))
       (setq dirs (cdr dirs)))
+    (message "Collecting cache info...done.")
     ret-val))
 
 (defun elmo-cache-expire-by-age (&optional days)
@@ -295,11 +297,12 @@ If KBYTES is kilo bytes (This value must be float)."
 						     (car (car nalist))))
 	       (elmo-file-field-condition-match cache-file condition))
 	  (setq ret-val (append ret-val (list (caar nalist)))))
-      (setq i (1+ i))
-      (setq percent (/ (* i 100) num))
-      (elmo-display-progress
-       'elmo-cache-search-all "Searching..."
-       percent)
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(setq percent (/ (* i 100) num))
+	(elmo-display-progress
+	 'elmo-cache-search-all "Searching..."
+	 percent))
       (setq nalist (cdr nalist)))
     ret-val))
 
@@ -399,6 +402,9 @@ Returning its cache buffer."
 	(setq buf (get-buffer-create (format "%s%d" elmo-buffer-cache-name len)))
       (setq buf (elmo-buffer-cache-buffer-get (nth (1- len) elmo-buffer-cache)))
       (setcdr (nthcdr (- len 2) elmo-buffer-cache) nil))
+    (save-excursion
+      (set-buffer buf)
+      (elmo-set-buffer-multibyte nil))
     (setq elmo-buffer-cache
 	  (cons (elmo-buffer-cache-entry-make fld-msg-id buf)
 		elmo-buffer-cache))
@@ -530,11 +536,12 @@ Returning its cache buffer."
 		     mark-alist 
 		     num
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) len))
-	(elmo-display-progress
-	 'elmo-cache-msgdb-create-as-numlist "Creating msgdb..."
-	 percent)
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) len))
+	  (elmo-display-progress
+	   'elmo-cache-msgdb-create-as-numlist "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist))))
@@ -682,10 +689,11 @@ Returning its cache buffer."
 	    (elmo-cache-get-folder-directory spec))
 					    condition)
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-cache-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-cache-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:43:10 teranisi>
+;; Time-stamp: <00/04/20 13:46:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -135,20 +135,10 @@
 	   (elmo-msgdb-rename-path old-folder new-folder))
 	(elmo-dop-rename-folder old-folder new-folder)))))
 
-(defun elmo-read-msg-no-cache (folder msg outbuf &optional msgdb)
-  "Read messsage into outbuf without cacheing.
-If msgdb is specified, use cache."
-  (let (ret-val)
-    (when msgdb
-      (set-buffer outbuf)
-      (erase-buffer)
-      (setq ret-val
-	    (elmo-cache-read 
-	     ;; message-id
-	     (cdr (assq msg (elmo-msgdb-get-number-alist msgdb)))
-	     folder msg)))
-    (if (not ret-val)
-	(elmo-call-func folder "read-msg" msg outbuf))))
+(defun elmo-read-msg-no-cache (folder msg outbuf)
+  "Read messsage specified by FOLDER and MSG(number) into OUTBUF
+without cacheing."
+  (elmo-call-func folder "read-msg" msg outbuf))
 
 (defun elmo-force-cache-msg (folder number msgid &optional loc-alist)
   "Force cache message."
@@ -220,7 +210,7 @@ If msgdb is specified, use cache."
   "Read message into outbuf."
   (let ((inhibit-read-only t))
     (if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf msgdb)
+	(elmo-read-msg-no-cache folder msg outbuf)
       (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb 
@@ -330,15 +320,16 @@ If msgdb is specified, use cache."
 	;; delete src cache if it is partial.
 	(elmo-cache-delete-partial message-id src-folder (car messages))
 	(setq ret-val (append ret-val (list (car messages))))
-	(setq i (+ i 1))
-	(setq percent (/ (* i 100) all-msg-num))
-	(if no-delete 
+	(when (> all-msg-num elmo-display-progress-threshold)
+	  (setq i (+ i 1))
+	  (setq percent (/ (* i 100) all-msg-num))
+	  (if no-delete 
+	      (elmo-display-progress
+	       'elmo-move-msgs "Copying messages..."
+	       percent)
 	    (elmo-display-progress
-	     'elmo-move-msgs "Copying messages..."
-	     percent)
-	  (elmo-display-progress
-	   'elmo-move-msgs "Moving messages..."
-	   percent))
+	     'elmo-move-msgs "Moving messages..."
+	     percent)))
 	(setq messages (cdr messages)))
       ;; Save seen-list.
       (unless (eq dst-folder 'null)

@@ -141,11 +141,12 @@
 			     entity))
 			   already-mark
 			 new-mark))))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-internal-msgdb-create "Creating msgdb..."
-	 percent)
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-internal-msgdb-create "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist loc-alist))))

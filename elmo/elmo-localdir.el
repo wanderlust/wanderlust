@@ -152,11 +152,12 @@
 		     mark-alist 
 		     num
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) len))
-	(elmo-display-progress
-	 'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
-	 percent)
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) len))
+	  (elmo-display-progress
+	   'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist))))
@@ -360,10 +361,11 @@
       (if (elmo-localdir-field-condition-match spec (car msgs)
 					       condition)
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-localdir-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-localdir-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
@@ -404,9 +406,11 @@
 	    (mapcar 'car onum-alist)))
     (setq total (length flist))
     (while flist
-      (elmo-display-progress
-       'elmo-localdir-pack-number "Packing..."
-       (/ (* i 100) total))
+      (setq i (1+ i))
+      (when (> total elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-localdir-pack-number "Packing..."
+	 (/ (* i 100) total)))
       (setq onum (car flist))
       (when (not (eq onum i)) ;; why \=() is wrong..
         (elmo-bind-directory
@@ -425,7 +429,6 @@
 	      (elmo-msgdb-mark-append
 	       new-mark-alist
 	       i mark)))
-      (setq i (1+ i))
       (setq flist (cdr flist)))
     (message "Packing...done.")
     (list (elmo-msgdb-get-overview msgdb)

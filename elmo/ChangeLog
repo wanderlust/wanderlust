@@ -1,3 +1,8 @@
+2000-05-12  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-vars.el (elmo-display-progress-threshold): New variable.
+	All other related modules are changed.
+
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Fixed a problem

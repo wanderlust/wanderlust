@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:41:50 teranisi>
+;; Time-stamp: <00/04/28 10:30:51 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -409,21 +409,26 @@ Don't cache if nil.")
 		      (setq ret-val (delete top-ng ret-val)))
 		  (if (not (assoc top-ng ret-val))
 		      (setq ret-val (nconc ret-val (list (list top-ng))))))
-		(setq i (1+ i))
-		(and (zerop (% i 10))
-		     (elmo-display-progress
-		      'elmo-nntp-list-folders "Parsing active..."
-		      (/ (* i 100) len)))
+		(when (> len elmo-display-progress-threshold)
+		  (setq i (1+ i))
+		  (if (or (zerop (% i 10)) (= i len))
+		      (elmo-display-progress
+		       'elmo-nntp-list-folders "Parsing active..."
+		       (/ (* i 100) len))))
 		(forward-line 1)
 		))
 	  (while (re-search-forward "\\([^ ]+\\) .*\n" nil t)
 	    (setq ret-val (nconc ret-val
 				 (list (elmo-match-buffer 1))))
-	    (setq i (1+ i))
-	    (and (zerop (% i 10))
-		 (elmo-display-progress
-		  'elmo-nntp-list-folders "Parsing active..."
-		  (/ (* i 100) len))))))
+	    (when (> len elmo-display-progress-threshold)
+	      (setq i (1+ i))
+	      (if (or (zerop (% i 10)) (= i len))
+		  (elmo-display-progress
+		   'elmo-nntp-list-folders "Parsing active..."
+		   (/ (* i 100) len))))))
+	(when (> len elmo-display-progress-threshold)
+	  (elmo-display-progress
+	   'elmo-nntp-list-folders "Parsing active..." 100)))
       (kill-buffer tmp-buffer)
       (unless (string= server elmo-default-nntp-server)
 	(setq append-serv (concat "@" server)))
@@ -680,11 +685,14 @@ Don't cache if nil.")
 	      (if (null (setq ov-str (elmo-nntp-read-contents buffer process)))
 		  (error "Fetching overview failed")))
 	    (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
+	    (when (> length elmo-display-progress-threshold)
+	      (elmo-display-progress
+	       'elmo-nntp-msgdb-create "Getting overview..." 
+	       (/ (* (+ (- (min cur end-num)
+			   beg-num) 1) 100) length))))
+	  (when (> length elmo-display-progress-threshold)
 	    (elmo-display-progress
-	     'elmo-nntp-msgdb-create "Getting overview..." 
-	     (/ (* (+ (- (min cur
-			      end-num)
-			 beg-num) 1) 100) length))))
+	     'elmo-nntp-msgdb-create "Getting overview..." 100)))
 	(if (not use-xover)
 	    (setq ret-val (elmo-nntp-msgdb-create-by-header
 			   folder buffer process numlist
@@ -702,8 +710,7 @@ Don't cache if nil.")
 			seen-mark
 			important-mark
 			seen-list
-			filter)))))
-	  (message "Getting overview...done."))
+			filter))))))
 	;; If there are canceled messages, overviews are not obtained
 	;; to max-number(inn 2.3?).
 	(when (and (elmo-nntp-max-number-precedes-list-active-p)
@@ -1161,11 +1168,14 @@ Return nil if connection failed."
 	       (< received count))
 	(accept-process-output process 1)
 	(discard-input)
-	(and (zerop (% received 10))
-	     (elmo-display-progress
-	      'elmo-nntp-groups-read-response "Getting folders info..."
-	      (/ (* received 100) count)))
-	)
+	(when (> count elmo-display-progress-threshold)
+	  (if (or (zerop (% received 10)) (= received count))
+	      (elmo-display-progress
+	       'elmo-nntp-groups-read-response "Getting folders info..."
+	       (/ (* received 100) count)))))
+      (when (> count elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-nntp-groups-read-response "Getting folders info..." 100))
       ;; Wait for the reply from the final command.
       (goto-char (point-max))
       (re-search-backward "^[0-9]" nil t)
@@ -1240,13 +1250,17 @@ Return nil if connection failed."
 		     (setq last-point (point))
 		     (setq received (1+ received)))
 		   (< received count))
-	    (and (zerop (% received 20))
-		 (elmo-display-progress
-		  'elmo-nntp-retrieve-headers "Getting headers..."
-		  (/ (* received 100) number)))
+	    (when (> number elmo-display-progress-threshold)
+	      (if (or (zerop (% received 20)) (= received number))
+		  (elmo-display-progress
+		   'elmo-nntp-retrieve-headers "Getting headers..."
+		   (/ (* received 100) number))))
 	    (accept-process-output process 1)
 	    (discard-input)
 	    )))
+      (when (> number elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-nntp-retrieve-headers "Getting headers..." 100))
       (message "Getting headers...done")
       ;; Remove all "\r"'s.
       (goto-char (point-min))
@@ -1298,20 +1312,23 @@ Return nil if connection failed."
 				      nil
 				    already-mark)
 				(if seen
-				    seen-mark
+				    (if elmo-nntp-use-cache
+					seen-mark)
 				  new-mark))))
 		    (setq mark-alist
 			  (elmo-msgdb-mark-append 
 			   mark-alist 
 			   num gmark)))
 		))))
-	(setq i (1+ i))
-	(and (zerop (% i 20))
-	     (elmo-display-progress
-	      'elmo-nntp-msgdb-create-message "Creating msgdb..."
-	      (/ (* i 100) len)))
-	)
-      (message "Creating msgdb...done.")
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (if (or (zerop (% i 20)) (= i len))
+	      (elmo-display-progress
+	       'elmo-nntp-msgdb-create-message "Creating msgdb..."
+	       (/ (* i 100) len)))))
+      (when (> len elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-nntp-msgdb-create-message "Creating msgdb..." 100))
       (list overview number-alist mark-alist))))
 
 (defun elmo-nntp-use-cache-p (spec number)
