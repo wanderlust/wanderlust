@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage ja
 @documentencoding iso-2022-jp
-@set VERSION 2.5.8
+@include version.texi
 @synindex pg cp
 @finalout
 
@@ -776,9 +776,9 @@ default $BCM(B:
              $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
              @code{(user-login-name)} $B$NJV$jCM!#(B
 $BG'>ZK!(B    -> $BJQ?t(B @code{elmo-default-imap4-authenticate-type} $B$NCM!#(B
-             $B=i4|@_Dj$O(B 'login$B!#(B
+             $B=i4|@_Dj$O(B @code{login}$B!#(B
 $B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-default-imap4-server} $B$NCM!#(B
-             $B=i4|@_Dj$O(B "localhost"$B!#(B
+             $B=i4|@_Dj$O(B @samp{localhost}$B!#(B
 $B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-default-imap4-port} $B$NCM!#(B
              $B=i4|@_Dj$O(B 143$B!#(B
 @end example
@@ -788,11 +788,21 @@ default $BCM(B:
 $B%$%"%&%)!<%k$r1[$($J$1$l$P$J$i$J$$>l9g$G$b(B @samp{foo%imap@@gateway} $B$N$h(B
 $B$&$K;XDj$G$-$^$9!#(B
 
+@lisp
+;; $BNc(B: imap4.exaple.org $B$r%a%$%s$G;HMQ$9$k(B IMAP $B%5!<%P$H$7$F@_Dj(B
+(setq elmo-default-imap4-server "imap4.example.org")
+@end lisp
+
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL (Secure Socket Layer)$B$r(B
 $BMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B@samp{!!} $B$@$H!"(BSTARTTLS $B$K$h$j(BSSL$B%3%M%/(B
 $B%7%g%s$rD%$j$^$9!#JQ?t(B @code{elmo-default-imap4-stream-type} $B$NCM$,(B 
-non-nil $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B'starttls $B$J$i(B 
-@samp{!!} $B$r0UL#$7$^$9!#(B
+@code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} 
+$B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
+
+@lisp
+;; $BNc(B: SSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$k(B
+(setq elmo-default-imap4-stream-type 'ssl) 
+@end lisp
 
 (SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9(B
 $B$kI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL$B$K4^$^$l$k(B @command{openssl} $B$K%Q%9$,(B
@@ -805,6 +815,11 @@ non-nil $B$J$i!"(B@samp{!} $B$rIU$1$J$/$F$b(B SSL $B$r;H$$$^$9!#(B'starttl
 @code{clear} ($B@8%Q%9%o!<%I$rAw$k(B) $B$K@ZBX$($^$9!#JQ?t(B 
 @code{elmo-imap4-force-login} $B$,(B non-nil $B$J$i$P!"3NG'L5$7$K(B @code{clear} 
 $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B @code{nil})$B!#(B
+
+@lisp
+;; $BNc(B: $B@8%Q%9%o!<%I$GG'>Z(B
+(setq elmo-default-imap4-authenticate-type 'clear) 
+@end lisp
 
 $BNc(B:
 
@@ -2514,7 +2529,6 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 @item wl-cache-prefetch-folder-type-list
 @vindex wl-cache-prefetch-folder-type-list
 $B=i4|@_Dj$O0J2<$N%j%9%H!#(B
-The initial setting is the list shown below:
 @lisp
 @group
 (nntp imap4)
@@ -4218,8 +4232,9 @@ Non-nil $B$J$iJV?.%"%I%l%9$N(B @samp{To:}, @samp{Cc:} $B%U%#!<%k%I$KAj<j$N%U%
 
 @item wl-draft-use-cache
 @vindex wl-draft-use-cache
-$B=i4|@_Dj$O(B @code{t}$B!#Aw?.$9$k%a%C%;!<%8$r%-%c%C%7%e$9$k$+$I$&$+$r<($9%U(B
-$B%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#(B
+$B=i4|@_Dj$O(B @code{nil}$B!#Aw?.$9$k%a%C%;!<%8$r%-%c%C%7%e$9$k$+$I$&$+$r<($9%U(B
+$B%i%0$G$9!#(BNon-nil $B$J$i%-%c%C%7%e$7$^$9!#$?$@$7(B @code{wl-insert-message-id}$B$,(B
+non-nil$B$N>l9g$O%-%c%C%7%e$5$l$^$;$s!#(B
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
@@ -5784,8 +5799,6 @@ OK $B$G$9!#(B
 ;; @r{$B<+F0E*$K(B ML $B%U%#!<%k%I$r2C$($k(B}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
-;; @r{$B<+F0<}=8$9$k%U%)%k%@$N@55,I=8=(B}
-(setq bbdb-wl-folder-regexp "^%\\|^-")
 @end group
 @end lisp
 

@@ -108,8 +108,11 @@
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
-  (elmo-pipe-drain (elmo-pipe-folder-src-internal folder)
-		   (elmo-pipe-folder-dst-internal folder)))
+  (let ((src-folder (elmo-pipe-folder-src-internal folder))
+	(dst-folder (elmo-pipe-folder-dst-internal folder)))
+    (when (and (elmo-folder-plugged-p src-folder)
+	       (elmo-folder-plugged-p dst-folder))
+      (elmo-pipe-drain src-folder dst-folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))

@@ -1,3 +1,13 @@
+2001-05-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-detect-info-directory): Call `info-initialize' for
+	Emacs21.
+
+2001-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* utils/bbdb-wl.el (bbdb-wl-get-update-record): Use function
+	`wl-summary-buffer-folder-name' instead of same name variable.
+
 2001-05-08  Kenichi OKADA  <okada@opaopa.org>
 
 	* utils/bbdb-wl.el (bbdb-wl-folder-regexp): New variable.

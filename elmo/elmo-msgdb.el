@@ -330,14 +330,14 @@ header separator."
    ((vectorp condition)
     (elmo-msgdb-search-internal-primitive condition entity number-list))
    ((eq (car condition) 'and)
-    (and (elmo-msgdb-search-internal-primitive
+    (and (elmo-msgdb-search-internal
 	  (nth 1 condition) entity number-list)
-	 (elmo-msgdb-search-internal-primitive
+	 (elmo-msgdb-search-internal
 	  (nth 2 condition) entity number-list)))
    ((eq (car condition) 'or)
-    (or (elmo-msgdb-search-internal-primitive
+    (or (elmo-msgdb-search-internal
 	 (nth 1 condition) entity number-list)
-	(elmo-msgdb-search-internal-primitive
+	(elmo-msgdb-search-internal
 	 (nth 2 condition) entity number-list)))))
 
 (defun elmo-msgdb-delete-msgs (msgdb msgs)
