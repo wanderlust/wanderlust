@@ -46,7 +46,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Abolished face
 
    wl-highlight-refile-destination-face
-   (wl-highlight-action-argument-face ¤ËÊÑÌ¾)
+   (renamed to wl-highlight-action-argument-face)
 
 ** Variables renamed
    wl-summary-*-mark are renamed to elmo-msgdb-*-mark.
