@@ -2595,8 +2595,7 @@ If optional argument is non-nil, checking is omitted."
 	(buf (get-buffer-create buffer-name))
 	(folder wl-summary-buffer-folder-name)
 	(copy-variables
-	 (append '(elmo-msgdb-overview-hashtb
-		   wl-summary-buffer-view
+	 (append '(wl-summary-buffer-view
 		   wl-summary-buffer-refile-list
 		   wl-summary-buffer-delete-list
 		   wl-summary-buffer-copy-list
@@ -2919,17 +2918,6 @@ If optional argument is non-nil, checking is omitted."
 (defun wl-summary-subject-equal (subject1 subject2)
   (string= (wl-summary-subject-filter-func-internal subject1)
 	   (wl-summary-subject-filter-func-internal subject2)))
-
-(defun wl-summary-subject-equal-by-number (msg1 msg2 &optional overview)
-  (let ((overview (or overview
-		      (elmo-msgdb-get-overview wl-summary-buffer-msgdb))))
-    (wl-summary-subject-equal
-     (or (elmo-msgdb-overview-entity-get-subject
-	  (elmo-msgdb-overview-get-entity-by-number overview msg1))
-	 "")
-     (or (elmo-msgdb-overview-entity-get-subject
-	  (elmo-msgdb-overview-get-entity-by-number overview msg2))
-	 ""))))
 
 (defmacro wl-summary-put-alike (alike)
   (` (elmo-set-hash-val (format "#%d" (wl-count-lines))
@@ -3517,9 +3505,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 				(elmo-msgdb-get-number-alist
 				 wl-summary-buffer-msgdb)))))
 	 (entity (and msg-num
-		      (elmo-msgdb-overview-get-entity-by-number
-		       (elmo-msgdb-get-overview wl-summary-buffer-msgdb)
-		       msg-num)))
+		      (elmo-msgdb-overview-get-entity
+		       msg-num wl-summary-buffer-msgdb)))
 	 (variable 
 	  (intern (format "wl-summary-buffer-%s-list" copy-or-refile)))
 	 folder mark already tmp-folder)
@@ -3627,8 +3614,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 							     mark-alist))
 		   (setq dst
 			 (wl-refile-guess-by-rule
-			  (elmo-msgdb-overview-get-entity-by-number
-			   overview number)))
+			  (elmo-msgdb-overview-get-entity
+			   number wl-summary-buffer-msgdb)))
 		   (not (equal dst spec)))
 	  (when (not (member dst checked-dsts))
 	    (wl-folder-confirm-existence dst)
@@ -3645,8 +3632,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		  (lambda (x)
 		    (when (and (setq dst 
 				     (wl-refile-guess-by-rule
-				      (elmo-msgdb-overview-get-entity-by-number 
-				       overview x)))
+				      (elmo-msgdb-overview-get-entity 
+				       x wl-summary-buffer-msgdb)))
 			       (not (equal dst spec)))
 		      (if (wl-summary-refile dst x)
 			  (incf count))
