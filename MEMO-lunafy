@@ -64,7 +64,7 @@ elmo-folder-get-spec => wl-folder-get-elmo-folder
 wl-summary-buffer-folder-name 
 => Macro `wl-summary-buffer-folder-name' or `elmo-folder-name-internal'
 wl-summary-msgdb-save=>elmo-folder-commit
-wl-summary-sync-update3=>wl-summary-syunc-update.
+wl-summary-sync-update3=>wl-summary-sync-update.
 
 * 改名
 

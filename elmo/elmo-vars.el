@@ -30,16 +30,47 @@
 ;; 
 (require 'poe)
 
-;; silence byte compiler
 (eval-when-compile
   (defun-maybe dynamic-link (a))
   (defun-maybe dynamic-call (a b)))
 
-(defgroup elmo nil
-  "ELMO, Elisp Library for Message Orchestration."
-  :tag "ELMO"
-  :group 'news
-  :group 'mail)
+;; IMAP4
+(defvar elmo-default-imap4-mailbox "inbox"
+  "*Default IMAP4 mailbox.")
+(defvar elmo-default-imap4-server "localhost"
+  "*Default IMAP4 server.")
+(defvar elmo-default-imap4-authenticate-type 'login
+  "*Default Authentication type for IMAP4.")
+(defvar elmo-default-imap4-user (or (getenv "USER")
+				    (getenv "LOGNAME")
+				    (user-login-name))
+  "*Default username for IMAP4.")
+(defvar elmo-default-imap4-port 143
+  "*Default Port number of IMAP.")
+(defvar elmo-default-imap4-stream-type nil
+  "*Default stream type for IMAP4.
+Any symbol value of `elmo-network-stream-type-alist'.")
+(defvar elmo-imap4-stream-type-alist nil
+  "*Stream bindings for IMAP4.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
+;; POP3
+(defvar elmo-default-pop3-user (or (getenv "USER")
+				   (getenv "LOGNAME")
+				   (user-login-name))
+  "*Default username for POP3.")
+(defvar elmo-default-pop3-server  "localhost"
+  "*Default POP3 server.")
+(defvar elmo-default-pop3-authenticate-type 'user
+  "*Default Authentication type for POP3.")
+(defvar elmo-default-pop3-port 110
+  "*Default POP3 port.")
+(defvar elmo-default-pop3-stream-type nil
+  "*Default stream type for POP3.
+Any symbol value of `elmo-network-stream-type-alist'.")
+(defvar elmo-pop3-stream-type-alist nil
+  "*Stream bindings for POP3.
+This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;; NNTP
 (defvar elmo-default-nntp-server  "localhost"
@@ -72,10 +103,8 @@ Each elements are regexp of folder name (This is obsolete).")
   "*ELMO Password filename.")
 (defvar elmo-passwd-life-time nil
   "*Duration of ELMO Password in seconds.  nil means infinity.")
-
 (defvar elmo-warning-threshold 30000
   "*Display warning when the bytes of message exceeds this value.")
-
 (defvar elmo-msg-appended-hook nil
   "A hook called when message is appended to database.")
 (defvar elmo-msg-deleted-hook nil
@@ -122,8 +151,9 @@ For disconnected operations.")
 (defvar elmo-use-server-diff t
   "Non-nil forces to get unread message information on server.")
 
-(defvar elmo-strict-diff-folder-list nil
-  "List of regexps of folder name which should be checked its diff strictly.")
+(defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
+  "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored.
+(Except `\\Deleted' flag).")
 
 (defvar elmo-msgdb-extra-fields nil
   "Extra fields for msgdb.")
@@ -133,10 +163,19 @@ For disconnected operations.")
 (defvar elmo-enable-disconnected-operation nil
   "*Enable disconnected operations.")
 
+(defvar elmo-imap4-overview-fetch-chop-length 200
+  "*Number of overviews to fetch in one request in imap4.")
 (defvar elmo-nntp-overview-fetch-chop-length 200
  "*Number of overviews to fetch in one request in nntp.")
 (defvar elmo-localdir-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")
+(defvar elmo-imap4-force-login nil
+  "*Non-nil forces to try 'login' if there is no 'auth' capability in imapd.")
+(defvar elmo-imap4-use-select-to-update-status nil
+  "*Some imapd have to send select command to update status.
+(ex. UW imapd 4.5-BETA?).  For these imapd, you must set this variable t.")
+(defvar elmo-imap4-use-modified-utf7 nil
+  "*Use mofidied UTF-7 (rfc2060) encoding for IMAP4 folder name.")
 
 (defvar elmo-auto-change-plugged 600
   "*Time to expire change plugged state automatically, as the number of seconds.
@@ -172,6 +211,10 @@ If function, return value of function.")
 (defvar elmo-multi-divide-number 100000
   "*Multi divider number.")
 
+;;; User variables for elmo-archive.
+(defvar elmo-archive-default-type 'zip
+  "*Default archiver type.  The value must be a symbol.")
+
 ;; database dynamic linking
 (defvar elmo-database-dl-module
   (expand-file-name "database.so" exec-directory))
@@ -198,6 +241,19 @@ If function, return value of function.")
 (defvar elmo-date-match (not (boundp 'nemacs-version))
   "Date match is available or not.")
 
+(defconst elmo-spec-alist
+  '((?%  . imap4)
+    (?-  . nntp)
+    (?\+ . localdir)
+    (?\* . multi)
+    (?\/ . filter)
+    (?\$ . archive)
+    (?&  . pop3)
+    (?=  . localnews)
+    (?'  . internal)
+    (?|  . pipe)
+    (?.  . maildir)))
+
 (defvar elmo-network-stream-type-alist
   '(("!"      ssl       ssl      open-ssl-stream)
     ("!!"     starttls  starttls starttls-open-stream)
@@ -209,6 +265,9 @@ SYMBOL should be identical in this alist.
 FEATURE is a symbol of the feature for OPEN-STREAM-FUNCTION.
 OPEN-STREAM-FUNCTION is a function to open network stream.
 Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
+
+(defvar elmo-debug nil)
+(defconst mmelmo-entity-buffer-name "*MMELMO-BUFFER*")
 
 (defvar elmo-folder-info-hashtb nil
   "Array of folder database information '(max length new unread).")
@@ -249,7 +308,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-weekday-name-fr '["Dim" "Lun" "Mar" "Mer" "Jeu" "Ven" "Sam"])
 (defvar elmo-weekday-name-de '["Son" "Mon" "Die" "Mit" "Don" "Fre" "Sam"])
 
-(defvar elmo-filename-replace-string-alist
+(defvar elmo-msgid-replace-string-alist
   '((":"  . " c")
     ("*"  . " a")
     ("?"  . " q")
@@ -260,8 +319,14 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
     ("/"  . " s")
     ("\\" . " b")))
 
+(defvar elmo-archive-use-cache nil
+  "Use cache in archive folder.")
+
 (defvar elmo-nntp-use-cache t
   "Use cache in nntp folder.")
+
+(defvar elmo-imap4-use-cache t
+  "Use cache in imap4 folder.")
 
 (defvar elmo-pop3-use-cache t
   "Use cache in pop3 folder.")
@@ -271,6 +336,10 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-nntp-max-number-precedes-list-active nil
   "Non-nil means max number of msgdb is set as the max number of `list active'.
 (Needed for inn 2.3 or later?).")
+
+(defvar elmo-use-killed-list t
+  "If non-nil, deleted messages are saved as `killed'
+and do not appear again.")
 
 (defvar elmo-pop3-send-command-synchronously nil
   "If non-nil, commands are send synchronously.

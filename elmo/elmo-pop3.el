@@ -40,84 +40,12 @@
 (eval-and-compile
   (autoload 'md5 "md5"))
 
-;; POP3
-(defvar elmo-default-pop3-user (or (getenv "USER")
-				   (getenv "LOGNAME")
-				   (user-login-name))
-  "*Default username for POP3.")
-(defvar elmo-default-pop3-server  "localhost"
-  "*Default POP3 server.")
-(defvar elmo-default-pop3-authenticate-type 'user
-  "*Default Authentication type for POP3.")
-(defvar elmo-default-pop3-port 110
-  "*Default POP3 port.")
-(defvar elmo-default-pop3-stream-type nil
-  "*Default stream type for POP3.
-Any symbol value of `elmo-network-stream-type-alist'.")
-
-
-(defvar elmo-pop3-stream-type-alist nil
-  "*Stream bindings for POP3.
-This is taken precedence over `elmo-network-stream-type-alist'.")
-
-
-(defvar elmo-pop3-default-use-uidl t
-  "If non-nil, use UIDL on POP3.")
-
-(defvar elmo-pop3-use-uidl-internal t
-  "(Internal switch for using UIDL on POP3).")
-(defvar elmo-pop3-inhibit-uidl nil
-  "(Internal switch for using UIDL on POP3).")
+(defvar elmo-pop3-use-uidl t
+  "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
 
-;;; ELMO POP3 folder
-(eval-and-compile
-  (luna-define-class elmo-pop3-folder (elmo-net-folder)
-		     (use-uidl location-alist))
-  (luna-define-internal-accessors 'elmo-pop3-folder))
-
-(luna-define-method elmo-folder-initialize :around ((folder
-						     elmo-pop3-folder)
-						    name)
-  (let ((elmo-network-stream-type-alist
-	 (if elmo-pop3-stream-type-alist
-	     (append elmo-pop3-stream-type-alist
-		     elmo-network-stream-type-alist)
-	   elmo-network-stream-type-alist)))
-    (setq name (luna-call-next-method))
-    ;; Setup slots for elmo-net-folder
-    (when (string-match "^\\([^:/!]*\\)\\(/[^/:@!]+\\)?\\(:[^/:@!]+\\)?" name)
-      (elmo-net-folder-set-user-internal folder
-					 (if (match-beginning 1)
-					     (elmo-match-string 1 name)))
-      (if (eq (length (elmo-net-folder-user-internal folder)) 0)
-	  (elmo-net-folder-set-user-internal folder
-					     elmo-default-pop3-user))
-      (elmo-net-folder-set-auth-internal
-       folder
-       (if (match-beginning 2)
-	   (intern (elmo-match-substring 2 name 1))
-	 elmo-default-pop3-authenticate-type))
-      (elmo-pop3-folder-set-use-uidl-internal
-       folder
-       (if (match-beginning 3)
-	   (string= (elmo-match-substring 3 name 1) "uidl")
-	 elmo-pop3-default-use-uidl)))
-    (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder 
-					   elmo-default-pop3-server))
-    (unless (elmo-net-folder-port-internal folder)
-      (elmo-net-folder-set-port-internal folder
-					 elmo-default-pop3-port))
-    (unless (elmo-net-folder-stream-type-internal folder)
-      (elmo-net-folder-set-stream-type-internal
-       folder
-       elmo-default-pop3-stream-type))
-    folder))
-
-;;; POP3 session
-(luna-define-class elmo-pop3-session (elmo-network-session) ())
+(luna-define-class elmo-pop3-session (elmo-network-session))
 
 ;; buffer-local
 (defvar elmo-pop3-read-point nil)
@@ -139,25 +67,25 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
     (when (memq (process-status
 		 (elmo-network-session-process-internal session))
 		'(open run))
-      (let ((buffer (process-buffer 
-		     (elmo-network-session-process-internal session))))
-	(elmo-pop3-send-command (elmo-network-session-process-internal session)
-				"quit")
-	;; process is dead.
-	(or (elmo-pop3-read-response
-	     (elmo-network-session-process-internal session)
-	     t buffer)
-	    (error "POP error: QUIT failed"))))
+      (elmo-pop3-send-command (elmo-network-session-process-internal session)
+			      "quit")
+      (or (elmo-pop3-read-response
+	   (elmo-network-session-process-internal session) t)
+	  (error "POP error: QUIT failed")))
     (kill-buffer (process-buffer
 		  (elmo-network-session-process-internal session)))
     (delete-process (elmo-network-session-process-internal session))))
 
-(defun elmo-pop3-get-session (folder &optional if-exists)
-  (let ((elmo-pop3-use-uidl-internal (if elmo-pop3-inhibit-uidl
-					 nil
-				       (elmo-pop3-folder-use-uidl-internal
-					folder))))
-    (elmo-network-get-session 'elmo-pop3-session "POP3" folder if-exists)))
+(defun elmo-pop3-get-session (spec &optional if-exists)
+  (elmo-network-get-session
+   'elmo-pop3-session
+   "POP3"
+   (elmo-pop3-spec-hostname spec)
+   (elmo-pop3-spec-port spec)
+   (elmo-pop3-spec-username spec)
+   (elmo-pop3-spec-auth spec)
+   (elmo-pop3-spec-stream-type spec)
+   if-exists))
 
 (defun elmo-pop3-send-command (process command &optional no-erase)
   (with-current-buffer (process-buffer process)
@@ -168,9 +96,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
-(defun elmo-pop3-read-response (process &optional not-command buffer)
-  ;; buffer is in case for process is dead.
-  (with-current-buffer (or buffer (process-buffer process))
+(defun elmo-pop3-read-response (process &optional not-command)
+  (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  (response-string nil)
 	  (response-continue t)
@@ -311,7 +238,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 		   mechanism
 		   (elmo-network-session-user-internal session)
 		   "pop"
-		   (elmo-network-session-server-internal session)))
+		   (elmo-network-session-host-internal session)))
 ;;;	    (if elmo-pop3-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-pop3-auth-user-realm))
 	    (setq name (sasl-mechanism-name mechanism))
@@ -374,7 +301,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
       ;; POP server always returns a sequence of serial numbers.
       (setq count (elmo-pop3-parse-list-response response))
       ;; UIDL
-      (when elmo-pop3-use-uidl-internal
+      (when elmo-pop3-use-uidl
 	(setq elmo-pop3-uidl-number-hash (elmo-make-hash (* count 2)))
 	(setq elmo-pop3-number-uidl-hash (elmo-make-hash (* count 2)))
 	;; UIDL
@@ -400,24 +327,21 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
        (buffer-substring elmo-pop3-read-point
 			 (- match-end 3))))))
 
-(luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-pop3-folder))
-  (convert-standard-filename
-   (expand-file-name
-    (elmo-safe-filename (elmo-net-folder-user-internal folder))
-    (expand-file-name (elmo-net-folder-server-internal folder)
-		      (expand-file-name
-		       "pop"
-		       elmo-msgdb-dir)))))
+;; dummy functions
+(defun elmo-pop3-list-folders (spec &optional hierarchy) nil)
+(defun elmo-pop3-append-msg (spec string) nil nil)
+(defun elmo-pop3-folder-creatable-p (spec) nil)
+(defun elmo-pop3-create-folder (spec) nil)
 
-(luna-define-method elmo-folder-exists-p ((folder elmo-pop3-folder))
+(defun elmo-pop3-folder-exists-p (spec)
   (if (and elmo-pop3-exists-exactly
-	   (elmo-folder-plugged-p folder))
+	   (elmo-pop3-plugged-p spec))
       (save-excursion
-	(let (elmo-auto-change-plugged  ; don't change plug status.
-	      elmo-pop3-inhibit-uidl    ; No need to use uidl.
+	(let (elmo-auto-change-plugged ; don't change plug status.
+	      elmo-pop3-use-uidl       ; No need to use uidl.
 	      session)
 	  (prog1
-	      (setq session (elmo-pop3-get-session folder))
+	      (setq session (elmo-pop3-get-session spec))
 	    (if session
 		(elmo-network-close-session session)))))
     t))
@@ -464,10 +388,10 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	(setq elmo-pop3-list-done t))
       count)))
 
-(defun elmo-pop3-list-location (folder)
+(defun elmo-pop3-list-location (spec)
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal
-			 (elmo-pop3-get-session folder)))
+			 (elmo-pop3-get-session spec)))
     (let (list)
       (if elmo-pop3-uidl-done
 	  (progn
@@ -478,46 +402,18 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	    (nreverse list))
 	(error "POP3: Error in UIDL")))))
 
-(defun elmo-pop3-list-folder-by-location (folder locations)
-  (let* ((location-alist (elmo-pop3-folder-location-alist-internal folder))
-	 (locations-in-db (mapcar 'cdr location-alist))
-	 result new-locs new-alist deleted-locs i)
-    (setq new-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations-in-db)))
-			  locations))
-    (setq deleted-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations)))
-			  locations-in-db))
-    (setq i (or (elmo-max-of-list (mapcar 'car location-alist)) 0))
-    (mapcar
-     (function
-      (lambda (x)
-	(setq location-alist
-	      (delq (rassoc x location-alist) location-alist))))
-     deleted-locs)
-    (while new-locs
-      (setq i (1+ i))
-      (setq new-alist (cons (cons i (car new-locs)) new-alist))
-      (setq new-locs (cdr new-locs)))
-    (setq result (nconc location-alist new-alist))
-    (setq result (sort result (lambda (x y) (< (car x)(car y)))))
-    (elmo-pop3-folder-set-location-alist-internal folder result)
-    (mapcar 'car result)))
-
-(defun elmo-pop3-list-by-uidl-subr (folder &optional nonsort)
-  (let ((flist (elmo-pop3-list-folder-by-location
-		folder
-		(elmo-pop3-list-location folder))))
+(defun elmo-pop3-list-by-uidl-subr (spec &optional nonsort)
+  (let ((flist (elmo-list-folder-by-location
+		spec
+		(elmo-pop3-list-location spec))))
     (if nonsort
 	(cons (elmo-max-of-list flist) (length flist))
       (sort flist '<))))
 
-(defun elmo-pop3-list-by-list (folder)
+(defun elmo-pop3-list-by-list (spec)
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal
-			 (elmo-pop3-get-session folder)))
+			 (elmo-pop3-get-session spec)))
     (let (list)
       (if elmo-pop3-list-done
 	  (progn
@@ -529,23 +425,25 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	    (sort list '<))
 	(error "POP3: Error in list")))))
 
-(defsubst elmo-pop3-folder-list-messages (folder)
-  (if (and (not elmo-pop3-inhibit-uidl)
-	   (elmo-pop3-folder-use-uidl-internal folder))
-      (elmo-pop3-list-by-uidl-subr folder)
-    (elmo-pop3-list-by-list folder)))
+(defun elmo-pop3-list-folder (spec)
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path spec))))
+	numbers)
+    (elmo-pop3-commit spec)
+    (setq numbers (if elmo-pop3-use-uidl
+		      (progn
+			(elmo-pop3-list-by-uidl-subr spec))
+		    (elmo-pop3-list-by-list spec)))
+    (elmo-living-messages numbers killed)))
 
-(luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-pop3-folder))
-  (elmo-pop3-folder-list-messages folder))
-
-(luna-define-method elmo-folder-status ((folder elmo-pop3-folder))
-  (elmo-folder-check folder)
-  (if (elmo-pop3-folder-use-uidl-internal folder)
-      (elmo-pop3-list-by-uidl-subr folder 'nonsort)
+(defun elmo-pop3-max-of-folder (spec)
+  (elmo-pop3-commit spec)
+  (if elmo-pop3-use-uidl
+      (elmo-pop3-list-by-uidl-subr spec 'nonsort)
     (let* ((process
 	    (elmo-network-session-process-internal
-	     (elmo-pop3-get-session folder)))
+	     (elmo-pop3-get-session spec)))
 	   (total 0)
 	   response)
       (with-current-buffer (process-buffer process)
@@ -620,22 +518,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	(replace-match "\n"))
       (copy-to-buffer tobuffer (point-min) (point-max)))))
 
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-pop3-folder)
-					      numlist new-mark
-					      already-mark seen-mark
-					      important-mark seen-list)
-  (let ((process (elmo-network-session-process-internal
-		  (elmo-pop3-get-session folder))))
-    (with-current-buffer (process-buffer process)
-      (elmo-pop3-sort-msgdb-by-original-number
-       folder
-       (elmo-pop3-msgdb-create-by-header
-	process
-	numlist
-	new-mark already-mark
-	seen-mark seen-list
-	(if (elmo-pop3-folder-use-uidl-internal folder)
-	    (elmo-pop3-folder-location-alist-internal folder)))))))
+(defalias 'elmo-pop3-msgdb-create 'elmo-pop3-msgdb-create-as-numlist)
 
 (defun elmo-pop3-sort-overview-by-original-number (overview loc-alist)
   (if loc-alist
@@ -649,15 +532,33 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 			     loc-alist))))))
     overview))
 
-(defun elmo-pop3-sort-msgdb-by-original-number (folder msgdb)
+(defun elmo-pop3-sort-msgdb-by-original-number (msgdb)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
-    (current-buffer)
     (setq overview (elmo-pop3-sort-overview-by-original-number
 		    overview
-		    (elmo-pop3-folder-location-alist-internal folder)))
+		    (elmo-msgdb-get-location msgdb)))
     (message "Sorting...done")
-    (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb))))
+    (list overview (nth 1 msgdb)(nth 2 msgdb)(nth 3 msgdb)(nth 4 msgdb))))
+
+(defun elmo-pop3-msgdb-create-as-numlist (spec numlist new-mark
+					       already-mark seen-mark
+					       important-mark seen-list
+					       &optional msgdb)
+  (when numlist
+    (let ((process (elmo-network-session-process-internal
+		    (elmo-pop3-get-session spec)))
+	  loc-alist)
+      (if elmo-pop3-use-uidl
+	  (setq loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
+			    (elmo-msgdb-location-load
+			     (elmo-msgdb-expand-path spec)))))
+      (with-current-buffer (process-buffer process)
+	(elmo-pop3-sort-msgdb-by-original-number
+	 (elmo-pop3-msgdb-create-by-header process numlist
+					   new-mark already-mark
+					   seen-mark seen-list
+					   loc-alist))))))
 
 (defun elmo-pop3-uidl-to-number (uidl)
   (string-to-number (elmo-get-hash-val uidl
@@ -748,8 +649,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	      (setq message-id (car entity))
 	      (setq seen (member message-id seen-list))
 	      (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-				  (if (elmo-file-cache-status
-				       (elmo-file-cache-get message-id))
+				  (if (elmo-cache-exists-p
+				       message-id) ; XXX
 				      (if seen
 					  nil
 					already-mark)
@@ -768,7 +669,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	      (elmo-display-progress
 	       'elmo-pop3-msgdb-create-message "Creating msgdb..."
 	       (/ (* i 100) num)))))
-      (list overview number-alist mark-alist))))
+      (list overview number-alist mark-alist loc-alist))))
 
 (defun elmo-pop3-read-body (process outbuf)
   (with-current-buffer (process-buffer process)
@@ -781,30 +682,17 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
       (setq end (point))
       (with-current-buffer outbuf
 	(erase-buffer)
-	(insert-buffer-substring (process-buffer process) start (- end 3))))))
+	(insert-buffer-substring (process-buffer process) start (- end 3))
+	(elmo-delete-cr-get-content-type)))))
 
-(luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))
-  (if (elmo-pop3-folder-use-uidl-internal folder)
-      (elmo-pop3-folder-set-location-alist-internal
-       folder (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
-
-(luna-define-method elmo-folder-commit :after ((folder elmo-pop3-folder))
-  (when (elmo-folder-persistent-p folder)
-    (elmo-msgdb-location-save (elmo-folder-msgdb-path folder)
-			      (elmo-pop3-folder-location-alist-internal
-			       folder))))
-
-(luna-define-method elmo-folder-close-internal ((folder elmo-pop3-folder))
-  (elmo-pop3-folder-set-location-alist-internal folder nil)
-  (elmo-folder-check folder))
-
-(luna-define-method elmo-message-fetch-plugged ((folder elmo-pop3-folder)
-						number strategy
-						&optional section
-						outbuf unseen)
-  (let* ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
+(defun elmo-pop3-read-msg (spec number outbuf &optional msgdb)
+  (let* ((loc-alist (if elmo-pop3-use-uidl
+			(if msgdb
+			    (elmo-msgdb-get-location msgdb)
+			  (elmo-msgdb-location-load
+			   (elmo-msgdb-expand-path spec)))))
 	 (process (elmo-network-session-process-internal
-		   (elmo-pop3-get-session folder)))
+		   (elmo-pop3-get-session spec)))
 	 response errmsg msg)
     (with-current-buffer (process-buffer process)
       (if loc-alist
@@ -839,28 +727,62 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	      (error "Deleting message failed")))
 	(error "Deleting message failed")))))
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-pop3-folder)
-						      msgs)
-  (let ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
+(defun elmo-pop3-delete-msgs (spec msgs &optional msgdb)
+  (let ((loc-alist (if elmo-pop3-use-uidl
+		       (if msgdb
+			   (elmo-msgdb-get-location msgdb)
+			 (elmo-msgdb-location-load
+			  (elmo-msgdb-expand-path spec)))))
 	(process (elmo-network-session-process-internal
-		  (elmo-pop3-get-session folder))))
+		  (elmo-pop3-get-session spec))))
     (mapcar '(lambda (msg) (elmo-pop3-delete-msg
 			    process msg loc-alist))
 	    msgs)))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-pop3-folder) number)
+(defun elmo-pop3-search (spec condition &optional numlist)
+  (error "Searching in pop3 folder is not implemented yet"))
+
+(defun elmo-pop3-use-cache-p (spec number)
   elmo-pop3-use-cache)
 
-(luna-define-method elmo-folder-persistent-p ((folder elmo-pop3-folder))
-  (and (elmo-folder-persistent-internal folder)
-       (elmo-pop3-folder-use-uidl-internal folder)))
+(defun elmo-pop3-local-file-p (spec number)
+  nil)
 
+(defun elmo-pop3-port-label (spec)
+  (concat "pop3"
+	  (if (elmo-pop3-spec-stream-type spec)
+	      (concat "!" (symbol-name
+			   (elmo-network-stream-type-symbol
+			    (elmo-pop3-spec-stream-type spec)))))))
 
-(luna-define-method elmo-folder-check ((folder elmo-pop3-folder))
-  (if (elmo-folder-plugged-p folder)
-      (let ((session (elmo-pop3-get-session folder 'if-exists)))
+(defsubst elmo-pop3-portinfo (spec)
+  (list (elmo-pop3-spec-hostname spec)
+	(elmo-pop3-spec-port spec)))
+
+(defun elmo-pop3-plugged-p (spec)
+  (apply 'elmo-plugged-p
+	 (append (elmo-pop3-portinfo spec)
+		 (list nil (quote (elmo-pop3-port-label spec))))))
+
+(defun elmo-pop3-set-plugged (spec plugged add)
+  (apply 'elmo-set-plugged plugged
+	 (append (elmo-pop3-portinfo spec)
+		 (list nil nil (quote (elmo-pop3-port-label spec)) add))))
+
+(defalias 'elmo-pop3-sync-number-alist
+  'elmo-generic-sync-number-alist)
+(defalias 'elmo-pop3-list-folder-unread
+  'elmo-generic-list-folder-unread)
+(defalias 'elmo-pop3-list-folder-important
+  'elmo-generic-list-folder-important)
+(defalias 'elmo-pop3-folder-diff 'elmo-generic-folder-diff)
+
+(defun elmo-pop3-commit (spec)
+  (if (elmo-pop3-plugged-p spec)
+      (let ((session (elmo-pop3-get-session spec 'if-exists)))
 	(and session
 	     (elmo-network-close-session session)))))
+       
 
 (require 'product)
 (product-provide (provide 'elmo-pop3) (require 'elmo-version))

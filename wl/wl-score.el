@@ -353,7 +353,7 @@ Set `wl-score-cache' nil."
 
 (defun wl-score-get-score-alist (&optional folder)
   (interactive)
-  (let* ((fld (or folder (wl-summary-buffer-folder-name)))
+  (let* ((fld (or folder wl-summary-buffer-folder-name))
 	 (score-alist (reverse
 		       (wl-score-get-score-files wl-score-folder-alist fld)))
 	 alist scores)
@@ -395,9 +395,9 @@ Set `wl-score-cache' nil."
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
 	 (overview (elmo-msgdb-get-overview
-		    (or msgdb (wl-summary-buffer-msgdb))))
+		    (or msgdb wl-summary-buffer-msgdb)))
 	 (mark-alist (elmo-msgdb-get-mark-alist
-		      (or msgdb (wl-summary-buffer-msgdb))))
+		      (or msgdb wl-summary-buffer-msgdb)))
 	 (wl-score-stop-add-entry not-add)
 	 entries
 	 news new num entry ov header)
@@ -926,11 +926,11 @@ Set `wl-score-cache' nil."
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
 	 (roverview (reverse (elmo-msgdb-get-overview
-			      (wl-summary-buffer-msgdb))))
+			      wl-summary-buffer-msgdb)))
 	 msgs)
     (if (not expire)
 	(mapcar 'car (elmo-msgdb-get-number-alist
-		      (wl-summary-buffer-msgdb))) ;; all messages
+		      wl-summary-buffer-msgdb)) ;; all messages
       (catch 'break
 	(while roverview
 	  (if (< (wl-day-number
@@ -946,8 +946,8 @@ Set `wl-score-cache' nil."
   (let ((num (wl-summary-message-number)))
     (if num
 	(assoc (cdr (assq num (elmo-msgdb-get-number-alist
-			       (wl-summary-buffer-msgdb))))
-	       (elmo-msgdb-get-overview (wl-summary-buffer-msgdb))))))
+			       wl-summary-buffer-msgdb)))
+	       (elmo-msgdb-get-overview wl-summary-buffer-msgdb)))))
 
 (defun wl-score-get-header (header &optional extra)
   (let ((index (nth 2 (assoc header wl-score-header-index)))
@@ -996,9 +996,9 @@ Set `wl-score-cache' nil."
 	  (setq alist (cdr alist))
 	  (setq i (1+ i))
 	  (set-buffer-modified-p nil)))
-      (when (and (get-buffer wl-message-buffer)
+      (when (and (get-buffer wl-message-buf-name)
 		 (setq mes-win (get-buffer-window
-				(get-buffer wl-message-buffer))))
+				(get-buffer wl-message-buf-name))))
 	(select-window mes-win)
 	(unless (eq (next-window) cur-win)
 	  (delete-window (next-window))))
@@ -1182,8 +1182,8 @@ Set `wl-score-cache' nil."
     (wl-score-save)
     (setq wl-score-cache nil)
     (setq wl-summary-scored nil)
-    (setq number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
-    (wl-summary-score-headers nil (wl-summary-buffer-msgdb)
+    (setq number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
+    (wl-summary-score-headers nil wl-summary-buffer-msgdb
 			      (unless arg
 				(wl-summary-rescore-msgs number-alist)))
     (setq expunged (wl-summary-score-update-all-lines t))
@@ -1195,13 +1195,14 @@ Set `wl-score-cache' nil."
 (defun wl-summary-score-headers (&optional folder msgdb force-msgs not-add)
   "Do scoring if scoring is required."
   (let ((scores (wl-score-get-score-alist
-		 (or folder (wl-summary-buffer-folder-name)))))
+		 (or folder wl-summary-buffer-folder-name))))
     (when scores
       (wl-score-headers scores msgdb force-msgs not-add))))
 
 (defun wl-summary-score-update-all-lines (&optional update)
   (let* ((alist wl-summary-scored)
 	 (count (length alist))
+	 (folder wl-summary-buffer-folder-name)
 	 (i 0)
 	 (update-unread nil)
 	 num score dels visible score-mark mark-alist)
@@ -1212,7 +1213,7 @@ Set `wl-score-cache' nil."
 	      score (cdar alist))
 	(when wl-score-debug
 	  (message "Scored %d with %d" score num)
-	  (wl-push (list (elmo-string (wl-summary-buffer-folder-name)) num score)
+	  (wl-push (list (elmo-string wl-summary-buffer-folder-name) num score)
 		wl-score-trace))
 	(setq score-mark (wl-summary-get-score-mark num))
 	(and (setq visible (wl-summary-jump-to-msg num))
@@ -1243,22 +1244,22 @@ Set `wl-score-cache' nil."
 	   (/ (* i 100) count))))
       (when dels
 	(setq mark-alist
-	      (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
+	      (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
 	(let ((marks dels))
 	  (while marks
 	    (setq mark-alist
 		  (elmo-msgdb-mark-set mark-alist (pop marks) nil))))
-	(elmo-folder-mark-as-read wl-summary-buffer-elmo-folder
-				  dels)
-	(elmo-msgdb-set-mark-alist (wl-summary-buffer-msgdb) mark-alist)
+	(elmo-mark-as-read wl-summary-buffer-folder-name
+			   dels wl-summary-buffer-msgdb)
+	(elmo-msgdb-set-mark-alist wl-summary-buffer-msgdb mark-alist)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
 	(let ((num-db (elmo-msgdb-get-number-alist
-		       (wl-summary-buffer-msgdb)))
+		       wl-summary-buffer-msgdb))
 	      (mark-alist (elmo-msgdb-get-mark-alist
-			   (wl-summary-buffer-msgdb))))
+			   wl-summary-buffer-msgdb)))
 	  ;; Update Folder mode
-	  (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
+	  (wl-folder-set-folder-updated wl-summary-buffer-folder-name
 					(list 0
 					      (wl-summary-count-unread
 					       mark-alist)
@@ -1293,12 +1294,13 @@ Set `wl-score-cache' nil."
 		       (find-file-noselect file)))
 	(sum-buf (current-buffer)))
     (if (string-match (concat "^" wl-summary-buffer-name) (buffer-name))
-	(let ((cur-buf (current-buffer)))
-	  (when wl-message-buffer
-	    (wl-message-select-buffer wl-message-buffer)
+	(let ((cur-buf (current-buffer))
+	      (view-message-buffer (get-buffer wl-message-buf-name)))
+	  (when view-message-buffer
+	    (wl-select-buffer view-message-buffer)
 	    (delete-window)
 	    (select-window (get-buffer-window cur-buf)))
-	  (wl-message-select-buffer edit-buffer))
+	  (wl-select-buffer edit-buffer))
       (switch-to-buffer edit-buffer))
     (wl-score-mode)
     (setq wl-score-edit-exit-func 'wl-score-edit-done)

@@ -58,7 +58,6 @@
 ;;; Code:
 ;;
 
-(require 'elmo)
 (eval-when-compile
   (require 'wl-folder)
   (require 'wl-summary)
@@ -353,7 +352,7 @@
 			    ((string= fld-name wl-queue-folder);; queue folder
 			     (get 'wl-folder-queue-image 'image))
 			    (;; and one of many other folders
-			     (setq type (elmo-folder-type fld-name))
+			     (setq type (elmo-folder-get-type fld-name))
 			     (get (intern (format "wl-folder-%s-image" type))
 				  'image)))))
 	      (overlay-put overlay 'before-string image)))
@@ -407,7 +406,7 @@
 	       (concat (propertize " " 'display
 				   (get 'wl-folder-queue-image 'image))
 		       string))
-	      ((setq type (elmo-folder-type folder))
+	      ((setq type (elmo-folder-get-type folder))
 	       (concat (propertize " " 'display
 				   (get (intern (format "wl-folder-%s-image"
 							type))
@@ -430,7 +429,6 @@
     (wl-folder-archive-image      . wl-archive-folder-icon)
     (wl-folder-pipe-image         . wl-pipe-folder-icon)
     (wl-folder-maildir-image      . wl-maildir-folder-icon)
-    (wl-folder-nmz-image          . wl-nmz-folder-icon)
     (wl-folder-trash-empty-image  . wl-empty-trash-folder-icon)
     (wl-folder-draft-image        . wl-draft-folder-icon)
     (wl-folder-queue-image        . wl-queue-folder-icon)
@@ -527,8 +525,7 @@
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
-  (if (string-match (regexp-quote wl-message-buffer-cache-name)
-		    (regexp-quote (buffer-name)))
+  (if (string-match wl-message-buf-name (buffer-name))
       (wl-message-next-page)
     (let ((cur-buf (current-buffer))
 	  proceed)
@@ -543,8 +540,7 @@
 
 (defun wl-message-wheel-down (event)
   (interactive "e")
-  (if (string-match (regexp-quote wl-message-buffer-cache-name)
-		    (regexp-quote (buffer-name)))
+  (if (string-match wl-message-buf-name (buffer-name))
       (wl-message-prev-page)
     (let ((cur-buf (current-buffer))
 	  proceed)
