@@ -3,6 +3,8 @@
 	* INSTALL (Installation): Add notify for tm-8 with old APEL user.
 	* INSTALL.ja: Ditto.
 
+	* etc/VERSION: New file.
+
 2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-MK (config-wl-package-subr): Changed message.
