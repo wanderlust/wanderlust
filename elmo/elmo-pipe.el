@@ -97,7 +97,7 @@
 
 (defun elmo-pipe-drain (src dst)
   "Move all messages of SRC to DST."
-  (let ((elmo-pop3-inhibit-uidl t)) ; No need to use UIDL
+  (let ((elmo-inhibit-number-mapping t)) ; No need to use UIDL
     (message "Checking %s..." (elmo-folder-name-internal src))
     (elmo-folder-open-internal src)
     (elmo-folder-move-messages src (elmo-folder-list-messages src) dst))
@@ -132,7 +132,7 @@
 (luna-define-method elmo-folder-status ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-src-internal folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
-  (let* ((elmo-pop3-inhibit-uidl t)
+  (let* ((elmo-inhibit-number-mapping t)
 	 (src-length (length (elmo-folder-list-messages
 			      (elmo-pipe-folder-src-internal folder))))
 	 (dst-list (elmo-folder-list-messages

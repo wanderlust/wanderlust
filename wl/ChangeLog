@@ -1,3 +1,27 @@
+2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-queue-flush): Don't call
+	`elmo-dop-unlock-message'.
+	* wl-draft.el (wl-draft-queue-append): Don't call
+	`elmo-dop-lock-message'.
+
+	* wl-summary.el (wl-summary-buffer-msgdb): Revival (for compatibility).
+	(wl-summary-buffer-folder-name): Ditto.
+	(wl-summary-message-regexp): Added '-' (all other related portions
+	are changed).
+	(wl-summary-goto-folder-subr): Set wl-summary-buffer-msgdb and
+	wl-summary-buffer-folder-name.
+
+2001-02-26  "A. SAGATA" <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Fixed problem that
+	the number of mails in the folder buffer is not updated by wl-biff.
+
+2000-02-26  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-default-subject-filter): Fix for `Re>'.
+	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): Ditto.
+
 2001-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-regexp-opt): New function.

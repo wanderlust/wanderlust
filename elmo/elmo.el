@@ -25,11 +25,6 @@
 
 ;;; Commentary:
 ;;
-;; APIs which can be used before opened:
-
-;; elmo-make-folder
-;; elmo-folder-diff
-;; elmo-folder-open
 
 ;;; Code:
 ;; 

@@ -66,8 +66,6 @@
 (defvar wl-summary-mode-map nil)
 (defvar wl-current-summary-buffer nil)
 
-;; (defvar wl-summary-buffer-msgdb       nil) obsolete.
-;; (defvar wl-summary-buffer-folder-name nil) obsolete.
 (defvar wl-summary-buffer-elmo-folder nil)
 
 (defmacro wl-summary-buffer-folder-name ()
@@ -109,6 +107,8 @@
 (defvar wl-summary-buffer-next-folder-func nil)
 (defvar wl-summary-buffer-exit-func nil)
 (defvar wl-summary-buffer-number-list nil)
+(defvar wl-summary-buffer-msgdb nil)
+(defvar wl-summary-buffer-folder-name nil)
 
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
@@ -127,7 +127,7 @@
 
 (defvar wl-summary-get-petname-func 'wl-address-get-petname-1)
 
-(defvar wl-summary-message-regexp "^ *\\([0-9]+\\)")
+(defvar wl-summary-message-regexp "^ *\\([0-9-]+\\)")
 
 (defvar wl-summary-shell-command-last "")
 
@@ -177,6 +177,8 @@
 (make-variable-buffer-local 'wl-summary-buffer-next-folder-func)
 (make-variable-buffer-local 'wl-summary-buffer-exit-func)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
+(make-variable-buffer-local 'wl-summary-buffer-msgdb)
+(make-variable-buffer-local 'wl-summary-buffer-folder-name)
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -1357,7 +1359,7 @@ If ARG is non-nil, checking is omitted."
 	(goto-char (point-min))
 	(while (not (eobp))
 	  (beginning-of-line)
-	  (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+	  (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	    (setq mark (wl-match-buffer 2))
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (if (or (and (null prefetch-marks)
@@ -1411,7 +1413,7 @@ If ARG is non-nil, checking is omitted."
   (save-excursion
     (save-match-data
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	(goto-char (match-beginning 2))
 	(let ((inhibit-read-only t)
 	      (buffer-read-only nil)
@@ -1605,7 +1607,7 @@ If ARG is non-nil, checking is omitted."
 	(elmo-folder-mark-as-read folder (wl-summary-collect-unread mark-alist))
 	(save-excursion
 	  (goto-char (point-min))
-	  (while (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
+	  (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9 ]\\)" nil t)
 	    (setq msg (string-to-int (wl-match-buffer 1)))
 	    (setq mark (wl-match-buffer 2))
 	    (when (and (not (string= mark wl-summary-important-mark))
@@ -1656,7 +1658,7 @@ If ARG is non-nil, checking is omitted."
 	   mark number unread new-mark)
 ;;;   (re-search-backward "^ *[0-9]+..[0-9]+/[0-9]+" nil t) ; set cursor line
       (beginning-of-line)
-      (when (looking-at "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)")
 	(progn
 	  (setq mark (wl-match-buffer 2))
 	  (cond
@@ -1701,7 +1703,7 @@ If ARG is non-nil, checking is omitted."
     (message "Resuming cache status...")
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^ *\\([0-9]+\\)[^0-9]\\([^0-9]\\)" nil t)
+      (while (re-search-forward "^ *\\([0-9-]+\\)[^0-9]\\([^0-9]\\)" nil t)
 	(setq msg (string-to-int
 		   (wl-match-buffer 1)))
 	(setq mark (wl-match-buffer 2))
@@ -2215,7 +2217,7 @@ If ARG is non-nil, checking is omitted."
 	  (buffer-read-only nil)
 	  msg-num
 	  cur-mark)
-      (when (looking-at "^ *\\([0-9]+\\)\\([^0-9]\\)")
+      (when (looking-at "^ *\\([0-9-]+\\)\\([^0-9]\\)")
 	(setq msg-num  (string-to-int (wl-match-buffer 1)))
 	(setq cur-mark (wl-match-buffer 2))
 	(when (member cur-mark (list " "
@@ -2282,7 +2284,7 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-message-number ()
   (save-excursion
     (beginning-of-line)
-    (if (looking-at "^ *\\([0-9]+\\)")
+    (if (looking-at "^ *\\([0-9-]+\\)")
 	(string-to-int (wl-match-buffer 1))
       nil)))
 
@@ -2460,7 +2462,9 @@ If ARG, without confirm."
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-mark-modified
 		   wl-summary-buffer-thread-modified
-		   wl-summary-buffer-number-list)
+		   wl-summary-buffer-number-list
+		   wl-summary-buffer-msgdb
+		   wl-summary-buffer-folder-name)
 		 (and (eq wl-summary-buffer-view 'thread)
 		      '(wl-thread-entity-hashtb
 			wl-thread-entities
@@ -2565,6 +2569,10 @@ If ARG, without confirm."
 		(buffer-read-only nil))
 	    ;; Select folder
 	    (elmo-folder-open folder)
+	    ;; For compatibility
+	    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
+	    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal
+						 folder))
 	    (erase-buffer)
 	    ;; Resume summary view
 	    (if wl-summary-cache-use
@@ -2742,7 +2750,7 @@ If ARG, without confirm."
 
 (defun wl-summary-default-subject-filter (subject)
   (let ((case-fold-search t))
-    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\):" ""))
+    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
     (setq subject (elmo-replace-in-string subject "[ \t]" ""))
     (elmo-replace-in-string subject "^\\[.*\\]" "")))
 
@@ -4285,7 +4293,7 @@ If ARG, exit virtual folder."
       (setq wl-summary-buffer-number-column
 	    (or
 	     (if (and update
-		      (setq end (if (re-search-forward "^ *[0-9]+[^0-9]" nil t)
+		      (setq end (if (re-search-forward "^ *[0-9-]+[^0-9]" nil t)
 				    (point))))
 		 (- end (progn (beginning-of-line) (point)) 1))
 	     (wl-get-assoc-list-value wl-summary-number-column-alist
