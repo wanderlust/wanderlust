@@ -147,6 +147,7 @@
   (define-key wl-folder-mode-map "rc"    'wl-folder-mark-as-read-all-region)
   (define-key wl-folder-mode-map "c"    'wl-folder-mark-as-read-all-current-entity)
   (define-key wl-folder-mode-map "g"    'wl-folder-goto-folder)
+  (define-key wl-folder-mode-map "G"    'wl-folder-goto-folder-sticky)
   (define-key wl-folder-mode-map "j"    'wl-folder-jump-to-current-entity)
   (define-key wl-folder-mode-map "w"    'wl-draft)
   (define-key wl-folder-mode-map "W"    'wl-folder-write-current-folder)
@@ -2187,6 +2188,10 @@ Use `wl-subscribed-mailing-list'."
 (defun wl-folder-goto-folder (&optional arg)
   (interactive "P")
   (wl-folder-goto-folder-subr nil arg))
+
+(defun wl-folder-goto-folder-sticky ()
+  (interactive)
+  (wl-folder-goto-folder-subr nil t))
 
 (defun wl-folder-goto-folder-subr (&optional folder sticky)
   (beginning-of-line)

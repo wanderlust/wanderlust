@@ -1,3 +1,9 @@
+2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-goto-folder-sticky): Just call
+	wl-folder-goto-folder with sticky argument.
+	(wl-folder-mode-map): Bind wl-folder-goto-folder-sticky to "G".
+
 2002-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-next-buffer
