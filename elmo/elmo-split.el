@@ -290,7 +290,8 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 	(format "%d messages are splitted" count)))
       (if (eq fcount 0)
 	  "."
-	(format " (%d failure)." fcount))))))
+	(format " (%d failure)." fcount))))
+    count))
 
 (defun elmo-split-subr (folder &optional reharsal)
   (let ((elmo-inhibit-display-retrieval-progress t)

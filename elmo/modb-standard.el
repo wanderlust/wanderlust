@@ -291,6 +291,7 @@
 					 number flag)
   (case flag
     (read
+     (elmo-msgdb-unset-flag msgdb number 'new)
      (elmo-msgdb-unset-flag msgdb number 'unread))
     (uncached
      (elmo-msgdb-unset-flag msgdb number 'cached))
@@ -298,8 +299,6 @@
      (let* ((cur-flags (modb-standard-message-flags msgdb number))
 	    (new-flags (copy-sequence cur-flags))
 	    diff)
-       (and (memq 'new new-flags)
-	    (setq new-flags (delq 'new new-flags)))
        (or (memq flag new-flags)
 	   (setq new-flags (cons flag new-flags)))
        (when (and (eq flag 'unread)
@@ -331,8 +330,6 @@
      (let* ((cur-flags (modb-standard-message-flags msgdb number))
 	    (new-flags (copy-sequence cur-flags))
 	    diff)
-       (and (memq 'new new-flags)
-	    (setq new-flags (delq 'new new-flags)))
        (and (memq flag new-flags)
 	    (setq new-flags (delq flag new-flags)))
        (when (and (eq flag 'unread)

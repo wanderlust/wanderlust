@@ -1,3 +1,14 @@
+2003-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* modb-standard.el (elmo-msgdb-set-flag): Unset 'new flag when
+	read flag is set.
+	(elmo-msgdb-set-flag): Don't remove 'new flag unconditionally.
+	(elmo-msgdb-unset-flag): Ditto.
+
+2003-11-05  Andreas Fuchs <asf@boinkor.net>
+
+	* elmo-split.el (elmo-split): Return split message count.
+
 2003-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-flag-table-get): Check cached if saved flags
