@@ -47,6 +47,13 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** 変数 wl-refile-policy-alist は廃止されました。
 
 ** スパムフィルタモジュールが新たに追加されました。
+   以下のスパムフィルタに対応しています。
+   bogofilter
+   spamfilter
+   bsfilter
+   SpamAssassin
+   SpamOracle
+   正規表現によるヘッダ検査
 
 ** バッチ処理用のモジュールが新たに追加されました。
 

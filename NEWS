@@ -48,6 +48,13 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** The variable wl-refile-policy-alist is abolished.
 
 ** SPAM filter module is added.
+   Following spam filter libraries are supported.
+   bogofilter
+   spamfilter
+   bsfilter
+   SpamAssassin
+   SpamOracle
+   Regular Expressions Header Matching
 
 ** Batch processing module is added.
 
