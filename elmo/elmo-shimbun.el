@@ -121,7 +121,9 @@
 		 (elmo-shimbun-folder-header-hash-internal folder))))
     (when header
       (with-temp-buffer
-	(shimbun-header-insert header)
+	(shimbun-header-insert
+	 (elmo-shimbun-folder-shimbun-internal folder)
+	 header)
 	(elmo-msgdb-create-overview-from-buffer number)))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
