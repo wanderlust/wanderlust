@@ -1,4 +1,4 @@
-;;; elmo-pipe.el -- PIPE Interface for ELMO.
+;;; elmo-pipe.el --- PIPE Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 

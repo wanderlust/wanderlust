@@ -1,4 +1,4 @@
-;;; elmo-cache.el -- Cache modules for Elmo.
+;;; elmo-cache.el --- Cache modules for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 Kenichi OKADA <okada@opaopa.org>
@@ -26,17 +26,17 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo)
 (require 'elmo-map)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;; cache backend by Kenichi OKADA <okada@opaopa.org>
 ;;
 (eval-and-compile

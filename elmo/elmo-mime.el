@@ -1,4 +1,4 @@
-;;; elmo-mime.el -- MIME module for ELMO.
+;;; elmo-mime.el --- MIME module for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 

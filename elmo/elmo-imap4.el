@@ -1,4 +1,4 @@
-;;; elmo-imap4.el -- IMAP4 Interface for ELMO.
+;;; elmo-imap4.el --- IMAP4 Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1999,2000      Kenichi OKADA <okada@opaopa.org>
@@ -1735,9 +1735,9 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-initialize :around ((folder
 						     elmo-imap4-folder)
 						    name)
-  (let ((default-user        elmo-imap4-default-user)
-	(default-server      elmo-imap4-default-server)
-	(default-port        elmo-imap4-default-port)
+  (let ((default-user	elmo-imap4-default-user)
+	(default-server elmo-imap4-default-server)
+	(default-port	elmo-imap4-default-port)
 	(elmo-network-stream-type-alist
 	 (if elmo-imap4-stream-type-alist
 	     (append elmo-imap4-stream-type-alist
@@ -1779,7 +1779,7 @@ Return nil if no complete line has arrived."
        folder
        (elmo-get-network-stream-type elmo-imap4-default-stream-type)))
     folder))
- 
+
 ;;; ELMO IMAP4 folder
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-imap4-folder))

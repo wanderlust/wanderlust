@@ -1,4 +1,4 @@
-;;; elmo-localdir.el -- Localdir Interface for ELMO.
+;;; elmo-localdir.el --- Localdir Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>

@@ -1,4 +1,4 @@
-;;; elmo-pop3.el -- POP3 Interface for ELMO.
+;;; elmo-pop3.el --- POP3 Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1999,2000      Kenichi OKADA <okada@opaopa.org>
@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo-msgdb)
 (require 'elmo-net)
@@ -112,7 +112,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 						elmo-pop3-default-use-uidl
 					      (string= (car parse) "uidl")))
     (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder 
+      (elmo-net-folder-set-server-internal folder
 					   elmo-pop3-default-server))
     (unless (elmo-net-folder-port-internal folder)
       (elmo-net-folder-set-port-internal folder
@@ -149,7 +149,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (when (memq (process-status
 		 (elmo-network-session-process-internal session))
 		'(open run))
-      (let ((buffer (process-buffer 
+      (let ((buffer (process-buffer
 		     (elmo-network-session-process-internal session))))
 	(elmo-pop3-send-command (elmo-network-session-process-internal session)
 				"quit")
@@ -211,7 +211,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 		(setq return-value nil))
 	    (setq elmo-pop3-read-point match-end)
 	    (if not-command
- 		(setq response-continue nil))
+		(setq response-continue nil))
 	    (setq return-value
 		  (if return-value
 		      (concat return-value "\n" response-string)
@@ -226,7 +226,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
     (insert output)
     (elmo-pop3-debug "RECEIVED: %s\n" output)
     (if (and elmo-pop3-total-size
-	     (> elmo-pop3-total-size 
+	     (> elmo-pop3-total-size
 		(min elmo-display-retrieval-progress-threshold 100)))
 	(elmo-display-progress
 	 'elmo-display-retrieval-progress
@@ -274,7 +274,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	    (signal 'elmo-authenticate-error
 		    '(elmo-pop3-auth-apop))))
     (signal 'elmo-open-error '(elmo-pop3-auth-apop))))
-    
+
 (luna-define-method elmo-network-initialize-session-buffer :after
   ((session elmo-pop3-session) buffer)
   (with-current-buffer buffer
@@ -311,7 +311,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
-  (with-current-buffer (process-buffer 
+  (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
     (let* ((process (elmo-network-session-process-internal session))
 	   (elmo-pop3-debug-inhibit-logging t)
@@ -375,7 +375,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 		      (throw 'done nil)))
 		(sasl-step-set-data
 		 step
-		 (elmo-base64-decode-string 
+		 (elmo-base64-decode-string
 		  (cadr (split-string response " "))))
 		(setq step (sasl-next-step client step))
 		(elmo-pop3-send-command
@@ -599,11 +599,11 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   (cond
    ((eq (following-char) ?+)
     (if (re-search-forward "\n\\.\r?\n" nil t)
- 	t
+	t
       nil))
    ((looking-at "-")
     (if (search-forward "\n" nil t)
- 	t
+	t
       nil))
    (t
     nil)))

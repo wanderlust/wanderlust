@@ -1,4 +1,4 @@
-;;; elmo-util.el -- Utilities for Elmo.
+;;; elmo-util.el --- Utilities for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
@@ -42,13 +42,13 @@
 (defmacro elmo-set-buffer-multibyte (flag)
   "Set the multibyte flag of the current buffer to FLAG."
   (cond ((boundp 'MULE)
-         (list 'setq 'mc-flag flag))
-        ((featurep 'xemacs)
-         flag)
-        ((and (boundp 'emacs-major-version) (>= emacs-major-version 20))
-         (list 'set-buffer-multibyte flag))
-        (t
-         flag)))
+	 (list 'setq 'mc-flag flag))
+	((featurep 'xemacs)
+	 flag)
+	((and (boundp 'emacs-major-version) (>= emacs-major-version 20))
+	 (list 'set-buffer-multibyte flag))
+	(t
+	 flag)))
 
 (defvar elmo-work-buf-name " *elmo work*")
 (defvar elmo-temp-buf-name " *elmo temp*")
@@ -206,7 +206,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (elmo-condition-parse-error)))
 
 ;; or-expr      ::= and-expr /
-;; 	            and-expr "|" or-expr
+;;	            and-expr "|" or-expr
 (defun elmo-condition-parse-or-expr ()
   (let ((left (elmo-condition-parse-and-expr)))
     (if (looking-at "| *")
@@ -396,19 +396,19 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-passwd-alist-load ()
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-                                      elmo-msgdb-dir))
-          (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-          insert-file-contents-post-hook
-          ret-val)
+				      elmo-msgdb-dir))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*"))
+	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook
+	  ret-val)
       (if (not (file-readable-p filename))
-          ()
-        (set-buffer tmp-buffer)
-        (insert-file-contents filename)
-        (setq ret-val
-              (condition-case nil
-                  (read (current-buffer))
-                (error nil nil))))
+	  ()
+	(set-buffer tmp-buffer)
+	(insert-file-contents filename)
+	(setq ret-val
+	      (condition-case nil
+		  (read (current-buffer))
+		(error nil nil))))
       (kill-buffer tmp-buffer)
       ret-val)))
 
@@ -416,14 +416,14 @@ Return value is a cons cell of (STRUCTURE . REST)"
   "Clear password cache."
   (interactive)
   (setq elmo-passwd-alist nil))
-  
+
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
   (save-excursion
     (let ((filename (expand-file-name elmo-passwd-alist-file-name
-                                      elmo-msgdb-dir))
-          (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
+				      elmo-msgdb-dir))
+	  (tmp-buffer (get-buffer-create " *elmo-passwd-alist-tmp*")))
       (set-buffer tmp-buffer)
       (erase-buffer)
       (prin1 elmo-passwd-alist tmp-buffer)
@@ -432,11 +432,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 ;;;	       (not (equal 384 (file-modes filename))))
 ;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
       (if (file-writable-p filename)
-         (progn
-           (write-region (point-min) (point-max)
-                         filename nil 'no-msg)
-           (set-file-modes filename 384))
-        (message (format "%s is not writable." filename)))
+	  (progn
+	    (write-region (point-min) (point-max)
+			  filename nil 'no-msg)
+	    (set-file-modes filename 384))
+	(message (format "%s is not writable." filename)))
       (kill-buffer tmp-buffer))))
 
 (defun elmo-get-passwd (key)
@@ -470,19 +470,19 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defmacro elmo-read-char-exclusive ()
   (cond ((featurep 'xemacs)
-         '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
-                               (left . ?\C-h))))
-                event key)
-            (while (not
-                    (and
-                     (key-press-event-p (setq event (next-command-event)))
-                     (setq key (or (event-to-character event)
-                                   (cdr (assq (event-key event) table)))))))
-            key))
-        ((fboundp 'read-char-exclusive)
-         '(read-char-exclusive))
-        (t
-         '(read-char))))
+	 '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
+			       (left . ?\C-h))))
+		event key)
+	    (while (not
+		    (and
+		     (key-press-event-p (setq event (next-command-event)))
+		     (setq key (or (event-to-character event)
+				   (cdr (assq (event-key event) table)))))))
+	    key))
+	((fboundp 'read-char-exclusive)
+	 '(read-char-exclusive))
+	(t
+	 '(read-char))))
 
 (defun elmo-read-passwd (prompt &optional stars)
   "Read a single line of text from user without echoing, and return it."
@@ -549,12 +549,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	    (setq tlist (cdr tlist)))
 	  (setq str
 		(concat str ")")))
-      (setq str 
+      (setq str
 	    (if (symbolp tlist)
 		(symbol-name tlist)
 	      tlist)))
     str))
- 
+
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
@@ -877,7 +877,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 					      '("last" "first" "from"
 						"subject" "to" "cc" "since"
 						"before"))))))
- 
+
 (defun elmo-buffer-field-condition-match (condition number number-list)
   (cond
    ((vectorp condition)
@@ -959,10 +959,10 @@ Emacs 19.28 or earlier does not have `unintern'."
 (defun elmo-make-hash (&optional hashsize)
   "Make a new hash table which have HASHSIZE size."
   (make-vector
-   (if hashsize 
+   (if hashsize
        (max
 	;; Prime numbers as lengths tend to result in good
-	;; hashing; lengths one less than a power of two are 
+	;; hashing; lengths one less than a power of two are
 	;; also good.
 	(min
 	 (let ((i 1))
@@ -1513,7 +1513,7 @@ NUMBER-SET is altered."
     (store-match-data nil)
     (while (string-match regexp string (match-end 0))
       (setq list (cons (substring string (match-beginning matchn)
-                                  (match-end matchn)) list)))
+				  (match-end matchn)) list)))
     (nreverse list)))
 
 ;;; File cache.

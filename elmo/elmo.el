@@ -1,4 +1,4 @@
-;;; elmo.el -- Elisp Library for Message Orchestration
+;;; elmo.el --- Elisp Library for Message Orchestration.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -1187,7 +1187,7 @@ FIELD is a symbol of the field."
   (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
 
 (defun elmo-folder-synchronize (folder
-				new-mark             ;"N"
+				new-mark	     ;"N"
 				unread-uncached-mark ;"U"
 				unread-cached-mark   ;"!"
 				read-uncached-mark   ;"u"

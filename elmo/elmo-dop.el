@@ -1,4 +1,4 @@
-;;; elmo-dop.el -- Modules for Disconnected Operations on ELMO.
+;;; elmo-dop.el --- Modules for Disconnected Operations on ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo)
 (require 'elmo-vars)
@@ -114,7 +114,7 @@ even an operation concerns the unplugged folder."
 		    (progn
 		      (apply (elmo-dop-queue-method (car queue))
 			     (prog1
-				 (setq folder 
+				 (setq folder
 				       (elmo-make-folder
 					(elmo-dop-queue-fname (car queue))))
 			       (elmo-folder-open folder))
@@ -129,7 +129,7 @@ even an operation concerns the unplugged folder."
 		(setq queue (cdr queue)))
 	      (message "%d/%d operation(s) are performed successfully."
 		       performed num)
-	      (sit-for 0) ; 
+	      (sit-for 0) ;
 	      (elmo-dop-queue-save)))
 	(if (elmo-y-or-n-p "Clear all pending operations? "
 			   (not elmo-dop-flush-confirm) t)
@@ -168,7 +168,7 @@ Return a message number."
 			   (elmo-localdir-folder-directory-internal folder))
 			  nil 'no-msg)
     new-number))
-  
+
 
 (defun elmo-dop-spool-folder-list-messages (folder)
   "List messages in the dop spool folder.
@@ -252,7 +252,7 @@ FOLDER is the folder structure."
       (elmo-message-fetch spool-folder number
 			  (elmo-make-fetch-strategy 'entire)
 			  nil (current-buffer) 'unread)
-      (condition-case nil 
+      (condition-case nil
 	  (setq failure (not
 			 (elmo-folder-append-buffer folder unread set-number)))
 	(error (setq failure t)))
@@ -271,7 +271,7 @@ FOLDER is the folder structure."
    folder
    ;; messages are deleted only if message-id is not changed.
    (mapcar 'car
-	   (elmo-delete-if 
+	   (elmo-delete-if
 	    (lambda (pair)
 	      (not (string=
 		    (cdr pair)

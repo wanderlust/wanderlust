@@ -1,4 +1,4 @@
-;;; elmo-maildir.el -- Maildir interface for ELMO.
+;;; elmo-maildir.el --- Maildir interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 

@@ -1,4 +1,4 @@
-;;; elmo-database.el -- Database module for ELMO.
+;;; elmo-database.el --- Database module for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo-vars)
 (require 'elmo-msgdb)
 

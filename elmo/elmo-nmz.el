@@ -1,4 +1,4 @@
-;;; elmo-nmz.el -- Namazu interface for ELMO.
+;;; elmo-nmz.el --- Namazu interface for ELMO.
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -248,13 +248,13 @@
 	   (elmo-map-message-location folder (car msgs))
 	   condition
 	   (car msgs)
- 	   orig)
- 	  (setq matches (cons (car msgs) matches)))
+	   orig)
+	  (setq matches (cons (car msgs) matches)))
        (setq i (1+ i))
        (setq percent (/ (* i 100) num))
        (elmo-display-progress
-        'elmo-nmz-search "Searching..."
-        percent)
+	'elmo-nmz-search "Searching..."
+	percent)
        (setq msgs (cdr msgs)))
     matches))
 
@@ -276,7 +276,7 @@
 
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-nmz-folder) numbers)
   t)
-  
+
 (require 'product)
 (product-provide (provide 'elmo-nmz) (require 'elmo-version))
 

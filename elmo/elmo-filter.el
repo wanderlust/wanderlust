@@ -1,4 +1,4 @@
-;;; elmo-filter.el -- Filtered Folder Interface for ELMO.
+;;; elmo-filter.el --- Filtered Folder Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 
 ;;; ELMO filter folder
@@ -43,7 +43,7 @@
     (elmo-filter-folder-set-condition-internal folder
 					       (car pair))
     (if (string-match "^ */\\(.*\\)$" (cdr pair))
- 	(elmo-filter-folder-set-target-internal
+	(elmo-filter-folder-set-target-internal
 	 folder
 	 (elmo-make-folder (elmo-match-string 1 (cdr pair))))
       (error "Folder syntax error `%s'" (elmo-folder-name-internal folder)))

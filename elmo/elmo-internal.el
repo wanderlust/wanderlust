@@ -1,4 +1,4 @@
-;;; elmo-internal.el -- Internal Interface for ELMO.
+;;; elmo-internal.el --- Internal Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 
 ;;; ELMO internal folder

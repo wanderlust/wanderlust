@@ -1,4 +1,4 @@
-;;; elmo-net.el -- Network module for ELMO.
+;;; elmo-net.el --- Network module for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,7 +24,7 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 
@@ -248,7 +248,7 @@ Returns a process object.  if making session failed, returns nil."
 	     (elmo-network-stream-type-feature stream-type))
 	(require (elmo-network-stream-type-feature stream-type)))
     (condition-case err
- 	(let (process-connection-type)
+	(let (process-connection-type)
 	  (as-binary-process
 	   (setq process
 		 (if stream-type
@@ -296,7 +296,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	 folder
 	 (string-to-int (elmo-match-substring 2 name 1))))
     (if (match-beginning 3)
-	(elmo-net-folder-set-stream-type-internal 
+	(elmo-net-folder-set-stream-type-internal
 	 folder
 	 (assoc (elmo-match-string 3 name)
 		elmo-network-stream-type-alist)))
@@ -321,7 +321,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (apply 'elmo-plugged-p
 	 (append (elmo-net-port-info folder)
 		 (list nil (quote (elmo-net-port-label folder))))))
-			    
+
 (luna-define-method elmo-folder-set-plugged ((folder elmo-net-folder)
 					     plugged &optional add)
   (apply 'elmo-set-plugged plugged
@@ -423,12 +423,12 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 		      new-mark already-mark seen-mark
 		      important-mark seen-list)))
 
-(luna-define-method elmo-folder-msgdb-create-unplugged ((folder 
+(luna-define-method elmo-folder-msgdb-create-unplugged ((folder
 							 elmo-net-folder)
 							numbers
 							new-mark already-mark
 							seen-mark
-							important-mark 
+							important-mark
 							seen-list)
   ;; XXXX should be appended to already existing msgdb.
   (elmo-dop-msgdb
@@ -436,7 +436,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 			     (mapcar 'abs numbers)
 			     new-mark already-mark
 			     seen-mark
-			     important-mark 
+			     important-mark
 			     seen-list)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-net-folder)
@@ -477,7 +477,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
     t))
 
 (luna-define-method elmo-folder-mark-as-read-unplugged ((folder
-							 elmo-net-folder) 
+							 elmo-net-folder)
 							numbers)
   (elmo-folder-mark-as-read-dop folder numbers))
 
@@ -486,7 +486,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (elmo-folder-unmark-read-dop folder numbers))
 
 (luna-define-method elmo-folder-mark-as-important-unplugged ((folder
-							      elmo-net-folder) 
+							      elmo-net-folder)
 							     numbers)
   (elmo-folder-mark-as-important-dop folder numbers))
 

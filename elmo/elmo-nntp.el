@@ -1,4 +1,4 @@
-;;; elmo-nntp.el -- NNTP Interface for ELMO.
+;;; elmo-nntp.el --- NNTP Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -28,10 +28,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo-vars)
 (require 'elmo-util)
@@ -91,7 +91,7 @@
 					   elmo-nntp-default-user
 					 (car parse)))
     (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder 
+      (elmo-net-folder-set-server-internal folder
 					   elmo-nntp-default-server))
     (unless (elmo-net-folder-port-internal folder)
       (elmo-net-folder-set-port-internal folder
@@ -258,10 +258,10 @@ Don't cache if nil.")
       (setq elmo-nntp-read-point (point-min))
       ;; Skip garbage output from process before greeting.
       (while (and (memq (process-status process) '(open run))
-                  (goto-char (point-max))
-                  (forward-line -1)
-                  (not (looking-at "20[01]")))
-        (accept-process-output process 1))
+		  (goto-char (point-max))
+		  (forward-line -1)
+		  (not (looking-at "20[01]")))
+	(accept-process-output process 1))
       (setq elmo-nntp-read-point (point))
       (or (elmo-nntp-read-response session t)
 	  (error "Cannot open network"))
@@ -306,7 +306,7 @@ Don't cache if nil.")
   (elmo-nntp-send-command session "mode reader")
   (if (null (elmo-nntp-read-response session t))
       (error "Mode reader failed")))
-  
+
 (defun elmo-nntp-send-command (session command &optional noerase)
   (with-current-buffer (elmo-network-session-buffer session)
     (unless noerase
@@ -446,7 +446,7 @@ Don't cache if nil.")
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (if (and (elmo-nntp-folder-group-internal folder)
-	       (elmo-nntp-select-group 
+	       (elmo-nntp-select-group
 		session
 		(elmo-nntp-folder-group-internal folder)))
 	  ;; add top newsgroups
@@ -489,7 +489,7 @@ Don't cache if nil.")
 	  (setq start nil)
 	  (while (string-match (concat "^"
 				       (regexp-quote
-					(or 
+					(or
 					 (elmo-nntp-folder-group-internal
 					  folder)
 					 "")) ".*$")
@@ -503,7 +503,7 @@ Don't cache if nil.")
 	    (progn
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if (and 
+			    (if (and
 				 (elmo-nntp-folder-group-internal folder)
 				 (null (string=
 					(elmo-nntp-folder-group-internal
@@ -643,7 +643,7 @@ Don't cache if nil.")
 		;; Max is killed.
 		(setq end-num nil))
 	      (cons end-num (car entry)))
-	  (error "No such newsgroup \"%s\"" 
+	  (error "No such newsgroup \"%s\""
 		 (elmo-nntp-folder-group-internal folder)))
       (let ((session (elmo-nntp-get-session folder))
 	    response e-num)
@@ -651,7 +651,7 @@ Don't cache if nil.")
 	    (error "Connection failed"))
 	(save-excursion
 	  (elmo-nntp-send-command session
-				  (format 
+				  (format
 				   "group %s"
 				   (elmo-nntp-folder-group-internal folder)))
 	  (setq response (elmo-nntp-read-response session))
@@ -1167,7 +1167,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (elmo-list-filter from-msgs result)
 	  result))))))
 
-(luna-define-method elmo-folder-search ((folder elmo-nntp-folder) 
+(luna-define-method elmo-folder-search ((folder elmo-nntp-folder)
 					condition &optional from-msgs)
   (let (result)
     (cond
@@ -1482,7 +1482,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    message-id (std11-msg-id-string
 			(car (std11-parse-msg-id-string
 			      (std11-fetch-field "message-id"))))))
-    (when newsgroups 
+    (when newsgroups
       (when (setq crosspost-newsgroups
 		  (delete
 		   (elmo-nntp-folder-group-internal folder)
@@ -1547,18 +1547,18 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	(setq elmo-crosspost-message-alist-modified t)))
     (dolist (dele cross-deletes)
       (setq elmo-crosspost-message-alist (delq
-					  dele 
+					  dele
 					  elmo-crosspost-message-alist)))
     (elmo-nntp-folder-set-reads-internal folder reads)))
 
-(luna-define-method elmo-folder-list-unreads-internal 
+(luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-nntp-folder) unread-marks mark-alist)
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
   (let ((mark-alist (or mark-alist (elmo-msgdb-get-mark-alist
 				    (elmo-folder-msgdb folder)))))
     (elmo-living-messages (delq nil
-				(mapcar 
+				(mapcar
 				 (lambda (x)
 				   (if (member (nth 1 x) unread-marks)
 				       (car x)))

@@ -1,4 +1,4 @@
-;;; elmo-multi.el -- Multiple Folder Interface for ELMO.
+;;; elmo-multi.el --- Multiple Folder Interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo)
 (require 'luna)
@@ -73,7 +73,7 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-multi-folder))
-  (expand-file-name (elmo-replace-string-as-filename 
+  (expand-file-name (elmo-replace-string-as-filename
 		     (elmo-folder-name-internal folder))
 		    (expand-file-name "multi"
 				      elmo-msgdb-dir)))
@@ -84,13 +84,13 @@
 	 (mapcar
 	  'elmo-folder-newsgroups
 	  (elmo-flatten
-	   (mapcar 
+	   (mapcar
 	    'elmo-folder-get-primitive-list
 	    (elmo-multi-folder-children-internal folder)))))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-multi-folder))
   (elmo-flatten
-   (mapcar 
+   (mapcar
     'elmo-folder-get-primitive-list
     (elmo-multi-folder-children-internal folder))))
 
@@ -106,7 +106,7 @@
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
 					     number)
-  (elmo-message-use-cache-p 
+  (elmo-message-use-cache-p
    (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
 	(elmo-multi-folder-children-internal folder))
    (% number (elmo-multi-folder-divide-number-internal folder))))
@@ -215,7 +215,7 @@
 	  (if (setq same (rassoc (cdr (car cur)) all-alist))
 	      (unless (= (/ (car (car cur))
 			    (elmo-multi-folder-divide-number-internal folder))
-			 (/ (car same) 
+			 (/ (car same)
 			    (elmo-multi-folder-divide-number-internal folder)))
 		;; base is also same...delete it!
 		(setq to-be-deleted
@@ -612,7 +612,7 @@
     (elmo-folder-mark-as-important (car folder-numbers)
 				   (cdr folder-numbers)))
   t)
-  
+
 (luna-define-method elmo-folder-unmark-important ((folder elmo-multi-folder)
 						  numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))

@@ -1,4 +1,4 @@
-;;; elmo-shimbun.el -- Shimbun interface for ELMO.
+;;; elmo-shimbun.el --- Shimbun interface for ELMO.
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 

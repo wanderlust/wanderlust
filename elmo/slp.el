@@ -27,7 +27,7 @@
 ;;
 ;; slp.el is an elisp library providing an interface for SLP (RFC2614)
 ;; using OpenSLP(http://www.openslp.org/) slptool .
-;; 
+;;
 ;;; History:
 ;; 28 Aug 2001 Created.
 
@@ -50,7 +50,7 @@
 (defun slp-exec-wait (type &rest args)
   "Synchronous execution of slp-program.
 TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
-  (with-temp-buffer 
+  (with-temp-buffer
     (let ((result (apply 'call-process slp-program nil t nil
 			 (append slp-program-arguments (delq nil args)))))
       (unless (zerop result)

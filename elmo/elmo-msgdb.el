@@ -1,4 +1,4 @@
-;;; elmo-msgdb.el -- Message Database for Elmo.
+;;; elmo-msgdb.el --- Message Database for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000           Masahiro MURATA <muse@ba2.so-net.ne.jp>

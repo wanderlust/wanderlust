@@ -1,4 +1,4 @@
-;;; elmo-archive.el -- Archive folder of ELMO.
+;;; elmo-archive.el --- Archive folder of ELMO.
 
 ;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>

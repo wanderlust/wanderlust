@@ -1,4 +1,4 @@
-;;; elmo-map.el -- A ELMO folder class with message number mapping.
+;;; elmo-map.el --- A ELMO folder class with message number mapping.
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -28,7 +28,7 @@
 ;; should inherit this folder.
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-msgdb)
 

@@ -1,4 +1,4 @@
-;;; pldap.el -- A portable LDAP support for Emacs.
+;;; pldap.el --- A portable LDAP support for Emacs.
 
 ;; Copyright (C) 1998 Free Software Foundation, Inc.
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -34,7 +34,7 @@
 ;;; Commentary:
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 
@@ -792,7 +792,7 @@ entry according to the value of WITHDN."
     nil)
    (t
     (error "Wrong LDAP boolean string: %s" str))))
-    
+
 (defun ldap-encode-country-string (str)
   "Encode STR to LDAP country string."
   ;; We should do something useful here...
@@ -822,7 +822,7 @@ entry according to the value of WITHDN."
 	     "$"))
 
 ;;; LDAP protocol functions
-;;    
+;;
 (defun ldap-get-host-parameter (host parameter)
   "Get HOST's PARAMETER in `ldap-host-parameters-alist'."
   (plist-get (cdr (assoc host ldap-host-parameters-alist))
@@ -845,7 +845,7 @@ and the corresponding decoder is then retrieved from
     (if encoder
 	(cons name (mapcar encoder values))
       attr)))
-	
+
 (defun ldap-decode-attribute (attr)
   "Decode the attribute/value pair ATTR according to LDAP rules.
 The attribute name is looked up in `ldap-attribute-syntaxes-alist'
@@ -865,7 +865,7 @@ and the corresponding decoder is then retrieved from
 	    (cons name (mapcar decoder values))
 	  attr))
     attr))
-    
+
 (defun ldap-search (arg1 &rest args)
   "Perform an LDAP search.if ARG1 is LDAP object, invoke `ldap-search-basic'.
 Otherwise, invoke `ldap-search-entries'.  ARGS are passed to each function."

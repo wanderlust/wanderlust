@@ -1,4 +1,4 @@
-;;; elmo-mark.el -- Global mark folder for ELMO.
+;;; elmo-mark.el --- Global mark folder for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (require 'elmo)
 (require 'elmo-map)
 
