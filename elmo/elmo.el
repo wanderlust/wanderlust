@@ -101,6 +101,9 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (elmo-define-signal update-overview (number)
   "Notify update overview of the message with NUMBER.")
 
+(elmo-define-signal message-number-changed (old-number new-number)
+  "Notify change of message number within the folder.")
+
 ;; autoloads
 (eval-and-compile
   (autoload 'md5 "md5")

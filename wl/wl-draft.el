@@ -2242,12 +2242,14 @@ Automatically applied in draft sending time."
 	    (goto-char (point-max))
 	    (insert (concat field ": " content "\n"))))))))
 
+(defsubst wl-draft-config-info-filename (number msgdb-dir)
+  (expand-file-name
+   (format "%s-%d" wl-draft-config-save-filename number)
+   msgdb-dir))
+
 (defun wl-draft-config-info-operation (msg operation)
   (let* ((msgdb-dir (elmo-folder-msgdb-path (wl-draft-get-folder)))
-	 (filename
-	  (expand-file-name
-	   (format "%s-%d" wl-draft-config-save-filename msg)
-	   msgdb-dir))
+	 (filename (wl-draft-config-info-filename msg msgdb-dir))
 	 element alist variable)
     (cond
      ((eq operation 'save)
@@ -2637,6 +2639,20 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	     wl-draft-parent-number)
     (setq wl-draft-parent-flag flag)
     (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)))
+
+(defun wl-draft-buffer-change-number (old-number new-number)
+  (when (eq wl-draft-buffer-message-number old-number)
+    (setq wl-draft-buffer-message-number new-number)
+    (rename-buffer (format "%s/%d" wl-draft-folder new-number))
+    (setq buffer-file-name (buffer-name))
+    (set-buffer-modified-p nil)))
+
+(defun wl-draft-rename-saved-config (old-number new-number)
+  (let* ((msgdb-dir (elmo-folder-msgdb-path (wl-draft-get-folder)))
+	 (old-name (wl-draft-config-info-filename old-number msgdb-dir))
+	 (new-name (wl-draft-config-info-filename new-number msgdb-dir)))
+    (when (file-exists-p old-name)
+      (rename-file old-name new-name 'ok-if-already-exists))))
 
 (require 'product)
 (product-provide (provide 'wl-draft) (require 'wl-version))

@@ -349,7 +349,11 @@ FOLDER is the folder structure."
 			      (t
 			       (list flag)))))
 	(when (or (condition-case nil
-		      (elmo-folder-append-buffer folder flags set-number)
+		      (let ((new-num (elmo-folder-next-message-number folder)))
+			(prog1
+			    (elmo-folder-append-buffer folder flags set-number)
+			  (elmo-emit-signal 'message-number-changed
+					    folder (- number) new-num)))
 		    (error))
 		  ;; Append failed...
 		  (elmo-folder-append-buffer

@@ -355,6 +355,7 @@
 	  (elmo-message-entity-set-number entity new-number))
 	(elmo-msgdb-append-entity new-msgdb entity
 				  (elmo-msgdb-flags msgdb old-number))
+	(elmo-emit-signal 'message-number-changed folder old-number new-number)
 	(setq new-number (1+ new-number))))
     (message "Packing...done")
     (elmo-folder-set-msgdb-internal folder new-msgdb)))

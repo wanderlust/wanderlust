@@ -1,3 +1,12 @@
+2005-03-07  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-config-info-filename): Extracted from
+	`wl-draft-config-info-operation'.
+	(wl-draft-buffer-change-number): New function.
+	(wl-draft-rename-saved-config): Ditto.
+	* wl.el (wl-init): Connect slot for message-number-changed.
+	(toplevel): Add autoload for wl-draft-rename-saved-config.
+
 2005-03-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-buffer-attach): Connect to signal

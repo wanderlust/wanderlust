@@ -110,7 +110,10 @@
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-map-folder))
   (let* ((msgdb (elmo-folder-msgdb folder))
-	 (numbers (sort (elmo-folder-list-messages folder nil 'in-msgdb) '<))
+	 (numbers
+	  (sort (elmo-folder-list-messages folder nil
+					   (not elmo-pack-number-check-strict))
+		'<))
 	 (new-msgdb (elmo-make-msgdb (elmo-folder-msgdb-path folder)))
 	 (number 1)
 	 total location entity)
@@ -126,6 +129,7 @@
 	      (cons (cons number
 			  (elmo-map-message-location folder old-number))
 		    location))
+	(elmo-emit-signal 'message-number-changed folder old-number number)
 	(setq number (1+ number))))
     (message "Packing...done")
     (elmo-map-folder-location-setup folder (nreverse location))

@@ -720,6 +720,18 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
        (nth 1 spec)))
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
+    (elmo-connect-signal
+     nil
+     'message-number-changed
+     'wl-draft
+     (elmo-define-signal-handler (listener folder old-number new-number)
+       (dolist (buffer (wl-collect-draft))
+	 (with-current-buffer buffer
+	   (wl-draft-buffer-change-number old-number new-number)))
+       (wl-draft-rename-saved-config old-number new-number))
+     (elmo-define-signal-filter (listener folder old-number new-number)
+       (and folder
+	    (string= (elmo-folder-name-internal folder) wl-draft-folder))))
     (wl-news-check)
     (setq wl-init t)
     ;; This hook may contain the functions `wl-plugged-init-icons' and
@@ -929,7 +941,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       wl-score-change-score-file wl-score-edit-current-scores
       wl-score-edit-file wl-score-flush-cache wl-summary-rescore
       wl-score-set-mark-below wl-score-set-expunge-below
-      wl-summary-increase-score wl-summary-lower-score ))))
+      wl-summary-increase-score wl-summary-lower-score )
+     ("wl-draft" wl-draft-rename-saved-config))))
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)
