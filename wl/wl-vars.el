@@ -1140,7 +1140,9 @@ ex.
   (reply
    \"^To: .*hogehoge@aaa.ne.jp\"
    (\"From\" . \"Alternative Address <hogehoge@aaa.ne.jp>\")
-   my-draft-config-function-hogehoge))"
+   my-draft-config-function-hogehoge))
+
+See also variable `wl-draft-parent-folder'."
   :type '(repeat (list (sexp :tag "Match")
 		       (repeat
 			:inline t

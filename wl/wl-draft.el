@@ -83,9 +83,9 @@ You can refer its value in `wl-draft-config-alist'.
 e.g.
 (setq wl-draft-config-alist
       '(((string-match \".*@domain1$\" wl-draft-parent-folder)
-	 (\"From\" . \"user@domain1\"))
-	((string-match \".*@domain2$\" wl-draft-parent-folder)
-	 (\"From\" . \"user@domain2\"))))")
+         (\"From\" . \"user@domain1\"))
+        ((string-match \".*@domain2$\" wl-draft-parent-folder)
+         (\"From\" . \"user@domain2\"))))")
 
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)

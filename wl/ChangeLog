@@ -1,6 +1,7 @@
 2002-09-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-parent-folder): Write description.
+	* wl-vars.el (wl-draft-config-alist): Refer `wl-draft-parent-folder'
 
 2002-09-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
