@@ -1,3 +1,11 @@
+2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-append-messages): Find cache file in
+	unplugged status when elmo-enable-disconnected-operation is t.
+
+	* elmo-dop.el (elmo-dop-spool-folder-append-buffer): Check existence
+	of spool folder before checking new number.
+
 2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-network-close-session): Removed 3rd argument.

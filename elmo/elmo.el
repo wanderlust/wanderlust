@@ -841,17 +841,28 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   unread-marks same-number)
-  (let (unseen seen-list succeed-numbers failure)
+  (let (unseen seen-list succeed-numbers failure cache)
     (with-temp-buffer
       (while numbers
 	(setq failure nil)
 	(condition-case nil
 	    (progn
-	      (elmo-message-fetch src-folder (car numbers)
-				  (elmo-make-fetch-strategy
-				   'entire)
-				  nil (current-buffer)
-				  'unread)
+	      (elmo-message-fetch
+	       src-folder (car numbers)
+	       (if (and (not (elmo-folder-plugged-p src-folder))
+			elmo-enable-disconnected-operation)
+		   (if (and (setq cache (elmo-file-cache-get
+					 (elmo-message-field
+					  src-folder (car numbers)
+					  'message-id)))
+			    (eq (elmo-file-cache-status cache) 'entire))
+		       (elmo-make-fetch-strategy
+			'entire
+			t
+			nil (elmo-file-cache-path cache)))
+		 (elmo-make-fetch-strategy 'entire))
+	       nil (current-buffer)
+	       'unread)
 	      (unless (eq (buffer-size) 0)
 		(elmo-folder-append-buffer
 		 folder

@@ -1,3 +1,8 @@
+2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-plugged-dop-queue-info): Fix to check stream-type.
+	(wl-plugged-drawing): Ditto.
+
 2001-06-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folder): Use own buffer for pop3 biff
