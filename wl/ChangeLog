@@ -1,3 +1,8 @@
+2002-04-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl.el (wl-check-environment): Cause error when wl-from is nil,
+	seems critical one (partially reverse the change in 2002/03/17).
+
 2002-04-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-util.el (wl-sendlog-time): Merge into wl-draft-write-sendlog.

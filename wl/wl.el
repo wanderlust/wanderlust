@@ -703,7 +703,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless wl-from (elmo-warning "Please set `wl-from'."))
+  (unless wl-from (error "Please set `wl-from' to your mail address."))
   ;; Message-ID
   (when wl-insert-message-id
     (let ((message-id (funcall wl-message-id-function))
