@@ -2010,7 +2010,9 @@ Return nil if no complete line has arrived."
 	    (elmo-imap4-folder-mailbox-internal folder))
 	   " "
 	   (elmo-imap4-mailbox
-	    (elmo-imap4-folder-mailbox-internal new-folder))))))
+	    (elmo-imap4-folder-mailbox-internal new-folder))))
+    (elmo-imap4-session-set-current-mailbox-internal
+     session (elmo-imap4-folder-mailbox-internal new-folder))))
 
 (defun elmo-imap4-copy-messages (src-folder dst-folder numbers)
   (let ((session (elmo-imap4-get-session src-folder))
