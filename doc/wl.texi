@@ -1599,6 +1599,14 @@ If the current cursor point is on the NNTP folder,
 create a new draft message which already has newsgroups field.
 (@code{wl-folder-write-current-newsgroup})
 
+@item C-c C-o
+@kindex C-c C-o (Folder)
+@findex wl-jump-to-draft-buffer
+Move to the draft buffer if available.  If multiple draft buffer exists,
+moved to one after another.  If prefix argument is specified, load draft
+folder's message to the draft buffer and jump to it.
+(@code{wl-jump-to-draft-buffer})
+
 @item s
 @kindex s (Folder)
 @findex wl-folder-check-current-entity
@@ -1624,6 +1632,12 @@ selected region.
 @findex wl-folder-sync-region
 Update summary information of the folders in the currently selected region.
 (@code{wl-folder-sync-region})
+
+@item Z
+@kindex Z (Folder)
+@findex wl-status-update
+Sync up address book status with @file{~/.addresses}'s content.
+(@code{wl-status-update})
 
 @item P
 @kindex P (Folder)
@@ -2122,14 +2136,6 @@ List folders that are currently available.
 @findex wl-fldmgr-access-display-all
 List all folders regardless of the subscription status.
 (@code{wl-fldmgr-access-display-all})
-
-@item C-c C-o
-@kindex C-c C-o (Folder)
-@findex wl-jump-to-draft-buffer
-Move to the draft buffer if available.  If multiple draft buffer exists,
-moved to one after another.  If prefix argument is specified, load draft
-folder's message to the draft buffer and jump to it.
-(@code{wl-jump-to-draft-buffer})
 @end table
 
 

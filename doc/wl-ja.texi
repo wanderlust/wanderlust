@@ -1620,6 +1620,15 @@ Wanderlust の内部で保持されたメッセージを閲覧するためのフォルダです。
 Newsgroups フィールドを補ってドラフトを用意します。
 (@code{wl-folder-write-current-newsgroup})
 
+@item C-c C-o
+@kindex C-c C-o (Folder)
+@findex wl-jump-to-draft-buffer
+ドラフトバッファがあれば移動します。 複数のドラフトバッファが存在する場合は、
+次々と切り替えていきます。また、prefix argument をつけることにより、
+バッファが存在していない場合は、ドラフトフォルダからファイルを(存在すれば)
+読み込みます。
+(@code{wl-jump-to-draft-buffer})
+
 @item s
 @kindex s (Folder)
 @findex wl-folder-check-current-entity
@@ -1643,6 +1652,12 @@ Newsgroups フィールドを補ってドラフトを用意します。
 @findex wl-folder-sync-region
 リージョンにあるフォルダのサマリを更新します。
 (@code{wl-folder-sync-region})
+
+@item Z
+@kindex Z (Folder)
+@findex wl-status-update
+@file{~/.addresses} 等の状態を最新のものに更新します。
+(@code{wl-status-update})
 
 @item P
 @kindex P (Folder)
@@ -2141,15 +2156,6 @@ wl-folders-file にセーブする。
 @findex wl-fldmgr-access-display-all
 非表示のフォルダも含めて全てのフォルダを一覧表示する。
 (@code{wl-fldmgr-access-display-all})
-
-@item C-c C-o
-@kindex C-c C-o (Folder)
-@findex wl-jump-to-draft-buffer
-ドラフトバッファがあれば移動します。 複数のドラフトバッファが存在する場合は、
-次々と切り替えていきます。また、prefix argument をつけることにより、
-バッファが存在していない場合は、ドラフトフォルダからファイルを(存在すれば)
-読み込みます。
-(@code{wl-jump-to-draft-buffer})
 @end table
 
 
@@ -3650,7 +3656,7 @@ nil ならばその Field を削除します。
 @end lisp
 
 @subsection テンプレートの挿入
-@cindex Templete
+@cindex Template
 @cindex Apply Template
 
 変数 @code{wl-template-alist} を設定し、
