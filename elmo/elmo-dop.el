@@ -144,9 +144,9 @@ which is corresponded to the FOLDER."
 FOLDER is the folder structure.
 Return a message number."
   (setq folder (elmo-dop-spool-folder folder))
+  (unless (elmo-folder-exists-p folder)
+    (elmo-folder-create folder))
   (let ((new-number (1+ (car (elmo-folder-status folder)))))
-    (unless (elmo-folder-exists-p folder)
-      (elmo-folder-create folder))
     ;; dop folder is a localdir folder.
     (write-region-as-binary (point-min) (point-max)
 			  (expand-file-name

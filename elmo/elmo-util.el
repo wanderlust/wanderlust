@@ -142,13 +142,6 @@ File content is encoded with MIME-CHARSET."
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
-(defun elmo-get-network-stream-type (stream-type stream-type-alist)
-  (catch 'found
-    (while stream-type-alist
-      (if (eq (nth 1 (car stream-type-alist)) stream-type)
-	  (throw 'found (car stream-type-alist)))
-      (setq stream-type-alist (cdr stream-type-alist)))))
-
 ;;; Search Condition
 
 (defconst elmo-condition-atom-regexp "[^/ \")|&]*")
