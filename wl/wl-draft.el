@@ -247,26 +247,33 @@ e.g.
 
 (defun wl-draft-forward-make-subject (original-subject)
   "Generate subject string for forwarding."
-  (if wl-forward-subject-prefix
-      (concat wl-forward-subject-prefix
-	      (wl-draft-strip-subject-regexp
-	       (or original-subject "")
-	       wl-subject-forward-prefix-regexp))
-    original-subject))
+  (cond ((functionp wl-forward-subject-prefix)
+	 (concat (funcall wl-forward-subject-prefix)
+		 original-subject))
+	((stringp wl-forward-subject-prefix)
+	 (concat wl-forward-subject-prefix
+		 (wl-draft-strip-subject-regexp
+		  (or original-subject "")
+		  wl-subject-forward-prefix-regexp)))
+	(t original-subject)))
 
 (defun wl-draft-reply-make-subject (original-subject)
   "Generate subject string for replying."
-  (if wl-reply-subject-prefix
-      (concat wl-reply-subject-prefix
-	      (wl-draft-strip-subject-regexp
-	       (or original-subject "")
-	       wl-subject-re-prefix-regexp))
-    original-subject))
+  (cond ((functionp wl-reply-subject-prefix)
+	 (concat (funcall wl-reply-subject-prefix)
+		 original-subject))
+	((stringp wl-reply-subject-prefix)
+	 (concat wl-reply-subject-prefix
+		 (wl-draft-strip-subject-regexp
+		  (or original-subject "")
+		  wl-subject-re-prefix-regexp)))
+	(t original-subject)))
 
 (defun wl-draft-forward (original-subject summary-buf)
-  (let (references parent-folder)
+  (let (references parent-folder subject)
     (with-current-buffer summary-buf
       (setq parent-folder (wl-summary-buffer-folder-name)))
+    (setq subject (wl-draft-forward-make-subject original-subject))
     (with-current-buffer (wl-message-get-original-buffer)
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
@@ -281,8 +288,7 @@ e.g.
 	 (get-buffer-window summary-buf)
 	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
-		    (cons 'Subject
-			  (wl-draft-forward-make-subject original-subject))
+		    (cons 'Subject subject)
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (goto-char (point-max))
@@ -357,7 +363,7 @@ Reply to author if WITH-ARG is non-nil."
 	(setq r-list (cdr r-list)))
       (error "No match field: check your `wl-draft-reply-%s-argument-list'"
 	     (if with-arg "with" "without")))
-    (setq subject (std11-field-body "Subject"))
+    (setq subject (wl-draft-reply-make-subject (std11-field-body "Subject")))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
@@ -379,7 +385,6 @@ Reply to author if WITH-ARG is non-nil."
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
-    (setq subject (wl-draft-reply-make-subject subject))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))

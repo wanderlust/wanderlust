@@ -1723,14 +1723,18 @@ This variable overwhelm `wl-message-ignored-field-list' settings."
   :group 'wl-pref)
 
 (defcustom wl-reply-subject-prefix "Re: "
-  "*Prefix of the subject of the replied message."
-  :type 'string
+  "*Prefix of the subject of the replied message.
+The value is string or string valued function to be evalueted in the target
+message buffer."
+  :type '(choice string function)
   :group 'wl-draft
   :group 'wl-pref)
 
 (defcustom wl-forward-subject-prefix "Forward: "
-  "*Prefix of the subject of the forwarded message."
-  :type 'string
+  "*Prefix of the subject of the forwarded message.
+The value is string or string valued function to be evalueted in the target
+message buffer."
+  :type '(choice string function)
   :group 'wl-draft
   :group 'wl-pref)
 

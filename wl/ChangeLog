@@ -1,5 +1,10 @@
 2004-06-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-vars.el (wl-reply-subject-prefix): The value can be function.
+	(wl-forward-subject-prefix): Ditto.
+	* wl-draft.el (wl-draft-forward-make-subject): Change accordingly.
+	(wl-draft-reply-make-subject): Ditto.
+
 	* wl-draft.el (wl-draft-forward-make-subject): Extracted from
 	`wl-draft-forward'.
 	(wl-draft-reply-make-subject): Ditto from `wl-draft-reply'.
