@@ -1,28 +1,4 @@
-2001-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-util.el (wl-regexp-opt): New function.
-
-	* wl-summary.el (wl-summary-delete-messages-on-buffer): Delete
-	number from `wl-summary-buffer-number-list'.
-	(wl-summary-goto-folder-subr): Load msgdb before resuming summary view;
-	Call `wl-summary-rescan' if `wl-summary-cache-use' is nil.
-	(wl-summary-move-spec-alist): Changed default setting.
-
-2001-02-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* wl-vars.el (wl-biff-notify-hook): New hook.
-	* wl-util.el (wl-biff-notify): Run `wl-biff-notify-hook' at
-	the arrival of new mail.
-	(Based on the patch from Hironori Fukuchi <nory@valis.co.jp>
-	and advice by Yuuichi Teranishi  <teranisi@gohome.org>)
-
-2001-02-23  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-default-get-next-msg): Fix (num => msg).
-
 2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-default-get-next-msg): Fix.
 
 	* Version number is increased to 2.5.8.
 
