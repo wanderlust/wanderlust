@@ -178,12 +178,8 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 @section $BF0:n4D6-(B
 
 Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
-@c $B$5$i$K(B Nemacs 3.3.2 $B>e$G$b!"(B($B;H$($k5!G=$O8BDj$5$l$k$b$N$N(B) $BF0:n$9$k$3$H(B
-@c $B$,3NG'$5$l$F$$$^$9!#(B
 
 @itemize @bullet
-@item Nemacs 3.3.2 ($BCm(B: $B;H$($k5!G=$O8BDj$5$l$^$9(B)
-@item Mule 2.3 based on Emacs 19.28
 @item Mule 2.3 based on Emacs 19.34
 @item Emacs 20.2 $B0J9_(B
 @item XEmacs 20.4 $B0J9_(B
@@ -2025,7 +2021,7 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 
 @subsubsection $B%U%)%k%@$NJB$SBX$((B
 
-$B%0%k!<%WFb$N%U%)%k%@$rJB$SBX$($9$k:]!"(B@code{wl-fldmgr-sort-func} $B$K;XDj(B
+$B%0%k!<%WFb$N%U%)%k%@$rJB$SBX$($9$k:]!"(B@code{wl-fldmgr-sort-function} $B$K;XDj(B
 $B$5$l$?4X?t$rMQ$$$^$9!#=i4|@_Dj$G$O(B @code{wl-fldmgr-sort-standard} $B$,;XDj(B
 $B$5$l$F$*$j!"$3$l$O%"%k%U%!%Y%C%H=g$KJB$SBX$(%0%k!<%W$O:G=i$K$9$k4X?t$G$9!#(B
 $BJB$SBX$($O;XDj$7$?%0%k!<%W$N$_9T$$!"2<0L$N%0%k!<%W$^$GJB$SBX$($O$7$^$;$s!#(B
@@ -2255,8 +2251,8 @@ wl-folders-file $B$K%;!<%V$9$k!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"%;!<%V$9$k:]$K(B @file{~/.folders.bak} 
 $B$K%P%C%/%"%C%W$r<h$j$^$9!#(B
 
-@item wl-fldmgr-sort-func
-@vindex wl-fldmgr-sort-func
+@item wl-fldmgr-sort-function
+@vindex wl-fldmgr-sort-function
 $B=i4|@_Dj$O(B @code{wl-fldmgr-sort-standard}$B!#(Bsort $B;~$K;HMQ$9$k4X?t$r;XDj$7(B
 $B$^$9!#=i4|@_Dj$O!"%"%k%U%!%Y%C%H=g$KJB$Y%0%k!<%W$O:G=i$K$9$k4X?t$G$9!#(B
 (@code{wl-fldmgr-sort-group-first} $B$,(B non-nil $B$N>l9g(B)$B!#(B
@@ -2915,11 +2911,11 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @kindex # (Summary)
 @findex wl-summary-print-message
 $B8=:_$N%a%C%;!<%8$NFbMF$r0u:~$7$^$9!#(BEmacs 20$B0J9_(B $B$G$O(B @code{ps-print} $B$r(B
-$B;H$$$^$9!#Gr9u%W%j%s%?$G$O!"(B@code{wl-ps-print-buffer-func} $B$r(B
+$B;H$$$^$9!#Gr9u%W%j%s%?$G$O!"(B@code{wl-ps-print-buffer-function} $B$r(B
 @code{ps-print-buffer} $B$K@_Dj$7$?$[$&$,NI$$$+$b$7$l$^$;$s!#(B
 
 @lisp
-(setq wl-ps-print-buffer-func 'ps-print-buffer)
+(setq wl-ps-print-buffer-function 'ps-print-buffer)
 @end lisp
 
 @noindent
@@ -3949,7 +3945,7 @@ POP-before-SMTP $B$K$h$k%a!<%k$NAw?.$,$G$-$^$9!#(B
 $B@_Dj$O!"(B
 
 @lisp
-(setq wl-draft-send-mail-func 'wl-draft-send-mail-with-pop-before-smtp)
+(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)
 @end lisp
 
 @noindent
@@ -5053,8 +5049,8 @@ Non-nil $B$K$9$k$H!"(B
 $B;D$7$F$*$/%a%C%;!<%8?t$K(B @code{wl-summary-expire-reserve-marks} $B$G@_Dj$5(B
 $B$l$?%a%C%;!<%8$r4^$a$^$9!#(B
 
-@item wl-expire-archive-get-folder-func
-@vindex wl-expire-archive-get-folder-func
+@item wl-expire-archive-get-folder-function
+@vindex wl-expire-archive-get-folder-function
 $B=i4|@_Dj$O(B @code{wl-expire-archive-get-folder}$B!#(B
 
 $B:o=|@h$NI8=`4X?t$G%"!<%+%$%V%U%)%k%@L>$r<hF@$9$k4X?t$r;XDj$7$^$9!#(B
@@ -5222,7 +5218,7 @@ expire $B$J$I$NF0:n$K$O1F6A$O$"$j$^$;$s!#(B
 $B$9$k$@$1$K$J$j$^$9!#(B
 
 $B%G%U%)%k%H$G$O%3%T!<@h$N%"!<%+%$%V%U%)%k%@$O(B
-@code{wl-expire-archive-get-folder-func} $B$K=>$C$F<+F0E*$K7hDj$5$l$^$9$,!"(B
+@code{wl-expire-archive-get-folder-function} $B$K=>$C$F<+F0E*$K7hDj$5$l$^$9$,!"(B
 prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!"(B
 $B;XDj$7$?%U%)%k%@$K%3%T!<$9$k$3$H$,$G$-$^$9!#(B
 
@@ -5236,7 +5232,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 
 @itemize @bullet
 @item @code{wl-expire-archive-files}
-@item @code{wl-expire-archive-get-folder-func}
+@item @code{wl-expire-archive-get-folder-function}
 @item @code{wl-expire-archive-folder-name-fmt}
 @item @code{wl-expire-archive-folder-type}
 @item @code{wl-expire-archive-folder-prefix}
@@ -5792,7 +5788,7 @@ OK $B$G$9!#(B
 @lisp
 @group
 (autoload 'wl-draft-send-with-imput-async "im-wl")
-(setq wl-draft-send-func 'wl-draft-send-with-imput-async)
+(setq wl-draft-send-function 'wl-draft-send-with-imput-async)
 @end group
 @end lisp
 
@@ -5820,7 +5816,7 @@ OK $B$G$9!#(B
 (setq signature-use-bbdb t)
 (setq bbdb-north-american-phone-numbers-p nil)
 ;; @r{$B%5%^%j$K(B bbdb $B$NL>A0$rI=<((B} :-)$B!#(B
-(setq wl-summary-from-func 'bbdb-wl-from-func)
+(setq wl-summary-from-function 'bbdb-wl-from-func)
 ;; @r{$B<+F0E*$K(B ML $B%U%#!<%k%I$r2C$($k(B}
 (add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
 (setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
@@ -5886,7 +5882,7 @@ x-face-mule 0.19$B0JA0$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 
 @lisp
 @group
-(setq wl-highlight-x-face-func
+(setq wl-highlight-x-face-function
       (function
        (lambda (&optional beg end)
          (x-face-mule:x-face-decode-message-header))))
@@ -5899,7 +5895,7 @@ x-face-mule 0.20 $B0J9_$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 
 @lisp
 @group
-(setq wl-highlight-x-face-func
+(setq wl-highlight-x-face-function
       (function
        (lambda (&optional beg end)
          (x-face-mule-x-face-decode-message-header))))
@@ -5913,7 +5909,7 @@ bitmap-mule 8.0$B0J9_$KIUB0$N(B @file{x-face-mule.el}
 @lisp
 @group
 (autoload 'x-face-decode-message-header "x-face-mule")
-(setq wl-highlight-x-face-func 'x-face-decode-message-header)
+(setq wl-highlight-x-face-function 'x-face-decode-message-header)
 @end group
 @end lisp
 
@@ -6356,14 +6352,14 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @samp{X-Mailer:} $B%U%#!<%k%I$d(B @samp{User-Agent:} $B%U%#!<%k%I$K6E$j$?$$$H(B
 $B$$$&JQ$o$C$??M$O!"J8;zNs$r@8@.$9$k4X?t$r<+J,$N9%$-$J$h$&$KDj5A$7$F!"JQ?t(B 
-@code{wl-generate-mailer-string-func} $B$K@_Dj$7$F$/$@$5$$!#(B
+@code{wl-generate-mailer-string-function} $B$K@_Dj$7$F$/$@$5$$!#(B
 
 @samp{User-Agent:} $B%U%#!<%k%I$rC;$/$7$?$$$N$G$"$l$P!"0J2<$N@_Dj$r$7$F$/(B
 $B$@$5$$!#(B
 
 @lisp
 @group
-(setq wl-generate-mailer-string-func
+(setq wl-generate-mailer-string-function
       (function
        (lambda ()
          (concat "User-Agent: "
@@ -6376,7 +6372,7 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @lisp
 @group
 (setq mime-edit-insert-user-agent-field nil)
-(setq wl-generate-mailer-string-func
+(setq wl-generate-mailer-string-function
       (function
        (lambda ()
          (format "X-Mailer: %s" (product-string-1 'wl-version)))))
