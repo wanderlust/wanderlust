@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust の texinfo
-@set Time-stamp: <2000-06-16 01:21:37 kaoru>
+@set Time-stamp: <2000-06-16 02:01:17 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -22,7 +22,7 @@ Yet another message interface on Emacsen.
 このファイルは Emacs で動くメール/ニュース管理システム
 Wanderlust に関する説明書です。
 
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada} and @w{Kaoru Takahashi}.
 
@@ -77,7 +77,7 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada}, and @w{Kaoru Takahashi}.
 
@@ -3912,9 +3912,16 @@ nilのままなら @code{elmo-default-pop3-ssl}を利用します。
 @vindex wl-draft-sendlog
 初期設定は t。
 t なら @file{~/.elmo/sendlog} に送信ログを出力します。
-ログを出力するタイミングは smtp, qmail による送信、fcc, queuing によるフォ
-ルダへの格納、です(失敗の場合も)。ただし、im-wl.el による送信は sendlog に
-は出力せずに imput のログ機能におまかせします。
+ログを出力するタイミングは以下の通りです(失敗の場合も)。
+
+@itemize @minus
+@item smtp, qmail による送信
+@item fcc によるフォルダへの格納
+@item queuing によるフォルダへの格納
+@end itemize
+
+ただし、@file{im-wl.el} による送信では、
+@file{sendlog} には出力せずに imput のログ機能におまかせします。
 
 @item wl-draft-sendlog-max-size
 @vindex wl-draft-sendlog-max-size

@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-06-16 01:21:37 kaoru>
+@set Time-stamp: <2000-06-16 02:01:17 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -19,7 +19,7 @@
 This file documents Wanderlust,
 Yet another message interface on Emacsen.
 
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada}, @w{Kaoru Takahashi},
 @w{Bun Mizuhara} and @w{Masayuki Osada}.
@@ -62,7 +62,7 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi}, @*
+Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada}, @w{Kaoru Takahashi},
 @w{Bun Mizuhara} and @w{Masayuki Osada}.
@@ -3928,11 +3928,18 @@ off-line transmission.
 @vindex wl-draft-sendlog
 The initial setting is t.
 If t, transmission log is written in @file{~/.elmo/sendlog}.
-It is written when drafts are sent by smtp or qmail, and when they are
-saved into folders by fcc or queuing (it is written even if the
-transmission fails).
-But transmission by im-wl.el is not written in the sendlog and left to
-the logging function of imput.
+It is written when:
+
+@itemize @minus
+@item drafts are sent by smtp or qmail
+@item saved into folders by fcc
+@item saved into folders by queuing
+@end itemize
+
+(it is written even if the transmission fails).
+But transmission by @file{im-wl.el} is not written in the @file{sendlog} and
+left to the logging function of imput.
+
 
 @item wl-draft-sendlog-max-size
 @vindex wl-draft-sendlog-max-size
