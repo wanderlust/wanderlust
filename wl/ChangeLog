@@ -1,3 +1,7 @@
+2002-01-05  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-refile-subr): Remove `interactive'.
+
 2001-12-29  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-sent-message-queued): New buffer-local variable.
