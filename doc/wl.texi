@@ -749,9 +749,10 @@ Format:
 @end example
 
 You can specify
-"auth" (encoded password transmission), "cram-md5" (cram-md5 authentication)
-or "login" (plain password transmission) as @var{authenticate-type}.
-(To use cram-md5 authentication, you must install @file{utils/sasl} package.)
+'login (encoded password transmission), 'cram-md5 (CRAM-MD5
+authentication), 'digest-md5 (DIGEST-MD5 authentication) or 'plain (or
+nil, plain password transmission) as @var{authenticate-type}.
+(To use CRAM-MD5 or DIGEST-MD5 authentication, you must install @file{utils/sasl} package.)
 
 default:
 
@@ -780,12 +781,12 @@ If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 If the value of @code{elmo-default-imap4-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
-If you specify "auth" or "cram-md5" as authentication method, the password
-is sent in encoded form. But, if your server is unable to receive an encoded
-password, authentication will fall back to "login" (that is, sending password
-in raw format) after confirmation to user. If @code{elmo-imap4-force-login}
-is non-nil, authentication will fall back to "login" without confirmation
-(default value is nil).
+If you specify 'login, 'cram-md5 or 'digest-md5 as authentication
+method, the password is sent in encoded form. But, if your server is
+unable to receive an encoded password, authentication will fall back to
+'plain (that is, sending password in raw format) after confirmation to
+user. If @code{elmo-imap4-force-login} is non-nil, authentication will
+fall back to 'plain without confirmation (default value is nil).
 
 Example:
 
@@ -798,7 +799,7 @@ Example:
 %inbox:hoge/login@@server1
             -> server1's IMAP mailbox "inbox"
                of user "hoge", with plain password authentication
-               ("login").
+               ('plain).
 @end group
 @end example
 

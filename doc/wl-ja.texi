@@ -772,13 +772,14 @@ RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$
 @end example
 
 @example
-@var{$BG'>ZK!(B}$B$K$O(B "auth" ($B%(%s%3!<%I$7$F%Q%9%o!<%I$rAw?.(B)$B$+(B
-           "cram-md5" (cram-md5$B$K$h$kG'>Z(B)$B$+(B
-           "login" ($B@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
+@var{$BG'>ZK!(B}$B$K$O(B 'login ($B%(%s%3!<%I$7$F%Q%9%o!<%I$rAw?.(B)$B$+(B
+           'cram-md5 (CRAM-MD5 $B$K$h$kG'>Z(B)$B$+(B
+           'digest-md5 (DIGEST-MD5 $B$K$h$kG'>Z(B)$B$+(B
+           'plain ($B$^$?$O(B nil$B!#@8%Q%9%o!<%I$rAw?.(B) $B$N$$$:$l$+$r;XDj!#(B
 @end example
 
-(cram-md5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/sasl} $B$r%$%s%9%H!<%k$9$k(B
-$BI,MW$,$"$j$^$9!#(B)
+(CRAM-MD5 $B$d(B DIGEST-MD5 $B$K$h$kG'>Z$r9T$J$&$K$O(B $BK\%Q%C%1!<%8$N(B
+@file{utils/sasl} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
 
 default $BCM(B:
 
@@ -787,7 +788,7 @@ default $BCM(B:
              $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
              @code{(user-login-name)} $B$NJV$jCM!#(B
 $BG'>ZK!(B    -> $BJQ?t(B @code{elmo-default-imap4-authenticate-type} $B$NCM!#(B
-             $B=i4|@_Dj$O(B "auth"$B!#(B
+             $B=i4|@_Dj$O(B 'login$B!#(B
 $B%[%9%HL>(B  -> $BJQ?t(B @code{elmo-default-imap4-server} $B$NCM!#(B
              $B=i4|@_Dj$O(B "localhost"$B!#(B
 $B%]!<%HHV9f(B-> $BJQ?t(B @code{elmo-default-imap4-port} $B$NCM!#(B
@@ -810,11 +811,11 @@ SSL$B%3%M%/%7%g%s$rD%$j$^$9!#(B
 $BDL$C$F$$$kI,MW$,$"$j$^$9!#(BSTARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls$B%Q%C(B
 $B%1!<%8$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
 
-$BG'>ZK!$H$7$F!"(B"auth" $B$b$7$/$O(B "cram-md5" $B$r;XDj$7$?>l9g!"%Q%9%o!<%I$r(B
-$B%(%s%3!<%I$7$FAw?.$7$^$9!#$?$@$7!"%5!<%PB&$,%Q%9%o!<%I$r%(%s%3!<%I$7$F(B
-$B<u$1<h$kG=NO$,L5$$>l9g$O!"3NG'$N$N$A!"(B"login" ($B@8%Q%9%o!<%I$rAw$k(B) 
+$BG'>ZK!$H$7$F!"(B'login$B!"(B'cram-md5 $B$b$7$/$O(B 'digest-md5 $B$r;XDj$7$?>l9g!"(B
+$B%Q%9%o!<%I$r%(%s%3!<%I$7$FAw?.$7$^$9!#$?$@$7!"%5!<%PB&$,%Q%9%o!<%I$r%(%s(B
+$B%3!<%I$7$F<u$1<h$kG=NO$,L5$$>l9g$O!"3NG'$N$N$A!"(B'plain ($B@8%Q%9%o!<%I$rAw$k(B) 
 $B$K@ZBX$($^$9!#JQ?t(B @code{elmo-imap4-force-login} $B$,(B non-nil $B$J$i$P!"(B
-$B3NG'L5$7$K(B "login" $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B nil)$B!#(B
+$B3NG'L5$7$K(B 'plain $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B nil)$B!#(B
 
 $BNc(B:
 
@@ -824,9 +825,9 @@ SSL$B%3%M%/%7%g%s$rD%$j$^$9!#(B
 %#mh/inbox -> IMAP $B$N%a!<%k%\%C%/%9!"(B"#mh/inbox"
 
 %inbox:hoge -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox" $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
-%inbox:hoge/login@@server1
+%inbox:hoge/plain@@server1
             -> server1 $B>e$N(B IMAP $B$N%a!<%k%\%C%/%9(B "inbox" $B$X(B
-               $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B("login"$B$G(B)
+               $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B('plain $B$G(B)
                $B%"%/%;%9!#(B
 @end group
 @end example
