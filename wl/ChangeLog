@@ -1,5 +1,8 @@
 2004-09-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-message.el (wl-message-redisplay): Does not narrow header if
+	disply-type is all-header or as-is.
+
 	* wl-summary.el (wl-summary-enter-handler): Use
 	`wl-thread-jump-to-msg' instead of `wl-summary-jump-to-msg'.
 

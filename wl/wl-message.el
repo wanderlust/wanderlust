@@ -484,7 +484,8 @@ Returns non-nil if bottom of message."
     (when (re-search-forward "^$" nil t)
       (wl-message-add-buttons-to-header (point-min) (point))
       (wl-message-add-buttons-to-body (point) (point-max)))
-    (when wl-message-use-header-narrowing
+    (when (and wl-message-use-header-narrowing
+	       (not (memq display-type '(all-header as-is))))
       (wl-message-header-narrowing))
     (goto-char (point-min))
     (ignore-errors (run-hooks 'wl-message-redisplay-hook))
