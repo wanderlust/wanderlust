@@ -1,3 +1,8 @@
+2000-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el (texinfo-format-printindex): Use (featurep
+	'meadow) instead of `texinfmt-version'.
+
 2000-09-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (texinfo-format-printindex): Add
