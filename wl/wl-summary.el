@@ -4178,8 +4178,8 @@ If ARG, exit virtual folder."
       (if (string-match
 	   "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	   subject-string)
-	  (match-string 2 subject-string))
-      "")))
+	  (match-string 2 subject-string)
+	""))))
 
 (defun wl-summary-line-attached ()
   (let ((content-type (elmo-msgdb-overview-entity-get-extra-field

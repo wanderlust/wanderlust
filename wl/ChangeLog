@@ -1,3 +1,7 @@
+2002-05-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-line-list-count): Fixed parenthesis.
+
 2002-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-delete-messages-on-buffer): Fix for
