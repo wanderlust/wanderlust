@@ -119,20 +119,19 @@
   (if (elmo-filter-folder-require-msgdb-internal folder)
       (let* ((target-folder (elmo-filter-folder-target-internal folder))
 	     (len (length numlist))
-	     (msgdb (progn
-		      (elmo-folder-check target-folder)
-		      (elmo-folder-msgdb target-folder)))
 	     (new-msgdb (elmo-make-msgdb))
 	     message-id entity)
+	(elmo-folder-check target-folder)
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-progress-set 'elmo-folder-msgdb-create
 			     len "Creating msgdb..."))
 	(unwind-protect
 	    (dolist (number numlist)
-	      (setq entity (elmo-msgdb-message-entity msgdb number))
+	      (setq entity (elmo-message-entity target-folder number))
 	      (when entity
-		(elmo-msgdb-append-entity new-msgdb entity
-					  (elmo-msgdb-flags msgdb number)))
+		(elmo-msgdb-append-entity
+		 new-msgdb entity
+		 (elmo-message-flags target-folder number)))
 	      (elmo-progress-notify 'elmo-folder-msgdb-create))
 	  (elmo-progress-clear 'elmo-folder-msgdb-create))
 	new-msgdb)
