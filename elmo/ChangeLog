@@ -1,6 +1,8 @@
 2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* acap.el: New file.
+	(acap-network-stream-open): Show "Connecting..." message.
+	(acap-parse-response): Fixed problem for BYE untagged response.
 
 2001-08-20  Tatsuya Kinoshita <tats@iris.ne.jp>
 

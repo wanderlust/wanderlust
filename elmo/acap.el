@@ -108,9 +108,11 @@ Valid states are `closed', `initial', `auth'.")
 
 (defun acap-network-stream-open (buffer server port &optional type)
   (let* ((port (or port acap-default-port))
-	 (process (funcall (cdr (assq (or type 'default)
-				      acap-network-stream-alist))
-			   "ACAP" buffer server port)))
+	 (process (progn
+		    (message "Connecting to %s..." server)
+		    (funcall (cdr (assq (or type 'default)
+					acap-network-stream-alist))
+			     "ACAP" buffer server port))))
     (when process
       (with-current-buffer buffer
 	(while (and (memq (process-status process) '(open run))
@@ -729,8 +731,8 @@ ENTRIES is a store-entry list."
 	  (ALERT ;(cons 'alert (acap-parse-resp-body))
 	   (message (nth 1 (acap-parse-resp-body))))
 	  (BYE   ;(cons 'bye (acap-parse-resp-body)))
-	   (message (acap-parse-resp-body))
-	   (ding)
+	   ;;(message (nth 1  (acap-parse-resp-body)))
+	   ;;(ding)
 	   (delete-process acap-process))
 	  (CHANGE (cons 'change
 			(list (acap-parse-quoted)
