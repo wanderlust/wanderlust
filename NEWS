@@ -43,7 +43,11 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    Non-nil value of wl-message-truncate-lines or wl-draft-truncate-lines
    means truncating long lines at window width.
 
-** Overall elmo module are rewritten.
+** Bitmap image for opening demo is removed from wl-demo.elc and now loaded
+   from wl-icon-directory.
+   Special logo is displayed through the Christmas season :)
+
+** Overall elmo module is rewritten.
 
 ** Variables depending on elmo backends are renamed to "elmo-backend-*".
    e.g. elmo-default-imap4-server is renamed to elmo-imap4-default-server.
