@@ -229,19 +229,6 @@
 (defmacro wl-folder-buffer-group-p ()
   (` (get-text-property (point) 'wl-folder-is-group)))
 
-(defmacro wl-folder-folder-name ()
-  (` (save-excursion
-       (beginning-of-line)
-       (if (or (looking-at "^[ ]*\\[[\\+-]\\]\\(.+\\):[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+\n")
-	       (looking-at "^[ ]*\\([^\\[].+\\):.*\n"))
-	   (wl-match-buffer 1)))))
-
-(defmacro wl-folder-entity-name ()
-  (` (save-excursion
-       (beginning-of-line)
-       (if (looking-at "^[ ]*\\([^\\[].+\\):.*\n")
-	   (wl-match-buffer 1)))))
-
 (defun wl-folder-buffer-search-group (group)
   (let ((prev-point (point))
 	(group-regexp (concat
@@ -676,7 +663,7 @@ Optional argument ARG is repeart count."
 ;	  (wl-delete-all-overlays)
 ;	  (wl-highlight-folder-current-line)
 	  )))
-     ((setq fld-name (wl-folder-entity-name))
+     ((setq fld-name (wl-folder-get-entity-from-buffer))
       (wl-folder-set-current-entity-id
        (get-text-property (point) 'wl-folder-entity-id))
       (setq fld-name (wl-folder-get-folder-name-by-id
@@ -1437,7 +1424,7 @@ If current line is group folder, all subfolders are marked."
     (if (re-search-backward (wl-folder-unread-regex group) nil t)
 	(progn
 	  (beginning-of-line)
-	  (wl-folder-folder-name))
+	  (wl-folder-get-entity-from-buffer))
       (goto-char start-point)
       (message "No more unread folder")
       nil)))
@@ -1451,7 +1438,7 @@ If current line is group folder, all subfolders are marked."
     (if (re-search-forward (wl-folder-unread-regex group) nil t)
 	(progn
 	  (beginning-of-line)
-	  (wl-folder-folder-name))
+	  (wl-folder-get-entity-from-buffer))
       (goto-char start-point)
       (message "No more unread folder")
       nil)))

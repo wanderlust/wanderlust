@@ -756,7 +756,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   (let ((entity-name
 	 (or (wl-folder-get-folder-name-by-id
 	      (get-text-property (point) 'wl-folder-entity-id))
-	     (wl-folder-get-realname (wl-folder-folder-name)))))
+	     (wl-folder-get-entity-from-buffer))))
     (when (and entity-name
 	       (or (not (interactive-p))
 		   (y-or-n-p (format "Expire %s? " entity-name))))
@@ -774,7 +774,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   (let ((entity-name
 	 (or (wl-folder-get-folder-name-by-id
 	      (get-text-property (point) 'wl-folder-entity-id))
-	     (wl-folder-get-realname (wl-folder-folder-name)))))
+	     (wl-folder-get-entity-from-buffer))))
     (when (and entity-name
 	       (or (not (interactive-p))
 		   (y-or-n-p (format "Archive %s? " entity-name))))
