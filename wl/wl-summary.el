@@ -549,6 +549,8 @@
 (defun wl-summary-display-top ()
   (interactive)
   (goto-char (point-min))
+  (when wl-summary-lazy-highlight
+    (wl-highlight-summary-window))
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -556,6 +558,8 @@
   (interactive)
   (goto-char (point-max))
   (forward-line -1)
+  (when wl-summary-lazy-highlight
+    (wl-highlight-summary-window))
   (if wl-summary-buffer-disp-msg
       (wl-summary-redisplay)))
 
@@ -787,13 +791,6 @@ you."
    wl-thread-space-str-internal
    (or (nth 5 wl-summary-buffer-thread-indent-set)
        wl-thread-space-str))
-  (setq wl-thread-indent-regexp
-	(concat
-	 (regexp-quote wl-thread-have-younger-brother-str-internal) "\\|"
-	 (regexp-quote wl-thread-youngest-child-str-internal) "\\|"
-	 (regexp-quote wl-thread-vertical-str-internal) "\\|"
-	 (regexp-quote wl-thread-horizontal-str-internal) "\\|"
-	 (regexp-quote wl-thread-space-str-internal)))
   (run-hooks 'wl-summary-buffer-set-folder-hook))
 
 (defun wl-summary-mode ()
@@ -2008,7 +2005,6 @@ If ARG is non-nil, checking is omitted."
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
 		  (message "Inserting thread...")
-		  (setq wl-thread-entity-cur 0)
 		  (wl-thread-insert-top)
 		  (message "Inserting thread...done"))
 		(if elmo-use-database

@@ -1,4 +1,25 @@
+2002-05-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-disable-bcc-for-mime-bcc): New user option.
+	(wl-draft-disable-fcc-for-mime-bcc): Ditto.
+
+	* wl-draft.el (wl-draft-deduce-address-list): Disable bcc while
+	mime-bcc if wl-draft-disable-bcc-for-mime-bcc is non-nil.
+	(wl-draft-get-fcc-list): Likewise.
+
 2002-05-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-indent-regexp): Abolished.
+	(wl-thread-entity-cur): Ditto.
+	* wl-summary.el (wl-summary-buffer-set-folder): Removed
+	wl-thread-indent-regexp	setting.
+	(wl-summary-sync-update): Removed wl-thread-entity-cur setting.
+
+	* wl-summary.el (wl-summary-display-top): Highlight summary window when
+	wl-summary-lazy-highlight.
+	(wl-summary-display-bottom): Ditto.
+
+	* wl-thread.el (wl-thread-open-close): Likewise.
 
 	* wl-draft.el (wl-draft-do-mime-bcc): Decode field body of original
 	from and subject;

@@ -1098,6 +1098,16 @@ If nil, a string `This is a blind carbon copy.' is used."
   :type '(string :tag "Body")
   :group 'wl-draft)
 
+(defcustom wl-draft-disable-bcc-for-mime-bcc t
+  "Disable Bcc while MIME-encapsulated Bcc."
+  :type 'boolean
+  :group 'wl-draft)
+
+(defcustom wl-draft-disable-fcc-for-mime-bcc t
+  "Disable Fcc while MIME-encapsulated Bcc."
+  :type 'boolean
+  :group 'wl-draft)
+
 (defcustom wl-draft-config-alist nil
   "Alist of configuration field on draft.
 ex.

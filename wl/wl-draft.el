@@ -988,7 +988,10 @@ from current buffer."
   "Get address list suitable for smtp RCPT TO:<address>.
 Group list content is removed if `wl-draft-remove-group-list-contents' is
 non-nil."
-  (let ((fields '("to" "cc" "bcc"))
+  (let ((fields (if (and wl-draft-doing-mime-bcc
+			 wl-draft-disable-bcc-for-mime-bcc)
+		    '("to" "cc")
+		  '("to" "cc" "bcc")))
 	(resent-fields '("resent-to" "resent-cc" "resent-bcc"))
 	(case-fold-search t)
 	addrs recipients)
@@ -1428,26 +1431,31 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (point-max)))))))
 
 (defun wl-draft-get-fcc-list (header-end)
-  (let (fcc-list
-	(case-fold-search t))
-    (or (markerp header-end) (error "HEADER-END must be a marker"))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward "^Fcc:[ \t]*" header-end t)
-	(setq fcc-list
-	      (cons (buffer-substring-no-properties
-		     (point)
-		     (progn
-		       (end-of-line)
-		       (skip-chars-backward " \t")
-		       (point)))
-		    fcc-list))
-	(save-match-data
-	  (wl-folder-confirm-existence
-	   (wl-folder-get-elmo-folder (eword-decode-string (car fcc-list)))))
-	(delete-region (match-beginning 0)
-		       (progn (forward-line 1) (point)))))
-    fcc-list))
+  (if (and wl-draft-doing-mime-bcc
+	   wl-draft-disable-fcc-for-mime-bcc)
+      (progn
+	(wl-draft-delete-field "fcc")
+	nil)
+    (let (fcc-list
+	  (case-fold-search t))
+      (or (markerp header-end) (error "HEADER-END must be a marker"))
+      (save-excursion
+	(goto-char (point-min))
+	(while (re-search-forward "^Fcc:[ \t]*" header-end t)
+	  (setq fcc-list
+		(cons (buffer-substring-no-properties
+		       (point)
+		       (progn
+			 (end-of-line)
+			 (skip-chars-backward " \t")
+			 (point)))
+		      fcc-list))
+	  (save-match-data
+	    (wl-folder-confirm-existence
+	     (wl-folder-get-elmo-folder (eword-decode-string (car fcc-list)))))
+	  (delete-region (match-beginning 0)
+			 (progn (forward-line 1) (point)))))
+      fcc-list)))
 
 (defun wl-draft-do-fcc (header-end &optional fcc-list)
   (let ((send-mail-buffer (current-buffer))

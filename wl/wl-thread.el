@@ -41,13 +41,10 @@
 (defvar wl-thread-entities nil)
 (defvar wl-thread-entity-list nil)	; entity list
 (defvar wl-thread-entity-hashtb nil)	; obarray
-(defvar wl-thread-indent-regexp nil)
 
 (make-variable-buffer-local 'wl-thread-entity-hashtb)
 (make-variable-buffer-local 'wl-thread-entities)     ; ".wl-thread-entity"
 (make-variable-buffer-local 'wl-thread-entity-list)  ; ".wl-thread-entity-list"
-(make-variable-buffer-local 'wl-thread-entity-cur)
-(make-variable-buffer-local 'wl-thread-indent-regexp)
 
 ;;; global flag
 (defvar wl-thread-insert-force-opened nil)
@@ -1087,6 +1084,8 @@ Message is inserted to the summary buffer."
 	      (wl-summary-jump-to-msg msg)
 	      (wl-thread-close
 	       (wl-thread-get-entity (wl-summary-message-number)))))))
+      (when wl-summary-lazy-highlight
+	(wl-highlight-summary-window))
       (wl-summary-set-message-modified)
       (set-buffer-modified-p nil))))
 
