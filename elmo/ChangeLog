@@ -1,3 +1,7 @@
+2004-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-string-partial-p): Removed unused function.
+
 2004-02-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo.el (elmo-folder-synchronize): Fix description of the return

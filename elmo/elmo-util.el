@@ -355,9 +355,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	  (nconc list rest))
       (nconc list (list element)))))
 
-(defun elmo-string-partial-p (string)
-  (and (stringp string) (string-match "message/partial" string)))
-
 (defun elmo-get-file-string (filename &optional remove-final-newline)
   (elmo-set-work-buf
    (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
