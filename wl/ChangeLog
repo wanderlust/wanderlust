@@ -1,3 +1,7 @@
+2004-01-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-unsubscribe): Avoid compile warning.
+
 2004-01-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-folder.el (wl-folder-jump-to-current-entity): Cosmetic fix.

@@ -1151,7 +1151,8 @@ return value is diffs '(-new -unread -all)."
 	    (setq indent (wl-fldmgr-make-indent (nth 1 tmp)))
 	    (if (eq (cdr (nth 2 tmp)) 'access)
 		(when (wl-fldmgr-cut tmp)
-		  (pop wl-fldmgr-cut-entity-list)  ;; don't leave cut-list
+		  ;; don't leave cut-list
+		  (setq wl-fldmgr-cut-entity-list (cdr wl-fldmgr-cut-entity-list))
 		  (setq beg (point))
 		  (insert indent wl-folder-unsubscribe-mark
 			  (if is-group
