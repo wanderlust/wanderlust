@@ -666,6 +666,7 @@
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-pop3-commit 'elmo-generic-commit)
+(defalias 'elmo-pop3-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-pop3)
 
