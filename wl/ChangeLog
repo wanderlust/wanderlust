@@ -1,3 +1,7 @@
+2001-06-28  OHASHI Akira  <bg66@koka-in.org>
+
+        * wl-vars.el: Fix file coding system to ISO-2022-JP.
+
 2001-06-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-exec-subr): Hide message buffer after
