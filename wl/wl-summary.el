@@ -513,6 +513,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "ro"   'wl-summary-refile-region)
   (define-key wl-summary-mode-map "rO"   'wl-summary-copy-region)
   (define-key wl-summary-mode-map "rd"   'wl-summary-delete-region)
+  (define-key wl-summary-mode-map "rD"   'wl-summary-erase-region)
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
   (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)
@@ -2876,7 +2877,27 @@ Return number if put mark succeed"
 				   (list (nth 2 elem)
 					 (car elem)))))))
     dest-numbers))
+
 ;;; Actions
+(defun wl-summary-set-action-generic (mark number visible interactive data)
+  (when visible
+    ;; Note that the cursor is on the target message at this moment.
+    (let ((cur-mark (wl-summary-temp-mark)))
+      (if (wl-summary-reserve-temp-mark-p cur-mark)
+	  (if interactive
+	      (error "%s is already marked as `%s'" number cur-mark))
+	;; Remove current mark.
+	(wl-summary-unset-mark)))
+    (wl-summary-mark-line mark)
+    (when (and visible
+	       wl-summary-highlight)
+      (wl-highlight-summary-current-line)))
+  (wl-summary-register-temp-mark number mark nil))
+
+(defun wl-summary-unset-action-generic (number)
+  ;; Just unhighlight.
+  (when wl-summary-highlight
+    (wl-highlight-summary-current-line)))
 
 ;; Target mark handling.
 (defun wl-summary-set-target-mark (mark number visible interactive data)
@@ -2911,26 +2932,6 @@ Return number if put mark succeed"
 (defun wl-summary-target-mark-delete ()
   (interactive)
   (wl-summary-target-mark-replace "d"))
-
-(defun wl-summary-set-action-generic (mark number visible interactive data)
-  (when visible
-    ;; Note that the cursor is on the target message at this moment.
-    (let ((cur-mark (wl-summary-temp-mark)))
-      (if (wl-summary-reserve-temp-mark-p cur-mark)
-	  (if interactive
-	      (error "%s is already marked as `%s'" number cur-mark))
-	;; Remove current mark.
-	(wl-summary-unset-mark)))
-    (wl-summary-mark-line mark)
-    (when (and visible
-	       wl-summary-highlight)
-      (wl-highlight-summary-current-line)))
-  (wl-summary-register-temp-mark number mark nil))
-
-(defun wl-summary-unset-action-generic (number)
-  ;; Just unhighlight.
-  (when wl-summary-highlight
-    (wl-highlight-summary-current-line)))
 
 (defun wl-summary-exec-action-delete (mark-list)
   (if (null mark-list)
@@ -2985,6 +2986,14 @@ Return number if put mark succeed"
   (interactive)
   (wl-summary-set-mark "D" number (interactive-p)))
 
+(defun wl-summary-target-mark-erase ()
+  (interactive)
+  (wl-summary-target-mark-replace "D"))
+
+(defun wl-summary-erase-region (beg end)
+  (interactive "r")
+  (wl-summary-mark-region-subr 'wl-summary-erase beg end))
+
 (defun wl-summary-exec-action-erase (mark-list)
   (if (null mark-list)
       (message "No marks")
@@ -3003,7 +3012,7 @@ Return number if put mark succeed"
 					; the bottom line.
 	(when (> refile-len elmo-display-progress-threshold)
 	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len "Deleting messages..."))
+			     refile-len "Erasing messages..."))
 	(setq result nil)
 	(condition-case nil
 	    (setq result (elmo-folder-move-messages
@@ -3385,26 +3394,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 ;; 	      (wl-summary-unmark msg-num)
 ;; 	      (wl-summary-erase-subr (list msg-num))))))
 ;;     (message "Read-only folder.")))
-
-(defun wl-summary-target-mark-erase ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let (number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  (let (wl-summary-buffer-disp-msg)
-	    (when (setq number (wl-summary-message-number))
-	      (wl-summary-erase number)
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list)))))
-	(forward-line 1))
-      (setq mlist wl-summary-buffer-target-mark-list)
-      (while mlist
-	(wl-summary-register-temp-mark (car mlist) "D" nil)
-	(setq wl-summary-buffer-target-mark-list
-	      (delq (car mlist) wl-summary-buffer-target-mark-list))
-	(setq mlist (cdr mlist))))))
 
 ;; (defun wl-summary-erase-subr (msgs)
 ;;  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)

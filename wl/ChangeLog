@@ -4,6 +4,10 @@
 	(wl-summary-target-mark-prefetch): Use it.
 	(wl-summary-target-mark-delete): Ditto.
 	(toplevel): Rearranged definition order.
+	(wl-summary-mode-map): Bind wl-summary-erase-region to "rD".
+	(wl-summary-target-mark-erase): Rewrite.
+	(wl-summary-erase-region): New function.
+	(wl-summary-exec-action-erase): Changed message.
 
 	* wl-vars.el (wl-summary-reserve-mark-list): Added "d" and "i".
 	(wl-summary-skip-mark-list): Added "d".
