@@ -1,3 +1,13 @@
+2004-06-04  Tsutomu OKADA  <tsutomu.okada@furuno.co.jp>
+
+	* wl-vars.el (wl-subject-re-prefix-regexp): Renamed from
+	`wl-subject-prefix-regexp'.
+	(wl-subject-forward-prefix-regexp): New variable.
+	* wl-draft.el (wl-draft-strip-subject-regexp): Renamed from
+	`wl-draft-strip-subject-re' and take regexp as argument.
+	(wl-draft-forward): Use it.
+	(wl-draft-reply): Ditto.
+
 2004-05-30  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* wl-e21.el (wl-highlight-plugged-current-line): Change for

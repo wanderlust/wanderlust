@@ -1740,8 +1740,14 @@ This variable overwhelm `wl-message-ignored-field-list' settings."
   :group 'wl-pref
   :group 'wl-draft)
 
-(defcustom wl-subject-prefix-regexp "^[ \t]*\\([Rr][Ee][:>][ \t]*\\)*[ \t]*"
+(defcustom wl-subject-re-prefix-regexp "^[ \t]*\\([Rr][Ee][:>][ \t]*\\)*[ \t]*"
   "*Regexp matching \"Re: \" in the subject line."
+  :type 'regexp
+  :group 'wl-draft
+  :group 'wl-pref)
+
+(defcustom wl-subject-forward-prefix-regexp "^[ \t]*\\(\\([Ff][Oo][Rr][Ww][Aa][Rr][Dd]\\|[Ff][Ww][Dd]\\|[Ff][Ww]\\)[:>][ \t]*\\)*[ \t]*"
+  "*Regexp matching \"Forward: \", \"Fwd: \", or \"Fw: \" in the subject line."
   :type 'regexp
   :group 'wl-draft
   :group 'wl-pref)

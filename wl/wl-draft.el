@@ -258,16 +258,19 @@ e.g.
 	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
-			  (concat wl-forward-subject-prefix original-subject))
+			  (concat wl-forward-subject-prefix
+				  (wl-draft-strip-subject-regexp
+				   original-subject
+				   wl-subject-forward-prefix-regexp)))
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
 
-(defun wl-draft-strip-subject-re (subject)
-  "Remove \"Re:\" from SUBJECT string. Shamelessly copied from Gnus."
-  (if (string-match wl-subject-prefix-regexp subject)
+(defun wl-draft-strip-subject-regexp (subject regexp)
+  "Remove REGEXP from SUBJECT string."
+  (if (string-match regexp subject)
       (substring subject (match-end 0))
     subject))
 
@@ -363,8 +366,9 @@ Reply to author if WITH-ARG is non-nil."
 	     cc)))
     (and wl-reply-subject-prefix
 	 (setq subject (concat wl-reply-subject-prefix
-			       (wl-draft-strip-subject-re
-				(or subject "")))))
+			       (wl-draft-strip-subject-regexp
+				(or subject "")
+				wl-subject-re-prefix-regexp))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
