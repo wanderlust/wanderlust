@@ -243,7 +243,9 @@
       (setq icon (car icons)
 	    icons (cdr icons)
 	    dest (expand-file-name (file-name-nondirectory icon) PIXMAPDIR))
-      (princ (format "%s->%s\n" icon dest))
+      (princ (format "%s -> %s\n"
+		     (file-name-nondirectory icon)
+		     (substring (file-name-directory dest) 0 -1)))
       (copy-file icon dest t))))
 
 (defun install-wl-package ()
