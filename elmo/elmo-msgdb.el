@@ -172,10 +172,8 @@ STATUS is a symbol which is one of the following:
        (case cur-status
 	 ((read important answered))
 	 (t (elmo-msgdb-set-mark msgdb number
-				 (if (and use-cache cur-cached)
-				     (elmo-msgdb-set-mark
-				      msgdb number
-				      elmo-msgdb-read-uncached-mark)))
+				 (if (and use-cache (not cur-cached))
+				     elmo-msgdb-read-uncached-mark))
 	    (setq mark-modified t))))
       (important
        (unless (eq cur-status 'important)
@@ -248,7 +246,8 @@ STATUS is a symbol which is one of the following:
 (defsubst elmo-msgdb-uncached-marks ()
   (or elmo-msgdb-uncached-marks-internal
       (setq elmo-msgdb-uncached-marks-internal
-	    (list elmo-msgdb-answered-uncached-mark
+	    (list elmo-msgdb-new-mark
+		  elmo-msgdb-answered-uncached-mark
 		  elmo-msgdb-unread-uncached-mark
 		  elmo-msgdb-read-uncached-mark))))
 
