@@ -833,15 +833,11 @@ Optional argument ARG is repeart count."
 	(setq new    (and new    (max 0 new))
 	      unread (and unread (max 0 unread))
 	      all    (and all    (max 0 all))))
-      (setq unread (or ;; If server diff, All unreads are
-			; treated as unsync.
-		    (and unread
-			 (elmo-folder-use-flag-p folder)
-			 (- unread (or new 0)))
-		    (elmo-folder-get-info-unread folder)
-		    (cdr (wl-summary-count-unread
-			  (elmo-msgdb-get-mark-alist
-			   (elmo-folder-msgdb folder))))))
+      (setq unread (or (and unread (- unread (or new 0)))
+		       (elmo-folder-get-info-unread folder)
+		       (cdr (wl-summary-count-unread
+			     (elmo-msgdb-get-mark-alist
+			      (elmo-folder-msgdb folder))))))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list new unread all)
 				   (get-buffer wl-folder-buffer-name)))

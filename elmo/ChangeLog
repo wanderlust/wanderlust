@@ -1,3 +1,10 @@
+2002-01-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-folder-diff-plugged): If unread is
+	less than new, set new as unread.
+
+	* elmo-util.el (elmo-string): Don't put text-property if nil.
+
 2002-01-21  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Case sensitive.

@@ -2316,8 +2316,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (defsubst elmo-imap4-folder-diff-plugged (folder)
   (let ((session (elmo-imap4-get-session folder))
-	messages
-	response killed)
+	messages new unread response killed)
 ;;; (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
@@ -2337,9 +2336,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(setq messages (- messages
 			  (elmo-msgdb-killed-list-length
 			   killed))))
-    (list (elmo-imap4-response-value response 'recent)
-	  (elmo-imap4-response-value response 'unseen)
-	  messages)))
+    (setq new (elmo-imap4-response-value response 'recent)
+	  unread (elmo-imap4-response-value response 'unseen))
+    (if (< unread new) (setq new unread))
+    (list new unread messages)))
 
 (luna-define-method elmo-folder-diff-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-folder-diff-plugged folder))

@@ -1227,7 +1227,7 @@ the value of `foo'."
 (defmacro elmo-string (string)
   "STRING without text property."
   (` (let ((obj (copy-sequence (, string))))
-       (set-text-properties 0 (length obj) nil obj)
+       (and obj (set-text-properties 0 (length obj) nil obj))
        obj)))
 
 (defun elmo-flatten (list-of-list)
