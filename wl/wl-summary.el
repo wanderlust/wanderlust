@@ -3129,7 +3129,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		     (eq (wl-summary-message-number)
 			 (with-current-buffer wl-message-buffer
 			   wl-message-buffer-cur-number)))
-	  (wl-summary-toggle-disp-msg 'off))
+	  (wl-summary-toggle-disp-msg 'off)
+	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
 	(message (concat "Executing...done"
 			 (if (> refile-failures 0)

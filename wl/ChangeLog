@@ -1,3 +1,8 @@
+2003-01-14  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-exec-subr): Unset wl-message-buffer if
+	it is not up-tp-date.
+
 2003-01-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-empty-trash): Set and show up summary
