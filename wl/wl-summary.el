@@ -641,7 +641,7 @@ you."
 			      (concat "^--" boundary "\n"
 				      "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				      "[Cc]ontent-[Tt]ype:[ \t]+"
-				      "\\(message/rfc822\\|text/rfc822-headers\\)\n"
+				      "\\(message/rfc822\\|text/rfc822-headers\\).*\n"
 				      "\\(.+\n\\)*\n") nil t))
 		 (re-search-forward
 		  (concat "\n\\(--" boundary "\\)--\n") nil t))
