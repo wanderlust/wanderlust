@@ -1,3 +1,7 @@
+2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.4.
+
 2003-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-folder-initialize): Don't use
