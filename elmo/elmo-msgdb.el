@@ -633,7 +633,7 @@ content of MSGDB is changed."
   (elmo-number-set-member msg killed-list))
 
 (defun elmo-msgdb-set-as-killed (killed-list msg)
-  elmo-number-set-append killed-list msg)
+  (elmo-number-set-append killed-list msg))
 
 (defun elmo-msgdb-append-to-killed-list (folder msgs)
   (let ((dir (elmo-msgdb-expand-path folder)))
