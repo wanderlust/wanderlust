@@ -286,16 +286,14 @@ FOLDER is the folder structure."
 
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
-  (let ((number-list (elmo-folder-list-messages folder nil 'in-msgdb))
+  (let ((number-list (sort (elmo-folder-list-messages folder nil 'in-msgdb) '>))
 	(spool-folder (elmo-dop-spool-folder folder))
 	spool-length
-	(i 0)
 	max-num)
-    (setq spool-length (or (car (if (elmo-folder-exists-p spool-folder)
-				    (elmo-folder-status spool-folder))) 0))
-    (setq max-num
-	  (or (nth (max (- (length number-list) 1) 0) number-list)
-	      0))
+    (setq spool-length (or (if (elmo-folder-exists-p spool-folder)
+			       (car (elmo-folder-status spool-folder)))
+			   0))
+    (setq max-num (or (car number-list) 0))
     (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
 
 ;;; Delayed operation (executed at online status).
