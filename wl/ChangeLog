@@ -1,3 +1,7 @@
+2000-10-24   Daiki Ueno <ueno@unixuser.org>
+
+	* wl-message.el (wl-message-add-button): Use overlay.
+
 2000-10-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-parse-mailbox-list): Don't insert extra space.

@@ -556,11 +556,13 @@
   "Create a button between FROM and TO with callback FUNCTION and DATA."
   (add-text-properties
    from to
-   (nconc (list 'mouse-face 'highlight)
-	  (list 'local-map wl-message-button-map)
-	  (list 'wl-message-button-callback function)
+   (nconc (list 'wl-message-button-callback function)
 	  (if data
-	      (list 'wl-message-button-data data)))))
+	      (list 'wl-message-button-data data))))
+  (let ((ov (make-overlay from to)))
+    (overlay-put ov 'mouse-face 'highlight)
+    (overlay-put ov 'local-map wl-message-button-map)
+    (overlay-put ov 'evaporate t)))
 
 (defun wl-message-button-dispatcher (event)
   "Select the button under point."
