@@ -3895,20 +3895,16 @@ If ARG, exit virtual folder."
 		      ;; interactive
 		      t)
 	    mark (elmo-msgdb-get-mark msgdb number))
-      (when (or (string= mark wl-summary-read-uncached-mark)
-		(string= mark wl-summary-unread-uncached-mark)
-		(string= mark wl-summary-unread-cached-mark)
-		(string= mark wl-summary-new-mark))
-	(cond
-	 ((string= mark wl-summary-new-mark) ; N
-	  (setq stat 'new))
-	 ((string= mark wl-summary-unread-uncached-mark) ; U
-	  (setq stat 'unread))
-	 ((string= mark wl-summary-unread-cached-mark)  ; !
-	  (setq stat 'unread))
-	 (t
-	  ;; no need to mark server.
-	  (setq no-folder-mark t))))
+      (cond
+       ((string= mark wl-summary-new-mark) ; N
+	(setq stat 'new))
+       ((string= mark wl-summary-unread-uncached-mark) ; U
+	(setq stat 'unread))
+       ((string= mark wl-summary-unread-cached-mark)  ; !
+	(setq stat 'unread))
+       (t
+	;; no need to mark server.
+	(setq no-folder-mark t)))
       (setq new-mark
 	    (if (and (if (elmo-message-use-cache-p folder number)
 			 (not (elmo-folder-local-p folder)))
