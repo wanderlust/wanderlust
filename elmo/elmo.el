@@ -1543,8 +1543,7 @@ If update process is interrupted, return nil.")
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-folder)
 						 numbers)
-  (if (elmo-folder-msgdb-internal folder)
-      (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) numbers)))
+  (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) numbers))
 
 (luna-define-generic elmo-folder-length (folder)
   "Return number of messages in the FOLDER.")
