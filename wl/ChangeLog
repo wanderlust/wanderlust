@@ -1,5 +1,13 @@
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-pick-field-default): Added `Last', `First' and
+	removed `Date'.
+	(wl-fldmgr-make-filter-default): New user option.
+
+	* wl-fldmgr.el (wl-fldmgr-make-filter): Simplify.
+	Use `elmo-read-search-condition' and `wl-fldmgr-make-filter-default'
+	(wl-fldmgr-filter-completion-alist): Abolish.
+
 	* wl.el (wl): Don't check servers if arg is non-nil.
 
 	* wl-draft.el (wl-draft-reply): Set only message-id string to

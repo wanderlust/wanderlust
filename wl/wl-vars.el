@@ -1158,12 +1158,13 @@ with wl-highlight-folder-many-face."
   "*Default field for pick."
   :type '(radio (const "From")
 		(const "Subject")
-		(const "Date")
 		(const "To")
 		(const "Cc")
 		(const "Body")
 		(const "Since")
 		(const "Before")
+		(const "Last")
+		(const "First")
 		(string :tag "Other"))
   :group 'wl-summary)
 
@@ -1720,6 +1721,20 @@ ex.
 (defcustom wl-fldmgr-add-complete-with-current-folder-list nil
   "*If non-nil, completion for adding folder refers current folder list."
   :type 'boolean
+  :group 'wl-folder)
+
+(defcustom wl-fldmgr-make-filter-default "Body"
+  "*Default filter key while making filter on Folder."
+  :type '(radio (const "From")
+		(const "Subject")
+		(const "To")
+		(const "Cc")
+		(const "Body")
+		(const "Since")
+		(const "Before")
+		(const "Last")
+		(const "First")
+		(string :tag "Other"))
   :group 'wl-folder)
 
 ;;; For Expire and Archive

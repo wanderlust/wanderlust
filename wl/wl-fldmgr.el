@@ -52,19 +52,6 @@
 
 ")
 
-(defconst wl-fldmgr-filter-completion-alist
-  '(("/last:")
-    ("/first:")
-    ("/since:")
-    ("/before:")
-    ("/from=")
-    ("/subject=")
-    ("/date=")
-    ("/to=")
-    ("/cc=")
-    ("/tocc=")
-    ("/body=")))
-
 ;;; Initial setup
 
 (defvar wl-fldmgr-mode-map nil)
@@ -1012,37 +999,16 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (if (looking-at wl-folder-group-regexp)
 	(message "This folder is group")
-      (let ((tmp (wl-fldmgr-get-path-from-buffer)))
+      (let ((tmp (wl-fldmgr-get-path-from-buffer))
+	    entity)
 	(if (eq (cdr (nth 2 tmp)) 'access)
-	    (message "Tan't change access group")
-	  (let* ((entity (nth 4 tmp))
-		 (old-entity entity)
-		 old-filter
-		 filter new-entity)
-	    (unless entity (error "no folder"))
-	    (when (string-match "^\\(\\(/[^/]+/\\)+\\)\\(.*\\)" entity)
-	      (setq old-filter (substring entity
-					  (match-beginning 1)
-					  (match-end 1)))
-	      (setq old-entity (substring entity
-					  (match-beginning 3)
-					  (match-end 3))))
-	    (setq filter (completing-read "Filter: "
-					  wl-fldmgr-filter-completion-alist
-					  nil nil
-					  (or old-filter "/")))
-	    (unless (or (string= filter "")
-			(string-match "/$" filter))
-	      (setq filter (concat filter "/")))
-	    (setq new-entity (concat filter old-entity))
-	    (let ((entity new-entity)
-		  spec)
-	      ;; check filter syntax
-	      (while (eq
-		      (car (setq spec (elmo-folder-get-spec entity)))
-		      'filter)
-		(setq entity (nth 2 spec))))
-	    (wl-fldmgr-add new-entity)))))))
+	    (message "Can't change access group")
+	  (setq entity (nth 4 tmp))
+	  (unless entity (error "no folder"))
+	  (wl-fldmgr-add (concat "/"
+				 (elmo-read-search-condition
+				  wl-fldmgr-make-filter-default)
+				 "/" entity)))))))
 
 (defun wl-fldmgr-sort ()
   (interactive)
