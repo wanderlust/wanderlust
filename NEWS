@@ -1,5 +1,15 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.12.1 from 2.12.0
+  Version 2.12.1 is a bug fix version of 2.12.0.
+
+** Fixed the problem to cause error on automatical draft saving.
+
+** Fixed the problem to cause error on invoking address manager.
+
+** Fixed the problem that flags were not inherited on copying/refiling from
+   filter folders.
+
 * Changes in 2.12.0 from 2.10.1
 
 ** The structure of the message database is improved.
