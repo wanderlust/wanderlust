@@ -1471,6 +1471,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(switch-to-buffer (get-buffer-create wl-folder-buffer-name)))
       (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)
+      (sit-for 0)
       (wl-folder-init)
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
@@ -1478,7 +1479,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(setcdr (assoc (car wl-folder-entity) wl-folder-group-alist) t)
 	(save-excursion
 	  (wl-folder-insert-entity " " wl-folder-entity)))
-      (sit-for 0)
       (set-buffer-modified-p nil)
       (setq initialize t))
     initialize))

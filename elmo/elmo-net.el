@@ -158,9 +158,7 @@ if making session failed, returns nil."
   (let (pair session key)
     (if (not (elmo-plugged-p
 	      (elmo-net-folder-server-internal folder)
-	      (elmo-net-folder-port-internal folder)
-	      (elmo-network-stream-type-symbol
-	       (elmo-net-folder-stream-type-internal folder))))
+	      (elmo-net-folder-port-internal folder)))
 	(error "Unplugged"))
     (setq pair (assoc (setq key (elmo-network-session-cache-key name folder))
 		      elmo-network-session-cache))
@@ -257,17 +255,14 @@ Returns a process object.  if making session failed, returns nil."
 		   (open-network-stream name buffer server service)))))
       (error
        (when auto-plugged
-	 (elmo-set-plugged nil server service
-			   (elmo-network-stream-type-symbol stream-type)
-			   (current-time))
+	 (elmo-set-plugged nil server service stream-type (current-time))
 	 (message "Auto plugged off at %s:%d" server service)
 	 (sit-for 1))
        (signal (car err) (cdr err))))
     (when process
       (process-kill-without-query process)
       (when auto-plugged
-	(elmo-set-plugged t server service
-			  (elmo-network-stream-type-symbol stream-type)))
+	(elmo-set-plugged t server service stream-type))
       process)))
 
 (defun elmo-get-network-stream-type (symbol)
