@@ -2161,7 +2161,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
        (elmo-imap4-folder-mailbox-internal folder))
       (elmo-imap4-search-internal folder session condition numbers))))
 
-(luna-define-method elmo-folder-msgdb-create-plugged
+(luna-define-method elmo-folder-msgdb-create
   ((folder elmo-imap4-folder) numbers &rest args)
   (when numbers
     (let ((session (elmo-imap4-get-session folder))
@@ -2380,29 +2380,24 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (luna-define-method elmo-folder-append-buffer
   ((folder elmo-imap4-folder) unread &optional number)
-  (if (elmo-folder-plugged-p folder)
-      (let ((session (elmo-imap4-get-session folder))
-	    send-buffer result)
-	(elmo-imap4-session-select-mailbox session
-					   (elmo-imap4-folder-mailbox-internal
-					    folder))
-	(setq send-buffer (elmo-imap4-setup-send-buffer))
-	(unwind-protect
-	    (setq result
-		  (elmo-imap4-send-command-wait
-		   session
-		   (list
-		    "append "
-		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
-					 folder))
-		    (if unread " " " (\\Seen) ")
-		    (elmo-imap4-buffer-literal send-buffer))))
-	  (kill-buffer send-buffer))
-	result)
-    ;; Unplugged
-    (if elmo-enable-disconnected-operation
-	(elmo-folder-append-buffer-dop folder unread number)
-      (error "Unplugged"))))
+  (let ((session (elmo-imap4-get-session folder))
+	send-buffer result)
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (setq send-buffer (elmo-imap4-setup-send-buffer))
+    (unwind-protect
+	(setq result
+	      (elmo-imap4-send-command-wait
+	       session
+	       (list
+		"append "
+		(elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
+				     folder))
+		(if unread " " " (\\Seen) ")
+		(elmo-imap4-buffer-literal send-buffer))))
+      (kill-buffer send-buffer))
+    result))
 
 (eval-when-compile
   (defmacro elmo-imap4-identical-system-p (folder1 folder2)
@@ -2418,9 +2413,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
   ((folder elmo-imap4-folder) src-folder numbers unread-marks
    &optional same-number)
   (if (and (eq (elmo-folder-type-internal src-folder) 'imap4)
-	   (elmo-imap4-identical-system-p folder src-folder)
-	   (elmo-folder-plugged-p folder))
-      ;; Plugged
+	   (elmo-imap4-identical-system-p folder src-folder))
       (elmo-imap4-copy-messages src-folder folder numbers)
     (luna-call-next-method)))
 
@@ -2431,12 +2424,12 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	    (elmo-imap4-get-session folder)))
     elmo-enable-disconnected-operation)) ; offline refile.
 
-;(luna-define-method elmo-message-fetch-unplugged
-;  ((folder elmo-imap4-folder)
-;   number strategy  &optional section outbuf unseen)
-;  (error "%d%s is not cached." number (if section
-;					  (format "(%s)" section)
-;					"")))
+(luna-define-method elmo-message-fetch-unplugged
+  ((folder elmo-imap4-folder)
+   number strategy  &optional section outbuf unseen)
+  (error "%d%s is not cached." number (if section
+					  (format "(%s)" section)
+					"")))
 
 (defsubst elmo-imap4-message-fetch (folder number strategy
 					   section outbuf unseen)
@@ -2471,33 +2464,6 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						outbuf unseen)
   (elmo-imap4-message-fetch folder number strategy section outbuf unseen))
 
-(luna-define-method elmo-message-fetch-field ((folder elmo-imap4-folder)
-					      number field)
-  (let ((session (elmo-imap4-get-session folder)))
-    (elmo-imap4-session-select-mailbox session
-				       (elmo-imap4-folder-mailbox-internal
-					folder))
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-fetch-callback nil)
-      (setq elmo-imap4-fetch-callback-data nil))
-    (with-temp-buffer
-      (insert 
-       (elmo-imap4-response-bodydetail-text
-	(elmo-imap4-response-value
-	 (elmo-imap4-send-command-wait session
-				       (concat
-					(if elmo-imap4-use-uid
-					    "uid ")
-					(format
-					 "fetch %s (body.peek[header.fields (%s)])"
-					 number field)))
-	 'fetch)))
-      (elmo-delete-cr-buffer)
-      (goto-char (point-min))
-      (std11-field-body (symbol-name field)))))
-
-
-  
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))
 

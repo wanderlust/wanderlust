@@ -506,10 +506,8 @@ Return newly created temporary directory name which contains temporary files.")
   (dolist (number numbers)
     (elmo-message-encache folder number)))
 
-(luna-define-generic elmo-message-encache (folder number)
-  "Encache message in the FOLDER with NUMBER.")
-
-(luna-define-method elmo-message-encache ((folder elmo-folder) number)
+(defun elmo-message-encache (folder number)
+  "Encache message in the FOLDER with NUMBER."
   (elmo-message-fetch
    folder number
    (elmo-make-fetch-strategy 'entire
@@ -561,12 +559,6 @@ If optional argument SECTION is specified, only the SECTION of the message
 is fetched (if possible).
 If second optional argument UNREAD is non-nil, message is not marked as read.
 Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-field (folder number field)
-  "Fetch a message field value.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-FIELD is a symbol of the field name.")
 
 (luna-define-generic elmo-message-folder (folder number)
   "Get primitive folder of the message.")
@@ -890,8 +882,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 				 "Copying messages..."
 			       "Moving messages..."))
 	   succeeds i result)
-      (if (eq dst-folder 'null)
-	  (setq succeeds messages)
+      (unless (eq dst-folder 'null)
 	;; src is already opened.
 	(when messages
 	  (elmo-folder-open-internal dst-folder)
@@ -1122,10 +1113,7 @@ FIELD is a symbol of the field."
 			       (elmo-fetch-strategy-cache-path strategy)
 			       section))
 	     (file-exists-p cache-file))
-	(if (and (elmo-cache-path-section-p cache-file)
-		 (eq (elmo-fetch-strategy-entireness strategy) 'entire))
-	    (error "Entire message is not cached.")
-	  (insert-file-contents-as-binary cache-file))
+	(insert-file-contents-as-binary cache-file)
       (elmo-message-fetch-internal folder number strategy section unread)
       (elmo-delete-cr-buffer)
       (when (and (> (buffer-size) 0)
@@ -1396,7 +1384,7 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?|  'pipe)
 (elmo-define-folder ?.  'maildir)
 (elmo-define-folder ?'  'internal)
-(elmo-define-folder ?\[  'nmz)
+(elmo-define-folder ?[  'nmz)
 (elmo-define-folder ?@  'shimbun)
 
 ;;; Obsolete variables.

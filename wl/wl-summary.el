@@ -2460,14 +2460,6 @@ If ARG, without confirm."
 	 (lambda (x) (elmo-msgdb-overview-entity-get-number x))
 	 (elmo-msgdb-get-overview (wl-summary-buffer-msgdb)))))
 
-(defun wl-summary-auto-select-msg-p (unread-msg)
-  (and unread-msg
-       (not (string=
-	     (cadr (assoc unread-msg
-			  (elmo-msgdb-get-mark-alist
-			   (wl-summary-buffer-msgdb))))
-	     wl-summary-important-mark))))
-
 (defun wl-summary-goto-folder-subr (&optional name scan-type other-window
 					      sticky interactive scoring)
   "Display target folder on summary."
@@ -2583,13 +2575,9 @@ If ARG, without confirm."
 	      (let ((unreadp (wl-summary-next-message 
 			      (wl-summary-message-number)
 			      'down t)))
-		(cond ((and wl-auto-select-first
-			    (wl-summary-auto-select-msg-p unreadp))
-		       ;; wl-auto-select-first is non-nil and
-		       ;; unreadp is non-nil but not important
+		(cond ((and wl-auto-select-first unreadp)
 		       (setq retval 'disp-msg))
-		      ((not (wl-summary-auto-select-msg-p unreadp))
-		       ;; unreadp is nil or important
+		      ((not unreadp)
 		       (setq retval 'more-next))))
 	    (goto-char (point-max))
 	    (if (elmo-folder-plugged-p folder)
@@ -3104,10 +3092,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (setq result (elmo-folder-move-messages
 			    wl-summary-buffer-elmo-folder
 			    (cdr (car dst-msgs))
-			    (if (eq 'null (car (car dst-msgs)))
-				'null
-			      (wl-folder-get-elmo-folder
-			       (car (car dst-msgs))))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
 			    (wl-summary-buffer-msgdb)
 			    refile-len
 			    refile-executed
@@ -4081,7 +4067,7 @@ If ARG, exit virtual folder."
 	    (setq mark (or mark (cadr (assq number mark-alist)))))
 	(setq visible t))
       (when visible
-	(if (null (setq number (wl-summary-message-number)))
+	(if (null (wl-summary-message-number))
 	    (progn
 	      (message "No message.")
 	      (setq visible nil))
