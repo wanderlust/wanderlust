@@ -1,3 +1,12 @@
+2003-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Fix logic: set
+	entity-id when folder is given.
+	* wl-folder.el (wl-folder-set-current-entity-id): Don't use
+	save-excursion, use save-selected-window instead.
+	Select folder buffer window if exists.
+	(To correct behavior with wl-folder-move-cur-folder.)
+
 2003-01-10  Masahiro Murata  <muse@ba2.so-net.ne.jp>
 
 	* wl-draft.el (wl-draft-reedit): Avoid error on Meadow [wl:11209].
