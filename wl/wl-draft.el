@@ -1673,8 +1673,8 @@ Derived from `message-save-drafts' in T-gnus."
 (defsubst wl-draft-default-headers ()
   (list
    (cons 'Mail-Reply-To (and wl-insert-mail-reply-to
-				(wl-address-header-extract-address
-				 wl-from)))
+			     (wl-address-header-extract-address
+			      wl-from)))
    (cons "" wl-generate-mailer-string-function)
    (cons 'Reply-To mail-default-reply-to)
    (cons 'wl-draft-insert-ccs
