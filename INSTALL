@@ -29,7 +29,7 @@ Required environment
   SEMI requires APEL and FLIM packages.
   Recommended combination of APEL, FLIM and SEMI are:
 
-	APEL 10.2, FLIM 1.13.2 and SEMI 1.13.7
+	APEL 10.3, FLIM 1.14.2 and SEMI 1.14.3
 
   You can download these packages from following URLs.
 

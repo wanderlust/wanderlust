@@ -749,15 +749,16 @@ Returns response value if selecting folder succeed. "
 		"search %s") flag))
      'search)))
 
-(defun elmo-imap4-list-folder (spec)
+(defun elmo-imap4-list-folder (spec &optional nohide)
   (let* ((killed (and elmo-use-killed-list
 		      (elmo-msgdb-killed-list-load
 		       (elmo-msgdb-expand-path spec))))
 	 (max (elmo-msgdb-max-of-killed killed))
 	 numbers)
     (setq numbers (elmo-imap4-list spec
-				   (if (null (eq max 0))
-				       (format "%d:*" (1+ max))
+				   (if (or nohide
+					   (null (eq max 0)))
+				       (format "uid %d:*" (1+ max))
 				     "all")))
     (elmo-living-messages numbers killed)))
 

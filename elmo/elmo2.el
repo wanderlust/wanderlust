@@ -80,10 +80,10 @@
     (elmo-dop-max-of-folder folder)))
 
 ;;  list elmo-list-folder (folder)
-(defun elmo-list-folder (folder)
+(defun elmo-list-folder (folder &optional nohide)
   (if (elmo-folder-plugged-p folder)
-      (elmo-call-func folder "list-folder")
-    (elmo-dop-list-folder folder)))
+      (elmo-call-func folder "list-folder" nohide)
+    (elmo-dop-list-folder folder nohide)))
 
 ;;  list elmo-list-folders (folder)
 (defun elmo-list-folders (folder &optional hierarchy)

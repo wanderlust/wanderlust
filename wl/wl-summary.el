@@ -2163,7 +2163,7 @@ If ARG is non-nil, checking is omitted."
     (wl-folder-confirm-existence folder 'force)
     (message "Checking folder diff...")
     (elmo-commit folder)
-    (setq in-folder (elmo-list-folder folder))
+    (setq in-folder (elmo-list-folder folder sync-all))
     (setq in-db (unless sync-all (sort (mapcar 'car number-alist) '<)))
     (if (not elmo-use-killed-list)
 	(setq diff (if (eq (elmo-folder-get-type folder) 'multi)

@@ -287,7 +287,7 @@
   (mapcar '(lambda (msg) (elmo-localdir-delete-msg spec msg))
 	  msgs))
 
-(defun elmo-localdir-list-folder (spec); called by elmo-localdir-search()
+(defun elmo-localdir-list-folder (spec &optional nohide); called by elmo-localdir-search()
   (elmo-localdir-list-folder-subr spec))
 
 (defun elmo-localdir-max-of-folder (spec)

@@ -29,7 +29,7 @@ MIME用モジュールのインストール
   SEMI には APEL, FLIM と呼ばれるパッケージも必要です。
   推奨される APEL, FLIM, SEMI の組合せは以下の通りです。
 
-	APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
+	APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
 
   APEL, FLIM, SEMI, パッケージはそれぞれ以下の URL で入手可能です。
 
