@@ -1,5 +1,8 @@
 2002-03-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl.el (wl-check-environment): Merge examination for "@" at
+	inappropriate position into the first string-match.
+
 	* wl-summary.el (wl-summary-target-mark-print): New function.
 	(wl-summary-pipe-message-subr): Extracted from
 	`wl-summary-pipe-message'.
