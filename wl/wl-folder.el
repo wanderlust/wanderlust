@@ -2218,7 +2218,7 @@ Use `wl-subscribed-mailing-list'."
 				     (+ (nth 0 nums)(nth 1 nums)))
 				"*")
 			    (or (nth 2 nums) "*")))
-	    (put-text-property (match-beginning 2) (point) id is-group)
+	    (wl-folder-put-folder-property (match-beginning 2) (point) id is-group)
 	    (if is-group
 		;; update only colors
 		(wl-highlight-folder-group-line nums)
