@@ -46,7 +46,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    But if you don't want to leave useless data on the disk, delete under
    .elmo/multi and .elmo/archive in advance.
 
-** If you set obsolete variables (e.g. renamed ones), Wandelust shows warning
+** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
    messages and urge you to change settings.
    To suppress warning messages, set elmo-obsolete-variable-show-warnings to
    nil.
