@@ -19,27 +19,30 @@ INFODIR = NONE
 # For XEmacs package.
 PACKAGEDIR = NONE
 
+# For XEmacs or Emacs 21: directory where icon files should go.
+PIXMAPDIR = NONE
+
 
 ################# No need to modify following lines ####################
 FLAGS   = -batch -q -no-site-file
 
 elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package $(LISPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package $(LISPDIR) $(PIXMAPDIR)
 
 install-elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR) $(PIXMAPDIR)
 
 uninstall-elc:
-	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package $(LISPDIR)
+	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package $(LISPDIR) $(PIXMAPDIR)
 
 clean-elc:
 	rm -f wl/*.elc wl/auto-autoloads.el wl/custom-load.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
 
 package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas $(PACKAGEDIR)
+	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas $(PACKAGEDIR) $(PIXMAPDIR)
 
 install-package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f install-wl-package-xmas $(PACKAGEDIR)
+	$(XEMACS) $(FLAGS) -l WL-MK -f install-wl-package-xmas $(PACKAGEDIR) $(PIXMAPDIR)
 
 info:
 	$(EMACS) $(FLAGS) -l WL-MK -f wl-texinfo-format $(INFODIR)
