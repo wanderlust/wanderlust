@@ -5234,12 +5234,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (if (not wl-summary-indent-length-limit)
 		(wl-horizontal-recenter)))
 	  (wl-highlight-summary-displaying)
-	  (when wl-message-buffer-prefetch-depth
-	    (if (not (< wl-message-buffer-prefetch-depth
-			wl-message-buffer-cache-size))
-		(error (concat
-			"`wl-message-buffer-prefetch-depth' must be smaller than "
-			"`wl-message-buffer-cache-size' - 1.")))
 	    (wl-message-buffer-prefetch-next folder num
 					     wl-message-buffer-prefetch-depth
 					     (current-buffer)
