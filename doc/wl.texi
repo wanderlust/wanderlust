@@ -2455,13 +2455,12 @@ With prefix argument, @kbd{/} opens all children threads.
 Commands with the key binding that begins with @kbd{t} executes commands
 on the messages in the thread.
 
-@section reconstruct thread by hand
+@subsection reconstruct thread by hand
 
-You can reconstruct the thread manually.
-In Summary, @kbd{M-w} (@code{wl-summary-save-current-message})
-at the corresponding message, and @kbd{C-y} 
-(@code{wl-summary-yank-saved-message}) at the new parent message
-then you have the reconstructed thread.
+You can reconstruct the thread manually.  In Summary, @kbd{M-w}
+(@code{wl-summary-save-current-message}) at the corresponding message,
+and @kbd{C-y} (@code{wl-summary-yank-saved-message}) at the new parent
+message then you have the reconstructed thread.
 
 
 @node Cache, Auto Refile, Thread Operations, Summary
