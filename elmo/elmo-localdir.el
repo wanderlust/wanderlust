@@ -206,7 +206,7 @@
 	       (not (file-exists-p filename)))
       (write-region-as-binary
        (point-min) (point-max) filename nil 'no-msg)
-      (elmo-folder-preserve-falgs
+      (elmo-folder-preserve-flags
        folder (elmo-msgdb-get-message-id-from-buffer) flags)
       t)))
 

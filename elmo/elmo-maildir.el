@@ -411,7 +411,7 @@ file name for maildir directories."
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
 	    basedir))
-	  (elmo-folder-preserve-falgs
+	  (elmo-folder-preserve-flags
 	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
 	  t)
       ;; If an error occured, return nil.

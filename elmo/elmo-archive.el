@@ -617,7 +617,7 @@ TYPE specifies the archiver's symbol."
 		 (as-binary-output-file
 		  (write-region (point-min) (point-max) newfile nil 'no-msg))
 		 (elmo-archive-call-method method (list arc newfile))
-		 (elmo-folder-preserve-falgs
+		 (elmo-folder-preserve-flags
 		  folder
 		  (with-current-buffer src-buffer
 		    (elmo-msgdb-get-message-id-from-buffer))

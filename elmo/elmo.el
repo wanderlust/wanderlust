@@ -851,7 +851,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 			(elmo-folder-flag-table folder))
   (elmo-folder-set-flag-table-internal folder nil))
 
-(defun elmo-folder-preserve-falgs (folder msgid flags)
+(defun elmo-folder-preserve-flags (folder msgid flags)
   "Preserve FLAGS into FOLDER for a message that has MSGID."
   (when (and msgid flags)
     (let ((flag-table (elmo-folder-flag-table folder 'if-exists))

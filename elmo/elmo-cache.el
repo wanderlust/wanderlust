@@ -127,7 +127,7 @@
 		   (not (file-exists-p file)))
 	  (write-region-as-binary
 	   (point-min) (point-max) file nil 'no-msg)
-	  (elmo-folder-preserve-falgs folder msgid flags)
+	  (elmo-folder-preserve-flags folder msgid flags)
 	  t)))))
 
 (luna-define-method elmo-map-folder-delete-messages ((folder elmo-cache-folder)

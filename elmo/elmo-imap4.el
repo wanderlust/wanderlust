@@ -2596,7 +2596,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	(when result
-	  (elmo-folder-preserve-falgs
+	  (elmo-folder-preserve-flags
 	   folder (elmo-msgdb-get-message-id-from-buffer) flags))
 	result)
     ;; Unplugged
