@@ -1335,9 +1335,19 @@ emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
 @table @code
 @item elmo-shimbun-update-overview-folder-list
 @vindex elmo-shimbun-update-overview-folder-list
-初期設定は @code{nil}。メッセージをフェッチしたときに overview を更新
-したい新聞フォルダを、フォルダ名の正規表現からなるリストで指定します。
-サマリを更新するには、フェッチした後に @kbd{s rescan} して下さい。
+初期設定は @code{all}。メッセージをフェッチしたときに overview を更新す
+る新聞フォルダを指定します。全ての新聞フォルダで overview を更新したい場
+合には、@code{all} を設定します。フォルダ名の正規表現からなるリストを設
+定する事で、更新するフォルダを限定する事も出来ます。
+
+例:
+
+@example
+(setq elmo-shimbun-update-overview-folder-list
+      '("^@@airs\\." "^@@namazu\\."))
+@end example
+
+サマリの表示を更新するには、フェッチした後に @kbd{s rescan} が必要です。
 @end table
 
 
@@ -6254,7 +6264,7 @@ Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
 @code{<}, @code{>}, @code{=}, @code{>=}, @code{<=}
 
 @item Followup
-このキーは、@code{From}ヘッダーにマッチし、
+このキーは、@code{From}ヘッダにマッチし、
 そのメッセージへの全てのフォローアップに対してスコアをつけます。
 たとえば、自分自身の記事へのフォローアップのスコアを増やしたりするのに便利です。
 
@@ -6263,7 +6273,7 @@ Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
 
 @item Thread
 このキーは、@code{Message-ID} @var{x} で始まっている(サブ)スレッドにスコアを付ける場合に指定します。
-これは @code{References} ヘッダーに @var{x} を持つそれぞれの記事に新しい
+これは @code{References} ヘッダに @var{x} を持つそれぞれの記事に新しい
 @samp{Thread} エントリを自動的に追加します。
 これにより、全ての祖先の @code{Message-ID} を @code{References} に含んでいない場合でも、
 確実にスレッド全体のスコアを増減させることができます。
@@ -6884,10 +6894,11 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
 デフォルトでは、以下の spam フィルタリングライブラリに対応しています。
 
 @menu
-* bogofilter::                  bogofilter
-* spamfilter::                  spamfilter.el
-* bsfilter::                    bsfilter
-* SpamAssassin::                SpamAssassin
+* bogofilter::                          bogofilter
+* spamfilter::                          spamfilter.el
+* bsfilter::                            bsfilter
+* SpamAssassin::                        SpamAssassin
+* Regular Expressions Header Matching:: 正規表現によるヘッダ検査
 @end menu
 
 
@@ -7028,7 +7039,7 @@ bsfilter を起動するシェルに与える引数を指定します。
 
 @end table
 
-@node SpamAssassin,  , bsfilter, Spam Filter Processors
+@node SpamAssassin, , bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
@@ -7084,6 +7095,51 @@ SpamAssassin の学習用プログラム @command{sa-learn} 実行時に与える
 からの出力が @code{"*Debug ELMO SpamAssassin*"}というバッファに出力されます。
 
 @end table
+
+@node Regular Expressions Header Matching,  , SpamAssassin, Spam Filter Processors
+@subsection Regular Expressions Header Matching
+@cindex Regular Expressions Header Matching
+
+メッセージヘッダの各フィールドが正規表現と合致するかどうかを検査し、spam 
+かどうかを判定します。このバックエンドを使用するには、@file{~/.wl} など
+に以下の設定を記述します。
+
+@lisp
+@group
+(setq elmo-spam-scheme 'header)
+@end group
+@end lisp
+
+overview 情報に含まれないフィールドを検査の対象とする場合、
+@code{elmo-msgdb-extra-fields} に追加しておくと、出来るだけメッセージ本
+体を読み込まずに overview 情報を元に検査します。
+
+@subsubsection カスタマイズ変数
+
+@table @code
+@item elmo-spam-header-good-alist
+@vindex elmo-spam-header-good-alist
+初期設定は以下の通り。
+
+@lisp
+'(("X-Spam-Flag" . "No"))
+@end lisp
+
+ヘッダフィールド名と合致した時に non-spam と判定する為の正規表現の組をリ
+ストで指定します。@code{elmo-spam-header-spam-alist} より優先されます。
+
+@item elmo-spam-header-spam-alist
+@vindex elmo-spam-header-spam-alist
+初期設定は以下の通り。
+
+@lisp
+'(("X-Spam-Flag" . "Yes"))
+@end lisp
+
+ヘッダフィールド名と合致した時に spam と判定する為の正規表現の組をリスト
+で指定します。
+@end table
+
 
 @node Customization, Terminology, Spam Filter, Top
 @chapter Wanderlust のカスタマイズ
