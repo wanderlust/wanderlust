@@ -659,9 +659,9 @@ This chapter describes the folder types which Wanderlust is able to handle.
 Wanderlust uses ELMO as it's interface, so every folder types supported
 by ELMO is usable in Wanderlust.
 
-As of version @value{VERSION}, 10 types of folders are predefined. These are
-IMAP, NNTP, LocalDir(MH), News Spool, POP, Archive, Multi, Filter, Pipe
-and Internal folder types.
+As of version @value{VERSION}, 11 types of folders are predefined. These are
+IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP, Multi, Filter,
+Pipe and Internal folder types.
 
 @menu
 * IMAP Folder::              @samp{%} -- IMAP folder
