@@ -1,3 +1,17 @@
+2003-12-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-thread.el (wl-thread-mark-as-answered): New function.
+
+	* wl-summary.el (wl-summary-mode-menu-spec): Add "Mark as
+	answered" entry.
+	(wl-summary-mode-map): Bind wl-summary-mark-as-answered-region to
+	"r&" and wl-thread-mark-as-answered to "t&".
+	(wl-summary-mark-as-important-region): Refine to toggle mark.
+	(wl-summary-mark-as-answered-region): New function.
+	(wl-summary-mark-as-answered-internal): Changed to optional 2nd
+	and 3rd argument.
+	(wl-summary-mark-as-important-internal): Likewise.
+
 2003-12-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-template.el (wl-template-preview): New internal variable.

@@ -288,6 +288,7 @@ See also variable `wl-use-petname'."
      ["Mark as read"    wl-summary-mark-as-read t]
      ["Mark as important" wl-summary-mark-as-important t]
      ["Mark as unread"   wl-summary-mark-as-unread t]
+     ["Mark as answered" wl-summary-mark-as-answered t]
      ["Set dispose mark" wl-summary-dispose t]
      ["Set refile mark" wl-summary-refile t]
      ["Set copy mark"   wl-summary-copy t]
@@ -309,6 +310,7 @@ See also variable `wl-use-petname'."
      ["Mark as read" wl-thread-mark-as-read (eq wl-summary-buffer-view 'thread)]
      ["Mark as important"	wl-thread-mark-as-important (eq wl-summary-buffer-view 'thread)]
      ["Mark as unread"		wl-thread-mark-as-unread (eq wl-summary-buffer-view 'thread)]
+     ["Mark as answered"	wl-thread-mark-as-answered (eq wl-summary-buffer-view 'thread)]
      ["Set delete mark"  wl-thread-delete (eq wl-summary-buffer-view 'thread)]
      ["Set refile mark"  wl-thread-refile (eq wl-summary-buffer-view 'thread)]
      ["Set copy mark"    wl-thread-copy (eq wl-summary-buffer-view 'thread)]
@@ -321,6 +323,7 @@ See also variable `wl-use-petname'."
      ["Mark as read" wl-summary-mark-as-read-region t]
      ["Mark as important" wl-summary-mark-as-important-region t]
      ["Mark as unread" wl-summary-mark-as-unread-region t]
+     ["Mark as answered" wl-summary-mark-as-answered-region t]
      ["Set dispose mark" wl-summary-dispose-region t]
      ["Set refile mark" wl-summary-refile-region t]
      ["Set copy mark" wl-summary-copy-region t]
@@ -484,6 +487,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
   (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
+  (define-key wl-summary-mode-map "t&" 'wl-thread-mark-as-answered)
   (define-key wl-summary-mode-map "ty" 'wl-thread-save)
   (define-key wl-summary-mode-map "ts" 'wl-thread-set-parent)
 
@@ -526,6 +530,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
   (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)
+  (define-key wl-summary-mode-map "r&"   'wl-summary-mark-as-answered-region)
   (define-key wl-summary-mode-map "ry"   'wl-summary-save-region)
 
   ;; score commands
@@ -1552,8 +1557,10 @@ If ARG is non-nil, checking is omitted."
     (save-restriction
       (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
-      (if (eq wl-summary-buffer-view 'thread)
-	  (progn
+      (let ((inverse (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     (wl-summary-message-number)
+					     'important)))
+	(if (eq wl-summary-buffer-view 'thread)
 	    (while (not (eobp))
 	      (let* ((number (wl-summary-message-number))
 		     (entity (wl-thread-get-entity number))
@@ -1561,18 +1568,44 @@ If ARG is non-nil, checking is omitted."
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...mark line.
 		    ;; Crossposts are not processed
-		    (wl-summary-mark-as-important)
+		    (wl-summary-mark-as-important-internal inverse)
 		  ;; closed
-		  (wl-summary-mark-as-important) ; mark itself.
-		  (setq children
-			(delq number (wl-thread-get-children-msgs number)))
-		  (while children
-		    (wl-summary-mark-as-important (car children))
-		    (setq children (cdr children))))
-		(forward-line 1))))
-	(while (not (eobp))
-	  (wl-summary-mark-as-important)
-	  (forward-line 1)))))
+		  (wl-summary-mark-as-important-internal
+		   inverse
+		   (wl-thread-get-children-msgs number)))
+		(forward-line 1)))
+	  (while (not (eobp))
+	    (wl-summary-mark-as-important-internal inverse)
+	    (forward-line 1))))))
+  (wl-summary-count-unread)
+  (wl-summary-update-modeline))
+
+(defun wl-summary-mark-as-answered-region (beg end)
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (wl-summary-narrow-to-region beg end)
+      (goto-char (point-min))
+      (let ((inverse (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     (wl-summary-message-number)
+					     'answered)))
+	(if (eq wl-summary-buffer-view 'thread)
+	    (while (not (eobp))
+	      (let* ((number (wl-summary-message-number))
+		     (entity (wl-thread-get-entity number))
+		     children)
+		(if (wl-thread-entity-get-opened entity)
+		    ;; opened...mark line.
+		    ;; Crossposts are not processed
+		    (wl-summary-mark-as-answered-internal inverse)
+		  ;; closed
+		  (wl-summary-mark-as-answered-internal
+		   inverse
+		   (wl-thread-get-children-msgs number)))
+		(forward-line 1)))
+	  (while (not (eobp))
+	    (wl-summary-mark-as-answered-internal inverse)
+	    (forward-line 1))))))
   (wl-summary-count-unread)
   (wl-summary-update-modeline))
 
@@ -2981,6 +3014,7 @@ Return non-nil if the mark is updated"
 				    no-modeline-update))
 
 (defsubst wl-summary-mark-as-answered-internal (inverse
+						&optional
 						number-or-numbers
 						no-modeline-update)
   (save-excursion
@@ -3032,6 +3066,7 @@ Return non-nil if the mark is updated"
 					no-modeline-update))
 
 (defsubst wl-summary-mark-as-important-internal (inverse
+						 &optional
 						 number-or-numbers
 						 no-server-update)
   (if (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
