@@ -3770,7 +3770,7 @@ folder is moved.
 
 @item wl-summary-weekday-name-lang
 @vindex  wl-summary-weekday-name-lang
-The initial setting is @samp{ja}.  Specify language of the weekday.
+Specify language of the weekday.
 @samp{en} displays English, @samp{fr} displays French, @samp{de}
 displays Deutsch. You should rescan summary view after changing this value.
 
