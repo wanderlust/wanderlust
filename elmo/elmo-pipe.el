@@ -157,6 +157,11 @@
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
 
+(luna-define-method elmo-folder-set-message-modified
+  ((folder elmo-pipe-folder) modified)
+  (elmo-folder-set-message-modified-internal
+   (elmo-pipe-folder-dst-internal folder) modified))
+
 (luna-define-method elmo-folder-list-messages ((folder elmo-pipe-folder)
 					       &optional visible-only in-msgdb)
   ;; Use target folder's killed-list in the pipe folder.
@@ -326,10 +331,6 @@
 		      'elmo-folder-rename-internal
 		      (elmo-pipe-folder-dst-internal new-folder))
     (elmo-msgdb-rename-path folder new-folder)))
-
-(luna-define-method elmo-folder-commit ((folder elmo-pipe-folder))
-  (elmo-folder-commit
-   (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)
 					     &optional

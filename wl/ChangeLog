@@ -1,3 +1,9 @@
+2003-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-set-message-modified): Use
+	elmo-folder-set-message-modified instead of
+	elmo-folder-set-message-modified-internal.
+
 2003-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync): Call wl-summary-sync-marks

@@ -1002,7 +1002,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       "folder mode"))
 
 (defun wl-summary-set-message-modified ()
-  (elmo-folder-set-message-modified-internal
+  (elmo-folder-set-message-modified
    wl-summary-buffer-elmo-folder t)
   (setq wl-summary-buffer-message-modified t)
   (wl-summary-set-mark-modified))

@@ -1,3 +1,12 @@
+2003-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-set-message-modified): New method.
+	(elmo-generic-folder-commit): Use it.
+	(elmo-folder-synchronize): Ditto.
+
+	* elmo-pipe.el (elmo-folder-set-message-modified): Define.
+	(elmo-folder-commit): Remove duplicate definition.
+
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-list-message-entities): Ignore killed-list.

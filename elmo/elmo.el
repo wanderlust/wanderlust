@@ -156,6 +156,7 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
   (or (elmo-folder-msgdb-internal folder)
       (elmo-folder-set-msgdb-internal folder
 				      (elmo-msgdb-load folder))))
+
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
 If optional LOAD-MSGDB is non-nil, msgdb is loaded.
@@ -203,6 +204,12 @@ Return value is cons cell or list:
 
 (luna-define-generic elmo-folder-reserve-status-p (folder)
   "If non-nil, the folder should not close folder after `elmo-folder-status'.")
+
+(luna-define-generic elmo-folder-set-message-modified (folder modified)
+  "Set FOLDER as modified.")
+(luna-define-method elmo-folder-set-message-modified ((folder elmo-folder)
+						      modified)
+  (elmo-folder-set-message-modified-internal folder modified))
 
 (luna-define-generic elmo-folder-list-messages (folder &optional visible-only
 						       in-msgdb)
@@ -682,7 +689,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
       (elmo-folder-set-info-max-by-numdb
        folder
        (elmo-folder-list-messages folder nil 'in-msgdb))
-      (elmo-folder-set-message-modified-internal folder nil)
+      (elmo-folder-set-message-modified folder nil)
       (elmo-msgdb-killed-list-save
        (elmo-folder-msgdb-path folder)
        (elmo-folder-killed-list-internal folder)))
@@ -1554,7 +1561,7 @@ If update process is interrupted, return nil.")
 	      ;; process crosspost.
 	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
 	      (elmo-folder-process-crosspost folder)
-	      (elmo-folder-set-message-modified-internal folder t)
+	      (elmo-folder-set-message-modified folder t)
 	      (elmo-folder-set-mark-modified-internal folder t))
 	    ;; return value.
 	    (or crossed 0)))
