@@ -1,11 +1,3 @@
-2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-imap4.el (elmo-imap4-msgdb-create): Set
-	`elmo-imap4-fetch-callback-data' as a cons cell of `args'
-	and result of `elmo-imap4-use-flag-p'.
-	(elmo-imap4-fetch-callback-1): Set mark according to
-	the result of `elmo-imap4-use-flag-p'.
-
 2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-generic-folder-diff): Moved from elmo2.el
