@@ -1,5 +1,17 @@
 2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-msgdb.el (elmo-msgdb-mark): New inline function.
+
+	* elmo-filter.el (elmo-folder-msgdb-create): Call target-folder's
+	method if msgdb is not required.
+	(elmo-filter-folder-list-importants): Don't treat global-mark.
+
+	* elmo.el (elmo-folder-list-importants): Ditto.
+
+	* elmo-net.el (elmo-folder-list-importants): Ditto.
+
+	* elmo-map.el (elmo-folder-list-importants): Ditto.
+
 	* elmo-msgdb.el (elmo-msgdb-seen-list): Use `elmo-msgdb-unread-marks'
 
 	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Set answered mark.

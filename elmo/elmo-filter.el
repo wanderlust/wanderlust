@@ -110,29 +110,34 @@
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-filter-folder)
 					      numlist seen-list)
-  (let* ((target-folder (elmo-filter-folder-target-internal folder))
-	 (len (length numlist))
-	 (msgdb (elmo-folder-msgdb target-folder))
-	 overview number-alist mark-alist message-id entity)
-    (when (> len elmo-display-progress-threshold)
-      (elmo-progress-set 'elmo-folder-msgdb-create
-			 len "Creating msgdb..."))
-    (unwind-protect
-	(dolist (number numlist)
-	  (setq entity (elmo-msgdb-overview-get-entity number msgdb))
-	  (when entity
-	    (setq overview (elmo-msgdb-append-element overview entity)
-		  message-id (elmo-msgdb-overview-entity-get-id entity)
-		  number-alist (elmo-msgdb-number-add number-alist
-						      number
-						      message-id)
-		  mark-alist (elmo-msgdb-mark-append
-			      mark-alist
-			      number
-			      (elmo-msgdb-get-mark msgdb number))))
-	  (elmo-progress-notify 'elmo-folder-msgdb-create))
-      (elmo-progress-clear 'elmo-folder-msgdb-create))
-    (list overview number-alist mark-alist)))
+  (if (elmo-filter-folder-require-msgdb-internal folder)
+      (let* ((target-folder (elmo-filter-folder-target-internal folder))
+	     (len (length numlist))
+	     (msgdb (elmo-folder-msgdb target-folder))
+	     overview number-alist mark-alist message-id entity)
+	(when (> len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-msgdb-create
+			     len "Creating msgdb..."))
+	(unwind-protect
+	    (dolist (number numlist)
+	      (setq entity (elmo-msgdb-overview-get-entity number msgdb))
+	      (when entity
+		(setq overview (elmo-msgdb-append-element overview entity)
+		      message-id (elmo-msgdb-overview-entity-get-id entity)
+		      number-alist (elmo-msgdb-number-add number-alist
+							  number
+							  message-id)
+		      mark-alist (elmo-msgdb-mark-append
+				  mark-alist
+				  number
+				  (elmo-msgdb-get-mark msgdb number))))
+	      (elmo-progress-notify 'elmo-folder-msgdb-create))
+	  (elmo-progress-clear 'elmo-folder-msgdb-create))
+	(list overview number-alist mark-alist))
+    ;; Does not require msgdb.
+    (elmo-folder-msgdb-create
+     (elmo-filter-folder-target-internal folder)
+     numlist seen-list)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
 					       unread &optional number)
@@ -174,14 +179,10 @@
   (elmo-filter-folder-list-unreads folder))
 
 (defsubst elmo-filter-folder-list-importants (folder)
-  (elmo-uniq-list
-   (nconc
-    (elmo-list-filter
-     (elmo-folder-list-messages folder nil 'in-msgdb)
-     (elmo-folder-list-importants
-      (elmo-filter-folder-target-internal folder)))
-    (elmo-folder-list-messages-with-global-mark
-     folder elmo-msgdb-important-mark))))
+  (elmo-list-filter
+   (elmo-folder-list-messages folder nil 'in-msgdb)
+   (elmo-folder-list-importants
+    (elmo-filter-folder-target-internal folder))))
 
 (luna-define-method elmo-folder-list-importants ((folder elmo-filter-folder))
   (elmo-filter-folder-list-importants folder))
