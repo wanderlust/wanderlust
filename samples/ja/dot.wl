@@ -1,5 +1,18 @@
 ;;; dot.wl -- sample setting file for Wanderlust	-*- emacs-lisp -*-
 
+;; [[ SEMI の設定 ]]
+
+;; HTML パートを表示しない
+;; (require 'mime-setup) より先に記述する必要があります。
+(setq mime-setup-enable-inline-html nil)
+
+;; 大きいメッセージを送信時に分割しない
+(setq mime-edit-split-message nil)
+
+;; 大きいメッセージとみなす行数の設定
+;(setq mime-edit-message-default-max-lines 1000)
+
+
 ;; [[ 動作に必要な設定 ]]
 
 ;; まず、次の設定を ~/.emacs などに書いてください。
@@ -34,6 +47,14 @@
 	;; "ml@example.com" ...
 	))
 
+;; (system-name) が FQDN を返さない場合、
+;; `wl-local-domain' にホスト名を除いたドメイン名を設定してください。
+;; (system-name)  "." wl-local-domain が Message-ID に使用されます。
+;(setq wl-local-domain "example.com")
+
+;; Message-ID のドメインパートを強制的に指定
+;(setq wl-message-id-domain "hostname.example.com")
+
 
 ;;; [[ サーバの設定 ]]
 
@@ -47,14 +68,6 @@
 (setq elmo-nntp-default-server "localhost")
 ;; 投稿先のニュースサーバ
 (setq wl-nntp-posting-server elmo-nntp-default-server)
-
-;; (system-name) が FQDN を返さない場合、
-;; `wl-local-domain' にホスト名を除いたドメイン名を設定してください。
-;; (system-name)  "." wl-local-domain が Message-ID に使用されます。
-;(setq wl-local-domain "example.com")
-
-;; Message-ID のドメインパートを強制的に指定
-;(setq wl-message-id-domain "hostname.example.com")
 
 ;; IMAP サーバの認証方式の設定
 (setq elmo-imap4-default-authenticate-type 'clear) ; 生パスワード
@@ -89,13 +102,6 @@
 
 ;; ドラフトを新しいフレームで書く
 ;(setq wl-draft-use-frame t)
-
-;; HTML パートを表示しない
-;; (require 'mime-setup) より先に記述する必要があります。
-;(setq mime-setup-enable-inline-html nil)
-
-;; 大きいメッセージを送信時に分割しない
-;(setq mime-edit-split-message nil)
 
 ;; サブジェクトが変わったらスレッドを切って表示
 ;(setq wl-summary-divide-thread-when-subject-changed t)
@@ -216,7 +222,8 @@
 ;(setq wl-generate-mailer-string-function
 ;      (function
 ;       (lambda ()
-;	 (wl-generate-user-agent-string-1 nil))))
+;	 (concat "User-Agent: "
+;		 (wl-generate-user-agent-string-1 nil)))))
 
 
 ;;; [[ テンプレート ]]
@@ -289,13 +296,27 @@
 	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
 
 
+;;; [[ メッセージ表示の設定 ]]
+
+;; 隠したいヘッダの設定
+(setq wl-message-ignored-field-list
+      '(".*Received:" ".*Path:" ".*Id:" "^References:"
+	"^Replied:" "^Errors-To:"
+	"^Lines:" "^Sender:" ".*Host:" "^Xref:"
+	"^Content-Type:" "^Precedence:"
+	"^Status:" "^X-VM-.*:"))
+
+;; 表示するヘッダの設定
+;; 'wl-message-ignored-field-list' より優先される
+(setq mime-view-visible-field-list '("^Message-Id:"))
+
+
 ;; X-Face を表示する (要 x-face (and x-face-mule))
 (when (and window-system
 	   (module-installed-p 'x-face))
-  (cond (wl-on-xemacs			;; for XEmacs
+  (cond ((featurep 'xemacs)
 	 (autoload 'x-face-xmas-wl-display-x-face "x-face" nil t)
-	 (setq wl-highlight-x-face-function
-	       'x-face-xmas-wl-display-x-face))
+	 (setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
 	 ;; x-face-mule 0.20以降
@@ -305,6 +326,19 @@
 		  (x-face-decode-message-header))))
 	 (require 'x-face-mule))
 	))
+
+;; スコア機能の設定
+;; `wl-score-folder-alist' の設定に関わらず必ず "all.SCORE" は使用される。
+;(setq wl-score-folder-alist
+;      '(("^-comp\\."
+;	 "news.comp.SCORE"
+;	 "news.SCORE")
+;	("^-"
+;	 "news.SCORE")))
+
+;; スコアファイルを保存するディレクトリ
+; (setq wl-score-files-directory "~/.elmo/")
+
 
 ;; 自動リファイルのルール設定
 ;(setq wl-refile-rule-alist
@@ -320,16 +354,5 @@
 ;; ません。nil ですべてのメッセージが対象になります。
 ;(setq wl-summary-auto-refile-skip-marks nil)
 
-;; スコア機能の設定
-;; `wl-score-folder-alist' の設定に関わらず必ず "all.SCORE" は使用される。
-;(setq wl-score-folder-alist
-;      '(("^-comp\\."
-;	 "news.comp.SCORE"
-;	 "news.SCORE")
-;	("^-"
-;	 "news.SCORE")))
-
-;; スコアファイルを保存するディレクトリ
-; (setq wl-score-files-directory "~/.elmo/")
 
 ;;; dot.wl ends here
