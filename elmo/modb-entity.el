@@ -179,14 +179,13 @@ Header region is supposed to be narrowed.")
 			      (elmo-make-hash 2048))))
 	    decoded)
 	(or (elmo-get-hash-val string hashtb)
-	    (progn
-	      (elmo-set-hash-val
-	       string
-	       (setq decoded
-		     (decode-mime-charset-string string elmo-mime-charset))
-	       hashtb)
-	      decoded)))
-    (decode-mime-charset-string string elmo-mime-charset)))
+	    (prog1
+		(setq decoded
+		      (elmo-with-enable-multibyte
+			(decode-mime-charset-string string elmo-mime-charset)))
+	      (elmo-set-hash-val string decoded hashtb))))
+    (elmo-with-enable-multibyte
+      (decode-mime-charset-string string elmo-mime-charset))))
 
 (defsubst modb-legacy-make-message-entity (args)
   "Make an message entity."

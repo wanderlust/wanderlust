@@ -1425,6 +1425,7 @@ If Optional LOCAL is non-nil, don't update server flag."
 					 unread
 					 section)
   (with-temp-buffer
+    (set-buffer-multibyte nil)
     (when (elmo-message-fetch folder number strategy unread section)
       (buffer-string))))
 
