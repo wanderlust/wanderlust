@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-09 17:36:35 teranisi>
+;; Time-stamp: <2000-05-09 17:43:31 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -5003,8 +5003,8 @@ Reply to author if invoked with argument."
 	      (when (setq mes-buf (wl-message-get-original-buffer))
 		(wl-draft-reply mes-buf (not arg) summary-buf)
 		(unless without-setup-hook
-		  (run-hooks 'wl-mail-setup-hook))))
-	  t))))
+		  (run-hooks 'wl-mail-setup-hook)))
+	      t)))))
 
 (defun wl-summary-write ()
   "Write a new draft from Summary."
