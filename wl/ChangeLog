@@ -2,7 +2,7 @@
 
 	* wl-draft.el (wl-draft-create-buffer): Set `wl-draft-parent-folder'
 	as "" (zero-length string) if no parent.
-	(wl-draft-hide): Fixed logif for wl-draft-use-frame.
+	(wl-draft-hide): Fixed logic for wl-draft-use-frame.
 
 2002-08-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
