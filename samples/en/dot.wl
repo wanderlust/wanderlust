@@ -89,16 +89,16 @@
 ;; Folder Carbon Copy
 ;(setq wl-fcc "+outbox")
 
-;; Confirm at exit time.
+;; Confirm before exitting Wanderlust.
 (setq wl-interactive-exit t)
 
-;; Confirm at message sending time.
+;; Confirm before sending message.
 (setq wl-interactive-send t)
 
 ;; Create opened thread.
 ;(setq wl-thread-insert-opened t)
 
-;; folder mode and summary mode is displayed at the same time. (3pane)
+;; Keep folder window beside summary. (3 pane)
 ;(setq wl-stay-folder-window t)
 
 ;; Open new frame for draft buffer.
@@ -121,8 +121,8 @@
 ;; goto next folder when exit from summary.
 ;(setq wl-auto-select-next t)
 
-;; folder is skipped if there is no unread.
-;(setq wl-summary-next-no-unread 'skip-no-unread)
+;; skip folder if there is no unread message.
+;(setq wl-auto-select-next 'skip-no-unread)
 
 ;; jump to unread message in 'N' or 'P'.
 ;(setq wl-summary-move-order 'unread)
