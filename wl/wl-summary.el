@@ -3881,9 +3881,7 @@ If ARG, exit virtual folder."
   (interactive)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
-(defun wl-summary-mark-as-read (&optional number
-					  no-folder-mark
-					  cached)
+(defun wl-summary-mark-as-read (&optional number no-folder-mark)
   (interactive)
   (save-excursion
     (let ((buffer-read-only nil)
@@ -3903,21 +3901,20 @@ If ARG, exit virtual folder."
 		(string= mark wl-summary-new-mark))
 	(cond
 	 ((string= mark wl-summary-new-mark) ; N
-	  (setq stat 'new)
-	  (setq uncached t))
+	  (setq stat 'new))
 	 ((string= mark wl-summary-unread-uncached-mark) ; U
-	  (setq stat 'unread)
-	  (setq uncached t))
+	  (setq stat 'unread))
 	 ((string= mark wl-summary-unread-cached-mark)  ; !
 	  (setq stat 'unread))
 	 (t
 	  ;; no need to mark server.
 	  (setq no-folder-mark t))))
       (setq new-mark
-	    (if (and uncached
-		     (if (elmo-message-use-cache-p folder number)
+	    (if (and (if (elmo-message-use-cache-p folder number)
 			 (not (elmo-folder-local-p folder)))
-		     (not cached))
+		     (not (elmo-file-cache-exists-p
+			   (elmo-message-field wl-summary-buffer-elmo-folder
+					       number 'message-id))))
 		wl-summary-read-uncached-mark
 	      nil))
       ;; folder mark.
@@ -3935,13 +3932,13 @@ If ARG, exit virtual folder."
 	 (wl-summary-buffer-folder-name)
 	 (+ wl-summary-buffer-unread-count
 	    wl-summary-buffer-new-count))
-	(when (or stat cached)
-	  ;; view mark.
+	(when stat
+	  ;; set mark on buffer
 	  (when visible
 	    (unless (string= (wl-summary-persistent-mark) new-mark)
 	      (delete-backward-char 1)
 	      (insert (or new-mark " "))))
-	  ;; msgdb mark.
+	  ;; set msgdb mark.
 	  (elmo-msgdb-set-mark msgdb number new-mark)
 	  (wl-summary-set-mark-modified))
 	(if (and visible wl-summary-highlight)
@@ -5176,9 +5173,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		    wl-summary-buffer-elmo-folder))
 		  (elmo-folder-plugged-p
 		   wl-summary-buffer-elmo-folder))
-		 'leave))
-	   'cached ; cached by reading.
-	   )
+		 'leave)))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
@@ -5216,7 +5211,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-message-redisplay fld num 'as-is
 				(string= (elmo-folder-name-internal fld)
 					 wl-draft-folder))
-	  (wl-summary-mark-as-read num nil 'cached)
+	  (wl-summary-mark-as-read num)
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
@@ -5243,7 +5238,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (if (wl-message-redisplay fld num 'all-header
 				    (string= (elmo-folder-name-internal fld)
 					     wl-draft-folder))
-	      (wl-summary-mark-as-read num nil 'cached))
+	      (wl-summary-mark-as-read num))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))
