@@ -272,12 +272,17 @@ LOCATION."
 
 (luna-define-method elmo-folder-list-subfolders
   ((folder elmo-maildir-folder) &optional one-level)
-  (let ((elmo-list-subdirectories-ignore-regexp
-	 "^\\(\\.\\.?\\|cur\\|tmp\\|new\\)$"))
+  (let ((prefix (concat (elmo-folder-name-internal folder)
+			(unless (string= (elmo-folder-prefix-internal folder)
+					 (elmo-folder-name-internal folder))
+			  elmo-path-sep)))
+	(elmo-list-subdirectories-ignore-regexp
+	 "^\\(\\.\\.?\\|cur\\|tmp\\|new\\)$")
+	elmo-have-link-count)
     (append
      (list (elmo-folder-name-internal folder))
-     (mapcar
-      (lambda (x) (concat (elmo-folder-prefix-internal folder) x))
+     (elmo-mapcar-list-of-list
+      (function (lambda (x) (concat prefix x)))
       (elmo-list-subdirectories
        (elmo-maildir-folder-directory-internal folder)
        ""
