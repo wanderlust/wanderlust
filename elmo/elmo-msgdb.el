@@ -609,7 +609,7 @@ header separator."
    (expand-file-name elmo-msgdb-overview-filename dir)
    overview))
 
-(defun elmo-msgdb-match-condition-primitive (condition entity numbers)
+(defun elmo-msgdb-match-condition-primitive (condition mark entity numbers)
   (catch 'unresolved
     (let ((key (elmo-filter-key condition))
 	  (case-fold-search t)
@@ -629,6 +629,21 @@ header separator."
 				   entity)
 				  numbers)))
 			(string-to-int (elmo-filter-value condition)))))
+       ((string= key "mark")
+	(setq result
+	      (cond
+	       ((string= (elmo-filter-value condition) "any")
+		(not (or (null mark)
+			 (string= mark elmo-msgdb-read-uncached-mark))))
+;;	  (member mark (append (elmo-msgdb-answered-marks)
+;;			       (list elmo-msgdb-important-mark)
+;;			       (elmo-msgdb-unread-marks))))
+	       ((string= (elmo-filter-value condition) "unread")
+		(member mark (elmo-msgdb-unread-marks)))
+	       ((string= (elmo-filter-value condition) "important")
+		(string= mark elmo-msgdb-important-mark))
+	       ((string= (elmo-filter-value condition) "answered")
+		(member mark (elmo-msgdb-answered-marks))))))
        ((string= key "from")
 	(setq result (string-match
 		      (elmo-filter-value condition)
@@ -671,31 +686,31 @@ header separator."
 	  (not result)
 	result))))
 
-(defun elmo-msgdb-match-condition (condition entity numbers)
+(defun elmo-msgdb-match-condition-internal (condition mark entity numbers)
   (cond
    ((vectorp condition)
-    (elmo-msgdb-match-condition-primitive condition entity numbers))
+    (elmo-msgdb-match-condition-primitive condition mark entity numbers))
    ((eq (car condition) 'and)
-    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
-					   entity numbers)))
+    (let ((lhs (elmo-msgdb-match-condition-internal (nth 1 condition)
+						    mark entity numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
-					       entity numbers)))
+	(let ((rhs (elmo-msgdb-match-condition-internal
+		    (nth 2 condition) mark entity numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'and lhs rhs))
 		(rhs
 		 lhs))))
        (lhs
-	(elmo-msgdb-match-condition (nth 2 condition)
-				    entity numbers)))))
+	(elmo-msgdb-match-condition-internal (nth 2 condition)
+					     mark entity numbers)))))
    ((eq (car condition) 'or)
-    (let ((lhs (elmo-msgdb-match-condition (nth 1 condition)
-					   entity numbers)))
+    (let ((lhs (elmo-msgdb-match-condition-internal (nth 1 condition)
+						    mark entity numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition (nth 2 condition)
-					       entity numbers)))
+	(let ((rhs (elmo-msgdb-match-condition-internal (nth 2 condition)
+							mark entity numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'or lhs rhs))
 		(rhs
@@ -705,8 +720,22 @@ header separator."
        (lhs
 	t)
        (t
-	(elmo-msgdb-match-condition (nth 2 condition)
-				    entity numbers)))))))
+	(elmo-msgdb-match-condition-internal (nth 2 condition)
+					     mark entity numbers)))))))
+
+(defun elmo-msgdb-match-condition (msgdb condition number numbers)
+  "Check whether the condition of the message is satisfied or not.
+MSGDB is the msgdb to search from.
+CONDITION is the search condition.
+NUMBER is the message number to check.
+NUMBERS is the target message number list.
+Return CONDITION itself if no entity exists in msgdb."
+  (let ((entity (elmo-msgdb-overview-get-entity number msgdb)))
+    (if entity
+	(elmo-msgdb-match-condition-internal condition
+					     (elmo-msgdb-get-mark msgdb number)
+					     entity numbers)
+      condition)))
 
 (defsubst elmo-msgdb-set-overview (msgdb overview)
   (setcar msgdb overview))
