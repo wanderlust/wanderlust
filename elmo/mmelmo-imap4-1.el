@@ -169,13 +169,13 @@
 	   (process (elmo-imap4-connection-get-process connection))
 	   (read-it t)
 	   response errmsg ret-val bytes)
-      (when (elmo-imap4-spec-folder spec)
+      (when (elmo-imap4-spec-mailbox spec)
 	(save-excursion
 	  (when (not (string= (elmo-imap4-connection-get-cwf connection)
-			      (elmo-imap4-spec-folder spec)))
+			      (elmo-imap4-spec-mailbox spec)))
 	    (if (null (setq response 
 			    (elmo-imap4-select-folder 
-			     (elmo-imap4-spec-folder spec) connection)))
+			     (elmo-imap4-spec-mailbox spec) connection)))
 		(error "Select folder failed")))
 	  (elmo-imap4-send-command (process-buffer process)
 				   process

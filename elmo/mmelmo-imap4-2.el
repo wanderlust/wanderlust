@@ -163,7 +163,7 @@
   (save-excursion
     (let* ((spec (elmo-folder-get-spec fld))
 	   (connection (elmo-imap4-get-connection spec))
-	   (folder (elmo-imap4-spec-folder spec))
+	   (folder (elmo-imap4-spec-mailbox spec))
 	   response)
       (when folder
 	(save-excursion

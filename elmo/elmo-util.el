@@ -361,8 +361,8 @@ File content is encoded with MIME-CHARSET."
 (defsubst elmo-imap4-spec-ssl (spec)
   (nth 6 spec))
 
-(defsubst elmo-imap4-spec-folder (spec) ;; obsolete
-  (nth 1 spec))
+(defalias 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
+(make-obsolete 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
 
 (defsubst elmo-imap4-connection-get-process (conn)
   (nth 1 conn))

@@ -127,7 +127,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defun elmo-imap4-list-folders (spec &optional hierarchy)
   (save-excursion
-    (let* ((root (elmo-imap4-spec-folder spec))
+    (let* ((root (elmo-imap4-spec-mailbox spec))
 	   (process (elmo-imap4-get-process spec))
 	   (delim (or
 		 (cdr
@@ -181,7 +181,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
     (elmo-imap4-send-command (process-buffer process)
 			     process
 			     (format "status \"%s\" (messages)"
-				     (elmo-imap4-spec-folder spec)))
+				     (elmo-imap4-spec-mailbox spec)))
     (elmo-imap4-read-response (process-buffer process) process)))
 
 (defun elmo-imap4-folder-creatable-p (spec)
@@ -194,7 +194,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defun elmo-imap4-create-folder (spec)
   (let ((process (elmo-imap4-get-process spec))
-	(folder (elmo-imap4-spec-folder spec)))
+	(folder (elmo-imap4-spec-mailbox spec)))
     (when folder
 ;;     For UW imapd 4.6, this workaround is needed to create #mh mailbox.
 ;      (if (string-match "^\\(#mh/\\).*[^/]$" folder)
@@ -210,7 +210,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 (defun elmo-imap4-delete-folder (spec)
   (let ((process (elmo-imap4-get-process spec))
 	msgs)
-    (when (elmo-imap4-spec-folder spec)
+    (when (elmo-imap4-spec-mailbox spec)
       (when (setq msgs (elmo-imap4-list-folder spec))
 	(elmo-imap4-delete-msgs spec msgs))
       (elmo-imap4-send-command (process-buffer process) process "close")
@@ -218,26 +218,26 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-send-command (process-buffer process)
 			       process
 			       (format "delete %s"
-				       (elmo-imap4-spec-folder spec)))
+				       (elmo-imap4-spec-mailbox spec)))
       (if (null (elmo-imap4-read-response (process-buffer process)
 					  process))
-	  (error "Delete folder %s failed" (elmo-imap4-spec-folder spec))
+	  (error "Delete folder %s failed" (elmo-imap4-spec-mailbox spec))
 	t))))
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
   (let ((process (elmo-imap4-get-process old-spec)))
-    (when (elmo-imap4-spec-folder old-spec)
+    (when (elmo-imap4-spec-mailbox old-spec)
       (elmo-imap4-send-command (process-buffer process) process "close")
       (elmo-imap4-read-response (process-buffer process) process)
       (elmo-imap4-send-command (process-buffer process)
 			       process
 			       (format "rename %s %s"
-				       (elmo-imap4-spec-folder old-spec)
-				       (elmo-imap4-spec-folder new-spec)))
+				       (elmo-imap4-spec-mailbox old-spec)
+				       (elmo-imap4-spec-mailbox new-spec)))
       (if (null (elmo-imap4-read-response (process-buffer process) process))
 	  (error "Rename folder from %s to %s failed"
-		 (elmo-imap4-spec-folder old-spec)
-		 (elmo-imap4-spec-folder new-spec))
+		 (elmo-imap4-spec-mailbox old-spec)
+		 (elmo-imap4-spec-mailbox new-spec))
 	t))))
 
 (defun elmo-imap4-max-of-folder (spec)
@@ -247,7 +247,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-send-command (process-buffer process)
 			       process
 			       (format "status \"%s\" (uidnext messages)"
-				       (elmo-imap4-spec-folder spec)))
+				       (elmo-imap4-spec-mailbox spec)))
       (setq response (elmo-imap4-read-response (process-buffer process)
 					       process))
       (when (and response (string-match 
@@ -431,17 +431,17 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   (save-excursion
     (let ((connection (elmo-imap4-get-connection spec))
 	  response ret-val beg end)
-      (and (not (null (elmo-imap4-spec-folder spec)))
+      (and (not (null (elmo-imap4-spec-mailbox spec)))
 	   (if (not (string= (elmo-imap4-connection-get-cwf connection) 
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (if (null (setq response 
 			       (elmo-imap4-select-folder 
-				(elmo-imap4-spec-folder spec)
+				(elmo-imap4-spec-mailbox spec)
 				connection)))
 		   (error "Select folder failed"))
 	     (if elmo-imap4-use-select-to-update-status
 		 (elmo-imap4-select-folder 
-		  (elmo-imap4-spec-folder spec)
+		  (elmo-imap4-spec-mailbox spec)
 		  connection) 
 	       (elmo-imap4-check connection)))))))
 
@@ -478,7 +478,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-send-command (process-buffer process)
 			       process 
 			       (format "status \"%s\" (uidvalidity)" 
-				       (elmo-imap4-spec-folder spec)))
+				       (elmo-imap4-spec-mailbox spec)))
       (setq response (elmo-imap4-read-response 
 		      (process-buffer process) process))
       (if (string-match "UIDVALIDITY \\([0-9]+\\)" response)
@@ -494,7 +494,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-send-command (process-buffer process)
 			       process 
 			       (format "status \"%s\" (uidvalidity)" 
-				       (elmo-imap4-spec-folder spec)))
+				       (elmo-imap4-spec-mailbox spec)))
       (setq response (elmo-imap4-read-response 
 		      (process-buffer process) process))
       (if (string-match "UIDVALIDITY \\([0-9]+\\)" response)
@@ -510,21 +510,21 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
     (let* ((connection (elmo-imap4-get-connection spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   response ret-val beg end)
-      (and (elmo-imap4-spec-folder spec)
+      (and (elmo-imap4-spec-mailbox spec)
 	   (if (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (if (null (setq response 
 			       (elmo-imap4-select-folder 
-				(elmo-imap4-spec-folder spec)
+				(elmo-imap4-spec-mailbox spec)
 				connection)))
 		   (error "Select folder failed"))
 	     ;; for status update.
 	     (if elmo-imap4-use-select-to-update-status
-		 (elmo-imap4-select-folder (elmo-imap4-spec-folder spec) 
+		 (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec) 
 					   connection)
 	       (unless (elmo-imap4-check connection)
 		 ;; Check failed...not selected??
-		 (elmo-imap4-select-folder (elmo-imap4-spec-folder spec) 
+		 (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec) 
 					   connection)))))
       (elmo-imap4-send-command (process-buffer process)
 			       process
@@ -600,11 +600,11 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
     (let* ((connection (elmo-imap4-get-connection spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   response ret-val len word)
-      (if (and (elmo-imap4-spec-folder spec)
+      (if (and (elmo-imap4-spec-mailbox spec)
 	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-folder spec) connection)))
+		      (elmo-imap4-spec-mailbox spec) connection)))
 	  (error "Select folder failed"))
       (while condition
 	(setq response (elmo-imap4-search-internal process
@@ -630,7 +630,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   
 (defun elmo-imap4-use-flag-p (spec)
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
-		     (elmo-imap4-spec-folder spec))))
+		     (elmo-imap4-spec-mailbox spec))))
 
 (defsubst elmo-imap4-make-address (name mbox host)
   (cond (name
@@ -905,11 +905,11 @@ If optional argument UNMARK is non-nil, unmark."
 	   (process (elmo-imap4-connection-get-process connection))
 	   (msg-list (copy-sequence msgs))
 	   set-list ent)
-      (if (and (elmo-imap4-spec-folder spec)
+      (if (and (elmo-imap4-spec-mailbox spec)
 	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-folder spec) connection)))
+		      (elmo-imap4-spec-mailbox spec) connection)))
 	  (error "Select folder failed"))
       (setq set-list (elmo-imap4-make-number-set-list msg-list))
       (when set-list
@@ -988,13 +988,13 @@ If optional argument UNMARK is non-nil, unmark."
 			numlist
 			elmo-imap4-overview-fetch-chop-length))
 	(message "Getting overview...")
-	(if (and (elmo-imap4-spec-folder spec)
+	(if (and (elmo-imap4-spec-mailbox spec)
 		 (not (string= (elmo-imap4-connection-get-cwf connection)
-			       (elmo-imap4-spec-folder spec)))
+			       (elmo-imap4-spec-mailbox spec)))
 		 (null (elmo-imap4-select-folder 
-			(elmo-imap4-spec-folder spec) connection)))
+			(elmo-imap4-spec-mailbox spec) connection)))
 	    (error "Select imap folder %s failed" 
-		   (elmo-imap4-spec-folder spec)))
+		   (elmo-imap4-spec-mailbox spec)))
 	(while set-list
 	  (elmo-imap4-send-command 
 	   (process-buffer process)
@@ -1019,7 +1019,7 @@ If optional argument UNMARK is non-nil, unmark."
 		       ret-val
 		       (elmo-imap4-create-msgdb-from-overview-string 
 			ov-str
-			(elmo-imap4-spec-folder spec)
+			(elmo-imap4-spec-mailbox spec)
 			new-mark already-mark seen-mark important-mark
 			seen-list filter)))))
 	  (setq count (+ count (car (car set-list))))
@@ -1038,7 +1038,7 @@ If optional argument UNMARK is non-nil, unmark."
 		     ret-val
 		     (elmo-imap4-create-msgdb-from-overview-string 
 		      ov-str 
-		      (elmo-imap4-spec-folder spec)
+		      (elmo-imap4-spec-mailbox spec)
 		      new-mark already-mark seen-mark important-mark
 		      seen-list filter)))))
 	(message "Getting overview...done.")
@@ -1287,12 +1287,12 @@ Return nil if connection failed."
 	   (connection (elmo-imap4-get-connection spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   response ret-val bytes)
-      (when (elmo-imap4-spec-folder spec)
+      (when (elmo-imap4-spec-mailbox spec)
 	(when (not (string= (elmo-imap4-connection-get-cwf connection)
-			    (elmo-imap4-spec-folder spec)))
+			    (elmo-imap4-spec-mailbox spec)))
 	  (if (null (setq response 
 			  (elmo-imap4-select-folder 
-			   (elmo-imap4-spec-folder spec) connection)))
+			   (elmo-imap4-spec-mailbox spec) connection)))
 	      (error "Select folder failed")))
 	(elmo-imap4-send-command (process-buffer process)
 				 process
@@ -1335,12 +1335,12 @@ Return nil if connection failed."
 	   (process (elmo-imap4-connection-get-process connection))
 	   response ret-val bytes)
       (as-binary-process
-       (when (elmo-imap4-spec-folder spec)
+       (when (elmo-imap4-spec-mailbox spec)
 	 (when (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	   (if (null (setq response 
 			   (elmo-imap4-select-folder 
-			    (elmo-imap4-spec-folder spec) 
+			    (elmo-imap4-spec-mailbox spec) 
 			    connection)))
 	       (error "Select folder failed")))
 	 (elmo-imap4-send-command (process-buffer process)
@@ -1418,11 +1418,11 @@ Return nil if connection failed."
 	   (process (elmo-imap4-connection-get-process connection))
 	   ;;(size (length string))
 	   response msgs)
-      (if (and (elmo-imap4-spec-folder spec)
+      (if (and (elmo-imap4-spec-mailbox spec)
 	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-folder spec) 
+		      (elmo-imap4-spec-mailbox spec) 
 		      connection)))
 	  (error "Select folder failed"))
       (save-excursion
@@ -1446,11 +1446,11 @@ Return nil if connection failed."
     (let* ((connection (elmo-imap4-get-connection spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   send-buf)
-      (if (and (elmo-imap4-spec-folder spec)
+      (if (and (elmo-imap4-spec-mailbox spec)
 	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
+			     (elmo-imap4-spec-mailbox spec)))
 	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-folder spec) connection)))
+		      (elmo-imap4-spec-mailbox spec) connection)))
 	  (error "Select folder failed"))
       (save-excursion
 	(setq send-buf (elmo-imap4-setup-send-buffer-from-file 
@@ -1459,7 +1459,7 @@ Return nil if connection failed."
 	(elmo-imap4-send-command (process-buffer process)
 				 process
 				 (format "append %s (\\Seen) {%d}"
-					 (elmo-imap4-spec-folder spec)
+					 (elmo-imap4-spec-mailbox spec)
 					 (buffer-size)))
 	(process-send-string process (buffer-string))
 	(process-send-string process "\r\n") ; finished appending.
@@ -1475,10 +1475,10 @@ Return nil if connection failed."
     (let* ((connection (elmo-imap4-get-connection spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   send-buf)
-      (if (and (elmo-imap4-spec-folder spec)
+      (if (and (elmo-imap4-spec-mailbox spec)
 	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-folder spec)))
-	       (null (elmo-imap4-select-folder (elmo-imap4-spec-folder spec)
+			     (elmo-imap4-spec-mailbox spec)))
+	       (null (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec)
 					       connection)))
 	  (error "Select folder failed"))
       (save-excursion
@@ -1487,7 +1487,7 @@ Return nil if connection failed."
 	(elmo-imap4-send-command (process-buffer process)
 				 process
 				 (format "append %s %s{%d}"
-					 (elmo-imap4-spec-folder spec)
+					 (elmo-imap4-spec-mailbox spec)
 					 (if no-see "" "(\\Seen) ")
 					 (buffer-size)))
 	(if (null (elmo-imap4-read-response (process-buffer process)
@@ -1506,8 +1506,8 @@ Return nil if connection failed."
 (defun elmo-imap4-copy-msgs (dst-spec msgs src-spec &optional expunge-it same-number)
   "Equivalence of hostname, username is assumed."
   (save-excursion
-    (let* ((src-folder (elmo-imap4-spec-folder src-spec))
-	   (dst-folder (elmo-imap4-spec-folder dst-spec))
+    (let* ((src-folder (elmo-imap4-spec-mailbox src-spec))
+	   (dst-folder (elmo-imap4-spec-mailbox dst-spec))
 	   (connection (elmo-imap4-get-connection src-spec))
 	   (process (elmo-imap4-connection-get-process connection))
 	   (mlist msgs))
@@ -1545,13 +1545,13 @@ Return nil if connection failed."
 	   response)
       ;; commit when same folder.
       (if (string= (elmo-imap4-connection-get-cwf connection)
-		   (elmo-imap4-spec-folder spec))
+		   (elmo-imap4-spec-mailbox spec))
 	  (elmo-imap4-commit spec))
       (elmo-imap4-send-command (process-buffer process)
 			       process
 			       (format
 				"status \"%s\" (unseen messages)"
-				(elmo-imap4-spec-folder spec)))
+				(elmo-imap4-spec-mailbox spec)))
       (setq response (elmo-imap4-read-response 
 		      (process-buffer process) process))
       (when (string-match "\\* STATUS [^(]* \\(([^)]*)\\)" response)
