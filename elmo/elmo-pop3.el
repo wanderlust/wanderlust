@@ -43,8 +43,6 @@
 (defvar elmo-pop3-exists-exactly t)
 (defvar sasl-mechanism-alist)
 
-(defvar elmo-pop3-total-size nil)
-
 (luna-define-class elmo-pop3-session (elmo-network-session))
 
 ;; buffer-local
@@ -140,9 +138,7 @@
     (set-buffer (process-buffer process))
     (goto-char (point-max))
     (insert output)
-    (if elmo-pop3-total-size
-	(message "Retrieving...(%d/%d bytes)." 
-		 (buffer-size) elmo-pop3-total-size))))
+    (message "Retrieving...(%d bytes)." (buffer-size))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))
@@ -702,34 +698,18 @@
 			   (elmo-msgdb-expand-path spec)))))
 	 (process (elmo-network-session-process-internal
 		   (elmo-pop3-get-session spec)))
-	 size response errmsg msg)
+	 response errmsg msg)
     (with-current-buffer (process-buffer process)
       (if loc-alist
 	  (setq number (elmo-pop3-uidl-to-number
 			(cdr (assq number loc-alist)))))
-      (setq size (string-to-number
-		  (elmo-pop3-number-to-size number)))
       (when number
 	(elmo-pop3-send-command process
 				(format "retr %s" number))
-	(setq elmo-pop3-total-size size)
-	(unless elmo-inhibit-display-retrieval-progress
-	  (setq elmo-pop3-total-size size)
-	  (elmo-display-progress
-	   'elmo-pop3-display-retrieval-progress
-	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)
-	   0))
-	(unwind-protect
-	    (progn
-	      (when (null (setq response (elmo-pop3-read-response
-					  process t)))
-		(error "Fetching message failed"))
-	      (setq response (elmo-pop3-read-body process outbuf)))
-	  (setq elmo-pop3-total-size nil))
-	(unless elmo-inhibit-display-retrieval-progress
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress "" 100)  ; remove progress bar.
-	  (message "Retrieving...done."))
+	(when (null (setq response (elmo-pop3-read-response
+				    process t)))
+	  (error "Fetching message failed"))
+	(setq response (elmo-pop3-read-body process outbuf))
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)
