@@ -1,17 +1,3 @@
-2001-03-11  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-draft.el (wl-draft-do-fcc): Fix for `wl-draft-use-cache'
-
-2001-03-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
-	Fixed `match-beginning' argument mismatch.
-
-2001-03-05  Katsumi Yamaoka    <yamaoka@jpl.org>
-
-	* wl-demo.el (wl-demo): Reset `tab-width' and `tab-stop-list' to
-	the default value.
-
 2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-folder.el (wl-make-plugged-alist): Use `wl-nntp-posting-port'
