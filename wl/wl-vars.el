@@ -42,12 +42,12 @@
 (defgroup wl nil
   "Wanderlust, a news and mail reading software."
   :tag "Wanderlust"
-  :link '(custom-manual
-	  (if (and (boundp 'current-language-environment)
-		   (string-equal "Japanese"
-				 (symbol-value 'current-language-environment)))
-	      "(wl-ja)Top"
-	    "(wl)Top"))
+  :link (` (custom-manual
+	    (, (if (and (boundp 'current-language-environment)
+			(string-equal "Japanese"
+				      (symbol-value 'current-language-environment)))
+		   "(wl-ja)Top"
+		 "(wl)Top"))))
   :group 'news
   :group 'mail)
 
