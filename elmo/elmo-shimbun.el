@@ -66,6 +66,14 @@
     (+ (* (- (car now) (car time)) 65536)
        (- (nth 1 now) (nth 1 time)))))
 
+(defun elmo-shimbun-parse-time-string (string)
+  "Parse the time-string STRING and return its time as Emacs style."
+  (ignore-errors
+    (let ((x (timezone-fix-time string nil nil)))
+      (encode-time (aref x 5) (aref x 4) (aref x 3)
+		   (aref x 2) (aref x 1) (aref x 0)
+		   (aref x 6)))))
+
 (defsubst elmo-shimbun-headers-check-p (folder)
   (or (null (elmo-shimbun-folder-last-check-internal folder))
       (and (elmo-shimbun-folder-last-check-internal folder)
@@ -73,10 +81,15 @@
 	       (elmo-shimbun-folder-last-check-internal folder))
 	      elmo-shimbun-check-interval))))
 
-(defun elmo-shimbun-msgdb-to-headers (folder)
+(defun elmo-shimbun-msgdb-to-headers (folder expire-days)
   (let (headers)
     (dolist (ov (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
-      (when (elmo-msgdb-overview-entity-get-extra-field ov "xref")
+      (when (and (elmo-msgdb-overview-entity-get-extra-field ov "xref")
+		 (> (elmo-shimbun-lapse-seconds
+		     (elmo-shimbun-parse-time-string
+		      (elmo-msgdb-overview-entity-get-date ov)))
+		    (* expire-days 86400 ; seconds per day
+		       )))
 	(setq headers
 	      (cons (shimbun-make-header
 		     (elmo-msgdb-overview-entity-get-number ov)
@@ -115,7 +128,9 @@
 		  (elmo-shimbun-folder-shimbun-internal folder)))))
     (elmo-shimbun-folder-set-headers-internal
      folder
-     (nconc (elmo-shimbun-msgdb-to-headers folder)
+     (nconc (elmo-shimbun-msgdb-to-headers
+	     folder (shimbun-article-expiration-days
+		     (elmo-shimbun-folder-shimbun-internal folder)))
 	    headers))
     (setq hash
 	  (elmo-shimbun-folder-set-header-hash-internal
