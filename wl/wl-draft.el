@@ -74,6 +74,7 @@
 (defvar wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
 (defvar wl-draft-parent-folder nil)
+(defvar wl-draft-doing-mime-bcc nil)
 
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
@@ -1296,14 +1297,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(recipients (wl-parse-addresses field-body))
 	(draft-buffer (current-buffer))
 	buffer)
-    (when (not (zerop (length field-body)))
+    (when (and (not wl-draft-doing-mime-bcc) ; To avoid infinite loop.
+	       (not (zerop (length field-body))))
       (with-current-buffer (setq buffer (generate-new-buffer 
 					 " *temporary buffer for mime bcc*"))
 	(insert-buffer draft-buffer))
       (unwind-protect
 	  (dolist (recipient recipients)
 	    (with-temp-buffer
-	      (let (mail-citation-hook 
+	      (let ((wl-draft-doing-mime-bcc t)
+		    mail-citation-hook 
 		    mail-yank-hooks
 		    wl-draft-add-references
 		    wl-draft-add-in-reply-to

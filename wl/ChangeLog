@@ -1,7 +1,10 @@
-2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
+2002-05-20  Yuuichi Teranishi  <teranisi@ns.templewest.net>
 
 	* wl-draft.el (wl-draft-do-mime-bcc): Use generate-new-buffer and
 	insert-buffer instead of clone-buffer.
+	(wl-draft-doing-mime-bcc): New variable.
+	(wl-draft-do-mime-bcc): Bind wl-draft-doing-mime-bcc to avoid
+	infinite loop.
 
 	* wl-vars.el (wl-draft-mime-bcc-field-name): New user option.
 	(wl-draft-mime-bcc-body): Ditto.
