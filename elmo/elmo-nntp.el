@@ -862,7 +862,8 @@ Don't cache if nil.")
       (if (null (elmo-nntp-read-response session t))
 	  (progn
 	    (with-current-buffer outbuf (erase-buffer))
-	    (error "Fetching message failed"))
+	    (message "Fetching message failed")
+	    nil)
 	(prog1 (elmo-nntp-read-body session outbuf)
 	  (with-current-buffer outbuf
 	    (goto-char (point-min))

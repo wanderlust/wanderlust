@@ -1,5 +1,9 @@
 2000-10-15  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-nntp.el (elmo-nntp-read-msg): Don't error.
+
+2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-nntp.el (elmo-network-initialize-session):
 	Add starttls negotiation.
 
