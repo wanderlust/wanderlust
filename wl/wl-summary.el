@@ -1359,56 +1359,56 @@ If ARG is non-nil, checking is omitted."
 				(null wl-prefetch-threshold)
 				(< size wl-prefetch-threshold))))
 	   mark new-mark)
-      (unwind-protect
-	  (progn
-	    (when (and (or arg (not file-cached))
-		       size (not force-read) wl-prefetch-confirm)
-	      (setq force-read
-		    (save-restriction
-		      (widen)
-		      (y-or-n-p
-		       (format
-			"Message from %s has %d bytes.  Prefetch it? "
-			(concat
-			 "[ "
-			 (save-match-data
-			   (wl-set-string-width
-			    17
-			    (funcall
-			     wl-summary-from-function
-			     (elmo-delete-char
-			      ?\"
-			      (or
-			       (elmo-message-entity-field
-				(elmo-message-entity
-				 wl-summary-buffer-elmo-folder
-				 number)
-				'from t)
-			       "??")))))
-			 " ]")
-			size))))
-	      (message ""))		; flush.
-	    (if force-read
-		(save-excursion
-		  (save-match-data
-		    ;; online
-		    (if (or arg (not file-cached))
-			(elmo-message-encache
-			 wl-summary-buffer-elmo-folder
-			 number))
-		    (elmo-message-set-cached wl-summary-buffer-elmo-folder
-					     number t)
-		    (when (and (wl-summary-jump-to-msg number)
-			       (wl-summary-update-persistent-mark))
-		      (sit-for 0)
-		      (wl-summary-count-unread)
-		      (wl-summary-update-modeline)
-		      (wl-folder-update-unread
-		       (wl-summary-buffer-folder-name)
-		       (+ wl-summary-buffer-unread-count
-			  wl-summary-buffer-new-count))))
-		  t)
-	      nil))))))
+      (ignore-errors
+	(when (and (or arg (not file-cached))
+		   size (not force-read) wl-prefetch-confirm)
+	  (let ((wl-message-entity (elmo-message-entity
+				    wl-summary-buffer-elmo-folder
+				    number)))
+	    (setq force-read
+		  (save-restriction
+		    (widen)
+		    (y-or-n-p
+		     (format
+		      "Message from %s has %d bytes.  Prefetch it? "
+		      (concat
+		       "[ "
+		       (save-match-data
+			 (wl-set-string-width
+			  17
+			  (funcall
+			   wl-summary-from-function
+			   (elmo-delete-char
+			    ?\"
+			    (or
+			     (elmo-message-entity-field
+			      wl-message-entity
+			      'from t)
+			     "??")))))
+		       " ]")
+		      size))))
+	    (message "")))		; flush.
+	(if force-read
+	    (save-excursion
+	      (save-match-data
+		;; online
+		(if (or arg (not file-cached))
+		    (elmo-message-encache
+		     wl-summary-buffer-elmo-folder
+		     number))
+		(elmo-message-set-cached wl-summary-buffer-elmo-folder
+					 number t)
+		(when (and (wl-summary-jump-to-msg number)
+			   (wl-summary-update-persistent-mark))
+		  (sit-for 0)
+		  (wl-summary-count-unread)
+		  (wl-summary-update-modeline)
+		  (wl-folder-update-unread
+		   (wl-summary-buffer-folder-name)
+		   (+ wl-summary-buffer-unread-count
+		      wl-summary-buffer-new-count))))
+	      t)
+	  nil)))))
 
 (defsubst wl-summary-narrow-to-region (beg end)
   (narrow-to-region
