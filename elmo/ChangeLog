@@ -1,5 +1,8 @@
 2000-10-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-util.el (elmo-make-directory): Fixed permission lateral
+	representation.
+
 	* elmo-util.el (elmo-string-matched-member): New function.
 
 2000-10-26  Yuuichi Teranishi  <teranisi@gohome.org>

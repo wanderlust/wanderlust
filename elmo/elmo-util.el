@@ -1050,8 +1050,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(elmo-make-directory parent))
     (make-directory path)
     (if (string= path (expand-file-name elmo-msgdb-dir))
-	(set-file-modes path 448) ; 700
-      )))
+	(set-file-modes path (+ (* 64 7) (* 8 0) 0))))) ; chmod 0700
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
   "Delete directory recursively."
