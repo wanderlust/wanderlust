@@ -1,3 +1,8 @@
+2000-10-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el (texinfo-format-printindex): Mule for Windows
+	detection fixed.
+
 2000-10-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Makefile (mostlyclean-dvi, clean-dvi): New target.

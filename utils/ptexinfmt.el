@@ -48,8 +48,9 @@
 (broken-facility texinfo-format-printindex
   "Can't sort on Mule for Windows."
   (if (and (memq system-type '(windows-nt ms-dos))
+;;; I don't know version threshold. 
 ;;;	   (string< texinfmt-version "2.37 of 24 May 1997")
-	   (not (featurep 'meadow)))
+	   (boundp 'MULE) (not (featurep 'meadow)))
       nil
     t)
   ptexinfmt-disable-broken-notice)
