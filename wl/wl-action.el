@@ -541,29 +541,18 @@ Return number if put mark succeed"
 ;; Prefetch.
 (defun wl-summary-exec-action-prefetch (mark-list)
   (save-excursion
-    (let* ((buffer-read-only nil)
-	   (count 0)
+    (let* ((count 0)
 	   (length (length mark-list))
 	   (mark-list-copy (copy-sequence mark-list))
 	   (pos (point))
-	   (failures 0)
-	   new-mark)
+	   (failures 0))
       (dolist (mark-info mark-list-copy)
 	(message "Prefetching...(%d/%d)"
 		 (setq count (+ 1 count)) length)
-	(setq new-mark (wl-summary-prefetch-msg (car mark-info)))
-	(if new-mark
+	(if (wl-summary-prefetch-msg (car mark-info))
 	    (progn
 	      (wl-summary-unset-mark (car mark-info))
-	      (when (wl-summary-jump-to-msg (car mark-info))
-		(wl-summary-persistent-mark) ; move
-		(delete-backward-char 1)
-		(insert new-mark)
-		(when wl-summary-highlight
-		  (wl-highlight-summary-current-line))
-		(save-excursion
-		  (goto-char pos)
-		  (sit-for 0))))
+	      (sit-for 0))
 	  (incf failures)))
       (message "Prefetching...done")
       0)))
@@ -571,7 +560,7 @@ Return number if put mark succeed"
 ;; Resend.
 (defun wl-summary-get-resend-address (action number)
   "Decide resend address."
-  (wl-complete-field-to "Resend message to: "))
+  (completing-read "Resend message to: " 'wl-complete-address))
 
 (defun wl-summary-exec-action-resend (mark-list)
   (let ((failure 0))

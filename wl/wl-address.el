@@ -274,12 +274,18 @@ Matched address lists are append to CL."
       (setq entries (cdr entries)))
     (append result cl)))
 
-(defun wl-complete-field-to (prompt)
-  (interactive)
-  (let ((cl wl-address-completion-list))
-    (if cl
-	(completing-read (or prompt "To: ") cl)
-      (read-string (or prompt "To: ")))))
+(defun wl-complete-address (string predicate flag)
+  "Completion function for completing-read (comma separated addresses)."
+  (if (string-match "^\\(.*,\\)\\(.*\\)$" string)
+      (let* ((str1 (match-string 1 string))
+	     (str2 (match-string 2 string))
+	     (str2-comp (wl-complete-address str2 predicate flag)))
+	(if (and (not flag) (stringp str2-comp))
+	    (concat str1 str2-comp)
+	  str2-comp))
+    (if (not flag)
+	(try-completion string wl-address-list)
+      (all-completions string wl-address-list))))
 
 (defalias 'wl-address-quote-specials 'elmo-address-quote-specials)
 

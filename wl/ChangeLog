@@ -1,3 +1,27 @@
+2003-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Update persistent mark.
+	(wl-summary-prefetch-region-no-mark): Change accordingly.
+	* wl-action.el (wl-summary-exec-action-prefetch): Ditto.
+
+2003-07-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-address.el (wl-complete-field-to): Abolished.
+	(wl-complete-address): Completion function for completing-read.
+	* wl-action.el (wl-summary-get-resend-address): Use it.
+
+	* wl-summary.el (wl-summary-update-persistent-mark): Renamed from
+	wl-summary-update-mark and abolish unused argument.
+	(wl-summary-prefetch-region-no-mark, wl-summary-mark-as-read-all)
+	(wl-summary-delete-cache, wl-summary-resume-cache-status)
+	(wl-summary-update-status-marks, wl-summary-mark-as-read-internal)
+	(wl-summary-mark-as-important, wl-summary-redisplay-internal)
+	(wl-summary-mark-as-answered-internal, wl-summary-reply): Use it.
+	* wl-draft.el (wl-draft-kill): Ditto.
+
+	* wl-summary.el: Remove unused binding of case-fold-search.
+	(wl-summary-replace-status-marks): Abolished.
+
 2003-07-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-action.el (wl-summary-set-mark): Cause an error when no message

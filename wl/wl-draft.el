@@ -772,8 +772,8 @@ Reply to author if WITH-ARG is non-nil."
 				folder-name)))
 		(with-current-buffer buffer
 		  (elmo-folder-unmark-answered folder (list number))
-		  (wl-summary-jump-to-msg number)
-		  (wl-summary-update-mark number))
+		  (when (wl-summary-jump-to-msg number)
+		    (wl-summary-update-persistent-mark)))
 	      (elmo-folder-open folder 'load-msgdb)
 	      (elmo-folder-unmark-answered folder (list number))
 	      (elmo-folder-close folder))))
