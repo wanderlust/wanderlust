@@ -1,3 +1,21 @@
+2004-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Revival of
+	wl-summary-mark-as-important related bindings;
+	Bind 'F','tF','mF','rF','m&'.
+	(wl-summary-mark-as-important-region): Revival.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+	(wl-summary-target-mark-operation): New function.
+	(wl-summary-target-mark-mark-as-answered): Use it.
+	(wl-summary-decide-flag): Don't set Important as default.
+	(wl-summary-mark-as-important-internal): Revival.
+	(wl-summary-mark-as-important): Ditto.
+
+	* wl-thread.el (wl-thread-mark-as-important): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-line-face-spec): Use find-face
+	instead of facep.
+
 2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-dnd.el (wl-dnd-drop-func): Fix.

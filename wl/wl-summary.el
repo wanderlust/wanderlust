@@ -414,7 +414,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "E"    'wl-summary-reedit)
   (define-key wl-summary-mode-map "\eE"  'wl-summary-resend-bounced-mail)
   (define-key wl-summary-mode-map "f"    'wl-summary-forward)
-  (define-key wl-summary-mode-map "$"    'wl-summary-set-flags)
+  (define-key wl-summary-mode-map "$"    'wl-summary-mark-as-important)
+  (define-key wl-summary-mode-map "F"    'wl-summary-set-flags)
   (define-key wl-summary-mode-map "&"    'wl-summary-mark-as-answered)
   (define-key wl-summary-mode-map "@"    'wl-summary-edit-addresses)
 
@@ -493,7 +494,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "t~" 'wl-thread-resend)
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
-  (define-key wl-summary-mode-map "t$" 'wl-thread-set-flags)
+  (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
+  (define-key wl-summary-mode-map "tF" 'wl-thread-set-flags)
   (define-key wl-summary-mode-map "t&" 'wl-thread-mark-as-answered)
   (define-key wl-summary-mode-map "ty" 'wl-thread-save)
   (define-key wl-summary-mode-map "ts" 'wl-thread-set-parent)
@@ -513,7 +515,9 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "my"   'wl-summary-target-mark-save)
   (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "m!"   'wl-summary-target-mark-mark-as-unread)
-  (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-set-flags)
+  (define-key wl-summary-mode-map "m&"   'wl-summary-target-mark-mark-as-answered)
+  (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-mark-as-important)
+  (define-key wl-summary-mode-map "mF"   'wl-summary-target-mark-set-flags)
   (define-key wl-summary-mode-map "mU"   'wl-summary-target-mark-uudecode)
   (define-key wl-summary-mode-map "ma"   'wl-summary-target-mark-all)
   (define-key wl-summary-mode-map "mt"   'wl-summary-target-mark-thread)
@@ -538,7 +542,8 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "r~"   'wl-summary-resend-region)
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
-  (define-key wl-summary-mode-map "r$"   'wl-summary-set-flags-region)
+  (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)
+  (define-key wl-summary-mode-map "rF"   'wl-summary-set-flags-region)
   (define-key wl-summary-mode-map "r&"   'wl-summary-mark-as-answered-region)
   (define-key wl-summary-mode-map "ry"   'wl-summary-save-region)
 
@@ -1622,6 +1627,35 @@ If ARG is non-nil, checking is omitted."
 		(forward-line 1)))
 	  (while (not (eobp))
 	    (wl-summary-mark-as-answered-internal inverse)
+	    (forward-line 1))))))
+  (wl-summary-count-unread)
+  (wl-summary-update-modeline))
+
+(defun wl-summary-mark-as-important-region (beg end)
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (wl-summary-narrow-to-region beg end)
+      (goto-char (point-min))
+      (let ((inverse (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					     (wl-summary-message-number)
+					     'important)))
+	(if (eq wl-summary-buffer-view 'thread)
+	    (while (not (eobp))
+	      (let* ((number (wl-summary-message-number))
+		     (entity (wl-thread-get-entity number))
+		     children)
+		(if (wl-thread-entity-get-opened entity)
+		    ;; opened...mark line.
+		    ;; Crossposts are not processed
+		    (wl-summary-mark-as-important-internal inverse)
+		  ;; closed
+		  (wl-summary-mark-as-important-internal
+		   inverse
+		   (wl-thread-get-children-msgs number)))
+		(forward-line 1)))
+	  (while (not (eobp))
+	    (wl-summary-mark-as-important-internal inverse)
 	    (forward-line 1))))))
   (wl-summary-count-unread)
   (wl-summary-update-modeline))
@@ -2909,6 +2943,27 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
       (dolist (number wl-summary-buffer-target-mark-list)
 	(wl-summary-unset-mark number)))))
 
+(defun wl-summary-target-mark-operation (flag)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  wl-summary-buffer-disp-msg)
+      (funcall
+       (intern (format "wl-summary-mark-as-%s-internal" flag))
+       nil
+       wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
+
+(defun wl-summary-target-mark-mark-as-important ()
+  (interactive)
+  (wl-summary-target-mark-operation 'important))
+
+(defun wl-summary-target-mark-mark-as-answered ()
+  (interactive)
+  (wl-summary-target-mark-operation 'answered))
+
 (defun wl-summary-target-mark-set-flags ()
   (interactive)
   (save-excursion
@@ -3096,7 +3151,7 @@ Return non-nil if the mark is updated"
 			  elmo-global-flag-list)
 		  nil nil (mapconcat (lambda (flag)
 				       (capitalize (symbol-name flag)))
-				     (or flags '(important))
+				     flags
 				     ",")))))
     (dolist (flag new-flags)
       (unless (memq flag elmo-global-flag-list)
@@ -3199,6 +3254,24 @@ Return non-nil if the mark is updated"
   (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
       (error "Cannot process flags in this folder"))
   (wl-summary-set-flags-internal nil nil nil remove))
+
+(defun wl-summary-mark-as-important-internal (inverse
+					      &optional number-or-numbers)
+  (if inverse
+      (wl-summary-remove-flags-internal number-or-numbers '(important))
+    (wl-summary-add-flags-internal number-or-numbers '(important))))
+
+(defun wl-summary-mark-as-important (&optional prompt)
+  (interactive "P")
+  (if (eq 'flag (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
+      (error "Cannot process flags in this folder"))
+  (if prompt
+      (wl-summary-set-flags-internal)
+    (wl-summary-mark-as-important-internal
+     (and (interactive-p)
+	  (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				  (wl-summary-message-number)
+				  'important)))))
 
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)

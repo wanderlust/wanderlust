@@ -839,7 +839,7 @@
 				  (intern (format
 					   "wl-highlight-summary-%s-flag-face"
 					   (car (car fl)))))
-			    (when (facep face)
+			    (when (find-face face)
 			      (list face)))
 			  fl nil))
 		  (setq fl (cdr fl)))
@@ -849,7 +849,7 @@
 				   (intern (format
 					    "wl-highlight-summary-%s-face"
 					    (car priorities))))
-			     (when (facep face)
+			     (when (find-face face)
 			       (list face))))))
 	    (setq priorities (cdr priorities)))
 	  result))
