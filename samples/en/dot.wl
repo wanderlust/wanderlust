@@ -2,14 +2,14 @@
 
 ;; [[ SEMI Setting ]]
 
-;; Disable inline display HTML part.
+;; Disable inline display of HTML part.
 ;; Put before (require 'mime-setup)
 (setq mime-setup-enable-inline-html nil)
 
 ;; Don't split large message.
 (setq mime-edit-split-message nil)
 
-;; If lines of message is larger than this value, message is `large'.
+;; If lines of message are larger than this value, treat it as `large'.
 ;(setq mime-edit-message-default-max-lines 1000)
 
 
@@ -104,7 +104,7 @@
 ;; Open new frame for draft buffer.
 ;(setq wl-draft-use-frame t)
 
-;; Thread divide when change subject.
+;; Divide thread by change of subject.
 ;(setq wl-summary-divide-thread-when-subject-changed t)
 
 ;; Thread view
