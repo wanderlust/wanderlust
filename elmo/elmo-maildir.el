@@ -44,7 +44,9 @@
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
 		     (elmo-map-folder)
-		     (directory unread-locations flagged-locations))
+		     (directory unread-locations
+				flagged-locations
+				answered-locations))
   (luna-define-internal-accessors 'elmo-maildir-folder))
 
 (luna-define-method elmo-folder-initialize ((folder
@@ -89,38 +91,45 @@ LOCATION."
   (let* ((cur-dir (expand-file-name (or child-dir "cur") dir))
 	 (cur (directory-files cur-dir
 			       nil "^[^.].*$" t))
-	 unread-locations flagged-locations seen flagged sym
-	 locations)
+	 unread-locations flagged-locations answered-locations
+	 seen flagged answered sym locations)
     (setq locations
 	  (mapcar
 	   (lambda (x)
 	     (if (string-match "^\\([^:]+\\):\\([^:]+\\)$" x)
 		 (progn
-		   (setq seen nil)
+		   (setq seen nil answered nil flagged nil)
 		   (save-match-data
 		     (cond
-		      ((string-match "S" (elmo-match-string 2 x))
-		       (setq seen t))
 		      ((string-match "F" (elmo-match-string 2 x))
-		       (setq flagged t))))
+		       (setq flagged t))
+		      ((string-match "R" (elmo-match-string 2 x))
+		       (setq answered t))
+		      ((string-match "S" (elmo-match-string 2 x))
+		       (setq seen t))))
 		   (setq sym (elmo-match-string 1 x))
-		   (unless seen (setq unread-locations
-				      (cons sym unread-locations)))
-		   (if flagged (setq flagged-locations
-				     (cons sym flagged-locations)))
+		   (cond
+		    (flagged (setq flagged-locations
+				   (cons sym flagged-locations)))
+		    (answered (setq answered-locations
+				    (cons sym answered-locations)))
+		    (seen)
+		    (t
+		     (setq unread-locations (cons sym unread-locations))))
 		   sym)
 	       x))
 	   cur))
-    (list locations unread-locations flagged-locations)))
+    (list locations unread-locations flagged-locations answered-locations)))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-maildir-folder))
   (elmo-maildir-update-current folder)
   (let ((locs (elmo-maildir-list-location
 	       (elmo-maildir-folder-directory-internal folder))))
-    ;; 0: locations, 1: unread-locations, 2: flagged-locations
+    ;; 0: locations, 1: unread-locs, 2: flagged-locs 3: answered-locs
     (elmo-maildir-folder-set-unread-locations-internal folder (nth 1 locs))
     (elmo-maildir-folder-set-flagged-locations-internal folder (nth 2 locs))
+    (elmo-maildir-folder-set-answered-locations-internal folder (nth 3 locs))
     (nth 0 locs)))
 
 (luna-define-method elmo-map-folder-list-unreads
@@ -131,40 +140,106 @@ LOCATION."
   ((folder elmo-maildir-folder))
   (elmo-maildir-folder-flagged-locations-internal folder))
 
+(luna-define-method elmo-map-folder-list-answereds
+  ((folder elmo-maildir-folder))
+  (elmo-maildir-folder-answered-locations-internal folder))
+
 (luna-define-method elmo-folder-msgdb-create 
   ((folder elmo-maildir-folder) numbers flag-table)
   (let* ((unread-list (elmo-maildir-folder-unread-locations-internal folder))
 	 (flagged-list (elmo-maildir-folder-flagged-locations-internal folder))
+	 (answered-list (elmo-maildir-folder-answered-locations-internal
+			 folder))
 	 (len (length numbers))
 	 (i 0)
-	 overview number-alist mark-alist entity
-	 location pair mark)
+	 overview number-alist mark-alist entity message-id flag
+	 file location pair mark cache-status file-flag)
     (message "Creating msgdb...")
-    (dolist
-	(number numbers)
+    (dolist (number numbers)
       (setq location (elmo-map-message-location folder number))
       (setq entity
 	    (elmo-msgdb-create-overview-entity-from-file
 	     number
-	     (elmo-maildir-message-file-name folder location)))
+	     (setq file
+		   (elmo-maildir-message-file-name folder location))))
       (when entity
 	(setq overview
-	      (elmo-msgdb-append-element overview entity))
-	(setq number-alist
+	      (elmo-msgdb-append-element overview entity)
+	      number-alist
 	      (elmo-msgdb-number-add number-alist
-				     (elmo-msgdb-overview-entity-get-number
-				      entity)
-				     (elmo-msgdb-overview-entity-get-id
-				      entity)))
-	(cond 
-	 ((member location unread-list)
-	  (setq mark elmo-msgdb-new-mark)) ; unread!
+				     (elmo-message-entity-number entity)
+				     (setq message-id
+					   (elmo-message-entity-field
+					    entity 'message-id)))
+	      ;; Precede flag-table to file-info.
+	      flag (elmo-flag-table-get flag-table message-id)
+	      file-flag nil
+	      mark nil)
+	(setq cache-status
+	      (elmo-file-cache-status (elmo-file-cache-get message-id)))
+	
+	;; Already flagged on filename (precede it to flag-table).
+	(cond
 	 ((member location flagged-list)
-	  (setq mark elmo-msgdb-important-mark)))
-	(if (setq mark (or (elmo-msgdb-global-mark-get
-			    (elmo-msgdb-overview-entity-get-id
-			     entity))
-			   mark))
+	  (setq file-flag 'important
+		mark elmo-msgdb-important-mark))
+	 ((member location answered-list)
+	  (setq file-flag 'answered
+		mark (elmo-msgdb-mark 'answered cache-status)))
+	 ((member location unread-list)
+	  (setq file-flag 'unread
+		mark (elmo-msgdb-mark 'unread cache-status)))
+	 (t (setq file-flag 'read)))
+
+	;; Set mark according to flag-table if file status is unread or read.
+	(when (or (eq file-flag 'read)
+		  (eq file-flag 'unread))
+	  ;; 
+	  (unless (eq 'read flag)
+	    (setq mark (elmo-msgdb-mark flag cache-status 'new)))
+	  ;; Update filename's info portion according to the flag-table.
+	  (cond
+	   ((and (or (eq flag 'important)
+		     (setq mark (elmo-msgdb-global-mark-get
+				 (elmo-message-entity-field
+				  entity 'message-id))))
+		 (not (eq file-flag 'important)))
+	    (elmo-maildir-set-mark file ?F)
+	    ;; Delete from unread location list.
+	    (elmo-maildir-folder-set-unread-locations-internal
+	     folder
+	     (delete location
+		     (elmo-maildir-folder-unread-locations-internal
+		      folder)))
+	    ;; Append to flagged location list.
+	    (elmo-maildir-folder-set-flagged-locations-internal
+	     folder
+	     (cons location
+		   (elmo-maildir-folder-flagged-locations-internal
+		    folder))))
+	   ((and (eq flag 'answered)
+		 (not (eq file-flag 'answered)))
+	    (elmo-maildir-set-mark file ?R)
+	    ;; Delete from unread locations.
+	    (elmo-maildir-folder-set-unread-locations-internal
+	     folder
+	     (delete location
+		     (elmo-maildir-folder-unread-locations-internal folder)))
+	    ;; Append to answered location list.
+	    (elmo-maildir-folder-set-answered-locations-internal
+	     folder
+	     (cons location
+		   (elmo-maildir-folder-answered-locations-internal folder))))
+	   ((and (eq flag 'read)
+		 (not (eq file-flag 'read)))
+	    (elmo-maildir-set-mark file ?S)
+	    ;; Delete from unread locations.
+	    (elmo-maildir-folder-set-unread-locations-internal
+	     folder
+	     (delete location
+		     (elmo-maildir-folder-unread-locations-internal
+		      folder))))))
+	(if mark
 	    (setq mark-alist
 		  (elmo-msgdb-mark-append
 		   mark-alist
@@ -409,10 +484,18 @@ file name for maildir directories."
    src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-maildir-folder-directory-internal folder))
+	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
-	    filename)
+	    filename mark flag id)
 	(dolist (number numbers)
-	  (setq filename (elmo-maildir-temporal-filename dir))
+	  (setq mark (elmo-message-mark src-folder (car numbers))
+		flag (cond
+		      ((null mark) 'read)
+		      ((member mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ((not (member mark (elmo-msgdb-unread-marks)))
+		       'read))
+		filename (elmo-maildir-temporal-filename dir))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)
@@ -421,7 +504,13 @@ file name for maildir directories."
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
 	    dir))
+	  ;; src folder's msgdb is loaded.
+	  (when (setq id (elmo-message-field src-folder (car numbers)
+					     'message-id))
+	    (elmo-flag-table-set table id flag))
 	  (elmo-progress-notify 'elmo-folder-move-messages))
+	(when (elmo-folder-persistent-p folder)
+	  (elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
 	succeeds)
     (luna-call-next-method)))
 

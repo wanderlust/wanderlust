@@ -1,3 +1,13 @@
+2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (luna-define-class): Added slot `answered-locations'.
+	(elmo-map-folder-list-message-locations): Setup `answered-locations'
+	slot.
+	(elmo-map-folder-list-answereds): Define.
+	(elmo-maildir-list-location): Treat 'R' info.
+	(elmo-folder-msgdb-create): Treat flag-table.
+	(elmo-folder-append-messages): Save flag-table.
+
 2002-05-05  David Smith <ultrasoul@ultrasoul.com>
 
 	* elmo-imap4.el (elmo-imap4-folder-diff-plugged): 
