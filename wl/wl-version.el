@@ -42,7 +42,7 @@
 ;; set version-string
 (if (fboundp 'product-version-as-string)
     (product-version-as-string 'wl-version)
-  (product-string-1 'wl-version))	; APEL 10.2 or earlier
+  (product-string-1 'wl-version))	; APEL 10.2 or earlier.
 
 ;; require wl-util after product-provide.
 (eval-when-compile (require 'wl-util))	; wl-match-string
@@ -99,10 +99,11 @@ Insert User-Agent field instead of X-Mailer field."
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
-If VERBOSE return with SEMI, FLIM and APEL version"
+If VERBOSE return with SEMI, FLIM and APEL version."
   (cond
-   ;; Don't use product-string-verbose for short User-Agent field value.
+   ;; non-verbose
    ((not verbose)
+    ;; Don't use product-string-verbose for short User-Agent field value.
     (concat (product-string-1 'wl-version t) " "
 	    (wl-extended-emacs-version3 "/" t)))
    ;; SEMI
@@ -156,7 +157,7 @@ If WITH-CODENAME add XEmacs codename."
 
 (defun wl-extended-emacs-version2 (&optional delimiter with-codename)
   "Stringified Emacs version.
-Separate DELIMITER (default it \" \").  If WITH-CODENAME add XEmacs codename."
+Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
    ((and (boundp 'mule-version)
 	 mule-version
