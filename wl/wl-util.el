@@ -817,4 +817,38 @@ that `read' can handle, whenever this is possible."
 (defun wl-load-profile ()
   (funcall wl-load-profile-func))
 
+;;;
+
+(defmacro wl-count-lines ()
+  (` (save-excursion
+       (beginning-of-line)
+       (count-lines 1 (point)))))
+
+(defun wl-horizontal-recenter ()
+  "Recenter the current buffer horizontally."
+  (beginning-of-line)
+  (re-search-forward "[[<]" (point-at-eol) t)
+  (if (< (current-column) (/ (window-width) 2))
+      (set-window-hscroll (get-buffer-window (current-buffer) t) 0)
+    (let* ((orig (point))
+	   (end (window-end (get-buffer-window (current-buffer) t)))
+	   (max 0))
+      (when end
+	;; Find the longest line currently displayed in the window.
+	(goto-char (window-start))
+	(while (and (not (eobp))
+		    (< (point) end))
+	  (end-of-line)
+	  (setq max (max max (current-column)))
+	  (forward-line 1))
+	(goto-char orig)
+	;; Scroll horizontally to center (sort of) the point.
+	(if (> max (window-width))
+	    (set-window-hscroll
+	     (get-buffer-window (current-buffer) t)
+	     (min (- (current-column) (/ (window-width) 3))
+		  (+ 2 (- max (window-width)))))
+	  (set-window-hscroll (get-buffer-window (current-buffer) t) 0))
+	max))))
+
 ;;; wl-util.el ends here
