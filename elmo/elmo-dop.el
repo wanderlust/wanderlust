@@ -144,10 +144,29 @@ even an operation concerns the unplugged folder."
 	  (message "")))
       count)))
 
-(defvar elmo-dop-merge-funcs nil)
 (defun elmo-dop-queue-merge ()
-  ;; XXXX Not implemented yet.
-  )
+  (let ((queue elmo-dop-queue)
+	new-queue match-queue que)
+    (while (setq que (car queue))
+      (if (and
+	   (assq (elmo-dop-queue-method que)
+		 elmo-dop-queue-method-name-alist)
+	   (setq match-queue
+		 (car (delete nil
+			      (mapcar '(lambda (nqueue)
+					 (if (and
+					      (string= (elmo-dop-queue-fname que)
+						       (elmo-dop-queue-fname nqueue))
+					      (string= (elmo-dop-queue-method que)
+						       (elmo-dop-queue-method nqueue)))
+					     nqueue))
+				      new-queue)))))
+	    (setcar (elmo-dop-queue-arguments match-queue)
+		    (append (car (elmo-dop-queue-arguments match-queue))
+			    (car (elmo-dop-queue-arguments que))))
+	(setq new-queue (nconc new-queue (list que))))
+      (setq queue (cdr queue)) )
+    (setq elmo-dop-queue new-queue)))
 
 ;;; dop spool folder
 (defmacro elmo-dop-spool-folder (folder)
