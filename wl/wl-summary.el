@@ -1288,12 +1288,8 @@ q	Goto folder mode."
 	   the-email
 	   (elmo-get-hash-val the-email wl-address-petname-hash)
 	   (wl-address-header-extract-realname
-	    (cdr (assoc
-		  (let ((completion-ignore-case t) comp)
-		    (setq comp
-			  (try-completion the-email wl-address-completion-list))
-		    (if (equal comp t) the-email comp))
-		  wl-address-completion-list))) t)
+	    (cdr (assoc (downcase the-email)
+			wl-address-completion-list))) t)
 	  "edited")
 	 ((eq char ?d)
 	  ;; Delete Addresses
@@ -4337,9 +4333,6 @@ If ARG, exit virtual folder."
 		  (unless no-server-update
 		    (elmo-unmark-important folder (list number) msgdb)
 		    (elmo-msgdb-global-mark-delete message-id))
-		  ;; Remove cache if local it is folder.
-		  (if (elmo-folder-local-p folder)
-		      (elmo-cache-delete message-id folder number))
 		  (when visible
 		    (delete-region (match-beginning 2) (match-end 2))
 		    (insert " "))
