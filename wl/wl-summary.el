@@ -61,7 +61,8 @@
   (defun-maybe elmo-database-msgid-put (a b c))
   (defun-maybe elmo-database-close ())
   (defun-maybe elmo-database-msgid-get (a))
-  (defun-maybe run-with-idle-timer (secs repeat function &rest args)))
+  (defun-maybe run-with-idle-timer (secs repeat function &rest args))
+  (defun-maybe ps-print-preprint (a)))
 
 (defvar wl-summary-buffer-name "Summary")
 (defvar wl-summary-mode-map nil)

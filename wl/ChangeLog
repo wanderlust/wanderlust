@@ -1,3 +1,7 @@
+2000-07-07  Kenichi OKADA	<okada@opaopa.org>
+
+	* wl-summary.el (TopLevel): Define-maybe `ps-print-preprint'.
+
 2000-07-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync): Call `elmo-clear-killed' when
