@@ -1,3 +1,11 @@
+2001-05-09  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule-subr):
+	New function.
+	(wl-folder-guess-mailing-list-by-folder-name-subr): New function.
+	(wl-folder-guess-mailing-list-by-refile-rule): Fix for multi folder.
+	(wl-folder-guess-mailing-list-by-folder-name): Ditto.
+
 2001-05-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-mime-setup): Added setting for
