@@ -940,26 +940,32 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (string< (or (car list-info-x) "")
 	       (or (car list-info-y) "")))))
 
-(defun wl-summary-sort-by-date ()
-  (interactive)
-  (wl-summary-rescan "date"))
-(defun wl-summary-sort-by-number ()
-  (interactive)
-  (wl-summary-rescan "number"))
-(defun wl-summary-sort-by-subject ()
-  (interactive)
-  (wl-summary-rescan "subject"))
-(defun wl-summary-sort-by-from ()
-  (interactive)
-  (wl-summary-rescan "from"))
-(defun wl-summary-sort-by-list-info ()
-  (interactive)
-  (wl-summary-rescan "list-info"))
-(defun wl-summary-sort-by-size ()
-  (interactive)
-  (wl-summary-rescan "size"))
+(defun wl-summary-sort-by-date (reverse)
+  "Sort summary lines into the order by message date; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "date" reverse))
+(defun wl-summary-sort-by-number (reverse)
+  "Sort summary lines into the order by message number; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "number" reverse))
+(defun wl-summary-sort-by-subject (reverse)
+  "Sort summary lines into the order by subject; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "subject" reverse))
+(defun wl-summary-sort-by-from (reverse)
+  "Sort summary lines into the order by from; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "from" reverse))
+(defun wl-summary-sort-by-list-info (reverse)
+  "Sort summary lines into the order by mailing list info; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "list-info" reverse))
+(defun wl-summary-sort-by-size (reverse)
+  "Sort summary lines into the order by message size; argument means descending order."
+  (interactive "P")
+  (wl-summary-rescan "size" reverse))
 
-(defun wl-summary-rescan (&optional sort-by disable-killed disable-thread)
+(defun wl-summary-rescan (&optional sort-by reverse disable-killed disable-thread)
   "Rescan current folder without updating."
   (interactive)
   (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
@@ -977,13 +983,14 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(predicate (and sort-by
 			(intern (format "wl-summary-overview-entity-compare-by-%s"
 					sort-by))))
+	(sort-label (if reverse "Reverse sorting" "Sorting"))
 	(i 0)
 	num
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
     (when sort-by
-      (message "Sorting by %s..." sort-by)
+      (message "%s by %s..." sort-label sort-by)
       (setq numbers
 	    (sort numbers
 		  (lambda (x y)
@@ -991,7 +998,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		     predicate
 		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
 		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
-      (message "Sorting by %s...done" sort-by))
+      (if reverse (setq numbers (nreverse numbers)))
+      (message "%s by %s...done" sort-label sort-by))
     (setq num (length numbers))
     (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
 	  wl-thread-entity-list nil
@@ -1248,6 +1256,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 				     nil
 				   wl-use-scoring)))
 	     (wl-summary-rescan nil
+				nil
 				(string-match "noscore" range)
 				(string-match "thread" range))
 	     (and msg (wl-summary-jump-to-msg msg))))
@@ -1765,15 +1774,19 @@ This function is defined for `window-scroll-functions'"
       (apply 'wl-summary-insert-thread args)
     (apply 'wl-summary-insert-sequential args)))
 
-(defun wl-summary-sort ()
-  (interactive)
+(defun wl-summary-sort (reverse)
+  "Sort summary lines into the selected order; argument means descending order."
+  (interactive "P")
   (wl-summary-rescan
    (completing-read
-    (format "Sort by (%s): " (symbol-name wl-summary-default-sort-spec))
+    (format "%s by (%s): "
+	    (if reverse "Reverse sort" "Sort")
+	    (symbol-name wl-summary-default-sort-spec))
     (mapcar (lambda (spec)
 	      (list (symbol-name spec)))
 	    wl-summary-sort-specs)
-    nil t nil nil (symbol-name wl-summary-default-sort-spec))))
+    nil t nil nil (symbol-name wl-summary-default-sort-spec))
+   reverse))
 
 (defun wl-summary-get-available-flags (&optional include-specials)
   (if include-specials
@@ -2084,7 +2097,7 @@ If ARG, without confirm."
       (setq wl-summary-buffer-view 'thread))
     (wl-summary-update-modeline)
     (force-mode-line-update)
-    (wl-summary-rescan nil nil t)))
+    (wl-summary-rescan nil nil nil t)))
 
 (defun wl-summary-load-file-object (filename)
   "Load lisp object from dir."
@@ -4705,7 +4718,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
   (interactive "P")
   (elmo-folder-pack-numbers wl-summary-buffer-elmo-folder)
   (let (wl-use-scoring)
-    (wl-summary-rescan nil nil t)))
+    (wl-summary-rescan nil nil nil t)))
 
 (defun wl-summary-target-mark-uudecode ()
   (interactive)
