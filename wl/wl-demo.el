@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-06-15 20:04:29 yamaoka>
+;; Time-stamp: <2000-06-19 18:40:58 yamaoka>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -247,8 +247,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
       (setq rest (- wh (count-lines (point-min) (point)) 1))
       (let ((lw (current-column))
 	    (lh (count-lines (point-min) (point))))
-	(while (not (bobp))
-	  (end-of-line 0)
+	(while (progn (beginning-of-line) (not (bobp)))
+	  (backward-char)
 	  (setq lw (max lw (current-column))))
 	(indent-rigidly (point) (point-max) (max 0 (/ (- ww lw) 2)))))
     (insert-char ?\n (max 0 (/ (- rest 4) 2)))
