@@ -321,6 +321,7 @@ Please install latest APEL 7.3 or later.
 Wanderlust $BK\BN$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
 
 $B0l<!G[I[85(B:
+
 @example
 ftp://ftp.gohome.org/wl/
 @end example
@@ -762,9 +763,11 @@ Multi, Filter, Pipe, Internal $B$N(B 10 $B<oN`$G$9!#(B
 
 RFC 2060 $B$G5,Dj$5$l$?(B IMAP4rev1 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: @samp{%} @var{$B%a!<%k%\%C%/%9L>(B} [@samp{:} @var{$B%f!<%6L>(B} [@samp{/} @var{$BG'>ZK!(B}]][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}][@samp{!}]
+@samp{%} @var{$B%a!<%k%\%C%/%9L>(B} [@samp{:} @var{$B%f!<%6L>(B} [@samp{/} @var{$BG'>ZK!(B}]][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}][@samp{!}]
 @end group
 @end example
 
@@ -813,16 +816,18 @@ SSL$B%3%M%/%7%g%s$rD%$j$^$9!#(B
 $B$K@ZBX$($^$9!#JQ?t(B @code{elmo-imap4-force-login} $B$,(B non-nil $B$J$i$P!"(B
 $B3NG'L5$7$K(B "login" $B$K@ZBX$($^$9(B($B=i4|@_Dj$O(B nil)$B!#(B
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: %inbox     -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox"
-    %#mh/inbox -> IMAP $B$N%a!<%k%\%C%/%9!"(B"#mh/inbox"
+%inbox     -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox"
+%#mh/inbox -> IMAP $B$N%a!<%k%\%C%/%9!"(B"#mh/inbox"
 
-    %inbox:hoge -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox" $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
-    %inbox:hoge/login@@server1
-                -> server1 $B>e$N(B IMAP $B$N%a!<%k%\%C%/%9(B "inbox" $B$X(B
-                   $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B("login"$B$G(B)
-                   $B%"%/%;%9!#(B
+%inbox:hoge -> IMAP $B$N%a!<%k%\%C%/%9!"(B"inbox" $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
+%inbox:hoge/login@@server1
+            -> server1 $B>e$N(B IMAP $B$N%a!<%k%\%C%/%9(B "inbox" $B$X(B
+               $B%f!<%6(B "hoge" $B$G!"@8%Q%9%o!<%I$rAw$C$F(B("login"$B$G(B)
+               $B%"%/%;%9!#(B
 @end group
 @end example
 
@@ -880,9 +885,11 @@ ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
 $B%M%C%H%K%e!<%9$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 $B0l$D$N%K%e!<%9%0%k!<%W$,0l$D$N%U%)%k%@$H$7$F07$o$l$^$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: @samp{-} @var{$B%K%e!<%9%0%k!<%WL>(B} [[@samp{:} @var{$B%f!<%6L>(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
+@samp{-} @var{$B%K%e!<%9%0%k!<%WL>(B} [[@samp{:} @var{$B%f!<%6L>(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
 @end group
 @end example
 
@@ -905,10 +912,12 @@ default $BCM(B:
 $BDL$C$F$$$kI,MW$,$"$j$^$9!#(BSTARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls$B%Q%C(B
 $B%1!<%8$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B)
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: -fj.rec.tv            -> $B%K%e!<%9%0%k!<%W!"(Bfj.rec.tv$B!#(B
-    -fj.rec.tv@@newsserver -> newsserver $B>e$N%K%e!<%9%0%k!<%W!"(Bfj.rec.tv$B!#(B
+-fj.rec.tv            -> $B%K%e!<%9%0%k!<%W!"(Bfj.rec.tv$B!#(B
+-fj.rec.tv@@newsserver -> newsserver $B>e$N%K%e!<%9%0%k!<%W!"(Bfj.rec.tv$B!#(B
 @end group
 @end example
 
@@ -922,8 +931,10 @@ default $BCM(B:
 
 MH $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
-$B=q<0(B: @samp{+} @var{$B%G%#%l%/%H%jL>(B}
+@samp{+} @var{$B%G%#%l%/%H%jL>(B}
 @end example
 
 @var{$B%G%#%l%/%H%jL>(B}$B$O!"DL>o!"JQ?t(B @code{elmo-localdir-folder-path}
@@ -933,13 +944,16 @@ MH $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)
 
 $B%a%C%;!<%8$,J]B8$5$l$k%U%!%$%k$N%U%!%$%kL>$K$O!"%a%C%;!<%8HV9f$,;HMQ$5$l$^$9!#(B
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: +inbox         -> "~/Mail/inbox"
-    +from/teranisi -> "~/Mail/from/teranisi"
-    +~/test        -> "~/test"
++inbox         -> "~/Mail/inbox"
++from/teranisi -> "~/Mail/from/teranisi"
++~/test        -> "~/test"
 @end group
 @end example
+
 
 @node Maildir Folder, News Spool Folder, MH Folder, Folders
 @section Maildir $B%U%)%k%@(B
@@ -949,8 +963,10 @@ MH $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)
 
 Maildir $B7A<0(B(1$B%U%!%$%k(B1$B%a!<%k(B)$B$GJ]B8$5$l$?%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
-$B=q<0(B: @samp{.} @var{$B%G%#%l%/%H%jL>(B}
+@samp{.} @var{$B%G%#%l%/%H%jL>(B}
 @end example
 
 @var{$B%G%#%l%/%H%jL>(B}$B$O!"DL>o!"JQ?t(B @code{elmo-maildir-folder-path} ($B=i4|@_Dj$O(B 
@@ -966,14 +982,17 @@ Maildir $B$O!"(B@file{cur}, @file{new}, @file{tmp} $B$N%G%#%l%/%H%j$r4^$s$G$$
 $B$3$NF0:n$O(B @uref{http://cr.yp.to/proto/maildir.html} $B$K=>$C$F$$$^$9!#(B@*
 ($BF|K\8lLu$O(B @uref{http://www.jp.qmail.org/q103/jman5/maildir.html})
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: .              -> "~/Maildir"
-    .inbox         -> "~/Maildir/inbox"
-    .from/teranisi -> "~/Maildir/from/teranisi"
-    .~/test        -> "~/test"
+.              -> "~/Maildir"
+.inbox         -> "~/Maildir/inbox"
+.from/teranisi -> "~/Maildir/from/teranisi"
+.~/test        -> "~/test"
 @end group
 @end example
+
 
 @node News Spool Folder, Archive Folder, Maildir Folder, Folders
 @section News Spool $B%U%)%k%@(B
@@ -985,8 +1004,10 @@ Mew/IM $B$,Ds>'$9$k!"%m!<%+%k$KJ]B8$5$l$?%K%e!<%95-;v$rFI$_=q$-$9$k$?$a$N(B
 $B%U%)%k%@$G$9!#(BNNTP $B7PM3$G$O$J$/!"(Bgnspool $B$J$I$r;H$C$F<h$j4s$;$F$$$k$h$&(B
 $B$J>l9g$K$=$N%9%W!<%k$rD>@\FI$`!"$H$$$&;H$$J}$bA[Dj$7$F$$$^$9!#(B
 
+$B=q<0(B:
+
 @example
-$B=q<0(B: @samp{=} @var{$B%G%#%l%/%H%jL>(B}
+@samp{=} @var{$B%G%#%l%/%H%jL>(B}
 @end example
 
 @var{$B%G%#%l%/%H%jL>(B}$B$O!"JQ?t(B @code{elmo-localnews-folder-path}
@@ -994,10 +1015,12 @@ Mew/IM $B$,Ds>'$9$k!"%m!<%+%k$KJ]B8$5$l$?%K%e!<%95-;v$rFI$_=q$-$9$k$?$a$N(B
 $B$G;XDj$5$l$?%G%#%l%/%H%j$N%5%V%G%#%l%/%H%j$r;X$7$^$9!#(B
 $B%G%#%l%/%H%j$N6h@Z$j$O(B @samp{.} $B$G$b2D$G$9!#(B
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: =fj/os/os2         -> "~/News/fj/os/os2"
-    =fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
+=fj/os/os2         -> "~/News/fj/os/os2"
+=fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
 @end group
 @end example
 
@@ -1011,9 +1034,11 @@ Mew/IM $B$,Ds>'$9$k!"%m!<%+%k$KJ]B8$5$l$?%K%e!<%95-;v$rFI$_=q$-$9$k$?$a$N(B
 Info-ZIP $B$d(B LHA $B$J$I$G05=L$5$l$?%"!<%+%$%V%U%!%$%k$r0l$D$N%U%)%k%@$H$7(B
 $B$F07$$$^$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: @samp{$} @var{$B%G%#%l%/%H%jL>(B} [@samp{;} @var{$B%"!<%+%$%P%?%$%W(B} @samp{;} @var{$B%W%l%U%#%/%9(B}]
+@samp{$} @var{$B%G%#%l%/%H%jL>(B} [@samp{;} @var{$B%"!<%+%$%P%?%$%W(B} @samp{;} @var{$B%W%l%U%#%/%9(B}]
 @end group
 @end example
 
@@ -1040,12 +1065,14 @@ uuencode $B$K$h$k%@%$%8%'%9%HG[Aw$rDs6!$7$F$$$k(B ML $B$N=q8K%U%!%$%k$rE83+$9
 $BNc$($P(B ML $B%5!<%P$,(B fml $B$N>l9g!"(B@file{msend.tar.gz} $B$O(B @file{spool/1} $B$N(B
 $B$h$&$J9=B$$J$N$G!"(B@samp{spool} $B$r;XDj$7$^$9!#(B
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
-    $bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
-    $/foo@@server:~/bar;zoo     -> server $B>e$N(B "~/bar/elmo-archive.zoo"
-    $d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
+$teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
+$bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
+$/foo@@server:~/bar;zoo     -> server $B>e$N(B "~/bar/elmo-archive.zoo"
+$d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
 @end group
 @end example
 
@@ -1238,9 +1265,11 @@ OS/2 $B$G$O%7%'%k$r2p$5$:$KH/9T$G$-$k%3%^%s%IJ8;zNs$O(B 8190 $B%P%$%H$^$G$J$N
 
 RFC 1939 $B$G5,Dj$5$l$?(B POP3 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: @samp{&} [@var{$B%f!<%6L>(B}][[@samp{/} @var{$BG'>ZK!(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
+@samp{&} [@var{$B%f!<%6L>(B}][[@samp{/} @var{$BG'>ZK!(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
 @end group
 @end example
 
@@ -1248,6 +1277,7 @@ RFC 1939 $B$G5,Dj$5$l$?(B POP3 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(
 @samp{apop} (APOP $B$GG'>Z(B) $B$N(B 2 $B<oN`$,$"$j$^$9!#(B
 
 default $BCM(B:
+
 @example
 $B%f!<%6L>(B   -> $BJQ?t(B @code{elmo-default-pop3-user} $B$NCM!#(B
               $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
@@ -1260,11 +1290,13 @@ default $BCM(B:
               $B=i4|@_Dj$O(B 110$B!#(B
 @end example
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: &hoge@@localhost -> localhost $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
-    &hoge@@popserver:109 -> $B%[%9%H(B "popserver" $B$N%]!<%H(B 109 $BHV$X(B
-                            $B%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
+&hoge@@localhost -> localhost $B$X%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
+&hoge@@popserver:109 -> $B%[%9%H(B "popserver" $B$N%]!<%H(B 109 $BHV$X(B
+                        $B%f!<%6(B "hoge" $B$G%"%/%;%9!#(B
 @end group
 @end example
 
@@ -1297,9 +1329,11 @@ STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls$B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 
 $BJ#?t$N%U%)%k%@$r2>A[E*$K0l$D$K8+$($k$h$&$K$9$k%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: @samp{*} @var{$B%U%)%k%@(B1} [@samp{,} @var{$B%U%)%k%@(B2}] @dots{} [@samp{,} @var{$B%U%)%k%@(BN}]
+@samp{*} @var{$B%U%)%k%@(B1} [@samp{,} @var{$B%U%)%k%@(B2}] @dots{} [@samp{,} @var{$B%U%)%k%@(BN}]
 @end group
 @end example
 
@@ -1308,6 +1342,7 @@ STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls$B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 $B;XDj$7$^$9!#(B
 
 $BNc(B:
+
 @example
 @group
 *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
@@ -1329,8 +1364,10 @@ STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls$B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 
 $B;XDj$7$?>r7o$rK~$?$9%a%C%;!<%8$N$_$r4^$`2>A[E*$J%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
-$B=q<0(B: @samp{/} @var{$B>r7o(B} @samp{/} @var{$B%U%)%k%@(B}
+@samp{/} @var{$B>r7o(B} @samp{/} @var{$B%U%)%k%@(B}
 @end example
 
 @var{$B>r7o(B}$B$K$O!"0J2<$r=q$1$^$9!#(B
@@ -1343,6 +1380,7 @@ first: $BA4%a%C%;!<%8$N@hF,$+$i(B@var{$B?t;z(B}$B$N?t$@$1%a%C%;!<%8$r@Z$j=P
 last: $BA4%a%C%;!<%8$NKvHx$+$i(B@var{$B?t;z(B}$B$N?t$@$1%a%C%;!<%8$r@Z$j=P$7$^$9!#(B
 
 $BNc(B:
+
 @example
 @group
 /last:10/-fj.os.linux -> -fj.os.linux $B$N:G6a$N(B 10 $B8D$N%a%C%;!<%8(B
@@ -1371,6 +1409,7 @@ lastyear  ->  $B5nG/$N:#F|(B
 @end example
 
 $BNc(B:
+
 @example
 @group
 /since:3daysago/+inbox $B"*(B $B:G6a#3F|4V$N(B +inbox $BCf$N%a%C%;!<%8!#(B
@@ -1385,6 +1424,7 @@ lastyear  ->  $B5nG/$N:#F|(B
 @var{$B%U%#!<%k%IL>(B}$B!"(B@var{$BJ8;zNs(B}$B$KBgJ8;z>.J8;z$N6hJL$O$"$j$^$;$s!#(B
 
 $BNc(B:
+
 @example
 @group
 /from=teranisi/+inbox -> +inbox $B$G!"(BFrom: $B%U%#!<%k%I$K(B "teranisi"
@@ -1398,6 +1438,7 @@ lastyear  ->  $B5nG/$N:#F|(B
 $B$^$?!"(B@samp{/tocc=xxxx/} $B$O!"(B@samp{/to=xxxx|cc=xxxx/} $B$HF1$8$K$J$j$^$9!#(B
 
 $BNc(B:
+
 @example
 @group
 /from=teranisi|to=teranisi/+inbox
@@ -1448,8 +1489,10 @@ localdir $B$N%U%)%k%@$K$OG$0U$N%U%#!<%k%IL>$r=q$1$^$9!#(B
 
 $B%U%)%k%@1\Mw;~$K!"<+F0E*$K%a%C%;!<%8$N<h$j9~$_$r<B9T$9$k%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
-$B=q<0(B: @samp{|} @var{$B<h$j9~$_85(B} @samp{|} @var{$B<h$j9~$_@h(B}
+@samp{|} @var{$B<h$j9~$_85(B} @samp{|} @var{$B<h$j9~$_@h(B}
 @end example
 
 $B%U%)%k%@1\Mw;~!"(B@var{$B<h$j9~$_85(B}$B$+$i(B@var{$B<h$j9~$_@h(B}$B$X<+F0E*$K%a%C%;!<%8$,(B
@@ -1460,16 +1503,19 @@ localdir $B$N%U%)%k%@$K$OG$0U$N%U%#!<%k%IL>$r=q$1$^$9!#(B
 |&username@@popserver|+inbox
 @end example
 
+@noindent
 $B$N$h$&$K;XDj$9$k$H!"%U%)%k%@$NI=<($r99?7$9$k$H$-$K(B
 @samp{&username@@popserver} $B$+$i(B @samp{+inbox} $B$X!"%a%C%;!<%8$,<+F0E*$K<h$j9~$^$l$^$9!#(B
 
+$BNc(B:
+
 @example
 @group
-$BNc(B: %inbox|%myinbox   -> %inbox $B$+$i(B %myinbox $B$X%a%C%;!<%8$r<h$j9~$s$G(B
-                         $B1\Mw$9$k%U%)%k%@!#(B
-    *&user@@popserver1,&user@@popserver2|+inbox
-    -> &user@@popserver1 $B$H(B &user@@popserver2 $B$+$i(B +inbox $B$X%a%C%;!<%8$r(B
-    $B<h$j9~$s$G1\Mw$9$k%U%)%k%@!#(B
+%inbox|%myinbox   -> %inbox $B$+$i(B %myinbox $B$X%a%C%;!<%8$r<h$j9~$s$G(B
+                       $B1\Mw$9$k%U%)%k%@!#(B
+*&user@@popserver1,&user@@popserver2|+inbox
+  -> &user@@popserver1 $B$H(B &user@@popserver2 $B$+$i(B +inbox $B$X%a%C%;!<%8$r(B
+  $B<h$j9~$s$G1\Mw$9$k%U%)%k%@!#(B
 @end group
 @end example
 
@@ -1485,11 +1531,13 @@ localdir $B$N%U%)%k%@$K$OG$0U$N%U%#!<%k%IL>$r=q$1$^$9!#(B
 
 Wanderlust $B$NFbIt$GJ];}$5$l$?%a%C%;!<%8$r1\Mw$9$k$?$a$N%U%)%k%@$G$9!#(B
 
+$B=q<0(B:
+
 @example
 @group
-$B=q<0(B: 'mark 
-      $B$b$7$/$O(B
-      'cache/00$B!A(B1F
+'mark 
+@r{$B$b$7$/$O(B}
+'cache/00$B!A(B1F
 @end group
 @end example
 
@@ -1807,6 +1855,7 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 (@var{$B%"%/%;%9%0%k!<%W$N@55,I=8=(B} . (@var{$B9XFI%U%i%0(B} @var{$B%U%)%k%@$N@55,I=8=(B} @dots{}))
 @end example
 
+@noindent
 $B$H$J$C$F$$$^$9!#(B@var{$B9XFI%U%i%0(B}$B$,(B non-nil $B$N>l9g$O(B@var{$B%U%)%k%@$N@55,I=8=(B}$B$K%^%C%A(B
 $B$7$?%U%)%k%@$N$_I=<($7!"(B@var{$B9XFI%U%i%0(B}$B$,(B nil $B$N>l9g$O(B@var{$B%U%)%k%@$N@55,I=8=(B}
 $B$K%^%C%A$7$?%U%)%k%@$OI=<($5$l$J$/$J$j$^$9!#$?$@$7!"(B@var{$B9XFI%U%i%0(B}$B$,(B non-nil $B$G$b(B
@@ -1839,6 +1888,7 @@ Non-nil $B$J$i%5%^%j$K0\F0$7$?$H$-$K%U%)%k%@%P%C%U%!$N1&$K%5%^%j$N%P%C%U%!$,8=$
 @end group
 @end lisp
 
+@noindent
 $B<!$N$h$&$J3,AX9=B$$K$J$C$?%"%/%;%9%0%k!<%W$,:n$i$l$^$9!#(B
 
 @example

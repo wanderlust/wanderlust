@@ -740,9 +740,11 @@ and Internal folder types.
 
 A folder to access e-mails via IMAP4rev1 protocol (RFC 2060).
 
+Format:
+
 @example
 @group
-Format: @samp{%} @var{mailbox} [@samp{:} @var{username} [@samp{/} @var{authenticate-type}]][@samp{@@} @var{hostname}][@samp{:} @var{port}][@samp{!}]
+@samp{%} @var{mailbox} [@samp{:} @var{username} [@samp{/} @var{authenticate-type}]][@samp{@@} @var{hostname}][@samp{:} @var{port}][@samp{!}]
 @end group
 @end example
 
@@ -785,16 +787,18 @@ in raw format) after confirmation to user. If @code{elmo-imap4-force-login}
 is non-nil, authentication will fall back to "login" without confirmation
 (default value is nil).
 
+Example:
+
 @example
 @group
-Example: %inbox     -> IMAP mailbox "inbox"
-         %#mh/inbox -> IMAP mailbox "#mh/inbox"
+%inbox     -> IMAP mailbox "inbox"
+%#mh/inbox -> IMAP mailbox "#mh/inbox"
 
-         %inbox:hoge -> IMAP mailbox "inbox" of user "hoge".
-         %inbox:hoge/login@@server1
-                     -> server1's IMAP mailbox "inbox"
-                        of user "hoge", with plain password authentication
-                        ("login").
+%inbox:hoge -> IMAP mailbox "inbox" of user "hoge".
+%inbox:hoge/login@@server1
+            -> server1's IMAP mailbox "inbox"
+               of user "hoge", with plain password authentication
+               ("login").
 @end group
 @end example
 
@@ -854,9 +858,11 @@ ftp://ftp.ifcss.org/pub/software/unix/convert/utf7.tar.gz
 A folder to access USENET news via NNTP protocol (RFC 977).
 One newsgroup is treated as a folder.
 
+Format:
+
 @example
 @group
-Format: @samp{-} @var{newsgroup} [[@samp{:} @var{username}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
+@samp{-} @var{newsgroup} [[@samp{:} @var{username}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
 @end group
 @end example
 
@@ -877,10 +883,12 @@ If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 if the value of @code{elmo-default-nntp-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
+Example:
+
 @example
 @group
-Example: -fj.rec.tv            -> Newsgroup `fj.rec.tv'.
-         -fj.rec.tv@@newsserver -> Newsgroup `fj.rec.tv' on newsserver.
+-fj.rec.tv            -> Newsgroup `fj.rec.tv'.
+-fj.rec.tv@@newsserver -> Newsgroup `fj.rec.tv' on newsserver.
 @end group
 @end example
 
@@ -892,8 +900,10 @@ Example: -fj.rec.tv            -> Newsgroup `fj.rec.tv'.
 
 A folder to access MH format mail (1 file is 1 mail).
 
+Format:
+
 @example
-Format: @samp{+} @var{directory-name}
+@samp{+} @var{directory-name}
 @end example
 
 Normally, @var{directory-name} is an relative path to the variable
@@ -903,11 +913,13 @@ starts with @samp{/} or @samp{~}, then it is treated as an absolute path
 
 Message number is used for the name of the message file.
 
+Example:
+
 @example
 @group
-Example: +inbox         -> "~/Mail/inbox"
-         +from/teranisi -> "~/Mail/from/teranisi"
-         +~/test        -> "~/test"
++inbox         -> "~/Mail/inbox"
++from/teranisi -> "~/Mail/from/teranisi"
++~/test        -> "~/test"
 @end group
 @end example
 
@@ -919,8 +931,10 @@ Example: +inbox         -> "~/Mail/inbox"
 
 A folder to access to Maildir format (1 file is 1 mail).
 
+Format:
+
 @example
-Format: @samp{.} [@var{directory-name}]
+@samp{.} [@var{directory-name}]
 @end example
 
 Normally, @var{directory-name} is a relative path to the variable
@@ -936,14 +950,17 @@ the @file{tmp} directory and not accessed for 36 hours are deleted.
 
 This behavior conforms to the @uref{http://cr.yp.to/proto/maildir.html}.
 
+Example:
+
 @example
 @group
-Example: .              -> "~/Maildir"
-         .inbox         -> "~/Maildir/inbox"
-         .from/teranisi -> "~/Maildir/from/teranisi"
-         .~/test        -> "~/test"
+.              -> "~/Maildir"
+.inbox         -> "~/Maildir/inbox"
+.from/teranisi -> "~/Maildir/from/teranisi"
+.~/test        -> "~/test"
 @end group
 @end example
+
 
 @node News Spool Folder, Archive Folder, Maildir Folder, Folders
 @section News Spool Folder
@@ -955,20 +972,25 @@ This folder handles locally saved news articles which are proposed by Mew/IM.
 You can also read articles directly from a spool-file which is retrieved
 by an utility like gnspool.
 
+Format:
+
 @example
-Format: @samp{=} @var{directory-name}
+@samp{=} @var{directory-name}
 @end example
 
 @var{directory-name} is a sub-directory to the directory defined by variable
 @code{elmo-localnews-folder-path} (default is @file{~/News})
 You can use @samp{.} as directory delimiter as well as @samp{/}.
 
+Example:
+
 @example
 @group
-Example: =fj/os/os2         -> "~/News/fj/os/os2"
-         =fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
+=fj/os/os2         -> "~/News/fj/os/os2"
+=fj.os.bsd.freebsd -> "~/News/fj/os/bsd/freebsd"
 @end group
 @end example
+
 
 @node Archive Folder, POP Folder, News Spool Folder, Folders
 @section Archive Folder
@@ -979,9 +1001,11 @@ Example: =fj/os/os2         -> "~/News/fj/os/os2"
 This method can handle archive files, which are compressed by utilities
 such as Info-ZIP or LHA, as one folder.
 
+Format:
+
 @example
 @group
-Format: @samp{$} @var{path-name} [@samp{;} @var{archiver-type} @samp{;} @var{prefix}]
+@samp{$} @var{path-name} [@samp{;} @var{archiver-type} @samp{;} @var{prefix}]
 @end group
 @end example
 
@@ -1004,12 +1028,14 @@ If @var{archiver-type} is omitted, @code{elmo-archive-default-type}
 For example, if the ML server is fml, @file{msend.tar.gz} has a structure like 
 @file{spool/1}, so you have to specify @samp{spool} as @var{prefix}.
 
+Example:
+
 @example
 @group
-Example: $teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
-         $bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
-         $/foo@@server:~/bar;zoo     -> "~/bar/elmo-archive.zoo" on ftp server
-         $d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
+$teranisi         -> "~/Mail/teranisi/elmo-archive.zip"
+$bsd/freebsd;lha  -> "~/Mail/bsd/freebsd/elmo-archive.lzh"
+$/foo@@server:~/bar;zoo     -> "~/bar/elmo-archive.zoo" on ftp server
+$d:/msend.tar.gz;tgz;spool -> "d:/msend.tar.gz"
 @end group
 @end example
 
@@ -1208,9 +1234,11 @@ standard input (@code{rm-pipe}, @code{mv-pipe}, @code{cat-headers} action).
 
 A folder to access e-mails via POP3 protocol (RFC 1939).
 
+Format:
+
 @example
 @group
-Format: @samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
+@samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
 @end group
 @end example
 
@@ -1232,11 +1260,13 @@ default:
               Initial setting is 110.
 @end example
 
+Example:
+
 @example
 @group
-Example: &hoge@@localhost -> access to localhost as user "hoge".
-         &hoge@@popserver:109 -> access to the server "popserver" on port 109
-                                 as user "hoge".
+&hoge@@localhost -> access to localhost as user "hoge".
+&hoge@@popserver:109 -> access to the server "popserver" on port 109
+                        as user "hoge".
 @end group
 @end example
 
@@ -1268,9 +1298,11 @@ STARTTLS will be the default connection.
 A folder to access to a folder which collects messages from
 multiple folders virtually.
 
+Format:
+
 @example
 @group
-Format: @samp{*} @var{folder-1} [@samp{,} @var{folder-2}] @dots{} [@samp{,} @var{folder-N}]
+@samp{*} @var{folder-1} [@samp{,} @var{folder-2}] @dots{} [@samp{,} @var{folder-N}]
 @end group
 @end example
 
@@ -1279,6 +1311,7 @@ separated by ',' like
 @samp{@var{folder-1},@var{folder-2},@dots{},@var{folder-N}}.
 
 Example:
+
 @example
 @group
 *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs
@@ -1301,8 +1334,10 @@ Example:
 A folder to access to a folder which collects all messages that 
 satisfy a condition virtually.
 
+Format:
+
 @example
-Format: @samp{/} @var{condition} @samp{/} @var{target-folder}
+@samp{/} @var{condition} @samp{/} @var{target-folder}
 @end example
 
 In the @var{condition} part, you can specify following.
@@ -1315,6 +1350,7 @@ first: @var{number} messages are picked from top of folder.
 last:  @var{number} messages are picked from bottom of folder.
 
 Example:
+
 @example
 @group
 /last:10/-fj.os.linux -> Latest 10 messages from -fj.os.linux are picked.
@@ -1342,6 +1378,7 @@ lastyear  ->  same day of last year.
 @end example
 
 Example:
+
 @example
 @group
 /since:3daysago/+inbox -> messages arrived since 3 days ago in +inbox
@@ -1358,6 +1395,7 @@ All messages that have @var{field} and its value is @var{value} are picked.
 @var{field} and @var{value} are case insensitive.
 
 Example:
+
 @example
 @group
 /from=teranisi/+inbox -> In +inbox, messages which have From: field
@@ -1371,6 +1409,7 @@ If you can split conditions by character @samp{|}, it is considered as OR condit
 @samp{/tocc=xxxx/} is an abbreviation of @samp{/to=xxxx|cc=xxxx/}.
 
 Example:
+
 @example
 @group
 /from=teranisi|to=teranisi/+inbox
@@ -1423,8 +1462,10 @@ Localdir folder treats arbitrary field name.
 In the pipe folder, messages are automatically transferred from the source
 folder to destination folder.
 
+Format:
+
 @example
-Format: @samp{|} @var{source-folder} @samp{|} @var{destination-folder}
+@samp{|} @var{source-folder} @samp{|} @var{destination-folder}
 @end example
 
 When you access to the pipe folder, messages are automatically transferred
@@ -1439,10 +1480,12 @@ For example, if you specify following
 and access to it, messages are downloaded automatically from
 &username@@popserver to @samp{+inbox}.
 
+Example:
+
 @example
 @group
-Example: %inbox|%myinbox   -> Download %inbox to %myinbox.
-         *&user@@popserver1,&user@@popserver2|+inbox
+%inbox|%myinbox   -> Download %inbox to %myinbox.
+*&user@@popserver1,&user@@popserver2|+inbox
          -> Download from &user@@popserver1 and &user@@popserver2 to +inbox.
 @end group
 @end example
@@ -1457,11 +1500,13 @@ After messages are moved, a hook @code{elmo-pipe-drained-hook} is called.
 
 A folder to access to internal messages of Wanderlust.
 
+Format:
+
 @example
 @group
-Format: 'mark
-        or
-        'cache/00 - 1F
+'mark
+@r{or}
+'cache/00 - 1F
 @end group
 @end example
 
@@ -1784,6 +1829,7 @@ Each element is:
 (@var{regexp-of-access-folder} . (@var{subscribe-flag} @var{regexp-of-folders} @dots{}))
 @end example
 
+@noindent
 If @var{subscribe-flag} is non-nil, folders which have name matched to
 @var{regexp-of-folders} are displayed. Otherwise, hidden.
 However, already unsubscribed folder is not displayed even 
@@ -1815,6 +1861,7 @@ For example, if you specify
 @end group
 @end lisp
 
+@noindent
 such access group hierarchy is obtained.
 
 @example
