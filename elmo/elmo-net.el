@@ -455,45 +455,48 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 			     (mapcar 'abs numbers)
 			     seen-list)))
 
-(luna-define-method elmo-folder-unmark-important ((folder elmo-net-folder)
-						  numbers)
+(luna-define-method elmo-folder-unmark-important :around ((folder
+							   elmo-net-folder)
+							  numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-unmark-important-plugged
 			    numbers)
 	(elmo-folder-send folder
 			  'elmo-folder-unmark-important-unplugged numbers))
-    t))
+    (luna-call-next-method)))
 
-(luna-define-method elmo-folder-mark-as-important ((folder elmo-net-folder)
-						   numbers)
+(luna-define-method elmo-folder-mark-as-important :around ((folder
+							    elmo-net-folder)
+							   numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-mark-as-important-plugged
 			    numbers)
 	(elmo-folder-send folder 'elmo-folder-mark-as-important-unplugged
 			  numbers))
-    t))
+    (luna-call-next-method)))
 
-(luna-define-method elmo-folder-unmark-read ((folder elmo-net-folder)
-					     numbers)
+(luna-define-method elmo-folder-unmark-read :around ((folder elmo-net-folder)
+						     numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-unmark-read-plugged numbers)
 	(elmo-folder-send folder 'elmo-folder-unmark-read-unplugged numbers))
-    t))
+    (luna-call-next-method)))
 
-(luna-define-method elmo-folder-mark-as-read ((folder elmo-net-folder)
-					      numbers)
+(luna-define-method elmo-folder-mark-as-read :around ((folder elmo-net-folder)
+						      numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-mark-as-read-plugged numbers)
 	(elmo-folder-send
 	 folder 'elmo-folder-mark-as-read-unplugged numbers))
-    t))
+    (luna-call-next-method)))
 
-(luna-define-method elmo-folder-unmark-answered ((folder elmo-net-folder)
-						 numbers)
+(luna-define-method elmo-folder-unmark-answered :around ((folder
+							  elmo-net-folder)
+							 numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-unmark-answered-plugged
@@ -502,8 +505,9 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 			  'elmo-folder-unmark-answered-unplugged numbers))
     (luna-call-next-method)))
 
-(luna-define-method elmo-folder-mark-as-answered ((folder elmo-net-folder)
-						  numbers)
+(luna-define-method elmo-folder-mark-as-answered :around ((folder
+							   elmo-net-folder)
+							  numbers)
   (if (elmo-folder-use-flag-p folder)
       (if (elmo-folder-plugged-p folder)
 	  (elmo-folder-send folder 'elmo-folder-mark-as-answered-plugged
