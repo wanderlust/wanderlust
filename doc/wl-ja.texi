@@ -6574,7 +6574,7 @@ elmo は、@samp{Elisp Library for Message Orchestration} の略です。
 各バージョンにはコードネームがついています(ほとんど冗談です)。
 いまのところ 1980 年代の米ビルボード誌トップ 40 ヒット
 
-(@uref{http://www.summer.com.br/~pfilho/html/top40/index.html})
+(@uref{http://lyrics.natalnet.com.br/html/top40/index.html})
 
 からアルファベット順に適当に好きなものをピックアップして使っています。
 

@@ -6632,7 +6632,7 @@ Each versions has code names (they are almost jokes).
 Currently they are picked up alphabetically from the top 40 hits of
 U.S. Billboard magazines in 1980s.
 
-(@uref{http://www.summer.com.br/~pfilho/html/top40/index.html})
+(@uref{http://lyrics.natalnet.com.br/html/top40/index.html})
 
 
 @node Index,  , Addition, Top
