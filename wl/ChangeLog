@@ -1,3 +1,9 @@
+2003-02-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-get-prev-folder): Ignore Nemacs; Use `eq'
+	instead of `equal' for id.
+	(wl-folder-get-next-folder, wl-folder-get-path): Ditto.
+
 2003-01-30  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-thread.el (wl-thread-save-entities): Bind print-length
