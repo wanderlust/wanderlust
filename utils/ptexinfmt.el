@@ -44,13 +44,14 @@
 ;;; Broken
 (defvar ptexinfmt-disable-broken-notice-flag t
   "If non-nil disable notice, when call `ptexinfmt-broken-facility'.
-This is NO-NOTICE argument in `ptexinfmt-broken-facility'.")
+This is last argument in `ptexinfmt-broken-facility'.")
 
 (put 'ptexinfmt-broken-facility 'lisp-indent-function 'defun)
 (defmacro ptexinfmt-broken-facility (facility docstring assertion
-					      &optional no-notice)
+					      &optional dummy)
   "Declare a symbol FACILITY is broken if ASSERTION is nil.
-DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
+DOCSTRING will be printed if ASSERTION is nil and
+`ptexinfmt-disable-broken-notice-flag' is nil."
   (` (let ((facility '(, facility))
 	   (docstring (, docstring))
 	   (assertion (eval '(, assertion))))
@@ -58,7 +59,7 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
        (if assertion
 	   nil
 	 (put facility 'broken-docstring docstring)
-	 (if (, no-notice)
+	 (if ptexinfmt-disable-broken-notice-flag
 	     nil
 	   (message "BROKEN FACILITY DETECTED: %s" docstring))))))
 
@@ -104,8 +105,7 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
 ;;;	   (string< texinfmt-version "2.37 of 24 May 1997")
 	   (boundp 'MULE) (not (featurep 'meadow))) ; Mule for Windows
       nil
-    t)
-  ptexinfmt-disable-broken-notice-flag)
+    t))
 
 ;; @var
 (ptexinfmt-broken-facility texinfo-format-var
@@ -117,8 +117,7 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
 	  (insert "@var{@asis{foo}}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @xref
 (ptexinfmt-broken-facility texinfo-format-xref
@@ -130,8 +129,7 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
 	  (insert "@xref{, xref, , file}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @uref
 (ptexinfmt-broken-facility texinfo-format-uref
@@ -140,11 +138,10 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
       (with-temp-buffer
 	(let (texinfo-enclosure-list texinfo-alias-list)
 	  (texinfo-mode)
-	  (insert "@uref{mailto:foo@@bar.com}\n")
+	  (insert "@uref{mailto:foo@@noncommand.example.com}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @multitable
 (ptexinfmt-broken-facility texinfo-multitable-widths
@@ -159,13 +156,11 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
 	      nil
 	    t)))
     ;; function definition is void
-    t)
-  ptexinfmt-disable-broken-notice-flag)
+    t))
 
 (ptexinfmt-broken-facility texinfo-multitable-item
   "`texinfo-multitable-item' unsupport wide-char."
-  (not (get 'texinfo-multitable-widths 'broken))
-  ptexinfmt-disable-broken-notice-flag)
+  (not (get 'texinfo-multitable-widths 'broken)))
 
 
 ;;; Hardcopy and HTML (discard)
@@ -205,6 +200,11 @@ DOCSTRING will be printed if ASSERTION is nil and NO-NOTICE is nil."
 (put 'page 'texinfo-format 'texinfo-discard-line)
 (put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
 
+;; @tie{} (makeinfo 4.3 or later)
+(put 'tie 'texinfo-format 'texinfo-format-tie)
+(ptexinfmt-defun-if-void texinfo-format-tie ()
+  (texinfo-parse-arg-discard)
+  (insert " "))
 
 
 ;;; Directory File
@@ -328,7 +328,7 @@ Insert < ... > around EMAIL-ADDRESS."
 
 ;; @option
 (put 'option 'texinfo-format 'texinfo-format-option)
-(defun texinfo-format-option ()
+(ptexinfmt-defun-if-void texinfo-format-option ()
   "Insert ` ... ' around arg unless inside a table; in that case, no quotes."
   ;; `looking-at-backward' not available in v. 18.57, 20.2
   ;; searched-for character is a control-H
@@ -339,6 +339,26 @@ Insert < ... > around EMAIL-ADDRESS."
     (insert (texinfo-parse-arg-discard)))
   (goto-char texinfo-command-start))
 
+;; @verb{<char>TEXT<char>}  (makeinfo 4.1 or later)
+(put 'verb 'texinfo-format 'texinfo-format-verb)
+(ptexinfmt-defun-if-void texinfo-format-verb ()
+  "Format text between non-quoted unique delimiter characters verbatim.
+Enclose the verbatim text, including the delimiters, in braces.  Print
+text exactly as written (but not the delimiters) in a fixed-width.
+
+For example, @verb\{|@|\} results in @ and
+@verb\{+@'e?`!`+} results in @'e?`!`."
+
+  (let ((delimiter (buffer-substring-no-properties
+		    (1+ texinfo-command-end) (+ 2 texinfo-command-end))))
+    (unless (looking-at "{")
+      (error "Not found: @verb start brace"))
+    (delete-region texinfo-command-start (+ 2 texinfo-command-end))
+    (search-forward  delimiter))
+  (delete-backward-char 1)
+  (unless (looking-at "}")
+    (error "Not found: @verb end brace"))
+  (delete-char 1))
 
 
 ;;; Accents and Special characters
@@ -503,6 +523,11 @@ Insert < ... > around EMAIL-ADDRESS."
 (ptexinfmt-defun-if-void texinfo-format-soft-hyphen ()
   (texinfo-discard-command))
 
+;; @/
+(put '\/ 'texinfo-format 'texinfo-format-\/)
+(ptexinfmt-defun-if-void texinfo-format-\/ ()
+  (texinfo-discard-command))
+
 
 ;;; Cross References
 ;; @ref, @xref
@@ -521,7 +546,7 @@ Insert < ... > around EMAIL-ADDRESS."
 	(unless (null (nth 0 args))
 	  (insert (nth 0 args)))))))
 
-;; @uref
+;; @uref{URL [,TEXT] [,REPLACEMENT]}
 (put 'uref 'texinfo-format 'texinfo-format-uref)
 (ptexinfmt-defun-if-broken texinfo-format-uref ()
   "Format URL and optional URL-TITLE.
@@ -573,8 +598,19 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
       (texinfo-discard-command))))
 
 
+;;; Indent
+;; @exampleindent INDENT  (makeinfo 4.0 or later)
+
+;; @paragraphindent INDENT  (makeinfo 4.0 or later)
+;; INDENT: asis, 0, n
+
+;; @firstparagraphindent WORD   (makeinfo 4.6 or later)
+;; WORD: none, insert
+
+
+
 ;;; Special
-;; @image{FILENAME, [WIDTH], [HEIGHT]}
+;; @image{FILENAME [, WIDTH] [, HEIGHT]}
 (put 'image 'texinfo-format 'texinfo-format-image)
 (ptexinfmt-defun-if-void texinfo-format-image ()
   ;; I don't know makeinfo parse FILENAME.
@@ -589,9 +625,6 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
     ;; verbatim for Info output
     (goto-char (+ (point) (cadr (insert-file-contents filename))))
     (message "Reading included file: %s...done" filename)))
-
-
-;; @exampleindent
 
 
 
