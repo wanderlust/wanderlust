@@ -2,6 +2,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** 'H' key(display all header) and 'M' key(display without MIME analysis)
+   are now toggle key.
+   Now you can cite messages displayed by 'M'.
+
 ** Now you can sort summary lines into descending order.
 
 ** Abbreviate too long header extended to lines in message buffer.
