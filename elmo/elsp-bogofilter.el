@@ -46,52 +46,65 @@
   :type '(repeat string)
   :group 'elmo-spam-bogofilter)
 
-(defcustom elmo-spam-bogofilter-spam-switch "-s"
-  "*The switch that Bogofilter uses to register spam messages."
-  :type 'string
-  :group 'elmo-spam-bogofilter)
-
-(defcustom elmo-spam-bogofilter-good-switch "-n"
-  "*The switch that Bogofilter uses to register non spam messages."
-  :type 'string
-  :group 'elmo-spam-bogofilter)
-
 (defcustom elmo-spam-bogofilter-database-directory nil
   "*Directory path of the Bogofilter databases."
   :type '(choice (directory :tag "Location of the Bogofilter database directory")
 		 (const :tag "Use the default"))
   :group 'elmo-spam-bogofilter)
 
+(defcustom elmo-spam-bogofilter-arguments-alist
+  '((classify . ("-v" "-2"
+		 (if register "-u")
+		 (if elmo-spam-bogofilter-database-directory
+		     (list "-d" elmo-spam-bogofilter-database-directory))))
+    (register . ("-v"
+		 (if spam "-s" "-n")
+		 (if restore (if spam "-N" "-S"))
+		 (if elmo-spam-bogofilter-database-directory
+		     (list "-d" elmo-spam-bogofilter-database-directory)))))
+  "*An alist of options that are used with call bogofilter process.
+Each element is a list of following:
+\(TYPE . LIST-EXP)
+TYPE is a symbol from `classify' or `register'.
+LIST-EXP is an expression to get list of options."
+  :type '(repeat (cons (choice (const :tag "Classify" classify)
+			       (const :tag "Register" register))
+		       (repeat sexp)))
+  :group 'elmo-spam-bogofilter)
+
+(defcustom elmo-spam-bogofilter-debug nil
+  "Non-nil to debug elmo bogofilter spam backend."
+  :type 'boolean
+  :group 'elmo-spam-bogofilter)
+
+
 (eval-and-compile
   (luna-define-class elsp-bogofilter (elsp-generic)))
 
-(defsubst elsp-bogofilter-call-bogofilter (&rest args)
+(defsubst elmo-spam-bogofilter-call (&rest args)
   (apply #'call-process-region
 	 (point-min) (point-max)
 	 elmo-spam-bogofilter-program
-	 nil nil nil
-	 (append elmo-spam-bogofilter-args
-		 (delq nil (elmo-flatten args)))))
+	 nil (if elmo-spam-bogofilter-debug
+		 (get-buffer-create "*Debug ELMO SPAM Bogofilter*"))
+	 nil
+	 (delq nil (append elmo-spam-bogofilter-args
+			   (elmo-flatten args)))))
+
+(defmacro elmo-spam-bogofilter-arguments (type)
+  `(mapcar #'eval
+	   (cdr (assq ,type elmo-spam-bogofilter-arguments-alist))))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bogofilter)
 					     buffer &optional register)
   (with-current-buffer buffer
-    (= 0 (elsp-bogofilter-call-bogofilter
-	  "-v" "-2"
-	  (if register "-u")
-	  (if elmo-spam-bogofilter-database-directory
-	      (list "-d" elmo-spam-bogofilter-database-directory))))))
+    (= 0 (elmo-spam-bogofilter-call
+	  (elmo-spam-bogofilter-arguments 'classify)))))
 
 (defsubst elsp-bogofilter-register-buffer (buffer spam restore)
   (with-current-buffer buffer
-    (elsp-bogofilter-call-bogofilter
-     "-v"
-     (if spam
-	 elmo-spam-bogofilter-spam-switch
-       elmo-spam-bogofilter-good-switch)
-     (if restore (if spam "-N" "-S"))
-     (if elmo-spam-bogofilter-database-directory
-	 (list "-d" elmo-spam-bogofilter-database-directory)))))
+    (elmo-spam-bogofilter-call
+     (elmo-spam-bogofilter-arguments 'register))))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bogofilter)
 						    buffer &optional restore)

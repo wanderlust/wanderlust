@@ -1,3 +1,16 @@
+2004-01-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-spam-switch): Abolish.
+	(elmo-spam-bogofilter-good-switch): Ditto.
+	(elmo-spam-bogofilter-arguments-alist): New user option.
+	(elmo-spam-bogofilter-debug): Ditto.
+	(elmo-spam-bogofilter-call): Renamed from
+	`elsp-bogofilter-call-bogofilter'. If elmo-spam-bogofilter-debug
+	is non-nil, insert output in buffer for debug.
+	(elmo-spam-bogofilter-arguments): New macro.
+	(elmo-spam-buffer-spam-p): Use it.
+	(elsp-bogofilter-register-buffer): Ditto.
+
 2004-01-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-cache.el (elmo-folder-list-subfolders): Fix directory-files
