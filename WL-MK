@@ -478,9 +478,12 @@
 	    (unless (re-search-forward "^;;; -\\*- news-list -\\*-" nil t)
 	      (error "Invalid wl-news.el.in"))
 	    (forward-line 2)
-	    (insert "(defconst wl-news-news-alist\n  '")
-	    (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
-	    (insert ")\n")
+	    (if wl-news-lang
+		(progn
+		  (insert "(defconst wl-news-news-alist\n  '")
+		  (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
+		  (insert ")\n"))
+	      (insert "(defconst wl-news-news-alist nil)\n\n"))
 	    (let ((buffer-file-coding-system (mime-charset-to-coding-system 'x-ctext)))
 	      (write-region (point-min) (point-max) out-filename)))))))
 
