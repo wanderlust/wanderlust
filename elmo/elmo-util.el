@@ -1649,6 +1649,14 @@ the value of `foo'."
     (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
   (defalias 'elmo-field-body 'std11-field-body))
 
+(defun elmo-address-quote-specials (word)
+  "Make quoted string of WORD if needed."
+  (let ((lal (std11-lexical-analyze word)))
+    (if (or (assq 'specials lal)
+	    (assq 'domain-literal lal))
+	(prin1-to-string word)
+      word)))
+
 (defmacro elmo-string (string)
   "STRING without text property."
   (` (let ((obj (copy-sequence (, string))))

@@ -1,3 +1,15 @@
+2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-check-environment): Undo last change.
+
+	* wl-vars.el (wl-from): Changed default value.
+
+	* wl-draft.el (wl-draft): Don't set mark on mail body.
+	(wl-draft-reedit): Ditto.
+
+	* wl-address.el (wl-address-quote-specials): Define as an alias for
+	elmo-address-quote-specials.
+
 2001-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-check-environment): If `wl-from' is nil, use default value.

@@ -1380,9 +1380,6 @@ If optional argument is non-nil, current draft buffer is killed"
 			   (1- (point)))
 			 'category 'mail-header-separator)
       (and body (insert body)))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
     (as-binary-output-file
      (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		   nil t))
@@ -1486,9 +1483,6 @@ If optional argument is non-nil, current draft buffer is killed"
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
     (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		  nil t)
     (wl-draft-overload-functions)

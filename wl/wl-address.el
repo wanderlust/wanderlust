@@ -280,13 +280,7 @@ Matched address lists are append to CL."
 	(completing-read "To: " cl)
       (read-string "To: "))))
 
-(defun wl-address-quote-specials (word)
-  "Make quoted string of WORD if needed."
-  (let ((lal (std11-lexical-analyze word)))
-    (if (or (assq 'specials lal)
-	    (assq 'domain-literal lal))
-	(prin1-to-string word)
-      word)))
+(defalias 'wl-address-quote-specials 'elmo-address-quote-specials)
 
 (defun wl-address-make-completion-list (address-list)
   (let (addr-tuple cl)
