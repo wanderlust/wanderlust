@@ -1,3 +1,7 @@
+2004-09-14  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-filter.el (elmo-folder-local-p): Define.
+
 2004-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (modb-standard-loaded-message-id): Return nil
