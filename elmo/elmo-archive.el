@@ -1069,7 +1069,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-archive-call-method method args t))
 	 (set-buffer-multibyte default-enable-multibyte-characters)
 	 (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-	 (elmo-buffer-field-condition-match condition number number-list))))))
+	 (elmo-message-buffer-match-condition condition number))))))
 
 (luna-define-method elmo-folder-search ((folder elmo-archive-folder)
 					condition &optional from-msgs)

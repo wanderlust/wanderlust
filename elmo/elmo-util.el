@@ -255,6 +255,72 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (goto-char (match-end 0))))
    (t (error "Syntax error '%s'" (buffer-string)))))
 
+(defmacro elmo-filter-condition-p (filter)
+  `(or (vectorp ,filter) (consp ,filter)))
+
+(defmacro elmo-filter-type (filter)
+  `(aref ,filter 0))
+
+(defmacro elmo-filter-key (filter)
+  `(aref ,filter 1))
+
+(defmacro elmo-filter-value (filter)
+  `(aref ,filter 2))
+
+(defun elmo-condition-match (condition match-primitive args)
+  (cond
+   ((vectorp condition)
+    (if (eq (elmo-filter-type condition) 'unmatch)
+	(not (apply match-primitive condition args))
+      (apply match-primitive condition args)))
+   ((eq (car condition) 'and)
+    (let ((lhs (elmo-condition-match (nth 1 condition) match-primitive args)))
+      (cond
+       ((elmo-filter-condition-p lhs)
+	(let ((rhs (elmo-condition-match (nth 2 condition)
+					 match-primitive args)))
+	  (cond ((elmo-filter-condition-p rhs)
+		 (list 'and lhs rhs))
+		(rhs
+		 lhs))))
+       (lhs
+	(elmo-condition-match (nth 2 condition) match-primitive args)))))
+   ((eq (car condition) 'or)
+    (let ((lhs (elmo-condition-match (nth 1 condition) match-primitive args)))
+      (cond
+       ((elmo-filter-condition-p lhs)
+	(let ((rhs (elmo-condition-match (nth 2 condition)
+					 match-primitive args)))
+	  (cond ((elmo-filter-condition-p rhs)
+		 (list 'or lhs rhs))
+		(rhs
+		 t)
+		(t
+		 lhs))))
+       (lhs
+	t)
+       (t
+	(elmo-condition-match (nth 2 condition) match-primitive args)))))))
+
+(defun elmo-condition-optimize (condition)
+  (cond
+   ((vectorp condition)
+    (or (cdr (assoc (elmo-filter-key condition)
+		    '(("first"	. 0)
+		      ("last"	. 0)
+		      ("flag"	. 1)
+		      ("body"	. 3))))
+	2))
+   (t
+    (let ((weight-l (elmo-condition-optimize (nth 1 condition)))
+	  (weight-r (elmo-condition-optimize (nth 2 condition))))
+      (if (> weight-l weight-r)
+	  (let ((lhs (nth 1 condition)))
+	    (setcar (nthcdr 1 condition) (nth 2 condition))
+	    (setcar (nthcdr 2 condition) lhs)
+	    weight-l)
+	weight-r)))))
+
 ;;;
 (defsubst elmo-buffer-replace (regexp &optional newtext)
   (goto-char (point-min))
@@ -813,83 +879,6 @@ the directory becomes empty after deletion."
 		   'elmo-list-bigger-diff "%s%d%%" percent mes))))
 	(setq l1 (cdr l1)))
       (cons diff1 (list l2)))))
-
-(defmacro elmo-filter-condition-p (filter)
-  `(or (vectorp ,filter) (consp ,filter)))
-
-(defmacro elmo-filter-type (filter)
-  `(aref ,filter 0))
-
-(defmacro elmo-filter-key (filter)
-  `(aref ,filter 1))
-
-(defmacro elmo-filter-value (filter)
-  `(aref ,filter 2))
-
-(defsubst elmo-buffer-field-primitive-condition-match (condition
-						       number
-						       number-list)
-  (let (result)
-    (goto-char (point-min))
-    (cond
-     ((string= (elmo-filter-key condition) "last")
-      (setq result (<= (length (memq number number-list))
-		       (string-to-int (elmo-filter-value condition)))))
-     ((string= (elmo-filter-key condition) "first")
-      (setq result (< (- (length number-list)
-			 (length (memq number number-list)))
-		      (string-to-int (elmo-filter-value condition)))))
-     ((string= (elmo-filter-key condition) "since")
-      (let ((field-date (elmo-date-make-sortable-string
-			 (timezone-fix-time
-			  (std11-field-body "date")
-			  (current-time-zone) nil)))
-	    (specified-date (elmo-date-make-sortable-string
-			     (elmo-date-get-datevec
-			      (elmo-filter-value condition)))))
-	(setq result
-	      (or (string= field-date specified-date)
-		  (string< specified-date field-date)))))
-     ((string= (elmo-filter-key condition) "before")
-      (setq result
-	    (string<
-	     (elmo-date-make-sortable-string
-	      (timezone-fix-time
-	       (std11-field-body "date")
-	       (current-time-zone) nil))
-	     (elmo-date-make-sortable-string
-	      (elmo-date-get-datevec
-	       (elmo-filter-value condition))))))
-     ((string= (elmo-filter-key condition) "body")
-      (and (re-search-forward "^$" nil t)	   ; goto body
-	   (setq result (search-forward (elmo-filter-value condition)
-					nil t))))
-     (t
-      (dolist (fval (elmo-multiple-field-body (elmo-filter-key condition)))
-	(if (eq (length fval) 0) (setq fval nil))
-	(if fval (setq fval (eword-decode-string fval)))
-	(setq result (or result
-			 (and fval (string-match
-				    (elmo-filter-value condition) fval)))))))
-    (if (eq (elmo-filter-type condition) 'unmatch)
-	(setq result (not result)))
-    result))
-
-(defun elmo-buffer-field-condition-match (condition number number-list)
-  (cond
-   ((vectorp condition)
-    (elmo-buffer-field-primitive-condition-match
-     condition number number-list))
-   ((eq (car condition) 'and)
-    (and (elmo-buffer-field-condition-match
-	  (nth 1 condition) number number-list)
-	 (elmo-buffer-field-condition-match
-	  (nth 2 condition) number number-list)))
-   ((eq (car condition) 'or)
-    (or (elmo-buffer-field-condition-match
-	 (nth 1 condition) number number-list)
-	(elmo-buffer-field-condition-match
-	 (nth 2 condition) number number-list)))))
 
 (defmacro elmo-get-hash-val (string hashtable)
   (static-if (fboundp 'unintern)

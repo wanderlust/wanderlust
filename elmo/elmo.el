@@ -801,6 +801,14 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
     (setq results (elmo-msgdb-search msgdb condition numbers))
     (if (listp results)
 	results
+      (elmo-condition-optimize condition)
+      (when (and (consp condition)
+		 (eq (car condition) 'and)
+		 (listp (setq results (elmo-msgdb-search msgdb
+							 (nth 1 condition)
+							 numbers))))
+	(setq numbers results
+	      condition (nth 2 condition)))
       (let ((len (length numbers))
 	    matched)
 	(elmo-with-progress-display (> len elmo-display-progress-threshold)
@@ -821,6 +829,22 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	    (elmo-progress-notify 'elmo-folder-search)))
 	(message "Searching...done")
 	(nreverse matched)))))
+
+(defun elmo-message-buffer-match-condition (condition number)
+  (let* ((handler (luna-make-entity 'modb-buffer-entity-handler))
+	 (result (elmo-condition-match
+		  condition
+		  (lambda (condition handler entity)
+		    (elmo-msgdb-message-match-condition handler
+							condition
+							entity))
+		  (list
+		   handler
+		   (elmo-msgdb-make-message-entity
+		    handler
+		    :number number
+		    :buffer (current-buffer))))))
+    (and result (not (elmo-filter-condition-p result)))))
 
 (luna-define-method elmo-message-match-condition ((folder elmo-folder)
 						  number condition
@@ -849,7 +873,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	(set-buffer-multibyte default-enable-multibyte-characters)
 	(decode-coding-region (point-min) (point-max)
 			      elmo-mime-display-as-is-coding-system)
-	(elmo-buffer-field-condition-match condition number numbers)))))
+	(elmo-message-buffer-match-condition condition number)))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
   nil) ; default is noop.

@@ -219,13 +219,42 @@ If optional argument TYPE is specified, return converted value.")
 						&optional numbers)
   (let ((entity (elmo-msgdb-message-entity msgdb number)))
     (if entity
-	(elmo-msgdb-message-match-condition
-	 (elmo-message-entity-handler entity)
+	(elmo-condition-match
 	 condition
-	 entity
-	 (elmo-msgdb-flags msgdb number)
-	 (or numbers (elmo-msgdb-list-messages msgdb)))
+	 #'elmo-msgdb-match-condition-primitive
+	 (list msgdb number entity
+	       (or numbers (elmo-msgdb-list-messages msgdb))))
       condition)))
+
+(defun elmo-msgdb-match-condition-primitive (condition msgdb number entity
+						       population)
+  (let ((key (elmo-filter-key condition))
+	(case-fold-search t))
+    (cond
+     ((string= key "last")
+      (<= (length (memq number population))
+	  (string-to-int (elmo-filter-value condition))))
+     ((string= key "first")
+      (< (- (length population)
+	    (length (memq number population)))
+	 (string-to-int (elmo-filter-value condition))))
+     ((string= key "flag")
+      (let ((flags (elmo-msgdb-flags msgdb number)))
+	(cond ((string= (elmo-filter-value condition) "any")
+	       (and flags (not (equal flags '(cached)))))
+	     ((string= (elmo-filter-value condition) "digest")
+	      (catch 'found
+		(dolist (flag flags)
+		  (when (or (memq flag elmo-digest-flags)
+			    (elmo-global-flag-p flag))
+		    (throw 'found t)))))
+	     ((string= (elmo-filter-value condition) "read")
+	      (not (memq 'read flags)))
+	     (t
+	      (memq (intern (elmo-filter-value condition)) flags)))))
+     (t
+      (elmo-msgdb-message-match-condition (elmo-message-entity-handler entity)
+					  condition entity)))))
 
 (luna-define-method elmo-msgdb-update-entity ((msgdb modb-generic)
 					      entity values)

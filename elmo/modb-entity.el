@@ -129,9 +129,7 @@ Header region is supposed to be narrowed.")
 ;; Transitional interface.
 (luna-define-generic elmo-msgdb-message-match-condition (handler
 							 condition
-							 entity
-							 flags
-							 numbers)
+							 entity)
   "Return non-nil when the entity matches the condition.")
 
 ;; Generic implementation.
@@ -534,133 +532,30 @@ If each field is t, function is set as default converter."
 	  (copy-sequence (cdr entity)))))
 
 (luna-define-method elmo-msgdb-message-match-condition
-  ((handler modb-entity-handler) condition entity flags numbers)
-  (cond
-   ((vectorp condition)
-    (elmo-msgdb-match-condition-primitive handler condition
-					  entity flags numbers))
-   ((eq (car condition) 'and)
-    (let ((lhs (elmo-msgdb-message-match-condition handler
-						   (nth 1 condition)
-						   entity flags numbers)))
-      (cond
-       ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-message-match-condition
-		    handler (nth 2 condition) entity flags numbers)))
-	  (cond ((elmo-filter-condition-p rhs)
-		 (list 'and lhs rhs))
-		(rhs
-		 lhs))))
-       (lhs
-	(elmo-msgdb-message-match-condition handler (nth 2 condition)
-					    entity flags numbers)))))
-   ((eq (car condition) 'or)
-    (let ((lhs (elmo-msgdb-message-match-condition handler (nth 1 condition)
-						   entity flags numbers)))
-      (cond
-       ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-message-match-condition handler
-						       (nth 2 condition)
-						       entity flags numbers)))
-	  (cond ((elmo-filter-condition-p rhs)
-		 (list 'or lhs rhs))
-		(rhs
-		 t)
-		(t
-		 lhs))))
-       (lhs
-	t)
-       (t
-	(elmo-msgdb-message-match-condition handler
-					     (nth 2 condition)
-					     entity flags numbers)))))))
-
-;;
-(defun elmo-msgdb-match-condition-primitive (handler
-					     condition
-					     entity
-					     flags
-					     numbers)
-  (catch 'unresolved
-    (let ((key (elmo-filter-key condition))
-	  (case-fold-search t)
-	  result)
-      (cond
-       ((string= key "last")
-	(setq result (<= (length (memq
-				  (elmo-msgdb-message-entity-number
-				   handler entity)
-				  numbers))
-			 (string-to-int (elmo-filter-value condition)))))
-       ((string= key "first")
-	(setq result (< (-
-			 (length numbers)
-			 (length (memq
-				  (elmo-msgdb-message-entity-number
-				   handler entity)
-				  numbers)))
-			(string-to-int (elmo-filter-value condition)))))
-       ((string= key "flag")
-	(setq result
-	      (cond
-	       ((string= (elmo-filter-value condition) "any")
-		(or (memq 'important flags)
-		    (memq 'answered flags)
-		    (memq 'unread flags)))
-	       ((string= (elmo-filter-value condition) "digest")
-		(or (memq 'important flags)
-		    (memq 'unread flags)))
-	       ((string= (elmo-filter-value condition) "unread")
-		(memq 'unread flags))
-	       ((string= (elmo-filter-value condition) "important")
-		(memq 'important flags))
-	       ((string= (elmo-filter-value condition) "answered")
-		(memq 'answered flags)))))
-       ((string= key "from")
-	(setq result (string-match
-		      (elmo-filter-value condition)
-		      (elmo-msgdb-message-entity-field
-		       handler entity 'from))))
-       ((string= key "subject")
-	(setq result (string-match
-		      (elmo-filter-value condition)
-		      (elmo-msgdb-message-entity-field
-		       handler entity 'subject))))
-       ((string= key "to")
-	(setq result (string-match
-		      (elmo-filter-value condition)
-		      (elmo-msgdb-message-entity-field
-		       handler entity 'to 'string))))
-       ((string= key "cc")
-	(setq result (string-match
-		      (elmo-filter-value condition)
-		      (elmo-msgdb-message-entity-field
-		       handler entity 'cc 'string))))
-       ((or (string= key "since")
-	    (string= key "before"))
-	(let ((field-date (elmo-msgdb-message-entity-field
-			   handler entity 'date))
-	      (specified-date
-	       (elmo-datevec-to-time
-		(elmo-date-get-datevec
-		 (elmo-filter-value condition)))))
-	  (setq result (if (string= key "since")
-			   (not (elmo-time< field-date specified-date))
-			 (elmo-time< field-date specified-date)))))
-       ((member key elmo-msgdb-extra-fields)
-	(let ((extval (elmo-msgdb-message-entity-field handler
-						       entity
-						       (intern key)
-						       'string)))
-	  (when (stringp extval)
-	    (setq result (string-match
-			  (elmo-filter-value condition)
-			  extval)))))
-       (t
-	(throw 'unresolved condition)))
-      (if (eq (elmo-filter-type condition) 'unmatch)
-	  (not result)
-	result))))
+  ((handler modb-entity-handler) condition entity)
+  (let ((key (elmo-filter-key condition))
+	(case-fold-search t)
+	field-value)
+    (cond
+     ((or (string= key "since")
+	  (string= key "before"))
+      (let ((field-date (elmo-msgdb-message-entity-field
+			 handler entity 'date))
+	    (specified-date
+	     (elmo-datevec-to-time
+	      (elmo-date-get-datevec
+	       (elmo-filter-value condition)))))
+	(if (string= key "since")
+	    (not (elmo-time< field-date specified-date))
+	  (elmo-time< field-date specified-date))))
+     ((setq field-value (elmo-msgdb-message-entity-field handler
+							 entity
+							 (intern key)
+							 'string))
+      (and (stringp field-value)
+	   (string-match (elmo-filter-value condition) field-value)))
+     (t
+      condition))))
 
 
 ;; Standard implementation.
@@ -945,6 +840,67 @@ If each field is t, function is set as default converter."
     (format (if (cdr value) "(%s %05.0f)" "(%s)")
 	    (elmo-msgdb-get-decoded-cache (car value))
 	    (cdr value))))
+
+;; message buffer handler
+(eval-and-compile
+  (luna-define-class modb-buffer-entity-handler (modb-entity-handler)))
+
+(defvar modb-buffer-entity-specializer nil)
+(modb-set-field-converter 'modb-buffer-entity-specializer nil
+  'date	#'elmo-time-parse-date-string)
+
+(luna-define-method elmo-msgdb-make-message-entity
+  ((handler modb-buffer-entity-handler) args)
+  (cons handler (cons (or (plist-get args :number)
+			  (plist-get args 'number))
+		      (or (plist-get args :buffer)
+			  (plist-get args 'buffer)
+			  (current-buffer)))))
+
+(luna-define-method elmo-msgdb-message-entity-number
+  ((handler modb-buffer-entity-handler) entity)
+  (car (cdr entity)))
+
+(luna-define-method elmo-msgdb-message-entity-set-number
+  ((handler modb-buffer-entity-handler) entity number)
+  (and entity (setcar (cdr entity) number)))
+
+(luna-define-method elmo-msgdb-message-entity-field
+  ((handler modb-buffer-entity-handler) entity field &optional type)
+  (and entity
+       (let ((elmo-mime-charset
+	      (or (modb-entity-handler-mime-charset-internal handler)
+		  elmo-mime-charset)))
+	 (modb-convert-field-value
+	  modb-buffer-entity-specializer
+	  field
+	  (if (memq field '(number :number))
+	      (car (cdr entity))
+	    (with-current-buffer (cdr (cdr entity))
+	      (let ((extractor (cdr (assq field
+					  modb-entity-field-extractor-alist))))
+		(if extractor
+		    (funcall extractor field)
+		  (mapconcat
+		   (lambda (field-body)
+		     (mime-decode-field-body field-body (symbol-name field)
+					     'summary))
+		   (elmo-multiple-field-body (symbol-name field))
+		   "\n")))))
+	  type))))
+
+(luna-define-method elmo-msgdb-message-match-condition :around
+  ((handler modb-buffer-entity-handler) condition entity)
+  (let ((key (elmo-filter-key condition))
+	(case-fold-search t))
+    (cond
+     ((string= (elmo-filter-key condition) "body")
+      (with-current-buffer (cdr (cdr entity))
+	(goto-char (point-min))
+	(and (re-search-forward "^$" nil t)	   ; goto body
+	     (search-forward (elmo-filter-value condition) nil t))))
+     (t
+      (luna-call-next-method)))))
 
 (require 'product)
 (product-provide (provide 'modb-entity) (require 'elmo-version))
