@@ -1,3 +1,8 @@
+2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-sync-marks): Remove condition which
+	is always true.
+
 2004-09-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-mime.el (wl-mime-preview-follow-current-region): Avoid error

@@ -1806,28 +1806,23 @@ This function is defined for `window-scroll-functions'"
   (interactive)
   (let ((mes "Updated ")
 	diff diffs)
-    ;; synchronize marks.
-    (when (not (eq (elmo-folder-type-internal
-		    wl-summary-buffer-elmo-folder)
-		   'internal))
-
-      (message "Updating marks...")
-      (dolist (flag (wl-summary-get-available-flags))
-	(setq diff (elmo-list-diff (elmo-folder-list-flagged
-				    wl-summary-buffer-elmo-folder
-				    flag)
-				   (elmo-folder-list-flagged
-				    wl-summary-buffer-elmo-folder
-				    flag 'in-msgdb)))
-	(setq diffs (cadr diff))
-	(setq mes (concat mes (format "-%d" (length diffs))))
-	(when diffs
-	  (wl-summary-unset-persistent-mark flag diffs 'no-modeline 'no-server))
-	(setq diffs (car diff)
-	      mes (concat mes (format "/+%d %s " (length diffs) flag)))
-	(when diffs
-	  (wl-summary-set-persistent-mark flag diffs 'no-modeline 'no-server)))
-      (if (interactive-p) (message "%s" mes)))))
+    (message "Updating marks...")
+    (dolist (flag (wl-summary-get-available-flags))
+      (setq diff (elmo-list-diff (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  flag)
+				 (elmo-folder-list-flagged
+				  wl-summary-buffer-elmo-folder
+				  flag 'in-msgdb)))
+      (setq diffs (cadr diff))
+      (setq mes (concat mes (format "-%d" (length diffs))))
+      (when diffs
+	(wl-summary-unset-persistent-mark flag diffs 'no-modeline 'no-server))
+      (setq diffs (car diff)
+	    mes (concat mes (format "/+%d %s " (length diffs) flag)))
+      (when diffs
+	(wl-summary-set-persistent-mark flag diffs 'no-modeline 'no-server)))
+    (if (interactive-p) (message "%s" mes))))
 
 (defun wl-summary-sync-update (&optional unset-cursor
 					 disable-killed
