@@ -1,3 +1,7 @@
+2001-05-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl.el (wl): Omit `wl-check-environment' if wl-init is nil.
+
 2001-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-plugged-dop-queue-info): Fixed for new queue structure.

@@ -769,13 +769,14 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (unless wl-init
       (setq demo-buf (wl-demo)))
     (wl-init)
-    (condition-case nil
-	(progn
-	  (message "Checking environment...")
-	  (wl-check-environment arg)
-	  (message "Checking environment...done"))
-      (error)
-      (quit))
+    (unless wl-init
+      (condition-case nil
+	  (progn
+	    (message "Checking environment...")
+	    (wl-check-environment arg)
+	    (message "Checking environment...done"))
+	(error)
+	(quit)))
     (condition-case obj
 	(progn
 	  (wl-plugged-init (wl-folder arg))
