@@ -97,7 +97,7 @@ This is most commonly `imput(impost)' or `inews-nifty4u'.")
 	  (when (and wl-insert-message-id
 		     (not (re-search-forward "^Message-ID[ \t]*:" nil t)))
 	    (insert (concat "Message-ID: "
-			    (wl-draft-make-message-id-string) "\n")))
+			    (funcall wl-message-id-function) "\n")))
 	  ;; Insert date field.
 	  (goto-char (point-min))
 	  (or (re-search-forward "^Date[ \t]*:" nil t)

@@ -640,6 +640,7 @@ that `read' can handle, whenever this is possible."
      ;; might otherwise generate the same ID via another algorithm.
      wl-unique-id-suffix)))
 
+(defvar wl-message-id-function 'wl-draft-make-message-id-string)
 (defun wl-draft-make-message-id-string ()
   "Return Message-ID field value."
   (concat "<" (wl-unique-id)

@@ -1047,7 +1047,7 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 		 wl-insert-message-id)
 	     (not (re-search-forward "^Message-ID[ \t]*:" nil t)))
     (insert (concat "Message-ID: "
-		    (wl-draft-make-message-id-string)
+		    (funcall wl-message-id-function)
 		    "\n")))
   ;; Insert date field.
   (goto-char (point-min))

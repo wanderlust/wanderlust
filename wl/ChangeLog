@@ -1,5 +1,11 @@
 2002-01-17  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-utils.el (wl-message-id-function): New variable.
+	* wl-draft.el (wl-draft-insert-required-fields):
+	Use `wl-message-id-function'.
+
+2002-01-17  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-message-id-use-wl-from): New variable.
 	* wl-utils.el (wl-draft-make-message-id-string):
 	Use `wl-from' for domain part of Message-ID
