@@ -1,3 +1,10 @@
+2000-06-08  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-redisplay-no-mime): Update
+	buffer-local variables like `wl-summary-redisplay-internal'.
+	(wl-summary-redisplay-all-header): Likewise.  Update
+	Summary view too.
+
 2000-06-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-jump-to-parent-message):
