@@ -1,12 +1,3 @@
-2002-10-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* wl-mime.el (wl-message-delete-current-part): New function.
-	(wl-mime-node-id-to-string): Ditto.
-
-	* wl-mime.el (wl-message-delete-current-part): Use existing
-	original buffer which corresponds current mime-view buffer.
-	(fetched buffer might have different structure, possibly)
-
 2002-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-insert-headers): Put alike hash in reverse
