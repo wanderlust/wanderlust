@@ -1,5 +1,8 @@
 2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-draft.el (wl-draft-queue-flush): Call elmo-folder-open-internal
+	and elmo-folder-close.
+
 	* wl.el (wl): Call `wl-check-environment' before `wl-plugged-init'.
 
 2001-09-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>

@@ -1800,7 +1800,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   "Flush draft queue."
   (interactive)
   (let* ((queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
-	 (msgs2 (elmo-folder-list-messages queue-folder))
+	 (msgs2 (progn
+		  (elmo-folder-open-internal queue-folder)
+		  (elmo-folder-list-messages queue-folder)))
 	 (i 0)
 	 (performed 0)
 	 (wl-draft-queue-flushing t)
@@ -1859,6 +1861,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (kill-buffer buffer)
 	      (message "%d message(s) are sent." performed)))
 	(message "%d message(s) are remained to be sent." len))
+      (elmo-folder-close queue-folder)
       len)))
 
 (defun wl-jump-to-draft-buffer (&optional arg)
