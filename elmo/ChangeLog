@@ -1,3 +1,12 @@
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-folder-delete): Confirm deletion here, return t if
+	the folder has been deleted successfully.
+	* elmo-imap4.el (elmo-folder-delete): Ditto.
+	* elmo-archive.el (elmo-folder-delete): Ditto.
+	* elmo-localdir.el (elmo-folder-delete): Ditto.
+	* elmo-maildir.el (elmo-folder-delete): Ditto.
+
 2003-03-27  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-util.el (elmo-string-member-ignore-case): New function.

@@ -1,5 +1,10 @@
 2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-fldmgr.el (wl-fldmgr-delete): Move confirmation to elmo side,
+	cut visible folder when elmo-folder-delete returns non-nil value.
+
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
 	* wl-draft.el (wl-draft-send-confirm): Display more info (advised
 	by Kenichi OKADA <okada@opaopa.org>).
 
