@@ -285,6 +285,16 @@
   (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
 				 numbers ignore-flag))
 
+(luna-define-method elmo-folder-unmark-answered ((folder elmo-pipe-folder)
+						 numbers)
+  (elmo-folder-unmark-answered (elmo-pipe-folder-dst-internal folder)
+			       numbers))
+
+(luna-define-method elmo-folder-mark-as-answered ((folder elmo-pipe-folder)
+						  numbers)
+  (elmo-folder-mark-as-answered (elmo-pipe-folder-dst-internal folder)
+				numbers))
+
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))
 
