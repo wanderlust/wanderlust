@@ -1,3 +1,7 @@
+2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.7.
+
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-obsolete-variable-show-warnings): Define with

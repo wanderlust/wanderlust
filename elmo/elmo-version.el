@@ -40,7 +40,7 @@
 ;; product-define in the first place
 (product-provide 'elmo-version
   ;; Don't forget to check `wl-version.el' and Info.
-  (product-define "ELMO" nil '(2 7 6)))
+  (product-define "ELMO" nil '(2 7 7)))
 
 ;; For APEL 10.2 or earlier.
 (defun-maybe product-version-as-string (product)

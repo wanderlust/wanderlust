@@ -1,3 +1,7 @@
+2001-12-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Version number is increased to 2.7.7.
+
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-exit): Eliminated byte-compile warning.
