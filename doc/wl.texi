@@ -4133,14 +4133,14 @@ windows.
 
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI only) Initial setting is @code{nil}.
+Initial setting is @code{nil}.
 All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name.
 If @code{nil}, the value of @code{mime-view-ignored-field-list} is used.
 
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI only) Initial setting is @code{nil}.
+Initial setting is @code{nil}.
 All fields that match this list will be display in message buffer.
 Each elements are regexp of field-name. This value precedes
 @code{wl-message-ignored-field-list}.
@@ -4148,7 +4148,7 @@ If @code{nil}, the value of @code{mime-view-visible-field-list} is used.
 
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
-(SEMI only) Initial setting is
+Initial setting is
 '("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From").
 Header fields in message buffer are ordered by this value.
 Each elements are regexp of field-name.

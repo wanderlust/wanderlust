@@ -4120,21 +4120,21 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @item wl-message-ignored-field-list
 @vindex wl-message-ignored-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI=<($7$J$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
 $B;XDj$7$^$9!#(B
 @code{nil} $B$J$i!"(B@code{mime-view-ignored-field-list} $B$NCM$r;H$$$^$9!#(B
 
 @item wl-message-visible-field-list
 @vindex wl-message-visible-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B @code{nil}$B!#(B
+$B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI,$:I=<($7$?$$%X%C%@%U%#!<%k%I$r@55,I=8=$N%j%9%H$G(B
 $B;XDj$7$^$9!#(B@code{wl-message-ignored-field-list} $B$h$j$bM%@h$5$l$^$9!#(B
 @code{nil} $B$J$i!"(B@code{mime-view-visible-field-list} $B$NCM$r;H$$$^$9!#(B
 
 @item wl-message-sort-field-list
 @vindex wl-message-sort-field-list
-(SEMI $B$N$_(B) $B=i4|@_Dj$O(B 
+$B=i4|@_Dj$O(B 
 '("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From")$B!#(B
 $B%a%C%;!<%8%P%C%U%!$KI=<($9$k%X%C%@%U%#!<%k%I$N=gHV$r@55,I=8=$N%j%9%H$G(B
 $B;XDj$7$^$9!#(B
