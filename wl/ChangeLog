@@ -1,8 +1,3 @@
-2000-11-27  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl.el (wl-check-environment): Additional check for
-	'wl-local-domain' and `wl-message-id-domain'.
-
 2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.5.3.
