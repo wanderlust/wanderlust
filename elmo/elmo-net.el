@@ -235,6 +235,12 @@ Returns a process object.  if making session failed, returns nil."
 	    (elmo-network-authenticate-session session)
 	    (elmo-network-setup-session session)))
       (error
+       (when (eq (car error) 'elmo-open-error)
+	 (elmo-set-plugged nil server port
+			   (elmo-network-stream-type-symbol stream-type)
+			   (current-time))
+	 (message "Auto plugged off at %s:%d :%s" server port (cadr error))
+	 (sit-for 1))
        (when (eq (car error) 'elmo-authenticate-error)
 	 (elmo-remove-passwd (elmo-network-session-password-key session)))
        (elmo-network-close-session session)

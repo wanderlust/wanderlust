@@ -254,7 +254,8 @@ Don't cache if nil.")
 
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-nntp-session))
-  (let ((process (elmo-network-session-process-internal session)))
+  (let ((process (elmo-network-session-process-internal session))
+	response)
     (set-process-filter (elmo-network-session-process-internal session)
 			'elmo-nntp-process-filter)
     (with-current-buffer (elmo-network-session-buffer session)
@@ -266,8 +267,9 @@ Don't cache if nil.")
 		  (not (looking-at "^[2-5][0-9][0-9]")))
 	(accept-process-output process 1))
       (setq elmo-nntp-read-point (point))
-      (or (elmo-nntp-read-response session t)
-	  (error "Cannot open network"))
+      (setq response (elmo-nntp-read-response session t t))
+      (unless (car response)
+	  (signal 'elmo-open-error (list (cdr response))))
       (if elmo-nntp-send-mode-reader
 	  (elmo-nntp-send-mode-reader session))
       (when (eq (elmo-network-stream-type-symbol
@@ -321,7 +323,7 @@ Don't cache if nil.")
     (process-send-string (elmo-network-session-process-internal
 			  session) "\r\n")))
 
-(defun elmo-nntp-read-response (session &optional not-command)
+(defun elmo-nntp-read-response (session &optional not-command error-msg)
   (with-current-buffer (elmo-network-session-buffer session)
     (let ((process (elmo-network-session-process-internal session))
 	  (case-fold-search nil)
@@ -337,14 +339,14 @@ Don't cache if nil.")
 	(setq response-string
 	      (buffer-substring elmo-nntp-read-point (- match-end 2)))
 	(goto-char elmo-nntp-read-point)
-	(if (looking-at "[234][0-9]+ .*$")
+	(if (looking-at "[23][0-9]+ .*$")
 	    (progn (setq response-continue nil)
 		   (setq elmo-nntp-read-point match-end)
 		   (setq response
 			 (if response
 			     (concat response "\n" response-string)
 			   response-string)))
-	  (if (looking-at "[^234][0-9]+ .*$")
+	  (if (looking-at "[^23][0-9]+ .*$")
 	      (progn (setq response-continue nil)
 		     (setq elmo-nntp-read-point match-end)
 		     (setq response nil))
@@ -356,7 +358,9 @@ Don't cache if nil.")
 		      (concat response "\n" response-string)
 		    response-string)))
 	  (setq elmo-nntp-read-point match-end)))
-      response)))
+      (if error-msg
+	  (cons response response-string)
+	response))))
 
 (defun elmo-nntp-read-raw-response (session)
   (with-current-buffer (elmo-network-session-buffer session)

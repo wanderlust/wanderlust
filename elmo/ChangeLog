@@ -1,5 +1,13 @@
 2002-01-07  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-nntp.el (elmo-nntp-read-response): Added `error-msg' argument.
+	Change to looking-at `[23][0-9]+'.
+	(elmo-network-initialize-session): Use 'error-msg'
+	* elmo-net.el (elmo-network-open-session): Set unplugged
+	if elmo-network-initialize-session returns 'elmo-open-err.
+
+2002-01-07  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-version.el (elmo-version): Up to 2.9.4.
 
 2002-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
