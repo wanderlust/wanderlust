@@ -11,7 +11,7 @@
 (luna-define-method check-modules-apel-version ((case check-modules))
   (require 'apel-ver)
   (lunit-assert
-   (product-version>= (product-find 'apel-ver) '(10 2))))
+   (product-version>= (product-find 'apel-ver) '(10 3))))
 
 ;; X-Face on XEmacs
 (luna-define-method check-modules-x-face-xmas ((case check-modules))
