@@ -1286,7 +1286,7 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 		(goto-char (point-min)) ; to show recipients in header
 		(catch 'done
 		  (while t
-		    (message "Send current draft? <y/n/j(up)/k(down)> ")
+		    (message "Send current draft? <y/n/j(down)/k(up)> ")
 		    (setq answer (let ((cursor-in-echo-area t)) (read-char)))
 		    (cond
 		     ((or (eq answer ?y)

@@ -72,6 +72,11 @@
 	(wl-archive-folder): Ditto.
 	All other related portions are changed.
 
+2003-07-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-confirm): Change message. Now up/down
+	mean move up and down. (suggested by Takashi Kawachi)
+
 2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-acap.el (toplevel): Don't require un-define.
