@@ -51,8 +51,6 @@ nil なら original は利用しない。
 更新されたマークは、操作のあとで elmo-message-mark を呼び出すことにより
 得る。
 
----- ここまで DONE ----
-
 * Mark & Action
   一時マークの扱いを整理する．
   wl-summary-buffer-refile-list
@@ -61,8 +59,21 @@ nil なら original は利用しない。
   を廃止，新規変数
   wl-summary-buffer-temp-mark-list
   で一時マーク情報を一元管理する．
+
   wl-summary-mark-action-list でマークと，対応するアクションを
   定義できるようにする．
+
+  デフォルトのマーク＆アクションとして，
+  "o" refile              
+  "O" copy                
+  "d" dispose (旧 delete) 
+  "D" delete (旧 erase)   
+  "i" prefetch            
+  "~" resend              
+  を用意．
+  関連関数は新規ファイル wl-action.el に定義．
+
+---- ここまで DONE ----
 
 * 仮想フォルダの msgdb の扱い
   pipe, filter, multi では、オリジナルフォルダの msgdb を操作する。
