@@ -3297,6 +3297,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @kindex m i (Summary)
 @findex wl-summary-target-mark-prefetch
 Prefetch all messages which have target mark @samp{*}.
+With prefix argument, prefetch all targets even if some of them are cached.
 (@code{wl-summary-target-mark-prefetch})
 
 @item m R

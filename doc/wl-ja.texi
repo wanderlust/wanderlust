@@ -3286,6 +3286,8 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rJ]B8$
 @kindex m i (Summary)
 @findex wl-summary-target-mark-prefetch
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$rA4$F%W%j%U%'%C%A$7$^$9!#(B
+prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
+$B:FEY%W%j%U%'%C%A$7$^$9!#(B
 (@code{wl-summary-target-mark-prefetch})
 
 @item m R
