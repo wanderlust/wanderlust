@@ -39,6 +39,7 @@
   (add-hook 'wl-summary-exit-hook 'bbdb-wl-hide-bbdb-buffer)
   (add-hook 'wl-message-window-deleted-hook 'bbdb-wl-hide-bbdb-buffer)
   (add-hook 'wl-exit-hook 'bbdb-wl-exit)
+  (add-hook 'wl-save-hook 'bbdb-offer-save)
   (add-hook 'wl-summary-toggle-disp-off-hook 'bbdb-wl-hide-bbdb-buffer)
   (add-hook 'wl-summary-toggle-disp-folder-on-hook 'bbdb-wl-hide-bbdb-buffer)
   (add-hook 'wl-summary-toggle-disp-folder-off-hook 'bbdb-wl-hide-bbdb-buffer)
@@ -56,14 +57,9 @@
 	     (lambda ()
 ;;;	       (local-set-key "\M-\t" 'bbdb-complete-name)
 	       (define-key (current-local-map) "\M-\t" 'bbdb-complete-name))))
-  ;; BBDB 2.00.06 or earlier:
-  ;;  auto-autoloads.el includes (provide 'bbdb-autoloads)
-  ;;  Don't exist bbdb-autoloads.el
-  (when (and (not (featurep 'bbdb-autoloads))
-	     (module-installed-p 'bbdb-autoloads))
-    ;; BBDB 2.20: bbdb-autoloads.el NOT includes (provide 'bbdb-autoloads)
-    (load "bbdb-autoloads"))
-  
+  (require 'bbdb)
+  (bbdb-initialize)
+
   (if (not (boundp 'bbdb-get-addresses-from-headers))
       (defvar bbdb-get-addresses-from-headers
 	'("From" "Resent-From" "Reply-To")))
