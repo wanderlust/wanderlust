@@ -109,7 +109,6 @@ With association ((\"folder\" message \"message-id\") . cache-buffer).")
 ;    (setcdr pointer (list entry))
 ;    (setq wl-message-buffer-cache (cdr top))))
 
-(defconst wl-message-buffer-cache-name    " *WL:Message*")
 (defconst wl-original-message-buffer-name " *Original*")
 
 (defun wl-original-message-mode ()
@@ -131,7 +130,7 @@ If original message buffer already exists, it is re-used."
 
 (defun wl-message-buffer-create ()
   "Create a new message buffer."
-  (let* ((buffer (generate-new-buffer wl-message-buffer-cache-name))
+  (let* ((buffer (generate-new-buffer wl-message-buffer-name))
 	 (name (buffer-name buffer)))
     (with-current-buffer buffer
       (setq wl-message-buffer-original-buffer
@@ -173,7 +172,7 @@ Return its cache buffer."
 	   wl-message-buffer
 	   (get-buffer-window wl-message-buffer))
       (delete-window (get-buffer-window wl-message-buffer)))
-  (wl-kill-buffers (regexp-quote wl-message-buffer-cache-name))
+  (wl-kill-buffers (regexp-quote wl-message-buffer-name))
   (setq wl-message-buffer-cache nil))
 
 ;;; Message buffer handling from summary buffer.

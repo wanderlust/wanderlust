@@ -1,5 +1,17 @@
 2002-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-message-buffer-name): New user option.
+
+	* wl-summary.el (wl-summary-read-folder): Use wl-folder-entity-hashtb
+	directly instead of making alist dinamically.
+
+	* wl-message.el (wl-message-buffer-cache-name): Abolish.
+	(wl-message-buffer-create): Use wl-message-buffer-name instead of
+	wl-message-buffer-cache-name.
+	(wl-message-buffer-cache-clean-up): Ditto.
+
+	* wl-folder.el (wl-folder-set-entity-info): Use elmo-string.
+
 	* Version number is increased to 2.9.15.
 
 2002-08-06  Yuuichi Teranishi  <teranisi@gohome.org>

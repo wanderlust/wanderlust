@@ -1879,6 +1879,11 @@ See also variable `wl-summary-next-no-unread-command'."
   :group 'wl-pref
   :group 'wl-setting)
 
+(defcustom wl-message-buffer-name " *WL:Message*"
+  "*Buffer name for message buffers."
+  :group 'wl-pref
+  :group 'wl-setting)
+
 (defcustom wl-message-buffer-prefetch-folder-type-list t
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."

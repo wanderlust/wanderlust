@@ -1,5 +1,14 @@
 2002-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-warning): Define as a macro which uses
+	`display-warning' if it is defined as a function.
+
+	* elmo-split.el (elmo-split-fetch-decoded-field): New function.
+	(elmo-split-equal): Use it.
+	(elmo-split-match): Ditto.
+	(elmo-split-message-entity): New buffer-local variable.
+	(elmo-split-subr): Set it.
+
 	* elmo-version.el (elmo-version): Up to 2.9.15.
 
 2002-08-18  Kenichi OKADA  <okada@opaopa.org>

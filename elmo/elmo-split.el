@@ -119,6 +119,10 @@ Example:
 (defvar elmo-split-match-string-internal nil
   "Internal variable for string matching.  Don't touch this variable by hand.")
 
+(defvar elmo-split-message-entity nil
+  "Buffer local variable to store mime-entity.")
+(make-variable-buffer-local 'elmo-split-message-entity)
+
 ;;;
 (defun elmo-split-or (buffer &rest args)
   (catch 'done
@@ -166,14 +170,27 @@ Example:
 	(setq addrs (cdr addrs)))
       result)))
 
+(defun elmo-split-fetch-decoded-field (entity field-name)
+  (let ((sym (intern (capitalize field-name)))
+	(field-body (mime-entity-fetch-field entity field-name)))
+    (when field-body
+      (mime-decode-field-body field-body sym 'plain))))
+
 (defun elmo-split-equal (buffer field value)
   (with-current-buffer buffer
-    (let ((field-value (std11-field-body (symbol-name field))))
+    (let ((field-value (and
+			elmo-split-message-entity
+			(elmo-split-fetch-decoded-field
+			 elmo-split-message-entity
+			 (symbol-name field)))))
       (equal field-value value))))
 
 (defun elmo-split-match (buffer field value)
   (with-current-buffer buffer
-    (let ((field-value (std11-field-body (symbol-name field))))
+    (let ((field-value (and elmo-split-message-entity
+			    (elmo-split-fetch-decoded-field
+			     elmo-split-message-entity
+			     (symbol-name field)))))
       (and field-value
 	   (when (string-match value field-value)
 	     (setq elmo-split-match-string-internal field-value))))))
@@ -249,6 +266,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 		      (elmo-message-fetch folder msg
 					  (elmo-make-fetch-strategy 'entire)
 					  nil (current-buffer) 'unread))
+		(setq elmo-split-message-entity (mime-parse-buffer))
 		(catch 'terminate
 		  (dolist (rule elmo-split-rule)
 		    (setq elmo-split-match-string-internal nil)

@@ -293,7 +293,7 @@
 (defmacro wl-folder-set-entity-info (entity value &optional hashtb)
   (` (let* ((hashtb (or (, hashtb) wl-folder-entity-hashtb))
 	    (info (wl-folder-get-entity-info (, entity) hashtb)))
-       (elmo-set-hash-val (, entity)
+       (elmo-set-hash-val (elmo-string (, entity))
 			  (if (< (length (, value)) 4)
 			      (append (, value) (list (nth 3 info)))
 			    (, value))

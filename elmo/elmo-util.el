@@ -1878,15 +1878,18 @@ If KBYTES is kilo bytes (This value must be float)."
 ;;;
 ;; Warnings.
 
-(defconst elmo-warning-buffer-name "*elmo warning*")
-
-(defun elmo-warning (&rest args)
-  "Display a warning, making warning message by passing all args to `insert'."
-  (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
-    (goto-char (point-max))
-    (apply 'insert (append args '("\n")))
-    (ignore-errors (recenter 1))
-    (display-buffer elmo-warning-buffer-name)))
+(static-if (fboundp 'display-warning)
+    (defmacro elmo-warning (&rest args)
+      "Display a warning with `elmo' group."
+      `(display-warning 'elmo (format ,@args)))
+  (defconst elmo-warning-buffer-name "*elmo warning*")
+  (defun elmo-warning (&rest args)
+    "Display a warning. ARGS are passed to `format'."
+    (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
+      (goto-char (point-max))
+      (funcall 'insert (apply 'format (append args '("\n"))))
+      (ignore-errors (recenter 1))
+      (display-buffer elmo-warning-buffer-name))))
 
 (defvar elmo-obsolete-variable-alist nil)
 
@@ -1916,9 +1919,9 @@ If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
 	(defvaralias var obsolete)
       (set var (symbol-value obsolete)))
     (if elmo-obsolete-variable-show-warnings
-	(elmo-warning (format "%s is obsolete. Use %s instead."
-			      (symbol-name obsolete)
-			      (symbol-name var))))))
+	(elmo-warning "%s is obsolete. Use %s instead."
+		      (symbol-name obsolete)
+		      (symbol-name var)))))
 
 (defun elmo-resque-obsolete-variables (&optional alist)
   "Resque obsolete variables in ALIST.
