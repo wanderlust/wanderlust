@@ -1,7 +1,6 @@
-elmo-search で msgdb とフォルダ本体をシームレスに検索
-pick/virtual の completion 統合
 msgdb 構造の見直しと obarray 化
 重要マークの管理
+IMAP フォルダチェックで RECENT の値を使うようにする。
 サマリフォーマット自由化
 プリフェッチ予約マーク
 返事済み、フォワード済みマーク
