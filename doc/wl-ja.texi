@@ -2734,6 +2734,11 @@ IMAP のメッセージだけが先読みされます。この変数は
 初期設定は 30000 (bytes)。この値を越えるサイズのメッセージは、先読みしません。
 @code{wl-message-buffer-prefetch-threshold}を @code{nil} に設定すると、
 先読みするメッセージのサイズをチェックしません。
+
+@item wl-auto-prefetch-first
+@vindex wl-auto-prefetch-first
+初期設定は @code{nil}。
+Non-nil であればフォルダに移動した時に最初のメッセージを自動的に先読みします。
 @end table
 
 

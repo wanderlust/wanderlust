@@ -2742,6 +2742,12 @@ The initial setting is 30000 (bytes). If prefetching message has larger
 size than this value, Wanderlust does not prefetch automatically.
 If @code{wl-message-buffer-prefetch-threshold} is @code{nil}, 
 the message is not checked for the size.
+
+@item wl-auto-prefetch-first
+@vindex wl-auto-prefetch-first
+The initial setting is @code{nil}.
+If non-nil, first message is automatically prefetched to the buffer
+when you enter the folder.
 @end table
 
 
@@ -3603,7 +3609,8 @@ next message.
 @item wl-auto-select-first
 @vindex wl-auto-select-first
 The initial setting is @code{nil}.
-If non-nil, first message is automatically displayed.
+If non-nil, first message is automatically displayed when you enter
+the folder.
 
 @item wl-auto-select-next
 @vindex wl-auto-select-next
