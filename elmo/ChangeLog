@@ -1,5 +1,8 @@
 2004-01-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elsp-bogofilter.el (elmo-spam-bogofilter-arguments-alist):
+	Follow the options change of latest bogofilter.
+
 	* elsp-bogofilter.el (elmo-spam-bogofilter-spam-switch): Abolish.
 	(elmo-spam-bogofilter-good-switch): Ditto.
 	(elmo-spam-bogofilter-arguments-alist): New user option.

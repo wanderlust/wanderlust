@@ -53,12 +53,10 @@
   :group 'elmo-spam-bogofilter)
 
 (defcustom elmo-spam-bogofilter-arguments-alist
-  '((classify . ("-v" "-2"
-		 (if register "-u")
+  '((classify . ((if register "-u")
 		 (if elmo-spam-bogofilter-database-directory
 		     (list "-d" elmo-spam-bogofilter-database-directory))))
-    (register . ("-v"
-		 (if spam "-s" "-n")
+    (register . ((if spam "-s" "-n")
 		 (if restore (if spam "-N" "-S"))
 		 (if elmo-spam-bogofilter-database-directory
 		     (list "-d" elmo-spam-bogofilter-database-directory)))))
