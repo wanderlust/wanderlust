@@ -1357,7 +1357,8 @@ If optional argument UNMARK is non-nil, unmark."
 					  "uid copy %s "
 					"copy %s ")
 				      (car msgs))
-				     (elmo-imap4-mailbox dst-spec)))
+				     (elmo-imap4-mailbox
+				      (elmo-imap4-spec-mailbox dst-spec))))
       (setq msgs (cdr msgs)))
     (when expunge-it
       (elmo-imap4-send-command-wait session "expunge"))
