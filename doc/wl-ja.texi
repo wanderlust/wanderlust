@@ -1632,7 +1632,7 @@ POP $B%5!<%P$K%a!<%k$r;D$7$?$^$^!"%a%C%;!<%8$r(B @samp{+inbox} $B$K%3%T!<$7$F
 $B1\Mw$7$?$$>l9g$O!"(B
 
 @example
-|&username@@popserver|+inbox
+|&username@@popserver|:+inbox
 @end example
 
 $B$N$h$&$K$7$^$9!#(B

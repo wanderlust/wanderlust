@@ -1619,7 +1619,7 @@ If you want to copy messages from POP server and view them, specify the
 folder as follows:
 
 @example
-|&username@@popserver|+inbox
+|&username@@popserver|:+inbox
 @end example
 
 where messages will be kept on the server.
