@@ -380,7 +380,7 @@ If file exists and `wl-auto-insert-x-face' is non-nil."
   :type 'file
   :group 'wl-draft)
 
-(defvar wl-draft-write-file-function 'wl-draft-save
+(defcustom wl-draft-write-file-function 'wl-draft-save
   "Save function for draft message."
   :type 'function
   :group 'wl-draft)
@@ -644,8 +644,9 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when replied.")
 (defvar wl-mail-setup-hook nil
   "A hook called when Draft is prepared.")
-(defvar wl-draft-reedit-hook nil
-  "A hook called when Draft is re-edited.")
+(defvar wl-draft-reedit-hook '(wl-draft-remove-text-plain-tag)
+  "A hook called when Draft is re-edited.
+The cursor point is located at top of the body.")
 (defvar wl-draft-send-hook '(wl-draft-config-exec)
   "A hook called on the draft editing buffer before sending process starts.")
 (defvar wl-mail-send-pre-hook nil
