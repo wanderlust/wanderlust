@@ -1,3 +1,17 @@
+2001-04-24  Hiroya Murata  <hiroya@use-ebisu.co.jp>
+
+	* elmo-util.el (elmo-list-subdirectories-1): New function.
+	(elmo-list-subdirectories): Use `elmo-list-subdirectories-1'.
+	(elmo-mapcar-list-of-list): New function.
+
+	* elmo-archive.el (elmo-archive-folder-list-subfolders): Use
+	`elmo-mapcar-list-of-list' instead of `mapcar'.
+
+	* elmo-localdir.el (elmo-folder-list-subfolders): Ditto.
+
+	* elmo-maildir.el (elmo-folder-list-subfolders): Ditto. Bind
+	`elmo-have-link-count'. Return the fully qualified folder name.
+
 2001-04-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-shimbun-check-interval): New user option.
