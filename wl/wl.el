@@ -281,10 +281,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
     (while dop-queue
       (when (car dop-queue)
-	(setq ope (cons (elmo-dop-queue-method (car dop-queue))
-			(length 
+	(setq ope (cons (elmo-dop-queue-method-name (car dop-queue))
+			(length
 			 (if (listp
-			      (car 
+			      (car
 			       (elmo-dop-queue-arguments (car dop-queue))))
 			     (car (elmo-dop-queue-arguments
 				   (car dop-queue))))))))
