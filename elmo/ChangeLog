@@ -1,3 +1,9 @@
+2003-03-27  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-util.el (elmo-string-member-ignore-case): New function.
+	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Use it.
+	(elmo-imap4-fetch-callback-1-subr): Likewise.
+
 2003-03-27  Kimura Fuyuki <fuyuki@hadaly.org>
 
 	* elmo-imap4.el (elmo-imap4-response-get-selectable-mailbox-list): Fix
