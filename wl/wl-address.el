@@ -130,14 +130,15 @@ Returns matched uniq string list."
 (defun wl-ldap-alias-safe-string (str)
   "Modify STR for alias.
 Replace space/tab in STR into '_' char.
-And remove domain part of mail addr."
+Replace '@' in STR into '/' char."
   (while (string-match "[^_a-zA-Z0-9+@%.!\\-/]+" str)
     (setq str (concat (substring str 0 (match-beginning 0))
 		      "_"
 		      (substring str (match-end 0)))))
-  (if (string-match "@[^/@]+" str)
-      (setq str (concat (substring str 0 (match-beginning 0))
-			(substring str (match-end 0)))))
+  (if (string-match "\\(@\\)[^/@]+" str)
+      (setq str (concat (substring str 0 (match-beginning 1))
+			"/"
+			(substring str (match-end 1)))))
   str)
 
 (defun wl-ldap-register-dn-string (hash dn &optional str dn-list)
