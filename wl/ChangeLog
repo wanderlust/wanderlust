@@ -1,3 +1,16 @@
+2002-10-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Avoid byte-compile warnings.
+
+2002-10-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Fix logic.
+
+2002-10-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-message-delete-current-part): Use `delete-region'
+	instead of `kill-region'.
+
 2002-10-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-mime-preview-follow-current-region): New function

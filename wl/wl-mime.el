@@ -34,8 +34,13 @@
 (require 'mime-play)
 (require 'elmo)
 
+;; avoid compile warnings
 (eval-when-compile
-  (defalias-maybe 'Meadow-version 'ignore))
+  (defalias-maybe 'Meadow-version 'ignore)
+  (defvar-maybe zmacs-regions)
+  (defvar-maybe zmacs-region-active-p)
+  (defvar-maybe transient-mark-mode)
+  (defvar-maybe mark-active))
 
 (defvar xemacs-betaname)
 (defvar xemacs-codename)
@@ -70,7 +75,8 @@ has Non-nil value\)"
 	    (widen)
 	      (if (or (and wl-on-xemacs
 			   zmacs-regions zmacs-region-active-p)
-		      (and transient-mark-mode mark-active))
+		      (and (not wl-on-xemacs)
+			   transient-mark-mode mark-active))
 		  (wl-mime-preview-follow-current-region)
 		(mime-preview-follow-current-entity)))))))
 
@@ -280,7 +286,7 @@ It calls following-method selected from variable
 			  (wl-mime-node-id-to-string node-id))))
 	(with-temp-buffer
 	  (insert-buffer orig-buf)
-	  (kill-region header-start body-end)
+	  (delete-region header-start body-end)
 	  (goto-char header-start)
 	  (insert "Content-Type: text/plain; charset=US-ASCII\n\n")
 	  (insert "** This part has been removed by Wanderlust **\n\n")
