@@ -77,8 +77,7 @@
 
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
-(defvar wl-summary-buffer-refile-list nil)
-(defvar wl-summary-buffer-delete-list nil)
+(defvar wl-summary-buffer-temp-mark-list nil)
 (defvar wl-summary-buffer-last-displayed-msg nil)
 (defvar wl-summary-buffer-current-msg nil)
 (defvar wl-summary-buffer-unread-count 0)
@@ -98,7 +97,6 @@
 (defvar wl-summary-buffer-persistent nil)
 (defvar wl-summary-buffer-thread-nodes nil)
 (defvar wl-summary-buffer-target-mark-list nil)
-(defvar wl-summary-buffer-copy-list nil)
 (defvar wl-summary-buffer-prev-refile-destination nil)
 (defvar wl-summary-buffer-prev-copy-destination nil)
 (defvar wl-summary-buffer-saved-message nil)
@@ -140,10 +138,8 @@
 (make-variable-buffer-local 'wl-summary-search-buf-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-disp-msg)
 (make-variable-buffer-local 'wl-summary-buffer-disp-folder)
-(make-variable-buffer-local 'wl-summary-buffer-refile-list)
-(make-variable-buffer-local 'wl-summary-buffer-copy-list)
 (make-variable-buffer-local 'wl-summary-buffer-target-mark-list)
-(make-variable-buffer-local 'wl-summary-buffer-delete-list)
+(make-variable-buffer-local 'wl-summary-buffer-temp-mark-list)
 (make-variable-buffer-local 'wl-summary-buffer-last-displayed-msg)
 (make-variable-buffer-local 'wl-summary-buffer-unread-count)
 (make-variable-buffer-local 'wl-summary-buffer-new-count)
@@ -465,7 +461,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "o"    'wl-summary-refile)
   (define-key wl-summary-mode-map "O"    'wl-summary-copy)
   (define-key wl-summary-mode-map "\M-o" 'wl-summary-refile-prev-destination)
-;  (define-key wl-summary-mode-map "\M-O" 'wl-summary-copy-prev-destination)
   (define-key wl-summary-mode-map "\C-o" 'wl-summary-auto-refile)
   (define-key wl-summary-mode-map "d"    'wl-summary-delete)
   (define-key wl-summary-mode-map "u"    'wl-summary-unmark)
@@ -956,8 +951,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  wl-thread-entities nil
 	  wl-summary-buffer-number-list nil
 	  wl-summary-buffer-target-mark-list nil
-	  wl-summary-buffer-refile-list nil
-	  wl-summary-buffer-delete-list nil
+	  wl-summary-buffer-temp-mark-list nil
 	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
     (while numbers
@@ -1065,26 +1059,18 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   wl-summary-buffer-thread-modified)
 
 (defsubst wl-summary-cleanup-temp-marks (&optional sticky)
-  (if (or wl-summary-buffer-refile-list
-	  wl-summary-buffer-copy-list
-	  wl-summary-buffer-delete-list)
-      (if (y-or-n-p (format "Execute remaining marks in %s? "
-			    (wl-summary-buffer-folder-name)))
-	  (progn
-	    (wl-summary-exec)
-	    (if (or wl-summary-buffer-refile-list
-		    wl-summary-buffer-copy-list
-		    wl-summary-buffer-delete-list)
-		(error "Some execution was failed")))
-	;; delete temp-marks
-	(message "")
-	(wl-summary-delete-all-refile-marks)
-	(wl-summary-delete-all-copy-marks)
-	(wl-summary-delete-all-delete-marks)))
-  (if wl-summary-buffer-target-mark-list
-      (progn
-	(wl-summary-delete-all-target-marks)
-	(setq wl-summary-buffer-target-mark-list nil)))
+  (when wl-summary-buffer-temp-mark-list
+    (if (y-or-n-p (format "Execute remaining marks in %s? "
+			  (wl-summary-buffer-folder-name)))
+	(progn
+	  (wl-summary-exec)
+	  (if wl-summary-buffer-temp-mark-list
+	      (error "Some execution was failed")))
+      ;; delete temp-marks
+      (message "")
+      (setq wl-summary-buffer-temp-mark-list nil)))
+  (when wl-summary-buffer-target-mark-list
+    (setq wl-summary-buffer-target-mark-list nil))
   (wl-summary-delete-all-temp-marks-on-buffer sticky)
   (setq wl-summary-scored nil))
 
@@ -1203,9 +1189,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (setq wl-thread-entities nil)
   (setq wl-summary-buffer-number-list nil)
   (setq wl-summary-buffer-target-mark-list nil)
-  (setq wl-summary-buffer-refile-list nil)
-  (setq wl-summary-buffer-copy-list nil)
-  (setq wl-summary-buffer-delete-list nil))
+  (setq wl-summary-buffer-temp-mark-list nil))
 
 (defun wl-summary-sync (&optional unset-cursor force-range)
   (interactive)
@@ -1518,18 +1502,7 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-delete-copy-marks-on-buffer (copies)
   (wl-summary-delete-marks-on-buffer copies))
 
-(defun wl-summary-delete-all-refile-marks ()
-  (let ((marks wl-summary-buffer-refile-list))
-    (while marks
-      (wl-summary-unmark (car (pop marks))))))
-
-(defun wl-summary-delete-all-copy-marks ()
-  (let ((marks wl-summary-buffer-copy-list))
-    (while marks
-      (wl-summary-unmark (car (pop marks))))))
-
-(defun wl-summary-delete-all-delete-marks ()
-  (wl-summary-delete-marks-on-buffer wl-summary-buffer-delete-list))
+;;;
 
 (defun wl-summary-delete-all-target-marks ()
   (wl-summary-delete-marks-on-buffer wl-summary-buffer-target-mark-list))
@@ -2232,9 +2205,7 @@ If ARG, without confirm."
 	(folder wl-summary-buffer-elmo-folder)
 	(copy-variables
 	 (append '(wl-summary-buffer-view
-		   wl-summary-buffer-refile-list
-		   wl-summary-buffer-delete-list
-		   wl-summary-buffer-copy-list
+		   wl-summary-buffer-temp-mark-list
 		   wl-summary-buffer-target-mark-list
 		   wl-summary-buffer-elmo-folder
 		   wl-summary-buffer-number-column
@@ -2763,34 +2734,512 @@ If ARG, without confirm."
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
 
-(defun wl-summary-delete (&optional number)
-  "Mark a delete mark 'D'.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
+;;; Mark & Action
+(defvar wl-summary-mark-action-list
+  '(("*"
+     wl-summary-set-target-mark
+     wl-summary-unset-target-mark
+     nil)
+    ("d"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-delete)
+    ("D"
+     wl-summary-set-action-generic
+     wl-summary-unset-action-generic
+     wl-summary-exec-action-erase)
+    ("o"
+     wl-summary-set-action-refile
+     wl-summary-unset-action-refile
+     wl-summary-exec-action-refile)
+    ("O"
+     wl-summary-set-action-copy
+     wl-summary-unset-action-copy
+     wl-summary-exec-action-copy)
+;;    ("i"
+;;     wl-summary-set-action-generic
+;;     wl-summary-unset-action-generic
+;;     wl-summary-exec-action-prefetch)
+    )
+  "A variable to define Mark & Action.
+Each element of the list should be a list of
+\(MARK SET-MARK-FUNCTION UNSET-MARK-FUNCTION EXEC-FUNCTION)
+MARK is a temporal mark string to define.
+SET-MARK-FUNCTION is a function called to set the mark.
+Its argument is (MARK NUMBER VISIBLE INTERACTIVE DATA).
+UNSET-MARK-FUNCTION is a function called to unset the mark.
+Its argument is (NUMBER).
+EXEC-FUNCTION is a function called to execute the action.
+Its argument is a list of MARK-INFO.
+MARK-INFO is a list of (NUMBER MARK DATA).
+DATA is the value which is specified by SET-MARK-FUNCTION."
+  )
+
+;; Set mark
+(defun wl-summary-set-mark (&optional set-mark number interactive data)
   (interactive)
+  "Set temporary mark SET-MARK on the message with NUMBER.
+NUMBER is the message number to set the mark on.
+INTERACTIVE is set as t if it have to run interactively.
+DATA is passed to the set-action function of the action as an argument.
+Return number if put mark succeed"
+  (let* ((set-mark (or set-mark
+		       (completing-read "Mark: " wl-summary-mark-action-list)))
+	 (current (wl-summary-message-number))
+	 (action (assoc set-mark wl-summary-mark-action-list))
+	 visible mark)
+    (save-excursion
+      ;; Put mark
+      (setq visible (or
+		     ;; not-interactive and visible
+		     (and number (wl-summary-jump-to-msg number))
+		     ;; interactive
+		     (and (null number) current))
+	    number (or number current))
+      ;; Put mark on the current line.
+      (funcall (nth 1 action) (nth 0 action) number visible
+	       (or interactive (interactive-p)) data)
+      (set-buffer-modified-p nil))
+    ;; Move the cursor.
+    (if (or interactive (interactive-p))
+	(if (eq wl-summary-move-direction-downward nil)
+	    (wl-summary-prev)
+	  (wl-summary-next)))
+    ;; Return value.
+    number))
+
+(defun wl-summary-register-target-mark (number)
+  (or (memq number wl-summary-buffer-target-mark-list)
+      (setq wl-summary-buffer-target-mark-list
+	    (cons number wl-summary-buffer-target-mark-list))))
+
+(defun wl-summary-unregister-target-mark (number)
+  (delq number wl-summary-buffer-target-mark-list))
+
+(defun wl-summary-have-target-mark-p (number)
+  (memq number wl-summary-buffer-target-mark-list))
+
+;; wl-summary-buffer-temp-mark-list specification
+;; ((1 "D" nil)(2 "o" "+fuga")(3 "O" "+hoge"))
+(defun wl-summary-register-temp-mark (number mark mark-info)
+  (let ((elem (assq number wl-summary-buffer-temp-mark-list)))
+    (setq wl-summary-buffer-temp-mark-list
+	  (delq elem wl-summary-buffer-temp-mark-list)))
+  (setq wl-summary-buffer-temp-mark-list
+	(cons (list number mark mark-info) wl-summary-buffer-temp-mark-list)))
+
+(defun wl-summary-unregister-temp-mark (number)
+  (let ((elem (assq number wl-summary-buffer-temp-mark-list)))
+    (setq wl-summary-buffer-temp-mark-list
+	  (delq elem wl-summary-buffer-temp-mark-list))))
+
+(defun wl-summary-registered-temp-mark (number)
+  (assq number wl-summary-buffer-temp-mark-list))
+
+(defun wl-summary-collect-temp-mark (mark &optional begin end)
+  (if (or begin end)
+      (save-excursion
+	(save-restriction
+	  (let (mark-list)
+	    (narrow-to-region (or begin (point-min))(or end (point-max)))
+	    (goto-char (point-min))
+	    ;; for thread...
+	    (if (eq wl-summary-buffer-view 'thread)
+		(let (number entity mark-info)
+		  (while (not (eobp))
+		    (setq number (wl-summary-message-number)
+			  entity (wl-thread-get-entity number)
+			  mark-info (wl-summary-registered-temp-mark number))
+		    ;; toplevel message mark.
+		    (when (string= (nth 1 mark-info) mark)
+		      (setq mark-list (cons mark-info mark-list)))
+		    ;; When thread is closed...children should also be checked.
+		    (unless (wl-thread-entity-get-opened entity)
+		      (dolist (msg (wl-thread-get-children-msgs number))
+			(setq mark-info (wl-summary-registered-temp-mark
+					 msg))
+			(when (string= (nth 1 mark-info) mark)
+			  (setq mark-list (cons mark-info mark-list)))))
+		    (forward-line 1)))
+	      (let (number mark-info)
+		(while (not (eobp))
+		  (setq number (wl-summary-message-number)
+			mark-info (wl-summary-registered-temp-mark number))
+		  (when (string= (nth 1 mark-info) mark)
+		    (setq mark-list (cons mark-info mark-list)))
+		  (forward-line 1))))
+	    mark-list)))
+    (let (mark-list)
+      (dolist (mark-info wl-summary-buffer-temp-mark-list)
+	(when (string= (nth 1 mark-info) mark)
+	  (setq mark-list (cons mark-info mark-list))))
+      mark-list)))
+
+;; Unset mark
+(defun wl-summary-unset-mark (&optional number interactive)
+  "Unset temporary mark of the message with NUMBER.
+NUMBER is the message number to unset the mark.
+If not specified, the message on the cursor position is treated.
+Optional INTERACTIVE is non-nil when it should be called interactively.
+Return number if put mark succeed"
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (let ((buffer-read-only nil)
+	  visible mark action)
+      (if number
+	  (setq visible (wl-summary-jump-to-msg number))
+	(setq visible t))
+      (setq number (or number (wl-summary-message-number)))
+      ;; Delete mark on buffer.
+      (when visible
+	(setq mark (wl-summary-temp-mark))
+	(unless (string= mark " ")
+	  (delete-backward-char 1)
+	  (insert (or (wl-summary-get-score-mark number)
+		      " "))
+	  (setq action (assoc mark wl-summary-mark-action-list))
+	  (funcall (nth 2 action) number))
+	(set-buffer-modified-p nil))
+      ;; Remove from temporal mark structure.
+      (wl-summary-unregister-target-mark number)
+      (wl-summary-unregister-temp-mark number)))
+  ;; Move the cursor.
+  ;;  (if (or interactive (interactive-p))
+  ;;      (if (eq wl-summary-move-direction-downward nil)
+  ;;	  (wl-summary-prev)
+  ;;	(wl-summary-next))))
+  )
+
+;;; Actions
+
+;; Target mark handling.
+(defun wl-summary-set-target-mark (mark number visible interactive data)
+  (when visible
+    ;; Note that the cursor is on the target message at this moment.
+    (let ((cur-mark (wl-summary-temp-mark)))
+      (if (wl-summary-reserve-temp-mark-p cur-mark)
+	  (if interactive
+	      (error "%s is already marked as `%s'" number cur-mark))
+	;; Remove current mark.
+	(wl-summary-unset-mark)))
+    (wl-summary-mark-line mark)
+    (when (and visible
+	       wl-summary-highlight)
+      (wl-highlight-summary-current-line)))
+  (wl-summary-register-target-mark number))
+
+(defun wl-summary-unset-target-mark (number)
+  ;; Just unhighlight.
+  (when wl-summary-highlight
+    (wl-highlight-summary-current-line)))
+
+;; Delete action.
+(defun wl-summary-delete (&optional number)
+  (interactive)
+  (wl-summary-set-mark "d" number (interactive-p)))
+
+(defun wl-summary-set-action-generic (mark number visible interactive data)
+  (when visible
+    ;; Note that the cursor is on the target message at this moment.
+    (let ((cur-mark (wl-summary-temp-mark)))
+      (if (wl-summary-reserve-temp-mark-p cur-mark)
+	  (if interactive
+	      (error "%s is already marked as `%s'" number cur-mark))
+	;; Remove current mark.
+	(wl-summary-unset-mark)))
+    (wl-summary-mark-line mark)
+    (when (and visible
+	       wl-summary-highlight)
+      (wl-highlight-summary-current-line)))
+  (wl-summary-register-temp-mark number mark nil))
+
+(defun wl-summary-unset-action-generic (number)
+  ;; Just unhighlight.
+  (when wl-summary-highlight
+    (wl-highlight-summary-current-line)))
+
+(defun wl-summary-exec-action-delete (mark-list)
+  (if (null mark-list)
+      (message "No marks")
+    (save-excursion
+      (let ((del-fld (wl-summary-get-delete-folder
+		      (wl-summary-buffer-folder-name)))
+	    (start (point))
+	    (refiles (mapcar 'car mark-list))
+	    (refile-failures 0)
+	    refile-len
+	    dst-msgs			; loop counter
+	    result)
+	(message "Executing...")
+	;; begin refile...
+	(setq refile-len (length refiles))
+	(goto-char start)		; avoid moving cursor to
+					; the bottom line.
+	(when (> refile-len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-move-messages
+			     refile-len "Deleting messages..."))
+	(setq result nil)
+	(condition-case nil
+	    (setq result (elmo-folder-move-messages
+			  wl-summary-buffer-elmo-folder
+			  refiles
+			  (if (eq del-fld 'null)
+			      'null
+			    (wl-folder-get-elmo-folder del-fld))
+			  (wl-summary-buffer-msgdb)
+			  (not (null (cdr dst-msgs)))
+			  nil ; no-delete
+			  nil ; same-number
+			  t))
+	  (error nil))
+	(when result			; succeeded.
+	  ;; update buffer.
+	  (wl-summary-delete-messages-on-buffer refiles)
+	  ;; update wl-summary-buffer-temp-mark-list.
+	  (dolist (mark-info mark-list)
+	    (setq wl-summary-buffer-temp-mark-list
+		  (delq mark-info wl-summary-buffer-temp-mark-list))))
+	(elmo-progress-clear 'elmo-folder-move-messages)
+	(wl-summary-set-message-modified)
+	;; Return the operation failed message numbers.
+	(if result
+	    0
+	  (length refiles))))))
+
+;; Erase action.
+(defun wl-summary-erase (&optional number)
+  (interactive)
+  (wl-summary-set-mark "D" number (interactive-p)))
+
+(defun wl-summary-exec-action-erase (mark-list)
+  (if (null mark-list)
+      (message "No marks")
+    (save-excursion
+      (let ((del-fld 'null)
+	    (start (point))
+	    (refiles (mapcar 'car mark-list))
+	    (refile-failures 0)
+	    refile-len
+	    dst-msgs			; loop counter
+	    result)
+	(message "Executing...")
+	;; begin refile...
+	(setq refile-len (length refiles))
+	(goto-char start)		; avoid moving cursor to
+					; the bottom line.
+	(when (> refile-len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-move-messages
+			     refile-len "Deleting messages..."))
+	(setq result nil)
+	(condition-case nil
+	    (setq result (elmo-folder-move-messages
+			  wl-summary-buffer-elmo-folder
+			  refiles
+			  'null
+			  (wl-summary-buffer-msgdb)
+			  (not (null (cdr dst-msgs)))
+			  nil ; no-delete
+			  nil ; same-number
+			  t))
+	  (error nil))
+	(when result ; succeeded.
+	  ;; update buffer.
+	  (wl-summary-delete-messages-on-buffer refiles)
+	  ;; update wl-summary-buffer-temp-mark-list.
+	  (dolist (mark-info mark-list)
+	    (setq wl-summary-buffer-temp-mark-list
+		  (delq mark-info wl-summary-buffer-temp-mark-list))))
+	(elmo-progress-clear 'elmo-folder-move-messages)
+	(wl-summary-set-message-modified)
+	;; Return the operation failed message numbers.
+	(if result
+	    0
+	  (length refiles))))))
+
+(defun wl-summary-set-action-refile (mark number visible interactive data)
+  (wl-summary-set-action-refile-subr
+   'refile mark number visible interactive data))
+
+(defun wl-summary-set-action-refile-subr (copy-or-refile
+					  mark number visible
+					  interactive dst)
   (let* ((buffer-num (wl-summary-message-number))
 	 (msg-num (or number buffer-num))
-	 mark)
+	 (msgid (and msg-num
+		     (elmo-message-field wl-summary-buffer-elmo-folder
+					 msg-num 'message-id)))
+	 (entity (and msg-num
+		      (elmo-msgdb-overview-get-entity
+		       msg-num (wl-summary-buffer-msgdb))))
+	 folder cur-mark already tmp-folder)
     (catch 'done
+      (when (null entity)
+	;; msgdb is empty?
+	(if interactive
+	    (message "Cannot refile."))
+	(throw 'done nil))
       (when (null msg-num)
-	(if (interactive-p)
+	(if interactive
 	    (message "No message."))
 	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if (interactive-p)
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil))
-	(wl-summary-unmark msg-num))
-      (if (or (interactive-p)
-	      (eq number buffer-num))
-	  (wl-summary-mark-line "D"))
-      (setq wl-summary-buffer-delete-list
-	    (cons msg-num wl-summary-buffer-delete-list))
-      (if (interactive-p)
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
+      (when (setq cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	(when (wl-summary-reserve-temp-mark-p cur-mark)
+	  (if interactive
+	      (error "Already marked as `%s'" cur-mark))
+	  (throw 'done nil)))
+      (setq folder (and msg-num
+			(or dst (wl-summary-read-folder
+				 (or (wl-refile-guess entity) wl-trash-folder)
+				 (format "for %s " copy-or-refile)))))
+      ;; Cache folder hack by okada@opaopa.org
+      (when (and (eq (elmo-folder-type-internal
+		      (wl-folder-get-elmo-folder
+		       (wl-folder-get-realname folder))) 'cache)
+		 (not (string= folder
+			       (setq tmp-folder
+				     (concat "'cache/"
+					     (elmo-cache-get-path-subr
+					      (elmo-msgid-to-cache msgid)))))))
+	(setq folder tmp-folder)
+	(message "Force refile to %s." folder))
+      (if (string= folder (wl-summary-buffer-folder-name))
+	  (error "Same folder"))
+      (if (or (not (elmo-folder-writable-p (wl-folder-get-elmo-folder folder)))
+	      (string= folder wl-queue-folder)
+	      (string= folder wl-draft-folder))
+	  (error "Don't set as target: %s" folder))
+      ;; learn for refile.
+      (when (eq copy-or-refile 'refile)
+	(wl-refile-learn entity folder))
+      (wl-summary-unset-mark msg-num)
+      (when visible
+	(wl-summary-mark-line mark)
+	(when wl-summary-highlight
+	  (wl-highlight-summary-current-line))
+	;; print refile destination
+	(wl-summary-print-destination msg-num folder))
+      (wl-summary-register-temp-mark msg-num mark folder)
+      (setq wl-summary-buffer-prev-refile-destination folder)
       msg-num)))
+
+(defun wl-summary-unset-action-refile (number)
+  ;; Just unhighlight.
+  (when wl-summary-highlight
+    (wl-highlight-summary-current-line))
+  (wl-summary-remove-destination))
+
+(defun wl-summary-make-destination-numbers-list (mark-list)
+  (let (dest-numbers dest-number)
+    (dolist (elem mark-list)
+      (setq dest-number (assoc (nth 2 elem) dest-numbers))
+      (if dest-number
+	  (unless (memq (car elem) (cdr dest-number))
+	    (nconc dest-number (list (car elem))))
+	(setq dest-numbers (nconc dest-numbers
+				  (list
+				   (list (nth 2 elem)
+					 (car elem)))))))
+    dest-numbers))
+
+(defun wl-summary-exec-action-refile (mark-list)
+  (save-excursion
+    (let ((del-fld (wl-summary-get-delete-folder
+		    (wl-summary-buffer-folder-name)))
+	  (start (point))
+	  (failures 0)
+	  (refile-len (length mark-list))
+	  dst-msgs ; loop counter
+	  result)
+      ;; begin refile...
+      (setq dst-msgs
+	    (wl-summary-make-destination-numbers-list mark-list))
+      (goto-char start)	; avoid moving cursor to the bottom line.
+      (when (> refile-len elmo-display-progress-threshold)
+	(elmo-progress-set 'elmo-folder-move-messages
+			   refile-len "Moving messages..."))
+      (while dst-msgs
+	(setq result nil)
+	(condition-case nil
+	    (setq result (elmo-folder-move-messages
+			    wl-summary-buffer-elmo-folder
+			    (cdr (car dst-msgs))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
+			    (wl-summary-buffer-msgdb)
+			    (not (null (cdr dst-msgs)))
+			    nil ; no-delete
+			    nil ; same-number
+			    t))
+	  (error nil))
+	(if result		; succeeded.
+	    (progn
+	      ;; update buffer.
+	      (wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
+	      (setq wl-summary-buffer-temp-mark-list
+		    (wl-delete-associations 
+		     (cdr (car dst-msgs))
+		     wl-summary-buffer-temp-mark-list)))
+	  (setq failures
+		(+ failures (length (cdr (car dst-msgs))))))
+	(setq dst-msgs (cdr dst-msgs)))
+      (elmo-progress-clear 'elmo-folder-move-messages)
+      failures)))
+
+;; Copy action
+(defun wl-summary-set-action-copy (mark number visible interactive data)
+  (wl-summary-set-action-refile-subr
+   'copy mark number visible interactive data))
+
+(defun wl-summary-unset-action-copy (number)
+  ;; Just unhighlight.
+  (when wl-summary-highlight
+    (wl-highlight-summary-current-line))
+  (wl-summary-remove-destination))
+
+(defun wl-summary-exec-action-copy (mark-list)
+  (save-excursion
+    (let ((del-fld (wl-summary-get-delete-folder
+		    (wl-summary-buffer-folder-name)))
+	  (start (point))
+	  (failures 0)
+	  (refile-len (length mark-list))
+	  dst-msgs ; loop counter
+	  result)
+      ;; begin refile...
+      (setq dst-msgs
+	    (wl-summary-make-destination-numbers-list mark-list))
+      (goto-char start)	; avoid moving cursor to the bottom line.
+      (when (> refile-len elmo-display-progress-threshold)
+	(elmo-progress-set 'elmo-folder-move-messages
+			   refile-len "Copying messages..."))
+      (while dst-msgs
+	(setq result nil)
+	(condition-case nil
+	    (setq result (elmo-folder-move-messages
+			    wl-summary-buffer-elmo-folder
+			    (cdr (car dst-msgs))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
+			    (wl-summary-buffer-msgdb)
+			    (not (null (cdr dst-msgs)))
+			    t ; t is no-delete (copy)
+			    nil ; same-number
+			    t))
+	  (error nil))
+	(if result		; succeeded.
+	    (progn
+	      ;; update buffer.
+	      (wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
+	      (setq wl-summary-buffer-temp-mark-list
+		    (wl-delete-associations 
+		     (cdr (car dst-msgs))
+		     wl-summary-buffer-temp-mark-list)))
+	  (setq failures
+		(+ failures (length (cdr (car dst-msgs))))))
+	(setq dst-msgs (cdr dst-msgs)))
+      (elmo-progress-clear 'elmo-folder-move-messages)
+      failures)))
 
 (defun wl-summary-remove-destination ()
   (save-excursion
@@ -2812,223 +3261,122 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (goto-char re)
       (delete-char (- eol re)))))
 
-(defun wl-summary-check-mark (msg mark)
-  (let ((check-func (cond ((string= mark "o")
-			   'wl-summary-msg-marked-as-refiled)
-			  ((string= mark "O")
-			   'wl-summary-msg-marked-as-copied)
-			  ((string= mark "D")
-			   'wl-summary-msg-marked-as-deleted)
-			  ((string= mark "*")
-			   'wl-summary-msg-marked-as-target))))
-    (if check-func
-	(funcall check-func msg))))
-
-(defun wl-summary-mark-collect (mark &optional begin end)
+(defun wl-summary-collect-numbers-region (begin end)
+  "Return a list of message number in the region specified by BEGIN and END."
   (save-excursion
     (save-restriction
-      (let (msglist)
-	(narrow-to-region (or begin (point-min))
-			  (or end (point-max)))
+      (let (numbers)
+	(narrow-to-region (or begin (point-min))(or end (point-max)))
 	(goto-char (point-min))
 	;; for thread...
 	(if (eq wl-summary-buffer-view 'thread)
-	    (progn
+	    (let (number entity mark-info)
 	      (while (not (eobp))
-		(let* ((number (wl-summary-message-number))
-		       (entity (wl-thread-get-entity number))
-		       result)
-		  ;; opened...only myself is checked.
-		  (if (wl-summary-check-mark number mark)
-		      (wl-append msglist (list number)))
-		  (unless (wl-thread-entity-get-opened entity)
-		    ;; closed...children is also checked.
-		    (if (setq result (wl-thread-get-children-msgs-with-mark
-				      number
-				      mark))
-			(wl-append msglist result)))
-		  (forward-line 1)))
-	      (elmo-uniq-list msglist))
-	  (while (not (eobp))
-	    (when (string= (wl-summary-temp-mark) mark)
-	      (setq msglist (cons (wl-summary-message-number) msglist)))
-	    (forward-line 1))
-	  (nreverse msglist))))))
+		(setq numbers (cons (wl-summary-message-number) numbers)
+		      entity (wl-thread-get-entity number))
+		;; When thread is closed...children should also be checked.
+		(unless (wl-thread-entity-get-opened entity)
+		  (dolist (msg (wl-thread-get-children-msgs number))
+		    (setq numbers (cons msg numbers))))
+		(forward-line 1)))
+	  (let (number mark-info)
+	    (while (not (eobp))
+	      (setq numbers (cons (wl-summary-message-number) numbers))
+	      (forward-line 1))))
+	numbers))))
 
-(defun wl-summary-exec ()
+(defun wl-summary-exec (&optional numbers)
   (interactive)
-  (wl-summary-exec-subr (mapcar 'car wl-summary-buffer-refile-list)
-			(reverse wl-summary-buffer-delete-list)
-			(mapcar 'car wl-summary-buffer-copy-list)))
+  (let ((failures 0)
+	collected pair action modified)
+    (dolist (action wl-summary-mark-action-list)
+      (setq collected (cons (cons (car action) nil) collected)))
+    (dolist (mark-info wl-summary-buffer-temp-mark-list)
+      (if numbers
+	  (when (memq (nth 0 mark-info) numbers)
+	    (setq pair (assoc (nth 1 mark-info) collected)))
+	(setq pair (assoc (nth 1 mark-info) collected)))
+      (setq pair (assoc (nth 1 mark-info) collected))
+      (setcdr pair (cons mark-info (cdr pair))))
+    ;; collected is a pair of
+    ;; mark-string and a list of mark-info
+    (dolist (pair collected)
+      (setq action (assoc (car pair) wl-summary-mark-action-list))
+      (when (and (cdr pair) (nth 3 action))
+	(setq modified t)
+	(setq failures (+ failures (funcall (nth 3 action) (cdr pair))))))
+    (when modified
+      (wl-summary-set-message-modified))
+    (run-hooks 'wl-summary-exec-hook)
+    ;; message buffer is not up-to-date
+    (unless (and wl-message-buffer
+		 (eq (wl-summary-message-number)
+		     (with-current-buffer wl-message-buffer
+		       wl-message-buffer-cur-number)))
+      (wl-summary-toggle-disp-msg 'off)
+      (setq wl-message-buffer nil))
+    (set-buffer-modified-p nil)
+    (message "Executing...done%s"
+	     (if (> failures 0)
+		 (format " (%d failed)" failures)
+	       ""))))
 
 (defun wl-summary-exec-region (beg end)
   (interactive "r")
-  (message "Collecting marks...")
-  (save-excursion
-    (goto-char beg)
-    (beginning-of-line)
-    (setq beg (point))
-    (goto-char (1- end))
-    (forward-line)
-    (setq end (point))
-    (wl-summary-exec-subr (wl-summary-mark-collect "o" beg end)
-			  (wl-summary-mark-collect "D" beg end)
-			  (wl-summary-mark-collect "O" beg end))))
+  (wl-summary-exec
+   (wl-summary-collect-numbers-region beg end)))
 
-(defun wl-summary-exec-subr (moves dels copies)
-  (if (not (or moves dels copies))
-      (message "No marks")
-    (save-excursion
-      (let ((del-fld (wl-summary-get-delete-folder
-		      (wl-summary-buffer-folder-name)))
-	    (start (point))
-	    (refiles (append moves dels))
-	    (refile-failures 0)
-	    (copy-failures 0)
-	    (copy-len (length copies))
-	    refile-len
-	    dst-msgs			; loop counter
-	    result)
-	(message "Executing...")
-	(while dels
-	  (when (not (assq (car dels) wl-summary-buffer-refile-list))
-	    (wl-append wl-summary-buffer-refile-list
-		       (list (cons (car dels) del-fld)))
-	    (setq wl-summary-buffer-delete-list
-		  (delete (car dels) wl-summary-buffer-delete-list)))
-	  (setq dels (cdr dels)))
-	;; begin refile...
-	(setq refile-len (length refiles))
-	(setq dst-msgs
-	      (wl-inverse-alist refiles wl-summary-buffer-refile-list))
-	(goto-char start)		; avoid moving cursor to
-					; the bottom line.
-	(when (> refile-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len "Moving messages..."))
-	(while dst-msgs
-	  (setq result nil)
-	  (condition-case nil
-	      (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (if (eq 'null (car (car dst-msgs)))
-				'null
-			      (wl-folder-get-elmo-folder
-			       (car (car dst-msgs))))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    nil ; no-delete
-			    nil ; same-number
-			    t))
-	    (error nil))
-	  (if result			; succeeded.
-	      (progn
-		;; update buffer.
-		(wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
-		;; update refile-alist.
-		(setq wl-summary-buffer-refile-list
-		      (wl-delete-associations (cdr (car dst-msgs))
-					      wl-summary-buffer-refile-list)))
-	    (setq refile-failures
-		  (+ refile-failures (length (cdr (car dst-msgs))))))
-	  (setq dst-msgs (cdr dst-msgs)))
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	;; end refile
-	;; begin cOpy...
-	(setq dst-msgs (wl-inverse-alist copies wl-summary-buffer-copy-list))
-	(when (> copy-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     copy-len "Copying messages..."))
-	(while dst-msgs
-	  (setq result nil)
-	  (condition-case nil
-	      (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (wl-folder-get-elmo-folder
-			     (car (car dst-msgs)))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    t ; t is no-delete (copy)
-			    nil ; same number
-			    t))
-	    (error nil))
-	  (if result			; succeeded.
-	      (progn
-		;; update buffer.
-		(wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
-		;; update copy-alist
-		(setq wl-summary-buffer-copy-list
-		      (wl-delete-associations (cdr (car dst-msgs))
-					      wl-summary-buffer-copy-list)))
-	    (setq copy-failures
-		  (+ copy-failures (length (cdr (car dst-msgs))))))
-	  (setq dst-msgs (cdr dst-msgs)))
-	;; Hide progress bar.
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	;; end cOpy
-	(wl-summary-folder-info-update)
-	(wl-summary-set-message-modified)
-	(run-hooks 'wl-summary-exec-hook)
-	;; message buffer is not up-to-date
-	(unless (and wl-message-buffer
-		     (eq (wl-summary-message-number)
-			 (with-current-buffer wl-message-buffer
-			   wl-message-buffer-cur-number)))
-	  (wl-summary-toggle-disp-msg 'off)
-	  (setq wl-message-buffer nil))
-	(set-buffer-modified-p nil)
-	(message "Executing...done%s%s"
-		 (if (> refile-failures 0)
-		     (format " (%d refiling failed)" refile-failures)
-		   "")
-		 (if (> copy-failures 0)
-		     (format " (%d copying failed)" copy-failures)
-		   ""))))))
-
-(defun wl-summary-erase (&optional number)
-  "Erase message actually, without moving it to trash."
-  (interactive)
-  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
-      (let* ((buffer-num (wl-summary-message-number))
-	     (msg-num (or number buffer-num)))
-	(if (null msg-num)
-	    (message "No message.")
-	  (let* ((msgdb (wl-summary-buffer-msgdb))
-		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
-		 (subject (elmo-delete-char
-			   ?\n (or (elmo-msgdb-overview-entity-get-subject
-				    entity)
-				   wl-summary-no-subject-message))))
-	    (when (yes-or-no-p
-		   (format "Erase \"%s\" without moving it to trash? "
-			   (truncate-string subject 30)))
-	      (wl-summary-unmark msg-num)
-	      (wl-summary-erase-subr (list msg-num))))))
-    (message "Read-only folder.")))
+;; (defun wl-summary-erase (&optional number)
+;;   "Erase message actually, without moving it to trash."
+;;   (interactive)
+;;   (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
+;;       (let* ((buffer-num (wl-summary-message-number))
+;; 	     (msg-num (or number buffer-num)))
+;; 	(if (null msg-num)
+;; 	    (message "No message.")
+;; 	  (let* ((msgdb (wl-summary-buffer-msgdb))
+;; 		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
+;; 		 (subject (elmo-delete-char
+;; 			   ?\n (or (elmo-msgdb-overview-entity-get-subject
+;; 				    entity)
+;; 				   wl-summary-no-subject-message))))
+;; 	    (when (yes-or-no-p
+;; 		   (format "Erase \"%s\" without moving it to trash? "
+;; 			   (truncate-string subject 30)))
+;; 	      (wl-summary-unmark msg-num)
+;; 	      (wl-summary-erase-subr (list msg-num))))))
+;;     (message "Read-only folder.")))
 
 (defun wl-summary-target-mark-erase ()
   (interactive)
-  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
-      (if (null wl-summary-buffer-target-mark-list)
-	  (message "No marked message.")
-	(when (yes-or-no-p
-	       "Erase all marked messages without moving them to trash? ")
-	  (wl-summary-erase-subr wl-summary-buffer-target-mark-list)
-	  (setq wl-summary-buffer-target-mark-list nil)))
-    (message "Read-only folder.")))
+  (save-excursion
+    (goto-char (point-min))
+    (let (number mlist)
+      (while (not (eobp))
+	(when (string= (wl-summary-temp-mark) "*")
+	  (let (wl-summary-buffer-disp-msg)
+	    (when (setq number (wl-summary-message-number))
+	      (wl-summary-erase number)
+	      (setq wl-summary-buffer-target-mark-list
+		    (delq number wl-summary-buffer-target-mark-list)))))
+	(forward-line 1))
+      (setq mlist wl-summary-buffer-target-mark-list)
+      (while mlist
+	(wl-summary-register-temp-mark (car mlist) "D" nil)
+	(setq wl-summary-buffer-target-mark-list
+	      (delq (car mlist) wl-summary-buffer-target-mark-list))
+	(setq mlist (cdr mlist))))))
 
-(defun wl-summary-erase-subr (msgs)
-  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
-  (wl-summary-delete-messages-on-buffer msgs)
-  ;; message buffer is not up-to-date
-  (unless (and wl-message-buffer
-	       (eq (wl-summary-message-number)
-		   (with-current-buffer wl-message-buffer
-		     wl-message-buffer-cur-number)))
-    (wl-summary-toggle-disp-msg 'off)
-    (setq wl-message-buffer nil)))
+;; (defun wl-summary-erase-subr (msgs)
+;;  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
+;;   (wl-summary-delete-messages-on-buffer msgs)
+;;   ;; message buffer is not up-to-date
+;;   (unless (and wl-message-buffer
+;; 	       (eq (wl-summary-message-number)
+;; 		   (with-current-buffer wl-message-buffer
+;; 		     wl-message-buffer-cur-number)))
+;;     (wl-summary-toggle-disp-msg 'off)
+;;     (setq wl-message-buffer nil)))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
@@ -3084,13 +3432,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(insert folder)
 	(set-buffer-modified-p nil)))))
 
-(defsubst wl-summary-get-mark (number)
-  "Return a temporal mark of message specified by NUMBER."
-  (or (and (memq number wl-summary-buffer-delete-list) "D")
-      (and (assq number wl-summary-buffer-copy-list) "O")
-      (and (assq number wl-summary-buffer-refile-list) "o")
-      (and (memq number wl-summary-buffer-target-mark-list) "*")))
-
 (defsubst wl-summary-reserve-temp-mark-p (mark)
   "Return t if temporal MARK should be reserved."
   (member mark wl-summary-reserve-mark-list))
@@ -3107,11 +3448,11 @@ See `wl-refile-policy-alist' for more details."
   (let ((policy (wl-get-assoc-list-value wl-refile-policy-alist
 					 (wl-summary-buffer-folder-name))))
     (cond ((eq policy 'copy)
-	   (if (interactive-p)
-	       (call-interactively 'wl-summary-copy)
-	     (wl-summary-copy dst number)))
+	   (wl-summary-set-mark "O" number (interactive-p) dst)
+	   (run-hooks 'wl-summary-copy-hook))
 	  (t
-	   (wl-summary-refile-subr 'refile (interactive-p) dst number)))))
+	   (wl-summary-set-mark "o" number (interactive-p) dst)
+	   (run-hooks 'wl-summary-refile-hook)))))
 
 (defun wl-summary-copy (&optional dst number)
   "Put copy mark on current line message.
@@ -3119,92 +3460,15 @@ If optional argument DST is specified, put mark without asking
 destination folder.
 If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
-  (wl-summary-refile-subr 'copy (interactive-p) dst number))
+  (wl-summary-set-mark "O" number (interactive-p) dst))
 
-(defun wl-summary-refile-subr (copy-or-refile interactive &optional dst number)
-  (let* ((buffer-num (wl-summary-message-number))
-	 (msg-num (or number buffer-num))
-	 (msgid (and msg-num
-		     (elmo-message-field wl-summary-buffer-elmo-folder
-					 msg-num 'message-id)))
-	 (entity (and msg-num
-		      (elmo-msgdb-overview-get-entity
-		       msg-num (wl-summary-buffer-msgdb))))
-	 (variable
-	  (intern (format "wl-summary-buffer-%s-list" copy-or-refile)))
-	 folder mark already tmp-folder)
-    (catch 'done
-      (when (null entity)
-	;; msgdb is empty?
-	(if interactive
-	    (message "Cannot refile."))
-	(throw 'done nil))
-      (when (null msg-num)
-	(if interactive
-	    (message "No message."))
-	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if interactive
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil)))
-      (setq folder (and msg-num
-			(or dst (wl-summary-read-folder
-				 (or (wl-refile-guess entity) wl-trash-folder)
-				 (format "for %s" copy-or-refile)))))
-      ;; Cache folder hack by okada@opaopa.org
-      (if (and (eq (elmo-folder-type-internal
-		    (wl-folder-get-elmo-folder
-		     (wl-folder-get-realname folder))) 'cache)
-	       (not (string= folder
-			     (setq tmp-folder
-				   (concat "'cache/"
-					   (elmo-cache-get-path-subr
-					    (elmo-msgid-to-cache msgid)))))))
-	  (progn
-	    (setq folder tmp-folder)
-	    (message "Force refile to %s." folder)))
-      (if (string= folder (wl-summary-buffer-folder-name))
-	  (error "Same folder"))
-      (if (or (not (elmo-folder-writable-p (wl-folder-get-elmo-folder folder)))
-	      (string= folder wl-queue-folder)
-	      (string= folder wl-draft-folder))
-	  (error "Don't %s messages to %s" copy-or-refile folder))
-      ;; learn for refile.
-      (if (eq copy-or-refile 'refile)
-	  (wl-refile-learn entity folder))
-      (wl-summary-unmark msg-num)
-      (set variable (append
-		     (symbol-value variable)
-		     (list (cons msg-num folder))))
-      (when (or interactive
-		(eq number buffer-num))
-	(wl-summary-mark-line (if (eq copy-or-refile 'refile)
-				  "o" "O"))
-	;; print refile destination
-	(wl-summary-print-destination msg-num folder))
-      (if interactive
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
-      (run-hooks (intern (format "wl-summary-%s-hook" copy-or-refile)))
-      (setq wl-summary-buffer-prev-refile-destination folder)
-      msg-num)))
+
 
 (defun wl-summary-refile-prev-destination ()
   "Refile message to previously refiled destination."
   (interactive)
   (wl-summary-refile wl-summary-buffer-prev-refile-destination
 		     (wl-summary-message-number))
-  (if (eq wl-summary-move-direction-downward nil)
-      (wl-summary-prev)
-    (wl-summary-next)))
-
-(defun wl-summary-copy-prev-destination ()
-  "Refile message to previously refiled destination."
-  (interactive)
-  (wl-summary-copy wl-summary-buffer-prev-copy-destination
-		   (wl-summary-message-number))
   (if (eq wl-summary-move-direction-downward nil)
       (wl-summary-prev)
     (wl-summary-next)))
@@ -3269,78 +3533,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   "Unmark marks (temporary, refile, copy, delete)of current line.
 If optional argument NUMBER is specified, unmark message specified by NUMBER."
   (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  visible
-	  msg-num
-	  cur-mark)
-      (if number
-	  (setq visible (wl-summary-jump-to-msg number))
-	(setq visible t))
-      ;; Delete mark on buffer.
-      (when visible
-	(setq cur-mark (wl-summary-temp-mark))
-	(unless (string= cur-mark " ")
-	  (delete-backward-char 1)
-	  (or number
-	      (setq number (wl-summary-message-number)))
-	  (insert (or (wl-summary-get-score-mark number)
-		      " ")))
-	(if (or (string= cur-mark "o")
-		(string= cur-mark "O"))
-	    (wl-summary-remove-destination))
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line))
-	(set-buffer-modified-p nil))
-      ;; Remove from temporal mark structure.
-      (and number
-	   (wl-summary-delete-mark number)))))
-
-(defun wl-summary-msg-marked-as-target (msg)
-  (if (memq msg wl-summary-buffer-target-mark-list)
-      t))
-
-(defun wl-summary-msg-marked-as-copied (msg)
-  (assq msg wl-summary-buffer-copy-list))
-
-(defun wl-summary-msg-marked-as-deleted (msg)
-  (if (memq msg wl-summary-buffer-delete-list)
-      t))
-
-(defun wl-summary-msg-marked-as-refiled (msg)
-  (assq msg wl-summary-buffer-refile-list))
+  (wl-summary-unset-mark number (interactive-p)))
 
 (defun wl-summary-target-mark (&optional number)
   "Put target mark '*' on current message.
 If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
-  (let* ((buffer-num (wl-summary-message-number))
-	 (msg-num (or number buffer-num))
-	 mark)
-    (catch 'done
-      (when (null msg-num)
-	(if (interactive-p)
-	    (message "No message."))
-	(throw 'done nil))
-      (when (setq mark (wl-summary-get-mark msg-num))
-	(when (wl-summary-reserve-temp-mark-p mark)
-	  (if (interactive-p)
-	      (error "Already marked as `%s'" mark))
-	  (throw 'done nil))
-	(wl-summary-unmark msg-num))
-      (if (or (interactive-p)
-	      (eq number buffer-num))
-	  (wl-summary-mark-line "*"))
-      (setq wl-summary-buffer-target-mark-list
-	    (cons msg-num wl-summary-buffer-target-mark-list))
-      (if (interactive-p)
-	  (if (eq wl-summary-move-direction-downward nil)
-	      (wl-summary-prev)
-	    (wl-summary-next)))
-      msg-num)))
-
+  (wl-summary-set-mark "*" number (interactive-p)))
 
 (defun wl-summary-refile-region (beg end)
   "Put refile mark on messages in the region specified by BEG and END."
@@ -3454,14 +3653,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
     (when (string= (wl-summary-temp-mark) mark)
       (wl-summary-unmark))
     (forward-line 1))
-  (cond ((string= mark "*")
-	 (setq wl-summary-buffer-target-mark-list nil))
-	((string= mark "D")
-	 (setq wl-summary-buffer-delete-list nil))
-	((string= mark "O")
-	 (setq wl-summary-buffer-copy-list nil))
-	((string= mark "o")
-	 (setq wl-summary-buffer-refile-list nil))))
+  (let (deleted)
+    (dolist (mark-info wl-summary-buffer-temp-mark-list)
+      (when (string= (nth 1 mark-info) mark)
+	(setq deleted (cons mark-info deleted))))
+    (dolist (delete deleted)
+      (setq wl-summary-buffer-temp-mark-list
+	    (delq delete wl-summary-buffer-temp-mark-list)))))
 
 (defun wl-summary-unmark-all ()
   "Unmark all according to what you input."
@@ -3548,41 +3746,18 @@ If ARG, exit virtual folder."
   "Erase all temp marks from buffer."
   (interactive)
   (when (or wl-summary-buffer-target-mark-list
-	    wl-summary-buffer-delete-list
-	    wl-summary-buffer-refile-list
-	    wl-summary-buffer-copy-list)
+	    wl-summary-buffer-temp-mark-list)
     (save-excursion
       (goto-char (point-min))
       (unless no-msg
 	(message "Unmarking..."))
       (while (not (eobp))
-	(wl-summary-unmark)
+	(wl-summary-unset-mark)
 	(forward-line 1))
       (unless no-msg
 	(message "Unmarking...done"))
       (setq wl-summary-buffer-target-mark-list nil)
-      (setq wl-summary-buffer-delete-list nil)
-      (setq wl-summary-buffer-refile-list nil)
-      (setq wl-summary-buffer-copy-list nil))))
-
-(defun wl-summary-delete-mark (number)
-  "Delete temporary mark of the message specified by NUMBER."
-  (cond
-   ((memq number wl-summary-buffer-target-mark-list)
-    (setq wl-summary-buffer-target-mark-list
-	  (delq number wl-summary-buffer-target-mark-list)))
-   ((memq number wl-summary-buffer-delete-list)
-    (setq wl-summary-buffer-delete-list
-	  (delq number wl-summary-buffer-delete-list)))
-   (t
-    (let (pair)
-      (cond
-       ((setq pair (assq number wl-summary-buffer-copy-list))
-	(setq wl-summary-buffer-copy-list
-	      (delq pair wl-summary-buffer-copy-list)))
-       ((setq pair (assq number wl-summary-buffer-refile-list))
-	(setq wl-summary-buffer-refile-list
-	      (delq pair wl-summary-buffer-refile-list))))))))
+      (setq wl-summary-buffer-temp-mark-list nil))))
 
 (defsubst wl-summary-temp-mark ()
   "Move to the temp-mark column and return mark string."
@@ -3602,10 +3777,7 @@ If ARG, exit virtual folder."
 	  (buffer-read-only nil))
       (wl-summary-temp-mark) ; mark
       (delete-backward-char 1)
-      (insert mark)
-      (if wl-summary-highlight
-	  (wl-highlight-summary-current-line))
-      (set-buffer-modified-p nil))))
+      (insert mark))))
 
 (defun wl-summary-target-mark-delete ()
   (interactive)
@@ -3622,7 +3794,7 @@ If ARG, exit virtual folder."
 	(forward-line 1))
       (setq mlist wl-summary-buffer-target-mark-list)
       (while mlist
-	(wl-append wl-summary-buffer-delete-list (list (car mlist)))
+	(wl-summary-register-temp-mark (car mlist) "d" nil)
 	(setq wl-summary-buffer-target-mark-list
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist))))))
@@ -3661,12 +3833,10 @@ If ARG, exit virtual folder."
       (message "Prefetching... %d/%d message(s)" count length)
       (set-buffer-modified-p nil))))
 
-(defun wl-summary-target-mark-refile-subr (copy-or-refile)
-  (let ((variable
-	 (intern (format "wl-summary-buffer-%s-list" copy-or-refile)))
+(defun wl-summary-target-mark-refile-subr (copy-or-refile mark)
+  (let ((numlist wl-summary-buffer-number-list)
 	(function
 	 (intern (format "wl-summary-%s" copy-or-refile)))
-	(numlist wl-summary-buffer-number-list)
 	regexp number msgid entity folder mlist)
     (save-excursion
       ;; guess by first mark
@@ -3697,9 +3867,7 @@ If ARG, exit virtual folder."
 	;; process invisible messages.
 	(setq mlist wl-summary-buffer-target-mark-list)
 	(while mlist
-	  (set variable
-	       (append (symbol-value variable)
-		       (list (cons (car mlist) folder))))
+	  (wl-summary-register-temp-mark (car mlist) mark folder)
 	  (setq wl-summary-buffer-target-mark-list
 		(delq (car mlist) wl-summary-buffer-target-mark-list))
 	  (setq mlist (cdr mlist)))))))
@@ -3728,11 +3896,11 @@ If ARG, exit virtual folder."
 
 (defun wl-summary-target-mark-copy ()
   (interactive)
-  (wl-summary-target-mark-refile-subr "copy"))
+  (wl-summary-target-mark-refile-subr "copy" "O"))
 
 (defun wl-summary-target-mark-refile ()
   (interactive)
-  (wl-summary-target-mark-refile-subr "refile"))
+  (wl-summary-target-mark-refile-subr "refile" "o"))
 
 (defun wl-summary-target-mark-mark-as-read ()
   (interactive)
@@ -4229,9 +4397,7 @@ If ARG, exit virtual folder."
 	   (view (expand-file-name wl-summary-view-file dir))
 	   (save-view wl-summary-buffer-view)
 	   (mark-list (copy-sequence wl-summary-buffer-target-mark-list))
-	   (refile-list (copy-sequence wl-summary-buffer-refile-list))
-	   (copy-list (copy-sequence wl-summary-buffer-copy-list))
-	   (delete-list (copy-sequence wl-summary-buffer-delete-list))
+	   (temp-list (copy-sequence wl-summary-buffer-temp-mark-list))
 	   (tmp-buffer (get-buffer-create " *wl-summary-save-view-cache*"))
 	   (temp-column wl-summary-buffer-temp-mark-column)
 	   (charset wl-summary-buffer-mime-charset))
@@ -4253,9 +4419,7 @@ If ARG, exit virtual folder."
 		(make-local-variable 'wl-summary-highlight)
 		(setq wl-summary-highlight nil
 		      wl-summary-buffer-target-mark-list mark-list
-		      wl-summary-buffer-refile-list refile-list
-		      wl-summary-buffer-copy-list copy-list
-		      wl-summary-buffer-delete-list delete-list
+		      wl-summary-buffer-temp-mark-list temp-list
 		      wl-summary-buffer-temp-mark-column temp-column)
 		(wl-summary-delete-all-temp-marks 'no-msg)
 		(encode-coding-region

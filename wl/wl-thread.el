@@ -381,14 +381,11 @@ ENTITY is returned."
     (if (wl-thread-delete-line-from-buffer msg)
 	(progn
 	  (cond
-	   ((memq msg wl-summary-buffer-delete-list)
-	    (setq temp-mark "D"))
 	   ((memq msg wl-summary-buffer-target-mark-list)
 	    (setq temp-mark "*"))
-	   ((setq dest-pair (assq msg wl-summary-buffer-refile-list))
-	    (setq temp-mark "o"))
-	   ((setq dest-pair (assq msg wl-summary-buffer-copy-list))
-	    (setq temp-mark "O"))
+	   ((setq temp-mark (wl-summary-registered-temp-mark msg))
+	    (setq dest-pair (cons (nth 0 temp-mark)(nth 2 temp-mark))
+		  temp-mark (nth 1 temp-mark)))
 	   (t (setq temp-mark (wl-summary-get-score-mark msg))))
 	  (when (setq overview-entity
 		      (elmo-msgdb-overview-get-entity
@@ -847,14 +844,10 @@ Message is inserted to the summary buffer."
 	summary-line)
     (when (setq msg-num (wl-thread-entity-get-number entity))
       (unless all ; all...means no temp-mark.
-	(cond ((memq msg-num wl-summary-buffer-delete-list)
-	       (setq temp-mark "D"))
-	      ((memq msg-num wl-summary-buffer-target-mark-list)
+	(cond ((memq msg-num wl-summary-buffer-target-mark-list)
 	       (setq temp-mark "*"))
-	      ((assq msg-num wl-summary-buffer-refile-list)
-	       (setq temp-mark "o"))
-	      ((assq msg-num wl-summary-buffer-copy-list)
-	       (setq temp-mark "O"))))
+	      ((setq temp-mark (wl-summary-registered-temp-mark msg-num))
+	       (setq temp-mark (nth 1 temp-mark)))))
       (unless temp-mark
 	(setq temp-mark (wl-summary-get-score-mark msg-num)))
       (setq overview-entity
@@ -938,24 +931,22 @@ Message is inserted to the summary buffer."
       (narrow-to-region beg end)
       (goto-char (point-min))
       (while (not (eobp))
-	(let ((num (wl-summary-message-number)))
-	  (if (assq num wl-summary-buffer-refile-list)
-	      (wl-summary-remove-destination)))
+	(wl-summary-remove-destination)
 	(forward-line 1)))))
 
 (defun wl-thread-print-destination-region (beg end)
-  (if (or wl-summary-buffer-refile-list
-	  wl-summary-buffer-copy-list)
+  (if wl-summary-buffer-temp-mark-list
       (save-excursion
 	(save-restriction
 	  (narrow-to-region beg end)
 	  (goto-char (point-min))
 	  (while (not (eobp))
 	    (let ((num (wl-summary-message-number))
-		  pair)
-	      (if (or (setq pair (assq num wl-summary-buffer-refile-list))
-		      (setq pair (assq num wl-summary-buffer-copy-list)))
-		  (wl-summary-print-destination (car pair) (cdr pair))))
+		  temp-mark pair)
+	      (when (and (setq temp-mark
+			       (wl-summary-registered-temp-mark num))
+			 (setq pair (cons (nth 0 temp-mark)(nth 2 temp-mark))))
+		(wl-summary-print-destination (car pair) (cdr pair))))
 	    (forward-line 1))))))
 
 (defsubst wl-thread-get-children-msgs (msg &optional visible-only)

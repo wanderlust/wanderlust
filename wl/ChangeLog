@@ -1,3 +1,61 @@
+2003-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-erased-face): New face.
+	(wl-highlight-summary-line-string): Added "d" and "D".
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the change
+	in wl-summary.el.
+	(wl-thread-insert-entity-sub): Ditto.
+	(wl-thread-remove-destination-region): Ditto.
+	(wl-thread-print-destination-region): Ditto.
+
+	* wl-summary.el (wl-summary-buffer-refile-list,
+	wl-summary-buffer-delete-list,
+	wl-summary-buffer-copy-list): Abolish.
+	(wl-summary-buffer-temp-mark-list): New buffer local variable.
+	All other related portions are changed.
+	(wl-summary-mark-action-list): New variable.
+	(wl-summary-set-mark): New function.
+	(wl-summary-register-target-mark): Ditto.
+	(wl-summary-unregister-target-mark): Ditto.
+	(wl-summary-have-target-mark-p): Ditto.
+	(wl-summary-register-temp-mark): Ditto.
+	(wl-summary-unregister-temp-mark): Ditto.
+	(wl-summary-registered-temp-mark): Ditto.
+	(wl-summary-collect-temp-mark): Ditto.
+	(wl-summary-unset-mark): Ditto.
+	(wl-summary-set-target-mark): Ditto.
+	(wl-summary-unset-target-mark): Ditto.
+	(wl-summary-set-action-generic): Ditto.
+	(wl-summary-unset-action-generic): Ditto.
+	(wl-summary-exec-action-delete): Ditto.
+	(wl-summary-exec-action-erase): Ditto.
+	(wl-summary-set-action-refile): Ditto.
+	(wl-summary-set-action-refile-subr): Ditto.
+	(wl-summary-unset-action-refile): Ditto.
+	(wl-summary-make-destination-numbers-list): Ditto.
+	(wl-summary-exec-action-refile): Ditto.
+	(wl-summary-set-action-copy): Ditto.
+	(wl-summary-unset-action-copy): Ditto.
+	(wl-summary-exec-action-copy): Ditto.
+	(wl-summary-collect-numbers-region): Ditto.
+	(wl-summary-delete): Rewrite.
+	(wl-summary-erase): Ditto.
+	(wl-summary-remove-destination): Ditto.
+	(wl-summary-exec): Ditto.
+	(wl-summary-exec-region): Ditto.
+	(wl-summary-target-mark-erase): Ditto.
+	(wl-summary-refile): Ditto.
+	(wl-summary-copy): Ditto.
+	(wl-summary-unmark): Ditto.
+	(wl-summary-delete-all-mark): Ditto.
+	(wl-summary-mark-line): Don't highlight.
+	(wl-summary-target-mark-delete): Use wl-summary-register-temp-mark.
+	(wl-summary-target-mark-refile-subr): Rewrite.
+
+	(wl-summary-copy-prev-destination): Abolish.
+
 2003-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-thread-indent-level, wl-thread-*-str): Choose
