@@ -6991,9 +6991,6 @@ Emacs Lisp で実装された spam フィルタリングライブラリです。
 @file{util/im-wl.el} を @code{load-path} において以下のように設定すれば 
 OK です。
 
-インストール時に @code{exec-path} 上に @command{imput} があれば、
-@file{im-wl.el}はインストールされます。@xref{Install}.
-
 @lisp
 @group
 (autoload 'wl-draft-send-with-imput-async "im-wl")

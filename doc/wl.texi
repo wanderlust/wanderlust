@@ -6729,9 +6729,6 @@ Examples with other packages.
 Place @file{util/im-wl.el} on the @code{load-path} and do the following
 settings.
 
-If @command{imput} is on the @code{exec-path} at the installation,
-@file{im-wl.el} is byte-compiled and installed.  @xref{Install}.
-
 @lisp
 @group
 (autoload 'wl-draft-send-with-imput-async "im-wl")

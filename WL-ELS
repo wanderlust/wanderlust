@@ -65,7 +65,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils
-(defvar UTILS-MODULES '(rfc2368 wl-mailto wl-addrbook wl-complete))
+(defvar UTILS-MODULES '(rfc2368 im-wl wl-mailto wl-addrbook wl-complete))
 
 ;; OpenSSL/SSLeay package is also needed.
 (if (module-installed-p 'base64)
@@ -77,7 +77,5 @@
    (cons WLDIR WL-MODULES)
    (if (module-installed-p 'bbdb)
        (cons UTILSDIR (list 'bbdb-wl)))
-   (if (exec-installed-p "imput")
-       (cons UTILSDIR (list 'im-wl)))
    (if wl-install-utils
        (cons UTILSDIR UTILS-MODULES))))
