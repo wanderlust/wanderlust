@@ -495,7 +495,7 @@ The minimal requirement for settings is as the following.
 @lisp
 @group
 ;; @r{The setting to use SEMI}
-(load "mime-setup")
+(require 'mime-setup)
 
 ;; @r{autoload configuration}
 ;; @r{(These are not required if Wanderlust is installed as XEmacs package)}
@@ -521,7 +521,7 @@ because you can't write them in @file{.emacs}
 (if you write it to @file{.emacs}, you'll get an error).
 @xref{Highlights}.
 
-All above described settings except (load "mime-setup") and autoload
+All above described settings except @samp{(require 'mime-setup)} and autoload
 configuration can be written in
 @file{~/.wl}).
 
@@ -6023,6 +6023,7 @@ Examples with other packages.
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
 * Addrbook::                    Addrbook
+* mime-w3m::                    mime-w3m.el
 @end menu
 
 
@@ -6241,7 +6242,7 @@ For mhc-current:
 @end group
 @end lisp
 
-@node Addrbook,  , MHC, Living with other packages
+@node Addrbook, mime-w3m, MHC, Living with other packages
 @subsection wl-addrbook.el
 @pindex Addrbook
 
@@ -6257,6 +6258,15 @@ Place @file{util/wl-addrbook.el} and @file{util/wl-complete.el} on the
 (wl-addrbook-setup)
 @end group
 @end lisp
+
+@node mime-w3m,  , Addrbook, Living with other packages
+@subsection mime-w3m.el
+@pindex mime-w3m
+
+You can display html part by using @file{mime-w3m.el}
+distributed with emacs-w3m (@uref{http://emacs-w3m.namazu.org/}).
+You can find the usage in comment region at the head of @file{mime-w3m.el}.
+
 
 @node Highlights, Biff, Living with other packages, Customization
 @section Highlights

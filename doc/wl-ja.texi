@@ -530,7 +530,7 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 @lisp
 @group
 ;; @r{SEMI $B$r;H$&$?$a$N@_Dj(B}
-(load "mime-setup")
+(require 'mime-setup)
 
 ;; @r{autoload $B$N@_Dj(B}
 ;; @r{(XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$5$l$F$$$k>l9g!"I,MW$"$j$^$;$s(B)}
@@ -553,7 +553,7 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 $B$&!#(Bface $B$N@_Dj$O(B @file{~/.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B@file{~/.wl} 
 $B$K=q$$$F$/$@$5$$!#(B@xref{Highlights}.
 
-$B>e5-$N$&$A!"(B@samp{(load "mime-setup")} $B$H(B @code{autoload} $B$N@_Dj$O(B
+$B>e5-$N$&$A!"(B@samp{(require 'mime-setup)} $B$H(B @code{autoload} $B$N@_Dj$O(B
 @file{~/.emacs} $B$K=q$/I,MW$,$"$j$^$9!#$=$l0J30$N@_Dj$O(B @file{~/.wl} $B$K5-(B
 $B=R$G$-$^$9!#(B
 
@@ -5935,6 +5935,7 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 * dired-dd::                    dired-dd.el
 * MHC::                         MHC
 * Addrbook::                    Addrbook
+* mime-w3m::                    mime-w3m.el
 @end menu
 
 
@@ -6154,7 +6155,7 @@ mhc-current $B$N>l9g!'(B
 @end group
 @end lisp
 
-@node Addrbook,  , MHC, Living with other packages
+@node Addrbook, mime-w3m, MHC, Living with other packages
 @subsection wl-addrbook.el
 @pindex Addrbook
 
@@ -6171,6 +6172,16 @@ Mew $B$N(B Addrbook $B$r(B Wanderlust $B$G;HMQ$G$-$k$h$&$K$9$k$K$O!"(B
 (wl-addrbook-setup)
 @end group
 @end lisp
+
+@node mime-w3m,  , Addrbook, Living with other packages
+@subsection mime-w3m.el
+@pindex mime-w3m
+
+emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) $B$KIUB0$N(B
+@file{mime-w3m.el} $B$r;H$C$F!"%a%C%;!<%8$N(B html $B%Q!<%H$r(B
+$BI=<($5$;$k$3$H$,=PMh$^$9!#@_DjK!$O(B @file{mime-w3m.el} $B$N(B
+$B@hF,$N%3%a%s%H$r;2>H$7$F$/$@$5$$!#(B
+
 
 @node Highlights, Biff, Living with other packages, Customization
 @section $B%O%$%i%$%H$N@_Dj(B
