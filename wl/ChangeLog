@@ -1,3 +1,8 @@
+2001-04-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-e21.el (wl-biff-init-icons): Don't use `call-interactively' to
+	call the command `wl-biff-check-folders' in `mode-line-mouse2-map'.
+
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-biff-unnotify-hook): New variable.
