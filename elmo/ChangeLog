@@ -1,3 +1,8 @@
+2004-03-28  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-pop3.el (elmo-pop3-send-command): Combine `process-send-string'
+	calls.
+
 2004-03-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-spamfilter.el (elmo-spam-buffer-spam-p): Call
