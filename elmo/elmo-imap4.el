@@ -568,7 +568,7 @@ BUFFER must be a single-byte buffer."
 			      (mapcar '(lambda (fld)
 					 (unless
 					     (string-match
-					      (concat "^" (regexp-quote folder) delim)
+					      (concat "^" (regexp-quote folder))
 					      fld)
 					   fld))
 				      result))))
