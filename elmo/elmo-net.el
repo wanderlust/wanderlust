@@ -1,4 +1,4 @@
-;;; elmo-net.el -- Network module for ELMO.
+;;; elmo-net.el --- Network module for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,7 +24,7 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 
@@ -113,19 +113,20 @@
 
 (defsubst elmo-network-session-password-key (session)
   (format "%s:%s/%s@%s:%d"
-	  (elmo-network-session-name-internal session)
+	  (upcase
+	   (nth 1 (split-string (symbol-name
+				 (luna-class-name session)) "[4-]")))
 	  (elmo-network-session-user-internal session)
 	  (elmo-network-session-auth-internal session)
 	  (elmo-network-session-server-internal session)
 	  (elmo-network-session-port-internal session)))
 
 (defvar elmo-network-session-cache nil)
-(defvar elmo-network-session-name-prefix nil)
 
 (defsubst elmo-network-session-cache-key (name folder)
   "Returns session cache key for NAME and FOLDER."
   (format "%s:%s/%s@%s:%d%s"
-	  (concat elmo-network-session-name-prefix name)
+	  name
 	  (elmo-net-folder-user-internal folder)
 	  (elmo-net-folder-auth-internal folder)
 	  (elmo-net-folder-server-internal folder)
@@ -158,7 +159,9 @@ if making session failed, returns nil."
   (let (pair session key)
     (if (not (elmo-plugged-p
 	      (elmo-net-folder-server-internal folder)
-	      (elmo-net-folder-port-internal folder)))
+	      (elmo-net-folder-port-internal folder)
+	      (elmo-network-stream-type-symbol
+	       (elmo-net-folder-stream-type-internal folder))))
 	(error "Unplugged"))
     (setq pair (assoc (setq key (elmo-network-session-cache-key name folder))
 		      elmo-network-session-cache))
@@ -210,7 +213,7 @@ Returns a process object.  if making session failed, returns nil."
 			   :process nil
 			   :greeting nil))
 	(buffer (format " *%s session for %s@%s:%d%s"
-			(concat elmo-network-session-name-prefix name)
+			name
 			user
 			server
 			port
@@ -246,7 +249,7 @@ Returns a process object.  if making session failed, returns nil."
 	     (elmo-network-stream-type-feature stream-type))
 	(require (elmo-network-stream-type-feature stream-type)))
     (condition-case err
- 	(let (process-connection-type)
+	(let (process-connection-type)
 	  (as-binary-process
 	   (setq process
 		 (if stream-type
@@ -255,15 +258,30 @@ Returns a process object.  if making session failed, returns nil."
 		   (open-network-stream name buffer server service)))))
       (error
        (when auto-plugged
-	 (elmo-set-plugged nil server service stream-type (current-time))
+	 (elmo-set-plugged nil server service
+			   (elmo-network-stream-type-symbol stream-type)
+			   (current-time))
 	 (message "Auto plugged off at %s:%d" server service)
 	 (sit-for 1))
        (signal (car err) (cdr err))))
     (when process
       (process-kill-without-query process)
       (when auto-plugged
-	(elmo-set-plugged t server service stream-type))
+	(elmo-set-plugged t server service
+			  (elmo-network-stream-type-symbol stream-type)))
       process)))
+
+(defun elmo-get-network-stream-type (symbol)
+  "Return network stream type corresponding to SYMBOL.
+Returned value is searched from `elmo-network-stream-type-alist'."
+  (let ((alist elmo-network-stream-type-alist)
+	spec)
+    (while alist
+      (when (eq (nth 1 (car alist)) symbol)
+	(setq spec (car alist))
+	(setq alist nil))
+      (setq alist (cdr alist)))
+    spec))
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-net-folder)
@@ -279,13 +297,13 @@ Returns a process object.  if making session failed, returns nil."
 	 folder
 	 (string-to-int (elmo-match-substring 2 name 1))))
     (if (match-beginning 3)
-	(elmo-net-folder-set-stream-type-internal 
+	(elmo-net-folder-set-stream-type-internal
 	 folder
 	 (assoc (elmo-match-string 3 name)
 		elmo-network-stream-type-alist)))
     (substring name 0 (match-beginning 0))))
 
-(defun elmo-net-port-info (folder)
+(luna-define-method elmo-net-port-info ((folder elmo-net-folder))
   (list (elmo-net-folder-server-internal folder)
 	(elmo-net-folder-port-internal folder)
 	(elmo-network-stream-type-symbol
@@ -304,7 +322,7 @@ Returns a process object.  if making session failed, returns nil."
   (apply 'elmo-plugged-p
 	 (append (elmo-net-port-info folder)
 		 (list nil (quote (elmo-net-port-label folder))))))
-			    
+
 (luna-define-method elmo-folder-set-plugged ((folder elmo-net-folder)
 					     plugged &optional add)
   (apply 'elmo-set-plugged plugged
@@ -406,12 +424,12 @@ Returns a process object.  if making session failed, returns nil."
 		      new-mark already-mark seen-mark
 		      important-mark seen-list)))
 
-(luna-define-method elmo-folder-msgdb-create-unplugged ((folder 
+(luna-define-method elmo-folder-msgdb-create-unplugged ((folder
 							 elmo-net-folder)
 							numbers
 							new-mark already-mark
 							seen-mark
-							important-mark 
+							important-mark
 							seen-list)
   ;; XXXX should be appended to already existing msgdb.
   (elmo-dop-msgdb
@@ -419,7 +437,7 @@ Returns a process object.  if making session failed, returns nil."
 			     (mapcar 'abs numbers)
 			     new-mark already-mark
 			     seen-mark
-			     important-mark 
+			     important-mark
 			     seen-list)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-net-folder)
@@ -460,7 +478,7 @@ Returns a process object.  if making session failed, returns nil."
     t))
 
 (luna-define-method elmo-folder-mark-as-read-unplugged ((folder
-							 elmo-net-folder) 
+							 elmo-net-folder)
 							numbers)
   (elmo-folder-mark-as-read-dop folder numbers))
 
@@ -469,7 +487,7 @@ Returns a process object.  if making session failed, returns nil."
   (elmo-folder-unmark-read-dop folder numbers))
 
 (luna-define-method elmo-folder-mark-as-important-unplugged ((folder
-							      elmo-net-folder) 
+							      elmo-net-folder)
 							     numbers)
   (elmo-folder-mark-as-important-dop folder numbers))
 
@@ -479,11 +497,11 @@ Returns a process object.  if making session failed, returns nil."
   (elmo-folder-unmark-important-dop folder numbers))
 
 (luna-define-method elmo-message-encache :around ((folder elmo-net-folder)
-						  number)
+						  number &optional read)
   (if (elmo-folder-plugged-p folder)
       (luna-call-next-method)
     (if elmo-enable-disconnected-operation
-	(elmo-message-encache-dop folder number)
+	(elmo-message-encache-dop folder number read)
       (error "Unplugged"))))
 
 (luna-define-generic elmo-message-fetch-plugged (folder number strategy

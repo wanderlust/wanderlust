@@ -1,4 +1,4 @@
-;;; wl-draft.el -- Message draft mode for Wanderlust.
+;;; wl-draft.el --- Message draft mode for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -26,10 +26,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'sendmail)
 (require 'wl-template)
@@ -48,6 +48,9 @@
   (defalias-maybe 'x-face-insert-version-header 'ignore)
   (defalias-maybe 'wl-init 'ignore)
   (defalias-maybe 'wl-draft-mode 'ignore))
+
+(eval-and-compile
+  (autoload 'wl-addrmgr "wl-addrmgr"))
 
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-draft-cite-function 'wl-default-draft-cite)
@@ -70,18 +73,23 @@
 (defvar wl-draft-reedit nil)
 (defvar wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
+(defvar wl-draft-parent-folder nil)
 
 (defvar wl-draft-config-sub-func-alist
-  '((body        . wl-draft-config-sub-body)
-    (top         . wl-draft-config-sub-top)
-    (bottom      . wl-draft-config-sub-bottom)
-    (header      . wl-draft-config-sub-header)
-    (body-file   . wl-draft-config-sub-body-file)
-    (top-file    . wl-draft-config-sub-top-file)
-    (bottom-file . wl-draft-config-sub-bottom-file)
-    (header-file . wl-draft-config-sub-header-file)
-    (template    . wl-draft-config-sub-template)
-    (x-face      . wl-draft-config-sub-x-face)))
+  '((body		. wl-draft-config-sub-body)
+    (top		. wl-draft-config-sub-top)
+    (bottom		. wl-draft-config-sub-bottom)
+    (header		. wl-draft-config-sub-header)
+    (header-top		. wl-draft-config-sub-header-top)
+    (header-bottom	. wl-draft-config-sub-header)
+    (part-top		. wl-draft-config-sub-part-top)
+    (part-bottom	. wl-draft-config-sub-part-bottom)
+    (body-file		. wl-draft-config-sub-body-file)
+    (top-file		. wl-draft-config-sub-top-file)
+    (bottom-file	. wl-draft-config-sub-bottom-file)
+    (header-file	. wl-draft-config-sub-header-file)
+    (template		. wl-draft-config-sub-template)
+    (x-face		. wl-draft-config-sub-x-face)))
 
 (make-variable-buffer-local 'wl-draft-buffer-file-name)
 (make-variable-buffer-local 'wl-draft-buffer-cur-summary-buffer)
@@ -90,6 +98,7 @@
 (make-variable-buffer-local 'wl-sent-message-via)
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
+(make-variable-buffer-local 'wl-draft-parent-folder)
 
 (defmacro wl-smtp-extension-bind (&rest body)
   (` (let* ((smtp-sasl-mechanisms
@@ -99,14 +108,14 @@
 			     wl-smtp-authenticate-type
 			   (list wl-smtp-authenticate-type)))))
 	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
-	    (smtp-use-starttls wl-smtp-connection-type)
+	    (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
 	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
        (if (and (string= (car smtp-sasl-mechanisms) "DIGEST-MD5")
 		;; sendmail bug?
 		(string-match "^\\([^@]*\\)@\\([^@]*\\)"
 			      wl-smtp-posting-user))
 	   (setq smtp-sasl-user-name (match-string 1 wl-smtp-posting-user)
-		 smtp-sasl-properties (list 'realm 
+		 smtp-sasl-properties (list 'realm
 					    (match-string 2 wl-smtp-posting-user)))
 	 (setq smtp-sasl-user-name wl-smtp-posting-user
 	       smtp-sasl-properties nil))
@@ -250,7 +259,7 @@
   (mail-position-on-field "To"))
 
 (defun wl-draft-strip-subject-re (subject)
-  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus"
+  "Remove \"Re:\" from subject lines. Shamelessly copied from Gnus."
   (if (string-match wl-subject-prefix-regexp subject)
       (substring subject (match-end 0))
     subject))
@@ -272,7 +281,9 @@ Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
   (let (r-list
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from to-alist cc-alist decoder)
+	from to-alist cc-alist decoder parent-folder)
+    (set-buffer summary-buf)
+    (setq parent-folder (wl-summary-buffer-folder-name))
     (set-buffer buf)
     (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
     (catch 'done
@@ -320,14 +331,14 @@ Reply to author if WITH-ARG is non-nil."
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
       (setq subject (if (and subject decoder)
 			(funcall decoder subject) subject))
-      (setq to-alist 
+      (setq to-alist
 	    (mapcar
 	     (lambda (addr)
 	       (setq decoder (mime-find-field-decoder 'To 'plain))
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     to))
-      (setq cc-alist 
+      (setq cc-alist
 	    (mapcar
 	     (lambda (addr)
 	       (setq decoder (mime-find-field-decoder 'Cc 'plain))
@@ -336,7 +347,7 @@ Reply to author if WITH-ARG is non-nil."
 	     cc)))
     (and wl-reply-subject-prefix
 	 (setq subject (concat wl-reply-subject-prefix
-                               (wl-draft-strip-subject-re
+			       (wl-draft-strip-subject-re
 				(or subject "")))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
@@ -352,10 +363,18 @@ Reply to author if WITH-ARG is non-nil."
       (setq mail-followup-to
 	    (wl-draft-make-mail-followup-to (append to cc)))
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
-    (setq newsgroups (wl-parse newsgroups
-			       "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
-	  newsgroups (wl-delete-duplicates newsgroups)
-	  newsgroups (if newsgroups (mapconcat 'identity newsgroups ",")))
+    (with-temp-buffer			; to keep raw buffer unibyte.
+      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (setq newsgroups (wl-parse newsgroups
+				 "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
+	    newsgroups (wl-delete-duplicates newsgroups)
+	    newsgroups
+	    (if newsgroups
+		(mapconcat
+		 (lambda (grp)
+		   (setq decoder (mime-find-field-decoder 'Newsgroups 'plain))
+		   (if decoder (funcall decoder grp) grp))
+		 newsgroups ","))))
     (setq to (wl-delete-duplicates to nil t))
     (setq cc (wl-delete-duplicates
 	      (append (wl-delete-duplicates cc nil t)
@@ -390,32 +409,36 @@ Reply to author if WITH-ARG is non-nil."
 			 (mapconcat 'identity references "\n\t")))
     (wl-draft
      to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil nil summary-buf)
+     nil nil nil nil summary-buf nil parent-folder)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
 (defun wl-draft-add-references ()
+  (wl-draft-add-in-reply-to "References"))
+
+(defun wl-draft-add-in-reply-to (&optional alt-field)
   (let* ((mes-id (save-excursion
-                   (set-buffer mail-reply-buffer)
-                   (std11-field-body "message-id")))
-         (ref (std11-field-body "References"))
-         (ref-list nil) (st nil))
+		   (set-buffer mail-reply-buffer)
+		   (std11-field-body "message-id")))
+	 (field (or alt-field "In-Reply-To"))
+	 (ref (std11-field-body field))
+	 (ref-list nil) (st nil))
     (when (and mes-id ref)
       (while (string-match "<[^>]+>" ref st)
-        (setq ref-list
-              (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
-                    ref-list)))
+	(setq ref-list
+	      (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
+		    ref-list)))
       (when (and ref-list
 		 (member mes-id ref-list))
 	(setq mes-id nil)))
     (when mes-id
       (save-excursion
-        (when (mail-position-on-field "References")
-          (forward-line)
-          (while (looking-at "^[ \t]")
-            (forward-line))
-          (setq mes-id (concat "\t" mes-id "\n")))
-        (insert mes-id))
+	(when (mail-position-on-field field)
+	  (forward-line)
+	  (while (looking-at "^[ \t]")
+	    (forward-line))
+	  (setq mes-id (concat "\t" mes-id "\n")))
+	(insert mes-id))
       t)))
 
 (defun wl-draft-yank-from-mail-reply-buffer (decode-it
@@ -424,8 +447,7 @@ Reply to author if WITH-ARG is non-nil."
   (save-restriction
     (narrow-to-region (point)(point))
     (insert
-     (save-excursion
-       (set-buffer mail-reply-buffer)
+     (with-current-buffer mail-reply-buffer
        (when decode-it
 	 (decode-mime-charset-region (point-min) (point-max)
 				     wl-mime-charset))
@@ -435,15 +457,17 @@ Reply to author if WITH-ARG is non-nil."
       (goto-char (point-min))
       (wl-draft-delete-fields ignored-fields))
     (goto-char (point-max))
-    (push-mark)
+    (push-mark (point) nil t)
     (goto-char (point-min)))
   (let ((beg (point)))
     (cond (mail-citation-hook (run-hooks 'mail-citation-hook))
 	  (mail-yank-hooks (run-hooks 'mail-yank-hooks))
 	  (wl-draft-cite-function (funcall wl-draft-cite-function))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
-    (when (and wl-draft-add-references
-	       (wl-draft-add-references))
+    (when (if wl-draft-add-references
+	      (wl-draft-add-references)
+	    (if wl-draft-add-in-reply-to
+		(wl-draft-add-in-reply-to)))
       (wl-highlight-headers 'for-draft)) ; highlight when added References:
     (when wl-highlight-body-too
       (wl-highlight-body-region beg (point-max)))))
@@ -470,6 +494,7 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-message-mail-p ()
   "If exist To, Cc or Bcc field, return non-nil."
   (or (wl-message-field-exists-p "To")
+      (wl-message-field-exists-p "Resent-to")
       (wl-message-field-exists-p "Cc")
       (wl-message-field-exists-p "Bcc")
 ;;; This may be needed..
@@ -483,7 +508,8 @@ Reply to author if WITH-ARG is non-nil."
   (wl-draft-edit-string (elmo-get-file-string
 			 (or file
 			     (read-file-name "File to edit: "
-					     (or wl-tmp-dir "~/"))))))
+					     (or wl-temporary-file-directory
+						 "~/"))))))
 
 (defun wl-draft-edit-string (string)
   (let ((cur-buf (current-buffer))
@@ -548,7 +574,8 @@ Reply to author if WITH-ARG is non-nil."
   (let (original-buffer
 	mail-reply-buffer
 	mail-citation-hook mail-yank-hooks
-	wl-draft-add-references wl-draft-cite-function)
+	wl-draft-add-references wl-draft-add-in-reply-to
+	wl-draft-cite-function)
     (with-current-buffer wl-draft-buffer-cur-summary-buffer
       (with-current-buffer wl-message-buffer
 	(setq original-buffer (wl-message-get-original-buffer))
@@ -595,20 +622,18 @@ Reply to author if WITH-ARG is non-nil."
 	(summary-buf wl-current-summary-buffer)
 	(message-buf (get-buffer (wl-current-message-buffer)))
 	from date cite-title num entity)
-    (setq date (std11-fetch-field "date"))
     (if (and summary-buf
 	     (buffer-live-p summary-buf)
 	     message-buf
 	     (buffer-live-p message-buf))
 	(progn
-	  (save-excursion
-	    (set-buffer summary-buf)
-	    (setq num
-		  (save-excursion
-		    (set-buffer message-buf)
-		    wl-message-buffer-cur-number))
+	  (with-current-buffer summary-buf
+	    (setq num (save-excursion
+			(set-buffer message-buf)
+			wl-message-buffer-cur-number))
 	    (setq entity (elmo-msgdb-overview-get-entity
 			  num (wl-summary-buffer-msgdb)))
+	    (setq date (elmo-msgdb-overview-entity-get-date entity))
 	    (setq from (elmo-msgdb-overview-entity-get-from entity)))
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
@@ -694,7 +719,7 @@ Reply to author if WITH-ARG is non-nil."
     (when (and (or (eq major-mode 'wl-draft-mode)
 		   (eq major-mode 'mail-mode))
 	       (or force-kill
-		   (y-or-n-p "Kill Current Draft?")))
+		   (y-or-n-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
@@ -706,6 +731,15 @@ Reply to author if WITH-ARG is non-nil."
   (or (mail-position-on-field "fcc" t)  ;Put new field after exiting Fcc.
       (mail-position-on-field "to"))
   (insert "\nFcc: "))
+
+;; Imported from message.el.
+(defun wl-draft-elide-region (b e)
+  "Elide the text in the region.
+An ellipsis (from `wl-draft-elide-ellipsis') will be inserted where the
+text was killed."
+  (interactive "r")
+  (kill-region b e)
+  (insert wl-draft-elide-ellipsis))
 
 ;; function for wl-sent-message-via
 
@@ -735,10 +769,9 @@ Reply to author if WITH-ARG is non-nil."
 (defun wl-draft-write-sendlog (status proto server to id)
   "Write send log file, if `wl-draft-sendlog' is non-nil."
   (when wl-draft-sendlog
-    (save-excursion
-      (let* ((tmp-buf (get-buffer-create " *wl-draft-sendlog*"))
-	     (filename (expand-file-name wl-draft-sendlog-filename
-					 elmo-msgdb-dir))
+    (with-temp-buffer
+      (let* ((filename (expand-file-name wl-draft-sendlog-filename
+					 elmo-msgdb-directory))
 	     (filesize (nth 7 (file-attributes filename)))
 	     (server (if server (concat " server=" server) ""))
 	     (to (if to (cond
@@ -755,18 +788,15 @@ Reply to author if WITH-ARG is non-nil."
 		   ""))
 	     (id (if id (concat " id=" id) ""))
 	     (time (wl-sendlog-time)))
-	(set-buffer tmp-buf)
-	(erase-buffer)
 	(insert (format "%s proto=%s stat=%s%s%s%s\n"
 			time proto status server to id))
 	(if (and wl-draft-sendlog-max-size filesize
 		 (> filesize wl-draft-sendlog-max-size))
 	    (rename-file filename (concat filename ".old") t))
 	(if (file-writable-p filename)
-	    (write-region (point-min) (point-max)
-			  filename t 'no-msg)
-	  (message (format "%s is not writable." filename)))
-	(kill-buffer tmp-buf)))))
+	    (write-region-as-binary (point-min) (point-max)
+				    filename t 'no-msg)
+	  (message (format "%s is not writable." filename)))))))
 
 (defun wl-draft-get-header-delimiter (&optional delete)
   ;; If DELETE is non-nil, replace the header delimiter with a blank line
@@ -801,10 +831,10 @@ to find out how to use this."
 	(0   (progn
 	       (wl-draft-set-sent-message 'mail 'sent)
 	       (wl-draft-write-sendlog 'ok 'qmail nil (list to) id)))
-	(1   (error "qmail-inject reported permanent failure"))
-	(111 (error "qmail-inject reported transient failure"))
+	(1   (error "`qmail-inject' reported permanent failure"))
+	(111 (error "`qmail-inject' reported transient failure"))
 	;; should never happen
-	(t   (error "qmail-inject reported unknown failure"))))))
+	(t   (error "`qmail-inject' reported unknown failure"))))))
 
 (defun wl-draft-parse-msg-id-list-string (string)
   "Get msg-id list from STRING."
@@ -814,6 +844,22 @@ to find out how to use this."
 	(setq msg-id-list (cons (std11-msg-id-string parsed-id)
 				msg-id-list))))
     (nreverse msg-id-list)))
+
+(defun wl-draft-std11-parse-addresses (lal)
+  (let ((ret (std11-parse-address lal)))
+    (if ret
+	(let ((dest (list (car ret))))
+	  (setq lal (cdr ret))
+	  (while (and (setq ret (std11-parse-ascii-token lal))
+		      (string-equal (cdr (assq 'specials (car ret))) ",")
+		      (setq ret (std11-parse-address (cdr ret)))
+		      )
+	    (setq dest (cons (car ret) dest))
+	    (setq lal (cdr ret)))
+	  (while (eq 'spaces (car (car lal)))
+	    (setq lal (cdr lal)))
+	  (if lal (error "Error while parsing address"))
+	  (nreverse dest)))))
 
 (defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
   "Get mailbox list of FIELD from current buffer.
@@ -834,7 +880,7 @@ from current buffer."
 	(skip-chars-backward "\n")
 	(setq seq (std11-lexical-analyze
 		   (buffer-substring-no-properties beg (point))))
-	(setq addresses (std11-parse-addresses seq))
+	(setq addresses (wl-draft-std11-parse-addresses seq))
 	(while addresses
 	  (cond ((eq (car (car addresses)) 'group)
 		 (setq has-group-list t)
@@ -862,7 +908,7 @@ from current buffer."
   "Get address list suitable for smtp RCPT TO:<address>.
 Group list content is removed if `wl-draft-remove-group-list-contents' is
 non-nil."
-  (let ((fields        '("to" "cc" "bcc"))
+  (let ((fields '("to" "cc" "bcc"))
 	(resent-fields '("resent-to" "resent-cc" "resent-bcc"))
 	(case-fold-search t)
 	addrs recipients)
@@ -960,17 +1006,18 @@ non-nil."
   (require 'elmo-pop3)
   (condition-case ()
       (let ((session (elmo-pop3-get-session
-		      (list 'pop3
-			    (or wl-pop-before-smtp-user
-				elmo-pop3-default-user)
-			    (or wl-pop-before-smtp-authenticate-type
-				elmo-pop3-default-authenticate-type)
-			    (or wl-pop-before-smtp-server
-				elmo-pop3-default-server)
-			    (or wl-pop-before-smtp-port
-				elmo-pop3-default-port)
-			    (or wl-pop-before-smtp-stream-type
-				elmo-pop3-default-stream-type)))))
+		      (luna-make-entity
+		       'elmo-pop3-folder
+		       :user (or wl-pop-before-smtp-user
+				 elmo-pop3-default-user)
+		       :server (or wl-pop-before-smtp-server
+				   elmo-pop3-default-server)
+		       :port (or wl-pop-before-smtp-port
+				 elmo-pop3-default-port)
+		       :auth (or wl-pop-before-smtp-authenticate-type
+				 elmo-pop3-default-authenticate-type)
+		       :stream-type (or wl-pop-before-smtp-stream-type
+					elmo-pop3-default-stream-type)))))
 	(when session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
@@ -1047,7 +1094,8 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(if wl-draft-use-cache
 	    (let ((id (std11-field-body "Message-ID"))
 		  (elmo-enable-disconnected-operation t))
-		(elmo-file-cache-save id nil)))
+	      (elmo-file-cache-save (elmo-file-cache-get-path id)
+				    nil)))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)
@@ -1092,14 +1140,14 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.
-If optional argument is non-nil, current draft buffer is killed"
+If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (interactive)
   ;; Don't call this explicitly.
   ;; Added to 'wl-draft-send-hook (by teranisi)
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (y-or-n-p "Send current draft. OK?"))
+	    (y-or-n-p "Do you really want to send current draft? "))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer
@@ -1165,7 +1213,7 @@ If optional argument is non-nil, current draft buffer is killed"
   (let ((editing-buffer (current-buffer)))
     (wl-draft-hide editing-buffer)
     (kill-buffer editing-buffer)))
-  
+
 (defun wl-draft-send-and-exit ()
   "Send current draft message and kill it."
   (interactive)
@@ -1208,7 +1256,7 @@ If optional argument is non-nil, current draft buffer is killed"
 (defun wl-draft-get-fcc-list (header-end)
   (let (fcc-list
 	(case-fold-search t))
-    (or (markerp header-end) (error "header-end must be a marker"))
+    (or (markerp header-end) (error "HEADER-END must be a marker"))
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward "^Fcc:[ \t]*" header-end t)
@@ -1232,7 +1280,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	(tembuf (generate-new-buffer " fcc output"))
 	(case-fold-search t)
 	beg end)
-    (or (markerp header-end) (error "header-end must be a marker"))
+    (or (markerp header-end) (error "HEADER-END must be a marker"))
     (save-excursion
       (unless fcc-list
 	(setq fcc-list (wl-draft-get-fcc-list header-end)))
@@ -1256,7 +1304,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	  (if (elmo-folder-append-buffer
 	       (wl-folder-get-elmo-folder
 		(eword-decode-string (car fcc-list)))
-	       id)
+	       (not wl-fcc-force-as-read))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
 	  (setq fcc-list (cdr fcc-list)))))
@@ -1291,14 +1339,16 @@ If optional argument is non-nil, current draft buffer is killed"
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
 			   content-type content-transfer-encoding
-			   body edit-again summary-buf from)
+			   body edit-again summary-buf from parent-folder)
   "Write and send mail/news message with Wanderlust."
   (interactive)
-  (unless (featurep 'wl)
-    (require 'wl))
+  (require 'wl)
   (unless wl-init
-    (wl-load-profile))
-  (wl-init) ;; returns immediately if already initialized.
+    (wl-load-profile)
+    (wl-folder-init)
+    (elmo-init)
+    (wl-plugged-init t))
+  (wl-init) ; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
@@ -1330,7 +1380,11 @@ If optional argument is non-nil, current draft buffer is killed"
 	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
+    (make-local-variable 'truncate-partial-width-windows)
+    (setq truncate-partial-width-windows nil)
+    (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
+    (setq wl-draft-parent-folder parent-folder)
     (if (stringp (or from wl-from))
 	(insert "From: " (or from wl-from) "\n"))
     (and (or (interactive-p)
@@ -1390,9 +1444,6 @@ If optional argument is non-nil, current draft buffer is killed"
 			   (1- (point)))
 			 'category 'mail-header-separator)
       (and body (insert body)))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
     (as-binary-output-file
      (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		   nil t))
@@ -1405,11 +1456,11 @@ If optional argument is non-nil, current draft buffer is killed"
 	(run-hooks 'wl-mail-setup-hook))
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((eq this-command 'wl-summary-write-current-newsgroup)
- 	   (mail-position-on-field "Subject"))
- 	  ((and (interactive-p) (null to))
- 	   (mail-position-on-field "To"))
- 	  (t
- 	   (goto-char (point-max))))
+	   (mail-position-on-field "Subject"))
+	  ((and (interactive-p) (null to))
+	   (mail-position-on-field "To"))
+	  (t
+	   (goto-char (point-max))))
     (setq wl-draft-buffer-cur-summary-buffer (or summary-buf
 						 (get-buffer
 						  wl-summary-buffer-name)))
@@ -1441,17 +1492,17 @@ If optional argument is non-nil, current draft buffer is killed"
 	(elmo-nntp-default-stream-type
 	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
     (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
- 	(wl-draft-set-sent-message 'news 'unplugged
- 				   (cons elmo-nntp-default-server
- 					 elmo-nntp-default-port))
+	(wl-draft-set-sent-message 'news 'unplugged
+				   (cons elmo-nntp-default-server
+					 elmo-nntp-default-port))
       (elmo-nntp-post elmo-nntp-default-server (current-buffer))
       (wl-draft-set-sent-message 'news 'sent)
       (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
- 			      (std11-field-body "Newsgroups")
- 			      (std11-field-body "Message-ID")))))
+			      (std11-field-body "Newsgroups")
+			      (std11-field-body "Message-ID")))))
 
 (defun wl-draft-generate-clone-buffer (name &optional local-variables)
-  "generate clone of current buffer named NAME."
+  "Generate clone of current buffer named NAME."
   (let ((editing-buffer (current-buffer)))
     (save-excursion
       (set-buffer (generate-new-buffer name))
@@ -1492,9 +1543,6 @@ If optional argument is non-nil, current draft buffer is killed"
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
     (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		  nil t)
     (wl-draft-overload-functions)
@@ -1537,6 +1585,18 @@ If optional argument is non-nil, current draft buffer is killed"
 
 (defun wl-draft-config-sub-header (content)
   (wl-draft-config-body-goto-header)
+  (if content (insert (concat (eval content) "\n"))))
+
+(defun wl-draft-config-sub-header-top (content)
+  (goto-char (point-min))
+  (if content (insert (concat (eval content) "\n"))))
+
+(defun wl-draft-config-sub-part-top (content)
+  (goto-char (mime-edit-content-beginning))
+  (if content (insert (concat (eval content) "\n"))))
+
+(defun wl-draft-config-sub-part-bottom (content)
+  (goto-char (mime-edit-content-end))
   (if content (insert (concat (eval content) "\n"))))
 
 (defsubst wl-draft-config-sub-file (content)
@@ -1586,26 +1646,24 @@ If optional argument is non-nil, current draft buffer is killed"
     (while clist
       (setq config (car clist))
       (cond
+       ((functionp config)
+	(funcall config))
        ((consp config)
 	(let ((field (car config))
 	      (content (cdr config))
 	      ret-val)
- 	  (cond
- 	   ((stringp field)
- 	    (wl-draft-replace-field field (eval content) t))
- 	   ((setq ret-val (wl-draft-config-sub-func field content))
+	  (cond
+	   ((stringp field)
+	    (wl-draft-replace-field field (eval content) t))
+	   ((setq ret-val (wl-draft-config-sub-func field content))
 	    (if (cdr ret-val) ;; for wl-draft-config-sub-template
 		(wl-append local-variables (cdr ret-val))))
- 	   ((boundp field) ;; variable
- 	    (make-local-variable field)
- 	    (set field (eval content))
- 	    (wl-append local-variables (list field)))
- 	   (t
- 	    (error "%s: not variable" field)))))
-       ((or (functionp config)
-	    (and (symbolp config)
-		 (fboundp config)))
-	(funcall config))
+	   ((boundp field) ;; variable
+	    (make-local-variable field)
+	    (set field (eval content))
+	    (wl-append local-variables (list field)))
+	   (t
+	    (error "%s: not variable" field)))))
        (t
 	(error "%s: not supported type" config)))
       (setq clist (cdr clist)))
@@ -1785,7 +1843,9 @@ If optional argument is non-nil, current draft buffer is killed"
   "Flush draft queue."
   (interactive)
   (let* ((queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
-	 (msgs2 (elmo-folder-list-messages queue-folder))
+	 (msgs2 (progn
+		  (elmo-folder-open-internal queue-folder)
+		  (elmo-folder-list-messages queue-folder)))
 	 (i 0)
 	 (performed 0)
 	 (wl-draft-queue-flushing t)
@@ -1805,7 +1865,7 @@ If optional argument is non-nil, current draft buffer is killed"
       (setq msgs2 (cdr msgs2)))
     (when (> (setq len (length msgs)) 0)
       (if (elmo-y-or-n-p (format
-			  "%d message(s) are in the sending queue. Send now?"
+			  "%d message(s) are in the sending queue.  Send now? "
 			  len)
 			 (not elmo-dop-flush-confirm) t)
 	  (progn
@@ -1844,6 +1904,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	      (kill-buffer buffer)
 	      (message "%d message(s) are sent." performed)))
 	(message "%d message(s) are remained to be sent." len))
+      (elmo-folder-close queue-folder)
       len)))
 
 (defun wl-jump-to-draft-buffer (&optional arg)
@@ -1911,11 +1972,11 @@ If optional argument is non-nil, current draft buffer is killed"
   "Insert HEADER-NAME w/ value HEADER-VALUE into a message."
   ;; it seems like overriding existing headers is acceptable -- should
   ;; we provide an option?
-  
+
   ;; plan was: unfold header (might be folded), remove existing value, insert
   ;;           new value
   ;; wl doesn't seem to fold header lines yet anyway :-)
-  
+
   (let ((kill-whole-line t)
 	end-of-line)
     (mail-position-on-field (capitalize header-name))
@@ -1951,8 +2012,8 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
- 	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
- 	(wl-draft-reply-buffer-style 'split))
+	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
+	(wl-draft-reply-buffer-style 'split))
     (when (eq switch-function 'switch-to-buffer-other-window)
       (when (one-window-p t)
 	(if (window-minibuffer-p) (other-window 1))

@@ -1,4 +1,4 @@
-;;; wl-vars.el -- Variable definitions for Wanderlust.
+;;; wl-vars.el --- Variable definitions for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -33,16 +33,19 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
-
-(if (module-installed-p 'custom)
-    (require 'custom))
+(require 'custom)
 
 ;;; Customizable Variables
 
 (defgroup wl nil
   "Wanderlust, a news and mail reading software."
   :tag "Wanderlust"
-  :link '(custom-manual "(wl-ja)Top")
+  :link (` (custom-manual
+	    (, (if (and (boundp 'current-language-environment)
+			(string-equal "Japanese"
+				      (symbol-value 'current-language-environment)))
+		   "(wl-ja)Top"
+		 "(wl)Top"))))
   :group 'news
   :group 'mail)
 
@@ -86,13 +89,16 @@
   :prefix "wl-"
   :group 'wl)
 
+(defgroup wl-setting nil
+  "Wanderlust common settings."
+  :prefix "wl-"
+  :group 'wl)
+
 ;;; Emacsen
 (defconst wl-on-xemacs (featurep 'xemacs))
 
 (defconst wl-on-emacs21 (and (not wl-on-xemacs)
 			     (>= emacs-major-version 21)))
-
-(defconst wl-on-nemacs (fboundp 'nemacs-version))
 
 (defconst wl-on-mule (featurep 'mule))
 
@@ -100,39 +106,41 @@
   (and wl-on-mule (or wl-on-xemacs
 		      (> emacs-major-version 19))))
 
-(require 'elmo-vars)
+(defconst wl-on-nemacs nil) ; backward compatibility.
 
 (eval-when-compile
   (defun-maybe locate-data-directory (a)))
 
 (defvar wl-cs-noconv
   (cond (wl-on-mule3 'binary)
-        (wl-on-mule  '*noconv*)
-	(wl-on-nemacs 0)
-        (t           nil)))
+	(wl-on-mule  '*noconv*)
+	(t           nil)))
 
 (defvar wl-cs-autoconv
   (cond (wl-on-mule3 'undecided)
-        (wl-on-mule  '*autoconv*)
-	(wl-on-nemacs 2) ; junet...
-        (t           nil)))
+	(wl-on-mule  '*autoconv*)
+	(t           nil)))
 
 (defvar wl-cs-local
   (cond (wl-on-mule3  'junet)
-        (wl-on-mule   '*junet*)
-        (wl-on-nemacs 2)
-        (t           nil)))
+	(wl-on-mule   '*junet*)
+	(t           nil)))
 
 (defvar wl-cs-cache wl-cs-local)
 
 (defvar wl-use-semi (module-installed-p 'mime-view) ; If nil, use tm.
   "*Use SEMI or not.")
 
-(defcustom wl-from (if (boundp 'user-mail-address)
-		       user-mail-address)
+(defcustom wl-from (and user-mail-address
+			(concat (and user-full-name
+				     (concat (elmo-address-quote-specials
+					      user-full-name)
+					     " "))
+				"<" user-mail-address ">"))
   "*From string used in draft."
-  :type 'string
-  :group 'wl)
+  :type  'string
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-user-mail-address-list nil
   "*A list of user's mail addresses.
@@ -140,26 +148,28 @@ This list is used to judge whether an address is user's or not.
 You should set this variable if you use multiple e-mail addresses.
 If you don't have multiple e-mail addresses, you don't have to set this."
   :type '(repeat string)
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
-(defcustom wl-organization nil
+(defcustom wl-organization (getenv "ORGANIZATION")
   "Organization name."
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 
-(defcustom wl-tmp-dir "~/tmp/"
+(defcustom wl-temporary-file-directory "~/tmp/"
   "*Default temporary directory to save message, part."
   :type 'directory
   :group 'wl)
 
-(defcustom wl-icon-dir (if (fboundp 'locate-data-directory)
-			   (locate-data-directory "wl")
-			 (let ((icons (expand-file-name "wl/icons/"
-							data-directory)))
-			   (if (file-directory-p icons)
-			       icons)))
-  "*Icon directory (XEmacs or Emacs 21)."
+(defcustom wl-icon-directory (if (fboundp 'locate-data-directory)
+				 (locate-data-directory "wl")
+			       (let ((icons (expand-file-name "wl/icons/"
+							      data-directory)))
+				 (if (file-directory-p icons)
+				     icons)))
+  "*Directory to load the icon files from, or nil if none."
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl)
@@ -185,11 +195,6 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type 'string
   :group 'wl-summary)
 
-(defcustom wl-summary-update-confirm-threshold 500
-  "*Confirm updating summary if message number is larger than this value."
-  :type 'integer
-  :group 'wl-summary)
-
 ;; Important folders
 (defcustom wl-default-folder "%inbox"
   "*Default folder used in `wl-summary-goto-folder'."
@@ -202,7 +207,8 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 (defcustom wl-trash-folder "+trash"
   "*Trash folder"
   :type 'string
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 (defcustom wl-queue-folder "+queue"
   "*Queue folder"
   :type 'string
@@ -243,7 +249,8 @@ If file exists and `wl-auto-insert-x-face' is non-nil."
   "*Subscribed mailing list.
 You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
   :type '(repeat string)
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-demo t
   "*Display demo at start time."
@@ -255,9 +262,16 @@ You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
 If nil, `wl-from' is used."
   :type '(choice (const :tag "Same as 'From' field." nil)
 		 string)
+  :group 'wl
+  :group 'wl-setting)
+
+(defcustom wl-draft-add-in-reply-to t
+  "*If non-nil, message-id of the cited message is inserted to the
+in-reply-to field of the current draft."
+  :type 'boolean
   :group 'wl)
 
-(defcustom wl-draft-add-references t
+(defcustom wl-draft-add-references nil
   "*If non-nil, message-id of the cited message is inserted to the
 references field of the current draft."
   :type 'boolean
@@ -274,21 +288,24 @@ If nil, default smtp connection type is used."
 (defcustom wl-smtp-posting-user nil
   "*SMTP authentication user."
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-smtp-posting-server nil
   "*SMTP server name to send mail (wl-draft-send-mail-with-smtp)."
   :type '(choice (const :tag "none" nil)
 		 string)
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-smtp-posting-port nil
   "*SMTP port number in `wl-smtp-posting-server'.
 If nil, default SMTP port number(25) is used."
   :type '(choice (const :tag "Default (25)" nil)
-                 integer)
-  :group 'wl)
+		 integer)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-smtp-authenticate-type nil
   "*SMTP Authentication type.
@@ -298,30 +315,34 @@ If nil, don't authenticate."
 		 (const :tag "CRAM-MD5" "cram-md5")
 		 (const :tag "LOGIN" "login")
 		 (string :tag "Other"))
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-pop-before-smtp-user nil
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
+\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp\)"
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-pop-before-smtp-server nil
   "*POP3 server for POP-before-SMTP.
 If nil, `elmo-pop3-default-server' is used."
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-pop-before-smtp-port nil
   "*POP3 port for POP-before-SMTP.
 If nil, `elmo-pop3-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
@@ -335,37 +356,36 @@ If nil, `elmo-pop3-default-authenticate-type' is used."
   :type '(choice (const :tag "none" nil)
 		 (const :tag "APOP" "apop")
 		 (const :tag "POP3" "user"))
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-nntp-posting-server nil
   "*NNTP server name to post news.
 If nil, `elmo-nntp-default-server' is used."
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 (defcustom wl-nntp-posting-user nil
   "*NNTP user name to post news for authinfo.
 If nil, `elmo-nntp-default-user' is used.
 If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
-                 string)
-  :group 'wl)
+		 string)
+  :group 'wl
+  :group 'wl-setting)
 (defcustom wl-nntp-posting-port nil
   "*NNTP port to post news.
 If nil, `elmo-nntp-default-port' is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
 If nil, `elmo-nntp-default-stream-type' is used."
   :type 'boolean
   :group 'wl)
-
-(defcustom wl-fetch-confirm-threshold 30000
-  "*Confirm fetching if message size is larger than this value."
-  :type 'integer
-  :group 'wl-pref)
 
 (defcustom wl-prefetch-confirm t
   "*Confirm prefetching if message size is larger than `wl-prefetch-threshold'."
@@ -379,7 +399,8 @@ If message size is larger than this value, confirm prefetching
 when `wl-prefetch-confirm' is non-nil."
   :type '(choice (integer :tag "Threshold (bytes)")
 		 (const :tag "No limitation" nil))
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-cache-prefetch-threshold 30000
   "*Quit forward cache prefetching if message size is larger than this value."
@@ -389,7 +410,8 @@ when `wl-prefetch-confirm' is non-nil."
 (defcustom wl-thread-insert-opened nil
   "*Non-nil forces to insert thread as opened in updating."
   :type 'boolean
-  :group 'wl-summary)
+  :group 'wl-summary
+  :group 'wl-setting)
 
 (defcustom wl-thread-open-reading-thread t
   "*Non-nil forces to open reading thread."
@@ -471,7 +493,7 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
   "A hook called when suspend wanderlust.")
-(defvar wl-biff-notify-hook nil
+(defvar wl-biff-notify-hook '(ding)
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")
@@ -497,6 +519,10 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when summary line is inserted.")
 (defvar wl-summary-insert-headers-hook nil
   "A hook called when insert header for search header.")
+(defvar wl-message-display-internal-hook nil
+  "A hook called when message buffer is created and message is displayed.
+This hook may contain the functions `wl-setup-message' for
+reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-thread-update-children-number-hook nil
   "A hook called when children number is updated.")
 (defvar wl-folder-update-access-group-hook nil
@@ -511,8 +537,6 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
   "A hook called when make plugged alist.")
-(defvar wl-biff-notify-hook '(beep)
-  "A hook called when a biff-notification is invoked.")
 
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")
@@ -666,21 +690,36 @@ Default is for 'followup-to-me'."
 (defcustom wl-ldap-server "localhost"
   "*LDAP server."
   :type '(string :tag "Server")
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-ldap-port nil
   "*LDAP port."
   :type '(choice (const :tag "Default port" nil)
 		 integer)
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-ldap-base "c=US"
   "*LDAP base."
   :type '(string :tag "Base")
-  :group 'wl)
+  :group 'wl
+  :group 'wl-setting)
+
+(defcustom wl-ldap-objectclass "person"
+  "*LDAP objectclass."
+  :type 'string
+  :group 'wl
+  :group 'wl-setting)
 
 (defcustom wl-use-ldap nil
   "*If non-nil, use LDAP for address completion."
+  :type 'boolean
+  :group 'wl
+  :group 'wl-setting)
+
+(defcustom wl-use-acap nil
+  "*If non-nil, use ACAP for configuration."
   :type 'boolean
   :group 'wl)
 
@@ -728,9 +767,12 @@ Default is for 'followup-to-me'."
   :type '(repeat string)
   :group 'wl-summary)
 
-(defcustom wl-summary-fix-timezone "JST"
-  "Non-nil forces to fix timezone of summary date."
-  :type 'string
+(defcustom wl-summary-fix-timezone nil
+  "*Time zone of the date string in summary mode.
+If nil, it is adjust to the default time zone information
+\(system's default time zone or environment variable TZ\)."
+  :type '(choice (const :tag "Default time zone" nil)
+		 string)
   :group 'wl-summary)
 
 (defcustom wl-summary-default-score 0
@@ -775,7 +817,7 @@ This variable is local to the summary buffers."
   :type '(repeat (string :tag "Mark"))
   :group 'wl-score)
 
-(defcustom wl-use-scoring (not wl-on-nemacs)
+(defcustom wl-use-scoring t
   "*If non-nil, enable scoring."
   :type 'boolean
   :group 'wl-pref)
@@ -786,7 +828,7 @@ In sync-all or rescan."
   :type 'integer
   :group 'wl-score)
 
-(defcustom wl-score-files-dir (concat elmo-msgdb-dir elmo-path-sep)
+(defcustom wl-score-files-directory (concat elmo-msgdb-directory elmo-path-sep)
   "*Name of the directory where score files will be stored.
 (default \"~/.elmo\")."
   :type 'directory
@@ -901,11 +943,18 @@ ex.
 			(choice (cons (sexp :tag "Field(Variable)")
 				      (sexp :tag "Value"))
 				(sexp :tag "Function")))))
-  :group 'wl-draft)
+  :group 'wl-draft
+  :group 'wl-setting)
 
 (defcustom wl-draft-config-matchone nil
   "*If non-nil, applied only one element of `wl-draft-config-alist'."
   :type 'boolean
+  :group 'wl-draft
+  :group 'wl-setting)
+
+(defcustom wl-draft-elide-ellipsis "\n[...]\n\n"
+  "*The string which is inserted for elided text."
+  :type 'string
   :group 'wl-draft)
 
 (defcustom wl-template-alist nil
@@ -916,7 +965,8 @@ ex.
 			(choice (cons (sexp :tag "Field(Variable)")
 				      (sexp :tag "Value"))
 				(sexp :tag "Function")))))
-  :group 'wl-draft)
+  :group 'wl-draft
+  :group 'wl-setting)
 
 (defcustom wl-template-visible-select t
   "*If non-nil, select template with visible."
@@ -1102,18 +1152,29 @@ Allowed situations are:
   "*Domain part of this client (without hostname).
 Set this if (system-name) does not return FQDN."
   :type '(choice (const :tag "Use System Name" nil)
-                 string)
+		 string)
   :group 'wl-pref)
 
 (defcustom wl-message-id-domain nil
   "*Specific domain part of Message-ID."
   :type '(choice (const :tag "Use System Name" nil)
-                 string)
+		 string)
   :group 'wl-pref)
 
 (defcustom wl-break-pages t
   "*Break Pages at ^L."
   :type 'boolean
+  :group 'wl-pref)
+
+(defcustom wl-message-truncate-lines default-truncate-lines
+  "*Truncate lines in Message Buffer."
+  :type 'boolean
+  :group 'wl-pref)
+
+(defcustom wl-draft-truncate-lines default-truncate-lines
+  "*Truncate lines in Draft Buffer."
+  :type 'boolean
+  :group 'wl-draft
   :group 'wl-pref)
 
 (defcustom wl-message-scroll-amount 5
@@ -1128,21 +1189,55 @@ Set this if (system-name) does not return FQDN."
 
 (defcustom wl-message-sort-field-list '("Return-Path" "Received" "^To" "^Cc"
 					"Newsgroups" "Subject" "^From")
-  "*Sort order of header fields.  Each elements are regexp of field name.
-(Not valid on tm.)"
+  "*Sort order of header fields.  Each elements are regexp of field name."
   :type '(repeat (string :tag "Field Regexp"))
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-message-ignored-field-list nil
   "All fields that match this list will be hidden in message buffer.
 Each elements are regexp of field-name."
   :type '(repeat (string :tag "Field Regexp"))
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-message-visible-field-list nil
   "All fields that match this list will be displayed in message buffer.
 Each elements are regexp of field-name."
   :type '(repeat (string :tag "Field Regexp"))
+  :group 'wl-pref
+  :group 'wl-setting)
+
+(defcustom wl-message-header-button-alist
+  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):"
+       "<[^>]+>"
+       0 wl-message-button-refer-article  0)
+      ("^[^:]+:"
+       "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
+       1 wl-message-button-refer-article 3)))
+  "Alist of headers and regexps to match buttons in message headers."
+  :type '(repeat
+	  (list (regexp :tag "Header")
+		regexp
+		(integer :tag "Button")
+		(function :tag "Callback")
+		(repeat :tag "Data"
+			:inline t
+			(integer :tag "Regexp group"))))
+  :group 'wl-pref)
+
+(defcustom wl-message-body-button-alist
+  '(("<mailto:[^>]+>" 0 'ignore 0 1024)
+    ("<[^>]+@[^>]+>" 0 wl-message-button-refer-article 0 1024))
+  "Alist of regexps to match buttons in message body."
+  :type '(repeat
+	  (list regexp
+		(integer :tag "Button")
+		(function :tag "Callback")
+		(repeat :tag "Data"
+			:inline t
+			(integer :tag "Regexp group"))
+		(integer :tag "Max Length")))
   :group 'wl-pref)
 
 (defcustom wl-folder-window-width 20
@@ -1200,14 +1295,20 @@ with wl-highlight-folder-many-face."
 (defcustom wl-fcc nil
   "*Folder Carbon Copy."
   :type '(choice (const :tag "disable" nil)
-                 string)
+		 string function)
+  :group 'wl-draft
+  :group 'wl-pref)
+
+(defcustom wl-fcc-force-as-read nil
+  "*If non-nil, mark copied message as read."
+  :type 'boolean
   :group 'wl-draft
   :group 'wl-pref)
 
 (defcustom wl-bcc nil
   "*Blind Carbon Copy."
   :type '(choice (const :tag "disable" nil)
-                 string)
+		 string)
   :group 'wl-draft
   :group 'wl-pref)
 
@@ -1218,8 +1319,9 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-summary-indent-length-limit 46
-  "*Limit of indent length for thread."
-  :type 'integer
+  "*Limit of indent length for thread. Nil means unlimited"
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
@@ -1240,7 +1342,8 @@ with wl-highlight-folder-many-face."
 
 (defcustom wl-summary-width 80
   "*Set summary line width if non nil."
-  :type 'integer
+  :type '(choice (const :tag "Don't truncate" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
@@ -1258,21 +1361,21 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-from-width 17
+(defcustom wl-summary-from-width 17
   "*From width in summary."
   :type 'integer
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-subject-length-limit 35
-  "*Subject width in summary."
-  :type 'integer
+(defcustom wl-summary-subject-length-limit nil
+  "*Set subject width in summary when wl-summary-width is nil.
+Nil means unlimited"
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-mime-charset (if wl-on-nemacs
-			       'iso-2022-jp
-			     'x-ctext)
+(defcustom wl-mime-charset 'x-ctext
   "*MIME Charset for summary and message."
   :type 'symbol
   :group 'wl-summary
@@ -1446,12 +1549,24 @@ every intervals specified by wl-biff-check-interval."
   :type 'integer
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-on "[〒]"
+(defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
+					       (not (featurep 'mule)))
+					  "[Mail]"
+					(decode-coding-string
+					 ;; Youbin mark
+					 (read "\"[\e$B\\\")\e(B]\"")
+					 (if (boundp 'MULE)
+					     '*iso-2022-jp*
+					   'iso-2022-jp)))
   "String used to show biff status ON."
   :type 'string
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-off "[‐]"
+(defcustom wl-biff-state-indicator-off (if (and (featurep 'xemacs)
+						(not (featurep 'mule)))
+					   "[--]"
+					  ;; Japanese short hyphen
+					 "[‐]")
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-highlight)
@@ -1475,10 +1590,11 @@ even if the value of this option is set to nil.  Here are some samples:
 			(sexp :tag "Other" :value title)))
   :group 'wl-highlight)
 
-(defcustom wl-interactive-send nil
+(defcustom wl-interactive-send t
   "*If non-nil, require your confirmation when sending draft message."
   :type 'boolean
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-interactive-exit t
   "*If non-nil, require your confirmation when exiting WL."
@@ -1491,7 +1607,8 @@ If this variable is `unread', precede \"U\", \"!\", \"N\" mark.
 If this variable is `new', precede \"N\" mark."
   :type '(radio (const new)
 		(const unread))
-  :group 'wl-summary)
+  :group 'wl-summary
+  :group 'wl-setting)
 
 (defvar wl-summary-move-direction-downward t)
 
@@ -1505,7 +1622,8 @@ It uses wl-summary-move-direction-downward as a direction flag."
 (defcustom wl-auto-select-first nil
   "*If non-nil, display selected first message when enter summary."
   :type 'boolean
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
 (defcustom wl-auto-select-next nil
   "*If non-nil, offer to go to the next folder from the end of the previous.
@@ -1518,21 +1636,28 @@ See also variable `wl-summary-next-no-unread-command'."
 		(const :tag "on" t)
 		(const unread)
 		(const skip-no-unread))
-  :group 'wl-pref)
+  :group 'wl-pref
+  :group 'wl-setting)
 
-(defcustom wl-cache-prefetch-folder-type-list '(imap4 nntp)
+(defcustom wl-message-buffer-prefetch-folder-type-list t
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."
-  :type '(set (const localdir)
-	      (const localnews)
-	      (const imap4)
-	      (const nntp)
-	      (const pop3)
-	      (const archive)
-	      (const internal))
+  :type `(choice (const :tag "all" t)
+		 (const :tag "never" nil)
+		 (set (const localdir)
+		      (const localnews)
+		      (const maildir)
+		      (const imap4)
+		      (const nntp)
+		      (const pop3)
+		      (const shimbun)
+		      (const nmz)
+		      (const archive)
+		      (const mark)
+		      (const cache)))
   :group 'wl-pref)
 
-(defcustom wl-cache-prefetch-folder-list nil
+(defcustom wl-message-buffer-prefetch-folder-list nil
   "*All folders that match this list prefetch next message,
 and reserved buffer cache.
 e.x.
@@ -1654,7 +1779,7 @@ TYPE is one of the symbols `hide' or `read'.
 `read' means mark as read duplicated messages.
 If TYPE is nil, do nothing for duplicated messages."
   :type '(repeat (cons (regexp :tag "Folder regexp")
-		       (choice (const :tag "Hide" kill)
+		       (choice (const :tag "Hide" hide)
 			       (const :tag "Mark as read" read))))
   :group 'wl-folder)
 
@@ -1663,7 +1788,7 @@ If TYPE is nil, do nothing for duplicated messages."
   :type 'boolean
   :group 'wl-folder)
 
-(defcustom wl-folder-check-async (not wl-on-nemacs)
+(defcustom wl-folder-check-async t
   "*Check the folder asynchronous."
   :type 'boolean
   :group 'wl-folder)
@@ -1790,7 +1915,8 @@ ex.
 (defcustom wl-interactive-save-folders t
   "*Non-nil require your confirmation when save folders."
   :type 'boolean
-  :group 'wl-folder)
+  :group 'wl-folder
+  :group 'wl-setting)
 
 (defcustom wl-fldmgr-make-backup t
   "*Non-nil make backup file when save folders."
@@ -2001,22 +2127,6 @@ list  : reserved specified permanent marks."
   :type '(repeat (cons regexp face))
   :group 'wl-highlight)
 
-(defcustom wl-highlight-message-header-button-alist
-  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):" "<[^>]+>"
-       0 wl-message-button-refer-article  0)
-      ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
-       1 wl-message-button-refer-article 3)))
-  "Alist of headers and regexps to match buttons in message headers."
-  :type '(repeat
-	  (list (regexp :tag "Header")
-		regexp
-		(integer :tag "Button")
-		(function :tag "Callback")
-		(repeat :tag "Data"
-			:inline t
-			(integer :tag "Regexp group"))))
-  :group 'wl-highlight)
-
 (defcustom wl-highlight-citation-prefix-regexp
   "^[>|:} ]*[>|:}]\\([^ \n>]*>\\)?\\|^[^ <\n>]*>"
   "All lines that match this regexp will be highlighted with
@@ -2167,7 +2277,7 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-highlight-thread-indent-string-regexp "[^[<]*"
   "* A regexp string for thread indent...for highlight.")
 
-;; folder icons. filename relative to wl-icon-dir
+;; folder icons. filename relative to wl-icon-directory
 (defvar wl-opened-group-folder-icon "opened.xpm"
   "*Icon file for opened group folder.")
 (defvar wl-closed-group-folder-icon "closed.xpm"
@@ -2221,18 +2331,6 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-prog-uudecode-no-stdout-option t
   "*If non-nil, uudecode program don't have option for output to stdout.")
 
-;; Obsolete variables. for compatibility.
-(defvar wl-address-filename wl-address-file)
-(make-obsolete-variable 'wl-address-filename 'wl-address-file)
-(defvar wl-score-default-file-name wl-score-default-file)
-(make-obsolete-variable 'wl-score-default-file-name 'wl-score-default-file)
-(defvar wl-draft-prepared-config-alist nil)
-(make-obsolete-variable 'wl-draft-prepared-config-alist 'wl-draft-config-alist)
-(defvar wl-score-files-directory wl-score-files-dir)
-(make-obsolete-variable 'wl-score-files-directory 'wl-score-files-dir)
-(defvar wl-summary-temp-above wl-summary-target-above)
-(make-obsolete-variable 'wl-summary-temp-above 'wl-summary-target-above)
-
 ;; plug
 (defvar wl-plugged-plug-on "ON")
 (defvar wl-plugged-plug-off "--")
@@ -2241,7 +2339,36 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-port-indent 4)
 (defvar wl-plugged-queue-status-column 25)
 
-;; Obsolete variables.
+;;;; Obsolete variables.
+
+;; 2001-12-11: *-dir -> *-directory
+(elmo-define-obsolete-variable 'wl-icon-dir
+			       'wl-icon-directory)
+(elmo-define-obsolete-variable 'wl-mime-save-dir
+			       'wl-mime-save-directory)
+(elmo-define-obsolete-variable 'wl-score-files-dir
+			       'wl-score-files-directory)
+(elmo-define-obsolete-variable 'wl-tmp-dir
+			       'wl-temporary-file-directory)
+
+;; 2001-12-07
+(elmo-define-obsolete-variable 'wl-from-width
+			       'wl-summary-from-width)
+(elmo-define-obsolete-variable 'wl-subject-length-limit
+			       'wl-summary-subject-length-limit)
+
+;; 2001-12-10
+(elmo-define-obsolete-variable 'wl-summary-update-confirm-threshold
+			       'elmo-folder-update-threshold)
+(elmo-define-obsolete-variable 'wl-fetch-confirm-threshold
+			       'elmo-message-fetch-threshold)
+
+(elmo-define-obsolete-variable 'wl-cache-prefetch-folder-type-list
+			       'wl-message-buffer-prefetch-folder-type-list)
+(elmo-define-obsolete-variable 'wl-cache-prefetch-folder-list
+			       'wl-message-buffer-prefetch-folder-list)
+
+;; 2001-02-27: *-func -> *-function
 (elmo-define-obsolete-variable 'wl-summary-from-func
 			       'wl-summary-from-function)
 (elmo-define-obsolete-variable 'wl-summary-subject-func
@@ -2268,6 +2395,22 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 			       'wl-expire-archive-get-folder-function)
 (elmo-define-obsolete-variable 'wl-highlight-signature-search-func
 			       'wl-highlight-signature-search-function)
+
+;; 2000-01-25: temp mark -> target mark
+(elmo-define-obsolete-variable 'wl-summary-temp-above
+			       'wl-summary-target-above)
+
+;; 1999-11-07: Unified with `wl-draft-config-alist'.
+(defvar wl-draft-prepared-config-alist nil)
+(make-obsolete-variable 'wl-draft-prepared-config-alist
+			'wl-draft-config-alist)
+
+;; 1999-10-10
+(elmo-define-obsolete-variable 'wl-address-filename
+			       'wl-address-file)
+(elmo-define-obsolete-variable 'wl-score-default-file-name
+			       'wl-score-default-file)
+
 
 (require 'product)
 (product-provide (provide 'wl-vars) (require 'wl-version))

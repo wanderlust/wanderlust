@@ -1,5 +1,30 @@
 2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (luna-define-class): Added `biff' slot.
+
+	* elmo-pop3.el (elmo-pop3-debug): Split biff log.
+	(elmo-pop3-debug-inhibit-logging): Abolished.
+	(elmo-network-close-session): Eliminated needless let.
+	(elmo-pop3-get-session): Set prefix 'BIFF' if biff folder.
+	(elmo-pop3-send-command): Added `no-log' argument.
+	(elmo-pop3-process-filter): Use `with-current-buffer'.
+	(elmo-pop3-auth-user): Set `no-log' argument; Delete process
+	if login failure.
+	(elmo-pop3-auth-apop): Likewise.
+	(elmo-network-authenticate-session): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-get-session): Set prefix 'BIFF'
+	if biff folder.
+
+	* elmo-net.el (elmo-network-session-password-key): Use class symbol
+	string to determine protocol.
+	(elmo-network-session-name-prefix): Abolished.
+	(elmo-network-session-cache-key): Follow the change above.
+	(elmo-network-open-session): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-send-command): Modified error message.
+	(elmo-imap4-get-session): Set prefix 'BIFF' if biff folder.
+
 	* elmo-util.el (elmo-file-field-primitive-condition-match): Fixed
 	unmatch condition checking.
 

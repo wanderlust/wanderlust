@@ -1,4 +1,4 @@
-;;; wl-xmas.el -- Wanderlust modules for XEmacsen.
+;;; wl-xmas.el --- Wanderlust modules for XEmacsen.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
@@ -47,6 +47,8 @@
 (add-hook 'wl-init-hook 'wl-plugged-init-icons)
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
+
+(add-hook 'wl-message-display-internal-hook 'wl-setup-message)
 
 (defvar wl-use-toolbar (if (featurep 'toolbar) 'default-toolbar nil))
 (defvar wl-plugged-glyph nil)
@@ -135,7 +137,7 @@
   "The Draft buffer toolbar.")
 
 (defun wl-xmas-setup-toolbar (bar)
-  (let ((dir wl-icon-dir)
+  (let ((dir wl-icon-directory)
 	icon up down disabled name)
     (when dir
       (while bar
@@ -160,7 +162,7 @@
     (when wl-highlight-folder-with-icon
       (set-glyph-image glyph
 		       (vector 'xpm :file (expand-file-name
-					   icon-file wl-icon-dir))
+					   icon-file wl-icon-directory))
 		       locale tag-set 'prepend))
     glyph))
 
@@ -177,17 +179,17 @@
 	 (set-specifier (symbol-value wl-use-toolbar)
 			(cons (current-buffer) wl-summary-toolbar))))
 
-  (defsubst wl-xmas-setup-message-toolbar ()
-    (and wl-use-toolbar
-	 (wl-xmas-setup-toolbar wl-message-toolbar)
-	 (set-specifier (symbol-value wl-use-toolbar)
-			(cons (current-buffer) wl-message-toolbar))))
-
   (defsubst wl-xmas-setup-draft-toolbar ()
     (and wl-use-toolbar
 	 (wl-xmas-setup-toolbar wl-draft-toolbar)
 	 (set-specifier (symbol-value wl-use-toolbar)
 			(cons (current-buffer) wl-draft-toolbar)))))
+
+(defun wl-xmas-setup-message-toolbar ()
+  (and wl-use-toolbar
+       (wl-xmas-setup-toolbar wl-message-toolbar)
+       (set-specifier (symbol-value wl-use-toolbar)
+		      (cons (current-buffer) wl-message-toolbar))))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-glyph       . wl-opened-group-folder-icon)
@@ -290,7 +292,7 @@
 	    (when wl-use-highlight-mouse-line
 	      (put-text-property start end 'mouse-face 'highlight))
 	    (let ((text-face
-		   (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
+		   (if (looking-at (format "^[ \t]*\\(?:%s\\|%s\\)"
 					   wl-folder-unsubscribe-mark
 					   wl-folder-removed-mark))
 		       'wl-highlight-folder-killed-face
@@ -360,23 +362,23 @@
 
 (defvar wl-folder-internal-icon-list
   ;; alist of (glyph . icon-file)
-  '((wl-folder-nntp-glyph         . wl-nntp-folder-icon)
-    (wl-folder-imap4-glyph        . wl-imap-folder-icon)
-    (wl-folder-pop3-glyph         . wl-pop-folder-icon)
-    (wl-folder-localdir-glyph     . wl-localdir-folder-icon)
-    (wl-folder-localnews-glyph    . wl-localnews-folder-icon)
-    (wl-folder-internal-glyph     . wl-internal-folder-icon)
-    (wl-folder-multi-glyph        . wl-multi-folder-icon)
-    (wl-folder-filter-glyph       . wl-filter-folder-icon)
-    (wl-folder-archive-glyph      . wl-archive-folder-icon)
-    (wl-folder-pipe-glyph         . wl-pipe-folder-icon)
-    (wl-folder-maildir-glyph      . wl-maildir-folder-icon)
-    (wl-folder-nmz-glyph          . wl-nmz-folder-icon)
-    (wl-folder-shimbun-glyph      . wl-shimbun-folder-icon)
-    (wl-folder-trash-empty-glyph  . wl-empty-trash-folder-icon)
-    (wl-folder-draft-glyph        . wl-draft-folder-icon)
-    (wl-folder-queue-glyph        . wl-queue-folder-icon)
-    (wl-folder-trash-glyph        . wl-trash-folder-icon)))
+  '((wl-folder-nntp-glyph	. wl-nntp-folder-icon)
+    (wl-folder-imap4-glyph	. wl-imap-folder-icon)
+    (wl-folder-pop3-glyph	. wl-pop-folder-icon)
+    (wl-folder-localdir-glyph	. wl-localdir-folder-icon)
+    (wl-folder-localnews-glyph	. wl-localnews-folder-icon)
+    (wl-folder-internal-glyph	. wl-internal-folder-icon)
+    (wl-folder-multi-glyph	. wl-multi-folder-icon)
+    (wl-folder-filter-glyph	. wl-filter-folder-icon)
+    (wl-folder-archive-glyph	. wl-archive-folder-icon)
+    (wl-folder-pipe-glyph	. wl-pipe-folder-icon)
+    (wl-folder-maildir-glyph	. wl-maildir-folder-icon)
+    (wl-folder-nmz-glyph	. wl-nmz-folder-icon)
+    (wl-folder-shimbun-glyph	. wl-shimbun-folder-icon)
+    (wl-folder-trash-empty-glyph . wl-empty-trash-folder-icon)
+    (wl-folder-draft-glyph	. wl-draft-folder-icon)
+    (wl-folder-queue-glyph	. wl-queue-folder-icon)
+    (wl-folder-trash-glyph	. wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
   (dolist (icon wl-folder-internal-icon-list)
@@ -438,17 +440,19 @@
        (set-specifier scrollbar-height (cons (current-buffer) 0)))
   (wl-xmas-setup-summary-toolbar))
 
-(defun wl-message-overload-functions ()
-  (wl-xmas-setup-message-toolbar)
-  (local-set-key "l" 'wl-message-toggle-disp-summary)
-  (local-set-key 'button2 'wl-message-refer-article-or-url)
-  (local-set-key 'button4 'wl-message-wheel-down)
-  (local-set-key 'button5 'wl-message-wheel-up)
-  (local-set-key [(shift button4)] 'wl-message-wheel-down)
-  (local-set-key [(shift button5)] 'wl-message-wheel-up)
-  (set-keymap-parent wl-message-button-map (current-local-map))
-  (define-key wl-message-button-map 'button2
-    'wl-message-button-dispatcher))
+(defalias 'wl-setup-message 'wl-xmas-setup-message-toolbar)
+
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap 'button4 'wl-message-wheel-down)
+    (define-key keymap 'button5 'wl-message-wheel-up)
+    (define-key keymap [(shift button4)] 'wl-message-wheel-down)
+    (define-key keymap [(shift button5)] 'wl-message-wheel-up)
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map 'button2
+      'wl-message-button-dispatcher)
+    keymap))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
@@ -497,7 +501,6 @@ Special commands:
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)
   (define-key wl-draft-mode-map "\C-c\C-s" 'wl-draft-send)
-  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-draft-insert-x-face-field)
   (define-key wl-draft-mode-map "\C-c\C-c" 'wl-draft-send-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-z" 'wl-draft-save-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-k" 'wl-draft-kill)
@@ -510,7 +513,9 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-j" 'wl-template-select)
   (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
-  (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
+  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
+  (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer)
+  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)

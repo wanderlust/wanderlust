@@ -1,3 +1,30 @@
+2001-12-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-elide-region): New user command.
+	* wl-vars.el (wl-draft-elide-ellipsis): New user option.
+
+	* wl-e21.el (wl-draft-key-setup): Bind the key `C-c C-d' to the
+	command `wl-draft-elide-region'.
+	* wl-mule.el: Ditto.
+	* wl-xmas.el: Ditto.
+
+2001-12-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder): Fix for non-pop3 folders.
+	(wl-biff-check-folder-async): Removed needless let.
+
+2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folders): Set `no-cache' argument of
+	wl-folder-get-elmo-folder.
+	(wl-biff-check-folder): Set `biff' argument of
+	`wl-folder-check-one-entity'.
+	(wl-biff-check-folder-async): Setup `biff' slot of folder.
+
+	* wl-folder.el (wl-folder-get-elmo-folder): Added `no-cache' argument.
+	(wl-folder-check-one-entity): Added `biff' argument;
+	Setup `biff' slot of folder.
+
 2001-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions): Removed

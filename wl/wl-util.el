@@ -1,4 +1,4 @@
-;;; wl-util.el -- Utility modules for Wanderlust.
+;;; wl-util.el --- Utility modules for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
@@ -36,7 +36,6 @@
 (eval-when-compile
   (require 'elmo-util))
 
-(condition-case nil (require 'tm-edit) (error nil))
 (condition-case nil (require 'pp) (error nil))
 
 (eval-when-compile
@@ -175,23 +174,35 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 ;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
 (defsubst wl-set-string-width (width string)
-  (elmo-set-work-buf
-   (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-   (insert string)
-   (if (> (current-column) width)
-       (if (> (move-to-column width) width)
-	   (progn
-	     (condition-case nil ; ignore error
-		 (backward-char 1)
-	       (error))
-	     (concat (buffer-substring (point-min) (point)) " "))
-	 (buffer-substring (point-min) (point)))
-     (if (= (current-column) width)
-	 string
-       (concat string
-	       (format (format "%%%ds"
-			       (- width (current-column)))
-		       " "))))))
+  (static-cond
+   ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
+	 (not (featurep 'xemacs)))
+    (if (> (string-width string) width)
+	(setq string (truncate-string-to-width string width)))
+    (if (= (string-width string) width)
+	string
+      (concat string
+	      (format (format "%%%ds"
+			      (- width (string-width string)))
+		      " "))))
+   (t
+    (elmo-set-work-buf
+     (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+     (insert string)
+     (if (> (current-column) width)
+	 (if (> (move-to-column width) width)
+	     (progn
+	       (condition-case nil ; ignore error
+		   (backward-char 1)
+		 (error))
+	       (concat (buffer-substring (point-min) (point)) " "))
+	   (buffer-substring (point-min) (point)))
+       (if (= (current-column) width)
+	   string
+	 (concat string
+		 (format (format "%%%ds"
+				 (- width (current-column)))
+			 " "))))))))
 
 (defun wl-display-bytes (num)
   (let (result remain)
@@ -282,13 +293,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	(defmacro wl-as-coding-system (coding-system &rest body)
 	  (` (let ((file-coding-system-for-read (, coding-system))
 		   (file-coding-system (, coding-system)))
-	       (,@ body))))
-      (if wl-on-nemacs
-	  (defmacro wl-as-coding-system (coding-system &rest body)
-	    (` (let ((default-kanji-fileio-code (, coding-system))
-		     (kanji-fileio-code (, coding-system))
-		     kanji-expected-code)
-		 (,@ body))))))))
+	       (,@ body)))))))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
   (` (wl-as-coding-system (mime-charset-to-coding-system (, mime-charset))
@@ -508,14 +513,14 @@ that `read' can handle, whenever this is possible."
 	 "^nntp://\\([^:/]*\\):?\\([0-9]*\\)/\\([^/]*\\)/\\([0-9]*\\).*$" url)
 	(progn
 	  (if (eq (length (setq fld-name
-                                (elmo-match-string 3 url))) 0)
-              (setq fld-name nil))
+				(elmo-match-string 3 url))) 0)
+	      (setq fld-name nil))
 	  (if (eq (length (setq port
 				(elmo-match-string 2 url))) 0)
-              (setq port (int-to-string elmo-nntp-default-port)))
+	      (setq port (int-to-string elmo-nntp-default-port)))
 	  (if (eq (length (setq server
-                                (elmo-match-string 1 url))) 0)
-              (setq server elmo-nntp-default-server))
+				(elmo-match-string 1 url))) 0)
+	      (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
 	  (if (eq (length (setq msg
 				(elmo-match-string 4 url))) 0)
@@ -534,7 +539,7 @@ that `read' can handle, whenever this is possible."
 (defmacro wl-current-message-buffer ()
   (` (save-excursion
        (if (buffer-live-p wl-current-summary-buffer)
-           (set-buffer wl-current-summary-buffer))
+	   (set-buffer wl-current-summary-buffer))
        wl-message-buffer)))
 
 (defmacro wl-kill-buffers (regexp)
@@ -813,7 +818,7 @@ This function is imported from Emacs 20.7."
 	  folder)
       (if (eq (length flist) 1)
 	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist)) (interactive-p))
+				       (car flist) 'biff) (interactive-p))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
@@ -826,21 +831,21 @@ This function is imported from Emacs 20.7."
 	  (wl-biff-notify new-mails (interactive-p)))))))
 
 (defun wl-biff-check-folder (folder)
-  (if (eq (elmo-folder-type folder) 'pop3)
-      ;; pop3 biff should share the session.
-      (prog2
-	  (elmo-folder-check folder)
-	  (wl-folder-check-one-entity (elmo-folder-name-internal folder))
-	(elmo-folder-close folder))
-    (let ((elmo-network-session-name-prefix "BIFF-"))
-      (wl-folder-check-one-entity (elmo-folder-name-internal folder)))))
+  (if (eq (elmo-folder-type-internal folder) 'pop3)
+      (unless (elmo-pop3-get-session folder 'if-exists)
+	(wl-folder-check-one-entity (elmo-folder-name-internal folder)
+				    'biff))
+    (wl-folder-check-one-entity (elmo-folder-name-internal folder)
+				'biff)))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
       (with-current-buffer (nth 1 data)
 	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb
 				     (nth 0 data)
-				     (list (car diff) 0 (cdr diff))
+				     (list (nth 0 diff)
+					   (- (nth 1 diff) (nth 0 diff))
+					   (nth 2 diff))
 				     (current-buffer))))
   (setq wl-folder-info-alist-modified t)
   (setq wl-biff-check-folders-running nil)
@@ -849,6 +854,7 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (when (elmo-folder-plugged-p folder)
+    (elmo-folder-set-biff-internal folder t)
     (if (and (eq (elmo-folder-type-internal folder) 'imap4)
 	     (elmo-folder-use-flag-p folder))
 	;; Check asynchronously only when IMAP4 and use server diff.
@@ -859,11 +865,11 @@ This function is imported from Emacs 20.7."
 		(list (elmo-folder-name-internal folder)
 		      (get-buffer wl-folder-buffer-name)
 		      notify-minibuf))
-	  (let ((elmo-network-session-name-prefix "BIFF-"))
-	    (elmo-folder-diff-async folder)))
-      (wl-biff-notify (car (wl-biff-check-folder folder))
-		      notify-minibuf)
-      (setq wl-biff-check-folders-running nil))))
+	  (elmo-folder-diff-async folder))
+      (unwind-protect
+	  (wl-biff-notify (car (wl-biff-check-folder folder))
+			  notify-minibuf)
+	(setq wl-biff-check-folders-running nil)))))
 
 (if (and (fboundp 'regexp-opt)
 	 (not (featurep 'xemacs)))

@@ -1,5 +1,4 @@
-;;; wl-mule.el -- Wanderlust modules for Mule compatible Emacsen.
-;;                (Mule2.3@19.28, Mule2.3@19.34, Emacs 20.x)
+;;; wl-mule.el --- Wanderlust modules for Mule compatible Emacsen.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -25,7 +24,7 @@
 ;;
 
 ;;; Commentary:
-;;
+;; For Mule2.3@19.34, Emacs 20.x
 
 ;;; Code:
 ;;
@@ -99,21 +98,22 @@ Special commands:
 (defun wl-plugged-set-folder-icon (folder string)
   string)
 
-(defun wl-message-overload-functions ()
-  (local-set-key "l" 'wl-message-toggle-disp-summary)
-  (local-set-key [mouse-2] 'wl-message-refer-article-or-url)
-  (local-set-key [mouse-4] 'wl-message-wheel-down)
-  (local-set-key [mouse-5] 'wl-message-wheel-up)
-  (local-set-key [S-mouse-4] 'wl-message-wheel-down)
-  (local-set-key [S-mouse-5] 'wl-message-wheel-up)
-  (if (fboundp 'set-keymap-parent)
-      (set-keymap-parent wl-message-button-map (current-local-map)))
-  (define-key wl-message-button-map [mouse-2]
-    'wl-message-button-dispatcher))
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap [mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [mouse-5] 'wl-message-wheel-up)
+    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map [mouse-2]
+      'wl-message-button-dispatcher)
+    keymap))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
-  (if (string-match wl-message-buf-name (buffer-name))
+  (if (string-match (regexp-quote wl-message-buffer-cache-name)
+		    (regexp-quote (buffer-name)))
       (wl-message-next-page)
     (let ((cur-buf (current-buffer))
 	  proceed)
@@ -128,7 +128,8 @@ Special commands:
 
 (defun wl-message-wheel-down (event)
   (interactive "e")
-  (if (string-match wl-message-buf-name (buffer-name))
+  (if (string-match (regexp-quote wl-message-buffer-cache-name)
+		    (regexp-quote (buffer-name)))
       (wl-message-prev-page)
     (let ((cur-buf (current-buffer))
 	  proceed)
@@ -143,7 +144,6 @@ Special commands:
 
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)
-  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-draft-insert-x-face-field)
   (define-key wl-draft-mode-map "\C-c\C-s" 'wl-draft-send)
   (define-key wl-draft-mode-map "\C-c\C-c" 'wl-draft-send-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-z" 'wl-draft-save-and-exit)
@@ -157,7 +157,9 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-j" 'wl-template-select)
   (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
   (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
-  (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer))
+  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
+  (define-key wl-draft-mode-map "\C-xk" 'wl-draft-mimic-kill-buffer)
+  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region))
 
 (defun wl-draft-overload-menubar ()
   (local-set-key [menu-bar mail send]
