@@ -313,16 +313,8 @@ e.g.
       (substring subject (match-end 0))
     subject))
 
-(defun wl-draft-reply-list-symbol (with-arg)
-  "Return symbol `wl-draft-reply-*-argument-list' match condition.
-Check WITH-ARG and From: field."
-  (if (wl-address-user-mail-address-p (or (elmo-field-body "From") ""))
-      (if with-arg
-	  'wl-draft-reply-myself-with-argument-list
-	'wl-draft-reply-myself-without-argument-list)
-    (if with-arg
-	'wl-draft-reply-with-argument-list
-      'wl-draft-reply-without-argument-list)))
+(defun wl-draft-self-reply-p ()
+  (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
 
 (defun wl-draft-reply (buf with-arg summary-buf)
   "Reply to BUF buffer message.
@@ -335,7 +327,8 @@ Reply to author if WITH-ARG is non-nil."
       (with-current-buffer summary-buf
 	(setq parent-folder (wl-summary-buffer-folder-name))))
     (set-buffer (or buf mime-mother-buffer))
-    (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
+    (setq r-list (if with-arg wl-draft-reply-with-argument-list
+		   wl-draft-reply-without-argument-list))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))
@@ -379,7 +372,8 @@ Reply to author if WITH-ARG is non-nil."
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
       (error "No match field: check your `%s'"
-	     (symbol-name (wl-draft-reply-list-symbol with-arg))))
+	     (if with-arg "wl-draft-reply-with-argument-list"
+	       "wl-draft-reply-without-argument-list")))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))

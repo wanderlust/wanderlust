@@ -1,3 +1,18 @@
+2002-12-31  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
+
+	* wl-summary.el (wl-summary-mark-collect): Revive missing return
+	for sequential numbering case.
+
+2002-12-25  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-draft-reply-with-argument-list): Change default
+	value.
+	(wl-draft-reply-without-argument-list): Ditto.
+	(wl-draft-reply-myself-with-argument-list): Abolish.
+	(wl-draft-reply-myself-without-argument-list): Ditto.
+	* wl-draft.el (wl-draft-self-reply-p): New function.
+	(wl-draft-reply-list-symbol): Merge into `wl-draft-reply'.
+
 2002-12-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-e21.el (toplevel): Do not set wl-folder-mode-map.

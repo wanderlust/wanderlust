@@ -744,18 +744,11 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
   :group 'wl-draft)
 
 (defcustom wl-draft-reply-with-argument-list
-  '((("Followup-To" "Mail-Followup-To")
-     . (("Mail-Followup-To") ("From" "To" "Cc") ("Followup-To")))
-    ("Followup-To"
-     . (("From") ("To" "Cc") ("Followup-To")))
-    ("Mail-Followup-To"
-     . (("Mail-Followup-To") ("From" "To" "Cc") ("Newsgroups")))
-    ("Mail-Reply-To" . (("Mail-Reply-To") ("From" "To" "Cc") ("Newsgroups")))
-    ("Reply-To" . (("Reply-To") ("From" "To" "Cc") ("Newsgroups")))
-    ("Newsgroups" . (("From") ("To" "Cc") ("Newsgroups")))
-    ("From" . (("From") nil nil)))
+  '(("From" . (("Reply-To" "Mail-Reply-To" "From")
+	       ("Mail-Followup-To" "To" "Cc")
+	       ("Followup-To" "Newsgroups"))))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
@@ -769,57 +762,21 @@ Default is for 'reply-to-author'."
   :group 'wl-draft)
 
 (defcustom wl-draft-reply-without-argument-list
-  '((("Followup-To" "Mail-Followup-To")
-     . (("Mail-Followup-To") nil ("Followup-To")))
-    ("Followup-To" . (nil nil ("Followup-To")))
-    ("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
-    ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-    ("Reply-To" . (("Reply-To") nil nil))
-    ("Newsgroups" . (nil nil ("Newsgroups")))
+  '(("Followup-To" . (("Mail-Followup-To" "Mail-Reply-To" "Reply-To")
+		      nil ("Followup-To")))
+    ("Mail-Followup-To" . (("Mail-Followup-To") nil nil))
+    ("Newsgroups" . (("Mail-Reply-To" "Reply-To" "To") ("Cc") ("Newsgroups")))
+    ("Mail-Reply-To" . (("Mail-Reply-To" "Reply-To") ("To" "Cc") nil))
+    ("Reply-To" . (("Reply-To") ("To" "Cc") nil))
+    (wl-draft-self-reply-p . (("To") ("Cc") nil))
     ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
+\('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups')\)
 'field-name' is a string.
 'fields for ***' is a list of strings.
 If car of each cons cell exists in original message,
 cdr of each cons cell is used for draft message.
 Default is for 'reply-to-all'."
-  :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
-		       (list (repeat :tag "Fields For To" string)
-			     (repeat :tag "Fields For Cc" string)
-			     (repeat :tag "Fields For Newsgroups" string))))
-  :group 'wl-draft)
-
-(defcustom wl-draft-reply-myself-with-argument-list
-  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
-    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
-    ("From" . (("To") ("Cc") nil)))
-  "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
-'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
-Default is for 'reply-to-me'."
-  :type '(repeat (cons (choice (string :tag "Field Name")
-			       (repeat (string :tag "Field Name")))
-		       (list (repeat :tag "Fields For To" string)
-			     (repeat :tag "Fields For Cc" string)
-			     (repeat :tag "Fields For Newsgroups" string))))
-  :group 'wl-draft)
-
-(defcustom wl-draft-reply-myself-without-argument-list
-  '(("Followup-To" . (("To") ("Cc") ("Followup-To")))
-    ("Newsgroups" . (("To") ("Cc") ("Newsgroups")))
-    ("From" . (("To") ("Cc") nil)))
-  "Alist of cons cell of
-('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'field-name' is a string.
-'fields for ***' is a list of strings.
-If car of each cons cell exists in original message,
-cdr of each cons cell is used for draft message.
-Default is for 'followup-to-me'."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (repeat (string :tag "Field Name")))
 		       (list (repeat :tag "Fields For To" string)
@@ -2695,6 +2652,12 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2002-12-25
+(elmo-define-obsolete-variable 'wl-draft-reply-myself-with-argument-list
+			       'wl-draft-reply-with-argument-list)
+(elmo-define-obsolete-variable 'wl-draft-reply-myself-without-argument-list
+			       'wl-draft-reply-without-argument-list)
 
 ;; 2001-12-11: *-dir -> *-directory
 (elmo-define-obsolete-variable 'wl-icon-dir
