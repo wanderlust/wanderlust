@@ -1,4 +1,4 @@
-2001-12-18  Yuuichi Teranishi  <teranisi@gohome.org>
+2001-12-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-open-folder): Bind `elmo-mime-charset'.
 
