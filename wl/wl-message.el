@@ -414,6 +414,7 @@
     (require 'mmelmo)
     (wl-select-buffer view-message-buffer)
     (set-buffer view-message-buffer)
+    (setq truncate-lines wl-message-truncate-lines)
     (unwind-protect
 	(progn
 	  (setq wl-message-buffer-cur-summary-buffer cur-buf)

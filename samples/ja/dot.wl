@@ -87,6 +87,10 @@
 ;; サマリバッファの左にフォルダバッファを表示する (3ペイン表示)
 ;(setq wl-stay-folder-window t)
 
+;; 長い行を切り縮める
+;(setq wl-message-truncate-lines t)
+;(setq wl-draft-truncate-lines t)
+
 ;; ドラフトを新しいフレームで書く
 ;(setq wl-draft-use-frame t)
 
@@ -114,7 +118,7 @@
 ;(setq wl-auto-select-next t)
 
 ;; 未読がないフォルダは飛ばす(SPCキーだけで読み進める場合は便利)
-;(setq wl-summary-next-no-unread 'skip-no-unread)
+;(setq wl-auto-select-next 'skip-no-unread)
 
 ;; 未読メッセージを優先的に読む
 ;(setq wl-summary-move-order 'unread)

@@ -1,3 +1,13 @@
+2001-09-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-truncate-lines): New variable.
+	(wl-draft-truncate-lines): Ditto.
+
+	* wl-message.el (wl-mmelmo-message-redisplay): Use it to
+	set truncate-lines.
+
+	* wl-draft.el (wl-draft): Ditto.
+
 2001-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Push mark

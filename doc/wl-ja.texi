@@ -3652,6 +3652,10 @@ nil なら、mime-view-visible-field-list の値が使われます。
 '("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From")。
 メッセージバッファに表示するヘッダフィールドの順番を正規表現のリストで
 指定します。
+@item wl-message-truncate-lines
+@vindex wl-message-truncate-lines
+初期設定は @code{default-truncate-lines} の値が使われます。
+Non-nil ならメッセージバッファで長い行の折り返しをしません。
 @end table
 
 
@@ -4150,6 +4154,11 @@ Non-nil ならフォルダ一覧用に新しいフレームを開きます。
 @vindex wl-summary-use-frame
 初期設定は @code{nil}。
 Non-nil ならサマリ表示用に新しいフレームを開きます。
+
+@item wl-draft-truncate-lines
+@vindex wl-draft-truncate-lines
+初期設定は @code{default-truncate-lines} の値が使われます。
+Non-nil ならドラフトバッファで長い行の折り返しをしません。
 
 @item wl-from
 @vindex wl-from

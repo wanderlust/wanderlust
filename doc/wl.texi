@@ -3666,6 +3666,10 @@ If nil, the value of mime-view-visible-field-list is used.
 '("Return-Path" "Received" "^To" "^Cc" "Newsgroups" "Subject" "^From").
 Header fields in message buffer are orderd by this value.
 Each elements are regexp of field-name.
+@item wl-message-truncate-lines
+@vindex wl-message-truncate-lines
+The initial value is the value of @code{default-truncate-lines}.
+If it is non-nil, truncate long lines in message buffer.
 @end table
 
 @node Draft, Disconnected Operations, Message, Top
@@ -4177,6 +4181,21 @@ a reply draft buffer when it is prepared.
 @vindex wl-draft-use-frame
 The initial setting is @code{nil}.
 If non-nil, use new frame for the draft.
+
+@item wl-folder-use-frame
+@vindex wl-folder-use-frame
+The initial setting is @code{nil}.
+If non-nil, use new frame for the folder window.
+
+@item wl-summary-use-frame
+@vindex wl-summary-use-frame
+The initial setting is @code{nil}.
+If non-nil, use new frame for the summary.
+
+@item wl-draft-truncate-lines
+@vindex wl-draft-truncate-lines
+The initial value is the value of @code{default-truncate-lines}.
+If it is non-nil, truncate long lines in draft buffer.
 
 @item wl-from
 @vindex wl-from

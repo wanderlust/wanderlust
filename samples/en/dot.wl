@@ -87,6 +87,10 @@
 ;; Keep folder window beside summary. (3 pane)
 ;(setq wl-stay-folder-window t)
 
+;; Truncate long lines.
+;(setq wl-message-truncate-lines t)
+;(setq wl-draft-truncate-lines t)
+
 ;; Open new frame for draft buffer.
 ;(setq wl-draft-use-frame t)
 
