@@ -904,7 +904,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 
 ;; Arguments should be reduced.
 (defun elmo-folder-move-messages (src-folder msgs dst-folder
-					     &optional msgdb all done
+					     &optional msgdb
 					     no-delete-info
 					     no-delete
 					     same-number

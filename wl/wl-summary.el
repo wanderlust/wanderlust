@@ -3095,9 +3095,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 				wl-summary-unread-uncached-mark
 				wl-summary-new-mark))
 	    (refiles (append moves dels))
-	    (refile-executed 0)
 	    (refile-failures 0)
-	    (copy-executed 0)
 	    (copy-failures 0)
 	    (copy-len (length copies))
 	    refile-len
@@ -3131,8 +3129,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			      (wl-folder-get-elmo-folder
 			       (car (car dst-msgs))))
 			    (wl-summary-buffer-msgdb)
-			    refile-len
-			    refile-executed
 			    (not (null (cdr dst-msgs)))
 			    nil ; no-delete
 			    nil ; same-number
@@ -3149,7 +3145,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 					      wl-summary-buffer-refile-list)))
 	    (setq refile-failures
 		  (+ refile-failures (length (cdr (car dst-msgs))))))
-	  (setq refile-executed (+ refile-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
 	(elmo-progress-clear 'elmo-folder-move-messages)
 	;; end refile
@@ -3167,8 +3162,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			    (wl-folder-get-elmo-folder
 			     (car (car dst-msgs)))
 			    (wl-summary-buffer-msgdb)
-			    copy-len
-			    copy-executed
 			    (not (null (cdr dst-msgs)))
 			    t ; t is no-delete (copy)
 			    nil ; same number
@@ -3185,7 +3178,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 					      wl-summary-buffer-copy-list)))
 	    (setq copy-failures
 		  (+ copy-failures (length (cdr (car dst-msgs))))))
-	  (setq copy-executed (+ copy-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
 	;; Hide progress bar.
 	(elmo-progress-clear 'elmo-folder-move-messages)

@@ -146,7 +146,7 @@
 					 refile-list
 					 dst-folder
 					 msgdb
-					 nil nil t
+					 t
 					 copy
 					 preserve-number
 					 nil
@@ -182,7 +182,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 	  (setq copy-len (length refile-list))
 	(unless (or (elmo-folder-exists-p dst-folder)
 		  (elmo-folder-create dst-folder))
-	(error "%s: create folder failed" (elmo-folder-name-internal 
+	(error "%s: create folder failed" (elmo-folder-name-internal
 					   dst-folder)))
 	(while (setq msg (wl-pop msglist))
 	  (unless (wl-expire-msg-p msg mark-alist)
@@ -202,12 +202,11 @@ If REFILE-LIST includes reserve mark message, so copy."
 					       refile-list
 					       dst-folder
 					       msgdb
-					       nil nil t
+					       t
 					       copy-reserve-message
 					       preserve-number
 					       nil
-					       wl-expire-add-seen-list
-					       ))
+					       wl-expire-add-seen-list))
 	    (error "Expire: move msgs to %s failed"
 		   (elmo-folder-name-internal dst-folder)))
 	  (wl-expire-append-log (elmo-folder-name-internal folder)
