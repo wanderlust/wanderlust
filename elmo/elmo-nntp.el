@@ -78,33 +78,30 @@
 	     (setq elmo-network-stream-type-alist
 		   (append elmo-nntp-stream-type-alist
 			   elmo-network-stream-type-alist))
-	   elmo-network-stream-type-alist)))
+	   elmo-network-stream-type-alist))
+	parse)
     (setq name (luna-call-next-method))
-    (when (string-match
-	   "^\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
-	   name)
-      (elmo-nntp-folder-set-group-internal
+    (setq parse (elmo-parse-token name ":"))
+    (elmo-nntp-folder-set-group-internal folder
+					 (elmo-nntp-encode-group-string
+					  (car parse)))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
+    (elmo-net-folder-set-user-internal folder
+				       (if (eq (length (car parse)) 0)
+					   elmo-nntp-default-user
+					 (car parse)))
+    (unless (elmo-net-folder-server-internal folder)
+      (elmo-net-folder-set-server-internal folder 
+					   elmo-nntp-default-server))
+    (unless (elmo-net-folder-port-internal folder)
+      (elmo-net-folder-set-port-internal folder
+					 elmo-nntp-default-port))
+    (unless (elmo-net-folder-stream-type-internal folder)
+      (elmo-net-folder-set-stream-type-internal
        folder
-       (if (match-beginning 1)
-	   (elmo-nntp-encode-group-string
-	    (elmo-match-string 1 name))))
-      ;; Setup slots for elmo-net-folder
-      (elmo-net-folder-set-user-internal folder
-					 (if (match-beginning 2)
-					     (elmo-match-substring 2 name 1)
-					   elmo-nntp-default-user))
-      (unless (elmo-net-folder-server-internal folder)
-	(elmo-net-folder-set-server-internal folder 
-					     elmo-nntp-default-server))
-      (unless (elmo-net-folder-port-internal folder)
-	(elmo-net-folder-set-port-internal folder
-					   elmo-nntp-default-port))
-      (unless (elmo-net-folder-stream-type-internal folder)
-	(elmo-net-folder-set-stream-type-internal
-	 folder
-	 (elmo-get-network-stream-type
-	  elmo-nntp-default-stream-type)))
-      folder)))
+       (elmo-get-network-stream-type
+	elmo-nntp-default-stream-type)))
+    folder))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-nntp-folder))
   (convert-standard-filename

@@ -1347,6 +1347,42 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
       (setq alist (cdr alist)))
     matches))
 
+;;; Folder parser utils.
+(defun elmo-parse-token (string &optional seps)
+  "Parse atom from STRING using SEPS as a string of separator char list."
+  (let ((len (length string))
+	(seps (and seps (string-to-char-list seps)))
+	(i 0)
+	(sep nil)
+	content c in)
+    (if (eq len 0)
+	(cons "" "")
+      (while (and (< i len) (or in (null sep)))
+	(setq c (aref string i))
+	(cond
+	 ((and in (eq c ?\\))
+	  (setq i (1+ i)
+		i (1+ i)
+		content (cons (aref string i) content)))
+	 ((eq c ?\")
+	  (setq in (not in)
+		i (1+ i)))
+	 (in (setq content (cons c content)
+		   i (1+ i)))
+	 ((memq c seps)
+	  (setq sep c))
+	 (t (setq content (cons c content)
+		  i (1+ i)))))
+      (if in (error "Parse error in quoted"))
+      (cons (if (null content) "" (char-list-to-string (nreverse content)))
+	    (substring string i)))))
+
+(defun elmo-parse-prefixed-element (prefix string &optional seps)
+  (if (and (not (eq (length string) 0))
+	   (eq (aref string 0) prefix))
+      (elmo-parse-token (substring string 1) seps)
+    (cons "" string)))
+
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
 ;; 
 ;; number          ::= [0-9]+

@@ -1741,56 +1741,44 @@ Return nil if no complete line has arrived."
 	 (if elmo-imap4-stream-type-alist
 	     (append elmo-imap4-stream-type-alist
 		     elmo-network-stream-type-alist)
-	   elmo-network-stream-type-alist)))
+	   elmo-network-stream-type-alist))
+	parse)
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
       ;; case: imap4-default-server is specified like
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
     (setq name (luna-call-next-method))
-    (when (string-match
-	   "^\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
-	   name)
-      (progn
-	(if (match-beginning 1)
-	    (progn
-	      (elmo-imap4-folder-set-mailbox-internal
-	       folder
-	       (elmo-imap4-encode-folder-string
-		(elmo-match-string 1 name)))
-	      (if (eq (length (elmo-imap4-folder-mailbox-internal folder))
-		      0)
-		  ;; No information is specified other than folder type.
-		  (elmo-imap4-folder-set-mailbox-internal
-		   folder
-		   (elmo-imap4-encode-folder-string
-		    elmo-imap4-default-mailbox))))
-	  (elmo-imap4-folder-set-mailbox-internal
-	   folder
-	   (elmo-imap4-encode-folder-string
-	    elmo-imap4-default-mailbox)))
-	;; Setup slots for elmo-net-folder.
-	(elmo-net-folder-set-user-internal
-	 folder
-	 (if (match-beginning 2)
-	     (elmo-match-substring 2 name 1)
-	   default-user))
-	(elmo-net-folder-set-auth-internal
-	 folder
-	 (if (match-beginning 3)
-	     (intern (elmo-match-substring 3 name 1))
-	   (or elmo-imap4-default-authenticate-type 'clear)))
-	(unless (elmo-net-folder-server-internal folder)
-	  (elmo-net-folder-set-server-internal folder default-server))
-	(unless (elmo-net-folder-port-internal folder)
-	  (elmo-net-folder-set-port-internal folder default-port))
-	(unless (elmo-net-folder-stream-type-internal folder)
-	  (elmo-net-folder-set-stream-type-internal
-	   folder
-	   (elmo-get-network-stream-type
-	    elmo-imap4-default-stream-type)))
-	folder))))
-
+    ;; mailbox
+    (setq parse (elmo-parse-token name ":"))
+    (elmo-imap4-folder-set-mailbox-internal folder
+					    (elmo-imap4-encode-folder-string
+					     (if (eq (length (car parse)) 0)
+						 elmo-imap4-default-mailbox
+					       (car parse))))
+    ;; user
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/"))
+    (elmo-net-folder-set-user-internal folder
+				       (if (eq (length (car parse)) 0)
+					   default-user
+					 (car parse)))
+    ;; auth
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse)))
+    (elmo-net-folder-set-auth-internal
+     folder
+     (if (eq (length (car parse)) 0)
+	 (or elmo-imap4-default-authenticate-type 'clear)
+       (intern (car parse))))
+    (unless (elmo-net-folder-server-internal folder)
+      (elmo-net-folder-set-server-internal folder default-server))
+    (unless (elmo-net-folder-port-internal folder)
+      (elmo-net-folder-set-port-internal folder default-port))
+    (unless (elmo-net-folder-stream-type-internal folder)
+      (elmo-net-folder-set-stream-type-internal
+       folder
+       (elmo-get-network-stream-type elmo-imap4-default-stream-type)))
+    folder))
+  
 ;;; ELMO IMAP4 folder
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-imap4-folder))

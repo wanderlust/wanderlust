@@ -2702,7 +2702,7 @@ If ARG, without confirm."
     (error (ding)
 	   (message "Error in wl-summary-line-inserted-hook"))))
 
-(defun wl-summary-insert-summary (entity database mark-alist dummy &optional dummy)
+(defun wl-summary-insert-summary (entity database mark-alist dummy &optional dumm)
   (let ((overview-entity entity)
 	summary-line msg)
     (setq msg (elmo-msgdb-overview-entity-get-number entity))

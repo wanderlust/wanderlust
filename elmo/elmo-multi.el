@@ -44,9 +44,16 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)
 					    name)
-  (elmo-multi-folder-set-children-internal
-   folder
-   (mapcar 'elmo-make-folder (split-string name ",")))
+  (while (> (length (car (setq name (elmo-parse-token name ",")))) 0)
+    (elmo-multi-folder-set-children-internal
+     folder
+     (nconc (elmo-multi-folder-children-internal
+	     folder)
+	    (list (elmo-make-folder (car name)))))
+    (setq name (cdr name))
+    (when (and (> (length name) 0)
+	       (eq (aref name 0) ?,))
+      (setq name (substring name 1))))
   (elmo-multi-folder-set-divide-number-internal
    folder
    elmo-multi-divide-number)

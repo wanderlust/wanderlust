@@ -90,26 +90,27 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	 (if elmo-pop3-stream-type-alist
 	     (append elmo-pop3-stream-type-alist
 		     elmo-network-stream-type-alist)
-	   elmo-network-stream-type-alist)))
+	   elmo-network-stream-type-alist))
+	parse)
     (setq name (luna-call-next-method))
-    ;; Setup slots for elmo-net-folder
-    (when (string-match "^\\([^:/!]*\\)\\(/[^/:@!]+\\)?\\(:[^/:@!]+\\)?" name)
-      (elmo-net-folder-set-user-internal folder
-					 (if (match-beginning 1)
-					     (elmo-match-string 1 name)))
-      (if (eq (length (elmo-net-folder-user-internal folder)) 0)
-	  (elmo-net-folder-set-user-internal folder
-					     elmo-pop3-default-user))
-      (elmo-net-folder-set-auth-internal
-       folder
-       (if (match-beginning 2)
-	   (intern (elmo-match-substring 2 name 1))
-	 elmo-pop3-default-authenticate-type))
-      (elmo-pop3-folder-set-use-uidl-internal
-       folder
-       (if (match-beginning 3)
-	   (string= (elmo-match-substring 3 name 1) "uidl")
-	 elmo-pop3-default-use-uidl)))
+    ;; user
+    (setq parse (elmo-parse-token name "/:"))
+    (elmo-net-folder-set-user-internal folder
+				       (if (eq (length (car parse)) 0)
+					   elmo-pop3-default-user
+					 (car parse)))
+    ;; auth
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":"))
+    (elmo-net-folder-set-auth-internal folder
+				       (if (eq (length (car parse)) 0)
+					   elmo-pop3-default-authenticate-type
+					 (intern (downcase (car parse)))))
+    ;; uidl
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
+    (elmo-pop3-folder-set-use-uidl-internal folder
+					    (if (eq (length (car parse)) 0)
+						elmo-pop3-default-use-uidl
+					      (string= (car parse) "uidl")))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder 
 					   elmo-pop3-default-server))
