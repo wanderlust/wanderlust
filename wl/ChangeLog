@@ -1,3 +1,12 @@
+2000-11-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-read-folder): Fixed problem when
+	petname folder default was selected.
+	(Fix by HIROSE Yuuji <yuuji@gentei.org>)
+
+	* wl-refile.el (wl-refile-guess-by-rule):
+	Use `wl-folder-get-realname'.
+
 2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-nemacs.el (wl-draft-overload-functions): Bind 'C-c C-e'

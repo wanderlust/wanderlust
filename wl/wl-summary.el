@@ -3410,12 +3410,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		    wl-folder-entity-hashtb))
 	      nil nil (or init wl-default-spec)
 	      'wl-read-folder-hist)))
-    (setq fld (elmo-string (wl-folder-get-realname fld)))
-    (if (string-match "\n" fld)
-	(error "Not supported folder name: %s" fld))
     (if (or (string= fld wl-default-spec)
 	    (string= fld ""))
 	(setq fld default))
+    (setq fld (elmo-string (wl-folder-get-realname fld)))
+    (if (string-match "\n" fld)
+	(error "Not supported folder name: %s" fld))    
     (unless no-create
       (if ignore-error
 	  (ignore-errors (wl-folder-confirm-existence fld))
