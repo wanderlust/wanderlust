@@ -36,7 +36,8 @@
 ;;; Code:
 ;; 
 
-(eval-when-compile (require 'static))
+(eval-when-compile (require 'cl)
+		   (require 'static))
 
 (static-if (and (not (featurep 'pldap))
 		(fboundp 'ldap-open))
@@ -45,11 +46,6 @@
 
 ;; You don't have built-in ldap feature.
 ;; Use external program.
-(require 'poe)
-(require 'std11)
-
-(defconst pldap-version "1.1"
-  "Version number of pldap.")
 
 ;;; For LDIF encoding.
 ;; SAFE-CHAR                = %x01-09 / %x0B-0C / %x0E-7F
@@ -65,6 +61,17 @@
 (defconst ldap-ldif-safe-string-regexp
   (concat ldap-ldif-safe-init-char-regexp ldap-ldif-safe-char-regexp "*")
   "A Regexp for safe-string.")
+
+(defconst ldap-ldif-field-name-regexp "[a-zA-Z][a-zA-Z0-9-]*"
+  "A Regexp for field name.")
+
+(defconst ldap-ldif-field-head-regexp
+  (concat "^" ldap-ldif-field-name-regexp ":")
+  "A Regexp for field head.")
+
+(defconst ldap-ldif-next-field-head-regexp
+  (concat "\n" ldap-ldif-field-name-regexp ":")
+  "A Regexp for next field head.")
 
 (defmacro ldap/ldif-safe-string-p (string)
   "Return t if STRING is a safe-string for LDIF."
@@ -628,11 +635,10 @@ entry according to the value of WITHDN."
 	 (scope (or scope (plist-get plist 'scope)))
 	 (binddn (plist-get plist 'binddn))
 	 (passwd (plist-get plist 'passwd))
-	 (auth (plist-get plist 'auth))
 	 (deref (plist-get plist 'deref))
 	 (timelimit (plist-get plist 'timelimit))
 	 (sizelimit (plist-get plist 'sizelimit))
-	 start value dn attrs-result
+	 start value attrs-result
 	 (i 0)
 	 result arglist ret)
     (setq arglist (list (format "-h%s" (ldap-host ldap))))
@@ -708,8 +714,8 @@ entry according to the value of WITHDN."
 		  (cons
 		   (if withdn
 		       (if attrs-result
-			   (nconc (list (std11-field-body "dn")) attrs-result)
-			 (list (std11-field-body "dn")))
+			   (nconc (ldap/field-body "dn") attrs-result)
+			 (ldap/field-body "dn"))
 		     attrs-result)
 		   result))))
 	(if (not (eobp)) (forward-char 1))
@@ -717,6 +723,15 @@ entry according to the value of WITHDN."
       (if verbose
 	  (message "Parsing ldap results...done."))
       (delq nil (nreverse result)))))
+
+(defun ldap/field-end ()
+  "Move to end of field and return this point."
+  (if (re-search-forward ldap-ldif-next-field-head-regexp nil t)
+      (goto-char (match-beginning 0))
+    (if (re-search-forward "^$" nil t)
+	(goto-char (1- (match-beginning 0)))
+      (end-of-line)))
+  (point))
 
 (defun ldap/field-body (name)
   "Return field body list of NAME."
@@ -727,8 +742,10 @@ entry according to the value of WITHDN."
 	  body)
       (while (re-search-forward (concat "^" name ":[ \t]*") nil t)
 	;; Base64
-	(if (string-match "^:[ \t]*" (setq body (buffer-substring-no-properties
-					    (match-end 0) (std11-field-end))))
+	(if (string-match "^:[ \t]*" (setq body
+					   (buffer-substring-no-properties
+					    (match-end 0)
+					    (ldap/field-end))))
 	    (setq body (base64-decode-string (substring body (match-end 0)))))
 	(setq field-body (nconc field-body (list body))))
       field-body)))
@@ -736,13 +753,13 @@ entry according to the value of WITHDN."
 (defun ldap/collect-field (without)
   "Collect fields without WITHOUT."
   (goto-char (point-min))
-  (let ((regexp (concat "\\(" std11-field-head-regexp "\\)[ \t]*"))
+  (let ((regexp (concat "\\(" ldap-ldif-field-head-regexp "\\)[ \t]*"))
 	dest name body entry)
     (while (re-search-forward regexp nil t)
       (setq name (downcase (buffer-substring-no-properties
 			    (match-beginning 1)(1- (match-end 1)))))
       (setq body (buffer-substring-no-properties
-		  (match-end 0) (std11-field-end)))
+		  (match-end 0) (ldap/field-end)))
       (if (string-match "^:[ \t]*" body)
 	  (setq body (base64-decode-string (substring body (match-end 0)))))
       (unless (string= name without)
