@@ -1,5 +1,11 @@
 2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* sb-airs.el: Added footer.
+
+	* shimbun.el (shimbun-article): Define as luna-method.
+
+	* sb-tcup.el: New file.
+
 	* sb-airs.el (toplevel): Require 'sb-mhonarc.
 	(According to the report from ABE Yasushi <yasushi@indigo.co.jp>)
 

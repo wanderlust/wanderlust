@@ -293,9 +293,6 @@ for a charset indication")
 (defsubst shimbun-header-set-extra (header extra)
   (aset header 9 extra))
 
-(defvar shimbun-hash-length 997
-  "Length of shimbun-hash.")
-
 (defun shimbun-header-insert (header)
   (insert "Subject: " (or (shimbun-header-subject header) "(none)") "\n"
 	  "From: " (or (shimbun-header-from header) "(nobody)") "\n"
@@ -379,9 +376,11 @@ for a charset indication")
       (if (boundp sym)
 	  (symbol-value sym)))))
 
-(defun shimbun-article (shimbun id &optional outbuf)
+(luna-define-generic shimbun-article (shimbun id &optional outbuf)
   "Retrieve a SHIMBUN article which corresponds to ID to the OUTBUF.
-If OUTBUF is not specified, article is retrieved to the current buffer."
+If OUTBUF is not specified, article is retrieved to the current buffer.")
+
+(luna-define-method shimbun-article ((shimbun shimbun) id &optional outbuf)
   (when (shimbun-current-group-internal shimbun)
     (let* ((header (shimbun-header shimbun id))
 	   (xref (shimbun-header-xref header)))
