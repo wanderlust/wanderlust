@@ -54,6 +54,10 @@
 ;;  (overlay-put overlay 'wl-e21-icon t)
 ;;  ;; Make it to be removable.
 ;;  (overlay-put overlay 'evaporate t))
+;;
+;; Note that a port of Emacs to some platforms (e.g. MS-Windoze) does
+;; not yet support images.  It is a pity that neither icons nor tool-
+;; bars will not be displayed in such systems.
 
 ;;; Code:
 ;;
@@ -161,27 +165,34 @@
     )
   "The Draft buffer toolbar.")
 
+(eval-when-compile
+  (defmacro wl-e21-display-image-p ()
+    '(and (display-graphic-p)
+	  (image-type-available-p 'xpm))))
+
 (defun wl-e21-setup-toolbar (bar)
-  (let ((load-path (cons wl-icon-dir load-path))
-	(props '(:type xpm :ascent center
-		       :color-symbols (("backgroundToolBarColor" . "None"))
-		       :file))
-	(success t)
-	icon up down disabled name success)
-    (while bar
-      (setq icon (aref (pop bar) 0))
-      (unless (boundp icon)
-	(setq name (symbol-name icon)
-	      up (find-image `((,@props ,(concat name "-up.xpm")))))
-	(if up
-	    (progn
-	      (setq down (find-image `((,@props ,(concat name "-down.xpm"))))
-		    disabled (find-image `((,@props
-					    ,(concat name "-disabled.xpm")))))
-	      (set icon (vector down up disabled disabled)))
-	  (setq bar nil
-		success nil))))
-    success))
+  (when (and wl-use-toolbar
+	     (wl-e21-display-image-p))
+    (let ((load-path (cons wl-icon-dir load-path))
+	  (props '(:type xpm :ascent center
+			 :color-symbols (("backgroundToolBarColor" . "None"))
+			 :file))
+	  (success t)
+	  icon up down disabled name success)
+      (while bar
+	(setq icon (aref (pop bar) 0))
+	(unless (boundp icon)
+	  (setq name (symbol-name icon)
+		up (find-image `((,@props ,(concat name "-up.xpm")))))
+	  (if up
+	      (progn
+		(setq down (find-image `((,@props ,(concat name "-down.xpm"))))
+		      disabled (find-image
+				`((,@props ,(concat name "-disabled.xpm")))))
+		(set icon (vector down up disabled disabled)))
+	    (setq bar nil
+		  success nil))))
+      success)))
 
 (defvar wl-e21-toolbar-configurations
   '((auto-resize-tool-bar        . t)
@@ -211,29 +222,21 @@
 	      :image (symbol-value (aref def 0)))))))
 
 (defun wl-e21-setup-folder-toolbar ()
-  (and wl-use-toolbar
-       (display-graphic-p)
-       (wl-e21-setup-toolbar wl-folder-toolbar)
-       (wl-e21-make-toolbar-buttons wl-folder-mode-map wl-folder-toolbar)))
+  (when (wl-e21-setup-toolbar wl-folder-toolbar)
+    (wl-e21-make-toolbar-buttons wl-folder-mode-map wl-folder-toolbar)))
 
 (defun wl-e21-setup-summary-toolbar ()
-  (and wl-use-toolbar
-       (display-graphic-p)
-       (wl-e21-setup-toolbar wl-summary-toolbar)
-       (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
+  (when (wl-e21-setup-toolbar wl-summary-toolbar)
+    (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
 (eval-when-compile
   (defsubst wl-e21-setup-message-toolbar (keymap)
-    (and wl-use-toolbar
-	 (display-graphic-p)
-	 (wl-e21-setup-toolbar wl-message-toolbar)
-	 (wl-e21-make-toolbar-buttons keymap wl-message-toolbar)))
+    (when (wl-e21-setup-toolbar wl-message-toolbar)
+      (wl-e21-make-toolbar-buttons keymap wl-message-toolbar)))
 
   (defsubst wl-e21-setup-draft-toolbar ()
-    (and wl-use-toolbar
-	 (display-graphic-p)
-	 (wl-e21-setup-toolbar wl-draft-toolbar)
-	 (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
+    (when (wl-e21-setup-toolbar wl-draft-toolbar)
+      (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-image       . wl-opened-group-folder-icon)
@@ -241,7 +244,7 @@
 
 (eval-when-compile
   (defsubst wl-e21-highlight-folder-group-line (start end icon numbers)
-    (when (display-graphic-p)
+    (when (wl-e21-display-image-p)
       (let (overlay)
 	(let ((overlays (overlays-in start end)))
 	  (while (and (setq overlay (pop overlays))
@@ -330,7 +333,7 @@
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(let (image)
-	  (when (display-graphic-p)
+	  (when (wl-e21-display-image-p)
 	    (let (overlay)
 	      (let ((overlays (overlays-in start end)))
 		(while (and (setq overlay (pop overlays))
@@ -378,7 +381,7 @@
 
 (defun wl-highlight-plugged-current-line ()
   (interactive)
-  (when (display-graphic-p)
+  (when (wl-e21-display-image-p)
     (save-excursion
       (beginning-of-line)
       (when (looking-at "[\t ]*\\(\\[\\([^]]+\\)\\]\\)")
@@ -402,7 +405,7 @@
 	      (overlay-put overlay 'invisible t))))))))
 
 (defun wl-plugged-set-folder-icon (folder string)
-  (if (display-graphic-p)
+  (if (wl-e21-display-image-p)
       (let (type)
 	(cond ((string= folder wl-queue-folder)
 	       (concat (propertize " " 'display
@@ -437,7 +440,7 @@
     (wl-folder-trash-image        . wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
-  (when (display-graphic-p)
+  (when (wl-e21-display-image-p)
     (let ((load-path (cons wl-icon-dir load-path))
 	  (icons wl-folder-internal-icon-list)
 	  icon name image)
@@ -449,67 +452,68 @@
 	    (put (car icon) 'image (propertize name 'display image))))))))
 
 (defun wl-plugged-init-icons ()
-  (if (display-mouse-p)
-      (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
-					       #'wl-toggle-plugged))
-			 'help-echo "mouse-2 toggles plugged status")))
-	(if (display-graphic-p)
-	    (progn
-	      (unless wl-plugged-image
-		(let ((load-path (cons wl-icon-dir load-path)))
-		  (setq wl-plugged-image (find-image
-					  `((:type xpm
-						   :file ,wl-plugged-icon
-						   :ascent center)))
-			wl-unplugged-image (find-image
-					    `((:type xpm
-						     :file ,wl-unplugged-icon
-						     :ascent center))))))
-	      (setq wl-modeline-plug-state-on
-		    (apply 'propertize wl-plug-state-indicator-on
-			   `(display ,wl-plugged-image ,@props))
-		    wl-modeline-plug-state-off
-		    (apply 'propertize wl-plug-state-indicator-off
-			   `(display ,wl-unplugged-image ,@props))))
+  (let ((props (when (display-mouse-p)
+		 (list 'local-map (purecopy (make-mode-line-mouse2-map
+					     #'wl-toggle-plugged))
+		       'help-echo "mouse-2 toggles plugged status"))))
+    (if (wl-e21-display-image-p)
+	(progn
+	  (unless wl-plugged-image
+	    (let ((load-path (cons wl-icon-dir load-path)))
+	      (setq wl-plugged-image (find-image
+				      `((:type xpm
+					       :file ,wl-plugged-icon
+					       :ascent center)))
+		    wl-unplugged-image (find-image
+					`((:type xpm
+						 :file ,wl-unplugged-icon
+						 :ascent center))))))
+	  (setq wl-modeline-plug-state-on
+		(apply 'propertize wl-plug-state-indicator-on
+		       `(display ,wl-plugged-image ,@props))
+		wl-modeline-plug-state-off
+		(apply 'propertize wl-plug-state-indicator-off
+		       `(display ,wl-unplugged-image ,@props))))
+      (if props
 	  (setq wl-modeline-plug-state-on
 		(apply 'propertize wl-plug-state-indicator-on props)
 		wl-modeline-plug-state-off
-		(apply 'propertize wl-plug-state-indicator-off props))))
-    (setq wl-modeline-plug-state-on wl-plug-state-indicator-on
-	  wl-modeline-plug-state-off wl-plug-state-indicator-off)))
+		(apply 'propertize wl-plug-state-indicator-off props))
+	(setq wl-modeline-plug-state-on wl-plug-state-indicator-on
+	      wl-modeline-plug-state-off wl-plug-state-indicator-off)))))
 
 (defun wl-biff-init-icons ()
-  (if (display-mouse-p)
-      (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
-					       (lambda nil
-						 (call-interactively
-						  'wl-biff-check-folders))))
-			 'help-echo "mouse-2 checks new mails")))
-	(if (display-graphic-p)
-	    (progn
-	      (unless wl-biff-mail-image
-		(let ((load-path (cons wl-icon-dir load-path)))
-		  (setq wl-biff-mail-image (find-image
-					    `((:type xpm
-						     :file ,wl-biff-mail-icon
-						     :ascent center)))
-			wl-biff-nomail-image (find-image
-					      `((:type xpm
-						       :file
-						       ,wl-biff-nomail-icon
-						       :ascent center))))))
-	      (setq wl-modeline-biff-state-on
-		    (apply 'propertize wl-biff-state-indicator-on
-			   `(display ,wl-biff-mail-image ,@props))
-		    wl-modeline-biff-state-off
-		    (apply 'propertize wl-biff-state-indicator-off
-			   `(display ,wl-biff-nomail-image ,@props))))
+  (let ((props (when (display-mouse-p)
+		 (list 'local-map (purecopy (make-mode-line-mouse2-map
+					     (lambda nil
+					       (call-interactively
+						'wl-biff-check-folders))))
+		       'help-echo "mouse-2 checks new mails"))))
+    (if (wl-e21-display-image-p)
+	(progn
+	  (unless wl-biff-mail-image
+	    (let ((load-path (cons wl-icon-dir load-path)))
+	      (setq wl-biff-mail-image (find-image
+					`((:type xpm
+						 :file ,wl-biff-mail-icon
+						 :ascent center)))
+		    wl-biff-nomail-image (find-image
+					  `((:type xpm
+						   :file ,wl-biff-nomail-icon
+						   :ascent center))))))
+	  (setq wl-modeline-biff-state-on
+		(apply 'propertize wl-biff-state-indicator-on
+		       `(display ,wl-biff-mail-image ,@props))
+		wl-modeline-biff-state-off
+		(apply 'propertize wl-biff-state-indicator-off
+		       `(display ,wl-biff-nomail-image ,@props))))
+      (if props
 	  (setq wl-modeline-biff-state-on
 		(apply 'propertize wl-biff-state-indicator-on props)
 		wl-modeline-biff-state-off
-		(apply 'propertize wl-biff-state-indicator-off props))))
-    (setq wl-modeline-biff-state-on wl-biff-state-indicator-on
-	  wl-modeline-biff-state-off wl-biff-state-indicator-off)))
+		(apply 'propertize wl-biff-state-indicator-off props))
+	(setq wl-modeline-biff-state-on wl-biff-state-indicator-on
+	      wl-modeline-biff-state-off wl-biff-state-indicator-off)))))
 
 (defun wl-make-date-string ()
   (let ((system-time-locale "C"))

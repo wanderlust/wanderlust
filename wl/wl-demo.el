@@ -155,17 +155,22 @@ any conversions and evaluate FORMS there like `progn'."
   (if (and xpm
 	   (or (and (featurep 'xemacs)
 		    (featurep 'xpm))
-	       (and (condition-case nil
-			(require 'image)
-		      (error nil))
-		    (image-type-available-p 'xpm))))
+	       (condition-case nil
+		   (require 'image)
+		 (error nil))))
       (progn
 	(put 'wl-logo-xpm 'width (car xpm))
 	(put 'wl-logo-xpm 'height (nth 1 xpm))
 	(put 'wl-logo-xpm 'image
 	     (if (featurep 'xemacs)
 		 (make-glyph (vector 'xpm ':data (nth 2 xpm)))
-	       (create-image (nth 2 xpm) 'xpm t))))))
+	       (condition-case nil
+		   (let ((image-types '(xpm)))
+		     (create-image (nth 2 xpm) 'xpm t))
+		 (error
+		  (put 'wl-logo-xpm 'width nil)
+		  (put 'wl-logo-xpm 'height nil)
+		  nil)))))))
 
 (let (width height)
   (let ((xbm (wl-logo-xbm)))
@@ -182,8 +187,14 @@ any conversions and evaluate FORMS there like `progn'."
 	  (put 'wl-logo-xbm 'image
 	       (if (featurep 'xemacs)
 		   (make-glyph (vector 'xbm ':data xbm))
-		 (create-image (nth 2 xbm) 'xbm t
-			       ':width (car xbm) ':height (nth 1 xbm)))))))
+		 (condition-case nil
+		     (let ((image-types '(xbm)))
+		       (create-image (nth 2 xbm) 'xbm t
+				     ':width (car xbm) ':height (nth 1 xbm)))
+		   (error
+		    (put 'wl-logo-xbm 'width nil)
+		    (put 'wl-logo-xbm 'height nil)
+		    nil)))))))
   (if (and width
 	   (not (featurep 'xemacs))
 	   (condition-case nil
@@ -225,7 +236,8 @@ any conversions and evaluate FORMS there like `progn'."
 			(or (and (featurep 'xemacs)
 				 (device-on-window-system-p))
 			    (and wl-on-emacs21
-				 (display-graphic-p))))
+				 (display-graphic-p)
+				 (image-type-available-p 'xbm))))
 		   '(("xbm" . xbm)))
 	       (if (and (get 'wl-logo-bitmap 'width)
 			(not (featurep 'xemacs))
@@ -248,6 +260,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 			    selection))
 	  (setq image-type (cdr type))
 	(setq image-type (cdr (car selection))))))
+  (if image-type
+      (setq image-type (intern (format "wl-logo-%s" image-type))))
   (let ((demo-buf (let ((default-enable-multibyte-characters t)
 			(default-mc-flag t)
 			(default-line-spacing 0))
@@ -282,38 +296,16 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      nil t)
 	     (set-face-background 'fringe (face-background 'default frame)
 				  frame))))
-    (let ((logo (cond ((eq 'bitmap image-type)
-		       (if (and (get 'wl-logo-bitmap 'width)
-				(not (featurep 'xemacs))
-				(featurep 'bitmap))
-			   'wl-logo-bitmap))
-		      ((eq 'xbm image-type)
-		       (if (and (get 'wl-logo-xbm 'width)
-				(cond ((featurep 'xemacs)
-				       (device-on-window-system-p))
-				      (wl-on-emacs21
-				       (display-graphic-p))
-				      (t window-system)))
-			   'wl-logo-xbm))
-		      ((eq 'xpm image-type)
-		       (if (and (get 'wl-logo-xpm 'width)
-				(or (and (featurep 'xemacs)
-					 (featurep 'xpm)
-					 (device-on-window-system-p))
-				    (and wl-on-emacs21
-					 (display-graphic-p)
-					 (image-type-available-p 'xpm))))
-			   'wl-logo-xpm))))
-	  (ww (window-width))
+    (let ((ww (window-width))
 	  (wh (window-height))
 	  rest)
-      (if logo
-	  (let ((lw (get logo 'width))
-		(lh (get logo 'height))
-		(image (get logo 'image)))
+      (if image-type
+	  (let ((lw (get image-type 'width))
+		(lh (get image-type 'height))
+		(image (get image-type 'image)))
 	    (cond
 	     ((featurep 'xemacs)
-	      (if (eq 'wl-logo-xbm logo)
+	      (if (eq 'wl-logo-xbm image-type)
 		  (set-glyph-face image 'wl-highlight-logo-face))
 	      (setq rest (- wh 1 (/ (+ (* lh wh) (window-pixel-height) -1)
 				    (window-pixel-height))))
@@ -323,8 +315,8 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 	      (set-extent-end-glyph (make-extent (point) (point)) image))
 	     ((and wl-on-emacs21
 		   (display-graphic-p)
-		   (not (eq 'wl-logo-bitmap logo)))
-	      (if (eq 'wl-logo-xbm logo)
+		   (not (eq 'wl-logo-bitmap image-type)))
+	      (if (eq 'wl-logo-xbm image-type)
 		  (let ((bg (face-background 'wl-highlight-logo-face))
 			(fg (face-foreground 'wl-highlight-logo-face)))
 		    (if (stringp bg)
