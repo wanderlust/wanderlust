@@ -1,3 +1,8 @@
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Rearrange rescan.
+	(wl-summary-input-range): Added rescan-nokill.
+
 2003-08-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-target-mark-all): Use

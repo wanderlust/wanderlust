@@ -1171,7 +1171,7 @@ ENTITY is the message-entity to get the parent.")
   ;; List all message entities in the FOLDER.
   (mapcar
    (lambda (number) (elmo-message-entity folder number))
-   (elmo-folder-list-messages folder t t)))
+   (elmo-folder-list-messages folder nil t))) ; XXX killed-list is not used.
 
 (defmacro elmo-folder-do-each-message-entity (spec &rest form)
   "Iterator for message entity in the folder.

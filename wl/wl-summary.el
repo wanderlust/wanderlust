@@ -1158,14 +1158,14 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 (msgdb-dir (elmo-folder-msgdb-path folder))
 	 (range (or force-range (wl-summary-input-range
 				 (elmo-folder-name-internal folder)))))
-    (cond ((string= range "rescan")
-	   (let ((msg (wl-summary-message-number)))
-	     (wl-summary-rescan)
-	     (and msg (wl-summary-jump-to-msg msg))))
-	  ((string= range "rescan-noscore")
+    (cond ((string-match "rescan" range)
 	   (let ((msg (wl-summary-message-number))
-		 wl-use-scoring)
-	     (wl-summary-rescan nil t)
+		 (wl-use-scoring (if (string-match "noscore" range)
+				     nil
+				   wl-use-scoring)))
+	     (wl-summary-rescan nil
+				(or (string-match "nokill" range)
+				    (string-match "noscore" range)))
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "mark")
 	   (let ((msg (wl-summary-message-number)))
@@ -3318,6 +3318,7 @@ Return non-nil if the mark is updated"
 			    "last:"
 			    "cache-status"
 			    "rescan"
+n			    "rescan-nokill"
 			    "rescan-noscore"
 			    "update"
 			    "update-nokill"
