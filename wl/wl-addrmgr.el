@@ -169,7 +169,10 @@ See info under Wanderlust for full documentation.
    (lambda (addr)
      (nth 1 (std11-extract-address-components addr)))
    (wl-parse-addresses
-    (mapconcat 'identity (elmo-multiple-fields-body-list (list field)) ","))))
+    (mapconcat
+     'identity
+     (elmo-multiple-fields-body-list (list field) mail-header-separator)
+     ","))))
 
 (defun wl-addrmgr-pickup-entry-list (buffer)
   "Return a list of address entiry from BUFFER."

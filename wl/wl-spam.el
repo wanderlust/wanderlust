@@ -317,12 +317,11 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(number wl-message-buffer-cur-number)
 	spam)
     (message "Cheking spam...")
-    (when (elmo-spam-buffer-spam-p (elmo-spam-processor) original)
+    (when (setq spam (elmo-spam-buffer-spam-p (elmo-spam-processor) original))
       (with-current-buffer wl-message-buffer-cur-summary-buffer
 	(wl-summary-spam number)))
     (message "Cheking spam...done")
-    (when (interactive-p)
-      (message "No: %d is %sa spam message." number (if spam "" "not ")))))
+    (message "No: %d is %sa spam message." number (if spam "" "not "))))
 
 (defun wl-refile-guess-by-spam (entity)
   (when (elmo-spam-message-spam-p (elmo-spam-processor)
