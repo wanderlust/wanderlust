@@ -314,6 +314,7 @@ e.g.
     subject))
 
 (defun wl-draft-self-reply-p ()
+  "Return t when From address in the current message is user's self one or not."
   (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
 
 (defun wl-draft-reply (buf with-arg summary-buf)
