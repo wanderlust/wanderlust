@@ -1912,6 +1912,7 @@ Return nil if no complete line has arrived."
 		 elmo-imap4-default-hierarchy-delimiter))
 	 ;; Append delimiter when root with namespace.
 	 (root (if (and namespace-assoc
+			(match-end 1)
 			(string= (substring root (match-end 1))
 				 ""))
 		   (concat root delim)
