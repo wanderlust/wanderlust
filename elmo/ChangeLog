@@ -1,3 +1,8 @@
+2004-03-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-set-flag-plugged): Fix mismatched
+	parenthesis.
+
 2004-03-08  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-vars.el (elmo-msgdb-default-type): Remove generic from the
