@@ -698,7 +698,10 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   nil) ; default is not writable.
 
 (luna-define-method elmo-folder-delete ((folder elmo-folder))
-  (elmo-msgdb-delete-path folder))
+  (when (yes-or-no-p (format "Delete msgdb of \"%s\"? "
+			     (elmo-folder-name-internal folder)))
+    (elmo-msgdb-delete-path folder)
+    t))
 
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
   (let* ((new-folder (elmo-make-folder new-name)))

@@ -1,4 +1,4 @@
-;;; elmo-archive.el --- Archive folder of ELMO.
+;;; elmo-archive.el --- Archive folder of ELMO. -*- coding: euc-japan -*-
 
 ;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -447,17 +447,29 @@ TYPE specifies the archiver's symbol."
 	     (delete-file dummy)))
        ))))
 
-(luna-define-method elmo-folder-delete :before ((folder elmo-archive-folder))
-  (let ((arc (elmo-archive-get-archive-name folder)))
-    (if (not (file-exists-p arc))
-	(error "No such file: %s" arc)
-      (delete-file arc)
-      t)))
+(luna-define-method elmo-folder-delete ((folder elmo-archive-folder))
+  (let ((msgs (and (elmo-folder-exists-p folder)
+		   (elmo-folder-list-messages folder))))
+    (when (yes-or-no-p (format "%sDelete msgdb and substance of \"%s\"? "
+			       (if (> (length msgs) 0)
+				   (format "%d msg(s) exists. " (length msgs))
+				 "")
+			       (elmo-folder-name-internal folder)))
+      (let ((arc (elmo-archive-get-archive-name folder)))
+	(if (not (file-exists-p arc))
+	    (error "No such file: %s" arc)
+	  (delete-file arc))
+	(elmo-msgdb-delete-path folder)
+	t))))
 
 (luna-define-method elmo-folder-rename-internal ((folder elmo-archive-folder)
 						 new-folder)
   (let* ((old-arc (elmo-archive-get-archive-name folder))
-	 (new-arc (elmo-archive-get-archive-name new-folder)))
+	 (new-arc (elmo-archive-get-archive-name new-folder))
+	 (new-dir (directory-file-name
+		   (elmo-archive-get-archive-directory new-folder))))
+    (if elmo-archive-treat-file
+	(setq new-dir (directory-file-name (file-name-directory new-dir))))
     (unless (and (eq (elmo-archive-folder-archive-type-internal folder)
 		     (elmo-archive-folder-archive-type-internal new-folder))
 		 (equal (elmo-archive-folder-archive-prefix-internal
@@ -469,6 +481,8 @@ TYPE specifies the archiver's symbol."
       (error "No such file: %s" old-arc))
     (when (file-exists-p new-arc)
       (error "Already exists: %s" new-arc))
+    (unless (file-directory-p new-dir)
+      (elmo-make-directory new-dir))
     (rename-file old-arc new-arc)
     t))
 

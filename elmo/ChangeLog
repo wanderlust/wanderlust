@@ -1,3 +1,16 @@
+2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-archive.el (elmo-folder-rename-internal): Create directory
+	apropriately, mimic localdir's one.
+	Based on the patch from KAMO Tomoyuki <kamo@ITmanage.co.jp>.
+
+	* elmo.el (elmo-folder-delete): Confirm deletion here, return t if
+	the folder has been deleted successfully.
+	* elmo-imap4.el (elmo-folder-delete): Ditto.
+	* elmo-archive.el (elmo-folder-delete): Ditto.
+	* elmo-localdir.el (elmo-folder-delete): Ditto.
+	* elmo-maildir.el (elmo-folder-delete): Ditto.
+
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-maildir.el (elmo-folder-rename-internal): New method,
@@ -13,7 +26,7 @@
 	(elmo-nntp-search-primitive): Do nothing when body search is
 	invoked (although it is not used by the change above).
 	(elmo-nntp-get-folders-info): Don't use replace-regexp.
-	
+
 	* elmo-multi.el (elmo-folder-search): Don't ignore error anymore.
 
 	* elmo-localdir.el (elmo-folder-pack-numbers): onum, a member of

@@ -465,22 +465,30 @@ file name for maildir directories."
 	  t)
       (error))))
 
-(luna-define-method elmo-folder-delete :before ((folder elmo-maildir-folder))
-  (let ((basedir (elmo-maildir-folder-directory-internal folder)))
-    (condition-case nil
-	(let ((tmp-files (directory-files
-			  (expand-file-name "tmp" basedir)
-			  t "[^.].*")))
-	  ;; Delete files in tmp.
-	  (dolist (file tmp-files)
-	    (delete-file file))
-	  (dolist (dir '("new" "cur" "tmp" "."))
-	    (setq dir (expand-file-name dir basedir))
-	    (if (not (file-directory-p dir))
-		(error nil)
-	      (elmo-delete-directory dir t)))
-	  t)
-      (error nil))))
+(luna-define-method elmo-folder-delete ((folder elmo-maildir-folder))
+  (let ((msgs (and (elmo-folder-exists-p folder)
+		   (elmo-folder-list-messages folder))))
+    (when (yes-or-no-p (format "%sDelete msgdb and substance of \"%s\"? "
+			       (if (> (length msgs) 0)
+				   (format "%d msg(s) exists. " (length msgs))
+				 "")
+			       (elmo-folder-name-internal folder)))
+      (let ((basedir (elmo-maildir-folder-directory-internal folder)))
+	(condition-case nil
+	    (let ((tmp-files (directory-files
+			      (expand-file-name "tmp" basedir)
+			      t "[^.].*")))
+	      ;; Delete files in tmp.
+	      (dolist (file tmp-files)
+		(delete-file file))
+	      (dolist (dir '("new" "cur" "tmp" "."))
+		(setq dir (expand-file-name dir basedir))
+		(if (not (file-directory-p dir))
+		    (error nil)
+		  (elmo-delete-directory dir t))))
+	  (error nil)))
+      (elmo-msgdb-delete-path folder)
+      t)))
 
 (luna-define-method elmo-folder-rename-internal ((folder elmo-maildir-folder)
 						 new-folder)
