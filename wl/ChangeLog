@@ -1,5 +1,9 @@
 2005-03-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-sync-update): Use
+	`elmo-message-entity-field' instead of `car' to get message-id
+	from overview entity.
+
 	* wl-summary.el (wl-summary-rescan-message): Call
 	`wl-highlight-summary-displaying' when displaying a message.
 

@@ -2011,7 +2011,8 @@ This function is defined for `window-scroll-functions'"
 		    (wl-append update-top-list update-thread))
 		  (if elmo-use-database
 		      (elmo-database-msgid-put
-		       (car entity) (elmo-folder-name-internal folder)
+		       (elmo-message-entity-field entity 'message-id)
+		       (elmo-folder-name-internal folder)
 		       (elmo-message-entity-number entity)))
 		  (when (> num elmo-display-progress-threshold)
 		    (setq i (+ i 1))
