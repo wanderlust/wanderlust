@@ -231,6 +231,9 @@
   (elmo-folder-mark-as-important (elmo-pipe-folder-dst-internal folder)
 				 numbers))
 
+(luna-define-method elmo-folder-pack-numbers ((folder elmo-pipe-folder))
+  (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))
+
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
 

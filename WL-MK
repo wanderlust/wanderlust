@@ -101,6 +101,10 @@
     (condition-case ()
 	(require 'mime-setup)
       (error (error "No MIME module was detected. Please install SEMI or tm.")))
+    ;; smtp.el version check.
+    (require 'smtp)
+    (if (not (fboundp 'smtp-send-buffer))
+	(error "Please install FLIM 1.14.0 or later."))
     (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
@@ -279,8 +283,8 @@
     (install-wl-icons)
 
     (mapcar '(lambda (x)
-             (install-elisp-modules (cdr x) (car x) LISPDIR))
-                  modules-alist)
+	       (install-elisp-modules (cdr x) (car x) LISPDIR))
+	    modules-alist)
     ;; WL-AUTOLOAD-MODULES
     (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
     ;;
