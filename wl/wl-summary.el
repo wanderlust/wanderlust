@@ -2036,31 +2036,33 @@ If ARG is non-nil, checking is omitted."
 	 append-list delete-list crossed
 	 update-thread update-top-list
 	 expunged mes sync-result)
-    (unless wl-summary-buffer-elmo-folder
-      (error "(Internal error) Folder is not set:%s" (buffer-name
-						      (current-buffer))))
-    (fset 'wl-summary-append-message-func-internal
-	  (wl-summary-get-append-message-func))
-    ;; Flush pending append operations (disconnected operation).
-    ;;(setq seen-list
-    ;;(wl-summary-flush-pending-append-operations seen-list))
-    (goto-char (point-max))
-    (wl-folder-confirm-existence folder 'force)
-    (setq sync-result (elmo-folder-synchronize
-		       folder
-		       wl-summary-new-mark
-		       wl-summary-unread-uncached-mark
-		       wl-summary-unread-cached-mark
-		       wl-summary-read-uncached-mark
-		       wl-summary-important-mark
-		       sync-all no-check))
-    (setq new-msgdb (nth 0 sync-result))
-    (setq delete-list (nth 1 sync-result))
-    (setq crossed (nth 2 sync-result))
-    (if sync-result
+    (unwind-protect
 	(progn
-	  ;; Setup sync-all
-	  (if sync-all (wl-summary-sync-all-init))
+	  (unless wl-summary-buffer-elmo-folder
+	    (error "(Internal error) Folder is not set:%s" (buffer-name
+							    (current-buffer))))
+	  (fset 'wl-summary-append-message-func-internal
+		(wl-summary-get-append-message-func))
+	  ;; Flush pending append operations (disconnected operation).
+	  ;;(setq seen-list
+	  ;;(wl-summary-flush-pending-append-operations seen-list))
+	  (goto-char (point-max))
+	  (wl-folder-confirm-existence folder 'force)
+	  (setq sync-result (elmo-folder-synchronize
+			     folder
+			     wl-summary-new-mark
+			     wl-summary-unread-uncached-mark
+			     wl-summary-unread-cached-mark
+			     wl-summary-read-uncached-mark
+			     wl-summary-important-mark
+			     sync-all no-check))
+	  (setq new-msgdb (nth 0 sync-result))
+	  (setq delete-list (nth 1 sync-result))
+	  (setq crossed (nth 2 sync-result))
+	  (if sync-result
+	      (progn
+		;; Setup sync-all
+		(if sync-all (wl-summary-sync-all-init))
 ;    (if (and has-nntp
 ;	     (elmo-nntp-max-number-precedes-list-active-p))
 	;; XXX this does not work correctly in rare case.
@@ -2068,136 +2070,136 @@ If ARG is non-nil, checking is omitted."
 ;	      (wl-summary-delete-canceled-msgs-from-list
 ;	       delete-list
 ;	       (wl-summary-buffer-msgdb))))
-	  (when delete-list
-	    (wl-summary-delete-messages-on-buffer delete-list "Deleting...")
-	    (message "Deleting...done"))
-	  (when new-msgdb
-	    (wl-summary-set-status-marks-on-buffer
-	     wl-summary-new-mark
-	     wl-summary-unread-uncached-mark))
-	  (setq append-list (elmo-msgdb-get-overview new-msgdb))
-	  (setq curp append-list)
-	  (setq num (length curp))
-	  (when append-list
-	    (setq i 0)
-	    ;; set these value for append-message-func
-	    (setq overview (elmo-msgdb-get-overview
-			    (elmo-folder-msgdb folder)))
-	    (setq number-alist (elmo-msgdb-get-number-alist
-				(elmo-folder-msgdb folder)))
-	    (setq mark-alist (elmo-msgdb-get-mark-alist
-			      (elmo-folder-msgdb folder)))
-	    (setq wl-summary-delayed-update nil)
-	    (elmo-kill-buffer wl-summary-search-buf-name)
-	    (while curp
-	      (setq entity (car curp))
-	      (when (setq update-thread
-			  (wl-summary-append-message-func-internal
-			   entity overview mark-alist
-			   (not sync-all)))
-		(wl-append update-top-list update-thread))
-	      (if elmo-use-database
-		  (elmo-database-msgid-put
-		   (car entity) (elmo-folder-name-internal folder)
-		   (elmo-msgdb-overview-entity-get-number entity)))
-	      (setq curp (cdr curp))
-	      (when (> num elmo-display-progress-threshold)
-		(setq i (+ i 1))
-		(if (or (zerop (% i 5)) (= i num))
-		    (elmo-display-progress
-		     'wl-summary-sync-update "Updating thread..."
-		     (/ (* i 100) num)))))
-	    (when wl-summary-delayed-update
-	      (while wl-summary-delayed-update
-		(message "Parent (%d) of message %d is no entity"
-			 (caar wl-summary-delayed-update)
-			 (elmo-msgdb-overview-entity-get-number
-			  (cdar wl-summary-delayed-update)))
-		(when (setq update-thread
-			    (wl-summary-append-message-func-internal
-			     (cdar wl-summary-delayed-update)
-			     overview mark-alist (not sync-all) t))
-		  (wl-append update-top-list update-thread))
-		(setq wl-summary-delayed-update
-		      (cdr wl-summary-delayed-update))))
-	    (when (and (eq wl-summary-buffer-view 'thread)
-		       update-top-list)
-	      (wl-thread-update-indent-string-thread
-	       (elmo-uniq-list update-top-list)))
-	    (message "Updating thread...done"))
-	  (unless (eq wl-summary-buffer-view 'thread)
-	    (wl-summary-make-number-list))
-	  (wl-summary-set-message-modified)
-	  (wl-summary-set-mark-modified)
-	  (when (and sync-all (eq wl-summary-buffer-view 'thread))
-	    (elmo-kill-buffer wl-summary-search-buf-name)
-	    (message "Inserting thread...")
-	    (setq wl-thread-entity-cur 0)
-	    (wl-thread-insert-top)
-	    (message "Inserting thread...done"))
-	  (if elmo-use-database
-	      (elmo-database-close))
-	  (run-hooks 'wl-summary-sync-updated-hook)
-	  (setq mes 
-		(if (and (eq (length delete-list) 0)
-			 (eq num 0))
-		    (format
-		     "No updates for \"%s\"" (elmo-folder-name-internal
-					      folder))
-		  (format "Updated (-%d/+%d) message(s)"
-			  (length delete-list) num))))
-      (setq mes "Quit updating."))
-    ;; synchronize marks.
-    (if (and wl-summary-auto-sync-marks sync-result)
-	(wl-summary-sync-marks))
-    ;; scoring
-    (when wl-use-scoring
-      (setq wl-summary-scored nil)
-      (wl-summary-score-headers nil (wl-summary-buffer-msgdb)
-				(and sync-all
-				     (wl-summary-rescore-msgs number-alist))
-				sync-all)
-      (when (and wl-summary-scored
-		 (setq expunged (wl-summary-score-update-all-lines)))
-	(setq mes (concat mes
-			  (format " (%d expunged)"
-				  (length expunged))))))
-    (if (and crossed (> crossed 0))
-	(setq mes
-	      (if mes
-		  (concat mes
-			  (format " (%d crosspost)" crossed))
-		(format "%d crosspost message(s)" crossed)))
-      (and mes (setq mes (concat mes "."))))
-    ;; Update Folder mode
-    (wl-folder-set-folder-updated
-     (elmo-folder-name-internal folder)
-     (list 0
-	   (wl-summary-count-unread
-	    (elmo-msgdb-get-mark-alist
-	     (elmo-folder-msgdb folder)))
-	   (elmo-folder-messages folder)))
-    (wl-summary-update-modeline)
-    (wl-summary-buffer-number-column-detect t)
-    ;;
-    (unless unset-cursor
-      (goto-char (point-min))
-      (if (not (wl-summary-cursor-down t))
-	  (progn
-	    (goto-char (point-max))
-	    (forward-line -1))
-	(if (and wl-summary-highlight
-		 (not (get-text-property (point) 'face)))
-	    (save-excursion
-	      (forward-line (- 0
-			       (or
-				wl-summary-partial-highlight-above-lines
-				wl-summary-highlight-partial-threshold)))
-	      (wl-highlight-summary (point) (point-max))))))
-    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
-    (wl-delete-all-overlays)
-    (set-buffer-modified-p nil)
-    (if mes (message "%s" mes))))
+		(when delete-list
+		  (wl-summary-delete-messages-on-buffer delete-list "Deleting...")
+		  (message "Deleting...done"))
+		(when new-msgdb
+		  (wl-summary-set-status-marks-on-buffer
+		   wl-summary-new-mark
+		   wl-summary-unread-uncached-mark))
+		(setq append-list (elmo-msgdb-get-overview new-msgdb))
+		(setq curp append-list)
+		(setq num (length curp))
+		(when append-list
+		  (setq i 0)
+		  ;; set these value for append-message-func
+		  (setq overview (elmo-msgdb-get-overview
+				  (elmo-folder-msgdb folder)))
+		  (setq number-alist (elmo-msgdb-get-number-alist
+				      (elmo-folder-msgdb folder)))
+		  (setq mark-alist (elmo-msgdb-get-mark-alist
+				    (elmo-folder-msgdb folder)))
+		  (setq wl-summary-delayed-update nil)
+		  (elmo-kill-buffer wl-summary-search-buf-name)
+		  (while curp
+		    (setq entity (car curp))
+		    (when (setq update-thread
+				(wl-summary-append-message-func-internal
+				 entity overview mark-alist
+				 (not sync-all)))
+		      (wl-append update-top-list update-thread))
+		    (if elmo-use-database
+			(elmo-database-msgid-put
+			 (car entity) (elmo-folder-name-internal folder)
+			 (elmo-msgdb-overview-entity-get-number entity)))
+		    (setq curp (cdr curp))
+		    (when (> num elmo-display-progress-threshold)
+		      (setq i (+ i 1))
+		      (if (or (zerop (% i 5)) (= i num))
+			  (elmo-display-progress
+			   'wl-summary-sync-update "Updating thread..."
+			   (/ (* i 100) num)))))
+		  (when wl-summary-delayed-update
+		    (while wl-summary-delayed-update
+		      (message "Parent (%d) of message %d is no entity"
+			       (caar wl-summary-delayed-update)
+			       (elmo-msgdb-overview-entity-get-number
+				(cdar wl-summary-delayed-update)))
+		      (when (setq update-thread
+				  (wl-summary-append-message-func-internal
+				   (cdar wl-summary-delayed-update)
+				   overview mark-alist (not sync-all) t))
+			(wl-append update-top-list update-thread))
+		      (setq wl-summary-delayed-update
+			    (cdr wl-summary-delayed-update))))
+		  (when (and (eq wl-summary-buffer-view 'thread)
+			     update-top-list)
+		    (wl-thread-update-indent-string-thread
+		     (elmo-uniq-list update-top-list)))
+		  (message "Updating thread...done"))
+		(unless (eq wl-summary-buffer-view 'thread)
+		  (wl-summary-make-number-list))
+		(wl-summary-set-message-modified)
+		(wl-summary-set-mark-modified)
+		(when (and sync-all (eq wl-summary-buffer-view 'thread))
+		  (elmo-kill-buffer wl-summary-search-buf-name)
+		  (message "Inserting thread...")
+		  (setq wl-thread-entity-cur 0)
+		  (wl-thread-insert-top)
+		  (message "Inserting thread...done"))
+		(if elmo-use-database
+		    (elmo-database-close))
+		(run-hooks 'wl-summary-sync-updated-hook)
+		(setq mes 
+		      (if (and (eq (length delete-list) 0)
+			       (eq num 0))
+			  (format
+			   "No updates for \"%s\"" (elmo-folder-name-internal
+						    folder))
+			(format "Updated (-%d/+%d) message(s)"
+				(length delete-list) num))))
+	    (setq mes "Quit updating.")))
+      ;; synchronize marks.
+      (if (and wl-summary-auto-sync-marks sync-result)
+	  (wl-summary-sync-marks))
+      ;; scoring
+      (when wl-use-scoring
+	(setq wl-summary-scored nil)
+	(wl-summary-score-headers nil (wl-summary-buffer-msgdb)
+				  (and sync-all
+				       (wl-summary-rescore-msgs number-alist))
+				  sync-all)
+	(when (and wl-summary-scored
+		   (setq expunged (wl-summary-score-update-all-lines)))
+	  (setq mes (concat mes
+			    (format " (%d expunged)"
+				    (length expunged))))))
+      (if (and crossed (> crossed 0))
+	  (setq mes
+		(if mes
+		    (concat mes
+			    (format " (%d crosspost)" crossed))
+		  (format "%d crosspost message(s)" crossed)))
+	(and mes (setq mes (concat mes "."))))
+      ;; Update Folder mode
+      (wl-folder-set-folder-updated
+       (elmo-folder-name-internal folder)
+       (list 0
+	     (wl-summary-count-unread
+	      (elmo-msgdb-get-mark-alist
+	       (elmo-folder-msgdb folder)))
+	     (elmo-folder-messages folder)))
+      (wl-summary-update-modeline)
+      (wl-summary-buffer-number-column-detect t)
+      ;;
+      (unless unset-cursor
+	(goto-char (point-min))
+	(if (not (wl-summary-cursor-down t))
+	    (progn
+	      (goto-char (point-max))
+	      (forward-line -1))
+	  (if (and wl-summary-highlight
+		   (not (get-text-property (point) 'face)))
+	      (save-excursion
+		(forward-line (- 0
+				 (or
+				  wl-summary-partial-highlight-above-lines
+				  wl-summary-highlight-partial-threshold)))
+		(wl-highlight-summary (point) (point-max))))))
+      (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
+      (wl-delete-all-overlays)
+      (set-buffer-modified-p nil)
+      (if mes (message "%s" mes)))))
   
 (defun wl-summary-set-score-mark (mark)
   (save-excursion
