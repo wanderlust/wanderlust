@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-21 17:39:07 teranisi>
+;; Time-stamp: <2000-06-22 09:29:22 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -120,7 +120,7 @@ size:   size of the entity."
 					&optional invisible-fields
 					visible-fields)
   (mmelmo-insert-sorted-header-from-buffer
-   (mime-entity-buffer entity)
+   (mime-buffer-entity-buffer-internal entity)
    (mime-buffer-entity-header-start-internal entity)
    (mime-buffer-entity-header-end-internal entity)
    invisible-fields visible-fields mmelmo-sort-field-list))

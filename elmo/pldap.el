@@ -36,11 +36,15 @@
 ;;; Code:
 ;; 
 
-(eval-when-compile (require 'cl)
-		   (require 'static))
+(eval-when-compile (require 'cl))
 
-(static-if (and (not (featurep 'pldap))
-		(fboundp 'ldap-open))
+(defmacro ldap-static-if (cond then &rest else)
+  (if (eval cond)
+      then
+    (` (progn  (,@ else)))))
+
+(ldap-static-if (and (not (featurep 'pldap))
+		     (fboundp 'ldap-open))
     ;; You have built-in ldap feature (XEmacs).
     (require 'ldap)
 
@@ -1041,7 +1045,7 @@ PASSWD is the corresponding password."
 	  (message "Deleting LDAP entry..."))
       (ldap-delete ldap dn))
     (ldap-close ldap)))
-;; end of static-if
+;; end of ldap-static-if
 )
 
 (provide 'pldap)

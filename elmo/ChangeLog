@@ -1,3 +1,25 @@
+2000-06-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-2.el (initialize-instance):
+	Use `mime-buffer-entity-buffer-internal' instead of
+	`mime-entity-buffer'.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-mime-entity-buffer): New function.
+	(mime-entity-body): Implemented.
+	(mime-goto-header-start-point): Deleted.
+	(mime-goto-body-end-point): Ditto.
+	(mime-entity-point-min): Ditto.
+	(mime-entity-point-max): Ditto.
+	(mime-entity-children): Ditto.
+	(mime-insert-header): Use `mime-buffer-entity-buffer-internal'
+	instead of `mime-entity-buffer'.
+	(mime-entity-header-buffer): Ditto.
+	(mime-entity-body-buffer): Ditto.
+	(mime-write-entity-content): Ditto.
+
+	* pldap.el (ldap-static-if): New macro.
+	(toplevel): Use it instead of `static-if'.
+
 2000-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pldap.el (ldap-search-basic): Don't collect 'dn' value even if it is

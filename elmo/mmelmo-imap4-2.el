@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:43:27 teranisi>
+;; Time-stamp: <00/06/22 09:54:34 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -248,7 +248,7 @@ These value must be specified as argument for `luna-make-entity'."
 	       'initialize-instance))
 	 entity init-args))
 
-(luna-define-method mime-entity-buffer ((entity mime-elmo-imap4-entity))
+(defun mmelmo-imap4-mime-entity-buffer (entity)
   (if (mime-buffer-entity-buffer-internal entity)
       (save-excursion
 	(set-buffer (mime-buffer-entity-buffer-internal entity))
@@ -259,10 +259,11 @@ These value must be specified as argument for `luna-make-entity'."
 		   (mime-elmo-entity-size-internal entity)))
 	      (mime-buffer-entity-set-buffer-internal entity nil)
 	      (message "Fetching skipped part...")
-	      (luna-send entity 'mime-entity-buffer entity)
+	      (mmelmo-imap4-mime-entity-buffer entity)
 	      (message "Fetching skipped part...done."))
 	    (setq mmelmo-imap4-fetched t)))
 	(mime-buffer-entity-buffer-internal entity))
+    ;; No buffer exist.
     (save-excursion
       (set-buffer (get-buffer-create 
 		   (concat mmelmo-entity-buffer-name
@@ -302,42 +303,20 @@ These value must be specified as argument for `luna-make-entity'."
 	  (mmelmo-imap4-read-part entity)))
       (current-buffer))))
 
-(luna-define-method mime-goto-header-start-point ((entity mime-elmo-imap4-entity))
-  (set-buffer (mime-entity-buffer entity))
-  (point-min))
-
-(luna-define-method mime-goto-body-end-point ((entity mime-elmo-imap4-entity))
-  (set-buffer (mime-entity-buffer entity))
-  (point-max))
-
-(luna-define-method mime-entity-point-min ((entity mime-elmo-imap4-entity))
-  (set-buffer (mime-buffer-entity-buffer-internal entity))
-  (point-min))
-
-(luna-define-method mime-entity-point-max ((entity mime-elmo-imap4-entity))
-  (set-buffer (mime-buffer-entity-buffer-internal entity))
-  (point-max))
-
-(luna-define-method mime-entity-children ((entity mime-elmo-imap4-entity))
-  (let* ((content-type (mime-entity-content-type entity))
-         (primary-type (mime-content-type-primary-type content-type)))
-    (cond ((eq primary-type 'multipart)
-           (mime-parse-multipart entity))
-          ((and (eq primary-type 'message)
-                (memq (mime-content-type-subtype content-type)
-                      '(rfc822 news external-body)
-                      ))
-	   (save-excursion
-	     (set-buffer (luna-send entity 'mime-entity-buffer entity))
-	     (mime-buffer-entity-set-body-start-internal entity (point-min))
-	     (mime-buffer-entity-set-body-end-internal entity (point-max)))
-           (mime-parse-encapsulated entity)))))
+; mime-entity-children
 
 ;; override generic function for dynamic body fetching.
+(luna-define-method mime-entity-body ((entity 
+				       mime-elmo-imap4-entity))
+  (save-excursion
+    (set-buffer (mmelmo-imap4-mime-entity-buffer entity))
+    (buffer-substring (mime-buffer-entity-body-start-internal entity)
+		      (mime-buffer-entity-body-end-internal entity))))
+
 (luna-define-method mime-entity-content ((entity 
 					  mime-elmo-imap4-entity))
   (save-excursion
-    (set-buffer (mime-entity-buffer entity))
+    (set-buffer (mmelmo-imap4-mime-entity-buffer entity))
     (mime-decode-string
      (buffer-substring (mime-buffer-entity-body-start-internal entity)
 		       (mime-buffer-entity-body-end-internal entity))
@@ -362,32 +341,42 @@ These value must be specified as argument for `luna-make-entity'."
 					&optional invisible-fields 
 					visible-fields)
   (mmelmo-insert-sorted-header-from-buffer
-   (mime-entity-buffer entity)
+   (mmelmo-imap4-mime-entity-buffer entity)
    (mime-buffer-entity-header-start-internal entity)
    (mime-buffer-entity-header-end-internal entity)
    invisible-fields visible-fields))
 
 (luna-define-method mime-entity-header-buffer ((entity mime-elmo-imap4-entity))
-  (mime-entity-buffer entity))
+  (mime-buffer-entity-buffer-internal entity))
 
 (luna-define-method mime-entity-body-buffer ((entity mime-elmo-imap4-entity))
-  (mime-entity-buffer entity))
+  (mime-buffer-entity-buffer-internal entity))
 
 (luna-define-method mime-write-entity-content ((entity mime-elmo-imap4-entity)
 					       filename)
-  (save-excursion
-    (set-buffer (mime-entity-buffer entity))
-    (unless mmelmo-imap4-fetched
-      (setq mmelmo-imap4-skipped-parts nil) ; No need?
-      (let ((mmelmo-imap4-threshold (mime-elmo-entity-size-internal entity)))
-	(mime-buffer-entity-set-buffer-internal entity nil) ; To re-fetch.
-	(message "Fetching skipped part...")
-	(luna-send entity 'mime-entity-buffer entity)
-	(message "Fetching skipped part...done.")))
-    (mime-write-decoded-region (mime-buffer-entity-body-start-internal entity)
-			       (mime-buffer-entity-body-end-internal entity)
-			       filename
-			       (or (mime-entity-encoding entity) "7bit"))))
+  (let ((mmelmo-imap4-threshold (mime-elmo-entity-size-internal entity)))
+    (if (mime-buffer-entity-buffer-internal entity)
+	(save-excursion
+	  (set-buffer (mime-buffer-entity-buffer-internal entity))
+	  (unless mmelmo-imap4-fetched
+	    (setq mmelmo-imap4-skipped-parts nil) ; No need?
+	    (mime-buffer-entity-set-buffer-internal entity nil) ; To re-fetch.
+	    ))
+      (unless mmelmo-imap4-fetched
+	(setq mmelmo-imap4-skipped-parts nil) ; No need?
+	(let ((mmelmo-imap4-threshold (mime-elmo-entity-size-internal entity)))
+	  (mime-buffer-entity-set-buffer-internal entity nil) ; To re-fetch.
+	  (message "Fetching skipped part...")
+	  (mime-buffer-entity-set-buffer-internal
+	   entity
+	   (mmelmo-imap4-mime-entity-buffer entity))
+	  (message "Fetching skipped part...done.")))
+      (with-current-buffer (mime-buffer-entity-buffer-internal entity)
+	(mime-write-decoded-region 
+	 (mime-buffer-entity-body-start-internal entity)
+	 (mime-buffer-entity-body-end-internal entity)
+	 filename
+	 (or (mime-entity-encoding entity) "7bit"))))))
 
 (provide 'mmelmo-imap4-2)
 
