@@ -63,18 +63,19 @@
 (defvar elmo-pipe-drained-hook nil "A hook called when the pipe is flushed.")
 
 (defun elmo-pipe-drain (src dst)
-  (let ((srclist (elmo-list-folder src))
-	(msgdb (elmo-msgdb-load src))
-	elmo-nntp-use-cache
+  "Move all messages of SRC to DST."
+  (let (elmo-nntp-use-cache
 	elmo-imap4-use-cache
 	elmo-pop3-use-cache ; Inhibit caching while moving messages.
 	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
-    (elmo-move-msgs src srclist dst msgdb)
-    ;; Don't save msgdb here.
-    ;; Because summary view of original folder is not updated yet.
-    ;; (elmo-msgdb-save src msgdb)
-    (elmo-commit src)
+    (let ((srclist (elmo-list-folder src))
+	  (msgdb (elmo-msgdb-load src)))
+      (elmo-move-msgs src srclist dst msgdb)
+      ;; Don't save msgdb here.
+      ;; Because summary view of original folder is not updated yet.
+      ;; (elmo-msgdb-save src msgdb)
+      (elmo-commit src))
     (run-hooks 'elmo-pipe-drained-hook)))
 
 (defun elmo-pipe-list-folder (spec)
