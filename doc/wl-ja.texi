@@ -277,7 +277,7 @@ APEL, FLIM, SEMI の順にインストールしてください。
 推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
 
 @itemize @minus
-@item APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
+@item APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
 @end itemize
 
 その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、

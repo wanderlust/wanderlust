@@ -1,3 +1,25 @@
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync): Added 'all-shown'
+
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-input-range): Added `all-shown'
+
+2000-02-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Bind 'nohide as t if sync-all.
+
+2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-biff-init-icons): Don't generate icons if the
+	display does not support graphics.
+	(wl-plugged-init-icons): Ditto.
+	(wl-folder-init-icons): Ditto.
+
+	* wl-demo.el (wl-demo): Chech closely whether the display
+	supports graphics.
+
 2001-02-19  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-highlight.el (wl-highlight-summary-line-string): Use

@@ -496,7 +496,7 @@ Don't cache if nil.")
      (goto-char (point-min))
      (read (current-buffer)))))
 
-(defun elmo-nntp-list-folder (spec)
+(defun elmo-nntp-list-folder (spec &optional nohide)
   (let ((session (elmo-nntp-get-session spec))
 	(group   (elmo-nntp-spec-group spec))
 	(killed (and elmo-use-killed-list
