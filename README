@@ -15,9 +15,9 @@ Features:
  * Folder mode to select and edit subscribed folders.
  * Message cache, Disconnected Operation.
  * MH-like Fcc (Fcc: %Backup is possible).
- * Full support of MIME (by SEMI or tm[5]).
+ * Full support of MIME (by SEMI).
  * Draft editing of mail and news as a same interface.
- * Icon based interface for the list of Folder (XEmacs).
+ * Icon based interface for the list of Folder (XEmacs and Emacs 21).
  * Skip fetching of a large message part of MIME(IMAP4).
  * Server side searching (IMAP4), internationalized searching is available.
  * Virtual folder.

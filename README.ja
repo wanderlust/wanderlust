@@ -15,9 +15,9 @@ Features:
  * 購読フォルダの一覧を表示するフォルダモード。
  * メッセージキャッシュ、 Disconnected Operation。
  * MH 的 Fcc。(Fcc: %Backup も可)。
- * MIME 対応 (by SEMI or tm [5])。
+ * MIME 対応 (by SEMI)。
  * ニュース/メールの送信を統合したドラフト編集。
- * フォルダ一覧のアイコン表示 (XEmacs)。
+ * フォルダ一覧のアイコン表示 (XEmacs and Emacs 21)。
  * 大きなパートを取り寄せずに表示(IMAP4)。
  * メッセージの検索をサーバ側で実行(IMAP4)。日本語検索も可。
  * 仮想フォルダ。
