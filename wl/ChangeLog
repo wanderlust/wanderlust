@@ -1,12 +1,4 @@
-2001-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-version-show): Use `product-string-1'
-	instead of `wl-version'.
-	* wl-fldmgr.el (wl-fldmgr-folders-header): Likewise.
-
-	* wl-demo.el (wl-demo-copyright-notice): Add 2001.
-
-2000-12-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+2000-12-31  TAKAHASHI Kaoru  <moge@hoge.org>
 
 	* wl-highlight.el (wl-highlight-headers): Revert
 	`wl-highlight-x-face-func' argument (`beg' and `end').

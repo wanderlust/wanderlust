@@ -32,7 +32,7 @@
 ;;
 
 (defconst wl-demo-copyright-notice
-  "Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>")
+  "Copyright (C) 1998-2000 Yuuichi Teranishi <teranisi@gohome.org>")
 
 (require 'wl-vars)
 (require 'wl-version)

@@ -52,7 +52,7 @@
 # This file is generated automatically by %s.
 #
 
-" (product-string-1 'wl-version t)))
+" (wl-version t)))
 
 ;;; Initial setup
 

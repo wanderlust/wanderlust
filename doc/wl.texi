@@ -5888,10 +5888,7 @@ If you use x-face-mule 0.19 or older, do the following:
 
 @lisp
 @group
-(setq wl-highlight-x-face-func
-      (function
-       (lambda (&optional beg end)
-         (x-face-mule:x-face-decode-message-header))))
+(setq wl-highlight-x-face-func 'x-face-mule:x-face-decode-message-header)
 (require 'x-face-mule)
 @end group
 @end lisp
@@ -5900,10 +5897,7 @@ If you use x-face-mule 0.20 or later, try the following:
 
 @lisp
 @group
-(setq wl-highlight-x-face-func
-      (function
-       (lambda (&optional beg end)
-         (x-face-mule-x-face-decode-message-header))))
+(setq wl-highlight-x-face-func 'x-face-mule-x-face-decode-message-header)
 (require 'x-face-mule)
 @end group
 @end lisp
