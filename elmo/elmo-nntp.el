@@ -111,6 +111,9 @@
 		      (expand-file-name "nntp"
 					elmo-msgdb-dir)))))
 
+(luna-define-method elmo-folder-newsgroups ((folder elmo-nntp-folder))
+  (list (elmo-nntp-folder-group-internal folder)))
+
 ;;; NNTP Session
 (eval-and-compile
   (luna-define-class elmo-nntp-session (elmo-network-session)

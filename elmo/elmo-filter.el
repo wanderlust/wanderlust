@@ -64,6 +64,9 @@
    (elmo-replace-string-as-filename (elmo-folder-name-internal folder))
    (expand-file-name "filter" elmo-msgdb-dir)))
 
+(luna-define-method elmo-folder-newsgroups ((folder elmo-filter-folder))
+  (elmo-folder-newsgroups (elmo-filter-folder-target-internal folder)))
+
 (luna-define-method elmo-find-fetch-strategy
   ((folder elmo-filter-folder) entity &optional ignore-cache)
   (elmo-find-fetch-strategy

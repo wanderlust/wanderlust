@@ -163,6 +163,9 @@
   ;; Share with destination...OK?
   (elmo-folder-expand-msgdb-path (elmo-pipe-folder-dst-internal folder)))
 
+(luna-define-method elmo-folder-newsgroups ((folder elmo-pipe-folder))
+  (elmo-folder-newsgroups (elmo-pipe-folder-target-internal folder)))
+
 (luna-define-method elmo-folder-creatable-p ((folder elmo-pipe-folder))
   (and (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder))
        (elmo-folder-creatable-p (elmo-pipe-folder-dst-internal folder))))

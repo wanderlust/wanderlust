@@ -1,3 +1,8 @@
+2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-get-newsgroups): Use
+	`elmo-folder-newsgroups'.
+
 2001-11-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-config-sub-header-top): New fucntion.

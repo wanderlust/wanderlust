@@ -2029,23 +2029,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-folder-get-newsgroups (folder)
   "Return Newsgroups field value string for FOLDER newsgroup.
 If FOLDER is multi, return comma separated string (cross post)."
-  (let ((flist (elmo-folder-get-primitive-list
-		(wl-folder-get-elmo-folder folder))) ; multi
-	newsgroups fld ret)
-    (while (setq fld (car flist))
-      (if (setq ret
-		(cond ((eq 'nntp (elmo-folder-type-internal fld))
-		       (elmo-nntp-folder-group-internal fld))
-		      ((eq 'localnews (elmo-folder-type-internal fld))
-		       (elmo-replace-in-string
-			(elmo-localdir-folder-dir-name-internal fld)
-			"/" "\\."))))
-	  ;; append newsgroup
-	  (setq newsgroups (if (stringp newsgroups)
-			       (concat newsgroups "," ret)
-			     ret)))
-      (setq flist (cdr flist)))
-    (list nil nil newsgroups)))
+  (list nil nil (mapconcat 'identity
+			   (elmo-folder-newsgroups folder)
+			   ",")))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule (entity)
   "Return ML address guess by FOLDER.

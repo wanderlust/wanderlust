@@ -1,3 +1,20 @@
+2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-newsgroups): New generic function.
+
+	* elmo-localnews.el (elmo-localnews-folder): Added `group' slot.
+	(elmo-folder-initialize): Set it.
+	(elmo-folder-expand-msgdb-path): Use it.
+	(elmo-folder-newsgroups): Define.
+
+	* elmo-filter.el (elmo-folder-newsgroups): Define.
+
+	* elmo-pipe.el (elmo-folder-newsgroups): Ditto.
+
+	* elmo-nntp.el (elmo-folder-newsgroups): Ditto.
+
+	* elmo-multi.el (elmo-folder-newsgroups): Ditto.
+
 2001-11-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-shimbun.el (elmo-shimbun-update-overview-folder-list): New

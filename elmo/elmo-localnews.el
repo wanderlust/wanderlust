@@ -31,7 +31,17 @@
 ;;; Code:
 ;; 
 (require 'elmo-localdir)
-(luna-define-class elmo-localnews-folder (elmo-localdir-folder) ())
+
+(eval-and-compile
+  (luna-define-class elmo-localnews-folder (elmo-localdir-folder) (group))
+  (luna-define-internal-accessors 'elmo-localnews-folder))
+
+(luna-define-method elmo-folder-initialize :before ((folder
+						     elmo-localnews-folder)
+						    name)
+  (elmo-localnews-folder-set-group-internal folder
+					    (elmo-replace-in-string
+					     name "/" "\\.")))
 
 (luna-define-method elmo-localdir-folder-path ((folder elmo-localnews-folder))
   elmo-localnews-folder-path)
@@ -43,11 +53,13 @@
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localnews-folder))
   (expand-file-name
-   (elmo-replace-in-string (elmo-localdir-folder-dir-name-internal folder)
-			   "/" "\\.")
+   (elmo-localnews-folder-group-internal folder)
    (expand-file-name
     (symbol-name (elmo-folder-type-internal folder))
     elmo-msgdb-dir)))
+
+(luna-define-method elmo-folder-newsgroups ((folder elmo-localnews-folder))
+  (list (elmo-localnews-folder-group-internal folder)))
 
 (require 'product)
 (product-provide (provide 'elmo-localnews) (require 'elmo-version))

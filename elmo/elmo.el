@@ -600,6 +600,12 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (luna-define-generic elmo-folder-append-msgdb (folder append-msgdb)
   "Append  APPEND-MSGDB to the current msgdb of the folder.")
 
+(luna-define-generic elmo-folder-newsgroups (folder)
+  "Return list of newsgroup name of FOLDER.")
+
+(luna-define-method elmo-folder-newsgroups ((folder elmo-folder))
+  nil)
+
 (luna-define-method elmo-folder-open ((folder elmo-folder)
 				      &optional load-msgdb)
   (elmo-generic-folder-open folder load-msgdb))
