@@ -1,3 +1,8 @@
+2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Follow the
+	API change.
+
 2003-09-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb.el: New file.

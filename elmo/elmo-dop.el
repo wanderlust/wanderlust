@@ -299,6 +299,13 @@ FOLDER is the folder structure."
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
+	(flags (cond ((listp flag)
+		      flag)
+		     ;; for compatibility
+		     ((eq flag t)
+		      nil)
+		     (t
+		      (list flag))))
 	failure saved dequeued)
     (with-temp-buffer
       (if (elmo-message-fetch spool-folder number
@@ -308,7 +315,7 @@ FOLDER is the folder structure."
 	      (setq failure (not
 			     (elmo-folder-append-buffer
 			      folder
-			      (if (eq flag t) nil flag) ; for compatibility
+			      flags
 			      set-number)))
 	    (error (setq failure t)))
 	(setq dequeued t)) ; Already deletef from queue.
@@ -316,7 +323,7 @@ FOLDER is the folder structure."
 	;; Append failed...
 	(setq saved (elmo-folder-append-buffer
 		     (elmo-make-folder elmo-lost+found-folder)
-		     (if (eq flag t) nil flag) ; for compatibility
+		     flags
 		     set-number)))
       (if (and (not dequeued)    ; if dequeued, no need to delete.
 	       (or (not failure) ; succeed
