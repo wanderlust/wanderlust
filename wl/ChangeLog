@@ -1,5 +1,11 @@
 2000-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-folder.el (wl-folder-sync-entity): Bind name of summary/message
+	buffer as command specific.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+	(wl-folder-drop-unsync-entity): Ditto.
+
 	* wl-vars.el (wl-prog-uudecode-arg): Changed default to nil.
 	(wl-prog-uudecode-no-stdout-option): Changed default to t.
 	(Advised by YAMASHITA Junji <ysjj@unixuser.org>)
