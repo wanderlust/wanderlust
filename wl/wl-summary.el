@@ -1309,7 +1309,7 @@ If ARG is non-nil, checking is omitted."
 				      wl-summary-incorporate-marks))
 
 (defun wl-summary-prefetch-msg (number &optional arg)
-  "Returns status-mark. if skipped, returns nil."
+  "Prefetch message and return non-nil value. If skipped, return nil."
   ;; prefetching procedure.
   (save-excursion
     (let* ((size (elmo-message-field wl-summary-buffer-elmo-folder
