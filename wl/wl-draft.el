@@ -2400,6 +2400,8 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
   (unless (featurep 'wl)
     (require 'wl))
+  (or switch-function
+      (setq switch-function 'keep))
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
