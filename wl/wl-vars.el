@@ -918,6 +918,12 @@ ex.
   :group 'wl-draft
   :group 'wl-pref)
 
+(defcustom wl-draft-use-cache t
+  "*If non-nil, sending message is cached."
+  :type 'boolean
+  :group 'wl-draft
+  :group 'wl-pref)
+
 (defcustom wl-auto-flush-queue t
   "*If non-nil, sending queue is flushed when network status is toggled."
   :type 'boolean

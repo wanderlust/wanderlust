@@ -1,5 +1,11 @@
 2000-10-15  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-draft-use-cache): New variable.
+	* wl-draft.el (wl-draft-dispatch-message): Sending message is cached,
+	if wl-draft-use-cache is non-nil.
+
+2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-summary (wl-summary-prefetch): Don't prefetch if cached.
 	(wl-summary-prefetch-msg): force prefetch if called with optional argument.
 
