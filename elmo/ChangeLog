@@ -1,5 +1,12 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-pop3.el (elmo-network-authenticate-session): Abolish
+	`elmo-pop3-force-login'.
+	Redefine `sasl-mechanisms'.
+	* elmo-vars.el (elmo-pop3-force-login): Ditto.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-imap4.el (toplevel): Delete defun-maybe for sasl-*.
 	Delete `elmo-imap4-authenticator-alist'.
 	(elmo-imap4-auth-cram-md5): Delete.

@@ -266,10 +266,10 @@
 	   sasl-mechanism-alist
 	   (list '("USER" sasl-pop3-user)
 		 '("APOP" sasl-pop3-apop))))
+	 (sasl-mechanisms
+	  (append sasl-mechanisms (list "USER" "APOP")))
 	 (mechanism
-	  (if (eq auth 'any)
-	      (sasl-find-mechanism sasl-mechanisms)
-	    (sasl-find-mechanism auth)))
+	    (sasl-find-mechanism auth))
 	 client name step response
 	 sasl-read-passphrase)
     (unless mechanism
