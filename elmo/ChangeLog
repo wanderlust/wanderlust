@@ -1,3 +1,8 @@
+2001-02-13  OKAZAKI Tetsurou  <refactor@acidrain.localnet>
+
+	* elmo-imap4.el (elmo-imap4-prefetch-msg): Set `msgdb'
+	argument of `elmo-imap4-read-msg' as nil.
+
 2001-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-prefetch-msg): Set `unread' argument of
