@@ -1,5 +1,9 @@
 2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-highlight.el (wl-highlight-summary-answered-face): New face.
+	(wl-highlight-summary-line-string): Use it.
+	(wl-highlight-summary-current-line): Ditto.
+
 	* wl-mime.el (wl-message-delete-current-part): Check the class of
 	mime-entity.
 
