@@ -2394,11 +2394,6 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   (let ((wl-user-agent-headers-and-body-alist other-headers)
 	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
 	(wl-draft-buffer-style switch-function))
-    (when (eq switch-function 'switch-to-buffer-other-window)
-      (when (one-window-p t)
-	(if (window-minibuffer-p) (other-window 1))
-	(split-window))
-      (other-window 1))
     (if to
 	(if (wl-string-match-assoc "to" wl-user-agent-headers-and-body-alist
 				   'ignore-case)
