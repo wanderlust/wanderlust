@@ -3522,7 +3522,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 				 (or (wl-refile-guess entity) wl-trash-folder)
 				 (format "for %s" copy-or-refile)))))
       ;; Cache folder hack by okada@opaopa.org
-      (if (and (eq (car (elmo-folder-get-spec folder)) 'cache)
+      (if (and (eq (car (elmo-folder-get-spec
+			 (wl-folder-get-realname folder))) 'cache)
 	       (not (string= folder
 			     (setq tmp-folder
 				   (concat "'cache/"

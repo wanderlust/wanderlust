@@ -1,3 +1,27 @@
+2000-11-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.5.1.
+
+2000-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub):
+	Print refile/copy destination.
+
+2000-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-toggle-plugged): Don't call `wl-biff-start' if
+	queue-flush-only is non-nil.
+
+	* wl-util.el (wl-biff-check-folder-async): Fix close parenthesis.
+
+	* wl-summary.el (wl-summary-refile-subr): Use folder realname while
+	checking cache folder.
+
+2000-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name): Use
+	`regexp-quote'.
+
 2000-11-08  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name): New

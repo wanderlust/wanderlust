@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.5.0
+@set VERSION 2.5.1
 @synindex pg cp
 @finalout
 
@@ -761,12 +761,12 @@ You can omit the @var{hostname} from folder names if you set
 For example, you can specify a folder as @samp{foo%imap@@gateway} even
 if you have to go through a firewall.
 
-SSL (Secure Socket Layer) connection will be used if a folder name
-ends with @samp{!}. Or, if the value of @code{elmo-default-imap4-ssl} is non-nil,
-SSL will be the default connection.
-If a folder name ends with @samp{!!}, STARTTLS connection will be established.
-If the value of @code{elmo-default-imap4-ssl} is 'starttls,
-STARTTLS will be the default connection.
+SSL (Secure Socket Layer) connection will be used if a folder name ends
+with @samp{!}. Or, if the value of @code{elmo-default-imap4-stream-type}
+is non-nil, SSL will be the default connection.  If a folder name ends
+with @samp{!!}, STARTTLS connection will be established.  If the value
+of @code{elmo-default-imap4-stream-type} is @code{starttls}, STARTTLS
+will be the default connection.
 
 If you specify @code{login}, @code{cram-md5} or @code{digest-md5} as
 authentication method, the password is sent in encoded form. But, if
@@ -867,10 +867,10 @@ default:
 @end example
 
 AUTHINFO is used as authentication method if the @var{username} is non-nil.
-SSL will be default method if @code{elmo-default-nntp-ssl} is non-nil even
+SSL will be default method if @code{elmo-default-nntp-stream-type} is non-nil even
 if the folder name doesn't end with @samp{!}.
 If a folder name ends with @samp{!!}, STARTTLS connection will be established.
-if the value of @code{elmo-default-nntp-ssl} is @code{starttls},
+if the value of @code{elmo-default-nntp-stream-type} is @code{starttls},
 STARTTLS will be the default connection.
 
 Example:
@@ -1270,10 +1270,10 @@ To use apop as an @var{authenticate-type}, @file{md5.el} is needed
 
 If the last character of the folder name is @samp{!}, Wanderlust
 connects to the POP server via SSL (Secure Socket Layer).  If you set
-non-nil value to @code{elmo-default-pop-ssl}, you don't have to put
+non-nil value to @code{elmo-default-pop3-stream-type}, you don't have to put
 @samp{!} in the end of the folder name to use SSL. If a folder name ends
 with @samp{!!}, STARTTLS connection will be established.  if the value
-of @code{elmo-default-pop-ssl} is @code{starttls}, STARTTLS will be the
+of @code{elmo-default-pop3-stream-type} is @code{starttls}, STARTTLS will be the
 default connection.
 
 @node Multi Folder, Filter Folder, POP Folder, Folders
@@ -2427,6 +2427,11 @@ Enter message buffer by typing @kbd{j} key.
 To operate multipart, you have to enter to the message buffer.
 @xref{Message}.
 
+@subsection Pack the Message Numbers
+You can pack the message numbers in Summary by 
+@kbd{M-x wl-summary-pack-number}. Note that only MH Folder, 
+News Spool Folder and Maildir Folder are supported folder types.
+
 
 @node Thread Operations, Cache, Usage of Summary Mode, Summary
 @section Thread Operations
@@ -3497,7 +3502,7 @@ If non-nil and @code{wl-summary-jump-to-msg-by-message-id} failed, call
 @code{wl-summary-jump-to-msg-by-message-id-via-nntp} and search message
 from the NNTP server @code{elmo-default-nntp-server}.  The value of
 @code{elmo-default-nntp-user}, @code{elmo-default-nntp-port},
-@code{elmo-default-nntp-ssl} are used.
+@code{elmo-default-nntp-stream-type} are used.
 
 If @code{confirm}, server name can be specified. You can specify NNTP
 folder format like @samp{-:username@@servername:119!}.
@@ -3926,10 +3931,10 @@ If unset, @code{elmo-default-pop3-authenticate-type} is used.
 The POP port number for POP-before-SMTP authentication.
 If unset, @code{elmo-default-pop3-port} is used.
 
-@item wl-pop-before-smtp-ssl
+@item wl-pop-before-smtp-stream-type
 If non-nil, POP connection is established using SSL.  If
 @code{starttls}, STARTTLS (RFC2595) connection will be established.  If
-unset, @code{elmo-default-pop3-ssl} is used.
+unset, @code{elmo-default-pop3-stream-type} is used.
 @end table
 
 If variables for POP-before-SMTP (@code{wl-pop-before-smtp-*}) are 
@@ -4303,10 +4308,10 @@ The initial setting is @code{nil}.
 This is the port number of the NNTP server used for news submission.
 If @code{nil}, @code{elmo-default-nntp-server} is used.
 
-@item wl-nntp-posting-ssl
-@vindex wl-nntp-posting-ssl
+@item wl-nntp-posting-stream-type
+@vindex wl-nntp-posting-stream-type
 The initial setting is @code{nil}.
-If @code{nil}, @code{elmo-default-nntp-ssl} is evaluated.  If non-nil,
+If @code{nil}, @code{elmo-default-nntp-stream-type} is evaluated.  If non-nil,
 SSL is used for news submission.  If @code{starttls}, STARTTLS (RFC2595)
 connection will be established.
 
@@ -4334,11 +4339,11 @@ The initial setting is @code{nil}.
 This is the POP port number for POP-before-SMTP.  If it is @code{nil},
 @code{elmo-default-pop3-port} is used.
 
-@item wl-pop-before-smtp-ssl
-@vindex wl-pop-before-smtp-ssl
+@item wl-pop-before-smtp-stream-type
+@vindex wl-pop-before-smtp-stream-type
 The initial setting is @code{nil}.
 This flag controls the use of SSL for POP-before-SMTP.  If it is
-@code{nil}, @code{elmo-default-pop3-ssl} is used.  If @code{starttls},
+@code{nil}, @code{elmo-default-pop3-stream-type} is used.  If @code{starttls},
 STARTTLS (RFC2595) connection will be established.
 
 @item wl-draft-queue-save-variables
@@ -4388,6 +4393,13 @@ If non-nil, the value is used as port number.
 @vindex wl-ldap-base
 The initial setting is @samp{c=US}.
 LDAP search starting point (base) for address completion.
+
+@item wl-draft-remove-group-list-contents
+@vindex wl-draft-remove-group-list-contents
+The initial setting is @code{t}.
+If non-nil, remove the group-lists' members in the recipients when
+sending the message (group-list means the description such as
+@samp{Group: foo@@gohome.org, bar@@gohome.org;} in the recipients).
 @end table
 
 @node Disconnected Operations, Expire and Archive, Draft, Top
@@ -6165,12 +6177,12 @@ folder mode.
 
 @item wl-highlight-folder-opened-face
 The face for open groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
+It is meaningful when @code{wl-highlight-folder-by-numbers} is
 @code{nil} or a @var{number}.
 
 @item wl-highlight-folder-closed-face
 The face for close groups in the folder mode.
-It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
+It is meaningful when @code{wl-highlight-folder-by-numbers} is
 @code{nil} or a @var{number}.
 
 @item wl-highlight-folder-path-face
@@ -6246,6 +6258,11 @@ copied to @samp{To:} field.)
 
 Moreover, the behavior of @kbd{a} with prefix argument can 
 be directed by @code{wl-draft-reply-with-argument-list} as well.
+
+Note: To set the behavior when you reply to the message written by yourself, use
+@code{wl-draft-reply-myself-without-argument-list} and
+@code{wl-draft-reply-myself-with-argument-list}
+instead of them.
 
 @node Thread Format, User-Agent Field, Draft for Reply, Advanced Settings
 @subsection Appearance of Threads

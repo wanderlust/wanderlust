@@ -221,6 +221,13 @@
 	    ;;"e-mail2@bbb.com" ...
 	    ))
 
+;; Subscribed mailing list
+(setq wl-subscribed-mailing-list
+      '("wl@lists.airs.net"
+	"apel-ja@m17n.org"
+	;;"ml@example.com" ...
+	))
+
 ;; Change summary display function.
 
 ;; get extra field values as overview information (only localdir folder).
