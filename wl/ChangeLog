@@ -1,3 +1,25 @@
+2002-10-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-region-exists-p): New function.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Use it;
+	Remove defvars for byte-compile warnings.
+
+2002-10-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Fixed last change; use defvar instead of
+	defvar-maybe. Removed unused bind.
+
+2002-10-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-forward): If wl-draft-use-frame, select
+	summary buffer window before creating new frame.
+	(wl-draft-reply): Ditto.
+
+2002-10-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Avoid byte-compile warnings.
+
 2002-10-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-draft-yank-current-message-entity): Fix logic.
