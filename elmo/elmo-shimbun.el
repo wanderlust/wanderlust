@@ -119,20 +119,6 @@ See `shimbun-headers' for more detail about RANGE."
 		    headers))))
     (nreverse headers)))
 
-(defun elmo-shimbun-folder-setup (folder)
-  ;; Resume headers from existing msgdb.
-  (elmo-shimbun-folder-set-headers-internal
-   folder
-   (elmo-shimbun-msgdb-to-headers folder nil))
-  (elmo-shimbun-folder-set-header-hash-internal
-   folder
-   (elmo-make-hash
-    (length (elmo-shimbun-folder-headers-internal folder))))
-  (dolist (header (elmo-shimbun-folder-headers-internal folder))
-    (elmo-set-hash-val
-     (shimbun-header-id header) header
-     (elmo-shimbun-folder-header-hash-internal folder))))
-
 (defun elmo-shimbun-get-headers (folder)
   (shimbun-open-group
    (elmo-shimbun-folder-shimbun-internal folder)
@@ -151,7 +137,6 @@ See `shimbun-headers' for more detail about RANGE."
 			    (shimbun-header-id x)
 			    (elmo-folder-msgdb folder))
 		     x))
-		 ;; This takes much time.
 		 (shimbun-headers
 		  (elmo-shimbun-folder-shimbun-internal folder)
 		  (elmo-shimbun-folder-range-internal folder)))))
@@ -196,19 +181,11 @@ See `shimbun-headers' for more detail about RANGE."
 	 elmo-shimbun-default-index-range))
     folder))
 
-(luna-define-method elmo-folder-open-internal ((folder elmo-shimbun-folder))
-  (let ((inhibit-quit t))
-    (elmo-map-folder-location-setup
-     folder 
-     (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
-    ;; Resume headers from existing msgdb.
-    (elmo-shimbun-folder-setup folder))
+(luna-define-method elmo-folder-open-internal :before ((folder
+							elmo-shimbun-folder))
   (when (elmo-folder-plugged-p folder)
     (if (elmo-shimbun-headers-check-p folder)
-	(elmo-shimbun-get-headers folder))
-    (elmo-map-folder-update-locations
-     folder
-     (elmo-map-folder-list-message-locations folder))))
+	(elmo-shimbun-get-headers folder))))
 
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
