@@ -1,3 +1,8 @@
+2004-11-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el (wl-summary-mode): Set `show-trailing-whitespace'
+	after boundp check.
+
 2004-11-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mimic-kill-buffer): New command.
