@@ -590,7 +590,7 @@ e.g. \"Mr. bar <hoge@foo.com>\"
   (or (wl-address-get-petname-1 string)
       string))
 
-(defsubst wl-address-user-mail-address-p (address)
+(defun wl-address-user-mail-address-p (address)
   "Judge whether ADDRESS is user's or not."
   (member (downcase (wl-address-header-extract-address address))
 	  (or (mapcar 'downcase wl-user-mail-address-list)
@@ -598,7 +598,7 @@ e.g. \"Mr. bar <hoge@foo.com>\"
 		     (wl-address-header-extract-address
 		      wl-from))))))
 
-(defsubst wl-address-delete-user-mail-addresses (address-list)
+(defun wl-address-delete-user-mail-addresses (address-list)
   "Delete user mail addresses from list by side effect.
 Deletion is done by using `elmo-list-delete'."
   (let ((myself (or wl-user-mail-address-list
