@@ -26,7 +26,7 @@
 ;;
 
 ;;; Commentary:
-;;   Edit To:, Cc:, Bcc: fields interactively from E-Mail address list
+;;   Edit To:, Cc:, Bcc: fields interactively from E-Mail address list 
 ;;   on ~/.address file.
 
 ;;; Code:
@@ -153,7 +153,7 @@ Defined by `wl-addrmgr-method-alist'."
   (define-key wl-addrmgr-mode-map "\C-c\C-k" 'wl-addrmgr-quit)
 
   (define-key wl-addrmgr-mode-map "C"    'wl-addrmgr-change-method)
-
+  
   (define-key wl-addrmgr-mode-map "Z"    'wl-addrmgr-reload)
   (define-key wl-addrmgr-mode-map "\C-c\C-l" 'wl-addrmgr-redraw))
 
@@ -174,7 +174,8 @@ See info under Wanderlust for full documentation.
   "Return address list."
   (mapcar
    (lambda (addr)
-     (nth 1 (std11-extract-address-components addr)))
+     (cons (nth 1 (std11-extract-address-components addr))
+	   addr))
    (wl-parse-addresses
     (mapconcat 'identity (elmo-multiple-fields-body-list (list field)) ","))))
 
@@ -189,7 +190,7 @@ See info under Wanderlust for full documentation.
     (if (eq major-mode 'wl-draft-mode)
 	(if (get-buffer-window wl-addrmgr-buffer-name)
 	    nil
-	  (split-window (selected-window)
+	  (split-window (selected-window) 
 			(- (window-height (selected-window))
 			   wl-addrmgr-buffer-lines))
 	  (select-window (next-window))
@@ -200,7 +201,7 @@ See info under Wanderlust for full documentation.
       (switch-to-buffer (get-buffer-create wl-addrmgr-buffer-name)))
     (set-buffer wl-addrmgr-buffer-name)
     (wl-addrmgr-mode)
-    (unless wl-addrmgr-method
+    (unless wl-addrmgr-method 
       (setq wl-addrmgr-method wl-addrmgr-default-method
 	    wl-addrmgr-method-name (symbol-name wl-addrmgr-default-method)))
     (unless wl-addrmgr-sort-key
@@ -274,7 +275,7 @@ See info under Wanderlust for full documentation.
     (put-text-property 0 (length addr) 'face
 		       wl-addrmgr-address-face
 		       addr)
-    (insert
+    (insert 
      (wl-set-string-width
       (- wl-addrmgr-line-width 4)
       (concat real " " pet " " addr)))
@@ -300,7 +301,7 @@ Return nil if no ADDRESS exists."
 	  list field addrs beg real pet addr)
       (erase-buffer)
       (goto-char (point-min))
-      (insert
+      (insert 
        "Mark "
        (wl-set-string-width wl-addrmgr-realname-width
 			    "Realname")
@@ -325,12 +326,12 @@ Return nil if no ADDRESS exists."
 	      addrs (cdr list))
 	(while addrs
 	  (goto-char (point-min))
-	  (when (wl-addrmgr-search-forward-address (car addrs))
+	  (when (wl-addrmgr-search-forward-address (car (car addrs)))
 	    (wl-addrmgr-mark-write field)
 	    (setcdr list (delq (car addrs) (cdr list))))
 	  (setq addrs (cdr addrs)))
 	(setq already-list (cdr already-list))))))
-
+  
 (defun wl-addrmgr-next ()
   "Move cursor next line."
   (interactive)
@@ -419,8 +420,8 @@ Return nil if no ADDRESS exists."
 (defun wl-addrmgr-sort ()
   "Sort address entry."
   (interactive)
-  (setq wl-addrmgr-sort-key (intern
-			     (completing-read
+  (setq wl-addrmgr-sort-key (intern 
+			     (completing-read 
 			      (format "Sort By (%s): "
 				      (symbol-name wl-addrmgr-sort-key))
 			      '(("address")("realname")("petname")("none"))
@@ -428,8 +429,8 @@ Return nil if no ADDRESS exists."
 			      (symbol-name wl-addrmgr-sort-key))))
   (if (eq wl-addrmgr-sort-key 'none)
       (wl-addrmgr-reload)
-    (setq wl-addrmgr-sort-order (intern
-				 (completing-read
+    (setq wl-addrmgr-sort-order (intern 
+				 (completing-read 
 				  (format "Sort Order (%s): "
 					  (symbol-name wl-addrmgr-sort-order))
 				  '(("ascending") ("descending"))
@@ -446,9 +447,9 @@ Return nil if no ADDRESS exists."
 
 (defun wl-addrmgr-change-method ()
   (interactive)
-  (setq wl-addrmgr-method (intern
+  (setq wl-addrmgr-method (intern 
 			   (setq wl-addrmgr-method-name
-				 (completing-read
+				 (completing-read 
 				  (format "Method (%s): "
 					  (symbol-name wl-addrmgr-method))
 				  (mapcar (lambda (pair)
@@ -525,8 +526,8 @@ Return nil if no ADDRESS exists."
 (defun wl-addrmgr-address-entry ()
   (save-excursion
     (end-of-line)
-    (get-text-property (previous-single-property-change
-			(point) 'wl-addrmgr-entry nil
+    (get-text-property (previous-single-property-change 
+			(point) 'wl-addrmgr-entry nil 
 			(progn
 			  (beginning-of-line)
 			  (point)))
@@ -534,7 +535,7 @@ Return nil if no ADDRESS exists."
 
 (defun wl-addrmgr-mark-write (&optional mark)
   "Set MARK to the current address entry."
-  (save-excursion
+  (save-excursion 
     (end-of-line)
     (unless (< (count-lines (point-min) (point)) 3)
       (let ((buffer-read-only nil) beg end)
@@ -601,9 +602,15 @@ Return nil if no ADDRESS exists."
       (list to-list cc-list bcc-list))))
 
 (defun wl-addrmgr-apply-exec (rcpt)
-  (let ((to (nconc (nth 0 rcpt) (cdr (assq 'to wl-addrmgr-unknown-list))))
-	(cc (nconc (nth 1 rcpt) (cdr (assq 'cc wl-addrmgr-unknown-list))))
-	(bcc (nconc (nth 2 rcpt) (cdr (assq 'bcc wl-addrmgr-unknown-list))))
+  (let ((to (nconc (nth 0 rcpt) (mapcar 
+				 'cdr
+				 (cdr (assq 'to wl-addrmgr-unknown-list)))))
+	(cc (nconc (nth 1 rcpt) (mapcar
+				 'cdr 
+				 (cdr (assq 'cc wl-addrmgr-unknown-list)))))
+	(bcc (nconc (nth 2 rcpt) (mapcar 
+				  'cdr 
+				  (cdr (assq 'bcc wl-addrmgr-unknown-list)))))
 	from clist)
     (setq clist (list (cons "Bcc" (if bcc (mapconcat 'identity bcc ",\n\t")))
 		      (cons "Cc" (if cc (mapconcat 'identity cc ",\n\t")))

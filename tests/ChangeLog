@@ -1,7 +1,0 @@
-2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* test-dist.el: New file.
-	(test-wl-modules-exists, test-elmo-modules-exists)
-	(test-util-modules-exists, test-wl-icon-exists)
-	(test-version-status-icon-xpm, test-version-status-icon-xbm)
-	(test-texi-version): New testcases.
