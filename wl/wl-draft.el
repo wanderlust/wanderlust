@@ -1367,7 +1367,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    ;; If flag is set after send-function, the current mailbox
 	    ;; might changed by Fcc.
 	    ;; It causes a huge loss in the IMAP folder.
-	    (when (and parent-flag parent-number parent-folder)
+	    (when (and parent-flag parent-number
+		       (not (eq (length parent-folder) 0)))
 	      (wl-folder-set-persistent-mark
 	       parent-folder parent-number parent-flag))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)

@@ -1,3 +1,7 @@
+2004-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-send): Allow parent-folder as "".
+
 2004-12-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-forward):  Call wl-draft-forward-make-subject
