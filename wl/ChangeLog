@@ -1,5 +1,7 @@
 2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-default-get-next-msg): Fix.
+
 	* Version number is increased to 2.5.8.
 
 	* wl-thread.el (toplevel): require 'cl.

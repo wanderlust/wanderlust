@@ -5917,10 +5917,13 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(message "Dropping...done"))))
 
 (defun wl-summary-default-get-next-msg (msg)
-  (wl-summary-next-message msg
-			   (if wl-summary-move-direction-downward 'down
-			     'up)
-			   nil))
+  (or (wl-summary-next-message msg
+			       (if wl-summary-move-direction-downward 'down
+				 'up)
+			       nil)
+      (cadr (memq num (if wl-summary-move-direction-downward
+			  wl-summary-buffer-number-list
+			(reverse wl-summary-buffer-number-list))))))
 
 (defsubst wl-cache-prefetch-p (fld &optional num)
   (cond ((and num wl-cache-prefetch-folder-type-list)
