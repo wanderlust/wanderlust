@@ -1,5 +1,19 @@
 2004-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-draft.el (wl-draft-reply): Use set-buffer-multibyte instead
+	of elmo-set-buffer-multibyte.
+
+	* wl-message.el (wl-original-message-mode): Ditto.
+
+	* wl-score.el (wl-score-insert-header): Ditto.
+
+	* wl-summary.el
+	(wl-summary-edit-addresses-collect-candidate-fields): Ditto.
+	(wl-summary-goto-folder-subr): Ditto.
+	(wl-summary-insert-headers): Ditto.
+
+	* wl-util.el (wl-set-string-width): Ditto.
+
 	* Version number is increased to 2.11.29.
 
 2004-05-20  Yoichi NAKAYAMA  <yoichi@geiin.org>

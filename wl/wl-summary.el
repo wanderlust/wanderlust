@@ -1273,7 +1273,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (setq fields (cdr fields)))
     (setq candidates (elmo-uniq-list candidates))
     (elmo-set-work-buf
-     (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+     (set-buffer-multibyte default-enable-multibyte-characters)
      (mapcar (function
 	      (lambda (x)
 		(setq components (std11-extract-address-components x))
@@ -2354,7 +2354,7 @@ If ARG, without confirm."
 		       (view (expand-file-name wl-summary-view-file dir)))
 		  (when (file-exists-p cache)
 		    (insert-file-contents-as-binary cache)
-		    (elmo-set-buffer-multibyte
+		    (set-buffer-multibyte
 		     default-enable-multibyte-characters)
 		    (decode-mime-charset-region
 		     (point-min)(point-max)
@@ -2568,7 +2568,7 @@ If ARG, without confirm."
     (make-local-variable 'wl-summary-alike-hashtb)
     (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
     (when mime-decode
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters))
+      (set-buffer-multibyte default-enable-multibyte-characters))
     (while (setq ov (elmo-message-entity folder (pop numbers)))
       (setq this (funcall func ov))
       (and this (setq this (std11-unfold-string this)))

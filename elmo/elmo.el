@@ -800,7 +800,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 		     cache-path))))
     (when (and filename (file-readable-p filename))
       (with-temp-buffer
-	(elmo-set-buffer-multibyte nil)
+	(set-buffer-multibyte nil)
 	;;(insert-file-contents-as-binary filename)
 	(elmo-message-fetch folder number
 			    (elmo-make-fetch-strategy 'entire
@@ -808,7 +808,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 						      nil
 						      cache-path)
 			    nil (current-buffer) t)
-	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
+	(set-buffer-multibyte default-enable-multibyte-characters)
 	(decode-coding-region (point-min) (point-max)
 			      elmo-mime-display-as-is-coding-system)
 	(elmo-buffer-field-condition-match condition number numbers)))))

@@ -43,17 +43,6 @@
 (eval-and-compile
   (autoload 'md5 "md5"))
 
-(defmacro elmo-set-buffer-multibyte (flag)
-  "Set the multibyte flag of the current buffer to FLAG."
-  (cond ((boundp 'MULE)
-	 (list 'setq 'mc-flag flag))
-	((featurep 'xemacs)
-	 flag)
-	((and (boundp 'emacs-major-version) (>= emacs-major-version 20))
-	 (list 'set-buffer-multibyte flag))
-	(t
-	 flag)))
-
 (defvar elmo-work-buf-name " *elmo work*")
 (defvar elmo-temp-buf-name " *elmo temp*")
 
@@ -83,7 +72,7 @@
   "Execute BODY on work buffer.  Work buffer remains."
   (` (save-excursion
        (set-buffer (get-buffer-create elmo-work-buf-name))
-       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+       (set-buffer-multibyte default-enable-multibyte-characters)
        (erase-buffer)
        (,@ body))))
 
@@ -101,7 +90,7 @@ File content is decoded with MIME-CHARSET."
        (as-binary-input-file
 	(insert-file-contents filename))
        (when mime-charset
-	 (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+	 (set-buffer-multibyte default-enable-multibyte-characters)
 	 (decode-mime-charset-region (point-min) (point-max) mime-charset))
        (condition-case nil
 	   (read (current-buffer))
@@ -123,7 +112,7 @@ File content is encoded with MIME-CHARSET."
     (if (file-writable-p filename)
 	(progn
 	  (when mime-charset
-;;;	    (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+;;;	    (set-buffer-multibyte default-enable-multibyte-characters)
 	    (encode-mime-charset-region (point-min) (point-max) mime-charset))
 	  (as-binary-output-file
 	   (write-region (point-min) (point-max) filename nil 'no-msg)))
@@ -304,7 +293,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (elmo-set-work-buf
      (let ((coding-system-for-read 'no-conversion)
 	   (coding-system-for-write 'no-conversion))
-       (if unibyte (elmo-set-buffer-multibyte nil))
+       (if unibyte (set-buffer-multibyte nil))
        (insert string)
        (goto-char (point-min))
        (while (search-forward (char-to-string char) nil t)
@@ -942,7 +931,7 @@ the directory becomes empty after deletion."
      (t
       (elmo-set-work-buf
        (as-binary-input-file (insert-file-contents file))
-       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+       (set-buffer-multibyte default-enable-multibyte-characters)
        ;; Should consider charset?
        (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
        (setq result
@@ -1009,13 +998,13 @@ Emacs 19.28 or earlier does not have `unintern'."
   "Normalize MIME encoded STRING."
   (and string
        (elmo-set-work-buf
-	(elmo-set-buffer-multibyte default-enable-multibyte-characters)
+	(set-buffer-multibyte default-enable-multibyte-characters)
 	(setq string
 	      (encode-mime-charset-string
 	       (eword-decode-and-unfold-unstructured-field-body
 		string)
 	       elmo-mime-charset))
-	(elmo-set-buffer-multibyte nil)
+	(set-buffer-multibyte nil)
 	string)))
 
 (defsubst elmo-collect-field (beg end downcase-field-name)

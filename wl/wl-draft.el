@@ -368,7 +368,7 @@ Reply to author if WITH-ARG is non-nil."
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte default-enable-multibyte-characters)
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
       (setq subject (if (and subject decoder)
 			(funcall decoder subject) subject))
@@ -405,7 +405,7 @@ Reply to author if WITH-ARG is non-nil."
 	    (wl-draft-make-mail-followup-to (append to cc)))
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
     (with-temp-buffer			; to keep raw buffer unibyte.
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte default-enable-multibyte-characters)
       (setq newsgroups (wl-parse newsgroups
 				 "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
 	    newsgroups (wl-delete-duplicates newsgroups)

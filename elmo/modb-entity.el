@@ -206,7 +206,7 @@ Header region is supposed to be narrowed.")
 	extra field-body charset size)
     (save-excursion
       (setq entity (modb-legacy-make-message-entity args))
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte default-enable-multibyte-characters)
       (setq message-id (elmo-msgdb-get-message-id-from-buffer))
       (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
 	   (setq charset (intern-soft charset))

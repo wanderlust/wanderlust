@@ -88,7 +88,7 @@
   elmo-network-initialize-session-buffer ((session
 					   elmo-network-session) buffer)
   (with-current-buffer buffer
-    (elmo-set-buffer-multibyte nil)
+    (set-buffer-multibyte nil)
     (buffer-disable-undo (current-buffer))))
 
 (luna-define-method elmo-network-close-session ((session elmo-network-session))

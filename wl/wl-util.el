@@ -207,7 +207,7 @@ even when invalid character is contained."
 	  (concat string paddings)))))
    (t
     (elmo-set-work-buf
-     (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+     (set-buffer-multibyte default-enable-multibyte-characters)
      (insert string)
      (when (> (current-column) (abs width))
        (when (> (move-to-column (abs width)) (abs width))

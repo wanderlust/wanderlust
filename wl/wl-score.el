@@ -558,7 +558,7 @@ Set `wl-score-cache' nil."
       (make-local-variable 'wl-score-alike-hashtb)
       (setq wl-score-alike-hashtb (elmo-make-hash (* (length messages) 2)))
       (when mime-decode
-	(elmo-set-buffer-multibyte default-enable-multibyte-characters))
+	(set-buffer-multibyte default-enable-multibyte-characters))
       (let (art last this alike)
 	(while (setq art (pop messages))
 	  (setq this (wl-score-ov-entity-get (car art)

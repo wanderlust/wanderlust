@@ -1,5 +1,32 @@
 2004-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-util.el (elmo-set-buffer-multibyte): Abolish.
+	(elmo-set-work-buf): Use set-buffer-multibyte instead of
+	elmo-set-buffer-multibyte.
+	(elmo-object-load): Ditto.
+	(elmo-save-buffer): Ditto.
+	(elmo-delete-char): Ditto.
+	(elmo-file-field-primitive-condition-match): Ditto.
+	(elmo-mime-string): Ditto.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-entity-subr): Ditto.
+	(elmo-archive-field-condition-match): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-setup-send-buffer): Ditto.
+
+	* elmo-net.el (elmo-network-initialize-session-buffer): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-parse-overview-string): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Ditto.
+
+	* elmo.el (elmo-message-match-condition): Ditto.
+	(elmo-message-match-condition): Ditto.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.29.
 
 	* elmo-spam.el (elmo-spam-scheme): Add `header' as a candidate.

@@ -118,7 +118,7 @@ With association ((\"folder\" message \"message-id\") . cache-buffer).")
   "A major mode for original message buffer."
   (setq major-mode 'wl-original-message-mode)
   (setq buffer-read-only t)
-  (elmo-set-buffer-multibyte nil)
+  (set-buffer-multibyte nil)
   (setq mode-name "Wanderlust original message"))
 
 (defun wl-original-message-buffer-get (name)

@@ -1093,7 +1093,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (save-match-data
 	(set-buffer send-buf)
 	(erase-buffer)
-	(elmo-set-buffer-multibyte nil)
+	(set-buffer-multibyte nil)
 	(if string
 	    (insert string)
 	  (with-current-buffer source-buf

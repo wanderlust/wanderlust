@@ -182,7 +182,7 @@ For BBDB 2.33 or earlier."
 	      (setq fn (std11-full-name-string structure)
 		    fn (and fn
 			    (with-temp-buffer ; to keep raw buffer unibyte.
-			      (elmo-set-buffer-multibyte
+			      (set-buffer-multibyte
 			       default-enable-multibyte-characters)
 			      (eword-decode-string
 			       (decode-mime-charset-string
@@ -227,7 +227,7 @@ For BBDB 2.34 or later."
                 (setq fn (std11-full-name-string structure)
 		      fn (and fn
 			      (with-temp-buffer ; to keep raw buffer unibyte.
-				(elmo-set-buffer-multibyte
+				(set-buffer-multibyte
 				 default-enable-multibyte-characters)
 				(eword-decode-string
 				 (decode-mime-charset-string
@@ -303,7 +303,7 @@ the user confirms the creation."
 			  (string-match (bbdb-user-mail-names) addr))
 		      (setq from (or (std11-field-body "To") from)))
 		  (with-temp-buffer ; to keep raw buffer unibyte.
-		    (elmo-set-buffer-multibyte
+		    (set-buffer-multibyte
 		     default-enable-multibyte-characters)
 		    (setq from (eword-decode-string
 				(decode-mime-charset-string
@@ -478,7 +478,7 @@ displaying the record corresponding to the sender of the current message."
     (defun bbdb-extract-field-value (field)
       (let ((value (bbdb-wl-extract-field-value-internal field)))
 	(with-temp-buffer ; to keep raw buffer unibyte.
-	  (elmo-set-buffer-multibyte
+	  (set-buffer-multibyte
 	   default-enable-multibyte-characters)
 	  (and value
 	       (eword-decode-string value)))))

@@ -759,7 +759,7 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
     (let ((new-msgdb (elmo-make-msgdb))
 	  beg entity i number message-id flags)
       (set-buffer buffer)
-      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
       (setq i 0)
       (message "Creating msgdb...")
