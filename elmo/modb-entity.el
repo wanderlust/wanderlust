@@ -89,6 +89,13 @@ ENTITY is the message entity structure.
 FIELD is a symbol of the field.
 VALUE is the field value to set.")
 
+(luna-define-generic elmo-msgdb-message-entity-update-fields (handler
+							      entity values)
+  "Update message entity by VALUES.
+HANDLER is the message entity handler.
+ENTITY is the message entity structure.
+VALUES is an alist of field-name and field-value.")
+
 (luna-define-generic elmo-msgdb-copy-message-entity (handler entity)
   "Copy message entity.
 HANDLER is the message entity handler.
@@ -161,6 +168,18 @@ Header region is supposed to be narrowed.")
 						       modb-entity-handler)
 						      entity)
   (plist-get (cdr entity) :number))
+
+(luna-define-method elmo-msgdb-message-entity-update-fields
+  ((handler modb-entity-handler) entity values)
+  (let (updated)
+    (dolist (pair values)
+      (unless (equal
+	       (cdr pair)
+	       (elmo-msgdb-message-entity-field handler entity (car pair)))
+	(elmo-msgdb-message-entity-set-field handler entity
+					     (car pair) (cdr pair))
+	(setq updated t)))
+    updated))
 
 ;; Legacy implementation.
 (eval-and-compile (luna-define-class modb-legacy-entity-handler

@@ -84,6 +84,12 @@
    (elmo-define-signal-handler (folder target number)
      (elmo-emit-signal 'cache-changed folder number))
    (elmo-define-signal-filter (folder target number)
+     (memq number (elmo-folder-list-messages folder nil t))))
+  (elmo-connect-signal
+   target 'update-overview folder
+   (elmo-define-signal-handler (folder target number)
+     (elmo-emit-signal 'update-overview folder number))
+   (elmo-define-signal-filter (folder target number)
      (memq number (elmo-folder-list-messages folder nil t)))))
 
 (defun elmo-filter-number-list-load (dir)

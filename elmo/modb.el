@@ -134,6 +134,10 @@ Return CONDITION itself if no entity exists in msgdb.")
   "Append a ENTITY with FLAGS into the MSGDB.
 Return non-nil if message-id of entity is duplicated.")
 
+(luna-define-generic elmo-msgdb-update-entity (msgdb entity values)
+  "Update a ENTITY with VALUES into the MSGDB.
+VALUES is an alist of field-name and field-value.")
+
 (luna-define-generic elmo-msgdb-delete-messages (msgdb numbers)
   "Delete messages which are contained NUMBERS from MSGDB.
 Return non-nil if messages is deleted successfully.")
@@ -219,6 +223,14 @@ FIELD is a symbol of the field.")
 	 (elmo-msgdb-flags msgdb number)
 	 (or numbers (elmo-msgdb-list-messages msgdb)))
       condition)))
+
+(luna-define-method elmo-msgdb-update-entity ((msgdb modb-generic)
+					      entity values)
+  (when (elmo-msgdb-message-entity-update-fields
+	 (elmo-message-entity-handler entity)
+	 entity values)
+    (modb-generic-set-message-modified-internal msgdb t)
+    t))
 
 (luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-generic))
   (or modb-entity-default-cache-internal

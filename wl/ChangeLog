@@ -1,3 +1,13 @@
+2005-03-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-attach): Connect to signal
+	`update-overview'
+	(wl-summary-buffer-detach): Disconnect from it.
+	(wl-summary-rescan-message): Use command.
+
+	* wl-message.el (wl-message-buffer-display): Use
+	`with-current-buffer' instead of `save-excursion'.
+
 2005-03-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-draft-preview-attributes-list): Protect

@@ -94,6 +94,14 @@
       'flag-changed folder
       (car (elmo-multi-map-numbers folder child (list number)))))
    (elmo-define-signal-filter (folder sender)
+     (memq sender (elmo-multi-folder-children-internal folder))))
+  (elmo-connect-signal
+   nil 'update-overview folder
+   (elmo-define-signal-handler (folder child number)
+     (elmo-emit-signal
+      'update-overview folder
+      (car (elmo-multi-map-numbers folder child (list number)))))
+   (elmo-define-signal-filter (folder sender)
      (memq sender (elmo-multi-folder-children-internal folder)))))
 
 (defun elmo-multi-map-numbers (folder child numbers)

@@ -377,43 +377,34 @@ If it is the symbol `all', update overview for all shimbun folders."
   (let ((entity (elmo-message-entity folder shimbun-id))
 	(message-id (shimbun-header-id header))
 	references)
-    (unless (string= shimbun-id message-id)
-      (elmo-message-entity-set-field
-       entity 'x-original-id message-id)
-      (elmo-shimbun-header-set-extra-field
-       header "x-shimbun-id" shimbun-id)
-      (elmo-set-hash-val message-id
-			 entity
-			 (elmo-shimbun-folder-entity-hash folder))
-      (elmo-set-hash-val shimbun-id
-			 entity
-			 (elmo-shimbun-folder-entity-hash folder)))
-    (elmo-message-entity-set-field
-     entity
-     'from
-     (elmo-mime-string (shimbun-header-from header)))
-    (elmo-message-entity-set-field
-     entity
-     'subject
-     (elmo-mime-string (shimbun-header-subject header)))
-    (elmo-message-entity-set-field
-     entity
-     'date
-     (shimbun-header-date header))
-    (when (setq references
-		(or (elmo-msgdb-get-last-message-id
-		     (elmo-field-body "in-reply-to"))
-		    (elmo-msgdb-get-last-message-id
-		     (elmo-field-body "references"))))
-      (elmo-message-entity-set-field
-       entity
-       'references
-       (or (elmo-message-entity-field
-	    (elmo-get-hash-val
-	     references
-	     (elmo-shimbun-folder-entity-hash folder))
-	    'message-id)
-	   references)))))
+    (when (elmo-msgdb-update-entity
+	   (elmo-folder-msgdb folder)
+	   entity
+	   (nconc
+	    (unless (string= shimbun-id message-id)
+	      (elmo-shimbun-header-set-extra-field
+	       header "x-shimbun-id" shimbun-id)
+	      (elmo-set-hash-val message-id
+				 entity
+				 (elmo-shimbun-folder-entity-hash folder))
+	      (elmo-set-hash-val shimbun-id
+				 entity
+				 (elmo-shimbun-folder-entity-hash folder))
+	      (list (cons 'x-original-id message-id)))
+	    (list
+	     (cons 'from
+		   (elmo-mime-string (shimbun-header-from header)))
+	     (cons 'subject
+		   (elmo-mime-string (shimbun-header-subject header)))
+	     (cons 'date
+		   (shimbun-header-date header))
+	     (cons 'references
+		   (or (elmo-msgdb-get-last-message-id
+			(elmo-field-body "in-reply-to"))
+		       (elmo-msgdb-get-last-message-id
+			(elmo-field-body "references")))))))
+      (elmo-emit-signal 'update-overview folder
+			(elmo-message-entity-number entity)))))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
 					    location strategy
@@ -525,6 +516,13 @@ If it is the symbol `all', update overview for all shimbun folders."
 						 numbers)
   (elmo-folder-kill-messages folder numbers)
   t)
+
+(luna-define-method elmo-message-entity-parent ((folder elmo-shimbun-folder)
+						entity)
+  (let ((references (elmo-message-entity-field entity 'references)))
+    (and references
+	 (elmo-get-hash-val references
+			    (elmo-shimbun-folder-entity-hash folder)))))
 
 (require 'product)
 (product-provide (provide 'elmo-shimbun) (require 'elmo-version))

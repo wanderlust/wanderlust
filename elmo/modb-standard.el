@@ -476,6 +476,15 @@ When non-nil, redundunt message-id string are not saved."
 	  (modb-standard-set-flag-modified msgdb number))
 	duplicate))))
 
+(luna-define-method elmo-msgdb-update-entity ((msgdb modb-standard)
+					      entity values)
+  (let ((handler (elmo-message-entity-handler entity)))
+    (when (elmo-msgdb-message-entity-update-fields handler entity values)
+      (modb-standard-set-message-modified
+       msgdb
+       (elmo-msgdb-message-entity-number handler entity))
+      t)))
+
 (luna-define-method elmo-msgdb-delete-messages ((msgdb modb-standard)
 						numbers)
   (let ((number-list (modb-standard-number-list-internal msgdb))

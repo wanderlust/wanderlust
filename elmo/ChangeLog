@@ -1,3 +1,26 @@
+2005-03-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb.el (elmo-msgdb-update-entity): New API and define generic
+	implement.
+
+	* modb-standard.el (elmo-msgdb-update-entity): Define.
+
+	* modb-entity.el (elmo-msgdb-message-entity-update-fields): New
+	API and define generic implement.
+
+	* elmo.el (update-overview): New singnal.
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview): Rewrite use
+	`elmo-msgdb-update-entity' and emit signal `update-overview'.
+	(elmo-message-entity-parent): Define.
+
+	* elmo-pipe.el (elmo-pipe-connect-signals): Connect to signal
+	`update-overview'.
+
+	* elmo-multi.el (elmo-multi-connect-signals): Ditto.
+
+	* elmo-filter.el (elmo-filter-connect-signals): Ditto.
+
 2005-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-synchronize): Sort the return value of
@@ -5,7 +28,6 @@
 
 	* elmo-util.el (elmo-list-diff): Don't care the order of the returned
 	list.
-	
 
 2005-02-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

@@ -68,7 +68,11 @@
   (elmo-connect-signal
    destination 'cache-changed folder
    (elmo-define-signal-handler (folder dst number)
-     (elmo-emit-signal 'cache-changed folder number))))
+     (elmo-emit-signal 'cache-changed folder number)))
+  (elmo-connect-signal
+   destination 'update-overview folder
+   (elmo-define-signal-handler (folder dst number)
+     (elmo-emit-signal 'update-overview folder number))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))
   (nconc

@@ -98,6 +98,9 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (elmo-define-signal cache-changed (number)
   "Notify the change cache status of the message with NUMBER.")
 
+(elmo-define-signal update-overview (number)
+  "Notify update overview of the message with NUMBER.")
+
 ;; autoloads
 (eval-and-compile
   (autoload 'md5 "md5")

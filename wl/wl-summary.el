@@ -690,13 +690,21 @@ See also variable `wl-use-petname'."
      'cache-changed
      (current-buffer)
      (elmo-define-signal-handler (buffer folder number)
-       (wl-summary-update-persistent-mark-on-event buffer (list number))))))
+       (wl-summary-update-persistent-mark-on-event buffer (list number))))
+    (elmo-connect-signal
+     wl-summary-buffer-elmo-folder
+     'update-overview
+     (current-buffer)
+     (elmo-define-signal-handler (buffer folder number)
+       (with-current-buffer buffer
+	 (wl-summary-rescan-message number))))))
 
 (defun wl-summary-buffer-detach ()
   (when (and (eq major-mode 'wl-summary-mode)
 	     wl-summary-buffer-elmo-folder)
     (elmo-disconnect-signal 'flag-changed (current-buffer))
-    (elmo-disconnect-signal 'cache-changed (current-buffer))))
+    (elmo-disconnect-signal 'cache-changed (current-buffer))
+    (elmo-disconnect-signal 'update-overview (current-buffer))))
 
 (defun wl-status-update ()
   (interactive)
@@ -1143,6 +1151,49 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (goto-char (point-max))
     (forward-line -1)
     (set-buffer-modified-p nil)))
+
+(defun wl-summary-rescan-message (number &optional reparent)
+  "Rescan current message without updating."
+  (interactive (list (wl-summary-message-number)))
+  (let ((start-number (wl-summary-message-number))
+	(start-column (current-column)))
+    (when (wl-summary-jump-to-msg number)
+      (let* ((folder wl-summary-buffer-elmo-folder)
+	     (entity (elmo-message-entity folder number))
+	     (inhibit-read-only t))
+	(if (eq wl-summary-buffer-view 'thread)
+	    (let* ((thread-entity (wl-thread-get-entity number))
+		   (descendant (wl-thread-entity-get-descendant thread-entity))
+		   (thread-parent (wl-thread-entity-get-parent thread-entity))
+		   (entity-parent (elmo-message-entity-number
+				   (elmo-message-entity-parent folder entity)))
+		   update-top-list)
+	      (if (and (not reparent)
+		       (eq thread-parent entity-parent))
+		  (progn
+		    (wl-thread-entity-set-linked thread-entity nil)
+		    (wl-thread-update-line-on-buffer-sub nil number))
+		(wl-thread-delete-message number 'deep 'update)
+		(dolist (number (cons number descendant))
+		  (setq update-top-list
+			(nconc
+			 update-top-list
+			 (wl-summary-insert-thread
+			  (elmo-message-entity folder number)
+			  folder
+			  'update))))
+		(when update-top-list
+		  (wl-thread-update-indent-string-thread
+		   (elmo-uniq-list update-top-list)))))
+	    (delete-region (point-at-bol) (1+ (point-at-eol)))
+	    (wl-summary-insert-line
+	     (wl-summary-create-line entity nil
+				     (wl-summary-temp-mark number)
+				     (elmo-message-flags folder number)
+				     (elmo-message-cached-p folder number)))))
+      (wl-summary-set-message-modified)
+      (wl-summary-jump-to-msg start-number)
+      (move-to-column start-column))))
 
 (defun wl-summary-next-folder-or-exit (&optional next-entity upward)
   (if (and next-entity

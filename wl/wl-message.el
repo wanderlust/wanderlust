@@ -557,8 +557,7 @@ Returns non-nil if bottom of message."
       (setq redisplay t))
     (when (or force-reload redisplay)
       (condition-case err
-	  (save-excursion
-	    (set-buffer hit)
+	  (with-current-buffer hit
 	    (when (or force-reload
 		      (null entity)
 		      (not (elmo-mime-entity-display-p
