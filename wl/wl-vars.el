@@ -970,7 +970,7 @@ cdr of each cons cell is used for draft message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
-(defcustom wl-summary-new-cached-mark "n"
+(defcustom wl-summary-new-cached-mark "?"
   "Mark for new but already cached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
