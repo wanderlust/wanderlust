@@ -662,7 +662,7 @@ Optional argument ARG is repeart count."
 			wl-folder-buffer-cur-entity-id)))
       (let ((summary-buf (wl-summary-get-buffer-create fld-name arg))
 	    error-selecting)
-	(if (or wl-stay-folder-window wl-summary-use-frame)
+	(if wl-stay-folder-window
 	    (wl-folder-select-buffer summary-buf)
 	  (if (and summary-buf
 		   (get-buffer-window summary-buf))
@@ -2202,7 +2202,7 @@ Use `wl-subscribed-mailing-list'."
 	     (setq id (wl-folder-get-entity-id entity)))
 	(wl-folder-set-current-entity-id id))
     (setq summary-buf (wl-summary-get-buffer-create fld-name sticky))
-    (if (or wl-stay-folder-window wl-summary-use-frame)
+    (if wl-stay-folder-window
 	(wl-folder-select-buffer summary-buf)
       (if (and summary-buf
 	       (get-buffer-window summary-buf))
