@@ -1146,7 +1146,7 @@ Return nil if no complete line has arrived."
 		       (> (string-to-number (match-string 1))
 			  (min elmo-display-retrieval-progress-threshold 100)))
 		  (elmo-display-progress
-		   'elmo-display-retrieval-progress
+		   'elmo-imap4-display-literal-progress
 		   (format "Retrieving (%d/%d bytes)..."
 			   (- (point-max) (point))
 			   (string-to-number (match-string 1)))

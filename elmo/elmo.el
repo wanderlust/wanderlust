@@ -159,6 +159,10 @@ If optional LOAD-MSGDB is non-nil, msgdb is loaded.
 (luna-define-generic elmo-folder-check (folder)
   "Check the FOLDER to obtain newest information at the next list operation.")
 
+(luna-define-generic elmo-folder-clear (folder &optional keep-killed)
+  "Clear FOLDER to the initial state.
+If optional KEEP-KILLED is non-nil, killed-list is not cleared.")
+
 (luna-define-generic elmo-folder-commit (folder)
   "Save current status of FOLDER.")
 
@@ -1152,6 +1156,12 @@ FIELD is a symbol of the field."
 	 (elmo-fetch-strategy-cache-path strategy)
 	 section)))))
 
+(luna-define-method elmo-folder-clear ((folder elmo-folder)
+				       &optional keep-killed)
+  (unless keep-killed
+    (elmo-folder-set-killed-list-internal folder nil))
+  (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
+
 (defun elmo-folder-synchronize (folder
 				new-mark             ;"N"
 				unread-uncached-mark ;"U"
@@ -1167,8 +1177,9 @@ are mark strings for new messages, unread but cached messages,
 read but not cached messages, and important messages.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
-are thrown away and synchronized.
-If NO-CHECK is non-nil, recheck folder is skipped.
+\(the messages which are not in the killed-list\) are thrown away and 
+synchronized.
+If NO-CHECK is non-nil, rechecking folder is skipped.
 
 Return a list of
 \(NEW-MSGDB DELETE-LIST CROSSED\)
@@ -1195,11 +1206,7 @@ If update process is interrupted, return nil."
 			    number-alist mark-alist
 			    (concat important-mark read-uncached-mark))
 			   seen-list))
-	  ;; Make killed list as nil.
-	  (unless (eq ignore-msgdb 'visible-only)
-	    (elmo-folder-set-killed-list-internal folder nil))
-	  (elmo-folder-set-msgdb-internal folder
-					  (elmo-msgdb-clear))))
+	  (elmo-folder-clear folder (eq ignore-msgdb 'visible-only))))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
 	(progn
