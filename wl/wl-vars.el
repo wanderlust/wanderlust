@@ -1470,7 +1470,15 @@ every intervals specified by wl-biff-check-interval."
   :type 'string
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-off "[‐]"
+(defcustom wl-biff-state-indicator-off (if (and (featurep 'xemacs)
+						(not (featurep 'mule)))
+					   "[--]"
+					 (decode-coding-string
+					  ;; Japanese short hyphen
+					  (read "\"[‐]\"")
+					  (if (boundp 'MULE)
+					      '*iso-2022-jp*
+					    'iso-2022-jp)))
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-highlight)

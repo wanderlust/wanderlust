@@ -1,3 +1,8 @@
+2001-09-24  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-vars.el: (wl-biff-state-indicator-off): Changed default value
+	for xemacs with non-mule environment.
+
 2001-09-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-vars.el (wl-interactive-send): Set default value as t.
