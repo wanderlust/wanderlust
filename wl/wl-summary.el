@@ -3935,7 +3935,8 @@ If ARG, exit virtual folder."
 	      (delete-backward-char 1)
 	      (insert (or new-mark " "))))
 	  ;; set msgdb mark.
-	  (elmo-msgdb-set-mark msgdb number new-mark)
+	  (unless (string= mark new-mark)
+	    (elmo-msgdb-set-mark msgdb number new-mark))
 	  (wl-summary-set-mark-modified))
 	(if (and visible wl-summary-highlight)
 	    (wl-highlight-summary-current-line nil nil t)))

@@ -780,8 +780,8 @@ header separator."
 Header region is supposed to be narrowed."
   (save-excursion
     (let ((extras elmo-msgdb-extra-fields)
+	  (default-mime-charset default-mime-charset)
 	  message-id references from subject to cc date
-	  default-mime-charset
 	  extra field-body charset)
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq message-id (elmo-msgdb-get-message-id-from-buffer))
@@ -793,13 +793,14 @@ Header region is supposed to be narrowed."
 		 (elmo-field-body "in-reply-to"))
 		(elmo-msgdb-get-last-message-id
 		 (elmo-field-body "references"))))
-      (setq from (elmo-mime-string (elmo-delete-char
-				    ?\"
-				    (or
-				     (elmo-field-body "from")
-				     elmo-no-from)))
-	    subject (elmo-mime-string (or (elmo-field-body "subject")
-					  elmo-no-subject)))
+      (setq from (elmo-replace-in-string
+		  (elmo-mime-string (or (elmo-field-body "from")
+					elmo-no-from))
+		  "\t" " ")
+	    subject (elmo-replace-in-string
+		     (elmo-mime-string (or (elmo-field-body "subject")
+					   elmo-no-subject))
+		     "\t" " "))
       (setq date (or (elmo-field-body "date") time))
       (setq to   (mapconcat 'identity (elmo-multiple-field-body "to") ","))
       (setq cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))

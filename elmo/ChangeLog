@@ -1,3 +1,21 @@
+2002-05-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-disk-usage): Return 0 if invalid file attribute.
+
+	* elmo-msgdb.el (elmo-msgdb-create-overview-from-buffer): Avoid
+	changing default value of default-mime-charset.
+	(elmo-msgdb-create-overview-from-buffer): Remove TAB character.
+
+	* elmo-imap4.el (elmo-folder-open): Fixed NO response check.
+
+	* elmo-dop.el (elmo-dop-queue-merge-method-list): New variable.
+	(elmo-dop-queue-merge): Use elmo-dop-queue-merge-method-list
+	instead of elmo-dop-queue-method-name-alist to check merging queue.
+	(elmo-folder-delete-messages-dop): Delete from queue if negative
+	message number.
+	(elmo-folder-append-buffer-dop-delayed): Treat as success if queue
+	file is already removed.
+
 2002-05-10  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* elmo-vars.el: Bind colon keywords for old Emacsen.

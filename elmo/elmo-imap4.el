@@ -2399,14 +2399,14 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	      (elmo-folder-set-msgdb-internal
 	       folder msgdb))
 	  (quit
-	   (if response
+	   (if (elmo-imap4-response-ok-p response)
 	       (elmo-imap4-session-set-current-mailbox-internal
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
 		   session nil))))
 	  (error
-	   (if response
+	   (if (elmo-imap4-response-ok-p response)
 	       (elmo-imap4-session-set-current-mailbox-internal
 		session mailbox)
 	     (and session

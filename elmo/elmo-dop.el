@@ -62,6 +62,12 @@ Automatically loaded/saved.")
 				    method arguments)))
     (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
+(defvar elmo-dop-queue-merge-method-list
+  '(elmo-folder-mark-as-read
+    elmo-folder-unmark-read
+    elmo-folder-mark-as-important
+    elmo-folder-unmark-important))
+
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
     (elmo-folder-delete-messages-dop-delayed . "Delete")
@@ -149,21 +155,23 @@ even an operation concerns the unplugged folder."
 	new-queue match-queue que)
     (while (setq que (car queue))
       (if (and
-	   (assq (elmo-dop-queue-method que)
-		 elmo-dop-queue-method-name-alist)
+	   (memq (elmo-dop-queue-method que)
+		 elmo-dop-queue-merge-method-list)
 	   (setq match-queue
-		 (car (delete nil
-			      (mapcar '(lambda (nqueue)
-					 (if (and
-					      (string= (elmo-dop-queue-fname que)
-						       (elmo-dop-queue-fname nqueue))
-					      (string= (elmo-dop-queue-method que)
-						       (elmo-dop-queue-method nqueue)))
-					     nqueue))
-				      new-queue)))))
-	    (setcar (elmo-dop-queue-arguments match-queue)
-		    (append (car (elmo-dop-queue-arguments match-queue))
-			    (car (elmo-dop-queue-arguments que))))
+		 (car (delete 
+		       nil
+		       (mapcar
+			(lambda (nqueue)
+			  (if (and
+			       (string= (elmo-dop-queue-fname que)
+					(elmo-dop-queue-fname nqueue))
+			       (string= (elmo-dop-queue-method que)
+					(elmo-dop-queue-method nqueue)))
+			      nqueue))
+			new-queue)))))
+	  (setcar (elmo-dop-queue-arguments match-queue)
+		  (append (car (elmo-dop-queue-arguments match-queue))
+			  (car (elmo-dop-queue-arguments que))))
 	(setq new-queue (nconc new-queue (list que))))
       (setq queue (cdr queue)) )
     (setq elmo-dop-queue new-queue)))
@@ -224,14 +232,22 @@ FOLDER is the folder structure."
 	 number)))
 
 (defsubst elmo-folder-delete-messages-dop (folder numbers)
-  (elmo-dop-queue-append folder 'elmo-folder-delete-messages-dop-delayed
-			 (list
-			  (mapcar
-			   (lambda (number)
-			     (cons number (elmo-message-field
-					   folder number 'message-id)))
-			   numbers)))
-  t)
+  (let ((spool-folder (elmo-dop-spool-folder folder))
+	queue)
+    (dolist (number numbers)
+      (if (< number 0)
+	  (elmo-folder-delete-messages spool-folder
+				       (list (abs number))) ; delete from queue
+	(setq queue (cons number queue))))
+    (when queue
+      (elmo-dop-queue-append folder 'elmo-folder-delete-messages-dop-delayed
+			     (list
+			      (mapcar
+			       (lambda (number)
+				 (cons number (elmo-message-field
+					       folder number 'message-id)))
+			       queue))))
+    t))
 
 (defsubst elmo-message-encache-dop (folder number &optional read)
   (elmo-dop-queue-append folder 'elmo-message-encache (list number read)))
@@ -270,22 +286,25 @@ FOLDER is the folder structure."
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder unread number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
-	failure saved)
+	failure saved dequeued)
     (with-temp-buffer
-      (elmo-message-fetch spool-folder number
-			  (elmo-make-fetch-strategy 'entire)
-			  nil (current-buffer) 'unread)
-      (condition-case nil
-	  (setq failure (not
-			 (elmo-folder-append-buffer folder unread set-number)))
-	(error (setq failure t)))
+      (if (elmo-message-fetch spool-folder number
+			      (elmo-make-fetch-strategy 'entire)
+			      nil (current-buffer) 'unread)
+	  (condition-case nil
+	      (setq failure (not
+			     (elmo-folder-append-buffer
+			      folder unread set-number)))
+	    (error (setq failure t)))
+	(setq dequeued t)) ; Already deletef from queue.
       (when failure
 	;; Append failed...
 	(setq saved (elmo-folder-append-buffer
 		     (elmo-make-folder elmo-lost+found-folder)
 		     unread set-number)))
-      (if (or (not failure)
-	      saved)
+      (if (and (not dequeued)    ; if dequeued, no need to delete.
+	       (or (not failure) ; succeed
+		   saved))       ; in lost+found
 	  (elmo-folder-delete-messages spool-folder (list number)))
       t)))
 

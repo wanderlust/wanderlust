@@ -683,7 +683,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		(setq result (+ result (or (elmo-disk-usage (car files)) 0)))
 		(setq files (cdr files)))
 	      result)
-	  (float (nth 7 file-attr))))))
+	  (float (nth 7 file-attr)))
+      0)))
 
 (defun elmo-get-last-accessed-time (path &optional dir)
   "Return the last accessed time of PATH."
