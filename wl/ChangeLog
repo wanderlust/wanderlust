@@ -1,3 +1,12 @@
+2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-thread.el (wl-thread-save-top-list)
+	(wl-thread-save-entities): Use `with-temp-buffer'.
+	* wl-news.el.in (wl-news-previous-version-load):
+	(wl-news-previous-version-save): Ditto.
+	* wl-summary.el (wl-summary-load-file-object)
+	(wl-summary-save-view-cache): Ditto.
+
 2005-01-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (toplevel): Require 'elmo-flag'.

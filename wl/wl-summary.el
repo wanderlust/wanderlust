@@ -2193,21 +2193,16 @@ If ARG, without confirm."
 
 (defun wl-summary-load-file-object (filename)
   "Load lisp object from dir."
-  (save-excursion
-    (let ((tmp-buffer (get-buffer-create " *wl-summary-load-file-object*"))
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+  (with-temp-buffer
+    (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
 	  insert-file-contents-post-hook
 	  ret-val)
       (if (not (file-readable-p filename))
 	  ()
-	(set-buffer tmp-buffer)
 	(as-binary-input-file (insert-file-contents filename))
-	(setq ret-val
-	      (condition-case nil
-		  (read (current-buffer))
-		(error (error "Reading failed")))))
-      (kill-buffer tmp-buffer)
-      ret-val)))
+	(condition-case nil
+	    (read (current-buffer))
+	  (error (error "Reading failed")))))))
 
 (defun wl-summary-goto-folder (&optional arg)
   (interactive "P")
@@ -3682,11 +3677,9 @@ Return non-nil if the mark is updated"
 		  (write-region-as-binary (point-min)(point-max)
 					  cache nil 'no-msg)))
 	      (when (file-writable-p view) ; 'thread or 'sequence
-		(save-excursion
-		  (set-buffer tmp-buffer)
-		  (erase-buffer)
-		  (prin1 save-view tmp-buffer)
-		  (princ "\n" tmp-buffer)
+		(with-temp-buffer
+		  (prin1 save-view (current-buffer))
+		  (princ "\n" (current-buffer))
 		  (write-region (point-min) (point-max) view nil 'no-msg))))
 	  ;; kill tmp buffer.
 	  (kill-buffer tmp-buffer))))))

@@ -119,30 +119,22 @@
 (defun wl-thread-save-top-list (dir)
   (let ((top-file (expand-file-name wl-thread-entity-list-file dir))
 	(entity wl-thread-entity-list)
-	(tmp-buffer (get-buffer-create " *wl-thread-save-top-list*"))
 	print-length)
-    (save-excursion
-      (set-buffer tmp-buffer)
-      (erase-buffer)
+    (with-temp-buffer
       (when (file-writable-p top-file)
-	(prin1 entity tmp-buffer)
-	(princ "\n" tmp-buffer)
-	(write-region (point-min) (point-max) top-file nil 'no-msg)
-	(kill-buffer tmp-buffer)))))
+	(prin1 entity (current-buffer))
+	(princ "\n" (current-buffer))
+	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
 
 (defun wl-thread-save-entities (dir)
   (let ((top-file (expand-file-name wl-thread-entity-file dir))
 	(entities wl-thread-entities)
-	(tmp-buffer (get-buffer-create " *wl-thread-save-entities*"))
 	print-length print-level)
-    (save-excursion
-      (set-buffer tmp-buffer)
-      (erase-buffer)
+    (with-temp-buffer
       (when (file-writable-p top-file)
-	(prin1 entities tmp-buffer)
-	(princ "\n" tmp-buffer)
-	(write-region (point-min) (point-max) top-file nil 'no-msg)
-	(kill-buffer tmp-buffer)))))
+	(prin1 entities (current-buffer))
+	(princ "\n" (current-buffer))
+	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
 
 (defsubst wl-thread-entity-get-number (entity)
   (nth 0 entity))
