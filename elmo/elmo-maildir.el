@@ -394,8 +394,8 @@ file name for maildir directories."
       (let ((dir (elmo-maildir-folder-directory-internal folder))
 	    (succeeds numbers)
 	    filename)
-	(setq filename (elmo-maildir-temporal-filename dir))
 	(dolist (number numbers)
+	  (setq filename (elmo-maildir-temporal-filename dir))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)

@@ -1,5 +1,8 @@
 2001-11-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-maildir.el (elmo-folder-append-messages): Make temporal filename
+	for each message.
+
 	* elmo-multi.el (elmo-multi-folder-diff): Fixed problem when
 	recent value is returned from imap folder.
 
