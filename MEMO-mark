@@ -38,10 +38,9 @@ msgdb への操作はなるべく抽象化すること。
 
 * マークの更新
 
-! や $ や & (予定) などの操作により手動で更新される場合と、
-elmo-message-fetch や、elmo-message-encache などにより自動的に更新され
-る場合がある。更新されたマークは、操作のあとで elmo-message-mark を呼
-び出すことにより得られる。
+マークは elmo-folder-mark-as-read、elmo-message-set-cached などにより変更する。
+更新されたマークは、操作のあとで elmo-message-mark を呼び出すことにより
+得る。
 
 * global mark の管理
 
