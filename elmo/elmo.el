@@ -1232,17 +1232,7 @@ FOLDER is a ELMO folder structure.
 NUMBER is a number of the message.")
 
 (luna-define-method elmo-message-flags ((folder elmo-folder) number)
-  ;; This is a provisional implement.
-  (let ((mark (elmo-message-mark folder number)))
-    (append
-     (and (string= mark elmo-msgdb-new-mark)
-	  '(new))
-     (and (string= mark elmo-msgdb-important-mark)
-	  '(important))
-     (and (member mark (elmo-msgdb-unread-marks))
-	  '(unread))
-     (and (member mark (elmo-msgdb-answered-marks))
-	  '(answered)))))
+  (elmo-msgdb-flags (elmo-folder-msgdb folder) number))
 
 (defsubst elmo-message-flagged-p (folder number flag)
   "Return non-nil if the message is set FLAG.

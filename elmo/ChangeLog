@@ -1,3 +1,14 @@
+2003-09-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-message-flags): Use `elmo-msgdb-flags' instead of
+	`elmo-msgdb-mark'.
+
+	* elmo-util.el (elmo-with-progress-display): Fixed edebug spec.
+
+	* elmo-pipe.el (elmo-message-flags): Defined.
+
+	* elmo-multi.el (elmo-message-flags): Ditto.
+
 2003-09-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-delete-messages): Renamed from

@@ -1224,7 +1224,7 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 
 (put 'elmo-with-progress-display 'lisp-indent-function '2)
 (def-edebug-spec elmo-with-progress-display
-  (form (symbolp form &rest form) &rest form))
+  (form (symbolp form &optional form) &rest form))
 
 (defmacro elmo-with-progress-display (condition spec &rest body)
   "Evaluate BODY with progress gauge if CONDITION is non-nil.

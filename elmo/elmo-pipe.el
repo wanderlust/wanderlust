@@ -372,6 +372,9 @@
 (luna-define-method elmo-message-mark ((folder elmo-pipe-folder) number)
   (elmo-message-mark (elmo-pipe-folder-dst-internal folder) number))
 
+(luna-define-method elmo-message-flags ((folder elmo-pipe-folder) number)
+  (elmo-message-flags (elmo-pipe-folder-dst-internal folder) number))
+
 (luna-define-method elmo-message-field ((folder elmo-pipe-folder)
 					number field)
   (elmo-message-field (elmo-pipe-folder-dst-internal folder)
