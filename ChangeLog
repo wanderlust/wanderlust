@@ -1,3 +1,8 @@
+2000-07-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: Use fmakunbound, when broken-function
+	replace.
+
 2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-ELS: Deleted time-stamp line.
