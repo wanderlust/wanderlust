@@ -75,15 +75,6 @@ Any symbol value of `elmo-network-stream-type-alist' or
   :type 'boolean
   :group 'elmo)
 
-(elmo-define-obsolete-variable 'elmo-default-pop3-server
-			       'elmo-pop3-default-server)
-(elmo-define-obsolete-variable 'elmo-default-pop3-user
-			       'elmo-pop3-default-user)
-(elmo-define-obsolete-variable 'elmo-default-pop3-authenticate-type
-			       'elmo-pop3-default-authenticate-type)
-(elmo-define-obsolete-variable 'elmo-default-pop3-port
-			       'elmo-pop3-default-port)
-
 (defvar elmo-pop3-stream-type-alist nil
   "*Stream bindings for POP3.
 This is taken precedence over `elmo-network-stream-type-alist'.")
@@ -821,7 +812,8 @@ set as non-nil.")
 	(insert-buffer-substring (process-buffer process) start (- end 3))))))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))
-  (if (elmo-pop3-folder-use-uidl-internal folder)
+  (if (and (not elmo-inhibit-number-mapping)
+	   (elmo-pop3-folder-use-uidl-internal folder))
       (elmo-pop3-folder-set-location-alist-internal
        folder (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
 

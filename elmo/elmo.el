@@ -483,7 +483,7 @@ Return newly created temporary directory name which contains temporary files.")
 	   (elmo-file-cache-path cache-file))))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-folder))
+  ((folder elmo-folder) &optional visible-only)
   t)
 
 (luna-define-method elmo-folder-list-unreads-internal
@@ -817,11 +817,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
-	  (if unseen (setq seen-list (cons
-				      (elmo-message-field
-				       src-folder (car numbers)
-				       'message-id)
-				      seen-list)))
+	  (unless unseen
+	    (setq seen-list (cons (elmo-message-field
+				   src-folder (car numbers)
+				   'message-id)
+				  seen-list)))
 	  (setq succeed-numbers (cons (car numbers) succeed-numbers)))
 	(setq numbers (cdr numbers)))
       (if (and seen-list (elmo-folder-persistent-p folder))
@@ -1299,6 +1299,35 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?'  'internal)
 (elmo-define-folder ?[  'nmz)
 (elmo-define-folder ?@  'shimbun)
+
+;;; Obsolete variables.
+(elmo-define-obsolete-variable 'elmo-default-imap4-mailbox
+			       'elmo-imap4-default-mailbox)
+(elmo-define-obsolete-variable 'elmo-default-imap4-server
+			       'elmo-imap4-default-server)
+(elmo-define-obsolete-variable 'elmo-default-imap4-authenticate-type
+			       'elmo-imap4-default-authenticate-type)
+(elmo-define-obsolete-variable 'elmo-default-imap4-user
+			       'elmo-imap4-default-user)
+(elmo-define-obsolete-variable 'elmo-default-imap4-port
+			       'elmo-imap4-default-port)
+(elmo-define-obsolete-variable 'elmo-default-nntp-server
+			       'elmo-nntp-default-server)
+(elmo-define-obsolete-variable 'elmo-default-nntp-user
+			       'elmo-nntp-default-user)
+(elmo-define-obsolete-variable 'elmo-default-nntp-port
+			       'elmo-nntp-default-port)
+(elmo-define-obsolete-variable 'elmo-default-pop3-server
+			       'elmo-pop3-default-server)
+(elmo-define-obsolete-variable 'elmo-default-pop3-user
+			       'elmo-pop3-default-user)
+(elmo-define-obsolete-variable 'elmo-default-pop3-authenticate-type
+			       'elmo-pop3-default-authenticate-type)
+(elmo-define-obsolete-variable 'elmo-default-pop3-port
+			       'elmo-pop3-default-port)
+
+;; autoloads
+(autoload 'elmo-dop-queue-flush "elmo-dop")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

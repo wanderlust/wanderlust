@@ -1,4 +1,55 @@
+2001-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-list-messages-internal): Fixed lucking optional
+	argument `visible-only'.
+	(elmo-generic-folder-append-messages): Fixed condition. Use `unless'
+	instead of `if'.
+
+	* elmo-pop3.el (elmo-folder-open-internal): Check
+	`elmo-inhibit-number-mapping' is non-nil.
+
+	* elmo-pipe.el (elmo-folder-status): Fixed.
+
+2001-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-dop-queue-flush): Added autload setting.
+
+	* elmo-shimbun.el (elmo-shimbun-folder): Added `header-hash' slot.
+	(elmo-folder-open-internal): Setup `header-hash' slot.
+	(elmo-shimbun-msgdb-create-entity): Use `header-hash' to get header
+	information.
+	(elmo-map-message-fetch): Ditto.
+
+2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* shimbun.el, sb-airs.el, sb-asahi.el, sb-bbdb-ml.el, sb-cnet.el,
+	sb-fml.el, sb-lump.el, sb-mew.el, sb-mhonarc.el,
+	sb-netbsd.el, sb-sponichi.el, sb-text.el, sb-wired.el,
+	sb-xemacs.el, sb-yomiuri.el, sb-zdnet.el, sb-tcup.el: Removed.
+
+	* elmo-util.el (elmo-resque-obsolete-variable): Fix.
+
+2001-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* sb-airs.el: Added footer.
+
+	* shimbun.el (shimbun-article): Define as luna-method.
+
+	* sb-tcup.el: New file.
+
+	* sb-airs.el (toplevel): Require 'sb-mhonarc.
+	(According to the report from ABE Yasushi <yasushi@indigo.co.jp>)
+
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* sb-asahi.el (shimbun-index-url): Removed redundant '/' in URL string.
+	(shimbun-get-headers): Ditto.
+
+	* elmo.el: Moved obsolete variable definitions from
+	elmo-imap4.el, elmo-nntp.el and elmo-pop3.el.
+
+	* sb-asahi.el (shimbun-asahi-groups): Deleted "feneral" and "personal"
+	groups.
 
 	* shimbun.el: New file.
 
