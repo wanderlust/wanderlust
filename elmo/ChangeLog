@@ -1,5 +1,7 @@
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Don't save location data.
+
 	* elmo-nntp.el (elmo-nntp-max-of-folder): Fixed.
 
 	* elmo-util.el (elmo-number-set-member): New function.
