@@ -1,3 +1,7 @@
+2005-02-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.13.3.
+
 2005-02-27  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-util.el (elmo-list-diff): Fix the last change.
