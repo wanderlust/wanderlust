@@ -278,7 +278,7 @@ When FROM is nil, use (std11-field-body \"From\") instead."
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
     ;; symbol-name use in error message
     (setq r-list-name (symbol-name (wl-draft-reply-list-symbol no-arg from)))
-    (setq r-list (symbol-value r-list-name))
+    (setq r-list (symbol-value (wl-draft-reply-list-symbol no-arg from)))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))
