@@ -40,6 +40,15 @@
 					       name)
   (elmo-replace-in-string name "\\." "/"))
 
+(luna-define-method elmo-folder-expand-msgdb-path ((folder
+						    elmo-localnews-folder))
+  (expand-file-name
+   (elmo-replace-in-string (elmo-localdir-folder-dir-name-internal folder)
+			   "/" "\\.")
+   (expand-file-name
+    (symbol-name (elmo-folder-type-internal folder))
+    elmo-msgdb-dir)))
+
 (require 'product)
 (product-provide (provide 'elmo-localnews) (require 'elmo-version))
 
