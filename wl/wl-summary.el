@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/28 14:52:52 teranisi>
+;; Time-stamp: <00/07/10 18:29:09 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -97,7 +97,7 @@
 (defvar wl-summary-buffer-saved-message nil)
 (defvar wl-summary-buffer-prev-folder-func nil)
 (defvar wl-summary-buffer-next-folder-func nil)
-
+(defvar wl-summary-buffer-exit-func nil)
 (defvar wl-thread-indent-level-internal nil)
 (defvar wl-thread-have-younger-brother-str-internal nil)
 (defvar wl-thread-youngest-child-str-internal nil)
@@ -161,7 +161,8 @@
        'wl-thread-horizontal-str-internal
        'wl-thread-space-str-internal
        'wl-summary-buffer-prev-folder-func
-       'wl-summary-buffer-next-folder-func))
+       'wl-summary-buffer-next-folder-func
+       'wl-summary-buffer-exit-func))
 
 ;; internal functions (dummy)
 (unless (fboundp 'wl-summary-append-message-func-internal)
@@ -1113,52 +1114,53 @@ q	Goto folder mode.
 	summary-win
 	message-buf message-win
 	folder-buf folder-win)
-    (wl-summary-cleanup-temp-marks sticky)
-    (unwind-protect
-	;; save summary status
-	(progn
-	  (wl-summary-save-status sticky)
-	  ;(wl-summary-msgdb-save)
-	  (if wl-use-scoring
-	      (wl-score-save)))
-      ;; for sticky summary
-      (wl-delete-all-overlays)
-      (setq wl-summary-buffer-disp-msg nil)
-      (elmo-kill-buffer wl-summary-search-buf-name)
-      ;; delete message window if displayed.
-      (if (setq message-buf (get-buffer wl-message-buf-name))
-	  (if (setq message-win (get-buffer-window message-buf))
-	      (delete-window message-win)))
-      (if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	  (if (setq folder-win (get-buffer-window folder-buf))
-	      ;; folder win is already displayed.
-	      (select-window folder-win)
-	    ;; folder win is not displayed.
-	    (switch-to-buffer folder-buf))
-	;; currently no folder buffer
-	(wl-folder))
-      (and wl-folder-move-cur-folder
-	   wl-folder-buffer-cur-point
-	   (goto-char wl-folder-buffer-cur-point))
-      (setq wl-folder-buffer-cur-path nil)
-      (setq wl-folder-buffer-cur-entity-id nil)
-      (wl-delete-all-overlays)
-      (if wl-summary-exit-next-move
-	  (wl-folder-next-unsync t)
-	(beginning-of-line))
-      (if (setq summary-win (get-buffer-window summary-buf))
-	  (delete-window summary-win))
-      (if (or force-exit 
-	      (not sticky))
+    (if wl-summary-buffer-exit-func
+	(funcall wl-summary-buffer-exit-func)
+      (wl-summary-cleanup-temp-marks sticky)
+      (unwind-protect
+	  ;; save summary status
 	  (progn
-	    (set-buffer summary-buf)
-	    (and (get-buffer wl-message-buf-name)
-		 (kill-buffer wl-message-buf-name))
-	    ;; kill buffers of mime-view-caesar
-	    (wl-kill-buffers
-	     (format "^%s-([0-9 ]+)$" (regexp-quote wl-message-buf-name)))
-	    (kill-buffer summary-buf)))
-      (run-hooks 'wl-summary-exit-hook))))
+	    (wl-summary-save-status sticky)
+	    (if wl-use-scoring
+		(wl-score-save)))
+	;; for sticky summary
+	(wl-delete-all-overlays)
+	(setq wl-summary-buffer-disp-msg nil)
+	(elmo-kill-buffer wl-summary-search-buf-name)
+	;; delete message window if displayed.
+	(if (setq message-buf (get-buffer wl-message-buf-name))
+	    (if (setq message-win (get-buffer-window message-buf))
+		(delete-window message-win)))
+	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
+	    (if (setq folder-win (get-buffer-window folder-buf))
+		;; folder win is already displayed.
+		(select-window folder-win)
+	      ;; folder win is not displayed.
+	      (switch-to-buffer folder-buf))
+	  ;; currently no folder buffer
+	  (wl-folder))
+	(and wl-folder-move-cur-folder
+	     wl-folder-buffer-cur-point
+	     (goto-char wl-folder-buffer-cur-point))
+	(setq wl-folder-buffer-cur-path nil)
+	(setq wl-folder-buffer-cur-entity-id nil)
+	(wl-delete-all-overlays)
+	(if wl-summary-exit-next-move
+	    (wl-folder-next-unsync t)
+	  (beginning-of-line))
+	(if (setq summary-win (get-buffer-window summary-buf))
+	    (delete-window summary-win))
+	(if (or force-exit 
+		(not sticky))
+	    (progn
+	      (set-buffer summary-buf)
+	      (and (get-buffer wl-message-buf-name)
+		   (kill-buffer wl-message-buf-name))
+	      ;; kill buffers of mime-view-caesar
+	      (wl-kill-buffers
+	       (format "^%s-([0-9 ]+)$" (regexp-quote wl-message-buf-name)))
+	      (kill-buffer summary-buf)))
+	(run-hooks 'wl-summary-exit-hook)))))
 
 (defun wl-summary-sync-force-update (&optional unset-cursor)
   (interactive)
@@ -1209,6 +1211,7 @@ q	Goto folder mode.
 	   (setq wl-summary-buffer-copy-list nil)
 	   (setq wl-summary-buffer-delete-list nil)
 	   (wl-summary-buffer-number-column-detect nil)
+	   (elmo-clear-killed folder)
 	   (setq mes (wl-summary-sync-update3 seen-list unset-cursor))
 	   (elmo-msgdb-seen-save msgdb-dir nil) ; delete all seen.
 	   (if mes (message "%s" mes)))
@@ -2195,9 +2198,10 @@ If optional argument is non-nil, checking is omitted."
       (wl-summary-set-message-modified)
       (wl-summary-set-mark-modified)
       (erase-buffer))
-    (setq diff (if (eq (elmo-folder-get-type folder) 'multi)
-		   (elmo-multi-list-bigger-diff in-folder in-db)
-		 (elmo-list-bigger-diff in-folder in-db)))
+;    (setq diff (if (eq (elmo-folder-get-type folder) 'multi)
+;		   (elmo-multi-list-bigger-diff in-folder in-db)
+;		 (elmo-list-bigger-diff in-folder in-db)))
+    (setq diff (elmo-list-diff in-folder in-db))
     (setq append-list (car diff))
     (setq delete-list (cadr diff))
     (message "Checking folder diff...done.")

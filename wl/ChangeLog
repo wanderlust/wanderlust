@@ -1,3 +1,16 @@
+2000-07-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Call `elmo-clear-killed' when
+	range is `all'.
+	(wl-summary-sync-update3): Use `elmo-list-diff' instead of
+	`elmo-list-bigger-diff'.
+
+2000-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-exit-func):
+	New buffer local variable.
+	(wl-summary-exit): Call `wl-summary-buffer-exit-func' if non-nil.
+
 2000-07-10  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Fix the last change.
