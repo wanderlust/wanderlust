@@ -238,10 +238,18 @@
 
 ;; non-verbose User-Agent: field
 ;(setq wl-generate-mailer-string-function
-;      (function
-;       (lambda ()
-;	 (concat "User-Agent: "
-;		 (wl-generate-user-agent-string-1 nil)))))
+;      'wl-generate-user-agent-string-1)
+
+
+;; Automatically save modified draft buffers in every 20 seconds.
+;(defun my-wl-auto-save-draft-buffers ()
+;  (let ((buffers (wl-collect-draft)))
+;    (save-excursion
+;      (while buffers
+;	(set-buffer (car buffers))
+;	(if (buffer-modified-p) (wl-draft-save))
+;	(setq buffers (cdr buffers))))))
+;(run-with-idle-timer 20 t 'my-wl-auto-save-draft-buffers)
 
 
 ;;; [[ Template ]]
