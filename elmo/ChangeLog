@@ -1,3 +1,12 @@
+2004-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elsp-sa.el (elmo-spam-register-spam-buffer): Don't specify '--forget'.
+	(elmo-spam-register-good-buffer): Ditto.
+	(elmo-spam-spamassassin-register-messages): Ditto.
+
+	* elmo-util.el (elmo-string-member-ignore-case): Define with
+	static-cond.
+
 2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-type): Undo last change.

@@ -1302,7 +1302,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	  (throw 'found t))
       (setq slist (cdr slist)))))
 
-(cond ((fboundp 'member-ignore-case)
+(static-cond ((fboundp 'member-ignore-case)
        (defalias 'elmo-string-member-ignore-case 'member-ignore-case))
       ((fboundp 'compare-strings)
        (defun elmo-string-member-ignore-case (elt list)

@@ -98,13 +98,13 @@
 						    buffer &optional restore)
   (with-current-buffer buffer
     (eq 0 (apply 'elmo-spamassassin-call 'learn
-		 (list (when restore "--forget") "--spam")))))
+		 (list "--spam")))))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-sa)
 						    buffer &optional restore)
   (with-current-buffer buffer
     (eq 0 (apply 'elmo-spamassassin-call 'learn
-		 (list (when restore "--forget") "--ham")))))
+		 (list "--ham")))))
 
 (defsubst elmo-spam-spamassassin-register-messages (folder
 						    numbers
@@ -134,7 +134,6 @@
 	(apply 'elmo-spamassassin-call 'learn
 	       (delq nil
 		     (list "--mbox"
-			   (when restore "--forget")
 			   (if spam "--spam" "--ham"))))
 	(elmo-progress-notify 'elmo-spam-register count)
 	(erase-buffer)))))
