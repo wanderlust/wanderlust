@@ -10,6 +10,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Buffer prefetch works fine now. Messages of the number specified by
    wl-message-buffer-prefetch-depth are loaded into buffer in advance.
 
+** elmo-dop-queue-flush flushes queue that concerns plugged folder.
+
 ** Starting Wanderlust on the new frame is possible now. Set as
    (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 

@@ -10,6 +10,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** バッファプリフェッチが実装されました。wl-message-buffer-prefetch-depth
    の数だけ、メッセージをバッファに先読みします。
 
+** elmo-dop-queue-flush は繋がっているポートに関するキューを flush します。
+
 ** 新しいフレームを開いて Wanderlust を起動できるようになりました。
    (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
    のように設定して下さい。

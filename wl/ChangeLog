@@ -1,3 +1,8 @@
+2002-10-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-summary-burst): Get elmo folder correctly.
+	Take prefix argument to force asking the destination folder.
+
 2002-09-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-cursor-move-surface): Add missing

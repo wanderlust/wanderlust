@@ -2,9 +2,9 @@
 % The format of this file is adapted from the GNU Emacs reference card
 %
 % You can compile with:
-% tex wl-refcard.tex
-% dvips wl-refcard.dvi -t landscape -o wl-refcard.ps
-% pstops '2:0U(21cm,29.7cm),1' wl-refcard.ps wl-refcard-b.ps
+% ptex wl-refcard-ja.tex
+% dvips wl-refcard-ja.dvi -t landscape -o wl-refcard-ja.ps
+% pstops '2:0U(21cm,29.7cm),1' wl-refcard-ja.ps wl-refcard-ja-b.ps
 
 % Reference Card for GNU Emacs version 20 on Unix systems
 %**start of header
@@ -257,164 +257,164 @@ are preserved on all copies.
 
 \centerline{(for version \versionnumber)}
 
-\section{Starting Wanderlust}
+\section{Wanderlust の起動}
 
-\key{Start Wanderlust}{M-x wl}
-\key{Start composition}{M-x wl-draft}
+\key{Wanderlust を起動する}{M-x wl}
+\key{メッセージを作成}{M-x wl-draft}
 
 \section{Folder Mode}
 
-\key{Quit Wanderlust}{q}
-\key{Move to next entity}{n}
-\key{Move to previous entity}{p}
-\key{Move to next unread entity}{N}
-\key{Move to previous unread entity}{P}
-\key{Go to specified folder}{g}
-\key{Go into current folder}{SPC}
-\key{Open/Close current group}{SPC}
-\key{Rescan folders in current access group}{C-u SPC}
-\key{Check new messages for current entity}{s}
-\key{Synchronize current entity}{S}
-\key{Prefetch for current folder/group}{I}
-\key{Set as read all messages in current entity}{c}
-\key{Expire current entity}{e}
-\key{Compose message}{w}
-\key{Compose message for current folder}{W}
-\key{Reload address book}{Z}
-\key{Empty trash folder}{E}
+\key{Wanderlust をやめる}{q}
+\key{次}{n}
+\key{前}{p}
+\key{次の未読}{N}
+\key{前の未読}{P}
+\key{指定したフォルダに入る}{g}
+\key{このフォルダに入る}{SPC}
+\key{グループの開閉}{SPC}
+\key{アクセスグループの再スキャン}{C-u SPC}
+\key{新規メッセージをチェック}{s}
+\key{同期}{S}
+\key{プリフェッチ}{I}
+\key{全て既読に}{c}
+\key{エクスパイア}{e}
+\key{メッセージの作成}{w}
+\key{メッセージの作成(宛先を推測)}{W}
+\key{アドレス帳の再読込}{Z}
+\key{ごみ箱を空に}{E}
 
 \section{folder management}
 
-\key{Cut current entity}{C-k}
-\key{Cut region}{C-w}
-\key{Yank}{C-y}
-\key{Add folder}{m a}
-\key{Add group}{m g}
-\key{Add access group}{m A}
+\key{カット}{C-k}
+\key{領域をカット}{C-w}
+\key{貼り付け}{C-y}
+\key{フォルダを加える}{m a}
+\key{グループを加える}{m g}
+\key{アクセスグループを加える}{m A}
 
 \section{access group}
 
-\key{Display unsubscribed folders}{L}
-\key{Hide unsubscribed folders}{l}
-\key{Unsubscribe current entity}{u}
-\key{Unsubscribe region}{U}
+\key{非講読フォルダも表示}{L}
+\key{非講読フォルダを隠す}{l}
+\key{講読をやめる}{u}
+\key{講読をやめる(領域)}{U}
 
 \newcolumn
 \section{Summary Mode}
 
-\key{Go back to folder mode}{q}
-\key{Go to specified folder}{g}
-\key{Next message}{n}
-\key{Previous message}{p}
-\key{Next unread message}{N}
-\key{Previous unread message}{P}
-\key{First message}{<}
-\key{Last message}{>}
-\key{Jump to previously shown message}{TAB}
-\key{View current message}{SPC}
-\key{Force reloading current message}{C-u .}
-\key{Toggle display of message}{v}
-\key{Compose message}{w}
-\key{Compose message for current folder}{W}
-\key{Compose reply message}{a}
-\key{Compose reply message with citation}{A}
-\key{Forward current message}{f}
-\key{(Re-)Edit current message}{E}
-\key{Print current message}{\#}
-\key{Jump to message buffer}{j}
-\key{Reload address book}{Z}
+\key{フォルダバッファに戻る}{q}
+\key{指定したフォルダに入る}{g}
+\key{次}{n}
+\key{前}{p}
+\key{次の未読}{N}
+\key{前の未読}{P}
+\key{先頭のメッセージ}{<}
+\key{末尾のメッセージ}{>}
+\key{直前に見たメッセージ}{TAB}
+\key{メッセージを読む}{SPC}
+\key{メッセージの再読込}{C-u .}
+\key{メッセージ表示のトグル}{v}
+\key{メッセージを作成}{w}
+\key{メッセージを作成(宛先を推測)}{W}
+\key{返信}{a}
+\key{引用して返信}{A}
+\key{フォワード}{f}
+\key{再編集}{E}
+\key{印刷}{\#}
+\key{メッセージバッファへ}{j}
+\key{アドレス帳の再読込}{Z}
 
 \section{mark command}
 
-\key{Mark for refiling}{o}
-\key{Mark for copying}{O}
-\key{Mark for deleting}{d}
-\key{Mark as important}{\$}
-\key{Mark as target}{*}
-\key{Mark all messages as target}{m a}
-\key{Mark current thread as target}{m t}
-\key{Pick messages and mark}{?}
-\key{Pick messages from marked ones}{m *}
-\key{Mark target messages for refiling}{m o}
-\key{Mark target messages for deleting}{m d}
-\key{Print target messages}{m \#}
-\key{Send each target message to a pipe}{m |}
-\key{Execute refile/delete/copy}{x}
+\key{リファイルマークを付ける}{o}
+\key{コピーマークを付ける}{O}
+\key{削除マークを付ける}{d}
+\key{重要マークを付ける}{\$}
+\key{標的マークを付ける}{*}
+\key{全てのメッセージを標的にする}{m a}
+\key{スレッドを標的にする}{m t}
+\key{メッセージを選び出して標的に}{?}
+\key{標的の中からメッセージを選び出す}{m *}
+\key{標的をリファイル}{m o}
+\key{標的を削除}{m d}
+\key{標的を印刷}{m \#}
+\key{標的の各々をパイプに流す}{m |}
+\key{リファイル/削除/コピー を実行}{x}
 
 \section{prefix arguments for marking}
 
-\key{Apply command for marked messages}{m}
-\key{Apply command for thread after cursor point}{t}
-\key{Apply command for region}{r}
+\key{標的に対して}{m}
+\key{カーソル以降のスレッドに対して}{t}
+\key{領域に対して}{r}
 
 \newcolumn
 \section{prefetching}
 
-\key{Prefetch current message}{i}
-\key{Prefetch target messages}{m i}
-\key{Prefetch region}{r i}
+\key{プリフェッチ}{i}
+\key{標的をプリフェッチ}{m i}
+\key{領域をプリフェッチ}{r i}
 
 \section{sticky summary}
 
-\key{Stick current summary}{M-s}
-\key{Open summary and stick}{G}
-\key{Display next summary}{C-c C-n}
-\key{Display previous summary}{C-c C-p}
-\key{Discard current summary}{C-u q}
+\key{サマリをスティッキーに}{M-s}
+\key{指定したフォルダに入る}{G}
+\key{次のサマリ}{C-c C-n}
+\key{前のサマリ}{C-c C-p}
+\key{サマリを破棄}{C-u q}
 
 \section{Message Mode}
 
-\key{Go back to summary buffer}{q}
-\key{Scroll up or move to next content}{SPC}
-\key{Scroll down or move to previous content}{DEL}
-\key{Move to next content}{n}
-\key{Move to previous content}{p}
-\key{Decode current content as `play mode'}{v}
-\key{Decode current content as `extract mode'}{e}
-\key{Show current content}{C-c C-v C-c}
-\key{Hide current content}{C-c C-d C-c}
-\key{View help of MIME-View}{?}
+\key{サマリバッファに戻る}{q}
+\key{スクロールか次のパート}{SPC}
+\key{スクロールか前のパート}{DEL}
+\key{次のパート}{n}
+\key{前のパート}{p}
+\key{パートを再生}{v}
+\key{パートを取り出す}{e}
+\key{パートを表示}{C-c C-v C-c}
+\key{パートを隠す}{C-c C-d C-c}
+\key{MIME-View のヘルプ}{?}
 
 \section{Draft Mode}
 
-\key{Insert message to cite}{C-c C-y}
-\key{Insert template}{C-c C-j}
-\key{Insert signature}{C-c C-w}
-\key{Elide the region}{C-c C-d}
-\key{Preview current draft}{C-c C-p}
-\key{Send current draft}{C-c C-c}
-\key{Save current draft}{C-c C-z}
-\key{Discard current draft}{C-c C-k}
-\key{Jump to another draft}{C-c C-o}
-\key{Attach some file}{C-c C-x TAB}
+\key{メッセージを引用}{C-c C-y}
+\key{テンプレートの挿入}{C-c C-j}
+\key{署名の挿入}{C-c C-w}
+\key{領域を省く}{C-c C-d}
+\key{プレビュー}{C-c C-p}
+\key{送信}{C-c C-c}
+\key{草稿を保存}{C-c C-z}
+\key{草稿を破棄}{C-c C-k}
+\key{他のドラフトへ}{C-c C-o}
+\key{ファイルを添付}{C-c C-x TAB}
 %\key{Insert a reference to external body}{C-c C-x C-e}
-\key{Insert a new MIME tag}{C-c C-x t}
+\key{MIME タグの挿入}{C-c C-x t}
 %\key{Insert a text message}{C-c C-x C-t}
-\key{Encrypt the message}{C-c C-x e}
-\key{Sign the message}{C-c C-x s}
-\key{View help of MIME-Edit}{C-c C-x ?}
+\key{メッセージを暗号化}{C-c C-x e}
+\key{メッセージに署名}{C-c C-x s}
+\key{MIME-Edit のヘルプ}{C-c C-x ?}
 
 \shortcopyrightnotice
 
 \newcolumn
 \section{Plugged Status}
 
-\key{Toggle plugged status}{M-t}
-\key{Enter/Exit plugged mode}{C-t}
-\key{Toggle plugged state for current entity}{SPC}
+\key{プラグ状態のトグル(全体)}{M-t}
+\key{プラグドモードへの入退出}{C-t}
+\key{プラグ状態のトグル(個別)}{SPC}
 
 \section{Address Book Management}
 
-\key{Enter address book manager}{C-c C-a}
-\key{Exit address book manager}{q}
-\key{Set as {\tt To:}}{t}
-\key{Set as {\tt Cc:}}{c}
-\key{Set as {\tt Bcc:}}{b}
-\key{Unset}{u}
-\key{Compose message with current mark}{x}
-\key{Add new entry}{a}
-\key{Edit current entry}{e}
-\key{Delete current entry}{d}
+\key{アドレスマネージャの起動}{C-c C-a}
+\key{アドレスマネージャの終了}{q}
+\key{{\tt To:} に指定}{t}
+\key{{\tt Cc:} に指定}{c}
+\key{{\tt Bcc:} に指定}{b}
+\key{宛先の指定を解除}{u}
+\key{指定に沿ってメッセージを作成}{x}
+\key{新規登録}{a}
+\key{編集}{e}
+\key{削除}{d}
 
 \copyrightnotice
 
