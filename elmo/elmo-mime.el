@@ -285,21 +285,14 @@ Return non-nil if cache is used."
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
 
+      ;; Humm...
+      (set-buffer-multibyte nil)
       (mime-insert-entity message)
-      ;(insert (mime-entity-body message))
-      ;(insert (mime-entity-body message))
-
+      (set-buffer-multibyte t)
       (decode-coding-region (point-min) (point-max) 'undecided)
-
       (save-restriction
 	(std11-narrow-to-header)
 	(run-hooks 'elmo-message-header-inserted-hook))
-;      (mime-display-entity message nil
-;			   `((entity-button . invisible)
-;			     (header . visible)
-;			     (major-mode . ,original-major-mode))
-;			   preview-buffer)
-
       (use-local-map
        (or keymap
 	   (if default-keymap-or-function

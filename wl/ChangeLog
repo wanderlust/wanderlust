@@ -1,3 +1,43 @@
+2001-07-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-open-folder): New function.
+	(wl-summary-goto-folder-subr): Use it.
+	(wl-summary-mark-as-important): Fix;
+	Encache only when no cache exists.
+
+2001-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
+	Use with-current-buffer.
+
+2001-07-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-score.el (wl-score-insert-help): Check `wl-message-buffer'
+	before call `get-buffer'. Fixed parenthesis.
+	(wl-score-get-header-entry): Clear message and help window when
+	keyboard quit.
+	(wl-score-edit-insert-header): Ditto. 
+
+2001-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-message-mail-p): Test resent-to: field.
+	(Fix by Peter Møller Neergaard <turtle@bu.edu>)
+	(wl-default-draft-cite): Fix.
+
+	* wl-score.el (wl-score-insert-help): Fixed parenthesis.
+	(Pointed out by ABE Yasushi <yasushi@stbbs.net>)
+
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-prev-page): Do same bahavior
+	as summary when it is called in the message buffer.
+	(wl-message-next-page): Ditto.
+
+2001-07-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-forward): Use cache if it is not
+	section cache.
+
 2001-07-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el: Changed file coding system to ISO-2022-JP.
