@@ -1146,9 +1146,9 @@ CROSSED is cross-posted message number."
 	      ;; Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).
 	      (elmo-folder-process-crosspost folder)
 	      (elmo-folder-set-message-modified-internal folder t)
-	      (elmo-folder-set-mark-modified-internal folder t))
-	    ;; return value.
-	    (list new-msgdb delete-list crossed)))
+	      (elmo-folder-set-mark-modified-internal folder t)
+	      ;; return value.
+	      (list new-msgdb delete-list crossed))))
       (quit
        ;; Resume to the original status.
        (if before-append
