@@ -441,25 +441,21 @@ Returns non-nil if bottom of message."
     ;; highlight body
 ;    (when wl-highlight-body-too
 ;      (wl-highlight-body))
-    (condition-case ()
-	(wl-message-narrow-to-page)
-      (error nil)); ignore errors.
+    (ignore-errors (wl-message-narrow-to-page))
     (setq cache-used (cdr cache-used))
     (goto-char (point-min))
     (when (re-search-forward "^$" nil t)
       (wl-message-add-buttons-to-header (point-min) (point))
       (wl-message-add-buttons-to-body (point) (point-max)))
     (goto-char (point-min))
-    (unwind-protect
-	(save-excursion
-	  (run-hooks 'wl-message-redisplay-hook))
-      ;; go back to summary mode
-      (set-buffer-modified-p nil)
-      (setq buffer-read-only t)
-      (set-buffer summary-buf)
-      (setq summary-win (get-buffer-window summary-buf))
-      (if (window-live-p summary-win)
-	  (select-window summary-win)))
+    (ignore-errors (run-hooks 'wl-message-redisplay-hook))
+    ;; go back to summary mode
+    (set-buffer-modified-p nil)
+    (setq buffer-read-only t)
+    (set-buffer summary-buf)
+    (setq summary-win (get-buffer-window summary-buf))
+    (if (window-live-p summary-win)
+	(select-window summary-win))
     cache-used))
 
 ;; Use message buffer cache.

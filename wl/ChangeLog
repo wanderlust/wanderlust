@@ -1,3 +1,8 @@
+2002-04-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-redisplay): Ignore errors while
+	wl-message-redisplay-hook.
+
 2002-04-27  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-mimic-kill-buffer): Don't save draft.
