@@ -998,7 +998,6 @@ If current line is group folder, check all sub entries."
 	  (let ((wl-summary-buffer-name (concat
 					 wl-summary-buffer-name
 					 (symbol-name this-command)))
-		(wl-summary-use-frame nil)
 		(wl-summary-always-sticky-folder-list nil))
 	    (save-window-excursion
 	      (save-excursion
@@ -1049,7 +1048,6 @@ If current line is group folder, check all subfolders."
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
 					     (symbol-name this-command)))
-		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range folder)
@@ -2670,7 +2668,6 @@ Use `wl-subscribed-mailing-list'."
 	      (let ((wl-summary-buffer-name (concat
 					     wl-summary-buffer-name
 					     (symbol-name this-command)))
-		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range

@@ -772,7 +772,9 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (elmo-init)
   (let (demo-buf)
     (unless wl-init
-      (if wl-demo (setq demo-buf (wl-demo)))
+      (if wl-demo (setq demo-buf (wl-demo))))
+    (wl-init)
+    (unless wl-init
       (condition-case nil
 	  (progn
 	    (message "Checking environment...")
@@ -780,7 +782,6 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 	    (message "Checking environment...done"))
 	(error)
 	(quit)))
-    (wl-init)
     (condition-case obj
 	(progn
 	  (wl-plugged-init (wl-folder arg))
