@@ -580,7 +580,7 @@
     (define-key keymap [menu-bar mail signature]
       '("Insert Signature" . insert-signature))
     (define-key keymap [menu-bar headers fcc]
-      '("FCC" . wl-draft-fcc))))
+      '("Fcc" . wl-draft-fcc))))
 
 (defun wl-draft-mode-setup ()
   (require 'derived)
