@@ -1,3 +1,13 @@
+2000-10-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-get-filename): Fixed problem when
+	`file-name-completion' returns t.
+	(Reported by Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>)
+	(elmo-maildir-set-mark): Put `info' part to the files in the cur
+	directory if it does not exist.
+	(elmo-maildir-update-current): Use `while' instead of `mapcar'
+	for iteration.
+
 2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-folder-exists-p): Removed `condition-case'

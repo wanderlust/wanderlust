@@ -52,7 +52,7 @@ This variable should not be used in elsewhere.")
   (expand-file-name
    (let ((file (file-name-completion (symbol-name location)
 				     (expand-file-name "cur" dir))))
-     (if (eq file t) location file))
+     (if (eq file t) (symbol-name location) file))
    (expand-file-name "cur" dir)))
 
 (defsubst elmo-maildir-list-location (dir &optional child-dir)
@@ -114,23 +114,26 @@ This variable should not be used in elsewhere.")
     ;; cleanup tmp directory.
     (elmo-maildir-cleanup-temporal maildir)
     ;; move new msgs to cur directory.
-    (mapcar (lambda (x)
-	      (rename-file
-	       (expand-file-name x (expand-file-name "new" maildir))
-	       (expand-file-name (concat x ":2,")
-				 (expand-file-name "cur" maildir))))
-	    news)))
+    (while news
+      (rename-file
+       (expand-file-name (car news) (expand-file-name "new" maildir))
+       (expand-file-name (concat (car news) ":2,")
+			 (expand-file-name "cur" maildir)))
+      (setq news (cdr news)))))
 
 (defun elmo-maildir-set-mark (filename mark)
   "Mark the file in the maildir. MARK is a character."
-  (if (string-match "^\\([^:]+:2,\\)\\(.*\\)$" filename)
+  (if (string-match "^\\([^:]+:[12],\\)\\(.*\\)$" filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
 	(unless (memq mark flaglist)
 	  (setq flaglist (sort (cons mark flaglist) '<))
 	  (rename-file filename
 		       (concat (elmo-match-string 1 filename)
-			       (char-list-to-string flaglist)))))))
+			       (char-list-to-string flaglist)))))
+    ;; Rescue no info file in maildir.
+    (rename-file filename
+		 (concat filename ":2," (char-to-string mark)))))
 
 (defun elmo-maildir-delete-mark (filename mark)
   "Mark the file in the maildir. MARK is a character."
