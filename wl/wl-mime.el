@@ -39,8 +39,6 @@
   (defalias-maybe 'pgg-display-output-buffer 'ignore)
   (defalias-maybe 'pgg-verify-region 'ignore))
 
-(defvar mime-edit-temp-message-buffer)
-
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -218,7 +216,8 @@ It calls following-method selected from variable
 
 (defun wl-mime-quit-preview ()
   "Quitting method for mime-view."
-  (let* ((temp mime-edit-temp-message-buffer)
+  (let* ((temp (and (boundp 'mime-edit-temp-message-buffer) ;; for SEMI <= 1.14.6
+		    mime-edit-temp-message-buffer))
 	 (window (selected-window))
 	 buf)
     (mime-preview-kill-buffer)

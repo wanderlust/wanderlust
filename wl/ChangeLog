@@ -1,3 +1,9 @@
+2004-09-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-mime.el (mime-edit-temp-message-buffer): Remove definition.
+	(wl-mime-quit-preview): Check existence of
+	mime-edit-temp-message-buffer here.
+
 2004-09-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-delete): Remove folder entity
