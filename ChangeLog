@@ -1,7 +1,8 @@
-2001-08-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Makefile (check): New rule
 	* WL-MK (check-wl): New function.
+	* tests: New directory.
 	* tests/ChangeLog: New file.
 
 	* utils/ChangeLog: New file.
