@@ -34,13 +34,8 @@
 (require 'mime-play)
 (require 'elmo)
 
-;; avoid compile warnings
 (eval-when-compile
-  (defalias-maybe 'Meadow-version 'ignore)
-  (defvar-maybe zmacs-regions)
-  (defvar-maybe zmacs-region-active-p)
-  (defvar-maybe transient-mark-mode)
-  (defvar-maybe mark-active))
+  (defalias-maybe 'Meadow-version 'ignore))
 
 (defvar xemacs-betaname)
 (defvar xemacs-codename)
@@ -75,8 +70,7 @@ has Non-nil value\)"
 	    (widen)
 	      (if (or (and wl-on-xemacs
 			   zmacs-regions zmacs-region-active-p)
-		      (and (not wl-on-xemacs)
-			   transient-mark-mode mark-active))
+		      (and transient-mark-mode mark-active))
 		  (wl-mime-preview-follow-current-region)
 		(mime-preview-follow-current-entity)))))))
 
