@@ -1,5 +1,8 @@
 2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-highlight.el (wl-highlight-summary-window): Re-calculate the
+	end of the window if possible.
+
 	* wl-vars (wl-delete-folder-alist,): Change default value.
 	(wl-folder-hierarchy-access-folders): Ditto.
 

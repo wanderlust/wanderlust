@@ -991,13 +991,18 @@ Variables used:
 (defun wl-highlight-summary-window (&optional win beg)
   "Highlight summary window.
 This function is defined for `window-scroll-functions'"
-  (if wl-summary-highlight
-      (with-current-buffer (window-buffer win)
-	(when (eq major-mode 'wl-summary-mode)
-	  (wl-highlight-summary (window-start win)
-				(window-end win)
-				'lazy)
-	  (set-buffer-modified-p nil)))))
+  (when wl-summary-highlight
+    (with-current-buffer (window-buffer win)
+      (when (eq major-mode 'wl-summary-mode)
+	(let ((start (window-start win))
+	      (end (condition-case nil
+		       (window-end win t) ;; old emacsen doesn't support 2nd arg.
+		     (error (window-end win)))))
+	  (wl-highlight-summary start
+				end
+				'lazy))
+	(set-buffer-modified-p nil)))))
+
 
 (defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))
@@ -1098,8 +1103,7 @@ interpreted as cited text.)"
 	(real-end end)
 	current  beg
 	e p hend)
-    (if too-big
-	nil
+    (unless too-big
       (save-excursion
 	(save-restriction
 	  (widen)
