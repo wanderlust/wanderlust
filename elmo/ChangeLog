@@ -1,3 +1,7 @@
+2003-09-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.11.18.
+
 2003-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-kill-messages-before): Abolish.

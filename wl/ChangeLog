@@ -1,3 +1,7 @@
+2003-09-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.18.
+
 2003-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-prev-page): Use save-selected-window.
