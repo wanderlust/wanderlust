@@ -1,3 +1,12 @@
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news-mode-map): Add new keybind.
+	(wl-news): Change message.
+	(wl-news-exit): Check buffer.
+	(wl-news-force-exit): New function.
+	(wl-news-show-all): New function.
+	(wl-news-discard-and-exit): Fix.
+
 2002-12-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-summary-weekday-name-lang): Set default value
@@ -8,7 +17,7 @@
 
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
-	* wl-news.el.in (wl-news-check): 
+	* wl-news.el.in (wl-news-check): Rewritten.
 	(wl-news-previous-version-load): Change data type.
 	(wl-news-previous-version-save): Change data type.
 	(wl-news-append-news): Add return value.

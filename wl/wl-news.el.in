@@ -178,8 +178,9 @@
 (unless wl-news-mode-map
   (setq wl-news-mode-map (make-sparse-keymap))
   (define-key wl-news-mode-map "q"     'wl-news-exit)
-  (define-key wl-news-mode-map "Q"     'wl-news-discard-and-mail)
+  (define-key wl-news-mode-map "Q"     'wl-news-force-exit)
   (define-key wl-news-mode-map "\C-xk" 'wl-news-exit)
+  (define-key wl-news-mode-map "a"     'wl-news-show-all)
   (define-key wl-news-mode-map "\C-m"  'wl-news-next-line)
   (define-key wl-news-mode-map " "     'wl-news-next-page))
 
@@ -208,9 +209,9 @@
 		  (buffer-disable-undo (current-buffer))
 		  ;; insert news
 		  (let ((buffer-read-only nil))
-		    (insert "--- Wanderlust NEWS ---  press 'q' for exit\n")
-		    (if (wl-news-already-current-p)
-			(insert "                         press 'Q' for discard this message\n\n"))
+		    (insert "--- Wanderlust NEWS ---  press 'a' to show all NEWS\n")
+		    (insert "                         press 'q' to quit\n")
+		    (insert "                         press 'Q' to force quit\n\n")
 		    (while (car lang)
 		      (wl-news-append-news
 		       (car lang) previous-version t)
@@ -231,35 +232,51 @@
   (interactive)
   (scroll-up))
 
+(defun wl-news-show-all ()
+  (interactive)
+  (when (eq major-mode 'wl-news-mode)
+    (kill-buffer (current-buffer))
+    (wl-news t)))
+
 (defun wl-news-exit ()
   (interactive)
-  (if (eq major-mode 'wl-news-mode)
-      (if (not (wl-news-already-current-p))
-	  (wl-news-discard-and-mail)
-	(kill-buffer (current-buffer))
-	(if wl-news-winconf
-	    (set-window-configuration wl-news-winconf)))))
+  (let ((buf))
+    (when (setq buf (get-buffer wl-news-buf-name))
+      (wl-news-discard-and-mail)
+      (kill-buffer buf)
+      (if wl-news-winconf
+	  (set-window-configuration wl-news-winconf)))))
 
 (defun wl-news-discard-and-mail ()
   (interactive)
-  (if (eq major-mode 'wl-news-mode)
-      (let* ((oldest-version (cdr (wl-news-previous-version-load)))
-	     (current-version (product-version (product-find 'wl-version)))
-	     (new-old-version current-version))
-	(if (wl-news-check-news oldest-version wl-news-lang)
-	    (if (y-or-n-p "Do you want to see this message again? ")
-		(progn
-		  (message "Please M-x wl-news if you want to see it.")
-		  (setq new-old-version oldest-version))
-	      (if (y-or-n-p "Do you want this message for a mail? ")
-		  (or (wl-news-send-news oldest-version wl-news-lang)
-		      (error
-		       (format "Cannot append NEWS mail to %s" wl-default-folder))))))
-	(wl-news-previous-version-save
-	 current-version new-old-version)
+  (let* ((oldest-version (cdr (wl-news-previous-version-load)))
+	 (current-version (product-version (product-find 'wl-version)))
+	 (new-old-version current-version))
+    (if (wl-news-check-news oldest-version wl-news-lang)
+	(if (y-or-n-p "Do you want to see this message again? ")
+	    (progn
+	      (message "Please M-x wl-news if you want to see it.")
+	      (setq new-old-version oldest-version))
+	  (if (y-or-n-p "Do you want this message for a mail? ")
+	      (or (wl-news-send-news oldest-version wl-news-lang)
+		  (error
+		   (format "Cannot append NEWS mail to %s" wl-default-folder))))))
+    (wl-news-previous-version-save
+     current-version new-old-version)
 	(kill-buffer (current-buffer))
 	(if wl-news-winconf
-	    (set-window-configuration wl-news-winconf)))))
+	    (set-window-configuration wl-news-winconf))))
+
+(defun wl-news-force-exit ()
+  (interactive)
+  (let ((buf))
+    (when (setq buf (get-buffer wl-news-buf-name))
+      (wl-news-previous-version-save
+       (product-version (product-find 'wl-version))
+       (cdr (wl-news-previous-version-load)))
+      (kill-buffer buf)
+      (if wl-news-winconf
+	  (set-window-configuration wl-news-winconf)))))
 
 
 (require 'product)
