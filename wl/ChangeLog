@@ -1,5 +1,10 @@
 2001-06-25  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
 
+	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
+	as nil.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
 	* wl.el (wl): Check environment before wl-init.
 
 	* wl-summary.el (wl-summary-collect-unread): Eliminated.
