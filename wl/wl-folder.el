@@ -1,8 +1,10 @@
 ;;; wl-folder.el -- Folder mode for Wanderlust.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;;                          Masahiro MURATA <muse@ba2.so-net.ne.jp>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;         Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).

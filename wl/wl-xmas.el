@@ -1,8 +1,10 @@
 ;;; wl-xmas.el -- Wanderlust modules for XEmacsen.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright 2000 Katsumi Yamaoka <yamaoka@jpl.org>
 
-;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>,
+;;         Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
@@ -41,8 +43,10 @@
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
 
-(add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
-(add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
+(add-hook 'wl-init-hook 'wl-biff-init-icons)
+(add-hook 'wl-init-hook 'wl-plugged-init-icons)
+;; (add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
+;; (add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 

@@ -1,3 +1,33 @@
+2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-send-hook): Changed default value to
+	'(wl-draft-config-exec).
+
+	* wl-draft.el (wl-draft-send): Don't call `wl-draft-config-exec'
+	explicitly.
+	(wl-draft): Set `wl-draft-config-exec-flag' before running
+	`wl-mail-setup-hook'.
+
+	* wl-xmas.el (toplevel): Add `wl-plugged-init-icons' and
+	`wl-biff-init-icons' to	`wl-init-hook' instead of
+	`wl-make-plugged-hook'.
+	(Because if `wl-draft' command is invoked at first,
+	they are not initialized)
+	Updated copyright notice.
+
+	* wl-e21.el (toplevel): Ditto;
+
+	* wl-demo.el (toplevel): Updated copyright notice.
+	* wl-address.el (toplevel): Ditto.
+	* wl-draft.el (toplevel): Ditto.
+	* wl-version.el (toplevel): Ditto.
+	* wl-folder.el (toplevel): Ditto.
+	* wl-summary.el (toplevel): Ditto.
+	* wl-thread.el (toplevel): Ditto.
+	* wl-util.el (toplevel): Ditto.
+	* wl-vars.el (toplevel): Ditto.
+	* wl.el (toplevel): Ditto.
+
 2000-10-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-highlight.el (wl-highlight-message): Fixed problem of

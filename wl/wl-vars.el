@@ -1,8 +1,10 @@
 ;;; wl-vars.el -- Variable definitions for Wanderlust.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;;                          Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;         Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
@@ -440,7 +442,7 @@ system internal to accord facilities for the Emacs variants.")
   "A hook called when Draft is prepared.")
 (defvar wl-draft-reedit-hook nil
   "A hook called when Draft is re-edited.")
-(defvar wl-draft-send-hook nil
+(defvar wl-draft-send-hook '(wl-draft-config-exec)
   "A hook called on the draft editing buffer before sending process starts.")
 (defvar wl-mail-send-pre-hook nil
   "A hook called just before the mail sending process starts.")

@@ -1,8 +1,11 @@
 ;;; wl-address.el -- Tiny address management for Wanderlust.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
-
+;;                          Shun-ichi GOTO <gotoh@taiyo.co.jp>
+;;                          Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp>
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;         Shun-ichi GOTO <gotoh@taiyo.co.jp>
+;;         Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).

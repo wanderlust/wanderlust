@@ -1,6 +1,7 @@
 ;;; wl-e21.el -- Wanderlust modules for Emacs 21.
 
-;; Copyright 2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright 2000 Katsumi Yamaoka <yamaoka@jpl.org>
+;;                Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news
@@ -69,8 +70,10 @@
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
 
-(add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
-(add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
+(add-hook 'wl-init-hook 'wl-biff-init-icons)
+(add-hook 'wl-init-hook 'wl-plugged-init-icons)
+;; (add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
+;; (add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 

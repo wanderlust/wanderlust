@@ -1,8 +1,10 @@
 ;;; wl-draft.el -- Message draft mode for Wanderlust.
 
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;;                          Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
+;;         Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
@@ -1127,7 +1129,9 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
   "Send current draft message.
 If optional argument is non-nil, current draft buffer is killed"
   (interactive)
-  (wl-draft-config-exec)
+  ;; Don't call this explicitly.
+  ;; Added to 'wl-draft-send-hook (by teranisi)
+  ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
 	    (y-or-n-p "Send current draft. OK?"))
@@ -1429,6 +1433,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (wl-draft-overload-functions)
     (wl-highlight-headers 'for-draft)
     (goto-char (point-min))
+    (setq wl-draft-config-exec-flag t)
     (if (interactive-p)
 	(run-hooks 'wl-mail-setup-hook))
     (wl-user-agent-compose-internal) ;; user-agent
@@ -1438,7 +1443,6 @@ If optional argument is non-nil, current draft buffer is killed"
  	   (mail-position-on-field "To"))
  	  (t
  	   (goto-char (point-max))))
-    (setq wl-draft-config-exec-flag t)
     (setq wl-draft-buffer-cur-summary-buffer (or summary-buf
 						 (get-buffer
 						  wl-summary-buffer-name)))
