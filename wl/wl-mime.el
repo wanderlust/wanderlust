@@ -221,11 +221,12 @@ By setting following-method as yank-content."
     (while (file-directory-p filename)
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))
-    (if (file-exists-p filename)
-	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
-	    (message "Not saved")))
-    (setq wl-mime-save-directory (file-name-directory filename))
-    (mime-write-entity-content entity filename)))
+    (if (and (file-exists-p filename)
+	     (not (yes-or-no-p (format "File %s exists. Save anyway? " 
+				       filename))))
+	(message "Not saved")
+      (setq wl-mime-save-directory (file-name-directory filename))
+      (mime-write-entity-content entity filename))))
 
 ;;; Yet another combine method.
 (defun wl-mime-combine-message/partial-pieces (entity situation)

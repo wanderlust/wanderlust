@@ -1,3 +1,7 @@
+2002-03-04  Mito  <mito@mxa.nes.nec.co.jp>
+
+	* wl-mime.el (wl-mime-save-content): Don't save if answered "no".
+
 2002-02-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl.el (wl-check-environment): Also cause error when (system-name)
