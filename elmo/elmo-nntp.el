@@ -1379,10 +1379,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	(elmo-display-progress
 	 'elmo-nntp-retrieve-headers "Getting headers..." 100))
       (message "Getting headers...done")
-      ;; Remove all "\r"'s.
-      (goto-char (point-min))
-      (while (search-forward "\r\n" nil t)
-	(replace-match "\n"))
+      ;; Replace all CRLF with LF.
+      (elmo-delete-cr-buffer)
       (copy-to-buffer outbuf (point-min) (point-max)))))
 
 ;; end of from Gnus

@@ -678,10 +678,8 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
 	    (accept-process-output process 1)
 ;;;	    (accept-process-output process)
 	    (discard-input))))
-      ;; Remove all "\r"'s.
-      (goto-char (point-min))
-      (while (search-forward "\r\n" nil t)
-	(replace-match "\n"))
+      ;; Replace all CRLF with LF.
+      (elmo-delete-cr-buffer)
       (copy-to-buffer tobuffer (point-min) (point-max)))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-pop3-folder)

@@ -879,10 +879,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
      (with-temp-buffer
        (insert (or (elmo-imap4-response-bodydetail-text element)
 		   ""))
-       ;; Delete CR.
-       (goto-char (point-min))
-       (while (search-forward "\r\n" nil t)
-	 (replace-match "\n"))
+       ;; Replace all CRLF with LF.
+       (elmo-delete-cr-buffer)
        (elmo-msgdb-create-message-entity-from-buffer
 	handler
 	(elmo-imap4-response-value element 'uid)
