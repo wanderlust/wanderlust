@@ -50,9 +50,6 @@
 ;;
 ;; (acap-close proc)
 ;; => t
-;;
-;; Todo:
-;;  * Send literal data for STORE.
 
 ;;; History:
 ;;
@@ -661,9 +658,9 @@ ENTRIES is a store-entry list."
     rlist))
 
 (defun acap-parse-return-metadata-or-return-metalist ()
-  (or (acap-parse-string)
-      (acap-parse-value-or-return-metalist)
-      (and (acap-parse-nil) nil)))
+  (or (acap-parse-nil)
+      (acap-parse-string)
+      (acap-parse-value-or-return-metalist)))
 
 (defun acap-parse-value-or-return-metalist ()
   (when (eq (char-after (point)) ?\()
@@ -690,9 +687,9 @@ ENTRIES is a store-entry list."
 
 ;;   return-metadata    = nil / string / value-list / acl
 (defun acap-parse-return-metadata ()
-  (or (acap-parse-string)
+  (or (acap-parse-nil)
+      (acap-parse-string)
       (acap-parse-value-list)
-      (and (acap-parse-nil) nil)
       ;; (acap-parse-acl) acl is same as value-list.
       ))
 
@@ -763,7 +760,7 @@ ENTRIES is a store-entry list."
 	  (BYE   ;(cons 'bye (acap-parse-resp-body)))
 	   ;;(message (nth 1  (acap-parse-resp-body)))
 	   ;;(ding)
-	   )
+	   (delete-process acap-process))
 	  (CHANGE (cons 'change
 			(list (acap-parse-quoted)
 			      (progn

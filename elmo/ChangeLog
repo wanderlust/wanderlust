@@ -1,43 +1,4 @@
-2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo-imap4.el (elmo-imap4-default-mailbox,
-	elmo-imap4-default-server
-	elmo-imap4-default-authenticate-type,
-	elmo-imap4-default-user,
-	elmo-imap4-default-port,
-	elmo-imap4-default-stream-type,
-	elmo-imap4-stream-type-alist): Moved to elmo-vars.el.
-
-	* elmo-pop3.el (elmo-pop3-default-user,
-	elmo-pop3-default-server,
-	elmo-pop3-default-authenticate-type,
-	elmo-pop3-default-port,
-	elmo-pop3-default-stream-type,
-	elmo-pop3-stream-type-alist): Ditto.
-
-	* elmo-nntp.el (elmo-nntp-default-server,
-	elmo-nntp-default-user,
-	elmo-nntp-default-port,
-	elmo-nntp-default-stream-type,
-	elmo-nntp-stream-type-alist): Ditto.
-
-	* elmo-vars.el: Follow changes above.
-	(elmo-setting): New custom group; added 'elmo-setting group to
-	above variables.
-
-	* elmo-version.el (elmo-version): Up to 2.7.3.
-
-	* acap.el (acap-parse-response): Don't delete process when BYE
-	response (It causes hang-up on slow network environment).
-	(toplevel): Added comment.
-
 2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* slp.el (slp-exec-wait): Use `slp-program-arguments'.
-
-	* acap.el (acap-parse-return-metadata-or-return-metalist): Fix for
-	parsing NIL.
-	(acap-parse-return-metadata): Ditto.
 
 	* slp.el: New file.
 	(toplevel): Fixed typo.
