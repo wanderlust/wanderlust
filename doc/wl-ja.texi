@@ -2585,7 +2585,7 @@ IMAP $B%U%)%k%@$N%a%C%;!<%8$d(B NNTP $B%U%)%k%@$N%K%e!<%95-;v$rFI$`$3$H$,$G$-
 
 $B1JB3E*%^!<%/$N$&$A!"(B@code{wl-summary-expire-reserve-marks} $B$G;XDj$5$l$?(B
 $B%^!<%/$NIU$$$?%a%C%;!<%8$O!"8e$G@bL@$9$k(B (Wanderlust $B$N5!G=$H$7$F$N(B)
-expire $B$NBP>]$+$i$O=|30$5$l$^$9!#(B@xref{Expire and Archive}
+expire $B$NBP>]$+$i$O=|30$5$l$^$9!#(B@xref{Expire and Archive}.
 
 @subsection $B%a%C%;!<%8$NFI$_?J$a$+$?(B
 
