@@ -5076,7 +5076,7 @@ Reply to author if invoked with ARG."
 		  (split-window-vertically))
 	      (other-window 1)
 	      (when (setq mes-buf (wl-message-get-original-buffer))
-		(wl-draft-reply mes-buf (not arg) summary-buf)
+		(wl-draft-reply mes-buf arg summary-buf)
 		(unless without-setup-hook
 		  (run-hooks 'wl-mail-setup-hook)))
 	      t)))))
