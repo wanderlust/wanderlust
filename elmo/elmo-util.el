@@ -598,8 +598,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
    ((or (looking-at "yesterday") (looking-at "lastweek")
 	(looking-at "lastmonth") (looking-at "lastyear")
 	(looking-at "[0-9]+ *daysago")
-	(looking-at "[0-9]+")
 	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
+	(looking-at "[0-9]+")
 	(looking-at "[^/ \")|&]*") ; atom* (except quoted specials).
 	)
     (prog1 (elmo-match-buffer 0)
