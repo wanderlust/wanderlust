@@ -6,7 +6,7 @@
 	* wl-thread.el (wl-thread-reparent-children): New inline function.
 	(wl-thread-delete-message): Use it.
 
-	* wl-score.el (wl-score-headers): Abolish local variable
+	* wl-score.el (wl-score-headers): Abolish local variable `buffers'.
 	(wl-summary-score-update-all-lines): Don't use `dolist'.
 
 2000-10-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
