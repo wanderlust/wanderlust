@@ -317,23 +317,42 @@ It calls following-method selected from variable
   (require 'pgg)
   (save-excursion
     (beginning-of-line)
-    (if (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
-	    (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
-	(let (beg end status)
-	  (setq end (match-end 0))
-	  (if (setq beg (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	      (progn
-		(save-excursion
-		  (mime-show-echo-buffer)
-		  (set-buffer mime-echo-buffer-name)
-		  (set-window-start
-		   (get-buffer-window mime-echo-buffer-name)
-		   (point-max)))
-		(setq status (pgg-verify-region beg end nil 'fetch))
-		(set-buffer mime-echo-buffer-name)
-		(insert-buffer-substring
-		 (if status pgg-output-buffer pgg-errors-buffer)))
-	    (message "Cannot find pgp signed region")))
+    (if (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
+		 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
+	     (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
+	(let (status m-beg)
+	  (let* ((beg (point))
+		 (situation (mime-preview-find-boundary-info))
+		 (p-end (aref situation 1))
+		 (entity (aref situation 2))
+		 (count 0))
+	    (goto-char p-end)
+	    (while (< beg (point))
+	      (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
+		  (setq count (+ count 1))
+		(defbug)))
+	    (with-temp-buffer
+	      (set-buffer-multibyte nil)
+	      (insert (mime-entity-body entity))
+	      (goto-char (point-max))
+	      (while (> count 0)
+		(if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
+		    (setq count (- count 1))
+		  (debug)))
+	      (let ((r-beg (point))
+		    (r-end (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)))
+		(if r-end
+		    (setq status (pgg-verify-region r-beg r-end nil 'fetch))
+		  (debug)))))
+	  (mime-show-echo-buffer)
+	  (set-buffer mime-echo-buffer-name)
+	  (set-window-start
+	   (get-buffer-window mime-echo-buffer-name)
+	   (point-max))
+	  (setq m-beg (point))
+	  (insert-buffer-substring
+	   (if status pgg-output-buffer pgg-errors-buffer))
+	  (decode-coding-region m-beg (point) wl-cs-autoconv))
       (message "Cannot find pgp signed region"))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
