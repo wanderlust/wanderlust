@@ -78,6 +78,7 @@ Yet Another Message Interface On Emacsen"
   (autoload 'make-glyph "glyphs")
   (autoload 'set-glyph-face "glyphs")
   (autoload 'set-specifier "specifier")
+  (defalias-maybe 'face-background-name 'ignore)
   (defalias-maybe 'frame-char-height 'ignore)
   (defalias-maybe 'frame-char-width 'ignore)
   (defalias-maybe 'glyph-height 'ignore)

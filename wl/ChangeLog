@@ -1,3 +1,8 @@
+2004-02-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-demo.el (face-background-name): Defalias to avoid compile
+	warning.
+
 2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-decide-flag): Use
