@@ -51,10 +51,6 @@
 ;;; Code:
 (eval-when-compile (require 'cl))
 
-(defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
-  "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored.
-\(Except `\\Deleted' flag\).")
-
 (defvar elmo-imap4-overview-fetch-chop-length 200
   "*Number of overviews to fetch in one request.")
 
@@ -1912,8 +1908,7 @@ Return nil if no complete line has arrived."
   (elmo-imap4-folder-list-flagged folder 'answered))
 
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
-  (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
-		     (elmo-imap4-folder-mailbox-internal folder))))
+  t)
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-imap4-folder)
 						 &optional one-level)
