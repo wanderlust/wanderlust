@@ -1,3 +1,26 @@
+2001-06-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-move-messages): Bind
+	elmo-inhibit-display-retrieval-progress as t while moving messages.
+
+	* elmo-vars.el (elmo-display-retrieval-progress-threshold):
+	New variable.
+	(elmo-inhibit-display-retrieval-progress): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-process-filter): Use elmo-display-progress
+	for retrieval progress;
+	Don't display progress when total buffer size is smaller than
+	elmo-display-retrieval-progress-threshold.
+	(elmo-message-fetch-plugged): Don't display progress when
+	elmo-inhibit-display-retrieval-progress is non-nil.
+
+	* elmo-imap4.el (elmo-imap4-find-next-line): Use elmo-display-progress
+	for retrieval progress;
+	Don't display progress when literal size is smaller than
+	elmo-display-retrieval-progress-threshold.
+	(elmo-imap4-message-fetch): Don't display progress when
+	elmo-inhibit-display-retrieval-progress is non-nil.
+
 2001-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-display-literal-progress): New variable.
