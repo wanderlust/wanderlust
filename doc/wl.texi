@@ -1242,7 +1242,7 @@ You can specify
 as @var{authenticate-type}.
 
 You can specify @samp{uidl} (use UIDL command for message numbering) or
-@samp{list} (use LIST command for message numbering) ad @samp{numbering-method}.
+@samp{list} (use LIST command for message numbering) as @samp{numbering-method}.
 
 default:
 @example
