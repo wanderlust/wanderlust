@@ -1,4 +1,4 @@
-;;; wl-vars.el -- Variable definitions for Wanderlust. -*-coding:euc-japan;-*-
+;;; wl-vars.el -- Variable definitions for Wanderlust.
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -104,8 +104,6 @@
 (defconst wl-on-mule3
   (and wl-on-mule (or wl-on-xemacs
 		      (> emacs-major-version 19))))
-
-(require 'elmo-vars)
 
 (eval-when-compile
   (defun-maybe locate-data-directory (a)))
@@ -1454,12 +1452,17 @@ every intervals specified by wl-biff-check-interval."
   :type 'integer
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-on "[¢©]"
+(defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
+					       (not (featurep 'mule)))
+					  "[Mail]"
+					(decode-coding-string
+					 (read "\"[\e$B\\\")\e(B]\"")
+					 'iso-2022-jp)) ; Youbin mark
   "String used to show biff status ON."
   :type 'string
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-off "[¡¾]"
+(defcustom wl-biff-state-indicator-off "[$B!>(B]"
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-highlight)
@@ -2161,15 +2164,15 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 ;; Advanced thread view.
 (defvar wl-thread-indent-level 1
   "*Indent level for thread.")
-(defvar wl-thread-have-younger-brother-str "¨²"
+(defvar wl-thread-have-younger-brother-str "$B(2(B"
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-youngest-child-str       "¨±"
+(defvar wl-thread-youngest-child-str       "$B(1(B"
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-vertical-str             "¨­"
+(defvar wl-thread-vertical-str             "$B(-(B"
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-horizontal-str           "¨¬"
+(defvar wl-thread-horizontal-str           "$B(,(B"
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-space-str                "¡¡"
+(defvar wl-thread-space-str                "$B!!(B"
   "*A string for thread branch line.  It should contain one character.")
 
 (defvar wl-highlight-thread-indent-string-regexp "[^[<]*"
