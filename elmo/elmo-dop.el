@@ -66,7 +66,9 @@ Automatically loaded/saved.")
   '(elmo-folder-mark-as-read
     elmo-folder-unmark-read
     elmo-folder-mark-as-important
-    elmo-folder-unmark-important))
+    elmo-folder-unmark-important
+    elmo-folder-mark-as-answered
+    elmo-folder-unmark-answered))
 
 (defvar elmo-dop-queue-method-name-alist
   '((elmo-folder-append-buffer-dop-delayed . "Append")
@@ -75,6 +77,8 @@ Automatically loaded/saved.")
     (elmo-folder-create-dop-delayed . "Create")
     (elmo-folder-mark-as-read . "Read")
     (elmo-folder-unmark-read . "Unread")
+    (elmo-folder-mark-as-answered . "Answered")
+    (elmo-folder-unmark-answered . "Unanswered")    
     (elmo-folder-mark-as-important . "Important")
     (elmo-folder-unmark-important . "Unimportant")))
 
@@ -271,6 +275,12 @@ FOLDER is the folder structure."
 (defsubst elmo-folder-unmark-important-dop (folder numbers)
   (elmo-dop-queue-append folder 'elmo-folder-unmark-important (list numbers)))
 
+(defsubst elmo-folder-mark-as-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-mark-as-answered (list numbers)))
+
+(defsubst elmo-folder-unmark-answered-dop (folder numbers)
+  (elmo-dop-queue-append folder 'elmo-folder-unmark-answered (list numbers)))
+
 ;;; Execute as subsutitute for plugged operation.
 (defun elmo-folder-status-dop (folder)
   (let* ((number-alist (elmo-msgdb-number-load
@@ -280,8 +290,8 @@ FOLDER is the folder structure."
 	 spool-length
 	 (i 0)
 	 max-num)
-    (setq spool-length (car (if (elmo-folder-exists-p spool-folder)
-				(elmo-folder-status spool-folder))))
+    (setq spool-length (or (car (if (elmo-folder-exists-p spool-folder)
+				    (elmo-folder-status spool-folder))) 0))
     (setq max-num
 	  (or (nth (max (- (length number-list) 1) 0) number-list)
 	      0))

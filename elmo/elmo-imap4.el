@@ -792,18 +792,16 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 ;;
 ;; app-data:
-;; cons of list
-;; 0: new-mark 1: already-mark 2: seen-mark 3: important-mark
-;; 4: seen-list
-;; and result of use-flag-p.
+;; cons of seen-list and result of use-flag-p.
 (defsubst elmo-imap4-fetch-callback-1-subr (entity flags app-data)
   "A msgdb entity callback function."
   (let* ((use-flag (cdr app-data))
 	 (app-data (car app-data))
-	 (seen (member (car entity) (nth 4 app-data)))
+	 (seen (member (car entity) app-data))
 	 mark)
     (if (member "\\Flagged" flags)
-	(elmo-msgdb-global-mark-set (car entity) (nth 3 app-data)))
+	(elmo-msgdb-global-mark-set (car entity)
+				    elmo-msgdb-important-mark))
     (if (setq mark (elmo-msgdb-global-mark-get (car entity)))
 	(unless (member "\\Seen" flags)
 	  (setq elmo-imap4-seen-messages
@@ -816,13 +814,13 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 				 (and use-flag
 				      (member "\\Seen" flags)))
 			     nil
-			   (nth 1 app-data))
+			   elmo-msgdb-unread-cached-mark)
 		       (if (or seen
 			       (and use-flag
 				    (member "\\Seen" flags)))
 			   (if elmo-imap4-use-cache
-			       (nth 2 app-data))
-			 (nth 0 app-data))))))
+			       elmo-msgdb-read-uncached-mark)
+			 elmo-msgdb-new-mark)))))
     (setq elmo-imap4-current-msgdb
 	  (elmo-msgdb-append
 	   elmo-imap4-current-msgdb
@@ -1882,6 +1880,10 @@ Return nil if no complete line has arrived."
   ((folder elmo-imap4-folder))
   (elmo-imap4-list folder "flagged"))
 
+(luna-define-method elmo-folder-list-answereds-plugged
+  ((folder elmo-imap4-folder))
+  (elmo-imap4-list folder "answered"))
+
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-folder-mailbox-internal folder))))
@@ -2095,7 +2097,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
 	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"
-			    "larger" "smaller"))
+			    "larger" "smaller" "mark"))
 	(total 0)
 	(length (length from-msgs))
 	charset set-list end results)
@@ -2113,6 +2115,14 @@ If optional argument REMOVE is non-nil, remove FLAG."
 			   numbers)))
 	(mapcar '(lambda (x) (delete x numbers)) rest)
 	numbers))
+     ((string= "mark" search-key)
+      (cond
+       ((string= "unread" (elmo-filter-value filter))
+	(elmo-folder-list-unreads folder))
+       ((string= "important" (elmo-filter-value filter))
+	(elmo-folder-list-importants folder))
+       ((string= "answered" (elmo-filter-value filter))
+	(elmo-folder-list-answereds folder))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key)
@@ -2240,7 +2250,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (luna-call-next-method)))
 
 (luna-define-method elmo-folder-msgdb-create-plugged
-  ((folder elmo-imap4-folder) numbers &rest args)
+  ((folder elmo-imap4-folder) numbers seen-list)
   (when numbers
     (let ((session (elmo-imap4-get-session folder))
 	  (headers
@@ -2265,7 +2275,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(setq elmo-imap4-current-msgdb nil
 	      elmo-imap4-seen-messages nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data (cons args
+	      elmo-imap4-fetch-callback-data (cons seen-list
 						   (elmo-folder-use-flag-p
 						    folder)))
 	(while set-list
@@ -2304,6 +2314,14 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-mark-as-read-plugged
   ((folder elmo-imap4-folder) numbers)
   (elmo-imap4-set-flag folder numbers "\\Seen"))
+
+(luna-define-method elmo-folder-unmark-answered-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Answered" 'remove))
+
+(luna-define-method elmo-folder-mark-as-answered-plugged
+  ((folder elmo-imap4-folder) numbers)
+  (elmo-imap4-set-flag folder numbers "\\Answered"))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
 					      number)
@@ -2513,8 +2531,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		     (elmo-net-folder-user-internal (, folder2)))))))
 
 (luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-imap4-folder) src-folder numbers unread-marks
-   &optional same-number)
+  ((folder elmo-imap4-folder) src-folder numbers &optional same-number)
   (if (and (eq (elmo-folder-type-internal src-folder) 'imap4)
 	   (elmo-imap4-identical-system-p folder src-folder)
 	   (elmo-folder-plugged-p folder))
@@ -2605,7 +2622,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (goto-char (point-min))
       (std11-field-body (symbol-name field)))))
 
-
+(luna-define-method elmo-folder-search-requires-msgdb-p ((folder
+							  elmo-imap4-folder)
+							 condition)
+  nil)
 
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))
