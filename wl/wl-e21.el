@@ -72,6 +72,15 @@
   (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
+;; For Emacs 21.0.104 or earlier
+(defun-maybe make-mode-line-mouse-map (mouse function) "\
+Return a keymap with single entry for mouse key MOUSE on the mode line.
+MOUSE is defined to run function FUNCTION with no args in the buffer
+corresponding to the mode line clicked."
+  (let ((map (make-sparse-keymap)))
+    (define-key map (vector 'mode-line mouse) function)
+    map))
+
 (add-hook 'wl-folder-mode-hook 'wl-setup-folder)
 (add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
 
@@ -454,8 +463,8 @@
 
 (defun wl-plugged-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-toggle-plugged))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-toggle-plugged))
 		       'help-echo "mouse-2 toggles plugged status"))))
     (if (wl-e21-display-image-p)
 	(progn
@@ -485,8 +494,8 @@
 
 (defun wl-biff-init-icons ()
   (let ((props (when (display-mouse-p)
-		 (list 'local-map (purecopy (make-mode-line-mouse2-map
-					     #'wl-biff-check-folders))
+		 (list 'local-map (purecopy (make-mode-line-mouse-map
+					     'mouse-2 #'wl-biff-check-folders))
 		       'help-echo "mouse-2 checks new mails"))))
     (if (wl-e21-display-image-p)
 	(progn
