@@ -21,6 +21,8 @@ elmo-lunafy メモ
   以外のメソッドは elmo-folder-open で open してから実行しなければならない。
   open したフォルダは elmo-folder-close で close する必要がある。
 
+* *-func => *-function
+
 * 旧 => 新
 
 elmo-folder-get-spec => elmo-make-folder
@@ -38,7 +40,7 @@ elmo-rename-folder => elmo-folder-rename
 elmo-delete-folder => elmo-folder-delete
 elmo-create-folder => elmo-folder-create
 elmo-msgdb-load => elmo-folder-open
-elmo-msgdb-save => elmo-folder-commit
+wl-summary-msgdb-save=>elmo-folder-commit
 elmo-get-msg-name => elmo-message-file-name
 elmo-local-file-p => elmo-folder-message-file-p or elmo-message-file-p
 elmo-move-msgs => elmo-folder-move-messages
@@ -122,7 +124,6 @@ archive フォルダ用 msgdb path を変更。
 ** オフライン処理
 ** tm 対応
 ** NNTP 関連
-   クロスポスト処理
    wl-folder-check-entity-async
 ** パートフェッチが SEMI まかせ
 ** フォルダとアイコンファイルの対応
