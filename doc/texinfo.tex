@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2002-12-26.16}
+\def\texinfoversion{2003-01-02.15}
 %
 % Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
@@ -6406,7 +6406,7 @@ should work if nowhere else does.}
 \catcode`\_=\active
 \def_{\ifusingtt\normalunderscore\_}
 % Subroutine for the previous macro.
-\def\_{\leavevmode \kern.06em \vbox{\hrule width.3em height.1ex}}
+\def\_{\leavevmode \kern.07em \vbox{\hrule width.3em height.1ex}\kern .07em }
 
 \catcode`\|=\active
 \def|{{\tt\char124}}
