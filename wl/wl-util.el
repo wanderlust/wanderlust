@@ -912,7 +912,7 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
   (if (and (elmo-folder-plugged-p folder)
-	   (elmo-folder-exists-p folder))
+	   (wl-folder-entity-exists-p (elmo-folder-name-internal folder)))
       (progn
 	(elmo-folder-set-biff-internal folder t)
 	(if (and (eq (elmo-folder-type-internal folder) 'imap4)
