@@ -86,7 +86,8 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   (autoload 'elmo-global-flag-p "elmo-flag")
   (autoload 'elmo-global-flag-detach "elmo-flag")
   (autoload 'elmo-global-flag-detach-messages "elmo-flag")
-  (autoload 'elmo-global-flag-set "elmo-flag"))
+  (autoload 'elmo-global-flag-set "elmo-flag")
+  (autoload 'elmo-global-mark-migrate "elmo-flag"))
 
 (defun elmo-define-folder (prefix backend)
   "Define a folder.

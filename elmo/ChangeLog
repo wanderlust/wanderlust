@@ -3,6 +3,7 @@
 	* elmo.el (toplevel): Remove setting of autoloding for
 	elmo-global-flag-initialize.
 	(elmo-init): Don't call elmo-global-flag-initialize.
+	(toplevel): Added autoload setting for elmo-global-mark-migrate.
 
 	* elmo-flag.el (elmo-global-flag-initialize): Abolish.
 	(elmo-global-mark-migrate): Don't call it.
