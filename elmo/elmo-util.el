@@ -1648,16 +1648,6 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	    (throw 'loop a))
 	(setq alist (cdr alist))))))
 
-(defun elmo-string-rassoc-all (key alist)
-  (let (matches)
-    (while alist
-      (if (string= key (cdr (car alist)))
-	  (setq matches
-		(cons (car alist)
-		      matches)))
-      (setq alist (cdr alist)))
-    matches))
-
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
 ;; 
 ;; number          ::= [0-9]+
