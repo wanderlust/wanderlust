@@ -1535,6 +1535,11 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			 (progn (forward-line 1) (point)))))
       fcc-list)))
 
+(defcustom wl-draft-fcc-append-read-folder-hist t
+  "Non-nil to append fcc'ed folder to `wl-read-folder-hist'."
+  :type 'boolean
+  :group 'wl-draft)
+
 (defun wl-draft-do-fcc (header-end &optional fcc-list)
   (let ((send-mail-buffer (current-buffer))
 	(tembuf (generate-new-buffer " fcc output"))
@@ -1567,6 +1572,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	       (and wl-fcc-force-as-read 'read))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
+	  (if (and wl-draft-fcc-append-read-folder-hist
+		   (boundp 'wl-read-folder-hist))
+	      (setq wl-read-folder-hist
+		    (append (list (car fcc-list)) wl-read-folder-hist)))
 	  (setq fcc-list (cdr fcc-list)))))
     (kill-buffer tembuf)))
 

@@ -1,3 +1,8 @@
+2003-09-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-fcc-append-read-folder-hist): New variable.
+	(wl-draft-do-fcc): Append fcc'ed folder to wl-read-folder-hist.
+
 2003-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-draft-preview-message): Use `format' to print value.
