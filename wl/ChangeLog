@@ -1,3 +1,7 @@
+2003-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-use-semi): Remove unused variable.
+
 2003-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-new-cached-mark): Changed default value to

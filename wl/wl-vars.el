@@ -129,9 +129,6 @@
 
 (defvar wl-cs-cache wl-cs-local)
 
-(defvar wl-use-semi (module-installed-p 'mime-view) ; If nil, use tm.
-  "*Use SEMI or not.")
-
 (defcustom wl-from (and user-mail-address
 			(concat (and (user-full-name)
 				     (concat (elmo-address-quote-specials
