@@ -40,7 +40,7 @@
 	(setq file (car files)
 	      files nil))
       (setq files (cdr files)))
-    (expand-file-name file)))
+    (and file (expand-file-name file))))
 
 (defcustom elmo-file-command (exec-installed-p "file")
   "*Program name of the file type detection command `file'."
