@@ -8539,6 +8539,25 @@ in Japanese.}
 I would like to express my thanks to the members of the mailing list for
 valuable advice and many pieces of code they contributed.
 
+@subsection Archive
+
+You can read messages posted to the mailing list on the web or in
+NetNews.
+
+Read messages posted to @t{<wl@@lists.airs.net>}
+
+@example
+@uref{http://lists.airs.net/wl/archive/}
+@uref{news://gmane.mail.wanderlust.general.japanese@@news.gmane.org}
+@end example
+
+Read messages posted to @t{<wl-en@@lists.airs.net>}
+
+@example
+@uref{http://lists.airs.net/wl-en/archive/}
+@uref{news://gmane.mail.wanderlust.general@@news.gmane.org}
+@end example
+
 
 @node Addition, Index, Mailing List, Top
 @chapter Additional Information

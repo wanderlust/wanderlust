@@ -8595,6 +8595,25 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
 メーリングリストの皆様には貴重な御助言、コードをたくさん御提供いただいて
 おります。この場を借りてお礼申し上げます。
 
+@subsection アーカイブ
+
+メーリングリストに投稿されたメッセージは、ウェブや NetNews でも読むこと
+ができます。
+
+@t{<wl@@lists.airs.net>} に投稿されたメッセージ
+
+@example
+@uref{http://lists.airs.net/wl/archive/}
+@uref{news://gmane.mail.wanderlust.general.japanese@@news.gmane.org}
+@end example
+
+@t{<wl-en@@lists.airs.net>} に投稿されたメッセージ
+
+@example
+@uref{http://lists.airs.net/wl-en/archive/}
+@uref{news://gmane.mail.wanderlust.general@@news.gmane.org}
+@end example
+
 
 @node Addition, Index, Mailing List, Top
 @chapter おまけ
