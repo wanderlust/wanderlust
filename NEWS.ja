@@ -1,5 +1,8 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+** wl-draft-reply-with-argument-list と wl-draft-reply-without-argument-list
+  の初期値が変更されました。以前の設定は、samples/ja/dot.wl を参照ください。
+
 ** ドラフトバッファウィンドウの配置の指定の仕方が変更されました。
    wl-draft-buffer-style と wl-draft-reply-buffer-style に keep,full,split
    のいずれかを指定します。

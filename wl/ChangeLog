@@ -1,5 +1,11 @@
 2002-12-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-draft-reply-with-argument-list): Change
+	default value.
+	(wl-draft-reply-without-argument-list): Ditto.
+
+2002-12-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-message-buffer-prefetch-depth): Change default value.
 	(wl-message-buffer-prefetch-idle-time): Ditto.
 	(wl-message-buffer-prefetch-folder-type-list): Ditto.

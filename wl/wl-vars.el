@@ -744,8 +744,15 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
   :group 'wl-draft)
 
 (defcustom wl-draft-reply-with-argument-list
-  '(("Reply-To" . (("Reply-To") nil nil))
-    ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+  '((("Followup-To" "Mail-Followup-To")
+     . (("Mail-Followup-To") ("From" "To" "Cc") ("Followup-To")))
+    ("Followup-To"
+     . (("From") ("To" "Cc") ("Followup-To")))
+    ("Mail-Followup-To"
+     . (("Mail-Followup-To") ("From" "To" "Cc") ("Newsgroups")))
+    ("Mail-Reply-To" . (("Mail-Reply-To") ("From" "To" "Cc") ("Newsgroups")))
+    ("Reply-To" . (("Reply-To") ("From" "To" "Cc") ("Newsgroups")))
+    ("Newsgroups" . (("From") ("To" "Cc") ("Newsgroups")))
     ("From" . (("From") nil nil)))
   "Alist of cons cell of
 ('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
@@ -762,10 +769,14 @@ Default is for 'reply-to-author'."
   :group 'wl-draft)
 
 (defcustom wl-draft-reply-without-argument-list
-  '(("Followup-To" . (nil nil ("Followup-To")))
+  '((("Followup-To" "Mail-Followup-To")
+     . (("Mail-Followup-To") nil ("Followup-To")))
+    ("Followup-To" . (nil nil ("Followup-To")))
     ("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
-    ("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
-    ("From" . (("From") ("To" "Cc") ("Newsgroups"))))
+    ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+    ("Reply-To" . (("Reply-To") nil nil))
+    ("Newsgroups" . (nil nil ("Newsgroups")))
+    ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
 ('field-name' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
 'field-name' is a string.

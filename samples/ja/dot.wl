@@ -300,6 +300,17 @@
 ;	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
 ;	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
 
+;; 2.11.0 以前のデフォルト設定
+;(setq wl-draft-reply-with-argument-list
+;      '(("Reply-To" . (("Reply-To") nil nil))
+;	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+;	("From" . (("From") nil nil))))
+;(setq wl-draft-reply-without-argument-list
+;      '(("Followup-To" . (nil nil ("Followup-To")))
+;	("Mail-Followup-To" . (("Mail-Followup-To") nil ("Newsgroups")))
+;	("Reply-To" . (("Reply-To") ("To" "Cc" "From") ("Newsgroups")))
+;	("From" . (("From") ("To" "Cc") ("Newsgroups")))))
+
 
 ;;; [[ メッセージ表示の設定 ]]
 
