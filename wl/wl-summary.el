@@ -1182,13 +1182,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 						 folder))
 					'force-update nil nil t))
 	  (t
-	   (let ((wl-use-scoring (if (string-match "noscore" range)
-				     nil
-				   wl-use-scoring)))
-	     (wl-summary-sync-update unset-cursor
-				     (or (string-match "nokill" range)
-					 (string-match "noscore" range))
-				     (string-match "all" range)))))))
+	   (wl-summary-sync-update unset-cursor
+				   (string-match "nokill" range)
+				   (string-match "all" range))))))
 
 (defvar wl-summary-edit-addresses-candidate-fields
   ;; First element becomes default.
@@ -3318,14 +3314,12 @@ Return non-nil if the mark is updated"
 			    "last:"
 			    "cache-status"
 			    "rescan"
-n			    "rescan-nokill"
+			    "rescan-nokill"
 			    "rescan-noscore"
 			    "update"
 			    "update-nokill"
-			    "update-noscore"
 			    "all"
-			    "all-nokill"
-			    "all-noscore"))
+			    "all-nokill"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)
