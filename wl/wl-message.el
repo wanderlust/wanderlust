@@ -54,8 +54,6 @@
 
 (defvar wl-message-buffer-prefetch-debug
   t)
-(defvar wl-message-buffer-prefetch-threshold
-  30000)
 
 (defvar wl-message-buffer nil) ; message buffer.
 
@@ -524,9 +522,9 @@ Returns non-nil if bottom of message."
 		(when (or (elmo-message-file-p folder number)
 			  (not 
 			   (and (integerp size)
-				wl-message-buffer-prefetch-threshold
+				elmo-message-fetch-threshold
 				(>= size
-				    wl-message-buffer-prefetch-threshold))))
+				    elmo-message-fetch-threshold))))
 		  ;;(not (elmo-file-cache-exists-p message-id)))))
 		  (when wl-message-buffer-prefetch-debug
 		    (setq time1 (current-time))

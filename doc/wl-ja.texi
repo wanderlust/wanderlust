@@ -533,9 +533,9 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 (setq wl-icon-dir "~/work/wl/etc")
 
 ;; @r{$B%a!<%k$rAw?.$9$k(B SMTP $B%5!<%P!#(B $B=i4|@_Dj$O(B @code{nil}$B!#(B}
-(setq wl-smtp-posting-server "your.smtp.server.com")
+(setq wl-smtp-posting-server "your.smtp.example.com")
 ;; @r{$B%K%e!<%9Ej9FMQ$N(B NNTP $B%5!<%P!#(B $B=i4|@_Dj$O(B @code{nil}$B!#(B}
-(setq wl-nntp-posting-server "your.nntp.server.com")
+(setq wl-nntp-posting-server "your.nntp.example.com")
 @end group
 @end lisp
 
@@ -655,14 +655,14 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 %inbox  "$B<u?.H"(B"
 +trash  "$B%4%_H"(B"
 +draft  "$BAp9F(B"
-%#mh/Backup@@my.imap.server.com "$BAw?.:Q$_(B"
+%#mh/Backup@@my.imap.example.com "$BAw?.:Q$_(B"
 # $B%0%k!<%W$NDj5A(B
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
     %#mh/spool/elips         "ELIPS ML"
     %#mh/spool/apel-ja       "APEL ($BF|K\8l(B) ML"
     %#mh/spool/xemacs-beta   "XEmacs $B%Y!<%?(B"
-    -fj.news.reader.gnus@@other.nntp.server.com
+    -fj.news.reader.gnus@@other.nntp.example.com
     *-fj.editor.xemacs,-fj.editor.mule,-fj.editor.emacs "fj $B$N(B Emacsen"
 @}
 #
@@ -2826,6 +2826,9 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @findex wl-summary-down
 $B2<J}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
 $B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
+$B$?$@$7!"$^$H$a=hM}%^!<%/(B @samp{*} $B$,$D$$$?%a%C%;!<%8$,$"$k>l9g$O!"(B
+$B$^$H$a=hM}%^!<%/(B @samp{*} $B$,$D$$$?%a%C%;!<%8$KM%@hE*$K0\F0$7$^$9!#(B
+$B$3$N5sF0$O(B @code{wl-summary-move-order}$B$NCM$K1~$8$FJQ$o$j$^$9!#(B
 (@code{wl-summary-down})
 
 @item P
@@ -2833,6 +2836,9 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @findex wl-summary-up
 $B>eJ}8~$K$"$kL$FI$b$7$/$O(B @samp{$}$B%^!<%/$D$-$N%a%C%;!<%8$X0\F0$7$^$9!#(B
 $B%*%U%i%$%s%b!<%I$N$H$-$K$O!"%-%c%C%7%e$5$l$F$$$J$$%a%C%;!<%8$K0\F0$7$^$;$s!#(B
+$B$?$@$7!"$^$H$a=hM}%^!<%/(B @samp{*} $B$,$D$$$?%a%C%;!<%8$,$"$k>l9g$O!"(B
+$B$^$H$a=hM}%^!<%/(B @samp{*} $B$,$D$$$?%a%C%;!<%8$KM%@hE*$K0\F0$7$^$9!#(B
+$B$3$N5sF0$O(B @code{wl-summary-move-order}$B$NCM$K1~$8$FJQ$o$j$^$9!#(B
 (@code{wl-summary-up})
 
 @item w
@@ -3728,13 +3734,13 @@ nil $B$J$i!"(Bmime-view-visible-field-list $B$NCM$,;H$o$l$^$9!#(B
 @lisp
 @group
 (setq wl-draft-config-alist
-      '(((string-match "aaa.ne.jp$" (system-name))
+      '(((string-match "aaa.example.com$" (system-name))
          ;; @r{$B<0$,(Bnon-nil$B$J$iE,MQ$9$k(B}
          (wl-smtp-posting-server . "mailserver-B")
          (wl-nntp-posting-server . "newsserver-B")
          ;; @r{$B0l;~E*$JJQ?t$N@_Dj(B}
          )
-        ("^To: .*user@@aaa.bbb.com"
+        ("^To: .*user@@aaa.bbb.example.com"
          ;; @r{$B%I%i%U%H%P%C%U%!$N%X%C%@$K%^%C%A$9$l$PE,MQ$9$k(B}
          ("Organization" . (format "Go %s" my-webpage)))
                            ;; @r{elisp $B<0$,=q$1$k(B (eval $B$7$F$$$k$@$1(B)}
@@ -3862,7 +3868,7 @@ nil $B$J$i!"(Bmime-view-visible-field-list $B$NCM$,;H$o$l$^$9!#(B
          (body . "  $B!{!{$G$9!#(B\n"))
         ("report"
          (template . "default")                 ;; @r{(a)}
-         ("To" . "jousi@@kaisha.jp")
+         ("To" . "jousi@@example.com")
          ("Subject" . "$BJs9p(B")
          (body-file . "~/work/report.txt")
          )

@@ -1,4 +1,21 @@
+2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-make-plugged-alist): Use `wl-nntp-posting-port'
+	instead of `elmo-nntp-default-port'.
+
+	* wl-vars.el: Fixed some doc strings.
+
 2001-02-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Use
+	`elmo-msgdb-overview-get-entity' instead of `assoc'.
+
+	* wl-vars.el: Define *-func as obsolete variable using
+	`elmo-define-obsolete-variable'.
+
+	* wl-message.el (wl-message-buffer-prefetch-threshold): Eliminated.
+	(wl-message-buffer-prefetch): Use `elmo-message-fetch-threshold'
+	instead of `wl-message-buffer-prefetch-threshold'.
 
 	* wl-summary.el (wl-summary-buffer-message-redisplay-func): Removed.
 
@@ -89,6 +106,44 @@
 
 	* wl-summary.el (wl-summary-default-subject-filter): Fix for `Re>'.
 	* wl-vars.el (wl-summary-search-parent-by-subject-regexp): Ditto.
+
+2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-next-message):
+	Return next message number when wl-summary-move-order is nil.
+
+2001-02-28  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-summary.el (wl-summary-move-spec-plugged-alist): Renamed from
+	`wl-summary-move-spec-alist'.
+	(wl-summary-move-spec-unplugged-alist): New variable
+	(Move spec for unplugged status).
+	(wl-summary-next-message): Use `wl-summary-move-spec-plugged-alist'
+	if plugged, `wl-summary-move-spec-unplugged-alist' is unplugged.
+
+2001-03-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-e21.el (wl-draft-overload-menubar): "FCC" -> "Fcc".
+	* wl-mule.el (wl-draft-overload-menubar): Ditto.
+
+2001-02-28  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-mime.el (wl-draft-preview-message): Use `function' instead of
+	simple quotation to quote the anonymous function.
+	* tm-wl.el (wl-draft-preview-message): Ditto.
+
+2001-02-25  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-summary-displaying): Optimize;
+	Eliminate redundant `save-excursion'.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Avoid
+	accessing match data when `looking-at' failed.
+
+	* wl-draft.el (wl-draft-delete): Use `match-string' instead of
+	`elmo-match-string' where users don't care about the speed.
+	(wl-draft-save): Ditto.
 
 2001-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
 

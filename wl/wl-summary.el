@@ -1244,8 +1244,8 @@ If ARG is non-nil, checking is omitted."
 	   (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	   (number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (message-id (cdr (assq number number-alist)))
-	   (ov (assoc message-id
-		      (elmo-msgdb-get-overview msgdb)))
+	   (ov (elmo-msgdb-overview-get-entity
+		message-id (elmo-msgdb-get-overview msgdb)))
 	   (entity ov)
 	   (size (elmo-msgdb-overview-entity-get-size ov))
 	   (inhibit-read-only t)
@@ -4311,7 +4311,7 @@ If ARG, exit virtual folder."
 	(wl-match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
-(defvar wl-summary-move-spec-alist
+(defvar wl-summary-move-spec-plugged-alist
   (` ((new . ((t . nil)
 	      (p . (, wl-summary-new-mark))
 	      (p . (, (wl-regexp-opt
@@ -4325,34 +4325,47 @@ If ARG, exit virtual folder."
 				wl-summary-unread-cached-mark))))
 		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
+(defvar wl-summary-move-spec-unplugged-alist
+  (` ((new . ((t . nil)
+	      (p . (, wl-summary-unread-cached-mark))
+	      (p . (, (regexp-quote wl-summary-important-mark)))))
+      (unread . ((t . nil)
+		 (p . (, wl-summary-unread-cached-mark))
+		 (p . (, (regexp-quote wl-summary-important-mark))))))))
+
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 
-			     wl-summary-move-spec-alist)))
+			     (if (elmo-folder-plugged-p
+				  wl-summary-buffer-elmo-folder)
+				 wl-summary-move-spec-plugged-alist
+			       wl-summary-move-spec-unplugged-alist))))
 	(nums (memq num (if (eq direction 'up)
 			    (reverse wl-summary-buffer-number-list)
 			  wl-summary-buffer-number-list)))
 	marked-list nums2)
     (unless hereto (setq nums (cdr nums)))
     (setq nums2 nums)
-    (catch 'done
-      (while cur-spec
-	(setq nums nums2)
-	(cond ((eq (car (car cur-spec)) 'p)
-	       (if (setq marked-list (elmo-folder-list-messages-mark-match
-				      wl-summary-buffer-elmo-folder
-				      (cdr (car cur-spec))))
-		   (while nums
-		     (if (memq (car nums) marked-list)
-			 (throw 'done (car nums)))
-		     (setq nums (cdr nums)))))
-	      ((eq (car (car cur-spec)) 't)
-	       (while nums
-		 (if (and wl-summary-buffer-target-mark-list
-			  (memq (car nums)
-				wl-summary-buffer-target-mark-list))
-		     (throw 'done (car nums)))
-		 (setq nums (cdr nums)))))
-	(setq cur-spec (cdr cur-spec))))))
+    (if cur-spec
+	(catch 'done
+	  (while cur-spec
+	    (setq nums nums2)
+	    (cond ((eq (car (car cur-spec)) 'p)
+		   (if (setq marked-list (elmo-folder-list-messages-mark-match
+					  wl-summary-buffer-elmo-folder
+					  (cdr (car cur-spec))))
+		       (while nums
+			 (if (memq (car nums) marked-list)
+			     (throw 'done (car nums)))
+			 (setq nums (cdr nums)))))
+		  ((eq (car (car cur-spec)) 't)
+		   (if wl-summary-buffer-target-mark-list
+		       (while nums
+			 (if (memq (car nums)
+				   wl-summary-buffer-target-mark-list)
+			     (throw 'done (car nums)))
+			 (setq nums (cdr nums))))))
+	    (setq cur-spec (cdr cur-spec))))
+      (car nums))))
 
 (defsubst wl-summary-cursor-move (direction hereto)
   (when (and (eq direction 'up)
@@ -4714,6 +4727,7 @@ Return t if message exists."
 	    (wl-summary-jump-to-msg-internal
 	     (wl-summary-buffer-folder-name) original 'no-sync))
 	(cond ((eq wl-summary-search-via-nntp 'confirm)
+	       (require 'elmo-nntp)
 	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>?"
 			elmo-nntp-default-server)
 	       (setq schar (read-char))
