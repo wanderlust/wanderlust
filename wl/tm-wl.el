@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/10 23:47:38 teranisi>
+;; Time-stamp: <00/04/20 13:45:03 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -100,9 +100,9 @@ By setting following-method as yank-content."
 	(if (setq mime-out-win (get-buffer-window mime-out-buf))
 	    (delete-window mime-out-win)))))
 
-(defun wl-message-request-partial (folder number msgdb)
+(defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
-   (elmo-read-msg-no-cache folder number (current-buffer) msgdb)
+   (elmo-read-msg-no-cache folder number (current-buffer))
    (mime/parse-message nil nil)))
 
 (defalias 'wl-message-read            'mime-viewer/scroll-up-content)
@@ -233,8 +233,7 @@ By setting following-method as yank-content."
 	      (setq cinfo
 		    (wl-message-request-partial
 		     folder
-		     (elmo-msgdb-overview-entity-get-number (car overviews))
-		     msgdb))
+		     (elmo-msgdb-overview-entity-get-number (car overviews))))
 	      (setq parameters (mime::content-info/parameters cinfo))
 	      (setq the-id (assoc-value "id" parameters))
 	      (if (string= the-id id)

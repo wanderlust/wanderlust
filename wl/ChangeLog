@@ -1,3 +1,12 @@
+2000-04-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-message-request-partial):
+	Eliminated argument `msgdb'.
+	Don't pass `msgdb' argument to `elmo-read-msg-no-cache'.
+	(wl-mime-combine-message/partial-pieces): Likewise.
+	* tm-wl.el (wl-message-request-partial): Likewise.
+	(wl-mime-combine-message/partial-pieces): Likewise.
+
 2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* wl-summary.el (wl-summary-sync-marks): Remove progress gauge
