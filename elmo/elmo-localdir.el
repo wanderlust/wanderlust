@@ -355,7 +355,8 @@
 	 (elmo-msgdb-overview-get-entity onum msgdb)
 	 new-number)
 	;; update number-alist
-	(setcar (assq onum onum-alist) new-number))
+	(and (assq onum onum-alist)
+	     (setcar (assq onum onum-alist) new-number)))
       ;; update mark-alist
       (when (setq mark (cadr (assq onum omark-alist)))
 	(setq new-mark-alist
