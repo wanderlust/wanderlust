@@ -7469,8 +7469,9 @@ The initial setting is the alist shown below:
 @noindent
 This is an associative list of regular expressions of folder names and
 update range of the summary.  Update range is one of the @samp{all},
-@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first} and
-@samp{last}. If a folder do not match, @samp{update} is used.
+@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first},
+@samp{last} and @samp{no-sync}. If a folder do not match, @samp{update}
+is used.
 
 @item wl-ask-range
 @vindex wl-ask-range
