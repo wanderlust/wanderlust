@@ -573,12 +573,10 @@ BUFFER must be a single-byte buffer."
 	 (elmo-imap4-session-current-mailbox-internal session)
 	 (elmo-imap4-spec-mailbox spec))
 	t
-      (condition-case nil
-	  (elmo-imap4-session-select-mailbox
-	   session
-	   (elmo-imap4-spec-mailbox spec)
-	   'force)
-	(error nil)))))
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-spec-mailbox spec)
+       'force))))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)

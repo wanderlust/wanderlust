@@ -1,5 +1,22 @@
 2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-imap4.el (elmo-imap4-folder-exists-p): Removed `condition-case'
+	enclosure (It's harmful in unplugged status).
+
+	* elmo-pop3.el (elmo-pop3-folder-exists-p): Ditto.
+
+	* mmelmo-1.el: Removed.
+
+	* mmelmo-2.el: Ditto.
+
+	* mmelmo-imap4-1.el: Ditto.
+
+	* mmelmo-imap4-2.el: Ditto.
+
+	* mmelmo-imap4.el: Merged mmelmo-imap4-2.el
+
+	* mmelmo.el: Merged mmelmo-2.el.
+
 	* elmo-version.el (elmo-version): Up to 2.3.92.
 
 2000-10-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>

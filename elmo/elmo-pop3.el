@@ -390,12 +390,10 @@
       (save-excursion
 	(let (elmo-auto-change-plugged ; don't change plug status.
 	      session)
-	  (condition-case nil
-	      (prog1
-		  (setq session (elmo-pop3-get-session spec))
-		(if session
-		    (elmo-network-close-session session)))
-	    (error nil))))
+	  (prog1
+	      (setq session (elmo-pop3-get-session spec))
+	    (if session
+		(elmo-network-close-session session)))))
     t))
 
 (defun elmo-pop3-parse-uidl-response (string)
