@@ -1,8 +1,3 @@
-2002-10-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* check-modules.el (check-modules-flim-content-transfer-encoding):
-	Fixed `mime-encode-string' testcase.
-
 2002-07-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* check-modules.el (check-modules-charsets-mime-charset-alist):
