@@ -2963,7 +2963,7 @@ If ARG, exit virtual folder."
 	  (buffer-read-only nil)
 	  (folder wl-summary-buffer-elmo-folder)
 	  (case-fold-search nil)
-	  unread-message unread-messages number
+	  unread-message number
 	  number-list mark visible new-mark)
       (setq number-list (cond ((numberp number-or-numbers)
 			       (setq unread-message
