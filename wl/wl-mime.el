@@ -28,11 +28,11 @@
 
 ;;; Code:
 ;;
-
 (require 'mime-view)
 (require 'mime-edit)
 (require 'mime-play)
 (require 'elmo)
+(require 'wl-vars)
 
 (eval-when-compile
   (defalias-maybe 'pgg-decrypt-region 'ignore)

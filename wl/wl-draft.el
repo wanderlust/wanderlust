@@ -30,7 +30,7 @@
 
 ;;; Code:
 ;;
-
+(require 'elmo)
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)

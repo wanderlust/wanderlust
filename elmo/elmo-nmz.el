@@ -28,6 +28,8 @@
 
 ;;; Code:
 ;;
+(eval-when-compile (require 'cl))
+
 (require 'elmo)
 (require 'elmo-map)
 (require 'mime-edit)

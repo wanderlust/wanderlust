@@ -33,7 +33,9 @@
 
 ;;; Code:
 ;;
+(eval-when-compile (require 'cl))
 
+(require 'elmo)
 (require 'elmo-msgdb)
 (require 'emu)
 (require 'std11)

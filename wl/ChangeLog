@@ -1,3 +1,11 @@
+2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Require wl-vars.
+
+	* wl-message.el (toplevel): Require cl at compile.
+
+	* wl-draft.el (toplevel): Require elmo.
+
 2005-01-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-buffer-prefetch): Count is a number

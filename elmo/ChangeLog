@@ -1,3 +1,19 @@
+2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (toplevel): Require cl at compile.
+
+	* elmo-nntp.el (toplevel): Ditto.
+
+	* elmo-nmz.el (toplevel): Ditto.
+
+	* elmo-multi.el (toplevel): Ditto.
+
+	* elmo-file.el (toplevel): Ditto.
+
+	* elmo-dop.el (toplevel): Ditto.
+
+	* elmo-archive.el (toplevel): Likewise elmo and cl (at compile).
+
 2005-01-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmimap.el (mmimap-make-mime-entity): Set children's top node number

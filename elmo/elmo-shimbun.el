@@ -34,6 +34,7 @@
 (require 'shimbun)
 
 (eval-when-compile
+  (require 'cl)
   (defun-maybe shimbun-servers-list ()))
 
 (defcustom elmo-shimbun-check-interval 60
