@@ -133,6 +133,12 @@ Header region is supposed to be narrowed.")
   "Return non-nil when the entity matches the condition.")
 
 ;; Generic implementation.
+(luna-define-method initialize-instance :after ((handler modb-entity-handler)
+						&rest init-args)
+  (unless (modb-entity-handler-mime-charset-internal handler)
+    (modb-entity-handler-set-mime-charset-internal handler elmo-mime-charset))
+  handler)
+
 (luna-define-method modb-entity-handler-list-parameters
   ((handler modb-entity-handler))
   (list 'mime-charset))
@@ -190,6 +196,11 @@ Header region is supposed to be narrowed.")
 					     (car pair) (cdr pair))
 	(setq updated t)))
     updated))
+
+;; helper functions
+(defsubst modb-entity-handler-mime-charset (handler)
+  (or (modb-entity-handler-mime-charset-internal handler)
+      elmo-mime-charset))
 
 (defun modb-entity-handler-equal-p (handler other)
   "Return non-nil, if OTHER hanlder is equal this HANDLER."
@@ -619,8 +630,7 @@ If each field is t, function is set as default converter."
     (let (index)
       (unless as-is
 	(let ((elmo-mime-charset
-	       (or (modb-entity-handler-mime-charset-internal (car entity))
-		   elmo-mime-charset)))
+	       (modb-entity-handler-mime-charset (car entity))))
 	  (setq value (modb-convert-field-value modb-standard-entity-normalizer
 						field value))))
       (cond ((memq field '(message-id :message-id))
@@ -667,8 +677,7 @@ If each field is t, function is set as default converter."
   ((handler modb-standard-entity-handler) entity field &optional type)
   (and entity
        (let ((elmo-mime-charset
-	      (or (modb-entity-handler-mime-charset-internal handler)
-		  elmo-mime-charset))
+	      (modb-entity-handler-mime-charset handler))
 	     index)
 	 (modb-convert-field-value
 	  modb-standard-entity-specializer
@@ -869,8 +878,7 @@ If each field is t, function is set as default converter."
   ((handler modb-buffer-entity-handler) entity field &optional type)
   (and entity
        (let ((elmo-mime-charset
-	      (or (modb-entity-handler-mime-charset-internal handler)
-		  elmo-mime-charset)))
+	      (modb-entity-handler-mime-charset handler)))
 	 (modb-convert-field-value
 	  modb-buffer-entity-specializer
 	  field

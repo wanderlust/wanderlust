@@ -1,5 +1,11 @@
 2005-03-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* modb-entity.el (initialize-instance): Define.
+	(modb-entity-handler-mime-charset): New internal function.
+	(modb-standard-entity-set-field): Use it.
+	(elmo-msgdb-message-entity-field): Ditto.
+	(elmo-msgdb-message-entity-field): Ditto.
+
 	* modb.el (elmo-msgdb-match-condition): Rewrite with
 	`elmo-condition-match'.
 	(elmo-msgdb-match-condition-primitive): New function.
