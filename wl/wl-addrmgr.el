@@ -154,7 +154,7 @@
   "Major mode for Wanderlust address management.
 See info under Wanderlust for full documentation.
 
-\\{wl-addrmgr-mode}"
+\\{wl-addrmgr-mode-map}"
   (kill-all-local-variables)
   (setq mode-name "Address"
 	major-mode 'wl-addrmgr-mode)
