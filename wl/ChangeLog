@@ -1,3 +1,7 @@
+2002-01-25  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl.el (wl-other-frame): Removed garbages.
+
 2002-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-e21.el (wl-draft-key-setup): Don't bind C-x C-s

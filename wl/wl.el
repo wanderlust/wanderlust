@@ -869,20 +869,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 	       (let ((frame ,frame))
 		 (if (eq (selected-frame) frame)
 		     (delete-frame frame)))))
-      (let ((demo-buf (if (and (not wl-init)
-			       wl-demo)
-			  (wl-demo)))
-	    wl-demo)
-	(unless wl-init
-	  (wl-load-profile)
-	  (wl-folder-init)
-	  (elmo-init))
-	(wl-init)	
-	(sit-for 0)
-	(prog1
-	    (wl arg)
-	  (if (buffer-live-p demo-buf)
-	      (kill-buffer demo-buf)))))))
+      (wl arg))))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile
