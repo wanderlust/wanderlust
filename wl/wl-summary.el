@@ -2915,9 +2915,8 @@ Return non-nil if the mark is updated"
 	  'internal)
       (error "Cannot process mark in this folder"))
   (save-excursion
-    (let* (eol
-	  (folder wl-summary-buffer-elmo-folder)
-	  message-id visible cur-mark)
+    (let* ((folder wl-summary-buffer-elmo-folder)
+	   message-id visible cur-mark)
       (cond (number
 	     (setq visible (wl-summary-jump-to-msg number))
 	     (setq cur-mark (or mark
