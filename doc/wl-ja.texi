@@ -1251,25 +1251,30 @@ RFC 1939 $B$G5,Dj$5$l$?(B POP3 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9!#(
 
 @example
 @group
-@samp{&} [@var{$B%f!<%6L>(B}][[@samp{/} @var{$BG'>ZK!(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
+@samp{&} [@var{$B%f!<%6L>(B}][[@samp{/} @var{$BG'>ZK!(B}][@samp{:} @var{$BHV9f$N?6$jJ}(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
 @end group
 @end example
 
 @var{$BG'>ZK!(B}$B$K$O!"(B@samp{user} ($B@8%Q%9%o!<%I$rAw?.$7$FG'>Z(B) $B$H(B
 @samp{apop} (APOP $B$GG'>Z(B) $B$N(B 2 $B<oN`$,$"$j$^$9!#(B
 
+@var{$BHV9f$N?6$jJ}(B}$B$K$O!"(B@samp{uidl} (UIDL $B%3%^%s%I$K$h$kHV9fIU$1(B) $B$+(B
+@samp{list} (LIST $B%3%^%s%I$K$h$kHV9fIU$1(B) $B$N$$$:$l$+$r;XDj$7$^$9!#(B
+
 default $BCM(B:
 
 @example
-$B%f!<%6L>(B   -> $BJQ?t(B @code{elmo-pop3-default-user} $B$NCM!#(B
-              $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
-              @code{(user-login-name)} $B$NJV$jCM!#(B
-$BG'>ZK!(B     -> $BJQ?t(B @code{elmo-pop3-default-authenticate-type} $B$NCM!#(B
-              $B=i4|@_Dj$O(B "user"$B!#(B
-$B%[%9%HL>(B   -> $BJQ?t(B @code{elmo-pop3-default-server} $B$NCM!#(B
-              $B=i4|@_Dj$O(B "localhost"$B!#(B
-$B%]!<%HHV9f(B -> $BJQ?t(B @code{elmo-pop3-default-port} $B$NCM!#(B
-              $B=i4|@_Dj$O(B 110$B!#(B
+$B%f!<%6L>(B    -> $BJQ?t(B @code{elmo-pop3-default-user} $B$NCM!#(B
+               $B=i4|@_Dj$O(B $B4D6-JQ?t(B @env{USER} $B$+!"(B@env{LOGNAME} $B$+!"(B
+               @code{(user-login-name)} $B$NJV$jCM!#(B
+$BG'>ZK!(B      -> $BJQ?t(B @code{elmo-pop3-default-authenticate-type} $B$NCM!#(B
+               $B=i4|@_Dj$O(B "user"$B!#(B
+$BHV9f$N?6$jJ}(B-> $BJQ?t(B @code{elmo-pop3-default-use-uidl} $B$NCM$K$h$k!#(B
+               t $B$J$i(B UIDL $B$rMQ$$$k!#=i4|@_Dj$O(B t$B!#(B
+$B%[%9%HL>(B    -> $BJQ?t(B @code{elmo-pop3-default-server} $B$NCM!#(B
+               $B=i4|@_Dj$O(B "localhost"$B!#(B
+$B%]!<%HHV9f(B  -> $BJQ?t(B @code{elmo-pop3-default-port} $B$NCM!#(B
+               $B=i4|@_Dj$O(B 110$B!#(B
 @end example
 
 $BNc(B:
