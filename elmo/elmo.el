@@ -687,6 +687,9 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (luna-define-method elmo-folder-writable-p ((folder elmo-folder))
   nil) ; default is not writable.
 
+(luna-define-method elmo-folder-delete ((folder elmo-folder))
+  (elmo-msgdb-delete-path folder))
+
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
   (let* ((new-folder (elmo-make-folder new-name)))
     (unless (eq (elmo-folder-type-internal folder)

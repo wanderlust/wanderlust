@@ -1973,7 +1973,7 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
   t)
 
-(luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
+(luna-define-method elmo-folder-delete :before ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder))
 	msgs)
     (when (elmo-imap4-folder-mailbox-internal folder)

@@ -1,4 +1,4 @@
-;;; elmo-maildir.el -- Maildir interface for ELMO.
+;;; elmo-maildir.el --- Maildir interface for ELMO.
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile (require 'cl))
 
@@ -58,12 +58,12 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-maildir-folder))
-  (expand-file-name 
-   (elmo-replace-string-as-filename 
+  (expand-file-name
+   (elmo-replace-string-as-filename
     (elmo-maildir-folder-directory-internal folder))
    (expand-file-name
     "maildir"
-    elmo-msgdb-dir)))
+    elmo-msgdb-directory)))
 
 (defun elmo-maildir-message-file-name (folder location)
   "Get a file name of the message from FOLDER which corresponded to
@@ -377,7 +377,7 @@ file name for maildir directories."
 							 numbers
 							 &optional
 							 start-number)
-  (let ((temp-dir (elmo-folder-make-temp-dir folder))
+  (let ((temp-dir (elmo-folder-make-temporary-directory folder))
 	(cur-number (if start-number 0)))
     (dolist (number numbers)
       (elmo-copy-file
@@ -394,8 +394,8 @@ file name for maildir directories."
       (let ((dir (elmo-maildir-folder-directory-internal folder))
 	    (succeeds numbers)
 	    filename)
-	(setq filename (elmo-maildir-temporal-filename dir))
 	(dolist (number numbers)
+	  (setq filename (elmo-maildir-temporal-filename dir))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder number)
 	   filename)
@@ -403,7 +403,8 @@ file name for maildir directories."
 	   filename
 	   (expand-file-name
 	    (concat "new/" (file-name-nondirectory filename))
-	    dir)))
+	    dir))
+	  (elmo-progress-notify 'elmo-folder-move-messages))
 	succeeds)
     (luna-call-next-method)))
 
@@ -440,6 +441,9 @@ file name for maildir directories."
 (luna-define-method elmo-folder-creatable-p ((folder elmo-maildir-folder))
   t)
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-maildir-folder))
+  t)
+
 (luna-define-method elmo-folder-create ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))
     (condition-case nil
@@ -453,7 +457,7 @@ file name for maildir directories."
 	  t)
       (error))))
 
-(luna-define-method elmo-folder-delete ((folder elmo-maildir-folder))
+(luna-define-method elmo-folder-delete :before ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))
     (condition-case nil
 	(let ((tmp-files (directory-files
