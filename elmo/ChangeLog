@@ -1,3 +1,10 @@
+2000-09-18  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-literal-1): Renamed from
+	`elmo-imap4-literal-subr'.
+	(elmo-imap4-string-1): Renamed from `elmo-imap4-string-subr'.
+	(elmo-imap4-astring-1): Renamed from `elmo-imap4-astring-subr'.
+
 2000-09-15  Kenichi OKADA <okada@opaopa.org>
 
 	* elmo-archive.el (elmo-archive-list-folder-subr): Fix.
