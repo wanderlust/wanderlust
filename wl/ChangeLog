@@ -1,3 +1,10 @@
+2003-08-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Treat no-sync.
+
+	* wl-vars.el (wl-folder-sync-range-alist): Removed first: and last:.
+	
+
 2003-08-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-refile.el (wl-refile-subject-learn): Call

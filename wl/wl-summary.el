@@ -1180,6 +1180,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	   (let ((msg (wl-summary-message-number)))
 	     (wl-summary-resume-cache-status)
 	     (and msg (wl-summary-jump-to-msg msg))))
+	  ((string= range "no-sync"))
 	  ((or (string-match "last:" range)
 	       (string-match "first:" range))
 	   (wl-summary-goto-folder-subr (concat "/" range "/"
