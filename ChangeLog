@@ -1,6 +1,6 @@
 2000-10-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* Makefile (clean-info, mostlyclean-info): New rule.
+	* Makefile (clean-info, mostlyclean-info): New target.
 	(clean-elc): Added `wl/*~'.
 
 2000-10-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
@@ -44,8 +44,8 @@
 
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* WL-ELS (WL-MODULES): Add wl-version.
-	(ELMO-MODULES): Add elmo-version.
+	* WL-ELS (WL-MODULES): Added `wl-version'.
+	(ELMO-MODULES): Added `elmo-version'.
 
 2000-10-03  Katsumi Yamaoka    <yamaoka@jpl.org>
 
