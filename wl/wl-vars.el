@@ -290,7 +290,9 @@ which are replaced by the given information:
 %~ If the previous spec is not zero-length, replaced with ' '.
 
 If the format string contains the specifiers %( and %), the text between
-them will have the specified number of columns."
+them will have the specified number of columns.
+
+See also variable `wl-summary-width'."
   :group 'wl-summary
   :type 'string)
 

@@ -1,3 +1,7 @@
+2004-12-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-summary-line-format): Add reference to wl-summary-width.
+
 2004-12-07  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-action.el (wl-summary-exec-action-refile): Display a done message
