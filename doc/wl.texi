@@ -1923,6 +1923,12 @@ Flush queue.
 Move to the virtual folder with the condition specified.
 (@code{wl-folder-virtual})
 
+@item ?
+@kindex ? (Folder)
+@findex wl-folder-pick
+Search the folders with the condition specified.
+(@code{wl-folder-pick})
+
 @item o
 @kindex o (Folder)
 @findex wl-folder-open-all-unread-folder

@@ -1930,6 +1930,12 @@ IMAP フォルダで直接消した場合だけサーバ上のマークが消えます。)
 与えられた条件を持つメッセージのみを持つ仮想フォルダへ移動します。
 (@code{wl-folder-virtual})
 
+@item ?
+@kindex ? (Folder)
+@findex wl-folder-pick
+与えられた条件を持つメッセージを持つフォルダを探します。
+(@code{wl-folder-pick})
+
 @item o
 @kindex o (Folder)
 @findex wl-folder-open-all-unread-folder
