@@ -1077,8 +1077,7 @@ If current line is group folder, all subfolders are marked."
 	  (group (wl-folder-buffer-group-p))
 	  summary-buf)
       (when (and entity-name
-		 (y-or-n-p (format "Mark all messages in %s as read? "
-				   entity-name)))
+		 (y-or-n-p (format "Mark all messages in %s as read? " entity-name)))
 	(wl-folder-mark-as-read-all-entity
 	 (if group
 	     (wl-folder-search-group-entity-by-name entity-name
