@@ -1,3 +1,8 @@
+2000-10-02  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-make-toolbar-buttons): Invalidate the default
+	bindings.
+
 2000-09-29  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-e21-setup-toolbar): Make the background color of

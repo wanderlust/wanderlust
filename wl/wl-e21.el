@@ -184,6 +184,12 @@
 	config)
     (while (setq config (pop configs))
       (set (make-local-variable (car config)) (cdr config))))
+  ;; Invalidate the default bindings.
+  (let ((keys (cdr (key-binding [tool-bar] t)))
+	item)
+    (while (setq item (pop keys))
+      (when (setq item (car-safe item))
+	(define-key keymap (vector 'tool-bar item) 'undefined))))
   (let ((n (length defs))
 	def)
     (while (>= n 0)
