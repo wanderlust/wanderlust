@@ -59,7 +59,8 @@
 (make-variable-buffer-local 'wl-message-buffer-cur-folder)
 (make-variable-buffer-local 'wl-message-buffer-cur-number)
 
-(provide 'wl-message)
+(require 'product)
+(product-provide (provide 'wl-message) (require 'wl-version))
 
 (defvar wl-fixed-window-configuration nil)
 

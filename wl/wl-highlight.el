@@ -33,7 +33,8 @@
 	 (featurep 'dragdrop))
     (require 'wl-dnd))
 (require 'wl-vars)
-(provide 'wl-highlight)
+(require 'product)
+(product-provide (provide 'wl-highlight) (require 'wl-version))
 
 (eval-when-compile
   (cond (wl-on-xemacs

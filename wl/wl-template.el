@@ -188,6 +188,7 @@ Enterring WL-Template mode calls the value of `wl-template-mode-hook'."
 	  (insert mail-header-separator "\n"))
       (wl-draft-config-exec-sub template))))
 
-(provide 'wl-template)
+(require 'product)
+(product-provide (provide 'wl-template) (require 'wl-version))
 
 ;;; wl-template.el ends here

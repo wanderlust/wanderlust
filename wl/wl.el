@@ -803,6 +803,7 @@ If prefix argument is specified, folder checkings are skipped."
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)
 
-(provide 'wl)
+(require 'product)
+(product-provide (provide 'wl) (require 'wl-version))
 
 ;;; wl.el ends here

@@ -379,6 +379,7 @@ automatically."
   (add-hook 'mmelmo-entity-content-inserted-hook 'wl-highlight-body))
   
 
-(provide 'wl-mime)
+(require 'product)
+(product-provide (provide 'wl-mime) (require 'wl-version))
 
 ;;; wl-mime.el ends here

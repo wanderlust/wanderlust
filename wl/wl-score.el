@@ -1480,6 +1480,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 	(pp form (current-buffer)))
       (goto-char (point-min)))))
 
-(provide 'wl-score)
+(require 'product)
+(product-provide (provide 'wl-score) (require 'wl-version))
 
 ;;; wl-score.el ends here

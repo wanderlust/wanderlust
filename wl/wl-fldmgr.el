@@ -1342,6 +1342,7 @@ return value is diffs '(-new -unread -all)."
     (setq wl-fldmgr-modified-access-list nil)
     (message "Saving folders...done")))
 
-(provide 'wl-fldmgr)
+(require 'product)
+(product-provide (provide 'wl-fldmgr) (require 'wl-version))
 
 ;;; wl-fldmgr.el ends here

@@ -152,6 +152,7 @@ However, if `mail-yank-prefix' is non-nil, insert that prefix on each line."
 ;; a dead duck... We MUST re-load it certainly.
 (load-library "poe-18")
 
-(provide 'wl-nemacs)
+(require 'product)
+(product-provide (provide 'wl-nemacs) (require 'wl-version))
 
 ;;; wl-nemacs.el ends here

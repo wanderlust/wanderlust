@@ -276,6 +276,7 @@ Warning: Unknown req `%S' with options `%S'" req options))
 			     nil))))
 	match)))))
 
-(provide 'wl-mule)
+(require 'product)
+(product-provide (provide 'wl-mule) (require 'wl-version))
 
 ;;; wl-mule.el ends here

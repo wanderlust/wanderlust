@@ -1,5 +1,30 @@
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-address.el (toplevel): Use product-provide.
+	* wl-demo.el (toplevel): Ditto.
+	* wl-dnd.el (toplevel): Ditto.
+	* wl-draft.el (toplevel): Ditto.
+	* wl-e21.el (toplevel): Ditto.
+	* wl-expire.el (toplevel): Ditto.
+	* wl-fldmgr.el (toplevel): Ditto.
+	* wl-folder.el (toplevel): Ditto.
+	* wl-highlight.el (toplevel): Ditto.
+	* wl-message.el (toplevel): Ditto.
+	* wl-mime.el (toplevel): Ditto.
+	* wl-mule.el (toplevel): Ditto.
+	* wl-nemacs.el (toplevel): Ditto.
+	* wl-refile.el (toplevel): Ditto.
+	* wl-score.el (toplevel): Ditto.
+	* wl-summary.el (toplevel): Ditto.
+	* wl-template.el (toplevel): Ditto.
+	* wl-thread.el (toplevel): Ditto.
+	* wl-util.el (toplevel): Ditto.
+	* wl-vars.el (toplevel): Ditto.
+	* wl-xmas.el (toplevel): Ditto.
+	* wl.el (toplevel): Ditto.
+
+2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
 	* wl-fldmgr.el (wl-fldmgr-save-folders): Use (wl-version t)
 	instead of product.
 

@@ -594,6 +594,7 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
-(provide 'wl-e21)
+(require 'product)
+(product-provide (provide 'wl-e21) (require 'wl-version))
 
 ;;; wl-e21.el ends here

@@ -6023,6 +6023,7 @@ Reply to author if invoked with argument."
 	  (setq  wl-summary-buffer-saved-message nil)))
     (message "There's no saved message.")))
 
-(provide 'wl-summary)
+(require 'product)
+(product-provide (provide 'wl-summary) (require 'wl-version))
 
 ;;; wl-summary.el ends here

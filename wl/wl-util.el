@@ -29,7 +29,8 @@
 ;;; Code:
 ;;
 
-(provide 'wl-util)
+(require 'product)
+(product-provide (provide 'wl-util) (require 'wl-version))
 (eval-when-compile
   (require 'elmo-util))
 

@@ -31,8 +31,8 @@
 
 (require 'wl-vars)
 (require 'wl-util)
-(provide 'wl-refile)
-
+(require 'product)
+(product-provide (provide 'wl-refile) (require 'wl-version))
 
 (defvar wl-refile-alist nil)
 (defvar wl-refile-alist-file-name "refile-alist")

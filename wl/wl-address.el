@@ -683,7 +683,8 @@ If already registerd, change it."
       (message "Adding Petname...done")
       (kill-buffer tmp-buf))))
 
-(provide 'wl-address)
+(require 'product)
+(product-provide (provide 'wl-address) (require 'wl-version))
 
 ;;; wl-address.el ends here
 

@@ -2665,6 +2665,7 @@ If optional arg exists, don't check any folders."
 		(elmo-folder-exists-p folder))
       (wl-folder-create-subr folder))))
 
-(provide 'wl-folder)
+(require 'product)
+(product-provide (provide 'wl-folder) (require 'wl-version))
 
 ;;; wl-folder.el ends here

@@ -2013,6 +2013,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 		   wl-user-agent-headers-and-body-alist 'ignore-case)))))
     t))
 
-(provide 'wl-draft)
+(require 'product)
+(product-provide (provide 'wl-draft) (require 'wl-version))
 
 ;;; wl-draft.el ends here

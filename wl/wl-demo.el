@@ -35,7 +35,8 @@
 (require 'wl-vars)
 (require 'wl-version)
 (require 'wl-highlight)
-(provide 'wl-demo)
+(require 'product)
+(product-provide (provide 'wl-demo) (require 'wl-version))
 
 ;; Avoid byte compile warnings.
 (eval-when-compile

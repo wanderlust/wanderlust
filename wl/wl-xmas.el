@@ -514,6 +514,7 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
-(provide 'wl-xmas)
+(require 'product)
+(product-provide (provide 'wl-xmas) (require 'wl-version))
 
 ;;; wl-xmas.el ends here

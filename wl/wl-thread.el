@@ -1574,6 +1574,7 @@ Message is inserted to the summary buffer."
       ;; update thread on buffer
       (wl-thread-update-line-msgs update-msgs t))))
 
-(provide 'wl-thread)
+(require 'product)
+(product-provide (provide 'wl-thread) (require 'wl-version))
 
 ;;; wl-thread.el ends here

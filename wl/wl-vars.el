@@ -2177,6 +2177,7 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 (defvar wl-plugged-port-indent 4)
 (defvar wl-plugged-queue-status-column 25)
 
-(provide 'wl-vars)
+(require 'product)
+(product-provide (provide 'wl-vars) (require 'wl-version))
 
 ;;; wl-vars.el ends here
