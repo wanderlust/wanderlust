@@ -27,12 +27,12 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 ;; TODO:
 ;; Info-Zip 専用エージェントを用いた日本語検索（OS/2 専用）。
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo-msgdb)
 (require 'emu)
@@ -283,7 +283,7 @@
 TYPE specifies the archiver's symbol."
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
-         (file (elmo-archive-get-archive-name folder))
+	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'ls))
 	 (args (list file))
 	 (file-regexp (format (elmo-archive-get-regexp type)
@@ -340,7 +340,7 @@ TYPE specifies the archiver's symbol."
 
 (defun elmo-archive-get-archive-name (folder)
   (let ((dir (elmo-archive-get-archive-directory folder))
-        (suffix (elmo-archive-get-suffix
+	(suffix (elmo-archive-get-suffix
 		 (elmo-archive-folder-archive-type-internal
 		  folder)))
 	filename dbdir)
@@ -393,22 +393,25 @@ TYPE specifies the archiver's symbol."
 (luna-define-method elmo-folder-creatable-p ((folder elmo-archive-folder))
   t)
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-archive-folder))
+  t)
+
 (luna-define-method elmo-folder-create ((folder elmo-archive-folder))
   (let* ((dir (directory-file-name	; remove tail slash.
 	       (elmo-archive-get-archive-directory folder)))
-         (type (elmo-archive-folder-archive-type-internal folder))
-         (arc (elmo-archive-get-archive-name folder)))
+	 (type (elmo-archive-folder-archive-type-internal folder))
+	 (arc (elmo-archive-get-archive-name folder)))
     (if elmo-archive-treat-file
 	(setq dir (directory-file-name (file-name-directory dir))))
     (cond ((and (file-exists-p dir)
 		(not (file-directory-p dir)))
-           ;; file exists
-           (error "Create folder failed; File \"%s\" exists" dir))
-          ((file-directory-p dir)
-           (if (file-exists-p arc)
-               t			; return value
+	   ;; file exists
+	   (error "Create folder failed; File \"%s\" exists" dir))
+	  ((file-directory-p dir)
+	   (if (file-exists-p arc)
+	       t			; return value
 	     (elmo-archive-create-file arc type folder)))
-          (t
+	  (t
 	   (elmo-make-directory dir)
 	   (elmo-archive-create-file arc type folder)
 	   t))))
@@ -417,8 +420,8 @@ TYPE specifies the archiver's symbol."
   (save-excursion
     (let* ((tmp-dir (directory-file-name
 		     (elmo-folder-msgdb-path folder)))
-           (dummy elmo-archive-dummy-file)
-           (method (or (elmo-archive-get-method type 'create)
+	   (dummy elmo-archive-dummy-file)
+	   (method (or (elmo-archive-get-method type 'create)
 		       (elmo-archive-get-method type 'mv)))
 	   (args (list archive dummy)))
       (when (null method)
@@ -476,7 +479,7 @@ TYPE specifies the archiver's symbol."
 	     (prefix (if (string=
 			  (elmo-archive-folder-archive-prefix-internal folder)
 			  "")
-			 "" 
+			 ""
 		       (concat ";"
 			       (elmo-archive-folder-archive-prefix-internal
 				folder))))
@@ -596,7 +599,7 @@ TYPE specifies the archiver's symbol."
 	 (elmo-folder-message-file-p src-folder)
 	 (elmo-folder-message-file-number-p src-folder))
     ;; same-number(localdir, localnews) -> archive
-    (elmo-archive-append-files folder 
+    (elmo-archive-append-files folder
 			       (elmo-folder-message-file-directory src-folder)
 			       numbers)
     numbers)
@@ -616,7 +619,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-make-directory (file-name-directory prefix)))
 	(rename-file
 	 temp-dir
-	 (setq new-dir 
+	 (setq new-dir
 	       (expand-file-name
 		prefix
 		;; parent of temp-dir..(works in windows?)
@@ -642,7 +645,7 @@ TYPE specifies the archiver's symbol."
     (or (elmo-archive-get-method type 'ext-pipe)
 	(elmo-archive-get-method type 'ext))))
 
-(luna-define-method elmo-folder-message-make-temp-files 
+(luna-define-method elmo-folder-message-make-temp-files
   ((folder elmo-archive-folder) numbers
    &optional start-number)
   (elmo-archive-folder-message-make-temp-files folder numbers start-number))
@@ -652,7 +655,7 @@ TYPE specifies the archiver's symbol."
 						    start-number)
   (let* ((tmp-dir-src (elmo-folder-make-temp-dir folder))
 	 (tmp-dir-dst (elmo-folder-make-temp-dir folder))
- 	 (arc     (elmo-archive-get-archive-name folder))
+	 (arc     (elmo-archive-get-archive-name folder))
 	 (type    (elmo-archive-folder-archive-type-internal folder))
 	 (prefix  (elmo-archive-folder-archive-prefix-internal folder))
 	 (p-method (elmo-archive-get-method type 'ext-pipe))
@@ -662,7 +665,7 @@ TYPE specifies the archiver's symbol."
 					(int-to-string x))) numbers))
 	 number)
     ;; Expand files in the tmp-dir-src.
-    (elmo-bind-directory 
+    (elmo-bind-directory
      tmp-dir-src
      (cond
       ((functionp n-method)
@@ -694,7 +697,7 @@ TYPE specifies the archiver's symbol."
     (elmo-delete-directory tmp-dir-src)
     ;; tmp-dir-dst is the return directory.
     tmp-dir-dst))
-    
+
 (defun elmo-archive-append-files (folder dir &optional files)
   (let* ((dst-type (elmo-archive-folder-archive-type-internal folder))
 	 (arc (elmo-archive-get-archive-name folder))
@@ -893,13 +896,13 @@ TYPE specifies the archiver's symbol."
 		(elmo-archive-folder-archive-type-internal folder)
 		'cat-headers))
 	  (elmo-archive-msgdb-create-as-numlist-subr2
-           folder numbers new-mark already-mark seen-mark important-mark
+	   folder numbers new-mark already-mark seen-mark important-mark
 	   seen-list)
 	(elmo-archive-msgdb-create-as-numlist-subr1
-         folder numbers new-mark already-mark seen-mark important-mark
+	 folder numbers new-mark already-mark seen-mark important-mark
 	 seen-list)))))
 
-(defun elmo-archive-msgdb-create-as-numlist-subr1 (folder 
+(defun elmo-archive-msgdb-create-as-numlist-subr1 (folder
 						   numlist new-mark
 						   already-mark seen-mark
 						   important-mark
@@ -1025,16 +1028,16 @@ TYPE specifies the archiver's symbol."
     (goto-char (point-min))
     (setq rest msgs)
     (while (and rest (re-search-forward delim nil t)
-                (not (eobp)))
+		(not (eobp)))
       (setq number (car rest))
       (setq sp (1+ (point)))
       (setq ep (prog2 (re-search-forward delim)
 		   (1+ (- (point) (length delim)))))
       (if (>= sp ep)			; no article!
 	  ()				; nop
-        (save-excursion
-          (narrow-to-region sp ep)
-          (setq entity (elmo-archive-msgdb-create-entity-subr number))
+	(save-excursion
+	  (narrow-to-region sp ep)
+	  (setq entity (elmo-archive-msgdb-create-entity-subr number))
 	  (setq overview
 		(elmo-msgdb-append-element
 		 overview entity))
@@ -1060,7 +1063,7 @@ TYPE specifies the archiver's symbol."
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark)))
-          (setq ret-val (append ret-val (list overview number-alist mark-alist)))
+	  (setq ret-val (append ret-val (list overview number-alist mark-alist)))
 	  (widen)))
       (forward-line 1)
       (setq rest (cdr rest)))
@@ -1098,7 +1101,7 @@ TYPE specifies the archiver's symbol."
 	 number-list ret-val)
     (setq number-list msgs)
     (while msgs
-      (if (elmo-archive-field-condition-match 
+      (if (elmo-archive-field-condition-match
 	   folder (car msgs) number-list
 	   condition
 	   (elmo-archive-folder-archive-prefix-internal folder))

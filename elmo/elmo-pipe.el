@@ -159,6 +159,9 @@
   (and (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder))
        (elmo-folder-creatable-p (elmo-pipe-folder-dst-internal folder))))
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-pipe-folder))
+  (elmo-folder-writable-p (elmo-pipe-folder-dst-internal folder)))
+
 (luna-define-method elmo-folder-create ((folder elmo-pipe-folder))
   (if (and (not (elmo-folder-exists-p (elmo-pipe-folder-src-internal folder)))
 	   (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder)))

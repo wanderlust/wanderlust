@@ -671,7 +671,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   t) ; default is creatable.
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-folder))
-  t) ; default is writable.
+  nil) ; default is not writable.
 
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
   (let* ((new-folder (elmo-make-folder new-name)))
@@ -917,8 +917,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	   succeeds i result)
       (if (eq dst-folder 'null)
 	  (setq succeeds messages)
-	;; src is already opened.
+	(unless (elmo-folder-writable-p dst-folder)
+	  (error "move: %d is not writable"
+		 (elmo-folder-name-internal dst-folder)))
 	(when messages
+	  ;; src is already opened.
 	  (elmo-folder-open-internal dst-folder)
 	  (unless (setq succeeds (elmo-folder-append-messages dst-folder
 							      src-folder
@@ -948,7 +951,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	    (if (not no-delete-info)
 		(message "Cleaning up src folder..."))
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
-		     (elmo-msgdb-delete-msgs 
+		     (elmo-msgdb-delete-msgs
 		      (elmo-folder-msgdb src-folder) succeeds))
 		(setq result t)
 	      (message "move: delete messages from %s failed."

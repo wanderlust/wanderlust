@@ -175,6 +175,9 @@
 (luna-define-method elmo-folder-creatable-p ((folder elmo-filter-folder))
   (elmo-folder-creatable-p (elmo-filter-folder-target-internal folder)))
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-filter-folder))
+  (elmo-folder-writable-p (elmo-filter-folder-target-internal folder)))
+
 (luna-define-method elmo-folder-create ((folder elmo-filter-folder))
   (elmo-folder-create (elmo-filter-folder-target-internal folder)))
 

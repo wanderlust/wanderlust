@@ -440,6 +440,9 @@ file name for maildir directories."
 (luna-define-method elmo-folder-creatable-p ((folder elmo-maildir-folder))
   t)
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-maildir-folder))
+  t)
+
 (luna-define-method elmo-folder-create ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))
     (condition-case nil

@@ -1,3 +1,26 @@
+2001-09-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-writable-p): Changed default value to nil.
+	(elmo-folder-move-messages): Check `elmo-folder-writable-p'.
+
+	* elmo-archive.el (elmo-folder-writable-p): Defined.
+
+	* elmo-cache.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-filter.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-imap4.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-localdir.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-maildir.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-mark.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-pipe.el (elmo-folder-writable-p): Ditto.
+
+	* elmo-nntp.el (elmo-folder-writable-p): Eliminated.
+
 2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-address-quote-specials): New function;

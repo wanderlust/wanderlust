@@ -58,7 +58,7 @@
 		    (expand-file-name "internal"
 				      elmo-msgdb-dir)))
 
-(luna-define-method elmo-map-folder-list-message-locations 
+(luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-mark-folder))
   (elmo-mark-folder-list-message-locations folder))
 
@@ -66,7 +66,7 @@
   (let (result)
     (dolist (pair (or elmo-msgdb-global-mark-alist
 		      (setq elmo-msgdb-global-mark-alist
-			    (elmo-object-load 
+			    (elmo-object-load
 			     (expand-file-name
 			      elmo-msgdb-global-mark-filename
 			      elmo-msgdb-dir)))))
@@ -138,7 +138,7 @@
       (when (file-writable-p path)
 	(write-region-as-binary (point-min) (point-max)
 				path nil 'no-msg)))
-    (elmo-msgdb-global-mark-set msgid 
+    (elmo-msgdb-global-mark-set msgid
 				(elmo-mark-folder-mark-internal folder))))
 
 (luna-define-method elmo-map-folder-delete-messages ((folder elmo-mark-folder)
@@ -159,6 +159,9 @@
       (insert-file-contents-as-binary file))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-mark-folder))
+  t)
+
+(luna-define-method elmo-folder-writable-p ((folder elmo-mark-folder))
   t)
 
 (luna-define-method elmo-folder-search ((folder elmo-mark-folder)

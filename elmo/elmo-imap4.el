@@ -1878,12 +1878,12 @@ Return nil if no complete line has arrived."
       (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
     (unless (eq (elmo-net-folder-auth-internal folder)
 		(or elmo-imap4-default-authenticate-type 'clear))
-      (setq append-serv 
+      (setq append-serv
 	    (concat append-serv "/"
 		    (symbol-name (elmo-net-folder-auth-internal folder)))))
     (unless (string= (elmo-net-folder-server-internal folder)
 		     elmo-imap4-default-server)
-      (setq append-serv (concat append-serv "@" 
+      (setq append-serv (concat append-serv "@"
 				(elmo-net-folder-server-internal folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-imap4-default-port)
       (setq append-serv (concat append-serv ":"
@@ -1899,23 +1899,23 @@ Return nil if no complete line has arrived."
     (if one-level
 	(let (folder folders ret)
 	  (while (setq folders (car result))
-	    (if (prog1 
+	    (if (prog1
 		    (string-match
 		     (concat "^\\(" root "[^" delim "]" "+\\)" delim)
 			  folders)
 		  (setq folder (match-string 1 folders)))
 		(progn
-		  (setq ret 
-			(append ret 
-				(list 
+		  (setq ret
+			(append ret
+				(list
 				 (list
-				  (concat 
+				  (concat
 				   prefix
 				   (elmo-imap4-decode-folder-string folder)
 				   (and append-serv
 					(eval append-serv)))))))
 		  (setq result
-			(delq 
+			(delq
 			 nil
 			 (mapcar '(lambda (fld)
 				    (unless
@@ -1925,8 +1925,8 @@ Return nil if no complete line has arrived."
 				      fld))
 				 result))))
 	      (setq ret (append
-			 ret 
-			 (list 
+			 ret
+			 (list
 			  (concat prefix
 				  (elmo-imap4-decode-folder-string folders)
 				  (and append-serv
@@ -1949,6 +1949,9 @@ Return nil if no complete line has arrived."
        session
        (elmo-imap4-folder-mailbox-internal folder)
        'force 'no-error))))
+
+(luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
+  t)
 
 (luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder))
@@ -2139,7 +2142,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 			   (elmo-imap4-search-internal
 			    folder session (nth 2 condition) from-msgs)))
 	    result (sort result '<))))))
-    
+
 (luna-define-method elmo-folder-search ((folder elmo-imap4-folder)
 					condition &optional numbers)
   (save-excursion
@@ -2221,7 +2224,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (not (elmo-imap4-session-read-only-internal
 	    (elmo-imap4-get-session folder)))
     elmo-enable-disconnected-operation)) ; offline refile.
-					     
+
 (luna-define-method elmo-folder-check-plugged ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder 'if-exists)))
     (when session
@@ -2232,7 +2235,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	      (elmo-imap4-session-select-mailbox
 	       session
 	       (elmo-imap4-folder-mailbox-internal folder)
-	       'force)	      
+	       'force)
 	    (elmo-imap4-session-check session))))))
 
 (defsubst elmo-imap4-folder-diff-plugged (folder)
@@ -2295,7 +2298,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	       (elmo-imap4-session-set-current-mailbox-internal
 		session mailbox)
 	     (and session
-		  (elmo-imap4-session-set-current-mailbox-internal 
+		  (elmo-imap4-session-set-current-mailbox-internal
 		   session nil))))
 	  (error
 	   (if response
@@ -2463,7 +2466,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-imap4-folder)
 						number strategy
-						&optional section 
+						&optional section
 						outbuf unseen)
   (elmo-imap4-message-fetch folder number strategy section outbuf unseen))
 
@@ -2477,7 +2480,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
     (with-temp-buffer
-      (insert 
+      (insert
        (elmo-imap4-response-bodydetail-text
 	(elmo-imap4-response-value
 	 (elmo-imap4-send-command-wait session
@@ -2493,7 +2496,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (std11-field-body (symbol-name field)))))
 
 
-  
+
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))
 

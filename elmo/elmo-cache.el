@@ -168,6 +168,9 @@
 (luna-define-method elmo-folder-creatable-p ((folder elmo-cache-folder))
   nil)
 
+(luna-define-method elmo-folder-writable-p ((folder elmo-cache-folder))
+  t)
+
 (luna-define-method elmo-folder-exists-p ((folder elmo-cache-folder))
   t)
 

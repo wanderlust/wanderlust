@@ -1423,9 +1423,6 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-folder-creatable-p ((folder elmo-nntp-folder))
   nil)
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-nntp-folder))
-  nil)
-
 (defun elmo-nntp-parse-newsgroups (string &optional subscribe-only)
   (let ((nglist (elmo-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
 	ngs)

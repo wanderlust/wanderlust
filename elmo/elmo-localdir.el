@@ -28,10 +28,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 (eval-when-compile (require 'cl))
 
 (require 'elmo-msgdb)
@@ -281,6 +281,9 @@
   (elmo-localdir-list-subr folder t))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-localdir-folder))
+  t)
+
+(luna-define-method elmo-folder-writable-p ((folder elmo-localdir-folder))
   t)
 
 (luna-define-method elmo-folder-create ((folder elmo-localdir-folder))
