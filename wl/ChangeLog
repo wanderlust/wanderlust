@@ -1,3 +1,8 @@
+2004-11-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (elmo-event-handler-flag-changed): Use
+	`set-buffer' instead of `with-current-buffer'.
+
 2004-11-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-after-resize-function): New function.

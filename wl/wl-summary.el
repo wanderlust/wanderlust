@@ -656,12 +656,12 @@ See also variable `wl-use-petname'."
 (luna-define-method elmo-event-handler-flag-changed ((handler
 						      wl-summary-event-handler)
 						     numbers)
-  (with-current-buffer (wl-summary-event-handler-buffer-internal handler)
-    (save-excursion
-      (dolist (number numbers)
-	(when (and (wl-summary-message-visible-p number)
-		   (wl-summary-jump-to-msg number))
-	  (wl-summary-update-persistent-mark number))))))
+  (save-excursion
+    (set-buffer (wl-summary-event-handler-buffer-internal handler))
+    (dolist (number numbers)
+      (when (and (wl-summary-message-visible-p number)
+		 (wl-summary-jump-to-msg number))
+	(wl-summary-update-persistent-mark number)))))
 
 (defun wl-summary-buffer-detach ()
   (when (and (eq major-mode 'wl-summary-mode)
