@@ -1,3 +1,17 @@
+2002-05-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-line-open-bracket): Abolished.
+	(wl-summary-line-close-bracket): Ditto.
+	(wl-summary-line-children-number): Ditto.
+	(wl-summary-line-thread-indent): Ditto.
+	(wl-summary-line-children-and-from): Ditto.
+
+	* wl-vars.el (wl-summary-line-format-spec-alist): Redefine '[', ']',
+	't', 'c', 'F' and added 'C'.
+
+	* wl-util.el (wl-set-string-width): Accept negative value.
+	(wl-line-parse-format): Added "%number(" and "%)".
+
 2002-05-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-line-list-count): Change format of the

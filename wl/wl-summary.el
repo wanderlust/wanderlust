@@ -4039,16 +4039,6 @@ If ARG, exit virtual folder."
   (format "%02d" (aref wl-datevec 3)))
 (defun wl-summary-line-minute ()
   (format "%02d" (aref wl-datevec 4)))
-(defun wl-summary-line-open-bracket ()
-  (if wl-thr-linked "<" "["))
-(defun wl-summary-line-close-bracket ()
-  (if wl-thr-linked ">" "]"))
-(defun wl-summary-line-children-number ()
-  (if wl-thr-children-number
-      (concat "+" (int-to-string wl-thr-children-number) ":")
-    ""))
-(defun wl-summary-line-thread-indent ()
-  (or wl-thr-indent-string ""))
 
 (defun wl-summary-line-size ()
   (let ((size (elmo-msgdb-overview-entity-get-size wl-message-entity)))
@@ -4093,11 +4083,6 @@ If ARG, exit virtual folder."
 		    (funcall wl-summary-from-function
 			     (elmo-msgdb-overview-entity-get-from
 			      wl-message-entity))))
-
-(defun wl-summary-line-children-and-from ()
-  (concat
-   (wl-summary-line-children-number) " "
-   (wl-summary-line-from)))
 
 (defun wl-summary-line-list-count ()
   (let ((folder wl-summary-buffer-folder-name)

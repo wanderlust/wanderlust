@@ -174,35 +174,50 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 ;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
 (defsubst wl-set-string-width (width string)
+  "Make a new string which have specified WIDTH and content of STRING.
+If WIDTH is negative number, padding spaces are added to the head and
+otherwise, padding spaces are added to the tail of the string."
   (static-cond
    ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
 	 (not (featurep 'xemacs)))
-    (if (> (string-width string) width)
-	(setq string (truncate-string-to-width string width)))
-    (if (= (string-width string) width)
+    (if (> (string-width string) (abs width))
+	(setq string (truncate-string-to-width string (abs width))))
+    (if (= (string-width string) (abs width))
 	string
-      (concat string
-	      (format (format "%%%ds"
-			      (- width (string-width string)))
-		      " "))))
+      (if (< width 0)
+	  (concat (format (format "%%%ds"
+				  (- (abs width) (string-width string)))
+			  " ")
+		  string)
+	(concat string
+		(format (format "%%%ds"
+				(- (abs width) (string-width string)))
+			" ")))))
    (t
     (elmo-set-work-buf
      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
      (insert string)
-     (if (> (current-column) width)
-	 (if (> (move-to-column width) width)
+     (if (> (current-column) (abs width))
+	 (if (> (move-to-column (abs width)) (abs width))
 	     (progn
 	       (condition-case nil ; ignore error
 		   (backward-char 1)
 		 (error))
-	       (concat (buffer-substring (point-min) (point)) " "))
+	       (if (< width 0)
+		   (concat " " (buffer-substring (point-min) (point)))
+		 (concat (buffer-substring (point-min) (point)) " ")))
 	   (buffer-substring (point-min) (point)))
-       (if (= (current-column) width)
+       (if (= (current-column) (abs width))
 	   string
-	 (concat string
-		 (format (format "%%%ds"
-				 (- width (current-column)))
-			 " "))))))))
+	 (if (< width 0)
+	     (concat (format (format "%%%ds"
+				     (- (abs width) (current-column)))
+			     " ")
+		     string)
+	   (concat string
+		   (format (format "%%%ds"
+				   (- (abs width) (current-column)))
+			   " ")))))))))
 
 (defun wl-mode-line-buffer-identification (&optional id)
   (let ((priorities '(biff plug title)))
@@ -916,8 +931,9 @@ is enclosed by at least one regexp grouping construct."
       newtext)))
 
 (defun wl-line-parse-format (format spec-alist)
-  "Make a formatter from FORMAT and SPEC-ALIST."
-  (let (f spec specs)
+  "Make a formatter from FORMAT and SPEC-ALIST.
+WIDTH is the width of the result string."
+  (let (f spec specs stack)
     (setq f
 	  (with-temp-buffer
 	    (insert format)
@@ -926,20 +942,51 @@ is enclosed by at least one regexp grouping construct."
 	      (cond
 	       ((looking-at "%")
 		(goto-char (match-end 0)))
-	       ((looking-at "\\([0-9]*\\)\\([^0-9]\\)")
-		(setq spec
-		      (if (setq spec (assq (string-to-char (match-string 2))
-					   spec-alist))
-			  (nth 1 spec)
-			(match-string 2)))
-		(unless (string= "" (match-string 1))
-		  (setq spec (list 'wl-set-string-width
-				   (string-to-number (match-string 1))
-				   spec)))
-		(setq specs (cons spec specs))
-		(replace-match "s" 'fixed))))
+	       ((looking-at "\\(-?[0-9]*\\)\\([^0-9]\\)")
+		(cond
+		 ((string= (match-string 2) "(")
+		  (if (zerop (length (match-string 1)))
+		      (error "No number specification for %( line format"))
+		  (push (list 
+			 (match-beginning 0) ; start
+			 (match-end 0)       ; start-content
+			 (string-to-number
+			  (match-string 1))  ; width
+			 specs) ; specs
+			stack)
+		  (setq specs nil))
+		 ((string= (match-string 2) ")")
+		  (let ((entry (pop stack))
+			form)
+		    (unless entry
+		      (error
+		       "No matching %( parenthesis in summary line format"))
+		    (goto-char (car entry)) ; start
+		    (setq form (buffer-substring (nth 1 entry) ; start-content
+						 (- (match-beginning 0) 1)))
+		    (delete-region (car entry) (match-end 0))
+		    (insert "s")
+		    (setq specs
+			  (append
+			   (nth 3 entry)
+			   (list (list 'wl-set-string-width (nth 2 entry)
+				       (append
+					(list 'format form)
+					specs)))))))
+		 (t
+		  (setq spec
+			(if (setq spec (assq (string-to-char (match-string 2))
+					     spec-alist))
+			    (nth 1 spec)
+			  (match-string 2)))
+		  (unless (string= "" (match-string 1))
+		    (setq spec (list 'wl-set-string-width
+				     (string-to-number (match-string 1))
+				     spec)))
+		  (replace-match "s" 'fixed)
+		  (setq specs (append specs (list spec))))))))
 	    (buffer-string)))
-    (append (list 'format f) (nreverse specs))))
+    (append (list 'format f) specs)))
 
 (defmacro wl-line-formatter-setup (formatter format alist)
   (` (let (byte-compile-warnings)

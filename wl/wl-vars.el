@@ -181,14 +181,26 @@ If you don't have multiple e-mail addresses, you don't have to set this."
     (?W (wl-summary-line-day-of-week))
     (?h (wl-summary-line-hour))
     (?m (wl-summary-line-minute))
-    (?\[ (wl-summary-line-open-bracket))
-    (?\] (wl-summary-line-close-bracket))
-    (?t (wl-summary-line-thread-indent))
+    (?\[ (if wl-thr-linked "<" "["))
+    (?\] (if wl-thr-linked ">" "]"))
+    (?t (or wl-thr-indent-string ""))
     (?s (wl-summary-line-subject))
     (?S (wl-summary-line-size))
-    (?c (wl-summary-line-children-number))
+    (?C (if wl-thr-children-number
+	    (concat "[+" (number-to-string wl-thr-children-number) "] ")
+	  (if wl-parent-message-entity
+	      (if wl-thr-linked ">>" ">")
+	    "")))
+    (?c (if wl-thr-children-number
+	    (concat "+" (number-to-string wl-thr-children-number) ":")
+	  " "))
+    (?F (concat
+	 (if wl-thr-children-number
+	     (concat "+" (number-to-string wl-thr-children-number) ":")
+	   "")
+	 " "
+	 (wl-summary-line-from)))
     (?f (wl-summary-line-from))
-    (?F (wl-summary-line-children-and-from))
     (?# (wl-summary-line-list-count)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
@@ -196,7 +208,7 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING is an expression to get string to insert.")
 
-(defcustom wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17F %] %s"
+(defcustom wl-summary-line-format "%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s"
   "*A default format string for summary line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
