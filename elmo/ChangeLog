@@ -1,7 +1,11 @@
 2000-11-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-net.el (elmo-network-get-session): Changed logic for
+	checking process status.
+
 	* elmo-pop3.el (elmo-network-close-session): Do nothing if session
-	process is nil.
+	process is nil;
+	Changed logic for checking process status.
 
 2000-11-20  Yuuichi Teranishi  <teranisi@gohome.org>
 

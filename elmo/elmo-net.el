@@ -137,10 +137,10 @@ if making session failed, returns nil."
 				 name host port user auth stream-type))
 		      elmo-network-session-cache))
     (when (and pair
-	       (memq (process-status
-		      (elmo-network-session-process-internal
-		       (cdr pair)))
-		     '(closed exit)))
+	       (not (memq (process-status
+			   (elmo-network-session-process-internal
+			    (cdr pair)))
+			  '(open run))))
       (setq elmo-network-session-cache
 	    (delq pair elmo-network-session-cache))
       (elmo-network-close-session (cdr pair))

@@ -91,9 +91,9 @@
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (when (elmo-network-session-process-internal session)
-    (unless (memq (process-status
-		   (elmo-network-session-process-internal session))
-		  '(closed exit))
+    (when (memq (process-status
+		 (elmo-network-session-process-internal session))
+		'(open run))
       (elmo-pop3-send-command (elmo-network-session-process-internal session)
 			      "quit")
       (or (elmo-pop3-read-response
