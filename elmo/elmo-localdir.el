@@ -299,7 +299,7 @@
   (let ((dir (elmo-localdir-folder-directory-internal folder)))
     (if (not (file-directory-p dir))
 	(error "No such directory: %s" dir)
-      (elmo-delete-directory dir t)
+      (elmo-delete-match-files dir "[0-9]+" t)
       t)))
 
 (luna-define-method elmo-folder-rename-internal ((folder elmo-localdir-folder)

@@ -732,6 +732,18 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (unless hierarchy
       (delete-directory path)))))
 
+(defun elmo-delete-match-files (path regexp &optional remove-if-empty)
+  "Delete directory files specified by PATH.
+If optional REMOVE-IF-EMPTY is non-nil, delete directory itself if
+the directory becomes empty after deletion."
+  (when (stringp path) ; nil is not permitted.
+    (dolist (file (directory-files path t regexp))
+      (delete-file file))
+    (if remove-if-empty
+	(ignore-errors 
+	  (delete-directory path) ; should be removed if empty.
+	  ))))
+
 (defun elmo-list-filter (l1 l2)
   "L1 is filter."
   (if (eq l1 t)

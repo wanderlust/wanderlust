@@ -1,5 +1,10 @@
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-delete-match-files): New function.
+
+	* elmo-localdir.el (elmo-folder-delete): Use elmo-delete-match-files
+	instead of elmo-delete-directory.
+
 	* elmo-shimbun.el (elmo-shimbun-get-headers): Bind
 	elmo-hash-minimun-size as 63.
 
