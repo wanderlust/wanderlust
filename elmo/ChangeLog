@@ -1,3 +1,7 @@
+2000-10-18  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo2.el (elmo-generic-folder-diff): Fix.
+
 2000-10-17  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-msgdb.el (elmo-msgdb-killed-list-length): New function.

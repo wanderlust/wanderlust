@@ -721,7 +721,7 @@ message list in msgdb. Otherwise, number-list is load from msgdb."
 	(let ((number-list (or number-list
 			       (mapcar 'car
 				       (elmo-msgdb-number-load
-					(elmo-msgdb-expand-path spec))))))
+					(elmo-msgdb-expand-path folder))))))
 	  ;; No info-cache.
 	  (setq in-db (sort number-list '<))
 	  (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
