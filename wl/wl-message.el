@@ -54,7 +54,6 @@
 
 (defvar wl-message-buffer nil) ; message buffer.
 
-(defvar wl-message-buffer-cur-summary-buffer nil)
 (defvar wl-message-buffer-cur-folder nil)
 (defvar wl-message-buffer-cur-number nil)
 (defvar wl-message-buffer-cur-flag nil)

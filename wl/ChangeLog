@@ -1,3 +1,8 @@
+2003-11-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-message.el (wl-message-buffer-cur-summary-buffer): Remove
+	duplicate definition.
+
 2003-11-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-current-message-buffer): If wl-message-buffer is
@@ -9,7 +14,7 @@
 	* wl-util.el (wl-region-exists-p): Use region-active-p.
 	(wl-deactivate-region): New function.
 	* wl-message.el (wl-message-redisplay): Deactivate region.
-	
+
 	* wl-summary.el (wl-summary-reply): Call
 	`wl-summary-set-message-buffer-or-redisplay' instead of
 	`wl-summary-redisplay-internal', don't move point.
