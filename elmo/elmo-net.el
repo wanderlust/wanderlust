@@ -362,7 +362,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 
 (luna-define-method elmo-folder-list-messages-plugged
   ((folder elmo-net-folder))
-  t)
+  nil)
 
 ;; Should consider offline append and removal.
 (luna-define-method elmo-folder-list-messages-unplugged ((folder
@@ -380,7 +380,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	 ;; append appending messages
 	 (mapcar (lambda (x) (* -1 x))
 		 (elmo-dop-spool-folder-list-messages folder))))
-    (error "Unplugged")))
+    t))
 
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-net-folder) unread-marks &optional mark-alist)

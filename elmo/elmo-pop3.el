@@ -576,7 +576,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
       (elmo-pop3-list-by-uidl-subr folder)
     (elmo-pop3-list-by-list folder)))
 
-(luna-define-method elmo-folder-list-messages-internal
+(luna-define-method elmo-folder-list-messages-plugged
   ((folder elmo-pop3-folder) &optional nohide)
   (elmo-pop3-folder-list-messages folder))
 
