@@ -3,6 +3,8 @@
 	* elmo.el (elmo-generic-folder-append-messages): Check return value of
 	elmo-folder-append-buffer.
 
+	* elmo-dop.el (elmo-folder-append-buffer-dop-delayed): Ditto.
+
 	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
 
 	* elmo-archive.el (elmo-archive-folder-append-buffer): Return t

@@ -246,17 +246,20 @@ FOLDER is the folder structure."
 
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder unread number set-number)
-  (let ((spool-folder (elmo-dop-spool-folder folder)))
+  (let ((spool-folder (elmo-dop-spool-folder folder))
+	failure)
     (with-temp-buffer
       (elmo-message-fetch spool-folder number
 			  (elmo-make-fetch-strategy 'entire)
 			  nil (current-buffer) 'unread)
       (condition-case nil 
-	  (elmo-folder-append-buffer folder unread set-number)
-	(error
-	 ;; Append failed...
-	 (elmo-folder-append-buffer (elmo-make-folder elmo-lost+found-folder)
-				    unread set-number)))
+	  (setq failure (not
+			 (elmo-folder-append-buffer folder unread set-number)))
+	(error (setq failure t)))
+      (when failure
+	;; Append failed...
+	(elmo-folder-append-buffer (elmo-make-folder elmo-lost+found-folder)
+				   unread set-number))
       (elmo-folder-delete-messages spool-folder (list number))
       t)))
 
