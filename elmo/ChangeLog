@@ -4,6 +4,9 @@
 	(elmo-nntp-send-command, elmo-nntp-process-filter): Call it.
 	(elmo-network-authenticate-session): Hide auth-info from the log.
 
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Don't append
+	user name if it is equal to elmo-nntp-default-user.
+
 2003-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-shimbun-get-headers): Use shimbun-server

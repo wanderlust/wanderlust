@@ -479,7 +479,7 @@ Don't cache if nil.")
 (defun elmo-nntp-folder-list-subfolders (folder one-level)
   (let ((session (elmo-nntp-get-session folder))
 	(case-fold-search nil)
-	response ret-val top-ng append-serv use-list-active start)
+	response ret-val top-ng username append-serv use-list-active start)
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (if (and (elmo-nntp-folder-group-internal folder)
@@ -579,6 +579,12 @@ Don't cache if nil.")
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
 	   'elmo-nntp-list-folders "Parsing active..." 100))))
+
+    (setq username (elmo-net-folder-user-internal folder))
+    (when (and username
+	       (string= username elmo-nntp-default-user))
+      (setq username nil))
+
     (unless (string= (elmo-net-folder-server-internal folder)
 		     elmo-nntp-default-server)
       (setq append-serv (concat "@" (elmo-net-folder-server-internal
@@ -597,16 +603,15 @@ Don't cache if nil.")
     (mapcar '(lambda (fld)
 	       (if (consp fld)
 		   (list (concat "-" (elmo-nntp-decode-group-string (car fld))
-				 (and (elmo-net-folder-user-internal folder)
+				 (and username
 				      (concat
 				       ":"
-				       (elmo-net-folder-user-internal folder)))
+				       username))
 				 (and append-serv
 				      (concat append-serv))))
 		 (concat "-" (elmo-nntp-decode-group-string fld)
-			 (and (elmo-net-folder-user-internal folder)
-			      (concat ":" (elmo-net-folder-user-internal
-					   folder)))
+			 (and username
+			      (concat ":" username))
 			 (and append-serv
 			      (concat append-serv)))))
 	    ret-val)))
