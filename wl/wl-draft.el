@@ -1048,11 +1048,11 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(if (and sent-via wl-draft-fcc-list)
 	    (progn
 	      (wl-draft-do-fcc (wl-draft-get-header-delimiter) wl-draft-fcc-list)
-	      (setq wl-draft-fcc-list nil)))
-	(if wl-draft-use-cache
-	    (let ((id (std11-field-body "Message-ID"))
-		  (elmo-enable-disconnected-operation t))
-	      (elmo-cache-save id nil nil nil)))
+	      (setq wl-draft-fcc-list nil))
+	  (if wl-draft-use-cache
+	      (let ((id (std11-field-body "Message-ID"))
+		    (elmo-enable-disconnected-operation t))
+		(elmo-cache-save id nil nil nil))))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)
