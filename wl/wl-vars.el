@@ -1619,14 +1619,6 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-summary-subject-length-limit nil
-  "*Set subject width in summary when wl-summary-width is nil.
-Nil means unlimited"
-  :type '(choice (const :tag "Unlimited" nil)
-		 integer)
-  :group 'wl-summary
-  :group 'wl-pref)
-
 (defcustom wl-mime-charset 'x-ctext
   "*MIME Charset for summary and message."
   :type 'symbol
@@ -2644,10 +2636,6 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 			       'wl-score-files-directory)
 (elmo-define-obsolete-variable 'wl-tmp-dir
 			       'wl-temporary-file-directory)
-
-;; 2001-12-07
-(elmo-define-obsolete-variable 'wl-subject-length-limit
-			       'wl-summary-subject-length-limit)
 
 ;; 2001-12-10
 (elmo-define-obsolete-variable 'wl-summary-update-confirm-threshold

@@ -259,20 +259,15 @@
   "If parent of ENTITY is invisible, the top invisible ancestor entity of
 ENTITY is returned."
   (let ((cur-entity entity)
-	ret-val)
+	top)
     (catch 'done
       (while (setq cur-entity (wl-thread-entity-get-parent-entity
 			       cur-entity))
 	(if (null (wl-thread-entity-get-number cur-entity))
-	    ;; top!!
-	    (progn
-	      ;;(setq ret-val nil)
-	      (throw 'done nil))
+	    (throw 'done nil)
 	  (when (not (wl-thread-entity-get-opened cur-entity))
-	    ;; not opened!!
-	    (setq ret-val cur-entity)))))
-    ;; top of closed entity in the path.
-    ret-val))
+	    (setq top cur-entity)))))
+    top))
 
 (defun wl-thread-entity-get-nearly-older-brother (entity &optional parent)
   (let ((brothers (wl-thread-entity-get-older-brothers entity parent)))
