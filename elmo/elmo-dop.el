@@ -87,7 +87,7 @@ Automatically loaded/saved.")
   ;; obsolete
   (unless (or (null elmo-dop-queue)
 	      (vectorp (car elmo-dop-queue)))
-    (if (y-or-n-p "
+    (if (y-or-n-p "\
 Saved queue is old version(2.6). Clear all pending operations? ")
 	(progn
 	  (setq elmo-dop-queue nil)
