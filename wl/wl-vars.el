@@ -990,6 +990,24 @@ ex.
   :group 'wl-draft
   :group 'wl-pref)
 
+(defcustom wl-draft-force-queuing nil
+  "*Non-nil forces queued sending for mail and news."
+  :type 'boolean
+  :group 'wl-draft
+  :group 'wl-pref)
+
+(defcustom wl-draft-force-queuing-mail nil
+  "*Non-nil forces queued sending for mail."
+  :type 'boolean
+  :group 'wl-draft
+  :group 'wl-pref)
+
+(defcustom wl-draft-force-queuing-news nil
+  "*Non-nil forces queued sending for news."
+  :type 'boolean
+  :group 'wl-draft
+  :group 'wl-pref)
+
 (defcustom wl-draft-use-cache nil
   "*If non-nil, sending message is cached."
   :type 'boolean

@@ -69,6 +69,7 @@
 (defvar wl-draft-queue-flush-send-function 'wl-draft-dispatch-message)
 (defvar wl-sent-message-via nil)
 (defvar wl-sent-message-modified nil)
+(defvar wl-sent-message-queued nil)
 (defvar wl-draft-fcc-list nil)
 (defvar wl-draft-reedit nil)
 (defvar wl-draft-reply-buffer nil)
@@ -96,6 +97,7 @@
 (make-variable-buffer-local 'wl-draft-config-variables)
 (make-variable-buffer-local 'wl-draft-config-exec-flag)
 (make-variable-buffer-local 'wl-sent-message-via)
+(make-variable-buffer-local 'wl-sent-message-queued)
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
@@ -1076,11 +1078,21 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(progn
 	  (if (and (wl-message-mail-p)
 		   (not (wl-draft-sent-message-p 'mail)))
-	      (funcall wl-draft-send-mail-function))
+	      (if (or (not (or wl-draft-force-queuing
+			       wl-draft-force-queuing-mail))
+		      (memq 'mail wl-sent-message-queued))
+		  (funcall wl-draft-send-mail-function)
+		(push 'mail wl-sent-message-queued)
+		(wl-draft-set-sent-message 'mail 'unplugged)))
 	  (if (and (wl-message-news-p)
 		   (not (wl-draft-sent-message-p 'news))
 		   (not (wl-message-field-exists-p "Resent-to")))
-	      (funcall wl-draft-send-news-function)))
+	      (if (or (not (or wl-draft-force-queuing
+			       wl-draft-force-queuing-news))
+		      (memq 'news wl-sent-message-queued))
+		  (funcall wl-draft-send-news-function)
+		(push 'news wl-sent-message-queued)
+		(wl-draft-set-sent-message 'news 'unplugged))))
       ;;
       (let* ((status (wl-draft-sent-message-results))
 	     (unplugged-via (car status))
@@ -1099,7 +1111,9 @@ If FORCE-MSGID, ignore 'wl-insert-message-id'."
 	(when (and unplugged-via
 		   wl-sent-message-modified)
 	  (if wl-draft-enable-queuing
-	      (wl-draft-queue-append wl-sent-message-via)
+	      (progn
+		(wl-draft-queue-append wl-sent-message-via)
+		(setq wl-sent-message-modified 'requeue))
 	    (error "Unplugged")))
 	(when wl-draft-verbose-send
 	  (if (and unplugged-via sent-via);; combined message
@@ -1383,6 +1397,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
+    (setq wl-sent-message-queued nil)
     (setq wl-draft-parent-folder parent-folder)
     (if (stringp (or from wl-from))
 	(insert "From: " (or from wl-from) "\n"))
@@ -1537,6 +1552,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (auto-save-mode -1)
     (wl-draft-mode)
     (setq wl-sent-message-via nil)
+    (setq wl-sent-message-queued nil)
     (setq wl-draft-buffer-file-name file-name)
     (wl-draft-config-info-operation number 'load)
     (goto-char (point-min))
@@ -1803,7 +1819,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 				wl-draft-config-variables
 				(list 'wl-draft-fcc-list)))))
 	(if add-sent-message-via
-	    (push 'wl-sent-message-via variables))
+	    (progn
+	      (push 'wl-sent-message-queued variables)
+	      (push 'wl-sent-message-via variables)))
 	(while (setq variable (pop variables))
 	  (when (boundp variable)
 	    (wl-append alist
@@ -1855,9 +1873,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (catch 'found
 	(while sent-via
 	  (when (and (eq (nth 1 (car sent-via)) 'unplugged)
-		     (elmo-plugged-p
-		      (car (nth 2 (car sent-via)))
-		      (cdr (nth 2 (car sent-via)))))
+		     (or (not (nth 2 (car sent-via)))
+			 (elmo-plugged-p
+			  (car (nth 2 (car sent-via)))
+			  (cdr (nth 2 (car sent-via))))))
 	    (wl-append msgs (list (car msgs2)))
 	    (throw 'found t))
 	  (setq sent-via (cdr sent-via))))
@@ -1894,11 +1913,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		   (setq failure t))
 		  (quit
 		   (setq failure t)))
-		(unless failure
-		  (elmo-folder-delete-messages
-		   queue-folder (cons (car msgs) nil))
-		  (wl-draft-queue-info-operation (car msgs) 'delete)
-		  (setq performed (+ 1 performed)))
+		(if (eq wl-sent-message-modified 'requeue)
+		    (progn
+		      (elmo-folder-delete-messages
+		       queue-folder (cons (car msgs) nil))
+		      (wl-draft-queue-info-operation (car msgs) 'delete))
+		  (unless failure
+		    (elmo-folder-delete-messages
+		     queue-folder (cons (car msgs) nil))
+		    (wl-draft-queue-info-operation (car msgs) 'delete)
+		    (setq performed (+ 1 performed))))
 		(setq msgs (cdr msgs)))
 	      (kill-buffer buffer)
 	      (message "%d message(s) are sent." performed)))

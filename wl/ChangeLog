@@ -1,3 +1,15 @@
+2001-12-29  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-sent-message-queued): New buffer-local variable.
+	(wl-draft-dispatch-message): Changed for send-later.
+	(wl-draft-queue-flush): Ditto.
+	(wl-draft): Clear `wl-sent-message-queued'.
+	(wl-draft-reedit): Ditto.
+	(wl-draft-queue-info-operation): Added `wl-sent-message-queued'
+	* wl-vars.el (wl-draft-force-queuing): New variable.
+	(wl-draft-force-queuing-mail): New variable.
+	(wl-draft-force-queuing-news): New variable.
+
 2001-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-hide): Removed `interactive'.
