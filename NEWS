@@ -3,12 +3,38 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.12.1 from 2.12.0
   Version 2.12.1 is a bug fix version of 2.12.0.
 
-** Fixed the problem to cause error on automatical draft saving.
+** Fixed the problem in display module for partially fetched IMAP messages.
+   Now partially fetched messages are displayed accurately.
+   If a message includes child messages, their headers were not displayed.
 
-** Fixed the problem to cause error on invoking address manager.
+** Fixed the problem that %INBOX is not appeared as a subfolder of %INBOX.
+   In cyrus-imapd, this problem occured.
 
-** Fixed the problem that flags were not inherited on copying/refiling from
-   filter folders.
+** Now user defined flags are appeared in the completions for search conditions.
+
+** Fixed the problem that a wrong flag folders are created by some flag names.
+   If a flag contains a character other than [a-z], the problem occured.
+
+** Now expansion of the access group "@/" works correctly.
+
+** Fixed the problem to cause an error on automatical draft saving.
+
+** Fixed the problem to cause an error on invoking address manager.
+   A message which includes a string "To:" etc. caused an error.
+
+** Fixed the problem in the flag inheritance function of the filter folder.
+
+** New option `wl-summary-resend-use-cache'.
+   You can resend messages using cache in the offline status.
+
+** New option `elmo-network-session-idle-timeout'.
+   Network sessions which are not used longer than this value (in seconds)
+   are thrown away and new session is created.
+
+** Improved redisplay functions for "H" and "M" key.
+   MIME structure and buffer is reused for redisplay.
+
+** Now attributes for netnews are displayed in the draft preview.
 
 * Changes in 2.12.0 from 2.10.1
 
