@@ -839,7 +839,7 @@ TYPE specifies the archiver's symbol."
      (setq ret-val
 	   (elmo-archive-call-process
 	    (car compress) (append (cdr compress) (list arc-tar)))))
-    ;; delete tmporary messages
+    ;; delete temporary messages
     (if (and (not copy)
 	     (eq exec-type 'append))
 	(while tmp-msgs
