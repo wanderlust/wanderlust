@@ -1462,8 +1462,16 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(switch-to-buffer folder-buf)))
 	  (switch-to-buffer folder-buf))
       (if wl-folder-use-frame
-	  (switch-to-buffer-other-frame
-	   (get-buffer-create wl-folder-buffer-name))
+	  (progn
+	    (switch-to-buffer-other-frame
+	     (get-buffer-create wl-folder-buffer-name))
+	    (let ((frame (selected-frame)))
+	      (setq wl-delete-startup-frame-function
+		    `(lambda ()
+		       (setq wl-delete-startup-frame-function nil)
+		       (let ((frame ,frame))
+			 (if (eq (selected-frame) frame)
+			     (delete-frame frame)))))))
 	(switch-to-buffer (get-buffer-create wl-folder-buffer-name)))
       (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)

@@ -1,3 +1,14 @@
+2002-01-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-exit): If wl-delete-startup-frame-function is non-nil,
+	call it.
+	(wl-delete-startup-frame-function): New variable.
+	(wl-other-frame): New function
+	(Original was written by Yamaoka san [wl: 09239]).
+
+	* wl-folder.el (wl-folder): Set up `wl-delete-startup-frame-function'
+	if `wl-folder-use-frame'.
+
 2002-01-24  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-message.el (wl-message-buffer-prefetch-p): Check plugged.

@@ -666,9 +666,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			(list wl-folder-buffer-name
 			      wl-plugged-buf-name)
 			"\\|")))
-    (if (and wl-folder-use-frame
-	     (> (length (visible-frame-list)) 1))
-	(delete-frame))
+    (when wl-delete-startup-frame-function
+      (funcall wl-delete-startup-frame-function))
+;;    (if (and wl-folder-use-frame
+;;	     (> (length (visible-frame-list)) 1))
+;;	(delete-frame))
     (setq wl-init nil)
     (remove-hook 'kill-emacs-hook 'wl-save-status)
     t)
@@ -835,6 +837,52 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (if (buffer-live-p demo-buf)
 	(kill-buffer demo-buf)))
   (run-hooks 'wl-hook))
+
+(defvar wl-delete-startup-frame-function nil)
+
+;;;###autoload
+(defun wl-other-frame (&optional arg)
+  "Pop up a frame to read messages via Wanderlust."
+  (interactive)
+  (let ((focusing-functions (append '(raise-frame select-frame)
+				    (if (fboundp 'x-focus-frame)
+					'(x-focus-frame)
+				      '(focus-frame))))
+	(folder (get-buffer wl-folder-buffer-name))
+	window frame wl-folder-use-frame)
+    (if (and folder
+	     (setq window (get-buffer-window folder t))
+	     (window-live-p window)
+	     (setq frame (window-frame window)))
+	(progn
+	  (while focusing-functions
+	    (funcall (car focusing-functions) frame)
+	    (setq focusing-functions (cdr focusing-functions)))
+	  (wl arg))
+      (setq frame (make-frame))
+      (while focusing-functions
+	(funcall (car focusing-functions) frame)
+	(setq focusing-functions (cdr focusing-functions)))
+      (setq wl-delete-startup-frame-function
+	    `(lambda ()
+	       (setq wl-delete-startup-frame-function nil)
+	       (let ((frame ,frame))
+		 (if (eq (selected-frame) frame)
+		     (delete-frame frame)))))
+      (let ((demo-buf (if (and (not wl-init)
+			       wl-demo)
+			  (wl-demo)))
+	    wl-demo)
+	(unless wl-init
+	  (wl-load-profile)
+	  (wl-folder-init)
+	  (elmo-init))
+	(wl-init)	
+	(sit-for 0)
+	(prog1
+	    (wl arg)
+	  (if (buffer-live-p demo-buf)
+	      (kill-buffer demo-buf)))))))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile
