@@ -1,3 +1,8 @@
+2002-11-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-target-mark-erase): New function.
+	Bind it to "mD".
+
 2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-write-file-function): Fix.

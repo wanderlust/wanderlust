@@ -511,6 +511,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
   (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
   (define-key wl-summary-mode-map "m|"   'wl-summary-target-mark-pipe)
+  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-erase)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -3154,6 +3155,21 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
 					   (list msg-num))
 	      (save-excursion (wl-summary-sync nil "update"))))))
+    (message "Read-only folder.")))
+
+(defun wl-summary-target-mark-erase ()
+  (interactive)
+  (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
+      (if (null wl-summary-buffer-target-mark-list)
+	  (message "No marked message.")
+	(when (yes-or-no-p
+	       "Erase all marked messages without moving them to trash? ")
+	  (while (car wl-summary-buffer-target-mark-list)
+	    (let ((num (car wl-summary-buffer-target-mark-list)))
+	      (wl-summary-unmark num)
+	      (elmo-folder-delete-messages wl-summary-buffer-elmo-folder
+					   (list num))))
+	  (save-excursion (wl-summary-sync nil "update"))))
     (message "Read-only folder.")))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
