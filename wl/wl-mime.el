@@ -267,7 +267,7 @@ It calls following-method selected from variable
 	      (erase-buffer)
 	      (dolist (pair attribute-list)
 		(insert (capitalize (symbol-name (car pair))) ": "
-			(or (cdr pair) "")
+			(format "%s" (or (cdr pair) ""))
 			"\n"))
 	      (goto-char (point-min))
 	      (wl-highlight-headers)))

@@ -1,3 +1,7 @@
+2003-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Use `format' to print value.
+
 2003-09-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.11.10.
