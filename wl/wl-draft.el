@@ -1655,7 +1655,7 @@ Derived from `message-save-drafts' in T-gnus."
   (if (not (= (preceding-char) ?\n))
       (insert ?\n)))
 
-(defsubst wl-draft-insert-ccs (str cc)
+(defsubst wl-draft-trim-ccs (cc)
   (let ((field
 	 (if (functionp cc)
 	     (funcall cc)
@@ -1668,7 +1668,8 @@ Derived from `message-save-drafts' in T-gnus."
 				  (wl-parse-addresses (std11-field-body "To"))
 				  (wl-parse-addresses (std11-field-body "Cc"))))
 			 (mapcar 'downcase wl-subscribed-mailing-list)))))
-	(insert str field "\n"))))
+	field
+      nil)))
 
 (defsubst wl-draft-default-headers ()
   (list
@@ -1677,11 +1678,13 @@ Derived from `message-save-drafts' in T-gnus."
 			      wl-from)))
    (cons "" wl-generate-mailer-string-function)
    (cons 'Reply-To mail-default-reply-to)
-   (cons 'wl-draft-insert-ccs
-	 (list "Bcc: " (or wl-bcc
-			   (and mail-self-blind (user-login-name)))))
-   (cons 'wl-draft-insert-ccs
-	 (list "Fcc: " wl-fcc))
+   (cons 'Bcc (function
+	       (lambda ()
+		 (wl-draft-trim-ccs
+		  (or wl-bcc (and mail-self-blind (user-login-name)))))))
+   (cons 'Fcc (function
+	       (lambda ()
+		 (wl-draft-trim-ccs wl-fcc))))
    (cons 'Organization wl-organization)
    (and wl-auto-insert-x-face
 	(file-exists-p wl-x-face-file)
@@ -1689,8 +1692,6 @@ Derived from `message-save-drafts' in T-gnus."
    mail-default-headers
    ;; check \n at th end of line for `mail-default-headers'
    'wl-draft-check-new-line
-;   wl-draft-default-headers
-;   'wl-draft-check-new-line
    ))
 
 (defun wl-draft-insert-mail-header-separator (&optional delimline)

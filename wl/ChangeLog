@@ -1,5 +1,10 @@
 2002-03-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-trim-ccs): Renamed from
+	`wl-draft-insert-ccs' and return field value instead of inserting
+	the header. Abolish cc argument.
+	* wl-draft.el (wl-draft-default-headers): Use it for Bcc and Fcc.
+
 	* wl-draft.el (wl-draft-default-headers): Use cons with symbol car
 	rather than one with string car.
 
