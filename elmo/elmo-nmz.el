@@ -33,7 +33,8 @@
 (require 'mime-edit)
 
 (defcustom elmo-nmz-default-index-path "~/Mail"
-  "*Default index path for namazu."
+  "*Default index path for namazu.
+If the value is a list, all elements are used as index paths for namazu."
   :type 'directory
   :group 'elmo)
 
@@ -55,7 +56,8 @@
 (defcustom elmo-nmz-index-alias-alist nil
   "*Alist of ALIAS and INDEX-PATH."
   :type '(repeat (cons (string :tag "Alias Name")
-		       (directory :tag "Index Path")))
+		       (choice (directory :tag "Index Path")
+			       (repeat (directory :tag "Index Path")))))
   :group 'elmo)
 
 ;;; "namazu search"
@@ -220,9 +222,14 @@
 		     (list
 		      (encode-mime-charset-string
 		       (elmo-nmz-folder-pattern-internal folder)
-		       elmo-nmz-charset)
-		      (expand-file-name
-		       (elmo-nmz-folder-index-path-internal folder)))))
+		       elmo-nmz-charset))
+		     (if (listp (elmo-nmz-folder-index-path-internal folder))
+			 (mapcar
+			  'expand-file-name
+			  (elmo-nmz-folder-index-path-internal folder))
+		       (list
+			(expand-file-name
+			 (elmo-nmz-folder-index-path-internal folder))))))
       (goto-char (point-min))
       (while (not (eobp))
 	(beginning-of-line)
