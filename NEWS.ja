@@ -1,5 +1,9 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+** サマリ行の表示形式を変更できるようになりました。
+   wl-summary-line-format で書式を設定できます。フォルダ毎に書式を変えたい
+   場合は wl-folder-summary-line-format-alist を用いて下さい。
+
 ** ドラフトフォルダへの保存形式が変更されました。wl-draft-save の際には
    エンコードして保存されます。
 
@@ -34,6 +38,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    決められるようになりました。
 
 ** 関数 wl-draft のインターフェースが変更されました。
+   最初に用意するヘッダを関連リストの形で渡すようになりました。
 
 ** wl-generate-mailer-string-function の使用法が変更になりました。
    User-Agent フィールドに入る文字列を返す関数を指定して下さい。

@@ -1,5 +1,9 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+** You can alter the format of summary lines.
+   Specify format by wl-summary-line-format. If you want to change ones
+   according to folder names, use wl-folder-summary-line-format-alist.
+
 ** Save format for the draft folder has been changed. Messages are encoded
    before saved by wl-draft-save.
 
@@ -32,6 +36,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    for setting the recipients in draft by the return value of it.
 
 ** The interface of the function wl-draft has been changed.
+   The initial set of headers are handed as an association list.
 
 ** The uses of wl-generate-mailer-string-function has been changed.
    Specify a function which returns some string to appear in User-Agent header.
