@@ -300,6 +300,7 @@ If nil, default acap port is used."
     (if (interactive-p)
 	(message "Store completed."))))
 
-(provide 'wl-acap)
+(require 'product)
+(product-provide (provide 'wl-acap) (require 'wl-version))
 
 ;;; wl-acap.el ends here

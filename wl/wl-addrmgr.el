@@ -656,10 +656,7 @@ Return nil if no ADDRESS exists."
 	(put-text-property beg end 'face nil)
 	(wl-highlight-message beg end t))))
 
-;; beginning of the end
 (require 'product)
-(product-provide
-    (provide 'wl-addrmgr)
-  (require 'wl-version))
+(product-provide (provide 'wl-addrmgr) (require 'wl-version))
 
 ;;; wl-addrmgr.el ends here

@@ -1,3 +1,8 @@
+2001-09-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-acap.el (toplevel): Added `product-provide' declare.
+	* wl-addrmgr.el (toplevel): Fixed `product-provide' declare style.
+
 2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl): Changed order of calling `elmo-init'
