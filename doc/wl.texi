@@ -145,7 +145,7 @@ The main features of Wanderlust:
 @item Manages unread messages.
 @item Interactive thread display.
 @item Folder Mode shows the list of subscribed folders.
-@item Message Cache, Disconnected Operation (Read Only).
+@item Message Cache, Disconnected Operation.
 @item MH-like FCC. (Fcc: %Backup and Fcc: $Backup is allowed).
 @item MIME compliant (by SEMI).
 @item Transmission of news and mail are unified by Message transmitting draft.
@@ -5660,7 +5660,8 @@ The initial setting is the list below.
 @lisp
 @group
 (list wl-summary-important-mark
-      wl-summary-new-mark
+      wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark
       wl-summary-unread-mark
       wl-summary-unread-uncached-mark
       wl-summary-unread-cached-mark)
@@ -6182,7 +6183,8 @@ The initial setting is the list shown below:
 
 @lisp
 @group
-(list wl-summary-new-mark)
+(list wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark)
 @end group
 @end lisp
 

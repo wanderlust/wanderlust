@@ -145,6 +145,7 @@ into another language, under the above conditions for modified versions.
 * Scoring::                  メッセージのスコア
 * Split messages::           メッセージの振り分け
 * Address Book::             アドレス帳
+* Spam Filter::              Spam フィルタ
 * Customization::            カスタマイズ
 * Terminology::              用語の解説
 * Mailing List::             メーリングリスト
@@ -170,7 +171,7 @@ Wanderlust の主な特徴/特長は以下の通りです。
 @item 未読管理。
 @item インタラクティブなスレッド表示。
 @item 購読フォルダの一覧を表示するフォルダモード。
-@item メッセージキャッシュ、Disconnected Operation (現在は表示のみ)。
+@item メッセージキャッシュ、Disconnected Operation。
 @item MH 的 FCC。(@samp{Fcc: %Backup} や @samp{Fcc: $Backup} も可)。
 @item MIME 対応 (by SEMI)。
 @item ニュース/メールの送信を統合したメッセージ送信ドラフト。
@@ -5614,7 +5615,8 @@ expire を行うフォルダと expire 方法の指定を行います。詳しくは上記の
 @lisp
 @group
 (list wl-summary-important-mark
-      wl-summary-new-mark
+      wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark
       wl-summary-unread-mark
       wl-summary-unread-uncached-mark
       wl-summary-unread-cached-mark)
@@ -6122,7 +6124,8 @@ Wanderlust 以外で直接スコアファイルを変更した場合は、
 
 @lisp
 @group
-(list wl-summary-new-mark)
+(list wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark)
 @end group
 @end lisp
 
@@ -6496,7 +6499,7 @@ pop3                    ×    △    △    △
 れます。
 
 
-@node Address Book, Customization, Split messages, Top
+@node Address Book, Spam Filter, Split messages, Top
 @chapter アドレス帳
 @cindex Address Book
 
@@ -6620,7 +6623,237 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @end table
 
 
-@node Customization, Terminology, Address Book, Top
+@node Spam Filter, Customization, Address Book, Top
+@chapter Spam フィルタ
+@cindex Spam Filter
+
+@code{wl-spam} は、spam フィルタのフロントエンドを提供します。
+
+@menu
+* Usage of Spam Filter::        使い方
+* Spam Filter Processor::       対応している Spam Filter
+@end menu
+
+@node Usage of Spam Filter, Spam Filter Processor, Spam Filter, Spam Filter
+@section 使い方
+
+@subsection 初期設定
+
+@code{wl-spam} を使うには、まず @file{~/.wl} に以下のように設定して下さ
+い。
+
+@lisp
+@group
+;; @r{@samp{bogofilter} を使う場合。}
+;; @r{ここで、使いたい spam フィルタの @samp{scheme} を設定して下さい。}
+;; @r{@xref{Spam Filter Processor}}
+(setq elmo-spam-scheme 'bogofilter)
+(require 'wl-spam)
+@end group
+@end lisp
+
+@subsection spam の判定
+
+@subsection spam の学習
+
+@subsection キーバインド
+@cindex Keybind, spam filter
+
+@table @kbd
+@item k m
+@kindex k m (Summary)
+@findex wl-summary-spam
+カーソル行のメッセージに spam マーク(@samp{s})を付けます。
+
+@item k c
+@kindex k c (Summary)
+@findex wl-summary-test-spam
+カーソル行のメッセージをテストし、spam と判定された場合に spam マークを
+付けます。
+
+@item k C
+@kindex k C (Summary)
+@findex wl-summary-mark-spam
+@code{wl-spam-auto-check-marks} に含まれるマークを持つメッセージについて 
+spam かどうかのテストを行います。spam と判定されたメッセージには、spam 
+マークが付けられます。prefix argument をつけた場合は、全てのメッセージを
+対象とします。
+
+@item k s
+@kindex k s (Summary)
+@findex wl-summary-register-as-spam
+カーソル行のメッセージを spam として登録します。
+
+@item k S
+@kindex k S (Summary)
+@findex wl-summary-register-as-spam-all
+フォルダ内の全てのメッセージを spam として登録します。
+
+@item k n
+@kindex k n (Summary)
+@findex wl-summary-register-as-good
+カーソル行のメッセージを non-spam として登録します。
+
+@item k N
+@kindex k N (Summary)
+@findex wl-summary-register-as-good-all
+フォルダ内の全てのメッセージを non-spam として登録します。
+
+@item m s
+@kindex m s (Summary)
+@findex wl-summary-target-mark-register-as-spam
+まとめ処理用マーク @samp{*} のついたメッセージを spam として登録します。
+
+@item m n
+@kindex m n (Summary)
+@findex wl-summary-target-mark-register-as-good
+まとめ処理用マーク @samp{*} のついたメッセージを non-spam として登録しま
+す。
+@end table
+
+@subsection カスタマイズ変数
+
+@table @code
+@item wl-spam-folder-name
+@vindex wl-spam-folder-name
+spam と判定されたメッセージを移動するフォルダ名を設定します。
+初期設定は、@samp{+spam}。
+
+@item wl-spam-undecided-folder-regexp-list
+@vindex wl-spam-undecided-folder-regexp-list
+spam か non-spam か未判定のメッセージがあると看倣すフォルダを、フォルダ
+名の正規表現のリストで指定します。
+初期設定は、@code{'("inbox")}
+
+@item wl-spam-ignored-folder-regexp-list
+@vindex wl-spam-ignored-folder-regexp-list
+初期設定は以下の通り。
+
+@lisp
+@group
+(list (regexp-opt (list wl-draft-folder
+                        wl-trash-folder
+                        wl-queue-folder)))
+@end group
+@end lisp
+
+spam 判定に対して無効なフォルダを、フォルダ名の正規表現のリストで指定し
+ます。
+
+@item wl-spam-auto-check-folder-regexp-list
+@vindex wl-spam-auto-check-folder-regexp-list
+サマリに移動した時に自動的に spam 判定を行うフォルダを正規表現のリストで
+指定します。
+初期設定は、@code{nil}。
+
+@item wl-spam-auto-check-marks
+@vindex wl-spam-auto-check-marks
+初期設定は以下のリスト。
+
+@lisp
+@group
+(list wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark)
+@end group
+@end lisp
+
+@code{wl-spam-auto-check-folder-regexp-list} による自動判定を含む、フォ
+ルダ全体に対する spam 判定の対象とするメッセージのマークを指定します。マー
+クには永続マークのみ指定できます。一時的マークは指定できません。
+
+デフォルトのようにリストで指定するとそのマークのついたメッセージだけを対
+象とする他、以下の指定もできます。
+
+@table @code
+@item all
+永続マークが何であっても spam 判定の対象とします。
+@end table
+@end table
+
+
+@node Spam Filter Processor,  , Usage of Spam Filter, Spam Filter
+@section 対応している Spam Filter
+@cindex Spam Filter, Bogofilter
+@cindex Spam Filter, Spamfilter
+
+デフォルトでは、以下の spam フィルタリングライブラリに対応しています。
+
+@menu
+* bogofilter::                  bogofilter
+* spamfilter::                  spamfilter.el
+@c* Bsfileter::                   bsfilter
+@end menu
+
+
+@node bogofilter, spamfilter, Spam Filter Processor, Spam Filter Processor
+@subsection bogofilter
+@cindex bogofilter
+
+bogofilter (@uref{http://bogofilter.sourceforge.net/}) は、C言語で実装さ
+れた spam フィルタです。
+
+bogofilter による spam フィルタを使用するには、@file{~/.wl} などに以下の
+設定を記述します。
+
+@lisp
+@group
+(setq elmo-spam-scheme 'bogofilter)
+@end group
+@end lisp
+
+@subsubsection カスタマイズ変数
+
+@table @code
+@item elmo-spam-bogofilter-program
+@vindex elmo-spam-bogofilter-program
+初期設定は、@file{bogofilter}。
+bogofiler の実行ファイルの名前を設定します。実行ファイルが、環境変数 
+@env{PATH} 上にない場合は、フルパスを設定する必要があります。
+
+@item elmo-spam-bogofilter-args
+@vindex elmo-spam-bogofilter-args
+初期設定は、@code{nil}。
+bogofilter の実行時に実行ファイルに渡される引数を指定します。
+
+@item elmo-spam-bogofilter-database-directory
+@vindex elmo-spam-bogofilter-database-directory
+使用する統計データベースの存在するディレクトリを指定します。@code{nil} 
+ならデフォルトの位置 (@file{~/.bogofilter}) が使用されます。
+初期設定は、@code{nil}
+@end table
+
+
+@node spamfilter,  , bogofilter, Spam Filter Processor
+@subsection spamfilter.el
+@cindex spamfilter
+
+@file{spamfilter.el}
+(@uref{http://www.geocities.co.jp/SiliconValley-PaloAlto/7043/}) は、
+Emacs Lisp で実装された spam フィルタリングライブラリです。
+
+インストール時に @code{load-path} 上に @file{spamfilter.el} があれば、自
+動的に対応モジュールがコンパイル/インストールされます。@xref{Install}
+
+@file{spamfilter.el} を使用するには、@file{~/.wl} などに以下の設定を記述
+します。(もちろん、@file{spamfilter.el} 自体の設定も必要です)
+
+@lisp
+@group
+(setq elmo-spam-scheme 'spamfilter)
+@end group
+@end lisp
+
+@subsubsection カスタマイズ変数
+
+@table @code
+@item elmo-spam-spamfilter-corpus-filename
+@vindex elmo-spam-spamfilter-corpus-filename
+初期設定は @file{~/.elmo/.spamfilter}。
+コーパスファイルの名前を設定します。
+@end table
+
+
+@node Customization, Terminology, Spam Filter, Top
 @chapter Wanderlust のカスタマイズ
 @cindex Customization
 
@@ -6917,7 +7150,7 @@ Mew の Addrbook を Wanderlust で使用できるようにするには、
 
 emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) に付属の
 @file{mime-w3m.el} を使って、メッセージの html パートを
-表示させることが出来ます。設定法は @file{mime-w3m.el} の
+表示させることが出来ます。設定方法は @file{mime-w3m.el} の
 先頭のコメントを参照してください。
 
 
