@@ -142,6 +142,7 @@
 ;  (define-key wl-folder-mode-map "\M- " 'wl-folder-open-close)
   (define-key wl-folder-mode-map "/"    'wl-folder-open-close)
   (define-key wl-folder-mode-map "\C-m" 'wl-folder-jump-to-current-entity)
+  (define-key wl-folder-mode-map [(shift return)] 'wl-folder-jump-to-current-entity-with-arg)
   (define-key wl-folder-mode-map "\M-\C-m" 'wl-folder-update-recursive-current-entity)
   (define-key wl-folder-mode-map "rc"    'wl-folder-mark-as-read-all-region)
   (define-key wl-folder-mode-map "c"    'wl-folder-mark-as-read-all-current-entity)
@@ -586,6 +587,10 @@ Optional argument ARG is repeart count."
     (wl-string-match-member entity wl-force-fetch-folders))
    (t
     wl-force-fetch-folders)))
+
+(defun wl-folder-jump-to-current-entity-with-arg ()
+  (interactive)
+  (wl-folder-jump-to-current-entity t))
 
 (defun wl-folder-jump-to-current-entity (&optional arg)
   "Enter the current folder.  If optional ARG exists, update folder list."

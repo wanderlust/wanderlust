@@ -387,6 +387,7 @@
   (define-key wl-summary-mode-map "-"    'wl-summary-prev-line-content)
   (define-key wl-summary-mode-map "\e\r" 'wl-summary-prev-line-content)
   (define-key wl-summary-mode-map "g"    'wl-summary-goto-folder)
+  (define-key wl-summary-mode-map "G"    'wl-summary-goto-folder-sticky)
   (define-key wl-summary-mode-map "c"    'wl-summary-mark-as-read-all)
 ;  (define-key wl-summary-mode-map "D"    'wl-summary-drop-unsync)
 
@@ -2365,7 +2366,11 @@ If ARG, without confirm."
 
 (defun wl-summary-goto-folder (&optional arg)
   (interactive "P")
-  (wl-summary-goto-folder-subr nil nil nil arg t))
+  (wl-summary-goto-folder-subr nil nil nil nil t nil arg))
+
+(defun wl-summary-goto-folder-sticky ()
+  (interactive)
+  (wl-summary-goto-folder-subr nil nil nil t t))
 
 (defun wl-summary-goto-last-visited-folder ()
   (interactive)
@@ -2499,7 +2504,8 @@ If ARG, without confirm."
 					   folder)))))
 
 (defun wl-summary-goto-folder-subr (&optional name scan-type other-window
-					      sticky interactive scoring)
+					      sticky interactive scoring
+					      force-exit)
   "Display target folder on summary."
   (interactive)
   (let* ((keep-cursor (memq this-command
@@ -2517,7 +2523,8 @@ If ARG, without confirm."
 	       (eq major-mode 'wl-summary-mode)) ; called in summary.
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
       (run-hooks 'wl-summary-exit-pre-hook)
-      (wl-summary-cleanup-temp-marks (wl-summary-sticky-p))
+      (if (or force-exit (not (wl-summary-sticky-p)))
+	  (wl-summary-cleanup-temp-marks (wl-summary-sticky-p)))
       (wl-summary-save-view)
       (elmo-folder-commit wl-summary-buffer-elmo-folder))
     (setq buf (wl-summary-get-buffer-create (elmo-folder-name-internal folder)

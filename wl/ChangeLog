@@ -1,3 +1,17 @@
+2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (toplevel): Bind [(shift return)] to
+	wl-folder-jump-to-current-entity-with-arg.
+	(wl-folder-jump-to-current-entity-with-arg): Just call with arg
+	`wl-folder-jump-to-current-entity'.
+	* wl-summary.el (toplevel): Bind `wl-summary-goto-folder-sticky'
+	to "G".
+	(wl-summary-goto-folder-sticky): Just call with the sticky arg
+	`wl-summary-goto-folder'.
+	(wl-summary-goto-folder-subr): Add 7th argument force-exit.
+	Unless force-exit, do not clean temp. marks for sticky summary.
+	(wl-summary-goto-folder): Now the prefix argument means force-exit.
+
 2002-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-important): Refetch if cache is
