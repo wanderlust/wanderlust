@@ -481,6 +481,10 @@ Returns non-nil if bottom of message."
 	  ;; buffer cache is used.
 	  (setq cache-used t)
 	  (with-current-buffer hit
+	    ;; Rewind to the top page
+	    (widen)
+	    (goto-char (point-min))
+	    (ignore-errors (wl-message-narrow-to-page))
 	    (unless (eq wl-message-buffer-cur-flag flag)
 	      (setq read t))))
       ;; delete tail and add new to the top.
