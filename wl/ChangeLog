@@ -1,3 +1,8 @@
+2000-10-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el (toplevel): Remove (provide 'elmo-msgdb).  And add
+	(require 'elmo-msgdb) for inline function.
+
 2000-10-06  Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-vars.el (wl-draft-queue-save-variables): Add variables.

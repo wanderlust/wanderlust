@@ -34,7 +34,7 @@
 (require 'wl-vars)
 (require 'wl-util)
 (eval-when-compile
-  (provide 'elmo-msgdb))
+  (require 'elmo-msgdb))		; for inline functions
 
 (eval-when-compile (require 'cl))	; dolist
 
