@@ -1,3 +1,8 @@
+2000-05-24  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-draft.el (wl-draft-clone-local-variables):
+	Remove redundant `setq'.
+
 2000-05-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer):
