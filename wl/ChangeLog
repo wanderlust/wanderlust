@@ -1,5 +1,11 @@
 2000-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-reply): Return t if there was a
+	message at cursor point.
+	Added unwind-protect.
+	(wl-summary-reply-with-citation): Cite only when wl-summary-reply
+	returns t.
+
 	* wl-summary.el (wl-summary-reply): Cause an error when there's no
 	message at cursor point.
 	(wl-summary-reply-with-citation): Remove unwind-protect.
