@@ -538,7 +538,7 @@ without cacheing."
 
 (defun elmo-pack-number (folder msgdb arg)
   (let ((type (elmo-folder-get-type folder)))
-    (if (memq type '(localdir localnews))
+    (if (memq type '(localdir localnews maildir))
 	(elmo-call-func folder "pack-number" msgdb arg)
       (error "pack-number not supported"))))
 

@@ -444,6 +444,8 @@ content of MSGDB is changed."
 	      (delq (assq (car msg-list) number-alist) number-alist))
 	(setq mark-alist (delq (assq (car msg-list) mark-alist) mark-alist))
 	(setq loc-alist (delq (assq (car msg-list) loc-alist) loc-alist))
+	;; XXX Should consider when folder is not persistent.
+	(elmo-msgdb-location-save dir loc-alist)
 	(setq msg-list (cdr msg-list)))
       (setcar msgdb overview)
       (setcar (cdr msgdb) number-alist)

@@ -480,6 +480,38 @@ file name for maildir directories."
 			 (elmo-msgdb-expand-path
 			  nil spec)))))
 
+(defun elmo-maildir-pack-number (spec msgdb arg)
+  (let ((old-number-alist (elmo-msgdb-get-number-alist msgdb))
+	(old-overview (elmo-msgdb-get-overview msgdb))
+	(old-mark-alist (elmo-msgdb-get-mark-alist msgdb))
+	(old-location (elmo-msgdb-get-location msgdb))
+	old-number overview number-alist mark-alist location
+	mark (number 1))
+    (setq overview old-overview)
+    (while old-overview
+      (setq old-number
+	    (elmo-msgdb-overview-entity-get-number (car old-overview)))
+      (elmo-msgdb-overview-entity-set-number (car old-overview) number)
+      (setq number-alist
+	    (cons (cons number (cdr (assq old-number old-number-alist)))
+		  number-alist))
+      (when (setq mark (cadr (assq old-number old-mark-alist)))
+	(setq mark-alist
+	      (elmo-msgdb-mark-append
+	       mark-alist number mark)))
+      (setq location
+	    (cons (cons number (cdr (assq old-number old-location)))
+		  location))
+      (setq number (1+ number))
+      (setq old-overview (cdr old-overview)))
+    ;; XXX Should consider when folder is not persistent.
+    (elmo-msgdb-location-save (elmo-msgdb-expand-path nil spec) location)
+    (list overview
+	  (nreverse number-alist)
+	  (nreverse mark-alist)
+	  (nreverse location)
+	  (elmo-msgdb-make-overview-hashtb overview))))
+
 (defalias 'elmo-maildir-sync-number-alist
   'elmo-generic-sync-number-alist)
 (defalias 'elmo-maildir-list-folder-unread

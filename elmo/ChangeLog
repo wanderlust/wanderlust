@@ -1,5 +1,11 @@
 2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-maildir.el (elmo-maildir-pack-number): Implemented.
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Save location data.
+
+	* elmo2.el (elmo-pack-number): Added 'maildir as allowd type.
+
 	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Fixed
 	arguments for `SEARCH' command.
 	(elmo-imap4-parse-string): Set `POS' argument for char-after.
