@@ -417,6 +417,10 @@ when `wl-prefetch-confirm' is non-nil."
   "A hook called when unread message is displayed.")
 (defvar wl-summary-edit-addresses-hook nil
   "A hook called when address book is edited.")
+(defvar wl-summary-buffer-message-saved-hook nil
+  "A hook called when msgdb is saved.")
+(defvar wl-summary-buffer-mark-saved-hook nil
+  "A hook called when mark is saved.")
 (defvar wl-summary-divide-thread-when-subject-changed nil
   "Divide thread when subject is changed.")
 (defvar wl-init-hook nil

@@ -85,6 +85,7 @@
 (defvar wl-summary-buffer-view 'thread)
 (defvar wl-summary-buffer-message-modified nil)
 (defvar wl-summary-buffer-mark-modified nil)
+(defvar wl-summary-buffer-thread-modified nil)
 (defvar wl-summary-buffer-number-column nil)
 (defvar wl-summary-buffer-number-regexp nil)
 (defvar wl-summary-buffer-persistent nil)
@@ -139,6 +140,7 @@
        'wl-summary-buffer-view
        'wl-summary-buffer-message-modified
        'wl-summary-buffer-mark-modified
+       'wl-summary-buffer-thread-modified
        'wl-summary-buffer-number-column
        'wl-summary-buffer-number-regexp
        'wl-summary-buffer-persistent
@@ -1021,6 +1023,10 @@ q	Goto folder mode.
   (setq wl-summary-buffer-mark-modified t))
 (defun wl-summary-mark-modified-p ()
   wl-summary-buffer-mark-modified)
+(defun wl-summary-set-thread-modified ()
+  (setq wl-summary-buffer-thread-modified t))
+(defun wl-summary-thread-modified-p ()
+  wl-summary-buffer-thread-modified)
 
 (defun wl-summary-msgdb-save ()
   "Save msgdb if modified."
@@ -1039,7 +1045,8 @@ q	Goto folder mode.
 	   (elmo-string wl-summary-buffer-folder-name)
 	   (elmo-msgdb-get-number-alist
 	    wl-summary-buffer-msgdb))
-	  (setq wl-summary-buffer-message-modified nil))
+	  (setq wl-summary-buffer-message-modified nil)
+	  (run-hooks 'wl-summary-buffer-message-saved-hook))
 	(when (wl-summary-mark-modified-p)
 	  (or path 
 	      (setq path (elmo-msgdb-expand-path
@@ -1053,7 +1060,8 @@ q	Goto folder mode.
 ;; 	   0
 ;; 	   (+ wl-summary-buffer-new-count wl-summary-buffer-unread-count))
 ;;	  (setq wl-folder-info-alist-modified t)
-	  (setq wl-summary-buffer-mark-modified nil))))))
+	  (setq wl-summary-buffer-mark-modified nil)
+	  (run-hooks 'wl-summary-buffer-mark-saved-hook))))))
 
 (defsubst wl-summary-cleanup-temp-marks (&optional sticky)
   (if (or wl-summary-buffer-refile-list
@@ -1085,7 +1093,8 @@ q	Goto folder mode.
     ;; save the current summary buffer view.
     (if (and wl-summary-cache-use 
 	     (or (wl-summary-message-modified-p)
-		 (wl-summary-mark-modified-p)))
+		 (wl-summary-mark-modified-p)
+		 (wl-summary-thread-modified-p)))
 	(wl-summary-save-view-cache sticky))
     ;; save msgdb ... 
     (wl-summary-msgdb-save)))
@@ -2607,7 +2616,8 @@ If optional argument is non-nil, checking is omitted."
 		   wl-summary-buffer-number-column
 		   wl-summary-buffer-number-regexp
 		   wl-summary-buffer-message-modified
-		   wl-summary-buffer-mark-modified)
+		   wl-summary-buffer-mark-modified
+		   wl-summary-buffer-thread-modified)
 		 (and (eq wl-summary-buffer-view 'thread)
 		      '(wl-thread-entity-hashtb
 			wl-thread-entities
@@ -6090,7 +6100,8 @@ Reply to author if invoked with argument."
 	    (message "Cannot set itself as a parent.")
 	  (save-excursion
 	    (wl-thread-jump-to-msg wl-summary-buffer-saved-message)
-	    (wl-thread-set-parent number))
+	    (wl-thread-set-parent number)
+	    (wl-summary-set-thread-modified))
 	  (setq  wl-summary-buffer-saved-message nil)))
     (message "There's no saved message.")))
 

@@ -1,3 +1,21 @@
+2000-07-07  Kenichi OKADA	<okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-buffer-thread-modified):
+	New buffer-local variable.
+	(wl-summary-set-thread-modified): New function.
+	(wl-summary-thread-modified-p): New function.
+	(wl-summary-save-status): Use function `wl-summary-thread-modified-p'.
+	(wl-summary-yank-saved-message): Use function
+	`wl-summary-set-thread-modified'
+	(wl-summary-switch-to-clone-buffer): Add
+	`wl-summary-buffer-thread-modified'.
+
+	* wl-vars.el (wl-summary-buffer-message-saved-hook): New variable.
+	(wl-summary-buffer-mark-saved-hook): Ditto.
+	* wl-summary.el (wl-summary-msgdb-save): New hook
+	`wl-summary-buffer-message-saved-hook' and
+	`wl-summary-buffer-mark-saved-hook'.
+
 2000-07-04  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Simplified `fringe' face manipulation.
