@@ -172,7 +172,7 @@
 (luna-define-method elmo-folder-list-answereds ((folder elmo-pipe-folder))
   (elmo-folder-list-answereds (elmo-pipe-folder-dst-internal folder)))
 
-(luna-define-method elmo-folder-status ((folder elmo-pipe-folder))
+(luna-define-method elmo-folder-diff ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-src-internal folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
   (let* ((elmo-inhibit-number-mapping
@@ -180,10 +180,13 @@
 	 (src-length (length (elmo-pipe-folder-list-target-messages
 			      (elmo-pipe-folder-src-internal folder)
 			      (elmo-pipe-folder-copied-list-load folder))))
-	 (dst-list (elmo-folder-list-messages
-		    (elmo-pipe-folder-dst-internal folder))))
-    (prog1 (cons (+ src-length (elmo-max-of-list dst-list))
-		 (+ src-length (length dst-list)))
+	 (dst-diff (elmo-folder-diff (elmo-pipe-folder-dst-internal folder))))
+    (prog1
+	(cond
+	 ((consp (cdr dst-diff)) ; new unread all
+	  (mapcar (lambda (number) (+ number src-length)) dst-diff))
+	 (t
+	  (cons (+ (car dst-diff) src-length) (cdr dst-diff))))
       ;; No save.
       (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
       (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))))

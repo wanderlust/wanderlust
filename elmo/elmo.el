@@ -192,10 +192,8 @@ If optional KEEP-KILLED is non-nil, killed-list is not cleared.")
 (luna-define-generic elmo-folder-use-flag-p (folder)
   "Returns t if FOLDER treats unread/important flag itself.")
 
-(luna-define-generic elmo-folder-diff (folder &optional numbers)
+(luna-define-generic elmo-folder-diff (folder)
   "Get diff of FOLDER.
-If optional NUMBERS is set, it is used as current NUMBERS.
-Otherwise, saved status for folder is used for comparison.
 Return value is cons cell or list:
  - a cons cell (new . all)
  - a list (new unread all)")
@@ -681,8 +679,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
        (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))
       (elmo-folder-set-info-max-by-numdb
        folder
-       (elmo-msgdb-get-number-alist
-	(elmo-folder-msgdb folder)))
+       (elmo-folder-list-messages folder nil 'in-msgdb))
       (elmo-folder-set-message-modified-internal folder nil)
       (elmo-msgdb-killed-list-save
        (elmo-folder-msgdb-path folder)
@@ -886,12 +883,12 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 		       (list new unread numbers max)
 		       elmo-folder-info-hashtb)))
 
-(defun elmo-folder-set-info-max-by-numdb (folder msgdb-number)
+(defun elmo-folder-set-info-max-by-numdb (folder numbers)
   "Set FOLDER info by MSGDB-NUMBER in msgdb."
-  (let ((num-db (sort (mapcar 'car msgdb-number) '<)))
+  (let ((numbers (sort numbers '<)))
     (elmo-folder-set-info-hashtb
      folder
-     (or (nth (max 0 (1- (length num-db))) num-db) 0)
+     (or (nth (max 0 (1- (length numbers))) numbers) 0)
      nil ;;(length num-db)
      )))
 
@@ -945,10 +942,7 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	 append-list delete-list diff)
     (cons (if (equal in-folder in-db)
 	      0
-	    (setq diff (elmo-list-diff
-			in-folder in-db
-			nil
-			))
+	    (setq diff (elmo-list-diff in-folder in-db nil))
 	    (setq append-list (car diff))
 	    (setq delete-list (cadr diff))
 	    (if append-list
@@ -958,11 +952,10 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 		0)))
 	  (length in-folder))))
 
-(luna-define-method elmo-folder-diff ((folder elmo-folder)
-				      &optional numbers)
-  (elmo-generic-folder-diff folder numbers))
+(luna-define-method elmo-folder-diff ((folder elmo-folder))
+  (elmo-generic-folder-diff folder))
 
-(defun elmo-generic-folder-diff (folder numbers)
+(defun elmo-generic-folder-diff (folder)
   (if (elmo-string-match-member (elmo-folder-name-internal folder)
 				elmo-strict-diff-folder-list)
       (elmo-strict-folder-diff folder)
@@ -971,19 +964,15 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 	  (in-db t)
 	  unsync messages
 	  in-db-max)
-      (if numbers
-	  (setq in-db-max (or (nth (max 0 (1- (length numbers))) numbers)
-			      0))
-	(if (not cached-in-db-max)
-	    (let ((number-list (mapcar 'car
-				       (elmo-msgdb-number-load
-					(elmo-folder-msgdb-path folder)))))
-	      ;; No info-cache.
-	      (setq in-db (sort number-list '<))
-	      (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
-				  0))
-	      (elmo-folder-set-info-hashtb folder in-db-max nil))
-	  (setq in-db-max cached-in-db-max)))
+      (if (not cached-in-db-max)
+	  (let ((number-list (elmo-folder-list-messages folder
+							nil 'in-msgdb)))
+	    ;; No info-cache.
+	    (setq in-db (sort number-list '<))
+	    (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
+				0))
+	    (elmo-folder-set-info-hashtb folder in-db-max nil))
+	(setq in-db-max cached-in-db-max))
       (setq unsync (if (and in-db (car in-folder))
 		       (- (car in-folder) in-db-max)
 		     (if (and in-folder (null in-db))
@@ -1587,9 +1576,10 @@ If update process is interrupted, return nil.")
   (unless silent
     (message "Loading msgdb for %s..." (elmo-folder-name-internal folder)))
   (let ((msgdb (elmo-load-msgdb (elmo-folder-msgdb-path folder))))
-    (elmo-folder-set-info-max-by-numdb folder
-				       (elmo-msgdb-get-number-alist msgdb))
-
+    (elmo-folder-set-info-max-by-numdb
+     folder
+     (mapcar 'elmo-msgdb-overview-entity-get-number
+	     (elmo-msgdb-get-overview msgdb)))
     (unless silent
       (message "Loading msgdb for %s...done"
 	       (elmo-folder-name-internal folder)))

@@ -598,8 +598,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-check-plugged)))
 
-(luna-define-method elmo-folder-diff :around ((folder elmo-net-folder)
-					      &optional numbers)
+(luna-define-method elmo-folder-diff :around ((folder elmo-net-folder))
   (if (and (elmo-folder-use-flag-p folder)
 	   (elmo-folder-plugged-p folder))
       (elmo-folder-send folder 'elmo-folder-diff-plugged)

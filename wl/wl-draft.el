@@ -1644,6 +1644,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (if (interactive-p)
 	(run-hooks 'wl-mail-setup-hook))
     (goto-char (point-min))
+    (setq buffer-undo-list nil)
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((and
 	    (interactive-p)

@@ -1,3 +1,25 @@
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-generic-folder-commit): Use elmo-folder-list-messages.
+	(elmo-folder-set-info-max-by-numdb): Changed argument to number list.
+	(elmo-generic-folder-diff): Abolish argument.
+	(elmo-msgdb-load): Don't use number-alist.
+
+	* elmo-filter.el (elmo-folder-diff): Abolish argument.
+
+	* elmo-pipe.el (elmo-folder-diff): Ditto.
+
+	* elmo-nmz.el (elmo-folder-diff): Ditto.
+
+	* elmo-net.el (elmo-folder-diff): Ditto.
+
+	* elmo-maildir.el (elmo-folder-diff): Ditto.
+
+	* elmo-imap4.el (elmo-folder-diff-async): Ditto.
+
+	* elmo-multi.el (elmo-folder-diff): Ditto
+	(elmo-multi-folder-diff): Rewrite.
+
 2003-08-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-pipe.el (elmo-folder-msgdb): Define.

@@ -540,8 +540,7 @@ file name for maildir directories."
 	 (file-directory-p (expand-file-name "cur" basedir))
 	 (file-directory-p (expand-file-name "tmp" basedir)))))
 
-(luna-define-method elmo-folder-diff ((folder elmo-maildir-folder)
-				      &optional numbers)
+(luna-define-method elmo-folder-diff ((folder elmo-maildir-folder))
   (let* ((dir (elmo-maildir-folder-directory-internal folder))
 	 (new-len (length (car (elmo-maildir-list-location dir "new"))))
 	 (cur-len (length (car (elmo-maildir-list-location dir "cur")))))

@@ -210,8 +210,7 @@
      (lambda (x) (concat prefix x))
      (elmo-folder-list-subfolders target one-level))))
 
-(luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder)
-					      &optional numbers)
+(luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder))
   (let ((condition (elmo-filter-folder-condition-internal folder))
 	diff)
     (if (vectorp condition)

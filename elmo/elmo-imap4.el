@@ -2401,8 +2401,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-diff-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-folder-diff-plugged folder))
 
-(luna-define-method elmo-folder-diff-async ((folder elmo-imap4-folder)
-					    &optional number-alist)
+(luna-define-method elmo-folder-diff-async ((folder elmo-imap4-folder))
   (setq elmo-imap4-server-diff-async-callback
 	elmo-folder-diff-async-callback)
   (setq elmo-imap4-server-diff-async-callback-data

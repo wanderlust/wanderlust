@@ -235,27 +235,30 @@
       (setq cur-number (+ 1 cur-number)))
     t))
 
-(luna-define-method elmo-folder-diff ((folder elmo-multi-folder)
-				      &optional numbers)
-  (elmo-multi-folder-diff folder numbers))
+(luna-define-method elmo-folder-diff ((folder elmo-multi-folder))
+  (elmo-multi-folder-diff folder))
 
-(defun elmo-multi-folder-diff (folder numbers)
+(defun elmo-multi-folder-diff (folder)
   (let ((flds (elmo-multi-folder-children-internal folder))
-	(num-list (and numbers (elmo-multi-split-numbers folder numbers)))
-	(unsync 0)
-	(messages 0)
-	diffs)
+	(news 0)
+	(unreads 0)
+	(alls 0)
+	no-unreads diff)
     (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff (car flds)
-						       (car num-list)))))
+      (setq diff (elmo-folder-diff (car flds)))
+      (cond
+       ((consp (cdr diff)) ; (new unread all)
+	(setq news    (+ news (nth 0 diff))
+	      unreads (+ unreads (nth 0 diff))
+	      alls    (+ alls (nth 0 diff))))
+       (t
+	(setq no-unreads t)
+	(setq news    (+ news (car diff))
+	      alls    (+ alls (cdr diff)))))
       (setq flds (cdr flds)))
-    (while diffs
-      (and (car (car diffs))
-	   (setq unsync (+ unsync (car (car diffs)))))
-      (setq messages  (+ messages (cdr (car diffs))))
-      (setq diffs (cdr diffs)))
-    (elmo-folder-set-info-hashtb folder nil messages)
-    (cons unsync messages)))
+    (if no-unreads
+	(cons news alls)
+      (list news unreads alls))))
 
 (luna-define-method elmo-folder-list-unreads ((folder elmo-multi-folder))
   (let ((cur-number 0)
