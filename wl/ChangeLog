@@ -1,4 +1,8 @@
-2001-06-25  Yuuichi Teranishi  <teranisi@isl.ntt.co.jp>
+2001-06-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-reply): Fixed problem when
+	wl-draft-use-frame is non-nil.
+	(wl-summary-forward): Ditto.
 
 	* wl-folder.el (wl-folder-sync-entity): Bind wl-summary-use-frame
 	as nil.
