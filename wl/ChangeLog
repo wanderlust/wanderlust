@@ -1,3 +1,11 @@
+2002-01-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-address.el (wl-address-make-completion-list): Do not enclose
+	address by " <" and ">" if associated realname is "".
+	* wl-addrmgr.el (wl-addrmgr-mark-check): Ditto.
+	This is against the promblem with group list in .addresses pointed
+	out by Tomotaka SUWA <cooper@saitama.fujimic.fujisankei-g.co.jp>.
+
 2002-01-19  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-write-sendlog): The first argument of

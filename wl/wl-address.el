@@ -287,12 +287,14 @@ Matched address lists are append to CL."
     (while address-list
       (setq addr-tuple (car address-list))
       (setq cl
-	     (cons
-	      (cons (nth 0 addr-tuple)
-		    (concat
-		     (wl-address-quote-specials
-		      (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))
-	      cl))
+	    (cons
+	     (cons (nth 0 addr-tuple)
+		   (if (string= (nth 2 addr-tuple) "")
+		       (nth 0 addr-tuple)
+		     (concat
+		      (wl-address-quote-specials
+		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
+	     cl))
       ;; nickname completion.
       (unless (or (equal (nth 1 addr-tuple) (nth 0 addr-tuple))
 		  ;; already exists
@@ -300,9 +302,11 @@ Matched address lists are append to CL."
 	(setq cl
 	      (cons
 	       (cons (nth 1 addr-tuple)
-		     (concat
-		      (wl-address-quote-specials
-		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))
+		     (if (string= (nth 2 addr-tuple) "")
+			 (nth 0 addr-tuple)
+		       (concat
+			(wl-address-quote-specials
+			 (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
 	       cl)))
       (setq address-list (cdr address-list)))
     cl))

@@ -577,23 +577,29 @@ Return nil if no ADDRESS exists."
 	(setq realname (nth 2 (wl-addrmgr-address-entry)))
 	(cond
 	 ((string= mark "To:")
-	  (setq to-list (cons (if full (concat
-					(wl-address-quote-specials realname)
-					" <" addr">")
-				addr)
-			      to-list)))
+	  (setq to-list (cons
+			 (if (and full (not (string= realname "")))
+			     (concat
+			      (wl-address-quote-specials realname)
+			      " <" addr">")
+			   addr)
+			 to-list)))
 	 ((string= mark "Cc:")
-	  (setq cc-list (cons (if full (concat
-					(wl-address-quote-specials realname)
-					" <" addr">")
-				addr)
-			      cc-list)))
+	  (setq cc-list (cons
+			 (if (and full (not (string= realname "")))
+			     (concat
+			      (wl-address-quote-specials realname)
+			      " <" addr">")
+			   addr)
+			 cc-list)))
 	 ((string= mark "Bcc:")
-	  (setq bcc-list (cons (if full (concat
-					 (wl-address-quote-specials realname)
-					 " <" addr">")
-				 addr)
-			       bcc-list)))))
+	  (setq bcc-list (cons
+			  (if (and full (not (string= realname "")))
+			      (concat
+			       (wl-address-quote-specials realname)
+			       " <" addr">")
+			    addr)
+			  bcc-list)))))
       (list to-list cc-list bcc-list))))
 
 (defun wl-addrmgr-apply-exec (rcpt)
