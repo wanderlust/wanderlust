@@ -3002,6 +3002,7 @@ Mark as read the message at the current cursor point.
 @item i
 @kindex i (Summary)
 Prefetch the message at the current cursor point.
+With prefix argument, prefetch the message even if it is cached.
 @findex wl-summary-prefetch
 (@code{wl-summary-prefetch})
 
@@ -4143,6 +4144,11 @@ reply a message.  If it is @code{nil}, insert her address only.
 The initial setting is t.
 This flag controls off-line transmission.  If non-nil, the draft is
 sent off-line.
+
+@item wl-draft-use-cache
+@vindex wl-draft-use-cache
+The initial setting is code{t}.
+If non-nil, cache the message which is sent.
 
 @item wl-auto-flush-queue
 @vindex wl-auto-flush-queue
