@@ -1,3 +1,8 @@
+2004-02-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-elmo-util.el (test-elmo-number-set-member-1): Use `equal'.
+	(test-elmo-number-set-member-2): New testcase.
+
 2004-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-elmo-util.el (lunit-test-case-setup): Set `print-length',

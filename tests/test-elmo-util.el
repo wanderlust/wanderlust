@@ -1,22 +1,16 @@
 (require 'lunit)
 (require 'elmo-util)
 
-
 (luna-define-class test-elmo-util (lunit-test-case))
 
 ;; setup & teardown
 (defvar test-elmo-temoporary-file)
 
 (luna-define-method lunit-test-case-setup ((case test-elmo-util))
-  (setq print-length 1
-	print-level 1)
-  (setq case-fold-search nil)
   (setq test-elmo-temoporary-file
 	(make-temp-file temporary-file-directory)))
 
 (luna-define-method lunit-test-case-teardown ((case test-elmo-util))
-  (setq print-length nil
-	print-level nil)
   (when (file-exists-p test-elmo-temoporary-file)
     (delete-file test-elmo-temoporary-file)))
 
@@ -190,15 +184,20 @@
     (elmo-flatten '(1 2 (3 4 5))))))
 
 (luna-define-method test-elmo-number-set-member-1 ((case test-elmo-util))
-  "Check edge"
+  "Check edge."
   (lunit-assert
-   (elmo-number-set-member 1 '((1 . 99))))
+   (equal '((1 . 99))
+	  (elmo-number-set-member 1 '((1 . 99)))))
   (lunit-assert
-   (elmo-number-set-member 99 '((1 . 99))))
+   (equal '((1 . 99))
+	  (elmo-number-set-member 99 '((1 . 99))))))
+
+(luna-define-method test-elmo-number-set-member-2 ((case test-elmo-util))
+  "Check edge."
   (lunit-assert
-   (not (elmo-number-set-member 0 '((1 . 99)))))
+   (null (elmo-number-set-member 0 '((1 . 99)))))
   (lunit-assert
-   (not (elmo-number-set-member 100 '((1 . 99))))))
+   (null (elmo-number-set-member 100 '((1 . 99))))))
 
 (luna-define-method test-elmo-number-set-append-list-1 ((case test-elmo-util))
   "Simple testcase."
