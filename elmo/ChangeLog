@@ -1,5 +1,7 @@
 2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-cache.el (elmo-cache-search-all): Added argument `from-msgs'.
+
 	* elmo2.el (elmo-generic-list-folder-unread): Rewrite.
 	(elmo-list-folder-unread): Rewrite.
 	(elmo-list-folder-important): Ditto.

@@ -280,10 +280,10 @@ If KBYTES is kilo bytes (This value must be float)."
 		;; not directory.
 		path))))))
 
-(defun elmo-cache-search-all (folder condition)
+(defun elmo-cache-search-all (folder condition from-msgs)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-msgdb-expand-path folder)))
-	 (number-list (mapcar 'car number-alist))
+	 (number-list (or from-msgs (mapcar 'car number-alist)))
 	 (num (length number-alist))
 	 cache-file
 	 ret-val
@@ -291,7 +291,8 @@ If KBYTES is kilo bytes (This value must be float)."
 	 percent i)
     (setq i 0)
     (while number-alist
-      (if (and (setq cache-file (elmo-cache-exists-p (cdr (car
+      (if (and (memq (car (car number-alist)) number-list)
+	       (setq cache-file (elmo-cache-exists-p (cdr (car
 							   number-alist))
 						     folder
 						     (car (car
