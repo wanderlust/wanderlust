@@ -31,7 +31,7 @@
 ;;; Code:
 ;; 
 (require 'product)
-(provide 'elmo-version)			; have to declare in the top.
+(provide 'elmo-version)			; before product-provide
 
 ;; product-define in the first place
 (product-provide 'elmo-version

@@ -31,15 +31,14 @@
 ;;; Code:
 ;;
 (require 'product)
-(provide 'wl-version)			; have to declare in the top.
 (require 'elmo-version)			; product-version-as-string
+(provide 'wl-version)			; before product-provide
 
 ;; product-define in the first place
 (product-provide 'wl-version
   (product-define
    "Wanderlust" nil
    (eval-when-compile
-;;;  (require 'elmo-version)
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Roam"))
 
