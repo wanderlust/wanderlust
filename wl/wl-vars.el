@@ -251,7 +251,7 @@ Each element is a list of following:
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
-(defcustom wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %36s"
+(defcustom wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s"
   "*A default format string for summary line of Wanderlust.
 It may include any of the following format specifications
 which are replaced by the given information:
