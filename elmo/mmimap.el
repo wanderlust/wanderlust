@@ -24,7 +24,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
 
@@ -56,7 +56,7 @@ SECTION is a section string which is defined in RFC2060.")
   "Return non-nil when LOCATION may fetch the ENTITY.")
 
 ;;; @ Subroutines
-;; 
+;;
 
 (defun mmimap-entity-section (node-id)
   "Return a section string from NODE-ID"
@@ -64,7 +64,7 @@ SECTION is a section string which is defined in RFC2060.")
    ((numberp node-id)
     (number-to-string (1+ node-id)))
    ((listp node-id)
-    (mapconcat 
+    (mapconcat
      'mmimap-entity-section
      (reverse node-id)
      "."))))
@@ -83,6 +83,7 @@ SECTION is a section string which is defined in RFC2060.")
 					      parent)
   "Analyze parsed IMAP4 BODYSTRUCTURE response and make MIME entity.
 CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
+  (setq node-id (if number (cons number node-id) node-id))
   (cond
    ((listp (car bodystructure)) ; multipart
     (let ((num 0)
@@ -93,9 +94,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	     :new      t
 	     :parent   parent
 	     :location location
-	     :node-id (if (eq number 0)
-			  node-id
-			(nconc (list number) node-id))))
+	     :node-id  node-id))
       (while (and (setq curp (car bodystructure))
 		  (listp curp))
 	(setq children
@@ -103,9 +102,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 		     (list
 		      (mmimap-make-mime-entity curp class
 					       location
-					       (if (eq number 0)
-						   node-id
-						 (nconc (list number) node-id))
+					       node-id
 					       num
 					       entity))))
 	(setq num (+ num 1))
@@ -122,7 +119,6 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
       entity))
    (t ; singlepart
     (let (content-type entity)
-      (setq node-id (nconc (list number) node-id))
       (setq entity
 	    (luna-make-entity
 	     class
@@ -139,7 +135,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 				   (intern (downcase
 					    (nth 1 bodystructure))))
 			       (mime-decode-parameters
-				(nth 2 bodystructure))))      
+				(nth 2 bodystructure))))
       (mime-entity-set-encoding-internal entity
 					 (and (nth 5 bodystructure)
 					      (downcase
@@ -160,11 +156,11 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
   (if (mime-imap-entity-new-internal entity)
       entity
     (mmimap-make-mime-entity
-     (mime-imap-location-bodystructure 
+     (mime-imap-location-bodystructure
       (mime-entity-location-internal entity))
      (luna-class-name entity)
      (mime-entity-location-internal entity)
-     nil 0 nil)))
+     nil nil nil)))
 
 ;;; @ entity
 ;;
@@ -254,7 +250,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 
 (luna-define-method mime-entity-fetch-field :around
   ((entity mime-imap-entity) field-name)
-  (if (mime-root-entity-p entity) 
+  (if (mime-root-entity-p entity)
       (or (luna-call-next-method)
 	  (with-temp-buffer
 	    (insert (mime-imap-entity-header-string entity))
