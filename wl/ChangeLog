@@ -1,3 +1,8 @@
+2000-05-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-prefetch-entity):
+	Execute prefetching if new count is unknown.
+
 2000-05-27  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-vars.el (wl-summary-insert-headers-hook): New variable.
