@@ -116,8 +116,8 @@
 	(progn
 	  (elmo-msgdb-append-to-killed-list src msgs)
 	  (elmo-msgdb-killed-list-save
-	   (elmo-folder-msgdb-path folder)
-	   (elmo-folder-killed-list-internal folder)))))
+	   (elmo-folder-msgdb-path src)
+	   (elmo-folder-killed-list-internal src)))))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)
