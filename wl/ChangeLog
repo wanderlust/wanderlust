@@ -107,6 +107,11 @@
 	`make-mode-line-mouse-map' instead of `make-mode-line-mouse2-map'.
 	(wl-biff-init-icons): Ditto.
 
+2001-08-15  YAMASHITA Junji <ysjj@unixuser.org>
+
+	* wl-highlight.el (wl-highlight-summary-current-line):
+	  Work with transient-mark-mode
+
 2001-08-06  SAITO Atsunori <sai@yedo.com>
 
 	* wl-vars.el (wl-ldap-objectclass): New user option.
