@@ -1,3 +1,9 @@
+2003-12-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-template.el (wl-template-preview): New internal variable.
+	(wl-template-preview-p): New function.
+	(wl-template-show): Bind `wl-template-preview' as t.
+
 2003-12-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-mime-combine-message/partial-pieces): Call

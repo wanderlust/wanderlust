@@ -39,6 +39,7 @@
 (defvar wl-template-cur-num 0)
 (defvar wl-template-max-num 0)
 (defvar wl-template-draft-buffer nil)
+(defvar wl-template-preview nil)
 
 ;;; Code
 
@@ -50,6 +51,10 @@
   (define-key wl-template-mode-map "q"     'wl-template-abort)
   (define-key wl-template-mode-map "\r"    'wl-template-set)
   (define-key wl-template-mode-map "\n"    'wl-template-set))
+
+(defun wl-template-preview-p ()
+  "Return non-nil when preview template."
+  wl-template-preview)
 
 (defun wl-template-apply (name)
   "Apply NAME template to draft."
@@ -129,6 +134,7 @@ ARG is ignored."			; ARG ignored this version (?)
   (save-excursion
     (set-buffer wl-template-buffer-name)
     (let ((buffer-read-only nil)
+	  (wl-template-preview t)
 	  (mail-header-separator  "--header separater--"))
       (erase-buffer)
       (goto-char (point-min))
