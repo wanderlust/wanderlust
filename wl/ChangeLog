@@ -1,3 +1,8 @@
+2004-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-e21.el (wl-draft-mode-setup): Avoid global-font-lock-mode
+	(Thanks to Yoichi NAKAYAMA).
+
 2004-12-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (wl-save-drafts): Restore echo area.
