@@ -360,7 +360,8 @@ file name for maildir directories."
 	(cons (+ (or (elmo-max-of-list flist) 0) (length news))
 	      (+ (length news)
 		 (if killed
-		     (- (length flist) (length killed))
+		     (- (length flist)
+			(elmo-msgdb-killed-list-length killed))
 		   (length flist))))
       (setq numbers (sort flist '<))
       (elmo-living-messages numbers killed))))

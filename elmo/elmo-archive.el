@@ -266,7 +266,8 @@ TYPE specifies the archiver's symbol."
     (if nonsort
 	(cons (or (elmo-max-of-list file-list) 0)
 	      (if killed
-		  (- (length file-list) (length killed))
+		  (- (length file-list)
+		     (elmo-msgdb-killed-list-length killed))
 		(length file-list)))
       (setq numbers (sort file-list '<))
       (elmo-living-messages numbers killed))))

@@ -618,6 +618,9 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-max-of-folder (spec)
   (let ((session (elmo-imap4-get-session spec))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
 	status)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
@@ -632,7 +635,11 @@ BUFFER must be a single-byte buffer."
 		  'status))
     (cons
      (- (elmo-imap4-response-value status 'uidnext) 1)
-     (elmo-imap4-response-value status 'messages))))
+     (if killed
+	 (-
+	  (elmo-imap4-response-value status 'messages)
+	  (elmo-msgdb-killed-list-length killed))
+       (elmo-imap4-response-value status 'messages)))))
 
 (defun elmo-imap4-folder-diff (spec folder &optional number-list)
   (if elmo-use-server-diff

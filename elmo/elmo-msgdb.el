@@ -652,6 +652,16 @@ content of MSGDB is changed."
       (elmo-msgdb-killed-list-load dir)
       msgs))))
 
+(defun elmo-msgdb-killed-list-length (killed-list)
+  (let ((killed killed-list)
+	(ret-val 0))
+    (while (car killed)
+      (if (consp (car killed))
+	  (setq ret-val (+ ret-val 1 (- (cdar killed) (caar killed))))
+	(setq ret-val (+ ret-val 1)))
+      (setq killed (cdr killed)))
+    ret-val))
+
 (defun elmo-living-messages (messages killed-list)
   (if killed-list
       (delq nil

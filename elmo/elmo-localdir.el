@@ -227,7 +227,8 @@
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
 	      (if killed
-		  (- (length flist) (length killed))
+		  (- (length flist)
+		     (elmo-msgdb-killed-list-length killed))
 		(length flist)))
       (setq numbers (sort flist '<))
       (elmo-living-messages numbers killed))))
