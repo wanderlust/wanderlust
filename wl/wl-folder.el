@@ -46,6 +46,11 @@
   (require 'wl)
   (require 'elmo-nntp))
 
+(defcustom wl-folder-init-hook nil
+  "A hook called after folder initialization is finished."
+  :type 'hook
+  :group 'wl)
+
 (defvar wl-folder-buffer-name "Folder")
 (defvar wl-folder-entity nil)		; desktop entity.
 (defvar wl-folder-group-alist nil)	; opened or closed
@@ -1996,7 +2001,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (interactive)
   (if wl-use-acap
       (wl-acap-init)
-    (funcall wl-folder-init-function)))
+    (funcall wl-folder-init-function))
+  (run-hooks 'wl-folder-init-hook))
 
 (defun wl-local-folder-init ()
   "Initialize local folder."
