@@ -174,8 +174,7 @@ See info under Wanderlust for full documentation.
   "Return address list."
   (mapcar
    (lambda (addr)
-     (cons (nth 1 (std11-extract-address-components addr))
-	   addr))
+     (nth 1 (std11-extract-address-components addr)))
    (wl-parse-addresses
     (mapconcat 'identity (elmo-multiple-fields-body-list (list field)) ","))))
 
