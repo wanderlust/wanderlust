@@ -1739,7 +1739,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		    (elmo-display-progress
 		     'wl-folder-insert-entity "Inserting group %s..."
 		     (/ (* i 100) len) (car entity)))
-		  (setq flist (cdr flist))))
+		  (setq flist (cdr flist)))
+		(if (> len 0)
+		    (message "Inserting group %s...done" (car entity))))
 	      (save-excursion
 		(goto-char group-name-end)
 		(delete-region (point) (save-excursion (end-of-line)

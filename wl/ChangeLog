@@ -1,3 +1,9 @@
+2003-05-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder (wl-folder-insert-entity): Display a message,
+	`...done', when the work finish.
+	(from Tatsuya Kinoshita <tats@vega.ocn.ne.jp> [wl:10866])
+
 2003-05-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-message.el (wl-message-redisplay): Remove unused local
