@@ -283,7 +283,7 @@ It calls following-method selected from variable
       (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
-    (make-local-variable 'kill-buffer-hook)
+    (make-local-hook 'kill-buffer-hook)
     (add-hook 'kill-buffer-hook
 	      (lambda ()
 		(when (get-buffer-window
@@ -293,7 +293,8 @@ It calls following-method selected from variable
 		  (delete-window))
 		(when (get-buffer wl-draft-preview-attributes-buffer-name)
 		  (kill-buffer (get-buffer
-				wl-draft-preview-attributes-buffer-name)))))
+				wl-draft-preview-attributes-buffer-name))))
+	      nil t)
     (if (not wl-draft-preview-attributes)
 	(message (concat "Recipients: "
 			 (cdr (assq 'recipients attribute-list))))

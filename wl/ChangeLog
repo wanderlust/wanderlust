@@ -1,3 +1,12 @@
+2004-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode): Set kill-buffer-hook as
+	buffer-local.
+
+	* wl-mime.el (wl-draft-preview-message): Use make-local-hook for
+	kill-buffer-hook instead of make-local-variable.
+	(wl-draft-preview-message): Set `local' argument of add-hook as t.
+
 2004-12-12  Scott Renfro <scott@renfro.org>
 
 	* wl-summary.el (wl-summary-default-subject-filter): Fixed greedy

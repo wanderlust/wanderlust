@@ -921,7 +921,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	      #'wl-summary-after-resize-function))
   (make-local-hook 'change-major-mode-hook)
   (add-hook 'change-major-mode-hook #'wl-summary-buffer-detach nil t)
-  (add-hook 'kill-buffer-hook #'wl-summary-buffer-detach)
+  (make-local-hook 'kill-buffer-hook)
+  (add-hook 'kill-buffer-hook #'wl-summary-buffer-detach nil t)
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
