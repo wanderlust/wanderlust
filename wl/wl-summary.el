@@ -1549,11 +1549,11 @@ If optional argument is non-nil, checking is omitted."
 	(delete-region (match-beginning 1) (match-end 1))
 	(insert " ")))))
 
-(defun wl-summary-delete-copy-marks-on-buffer (cpys)
+(defun wl-summary-delete-copy-marks-on-buffer (copies)
   (mapcar (function
 	   (lambda (x)
 	     (wl-summary-unmark x)))
-	  cpys))
+	  copies))
 
 (defun wl-summary-delete-all-refile-marks ()
   (mapcar (function
@@ -3267,21 +3267,26 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			  (wl-summary-mark-collect "D" beg end)
 			  (wl-summary-mark-collect "O" beg end))))
   
-(defun wl-summary-exec-subr (msgs dels cpys)
-  (save-excursion
-    (let* ((del-fld (wl-summary-get-delete-folder 
-		     wl-summary-buffer-folder-name))
-	   (start (point))
-	   dst tmp msg msgs2 cpys2
-	   msg-dst dst-msgs len 
-	   refile-failures 
-	   copy-failures
-	   succeeds result executed)
-      (if (not (or msgs dels cpys))
-	  (message "No marks")
+(defun wl-summary-exec-subr (moves dels copies)
+  (if (not (or moves dels copies))
+      (message "No marks")
+    (save-excursion
+      (let ((del-fld (wl-summary-get-delete-folder 
+		      wl-summary-buffer-folder-name))
+	    (start (point))
+	    (unread-marks (list wl-summary-unread-cached-mark
+				wl-summary-unread-uncached-mark
+				wl-summary-new-mark))
+	    (refiles (append moves dels))
+	    (refile-executed 0)
+	    (refile-failures 0)
+	    (copy-executed 0)
+	    (copy-failures 0)
+	    (copy-len (length copies))
+	    refile-len
+	    dst-msgs			; loop counter
+	    result)
 	(message "Executing ...")
-	(setq msgs (append msgs dels))
-	(setq msgs2 msgs)
 	(while dels
 	  (when (not (assq (car dels) wl-summary-buffer-refile-list))
 	    (wl-append wl-summary-buffer-refile-list
@@ -3289,21 +3294,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (setq wl-summary-buffer-delete-list
 		  (delete (car dels) wl-summary-buffer-delete-list)))
 	  (setq dels (cdr dels)))
-	(setq len (length msgs2))
 	;; begin refile...
-	(while msgs
-	  (setq msg (car msgs))
-	  (setq msgs (cdr msgs))
-	  (setq msg-dst (assq msg wl-summary-buffer-refile-list))
-	  (setq dst (cdr msg-dst))
-	  (if dst
-	      (if (setq tmp (assoc dst dst-msgs))
-		  (setq dst-msgs (cons (append tmp (list msg))
-					 (delete tmp dst-msgs)))
-		(setq dst-msgs (cons (list dst msg) dst-msgs)))))
-	(setq refile-failures 0)
-	(goto-char start) ; avoid moving cursor to the bottom line.
-	(setq executed 0)
+	(setq refile-len (length refiles))
+	(setq dst-msgs
+	      (wl-inverse-alist refiles wl-summary-buffer-refile-list))
+	(goto-char start)		; avoid moving cursor to
+					; the bottom line.
 	(while dst-msgs
 	  ;;(elmo-msgdb-add-msgs-to-seen-list 
 	  ;; (car (car dst-msgs)) ;dst-folder	   
@@ -3317,83 +3313,59 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 					   (cdr (car dst-msgs))
 					   (car (car dst-msgs))
 					   wl-summary-buffer-msgdb 
-					   len executed (cdr dst-msgs)
+					   refile-len
+					   refile-executed
+					   (not (null (cdr dst-msgs)))
 					   nil ; no-delete
 					   nil ; same-number
-					   (list wl-summary-unread-cached-mark
-						 wl-summary-unread-uncached-mark
-						 wl-summary-new-mark)))
+					   unread-marks))
 	    (error nil))
-	  (if result ; succeeded.
+	  (if result			; succeeded.
 	      (progn
 		;; update buffer.
-		(wl-summary-delete-messages-on-buffer 
-		 (cdr (car dst-msgs)))
+		(wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
 		;; update refile-alist.
-		(mapcar 
-		 (function 
-		  (lambda (x)
-		    (setq wl-summary-buffer-refile-list
-			  (delq (assq x wl-summary-buffer-refile-list)
-				wl-summary-buffer-refile-list))))
-		 (cdr (car dst-msgs))))
+		(setq wl-summary-buffer-refile-list
+		      (wl-delete-associations (cdr (car dst-msgs))
+					     wl-summary-buffer-refile-list)))
 	    (setq refile-failures 
 		  (+ refile-failures (length (cdr (car dst-msgs))))))
-	  (setq executed (+ executed (length (cdr (car dst-msgs)))))
+	  (setq refile-executed (+ refile-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
 	;; end refile
 	;; begin cOpy...
-	(setq cpys2 cpys)
-	(setq len (length cpys2))
-	(while cpys
-	  (setq msg (car cpys))
-	  (setq cpys (cdr cpys))
-	  (setq msg-dst (assq msg wl-summary-buffer-copy-list))
-	  (setq dst (cdr msg-dst))
-	  (if dst
-	      (if (setq tmp (assoc dst dst-msgs))
-		  (setq dst-msgs (cons (append tmp (list msg))
-				       (delete tmp dst-msgs)))
-		(setq dst-msgs (cons (list dst msg) dst-msgs)))))
-	(setq copy-failures 0)
-	(setq executed 0)
+	(setq dst-msgs (wl-inverse-alist copies wl-summary-buffer-copy-list))
 	(while dst-msgs
 	  ;;(elmo-msgdb-add-msgs-to-seen-list 
-	  ;;(car (car dst-msgs)) ;dst-folder	   
-	  ;;(cdr (car dst-msgs)) ;msgs 
-	  ;;wl-summary-buffer-msgdb 
-	  ;;(concat wl-summary-important-mark
-	  ;;wl-summary-read-uncached-mark))
+	  ;; (car (car dst-msgs)) ;dst-folder	   
+	  ;; (cdr (car dst-msgs)) ;msgs 
+	  ;; wl-summary-buffer-msgdb 
+	  ;; (concat wl-summary-important-mark
+	  ;;  wl-summary-read-uncached-mark))
 	  (setq result nil)
 	  (condition-case nil
 	      (setq result (elmo-move-msgs wl-summary-buffer-folder-name 
 					   (cdr (car dst-msgs))
 					   (car (car dst-msgs))
 					   wl-summary-buffer-msgdb 
-					   len executed 
-					   (cdr dst-msgs) 
+					   copy-len
+					   copy-executed 
+					   (not (null (cdr dst-msgs)))
 					   t ; t is no-delete (copy)
 					   nil ; same number
-					   (list 
-					    wl-summary-unread-cached-mark
-					    wl-summary-unread-uncached-mark
-					    wl-summary-new-mark)))
+					   unread-marks))
 	    (error nil))
-	  (if result ; succeeded.
+	  (if result			; succeeded.
 	      (progn
 		;; update buffer.
 		(wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
 		;; update copy-alist
-		(mapcar
-		 (function
-		  (lambda (x)
-		    (setq wl-summary-buffer-copy-list
-			  (delq (assq x wl-summary-buffer-copy-list)
-				wl-summary-buffer-copy-list))))
-		 (cdr (car dst-msgs))))
+		(setq wl-summary-buffer-copy-list
+		      (wl-delete-associations (cdr (car dst-msgs))
+					      wl-summary-buffer-copy-list)))
 	    (setq copy-failures
 		  (+ copy-failures (length (cdr (car dst-msgs))))))
-	  (setq executed (+ executed (length (cdr (car dst-msgs)))))
+	  (setq copy-executed (+ copy-executed (length (cdr (car dst-msgs)))))
 	  (setq dst-msgs (cdr dst-msgs)))
 	;; end cOpy 
 	(wl-summary-folder-info-update)

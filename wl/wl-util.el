@@ -553,11 +553,41 @@ or between BEG and END."
 	      (list (list item value))))))
 
 (defun wl-delete-alist (key alist)
-  "Delete all entries in ALIST that have a key eq to KEY."
+  "Delete by side effect any entries specified with KEY from ALIST.
+Return the modified ALIST.  Key comparison is done with `assq'.
+Write `(setq foo (wl-delete-alist key foo))' to be sure of changing
+the value of `foo'."
   (let (entry)
     (while (setq entry (assq key alist))
       (setq alist (delq entry alist)))
     alist))
+
+(defun wl-delete-associations (keys alist)
+  "Delete by side effect any entries specified with KEYS from ALIST.
+Return the modified ALIST.  KEYS must be a list of keys for ALIST.
+Deletion is done with `wl-delete-alist'.
+Write `(setq foo (wl-delete-associations keys foo))' to be sure of
+changing the value of `foo'."
+  (while keys
+    (setq alist (wl-delete-alist (car keys) alist))
+    (setq keys (cdr keys)))
+  alist)
+
+(defun wl-inverse-alist (keys alist)
+  "Inverse ALIST, copying.  Return an association list represents
+the inverse mapping of ALIST, from objects to KEYS.
+The objects mapped (cdrs of elements of the ALIST) are shared."
+  (let (x y tmp result)
+    (while keys
+      (setq x (car keys))
+      (setq y (cdr (assq x alist)))
+      (if y
+	  (if (setq tmp (assoc y result))
+	      (setq result (cons (append tmp (list x))
+				 (delete tmp result)))
+	    (setq result (cons (list y x) result))))
+      (setq keys (cdr keys)))
+    result))
 
 (eval-when-compile 
   (require 'static))
