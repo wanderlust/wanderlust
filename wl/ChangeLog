@@ -1,5 +1,8 @@
 2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-folder.el (wl-folder-check-one-entity): Follow the API change on
+	`wl-summary-count-unread'.
+
 	* wl-summary.el (wl-summary-sync-marks): Treat global-mark here.
 
 	* wl-version.el (wl-version): Set codename for `elmo-mark' branch.
