@@ -1,3 +1,7 @@
+2000-10-26  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo): Don't use `fancy-splash-insert'.
+
 2000-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-highlight.el (wl-highlight-message):
