@@ -589,23 +589,27 @@
     (search-forward "\n\n")
     (let ((sp (point))
 	  ep filename case-fold-search)
-      (if first
-	  (progn
-	    (re-search-forward "^begin[ \t]+[0-9]+[ \t]+\\([^ ].*\\)" nil t)
-	    (setq filename (buffer-substring (match-beginning 1)(match-end 1))))
-	(re-search-forward "^M.*$" nil t)) ; uuencoded string
-      (beginning-of-line)
-      (setq sp (point))
-      (goto-char (point-max))
-      (if last
-	  (re-search-backward "^end" sp t)
-        (re-search-backward "^M.*$" sp t)) ; uuencoded string
-      (forward-line 1)
-      (setq ep (point))
-      (set-buffer outbuf)
-      (goto-char (point-max))
-      (insert-buffer-substring buf sp ep)
-      (set-buffer buf)
-      filename)))
+      (catch 'done
+	(if first
+	    (progn
+	      (if (re-search-forward "^begin[ \t]+[0-9]+[ \t]+\\([^ ].*\\)" nil t)
+		  (setq filename (buffer-substring (match-beginning 1)(match-end 1)))
+		(throw 'done nil)))
+	  (re-search-forward "^M.*$" nil t)) ; uuencoded string
+	(beginning-of-line)
+	(setq sp (point))
+	(goto-char (point-max))
+	(if last
+	    (re-search-backward "^end" sp t)
+	  (re-search-backward "^M.*$" sp t)) ; uuencoded string
+	(forward-line 1)
+	(setq ep (point))
+	(set-buffer outbuf)
+	(goto-char (point-max))
+	(insert-buffer-substring buf sp ep)
+	(set-buffer buf)
+	filename))))
 
 ;;; wl-message.el ends here
+
+

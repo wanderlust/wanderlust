@@ -5928,9 +5928,11 @@ Reply to author if invoked with argument."
 	(set-buffer (setq orig-buf (wl-message-get-original-buffer)))
 	(goto-char (point-min))
 	(cond ((= i 1) ; first
-	       (setq filename (wl-message-uu-substring 
-			       orig-buf tmp-buf t 
-			       (= i k))))
+	       (if (setq filename (wl-message-uu-substring 
+				   orig-buf tmp-buf t 
+				   (= i k)))
+		   nil
+		 (error "Can't find begin line.")))
 	      ((< i k)
 	       (wl-message-uu-substring orig-buf tmp-buf))
 	      (t ; last
