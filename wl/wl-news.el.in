@@ -175,6 +175,7 @@
 	 (car lang) previous-version t)
 	(setq lang (cdr lang))))
     (switch-to-buffer wl-news-buf-name)
+    (delete-other-windows)
     (goto-char (point-min))))
 
 (defun wl-news-next-line ()

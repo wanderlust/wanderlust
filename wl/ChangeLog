@@ -1,5 +1,9 @@
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.in (wl-news): Add `delete-other-windows'.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-news.el.in (wl-news): New function.
 	(wl-news-mode): New function.
 	(wl-news-next-line): New function.
