@@ -6704,7 +6704,6 @@ valuable advice and many pieces of code they contributed.
       7/18    Use UIDL in POP3.
       9/12    biff feature with Satata-san & Yamaoka-san.
      10/17    expire-hide by Okada-san.
-     11/08    Released 2.4.0 stable.
 @end example
 
 See @file{ChangeLog} for details.
