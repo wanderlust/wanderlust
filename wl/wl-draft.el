@@ -609,10 +609,7 @@ Reply to author if WITH-ARG is non-nil."
 	(set-buffer
 	 (wl-draft (list
 		    (cons 'From
-			  (if (member
-			       (nth 1 (std11-extract-address-components from))
-			       wl-user-mail-address-list)
-			      from))
+			  (if (wl-address-user-mail-address-p from) from))
 		    (cons 'To to)
 		    (cons 'Cc cc)
 		    (cons 'Subject subject)
