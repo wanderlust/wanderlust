@@ -60,6 +60,7 @@
       (` (defvar (, symbol) (, value) (, doc))))))
 
 (load "bytecomp" nil t)
+
 (unless (fboundp 'byte-compile-file-form-custom-declare-variable)
   ;; Bind defcustom'ed variables.
   (put 'custom-declare-variable 'byte-hunk-handler
@@ -69,6 +70,16 @@
 	(setq byte-compile-bound-variables
 	      (cons (nth 1 (nth 1 form)) byte-compile-bound-variables)))
     form))
+
+(condition-case nil
+    (char-after)
+  (wrong-number-of-arguments
+   ;; Optimize byte code for `char-after'.
+   (put 'char-after 'byte-optimizer 'byte-optimize-char-after)
+   (defun byte-optimize-char-after (form)
+     (if (null (cdr form))
+	 '(char-after (point))
+       form))))
 
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
@@ -135,10 +146,26 @@
   (config-wl-pixmap-dir)
   (princ "\n"))
 
-(defun check-wl ()
+(defun test-wl ()
   (config-wl-package)
   (require 'lunit)
   (let ((files (directory-files "tests" t "^test-.*\\.el$"))
+	(suite (lunit-make-test-suite)))
+    (while files
+      (if (file-regular-p (car files))
+	  (progn
+	    (load-file (car files))
+	    (lunit-test-suite-add-test
+	     suite (lunit-make-test-suite-from-class
+		    (intern (file-name-sans-extension
+			     (file-name-nondirectory (car files))))))))
+      (setq files (cdr files)))
+    (lunit suite)))
+
+(defun check-wl ()
+  (config-wl-package)
+  (require 'lunit)
+  (let ((files (directory-files "tests" t "^check-.*\\.el$"))
 	(suite (lunit-make-test-suite)))
     (while files
       (if (file-regular-p (car files))
