@@ -29,14 +29,14 @@ Select MIME Module
 
 (c) Emacs 20.1 to 20.3
 
-	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
   Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
   earlier.
 
 (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
+	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
   Mule based on Emacs 19.34 can also run SEMI.  See the following web
   page to get more information (in Japanese).
@@ -45,7 +45,7 @@ Select MIME Module
 
 (e) Emacs 19.28 or earlier (Mule 2.3, Nemacs)
 
-	APEL 10.3, CLIME 1.14.3, tm 8.8
+	APEL 10.3, CLIME 1.14.0, tm 8.8
 
   If you use Mule based on Emacs 19.28 or earlier, please install tm.
   SEMI does not support Emacs 19.28 or earlier.  You need upgrade APEL
@@ -59,7 +59,7 @@ Install MIME Module
 
 	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
 	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:	ftp://ftp.jpl.org/pub/m17n/
+	CLIME:
 	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
 	tm:	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 
@@ -179,10 +179,6 @@ Manual
 
   Manual directory is automatically detected. Of course, it can be
   configured by INFODIR in Makefile.
-
-  And you can view manual on following URL:
-
-	http://www.gohome.org/wl/doc/wl_toc.html
 
 
 Sample configuration file
