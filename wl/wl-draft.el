@@ -1573,7 +1573,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	       (and wl-fcc-force-as-read '(read)))
 	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
 	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
-	  (if (and wl-draft-fcc-append-read-folder-hist
+	  (if (and wl-draft-fcc-append-read-folder-history
 		   (boundp 'wl-read-folder-history))
 	      (or (equal (car fcc-list) (car wl-read-folder-history))
 		  (setq wl-read-folder-history
