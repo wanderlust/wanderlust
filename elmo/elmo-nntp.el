@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/11 09:46:12 teranisi>
+;; Time-stamp: <00/07/11 18:02:53 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -516,19 +516,34 @@ Don't cache if nil.")
 	 (dir (elmo-msgdb-expand-path nil spec))
 	 (killed-list (and elmo-nntp-use-killed-list
 			   (elmo-msgdb-killed-list-load dir)))
-	 number-alist)
+	 number-alist end-num)
     (if elmo-nntp-groups-async
 	(let* ((fld (concat folder
 			    (elmo-nntp-folder-postfix user server port ssl)))
 	       (entry (elmo-get-hash-val fld elmo-nntp-groups-hashtb)))
 	  (if entry
-	      (cons (nth 2 entry)
-		    (car entry))
+	      (progn
+		(setq end-num (nth 2 entry))
+		(when (and killed-list elmo-nntp-use-killed-list)
+		  (setq killed-list (nreverse (sort killed-list '<)))
+		  (cond
+		   ;; XXX biggest number in server is killed,
+		   ;; so max number is unknown (treated as no unsync).
+		   ((eq end-num (car killed-list))
+		    (setq end-num nil))
+		   ;; killed number is obsolete.
+		   ((< end-num (car killed-list))
+		    (while killed-list
+		      (when (>= end-num (car killed-list))
+			(elmo-msgdb-killed-list-save dir killed-list)
+			(setq killed-list nil))
+		      (setq killed-list (cdr killed-list))))))
+		(cons end-num (car entry)))
 	    (error "No such newsgroup \"%s\"" fld)))
       (let* ((connection (elmo-nntp-get-connection server user port ssl))
 	     (buffer  (car connection))
 	     (process (cadr connection))
-	     response e-num end-num)
+	     response e-num)
 	(if (not connection)
 	    (error "Connection failed"))
 	(save-excursion
