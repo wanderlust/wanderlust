@@ -2453,12 +2453,13 @@ Use `wl-subscribed-mailing-list'."
   (interactive)
   (if (not fld-name)
       (setq fld-name (wl-summary-read-folder wl-default-folder)))
-  (let* ((id (wl-folder-get-entity-id
-	      (wl-folder-search-entity-by-name fld-name wl-folder-entity
-					       'folder)))
-	 (path (and id (wl-folder-get-path wl-folder-entity id))))
-      (if path
-	  (wl-folder-open-folder-sub path))))
+  (let ((entity (wl-folder-search-entity-by-name
+		 fld-name wl-folder-entity 'folder)))
+    (if entity
+	(let* ((id (wl-folder-get-entity-id entity))
+	       (path (and id (wl-folder-get-path wl-folder-entity id))))
+	  (if path (wl-folder-open-folder-sub path)))
+      (message "%s: not found" fld-name))))
 
 (defun wl-folder-open-folder-sub (path)
   (let ((inhibit-read-only t)

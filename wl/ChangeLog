@@ -1,5 +1,8 @@
 2004-07-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-folder.el (wl-folder-open-folder): Avoid error.
+	Reported by John Owens, [wl-en:815]
+
 	* wl.el (wl): Set timer for biff process even if prefix argument
 	is given or auto-checking is quitted.
 
