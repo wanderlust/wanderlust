@@ -28,6 +28,10 @@
 ## MH フォルダ
 +inbox
 
+## IMAP フォルダ
+# %inbox.emacs.wl
+# %inbox.emacs.apel-ja
+
 ## IMAP サーバ越しに MH folder にアクセス
 # %#mh/inbox
 

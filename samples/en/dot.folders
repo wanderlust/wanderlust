@@ -28,6 +28,10 @@
 ## MH folder
 +inbox
 
+## IMAP folder
+# %inbox.emacs.wl
+# %inbox.emacs.apel-ja
+
 ## MH folder via IMAP
 # %#mh/inbox
 
