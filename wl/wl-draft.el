@@ -295,6 +295,9 @@ e.g.
 	    references (wl-delete-duplicates references)
 	    references (when references
 			 (mapconcat 'identity references "\n\t"))))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
 			  (concat wl-forward-subject-prefix original-subject))
@@ -461,6 +464,9 @@ Reply to author if WITH-ARG is non-nil."
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
+    (and wl-draft-use-frame
+	 (get-buffer-window summary-buf)
+	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To to)
 		    (cons 'Cc cc)
 		    (cons 'Newsgroups newsgroups)

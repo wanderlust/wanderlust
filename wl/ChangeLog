@@ -1,3 +1,9 @@
+2002-10-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-forward): If wl-draft-use-frame, select
+	summary buffer window before creating new frame.
+	(wl-draft-reply): Ditto.
+
 2002-10-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (toplevel): Avoid byte-compile warnings.
