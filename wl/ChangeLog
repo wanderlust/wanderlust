@@ -1,3 +1,8 @@
+2005-02-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-template.el (wl-template-select): Cause error if
+	`wl-template-alist' is nil.
+
 2005-02-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-news.el.in: Set file variable `no-byte-compile'.
