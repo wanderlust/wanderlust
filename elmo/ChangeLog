@@ -1,6 +1,6 @@
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl-version.el: New file.  Use product.el.
+	* elmo-version.el: New file.  Use product.el.
 
 2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
