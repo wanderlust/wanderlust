@@ -1,3 +1,9 @@
+2002-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nmz.el (elmo-nmz-args): Changed default argumnet to --late
+	from --early.
+	(elmo-map-folder-list-message-locations): Reverse location list.
+
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-list-folders-get-cache): Fix.

@@ -48,7 +48,7 @@ If the value is a list, all elements are used as index paths for namazu."
   :type 'symbol
   :group 'elmo)
 
-(defcustom elmo-nmz-args '("--all" "--list" "--early")
+(defcustom elmo-nmz-args '("--all" "--list" "--late")
   "*Argument list for namazu to list matched files."
   :type '(repeat string)
   :group 'elmo)
@@ -249,7 +249,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	(end-of-line)
 	(setq locations (cons (buffer-substring bol (point)) locations))
 	(forward-line 1))
-      locations)))
+      (nreverse locations))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-nmz-folder))
   t)
