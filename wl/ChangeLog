@@ -5,6 +5,7 @@
 	point.
 	(wl-draft-reedit): Remove the mime-edit tag if the first part is
 	text/plain.
+	(wl-draft-reedit): Fixed argument for wl-draft-buffer-style.
 
 2002-11-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
