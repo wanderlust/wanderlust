@@ -6557,7 +6557,7 @@ If the message passes all rules, it will be dealed along @samp{ACTION}
 specified by @code{elmo-split-default-action}.
 
 
-@node Address Book, Customization, Split messages, Top
+@node Address Book, Spam Filter, Split messages, Top
 @chapter Address Book
 @cindex Address Book
 
@@ -6688,7 +6688,365 @@ Edit entry.
 @end table
 
 
-@node Customization, Terminology, Address Book, Top
+@node Spam Filter, Customization, Address Book, Top
+@chapter Spam Filter
+@cindex Spam Filter
+
+@code{wl-spam} provides an frontend to external spam filtering programs.
+You can register to or judge spam by the filtering program cooperateing
+with messages operations on Wanderlust.
+
+@menu
+* Usage of Spam Filter::        Usage of Spam Filter
+* Spam Filter Processor::       Supported spam filters
+@end menu
+
+@node Usage of Spam Filter, Spam Filter Processor, Spam Filter, Spam Filter
+@section Usage of Spam Filter
+
+@subsection Initial Setting
+
+To use @code{wl-spam}, write in @file{~/.wl} as follows:
+
+@lisp
+@group
+;; @r{Use @samp{bogofilter} as spam back end}
+;; @r{Set @samp{scheme} here as the spam filter you will use.}
+;; @r{@xref{Spam Filter Processor}}
+(setq elmo-spam-scheme 'bogofilter)
+(require 'wl-spam)
+@end group
+@end lisp
+
+@subsection spam mark
+
+The spam mark (@samp{s}) will be provided as new temporary mark.
+Messages marked by this will be refiled into @code{wl-spam-folder} when
+the action is called for execution. Marked messages will be skipped by
+summary walking in ordinary way.
+
+The spam mark is be put on by spam judgement described later, or by
+invoking @samp{k m} at any time.
+
+@subsection spam judgment
+
+You can judge spam messages by following ways:
+
+@enumerate
+@item
+Make judgement on execution of auto-refile.
+
+Insert @code{wl-refile-guess-by-spam} to arbitrary position in
+@code{wl-auto-refile-guess-functions} as follows.
+
+@lisp
+@group
+(setq wl-auto-refile-guess-functions
+      '(wl-refile-guess-by-rule
+        wl-refile-guess-by-spam))
+@end group
+@end lisp
+
+In this example, judge spam if it could not decide refile destination by
+@code{wl-refile-rule-alist}.
+
+@item
+Make judgement on entering the summary of specified folder.
+
+Specify the value of @code{wl-spam-auto-check-folder-regexp-list}
+as the list of regular expressions for folder names to be
+automatically judged by spam filter.
+
+@lisp
+(setq wl-spam-auto-check-folder-regexp-list '("\\+inbox"))
+@end lisp
+
+In this example, judgement will be processed when you enter summary of
+the folder whose name contains @samp{+inbox}.
+
+@item
+Make judgement on splitting messages with @code{elmo-split}.
+
+It provides new function @code{spam-p} to be specified as @samp{CONDITION}
+in @code{elmo-split-rule}. This function returns true when the message
+is judged as spam.
+@xref{Split messages}
+
+You can also process learning by the result of judgement. (You would
+better turn on this feature after learning to some extent)
+
+Example follows:
+
+@lisp
+@group
+(setq elmo-split-rule
+      '(((spam-p) "+spam")
+        ;; @r{to learn by the judgement, use following instead}
+        ;((spam-p :register t) "+spam")
+        (t "+inbox"))
+@end group
+@end lisp
+@end enumerate
+
+@subsection spam learning
+
+@code{wl-spam} automatically learn spam with refiling messages.
+
+At first, @code{wl-spam} classifies the folders controlled by Wanderlust
+into following 4 domains by the class of containig messages
+
+@table @samp
+@item spam
+Folders containing messages judged as spam.
+(The folder specified by @code{wl-spam-folder})
+@item good
+Folders containing messages judged as non-spam.
+@item undecide
+Folders containing messages not yet judged. Folders without
+pre-distribution may belong to this domain e.g. @samp{+inbox}.
+(specified by @code{wl-spam-undecided-folder-regexp-list})
+@item ignored
+Foldes have nothing to do with spam processing e.g.
+@code{wl-trash-folder} or @code{wl-draft-folder}. (specified by
+@code{wl-spam-ignored-folder-regexp-list})
+@end table
+
+When you refile messages across different domains, it automatically
+learn messages as @samp{spam} or @samp{non-spam} according to domains
+it belongs before and after.
+
+To put it concretely, it will learn by following rule:
+
+@table @samp
+@item undecide -> spam
+learn as spam.
+@item good -> spam
+learn as spam and cancel previous study as non-spam.
+@item undecide -> good
+learn as non-spam.
+@item spam -> good
+learn as non-spam and cancel previous study as spam.
+@end table
+
+It do not learn anything in other cases.
+
+@subsection Key Bindings
+@cindex Keybind, spam filter
+
+@table @kbd
+@item k m
+@kindex k m (Summary)
+@findex wl-summary-spam
+Put spam mark (@samp{s}) on current message.
+
+@item k c
+@kindex k c (Summary)
+@findex wl-summary-test-spam
+Test current message and put spam mark if judged as spam.
+
+@item k C
+@kindex k C (Summary)
+@findex wl-summary-mark-spam
+Test messages with the mark in @code{wl-spam-auto-check-marks},
+and put spam mark if judged as spam. If it is called with prefix
+argument, test all messages regardless of their marks.
+
+@item k s
+@kindex k s (Summary)
+@findex wl-summary-register-as-spam
+Register current message as spam.
+
+@item k S
+@kindex k S (Summary)
+@findex wl-summary-register-as-spam-all
+Register all messages in the folder as spam.
+
+@item k n
+@kindex k n (Summary)
+@findex wl-summary-register-as-good
+Register current message as non-spam.
+
+@item k N
+@kindex k N (Summary)
+@findex wl-summary-register-as-good-all
+Register all messages in the folder as non-spam.
+
+@item m k
+@kindex m k (Summary)
+@findex wl-summary-target-mark-spam
+Put spam mark (@samp{s}) on messages with the target mark @samp{*}.
+
+@item m s
+@kindex m s (Summary)
+@findex wl-summary-target-mark-register-as-spam
+Register messages with the target mark @samp{*} as spam.
+
+@item m n
+@kindex m n (Summary)
+@findex wl-summary-target-mark-register-as-good
+Register messages with the target mark @samp{*} as non-spam.
+@end table
+
+@subsection Customizable Variables
+
+@table @code
+@item wl-spam-folder
+@vindex wl-spam-folder
+Specify the name of destination folder for the spam messages.
+The initial setting is @samp{+spam}.
+
+@item wl-spam-undecided-folder-regexp-list
+@vindex wl-spam-undecided-folder-regexp-list
+Specify the list of regexp of folder names which contain messages
+not yet decided as spam or non-spam.
+The initial setting is @code{'("inbox")}.
+
+@item wl-spam-ignored-folder-regexp-list
+@vindex wl-spam-ignored-folder-regexp-list
+The initial setting is as follows.
+
+@lisp
+@group
+(list (regexp-opt (list wl-draft-folder
+                        wl-trash-folder
+                        wl-queue-folder)))
+@end group
+@end lisp
+
+Folders of no effect against spam judgement, specified by the list of
+folder name regular expressions.
+
+@item wl-spam-auto-check-folder-regexp-list
+@vindex wl-spam-auto-check-folder-regexp-list
+Folders to make spam judgement on entering the summary of them,
+specified by the list of folder name regular expressions.
+The initial setting is @code{nil}.
+
+@item wl-spam-auto-check-marks
+@vindex wl-spam-auto-check-marks
+The initial setting is the following list:
+
+@lisp
+@group
+(list wl-summary-new-uncached-mark
+      wl-summary-new-cached-mark)
+@end group
+@end lisp
+
+Messages with mark specified by this variable will be processed
+by whole-folder judgement including auto test by
+@code{wl-spam-auto-check-folder-regexp-list}.
+Persistent marks can be used in this method, but temporary marks cannot.
+
+You can specify the list of marks as the initial setting, or you can
+specify follwing symbol:
+
+@table @code
+@item all
+Process all messages regardless of persistent marks.
+@end table
+@end table
+
+
+@node Spam Filter Processor,  , Usage of Spam Filter, Spam Filter
+@section Supported Spam Filters
+@cindex Spam Filter, Bogofilter
+@cindex Spam Filter, Spamfilter
+
+Supported spam filtering libraries are following ones.
+
+@menu
+* bogofilter::                  bogofilter
+* spamfilter::                  spamfilter.el
+* Bsfileter::                   bsfilter
+* SpamAssassin::                spamassassin
+@end menu
+
+
+@node bogofilter, spamfilter, Spam Filter Processor, Spam Filter Processor
+@subsection bogofilter
+@cindex bogofilter
+
+bogofilter (@uref{http://bogofilter.sourceforge.net/}) is a spam filter
+implemented by C language.
+
+To use spam filter with bogofilter, write following setting in
+@file{~/.wl} or somewhere else.
+
+@lisp
+@group
+(setq elmo-spam-scheme 'bogofilter)
+@end group
+@end lisp
+
+@subsubsection Customizable Variables
+
+@table @code
+@item elmo-spam-bogofilter-program
+@vindex elmo-spam-bogofilter-program
+The initial setting is @file{bogofilter}.
+Spacify the name of executable of bogofiler. If the executable
+is not in your environmental variable @env{PATH}, you should
+set this by full path.
+
+@item elmo-spam-bogofilter-args
+@vindex elmo-spam-bogofilter-args
+The initial setting is @code{nil}.
+Specify arguments to be supplied for bogofilter executable.
+
+@item elmo-spam-bogofilter-database-directory
+@vindex elmo-spam-bogofilter-database-directory
+Specify the directory for statistical database to be used.
+@code{nil} to use default directory (@file{~/.bogofilter}).
+The initial setting is @code{nil}.
+@end table
+
+
+@node spamfilter, Bsfilter, bogofilter, Spam Filter Processor
+@subsection spamfilter.el
+@cindex spamfilter
+
+@file{spamfilter.el}
+(@uref{http://www.geocities.co.jp/SiliconValley-PaloAlto/7043/}) is a
+spam filtering library implemented by Emacs Lisp.
+
+Corresponding modules will be compiled/installed, if you have
+@file{spamfilter.el} within @code{load-path} when you are to install wl.
+@xref{Install}.
+
+To use @file{spamfilter.el}, write following setting in @file{~/.wl} or
+somewhere else.
+(Of cource, you have to have settings for @file{spamfilter.el} itself)
+
+@lisp
+@group
+(setq elmo-spam-scheme 'spamfilter)
+@end group
+@end lisp
+
+@subsubsection Customizable Variables
+
+@table @code
+@item elmo-spam-spamfilter-corpus-filename
+@vindex elmo-spam-spamfilter-corpus-filename
+The initial setting is @file{~/.elmo/.spamfilter}.
+It specifies the name of corpus file.
+@end table
+
+@node Bsfilter, SpamAssassin, spamfilter, Spam Filter Processor
+@subsection bsfilter
+@cindex bsfilter
+
+not yet documented...
+
+@node SpamAssassin,  , Bsfilter, Spam Filter Processor
+@subsection spamassassin
+@cindex spamassassin
+
+not yet documented...
+
+
+@node Customization, Terminology, Spam Filter, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 
