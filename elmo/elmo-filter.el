@@ -65,7 +65,7 @@
 (defun elmo-filter-delete-msgs (spec msgs)
   (elmo-call-func (nth 2 spec) "delete-msgs" msgs))
 
-(defun elmo-filter-list-folder (spec)
+(defun elmo-filter-list-folder (spec &optional nohide)
   (elmo-search (nth 2 spec) (nth 1 spec)))
 
 (defun elmo-filter-list-folder-unread (spec number-alist mark-alist

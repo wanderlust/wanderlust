@@ -64,7 +64,7 @@
   (elmo-localnews-as-newsdir
    (elmo-localdir-read-msg spec number outbuf)))
 
-(defun elmo-localnews-list-folder (spec)
+(defun elmo-localnews-list-folder (spec &optional nohide)
   (elmo-localnews-as-newsdir
    (elmo-localdir-list-folder-subr spec)))
 
