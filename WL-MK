@@ -105,10 +105,7 @@
   (condition-case ()
       (require 'mime-setup)
     (error (error "No MIME module was detected. Please install SEMI or tm.")))
-  (if wl-use-semi
-      (princ (concat "\nUse SEMI"
-		     (if wl-use-luna " with LUNA\n" " without LUNA\n")))
-    (princ "\nUse tm.\n"))))
+  (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."

@@ -54,29 +54,15 @@
       (setq WL-MODULES (append WL-MODULES (list 'wl-mime)))
       (setq ELMO-MODULES (append ELMO-MODULES (list 'mmelmo 'mmelmo-imap4))))
   (defconst wl-use-semi nil)
-  (setq WL-MODULES (append WL-MODULES (list 'tm-wl)))
-  )
+  (setq WL-MODULES (append WL-MODULES (list 'tm-wl))))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; FLIM 1.12 / FLIM 1.13
-(cond
- ((module-installed-p 'luna)
-  ;; FLIM 1.13 (SEMI/tm-8)
-  (defconst wl-use-luna t)
-  (setq ELMO-MODULES
-	(append ELMO-MODULES
-		(list 'mmelmo-2
-		      'mmelmo-imap4-2))))
- (wl-use-semi
-  ;; FLIM 1.12
-  (defconst wl-use-luna nil)
-  (setq ELMO-MODULES
-	(append ELMO-MODULES
-		(list 'mmelmo-1
-		      'mmelmo-imap4-1))))
- )
-
+(if (not (module-installed-p 'luna))
+    (if wl-use-semi
+	(error "Use FLIM-1.13.2 or later and SEMI 1.13.7 or later.")
+      (if (module-installed-p 'product)
+	  (error "Use tm-8.x with APEL 10.2 or later.")
+	;; tm but luna is not installed (tm7?)
+	(error "Use tm-8.x."))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils

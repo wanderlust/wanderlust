@@ -1,3 +1,10 @@
+2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-MK (config-wl-package-subr): Changed message.
+
+	* WL-ELS: Abolished FLIM 1.12 support.
+	Notify tm-8 requires APEL 10.2 or later.
+
 2000-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* etc/icons/wl-logo.xbm: Removed.
