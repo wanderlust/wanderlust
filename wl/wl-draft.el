@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-22 19:12:26 teranisi>
+;; Time-stamp: <2000-05-18 14:14:17 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -388,10 +388,34 @@ the `wl-smtp-features' variable."
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
-(defun wl-draft-yank-from-mail-reply-buffer (decode-it)
+(defun wl-draft-add-references ()
+  (let* ((mes-id (save-excursion
+                   (set-buffer mail-reply-buffer)
+                   (std11-field-body "message-id")))
+         (ref (std11-field-body "References"))
+         (ref-list nil) (st nil))
+    (when (and mes-id ref)
+      (while (string-match "<[^>]+>" ref st)
+        (setq ref-list
+              (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
+                    ref-list)))
+      (if (and ref-list
+               (member mes-id ref-list))
+          (setq mes-id nil)))
+    (when mes-id
+      (save-excursion
+        (when (mail-position-on-field "References")
+          (forward-line)
+          (while (looking-at "^[ \t]")
+            (forward-line))
+          (setq mes-id (concat "\t" mes-id "\n")))
+        (insert mes-id))
+      t)))
+
+(defun wl-draft-yank-from-mail-reply-buffer (decode-it
+					     &optional ignored-fields)
   (interactive)
   (save-restriction
-    (current-buffer)
     (narrow-to-region (point)(point))
     (insert 
      (save-excursion
@@ -401,6 +425,9 @@ the `wl-smtp-features' variable."
 				       wl-mime-charset))       
        (buffer-substring-no-properties 
 	(point-min) (point-max))))
+    (when ignored-fields
+      (goto-char (point-min))
+      (wl-draft-delete-fields ignored-fields))
     (goto-char (point-max))
     (push-mark)
     (goto-char (point-min)))
@@ -410,6 +437,9 @@ the `wl-smtp-features' variable."
 	  (t (and wl-draft-cite-func
 		  (funcall wl-draft-cite-func)))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
+    (and wl-draft-add-references
+	 (if (wl-draft-add-references)
+	     (wl-highlight-headers)))
     (if wl-highlight-body-too
 	(wl-highlight-body-region beg (point-max)))))
 
@@ -496,13 +526,14 @@ the `wl-smtp-features' variable."
   (interactive)
   (let ((mail-reply-buffer (wl-message-get-original-buffer))
 	mail-citation-hook mail-yank-hooks
-	wl-draft-cite-func)
+	wl-draft-add-references wl-draft-cite-func)
     (if (eq 0
 	    (save-excursion
 	      (set-buffer mail-reply-buffer)
 	      (buffer-size)))
 	(error "No current message")
-      (wl-draft-yank-from-mail-reply-buffer nil))))
+      (wl-draft-yank-from-mail-reply-buffer nil
+					    wl-ignored-forwarded-headers))))
 
 (defun wl-draft-insert-get-message (dummy)
   (let ((fld (completing-read 
