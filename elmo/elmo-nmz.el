@@ -235,6 +235,9 @@ If the value is a list, all elements are used as index paths for namazu."
 (luna-define-method elmo-folder-exists-p ((folder elmo-nmz-folder))
   (elmo-nmz-folder-pattern-internal folder))
 
+(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-nmz-folder))
+  (null (elmo-nmz-folder-pattern-internal folder)))
+
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-nmz-folder)
 						 &optional one-level)
   (mapcar (lambda (name) (elmo-recover-string-from-filename name))

@@ -9,6 +9,7 @@
 	group entry.
 	(elmo-folder-exists-p): "[" is empty.
 	(elmo-folder-list-subfolders): New function.
+	(elmo-folder-have-subfolder-p): Ditto.
 
 2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
