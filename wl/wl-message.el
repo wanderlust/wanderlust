@@ -407,8 +407,8 @@
 	 (message-id (cdr (assq number 
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id 
-		       (elmo-msgdb-get-overview msgdb))))
+		(elmo-msgdb-overview-get-entity
+		 (elmo-msgdb-get-overview msgdb) message-id)))
 	 (backend (wl-message-decide-backend folder number message-id size))
 	 cur-entity ret-val header-end real-fld-num summary-win)
     (require 'mmelmo)
@@ -497,10 +497,9 @@
 	 (message-id (cdr (assq number 
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id 
-		       (elmo-msgdb-get-overview msgdb))))
-	 header-end ret-val summary-win
-	 )
+		(elmo-msgdb-overview-get-entity
+		 (elmo-msgdb-get-overview msgdb) message-id)))
+	 header-end ret-val summary-win)
     (wl-select-buffer view-message-buffer)
     (unwind-protect
 	(progn
