@@ -1,3 +1,9 @@
+2000-07-07  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-imap4-spec-folder): Use
+	`elmo-imap4-spec-mailbox'; Mark as obsolete.
+	All callers changed.
+
 2000-06-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmelmo-2.el (initialize-instance):
