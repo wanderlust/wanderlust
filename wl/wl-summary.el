@@ -379,6 +379,11 @@ See also variable `wl-use-petname'."
     (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
     (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
     (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
+    ;; For Meadow2
+    (define-key wl-summary-mode-map [mouse-wheel1]
+      'wl-summary-wheel-dispatcher)
+    (define-key wl-summary-mode-map [S-mouse-wheel1]
+      'wl-summary-wheel-dispatcher)
     (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click)))
 
 (if wl-summary-mode-map

@@ -1,3 +1,13 @@
+2004-01-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-setup-mouse)[non-xemacs]: Bind mouse-wheel1
+	to wl-summary-wheel-dispatcher.
+
+	* wl-e21.el (wl-message-define-keymap): Bind mouse-wheel1 to
+	wl-message-wheel-dispatcher.
+	(wl-message-wheel-dispatcher): New function.
+	(wl-summary-wheel-dispatcher): Ditto.
+
 2004-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-action.el (wl-summary-target-mark-all): List messages which are
