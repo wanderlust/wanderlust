@@ -877,6 +877,39 @@ is enclosed by at least one regexp grouping construct."
       (concat open-paren (mapconcat 'regexp-quote strings "\\|")
 	      close-paren))))
 
+(defun wl-expand-newtext (newtext original)
+  (let ((len (length newtext))
+	(pos 0)
+	c expanded beg N did-expand)
+    (while (< pos len)
+      (setq beg pos)
+      (while (and (< pos len)
+		  (not (= (aref newtext pos) ?\\)))
+	(setq pos (1+ pos)))
+      (unless (= beg pos)
+	(push (substring newtext beg pos) expanded))
+      (when (< pos len)
+	;; We hit a \; expand it.
+	(setq did-expand t
+	      pos (1+ pos)
+	      c (aref newtext pos))
+	(if (not (or (= c ?\&)
+		     (and (>= c ?1)
+			  (<= c ?9))))
+	    ;; \ followed by some character we don't expand.
+	    (push (char-to-string c) expanded)
+	  ;; \& or \N
+	  (if (= c ?\&)
+	      (setq N 0)
+	    (setq N (- c ?0)))
+	  (when (match-beginning N)
+	    (push (substring original (match-beginning N) (match-end N))
+		  expanded))))
+      (setq pos (1+ pos)))
+    (if did-expand
+	(apply (function concat) (nreverse expanded))
+      newtext)))
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 

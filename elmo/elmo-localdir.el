@@ -122,15 +122,16 @@
 							 &optional
 							 start-number)
   (let ((temp-dir (elmo-folder-make-temp-dir folder))
-	(cur-number (if start-number 0)))
+	(cur-number (or start-number 0)))
     (dolist (number numbers)
       (elmo-add-name-to-file
        (expand-file-name
 	(int-to-string number)
 	(elmo-localdir-folder-directory-internal folder))
        (expand-file-name
-	(int-to-string (if start-number (incf cur-number) number))
-	temp-dir)))
+	(int-to-string (if start-number cur-number number))
+	temp-dir))
+      (incf cur-number))
     temp-dir))
 
 (defun elmo-localdir-msgdb-create-entity (dir number)
