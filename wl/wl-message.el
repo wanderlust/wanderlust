@@ -59,6 +59,9 @@
 (make-variable-buffer-local 'wl-message-buffer-cur-folder)
 (make-variable-buffer-local 'wl-message-buffer-cur-number)
 
+(require 'product)
+(product-provide (provide 'wl-message) (require 'wl-version))
+
 (defvar wl-fixed-window-configuration nil)
 
 (defun wl-message-buffer-window ()
@@ -633,7 +636,6 @@ If failed, attempt to execute button-dispatcher."
 	(set-buffer buf)
 	filename))))
 
-(require 'product)
-(product-provide (provide 'wl-message) (require 'wl-version))
-
 ;;; wl-message.el ends here
+
+

@@ -32,8 +32,6 @@
 ;;
 
 (require 'elmo2)
-(require 'wl-version)			; reduce recursive-load-depth
-
 ;; from x-face.el
 (unless (and (fboundp 'defgroup)
              (fboundp 'defcustom))
@@ -45,6 +43,7 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'wl-version)
 
 (cond (wl-on-xemacs
        (require 'wl-xmas))
@@ -55,7 +54,7 @@
       (t
        (require 'wl-mule)))
 
-(provide 'wl)				; circular dependency
+(provide 'wl) ; circular dependency
 (require 'wl-folder)
 (require 'wl-summary)
 (require 'wl-thread)
