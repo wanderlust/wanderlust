@@ -1,3 +1,8 @@
+2003-09-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1): Use
+	elmo-imap4-current-msgdb to decide entity handler.
+
 2003-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-dop.el (elmo-dop-msgdb): Rewrite.

@@ -809,21 +809,21 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 ;; Current buffer is process buffer.
 (defun elmo-imap4-fetch-callback-1 (element app-data)
-  (elmo-imap4-fetch-callback-1-subr
-   (with-temp-buffer
-     (insert (or (elmo-imap4-response-bodydetail-text element)
-		 ""))
-     ;; Delete CR.
-     (goto-char (point-min))
-     (while (search-forward "\r\n" nil t)
-       (replace-match "\n"))
-     (elmo-msgdb-create-message-entity-from-buffer
-      (elmo-msgdb-message-entity-handler
-       (elmo-folder-msgdb-internal (cdr app-data)))
-      (elmo-imap4-response-value element 'uid)
-      :size (elmo-imap4-response-value element 'rfc822size)))
-   (elmo-imap4-response-value element 'flags)
-   app-data))
+  (let ((handler (elmo-msgdb-message-entity-handler elmo-imap4-current-msgdb)))
+    (elmo-imap4-fetch-callback-1-subr
+     (with-temp-buffer
+       (insert (or (elmo-imap4-response-bodydetail-text element)
+		   ""))
+       ;; Delete CR.
+       (goto-char (point-min))
+       (while (search-forward "\r\n" nil t)
+	 (replace-match "\n"))
+       (elmo-msgdb-create-message-entity-from-buffer
+	handler
+	(elmo-imap4-response-value element 'uid)
+	:size (elmo-imap4-response-value element 'rfc822size)))
+     (elmo-imap4-response-value element 'flags)
+     app-data)))
 
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
