@@ -419,8 +419,10 @@ even an operation concerns the unplugged folder."
 			    (car appendings))))
 	(when file-string
 	  (condition-case ()
-	      (elmo-append-msg folder file-string (car appendings) nil
-			       (not (member (car appendings) seen-list)))
+	      (setq failure (not 
+			     (elmo-append-msg 
+			      folder file-string (car appendings) nil
+			      (not (member (car appendings) seen-list)))))
 	    (quit  (setq failure t))
 	    (error (setq failure t)))
 	  (setq i (+ 1 i))

@@ -1,3 +1,8 @@
+2001-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-dop.el (elmo-dop-flush-pending-append-operations): Check
+	return value of elmo-append-msg.
+
 2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-address-quote-specials): New function;
