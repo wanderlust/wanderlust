@@ -1,3 +1,7 @@
+2003-07-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-action.el (wl-summary-set-mark): Cause an error when no message.
+
 2003-07-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-expire.el (wl-folder-expire-current-entity): Specify folder type.

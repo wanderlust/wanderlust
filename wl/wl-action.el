@@ -64,6 +64,10 @@ Return number if put mark succeed"
 	 (current (wl-summary-message-number))
 	 (action (assoc set-mark wl-summary-mark-action-list))
 	 visible mark cur-mark)
+    (when (elmo-folder-length wl-summary-buffer-elmo-folder)
+      (error "Set mark failed"))
+    (unless current
+      (error "No message"))
     (prog1
 	(save-excursion
 	  ;; Put mark

@@ -1572,7 +1572,9 @@ If update process is interrupted, return nil.")
   "Return number of messages in the FOLDER.")
 
 (luna-define-method elmo-folder-length ((folder elmo-folder))
-  (elmo-msgdb-length (elmo-folder-msgdb folder)))
+  (if (elmo-folder-msgdb-internal folder)
+      (elmo-msgdb-length (elmo-folder-msgdb folder))
+    0))
 
 (defun elmo-msgdb-load (folder &optional silent)
   (unless silent
