@@ -1521,7 +1521,7 @@ every intervals specified by wl-biff-check-interval."
 						(not (featurep 'mule)))
 					   "[--]"
 					  ;; Japanese short hyphen
-					 "\"[‐]\"")
+					 "[‐]")
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-highlight)
