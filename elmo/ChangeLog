@@ -1,3 +1,8 @@
+2001-02-21  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-display-progress): Prefer
+	`progress-feedback-with-label' to `lprogress-display'.
+
 2000-02-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-network-authenticate-session): Fix.
@@ -48,6 +53,12 @@
 	`elmo-inhibit-read-cache' is non-nil.
 
 	* elmo-vars.el (elmo-inhibit-read-cache): New global switch.
+
+2001-02-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-cache.el (elmo-cache-expire-by-size): Count
+	a disk usage for a cache file entry in KB even when
+	its kind is a directory.
 
 
 2001-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
