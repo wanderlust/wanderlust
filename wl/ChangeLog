@@ -1,5 +1,9 @@
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-expire.el (wl-summary-expire): Fix.
+
+2000-10-18  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl.el (wl-check-environment): Don't check `wl-trash-folder'
 	and `elmo-lost+found-folder' if 'wl-draft.
 	* wl-draft.el (wl-draft): Call `wl-init' with 'wl-draft.
