@@ -1,3 +1,17 @@
+2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-MK (test-wl): Renamed from check-wl.
+	(check-wl): New function.
+
+	* Makefile (check): Don't use `-q -no-site-file'.
+	(BATCHFLAG): New variable.
+	(check): Use it.
+	(test): New rule.
+
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (WL-MODULES): Added wl-acap.
+
 2001-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WL-MK: Byte-optimize the function `char-after' for old Emacsen.

@@ -1,4 +1,34 @@
+2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-open): erase buffer before starting network process.
+	(acap-store): Rewrite.
+
 2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-default-mailbox,
+	elmo-imap4-default-server
+	elmo-imap4-default-authenticate-type,
+	elmo-imap4-default-user,
+	elmo-imap4-default-port,
+	elmo-imap4-default-stream-type,
+	elmo-imap4-stream-type-alist): Moved to elmo-vars.el.
+
+	* elmo-pop3.el (elmo-pop3-default-user,
+	elmo-pop3-default-server,
+	elmo-pop3-default-authenticate-type,
+	elmo-pop3-default-port,
+	elmo-pop3-default-stream-type,
+	elmo-pop3-stream-type-alist): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-default-server,
+	elmo-nntp-default-user,
+	elmo-nntp-default-port,
+	elmo-nntp-default-stream-type,
+	elmo-nntp-stream-type-alist): Ditto.
+
+	* elmo-vars.el: Follow changes above.
+	(elmo-setting): New custom group; added 'elmo-setting group to
+	above variables.
 
 	* elmo-version.el (elmo-version): Up to 2.7.3.
 
