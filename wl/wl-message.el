@@ -138,7 +138,7 @@
 (defun wl-message-follow-current-entity (buffer)
   "Follow to current message."
   (wl-draft-reply (wl-message-get-original-buffer)
-		  'to-all wl-message-buffer-cur-summary-buffer)
+		  nil wl-message-buffer-cur-summary-buffer) ; reply to all
   (let ((mail-reply-buffer buffer))
     (wl-draft-yank-from-mail-reply-buffer nil)))
 

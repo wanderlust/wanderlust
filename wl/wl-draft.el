@@ -256,28 +256,26 @@
       (substring subject (match-end 0))
     subject))
 
-(defun wl-draft-reply-list-symbol (from no-arg)
-  "Check FROM and NO-ARG, return symbol `wl-draft-reply-*-argument-list'.
-Return symbol, not list.  Use symbol-name"
-  (if (wl-address-user-mail-address-p from)
-      (if no-arg
-          'wl-draft-reply-myself-without-argument-list
-        'wl-draft-reply-myself-with-argument-list)
-    (if no-arg
-        'wl-draft-reply-without-argument-list
-      'wl-draft-reply-with-argument-list)))
+(defun wl-draft-reply-list-symbol (with-arg)
+  "Return symbol `wl-draft-reply-*-argument-list' match condition.
+Check WITH-ARG and From: field."
+  (if (wl-address-user-mail-address-p (or (elmo-field-body "From") ""))
+      (if with-arg
+	  'wl-draft-reply-myself-with-argument-list
+	'wl-draft-reply-myself-without-argument-list)
+    (if with-arg
+	'wl-draft-reply-with-argument-list
+      'wl-draft-reply-without-argument-list)))
 
-(defun wl-draft-reply (buf no-arg summary-buf)
-  ""
+(defun wl-draft-reply (buf with-arg summary-buf)
+  "Reply to BUF buffer message.
+Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
   (let (r-list
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from to-alist cc-alist r-list-name decoder)
+	from to-alist cc-alist decoder)
     (set-buffer buf)
-    (setq from (wl-address-header-extract-address (std11-field-body "From")))
-    ;; symbol-name use in error message
-    (setq r-list-name (symbol-name (wl-draft-reply-list-symbol from no-arg)))
-    (setq r-list (symbol-value (wl-draft-reply-list-symbol from no-arg)))
+    (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))
@@ -313,7 +311,8 @@ Return symbol, not list.  Use symbol-name"
 					     ",")))
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
-      (error "No match field: check your `%s'" r-list-name))
+      (error "No match field: check your `%s'"
+	     (symbol-name (wl-draft-reply-list-symbol with-arg))))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
@@ -350,12 +349,10 @@ Return symbol, not list.  Use symbol-name"
     ;; and myself is contained in cc,
     ;; delete myself from cc.
     (setq cc (wl-draft-delete-myself-from-cc to cc))
-    (if wl-insert-mail-followup-to
-	(progn
-	  (setq mail-followup-to
-		(wl-draft-make-mail-followup-to (append to cc)))
-	  (setq mail-followup-to (wl-delete-duplicates mail-followup-to
-						       nil t))))
+    (when wl-insert-mail-followup-to
+      (setq mail-followup-to
+	    (wl-draft-make-mail-followup-to (append to cc)))
+      (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
     (setq newsgroups (wl-parse newsgroups
 			       "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
 	  newsgroups (wl-delete-duplicates newsgroups)
