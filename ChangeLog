@@ -1,3 +1,7 @@
+2004-04-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-ELS (UTILS-MODULES): If rfc2368 found, not to install it.
+
 2004-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* etc/icons/wl-summary-set-flags-up.xpm: Re-draw.
