@@ -199,7 +199,7 @@
 (defun wl-draft-insert-x-face-field-here ()
   "Insert X-Face field at point."
   (let ((x-face-string (elmo-get-file-string wl-x-face-file)))
-    (when (string-match "^[ \t]*" x-face-string)
+    (when (string-match "^\\(X-Face:\\)?[ \t\n]*" x-face-string)
       (setq x-face-string (substring x-face-string (match-end 0))))
     (insert "X-Face: " x-face-string))
   (when (not (= (preceding-char) ?\n))	; for chomped (choped) x-face-string

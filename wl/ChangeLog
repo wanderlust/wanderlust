@@ -1,3 +1,8 @@
+2002-03-07  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-insert-x-face-field-here): Strip X-Face
+	header if the file `wl-x-face-file' already contains it.
+
 2002-03-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Add "Write for current
