@@ -1,5 +1,8 @@
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-folder.el (wl-folder-buffer-search-entity): Bind case-fold-search
+	as nil.
+
 	* wl-thread.el (wl-thread-open-all-unread): Use 
 	elmo-folder-list-messages-mark-match.
 	(wl-thread-insert-message): Removed argument `mark-alist'.

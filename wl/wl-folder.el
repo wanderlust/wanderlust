@@ -249,7 +249,8 @@
     (regexp-quote group) ":[-0-9-]+/[0-9-]+/[0-9-]+") nil t))
 
 (defun wl-folder-buffer-search-entity (folder &optional searchname)
-  (let ((search (or searchname (wl-folder-get-petname folder))))
+  (let ((search (or searchname (wl-folder-get-petname folder)))
+	case-fold-search)
     (re-search-forward
      (concat
       "^[ \t]*"
