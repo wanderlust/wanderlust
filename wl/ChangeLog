@@ -1,3 +1,8 @@
+2001-11-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-folder.el (wl-folder-get-newsgroups): Fixed probrem when
+	localnews folder.
+
 2001-11-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-mode): Undo last change.

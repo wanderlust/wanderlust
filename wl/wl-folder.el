@@ -2038,7 +2038,7 @@ If FOLDER is multi, return comma separated string (cross post)."
 		       (elmo-nntp-folder-group-internal fld))
 		      ((eq 'localnews (elmo-folder-type-internal fld))
 		       (elmo-replace-in-string
-			(elmo-nntp-folder-group-internal fld)
+			(elmo-localdir-folder-dir-name-internal fld)
 			"/" "\\."))))
 	  ;; append newsgroup
 	  (setq newsgroups (if (stringp newsgroups)
