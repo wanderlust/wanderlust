@@ -81,7 +81,7 @@ This variable is local in each draft buffer.
 You can refer its value in `wl-draft-config-alist'.
 
 e.g.
-(setq wl-draft-config-alist
+\(setq wl-draft-config-alist
       '(((string-match \".*@domain1$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain1\"))
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
@@ -1718,7 +1718,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (error "wl-draft-create-header must be use in wl-draft-mode."))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
-    (add-hook 'local-write-file-hooks 'wl-draft-save)
+    (when wl-draft-write-file-function
+      (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-draft-overload-functions)
     (wl-highlight-headers 'for-draft)
     (wl-draft-save)
@@ -1914,7 +1915,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(wl-draft-decode-message-in-buffer))
       (goto-char (wl-draft-insert-mail-header-separator))
       ;; If the first part is text/plain, the mime-edit tag is useless.
-      (if (looking-at "^--\\[\\[text/plain\\]\\]")
+      (if (looking-at "^--\\[\\[text/plain\\]\\]$")
 	  (delete-region (point-at-bol)(1+ (point-at-eol))))
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
@@ -1932,7 +1933,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (goto-char (point-min))
       (wl-draft-overload-functions)
       (wl-draft-editor-mode)
-      (add-hook 'local-write-file-hooks 'wl-draft-save)
+      (when wl-draft-write-file-function
+	(add-hook 'local-write-file-hooks wl-draft-write-file-function))
       (wl-highlight-headers 'for-draft)
       (run-hooks 'wl-draft-reedit-hook)
       (goto-char (point-max))

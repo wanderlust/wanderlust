@@ -379,6 +379,11 @@ If file exists and `wl-auto-insert-x-face' is non-nil."
   :type 'file
   :group 'wl-draft)
 
+(defvar wl-draft-write-file-function 'wl-draft-save
+  "Save function for draft message."
+  :type 'function
+  :group 'wl-draft)
+
 (defcustom wl-subscribed-mailing-list nil
   "*Subscribed mailing list.
 You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
