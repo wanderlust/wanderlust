@@ -1,4 +1,14 @@
-2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+2001-12-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-process-bye): New function.
+	(elmo-imap4-send-command): Call elmo-imap4-process-bye.
+	(elmo-imap4-accept-ok): Ditto.
+	(elmo-imap4-session-select-mailbox): If argument `no-error' equals to
+	'notify-bye, only BYE error is reported.
+	(elmo-folder-exists-p-plugged): Set no-error argument of
+	`elmo-imap4-session-select-mailbox' as 'notify-bye.
+
+	* elmo.el (elmo-imap4-bye-error): Changed message.
 
 	* elmo-dop.el (elmo-dop-queue-flush): Fixed obsolete version message.
 	(elmo-dop-queue-flush): Don't append to the dop-queue while flushing

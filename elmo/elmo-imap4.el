@@ -262,10 +262,7 @@ Returns a TAG string which is assigned to the COMMAND."
       ;; (erase-buffer) No need.
       (goto-char (point-min))
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
-	(elmo-network-close-session session)
-	(signal 'elmo-imap4-bye-error
-		(list (elmo-imap4-response-error-text
-		       elmo-imap4-current-response))))
+	(elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
       (if elmo-imap4-parsing
 	  (error "IMAP process is running. Please wait (or plug again.)"))
@@ -352,6 +349,15 @@ If response is not `+' response, returns nil."
     (elmo-network-session-process-internal session))
    'continue-req))
 
+(defun elmo-imap4-process-bye (session)
+  (with-current-buffer (elmo-network-session-buffer session)
+    (let ((r elmo-imap4-current-response))
+      (setq elmo-imap4-current-response nil)
+      (elmo-network-close-session session)
+      (signal 'elmo-imap4-bye-error
+	      (list (concat (elmo-imap4-response-error-text r))
+		    "Try Again")))))
+
 (defun elmo-imap4-accept-continue-req (session)
   "Returns non-nil if `+' (continue-req) response is arrived in SESSION.
 If response is not `+' response, cause an error."
@@ -377,15 +383,10 @@ If response is not `OK' response, causes error with IMAP response text."
     (if (elmo-imap4-response-ok-p response)
 	response
       (if (elmo-imap4-response-bye-p response)
-	  (progn
-	    (elmo-network-close-session session)
-	    (signal 'elmo-imap4-bye-error
-		    (list (elmo-imap4-response-error-text response))))
+	  (elmo-imap4-process-bye session)
 	(error "IMAP error: %s"
 	       (or (elmo-imap4-response-error-text response)
 		   "No `OK' response from server."))))))
-
-
 
 ;;; MIME-ELMO-IMAP Location
 (luna-define-method mime-imap-location-section-body ((location
@@ -629,6 +630,7 @@ If optional argument FORCE is non-nil, select mailbox even if current mailbox
 is same as MAILBOX.
 If second optional argument NO-ERROR is non-nil, don't cause an error when
 selecting folder was failed.
+If NO-ERROR is 'notify-bye, only BYE response is reported as error.
 Returns response value if selecting folder succeed. "
   (when (or force
 	    (not (string=
@@ -651,10 +653,13 @@ Returns response value if selecting folder succeed. "
 	       session
 	       (nth 1 (assq 'read-only (assq 'ok response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
-	  (unless no-error
-	    (error (or
-		    (elmo-imap4-response-error-text response)
-		    (format "Select %s failed" mailbox))))))
+	  (if (and (eq no-error 'notify-bye)
+		   (elmo-imap4-response-bye-p response))
+	      (elmo-imap4-process-bye session)
+	    (unless no-error
+	      (error (or
+		      (elmo-imap4-response-error-text response)
+		      (format "Select %s failed" mailbox)))))))
       (and result response))))
 
 (defun elmo-imap4-check-validity (spec validity-file)
@@ -1940,7 +1945,7 @@ Return nil if no complete line has arrived."
       (elmo-imap4-session-select-mailbox
        session
        (elmo-imap4-folder-mailbox-internal folder)
-       'force 'no-error))))
+       'force 'notify-bye))))
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
   t)
