@@ -1,3 +1,30 @@
+2001-02-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo.el (toplevel): Require 'elmo-version first;
+	for little `recursive-load-depth' settings.
+	Fix "ends here" comment.
+
+2001-02-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (toplevel): Require 'poem;
+	Some functions are moved from elmo-cache.el.
+
+	* elmo-net.el (toplevel): Require 'elmo-cache.
+
+	* elmo-msgdb.el (toplevel): Don't require 'elmo-cache.
+
+	* elmo.el (toplevel): Ditto.
+
+	* elmo-cache.el: Rewrite with luna;
+	Some functions are moved to elmo-util.el.
+
+	* elmo-internal.el (elmo-internal-folder-list): New variable.
+	(elmo-internal-folder-initialize): Rewrite.
+	(elmo-folder-list-subfolders): Ditto.
+
+	* elmo-cache.el (elmo-cache-search-all): Eliminated.
+	(elmo-cache-collect-sub-directories): Ditto.
+
 2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.5.8.

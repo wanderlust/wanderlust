@@ -1823,7 +1823,8 @@ If ARG is non-nil, checking is omitted."
 	      (progn
 		(delete-region (match-beginning 0) (match-end 0))
 		(delete-char 1) ; delete '\n'
-		)))
+		(setq wl-summary-buffer-number-list
+		      (delq (car msgs) wl-summary-buffer-number-list)))))
 	(when (and deleting-info
 		   (> len elmo-display-progress-threshold))
 	  (setq i (1+ i))
@@ -2562,8 +2563,10 @@ If ARG, without confirm."
 	  (let ((case-fold-search nil)
 		(inhibit-read-only t)
 		(buffer-read-only nil))
+	    ;; Select folder
+	    (elmo-folder-open folder)
 	    (erase-buffer)
-	    ;; resume summary cache
+	    ;; Resume summary view
 	    (if wl-summary-cache-use
 		(let* ((dir (elmo-folder-msgdb-path folder))
 		       (cache (expand-file-name wl-summary-cache-file dir))
@@ -2580,9 +2583,12 @@ If ARG, without confirm."
 			  (wl-summary-load-file-object view)))
 		  (if (eq wl-summary-buffer-view 'thread)
 		      (wl-thread-resume-entity folder)
-		    (wl-summary-make-number-list))))
-	    ;; Select folder
-	    (elmo-folder-open folder)
+		    (wl-summary-make-number-list)))
+	      (setq wl-summary-buffer-view
+		    (wl-summary-load-file-object
+		     (expand-file-name wl-summary-view-file
+				       (elmo-folder-msgdb-path folder))))
+	      (wl-summary-rescan))
 	    (wl-summary-count-unread
 	     (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	    (wl-summary-update-modeline)))
@@ -2736,7 +2742,7 @@ If ARG, without confirm."
 
 (defun wl-summary-default-subject-filter (subject)
   (let ((case-fold-search t))
-    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\):" ""))
+    (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
     (setq subject (elmo-replace-in-string subject "[ \t]" ""))
     (elmo-replace-in-string subject "^\\[.*\\]" "")))
 
@@ -4295,11 +4301,18 @@ If ARG, exit virtual folder."
       (elmo-date-get-week year month mday))))
 
 (defvar wl-summary-move-spec-alist
-  '((new . ((p . "\\(N\\|\\$\\)")
-	    (p . "\\(U\\|!\\)")
-	    (t . nil)))
-    (unread . ((p . "\\(N\\|\\$\\|U\\|!\\)")
-	       (t . nil)))))
+  (` ((new . ((t . nil)
+	      (p . (, wl-summary-new-mark))
+	      (p . (, (wl-regexp-opt
+		       (list wl-summary-unread-uncached-mark
+			     wl-summary-unread-cached-mark))))
+	      (p . (, (regexp-quote wl-summary-important-mark)))))
+      (unread . ((t . nil)
+		 (p . (, (wl-regexp-opt
+			  (list wl-summary-new-mark
+				wl-summary-unread-uncached-mark
+				wl-summary-unread-cached-mark))))
+		 (p . (, (regexp-quote wl-summary-important-mark))))))))
 
 (defsubst wl-summary-next-message (num direction hereto)
   (let ((cur-spec (cdr (assq wl-summary-move-order 
