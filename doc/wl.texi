@@ -3461,10 +3461,22 @@ If non-nil, first message is automatically displayed.
 
 @item wl-auto-select-next
 @vindex wl-auto-select-next
-The initial setting is @code{nil}.  If non-nil, jump to next summary
-automatically.  If @code{unread}, jump to next unread folder's summary
-after confirmation.  If @code{skip-no-unread}, unread folders are
-automatically skipped.
+The initial setting is @code{nil}. This controls behavior when there is
+no unread message in current summary.
+
+@example
+nil: asks whether you want to go back to folder mode
+'unread: asks whether you want to go to next unread folder
+  If the next one comes to be possessing no unread message
+  by treatment of cross-posted messages or Scoring, then
+  asks whether you want to go to next to next folder.
+'skip-no-unread: similar as unread
+  But does not ask before going to next to next folder.
+otherwise: asks whether you want to go to next unread folder
+@end example
+
+It might be useful to set @code{'skip-no-unread} for people who
+want to continue reading by just pressing and pressing space key.
 
 @item wl-thread-insert-opened
 @vindex wl-thread-insert-opened

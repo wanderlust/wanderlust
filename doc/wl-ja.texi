@@ -3450,10 +3450,21 @@ Non-nil ならフォルダに移動した時に最初のメッセージを自動的に表示します。
 
 @item wl-auto-select-next
 @vindex wl-auto-select-next
-初期設定は @code{nil}。Non-nil なら、あるフォルダのサマリから次のフォル
-ダのサマリへ自動的に移動します。値が @code{unread} なら、確認を求めて未
-読メッセージがないフォルダに移動します。値が @code{skip-no-unread} なら、
-未読メッセージがないフォルダを自動的に飛ばします。
+初期設定は @code{nil}。サマリに未読メッセージがなくなった時の動作を指定します。
+
+@example
+nil： フォルダモードに戻るか尋ねる
+'unread： 次の未読ありのフォルダに行くか尋ねる。
+  移動先のフォルダで crosspost 処理や Score 機能などにより
+  未読がなくなれば、さらに次のフォルダに行くか尋ねる。
+'skip-no-unread： unread と同様。
+  ただし、移動した先で未読がなくなった場合には、自動的に次の
+  フォルダに行く。
+上記以外： 次の未読ありのフォルダに行くか尋ねる。
+@end example
+
+スペースキーでひたすら読み進めたい人は @code{'skip-no-unread} にしておくのが
+便利かもしれません。
 
 @item wl-thread-insert-opened
 @vindex wl-thread-insert-opened
