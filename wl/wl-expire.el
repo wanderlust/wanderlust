@@ -119,7 +119,7 @@
 (defun wl-expire-refile (folder refile-list msgdb dst-folder
 				&optional no-reserve-marks preserve-number copy)
   "Refile message for expire. If COPY is non-nil, copy message."
-  (when (not (string= folder dst-folder))
+  (when (not (string= (elmo-folder-name-internal folder) dst-folder))
     (unless no-reserve-marks
       (setq refile-list
 	    (wl-expire-delete-reserve-marked-msgs-from-list
@@ -128,6 +128,7 @@
      (let* ((doingmes (if copy
 			  "Copying %s"
 			"Expiring (move %s)"))
+	    (dst-folder (wl-folder-get-elmo-folder dst-folder))
 	    (mess (format (concat doingmes " %s msgs...")
 			  (elmo-folder-name-internal dst-folder)
 			  (length refile-list))))
