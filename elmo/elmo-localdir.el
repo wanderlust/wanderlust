@@ -228,13 +228,15 @@
   ((folder elmo-localdir-folder)
    src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
-      (let ((dir (elmo-localdir-folder-directory-internal folder))
+      (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
+	    (dir (elmo-localdir-folder-directory-internal folder))
 	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
 	    (next-num (1+ (car (elmo-folder-status folder))))
 	    mark flag id)
 	(while numbers
-	  (setq mark (elmo-message-mark src-folder (car numbers))
+	  (setq mark (and src-msgdb-exists
+			  (elmo-message-mark src-folder (car numbers)))
 		flag (cond
 		      ((null mark) 'read)
 		      ((member mark (elmo-msgdb-answered-marks))
@@ -248,9 +250,10 @@
 	    (int-to-string
 	     (if same-number (car numbers) next-num))
 	    dir))
-	  ;; src folder's msgdb is loaded.
-	  (when (setq id (elmo-message-field src-folder (car numbers)
-					     'message-id))
+	  ;; save flag-table only when src folder's msgdb is loaded.
+	  (when (setq id (and src-msgdb-exists
+			      (elmo-message-field src-folder (car numbers)
+						  'message-id)))
 	    (elmo-flag-table-set table id flag))
 	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))

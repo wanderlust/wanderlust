@@ -1019,15 +1019,19 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
-  (let (unseen table flag mark
-	       succeed-numbers failure cache id)
+  (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
+	unseen table flag mark
+	succeed-numbers failure cache id)
     (setq table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (while numbers
 	(setq failure nil
-	      id (elmo-message-field src-folder (car numbers) 'message-id)
-	      mark (elmo-message-mark src-folder (car numbers))
+	      id (and src-msgdb-exists
+		      (elmo-message-field src-folder (car numbers)
+					  'message-id))
+	      mark (and src-msgdb-exists
+			(elmo-message-mark src-folder (car numbers)))
 	      flag (and id
 			(cond
 			 ((null mark) 'read)

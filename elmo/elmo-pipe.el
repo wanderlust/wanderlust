@@ -109,7 +109,7 @@
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
     ;; Warnnig: some function requires msgdb
-    ;;  but elmo-folder-open-internal do not load msgdb.
+    ;; but elmo-folder-open-internal do not load msgdb.
     (elmo-folder-open-internal src)
     (setq msgs (elmo-pipe-folder-list-target-messages src ignore-list)
 	  len (length msgs))

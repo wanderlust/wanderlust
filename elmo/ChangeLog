@@ -1,3 +1,12 @@
+2003-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir.el (elmo-folder-append-messages): Don't refer
+	mark nor message-id when msgdb of source folder is not loaded.
+
+	* elmo.el (elmo-generic-folder-append-messages): Ditto.
+
+	* elmo-maildir.el (elmo-folder-append-messages): Ditto.
+
 2003-07-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-length): Don't require msgdb.
