@@ -355,6 +355,7 @@ Returns non-nil if bottom of message."
 
 (defun wl-message-get-original-buffer ()
   "Get original buffer for current message buffer."
+  (current-buffer)
   wl-message-buffer-original-buffer)
 
 (defun wl-message-redisplay (folder number flag &optional force-reload)
@@ -405,8 +406,7 @@ Returns non-nil if bottom of message."
     cache-used))
 
 ;; Use message buffer cache.
-(defun wl-message-buffer-display (folder number flag
-					 &optional force-reload unread)
+(defun wl-message-buffer-display (folder number flag &optional force-reload)
   (let* ((msg-id (elmo-message-field folder number 'message-id))
 	 (fname (elmo-folder-name-internal folder))
 	 (hit (wl-message-buffer-cache-hit (list fname number msg-id)))
@@ -429,25 +429,24 @@ Returns non-nil if bottom of message."
       (setq hit (wl-message-buffer-cache-add (list fname number msg-id)))
       (setq read t))
     (if (or force-reload read)
-	(condition-case err
+	;(condition-case err
 	    (save-excursion
 	      (set-buffer hit)
 	      (setq
 	       cache-used
-	       (wl-message-display-internal folder number flag
-					    force-reload unread))
+	       (wl-message-display-internal folder number flag force-reload))
 	      (setq wl-message-buffer-cur-flag flag))
-	  (quit
-	   (wl-message-buffer-cache-delete)
-	   (error "Display message %s/%s is quitted" fname number))
-	  (error
-	   (wl-message-buffer-cache-delete)
-	   (signal (car err) (cdr err))
-	   nil))) ;; will not be used
+;	  (quit
+;	   (wl-message-buffer-cache-delete)
+;	   (error "Display message %s/%s is quitted" fname number))
+;	  (error
+;	   (wl-message-buffer-cache-delete)
+;	   (signal (car err) (cdr err))
+;	   nil))) ;; will not be used
+      )
     (cons hit cache-used)))
 
-(defun wl-message-display-internal (folder number flag
-					   &optional force-reload unread)
+(defun wl-message-display-internal (folder number flag &optional force-reload)
   (let ((elmo-message-ignored-field-list
 	 (if (eq flag 'all-header)
 	     nil
@@ -462,14 +461,12 @@ Returns non-nil if bottom of message."
 				       (current-buffer)
 				       (wl-message-get-original-buffer)
 				       'wl-original-message-mode
-				       force-reload
-				       unread))
+				       force-reload))
 	  (elmo-mime-message-display folder number
 				     (current-buffer)
 				     (wl-message-get-original-buffer)
 				     'wl-original-message-mode
-				     force-reload
-				     unread))
+				     force-reload))
       (setq buffer-read-only t))))
 
 (defsubst wl-message-buffer-prefetch-p (folder &optional number)
@@ -531,8 +528,7 @@ Returns non-nil if bottom of message."
 		  (when wl-message-buffer-prefetch-debug
 		    (setq time1 (current-time))
 		    (message "Prefetching %d..." number))
-		  (setq result (wl-message-buffer-display folder number
-							  'mime nil 'unread))
+		  (setq result (wl-message-buffer-display folder number 'mime))
 		  (when wl-message-buffer-prefetch-debug
 		    (setq time2 (current-time))
 		    (setq sec  (- (nth 1 time2)(nth 1 time1)))

@@ -204,14 +204,12 @@ value is used."
     rawbuf))
 
 (defun elmo-mime-message-display (folder number viewbuf rawbuf original-mode
-					 &optional ignore-cache unread)
+					 &optional ignore-cache)
   "Display MIME message. 
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
 ORIGINAL is the major mode of RAWBUF.
 If optional argument IGNORE-CACHE is specified, existing cache is ignored.
-If second optional argument UNREAD is specified, message is displayed but
-keep it as unread.
 Return non-nil if not entire message was fetched."
   (let (mime-display-header-hook ; Do nothing.
 	entity strategy)
@@ -227,7 +225,7 @@ Return non-nil if not entire message was fetched."
 	  'elmo-imap
 	'elmo-buffer)
       (elmo-make-mime-message-location
-       folder number strategy rawbuf unread))
+       folder number strategy rawbuf nil))
      viewbuf nil nil original-mode)
     (if strategy
 	(or (elmo-fetch-strategy-use-cache strategy)
@@ -235,14 +233,12 @@ Return non-nil if not entire message was fetched."
 		'section)))))
 
 (defun elmo-mime-display-as-is (folder number viewbuf rawbuf original-mode
-				       &optional ignore-cache unread)
+					 &optional ignore-cache)
   "Display MIME message. 
 A message in the FOLDER with NUMBER is displayed on the VIEWBUF using RAWBUF.
 VIEWBUF is a view buffer and RAWBUF is a raw buffer.
 ORIGINAL is the major mode of RAWBUF.
 If optional argument IGNORE-CACHE is specified, existing cache is ignored.
-If second optional argument UNREAD is specified, message is displayed but
-keep it as unread.
 Return non-nil if cache is used."
   (let ((entity (elmo-msgdb-overview-get-entity number
 						(elmo-folder-msgdb-internal
@@ -260,7 +256,7 @@ Return non-nil if cache is used."
      (mime-open-entity
       'elmo-buffer
       (elmo-make-mime-message-location
-       folder number strategy rawbuf unread))
+       folder number strategy rawbuf nil))
      viewbuf nil nil original-mode)
     (elmo-fetch-strategy-use-cache strategy)))
 

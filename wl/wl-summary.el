@@ -591,7 +591,8 @@ If ARG is non-nil, Supersedes message"
 	(let ((mmelmo-force-fetch-entire-message t))
 	  (if (null (wl-summary-message-number))
 	      (message "No message.")
-	    (set-buffer (wl-summary-get-original-buffer))
+	    (wl-summary-set-message-buffer-or-redisplay)
+	    (set-buffer (wl-message-get-original-buffer))
 	    (wl-draft-edit-string (buffer-substring (point-min)
 						    (point-max)))))))))
 
@@ -4061,9 +4062,9 @@ If ARG, exit virtual folder."
 		  (if (and visible wl-summary-highlight)
 		      (wl-highlight-summary-current-line nil nil t))
 		  (if (not notcrosses)
-		      (wl-summary-set-crosspost
-		       wl-summary-buffer-elmo-folder
-		       number)))
+		      (wl-summary-set-crosspost nil
+						(and wl-summary-buffer-disp-msg
+						     (interactive-p)))))
 	      (if mark (message "Warning: Changing mark failed.")))))
       (set-buffer-modified-p nil)
       (if stat
@@ -5507,14 +5508,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
 					   wl-summary-buffer-new-count)
 					(length num-db)))))
 
-(defun wl-summary-get-original-buffer ()
-  "Get original buffer for the current summary."
-  (save-excursion
-    (wl-summary-set-message-buffer-or-redisplay)
-    (wl-message-get-original-buffer)))
-
-;; This function will be needless in the future.
-;; (After when Newsgroups: field is saved in msgdb)
 (defun wl-summary-get-newsgroups ()
   (let ((folder-list (elmo-folder-get-primitive-list
 		      wl-summary-buffer-elmo-folder))
@@ -5526,22 +5519,28 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (setq folder-list (cdr folder-list)))
     ng-list))
 
-;; This function will be moved to elmo in the future.
-;; (After when Newsgroups: field is saved in msgdb)
-(defun wl-summary-set-crosspost (folder number)
-  (let (newsgroups)
-    (when (eq (elmo-folder-type-internal folder) 'nntp)
-      (with-current-buffer (wl-summary-get-original-buffer)
+(defun wl-summary-set-crosspost (&optional type redisplay)
+  (let* ((number (wl-summary-message-number))
+	 message-buf newsgroups)
+    (when (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
+	      'nntp)
+      (if redisplay
+	  (wl-summary-redisplay))
+      (save-excursion
+	(if (setq message-buf (wl-message-get-original-buffer))
+	    (set-buffer message-buf))
 	(setq newsgroups (std11-field-body "newsgroups")))
       (when newsgroups
-	(let* ((ng-list (wl-summary-get-newsgroups)) ;; for multi folder
-	       crosspost-newsgroups)
-	  (when (setq crosspost-newsgroups
+	(let* ((msgdb (wl-summary-buffer-msgdb))
+	       (num-db (elmo-msgdb-get-number-alist msgdb))
+	       (ng-list (wl-summary-get-newsgroups)) ;; for multi folder
+	       crosspost-folders)
+	  (when (setq crosspost-folders
 		      (elmo-list-delete ng-list
 					(wl-parse-newsgroups newsgroups t)))
-	    (elmo-crosspost-message-set
-	     (elmo-message-field folder number 'message-id)
-	     crosspost-newsgroups)
+	    (elmo-crosspost-message-set (cdr (assq number num-db)) ;;message-id
+					crosspost-folders
+					type) ;;not used
 	    (setq wl-crosspost-alist-modified t)))))))
 
 (defun wl-summary-is-crosspost-folder (folder-list groups)
@@ -5554,6 +5553,37 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (wl-append crosses (list group)))
       (setq folder-list (cdr folder-list)))
     crosses))
+
+(defun wl-summary-update-crosspost ()
+  (let* ((msgdb (wl-summary-buffer-msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
+	 (folder-list
+	  (elmo-folder-get-primitive-list wl-summary-buffer-elmo-folder))
+	 (alist elmo-crosspost-message-alist)
+	 (crossed 0)
+	 mark ngs num)
+    (when (elmo-folder-contains-type wl-summary-buffer-elmo-folder 'nntp)
+      (while alist
+	(when (setq ngs
+		    (wl-summary-is-crosspost-folder
+		     folder-list
+		     (nth 1 (car alist))))
+	  (when (setq num (car (rassoc (caar alist) number-alist)))
+	    (if (and (setq mark (cadr (assq num mark-alist)))
+		     (member mark (list wl-summary-new-mark
+					wl-summary-unread-uncached-mark
+					wl-summary-unread-cached-mark)))
+		(setq crossed (1+ crossed)))
+	    (if (wl-summary-jump-to-msg num)
+		(wl-summary-mark-as-read t);; opened
+	      (wl-summary-mark-as-read t nil nil num)));; closed
+	  ;; delete if message does't exists.
+	  (elmo-crosspost-message-delete (caar alist) ngs)
+	  (setq wl-crosspost-alist-modified t))
+	(setq alist (cdr alist))))
+    (if (> crossed 0)
+	crossed)))
 
 (defun wl-crosspost-alist-load ()
   (setq elmo-crosspost-message-alist (elmo-crosspost-alist-load))
@@ -5599,7 +5629,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(set-buffer summary-buf)
 	(wl-summary-jump-to-msg (car mlist))
 	(wl-summary-redisplay)
-	(set-buffer (setq orig-buf (wl-summary-get-original-buffer)))
+	(set-buffer (setq orig-buf (wl-message-get-original-buffer)))
 	(goto-char (point-min))
 	(cond ((= i 1) ; first
 	       (if (setq filename (wl-message-uu-substring

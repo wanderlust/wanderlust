@@ -97,13 +97,16 @@
 
 (defun elmo-pipe-drain (src dst)
   "Move all messages of SRC to DST."
-  (let ((elmo-pop3-inhibit-uidl t)) ; No need to use UIDL
+  (let (elmo-nntp-use-cache
+	elmo-imap4-use-cache
+	elmo-pop3-use-cache ; Inhibit caching while moving messages.
+	(elmo-pop3-inhibit-uidl t)) ; No need to use UIDL
     (message "Checking %s..." (elmo-folder-name-internal src))
     (elmo-folder-open-internal src)
     (elmo-folder-move-messages src (elmo-folder-list-messages src) dst))
-  ;; Don't save msgdb here.
-  ;; Because summary view of original folder is not updated yet.
-  (elmo-folder-close-internal src)
+  ;; All of the msgdb entry is nil. 
+  ;; But it is ok because all messages are drained.
+  (elmo-folder-close src)
   (run-hooks 'elmo-pipe-drained-hook))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))

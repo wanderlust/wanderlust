@@ -14,14 +14,11 @@
    ))
 
 (defconst ELMO-MODULES '(
-   utf7 pldap mmimap
-   elmo-date elmo-util elmo-version elmo-vars elmo elmo-msgdb
-   elmo-net elmo-imap4 elmo-pop3 elmo-nntp
-   elmo-localdir elmo-localnews elmo-map elmo-maildir
-   elmo-multi elmo-filter
-   elmo-archive elmo-pipe elmo-cache
-   elmo-internal elmo-mark
-   elmo-dop elmo-nmz
+   elmo-util elmo-version elmo-net elmo-imap4 elmo-nntp elmo-archive
+   elmo-localdir elmo-msgdb elmo-vars elmo2
+   elmo-cache elmo-multi elmo-filter elmo-pipe
+   elmo-dop elmo-pop3 elmo-localnews elmo-maildir
+   elmo-date elmo-internal utf7 pldap
    ))
 
 
@@ -55,7 +52,7 @@
     (progn
       (defconst wl-use-semi t)
       (setq WL-MODULES (append WL-MODULES (list 'wl-mime)))
-      (setq ELMO-MODULES (append ELMO-MODULES (list 'elmo-mime))))
+      (setq ELMO-MODULES (append ELMO-MODULES (list 'mmelmo 'mmelmo-imap4))))
   (defconst wl-use-semi nil)
   (setq WL-MODULES (append WL-MODULES (list 'tm-wl))))
 
