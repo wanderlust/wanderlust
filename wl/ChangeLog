@@ -1,4 +1,4 @@
-2000-12-31  TAKAHASHI Kaoru  <moge@hoge.org>
+2000-12-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-highlight.el (wl-highlight-headers): Revert
 	`wl-highlight-x-face-func' argument (`beg' and `end').
