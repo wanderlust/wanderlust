@@ -1577,15 +1577,36 @@ lastyear  ->  去年の今日
 @samp{&username@@popserver} から @samp{+inbox} へ、メッセージが自動的に
 取り込まれます。
 
+また、二つ目の @samp{|} を @samp{|:} にして、
+
+@example
+@samp{|} @var{取り込み元} @samp{|:} @var{取り込み先}
+@end example
+
+とすると、取り込み元から取り込み先にメッセージをコピーします。その際に、
+取り込まれたメッセージは killed list に加えられます。したがって、次に
+そのフォルダにアクセスした際には差分だけが取り込まれます。
+POP サーバにメールを残したまま、メッセージを @samp{+inbox} にコピーして
+閲覧したい場合は、
+
+@example
+|&username@@popserver|+inbox
+@end example
+
+のようにします。
+
 例:
 
 @example
 @group
-%inbox|%myinbox   -> %inbox から %myinbox へメッセージを取り込んで
+|%inbox|%myinbox   -> %inbox から %myinbox へメッセージを取り込んで
                        閲覧するフォルダ。
-*&user@@popserver1,&user@@popserver2|+inbox
+|*&user@@popserver1,&user@@popserver2|+inbox
   -> &user@@popserver1 と &user@@popserver2 から +inbox へメッセージを
-  取り込んで閲覧するフォルダ。
+     取り込んで閲覧するフォルダ。
+|-gnu.emacs.sources|:+sources
+  -> -gnu.emacs.sources から +sources へメッセージをコピーして閲覧する
+     フォルダ。
 @end group
 @end example
 

@@ -1559,13 +1559,33 @@ For example, if you specify following
 and access it, messages are downloaded automatically from
 @samp{&username@@popserver} to @samp{+inbox}.
 
+On the other hand, if you put @samp{|:} instead of second @samp{|},
+then messages are copied to the destination folder (not deleted from
+source-folder), and copied messages are put into the killed list. Therefore
+if you access in the next time, only new messages will be copied.
+
+@example
+@samp{|} @var{source-folder} @samp{|:} @var{destination-folder}
+@end example
+
+If you want to copy messages from POP server and view them, specify the
+folder as follows:
+
+@example
+|&username@@popserver|+inbox
+@end example
+
+where messages will be kept on the server.
+
 Example:
 
 @example
 @group
-%inbox|%myinbox   -> Download %inbox to %myinbox.
-*&user@@popserver1,&user@@popserver2|+inbox
+|%inbox|%myinbox   -> Download %inbox to %myinbox.
+|*&user@@popserver1,&user@@popserver2|+inbox
          -> Download from &user@@popserver1 and &user@@popserver2 to +inbox.
+|-gnu.emacs.sources|:+sources
+         -> Copy messages from -gnu.emacs.sources to +sources.
 @end group
 @end example
 
