@@ -366,11 +366,7 @@ the `wl-smtp-features' variable."
 			   subject)
 	     0)))
 	 (setq subject (concat wl-reply-subject-prefix subject)))
-    (and (setq in-reply-to (std11-field-body "Message-Id"))
-	 (setq in-reply-to
-	       (format "In your message of \"%s\"\n\t%s"
-		       (or (std11-field-body "Date") "some time ago")
-		       in-reply-to)))
+    (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
