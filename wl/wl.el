@@ -757,10 +757,10 @@ If prefix argument is specified, folder checkings are skipped."
   (interactive "P")
   (unless wl-init
     (wl-load-profile))
+  (wl-plugged-init (null (get-buffer wl-folder-buffer-name)))
   (unwind-protect
       (wl-init arg)
-    (let ((make (wl-folder arg)))
-      (wl-plugged-init make)))
+    (wl-folder arg))
   (run-hooks 'wl-hook))
 
 ;; Define some autoload functions WL might use.

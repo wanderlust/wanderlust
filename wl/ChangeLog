@@ -1,3 +1,9 @@
+2000-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Initialize plug-related settings before `wl-init'.
+
+	* wl-draft.el (wl-draft): funcall `wl-fcc' if it is a function.
+
 2000-09-13  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-folder.el (wl-folder-entity-assign-id): Undo the last change.

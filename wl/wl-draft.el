@@ -1344,7 +1344,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (if (or wl-bcc mail-self-blind)
 	(insert "Bcc: " (or wl-bcc (user-login-name)) "\n"))
     (if wl-fcc
-	(insert "FCC: " wl-fcc "\n"))
+	(insert "FCC: " (if (functionp wl-fcc) (funcall wl-fcc) wl-fcc) "\n"))
     (if wl-organization
 	(insert "Organization: " wl-organization "\n"))
     (and wl-auto-insert-x-face
