@@ -2544,7 +2544,7 @@ message has empty subject field.
 @cindex Mark, Temporary
 
 There are four temporary marks,
-@samp{*}, @samp{D}, @samp{o} and @samp{O}.
+@samp{*}, @samp{d}, @samp{o} and @samp{O}.
 Temporary marks indicates message operations.
 
 @table @samp

@@ -3341,7 +3341,7 @@ prefix argument つきならば既にキャッシュされているメッセージも
 
 @item x
 @kindex x (Summary)
-すべての @samp{D}, @samp{o}, @samp{O} マークを実行します。
+すべての @samp{d}, @samp{o}, @samp{O} マークを実行します。
 @findex wl-summary-exec
 (@code{wl-summary-exec})
 
