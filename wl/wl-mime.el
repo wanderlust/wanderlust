@@ -331,6 +331,7 @@ It calls following-method selected from variable
     (widen)
     (let* ((entity (get-text-property (point) 'mime-view-entity))
 	   (node-id (mime-entity-node-id entity))
+	   (filename (mime-entity-safe-filename entity))
 	   (header-start (mime-buffer-entity-header-start-internal entity))
 	   (body-end (mime-buffer-entity-body-end-internal entity))
 	   (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
@@ -355,7 +356,17 @@ It calls following-method selected from variable
 		(insert-buffer orig-buf)
 		(delete-region header-start body-end)
 		(goto-char header-start)
-		(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
+		(insert "Content-Type: text/plain; charset=US-ASCII\n")
+		(when filename
+		  (insert
+		   "Content-Disposition:"
+		   (mime-encode-field-body
+			 (concat ""
+				 (and filename
+				      (concat " inline; filename=" (std11-wrap-as-quoted-string filename))))
+			 "Content-Disposition")
+		   "\n"))
+		(insert "\n")
 		(insert "** This part has been removed by Wanderlust **\n\n")
 		(elmo-folder-append-buffer folder))
 

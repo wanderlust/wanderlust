@@ -1,3 +1,8 @@
+2004-08-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-mime.el (wl-message-delete-current-part): If filename exists,
+	add Content-Disposition heaeder on the deleted part.
+
 2004-08-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-save): Encode address list under edit by
