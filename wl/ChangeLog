@@ -1,3 +1,7 @@
+2000-05-21  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-folder.el (wl-folder-buffer-cur-path): Make buffer-local.
+
 2000-05-21  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-summary.el (wl-summary-switch-to-clone-buffer): Remove
