@@ -61,6 +61,7 @@
 (defvar wl-message-buffer-cur-summary-buffer nil)
 (defvar wl-message-buffer-original-buffer nil) ; original buffer.
 (defvar wl-message-buffer-all-header-flag nil)
+(defvar wl-message-buffer-mode-line-formatter nil)
 
 (make-variable-buffer-local 'wl-message-buffer-cur-folder)
 (make-variable-buffer-local 'wl-message-buffer-cur-number)
@@ -68,6 +69,7 @@
 (make-variable-buffer-local 'wl-message-buffer-cur-summary-buffer)
 (make-variable-buffer-local 'wl-message-buffer-original-buffer)
 (make-variable-buffer-local 'wl-message-buffer-all-header-flag)
+(make-variable-buffer-local 'wl-message-buffer-mode-line-formatter)
 
 (defvar wl-fixed-window-configuration nil)
 
@@ -432,12 +434,12 @@ Returns non-nil if bottom of message."
     (setq wl-message-buffer-cur-summary-buffer summary-buf)
     (setq wl-message-buffer-cur-folder (elmo-folder-name-internal folder))
     (setq wl-message-buffer-cur-number number)
+    (wl-line-formatter-setup
+     wl-message-buffer-mode-line-formatter
+     wl-message-mode-line-format
+     wl-message-mode-line-format-spec-alist)
     (setq mode-line-buffer-identification
-	  (format "Wanderlust: << %s / %s >>"
-		  (if (memq 'modeline wl-use-folder-petname)
-		      (wl-folder-get-petname (elmo-folder-name-internal
-					      folder))
-		    (elmo-folder-name-internal folder)) number))
+	  (funcall wl-message-buffer-mode-line-formatter))
     ;; highlight body
 ;    (when wl-highlight-body-too
 ;      (wl-highlight-body))

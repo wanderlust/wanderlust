@@ -1396,6 +1396,27 @@ which appear just before @."
   :type 'boolean
   :group 'wl-pref)
 
+(defvar wl-message-mode-line-format-spec-alist
+  '((?f (if (memq 'modeline wl-use-folder-petname)
+	    (wl-folder-get-petname wl-message-buffer-cur-folder)
+	  wl-message-buffer-cur-folder))
+    (?n wl-message-buffer-cur-number))
+  "An alist of format specifications for message buffer's mode-lines.
+Each element is a list of following:
+\(SPEC STRING-EXP\)
+SPEC is a character for format specification.
+STRING-EXP is an expression to get string to insert.")
+
+(defcustom wl-message-mode-line-format "Wanderlust: << %f / %n >>"
+  "*A format string for message buffer's mode-line of Wanderlust.
+It may include any of the following format specifications
+which are replaced by the given information:
+
+%f The folder name.
+%n The number of the message."
+  :group 'wl-pref
+  :type 'string)
+
 (defcustom wl-message-truncate-lines default-truncate-lines
   "*Truncate lines in Message Buffer."
   :type 'boolean

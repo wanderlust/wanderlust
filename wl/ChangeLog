@@ -1,3 +1,10 @@
+2002-09-04  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-message-mode-line-format): New variable.
+	(wl-message-mode-line-format-spec-alist): Ditto.
+	* wl-message.el (wl-message-buffer-mode-line-formatter): Ditto.
+	(wl-message-redisplay): Use wl-message-mode-line-format.
+
 2002-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-mime.el (wl-draft-preview-message): Bind wl-draft-parent-folder.
