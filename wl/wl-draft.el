@@ -1923,7 +1923,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (delete-other-windows)
 	   (switch-to-buffer buffer))
 	  (t (if (functionp wl-draft-buffer-style)
-		 (funcall wl-draft-buffer-style buf-name)
+		 (funcall wl-draft-buffer-style buffer)
 	       (error "Invalid value for wl-draft-buffer-style")))))
       (set-buffer buffer)
       (setq wl-draft-parent-folder "")
