@@ -342,7 +342,9 @@ the `wl-smtp-features' variable."
 		    (setq addr (eword-extract-address-components addr))
 		    (cons (nth 1 addr)
 			  (if (nth 0 addr)
-			      (concat (nth 0 addr) " <" (nth 1 addr) ">")
+			      (concat
+			       (wl-address-quote-specials (nth 0 addr))
+			       " <" (nth 1 addr) ">")
 			    (nth 1 addr))))
 		 (append to cc)))))
     (and subject wl-reply-subject-prefix
@@ -965,8 +967,8 @@ non-nil."
 		 elmo-default-pop3-server)
 	     (or wl-pop-before-smtp-port
 		 elmo-default-pop3-port)
-	     (or wl-pop-before-smtp-ssl
-		 elmo-default-pop3-ssl)))
+	     (or wl-pop-before-smtp-stream-type
+		 elmo-default-pop3-stream-type)))
     (error))
   (wl-draft-send-mail-with-smtp))
 
@@ -1411,8 +1413,8 @@ If optional argument is non-nil, current draft buffer is killed"
 	 (or wl-nntp-posting-server elmo-default-nntp-server))
 	(elmo-default-nntp-port
 	 (or wl-nntp-posting-port elmo-default-nntp-port))
-	(elmo-default-nntp-ssl
-	 (or wl-nntp-posting-ssl elmo-default-nntp-ssl)))
+	(elmo-default-nntp-stream-type
+	 (or wl-nntp-posting-stream-type elmo-default-nntp-stream-type)))
     (if (not (elmo-plugged-p elmo-default-nntp-server elmo-default-nntp-port))
  	(wl-draft-set-sent-message 'news 'unplugged
  				   (cons elmo-default-nntp-server

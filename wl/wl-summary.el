@@ -5039,31 +5039,32 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive)
   (let* ((msgid (elmo-string (or id (read-from-minibuffer "Message-ID: "))))
  	 newsgroups folder ret
-	 user server port ssl spec)
+	 user server port type spec)
     (if server-spec
 	(if (string-match "^-" server-spec)
 	    (setq spec (elmo-nntp-get-spec server-spec)
 		  user (nth 2 spec)
 		  server (nth 3 spec)
 		  port (nth 4 spec)
-		  ssl (nth 5 spec))
+		  type (nth 5 spec))
 	  (setq server server-spec)))
     (when (setq ret (elmo-nntp-get-newsgroup-by-msgid
 		     msgid
 		     (or server elmo-default-nntp-server)
 		     (or user elmo-default-nntp-user)
 		     (or port elmo-default-nntp-port)
-		     (or ssl elmo-default-nntp-ssl)))
+		     (or type elmo-default-nntp-stream-type)))
       (setq newsgroups (wl-parse-newsgroups ret))
       (setq folder (concat "-" (car newsgroups)
-			   (elmo-nntp-folder-postfix user server port ssl)))
+			   (elmo-nntp-folder-postfix user server port type)))
       (catch 'found
 	(while newsgroups
 	  (if (wl-folder-entity-exists-p (car newsgroups)
 					 wl-folder-newsgroups-hashtb)
 	      (throw 'found
 		     (setq folder (concat "-" (car newsgroups)
-					  (elmo-nntp-folder-postfix user server port ssl)))))
+					  (elmo-nntp-folder-postfix
+					   user server port type)))))
 	  (setq newsgroups (cdr newsgroups)))))
     (if ret
 	(wl-summary-jump-to-msg-internal folder nil 'update msgid)

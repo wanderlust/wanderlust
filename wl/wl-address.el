@@ -276,6 +276,12 @@ Matched address lists are append to CL."
 	(completing-read "To: " cl)
       (read-string "To: "))))
 
+(defun wl-address-quote-specials (word)
+  "Make quoted string of WORD if needed."
+  (if (assq 'specials (std11-lexical-analyze word))
+      (prin1-to-string word)
+    word))
+
 (defun wl-address-make-completion-list (address-list)
   (let (addr-tuple cl)
     (while address-list
@@ -283,7 +289,9 @@ Matched address lists are append to CL."
       (setq cl
 	     (cons
 	      (cons (nth 0 addr-tuple)
-		    (concat (nth 2 addr-tuple) " <"(nth 0 addr-tuple)">"))
+		    (concat
+		     (wl-address-quote-specials
+		      (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))
 	      cl))
       ;; nickname completion.
       (unless (or (equal (nth 1 addr-tuple) (nth 0 addr-tuple))
@@ -292,7 +300,9 @@ Matched address lists are append to CL."
 	(setq cl
 	      (cons
 	       (cons (nth 1 addr-tuple)
-		     (concat (nth 2 addr-tuple) " <"(nth 0 addr-tuple)">"))
+		     (concat 
+		      (wl-address-quote-specials
+		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))
 	       cl)))
       (setq address-list (cdr address-list)))
     cl))

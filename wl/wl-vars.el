@@ -318,9 +318,9 @@ If nil, elmo-default-pop3-port is used."
 		 integer string)
   :group 'wl)
 
-(defcustom wl-pop-before-smtp-ssl nil
-  "*Non-nil forces using SSL by default for POP-before-SMTP.
-If nil, elmo-default-pop3-ssl is used."
+(defcustom wl-pop-before-smtp-stream-type nil
+  "*Stream type for POP-before-SMTP.
+If nil, elmo-default-pop3-stream-type is used."
   :type 'boolean
   :group 'wl)
 
@@ -351,9 +351,9 @@ If nil, elmo-default-nntp-port is used."
   :type '(choice (const :tag "none" nil)
 		 integer string)
   :group 'wl)
-(defcustom wl-nntp-posting-ssl nil
-  "*Non-nil forces using SSL to post news.
-If nil, elmo-default-nntp-ssl is used."
+(defcustom wl-nntp-posting-stream-type nil
+  "*Stream type for posting Netnews.
+If nil, elmo-default-nntp-stream-type is used."
   :type 'boolean
   :group 'wl)
 

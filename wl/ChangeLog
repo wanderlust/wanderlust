@@ -1,3 +1,21 @@
+2000-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id-via-nntp):
+	Follow up changes for stream-type.
+
+	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Ditto.
+	(wl-draft-elmo-nntp-send): Ditto.
+
+	* wl-vars.el (wl-pop-before-smtp-stream-type): New variable.
+	(wl-nntp-posting-stream-type): Ditto.
+	(wl-pop-before-smtp-ssl): Abolished.
+	(wl-nntp-posting-ssl): Ditto.
+
+	* wl-address.el (wl-address-quote-specials): New function.
+	(wl-address-make-completion-list): Use `wl-address-quote-specials'.
+
+	* wl-draft.el (wl-draft-reply): Ditto.
+
 2000-08-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-user-agent-compose): Add (require 'wl) for
