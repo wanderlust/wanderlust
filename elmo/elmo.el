@@ -952,14 +952,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 				  0))
 	      (elmo-folder-set-info-hashtb folder in-db-max nil))
 	  (setq in-db-max cached-in-db-max)))
-      (setq unsync (if (and in-db
-			    (car in-folder))
+      (setq unsync (if (and in-db (car in-folder))
 		       (- (car in-folder) in-db-max)
-		     (if (and in-folder
-			      (null in-db))
+		     (if (and in-folder (null in-db))
 			 (cdr in-folder)
-		       (if (null (car in-folder))
-			   nil))))
+		       (car in-folder))))
       (setq messages (cdr in-folder))
       (if (and unsync messages (> unsync messages))
 	  (setq unsync messages))
@@ -1161,55 +1158,55 @@ FIELD is a symbol of the field."
 						  numbers)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'important))))
+      (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
+			     folder
+			     number
+			     'important))))
 
 (luna-define-method elmo-folder-mark-as-important ((folder elmo-folder)
 						   numbers)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'important))))
+      (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
+			   folder
+			   number
+			   'important))))
 
 (luna-define-method elmo-folder-unmark-read ((folder elmo-folder)
 					     numbers
 					     &optional ignore-flags)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'read))))
+      (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
+			     folder
+			     number
+			     'read))))
 
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-folder)
 					      numbers
 					      &optional ignore-flag)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'read))))
+      (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
+			   folder
+			   number
+			   'read))))
 
 (luna-define-method elmo-folder-unmark-answered ((folder elmo-folder) numbers)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-unset-status (elmo-folder-msgdb folder)
-			       folder
-			       number
-			       'answered))))
+      (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
+			     folder
+			     number
+			     'answered))))
 
 (luna-define-method elmo-folder-mark-as-answered ((folder elmo-folder) numbers)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
-      (elmo-msgdb-set-status (elmo-folder-msgdb folder)
-			     folder
-			     number
-			     'answered))))
+      (elmo-msgdb-set-flag (elmo-folder-msgdb folder)
+			   folder
+			   number
+			   'answered))))
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-folder)
 						   &optional
@@ -1354,7 +1351,7 @@ FIELD is a symbol of the field."
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
-read mark status. If IGNORE-MSGDB is 'visible-only, only visible messages
+flag status. If IGNORE-MSGDB is 'visible-only, only visible messages
 \(the messages which are not in the killed-list\) are thrown away and
 synchronized.
 If NO-CHECK is non-nil, rechecking folder is skipped.
