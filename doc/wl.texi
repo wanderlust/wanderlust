@@ -3632,6 +3632,30 @@ cached.
 @vindex elmo-pop3-use-cache
 The initial setting is @code{t}.  If non-nil, messages read via POP3 are
 cached.
+
+@item wl-folder-process-duplicates-alist
+@vindex wl-folder-process-duplicates-alist
+The initial setting is @code{nil}.
+This list determines how to deal with duplicated messages in the same folder.
+Each item in the list is regexp of folder name and action; you can specify any
+one of the following in the place of action:
+
+@example
+@code{nil} : do nothing for duplicated messages.
+@code{hide} : hide duplicated messages from the summary.
+@code{read} : set duplicated messages as read.
+@end example
+
+@noindent
+Following is an example (hide duplicated messages in multi folders)
+
+@lisp
+@group
+(setq wl-folder-process-duplicates-alist
+                 '(("^\\+draft$" . nil) ("^\\+trash$" . nil)
+                   ("^\\*.*" . hide) (".*" . read)))
+@end group
+@end lisp
 @end table
 
 
