@@ -4052,14 +4052,6 @@ moves to the previous message.
 Scrolls the message forward.  When the bottom of the message is hit,
 moves to the next message.
 (@code{wl-message-wheel-up})
-
-@item D
-@kindex D (Message)
-@findex wl-message-delete-current-part
-Delete the part under cursor. In fact it appends modified message to
-the current folder then moves old one to trash folder. Therefore the
-message number will be changed.
-(@code{wl-message-delete-current-part})
 @end table
 
 @section Customizable Variables
@@ -4465,10 +4457,7 @@ http://www.iecc.com/pop-before-smtp.html
 @item C-c C-y
 @kindex C-c C-y (Draft)
 @findex wl-draft-yank-original
-Cites the content of the current message buffer (the part under cursor).
-If the region is active, cites the region (it affects only if
-@code{transient-mark-mode} (on GNU Emacs) or @code{zmacs-regions}
-(on XEmacs) is Non-nil).
+Cites the content of the current message buffer.
 (@code{wl-draft-yank-original})
 
 @item C-c C-p

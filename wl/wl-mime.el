@@ -51,11 +51,7 @@
 
 (defun wl-draft-yank-current-message-entity ()
   "Yank currently displayed message entity.
-By setting following-method as yank-content.
-
-If region is active, yank region contents instead. \(this feature is available
-if and only if `transient-mark-mode' \(GNU Emacs\) or `zmacs-regions' \(XEmacs\)
-has Non-nil value\)"
+By setting following-method as yank-content."
   (let ((wl-draft-buffer (current-buffer))
 	(mime-view-following-method-alist
 	 (list (cons 'wl-original-message-mode
@@ -65,84 +61,10 @@ has Non-nil value\)"
 		     (function wl-draft-yank-to-draft-buffer)))))
     (if (get-buffer (wl-current-message-buffer))
 	(save-excursion
-	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction
+	    (set-buffer (wl-current-message-buffer))
 	    (widen)
-	      (if (or (and wl-on-xemacs
-			   zmacs-regions zmacs-region-active-p)
-		      (and transient-mark-mode mark-active))
-		  (wl-mime-preview-follow-current-region)
-		(mime-preview-follow-current-entity)))))))
-
-;; modified mime-preview-follow-current-entity from mime-view.el
-(defun wl-mime-preview-follow-current-region ()
-  "Write follow message to current region.
-It calls following-method selected from variable
-`mime-preview-following-method-alist'."
-  (interactive)
-  (let ((r-beg (region-beginning))
-	(r-end (region-end))
-	(entity (get-text-property (point-min)
-				   'mime-view-entity)))
-    (let* ((mode (mime-preview-original-major-mode 'recursive))
-	   (new-name
-	    (format "%s-active-region" (buffer-name)))
-	   new-buf
-	   (the-buf (current-buffer))
-	   fields)
-      (save-excursion
-	(set-buffer (setq new-buf (get-buffer-create new-name)))
-	(erase-buffer)
-	(insert ?\n)
-	(insert-buffer-substring the-buf r-beg r-end)
-	(goto-char (point-min))
-	(let ((current-entity
-	       (if (and (eq (mime-entity-media-type entity) 'message)
-			(eq (mime-entity-media-subtype entity) 'rfc822))
-		   (car (mime-entity-children entity))
-		 entity)))
-	  (while (and current-entity
-		      (if (and (eq (mime-entity-media-type
-				    current-entity) 'message)
-			       (eq (mime-entity-media-subtype
-				    current-entity) 'rfc822))
-			  nil
-			(mime-insert-header current-entity fields)
-			t))
-	    (setq fields (std11-collect-field-names)
-		  current-entity (mime-entity-parent current-entity))
-	    ))
-	(let ((rest mime-view-following-required-fields-list)
-	      field-name ret)
-	  (while rest
-	    (setq field-name (car rest))
-	    (or (std11-field-body field-name)
-		(progn
-		  (save-excursion
-		    (set-buffer the-buf)
-		    (let ((entity (when mime-mother-buffer
-				    (set-buffer mime-mother-buffer)
-				    (get-text-property (point)
-						       'mime-view-entity))))
-		      (while (and entity
-				  (null (setq ret (mime-entity-fetch-field
-						   entity field-name))))
-			(setq entity (mime-entity-parent entity)))))
-		  (if ret
-		      (insert (concat field-name ": " ret "\n"))
-		    )))
-	    (setq rest (cdr rest))
-	    ))
-	)
-      (let ((f (cdr (assq mode mime-preview-following-method-alist))))
-	(if (functionp f)
-	    (funcall f new-buf)
-	  (message
-	   (format
-	    "Sorry, following method for %s is not implemented yet."
-	    mode))
-	  ))
-      )))
+	    (mime-preview-follow-current-entity))))))
 
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
@@ -254,49 +176,47 @@ It calls following-method selected from variable
 (defun wl-message-delete-current-part ()
   "Delete a part under the cursor from the multipart message."
   (interactive)
-  (save-restriction
-    (widen)
-    (let* ((entity (get-text-property (point) 'mime-view-entity))
-	   (node-id (mime-entity-node-id entity))
-	   (header-start (mime-buffer-entity-header-start-internal entity))
-	   (body-end (mime-buffer-entity-body-end-internal entity))
-	   (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
-	   (number wl-message-buffer-cur-number)
-	   (msgid (elmo-message-field folder number 'message-id))
-	   (orig-buf wl-message-buffer-original-buffer))
-      (if (eq (luna-class-name entity) 'mime-elmo-imap-entity)
-	  (error "Please fetch the entire message (by typing 'C-u .') and try again"))
-      (with-current-buffer orig-buf
-	(unless (string-equal
-		 (buffer-string)
-		 (elmo-message-fetch folder number
-				     (elmo-make-fetch-strategy 'entire)))
-	  (error "Buffer content differs from actual message")))
-      (when (and (elmo-folder-writable-p folder)
-		 (buffer-live-p orig-buf)
-		 node-id
-		 (yes-or-no-p
-		  (format "Do you really want to delete part %s? "
-			  (wl-mime-node-id-to-string node-id))))
-	(with-temp-buffer
-	  (insert-buffer orig-buf)
-	  (kill-region header-start body-end)
-	  (goto-char header-start)
-	  (insert "Content-Type: text/plain; charset=US-ASCII\n\n")
-	  (insert "** This part has been removed by Wanderlust **\n\n")
-	  (elmo-folder-append-buffer folder t))
+  (let* ((entity (get-text-property (point) 'mime-view-entity))
+	 (node-id (mime-entity-node-id entity))
+	 (header-start (mime-buffer-entity-header-start-internal entity))
+	 (body-end (mime-buffer-entity-body-end-internal entity))
+	 (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
+	 (number wl-message-buffer-cur-number)
+	 (msgid (elmo-message-field folder number 'message-id))
+	 (orig-buf wl-message-buffer-original-buffer))
+    (if (eq (luna-class-name entity) 'mime-elmo-imap-entity)
+	(error "Please fetch the entire message (by typing 'C-u .') and try again"))
+    (with-current-buffer orig-buf
+      (unless (string-equal
+	       (buffer-string)
+	       (elmo-message-fetch folder number
+				   (elmo-make-fetch-strategy 'entire)))
+	(error "Buffer content differs from actual message")))
+    (when (and (elmo-folder-writable-p folder)
+	       (buffer-live-p orig-buf)
+	       node-id
+	       (yes-or-no-p
+		(format "Do you really want to delete part %s? "
+			(wl-mime-node-id-to-string node-id))))
+      (with-temp-buffer
+	(insert-buffer orig-buf)
+	(kill-region header-start body-end)
+	(goto-char header-start)
+	(insert "Content-Type: text/plain; charset=US-ASCII\n\n")
+	(insert "** This part has been removed by Wanderlust **\n\n")
+	(elmo-folder-append-buffer folder t))
 
-	(elmo-folder-append-messages
-	 (wl-folder-get-elmo-folder wl-trash-folder)
-	 folder (list number) nil)
-	(elmo-folder-delete-messages folder (list number))
+      (elmo-folder-append-messages
+       (wl-folder-get-elmo-folder wl-trash-folder)
+       folder (list number) nil)
+      (elmo-folder-delete-messages folder (list number))
 
-	(when (file-exists-p (elmo-cache-get-path msgid))
-	  (delete-file (elmo-cache-get-path msgid)))
+      (when (file-exists-p (elmo-cache-get-path msgid))
+	(delete-file (elmo-cache-get-path msgid)))
 
-	(mime-preview-quit)
-	(wl-summary-toggle-disp-msg 'off)
-	(wl-summary-sync nil "update")))))
+      (mime-preview-quit)
+      (wl-summary-toggle-disp-msg 'off)
+      (wl-summary-sync nil "update"))))
 
 ;;; Summary
 (defun wl-summary-burst-subr (message-entity target number)

@@ -528,7 +528,6 @@
 
 (defun wl-message-define-keymap ()
   (let ((keymap (make-sparse-keymap)))
-    (define-key keymap "D" 'wl-message-delete-current-part)
     (define-key keymap "l" 'wl-message-toggle-disp-summary)
     (define-key keymap [mouse-4] 'wl-message-wheel-down)
     (define-key keymap [mouse-5] 'wl-message-wheel-up)

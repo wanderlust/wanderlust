@@ -4021,14 +4021,6 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B%a%C%;!<%8$r>e$K%9%/%m!<%k$7$^$9!#%a%C%;!<%8$N@hF,$^$GE~C#$9$k$H!"(B
 $BA0$N%a%C%;!<%8$K0\F0$7$^$9!#(B
 (@code{wl-message-wheel-up})
-
-@item D
-@kindex D (Message)
-@findex wl-message-delete-current-part
-$B%+!<%=%k0LCV$N%Q!<%H$r:o=|$7$^$9!#<B:]$K$O!"JQ99$7$?%a%C%;!<%8$r(B
-$B:#5o$k%U%)%k%@$KDI2C$7$F$+$i!"8E$$%a%C%;!<%8$r%4%_H"$K0\F0$9$k$N$G!"(B
-$B%a%C%;!<%8HV9f$OJQ2=$7$^$9!#(B
-(@code{wl-message-delete-current-part})
 @end table
 
 @section $B%+%9%?%^%$%:JQ?t(B
@@ -4423,10 +4415,7 @@ http://www.iecc.com/pop-before-smtp.html
 @item C-c C-y
 @kindex C-c C-y (Draft)
 @findex wl-draft-yank-original
-$B8=:_I=<(Cf$N%a%C%;!<%8%P%C%U%!(B($B%+!<%=%k0LCV$N%Q!<%H(B)$B$NFbMF$r0zMQ$7$^$9!#(B
-$B%j!<%8%g%s$,M-8z$J>l9g$K$O!"%j!<%8%g%s$r0zMQ$7$^$9(B
-(@code{transient-mark-mode} (GNU Emacs $B$N>l9g(B) $B$+(B @code{zmacs-regions}
-(XEmacs $B$N>l9g(B) $B$,(B Non-nil $B$N;~$N$_(B)$B!#(B
+$B8=:_I=<(Cf$N%a%C%;!<%8%P%C%U%!$NFbMF$r0zMQ$7$^$9!#(B
 (@code{wl-draft-yank-original})
 
 @item C-c C-p
