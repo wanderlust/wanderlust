@@ -1,20 +1,3 @@
-2001-09-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* WL-MK (toplevel): Ignore Nemacs.
-	(compile-wl-package, wl-detect-info-directory): Ditto.
-
-	* WL-MK (config-wl-package-subr): Fixed error message.  Ignore tm.
-	Add refer to INSTALL and INSTALL.ja.
-	* WL-ELS (toplevel): Likewise.
-
-	* WL-MK (test-wl, check-wl): Add docstring.
-
-2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* INSTALL.ja (Sample configration file): Added comment
-	~/.addresses was optional.
-	* INSTALL: Ditto.
-
 2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* WL-MK (test-wl): Renamed from check-wl.

@@ -40,11 +40,6 @@
 
 (defconst wl-demo-icon-name (concat "wl-" (wl-version-status) "-logo"))
 
-(eval-and-compile
-  (if wl-on-emacs21
-      ;; `display-images-p' has not been available prior to Emacs 21.0.105.
-      (defalias-maybe 'display-images-p 'display-graphic-p)))
-
 ;; Avoid byte compile warnings.
 (eval-when-compile
   (defalias-maybe 'bitmap-compose 'ignore)
@@ -53,7 +48,7 @@
   (defalias-maybe 'bitmap-read-xbm-file 'ignore)
   (defalias-maybe 'create-image 'ignore)
   (defalias-maybe 'device-on-window-system-p 'ignore)
-  (defalias-maybe 'display-images-p 'ignore)
+  (defalias-maybe 'display-graphic-p 'ignore)
   (defalias-maybe 'frame-char-height 'ignore)
   (defalias-maybe 'frame-char-width 'ignore)
   (defalias-maybe 'frame-parameter 'ignore)
@@ -72,8 +67,7 @@
 ;; demo ;-)
 ;;
 
-(defvar wl-logo-ascii "\
-        o$                  oo$$$$$$ooo
+(defvar wl-logo-ascii "        o$                  oo$$$$$$ooo
      oo$$$      o$$      o$$$\"\"\"\"\"\"$$$$$o
   $$$$$$\"     o$$$\"    o$\"\"          \"$$$
     $$\"      o$\"\"    o$\"              $$$
@@ -235,14 +229,14 @@ any conversions and evaluate FORMS there like `progn'."
 			       (featurep 'xpm)
 			       (device-on-window-system-p))
 			  (and wl-on-emacs21
-			       (display-images-p)
+			       (display-graphic-p)
 			       (image-type-available-p 'xpm))))
 		 '(("xpm" . xpm)))
 	     (if (and (get 'wl-logo-xbm 'width)
 		      (or (and (featurep 'xemacs)
 			       (device-on-window-system-p))
 			  (and wl-on-emacs21
-			       (display-images-p)
+			       (display-graphic-p)
 			       (image-type-available-p 'xbm))))
 		 '(("xbm" . xbm)))
 	     (if (and (get 'wl-logo-bitmap 'width)
@@ -303,7 +297,7 @@ Optional IMAGE-TYPE overrides the variable `wl-demo-display-logo'."
 					 2 (window-pixel-width))))
 	      (set-extent-end-glyph (make-extent (point) (point)) image))
 	     ((and wl-on-emacs21
-		   (display-images-p)
+		   (display-graphic-p)
 		   (not (eq 'wl-logo-bitmap image-type)))
 	      (if (eq 'wl-logo-xbm image-type)
 		  (let ((bg (face-background 'wl-highlight-logo-face))
