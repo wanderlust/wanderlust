@@ -5897,6 +5897,12 @@ POP3 $B;2>H;~$K=hM}$,%O%s%0$9$k$h$&$J>l9g$O!"(Bt$B$K$9$k$H$$$$$+$b$7$l$^$;$s!
 @vindex elmo-dop-flush-confirm
 $B=i4|@_Dj$O!"(Bt$B!#(B
 Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
+
+@item elmo-display-progress-threshold
+@vindex elmo-display-progress-threshold
+$B=i4|@_Dj$O!"(B20$B!#(B
+$B?JD=I=<((B(progress gauge)$B$rI=<($9$k$7$-$$CM!#$3$NCM$h$j$b99?7?t$,Bg$-$$>l(B
+$B9g$O?JD=I=<($7$^$9!#(B
 @end table
 
 

@@ -5,8 +5,8 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-04-03 14:30:38 teranisi>
-@set version 1.1.0
+@set Time-stamp: <00/04/26 17:31:25 teranisi>
+@set version 1.1.1
 @synindex pg cp
 @finalout
 
@@ -393,7 +393,6 @@ such as "elmo" then add following to @file{WL-CFG}:
 @end lisp
 
 @noindent
-
 @subsection Install as a XEmacs package
 @cindex XEmacs package
 @cindex XEmacs package install
@@ -478,7 +477,8 @@ because you can't write them in @file{.emacs}
 (if you write it to @file{.emacs}, you'll get an error).
 @xref{Highlights}.
 
-All above described settings except (load "mime-setup") can be written in
+All above described settings except (load "mime-setup") and autoload
+configuration can be written in
 @file{~/.wl}).
 
 @subsection mail-user-agent
@@ -541,7 +541,6 @@ bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
 @end example
 
 @noindent
-
 One line defines one persons description.
 
 Actually, in default setup, "nickname" is used in summary-mode and "real name"
@@ -632,7 +631,6 @@ M-x wl
 @end example
 
 @noindent
-
 After initialization, Folder Mode which shows the list of folders will appear.
 That means the folders you defined in the @file{~/.folders} are listed
 If you start Wanderlust with prefix argument like @kbd{C-u M-x wl}, you
@@ -1013,8 +1011,6 @@ Of course, following is possible @t{:-)}
 @end lisp
 
 @noindent
-
-
 @node Archive Vars,  , Archive Tips, Archive Folder
 @subsection Variables About Archive Folder
 @cindex Archive variables
@@ -1369,7 +1365,6 @@ FOLDER-NAME:NEW-NUMBER/UNREAD-NUMBER/ALL-NUMBER
 @end example
 
 @noindent
-
 @kbd{s} key on the folder line updates these numbers.
 It changes its color if it has many new messages.
 
@@ -2172,7 +2167,6 @@ For example, the following line indicates one thread (a context of a topic).
 @end example
 
 @noindent
-
 If you type @kbd{/} on this line, the thread is opened and it changes
 the appearance like following.
 
@@ -2201,7 +2195,6 @@ M-x elmo-cache-expire-by-size
 @end example
 
 @noindent
-
 The command deletes cache files to the specified size by the order of
 last accessed time.
 
@@ -2240,8 +2233,11 @@ A list of regexp of folders to enable message prefetching.
 @end table
 
 @subsection Auto Refile
+@vindex elmo-msgdb-extra-fields
+@vindex wl-refile-rule-alist
+@findex wl-summary-auto-refile
 
-You refile messages automatically, by typing @kbd{C-o}
+You can refile messages automatically, by typing @kbd{C-o}
 (@code{wl-summary-auto-refile}). It decides destination of refile by
 the content of the message header information (information in the msgdb).
 
@@ -2252,34 +2248,63 @@ set the variable @code{elmo-msgdb-extra-fields} like following.
 @lisp
 (setq elmo-msgdb-extra-fields
       '("x-ml-name"
-      "reply-to"
-      "sender"
-      "mailing-list"
-      "newsgroups"))
+        "reply-to"
+        "sender"
+        "mailing-list"
+        "newsgroups"))
 @end lisp
 
 @noindent
-
 By this setting, Wanderlust saves extra fields in the msgdb.  You have
 to type @kbd{s all} to get extra fields for the messages that are
 already exists in the summary.
 
-Then, specify the refile rule in the @code{wl-refile-rule-alist} like
-following.
+Then, specify the refile rule.  The refile target folder of auto
+refiling is decided by the value of @code{wl-refile-rule-alist}.
+@code{wl-refile-rule-alist} is a list of a rule:
+
+@example
+        (FIELD (REGEXP . TARGET)
+               (REGEXP . TARGET)
+               @dots{})
+@end example
+
+Each rule means `if FIELD value matches REGEXP, then refile to TARGET folder'.
+The rule matched first is applied.
+
+FIELD is a string of field name.  You can specify a list of field name
+string, too. In this case, if one of these fields is matched, then the
+rule is fired (i.e. OR condition).
+
+REGEXP is a regular expression for field value.  TARGET is a target
+folder string. You can specify a rule at TARGET part, too.  In this
+case, If the field value of the rule and the current rule is matched,
+then the current rule is fired (i.e. AND condition).
+
+In TARGET part, you can refer matched substring of REGEXP.
+To refer substring, specify following in TARGET:
+
+@example
+\&            means substitute original matched text.
+\N (number)   means substitute what matched the Nth `\(...\)'.
+@end example
+
+Following is an example of @code{wl-refile-rule-alist}.
 
 @lisp
 (setq wl-refile-rule-alist
-      '(
-        ("x-ml-name"
+      '(("x-ml-name"
          ("^Wanderlust" . "+wl")
          ("^Elisp" . "+elisp"))
+        (("To" "Cc")
+         ("\\([a-z]+\\)@@gohome.org" . "+\\1"))
         ("From"
-         ("teranisi@@isl.ntt.co.jp" . "+teranisi"))))
+         ("me@@gohome.org" . ("To" ("you@@gohome.org" . 
+                                    "+from-me-to-you"))))))
 @end lisp
 
-After these setting, refile marks are automatically put on the condition
+After these settings, refile marks are automatically put on the condition
 matched messages by typing @kbd{C-o} (@code{wl-summary-auto-refile}).
-The rule matched first is applied.
 
 Messages which have @code{wl-summary-auto-refile-skip-marks} is skipped
 auto refiling. 
@@ -2459,12 +2484,20 @@ Save the message at current cursor point.
 @kindex n (Summary)
 @findex wl-summary-next
 Move cursor to the next message.
+If message is marked with a temporal mark in 
+@code{wl-summary-skip-mark-list}, cursor is not moved to it.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
 (@code{wl-summary-next})
 
 @item p
 @kindex p (Summary)
 @findex wl-summary-prev
 Move cursor to the previous message.
+If message is marked with a temporal mark in 
+@code{wl-summary-skip-mark-list}, cursor is not moved to it.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
 (@code{wl-summary-prev})
 
 @item N
@@ -2616,6 +2649,9 @@ You can sort by date, from, number and subject.
 @kindex T (Summary)
 @findex wl-summary-toggle-thread
 Toggle the threading.
+Threading status is displayed on the modeline.
+@{S@} means threading is off (Sequence) and 
+@{T@} means threading is on (Thread).
 (@code{wl-summary-toggle-thread})
 
 @item l
@@ -3469,7 +3505,6 @@ As shown in the example in @code{wl-draft-config-alist}, you can select
 @end example
 
 @noindent
-
 @subsection Sending mail by POP-before-SMTP
 @cindex POP-before-SMTP
 
@@ -3921,6 +3956,9 @@ and on-line.
 You can invoke Wanderlust in the off-line state by setting
 @code{wl-plugged} to nil in @file{~/.wl} or anything appropriate.
 
+In the off-line mode, @kbd{n} and @kbd{p} command in the summary mode
+ignores uncached messages.
+
 Even in the off-line state, provided that relevant messages are cached,
 and the variable @code{elmo-enable-disconnected-operation} (described
 later) is non-nil, you can:
@@ -4218,7 +4256,6 @@ Items in the list has the format of:
 @end example
 
 @noindent
-
 The folder is examined if it matches "regexp_for_folders" from the
 beginning of the list.  If you invoke expiration on the folder that does
 not match any of them, nothing will happen.
@@ -4961,7 +4998,7 @@ If nil, they are not deleted.
 
 @item wl-summary-score-marks
 @vindex wl-summary-score-marks
-The initial setting is '("N" "!" "U").
+The initial setting is '("N").
 Messages with these marks are scored.
 
 @item wl-use-scoring
@@ -5904,6 +5941,12 @@ looking up POP3.
 The initial setting is t.
 If non-nil, you are asked for confirmation if accumulated off-line
 operations are executed.
+
+@item elmo-display-progress-threshold
+@vindex elmo-display-progress-threshold
+The initial settin is 20。
+Threshold for display progress gauge.  If number of renewal is more than
+this value, display progress gauge.
 @end table
 
 
