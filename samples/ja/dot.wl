@@ -91,6 +91,7 @@
 ;(setq wl-draft-use-frame t)
 
 ;; HTML パートを表示しない
+;; (require 'mime-setup) より先に記述する必要があります。
 ;(setq mime-setup-enable-inline-html nil)
 
 ;; 大きいメッセージを送信時に分割しない
@@ -162,10 +163,10 @@
 ;; サマリ表示において使用する情報を持つフィールドをoverview情報に
 ;; 入れる設定(ただし，localフォルダのみ)
 ;; 自動リファイルに必要なフィールドも設定
-(setq elmo-msgdb-extra-fields '("newsgroups"
-				"x-ml-name" "list-id"
-				"x-mail-count" "x-ml-count" "x-sequence"
-				"mailing-list"))
+(setq elmo-msgdb-extra-fields
+      '("newsgroups"
+	"list-id" "x-ml-name" "mailing-list"
+	"x-mail-count" "x-ml-count" "x-sequence"))
 
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する
@@ -187,7 +188,7 @@
 			    (cadr (split-string sequence " ")))))
     (if (string-match
 ;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-         "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
 	  (setq subj (substring subject-string (match-end 0)))
@@ -225,12 +226,12 @@
       '(("default"
 	 ("From" . wl-from)
 	 ("Organization" . "~/.wl sample")
-	 (body . "  ○○です。\n"))		;; 本文
+	 (body . "  ○○です。\n"))	; 本文
 	("report"
 	 ("To" . "boss@example.com")
 	 ("Subject" . "報告")
-	 (top . "今週の報告です。\n")		;; 本文先頭への挿入
-;;	 (bottom-file . "~/work/report.txt")	;; 本文末尾へファイルの挿入
+	 (top . "今週の報告です。\n")	; 本文先頭への挿入
+;;	 (bottom-file . "~/work/report.txt") ; 本文末尾へファイルの挿入
 	 )
 	))
 
@@ -239,11 +240,11 @@
 (setq wl-draft-config-alist
       '((reply			;; 返信元のバッファを見る
 	 "^To: .*\\(test-notsend-wl@lists.airs.net\\)"
-	 (template . "default"))		;; テンプレート
+	 (template . "default"))	; テンプレート
 	("^To: .*\\(test-notsend-wl@lists.airs.net\\)"
-	 wl-ml-draft-config-func		;; 関数
-	 ("From" . wl-from)			;; 変数
-	 ("Organization" . "~/.wl sample"))	;; 文字列
+	 wl-ml-draft-config-func	; 関数
+	 ("From" . wl-from)		; 変数
+	 ("Organization" . "~/.wl sample")) ; 文字列
 	("^Newsgroups: test.*"
 	 ("Organization" . "ニュース投稿時の組織名"))
 	))
@@ -297,22 +298,22 @@
 	       'x-face-xmas-wl-display-x-face))
 	;; for Mule (GNU Emacs)
 	((module-installed-p 'x-face-mule)
-	 ;; x-face-mule 0.20以後
+	 ;; x-face-mule 0.20以降
 	 (setq wl-highlight-x-face-func
 	       (function
 		(lambda (&rest dummy)
 		  (x-face-decode-message-header))))
-	 (require 'x-face-mule)
-	 )))
+	 (require 'x-face-mule))
+	))
 
 ;; 自動リファイルのルール設定
 ;(setq wl-refile-rule-alist
 ;      '(
-;     	("x-ml-name"
-;     	 ("^Wanderlust" . "+wl")
-;     	 ("^Elisp" . "+elisp"))
-;     	("From"
-;     	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
+;	("x-ml-name"
+;	 ("^Wanderlust" . "+wl")
+;	 ("^Elisp" . "+elisp"))
+;	("From"
+;	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
 
 ;; 自動リファイルしない永続マークを設定
 ;; 標準では "N" "U" "!" になっており、未読メッセージを自動リファイルし
