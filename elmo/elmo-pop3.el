@@ -273,15 +273,7 @@
 	 client name step response
 	 sasl-read-passphrase)
     (unless mechanism
-      (if (or elmo-pop3-force-login
-	      (y-or-n-p
-	       (format
-		"There's no %s capability in server. continue?"
-		(elmo-list-to-string
-		   (elmo-network-session-auth-internal session)))))
-	    (setq mechanism (sasl-find-mechanism
-			     sasl-mechanisms))
-	  (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms))))
+      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms))))
       (setq client
 	    (sasl-make-client
 	     mechanism

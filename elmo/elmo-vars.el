@@ -180,7 +180,6 @@ For disconnected operations.")
 (defvar elmo-auto-change-plugged 600
   "*Time to expire change plugged state automatically, as the number of seconds.
 Don't change plugged state automatically if nil.")
-
 (defvar elmo-plugged-condition 'one
   "*The condition for `elmo-plugged' becomes on.
 If `all', when all ports are on.  If `one', when even one port is on.
