@@ -549,7 +549,7 @@ Reply to author if WITH-ARG is non-nil."
 	(tmp-buf (get-buffer-create " *wl-draft-edit-string*"))
 	to subject in-reply-to cc references newsgroups mail-followup-to
 	content-type content-transfer-encoding from
-	body-beg buffer-read-only)
+	body-beg)
     (set-buffer tmp-buf)
     (erase-buffer)
     (insert string)
@@ -607,7 +607,6 @@ Reply to author if WITH-ARG is non-nil."
       (and to (mail-position-on-field "To"))
       (delete-other-windows)
       (kill-buffer tmp-buf)))
-  (setq buffer-read-only nil) ;;??
   (run-hooks 'wl-draft-reedit-hook))
 
 (defun wl-draft-insert-current-message (dummy)
