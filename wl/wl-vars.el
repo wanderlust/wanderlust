@@ -860,9 +860,10 @@ Default is for 'followup-to-me'."
   :type 'file
   :group 'wl)
 
-(defcustom wl-ldap-server "localhost"
+(defcustom wl-ldap-server nil
   "*LDAP server."
-  :type '(string :tag "Server")
+  :type '(choice (const :tag "Default server(localhost)" nil)
+		 (string :tag "Server"))
   :group 'wl
   :group 'wl-setting)
 
@@ -873,15 +874,10 @@ Default is for 'followup-to-me'."
   :group 'wl
   :group 'wl-setting)
 
-(defcustom wl-ldap-base "c=US"
+(defcustom wl-ldap-base nil
   "*LDAP base."
-  :type '(string :tag "Base")
-  :group 'wl
-  :group 'wl-setting)
-
-(defcustom wl-ldap-objectclass "person"
-  "*LDAP objectclass."
-  :type 'string
+  :type '(choice (const :tag "Default base" nil)
+		 (string :tag "Base"))
   :group 'wl
   :group 'wl-setting)
 

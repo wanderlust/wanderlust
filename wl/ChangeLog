@@ -1,3 +1,18 @@
+2002-09-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-ldap-objectclass): Abolish.
+
+	* wl-address.el (wl-ldap-search-attribute-type-list): Added 'email'.
+	(wl-ldap-make-filter): Removed condition for objectclass.
+	(wl-ldap-make-matched-value-list): Remove meaningless process.
+	(wl-ldap-alias-safe-string): Changed regexp for space/tab matching.
+	(wl-address-ldap-search): Don't add `*' to `pat' string;
+	use ignore-errors; added `email';
+	use `ldap-default-host' if non-nil and `wl-ldap-server'is nil;
+	use `ldap-default-port' if non-nil and `wl-ldap-port' is nil;
+	use `ldap-default-base' if non-nil and `wl-ldap-base' is nil.
+
+
 2002-09-02  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-parent-folder): Write description.
