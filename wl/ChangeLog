@@ -1,7 +1,7 @@
 2003-06-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-print-destination): Keep position.
-	(wl-summary-cursor-move-surface): Keep horisontal position.
+	(wl-summary-cursor-move-surface): Keep horizontal position.
 
 2003-05-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
