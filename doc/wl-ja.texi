@@ -4869,8 +4869,9 @@ SMTP AUTH による認証を行なうときの認証方式です。
 @vindex wl-smtp-connection-type
 初期設定は @code{nil}。
 SMTP のコネクションをどのように張るかを指定します。
-@code{nil} なら @code{smtp-connection-type} を利用します。
+@code{nil} ならデフォルトの接続型式を利用します。
 @code{starttls} なら STARTTLS (RFC2595)を利用してコネクションを張ります。
+@code{ssl} なら SSL を利用します。
 
 @item wl-nntp-posting-server
 @vindex wl-nntp-posting-server
