@@ -690,7 +690,7 @@ Return number if put mark succeed"
       (setq wl-message-buffer nil))
     (set-buffer-modified-p nil)
     (when (> failures 0)
-      (format "%d execution(s) were failed" failures))))
+      (message "%d execution(s) were failed" failures))))
 
 (defun wl-summary-exec-region (beg end)
   (interactive "r")

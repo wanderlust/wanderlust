@@ -634,9 +634,10 @@ TYPE specifies the archiver's symbol."
 	   (elmo-folder-message-file-p src-folder)
 	   (elmo-folder-message-file-number-p src-folder))
       ;; same-number(localdir, localnews) -> archive
-      (elmo-archive-append-files folder
-				 (elmo-folder-message-file-directory src-folder)
-				 numbers)
+      (unless (elmo-archive-append-files folder
+					 (elmo-folder-message-file-directory src-folder)
+					 numbers)
+	(setq numbers nil))
       (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
       numbers)
      ((elmo-folder-message-make-temp-file-p src-folder)
@@ -671,7 +672,8 @@ TYPE specifies the archiver's symbol."
 	(if (elmo-archive-append-files folder
 				       base-dir
 				       files)
-	    (elmo-delete-directory temp-dir)))
+	    (elmo-delete-directory temp-dir)
+	  (setq numbers nil)))
       (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
       numbers)
      (t (luna-call-next-method)))))

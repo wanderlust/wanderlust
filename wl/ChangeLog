@@ -1,3 +1,7 @@
+2004-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-action.el (wl-summary-exec): Print failure count.
+
 2004-07-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-redisplay-internal): Change `defsubst'
