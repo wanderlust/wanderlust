@@ -19,6 +19,18 @@
 	Set wl-draft-parent-number.
 	(wl-draft-kill): Delete answered mark if it is a reply.
 
+2002-10-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-mime-preview-follow-current-region): New function
+	that originates in mime-preview-follow-current-entity.
+	(wl-draft-yank-current-message-entity): Use it if region is active.
+
+	* wl-mime.el (wl-message-delete-current-part): Remove restriction.
+	* wl-e21.el (wl-message-define-keymap): Bind "D" for
+	`wl-message-delete-current-part'.
+	* wl-mule.el (wl-message-define-keymap): Ditto.
+	* wl-xmas.el (wl-message-define-keymap): Ditto.
+
 2002-10-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-mime.el (wl-message-delete-current-part): New function.
