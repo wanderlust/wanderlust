@@ -1,3 +1,7 @@
+2003-11-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-summary-burst): Check target folder is writable.
+
 2003-11-14  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-folder.el (wl-folder-update-unread): Re-indent.

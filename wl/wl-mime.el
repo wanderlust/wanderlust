@@ -505,15 +505,23 @@ With ARG, ask destination folder."
   (interactive "P")
   (let ((raw-buf (wl-summary-get-original-buffer))
 	(view-buf wl-message-buffer)
-	children message-entity content-type target-name target)
+	message-entity target)
     (save-excursion
-      (setq target wl-summary-buffer-elmo-folder)
-      (when (or arg (not (elmo-folder-writable-p target)))
-	(setq target-name (wl-summary-read-folder wl-default-folder "to extract to"))
-	(setq target (wl-folder-get-elmo-folder target-name)))
+      (when (and (null arg)
+		 (elmo-folder-writable-p wl-summary-buffer-elmo-folder))
+	(setq target wl-summary-buffer-elmo-folder))
+      (while (null target)
+	(let ((name (wl-summary-read-folder wl-default-folder
+					    "to extract to")))
+	  (setq target (wl-folder-get-elmo-folder name))
+	  (unless (elmo-folder-writable-p target)
+	    (message "%s is not writable" name)
+	    (setq target nil)
+	    (sit-for 1))))
       (wl-summary-set-message-buffer-or-redisplay)
       (with-current-buffer view-buf
-	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
+	(setq message-entity
+	      (get-text-property (point-min) 'mime-view-entity)))
       (when message-entity
 	(message "Bursting...")
 	(with-current-buffer raw-buf
@@ -521,8 +529,9 @@ With ARG, ask destination folder."
 	(message "Bursting...done"))
       (if (elmo-folder-plugged-p target)
 	  (elmo-folder-check target)))
-    (when (or (not target-name)
-	      (string= wl-summary-buffer-folder-name target-name))
+    (when (and target
+	       (string= wl-summary-buffer-folder-name
+			(elmo-folder-name-internal target)))
       (save-excursion (wl-summary-sync-update)))))
 
 ;; internal variable.
