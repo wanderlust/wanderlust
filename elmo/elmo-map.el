@@ -300,19 +300,21 @@
    (elmo-map-message-location folder number)
    strategy section unread))
 
-(luna-define-method elmo-folder-list-unreads ((folder elmo-map-folder))
+(luna-define-method elmo-folder-list-unreads :around ((folder elmo-map-folder))
   (let ((locations (elmo-map-folder-list-unreads folder)))
     (if (listp locations)
 	(elmo-map-folder-locations-to-numbers folder locations)
       (luna-call-next-method))))
 
-(luna-define-method elmo-folder-list-importants ((folder elmo-map-folder))
+(luna-define-method elmo-folder-list-importants :around ((folder
+							  elmo-map-folder))
   (let ((locations (elmo-map-folder-list-importants folder)))
     (if (listp locations)
 	(elmo-map-folder-locations-to-numbers folder locations)
       (luna-call-next-method))))
 
-(luna-define-method elmo-folder-list-answereds ((folder elmo-map-folder))
+(luna-define-method elmo-folder-list-answereds :around ((folder
+							 elmo-map-folder))
   (let ((locations (elmo-map-folder-list-answereds folder)))
     (if (listp locations)
 	(elmo-map-folder-locations-to-numbers folder locations)

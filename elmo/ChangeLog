@@ -2,7 +2,9 @@
 
 	* elmo-map.el (elmo-map-folder-list-unreads): Define default behavior.
 	(elmo-map-folder-list-answereds): New method.
-	(elmo-folder-list-unreads): Fix.
+	(elmo-folder-list-unreads): Add :around qualifier.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
 
 2002-09-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
