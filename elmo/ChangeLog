@@ -1,5 +1,7 @@
 2000-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo2.el (elmo-multi-folder-diff): Fixed problem of filter folder.
+
 	* elmo-imap4.el (elmo-imap4-authenticator-alist): Added `plain' entry.
 	(elmo-imap4-send-command): Use `elmo-imap4-current-response' instead
 	of `response'.

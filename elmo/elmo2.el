@@ -774,7 +774,8 @@ without cacheing."
       (setq count (+ 1 count))
       (setq flds (cdr flds)))
     (while diffs
-      (setq unsync (+ unsync (car (car diffs))))
+      (and (car (car diffs))
+	   (setq unsync (+ unsync (car (car diffs)))))
       (setq nomif  (+ nomif (cdr (car diffs))))
       (setq diffs (cdr diffs)))
     (elmo-folder-set-info-hashtb fld nil nomif)
