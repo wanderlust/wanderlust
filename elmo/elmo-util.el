@@ -32,6 +32,8 @@
 (eval-when-compile (require 'cl))
 (require 'elmo-vars)
 (require 'elmo-date)
+(require 'mcharset)
+(require 'pces)
 (require 'std11)
 (require 'eword-decode)
 (require 'utf7)
@@ -1326,33 +1328,51 @@ NUMBER-SET is altered."
   :type 'regexp
   :group 'elmo)
 
-(defun elmo-list-subdirectories (directory file one-level)
-  (let ((root (zerop (length file)))
+(defun elmo-list-subdirectories-1 (basedir curdir one-level)
+  (let ((root (zerop (length curdir)))
 	(w32-get-true-file-link-count t) ; for Meadow
-	files attr dirs dir)
-    (setq files (directory-files (setq dir (expand-file-name file directory))))
-    (while files
-      (if (and (not (string-match elmo-list-subdirectories-ignore-regexp
-				  (car files)))
-	       (car (setq attr (file-attributes (expand-file-name 
-						 (car files) dir)))))
-	  (if (and (not one-level)
-		   (and elmo-have-link-count (< 2 (nth 1 attr))))
-	      (setq dirs
-		    (nconc dirs
-			   (elmo-list-subdirectories
-			    directory
-			    (concat file
-				    (and (not root) elmo-path-sep)
-				    (car files))
-			    one-level)))
+	attr dirs dir)
+    (catch 'done
+      (dolist (file (directory-files (setq dir (expand-file-name curdir basedir))))
+	(when (and (not (string-match
+			 elmo-list-subdirectories-ignore-regexp
+			 file))
+		   (car (setq attr (file-attributes
+				    (expand-file-name file dir)))))
+	  (when (eq one-level 'check) (throw 'done t))
+	  (let ((relpath
+		 (concat curdir (and (not root) elmo-path-sep) file))
+		subdirs)
 	    (setq dirs (nconc dirs
-			      (list
-			       (concat file
-				       (and (not root) elmo-path-sep)
-				       (car files)))))))
-      (setq files (cdr files)))
-    (nconc (and (not root) (list file)) dirs)))
+			      (if (if elmo-have-link-count (< 2 (nth 1 attr))
+				    (setq subdirs
+					  (elmo-list-subdirectories-1
+					   basedir
+					   relpath
+					   (if one-level 'check))))
+				  (if one-level
+				      (list (list relpath))
+				    (cons relpath
+					  (or subdirs
+					      (elmo-list-subdirectories-1
+					       basedir
+					       relpath
+					       nil))))
+				(list relpath)))))))
+      dirs)))
+
+(defun elmo-list-subdirectories (directory file one-level)
+  (let ((subdirs (elmo-list-subdirectories-1 directory file one-level)))
+    (if (zerop (length file))
+	subdirs
+      (cons file subdirs))))
+
+(defun elmo-mapcar-list-of-list (func list-of-list)
+  (mapcar
+   (lambda (x)
+     (cond ((listp x) (elmo-mapcar-list-of-list func x))
+	   (t (funcall func x))))
+   list-of-list))
 
 (defun elmo-parse (string regexp &optional matchn)
   (or matchn (setq matchn 1))

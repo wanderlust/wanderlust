@@ -278,6 +278,14 @@
 	(messages 0)
 	num-list
 	diffs)
+    ;; If first time, dummy numbers is used as current number list.
+    (unless numbers
+      (let ((i 0)
+	    (divider (elmo-multi-folder-divide-number-internal folder)))
+	(dolist (folder flds)
+	  (setq i (+ i 1))
+	  (setq numbers
+		(cons (* i divider) numbers)))))
     (setq num-list
 	  (elmo-multi-split-numbers folder
 				    (elmo-uniq-list
