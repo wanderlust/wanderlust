@@ -834,7 +834,9 @@ This function is imported from Emacs 20.7."
   (if (eq (elmo-folder-type-internal folder) 'pop3)
       (unless (elmo-pop3-get-session folder 'if-exists)
 	(wl-folder-check-one-entity (elmo-folder-name-internal folder)
-				    'biff))))
+				    'biff))
+    (wl-folder-check-one-entity (elmo-folder-name-internal folder)
+				'biff)))
 
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
@@ -863,8 +865,7 @@ This function is imported from Emacs 20.7."
 		(list (elmo-folder-name-internal folder)
 		      (get-buffer wl-folder-buffer-name)
 		      notify-minibuf))
-	  (let ((elmo-network-session-name-prefix "BIFF-"))
-	    (elmo-folder-diff-async folder)))
+	  (elmo-folder-diff-async folder))
       (unwind-protect
 	  (wl-biff-notify (car (wl-biff-check-folder folder))
 			  notify-minibuf)

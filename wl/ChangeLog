@@ -1,3 +1,8 @@
+2001-12-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder): Fix for non-pop3 folders.
+	(wl-biff-check-folder-async): Removed needless let.
+
 2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-biff-check-folders): Set `no-cache' argument of
