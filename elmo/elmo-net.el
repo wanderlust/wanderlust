@@ -324,7 +324,7 @@ Returns a process object.  if making session failed, returns nil."
 (luna-define-method elmo-folder-status-unplugged
   ((folder elmo-net-folder))
   (if elmo-enable-disconnected-operation
-      (elmo-folder-status-dop folder)
+      () ; XXX FIXME. (elmo-folder-status-dop folder) 
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-list-messages-internal
@@ -340,22 +340,12 @@ Returns a process object.  if making session failed, returns nil."
   ((folder elmo-net-folder))
   t)
 
+;; XXX
 ;; Should consider offline append and removal.
-(luna-define-method elmo-folder-list-messages-unplugged ((folder
-							  elmo-net-folder))
+(luna-define-method elmo-folder-list-messages-unplugged
+  ((folder elmo-net-folder))
   (if elmo-enable-disconnected-operation
-      (let ((deleting (elmo-dop-list-deleting-messages folder)))
-	(nconc
-	 ;; delete deleting messages
-	 (elmo-delete-if
-	  (lambda (number) (memq number deleting))
-	  ;; current number-list.
-	  (mapcar
-	   'car
-	   (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder))))
-	 ;; append appending messages
-	 (mapcar (lambda (x) (* -1 x))
-		 (elmo-dop-spool-folder-list-messages folder))))
+      t 
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-list-unreads-internal
@@ -385,42 +375,6 @@ Returns a process object.  if making session failed, returns nil."
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-delete-messages-plugged numbers)
     (elmo-folder-send folder 'elmo-folder-delete-messages-unplugged numbers)))
-
-(luna-define-method elmo-folder-delete-messages-unplugged ((folder
-							    elmo-net-folder)
-							   numbers)
-  (elmo-folder-delete-messages-dop folder numbers))
-
-(luna-define-method elmo-folder-msgdb-create ((folder elmo-net-folder)
-					      numbers new-mark
-					      already-mark seen-mark
-					      important-mark seen-list)
-  (if (elmo-folder-plugged-p folder)
-      (elmo-folder-send folder 'elmo-folder-msgdb-create-plugged
-			numbers
-			new-mark
-			already-mark seen-mark
-			important-mark seen-list)
-    (elmo-folder-send folder 'elmo-folder-msgdb-create-unplugged
-		      numbers
-		      new-mark already-mark seen-mark
-		      important-mark seen-list)))
-
-(luna-define-method elmo-folder-msgdb-create-unplugged ((folder 
-							 elmo-net-folder)
-							numbers
-							new-mark already-mark
-							seen-mark
-							important-mark 
-							seen-list)
-  ;; XXXX should be appended to already existing msgdb.
-  (elmo-dop-msgdb
-   (elmo-folder-msgdb-create (elmo-dop-spool-folder folder)
-			     (mapcar 'abs numbers)
-			     new-mark already-mark
-			     seen-mark
-			     important-mark 
-			     seen-list)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-net-folder)
 						  numbers)
@@ -459,33 +413,6 @@ Returns a process object.  if making session failed, returns nil."
 	 folder 'elmo-folder-mark-as-read-unplugged numbers))
     t))
 
-(luna-define-method elmo-folder-mark-as-read-unplugged ((folder
-							 elmo-net-folder) 
-							numbers)
-  (elmo-folder-mark-as-read-dop folder numbers))
-
-(luna-define-method elmo-folder-unmark-read-unplugged ((folder elmo-net-folder)
-						     numbers)
-  (elmo-folder-unmark-read-dop folder numbers))
-
-(luna-define-method elmo-folder-mark-as-important-unplugged ((folder
-							      elmo-net-folder) 
-							     numbers)
-  (elmo-folder-mark-as-important-dop folder numbers))
-
-(luna-define-method elmo-folder-unmark-important-unplugged ((folder
-							     elmo-net-folder)
-							    numbers)
-  (elmo-folder-unmark-important-dop folder numbers))
-
-(luna-define-method elmo-message-encache :around ((folder elmo-net-folder)
-						  number)
-  (if (elmo-folder-plugged-p folder)
-      (luna-call-next-method)
-    (if elmo-enable-disconnected-operation
-	(elmo-message-encache-dop folder number)
-      (error "Unplugged"))))
-
 (luna-define-generic elmo-message-fetch-plugged (folder number strategy
 							&optional
 							section
@@ -513,12 +440,7 @@ Returns a process object.  if making session failed, returns nil."
 
 (luna-define-method elmo-message-fetch-unplugged
   ((folder elmo-net-folder) number strategy  &optional section outbuf unseen)
-  (if (and elmo-enable-disconnected-operation
-	   (< number 0))
-      (elmo-message-fetch-internal
-       (elmo-dop-spool-folder folder) (abs number) strategy
-       section unseen)
-    (error "Unplugged")))
+  (error "Unplugged"))
 
 (luna-define-method elmo-folder-check ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)
