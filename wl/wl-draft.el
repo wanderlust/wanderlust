@@ -1237,21 +1237,47 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
       (setq locals (cdr locals)))
     result))
 
+(defcustom wl-draft-send-confirm-with-preview t
+  "Non-nil to invoke preview through confirmation of sending.
+This variable is valid when `wl-interactive-send' has non-nil value."
+  :type 'boolean
+  :group 'wl-draft)
+
 (defun wl-draft-send-confirm ()
-  (let (result answer)
-    (save-excursion
-      (goto-char (point-min)) ; to show recipients in header
-      (message "Send current draft? <y/n/p(review)> ")
-      (setq answer (let ((cursor-in-echo-area t)) (read-char))))
-    (cond
-     ((or (eq answer (string-to-char "y"))
-	  (eq answer (string-to-char "Y"))
-	  (eq answer (string-to-char " ")))
-      (setq result t))
-     ((or (eq answer (string-to-char "p"))
-	  (eq answer (string-to-char "P")))
-      (wl-draft-preview-message)))
-    result))
+  (let (answer)
+    (unwind-protect
+	(condition-case quit
+	    (progn
+	      (when wl-draft-send-confirm-with-preview
+		(wl-draft-preview-message))
+	      (save-excursion
+		(goto-char (point-min)) ; to show recipients in header
+		(catch 'done
+		  (while t
+		    (message "Send current draft? <y/n> ")
+		    (setq answer (let ((cursor-in-echo-area t)) (read-char)))
+		    (cond
+		     ((or (eq answer ?y)
+			  (eq answer ?Y)
+			  (eq answer ? ))
+		  (throw 'done t))
+		     ((or (eq answer ?v)
+			  (eq answer ?j)
+			  (eq answer ?J))
+		      (condition-case err
+			  (scroll-up)
+			(error nil)))
+		     ((or (eq answer ?^)
+			  (eq answer ?k)
+			  (eq answer ?K))
+		      (condition-case err
+			  (scroll-down)
+			(error nil)))
+		     (t
+		      (throw 'done nil)))))))
+	  (quit nil))
+      (when wl-draft-send-confirm-with-preview
+	(mime-preview-quit)))))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.

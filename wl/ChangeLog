@@ -1,3 +1,10 @@
+2003-02-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-send-confirm): Rewritten. Invoke preview
+	when `wl-draft-send-confirm-with-preview' is non-nil.
+	You can scroll up/down by j/k.
+	(wl-draft-send-confirm-with-preview): New variable (default=t).
+
 2003-02-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-fldmgr.el (wl-fldmgr-folders-header): Add more comment.
