@@ -153,10 +153,11 @@
     (defvar bbdb-get-addresses-headers
       (append bbdb-get-addresses-from-headers bbdb-get-addresses-to-headers)))
 
-(defun bbdb-wl-get-addresses (&optional only-first-address)
+(defun bbdb-wl-get-addresses-1 (&optional only-first-address)
   "Return real name and email address of sender respectively recipients.
 If an address matches `bbdb-user-mail-names' it will be ignored.
-The headers to search can be configured by `bbdb-get-addresses-headers'."
+The headers to search can be configured by `bbdb-get-addresses-headers'.
+For BBDB 2.33 or earlier."
   (save-excursion
     (save-restriction
       (std11-narrow-to-header)
@@ -179,19 +180,76 @@ The headers to search can be configured by `bbdb-get-addresses-headers'."
 			       (decode-mime-charset-string
 				fn wl-mime-charset))))
 		    ad (std11-address-string structure))
-
 	      ;; ignore uninteresting addresses, this is kinda gross!
 	      (when (or (not (stringp uninteresting-senders))
-			(not (or
-			      (and fn (string-match uninteresting-senders fn))
-			      (and ad (string-match uninteresting-senders ad)))))
+			(not 
+			 (or
+			  (and fn (string-match uninteresting-senders fn))
+			  (and ad (string-match uninteresting-senders ad)))))
 		(add-to-list 'addrlist (list fn ad)))
-
 	      (if (and only-first-address addrlist)
 		  (setq structures nil headers nil)
 		(setq structures (cdr structures)))))
 	  (setq headers (cdr headers)))
 	(nreverse addrlist)))))
+
+(defun bbdb-wl-get-addresses-2 (&optional only-first-address)
+  "Return real name and email address of sender respectively recipients.
+If an address matches `bbdb-user-mail-names' it will be ignored.
+The headers to search can be configured by `bbdb-get-addresses-headers'.
+For BBDB 2.34 or later."
+  (save-excursion
+    (save-restriction
+      (std11-narrow-to-header)
+      (let ((headers bbdb-get-addresses-headers)
+	    (uninteresting-senders bbdb-user-mail-names)
+	    addrlist header structures structure fn ad
+	    header-type header-fields)
+	(while headers
+	  (setq header-type (caar headers)
+		header-fields (cdar headers))
+	  (while header-fields
+	    (setq header-content (std11-fetch-field (car header-fields)))
+	    (when header-content
+	      (setq structures (std11-parse-addresses-string
+				(std11-unfold-string header-content)))
+	      (while (and (setq structure (car structures))
+			  (eq (car structure) 'mailbox))
+		(setq fn (std11-full-name-string structure)
+		      fn (and fn
+			      (with-temp-buffer ; to keep raw buffer unibyte.
+				(elmo-set-buffer-multibyte
+				 default-enable-multibyte-characters)
+				(eword-decode-string
+				 (decode-mime-charset-string
+				  fn wl-mime-charset))))
+		      ad (std11-address-string structure))
+		
+		;; ignore uninteresting addresses, this is kinda gross!
+		(when (or (not (stringp uninteresting-senders))
+			  (not 
+			   (or
+			    (and fn
+				 (string-match uninteresting-senders fn))
+			    (and ad
+				 (string-match uninteresting-senders ad)))))
+		  (add-to-list 'addrlist (list header-type
+					       (car header-fields)
+					       (list fn ad))))
+		(if (and only-first-address addrlist)
+		    (setq structures nil headers nil)
+		  (setq structures (cdr structures)))))
+	    (setq header-fields (cdr header-fields)))
+	  (setq headers (cdr headers)))
+	(nreverse addrlist)))))
+
+(defun bbdb-wl-get-addresses (&optional only-first-address)
+  "Return real name and email address of sender respectively recipients.
+If an address matches `bbdb-user-mail-names' it will be ignored.
+The headers to search can be configured by `bbdb-get-addresses-headers'."
+  (if (string< bbdb-version "2.34")
+      (bbdb-wl-get-addresses-1)
+    (bbdb-wl-get-addresses-2)))
 
 (defun bbdb-wl-update-record (&optional offer-to-create)
   "Returns the record corresponding to the current WL message,
@@ -304,10 +362,23 @@ This buffer will be in `bbdb-mode', with associated keybindings."
 	 (select-window bbdb-win))
     records))
 
+(defun bbdb-wl-address-headers-spec (address-class)
+  "Return address headers structure for ADDRESS-CLASS."
+  (if (string< bbdb-version "2.34")
+      (cond
+       ((eq address-class 'recipients)
+	bbdb-get-addresses-to-headers)
+       ((eq address-class 'authors)
+	bbdb-get-addresses-from-headers)
+       (t
+	(append bbdb-get-addresses-to-headers
+		bbdb-get-addresses-from-headers)))
+    (list (assoc address-class bbdb-get-addresses-headers))))
+
 (defun bbdb-wl-show-all-recipients ()
   "Show all recipients of this message. Counterpart to `bbdb/vm-show-sender'."
   (interactive)
-  (bbdb-wl-show-records  bbdb-get-addresses-to-headers))
+  (bbdb-wl-show-records (bbdb-wl-address-headers-spec 'recipients)))
 
 (defun bbdb-wl-show-sender (&optional show-recipients)
   "Display the contents of the BBDB for the senders of this message.
@@ -320,7 +391,8 @@ This buffer will be in `bbdb-mode', with associated keybindings."
 	((= 16 show-recipients)
 	 (bbdb-wl-show-records))
 	(t
-	 (if (null (bbdb-wl-show-records bbdb-get-addresses-from-headers))
+	 (if (null (bbdb-wl-show-records
+		    (bbdb-wl-address-headers-spec 'authors)))
 	     (bbdb-wl-show-all-recipients)))))
 
 (defun bbdb-wl-pop-up-bbdb-buffer (&optional offer-to-create)
