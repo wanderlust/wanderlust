@@ -42,7 +42,7 @@
 Automatically loaded/saved.")
 
 (defun elmo-dop-queue-append (folder function argument)
-  (let ((operation (list (elmo-string folder) function argument)))
+  (let ((operation (list (format "%s" folder) function argument)))
     (elmo-dop-queue-load)
     (unless (member operation elmo-dop-queue) ;; don't append same operation
       (setq elmo-dop-queue
@@ -241,25 +241,6 @@ even an operation concerns the unplugged folder."
       (setq numbers (cdr numbers)))
     (cons appended deleting-msgids)))
 
-(defun elmo-dop-list-deleted (folder number-alist)
-  "List message numbers to be deleted on FOLDER from NUMBER-ALIST."
-  (elmo-dop-queue-load)
-  (let ((queue elmo-dop-queue)
- 	numbers matches nalist)
-    (while queue
-      (if (and (string= (nth 0 (car queue)) folder)
-	       (string= (nth 1 (car queue)) "delete-msgids"))
-	  (setq numbers
-		(nconc numbers
-		       (delq nil (mapcar
-				  (lambda (x)
-				    (mapcar 'car
-					    (elmo-string-rassoc-all
-					     x number-alist)))
-				  (nth 2 (car queue)))))))
-      (setq queue (cdr queue)))
-    (elmo-uniq-list (elmo-flatten numbers))))
-
 (defun elmo-dop-delete-msgs (folder msgs msgdb)
   (save-match-data
     (let ((folder-numbers (elmo-make-folder-numbers-list folder msgs))
@@ -306,8 +287,6 @@ even an operation concerns the unplugged folder."
 		 alreadies
 		 max-num
 		 (i 0))
-	    (setq killed (nconc (elmo-dop-list-deleted folder number-alist)
-				killed))
 	    (while append-list
 	      (if (rassoc (car append-list) number-alist)
 		  (setq alreadies (append alreadies
@@ -353,7 +332,7 @@ even an operation concerns the unplugged folder."
   (if (eq (elmo-folder-get-type folder) 'imap4)
       (if elmo-enable-disconnected-operation
 	  (let* ((number-alist (elmo-msgdb-number-load
-				(elmo-msgdb-expand-path folder)))
+				       (elmo-msgdb-expand-path folder)))
 		 (number-list (mapcar 'car number-alist))
 		 (append-list (elmo-dop-append-list-load folder))
 		 (append-num (length append-list))

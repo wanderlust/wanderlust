@@ -4706,30 +4706,31 @@ If ARG, exit virtual folder."
 	      (run-hooks 'wl-summary-toggle-disp-folder-message-resumed-hook)
 	      (select-window (get-buffer-window cur-buf)))
 	    )
-	;; hide message window
-	(let ((mes-win (get-buffer-window view-message-buffer))
-	      (wl-stay-folder-window t))
-	  (if mes-win (delete-window mes-win))
-	  (select-window (get-buffer-window cur-buf))
-	  ;; display wl-folder window!!
-	  (if (setq fld-buf (get-buffer wl-folder-buffer-name))
-	      (if (setq fld-win (get-buffer-window fld-buf))
-		  ;; folder win is already displayed.
-		  (select-window fld-win)
-		;; folder win is not displayed...occupy all.
-		(switch-to-buffer fld-buf))
-	    ;; no folder buf
-	    (wl-folder))
-	  (split-window-horizontally wl-folder-window-width)
-	  (other-window 1)
-	  (switch-to-buffer cur-buf)
-	  ;; resume message window.
-	  (run-hooks 'wl-summary-toggle-disp-folder-on-hook)
-	  (when mes-win
-	    (wl-select-buffer view-message-buffer)
-	    (run-hooks 'wl-summary-toggle-disp-folder-message-resumed-hook)
-	    (select-window (get-buffer-window cur-buf))))
-	))))
+	(save-excursion
+	  ;; hide message window
+	  (let ((mes-win (get-buffer-window view-message-buffer))
+		(wl-stay-folder-window t))
+	    (if mes-win (delete-window mes-win))
+	    (select-window (get-buffer-window cur-buf))
+	    ;; display wl-folder window!!
+	    (if (setq fld-buf (get-buffer wl-folder-buffer-name))
+		(if (setq fld-win (get-buffer-window fld-buf))
+		    ;; folder win is already displayed.
+		    (select-window fld-win)
+		  ;; folder win is not displayed...occupy all.
+		  (switch-to-buffer fld-buf))
+	      ;; no folder buf
+	      (wl-folder))
+	    (split-window-horizontally wl-folder-window-width)
+	    (other-window 1)
+	    (switch-to-buffer cur-buf)
+	    ;; resume message window.
+	    (run-hooks 'wl-summary-toggle-disp-folder-on-hook)
+	    (when mes-win
+	      (wl-select-buffer view-message-buffer)
+	      (run-hooks 'wl-summary-toggle-disp-folder-message-resumed-hook)
+	      (select-window (get-buffer-window cur-buf))))
+	  )))))
   (run-hooks 'wl-summary-toggle-disp-folder-hook))
 
 (defun wl-summary-toggle-disp-msg (&optional arg)

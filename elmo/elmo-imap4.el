@@ -636,24 +636,23 @@ BUFFER must be a single-byte buffer."
     (when (elmo-imap4-spec-mailbox spec)
       (when (setq msgs (elmo-imap4-list-folder spec))
 	(elmo-imap4-delete-msgs spec msgs))
-      (elmo-imap4-send-command-wait session "close")
+      ;; (elmo-imap4-send-command-wait session "close")
       (elmo-imap4-send-command-wait
        session
        (list "delete "
 	     (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec)))))))
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
-  (let ((session (elmo-imap4-get-session old-spec)))
-    (elmo-imap4-send-command-wait session "close")
-    (elmo-imap4-send-command-wait
-     session
-     (list "rename "
-	   (elmo-imap4-mailbox
-	    (elmo-imap4-spec-mailbox old-spec))
-	   " "
-	   (elmo-imap4-mailbox
-	    (elmo-imap4-spec-mailbox new-spec))))))
-  
+;;;(elmo-imap4-send-command-wait session "close")
+  (elmo-imap4-send-command-wait
+   (elmo-imap4-get-session old-spec)
+   (list "rename "
+	 (elmo-imap4-mailbox
+	  (elmo-imap4-spec-mailbox old-spec))
+	 " "
+	 (elmo-imap4-mailbox
+	  (elmo-imap4-spec-mailbox new-spec)))))
+
 (defun elmo-imap4-max-of-folder (spec)
   (let ((session (elmo-imap4-get-session spec))
 	 (killed (and elmo-use-killed-list
