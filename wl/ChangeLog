@@ -3,6 +3,8 @@
 	* wl-folder.el (wl-folder-mode-menu-spec): Add "Write for current
 	folder" entry.
 	* wl-summary.el (wl-summary-mode-menu-spec): Ditto.
+	* wl-e21.el (wl-folder-toolbar): Ditto.
+	* wl-xmas.el (wl-folder-toolbar): Ditto.
 
 2002-03-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 

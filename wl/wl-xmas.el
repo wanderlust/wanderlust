@@ -65,12 +65,12 @@
      wl-folder-prev-entity t "Previous Folder"]
     [wl-folder-check-current-entity
      wl-folder-check-current-entity t "Check Current Folder"]
-;;; [wl-draft
-;;;  wl-draft t "Write a New Message"]
     [wl-folder-sync-current-entity
      wl-folder-sync-current-entity t "Sync Current Folder"]
     [wl-draft
      wl-draft t "Write a New Message"]
+    [wl-write-current-folder
+     wl-folder-write-current-folder t "Write for Current Folder"]
     [wl-folder-empty-trash
      wl-folder-empty-trash t "Empty Trash"]
     [wl-exit
@@ -95,6 +95,8 @@
      wl-summary-mark-as-important t "Mark Current Message as Important"]
     [wl-draft
      wl-draft t "Write a New Message"]
+    [wl-write-current-folder
+     wl-summary-write-current-folder t "Write for Current Folder"]
     [wl-summary-reply
      wl-summary-reply t "Reply to Current Message" ]
     [wl-summary-reply-with-citation
