@@ -4695,31 +4695,33 @@ Return t if message exists."
 	draft-buf)
     (wl-summary-jump-to-msg (car mlist))
     (wl-summary-reply arg t)
-    (goto-char (point-max))
-    (setq start-point (point-marker))
-    (setq draft-buf (current-buffer))
-    (save-window-excursion
-      (while mlist
-	(set-buffer summary-buf)
-	(delete-other-windows)
-	(wl-summary-jump-to-msg (car mlist))
-	(wl-summary-redisplay)
-	(set-buffer draft-buf)
-	(goto-char (point-max))
-	(wl-draft-yank-original)
-	(setq mlist (cdr mlist)))
-      (goto-char start-point)
-      (save-excursion
-	(set-buffer summary-buf)
-	(wl-summary-delete-all-temp-marks)))
-    (run-hooks 'wl-mail-setup-hook)))
+    (save-excursion
+      (goto-char (point-max))
+      (setq start-point (point-marker))
+      (setq draft-buf (current-buffer))
+      (save-window-excursion
+	(while mlist
+	  (set-buffer summary-buf)
+	  (delete-other-windows)
+	  (wl-summary-jump-to-msg (car mlist))
+	  (wl-summary-redisplay)
+	  (set-buffer draft-buf)
+	  (goto-char (point-max))
+	  (wl-draft-yank-original)
+	  (setq mlist (cdr mlist)))
+	(goto-char start-point)
+	(save-excursion
+	  (set-buffer summary-buf)
+	  (wl-summary-delete-all-temp-marks)))
+      (run-hooks 'wl-mail-setup-hook))))
 
 (defun wl-summary-reply-with-citation (&optional arg)
   (interactive "P")
   (when (wl-summary-reply arg t)
-    (goto-char (point-max))
-    (wl-draft-yank-original)
-    (run-hooks 'wl-mail-setup-hook)))
+    (save-excursion
+      (goto-char (point-max))
+      (wl-draft-yank-original)
+      (run-hooks 'wl-mail-setup-hook))))
 
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
   (interactive)
@@ -4924,7 +4926,8 @@ Reply to author if invoked with ARG."
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf)
 	(unless without-setup-hook
-	  (run-hooks 'wl-mail-setup-hook)))
+	  (save-excursion
+	    (run-hooks 'wl-mail-setup-hook))))
       t)))
 
 (defun wl-summary-write ()

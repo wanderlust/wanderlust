@@ -475,8 +475,14 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'References references)
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
-    (setq wl-draft-reply-buffer buf))
-  (run-hooks 'wl-reply-hook))
+    (setq wl-draft-reply-buffer buf)
+    (run-hooks 'wl-reply-hook)
+    (or (and to
+	     (progn (mail-position-on-field "To")
+		    (wl-draft-beginning-of-line)))
+	(and newsgroups
+	     (progn (mail-position-on-field "Newsgroups")
+		    (wl-draft-beginning-of-line))))))
 
 (defun wl-draft-add-references ()
   (wl-draft-add-in-reply-to "References"))
