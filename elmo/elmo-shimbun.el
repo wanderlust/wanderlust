@@ -32,10 +32,93 @@
 (require 'elmo-map)
 (require 'shimbun)
 
+(defcustom elmo-shimbun-check-interval 60
+  "*Check interval for shimbun."
+  :type 'integer
+  :group 'elmo)
+
+;; Internal variable.
+;; A list of elements like:
+;; ("server.group" . [header-list header-hash last-check]).
+(defvar elmo-shimbun-headers-cache nil)
+
 (eval-and-compile
   (luna-define-class elmo-shimbun-folder
 		     (elmo-map-folder) (shimbun headers header-hash group))
   (luna-define-internal-accessors 'elmo-shimbun-folder))
+
+(defsubst elmo-shimbun-headers-cache-header-list (entry)
+  (aref entry 0))
+
+(defsubst elmo-shimbun-headers-cache-set-header-list (entry list)
+  (aset entry 0 list))
+
+(defsubst elmo-shimbun-headers-cache-header-hash (entry)
+  (aref entry 1))
+
+(defsubst elmo-shimbun-headers-cache-set-header-hash (entry hash)
+  (aset entry 1 hash))
+
+(defsubst elmo-shimbun-headers-cache-last-check (entry)
+  (aref entry 2))
+
+(defsubst elmo-shimbun-headers-cache-set-last-check (entry time)
+  (aset entry 2 time))
+
+(defsubst elmo-shimbun-lapse-seconds (time)
+  (let ((now (current-time)))
+    (+ (* (- (car now) (car time)) 65536)
+       (- (nth 1 now) (nth 1 time)))))
+
+(defsubst elmo-shimbun-headers-cache-check-p (cache)
+  (or (null (elmo-shimbun-headers-cache-last-check cache))
+      (and (elmo-shimbun-headers-cache-last-check cache)
+	   (> (elmo-shimbun-lapse-seconds
+	       (elmo-shimbun-headers-cache-last-check cache))
+	      elmo-shimbun-check-interval))))
+
+(defun elmo-shimbun-get-headers (folder)
+  (shimbun-open-group
+   (elmo-shimbun-folder-shimbun-internal folder)
+   (elmo-shimbun-folder-group-internal folder))
+  (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
+	 (key (concat (shimbun-server-internal shimbun)
+		      "." (shimbun-current-group-internal shimbun)))
+	 (elmo-hash-minimum-size 0)
+	 entry headers hash done)
+    (if (setq entry (cdr (assoc key elmo-shimbun-headers-cache)))
+	(unless (elmo-shimbun-headers-cache-check-p entry)
+	  (elmo-shimbun-folder-set-headers-internal
+	   folder
+	   (elmo-shimbun-headers-cache-header-list entry))
+	  (elmo-shimbun-folder-set-header-hash-internal
+	   folder
+	   (elmo-shimbun-headers-cache-header-hash entry))
+	  (elmo-shimbun-headers-cache-header-list entry)
+	  (setq done t)))
+    (unless done
+      (setq headers
+	    (elmo-shimbun-folder-set-headers-internal
+	     folder (shimbun-headers
+		     (elmo-shimbun-folder-shimbun-internal folder))))
+      (setq hash
+	    (elmo-shimbun-folder-set-header-hash-internal
+	     folder
+	     (elmo-make-hash
+	      (length (elmo-shimbun-folder-headers-internal folder)))))
+      ;; Set up header hash.
+      (dolist (header (elmo-shimbun-folder-headers-internal folder))
+	(elmo-set-hash-val
+	 (shimbun-header-id header) header
+	 (elmo-shimbun-folder-header-hash-internal folder)))
+      (if entry
+	  (progn
+	    (elmo-shimbun-headers-cache-set-header-list entry headers)
+	    (elmo-shimbun-headers-cache-set-header-hash entry hash)
+	    (elmo-shimbun-headers-cache-set-last-check entry (current-time)))
+	(setq elmo-shimbun-headers-cache
+	      (cons (cons key (vector headers hash (current-time)))
+		    elmo-shimbun-headers-cache))))))
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-shimbun-folder)
@@ -57,20 +140,7 @@
 (luna-define-method elmo-folder-open-internal :before ((folder
 							elmo-shimbun-folder))
   (when (elmo-folder-plugged-p folder)
-    (shimbun-open-group
-     (elmo-shimbun-folder-shimbun-internal folder)
-     (elmo-shimbun-folder-group-internal folder))
-    (elmo-shimbun-folder-set-headers-internal
-     folder (shimbun-headers
-	     (elmo-shimbun-folder-shimbun-internal folder)))
-    (elmo-shimbun-folder-set-header-hash-internal
-     folder
-     (elmo-make-hash (length (elmo-shimbun-folder-headers-internal folder))))
-    ;; Set up header hash.
-    (dolist (header (elmo-shimbun-folder-headers-internal folder))
-      (elmo-set-hash-val
-       (shimbun-header-id header) header
-       (elmo-shimbun-folder-header-hash-internal folder)))))
+    (elmo-shimbun-get-headers folder)))
 
 (luna-define-method elmo-folder-close-internal :after ((folder
 							elmo-shimbun-folder))
@@ -252,7 +322,10 @@
 (luna-define-method elmo-folder-mark-as-read ((folder elmo-shimbun-folder)
 					      numbers)
   t)
-  
+
+(luna-define-method elmo-quit ((folder elmo-shimbun-folder))
+  (setq elmo-shimbun-headers-cache nil))
+ 
 (require 'product)
 (product-provide (provide 'elmo-shimbun) (require 'elmo-version))
 

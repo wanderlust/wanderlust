@@ -1163,7 +1163,8 @@ interpreted as cited text.)"
 	  (if (and hack-sig (not too-big))
 	      (setq end (funcall wl-highlight-signature-search-function
 				 (- end wl-max-signature-size) end)))
-	  (if hack-sig
+	  (if (and hack-sig
+		   (not (eq end real-end)))
 	      (put-text-property end (point-max)
 				 'face 'wl-highlight-message-signature))
 	  (narrow-to-region start end)
