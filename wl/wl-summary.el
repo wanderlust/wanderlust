@@ -5808,8 +5808,8 @@ Reply to author if invoked with argument."
 	       (ng-list (wl-summary-get-newsgroups)) ;; for multi folder
 	       crosspost-folders)
 	  (when (setq crosspost-folders
-		      (elmo-delete-lists ng-list
-					 (wl-parse-newsgroups newsgroups t)))
+		      (elmo-list-delete ng-list
+					(wl-parse-newsgroups newsgroups t)))
 	    (elmo-crosspost-message-set (cdr (assq number num-db)) ;;message-id
 					crosspost-folders
 					type) ;;not used
