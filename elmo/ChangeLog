@@ -1,3 +1,7 @@
+2000-07-14  Hiroshi Tsutsui <tsutsui@easter.kuee.kyoto-u.ac.jp>
+
+	* elmo-cache.el (elmo-cache-clear-killed): Fixed.
+
 2000-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-append-to-killed-list): New function.
