@@ -206,15 +206,23 @@
 
 (luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder)
 					      &optional numbers)
-  (if (not (and (vectorp (elmo-filter-folder-condition-internal
-			  folder))
-		(string-match "^last$"
-			      (elmo-filter-key
-			       (elmo-filter-folder-condition-internal
-				folder)))))
-      (cons nil (cdr (elmo-folder-diff (elmo-filter-folder-target-internal
-					folder))))
-    (luna-call-next-method)))
+  (let ((condition (elmo-filter-folder-condition-internal folder))
+	diff)
+    (if (vectorp condition)
+	(cond
+	 ((and (string= (elmo-filter-key condition) "mark")
+	       (or (string= (elmo-filter-value condition) "any")
+		   (string= (elmo-filter-value condition) "unread")))
+	  (setq diff (elmo-folder-diff (elmo-filter-folder-target-internal
+					folder)))
+	  (if (consp diff)
+	      (cons (car diff) (car diff))
+	    (cons (car diff) (nth 1 diff))))
+	 ((string-match "^last$" (elmo-filter-key condition))
+	  (cons nil (cdr (elmo-folder-diff (elmo-filter-folder-target-internal
+					    folder)))))
+	 (t (luna-call-next-method)))
+      (luna-call-next-method))))
 
 (luna-define-method elmo-folder-status ((folder elmo-filter-folder))
   (elmo-folder-status
@@ -284,7 +292,6 @@
   (elmo-folder-mark-as-important (elmo-filter-folder-target-internal folder)
 				 numbers)
     (luna-call-next-method))
-
 
 (luna-define-method elmo-folder-unmark-important :around ((folder
 							   elmo-filter-folder)
