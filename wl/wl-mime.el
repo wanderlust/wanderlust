@@ -557,11 +557,9 @@ With ARG, ask destination folder."
 (defun wl-mime-combine-message/partial-pieces (entity situation)
   "Internal method for wl to combine message/partial messages automatically."
   (interactive)
-  (let* ((folder (save-excursion
-		   (set-buffer wl-message-buffer-cur-summary-buffer)
+  (let* ((folder (with-current-buffer wl-message-buffer-cur-summary-buffer
 		   wl-summary-buffer-elmo-folder))
 	 (mime-display-header-hook 'wl-highlight-headers)
-	 (folder wl-message-buffer-cur-folder)
 	 (id (or (cdr (assoc "id" situation)) ""))
 	 (mother (current-buffer))
 	 (summary-buf wl-message-buffer-cur-summary-buffer)
@@ -600,7 +598,7 @@ With ARG, ask destination folder."
 	    (let* ((message
 		    ;; request message at the cursor in Subject buffer.
 		    (wl-message-request-partial
-		     folder
+		     (elmo-folder-name-internal folder)
 		     (elmo-message-entity-number entity)))
 		   (situation (mime-entity-situation message))
 		   (the-id (or (cdr (assoc "id" situation)) "")))

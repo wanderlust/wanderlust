@@ -1,3 +1,8 @@
+2003-12-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-mime-combine-message/partial-pieces): Fixed bug;
+	Removed duplicate local bind `folder'.
+
 2003-11-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el (wl-spam-folder): Renamed from `wl-spam-folder-name'.
