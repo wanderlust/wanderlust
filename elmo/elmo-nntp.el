@@ -432,7 +432,6 @@ Don't cache if nil.")
 	  (erase-buffer)
 	  (insert (nth 3 elmo-nntp-list-folders-cache))
 	  (goto-char (point-min))
-	  (debug)
 	  (or (string= group "")
 	      (and group
 		   (keep-lines (concat "^" (regexp-quote group) "\\."))))

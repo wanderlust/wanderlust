@@ -1,3 +1,8 @@
+2002-04-04  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders-get-cache): Delete
+	debugging code.
+
 2002-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-creatable-p): Changed default value to nil
