@@ -97,13 +97,13 @@
 (defconst wl-on-emacs21 (and (not wl-on-xemacs)
 			     (>= emacs-major-version 21)))
 
+(defconst wl-on-nemacs (fboundp 'nemacs-version))
+
 (defconst wl-on-mule (featurep 'mule))
 
 (defconst wl-on-mule3
   (and wl-on-mule (or wl-on-xemacs
 		      (> emacs-major-version 19))))
-
-(defconst wl-on-nemacs nil) ; backward compatibility.
 
 (eval-when-compile
   (defun-maybe locate-data-directory (a)))
@@ -111,16 +111,19 @@
 (defvar wl-cs-noconv
   (cond (wl-on-mule3 'binary)
         (wl-on-mule  '*noconv*)
+	(wl-on-nemacs 0)
         (t           nil)))
 
 (defvar wl-cs-autoconv
   (cond (wl-on-mule3 'undecided)
         (wl-on-mule  '*autoconv*)
+	(wl-on-nemacs 2) ; junet...
         (t           nil)))
 
 (defvar wl-cs-local
   (cond (wl-on-mule3  'junet)
         (wl-on-mule   '*junet*)
+        (wl-on-nemacs 2)
         (t           nil)))
 
 (defvar wl-cs-cache wl-cs-local)
@@ -783,7 +786,7 @@ This variable is local to the summary buffers."
   :type '(repeat (string :tag "Mark"))
   :group 'wl-score)
 
-(defcustom wl-use-scoring t
+(defcustom wl-use-scoring (not wl-on-nemacs)
   "*If non-nil, enable scoring."
   :type 'boolean
   :group 'wl-pref)
@@ -1278,7 +1281,9 @@ with wl-highlight-folder-many-face."
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-mime-charset 'x-ctext
+(defcustom wl-mime-charset (if wl-on-nemacs
+			       'iso-2022-jp
+			     'x-ctext)
   "*MIME Charset for summary and message."
   :type 'symbol
   :group 'wl-summary
@@ -1674,7 +1679,7 @@ If TYPE is nil, do nothing for duplicated messages."
   :type 'boolean
   :group 'wl-folder)
 
-(defcustom wl-folder-check-async t
+(defcustom wl-folder-check-async (not wl-on-nemacs)
   "*Check the folder asynchronous."
   :type 'boolean
   :group 'wl-folder)

@@ -1,6 +1,15 @@
 ;;;							-*- emacs-lisp -*-
 ;;; Configuration file for installation.
 
+;; load-path setting example for Nemacs with tm.
+;(setq load-path (append
+;		 (list "/usr/local/lib/nemacs/local.lisp/apel"
+;		       "/usr/local/lib/nemacs/local.lisp/flim"
+;		       "/usr/local/lib/nemacs/local.lisp/mu"
+;		       "/usr/local/lib/nemacs/local.lisp/tm"
+;		       "/usr/local/lib/nemacs/local.lisp/")
+;		 load-path))
+
 ;; load-path setting example for Mule with SEMI.
 ;(setq load-path (append
 ;		 (list "/usr/local/share/mule/site-lisp/apel"
