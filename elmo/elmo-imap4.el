@@ -245,7 +245,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
     matched))
 
 (defmacro elmo-imap4-response-error-text (response)
-  "Returns text of NO, BAD, BYE, response."
+  "Returns text of NO, BAD, BYE response."
   (` (nth 1 (or (elmo-imap4-response-value (, response) 'no)
 		(elmo-imap4-response-value (, response) 'bad)
 		(elmo-imap4-response-value (, response) 'bye)))))

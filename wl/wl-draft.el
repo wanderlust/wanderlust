@@ -81,7 +81,7 @@ This variable is local in each draft buffer.
 You can refer its value in `wl-draft-config-alist'.
 
 e.g.
-\(setq wl-draft-config-alist
+(setq wl-draft-config-alist
       '(((string-match \".*@domain1$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain1\"))
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
