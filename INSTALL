@@ -91,7 +91,7 @@ Install MIME Module
 Installation
 ============
 
-(a) Edit Makefile
+(a) Edit Makefile, WL-CFG
 
   Edit EMACS, LISPDIR, and so on in Makefile.
 
@@ -100,6 +100,8 @@ Installation
 
   If LISPDIR is not specified (or NONE by default), it is automatically
   detected.
+
+  Edit WL-CFG if you need. You can specify language for INFO, etc.
 
 (b) Bytecompile and Install
 
@@ -125,7 +127,7 @@ Install as a XEmacs package
   packages.  After installation as a XEmacs package, you do not need
   configurations of autoload, icon path in your own .emacs file.
 
-(a) Edit Makefile
+(a) Edit Makefile, WL-CFG
 
   Edit XEMACS, PACKAGEDIR, and so on in Makefile.
 
@@ -134,6 +136,8 @@ Install as a XEmacs package
 
   If PACKAGEDIR is not specified (NONE by default) and the SEMI
   modules have been installed, it is automatically detected.
+
+  Edit WL-CFG if you need. You can specify language for INFO, etc.
 
 (b) Bytecompile and Install
 
