@@ -820,7 +820,7 @@
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
 	  ((string= temp-mark "+")
 	   (setq fsymbol 'wl-highlight-summary-high-read-face))
-	  (t (if (zerop (length indent))
+	  (t (if (= 0 (length indent))
 		 (setq fsymbol 'wl-highlight-summary-thread-top-face)
 	       (setq fsymbol 'wl-highlight-summary-normal-face))))
     (put-text-property 0 (length line) 'face fsymbol line))
@@ -1012,7 +1012,7 @@ interpreted as cited text.)"
 		(when (> lines elmo-display-progress-threshold)
 		  (setq i (+ i 1))
 		  (setq percent (/ (* i 100) lines))
-		  (if (or (zerop (% percent 5)) (= i lines))
+		  (if (or (eq (% percent 5) 0) (= i lines))
 		      (elmo-display-progress
 		       'wl-highlight-summary "Highlighting..."
 		       percent)))

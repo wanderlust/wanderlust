@@ -1,33 +1,3 @@
-2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
-
-	* wl-e21.el (wl-biff-init-icons): Don't generate icons of the
-	display does not support graphics.
-	(wl-plugged-init-icons): Ditto.
-	(wl-folder-init-icons): Ditto.
-
-	* wl-demo.el (wl-demo): Chech closely whether the display
-	supports graphics.
-
-2001-02-19  OKAZAKI Tetsurou  <okazaki@be.to>
-
-	* wl-highlight.el (wl-highlight-summary-line-string): Use
-	`zerop' instead of `= 0'.
-	(wl-highlight-summary): Use `zerop' instead of `eq 0'.
-
-	* wl-template.el (wl-template-next): Use `=' instead of `eq'
-	for comparing numbers.
-	(wl-template-prev): Use `zerop' instead of `eq 0'.
-
-	* wl-draft.el (wl-draft-insert-current-message): Use
-	`with-current-buffer' instead of `save-excursion'.
-	Use `zerop' instead of `eq 0'.
-
-2001-02-17  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-draft.el (wl-draft-insert-ccs): New function.
-	(wl-draft): Use `wl-draft-insert-ccs' for Bcc and FCC.
-	* wl-vars.el (wl-draft-delete-myself-from-bcc-fcc): New variable.
-
 2001-02-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-cache-prefetch-message): Fixed last change.

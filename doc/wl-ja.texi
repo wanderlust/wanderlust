@@ -277,7 +277,7 @@ APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
 $B?d>)$5$l$k(B APEL, FLIM, SEMI $B$N%P!<%8%g%s$NAH9g$;$O!"0J2<$NDL$j$G$9!#(B
 
 @itemize @minus
-@item APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
+@item APEL 10.2, FLIM 1.13.2, SEMI 1.13.7
 @end itemize
 
 $B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"(B
@@ -4234,11 +4234,6 @@ Non-nil $B$J$i<+F0E*$KAw?.$7$^$9(B ($B$$$A$*$&(B @code{y-or-n-p} $B$G3NG'$7
 Non-nil $B$J$i!"<+J,08$F$N%a!<%k$KJV?.$9$k>l9g!">o$K(B @samp{To:},
 @samp{Cc:} $B$+$i<+J,$N%a!<%k%"%I%l%9$r:o=|$7$^$9!#(B
 
-@item wl-draft-delete-myself-from-bcc-fcc
-@vindex wl-draft-delete-myself-from-bcc-fcc
-Non-nil $B$G!"(B@samp{To:}, @samp{Cc:} $B$,(B $BJQ?t(B @code{wl-subscribed-mailing-list} $B$K(B
-$B4^$^$l$F$$$k>l9g!"(B@samp{Bcc:} , @samp{FCC:} $B$r$D$1$^$;$s!%(B
-
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
@@ -6176,10 +6171,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 
 @node Draft for Reply, Thread Format, Advanced Settings, Advanced Settings
 @subsection $BJV;vMQ%I%i%U%H(B
-@vindex wl-draft-reply-with-argument-list
-@vindex wl-draft-reply-without-argument-list
-@vindex wl-draft-reply-myself-with-argument-list
-@vindex wl-draft-reply-myself-without-argument-list
 
 $B%a!<%j%s%0%j%9%H$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7(B
 $B$?$@$1$G855-;v$N(B @samp{Reply-To:} $B$K$"$k%"%I%l%9$r(B @samp{To:} $B$KMQ0U$7$F(B
