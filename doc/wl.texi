@@ -1723,7 +1723,7 @@ it is treated as @samp{important} flag is specified.
 
 In addition, in summary mode, to be described later, you can freely
 define global flags and put them on messages.
-@xref{Usage of Summary mode}.
+@xref{Usage of Summary Mode}.
 
 In this folder, if you delete message, @var{global-flag} put on the
 message is removed.  If you append messages to this folder, the message
@@ -6912,7 +6912,7 @@ To use @code{wl-spam}, write in @file{~/.wl} as follows:
 @group
 ;; @r{Use @samp{bogofilter} as spam back end}
 ;; @r{Set @samp{scheme} here as the spam filter you will use.}
-;; @r{@xref{Spam Filter Processors}}
+;; @r{@xref{Spam Filter Processors}.}
 (setq elmo-spam-scheme 'bogofilter)
 (require 'wl-spam)
 @end group
@@ -6970,7 +6970,7 @@ Make judgement on splitting messages with @code{elmo-split}.
 It provides new function @code{spam-p} to be specified as @samp{CONDITION}
 in @code{elmo-split-rule}. This function returns true when the message
 is judged as spam.
-@xref{Split messages}
+@xref{Split messages}.
 
 You can also process learning by the result of judgement. (You would
 better turn on this feature after learning to some extent)
@@ -8388,7 +8388,7 @@ The initial setting is the alist shown below:
 @lisp
 @group
 (("^-" . remove)
- ("^@" . remove))
+ ("^@@" . remove))
 @end group
 @end lisp
 

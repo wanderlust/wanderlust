@@ -1749,7 +1749,7 @@ Wanderlust の内部に保持したメッセージを閲覧するためのフォルダです。
 の @samp{important} フラグを指定したものと看倣されます。
 
 また、後述のサマリモードにおいて、自由にグローバルフラグを定義してメッセー
-ジに付加することも出来ます。@xref{Usage of Summary mode}
+ジに付加することも出来ます。@xref{Usage of Summary Mode}.
 
 このフォルダでメッセージを削除すると、そのメッセージについていた 
 @var{グローバルフラグ} が削除されます。また、このフォルダにメッセージ
@@ -2581,7 +2581,7 @@ Non-nil なら @code{wl-fldmgr-add} の補完候補を
 サマリモードは、メッセージの一覧を表示するモードです。
 
 @menu
-* Usage of Summary mode::       使用方法
+* Usage of Summary Mode::       使用方法
 * Thread Operations::           スレッドの操作
 * Cache::                       キャッシュと先読み機能
 * Auto Refile::                 自動リファイル
@@ -2593,7 +2593,7 @@ Non-nil なら @code{wl-fldmgr-add} の補完候補を
 @end menu
 
 
-@node Usage of Summary mode, Thread Operations, Summary, Summary
+@node Usage of Summary Mode, Thread Operations, Summary, Summary
 @section 使用方法(TIPS)
 
 @subsection サマリの表示内容
@@ -2746,7 +2746,7 @@ expire の対象から除外されます。@xref{Expire and Archive}.
 MH Folder, News Spool Folder, Maildir Folder のみです。
 
 
-@node Thread Operations, Cache, Usage of Summary mode, Summary
+@node Thread Operations, Cache, Usage of Summary Mode, Summary
 @section スレッドの操作
 
 例えば、
@@ -6903,7 +6903,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @group
 ;; @r{@samp{bogofilter} を使う場合。}
 ;; @r{ここで、使いたい spam フィルタの @samp{scheme} を設定して下さい。}
-;; @r{@xref{Spam Filter Processors}}
+;; @r{@xref{Spam Filter Processors}.}
 (setq elmo-spam-scheme 'bogofilter)
 (require 'wl-spam)
 @end group
@@ -6960,7 +6960,7 @@ spam マークは、後述する spam の判定処理で自動的に付く他、@kbd{k m} 
 @code{elmo-split-rule} の @samp{CONDITION} として指定出来る関数に 
 @code{spam-p} が追加されます。この関数は、対象のメッセージが spam と判定
 された時に真となります。
-@xref{Split messages}
+@xref{Split messages}.
 
 また、判定結果を元に学習させることも出来ます。(ある程度学習が進んでから、
 この設定を有効にするとよいでしょう)
@@ -7214,7 +7214,7 @@ non-nil に指定すると、@command{bogofilter} からの出力が
 Emacs Lisp で実装された spam フィルタリングライブラリです。
 
 インストール時に @code{load-path} 上に @file{spamfilter.el} があれば、自
-動的に対応モジュールがコンパイル/インストールされます。@xref{Install}
+動的に対応モジュールがコンパイル/インストールされます。@xref{Install}.
 
 @file{spamfilter.el} を使用するには、@file{~/.wl} などに以下の設定を記述
 します。(もちろん、@file{spamfilter.el} 自体の設定も必要です)
@@ -8363,7 +8363,7 @@ IMAP4 フォルダに対する条件フィルタフォルダのような場合には、
 @lisp
 @group
 (("^-" . remove)
- ("^@" . remove))
+ ("^@@" . remove))
 @end group
 @end lisp
 
