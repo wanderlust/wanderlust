@@ -11,6 +11,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
    messages and urge you to change settings.
+   Please change your settings according to the messages.
    To suppress warning messages, set elmo-obsolete-variable-show-warnings to
    nil.
 
