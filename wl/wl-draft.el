@@ -256,6 +256,17 @@
       (substring subject (match-end 0))
     subject))
 
+(defun wl-draft-reply-list-symbol (from no-arg)
+  "Check FROM and NO-ARG, return symbol `wl-draft-reply-*-argument-list'.
+Return symbol, not list.  Use symbol-name"
+  (if (wl-address-user-mail-address-p from)
+      (if no-arg
+          'wl-draft-reply-myself-without-argument-list
+        'wl-draft-reply-myself-with-argument-list)
+    (if no-arg
+        'wl-draft-reply-without-argument-list
+      'wl-draft-reply-with-argument-list)))
+
 (defun wl-draft-reply (buf no-arg summary-buf)
   ""
 ;;;(save-excursion
@@ -273,12 +284,9 @@
     (setq eword-lexical-analyzer mime-header-lexical-analyzer)
     (set-buffer buf)
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
-    (setq r-list 
-	  (if (wl-address-user-mail-address-p from)
-	      (if no-arg wl-draft-reply-myself-without-argument-list
-		wl-draft-reply-myself-with-argument-list)
-	    (if no-arg wl-draft-reply-without-argument-list
-	      wl-draft-reply-with-argument-list)))
+    ;; symbol-name use in error message
+    (setq r-list-name (symbol-name (wl-draft-reply-list-symbol from no-arg)))
+    (setq r-list (symbol-value (wl-draft-reply-list-symbol from no-arg)))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))
@@ -314,7 +322,7 @@
 					     ",")))
 	  (throw 'done nil))
 	(setq r-list (cdr r-list)))
-      (error "No match field: check your `wl-draft-reply-without-argument-list'"))
+      (error "No match field: check your `%s'" r-list-name))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))

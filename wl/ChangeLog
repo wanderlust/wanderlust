@@ -1,5 +1,8 @@
 2001-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-draft.el (wl-draft-reply-list-symbol): New function.
+	(wl-draft-reply): Use it.  Fixed "No match field" error message.
+
 	* wl-draft.el (wl-draft-insert-from-field): Use (length "From: ")
 	instead of magic-number 6.  Use `not' instead of `null' for symbol
 	`nil' check (not empty list).
