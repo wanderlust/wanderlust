@@ -194,13 +194,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
     (?~ (if (zerop (length wl-line-string)) "" " "))
     (?c (if wl-thr-children-number
 	    (concat "+" (number-to-string wl-thr-children-number) ":")
-	  " "))
-    (?F (concat
-	 (if wl-thr-children-number
-	     (concat "+" (number-to-string wl-thr-children-number) ":")
-	   "")
-	 " "
-	 (wl-summary-line-from)))
+	  ""))
     (?f (wl-summary-line-from))
     (?# (wl-summary-line-list-count)))
   "An alist of format specifications that can appear in summary lines.
@@ -226,13 +220,10 @@ which are replaced by the given information:
    it is replaced with '>'.
 %c The children number of the closed message thread.
    Children number is printed like '+??:'.
-   If the message is opened, ' ' is displayed.
 %C The children number of the closed message thread.
    Children number is printed like '[+??] '.
    If the message is opened, '>' or '>>' (linked) is displayed.
 %f The from: field string of the message.
-%F The children number of the closed message thread and 
-   the from: field string of the message are concatenated.
 %s The subject: field string of the message.
 %S The size of the message (if available).
 %~ If the previous spec is not zero-length, replaced with ' '.
