@@ -664,10 +664,7 @@ Returns non-nil if bottom of message."
 		  (setq time1 (current-time))
 		  (message "Prefetching %d..." number))
 		(setq result (wl-message-buffer-display
-			      folder number
-			      'as-is
-			      ;'mime
-			      nil 'unread))
+			      folder number 'mime nil 'unread))
 		(when wl-message-buffer-prefetch-debug
 		  (setq time2 (current-time))
 		  (setq sec  (- (nth 1 time2)(nth 1 time1)))
