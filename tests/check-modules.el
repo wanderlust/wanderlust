@@ -148,3 +148,9 @@
   (when (locate-library "shimbun")
     (require 'shimbun)
     (lunit-assert (fboundp 'shimbun-server))))
+
+;; spamfilter.el >= 0.10
+(luna-define-method test-spamfilter ((case check-modules))
+  (when (locate-library "spamfilter")
+    (require 'spamfilter)
+    (lunit-assert (fboundp 'spamf-corpus-name))))
