@@ -630,23 +630,25 @@ content of MSGDB is changed."
    killed-list))
 
 (defun elmo-msgdb-killed-message-p (killed-list msg)
-  (memq msg killed-list))
+  (elmo-number-set-member msg killed-list))
 
 (defun elmo-msgdb-set-as-killed (killed-list msg)
-  (elmo-msgdb-append-element killed-list msg))
+  elmo-number-set-append killed-list msg)
 
 (defun elmo-msgdb-append-to-killed-list (folder msgs)
   (let ((dir (elmo-msgdb-expand-path folder)))
     (elmo-msgdb-killed-list-save
      dir
-     (nconc (elmo-msgdb-killed-list-load dir)
-	    msgs))))
+     (elmo-number-set-append-list
+      (elmo-msgdb-killed-list-load dir)
+      msgs))))
 
 (defun elmo-living-messages (messages killed-list)
   (if killed-list
       (delq nil
 	    (mapcar (lambda (number)
-		      (unless (memq number killed-list) number))
+		      (unless (elmo-number-set-member number killed-list)
+			number))
 		    messages))
     messages))
 

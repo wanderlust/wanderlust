@@ -1606,6 +1606,63 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	    (throw 'loop a))
 	(setq alist (cdr alist))))))
 
+;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
+;; 
+;; number          ::= [0-9]+
+;; beg             ::= number
+;; end             ::= number
+;; number-range    ::= "(" beg " . " end ")"      ;; cons cell
+;; number-set-elem ::= number / number-range
+;; number-set      ::= "(" *number-set-elem ")"   ;; list
+
+(defun elmo-number-set-member (number number-set)
+  "Returns non-nil if NUMBER is an element of NUMBER-SET.
+The value is actuall the tail of SET-LIST whose car contains NUMBER."
+  (or (memq number number-set)
+      (let (found)
+	(while (and number-set (not found))
+	  (if (and (consp (car number-set))
+		   (and (<= (car (car number-set)) number)
+			(<= number (cdr (car number-set)))))
+	      (setq found t)
+	    (setq number-set (cdr number-set))))
+	number-set)))
+
+(defun elmo-number-set-append-list (number-set list)
+  "Append LIST of numbers to the NUMBER-SET.
+NUMBER-SET is altered."
+  (let ((appended number-set))
+    (while list
+      (setq appended (elmo-number-set-append appended (car list)))
+      (setq list (cdr list)))
+    appended))
+
+(defun elmo-number-set-append (number-set number)
+  "Append NUMBER to the NUMBER-SET.
+NUMBER-SET is altered."
+  (let ((number-set-1 number-set)
+	found elem)
+    (while (and number-set (not found))
+      (setq elem (car number-set))
+      (cond
+       ((and (consp elem)
+	     (eq (+ 1 (cdr elem)) number))
+	(setcdr elem number)
+	(setq found t))
+       ((and (integerp elem)
+	     (eq (+ 1 elem) number))
+	(setcar number-set (cons elem number))
+	(setq found t))
+       ((or (and (integerp elem) (eq elem number))
+	    (and (consp elem)
+		 (<= (car elem) number)
+		 (<= number (cdr elem))))
+	(setq found t)))
+      (setq number-set (cdr number-set)))
+    (if (not found)
+	(setq number-set-1 (nconc number-set-1 (list number))))
+    number-set-1))
+
 (provide 'elmo-util)
 
 ;;; elmo-util.el ends here

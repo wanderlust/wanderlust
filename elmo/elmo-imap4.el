@@ -567,19 +567,17 @@ BUFFER must be a single-byte buffer."
 	    result)))
 
 (defun elmo-imap4-folder-exists-p (spec)
-  (let ((session (elmo-imap4-get-session spec))
-	response)
-    (setq response
-	  (elmo-imap4-read-response
+  (let ((session (elmo-imap4-get-session spec)))
+    (if (string=
+	 (elmo-imap4-session-current-mailbox-internal session)
+	 (elmo-imap4-spec-mailbox spec))
+	t
+      (condition-case nil
+	  (elmo-imap4-session-select-mailbox
 	   session
-	   (elmo-imap4-send-command
-	    session
-	    (list "status " (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-		  " (messages)"))))
-    (when (elmo-imap4-response-bye-p response)
-      (signal 'elmo-imap4-bye-error
-	      (list (elmo-imap4-response-error-text response))))
-    (elmo-imap4-response-ok-p response)))
+	   (elmo-imap4-spec-mailbox spec)
+	   'force)
+	(error nil)))))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)
@@ -900,31 +898,6 @@ BUFFER must be a single-byte buffer."
       (if (bufferp obj)
 	  (or (bobp) (forward-char -1)))))))
 
-(defun elmo-imap4-add-to-cont-list (cont-list msg)
-  (let ((elist cont-list)
-	(ret-val cont-list)
-	entity found)
-    (while (and elist (not found))
-      (setq entity (car elist))
-      (cond
-       ((and (consp entity)
-	     (eq (+ 1 (cdr entity)) msg))
-	(setcdr entity msg)
-	(setq found t))
-       ((and (integerp entity)
-	     (eq (+ 1 entity) msg))
-	(setcar elist (cons entity msg))
-	(setq found t))
-       ((or (and (integerp entity) (eq entity msg))
-	    (and (consp entity)
-		 (<= (car entity) msg)
-		 (<= msg (cdr entity)))) ; included
-	(setq found t))); noop
-      (setq elist (cdr elist)))
-    (if (not found)
-	(setq ret-val (append cont-list (list msg))))
-    ret-val))
-
 (defun elmo-imap4-make-number-set-list (msg-list &optional chop-length)
   "Make RFC2060's message set specifier from MSG-LIST.
 Returns a list of (NUMBER . SET-STRING).
@@ -942,7 +915,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (while (and (not (null msg-list))
 		  (< count chop-length))
 	(setq cont-list
-	      (elmo-imap4-add-to-cont-list
+	      (elmo-number-set-append
 	       cont-list (car msg-list)))
 	(incf count)
 	(setq msg-list (cdr msg-list)))

@@ -1073,7 +1073,6 @@ Currently works on IMAP4 folder only."
     (elmo-folder-number-get-spec fld number)))
 
 ;; autoloads
-(autoload 'elmo-imap4-get-connection "elmo-imap4")
 (autoload 'elmo-nntp-make-groups-hashtb "elmo-nntp")
 (autoload 'elmo-nntp-post "elmo-nntp")
 (autoload 'elmo-localdir-max-of-folder "elmo-localdir")

@@ -1,6 +1,22 @@
 2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-number-set-member): New function.
+	(elmo-number-set-append-list): Ditto.
+	(elmo-number-set-append): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-killed-message-p):
+	Use `elmo-number-set-member'.
+	(elmo-living-messages): Ditto.
+	(elmo-msgdb-set-as-killed): Use `elmo-number-set-append'.
+	(elmo-msgdb-append-to-killed-list): Use `elmo-number-set-append-list'.
+
+	* elmo-imap4.el (elmo-imap4-folder-exists-p): Rewrite.
+	(elmo-imap4-add-to-cont-list): Abolished.
+	(elmo-imap4-make-number-set-list): Use `elmo-number-set-append'
+	instead of elmo-imap4-add-to-cont-list.
+
 	* elmo2.el (elmo-msgdb-search): Moved from elmo-msgdb.el.
+	(toplevel): Removed autoload setting for `elmo-imap4-get-connection'.
 
 	* elmo-msgdb.el (elmo-msgdb-search): Moved to elmo2.el.
 
