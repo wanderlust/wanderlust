@@ -87,18 +87,19 @@ Return number if put mark succeed"
 	      (setq data (funcall (wl-summary-action-argument-function action)
 				  (wl-summary-action-symbol action)
 				  number)))
-	    (wl-summary-unset-mark number)
-	    (when visible
-	      (wl-summary-mark-line set-mark)
-	      (when wl-summary-highlight
-		(wl-highlight-summary-current-line))
-	      (when data
-		(wl-summary-print-argument number data)))
+	    ;; Unset the mark of current line.
+	    (wl-summary-unset-mark)
 	    ;; Set action.
 	    (funcall (wl-summary-action-set-function action)
 		     number
 		     (wl-summary-action-mark action)
 		     data)
+	    (when visible
+	      (wl-summary-put-temp-mark set-mark)
+	      (when wl-summary-highlight
+		(wl-highlight-summary-current-line))
+	      (when data
+		(wl-summary-print-argument number data)))
 	    (set-buffer-modified-p nil)
 	    ;; Return value.
 	    number))
@@ -141,7 +142,7 @@ Return number if put mark succeed"
 	    (let (wl-summary-buffer-disp-msg)
 	      (when (setq number (wl-summary-message-number))
 		(wl-summary-set-mark (wl-summary-action-mark action)
-				     number nil data)
+				     nil nil data)
 		(setq wl-summary-buffer-target-mark-list
 		      (delq number wl-summary-buffer-target-mark-list)))))
 	  (forward-line 1))
@@ -223,24 +224,24 @@ Return number if put mark succeed"
 	  visible mark action)
       (if number
 	  (setq visible (wl-summary-jump-to-msg number)) ; can be nil
-	(setq visible t))
-      (setq number (or number (wl-summary-message-number)))
+	(setq visible t
+	      number (wl-summary-message-number)))
+      (setq mark (wl-summary-temp-mark))
+      ;; Remove from temporal mark structure.
+      (wl-summary-unregister-target-mark number)
+      (wl-summary-unregister-temp-mark number)
       ;; Delete mark on buffer.
       (when visible
-	(setq mark (wl-summary-temp-mark))
 	(unless (string= mark " ")
-	  (delete-backward-char 1)
-	  (insert (or (wl-summary-get-score-mark number)
-		      " "))
+	  (wl-summary-put-temp-mark
+	   (or (wl-summary-get-score-mark number)
+	       " "))
 	  (setq action (assoc mark wl-summary-mark-action-list))
 	  (when wl-summary-highlight
 	    (wl-highlight-summary-current-line))
 	  (when (wl-summary-action-argument-function action)
 	    (wl-summary-remove-argument)))
-	(set-buffer-modified-p nil))
-      ;; Remove from temporal mark structure.
-      (wl-summary-unregister-target-mark number)
-      (wl-summary-unregister-temp-mark number)))
+	(set-buffer-modified-p nil))))
   ;; Move the cursor.
   ;;  (if (or interactive (interactive-p))
   ;;      (if (eq wl-summary-move-direction-downward nil)
@@ -777,8 +778,7 @@ Return number if put mark succeed"
   "Refile message to previously refiled destination."
   (interactive)
   (funcall (symbol-function 'wl-summary-refile)
-	   wl-summary-buffer-prev-refile-destination
-	   (wl-summary-message-number))
+	   wl-summary-buffer-prev-refile-destination)
   (if (eq wl-summary-move-direction-downward nil)
       (wl-summary-prev)
     (wl-summary-next)))
@@ -881,14 +881,14 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
 		     children)
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...delete line.
-		    (funcall function number data)
+		    (funcall function nil data)
 		  ;; closed
 		  (setq children (wl-thread-get-children-msgs number))
 		  (while children
 		    (funcall function (pop children) data)))
 		(forward-line 1))))
 	(while (not (eobp))
-	  (funcall function (wl-summary-message-number) data)
+	  (funcall function nil data)
 	  (forward-line 1))))))
 
 (defun wl-summary-target-mark-all ()

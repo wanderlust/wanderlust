@@ -550,6 +550,12 @@ See also variable `wl-use-petname'."
    "Menu used in Summary mode."
    wl-summary-mode-menu-spec))
 
+(defsubst wl-summary-message-visible-p (number)
+  "Return non-nil if the message with NUMBER is visible."
+  (or (eq wl-summary-buffer-view 'sequence)
+      (not (wl-thread-entity-parent-invisible-p
+	    (wl-thread-get-entity number)))))
+
 (defun wl-status-update ()
   (interactive)
   (wl-address-init))
@@ -680,11 +686,11 @@ you."
 	dummy-persistent))
       (goto-char (point-min))
       (setq temp (save-excursion
-		   (search-forward dummy-temp nil t)
-		   (current-column))
+		   (when (search-forward dummy-temp nil t)
+		     (current-column)))
 	    persistent (save-excursion
-			 (search-forward dummy-persistent nil t)
-			 (current-column))))
+			 (when (search-forward dummy-persistent nil t)
+			   (current-column)))))
     (setq wl-summary-buffer-temp-mark-column temp
 	  wl-summary-buffer-persistent-mark-column persistent)))
 
@@ -1876,17 +1882,11 @@ If ARG is non-nil, checking is omitted."
 (defun wl-summary-set-score-mark (mark)
   (save-excursion
     (beginning-of-line)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil)
-	  msg-num
-	  cur-mark)
-      (setq msg-num (wl-summary-message-number))
-      (setq cur-mark (wl-summary-temp-mark))
+    (let ((cur-mark (wl-summary-temp-mark)))
       (when (member cur-mark (list " "
 				   wl-summary-score-below-mark
 				   wl-summary-score-over-mark))
-	(delete-backward-char 1)
-	(insert mark)
+	(wl-summary-put-temp-mark mark)
 	(if wl-summary-highlight
 	    (wl-highlight-summary-current-line))
 	(set-buffer-modified-p nil)))))
@@ -2586,16 +2586,10 @@ If ARG, without confirm."
 
 (defun wl-summary-target-mark-msgs (msgs)
   "Return the number of marked messages."
-  (let ((i 0) num)
-    (while msgs
-      (if (eq wl-summary-buffer-view 'thread)
-	  (wl-thread-jump-to-msg (car msgs))
-	(wl-summary-jump-to-msg (car msgs)))
-      (setq num (wl-summary-message-number))
-      (when (eq num (car msgs))
-	(wl-summary-target-mark num)
-	(setq i (1+ i)))
-      (setq msgs (cdr msgs)))
+  (let ((i 0))
+    (dolist (number msgs)
+      (when (wl-summary-target-mark number)
+	(setq i (1+ i))))
     i))
 
 (defun wl-summary-pick (&optional from-list delete-marks)
@@ -2668,24 +2662,33 @@ If ARG, exit virtual folder."
       (setq wl-summary-buffer-temp-mark-list nil))))
 
 (defsubst wl-summary-temp-mark ()
-  "Move to the temp-mark column and return mark string."
-  (move-to-column wl-summary-buffer-temp-mark-column)
-  (buffer-substring (- (point) 1) (point)))
+  "Return temp-mark string of current line."
+  (let ((number (wl-summary-message-number))
+	info)
+    (or (and (wl-summary-have-target-mark-p number)
+	     "*")
+	(and (setq info (wl-summary-registered-temp-mark number))
+	     (nth 1 info))
+	(wl-summary-get-score-mark number)
+	" ")))
 
 (defsubst wl-summary-persistent-mark ()
-  "Move to the persistent-mark column and return mark string."
-  (move-to-column wl-summary-buffer-persistent-mark-column)
-  (buffer-substring (- (point) 1) (point)))
+  "Return persistent-mark string of current line."
+  (or (ignore-errors
+	(elmo-message-mark wl-summary-buffer-elmo-folder
+			   (wl-summary-message-number)))
+      " "))
 
-(defun wl-summary-mark-line (mark)
-  "Put MARK on current line."
-  (save-excursion
-    (beginning-of-line)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil))
-      (wl-summary-temp-mark) ; mark
-      (delete-backward-char 1)
-      (insert mark))))
+(defun wl-summary-put-temp-mark (mark)
+  "Put temp MARK on current line."
+  (when wl-summary-buffer-temp-mark-column
+    (save-excursion
+      (beginning-of-line)
+      (let ((inhibit-read-only t)
+	    (buffer-read-only nil))
+	(move-to-column wl-summary-buffer-temp-mark-column)
+	(delete-backward-char 1)
+	(insert mark)))))
 
 (defun wl-summary-next-buffer ()
   "Switch to next summary buffer."
@@ -2720,8 +2723,7 @@ If ARG, exit virtual folder."
       (while (not (eobp))
 	(when (string= (wl-summary-temp-mark) "*")
 	  ;; delete target-mark from buffer.
-	  (delete-backward-char 1)
-	  (insert " ")
+	  (wl-summary-put-temp-mark " ")
 	  (setq number (wl-summary-message-number))
 	  (setq mlist (append mlist (list number)))
 	  (if wl-summary-highlight
@@ -2749,8 +2751,7 @@ If ARG, exit virtual folder."
 	  number mlist)
       (while (not (eobp))
 	(when (string= (wl-summary-temp-mark) "*")
-	  (delete-backward-char 1)
-	  (insert " ")
+	  (wl-summary-put-temp-mark " ")
 	  (setq number (wl-summary-message-number))
 	  (setq mlist (append mlist (list number)))
 	  (if wl-summary-highlight
@@ -2779,8 +2780,7 @@ If ARG, exit virtual folder."
       (while (not (eobp))
 	(when (string= (wl-summary-temp-mark) "*")
 	  ;; delete target-mark from buffer.
-	  (delete-backward-char 1)
-	  (insert " ")
+	  (wl-summary-put-temp-mark " ")
 	  (setq number (wl-summary-mark-as-important))
 	  (if wl-summary-highlight
 	      (wl-highlight-summary-current-line))
@@ -2809,7 +2809,7 @@ If ARG, exit virtual folder."
     (while (setq number (car wl-summary-buffer-target-mark-list))
       (wl-thread-jump-to-msg number)
       (wl-summary-save t wl-save-dir)
-      (wl-summary-unmark number))))
+      (wl-summary-unmark))))
 
 (defun wl-summary-target-mark-pick ()
   (interactive)
@@ -2818,21 +2818,23 @@ If ARG, exit virtual folder."
 (defun wl-summary-update-persistent-mark ()
   "Synch up persistent mark of current line with msgdb's.
 Return non-nil if the mark is updated"
-  (ignore-errors
-    (save-excursion
-      (let ((inhibit-read-only t)
-	    (buffer-read-only nil)
-	    (new-mark
-	     (or (elmo-message-mark wl-summary-buffer-elmo-folder
-				    (wl-summary-message-number))
-		 " "))
-	    (mark (wl-summary-persistent-mark)))
-	(unless (string= new-mark mark)
-	  (delete-backward-char 1)
-	  (insert new-mark)
-	  (if wl-summary-highlight (wl-highlight-summary-current-line))
-	  (set-buffer-modified-p nil)
-	  t)))))
+  (if wl-summary-buffer-persistent-mark-column
+      (save-excursion
+	(move-to-column wl-summary-buffer-persistent-mark-column)
+	(let ((inhibit-read-only t)
+	      (buffer-read-only nil)
+	      (mark (buffer-substring (- (point) 1) (point)))
+	      (new-mark (wl-summary-persistent-mark)))
+	  (unless (string= new-mark mark)
+	    (delete-backward-char 1)
+	    (insert new-mark)
+	    (when wl-summary-highlight
+	      (wl-highlight-summary-current-line))
+	    (set-buffer-modified-p nil)
+	    t)))
+    (when wl-summary-highlight
+      (wl-highlight-summary-current-line))
+    (set-buffer-modified-p nil)))
 
 (defsubst wl-summary-mark-as-read-internal (inverse
 					    number-or-numbers
@@ -4366,7 +4368,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	(let ((num (car wl-summary-buffer-target-mark-list)))
 	  (wl-thread-jump-to-msg num)
 	  (wl-summary-pipe-message-subr prefix command)
-	  (wl-summary-unmark num))))))
+	  (wl-summary-unmark))))))
 
 (defun wl-summary-pipe-message-subr (prefix command)
   (save-excursion
@@ -4453,7 +4455,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	(let ((num (car wl-summary-buffer-target-mark-list)))
 	  (wl-thread-jump-to-msg num)
 	  (wl-summary-print-message)
-	  (wl-summary-unmark num))))))
+	  (wl-summary-unmark))))))
 
 (defun wl-summary-folder-info-update ()
   (wl-folder-set-folder-updated

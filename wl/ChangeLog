@@ -2,6 +2,26 @@
 
 	* Version number is increased to 2.11.7.
 
+	* wl.el (wl-check-variables-2): Don't check wl-summary-line-format
+	and wl-folder-summary-line-format.
+
+	* wl-summary.el (wl-summary-message-visible-p): New inline function.
+	(wl-summary-put-temp-mark): Rename from wl-summary-mark-line.
+	(wl-summary-set-score-mark): Use it.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+	(wl-summary-target-mark-msgs): Simplified.
+	(wl-summary-detect-mark-position): Fixed problem when
+	summary-line-format no contain persisten/temp mark spec.
+	(wl-summary-temp-mark): Ditto.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-update-persistent-mark): Ditto.
+
+	* wl-action.el (wl-summary-set-mark): Ditto.
+	(wl-summary-unset-mark): Ditto.
+	All other related portions are changed.
+
 2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.11.6.
