@@ -1,3 +1,7 @@
+2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.5.7.
+
 2001-01-29  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-message.el (wl-message-next-page): Bind
@@ -39,6 +43,28 @@
 	(wl-summary-simple-from): Ditto.
 
 	* wl-address.el (wl-address-get-petname-1): Define as function.
+
+2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): Fixed problem when there's no subject
+	field in the original message.
+	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
+
+2001-01-19  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-expire.el (wl-expire-hide):
+	Call `wl-expire-delete-reserve-marked-msgs-from-list'.
+
+2001-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): Use `mime-find-field-decoder' to
+	find decoder for To, Cc, and Subject.
+
+2001-01-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-cache-prefetch-next): Revert the logic
+	for checking `elmo-use-buffer-cache'.
+	(wl-summary-mark-as-important): Fixed typo in comment.
 
 2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
 

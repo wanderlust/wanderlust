@@ -521,14 +521,16 @@
 (defalias 'elmo-pop3-msgdb-create 'elmo-pop3-msgdb-create-as-numlist)
 
 (defun elmo-pop3-sort-overview-by-original-number (overview loc-alist)
-  (sort overview
-	(lambda (ent1 ent2)
-	  (< (elmo-pop3-uidl-to-number
-	      (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
-			 loc-alist)))
-	     (elmo-pop3-uidl-to-number
-	      (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
-			 loc-alist)))))))
+  (if loc-alist
+      (sort overview
+	    (lambda (ent1 ent2)
+	      (< (elmo-pop3-uidl-to-number
+		  (cdr (assq (elmo-msgdb-overview-entity-get-number ent1)
+			     loc-alist)))
+		 (elmo-pop3-uidl-to-number
+		  (cdr (assq (elmo-msgdb-overview-entity-get-number ent2)
+			     loc-alist))))))
+    overview))
 
 (defun elmo-pop3-sort-msgdb-by-original-number (msgdb)
   (message "Sorting...")

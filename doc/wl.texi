@@ -5,7 +5,7 @@
 @c %**end of header
 @documentlanguage en
 @documentencoding us-ascii
-@set VERSION 2.5.6
+@set VERSION 2.5.7
 @synindex pg cp
 @finalout
 
@@ -61,7 +61,7 @@ into another language, under the above conditions for modified versions.
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
+Copyright @copyright{} 1998, 1999, 2000, 2001 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata}, @w{Kenichi Okada},
 @w{Kaoru Takahashi}, @w{Bun Mizuhara} and @w{Masayuki Osada}.
 
@@ -739,7 +739,7 @@ You can specify @code{login} (encoded password transmission),
 @code{cram-md5} (CRAM-MD5 authentication), @code{digest-md5} (DIGEST-MD5
 authentication) or @code{clear} (or @code{nil}, plain password
 transmission) as @var{authenticate-type}.  (To use CRAM-MD5 or
-DIGEST-MD5 authentication, you must install @file{utils/sasl} package.)
+DIGEST-MD5 authentication, you must install @file{utils/sasl} package if FLIM version is earlier than 1.14.0. If FLIM version is 1.14.0 or later, you need not install @file{utils/sasl})
 
 default:
 
@@ -6703,6 +6703,8 @@ valuable advice and many pieces of code they contributed.
       7/11    killed message feature.
       7/18    Use UIDL in POP3.
       9/12    biff feature with Satata-san & Yamaoka-san.
+     10/17    expire-hide by Okada-san.
+     11/08    Released 2.4.0 stable.
 @end example
 
 See @file{ChangeLog} for details.
