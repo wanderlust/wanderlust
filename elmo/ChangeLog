@@ -1,3 +1,8 @@
+2000-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-search-basic): Don't collect 'dn' value even if it is
+	included in `attrs' argument.
+
 2000-06-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-util.el (elmo-get-passwd): Use old backquote style.
