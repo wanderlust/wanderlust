@@ -129,7 +129,7 @@
 		   (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))))))
     (elmo-list-filter
      (mapcar 'car (elmo-msgdb-get-number-alist
-		   (elmo-folder-msgdb-internal folder)))
+		   (elmo-folder-msgdb folder)))
      unreads)))
 
 (luna-define-method elmo-folder-list-unreads-internal
@@ -152,7 +152,7 @@
 		   (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))))))
     (elmo-list-filter
      (mapcar 'car (elmo-msgdb-get-number-alist
-		   (elmo-folder-msgdb-internal folder)))
+		   (elmo-folder-msgdb folder)))
      importants)))
 
 (luna-define-method elmo-folder-list-importants-internal

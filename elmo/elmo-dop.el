@@ -43,17 +43,29 @@ Automatically loaded/saved.")
 						      elmo-msgdb-dir))
   "A folder for `elmo-folder-append-messages' disconnected operations.")
 
-(defun elmo-dop-queue-append (folder function arguments)
-  (let ((operation (list (elmo-folder-name-internal folder)
-			 function arguments)))
-    (unless (member operation elmo-dop-queue) ;; don't append same operation
-      (setq elmo-dop-queue
-	    (append elmo-dop-queue
-		    (list operation)))
-      (elmo-dop-queue-save))))
+(defmacro elmo-make-dop-queue (fname method arguments)
+  "Make a dop queue."
+  (` (vector (, fname) (, method) (, arguments))))
+
+(defmacro elmo-dop-queue-fname (queue)
+  "Return the folder name string of the QUEUE."
+  (` (aref (, queue) 0)))
+
+(defmacro elmo-dop-queue-method (queue)
+  "Return the method symbol of the QUEUE."
+  (` (aref (, queue) 1)))
+
+(defmacro elmo-dop-queue-arguments (queue)
+  "Return the arguments of the QUEUE."
+  (` (aref (, queue) 2)))
+
+(defun elmo-dop-queue-append (fname method arguments)
+  "Append to disconnected operation queue."
+  (let ((queue (elmo-make-dop-queue fname method arguments)))
+    (setq elmo-dop-queue (nconc elmo-dop-queue (list queue)))))
 
 (defun elmo-dop-queue-flush (&optional force)
-  "Flush Disconnected operations.
+  "Flush disconnected operations.
 If optional argument FORCE is non-nil, try flushing all operation queues
 even an operation concerns the unplugged folder."
   (elmo-dop-queue-merge)
@@ -82,65 +94,30 @@ even an operation concerns the unplugged folder."
 		(setq i (+ 1 i))
 		(message "Flushing queue....%d/%d." i num)
 		(condition-case err
-		    (if (and (not force)
-			     (not (elmo-folder-plugged-p (nth 0 (car queue)))))
-			(setq failure t)
-		      (setq folder (nth 0 (car queue))
-			    func (nth 1 (car queue)))
-		      (cond
-		       ((string= func "prefetch-msgs")
-			(elmo-prefetch-msgs
-			 folder
-			 (nth 2 (car queue)))) ;argunemt
-		       ((string= func "append-operations")
-			(elmo-dop-flush-pending-append-operations
-			 folder nil t))
-		       (t
-			(elmo-call-func
-			 folder
-			 func
-			 (nth 2 (car queue)) ;argunemt
-			 ))))
+		    (apply (elmo-dop-queue-method (car queue))
+			   (elmo-dop-queue-fname (car queue))
+			   (elmo-dop-queue-arguments queue))
 		  (quit  (setq failure t))
 		  (error (setq failure err)))
 		(if failure
-		    ;; create-folder was failed.
-		    (when (and (string= func "create-folder-maybe")
-			       (elmo-y-or-n-p
-				(format
-				 "Create folder %s failed.  Abort creating? "
-				 folder)
-				(not elmo-dop-flush-confirm) t))
-		      (elmo-dop-save-pending-messages folder)
-		      (setq elmo-dop-queue (delq (car queue) elmo-dop-queue)))
+		    ();
 		  (setq elmo-dop-queue (delq (car queue) elmo-dop-queue))
 		  (setq performed (+ 1 performed)))
 		(setq queue (cdr queue)))
 	      (message "%d/%d operation(s) are performed successfully."
 		       performed num)
-	      (sit-for 1) ; 
+	      (sit-for 0) ; 
 	      (elmo-dop-queue-save)))
 	(if (elmo-y-or-n-p "Clear all pending operations? "
 			   (not elmo-dop-flush-confirm) t)
-	    (let ((queue elmo-dop-queue))
-	      (while queue
-		(if (string= (nth 1 (car queue)) "append-operations")
-		    (elmo-dop-append-list-save (nth 0 (car queue)) nil))
-		(setq queue (cdr queue)))
+	    (progn
 	      (setq elmo-dop-queue nil)
 	      (message "All pending operations are cleared.")
 	      (elmo-dop-queue-save))
 	  (message "")))
       count)))
 
-(defconst elmo-dop-merge-funcs
-  '("delete-msgids"
-    "prefetch-msgs"
-    "unmark-important"
-    "mark-as-important"
-    "mark-as-read"
-    "mark-as-unread"))
-
+(defvar elmo-dop-merge-funcs nil)
 (defun elmo-dop-queue-merge ()
   (let ((queue elmo-dop-queue)
         new-queue match-queue que)
@@ -162,403 +139,41 @@ even an operation concerns the unplugged folder."
       (setq queue (cdr queue)))
     (setq elmo-dop-queue new-queue)))
 
-(defun elmo-dop-queue-load ()
-  (save-excursion
-    (setq elmo-dop-queue
-	  (elmo-object-load
-	   (expand-file-name elmo-queue-filename
-			     elmo-msgdb-dir)))))
 
-(defun elmo-dop-queue-save ()
-  (save-excursion
-    (elmo-object-save
-     (expand-file-name elmo-queue-filename
-		       elmo-msgdb-dir)
-     elmo-dop-queue)))
+;;; Execution is delayed.
 
-(defun elmo-dop-append-list-load (folder &optional resume)
-  (elmo-object-load
-   (expand-file-name (if resume
-			 elmo-msgdb-resume-list-filename
-		       elmo-msgdb-append-list-filename)
-		     (elmo-folder-msgdb-path folder))))
 
-(defun elmo-dop-append-list-save (folder append-list &optional resume)
-  (if append-list
-      (elmo-object-save
-       (expand-file-name (if resume
-			     elmo-msgdb-resume-list-filename
-			   elmo-msgdb-append-list-filename)
-			 (elmo-folder-msgdb-path folder))
-       append-list)
-    (condition-case ()
-	(delete-file (expand-file-name (if resume
-					   elmo-msgdb-resume-list-filename
-					 elmo-msgdb-append-list-filename)
-				       (elmo-folder-msgdb-path folder)))
-      (error))))
+;;; Offline append:
+;; If appended message is local file or cached, it is saved in
+;; .elmo/dop/1 2 3 4 ...
+;; then msgdb-path/append file is created and contain message number list.
+;; ex. (1 3 5)
 
-(defun elmo-dop-deleting-numbers-to-msgids (alist numbers appended)
-  "returns (new-appended . deleting-msgids)."
-  (let (msgid deleting-msgids)
-    (while numbers
-      (setq msgid (cdr (assq (car numbers) alist)))
-      (if (member msgid appended)
-	  (setq appended (delete msgid appended))
-	(setq deleting-msgids (append deleting-msgids (list msgid))))
-      (setq numbers (cdr numbers)))
-    (cons appended deleting-msgids)))
+(defun elmo-folder-append-buffer-dop (folder unread &optional number)
+  )
 
-(defun elmo-dop-list-deleted (name number-alist)
-  "List message numbers to be deleted on folder with NAME from NUMBER-ALIST."
-  (elmo-dop-queue-load)
-  (let ((queue elmo-dop-queue)
- 	numbers matches nalist)
-    (while queue
-      (if (and (string= (nth 0 (car queue)) name)
-	       (string= (nth 1 (car queue)) "delete-msgids"))
-	  (setq numbers
-		(nconc numbers
-		       (delq nil (mapcar
-				  (lambda (x)
-				    (mapcar 'car
-					    (elmo-string-rassoc-all
-					     x number-alist)))
-				  (nth 2 (car queue)))))))
-      (setq queue (cdr queue)))
-    (elmo-uniq-list (elmo-flatten numbers))))
+(defun elmo-folder-delete-messages-dop (folder numbers)
+  )
 
-(defun elmo-dop-delete-msgs (folder msgs msgdb)
-  (save-match-data
-    (let ((folder-numbers (elmo-make-folder-numbers-list folder msgs))
-	  appended-deleting)
-      (while folder-numbers
-	(if (eq (elmo-folder-get-type (car (car folder-numbers)))
-		'imap4)
-	    (if elmo-enable-disconnected-operation
-		(progn
-		  (setq appended-deleting
-			(elmo-dop-deleting-numbers-to-msgids
-			 (elmo-msgdb-get-number-alist msgdb)
-			 msgs ; virtual number
-			 (elmo-dop-append-list-load folder)))
-		  (if (cdr appended-deleting)
-		      (elmo-dop-queue-append
-		       (car (car folder-numbers)) ; real folder
-		       "delete-msgids" ;; for secure removal.
-		       (cdr appended-deleting)))
-		  (elmo-dop-append-list-save folder (car appended-deleting)))
-	      (error "Unplugged"))
-	  ;; not imap4 folder...delete now!
-	  (elmo-call-func (car (car folder-numbers)) "delete-msgs"
-			  (cdr (car folder-numbers))))
-	(setq folder-numbers (cdr folder-numbers))))
-    t))
+(defun elmo-folder-encache-dop (folder numbers)
+  )
 
-(defun elmo-dop-prefetch-msgs (folder msgs)
-  (save-match-data
-    (elmo-dop-queue-append folder "prefetch-msgs" msgs)))
+(defun elmo-create-folder-dop (folder)
+  )
 
-(defun elmo-dop-list-folder (folder &optional nohide)
-  (if (or (memq (elmo-folder-get-type folder)
-		'(imap4 nntp pop3 filter pipe))
-	  (and (elmo-multi-p folder) (not (elmo-folder-local-p folder))))
-      (if elmo-enable-disconnected-operation
-	  (let* ((path (elmo-msgdb-expand-path folder))
-		 (number-alist (elmo-msgdb-number-load path))
-		 (number-list (mapcar 'car number-alist))
-		 (append-list (elmo-dop-append-list-load folder))
-		 (append-num (length append-list))
-		 (killed (and elmo-use-killed-list
-			      (elmo-msgdb-killed-list-load path)))
-		 alreadies
-		 max-num
-		 (i 0))
-	    (setq killed (nconc (elmo-dop-list-deleted folder number-alist)
-				killed))
-	    (while append-list
-	      (if (rassoc (car append-list) number-alist)
-		  (setq alreadies (append alreadies
-					  (list (car append-list)))))
-	      (setq append-list (cdr append-list)))
-	    (setq append-num (- append-num (length alreadies)))
-	    (setq max-num
-		  (or (nth (max (- (length number-list) 1) 0)
-			   number-list) 0))
-	    (while (< i append-num)
-	      (setq number-list
-		    (append number-list
-			    (list (+ max-num i 1))))
-	      (setq i (+ 1 i)))
-	    (elmo-living-messages number-list killed))
-	(error "Unplugged"))
-    ;; not imap4 folder...list folder
-    (elmo-call-func folder "list-folder")))
-
-(defun elmo-dop-count-appended (folder)
-  (length (elmo-dop-append-list-load folder)))
-
-(defun elmo-dop-call-func-on-msgs (folder func-name msgs msgdb)
-  (let ((append-list (elmo-dop-append-list-load folder))
-	(number-alist (elmo-msgdb-get-number-alist msgdb))
-	matched)
-    (if (eq (elmo-folder-get-type folder) 'imap4)
-	(progn
-;;;	  (while append-list
-;;;	    (if (setq matched (car (rassoc (car append-list) number-alist)))
-;;;		(setq msgs (delete matched msgs)))
-;;;	    (setq append-list (cdr append-list)))
-	  (if msgs
-	      (elmo-dop-queue-append folder func-name msgs)))
-      ;; maildir... XXX hard coding.....
-      (if (not (featurep 'elmo-maildir))
-	  (require 'maildir))
-      (funcall (intern (format "elmo-maildir-%s" func-name))
-	       (elmo-folder-get-spec folder)
-	       msgs msgdb))))
-
-(defun elmo-dop-folder-status (folder)
+;;; Execute as subsutitute for plugged operation.
+(defun elmo-folder-status-dop (folder)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-folder-msgdb-path folder)))
 	 (number-list (mapcar 'car number-alist))
-	 (append-list (elmo-dop-append-list-load folder))
-	 (append-num (length append-list))
-	 alreadies
 	 (i 0)
 	 max-num)
-    (while append-list
-      (if (rassoc (car append-list) number-alist)
-	  (setq alreadies (append alreadies
-				  (list (car append-list)))))
-      (setq append-list (cdr append-list)))
+    ;; number of messages which are queued as append should be added
+    ;; to max-num and length.
     (setq max-num
 	  (or (nth (max (- (length number-list) 1) 0) number-list)
 	      0))
-    (cons (- (+ max-num append-num) (length alreadies))
-	  (- (+ (length number-list) append-num) (length alreadies)))))
-
-(defun elmo-dop-max-of-folder (folder)
-  (if (eq (elmo-folder-get-type folder) 'imap4)
-      (if elmo-enable-disconnected-operation
-	  (let* ((number-alist (elmo-msgdb-number-load
-				(elmo-msgdb-expand-path folder)))
-		 (number-list (mapcar 'car number-alist))
-		 (append-list (elmo-dop-append-list-load folder))
-		 (append-num (length append-list))
-		 alreadies
-		 (i 0)
-		 max-num)
-	    (while append-list
-	      (if (rassoc (car append-list) number-alist)
-		  (setq alreadies (append alreadies
-					  (list (car append-list)))))
-	      (setq append-list (cdr append-list)))
-	    (setq max-num
-		  (or (nth (max (- (length number-list) 1) 0) number-list)
-		      0))
-	    (cons (- (+ max-num append-num) (length alreadies))
-		  (- (+ (length number-list) append-num) (length alreadies))))
-	(error "Unplugged"))
-    ;; not imap4 folder.
-    (elmo-call-func folder "max-of-folder")))
-
-(defun elmo-dop-save-pending-messages (folder)
-  (message (format "Saving queued message in %s..." elmo-lost+found-folder))
-  (let* ((append-list (elmo-dop-append-list-load folder))
-	 file-string)
-    (while append-list
-      (when (setq file-string (elmo-get-file-string  ; message string
-			       (elmo-cache-get-path
-				(car append-list))))
-	(elmo-append-msg elmo-lost+found-folder file-string)
-	(elmo-dop-unlock-message (car append-list)))
-      (setq append-list (cdr append-list))
-      (elmo-dop-append-list-save folder nil)))
-  (message (format "Saving queued message in %s...done"
-		   elmo-lost+found-folder)))
-
-(defun elmo-dop-flush-pending-append-operations (folder &optional appends resume)
-  (message "Appending queued messages...")
-  (let* ((append-list (or appends
-			  (elmo-dop-append-list-load folder)))
-	 (appendings append-list)
-	 (i 0)
-	 (num (length append-list))
-	 failure file-string)
-    (when resume
-      ;; Resume msgdb changed by elmo-dop-msgdb-create.
-      (let* ((resumed-list (elmo-dop-append-list-load folder t))
-	     (number-alist (elmo-msgdb-number-load
-			    (elmo-msgdb-expand-path folder)))
-	     (appendings append-list)
-	     pair dels)
-	(while appendings
-	  (if (setq pair (rassoc (car appendings) number-alist))
-	      (setq resumed-list (append resumed-list
-					 (list (car appendings)))))
-	  (setq appendings (cdr appendings)))
-	(elmo-dop-append-list-save folder resumed-list t)))
-    (while appendings
-      (let* ((seen-list (elmo-msgdb-seen-load
-			 (elmo-msgdb-expand-path folder))))
-	(setq failure nil)
-	(setq file-string (elmo-get-file-string  ; message string
-			   (elmo-cache-get-path
-			    (car appendings))))
-	(when file-string
-	  (condition-case ()
-	      (elmo-append-msg folder file-string (car appendings) nil
-			       (not (member (car appendings) seen-list)))
-	    (quit  (setq failure t))
-	    (error (setq failure t)))
-	  (setq i (+ 1 i))
-	  (message (format "Appending queued messages...%d" i))
-	  (if failure
-	      (elmo-append-msg elmo-lost+found-folder
-			       file-string (car appendings) nil
-			       (not (member (car appendings) seen-list)))))
-	(elmo-dop-unlock-message (car appendings))
-	(setq appendings (cdr appendings))))
-    ;; All pending append operation is flushed.
-    (elmo-dop-append-list-save folder nil)
-    (elmo-commit folder)
-    (unless resume
-      ;; delete '(folder "append-operations") in elmo-dop-queue.
-      (let (elmo-dop-queue)
-	(elmo-dop-queue-load)
-	(setq elmo-dop-queue (delete (list folder "append-operations" nil)
-				     elmo-dop-queue))
-	(elmo-dop-queue-save))))
-  (message "Appending queued messages...done"))
-
-(defun elmo-dop-folder-exists-p (folder)
-  (or (file-exists-p (elmo-msgdb-expand-path folder))
-      (if (and elmo-enable-disconnected-operation
-	       (eq (elmo-folder-get-type folder) 'imap4))
-	  (file-exists-p (elmo-msgdb-expand-path folder))
-	(elmo-call-func folder "folder-exists-p"))))
-
-(defun elmo-dop-create-folder (folder)
-  (if (eq (elmo-folder-get-type folder) 'imap4)
-      (if elmo-enable-disconnected-operation
-	  (elmo-dop-queue-append folder "create-folder-maybe" nil)
-	(error "Unplugged"))
-    (elmo-call-func folder "create-folder")))
-
-(defun elmo-dop-append-msg (folder string message-id &optional msg)
-  (if elmo-enable-disconnected-operation
-      (if message-id
-	  (progn
-	    (unless (elmo-cache-exists-p message-id)
-	      (elmo-set-work-buf
-	       (insert string)
-	       (elmo-cache-save message-id nil folder msg (current-buffer))))
-	    (let ((append-list (elmo-dop-append-list-load folder))
-		  (number-alist (elmo-msgdb-number-load
-				 (elmo-msgdb-expand-path folder))))
-	      (when (and ; not in current folder.
-		     (not (rassoc message-id number-alist))
-		     (not (member message-id append-list)))
-		(setq append-list
-		      (append append-list (list message-id)))
-		(elmo-dop-lock-message message-id)
-		(elmo-dop-append-list-save folder append-list)
-		(elmo-dop-queue-append folder "append-operations" nil))
-	      t))
-	nil)
-    (error "Unplugged")))
-
-(defalias 'elmo-dop-msgdb-create 'elmo-dop-msgdb-create-as-numlist)
-
-(defun elmo-dop-msgdb-create-as-numlist (folder numlist new-mark already-mark
-						seen-mark important-mark
-						seen-list)
-  (if (or (eq (elmo-folder-get-type folder) 'imap4)
-	  (eq (elmo-folder-get-type folder) 'nntp))
-      (if elmo-enable-disconnected-operation
-	  (let* ((num-alist (elmo-msgdb-number-load
-			     (elmo-msgdb-expand-path folder)))
-		 (number-list (mapcar 'car num-alist))
-		 (ov (elmo-msgdb-overview-load
-		      (elmo-msgdb-expand-path folder)))
-		 (append-list (elmo-dop-append-list-load folder))
-		 (num (length numlist))
-		 (i 0)
-		 overview number-alist mark-alist msgid ov-entity
-		 max-num percent seen gmark)
-	    (setq max-num
-		  (or (nth (max (- (length number-list) 1) 0) number-list)
-		      0))
-	    (while numlist
-	      (if (setq msgid
-			(nth (+ (length append-list)
-				(- (car numlist) max-num 1 num))
-			     append-list))
-		  (progn
-		    (setq overview
-			  (elmo-msgdb-append-element
-			   overview
-			   (elmo-localdir-msgdb-create-overview-entity-from-file
-			    (car numlist)
-			    (elmo-cache-get-path msgid))))
-		    (setq number-alist
-			  (elmo-msgdb-number-add number-alist
-						 (car numlist) msgid))
-		    (setq seen (member msgid seen-list))
-		    (if (setq gmark
-			      (or (elmo-msgdb-global-mark-get msgid)
-				  (if (elmo-cache-exists-p
-				       msgid
-				       folder
-				       (car number-alist))
-				      (if seen
-					  nil
-					already-mark)
-				    (if seen
-					seen-mark)
-				    new-mark)))
-			(setq mark-alist
-			      (elmo-msgdb-mark-append
-			       mark-alist (car numlist) gmark))))
-		
-		(when (setq ov-entity (assoc
-				       (cdr (assq (car numlist) num-alist))
-				       ov))
-		  (setq overview
-			(elmo-msgdb-append-element
-			 overview ov-entity))
-		  (setq number-alist
-			(elmo-msgdb-number-add number-alist
-					       (car numlist)
-					       (car ov-entity)))
-		  (setq seen (member ov-entity seen-list))
-		  (if (setq gmark
-			    (or (elmo-msgdb-global-mark-get (car ov-entity))
-				(if (elmo-cache-exists-p
-				     msgid
-				     folder
-				     (car ov-entity))
-				    (if seen
-					nil
-				      already-mark)
-				  (if seen
-				      seen-mark)
-				  new-mark)))
-		      (setq mark-alist
-			    (elmo-msgdb-mark-append
-			     mark-alist (car numlist) gmark)))))
-	      (when (> num elmo-display-progress-threshold)
-		(setq i (1+ i))
-		(setq percent (/ (* i 100) num))
-		(elmo-display-progress
-		 'elmo-dop-msgdb-create-as-numlist "Creating msgdb..."
-		 percent))
-	      (setq numlist (cdr numlist)))
-	    (list overview number-alist mark-alist))
-	(error "Unplugged"))
-    ;; not imap4 folder...
-    (elmo-call-func folder "msgdb-create" numlist new-mark already-mark
-		    seen-mark important-mark seen-list)))
+    (cons max-num number-list)))
 
 (require 'product)
 (product-provide (provide 'elmo-dop) (require 'elmo-version))

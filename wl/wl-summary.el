@@ -45,7 +45,6 @@
 (condition-case nil (require 'timezone) (error nil))
 (condition-case nil (require 'easymenu) (error nil))
 (require 'elmo-date)
-(require 'elmo-dop)
 (condition-case nil (require 'ps-print) (error nil))
 
 (eval-when-compile
@@ -897,7 +896,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (wl-summary-set-message-modified)
     (wl-summary-count-unread
      (elmo-msgdb-get-mark-alist
-      (elmo-folder-msgdb-internal wl-summary-buffer-elmo-folder)))
+      (elmo-folder-msgdb wl-summary-buffer-elmo-folder)))
     (wl-summary-update-modeline)
     (goto-char (point-max))
     (forward-line -1)
@@ -1283,48 +1282,24 @@ If ARG is non-nil, checking is omitted."
 		(if force-read
 		    (save-excursion
 		      (save-match-data
-			(if (and (null (elmo-folder-plugged-p
-					wl-summary-buffer-elmo-folder))
-				 elmo-enable-disconnected-operation)
-			    (progn;; append-queue for offline
-			      (elmo-dop-prefetch-msgs
-			       wl-summary-buffer-elmo-folder (list number))
-			      (setq
-			       new-mark
-			       (cond
-				((string= mark
-					  wl-summary-unread-uncached-mark)
-				 wl-summary-unread-cached-mark)
-				((string= mark wl-summary-new-mark)
-				 (setq wl-summary-buffer-new-count
-				       (- wl-summary-buffer-new-count 1))
-				 (setq wl-summary-buffer-unread-count
-				       (+ wl-summary-buffer-unread-count 1))
-				 wl-summary-unread-cached-mark)
-				((or (null mark)
-				     (string= mark wl-summary-read-uncached-mark))
-				 (setq wl-summary-buffer-unread-count
-				       (+ wl-summary-buffer-unread-count 1))
-				 wl-summary-unread-cached-mark)
-				(t mark))))
-			  ;; online
-			  (elmo-message-encache
-			   wl-summary-buffer-elmo-folder
-			   number)
-			  (setq new-mark
-				(cond
-				 ((string= mark
-					   wl-summary-unread-uncached-mark)
-				  wl-summary-unread-cached-mark)
-				 ((string= mark wl-summary-new-mark)
-				  (setq wl-summary-buffer-new-count
-					(- wl-summary-buffer-new-count 1))
-				  (setq wl-summary-buffer-unread-count
-					(+ wl-summary-buffer-unread-count 1))
-				  wl-summary-unread-cached-mark)
-				 ((string= mark wl-summary-read-uncached-mark)
-				  nil)
-				 (t mark))))
+			;; online
+			(elmo-message-encache
+			 wl-summary-buffer-elmo-folder
+			 number)
+			(setq new-mark
+			      (cond
+			       ((string= mark
+					 wl-summary-unread-uncached-mark)
+				wl-summary-unread-cached-mark)
+			       ((string= mark wl-summary-new-mark)
+				(setq wl-summary-buffer-new-count
+				      (- wl-summary-buffer-new-count 1))
+				(setq wl-summary-buffer-unread-count
+				      (+ wl-summary-buffer-unread-count 1))
+				wl-summary-unread-cached-mark)
+			       ((string= mark wl-summary-read-uncached-mark)
+				nil)
+			       (t mark)))
 			(setq mark-alist (elmo-msgdb-mark-set
 					  mark-alist number new-mark))
 			(or new-mark (setq new-mark " "))
@@ -2095,14 +2070,11 @@ If ARG is non-nil, checking is omitted."
 	    (setq i 0)
 	    ;; set these value for append-message-func
 	    (setq overview (elmo-msgdb-get-overview
-			    (elmo-folder-msgdb-internal
-			     folder)))
+			    (elmo-folder-msgdb folder)))
 	    (setq number-alist (elmo-msgdb-get-number-alist
-				(elmo-folder-msgdb-internal
-				 folder)))
+				(elmo-folder-msgdb folder)))
 	    (setq mark-alist (elmo-msgdb-get-mark-alist
-			      (elmo-folder-msgdb-internal
-			       folder)))
+			      (elmo-folder-msgdb folder)))
 	    (setq wl-summary-delayed-update nil)
 	    (elmo-kill-buffer wl-summary-search-buf-name)
 	    (while curp
@@ -2186,7 +2158,7 @@ If ARG is non-nil, checking is omitted."
      (list 0
 	   (wl-summary-count-unread
 	    (elmo-msgdb-get-mark-alist
-	     (elmo-folder-msgdb-internal folder)))
+	     (elmo-folder-msgdb folder)))
 	   (elmo-folder-messages folder)))
     (wl-summary-update-modeline)
     (wl-summary-buffer-number-column-detect t)
@@ -2297,44 +2269,6 @@ If ARG is non-nil, checking is omitted."
     (while dsts
       (setq dsts (cdr dsts)))))
 
-(defun wl-summary-flush-pending-append-operations (&optional seen-list)
-  "Execute append operations that are done while offline status."
-  (when (and (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
-	     elmo-enable-disconnected-operation)
-    (let* ((resumed-list (elmo-dop-append-list-load
-			  wl-summary-buffer-elmo-folder t))
-	   (append-list (elmo-dop-append-list-load
-			 wl-summary-buffer-elmo-folder))
-	   (appends (append resumed-list append-list))
-	   (number-alist (elmo-msgdb-get-number-alist
-			  (wl-summary-buffer-msgdb)))
-	   dels pair)
-      (when appends
-	(while appends
-	  (if (setq pair (rassoc (car appends) number-alist))
-	      (setq dels (append dels (list (car pair)))))
-	  (setq appends (cdr appends)))
-	(when dels
-	  (setq seen-list
-		(elmo-msgdb-add-msgs-to-seen-list
-		 dels
-		 (wl-summary-buffer-msgdb)
-		 (list wl-summary-unread-cached-mark
-		       wl-summary-unread-uncached-mark
-		       wl-summary-new-mark)
-		 seen-list))
-	  (message "Resuming summary status...")
-	  (elmo-msgdb-delete-msgs wl-summary-buffer-elmo-folder
-				  dels)
-	  (wl-summary-delete-messages-on-buffer dels)
-	  (message "Resuming summary status...done"))
-	;; delete resume-file
-	(elmo-dop-append-list-save wl-summary-buffer-elmo-folder nil t)
-	(when append-list
-	  (elmo-dop-flush-pending-append-operations
-	   wl-summary-buffer-elmo-folder append-list)))))
-  seen-list)
-
 (defun wl-summary-delete-all-msgs ()
   (interactive)
   (let ((cur-buf (current-buffer))
@@ -2349,9 +2283,8 @@ If ARG is non-nil, checking is omitted."
 	    (message "Deleting...")
 	    (elmo-folder-delete-messages
 	     wl-summary-buffer-elmo-folder dels)
-	    (elmo-msgdb-delete-msgs wl-summary-buffer-elmo-folder
+	    (elmo-msgdb-delete-msgs (wl-summary-buffer-msgdb)
 				    dels)
-
 ;;;	    (elmo-msgdb-save (wl-summary-buffer-folder-name) nil)
 	    (wl-summary-set-message-modified)
 	    (wl-summary-set-mark-modified)
@@ -2568,7 +2501,7 @@ If ARG, without confirm."
 		(inhibit-read-only t)
 		(buffer-read-only nil))
 	    ;; Select folder
-	    (elmo-folder-open folder)
+	    (elmo-folder-open folder 'load-msgdb)
 	    ;; For compatibility
 	    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
 	    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal

@@ -254,6 +254,9 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-inhibit-number-mapping nil
   "Global switch to inhibit number mapping (e.g. Inhibit UIDL on POP3).")
 
+(defvar elmo-dop-queue nil
+  "Global variable for storing disconnected operation queues.")
+
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

@@ -372,6 +372,7 @@
     (wl-folder-pipe-glyph         . wl-pipe-folder-icon)
     (wl-folder-maildir-glyph      . wl-maildir-folder-icon)
     (wl-folder-nmz-glyph          . wl-nmz-folder-icon)
+    (wl-folder-shimbun-glyph      . wl-shimbun-folder-icon)
     (wl-folder-trash-empty-glyph  . wl-empty-trash-folder-icon)
     (wl-folder-draft-glyph        . wl-draft-folder-icon)
     (wl-folder-queue-glyph        . wl-queue-folder-icon)

@@ -216,7 +216,7 @@ Return non-nil if not entire message was fetched."
   (let (mime-display-header-hook ; Do nothing.
 	entity strategy)
     (setq entity (elmo-msgdb-overview-get-entity number
-						 (elmo-folder-msgdb-internal
+						 (elmo-folder-msgdb
 						  folder)))
     (setq strategy (elmo-find-fetch-strategy folder entity
 					     ignore-cache))
@@ -245,8 +245,7 @@ If second optional argument UNREAD is specified, message is displayed but
 keep it as unread.
 Return non-nil if cache is used."
   (let ((entity (elmo-msgdb-overview-get-entity number
-						(elmo-folder-msgdb-internal
-						 folder)))
+						(elmo-folder-msgdb folder)))
 	mime-display-header-hook ; Do nothing.
 	cache-file strategy use-cache)
     (setq cache-file (elmo-file-cache-get

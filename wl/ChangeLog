@@ -1,3 +1,42 @@
+2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-default-draft-cite): Use date field
+	on the citation buffer.
+
+	* wl-vars.el (wl-shimbun-folder-icon): New variable.
+
+	* wl-xmas.el (wl-folder-internal-icon-list): Added
+	`wl-folder-shimbun-image'.
+
+	* wl-e21.el (wl-folder-internal-icon-list): Added
+	`wl-folder-shimbun-image'.
+
+2001-03-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-init): Eliminated argument.
+	(wl): Rewrite.
+
+	* wl-summary.el (wl-summary-prefetch-msg): Use `elmo-message-encache'.
+	(wl-summary-sync-update): Use Use `elmo-folder-msgdb'
+	instead of `elmo-folder-msgdb-internal'.
+	(wl-summary-sync-update): Ditto.
+	(wl-summary-flush-pending-append-operations): Eliminated.
+	(wl-summary-delete-all-msgs): Set msgdb instead of folder.
+	(wl-summary-goto-folder-subr): Set load-msgdb argument of
+	`elmo-folder-open'.
+
+	* wl-mime.el (wl-summary-burst): Fixed.
+
+	* wl-folder.el (wl-folder-info-save): Check data type.
+
+	* wl-expire.el (wl-expire-delete): Set msgdb instead of folder.
+	(wl-expire-refile-with-copy-reserve-msg): Use `elmo-folder-msgdb'
+	instead of `elmo-folder-msgdb-internal'.
+	(wl-expire-hide): Ditto.
+
+
+	* wl-draft.el (wl-draft): Removed argument for `wl-init'.
+
 2001-03-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-write-current-folder): Support petname.

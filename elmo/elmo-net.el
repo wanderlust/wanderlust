@@ -324,8 +324,7 @@ Returns a process object.  if making session failed, returns nil."
 (luna-define-method elmo-folder-status-unplugged
   ((folder elmo-net-folder))
   (if elmo-enable-disconnected-operation
-      (progn
-	(elmo-dop-folder-status folder))
+      () ; XXX FIXME. (elmo-folder-status-dop folder) 
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-list-messages-internal
@@ -450,7 +449,8 @@ Returns a process object.  if making session failed, returns nil."
 				(current-buffer) unseen)
 	      (elmo-delete-cr-buffer)
 	      (when (and (> (buffer-size) 0)
-			 (elmo-fetch-strategy-save-cache strategy))
+			 (elmo-fetch-strategy-save-cache strategy)
+			 (elmo-fetch-strategy-cache-path strategy))
 		(elmo-file-cache-save
 		 (elmo-fetch-strategy-cache-path strategy)
 		 section))

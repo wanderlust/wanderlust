@@ -80,7 +80,7 @@
 		      (save-excursion
 			(if (buffer-live-p  wl-current-summary-buffer)
 			    (set-buffer wl-current-summary-buffer))
-			wl-message-buffer)))
+			wl-message-buf-name)))
 	    (cur-win (selected-window))
 	    (b (current-buffer)))
 	(and mes-win (select-window mes-win))
@@ -138,7 +138,7 @@ the user confirms the creation."
 		(save-excursion
 		  (if (buffer-live-p wl-current-summary-buffer)
 		      (set-buffer wl-current-summary-buffer))
-		  wl-message-buffer))
+		  wl-message-buf-name))
 	       (intern (format
 			"%s-%d"
 			wl-current-summary-buffer
@@ -195,7 +195,7 @@ of the BBDB record corresponding to the sender of this message."
   "Display the contents of the BBDB for the sender of this message.
 This buffer will be in `bbdb-mode', with associated keybindings."
   (interactive)
-  (wl-summary-set-message-buffer-or-redisplay)
+  (wl-summary-redisplay)
   (set-buffer (wl-message-get-original-buffer))
   (let ((record (bbdb-wl-update-record t))
 	bbdb-win)
@@ -218,7 +218,7 @@ displaying the record corresponding to the sender of the current message."
 		    (save-excursion
 		      (if (buffer-live-p  wl-current-summary-buffer)
 			  (set-buffer wl-current-summary-buffer))
-		      wl-message-buffer)))
+		      wl-message-buf-name)))
 	  (cur-win (selected-window))
 	  (b (current-buffer)))
       (and mes-win
@@ -256,29 +256,27 @@ displaying the record corresponding to the sender of the current message."
 
 ;;; @ bbdb-extract-field-value -- stolen from tm-bbdb.
 ;;;
-(if (and (string< bbdb-version "1.58")
-	 ;; (not (fboundp 'bbdb-extract-field-value) ; defined as autoload
-	 (not (fboundp 'bbdb-header-start)))
+(and (not (fboundp 'bbdb-wl-extract-field-value-internal))
+;;;  (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
     (progn
-      (load "bbdb-hooks")
-      (require 'bbdb-hooks)))
-
-(static-cond ((fboundp 'tm:bbdb-extract-field-value)
-	      (defun bbdb-wl-extract-field-value-internal (field)
-		(funcall (symbol-function 'tm:bbdb-extract-field-value)
-			 field)))
-	     (t
-	      (defun bbdb-wl-extract-field-value-internal (field)
-		(funcall (symbol-function 'bbdb-extract-field-value)
-			 field))))
-
-(defun bbdb-extract-field-value (field)
-  (let ((value (bbdb-wl-extract-field-value-internal field)))
-    (with-temp-buffer ; to keep raw buffer unibyte.
-      (elmo-set-buffer-multibyte
-       default-enable-multibyte-characters)
-      (and value
-	   (eword-decode-string value)))))
+      (if (and (string< bbdb-version "1.58")
+	       ;; (not (fboundp 'bbdb-extract-field-value) ; defined as autoload
+	       (not (fboundp 'bbdb-header-start)))
+	  (load "bbdb-hooks")
+	(require 'bbdb-hooks))
+      (fset 'bbdb-wl-extract-field-value-internal
+	    (cond
+	     ((fboundp 'tm:bbdb-extract-field-value)
+	      (symbol-function 'tm:bbdb-extract-field-value))
+	     (t (symbol-function 'bbdb-extract-field-value))))
+      (defun bbdb-extract-field-value (field)
+	(let ((value (bbdb-wl-extract-field-value-internal field)))
+	  (with-temp-buffer ; to keep raw buffer unibyte.
+	    (elmo-set-buffer-multibyte
+	     default-enable-multibyte-characters)
+	    (and value
+		 (eword-decode-string value)))))
+      ))
 
 
 (provide 'bbdb-wl)

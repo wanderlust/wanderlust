@@ -140,8 +140,16 @@ If optional argument NON-PERSISTENT is non-nil, folder is treated as
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
-(luna-define-generic elmo-folder-open (folder)
-  "Open and setup (load saved status) FOLDER.")
+(defmacro elmo-folder-msgdb (folder)
+  "Return the msgdb of FOLDER (on-demand loading)."
+  (` (or (elmo-folder-msgdb-internal (, folder))
+	 (elmo-folder-set-msgdb-internal (, folder)
+					 (elmo-msgdb-load (, folder))))))
+
+(luna-define-generic elmo-folder-open (folder &optional load-msgdb)
+  "Open and setup (load saved status) FOLDER.
+If optional LOAD-MSGDB is non-nil, msgdb is loaded.
+(otherwise, msgdb is loaded on-demand)")
 
 (luna-define-generic elmo-folder-open-internal (folder)
   "Open FOLDER (without loading saved folder status).")
@@ -486,7 +494,13 @@ Return newly created temporary directory name which contains temporary files.")
   ((folder elmo-folder) important-mark)
   t)
 
+(defun elmo-folder-encache (folder numbers)
+  "Encache messages in the FOLDER with NUMBERS."
+  (dolist (number numbers)
+    (elmo-message-encache folder number)))
+
 (defun elmo-message-encache (folder number)
+  "Encache message in the FOLDER with NUMBER."
   (elmo-message-fetch
    folder number
    (elmo-make-fetch-strategy 'entire
@@ -525,11 +539,13 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (luna-define-generic elmo-folder-append-msgdb (folder append-msgdb)
   "Append  APPEND-MSGDB to the current msgdb of the folder.")
 
-(luna-define-method elmo-folder-open ((folder elmo-folder))
-  (elmo-generic-folder-open folder))
+(luna-define-method elmo-folder-open ((folder elmo-folder)
+				      &optional load-msgdb)
+  (elmo-generic-folder-open folder load-msgdb))
 
-(defun elmo-generic-folder-open (folder)
-  (elmo-folder-set-msgdb-internal folder (elmo-msgdb-load folder))
+(defun elmo-generic-folder-open (folder load-msgdb)
+  (if load-msgdb
+      (elmo-folder-set-msgdb-internal folder (elmo-msgdb-load folder)))
   (elmo-folder-set-killed-list-internal
    folder
    (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
@@ -550,14 +566,14 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (when (elmo-folder-message-modified-internal folder)
       (elmo-msgdb-overview-save
        (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-overview (elmo-folder-msgdb-internal folder)))
+       (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
       (elmo-msgdb-number-save
        (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-number-alist (elmo-folder-msgdb-internal folder)))
+       (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))
       (elmo-folder-set-info-max-by-numdb
        folder
        (elmo-msgdb-get-number-alist
-	(elmo-folder-msgdb-internal folder)))
+	(elmo-folder-msgdb folder)))
       (elmo-folder-set-message-modified-internal folder nil)
       (elmo-msgdb-killed-list-save
        (elmo-folder-msgdb-path folder)
@@ -565,7 +581,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
     (when (elmo-folder-mark-modified-internal folder)
       (elmo-msgdb-mark-save
        (elmo-folder-msgdb-path folder)
-       (elmo-msgdb-get-mark-alist (elmo-folder-msgdb-internal folder)))
+       (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
       (elmo-folder-set-mark-modified-internal folder nil))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-folder))
@@ -696,8 +712,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 (defsubst elmo-strict-folder-diff (folder)
   "Return folder diff information strictly from FOLDER."
   (let* ((dir (elmo-folder-msgdb-path folder))
-	 (nalist (or (elmo-folder-msgdb-internal folder)
-		     (elmo-msgdb-number-load dir)))
+	 (nalist (elmo-msgdb-get-number-alist (elmo-folder-msgdb folder)))
 	 (in-db (sort (mapcar 'car nalist) '<))
 	 (in-folder  (elmo-folder-list-messages folder))
 	 append-list delete-list diff)
@@ -852,7 +867,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 		 (seen-list (elmo-msgdb-seen-load dir)))
 	    (setq seen-list
 		  (elmo-msgdb-add-msgs-to-seen-list
-		   msgs (elmo-folder-msgdb-internal src-folder)
+		   msgs (elmo-folder-msgdb src-folder)
 		   unread-marks seen-list))
 	    (elmo-msgdb-seen-save dir seen-list))))
       (when (and done
@@ -865,7 +880,8 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	    (if (not no-delete-info)
 		(message "Cleaning up src folder..."))
 	    (if (and (elmo-folder-delete-messages src-folder succeeds)
-		     (elmo-msgdb-delete-msgs src-folder succeeds))
+		     (elmo-msgdb-delete-msgs 
+		      (elmo-folder-msgdb src-folder) succeeds))
 		(setq result t)
 	      (message "move: delete messages from %s failed."
 		       (elmo-folder-name-internal src-folder))
@@ -890,11 +906,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
       (elmo-folder-set-path-internal
        folder
        (elmo-folder-expand-msgdb-path folder))))
-
-(defun elmo-folder-msgdb (folder)
-  "Return the msgdb of FOLDER (on-demand loading)."
-  (or (elmo-folder-msgdb-internal folder)
-      (elmo-msgdb-load folder)))
 
 (defun elmo-message-mark (folder number)
   "Get mark of the message.
@@ -940,9 +951,9 @@ FIELD is a symbol of the field."
 (defun elmo-message-set-mark (folder number mark)
   "Set mark for the message in the FOLDER with NUMBER as MARK."
   (elmo-msgdb-set-mark-alist
-   (elmo-folder-msgdb-internal folder)
+   (elmo-folder-msgdb folder)
    (elmo-msgdb-mark-set
-    (elmo-msgdb-get-mark-alist (elmo-folder-msgdb-internal folder))
+    (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder))
     number mark)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
@@ -975,7 +986,7 @@ FIELD is a symbol of the field."
       (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
 	     (all-alist (copy-sequence (append
 					(elmo-msgdb-get-number-alist
-					 (elmo-folder-msgdb-internal folder))
+					 (elmo-folder-msgdb folder))
 					number-alist)))
 	     (cur number-alist)
 	     pair
@@ -996,7 +1007,7 @@ FIELD is a symbol of the field."
 	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
-					 (elmo-folder-msgdb-internal folder)
+					 (elmo-folder-msgdb folder)
 					 append-msgdb t))
 	(length to-be-deleted))
     0))
@@ -1055,13 +1066,13 @@ CROSSED is cross-posted message number."
 	number-alist mark-alist 
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
 	seen-list crossed after-append)
-    (setq old-msgdb (elmo-folder-msgdb-internal folder))
+    (setq old-msgdb (elmo-folder-msgdb folder))
     ;; Load seen-list.
     (setq seen-list (elmo-msgdb-seen-load (elmo-folder-msgdb-path folder)))
     (setq number-alist (elmo-msgdb-get-number-alist
-			(elmo-folder-msgdb-internal folder)))
+			(elmo-folder-msgdb folder)))
     (setq mark-alist (elmo-msgdb-get-mark-alist
-		      (elmo-folder-msgdb-internal folder)))
+		      (elmo-folder-msgdb folder)))
     (if ignore-msgdb
 	(progn
 	  (setq seen-list (nconc
@@ -1112,7 +1123,8 @@ CROSSED is cross-posted message number."
 		(elmo-folder-process-crosspost folder)
 		nil ; no update.
 		)
-	    (if delete-list (elmo-msgdb-delete-msgs folder delete-list))
+	    (if delete-list (elmo-msgdb-delete-msgs
+			     (elmo-folder-msgdb folder) delete-list))
 	    (when new-list
 	      (setq new-msgdb (elmo-folder-msgdb-create
 			       folder
@@ -1120,7 +1132,7 @@ CROSSED is cross-posted message number."
 			       new-mark unread-cached-mark
 			       read-uncached-mark important-mark
 			       seen-list))
-	      (elmo-msgdb-change-mark (elmo-folder-msgdb-internal folder)
+	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
 				      new-mark unread-uncached-mark)
 	      ;; Clear seen-list.
 	      (if (elmo-folder-persistent-p folder)
@@ -1146,7 +1158,7 @@ CROSSED is cross-posted message number."
   "Return number of messages in the FOLDER."
   (length
    (elmo-msgdb-get-number-alist
-    (elmo-folder-msgdb-internal folder))))
+    (elmo-folder-msgdb folder))))
 
 ;;;
 (defun elmo-msgdb-search (folder condition msgdb)
@@ -1252,7 +1264,8 @@ Return a hashtable for newsgroups."
 (defun elmo-init ()
   "Initialize ELMO module."
   (elmo-crosspost-message-alist-load)
-  (elmo-resque-obsolete-variables))
+  (elmo-resque-obsolete-variables)
+  (elmo-dop-queue-load))
 
 (defun elmo-quit ()
   "Quit and cleanup ELMO."
@@ -1285,6 +1298,7 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?.  'maildir)
 (elmo-define-folder ?'  'internal)
 (elmo-define-folder ?[  'nmz)
+(elmo-define-folder ?@  'shimbun)
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

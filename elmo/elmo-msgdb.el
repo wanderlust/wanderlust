@@ -340,11 +340,11 @@ header separator."
 	(elmo-msgdb-search-internal-primitive
 	 (nth 2 condition) entity number-list)))))
 
-(defun elmo-msgdb-delete-msgs (folder msgs)
-  "Delete MSGS from msgdb for FOLDER.
+(defun elmo-msgdb-delete-msgs (msgdb msgs)
+  "Delete MSGS from MSGDB
 content of MSGDB is changed."
   (save-excursion
-    (let* ((msgdb (elmo-folder-msgdb-internal folder))
+    (let* (;(msgdb (elmo-folder-msgdb folder))
 	   (overview (car msgdb))
 	   (number-alist (cadr msgdb))
 	   (mark-alist (caddr msgdb))
@@ -353,11 +353,6 @@ content of MSGDB is changed."
 	   ov-entity)
       ;; remove from current database.
       (while msgs
-	;(setq message-id (cdr (assq (car msg-list) number-alist)))
-	;(if (and (not reserve-cache) message-id)
-	;    (elmo-cache-delete message-id))
-;;;	This is no good!!!!
-;;;	(setq overview (delete (assoc message-id overview) overview))
 	(setq overview
 	      (delq
 	       (setq ov-entity
@@ -369,7 +364,7 @@ content of MSGDB is changed."
 	      (delq (assq (car msgs) number-alist) number-alist))
 	(setq mark-alist (delq (assq (car msgs) mark-alist) mark-alist))
 	(setq msgs (cdr msgs)))
-      (elmo-folder-set-message-modified-internal folder t)
+      ;(elmo-folder-set-message-modified-internal folder t)
       (setcar msgdb overview)
       (setcar (cdr msgdb) number-alist)
       (setcar (cddr msgdb) mark-alist)
@@ -817,6 +812,18 @@ Header region is supposed to be narrowed."
    (expand-file-name
     elmo-msgdb-location-filename
     dir) alist))
+
+(defun elmo-dop-queue-load ()
+  (setq elmo-dop-queue
+	(elmo-object-load
+	 (expand-file-name elmo-queue-filename
+			   elmo-msgdb-dir))))
+
+(defun elmo-dop-queue-save ()
+  (elmo-object-save
+   (expand-file-name elmo-queue-filename
+		     elmo-msgdb-dir)
+   elmo-dop-queue))
 
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))

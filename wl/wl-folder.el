@@ -1450,14 +1450,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-folder (&optional arg)
   (interactive "P")
   (let (initialize)
-;;; (delete-other-windows)
     (if (get-buffer wl-folder-buffer-name)
 	(switch-to-buffer  wl-folder-buffer-name)
       (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
       (set-buffer wl-folder-buffer-name)
       (wl-folder-mode)
-      (wl-folder-init)
       (sit-for 0)
+      (wl-folder-init)
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
 	(erase-buffer)
@@ -2206,12 +2205,13 @@ Use `wl-subscribed-mailing-list'."
 	  (when (and (setq info (elmo-folder-get-info
 				 (wl-folder-get-elmo-folder entity)))
 		     (not (equal info '(nil))))
-	    (wl-append info-alist (list (list (elmo-string entity)
-					      (list (nth 3 info)  ;; max
-						    (nth 2 info)  ;; length
-						    (nth 0 info)  ;; new
-						    (nth 1 info)) ;; unread
-					      ))))))
+	    (if (listp info)
+		(wl-append info-alist (list (list (elmo-string entity)
+						  (list (nth 3 info)  ;; max
+							(nth 2 info)  ;; length
+							(nth 0 info)  ;; new
+							(nth 1 info)) ;; unread
+						  )))))))
 	(unless entities
 	  (setq entities (wl-pop entity-stack))))
       (elmo-msgdb-finfo-save info-alist)

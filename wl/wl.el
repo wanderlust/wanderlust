@@ -118,14 +118,14 @@
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))
-	(when (and (eq major-mode 'wl-summary-mode)
-		   (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
-	  (let* ((msgdb-dir (elmo-folder-msgdb-path
-			     wl-summary-buffer-elmo-folder))
-		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
-	    (setq seen-list
-		  (wl-summary-flush-pending-append-operations seen-list))
-	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
+;; 	(when (and (eq major-mode 'wl-summary-mode)
+;; 		   (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
+;; 	  (let* ((msgdb-dir (elmo-folder-msgdb-path
+;; 			     wl-summary-buffer-elmo-folder))
+;; 		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
+;; 	 (setq seen-list
+;; 		  (wl-summary-flush-pending-append-operations seen-list))
+;; 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
     (wl-biff-stop)
     (run-hooks 'wl-unplugged-hook))
@@ -651,50 +651,38 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (unless wl-on-nemacs
       (remove-hook 'kill-emacs-hook 'wl-save-status))
     t)
-  (message "") ;; empty minibuffer.
+  (message "") ; empty minibuffer.
   )
 
-(defun wl-init (&optional arg)
+(defun wl-init ()
   (when (not wl-init)
     (setq elmo-plugged wl-plugged)
-    (let (succeed demo-buf)
-      (if wl-demo
-	  (setq demo-buf (wl-demo)))
-      (unless wl-on-nemacs
-	(add-hook 'kill-emacs-hook 'wl-save-status))
-      (unwind-protect
-	  (progn
-	    (wl-address-init)
-	    (wl-draft-setup)
-	    (wl-refile-alist-setup)
-	    (if wl-use-semi
-		(progn
-		  (require 'wl-mime)
-		  (setq elmo-use-semi t))
-	      (require 'tm-wl)
-	      (setq elmo-use-semi nil))
-	    ;; defined above.
-	    (wl-mime-setup)
-	    (fset 'wl-summary-from-func-internal
-		  (symbol-value 'wl-summary-from-function))
-	    (fset 'wl-summary-subject-func-internal
-		  (symbol-value 'wl-summary-subject-function))
-	    (fset 'wl-summary-subject-filter-func-internal
-		  (symbol-value 'wl-summary-subject-filter-function))
-	    (setq elmo-no-from wl-summary-no-from-message)
-	    (setq elmo-no-subject wl-summary-no-subject-message)
-	    (setq succeed t)
-	    (progn
-	      (message "Checking environment...")
-	      (wl-check-environment arg)
-	      (message "Checking environment...done"))
-	    demo-buf)
-	(if succeed
-	    (setq wl-init t))
-	;; This hook may contain the functions `wl-plugged-init-icons' and
-	;; `wl-biff-init-icons' for reasons of system internal to accord
-	;; facilities for the Emacs variants.
-	(run-hooks 'wl-init-hook)))))
+    (unless wl-on-nemacs
+      (add-hook 'kill-emacs-hook 'wl-save-status))
+    (wl-address-init)
+    (wl-draft-setup)
+    (wl-refile-alist-setup)
+    (if wl-use-semi
+	(progn
+	  (require 'wl-mime)
+	  (setq elmo-use-semi t))
+      (require 'tm-wl)
+      (setq elmo-use-semi nil))
+    ;; defined above.
+    (wl-mime-setup)
+    (fset 'wl-summary-from-func-internal
+	  (symbol-value 'wl-summary-from-function))
+    (fset 'wl-summary-subject-func-internal
+	  (symbol-value 'wl-summary-subject-function))
+    (fset 'wl-summary-subject-filter-func-internal
+	  (symbol-value 'wl-summary-subject-filter-function))
+    (setq elmo-no-from wl-summary-no-from-message)
+    (setq elmo-no-subject wl-summary-no-subject-message)
+    (setq wl-init t)
+    ;; This hook may contain the functions `wl-plugged-init-icons' and
+    ;; `wl-biff-init-icons' for reasons of system internal to accord
+    ;; facilities for the Emacs variants.
+    (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
   (unless (featurep 'mime-setup)
@@ -764,21 +752,32 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive "P")
   (or wl-init (wl-load-profile))
   (let (demo-buf)
-    (unwind-protect
-	(setq demo-buf (wl-init arg))
-      (wl-plugged-init (wl-folder arg))
-      (elmo-init)
-      (unwind-protect
+    (setq demo-buf (wl-demo))
+    (wl-init)
+    (condition-case nil
+	(progn
+	  (message "Checking environment...")
+	  (wl-check-environment arg)
+	  (message "Checking environment...done"))
+      (error)
+      (quit))
+    (condition-case obj
+	(progn
+	  (wl-plugged-init (wl-folder arg))
+	  (elmo-init)
 	  (unless arg
 	    (run-hooks 'wl-auto-check-folder-pre-hook)
 	    (wl-folder-auto-check)
 	    (run-hooks 'wl-auto-check-folder-hook))
-	(unless arg (wl-biff-start))
-	(if (buffer-live-p demo-buf)
-	    (kill-buffer demo-buf)))
-      (if (buffer-live-p demo-buf)
-	  (kill-buffer demo-buf))
-      (run-hooks 'wl-hook))))
+	  (unless arg (wl-biff-start)))
+      (error 
+       (if (buffer-live-p demo-buf)
+	   (kill-buffer demo-buf))
+       (signal (car obj)(cdr obj)))
+      (quit))
+    (if (buffer-live-p demo-buf)
+	(kill-buffer demo-buf)))
+  (run-hooks 'wl-hook))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile

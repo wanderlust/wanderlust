@@ -2164,7 +2164,9 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-pipe-folder-icon "pipe.xpm"
   "*Icon file for pipe folder.")
 (defvar wl-nmz-folder-icon "nmz.xpm"
-  "*Icon file for localdir folder.")
+  "*Icon file for namazu folder.")
+(defvar wl-shimbun-folder-icon "shimbun.xpm"
+  "*Icon file for shimbun folder.")
 (defvar wl-maildir-folder-icon "maildir.xpm"
   "*Icon file for maildir folder.")
 (defvar wl-empty-trash-folder-icon "trash-e.xpm"

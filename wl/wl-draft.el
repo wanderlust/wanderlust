@@ -586,6 +586,7 @@ Reply to author if WITH-ARG is non-nil."
 	(summary-buf wl-current-summary-buffer)
 	(message-buf (get-buffer (wl-current-message-buffer)))
 	from date cite-title num entity)
+    (setq date (std11-fetch-field "date"))
     (if (and summary-buf
 	     (buffer-live-p summary-buf)
 	     message-buf
@@ -599,8 +600,7 @@ Reply to author if WITH-ARG is non-nil."
 		    wl-message-buffer-cur-number))
 	    (setq entity (elmo-msgdb-overview-get-entity
 			  num (wl-summary-buffer-msgdb)))
-	    (setq from (elmo-msgdb-overview-entity-get-from entity))
-	    (setq date (elmo-msgdb-overview-entity-get-date entity)))
+	    (setq from (elmo-msgdb-overview-entity-get-from entity)))
 	  (setq cite-title (format "At %s,\n%s wrote:"
 				   (or date "some time ago")
 				   (wl-summary-from-func-internal
@@ -1289,7 +1289,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (require 'wl))
   (unless wl-init
     (wl-load-profile))
-  (wl-init 'wl-draft) ;; returns immediately if already initialized.
+  (wl-init) ;; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))

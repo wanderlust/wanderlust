@@ -1,3 +1,53 @@
+2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-msgdb): Define as macro.
+	(elmo-folder-open): Added argument `load-msgdb'.
+	(elmo-generic-folder-open): Ditto.
+	(elmo-folder-encache): New function.
+
+	* elmo-dop.el (elmo-dop-queue): Moved from elmo-dop.el.
+
+	* elmo-net.el (elmo-message-fetch): Check the cache path is non-nil.
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs):
+	Eliminated argument FOLDER and added argument MSGDB.
+	(elmo-dop-queue-load): Moved from elmo-dop.el.
+	(elmo-dop-queue-save): Ditto.
+
+	* elmo-map.el (elmo-map-folder-update-locations): Sort by number.
+
+	* elmo-imap4.el (elmo-folder-open): Added argument load-msgdb.
+
+	* elmo-filter.el (elmo-filter-folder-list-unreads-internal):
+	Use elmo-folder-msgdb instead of elmo-folder-msgdb-internal.
+	(elmo-filter-folder-list-importants-internal): Ditto.
+
+	* elmo-map.el (elmo-folder-pack-number): Ditto.
+
+	* elmo-mime.el (elmo-mime-message-display): Ditto.
+
+	* elmo.el (elmo-generic-folder-commit): Ditto.
+	(elmo-folder-list-unreads): Ditto.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-generic-folder-commit): Ditto.
+	(elmo-message-set-mark): Ditto.
+	(elmo-generic-folder-append-msgdb): Ditto.
+	(elmo-folder-synchronize): Ditto.
+	(elmo-folder-messages): Ditto.
+	(elmo-init): Call elmo-dop-queue-load.
+	(elmo-folder-list-messages): Ditto.
+
+	* elmo-nntp.el (elmo-folder-update-number): Ditto.
+	(elmo-nntp-folder-process-crosspost): Ditto.
+	(elmo-folder-list-unreads-internal): Ditto.
+
+	* elmo-dop.el: Removed old functions.
+
+2001-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Changed argument from
+	`folder' to `msgdb'.
+
 2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mmimap.el (mmimap-parse-parameters-from-list): Define as alias for

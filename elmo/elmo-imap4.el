@@ -2295,7 +2295,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	elmo-folder-diff-async-callback-data)
   (elmo-imap4-server-diff-async folder))
 
-(luna-define-method elmo-folder-open :around ((folder elmo-imap4-folder))
+(luna-define-method elmo-folder-open :around ((folder elmo-imap4-folder)
+					      &optional load-msgdb)
   (if (elmo-folder-plugged-p folder)
       (let (session mailbox msgdb response tag)
 	(condition-case err
@@ -2306,7 +2307,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						 (list "select "
 						       (elmo-imap4-mailbox
 							mailbox))))
-	      (setq msgdb (elmo-msgdb-load folder))
+	      (if load-msgdb
+		  (setq msgdb (elmo-msgdb-load folder)))
 	      (elmo-folder-set-killed-list-internal
 	       folder
 	       (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
@@ -2325,8 +2327,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
 		   session nil)))))
-	(elmo-folder-set-msgdb-internal folder
-					(or msgdb (elmo-msgdb-load folder))))
+	(if load-msgdb
+	    (elmo-folder-set-msgdb-internal
+	     folder
+	     (or msgdb (elmo-msgdb-load folder)))))
     (luna-call-next-method)))
 
 ;; elmo-folder-open-internal: do nothing.

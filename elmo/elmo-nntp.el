@@ -889,7 +889,7 @@ Don't cache if nil.")
   (if (elmo-nntp-max-number-precedes-list-active-p)
       (let ((session (elmo-nntp-get-session folder))
 	    (number-alist (elmo-msgdb-get-number-alist
-			   (elmo-folder-msgdb-internal folder))))
+			   (elmo-folder-msgdb folder))))
 	(if (elmo-nntp-list-active-p session)
 	    (let (msgdb-max max-number)
 	      ;; If there are canceled messages, overviews are not obtained
@@ -912,7 +912,7 @@ Don't cache if nil.")
 		      (and msgdb-max max-number
 			   (< msgdb-max max-number)))
 		  (elmo-msgdb-set-number-alist
-		   (elmo-folder-msgdb-internal folder)
+		   (elmo-folder-msgdb folder)
 		   (nconc number-alist
 			  (list (cons max-number nil))))))))))
 
@@ -1623,7 +1623,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    (setq reads (cons (car entity) reads)))
 	(when (setq entity (elmo-msgdb-overview-get-entity
 			    (nth 0 cross)
-			    (elmo-folder-msgdb-internal folder)))
+			    (elmo-folder-msgdb folder)))
 	  (setq reads (cons (elmo-msgdb-overview-entity-get-number entity)
 			    reads))))
       (when entity
@@ -1643,7 +1643,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
   (let ((mark-alist (or mark-alist (elmo-msgdb-get-mark-alist
-				    (elmo-folder-msgdb-internal folder)))))
+				    (elmo-folder-msgdb folder)))))
     (elmo-living-messages (delq nil
 				(mapcar 
 				 (lambda (x)

@@ -180,7 +180,8 @@ By setting following-method as yank-content."
 (defun wl-summary-burst ()
   ""
   (interactive)
-  (let ((raw-buf (wl-message-get-original-buffer))
+  (let ((raw-buf (wl-summary-get-original-buffer))
+	(view-buf wl-message-buffer)
 	children message-entity content-type target)
     (save-excursion
       (setq target wl-summary-buffer-elmo-folder)
@@ -188,11 +189,10 @@ By setting following-method as yank-content."
 	(setq target
 	      (wl-summary-read-folder wl-default-folder "to extract to")))
       (wl-summary-set-message-buffer-or-redisplay)
-      (save-excursion
-	(set-buffer (get-buffer wl-message-buffer))
+      (with-current-buffer view-buf
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
-      (set-buffer raw-buf)
-      (setq children (mime-entity-children message-entity))
+      (with-current-buffer raw-buf
+	(setq children (mime-entity-children message-entity)))
       (when children
 	(message "Bursting...")
 	(wl-summary-burst-subr children target 0)

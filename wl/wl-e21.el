@@ -436,6 +436,7 @@
     (wl-folder-pipe-image         . wl-pipe-folder-icon)
     (wl-folder-maildir-image      . wl-maildir-folder-icon)
     (wl-folder-nmz-image          . wl-nmz-folder-icon)
+    (wl-folder-shimbun-image      . wl-shimbun-folder-icon)
     (wl-folder-trash-empty-image  . wl-empty-trash-folder-icon)
     (wl-folder-draft-image        . wl-draft-folder-icon)
     (wl-folder-queue-image        . wl-queue-folder-icon)

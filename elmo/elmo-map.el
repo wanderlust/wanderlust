@@ -114,7 +114,7 @@
 	(elmo-map-folder-location-hash-internal folder))))
 
 (luna-define-method elmo-folder-pack-number ((folder elmo-map-folder))
-  (let* ((msgdb (elmo-folder-msgdb-internal folder))
+  (let* ((msgdb (elmo-folder-msgdb folder))
 	 (old-number-alist (elmo-msgdb-get-number-alist msgdb))
 	 (old-overview (elmo-msgdb-get-overview msgdb))
 	 (old-mark-alist (elmo-msgdb-get-mark-alist msgdb))
@@ -210,7 +210,9 @@
 			 pair
 			 (elmo-map-folder-location-hash-internal
 			  folder)))
-    (setq location-alist (nconc location-alist new-alist))
+    (setq location-alist
+	  (sort (nconc location-alist new-alist)
+		(lambda (x y) (< (car x) (car y)))))
     (elmo-map-folder-set-location-alist-internal folder location-alist)))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))

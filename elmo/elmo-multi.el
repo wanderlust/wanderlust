@@ -175,7 +175,7 @@
   (let ((number-alists (elmo-multi-split-number-alist
 			folder
 			(elmo-msgdb-get-number-alist
-			 (elmo-folder-msgdb-internal folder))))
+			 (elmo-folder-msgdb folder))))
 	(cur-number 1))
     (dolist (child (elmo-multi-folder-children-internal folder))
       (elmo-folder-process-crosspost child (car number-alists))
@@ -187,7 +187,7 @@
       (let* ((number-alist (elmo-msgdb-get-number-alist append-msgdb))
 	     (all-alist (copy-sequence (append
 					(elmo-msgdb-get-number-alist
-					 (elmo-folder-msgdb-internal folder))
+					 (elmo-folder-msgdb folder))
 					number-alist)))
 	     (cur number-alist)
 	     to-be-deleted
@@ -211,7 +211,7 @@
 	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
-					 (elmo-folder-msgdb-internal folder)
+					 (elmo-folder-msgdb folder)
 					 append-msgdb t))
 	(length to-be-deleted))
     0))
@@ -359,7 +359,7 @@
 	(mark-alists (elmo-multi-split-mark-alist
 		      folder
 		      (elmo-msgdb-get-mark-alist
-		       (elmo-folder-msgdb-internal folder))))
+		       (elmo-folder-msgdb folder))))
 	(cur-number 0)
 	unreads
 	all-unreads)
@@ -393,7 +393,7 @@
 	(mark-alists (elmo-multi-split-mark-alist
 		      folder
 		      (elmo-msgdb-get-mark-alist
-		       (elmo-folder-msgdb-internal folder))))
+		       (elmo-folder-msgdb folder))))
 	(cur-number 0)
 	importants
 	all-importants)
