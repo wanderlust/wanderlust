@@ -1,3 +1,7 @@
+2001-12-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.9.2.
+
 2001-12-21  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-draft-elide-region): New user command.
