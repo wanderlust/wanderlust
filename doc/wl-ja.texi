@@ -1287,6 +1287,23 @@ STARTTLS を利用するには、さらに、starttls パッケージをインストール
 @pindex w3m
 @pindex emacs-w3m
 
+emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) を用いて
+WWW 上の新聞やニュースサイト、メーリングリストアーカイブなどを
+読むためのフォルダです。
+
+w3m および emacs-w3m がインストールされている必要があります。
+
+書式:
+
+@example
+@group
+@samp{@@} @var{モジュール名} @samp{.} @var{フォルダ名}
+@end group
+@end example
+
+@var{モジュール名}、および @var{フォルダ名} に入る値については
+emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu フォルダ

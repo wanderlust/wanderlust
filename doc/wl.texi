@@ -1268,6 +1268,23 @@ default connection.
 @pindex w3m
 @pindex emacs-w3m
 
+A folder for watching "shimbun" (means "newspaper" in Japanese),
+news site and mailing list archives on WWW by using emacs-w3m
+(@uref{http://emacs-w3m.namazu.org/}).
+
+You should possess w3m and emacs-w3m to use this.
+
+Format:
+
+@example
+@group
+@samp{@@} @var{module-name} @samp{.} @var{folder-name}
+@end group
+@end example
+
+Admissible values of @var{module-name} and @var{folder-name} are 
+described in @file{README.shimbun.ja} distributed with emacs-w3m.
+
 
 @node Namazu Folder, Multi Folder, Shimbun Folder, Folders
 @section Namazu Folder
