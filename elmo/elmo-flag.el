@@ -96,6 +96,16 @@
    (expand-file-name ".minfo" (elmo-folder-msgdb-path folder))
    (elmo-flag-folder-minfo-internal folder)))
 
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-flag-folder)
+						 &optional one-level)
+  (mapcar (lambda (flag)
+	    (concat
+	     (elmo-folder-prefix-internal folder)
+	     (symbol-name (elmo-folder-type-internal folder))
+	     "/"
+	     (symbol-name flag)))
+	  elmo-global-flag-list))
+
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
   (let* ((elem (elmo-get-hash-val (concat "#" (number-to-string number))

@@ -70,17 +70,25 @@
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-internal-folder)
 						 &optional one-level)
-  (mapcar
-   (lambda (x)
-     (if (elmo-folder-have-subfolder-p
-	  (elmo-make-folder
-	   (concat (elmo-folder-prefix-internal folder)
-		   (symbol-name x))))
-	 (list (concat (elmo-folder-prefix-internal folder)
-		       (symbol-name x)))
-       (concat (elmo-folder-prefix-internal folder)
-	       (symbol-name x))))
-   elmo-internal-folder-list))
+  (if one-level
+      (mapcar
+       (lambda (x)
+	 (let ((name (concat (elmo-folder-prefix-internal folder)
+			     (symbol-name x))))
+	   (if (elmo-folder-have-subfolder-p (elmo-make-folder name))
+	       (list name)
+	     name)))
+       elmo-internal-folder-list)
+    (apply #'nconc
+	   (mapcar
+	    (lambda (x)
+	      (let* ((name (concat (elmo-folder-prefix-internal folder)
+				   (symbol-name x)))
+		     (subfolder (elmo-make-folder name)))
+		(if (elmo-folder-have-subfolder-p subfolder)
+		    (elmo-folder-list-subfolders subfolder)
+		  (list name))))
+	    elmo-internal-folder-list))))
 
 (require 'product)
 (product-provide (provide 'elmo-internal) (require 'elmo-version))

@@ -135,6 +135,9 @@
 (luna-define-method elmo-message-file-p ((folder elmo-sendlog-folder) number)
   t)
 
+(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-sendlog-folder))
+  nil)
+
 (require 'product)
 (product-provide (provide 'elmo-sendlog) (require 'elmo-version))
 
