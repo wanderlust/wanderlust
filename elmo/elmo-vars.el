@@ -327,6 +327,9 @@ If function, return value of function.")
 If server doesn't accept asynchronous commands, this variable should be 
 set as non-nil.")
 
+(defvar elmo-use-decoded-cache t
+  "Use cache of decode mime charset string.")
+
 (provide 'elmo-vars)
 
 ;;; elmo-vars.el ends here
