@@ -1,3 +1,8 @@
+2001-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-message-display): Added argument `unread'.
+	(elmo-mime-message-display-as-is): Ditto.
+
 2001-02-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Eliminated needless bindings;
