@@ -1,6 +1,8 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust. 21 Mar 2000
 
-* Changes in version 1.1.1 (Bug fix version of 1.1.0)
+* Version 1.1.1 is a bug fix version of 1.1.0 with minor user-visible changes.
+
+** Development on the CVS server is started.
 
 ** Flush operation and sending queues if Wanderlust is  started
    in plugged status.
