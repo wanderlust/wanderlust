@@ -1,3 +1,8 @@
+2000-07-20  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-commit): Do nothing when unplugged.
+	* elmo-imap4.el (elmo-imap4-commit): Ditto.
+
 2000-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-use-uidl): New variable.

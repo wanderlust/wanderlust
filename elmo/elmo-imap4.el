@@ -427,22 +427,24 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       (elmo-imap4-read-response buffer process))))
 
 (defun elmo-imap4-commit (spec)
-  (save-excursion
-    (let ((connection (elmo-imap4-get-connection spec))
-	  response ret-val beg end)
-      (and (not (null (elmo-imap4-spec-mailbox spec)))
-	   (if (not (string= (elmo-imap4-connection-get-cwf connection) 
-			     (elmo-imap4-spec-mailbox spec)))
-	       (if (null (setq response 
-			       (elmo-imap4-select-folder 
-				(elmo-imap4-spec-mailbox spec)
-				connection)))
-		   (error "Select folder failed"))
-	     (if elmo-imap4-use-select-to-update-status
-		 (elmo-imap4-select-folder 
-		  (elmo-imap4-spec-mailbox spec)
-		  connection) 
-	       (elmo-imap4-check connection)))))))
+  (if (elmo-plugged-p (elmo-imap4-spec-hostname spec)
+		      (elmo-imap4-spec-port spec))
+      (save-excursion
+	(let ((connection (elmo-imap4-get-connection spec))
+	      response ret-val beg end)
+	  (and (not (null (elmo-imap4-spec-mailbox spec)))
+	       (if (not (string= (elmo-imap4-connection-get-cwf connection) 
+				 (elmo-imap4-spec-mailbox spec)))
+		   (if (null (setq response 
+				   (elmo-imap4-select-folder 
+				    (elmo-imap4-spec-mailbox spec)
+				    connection)))
+		       (error "Select folder failed"))
+		 (if elmo-imap4-use-select-to-update-status
+		     (elmo-imap4-select-folder
+		      (elmo-imap4-spec-mailbox spec)
+		      connection) 
+		   (elmo-imap4-check connection))))))))
 
 (defun elmo-imap4-check (connection)
   (let ((process (elmo-imap4-connection-get-process connection)))

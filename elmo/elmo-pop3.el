@@ -819,8 +819,9 @@
   'elmo-generic-list-folder-important)
 
 (defun elmo-pop3-commit (spec)
-  (elmo-pop3-close-connection
-   (elmo-pop3-get-connection spec 'if-exists)))
+  (if (elmo-plugged-p (elmo-pop3-spec-hostname spec) (elmo-pop3-spec-port spec))
+      (elmo-pop3-close-connection
+       (elmo-pop3-get-connection spec 'if-exists))))
 
 (provide 'elmo-pop3)
 
