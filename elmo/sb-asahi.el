@@ -46,7 +46,7 @@
 (defvar shimbun-asahi-content-end "\n<!-- End of kiji -->\n")
 
 (luna-define-method shimbun-index-url ((shimbun shimbun-asahi))
-  (format "%sp%s.html"
+  (format "%s/%s/update/list.html"
 	  (shimbun-url-internal shimbun)
 	  (shimbun-current-group-internal shimbun)))
 
@@ -57,9 +57,10 @@
       (forward-line -1)
       (delete-region (point) (point-max))
       (goto-char (point-min))
-      (let (headers)
+      (let ((case-fold-search t)
+	    headers)
 	(while (re-search-forward
-		"^■<a href=\"\\(\\([0-9][0-9][0-9][0-9]\\)/past/\\([A-z]*[0-9]*\\)\\.html\\)\"> *"
+		"<a href=\"\\(\\([0-9][0-9][0-9][0-9]\\)/\\([0-9]+\\)\\.html\\)\"> *"
 		nil t)
 	  (let ((id (format "<%s%s%%%s>"
 			    (match-string 2)
@@ -77,13 +78,17 @@
 				"\\(<[^>]+>\\|\r\\)")
 			       ""))
 		   (shimbun-from-address-internal shimbun)
-		   "" id "" 0 0 (concat (shimbun-url-internal shimbun) url))
+		   "" id "" 0 0 (format "%s/%s/update/%s"
+					(shimbun-url-internal shimbun)
+					(shimbun-current-group-internal
+					 shimbun)
+					url))
 		  headers)))
 	(setq headers (nreverse headers))
 	(let ((i 0))
 	  (while (and (nth i headers)
 		      (re-search-forward
-		       "^\\[\\([0-9][0-9]\\)/\\([0-9][0-9]\\) \\([0-9][0-9]:[0-9][0-9]\\)\\]"
+		       "^(\\([0-9][0-9]\\)/\\([0-9][0-9]\\) \\([0-9][0-9]:[0-9][0-9]\\))"
 		       nil t))
 	    (let ((month (string-to-number (match-string 1)))
 		  (date (decode-time (current-time))))

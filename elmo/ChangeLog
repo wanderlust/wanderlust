@@ -1,3 +1,14 @@
+2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* shimbun.el: New file.
+
+	* elmo-shimbun.el: New file.
+
+	* sb-airs.el, sb-asahi.el, sb-bbdb-ml.el, sb-cnet.el,
+	sb-fml.el, sb-lump.el, sb-mew.el, sb-mhonarc.el,
+	sb-netbsd.el, sb-sponichi.el, sb-text.el, sb-wired.el,
+	sb-xemacs.el, sb-yomiuri.el, sb-zdnet.el: New files.
+
 2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-msgdb): Define as macro.
