@@ -2089,7 +2089,7 @@ If ARG, without confirm."
       (setq wl-summary-buffer-view 'thread))
     (wl-summary-update-modeline)
     (force-mode-line-update)
-    (wl-summary-rescan)))
+    (wl-summary-rescan nil nil t)))
 
 (defun wl-summary-load-file-object (filename)
   "Load lisp object from dir."

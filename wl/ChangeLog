@@ -1,3 +1,9 @@
+2004-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-toggle-thread): Call
+	`wl-summary-rescan' with disable-thread as non-nil.
+	(Thanks to KOBAYASHI Shinji <kobayashi_shinji@nifty.com>)
+
 2004-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-demo.el (wl-demo-set-background-color)[Emacs21]: Set slant and
