@@ -3092,10 +3092,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	      (setq result (elmo-folder-move-messages
 			    wl-summary-buffer-elmo-folder
 			    (cdr (car dst-msgs))
-			    (if (eq 'null (car (car dst-msgs)))
-				'null
-			      (wl-folder-get-elmo-folder
-			       (car (car dst-msgs))))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
 			    (wl-summary-buffer-msgdb)
 			    refile-len
 			    refile-executed
@@ -4069,7 +4067,7 @@ If ARG, exit virtual folder."
 	    (setq mark (or mark (cadr (assq number mark-alist)))))
 	(setq visible t))
       (when visible
-	(if (null (setq number (wl-summary-message-number)))
+	(if (null (wl-summary-message-number))
 	    (progn
 	      (message "No message.")
 	      (setq visible nil))

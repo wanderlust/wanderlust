@@ -50,8 +50,7 @@
   :group 'elmo)
 
 (defcustom elmo-message-fetch-confirm t
-  "If non-nil, confirm fetching if message size is larger than
-`elmo-message-fetch-threshold'.
+  "Confirm fetching if message size is larger than `elmo-fetch-threshold'.
 Otherwise, entire fetching of the message is aborted without confirmation."
   :type 'boolean
   :group 'elmo)
@@ -220,22 +219,17 @@ UNREAD-MARKS is the unread marks."
 (defun elmo-folder-list-importants (folder important-mark)
   "Returns a list of important message numbers contained in FOLDER.
 IMPORTANT-MARK is the important mark."
-  (let ((importants (elmo-folder-list-importants-internal folder important-mark))
-	(number-alist (elmo-msgdb-get-number-alist
-		       (elmo-folder-msgdb folder)))
-	num-pair result)
-    (dolist (mark-pair (or elmo-msgdb-global-mark-alist
-			   (setq elmo-msgdb-global-mark-alist
-				 (elmo-object-load 
-				  (expand-file-name
-				   elmo-msgdb-global-mark-filename
-				   elmo-msgdb-dir)))))
-      (if (and (string= important-mark (cdr mark-pair))
-	       (setq num-pair (rassoc (car mark-pair) number-alist)))
-	  (setq result (cons (car num-pair) result))))
-    (if (listp importants)
-	(elmo-uniq-list (nconc result importants))
-      result)))
+  (let ((list (elmo-folder-list-importants-internal folder important-mark)))
+    (if (listp list)
+	list
+      ;; Not available, use current mark.
+      (delq nil
+	    (mapcar
+	     (function
+	      (lambda (x)
+		(if (string= (cadr x) important-mark)
+		    (car x))))
+	     (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional
 								visible-only)
@@ -506,10 +500,8 @@ Return newly created temporary directory name which contains temporary files.")
   (dolist (number numbers)
     (elmo-message-encache folder number)))
 
-(luna-define-generic elmo-message-encache (folder number)
-  "Encache message in the FOLDER with NUMBER.")
-
-(luna-define-method elmo-message-encache ((folder elmo-folder) number)
+(defun elmo-message-encache (folder number)
+  "Encache message in the FOLDER with NUMBER."
   (elmo-message-fetch
    folder number
    (elmo-make-fetch-strategy 'entire
@@ -561,12 +553,6 @@ If optional argument SECTION is specified, only the SECTION of the message
 is fetched (if possible).
 If second optional argument UNREAD is non-nil, message is not marked as read.
 Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-field (folder number field)
-  "Fetch a message field value.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-FIELD is a symbol of the field name.")
 
 (luna-define-generic elmo-message-folder (folder number)
   "Get primitive folder of the message.")
@@ -890,8 +876,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 				 "Copying messages..."
 			       "Moving messages..."))
 	   succeeds i result)
-      (if (eq dst-folder 'null)
-	  (setq succeeds messages)
+      (unless (eq dst-folder 'null)
 	;; src is already opened.
 	(when messages
 	  (elmo-folder-open-internal dst-folder)
@@ -1122,10 +1107,7 @@ FIELD is a symbol of the field."
 			       (elmo-fetch-strategy-cache-path strategy)
 			       section))
 	     (file-exists-p cache-file))
-	(if (and (elmo-cache-path-section-p cache-file)
-		 (eq (elmo-fetch-strategy-entireness strategy) 'entire))
-	    (error "Entire message is not cached.")
-	  (insert-file-contents-as-binary cache-file))
+	(insert-file-contents-as-binary cache-file)
       (elmo-message-fetch-internal folder number strategy section unread)
       (elmo-delete-cr-buffer)
       (when (and (> (buffer-size) 0)
@@ -1396,7 +1378,7 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?|  'pipe)
 (elmo-define-folder ?.  'maildir)
 (elmo-define-folder ?'  'internal)
-(elmo-define-folder ?\[  'nmz)
+(elmo-define-folder ?[  'nmz)
 (elmo-define-folder ?@  'shimbun)
 
 ;;; Obsolete variables.

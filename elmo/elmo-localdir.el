@@ -343,7 +343,7 @@
   (let* ((dir (elmo-localdir-folder-directory-internal folder))
 	 (msgdb (elmo-folder-msgdb folder))
 	 (onum-alist (elmo-msgdb-get-number-alist msgdb))
-	 (omark-alist (elmo-msgdb-get-mark-alist msgdb))
+	 (omark-alist (elmo-msgdb-get-mark-alist (elmo-folder-msgdb msgdb)))
 	 (new-number 1)			; first ordinal position in localdir
 	 flist onum mark new-mark-alist total)
     (setq flist
