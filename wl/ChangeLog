@@ -1,3 +1,8 @@
+2000-07-04  Kenichi OKADA	<okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-edit-string): Call
+	`wl-draft-reedit-hook' instead of `wl-mail-setup-hook'.
+
 2000-07-03  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Hide scroll bars, etc. first.

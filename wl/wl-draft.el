@@ -521,7 +521,7 @@ the `wl-smtp-features' variable."
       (delete-other-windows)
       (kill-buffer tmp-buf)))
   (setq buffer-read-only nil) ;;??
-  (run-hooks 'wl-mail-setup-hook))
+  (run-hooks 'wl-draft-reedit-hook))
 
 (defun wl-draft-insert-current-message (dummy)
   (interactive)
