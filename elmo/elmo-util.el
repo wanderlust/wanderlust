@@ -1569,16 +1569,14 @@ SECTION is the section string."
 
 (defun elmo-file-cache-delete (path)
   "Delete a cache on PATH."
-  (let (files)
-    (when (file-exists-p path)
-      (if (file-directory-p path)
-	  (progn
-	    (setq files (directory-files path t "^[^\\.]"))
-	    (while files
-	      (delete-file (car files))
-	      (setq files (cdr files)))
-	    (delete-directory path))
-	(progn (delete-file path) t)))))
+  (when (file-exists-p path)
+    (if (file-directory-p path)
+	(progn
+	  (dolist (file (directory-files path t "^[^\\.]"))
+	    (delete-file file))
+	  (delete-directory path))
+      (delete-file path))
+    t))
 
 (defun elmo-file-cache-exists-p (msgid)
   "Returns 'section or 'entire if a cache which corresponds to MSGID exists."

@@ -1,3 +1,9 @@
+2002-01-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-file-cache-delete): Fixed last change;
+	Return t if PATH is directory, too.
+	Use `dolist' instead of while loop.
+
 2002-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-util.el (elmo-file-cache-delete): Return t if a cache file
