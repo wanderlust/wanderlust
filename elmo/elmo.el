@@ -1549,7 +1549,7 @@ If update process is interrupted, return nil.")
 	    (setq diff-new (sort diff-new #'<))
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list)))
-	    (when mask
+	    (when (and mask (not ignore-msgdb))
 	      (setq diff-new (elmo-list-filter mask diff-new))))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends diff-new))
