@@ -2708,11 +2708,18 @@ A list of regexp of folders to enable message prefetching.
 
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-The initial setting is 5. The number of messages to prefetch.
+The initial setting is 3. The number of messages for automatical prefetch.
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
-The initial setting is 0.2 (in seconds). The period of prefetching.
+The initial setting is 0.2 (in seconds). The period of automatical prefetch.
+
+@item wl-message-buffer-prefetch-threshold
+@vindex wl-message-buffer-prefetch-threshold
+The initial setting is 30000 (bytes). If prefetching message has larger
+size than this value, Wanderlust does not prefetch automatically.
+If @code{wl-message-buffer-prefetch-threshold} is @code{nil}, 
+the message is not checked for the size.
 @end table
 
 

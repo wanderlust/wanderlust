@@ -2702,11 +2702,18 @@ IMAP のメッセージだけが先読みされます。この変数は
 
 @item wl-message-buffer-prefetch-depth
 @vindex wl-message-buffer-prefetch-depth
-初期設定は 5。先読み機能するメッセージの数。
+初期設定は 3。先読み機能するメッセージの数。
 
 @item wl-message-buffer-prefetch-idle-time
 @vindex wl-message-buffer-prefetch-idle-time
 初期設定は 0.2 (単位:秒)。先読み機能する時間間隔。
+
+@item wl-message-buffer-prefetch-threshold
+@vindex wl-message-buffer-prefetch-threshold
+初期設定は 30000 (bytes)。@code{wl-message-buffer-prefetch-threshold} を
+越えるサイズのメッセージは、先読みしません。
+@code{wl-message-buffer-prefetch-threshold}を @code{nil} にすると、
+先読みするメッセージのサイズのチェックをしません。
 @end table
 
 
