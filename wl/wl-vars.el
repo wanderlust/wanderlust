@@ -631,7 +631,8 @@ If nil, `elmo-pop3-default-port' is used."
 (defcustom wl-pop-before-smtp-stream-type nil
   "*Stream type for POP-before-SMTP.
 If nil, `elmo-pop3-default-stream-type' is used."
-  :type 'boolean
+  :type '(choice (const :tag "Use `elmo-pop3-default-stream-type'" nil)
+		 symbol)
   :group 'wl)
 
 (defcustom wl-pop-before-smtp-authenticate-type nil
@@ -668,7 +669,8 @@ If nil, `elmo-nntp-default-port' is used."
 (defcustom wl-nntp-posting-stream-type nil
   "*Stream type for posting Netnews.
 If nil, `elmo-nntp-default-stream-type' is used."
-  :type 'boolean
+  :type '(choice (const :tag "Use `elmo-nntp-default-stream-type'" nil)
+		 symbol)
   :group 'wl)
 (defcustom wl-nntp-posting-function 'elmo-nntp-post
   "A function to post news.

@@ -1,3 +1,8 @@
+2005-01-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-pop-before-smtp-stream-type): Fix range.
+	(wl-nntp-posting-stream-type): Ditto.
+
 2005-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2005.
