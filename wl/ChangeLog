@@ -1,3 +1,8 @@
+2003-03-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-confirm): Display more info (advised
+	by Kenichi OKADA <okada@opaopa.org>).
+
 2003-03-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-folder.el (wl-folder-open-all): Fix to get proper entity.
