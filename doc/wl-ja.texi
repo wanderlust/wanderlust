@@ -4092,7 +4092,7 @@ MIME のマルチパートメッセージの確認に使うと便利です。
 @kindex C-l (Draft)
 @findex wl-draft-highlight-and-recenter
 現在のドラフトをハイライトしなおします。
-(@code wl-draft-highlight-and-recenter)
+(@code{wl-draft-highlight-and-recenter})
 
 @item M-t
 @kindex M-t (Draft)

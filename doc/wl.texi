@@ -4121,7 +4121,7 @@ Encodes or decodes the specified region in Caesar cipher.
 @kindex C-l (Draft)
 @findex wl-draft-highlight-and-recenter
 Recenter and rehighlight current draft.
-(@code wl-draft-highlight-and-recenter)
+(@code{wl-draft-highlight-and-recenter})
 
 @item M-t
 @kindex M-t (Draft)
