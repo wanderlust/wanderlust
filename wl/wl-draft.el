@@ -76,7 +76,7 @@
 (defvar wl-draft-doing-mime-bcc nil)
 
 (defvar wl-draft-parent-folder nil
-  "Parent folder name of the current draft.
+  "Folder name of the summary in which current draft is invoked.
 This variable is local in each draft buffer.
 You can refer its value in `wl-draft-config-alist'.
 
