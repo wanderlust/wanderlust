@@ -3877,11 +3877,10 @@ Reply to author if invoked with ARG."
 	mes-buf)
     (when number
       (save-excursion
-	(wl-summary-redisplay-internal folder number))
+	(wl-summary-set-message-buffer-or-redisplay))
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
-      (goto-char (point-min))
       (condition-case err
 	  (when (setq mes-buf (wl-message-get-original-buffer))
 	    (wl-draft-reply mes-buf arg summary-buf number)

@@ -430,6 +430,7 @@ Returns non-nil if bottom of message."
     (wl-message-select-buffer wl-message-buffer)
 
     (set-buffer message-buf)
+    (wl-deactivate-region)
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-message-truncate-lines)

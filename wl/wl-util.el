@@ -906,8 +906,13 @@ is enclosed by at least one regexp grouping construct."
 (defun wl-region-exists-p ()
   "Return non-nil if a region exists on current buffer."
   (static-if (featurep 'xemacs)
-      (and zmacs-regions zmacs-region-active-p)
+      (region-active-p)
     (and transient-mark-mode mark-active)))
+
+(defun wl-deactivate-region ()
+  "Deactivate region on current buffer"
+  (static-if (not (featurep 'xemacs))
+      (setq mark-active nil)))
 
 (defvar wl-line-string)
 (defun wl-line-parse-format (format spec-alist)
