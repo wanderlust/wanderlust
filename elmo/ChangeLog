@@ -1,3 +1,8 @@
+2000-10-10  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-dop.el (elmo-dop-flush-pending-append-operations): Add no-see.
+	(elmo-dop-call-func-on-msgs): Don't delete appends from msgs.
+
 2000-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-multi.el (elmo-multi-split-mark-alist): Copy and sort alist
@@ -134,7 +139,7 @@
 	(elmo-imap4-get-spec): Take into account
 	`elmo-imap4-stream-type-alist'.
 
-2000-10-06  Kenichi OKADA <okada@opaopa.org>
+2000-10-06  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-nntp.el (elmo-nntp-list-folders): Fix for `-/'
 	(elmo-nntp-list-folders-get-cache): Ditto.
@@ -343,13 +348,13 @@
 	(elmo-imap4-string-1): Renamed from `elmo-imap4-string-subr'.
 	(elmo-imap4-astring-1): Renamed from `elmo-imap4-astring-subr'.
 
-2000-09-15  Kenichi OKADA <okada@opaopa.org>
+2000-09-15  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-archive.el (elmo-archive-list-folder-subr): Fix.
 	(elmo-archive-list-folder): Fix.
 	(elmo-archive-max-of-folder): Fix.
 
-2000-09-15  Kenichi OKADA <okada@opaopa.org>
+2000-09-15  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-localdir.el (elmo-localdir-copy-msgs): Use
 	 `elmo-localdir-max-of-folder' instead of 'elmo-localdir-list-folder-subr'.
@@ -574,7 +579,7 @@
 	(elmo-imap4-error-message): Abolish
 	(elmo-imap4-list-folders): Don't quote lambda.
 	(elmo-imap4-create-msgdb-from-overview-string): Ditto.
-	(elmo-imap4-parse-namespace): Ditto.	
+	(elmo-imap4-parse-namespace): Ditto.
 	(elmo-imap4-open-connection): Rewrite.
 	(elmo-imap4-open-connection-1): Simplified (authenticate only).
 	(elmo-imap4-get-connection): Abolish local variable `result'.
@@ -648,12 +653,12 @@
 	(elmo-imap4-auth-digest-md5): New function.
 	(elmo-imap4-login): New function.
 
-2000-08-12  Kenichi OKADA <okada@opaopa.org>
+2000-08-12  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-maildir.el (elmo-maildir-delete-folder): Set argument of the
 	function `error'.
 
-2000-08-12  Kenichi OKADA <okada@opaopa.org>
+2000-08-12  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-pop3-get-connection): Add `signal'.
 
@@ -666,11 +671,11 @@
 	* elmo-imap4.el (elmo-imap4-parse-overview-string): In regexps
 	for server responses, quote `*' regardless of where it appears.
 
-2000-08-03  Kenichi OKADA <okada@opaopa.org>
+2000-08-03  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-maildir.el (elmo-maildir-commit): New alias.
 
-2000-08-03  Kenichi OKADA <okada@opaopa.org>
+2000-08-03  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-util.el (elmo-display-progress):
 		Use `progress-feedback-with-label'.
@@ -769,7 +774,7 @@
 	the local variable `folder' to `mailbox'.
 	Rename the argument `fld' to `folder'.
 
-2000-07-20  Kenichi OKADA <okada@opaopa.org>
+2000-07-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-pop3-commit): Do nothing when unplugged.
 	* elmo-imap4.el (elmo-imap4-commit): Ditto.
@@ -1038,7 +1043,7 @@
 	(elmo-msgdb-overview-entity-get-subject): Ditto.
 	* elmo-vars.el (elmo-use-decoded-cache): New variable.
 
-2000-05-10  Kenichi OKADA <okada@opaopa.org>
+2000-05-10  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-utils.el (elmo-get-passwd): Set timeout of password.
 	(elmo-remove-passwd): Fill password with 0 before erase.

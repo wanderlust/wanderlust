@@ -1,3 +1,12 @@
+2000-10-10  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync-force-update): Append queue
+	`mark-as-read'if unplugged.
+
+2000-10-09  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-refile-subr): Fix.
+
 2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el: New file.  Use product.el.
@@ -37,11 +46,11 @@
 	* wl-score.el (toplevel): Remove (provide 'elmo-msgdb).  And add
 	(require 'elmo-msgdb) for inline function.
 
-2000-10-06  Kenichi OKADA	<okada@opaopa.org>
+2000-10-06  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-vars.el (wl-draft-queue-save-variables): Add variables.
 
-2000-10-06  Kenichi OKADA	<okada@opaopa.org>
+2000-10-06  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-score.el (wl-score-headers): Fix for the confusing macro
 	`elmo-kill-buffer'.
@@ -743,7 +752,7 @@
 	* wl-draft.el (wl-draft-reply): Fixed problem when to or cc
 	contains invalid address syntax.
 
-2000-07-26	Kenichi OKADA	<okada@opaopa.org>
+2000-07-26  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-folder.el (wl-folder-check-entity-async): Use
 	`elmo-nntp-spec-hostname'.
@@ -763,7 +772,7 @@
 	* wl-refile.el (wl-refile-learn): Move hit element to the top of
 	`wl-refile-alist'.
 
-2000-07-26	Kenichi OKADA	<okada@opaopa.org>
+2000-07-26  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft): Added argument `content-transfer-encoding'.
 	(wl-draft-edit-string): Ditto.
@@ -781,7 +790,7 @@
 	* wl-draft.el (wl-draft-reply): Fixed problem when mail-followup-to
 	contains an address which is not included in original to or cc.
 
-2000-07-19  Kenichi OKADA	<okada@opaopa.org>
+2000-07-19  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-target-mark-uudecode): Error when
 	begin-line does not exist.
@@ -829,7 +838,7 @@
 	(Append numbers confirmed as disappeared to the killed list.)
 	(wl-summary-confirm-appends): Don't display negative number.
 
-2000-07-07  Kenichi OKADA	<okada@opaopa.org>
+2000-07-07  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (TopLevel): Define-maybe `ps-print-preprint'.
 
@@ -854,7 +863,7 @@
 
 	* wl-demo.el (wl-demo): Don't use `eval'.
 
-2000-07-07  Kenichi OKADA	<okada@opaopa.org>
+2000-07-07  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-buffer-thread-modified):
 	New buffer-local variable.
@@ -882,7 +891,7 @@
 	don't hide scroll bars under FSF Emacsen because it may incur an
 	undesirable redrawing.
 
-2000-07-04  Kenichi OKADA	<okada@opaopa.org>
+2000-07-04  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-edit-string): Call
 	`wl-draft-reedit-hook' instead of `wl-mail-setup-hook'.

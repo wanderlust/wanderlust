@@ -1132,6 +1132,7 @@ q	Goto folder mode.
 (defun wl-summary-sync-force-update (&optional unset-cursor)
   (interactive)
   (let ((msgdb-dir (elmo-msgdb-expand-path wl-summary-buffer-folder-name))
+	(type (elmo-folder-get-type wl-summary-buffer-folder-name))
 	ret-val seen-list)
     (unwind-protect
 	(progn
@@ -1139,7 +1140,18 @@ q	Goto folder mode.
 	      (setq seen-list (elmo-msgdb-seen-load msgdb-dir)))
 	  (setq ret-val (wl-summary-sync-update3 seen-list unset-cursor))
 	  (if wl-summary-buffer-persistent
-	      (elmo-msgdb-seen-save msgdb-dir nil)))
+	      (progn
+		(if (and (eq type 'imap4)
+			 (not (elmo-folder-plugged-p
+			       wl-summary-buffer-folder-name)))
+		    (let* ((msgdb wl-summary-buffer-msgdb)
+			   (number-alist (elmo-msgdb-get-number-alist msgdb)))
+		      (elmo-mark-as-read wl-summary-buffer-folder-name
+					 (mapcar 
+					  (lambda (msgid)
+					    (car (rassoc msgid number-alist)))
+					  seen-list) msgdb)))
+		(elmo-msgdb-seen-save msgdb-dir nil))))
       (set-buffer (current-buffer)))
     (if (interactive-p)
 	(message "%s" ret-val))
@@ -3509,7 +3521,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (if (string= folder wl-summary-buffer-folder-name)
 	  (error "Same folder"))
       (if (and
-	   (not (elmo-folder-plugged-p folder))
+	   (not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
 	   (or (null msgid)
 	       (not (elmo-cache-exists-p msgid))))
 	  (error "Unplugged (no cache or msgid)"))

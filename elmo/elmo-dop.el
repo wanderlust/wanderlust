@@ -315,10 +315,10 @@ even an operation concerns the unplugged folder."
 	matched)
     (if (eq (elmo-folder-get-type folder) 'imap4)
 	(progn
-	  (while append-list
-	    (if (setq matched (car (rassoc (car append-list) number-alist)))
-		(setq msgs (delete matched msgs)))
-	    (setq append-list (cdr append-list)))
+;;	  (while append-list
+;;	    (if (setq matched (car (rassoc (car append-list) number-alist)))
+;;		(setq msgs (delete matched msgs)))
+;;	    (setq append-list (cdr append-list)))
 	  (if msgs
 	      (elmo-dop-queue-append folder func-name msgs)))
       ;; maildir... XXX hard coding.....
@@ -379,7 +379,7 @@ even an operation concerns the unplugged folder."
     (when resume
       ;; Resume msgdb changed by elmo-dop-msgdb-create.
       (let* ((resumed-list (elmo-dop-append-list-load folder t))
-	     (number-alist (elmo-msgdb-number-load
+	     (number-alist (elmo-msgdb-number-load 
 			    (elmo-msgdb-expand-path folder)))
 	     (appendings append-list)
 	     pair dels)
@@ -390,22 +390,26 @@ even an operation concerns the unplugged folder."
 	  (setq appendings (cdr appendings)))
 	(elmo-dop-append-list-save folder resumed-list t)))
     (while appendings
-      (setq failure nil)
-      (setq file-string (elmo-get-file-string  ; message string
-			 (elmo-cache-get-path
-			  (car appendings))))
-      (when file-string
-	(condition-case ()
-	    (elmo-append-msg folder file-string (car appendings))
-	  (quit  (setq failure t))
-	  (error (setq failure t)))
-	(setq i (+ 1 i))
-	(message (format "Appending queued messages...%d" i))
-	(if failure
-	    (elmo-append-msg elmo-lost+found-folder
-			     file-string (car appendings))))
-      (elmo-dop-unlock-message (car appendings))
-      (setq appendings (cdr appendings)))
+      (let* ((seen-list (elmo-msgdb-seen-load 
+			 (elmo-msgdb-expand-path folder))))
+	(setq failure nil)
+	(setq file-string (elmo-get-file-string  ; message string
+			   (elmo-cache-get-path
+			    (car appendings))))
+	(when file-string
+	  (condition-case ()
+	      (elmo-append-msg folder file-string (car appendings) nil
+			       (not (member (car appendings) seen-list)))
+	    (quit  (setq failure t))
+	    (error (setq failure t)))
+	  (setq i (+ 1 i))
+	  (message (format "Appending queued messages...%d" i))
+	  (if failure
+	      (elmo-append-msg elmo-lost+found-folder
+			       file-string (car appendings) nil
+			       (not (member (car appendings) seen-list)))))
+	(elmo-dop-unlock-message (car appendings))
+	(setq appendings (cdr appendings))))
     ;; All pending append operation is flushed.
     (elmo-dop-append-list-save folder nil)
     (elmo-commit folder)
