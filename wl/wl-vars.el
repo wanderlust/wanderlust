@@ -415,13 +415,14 @@ EXEC-FUNCTION is a function called to execute the action.
 Its argument is a list of MARK-INFO.
 MARK-INFO is a list of (NUMBER MARK DATA).
 FACE is a face for highlighting."
-  :type '(repeat (string :tag "Temporary mark")
-		 (symbol :tag "Action name")
-		 (symbol :tag "Set mark function")
-		 (symbol :tag "Unset mark function")
-		 (symbol :tag "Exec function")
-		 (symbol :tag "Face symbol")
-		 (string :tag "Document string"))
+  :type '(repeat (list
+		  (string :tag "Temporary mark")
+		  (symbol :tag "Action name")
+		  (symbol :tag "Argument function")
+		  (symbol :tag "Set mark function")
+		  (symbol :tag "Exec function")
+		  (symbol :tag "Face symbol")
+		  (string :tag "Document string")))
   :group 'wl-summary)
 
 ;; Important folders

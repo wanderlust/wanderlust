@@ -94,12 +94,14 @@
 Append this value to `wl-summary-mark-action-list' by `wl-spam-setup'.
 
 See `wl-summary-mark-action-list' for the detail of element."
-  :type '(repeat (string :tag "Temporary mark")
-		 (symbol :tag "Set mark function")
-		 (symbol :tag "Unset mark function")
-		 (symbol :tag "Exec function")
-		 (symbol :tag "Face symbol")
-		 (string :tag "Document string"))
+  :type '(repeat (list
+		  (string :tag "Temporary mark")
+		  (symbol :tag "Action name")
+		  (symbol :tag "Argument function")
+		  (symbol :tag "Set mark function")
+		  (symbol :tag "Exec function")
+		  (symbol :tag "Face symbol")
+		  (string :tag "Document string")))
   :group 'wl-spam)
 
 (defun wl-spam-domain (folder-name)

@@ -1,3 +1,9 @@
+2004-06-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-mark-action-list): Fix customization type.
+
+	* wl-spam.el (wl-spam-mark-action-list): Ditto.
+
 2004-06-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-summary-mark-action-list): Fix customization type.
