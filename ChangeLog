@@ -1,3 +1,8 @@
+2000-10-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* doc/texinfo.tex, doc/txi-en.tex, doc/txi-ja.tex: New file
+	imported.
+
 2000-10-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Makefile (clean-info, mostlyclean-info): New target.
