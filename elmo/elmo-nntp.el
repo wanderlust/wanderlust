@@ -736,8 +736,9 @@ Don't cache if nil.")
 (defun elmo-nntp-create-msgdb-from-overview-string (str
 						    flag-table
 						    &optional numlist)
-  (let (ov-list gmark message-id seen
-	ov-entity overview number-alist mark-alist num
+  (let ((new-msgdb (elmo-make-msgdb))
+	ov-list gmark message-id entity
+	ov-entity num
 	extras extra ext field field-index)
     (setq ov-list (elmo-nntp-parse-overview-string str))
     (while ov-list
@@ -762,44 +763,31 @@ Don't cache if nil.")
 		(setq field (elmo-msgdb-remove-field-string field)))
               (setq extra (cons (cons ext field) extra))))
 	  (setq extras (cdr extras)))
-	(setq overview
-	      (elmo-msgdb-append-element
-	       overview
-	       (cons (aref ov-entity 4)
-		     (vector num
-			     (elmo-msgdb-get-last-message-id
-			      (aref ov-entity 5))
-			     ;; from
-			     (elmo-mime-string (elmo-delete-char
-						?\"
-						(or
-						 (aref ov-entity 2)
-						 elmo-no-from) 'uni))
-			     ;; subject
-			     (elmo-mime-string (or (aref ov-entity 1)
-						   elmo-no-subject))
-			     (aref ov-entity 3) ;date
-			     nil ; to
-			     nil ; cc
-			     (string-to-int
-			      (aref ov-entity 6)) ; size
-			     extra ; extra-field-list
-			     ))))
-	(setq number-alist
-	      (elmo-msgdb-number-add number-alist num
-				     (aref ov-entity 4)))
-	(setq message-id (aref ov-entity 4))
-	(if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
-			    (elmo-msgdb-mark
-			     (elmo-flag-table-get flag-table message-id)
-			     (elmo-file-cache-status
-			      (elmo-file-cache-get message-id))
-			     'new)))
-	    (setq mark-alist
-		  (elmo-msgdb-mark-append mark-alist
-					  num gmark))))
+	(setq entity (elmo-msgdb-make-message-entity
+		      :message-id (aref ov-entity 4)
+		      :number     num
+		      :references (elmo-msgdb-get-last-message-id
+				    (aref ov-entity 5))
+		      :from       (elmo-mime-string (elmo-delete-char
+						     ?\"
+						     (or
+						      (aref ov-entity 2)
+						      elmo-no-from) 'uni))
+		      :subject    (elmo-mime-string (or (aref ov-entity 1)
+							elmo-no-subject))
+		      :date       (aref ov-entity 3)
+		      :size       (string-to-int (aref ov-entity 6))
+		      :extra      extra))
+	(setq message-id (elmo-message-entity-field entity 'message-id))
+	(setq gmark (or (elmo-msgdb-global-mark-get message-id)
+			(elmo-msgdb-mark
+			 (elmo-flag-table-get flag-table message-id)
+			 (elmo-file-cache-status
+			  (elmo-file-cache-get message-id))
+			 'new)))
+	(elmo-msgdb-append-entity new-msgdb entity gmark))
       (setq ov-list (cdr ov-list)))
-    (list overview number-alist mark-alist)))
+    new-msgdb))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-nntp-folder)
 					      numbers flag-table)
@@ -1406,8 +1394,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 (defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
-    (let (beg overview number-alist mark-alist
-	      entity i num gmark seen message-id)
+    (let ((new-msgdb (elmo-make-msgdb))
+	  beg overview number-alist mark-alist
+	  entity i num gmark seen message-id)
       (elmo-set-buffer-multibyte nil)
       (goto-char (point-min))
       (setq i 0)
@@ -1427,27 +1416,16 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	      (setq entity
 		    (elmo-msgdb-create-overview-from-buffer num))
 	      (when entity
-		(setq overview
-		      (elmo-msgdb-append-element
-		       overview entity))
-		(setq number-alist
-		      (elmo-msgdb-number-add
-		       number-alist
-		       (elmo-msgdb-overview-entity-get-number entity)
-		       (car entity)))
-		(setq message-id (car entity))
-		(if (setq gmark
-			  (or (elmo-msgdb-global-mark-get message-id)
-			      (elmo-msgdb-mark
-			       (elmo-flag-table-get flag-table message-id)
-			       (elmo-file-cache-status
-				(elmo-file-cache-get message-id))
-			       'new)))
-		    (setq mark-alist
-			  (elmo-msgdb-mark-append
-			   mark-alist
-			   num gmark)))
-		))))
+		(setq message-id
+		      (elmo-message-entity-field entity 'message-id)
+		      gmark
+		      (or (elmo-msgdb-global-mark-get message-id)
+			  (elmo-msgdb-mark
+			   (elmo-flag-table-get flag-table message-id)
+			   (elmo-file-cache-status
+			    (elmo-file-cache-get message-id))
+			   'new)))
+		(elmo-msgdb-append-entity new-msgdb entity gmark)))))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (if (or (zerop (% i 20)) (= i len))
@@ -1457,7 +1435,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (when (> len elmo-display-progress-threshold)
 	(elmo-display-progress
 	 'elmo-nntp-msgdb-create-message "Creating msgdb..." 100))
-      (list overview number-alist mark-alist))))
+      new-msgdb)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)
   elmo-nntp-use-cache)

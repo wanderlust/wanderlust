@@ -151,8 +151,9 @@ LOCATION."
 	 (answered-list (elmo-maildir-folder-answered-locations-internal
 			 folder))
 	 (len (length numbers))
+	 (new-msgdb (elmo-make-msgdb))
 	 (i 0)
-	 overview number-alist mark-alist entity message-id flag
+	 entity message-id flag
 	 file location pair mark cache-status file-flag)
     (message "Creating msgdb...")
     (dolist (number numbers)
@@ -163,19 +164,13 @@ LOCATION."
 	     (setq file
 		   (elmo-maildir-message-file-name folder location))))
       (when entity
-	(setq overview
-	      (elmo-msgdb-append-element overview entity)
-	      number-alist
-	      (elmo-msgdb-number-add number-alist
-				     (elmo-message-entity-number entity)
-				     (setq message-id
-					   (elmo-message-entity-field
-					    entity 'message-id)))
+	(setq message-id (elmo-message-entity-field
+			  entity 'message-id)
 	      ;; Precede flag-table to file-info.
 	      flag (elmo-flag-table-get flag-table message-id)
 	      file-flag nil
-	      mark nil)
-	(setq cache-status
+	      mark nil
+	      cache-status
 	      (elmo-file-cache-status (elmo-file-cache-get message-id)))
 	
 	;; Already flagged on filename (precede it to flag-table).
@@ -239,21 +234,14 @@ LOCATION."
 	     (delete location
 		     (elmo-maildir-folder-unread-locations-internal
 		      folder))))))
-	(if mark
-	    (setq mark-alist
-		  (elmo-msgdb-mark-append
-		   mark-alist
-		   (elmo-msgdb-overview-entity-get-number
-		    entity)
-		   mark)))
+	(elmo-msgdb-append-entity new-msgdb entity mark)
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
 	  (elmo-display-progress
 	   'elmo-maildir-msgdb-create "Creating msgdb..."
 	   (/ (* i 100) len)))))
     (message "Creating msgdb...done")
-    (elmo-msgdb-sort-by-date
-     (list overview number-alist mark-alist))))
+    (elmo-msgdb-sort-by-date new-msgdb)))
 
 (defun elmo-maildir-cleanup-temporal (dir)
   ;; Delete files in the tmp dir which are not accessed

@@ -809,16 +809,9 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			       (if elmo-imap4-use-cache
 				   elmo-msgdb-read-uncached-mark))
 			   elmo-msgdb-new-mark))))))
-    (setq elmo-imap4-current-msgdb
-	  (elmo-msgdb-append
-	   elmo-imap4-current-msgdb
-	   (list (list entity)
-		 (list (cons (elmo-msgdb-overview-entity-get-number entity)
-			     (car entity)))
-		 (if mark
-		     (list
-		      (list (elmo-msgdb-overview-entity-get-number entity)
-			    mark))))))))
+    (elmo-msgdb-append-entity elmo-imap4-current-msgdb
+			      entity
+			      mark)))
 
 ;; Current buffer is process buffer.
 (defun elmo-imap4-fetch-callback-1 (element app-data)
@@ -2289,7 +2282,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		      elmo-imap4-overview-fetch-chop-length))
       ;; Setup callback.
       (with-current-buffer (elmo-network-session-buffer session)
-	(setq elmo-imap4-current-msgdb nil
+	(setq elmo-imap4-current-msgdb (elmo-make-msgdb)
 	      elmo-imap4-seen-messages nil
 	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
 	      elmo-imap4-fetch-callback-data (cons flag-table

@@ -122,7 +122,8 @@
       (let* ((target-folder (elmo-filter-folder-target-internal folder))
 	     (len (length numlist))
 	     (msgdb (elmo-folder-msgdb target-folder))
-	     overview number-alist mark-alist message-id entity mark)
+	     (new-msgdb (elmo-make-msgdb))
+	     message-id entity mark)
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-progress-set 'elmo-folder-msgdb-create
 			     len "Creating msgdb..."))
@@ -130,19 +131,11 @@
 	    (dolist (number numlist)
 	      (setq entity (elmo-msgdb-overview-get-entity number msgdb))
 	      (when entity
-		(setq overview (elmo-msgdb-append-element overview entity)
-		      message-id (elmo-msgdb-overview-entity-get-id entity)
-		      number-alist (elmo-msgdb-number-add number-alist
-							  number
-							  message-id))
-		(when (setq mark (elmo-msgdb-get-mark msgdb number))
-		  (setq mark-alist (elmo-msgdb-mark-append
-				    mark-alist
-				    number
-				    mark))))
+		(setq mark (elmo-msgdb-get-mark msgdb number))
+		(elmo-msgdb-append-entity new-msgdb entity mark))
 	      (elmo-progress-notify 'elmo-folder-msgdb-create))
 	  (elmo-progress-clear 'elmo-folder-msgdb-create))
-	(list overview number-alist mark-alist))
+	new-msgdb)
     ;; Does not require msgdb.
     (elmo-folder-msgdb-create
      (elmo-filter-folder-target-internal folder)
