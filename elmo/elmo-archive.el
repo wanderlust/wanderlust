@@ -231,10 +231,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scan Folder
 
-(defsubst elmo-archive-list-folder-subr (file type prefix &optional nonsort)
+(defsubst elmo-archive-list-folder-subr (spec &optional nonsort)
   "*Returns list of number-file(int, not string) in archive FILE.
 TYPE specifies the archiver's symbol."
-  (let* ((method (elmo-archive-get-method type 'ls))
+  (let* ((type (nth 2 spec))
+	 (prefix (nth 3 spec))
+         (file (elmo-archive-get-archive-name (nth 1 spec) type spec))
+	 (method (elmo-archive-get-method type 'ls))
 	 (args (list file))
 	 (file-regexp (format (elmo-archive-get-regexp type)
 			      (elmo-concat-path (regexp-quote prefix) "")))
@@ -274,16 +277,10 @@ TYPE specifies the archiver's symbol."
       numbers))))
 
 (defun elmo-archive-list-folder (spec)
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
-    (elmo-archive-list-folder-subr arc type prefix)))
+  (elmo-archive-list-folder-subr spec))
 
 (defun elmo-archive-max-of-folder (spec)
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-         (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
-    (elmo-archive-list-folder-subr arc type prefix t)))
+  (elmo-archive-list-folder-subr spec t))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

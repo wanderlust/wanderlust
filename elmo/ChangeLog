@@ -1,3 +1,23 @@
+2000-09-15  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-archive.el (elmo-archive-list-folder-subr): Fix.
+	(elmo-archive-list-folder): Fix.
+	(elmo-archive-max-of-folder): Fix.
+
+2000-09-15  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-localdir.el (elmo-localdir-copy-msgs): Use
+	 `elmo-localdir-max-of-folder' instead of 'elmo-localdir-list-folder-subr'.
+	(elmo-localdir-append-msg): Ditto.
+	(elmo-localdir-list-folder): Fix for `nonsort'.
+	(elmo-localdir-list-folder-subr): Fix for `killed'.
+	* elmo-maildir.el (elmo-maildir-list-folder): Ditto.
+	(elmo-maildir-list-folder-subr): Ditto.
+	* elmo-archive.el (elmo-archive-list-folder): Ditto.
+	(elmo-archive-list-folder-subr): Ditto.
+	* elmo-internal.el (elmo-internal-list-folder): Ditto.
+	(elmo-internal-list-folder-subr): Ditto.
+
 2000-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-parse-flag-list): Rewrite.
