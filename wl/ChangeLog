@@ -1,3 +1,8 @@
+2001-10-15  NAKAJIMA Mikio  <minakaji@osaka.email.ne.jp>
+
+	* wl-summary.el (wl-summary-jump-to-msg): Search before
+	calibration point by `beginning-of-line'.
+
 2001-10-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-fldmgr.el (wl-fldmgr-make-group): Check folder name only
