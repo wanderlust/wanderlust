@@ -4253,7 +4253,7 @@ sent off-line.
 
 @item wl-draft-use-cache
 @vindex wl-draft-use-cache
-The initial setting is @code{t}.
+The initial setting is @code{nil}.
 If non-nil, cache the message which is sent.
 
 @item wl-auto-flush-queue
