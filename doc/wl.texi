@@ -620,10 +620,10 @@ If variable @code{wl-use-ldap} is non-nil (initial setting is nil),
 address completion in draft mode uses LDAP information.
 
 If you use LDAP, you have to set @code{wl-ldap-server},
-@code{wl-ldap-port} and @{wl-ldap-base} properly. If your emacs does not
-have LDAP feature as built-in feature (Currently only XEmacs can have
-built-in LDAP feature), you have to set command exec PATH to the program
-`ldapsearch'.
+@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
+not have LDAP feature as built-in feature (Currently only XEmacs can
+have built-in LDAP feature), you have to set command exec PATH to the
+program `ldapsearch'.
 
 @node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section Folder Definition
@@ -1449,11 +1449,10 @@ Example:
 @noindent
 Tip for string description:
 
-Space character, @samp{"}, @samp{/},@samp{)},@samp{|} and @samp{&} should
-be enclosed with @samp{"} in @var{value} string.
-(@samp{"} should be escaped with @{\} in it).
-You can enclose the string with @samp{"} even it does not contain
-these characters.
+Space character, @samp{"}, @samp{/},@samp{)},@samp{|} and @samp{&}
+should be enclosed with @samp{"} in @var{value} string.  (@samp{"}
+should be escaped with @samp{\} in it).  You can enclose the string with
+@samp{"} even it does not contain these characters.
 
 @noindent
 Advanced example:
@@ -4147,7 +4146,7 @@ sent off-line.
 
 @item wl-draft-use-cache
 @vindex wl-draft-use-cache
-The initial setting is code{t}.
+The initial setting is @code{t}.
 If non-nil, cache the message which is sent.
 
 @item wl-auto-flush-queue
