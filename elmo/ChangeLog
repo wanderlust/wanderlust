@@ -1,3 +1,45 @@
+2001-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed
+	unbalanced parenthesis.
+
+2001-08-03  YAMASHITA Junji <ysjj@unixuser.org>
+
+	* elmo-localdir.el (elmo-folder-rename-internal): Fixed typo.
+
+2001-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed logic.
+	(Advised by YAMASHITA Junji <ysjj@unixuser.org>.)
+
+2001-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-folder-msgdb-create): Bind unbound
+	local variables.
+
+2001-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-use-cache): New user option.
+	(elmo-message-use-cache-p): Define.
+	(elmo-folder-msgdb-create): Treat cache.
+
+2001-07-28  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Call
+	`elmo-nntp-send-mode-reader'.
+	(elmo-network-setup-session): Remove `elmo-nntp-send-mode-reader'.
+
+2001-07-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-index-range-alist): Changed to regexp
+	alist.
+	(elmo-folder-initialize): Use elmo-string-matched-assoc instead of
+	assoc.
+
+	* elmo-net.el (elmo-network-get-session): Set stream-type argument
+	for `elmo-plugged-p'.
+	(elmo-open-network-stream): Fixed stream-type argument.
+
 2001-07-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-archive.el (elmo-archive-get-archive-name): Cause an error when

@@ -104,7 +104,7 @@ If level 3 is required for uniqness with other candidates,
 (defun wl-ldap-make-filter (pat type-list)
   "Make RFC1558 quiery filter for PAT from ATTR-LIST.
 Each are \"OR\" combination, and PAT is beginning-match."
-  (concat "(&(objectclass=person)(|"
+  (concat "(&(objectclass=" wl-ldap-objectclass ")(|"
 	  (mapconcat (lambda (x) (format "(%s=%s*)" x pat)) ; fixed format
 		     type-list
 		     "")
