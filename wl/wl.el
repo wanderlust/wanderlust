@@ -86,8 +86,7 @@
 	    'wl-plug-state-indicator-on
 	  'wl-plug-state-indicator-off))
   (if wl-plugged
-      (wl-toggle-plugged t 'flush))
-  (force-mode-line-update t))
+      (wl-toggle-plugged t 'flush)))
 
 (defun wl-toggle-plugged (&optional arg queue-flush-only)
   (interactive)
@@ -209,15 +208,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (setq major-mode 'wl-plugged-mode)
   (setq mode-name "Plugged")
   (easy-menu-add wl-plugged-mode-menu)
-  (let ((id '("Wanderlust: %12b")))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (cdr id)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification)
   (setq wl-plugged-switch wl-plugged)
   (setq wl-plugged-alist-modified nil)
   (setq buffer-read-only t)

@@ -37,6 +37,14 @@
   (require 'wl-highlight)
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
+(add-hook 'wl-folder-mode-hook 'wl-setup-folder)
+(add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
+
+(add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
+(add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
+
+(add-hook 'wl-summary-mode-hook 'wl-setup-summary)
+
 (defvar wl-use-toolbar (if (featurep 'toolbar) 'default-toolbar nil))
 (defvar wl-plugged-glyph nil)
 (defvar wl-unplugged-glyph nil)
@@ -418,13 +426,12 @@
     (concat (wl-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
 
-
-(defun wl-xmas-setup-folder ()
+(defun wl-setup-folder ()
   (and (featurep 'scrollbar)
        (set-specifier scrollbar-height (cons (current-buffer) 0)))
   (wl-xmas-setup-folder-toolbar))
 
-(defun wl-xmas-setup-summary ()
+(defun wl-setup-summary ()
   (make-local-variable 'dragdrop-drop-functions)
   (setq dragdrop-drop-functions '((wl-dnd-default-drop-message t t)))
   (and (featurep 'scrollbar)
@@ -506,15 +513,7 @@ Special commands:
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 (defun wl-draft-overload-functions ()
-  (let ((id '("Wanderlust: %12b")))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (cdr id)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification)
   (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
   (wl-draft-overload-menubar))

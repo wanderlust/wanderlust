@@ -395,7 +395,9 @@ when `wl-prefetch-confirm' is non-nil."
 
 ;;;; Hooks
 (defvar wl-folder-mode-hook nil
-  "A hook called when wanderlust folder mode is started.")
+  "A hook called when wanderlust folder mode is started.  This hook may
+contain the functions `wl-folder-init-icons' and `wl-setup-folder' for
+reasons of system internal to accord facilities for the Emacs variants.")
 (defvar wl-summary-toggle-disp-on-hook nil
   "A hook called when message is toggled.")
 (defvar wl-summary-toggle-disp-off-hook nil
@@ -407,7 +409,10 @@ when `wl-prefetch-confirm' is non-nil."
 (defvar wl-summary-toggle-disp-folder-message-resumed-hook nil
   "A hook called when message window is resumed when folder is toggled.")
 (defvar wl-summary-mode-hook nil
-  "A hook called when summary mode is started.")
+  "A hook called when summary mode is started.  This hook may contain
+the function `wl-setup-summary' for reasons of system internal to
+accord facilities for the Emacs variants.")
+
 (defvar wl-summary-prepared-pre-hook nil
   "A hook called before the summary buffer has been generated.")
 (defvar wl-summary-prepared-hook nil
@@ -491,7 +496,10 @@ when `wl-prefetch-confirm' is non-nil."
 (defvar wl-score-mode-hook nil
   "A hook called when score mode is started.")
 (defvar wl-make-plugged-hook nil
-  "A hook called when make plugged alist.")
+  "A hook called when make plugged alist.  This hook may contain the
+functions `wl-plugged-init-icons' and `wl-biff-init-icons' for reasons
+of system internal to accord facilities for the Emacs variants.")
+
 (defvar wl-plugged-exit-hook nil
   "A hook called when exit plugged mode.")
 
@@ -1328,6 +1336,37 @@ every intervals specified by wl-biff-check-interval. "
   :type 'integer
   :group 'wl-folder)
 
+(defcustom wl-biff-state-indicator-on "[〒]"
+  "String used to show biff status ON."
+  :type 'string
+  :group 'wl-folder)
+
+(defcustom wl-biff-state-indicator-off "[‐]"
+  "String used to show biff status OFF."
+  :type 'string
+  :group 'wl-folder)
+
+(defvar wl-biff-state-indicator wl-biff-state-indicator-off)
+
+(defcustom wl-mode-line-display-priority-list '(biff plug title)
+  "Displaying order of items to be shown in modeline.  The first item will
+be placed in the leftmost.  The significant items are `biff' and `plug';
+otherwise, e.g. `title', corresponds to the things except for the biff
+staus nor the plugged status.  The default order is '(biff plug title)
+even if the value of this option is set to nil.  Here are some samples:
+
+;; Plugged status first:
+\(setq wl-mode-line-display-priority-list '(plug))
+
+;; Biff status, Title of Wanderlust, Plugged status:
+\(setq wl-mode-line-display-priority-list '(biff title plug))
+
+"
+  :type '(repeat (radio (const :format "%v " biff)
+			(const :format "%v " plug)
+			(sexp :tag "Other" :value title)))
+  :group 'wl-highlight)
+
 (defcustom wl-interactive-send nil
   "*If non-nil, require your confirmation when sending draft message."
   :type 'boolean
@@ -1891,8 +1930,8 @@ the `wl-highlight-message-headers' face."
 This is to prevent us from wasting time trying to fontify things like
 uuencoded files and large digests.  If this is nil, all messages will
 be highlighted."
-    :type 'integer
-    :group 'wl-highlight)
+  :type 'integer
+  :group 'wl-highlight)
 
 ;; highilght about signature (of draft and message)
 (defcustom wl-highlight-signature-separator
@@ -1912,8 +1951,8 @@ This variable can also be a regex. "
   :group 'wl-highlight)
 
 ;; highilght about mouse
-(defcustom wl-use-highlight-mouse-line (and (or wl-on-xemacs wl-on-emacs21)
-					    window-system)
+(defcustom wl-use-highlight-mouse-line (and window-system
+					    (>= emacs-major-version 19))
   "*Highlight mouse line, if non nil."
   :type 'boolean
   :group 'wl-highlight)
@@ -1976,10 +2015,6 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 (defvar wl-plug-state-indicator-on  " [ON] ")
 (defvar wl-plug-state-indicator-off " [--] ")
 (defvar wl-plug-state-indicator 'wl-plug-state-indicator-on)
-
-(defvar wl-biff-state-indicator-on "(M@il)")
-(defvar wl-biff-state-indicator-off "(-)")
-(defvar wl-biff-state-indicator wl-biff-state-indicator-off)
 
 (defvar wl-show-plug-status-on-modeline t)
 

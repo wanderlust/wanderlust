@@ -171,16 +171,8 @@ Special commands:
     '("FCC" . wl-draft-fcc)))
 
 (defun wl-draft-overload-functions ()
-  (let ((id '("Wanderlust: %12b")))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (cdr id)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
-  (local-set-key "\C-c\C-s" 'wl-draft-send)    ; override
+  (wl-mode-line-buffer-identification)
+  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-draft-overload-menubar))
 
 ;; for "ja-mule-canna-2.3.mini" on PocketBSD

@@ -38,6 +38,14 @@
   (defvar-maybe wl-folder-mode-map (make-sparse-keymap))
   (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
 
+(add-hook 'wl-folder-mode-hook 'wl-setup-folder)
+(add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
+
+(add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
+(add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
+
+(add-hook 'wl-summary-mode-hook 'wl-setup-summary)
+
 (defvar wl-use-toolbar (and (display-graphic-p)
 			    (image-type-available-p 'xpm)))
 (defvar wl-plugged-image nil)
@@ -482,9 +490,9 @@
 (defun wl-make-date-string ()
   (format-time-string "%a, %d %b %Y %T %z"))
 
-(defalias 'wl-e21-setup-folder 'wl-e21-setup-folder-toolbar)
+(defalias 'wl-setup-folder 'wl-e21-setup-folder-toolbar)
 
-(defalias 'wl-e21-setup-summary 'wl-e21-setup-summary-toolbar)
+(defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
 (defun wl-message-overload-functions ()
   (wl-e21-setup-message-toolbar)
@@ -571,15 +579,7 @@ Special commands:
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 (defun wl-draft-overload-functions ()
-  (let ((id '("Wanderlust: %12b")))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (cdr id)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification)
   (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-e21-setup-draft-toolbar)
   (wl-draft-overload-menubar))

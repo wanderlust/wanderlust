@@ -1384,13 +1384,6 @@ If current line is group folder, all subfolders are marked."
       (message "No more unread folder")
       nil)))
 
-;; Avoid byte-compile warning.
-(eval-when-compile
-  (unless wl-on-xemacs
-    (defalias 'wl-xmas-setup-folder 'ignore))
-  (unless wl-on-emacs21
-    (defalias 'wl-e21-setup-folder 'ignore)))
-
 (defun wl-folder-mode ()
   "Major mode for Wanderlust Folder.
 See info under Wanderlust for full documentation.
@@ -1409,20 +1402,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
 	wl-folder-buffer-cur-point nil)
-  (let ((id '("Wanderlust: %12b")))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (cdr id)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification)
   (easy-menu-add wl-folder-mode-menu)
-  (cond (wl-on-xemacs
-	 (wl-xmas-setup-folder))
-	(wl-on-emacs21
-	 (wl-e21-setup-folder)))
+  ;; This hook may contain the functions `wl-folder-init-icons' and
+  ;; `wl-setup-folder' for reasons of system internal to accord
+  ;; facilities for the Emacs variants.
   (run-hooks 'wl-folder-mode-hook))
 
 (defun wl-folder-append-petname (realname petname)
@@ -1436,10 +1420,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (wl-append wl-folder-petname-alist
 	       (list (cons realname petname)))))
 
-(eval-and-compile
-  (unless (or wl-on-xemacs wl-on-emacs21)
-    (defalias 'wl-folder-init-icons 'ignore)))
-
 (defun wl-folder (&optional arg)
   (interactive "P")
   (let (initialize)
@@ -1449,7 +1429,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
     (wl-folder-mode)
     (wl-folder-init)
-    (wl-folder-init-icons)
     (set-buffer wl-folder-buffer-name)
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil))
@@ -1951,11 +1930,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	wl-score-cache nil
 	))
 
-(eval-and-compile
-  (unless (or wl-on-xemacs wl-on-emacs21)
-    (defalias 'wl-plugged-init-icons 'ignore)
-    (defalias 'wl-biff-init-icons 'ignore)))
-
 (defun wl-make-plugged-alist ()
   (let ((entity-list (wl-folder-get-entity-list wl-folder-entity))
 	(add (not wl-reset-plugged-alist)))
@@ -1976,9 +1950,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			wl-nntp-posting-server
 			elmo-default-nntp-port
 			nil nil "nntp" add))
-    (wl-plugged-init-icons)
-    (wl-biff-init-icons)
-    ;; user setting
+    ;; This hook may contain the functions `wl-plugged-init-icons' and
+    ;; `wl-biff-init-icons' for reasons of system internal to accord
+    ;; facilities for the Emacs variants.
     (run-hooks 'wl-make-plugged-hook)))
 
 (defvar wl-folder-init-func 'wl-local-folder-init)

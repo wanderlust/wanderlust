@@ -1,10 +1,70 @@
+2000-09-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl.el (wl-plugged-mode): Use revised
+	`wl-mode-line-buffer-identification'.
+	(wl-plugged-init): Don't use `force-mode-line-update'.
+
+	* wl-xmas.el (wl-draft-overload-functions): Use revised
+	`wl-mode-line-buffer-identification'.
+	(wl-setup-summary): Renamed from `wl-xmas-setup-summary'.
+	(wl-setup-folder): Renamed from `wl-xmas-setup-folder'.
+	(TopLevel): Add `wl-setup-summary' to `wl-summary-mode-hook';
+	add `wl-plugged-init-icons' and `wl-biff-init-icons' to
+	`wl-make-plugged-hook';
+	add `wl-folder-init-icons' and `wl-setup-folder' to
+	`wl-folder-mode-hook'.
+
+	* wl-vars.el (wl-use-highlight-mouse-line): Activate it for Emacs
+	19 as well.
+	(wl-mode-line-display-priority-list): New user option.
+	(wl-biff-state-indicator-off, wl-biff-state-indicator-on):
+	Defcustomized.
+	(wl-make-plugged-hook, wl-summary-mode-hook, wl-folder-mode-hook):
+	Add docs.
+
+	* wl-util.el (wl-biff-start): Call `wl-biff-check-folders' at the
+	start.
+	(wl-mode-line-buffer-identification): Revised as a function.
+
+	* wl-summary.el (wl-summary-mode): Use revised
+	`wl-mode-line-buffer-identification'; don't call
+	`wl-e21-setup-summary' nor `wl-xmas-setup-summary' directly.
+	(TopLevel): Don't bind `wl-e21-setup-summary' nor
+	`wl-xmas-setup-summary'.
+
+	* wl-nemacs.el (wl-draft-overload-functions): Use revised
+	`wl-mode-line-buffer-identification'.
+
+	* wl-mule.el (wl-draft-overload-functions): Use revised
+	`wl-mode-line-buffer-identification'.
+
+	* wl-folder.el (wl-make-plugged-alist): Don't call
+	`wl-biff-init-icons' nor `wl-plugged-init-icons' directly.
+	(wl-folder): Don't call `wl-folder-init-icons' directly.
+	(wl-folder-mode): Don't call `wl-e21-setup-folder' nor
+	`wl-xmas-setup-folder' directly;
+	use revised `wl-mode-line-buffer-identification'.
+	(TopLevel): Don't bind `wl-biff-init-icons',
+	`wl-plugged-init-icons', `wl-folder-init-icons',
+	`wl-e21-setup-folder' nor `wl-xmas-setup-folder'.
+
+	* wl-e21.el (wl-draft-overload-functions): Use revised
+	`wl-mode-line-buffer-identification'.
+	(wl-setup-summary): Renamed from `wl-e21-setup-summary'.
+	(wl-setup-folder): Renamed from `wl-e21-setup-folder'.
+	(TopLevel): Add `wl-setup-summary' to `wl-summary-mode-hook';
+	add `wl-plugged-init-icons' and `wl-biff-init-icons' to
+	`wl-make-plugged-hook';
+	add `wl-folder-init-icons' and `wl-setup-folder' to
+	`wl-folder-mode-hook'.
+
 2000-09-18  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
             Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl.el (wl): Call `wl-biff-start'.
 	(wl-exit): Call `wl-biff-stop'.
 	(wl-plugged-mode): Show biff in modeline.
-	(wl-unplugged-glyph, wl-unplugged-glyph): Removed.
+	(wl-unplugged-glyph, wl-plugged-glyph): Removed.
 
 	* wl-xmas.el (wl-draft-overload-functions): Show biff in modeline.
 	(wl-biff-init-icons): New function.

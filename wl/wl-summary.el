@@ -751,13 +751,6 @@ Returns nil if selecting folder was in failure."
 	 (regexp-quote wl-thread-space-str-internal)))
   (run-hooks 'wl-summary-buffer-set-folder-hook))
 
-;; Avoid byte-compile warning.
-(eval-when-compile
-  (unless wl-on-xemacs
-    (defalias 'wl-xmas-setup-summary 'ignore))
-  (unless wl-on-emacs21
-    (defalias 'wl-e21-setup-summary 'ignore)))
-
 (defun wl-summary-mode ()
   "Major mode for reading threaded messages.
 The keys that are defined for this mode are:\\<wl-summary-mode-map>
@@ -813,31 +806,20 @@ q	Goto folder mode.
 ;; (setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
   (setq buffer-read-only t)
   (setq truncate-lines t)
-;  (make-local-variable 'tab-width)
-;  (setq tab-width 1)
+;; (make-local-variable 'tab-width)
+;; (setq tab-width 1)
   (buffer-disable-undo (current-buffer))
   (if wl-use-semi
       (setq wl-summary-buffer-message-redisplay-func
 	    'wl-mmelmo-message-redisplay)
     (setq wl-summary-buffer-message-redisplay-func
 	  'wl-normal-message-redisplay))
-  ;; setup toolbar, dnd, etc.
-  (cond (wl-on-xemacs
-	 (wl-xmas-setup-summary))
-	(wl-on-emacs21
-	 (wl-e21-setup-summary)))
-  (let ((id '("Wanderlust: "
-	      wl-summary-buffer-folder-indicator
-	      wl-summary-buffer-unread-status)))
-    (when wl-show-plug-status-on-modeline
-      (wl-push 'wl-plug-state-indicator id))
-    (when wl-biff-check-folder-list
-      (wl-push 'wl-biff-state-indicator id))
-    (when (or wl-show-plug-status-on-modeline wl-biff-check-folder-list)
-      (wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification '("Wanderlust: "
+					wl-summary-buffer-folder-indicator
+					wl-summary-buffer-unread-status))
   (easy-menu-add wl-summary-mode-menu)
+  ;; This hook may contain the function `wl-setup-summary' for reasons
+  ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
 
 (defun wl-summary-overview-entity-compare-by-date (x y)

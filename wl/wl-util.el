@@ -399,7 +399,32 @@ Insert User-Agent field instead of X-Mailer field."
 	(concat "User-Agent: " wl-appname "/" wl-version " (" wl-codename ") "
 		(wl-extended-emacs-version3 "/" t))))))
 
-(defalias 'wl-mode-line-buffer-identification 'identity)
+(defun wl-mode-line-buffer-identification (&optional id)
+  (let ((priorities '(biff plug title)))
+    (let ((items (reverse wl-mode-line-display-priority-list))
+	  item)
+      (while items
+	(setq item (car items)
+	      items (cdr items))
+	(unless (memq item '(biff plug))
+	  (setq item 'title))
+	(setq priorities (cons item (delq item priorities)))))
+    (let (priority result)
+      (while priorities
+	(setq priority (car priorities)
+	      priorities (cdr priorities))
+	(cond ((and wl-biff-check-folder-list (eq 'biff priority))
+	       (setq result (append result '(wl-biff-state-indicator))))
+	      ((and wl-show-plug-status-on-modeline (eq 'plug priority))
+	       (setq result (append result '(wl-plug-state-indicator))))
+	      (t
+	       (setq result (append result (or id '("Wanderlust: %12b")))))))
+      (prog1
+	  (setq mode-line-buffer-identification (if (stringp (car result))
+						    result
+						  (cons "" result)))
+	(force-mode-line-update t)))))
+
 (defalias 'wl-display-error 'elmo-display-error)
 (make-obsolete 'wl-display-error 'elmo-display-error)
 
@@ -867,7 +892,8 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (wl-biff-stop)
     (when wl-biff-check-folder-list
-      (start-itimer "wl-biff" 'wl-biff-check-folders
+      (wl-biff-check-folders)
+      (start-itimer wl-biff-timer-name 'wl-biff-check-folders
 		    wl-biff-check-interval wl-biff-check-interval))))
 
  ((condition-case nil (require 'timer) (error nil));; FSFmacs 19+
@@ -878,6 +904,7 @@ that `read' can handle, whenever this is possible."
 
   (defun wl-biff-start ()
     (when wl-biff-check-folder-list
+      (wl-biff-check-folders)
       (put 'wl-biff 'timer (run-at-time t wl-biff-check-interval
 					'wl-biff-event-handler))))
 

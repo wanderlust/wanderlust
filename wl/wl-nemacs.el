@@ -66,15 +66,7 @@
   (list (cons t (mime-charset-to-coding-system default-mime-charset))))
 
 (defun wl-draft-overload-functions ()
-  (let ((id '("Wanderlust: %12b")))
-    (if wl-show-plug-status-on-modeline
-	(wl-push 'wl-plug-state-indicator id))
-    (if wl-biff-check-folder-list
-	(wl-push 'wl-biff-state-indicator id))
-    (if (cdr id)
-	(wl-push "" id))
-    (setq mode-line-buffer-identification
-	  (wl-mode-line-buffer-identification id)))
+  (wl-mode-line-buffer-identification)
   (local-set-key "\C-c\C-y" 'wl-draft-yank-original)
   (local-set-key "\C-c\C-s" 'wl-draft-send)
   (local-set-key "\C-c\C-a" 'wl-draft-insert-x-face-field)
