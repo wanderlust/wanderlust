@@ -1,5 +1,13 @@
 2001-11-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule):
+	Change local variable name.
+	(wl-folder-guess-mailing-list-by-folder-name): Ditto.
+	(wl-folder-get-newsgroups): Return nil when non-news folder.
+	* wl-summary.el (wl-summary-write-current-folder): State through
+	when guess-list return nil.
+	(wl-summary-write-current-folder-functions): Fixed docstring.
+
 	* wl.el (wl-exit): Changed confirm message.
 
 	* wl.el (wl-init): (require 'mime-setup) move to toplevel.

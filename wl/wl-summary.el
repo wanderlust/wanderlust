@@ -4904,7 +4904,8 @@ Reply to author if invoked with ARG."
     wl-folder-guess-mailing-list-by-refile-rule
     wl-folder-guess-mailing-list-by-folder-name)
   "Newsgroups or Mailing List address guess functions list.
-Call from `wl-summary-write-current-folder'")
+Call from `wl-summary-write-current-folder'.
+When guess function return nil, challenge next guess-function.")
 
 (defun wl-summary-write-current-folder (&optional folder)
   "Write message to current FOLDER's newsgroup or mailing-list.
@@ -4917,11 +4918,15 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  guess-list)
       (while flist
 	(setq guess-list (funcall (car flist) folder))
-	(if (or (nth 0 guess-list)	; To:
-;;;		(nth 1 guess-list)	; Cc:
-		(nth 2 guess-list))	; Newsgroups:
-	    (setq flist nil)
-	  (setq flist (cdr flist))))
+	(cond ((null guess-list)
+	       (setq flist (cdr flist)))
+	      ;; To: or Newsgroups:
+	      ((or (stringp (nth 0 guess-list))
+		   (stringp (nth 2 guess-list)))
+	       (setq flist nil))
+	      ;; (nil X nil) or error case
+	      (t
+	       (setq flist (cdr flist)))))
       (when (null guess-list)
 	(error "Can't guess by folder %s" folder))
       (wl-draft (nth 0 guess-list) nil nil ; To:

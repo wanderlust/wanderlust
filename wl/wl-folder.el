@@ -2029,10 +2029,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-folder-get-newsgroups (folder)
   "Return Newsgroups field value string for FOLDER newsgroup.
 If FOLDER is multi, return comma separated string (cross post)."
-  (list nil nil (mapconcat 'identity
-			   (elmo-folder-newsgroups
-			    (wl-folder-get-elmo-folder folder))
-			   ",")))
+  (let ((nlist (elmo-folder-newsgroups
+			(wl-folder-get-elmo-folder folder))))
+    (if nlist
+	(list nil nil (mapconcat 'identity nlist ","))
+      nil)))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule (entity)
   "Return ML address guess by FOLDER.
@@ -2040,17 +2041,18 @@ Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
 	  (wl-folder-get-elmo-folder entity)))
-	fld ret mlist)
+	fld mladdr to)
     (while (setq fld (car flist))
-      (if (setq ret
-		(wl-folder-guess-mailing-list-by-refile-rule-subr
-		 (elmo-folder-name-internal fld)))
-	  (setq mlist (if (stringp mlist)
-			  (concat mlist ", " ret)
-			ret)))
+      (setq mladdr (wl-folder-guess-mailing-list-by-refile-rule-subr
+		    (elmo-folder-name-internal fld)))
+      (when mladdr
+	(setq to (if (stringp to)
+		     (concat to ", " mladdr)
+		   mladdr)))
       (setq flist (cdr flist)))
-    (if mlist
-	(list mlist nil nil))))
+    (if (stringp to)
+	(list to nil nil)
+      nil)))
 
 (defun wl-folder-guess-mailing-list-by-refile-rule-subr (entity)
   (unless (memq (elmo-folder-type entity)
@@ -2077,17 +2079,18 @@ Use `wl-subscribed-mailing-list'."
   (let ((flist
 	 (elmo-folder-get-primitive-list
 	  (wl-folder-get-elmo-folder entity)))
-	fld ret mlist)
+	fld mladdr to)
     (while (setq fld (car flist))
-      (if (setq ret
-		(wl-folder-guess-mailing-list-by-folder-name-subr
-		 (elmo-folder-name-internal fld)))
-	  (setq mlist (if (stringp mlist)
-			  (concat mlist ", " ret)
-			ret)))
+      (setq mladdr (wl-folder-guess-mailing-list-by-folder-name-subr
+		    (elmo-folder-name-internal fld)))
+      (when mladdr
+	(setq to (if (stringp to)
+		     (concat to ", " mladdr)
+		   mladdr)))
       (setq flist (cdr flist)))
-    (if mlist
-	(list mlist nil nil))))
+    (if (stringp to)
+	(list to nil nil)
+      nil)))
 
 (defun wl-folder-guess-mailing-list-by-folder-name-subr (entity)
   (when (memq (elmo-folder-type entity)
