@@ -1,17 +1,9 @@
-2002-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-buffer-mark-modified): Abolish
-	(All other related portions are changed).
-	(wl-summary-mark-as-read-all): Rewrite.
-
 2002-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync-marks): Set no-modeline argument of
 	`wl-summary-mark-as-read'.
 	(wl-summary-mark-as-unread): Rewrite.
 	(wl-summary-mark-as-read): Added no-modeline argument.
-	(wl-summary-resume-cache-status): Rewrite.
-	(wl-summary-exec-subr): Remove unused local variable.
 
 2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
