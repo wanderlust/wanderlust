@@ -354,8 +354,8 @@ If nil, `elmo-pop3-default-stream-type' is used."
   "*Default Authentication type for POP-before-SMTP.
 If nil, `elmo-pop3-default-authenticate-type' is used."
   :type '(choice (const :tag "none" nil)
-		 (const :tag "APOP" "apop")
-		 (const :tag "POP3" "user"))
+		 (const :tag "APOP" 'apop)
+		 (const :tag "POP3" 'user))
   :group 'wl
   :group 'wl-setting)
 
