@@ -1548,13 +1548,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 						      flag &optional in-msgdb)
   ;;    2.3. elmo-folder-list-unreads return unread message list according to
   ;;         `reads' slot.
-  (case flag
-    (unread
-     (elmo-living-messages (luna-call-next-method)
-			   (elmo-nntp-folder-reads-internal folder)))
-    ;; Should consider read, digest and any flag?
-    (otherwise
-     (luna-call-next-method))))
+  (let ((msgs (luna-call-next-method)))
+    (if in-msgdb
+	msgs
+      (case flag
+	(unread
+	 (elmo-living-messages msgs (elmo-nntp-folder-reads-internal folder)))
+	;; Should consider read, digest and any flag?
+	(otherwise
+	 msgs)))))
 
 (require 'product)
 (product-provide (provide 'elmo-nntp) (require 'elmo-version))
