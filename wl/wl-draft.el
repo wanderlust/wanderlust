@@ -49,6 +49,9 @@
   (defalias-maybe 'wl-init 'ignore)
   (defalias-maybe 'wl-draft-mode 'ignore))
 
+(eval-and-compile
+  (autoload 'wl-addrmgr "wl-addrmgr"))
+
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-draft-cite-function 'wl-default-draft-cite)
 (defvar wl-draft-buffer-file-name nil)
@@ -813,6 +816,20 @@ to find out how to use this."
 				msg-id-list))))
     (nreverse msg-id-list)))
 
+(defun wl-draft-std11-parse-addresses (lal)
+  (let ((ret (std11-parse-address lal)))
+    (if ret
+	(let ((dest (list (car ret))))
+	  (setq lal (cdr ret))
+	  (while (and (setq ret (std11-parse-ascii-token lal))
+		      (string-equal (cdr (assq 'specials (car ret))) ",")
+		      (setq ret (std11-parse-address (cdr ret)))
+		      )
+	    (setq dest (cons (car ret) dest))
+	    (setq lal (cdr ret)))
+	  (if lal (error "Error while parsing address"))
+	  (nreverse dest)))))
+
 (defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
   "Get mailbox list of FIELD from current buffer.
 The buffer is expected to be narrowed to just the headers of the message.
@@ -832,7 +849,7 @@ from current buffer."
 	(skip-chars-backward "\n")
 	(setq seq (std11-lexical-analyze
 		   (buffer-substring-no-properties beg (point))))
-	(setq addresses (std11-parse-addresses seq))
+	(setq addresses (wl-draft-std11-parse-addresses seq))
 	(while addresses
 	  (cond ((eq (car (car addresses)) 'group)
 		 (setq has-group-list t)
@@ -1389,9 +1406,7 @@ If optional argument is non-nil, current draft buffer is killed"
 			   (1- (point)))
 			 'category 'mail-header-separator)
       (and body (insert body)))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
+    (push-mark (point) t t)
     (as-binary-output-file
      (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		   nil t))
@@ -1491,9 +1506,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
-    (if wl-on-nemacs
-	(push-mark (point) t)
-      (push-mark (point) t t))
+    (push-mark (point) t t)
     (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		  nil t)
     (wl-draft-overload-functions)

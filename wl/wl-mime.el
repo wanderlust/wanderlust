@@ -83,22 +83,26 @@ By setting following-method as yank-content."
 	       (let ((wl-draft-config-exec-flag config-exec-flag))
 		 (run-hooks 'wl-draft-send-hook)
 		 (setq recipients-message
-		       (concat "Recipients: "
-			       (mapconcat
-				'identity
-				(wl-draft-deduce-address-list
-				 (current-buffer)
-				 (point-min)
-				 (save-excursion
-				   (goto-char (point-min))
-				   (re-search-forward
-				    (concat
-				     "^"
-				     (regexp-quote mail-header-separator)
-				     "$")
-				    nil t)
-				   (point)))
-				", ")))))))
+		       (condition-case err
+			   (concat "Recipients: "
+				   (mapconcat
+				    'identity
+				    (wl-draft-deduce-address-list
+				     (current-buffer)
+				     (point-min)
+				     (save-excursion
+				       (goto-char (point-min))
+				       (re-search-forward
+					(concat
+					 "^"
+					 (regexp-quote mail-header-separator)
+					 "$")
+					nil t)
+				       (point)))
+				    ", "))
+			 (error
+			  (kill-buffer (current-buffer))
+			  (signal (car err) (cdr err)))))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
