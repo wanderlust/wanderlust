@@ -1364,6 +1364,23 @@ NUMBER-SET is altered."
     (nreverse list)))
 
 ;;; File cache.
+(defmacro elmo-make-file-cache (path status)
+  "PATH is the cache file name.
+STATUS is one of 'section, 'entire or nil.
+ nil means no cache exists.
+'section means partial section cache exists.
+'entire means entire cache exists.
+If the cache is partial file-cache, TYPE is 'partial."
+  (` (cons (, path) (, status))))
+
+(defmacro elmo-file-cache-path (file-cache)
+  "Returns the file path of the FILE-CACHE."
+  (` (car (, file-cache))))
+
+(defmacro elmo-file-cache-status (file-cache)
+  "Returns the status of the FILE-CACHE."
+  (` (cdr (, file-cache))))
+
 (defsubst elmo-cache-to-msgid (filename)
   (concat "<" (elmo-recover-string-from-filename filename) ">"))
 
@@ -1440,23 +1457,6 @@ SECTION is the section string."
 	  (elmo-make-directory dir))
       (write-region-as-binary (point-min) (point-max)
 			      path nil 'no-msg))))
-
-(defmacro elmo-make-file-cache (path status)
-  "PATH is the cache file name.
-STATUS is one of 'section, 'entire or nil.
- nil means no cache exists.
-'section means partial section cache exists.
-'entire means entire cache exists.
-If the cache is partial file-cache, TYPE is 'partial."
-  (` (cons (, path) (, status))))
-
-(defmacro elmo-file-cache-path (file-cache)
-  "Returns the file path of the FILE-CACHE."
-  (` (car (, file-cache))))
-
-(defmacro elmo-file-cache-status (file-cache)
-  "Returns the status of the FILE-CACHE."
-  (` (cdr (, file-cache))))
 
 (defun elmo-file-cache-get (msgid &optional section)
   "Returns the current file-cache object associated with MSGID.

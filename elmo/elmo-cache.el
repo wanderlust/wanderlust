@@ -34,7 +34,6 @@
 (require 'elmo-util)
 (require 'elmo)
 (require 'elmo-map)
-(require 'elmo-dop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 

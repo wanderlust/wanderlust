@@ -1,3 +1,45 @@
+2001-02-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-folder-msgdb-create): Fixed.
+
+	* elmo-imap4.el (elmo-folder-initialize): Fixed problem
+	when elmo-imap4-default-authenticate-type is nil.
+	(elmo-folder-list-subfolders): Ditto
+	(According to the reported of Bun Mizuhara <mizuhara@acm.org>)
+	(elmo-imap4-fetch-callback-1-subr): Renamed from
+	`elmo-imap4-fetch-callback-1' and define as inline function.
+	(elmo-imap4-fetch-callback-1):
+	Renamed from `elmo-imap4-fetch-callback'.
+	(elmo-imap4-parse-fetch): Funcall `elmo-imap4-fetch-callback'.
+
+	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Fixed
+	msgdb path (To keep compatibility with main trunk).
+
+	* elmo-vars.el (elmo-inhibit-number-mapping): New variable.
+
+	* elmo-util.el (elmo-make-file-cache): Moved position of
+	some macros.
+
+	* elmo-pop3.el (elmo-pop3-inhibit-uidl): Eliminated.
+	(elmo-pop3-get-session): Use `elmo-inhibit-number-mapping'
+	instead of `elmo-pop3-inhibit-uidl'.
+	(elmo-folder-exists-p): Ditto.
+	(elmo-pop3-folder-list-messages): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-drain): Use `elmo-inhibit-number-mapping'
+	instead of `elmo-pop3-inhibit-uidl'.
+	(elmo-folder-status): Ditto.
+
+	* elmo-dop.el (elmo-dop-folder): New variable.
+	(elmo-dop-lock-message): Eliminated.
+	(elmo-dop-unlock-message): Ditto.
+	(elmo-dop-lock-list-load): Ditto.
+	(elmo-dop-lock-list-save): Ditto.
+	(elmo-dop-delete-folder): Ditto.
+	(elmo-dop-rename-folder): Ditto.
+
+	* elmo.el: Removed incomplete commentary.
+
 2001-02-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo.el (toplevel): Require 'elmo-version first;
