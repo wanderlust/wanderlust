@@ -3,7 +3,7 @@
 	* wl.el (wl-check-environment): If `wl-from' is nil, use default value.
 
 	* wl-vars.el (wl-from): Set default value as nil.
-	(wl-organization): Sed default value as ORGANIZATION environment
+	(wl-organization): Set default value as ORGANIZATION environment
 	variable.
 
 	* wl-draft.el (wl-smtp-extension-bind): Check value of
