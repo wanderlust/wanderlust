@@ -1,0 +1,128 @@
+;;; wl-news.el --- Create notification from NEWS(.ja) for Wanderlust.
+
+;; Copyright (C) 2002 Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+;; Copyright (C) 2002 Kenichi OKADA <okada@opaopa.org>
+
+;; Author: Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+;;	Kenichi OKADA <okada@opaopa.org>
+;; Keywords: mail, net news
+
+;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+;;
+
+;;; Commentary:
+;;
+
+;;; Code:
+;;
+
+(require 'elmo)
+(require 'wl-vars)
+(require 'wl-util)
+(require 'wl-address)
+(require 'wl-draft)
+(require 'wl-folder)
+
+(defvar wl-news-version-file-name "previous-version")
+(defvar wl-news-default-previous-version '(2 0 0))
+
+(defun wl-news-check ()
+  (let ((previous-version (wl-news-previous-version-load))
+	(current-version (product-version (product-find 'wl-version))))
+    (if (and (< 0 (product-version-compare
+		   current-version previous-version))
+	     (wl-news-append-news-to-folder previous-version))
+	(wl-news-previous-version-save current-version))))
+
+
+;;; -*- news-list -*-
+
+
+;;; -*- news-list-end -*-
+
+(defun wl-news-previous-version-load ()
+  (save-excursion
+    (let ((filename (expand-file-name
+		     wl-news-version-file-name
+		     elmo-msgdb-directory))
+	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*"))
+	  insert-file-contents-pre-hook
+	  insert-file-contents-post-hook
+	  ret-val)
+      (if (not (file-readable-p filename))
+	  wl-news-default-previous-version
+	(set-buffer tmp-buffer)
+	(insert-file-contents filename)
+	(setq ret-val
+	      (condition-case nil
+		  (read (current-buffer))
+		(error nil nil)))
+	(kill-buffer tmp-buffer)
+	ret-val))))
+
+(defun wl-news-previous-version-save (version)
+  (save-excursion
+    (let ((filename (expand-file-name
+		     wl-news-version-file-name
+		     elmo-msgdb-directory))
+	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*")))
+      (set-buffer tmp-buffer)
+      (erase-buffer)
+      (prin1 version tmp-buffer)
+      (princ "\n" tmp-buffer)
+      (if (file-writable-p filename)
+	  (write-region (point-min) (point-max)
+			filename nil 'no-msg)
+	(message "%s is not writable." filename))
+      (kill-buffer tmp-buffer))))
+
+(defun wl-news-append-news-to-folder (previous-version)
+  (let ((news-list wl-news-news-alist)
+	(news-list-ja wl-news-news-ja-alist))
+    (with-temp-buffer
+      (insert "Subject: Wanderlust NEWS\n"
+	      "From: \"WL Release 'Bot\"\n"
+	      "To: " (wl-address-header-extract-address wl-from) "\n"
+	      "Date: " (wl-make-date-string) "\n"
+	      "Message-ID: " (funcall wl-message-id-function) "\n"
+	      "Content-Type: multipart/mixed;\n\tboundary=Multipart\n\n"
+	      "--Multipart\n"
+	      "Content-Type: text/plain\n\n")
+      (while (< 0
+		(product-version-compare
+		 (car (car news-list))
+		 previous-version))
+	(insert (cdr (car news-list)) "\n\n")
+	(setq news-list (cdr news-list)))
+      (insert "--Multipart\n")
+      (insert "Content-Type: text/plain; charset=ISO-2022-JP\n\n")
+      (while (< 0
+		(product-version-compare
+		 (car (car news-list-ja))
+		 previous-version))
+	(insert (cdr (car news-list-ja)) "\n\n")
+	(setq news-list-ja (cdr news-list-ja)))
+      (encode-coding-region (point-min) (point-max) 'iso-2022-7bit)
+      (if (elmo-folder-writable-p (wl-folder-get-elmo-folder wl-draft-folder))
+	  (elmo-folder-append-buffer
+	   (wl-folder-get-elmo-folder wl-default-folder) t)))))
+
+(require 'product)
+(product-provide (provide 'wl-news) (require 'wl-version))
+
+;;; wl-news.el ends here

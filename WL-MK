@@ -31,6 +31,11 @@
 (defvar wl-info-lang '("ja" "en")
   "The language of info file (\"ja\" or \"en\").")
 
+;;; NEWS
+(defconst wl-news-news-file "NEWS")
+(defconst wl-news-news-file-ja "NEWS.ja")
+(defconst wl-news-filename "wl-news.el")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (require 'cl)
@@ -221,6 +226,7 @@
 
 (defun compile-wl-package ()
   (config-wl-package)
+  (make-wl-news)
   (mapcar
    '(lambda (x)
       (compile-elisp-modules (cdr x) (car x)))
@@ -432,6 +438,75 @@
 (defun install-wl-info ()
   (wl-texinfo-format)
   (wl-texinfo-install))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; wl-news stuff
+
+(defun make-wl-news ()
+  (let ((in-filename
+	 (expand-file-name (concat wl-news-filename ".in") WLDIR))
+	(out-filename
+	 (expand-file-name wl-news-filename WLDIR)))
+    (if (or (file-newer-than-file-p in-filename out-filename)
+	    (file-newer-than-file-p wl-news-news-file out-filename)
+	    (file-newer-than-file-p wl-news-news-file-ja out-filename))
+	(with-temp-buffer
+	  (save-excursion
+	    (insert-file-contents in-filename)
+	    (goto-char (point-min))
+	    (unless (re-search-forward "^;;; -\\*- news-list -\\*-" nil t)
+	      (error "Invalid wl-news.el.in"))
+	    (forward-line 2)
+	    (insert "(defconst wl-news-news-alist\n  '")
+	    (prin1 (wl-news-parse-news) (current-buffer))
+	    (insert ")\n\n")
+	    (insert "(defconst wl-news-news-ja-alist\n  '")
+	    (prin1 (wl-news-parse-news-ja) (current-buffer))
+	    (insert ")\n")
+	    (write-region (point-min) (point-max) out-filename))))))
+
+(defun wl-news-parse-news ()
+  (let (news-list)
+    (with-temp-buffer
+      (insert-file-contents wl-news-news-file)
+      (while (re-search-forward "^\\* Changes in \\([0-9.]*\\) from" nil t)
+	(let ((beg (match-beginning 0))
+	      (version-tmp (split-string (match-string 1) "\\."))
+	       version news-string end)
+	  (while version-tmp
+	    (setq version (append version (list (string-to-int (car version-tmp)))))
+	    (setq version-tmp (cdr version-tmp)))
+	  (re-search-forward "^\\(\\* \\|\\)" nil t)
+	  (goto-char (- (match-beginning 0) 1))
+	  (setq end (point))
+	  (setq news-string (buffer-substring beg end))
+	  (setq news-list
+		(append news-list
+			(list (cons version news-string)))))))
+    news-list))
+
+(defun wl-news-parse-news-ja ()
+  (let (news-list)
+    (with-temp-buffer
+      (insert-file-contents wl-news-news-file-ja)
+      (while (re-search-forward "^\\* [0-9.]* から \\([0-9.]*\\) への変更点" nil t)
+	(let ((beg (match-beginning 0))
+	      (version-tmp (split-string (match-string 1) "\\."))
+	       version news-string end)
+	  (while version-tmp
+	    (setq version (append version (list (string-to-int (car version-tmp)))))
+	    (setq version-tmp (cdr version-tmp)))
+	  (re-search-forward "^\\(\\* \\|\\)" nil t)
+	  (goto-char (- (match-beginning 0) 1))
+	  (setq end (point))
+	  (setq news-string (buffer-substring beg end))
+	  (setq news-list
+		(append news-list
+			(list (cons version news-string)))))))
+    news-list))
+
+
 
 
 ;;; ToDo

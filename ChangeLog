@@ -1,3 +1,13 @@
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-MK (make-wl-news): New function.
+	(wl-news-parse-news): New function.
+	(wl-news-parse-news-ja): New function.
+	(compile-wl-package): Do `make-wl-news'.
+	(wl-news-news-file): New variable.
+	(wl-news-news-file-ja): New variable.
+	(wl-news-filename: New variable.
+
 2002-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.10.0 - "Venus"

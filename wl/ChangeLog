@@ -1,5 +1,9 @@
 2002-12-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.el : New file.
+
+2002-12-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-vars.el (wl-draft-reply-with-argument-list): Change
 	default value.
 	(wl-draft-reply-without-argument-list): Ditto.

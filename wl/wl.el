@@ -58,6 +58,7 @@
 (require 'wl-summary)
 (require 'wl-thread)
 (require 'wl-address)
+(require 'wl-news)
 
 (wl-draft-mode-setup)
 (require 'wl-draft)
@@ -696,6 +697,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (symbol-value 'wl-summary-subject-filter-function))
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
+    (wl-news-check)
     (setq wl-init t)
     ;; This hook may contain the functions `wl-plugged-init-icons' and
     ;; `wl-biff-init-icons' for reasons of system internal to accord
