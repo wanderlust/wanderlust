@@ -1,3 +1,9 @@
+2001-12-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-version.el (nemacs-version): Eliminated.
+	(wl-extended-emacs-version2): Ignore nemacs.
+	(wl-extended-emacs-version3): Ditto.
+
 2001-11-30  Tatsuya Kinoshita  <tats@iris.ne.jp>
 
 	* wl-vars.el (wl-draft-add-references): Set default value as nil.

@@ -77,7 +77,6 @@ If variable `wl-version-status' is non-nil, override default rule."
 
 ;; avoid compile warnings
 (defvar mule-version)
-(defvar nemacs-version)
 (defvar emacs-beta-version)
 (defvar xemacs-codename)
 (defvar mime-edit-insert-user-agent-field)
@@ -144,15 +143,8 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 		(elmo-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(concat "Nemacs" (or delimiter " ")
-		nemacs-version
-		"@"
-		(substring emacs-version
-			   (match-beginning 1)
-			   (match-end 1)))
-      (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+    (concat "Emacs" (or delimiter " ")
+	    (elmo-match-string 1 emacs-version)))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (elmo-match-string 1 emacs-version)
@@ -181,21 +173,8 @@ Separate DELIMITER (default is \" \").  If WITH-CODENAME add XEmacs codename."
 		(elmo-match-string 2 mule-version)
 	      "")))
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(let ((nemacs-codename-assoc '(("3.3.2" . " (FUJIMUSUME)")
-				       ("3.3.1" . " (HINAMATSURI)")
-				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
-	  (format "Emacs%s%s Nemacs%s%s%s"
-		  (or delimiter " ")
-		  (elmo-match-string 1 emacs-version)
-		  (or delimiter " ")
-		  nemacs-version
-		  (or (and with-codename
-			   (cdr (assoc nemacs-version
-				       nemacs-codename-assoc)))
-		      "")))
-      (concat "Emacs" (or delimiter " ")
-	      (elmo-match-string 1 emacs-version))))
+    (concat "Emacs" (or delimiter " ")
+	    (elmo-match-string 1 emacs-version)))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (elmo-match-string 1 emacs-version)
