@@ -3679,6 +3679,11 @@ cached.
 The initial setting is @code{t}.  If non-nil, messages read via POP3 are
 cached.
 
+@item elmo-shimbun-use-cache
+@vindex elmo-shimbun-use-cache
+The initial setting is @code{t}.  If non-nil, messages read in Shimbun
+folders are cached.
+
 @item wl-folder-process-duplicates-alist
 @vindex wl-folder-process-duplicates-alist
 The initial setting is @code{nil}.

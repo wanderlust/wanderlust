@@ -3660,6 +3660,11 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"(BPOP3 $B$GFI$s$@%a%C%;!<%8$r%-%c%C%7%e$7(B
 $B$^$9!#(B
 
+@item elmo-shimbun-use-cache
+@vindex elmo-shimbun-use-cache
+$B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"?7J9%U%)%k%@$GFI$s$@%a%C%;!<%8$r(B
+$B%-%c%C%7%e$7$^$9!#(B
+
 @item wl-folder-process-duplicates-alist
 @vindex wl-folder-process-duplicates-alist
 $B=i4|@_Dj$O(B @code{nil}$B!#=EJ#$7$?%a%C%;!<%8$,F1$8%U%)%k%@$K$"$k>l9g$NF0:n(B
