@@ -4911,31 +4911,30 @@ When guess function return nil, challenge next guess-function.")
   "Write message to current FOLDER's newsgroup or mailing-list.
 Use function list is `wl-summary-write-current-folder-functions'."
   (interactive)
-  (let (newsgroups to cc)
-    ;; default FOLDER is current buffer folder
-    (setq folder (or folder (wl-summary-buffer-folder-name)))
-    (let ((flist wl-summary-write-current-folder-functions)
-	  guess-list)
-      (while flist
-	(setq guess-list (funcall (car flist) folder))
-	(cond ((null guess-list)
-	       (setq flist (cdr flist)))
-	      ;; To: or Newsgroups:
-	      ((or (stringp (nth 0 guess-list))
-		   (stringp (nth 2 guess-list)))
-	       (setq flist nil))
-	      ;; (nil X nil) or error case
-	      (t
-	       (setq flist (cdr flist)))))
-      (when (null guess-list)
-	(error "Can't guess by folder %s" folder))
-      (wl-draft (nth 0 guess-list) nil nil ; To:
-		(nth 1 guess-list) nil	; Cc:
-		(nth 2 guess-list)	; Newsgroups:
-		nil nil nil nil nil nil nil
-		folder)
-      (run-hooks 'wl-mail-setup-hook)
-      (mail-position-on-field "Subject"))))
+  ;; default FOLDER is current buffer folder
+  (setq folder (or folder (wl-summary-buffer-folder-name)))
+  (let ((func-list wl-summary-write-current-folder-functions)
+	guess-list guess-func)
+    (while func-list
+      (setq guess-list (funcall (car func-list) folder))
+      (if (null guess-list)
+	  (setq func-list (cdr func-list))
+	(setq guess-func (car func-list))
+	(setq func-list nil)))
+    (when (null guess-func)
+      (error "Can't guess by folder %s" folder))
+    (unless (or (stringp (nth 0 guess-list))
+		(stringp (nth 1 guess-list))
+		(stringp (nth 2 guess-list)))
+      (error "Invalid value return guess function `%s'"
+	     (symbol-name guess-func)))
+    (wl-draft (nth 0 guess-list) nil nil ; To:
+	      (nth 1 guess-list) nil	; Cc:
+	      (nth 2 guess-list)	; Newsgroups:
+	      nil nil nil nil nil nil nil
+	      folder)
+    (run-hooks 'wl-mail-setup-hook)
+    (mail-position-on-field "Subject")))
 
 (defun wl-summary-forward (&optional without-setup-hook)
   ""
