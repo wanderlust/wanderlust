@@ -561,7 +561,7 @@ Optional argument ARG is repeart count."
 	(throw 'done t))
       (goto-char (point-max))))
 
-(defsubst wl-folder-update-group (entity diffs &optional is-group)
+(defun wl-folder-update-group (entity diffs &optional is-group)
   (save-excursion
     (let ((path (wl-folder-get-path
 		 wl-folder-entity
