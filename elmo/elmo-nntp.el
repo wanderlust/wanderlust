@@ -796,8 +796,9 @@ Don't cache if nil.")
 (defun elmo-nntp-folder-msgdb-create (folder numbers flag-table)
   (let ((filter numbers)
 	(session (elmo-nntp-get-session folder))
+	(new-msgdb (elmo-make-msgdb))
 	beg-num end-num cur length
-	ret-val ov-str use-xover dir)
+	new-msgdb ov-str use-xover dir)
     (elmo-nntp-select-group session (elmo-nntp-folder-group-internal
 				     folder))
     (when (setq use-xover (elmo-nntp-xover-p session))
@@ -817,14 +818,12 @@ Don't cache if nil.")
 	      elmo-nntp-overview-fetch-chop-length))))
 	(with-current-buffer (elmo-network-session-buffer session)
 	  (if ov-str
-	      (setq ret-val
-		    (elmo-msgdb-append
-		     ret-val
-		     (elmo-nntp-create-msgdb-from-overview-string
-		      ov-str
-		      flag-table
-		      filter
-		      )))))
+	      (elmo-msgdb-append
+	       new-msgdb
+	       (elmo-nntp-create-msgdb-from-overview-string
+		ov-str
+		flag-table
+		filter))))
 	(if (null (elmo-nntp-read-response session t))
 	    (progn
 	      (setq cur end-num);; exit while loop
@@ -842,24 +841,23 @@ Don't cache if nil.")
 	(elmo-display-progress
 	 'elmo-nntp-msgdb-create "Getting overview..." 100)))
     (if (not use-xover)
-	(setq ret-val (elmo-nntp-msgdb-create-by-header
-		       session numbers flag-table))
+	(setq new-msgdb (elmo-nntp-msgdb-create-by-header
+			 session numbers flag-table))
       (with-current-buffer (elmo-network-session-buffer session)
 	(if ov-str
-	    (setq ret-val
-		  (elmo-msgdb-append
-		   ret-val
-		   (elmo-nntp-create-msgdb-from-overview-string
-		    ov-str
-		    flag-table
-		    filter))))))
+	    (elmo-msgdb-append
+	     new-msgdb
+	     (elmo-nntp-create-msgdb-from-overview-string
+	      ov-str
+	      flag-table
+	      filter)))))
     (elmo-folder-set-killed-list-internal
      folder
      (nconc
       (elmo-folder-killed-list-internal folder)
       (car (elmo-list-diff
 	    numbers
-	    (elmo-msgdb-list-messages ret-val)))))
+	    (elmo-msgdb-list-messages new-msgdb)))))
     ;; If there are canceled messages, overviews are not obtained
     ;; to max-number(inn 2.3?).
     (when (and (elmo-nntp-max-number-precedes-list-active-p)
@@ -873,10 +871,10 @@ Don't cache if nil.")
 	    (elmo-nntp-set-list-active session nil)
 	    (error "NNTP list command failed")))
       (elmo-nntp-catchup-msgdb
-       ret-val
+       new-msgdb
        (nth 1 (read (concat "(" (elmo-nntp-read-contents
 				 session) ")")))))
-    ret-val))
+    new-msgdb))
 
 (luna-define-method elmo-folder-update-number ((folder elmo-nntp-folder))
   (if (elmo-nntp-max-number-precedes-list-active-p)
@@ -1395,8 +1393,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg overview number-alist mark-alist
-	  entity i num gmark seen message-id)
+	  beg entity i num gmark message-id)
       (elmo-set-buffer-multibyte nil)
       (goto-char (point-min))
       (setq i 0)

@@ -105,7 +105,7 @@ update overview when message is fetched."
 
 (defun elmo-shimbun-folder-entity-hash (folder)
   (or (elmo-shimbun-folder-entity-hash-internal folder)
-      (let ((overviews (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
+      (let ((overviews (elmo-folder-list-message-entities folder))
 	    hash id)
 	(when overviews
 	  (setq hash (elmo-make-hash (length overviews)))
@@ -473,7 +473,7 @@ update overview when message is fetched."
 				    ))
 			    t))
 		 (elmo-msgdb-overview-entity-get-id ov)))
-	     (elmo-msgdb-get-overview (elmo-folder-msgdb folder))))
+	     (elmo-folder-list-message-entities folder)))
       (mapcar
        (lambda (header)
 	 (or (elmo-shimbun-header-extra-field header "x-shimbun-id")

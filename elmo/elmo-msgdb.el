@@ -445,16 +445,30 @@ FLAG is a symbol which is one of the following:
 	 (elmo-msgdb-overview-get-entity
 	  number msgdb)))))
 
-(defsubst elmo-msgdb-append (msgdb msgdb-append)
-  (list
-   (nconc (car msgdb) (car msgdb-append))
-   (nconc (cadr msgdb) (cadr msgdb-append))
-   (nconc (caddr msgdb) (caddr msgdb-append))
-   (elmo-msgdb-make-index-return
-    msgdb
-    (elmo-msgdb-get-overview msgdb-append)
-    (elmo-msgdb-get-mark-alist msgdb-append))
-   (nth 4 msgdb)))
+(defun elmo-msgdb-append (msgdb msgdb-append)
+  "Return a list of messages which have duplicated message-id."
+  (let (duplicates)
+    (elmo-msgdb-set-overview
+     msgdb
+     (nconc (elmo-msgdb-get-overview msgdb)
+	    (elmo-msgdb-get-overview msgdb-append)))
+    (elmo-msgdb-set-number-alist
+     msgdb
+     (nconc (elmo-msgdb-get-number-alist msgdb)
+	    (elmo-msgdb-get-number-alist msgdb-append)))
+    (elmo-msgdb-set-mark-alist
+     msgdb
+     (nconc (elmo-msgdb-get-mark-alist msgdb)
+	    (elmo-msgdb-get-mark-alist msgdb-append)))
+    (setq duplicates (elmo-msgdb-make-index
+		      msgdb
+		      (elmo-msgdb-get-overview msgdb-append)
+		      (elmo-msgdb-get-mark-alist msgdb-append)))
+    (elmo-msgdb-set-path
+     msgdb
+     (or (elmo-msgdb-get-path msgdb)
+	 (elmo-msgdb-get-path msgdb-append)))
+    duplicates))
 
 (defun elmo-msgdb-merge (folder msgdb-merge)
   "Return a list of messages which have duplicated message-id."
@@ -487,13 +501,13 @@ FLAG is a symbol which is one of the following:
 
 (defsubst elmo-msgdb-clear (&optional msgdb)
   (if msgdb
-      (list
-       (setcar msgdb nil)
-       (setcar (cdr msgdb) nil)
-       (setcar (cddr msgdb) nil)
-       (setcar (nthcdr 3 msgdb) nil)
-       (setcar (nthcdr 4 msgdb) nil))
-    (list nil nil nil nil nil)))
+      (progn
+	(elmo-msgdb-set-overview msgdb nil)
+	(elmo-msgdb-set-number-alist msgdb nil)
+	(elmo-msgdb-set-mark-alist msgdb nil)
+	(elmo-msgdb-set-index msgdb nil)
+	msgdb)
+    (elmo-make-msgdb)))
 
 (defun elmo-msgdb-delete-msgs (msgdb msgs)
   "Delete MSGS from MSGDB
@@ -517,18 +531,20 @@ content of MSGDB is changed."
       ;;
       (when index (elmo-msgdb-clear-index msgdb ov-entity))
       (setq msgs (cdr msgs)))
-    (setcar msgdb overview)
-    (setcar (cdr msgdb) number-alist)
-    (setcar (cddr msgdb) mark-alist)
-    (setcar (nthcdr 3 msgdb) index)
+    (elmo-msgdb-set-overview msgdb overview)
+    (elmo-msgdb-set-number-alist msgdb number-alist)
+    (elmo-msgdb-set-mark-alist msgdb mark-alist)
+    (elmo-msgdb-set-index msgdb index)
     t)) ;return value
 
 (defun elmo-msgdb-sort-by-date (msgdb)
   (message "Sorting...")
   (let ((overview (elmo-msgdb-get-overview msgdb)))
-    (setq overview (elmo-msgdb-overview-sort-by-date overview))
+    (elmo-msgdb-set-overview
+     msgdb
+     (elmo-msgdb-overview-sort-by-date overview))
     (message "Sorting...done")
-    (list overview (nth 1 msgdb)(nth 2 msgdb))))
+    msgdb))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
