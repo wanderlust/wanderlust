@@ -1,3 +1,9 @@
+2003-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-extra-field):
+	Convert field-name to lower case.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+
 2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* acap.el, elmo-imap4.el, elmo-nntp.el, elmo-util.el, pldap.el:
