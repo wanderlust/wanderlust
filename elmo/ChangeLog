@@ -1,5 +1,10 @@
 2001-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-encache): Set unread argument for
+	elmo-message-fetch.
+
+	* elmo-shimbun.el (elmo-dop): Require 'elmo-dop.
+
 	* elmo.el (elmo-net-port-info): New method.
 
 	* elmo-shimbun.el (elmo-net-port-info): Define.

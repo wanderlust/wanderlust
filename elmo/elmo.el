@@ -523,7 +523,8 @@ Return newly created temporary directory name which contains temporary files.")
 			     t   ;save-cache
 			     (elmo-file-cache-get-path
 			      (elmo-message-field
-			       folder number 'message-id)))))
+			       folder number 'message-id)))
+   nil nil 'unread))
 
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional
