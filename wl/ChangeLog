@@ -1,3 +1,17 @@
+2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-exit): Call `wl-acap-exit'.
+
+	* wl-summary.el (wl-summary-message-string): New function.
+	(wl-summary-reedit): Use it.
+	(wl-summary-resend-bounced-mail): Remove needless let.
+	(wl-summary-supersedes-message): Ditto.
+	(wl-summary-save): Ditto.
+
+	* wl-acap.el (wl-acap-original-msgdb-dir): New variable.
+	(wl-acap-init): Set it.
+	(wl-acap-exit): New function.
+
 2001-11-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (wl-init): Revert (require 'mime-setup). move from

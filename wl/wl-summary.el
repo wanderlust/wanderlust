@@ -564,6 +564,29 @@
 	      wl-summary-buffer-unread-count unread))
     (+ new unread)))
 
+(defun wl-summary-message-string (&optional use-cache)
+  "Return full body string of current message.
+If optional USE-CACHE is non-nil, use cache if exists."
+  (let ((number (wl-summary-message-number))
+	(folder wl-summary-buffer-elmo-folder))
+    (if (null number)
+	(message "No message.")
+      (elmo-set-work-buf
+       (elmo-message-fetch folder
+			   number
+			   (elmo-make-fetch-strategy
+			    'entire
+			    use-cache ; use cache
+			    nil ; save cache (should `t'?)
+			    (and
+			     use-cache
+			     (elmo-file-cache-get-path
+			      (elmo-message-field folder number 'message-id))))
+			   nil
+			   (current-buffer)
+			   'unread)
+       (buffer-string)))))
+
 (defun wl-summary-reedit (&optional arg)
   "Re-edit current message.
 If ARG is non-nil, Supersedes message"
@@ -578,13 +601,7 @@ If ARG is non-nil, Supersedes message"
 		  (mail-position-on-field "Newsgroups")
 		(mail-position-on-field "To"))
 	      (delete-other-windows)))
-      (save-excursion
-	(let ((mmelmo-force-fetch-entire-message t))
-	  (if (null (wl-summary-message-number))
-	      (message "No message.")
-	    (set-buffer (wl-summary-get-original-buffer))
-	    (wl-draft-edit-string (buffer-substring (point-min)
-						    (point-max)))))))))
+      (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
@@ -593,37 +610,36 @@ contains some mail you have written but has been bounced back to
 you."
   (interactive)
   (save-excursion
-    (let ((mmelmo-force-fetch-entire-message t))
-      (wl-summary-set-message-buffer-or-redisplay)
-      (set-buffer (wl-message-get-original-buffer))
-      (goto-char (point-min))
-      (let ((case-fold-search nil))
-	(cond
-	 ((and
-	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
-	   (not (bolp))
-	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
-	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
-		start)
-	    (cond
-	     ((and (setq start (re-search-forward
-			   (concat "^--" boundary "\n"
-				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
-				   "[Cc]ontent-[Tt]ype:[ \t]+"
-				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
-				   "\\(.+\n\\)*\n") nil t))
-		   (re-search-forward
-			 (concat "\n\\(--" boundary "\\)--\n") nil t))
-	      (wl-draft-edit-string (buffer-substring start (match-beginning 1))))
-	     (t
-	      (message "Seems no message/rfc822 part.")))))
-	 ((let ((case-fold-search t))
-	    (re-search-forward wl-rejected-letter-start nil t))
-	  (skip-chars-forward " \t\n")
-	  (wl-draft-edit-string (buffer-substring (point) (point-max))))
-	 (t
-	  (message "Does not appear to be a rejected letter.")))))))
+    (wl-summary-set-message-buffer-or-redisplay)
+    (set-buffer (wl-message-get-original-buffer))
+    (goto-char (point-min))
+    (let ((case-fold-search nil))
+      (cond
+       ((and
+	 (re-search-forward
+	  (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
+	 (not (bolp))
+	 (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
+	(let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
+	      start)
+	  (cond
+	   ((and (setq start (re-search-forward
+			      (concat "^--" boundary "\n"
+				      "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
+				      "[Cc]ontent-[Tt]ype:[ \t]+"
+				      "\\(message/rfc822\\|text/rfc822-headers\\)\n"
+				      "\\(.+\n\\)*\n") nil t))
+		 (re-search-forward
+		  (concat "\n\\(--" boundary "\\)--\n") nil t))
+	    (wl-draft-edit-string (buffer-substring start (match-beginning 1))))
+	   (t
+	    (message "Seems no message/rfc822 part.")))))
+       ((let ((case-fold-search t))
+	  (re-search-forward wl-rejected-letter-start nil t))
+	(skip-chars-forward " \t\n")
+	(wl-draft-edit-string (buffer-substring (point) (point-max))))
+       (t
+	(message "Does not appear to be a rejected letter."))))))
 
 (defun wl-summary-resend-message (address)
   "Resend the current message to ADDRESS."
@@ -5340,7 +5356,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
   "Supersede current message."
   (interactive)
   (let ((summary-buf (current-buffer))
-	(mmelmo-force-fetch-entire-message t)
 	message-buf from)
     (wl-summary-set-message-buffer-or-redisplay)
     (if (setq message-buf (wl-message-get-original-buffer))
@@ -5374,8 +5389,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 (defun wl-summary-save (&optional arg wl-save-dir)
   (interactive)
   (let ((filename)
-	(num (wl-summary-message-number))
-	(mmelmo-force-fetch-entire-message t))
+	(num (wl-summary-message-number)))
     (if (null wl-save-dir)
 	(setq wl-save-dir wl-tmp-dir))
     (if num

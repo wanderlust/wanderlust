@@ -96,6 +96,12 @@ If nil, default acap port is used."
   :type 'symbol
   :group 'wl)
 
+(defvar wl-acap-original-msgdb-dir nil)
+
+(defun wl-acap-exit ()
+  "End ACAP session."
+  (setq elmo-msgdb-dir wl-acap-original-msgdb-dir))
+  
 (defun wl-acap-init ()
   "A candidate for `wl-folder-init-function'."
   (let ((service (wl-acap-find-acap-service))
@@ -161,6 +167,7 @@ If nil, default acap port is used."
     (dolist (setting settings)
       (set (car setting) (cdr setting)))
     ;; Database directory becomes specific to the ACAP server.
+    (setq wl-acap-original-msgdb-dir elmo-msgdb-dir)
     (setq elmo-msgdb-dir (expand-file-name
 			  (concat "acap/" (car service) "/" wl-acap-user)
 			  elmo-msgdb-dir))

@@ -445,6 +445,12 @@ ENTRIES is a store-entry list."
 (defun acap-response-ok-p (response)
   (assq 'done-ok response))
 
+(defun acap-response-bye-p (response)
+  (assq 'bye response))
+
+(defun acap-response-bye-message (response)
+  (nth 1 (cdr (assq 'bye response))))
+
 (defun acap-response-cont-p (response)
   (assq 'cont response))
 
@@ -536,6 +542,9 @@ ENTRIES is a store-entry list."
   (with-current-buffer (process-buffer process)
     (while (and (not (acap-response-cont-p acap-response))
 		(< acap-reached-tag tag))
+      (when (acap-response-bye-p acap-response)
+	(error (prog1 (acap-response-bye-message acap-response)
+		 (setq acap-response nil))))
       (or (and (not (memq (process-status process) '(open run)))
 	       (sit-for 1))
 	  (let ((len (/ (point-max) 1024))
@@ -799,10 +808,8 @@ ENTRIES is a store-entry list."
 			       (acap-parse-return-data-list)))))
 	  (ALERT ;(cons 'alert (acap-parse-resp-body))
 	   (message (nth 1 (acap-parse-resp-body))))
-	  (BYE   ;(cons 'bye (acap-parse-resp-body)))
-	   ;;(message (nth 1  (acap-parse-resp-body)))
-	   ;;(ding)
-	   )
+	  ((BYE Bye bye)  
+	   (cons 'bye (acap-parse-resp-body)))
 	  (CHANGE (cons 'change
 			(list (acap-parse-quoted)
 			      (progn

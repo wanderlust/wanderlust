@@ -1,3 +1,10 @@
+2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-response-bye-p): New function.
+	(acap-response-bye-message): Ditto.
+	(acap-wait-for-response): If bye response is received, cause an error.
+	(acap-parse-response): Make bye response when 'Bye' is received.
+
 2001-11-23  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-pipe.el (elmo-pipe-drain): Load killed-list.
