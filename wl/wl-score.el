@@ -1245,15 +1245,12 @@ Set `wl-score-cache' nil."
 	   'wl-summary-score-update-all-lines "Updating score..."
 	   (/ (* i 100) count))))
       (when dels
-	(setq mark-alist
-	      (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	(let ((marks dels))
 	  (while marks
-	    (setq mark-alist
-		  (elmo-msgdb-mark-set mark-alist (pop marks) nil))))
+	    (elmo-msgdb-set-mark (wl-summary-buffer-msgdb)
+				 (pop marks) nil)))
 	(elmo-folder-mark-as-read wl-summary-buffer-elmo-folder
 				  dels)
-	(elmo-msgdb-set-mark-alist (wl-summary-buffer-msgdb) mark-alist)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
 	(let ((num-db (elmo-msgdb-get-number-alist
@@ -1262,12 +1259,12 @@ Set `wl-score-cache' nil."
 			   (wl-summary-buffer-msgdb))))
 	  ;; Update Folder mode
 	  (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
-					(list 0
-					      (let ((pair
-						     (wl-summary-count-unread
-						      mark-alist)))
-						(+ (car pair) (cdr pair)))
-					      (length num-db)))
+					(list 
+					 0
+					 (let ((pair
+						(wl-summary-count-unread)))
+					   (+ (car pair) (cdr pair)))
+					 (length num-db)))
 	  (wl-summary-update-modeline)))
       (message "Updating score...done")
       dels)))
