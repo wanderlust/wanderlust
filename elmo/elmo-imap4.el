@@ -810,17 +810,22 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		 elmo-imap4-seen-messages)))
       (setq mark (or (if (elmo-file-cache-status
 			  (elmo-file-cache-get (car entity)))
+			 ;; cached.
+			 (if (member "\\Answered" flags)
+			     elmo-msgdb-answered-cached-mark
+			   (if (or seen
+				   (and use-flag
+					(member "\\Seen" flags)))
+			       nil
+			     elmo-msgdb-unread-cached-mark))
+		       (if (member "\\Answered" flags)
+			   elmo-msgdb-answered-uncached-mark
 			 (if (or seen
 				 (and use-flag
 				      (member "\\Seen" flags)))
-			     nil
-			   elmo-msgdb-unread-cached-mark)
-		       (if (or seen
-			       (and use-flag
-				    (member "\\Seen" flags)))
-			   (if elmo-imap4-use-cache
-			       elmo-msgdb-read-uncached-mark)
-			 elmo-msgdb-new-mark)))))
+			     (if elmo-imap4-use-cache
+				 elmo-msgdb-read-uncached-mark)
+			   elmo-msgdb-new-mark))))))
     (setq elmo-imap4-current-msgdb
 	  (elmo-msgdb-append
 	   elmo-imap4-current-msgdb
@@ -1884,6 +1889,9 @@ Return nil if no complete line has arrived."
   ((folder elmo-imap4-folder))
   (elmo-imap4-list folder "answered"))
 
+(defun elmo-imap4-folder-list-any-plugged (folder)
+  (elmo-imap4-list folder "or answered or unseen flagged"))
+
 (luna-define-method elmo-folder-use-flag-p ((folder elmo-imap4-folder))
   (not (string-match elmo-imap4-disuse-server-flag-mailbox-regexp
 		     (elmo-imap4-folder-mailbox-internal folder))))
@@ -2122,7 +2130,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
        ((string= "important" (elmo-filter-value filter))
 	(elmo-folder-list-importants folder))
        ((string= "answered" (elmo-filter-value filter))
-	(elmo-folder-list-answereds folder))))
+	(elmo-folder-list-answereds folder))
+       ((string= "any" (elmo-filter-value filter))
+	(elmo-imap4-folder-list-any-plugged folder))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key)

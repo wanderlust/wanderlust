@@ -453,8 +453,8 @@ content of MSGDB is changed."
       (if (setq mark (elmo-msgdb-get-mark
 		      msgdb
 		      (elmo-msgdb-overview-entity-get-number (car ov))))
-	  (if (and mark (member mark (list elmo-msgdb-important-mark
-					   elmo-msgdb-read-uncached-mark)))
+	  (if (and mark (not (member mark
+				     (elmo-msgdb-unread-marks))))
 	      (setq seen-list (cons
 			       (elmo-msgdb-overview-entity-get-id (car ov))
 			       seen-list)))

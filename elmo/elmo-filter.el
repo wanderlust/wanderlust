@@ -65,16 +65,17 @@
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-check ((folder elmo-filter-folder))
-  (elmo-folder-synchronize (elmo-filter-folder-target-internal folder)))
+  (if (elmo-filter-folder-require-msgdb-internal folder)
+      (elmo-folder-synchronize (elmo-filter-folder-target-internal folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-filter-folder))
   (elmo-folder-close-internal (elmo-filter-folder-target-internal folder)))
 
-(luna-define-method elmo-folder-close :around ((folder elmo-filter-folder))
-  ;; Save target msgdb if it is used.
+(luna-define-method elmo-folder-close :after ((folder elmo-filter-folder))
+  ;; Clear target msgdb if it is used.
   (if (elmo-filter-folder-require-msgdb-internal folder)
-      (elmo-folder-close (elmo-filter-folder-target-internal folder)))
-  (luna-call-next-method))
+      (elmo-folder-set-msgdb-internal (elmo-filter-folder-target-internal
+				       folder) nil)))
 
 (luna-define-method elmo-folder-commit :around ((folder elmo-filter-folder))
   ;; Save target msgdb if it is used.
