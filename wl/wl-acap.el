@@ -188,10 +188,43 @@ If nil, default acap port is used."
 	(message "Searching ACAP server...")
 	(prog1 (let ((response (condition-case nil
 				   (slp-findsrvs "acap")
-				 (error))))
+				 (error)))
+		     selected)
 		 (when response
-		   ;; Only the first service entry is used.
-		   (setq response (car (slp-response-body response)))
+		   (if (> (length (slp-response-body response)) 1)
+		       (progn
+			 (setq selected
+			       (completing-read
+				"Select ACAP server: "
+				(mapcar (lambda (body)
+					  (list
+					   (concat
+					    (slp-response-srv-url-host
+					     body)
+					    (when (slp-response-srv-url-port
+						   body)
+					      (concat
+					       ":"
+					       (slp-response-srv-url-port
+						body))))))
+					(slp-response-body response)))
+			       response
+			       (catch 'done
+				 (dolist (entry (slp-response-body response))
+				   (when (string=
+					  (concat
+					   (slp-response-srv-url-host
+					    entry)
+					   (when
+					       (slp-response-srv-url-port
+						entry)
+					     (concat
+					      ":"
+					      (slp-response-srv-url-port
+					       entry))))
+					  selected)
+				     (throw 'done entry))))))
+		     (setq response (car (slp-response-body response))))
 		   (cons (slp-response-srv-url-host response)
 			 (slp-response-srv-url-port response))))
 	  (message "Searching ACAP server...done")))

@@ -1,3 +1,16 @@
+2001-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-message-body-button-alist): Set 4th element as the
+	max match length.
+	(Pointed out by Akihiro MOTOKI <amotoki@dd.iij4u.or.jp>.)
+
+	* wl-message.el (wl-message-add-buttons-to-body): Use 3rd element value
+	for the max match length;
+	Use 4th element value for the button string regexp group.
+
+	* wl-acap.el (wl-acap-find-acap-service): If multiple ACAP server
+	candidate exists, prompt to select.
+
 2001-10-15  NAKAJIMA Mikio  <minakaji@osaka.email.ne.jp>
 
 	* wl-summary.el (wl-summary-jump-to-msg): Search before

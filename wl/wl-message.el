@@ -376,13 +376,13 @@ Returns non-nil if bottom of message."
 	  (setq entry (car alist)
 		alist (cdr alist))
 	  (goto-char (point-min))
-	  (while (re-search-forward (car entry) nil t)
+	  (while (re-search-forward (car entry) (+ (point) (nth 3 entry)) t)
 	    (unless (get-text-property (point) 'keymap)
 	      (wl-message-add-button
 	       (match-beginning (nth 1 entry))
 	       (match-end (nth 1 entry))
 	       (nth 2 entry)
-	       (match-string (nth 3 entry))))))))))
+	       (match-string (nth 4 entry))))))))))
   
 (defun wl-message-add-buttons-to-header (start end)
   (save-excursion
