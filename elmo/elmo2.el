@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:43:10 teranisi>
+;; Time-stamp: <00/04/20 10:03:08 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -135,11 +135,12 @@
 	   (elmo-msgdb-rename-path old-folder new-folder))
 	(elmo-dop-rename-folder old-folder new-folder)))))
 
-(defun elmo-read-msg-no-cache (folder msg outbuf &optional msgdb)
+(defun elmo-read-msg-no-cache (folder msg outbuf &optional msgdb force-reload)
   "Read messsage into outbuf without cacheing.
 If msgdb is specified, use cache."
   (let (ret-val)
-    (when msgdb
+    (when (and (not force-reload)
+	       msgdb)
       (set-buffer outbuf)
       (erase-buffer)
       (setq ret-val
@@ -220,7 +221,7 @@ If msgdb is specified, use cache."
   "Read message into outbuf."
   (let ((inhibit-read-only t))
     (if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf msgdb)
+	(elmo-read-msg-no-cache folder msg outbuf msgdb force-reload)
       (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb 
