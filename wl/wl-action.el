@@ -646,7 +646,7 @@ Return number if put mark succeed"
 	(goto-char (point-min))
 	;; for thread...
 	(if (eq wl-summary-buffer-view 'thread)
-	    (let (number entity mark-info)
+	    (let (number entity)
 	      (while (not (eobp))
 		(setq numbers (cons (wl-summary-message-number) numbers)
 		      entity (wl-thread-get-entity number))
@@ -655,11 +655,11 @@ Return number if put mark succeed"
 		  (dolist (msg (wl-thread-get-children-msgs number))
 		    (setq numbers (cons msg numbers))))
 		(forward-line 1)))
-	  (let (number mark-info)
+	  (let (number)
 	    (while (not (eobp))
 	      (setq numbers (cons (wl-summary-message-number) numbers))
 	      (forward-line 1))))
-	numbers))))
+	(nreverse (delq nil numbers))))))
 
 (defun wl-summary-exec (&optional numbers)
   (interactive)
