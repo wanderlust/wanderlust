@@ -684,29 +684,51 @@ Message is inserted to the summary buffer."
 	  (wl-thread-update-children-number invisible-top)
 	  nil))))
 
+;(defun wl-thread-get-parent-list (msgs)
+;  ;; return ancestors
+;  (let* ((msgs2 msgs)
+;	 myself)
+;    (while msgs2
+;      (setq myself (car msgs2)
+;	    msgs2 (cdr msgs2))
+;      (while (not (eq myself (car msgs2)))
+;	(if (wl-thread-descendant-p myself (car msgs2))
+;	    (setq msgs (delq (car msgs2) msgs)))
+;	(setq msgs2 (or (cdr msgs2) msgs)))
+;      (setq msgs2 (cdr msgs2)))
+;    msgs))
+
 (defun wl-thread-get-parent-list (msgs)
-  (let* ((msgs2 msgs)
-	 myself)
-    (while msgs2
-      (setq myself (car msgs2)
-	    msgs2 (cdr msgs2))
-      (while (not (eq myself (car msgs2)))
-	(if (wl-thread-descendant-p myself (car msgs2))
-	    (setq msgs (delq (car msgs2) msgs)))
-	(setq msgs2 (or (cdr msgs2) msgs)))
-      (setq msgs2 (cdr msgs2)))
-    msgs))
+  ;; return connected ancestors
+  (let ((ptr msgs)
+	parent ret)
+    (while (car ptr)
+      (setq parent (wl-thread-entity-get-parent (wl-thread-get-entity (car ptr))))
+      (when (or (not parent)
+		(not (memq parent msgs)))
+	(setq ret (append ret (list (car ptr)))))
+      (setq ptr (cdr ptr)))
+    ret))
 
 (defun wl-thread-update-indent-string-thread (top-list)
-  (let ((top-list (wl-thread-get-parent-list top-list))
-	beg)
+  (let* ((top-list (wl-thread-get-parent-list top-list))
+	 (num (length top-list))
+	 (i 0)
+	 beg)
     (while top-list
+      (when (or (zerop (% i 5)) (= i num))
+	(elmo-display-progress
+	 'wl-thread-update-indent-string-thread
+	 "Updating thread indent..."
+	 (/ (* i 100) num)))
       (when (car top-list)
 	(wl-summary-jump-to-msg (car top-list))
 	(setq beg (point))
 	(wl-thread-goto-bottom-of-sub-thread)
 	(wl-thread-update-indent-string-region beg (point)))
-      (setq top-list (cdr top-list)))))
+      (setq top-list (cdr top-list)
+	    i (1+ i)))
+    (message "Updating thread indent...done")))
 
 (defun wl-thread-update-children-number (entity)
   "Update the children number."

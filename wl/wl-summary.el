@@ -1089,18 +1089,22 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-thread-modified-p ()
   wl-summary-buffer-thread-modified)
 
-(defun wl-summary-cleanup-temp-marks (&optional sticky)
+(defun wl-summary-cleanup-temp-marks (&optional default-keep)
   (when wl-summary-buffer-temp-mark-list
-    (if (y-or-n-p (format "Execute remaining marks in %s before cleanup? "
-			  (wl-summary-buffer-folder-name)))
+    (if (y-or-n-p (format "Execute marks in %s?%s "
+			  (wl-summary-buffer-folder-name)
+			  (if default-keep
+			      ""
+			    " (answer \"n\" to discard them)")))
 	(progn
 	  (wl-summary-exec)
 	  (if wl-summary-buffer-temp-mark-list
 	      (error "Some execution was failed")))
       ;; temp-mark-list is remained.
       (message "")))
-  (wl-summary-delete-all-temp-marks 'no-msg)
-  (setq wl-summary-scored nil))
+  (unless default-keep
+    (wl-summary-delete-all-temp-marks 'no-msg)
+    (setq wl-summary-scored nil)))
 
 ;; a subroutine for wl-summary-exit/wl-save-status
 ;; Note that folder is not commited here.
@@ -1140,7 +1144,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
     (if wl-summary-buffer-exit-function
 	(funcall wl-summary-buffer-exit-function)
       (if (or force-exit (not sticky))
-	  (wl-summary-cleanup-temp-marks sticky))
+	  (wl-summary-cleanup-temp-marks))
       (unwind-protect
 	  ;; save summary status
 	  (progn
@@ -1897,7 +1901,9 @@ This function is defined for `window-scroll-functions'"
 						 sync-all
 						 no-check))
 	  (if crossed
-	      (progn
+	      (let ((wl-summary-highlight
+		     (and wl-summary-highlight
+			  (not wl-summary-lazy-highlight))))
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
 		(setq diff (elmo-list-diff (elmo-folder-list-messages
@@ -1915,8 +1921,7 @@ This function is defined for `window-scroll-functions'"
 		(when (and wl-summary-lazy-highlight
 			   wl-summary-lazy-update-mark)
 		  (let (buffer-read-only)
-		    (put-text-property (point-min) (point-max) 'face nil))
-		  (run-hooks 'wl-summary-buffer-window-scroll-functions))
+		    (put-text-property (point-min) (point-max) 'face nil)))
 		(setq num (length append-list))
 		(setq i 0)
 		(setq wl-summary-delayed-update nil)
@@ -2018,15 +2023,16 @@ This function is defined for `window-scroll-functions'"
 	    (progn
 	      (goto-char (point-max))
 	      (forward-line -1))
-	  (if (and wl-summary-highlight
-		   (not wl-summary-lazy-highlight)
-		   (not (get-text-property (point) 'face)))
-	      (save-excursion
-		(forward-line (- 0
-				 (or
-				  wl-summary-partial-highlight-above-lines
-				  wl-summary-highlight-partial-threshold)))
-		(wl-highlight-summary (point) (point-max))))))
+	  (when wl-summary-highlight
+	    (if wl-summary-lazy-highlight
+		(run-hooks 'wl-summary-buffer-window-scroll-functions)
+	      (when (not (get-text-property (point) 'face))
+		(save-excursion
+		  (forward-line (- 0
+				   (or
+				    wl-summary-partial-highlight-above-lines
+				    wl-summary-highlight-partial-threshold)))
+		  (wl-highlight-summary (point) (point-max))))))))
       (wl-delete-all-overlays)
       (set-buffer-modified-p nil)
       (if mes (message "%s" mes)))))
@@ -2318,7 +2324,7 @@ If ARG, without confirm."
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
       (run-hooks 'wl-summary-exit-pre-hook)
       (if (or force-exit (not (wl-summary-sticky-p)))
-	  (wl-summary-cleanup-temp-marks (wl-summary-sticky-p)))
+	  (wl-summary-cleanup-temp-marks))
       (wl-summary-save-view)
       (elmo-folder-commit wl-summary-buffer-elmo-folder)
       (if (and (wl-summary-sticky-p) force-exit)

@@ -1,5 +1,15 @@
 2004-06-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-summary.el (wl-summary-sync-update): Utilize lazy-highlight.
+
+	* wl-thread.el (wl-thread-get-parent-list): Don't check
+	disconnected ancestors, neglecting needless work in
+	`wl-thread-update-indent-string-thread'.
+
+	* wl.el (wl-save): Take prefix argument to execute remaining marks.
+	* wl-summary.el (wl-summary-cleanup-temp-marks): Abolish unused
+	argument, add argument default-keep to keep marks by default.
+
 	* Version number is increased to 2.11.30.
 
 	* wl-vars.el (wl-draft-reply-with-argument-list): Fix
