@@ -1386,7 +1386,7 @@ If Optional LOCAL is non-nil, don't update server flag."
   (let ((msgdb (elmo-folder-msgdb folder))
 	(killed (elmo-folder-killed-list-internal folder)))
     (dolist (number numbers)
-      (elmo-number-set-append killed number)
+      (setq killed (elmo-number-set-append killed number))
       (elmo-msgdb-unset-flag msgdb number 'all))
     (elmo-folder-set-killed-list-internal folder killed)))
 
