@@ -223,8 +223,11 @@ update overview when message is fetched."
       (when (nth 0 server-group) ; server
 	(elmo-shimbun-folder-set-shimbun-internal
 	 folder
-	 (shimbun-open (nth 0 server-group)
-		       (luna-make-entity 'shimbun-elmo-mua :folder folder))))
+	 (condition-case nil
+	     (shimbun-open (nth 0 server-group)
+			   (luna-make-entity 'shimbun-elmo-mua :folder folder))
+	   (file-error
+	    (luna-make-entity 'shimbun :server (nth 0 server-group))))))
       (when (nth 1 server-group)
 	(elmo-shimbun-folder-set-group-internal
 	 folder
