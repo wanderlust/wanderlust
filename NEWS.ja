@@ -9,11 +9,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** make check で簡単な環境テストができるようになりました。
 
-** 名前変更等で既に使われなくなった変数が設定されていると warning
-   が表示されるようになりました。
-   メッセージを参考にして、新しい設定に変更してください。
-   warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を
-   nil にしてください。
+** 名前変更等で使われなくなった変数を .wl 等で設定していると、警告が表示され
+   ます。メッセージを参考にして、設定を変更してください。
+   もし何らかの理由で警告の表示を抑制したい場合には、変数
+   elmo-obsolete-variable-show-warnings を nil にしてください。
 
 ** 新規内部フォルダ 'sendlog が追加されました。
 
@@ -71,22 +70,20 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** xxx-dir という名前の変数は xxx-directory という名前に変更されました。
    例えば、wl-icon-dir は wl-icon-directory に変更されています。
-   Emacs21 で logo 表示などの設定している方は特に注意してください。
+   Emacs21 で logo 表示などの設定をしている方は特に注意してください。
 
 ** elmo-cache-dirname を廃止して elmo-cache-directory を新設しました。
-   NFS 環境などで ~/.elmo/cache をシンボリックリンクで飛ばしていた
-   方は、elmo-cache-directory を設定することによってキャッシュだけ
-   を全く別のディレクトリにできます。
+   elmo-cache-directory を設定することによってキャッシュだけを全く別の
+   ディレクトリに置くことができます。
 
 ** elmo-enable-disconnected-operation のデフォルト値が t になりました。
    オフライン状態でもメッセージがキャッシュされていれば、ある程度の
    メッセージ操作が可能です。
 
-** "$" マークの付いたメッセージは、元のメッセージが消えていてもサマリには
-   残るという仕様は廃止されました。
-   "$" マークの付いたメッセージは元のメッセージが消されたとしても 'mark
-   フォルダに残っていますので、"$" マークの付いたメッセージを見直したい
-   場合は 'mark フォルダを参照してください。
+** "$" マークの付いたメッセージは、メッセージの実体が消えた場合にはサマリから
+   も消えるようになりました。
+   "$" マークの付いたメッセージを見直したい場合は 'mark フォルダを参照して
+   ください。
 
 * 2.6.1 は 2.6.0 の修正版です。
 
