@@ -40,7 +40,7 @@
 ;; product-define in the first place
 (product-provide 'elmo-version
   ;; Don't forget to check `wl-version.el' and Info.
-  (product-define "ELMO" nil '(2 11 19)))
+  (product-define "ELMO" nil '(2 11 20)))
 
 ;; set version-string
 (product-version-as-string 'elmo-version)
