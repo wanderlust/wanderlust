@@ -8,7 +8,7 @@
 	* elmo-nmz.el (elmo-folder-initialize): Enable "[" for access
 	group entry.
 	(elmo-folder-exists-p): "[" is empty.
-	(elmo-folder-list-subfolders): New function.
+	(elmo-folder-list-subfolders): Define.
 	(elmo-folder-have-subfolder-p): Ditto.
 
 2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
