@@ -650,6 +650,13 @@ See also variable `wl-use-petname'."
 		   (wl-summary-jump-to-msg number))
 	  (wl-summary-update-persistent-mark number))))))
 
+(defun wl-summary-buffer-detach ()
+  (when (and (eq major-mode 'wl-summary-mode)
+	     wl-summary-buffer-elmo-folder
+	     wl-summary-buffer-event-handler)
+    (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
+				wl-summary-buffer-event-handler)))
+
 (defun wl-status-update ()
   (interactive)
   (wl-address-init))
@@ -797,6 +804,7 @@ you."
 	  wl-summary-buffer-persistent-mark-column persistent)))
 
 (defun wl-summary-buffer-set-folder (folder)
+  (wl-summary-buffer-detach)
   (if (stringp folder)
       (setq folder (wl-folder-get-elmo-folder folder)))
   (setq wl-summary-buffer-elmo-folder folder)
@@ -896,6 +904,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (make-local-hook hook)
       (dolist (function wl-summary-buffer-window-scroll-functions)
 	(add-hook hook function nil t))))
+  (make-local-hook 'change-major-mode-hook)
+  (add-hook 'change-major-mode-hook #'wl-summary-buffer-detach nil t)
+  (add-hook 'kill-buffer-hook #'wl-summary-buffer-detach)
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
@@ -1211,10 +1222,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  (progn
 	    (wl-summary-save-view)
 	    (if (or force-exit (not sticky))
-		(progn
-		  (elmo-folder-close wl-summary-buffer-elmo-folder)
-		  (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
-					      wl-summary-buffer-event-handler))
+		(elmo-folder-close wl-summary-buffer-elmo-folder)
 	      (elmo-folder-commit wl-summary-buffer-elmo-folder)
 	      (elmo-folder-check wl-summary-buffer-elmo-folder))
 	    (if wl-use-scoring (wl-score-save)))
@@ -2246,9 +2254,6 @@ If ARG, without confirm."
 	     (symbol-value (car copy-variables))))
       (setq copy-variables (cdr copy-variables)))
     (switch-to-buffer buf)
-    (with-current-buffer cur-buf
-      (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
-				  wl-summary-buffer-event-handler))
     (kill-buffer cur-buf)
     (wl-summary-count-unread)
     (wl-summary-update-modeline)
@@ -2338,9 +2343,6 @@ If ARG, without confirm."
 	  (if other-window
 	      (delete-other-windows))
 	  (set-buffer buf)
-	  (when wl-summary-buffer-event-handler
-	    (elmo-folder-remove-handler wl-summary-buffer-elmo-folder
-					wl-summary-buffer-event-handler))
 	  (unless (eq major-mode 'wl-summary-mode)
 	    (wl-summary-mode))
 	  (wl-summary-buffer-set-folder folder)
