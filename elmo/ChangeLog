@@ -1,3 +1,8 @@
+2001-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-msgdb-create-entity): Set `shimbun'
+	argument for `shimbun-header-insert'.
+
 2001-04-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-multi.el (elmo-multi-folder-diff): Use dummy number list
