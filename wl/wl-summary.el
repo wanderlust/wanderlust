@@ -4337,9 +4337,6 @@ If ARG, exit virtual folder."
 		  (unless no-server-update
 		    (elmo-unmark-important folder (list number) msgdb)
 		    (elmo-msgdb-global-mark-delete message-id))
-		  ;; Remove cache if local it is folder.
-		  (if (elmo-folder-local-p folder)
-		      (elmo-cache-delete message-id folder number))
 		  (when visible
 		    (delete-region (match-beginning 2) (match-end 2))
 		    (insert " "))
