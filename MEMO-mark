@@ -49,15 +49,3 @@ msgdb への操作はなるべく抽象化すること。
  元 message が移動しても、elmo-marked-message-folder には残る。
 
  update したときに、elmo-marked-message-folder にあればマークを付ける。
-
-* seen-list の廃止
-
-seen-list は廃止し、{"<message-id>" => "mark"} のハッシュテーブルとする。
-
-elmo-msgdb-id-mark-table-load:
-
-id-mark-table があれば使う。cons cell の list を hashtable にする。
-なければ、seen-list をさがす => seen-list ファイルは消す
-
-elmo-msgdb-id-mark-table-save:
-(cons message-id mark) のリストとしてセーブ

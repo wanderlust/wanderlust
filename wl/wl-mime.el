@@ -72,7 +72,6 @@ By setting following-method as yank-content."
   "Preview editing message."
   (interactive)
   (let* (recipients-message
-	 (current-point (point))
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (parent-folder wl-draft-parent-folder)
 	 (mime-display-header-hook 'wl-highlight-headers)
@@ -90,7 +89,6 @@ By setting following-method as yank-content."
 	     (lambda ()
 	       (let ((wl-draft-config-exec-flag config-exec-flag)
 		     (wl-draft-parent-folder parent-folder))
-		 (goto-char current-point)
 		 (run-hooks 'wl-draft-send-hook)
 		 (setq recipients-message
 		       (condition-case err
