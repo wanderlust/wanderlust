@@ -1,3 +1,10 @@
+2000-10-13  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Remove
+	an invalid SPACE character ahead of `SEARCH' command.  Move
+	a valid SPACE character following `SEARCH' from conditional
+	`format' arguments to control-strings.
+
 2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-call-func-on-markable-msgs): Return t if marking
