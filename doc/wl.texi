@@ -2500,6 +2500,7 @@ mode.
 * Cache::                       File cache, Buffer cache, and Prefetch
 * Auto Refile::                 Auto refile settings
 * Sticky Summary::              Summary make sticky
+* Summary View::                Format of summary lines
 * Key Bindings of Summary::     Key bindings
 * Variables of Summary::        Customize Summary Mode
 @end menu
@@ -2852,7 +2853,7 @@ To execute auto refile on all messages, set following.
 @end lisp
 
 
-@node Sticky Summary, Key Bindings of Summary, Auto Refile, Summary
+@node Sticky Summary, Summary View, Auto Refile, Summary
 @section Sticky Summary
 @cindex Summary, Sticky
 @cindex Sticky Summary
@@ -2880,7 +2881,66 @@ are same as normal summary.
 are automatically stuck.
 
 
-@node Key Bindings of Summary, Variables of Summary, Sticky Summary, Summary
+@node Summary View, Key Bindings of Summary, Sticky Summary, Summary
+@section Format of summary lines
+@cindex Format of summary lines
+You can alter the format of lines in Summary mode.
+
+Summary line format is specified by @code{wl-summary-line-format}.
+You can use control strings defined by
+@code{wl-summary-line-format-spec-alist}.
+Note that @code{wl-summary-line-format} must contain
+temporary mark (@samp{%T}) and permanent mark(@samp{%P}) at
+constant positions respectively. An example follows.
+
+@lisp
+@group
+;; @r{number temporary-mark permanent-mark date branch}
+;; @r{[ (number-of-children) sender ] subject}
+(setq wl-summary-line-format "%n%T%P%M/%D(%W) %t%[%17(%c %f%) %] %s")
+@end lisp
+@end group
+
+Where the number set the column number of the field (for negative value,
+filled from right)
+
+Major control strings defined by @code{wl-summary-line-format-spec-alist}
+are displayed in the following list.
+
+@example
+@group
+%n  message number
+%Y  year
+%M  month
+%D  day
+%W  day of week
+%h  hour
+%m  minute
+%t  branch of the thread
+%[  [ (< for re-connected child)
+%]  ] (> for re-connected child)
+%s  subject
+%S  size
+%c  +number-of-children: (display only for opened thread)
+%C  [+number-of-children] (display only for opened thread)
+@end example
+@end group
+
+You can specify the format by each folders with
+@code{wl-folder-summary-line-format-alist}.
+Please set regular expression for folder names and summary
+line format as the following example.
+
+@lisp
+@group
+(setq wl-folder-summary-line-format-alist
+      '(("^%" . "%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s")
+        ("^+" . "%n%T%P%M/%D %[ %17f %] %t%C%s")))
+@end group
+@end lisp
+
+
+@node Key Bindings of Summary, Variables of Summary, Summary View, Summary
 @section Key bindings
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer

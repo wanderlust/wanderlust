@@ -2497,6 +2497,7 @@ Non-nil $B$J$i(B @code{wl-fldmgr-add} $B$NJd408uJd$r(B
 * Cache::                       $B%-%c%C%7%e$H@hFI$_5!G=(B
 * Auto Refile::                 $B<+F0%j%U%!%$%k(B
 * Sticky Summary::              $B%9%F%#%C%-!<%5%^%j(B
+* Summary View::                $B%5%^%j9T$N7A<0(B
 * Key Bindings of Summary::     $B%-!<%P%$%s%I(B
 * Variables of Summary::        $B%+%9%?%^%$%:JQ?t(B
 @end menu
@@ -2839,7 +2840,7 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 $B$NMM$K(B @code{wl-summary-auto-refile-skip-marks} $B$r(B @code{nil} $B$K$7$^$9!#(B
 
 
-@node Sticky Summary, Key Bindings of Summary, Auto Refile, Summary
+@node Sticky Summary, Summary View, Auto Refile, Summary
 @section $B%9%F%#%C%-!<%5%^%j(B
 @cindex Summary, Sticky
 @cindex Sticky Summary
@@ -2868,7 +2869,64 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 $B$H$9$k$3$H$b$G$-$^$9!#(B
 
 
-@node Key Bindings of Summary, Variables of Summary, Sticky Summary, Summary
+@node Summary View, Key Bindings of Summary, Sticky Summary, Summary
+@section $B%5%^%j9T$N7A<0(B
+@cindex Format of summary lines
+
+$B%5%^%j9T$N7A<0$O!"$"$kDxEY<+M3$KJQ99$G$-$^$9!#(B
+
+$B%5%^%j9T$N7A<0$rJQ99$9$k$K$O(B @code{wl-summary-line-format} $B$r@_Dj$7$^$9!#(B
+@code{wl-summary-line-format-spec-alist} $B$GDj5A$5$l$?=q<0$rMQ$$$^$9!#(B
+$B$=$N:]$NCm0U$H$7$F!"(B@code{wl-summary-line-format} $B$K$O0l;~E*%^!<%/(B(@samp{%T})
+$B$H1JB3E*%^!<%/(B(@samp{%P})$B$r$=$l$>$lDj0LCV$J$k$h$&$KI,$:4^$a$k$h$&$K$7$F2<$5$$!#(B
+$B0J2<$KNc$r<($7$^$9!#(B
+
+@lisp
+@group
+;; @r{$BHV9f(B $B0l;~%^!<%/(B $B1JB3%^!<%/(B $BF|IU(B $B;^(B [ ($B;R$N?t(B) $B:9=P?M(B ] $B7oL>(B}
+(setq wl-summary-line-format "%n%T%P%M/%D(%W) %t%[%17(%c %f%) %] %s")
+@end lisp
+@end group
+
+$B?t;z$O7e?t$rI=$7$^$9(B($BIi$N?t$N>l9g!"1&5M$a$K$J$j$^$9(B)
+
+$B%G%U%)%k%H$N(B @code{wl-summary-line-format-spec-alist} $B$GMQ0U$5$l$F$$$k(B
+$B=q<05-9f$N$&$A<g$J$b$N$O0J2<$NDL$j$G$9!#(B
+
+@example
+@group
+%n  $B%a%C%;!<%8HV9f(B
+%Y  $BG/(B
+%M  $B7n(B
+%D  $BF|(B
+%W  $BMKF|(B
+%h  $B;~(B
+%m  $BJ,(B
+%t  $B%9%l%C%I$N;^(B
+%[  [ ($B7R$.D>$7$?;R$N>l9g$O(B <)
+%]  ] ($B7R$.D>$7$?;R$N>l9g$O(B >)
+%s  $B7oL>(B
+%S  $B%5%$%:(B
+%c  +$B;R$N?t(B: ($B%9%l%C%I$r3+$$$?;~$N$_I=<((B)
+%C  [+$B;R$N?t(B] ($B%9%l%C%I$r3+$$$?;~$N$_I=<((B)
+@end example
+@end group
+
+@code{wl-folder-summary-line-format-alist} $B$r@_Dj$9$k$H!"(B
+$B%5%^%j9T$N7A<0$r%U%)%k%@Kh$K;XDj$9$k$3$H$,$G$-$^$9!#(B
+$B0J2<$NNc$N$h$&$K!"%U%)%k%@L>$N@55,I=8=$H%5%^%j9T$N=q<0$r;XDj(B
+$B$7$F2<$5$$!#(B
+
+@lisp
+@group
+(setq wl-folder-summary-line-format-alist
+      '(("^%" . "%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %s")
+        ("^+" . "%n%T%P%M/%D %[ %17f %] %t%C%s")))
+@end group
+@end lisp
+
+
+@node Key Bindings of Summary, Variables of Summary, Summary View, Summary
 @section $B%-!<%P%$%s%I(B
 @cindex Keybind, Summary Mode
 @cindex Keybind, Summary Buffer
