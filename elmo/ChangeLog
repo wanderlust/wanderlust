@@ -1,3 +1,10 @@
+2003-11-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-standard.el (elmo-msgdb-set-flag): Simplify;
+	Undo last change (move to elmo-msgdb-unset-flag).
+	(elmo-msgdb-unset-flag): Simplify; Unset 'new flag when unread
+	flag is unset.
+
 2003-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* modb-standard.el (elmo-msgdb-set-flag): Unset 'new flag when
