@@ -465,12 +465,14 @@ TYPE specifies the archiver's symbol."
 			(elmo-archive-folder-archive-prefix-internal
 			 new-folder)))
       (error "Not same archive type and prefix"))
-    (if (not (file-exists-p old-arc))
-	(error "No such file: %s" old-arc)
-      (if (file-exists-p new-arc)
-	  (error "Already exists: %s" new-arc)
-	(rename-file old-arc new-arc)
-	t))))
+    (unless (file-exists-p old-arc)
+      (error "No such file: %s" old-arc))
+    (when (file-exists-p new-arc)
+      (error "Already exists: %s" new-arc))
+    (unless (file-directory-p new-dir)
+      (elmo-make-directory new-dir))
+    (rename-file old-arc new-arc)
+    t))
 
 (defun elmo-archive-folder-list-subfolders (folder one-level)
   (if elmo-archive-treat-file

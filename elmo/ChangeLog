@@ -1,5 +1,9 @@
 2003-02-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-localdir.el (elmo-folder-rename-internal): Referctoring;
+	Replace nested conditional with guard clauses.
+	* elmo-archive.el (elmo-folder-rename-internal): Ditto.
+
 	* elmo-imap4.el: Remove Nemacs hack, replace `elmo-read' with `read'.
 	* elmo-util.el: Ditto.
 
