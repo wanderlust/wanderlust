@@ -2408,6 +2408,12 @@ The initial setting is @code{nil}.
 If non-nil, negative value is displayed when the message is deleted.  If
 @code{sync}, folder is synchronized when the message is deleted.  If
 @code{nil}, message deletion is ignored.
+
+@item wl-fldmgr-add-complete-with-current-folder-list
+@vindex wl-fldmgr-add-complete-with-current-folder-list
+The initial setting is @code{nil}.
+Non-nil means call @code{elmo-folder-list-subfolders} and get completion
+candidate for @code{wl-fldmgr-add}.
 @end table
 
 @subsection Miscellanea

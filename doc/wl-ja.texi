@@ -2412,6 +2412,12 @@ Non-nil の場合、フォルダの新規メッセージ数のチェックを行うたびに
 Non-nil ならメッセージが削除されたときにフォルダモードで未読数をチェック
 すると負の値が表示されます。値が @code{sync} ならば、メッセージが削除さ
 れていたときにフォルダの内容と同期を取ります。
+
+@item wl-fldmgr-add-complete-with-current-folder-list
+@vindex wl-fldmgr-add-complete-with-current-folder-list
+初期設定は @code{nil}。
+Non-nil なら @code{wl-fldmgr-add} の補完候補を
+@code{elmo-folder-list-subfolders} で得ます。
 @end table
 
 @subsection その他
