@@ -58,7 +58,6 @@
   :type '(string :tag "Mark")
   :group 'elmo)
 
-;; Not implemented yet.
 (defcustom elmo-msgdb-answered-cached-mark "&"
   "Mark for answered and cached message."
   :type '(string :tag "Mark")
@@ -69,7 +68,7 @@
   :type '(string :tag "Mark")
   :group 'elmo)
 
-(defcustom elmo-msgdb-important-mark"$"
+(defcustom elmo-msgdb-important-mark "$"
   "Mark for important message."
   :type '(string :tag "Mark")
   :group 'elmo)
