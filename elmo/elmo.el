@@ -1217,7 +1217,7 @@ FIELD is a symbol of the field.")
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (when (elmo-global-flag-p 'important)
-	(elmo-global-flag-detach 'important folder number 'remove-if-none))
+	(elmo-global-flag-detach 'important folder number 'always))
       (elmo-msgdb-unset-flag (elmo-folder-msgdb folder)
 			     number
 			     'important))))

@@ -104,6 +104,10 @@
 	 target-folder key)
     (dolist (pair (car elem))
       (when (and (car pair) (cdr pair))
+	(elmo-clear-hash-val (concat (number-to-string (cdr pair)) ":"
+				     (car pair))
+			     (elmo-flag-folder-minfo-hash-internal
+			      folder))
 	(unless keep-referrer
 	  (setq target-folder (elmo-make-folder (car pair)))
 	  (elmo-folder-open target-folder 'load-msgdb)
@@ -111,11 +115,7 @@
 	  ;; (XXX Should the message-id checked?)
 	  (elmo-message-unset-flag target-folder (cdr pair)
 				   (elmo-flag-folder-flag-internal folder))
-	  (elmo-folder-close target-folder))
-	(elmo-clear-hash-val (concat (number-to-string (cdr pair)) ":"
-				     (car pair))
-			     (elmo-flag-folder-minfo-hash-internal
-			      folder))))
+	  (elmo-folder-close target-folder))))
     (elmo-clear-hash-val (concat "#" (number-to-string number))
 			 (elmo-flag-folder-minfo-hash-internal
 			  folder))
@@ -330,7 +330,9 @@ MESSAGE-ID is the message-id of the message."
 FOLDER is the folder structure.
 NUMBERS is the message number.
 If optional DELETE-IF-NONE is non-nil, delete message from flag folder when
-the message is not flagged in any folder."
+the message is not flagged in any folder.
+If DELETE-IF-NONE is a symbol `always',
+delete message without flagged in other folder."
   (unless (eq (elmo-folder-type-internal folder) 'flag)
     (let ((flag-folder (elmo-flag-get-folder flag))
 	  elem key)
@@ -346,8 +348,11 @@ the message is not flagged in any folder."
 	  (elmo-clear-hash-val key (elmo-flag-folder-minfo-hash-internal
 				    flag-folder))
 	  ;; Does not have any referrer, remove.
-	  (when (and delete-if-none (null (car elem)))
-	    (elmo-flag-folder-delete-message flag-folder (nth 2 elem) 'keep)
+	  (when (and delete-if-none
+		     (or (eq delete-if-none 'always)
+			 (null (car elem))))
+	    (elmo-flag-folder-delete-message flag-folder (nth 2 elem)
+					     (null (car elem)))
 	    (elmo-localdir-delete-message flag-folder (nth 2 elem))
 	    (elmo-folder-commit flag-folder)))))))
 
