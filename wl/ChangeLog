@@ -1,10 +1,8 @@
-2003-02-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+2003-03-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-xmas.el (wl-xmas-highlight-folder-group-line): Use
-	`map-extents' instead of `extent-at' repeatedly.
-	(wl-highlight-folder-current-line): Ditto.
-
-	* wl-highlight.el: Remove useless dummy functions.
+	* wl-summary.el (wl-summary-mark-as-read-internal): New inline
+	function.
+	(wl-summary-mark-as-read, wl-summary-mark-as-read): Use it.
 
 2003-03-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

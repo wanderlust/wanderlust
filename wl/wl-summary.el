@@ -3936,6 +3936,7 @@ If ARG, exit virtual folder."
 (defun wl-summary-mark-as-read (&optional number-or-numbers
 					  no-folder-mark
 					  no-modeline-update)
+  (interactive)
   (wl-summary-mark-as-read-internal nil
 				    number-or-numbers
 				    no-folder-mark
@@ -3944,6 +3945,7 @@ If ARG, exit virtual folder."
 (defun wl-summary-mark-as-unread (&optional number-or-numbers
 					    no-folder-mark
 					    no-modeline-update)
+  (interactive)
   (wl-summary-mark-as-read-internal 'inverse
 				    number-or-numbers
 				    no-folder-mark
