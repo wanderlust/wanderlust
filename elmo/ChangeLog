@@ -3,6 +3,11 @@
 	* elmo-filter.el (elmo-folder-diff): Fixed condition checking
 	`last:' filter.
 
+2002-10-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-dop.el (elmo-folder-status-dop): If spool-folder is absent,
+	set spool-length to 0.
+
 2002-10-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-dop.el (elmo-dop-queue-flush): Check obsolete at first.

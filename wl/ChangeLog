@@ -1,3 +1,27 @@
+2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-make-number-list): Initialize.
+	(wl-summary-update-mark): New function.
+	(wl-summary-reply): Put `answered' mark on the message.
+	(wl-summary-reply): Set `number' argument to wl-draft-reply.
+
+	* wl-draft.el (wl-draft-parent-number): New buffer local variable.
+	(wl-draft-reply): Added optional argument `number';
+	Set wl-draft-parent-number.
+	(wl-draft-kill): Delete answered mark if it is a reply.
+
+2002-10-16  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-mime.el (wl-message-delete-current-part): New function.
+	(wl-mime-node-id-to-string): Ditto.
+
+	* wl-mime.el (wl-message-delete-current-part): Use existing
+	original buffer which corresponds current mime-view buffer.
+	(fetched buffer might have different structure, possibly)
+
+	* wl-mime.el (wl-message-delete-current-part): Quit if the
+	message content differs from the actual message.
+
 2002-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-insert-headers): Put alike hash in reverse

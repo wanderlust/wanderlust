@@ -87,6 +87,8 @@ e.g.
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain2\"))))")
 
+(defvar wl-draft-parent-number nil)
+
 (defvar wl-draft-config-sub-func-alist
   '((body		. wl-draft-config-sub-body)
     (top		. wl-draft-config-sub-top)
@@ -112,6 +114,7 @@ e.g.
 (make-variable-buffer-local 'wl-draft-fcc-list)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
+(make-variable-buffer-local 'wl-draft-parent-number)
 
 (defsubst wl-smtp-password-key (user mechanism server)
   (format "SMTP:%s/%s@%s"
@@ -321,7 +324,7 @@ Check WITH-ARG and From: field."
 	'wl-draft-reply-with-argument-list
       'wl-draft-reply-without-argument-list)))
 
-(defun wl-draft-reply (buf with-arg summary-buf)
+(defun wl-draft-reply (buf with-arg summary-buf &optional number)
   "Reply to BUF buffer message.
 Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
@@ -469,6 +472,7 @@ Reply to author if WITH-ARG is non-nil."
 		    (cons 'References references)
 		    (cons 'Mail-Followup-To mail-followup-to))
 	      nil nil nil nil parent-folder)
+    (setq wl-draft-parent-number number)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
@@ -771,6 +775,13 @@ Reply to author if WITH-ARG is non-nil."
 	       (or force-kill
 		   (y-or-n-p "Kill Current Draft? ")))
       (let ((cur-buf (current-buffer)))
+	(when wl-draft-parent-number
+	  (let ((number wl-draft-parent-number))
+	    (with-current-buffer wl-draft-buffer-cur-summary-buffer
+	      (wl-summary-jump-to-msg number)
+	      (elmo-folder-unmark-answered wl-summary-buffer-elmo-folder
+					   (list number))
+	      (wl-summary-update-mark number))))
 	(wl-draft-hide cur-buf)
 	(wl-draft-delete cur-buf)))
     (message "")))

@@ -1848,7 +1848,7 @@ If ARG is non-nil, checking is omitted."
     nil t nil nil (symbol-name wl-summary-default-sort-spec))))
 
 (defun wl-summary-sync-marks ()
-  "Update marks in summary."
+  "Update persistent marks in summary."
   (interactive)
   (let ((last-progress 0)
 	(folder wl-summary-buffer-elmo-folder)
@@ -2329,6 +2329,7 @@ If ARG, without confirm."
 (defun wl-summary-make-number-list ()
   (save-excursion
     (goto-char (point-min))
+    (setq wl-summary-buffer-number-list nil)
     (while (not (eobp))
       (setq wl-summary-buffer-number-list
 	    (cons (wl-summary-message-number)
@@ -3864,6 +3865,19 @@ If ARG, exit virtual folder."
   (interactive)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
+(defun wl-summary-update-mark (&optional number)
+  "Synch up persistent mark of current line with msgdb's."
+  (let ((number (or number (wl-summary-message-number)))
+	buffer-read-only cur-mark)
+    (setq cur-mark (elmo-message-mark wl-summary-buffer-elmo-folder number))
+    ;; set mark on buffer
+    (unless (string= (wl-summary-persistent-mark) cur-mark)
+      (delete-backward-char 1)
+      (insert (or cur-mark " ")))
+    (when wl-summary-highlight
+      (wl-highlight-summary-current-line nil nil t))
+    (set-buffer-modified-p nil)))
+
 (defun wl-summary-mark-as-read (&optional number
 					  no-folder-mark
 					  no-modeline-update)
@@ -4763,6 +4777,8 @@ Reply to author if invoked with ARG."
     (when number
       (save-excursion
 	(wl-summary-redisplay-internal folder number))
+      (elmo-folder-mark-as-answered folder (list number))
+      (wl-summary-update-mark number)
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
@@ -4771,7 +4787,7 @@ Reply to author if invoked with ARG."
 	(split-window-vertically)
 	(other-window 1))
       (when (setq mes-buf (wl-message-get-original-buffer))
-	(wl-draft-reply mes-buf arg summary-buf)
+	(wl-draft-reply mes-buf arg summary-buf number)
 	(unless without-setup-hook
 	  (run-hooks 'wl-mail-setup-hook)))
       t)))
