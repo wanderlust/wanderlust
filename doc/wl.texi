@@ -2166,7 +2166,8 @@ You can append, delete, edit folders from folder mode.
 
 @subsubsection Append Folder
 
-@kbd{m a} appends new folder to the folder mode.
+@kbd{m a} appends new folder to your folder list. If you enter non-existent
+folder, it will ask you to create a new one.
 @kbd{m g} appends new folder group.
 To append new folder to this group, firstly open it,
 then execute append command in the next line.
@@ -2283,7 +2284,8 @@ one stroke key binding.
 @item m a
 @kindex m a (Folder)
 @findex wl-fldmgr-add
-Insert a folder.
+Add specified folder to your folder list . If you enter non-existent
+folder, create it after confirmation.
 (@code{wl-fldmgr-add})
 
 @item +
