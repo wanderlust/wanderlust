@@ -14,7 +14,7 @@
 ;; required elisp packages:
 ;;
 ;;   -wl (>= 0.9.6?)
-;;   
+;;
 ;;   -rfc2368.el
 ;;   -thingatpt.el or browse-url.el
 ;;
@@ -63,7 +63,7 @@
 ;; 1999-06-11:
 ;;
 ;;   fixed a typo
-;; 
+;;
 ;; 0.4
 ;;
 ;; 1999-06-01:
@@ -81,7 +81,9 @@
 ;; how should we handle the dependecy on wl?
 ;; will this work?
 (eval-when-compile
-  (require 'wl))
+  (require 'wl)
+  (defun wl-mailto-url-at-point ()))
+
 
 ;; use rfc2368 support -- should be usable for things other than wl too
 (require 'rfc2368)

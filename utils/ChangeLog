@@ -1,3 +1,7 @@
+2002-01-07  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-mailto.el (wl-mailto-url-at-point): defun at compile time.
+
 2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* bbdb-wl.el (bbdb-wl-setup): Added autoload magic.
