@@ -1,3 +1,7 @@
+2001-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-add): Fixed problem when `name' is list.
+
 2001-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-add-buttons-to-body): Exchenged 3rd and 4th

@@ -822,7 +822,9 @@ return value is diffs '(-new -unread -all)."
 	    (setq name (wl-fldmgr-read-string
 			(wl-summary-read-folder wl-default-folder "to add"))))
 	;; maybe add elmo-plugged-alist.
-	(elmo-folder-set-plugged (wl-folder-get-elmo-folder name) wl-plugged t)
+	(elmo-folder-set-plugged (wl-folder-get-elmo-folder
+				  (if (listp name) (car name) name))
+				 wl-plugged t)
 	(when (setq diffs
 		    (wl-add-entity
 		     path (list name) wl-folder-entity (nth 3 tmp) t))
