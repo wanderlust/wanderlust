@@ -1,5 +1,8 @@
 2004-01-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-action.el (wl-summary-target-mark-all): List messages which are
+	not in the killed-list.
+
 	* wl-summary.el (wl-summary-mark-as-important-internal): Cause an error
 	only when the folder is 'flag/important.
 
