@@ -1,3 +1,14 @@
+2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-e21.el (make-mode-line-mouse-map): Import from Emacs
+	21.0.105.  For Emacs 21.0.104 or earlier.
+
+2001-09-03  Takuo KITAME <kitame@northeye.org>
+
+	* wl-e21.el (wl-plugged-init-icons): Use
+	`make-mode-line-mouse-map' instead of `make-mode-line-mouse2-map'.
+	(wl-biff-init-icons): Ditto.
+
 2001-08-06  SAITO Atsunori <sai@yedo.com>
 
 	* wl-vars.el (wl-ldap-objectclass): New user option.
