@@ -1,3 +1,11 @@
+2002-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-insert-headers): Put alike hash in reverse
+	order.
+	(wl-summary-search-by-subject): Search parent message from tail;
+	Check the existence of the parent message on the current thread tree.
+	(wl-summary-update-thread): Check whether the line is inserted.
+
 2002-10-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-summary-line-format): Undo last change.
