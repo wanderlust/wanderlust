@@ -1,3 +1,8 @@
+2003-07-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-prefetch-region-no-mark): Update
+	persistent mark when prefetch is succeeded.
+
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-expire.el (wl-expire-delete): Use elmo-folder-detach-messages

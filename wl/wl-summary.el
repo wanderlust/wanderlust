@@ -1478,13 +1478,16 @@ If ARG is non-nil, checking is omitted."
 	      (message "Prefetching... %d/%d message(s)"
 		       (setq count (+ 1 count)) length))
 	  ;; redisplay!
-	  (save-excursion
-	    (setq pos (point))
-	    (goto-char start-pos)
-	    (if (pos-visible-in-window-p pos)
-		(save-restriction
-		  (widen)
-		  (sit-for 0))))
+	  (when mark
+	    (save-excursion
+	      (setq pos (point))
+	      (when (wl-summary-jump-to-msg (car targets))
+		(wl-summary-update-mark (car targets)))
+	      (goto-char start-pos)
+	      (if (pos-visible-in-window-p pos)
+		  (save-restriction
+		    (widen)
+		    (sit-for 0)))))
 	  (setq targets (cdr targets)))
 	(message "Prefetched %d/%d message(s)" count length)
 	(cons count length)))))
