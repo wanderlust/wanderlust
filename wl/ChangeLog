@@ -1,3 +1,7 @@
+2000-10-27  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-template.el: Doc fixes.
+
 2000-10-26  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-message-overload-functions): Do nothing if
