@@ -1367,6 +1367,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let ((alphabet '(?A ?B ?C ?D ?E ?F ?G ?H ?I ?J ?K ?L ?M ?N ?O ?P ?Q ?R ?S ?T ?U ?V ?W ?X ?Y ?Z)))
     (nth (abs (% (random) 26)) alphabet)))
 
+;;;;;;;;;;;;;;;;
 ;;;###autoload
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
@@ -1380,11 +1381,56 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (wl-folder-init)
     (elmo-init)
     (wl-plugged-init t))
-  (wl-init) ; returns immediately if already initialized.
-  (if (interactive-p)
-      (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
-  (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
-	buf-name file-name num wl-demo change-major-mode-hook)
+  (let (wl-demo)
+    (wl-init)) ; returns immediately if already initialized.
+
+  (let (buf-name header-alist)
+    (setq buf-name
+	  (wl-draft-create-buffer
+	   (or
+	    (eq this-command 'wl-draft)
+	    (eq this-command 'wl-summary-write)
+	    (eq this-command 'wl-summary-write-current-folder))
+	   parent-folder summary-buf))
+    (setq header-alist
+	  (list
+	   (cons "From: " (or from wl-from))
+	   (cons "To: " (or to
+			    (and
+			     (or (interactive-p)
+				 (eq this-command 'wl-summary-write))
+			     "")))
+	   (cons "Cc: " cc)
+	   (cons "Subject: " (or subject ""))
+	   (cons "Newsgroups: " newsgroups)
+	   (cons "Mail-Followup-To: " mail-followup-to)
+	   (cons "In-Reply-To: " in-reply-to)
+	   (cons "References: " references)))
+    (setq header-alist (append header-alist
+			       (wl-draft-default-headers)
+			       (if body (list "\n" body))))
+    (wl-draft-create-contents header-alist)
+    (if edit-again
+	(wl-draft-decode-body
+	 content-type content-transfer-encoding))
+    (wl-draft-insert-mail-header-separator)
+    (wl-draft-prepare-edit (interactive-p))
+
+    (goto-char (point-min))
+    (wl-user-agent-compose-internal) ;; user-agent
+    (cond ((eq this-command 'wl-summary-write-current-newsgroup)
+	   (mail-position-on-field "Subject"))
+	  ((and (interactive-p) (null to))
+	   (mail-position-on-field "To"))
+	  (t
+	   (goto-char (point-max))))
+    buf-name))
+
+(defun wl-draft-create-buffer (&optional full parent-folder summary-buf)
+  (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
+	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
+	 (summary-buf (or summary-buf (wl-summary-get-buffer parent-folder)))
+	buf-name file-name num change-major-mode-hook)
     (if (not (elmo-folder-message-file-p draft-folder))
 	(error "%s folder cannot be used for draft folder" wl-draft-folder))
     (setq num (elmo-max-of-list
@@ -1406,9 +1452,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			   (buffer-name)))
 	(rename-buffer (concat wl-draft-folder "/" (int-to-string num))))
     (if (or (eq wl-draft-reply-buffer-style 'full)
-	    (eq this-command 'wl-draft)
-	    (eq this-command 'wl-summary-write)
-	    (eq this-command 'wl-summary-write-current-folder))
+	    full)
 	(delete-other-windows))
     (auto-save-mode -1)
     (wl-draft-mode)
@@ -1417,87 +1461,112 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
     (setq wl-sent-message-queued nil)
-    (setq wl-draft-parent-folder parent-folder)
-    (if (stringp (or from wl-from))
-	(insert "From: " (or from wl-from) "\n"))
-    (and (or (interactive-p)
-	     (eq this-command 'wl-summary-write)
-	     to)
-	 (insert "To: " (or to "") "\n"))
-    (and cc (insert "Cc: " (or cc "") "\n"))
-    (insert "Subject: " (or subject "") "\n")
-    (and newsgroups (insert "Newsgroups: " newsgroups "\n"))
-    (and mail-followup-to (insert "Mail-Followup-To: " mail-followup-to "\n"))
-    (and wl-insert-mail-reply-to
-	 (insert "Mail-Reply-To: "
-		 (wl-address-header-extract-address
-		  wl-from) "\n"))
-    (and in-reply-to (insert "In-Reply-To: " in-reply-to "\n"))
-    (and references (insert "References: " references "\n"))
-    (insert (funcall wl-generate-mailer-string-function) "\n")
     (setq wl-draft-buffer-file-name file-name)
-    (if mail-default-reply-to
-	(insert "Reply-To: " mail-default-reply-to "\n"))
-    (wl-draft-insert-ccs "Bcc: " (or wl-bcc
-			       (and mail-self-blind (user-login-name))))
-    (wl-draft-insert-ccs "Fcc: " wl-fcc)
-    (if wl-organization
-	(insert "Organization: " wl-organization "\n"))
-    (and wl-auto-insert-x-face
-	 (file-exists-p wl-x-face-file)
-	 (wl-draft-insert-x-face-field-here))
-    (if mail-default-headers
-	(insert mail-default-headers))
-    (if (not (= (preceding-char) ?\n))
-	(insert ?\n))
-    (if edit-again
-	(let (start)
-	  (setq start (point))
-	  (when content-type
-	    (insert "Content-type: " content-type "\n"))
-	  (when content-transfer-encoding
-	    (insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
-	  (if (or content-type content-transfer-encoding)
-	      (insert "\n"))
-	  (and body (insert body))
-	  (save-restriction
-	    (narrow-to-region start (point))
-	    (and edit-again
-		 (wl-draft-decode-message-in-buffer))
-	    (widen)
-	    (goto-char start)
-	    (put-text-property (point)
-			       (progn
-				 (insert mail-header-separator "\n")
-				 (1- (point)))
-			       'category 'mail-header-separator)))
-      (put-text-property (point)
-			 (progn
-			   (insert mail-header-separator "\n")
-			   (1- (point)))
-			 'category 'mail-header-separator)
-      (and body (insert body)))
-    (as-binary-output-file
-     (write-region (point-min)(point-max) wl-draft-buffer-file-name
-		   nil t))
-    (wl-draft-editor-mode)
-    (wl-draft-overload-functions)
-    (wl-highlight-headers 'for-draft)
-    (goto-char (point-min))
     (setq wl-draft-config-exec-flag t)
-    (if (interactive-p)
-	(run-hooks 'wl-mail-setup-hook))
-    (wl-user-agent-compose-internal) ;; user-agent
-    (cond ((eq this-command 'wl-summary-write-current-newsgroup)
-	   (mail-position-on-field "Subject"))
-	  ((and (interactive-p) (null to))
-	   (mail-position-on-field "To"))
-	  (t
-	   (goto-char (point-max))))
-    (setq wl-draft-buffer-cur-summary-buffer (or summary-buf
-						 (get-buffer
-						  wl-summary-buffer-name)))
+    (setq wl-draft-parent-folder parent-folder)
+    (setq wl-draft-buffer-cur-summary-buffer summary-buf)
     buf-name))
+
+(defun wl-draft-create-contents (header-alist)
+  "header-alist' sample
+'(function  ;; funcall
+  string    ;; insert string
+  (string . string)    ;;  insert string string
+  (string . function)  ;;  insert string (funcall)
+  (string . nil)       ;;  insert nothing
+  (function . (arg1 arg2 ..))  ;; call function with argument
+  nil                  ;;  insert nothing
+"
+  (unless (eq major-mode 'wl-draft-mode)
+    (error "wl-draft-create-header must be use in wl-draft-mode."))
+  (let ((halist header-alist)
+	field value)
+    (while halist
+      (cond
+       ;; function
+       ((functionp (car halist)) (funcall (car halist)))
+       ;; string
+       ((stringp (car halist)) (insert (car halist) "\n"))
+       ;; cons
+       ((consp (car halist))
+	(setq field (car (car halist)))
+	(setq value (cdr (car halist)))
+	(cond
+	 ((functionp field) (apply field value))
+	 ((stringp field)
+	  (cond
+	   ((stringp value) (insert field value "\n"))
+	   ((functionp value) (insert field (funcall value) "\n"))
+	   ((not value))
+	   (t
+	    (debug))))
+	 ;;
+	 ((not field))
+	 (t
+	  (debug))
+	 )))
+      (setq halist (cdr halist)))))
+
+(defun wl-draft-prepare-edit (&optional hook)
+  (wl-draft-editor-mode)
+  (wl-draft-overload-functions)
+  (wl-highlight-headers 'for-draft)
+  (if hook (run-hooks 'wl-mail-setup-hook))
+  (as-binary-output-file
+   (write-region (point-min)(point-max) wl-draft-buffer-file-name
+		 nil t)))
+
+(defun wl-draft-decode-header ()
+  (save-excursion
+    (let (delimline)
+      (goto-char (point-min))
+      (or (search-forward "\n\n" nil t)
+	  (goto-char (point-max)))
+      (setq delimline (point))
+      (save-restriction
+	(narrow-to-region (point-min) delimline)
+	(wl-draft-decode-message-in-buffer)
+	(widen))
+    delimline)))
+
+(defun wl-draft-decode-body (&optional content-type content-transfer-encoding)
+  (let ((content-type
+	 (or content-type
+		(std11-field-body "content-type")))
+	(content-transfer-encoding
+	 (or content-transfer-encoding
+	     (std11-field-body "content-transfer-encoding")))
+	delimline)
+    (goto-char (point-min))
+    (if (search-forward "\n\n" nil t)
+	(progn
+	  (goto-char (1- (point)))
+	  (delete-char))
+      (goto-char (point-max)))
+    (setq delimline (point))
+    (save-excursion
+      (wl-draft-delete-field "content-type" delimline)
+      (wl-draft-delete-field "content-transfer-encoding" delimline))
+    (when content-type
+      (insert "Content-type: " content-type "\n"))
+    (when content-transfer-encoding
+      (insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
+    (if (or content-type content-transfer-encoding)
+	(insert "\n"))
+    (save-restriction
+      (narrow-to-region delimline (point-max))
+      (debug)
+      (wl-draft-decode-message-in-buffer)
+      (widen))
+    (goto-char delimline)
+    (insert "\n")
+    delimline))
+
+;;; subroutine for wl-draft-create-contents
+;;; must be used in wl-draft-mode
+(defun wl-draft-check-new-line ()
+  (if (not (= (preceding-char) ?\n))
+      (insert ?\n)))
 
 (defsubst wl-draft-insert-ccs (str cc)
   (let ((field
@@ -1513,6 +1582,48 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 				  (wl-parse-addresses (std11-field-body "Cc"))))
 			 (mapcar 'downcase wl-subscribed-mailing-list)))))
 	(insert str field "\n"))))
+
+(defsubst wl-draft-default-headers ()
+  (list
+   (cons "Mail-Reply-To: " (and wl-insert-mail-reply-to
+				(wl-address-header-extract-address
+				 wl-from)))
+   wl-generate-mailer-string-function
+   (cons "Reply-To: " mail-default-reply-to)
+   (cons 'wl-draft-insert-ccs
+	 (list "Bcc: " (or wl-bcc
+			   (and mail-self-blind (user-login-name)))))
+   (cons 'wl-draft-insert-ccs
+	 (list "Fcc: " wl-fcc))
+   (cons "Organization: " wl-organization)
+   (and wl-auto-insert-x-face
+	(file-exists-p wl-x-face-file)
+	'wl-draft-insert-x-face-field-here) ;; allow nil
+   mail-default-headers
+   ;; check \n at th end of line for `mail-default-headers'
+   'wl-draft-check-new-line
+;   wl-draft-default-headers
+;   'wl-draft-check-new-line
+   ))
+
+(defun wl-draft-insert-mail-header-separator (&optional delimline)
+  (save-excursion
+    (if delimline
+	(goto-char delimline)
+      (goto-char (point-min))
+      (if (search-forward "\n\n" nil t)
+	  (progn
+	    (goto-char (1- (point)))
+	    (delete-char))
+	(goto-char (point-max))))
+    (wl-draft-check-new-line)
+    (put-text-property (point)
+		       (progn
+			 (insert mail-header-separator "\n")
+			 (1- (point)))
+		       'category 'mail-header-separator)))
+
+;;;;;;;;;;;;;;;;
 
 (defun wl-draft-elmo-nntp-send ()
   (let ((elmo-nntp-post-pre-hook wl-news-send-pre-hook)

@@ -1,5 +1,17 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft): Rewrite.
+	(wl-draft-create-buffer): New function.
+	(wl-draft-create-contents): Ditto.
+	(wl-draft-prepare-edit): Ditto.
+	(wl-draft-decode-header): Ditto.
+	(wl-draft-decode-body): Ditto.
+	(wl-draft-check-new-line): Ditto.
+	(wl-draft-default-headers): Ditto.
+	(wl-draft-insert-mail-header-separator): Ditto.
+
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
 	* Version number is increased to 2.9.6.
 
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
