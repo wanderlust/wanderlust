@@ -1,3 +1,8 @@
+2001-12-24  Yuuichi Teranishi  <yuuichi@elmo.templewest.net>
+
+	* wl-draft.el (wl-draft-hide): Removed `interactive'.
+	(Pointed out by YAMASHITA Junji <ysjj@unixuser.org>)
+
 2001-12-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.9.2.
