@@ -96,7 +96,7 @@ See `shimbun-headers' for more detail about RANGE."
     (dolist (ov (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
       (when (and (elmo-msgdb-overview-entity-get-extra-field ov "xref")
 		 (if expire-days
-		     (> (elmo-shimbun-lapse-seconds
+		     (< (elmo-shimbun-lapse-seconds
 			 (elmo-shimbun-parse-time-string
 			  (elmo-msgdb-overview-entity-get-date ov)))
 			(* expire-days 86400 ; seconds per day
