@@ -1284,18 +1284,6 @@ Otherwise treat \\ in NEWTEXT string as special:
    (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
    (elmo-buffer-field-condition-match condition number number-list)))
 
-(defun elmo-cross-device-link-error-p (err)
-  (let ((errobj err)
-	cur)
-    (catch 'done
-      (while errobj
-	(if (and (stringp (setq cur (car errobj)))
-		 (or (string-match "cross-device" cur)
-		     (string-match "operation not supported" cur)))
-	    (throw 'done t))
-	(setq errobj (cdr errobj)))
-      nil)))
-
 (defmacro elmo-get-hash-val (string hashtable)
   (let ((sym (list 'intern-soft string hashtable)))
     (list 'if (list 'boundp sym)
@@ -1416,9 +1404,8 @@ Otherwise treat \\ in NEWTEXT string as special:
 (defsubst elmo-copy-file (src dst)
   (condition-case err
       (elmo-add-name-to-file src dst t)
-    (error (if (elmo-cross-device-link-error-p err)
-	       (copy-file src dst t)
-	     (error "copy file failed")))))
+    (error (copy-file src dst t)
+	   (error "copy file failed"))))
 
 (defmacro elmo-buffer-exists-p (buffer)
   (` (when (, buffer)

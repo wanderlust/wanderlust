@@ -1,5 +1,8 @@
 2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-cross-device-link-error-p): Abolished.
+	(elmo-copy-file): Uncheck error condition for `add-name-to-file'.
+
 	* elmo-nntp.el (elmo-nntp-search-primitive): Decode header field.
 	(elmo-nntp-search-primitive): Fixed problem when condition is
 	'unmatch'.
