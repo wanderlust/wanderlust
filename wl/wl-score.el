@@ -464,10 +464,9 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	(setq wl-scores-messages (cdr wl-scores-messages))))
     (message "Scoring...done")
     ;; Remove buffers.
-    (let ((buffers wl-score-header-buffer-list))
-      (while buffers
-	(elmo-kill-buffer (pop buffers))))
-    (setq wl-score-header-buffer-list nil)))
+    (let (buffer)
+      (while (setq buffer (pop wl-score-header-buffer-list))
+	(elmo-kill-buffer buffer)))))
 
 (defun wl-score-integer (scores header now expire)
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
