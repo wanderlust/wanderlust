@@ -683,7 +683,7 @@ Returns non-nil if bottom of message."
 					  &optional summary charset)
   (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
 	 (num number))
-    (when (and count
+    (when (and (> count 0)
 	       (wl-message-buffer-prefetch-p folder))
       (unless (wl-message-buffer-prefetch-p folder number)
 	(setq num
@@ -697,7 +697,7 @@ Returns non-nil if bottom of message."
 					       &optional summary charset)
   (let* ((summary (or summary (get-buffer wl-summary-buffer-name)))
 	 next)
-    (when (and count
+    (when (and (> count 0)
 	       (wl-message-buffer-prefetch-p folder))
       (setq next (wl-message-buffer-prefetch-get-next folder number summary))
       (when next

@@ -1,3 +1,9 @@
+2005-01-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-message.el (wl-message-buffer-prefetch): Count is a number
+	and do nothing when it is not positive.
+	(wl-message-buffer-prefetch-next): Ditto.
+
 2005-01-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Avoid error for
