@@ -1,3 +1,7 @@
+2000-07-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: Disable broken check notice.
+
 2000-07-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: Support @multitable.

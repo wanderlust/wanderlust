@@ -51,7 +51,8 @@
 	  (insert "@var{@asis{foo}}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil)))
+    (error nil))
+  'no-notice)
 
 ;; @xref
 (broken-facility texinfo-format-xref
@@ -63,7 +64,8 @@
 	  (insert "@xref{, xref, , file}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil)))
+    (error nil))
+  'no-notice)
 
 ;; @uref
 (broken-facility texinfo-format-uref
@@ -75,7 +77,8 @@
 	  (insert "@uref{mailto:foo@@bar.com}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil)))
+    (error nil))
+  'no-notice)
 
 ;;; Obsolete
 ;; Removed Texinfo 3.8
