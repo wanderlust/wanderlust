@@ -1,5 +1,11 @@
 2001-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-delete-cache): Fixed.
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-folder-name):
+	Workaround for net folders.
+	(According to the patch from ABE Yasushi <yasushi@stbbs.net>)
+
 	* wl-vars.el (wl-folder-process-duplicates-alist): Changed default
 	value to nil (According to the patch from
 	Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>).

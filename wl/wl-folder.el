@@ -2112,6 +2112,8 @@ Use `wl-subscribed-mailing-list'."
     (let (key foldername)
       ;; Get foldername and Remove folder type symbol.
       (setq foldername (substring entity 1))
+      (if (string-match "@" foldername)
+	  (setq foldername (substring foldername 0 (match-beginning 0))))
       (when (string-match "[^\\./]+$" foldername)
 	(setq key (regexp-quote
 		   (concat (substring foldername (match-beginning 0)) "@")))

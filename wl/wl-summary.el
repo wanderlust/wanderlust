@@ -1670,9 +1670,10 @@ If ARG is non-nil, checking is omitted."
 	    (goto-char (match-beginning 2))
 	    (insert new-mark)
 	    (elmo-file-cache-delete 
-	     (elmo-message-field wl-summary-buffer-elmo-folder
-				     number
-				     'message-id))
+	     (elmo-file-cache-get-path
+	      (elmo-message-field wl-summary-buffer-elmo-folder
+				  number
+				  'message-id)))
 	    (setq mark-alist
 		  (elmo-msgdb-mark-set mark-alist number new-mark))
 	    (elmo-msgdb-set-mark-alist msgdb mark-alist)
