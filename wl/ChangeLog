@@ -1,3 +1,8 @@
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-decode-body): Remove `debug'.
+	(wl-draft-default-headers): Fix.
+
 2002-01-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-default-headers): Insert return value of
