@@ -81,13 +81,16 @@
 (defvar wl-folder-queue-glyph nil)
 
 (defvar wl-folder-buffer-disp-summary nil)
-(make-variable-buffer-local 'wl-folder-buffer-disp-summary)
 (defvar wl-folder-buffer-cur-entity-id nil)
-(make-variable-buffer-local 'wl-folder-buffer-cur-entity-id)
 (defvar wl-folder-buffer-cur-path nil)
-(make-variable-buffer-local 'wl-folder-buffer-cur-entity-id)
 (defvar wl-folder-buffer-cur-point nil)
-(make-variable-buffer-local 'wl-folder-buffer-cur-point)
+
+(mapcar
+ (function make-variable-buffer-local)
+ (list 'wl-folder-buffer-disp-summary
+       'wl-folder-buffer-cur-entity-id
+       'wl-folder-buffer-cur-path
+       'wl-folder-buffer-cur-point))
 
 (defconst wl-folder-entity-regexp "^\\([ ]*\\)\\(\\[[\\+-]\\]\\)?\\([^\\[].+\\):[-*0-9]+/[-*0-9]+/[-*0-9]+")
 (defconst wl-folder-group-regexp  "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+\n")
