@@ -422,18 +422,24 @@
 	all-importants)
     (while folders
       (setq cur-number (+ cur-number 1))
-      (when (listp (setq importants
-			 (elmo-folder-list-importants-internal
-			  (car folders) important-mark)))
-	(setq all-importants
-	      (nconc all-importants
-		     (mapcar 
-		      (lambda (x)
-			(+ x
-			   (* cur-number
-			      (elmo-multi-folder-divide-number-internal
-			       folder))))		   
-		      importants))))
+      (unless (listp (setq importants
+			   (elmo-folder-list-importants-internal
+			    (car folders) important-mark)))
+	(setq importants (delq  nil
+			     (mapcar
+			      (lambda (x)
+				(if (string= (cadr x) important-mark)
+				    (car x)))
+			      (car mark-alists)))))
+      (setq all-importants
+	    (nconc all-importants
+		   (mapcar 
+		    (lambda (x)
+		      (+ x
+			 (* cur-number
+			    (elmo-multi-folder-divide-number-internal
+			     folder))))		   
+		    importants)))
       (setq mark-alists (cdr mark-alists)
 	    folders (cdr folders)))
     all-importants))

@@ -514,7 +514,7 @@ Special commands:
 
 (defun wl-draft-overload-functions ()
   (wl-mode-line-buffer-identification)
-  ;; (local-set-key "\C-c\C-s" 'wl-draft-send);; override
+  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
   (wl-draft-overload-menubar))
 
