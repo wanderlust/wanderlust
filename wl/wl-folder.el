@@ -2502,6 +2502,7 @@ Use `wl-subscribed-mailing-list'."
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
 	   'wl-folder-open-all "Opening all folders..." 100))))
+    (wl-highlight-folder-path wl-folder-buffer-cur-path)
     (message "Opening all folders...done")
     (set-buffer-modified-p nil)))
 
@@ -2520,6 +2521,7 @@ Use `wl-subscribed-mailing-list'."
     (erase-buffer)
     (wl-folder-insert-entity " " wl-folder-entity)
     (wl-folder-move-path id)
+    (wl-highlight-folder-path wl-folder-buffer-cur-path)
     (recenter)
     (set-buffer-modified-p nil)))
 

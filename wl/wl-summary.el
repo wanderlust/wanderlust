@@ -862,7 +862,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
-  (let (sequence ml-name ml-count subject return-path)
+  (let (sequence ml-name ml-count subject return-path delivered-to mailing-list)
     (setq sequence (elmo-msgdb-overview-entity-get-extra-field
 		    entity "x-sequence")
 	  ml-name (or (elmo-msgdb-overview-entity-get-extra-field
@@ -889,6 +889,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 (progn
 	   (or ml-name (setq ml-name (match-string 1 return-path)))
 	   (or ml-count (setq ml-count (match-string 2 return-path)))))
+    (and (setq delivered-to
+	       (elmo-msgdb-overview-entity-get-extra-field
+		entity "delivered-to"))
+	 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
+	 (or ml-name (setq ml-name (match-string 1 delivered-to))))
+    (and (setq mailing-list
+	       (elmo-msgdb-overview-entity-get-extra-field
+		entity "mailing-list"))
+	 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" mailing-list)	; *-help@, *-owner@, etc.
+	 (or ml-name (setq ml-name (match-string 2 mailing-list))))
     (cons (and ml-name (car (split-string ml-name " ")))
 	  (and ml-count (string-to-int ml-count)))))
 
@@ -896,12 +906,13 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   "Compare entity X and Y by mailing-list info."
   (let* ((list-info-x (wl-summary-get-list-info x))
 	 (list-info-y (wl-summary-get-list-info y)))
-    (if (equal list-info-x list-info-y)
-	(wl-summary-overview-entity-compare-by-date x y)
-      (if (string= (car list-info-x) (car list-info-y))
+    (if (equal (car list-info-x) (car list-info-y))
+	(if (equal (cdr list-info-x) (cdr list-info-y))
+	    (wl-summary-overview-entity-compare-by-date x y)
 	  (< (or (cdr list-info-x) 0)
-	     (or (cdr list-info-y) 0))
-	(string< (car list-info-x) (car list-info-y))))))
+	     (or (cdr list-info-y) 0)))
+      (string< (or (car list-info-x) "")
+	       (or (car list-info-y) "")))))
 
 (defun wl-summary-sort-by-date ()
   (interactive)
@@ -4175,8 +4186,9 @@ If ARG, exit virtual folder."
 
 (defun wl-summary-line-list-info ()
   (let ((list-info (wl-summary-get-list-info wl-message-entity)))
-    (if (and (car list-info) (cdr list-info))
-	(format "(%s %05d)" (car list-info) (cdr list-info))
+    (if (car list-info)
+	(format (if (cdr list-info) "(%s %05d)" "(%s)")
+		(car list-info) (cdr list-info))
       "")))
 
 (defun wl-summary-line-list-count ()

@@ -1,3 +1,17 @@
+2002-07-23  KAMO Tomoyuki  <kamo@i-manage.co.jp>
+
+	* wl-folder.el (wl-folder-open-all): Call wl-highlight-folder-path.
+	(wl-folder-close-all): Ditto.
+
+2002-07-09  KAMO Tomoyuki  <kamo@i-manage.co.jp>
+
+	* wl-summary.el (wl-summary-get-list-info): Process delivered-to:
+	and mailing-list:.
+	(wl-summary-overview-entity-compare-by-list-info): Treat empty field
+	value.
+	(wl-summary-line-list-info): Print mailing-list name even when 
+	list-number is empty.
+
 2002-07-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-edit-string): Don't set buffer-read-only.
