@@ -1926,7 +1926,7 @@ See also variable `wl-summary-next-no-unread-command'."
   :group 'wl-pref
   :group 'wl-setting)
 
-(defcustom wl-message-buffer-prefetch-folder-type-list t
+(defcustom wl-message-buffer-prefetch-folder-type-list '(imap4 nntp)
   "*All folder types that match this list prefetch next message,
 and reserved buffer cache."
   :type `(choice (const :tag "all" t)
@@ -1952,12 +1952,12 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-message-buffer-prefetch-depth 3
+(defcustom wl-message-buffer-prefetch-depth 1
   "*Depth of buffer prefetch in summary mode."
   :type 'integer
   :group 'wl-pref)
 
-(defcustom wl-message-buffer-prefetch-idle-time 0.2
+(defcustom wl-message-buffer-prefetch-idle-time 1
   "*Idle time of buffer prefetch."
   :type 'number
   :group 'wl-pref)
