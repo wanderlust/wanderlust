@@ -1,3 +1,9 @@
+2000-07-22  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity): Rename
+	the local variable `folder' to `mailbox'.
+	Rename the argument `fld' to `folder'.
+
 2000-07-20  Kenichi OKADA <okada@opaopa.org>
 
 	* elmo-pop3.el (elmo-pop3-commit): Do nothing when unplugged.
