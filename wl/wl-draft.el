@@ -1010,18 +1010,19 @@ non-nil."
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
   (condition-case ()
-      (elmo-pop3-get-session
-       (list 'pop3
-	     (or wl-pop-before-smtp-user
-		 elmo-default-pop3-user)
-	     (or wl-pop-before-smtp-authenticate-type
-		 elmo-default-pop3-authenticate-type)
-	     (or wl-pop-before-smtp-server
-		 elmo-default-pop3-server)
-	     (or wl-pop-before-smtp-port
-		 elmo-default-pop3-port)
-	     (or wl-pop-before-smtp-stream-type
-		 elmo-default-pop3-stream-type)))
+      (let ((session (elmo-pop3-get-session
+		      (list 'pop3
+			    (or wl-pop-before-smtp-user
+				elmo-default-pop3-user)
+			    (or wl-pop-before-smtp-authenticate-type
+				elmo-default-pop3-authenticate-type)
+			    (or wl-pop-before-smtp-server
+				elmo-default-pop3-server)
+			    (or wl-pop-before-smtp-port
+				elmo-default-pop3-port)
+			    (or wl-pop-before-smtp-stream-type
+				elmo-default-pop3-stream-type)))))
+	(and session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
 
