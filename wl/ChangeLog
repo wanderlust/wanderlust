@@ -1,3 +1,9 @@
+2004-12-07  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-forward): Don't call set-buffer since
+	there is switch-to-buffer at the end of wl-message-select-buffer.
+	(wl-summary-reply): Ditto.
+
 2004-12-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-forward): Put subject in original

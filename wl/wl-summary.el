@@ -4145,9 +4145,7 @@ Reply to author if invoked with ARG."
     (when number
       (save-excursion
 	(wl-summary-set-message-buffer-or-redisplay))
-      (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer wl-message-buffer)
-      (set-buffer mes-buf)
       (condition-case err
 	  (when (setq mes-buf (wl-message-get-original-buffer))
 	    (wl-draft-reply mes-buf arg summary-buf number)
@@ -4210,7 +4208,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	(wl-draft-forward t)
-	mes-buf
 	entity subject num)
     (if (null number)
 	(message "No message.")
@@ -4222,9 +4219,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  ;; Reload.
 	  (wl-summary-redisplay-internal nil nil 'force-reload)
 	(wl-summary-redisplay-internal folder number))
-      (setq mes-buf wl-message-buffer)
-      (wl-message-select-buffer mes-buf)
-      (set-buffer mes-buf)
+      (wl-message-select-buffer wl-message-buffer)
       (setq subject (with-current-buffer
 			wl-message-buffer-original-buffer
 		      (std11-field-body "Subject")))
