@@ -1,5 +1,7 @@
 2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-rescan): Use numbers in the msgdb.
+
 	* wl-score.el (wl-summary-score-update-all-lines): Use
 	wl-summary-set-mark.
 	(wl-summary-score-update-all-lines): Kill expunged messages.

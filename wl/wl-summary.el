@@ -938,16 +938,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	curp
 	(inhibit-read-only t)
 	(buffer-read-only nil)
-	numbers expunged)
+	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
+					    nil t)) ; in-msgdb
+	expunged)
     (erase-buffer)
     (message "Re-scanning...")
     (setq i 0)
-    (setq num (length wl-summary-buffer-number-list))
-    (setq numbers wl-summary-buffer-number-list)
     (when sort-by
       (message "Sorting by %s..." sort-by)
       (setq numbers
-	    (sort wl-summary-buffer-number-list
+	    (sort numbers
 		  (lambda (x y)
 		    (funcall
 		     (intern (format "wl-summary-overview-entity-compare-by-%s"
@@ -955,6 +955,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
 		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
       (message "Sorting by %s...done" sort-by))
+    (setq num (length numbers))
     (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
 	  wl-thread-entity-list nil
 	  wl-thread-entities nil
