@@ -94,6 +94,40 @@
 ;;;   (equal '(1 2 "3" 5 4)
 ;;;	  (elmo-list-insert '(1 2 "3" 5) 4 "3"))
 
+(luna-define-method test-elmo-list-diff ((case test-elmo-util))
+  (let ((list1 '(1 2 3))
+	(list2 '(1 2 3 4))
+	(list3 '(1 2 4))
+	(list4 '(4 5 6))
+	(list5 '(3 4 5 6)))
+    (lunit-assert
+     (equal '(nil nil)
+	    (elmo-list-diff nil nil)))
+    (lunit-assert
+     (equal '(nil (1 2 3))
+	    (elmo-list-diff nil list1)))
+    (lunit-assert
+     (equal '((1 2 3) nil)
+	    (elmo-list-diff list1 nil)))
+    (lunit-assert
+     (equal '(nil nil)
+	    (elmo-list-diff list1 list1)))
+    (lunit-assert
+     (equal '(nil (4))
+	    (elmo-list-diff list1 list2)))
+    (lunit-assert
+     (equal '((3) (4))
+	    (elmo-list-diff list1 list3)))
+    (lunit-assert
+     (equal '((3 2 1) (6 5 4))
+	    (elmo-list-diff list1 list4)))
+    (lunit-assert
+     (equal '((2 1) (6 5))
+	    (elmo-list-diff list3 list4)))
+    (lunit-assert
+     (equal '((2 1) (6 5 3))
+	    (elmo-list-diff list3 list5)))))
+
 (luna-define-method test-elmo-delete-char-1 ((case test-elmo-util))
   (lunit-assert
    (string= "f" (elmo-delete-char ?o "foo")))
