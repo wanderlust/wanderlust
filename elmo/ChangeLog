@@ -1,5 +1,17 @@
 2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-make-folder): Add folder name error check.
+
+	* elmo-nntp.el (elmo-nntp-group-coding-system): New variable.
+	(elmo-nntp-encode-group-string): New inline function.
+	(elmo-nntp-decode-group-string): Ditto.
+	(elmo-folder-initialize): Use elmo-nntp-encode-group-string.
+	(elmo-nntp-folder-list-subfolders): Set processing buffer as unibyte;
+	Use `not' instead of `null';
+	Use elmo-nntp-decode-group-string.
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Don't append delimiter.
+
 	* elmo-version.el (elmo-version): Up to 2.7.5.
 
 2001-10-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

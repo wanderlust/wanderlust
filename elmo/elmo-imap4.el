@@ -1872,13 +1872,13 @@ Return nil if no complete line has arrived."
 		 elmo-imap4-default-hierarchy-delimiter))
 	 result append-serv type)
     ;; Append delimiter
-    (if (and root
-	     (not (string= root ""))
-	     (not (string-match (concat "\\(.*\\)"
-					(regexp-quote delim)
-					"\\'")
-				root)))
-	(setq root (concat root delim)))
+;;    (if (and root
+;;	     (not (string= root ""))
+;;	     (not (string-match (concat "\\(.*\\)"
+;;					(regexp-quote delim)
+;;					"\\'")
+;;				root)))
+;;	(setq root (concat root delim)))
     (setq result (elmo-imap4-response-get-selectable-mailbox-list
 		  (elmo-imap4-send-command-wait
 		   session

@@ -51,6 +51,19 @@
   "Non-nil means max number of msgdb is set as the max number of `list active'.
 (Needed for inn 2.3 or later?).")
 
+(defvar elmo-nntp-group-coding-system nil
+  "A coding system for newsgroup string.")
+
+(defsubst elmo-nntp-encode-group-string (string)
+  (if elmo-nntp-group-coding-system
+      (encode-coding-string string elmo-nntp-group-coding-system)
+    string))
+
+(defsubst elmo-nntp-decode-group-string (string)
+  (if elmo-nntp-group-coding-system
+      (decode-coding-string string elmo-nntp-group-coding-system)
+    string))
+
 ;;; ELMO NNTP folder
 (eval-and-compile
   (luna-define-class elmo-nntp-folder (elmo-net-folder)
@@ -73,7 +86,8 @@
       (elmo-nntp-folder-set-group-internal
        folder
        (if (match-beginning 1)
-	   (elmo-match-string 1 name)))
+	   (elmo-nntp-encode-group-string
+	    (elmo-match-string 1 name))))
       ;; Setup slots for elmo-net-folder
       (elmo-net-folder-set-user-internal folder
 					 (if (match-beginning 2)
@@ -430,6 +444,7 @@ Don't cache if nil.")
   (let ((session (elmo-nntp-get-session folder))
 	response ret-val top-ng append-serv use-list-active start)
     (with-temp-buffer
+      (set-buffer-multibyte nil)
       (if (and (elmo-nntp-folder-group-internal folder)
 	       (elmo-nntp-select-group 
 		session
@@ -444,8 +459,8 @@ Don't cache if nil.")
 	   session
 	   (concat "list"
 		   (if (and (elmo-nntp-folder-group-internal folder)
-			    (null (string= (elmo-nntp-folder-group-internal
-					    folder) "")))
+			    (not (string= (elmo-nntp-folder-group-internal
+					   folder) "")))
 		       (concat " active"
 			       (format " %s.*"
 				       (elmo-nntp-folder-group-internal folder)
@@ -542,14 +557,14 @@ Don't cache if nil.")
 		     (elmo-net-folder-stream-type-internal folder)))))
     (mapcar '(lambda (fld)
 	       (if (consp fld)
-		   (list (concat "-" (car fld)
+		   (list (concat "-" (elmo-nntp-decode-group-string (car fld))
 				 (and (elmo-net-folder-user-internal folder)
 				      (concat
 				       ":"
 				       (elmo-net-folder-user-internal folder)))
 				 (and append-serv
 				      (concat append-serv))))
-		 (concat "-" fld
+		 (concat "-" (elmo-nntp-decode-group-string fld)
 			 (and (elmo-net-folder-user-internal folder)
 			      (concat ":" (elmo-net-folder-user-internal
 					   folder)))

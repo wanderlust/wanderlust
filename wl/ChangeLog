@@ -1,5 +1,12 @@
 2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-message.el (wl-message-display-internal): Bind
+	`default-mime-charset'.
+
+	* wl-fldmgr.el (wl-fldmgr-make-group): Check folder name error.
+
+	* wl-draft.el (wl-draft-reply): Decode newsgroup field.
+
 	* Version number is increased to 2.7.5.
 
 2001-10-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

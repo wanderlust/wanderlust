@@ -355,10 +355,18 @@ Reply to author if WITH-ARG is non-nil."
       (setq mail-followup-to
 	    (wl-draft-make-mail-followup-to (append to cc)))
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
-    (setq newsgroups (wl-parse newsgroups
-			       "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
-	  newsgroups (wl-delete-duplicates newsgroups)
-	  newsgroups (if newsgroups (mapconcat 'identity newsgroups ",")))
+    (with-temp-buffer			; to keep raw buffer unibyte.
+      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+      (setq newsgroups (wl-parse newsgroups
+				 "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
+	    newsgroups (wl-delete-duplicates newsgroups)
+	    newsgroups
+	    (if newsgroups
+		(mapconcat
+		 (lambda (grp)
+		   (setq decoder (mime-find-field-decoder 'Newsgroups 'plain))
+		   (if decoder (funcall decoder grp) grp))
+		 newsgroups ","))))
     (setq to (wl-delete-duplicates to nil t))
     (setq cc (wl-delete-duplicates
 	      (append (wl-delete-duplicates cc nil t)
