@@ -258,13 +258,13 @@
 	))
 ;; Change headers in draft sending time.
 (setq wl-draft-config-alist
-      '((reply		;; see reply buffer
+      '((reply				; see reply buffer
 	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 (template . "default"))		;; template
+	 (template . "default"))	; template
 	("^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 wl-ml-draft-config-function		;; function
-	 ("From" . wl-from)			;; variable
-	 ("Organization" . "~/.wl sample"))	;; string
+	 ding				; function
+	 ("From" . wl-from)		; variable
+	 ("Organization" . "CHANGE THIS!!")) ; string
 	("^Newsgroups: test.*"
 	 ("Organization" . "organization for nntp."))
 	))

@@ -259,13 +259,13 @@
 ;; ドラフトバッファの内容により From や Organization などのヘッダを自
 ;; 動的に変更する
 (setq wl-draft-config-alist
-      '((reply			;; 返信元のバッファを見る
+      '((reply				; 返信元のバッファを見る
 	 "^To: .*test-notsend-wl@lists\\.airs\\.net"
 	 (template . "default"))	; テンプレート
 	("^To: .*test-notsend-wl@lists\\.airs\\.net"
-	 wl-ml-draft-config-function	; 関数
+	 ding				; 関数
 	 ("From" . wl-from)		; 変数
-	 ("Organization" . "~/.wl sample")) ; 文字列
+	 ("Organization" . "CHANGE THIS!!")) ; 文字列
 	("^Newsgroups: test.*"
 	 ("Organization" . "ニュース投稿時の組織名"))
 	))
