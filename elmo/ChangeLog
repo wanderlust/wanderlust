@@ -1,3 +1,8 @@
+2001-02-21  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-display-progress): Prefer
+	`progress-feedback-with-label' to `lprogress-display'.
+	
 2000-02-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-network-authenticate-session): Fix.
