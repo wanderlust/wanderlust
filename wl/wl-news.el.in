@@ -286,8 +286,7 @@
 	    (setq folder
 		  (wl-summary-read-folder wl-default-folder "to append ")))
 	(or (wl-news-send-news wl-news-buffer-oldest-version wl-news-lang folder)
-	    (error
-	     (format "Cannot append NEWS mail to %s" folder))))))
+	    (error "Cannot append NEWS mail to %s" folder)))))
 
 (defun wl-news-force-exit ()
   (interactive)

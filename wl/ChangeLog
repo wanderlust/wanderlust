@@ -1,7 +1,7 @@
 2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el, wl-expire.el, wl-mime.el, wl-summary.el, wl-util.el
-	: `message' and `error' take format string.
+	* wl-news.el.in: `message' and `error' take format string.
 
 2003-05-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
