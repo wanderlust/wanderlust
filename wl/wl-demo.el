@@ -108,8 +108,15 @@ any conversions and evaluate FORMS there like `progn'."
 (eval-when-compile
   (defmacro wl-logo-xpm ()
     ;; (WIDTH HEIGHT DATA)
-    (let ((file (expand-file-name (concat wl-demo-icon-name ".xpm")
-				  wl-icon-dir)))
+    (let ((file (expand-file-name
+		 (if (string-match "^... Dec \\([ 1][0-9]\\|2[0-4]\\)"
+				   (current-time-string))
+		     (concat (substring wl-demo-icon-name 0 -4)
+			     "xmas-"
+			     (substring wl-demo-icon-name -4)
+			     ".xpm")
+		   (concat wl-demo-icon-name ".xpm"))
+		 wl-icon-dir)))
       (if (file-exists-p file)
 	  (wl-demo-with-temp-file-buffer file
 	    (re-search-forward

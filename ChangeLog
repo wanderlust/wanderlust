@@ -1,3 +1,9 @@
+2001-12-07  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* etc/icons/wl-alpha-xmas-logo.xpm: New file.
+	* etc/icons/wl-beta-xmas-logo.xpm: New file.
+	* etc/icons/wl-stable-xmas-logo.xpm: New file.
+
 2001-12-02  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* doc/wl-refcard.tex: New file.
