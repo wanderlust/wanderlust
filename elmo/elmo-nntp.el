@@ -986,7 +986,9 @@ Don't cache if nil.")
 		   :user elmo-nntp-default-user
 		   :server hostname
 		   :port elmo-nntp-default-port
-		   :stream-type elmo-nntp-default-stream-type)))
+		   :stream-type
+		   (elmo-get-network-stream-type
+		    elmo-nntp-default-stream-type))))
 	response has-message-id)
     (save-excursion
       (set-buffer content-buf)
