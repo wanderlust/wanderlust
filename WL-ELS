@@ -8,13 +8,13 @@
 ;;; generic modules
 (defconst WL-MODULES '(
    wl wl-folder wl-summary wl-message
-   wl-vars wl-draft wl-util wl-address
+   wl-vars wl-draft wl-util wl-version wl-address
    wl-highlight wl-demo wl-refile wl-thread
    wl-fldmgr wl-expire wl-template wl-score
    ))
 
 (defconst ELMO-MODULES '(
-   elmo-util elmo-net elmo-imap4 elmo-nntp elmo-archive
+   elmo-util elmo-version elmo-net elmo-imap4 elmo-nntp elmo-archive
    elmo-localdir elmo-msgdb elmo-vars elmo2
    elmo-cache elmo-multi elmo-filter elmo-pipe
    elmo-dop elmo-pop3 elmo-localnews elmo-maildir
