@@ -325,8 +325,10 @@ It is highly recommended to set this value to t."
 
 (defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re[\\^[:> ]"
   "*If message does not have in-reply-to field nor references field and
- subject matches this regexp, search parent message by subject matching."
-  :type 'string
+subject matches this regexp, search parent message by subject matching.
+If nil, never search search parent by subject."
+  :type '(choice string
+		 (const :tag "Don't search parent" nil))
   :group 'wl-summary)
 
 ;; Important folders
