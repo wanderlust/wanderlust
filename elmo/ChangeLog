@@ -1,3 +1,9 @@
+2004-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-buffer): Fix docstring.
+	(elmo-generic-folder-append-messages): If elmo-message-flags return nil,
+	pass (read) for the FLAG argument of elmo-folder-append-buffer.
+	
 2004-10-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-split.el (elmo-split-rule): Update comment.

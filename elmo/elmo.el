@@ -382,7 +382,8 @@ FOLDER is the ELMO folder structure.")
   "Append current buffer as a new message.
 FOLDER is the destination folder (ELMO folder structure).
 FLAGS is the flag list for the appended message (list of symbols).
-If it is nil, it is not that there is no flag and what is not defined is meant.
+If FLAGS contain `read', the message is appended as `not-unread'.
+If it is nil, the appended message will be treated as `new'.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
 Return nil on failure.")
@@ -1057,10 +1058,11 @@ If optional argument IF-EXISTS is nil, load on demand.
 		    (> (buffer-size) 0)
 		    (elmo-folder-append-buffer
 		     folder
-		     (elmo-message-flags
-		      src-folder
-		      (car numbers)
-		      (elmo-msgdb-get-message-id-from-buffer))
+		     (or (elmo-message-flags
+			  src-folder
+			  (car numbers)
+			  (elmo-msgdb-get-message-id-from-buffer))
+			 '(read))
 		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
