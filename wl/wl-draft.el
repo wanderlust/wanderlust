@@ -328,9 +328,10 @@ Reply to author if WITH-ARG is non-nil."
   (let (r-list
 	to mail-followup-to cc subject in-reply-to references newsgroups
 	to-alist cc-alist decoder parent-folder)
-    (set-buffer summary-buf)
-    (setq parent-folder (wl-summary-buffer-folder-name))
-    (set-buffer buf)
+    (when (buffer-live-p summary-buf)
+      (with-current-buffer summary-buf
+	(setq parent-folder (wl-summary-buffer-folder-name))))
+    (set-buffer (or buf mime-mother-buffer))
     (setq r-list (symbol-value (wl-draft-reply-list-symbol with-arg)))
     (catch 'done
       (while r-list

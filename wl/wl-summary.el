@@ -3936,8 +3936,9 @@ If ARG, exit virtual folder."
 		      t)
 	    number (or number (wl-summary-message-number))
 	    mark (elmo-message-mark folder number))
-      ;; folder mark.
-      (elmo-folder-mark-as-read folder (list number) no-folder-mark)
+      (when (member mark (elmo-msgdb-unread-marks))
+	;; folder mark.
+	(elmo-folder-mark-as-read folder (list number) no-folder-mark))
       (elmo-message-set-cached folder number t)
       (setq new-mark (elmo-message-mark folder number))
       ;;
@@ -3945,6 +3946,10 @@ If ARG, exit virtual folder."
       ;;
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
+      (wl-folder-update-unread
+       (wl-summary-buffer-folder-name)
+       	 (+ wl-summary-buffer-unread-count
+	    wl-summary-buffer-new-count))
       ;; set mark on buffer
       (when visible
 	(unless (string= (wl-summary-persistent-mark) new-mark)

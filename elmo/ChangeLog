@@ -1,3 +1,8 @@
+2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-status): Skip white spaces after
+	status number.
+
 2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-mark-as-read): Added argument `ignore-flag'.
