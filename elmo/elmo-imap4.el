@@ -1804,15 +1804,16 @@ Return nil if no complete line has arrived."
 	 (setq mailbox "inbox"))
      (if (eq (string-to-char mailbox) ?/)
 	 (setq mailbox (substring mailbox 1 (length mailbox))))
-     (expand-file-name
-      mailbox
+     ;; don't use expand-file-name (e.g. %~/something)
+     (concat
       (expand-file-name
        (or (elmo-net-folder-user-internal folder) "nobody")
        (expand-file-name (or (elmo-net-folder-server-internal folder)
 			     "nowhere")
 			 (expand-file-name
 			  "imap"
-			  elmo-msgdb-directory)))))))
+			  elmo-msgdb-directory)))
+      "/" mailbox))))
 
 (luna-define-method elmo-folder-status-plugged ((folder
 						 elmo-imap4-folder))

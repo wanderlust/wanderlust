@@ -1,5 +1,8 @@
 2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-imap4.el (elmo-folder-expand-msgdb-path): Don't expand
+	mailbox (e.g. for %~/something).
+
 	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-extra-field):
 	Convert field-name to lower case.
 	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
