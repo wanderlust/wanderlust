@@ -1,5 +1,8 @@
 2000-07-22  OKAZAKI Tetsurou  <okazaki@be.to>
 
+	* elmo-imap4.el (elmo-imap4-read-bytes): Advance
+	`elmo-imap4-read-point' exactly.
+
 	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity): Rename
 	the local variable `folder' to `mailbox'.
 	Rename the argument `fld' to `folder'.
