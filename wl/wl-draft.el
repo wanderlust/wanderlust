@@ -1139,6 +1139,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 			   nil t)
 			  (match-beginning 0)
 			(point-max)))
+    (wl-draft-insert-required-fields)
     ;; ignore any blank lines in the header
     (while (progn (goto-char (point-min))
 		  (re-search-forward "\n[ \t]*\n\n*" nil t))
