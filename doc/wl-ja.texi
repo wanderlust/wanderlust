@@ -4062,24 +4062,72 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 @kbd{W} を押すと、(可能であれば)宛先を推測してドラフトバッファを用意しま
 す。
 
+@menu
+* Usage of Draft Mode::         基本的な使い方
+* Keybind in Draft Mode::       キーバインド
+* Variables of Draft Mode::     カスタマイズ変数
+@end menu
+
+@node Usage of Draft Mode, Keybind in Draft Mode, Draft, Draft
 @section 使い方(TIPS)
 
 基本は Emacs 標準のメールモードです。
 
-@subsection アドレスの補完
+@menu
+* Editing Header::                      ヘッダの編集
+* Editing Message Body::                メッセージの編集
+* Dynamical Message Re-arrangement::    メッセージの動的な変更
+* Template::                            テンプレートの挿入
+* POP-before-SMTP::                     POP-before-SMTP によるメールの送信
+@end menu
+
+@node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
+@subsection ヘッダの編集
 
 初期状態では @samp{To:} にカーソルがあります。送信相手のアドレスを入力し
-てください。@kbd{@key{TAB}} で補完します。
+てください。アドレスを入力する際には、@kbd{@key{TAB}} で補完ができます。
 
-ニュース記事として出したい場合は、@samp{Newsgroups:} フィールドを自分で
-書き加えてください。フィールド名は @kbd{@key{TAB}} で補完します。
+メッセージの宛先を指定するために、以下のフィールドが利用できます。それぞれ
+自分で書き加えて下さい。フィールド名を入力する際には、@kbd{@key{TAB}}で
+補完ができます。
 
-編集中のドラフトをセーブすると、@code{wl-draft-folder} で設定したドラフ
-トフォルダに追加されます。
+@table @asis
+@item @samp{Newsgroups:}
+ニュース記事として出す場合の投稿先を指定します。
 
-@samp{Fcc:} フィールドにフォルダを指定しておくと、送信したメッセージの
-コピーをそこに保存します。
+@item @samp{Cc:} 
+メッセージのコピー(Carbon Copy)を送付するアドレス。
+@end table
 
+以下のヘッダは、送信されるメッセージからは削除されます。
+
+@table @asis
+@item @samp{Bcc:} 
+メッセージのコピー(Blind Carbon Copy)を送付するアドレス。
+
+@item @samp{Fcc:} 
+送信したメッセージを保存するフォルダを指定します。
+
+@item @samp{Ecc:} 
+送信したメッセージをカプセル化して転送します。
+@end table
+
+以下の変数により、最初に用意するヘッダを追加できます。
+
+@table @code
+@item wl-fcc
+@vindex wl-fcc
+初期設定は @code{nil}。
+Non-nil なら、設定された値をドラフトの @samp{Fcc:} として最初から挿入します。
+関数が指定されている場合、関数の返り値(string) が挿入されます。
+
+@item wl-bcc
+@vindex wl-bcc
+初期設定は @code{nil}。
+Non-nil なら、設定された値をドラフトの @samp{Bcc:} として最初から挿入します。
+@end table
+
+@node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
 @subsection メッセージの編集
 
 マルチパートの編集は SEMI の MIME 編集モードを利用しています。
@@ -4087,6 +4135,10 @@ Non-nil ならメッセージバッファで長い行の折り返しをしません。
 @xref{MIME-Edit, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
 また、ドラフトバッファにおいて、@kbd{C-c C-x ?} でヘルプが参照できます。
 
+編集中のドラフトをセーブすると、@code{wl-draft-folder} で設定したドラフ
+トフォルダに追加されます。
+
+@node Dynamical Message Re-arrangement, Template, Editing Message Body, Usage of Draft Mode
 @subsection メッセージの動的な変更
 @vindex wl-draft-config-alist
 @c @cindex Chage Message
@@ -4229,6 +4281,7 @@ Field の値が @code{nil} ならばその Field を削除します。
 (add-hook 'wl-draft-reedit-hook 'wl-draft-config-exec)
 @end lisp
 
+@node Template, POP-before-SMTP, Dynamical Message Re-arrangement, Usage of Draft Mode
 @subsection テンプレートの挿入
 @cindex Template
 @cindex Apply Template
@@ -4282,6 +4335,7 @@ Field の値が @code{nil} ならばその Field を削除します。
 @noindent
 と書くことで @samp{default} のテンプレートを適用できます。
 
+@node POP-before-SMTP,  , Template, Usage of Draft Mode
 @subsection POP-before-SMTP によるメールの送信
 @cindex POP-before-SMTP
 @cindex SMTP-after-POP
@@ -4334,6 +4388,7 @@ http://www.iecc.com/pop-before-smtp.html
 @end group
 @end example
 
+@node Keybind in Draft Mode, Variables of Draft Mode, Usage of Draft Mode, Draft
 @section キーバインド
 @cindex Keybind, Draft Mode
 @cindex Keybind, Draft Buffer
@@ -4446,6 +4501,7 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 れます。デフォルトの省略符号として使われる値は (@samp{[...]}) です。
 @end table
 
+@node Variables of Draft Mode,  , Keybind in Draft Mode, Draft
 @section カスタマイズ変数
 
 @table @code
@@ -4590,17 +4646,6 @@ Non-nil ならドラフト用に新しいフレームを開きます。
 初期設定は @code{nil}。
 ユーザのアドレスリストです。
 アドレスを複数持っている場合は設定してください。
-
-@item wl-fcc
-@vindex wl-fcc
-初期設定は @code{nil}。
-Non-nil なら、設定された値をドラフトの @samp{Fcc:} として最初から挿入します。
-関数が指定されている場合、関数の返り値(string) が挿入されます。
-
-@item wl-bcc
-@vindex wl-bcc
-初期設定は @code{nil}。
-Non-nil なら、設定された値をドラフトの @samp{Bcc:} として最初から挿入します。
 
 @item wl-reply-subject-prefix
 @vindex wl-reply-subject-prefix
