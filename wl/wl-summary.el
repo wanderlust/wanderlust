@@ -2804,20 +2804,19 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 (defun wl-summary-update-persistent-mark ()
   "Synch up persistent mark of current line with msgdb's.
 Return non-nil if the mark is updated"
-  (if wl-summary-buffer-persistent-mark-column
-      (save-excursion
-	(move-to-column wl-summary-buffer-persistent-mark-column)
-	(let ((inhibit-read-only t)
-	      (buffer-read-only nil)
-	      (mark (buffer-substring (- (point) 1) (point)))
-	      (new-mark (wl-summary-persistent-mark)))
-	  (unless (string= new-mark mark)
-	    (delete-backward-char 1)
-	    (insert new-mark))
-	  (when wl-summary-highlight
-	    (wl-highlight-summary-current-line))
-	  (set-buffer-modified-p nil)
-	  t))
+  (prog1
+      (when wl-summary-buffer-persistent-mark-column
+	(save-excursion
+	  (move-to-column wl-summary-buffer-persistent-mark-column)
+	  (let ((inhibit-read-only t)
+		(buffer-read-only nil)
+		(mark (buffer-substring (- (point) 1) (point)))
+		(new-mark (wl-summary-persistent-mark)))
+	    (unless (string= new-mark mark)
+	      (delete-backward-char 1)
+	      (insert new-mark)
+	      (wl-summary-set-message-modified)
+	      t))))
     (when wl-summary-highlight
       (wl-highlight-summary-current-line))
     (set-buffer-modified-p nil)))
