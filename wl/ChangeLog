@@ -1,3 +1,27 @@
+2003-04-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-replace-status-marks): Disable
+	interactive use.
+	(wl-summary-reedit): Check message existence at first.
+	(wl-summary-mark-line): Fix doc, return value is indefinite.
+
+	* wl-highlight.el (wl-highlight-message): Arranged.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Abolish
+	unused 1st and 2nd arguments. Abolish 3rd argument `temp-too' and
+	check temp-mark by wl-summary-temp-mark always.
+	(wl-highlight-summary): Change accordingly.
+	* wl-summary.el (wl-summary-mark-as-read-all)
+	(wl-summary-delete-cache, wl-summary-set-score-mark)
+	(wl-summary-mark-as-unread, wl-summary-unmark)
+	(wl-summary-mark-line, wl-summary-mark-as-read)
+	(wl-summary-mark-as-important): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-window): Re-calculate the
+	end of the window if possible.
+	* wl-summary.el (wl-summary-sync-update): Support lazy
+	highlighting.
+
 2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (wl-as-coding-system): Define for non-mule too.
