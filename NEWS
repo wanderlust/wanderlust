@@ -81,6 +81,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    When the relevant messages are cached, you can do some operations
    even in the off-line state.
 
+** Now messages with "$" mark is not remained in the summary buffer when
+   the actual message itself is deleted.
+   Please visit the 'mark folder to review the messages with the "$" mark.
+
 * Version 2.6.1 is basically a bug fix version of 2.6.0.
 
 ** Fixed a problem that Emacs 21 causes `Recursive load...' error.

@@ -128,8 +128,8 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (error "%s is not supported yet" suffix)))))
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
     (timezone-fix-time
-     (concat (elmo-replace-in-string description "-" " ") " 0:00")
-     nil nil))))
+     (concat (elmo-replace-in-string description "-" " ") " 0:0")
+     (current-time-zone) nil))))
 
 (defun elmo-datevec-substitute (datevec1 datevec2)
   (if (/= (aref datevec2 2) 0)
@@ -157,8 +157,7 @@ Otherwise treat \\ in NEWTEXT string as special:
     (setq p 1)
     (while (< p month)
       (setq days (+ days (timezone-last-day-of-month p year)))
-      (setq p (+ p 1))
-      )
+      (setq p (+ p 1)))
     (setq days (+ days mday))
     (aref wday (% days 7))))
 

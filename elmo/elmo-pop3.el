@@ -877,7 +877,8 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	  (setq elmo-pop3-total-size nil))
 	(unless elmo-inhibit-display-retrieval-progress
 	  (elmo-display-progress
-	   'elmo-display-retrieval-progress "" 100)  ; remove progress bar.
+	   'elmo-display-retrieval-progress
+	   "Retrieving..." 100)  ; remove progress bar.
 	  (message "Retrieving...done."))
 	(set-buffer outbuf)
 	(goto-char (point-min))

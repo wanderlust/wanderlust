@@ -1173,7 +1173,9 @@ the value of `foo'."
 (defun elmo-progress-clear (label)
   (let ((counter (assq label elmo-progress-counter-alist)))
     (when counter
-      (elmo-display-progress label "" 100)
+      (elmo-display-progress label
+			     (elmo-progress-counter-format counter)
+			     100)
       (setq elmo-progress-counter-alist
 	    (delq counter elmo-progress-counter-alist)))))
 

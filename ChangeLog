@@ -1,7 +1,8 @@
 2001-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* NEWS, NEWS.ja: Added description about
-	`elmo-enable-disconnected-operation'.
+	`elmo-enable-disconnected-operation';
+	Added description about "$" mark.
 
 	* WL-MK (update-version): New function.
 

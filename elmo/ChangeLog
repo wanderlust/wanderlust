@@ -1,3 +1,14 @@
+2001-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-message-fetch): Fixed '100%' message.
+
+	* elmo-pop3.el (elmo-message-fetch-plugged): Ditto.
+
+	* elmo-util.el (elmo-progress-clear): Ditto.
+
+	* elmo-date.el (elmo-date-get-datevec): Fix timezone of
+	`DD-Mon-YYYY' type date.
+
 2001-12-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Use
