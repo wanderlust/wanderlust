@@ -1,3 +1,11 @@
+2002-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-process-filter): Check whether the pop3
+	process	buffer lives or not.
+
+	* elmo-dop.el (elmo-dop-queue-flush): Don't append to the dop-queue
+	while flushing queues (It causes infinite loop).
+
 2002-11-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed last change.

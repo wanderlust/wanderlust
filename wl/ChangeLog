@@ -1,3 +1,10 @@
+2002-12-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-sync-entity): Fixed problem when the
+	folder is sticky.
+	(wl-folder-mark-as-read-all-entity): Ditto.
+	(wl-folder-prefetch-entity): Ditto.
+
 2002-12-04  Yasutaka SHINDOH  <ring@fan.gr.jp>
 
 	* wl-demo.el (wl-demo-icon-name): Cope with Medow.

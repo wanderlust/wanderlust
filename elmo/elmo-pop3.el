@@ -233,19 +233,20 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
       return-value)))
 
 (defun elmo-pop3-process-filter (process output)
-  (with-current-buffer (process-buffer process)
-    (goto-char (point-max))
-    (insert output)
-    (elmo-pop3-debug "RECEIVED: %s\n" output)
-    (if (and elmo-pop3-total-size
-	     (> elmo-pop3-total-size
-		(min elmo-display-retrieval-progress-threshold 100)))
-	(elmo-display-progress
-	 'elmo-display-retrieval-progress
-	 (format "Retrieving (%d/%d bytes)..."
-		 (buffer-size)
-		 elmo-pop3-total-size)
-	 (/ (buffer-size) (/ elmo-pop3-total-size 100))))))
+  (when (buffer-live-p (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (goto-char (point-max))
+      (insert output)
+      (elmo-pop3-debug "RECEIVED: %s\n" output)
+      (if (and elmo-pop3-total-size
+	       (> elmo-pop3-total-size
+		  (min elmo-display-retrieval-progress-threshold 100)))
+	  (elmo-display-progress
+	   'elmo-display-retrieval-progress
+	   (format "Retrieving (%d/%d bytes)..."
+		   (buffer-size)
+		   elmo-pop3-total-size)
+	   (/ (buffer-size) (/ elmo-pop3-total-size 100)))))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))

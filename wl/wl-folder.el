@@ -1000,14 +1000,21 @@ If current line is group folder, check all sub entries."
 					 (wl-summary-always-sticky-folder-p
 					  folder))
 				     wl-summary-highlight))
-	   wl-auto-select-first new unread)
+	   wl-auto-select-first new unread sticky)
       (setq new (or (car nums) 0))
       (setq unread (or (cadr nums) 0))
       (if (or (not unread-only)
 	      (or (< 0 new) (< 0 unread)))
-	  (let ((wl-summary-buffer-name (concat
-					 wl-summary-buffer-name
-					 (symbol-name this-command)))
+	  (let ((wl-summary-buffer-name
+		 (if (setq sticky (get-buffer (wl-summary-sticky-buffer-name
+					       (elmo-folder-name-internal
+						folder))))
+		     ;; Sticky folder exists.
+		     (wl-summary-sticky-buffer-name
+		      (elmo-folder-name-internal folder))
+		   (concat
+		    wl-summary-buffer-name
+		    (symbol-name this-command))))
 		(wl-summary-use-frame nil)
 		(wl-summary-always-sticky-folder-list nil))
 	    (save-window-excursion
@@ -1016,7 +1023,9 @@ If current line is group folder, check all sub entries."
 					     (wl-summary-get-sync-range
 					      folder)
 					     nil nil nil t)
-		(wl-summary-exit)))))))))
+		(if sticky
+		    (wl-summary-save-status)
+		  (wl-summary-exit))))))))))
 
 (defun wl-folder-sync-current-entity (&optional unread-only)
   "Synchronize the folder at position.
@@ -1050,22 +1059,32 @@ If current line is group folder, check all subfolders."
 					 (wl-summary-always-sticky-folder-p
 					  folder))
 				     wl-summary-highlight))
-	   wl-auto-select-first new unread)
+	   wl-auto-select-first new unread sticky)
       (setq new (or (car nums) 0))
       (setq unread (or (cadr nums) 0))
       (if (or (< 0 new) (< 0 unread))
 	  (save-window-excursion
 	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
+	      (let ((wl-summary-buffer-name
+		     (if (setq sticky (get-buffer
+				       (wl-summary-sticky-buffer-name
+					(elmo-folder-name-internal
+					 folder))))
+			 ;; Sticky folder exists.
+			 (wl-summary-sticky-buffer-name
+			  (elmo-folder-name-internal folder))
+		       (concat
+			wl-summary-buffer-name
+			(symbol-name this-command))))
 		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
 					     (wl-summary-get-sync-range folder)
 					     nil)
 		(wl-summary-mark-as-read-all)
-		(wl-summary-exit))))
+		(if sticky
+		    (wl-summary-save-status)
+		  (wl-summary-exit)))))
 	(sit-for 0))))))
 
 (defun wl-folder-mark-as-read-all-current-entity ()
@@ -2682,16 +2701,24 @@ Use `wl-subscribed-mailing-list'."
 				     wl-summary-highlight))
 	   wl-summary-exit-next-move
 	   wl-auto-select-first ret-val
-	   count)
+	   count sticky)
       (setq count (or (car nums) 0))
       (setq count (+ count (wl-folder-count-incorporates folder)))
       (if (or (null (car nums)) ; unknown
 	      (< 0 count))
 	  (save-window-excursion
 	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
+	      (let ((wl-summary-buffer-name
+		     (if (setq sticky (get-buffer
+				       (wl-summary-sticky-buffer-name
+					(elmo-folder-name-internal
+					 folder))))
+			 ;; Sticky folder exists.
+			 (wl-summary-sticky-buffer-name
+			  (elmo-folder-name-internal folder))		     
+		       (concat
+			wl-summary-buffer-name
+			(symbol-name this-command))))
 		    (wl-summary-use-frame nil)
 		    (wl-summary-always-sticky-folder-list nil))
 		(wl-summary-goto-folder-subr entity
@@ -2699,7 +2726,9 @@ Use `wl-subscribed-mailing-list'."
 					      folder)
 					     nil)
 		(setq ret-val (wl-summary-incorporate))
-		(wl-summary-exit)
+		(if sticky
+		    (wl-summary-save-status)
+		  (wl-summary-exit))
 		ret-val)))
 	(cons 0 0))))))
 
