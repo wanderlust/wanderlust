@@ -319,44 +319,25 @@
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-folder-directory-internal folder))
    condition number number-list))
-  
+
 (luna-define-method elmo-folder-search ((folder elmo-localdir-folder)
 					condition &optional numbers)
   (let* ((msgs (or numbers (elmo-folder-list-messages folder)))
 	 (num (length msgs))
 	 (i 0)
-	 last cur number-list case-fold-search ret-val)
-    (cond
-     ;; short cut.
-     ((and (vectorp condition)
-	   (string= (elmo-filter-key condition) "last"))
-      (nthcdr (max (- (length msgs)
-		      (string-to-int (elmo-filter-value condition)))
-		   0)
-	      msgs))
-     ((and (vectorp condition)
-	   (string= (elmo-filter-key condition) "first"))
-      (let ((rest (nthcdr (string-to-int (elmo-filter-value condition) )
-			  msgs)))
-	(mapcar '(lambda (x)
-		   (delete x msgs)) rest))
-      msgs)
-     (t
-      (setq number-list msgs)
-      (while msgs
-	(if (elmo-localdir-field-condition-match folder condition
-						 (car msgs) number-list)
-	    (setq ret-val (cons (car msgs) ret-val)))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (setq cur (/ (* i 100) num))
-	  (unless (eq cur last)
-	    (elmo-display-progress
-	     'elmo-localdir-search "Searching..."
-	     cur)
-	    (setq last cur)))
-	(setq msgs (cdr msgs)))
-      (nreverse ret-val)))))
+	 number-list case-fold-search ret-val)
+    (setq number-list msgs)
+    (while msgs
+      (if (elmo-localdir-field-condition-match folder condition
+					       (car msgs) number-list)
+	  (setq ret-val (cons (car msgs) ret-val)))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-localdir-search "Searching..."
+	 (/ (* i 100) num)))
+      (setq msgs (cdr msgs)))
+    (nreverse ret-val)))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-localdir-folder))
   (let* ((dir (elmo-localdir-folder-directory-internal folder))

@@ -37,22 +37,9 @@
   :type 'integer
   :group 'elmo)
 
-(defcustom elmo-shimbun-default-index-range 2
-  "*Default value for the range of header indices."
-  :type '(choice (const :tag "all" all)
-		 (const :tag "last" last)
-		 (integer :tag "number"))
-  :group 'elmo)
-
-(defcustom elmo-shimbun-index-range-alist nil
-  "*Alist of FOLDER and RANGE.
-FOLDER is the shimbun folder name.
-RANGE is the range of the header indices .
-See `shimbun-headers' for more detail about RANGE."
-  :type '(repeat (cons (string :tag "Folder Name")
-		       (choice (const :tag "all" all)
-			       (const :tag "last" last)
-			       (integer :tag "number"))))
+(defcustom elmo-shimbun-use-entire-index nil
+  "*Nil means that shimbun check only the last index of articles."
+  :type 'boolean
   :group 'elmo)
 
 ;; Shimbun mua.
@@ -65,24 +52,19 @@ See `shimbun-headers' for more detail about RANGE."
 				  (elmo-folder-msgdb
 				   (shimbun-elmo-mua-folder-internal mua))))
 
+(luna-define-method shimbun-mua-use-entire-index ((mua shimbun-elmo-mua))
+  elmo-shimbun-use-entire-index)
+
 (eval-and-compile
   (luna-define-class elmo-shimbun-folder
 		     (elmo-map-folder) (shimbun headers header-hash
-						group range last-check))
+						group last-check))
   (luna-define-internal-accessors 'elmo-shimbun-folder))
 
 (defsubst elmo-shimbun-lapse-seconds (time)
   (let ((now (current-time)))
     (+ (* (- (car now) (car time)) 65536)
        (- (nth 1 now) (nth 1 time)))))
-
-(defun elmo-shimbun-parse-time-string (string)
-  "Parse the time-string STRING and return its time as Emacs style."
-  (ignore-errors
-    (let ((x (timezone-fix-time string nil nil)))
-      (encode-time (aref x 5) (aref x 4) (aref x 3)
-		   (aref x 2) (aref x 1) (aref x 0)
-		   (aref x 6)))))
 
 (defsubst elmo-shimbun-headers-check-p (folder)
   (or (null (elmo-shimbun-folder-last-check-internal folder))
@@ -91,17 +73,10 @@ See `shimbun-headers' for more detail about RANGE."
 	       (elmo-shimbun-folder-last-check-internal folder))
 	      elmo-shimbun-check-interval))))
 
-(defun elmo-shimbun-msgdb-to-headers (folder expire-days)
+(defun elmo-shimbun-msgdb-to-headers (folder)
   (let (headers)
     (dolist (ov (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
-      (when (and (elmo-msgdb-overview-entity-get-extra-field ov "xref")
-		 (if expire-days
-		     (< (elmo-shimbun-lapse-seconds
-			 (elmo-shimbun-parse-time-string
-			  (elmo-msgdb-overview-entity-get-date ov)))
-			(* expire-days 86400 ; seconds per day
-			   ))
-		   t))
+      (when (elmo-msgdb-overview-entity-get-extra-field ov "xref")
 	(setq headers
 	      (cons (shimbun-make-header
 		     (elmo-msgdb-overview-entity-get-number ov)
@@ -137,13 +112,10 @@ See `shimbun-headers' for more detail about RANGE."
 			    (elmo-folder-msgdb folder))
 		     x))
 		 (shimbun-headers
-		  (elmo-shimbun-folder-shimbun-internal folder)
-		  (elmo-shimbun-folder-range-internal folder)))))
+		  (elmo-shimbun-folder-shimbun-internal folder)))))
     (elmo-shimbun-folder-set-headers-internal
      folder
-     (nconc (elmo-shimbun-msgdb-to-headers
-	     folder (shimbun-article-expiration-days
-		     (elmo-shimbun-folder-shimbun-internal folder)))
+     (nconc (elmo-shimbun-msgdb-to-headers folder)
 	    headers))
     (setq hash
 	  (elmo-shimbun-folder-set-header-hash-internal
@@ -164,20 +136,15 @@ See `shimbun-headers' for more detail about RANGE."
 			  (list (elmo-match-string 1 name)
 				(substring name (match-end 0)))
 			(list name))))
-    (when (nth 0 server-group) ; server
-      (elmo-shimbun-folder-set-shimbun-internal
-       folder
-       (shimbun-open (nth 0 server-group)
-		     (luna-make-entity 'shimbun-elmo-mua :folder folder))))
-    (when (nth 1 server-group)
-      (elmo-shimbun-folder-set-group-internal
-       folder
-       (nth 1 server-group)))
-    (elmo-shimbun-folder-set-range-internal
-     folder
-     (or (cdr (assoc (elmo-folder-name-internal folder)
-		     elmo-shimbun-index-range-alist))
-	 elmo-shimbun-default-index-range))
+    (if (nth 0 server-group) ; server
+	(elmo-shimbun-folder-set-shimbun-internal
+	 folder
+	 (shimbun-open (nth 0 server-group)
+		       (luna-make-entity 'shimbun-elmo-mua :folder folder))))
+    (if (nth 1 server-group)
+	(elmo-shimbun-folder-set-group-internal
+	 folder
+	 (nth 1 server-group)))
     folder))
 
 (luna-define-method elmo-folder-open-internal :before ((folder
@@ -196,8 +163,6 @@ See `shimbun-headers' for more detail about RANGE."
   (elmo-shimbun-folder-set-headers-internal
    folder nil)
   (elmo-shimbun-folder-set-header-hash-internal
-   folder nil)
-  (elmo-shimbun-folder-set-last-check-internal
    folder nil))
 
 (luna-define-method elmo-folder-plugged-p ((folder elmo-shimbun-folder))
