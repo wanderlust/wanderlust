@@ -1,5 +1,11 @@
 2003-02-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-send-confirm): New function.
+	(wl-draft-send): Use it.
+
+	* wl-summary.el (wl-summary-jump-to-msg-by-message-id): Bind
+	cursor-in-echo-area while confirming.
+
 	* wl-summary.el (wl-summary-virtual): Call wl-summary-virtual-hook.
 
 	* wl-summary.el (wl-summary-jump-to-msg-by-message-id): Force

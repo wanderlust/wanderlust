@@ -1237,6 +1237,22 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
       (setq locals (cdr locals)))
     result))
 
+(defun wl-draft-send-confirm ()
+  (let (result answer)
+    (save-excursion
+      (goto-char (point-min))
+      (message "Send current draft? <y/n/p(review)> ")
+      (setq answer (let ((cursor-in-echo-area t)) (read-char))))
+    (cond
+     ((or (eq answer (string-to-char "y"))
+	  (eq answer (string-to-char "Y"))
+	  (eq answer (string-to-char " ")))
+      (setq result t))
+     ((or (eq answer (string-to-char "p"))
+	  (eq answer (string-to-char "P")))
+      (wl-draft-preview-message)))
+    result))
+
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.
 If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
@@ -1246,17 +1262,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   ;; (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
-	    (let (result)
-	      (wl-draft-preview-message)
-	      (goto-char (point-min))
-	      (condition-case nil
-		  (setq result
-			(y-or-n-p "Do you really want to send current draft? "))
-		(quit
-		 (mime-preview-quit)
-		 (signal 'quit nil)))
-	      (mime-preview-quit)
-	      result))
+	    (wl-draft-send-confirm))
     (let ((send-mail-function 'wl-draft-raw-send)
 	  (editing-buffer (current-buffer))
 	  (sending-buffer (wl-draft-generate-clone-buffer

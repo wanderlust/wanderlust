@@ -4730,9 +4730,9 @@ Return t if message exists."
 	     (wl-summary-buffer-folder-name) original 'no-sync))
 	(cond ((eq wl-summary-search-via-nntp 'confirm)
 	       (require 'elmo-nntp)
-	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>?"
+	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>? "
 			elmo-nntp-default-server)
-	       (setq schar (read-char))
+	       (setq schar (let ((cursor-in-echo-area t)) (read-char)))
 	       (cond ((eq schar ?y)
 		      (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 		     ((eq schar ?s)
