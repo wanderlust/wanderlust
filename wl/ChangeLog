@@ -1,5 +1,12 @@
 2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-resend-message): Fixed.
+
+	* wl-draft.el (wl-draft-edit-string): Fetch From: field value and
+	Call wl-draft with `from' argument if its address is included in
+	`wl-user-mail-address-list'.
+	(wl-draft): Added `from' argument.
+
 	* wl.el (wl-exit): Delete current frame if wl-folder-use-frame is
 	non-nil.
 	(wl): Don't show demo if wl-demo is nil.

@@ -643,8 +643,7 @@ you."
       (message "No address specified.")
     (message "Resending message to %s..." address)
     (save-excursion
-      (let ((mmelmo-force-fetch-entire-message t))
-	(wl-summary-set-message-buffer-or-redisplay)
+      (let ((original (wl-summary-get-original-buffer)))
 	;; We first set up a normal mail buffer.
 	(set-buffer (get-buffer-create " *wl-draft-resend*"))
 	(buffer-disable-undo (current-buffer))
@@ -664,7 +663,7 @@ you."
 	(delete-region (point) (point-max))
 	(let ((beg  (point)))
 	  ;; Insert the message to be resent.
-	  (insert-buffer-substring (wl-message-get-original-buffer))
+	  (insert-buffer-substring original)
 	  (goto-char (point-min))
 	  (search-forward "\n\n")
 	  (forward-char -1)
