@@ -1,5 +1,12 @@
 2001-05-08  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-folder.el (wl-folder-prefetch-entity): Use
+	`wl-folder-get-elmo-folder'.
+	(wl-folder-count-incorporates): Do not use
+	`wl-folder-get-elmo-folder'.
+
+2001-05-08  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-xmas.el (wl-plugged-set-folder-icon): Use `elmo-folder-type'
 	instead of `elmo-folder-get-type'.
 
