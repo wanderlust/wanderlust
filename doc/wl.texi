@@ -111,6 +111,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Disconnected Operations::  Off-Line management
 * Expire and Archive::       Automatic expiration and archiving of messages.
 * Scoring::                  Score of the messages.
+* Address Book::             Management Address Book.
 * Customization::            Customizing Wanderlust.
 * Mailing List::             Wanderlust mailing list
 * Addition::                 Additional Information
@@ -194,7 +195,6 @@ here.
 * Download::          Download and extract the packages.
 * Install::           Byte-compile and install.
 * Minimal Settings::  @file{.emacs} setup.
-* Mail Addresses::    Address book definition.
 * Folder Definition:: Folder definition.
 * Start Wanderlust::  Starting Wanderlust
 @end menu
@@ -459,7 +459,7 @@ You can read manual at the following URL:
 http://www.gohome.org/wl/doc/wl-euc_toc.html
 @end example
 
-@node Minimal Settings, Mail Addresses, Install, Start Me Up
+@node Minimal Settings, Folder Definition, Install, Start Me Up
 @section Set up .emacs
 @cindex Minimal Settings
 @cindex Settings
@@ -545,61 +545,8 @@ It is effective only when your Emacs can define @code{mail-user-agent}.
 @end lisp
 
 
-@node Mail Addresses, Folder Definition, Minimal Settings, Start Me Up
-@section Address book
-@cindex Address book Definition
-@cindex .addresses
-@cindex Alias, Address
 
-The file @file{~/.addresses} is a simple address book for Wanderlust.
-Make address file @file{~/.addresses}, and edit to suit your requirement.
-
-The data written in @file{~/.addresses} are used for address completion
-under draft editing mode. Furthermore, they are used when showing names
-in summary display mode. You can safely skip this section, if you don't
-want to customize address completion and summary display.
-It is possible to add/change/remove addresses from @file{~/.addresses} in
-summary buffer after Wanderlust is invoked. @refill
-
-The format is very simple. Like this. @refill
-
-@example
-@group
-#
-# @r{Lines begin with @samp{#} are comment.}
-# @r{Empty lines are ignored}
-#
-# @r{Format of each line:}
-# @var{email-address}  "@var{nickname} "@var{realname}"
-#
-teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
-foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
-bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
-@end group
-@end example
-
-@noindent
-One line defines one persons description.
-
-Actually, in default setup, @var{nickname} is used in summary-mode and
-@var{realname} is used in draft preparation mode. This behavior is
-better understood if you try it and confirmed the function first. You
-can write and try a small definition, so you will know the idea of the
-address book before writing a big one.
-
-And, if MH alias file is specified in variable @code{wl-alias-file},
-it is used as an address information in the draft preparation mode.
-
-If variable @code{wl-use-ldap} is non-nil (initial setting is
-@code{nil}), address completion in draft mode uses LDAP information.
-
-If you use LDAP, you have to set @code{wl-ldap-server},
-@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
-not have LDAP feature as built-in feature (Currently only XEmacs can
-have built-in LDAP feature), you have to set command exec @env{PATH} to
-the program @command{ldapsearch}.
-
-@node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
+@node Folder Definition, Start Wanderlust, Minimal Settings, Start Me Up
 @section Folder Definition
 @cindex Folder Definition
 @cindex .folders
@@ -5313,7 +5260,7 @@ Needless to say, you can use your own function.
 @end table
 
 
-@node Scoring, Customization, Expire and Archive, Top
+@node Scoring, Address Book, Expire and Archive, Top
 @chapter Score of the Messages
 @cindex Scoring
 @c @cindex Kill File
@@ -5811,7 +5758,137 @@ pop3                      N     E     E     E
 @end example
 
 
-@node Customization, Mailing List, Scoring, Top
+@node Address Book, Customization, Scoring, Top
+@chapter Address Book
+@cindex Address Book
+
+Address Book support mail address and petname display on summay
+mode.
+
+@menu
+* Mail Addresses::   Definition Address Book
+* Address Manager::  Address Manager
+@end menu
+
+@node Mail Addresses, Address Manager, Address Book, Address Book
+@section Address book
+@cindex Address book Definition
+@cindex .addresses
+@cindex Alias, Address
+
+The file @file{~/.addresses} is a simple address book for Wanderlust.
+Make address file @file{~/.addresses}, and edit to suit your requirement.
+
+The data written in @file{~/.addresses} are used for address completion
+under draft editing mode. Furthermore, they are used when showing names
+in summary display mode. You can safely skip this section, if you don't
+want to customize address completion and summary display.
+It is possible to add/change/remove addresses from @file{~/.addresses} in
+summary buffer after Wanderlust is invoked. @refill
+
+The format is very simple. Like this. @refill
+
+@example
+@group
+#
+# @r{Lines begin with @samp{#} are comment.}
+# @r{Empty lines are ignored}
+#
+# @r{Format of each line:}
+# @var{email-address}  "@var{nickname} "@var{realname}"
+#
+teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
+foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
+bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
+@end group
+@end example
+
+@noindent
+One line defines one persons description.
+
+Actually, in default setup, @var{nickname} is used in summary-mode and
+@var{realname} is used in draft preparation mode. This behavior is
+better understood if you try it and confirmed the function first. You
+can write and try a small definition, so you will know the idea of the
+address book before writing a big one.
+
+And, if MH alias file is specified in variable @code{wl-alias-file},
+it is used as an address information in the draft preparation mode.
+
+If variable @code{wl-use-ldap} is non-nil (initial setting is
+@code{nil}), address completion in draft mode uses LDAP information.
+
+If you use LDAP, you have to set @code{wl-ldap-server},
+@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
+not have LDAP feature as built-in feature (Currently only XEmacs can
+have built-in LDAP feature), you have to set command exec @env{PATH} to
+the program @command{ldapsearch}.
+
+
+@node Address Manager,  , Mail Addresses, Address Book
+@section Address Manager
+@cindex Address Manager
+
+You can type @kbd{C-c C-a} to enter address manger mode.  you can edit
+the address book and insert address to draft buffer.
+
+@subsection Key Bindings
+
+@table @kbd
+@item t
+@kindex t (Address Manager)
+@findex wl-addrmgr-set-to
+Add @samp{To:} mark.
+
+@item c
+@kindex c (Address Manager)
+@findex wl-addrmgr-set-cc
+Add @samp{Cc:} mark
+
+@item b
+@kindex b (Address Manager)
+@findex wl-addrmgr-set-bcc
+Add @samp{Bcc:} mark.
+
+@item u
+@kindex u (Address Manager)
+@findex wl-addrmgr-unmark
+Cancel the mark.
+
+@item x
+@kindex x (Address Manager)
+@findex wl-addrmgr-apply
+
+Insert @samp{To:}, @samp{Cc:}, or @samp{Bcc:} marked addresses to draft
+buffer and quit address manager.  When no draft buffer, make new draft
+with insert marked addresses.
+
+If no mark, quit address manager.
+
+
+@item q
+@kindex q (Address Manager)
+@findex wl-addrmgr-quit
+Quit address manager.
+
+@item a
+@kindex a (Address Manager)
+@findex wl-addrmgr-add
+Add new entry.
+
+@item d
+@kindex d (Address Manager)
+@findex wl-addrmgr-delete
+Delete entry.
+
+@item e
+@kindex e (Address Manager)
+@findex wl-addrmgr-edit
+Edit entry.
+@end table
+
+
+@node Customization, Mailing List, Address Book, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 
@@ -6009,7 +6086,7 @@ specific, but general-purpose for tm/SEMI).
 @end group
 @end lisp
 
-@node MHC, , dired-dd, Living with other packages
+@node MHC,  , dired-dd, Living with other packages
 @subsection mhc.el
 @pindex MHC
 
