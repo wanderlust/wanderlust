@@ -1,3 +1,8 @@
+2000-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-draft.el (wl-draft-reply): Fixed problem when mail-followup-to
+	contains an address which is not included in original to or cc.
+
 2000-07-19  Kenichi OKADA	<okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-target-mark-uudecode): Error when
