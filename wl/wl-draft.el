@@ -239,6 +239,30 @@ e.g.
 	 (wl-address-delete-user-mail-addresses cc))
 	(t cc)))
 
+(defsubst wl-draft-strip-subject-regexp (subject regexp)
+  "Remove REGEXP from SUBJECT string."
+  (if (string-match regexp subject)
+      (substring subject (match-end 0))
+    subject))
+
+(defun wl-draft-forward-make-subject (original-subject)
+  "Generate subject string for forwarding."
+  (if wl-forward-subject-prefix
+      (concat wl-forward-subject-prefix
+	      (wl-draft-strip-subject-regexp
+	       (or original-subject "")
+	       wl-subject-forward-prefix-regexp))
+    original-subject))
+
+(defun wl-draft-reply-make-subject (original-subject)
+  "Generate subject string for replying."
+  (if wl-reply-subject-prefix
+      (concat wl-reply-subject-prefix
+	      (wl-draft-strip-subject-regexp
+	       (or original-subject "")
+	       wl-subject-re-prefix-regexp))
+    original-subject))
+
 (defun wl-draft-forward (original-subject summary-buf)
   (let (references parent-folder)
     (with-current-buffer summary-buf
@@ -258,21 +282,12 @@ e.g.
 	 (select-window (get-buffer-window summary-buf)))
     (wl-draft (list (cons 'To "")
 		    (cons 'Subject
-			  (concat wl-forward-subject-prefix
-				  (wl-draft-strip-subject-regexp
-				   original-subject
-				   wl-subject-forward-prefix-regexp)))
+			  (wl-draft-forward-make-subject original-subject))
 		    (cons 'References references))
 	      nil nil nil nil parent-folder))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
-
-(defun wl-draft-strip-subject-regexp (subject regexp)
-  "Remove REGEXP from SUBJECT string."
-  (if (string-match regexp subject)
-      (substring subject (match-end 0))
-    subject))
 
 (defun wl-draft-self-reply-p ()
   "Return t when From address in the current message is user's self one or not."
@@ -364,11 +379,7 @@ Reply to author if WITH-ARG is non-nil."
 	       (cons (nth 1 (std11-extract-address-components addr))
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
-    (and wl-reply-subject-prefix
-	 (setq subject (concat wl-reply-subject-prefix
-			       (wl-draft-strip-subject-regexp
-				(or subject "")
-				wl-subject-re-prefix-regexp))))
+    (setq subject (wl-draft-reply-make-subject subject))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))

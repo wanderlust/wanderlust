@@ -1,3 +1,9 @@
+2004-06-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-forward-make-subject): Extracted from
+	`wl-draft-forward'.
+	(wl-draft-reply-make-subject): Ditto from `wl-draft-reply'.
+
 2004-06-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-target-mark-set-action): Stop if
