@@ -251,9 +251,6 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-display-progress-threshold 20
   "*Displaying progress gauge if number of messages are more than this value.")
 
-(defvar elmo-inhibit-number-mapping nil
-  "Global switch to inhibit number mapping (e.g. Inhibit UIDL on POP3).")
-
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

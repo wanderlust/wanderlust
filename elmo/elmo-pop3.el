@@ -90,6 +90,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 
 (defvar elmo-pop3-use-uidl-internal t
   "(Internal switch for using UIDL on POP3).")
+(defvar elmo-pop3-inhibit-uidl nil
+  "(Internal switch for using UIDL on POP3).")
 
 (defvar elmo-pop3-use-cache t
   "Use cache in pop3 folder.")
@@ -184,7 +186,7 @@ set as non-nil.")
     (delete-process (elmo-network-session-process-internal session))))
 
 (defun elmo-pop3-get-session (folder &optional if-exists)
-  (let ((elmo-pop3-use-uidl-internal (if elmo-inhibit-number-mapping
+  (let ((elmo-pop3-use-uidl-internal (if elmo-pop3-inhibit-uidl
 					 nil
 				       (elmo-pop3-folder-use-uidl-internal
 					folder))))
@@ -451,7 +453,7 @@ set as non-nil.")
 	   (elmo-folder-plugged-p folder))
       (save-excursion
 	(let (elmo-auto-change-plugged  ; don't change plug status.
-	      (elmo-inhibit-number-mapping t) ; No need to use uidl.
+	      elmo-pop3-inhibit-uidl    ; No need to use uidl.
 	      session)
 	  (prog1
 	      (setq session (elmo-pop3-get-session folder))
@@ -567,7 +569,7 @@ set as non-nil.")
 	(error "POP3: Error in list")))))
 
 (defsubst elmo-pop3-folder-list-messages (folder)
-  (if (and (not elmo-inhibit-number-mapping)
+  (if (and (not elmo-pop3-inhibit-uidl)
 	   (elmo-pop3-folder-use-uidl-internal folder))
       (elmo-pop3-list-by-uidl-subr folder)
     (elmo-pop3-list-by-list folder)))

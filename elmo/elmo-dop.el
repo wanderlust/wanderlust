@@ -39,13 +39,10 @@
   "A list of (folder-name function-to-be-called argument-list).
 Automatically loaded/saved.")
 
-(defvar elmo-dop-folder (concat "+" (expand-file-name "dop"
-						      elmo-msgdb-dir))
-  "A folder for `elmo-folder-append-messages' disconnected operations.")
-
-(defun elmo-dop-queue-append (folder function arguments)
+(defun elmo-dop-queue-append (folder function argument)
   (let ((operation (list (elmo-folder-name-internal folder)
-			 function arguments)))
+			 function argument)))
+    (elmo-dop-queue-load)
     (unless (member operation elmo-dop-queue) ;; don't append same operation
       (setq elmo-dop-queue
 	    (append elmo-dop-queue
@@ -56,6 +53,7 @@ Automatically loaded/saved.")
   "Flush Disconnected operations.
 If optional argument FORCE is non-nil, try flushing all operation queues
 even an operation concerns the unplugged folder."
+  (elmo-dop-queue-load) ; load cache.
   (elmo-dop-queue-merge)
   (let ((queue elmo-dop-queue)
 	(count 0)
@@ -149,13 +147,12 @@ even an operation concerns the unplugged folder."
 	   (member (cadr que) elmo-dop-merge-funcs)
 	   (setq match-queue
 		 (car (delete nil
-			      (mapcar
-			       (lambda (new-queue)
-				 (if (and
-				      (string= (car que) (car new-queue))
-				      (string= (cadr que) (cadr new-queue)))
-				     new-queue))
-			       new-queue)))))
+			      (mapcar '(lambda (new-queue)
+					 (if (and
+					      (string= (car que) (car new-queue))
+					      (string= (cadr que) (cadr new-queue)))
+					     new-queue))
+				      new-queue)))))
 	  (setcar (cddr match-queue)
 		  (append (nth 2 match-queue) (nth 2 que)))
 	(setq new-queue (append new-queue (list que))))
@@ -175,6 +172,40 @@ even an operation concerns the unplugged folder."
      (expand-file-name elmo-queue-filename
 		       elmo-msgdb-dir)
      elmo-dop-queue)))
+
+(defun elmo-dop-lock-message (message-id &optional lock-list)
+  (let ((locked (or lock-list
+		    (elmo-object-load
+		     (expand-file-name
+		      elmo-msgdb-lock-list-filename
+		      elmo-msgdb-dir)))))
+    (setq locked (cons message-id locked))
+    (elmo-object-save
+     (expand-file-name elmo-msgdb-lock-list-filename
+		       elmo-msgdb-dir)
+     locked)))
+
+(defun elmo-dop-unlock-message (message-id &optional lock-list)
+  (let ((locked (or lock-list
+		    (elmo-object-load
+		     (expand-file-name elmo-msgdb-lock-list-filename
+				       elmo-msgdb-dir)))))
+    (setq locked (delete message-id locked))
+    (elmo-object-save
+     (expand-file-name elmo-msgdb-lock-list-filename
+		       elmo-msgdb-dir)
+     locked)))
+
+(defun elmo-dop-lock-list-load ()
+  (elmo-object-load
+   (expand-file-name elmo-msgdb-lock-list-filename
+		     elmo-msgdb-dir)))
+
+(defun elmo-dop-lock-list-save (lock-list)
+  (elmo-object-save
+   (expand-file-name elmo-msgdb-lock-list-filename
+		     elmo-msgdb-dir)
+   lock-list))
 
 (defun elmo-dop-append-list-load (folder &optional resume)
   (elmo-object-load
@@ -444,6 +475,12 @@ even an operation concerns the unplugged folder."
 	  (elmo-dop-queue-append folder "create-folder-maybe" nil)
 	(error "Unplugged"))
     (elmo-call-func folder "create-folder")))
+
+(defun elmo-dop-delete-folder (folder)
+  (error "Unplugged"))
+
+(defun elmo-dop-rename-folder (old-folder new-folder)
+  (error "Unplugged"))
 
 (defun elmo-dop-append-msg (folder string message-id &optional msg)
   (if elmo-enable-disconnected-operation

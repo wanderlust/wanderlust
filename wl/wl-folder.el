@@ -845,7 +845,7 @@ Optional argument ARG is repeart count."
 					     (elmo-folder-msgdb-path
 					      folder)))))
 					 (cdr nums))
-				   (get-buffer wl-folder-buffer-name)))
+				   (current-buffer)))
     (setq wl-folder-info-alist-modified t)
     (sit-for 0)
     (list (if wl-folder-notify-deleted
