@@ -823,26 +823,26 @@
 (defun wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol action)
     (cond ((and (string= temp-mark wl-summary-score-over-mark)
-		(member mark (list elmo-msgdb-unread-cached-mark
-				   elmo-msgdb-unread-uncached-mark
-				   elmo-msgdb-new-mark)))
+		(member mark (list wl-summary-unread-cached-mark
+				   wl-summary-unread-uncached-mark
+				   wl-summary-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	  ((and (string= temp-mark wl-summary-score-below-mark)
-		(member mark (list elmo-msgdb-unread-cached-mark
-				   elmo-msgdb-unread-uncached-mark
-				   elmo-msgdb-new-mark)))
+		(member mark (list wl-summary-unread-cached-mark
+				   wl-summary-unread-uncached-mark
+				   wl-summary-new-mark)))
 	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
 	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
 	   (setq fsymbol (nth 5 action)))
-	  ((string= mark elmo-msgdb-new-mark)
+	  ((string= mark wl-summary-new-mark)
 	   (setq fsymbol 'wl-highlight-summary-new-face))
-	  ((member mark (list elmo-msgdb-unread-cached-mark
-			      elmo-msgdb-unread-uncached-mark))
+	  ((member mark (list wl-summary-unread-cached-mark
+			      wl-summary-unread-uncached-mark))
 	   (setq fsymbol 'wl-highlight-summary-unread-face))
-	  ((member mark (list elmo-msgdb-answered-cached-mark
-			      elmo-msgdb-answered-uncached-mark))
+	  ((member mark (list wl-summary-answered-cached-mark
+			      wl-summary-answered-uncached-mark))
 	   (setq fsymbol 'wl-highlight-summary-answered-face))
-	  ((or (string= mark elmo-msgdb-important-mark))
+	  ((or (string= mark wl-summary-important-mark))
 	   (setq fsymbol 'wl-highlight-summary-important-face))
 	  ((string= temp-mark wl-summary-score-below-mark)
 	   (setq fsymbol 'wl-highlight-summary-low-read-face))
@@ -874,24 +874,24 @@
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
-		 (member status-mark (list elmo-msgdb-unread-cached-mark
-					   elmo-msgdb-unread-uncached-mark
-					   elmo-msgdb-new-mark)))
+		 (member status-mark (list wl-summary-unread-cached-mark
+					   wl-summary-unread-uncached-mark
+					   wl-summary-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
 	   ((and (string= temp-mark wl-summary-score-below-mark)
-		 (member status-mark (list elmo-msgdb-unread-cached-mark
-					   elmo-msgdb-unread-uncached-mark
-					   elmo-msgdb-new-mark)))
+		 (member status-mark (list wl-summary-unread-cached-mark
+					   wl-summary-unread-uncached-mark
+					   wl-summary-new-mark)))
 	    (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	   ((string= status-mark elmo-msgdb-new-mark)
+	   ((string= status-mark wl-summary-new-mark)
 	    (setq fsymbol 'wl-highlight-summary-new-face))
-	   ((member status-mark (list elmo-msgdb-unread-cached-mark
-				      elmo-msgdb-unread-uncached-mark))
+	   ((member status-mark (list wl-summary-unread-cached-mark
+				      wl-summary-unread-uncached-mark))
 	    (setq fsymbol 'wl-highlight-summary-unread-face))
-	   ((member status-mark (list elmo-msgdb-answered-cached-mark
-				      elmo-msgdb-answered-uncached-mark))
+	   ((member status-mark (list wl-summary-answered-cached-mark
+				      wl-summary-answered-uncached-mark))
 	    (setq fsymbol 'wl-highlight-summary-answered-face))
-	   ((string= status-mark elmo-msgdb-important-mark)
+	   ((string= status-mark wl-summary-important-mark)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark
 	   ((string= temp-mark wl-summary-score-below-mark)

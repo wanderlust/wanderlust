@@ -92,12 +92,12 @@
 (defsubst wl-expire-message-p (folder number)
   "Return non-nil when a message in the FOLDER with NUMBER can be expired."
   (cond ((consp wl-summary-expire-reserve-marks)
-	 (let ((mark (elmo-message-mark folder number)))
+	 (let ((mark (wl-summary-message-mark folder number)))
 	   (not (or (member mark wl-summary-expire-reserve-marks)
 		    (and wl-summary-buffer-disp-msg
 			 (eq number wl-summary-buffer-current-msg))))))
 	((eq wl-summary-expire-reserve-marks 'all)
-	 (not (or (elmo-message-mark folder number)
+	 (not (or (wl-summary-message-mark folder number)
 		  (and wl-summary-buffer-disp-msg
 		       (eq number wl-summary-buffer-current-msg)))))
 	((eq wl-summary-expire-reserve-marks 'none)

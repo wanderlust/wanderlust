@@ -1674,7 +1674,7 @@ If ARG is non-nil, checking is omitted."
       (setq mes (format "Updated (-%d" (length diffs)))
       (while diffs
 	(wl-summary-mark-as-important (car diffs)
-				      elmo-msgdb-important-mark
+				      wl-summary-important-mark
 				      'no-server)
 	(setq diffs (cdr diffs)))
       (setq diffs (car diff)) ; important-appends
@@ -2126,11 +2126,9 @@ If ARG, without confirm."
 
 (defun wl-summary-auto-select-msg-p (unread-msg)
   (and unread-msg
-       (not (string=
-	     (elmo-message-mark
-	      wl-summary-buffer-elmo-folder
-	      unread-msg)
-	     elmo-msgdb-important-mark))))
+       (not (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				    unread-msg
+				    'important))))
 
 (defsubst wl-summary-open-folder (folder)
   ;; Select folder
@@ -2370,7 +2368,7 @@ If ARG, without confirm."
     (goto-char (point-max))
     (wl-summary-insert-line
      (wl-summary-create-line entity nil nil
-			     (elmo-message-mark
+			     (wl-summary-message-mark
 			      folder
 			      (elmo-message-entity-number
 			       entity))))
@@ -2573,7 +2571,7 @@ If ARG, without confirm."
 	  entity
 	  parent-entity
 	  nil
-	  (elmo-message-mark wl-summary-buffer-elmo-folder number)
+	  (wl-summary-message-mark wl-summary-buffer-elmo-folder number)
 	  (wl-thread-maybe-get-children-num number)
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
@@ -2667,11 +2665,39 @@ If ARG, exit virtual folder."
 	(wl-summary-get-score-mark number)
 	" ")))
 
+(defsubst wl-summary-message-mark (folder number)
+  "Return mark of the message."
+  (ignore-errors
+    (let ((priorities wl-summary-flag-priority-list)
+	  (cachedp (elmo-message-cached-p folder number))
+	  (flags (elmo-message-flags folder number))
+	  mark)
+      (while (and (null mark) priorities)
+	(when (memq (car priorities) flags)
+	  (setq mark
+		(case (car priorities)
+		  (new
+		   wl-summary-new-mark)
+		  (important
+		   wl-summary-important-mark)
+		  (answered
+		   (if cachedp
+		       wl-summary-answered-cached-mark
+		     wl-summary-answered-uncached-mark))
+		  (unread
+		   (if cachedp
+		       wl-summary-unread-cached-mark
+		     wl-summary-unread-uncached-mark)))))
+	(setq priorities (cdr priorities)))
+      (or mark
+	  (if (or cachedp (elmo-folder-local-p folder))
+	      nil
+	    wl-summary-read-uncached-mark)))))
+
 (defsubst wl-summary-persistent-mark ()
   "Return persistent-mark string of current line."
-  (or (ignore-errors
-	(elmo-message-mark wl-summary-buffer-elmo-folder
-			   (wl-summary-message-number)))
+  (or (wl-summary-message-mark wl-summary-buffer-elmo-folder
+			       (wl-summary-message-number))
       " "))
 
 (defun wl-summary-put-temp-mark (mark)
@@ -2793,10 +2819,10 @@ Return non-nil if the mark is updated"
 	  number-list visible)
       (setq number-list (cond ((numberp number-or-numbers)
 			       (setq unread-message
-				     (member (elmo-message-mark
-					      folder
-					      number-or-numbers)
-					     (elmo-msgdb-unread-marks)))
+				     (elmo-message-flagged-p
+				      folder
+				      number-or-numbers
+				      'unread))
 			       (list number-or-numbers))
 			      ((and (not (null number-or-numbers))
 				    (listp number-or-numbers))
@@ -2804,8 +2830,10 @@ Return non-nil if the mark is updated"
 			      ((setq number (wl-summary-message-number))
 			       ;; interactive
 			       (setq unread-message
-				     (member (elmo-message-mark folder number)
-					     (elmo-msgdb-unread-marks)))
+				     (elmo-message-flagged-p
+				      folder
+				      number
+				      'unread))
 			       (list number))))
       (if (null number-list)
 	  (message "No message.")
@@ -2887,9 +2915,9 @@ Return non-nil if the mark is updated"
   (interactive)
   (wl-summary-mark-as-answered-internal
    (and (interactive-p)
-	(member (elmo-message-mark wl-summary-buffer-elmo-folder
-				   (wl-summary-message-number))
-		(elmo-msgdb-answered-marks)))
+	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
+				(wl-summary-message-number)
+				'answered))
    number-or-numbers
    no-modeline-update))
 
@@ -2912,7 +2940,7 @@ Return non-nil if the mark is updated"
       (cond (number
 	     (setq visible (wl-summary-jump-to-msg number))
 	     (setq cur-mark (or mark
-				(elmo-message-mark
+				(wl-summary-message-mark
 				 wl-summary-buffer-elmo-folder number)
 				" ")))
 	    ((setq number (wl-summary-message-number))
@@ -2928,7 +2956,7 @@ Return non-nil if the mark is updated"
 			  wl-summary-buffer-elmo-folder
 			  number
 			  'message-id))
-	(if (string= cur-mark elmo-msgdb-important-mark)
+	(if (string= cur-mark wl-summary-important-mark)
 	    (progn
 	      ;; server side mark
 	      (save-match-data
@@ -3851,14 +3879,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(skip-tmark-regexp (wl-regexp-opt wl-summary-skip-mark-list))
 	(skip t)
 	(column (current-column))
-	skip-pmark-regexp goto-next next-entity finfo)
-    (if (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
-	()
-      (setq skip-pmark-regexp
-	    (wl-regexp-opt (list " "
-				 elmo-msgdb-unread-cached-mark
-				 elmo-msgdb-answered-cached-mark
-				 elmo-msgdb-important-mark))))
+	goto-next next-entity finfo)
     (beginning-of-line)
     (while (and skip
 		(not (if downward (eobp) (bobp))))
@@ -3866,13 +3887,10 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (forward-line 1)
 	(forward-line -1))
       (setq skip (or (string-match skip-tmark-regexp
-				   (save-excursion
-				     (wl-summary-temp-mark)))
-		     (and skip-pmark-regexp
-			  (not (string-match
-				skip-pmark-regexp
-				(save-excursion
-				  (wl-summary-persistent-mark))))))))
+				   (wl-summary-temp-mark))
+		     (not (elmo-message-accessible-p
+			   wl-summary-buffer-elmo-folder
+			   (wl-summary-message-number))))))
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
@@ -4056,9 +4074,9 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	  (when (elmo-message-use-cache-p folder num)
 	    (elmo-message-set-cached folder num t))
 	  (ignore-errors
-	    (if (member (elmo-message-mark wl-summary-buffer-elmo-folder
-					   num)
-			(elmo-msgdb-unread-marks))
+	    (if (elmo-message-flagged-p wl-summary-buffer-elmo-folder
+					num
+					'unread)
 		(wl-summary-mark-as-read num no-folder-mark)
 	      (wl-summary-update-persistent-mark)))
 	  (setq wl-summary-buffer-current-msg num)
@@ -4099,8 +4117,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 				(string= (elmo-folder-name-internal fld)
 					 wl-draft-folder))
 	  (ignore-errors
-	    (if (member (elmo-message-mark fld num)
-			(elmo-msgdb-unread-marks))
+	    (if (elmo-message-flagged-p fld num 'unread)
 		(wl-summary-mark-as-read num); no-folder-mark)
 	      (wl-summary-update-persistent-mark)))
 	  (setq wl-summary-buffer-current-msg num)

@@ -1,5 +1,49 @@
 2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-vars.el (wl-summary-new-mark, wl-summary-important-mark,
+	wl-summary-unread-uncached-mark, wl-summary-unread-cached-mark,
+	wl-summary-read-uncached-mark): Revive.
+	(wl-summary-answered-cached-mark,
+	wl-summary-answered-uncached-mark): New user option.
+	(wl-summary-score-marks): Follow the change above.
+	(wl-summary-auto-refile-skip-marks): Ditto.
+	(wl-summary-incorporate-marks): Ditto.
+	(wl-summary-expire-reserve-marks): Ditto.
+	(wl-summary-flag-priority-list): New user option.
+
+	* wl-summary.el (wl-summary-sync-marks): Follow the variable name
+	changes.
+	(wl-summary-auto-select-msg-p): Use elmo-message-flagged-p instead
+	of elmo-message-mark.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-mark-as-answered): Ditto.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-redisplay-internal): Ditto.
+	(wl-summary-redisplay-no-mime-internal): Ditto.
+	(wl-summary-message-mark): New function.
+	(wl-summary-insert-sequential): Use wl-summary-message-mark
+	instead of elmo-message-mark.
+	(wl-summary-update-thread): Ditto.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-cursor-move-surface): Use elmo-message-accessible-p
+	instead of elmo-message-mark.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Use
+	wl-summary-message-mark instead of elmo-message-mark.
+	(wl-thread-insert-entity-sub): Ditto.
+	(wl-thread-get-children-msgs-uncached): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Follow the
+	variable name changes.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-action.el (wl-summary-no-auto-refile-message-p): Use
+	wl-summary-message-mark instead of elmo-message-mark.
+
+	* wl-expire.el (wl-expire-message-p): Ditto.
+
+	* wl-score.el (wl-score-headers): Ditto.
+
 	* Version number is increased to 2.11.9.
 
 	* wl-summary.el (wl-summary-buffer-msgdb): Abolish.

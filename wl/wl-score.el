@@ -407,7 +407,7 @@ Set `wl-score-cache' nil."
       (setq num (elmo-message-entity-number entity))
       (when (and (not (assq num wl-summary-scored))
 		 (or (memq num force-msgs)
-		     (member (elmo-message-mark folder num)
+		     (member (wl-summary-message-mark folder num)
 			     wl-summary-score-marks)))
 	(setq wl-scores-messages
 	      (cons (cons entity (or wl-summary-default-score 0))

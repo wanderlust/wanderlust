@@ -787,7 +787,7 @@ Return number if put mark succeed"
     (wl-summary-next)))
 
 (defsubst wl-summary-no-auto-refile-message-p (number)
-  (member (elmo-message-mark wl-summary-buffer-elmo-folder number)
+  (member (wl-summary-message-mark wl-summary-buffer-elmo-folder number)
 	  wl-summary-auto-refile-skip-marks))
 
 (defun wl-summary-auto-refile (&optional open-all)

@@ -1120,12 +1120,18 @@ NUMBERS is a list of message numbers, messages are searched from the list."
        folder
        (elmo-folder-expand-msgdb-path folder))))
 
+(luna-define-generic elmo-message-cached-p (folder number)
+  "Return non-nil if the message is cached.")
+
+(luna-define-method elmo-message-cached-p ((folder elmo-folder) number)
+  (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number))
+
 (defun elmo-message-accessible-p (folder number)
   "Get accessibility of the message.
 Return non-nil when message is accessible."
   (or (elmo-folder-plugged-p folder)
       (elmo-folder-local-p folder)
-      (elmo-msgdb-get-cached (elmo-folder-msgdb folder) number)))
+      (elmo-message-cached-p folder number)))
 
 (luna-define-generic elmo-message-set-cached (folder number cached)
   "Set cache status of the message in the msgdb.
@@ -1216,6 +1222,35 @@ Return a list of numbers (`new' `unread' `answered')")
        ((member (cadr elem) (elmo-msgdb-answered-marks))
 	(incf answered))))
     (list new unreads answered)))
+
+(luna-define-generic elmo-message-flags (folder number)
+  "Return a list of flags.
+FOLDER is a ELMO folder structure.
+NUMBER is a number of the message.")
+
+(luna-define-method elmo-message-flags ((folder elmo-folder) number)
+  ;; This is a provisional implement.
+  (let ((mark (elmo-message-mark folder number)))
+    (append
+     (and (string= mark elmo-msgdb-new-mark)
+	  '(new))
+     (and (string= mark elmo-msgdb-important-mark)
+	  '(important))
+     (and (member mark (elmo-msgdb-unread-marks))
+	  '(unread))
+     (and (member mark (elmo-msgdb-answered-marks))
+	  '(answered)))))
+
+(defsubst elmo-message-flagged-p (folder number flag)
+  "Return non-nil if the message is set FLAG.
+FOLDER is a ELMO folder structure.
+NUMBER is a message number to test."
+  (let ((cur-flags (elmo-message-flags folder number)))
+    (case flag
+      (read
+       (not (memq 'unread cur-flags)))
+      (t
+       (memq flag cur-flags)))))
 
 (defun elmo-message-set-flag (folder number flag)
   "Set message flag.
