@@ -1,3 +1,13 @@
+2002-03-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-write-current-folder): Call wl-draft
+	even if the guess failed.
+
+	* wl-e21.el (wl-folder-toolbar): Remove "Guess" icon.
+	(wl-summary-toolbar): Remove "Guess" icon and use "New" icon for
+	wl-summary-write-current-folder.
+	* wl-xmas.el: Ditto.
+
 2002-03-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-next-page): Force display message if

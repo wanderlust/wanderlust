@@ -69,8 +69,6 @@
      wl-folder-sync-current-entity t "Sync Current Folder"]
     [wl-draft
      wl-draft t "Write a New Message"]
-    [wl-write-current-folder
-     wl-folder-write-current-folder t "Write for Current Folder"]
     [wl-folder-goto-draft-folder
      wl-folder-goto-draft-folder t "Go to Draft Folder"]
     [wl-folder-empty-trash
@@ -96,8 +94,6 @@
     [wl-summary-mark-as-important
      wl-summary-mark-as-important t "Mark Current Message as Important"]
     [wl-draft
-     wl-draft t "Write a New Message"]
-    [wl-write-current-folder
      wl-summary-write-current-folder t "Write for Current Folder"]
     [wl-summary-reply
      wl-summary-reply t "Reply to Current Message" ]
