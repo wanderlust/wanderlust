@@ -3,7 +3,7 @@
 ;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright 2000 Katsumi Yamaoka <yamaoka@jpl.org>
 
-;; Author: Yuuichi Teranishi <teranisi@gohome.org>,
+;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news
 

@@ -10,6 +10,7 @@
 	* wl-vars.el (toplevel): Ditto.
 	* wl-version.el (toplevel): Ditto.
 	* wl-xmas.el (toplevel): Ditto.
+	* wl.el (toplevel): Ditto.
 
 	* wl-version.el (toplevel): Added require `elmo-version' for
 	`product-version-as-string'.
