@@ -1,3 +1,9 @@
+2004-01-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-spam.el (wl-summary-exec-action-spam): Call
+	wl-folder-confirm-existence for spam folder.
+	(wl-spam-setup): Bind "mk".
+
 2004-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-refile-prev-destination): Avoid warning.
@@ -10,7 +16,7 @@
 2004-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-buffer-prev-copy-destination): Abolish.
-	(wl-summary-mode-map): Bound "t\M-o", "m\M-o" and "r\M-o"
+	(wl-summary-mode-map): Bound "t\M-o", "m\M-o" and "r\M-o".
 
 	* wl-action.el (wl-summary-refile-prev-destination): Rewrite.
 	(wl-summary-refile-prev-destination-region): New function.
