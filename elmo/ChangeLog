@@ -1,3 +1,11 @@
+2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.5.8.
+
+	* elmo.el (elmo-folder-list-messages-mark-match): New function.
+
+	* elmo-util.el (elmo-list-insert): New function.
+
 2001-02-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-init): New function.
