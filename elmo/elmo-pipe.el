@@ -176,8 +176,8 @@
 	 ((consp (cdr dst-diff)) ; new unread all
 	  (mapcar (lambda (number) (+ number src-length)) dst-diff))
 	 (t
-	  (cons (+ (car dst-diff) src-length)
-		(+ (cdr dst-diff) src-length))))
+	  (cons (+ (or (car dst-diff) 0) src-length)
+		(+ (or (cdr dst-diff) 0) src-length))))
       ;; No save.
       (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
       (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))))
@@ -362,7 +362,7 @@
 
 (luna-define-method elmo-message-folder ((folder elmo-pipe-folder)
 					 number)
-  (elmo-pipe-folder-dst-internal folder))
+  (elmo-message-folder (elmo-pipe-folder-dst-internal folder) number))
 
 (require 'product)
 (product-provide (provide 'elmo-pipe) (require 'elmo-version))
