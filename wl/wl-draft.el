@@ -1307,12 +1307,12 @@ Derived from `message-save-drafts' in T-gnus."
 	    (string-equal bufname "")
 	    (string-equal bufname (buffer-name)))
 	(let ((bufname (current-buffer)))
-	     (when (or (not (buffer-modified-p))
-		       (yes-or-no-p
-			(format "Buffer %s modified; kill anyway? " bufname)))
-	       (set-buffer-modified-p nil)
-	       (wl-draft-hide bufname)
-	       (kill-buffer bufname)))
+	  (when (or (not (buffer-modified-p))
+		    (yes-or-no-p
+		     (format "Buffer %s modified; kill anyway? " bufname)))
+	    (set-buffer-modified-p nil)
+	    (wl-draft-hide bufname)
+	    (kill-buffer bufname)))
       (kill-buffer bufname))))
 
 (defun wl-draft-save-and-exit ()
