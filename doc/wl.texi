@@ -4644,6 +4644,7 @@ The text is killed and replaced with the contents of the variable
 
 @node Variables of Draft Mode,  , Key Bindings of Draft, Draft
 @section Customizable Variables
+@cindex SMTP AUTH
 
 @table @code
 @item wl-subscribed-mailing-list

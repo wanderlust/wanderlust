@@ -4627,6 +4627,7 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 
 @node Variables of Draft Mode,  , Key Bindings of Draft, Draft
 @section カスタマイズ変数
+@cindex SMTP AUTH
 
 @table @code
 @item wl-subscribed-mailing-list
