@@ -1,3 +1,17 @@
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* Version number is increased to 2.5.2.
+
+2000-11-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (toplevel): Don't define wl-biff if `timer-activate'
+	does not exist.
+	(wl-biff-stop): Call `cancel-timer' if timer already exists.
+	(wl-biff-start): Call `timer-activate' if timer already exists.
+
+	* wl-mule.el (wl-message-overload-functions): Call `set-keymap-parent'
+	only when it is bound as function.
+
 2000-11-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.5.1.

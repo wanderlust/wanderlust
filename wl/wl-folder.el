@@ -2049,13 +2049,14 @@ Don't care multi."
 
 (defun wl-folder-guess-mailing-list-by-folder-name (folder)
   "Return ML address guess by FOLDER name's last hierarchy.
-Use `wl-subscribed-mailing-list'.  Don't care multi."
+Use `wl-subscribed-mailing-list'."
   (setq folder (car (elmo-folder-get-primitive-folder-list folder)))
   (when (memq (elmo-folder-get-type folder)
 	      '(localdir imap4 maildir))
     (let (key mladdress)
       (when (string-match "[^\\./]+$" folder)
-	(setq key (concat "^" (substring folder (match-beginning 0)) "@"))
+	(setq key (regexp-quote
+		   (concat (substring folder (match-beginning 0)) "@")))
 	(setq mladdress
 	      (elmo-string-matched-member
 	       key wl-subscribed-mailing-list 'case-ignore))
