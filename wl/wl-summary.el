@@ -1514,7 +1514,7 @@ If ARG is non-nil, checking is omitted."
 		  (setq children
 			(delq number (wl-thread-get-children-msgs number)))
 		  (while children
-		    (wl-thread-msg-mark-as-important (car children))
+		    (wl-summary-mark-as-important (car children))
 		    (setq children (cdr children))))
 		(forward-line 1))))
 	(while (not (eobp))
@@ -2776,22 +2776,16 @@ If ARG, exit virtual folder."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg
-	  number mlist)
-      (while (not (eobp))
-	(when (string= (wl-summary-temp-mark) "*")
-	  ;; delete target-mark from buffer.
-	  (wl-summary-put-temp-mark " ")
-	  (setq number (wl-summary-mark-as-important))
-	  (if wl-summary-highlight
-	      (wl-highlight-summary-current-line))
-	  (if number
-	      (setq wl-summary-buffer-target-mark-list
-		    (delq number wl-summary-buffer-target-mark-list))))
-	(forward-line 1))
-      (setq mlist wl-summary-buffer-target-mark-list)
+	  number
+	  (mlist wl-summary-buffer-target-mark-list))
       (while mlist
-	(wl-summary-mark-as-important (car mlist))
-	(wl-thread-msg-mark-as-important (car mlist))
+	(if (wl-summary-jump-to-msg (car mlist))
+	    (progn
+	      (wl-summary-put-temp-mark " ")
+	      (wl-summary-mark-as-important (car mlist))
+	      (when wl-summary-highlight
+		(wl-highlight-summary-current-line)))
+	  (wl-summary-mark-as-important (car mlist)))
 	(setq wl-summary-buffer-target-mark-list
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist)))
@@ -2963,56 +2957,49 @@ Return non-nil if the mark is updated"
     (let* (eol
 	  (folder wl-summary-buffer-elmo-folder)
 	  message-id visible cur-mark)
-      (if number
-	  (progn
-	    (setq visible (wl-summary-jump-to-msg number))
-	    (setq mark (or mark (elmo-message-mark
-				 wl-summary-buffer-elmo-folder number))))
-	(setq visible t))
-      (when visible
-	(if (null (setq number (wl-summary-message-number)))
+      (cond (number
+	     (setq visible (wl-summary-jump-to-msg number))
+	     (setq cur-mark (or mark
+				(elmo-message-mark
+				 wl-summary-buffer-elmo-folder number)
+				" ")))
+	    ((setq number (wl-summary-message-number))
+	     (setq visible t)
+	     (setq cur-mark (or mark (wl-summary-persistent-mark))))
+	    (t
+	     (error "No message")))
+      (when (or visible
+		;; already exists in msgdb.
+		(elmo-message-entity wl-summary-buffer-elmo-folder
+				     number))
+	(setq message-id (elmo-message-field
+			  wl-summary-buffer-elmo-folder
+			  number
+			  'message-id))
+	(if (string= cur-mark elmo-msgdb-important-mark)
 	    (progn
-	      (message "No message.")
-	      (setq visible nil))
-	  (end-of-line)
-	  (setq eol (point))
-	  (wl-summary-goto-previous-message-beginning)))
-      (if (or (and (not visible)
-		   ;; already exists in msgdb.
-		   (elmo-message-entity wl-summary-buffer-elmo-folder
-					number))
-	      (setq cur-mark (wl-summary-persistent-mark)))
-	  (progn
-	    (setq number (or number (wl-summary-message-number)))
-	    (setq mark (or mark cur-mark))
-	    (setq message-id (elmo-message-field
-			      wl-summary-buffer-elmo-folder
-			      number
-			      'message-id))
-	    (if (string= mark elmo-msgdb-important-mark)
-		(progn
-		  ;; server side mark
-		  (save-match-data
-		    (elmo-folder-unmark-important folder (list number)
-						  no-server-update)
-		    (unless no-server-update
-		      (elmo-msgdb-global-mark-delete message-id))
-		    ;; Remove cache if local folder.
-		    (if (and (elmo-folder-local-p folder)
-			     (not (eq 'mark
-				      (elmo-folder-type-internal folder))))
-			(elmo-file-cache-delete
-			 (elmo-file-cache-get-path message-id)))))
 	      ;; server side mark
-	      (elmo-folder-mark-as-important folder (list number)
-					     no-server-update)
-	      (if (eq (elmo-file-cache-exists-p message-id) 'entire)
-		  (elmo-folder-mark-as-read folder (list number))
-		;; Force cache message.
-		(elmo-message-encache folder number 'read))
-	      (unless no-server-update
-		(elmo-msgdb-global-mark-set message-id
-					    elmo-msgdb-important-mark)))))
+	      (save-match-data
+		(elmo-folder-unmark-important folder (list number)
+					      no-server-update)
+		(unless no-server-update
+		  (elmo-msgdb-global-mark-delete message-id))
+		;; Remove cache if local folder.
+		(if (and (elmo-folder-local-p folder)
+			 (not (eq 'mark
+				  (elmo-folder-type-internal folder))))
+		    (elmo-file-cache-delete
+		     (elmo-file-cache-get-path message-id)))))
+	  ;; server side mark
+	  (elmo-folder-mark-as-important folder (list number)
+					 no-server-update)
+	  (if (eq (elmo-file-cache-exists-p message-id) 'entire)
+	      (elmo-folder-mark-as-read folder (list number))
+	    ;; Force cache message.
+	    (elmo-message-encache folder number 'read))
+	  (unless no-server-update
+	    (elmo-msgdb-global-mark-set message-id
+					elmo-msgdb-important-mark))))
       (when visible
 	(wl-summary-update-persistent-mark))))
   number)

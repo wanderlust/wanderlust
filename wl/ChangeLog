@@ -1,3 +1,10 @@
+2003-08-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-msg-mark-as-important): Abolished.
+	* wl-summary.el (wl-summary-mark-as-important): Arranged.
+	(wl-summary-mark-as-important-region): Change accordingly.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+
 2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-summary-print-argument-within-window): New variable.

@@ -731,14 +731,6 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-prefetch-region arg))
 
-(defun wl-thread-msg-mark-as-important (msg)
-  "Set mark as important for invisible MSG. Modeline is not changed."
-  (let ((folder wl-summary-buffer-elmo-folder)
-	cur-mark)
-    (setq cur-mark (elmo-message-mark folder msg))
-    (elmo-folder-mark-as-important folder (list msg))
-    (wl-summary-set-mark-modified)))
-
 (defun wl-thread-mark-as-read (&optional arg)
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-mark-as-read-region arg))
