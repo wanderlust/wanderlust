@@ -281,10 +281,9 @@ e.g.
     (with-temp-buffer			; to keep raw buffer unibyte.
       (set-buffer-multibyte default-enable-multibyte-characters)
       (let ((decoder (mime-find-field-decoder 'Subject 'plain)))
-	(setq subject (wl-draft-reply-make-subject
+	(setq subject (wl-draft-forward-make-subject
 		       (if (and original-subject decoder)
 			   (funcall decoder original-subject) original-subject)))))
-    (setq subject (wl-draft-forward-make-subject subject))
     (with-current-buffer (wl-message-get-original-buffer)
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
