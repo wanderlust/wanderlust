@@ -1,6 +1,27 @@
+2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-highlight-folder-current-line): Call
+	`wl-folder-init-icons' when folder icons have not been initialized.
+
+	* wl-vars.el (wl-demo-display-logo): Add `bitmap' to the selection.
+
+	* wl-demo.el: Work also with BITMAP-MULE under Emacs 21.
+
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync): Added 'all-shown'
+
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-input-range): Added `all-shown'
+
+2000-02-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Bind 'nohide as t if sync-all.
+
 2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
-	* wl-e21.el (wl-biff-init-icons): Don't generate icons of the
+	* wl-e21.el (wl-biff-init-icons): Don't generate icons if the
 	display does not support graphics.
 	(wl-plugged-init-icons): Ditto.
 	(wl-folder-init-icons): Ditto.
