@@ -416,7 +416,7 @@ FLAG is a symbol which is one of the following:
       (elmo-msgdb-make-index
        msgdb
        (list entity)
-       (list (cons number mark))))))
+       (list (list number mark))))))
 
 (defsubst elmo-msgdb-get-number (msgdb message-id)
   "Get number of the message which corrensponds to MESSAGE-ID from MSGDB."

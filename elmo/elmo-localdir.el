@@ -340,9 +340,10 @@
   (let* ((dir (elmo-localdir-folder-directory-internal folder))
 	 (msgdb (elmo-folder-msgdb folder))
 	 (new-msgdb (elmo-make-msgdb))
-	 (numbers (elmo-folder-list-messages
-		   folder
-		   (not elmo-pack-number-check-strict)))
+	 (numbers (sort (elmo-folder-list-messages
+			 folder
+			 (not elmo-pack-number-check-strict))
+			'<))
 	 (new-number 1)		  ; first ordinal position in localdir
 	 total entity)
     (elmo-msgdb-set-path new-msgdb (elmo-folder-msgdb-path folder))

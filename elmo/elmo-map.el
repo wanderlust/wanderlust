@@ -138,36 +138,27 @@
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-map-folder))
   (let* ((msgdb (elmo-folder-msgdb folder))
-	 (old-number-alist (elmo-msgdb-get-number-alist msgdb))
-	 (old-overview (elmo-msgdb-get-overview msgdb))
-	 (old-mark-alist (elmo-msgdb-get-mark-alist msgdb))
-	 (old-location (elmo-map-folder-location-alist-internal folder))
-	 old-number overview number-alist mark-alist location
-	 mark (number 1))
-    (setq overview old-overview)
-    (while old-overview
-      (setq old-number
-	    (elmo-msgdb-overview-entity-get-number (car old-overview)))
-      (elmo-msgdb-overview-entity-set-number (car old-overview) number)
-      (setq number-alist
-	    (cons (cons number (cdr (assq old-number old-number-alist)))
-		  number-alist))
-      (when (setq mark (cadr (assq old-number old-mark-alist)))
-	(setq mark-alist
-	      (elmo-msgdb-mark-append
-	       mark-alist number mark)))
-      (setq location
-	    (cons (cons number
-			(elmo-map-message-location folder old-number))
-		  location))
-      (setq number (1+ number))
-      (setq old-overview (cdr old-overview)))
+	 (numbers (sort (elmo-folder-list-messages folder 'in-db) '<))
+	 (new-msgdb (elmo-make-msgdb))
+	 (number 1)
+	 total location entity)
+    (elmo-msgdb-set-path new-msgdb (elmo-folder-msgdb-path folder))
+    (setq total (length numbers))
+    (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	(elmo-folder-pack-numbers total "Packing...")
+      (dolist (old-number numbers)
+	(setq entity (elmo-msgdb-message-entity msgdb old-number))
+	(elmo-msgdb-overview-entity-set-number entity number)
+	(elmo-msgdb-append-entity new-msgdb entity
+				  (elmo-msgdb-get-mark msgdb old-number))
+	(setq location
+	      (cons (cons number
+			  (elmo-map-message-location folder old-number))
+		    location))
+	(setq number (1+ number))))
+    (message "Packing...done")
     (elmo-map-folder-location-setup folder (nreverse location))
-    (elmo-folder-set-msgdb-internal
-     folder
-     (elmo-make-msgdb overview
-		      (nreverse number-alist)
-		      (nreverse mark-alist)))))
+    (elmo-folder-set-msgdb-internal folder new-msgdb)))
 
 (defun elmo-map-folder-location-setup (folder locations)
   (elmo-map-folder-set-location-alist-internal
