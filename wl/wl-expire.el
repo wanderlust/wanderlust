@@ -465,8 +465,12 @@ Refile to archive folder followed message date."
     deleted-list
     ))
 
-(defun wl-expire-hide (folder hide-list msgdb)
-  ""
+(defun wl-expire-hide (folder hide-list msgdb &optional no-reserve-marks)
+  "Hide message for expire."
+  (unless no-reserve-marks
+    (setq hide-list
+	  (wl-expire-delete-reserve-marked-msgs-from-list
+	   hide-list (elmo-msgdb-get-mark-alist msgdb))))
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
     (message mess)
     (elmo-msgdb-delete-msgs folder hide-list msgdb t)

@@ -549,7 +549,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	    (forward-line))
 	  ret))))
 
-(defsubst wl-address-get-petname-1 (string)
+(defun wl-address-get-petname-1 (string)
   (let ((address (downcase (wl-address-header-extract-address string))))
     (elmo-get-hash-val address wl-address-petname-hash)))
 

@@ -133,9 +133,11 @@ This is NO-NOTICE argument in `broken-facility'.")
 
 ;; size
 (put 'smallbook 'texinfo-format 'texinfo-discard-line)
+(put 'letterpaper 'texinfo-format 'texinfo-discard-line)
 (put 'afourpaper 'texinfo-format 'texinfo-discard-line)
 (put 'afourlatex 'texinfo-format 'texinfo-discard-line)
 (put 'afourwide 'texinfo-format 'texinfo-discard-line)
+(put 'afivepaper 'texinfo-format 'texinfo-discard-line)
 (put 'pagesizes 'texinfo-format 'texinfo-discard-line-with-args)
 
 ;; style
