@@ -28,6 +28,24 @@
 	t)
     (wrong-number-of-arguments)))
 
+;; x-face-mule
+(luna-define-method check-modules-x-face-mule ((case check-modules))
+  (when (and (locate-library "x-face-mule")
+	     (not (featurep 'xemacs))
+	     (not (locate-library "x-face-e21")))
+    (require 'x-face-mule)
+    (lunit-assert (fboundp 'x-face-decode-message-header))
+    (lunit-assert (check-modules-x-face-decode-message-header))))
+
+(defun check-modules-x-face-decode-message-header ()
+  "When `x-face-decode-message-header' has non-optional argument, return nil."
+  (require 'x-face-mule)
+  (condition-case nil
+      (with-temp-buffer
+	(x-face-decode-message-header)
+	t)
+    (wrong-number-of-arguments)))
+
 ;; MIME entity (FLIM API Version 1.14 Draft Release 3)
 (luna-define-method check-modules-flim-mime-entity ((case check-modules))
   (require 'mime)

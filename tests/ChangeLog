@@ -1,3 +1,8 @@
+2002-05-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* check-modules.el (check-modules-x-face-mule): New testcase.
+	(check-modules-x-face-decode-message-header): New function.
+
 2002-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el (test-refcard-version): Check version.tex.
