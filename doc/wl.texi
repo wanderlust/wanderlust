@@ -497,7 +497,7 @@ The minimal requirement for settings is as the following.
 
 ;; @r{Directory where icons are placed.}
 ;; @r{Default: the peculiar value to the running version of Emacs.}
-;; @r{(This is not required if the default value has been set properly.)}
+;; @r{(This is not required if the default value has been set properly)}
 (setq wl-icon-directory "~/work/wl/etc")
 
 ;; @r{SMTP server for mail posting. Default: @code{nil}}
