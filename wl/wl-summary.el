@@ -781,8 +781,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 					wl-summary-buffer-unread-status))
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
-    (make-local-variable 'window-scroll-functions)
-    (add-hook 'window-scroll-functions 'wl-highlight-summary-window))  
+    (make-local-hook 'window-scroll-functions)
+    (add-hook 'window-scroll-functions 'wl-highlight-summary-window nil t))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
