@@ -174,8 +174,8 @@
 (defun test-wl ()
   "Run test suite for developer."
   (config-wl-package)
+  (make-wl-news)
   (require 'lunit)
-  (require 'wl-news "wl-news.el.in")
   (let ((files (directory-files "tests" t "^test-.*\\.el$"))
 	(suite (lunit-make-test-suite)))
     (while files
@@ -192,8 +192,10 @@
 (defun check-wl ()
   "Check user environment.  Not for developer."
   (config-wl-package)
+  ;; Avoid load error
+  (provide 'wl-news)
+  (load "wl-news.el.in")
   (require 'lunit)
-  (require 'wl-news "wl-news.el.in")
   (let ((files (directory-files "tests" t "^check-.*\\.el$"))
 	(suite (lunit-make-test-suite)))
     (while files
