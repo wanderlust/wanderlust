@@ -1,8 +1,3 @@
-2000-12-01  Kenichi OKADA  <okada@opaopa.org>
-
-	* elmo-util.el (elmo-read-search-condition-internal):
-	Require an element of table for searching field.
-
 2000-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-version.el (elmo-version): Up to 2.5.4.
