@@ -2170,6 +2170,7 @@ If optional argument is non-nil, checking is omitted."
     (setq seen-list
 	  (wl-summary-flush-pending-append-operations seen-list))
     (goto-char (point-max))
+    (wl-folder-confirm-existence folder 'force)
     (message "Checking folder diff...")
     (elmo-commit folder)
     (setq in-folder (elmo-list-folder folder))

@@ -989,7 +989,6 @@ If current line is group folder, check all sub entries."
 	(wl-folder-sync-entity (car flist) unread-only)
 	(setq flist (cdr flist)))))
    ((stringp entity)
-    (wl-folder-confirm-existence entity 'force)
     (let ((nums (wl-folder-get-entity-info entity))
 	  (wl-summary-highlight (if (or (wl-summary-sticky-p entity)
 					(wl-summary-always-sticky-folder-p
