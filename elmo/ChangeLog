@@ -1,3 +1,8 @@
+2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* acap.el, elmo-imap4.el, elmo-nntp.el, elmo-util.el, pldap.el:
+	`message' and `error' take format string.
+
 2003-02-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-localdir.el (elmo-folder-rename-internal): Referctoring;

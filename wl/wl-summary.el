@@ -406,7 +406,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "g"    'wl-summary-goto-folder)
   (define-key wl-summary-mode-map "G"    'wl-summary-goto-folder-sticky)
   (define-key wl-summary-mode-map "c"    'wl-summary-mark-as-read-all)
-;  (define-key wl-summary-mode-map "D"    'wl-summary-drop-unsync)
 
   (define-key wl-summary-mode-map "a"    'wl-summary-reply)
   (define-key wl-summary-mode-map "A"    'wl-summary-reply-with-citation)
@@ -825,7 +824,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
-    (if wl-on-xemacs 
+    (if wl-on-xemacs
 	(progn
 	  (make-local-variable 'pre-idle-hook)
 	  (add-hook 'pre-idle-hook 'wl-highlight-summary-window))
@@ -1949,7 +1948,7 @@ If ARG is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-unread (car diffs) 'no-server 'no-modeline)
 	(setq diffs (cdr diffs)))
-      (if (interactive-p) (message mes)))))
+      (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
   "Update the summary view to the newest folder status."
@@ -3127,14 +3126,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (wl-summary-toggle-disp-msg 'off)
 	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
-	(message (concat "Executing...done"
-			 (if (> refile-failures 0)
-			     (format " (%d refiling failed)" refile-failures)
-			   "")
-			 (if (> copy-failures 0)
-			     (format " (%d copying failed)" copy-failures)
-			   "")
-			 "."))))))
+	(message "Executing...done%s%s"
+		 (if (> refile-failures 0)
+		     (format " (%d refiling failed)" refile-failures)
+		   "")
+		 (if (> copy-failures 0)
+		     (format " (%d copying failed)" copy-failures)
+		   ""))))))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
@@ -4707,7 +4705,7 @@ Return t if message exists."
 	     (wl-summary-buffer-folder-name) original 'no-sync))
 	(cond ((eq wl-summary-search-via-nntp 'confirm)
 	       (require 'elmo-nntp)
-	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>?"
+	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>? "
 			elmo-nntp-default-server)
 	       (setq schar (read-char))
 	       (cond ((eq schar ?y)
@@ -4717,12 +4715,12 @@ Return t if message exists."
 		       msgid
 		       (read-from-minibuffer "NNTP Server: ")))
 		     (t
-		      (message errmsg)
+		      (message "%s" errmsg)
 		      nil)))
 	      (wl-summary-search-via-nntp
 	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 	      (t
-	       (message errmsg)
+	       (message "%s" errmsg)
 	       nil))))))
 
 (defun wl-summary-jump-to-msg-by-message-id-via-nntp (&optional id server-spec)

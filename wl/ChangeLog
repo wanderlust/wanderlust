@@ -1,3 +1,8 @@
+2003-06-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el, wl-expire.el, wl-mime.el, wl-summary.el, wl-util.el:
+	`message' and `error' take format string.
+
 2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-util.el (wl-as-coding-system): Define for non-mule too.
