@@ -537,7 +537,9 @@ Refile to archive folder followed message date."
 	       (or (not (interactive-p))
 		   (y-or-n-p (format "Expire %s? " (elmo-folder-name-internal
 						    folder)))))
-      (let* ((msgdb (wl-summary-buffer-msgdb))
+      (let* ((msgdb (or (wl-summary-buffer-msgdb)
+			(progn (elmo-folder-open folder 'load-msgdb)
+			       (elmo-folder-msgdb folder))))
 	     (number-alist (elmo-msgdb-get-number-alist msgdb))
 	     (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	     expval rm-type val-type value more args
