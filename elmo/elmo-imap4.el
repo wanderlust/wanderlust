@@ -1981,6 +1981,9 @@ Return nil if no complete line has arrived."
        (elmo-imap4-folder-mailbox-internal folder)
        'force 'notify-bye))))
 
+(luna-define-method elmo-folder-creatable-p ((folder elmo-imap4-folder))
+  t)
+
 (luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
   t)
 
@@ -2443,7 +2446,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 				      (elmo-file-cache-path
 				       cache-file)))))))
 
-(luna-define-method elmo-folder-create ((folder elmo-imap4-folder))
+(luna-define-method elmo-folder-create-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-send-command-wait
    (elmo-imap4-get-session folder)
    (list "create "

@@ -1,5 +1,34 @@
 2002-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder-creatable-p): Changed default value to nil
+	from t.
+
+	* elmo-pop3.el (elmo-folder-exists-p): Return nil if unplugged.
+
+	* elmo-nntp.el (elmo-folder-exists-p-plugged): Divided plugged
+	case from `elmo-folder-exists-p'.
+	(elmo-folder-exists-p): Removed.
+	(elmo-folder-creatable-p) Ditto.
+
+	* elmo-net.el (elmo-folder-create): Defined.
+	(elmo-folder-create-unplugged): New function.
+	(elmo-folder-exists-p): Changed default value to nil from t.
+
+	* elmo-imap4.el (elmo-folder-creatable-p): Defined.
+	(elmo-folder-create-plugged): Renamed from `elmo-folder-create'.
+
+	* elmo-dop.el (elmo-folder-create-dop): Renamed from
+	`elmo-create-folder-dop' and append queue
+	'elmo-folder-create-dop-delayed instead of 'elmo-folder-create.
+	(elmo-folder-create-dop-delayed): New function.
+
+	* elmo-cache.el (elmo-folder-creatable-p): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-creatable-p): Ditto.
+
+	* elmo-sendlog.el (elmo-folder-creatable-p): Ditto.
+	(elmo-folder-writable-p) : Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.9.9.
 
 2002-03-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

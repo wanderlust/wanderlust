@@ -161,9 +161,6 @@
     (when (file-exists-p file)
       (insert-file-contents-as-binary file))))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-cache-folder))
-  nil)
-
 (luna-define-method elmo-folder-writable-p ((folder elmo-cache-folder))
   t)
 

@@ -137,12 +137,6 @@
 	(insert-file-contents-as-binary filename)
       (error "Now this message is not cached. Please s all"))))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-sendlog-folder))
-  nil)
-
-(luna-define-method elmo-folder-writable-p ((folder elmo-sendlog-folder))
-  nil)
-
 (luna-define-method elmo-folder-exists-p ((folder elmo-sendlog-folder))
   t)
 

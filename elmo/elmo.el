@@ -692,7 +692,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   (elmo-folder-persistent-internal folder))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-folder))
-  t) ; default is creatable.
+  nil) ; default is not creatable.
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-folder))
   nil) ; default is not writable.

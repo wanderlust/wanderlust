@@ -251,9 +251,6 @@ update overview when message is fetched."
 					      number)
   elmo-shimbun-use-cache)
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-shimbun-folder))
-  nil)
-
 (luna-define-method elmo-folder-close-internal :after ((folder
 							elmo-shimbun-folder))
   (shimbun-close-group

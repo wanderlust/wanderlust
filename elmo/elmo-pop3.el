@@ -458,7 +458,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	      (setq session (elmo-pop3-get-session folder))
 	    (if session
 		(elmo-network-close-session session)))))
-    t))
+    nil))
 
 (defun elmo-pop3-parse-uidl-response (string)
   (let ((buffer (current-buffer))

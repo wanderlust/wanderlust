@@ -335,10 +335,20 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	 (append (elmo-net-port-info folder)
 		 (list nil nil (quote (elmo-net-port-label folder)) add))))
 
+(luna-define-method elmo-folder-create ((folder elmo-net-folder))
+  (if (elmo-folder-plugged-p folder)
+      (elmo-folder-send folder 'elmo-folder-create-plugged)
+    (elmo-folder-send folder 'elmo-folder-create-unplugged)))
+
+(luna-define-method elmo-folder-create-unplugged ((folder elmo-net-folder))
+  (if elmo-enable-disconnected-operation
+      (elmo-folder-create-dop folder)
+    (error "Unplugged")))
+
 (luna-define-method elmo-folder-exists-p ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-exists-p-plugged)
-    t)) ; If unplugged, assume the folder exists.
+    nil)) ; If unplugged, assume the folder not exists.
 
 (luna-define-method elmo-folder-status ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)

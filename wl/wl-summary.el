@@ -3384,7 +3384,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (message "Force refile to %s." folder)))
       (if (string= folder (wl-summary-buffer-folder-name))
 	  (error "Same folder"))
-      (if (or (string= folder wl-queue-folder)
+      (if (or (not (elmo-folder-writable-p (wl-folder-get-elmo-folder folder)))
+	      (string= folder wl-queue-folder)
 	      (string= folder wl-draft-folder))
 	  (error "Don't %s messages to %s" copy-or-refile folder))
       ;; learn for refile.

@@ -1,5 +1,11 @@
 2002-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-refile-subr): Cause an error if FOLDER
+	is not writable.
+
+	* wl-folder.el (wl-folder-create-subr): Cause an error if FOLDER
+	is not creatable.
+
 	* Version number is increased to 2.9.9.
 
 2002-04-03  Kenichi OKADA  <okada@opaopa.org>

@@ -1088,16 +1088,13 @@ Don't cache if nil.")
     (elmo-folder-set-killed-list-internal folder killed-list))
   t)
 
-(luna-define-method elmo-folder-exists-p ((folder elmo-nntp-folder))
+(luna-define-method elmo-folder-exists-p-plugged ((folder elmo-nntp-folder))
   (let ((session (elmo-nntp-get-session folder)))
-    (if (elmo-folder-plugged-p folder)
-	(progn
 	  (elmo-nntp-send-command
 	   session
 	   (format "group %s"
 		   (elmo-nntp-folder-group-internal folder)))
-	  (elmo-nntp-read-response session))
-      t)))
+    (elmo-nntp-read-response session)))
 
 (defun elmo-nntp-retrieve-field (spec field from-msgs)
   "Retrieve FIELD values from FROM-MSGS.
@@ -1465,9 +1462,6 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)
   elmo-nntp-use-cache)
-
-(luna-define-method elmo-folder-creatable-p ((folder elmo-nntp-folder))
-  nil)
 
 (defun elmo-nntp-parse-newsgroups (string &optional subscribe-only)
   (let ((nglist (elmo-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))

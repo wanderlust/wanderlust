@@ -66,7 +66,7 @@ Automatically loaded/saved.")
   '((elmo-folder-append-buffer-dop-delayed . "Append")
     (elmo-folder-delete-messages-dop-delayed . "Delete")
     (elmo-message-encache . "Encache")
-    (elmo-create-folder . "Create")
+    (elmo-folder-create-dop-delayed . "Create")
     (elmo-folder-mark-as-read . "Read")
     (elmo-folder-unmark-read . "Unread")
     (elmo-folder-mark-as-important . "Important")
@@ -236,8 +236,8 @@ FOLDER is the folder structure."
 (defsubst elmo-message-encache-dop (folder number &optional read)
   (elmo-dop-queue-append folder 'elmo-message-encache (list number read)))
 
-(defsubst elmo-create-folder-dop (folder)
-  (elmo-dop-queue-append folder 'elmo-folder-create nil))
+(defsubst elmo-folder-create-dop (folder)
+  (elmo-dop-queue-append folder 'elmo-folder-create-dop-delayed nil))
 
 (defsubst elmo-folder-mark-as-read-dop (folder numbers)
   (elmo-dop-queue-append folder 'elmo-folder-mark-as-read (list numbers)))
@@ -301,6 +301,10 @@ FOLDER is the folder structure."
 		    (elmo-message-fetch-field folder (car pair)
 					      'message-id))))
 	    number-alist))))
+
+(defun elmo-folder-create-dop-delayed (folder)
+  (unless (elmo-folder-exists-p folder)
+    (elmo-folder-create folder)))
 
 ;;; Util
 (defun elmo-dop-msgdb (msgdb)
