@@ -1,3 +1,15 @@
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-news.el.in (wl-news): New function.
+	(wl-news-mode): New function.
+	(wl-news-next-line): New function.
+	(wl-news-next-page): New function.
+	(wl-news-exit): New function.
+	(wl-news-buf-name): New variable.
+	(wl-news-mode-map): New variable.
+	(wl-news-winconf): New variable.
+	(wl-news-append-news): Add an option.
+
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-news.el.in (wl-news-send-news): Add 'Date' header.

@@ -96,10 +96,12 @@
 	(message "%s is not writable." filename))
       (kill-buffer tmp-buffer))))
 
-(defun wl-news-append-news (lang previous-version)
+(defun wl-news-append-news (lang previous-version &optional no-mime-tag)
   (require 'wl-mime)
   (let* ((news-list (cdr (assoc lang wl-news-news-alist))))
-    (mime-edit-insert-tag "text" "plain" "" "")
+    (if no-mime-tag
+	(insert "\n")
+      (mime-edit-insert-tag "text" "plain" "" ""))
     (while (< 0
 	      (product-version-compare
 	       (car (car news-list))
@@ -134,6 +136,60 @@
       ;; send
       (let (wl-interactive-send)
 	(wl-draft-send 'kill-when-done)))))
+
+;;; wl-news-mode
+
+(defvar wl-news-buf-name "NEWS")
+(defvar wl-news-mode-map nil)
+(defvar wl-news-winconf nil)
+
+(unless wl-news-mode-map
+  (setq wl-news-mode-map (make-sparse-keymap))
+  (define-key wl-news-mode-map "q"    'wl-news-exit)
+  (define-key wl-news-mode-map "\C-m" 'wl-news-next-line)
+  (define-key wl-news-mode-map " "    'wl-news-next-page))
+
+(defun wl-news-mode ()
+  "Mode for Wanderlust NEWS(.ja)."
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map wl-news-mode-map)
+  (setq major-mode 'wl-news-mode)
+  (setq mode-name "NEWS")
+  (setq buffer-read-only t))
+
+(defun wl-news ()
+  (interactive)
+  (setq wl-news-winconf (current-window-configuration))
+  (let* ((previous-version (wl-news-previous-version-load))
+	 (lang wl-news-lang)
+	 window-lines lines)
+    (set-buffer (get-buffer-create wl-news-buf-name))
+    (wl-news-mode)
+    (buffer-disable-undo (current-buffer))
+    ;; insert news
+    (let ((buffer-read-only nil))
+      (insert "--- Wanderlust NEWS ---  press 'q' for exit\n\n")
+      (while (car lang)
+	(wl-news-append-news
+	 (car lang) previous-version t)
+	(setq lang (cdr lang))))
+    (switch-to-buffer wl-news-buf-name)
+    (goto-char (point-min))))
+
+(defun wl-news-next-line ()
+  (interactive)
+  (scroll-up 1))
+
+(defun wl-news-next-page ()
+  (interactive)
+  (scroll-up))
+
+(defun wl-news-exit ()
+  (interactive)
+  (kill-buffer (current-buffer))
+  (if wl-news-winconf
+      (set-window-configuration wl-news-winconf)))
 
 (require 'product)
 (product-provide (provide 'wl-news) (require 'wl-version))
