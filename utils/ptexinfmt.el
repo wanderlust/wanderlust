@@ -46,13 +46,14 @@
 
 ;; sort -fd
 (broken-facility texinfo-format-printindex
-  "Can't sort on Windows."
+  "Can't sort on Mule for Windows."
   (if (and (memq system-type '(windows-nt ms-dos))
-	   (string< texinfmt-version "2.37 of 24 May 1997"))
+;;;	   (string< texinfmt-version "2.37 of 24 May 1997")
+	   (not (featurep 'meadow)))
       nil
     t)
   ptexinfmt-disable-broken-notice)
- 
+
 ;; @var
 (broken-facility texinfo-format-var
   "Don't perse @var argument."
@@ -749,6 +750,5 @@ This command is executed when texinfmt sees @item inside @multitable."
     (if (memq system-type '(vax-vms windows-nt ms-dos))
         (texinfo-sort-region opoint (point))
       (shell-command-on-region opoint (point) "sort -fd" 1))))
-
 
 ;;; ptexinfmt.el ends here
