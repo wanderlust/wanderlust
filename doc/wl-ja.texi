@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust $B$N(B texinfo
-@set Time-stamp: <2000-06-16 02:43:37 kaoru>
+@set Time-stamp: <2000-06-16 18:03:45 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -68,7 +68,7 @@ into another language, under the above conditions for modified versions.
 @sp 10
 @title Wanderlust $B%f!<%6%^%K%e%"%k(B
 @subtitle Yet Another Message Interface On Emacsen
-@subtitle for version @value{version}
+@subtitle for Wanderlust version @value{version}
 @author Yuuichi Teranishi $B;{@>M50l(B
 @author Fujikazu Okunishi $B1|@>F#OB(B
 @author Masahiro Murata   $BB<EDA442(B
@@ -367,7 +367,7 @@ ftp://opaopa.org/pub/elisp/
 $B<+F0E*$K%$%s%9%H!<%k@h$rE,Ev$K8!=P$7$^$9!#(B
 $B<B:]$N%$%s%9%H!<%k@h$K$D$$$F$O8e=R$7$^$9!#(B
 
-Mule 2.3 $B$J$I!"(B@file{subdirs.el} $B$,L5$/!"(Bload-path $B$K%5%V%G%#%l%/%H%j$,(B
+Mule 2.3 $B$J$I!"(B@file{subdirs.el} $B$,L5$/!"(B@code{load-path} $B$K%5%V%G%#%l%/%H%j$,(B
 $B<+F0E*$K2C$o$i$J$$(B Emacs $B$G$O!"(B
 
 @example
@@ -378,9 +378,9 @@ Cannot open load file: mime-setup
 $B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#$3$N>l9g$O!"(B
 custom, apel, flim, semi $B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B @code{EMACSLOADPATH}
 $B$K2C$($k$+!"E83+%G%#%l%/%H%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B
-load-path $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
+@code{load-path} $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
 
-$B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B load-path $B$rDL$7$F$*$/$HI,MW$J%b(B
+$B$^$?!"(BBBDB $B$rMxMQ$7$?$$>l9g!"(BBBDB $B$X$b(B @code{load-path} $B$rDL$7$F$*$/$HI,MW$J%b(B
 $B%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
 @xref{BBDB}.
 
@@ -388,7 +388,7 @@ load-path $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
 
 @file{WL-CFG} $B$H$$$&%U%!%$%k$,E83+%G%#%l%/%H%j$KB8:_$9$k$H!"(B
 $B%$%s%9%H!<%k;~$K(B load $B$5$l$k$h$&$K$J$C$F$$$^$9!#(B
-$B%$%s%9%H!<%k$G(B SEMI $BEy$N(B load-path $B$N@_Dj$,I,MW$G$"$l$P!"(B
+$B%$%s%9%H!<%k$G(B SEMI $BEy$N(B @code{load-path} $B$N@_Dj$,I,MW$G$"$l$P!"(B
 @file{WL-CFG} $B$K@_Dj$7$F$/$@$5$$!#(B
 
 $B%$%s%9%H!<%k@h$O(B @file{Makefile}$BCf$N(B @code{LISPDIR} $B$G;XDj$7$^$9$,!"(B
@@ -448,8 +448,8 @@ package $B$N%G%#%l%/%H%j$O(B SEMI $B$,%$%s%9%H!<%k$5$l$F$$$l$P<+F08!=P$5$l$^$
 
 @subsection $B%$%s%9%H!<%k$7$J$$$GMxMQ(B
 
-Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$7$J$/$F$b!"(B
-wl, elmo $B$N%G%#%l%/%H%j$K(B load-path $B$,@_Dj$5$l$F$$$l$P5/F0$9$k$3$H$,$G$-$^$9!#(B
+Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$7$J$/$F$b!"(B@file{wl}, @file{elmo}
+$B$N%G%#%l%/%H%j$K(B @code{load-path} $B$,@_Dj$5$l$F$$$l$P5/F0$9$k$3$H$,$G$-$^$9!#(B
 $BNc$($P(B @file{~/work} $B$K%Q%C%1!<%8$rE83+$7$?>l9g!"(B
 @file{.emacs} $B$K0J2<$N@_Dj$r$9$k$H5/F0$G$-$^$9!#(B
 
@@ -5247,6 +5247,7 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 * Highlights::                  $B%O%$%i%$%H$N@_Dj(B
 * Advanced Settings::           $B%+%9%?%^%$%:!A1~MQJT!A(B
 * Customizable Valiables::      $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
+* Hooks::                       $B%U%C%/(B
 @end menu
 
 
@@ -5268,9 +5269,9 @@ pop3                    $B!_(B    $B"$(B    $B"$(B    $B"$(B
 @subsection bbdb.el
 @pindex BBDB
 
-@file{util/bbdb-wl.el} $B$r(B load-path $B$K$*$$$F0J2<$N$h$&$K@_Dj$9$l$P(B OK $B$G$9!#(B
+@file{util/bbdb-wl.el} $B$r(B @code{load-path} $B$K$*$$$F0J2<$N$h$&$K@_Dj$9$l$P(B OK $B$G$9!#(B
 
-$B%$%s%9%H!<%k;~$K(B load-path $B>e$K(B BBDB $B$,$"$l$P!"(B
+$B%$%s%9%H!<%k;~$K(B @code{load-path} $B>e$K(B BBDB $B$,$"$l$P!"(B
 @file{bbdb-wl.el} $B$O%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
 @xref{Install}.
 
@@ -5722,7 +5723,7 @@ Mailng List $B$N5-;v$KJV;v$r=q$/$H$-$O!"%5%^%j%b!<%I$G(B @kbd{a} $B$r2!$7$?$@
 @end lisp
 
 
-@node Customizable Valiables,  , Advanced Settings, Customization
+@node Customizable Valiables, Hooks, Advanced Settings, Customization
 @section $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw(B
 
 $B$=$NB>$N%+%9%?%^%$%:JQ?t0lMw!#(B
@@ -5957,6 +5958,12 @@ Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
 @end table
 
 
+@node Hooks,  , Customizable Valiables, Customization
+@section $B%U%C%/(B
+
+(Not yet written)
+
+
 @c
 @c  Mailing List
 @c
@@ -6039,11 +6046,11 @@ wanderlust   wan$B!&(Bder$B!&(Blust
 
 @noindent
 $B$H$$$&0UL#$,$"$j$^$9!#$,!"L>A0$K$?$$$7$F?<$$0U?^$O$"$j$^$;$s!#(B
-($B6/$$$F8@$($P!"(BIMAP $B"*(B $B$I$3$G$b%a!<%k$,FI$a$k(B $B"*(B $BJ|O2JJ(B ?)
+($B6/$$$F8@$($P!"(BIMAP @result{} $B$I$3$G$b%a!<%k$,FI$a$k(B @result{} $BJ|O2JJ(B ?)
 
 elmo $B$O!"(B@samp{Elisp Library for Message Orchestration} $B$NN,$G$9!#(B
-$B:G=i$O$"$N@V$$$L$$$0$k$_$N$D$b$j$G$7$?$,!"(B
-$BJ|O2(B $B"*(B $BI:N.(B $B"*(B $BF;I8(B $B"*(B St.@: Elmo's fire $B"*(B elmo $B$H$$$&!"(B
+$B:G=i$O$"$N@V$$$L$$$0$k$_$N$D$b$j$G$7$?$,!"J|O2(B @result{} $BI:N.(B @result{}
+$BF;I8(B @result{} St.@: Elmo's fire @result{} elmo $B$H$$$&!"(B
 $B$=$l$C$]$$O"A[$b2DG=$G$9!#(B
 
 @section $B%3!<%I%M!<%`(B

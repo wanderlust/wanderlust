@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-06-16 02:43:37 kaoru>
+@set Time-stamp: <2000-06-16 18:03:45 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -51,7 +51,7 @@ into another language, under the above conditions for modified versions.
 @sp 10
 @title Wanderlust User's Manual
 @subtitle Yet Another Message Interface On Emacsen
-@subtitle for Version @value{version}
+@subtitle for Wanderlust version @value{version}
 @author Yuuichi Teranishi
 @author Fujikazu Okunishi
 @author Masahiro Murata
@@ -345,7 +345,7 @@ Destination directory is auto-probed if you leave @code{LISPDIR}
 in @file{Makefile} as is. (That is, leave it as @samp{NONE})
 
 If you are using an Emacs variant which does not merge specified directory
-to load-path (e.g. Mule 2.3 based on Emacs 19.28), 
+to @code{load-path} (e.g. Mule 2.3 based on Emacs 19.28), 
 then you will see the error message:
 
 @example
@@ -354,18 +354,18 @@ Cannot open load file: mime-setup
 
 @noindent
 In this case, either add destination directories of custom, apel, flim and semi
-to environmental variable @code{EMACSLOADPATH}, or define load-path in
+to environmental variable @code{EMACSLOADPATH}, or define @code{load-path} in
 @file{WL-CFG} in extracted directory.
 
 If you want to use BBDB, then the necessary modules are byte-compiled and
-installed when BBDB directory is added to load-path.
+installed when BBDB directory is added to @code{load-path}.
 @xref{BBDB}.
 
 @subsection @file{WL-CFG}
 
 Contents of the file @file{WL-CFG} is loaded under installation if a file
 with that name exists in extracted directory. You can use @file{WL-CFG} to
-configure load-path to extra packages such as SEMI if needed.
+configure @code{load-path} to extra packages such as SEMI if needed.
 
 If you want to specify the install directory of Wanderlust related
 files, then set following variables in @file{WL-CFG}
@@ -421,10 +421,10 @@ package directory is auto-probed, if SEMI is installed.
 
 @subsection Run in place
 
-If wl and elmo directories are defined in load-path, then byte-compilation
-and installation are not necessary to start Wanderlust. For example,
-if package is extracted in @file{~/work}, Wanderlust can be invoked with
-following setting in @file{.emacs}.
+If wl and elmo directories are defined in @code{load-path}, then
+byte-compilation and installation are not necessary to start Wanderlust.
+For example, if package is extracted in @file{~/work}, Wanderlust can be
+invoked with following setting in @file{.emacs}.
 
 @lisp
 (add-to-list 'load-path "~/work/wl-@var{version}/wl")
@@ -5288,6 +5288,7 @@ pop3                      N     E     E     E
 * Highlights::                 Highlights
 * Advanced Settings::          Advanced Settings
 * Customizable Variables::     Customizable Variables
+* Hooks::                      Hooks
 @end menu
 
 
@@ -5309,10 +5310,10 @@ Examples with other packages.
 @subsection bbdb.el
 @pindex BBDB
 
-Place @file{util/bbdb-wl.el} on the load-path and do the following
+Place @file{util/bbdb-wl.el} on the @code{load-path} and do the following
 settings.
 
-If BBDB is on the load-path at the installation, @file{bbdb-wl.el} is
+If BBDB is on the @code{load-path} at the installation, @file{bbdb-wl.el} is
 byte-compiled and installed.
 @xref{Install}.
 
@@ -5763,7 +5764,7 @@ The following is an example.
                  wl-appname wl-version wl-codename))))
 @end lisp
 
-@node Customizable Variables,  , Advanced Settings, Customization
+@node Customizable Variables, Hooks, Advanced Settings, Customization
 @section Customizable Variables
 
 Customizable variables that have not been described yet:
@@ -6002,6 +6003,12 @@ this value, display progress gauge.
 @end table
 
 
+@node Hooks,  , Customizable Variables, Customization
+@section Hooks
+
+(Not yet written)
+
+
 @c
 @c  Mailing List
 @c
@@ -6080,15 +6087,13 @@ wanderlust
 @end display
 
 @noindent
-but I had no profound intention.
-(if farfetched, IMAP @t{=>} you can read mail anywhere @t{=>} desire to
-wander ?)
+but I had no profound intention.  (if farfetched, IMAP @result{} you can
+read mail anywhere @result{} desire to wander ?)
 
 Elmo is the abbreviation of @samp{Elisp Library for Message
-Orchestration}.
-At first I meant the red puppet in the Sesame Street, but you may
-associate it with
-Wandering @t{=>} Drifting @t{=>} Guidepost @t{=>} St.@: Elmo's fire @t{=>} elmo.
+Orchestration}.  At first I meant the red puppet in the Sesame Street,
+but you may associate it with Wandering @result{} Drifting @result{}
+Guidepost @result{} St.@: Elmo's fire @result{} elmo.
 
 @section Code Names
 
