@@ -1,3 +1,11 @@
+2001-04-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-folder): Added `header-hash' slot.
+	(elmo-folder-open-internal): Setup `header-hash' slot.
+	(elmo-shimbun-msgdb-create-entity): Use `header-hash' to get header
+	information.
+	(elmo-map-message-fetch): Ditto.
+
 2001-04-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* shimbun.el, sb-airs.el, sb-asahi.el, sb-bbdb-ml.el, sb-cnet.el,
