@@ -1,3 +1,7 @@
+2001-12-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo.el (elmo-folder-confirm-appends): Fixed docstring.
+
 2001-12-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Fixed
