@@ -1,5 +1,8 @@
 2002-04-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-message.el (wl-message-buffer-prefetch-get-next): Use while
+	loop instead of recursive call.
+
 	* wl-addrmgr.el (wl-addrmgr-quit-yes): Call get-buffer-window with
 	2nd argument.
 
