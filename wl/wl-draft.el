@@ -338,8 +338,15 @@ Reply to author if WITH-ARG is non-nil."
 		      ((listp condition)
 		       (catch 'done
 			 (while condition
-			   (if (not (std11-field-body (car condition)))
-			       (throw 'done nil))
+			   (cond
+			    ((stringp (car condition))
+			     (or (std11-field-body (car condition))
+				 (throw 'done nil)))
+			    ((symbolp (car condition))
+			     (or (funcall (car condition))
+				 (throw 'done nil)))
+			    (t
+			     (debug)))
 			   (setq condition (cdr condition)))
 			 t))
 		      ((symbolp condition)

@@ -1,3 +1,22 @@
+2003-01-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-news.el.in (wl-news-buffer-oldest-version): New local variable.
+	(wl-news): Set it.
+	(wl-news-append-to-folder): Use it.
+
+	* wl-news.el.in (wl-news-send-news): Append to specified folder
+	instead of wl-default-folder.
+	(wl-news-append-to-folder): Show error message with specified folder.
+
+	* wl-vars.el: Follow "Left Margin Convention" in Emacs Manual.
+		In most major modes, Emacs assumes that any opening
+		delimiter found at the left margin is the start of a
+		top-level definition, or defun. Therefore, *never put an
+		opening delimiter at the left margin unless it should have
+		that significance.*
+
+	* wl-draft.el (wl-draft-reply): List in r-list can contain function.
+
 2003-01-05  NAKAJIMA Mikio  <minakaji@osaka.email.ne.jp>
 
 	* wl-draft.el (wl-draft-self-reply-p): Add doc string.

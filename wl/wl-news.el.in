@@ -169,9 +169,9 @@
       (wl-draft-get-header-delimiter t)
       (setq ret
 	    (and (elmo-folder-writable-p
-		  (wl-folder-get-elmo-folder wl-default-folder))
+		  (wl-folder-get-elmo-folder folder))
 		 (elmo-folder-append-buffer
-		  (wl-folder-get-elmo-folder wl-default-folder) t)))
+		  (wl-folder-get-elmo-folder folder) t)))
       (wl-draft-hide send-buffer)
       (wl-draft-delete send-buffer))
     ret))
@@ -181,6 +181,8 @@
 (defvar wl-news-buf-name "NEWS")
 (defvar wl-news-mode-map nil)
 (defvar wl-news-winconf nil)
+(defvar wl-news-buffer-oldest-version nil)
+(make-variable-buffer-local 'wl-news-buffer-oldest-version)
 
 (unless wl-news-mode-map
   (setq wl-news-mode-map (make-sparse-keymap))
@@ -214,6 +216,7 @@
 		  (setq wl-news-winconf (current-window-configuration))
 		  (set-buffer (get-buffer-create wl-news-buf-name))
 		  (wl-news-mode)
+		  (setq wl-news-buffer-oldest-version previous-version)
 		  (buffer-disable-undo (current-buffer))
 		  ;; insert news
 		  (let ((buffer-read-only nil))
@@ -270,8 +273,7 @@
 
 (defun wl-news-append-to-folder ()
   (interactive)
-  (let* ((oldest-version (cdr (wl-news-previous-version-load)))
-	 (current-version (product-version (product-find 'wl-version)))
+  (let* ((current-version (product-version (product-find 'wl-version)))
 	 (new-old-version current-version)
 	 (folder wl-default-folder))
     (if (or (and (elmo-folder-writable-p
@@ -281,9 +283,9 @@
 			    wl-default-folder)))
 	    (setq folder
 		  (wl-summary-read-folder wl-default-folder "to append ")))
-	(or (wl-news-send-news oldest-version wl-news-lang)
+	(or (wl-news-send-news wl-news-buffer-oldest-version wl-news-lang)
 	    (error
-	     (format "Cannot append NEWS mail to %s" wl-default-folder))))))
+	     (format "Cannot append NEWS mail to %s" folder))))))
 
 (defun wl-news-force-exit ()
   (interactive)
