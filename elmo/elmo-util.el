@@ -1444,8 +1444,7 @@ Emacs 19.28 or earlier does not have `unintern'."
 (defsubst elmo-copy-file (src dst)
   (condition-case err
       (elmo-add-name-to-file src dst t)
-    (error (copy-file src dst t)
-	   (error "Copy file failed"))))
+    (error (copy-file src dst t))))
 
 (defsubst elmo-buffer-exists-p (buffer)
   (if (bufferp buffer)
