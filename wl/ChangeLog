@@ -1,3 +1,7 @@
+2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.9.13.
+
 2002-05-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-read): Set msgdb mark only when
