@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-10 10:42:05 teranisi>
+;; Time-stamp: <2000-05-10 12:42:18 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2878,8 +2878,8 @@ If optional argument is non-nil, checking is omitted."
 	  (elmo-msgdb-overview-get-parent-entity entity overview));; temp
 	 ;;(parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
-	 ;;(case-fold-search t)
-	 ;;overview2 cur-entity
+	 (case-fold-search t)
+	 overview2 cur-entity
 	 msg) 
     ;; Search parent by subject.
     (when (and (null parent-number)
