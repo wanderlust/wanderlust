@@ -14,7 +14,7 @@
 	`wl-acap-original-msgdb-dir'.
 
 	* wl-vars.el (wl-icon-directory): Renamed from `wl-icon-dir'.
-	(wl-score-files-directory): Renamed from `wl-score-fiels-dir'.
+	(wl-score-files-directory): Renamed from `wl-score-files-dir'.
 
 	* wl-mime.el (wl-mime-save-directory): Renamed from
 	`wl-mime-save-directory'.
