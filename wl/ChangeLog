@@ -1,5 +1,13 @@
 2002-11-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-draft-write-file-function): Fix.
+	(wl-draft-reedit-hook): Changed default value.
+
+	* wl-draft.el (wl-draft-edit-string): Set cursor point for
+	wl-draft-reedit-hook.
+	(wl-draft-remove-text-plain-tag): New function.
+	(wl-draft-reedit): Set cursor point for wl-draft-reedit-hook.
+
 	* wl-vars.el (wl-draft-write-file-function): New user option.
 
 	* wl-draft.el (wl-draft-prepare-edit): Use it for

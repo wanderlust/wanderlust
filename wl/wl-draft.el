@@ -618,9 +618,12 @@ Reply to author if WITH-ARG is non-nil."
 		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
 		   'edit-again))
-      (and to (mail-position-on-field "To"))
-      (kill-buffer tmp-buf)))
-  (run-hooks 'wl-draft-reedit-hook))
+      (kill-buffer tmp-buf))
+    ;; Set cursor point to the top.
+    (goto-char (point-min))
+    (search-forward (concat mail-header-separator "\n") nil t)
+    (run-hooks 'wl-draft-reedit-hook)
+    (and to (mail-position-on-field "To"))))
 
 (defun wl-draft-insert-current-message (dummy)
   (interactive)
@@ -1876,10 +1879,15 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(setq local-variables (cdr local-variables)))
       (current-buffer))))
 
+(defun wl-draft-remove-text-plain-tag ()
+  "Remove text/plain tag of mime-edit."
+  (if (looking-at "^--\\[\\[text/plain\\]\\]$")
+      (delete-region (point-at-bol)(1+ (point-at-eol)))))
+
 (defun wl-draft-reedit (number)
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	(wl-draft-reedit t)
-	buffer file-name change-major-mode-hook)
+	buffer file-name change-major-mode-hook body-top)
     (setq file-name (elmo-message-file-name draft-folder number))
     (unless (file-exists-p file-name)
       (error "File %s does not exist" file-name))
@@ -1913,10 +1921,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (let((mime-edit-again-ignored-field-regexp
 	    "^\\(Content-.*\\|Mime-Version\\):"))
 	(wl-draft-decode-message-in-buffer))
-      (goto-char (wl-draft-insert-mail-header-separator))
-      ;; If the first part is text/plain, the mime-edit tag is useless.
-      (if (looking-at "^--\\[\\[text/plain\\]\\]$")
-	  (delete-region (point-at-bol)(1+ (point-at-eol))))
+      (setq body-top (wl-draft-insert-mail-header-separator))
       (if (not (string-match (regexp-quote wl-draft-folder)
 			     (buffer-name)))
 	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))
@@ -1936,6 +1941,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (when wl-draft-write-file-function
 	(add-hook 'local-write-file-hooks wl-draft-write-file-function))
       (wl-highlight-headers 'for-draft)
+      (goto-char body-top)
       (run-hooks 'wl-draft-reedit-hook)
       (goto-char (point-max))
       buffer)))
