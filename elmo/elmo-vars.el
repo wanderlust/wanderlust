@@ -138,7 +138,6 @@ If function, return value of function.")
 (defvar elmo-path-sep "/"
   "*Path separator.")
 (defvar elmo-plugged t)
-(defvar elmo-use-semi nil)
 
 (defvar elmo-no-subject "(No Subject in original.)"
   "*A string used when no subject field exists.")

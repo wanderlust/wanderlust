@@ -8,12 +8,10 @@
 MIME用モジュールの選択
 ======================
 
-  Wanderlust を使うためには、以下のどちらかの MIME 用モジュールをインス
-  トールしておく必要があります。機能が充実している SEMI の使用をお勧めし
-  ます。
+  Wanderlust を使うためには、以下の MIME 用モジュールをインス
+  トールしておく必要があります。
 
 	SEMI    (1.14.1 以上)
-	tm      (8.7 以上)
 
   SEMI には APEL, FLIM と呼ばれるパッケージも必要です。主な Emacsen につ
   いて推奨される APEL, FLIM, SEMI の組合せを以下に示します。
@@ -43,14 +41,6 @@ MIME用モジュールの選択
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
-(e) Emacs 19.28 以前 (Mule 2.3, Nemacs)
-
-	APEL 10.3, CLIME 1.14.0, tm 8.8
-
-  SEMI は動きませんので、tm をインストールしてください。APEL, CLIME を最
-  新版に入れ替える必要もあります。
-
-
 MIME用モジュールのインストール
 ==============================
 
@@ -60,9 +50,6 @@ MIME用モジュールのインストール
 	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
 	CLIME:
 	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
-	tm:	http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
-
-(a) SEMI のインストール
 
   APEL, FLIM(CLIME), SEMI の順にインストールしてください。基本的にすべて
   make install の実行で済むはずです。
@@ -78,19 +65,6 @@ MIME用モジュールのインストール
 
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
 	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
-
-(b) tm のインストール
-
-  tm 8.7 以降のバージョンが必要です。詳しいインストールの方法はパッケー
-  ジに添付されているドキュメント(README.en)を参照してください。
-
-  tm 8.8 以前のバージョンでは、
-
-    Use tm-8.x with APEL 10.2 or later
-
-  というエラーがでることがあります。この場合、APEL 10.2 以降をイ
-  ンストールしてください。
-
 
 通常のインストール
 ==================

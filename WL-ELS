@@ -8,7 +8,7 @@
 ;;; generic modules
 (defconst WL-MODULES '(
    wl wl-folder wl-summary wl-message
-   wl-vars wl-draft wl-util wl-version wl-address
+   wl-vars wl-draft wl-util wl-version wl-address wl-addrmgr
    wl-highlight wl-demo wl-refile wl-thread
    wl-fldmgr wl-expire wl-template wl-score
    ))
@@ -32,8 +32,6 @@
  ((featurep 'xemacs)
   (setq WL-MODULES (append WL-MODULES (list 'wl-dnd 'wl-xmas)))
   (setq ELMO-MODULES (append (list 'elmo-database) ELMO-MODULES)))
- ((fboundp 'nemacs-version)
-  (setq WL-MODULES (append WL-MODULES (list 'wl-nemacs))))
  ((and (boundp 'emacs-major-version) (>= emacs-major-version 21))
   (setq WL-MODULES (append WL-MODULES (list 'wl-e21))))
  ((featurep 'mule)
@@ -52,23 +50,12 @@
     (add-to-list 'ELMO-MODULES 'elmo-shimbun))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; tm-8 / SEMI
+;;; SEMI
 
-(if (module-installed-p 'mime-view)
-    (progn
-      (defconst wl-use-semi t)
-      (setq WL-MODULES (append WL-MODULES (list 'wl-mime)))
-      (setq ELMO-MODULES (append ELMO-MODULES (list 'elmo-mime))))
-  (defconst wl-use-semi nil)
-  (setq WL-MODULES (append WL-MODULES (list 'tm-wl))))
-
+(setq WL-MODULES (append WL-MODULES (list 'wl-mime)))
+(setq ELMO-MODULES (append ELMO-MODULES (list 'elmo-mime)))
 (if (not (module-installed-p 'luna))
-    (if wl-use-semi
-	(error "Use FLIM-1.13.2 or later and SEMI 1.13.7 or later.")
-      (if (module-installed-p 'product)
-	  (error "Use tm-8.x with APEL 10.2 or later.")
-	;; tm but luna is not installed (tm7?)
-	(error "Use tm-8.x."))))
+    (error "Use FLIM-1.13.2 or later and SEMI 1.13.7 or later."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils
