@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <00/04/26 17:31:25 teranisi>
+@set Time-stamp: <2000-06-15 19:55:00 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -4977,12 +4977,12 @@ Messages with scores larger than this value are attached with the
 important mark (@samp{$}).
 If nil, no important marks are attached.
 
-@item wl-summary-temp-above
-@vindex wl-summary-temp-above
+@item wl-summary-target-above
+@vindex wl-summary-target-above
 The initial setting is nil.
-Messages with scores larger than this value are attached with the temp
+Messages with scores larger than this value are attached with the target
 mark (@samp{*}).
-If nil, no temp marks are attached.
+If nil, no target marks are attached.
 
 @item wl-summary-mark-below
 @vindex wl-summary-mark-below
@@ -5080,7 +5080,7 @@ because some keys are not supported and there are Wanderlust specifics.
  ("chars"
   (1000000 -10 nil >))
  (important 5000)
- (temp 3000)
+ (target 3000)
  (mark 0)
  (expunge -3000))
 @end example
@@ -5179,10 +5179,10 @@ Both @code{mark} and @code{expunge} are applied,
 i.e. messages with a score less than this value is marked as read and
 deleted from the summary.
 
-@item temp
+@item target
 Messages with a score greater than this value is attached with temp
 marks.
-The default is @code{wl-summary-temp-above}.
+The default is @code{wl-summary-target-above}.
 
 @item important
 Messages with a score greater than this value is attached with important
@@ -5568,7 +5568,7 @@ marks in the summary.
 The face for message lines with copy marks in the summary.
 
 @item wl-highlight-summary-target-face
-The face for message lines with temp marks @samp{*} in the summary.
+The face for message lines with target marks @samp{*} in the summary.
 
 @item wl-highlight-summary-thread-top-face
 The face for message lines that are on the top of the thread in the

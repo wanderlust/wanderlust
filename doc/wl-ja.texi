@@ -5,7 +5,7 @@
 @c @documentlanguage ja
 @c %**end of header
 @c Wanderlust の texinfo
-@set Time-stamp: <00/04/26 17:31:17 teranisi>
+@set Time-stamp: <2000-06-15 19:55:00 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -4948,10 +4948,10 @@ Wanderlust 以外で直接スコアファイルを変更した場合は、
 この値より大きいスコアに対して importantマーク(@samp{$}) をつけます。
 nil の場合はマークを付けません。
 
-@item wl-summary-temp-above
-@vindex wl-summary-temp-above
+@item wl-summary-target-above
+@vindex wl-summary-target-above
 初期設定は nil。
-この値より大きいスコアに対して tempマーク(@samp{*}) をつけます。
+この値より大きいスコアに対して targetマーク(@samp{*}) をつけます。
 nil の場合はマークを付けません。
 
 @item wl-summary-mark-below
@@ -5048,7 +5048,7 @@ Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
  ("chars"
   (1000000 -10 nil >))
  (important 5000)
- (temp 3000)
+ (target 3000)
  (mark 0)
  (expunge -3000))
 @end example
@@ -5141,9 +5141,9 @@ Non-nil ならば、サマリ同期時に未読/重要マークも同期します。
 @code{mark} と @code{expunge} を同時に指定します。
 つまり、この値より小さいスコアのメッセージは既読マークをつけ、サマリから消去します。
 
-@item temp
-この値より大きいスコアのメッセージには temp マークをつけます。
-デフォルト値は @code{wl-summary-temp-above} で指定されます。
+@item target
+この値より大きいスコアのメッセージには target マークをつけます。
+デフォルト値は @code{wl-summary-target-above} で指定されます。
 
 @item important
 この値より大きいスコアのメッセージには important マークをつけます。
@@ -5527,7 +5527,7 @@ Non-nil ならフォルダモード、サマリモードなどで
 サマリでコピーマークのついたメッセージ行の face です。
 
 @item wl-highlight-summary-target-face
-サマリで一時処理用マーク @samp{*} のついたメッセージ行の face です。
+サマリでまとめ処理用マーク @samp{*} のついたメッセージ行の face です。
 
 @item wl-highlight-summary-thread-top-face
 サマリでスレッドトップのメッセージ行の face です。
