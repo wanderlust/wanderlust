@@ -28,14 +28,14 @@
 ;;; Code:
 ;;
 
-(cond
- ((and (not (featurep 'utf-2000))
-       (module-installed-p 'un-define))
-  (require 'un-define))
- ((and (featurep 'xemacs)
-       (not (featurep 'utf-2000))
-       (module-installed-p 'xemacs-ucs))
-  (require 'xemacs-ucs)))
+;;(cond
+;; ((and (not (featurep 'utf-2000))
+;;       (module-installed-p 'un-define))
+;;  (require 'un-define))
+;; ((and (featurep 'xemacs)
+;;       (not (featurep 'utf-2000))
+;;       (module-installed-p 'xemacs-ucs))
+;;  (require 'xemacs-ucs)))
 (require 'custom)
 (require 'cus-edit)
 (require 'wl-vars)

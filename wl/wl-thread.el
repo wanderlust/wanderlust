@@ -495,8 +495,7 @@ ENTITY is returned."
     (while msgs
       (setq children (wl-thread-entity-get-children
 		      (setq entity (wl-thread-get-entity (car msgs)))))
-      (when (elmo-message-entity wl-summary-buffer-elmo-folder
-				 (car msgs))
+      (when (elmo-message-entity wl-summary-buffer-elmo-folder (car msgs))
 	(wl-append ret-val (list (car msgs)))
 	(setq children nil))
       (setq msgs (cdr msgs))

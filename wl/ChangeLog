@@ -1,4 +1,8 @@
-2003-07-18  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (toplevel): Don't require un-define.
+
+2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-delete-message): Always update
 	wl-summary-buffer-number-list.

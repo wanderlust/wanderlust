@@ -1243,11 +1243,13 @@ NUMBER is a number of the message.")
 (luna-define-method elmo-message-mark ((folder elmo-folder) number)
   (elmo-msgdb-get-mark (elmo-folder-msgdb folder) number))
 
-(defun elmo-message-field (folder number field)
+(luna-define-generic elmo-message-field (folder number field)
   "Get message field value in the msgdb.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message.
-FIELD is a symbol of the field."
+FIELD is a symbol of the field.")
+
+(luna-define-method elmo-message-field ((folder elmo-folder) number field)
   (elmo-msgdb-get-field (elmo-folder-msgdb folder) number field))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)

@@ -133,10 +133,10 @@
   (cond
    ((numberp key)
     (let* ((pair (elmo-multi-real-folder-number folder key))
-	   (entity 
-	    (elmo-message-copy-entity
-	     (elmo-message-entity (car pair) (cdr pair)))))
-      (elmo-message-entity-set-number entity key)))
+	   (entity (elmo-message-entity (car pair) (cdr pair))))
+      (when entity
+	(elmo-message-entity-set-number (elmo-message-copy-entity entity)
+					key))))
    ((stringp key)
     (let ((children (elmo-multi-folder-children-internal folder))
 	  (cur-number 0)
@@ -153,6 +153,11 @@
 	  (setq children nil))
 	(setq children (cdr children)))
       match))))
+
+(luna-define-method elmo-message-field ((folder elmo-multi-folder)
+					number field)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-field (car pair) (cdr pair) field)))
 
 (luna-define-method elmo-message-mark ((folder elmo-multi-folder) number)
   (let ((pair (elmo-multi-real-folder-number folder number)))

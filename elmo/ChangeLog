@@ -1,5 +1,10 @@
 2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-message-field): Define as a method.
+
+	* elmo-multi.el (elmo-message-entity): Fixed bug when no entity found.
+	(elmo-message-field): Define.
+
 	* elmo.el (elmo-folder-list-unreads): Don't use msgdb API.
 	(elmo-folder-list-importants): Ditto.
 	(elmo-folder-list-answereds): Ditto.
