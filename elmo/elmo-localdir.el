@@ -397,8 +397,6 @@
   (let ((dir (elmo-localdir-get-folder-directory spec))
 	(onum-alist (elmo-msgdb-get-number-alist msgdb))
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
-	(oov (elmo-msgdb-get-overview msgdb))
-	(oovht (elmo-msgdb-get-overviewht msgdb))
 	i flist onum mark new-mark-alist total)
     (setq i 0)
     (setq flist
@@ -420,8 +418,8 @@
 	 (rename-file (int-to-string onum) (int-to-string i) t))
         ;; update overview
         (elmo-msgdb-overview-entity-set-number
-	 (elmo-msgdb-overview-get-entity-by-number
-	  oov onum oovht) i)
+	 (elmo-msgdb-overview-get-entity onum msgdb)
+	 i)
 	;; update number-alist
 	(setcar (assq onum onum-alist) i))
       ;; update mark-alist
