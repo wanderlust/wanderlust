@@ -1,3 +1,19 @@
+2005-04-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-folder-internal-icon-list): Fix last change.
+
+2005-03-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-xmas.el (wl-folder-internal-icon-list): Added entry for
+	`Access folder'.
+
+2005-03-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-access-folder-icon): New user option.
+
+	* wl-e21.el (wl-folder-internal-icon-list): Added entry for
+	`Access folder'.
+
 2005-04-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.14.1.
