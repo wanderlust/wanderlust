@@ -54,10 +54,10 @@
 By setting following-method as yank-content."
   (let ((wl-draft-buffer (current-buffer))
 	(mime-view-following-method-alist
-	 (list (cons 'mmelmo-original-mode
+	 (list (cons 'wl-original-message-mode
 		     (function wl-draft-yank-to-draft-buffer))))
 	(mime-preview-following-method-alist
-	 (list (cons 'mmelmo-original-mode
+	 (list (cons 'wl-original-message-mode
 		     (function wl-draft-yank-to-draft-buffer)))))
     (if (get-buffer (wl-current-message-buffer))
 	(save-excursion
@@ -72,27 +72,31 @@ By setting following-method as yank-content."
   ""
   (interactive)
   (let* (recipients-message
+	 (config-exec-flag wl-draft-config-exec-flag)
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 mime-view-ignored-field-list ; all header.
 	 (mime-edit-translate-buffer-hook
 	  (append
 	   '((lambda ()
-	       (setq recipients-message
-		     (concat "Recipients: "
-			     (mapconcat
-			      'identity
-			      (wl-draft-deduce-address-list
-			       (current-buffer)
-			       (point-min)
-			       (save-excursion
-				 (re-search-forward
-				  (concat "^"
-					  (regexp-quote mail-header-separator)
-					  "$")
-				  nil t)
-				 (point)))
-			      ", ")))
-	       (run-hooks 'wl-draft-send-hook)))
+	       (let ((wl-draft-config-exec-flag config-exec-flag))
+		 (run-hooks 'wl-draft-send-hook)
+		 (setq recipients-message
+		       (concat "Recipients: "
+			       (mapconcat
+				'identity
+				(wl-draft-deduce-address-list
+				 (current-buffer)
+				 (point-min)
+				 (save-excursion
+				   (goto-char (point-min))
+				   (re-search-forward
+				    (concat
+				     "^"
+				     (regexp-quote mail-header-separator)
+				     "$")
+				    nil t)
+				   (point)))
+				", "))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (let ((buffer-read-only nil))
@@ -129,8 +133,12 @@ By setting following-method as yank-content."
 
 (defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
-   (elmo-read-msg-no-cache folder number (current-buffer))
-;;;(mime-parse-buffer nil 'mime-buffer-entity)
+   (elmo-message-fetch (wl-folder-get-elmo-folder folder)
+		       number 
+		       (elmo-make-fetch-strategy 'entire)
+		       nil
+		       (current-buffer)
+		       'unread)
    (mime-parse-buffer nil)))
 
 (defalias 'wl-message-read            'mime-preview-scroll-up-entity)
@@ -158,10 +166,12 @@ By setting following-method as yank-content."
           (message (format "Bursting...%s" (setq number (+ 1 number))))
           (setq message-entity
                 (car (mime-entity-children (car children))))
-	  (elmo-append-msg target
-			   (mime-entity-body (car children))
-			   (mime-entity-fetch-field message-entity
-						    "Message-ID"))))
+	  (with-temp-buffer
+	    (insert (mime-entity-body (car children)))
+	    (elmo-folder-append-buffer
+	     target
+	     (mime-entity-fetch-field message-entity
+				      "Message-ID")))))
       (setq children (cdr children)))
     number))
 
@@ -171,13 +181,13 @@ By setting following-method as yank-content."
   (let ((raw-buf (wl-message-get-original-buffer))
 	children message-entity content-type target)
     (save-excursion
-      (setq target wl-summary-buffer-folder-name)
-      (while (not (elmo-folder-writable-p target))
+      (setq target wl-summary-buffer-elmo-folder)
+      (while (not (elmo-folder-message-appendable-p target))
 	(setq target
 	      (wl-summary-read-folder wl-default-folder "to extract to")))
       (wl-summary-set-message-buffer-or-redisplay)
       (save-excursion
-	(set-buffer (get-buffer wl-message-buf-name))
+	(set-buffer (get-buffer wl-message-buffer))
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
       (set-buffer raw-buf)
       (setq children (mime-entity-children message-entity))
@@ -186,8 +196,8 @@ By setting following-method as yank-content."
 	(wl-summary-burst-subr children target 0)
 	(message "Bursting...done"))
       (if (elmo-folder-plugged-p target)
-	  (elmo-commit target)))
-    (wl-summary-sync-update3)))
+	  (elmo-folder-check target)))
+    (wl-summary-sync-update)))
 
 ;; internal variable.
 (defvar wl-mime-save-dir nil "Last saved directory.")
@@ -214,22 +224,32 @@ By setting following-method as yank-content."
   (interactive)
   (let* ((msgdb (save-excursion
 		  (set-buffer wl-message-buffer-cur-summary-buffer)
-		  wl-summary-buffer-msgdb))
+		  (wl-summary-buffer-msgdb)))
 	 (mime-display-header-hook 'wl-highlight-headers)
 	 (folder wl-message-buffer-cur-folder)
 	 (id (or (cdr (assoc "id" situation)) ""))
 	 (mother (current-buffer))
+	 (summary-buf wl-message-buffer-cur-summary-buffer)
 	 subject-id overviews
 	 (root-dir (expand-file-name
 		    (concat "m-prts-" (user-login-name))
 		    temporary-file-directory))
-	 full-file)
+	 full-file point)
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials? ")))
 	(with-current-buffer mother
-	  (mime-store-message/partial-piece entity situation))
+	  (mime-store-message/partial-piece entity situation)
+	  (setq wl-message-buffer-cur-summary-buffer summary-buf)
+	  (make-variable-buffer-local 'mime-preview-over-to-next-method-alist)
+	  (setq mime-preview-over-to-next-method-alist
+		(cons (cons 'mime-show-message-mode 'wl-message-exit)
+		      mime-preview-over-to-next-method-alist))
+	  (make-variable-buffer-local 'mime-preview-over-to-previous-method-alist)
+	  (setq mime-preview-over-to-previous-method-alist
+		(cons (cons 'mime-show-message-mode 'wl-message-exit)
+		      mime-preview-over-to-previous-method-alist)))
       (setq subject-id
 	    (eword-decode-string
 	     (decode-mime-charset-string
@@ -247,7 +267,8 @@ By setting following-method as yank-content."
 		    ;; request message at the cursor in Subject buffer.
 		    (wl-message-request-partial
 		     folder
-		     (elmo-msgdb-overview-entity-get-number (car overviews))))
+		     (elmo-msgdb-overview-entity-get-number
+		      (car overviews))))
 		   (situation (mime-entity-situation message))
 		   (the-id (or (cdr (assoc "id" situation)) "")))
 	      (when (string= (downcase the-id)
@@ -269,15 +290,15 @@ By setting following-method as yank-content."
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
-	     'mmelmo-original-mode 'wl-message-exit)
+	     'wl-original-message-mode 'wl-message-exit)
   (set-alist 'mime-view-over-to-previous-method-alist
-	     'mmelmo-original-mode 'wl-message-exit)
+	     'wl-original-message-mode 'wl-message-exit)
   (set-alist 'mime-view-over-to-next-method-alist
-	     'mmelmo-original-mode 'wl-message-exit)
+	     'wl-original-message-mode 'wl-message-exit)
   (set-alist 'mime-preview-over-to-previous-method-alist
-	     'mmelmo-original-mode 'wl-message-exit)
+	     'wl-original-message-mode 'wl-message-exit)
   (set-alist 'mime-preview-over-to-next-method-alist
-	     'mmelmo-original-mode 'wl-message-exit)
+	     'wl-original-message-mode 'wl-message-exit)
   (add-hook 'wl-summary-redisplay-hook 'wl-message-delete-mime-out-buf)
   (add-hook 'wl-message-exit-hook 'wl-message-delete-mime-out-buf)
 
@@ -286,17 +307,17 @@ By setting following-method as yank-content."
    '((type . message) (subtype . partial)
      (method .  wl-mime-combine-message/partial-pieces)
      (request-partial-message-method . wl-message-request-partial)
-     (major-mode . mmelmo-original-mode)))
+     (major-mode . wl-original-message-mode)))
   (ctree-set-calist-strictly
    'mime-acting-condition
    '((mode . "extract")
-     (major-mode . mmelmo-original-mode)
+     (major-mode . wl-original-message-mode)
      (method . wl-mime-save-content)))
   (set-alist 'mime-preview-following-method-alist
-	     'mmelmo-original-mode
+	     'wl-original-message-mode
 	     (function wl-message-follow-current-entity))
   (set-alist 'mime-view-following-method-alist
-	     'mmelmo-original-mode
+	     'wl-original-message-mode
 	     (function wl-message-follow-current-entity))
   (set-alist 'mime-edit-message-inserter-alist
 	     'wl-draft-mode (function wl-draft-insert-current-message))
@@ -306,7 +327,7 @@ By setting following-method as yank-content."
 	     'wl-draft-mode
 	     (cdr (assq 'mail-mode mime-edit-split-message-sender-alist)))
   (set-alist 'mime-raw-representation-type-alist
-	     'mmelmo-original-mode 'binary)
+	     'wl-original-message-mode 'binary)
   ;; Sort and highlight header fields.
   (or wl-message-ignored-field-list
       (setq wl-message-ignored-field-list
@@ -315,9 +336,11 @@ By setting following-method as yank-content."
       (setq wl-message-visible-field-list
 	    mime-view-visible-field-list))
   (set-alist 'mime-header-presentation-method-alist
-	     'mmelmo-original-mode
-	     (function wl-mime-header-presentation-method))
-  (add-hook 'mmelmo-entity-content-inserted-hook 'wl-highlight-body))
+	     'wl-original-message-mode
+	     (function elmo-mime-insert-header))
+  (add-hook 'elmo-message-text-content-inserted-hook 'wl-highlight-body-all)
+  (add-hook 'elmo-message-header-inserted-hook 'wl-highlight-headers))
+  
   
 
 (require 'product)
