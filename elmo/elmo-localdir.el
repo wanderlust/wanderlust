@@ -86,22 +86,25 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localdir-folder))
-  (expand-file-name
-   (mapconcat
-    'identity
-    (delete ""
-	    (mapcar
-	     'elmo-replace-string-as-filename
-	     (split-string
-	      (let ((dir-name (elmo-localdir-folder-dir-name-internal folder)))
-		(if (file-name-absolute-p dir-name)
-		    (expand-file-name dir-name)
-		  dir-name))
-	      "/")))
-    "/")
-   (expand-file-name ;;"localdir"
-    (symbol-name (elmo-folder-type-internal folder))
-    elmo-msgdb-directory)))
+  (let* ((dir-name (elmo-localdir-folder-dir-name-internal folder))
+	 (path (mapconcat
+		'identity
+		(delete ""
+			(mapcar
+			 'elmo-replace-string-as-filename
+			 (split-string
+			  (if (file-name-absolute-p dir-name)
+			      (expand-file-name dir-name)
+			    dir-name)
+			  "/")))
+		"/")))
+    (expand-file-name
+     path
+     (expand-file-name ;;"localdir" or "localdir-abs"
+      (concat
+       (symbol-name (elmo-folder-type-internal folder))
+       (when (file-name-absolute-p dir-name) "-abs"))
+      elmo-msgdb-directory))))
 
 (luna-define-method elmo-message-file-name ((folder
 					     elmo-localdir-folder)
