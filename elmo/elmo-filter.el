@@ -89,6 +89,12 @@
    (elmo-replace-string-as-filename (elmo-folder-name-internal folder))
    (expand-file-name "filter" elmo-msgdb-directory)))
 
+(luna-define-method elmo-folder-search-requires-msgdb-p ((folder
+							  elmo-filter-folder)
+							 condition)
+  (elmo-folder-search-requires-msgdb-p
+   (elmo-filter-folder-target-internal folder) condition))
+
 (luna-define-method elmo-folder-newsgroups ((folder elmo-filter-folder))
   (elmo-folder-newsgroups (elmo-filter-folder-target-internal folder)))
 

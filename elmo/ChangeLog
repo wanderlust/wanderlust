@@ -1,3 +1,7 @@
+2003-10-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-folder-search-requires-msgdb-p): Define.
+
 2003-10-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-session-select-mailbox): Use
