@@ -1118,12 +1118,8 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defun elmo-folder-local-p (folder)
   "Return whether FOLDER is a local folder or not."
-  (let ((spec (elmo-folder-get-spec folder)))
-    (case (car spec)
-      (filter (elmo-folder-local-p (nth 2 spec)))
-      (pipe (elmo-folder-local-p (elmo-pipe-spec-dst spec)))
-      (t (memq (car spec)
-	       '(localdir localnews archive maildir internal cache))))))
+  (let ((type (elmo-folder-get-type folder)))
+    (memq type '(localdir localnews archive maildir internal cache))))
 
 (defun elmo-folder-writable-p (folder)
   (let ((type (elmo-folder-get-type folder)))
