@@ -1,3 +1,7 @@
+2004-07-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (toplevel): Removed unnecessary autoload.
+
 2004-07-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-exit): Switch to mime-mother-buffer if

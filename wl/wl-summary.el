@@ -4853,8 +4853,6 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-message-header-narrowing-toggle)
 	  (and wpos (set-window-start mwin wpos)))))))
 
-(autoload 'elmo-folder-list-global-flag-messages "elmo-flag")
-
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))
 
