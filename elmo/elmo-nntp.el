@@ -1127,27 +1127,27 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	numbers))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
-      (let* ((key-date (elmo-date-get-datevec (elmo-filter-value condition)))
-	     (key-datestr (elmo-date-make-sortable-string key-date))
+      (let* ((specified-date (elmo-date-make-sortable-string
+			      (elmo-date-get-datevec (elmo-filter-value
+						      condition))))
 	     (since (string= "since" search-key))
-	     result)
+	     field-date  result)
 	(if (eq (elmo-filter-type condition) 'unmatch)
 	    (setq since (not since)))
 	(setq result
 	      (delq nil
 		    (mapcar
 		     (lambda (pair)
+		       (setq field-date
+			     (elmo-date-make-sortable-string
+			      (timezone-fix-time
+			       (cdr pair)
+			       (current-time-zone) nil)))
 		       (if (if since
-			       (string< key-datestr
-					(elmo-date-make-sortable-string
-					 (timezone-fix-time
-					  (cdr pair)
-					  (current-time-zone) nil)))
-			     (not (string< key-datestr
-					   (elmo-date-make-sortable-string
-					    (timezone-fix-time
-					     (cdr pair)
-					     (current-time-zone) nil)))))
+			       (or (string= specified-date field-date)
+				   (string< specified-date field-date))
+			     (string< field-date
+				      specified-date))
 			   (car pair)))
 		     (elmo-nntp-retrieve-field spec "date" from-msgs))))
 	(if from-msgs

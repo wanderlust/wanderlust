@@ -36,6 +36,9 @@ check:
 test:
 	$(EMACS) $(FLAGS) -l WL-MK -f test-wl $(LISPDIR) $(PIXMAPDIR)
 
+update-version:
+	$(EMACS) $(FLAGS) -l WL-MK -f update-version $(LISPDIR) $(PIXMAPDIR)
+
 install-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package $(LISPDIR) $(PIXMAPDIR)
 

@@ -816,22 +816,30 @@ Return value is a cons cell of (STRUCTURE . REST)"
 			 (length (memq number number-list)))
 		      (string-to-int (elmo-filter-value condition)))))
      ((string= (elmo-filter-key condition) "since")
-      (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
+      (let* ((date (elmo-date-get-datevec (elmo-filter-value condition)))
+	     (field-date (timezone-make-date-sortable
+			  (timezone-fix-time
+			   (std11-field-body "date")
+			   (current-time-zone) nil)))
+	     (specified-date (timezone-make-sortable-date
+			      (aref date 0)
+			      (aref date 1)
+			      (aref date 2)
+			      (timezone-make-time-string
+			       (aref date 3)
+			       (aref date 4)
+			       (aref date 5)))))
 	(setq result
-	      (string<
-	       (timezone-make-sortable-date (aref date 0)
-					    (aref date 1)
-					    (aref date 2)
-					    (timezone-make-time-string
-					     (aref date 3)
-					     (aref date 4)
-					     (aref date 5)))
-	       (timezone-make-date-sortable (std11-field-body "date"))))))
+	      (or (string= field-date specified-date)
+		  (string< specified-date field-date)))))
      ((string= (elmo-filter-key condition) "before")
       (let ((date (elmo-date-get-datevec (elmo-filter-value condition))))
 	(setq result
 	      (string<
-	       (timezone-make-date-sortable (std11-field-body "date"))
+	       (timezone-make-date-sortable
+		(timezone-fix-time
+		 (std11-field-body "date")
+		 (current-time-zone) nil))
 	       (timezone-make-sortable-date (aref date 0)
 					    (aref date 1)
 					    (aref date 2)

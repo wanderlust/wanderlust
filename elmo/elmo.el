@@ -1278,16 +1278,7 @@ If update process is interrupted, return nil."
 			      (length new-list)))
 		     (setq diff-2 (elmo-list-diff (car diff) new-list)))
 	    (elmo-msgdb-append-to-killed-list folder (car diff-2)))
-	  ;; Don't delete important marked messages.
-	  (setq delete-list
-		(if (eq (elmo-folder-type-internal folder) 'mark)
-		    (cadr diff)
-		  (elmo-delete-if
-		   (lambda (x)
-		     (and (setq mark (cadr (assq x mark-alist)))
-			  (string= mark important-mark)))
-		   ;; delete message list
-		   (cadr diff))))
+	  (setq delete-list (cadr diff))
 	  (if (or (equal diff '(nil nil))
 		  (equal diff '(nil))
 		  (and (eq (length (car diff)) 0)

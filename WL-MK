@@ -141,6 +141,26 @@
   (config-wl-pixmap-dir)
   (princ "\n"))
 
+(defun update-version ()
+  "Update version number of documents."
+  (config-wl-package)
+  (load-file "elmo/elmo-version.el")
+  (let ((version (mapconcat
+		  'number-to-string
+		  (product-version (product-find 'elmo-version))
+		  ".")))
+    (princ (concat "Update version number to " version "\n"))
+    ;; generate version.tex
+    (with-temp-buffer
+      (insert "\\def\\versionnumber{" version "}\n")
+      (write-region (point-min) (point-max) (expand-file-name
+					     "version.tex" "doc")))
+    ;; generate version.texi
+    (with-temp-buffer
+      (insert "@set VERSION " version "\n")
+      (write-region (point-min) (point-max) (expand-file-name
+					     "version.texi" "doc")))))
+
 (defun test-wl ()
   "Run test suite for developer."
   (config-wl-package)
