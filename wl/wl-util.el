@@ -536,9 +536,11 @@ that `read' can handle, whenever this is possible."
     (with-current-buffer wl-current-summary-buffer
       (or wl-message-buffer
 	  (and (wl-summary-message-number)
-	       (car (wl-message-buffer-display wl-summary-buffer-elmo-folder
-					       (wl-summary-message-number)
-					       nil nil)))))))
+	       (car (wl-message-buffer-display
+		     wl-summary-buffer-elmo-folder
+		     (wl-summary-message-number)
+		     wl-summary-buffer-display-mime-mode
+		     nil nil)))))))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function
