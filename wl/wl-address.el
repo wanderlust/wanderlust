@@ -46,6 +46,7 @@
 (defvar wl-address-list nil)
 (defvar wl-address-completion-list nil)
 (defvar wl-address-petname-hash nil)
+(defvar wl-address-enable-strict-loading t)
 
 (defvar wl-address-ldap-search-hash nil)
 
@@ -288,27 +289,32 @@ Matched address lists are append to CL."
       (setq addr-tuple (car address-list))
       (setq cl
 	    (cons
-	     (cons (nth 0 addr-tuple)
-		   (if (or (string= (nth 2 addr-tuple) "")
-			   (string-match ".*:.*;$" (nth 0 addr-tuple)))
-		       (nth 0 addr-tuple)
-		     (concat
-		      (wl-address-quote-specials
-		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
+	     (wl-address-make-completion-entry 0 addr-tuple)
 	     cl))
       ;; nickname completion.
-      (setq cl
-	    (cons
-	     (cons (nth 1 addr-tuple)
-		   (if (or (string= (nth 2 addr-tuple) "")
-			   (string-match ".*:.*;$" (nth 0 addr-tuple)))
-		       (nth 0 addr-tuple)
-		     (concat
-		      (wl-address-quote-specials
-		       (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">")))
-	     cl))
+      (if wl-address-enable-strict-loading
+	  (unless (or (equal (nth 1 addr-tuple) (nth 0 addr-tuple))
+		      ;; already exists
+		      (assoc (nth 1 addr-tuple) cl))
+	    (setq cl
+		  (cons
+		   (wl-address-make-completion-entry 1 addr-tuple)
+		   cl)))
+	(setq cl
+	      (cons
+	       (wl-address-make-completion-entry 1 addr-tuple)
+	       cl)))
       (setq address-list (cdr address-list)))
     cl))
+
+(defun wl-address-make-completion-entry (index addr-tuple)
+  (cons (nth index addr-tuple)
+	(if (or (string= (nth 2 addr-tuple) "")
+		(string-match ".*:.*;$" (nth 0 addr-tuple)))
+	    (nth 0 addr-tuple)
+	  (concat
+	   (wl-address-quote-specials
+	    (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))))
 
 (defun wl-complete-field-body-or-tab ()
   (interactive)

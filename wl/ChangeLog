@@ -1,3 +1,12 @@
+2002-11-01  Tomotaka SUWA  <cooper@saitama.fujimic.fujisankei-g.co.jp>
+
+	* wl-address.el (wl-address-make-completion-entry): Extracted from
+	`wl-address-make-completion-list'.
+	(wl-address-enable-strict-loading): New variable.
+	(wl-address-make-completion-list): Revive petname duplication
+	inquiry, and enable it if `wl-address-enable-strict-loading'.
+	(Note: this should be fixed in future. Ref: [wl:10773],[wl:10455])
+
 2002-10-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-get-original-buffer): Avoid
