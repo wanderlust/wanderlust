@@ -1,3 +1,8 @@
+2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.4.0.
+	* wl-version.el (wl-version): Changed codename.
+
 2000-11-06  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-cancel-message): Fetch again if no Newsgroups.

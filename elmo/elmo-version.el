@@ -35,7 +35,7 @@
 
 ;; product-define in the first place
 (product-provide 'elmo-version
-  (product-define "ELMO" nil '(2 3 93)))
+  (product-define "ELMO" nil '(2 4 0)))
 
 ;; For APEL 10.2 or earlier.
 (defun-maybe product-version-as-string (product)
