@@ -1,3 +1,16 @@
+2001-07-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-clear): New method.
+	(elmo-folder-clear): Define.
+	(elmo-folder-synchronize): Call `elmo-folder-clear'.
+
+	* elmo-shimbun.el (elmo-folder-check): Rewrite.
+	(elmo-folder-clear): Define.
+
+	* elmo-map.el (elmo-folder-clear): Define.
+
+	* elmo-version.el (elmo-version): Up to 2.7.1.
+
 2001-06-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-synchronize): Return list of nil when no

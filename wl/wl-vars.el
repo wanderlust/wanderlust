@@ -105,8 +105,6 @@
   (and wl-on-mule (or wl-on-xemacs
 		      (> emacs-major-version 19))))
 
-(require 'elmo-vars)
-
 (eval-when-compile
   (defun-maybe locate-data-directory (a)))
 
@@ -733,9 +731,12 @@ Default is for 'followup-to-me'."
   :type '(repeat string)
   :group 'wl-summary)
 
-(defcustom wl-summary-fix-timezone "JST"
-  "Non-nil forces to fix timezone of summary date."
-  :type 'string
+(defcustom wl-summary-fix-timezone nil
+  "*Time zone of the date string in summary mode. 
+If nil, it is adjust to the default time zone information
+\(system's default time zone or environment variable TZ\)."
+  :type '(choice (const :tag "Default time zone" nil)
+		 string)
   :group 'wl-summary)
 
 (defcustom wl-summary-default-score 0
@@ -1451,7 +1452,12 @@ every intervals specified by wl-biff-check-interval."
   :type 'integer
   :group 'wl-highlight)
 
-(defcustom wl-biff-state-indicator-on "[〒]"
+(defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
+					       (not (featurep 'mule)))
+					  "[Mail]"
+					(decode-coding-string
+					 (read "\"[\e$B\\\")\e(B]\"")
+					 'iso-2022-jp)) ; Youbin mark
   "String used to show biff status ON."
   :type 'string
   :group 'wl-highlight)
