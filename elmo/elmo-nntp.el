@@ -712,10 +712,11 @@ Don't cache if nil.")
 	(while extras
 	  (setq ext (downcase (car extras)))
 	  (when (setq field-index (cdr (assoc ext elmo-nntp-overview-index)))
-	    (setq field (aref ov-entity field-index))
-	    (when (eq field-index 8) ;; xref
-	      (setq field (elmo-msgdb-remove-field-string field)))
-	    (setq extra (cons (cons ext field) extra)))
+            (when (> (length ov-entity) field-index)
+	      (setq field (aref ov-entity field-index))
+	      (when (eq field-index 8) ;; xref
+		(setq field (elmo-msgdb-remove-field-string field)))
+              (setq extra (cons (cons ext field) extra))))
 	  (setq extras (cdr extras)))
 	(setq overview
 	      (elmo-msgdb-append-element

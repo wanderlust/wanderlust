@@ -1,3 +1,8 @@
+2001-12-07  Mito <mito@mxa.nes.nec.co.jp>
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string):
+	Check number of overview fields.
+
 2001-12-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-confirm-appends): Changed message.
