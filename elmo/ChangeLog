@@ -1,5 +1,10 @@
 2000-08-12  Kenichi OKADA <okada@opaopa.org>
 
+	* elmo-maildir.el (elmo-maildir-delete-folder): Set argument of the
+	function `error'.
+
+2000-08-12  Kenichi OKADA <okada@opaopa.org>
+
 	* elmo-pop3.el (elmo-pop3-get-connection): Add `signal'.
 
 2000-08-08  Yuuichi Teranishi  <teranisi@gohome.org>

@@ -414,11 +414,11 @@ file name for maildir directories."
 	    (lambda (dir)
 	      (setq dir (expand-file-name dir basedir))
 	      (if (not (file-directory-p dir))
-		  (error)
+		  (error nil)
 		(elmo-delete-directory dir t))))
 	   '("new" "cur" "tmp" "."))
 	  t)
-      (error))))
+      (error nil))))
 
 (defun elmo-maildir-search (spec condition &optional from-msgs msgdb)
   (save-excursion
