@@ -23,7 +23,7 @@
 +queue
 
 ## 重要マーク `$' のついたメッセージをまとめる
-'mark
+'flag/important
 
 ## MH フォルダ
 +inbox
