@@ -1,5 +1,7 @@
 2001-11-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* check-base64.el (toplevel): Remove (require 'wl).
+
 	* check-modules.el (check-modules-flim-mime-entity)
 	(check-modules-flim-mime-content-information)
 	(check-modules-flim-encoded-word)

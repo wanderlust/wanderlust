@@ -1,5 +1,4 @@
 (require 'lunit)
-(require 'wl)
 
 (luna-define-class check-base64 (lunit-test-case))
 
