@@ -1,3 +1,8 @@
+2004-04-03  Colin Rafferty  <colin.rafferty@morganstanley.com>
+
+	* wl-highlight.el (wl-highlight-message): Change to strict regexp
+	for the separator line and quote mail-header-separator.
+
 2004-04-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el (wl-message-check-spam): Fixed problem no display

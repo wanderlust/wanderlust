@@ -1162,7 +1162,7 @@ interpreted as cited text.)"
 	    ;; If this search fails then the narrowing performed above
 	    ;; is sufficient
 	    (if (re-search-forward (format
-				    "^$\\|%s"
+				    "^\\(%s\\)?$"
 				    (regexp-quote mail-header-separator))
 				   nil t)
 		(narrow-to-region (point-min) (match-beginning 0)))
@@ -1196,7 +1196,7 @@ interpreted as cited text.)"
 	  (let (prefix prefix-face-alist pair end)
 	    (while (not (eobp))
 	      (cond
-	       ((looking-at mail-header-separator)
+	       ((looking-at (concat "^" (regexp-quote mail-header-separator) "$"))
 		(put-text-property (match-beginning 0) (match-end 0)
 				   'face 'wl-highlight-header-separator-face)
 		(goto-char (match-end 0)))
