@@ -248,17 +248,11 @@
 
 (defun wl-folder-buffer-search-entity (folder &optional searchname)
   (let ((search (or searchname (wl-folder-get-petname folder)))
-	case-fold-search
-	result)
-    (catch 'found
-      (while (setq result
-		   (re-search-forward
-		    (concat
-		     "^[ \t]*"
-		     (regexp-quote search) ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+")
-		    nil t))
-	(when (string= (wl-folder-get-entity-from-buffer) folder)
-	  (throw 'found result))))))
+	case-fold-search)
+    (re-search-forward
+     (concat
+      "^[ \t]*"
+      (regexp-quote search) ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+") nil t)))
 
 (defsubst wl-folder-get-folder-name-by-id (entity-id &optional hashtb)
   (and (numberp entity-id)

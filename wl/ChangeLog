@@ -1,7 +1,3 @@
-2004-12-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
-
-	* wl-folder.el (wl-folder-buffer-search-entity): Check real name.
-
 2004-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-smtp-authenticate-realm): New user option.

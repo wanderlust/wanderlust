@@ -1493,8 +1493,8 @@ Example:
 @item
 Date filter: @samp{since:@var{date}}, @samp{before:@var{date}}
 
-since: only messages arrived since @var{date} are picked (@var{date} is included).
-before: only messages arrived before @var{date} are picked (@var{date} is not included).
+since: only messages arrived since @var{date} are picked.
+before: only messages arrived before @var{date} are picked.
 
 You can specify following as @var{date}.
 
@@ -2637,7 +2637,7 @@ message has empty subject field.
 @subsection Temporary Marks
 @cindex Mark, Temporary
 
-There are seven temporary marks,
+There are four temporary marks,
 @samp{*}, @samp{d}, @samp{D}, @samp{o}, @samp{O}, @samp{i} and @samp{~}.
 Temporary marks indicates message operations.
 
@@ -2678,8 +2678,8 @@ Your answer is printed in the summary line.
 
 @subsection Persistent Marks
 
-There are ten persistent marks, @samp{!}, @samp{N}, @samp{n}, @samp{U},
-@samp{u}, @samp{A}, @samp{a}, @samp{F}, @samp{f} and @samp{$}.
+There are five persistent marks, @samp{!}, @samp{N}, @samp{n}, @samp{U},
+@samp{u}, @samp{A}, @samp{a} and @samp{$}.
 
 The persistent mark indicates the message's status and it is saved.
 Each persistent mark indicates:
@@ -2702,12 +2702,7 @@ message with @samp{!} is not cached yet.
 It is already replied message.
 @item a
 It is already replied message. It differs from @samp{A} that message
-with @samp{a} is already cached.
-@item F
-It is already forwarded message.
-@item f
-It is already forwarded message. It differs from @samp{F} that message
-with @samp{f} is already cached.
+with @samp{u} is already cached.
 @item $
 It is a message with some global flag.  It is convenient to put this
 mark on the messages to remember (If you want to remember to write a
@@ -2721,10 +2716,10 @@ If the message is read and cached (or local message),there are no
 persistent mark.
 @end table
 
-@samp{N}, @samp{U}, @samp{!}, @samp{A}, @samp{F} indicates that the
-message have no cache.  Messages with the marks other than these, you
-can read them in the offline status even they are in the IMAP folder or
-netnews folder.
+@samp{N}, @samp{U}, @samp{!}, @samp{A} indicates that the message have
+no cache.  Messages with the marks other than these, you can read them
+in the offline status even they are in the IMAP folder or netnews
+folder.
 
 Among messages with persistent marks, ones with marks specified by 
 @code{wl-summary-expire-reserve-marks} are excluded from the expiration
@@ -3007,19 +3002,8 @@ An example follows.
 @end group
 @end lisp
 
-Where the number set the column number of the field. If negative value,
-the column is filled from right. If the number begins with @samp{0},
-@samp{0} is used for filling columns instead of @samp{ }.
-
-Example:
-
-@example
-@group
-%5n   -> `1    '
-%-05n -> `00001'
-@end group
-@end example
-
+Where the number set the column number of the field (for negative value,
+filled from right)
 
 Major control strings defined by @code{wl-summary-line-format-spec-alist}
 are displayed in the following list.
@@ -3027,8 +3011,6 @@ are displayed in the following list.
 @example
 @group
 %n  message number
-%T  temporary mark
-%P  persistent mark
 %Y  year
 %M  month
 %D  day
@@ -3043,15 +3025,14 @@ are displayed in the following list.
 %S  size
 %c  +number-of-children: (display only for opened thread)
 %C  [+number-of-children] (display only for opened thread)
-%#  mailing list information (`(' ML-name [ ` ' ML-number ] `)')
-%l  number in the mailing list
-%@@ `@@' only if the first MIME part is multipart/mixed
-%~  ` ' only if previous column is empty
+%T  temporary mark (mandatory)
+%P  persistent mark (mandatory)
 @end group
 @end example
 
-The temporary mark (@samp{%T}) and persistent mark (@samp{%P}) must
-appear at the constant column. For example, if you specify @samp{%T} or
+@code{wl-summary-line-format} must contain temporary mark (@samp{%T})
+and persistent mark (@samp{%P}). Furthermore, these marks must appear at
+the constant column. For example, if you specify @samp{%T} or
 @samp{%P} after the @samp{%t}, which changes its length by thread
 position, marks are not treated correctly.
 
@@ -3191,13 +3172,10 @@ Display the previous page of the message at the current cursor point.
 
 @item @key{RET}
 @kindex @key{RET} (Summary)
-@findex wl-summary-enter-handler
+@findex wl-summary-next-line-content
 Display the next line of the message at the current cursor point.
-Display the message at the current cursor point if it is not displayed
-yet.  (@code{wl-summary-next-line-content}) If prefix argument is
-specified, message is scrolled up by one line.
-(@code{wl-summary-prev-line-content}) If prefix argument is numeric,
-cursor is jumped to the message with specified number.
+Display the message at the current cursor point if it is not displayed yet.
+(@code{wl-summary-next-line-content})
 
 @item -
 @itemx M-@key{RET}
@@ -3570,10 +3548,6 @@ Jump to the message which is displayed last.
 @item ?
 @kindex ? (Summary)
 Put @samp{*} mark on the messages that satisfies the specified condition.
-If messages already have @samp{*} mark, new @samp{*} marks are overridden.
-If prefix argument is specified, current @samp{*} marks are removed and
-new @samp{*} marks are appended.
-
 @findex wl-summary-pick
 (@code{wl-summary-pick})
 
@@ -4786,9 +4760,6 @@ adjust the window size by @code{wl-template-buffer-lines}.
 If @code{wl-template-visible-select} is @code{nil}, you should type the
 name of the template in the mini buffer.
 
-If @code{wl-template-select} is executed with prefix argument,
-inversed value of @code{wl-template-visible-select} is used.
-
 As shown in the example in @code{wl-draft-config-alist}, you can select
 @samp{default} template by writing:
 
@@ -5432,15 +5403,12 @@ later) is non-nil, you can following operations:
 * Re-file and Copy queue::      Re-file and Copy (IMAP4)
 * Creation of Folders::         Create Folders off-line (IMAP4)
 * Marking::                     Mark (IMAP4)
-* Pre-fetching Reservations::   Pre-fetch
+* Pre-fetching Reservations::   Pre-fetch (IMAP4, NNTP)
 @end menu
 
 As soon as Wanderlust becomes on-line, such operations invoked off-line
 are reflected in the servers via network.
 
-If the variable @code{elmo-enable-disconnected-operation} is @code{nil},
-these off-line operations are not executed and causes an error on
-re-file or copy operations.
 
 @node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
 @subsection Transmission of Messages
@@ -5491,12 +5459,23 @@ are also reflected in the servers when Wanderlust becomes on-line.
 
 
 @node Pre-fetching Reservations,  , Marking, Enable Operations
-@subsection Pre-fetching
+@subsection Pre-fetching (IMAP4, NNTP)
 
-You can make reservations for pre-fetching messages in networking
-folders (IMAP, NNTP, POP3, shimbun).  Reserved messages are marked with
-@samp{u} but not cached yet.  When Wanderlust becomes on-line, they are
-pre-fetched from servers.
+You can make reservations for pre-fetching messages in IMAP or NNTP
+folders.  Reserved messages are marked with @samp{!} but not cached
+yet.  When Wanderlust becomes on-line, they are pre-fetched from
+servers.
+
+If the variable @code{elmo-enable-disconnected-operation} is @code{nil},
+these off-line operations for IMAP4 and NNTP do not take place, and
+off-line re-file, copy or suchlike simply results in error.
+
+Because off-line operations use cache files, it is a bad idea to erase
+them by hand; it may cause Wanderlust to malfunction.
+
+If you want to remove caches, be sure to execute @kbd{M-x
+elmo-cache-expire-by-size}.  @code{elmo-cache-expire-by-size} does not
+remove caches for messages relevant to off-line operations.
 
 
 @node Plugged Mode, Off-line State settings, Enable Operations, Disconnected Operations
@@ -5618,8 +5597,8 @@ manually, press @kbd{F} in the folder mode.
 
 @item elmo-enable-disconnected-operation
 @vindex elmo-enable-disconnected-operation
-The initial setting is @code{t}.  Controls off-line operations regarding
-networking folders.  If non-nil, off-line operations are carried out.
+The initial setting is @code{t}.  Controls off-line operations
+regarding IMAP4.  If non-nil, off-line operations are carried out.
 
 @item elmo-lost+found-folder
 @vindex elmo-lost+found-folder
@@ -5984,9 +5963,10 @@ The initial setting is the list below.
 
 @lisp
 @group
-(list wl-summary-flag-mark
+(list wl-summary-important-mark
       wl-summary-new-uncached-mark
       wl-summary-new-cached-mark
+      wl-summary-unread-mark
       wl-summary-unread-uncached-mark
       wl-summary-unread-cached-mark)
 @end group
@@ -8720,22 +8700,20 @@ But by writing following line, you may use the old format of the msgdb as it was
 @end group
 @end lisp
 
-With the default setup, the old msgdb format is converted to the new
-format automatically.  You may change this behavior by writing following
-lines in @file{~/.wl}.
+With the default setup,
+the old msgdb format will be used as it was. 
+You may convert the format 
+by writing following lines in @file{~/.wl} or so.
 
 @lisp
 @group
 ;; @r{If the format of msgdb is different from} @code{elmo-msgdb-default-type},
 ;; @r{the format will be converted automatically when}
-;; @r{the msgdb is being loaded (default).}
+;; @r{the msgdb is being loaded.}
 (setq elmo-msgdb-convert-type 'auto)
 
 ;; @r{Convert msgdb when hitting @kbd{s all} in Summary mode}
 (setq elmo-msgdb-convert-type 'sync)
-
-;; @r{Inhibit conversion}
-(setq elmo-msgdb-convert-type nil)
 @end group
 @end lisp
 
@@ -8744,10 +8722,7 @@ But you will have following limitations.
 
 @enumerate
 @item
-You cannot use forwarded mark (@samp{F}, @samp{f}).
-@item
-You may only use @samp{important} flag. The other global flags may not
-be available.
+You may only use @samp{important} flag. The other flags may not be available.
 @end enumerate
 
 @subsection Changes from @samp{'mark} folder to  @samp{'flag}.
