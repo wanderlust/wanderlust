@@ -498,7 +498,7 @@ file name for maildir directories."
     (when (file-exists-p file)
       (insert-file-contents-as-binary file)
       (unless unseen
-	(elmo-map-folder-set-flag folder location 'read))
+	(elmo-map-folder-set-flag folder (list location) 'read))
       t)))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-maildir-folder))
