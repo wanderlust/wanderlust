@@ -1422,7 +1422,7 @@ Nil means unlimited"
   :group 'wl-pref)
 
 (defcustom wl-generate-mailer-string-function 'wl-generate-user-agent-string
-  "A function to create X-Mailer field string ."
+  "A function for creating User-Agent field string."
   :type 'function
   :group 'wl-draft)
 
