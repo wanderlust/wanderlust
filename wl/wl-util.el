@@ -539,11 +539,12 @@ that `read' can handle, whenever this is possible."
 (defmacro wl-concat-list (list separator)
   (` (mapconcat 'identity (delete "" (delq nil (, list))) (, separator))))
 
-(defmacro wl-current-message-buffer ()
-  (` (save-excursion
-       (if (buffer-live-p wl-current-summary-buffer)
-	   (set-buffer wl-current-summary-buffer))
-       wl-message-buffer)))
+(defun wl-current-message-buffer ()
+  (when (buffer-live-p wl-current-summary-buffer)
+    (with-current-buffer wl-current-summary-buffer
+      (car (wl-message-buffer-display wl-summary-buffer-elmo-folder
+				      (wl-summary-message-number)
+				      'mime)))))
 
 (defmacro wl-kill-buffers (regexp)
   (` (mapcar (function

@@ -4155,7 +4155,11 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 	  (wl-message-redisplay fld num 'as-is
 				(string= (elmo-folder-name-internal fld)
 					 wl-draft-folder))
-	  (wl-summary-mark-as-read num)
+	  (ignore-errors
+	    (if (member (elmo-message-mark fld num)
+			(elmo-msgdb-unread-marks))
+		(wl-summary-mark-as-read num); no-folder-mark)
+	      (wl-summary-update-persistent-mark)))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))

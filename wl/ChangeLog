@@ -1,3 +1,14 @@
+2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-current-message-buffer): Define as function;
+	Don't use the value of wl-messge-buffer.
+
+	* wl-summary.el (wl-summary-redisplay-no-mime-internal): Update
+	persistent mark.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): If there's
+	no current message, cause an error.
+
 2003-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-set-message-modified): Use

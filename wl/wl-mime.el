@@ -59,8 +59,11 @@ has Non-nil value\)"
 		     (function wl-draft-yank-to-draft-buffer))))
 	(mime-preview-following-method-alist
 	 (list (cons 'wl-original-message-mode
-		     (function wl-draft-yank-to-draft-buffer)))))
-    (if (get-buffer (wl-current-message-buffer))
+		     (function wl-draft-yank-to-draft-buffer))))
+	(message-buffer (wl-current-message-buffer)))
+    (unless message-buffer
+      (error "No message."))
+    (if (get-buffer message-buffer)
 	(save-excursion
 	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction

@@ -1,4 +1,8 @@
-2003-08-04  Yuuichi Teranishi  <teranisi@gohome.org>
+2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-mime.el (elmo-mime-message-display): Display message entirely
+	if folder length is zero.
+	(elmo-mime-display-as-is): Ditto.
 
 	* elmo-filter.el (elmo-folder-set-message-modified): Define.
 
