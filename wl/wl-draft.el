@@ -1303,11 +1303,12 @@ Derived from `message-save-drafts' in T-gnus."
   (let ((bufname (read-buffer (format "Kill buffer: (default %s) "
 				      (buffer-name))))
 	wl-draft-use-frame)
-    (if (or (not bufname)
+    (when (or (not bufname)
 	    (string-equal bufname "")
 	    (string-equal bufname (buffer-name)))
-	(wl-draft-save-and-exit)
-      (kill-buffer bufname))))
+      (setq bufname (current-buffer))
+      (wl-draft-hide bufname))
+    (kill-buffer bufname)))
 
 (defun wl-draft-save-and-exit ()
   "Save current draft and exit current draft mode."
