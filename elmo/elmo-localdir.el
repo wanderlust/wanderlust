@@ -227,15 +227,30 @@
    src-folder numbers &optional same-number)
   (if (elmo-folder-message-file-p src-folder)
       (let ((dir (elmo-localdir-folder-directory-internal folder))
+	    (table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
 	    (succeeds numbers)
-	    (next-num (1+ (car (elmo-folder-status folder)))))
+	    (next-num (1+ (car (elmo-folder-status folder))))
+	    mark flag)
 	(while numbers
+	  (setq mark (elmo-message-mark src-folder (car numbers))
+		flag (cond
+		      ((null mark) nil)
+		      ((member mark (elmo-msgdb-answered-marks))
+		       'answered)
+		      ;;
+		      ((not (member mark (elmo-msgdb-unread-marks)))
+		       'read)))
 	  (elmo-copy-file
 	   (elmo-message-file-name src-folder (car numbers))
 	   (expand-file-name
 	    (int-to-string
 	     (if same-number (car numbers) next-num))
 	    dir))
+	  (elmo-flag-table-set table
+			       (elmo-message-field
+				src-folder (car numbers)
+				'message-id)
+			       flag)
 	  (elmo-progress-notify 'elmo-folder-move-messages)
 	  (if (and (setq numbers (cdr numbers))
 		   (not same-number))
@@ -244,6 +259,8 @@
 			;; MDA is running.
 			(1+ (car (elmo-folder-status folder)))
 		      (1+ next-num)))))
+	(when (elmo-folder-persistent-p folder)
+	  (elmo-flag-table-save (elmo-folder-msgdb-path folder) table))
 	succeeds)
     (luna-call-next-method)))
 

@@ -1,3 +1,8 @@
+2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir.el (elmo-folder-append-messages): Treat flags for
+	local file messages.
+
 2003-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-generic-folder-append-messages): Set flag as nil
