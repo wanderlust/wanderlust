@@ -4108,11 +4108,12 @@ If ARG, exit virtual folder."
   (let ((wl-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
-	(wl-datevec (timezone-fix-time
-		     (elmo-msgdb-overview-entity-get-date 
-		      wl-message-entity)
-		     nil
-		     wl-summary-fix-timezone))
+	(wl-datevec (or (ignore-errors (timezone-fix-time
+					(elmo-msgdb-overview-entity-get-date 
+					 wl-message-entity)
+					nil
+					wl-summary-fix-timezone))
+			(make-vector 5 0)))
 	line mark)
     (if (and wl-thr-indent-string
 	     wl-summary-indent-length-limit

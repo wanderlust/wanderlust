@@ -1,5 +1,8 @@
 2002-05-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-create-line): Ignore errors while
+	timezone-fix-time.
+
 	* wl-acap.el (wl-acap-create-folder-entity): Bind unbound variable.
 
 	* wl-summary.el (wl-summary-sync-update): Ditto.
