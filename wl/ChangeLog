@@ -1,3 +1,8 @@
+2000-09-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-biff-check-folder-async): Set
+	`wl-biff-check-folders-running' even when it is not an IMAP folder.
+
 2000-09-26  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	NOTE: This change should be fixed in the future.

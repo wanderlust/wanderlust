@@ -1039,6 +1039,7 @@ This function is imported from Emacs 20.7."
 		      notify-minibuf))
 	  (elmo-folder-diff-async folder))
       (wl-biff-notify (car (wl-folder-check-one-entity folder))
-		      notify-minibuf))))
+		      notify-minibuf)
+      (setq wl-biff-check-folders-running nil))))
 
 ;;; wl-util.el ends here
