@@ -1,20 +1,3 @@
-2000-12-15   Daiki Ueno  <ueno@unixuser.org>
-
-	* elmo-net.el: Add autoload settings for `starttls-negotiate',
-	`sasl-find-mechanism', `sasl-make-client', `sasl-mechanism-name',
-	`sasl-next-step', `sasl-step-data' and `sasl-step-set-data'; bind
-	`sasl-mechanisms'.
-
-	* elmo-imap4.el: Don't require `sasl'; remove autoload settings
-	for `starttls-open-stream' and `starttls-negotiate'.
-
-	* elmo-nntp.el: Remove autoload settings for
-	`starttls-open-stream' and `starttls-negotiate'.
-
-	* elmo-pop3.el: Don't require `sasl'; remove autoload settings
-	for `starttls-open-stream' and `starttls-negotiate'; don't enclose
-	`luna-define-class' with `eval-and-compile'.
-
 2000-12-01  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-util.el (elmo-read-search-condition-internal):
