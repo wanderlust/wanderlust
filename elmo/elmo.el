@@ -1176,7 +1176,7 @@ FIELD is a symbol of the field."
 							   section unread)
   (let ((cache-path (elmo-fetch-strategy-cache-path strategy))
 	(method-priorities
-	 (cond ((eq (elmo-fetch-strategy-use-cache strategy) 'meybe)
+	 (cond ((eq (elmo-fetch-strategy-use-cache strategy) 'maybe)
 		'(entity cache))
 	       ((elmo-fetch-strategy-use-cache strategy)
 		'(cache entity))
