@@ -1931,8 +1931,8 @@ POLICY is copy or move."
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-folder-hierarchy-access-folders '("-" "-alt")
-  "*Access group folders to make hierarchy structure."
+(defcustom wl-folder-hierarchy-access-folders '("^-$" "^-alt$")
+  "*Access group REGEXPs to make hierarchy structure."
   :type '(repeat (string :tag "Folder"))
   :group 'wl-folder)
 

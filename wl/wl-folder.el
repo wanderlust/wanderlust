@@ -1581,7 +1581,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(when (setq new-flist
 			    (elmo-folder-list-subfolders
 			     (wl-folder-get-elmo-folder (car entity))
-			     (wl-string-member
+			     (wl-string-match-member
 			      (car entity)
 			      wl-folder-hierarchy-access-folders)))
 		  (setq update-flist

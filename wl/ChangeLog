@@ -1,3 +1,11 @@
+2002-02-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-update-newest): Use wl-string-match-member
+	instead of wl-match-member with wl-folder-hierarchy-access-folders.
+
+	* wl-vars.el (wl-folder-hierarchy-access-folders): Change default
+	value.
+
 2002-02-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply): If r-to-list is a function, call it;
@@ -6,7 +14,7 @@
 2002-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-send): Use mime-header-encode-method-alist
-	only if	it is bound as variable.
+	only if it is bound as variable.
 
 	* wl-mime.el (wl-draft-preview-message): Ditto.
 
