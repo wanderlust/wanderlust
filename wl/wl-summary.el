@@ -4570,7 +4570,8 @@ Return t if message exists."
       (if (wl-summary-no-mime-p folder)
 	  (wl-summary-redisplay-no-mime folder number)
 	(wl-summary-redisplay-internal folder number))
-      (set-buffer wl-message-buffer)
+      (when (buffer-live-p wl-message-buffer)
+	(set-buffer wl-message-buffer))
       nil)))
 
 (defun wl-summary-target-mark-forward (&optional arg)

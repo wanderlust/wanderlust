@@ -1,3 +1,19 @@
+2001-04-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-check-interval): New user option.
+	(elmo-shimbun-headers-cache): New internal variable.
+	(elmo-shimbun-headers-cache-header-list): New inline function.
+	(elmo-shimbun-headers-cache-set-header-list): Ditto.
+	(elmo-shimbun-headers-cache-header-hash): Ditto.
+	(elmo-shimbun-headers-cache-set-header-hash): Ditto.
+	(elmo-shimbun-headers-cache-last-check): Ditto.
+	(elmo-shimbun-headers-cache-set-last-check): Ditto.
+	(elmo-shimbun-lapse-seconds): Ditto.
+	(elmo-shimbun-headers-cache-check-p): Ditto.
+	(elmo-shimbun-get-headers): New function.
+	(elmo-folder-open-internal): Call it.
+	(elmo-quit): Define (Clear headers-cache).
+
 2001-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-folder-initialize): Fixed typo (folder->name).
