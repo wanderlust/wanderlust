@@ -1,3 +1,7 @@
+2001-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.9.0.
+
 2001-12-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-archive.el (elmo-archive-folder): Added `dir-name' slot.
