@@ -1,3 +1,10 @@
+2000-07-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el: Support @multitable.
+	(texinfo-multitable, texinfo-end-multitable,
+	texinfo-multitable-widths, texinfo-multitable-extract-row,
+	texinfo-multitable-item): New function.
+
 2000-07-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: Use fmakunbound, when broken-function
@@ -10,7 +17,7 @@
 2000-07-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: Support @image. Fix broken @uref.
-	(texinfo-format-image) New function.
+	(texinfo-format-image): New function.
 	(texinfo-format-uref): Fixed 2times parse probrem.
 
 2000-07-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
