@@ -265,16 +265,19 @@
 	    (catch 'done
 	      (while t
 		(unless (setq response (elmo-pop3-read-response process t))
+		  ;; response is NO or BAD.
 		  (signal 'elmo-authenticate-error
 			  (list (intern
 				 (concat "elmo-pop3-auth-"
 					 (downcase name))))))
 		(if (string-match "^\+OK" response)
 		    (if (sasl-next-step client step)
+			;; Bogus server?
 			(signal 'elmo-authenticate-error
 				(list (intern
 				       (concat "elmo-pop3-auth-"
 					       (downcase name)))))
+		      ;; The authentication process is finished.
 		      (throw 'done nil)))
 		(sasl-step-set-data
 		 step
