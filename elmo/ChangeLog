@@ -1,3 +1,8 @@
+2000-05-26  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-localdir.el (elmo-localdir-pack-number): Renamed
+	the local variable for a packed number self descriptively.
+
 2000-05-21  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* elmo2.el (elmo-msgdb-load): Remove elmo-msgdb-overview-hashtb.
