@@ -601,15 +601,9 @@ Return nil if no ADDRESS exists."
       (list to-list cc-list bcc-list))))
 
 (defun wl-addrmgr-apply-exec (rcpt)
-  (let ((to (nconc (nth 0 rcpt) (mapcar
-				 'cdr
-				 (cdr (assq 'to wl-addrmgr-unknown-list)))))
-	(cc (nconc (nth 1 rcpt) (mapcar
-				 'cdr
-				 (cdr (assq 'cc wl-addrmgr-unknown-list)))))
-	(bcc (nconc (nth 2 rcpt) (mapcar
-				  'cdr
-				  (cdr (assq 'bcc wl-addrmgr-unknown-list)))))
+  (let ((to (nconc (nth 0 rcpt) (cdr (assq 'to wl-addrmgr-unknown-list))))
+	(cc (nconc (nth 1 rcpt) (cdr (assq 'cc wl-addrmgr-unknown-list))))
+	(bcc (nconc (nth 2 rcpt) (cdr (assq 'bcc wl-addrmgr-unknown-list))))
 	from clist)
     (setq clist (list (cons "Bcc" (if bcc (mapconcat 'identity bcc ",\n\t")))
 		      (cons "Cc" (if cc (mapconcat 'identity cc ",\n\t")))

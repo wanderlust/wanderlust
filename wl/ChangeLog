@@ -1,5 +1,9 @@
 2001-08-21  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-addrmgr.el (wl-addrmgr-apply-exec): Fix for already-list.
+
+2001-08-21  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-addrmgr.el (wl-addrmgr-draw): Fix for already-list.
 	(wl-addrmgr-address-entry-list): Ditto.
 
