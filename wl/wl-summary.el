@@ -1082,7 +1082,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (if (or wl-summary-buffer-refile-list
 	  wl-summary-buffer-copy-list
 	  wl-summary-buffer-delete-list)
-      (if (y-or-n-p "Marks remain to be executed.  Execute them? ")
+      (if (y-or-n-p (format "Execute remaining marks in %s? "
+			    (wl-summary-buffer-folder-name)))
 	  (progn
 	    (wl-summary-exec)
 	    (if (or wl-summary-buffer-refile-list

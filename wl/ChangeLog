@@ -1,3 +1,9 @@
+2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-summary.el (wl-summary-cleanup-temp-marks): Ask execution
+	with the folder name. The question was unintelligible when it is
+	called from wl-save-status.
+
 2002-09-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-summary.el (wl-summary-save-view-cache): Avoid error on
