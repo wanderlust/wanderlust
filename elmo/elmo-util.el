@@ -32,8 +32,6 @@
 (require 'elmo-vars)
 (require 'elmo-date)
 (eval-when-compile (require 'cl))
-(require 'mcharset)
-(require 'pces)
 (require 'std11)
 (require 'eword-decode)
 (require 'utf7)
