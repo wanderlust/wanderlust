@@ -1506,8 +1506,8 @@ If update process is interrupted, return nil.")
 		(elmo-folder-process-crosspost folder)
 		0 ; no updates.
 		)
-	    (if delete-list (elmo-msgdb-delete-msgs
-			     (elmo-folder-msgdb folder) delete-list))
+	    (when delete-list
+	      (elmo-folder-detach-messages folder delete-list))
 	    (when new-list
 	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
 				      elmo-msgdb-new-mark

@@ -2,6 +2,7 @@
 
 	* elmo.el (elmo-folder-detach-messages): New method.
 	(elmo-folder-move-messages): Use it.
+	(elmo-folder-synchronize): Ditto.
 
 	* elmo-multi.el (elmo-folder-detach-messages): Define.
 
