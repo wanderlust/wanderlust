@@ -1936,8 +1936,8 @@ If optional argument is non-nil, checking is omitted."
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
 	(wl-thread-update-line-msgs (elmo-uniq-list update-list)
-				    (unless deleting-info 'no-msg)))
-      (wl-thread-cleanup-symbols msgs2)
+				    (unless deleting-info 'no-msg))
+	(wl-thread-cleanup-symbols msgs2))
       (wl-summary-count-unread 
        (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
       (wl-summary-update-modeline)
@@ -2288,10 +2288,8 @@ If optional argument is non-nil, checking is omitted."
 		      (cdr wl-summary-delayed-update))))
 	    (when (and (eq wl-summary-buffer-view 'thread)
 		       update-top-list)
-	      (message "Updating indent...")
 	      (wl-thread-update-indent-string-thread
-	       (elmo-uniq-list update-top-list))
-	      (message "Updating indent...done."))
+	       (elmo-uniq-list update-top-list)))
 	    (message "Updating thread...done.")
 	    ;;(set-buffer cur-buf)
 	    ))
@@ -2953,7 +2951,8 @@ If optional argument is non-nil, checking is omitted."
       (decode-mime-charset-region (point-min) (point-max)
 				  elmo-mime-charset)
       (when (eq mime-decode 'mime)
-	(eword-decode-region (point-min) (point-max))))))
+	(eword-decode-region (point-min) (point-max))))
+    (run-hooks 'wl-summary-insert-headers-hook)))
 
 (defun wl-summary-search-by-subject (entity overview)
   (let ((buf (get-buffer-create wl-summary-search-buf-name))
