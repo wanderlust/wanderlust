@@ -145,10 +145,10 @@
 ;;; [[ 特殊な設定 ]]
 
 ;; グループをcheckした後に未読があるフォルダのグループを自動的に開く
-(add-hook 'wl-folder-check-entity-hook
-	  '(lambda ()
-	     (wl-folder-open-unread-folder entity)
-	     ))
+;(add-hook 'wl-folder-check-entity-hook
+;	  '(lambda ()
+;	     (wl-folder-open-unread-folder entity)
+;	     ))
 
 ;; サマリ表示関数を変更する
 
@@ -204,7 +204,7 @@
 
 
 ;; 短い User-Agent: フィールドを使う
-;(setq wl-generate-mailer-string-function
+;(setq wl-generate-mailer-string-func
 ;      (function
 ;       (lambda ()
 ;	 (wl-generate-user-agent-string-1 nil))))
