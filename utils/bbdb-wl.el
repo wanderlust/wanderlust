@@ -179,8 +179,7 @@ For BBDB 2.33 or earlier."
 			      (std11-unfold-string header)))
 	    (while (and (setq structure (car structures))
 			(eq (car structure) 'mailbox))
-	      (setq fn (funcall bbdb-wl-canonicalize-full-name-function
-				(std11-full-name-string structure))
+	      (setq fn (std11-full-name-string structure)
 		    fn (and fn
 			    (with-temp-buffer ; to keep raw buffer unibyte.
 			      (elmo-set-buffer-multibyte
@@ -188,6 +187,7 @@ For BBDB 2.33 or earlier."
 			      (eword-decode-string
 			       (decode-mime-charset-string
 				fn wl-mime-charset))))
+                    fn (funcall bbdb-wl-canonicalize-full-name-function fn)
 		    ad (std11-address-string structure))
 	      ;; ignore uninteresting addresses, this is kinda gross!
 	      (when (or (not (stringp uninteresting-senders))
@@ -224,8 +224,7 @@ For BBDB 2.34 or later."
 				(std11-unfold-string header-content)))
 	      (while (and (setq structure (car structures))
 			  (eq (car structure) 'mailbox))
-		(setq fn (funcall bbdb-wl-canonicalize-full-name-function
-				  (std11-full-name-string structure))
+                (setq fn (std11-full-name-string structure)
 		      fn (and fn
 			      (with-temp-buffer ; to keep raw buffer unibyte.
 				(elmo-set-buffer-multibyte
@@ -233,6 +232,7 @@ For BBDB 2.34 or later."
 				(eword-decode-string
 				 (decode-mime-charset-string
 				  fn wl-mime-charset))))
+		      fn (funcall bbdb-wl-canonicalize-full-name-function fn)
 		      ad (std11-address-string structure))
 		;; ignore uninteresting addresses, this is kinda gross!
 		(when (or (not (stringp uninteresting-senders))
