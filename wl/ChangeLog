@@ -1,5 +1,12 @@
 2003-07-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-e21.el (wl-summary-toolbar): Follow the rename of
+	wl-summary-delete.
+	* wl-xmas.el (wl-summary-toolbar): Ditto.
+
+	* wl-action.el (wl-summary-set-mark): Don't override current
+	temp-mark.
+
 	* wl-refile.el (wl-refile-get-field-value): Fixed and simplified.
 
 2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
