@@ -316,7 +316,7 @@
 
 ;; 表示するヘッダの設定
 ;; 'wl-message-ignored-field-list' より優先される
-(setq wl-view-visible-field-list '("^Message-Id:"))
+(setq wl-message-visible-field-list '("^Message-Id:"))
 
 
 ;; X-Face を表示する (要 x-face or bitamap-mule)
