@@ -3433,8 +3433,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	     open-all)
 	(wl-thread-open-all))
     (let* ((spec (wl-summary-buffer-folder-name))
-	   (overview (elmo-msgdb-get-overview
-		      (wl-summary-buffer-msgdb)))
 	   (mark-alist (elmo-msgdb-get-mark-alist
 			(wl-summary-buffer-msgdb)))
 	   checked-dsts
@@ -3443,41 +3441,38 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (goto-line 1)
       (while (not (eobp))
 	(setq number (wl-summary-message-number))
-	(when (and (not (wl-summary-no-auto-refile-message-p number
-							     mark-alist))
-		   (setq dst
-			 (wl-folder-get-realname
-			  (wl-refile-guess-by-rule
-			   (elmo-msgdb-overview-get-entity
-			    number (wl-summary-buffer-msgdb)))))
-		   (not (equal dst spec)))
-	  (when (not (member dst checked-dsts))
-	    (wl-folder-confirm-existence (wl-folder-get-elmo-folder dst))
-	    (setq checked-dsts (cons dst checked-dsts)))
-	  (if (wl-summary-refile dst number)
-	      (incf count))
-	  (message "Marking...%d message(s)." count))
-	(if (eq wl-summary-buffer-view 'thread)
-	    ;; process invisible children.
-	    (unless (wl-thread-entity-get-opened
-		     (setq thr-entity (wl-thread-get-entity number)))
-	      (let ((messages
-		     (elmo-delete-if
-		      (function
-		       (lambda (x)
-			 (wl-summary-no-auto-refile-message-p
-			  x mark-alist)))
-		      (wl-thread-entity-get-descendant thr-entity))))
-		(while messages
-		  (when (and (setq dst
-				   (wl-refile-guess-by-rule
-				    (elmo-msgdb-overview-get-entity
-				     (car messages) (wl-summary-buffer-msgdb))))
-			     (not (equal dst spec)))
-		    (if (wl-summary-refile dst (car messages))
-			(incf count))
-		    (message "Marking...%d message(s)." count))
-		  (setq messages (cdr messages))))))
+	(dolist (number (cons number
+			      (and (eq wl-summary-buffer-view 'thread)
+				   ;; process invisible children.
+				   (not (wl-thread-entity-get-opened
+					 (setq thr-entity
+					       (wl-thread-get-entity number))))
+				   (wl-thread-entity-get-descendant
+				    thr-entity))))
+	  (when (and (not (wl-summary-no-auto-refile-message-p number
+							       mark-alist))
+		     (setq dst
+			   (wl-folder-get-realname
+			    (wl-refile-guess-by-rule
+			     (elmo-msgdb-overview-get-entity
+			      number (wl-summary-buffer-msgdb)))))
+		     (not (equal dst spec))
+		     (let ((pair (assoc dst checked-dsts))
+			   ret)
+		       (if pair
+			   (cdr pair)
+			 (setq ret
+			       (condition-case nil
+				   (progn
+				     (wl-folder-confirm-existence
+				      (wl-folder-get-elmo-folder dst))
+				     t)
+				 (error)))
+			 (setq checked-dsts (cons (cons dst ret) checked-dsts))
+			 ret)))
+	    (if (wl-summary-refile dst number)
+		(incf count))
+	    (message "Marking...%d message(s)." count)))
 	(forward-line))
       (if (eq count 0)
 	  (message "No message was marked.")

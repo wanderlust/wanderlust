@@ -1,3 +1,8 @@
+2002-04-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-auto-refile): Don't stop mark process
+	even if no folder is not created.
+
 2002-04-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-folder-mime-charset-alist): Added @2ch.
