@@ -11,6 +11,7 @@
 	(wl-summary-sort): Rewrite.
 	(wl-summary-line-list-info): Ditto.
 	(wl-summary-line-list-count): Ditto.
+	(wl-summary-refile-region): Fixed docstring.
 
 2002-06-17  Yuuichi Teranishi  <teranisi@gohome.org>
 

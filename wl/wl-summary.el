@@ -3428,7 +3428,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 
 (defun wl-summary-refile-region (beg end)
-  "Put copy mark on messages in the region specified by BEG and END."
+  "Put refile mark on messages in the region specified by BEG and END."
   (interactive "r")
   (wl-summary-refile-region-subr "refile" beg end))
 
