@@ -954,21 +954,21 @@ Optional argument ARG is repeart count."
 	 (goto-char wl-folder-buffer-cur-point))))
 
 (defun wl-folder-set-current-entity-id (entity-id)
-  (let ((buf (get-buffer wl-folder-buffer-name)))
+  (let* ((buf (get-buffer wl-folder-buffer-name))
+	 (buf-win (get-buffer-window buf)))
     (if buf
-	(save-excursion
-	  (set-buffer buf)
-	  (setq wl-folder-buffer-cur-entity-id entity-id)
-	  (setq wl-folder-buffer-cur-path (wl-folder-get-path wl-folder-entity
-							      entity-id))
-	  (wl-highlight-folder-path wl-folder-buffer-cur-path)
-	  (and wl-folder-move-cur-folder
-	       wl-folder-buffer-cur-point
-	       (goto-char wl-folder-buffer-cur-point))))
-    (if (eq (current-buffer) buf)
-	(and wl-folder-move-cur-folder
-	     wl-folder-buffer-cur-point
-	     (goto-char wl-folder-buffer-cur-point)))))
+	(save-current-buffer
+	  (save-selected-window
+	    (if buf-win
+		(select-window buf-win)
+	      (set-buffer buf))
+	    (setq wl-folder-buffer-cur-entity-id entity-id)
+	    (setq wl-folder-buffer-cur-path
+		  (wl-folder-get-path wl-folder-entity entity-id))
+	    (wl-highlight-folder-path wl-folder-buffer-cur-path)
+	    (and wl-folder-move-cur-folder
+		 wl-folder-buffer-cur-point
+		 (goto-char wl-folder-buffer-cur-point)))))))
 
 (defun wl-folder-check-current-entity ()
   "Check folder at position.

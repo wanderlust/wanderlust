@@ -2573,15 +2573,15 @@ If ARG, without confirm."
 	  (if (and interactive wl-summary-recenter)
 	      (recenter (/ (- (window-height) 2) 2))))))
     ;; set current entity-id
-    (if (and (not folder)
-	     (setq entity
-		   (wl-folder-search-entity-by-name (elmo-folder-name-internal
-						     folder)
-						    wl-folder-entity
-						    'folder)))
-	;; entity-id is unknown.
-	(wl-folder-set-current-entity-id
-	 (wl-folder-get-entity-id entity)))
+    (when (and folder
+	       (setq entity
+		     (wl-folder-search-entity-by-name
+		      (elmo-folder-name-internal folder)
+		      wl-folder-entity
+		      'folder)))
+      ;; entity-id is unknown.
+      (wl-folder-set-current-entity-id
+       (wl-folder-get-entity-id entity)))
     (when (and wl-summary-lazy-highlight
 	       wl-on-xemacs)
       (sit-for 0))

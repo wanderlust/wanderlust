@@ -3,6 +3,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 * 2.10.0 から 2.10.1 への変更点
   2.10.1 は 2.10.0 のバグ修正版です。
 
+** wl-folder-move-cur-folder が効いていなかった問題が修正されました。
+
 ** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
 
 ** wl-summary-pack-number が Maildir や shimbun フォルダで動かない
