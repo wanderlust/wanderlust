@@ -4430,14 +4430,14 @@ Non-nil $B$J$i%X%C%@$N>JN,I=<($rM-8z$K$7$^$9!#(B
 
 @menu
 * Editing Header::                      $B%X%C%@$NJT=8(B
-* Editing Message Body::                $B%a%C%;!<%8$NJT=8(B
+* Editing Message Body and Sending::    $B%a%C%;!<%8$NJT=8$HAw?.(B
 * Dynamical Message Re-arrangement::    $B%a%C%;!<%8$NF0E*$JJQ99(B
 * Template::                            $B%F%s%W%l!<%H$NA^F~(B
 * POP-before-SMTP::                     POP-before-SMTP $B$K$h$k%a!<%k$NAw?.(B
 @end menu
 
 
-@node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
+@node Editing Header, Editing Message Body and Sending, Usage of Draft Mode, Usage of Draft Mode
 @subsection $B%X%C%@$NJT=8(B
 
 $B<B:]$KAw?.A`:n$r9T$J$&$^$G$G$"$l$P!"(B@samp{--text follows this line--}
@@ -4487,8 +4487,8 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 @end table
 
 
-@node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
-@subsection $B%a%C%;!<%8$NJT=8(B
+@node Editing Message Body and Sending, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
+@subsection $B%a%C%;!<%8$NJT=8$HAw?.(B
 
 $B@bL@$9$k$^$G$b$J$$$G$9$,!"%a%C%;!<%8K\J8$NJT=8$O4pK\E*$KDL>o$NJ8>O:n@.$H(B
 $BF1MM$K9T$J$$$^$9!#K\J8$O(B @samp{--text follows this line--} $B$N9T$h$j2<$K(B
@@ -4501,10 +4501,14 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 $B$^$?!"%I%i%U%H%P%C%U%!$K$*$$$F!"(B@kbd{C-c C-x ?} $B$G%X%k%W$,;2>H$G$-$^$9!#(B
 
 $BJT=8Cf$N%I%i%U%H$r%;!<%V$9$k$H!"(B@code{wl-draft-folder} $B$G@_Dj$7$?%I%i%U(B
-$B%H%U%)%k%@$KDI2C$5$l$^$9!#(B
+$B%H%U%)%k%@$KDI2C$5$l$^$9!#(B@kbd{C-c C-z} (@code{wl-draft-save-and-exit})
+$B$K$h$j!"8e$+$iJT=8$G$-$k$h$&$K$=$l$r%;!<%V$7$?>e$G%I%i%U%H%P%C%U%!$rN%C&(B
+$B$G$-$^$9!#(B
+
+$B%a%C%;!<%8$NJT=8$,40N;$7$?$i!"(B@kbd{C-c C-c} $B$GAw?.$G$-$^$9!#(B
 
 
-@node Dynamical Message Re-arrangement, Template, Editing Message Body, Usage of Draft Mode
+@node Dynamical Message Re-arrangement, Template, Editing Message Body and Sending, Usage of Draft Mode
 @subsection $B%a%C%;!<%8$NF0E*$JJQ99(B
 @vindex wl-draft-config-alist
 @c @cindex Chage Message

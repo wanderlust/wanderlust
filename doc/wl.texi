@@ -4380,13 +4380,13 @@ Basically it is Emacs-standard mail mode.
 
 @menu
 * Editing Header::
-* Editing Message Body::
+* Editing Message Body and Sending::
 * Dynamical Message Re-arrangement::
 * Template::
 * POP-before-SMTP::
 @end menu
 
-@node Editing Header, Editing Message Body, Usage of Draft Mode, Usage of Draft Mode
+@node Editing Header, Editing Message Body and Sending, Usage of Draft Mode, Usage of Draft Mode
 @subsection Editing Message Header
 
 You can freely edit header region above @samp{--text follows this line--},
@@ -4437,8 +4437,8 @@ If non-nil, the value of this variable is inserted as a @samp{Bcc:} of
 the draft when it is prepared.
 @end table
 
-@node Editing Message Body, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
-@subsection Editing Messages
+@node Editing Message Body and Sending, Dynamical Message Re-arrangement, Editing Header, Usage of Draft Mode
+@subsection Editing Messages and Sending
 
 As a matter of course, editing message body can be performed in the same
 way as usual writing. You may write message body under
@@ -4451,9 +4451,13 @@ a MIME user interface for GNU Emacs}.
 You can also see help by @kbd{C-c C-x ?} in draft buffer.
 
 If you save the draft buffer you are editing, it is appended to the
-folder specified by @code{wl-draft-folder}.
+folder specified by @code{wl-draft-folder}.  You can leave draft buffer
+after storing it for future editing by @kbd{C-c C-z} (@code{wl-draft-save-and-exit}).
 
-@node Dynamical Message Re-arrangement, Template, Editing Message Body, Usage of Draft Mode
+If you have finished editing, you can send message by @kbd{C-c C-c}.
+
+
+@node Dynamical Message Re-arrangement, Template, Editing Message Body and Sending, Usage of Draft Mode
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
 @c @cindex Change Message
