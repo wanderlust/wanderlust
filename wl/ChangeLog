@@ -1,3 +1,9 @@
+2003-11-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-region-exists-p): Remove duplicate definition.
+	(wl-url-nntp): Use `wl-summary-jump-to-msg' instead of searching
+	by regexp.
+
 2003-11-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el (wl-spam-save-status): Dose not initialize processor

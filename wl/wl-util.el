@@ -314,14 +314,6 @@ even when invalid character is contained."
 (defalias 'wl-string 'elmo-string)
 (make-obsolete 'wl-string 'elmo-string)
 
-;; Check if active region exists or not.
-(if (boundp 'mark-active)
-    (defmacro wl-region-exists-p ()
-      'mark-active)
-  (if (fboundp 'region-exists-p)
-      (defmacro wl-region-exists-p ()
-	(list 'region-exists-p))))
-
 (if (not (fboundp 'overlays-in))
     (defun overlays-in (beg end)
       "Return a list of the overlays that overlap the region BEG ... END.
@@ -540,8 +532,7 @@ that `read' can handle, whenever this is possible."
 	       folder nil nil nil t)
 	    (wl-summary-goto-folder-subr
 	     folder 'update nil nil t)
-	    (goto-char (point-min))
-	    (re-search-forward (concat "^ *" msg) nil t)
+	    (wl-summary-jump-to-msg (string-to-number msg))
 	    (wl-summary-redisplay)))
       (message "Not a nntp: url."))))
 
