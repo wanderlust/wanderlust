@@ -1,6 +1,8 @@
 2004-01-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-address.el (wl-address-delete): Avoid mis-deleting.
+	* wl-address.el (wl-address-add-or-change): Don't add empty
+	address.
 
 2004-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

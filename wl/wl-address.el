@@ -671,9 +671,16 @@ If already registerd, change it."
 						the-realname)))
     (when change-address
       (setq new-addr (read-from-minibuffer "E-Mail: " address))
-      (if (and (not (string= address new-addr))
-	       (assoc new-addr wl-address-list))
-	  (error "'%s' already exists" new-addr)))
+      (cond
+       ((or (not (stringp address))
+	    (string-match "^[ \t]*$" address))
+	(error "empty address"))
+       ((and (not (string= address new-addr))
+	     (assoc new-addr wl-address-list))
+	(error "'%s' already exists" new-addr))
+       (t
+	;; do nothing
+	)))
     ;; writing to ~/.address
     (let ((output-coding-system
 	   (mime-charset-to-coding-system wl-mime-charset)))
