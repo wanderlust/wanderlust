@@ -1,1 +1,2 @@
-Cannot communicate with UW imapd with qmail patch.
+* Cannot communicate with UW imapd with qmail patch.
+* Biff of the POP3 folders do not work correctly (c.f. [wl: 08937]).
