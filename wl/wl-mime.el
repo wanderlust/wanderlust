@@ -348,32 +348,13 @@ It calls following-method selected from variable
       (with-temp-buffer
 	(setq raw-buf (current-buffer))
 	(mime-insert-entity entity)
-	(cond ((progn
-		 (goto-char (point-min))
-		 (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	       (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
-	       (goto-char (point-min))
-	       (delete-region
-		(point-min)
-		(and
-		 (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
-		 (match-end 0)))
-	       (delete-region
-		(and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
-		     (match-beginning 0))
-		(point-max))
-	       (goto-char (point-min))
-	       (while (re-search-forward "^- -" nil t)
-		 (replace-match "-"))
-	       (setq representation-type (if (mime-entity-cooked-p entity)
-					     'cooked)))
-	      ((progn
-		 (goto-char (point-min))
-		 (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	       (pgg-decrypt-region (point-min)(point-max))
-	       (delete-region (point-min) (point-max))
-	       (insert-buffer pgg-output-buffer)
-	       (setq representation-type 'elmo-buffer)))
+	(when (progn
+		(goto-char (point-min))
+		(re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
+	  (pgg-decrypt-region (point-min)(point-max))
+	  (delete-region (point-min) (point-max))
+	  (insert-buffer pgg-output-buffer)
+	  (setq representation-type 'elmo-buffer))
 	(setq child-entity (mime-parse-message
 			    (mm-expand-class-name representation-type)
 			    nil
