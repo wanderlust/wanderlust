@@ -1,3 +1,7 @@
+2002-02-07  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-pick): Fix for no match.
+
 2002-02-01  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-save):

@@ -3708,9 +3708,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		(wl-summary-unmark))
 	      (setq mlist (cdr mlist)))
 	    (setq wl-summary-buffer-target-mark-list nil)))
-      (if result
-	  (setq num (wl-summary-target-mark-msgs result)))
-      (if (> num 0)
+      (if (and result
+	       (setq num (wl-summary-target-mark-msgs result))
+	       (> num 0))
 	  (if (= num (length result))
 	      (message "%d message(s) are picked." num)
 	    (message "%d(%d) message(s) are picked." num
