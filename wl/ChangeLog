@@ -1,3 +1,13 @@
+2000-06-14  Yuuichi Teranishi  <teranisi@quickhack.net>
+
+	* wl-address.el (wl-ldap-search-internal): Renamed to `wl-ldap-search'.
+	Choose implementation at compile time.
+
+2000-06-13  Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp>
+
+	* wl-address.el (wl-ldap-search-internal): New function.
+	(wl-complete-field-to): Use it.
+
 2000-06-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-address.el (wl-ldap-search): Use `with-temp-buffer'.

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/12 13:41:52 teranisi>
+;; Time-stamp: <00/06/14 10:56:07 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -41,6 +41,41 @@
 (defvar wl-address-completion-list nil)
 (defvar wl-address-petname-hash nil)
 
+(static-if (and (featurep 'xemacs)
+		(fboundp 'ldap-open))
+;; LDAP is built-in feature.
+(defun wl-ldap-search (pat &optional cl)
+  "make completion-list by ldap search (use build-in ldap feature)"
+  (let ((ldap-pat (concat "mail=" pat "*"))
+        (ret cl)
+	hdl
+	search-ret
+        addr)
+    (setq hdl (ldap-open wl-ldap-server))
+    (setq search-ret 
+	  (ldap-search-basic hdl ldap-pat wl-ldap-base 'subtree '("mail")))
+    (ldap-close hdl)
+    (while search-ret
+      (if (listp search-ret)
+	  (progn
+	    (setq addr (car search-ret))
+	    (setq search-ret (cdr search-ret))
+	    (if (listp addr)
+		(progn
+		 (setq addr (car addr))
+		 (if (listp addr)
+		     (progn
+		       (setq addr (cdr addr))
+		       (if (listp addr)
+			   (progn
+			     (setq addr (car addr))
+			     (setq addr (cons addr addr))
+			     (if ret
+				 (setq ret (append ret (list addr)))
+			       (setq ret (list addr))))))))))
+	(setq search-ret nil)))
+    ret))
+;; LDAP is not built-in feature.
 (defun wl-ldap-search (pat &optional cl)
   "make completion-list by ldap search"
   (let ((ldap-pat (concat "mail=" pat "*"))
@@ -59,7 +94,7 @@
 	      (setq ret (append ret (list addr)))
 	    (setq ret (list addr))))))
     ret))
-
+)
 
 (defun wl-complete-field-to ()
   (interactive)
