@@ -1,3 +1,8 @@
+2002-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-folder-list-messages-plugged): Renamed from
+	`elmo-folder-list-messages-internal'.
+
 2002-01-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-search): Defined. Fixed docstring.
