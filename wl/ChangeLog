@@ -1,3 +1,8 @@
+2000-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-prefetch-region): Redisplay only
+	when cursor point is visible.
+
 2000-04-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-expire.el (wl-expire-archive-get-max-number):
