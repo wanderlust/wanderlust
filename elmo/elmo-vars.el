@@ -131,7 +131,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 
 (defcustom elmo-nntp-default-user nil
   "*Default User of NNTP.  nil means no user authentication."
-  :type 'string
+  :type '(choice (const nil)
+		 string)
   :group 'elmo
   :group 'elmo-setting)
 
