@@ -1,5 +1,8 @@
 2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
 
+	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style
+	shy-groups for regexp.
+
 	* wl-e21.el (wl-highlight-folder-current-line): Use Posix style
 	character classes and Perl style shy-groups for regexp.
 	(wl-highlight-plugged-current-line): Use Posix style character
