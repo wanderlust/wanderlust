@@ -10,6 +10,7 @@
 
 * その他の TODO
 
+** .addresses エントリについて hash table を使う
 ** wl-folder-check-entity-async のあたりで NNTP が特別扱いになっているのを
    どうにかする
 ** wl-summary-other-frame-list のような変数を設け、マッチしたサマリは

@@ -77,6 +77,14 @@
       (elmo-folder-set-msgdb-internal (elmo-filter-folder-target-internal
 				       folder) nil)))
 
+(luna-define-method elmo-folder-set-message-modified ((folder
+						       elmo-filter-folder)
+						      modified)
+  (if (elmo-filter-folder-require-msgdb-internal folder)
+      (elmo-folder-set-message-modified-internal
+       (elmo-filter-folder-target-internal folder) modified)
+    (elmo-folder-set-message-modified-internal folder modified)))
+
 (luna-define-method elmo-folder-commit :around ((folder elmo-filter-folder))
   ;; Save target msgdb if it is used.
   (if (elmo-filter-folder-require-msgdb-internal folder)
@@ -210,8 +218,7 @@
      (lambda (x) (concat prefix x))
      (elmo-folder-list-subfolders target one-level))))
 
-(luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder)
-					      &optional numbers)
+(luna-define-method elmo-folder-diff :around ((folder elmo-filter-folder))
   (let ((condition (elmo-filter-folder-condition-internal folder))
 	diff)
     (if (vectorp condition)

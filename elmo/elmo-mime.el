@@ -224,11 +224,11 @@ Return non-nil if not entire message was fetched."
   (let (mime-display-header-hook ; Do nothing.
 	(elmo-message-displaying t)
 	entity strategy)
-    (setq entity (elmo-msgdb-overview-get-entity number
-						 (elmo-folder-msgdb
-						  folder)))
-    (setq strategy (elmo-find-fetch-strategy folder entity
-					     ignore-cache))
+    (unless (zerop (elmo-folder-length folder))
+      (setq entity (elmo-message-entity folder number)))
+    (setq strategy (if entity (elmo-find-fetch-strategy folder entity
+							ignore-cache)
+		     (elmo-make-fetch-strategy 'entire)))
     (mime-display-message
      (mime-open-entity
       (if (and strategy
@@ -258,21 +258,23 @@ Return non-nil if cache is used."
 						(elmo-folder-msgdb folder)))
 	mime-display-header-hook ; Do nothing.
 	cache-file strategy use-cache)
-    (setq cache-file (elmo-file-cache-get
-		      (elmo-msgdb-overview-entity-get-id entity)))
-    (setq use-cache (and (elmo-message-use-cache-p folder number)
-			 (eq (elmo-file-cache-status cache-file) 'entire)))
+    (when entity
+      (setq cache-file (elmo-file-cache-get
+			(elmo-msgdb-overview-entity-get-id entity)))
+      (setq use-cache (and (elmo-message-use-cache-p folder number)
+			   (eq (elmo-file-cache-status cache-file) 'entire))))
     (setq strategy (elmo-make-fetch-strategy
-		    'entire use-cache (elmo-message-use-cache-p folder number)
-		    (elmo-file-cache-path
-		     cache-file)))
+		    'entire use-cache
+		    (elmo-message-use-cache-p folder number)
+		    (elmo-file-cache-path cache-file)))
     (elmo-mime-display-as-is-internal
      (mime-open-entity
       'elmo-buffer
       (elmo-make-mime-message-location
        folder number strategy rawbuf unread))
      viewbuf nil keymap original-mode)
-    (elmo-fetch-strategy-use-cache strategy)))
+    (when strategy
+      (elmo-fetch-strategy-use-cache strategy))))
 
 ;; Replacement of mime-display-message.
 (defun elmo-mime-display-as-is-internal (message

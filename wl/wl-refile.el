@@ -132,7 +132,7 @@
 
 (defun wl-refile-subject-learn (entity dst)
   (let ((subject (funcall wl-summary-subject-filter-function
-			  (elmo-message-entity-field entity 'subject)))
+			  (elmo-message-entity-field entity 'subject 'decode)))
 	hit)
     (setq dst (elmo-string dst))
     (if (and subject (not (string= subject "")))
@@ -198,7 +198,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-get-field-value (entity field)
   "Get FIELD value from ENTITY."
-  (elmo-message-entity-field entity (intern (downcase field))))
+  (elmo-message-entity-field entity (intern (downcase field)) 'decode))
 
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)
@@ -250,7 +250,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-guess-by-subject (entity)
   (cdr (assoc (funcall wl-summary-subject-filter-function
-		       (elmo-msgdb-overview-entity-get-subject entity))
+		       (elmo-message-entity-field entity 'subject 'decode))
 	      wl-refile-subject-alist)))
 
 (require 'product)

@@ -1925,7 +1925,8 @@ prefix argument $B$r$D$1$k$H!"%9%F%#%C%-!<%5%^%j$KF~$j$^$9!#(B
 @item V
 @kindex V (Folder)
 @findex wl-folder-virtual
-$B;XDj$7$?>r7o$H9gCW$9$k%a%C%;!<%8$N$_$r4^$`2>A[%U%)%k%@$X0\F0$7$^$9!#(B
+$B;XDj$7$?>r7o$H9gCW$9$k%a%C%;!<%8$N$_$r4^$`2>A[%U%)%k%@(B($B%U%#%k%?%U%)%k%@(B)
+$B$X0\F0$7$^$9!#(B
 (@code{wl-folder-virtual})
 
 @item ?
@@ -2554,7 +2555,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 
 $B0l;~E*%^!<%/$O!"%a%C%;!<%8$rA`:n$9$k$?$a%^!<%/$G$9!#(B
 
-$B0l;~E*%^!<%/$K$O!"(B@samp{*}, @samp{D}, @samp{o}, @samp{O} $B$,$"$j$^$9!#(B
+$B0l;~E*%^!<%/$K$O!"(B@samp{*}, @samp{d}, @samp{o}, @samp{O} $B$,$"$j$^$9!#(B
 
 @table @samp
 @item *
@@ -2562,8 +2563,8 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 @kbd{m} $B$G;O$^$k%3%^%s%I$G(B @samp{*}$B%^!<%/$N$D$$$?%a%C%;!<%8BP$7$F0l3g$7$?=hM}(B
 $B$,$G$-$^$9!#(B
 
-@item D
-$B:o=|$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{d} $B$r2!$9$HIU$-$^$9!#(B
+@item d
+$B=hJ,$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{d} $B$r2!$9$HIU$-$^$9!#(B
 
 @item o
 $B%j%U%!%$%k$9$k%a%C%;!<%8$KIU$/%^!<%/$G$9!#(B@kbd{o}$B$r2!$9$H!"%j%U%!%$%k@h(B
@@ -2574,8 +2575,7 @@ News $B%U%)%k%@$G$O(B article $BHV9f!"(BIMAP $B%U%)%k%@$G$O(B UID$B!"(BM
 $BMh$^$9!#$=$l$KEz$($k$H!"%3%T!<@h$N%U%)%k%@>pJs$,IU$12C$o$j$^$9!#(B
 @end table
 
-@kbd{x} $B$r2!$9$H!"(B@samp{D}, @samp{o}, @samp{O} $B$N%^!<%/$,IU$$$F$$$k(B
-$B%a%C%;!<%8$N:o=|!"%j%U%!%$%k!"%3%T!<$r<B9T$7$^$9!#(B
+@kbd{x} $B$r2!$9$H!"$=$l$>$l$N0l;~E*%^!<%/$KBP1~$7$?%"%/%7%g%s$r<B9T$7$^$9!#(B
 
 @subsection $B1JB3E*%^!<%/(B
 
@@ -3087,7 +3087,7 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 @item $
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
-@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+@samp{$} $B%^!<%/$r$D$1$^$9!#4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-mark-as-important})
 
 @item y
@@ -3256,19 +3256,28 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @item s
 @kindex s (Summary)
 @findex wl-summary-sync
-$B%a%C%;!<%8$N0lMwI=<($N99?7%l%s%8(B(@samp{all}, @samp{update},
-@samp{rescan}, @samp{cache-status}, @samp{first}, @samp{last})
-$B$NF~NO$r<u$1IU$1$?8e!"$=$l$K4p$E$$$F%a%C%;!<%8$N0lMwI=<($r99?7$7$^$9!#(B
+$B%a%C%;!<%8$N0lMwI=<($N99?7%l%s%8$NF~NO$r<u$1IU$1$?8e!"$=$l$K4p$E$$$F%a%C(B
+$B%;!<%8$N0lMwI=<($r99?7$7$^$9!#99?7%l%s%8$H$7$F$O0J2<$N$$$:$l$+$r;XDj$G$-(B
+$B$^$9!#(B
 
 @example
 @group
-all            ...$B$9$Y$F99?7(B
-all-visible    ...$B8+$($F$$$k%a%C%;!<%8$K$D$$$F$9$Y$F99?7(B
-update         ...$B8=:_$NI=<($r99?7(B
-rescan         ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B
-rescan-noscore ...$B8=:_$N(B msgdb $B$NFbMF$r:FI=<((B($B%9%3%"$J$7(B)
-cache-status   ...$B%-%c%C%7%e$N>uBV$r%^!<%/$KH?1G(B
-first, last    ...$B%U%#%k%?%U%)%k%@$K0\F0(B
+all              $B8=:_$N(B msgdb $B$NFbMF$rGK4~$7!"A4>pJs$r<h$j4s$;D>$7$^$9!#(B
+                 killed $B%a%C%;!<%8$O<h$j4s$;D>$7$^$;$s!#(B
+all-entirely     $B8=:_$N(B msgdb $B$NFbMF$rGK4~$7!"A4>pJs$r<h$j4s$;D>$7$^$9!#(B
+                 killed $B%a%C%;!<%8$b<h$j4s$;D>$7$^$9!#(B
+update           $BJ];}$7$F$$$k(B msgdb $B$N>pJs$H:G?7>pJs$N:9J,$r99?7$7$^$9!#(B
+                 killed $B%a%C%;!<%8$O99?7$7$^$;$s!#(B
+update-entirely  $BJ];}$7$F$$$k(B msgdb $B$N>pJs$H:G?7>pJs$N:9J,$r99?7$7$^$9!#(B
+                 killed $B%a%C%;!<%8$b99?7$7$^$9!#(B
+rescan           $B8=:_$N(B msgdb $B$K4p$E$$$F:FI=<($r9T$$$^$9!#(B
+rescan-noscore   $B8=:_$N(B msgdb $B$K4p$E$$$F:FI=<($r9T$$$^$9!#(B
+                 $B%9%3%"$K$h$j>C$($?%a%C%;!<%8$bI=<($7$^$9!#(B
+cache-status     $B%-%c%C%7%e$N>uBV$r%^!<%/$KH?1G$7$^$9!#(B
+mark             $B%^!<%/$N>uBV$r:G?7$K$7$^$9!#(B
+no-sync          $B2?$b$7$^$;$s!#(B
+first:$B?t;z(B       $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
+last:$B?t;z(B        $B%U%#%k%?%U%)%k%@$K0\F0$7$^$9!#(B
 @end group
 @end example
 
@@ -3308,8 +3317,8 @@ first, last    ...$B%U%#%k%?%U%)%k%@$K0\F0(B
 
 @item V
 @kindex V (Summary)
-$BM?$($i$l$?>r7o$r;}$D%a%C%;!<%8$N$_$r;}$D2>A[%U%)%k%@$X0\F0$7$^$9!#(B
-prefix argument $B$D$-$G<B9T$9$k$H2>A[%U%)%k%@$+$iC&=P$7$^$9!#(B
+$BM?$($i$l$?>r7o$r;}$D%a%C%;!<%8$N$_$r;}$D2>A[%U%)%k%@(B($B%U%#%k%?%U%)%k%@(B)$B$X(B
+$B0\F0$7$^$9!#(Bprefix argument $B$D$-$G<B9T$9$k$H2>A[%U%)%k%@$+$iC&=P$7$^$9!#(B
 @findex wl-summary-virtual
 (@code{wl-summary-virtual})
 
@@ -3331,17 +3340,10 @@ prefix argument $B$D$-$G<B9T$9$k$H2>A[%U%)%k%@$+$iC&=P$7$^$9!#(B
 $B%+!<%=%k9T$N%a%C%;!<%8$rFI$s$@$3$H$K$7$^$9!#(B
 (@code{wl-summary-mark-as-read})
 
-@item i
-@kindex i (Summary)
-$B%+!<%=%k9T$N%a%C%;!<%8$r%W%j%U%'%C%A$7$^$9!#(B
-prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
-$B:FEY%W%j%U%'%C%A$7$^$9!#(B
-@findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
-
 @item x
 @kindex x (Summary)
-$B$9$Y$F$N(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B%5%^%j%P%C%U%!$N$9$Y$F$N%a%C%;!<%8$KBP$7$F!"0l;~E*%^!<%/$KBP1~$9$k%"%/%7%g%s(B
+$B$r<B9T$7$^$9!#(B
 @findex wl-summary-exec
 (@code{wl-summary-exec})
 
@@ -3378,19 +3380,39 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item d
 @kindex d (Summary)
+@findex wl-summary-dispose
+$B%+!<%=%k9T$N%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
+$B=hJ,$N7k2L$O(B @code{wl-dispose-folder-alist} $B$G@)8f$G$-!"%G%U%)%k%H$G$O(B
+@code{wl-trash-folder} $B$K%j%U%!%$%k$5$l$^$9!#(B
+(@code{wl-summary-dispose})
+
+@item D
+@kindex D (Summary)
 @findex wl-summary-delete
-$B%+!<%=%k9T$N%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
+$B%+!<%=%k9T$N%a%C%;!<%8$K6/@):o=|%^!<%/$r$D$1$^$9!#(B
 (@code{wl-summary-delete})
+
+@item i
+@kindex i (Summary)
+$B%+!<%=%k9T$N%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$rIU$1$^$9!#(B
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item ~
+@kindex ~ (Summary)
+@findex wl-summary-resend
+$B%+!<%=%k9T$N%a%C%;!<%8$K:FAwM=Ls%^!<%/$rIU$1$^$9!#(B
+(@code{wl-summary-resend})
 
 @item u
 @kindex u (Summary)
 @findex wl-summary-unmark
-$B%+!<%=%k9T$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B%+!<%=%k9T$N%a%C%;!<%8$K%^!<%/$,$"$l$P<h$j=|$-$^$9!#(B
 (@code{wl-summary-unmark})
 
 @item U
 @kindex U (Summary)
-$B;XDj$7$?%^!<%/$r$9$Y$F:o=|$7$^$9!#(B
+$B;XDj$7$?%^!<%/$r$9$Y$F<h$j=|$-$^$9!#(B
 @findex wl-summary-unmark-all
 (@code{wl-summary-unmark-all})
 
@@ -3404,7 +3426,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8A4$F$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-mark-as-important-region})
 
 @item r !
@@ -3413,16 +3435,11 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 $B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$rA4$FFI$^$J$+$C$?$3$H$K$7$^$9!#(B
 (@code{wl-summary-mark-as-unread-region})
 
-@item r i
-@kindex r i (Summary)
-@findex wl-summary-prefetch-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$rA4$F%W%j%U%'%C%A$7$^$9!#(B
-(@code{wl-summary-prefetch-region})
-
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$KBP$7$F!"0l;~E*%^!<%/$KBP1~$9$k%"%/%7%g%s(B
+$B$r<B9T$7$^$9!#(B
 (@code{wl-summary-exec-region})
 
 @item r *
@@ -3445,9 +3462,15 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item r d
 @kindex r d (Summary)
-@findex wl-summary-delete-region
-$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-delete-region})
+@findex wl-summary-dispose-region
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
+(@code{wl-summary-dispose-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+$B;XDj%j!<%8%g%s$K$"$k%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$rIU$1$^$9!#(B
+(@code{wl-summary-prefetch-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3472,9 +3495,9 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rFI$s$
 @kindex t $ (Summary)
 @findex wl-thread-mark-as-important
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B4{$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%I$K(B
-@samp{$} $B%^!<%/$r$D$1$k$+:o=|$9$k$+$7$^$9!#(B
+$B4{$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-mark-as-important})
 
 @item t !
@@ -3484,69 +3507,68 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%I$K(B
 prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rFI$^$J$+$C$?$3$H$K$7$^$9!#(B
 (@code{wl-thread-mark-as-unread})
 
-@item t i
-@kindex t i (Summary)
-@findex wl-thread-prefetch
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$r%W%j%U%'%C%A$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$r%W%j%U%'%C%A$7$^$9!#(B
-(@code{wl-thread-prefetch})
-
 @item t x
 @kindex t x (Summary)
 @findex wl-thread-exec
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K$D$$$?(B @samp{D}, @samp{o}, @samp{O} $B%^!<%/$r<B9T$7$^$9!#(B
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$N%a%C%;!<%8$KBP$7$F!"0l;~(B
+$BE*%^!<%/$KBP1~$9$k%"%/%7%g%s$r<B9T$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-exec})
 
 @item t *
 @kindex t * (Summary)
 @findex wl-thread-target-mark
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K$^$H$a=hM}MQ%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-target-mark})
 
 @item t o
 @kindex t o (Summary)
 @findex wl-thread-refile
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K%j%U%!%$%k%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-refile})
 
 @item t O
 @kindex t O (Summary)
 @findex wl-thread-copy
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%3%T!<%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K%3%T!<%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-copy})
 
 @item t d
 @kindex t d (Summary)
-@findex wl-thread-delete
-$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K:o=|%^!<%/$r$D$1$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-thread-delete})
+@findex wl-thread-dispose
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K=hJ,%^!<%/$r$D$1$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
+(@code{wl-thread-dispose})
+
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+$B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$K%W%j%U%'%C%AM=Ls%^!<%/$r(B
+$BIU$1$^$9!#(B
+(@code{wl-thread-prefetch})
 
 @item t u
 @kindex t u (Summary)
 @findex wl-thread-unmark
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$N%a%C%;!<%8$K%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K(B
+$BE,MQ$7$^$9!#(B
 (@code{wl-thread-unmark})
 
 @item t y
 @kindex t y (Summary)
 @findex wl-thread-save
 $B%+!<%=%k9T$,$"$k%a%C%;!<%8$r@hF,$H$9$k%9%l%C%I$rJ]B8$7$^$9!#(B
-prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4$F$rJ]B8$7$^$9!#(B
+prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$rJ]B8$7$^$9!#(B
 (@code{wl-thread-save})
-
-@item m i
-@kindex m i (Summary)
-@findex wl-summary-target-mark-prefetch
-$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$rA4$F%W%j%U%'%C%A$7$^$9!#(B
-prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
-$B:FEY%W%j%U%'%C%A$7$^$9!#(B
-(@code{wl-summary-target-mark-prefetch})
 
 @item m R
 @kindex m R (Summary)
@@ -3558,7 +3580,7 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K(B @samp{$} $B%^!<%/$r$D$1$^$9!#(B
-$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P:o=|$7$^$9!#(B
+$B$9$G$K(B @samp{$} $B%^!<%/$,$"$l$P%^!<%/$r<h$j=|$-$^$9!#(B
 (@code{wl-summary-target-mark-mark-as-important})
 
 @item m !
@@ -3581,9 +3603,16 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 
 @item m d
 @kindex m d (Summary)
-@findex wl-summary-target-mark-delete
-$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K:o=|%^!<%/$r$D$1$^$9!#(B
-(@code{wl-summary-target-mark-delete})
+@findex wl-summary-target-mark-dispose
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K=hJ,%^!<%/$r$D$1$^$9!#(B
+(@code{wl-summary-target-mark-dispose})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$K%W%j%U%'%C%AM=Ls%^!<%/$r(B
+$BIU$1$^$9!#(B
+(@code{wl-summary-target-mark-prefetch})
 
 @item m y
 @kindex m y (Summary)
@@ -3654,12 +3683,6 @@ prefix argument $B$D$-$J$i$P4{$K%-%c%C%7%e$5$l$F$$$k%a%C%;!<%8$b(B
 $B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$N$D$$$?%a%C%;!<%8$=$l$>$l$r!"(B
 $B;XDj$7$?B>$N%W%m%;%9$K%Q%$%W7PM3$G0z$-EO$7$^$9!#(B
 (@code{wl-summary-target-mark-pipe})
-
-@item D
-@kindex D (Summary)
-@findex wl-summary-erase
-$B$4$_H"$K0\F0$;$:$K!"$=$N>l$G<B:]$K%a%C%;!<%8$r:o=|$7$^$9!#(B
-(@code{wl-summary-erase})
 
 @item M-t
 @kindex M-t (Summary)
@@ -7367,6 +7390,13 @@ Non-nil $B$J$i$P!"(BWanderlust $B=*N;;~$K3NG'$r9T$$$^$9!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i$P!"%a!<%kAw?.;~$KK\Ev$KAw?.$7$FNI$$$+$r3NG'$7$^$9!#(B
 
+@item wl-default-sync-range
+@vindex wl-default-sync-range
+$B=i4|@_Dj$O(B @samp{update}$B!#(B
+$B%G%U%)%k%H$N%5%^%j99?7%l%s%8$G!"(B@samp{all}, @samp{update},
+@samp{rescan}, @samp{no-sync} $B$N$$$:$l$+$r;XDj$7$^$9!#(B
+$B%l%s%8$N0UL#$K$D$$$F$O(B @code{wl-summary-sync} $B$N@bL@$r;2>H$7$F2<$5$$!#(B
+
 @item wl-folder-sync-range-alist
 @vindex wl-folder-sync-range-alist
 $B=i4|@_Dj$O!"0J2<$NO"A[%j%9%H!#(B
@@ -7379,11 +7409,11 @@ Non-nil $B$J$i$P!"%a!<%kAw?.;~$KK\Ev$KAw?.$7$FNI$$$+$r3NG'$7$^$9!#(B
 @end lisp
 
 @noindent
-$B%U%)%k%@L>$N@55,I=8=$H%U%)%k%@0\F0;~$N%5%^%j99?7%l%s%8$H$NO"A[%j%9%H$G$9!#(B
-$B99?7%l%s%8$K$O(B @code{wl-summary-sync} $B$GF~NO$G$-$kCM$N$$$:$l$+(B
-(@samp{all}, @samp{update}, @samp{rescan}, @samp{rescan-noscore},
-@samp{first}, @samp{last}, @samp{no-sync}) $B$r;XDj$7$^$9!#%^%C%A$7$J$+$C$?>l9g$O!"(B
-@samp{update} $B$H$J$j$^$9!#(B
+$B%U%)%k%@L>$N@55,I=8=$H%5%^%j99?7%l%s%8$H$NO"A[%j%9%H$G$9!#(B
+$B99?7%l%s%8$K$O(B @samp{all}, @samp{update}, @samp{rescan}, @samp{no-sync}
+$B$N$$$:$l$+$r;XDj$7$^$9!#%^%C%A$7$J$+$C$?>l9g$O!"(B@code{wl-default-sync-range}
+$B$NCM(B($B=i4|CM$O(B @samp{update})$B$r;H$$$^$9!#(B
+$B%l%s%8$N0UL#$K$D$$$F$O(B @code{wl-summary-sync} $B$N@bL@$r;2>H$7$F2<$5$$!#(B
 
 @item wl-ask-range
 @vindex wl-ask-range

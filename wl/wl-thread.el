@@ -389,13 +389,16 @@ ENTITY is returned."
 	  (when (setq message-entity
 		      (elmo-message-entity wl-summary-buffer-elmo-folder
 					   msg))
-	    (wl-summary-insert-line 
+	    (wl-summary-insert-line
 	     (wl-summary-create-line
 	      message-entity
 	      (elmo-message-entity wl-summary-buffer-elmo-folder
 				   parent-msg)
 	      temp-mark
-	      (elmo-message-mark wl-summary-buffer-elmo-folder msg)
+	      (elmo-message-flags wl-summary-buffer-elmo-folder
+				  msg)
+	      (elmo-message-cached-p wl-summary-buffer-elmo-folder
+				     msg)
 	      (if wl-thread-insert-force-opened
 		  nil
 		(wl-thread-maybe-get-children-num msg))
@@ -731,14 +734,6 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-prefetch-region arg))
 
-(defun wl-thread-msg-mark-as-important (msg)
-  "Set mark as important for invisible MSG. Modeline is not changed."
-  (let ((folder wl-summary-buffer-elmo-folder)
-	cur-mark)
-    (setq cur-mark (elmo-message-mark folder msg))
-    (elmo-folder-mark-as-important folder (list msg))
-    (wl-summary-set-mark-modified)))
-
 (defun wl-thread-mark-as-read (&optional arg)
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-mark-as-read-region arg))
@@ -824,7 +819,10 @@ Message is inserted to the summary buffer."
 	  (elmo-message-entity wl-summary-buffer-elmo-folder
 			       (nth 0 parent-entity))
 	  temp-mark
-	  (elmo-message-mark wl-summary-buffer-elmo-folder msg-num)
+	  (elmo-message-flags wl-summary-buffer-elmo-folder
+			      msg-num)
+	  (elmo-message-cached-p wl-summary-buffer-elmo-folder
+				 msg-num)
 	  (if wl-thread-insert-force-opened
 	      nil
 	    (wl-thread-maybe-get-children-num msg-num))
@@ -938,7 +936,7 @@ Message is inserted to the summary buffer."
     (while children-msgs
       (if (and (not (eq msg (car children-msgs))) ; except itself
 	       (or (and uncached-marks
-			(setq mark (elmo-message-mark
+			(setq mark (wl-summary-message-mark
 				    wl-summary-buffer-elmo-folder
 				    (car children-msgs)))
 			(member mark uncached-marks))

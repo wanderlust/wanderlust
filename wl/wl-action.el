@@ -31,6 +31,10 @@
 
 (require 'wl-summary)
 
+(eval-when-compile
+  (defalias-maybe 'wl-summary-target-mark 'ignore)
+  (defalias-maybe 'wl-summary-target-mark-region 'ignore))
+
 (defsubst wl-summary-action-mark (action)
   (nth 0 action))
 (defsubst wl-summary-action-symbol (action)
@@ -44,7 +48,8 @@
 (defsubst wl-summary-action-face (action)
   (nth 5 action))
 (defsubst wl-summary-action-docstring (action)
-  (nth 6 action))
+  (concat (nth 6 action)
+	  "\nThis function is defined by `wl-summary-define-mark-action'."))
 
 ;; Set mark
 (defun wl-summary-set-mark (&optional set-mark number interactive data)
@@ -59,16 +64,21 @@ Return number if put mark succeed"
 	 (current (wl-summary-message-number))
 	 (action (assoc set-mark wl-summary-mark-action-list))
 	 visible mark cur-mark)
+    (when (zerop (elmo-folder-length wl-summary-buffer-elmo-folder))
+      (error "Set mark failed"))
     (prog1
 	(save-excursion
 	  ;; Put mark
-	  (setq visible (or
-			 ;; not-interactive and visible
-			 (and number (wl-summary-jump-to-msg number))
-			 ;; interactive
-			 (and (null number) current))
-		number (or number current)
-		cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	  (if number
+	      ;; Jump to message if cursor is not on the message.
+	      (when (and (setq visible (wl-summary-message-visible-p number))
+			 (not (eq number current)))
+		(wl-summary-jump-to-msg number))
+	    (setq visible t
+		  number current))
+	  (setq cur-mark (nth 1 (wl-summary-registered-temp-mark number)))
+	  (unless number
+	    (error "No message"))
 	  (if (wl-summary-reserve-temp-mark-p cur-mark)
 	      (when interactive
 		(error "Already marked as `%s'" cur-mark))
@@ -78,18 +88,19 @@ Return number if put mark succeed"
 	      (setq data (funcall (wl-summary-action-argument-function action)
 				  (wl-summary-action-symbol action)
 				  number)))
+	    ;; Unset the current mark.
 	    (wl-summary-unset-mark number)
-	    (when visible
-	      (wl-summary-mark-line set-mark)
-	      (when wl-summary-highlight
-		(wl-highlight-summary-current-line))
-	      (when data
-		(wl-summary-print-argument number data)))
 	    ;; Set action.
 	    (funcall (wl-summary-action-set-function action)
 		     number
 		     (wl-summary-action-mark action)
 		     data)
+	    (when visible
+	      (wl-summary-put-temp-mark set-mark)
+	      (when wl-summary-highlight
+		(wl-highlight-summary-current-line))
+	      (when data
+		(wl-summary-print-argument number data)))
 	    (set-buffer-modified-p nil)
 	    ;; Return value.
 	    number))
@@ -105,7 +116,8 @@ Return number if put mark succeed"
 	    (cons number wl-summary-buffer-target-mark-list))))
 
 (defun wl-summary-unregister-target-mark (number)
-  (delq number wl-summary-buffer-target-mark-list))
+  (setq wl-summary-buffer-target-mark-list
+	(delq number wl-summary-buffer-target-mark-list)))
 
 (defun wl-summary-have-target-mark-p (number)
   (memq number wl-summary-buffer-target-mark-list))
@@ -131,7 +143,7 @@ Return number if put mark succeed"
 	    (let (wl-summary-buffer-disp-msg)
 	      (when (setq number (wl-summary-message-number))
 		(wl-summary-set-mark (wl-summary-action-mark action)
-				     number nil data)
+				     nil nil data)
 		(setq wl-summary-buffer-target-mark-list
 		      (delq number wl-summary-buffer-target-mark-list)))))
 	  (forward-line 1))
@@ -200,11 +212,12 @@ Return number if put mark succeed"
       mark-list)))
 
 ;; Unset mark
-(defun wl-summary-unset-mark (&optional number interactive)
+(defun wl-summary-unset-mark (&optional number interactive force)
   "Unset temporary mark of the message with NUMBER.
 NUMBER is the message number to unset the mark.
 If not specified, the message on the cursor position is treated.
 Optional INTERACTIVE is non-nil when it should be called interactively.
+If optional FORCE is non-nil, remove scored mark too.
 Return number if put mark succeed"
   (interactive)
   (save-excursion
@@ -212,25 +225,28 @@ Return number if put mark succeed"
     (let ((buffer-read-only nil)
 	  visible mark action)
       (if number
-	  (setq visible (wl-summary-jump-to-msg number))
-	(setq visible t))
-      (setq number (or number (wl-summary-message-number)))
+	  ;; Jump to message
+	  (when (and (setq visible (wl-summary-message-visible-p number))
+		     (not (eq number (wl-summary-message-number))))
+	    (wl-summary-jump-to-msg number))
+	(setq visible t
+	      number (wl-summary-message-number)))
+      (setq mark (wl-summary-temp-mark))
+      ;; Remove from temporal mark structure.
+      (wl-summary-unregister-target-mark number)
+      (wl-summary-unregister-temp-mark number)
       ;; Delete mark on buffer.
       (when visible
-	(setq mark (wl-summary-temp-mark))
 	(unless (string= mark " ")
-	  (delete-backward-char 1)
-	  (insert (or (wl-summary-get-score-mark number)
-		      " "))
+	  (wl-summary-put-temp-mark
+	   (or (unless force (wl-summary-get-score-mark number))
+	       " "))
 	  (setq action (assoc mark wl-summary-mark-action-list))
 	  (when wl-summary-highlight
 	    (wl-highlight-summary-current-line))
 	  (when (wl-summary-action-argument-function action)
 	    (wl-summary-remove-argument)))
-	(set-buffer-modified-p nil))
-      ;; Remove from temporal mark structure.
-      (wl-summary-unregister-target-mark number)
-      (wl-summary-unregister-temp-mark number)))
+	(set-buffer-modified-p nil))))
   ;; Move the cursor.
   ;;  (if (or interactive (interactive-p))
   ;;      (if (eq wl-summary-move-direction-downward nil)
@@ -276,12 +292,7 @@ Return number if put mark succeed"
 			  refiles
 			  (if (eq folder-name 'null)
 			      'null
-			    (wl-folder-get-elmo-folder folder-name))
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
+			    (wl-folder-get-elmo-folder folder-name))))
 	  (error nil))
 	(when result		; succeeded.
 	  ;; update buffer.
@@ -354,16 +365,17 @@ Return number if put mark succeed"
 	  `(lambda (beg end)
 	     ,(wl-summary-action-docstring action)
 	     (interactive "r")
-	     (goto-char beg)
-	     (wl-summary-mark-region-subr
-	      (quote ,(intern (format "wl-summary-%s"
-				      (wl-summary-action-symbol action))))
-	      beg end
-	      (if (quote ,(wl-summary-action-argument-function action))
-		  (funcall (function 
-			    ,(wl-summary-action-argument-function action))
-			   (quote ,(wl-summary-action-symbol action))
-			   (wl-summary-message-number))))))
+	     (save-excursion
+	       (goto-char beg)
+	       (wl-summary-mark-region-subr
+		(quote ,(intern (format "wl-summary-%s"
+					(wl-summary-action-symbol action))))
+		beg end
+		(if (quote ,(wl-summary-action-argument-function action))
+		    (funcall (function
+			      ,(wl-summary-action-argument-function action))
+			     (quote ,(wl-summary-action-symbol action))
+			     (wl-summary-message-number)))))))
     (fset (intern (format "wl-summary-target-mark-%s"
 			  (wl-summary-action-symbol action)))
 	  `(lambda ()
@@ -459,13 +471,7 @@ Return number if put mark succeed"
 	    (setq result (elmo-folder-move-messages
 			  wl-summary-buffer-elmo-folder
 			  (cdr (car dst-msgs))
-			  (wl-folder-get-elmo-folder
-			   (car (car dst-msgs)))
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
+			  (wl-folder-get-elmo-folder (car (car dst-msgs)))))
 	  (error nil))
 	(if result		; succeeded.
 	    (progn
@@ -503,15 +509,10 @@ Return number if put mark succeed"
 	(setq result nil)
 	(condition-case nil
 	    (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (wl-folder-get-elmo-folder
-			     (car (car dst-msgs)))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    t ; t is no-delete (copy)
-			    nil ; same-number
-			    t))
+			  wl-summary-buffer-elmo-folder
+			  (cdr (car dst-msgs))
+			  (wl-folder-get-elmo-folder (car (car dst-msgs)))
+			  'no-delete))
 	  (error nil))
 	(if result		; succeeded.
 	    (progn
@@ -530,29 +531,18 @@ Return number if put mark succeed"
 ;; Prefetch.
 (defun wl-summary-exec-action-prefetch (mark-list)
   (save-excursion
-    (let* ((buffer-read-only nil)
-	   (count 0)
+    (let* ((count 0)
 	   (length (length mark-list))
 	   (mark-list-copy (copy-sequence mark-list))
 	   (pos (point))
-	   (failures 0)
-	   new-mark)
+	   (failures 0))
       (dolist (mark-info mark-list-copy)
 	(message "Prefetching...(%d/%d)"
 		 (setq count (+ 1 count)) length)
-	(setq new-mark (wl-summary-prefetch-msg (car mark-info)))
-	(if new-mark
+	(if (wl-summary-prefetch-msg (car mark-info))
 	    (progn
 	      (wl-summary-unset-mark (car mark-info))
-	      (when (wl-summary-jump-to-msg (car mark-info))
-		(wl-summary-persistent-mark) ; move
-		(delete-backward-char 1)
-		(insert new-mark)
-		(when wl-summary-highlight
-		  (wl-highlight-summary-current-line))
-		(save-excursion
-		  (goto-char pos)
-		  (sit-for 0))))
+	      (sit-for 0))
 	  (incf failures)))
       (message "Prefetching...done")
       0)))
@@ -560,7 +550,7 @@ Return number if put mark succeed"
 ;; Resend.
 (defun wl-summary-get-resend-address (action number)
   "Decide resend address."
-  (wl-complete-field-to "Resend message to: "))
+  (completing-read "Resend message to: " 'wl-complete-address))
 
 (defun wl-summary-exec-action-resend (mark-list)
   (let ((failure 0))
@@ -755,14 +745,28 @@ Return number if put mark succeed"
 	  (search-forward "\r")
 	  (forward-char -1)
 	  (setq re (point))
-	  (setq c 0)
-	  (while (< c len)
-	    (forward-char -1)
-	    (setq c (+ c (char-width (following-char)))))
-	  (and (> c len) (setq folder (concat " " folder)))
-	  (setq rs (point))
-	  (when wl-summary-width
-	    (put-text-property rs re 'invisible t))
+	  (let ((width (cond (wl-summary-width
+			      (1- wl-summary-width))
+			     (wl-summary-print-argument-within-window
+			      (1- (window-width)))))
+		(c (current-column))
+		(padding 0))
+	    (if (and width (> (+ c len) width))
+		(progn
+		  (move-to-column width)
+		  (setq c (current-column))
+		  (while (> (+ c len) width)
+		    (forward-char -1)
+		    (setq c (current-column)))
+		  (when (< (+ c len) width)
+		    (setq folder (concat " " folder)))
+		  (setq rs (point))
+		  (put-text-property rs re 'invisible t))
+	      (when (and width
+			 (> (setq padding (- width len c)) 0))
+		(setq folder (concat (make-string padding ?\ )
+				     folder)))
+	      (setq rs (1- re))))
 	  (put-text-property rs re 'wl-summary-action-argument t)
 	  (goto-char re)
 	  (wl-highlight-action-argument-string folder)
@@ -777,14 +781,13 @@ Return number if put mark succeed"
   "Refile message to previously refiled destination."
   (interactive)
   (funcall (symbol-function 'wl-summary-refile)
-	   wl-summary-buffer-prev-refile-destination
-	   (wl-summary-message-number))
+	   wl-summary-buffer-prev-refile-destination)
   (if (eq wl-summary-move-direction-downward nil)
       (wl-summary-prev)
     (wl-summary-next)))
 
-(defsubst wl-summary-no-auto-refile-message-p (msg)
-  (member (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg)
+(defsubst wl-summary-no-auto-refile-message-p (number)
+  (member (wl-summary-message-mark wl-summary-buffer-elmo-folder number)
 	  wl-summary-auto-refile-skip-marks))
 
 (defun wl-summary-auto-refile (&optional open-all)
@@ -815,8 +818,8 @@ Return number if put mark succeed"
 		     (setq dst
 			   (wl-folder-get-realname
 			    (wl-refile-guess-by-rule
-			     (elmo-msgdb-overview-get-entity
-			      number (wl-summary-buffer-msgdb)))))
+			     (elmo-message-entity wl-summary-buffer-elmo-folder
+						  number))))
 		     (not (equal dst spec))
 		     (let ((pair (assoc dst checked-dsts))
 			   ret)
@@ -844,12 +847,6 @@ Return number if put mark succeed"
 If optional argument NUMBER is specified, unmark message specified by NUMBER."
   (interactive)
   (wl-summary-unset-mark number (interactive-p)))
-
-(defun wl-summary-target-mark (&optional number)
-  "Put target mark '*' on current message.
-If optional argument NUMBER is specified, mark message specified by NUMBER."
-  (interactive)
-  (wl-summary-set-mark "*" number (interactive-p)))
 
 (defun wl-summary-unmark-region (beg end)
   (interactive "r")
@@ -887,26 +884,22 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		     children)
 		(if (wl-thread-entity-get-opened entity)
 		    ;; opened...delete line.
-		    (funcall function number data)
+		    (funcall function nil data)
 		  ;; closed
 		  (setq children (wl-thread-get-children-msgs number))
 		  (while children
 		    (funcall function (pop children) data)))
 		(forward-line 1))))
 	(while (not (eobp))
-	  (funcall function (wl-summary-message-number) data)
+	  (funcall function nil data)
 	  (forward-line 1))))))
-
-(defun wl-summary-target-mark-region (beg end)
-  (interactive "r")
-  (wl-summary-mark-region-subr 'wl-summary-target-mark beg end nil))
 
 (defun wl-summary-target-mark-all ()
   (interactive)
   (wl-summary-target-mark-region (point-min) (point-max))
   (setq wl-summary-buffer-target-mark-list
-	(mapcar 'car
-		(elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))))
+	(elmo-folder-list-messages wl-summary-buffer-elmo-folder
+				   nil 'in-msgdb)))
 
 (defun wl-summary-delete-all-mark (mark)
   (goto-char (point-min))

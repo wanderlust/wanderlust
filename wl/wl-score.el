@@ -407,7 +407,7 @@ Set `wl-score-cache' nil."
       (setq num (elmo-message-entity-number entity))
       (when (and (not (assq num wl-summary-scored))
 		 (or (memq num force-msgs)
-		     (member (elmo-message-mark folder num)
+		     (member (wl-summary-message-mark folder num)
 			     wl-summary-score-marks)))
 	(setq wl-scores-messages
 	      (cons (cons entity (or wl-summary-default-score 0))
@@ -1233,16 +1233,15 @@ Set `wl-score-cache' nil."
 	   'wl-summary-score-update-all-lines "Updating score..."
 	   (/ (* i 100) count))))
       (when dels
-	;;(let ((marks dels))
-	;;(while marks
-	;;(elmo-message-set-flag wl-summary-buffer-elmo-folder
-	;;				   (pop marks) 'read)))
+	(dolist (del dels)
+	  (elmo-message-set-flag wl-summary-buffer-elmo-folder
+				 del 'read))
 	(elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
 	(wl-summary-delete-messages-on-buffer dels))
       (when (and update update-unread)
 	;; Update Folder mode
 	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
-				      (list 
+				      (list
 				       0
 				       (let ((pair
 					      (wl-summary-count-unread)))

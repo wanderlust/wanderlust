@@ -1905,7 +1905,7 @@ Flush queue.
 @item V
 @kindex V (Folder)
 @findex wl-folder-virtual
-Move to the virtual folder with the condition specified.
+Move to the virtual folder (filter folder) with the condition specified.
 (@code{wl-folder-virtual})
 
 @item ?
@@ -2544,7 +2544,7 @@ message has empty subject field.
 @cindex Mark, Temporary
 
 There are four temporary marks,
-@samp{*}, @samp{D}, @samp{o} and @samp{O}.
+@samp{*}, @samp{d}, @samp{o} and @samp{O}.
 Temporary marks indicates message operations.
 
 @table @samp
@@ -2553,8 +2553,8 @@ Target mark.
 You can execute a command on the all messages that have @samp{*} mark,
 with the key bindings which begins with @kbd{m}.
 
-@item D
-The mark to delete. You can put @samp{D} by typing @kbd{d} key.
+@item d
+The mark to dispose. You can put @samp{d} by typing @kbd{d} key.
 
 @item o
 The mark to refile.
@@ -2568,7 +2568,7 @@ The difference between this mark and refile mark is,
 this mark does not delete the message while latter does.
 @end table
 
-@kbd{x} key executes @samp{D}, @samp{o} and @samp{O} marks.
+@kbd{x} key executes action for temporary marks, respectively.
 
 @subsection Persistent Marks
 
@@ -3094,7 +3094,7 @@ A draft for forwarding the message at current cursor point is prepared.
 @kindex $ (Summary)
 @findex wl-summary-mark-as-important
 Put @samp{$} mark on the message at current cursor point.
-If already marked as @samp{$}, delete it.
+If already marked as @samp{$}, remove the mark.
 (@code{wl-summary-mark-as-important})
 
 @item y
@@ -3268,18 +3268,29 @@ Mark as unread the message at current cursor point.
 @item s
 @kindex s (Summary)
 @findex wl-summary-sync
-Synchronize summary view after prompting the update range
-(@samp{all}, @samp{update}, @samp{rescan}, @samp{first}, @samp{last}).
+Synchronize summary view after prompting the update range.
+You can specify one of the follows.
 
 @example
 @group
-all            ...Discard current summary and update all message.
-all-visible    ...Discard current summary and update all visible message.
-update         ...Update the difference between summary and the folder itself.
-rescan         ...Rescan the msgdb and display again.
-rescan-noscore ...Rescan the msgdb and display again (without scoring).
-cache-status   ...Sync the all marks with the real status of cache.
-first, last    ...Move to the filter folder(partial filter).
+all              Discard present msgdb and retrieve all informations.
+                 Do not retrieve killed messages.
+all-entirely     Discard present msgdb and retrieve all informations.
+                 Retrieve killed messages, too.
+update           Update the difference between informations in present
+                 msgdb and in current folder instance.
+                 Do not retrieve killed messages.
+update-entirely  Update the difference between informations in present
+                 msgdb and in current folder instance.
+                 Retrieve killed messages, too.
+rescan           Redisplay summary by rescanning present msgdb.
+rescan-noscore   Redisplay summary by rescanning present msgdb.
+                 Display messages killed by score, too.
+cache-status     Sync the all marks with the real status of cache.
+mark             Update marks.
+no-sync          Do nothing.
+first:NUM        Move to the filter folder(partial filter).
+last:NUM         Move to the filter folder(partial filter).
 @end group
 @end example
 
@@ -3318,7 +3329,7 @@ Toggle displaying of message window.
 
 @item V
 @kindex V (Summary)
-Move to the virtual folder with the condition specified.
+Move to the virtual folder (filter folder) with the condition specified.
 If called with prefix argument and current folder is virtual, exit it.
 @findex wl-summary-virtual
 (@code{wl-summary-virtual})
@@ -3341,16 +3352,9 @@ Put @samp{*} mark on the messages that satisfies the specified condition.
 Mark as read the message at the current cursor point.
 (@code{wl-summary-mark-as-read})
 
-@item i
-@kindex i (Summary)
-Prefetch the message at the current cursor point.
-With prefix argument, prefetch the message even if it is cached.
-@findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
-
 @item x
 @kindex x (Summary)
-Execute @samp{D}, @samp{o} and @samp{O} marks.
+Execute action for all temporary marks in the summary buffer.
 @findex wl-summary-exec
 (@code{wl-summary-exec})
 
@@ -3387,9 +3391,29 @@ previously specified.
 
 @item d
 @kindex d (Summary)
+@findex wl-summary-dispose
+Put disposal mark on the message at the current cursor point.
+The result of disposal is controlled by @code{wl-dispose-folder-alist},
+refiled to @code{wl-trash-folder} by default.
+(@code{wl-summary-dispose})
+
+@item D
+@kindex D (Summary)
 @findex wl-summary-delete
-Put delete mark on the message at the current cursor point.
+Put force deletion mark on the message at the current cursor point.
 (@code{wl-summary-delete})
+
+@item i
+@kindex i (Summary)
+Put prefetch reservation mark on the message at the current cursor point.
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item ~
+@kindex ~ (Summary)
+@findex wl-summary-resend
+Put resend reservation mark on the message at the current cursor point.
+(@code{wl-summary-resend})
 
 @item u
 @kindex u (Summary)
@@ -3413,7 +3437,7 @@ Mark as read messages in the specified region.
 @kindex r $ (Summary)
 @findex wl-summary-mark-as-important-region
 Mark as important @samp{$} messages in the specified region.
-If @samp{$} already exists, it is deleted.
+If @samp{$} mark already exists, remove the mark.
 (@code{wl-summary-mark-as-important-region})
 
 @item r !
@@ -3422,16 +3446,10 @@ If @samp{$} already exists, it is deleted.
 Mark as unread messages in the specified region.
 (@code{wl-summary-mark-as-unread-region})
 
-@item r i
-@kindex r i (Summary)
-@findex wl-summary-prefetch-region
-Prefetch messages in the specified region.
-(@code{wl-summary-prefetch-region})
-
 @item r x
 @kindex r x (Summary)
 @findex wl-summary-exec-region
-Execute @samp{D}, @samp{o} and @samp{O} marks on the messages in the
+Execute action for each temporary marks on the messages in the
 specified region.
 (@code{wl-summary-exec-region})
 
@@ -3455,9 +3473,15 @@ Put copy mark on the messages in the specified region.
 
 @item r d
 @kindex r d (Summary)
-@findex wl-summary-delete-region
-Put delete mark on the messages in the specified region.
-(@code{wl-summary-delete-region})
+@findex wl-summary-dispose-region
+Put disposal mark on the messages in the specified region.
+(@code{wl-summary-dispose-region})
+
+@item r i
+@kindex r i (Summary)
+@findex wl-summary-prefetch-region
+Put prefetch reservation mark on messages in the specified region.
+(@code{wl-summary-prefetch-region})
 
 @item r u
 @kindex r u (Summary)
@@ -3483,7 +3507,7 @@ With prefix argument, it affects on the all messages in the thread tree.
 @findex wl-thread-mark-as-important
 Put important mark @samp{$} on the messages which are the
 descendant of the current thread.
-If @samp{$} mark exists, it is deleted.
+If @samp{$} mark exists, remove the mark.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-mark-as-important})
 
@@ -3494,17 +3518,10 @@ Mark as unread messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-mark-as-unread})
 
-@item t i
-@kindex t i (Summary)
-@findex wl-thread-prefetch
-Prefetch messages which are the descendant of the current thread.
-With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-prefetch})
-
 @item t x
 @kindex t x (Summary)
 @findex wl-thread-exec
-Execute @samp{D}, @samp{o} and @samp{O} marks on the messages which are
+Execute action for temporary marks on the messages which are
 the descendant of the current thread.  With prefix argument, it affects
 on the all messages in the thread tree.
 (@code{wl-thread-exec})
@@ -3533,10 +3550,17 @@ With prefix argument, it affects on the all messages in the thread tree.
 
 @item t d
 @kindex t d (Summary)
-@findex wl-thread-delete
-Put delete mar on the messages which are the descendant of the current thread.
+@findex wl-thread-dispose
+Put disposal mark on the messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
-(@code{wl-thread-delete})
+(@code{wl-thread-dispose})
+
+@item t i
+@kindex t i (Summary)
+@findex wl-thread-prefetch
+Put prefetch reservation mark on messages which are the descendant of
+the current thread.
+(@code{wl-thread-prefetch})
 
 @item t u
 @kindex t u (Summary)
@@ -3553,13 +3577,6 @@ Save messages which are the descendant of the current thread.
 With prefix argument, it affects on the all messages in the thread tree.
 (@code{wl-thread-save})
 
-@item m i
-@kindex m i (Summary)
-@findex wl-summary-target-mark-prefetch
-Prefetch all messages which have target mark @samp{*}.
-With prefix argument, prefetch all targets even if some of them are cached.
-(@code{wl-summary-target-mark-prefetch})
-
 @item m R
 @kindex m R (Summary)
 @findex wl-summary-target-mark-mark-as-read
@@ -3570,7 +3587,7 @@ Mark as read all messages which have target mark @samp{*}.
 @kindex m $ (Summary)
 @findex wl-summary-target-mark-mark-as-important
 Mark as important all messages which have target mark @samp{*}.
-If already marked as @samp{$}, it is deleted.
+If already marked as @samp{$}, remove the mark.
 (@code{wl-summary-target-mark-mark-as-important})
 
 @item m !
@@ -3593,9 +3610,15 @@ Put copy mark on the messages which have target mark @samp{*}.
 
 @item m d
 @kindex m d (Summary)
-@findex wl-summary-target-mark-delete
-Put delete mark on the messages which have target mark @samp{*}.
-(@code{wl-summary-target-mark-delete})
+@findex wl-summary-target-mark-dispose
+Put disposal mark on the messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-dispose})
+
+@item m i
+@kindex m i (Summary)
+@findex wl-summary-target-mark-prefetch
+Put prefetch reservation mark on messages which have target mark @samp{*}.
+(@code{wl-summary-target-mark-prefetch})
 
 @item m y
 @kindex m y (Summary)
@@ -3665,12 +3688,6 @@ Print out all messages which have target mark @samp{*}.
 Pipe content of each message with target mark @samp{*} to some specified
 external process.
 (@code{wl-summary-target-mark-pipe})
-
-@item D
-@kindex D (Summary)
-@findex wl-summary-erase
-Actually erase the message at once, without moving it to trash.
-(@code{wl-summary-erase})
 
 @item M-t
 @kindex M-t (Summary)
@@ -7455,6 +7472,13 @@ If non-nil, you are asked for confirmation when Wanderlust terminates.
 The initial setting is @code{t}.
 If non-nil, you are asked for confirmation when mail is sent.
 
+@item wl-default-sync-range
+@vindex wl-default-sync-range
+The initial setting is @samp{update}.
+Default update range of the summary. You can specify
+@samp{all}, @samp{update}, @samp{rescan} or @samp{no-sync}.
+See description of @code{wl-summary-sync} for the meaning of ranges.
+
 @item wl-folder-sync-range-alist
 @vindex wl-folder-sync-range-alist
 The initial setting is the alist shown below:
@@ -7469,9 +7493,10 @@ The initial setting is the alist shown below:
 @noindent
 This is an associative list of regular expressions of folder names and
 update range of the summary.  Update range is one of the @samp{all},
-@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first},
-@samp{last} and @samp{no-sync}. If a folder do not match, @samp{update}
-is used.
+@samp{update}, @samp{rescan} or @samp{no-sync}. If the folder do not
+match any of them, the value of @code{wl-default-sync-range} is used
+(@samp{update} by default).
+See description of @code{wl-summary-sync} for the meaning of ranges.
 
 @item wl-ask-range
 @vindex wl-ask-range

@@ -168,12 +168,6 @@
 
 ;;; [[ Special Setting ]]
 
-;; bind "b" in Summary to resend-message (ala mutt's "b"ounce)
-;(add-hook 'wl-summary-mode-hook
-;	  '(lambda ()
-; 	     (define-key wl-summary-mode-map "b" 'wl-summary-resend-message)
-;	     ))
-
 ;; open unread group folder after checking.
 ;(add-hook 'wl-folder-check-entity-hook
 ;	  '(lambda ()

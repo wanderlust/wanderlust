@@ -58,7 +58,6 @@
   :type '(string :tag "Mark")
   :group 'elmo)
 
-;; Not implemented yet.
 (defcustom elmo-msgdb-answered-cached-mark "&"
   "Mark for answered and cached message."
   :type '(string :tag "Mark")
@@ -69,7 +68,7 @@
   :type '(string :tag "Mark")
   :group 'elmo)
 
-(defcustom elmo-msgdb-important-mark"$"
+(defcustom elmo-msgdb-important-mark "$"
   "Mark for important message."
   :type '(string :tag "Mark")
   :group 'elmo)
@@ -116,7 +115,6 @@
 ;; LIST-OF-MARKS elmo-msgdb-unread-marks 
 ;; LIST-OF-MARKS elmo-msgdb-answered-marks 
 ;; LIST-OF-MARKS elmo-msgdb-uncached-marks 
-;; elmo-msgdb-seen-save DIR OBJ
 ;; elmo-msgdb-overview-save DIR OBJ
 
 ;; elmo-msgdb-message-entity MSGDB KEY
@@ -182,9 +180,14 @@
     (elmo-msgdb-make-index msgdb)
     msgdb))
 
-(defun elmo-msgdb-list-messages (msgdb)
-  "List message numbers in the MSGDB."
-  (mapcar 'car (elmo-msgdb-get-number-alist msgdb)))
+(defun elmo-msgdb-list-messages (msgdb-or-path)
+  "Return a list of message numbers in the msgdb.
+If MSGDB-OR-PATH is a msgdb structure, use it as a msgdb.
+If argument is a string, use it as a path to load message entities."
+  (mapcar 'elmo-msgdb-overview-entity-get-number
+	  (if (stringp msgdb-or-path)
+	      (elmo-msgdb-overview-load msgdb-or-path)
+	    (elmo-msgdb-get-overview msgdb-or-path))))
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
@@ -395,11 +398,40 @@ FLAG is a symbol which is one of the following:
    (nconc (car msgdb) (car msgdb-append))
    (nconc (cadr msgdb) (cadr msgdb-append))
    (nconc (caddr msgdb) (caddr msgdb-append))
-   (elmo-msgdb-make-index
+   (elmo-msgdb-make-index-return
     msgdb
     (elmo-msgdb-get-overview msgdb-append)
     (elmo-msgdb-get-mark-alist msgdb-append))
    (nth 4 msgdb)))
+
+(defun elmo-msgdb-merge (folder msgdb-merge)
+  "Return a list of messages which have duplicated message-id."
+  (let (msgdb duplicates)
+    (setq msgdb (or (elmo-folder-msgdb-internal folder)
+		    (elmo-make-msgdb nil nil nil
+				     (elmo-folder-msgdb-path folder))))
+    (elmo-msgdb-set-overview
+     msgdb
+     (nconc (elmo-msgdb-get-overview msgdb)
+	    (elmo-msgdb-get-overview msgdb-merge)))
+    (elmo-msgdb-set-number-alist
+     msgdb
+     (nconc (elmo-msgdb-get-number-alist msgdb)
+	    (elmo-msgdb-get-number-alist msgdb-merge)))
+    (elmo-msgdb-set-mark-alist
+     msgdb
+     (nconc (elmo-msgdb-get-mark-alist msgdb)
+	    (elmo-msgdb-get-mark-alist msgdb-merge)))
+    (setq duplicates (elmo-msgdb-make-index
+		      msgdb
+		      (elmo-msgdb-get-overview msgdb-merge)
+		      (elmo-msgdb-get-mark-alist msgdb-merge)))
+    (elmo-msgdb-set-path
+     msgdb
+     (or (elmo-msgdb-get-path msgdb)
+	 (elmo-msgdb-get-path msgdb-merge)))
+    (elmo-folder-set-msgdb-internal folder msgdb)
+    duplicates))
 
 (defsubst elmo-msgdb-clear (&optional msgdb)
   (if msgdb
@@ -702,11 +734,6 @@ header separator."
 	   elmo-msgdb-answered-cached-mark
 	 elmo-msgdb-answered-uncached-mark)))))
 
-(defsubst elmo-msgdb-seen-save (dir obj)
-  (elmo-object-save
-   (expand-file-name elmo-msgdb-seen-filename dir)
-   obj))
-
 (defsubst elmo-msgdb-overview-save (dir overview)
   (elmo-object-save
    (expand-file-name elmo-msgdb-overview-filename dir)
@@ -989,7 +1016,7 @@ Return CONDITION itself if no entity exists in msgdb."
 		(references (aref (cdr entity) 1))
 		(size (aref (cdr entity) 7))
 		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
-	 (if decode
+	 (if (and decode (memq field '(from subject)))
 	     (elmo-msgdb-get-decoded-cache field-value)
 	   field-value))))
 
@@ -1237,7 +1264,7 @@ Header region is supposed to be narrowed."
       (and (setq number (elmo-msgdb-overview-entity-get-number entity))
 	   (elmo-clear-hash-val (format "#%d" number) mhash)))))
 
-(defun elmo-msgdb-make-index (msgdb &optional overview mark-alist)
+(defun elmo-msgdb-make-index-return (msgdb &optional overview mark-alist)
   "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
 If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
 Return the updated INDEX."
@@ -1268,6 +1295,44 @@ Return the updated INDEX."
       (setq index (or index (cons ehash mhash)))
       (elmo-msgdb-set-index msgdb index)
       index)))
+
+(defun elmo-msgdb-make-index (msgdb &optional overview mark-alist)
+  "Append OVERVIEW and MARK-ALIST to the index of MSGDB.
+If OVERVIEW and MARK-ALIST are nil, make index for current MSGDB.
+Return a list of message numbers which have duplicated message-ids."
+  (when msgdb
+    (let* ((overview (or overview (elmo-msgdb-get-overview msgdb)))
+	   (mark-alist (or mark-alist (elmo-msgdb-get-mark-alist msgdb)))
+	   (index (elmo-msgdb-get-index msgdb))
+	   (ehash (or (car index) ;; append
+		      (elmo-make-hash (length overview))))
+	   (mhash (or (cdr index) ;; append
+		      (elmo-make-hash (length overview))))
+	   duplicates)
+      (while overview
+	;; key is message-id
+	(if (elmo-get-hash-val (caar overview) ehash) ; duplicated.
+	    (setq duplicates (cons
+			      (elmo-msgdb-overview-entity-get-number
+			       (car overview))
+			      duplicates)))
+	(if (caar overview)
+	    (elmo-set-hash-val (caar overview) (car overview) ehash))
+	;; key is number
+	(elmo-set-hash-val
+	 (format "#%d"
+		 (elmo-msgdb-overview-entity-get-number (car overview)))
+	 (car overview) ehash)
+	(setq overview (cdr overview)))
+      (while mark-alist
+	;; key is number
+	(elmo-set-hash-val
+	 (format "#%d" (car (car mark-alist)))
+	 (car mark-alist) mhash)
+	(setq mark-alist (cdr mark-alist)))
+      (setq index (or index (cons ehash mhash)))
+      (elmo-msgdb-set-index msgdb index)
+      duplicates)))
 
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder
@@ -1327,10 +1392,10 @@ Return the updated INDEX."
 			   (list elmo-msgdb-important-mark))))))
     (when mark-regexp
       (if (eq flag 'read)
-	  (dolist (number (elmo-msgdb-get-number-alist msgdb))
-	    (unless (string-match mark-regexp (elmo-msgdb-get-mark
-					       msgdb number))
-	      (setq matched (cons number matched))))
+	  (dolist (number (elmo-msgdb-list-messages msgdb))
+	    (let ((mark (elmo-msgdb-get-mark msgdb number)))
+	      (unless (and mark (string-match mark-regexp mark))
+		(setq matched (cons number matched)))))
 	(dolist (elem (elmo-msgdb-get-mark-alist msgdb))
 	  (if (string-match mark-regexp (cadr elem))
 	      (setq matched (cons (car elem) matched))))))

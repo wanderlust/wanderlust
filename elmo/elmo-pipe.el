@@ -105,11 +105,13 @@
 
 (defun elmo-pipe-drain (src dst &optional copy ignore-list)
   "Move or copy all messages of SRC to DST."
-  (let ((elmo-inhibit-number-mapping (not copy)) ; No need to use UIDL
+  (let ((elmo-inhibit-number-mapping (and (eq (elmo-folder-type-internal
+					       src) 'pop3)
+					  (not copy))) ; No need to use UIDL
 	msgs len)
     (message "Checking %s..." (elmo-folder-name-internal src))
     ;; Warnnig: some function requires msgdb
-    ;;  but elmo-folder-open-internal do not load msgdb.
+    ;; but elmo-folder-open-internal do not load msgdb.
     (elmo-folder-open-internal src)
     (setq msgs (elmo-pipe-folder-list-target-messages src ignore-list)
 	  len (length msgs))
@@ -120,8 +122,7 @@
 			     "Copying messages..."
 			   "Moving messages...")))
     (unwind-protect
-	(elmo-folder-move-messages src msgs dst
-				   nil nil copy)
+	(elmo-folder-move-messages src msgs dst copy)
       (elmo-progress-clear 'elmo-folder-move-messages))
     (when (and copy msgs)
       (setq ignore-list (elmo-number-set-append-list ignore-list
@@ -148,11 +149,19 @@
 		      (expand-file-name "pipe" elmo-msgdb-directory)))
    copied-list))
 
+(luna-define-method elmo-folder-msgdb ((folder elmo-pipe-folder))
+  (elmo-folder-msgdb (elmo-pipe-folder-dst-internal folder)))
+
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal(elmo-pipe-folder-dst-internal folder)))
+
+(luna-define-method elmo-folder-set-message-modified
+  ((folder elmo-pipe-folder) modified)
+  (elmo-folder-set-message-modified-internal
+   (elmo-pipe-folder-dst-internal folder) modified))
 
 (luna-define-method elmo-folder-list-messages ((folder elmo-pipe-folder)
 					       &optional visible-only in-msgdb)
@@ -169,7 +178,7 @@
 (luna-define-method elmo-folder-list-answereds ((folder elmo-pipe-folder))
   (elmo-folder-list-answereds (elmo-pipe-folder-dst-internal folder)))
 
-(luna-define-method elmo-folder-status ((folder elmo-pipe-folder))
+(luna-define-method elmo-folder-diff ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-src-internal folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder))
   (let* ((elmo-inhibit-number-mapping
@@ -177,10 +186,14 @@
 	 (src-length (length (elmo-pipe-folder-list-target-messages
 			      (elmo-pipe-folder-src-internal folder)
 			      (elmo-pipe-folder-copied-list-load folder))))
-	 (dst-list (elmo-folder-list-messages
-		    (elmo-pipe-folder-dst-internal folder))))
-    (prog1 (cons (+ src-length (elmo-max-of-list dst-list))
-		 (+ src-length (length dst-list)))
+	 (dst-diff (elmo-folder-diff (elmo-pipe-folder-dst-internal folder))))
+    (prog1
+	(cond
+	 ((consp (cdr dst-diff)) ; new unread all
+	  (mapcar (lambda (number) (+ number src-length)) dst-diff))
+	 (t
+	  (cons (+ (car dst-diff) src-length)
+		(+ (cdr dst-diff) src-length))))
       ;; No save.
       (elmo-folder-close-internal (elmo-pipe-folder-src-internal folder))
       (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))))
@@ -320,12 +333,10 @@
 		      (elmo-pipe-folder-dst-internal new-folder))
     (elmo-msgdb-rename-path folder new-folder)))
 
-(luna-define-method elmo-folder-commit ((folder elmo-pipe-folder))
-  (elmo-folder-commit
-   (elmo-pipe-folder-dst-internal folder)))
-
 (luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)
-					     &optional ignore-msgdb
+					     &optional
+					     disable-killed
+					     ignore-msgdb
 					     no-check)
   (let ((src-folder (elmo-pipe-folder-src-internal folder))
 	(dst-folder (elmo-pipe-folder-dst-internal folder)))
@@ -340,7 +351,8 @@
 			    (elmo-pipe-folder-copied-list-load folder)))
 	(elmo-pipe-drain src-folder dst-folder))))
   (elmo-folder-synchronize
-   (elmo-pipe-folder-dst-internal folder) ignore-msgdb no-check))
+   (elmo-pipe-folder-dst-internal folder)
+   disable-killed ignore-msgdb no-check))
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-pipe-folder)
 					      flag
@@ -366,10 +378,23 @@
 		      number
 		      field))
 
+(luna-define-method elmo-message-set-cached ((folder elmo-pipe-folder)
+					     number cached)
+  (elmo-message-set-cached (elmo-pipe-folder-dst-internal folder)
+			   number cached))
+
+(luna-define-method elmo-find-fetch-strategy
+  ((folder elmo-pipe-folder) entity &optional ignore-cache)
+  (elmo-find-fetch-strategy (elmo-pipe-folder-dst-internal folder)
+			    (elmo-message-entity
+			     (elmo-pipe-folder-dst-internal folder)
+			     (elmo-message-entity-number entity))
+			    ignore-cache))
+
 (luna-define-method elmo-message-entity ((folder elmo-pipe-folder) key)
   (elmo-message-entity (elmo-pipe-folder-dst-internal folder) key))
 
-(luna-define-method elmo-message-folder ((folder elmo-multi-folder)
+(luna-define-method elmo-message-folder ((folder elmo-pipe-folder)
 					 number)
   (elmo-pipe-folder-dst-internal folder))
 					     

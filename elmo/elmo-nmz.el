@@ -167,8 +167,7 @@ If the value is a list, all elements are used as index paths for namazu."
   ((folder elmo-nmz-folder))
   t)
 
-(luna-define-method elmo-folder-diff ((folder elmo-nmz-folder)
-				      &optional numbers)
+(luna-define-method elmo-folder-diff ((folder elmo-nmz-folder))
   (cons nil nil))
 
 (luna-define-method elmo-folder-message-make-temp-files ((folder

@@ -43,7 +43,7 @@
 
 (defmacro elmo-multi-real-folder-number (folder number)
   "Returns a cons cell of real FOLDER and NUMBER."
-  (` (cons (nth (- 
+  (` (cons (nth (-
 		 (/ (, number)
 		    (elmo-multi-folder-divide-number-internal (, folder)))
 		 1) (elmo-multi-folder-children-internal (, folder)))
@@ -85,10 +85,12 @@
     (elmo-folder-set-msgdb-internal fld nil)))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-multi-folder)
-					     &optional ignore-msgdb
+					     &optional
+					     disable-killed
+					     ignore-msgdb
 					     no-check)
   (dolist (fld (elmo-multi-folder-children-internal folder))
-    (elmo-folder-synchronize fld ignore-msgdb no-check))
+    (elmo-folder-synchronize fld disable-killed ignore-msgdb no-check))
   0)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
@@ -129,6 +131,24 @@
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
        (elmo-multi-folder-children-internal folder)))
 
+(luna-define-method elmo-message-cached-p ((folder elmo-multi-folder) number)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-cached-p (car pair) (cdr pair))))
+
+(luna-define-method elmo-message-set-cached ((folder elmo-multi-folder)
+					     number cached)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-set-cached (car pair) (cdr pair) cached)))
+
+(luna-define-method elmo-find-fetch-strategy
+  ((folder elmo-multi-folder) entity &optional ignore-cache)
+  (let ((pair (elmo-multi-real-folder-number
+	       folder
+	       (elmo-message-entity-number entity))))
+    (elmo-find-fetch-strategy
+     (car pair)
+     (elmo-message-entity (car pair) (cdr pair)) ignore-cache)))
+
 (luna-define-method elmo-message-entity ((folder elmo-multi-folder) key)
   (cond
    ((numberp key)
@@ -153,6 +173,12 @@
 	  (setq children nil))
 	(setq children (cdr children)))
       match))))
+
+(luna-define-method elmo-message-entity-parent ((folder
+						 elmo-multi-folder) entity)
+  (elmo-message-entity
+   folder
+   (elmo-message-entity-field entity 'references)))
 
 (luna-define-method elmo-message-field ((folder elmo-multi-folder)
 					number field)
@@ -191,22 +217,6 @@
   (dolist (child (elmo-multi-folder-children-internal folder))
     (elmo-folder-process-crosspost child)))
 
-(defsubst elmo-multi-find-fetch-strategy (folder entity ignore-cache)
-  (if entity
-      (let ((pair (elmo-multi-real-folder-number
-		   folder
-		   (elmo-msgdb-overview-entity-get-number entity)))
-	    (new-entity (elmo-msgdb-copy-overview-entity entity)))
-	(setq new-entity
-	      (elmo-msgdb-overview-entity-set-number new-entity (cdr pair)))
-	(elmo-find-fetch-strategy (car pair) new-entity ignore-cache))
-    (elmo-make-fetch-strategy 'entire)))
-
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-multi-folder)
-   entity &optional ignore-cache)
-  (elmo-multi-find-fetch-strategy folder entity ignore-cache))
-
 (luna-define-method elmo-message-fetch ((folder elmo-multi-folder)
 					number strategy
 					&optional section outbuf unseen)
@@ -237,27 +247,30 @@
       (setq cur-number (+ 1 cur-number)))
     t))
 
-(luna-define-method elmo-folder-diff ((folder elmo-multi-folder)
-				      &optional numbers)
-  (elmo-multi-folder-diff folder numbers))
+(luna-define-method elmo-folder-diff ((folder elmo-multi-folder))
+  (elmo-multi-folder-diff folder))
 
-(defun elmo-multi-folder-diff (folder numbers)
+(defun elmo-multi-folder-diff (folder)
   (let ((flds (elmo-multi-folder-children-internal folder))
-	(num-list (and numbers (elmo-multi-split-numbers folder numbers)))
-	(unsync 0)
-	(messages 0)
-	diffs)
+	(news 0)
+	(unreads 0)
+	(alls 0)
+	no-unreads diff)
     (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff (car flds)
-						       (car num-list)))))
+      (setq diff (elmo-folder-diff (car flds)))
+      (cond
+       ((consp (cdr diff)) ; (new unread all)
+	(setq news    (+ news (nth 0 diff))
+	      unreads (+ unreads (nth 1 diff))
+	      alls    (+ alls (nth 2 diff))))
+       (t
+	(setq no-unreads t)
+	(setq news    (+ news (car diff))
+	      alls    (+ alls (cdr diff)))))
       (setq flds (cdr flds)))
-    (while diffs
-      (and (car (car diffs))
-	   (setq unsync (+ unsync (car (car diffs)))))
-      (setq messages  (+ messages (cdr (car diffs))))
-      (setq diffs (cdr diffs)))
-    (elmo-folder-set-info-hashtb folder nil messages)
-    (cons unsync messages)))
+    (if no-unreads
+	(cons news alls)
+      (list news unreads alls))))
 
 (luna-define-method elmo-folder-list-unreads ((folder elmo-multi-folder))
   (let ((cur-number 0)
@@ -360,37 +373,28 @@
       t)))
 
 (luna-define-method elmo-folder-search ((folder elmo-multi-folder)
-					condition &optional numlist)
+					condition &optional numbers)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
-	 numlist-list cur-numlist ; for filtered search.
-	 ret-val)
-    (if numlist
-	(setq numlist-list
-	      (elmo-multi-split-numbers folder numlist t)))
+	 numlist
+	 matches)
+    (setq numbers (or numbers
+		      (elmo-folder-list-messages folder)))
     (while flds
       (setq cur-number (+ cur-number 1))
-      (when numlist
-	(setq cur-numlist (car numlist-list))
-	(if (null cur-numlist)
-	    ;; t means filter all.
-	    (setq cur-numlist t)))
-      (setq ret-val (append
-		     ret-val
-		     (elmo-list-filter
-		      cur-numlist
-		      (mapcar
-		       (function
-			(lambda (x)
-			  (+
-			   (* (elmo-multi-folder-divide-number-internal
-			       folder) cur-number) x)))
-		       (elmo-folder-search
-			(car flds) condition)))))
-      (when numlist
-	(setq numlist-list (cdr numlist-list)))
+      (setq matches (append matches
+			    (mapcar
+			     (function
+			      (lambda (x)
+				(+
+				 (* (elmo-multi-folder-divide-number-internal
+				     folder)
+				    cur-number)
+				 x)))
+			     (elmo-folder-search
+			      (car flds) condition))))
       (setq flds (cdr flds)))
-    ret-val))
+    (elmo-list-filter numbers matches)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
 					      number)
@@ -516,6 +520,12 @@
 		     cur-number) x)))
 	      (elmo-folder-list-flagged child flag in-msgdb)))))
     numbers))
+
+(luna-define-method elmo-folder-set-message-modified ((folder
+						       elmo-multi-folder)
+						      modified)
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-set-message-modified child modified)))
 
 (luna-define-method elmo-folder-commit ((folder elmo-multi-folder))
   (dolist (child (elmo-multi-folder-children-internal folder))

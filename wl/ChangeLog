@@ -1,3 +1,353 @@
+2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-get-field-value): Call
+	`elmo-message-entity-field' with 3rd argument is non-nil.
+
+2003-08-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-draft-preview-attributes): New user option.
+	(wl-draft-preview-attributes-list): Ditto.
+	(wl-draft-preview-attributes-buffer-lines): Ditto.
+	(wl-draft-preview-attributes-buffer-name): Ditto.
+
+	* wl-mime.el (wl-draft-preview-message): Display attributes.
+
+2003-08-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-detect-mark-position): Bind
+	wl-summary-flag-priority-list to '(new).
+
+2003-08-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-highlight.el (wl-highlight-summary-line-face-spec): New
+	funtion.
+	(wl-highlight-summary-line-string): Use it.
+	(wl-highlight-summary-current-line): Ditto.
+
+2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-update-persistent-mark): Highlight the
+	line even when the mark string is not changed.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the
+	argument change in the wl-summary-create-line.
+	(wl-thread-insert-entity-sub): Ditto.
+
+	* wl-summary.el (wl-summary-detect-mark-position): Follow the
+	argument change in the wl-summary-create-line.
+	(wl-summary-insert-sequential): Ditto.
+	(wl-summary-update-thread): Ditto.
+	(wl-summary-persistent-mark-string): New inline function.
+	(wl-summary-message-mark): Use it.
+	(wl-summary-create-line): Abolish argument wl-persistent-mark
+	and added wl-flags, wl-cached.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Changed argument
+	mark to flags.
+	(wl-highlight-summary-current-line): Decide the face not by the 
+	persistent mark but flags.
+
+2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-new-mark, wl-summary-important-mark,
+	wl-summary-unread-uncached-mark, wl-summary-unread-cached-mark,
+	wl-summary-read-uncached-mark): Revive.
+	(wl-summary-answered-cached-mark,
+	wl-summary-answered-uncached-mark): New user option.
+	(wl-summary-score-marks): Follow the change above.
+	(wl-summary-auto-refile-skip-marks): Ditto.
+	(wl-summary-incorporate-marks): Ditto.
+	(wl-summary-expire-reserve-marks): Ditto.
+	(wl-summary-flag-priority-list): New user option.
+
+	* wl-summary.el (wl-summary-sync-marks): Follow the variable name
+	changes.
+	(wl-summary-auto-select-msg-p): Use elmo-message-flagged-p instead
+	of elmo-message-mark.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-mark-as-answered): Ditto.
+	(wl-summary-mark-as-important): Ditto.
+	(wl-summary-redisplay-internal): Ditto.
+	(wl-summary-redisplay-no-mime-internal): Ditto.
+	(wl-summary-message-mark): New function.
+	(wl-summary-insert-sequential): Use wl-summary-message-mark
+	instead of elmo-message-mark.
+	(wl-summary-update-thread): Ditto.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-cursor-move-surface): Use elmo-message-accessible-p
+	instead of elmo-message-mark.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Use
+	wl-summary-message-mark instead of elmo-message-mark.
+	(wl-thread-insert-entity-sub): Ditto.
+	(wl-thread-get-children-msgs-uncached): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Follow the
+	variable name changes.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-action.el (wl-summary-no-auto-refile-message-p): Use
+	wl-summary-message-mark instead of elmo-message-mark.
+
+	* wl-expire.el (wl-expire-message-p): Ditto.
+
+	* wl-score.el (wl-score-headers): Ditto.
+
+	* Version number is increased to 2.11.9.
+
+	* wl-summary.el (wl-summary-buffer-msgdb): Abolish.
+	(wl-summary-sync-update): Follow the change above.
+	(wl-summary-switch-to-clone-buffer): Ditto.
+	(wl-summary-open-folder): Ditto.
+
+2003-08-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-cursor-move-surface): Don't skip
+	`elmo-msgdb-answered-cached-mark' when the folder is unplugged.
+
+	* Version number is increased to 2.11.8.
+
+	* wl-summary.el (wl-summary-buffer-msgdb): Abolish.
+
+	* wl-expire.el (wl-expire-refile): Follow the API change on
+	`elmo-folder-move-messages'.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+
+	* wl-action.el (wl-summary-move-mark-list-messages): Ditto.
+	(wl-summary-exec-action-refile): Ditto.
+	(wl-summary-exec-action-copy): Ditto.
+	(wl-summary-no-auto-refile-message-p): No use
+	`wl-summary-buffer-msgdb'.
+	(wl-summary-auto-refile): Ditto.
+
+2003-08-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-sync): Fix regexp for last: and first:.
+
+2003-08-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Treat no-sync.
+
+	* wl-vars.el (wl-folder-sync-range-alist): Removed first: and last:.
+	(wl-default-sync-range): Ditto.
+
+2003-08-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-subject-learn): Call
+	`elmo-message-entity-field' with 3rd argument is non-nil.
+	(wl-refile-guess-by-subject): Use `elmo-message-entity-field'
+	instead of `elmo-msgdb-overview-entity-get-subject'.
+
+2003-08-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Rescan if
+	scan-type is rescan.
+	(wl-summary-delete-all-temp-marks): Remove scored mark too when
+	new optional argument force is non-nil.
+	(wl-summary-save-view-cache): Call it with force argument non-nil.
+
+	* wl-action.el (wl-summary-unset-mark): Added optional argument FORCE.
+
+2003-08-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-print-argument): Fixed last change.
+
+2003-08-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-mark-as-read): Fixed and
+	simplified.
+	(wl-summary-target-mark-mark-as-unread): Likewise.
+	(wl-summary-target-mark-mark-as-important): Likewise.
+
+2003-08-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-msg-mark-as-important): Abolished.
+	* wl-summary.el (wl-summary-mark-as-important): Arranged.
+	(wl-summary-mark-as-important-region): Change accordingly.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+
+2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-print-argument-within-window): New variable.
+
+	* wl-action.el (wl-summary-print-argument): Print argument to
+	right side of window if `wl-summary-print-argument-within-window'
+	is non-nil.
+
+2003-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-action.el (wl-summary-set-mark): Use
+	`wl-summary-message-visible-p' to check visibility of the message
+	and jump to message only when the message line is visible and have
+	different number; Call wl-summary-unset-mark with number argument.
+	(wl-summary-unset-mark): 
+	Use `wl-summary-message-visible-p'
+	to check visibility of the message and jump to message only when
+	the message line is visible and have different number;
+
+2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.7.
+
+	* wl.el (wl-check-variables-2): Don't check wl-summary-line-format
+	and wl-folder-summary-line-format.
+
+	* wl-summary.el (wl-summary-message-visible-p): New inline function.
+	(wl-summary-put-temp-mark): Rename from wl-summary-mark-line.
+	(wl-summary-set-score-mark): Use it.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+	(wl-summary-target-mark-mark-as-unread): Ditto.
+	(wl-summary-target-mark-mark-as-important): Ditto.
+	(wl-summary-target-mark-msgs): Simplified.
+	(wl-summary-detect-mark-position): Fixed problem when
+	summary-line-format no contain persisten/temp mark spec.
+	(wl-summary-temp-mark): Ditto.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-update-persistent-mark): Ditto.
+
+	* wl-action.el (wl-summary-set-mark): Ditto.
+	(wl-summary-unset-mark): Ditto.
+	All other related portions are changed.
+
+2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.11.6.
+
+2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-util.el (wl-current-message-buffer): Define as function;
+	Don't use the value of wl-messge-buffer.
+
+	* wl-summary.el (wl-summary-redisplay-no-mime-internal): Update
+	persistent mark.
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): If there's
+	no current message, cause an error.
+
+2003-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-set-message-modified): Use
+	elmo-folder-set-message-modified instead of
+	elmo-folder-set-message-modified-internal.
+
+2003-08-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Call wl-summary-sync-marks
+	interactively.
+	(wl-summary-sync): nokill->entirely.
+	(wl-summary-sync-marks): Fixed message.
+	(wl-summary-input-range): Added mark, nokill->entirely.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Set expunged
+	messages as read.
+
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-input-range): Abolish all-noscore and
+	update-noscore.
+	(wl-summary-sync): Follow the change above.
+
+2003-08-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-target-mark-all): Use
+	elmo-folder-list-messages.
+
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-rescan): Added argument disable-kill
+	(wl-summary-rescan): Set wl-summary-scored as nil.
+	(wl-summary-sync-force-update): Follow the change above.
+	(wl-summary-sync): Ditto.
+	(wl-summary-sync-update): Added argument disable-killed.
+	(wl-summary-insert-headers): Set visible-only argument for
+	elmo-folder-list-messages.
+	(wl-summary-input-range): Added update-nokill, update-noscore,
+	all-nokill, all-noscore and mark.
+
+	* Version number is increased to 2.11.5.
+
+	* wl-draft.el (wl-draft): Set buffer-undo-list as nil.
+
+2003-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Update persistent mark.
+	(wl-summary-prefetch-region-no-mark): Change accordingly.
+	* wl-action.el (wl-summary-exec-action-prefetch): Ditto.
+
+2003-07-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-address.el (wl-complete-field-to): Abolished.
+	(wl-complete-address): Completion function for completing-read.
+	* wl-action.el (wl-summary-get-resend-address): Use it.
+
+	* wl-summary.el (wl-summary-update-persistent-mark): Renamed from
+	wl-summary-update-mark and abolish unused argument.
+	(wl-summary-prefetch-region-no-mark, wl-summary-mark-as-read-all)
+	(wl-summary-delete-cache, wl-summary-resume-cache-status)
+	(wl-summary-update-status-marks, wl-summary-mark-as-read-internal)
+	(wl-summary-mark-as-important, wl-summary-redisplay-internal)
+	(wl-summary-mark-as-answered-internal, wl-summary-reply): Use it.
+	* wl-draft.el (wl-draft-kill): Ditto.
+
+	* wl-summary.el: Remove unused binding of case-fold-search.
+	(wl-summary-replace-status-marks): Abolished.
+
+2003-07-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-action.el (wl-summary-set-mark): Cause an error when no message
+	is specified or folder length is zero.
+
+2003-07-29  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-expire.el (wl-folder-expire-current-entity): Specify folder type.
+	(wl-folder-archive-current-entity): Ditto.
+
+2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-update-mark): Ignore errors while
+	retrieving message mark.
+	(wl-summary-redisplay-internal): Ditto.
+
+	* wl-message.el (wl-message-buffer-display): Ignore errors while
+	retrieving message-id field.
+
+	* wl-expire.el (wl-summary-expire): Fixed 2nd argument for `wl-append'.
+	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
+	(wl-expire-refile-with-copy-reserve-msg): Follow the change in the
+	order of the arguments for `wl-expire-message-p'.
+	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
+
+	* wl-summary.el (wl-summary-target-mark-reply-with-citation): 
+	Check return value of wl-summary-reply.
+	(wl-summary-reply): Recover window configuration when an error occured.
+
+2003-07-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-resend-message): Abolished, the
+	feature is inherited by wl-summary-resend (put resend mark).
+
+2003-07-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-toggle-disp-msg): Set
+	wl-message-buffer to nil when the message is hide.
+
+2003-07-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* .cvsignore: New file.
+
+2003-07-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-action.el (wl-summary-action-docstring): Add more info.
+	(wl-summary-target-mark, wl-summary-target-mark-region): Remove
+	duplicate definition.
+	(wl-summary-define-mark-action): Functions wl-summary-*-region
+	keep current position.
+	(wl-summary-unregister-target-mark): Store result to the variable.
+
+2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.11.4.
+
 2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-cleanup-temp-marks): Use

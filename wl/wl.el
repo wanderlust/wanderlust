@@ -786,17 +786,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		wl-message-buffer-cache-size))
 	(error (concat
 		"`wl-message-buffer-prefetch-depth' must be smaller than "
-		"`wl-message-buffer-cache-size' - 1."))))
-  (let (case-fold-search)
-    (unless (string-match "%T" wl-summary-line-format)
-      (error "`wl-summary-line-format' must contain %%T and %%P"))
-    (unless (string-match "%P" wl-summary-line-format)
-      (error "`wl-summary-line-format' must contain %%T and %%P"))
-    (dolist (pair wl-folder-summary-line-format-alist)
-      (unless (string-match "%T" (cdr pair))
-	(error "Format `%s' must contain %%T and %%P" (cdr pair)))
-      (unless (string-match "%P" (cdr pair))
-	(error "Format `%s' must contain %%T and %%P" (cdr pair))))))
+		"`wl-message-buffer-cache-size' - 1.")))))
 
 ;;;###autoload
 (defun wl (&optional arg)

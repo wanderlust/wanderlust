@@ -59,8 +59,11 @@ has Non-nil value\)"
 		     (function wl-draft-yank-to-draft-buffer))))
 	(mime-preview-following-method-alist
 	 (list (cons 'wl-original-message-mode
-		     (function wl-draft-yank-to-draft-buffer)))))
-    (if (get-buffer (wl-current-message-buffer))
+		     (function wl-draft-yank-to-draft-buffer))))
+	(message-buffer (wl-current-message-buffer)))
+    (unless message-buffer
+      (error "No message."))
+    (if (get-buffer message-buffer)
 	(save-excursion
 	  (set-buffer (wl-current-message-buffer))
 	  (save-restriction
@@ -143,7 +146,8 @@ It calls following-method selected from variable
 (defun wl-draft-preview-message ()
   "Preview editing message."
   (interactive)
-  (let* (recipients-message
+  (let* (wl-recipients
+	 (orig-buffer (current-buffer))
 	 (current-point (point))
 	 (config-exec-flag wl-draft-config-exec-flag)
 	 (parent-folder wl-draft-parent-folder)
@@ -164,10 +168,9 @@ It calls following-method selected from variable
 		     (wl-draft-parent-folder parent-folder))
 		 (goto-char current-point)
 		 (run-hooks 'wl-draft-send-hook)
-		 (setq recipients-message
+		 (setq wl-recipients
 		       (condition-case err
-			   (concat "Recipients: "
-				   (mapconcat
+			   (concat (mapconcat
 				    'identity
 				    (wl-draft-deduce-address-list
 				     (current-buffer)
@@ -191,7 +194,51 @@ It calls following-method selected from variable
       (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
-    (message "%s" recipients-message)))
+    (make-local-variable 'kill-buffer-hook)
+    (add-hook 'kill-buffer-hook
+	      (lambda ()
+		(when (get-buffer-window
+		       wl-draft-preview-attributes-buffer-name)
+		  (select-window (get-buffer-window
+				  wl-draft-preview-attributes-buffer-name))
+		  (delete-window))
+		(when (get-buffer wl-draft-preview-attributes-buffer-name)
+		  (kill-buffer (get-buffer
+				wl-draft-preview-attributes-buffer-name)))))
+    (if (not wl-draft-preview-attributes)
+	(message (concat "Recipients: " wl-recipients))
+;      (ignore-errors ; in case when the window is too small
+	(let* ((cur-win (selected-window))
+	       (size (min
+		      (- (window-height cur-win)
+			 window-min-height 1)
+		      (- (window-height cur-win)
+			 (max
+			  window-min-height
+			  (1+ wl-draft-preview-attributes-buffer-lines))))))
+	  (split-window cur-win (if (> size 0) size window-min-height))
+	  (select-window (next-window))
+	  (let ((pop-up-windows nil))
+	    (switch-to-buffer (get-buffer-create
+			       wl-draft-preview-attributes-buffer-name)))
+	  (with-current-buffer
+	      (get-buffer wl-draft-preview-attributes-buffer-name)
+	    (setq buffer-read-only t)
+	    (let (buffer-read-only)
+	      (erase-buffer)
+	      (dolist (attr wl-draft-preview-attributes-list)
+		(insert (capitalize (symbol-name attr)) ": "
+			(or
+			 (with-current-buffer orig-buffer
+			   (format "%s"
+				   (symbol-value
+				    (intern
+				     (concat "wl-" (symbol-name attr))))))
+			 "")
+			"\n"))
+	      (goto-char (point-min))
+	      (wl-highlight-headers)))
+	  (select-window cur-win)))));)
 
 (defalias 'wl-draft-caesar-region  'mule-caesar-region)
 

@@ -1,3 +1,210 @@
+2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-message-entity-field): Decode value
+	when field is from or subject.
+
+2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-message-entity-parent): Define.
+	(elmo-folder-search): Rewrite.
+
+2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-multi.el (elmo-message-cached-p): Define.
+
+	* elmo.el (elmo-message-cached-p): New method.
+	(elmo-message-accessible-p): Use it instead of msgdb API directly.
+	(elmo-message-flags): New method.
+	(elmo-message-flagged-p): New function.
+
+	* elmo-version.el (elmo-version): Up to 2.11.9.
+
+2003-08-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.11.8.
+
+	* elmo.el (elmo-folder-move-messages): Removed unused arguments.
+
+	* elmo-pipe.el (elmo-pipe-drain): Follow the change above.
+
+2003-08-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-detach-messages): Undo last change.
+
+2003-08-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-detach-messages): Don't load msgdb if empty.
+
+	* elmo-pipe.el (elmo-pipe-drain): Bind elmo-inhibit-number-mapping
+	only when src folder type is pop3.
+
+2003-08-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-make-index): Use
+	elmo-msgdb-overview-entity-get-number instead of
+	elmo-message-entity-number.
+
+2003-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.11.7.
+
+2003-08-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-append-msgdb): Rewrite and define as an inline
+	function.
+
+	* elmo-msgdb.el (elmo-msgdb-append): Use elmo-msgdb-make-index-return.
+	(elmo-msgdb-merge): New function.
+	(elmo-msgdb-make-index-return): Renamed from elmo-msgdb-make-index.
+	(elmo-msgdb-make-index): Rewrite.
+
+	* elmo-version.el (elmo-version): Up to 2.11.6.
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): If argument is a string,
+	use it as a the path for loading message entities.
+
+	* elmo-dop.el (elmo-folder-status-dop): Use elmo-msgdb-list-messages.
+
+2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-filter.el (elmo-folder-set-message-modified): Set 
+	message-modified slot of itself if it does not require target msgdb.
+
+	* elmo-mime.el (elmo-mime-message-display): Display message entirely
+	if folder length is zero.
+	(elmo-mime-display-as-is): Ditto.
+
+	* elmo-filter.el (elmo-folder-set-message-modified): Define.
+
+	* elmo-multi.el (elmo-folder-set-message-modified): Ditto.
+
+2003-08-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-set-message-modified): New method.
+	(elmo-generic-folder-commit): Use it.
+	(elmo-folder-synchronize): Ditto.
+
+	* elmo-pipe.el (elmo-folder-set-message-modified): Define.
+	(elmo-folder-commit): Remove duplicate definition.
+
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-message-entities): Ignore killed-list.
+
+2003-08-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-msgdb-load): Use elmo-msgdb-list-messages.
+	(elmo-strict-folder-diff): Ditto.
+	(elmo-folder-set-info-max-by-numdb): Simplify.
+
+	* elmo-nntp.el (elmo-nntp-folder-msgdb-create): Use
+	elmo-msgdb-list-messages.
+
+	* elmo-msgdb.el (elmo-msgdb-seen-save): Abolish.
+	(elmo-msgdb-list-flagged): Fixed problem when `flag' is `read'.
+
+2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-messages): Treat killed-list only when
+	visible-only is non-nil.
+	(elmo-folder-confirm-appends): Changed message.
+	(elmo-folder-synchronize): Added argument disable-killed.
+
+	* elmo-multi.el (elmo-folder-synchronize): Added argument
+	disable-killed.
+
+	* elmo-pipe.el (elmo-folder-synchronize): Ditto.
+
+	* elmo-version.el (elmo-version): Up to 2.11.5.
+
+	* elmo-multi.el (elmo-folder-search): Use nil for 1st argument of
+	elmo-list-filter.
+
+	* elmo-util.el (elmo-list-filter): Simplify.
+
+	* elmo.el (elmo-generic-folder-commit): Use elmo-folder-list-messages.
+	(elmo-folder-set-info-max-by-numdb): Changed argument to number list.
+	(elmo-generic-folder-diff): Abolish argument.
+	(elmo-msgdb-load): Don't use number-alist.
+
+	* elmo-filter.el (elmo-folder-diff): Abolish argument.
+
+	* elmo-pipe.el (elmo-folder-diff): Ditto.
+
+	* elmo-nmz.el (elmo-folder-diff): Ditto.
+
+	* elmo-net.el (elmo-folder-diff): Ditto.
+
+	* elmo-maildir.el (elmo-folder-diff): Ditto.
+
+	* elmo-imap4.el (elmo-folder-diff-async): Ditto.
+
+	* elmo-multi.el (elmo-folder-diff): Ditto
+	(elmo-multi-folder-diff): Rewrite.
+
+2003-08-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-folder-msgdb): Define.
+
+2003-08-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-set-cached): Define as a method.
+
+	* elmo-pipe.el (elmo-message-set-cached): Define.
+	(elmo-find-fetch-strategy): Ditto.
+
+	* elmo-multi.el (elmo-message-set-cached): Define.
+	(elmo-find-fetch-strategy): Rewrite.
+
+	* elmo-mime.el (elmo-mime-message-display): Use elmo-message-entity.
+
+	* elmo-pipe.el (elmo-message-folder): Fixed definition.
+
+2003-07-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-list-messages): Use number of overviews
+	instead of number-alist.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Don't refer
+	mark nor message-id when msgdb of source folder is not loaded.
+
+	* elmo.el (elmo-generic-folder-append-messages): Ditto.
+
+	* elmo-maildir.el (elmo-folder-append-messages): Ditto.
+
+2003-07-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-length): Don't require msgdb.
+
+2003-07-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-mark): Cause an error when empty folder.
+	(elmo-message-field): Ditto.
+
+	* elmo-maildir.el (luna-define-class): Added slot `answered-locations'.
+	(elmo-map-folder-list-message-locations): Setup `answered-locations'
+	slot.
+	(elmo-map-folder-list-answereds): Define.
+	(elmo-maildir-list-location): Treat 'R' info.
+	(elmo-folder-msgdb-create): Treat flag-table.
+	(elmo-folder-append-messages): Save flag-table.
+
+2002-05-05  David Smith <ultrasoul@ultrasoul.com>
+
+	* elmo-imap4.el (elmo-imap4-folder-diff-plugged): 
+	Use SELECT when	elmo-imap4-use-select-to-update-status is t.
+
+2003-07-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-generic-folder-append-messages): Fixed last change.
+
+	* elmo-localdir.el (elmo-folder-append-messages): Set flag as
+	'read when mark is null.
+
+2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.11.4.
+
 2003-07-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-pipe.el (elmo-folder-unmark-answered): Define.

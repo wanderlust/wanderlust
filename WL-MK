@@ -375,26 +375,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Texinfo stuff
 
+(defun wl-texinfo-info-file (lang)
+  (symbol-value (intern (format "wl-%s-info" lang))))
+
+(defun wl-texinfo-texi-file (lang)
+  (symbol-value (intern (format "wl-%s-texi" lang))))
+
+(defun wl-texinfo-check-newer (lang)
+  (let ((info-file (expand-file-name (wl-texinfo-info-file lang) DOCDIR)))
+    (and
+     (file-newer-than-file-p info-file
+			     (expand-file-name "version.texi" DOCDIR))
+     (file-newer-than-file-p info-file
+			     (expand-file-name (wl-texinfo-texi-file lang) DOCDIR)))))
+
 (defun wl-texinfo-format-file (lang)
-  (let ((infofile (symbol-value (intern (format "wl-%s-info" lang))))
-	(texifile (symbol-value (intern (format "wl-%s-texi" lang)))))
-    (require 'wl-vars) ;; for 'wl-cs-local
-    (or (file-newer-than-file-p (expand-file-name infofile DOCDIR)
-				(expand-file-name texifile DOCDIR))
-	(let (obuf beg)
-	  ;; Support old texinfmt.el
-	  (require 'ptexinfmt (expand-file-name "ptexinfmt.el" UTILSDIR))
-	  (find-file (expand-file-name texifile DOCDIR))
-	  (setq obuf (current-buffer))
-	  ;; We can't know file names if splitted.
-	  (texinfo-format-buffer t)
-	  ;; Emacs20.2's default is 'raw-text-unix.
-	  (and (fboundp 'set-buffer-file-coding-system)
-	       (set-buffer-file-coding-system wl-cs-local))
-	  (save-buffer)
-	  (kill-buffer (current-buffer)) ;; info
-	  (kill-buffer obuf)) ;; texi
-	)))
+  (require 'wl-vars) ;; for 'wl-cs-local
+  (or (wl-texinfo-check-newer lang)
+      (let (obuf)
+	;; Support old texinfmt.el
+	(require 'ptexinfmt (expand-file-name "ptexinfmt.el" UTILSDIR))
+	(find-file (expand-file-name (wl-texinfo-texi-file lang) DOCDIR))
+	(setq obuf (current-buffer))
+	;; We can't know file names if splitted.
+	(texinfo-format-buffer t)
+	;; Emacs20.2's default is 'raw-text-unix.
+	(and (fboundp 'set-buffer-file-coding-system)
+	     (set-buffer-file-coding-system wl-cs-local))
+	(save-buffer)
+	(kill-buffer (current-buffer)) ;; info
+	(kill-buffer obuf)) ;; texi
+      ))
 
 (defun wl-texinfo-format ()
   (wl-detect-info-directory)
@@ -405,7 +416,7 @@
 	 (wl-texinfo-format-file wl-info-lang))))
 
 (defun wl-texinfo-install-file (lang)
-  (let ((infofile (symbol-value (intern (format "wl-%s-info" lang)))))
+  (let ((infofile (wl-texinfo-info-file lang)))
     (install-file infofile DOCDIR INFODIR nil 'overwrite)))
 
 (defun wl-texinfo-install ()
@@ -422,7 +433,7 @@
 	 (let ((wl-info-lang (car wl-info-lang)))
 	   (wl-primary-info-file)))
 	((stringp wl-info-lang)
-	 (symbol-value (intern (format "wl-%s-info" wl-info-lang))))))
+	 (wl-texinfo-info-file wl-info-lang))))
 
 (defun wl-detect-info-directory ()
   (config-wl-package-subr)

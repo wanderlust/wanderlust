@@ -2370,6 +2370,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
+    (if elmo-imap4-use-select-to-update-status
+	(elmo-imap4-session-select-mailbox
+	 session
+	 (elmo-imap4-folder-mailbox-internal folder)))
     (setq response
 	  (elmo-imap4-send-command-wait session
 					(list
@@ -2397,8 +2401,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-diff-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-folder-diff-plugged folder))
 
-(luna-define-method elmo-folder-diff-async ((folder elmo-imap4-folder)
-					    &optional number-alist)
+(luna-define-method elmo-folder-diff-async ((folder elmo-imap4-folder))
   (setq elmo-imap4-server-diff-async-callback
 	elmo-folder-diff-async-callback)
   (setq elmo-imap4-server-diff-async-callback-data
