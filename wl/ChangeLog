@@ -1,3 +1,7 @@
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el (wl-demo-insert-image): Fixed the face name for xbm.
+
 2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-acap.el (wl-acap-cache-filename): New variable.
