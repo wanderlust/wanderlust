@@ -1,3 +1,9 @@
+2001-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-summary-burst): Extract message when content-type
+	of root entity is not only `multipart' but also `message/rfc822'.
+	(wl-summary-burst-subr): Ditto.
+
 2001-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (toplevel): Require 'custom.

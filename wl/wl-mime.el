@@ -157,28 +157,26 @@ By setting following-method as yank-content."
   'mime-button-dispatcher)
 
 ;;; Summary
-(defun wl-summary-burst-subr (children target number)
+(defun wl-summary-burst-subr (message-entity target number)
   ;; returns new number.
-  (let (content-type message-entity granch)
-    (while children
-      (setq content-type (mime-entity-content-type (car children)))
-      (if (eq (cdr (assq 'type content-type)) 'multipart)
-          (setq number (wl-summary-burst-subr
-			(mime-entity-children (car children))
-			target
-			number))
-        (when (and (eq (cdr (assq 'type content-type)) 'message)
-                   (eq (cdr (assq 'subtype content-type)) 'rfc822))
-          (message (format "Bursting...%s" (setq number (+ 1 number))))
-          (setq message-entity
-                (car (mime-entity-children (car children))))
-	  (with-temp-buffer
-	    (insert (mime-entity-body (car children)))
-	    (elmo-folder-append-buffer
-	     target
-	     (mime-entity-fetch-field message-entity
-				      "Message-ID")))))
-      (setq children (cdr children)))
+  (let (content-type entity)
+    (setq content-type (mime-entity-content-type message-entity))
+    (cond ((eq (cdr (assq 'type content-type)) 'multipart)
+	   (dolist (entity (mime-entity-children message-entity))
+	     (setq number (wl-summary-burst-subr
+			   entity
+			   target
+			   number))))
+	  ((and (eq (cdr (assq 'type content-type)) 'message)
+		(eq (cdr (assq 'subtype content-type)) 'rfc822))
+	   (message (format "Bursting...%s" (setq number (+ 1 number))))
+	   (setq entity
+		 (car (mime-entity-children message-entity)))
+	   (with-temp-buffer
+	     (insert (mime-entity-body message-entity))
+	     (elmo-folder-append-buffer
+	      target
+	      (mime-entity-fetch-field entity "Message-ID")))))
     number))
 
 (defun wl-summary-burst ()
@@ -195,11 +193,10 @@ By setting following-method as yank-content."
       (wl-summary-set-message-buffer-or-redisplay)
       (with-current-buffer view-buf
 	(setq message-entity (get-text-property (point-min) 'mime-view-entity)))
-      (with-current-buffer raw-buf
-	(setq children (mime-entity-children message-entity)))
-      (when children
+      (when message-entity
 	(message "Bursting...")
-	(wl-summary-burst-subr children target 0)
+	(with-current-buffer raw-buf
+	  (wl-summary-burst-subr message-entity target 0))
 	(message "Bursting...done"))
       (if (elmo-folder-plugged-p target)
 	  (elmo-folder-check target)))
