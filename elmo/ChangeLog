@@ -1,3 +1,7 @@
+2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-quit): Call `elmo-dop-queue-save'.
+
 2001-09-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* acap.el (acap-read-passphrase): Always autoload ange-ftp for

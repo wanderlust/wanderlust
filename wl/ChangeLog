@@ -1,3 +1,8 @@
+2001-09-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Changed order of calling `elmo-init'
+	and `elmo-folder-init'.
+
 2001-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-summary-burst): Extract message when content-type

@@ -1397,8 +1397,8 @@ Return a hashtable for newsgroups."
 
 (defun elmo-quit ()
   "Quit and cleanup ELMO."
-;  (setq elmo-newsgroups-hashtb nil)
   (elmo-crosspost-message-alist-save)
+  (elmo-dop-queue-save)
   ;; Not implemented yet.
   (let ((types elmo-folder-type-alist)
 	class)
