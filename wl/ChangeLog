@@ -1,3 +1,13 @@
+2000-08-22   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-folder.el (wl-folder-create-subr): New function.
+	(wl-folder-confirm-existence): Use it.
+	(wl-folder-check-one-entity): Use it.
+	Check the error symbol is derived from 'elmo-open-error.
+
+	* wl-summary.el (wl-summary-read-folder): Don't pass the argument
+	`ignore-error'.
+
 2000-08-21  Kaoru Takahashi  <kaoru@kaisei.org>
 
 	* wl-util.el (toplevel): Add (eval-when-compile (require

@@ -3428,7 +3428,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (string= fld ""))
 	(setq fld default))
     (unless no-create
-      (wl-folder-confirm-existence fld ignore-error))
+      (if ignore-error
+	  (ignore-errors (wl-folder-confirm-existence fld))
+	(wl-folder-confirm-existence fld)))
     fld))
 
 (defun wl-summary-print-destination (msg-num folder)

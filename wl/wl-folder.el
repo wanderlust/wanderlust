@@ -808,22 +808,12 @@
 		   (if (wl-string-member entity wl-strict-diff-folders)
 		       (elmo-strict-folder-diff entity)
 		     (elmo-folder-diff entity))
-		 (error
+		 (error	      
 		  ;; maybe not exist folder.
-		  (if (not (elmo-folder-exists-p entity))
-		      (if (not (elmo-folder-creatable-p entity))
-			  (error "Folder %s is not found" entity)
-			(if (y-or-n-p 
-			     (format "Folder %s does not exist, create it?" 
-				     entity))
-			    (progn
-			      (unless (elmo-create-folder entity)
-				(error "Create folder failed"))
-			      ;; one more try.
-			      (if (wl-string-member entity wl-strict-diff-folders)
-				  (elmo-strict-folder-diff entity)
-				(elmo-folder-diff entity)))
-			  (error "Folder is not created")))
+		  (if (and (not (memq 'elmo-open-error
+				      (get (car err) 'error-conditions)))
+			   (not (elmo-folder-exists-p entity)))
+		      (wl-folder-create-subr entity)
 		    (signal (car err) (cdr err))))))
 	 unread unsync nomif)
     (if (and (eq wl-folder-notify-deleted 'sync)
@@ -2648,38 +2638,24 @@ If optional arg exists, don't check any folders."
 	(wl-exit)
       (kill-buffer bufname))))
 
-(defun wl-folder-confirm-existence (fld &optional ignore-error)
-  (if (or (wl-folder-entity-exists-p fld)
-	  (file-exists-p (elmo-msgdb-expand-path fld)))
-      ()
-    (if ignore-error
-	(condition-case nil
-	    (if (elmo-folder-exists-p fld)
-		()
-	      (if (elmo-folder-creatable-p fld)
-		  (if (y-or-n-p 
-		       (format "Folder %s does not exist, create it?" fld))
-		      (progn
-			(setq wl-folder-entity-hashtb
-			      (wl-folder-create-entity-hashtb
-			       fld
-			       wl-folder-entity-hashtb))
-			(elmo-create-folder fld)))))
-	  (error))
-      (if (elmo-folder-exists-p fld)
-	  ()
-	(if (not (elmo-folder-creatable-p fld))
-	    (error "Folder %s is not found" fld)
-	  (if (y-or-n-p 
-	       (format "Folder %s does not exist, create it?" fld))
-	      (progn
-		(setq wl-folder-entity-hashtb
-		      (wl-folder-create-entity-hashtb
-		       fld
-		       wl-folder-entity-hashtb))
-		(unless (elmo-create-folder fld)
-		  (error "Create folder failed")))
-	    (error "Folder is not created")))))))
+(defun wl-folder-create-subr (entity)
+  (if (not (elmo-folder-creatable-p entity))
+      (error "Folder %s is not found" entity)
+    (if (y-or-n-p 
+	 (format "Folder %s does not exist, create it?" 
+		 entity))
+	(progn
+	  (setq wl-folder-entity-hashtb
+		(wl-folder-create-entity-hashtb
+		 entity wl-folder-entity-hashtb))
+	  (unless (elmo-create-folder entity)
+	    (error "Create folder failed")))
+      (error "Folder %s is not created" entity))))
+
+(defun wl-folder-confirm-existence (folder)
+  (unless (or (wl-folder-entity-exists-p folder)
+	      (file-exists-p (elmo-msgdb-expand-path folder)))
+    (wl-folder-create-subr folder)))
 
 (provide 'wl-folder)
 
