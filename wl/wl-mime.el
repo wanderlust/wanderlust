@@ -61,16 +61,15 @@ has Non-nil value\)"
 	 (list (cons 'wl-original-message-mode
 		     (function wl-draft-yank-to-draft-buffer))))
 	(message-buffer (wl-current-message-buffer)))
-    (unless message-buffer
-      (error "No message."))
-    (if (get-buffer message-buffer)
+    (if message-buffer
 	(save-excursion
-	  (set-buffer (wl-current-message-buffer))
+	  (set-buffer message-buffer)
 	  (save-restriction
 	    (widen)
 	    (if (wl-region-exists-p)
 		(wl-mime-preview-follow-current-region)
-	      (mime-preview-follow-current-entity)))))))
+	      (mime-preview-follow-current-entity))))
+      (error "No message."))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el
 (defun wl-mime-preview-follow-current-region ()
