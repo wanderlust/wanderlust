@@ -399,32 +399,7 @@ Insert User-Agent field instead of X-Mailer field."
 	(concat "User-Agent: " wl-appname "/" wl-version " (" wl-codename ") "
 		(wl-extended-emacs-version3 "/" t))))))
 
-(defun wl-make-modeline-subr ()
-  (let* ((duplicated (copy-sequence mode-line-format))
-	 (cur-entry duplicated)
-	 return-modeline)
-    (if (memq 'wl-plug-state-indicator mode-line-format)
-	duplicated
-      (catch 'done
-	(while cur-entry
-	  (if (or (and (symbolp (car cur-entry))
-		       (eq 'mode-line-buffer-identification 
-			      (car cur-entry)))
-		  (and (consp (car cur-entry))
-		       (or 
-			(eq 'modeline-buffer-identification 
-			       (car (car cur-entry)))
-			(eq 'modeline-buffer-identification 
-			       (cdr (car cur-entry))))))
-	      (progn
-		(setq return-modeline (append return-modeline
-					      (list 'wl-plug-state-indicator)
-					      cur-entry))
-		(throw 'done return-modeline))
-	    (setq return-modeline (append return-modeline
-					  (list (car cur-entry)))))
-	  (setq cur-entry (cdr cur-entry)))))))
-
+(defalias 'wl-mode-line-buffer-identification 'identity)
 (defalias 'wl-display-error 'elmo-display-error)
 (make-obsolete 'wl-display-error 'elmo-display-error)
 

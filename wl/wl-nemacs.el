@@ -76,7 +76,10 @@
 
 (defun wl-draft-overload-functions ()
   (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
+	(wl-mode-line-buffer-identification
+	 (if wl-show-plug-status-on-modeline
+	     '("" wl-plug-state-indicator "Wanderlust: %12b")
+	   '("Wanderlust: %12b"))))
   (local-set-key "\C-c\C-y" 'wl-draft-yank-original)
   (local-set-key "\C-c\C-s" 'wl-draft-send)
   (local-set-key "\C-c\C-a" 'wl-draft-insert-x-face-field)
@@ -91,11 +94,7 @@
   (local-set-key "\C-c\C-j" 'wl-template-select)
   (local-set-key "\C-c\C-p" 'wl-draft-preview-message)
   (local-set-key "\C-x\C-s" 'wl-draft-save)
-  (local-set-key "\C-xk"    'wl-draft-mimic-kill-buffer)
-  (when wl-show-plug-status-on-modeline
-    (set (make-variable-buffer-local 'mode-line-format) (wl-make-modeline))))
-
-(defalias 'wl-make-modeline 'wl-make-modeline-subr)
+  (local-set-key "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 ;;; Emulations.
 

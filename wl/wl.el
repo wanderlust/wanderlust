@@ -209,8 +209,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (setq major-mode 'wl-plugged-mode)
   (setq mode-name "Plugged")
   (easy-menu-add wl-plugged-mode-menu)
-  (when wl-show-plug-status-on-modeline 
-    (setq mode-line-format (wl-make-modeline)))
+  (setq mode-line-buffer-identification
+	(wl-mode-line-buffer-identification
+	 (if wl-show-plug-status-on-modeline
+	     '("" wl-plug-state-indicator "Wanderlust: %12b")
+	   '("Wanderlust: %12b"))))
   (setq wl-plugged-switch wl-plugged)
   (setq wl-plugged-alist-modified nil)
   (setq buffer-read-only t)

@@ -187,13 +187,12 @@ Special commands:
 
 (defun wl-draft-overload-functions ()
   (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
+	(wl-mode-line-buffer-identification
+	 (if wl-show-plug-status-on-modeline
+	     '("" wl-plug-state-indicator "Wanderlust: %12b")
+	   '("Wanderlust: %12b"))))
   (local-set-key "\C-c\C-s" 'wl-draft-send)    ; override
-  (wl-draft-overload-menubar)
-  (when wl-show-plug-status-on-modeline
-    (setq mode-line-format (wl-make-modeline))))
-
-(defalias 'wl-make-modeline 'wl-make-modeline-subr)
+  (wl-draft-overload-menubar))
 
 ;; for "ja-mule-canna-2.3.mini" on PocketBSD
 (defun-maybe make-face (a))

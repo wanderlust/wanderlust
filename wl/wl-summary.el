@@ -69,6 +69,7 @@
 
 (defvar wl-summary-buffer-msgdb       nil)
 (defvar wl-summary-buffer-folder-name nil)
+(defvar wl-summary-buffer-folder-indicator nil)
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
 (defvar wl-summary-buffer-refile-list nil) 
@@ -129,6 +130,7 @@
        'wl-summary-buffer-target-mark-list
        'wl-summary-buffer-delete-list
        'wl-summary-buffer-folder-name
+       'wl-summary-buffer-folder-indicator
        'wl-summary-buffer-last-displayed-msg
        'wl-summary-buffer-unread-status
        'wl-summary-buffer-unread-count
@@ -562,36 +564,6 @@
 	      wl-summary-buffer-unread-count unread))
     (+ new unread)))
 
-(defun wl-summary-make-modeline ()
-  "Create new modeline format for Wanderlust"
-  (let* ((duplicated (copy-sequence mode-line-format))
-	 (cur-entry duplicated)
-	 return-modeline)
-    (if (memq 'wl-plug-state-indicator mode-line-format)
-	duplicated
-      (catch 'done
-	(while cur-entry
-	  (if (or (and (symbolp (car cur-entry))
-		       (eq 'mode-line-buffer-identification 
-			      (car cur-entry)))
-		  (and (consp (car cur-entry))
-		       (or 
-			(eq 'modeline-buffer-identification 
-			       (car (car cur-entry)))
-			(eq 'modeline-buffer-identification 
-			       (cdr (car cur-entry))))))
-	      (progn
-		(setq return-modeline (append return-modeline
-					      (list 
-					       'wl-plug-state-indicator
-					       (car cur-entry)
-					       'wl-summary-buffer-unread-status)
-					      (cdr cur-entry)))
-		(throw 'done return-modeline))
-	    (setq return-modeline (append return-modeline
-					  (list (car cur-entry)))))
-	  (setq cur-entry (cdr cur-entry)))))))
-
 (defun wl-summary-reedit (&optional arg)
   "Re-edit current message.
 If optional argument is non-nil, Supersedes message"
@@ -732,6 +704,10 @@ Returns nil if selecting folder was in failure."
 
 (defun wl-summary-buffer-set-folder (folder)
   (setq wl-summary-buffer-folder-name folder)
+  (setq wl-summary-buffer-folder-indicator
+	(if (memq 'modeline wl-use-folder-petname)
+	    (wl-folder-get-petname folder)
+	  folder))
   (when (wl-summary-sticky-p)
     (make-local-variable 'wl-message-buf-name)
     (setq wl-message-buf-name (format "%s:%s" wl-message-buf-name folder)))
@@ -841,8 +817,14 @@ q	Goto folder mode.
     (setq wl-summary-buffer-message-redisplay-func
 	  'wl-normal-message-redisplay))
   (wl-xmas-setup-summary) ; setup toolbar, dnd, etc.
-  (when wl-show-plug-status-on-modeline 
-    (setq mode-line-format (wl-summary-make-modeline)))
+  (setq mode-line-buffer-identification
+	(wl-mode-line-buffer-identification
+	 (append
+	  (if wl-show-plug-status-on-modeline
+	      '("" wl-plug-state-indicator))
+	  '("Wanderlust: "
+	    wl-summary-buffer-folder-indicator
+	    wl-summary-buffer-unread-status))))
   (easy-menu-add wl-summary-mode-menu)
   (run-hooks 'wl-summary-mode-hook))
 
@@ -2660,11 +2642,6 @@ If optional argument is non-nil, checking is omitted."
      copy-variables)
     (switch-to-buffer buf)
     (kill-buffer cur-buf)
-    (setq mode-line-buffer-identification
-	  (format "Wanderlust: %s" 
-		  (if (memq 'modeline wl-use-folder-petname)
-		      (wl-folder-get-petname folder)
-		    folder)))
     (wl-summary-count-unread 
      (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
     (wl-summary-update-modeline)
@@ -2752,12 +2729,7 @@ If optional argument is non-nil, checking is omitted."
 		(inhibit-read-only t)
 		(buffer-read-only nil))
 	    (erase-buffer)
-	    (setq mode-line-buffer-identification
-		  (format "Wanderlust: %s" 
-			  (if (memq 'modeline wl-use-folder-petname)
-			      (wl-folder-get-petname fld)
-			    fld)))
-	      ;; resume summary cache
+	    ;; resume summary cache
 	    (if wl-summary-cache-use
 		(let* ((dir (elmo-msgdb-expand-path fld))
 		       (cache (expand-file-name wl-summary-cache-file dir))

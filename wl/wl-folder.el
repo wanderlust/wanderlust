@@ -1402,8 +1402,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
 	wl-folder-buffer-cur-point nil)
-  (when wl-show-plug-status-on-modeline 
-    (setq mode-line-format (wl-make-modeline)))
+  (setq mode-line-buffer-identification
+	(wl-mode-line-buffer-identification
+	 (if wl-show-plug-status-on-modeline
+	     '("" wl-plug-state-indicator "Wanderlust: %12b")
+	   '("Wanderlust: %12b"))))
   (easy-menu-add wl-folder-mode-menu)
   (wl-xmas-setup-folder)
   (run-hooks 'wl-folder-mode-hook))
@@ -1426,7 +1429,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (if (get-buffer wl-folder-buffer-name)
       (switch-to-buffer  wl-folder-buffer-name)
     (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
-    (setq mode-line-buffer-identification '("Wanderlust: %12b"))
     (wl-folder-mode)
     (wl-folder-init)
     (wl-folder-init-icons)

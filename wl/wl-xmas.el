@@ -328,32 +328,32 @@
    wl-folder-internal-icon-list))
 
 (defun wl-plugged-init-icons ()
-  (if (null wl-plugged-glyph)
-      (setq wl-plugged-glyph
-	    (wl-xmas-make-icon-glyph
-	     (concat "[" wl-plugged-plug-on "]")
-	     wl-plugged-icon)))
-  (if (null wl-unplugged-glyph)
-      (setq wl-unplugged-glyph
-	    (wl-xmas-make-icon-glyph
-	     (concat "[" wl-plugged-plug-off "]")
-	     wl-unplugged-icon))))
-
-(defun wl-make-modeline ()
-  "Make modeline for Wanderlust"
-  (wl-plugged-init-icons)
-  (let ((extent (make-extent nil nil))
-	(toggle-keymap (make-sparse-keymap)))
-    (define-key toggle-keymap 'button2 (make-modeline-command-wrapper
-					'wl-toggle-plugged))
-    (set-extent-keymap extent toggle-keymap)
-    (set-extent-property extent 'help-echo "button2 toggles plugged status")
-    (setq wl-plug-state-indicator-on (cons extent wl-plugged-glyph))
-    (setq wl-plug-state-indicator-off (cons extent wl-unplugged-glyph))
-    (setq wl-plug-state-indicator (if wl-plugged 
-				      wl-plug-state-indicator-on
-				    wl-plug-state-indicator-off)))
-  (wl-make-modeline-subr))
+  (unless wl-plugged-glyph
+    (setq wl-plugged-glyph
+	  (wl-xmas-make-icon-glyph
+	   (concat "[" wl-plugged-plug-on "]")
+	   wl-plugged-icon))
+    (let ((extent (make-extent nil nil))
+	  (toggle-keymap (make-sparse-keymap)))
+      (define-key toggle-keymap 'button2
+	(make-modeline-command-wrapper 'wl-toggle-plugged))
+      (set-extent-keymap extent toggle-keymap)
+      (set-extent-property extent 'help-echo "button2 toggles plugged status")
+      (setq wl-plug-state-indicator-on
+	    (cons extent wl-plugged-glyph))))
+  (unless wl-unplugged-glyph
+    (setq wl-unplugged-glyph
+	  (wl-xmas-make-icon-glyph
+	   (concat "[" wl-plugged-plug-off "]")
+	   wl-unplugged-icon))
+    (let ((extent (make-extent nil nil))
+	  (toggle-keymap (make-sparse-keymap)))
+      (define-key toggle-keymap 'button2
+	(make-modeline-command-wrapper 'wl-toggle-plugged))
+      (set-extent-keymap extent toggle-keymap)
+      (set-extent-property extent 'help-echo "button2 toggles plugged status")
+      (setq wl-plug-state-indicator-off
+	    (cons extent wl-unplugged-glyph)))))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -451,12 +451,13 @@ Special commands:
 
 (defun wl-draft-overload-functions ()
   (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
+	(wl-mode-line-buffer-identification
+	 (if wl-show-plug-status-on-modeline
+	     '("" wl-plug-state-indicator "Wanderlust: %12b")
+	   '("Wanderlust: %12b"))))
   (local-set-key "\C-c\C-s" 'wl-draft-send) ; override
   (wl-xmas-setup-draft-toolbar)
-  (wl-draft-overload-menubar)
-  (when wl-show-plug-status-on-modeline
-    (setq mode-line-format (wl-make-modeline))))
+  (wl-draft-overload-menubar))
 
 (defalias 'wl-defface 'defface)
 

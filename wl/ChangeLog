@@ -1,3 +1,41 @@
+2000-08-28   Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-nemacs.el (wl-draft-overload-functions): Set
+	`mode-line-buffer-identification' instead of using
+	`wl-make-modeline'.
+
+	* wl.el (wl-plugged-mode): Set `mode-line-buffer-identification'
+	instead	of using `wl-make-modeline'.
+
+	* wl-xmas.el (wl-plugged-init-icons): Set up
+	`wl-plug-state-indicator-on' and `wl-plug-state-indicator-off'.
+	(wl-make-modeline): Abolish.
+	(wl-draft-overload-functions): Set
+	`mode-line-buffer-identification' instead of using
+	`wl-make-modeline'.
+
+	* wl-util.el (wl-make-modeline-subr): Abolish.
+	(wl-mode-line-buffer-identification): New alias.
+
+	* wl-summary.el (wl-summary-buffer-folder-indicator): New.
+	(wl-summary-make-modeline): Abolish.
+	(wl-summary-buffer-set-folder): Set
+	`wl-summary-buffer-folder-indicator'.
+	(wl-summary-mode): Set `mode-line-buffer-identification' instead
+	of using `wl-make-modeline'.
+	(wl-summary-switch-to-clone-buffer): Don't set
+	`mode-line-buffer-identification'.
+	(wl-summary-goto-folder-subr): Ditto.
+
+	* wl-mule.el (wl-draft-overload-functions): Set
+	`mode-line-buffer-identification' instead of using
+	`wl-make-modeline'.
+
+	* wl-folder.el (wl-folder-mode): Set
+	`mode-line-buffer-identification' instead of using
+	`wl-make-modeline'.
+	(wl-folder): Don't set `mode-line-buffer-identification'.
+
 2000-08-28  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-refile.el (wl-refile-learn): Simplified.  Use `memq'
