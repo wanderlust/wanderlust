@@ -1,6 +1,6 @@
 2002-01-17  Kenichi OKADA  <okada@opaopa.org>
 
-	* im-wl.el (wl-draft-send-with-imput-async): Use `wl-message-id-function'
+	* im-wl.el (wl-draft-send-with-imput-async): Use `wl-message-id-function'.
 
 2002-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
