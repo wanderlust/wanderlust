@@ -1,3 +1,9 @@
+2001-10-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-pipe-drain): Use `unwind-protect';
+	Hide progress gauge if `elmo-folder-move-messages' exits
+	nonlocally.
+
 2001-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-folder-initialize): Use

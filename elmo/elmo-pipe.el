@@ -106,8 +106,9 @@
     (when (> len elmo-display-progress-threshold)
       (elmo-progress-set 'elmo-folder-move-messages
 			 len "Moving messages..."))
-    (elmo-folder-move-messages src msgs dst)
-    (elmo-progress-clear 'elmo-folder-move-messages))
+    (unwind-protect
+	(elmo-folder-move-messages src msgs dst)
+      (elmo-progress-clear 'elmo-folder-move-messages)))
   ;; Don't save msgdb here.
   ;; Because summary view of original folder is not updated yet.
   (elmo-folder-close-internal src)
@@ -133,7 +134,7 @@
   ((folder elmo-pipe-folder) unread-marks &optional mark-alist)
   (elmo-folder-list-unreads-internal (elmo-pipe-folder-dst-internal folder)
 				     unread-marks mark-alist))
-  
+
 (luna-define-method elmo-folder-list-importants-internal
   ((folder elmo-pipe-folder) important-mark)
   (elmo-folder-list-importants-internal (elmo-pipe-folder-dst-internal folder)
