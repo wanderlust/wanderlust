@@ -1,3 +1,7 @@
+2002-01-25  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* elmo.el (elmo-generic-folder-append-messages): Disable multibyte.
+
 2002-01-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-localnews.el (elmo-localnews-folder-path): Moved from

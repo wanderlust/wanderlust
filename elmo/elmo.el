@@ -963,6 +963,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 						   unread-marks same-number)
   (let (unseen seen-list succeed-numbers failure cache)
     (with-temp-buffer
+      (set-buffer-multibyte nil)
       (while numbers
 	(setq failure nil)
 	(condition-case nil
