@@ -1,3 +1,11 @@
+2000-09-11  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-highlight-folder-group-icon): New function.
+	(wl-highlight-folder-current-line): Use it.
+
+	* wl-folder.el (wl-folder-entity-assign-id): Don't put text props
+	in `id-name'.
+
 2000-09-08  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl.el: Require `wl-e21' when Emacs 21 is running.
