@@ -1421,7 +1421,13 @@ If Optional LOCAL is non-nil, don't update server flag."
 					       strategy section unread)
     (when (and (not unread)
 	       (elmo-message-flagged-p folder number 'unread))
-      (elmo-message-unset-flag folder number 'unread 'local))
+      (elmo-message-unset-flag folder number 'unread
+			       ;; If cache does not exists, update only msgdb.
+			       ;; otherwise, flag status on server should be
+			       ;; changed since it is never touched at this
+			       ;; point.
+			       (not (elmo-message-flagged-p
+				     folder number 'cached))))
     t))
 
 (luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
