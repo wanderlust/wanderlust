@@ -733,11 +733,15 @@
     (` (defun (, name) (,@ everything-else)))))
 
 (defmacro wl-delete-all-overlays ()
+  "Delete all momentary overlays."
   (if wl-on-nemacs
       nil
-    '(mapcar (lambda (x)
-	       (delete-overlay x))
-	     (overlays-in (point-min) (point-max)))))
+    '(let ((overlays (overlays-in (point-min) (point-max)))
+	   overlay)
+       (while (setq overlay (car overlays))
+	 (if (overlay-get overlay 'wl-momentary-overlay)
+	     (delete-overlay overlay))
+	 (setq overlays (cdr overlays))))))
 
 (defun-hilit wl-highlight-summary-displaying ()
   (interactive)
@@ -748,7 +752,9 @@
       (setq bol (point))
       (save-excursion (end-of-line) (setq eol (point)))
       (setq ov (make-overlay bol eol))
-      (overlay-put ov 'face 'wl-highlight-summary-displaying-face))))
+      (overlay-put ov 'face 'wl-highlight-summary-displaying-face)
+      (overlay-put ov 'evaporate t)
+      (overlay-put ov 'wl-momentary-overlay t))))
 
 (defun-hilit2 wl-highlight-folder-group-line (numbers)
   (end-of-line)
@@ -944,7 +950,9 @@ Variables used:
 		    (match-beginning 1)
 		    (match-end 1)))
 	  (setq wl-folder-buffer-cur-point (point))
-	  (overlay-put ov 'face 'wl-highlight-folder-path-face))
+	  (overlay-put ov 'face 'wl-highlight-folder-path-face)
+	  (overlay-put ov 'evaporate t)
+	  (overlay-put ov 'wl-momentary-overlay t))
 	(forward-line 1)))))
 
 (defun-hilit2 wl-highlight-refile-destination-string (string)
@@ -1177,13 +1185,13 @@ interpreted as cited text.)"
 		(put-text-property
 		 (match-beginning 2) (match-end 2)
 		 'face 'wl-highlight-message-header-contents)))
- 	      (goto-char hend))
+	      (goto-char hend))
 	     ((looking-at mail-header-separator)
 	      (put-text-property (match-beginning 0) (match-end 0)
 				 'face 'wl-highlight-header-separator-face)
 	      (goto-char (match-end 0)))
- 	     ;; ignore non-header field name lines
- 	     (t (forward-line 1)))))
+	     ;; ignore non-header field name lines
+	     (t (forward-line 1)))))
 	;; now do the body, unless it's too big....
 	(if too-big
 	    nil
