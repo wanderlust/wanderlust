@@ -332,6 +332,16 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (replace-match "\n"))
      (buffer-string))))
 
+(defun elmo-last (list)
+  (and list (nth (1- (length list)) list)))
+
+(defun elmo-set-list (vars vals)
+  (while vars
+    (when (car vars)
+      (set (car vars) (car vals)))
+    (setq vars (cdr vars)
+	  vals (cdr vals))))
+
 (defun elmo-uniq-list (lst &optional delete-function)
   "Distractively uniqfy elements of LST."
   (setq delete-function (or delete-function #'delete))
@@ -1552,6 +1562,59 @@ NUMBER-SET is altered."
     (if (not found)
 	(setq number-set-1 (nconc number-set-1 (list number))))
     number-set-1))
+
+(defun elmo-number-set-delete-list (number-set list)
+  "Delete LIST of numbers from the NUMBER-SET.
+NUMBER-SET is altered."
+  (let ((deleted number-set))
+    (dolist (number list)
+      (setq deleted (elmo-number-set-delete deleted number)))
+    deleted))
+
+(defun elmo-number-set-delete (number-set number)
+  "Delete NUMBER from the NUMBER-SET.
+NUMBER-SET is altered."
+  (let* ((curr number-set)
+	 (top (cons 'dummy number-set))
+	 (prev top)
+	 elem found)
+    (while (and curr (not found))
+      (setq elem (car curr))
+      (if (consp elem)
+	  (cond
+	   ((eq (car elem) number)
+	    (if (eq (cdr elem) (1+ number))
+		(setcar curr (cdr elem))
+	      (setcar elem (1+ number)))
+	    (setq found t))
+	   ((eq (cdr elem) number)
+	    (if (eq (car elem) (1- number))
+		(setcar curr (car elem))
+	      (setcdr elem (1- number)))
+	    (setq found t))
+	   ((and (> number (car elem))
+		 (< number (cdr elem)))
+	    (setcdr
+	     prev
+	     (nconc
+	      (list
+	       ;; (beg . (1- number))
+	       (let ((new (cons (car elem) (1- number))))
+		 (if (eq (car new) (cdr new))
+		     (car new)
+		   new))
+	       ;; ((1+ number) . end)
+	       (let ((new (cons (1+ number) (cdr elem))))
+		 (if (eq (car new) (cdr new))
+		     (car new)
+		   new)))
+	      (cdr curr)))))
+	(when (eq elem number)
+	  (setcdr prev (cdr curr))
+	  (setq found t)))
+      (setq prev curr
+	    curr (cdr curr)))
+    (cdr top)))
 
 (defun elmo-make-number-list (beg end)
   (let (number-list i)

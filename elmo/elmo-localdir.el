@@ -249,8 +249,8 @@
 	succeeds)
     (luna-call-next-method)))
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-localdir-folder)
-						 numbers)
+(luna-define-method elmo-folder-delete-messages-internal
+  ((folder elmo-localdir-folder) numbers)
   (dolist (number numbers)
     (elmo-localdir-delete-message folder number))
   t)

@@ -181,8 +181,9 @@
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-filter-folder)
 						 numbers)
-  (elmo-folder-delete-messages
-   (elmo-filter-folder-target-internal folder) numbers))
+  (and (elmo-folder-delete-messages
+	(elmo-filter-folder-target-internal folder) numbers)
+       (elmo-folder-detach-messages folder numbers)))
 
 (luna-define-method elmo-folder-list-messages ((folder elmo-filter-folder)
 					       &optional visible-only in-msgdb)
@@ -417,9 +418,7 @@
 (luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
 						 numbers)
   (elmo-filter-folder-countup-message-flags folder numbers -1)
-  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq)
-  (elmo-folder-detach-messages
-   (elmo-filter-folder-target-internal folder) numbers))
+  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq))
 
 (luna-define-method elmo-folder-length ((folder elmo-filter-folder))
   (length (elmo-filter-folder-number-list-internal folder)))

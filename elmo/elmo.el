@@ -315,11 +315,17 @@ Otherwise, all descendent folders are returned.")
   "Rename FOLDER to NEW-NAME (string).")
 
 (luna-define-generic elmo-folder-delete-messages (folder numbers)
-  "Delete messages.
+  "Delete messages with msgdb entity.
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be deleted.
 It is not recommended to use this function other than internal use.
 Use `elmo-folder-move-messages' with dst-folder 'null instead.")
+
+(luna-define-generic elmo-folder-delete-messages-internal (folder numbers)
+  "Delete messages, but no delete msgdb entity.
+FOLDER is the ELMO folder structure.
+NUMBERS is a list of message numbers to be deleted.
+Override this method by each implement of `elmo-folder'.")
 
 (luna-define-generic elmo-folder-search (folder condition &optional numbers)
   "Search and return list of message numbers.
@@ -696,16 +702,17 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
   (elmo-generic-folder-commit folder))
 
 (defun elmo-generic-folder-commit (folder)
-  (let ((msgdb (elmo-folder-msgdb-internal folder)))
-    (when (and msgdb (elmo-folder-persistent-p folder))
-      (when (elmo-msgdb-message-modified-p msgdb)
-	(elmo-folder-set-info-max-by-numdb
-	 folder
-	 (elmo-folder-list-messages folder nil 'in-msgdb))
-	(elmo-msgdb-killed-list-save
-	 (elmo-folder-msgdb-path folder)
-	 (elmo-folder-killed-list-internal folder)))
-      (elmo-msgdb-save msgdb))))
+  (when (elmo-folder-persistent-p folder)
+    (let ((msgdb (elmo-folder-msgdb-internal folder)))
+      (when msgdb
+	(when (elmo-msgdb-message-modified-p msgdb)
+	  (elmo-folder-set-info-max-by-numdb
+	   folder
+	   (elmo-folder-list-messages folder nil 'in-msgdb))
+	(elmo-msgdb-save msgdb))))
+    (elmo-msgdb-killed-list-save
+     (elmo-folder-msgdb-path folder)
+     (elmo-folder-killed-list-internal folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-folder))
   ;; do nothing.
@@ -755,6 +762,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	(error "Already exists folder: %s" new-name))
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
+
+(luna-define-method elmo-folder-delete-messages ((folder elmo-folder)
+						 numbers)
+  (and (elmo-folder-delete-messages-internal folder numbers)
+       (elmo-folder-detach-messages folder numbers)))
 
 (luna-define-method elmo-folder-search ((folder elmo-folder)
 					condition
@@ -1096,8 +1108,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 	  (elmo-folder-close dst-folder)))
       (if (and (not no-delete) succeeds)
 	  (progn
-	    (if (and (elmo-folder-delete-messages src-folder succeeds)
-		     (elmo-folder-detach-messages src-folder succeeds))
+	    (if (elmo-folder-delete-messages src-folder succeeds)
 		(progn
 		  (elmo-global-flag-detach-messages
 		   src-folder succeeds (eq dst-folder 'null))
@@ -1480,48 +1491,45 @@ If update process is interrupted, return nil.")
 					     ignore-msgdb
 					     no-check
 					     mask)
-  (let ((killed-list (elmo-folder-killed-list-internal folder))
-	(before-append t)
-	old-msgdb diff diff-2 delete-list new-list new-msgdb flag
-	flag-table crossed after-append)
-    (setq old-msgdb (elmo-folder-msgdb folder))
-    (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
+  (let ((old-msgdb (elmo-folder-msgdb folder))
+	(killed-list (elmo-folder-killed-list-internal folder))
+	(flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
+	(before-append t))
     (when ignore-msgdb
       (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
       (elmo-folder-clear folder (not disable-killed)))
     (unless no-check (elmo-folder-check folder))
     (condition-case nil
-	(progn
+	(let ((killed-list (elmo-folder-killed-list-internal folder))
+	      diff-new diff-del
+	      delete-list new-list new-msgdb crossed)
 	  (message "Checking folder diff...")
-	  (setq diff (elmo-list-diff (elmo-folder-list-messages
-				      folder
-				      (not disable-killed))
-				     (elmo-folder-list-messages
-				      folder
-				      (not disable-killed)
-				      'in-msgdb)))
-	  (when (and mask (car diff))
-	    (setcar diff (elmo-list-filter mask (car diff))))
+	  (elmo-set-list
+	   '(diff-new diff-del)
+	   (elmo-list-diff (elmo-folder-list-messages folder)
+			   (elmo-folder-list-messages folder nil 'in-msgdb)))
+	  (when diff-new
+	    (unless disable-killed
+	      (setq diff-new (elmo-living-messages diff-new killed-list)))
+	    (when mask
+	      (setq diff-new (elmo-list-filter mask diff-new))))
 	  (message "Checking folder diff...done")
-	  (setq new-list (elmo-folder-confirm-appends (car diff)))
-	  ;; Set killed list as ((1 . MAX-OF-DISAPPEARED))
-	  (when (and (not (eq (length (car diff))
-			      (length new-list)))
-		     (setq diff-2 (elmo-list-diff (car diff) new-list)))
-	    (elmo-folder-kill-messages-range
-	     folder
-	     (car (car diff-2))
-	     (nth (- (length (car diff-2)) 1) (car diff-2))))
-	  (setq delete-list (cadr diff))
-	  (if (or (equal diff '(nil nil))
-		  (equal diff '(nil))
-		  (and (eq (length (car diff)) 0)
-		       (eq (length (cadr diff)) 0)))
+	  (setq new-list (elmo-folder-confirm-appends diff-new))
+	  ;; Append to killed list as (MIN-OF-DISAPPEARED . MAX-OF-DISAPPEARED)
+	  (when (not (eq (length diff-new)
+			 (length new-list)))
+	    (let* ((diff (elmo-list-diff diff-new new-list))
+		   (disappeared (car diff)))
+	      (when disappeared
+		(elmo-folder-kill-messages-range folder
+						 (car disappeared)
+						 (elmo-last disappeared)))))
+	  (setq delete-list diff-del)
+	  (if (and (null diff-new) (null diff-del))
 	      (progn
 		(elmo-folder-update-number folder)
 		(elmo-folder-process-crosspost folder)
-		0 ; no updates.
-		)
+		0)			; `0' means no updates.
 	    (when delete-list
 	      (elmo-folder-detach-messages folder delete-list))
 	    (when new-list
@@ -1550,7 +1558,14 @@ If update process is interrupted, return nil.")
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-folder)
 						 numbers)
-  (elmo-msgdb-delete-messages (elmo-folder-msgdb folder) numbers))
+  (when (elmo-msgdb-delete-messages (elmo-folder-msgdb folder) numbers)
+    ;; Remove NUMBERS from killed message list.
+    (elmo-folder-set-killed-list-internal
+     folder
+     (elmo-number-set-delete-list
+      (elmo-folder-killed-list-internal folder)
+      numbers))
+    t))
 
 (luna-define-generic elmo-folder-length (folder)
   "Return number of messages in the FOLDER.")

@@ -1,5 +1,49 @@
 2004-10-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-folder-delete-messages-internal): New API (for
+	internal use only).
+	(elmo-generic-folder-commit): Save `killed-list' even if msgdb is
+	not modified.
+	(elmo-folder-delete-messages): Define.
+	(elmo-folder-move-messages): Don't call
+	`elmo-folder-detach-messages'.
+	(elmo-folder-synchronize): Rewrite.
+	(elmo-folder-detach-messages): Delete numbers from `killed-list'.
+
+	* elmo-util.el (elmo-last): New function.
+	(elmo-set-list): Ditto.
+	(elmo-number-set-delete-list): Ditto.
+	(elmo-number-set-delete): Ditto.
+
+	* elmo-shimbun.el (elmo-folder-delete-messages): Define.
+
+	* elmo-map.el (elmo-folder-delete-messages-internal): Renamed from
+	`elmo-folder-delete-messages' and don't delete location map.
+	(elmo-folder-detach-messages): Define.
+
+	* elmo-imap4.el (elmo-folder-delete): Use
+	`elmo-folder-delete-messages-internal' instead of
+	`elmo-folder-delete-messages'.
+
+	* elmo-filter.el (elmo-folder-delete-messages): Call
+	`elmo-folder-detach-messages'.
+	(elmo-folder-detach-messages): Don't call
+	`elmo-folder-detach-messages' for target folder.
+
+	* elmo-cache.el (elmo-map-folder-delete-messages): Return t when
+	message deletion is succeeded.
+
+	* elmo-maildir.el (elmo-map-folder-delete-messages): Ditto.
+
+	* elmo-archive.el (elmo-folder-delete-messages-internal): Renamed
+	from `elmo-folder-delete-messages'.
+
+	* elmo-flag.el (elmo-folder-delete-messages-internal): Ditto.
+
+	* elmo-localdir.el (elmo-folder-delete-messages-internal): Ditto.
+
+	* elmo-net.el (elmo-folder-delete-messages-internal): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.11.32.
 
 2004-10-10  Yuuichi Teranishi  <teranisi@gohome.org>

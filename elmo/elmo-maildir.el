@@ -484,7 +484,8 @@ file name for maildir directories."
       (if (and file
 	       (file-writable-p file)
 	       (not (file-directory-p file)))
-	  (delete-file file)))))
+	  (delete-file file))))
+  t)
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-maildir-folder)
 					    location strategy

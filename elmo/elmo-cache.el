@@ -135,7 +135,8 @@
   (dolist (location locations)
     (elmo-file-cache-delete
      (expand-file-name location
-		       (elmo-cache-folder-directory-internal folder)))))
+		       (elmo-cache-folder-directory-internal folder))))
+  t)
 
 (luna-define-method elmo-message-fetch-with-cache-process
   ((folder elmo-cache-folder) number strategy &optional section unseen)

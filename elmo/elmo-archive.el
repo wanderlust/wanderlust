@@ -766,8 +766,9 @@ TYPE specifies the archiver's symbol."
 	   (elmo-archive-exec-msgs-subr2
 	    n-prog (append n-prog-arg (list arc)) files (length arc)))))))))
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-archive-folder)
-						 numbers)
+(luna-define-method elmo-folder-delete-messages-internal ((folder
+							   elmo-archive-folder)
+							  numbers)
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (arc (elmo-archive-get-archive-name folder))

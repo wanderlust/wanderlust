@@ -527,6 +527,11 @@ If it is the symbol `all', update overview for all shimbun folders."
 			  folder))))
     t))
 
+(luna-define-method elmo-folder-delete-messages ((folder elmo-shimbun-folder)
+						 numbers)
+  (elmo-folder-kill-messages folder numbers)
+  t)
+
 (require 'product)
 (product-provide (provide 'elmo-shimbun) (require 'elmo-version))
 

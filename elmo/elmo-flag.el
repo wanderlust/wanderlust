@@ -160,9 +160,9 @@
      (delq elem (elmo-flag-folder-minfo-internal folder))))
   t)
 
-(luna-define-method elmo-folder-delete-messages ((folder
-						  elmo-flag-folder)
-						 numbers)
+(luna-define-method elmo-folder-delete-messages-internal ((folder
+							   elmo-flag-folder)
+							  numbers)
   (dolist (number numbers)
     (elmo-flag-folder-delete-message folder number)
     (elmo-localdir-delete-message folder number))

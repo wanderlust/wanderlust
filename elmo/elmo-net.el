@@ -414,11 +414,12 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 						      flag)
   t)
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-net-folder)
-						 numbers)
-  (if (elmo-folder-plugged-p folder)
-      (elmo-folder-send folder 'elmo-folder-delete-messages-plugged numbers)
-    (elmo-folder-send folder 'elmo-folder-delete-messages-unplugged numbers)))
+(luna-define-method elmo-folder-delete-messages-internal ((folder
+							   elmo-net-folder)
+							  numbers)
+   (if (elmo-folder-plugged-p folder)
+       (elmo-folder-send folder 'elmo-folder-delete-messages-plugged numbers)
+     (elmo-folder-send folder 'elmo-folder-delete-messages-unplugged numbers)))
 
 (luna-define-method elmo-folder-delete-messages-unplugged ((folder
 							    elmo-net-folder)

@@ -2079,7 +2079,7 @@ Return nil if no complete line has arrived."
 			       (elmo-folder-name-internal folder)))
       (let ((session (elmo-imap4-get-session folder)))
 	(when (elmo-imap4-folder-mailbox-internal folder)
-	  (when msgs (elmo-folder-delete-messages folder msgs))
+	  (when msgs (elmo-folder-delete-messages-internal folder msgs))
 	  (elmo-imap4-send-command-wait session "close")
 	  (elmo-imap4-send-command-wait
 	   session

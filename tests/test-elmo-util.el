@@ -211,6 +211,60 @@
    (equal '((1 . 100))
 	  (elmo-number-set-append '((1 . 99)) 100))))
 
+(luna-define-method test-elmo-number-set-delete-1 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '(2 3)
+	  (elmo-number-set-delete '(1 2 3) 1))))
+
+(luna-define-method test-elmo-number-set-delete-2 ((case test-elmo-util))
+  "Normal case."
+  (lunit-assert
+   (equal '(1 3)
+	  (elmo-number-set-delete '(1 2 3) 2))))
+
+(luna-define-method test-elmo-number-set-delete-3 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '(1 2)
+	  (elmo-number-set-delete '(1 2 3) 3))))
+
+(luna-define-method test-elmo-number-set-delete-4 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '((2 . 100))
+	  (elmo-number-set-delete '((1 . 100)) 1))))
+
+(luna-define-method test-elmo-number-set-delete-5 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '(1 (3 . 100))
+	  (elmo-number-set-delete '((1 . 100)) 2))))
+
+(luna-define-method test-elmo-number-set-delete-6 ((case test-elmo-util))
+  "Normal case."
+  (lunit-assert
+   (equal '((1 . 49) (51 . 100))
+	  (elmo-number-set-delete '((1 . 100)) 50))))
+
+(luna-define-method test-elmo-number-set-delete-7 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '((1 . 98) 100)
+	  (elmo-number-set-delete '((1 . 100)) 99))))
+
+(luna-define-method test-elmo-number-set-delete-8 ((case test-elmo-util))
+  "Check edge."
+  (lunit-assert
+   (equal '((1 . 99))
+	  (elmo-number-set-delete '((1 . 100)) 100))))
+
+(luna-define-method test-elmo-number-set-delete-list-1 ((case test-elmo-util))
+  "Simple testcase."
+  (lunit-assert
+   (equal '((1 . 99))
+	  (elmo-number-set-delete-list '((1 . 100)) '(100)))))
+
 (luna-define-method test-elmo-number-set-to-number-list-1 ((case test-elmo-util))
   "Simple testcase."
   (lunit-assert

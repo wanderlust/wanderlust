@@ -283,23 +283,29 @@ Return t if the message list is not available.")
 						  flag)
   t)
 
-(luna-define-method elmo-folder-delete-messages ((folder elmo-map-folder)
-						 numbers)
+(luna-define-method elmo-folder-delete-messages-internal ((folder
+							   elmo-map-folder)
+							  numbers)
   (elmo-map-folder-delete-messages
    folder
-   (elmo-map-folder-numbers-to-locations folder numbers))
-  (dolist (number numbers)
-    (elmo-map-folder-set-location-alist-internal
-     folder
-     (delq (elmo-get-hash-val
-	    (concat "#" (int-to-string number))
-	    (elmo-map-folder-location-hash-internal
-	     folder))
-	   (elmo-map-folder-location-alist-internal folder)))
-    (elmo-clear-hash-val (concat "#" (int-to-string number))
-			 (elmo-map-folder-location-hash-internal
-			  folder)))
-  t) ; success
+   (elmo-map-folder-numbers-to-locations folder numbers)))
+
+(luna-define-method elmo-folder-detach-messages :around ((folder
+							  elmo-map-folder)
+							 numbers)
+  (when (luna-call-next-method)
+    (dolist (number numbers)
+      (elmo-map-folder-set-location-alist-internal
+       folder
+       (delq (elmo-get-hash-val
+	      (concat "#" (int-to-string number))
+	      (elmo-map-folder-location-hash-internal
+	       folder))
+	     (elmo-map-folder-location-alist-internal folder)))
+      (elmo-clear-hash-val (concat "#" (int-to-string number))
+			   (elmo-map-folder-location-hash-internal
+			    folder)))
+    t)) ; success
 
 (require 'product)
 (product-provide (provide 'elmo-map) (require 'elmo-version))
