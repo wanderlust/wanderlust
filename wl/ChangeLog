@@ -1,3 +1,9 @@
+2000-04-21  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
+
+	* wl-summary.el (wl-summary-prefetch-region):
+	Pass current cursor point to `pos-visible-in-window-p' after
+	moving cursor to the started point.
+
 2000-04-20  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-vars.el (wl-ignored-forwarded-headers): New user option.
