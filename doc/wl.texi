@@ -264,8 +264,9 @@ confirmed to work.
 @item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
-@c You have to re-install Wanderlust
-@c if you upgraded APEL, FLIM, SEMI or tm.
+You have to re-install Wanderlust if you upgraded APEL, FLIM, SEMI or
+tm.
+
 
 @node Download, Install, MIME Modules, Start Me Up
 @section Download and Extract the Package
@@ -308,15 +309,14 @@ Extract the obtained package to your working directory:
 SSL (Secure Socket Layer) can be used for 
 SMTP, IMAP, NNTP and POP connections in Wanderlust.
 
-There are two ways to use SSL. One is to start SSL negotiation just after
-the connection establishment (generic way). 
-The other one is to start SSL negotiation by invoking STARTTLS command in
-the each session.
+There are two ways to use SSL. One is to start SSL negotiation just
+after the connection establishment (generic way). The other one is to
+start SSL negotiation by invoking STARTTLS command in the each session.
 
 To use the formar SSL (generic SSL), you must install @file{ssl.el} in
 the @file{utils} directory. OpenSSL command @command{openssl} is also
-required to use @file{ssl.el}. You must set PATH to the directory that
-OpenSSL commands are installed.
+required to use @file{ssl.el}. You must set @env{PATH} to the directory
+that OpenSSL commands are installed.
 
 To use the latter SSL(STARTTLS), you must install starttls package in
 addition to above. 
@@ -497,8 +497,8 @@ The minimal requirement for settings is as the following.
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; @r{Directory where icons are placed (XEmacs or Emacs 21). Default value
-;; is @code{nil}.}
+;; @r{Directory where icons are placed (XEmacs or Emacs 21).}
+;; @r{Default: @code{nil}.}
 ;; @r{(This is not required if Wanderlust is installed as XEmacs package)}
 (setq wl-icon-dir "~/work/wl/etc")
 
@@ -601,8 +601,8 @@ If variable @code{wl-use-ldap} is non-nil (initial setting is
 If you use LDAP, you have to set @code{wl-ldap-server},
 @code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
 not have LDAP feature as built-in feature (Currently only XEmacs can
-have built-in LDAP feature), you have to set command exec PATH to the
-program @command{ldapsearch}.
+have built-in LDAP feature), you have to set command exec @env{PATH} to
+the program @command{ldapsearch}.
 
 @node Folder Definition, Start Wanderlust, Mail Addresses, Start Me Up
 @section Folder Definition
@@ -878,8 +878,8 @@ Example:
 
 @example
 @group
--fj.rec.tv            -> Newsgroup `fj.rec.tv'.
--fj.rec.tv@@newsserver -> Newsgroup `fj.rec.tv' on newsserver.
+-fj.rec.tv            -> Newsgroup @samp{fj.rec.tv}.
+-fj.rec.tv@@newsserver -> Newsgroup @samp{fj.rec.tv} on @samp{newsserver}.
 @end group
 @end example
 
@@ -1526,8 +1526,8 @@ the message is removed.  If you append messages to this folder, the
 message will have @samp{$} mark.
 
 (Can't remove important mark @samp{$} on IMAP server from @samp{'mark}
-folder.  If you want IMAP folder's message remove from @{'mark} folder,
-remove important mark at IMAP Folder.)
+folder.  If you want IMAP folder's message remove from @samp{'mark}
+folder, remove important mark at IMAP Folder.)
 
 You can access to the cached messages fetched via network by accessing
 to the folders named @samp{'cache/00} - @samp{'cache/1F}. 00 - 1F are
@@ -6002,14 +6002,14 @@ Per default, this face is used for bodies of @samp{X-} fields
 The face for headers of quoted messages.
 
 @item wl-highlight-message-cited-text-*
-The face for texts of quoted messages.
-The last @samp{*} is a single figure so that 10 different colors can be used
-according to citation levels.
+The face for texts of quoted messages.  The last @samp{*} is a
+@var{single figure} so that 10 different colors can be used according to
+citation levels.
 
 @item wl-highlight-message-signature
-The face for signatures of messages.
-The initial settings are khaki for light background colors, and
-DarkSlateBlue for dark background colors.
+The face for signatures of messages.  The initial settings are
+@samp{khaki} for light background colors, and @samp{DarkSlateBlue} for
+dark background colors.
 
 @item wl-highlight-header-separator-face
 The face for header separators of draft messages.
@@ -6080,12 +6080,12 @@ folder mode.
 @item wl-highlight-folder-opened-face
 The face for open groups in the folder mode.
 It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
-@code{nil} or a number.
+@code{nil} or a @var{number}.
 
 @item wl-highlight-folder-closed-face
 The face for close groups in the folder mode.
 It is meaningful when @code{wl-highlight-group-folder-by-numbers} is
-@code{nil} or a number.
+@code{nil} or a @var{number}.
 
 @item wl-highlight-folder-path-face
 The face for the path to the currently selected folder in the folder
@@ -6154,9 +6154,9 @@ following settings:
 @end lisp
 
 @noindent
-(Only if there are both of @samp{X-ML-Name} and @samp{Reply-To} fields in the
-original message, @samp{Reply-To} field in the original is copied to @samp{To:}
-field.)
+(Only if there are both of @samp{X-ML-Name:} and @samp{Reply-To:} fields
+in the original message, @samp{Reply-To:} field in the original is
+copied to @samp{To:} field.)
 
 Moreover, the behavior of @kbd{a} with prefix argument can 
 be directed by @code{wl-draft-reply-with-argument-list} as well.
@@ -6216,7 +6216,7 @@ If you do not want to see branches, do the following:
 
 If you are eccentric enough to elaborate @samp{X-Mailer:} or
 @samp{User-Agent:} fields, define a function that generate appropriate
-strings as you like, and set it to
+strings as you like, and set it to variable
 @code{wl-generate-mailer-string-func}.
 
 If you do not want verbose @samp{User-Agent:} field, do the following:
@@ -6235,6 +6235,7 @@ The following is a example:
 
 @lisp
 @group
+(setq mime-edit-insert-user-agent-field nil)
 (setq wl-generate-mailer-string-func
       (function
        (lambda ()
@@ -6276,7 +6277,7 @@ If non-nil, you are asked for confirmation when mail is sent.
 
 @item wl-folder-sync-range-alist
 @vindex wl-folder-sync-range-alist
-The initial setting is the list shown below:
+The initial setting is the alist shown below:
 
 @lisp
 @group
@@ -6285,6 +6286,7 @@ The initial setting is the list shown below:
 @end group
 @end lisp
 
+@noindent
 This is an associative list of regular expressions of folder names and
 update range of the summary.  Update range is one of the @samp{all},
 @samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first} and
@@ -6384,7 +6386,7 @@ This takes precedence over @code{wl-no-save-folder-list}.
 
 @item wl-folder-mime-charset-alist
 @vindex wl-folder-mime-charset-alist
-The initial setting is the list shown below:
+The initial setting is the alist shown below:
 
 @lisp
 @group
@@ -6415,7 +6417,7 @@ It is ignored if @code{wl-folder-init-load-access-folders} is non-nil.
 
 @item wl-delete-folder-alist
 @vindex wl-delete-folder-alist
-The initial setting is the list shown below:
+The initial setting is the alist shown below:
 
 @lisp
 @group
@@ -6429,9 +6431,9 @@ Each item in the list is a folder and destination; you can specify any
 one of the following in the place of destination:
 
 @example
-'remove or 'null : deletes the messages instantly.
-string           : moves the messages to the specific folder.
-'trash or others : moves the messages to `wl-trash-folder'.
+@code{remove} or @code{null} : deletes the messages instantly.
+string             : moves the messages to the specific folder.
+@code{trash} or others  : moves the messages to @code{wl-trash-folder}.
 @end example
 
 @item wl-refile-policy-alist
@@ -6543,11 +6545,12 @@ A guide can be obtained automatically by sending mail to
 @example
 # guide
 @end example
-Please send bug reports or patches to the mailing list.
-You can post to the mailing list even though you are not a member of it.
+Please send bug reports or patches to the mailing list.  You can post to
+the mailing list even though you are not a member of it.
 
 If you send a bug report, please attach Backtrace with it.
-@footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to in Japanese.}
+@footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to
+in Japanese.}
 
 I would like to express my thanks to the members of the mailing list for 
 valuable advice and many pieces of code they contributed.
