@@ -1,3 +1,54 @@
+2002-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-unread-mark, wl-summary-important-mark,
+	wl-summary-new-mark, wl-summary-unread-uncached-mark,
+	wl-summary-unread-cached-mark, wl-summary-read-uncached-mark):
+	Renamed to the elmo-msgdb-*-mark.
+	(wl-summary-score-marks): Follow the change above.
+	(wl-summary-auto-refile-skip-marks): Ditto.
+	(wl-summary-incorporate-marks): Ditto.
+	(wl-summary-expire-reserve-marks): Ditto.
+
+	* wl-thread.el (wl-thread-open-all-unread): Follow the variable name
+	changes.
+	(wl-thread-insert-top): Changed updating message.
+
+	* wl-summary.el (wl-summary-buffer-answered-count): New buffer local
+	variable.
+	(wl-summary-count-unread): Count answered marks.
+	(wl-summary-rescan): Call wl-summary-insert-message instead of
+	wl-summary-append-message-func-internal.
+	(wl-summary-rescan): Don't call wl-summary-make-number-list.
+	(wl-summary-prefetch-msg): Follow the variable name changes.
+	(wl-summary-prefetch-region): Ditto.
+	(wl-summary-mark-as-read-all): Follow the API changes;
+	Don't call elmo-folder-replace-marks.
+	(wl-summary-delete-cache): Follow the variable name changes.
+	(wl-summary-resume-cache-status): Ditto.
+	(wl-summary-update-status-marks): New function.
+	(wl-summary-insert-message): New function.
+	(wl-summary-sync-marks): Follow the variable name changes.
+	(wl-summary-sync-update): Synchronize to the msgdb, too;
+	Changed update messages.
+	(wl-summary-make-number-list): Rewrite.
+	(wl-summary-insert-sequential): Update wl-summary-buffer-number-list.
+	(wl-summary-mark-as-unread): Follow the API changes.
+	(wl-summary-exec-subr): Follow the variable name changes.
+	(wl-summary-mark-as-read): Ditto.
+	(wl-summary-move-spec-plugged-alist): Ditto.
+	(wl-summary-move-spec-unplugged-alist): Ditto.
+	(wl-summary-cursor-move-surface): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Follow the
+	variable name changes.
+	(wl-highlight-summary-current-line): Ditto.
+
+	* wl-expire.el (wl-expire-refile): Follow the API change in
+	elmo-folder-move-messages.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+	(wl-summary-archive): Use elmo-folder-msgdb instead of
+	elmo-msgdb-load.
+
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-addrmgr.el (wl-addrmgr-apply-exec): Call wl-draft interactively
