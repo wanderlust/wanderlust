@@ -3143,11 +3143,12 @@ Proceed reading a message at the current cursor point.
 @item .
 @kindex . (Summary)
 @findex wl-summary-redisplay
-Redisplay a message at the current cursor point.
-If this command is called with prefix argument,
-Redisplay message regardless of the message cache (message is re-loaded
-from source).
-(@code{wl-summary-redisplay})
+Redisplay a message at the current cursor point with default display
+type.  If this command is called with prefix argument, Redisplay message
+regardless of the message cache (message is re-loaded from source).  If
+this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u .},
+redisplay message with current display type regardless of the
+message cache.  (@code{wl-summary-redisplay})
 
 @item <
 @kindex < (Summary)
@@ -3342,15 +3343,32 @@ list folder (refile destination), guess @samp{To:} field and completed
 
 @item H
 @kindex H (Summary)
-@findex wl-summary-redisplay-all-header
-Redisplay the message at current cursor point with all header fields.
-(@code{wl-summary-redisplay-all-header})
+@findex wl-summary-toggle-all-header
+Toggle display type between all and partial header fields and redisplay
+the message at current cursor point.  If this command is called with
+twice multiples @kbd{C-u} as @kbd{C-u C-u H}, set default display type
+of summary by current display type of header fields.
+(@code{wl-summary-toggle-all-header})
 
 @item M
 @kindex M (Summary)
-@findex wl-summary-redisplay-no-mime
-Redisplay the message at current cursor point without MIME analysis.
-(@code{wl-summary-redisplay-no-mime})
+@findex wl-summary-toggle-mime
+Toggle display type for MIME analysis and redisplay the message at
+current cursor point.  A change is performed in the order set as
+@code{wl-summary-display-mime-mode-list}.  If this command is called
+with numeric prefix argument, it switch directly as follows.
+
+@example
+@group
+1: Enable MIME analysis.
+2: Enable MIME analysis only for header fields.
+3: Disable MIME analysis.
+@end group
+@end example
+
+If this command is called with twice multiples @kbd{C-u} as @kbd{C-u C-u
+M}, set default display type of summary by current display type of MIME
+analysis.  (@code{wl-summary-toggle-mime})
 
 @item B
 @kindex B (Summary)
@@ -3462,6 +3480,8 @@ update-entirely  Update the difference between informations in present
 rescan           Redisplay summary by rescanning present msgdb.
 rescan-noscore   Redisplay summary by rescanning present msgdb.
                  Display messages killed by score, too.
+rescan-thread    Redisplay summary by rescanning present msgdb.
+                 Reconstruct thread, too.
 cache-status     Sync the all marks with the real status of cache.
 mark             Update marks.
 no-sync          Do nothing.
@@ -4296,9 +4316,42 @@ The initial setting is as follows:
 @end group
 @end lisp
 
-Specify the color of message in summary buffer with flag.  If multiple
-global flags are on one message, the former flag in this list is
-preferred.
+Specify the color and the mark of message in summary buffer with flag.
+If the mark are omitted, the mark specified in the variable
+@code{wl-summary-flag-mark} is assumed.  If multiple global flags are on
+one message, the former flag in this list is preferred.
+
+Example:
+
+@lisp
+@group
+(setq wl-summary-flag-alist
+      '((important "purple")
+        (todo "red")
+        (business "green" "B")
+        (private "blue" "X")))
+@end group
+@end lisp
+
+@item wl-summary-display-mime-mode-list
+@vindex wl-summary-display-mime-mode-list
+The initial setting is the list shown below:
+
+@lisp
+@group
+(mime as-is)
+@end group
+@end lisp
+
+@noindent
+The function @code{wl-summary-toggle-mime} switch specification of MIME
+analysis in the order of this list. You can specify one of the follows.
+
+@example
+@code{mime}        : Header and body are decoded.
+@code{header-only} : Only header is decoded.
+@code{as-is}       : Header and body are not decoded.
+@end example
 @end table
 
 
