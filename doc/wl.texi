@@ -5227,7 +5227,7 @@ manually, press @kbd{F} in the folder mode.
 
 @item elmo-enable-disconnected-operation
 @vindex elmo-enable-disconnected-operation
-The initial setting is @code{nil}.  Controls off-line operations
+The initial setting is @code{t}.  Controls off-line operations
 regarding IMAP4.  If non-nil, off-line operations are carried out.
 
 @item elmo-lost+found-folder
