@@ -5435,6 +5435,13 @@ Wanderlust にはオンラインモードとオフラインモードがあります。オフライン
 のネットワークフォルダに関するオフライン処理を実行せず、オフライン中のリ
 ファイル/コピー等の操作は単にエラーになります。
 
+オフライン処理でキャッシュファイルを使うので、キャッシュファイルを手で消
+すと Wanderlust が誤動作する恐れがあります。キャッシュを消したいときは
+@kbd{M-x elmo-cache-expire-by-size}を実行するようにしてください。
+@code{elmo-cache-expire-by-size} はオフライン処理の対象となるメッセージ
+のキャッシュは削除しません。
+
+
 @node Send Messages off-line, Re-file and Copy queue, Enable Operations, Enable Operations
 @subsection メッセージの送信
 
