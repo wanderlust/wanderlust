@@ -103,13 +103,17 @@
 	(setq load-path (cons (expand-file-name UTILSDIR) load-path)))
     (require 'install)
     (load "./WL-ELS" nil nil t)
-    (condition-case ()
-	(require 'mime-setup)
-      (error (error "No MIME module was detected.  Please install SEMI")))
+    ;; product.el version check
+    (require 'product)
+    (if (not (fboundp 'product-version-as-string))
+	(error "Please install new APEL.  See INSTALL or INSTALL.ja"))
     ;; smtp.el version check.
     (require 'smtp)
     (if (not (fboundp 'smtp-send-buffer))
-	(error "Please install new FLIM.  See INSTALL or INSTALL.ja"))))
+	(error "Please install new FLIM.  See INSTALL or INSTALL.ja"))
+    (condition-case ()
+	(require 'mime-setup)
+      (error (error "Cannot load `mime-setup'.  Please install SEMI")))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."

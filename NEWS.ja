@@ -7,6 +7,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** FLIM 1.14.2 以前の FLIM ではうまく動かない場合があります。
    FLIM 1.14.3 以降および対応した SEMI をインストールしてください。
 
+** make check で簡単な環境テストができるようになりました。
+
 ** 名前変更等で既に使われなくなった変数が設定されていると warning
    が表示されるようになりました。
    warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を

@@ -29,7 +29,8 @@ System Requirements
 Select MIME Module
 ==================
 
-  For each Emacsen, Recommended combination of MIME module package following.
+  For each Emacsen, Recommended combination of MIME module package
+  follows.
 
   (a) XEmacs 21.1 or later
 
@@ -81,6 +82,11 @@ Install MIME Module
 
   You have to re-install Wanderlust if you upgraded APEL, FLIM, or SEMI.
 
+  Do following, running environment test included APEL, FLIM, and SEMI
+  version check.  You can specify the emacs command name.
+
+	% make check
+	% make EMACS=xemacs check
 
 Installation
 ============

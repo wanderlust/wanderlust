@@ -7,6 +7,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Wanderlust might not work with FLIM 1.14.2 and older.
    It is recommended to use FLIM 1.14.3 or newer and associated SEMI.
 
+** Now available `make check' environment test for user.
+
 ** If you set obsolete variables (e.g. renamed ones), Wanderlust shows warning
    messages and urge you to change settings.
    To suppress warning messages, set elmo-obsolete-variable-show-warnings to
