@@ -256,9 +256,13 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed."
     msgs))
 
 (luna-define-method elmo-folder-list-importants ((folder elmo-folder))
-  (elmo-folder-list-messages-mark-match folder
-					(regexp-quote
-					 elmo-msgdb-important-mark)))
+  (elmo-uniq-list
+   (nconc
+    (elmo-folder-list-messages-with-global-mark folder
+						elmo-msgdb-important-mark)
+    (elmo-folder-list-messages-mark-match folder
+					  (regexp-quote
+					   elmo-msgdb-important-mark)))))
 
 (luna-define-method elmo-folder-list-answereds ((folder elmo-folder))
   (delq nil
@@ -328,11 +332,11 @@ CONDITION is a condition structure for testing.
 NUMBERS is a list of message numbers,
 use to be test for \"last\" and \"first\" predicates.")
 
-(luna-define-generic elmo-folder-msgdb-create (folder numbers id-mark-table)
+(luna-define-generic elmo-folder-msgdb-create (folder numbers seen-list)
   "Create a message database (implemented in each backends).
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to create msgdb.
-ID-MARK-TABLE is a hashtable of message-id and its status mark.")
+SEEN-LIST is a list of message-id string which should be treated as read.")
 
 (luna-define-generic elmo-folder-unmark-important (folder numbers)
   "Un-mark messages as important.

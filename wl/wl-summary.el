@@ -1916,13 +1916,8 @@ If ARG is non-nil, checking is omitted."
 	    unreads-in-db (elmo-folder-list-messages-mark-match
 			   wl-summary-buffer-elmo-folder
 			   (wl-regexp-opt (elmo-msgdb-unread-marks)))
-	    importants (elmo-uniq-list
-			(nconc
-			 (elmo-folder-list-importants
-			  wl-summary-buffer-elmo-folder)
-			 (elmo-folder-list-messages-with-global-mark
-			  wl-summary-buffer-elmo-folder
-			  elmo-msgdb-important-mark)))
+	    importants (elmo-folder-list-importants
+			wl-summary-buffer-elmo-folder)
 	    unreads (elmo-folder-list-unreads
 		     wl-summary-buffer-elmo-folder))
       (setq diff (elmo-list-diff importants importants-in-db))
