@@ -527,33 +527,6 @@ inserted to the buffer and returns t if fetch was ended successfully.
 If third optional argument UNREAD is non-nil, message is not marked as read.
 Returns non-nil if fetching was succeed.")
 
-(luna-define-generic elmo-message-fetch-with-cache-process (folder
-							    number strategy
-							    &optional
-							    section
-							    unread)
-  "Fetch a message into current buffer with cache process.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
-Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-internal (folder number strategy
-							 &optional
-							 section
-							 unread)
-  "Fetch a message into current buffer.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
-Returns non-nil if fetching was succeed.")
-
 (luna-define-generic elmo-message-folder (folder number)
   "Get primitive folder of the message.")
 
@@ -1080,43 +1053,6 @@ FIELD is a symbol of the field."
 	  (nthcdr (max (- len elmo-folder-update-threshold) 0) appends)
 	appends))))
 
-(luna-define-method elmo-message-fetch ((folder elmo-folder)
-					number strategy
-					&optional
-					section
-					outbuf
-					unread)
-  (if outbuf
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(elmo-message-fetch-with-cache-process folder number
-					       strategy section unread)
-	t)
-    (with-temp-buffer
-      (elmo-message-fetch-with-cache-process folder number
-					     strategy section unread)
-      (buffer-string))))
-
-(luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
-							   number strategy
-							   &optional
-							   section unread)
-  (let (cache-file)
-    (if (and (elmo-fetch-strategy-use-cache strategy)
-	     (setq cache-file (elmo-file-cache-expand-path
-			       (elmo-fetch-strategy-cache-path strategy)
-			       section))
-	     (file-exists-p cache-file))
-	(insert-file-contents-as-binary cache-file)
-      (elmo-message-fetch-internal folder number strategy section unread)
-      (elmo-delete-cr-buffer)
-      (when (and (> (buffer-size) 0)
-		 (elmo-fetch-strategy-save-cache strategy)
-		 (elmo-fetch-strategy-cache-path strategy))
-	(elmo-file-cache-save
-	 (elmo-fetch-strategy-cache-path strategy)
-	 section)))))
-
 (defun elmo-folder-synchronize (folder
 				new-mark             ;"N"
 				unread-uncached-mark ;"U"
@@ -1187,14 +1123,12 @@ CROSSED is cross-posted message number."
 	    (elmo-msgdb-append-to-killed-list folder (car diff-2)))
 	  ;; Don't delete important marked messages.
 	  (setq delete-list
-		(if (eq (elmo-folder-type-internal folder) 'mark)
-		    (cadr diff)
-		  (elmo-delete-if
-		   (lambda (x)
-		     (and (setq mark (cadr (assq x mark-alist)))
-			  (string= mark important-mark)))
-		   ;; delete message list
-		   (cadr diff))))
+		(elmo-delete-if
+		 (lambda (x)
+		   (and (setq mark (cadr (assq x mark-alist)))
+			(string= mark important-mark)))
+		 ;; delete message list
+		 (cadr diff)))
 	  (if (or (equal diff '(nil nil))
 		  (equal diff '(nil))
 		  (and (eq (length (car diff)) 0)

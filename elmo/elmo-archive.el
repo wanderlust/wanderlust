@@ -539,10 +539,16 @@ TYPE specifies the archiver's symbol."
 	(elmo-archive-call-method method args t))
        (elmo-delete-cr-buffer)))))
 
-(luna-define-method elmo-message-fetch-internal ((folder elmo-archive-folder)
-						 number strategy
-						 &optional section unseen)
-  (elmo-archive-message-fetch-internal folder number))
+(luna-define-method elmo-message-fetch ((folder elmo-archive-folder)
+					number strategy &optional section 
+					outbuf unseen)
+  (if outbuf
+      (with-current-buffer outbuf
+	(elmo-archive-message-fetch-internal folder number)
+	t)
+    (with-temp-buffer
+      (elmo-archive-message-fetch-internal folder number)
+      (buffer-string))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-archive-folder)
 					       unread &optional number)

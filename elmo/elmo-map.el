@@ -78,7 +78,7 @@
 						    strategy
 						    &optional
 						    section
-						    unseen)
+						    outbuf unseen)
   "")
 
 (luna-define-generic elmo-map-folder-list-unreads (folder)
@@ -267,13 +267,12 @@
    folder
    (elmo-map-folder-numbers-to-locations folder numbers)))
 
-(luna-define-method elmo-message-fetch-internal ((folder elmo-map-folder)
-						 number strategy
-						 &optional section unread)
+(luna-define-method elmo-message-fetch ((folder elmo-map-folder) number
+					strategy section outbuf unread)
   (elmo-map-message-fetch
    folder
    (elmo-map-message-location folder number)
-   strategy section unread))
+   strategy section outbuf unread))
 
 (luna-define-method elmo-folder-list-unreads-internal
   ((folder elmo-map-folder) unread-marks &optional mark-alist)

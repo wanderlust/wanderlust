@@ -266,12 +266,23 @@
       (delete-file filename)
       t)))
 
-(luna-define-method elmo-message-fetch-internal ((folder elmo-localdir-folder)
-						 number strategy
-						 &optional section unread)
-  (when (file-exists-p (elmo-message-file-name folder number))
-    (insert-file-contents-as-binary
-     (elmo-message-file-name folder number))))
+(luna-define-method elmo-message-fetch ((folder elmo-localdir-folder)
+					number strategy
+					&optional section outbuf unseen)
+  ;; strategy, section, unseen is ignored.
+  (if outbuf
+      (with-current-buffer outbuf
+	(erase-buffer)
+	(when (file-exists-p (elmo-message-file-name folder number))
+	  (insert-file-contents-as-binary
+	   (elmo-message-file-name folder number))
+	  (elmo-delete-cr-buffer))
+	t)
+    (with-temp-buffer
+      (when (file-exists-p (elmo-message-file-name folder number))
+	(insert-file-contents-as-binary (elmo-message-file-name folder number))
+	(elmo-delete-cr-buffer))
+      (buffer-string))))
 
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-localdir-folder) &optional nohide)

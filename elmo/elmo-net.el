@@ -413,34 +413,69 @@ Returns a process object.  if making session failed, returns nil."
 	 folder 'elmo-folder-mark-as-read-unplugged numbers))
     t))
 
-(luna-define-generic elmo-message-fetch-plugged (folder number strategy
-							&optional
-							section
-							outbuf
-							unseen)
-  "")
-
-(luna-define-generic elmo-message-fetch-unplugged (folder number strategy
-							  &optional
-							  section
-							  outbuf
-							  unseen)
-  "")
-
-(luna-define-method elmo-message-fetch-internal ((folder elmo-net-folder)
-						 number strategy
-						 &optional section unseen)
+(luna-define-method elmo-message-fetch ((folder elmo-net-folder)
+					number strategy
+					&optional section
+					outbuf
+					unseen)
   (if (elmo-folder-plugged-p folder)
-      (elmo-message-fetch-plugged folder number
-				  strategy section
+      (let ((cache-file (elmo-file-cache-expand-path
+			 (elmo-fetch-strategy-cache-path strategy)
+			 section)))
+	(if (and (elmo-fetch-strategy-use-cache strategy)
+		 (file-exists-p cache-file))
+	    (if outbuf
+		(with-current-buffer outbuf
+		  (insert-file-contents-as-binary cache-file)
+		  t)
+	      (with-temp-buffer
+		(insert-file-contents-as-binary cache-file)
+		(buffer-string)))
+	  (if outbuf
+	      (with-current-buffer outbuf
+		(elmo-folder-send folder 'elmo-message-fetch-plugged
+				  number strategy section
 				  (current-buffer) unseen)
-    (elmo-message-fetch-unplugged folder number
-				  strategy section
-				  (current-buffer) unseen)))
+		(elmo-delete-cr-buffer)
+		(when (and (> (buffer-size) 0)
+			   (elmo-fetch-strategy-save-cache strategy)
+			   (elmo-fetch-strategy-cache-path strategy))
+		  (elmo-file-cache-save
+		   (elmo-fetch-strategy-cache-path strategy)
+		   section))
+		t)
+	    (with-temp-buffer
+	      (elmo-folder-send folder 'elmo-message-fetch-plugged
+				number strategy section
+				(current-buffer) unseen)
+	      (elmo-delete-cr-buffer)
+	      (when (and (> (buffer-size) 0)
+			 (elmo-fetch-strategy-save-cache strategy)
+			 (elmo-fetch-strategy-cache-path strategy))
+		(elmo-file-cache-save
+		 (elmo-fetch-strategy-cache-path strategy)
+		 section))
+	      (buffer-string)))))
+    (elmo-folder-send folder 'elmo-message-fetch-unplugged
+		      number strategy section outbuf unseen)))
 
 (luna-define-method elmo-message-fetch-unplugged
   ((folder elmo-net-folder) number strategy  &optional section outbuf unseen)
-  (error "Unplugged"))
+  (if (elmo-fetch-strategy-use-cache strategy)
+      (if outbuf
+	  (with-current-buffer outbuf
+	    (insert-file-contents-as-binary
+	     (elmo-file-cache-expand-path
+	      (elmo-fetch-strategy-cache-path strategy)
+	      section))
+	    t)
+	(with-temp-buffer
+	  (insert-file-contents-as-binary
+	   (elmo-file-cache-expand-path
+	    (elmo-fetch-strategy-cache-path strategy)
+	    section))
+	  (buffer-string)))
+    (error "Unplugged")))
 
 (luna-define-method elmo-folder-check ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)

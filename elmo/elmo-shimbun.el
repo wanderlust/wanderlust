@@ -244,12 +244,22 @@
   nil)
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
-					    location strategy
-					    &optional section unseen)
-  (shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
-		   (elmo-get-hash-val
-		    location
-		    (elmo-shimbun-folder-header-hash-internal folder))))
+					    location strategy &optional
+					    section outbuf unseen)
+  (if outbuf
+      (with-current-buffer outbuf
+	(erase-buffer)
+	(shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
+			 (elmo-get-hash-val
+			  location
+			  (elmo-shimbun-folder-header-hash-internal folder)))
+	t)
+    (with-temp-buffer
+      (shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
+		       (elmo-get-hash-val
+			location
+			(elmo-shimbun-folder-header-hash-internal folder)))
+      (buffer-string))))
 
 (luna-define-method elmo-folder-list-messages-internal :around
   ((folder elmo-shimbun-folder) &optional nohide)
