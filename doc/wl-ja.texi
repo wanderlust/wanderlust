@@ -1569,12 +1569,18 @@ lastyear  ->  去年の今日
 unread    -> 未読
 important -> 重要
 answered  -> 返信済み
-digest    -> 未読または重要
-any       -> 未読または重要または返信済み
+forwarded -> 転送済み
+digest    -> 未読またはグローバルフラグ付き
+any       -> 未読、返信済み、転送済み、グローバルフラグ付き
 @end group
 @end example
 
 また、グローバルフラグとして設定したフラグも同様に設定することが出来ます。
+グローバルフラグとは、@code{wl-summary-set-flags} (F キー)により付与できる
+任意の名前を持つフラグです。フラグの名前は自由に定義することができます。
+デフォルトでは、@samp{important} フラグが用意されています。
+グローバルフラグが付与されたメッセージは、@samp{'flag} フォルダの
+サブフォルダを閲覧することで、まとめて読むことができます。
 @xref{Internal Folder}.
 
 例:
@@ -2710,7 +2716,7 @@ News フォルダでは article 番号、IMAP フォルダでは UID、M
 終了しても保存されるため、あとで返事を書きたい場合など、覚えておきたい重
 要なメッセージに付けておくと便利です。@samp{$} の付いたメッセージは、(実
 際のメッセージが消されたとしても) @samp{'flag} フォルダで閲覧できます。
-グローバルフラグは、@kbd{$} または、@kbd{F} で付けること出来ます。
+グローバルフラグは、@kbd{$} または、@kbd{F} で付けることが出来ます。
 
 @item なし
 既読メッセージにはマークが存在しません。
@@ -8300,6 +8306,7 @@ Non-nil な値が設定された場合は、新規にパスワードが入力されてから
 @vindex wl-draft-folder
 初期設定は @samp{+draft}。ドラフトをセーブするフォルダです。
 書き込みのできるフォルダを指定する必要があります。
+IMAP のリモートフォルダや、Maildir なども指定可能です。
 なお、@code{wl-draft-config-exec} で設定された変数は @code{elmo-msgdb-directory}
 以下に保存されます。したがって、@code{wl-draft-folder} でリモートのフォルダ
 を指定した場合、ドラフトのセーブ前に @code{wl-draft-config-exec} で設定された変数
@@ -8774,6 +8781,14 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
       8/21    wl-addrmgr by 北本さん。
      12/27    2.8.1 stable リリース。
 2002 12/11    2.10.0 stable リリース。
+2003  7/05    2.10.1 stable リリース。
+      9/18    flag フォルダ。
+      9/20    新形式 msgdb (modb-standard) by 村田浩也さん。
+     10/20    スパムフィルタ by 村田浩也さん。
+2004  1/06    デモの背景色指定。
+      2/09    'file' フォルダ。
+      9/12    forwarded マーク。
+              マーク文字列のデフォルト値変更。
 @end example
 
 詳しい変遷は @file{ChangeLog} を御覧ください。

@@ -1549,12 +1549,18 @@ You can specify following flag names:
 unread    -> unread
 important -> important
 answered  -> replied
+forwarded -> forwarded
 digest    -> unread or important
-any       -> unread or important or replied
+any       -> unread or replied or forwarded or global-flag.
 @end group
 @end example
 
-You can also use flags which you have set as global flag.
+You can also use flags which you have set as `global-flag'.  global-flag
+is a flag which has arbitrary name. You can put global-flag on messages
+by invoking @code{wl-summary-set-flags} (Key @key{F}). By default,
+@samp{important} flag is prepared.  You can view messages with
+global-flag by visiting the subfolder of @samp{'flag} folder.
+
 @xref{Internal Folder}.
 
 Example:
@@ -8339,6 +8345,7 @@ a folder and the like.
 @vindex wl-draft-folder
 The initial setting is @samp{+draft}.  It is the folder to which drafts are
 saved.  It must be a writable folder.
+You can set IMAP remote folder, Maildir and so on.
 Note that variable settings applied by @code{wl-draft-config-exec} is saved
 under @code{elmo-msgdb-directory}.  That is to say, if you specified remote
 folder as @code{wl-draft-folder}, variable settings which are applied by
@@ -8822,6 +8829,14 @@ Read messages posted to @t{<wl-en@@lists.airs.net>}
       8/21    wl-addrmgr by Kitamoto-san.
      12/27    Released 2.8.1 stable.
 2002 12/11    Released 2.10.0 stable.
+2003  7/05    Released 2.10.1 stable.
+      9/18    flag folder is added.
+      9/20    New msgdb format (modb-standard) by H.Murata-san.
+     10/20    Spam filter by H.Murata-san.
+2004  1/06    Background color of the demo become configurable.
+      2/09    'file' folder is added.
+      9/12    forwarded mark.
+              Default value of the mark strings are changed.
 @end example
 
 See @file{ChangeLog} for details.
