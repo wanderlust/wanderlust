@@ -348,7 +348,8 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 (luna-define-method elmo-folder-exists-p ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)
       (elmo-folder-send folder 'elmo-folder-exists-p-plugged)
-    nil)) ; If unplugged, assume the folder not exists.
+    ;; If unplugged, guess by msgdb.
+    (file-directory-p (elmo-folder-msgdb-path folder))))
 
 (luna-define-method elmo-folder-status ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)
