@@ -703,7 +703,8 @@ you."
   (let ((column wl-summary-buffer-number-column)
 	(formatter wl-summary-buffer-line-formatter)
 	(dummy-temp (char-to-string 200))
-	(wl-summary-new-mark (char-to-string 201)) ; bind only for the check.
+	;; bind only for the check.
+	(wl-summary-new-uncached-mark (char-to-string 201))
 	(wl-summary-flag-priority-list '(new))     ; ditto.
 	wl-summary-highlight
 	temp persistent)
@@ -726,9 +727,10 @@ you."
       (setq temp (save-excursion
 		   (when (search-forward dummy-temp nil t)
 		     (current-column)))
-	    persistent (save-excursion
-			 (when (search-forward wl-summary-new-mark nil t)
-			   (current-column)))))
+	    persistent
+	    (save-excursion
+	      (when (search-forward wl-summary-new-uncached-mark nil t)
+		(current-column)))))
     (setq wl-summary-buffer-temp-mark-column temp
 	  wl-summary-buffer-persistent-mark-column persistent)))
 
@@ -2771,7 +2773,9 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 	(setq mark
 	      (case (car priorities)
 		(new
-		 wl-summary-new-mark)
+		 (if cached
+		     wl-summary-new-cached-mark
+		   wl-summary-new-uncached-mark))
 		(important
 		 wl-summary-important-mark)
 		(answered

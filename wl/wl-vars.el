@@ -965,8 +965,13 @@ cdr of each cons cell is used for draft message."
 			(const :format "%v " unread)))
   :group 'wl-summary)
 
-(defcustom wl-summary-new-mark "N"
-  "Mark for new message."
+(defcustom wl-summary-new-uncached-mark "N"
+  "Mark for new and uncached message."
+  :type '(string :tag "Mark")
+  :group 'wl-summary-marks)
+
+(defcustom wl-summary-new-cached-mark "n"
+  "Mark for new but already cached message."
   :type '(string :tag "Mark")
   :group 'wl-summary-marks)
 
@@ -1060,7 +1065,7 @@ This variable is local to the summary buffers."
   :group 'wl-score)
 
 (defcustom wl-summary-score-marks
-  (list wl-summary-new-mark)
+  (list wl-summary-new-uncached-mark wl-summary-new-cached-mark)
   "Persistent marks to scoring."
   :type '(repeat (string :tag "Mark"))
   :group 'wl-score)
@@ -1875,7 +1880,8 @@ Also variables which begin with `wl-' can be specified
   :group 'wl-pref)
 
 (defcustom wl-summary-auto-refile-skip-marks
-  (list wl-summary-new-mark
+  (list wl-summary-new-uncached-mark
+	wl-summary-new-cached-mark
 	wl-summary-unread-uncached-mark
 	wl-summary-unread-cached-mark)
   "Persistent marks to skip auto-refiling."
@@ -1897,7 +1903,7 @@ the message is skipped at cursor move."
   :group 'wl-summary)
 
 (defcustom wl-summary-incorporate-marks
-  (list wl-summary-new-mark
+  (list wl-summary-new-uncached-mark
 	wl-summary-unread-uncached-mark)
   "Persistent marks to prefetch at `wl-summary-incorporate'."
   :type '(repeat (string :tag "Mark"))
@@ -2487,7 +2493,8 @@ ex.
 
 (defcustom wl-summary-expire-reserve-marks
   (list wl-summary-important-mark
-	wl-summary-new-mark
+	wl-summary-new-uncached-mark
+	wl-summary-new-cached-mark
 	wl-summary-unread-uncached-mark
 	wl-summary-unread-cached-mark)
   "Permanent marks of reserved message when expire.
@@ -2824,6 +2831,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2003-11-05
+(elmo-define-obsolete-variable 'wl-summary-new-mark
+			       'wl-summary-new-uncached-mark)
 
 ;; 2003-07-15 delete -> dispose
 (elmo-define-obsolete-variable 'wl-delete-folder-alist

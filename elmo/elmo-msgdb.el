@@ -201,14 +201,14 @@ VALUE is the field value (raw)."
 
 (defun elmo-flag-table-get (flag-table msg-id)
   (let ((flags (elmo-get-hash-val msg-id flag-table)))
-    (if flags
-	(append
-	 (and (elmo-file-cache-exists-p msg-id)
-	      '(cached))
+    (append
+     (and (elmo-file-cache-exists-p msg-id)
+	  '(cached))
+     (if flags
 	 (elmo-list-delete '(cached read)
 			   (copy-sequence flags)
-			   #'delq))
-      '(new unread))))
+			   #'delq)
+       '(new unread)))))
 
 (defun elmo-flag-table-save (dir flag-table)
   (elmo-object-save

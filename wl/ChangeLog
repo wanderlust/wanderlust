@@ -1,3 +1,19 @@
+2003-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-summary-new-uncached-mark): Renamed from
+	wl-summary-new-mark.
+	(wl-summary-new-cached-mark): New user option.
+	(wl-summary-score-marks): Follow the change above.
+	(wl-summary-auto-refile-skip-marks): Ditto.
+	(wl-summary-incorporate-marks): Ditto.
+	(wl-summary-expire-reserve-marks): Ditto.
+
+	* wl-spam.el (wl-spam-auto-check-marks): Ditto.
+
+	* wl-summary.el (wl-summary-detect-mark-position): Ditto.
+	(wl-summary-persistent-mark-string): Distinguished between cached
+	and uncached mark when the message is new.
+
 2003-11-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-spam.el (wl-spam-domain): Renamed from

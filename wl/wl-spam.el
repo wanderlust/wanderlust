@@ -65,7 +65,8 @@
   :group 'wl-spam)
 
 (defcustom wl-spam-auto-check-marks
-  (list wl-summary-new-mark)
+  (list wl-summary-new-uncached-mark
+	wl-summary-new-cached-mark)
   "Persistent marks to check spam automatically."
   :type '(choice (const :tag "All marks" all)
 		 (repeat (string :tag "Mark")))
