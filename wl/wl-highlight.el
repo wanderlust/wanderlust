@@ -818,7 +818,6 @@
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  (sregexp (concat "\\("wl-summary-message-regexp "\\)\\(.\\)\\(.\\)"))
 	  fregexp fsymbol bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
@@ -826,27 +825,20 @@
       (setq bol (point))
       (if smark
 	  (setq status-mark smark)
-	(setq looked-at (looking-at sregexp))
-	(when looked-at
-	  (setq status-mark (buffer-substring (match-beginning 3)
-					      (match-end 3)))))
+	(setq status-mark (wl-summary-persistent-mark)))
       (when temp-too
-	(unless looked-at
-	  (setq looked-at (looking-at sregexp)))
-	(when looked-at
-	  (setq temp-mark (buffer-substring (match-beginning 2)
-					    (match-end 2)))
-	  (cond
-	   ((string= temp-mark "*")
-	    (setq fsymbol 'wl-highlight-summary-temp-face))
-	   ((string= temp-mark "D")
-	    (setq fsymbol 'wl-highlight-summary-deleted-face))
-	   ((string= temp-mark "O")
-	    (setq fsymbol 'wl-highlight-summary-copied-face
-		  dest t))
-	   ((string= temp-mark "o")
-	    (setq fsymbol 'wl-highlight-summary-refiled-face
-		  dest t)))))
+	(setq temp-mark (wl-summary-temp-mark))
+	(cond
+	 ((string= temp-mark "*")
+	  (setq fsymbol 'wl-highlight-summary-temp-face))
+	 ((string= temp-mark "D")
+	  (setq fsymbol 'wl-highlight-summary-deleted-face))
+	 ((string= temp-mark "O")
+	  (setq fsymbol 'wl-highlight-summary-copied-face
+		dest t))
+	 ((string= temp-mark "o")
+	  (setq fsymbol 'wl-highlight-summary-refiled-face
+		dest t))))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark "+")
@@ -874,8 +866,7 @@
 	   ;;
 	   (t (if (null
 		   (wl-thread-entity-get-parent-entity
-		    (wl-thread-get-entity (string-to-number
-					   (match-string 1)))))
+		    (wl-thread-get-entity (wl-summary-message-number))))
 		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
 		(setq fsymbol 'wl-highlight-summary-normal-face)))))
       (put-text-property bol eol 'face fsymbol)
@@ -996,14 +987,6 @@ Variables used:
 	(wl-highlight-summary-current-line nil nil
 					   (or wl-summary-lazy-highlight
 					       wl-summary-scored))
-	(when (and (not wl-summary-lazy-highlight)
-		   (> lines elmo-display-progress-threshold))
-	  (setq i (+ i 1))
-	  (setq percent (/ (* i 100) lines))
-	  (if (or (zerop (% percent 5)) (= i lines))
-	      (elmo-display-progress
-	       'wl-highlight-summary "Highlighting..."
-	       percent)))
 	(forward-line 1))
       (unless wl-summary-lazy-highlight
 	(message "Highlighting...done")))))
@@ -1013,12 +996,13 @@ Variables used:
 This function is defined for `window-scroll-functions'"
   (if wl-summary-highlight
       (with-current-buffer (window-buffer win)
-	(wl-highlight-summary (window-start win)
-			      (save-excursion
-				(goto-char (window-start win))
-				(forward-line (frame-height))
-				(point)))
-	(set-buffer-modified-p nil))))
+	(when (eq major-mode 'wl-summary-mode)
+	  (wl-highlight-summary (window-start win)
+				(save-excursion
+				  (goto-char (window-start win))
+				  (forward-line (frame-height))
+				  (point)))
+	  (set-buffer-modified-p nil)))))
 
 (defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))

@@ -1,5 +1,58 @@
 2002-05-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-check-variables-2): Check whether wl-summary-line-format
+	and wl-folder-summary-line-format-alist contain %T and %P.
+
+	* wl-vars.el (wl-summary-mode-line-format-spec-alist): New variable.
+	(wl-summary-mode-line-format): New user option.
+	(wl-summary-line-format-spec-alist): Added l, T, P, n.
+	(wl-summary-line-format): Changed default value.
+	(wl-summary-lazy-highlight): Changed default value.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the
+	change in wl-summary-create-line.
+	(wl-thread-insert-entity-sub): Ditto.
+
+	* wl-summary.el (wl-summary-buffer-folder-indicator): Abolished.
+	(wl-summary-buffer-unread-status): Ditto.
+	(wl-summary-buffer-temp-mark-column): New buffer-local variable.
+	(wl-summary-buffer-persistent-mark-column): Ditto.
+	(wl-summary-buffer-mode-line-formatter): Ditto.
+	(wl-summary-buffer-mode-line): Ditto.
+	(wl-summary-message-regexp): Abolished.
+	(All other related portions are changed.)
+	(wl-summary-detect-mark-position): New function.
+	(wl-summary-buffer-set-folder): Setup
+	wl-summary-buffer-mode-line-formatter.
+	(wl-summary-mode): Setup selective-display;
+	Setup pre-idle-hook when xemacs.
+	(wl-summary-update-modeline): Rewrite.
+	(wl-summary-jump-to-msg): Define as function;
+	Changed regexp for searching messages.
+	(wl-summary-message-number): Rewrite.
+	(wl-summary-goto-folder-subr): Decode with `unix' EOL;
+	Do rescan when old type summary cache.
+	(wl-summary-goto-folder-subr): Call sit-for to rehighlight on XEmacs.
+	(wl-summary-remove-destination): Use '\r' to detect EOL.
+	(wl-summary-print-destination): Ditto.
+	(wl-summary-temp-mark): New inline function.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-line-number): New function.
+	(wl-summary-line-list-info): Renamed from wl-summary-line-list-info.
+	(wl-summary-line-list-count): New function.
+	(wl-summary-create-line): Added argument persistent-mark.
+	(All other related portions are changed)
+	(wl-summary-create-line): Insert '\r'.
+	(wl-summary-save-view-cache): Encode whth `unix' EOL.
+	(wl-summary-cursor-move-surface): New inline function.
+	(wl-summary-prev): Use it.
+	(wl-summary-next): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Don't use
+	wl-summary-message-regexp.
+	(wl-highlight-summary): Delete progress message.
+	(wl-highlight-summary-window): Do highlight only when wl-summary-mode.
+
         * Version number is increased to 2.9.12.
 
 2002-05-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

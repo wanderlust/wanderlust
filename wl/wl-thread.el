@@ -409,6 +409,7 @@ ENTITY is returned."
 	      (elmo-msgdb-overview-get-entity
 	       parent-msg (wl-summary-buffer-msgdb))
 	      temp-mark
+	      (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg)
 	      (if wl-thread-insert-force-opened
 		  nil
 		(wl-thread-maybe-get-children-num msg))
@@ -870,6 +871,7 @@ Message is inserted to the summary buffer."
 	  (elmo-msgdb-overview-get-entity
 	   (nth 0 parent-entity) (wl-summary-buffer-msgdb))
 	  temp-mark
+	  (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg-num)
 	  (if wl-thread-insert-force-opened
 	      nil
 	    (wl-thread-maybe-get-children-num msg-num))
