@@ -1,3 +1,12 @@
+2000-09-15  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-vars.el (wl-strict-diff-folders): Customization Type
+	and doc fix.  Define as a list of regular expressions for
+	folders or nil.  
+	* wl-folder.el (wl-folder-check-one-entity): Use
+	`wl-string-match-member' instead of `wl-string-member' for
+	`wl-strict-diff-folders'.
+
 2000-09-14  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-xmas.el (wl-xmas-highlight-folder-group-line): New function.
