@@ -1,3 +1,8 @@
+2000-07-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (wl-texinfo-format-file): require ptexinfmt.
+	* utils/ptexinfmt.el: provide feature.
+
 2000-07-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el: New file.
