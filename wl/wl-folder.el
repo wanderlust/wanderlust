@@ -963,8 +963,8 @@ Optional argument ARG is repeart count."
 		(select-window buf-win)
 	      (set-buffer buf))
 	    (setq wl-folder-buffer-cur-entity-id entity-id)
-	    (setq wl-folder-buffer-cur-path (wl-folder-get-path wl-folder-entity
-								entity-id))
+	    (setq wl-folder-buffer-cur-path
+		  (wl-folder-get-path wl-folder-entity entity-id))
 	    (wl-highlight-folder-path wl-folder-buffer-cur-path)
 	    (and wl-folder-move-cur-folder
 		 wl-folder-buffer-cur-point
