@@ -1,3 +1,8 @@
+2001-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-message.el (wl-message-mode-map): Define.
+	(wl-message-decode): Use it as local-map.
+
 2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-score.el (wl-score-guess-like-gnus): Abolished.
