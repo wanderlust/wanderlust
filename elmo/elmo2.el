@@ -33,6 +33,7 @@
 (require 'elmo-msgdb)
 (require 'elmo-cache)
 (require 'elmo-util)
+(require 'elmo-version)
 (require 'elmo-dop)
 (provide 'elmo2)
 

@@ -34,14 +34,6 @@
   (defun-maybe dynamic-link (a))
   (defun-maybe dynamic-call (a b)))
 
-;; Version info.
-(defconst elmo-version "2.3.0")
-(defconst elmo-appname "ELMO")
-
-(defun elmo-version ()
-  "Print ELMO version."
-  (format "%s/%s" elmo-appname elmo-version))
-
 ;; IMAP4
 (defvar elmo-default-imap4-mailbox "inbox"
   "*Default IMAP4 mailbox.")
