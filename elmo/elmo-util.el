@@ -29,9 +29,9 @@
 ;;; Code:
 ;; 
 
-(eval-when-compile (require 'cl))
 (require 'elmo-vars)
 (require 'elmo-date)
+(eval-when-compile (require 'cl))
 (require 'std11)
 (require 'eword-decode)
 (require 'utf7)
@@ -72,6 +72,19 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
+(defsubst elmo-call-func (folder func-name &rest args)
+  (let* ((spec (if (stringp folder)
+		   (elmo-folder-get-spec folder)
+		 folder))
+	 (type (symbol-name (car spec)))
+	 (backend-str (concat "elmo-" type))
+	 (backend-sym (intern backend-str)))
+    (unless (featurep backend-sym)
+      (require backend-sym))
+    (apply (intern (format "%s-%s" backend-str func-name))
+	   spec
+	   args)))
+
 ;; Nemacs's `read' is different.
 (static-if (fboundp 'nemacs-version)
     (defun elmo-read (obj)
@@ -88,10 +101,30 @@
        (erase-buffer)
        (,@ body))))
 
+(defmacro elmo-match-substring (pos string from)
+  "Substring of POSth matched string of STRING."
+  (` (substring (, string)
+		(+ (match-beginning (, pos)) (, from))
+		(match-end (, pos)))))
+
+(defmacro elmo-match-string (pos string)
+  "Substring POSth matched STRING."
+  (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
+
+(defmacro elmo-match-buffer (pos)
+  "Substring POSth matched from the current buffer."
+  (` (buffer-substring-no-properties
+      (match-beginning (, pos)) (match-end (, pos)))))
+
 (defmacro elmo-bind-directory (dir &rest body)
   "Set current directory DIR and execute BODY."
   (` (let ((default-directory (file-name-as-directory (, dir))))
        (,@ body))))
+
+(defmacro elmo-folder-get-type (folder)
+  "Get type of FOLDER."
+  (` (and (stringp (, folder))
+	  (cdr (assoc (string-to-char (, folder)) elmo-spec-alist)))))
 
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
@@ -139,12 +172,322 @@ File content is encoded with MIME-CHARSET."
 ;;;(princ "\n" (current-buffer))
    (elmo-save-buffer filename mime-charset)))
 
+(defsubst elmo-imap4-decode-folder-string (string)
+  (if elmo-imap4-use-modified-utf7
+      (utf7-decode-string string 'imap)
+    string))
+
+(defsubst elmo-imap4-encode-folder-string (string)
+  (if elmo-imap4-use-modified-utf7
+      (utf7-encode-string string 'imap)
+    string))
+
 (defun elmo-get-network-stream-type (stream-type stream-type-alist)
   (catch 'found
     (while stream-type-alist
       (if (eq (nth 1 (car stream-type-alist)) stream-type)
 	  (throw 'found (car stream-type-alist)))
       (setq stream-type-alist (cdr stream-type-alist)))))
+
+(defun elmo-network-get-spec (folder server port stream-type stream-type-alist)
+  (setq stream-type (elmo-get-network-stream-type
+		     stream-type stream-type-alist))
+  (when (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" folder)
+    (if (match-beginning 1)
+	(setq server (elmo-match-substring 1 folder 1)))
+    (if (match-beginning 2)
+	(setq port (string-to-int (elmo-match-substring 2 folder 1))))
+    (if (match-beginning 3)
+	(setq stream-type (assoc (elmo-match-string 3 folder)
+				 stream-type-alist)))
+    (setq folder (substring folder 0 (match-beginning 0))))
+  (cons folder (list server port stream-type)))
+
+(defun elmo-imap4-get-spec (folder)
+  (let ((default-user        elmo-default-imap4-user)
+	(default-server      elmo-default-imap4-server)
+	(default-port        elmo-default-imap4-port)
+	(default-stream-type elmo-default-imap4-stream-type)
+	(stream-type-alist elmo-network-stream-type-alist)
+	spec mailbox user auth)
+    (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
+      ;; case: default-imap4-server is specified like
+      ;; "hoge%imap.server@gateway".
+      (setq default-user (elmo-match-string 1 default-server))
+      (setq default-server (elmo-match-string 2 default-server)))
+    (if elmo-imap4-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-imap4-stream-type-alist stream-type-alist)))
+    (setq spec (elmo-network-get-spec
+		folder default-server default-port default-stream-type
+		stream-type-alist))
+    (setq folder (car spec))
+    (when (string-match
+	   "^\\(%\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
+	   folder)
+      (progn
+	(setq mailbox (if (match-beginning 2)
+			  (elmo-match-string 2 folder)
+			elmo-default-imap4-mailbox))
+	(setq user (if (match-beginning 3)
+		       (elmo-match-substring 3 folder 1)
+		     default-user))
+	(setq auth (if (match-beginning 4)
+		       (intern (elmo-match-substring 4 folder 1))
+		     elmo-default-imap4-authenticate-type))
+	(setq auth (or auth 'clear))
+	(append (list 'imap4
+		      (elmo-imap4-encode-folder-string mailbox)
+		      user auth)
+		(cdr spec))))))
+
+(defsubst elmo-imap4-spec-mailbox (spec)
+  (nth 1 spec))
+
+(defsubst elmo-imap4-spec-username (spec)
+  (nth 2 spec))
+
+(defsubst elmo-imap4-spec-auth (spec)
+  (nth 3 spec))
+
+(defsubst elmo-imap4-spec-hostname (spec)
+  (nth 4 spec))
+
+(defsubst elmo-imap4-spec-port (spec)
+  (nth 5 spec))
+
+(defsubst elmo-imap4-spec-stream-type (spec)
+  (nth 6 spec))
+
+(defalias 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
+(make-obsolete 'elmo-imap4-spec-folder 'elmo-imap4-spec-mailbox)
+
+(defsubst elmo-imap4-connection-get-process (conn)
+  (nth 1 conn))
+
+(defsubst elmo-imap4-connection-get-buffer (conn)
+  (nth 0 conn))
+
+(defsubst elmo-imap4-connection-get-cwf (conn)
+  (nth 2 conn))
+
+(defun elmo-nntp-get-spec (folder)
+  (let ((stream-type-alist elmo-network-stream-type-alist)
+	spec group user)
+    (if elmo-nntp-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-nntp-stream-type-alist stream-type-alist)))
+    (setq spec (elmo-network-get-spec folder
+				      elmo-default-nntp-server
+				      elmo-default-nntp-port
+				      elmo-default-nntp-stream-type
+				      stream-type-alist))
+    (setq folder (car spec))
+    (when (string-match
+	   "^\\(-\\)\\([^:@!]*\\)\\(:[^/!]+\\)?\\(/[^/:@!]+\\)?"
+	   folder)
+      (setq group
+	    (if (match-beginning 2)
+		(elmo-match-string 2 folder)))
+      (setq user
+	    (if (match-beginning 3)
+		(elmo-match-substring 3 folder 1)
+	      elmo-default-nntp-user))
+      (append (list 'nntp group user)
+	      (cdr spec)))))
+
+(defsubst elmo-nntp-spec-group (spec)
+  (nth 1 spec))
+
+(defsubst elmo-nntp-spec-username (spec)
+  (nth 2 spec))
+
+;; future use?
+;; (defsubst elmo-nntp-spec-auth (spec))
+
+(defsubst elmo-nntp-spec-hostname (spec)
+  (nth 3 spec))
+
+(defsubst elmo-nntp-spec-port (spec)
+  (nth 4 spec))
+
+(defsubst elmo-nntp-spec-stream-type (spec)
+  (nth 5 spec))
+
+(defun elmo-localdir-get-spec (folder)
+  (let (fld-name path)
+    (when (string-match
+	   "^\\(\\+\\)\\(.*\\)$"
+	   folder)
+      (if (eq (length (setq fld-name
+			    (elmo-match-string 2 folder))) 0)
+	  (setq fld-name "")
+	)
+      (if (file-name-absolute-p fld-name)
+	  (setq path (expand-file-name fld-name))
+;;;	(setq path (expand-file-name fld-name
+;;;				     elmo-localdir-folder-path))
+	(setq path fld-name))
+      (list (if (elmo-folder-maildir-p folder)
+		'maildir
+	      'localdir) path))))
+
+(defun elmo-maildir-get-spec (folder)
+  (let (fld-name path)
+    (when (string-match
+	   "^\\(\\.\\)\\(.*\\)$"
+	   folder)
+      (if (eq (length (setq fld-name
+			    (elmo-match-string 2 folder))) 0)
+	  (setq fld-name ""))
+      (if (file-name-absolute-p fld-name)
+	  (setq path (expand-file-name fld-name))
+	(setq path fld-name))
+      (list 'maildir path))))
+
+(defun elmo-folder-maildir-p (folder)
+  (catch 'found
+    (let ((li elmo-maildir-list))
+      (while li
+	(if (string-match (car li) folder)
+	    (throw 'found t))
+	(setq li (cdr li))))))
+
+(defun elmo-localnews-get-spec (folder)
+  (let (fld-name)
+    (when (string-match
+	 "^\\(=\\)\\(.*\\)$"
+	 folder)
+      (if (eq (length (setq fld-name
+			    (elmo-match-string 2 folder))) 0)
+	  (setq fld-name "")
+	)
+      (list 'localnews
+	    (elmo-replace-in-string fld-name "\\." "/")))))
+
+(defun elmo-cache-get-spec (folder)
+  (let (fld-name)
+    (when (string-match
+	 "^\\(!\\)\\(.*\\)$"
+	 folder)
+      (if (eq (length (setq fld-name
+			    (elmo-match-string 2 folder))) 0)
+	  (setq fld-name "")
+	)
+      (list 'cache
+	    (elmo-replace-in-string fld-name "\\." "/")))))
+
+;; Archive interface by OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+(defun elmo-archive-get-spec (folder)
+  (require 'elmo-archive)
+  (let (fld-name type prefix)
+    (when (string-match
+	   "^\\(\\$\\)\\([^;]*\\);?\\([^;]*\\);?\\([^;]*\\)$"
+	   folder)
+      ;; Drive letter is OK!
+      (if (eq (length (setq fld-name
+			    (elmo-match-string 2 folder))) 0)
+	  (setq fld-name "")
+	)
+      (if (eq (length (setq type
+			    (elmo-match-string 3 folder))) 0)
+	  (setq type (symbol-name elmo-archive-default-type)))
+      (if (eq (length (setq prefix
+			    (elmo-match-string 4 folder))) 0)
+	  (setq prefix ""))
+      (list 'archive fld-name (intern-soft type) prefix))))
+
+(defun elmo-pop3-get-spec (folder)
+  (let ((stream-type-alist elmo-network-stream-type-alist)
+	spec user auth)
+    (if elmo-pop3-stream-type-alist
+	(setq stream-type-alist
+	      (append elmo-pop3-stream-type-alist stream-type-alist)))
+    (setq spec (elmo-network-get-spec folder
+				      elmo-default-pop3-server
+				      elmo-default-pop3-port
+				      elmo-default-pop3-stream-type
+				      stream-type-alist))
+    (setq folder (car spec))
+    (when (string-match
+	   "^\\(&\\)\\([^:/!]*\\)\\(/[^/:@!]+\\)?"
+	   folder)
+      (setq user (if (match-beginning 2)
+		     (elmo-match-string 2 folder)))
+      (if (eq (length user) 0)
+	  (setq user elmo-default-pop3-user))
+      (setq auth (if (match-beginning 3)
+		     (intern (elmo-match-substring 3 folder 1))
+		   elmo-default-pop3-authenticate-type))
+      (setq auth (or auth 'user))
+      (append (list 'pop3 user auth)
+	      (cdr spec)))))
+
+(defsubst elmo-pop3-spec-username (spec)
+  (nth 1 spec))
+
+(defsubst elmo-pop3-spec-auth (spec)
+  (nth 2 spec))
+
+(defsubst elmo-pop3-spec-hostname (spec)
+  (nth 3 spec))
+
+(defsubst elmo-pop3-spec-port (spec)
+  (nth 4 spec))
+
+(defsubst elmo-pop3-spec-stream-type (spec)
+  (nth 5 spec))
+
+(defun elmo-internal-get-spec (folder)
+  (if (string-match "\\('\\)\\([^/]*\\)/?\\(.*\\)$" folder)
+      (let* ((item (downcase (elmo-match-string 2 folder)))
+	     (sym (and (> (length item) 0) (intern item))))
+	(cond ((or (null sym)
+		   (eq sym 'mark))
+	       (list 'internal sym (elmo-match-string 3 folder)))
+	      ((eq sym 'cache)
+	       (list 'cache (elmo-match-string 3 folder)))
+	      (t (error "Invalid internal folder spec"))))))
+
+(defun elmo-multi-get-spec (folder)
+  (save-match-data
+    (when (string-match
+	   "^\\(\\*\\)\\(.*\\)$"
+	   folder)
+      (append (list 'multi)
+	      (split-string
+	       (elmo-match-string 2 folder)
+	       ",")))))
+
+(defun elmo-filter-get-spec (folder)
+  (when (string-match "^\\(/\\)\\(.*\\)$" folder)
+    (let ((folder (elmo-match-string 2 folder))
+	  pair)
+      (setq pair (elmo-parse-search-condition folder))
+      (if (string-match "^ */\\(.*\\)$" (cdr pair))
+	  (list 'filter (car pair) (elmo-match-string 1 (cdr pair)))
+	(error "Folder syntax error `%s'" folder)))))
+
+(defun elmo-pipe-get-spec (folder)
+  (when (string-match "^\\(|\\)\\([^|]*\\)|\\(.*\\)$" folder)
+    (list 'pipe
+	  (elmo-match-string 2 folder)
+	  (elmo-match-string 3 folder))))
+
+(defsubst elmo-pipe-spec-src (spec)
+  (nth 1 spec))
+
+(defsubst elmo-pipe-spec-dst (spec)
+  (nth 2 spec))
+
+(defun elmo-folder-get-spec (folder)
+  "Return spec of FOLDER."
+  (let ((type (elmo-folder-get-type folder)))
+    (if type
+	(save-match-data
+	  (funcall (intern (concat "elmo-" (symbol-name type) "-get-spec"))
+		   folder))
+      (error "%s is not supported folder type" folder))))
 
 ;;; Search Condition
 
@@ -287,6 +630,13 @@ Return value is a cons cell of (STRUCTURE . REST)"
    (t (error "Syntax error '%s'" (buffer-string)))))
 
 ;;;
+(defun elmo-multi-get-real-folder-number (folder number)
+  (let* ((spec (elmo-folder-get-spec folder))
+	 (flds (cdr spec))
+	 (num number)
+	 (fld (nth (- (/ num elmo-multi-divide-number) 1) flds)))
+    (cons fld (% num elmo-multi-divide-number))))
+
 (defsubst elmo-buffer-replace (regexp &optional newtext)
   (goto-char (point-min))
   (while (re-search-forward regexp nil t)
@@ -303,13 +653,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
        (while (search-forward (char-to-string char) nil t)
 	 (replace-match ""))
        (buffer-string)))))
-
-(defsubst elmo-delete-cr-buffer ()
-  "Delete CR from buffer."
-  (save-excursion
-    (goto-char (point-min))
-    (while (search-forward "\r\n" nil t)
-      (replace-match "\n")) ))
 
 (defsubst elmo-delete-cr-get-content-type ()
   (save-excursion
@@ -511,6 +854,49 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (message "")
       ans)))
 
+;; from subr.el
+(defun elmo-replace-in-string (str regexp newtext &optional literal)
+  "Replace all matches in STR for REGEXP with NEWTEXT string.
+And returns the new string.
+Optional LITERAL non-nil means do a literal replacement.
+Otherwise treat \\ in NEWTEXT string as special:
+  \\& means substitute original matched text,
+  \\N means substitute match for \(...\) number N,
+  \\\\ means insert one \\."
+  (let ((rtn-str "")
+	(start 0)
+	(special)
+	match prev-start)
+    (while (setq match (string-match regexp str start))
+      (setq prev-start start
+	    start (match-end 0)
+	    rtn-str
+	    (concat
+	     rtn-str
+	     (substring str prev-start match)
+	     (cond (literal newtext)
+		   (t (mapconcat
+		       (function
+			(lambda (c)
+			  (if special
+			      (progn
+				(setq special nil)
+				(cond ((eq c ?\\) "\\")
+				      ((eq c ?&)
+				       (elmo-match-string 0 str))
+				      ((and (>= c ?0) (<= c ?9))
+				       (if (> c (+ ?0 (length
+						       (match-data))))
+					   ;; Invalid match num
+					   (error "Invalid match num: %c" c)
+					 (setq c (- c ?0))
+					 (elmo-match-string c str)))
+				      (t (char-to-string c))))
+			    (if (eq c ?\\) (progn (setq special t) nil)
+			      (char-to-string c)))))
+		       newtext ""))))))
+    (concat rtn-str (substring str start))))
+
 (defun elmo-string-to-list (string)
   (elmo-set-work-buf
    (insert string)
@@ -564,27 +950,23 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (setq alist (cdr alist)))
     (elmo-plug-on-by-servers alist other-servers)))
 
-(defun elmo-plugged-p (&optional server port stream-type alist label-exp)
+(defun elmo-plugged-p (&optional server port alist label-exp)
   (let ((alist (or alist elmo-plugged-alist))
 	plugged-info)
     (cond ((and (not port) (not server))
 	   (cond ((eq elmo-plugged-condition 'one)
-		  (if alist
-		      (catch 'plugged
-			(while alist
-			  (if (nth 2 (car alist))
-			      (throw 'plugged t))
-			  (setq alist (cdr alist))))
-		    elmo-plugged))
+		  (catch 'plugged
+		    (while alist
+		      (if (nth 2 (car alist))
+			  (throw 'plugged t))
+		      (setq alist (cdr alist)))))
 		 ((eq elmo-plugged-condition 'all)
-		  (if alist
-		      (catch 'plugged
-			(while alist
-			  (if (not (nth 2 (car alist)))
-			      (throw 'plugged nil))
-			  (setq alist (cdr alist)))
-			t)
-		    elmo-plugged))
+		  (catch 'plugged
+		    (while alist
+		      (if (not (nth 2 (car alist)))
+			  (throw 'plugged nil))
+		      (setq alist (cdr alist)))
+		    t))
 		 ((functionp elmo-plugged-condition)
 		  (funcall elmo-plugged-condition alist))
 		 (t ;; independent
@@ -597,12 +979,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		     (throw 'plugged t)))
 	       (setq alist (cdr alist)))))
 	  (t
-	   (setq plugged-info (assoc (list server port stream-type) alist))
+	   (setq plugged-info (assoc (cons server port) alist))
 	   (if (not plugged-info)
 	       ;; add elmo-plugged-alist automatically
 	       (progn
-		 (elmo-set-plugged elmo-plugged server port stream-type
-				   nil nil nil label-exp)
+		 (elmo-set-plugged elmo-plugged server port nil nil label-exp)
 		 elmo-plugged)
 	     (if (and elmo-auto-change-plugged
 		      (> elmo-auto-change-plugged 0)
@@ -612,7 +993,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		 t
 	       (nth 2 plugged-info)))))))
 
-(defun elmo-set-plugged (plugged &optional server port stream-type time
+(defun elmo-set-plugged (plugged &optional server port time
 				 alist label-exp add)
   (let ((alist (or alist elmo-plugged-alist))
 	label plugged-info)
@@ -630,7 +1011,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	     (setq alist (cdr alist))))
 	  (t
 	   ;; set plugged one port of server
-	   (setq plugged-info (assoc (list server port stream-type) alist))
+	   (setq plugged-info (assoc (cons server port) alist))
 	   (setq label (if label-exp
 			   (eval label-exp)
 			 (nth 1 plugged-info)))
@@ -640,11 +1021,9 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		 (setcdr plugged-info (list label plugged time)))
 	     (setq alist
 		   (setq elmo-plugged-alist
-			 (nconc
-			  elmo-plugged-alist
-			  (list
-			   (list (list server port stream-type)
-				 label plugged time))))))))
+			 (nconc elmo-plugged-alist
+				(list
+				 (list (cons server port) label plugged time))))))))
     alist))
 
 (defun elmo-delete-plugged (&optional server port alist)
@@ -712,7 +1091,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
   "Delete directory recursively."
-  (if (stringp path) ; nil is not permitted.
   (let ((dirent (directory-files path))
 	relpath abspath hierarchy)
     (while dirent
@@ -726,7 +1104,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	      (elmo-delete-directory abspath no-hierarchy))
 	  (delete-file abspath))))
     (unless hierarchy
-      (delete-directory path)))))
+      (delete-directory path))))
 
 (defun elmo-list-filter (l1 l2)
   "L1 is filter."
@@ -737,6 +1115,42 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(elmo-delete-if (lambda (x) (not (memq x l1))) l2)
       ;; filter is nil
       l2)))
+
+(defun elmo-folder-local-p (folder)
+  "Return whether FOLDER is a local folder or not."
+  (let ((spec (elmo-folder-get-spec folder)))
+    (case (car spec)
+      (filter (elmo-folder-local-p (nth 2 spec)))
+      (pipe (elmo-folder-local-p (elmo-pipe-spec-dst spec)))
+      (t (memq (car spec)
+	       '(localdir localnews archive maildir internal cache))))))
+
+(defun elmo-folder-writable-p (folder)
+  (let ((type (elmo-folder-get-type folder)))
+    (memq type '(imap4 localdir archive))))
+
+(defun elmo-multi-get-intlist-list (numlist &optional as-is)
+  (let ((numbers (sort numlist '<))
+	(cur-number 0)
+	one-list int-list-list)
+    (while numbers
+      (setq cur-number (+ cur-number 1))
+      (setq one-list nil)
+      (while (and numbers
+		  (eq 0
+		      (/ (- (car numbers)
+			    (* elmo-multi-divide-number cur-number))
+			 elmo-multi-divide-number)))
+	(setq one-list (nconc
+			one-list
+			(list
+			 (if as-is
+			     (car numbers)
+			   (% (car numbers)
+			      (* elmo-multi-divide-number cur-number))))))
+	(setq numbers (cdr numbers)))
+      (setq int-list-list (nconc int-list-list (list one-list))))
+    int-list-list))
 
 (defsubst elmo-list-delete-if-smaller (list number)
   (let ((ret-val (copy-sequence list)))
@@ -788,6 +1202,68 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		   'elmo-list-bigger-diff "%s%d%%" percent mes))))
 	(setq l1 (cdr l1)))
       (cons diff1 (list l2)))))
+
+(defun elmo-multi-list-bigger-diff (list1 list2 &optional mes)
+  (let ((list1-list (elmo-multi-get-intlist-list list1 t))
+	(list2-list (elmo-multi-get-intlist-list list2 t))
+	result
+	dels news)
+    (while (or list1-list list2-list)
+      (setq result (elmo-list-bigger-diff (car list1-list) (car list2-list)
+					  mes))
+      (setq dels (append dels (car result)))
+      (setq news (append news (cadr result)))
+      (setq list1-list (cdr list1-list))
+      (setq list2-list (cdr list2-list)))
+    (cons dels (list news))))
+
+(defvar elmo-imap4-name-space-regexp-list nil)
+(defun elmo-imap4-identical-name-space-p (fld1 fld2)
+  ;; only on UW?
+  (if (or (eq (string-to-char fld1) ?#)
+	  (eq (string-to-char fld2) ?#))
+      (string= (car (split-string fld1 "/"))
+	       (car (split-string fld2 "/")))
+    t))
+
+(defun elmo-folder-identical-system-p (folder1 folder2)
+  "FOLDER1 and FOLDER2 should be real folder (not virtual)."
+  (cond ((eq (elmo-folder-get-type folder1) 'imap4)
+	 (let ((spec1 (elmo-folder-get-spec folder1))
+	       (spec2 (elmo-folder-get-spec folder2)))
+	   (and 
+;;; No use.	    
+;;;	    (elmo-imap4-identical-name-space-p 
+;;;	     (nth 1 spec1) (nth 1 spec2))
+	    (string= (elmo-imap4-spec-hostname spec1)
+		     (elmo-imap4-spec-hostname spec2)) ; hostname
+	    (string= (elmo-imap4-spec-username spec1)
+		     (elmo-imap4-spec-username spec2))))) ; username
+	(t
+	 (elmo-folder-direct-copy-p folder1 folder2))))
+
+(defun elmo-folder-get-store-type (folder)
+  (let ((spec (elmo-folder-get-spec folder)))
+    (case (car spec)
+      (filter (elmo-folder-get-store-type (nth 2 spec)))
+      (pipe (elmo-folder-get-store-type (elmo-pipe-spec-dst spec)))
+      (multi (elmo-folder-get-store-type (nth 1 spec)))
+      (t (car spec)))))
+
+(defconst elmo-folder-direct-copy-alist
+  '((localdir  . (localdir localnews archive))
+    (maildir   . (maildir  localdir localnews archive))
+    (localnews . (localdir localnews archive))
+    (archive   . (localdir localnews archive))
+    (cache     . (localdir localnews archive))))
+
+(defun elmo-folder-direct-copy-p (src-folder dst-folder)
+  (let ((src-type (elmo-folder-get-store-type src-folder))
+	(dst-type (elmo-folder-get-store-type dst-folder))
+	dst-copy-type)
+    (and (setq dst-copy-type
+	       (cdr (assq src-type elmo-folder-direct-copy-alist)))
+	 (memq dst-type dst-copy-type))))
 
 (defmacro elmo-filter-type (filter)
   (` (aref (, filter) 0)))
@@ -972,28 +1448,28 @@ Emacs 19.28 or earlier does not have `unintern'."
     ":" "__")
    "|" "_or_"))
 
-(defvar elmo-filename-replace-chars nil)
+(defvar elmo-msgid-replace-chars nil)
 
-(defsubst elmo-replace-string-as-filename (msgid)
-  "Replace string as filename."
+(defsubst elmo-replace-msgid-as-filename (msgid)
+  "Replace Message-ID string (MSGID) as filename."
   (setq msgid (elmo-replace-in-string msgid " " "  "))
-  (if (null elmo-filename-replace-chars)
-      (setq elmo-filename-replace-chars
+  (if (null elmo-msgid-replace-chars)
+      (setq elmo-msgid-replace-chars
 	    (regexp-quote (mapconcat
-			   'car elmo-filename-replace-string-alist ""))))
-  (while (string-match (concat "[" elmo-filename-replace-chars "]")
+			   'car elmo-msgid-replace-string-alist ""))))
+  (while (string-match (concat "[" elmo-msgid-replace-chars "]")
 		       msgid)
     (setq msgid (concat
 		 (substring msgid 0 (match-beginning 0))
 		 (cdr (assoc
 		       (substring msgid
 				  (match-beginning 0) (match-end 0))
-		       elmo-filename-replace-string-alist))
+		       elmo-msgid-replace-string-alist))
 		 (substring msgid (match-end 0)))))
   msgid)
 
-(defsubst elmo-recover-string-from-filename (filename)
-  "Recover string from FILENAME."
+(defsubst elmo-recover-msgid-from-filename (filename)
+  "Recover Message-ID from FILENAME."
   (let (tmp result)
     (while (string-match " " filename)
       (setq tmp (substring filename
@@ -1002,7 +1478,7 @@ Emacs 19.28 or earlier does not have `unintern'."
       (if (string= tmp "  ")
 	  (setq tmp " ")
 	(setq tmp (car (rassoc tmp
-			       elmo-filename-replace-string-alist))))
+			       elmo-msgid-replace-string-alist))))
       (setq result
 	    (concat result
 		    (substring filename 0 (match-beginning 0))
@@ -1283,55 +1759,6 @@ NUMBER-SET is altered."
     (if (not found)
 	(setq number-set-1 (nconc number-set-1 (list number))))
     number-set-1))
-
-(defun elmo-number-set-to-number-list (number-set)
-  "Return a number list which corresponds to NUMBER-SET."
-  (let (number-list elem i)
-    (while number-set
-      (setq elem (car number-set))
-      (cond
-       ((consp elem)
-	(setq i (car elem))
-	(while (<= i (cdr elem))
-	  (setq number-list (cons i number-list))
-	  (incf i)))
-       ((integerp elem)
-	(setq number-list (cons elem number-list))))
-      (setq number-set (cdr number-set)))
-    (nreverse number-list)))
-
-(defcustom elmo-list-subdirectories-ignore-regexp "^\\(\\.\\.?\\|[0-9]+\\)$"
-  "*Regexp to filter subfolders."
-  :type 'regexp
-  :group 'elmo)
-
-(defun elmo-list-subdirectories (directory file one-level)
-  (let ((root (zerop (length file)))
-	(w32-get-true-file-link-count t) ; for Meadow
-	files attr dirs dir)
-    (setq files (directory-files (setq dir (expand-file-name file directory))))
-    (while files
-      (if (and (not (string-match elmo-list-subdirectories-ignore-regexp
-				  (car files)))
-	       (car (setq attr (file-attributes (expand-file-name 
-						 (car files) dir)))))
-	  (if (and (not one-level)
-		   (and elmo-have-link-count (< 2 (nth 1 attr))))
-	      (setq dirs
-		    (nconc dirs
-			   (elmo-list-subdirectories
-			    directory
-			    (concat file
-				    (and (not root) elmo-path-sep)
-				    (car files))
-			    one-level)))
-	    (setq dirs (nconc dirs
-			      (list
-			       (concat file
-				       (and (not root) elmo-path-sep)
-				       (car files)))))))
-      (setq files (cdr files)))
-    (nconc (and (not root) (list file)) dirs)))
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

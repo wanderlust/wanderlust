@@ -1,7 +1,7 @@
 ;;; wl-e21.el -- Wanderlust modules for Emacs 21.
 
-;; Copyright (C) 2000 Katsumi Yamaoka <yamaoka@jpl.org>
-;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>
+;; Copyright (C) 2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news
@@ -437,36 +437,40 @@
     (wl-folder-trash-image        . wl-trash-folder-icon)))
 
 (defun wl-folder-init-icons ()
-  (let ((load-path (cons wl-icon-dir load-path))
-	(icons wl-folder-internal-icon-list)
-	icon name image)
-    (while (setq icon (pop icons))
-      (unless (get (car icon) 'image)
-	(setq name (symbol-value (cdr icon))
-	      image (find-image `((:type xpm :file ,name :ascent center))))
-	(when image
-	  (put (car icon) 'image (propertize name 'display image)))))))
+  (when (display-graphic-p)
+    (let ((load-path (cons wl-icon-dir load-path))
+	  (icons wl-folder-internal-icon-list)
+	  icon name image)
+      (while (setq icon (pop icons))
+	(unless (get (car icon) 'image)
+	  (setq name (symbol-value (cdr icon))
+		image (find-image `((:type xpm :file ,name :ascent center))))
+	  (when image
+	    (put (car icon) 'image (propertize name 'display image))))))))
 
 (defun wl-plugged-init-icons ()
-  (unless wl-plugged-image
-    (let ((load-path (cons wl-icon-dir load-path)))
-      (setq wl-plugged-image (find-image `((:type xpm
-						  :file ,wl-plugged-icon
-						  :ascent center)))
-	    wl-unplugged-image (find-image `((:type xpm
-						    :file ,wl-unplugged-icon
-						    :ascent center))))))
   (if (display-mouse-p)
       (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
 					       #'wl-toggle-plugged))
 			 'help-echo "mouse-2 toggles plugged status")))
 	(if (display-graphic-p)
-	    (setq wl-modeline-plug-state-on
-		  (apply 'propertize wl-plug-state-indicator-on
-			 `(display ,wl-plugged-image ,@props))
-		  wl-modeline-plug-state-off
-		  (apply 'propertize wl-plug-state-indicator-off
-			 `(display ,wl-unplugged-image ,@props)))
+	    (progn
+	      (unless wl-plugged-image
+		(let ((load-path (cons wl-icon-dir load-path)))
+		  (setq wl-plugged-image (find-image
+					  `((:type xpm
+						   :file ,wl-plugged-icon
+						   :ascent center)))
+			wl-unplugged-image (find-image
+					    `((:type xpm
+						     :file ,wl-unplugged-icon
+						     :ascent center))))))
+	      (setq wl-modeline-plug-state-on
+		    (apply 'propertize wl-plug-state-indicator-on
+			   `(display ,wl-plugged-image ,@props))
+		    wl-modeline-plug-state-off
+		    (apply 'propertize wl-plug-state-indicator-off
+			   `(display ,wl-unplugged-image ,@props))))
 	  (setq wl-modeline-plug-state-on
 		(apply 'propertize wl-plug-state-indicator-on props)
 		wl-modeline-plug-state-off
@@ -475,14 +479,6 @@
 	  wl-modeline-plug-state-off wl-plug-state-indicator-off)))
 
 (defun wl-biff-init-icons ()
-  (unless wl-biff-mail-image
-    (let ((load-path (cons wl-icon-dir load-path)))
-      (setq wl-biff-mail-image (find-image
-				`((:type xpm :file ,wl-biff-mail-icon
-					 :ascent center)))
-	    wl-biff-nomail-image (find-image
-				  `((:type xpm :file ,wl-biff-nomail-icon
-					   :ascent center))))))
   (if (display-mouse-p)
       (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
 					       (lambda nil
@@ -490,12 +486,24 @@
 						  'wl-biff-check-folders))))
 			 'help-echo "mouse-2 checks new mails")))
 	(if (display-graphic-p)
-	    (setq wl-modeline-biff-state-on
-		  (apply 'propertize wl-biff-state-indicator-on
-			 `(display ,wl-biff-mail-image ,@props))
-		  wl-modeline-biff-state-off
-		  (apply 'propertize wl-biff-state-indicator-off
-			 `(display ,wl-biff-nomail-image ,@props)))
+	    (progn
+	      (unless wl-biff-mail-image
+		(let ((load-path (cons wl-icon-dir load-path)))
+		  (setq wl-biff-mail-image (find-image
+					    `((:type xpm
+						     :file ,wl-biff-mail-icon
+						     :ascent center)))
+			wl-biff-nomail-image (find-image
+					      `((:type xpm
+						       :file
+						       ,wl-biff-nomail-icon
+						       :ascent center))))))
+	      (setq wl-modeline-biff-state-on
+		    (apply 'propertize wl-biff-state-indicator-on
+			   `(display ,wl-biff-mail-image ,@props))
+		    wl-modeline-biff-state-off
+		    (apply 'propertize wl-biff-state-indicator-off
+			   `(display ,wl-biff-nomail-image ,@props))))
 	  (setq wl-modeline-biff-state-on
 		(apply 'propertize wl-biff-state-indicator-on props)
 		wl-modeline-biff-state-off

@@ -1524,7 +1524,7 @@ Each elements are regexp of folder name."
 		(repeat (regexp :tag "Folder Regexp")))
   :group 'wl-pref)
 
-(defcustom wl-no-save-folder-list '("^/.*$" "^\\[.*$")
+(defcustom wl-no-save-folder-list '("^/.*$")
   "All folders that match this list won't save its msgdb.
 Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
@@ -2157,8 +2157,6 @@ XBM even if XPM can be shown."
   "*Icon file for archive folder.")
 (defvar wl-pipe-folder-icon "pipe.xpm"
   "*Icon file for pipe folder.")
-(defvar wl-nmz-folder-icon "nmz.xpm"
-  "*Icon file for localdir folder.")
 (defvar wl-maildir-folder-icon "maildir.xpm"
   "*Icon file for maildir folder.")
 (defvar wl-empty-trash-folder-icon "trash-e.xpm"
