@@ -2156,8 +2156,8 @@ even if the value of this option is set to nil.  Here are some samples:
 
 (defcustom wl-summary-move-order 'unread
   "*The order of priority when move in summary mode.
-If this variable is `unread', precede \"U\", \"!\", \"N\" mark.
-If this variable is `new', precede \"N\" mark."
+If this variable is `unread', precede \"U\", \"u\", \"N\", \"n\" mark.
+If this variable is `new', precede \"N\", \"n\" mark."
   :type '(radio (const new)
 		(const unread))
   :group 'wl-summary
