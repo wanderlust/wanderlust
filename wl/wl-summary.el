@@ -2406,7 +2406,7 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (folder func mime-decode)
-  (let ((numbers (elmo-folder-list-messages folder nil t))
+  (let ((numbers (elmo-folder-list-messages folder 'visible t))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
