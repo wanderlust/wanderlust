@@ -1,3 +1,21 @@
+2000-05-12  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* wl-thread.el (wl-thread-update-line-msgs): Called
+	`wl-thread-update-line-on-buffer-sub'.
+	(wl-thread-update-line-on-buffer): Delete routine of inserting
+	thread.
+	(wl-thread-update-line-on-buffer-sub): Routine of inserting thread
+	moved from `wl-thread-update-line-on-buffer'.
+	Add threshold for displaying progress gauge.
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Change
+	argument of `wl-thread-update-line-msgs'.
+	Add threshold for displaying progress gauge.
+	* wl-folder.el:
+	Add threshold for displaying progress gauge.
+	* wl-score.el: Ditto.
+
+	* wl-expire.el (wl-summary-expire): Display deleting info.
+
 2000-05-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-update-line-msgs): Added optional argument
