@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2000-12-11.07}
+\def\texinfoversion{2001-01-12.11}
 %
 % Copyright (C) 1985, 86, 88, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 2000
 % Free Software Foundation, Inc.
@@ -730,9 +730,9 @@ where each line of input produces a line of output.}
   \fi
   %
   \ifodd\pageno
-    \def\temp{\inleftmargin\lefttext}%
+    \def\temp{\inrightmargin\righttext}% odd page -> outside is right margin
   \else
-    \def\temp{\inrightmargin\righttext}%
+    \def\temp{\inleftmargin\lefttext}%
   \fi
   \temp
 }
@@ -924,7 +924,11 @@ where each line of input produces a line of output.}
     \fi
       \ifx\empty\imagewidth\else width \imagewidth \fi
       \ifx\empty\imageheight\else height \imageheight \fi
-      {#1.pdf}%
+      \ifnum\pdftexversion<13
+	 #1.pdf%
+       \else
+         {#1.pdf}%
+       \fi
     \ifnum\pdftexversion < 14 \else
       \pdfrefximage \pdflastximage
     \fi}
@@ -5948,6 +5952,15 @@ should work if nowhere else does.}
   \setemergencystretch
 }
 
+% Use `small' versions.
+% 
+\def\smallenvironments{%
+  \let\smalldisplay = \smalldisplayx
+  \let\smallexample = \smalllispx
+  \let\smallformat = \smallformatx
+  \let\smalllisp = \smalllispx
+}
+
 % @letterpaper (the default).
 \def\letterpaper{{\globaldefs = 1
   \parskip = 3pt plus 2pt minus 1pt
@@ -5970,11 +5983,7 @@ should work if nowhere else does.}
   \contentsrightmargin = 0pt
   \deftypemargin = 0pt
   \defbodyindent = .5cm
-  %
-  \let\smalldisplay = \smalldisplayx
-  \let\smallexample = \smalllispx
-  \let\smallformat = \smallformatx
-  \let\smalllisp = \smalllispx
+  \smallenvironments
 }}
 
 % Use @afourpaper to print on European A4 paper.
@@ -5986,6 +5995,26 @@ should work if nowhere else does.}
   %
   \tolerance = 700
   \hfuzz = 1pt
+}}
+
+% Use @afivepaper to print on European A5 paper.
+% From romildo@urano.iceb.ufop.br, 2 July 2000.
+% He also recommends making @example and @lisp be small.
+\def\afivepaper{{\globaldefs = 1
+  \setleading{12.5pt}%
+  \parskip = 2pt plus 1pt minus 0.1pt
+  %
+  \internalpagesizes{166mm}{120mm}{\voffset}{-8mm}{\bindingoffset}{8pt}%
+  %
+  \lispnarrowing = 0.2in
+  \tolerance = 800
+  \hfuzz = 1.2pt
+  \contentsrightmargin = 0mm
+  \deftypemargin = 0pt
+  \defbodyindent = 2mm
+  \tableindent = 12mm
+  %
+  \smallenvironments
 }}
 
 % A specific text layout, 24x15cm overall, intended for A4 paper.  Top margin
