@@ -5,7 +5,7 @@
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <00/04/24 17:24:35 teranisi>
+@set Time-stamp: <00/04/24 19:29:55 teranisi>
 @set version 1.1.1
 @synindex pg cp
 @finalout
@@ -2649,8 +2649,8 @@ You can sort by date, from, number and subject.
 @findex wl-summary-toggle-thread
 Toggle the threading.
 Threading status is displayed on the modeline.
-{S} means threading is off (Sequence) and 
-{T} means threading is on (Thread).
+@{S@} means threading is off (Sequence) and 
+@{T@} means threading is on (Thread).
 (@code{wl-summary-toggle-thread})
 
 @item l
