@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/05/11 09:20:11 teranisi>
+;; Time-stamp: <00/07/13 10:32:40 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -561,80 +561,17 @@ content of MSGDB is changed."
    killed-list))
 
 (defun elmo-msgdb-killed-message-p (killed-list msg)
-  (and killed-list
-       (not (listp
-	     (catch 'found
-	       (mapcar 
-		(function 
-		 (lambda (entity)
-		   (cond 
-		    ((integerp entity)
-		     (if (eq entity msg)
-			 (throw 'found t)))
-		    ((consp entity)
-		     (if (and (<= (car entity) msg)
-			      (<= msg (cdr entity)))
-			 (throw 'found t)))))
-		 killed-list)))))))
+  (memq msg killed-list))
 
 (defun elmo-msgdb-set-as-killed (killed-list msg)
-  "if cons cell, set car-cdr messages as killed.
-if integer, set number th message as killed."
-  (let ((dlist killed-list)
-	(ret-val killed-list)
-	entity found)
-    (cond
-     ((integerp msg)
-      (while (and dlist (not found))
-	(setq entity (car dlist))
-	(if (or (and (integerp entity) (eq entity msg))
-		(and (consp entity) 
-		     (<= (car entity) msg)
-		     (<= msg (cdr entity))))
-	    (setq found t))
-	(setq dlist (cdr dlist))
-	)
-      (if (not found)
-	  (setq ret-val (elmo-msgdb-append-element killed-list msg)))
-      )
-     ((consp msg)
-      (while (and dlist (not found))
-	(setq entity (car dlist))
-	(if (integerp entity)
-	    (cond 
-	     ((and (<= (car msg) entity)(<= entity (cdr msg)))
-	      (setcar dlist msg)
-	      (setq found t)
-	      )
-	     ((= (1- (car msg)) entity)
-	      (setcar dlist (cons entity (cdr msg)))
-	      (setq found t)
-	      )
-	     ((= (1+ (cdr msg)) entity)
-	      (setcar dlist (cons (car msg) entity))
-	      (setq found t)
-	      ))
-	  ;; entity is consp
-	  (cond  ; there are four patterns
-	   ((and (<= (car msg) (car entity))
-		 (<= (cdr entity) (cdr msg)))
-	    (setcar dlist msg)
-	    (setq found t))
-	   ((and (< (car entity)(car msg))
-		 (< (cdr msg) (cdr entity)))
-	    (setq found t))
-	   ((and (<= (car msg) (car entity))
-		 (<= (cdr msg) (cdr entity)))
-	    (setcar dlist (cons (car msg) (cdr entity)))
-	    (setq found t))
-	   ((and (<= (car entity) (car msg))
-		 (<= (cdr entity) (cdr msg)))
-	    (setcar dlist (cons (car entity) (cdr msg)))
-	    (setq found t))))
-	(setq dlist (cdr dlist)))
-      (if (not found)
-	  (setq ret-val (elmo-msgdb-append-element killed-list msg)))))
-    ret-val))
+  (elmo-msgdb-append-element killed-list msg))
+
+(defun elmo-msgdb-append-to-killed-list (folder msgs)
+  (let ((dir (elmo-msgdb-expand-path folder)))
+    (elmo-msgdb-killed-list-save
+     dir
+     (nconc (elmo-msgdb-killed-list-load dir)
+	    msgs))))
 
 (defun elmo-msgdb-finfo-load ()
   (elmo-object-load (expand-file-name 
