@@ -44,6 +44,9 @@ MIME-MODE is a symbol which is one of the following:
   `mime'  (Can display each MIME part)
   `as-is' (Can display raw message)")
 
+(luna-define-generic elmo-mime-entity-reassembled-p (entity)
+  "Return non-nil if ENTITY is reassembled message/partial pieces.")
+
 (luna-define-generic elmo-mime-entity-display (entity preview-buffer
 						      &optional
 						      original-major-mode
@@ -79,9 +82,16 @@ use for keymap of representation buffer.")
 			  keymap
 			  original-major-mode)))
 
+(defun elmo-mime-entity-fragment-p (entity)
+  (and (not (elmo-mime-entity-reassembled-p entity))
+       (eq (mime-entity-media-type entity) 'message)
+       (eq (mime-entity-media-subtype entity) 'partial)))
+
 (eval-and-compile
   (luna-define-class mime-elmo-buffer-entity (mime-buffer-entity
-					      elmo-mime-entity))
+					      elmo-mime-entity)
+		     (reassembled))
+  (luna-define-internal-accessors 'mime-elmo-buffer-entity)
   (luna-define-class mime-elmo-imap-entity (mime-imap-entity
 					    elmo-mime-entity)))
 
@@ -238,6 +248,10 @@ value is used."
   ;; always return t.
   t)
 
+(luna-define-method elmo-mime-entity-reassembled-p ((entity
+						     mime-elmo-buffer-entity))
+  (mime-elmo-buffer-entity-reassembled-internal entity))
+
 (luna-define-method elmo-mime-entity-display-as-is ((entity
 						     mime-elmo-buffer-entity)
 						     preview-buffer
@@ -264,15 +278,45 @@ value is used."
   (error "Does not support this method"))
 
 
-(defun elmo-message-mime-entity (folder number rawbuf
+(defun elmo-message-mime-entity (folder number rawbuf reassemble
 					&optional
 					ignore-cache unread entire)
   "Return the mime-entity structure of the message in the FOLDER with NUMBER.
 RAWBUF is the output buffer for original message.
+If REASSEMBLE is non-nil and MIME media type of the message is message/partial,
+the mime-entity is reassembled partial message.
 If optional argument IGNORE-CACHE is non-nil, existing cache is ignored.
 If second optional argument UNREAD is non-nil,
 keep status of the message as unread.
 If third optional argument ENTIRE is non-nil, fetch entire message at once."
+  (let (id message entity content-type)
+    (or (and reassemble
+	     (setq entity (elmo-message-entity folder number))
+	     (setq id (if (setq content-type (elmo-message-entity-field
+					      entity 'content-type))
+			  (and (string-match "message/partial" content-type)
+			       (mime-content-type-parameter
+				(mime-parse-Content-Type content-type) "id"))
+			(and (setq message (elmo-message-mime-entity-internal
+					    folder number rawbuf
+					    ignore-cache unread entire))
+			     (eq (mime-entity-media-type message) 'message)
+			     (eq (mime-entity-media-subtype message) 'partial)
+			     (mime-content-type-parameter
+			      (mime-entity-content-type message) "id"))))
+	     (elmo-message-reassembled-mime-entity
+	      folder id rawbuf
+	      (elmo-message-entity-field entity 'subject 'decode)
+	      ignore-cache
+	      unread))
+	message
+	(elmo-message-mime-entity-internal
+	 folder number rawbuf ignore-cache unread entire))))
+
+
+(defun elmo-message-mime-entity-internal (folder number rawbuf
+						 &optional
+						 ignore-cache unread entire)
   (let ((strategy (elmo-find-fetch-strategy folder number
 					    ignore-cache
 					    entire)))
@@ -291,6 +335,120 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 	       (erase-buffer)
 	       (elmo-message-fetch folder number strategy unread)))
 	   (mime-open-entity 'elmo-buffer rawbuf)))))
+
+
+(defconst elmo-mime-inherit-field-list-from-enclosed
+  '("^Content-.*:" "^Message-Id:" "^Subject:"
+    "^Encrypted.*:" "^MIME-Version:"))
+
+(defsubst elmo-mime-make-reassembled-mime-entity (buffer)
+  (let ((entity (mime-open-entity 'elmo-buffer buffer)))
+    (mime-elmo-buffer-entity-set-reassembled-internal entity t)
+    entity))
+
+(defun elmo-message-reassembled-mime-entity (folder id rawbuf subject
+						    &optional
+						    ignore-cache
+						    unread)
+  (let ((cache (elmo-file-cache-get (concat "<" id ">")))
+	pieces)
+    (if (and (not ignore-cache)
+	     (eq (elmo-file-cache-status cache) 'entire))
+	;; use cache
+	(with-current-buffer rawbuf
+	  (let (buffer-read-only)
+	    (erase-buffer)
+	    (elmo-file-cache-load (elmo-file-cache-path cache) nil))
+	  (elmo-mime-make-reassembled-mime-entity rawbuf))
+      ;; reassemble fragment of the entity
+      (when (setq pieces (elmo-mime-collect-message/partial-pieces
+			  folder id
+			  (regexp-quote
+			   (if (string-match "[0-9\n]+" subject)
+			       (substring subject 0 (match-beginning 0))
+			     subject))
+			  ignore-cache unread))
+	(with-current-buffer rawbuf
+	  (let (buffer-read-only
+		(outer-header (car pieces))
+		(pieces (sort (cdr pieces) (lambda (l r) (< (car l) (car r)))))
+		contents entity)
+	    (erase-buffer)
+	    (while pieces
+	      (insert (cdr (car pieces)))
+	      (setq pieces (cdr pieces)))
+	    (let ((case-fold-search t))
+	      (save-restriction
+		(std11-narrow-to-header)
+		(goto-char (point-min))
+		(while (re-search-forward std11-field-head-regexp nil t)
+		  (let ((field-start (match-beginning 0)))
+		    (unless (mime-visible-field-p
+			     (buffer-substring field-start (match-end 0))
+			     elmo-mime-inherit-field-list-from-enclosed
+			     '(".*"))
+		      (delete-region field-start (1+ (std11-field-end))))))))
+	    (goto-char (point-min))
+	    (insert outer-header)
+	    ;; save cache
+	    (elmo-file-cache-save (elmo-file-cache-path cache) nil)
+	    (elmo-mime-make-reassembled-mime-entity rawbuf)))))))
+
+(defun elmo-mime-collect-message/partial-pieces (folder id subject-regexp
+							&optional
+							ignore-cache
+							unread)
+  (catch 'complete
+    (with-temp-buffer
+      (set-buffer-multibyte nil)
+      (let (total header pieces)
+	(elmo-folder-do-each-message-entity (entity folder)
+	  (when (string-match
+		 subject-regexp
+		 (elmo-message-entity-field entity 'subject 'decode))
+	    (erase-buffer)
+	    (let* ((message (elmo-message-mime-entity-internal
+			     folder
+			     (elmo-message-entity-number entity)
+			     (current-buffer)
+			     ignore-cache
+			     unread))
+		   (ct (mime-entity-content-type message))
+		   (the-id (or (mime-content-type-parameter ct "id") ""))
+		   number)
+	      (when (string= (downcase the-id)
+			     (downcase id))
+		(setq number (string-to-number
+			      (mime-content-type-parameter ct "number")))
+		(setq pieces (cons (cons number (mime-entity-body message))
+				   pieces))
+		(when (= number 1)
+		  (let ((case-fold-search t))
+		    (save-restriction
+		      (std11-narrow-to-header)
+		      (goto-char (point-min))
+		      (while (re-search-forward std11-field-head-regexp nil t)
+			(let ((field-start (match-beginning 0)))
+			  (when (mime-visible-field-p
+				 (buffer-substring field-start (match-end 0))
+				 nil
+				 elmo-mime-inherit-field-list-from-enclosed)
+			    (setq header (concat
+					  header
+					  (buffer-substring
+					   field-start (std11-field-end))
+					  "\n"))))))))
+		(unless total
+		  (setq total (ignore-errors
+				(string-to-number
+				 (mime-content-type-parameter ct "total")))))
+		(when (and total
+			   (> total 0)
+			   (>= (length pieces) total))
+		  (throw 'complete (cons header pieces)))))))))
+    ;; return value
+    nil))
+
 
 ;; Replacement of mime-display-message.
 (defun elmo-mime-display-as-is-internal (message

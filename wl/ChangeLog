@@ -1,3 +1,14 @@
+2005-02-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-message-use-header-narrowing): New user option.
+
+	* wl-summary.el (wl-summary-toggle-mime): Treat numeric prefix
+	argument `5'.
+
+	* wl-message.el (wl-message-display-no-merge-p): New function.
+	(wl-message-buffer-display): Check whether the message is
+	reassembled and follow the API change.
+
 2005-02-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-exec-action-resend-subr): Disable

@@ -4493,6 +4493,12 @@ Each elements are regexp of field-name.
 @vindex wl-message-truncate-lines
 The initial value is the value of @code{default-truncate-lines}.
 If it is non-nil, truncate long lines in message buffer.
+
+@item wl-message-auto-reassemble-message/partial
+@vindex wl-message-auto-reassemble-message/partial
+The initial setting is @code{nil}.
+If non-nil, automatically reassemble fragments of the message on
+displaying when its MIME media type is message/partial.
 @end table
 
 @node Draft, Disconnected Operations, Message, Top

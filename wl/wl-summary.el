@@ -4474,7 +4474,9 @@ If ARG is numeric number, decode message as following:
 	(setq mime-mode (case arg
 			  (1 'mime)
 			  (2 'header-only)
-			  (3 'as-is))))
+			  (3 'as-is)
+;;;			  (4 'decode-only)
+			  (5 'no-merge))))
        (arg
 	;; Specify coding-system (doesn't change the MIME mode).
 	(setq elmo-mime-display-as-is-coding-system

@@ -1646,6 +1646,11 @@ which appear just before @."
   :type 'boolean
   :group 'wl-pref)
 
+(defcustom wl-message-auto-reassemble-message/partial nil
+  "*Reassemble message/partial messages automatically on show when non-nil."
+  :type 'boolean
+  :group 'wl-pref)
+
 (defcustom wl-message-use-header-narrowing t
   "Use header narrowing when non-nil."
   :type 'boolean

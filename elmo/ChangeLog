@@ -1,3 +1,16 @@
+2005-02-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-mime.el (elmo-mime-entity-reassembled-p): New method.
+	(elmo-mime-entity-fragment-p): New function.
+	(mime-elmo-buffer-entity): Added slot `reassembled'.
+	(elmo-message-mime-entity): Added 4th argument `reassemble'.
+	(elmo-message-mime-entity-internal): New function (renamed from
+	`elmo-message-mime-entity').
+	(elmo-mime-inherit-field-list-from-enclosed): New constant.
+	(elmo-mime-make-reassembled-mime-entity): New function.
+	(elmo-message-reassembled-mime-entity): Ditto.
+	(elmo-mime-collect-message/partial-pieces): Ditto.
+
 2005-02-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-message-fetch-string): Disable multibyte.

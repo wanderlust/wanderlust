@@ -444,6 +444,9 @@ Returns non-nil if bottom of message."
 (defun wl-message-display-all-header-p (display-type)
   (eq (wl-message-display-type-property display-type :header) 'all))
 
+(defun wl-message-display-no-merge-p (display-type)
+  (eq (wl-message-display-type-property display-type :mime) 'no-merge))
+
 (defun wl-message-buffer-display-type (&optional message-buffer)
   (if message-buffer
       (with-current-buffer message-buffer
@@ -562,11 +565,17 @@ Returns non-nil if bottom of message."
 			    entity
 			    (if (wl-message-mime-analysis-p display-type)
 				'mime
-			      'as-is))))
+			      'as-is)))
+		      (if (wl-message-display-no-merge-p display-type)
+			  (elmo-mime-entity-reassembled-p entity)
+			(elmo-mime-entity-fragment-p entity)))
 	      (setq entity (elmo-message-mime-entity
 			    folder
 			    number
 			    (wl-message-get-original-buffer)
+			    (and wl-message-auto-reassemble-message/partial
+				 (not (wl-message-display-no-merge-p
+				       display-type)))
 			    force-reload
 			    unread
 			    (not (wl-message-mime-analysis-p display-type)))))

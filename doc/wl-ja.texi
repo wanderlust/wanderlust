@@ -4497,6 +4497,12 @@ Non-nil ならヘッダの省略表示を有効にします。
 @vindex wl-message-header-narrowing-string
 初期設定は @samp{...}。
 ヘッダの内容を省略した時に表示する文字列を指定します。
+
+@item wl-message-auto-reassemble-message/partial
+@vindex wl-message-auto-reassemble-message/partial
+初期設定は @code{nil}。
+Non-nil なら MIME メディアタイプが message/partial のメッセージを表示する
+際に、自動的に結合して表示します。
 @end table
 
 
