@@ -188,27 +188,32 @@
 
 (defun elmo-multi-split-mark-alist (mark-alist)
   (let ((cur-number 0)
+	(alist (sort (copy-sequence mark-alist)
+		     (lambda (pair1 pair2)
+		       (< (car pair1)(car pair2)))))
 	one-alist result)
-    (while mark-alist
+    (while alist
       (setq cur-number (+ cur-number 1))
       (setq one-alist nil)
-      (while (and mark-alist
+      (while (and alist
 		  (eq 0
-		      (/ (- (car (car mark-alist))
+		      (/ (- (car (car alist))
 			    (* elmo-multi-divide-number cur-number))
 			 elmo-multi-divide-number)))
 	(setq one-alist (nconc
 			 one-alist
 			 (list
-			  (list (% (car (car mark-alist))
+			  (list (% (car (car alist))
 				   (* elmo-multi-divide-number cur-number))
-				(cadr (car mark-alist))))))
-	(setq mark-alist (cdr mark-alist)))
+				(cadr (car alist))))))
+	(setq alist (cdr alist)))
       (setq result (nconc result (list one-alist))))
     result))
 
 (defun elmo-multi-split-number-alist (number-alist)
-  (let ((alist number-alist)
+  (let ((alist (sort (copy-sequence number-alist)
+		     (lambda (pair1 pair2)
+		       (< (car pair1)(car pair2)))))
 	(cur-number 0)
 	one-alist split num)
     (while alist
