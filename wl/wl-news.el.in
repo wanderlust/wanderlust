@@ -93,7 +93,8 @@
     (let ((filename (expand-file-name
 		     wl-news-version-file-name
 		     elmo-msgdb-directory))
-	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*")))
+	  (tmp-buffer (get-buffer-create " *wl-news-version-tmp*"))
+	  print-length print-level)
       (set-buffer tmp-buffer)
       (erase-buffer)
       (prin1 (cons current-version previous-version) tmp-buffer)
