@@ -728,9 +728,12 @@ Default is for 'followup-to-me'."
   :type '(repeat string)
   :group 'wl-summary)
 
-(defcustom wl-summary-fix-timezone "JST"
-  "Non-nil forces to fix timezone of summary date."
-  :type 'string
+(defcustom wl-summary-fix-timezone nil
+  "*Time zone of the date string in summary mode. 
+If nil, it is adjust to the default time zone information
+\(system's default time zone or environment variable TZ\)."
+  :type '(choice (const :tag "Default time zone" nil)
+		 string)
   :group 'wl-summary)
 
 (defcustom wl-summary-default-score 0
