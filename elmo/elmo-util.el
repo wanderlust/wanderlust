@@ -1578,7 +1578,7 @@ SECTION is the section string."
 	      (delete-file (car files))
 	      (setq files (cdr files)))
 	    (delete-directory path))
-	(delete-file path)))))
+	(progn (delete-file path) t)))))
 
 (defun elmo-file-cache-exists-p (msgid)
   "Returns 'section or 'entire if a cache which corresponds to MSGID exists."

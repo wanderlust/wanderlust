@@ -1,3 +1,8 @@
+2002-01-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-util.el (elmo-file-cache-delete): Return t if a cache file
+	is deleted.
+
 2002-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-net.el (elmo-folder-list-messages-plugged): Changed default
