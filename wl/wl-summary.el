@@ -613,7 +613,7 @@ you."
 	(cond
 	 ((and
 	   (re-search-forward
-	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/report\\)") nil t)
+	    (concat "^\\($\\|[Cc]ontent-[Tt]ype:[ \t]+multipart/\\(report\\|mixed\\)\\)") nil t)
 	   (not (bolp))
 	   (re-search-forward "boundary=\"\\([^\"]+\\)\"" nil t))
 	  (let ((boundary (buffer-substring (match-beginning 1) (match-end 1)))
@@ -621,6 +621,7 @@ you."
 	    (cond
 	     ((and (setq start (re-search-forward
 			   (concat "^--" boundary "\n"
+				   "\\([Cc]ontent-[Dd]escription:.*\n\\)?"
 				   "[Cc]ontent-[Tt]ype:[ \t]+"
 				   "\\(message/rfc822\\|text/rfc822-headers\\)\n"
 				   "\\(.+\n\\)*\n") nil t))
