@@ -77,7 +77,7 @@ CVS:
 
   To get Wanderlust from stable branch, do following instead of above
 
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_8 wanderlust
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_10 wanderlust
 
   You can also view CVS repository via
 
