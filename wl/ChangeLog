@@ -8,6 +8,9 @@
 	(wl-summary-target-mark-erase): Rewrite.
 	(wl-summary-erase-region): New function.
 	(wl-summary-exec-action-erase): Changed message.
+	(wl-summary-move-mark-list-messages): New function.
+	(wl-summary-exec-action-delete): Use it.
+	(wl-summary-exec-action-erase): Ditto.
 
 	* wl-vars.el (wl-summary-reserve-mark-list): Added "d" and "i".
 	(wl-summary-skip-mark-list): Added "d".

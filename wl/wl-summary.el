@@ -2878,6 +2878,51 @@ Return number if put mark succeed"
 					 (car elem)))))))
     dest-numbers))
 
+(defun wl-summary-move-mark-list-messages (mark-list folder-name message)
+  (if (null mark-list)
+      (message "No marks")
+    (save-excursion
+      (let ((start (point))
+	    (refiles (mapcar 'car mark-list))
+	    (refile-failures 0)
+	    refile-len
+	    dst-msgs			; loop counter
+	    result)
+	;; begin refile...
+	(setq refile-len (length refiles))
+	(goto-char start)		; avoid moving cursor to
+					; the bottom line.
+	(when (> refile-len elmo-display-progress-threshold)
+	  (elmo-progress-set 'elmo-folder-move-messages
+			     refile-len message))
+	(setq result nil)
+	(condition-case nil
+	    (setq result (elmo-folder-move-messages
+			  wl-summary-buffer-elmo-folder
+			  refiles
+			  (if (eq folder-name 'null)
+			      'null
+			    (wl-folder-get-elmo-folder folder-name))
+			  (wl-summary-buffer-msgdb)
+			  (not (null (cdr dst-msgs)))
+			  nil ; no-delete
+			  nil ; same-number
+			  t))
+	  (error nil))
+	(when result		; succeeded.
+	  ;; update buffer.
+	  (wl-summary-delete-messages-on-buffer refiles)
+	  ;; update wl-summary-buffer-temp-mark-list.
+	  (dolist (mark-info mark-list)
+	    (setq wl-summary-buffer-temp-mark-list
+		  (delq mark-info wl-summary-buffer-temp-mark-list))))
+	(elmo-progress-clear 'elmo-folder-move-messages)
+	(wl-summary-set-message-modified)
+	;; Return the operation failed message numbers.
+	(if result
+	    0
+	  (length refiles))))))
+
 ;;; Actions
 (defun wl-summary-set-action-generic (mark number visible interactive data)
   (when visible
@@ -2934,52 +2979,10 @@ Return number if put mark succeed"
   (wl-summary-target-mark-replace "d"))
 
 (defun wl-summary-exec-action-delete (mark-list)
-  (if (null mark-list)
-      (message "No marks")
-    (save-excursion
-      (let ((del-fld (wl-summary-get-delete-folder
-		      (wl-summary-buffer-folder-name)))
-	    (start (point))
-	    (refiles (mapcar 'car mark-list))
-	    (refile-failures 0)
-	    refile-len
-	    dst-msgs			; loop counter
-	    result)
-	(message "Executing...")
-	;; begin refile...
-	(setq refile-len (length refiles))
-	(goto-char start)		; avoid moving cursor to
-					; the bottom line.
-	(when (> refile-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len "Deleting messages..."))
-	(setq result nil)
-	(condition-case nil
-	    (setq result (elmo-folder-move-messages
-			  wl-summary-buffer-elmo-folder
-			  refiles
-			  (if (eq del-fld 'null)
-			      'null
-			    (wl-folder-get-elmo-folder del-fld))
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
-	  (error nil))
-	(when result			; succeeded.
-	  ;; update buffer.
-	  (wl-summary-delete-messages-on-buffer refiles)
-	  ;; update wl-summary-buffer-temp-mark-list.
-	  (dolist (mark-info mark-list)
-	    (setq wl-summary-buffer-temp-mark-list
-		  (delq mark-info wl-summary-buffer-temp-mark-list))))
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	(wl-summary-set-message-modified)
-	;; Return the operation failed message numbers.
-	(if result
-	    0
-	  (length refiles))))))
+  (wl-summary-move-mark-list-messages mark-list
+				      (wl-summary-get-delete-folder
+				       (wl-summary-buffer-folder-name))
+				      "Deleting messages..."))
 
 ;; Erase action.
 (defun wl-summary-erase (&optional number)
@@ -2995,49 +2998,9 @@ Return number if put mark succeed"
   (wl-summary-mark-region-subr 'wl-summary-erase beg end))
 
 (defun wl-summary-exec-action-erase (mark-list)
-  (if (null mark-list)
-      (message "No marks")
-    (save-excursion
-      (let ((del-fld 'null)
-	    (start (point))
-	    (refiles (mapcar 'car mark-list))
-	    (refile-failures 0)
-	    refile-len
-	    dst-msgs			; loop counter
-	    result)
-	(message "Executing...")
-	;; begin refile...
-	(setq refile-len (length refiles))
-	(goto-char start)		; avoid moving cursor to
-					; the bottom line.
-	(when (> refile-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len "Erasing messages..."))
-	(setq result nil)
-	(condition-case nil
-	    (setq result (elmo-folder-move-messages
-			  wl-summary-buffer-elmo-folder
-			  refiles
-			  'null
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
-	  (error nil))
-	(when result ; succeeded.
-	  ;; update buffer.
-	  (wl-summary-delete-messages-on-buffer refiles)
-	  ;; update wl-summary-buffer-temp-mark-list.
-	  (dolist (mark-info mark-list)
-	    (setq wl-summary-buffer-temp-mark-list
-		  (delq mark-info wl-summary-buffer-temp-mark-list))))
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	(wl-summary-set-message-modified)
-	;; Return the operation failed message numbers.
-	(if result
-	    0
-	  (length refiles))))))
+  (wl-summary-move-mark-list-messages mark-list
+				      'null
+				      "Erasing messages..."))
 
 ;; Refile action
 (defun wl-summary-refile (&optional dst number)
@@ -3373,38 +3336,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive "r")
   (wl-summary-exec
    (wl-summary-collect-numbers-region beg end)))
-
-;; (defun wl-summary-erase (&optional number)
-;;   "Erase message actually, without moving it to trash."
-;;   (interactive)
-;;   (if (elmo-folder-writable-p wl-summary-buffer-elmo-folder)
-;;       (let* ((buffer-num (wl-summary-message-number))
-;; 	     (msg-num (or number buffer-num)))
-;; 	(if (null msg-num)
-;; 	    (message "No message.")
-;; 	  (let* ((msgdb (wl-summary-buffer-msgdb))
-;; 		 (entity (elmo-msgdb-overview-get-entity msg-num msgdb))
-;; 		 (subject (elmo-delete-char
-;; 			   ?\n (or (elmo-msgdb-overview-entity-get-subject
-;; 				    entity)
-;; 				   wl-summary-no-subject-message))))
-;; 	    (when (yes-or-no-p
-;; 		   (format "Erase \"%s\" without moving it to trash? "
-;; 			   (truncate-string subject 30)))
-;; 	      (wl-summary-unmark msg-num)
-;; 	      (wl-summary-erase-subr (list msg-num))))))
-;;     (message "Read-only folder.")))
-
-;; (defun wl-summary-erase-subr (msgs)
-;;  (elmo-folder-move-messages wl-summary-buffer-elmo-folder msgs 'null)
-;;   (wl-summary-delete-messages-on-buffer msgs)
-;;   ;; message buffer is not up-to-date
-;;   (unless (and wl-message-buffer
-;; 	       (eq (wl-summary-message-number)
-;; 		   (with-current-buffer wl-message-buffer
-;; 		     wl-message-buffer-cur-number)))
-;;     (wl-summary-toggle-disp-msg 'off)
-;;     (setq wl-message-buffer nil)))
 
 (defun wl-summary-read-folder (default &optional purpose ignore-error
 				no-create init)
