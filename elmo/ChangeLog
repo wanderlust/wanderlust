@@ -1,5 +1,7 @@
 2000-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* mmelmo-imap4-2.el (mime-entity-children): Defined.
+
 	* elmo-imap4.el (elmo-imap4-mark-set-on-msgs):
 	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'
 	before STORE command.

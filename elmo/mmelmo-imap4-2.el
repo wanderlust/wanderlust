@@ -270,6 +270,9 @@ These value must be specified as argument for `luna-make-entity'."
       (current-buffer))))
 
 ; mime-entity-children
+(luna-define-method mime-entity-children ((entity
+					   mime-elmo-imap4-entity))
+  (mime-entity-children-internal entity))
 
 ;; override generic function for dynamic body fetching.
 (luna-define-method mime-entity-body ((entity
