@@ -1,3 +1,19 @@
+2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* tm-wl.el, wl-address.el, wl-demo.el, wl-dnd.el, wl-draft.el,
+	wl-draft.el.orig, wl-expire.el, wl-fldmgr.el, wl-folder.el,
+	wl-highlight.el, wl-message.el, wl-mime.el, wl-mule.el, wl-nemacs.el,
+	wl-refile.el, wl-refile.el.orig, wl-score.el, wl-summary.el,
+	wl-summary.el.orig, wl-template.el, wl-thread.el, wl-util.el,
+	wl-vars.el, wl-xmas.el, wl.el (toplevel): Deleted time-stamp line.
+
+	* wl-draft.el (wl-draft-reply): Bind `eword-lexical-analyzer' locally.
+
+2000-07-12  Hironori Fukuchi <nory@valis.co.jp>
+
+	* wl-summary.el (wl-summary-search-by-subject):
+	Search parent message from the latest one.
+
 2000-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply):	Insert address with full-name.
