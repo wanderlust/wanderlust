@@ -829,18 +829,21 @@ Optional argument ARG is repeart count."
 	(setq unsync (if (and (car nums) (> 0 (car nums))) 0 (car nums)))
 	(setq nomif (if (and (car nums) (> 0 (cdr nums))) 0 (cdr nums)))
 	(setq nums (cons unsync nomif)))
-      (setq unread (or ;; If server diff, All unreads are
-			; treated as unsync.
-		    (if (elmo-folder-use-flag-p folder)
-			0)
-		    (elmo-folder-get-info-unread folder)
-		    (wl-summary-count-unread (elmo-msgdb-mark-load
-					      (elmo-folder-msgdb-path
-					       folder)))))
-      (setq unread (min unread (cdr nums)))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list (car nums)
-					 unread
+					 (setq
+					  unread
+					  (or
+					   ;; If server diff, All unreads are
+					   ;; treated as unsync.
+					   (if (elmo-folder-use-flag-p folder)
+					       0)
+					   (elmo-folder-get-info-unread
+					    folder)
+					   (wl-summary-count-unread
+					    (elmo-msgdb-mark-load
+					     (elmo-folder-msgdb-path
+					      folder)))))
 					 (cdr nums))
 				   (get-buffer wl-folder-buffer-name)))
     (setq wl-folder-info-alist-modified t)
