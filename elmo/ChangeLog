@@ -1,3 +1,8 @@
+2000-04-15  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
+
+	* elmo-archive.el (elmo-archive-list-folders):
+	Use `file-name-directory' if base folder does not exist.
+
 2000-04-14  Nishimoto Masaki <nishimoto@gaju.org>
 
 	* elmo-archive.el (elmo-archive-list-folders): Don't use
