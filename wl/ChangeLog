@@ -1,3 +1,7 @@
+2004-04-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.11.26.
+
 2004-04-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-draft-sendlog-max-size): Add nil to range.
