@@ -54,15 +54,13 @@
 (defvar elmo-pop3-size-hash nil) ; number -> size
 (defvar elmo-pop3-uidl-done nil)
 (defvar elmo-pop3-list-done nil)
-(defvar elmo-pop3-lock nil)
 
 (defvar elmo-pop3-local-variables '(elmo-pop3-read-point
 				    elmo-pop3-uidl-number-hash
 				    elmo-pop3-number-uidl-hash
 				    elmo-pop3-uidl-done
 				    elmo-pop3-size-hash
-				    elmo-pop3-list-done
-				    elmo-pop3-lock))
+				    elmo-pop3-list-done))
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (when (elmo-network-session-process-internal session)
@@ -95,7 +93,6 @@
       (erase-buffer))
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
-    (elmo-pop3-lock)
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
@@ -136,7 +133,6 @@
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
-      (elmo-pop3-unlock)
       return-value)))
 
 (defun elmo-pop3-process-filter (process output)
@@ -327,7 +323,8 @@
 	(elmo-pop3-parse-uidl-response response)))))
 
 (defun elmo-pop3-read-contents (buffer process)
-  (with-current-buffer buffer
+  (save-excursion
+    (set-buffer buffer)
     (let ((case-fold-search nil)
 	  match-end)
       (goto-char elmo-pop3-read-point)
@@ -335,7 +332,6 @@
 	(accept-process-output process)
 	(goto-char elmo-pop3-read-point))
       (setq match-end (point))
-      (elmo-pop3-unlock)
       (elmo-delete-cr
        (buffer-substring elmo-pop3-read-point
 			 (- match-end 3))))))
@@ -484,19 +480,6 @@
       nil))
    (t
     nil)))
-
-(defun elmo-pop3-lock ()
-  "Lock pop3 process."
-  (setq elmo-pop3-lock t))
-
-(defun elmo-pop3-unlock ()
-  "Unlock pop3 process."
-  (setq elmo-pop3-lock nil))
-
-(defun elmo-pop3-locked-p (process)
-  "Return t if pop3 PROCESS is locked."
-  (with-current-buffer (process-buffer process)
-    elmo-pop3-lock))
      
 (defun elmo-pop3-retrieve-headers (buffer tobuffer process articles)
   (save-excursion
@@ -822,10 +805,8 @@
 (defun elmo-pop3-commit (spec)
   (if (elmo-pop3-plugged-p spec)
       (let ((session (elmo-pop3-get-session spec 'if-exists)))
-	(when (and session
-		   (not (elmo-pop3-locked-p
-			 (elmo-network-session-process-internal session))))
-	  (elmo-network-close-session session)))))
+	(and session
+	     (elmo-network-close-session session)))))
        
 
 (require 'product)
