@@ -38,8 +38,10 @@
   "Way to canonicalize full name.")
 
 (defun bbdb-wl-canonicalize-spaces-and-dots (string)
-  (while (string-match "  +\\|[\f\t\n\r\v]+\\|\\." string)
+  (while (and string (string-match "  +\\|[\f\t\n\r\v]+\\|\\." string))
     (setq string (replace-match " " nil t string)))
+  (and string (string-match "^ *" string)
+       (setq string (replace-match "" nil t string)))
   string)
 
 ;;;###autoload

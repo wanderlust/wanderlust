@@ -1,3 +1,8 @@
+2002-06-03  KOBAYASHI Shinji <kobayashi_shinji@nifty.com>
+
+	* bbdb-wl.el (bbdb-wl-canonicalize-spaces-and-dots): Remove
+	the preceding spaces.
+
 2002-06-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el: discard @cartouche.  @anchor discard for Mule 2.3.
