@@ -1,3 +1,7 @@
+2003-12-19  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-vars.el (wl-draft-mime-bcc-body): Customization type fix.
+
 2003-12-18  Yoichi NAKAYAMA <yoichi@geiin.org>
 
 	* wl-mime.el (wl-message-verify-pgp-nonmime): Remove kludge.
