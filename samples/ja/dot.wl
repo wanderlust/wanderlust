@@ -180,9 +180,8 @@
 
 ;; サマリ表示関数を変更する
 
-;; サマリ表示において使用する情報を持つフィールドをoverview情報に
-;; 入れる設定(ただし，localフォルダのみ)
-;; 自動リファイルに必要なフィールドも設定
+;; `elmo-msgdb-overview-entity-get-extra-field' で参照したいフィールド。
+;; 自動リファイルで参照したいフィールドも設定する。
 (setq elmo-msgdb-extra-fields
       '("newsgroups"
 	"list-id" "x-ml-name" "mailing-list"

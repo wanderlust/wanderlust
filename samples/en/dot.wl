@@ -182,7 +182,8 @@
 
 ;; Change summary display function.
 
-;; get extra field values as overview information (only localdir folder).
+;; Set extra filed use with `elmo-msgdb-overview-entity-get-extra-field'.
+;; And use with auto-refile.
 (setq elmo-msgdb-extra-fields
       '("newsgroups"
 	"list-id" "x-ml-name" "mailing-list"
