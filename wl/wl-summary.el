@@ -3600,6 +3600,7 @@ If ARG, exit virtual folder."
 	  (wl-message-select-buffer wl-message-buffer)
 	  (delete-window)
 	  (select-window (get-buffer-window cur-buf))
+	  (setq wl-message-buffer nil)
 	  (run-hooks 'wl-summary-toggle-disp-off-hook))
 ;;;	(switch-to-buffer cur-buf)
 	)))
