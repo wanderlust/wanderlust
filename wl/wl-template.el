@@ -144,15 +144,15 @@ ARG is ignored."			; ARG ignored this version (?)
 (defun wl-template-next ()
   "Display next reference in other buffer."
   (interactive)
-  (if (eq wl-template-max-num
-	  (setq wl-template-cur-num (1+ wl-template-cur-num)))
+  (if (= wl-template-max-num
+	 (setq wl-template-cur-num (1+ wl-template-cur-num)))
       (setq wl-template-cur-num 0))
   (wl-template-show))
 
 (defun wl-template-prev ()
   "Display previous reference in other buffer."
   (interactive)
-  (setq wl-template-cur-num (if (eq wl-template-cur-num 0)
+  (setq wl-template-cur-num (if (zerop wl-template-cur-num)
 				(1- wl-template-max-num)
 			      (1- wl-template-cur-num)))
   (wl-template-show))
