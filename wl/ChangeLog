@@ -1,3 +1,11 @@
+2003-06-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+	
+	* wl-message.el (wl-message-buffer-cache-add): Create new buffer
+	when it hits killed buffer.
+
+	* wl-message.el (wl-message-redisplay): Remove unused local
+	variables (Reported by NAKAJIMA Mikio <minakaji@namazu.org>).
+
 2003-06-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-highlight.el (wl-highlight-summary-window): Re-calculate the
