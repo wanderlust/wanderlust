@@ -82,6 +82,9 @@
 
 ;;; [[ Basic Setting ]]
 
+;; Language for day of the week in summary
+(setq wl-summary-weekday-name-lang "en")
+
 ;; Default folder for `wl-summary-goto-folder'.
 ;(setq wl-default-folder "+inbox")
 
