@@ -1,3 +1,8 @@
+2000-12-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-version-status-alist): Use `=' instead of
+	`eq'.
+
 2000-11-27  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl.el (wl-check-environment): Additional check for
