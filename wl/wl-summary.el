@@ -5199,7 +5199,7 @@ Reply to author if invoked with argument."
   "Write a new draft from Summary."
   (interactive)
   (wl-draft nil nil nil nil nil
-	    nil nil nil nil nil (current-buffer))
+	    nil nil nil nil nil nil (current-buffer))
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 

@@ -264,7 +264,7 @@ the `wl-smtp-features' variable."
 
 (defun wl-draft-forward (original-subject summary-buf)
   (wl-draft "" (concat "Forward: " original-subject) 
-	    nil nil nil nil nil nil nil nil summary-buf)
+	    nil nil nil nil nil nil nil nil nil summary-buf)
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
@@ -509,7 +509,7 @@ the `wl-smtp-features' variable."
   (let ((cur-buf (current-buffer))
 	(tmp-buf (get-buffer-create " *wl-draft-edit-string*"))
 	to subject in-reply-to cc references newsgroups mail-followup-to
-	content-type 
+	content-type content-transfer-encoding
 	body-beg buffer-read-only
 	)
     (set-buffer tmp-buf)
@@ -537,15 +537,16 @@ the `wl-smtp-features' variable."
     (setq references (std11-field-body "References"))
     (setq newsgroups (std11-field-body "Newsgroups"))
     (setq mail-followup-to (std11-field-body "Mail-Followup-To"))
-    (setq content-type  (std11-field-body "Content-Type"))
+    (setq content-type (std11-field-body "Content-Type"))
+    (setq content-transfer-encoding (std11-field-body "Content-Transfer-Encoding"))
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
     (unwind-protect
-	(set-buffer
+	(set-buffer 
 	 (wl-draft to subject in-reply-to cc references newsgroups 
 		   mail-followup-to
-		   content-type
+		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
 		   'edit-again
 		   ))
@@ -1199,7 +1200,7 @@ If optional argument is non-nil, current draft buffer is killed"
 ;;;###autoload
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
-			   content-type
+			   content-type content-transfer-encoding
 			   body edit-again summary-buf)
   "Write and send mail/news message with Wanderlust."
   (interactive)
@@ -1276,7 +1277,11 @@ If optional argument is non-nil, current draft buffer is killed"
 	(let (start)
 	  (setq start (point))
 	  (when content-type 
-	    (insert "Content-type: " content-type "\n\n"))
+	    (insert "Content-type: " content-type "\n"))
+	  (when content-transfer-encoding
+	    (insert "Content-Transfer-encoding: " content-transfer-encoding "\n"))
+	  (if (or content-type content-transfer-encoding)
+	      (insert "\n"))
 	  (and body (insert body))
 	  (save-restriction
 	    (narrow-to-region start (point))

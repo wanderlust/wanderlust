@@ -1,3 +1,10 @@
+2000-07-26	Kenichi OKADA	<okada@opaopa.org>
+
+	* wl-draft.el (wl-draft): Added argument `content-transfer-encoding'.
+	(wl-draft-edit-string): Ditto.
+	(wl-draft-forward): Ditto.
+	* wl-summary.el (wl-summary-write): Ditto.
+
 2000-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync-update3): Call
