@@ -411,32 +411,34 @@
 
 (luna-define-method elmo-msgdb-append-entity ((msgdb modb-standard)
 					      entity &optional flags)
-  (let ((number (elmo-msgdb-message-entity-number
-		 (elmo-message-entity-handler entity) entity))
-	(msg-id (elmo-msgdb-message-entity-field
-		 (elmo-message-entity-handler entity) entity 'message-id))
-	duplicate)
-    ;; number-list
-    (modb-standard-set-number-list-internal
-     msgdb
-     (nconc (modb-standard-number-list-internal msgdb)
-	    (list number)))
-    ;; entity-map
-    (let ((table (modb-standard-entity-map msgdb)))
-      (setq duplicate (elmo-get-hash-val msg-id table))
-      (elmo-set-hash-val (modb-standard-key number) entity table)
-      (elmo-set-hash-val msg-id entity table))
-    ;; modification flags
-    (modb-standard-set-message-modified msgdb number)
-    ;; flag-map
-    (when flags
-      (elmo-set-hash-val
-       (modb-standard-key number)
-       (cons number flags)
-       (modb-standard-flag-map msgdb))
-      (modb-standard-countup-flags msgdb flags)
-      (modb-standard-set-flag-modified msgdb number))
-    duplicate))
+  (when entity
+    (let ((number (elmo-msgdb-message-entity-number
+		   (elmo-message-entity-handler entity) entity))
+	  (msg-id (elmo-msgdb-message-entity-field
+		   (elmo-message-entity-handler entity) entity 'message-id))
+	  duplicate)
+      (when msg-id
+	;; number-list
+	(modb-standard-set-number-list-internal
+	 msgdb
+	 (nconc (modb-standard-number-list-internal msgdb)
+		(list number)))
+	;; entity-map
+	(let ((table (modb-standard-entity-map msgdb)))
+	  (setq duplicate (elmo-get-hash-val msg-id table))
+	  (elmo-set-hash-val (modb-standard-key number) entity table)
+	  (elmo-set-hash-val msg-id entity table))
+	;; modification flags
+	(modb-standard-set-message-modified msgdb number)
+	;; flag-map
+	(when flags
+	  (elmo-set-hash-val
+	   (modb-standard-key number)
+	   (cons number flags)
+	   (modb-standard-flag-map msgdb))
+	  (modb-standard-countup-flags msgdb flags)
+	  (modb-standard-set-flag-modified msgdb number))
+	duplicate))))
 
 (luna-define-method elmo-msgdb-delete-messages ((msgdb modb-standard)
 						numbers)
