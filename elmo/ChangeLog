@@ -1,3 +1,8 @@
+2001-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-open): erase buffer before starting network process.
+	(acap-store): Rewrite.
+
 2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-default-mailbox,

@@ -146,10 +146,26 @@
   (config-wl-pixmap-dir)
   (princ "\n"))
 
-(defun check-wl ()
+(defun test-wl ()
   (config-wl-package)
   (require 'lunit)
   (let ((files (directory-files "tests" t "^test-.*\\.el$"))
+	(suite (lunit-make-test-suite)))
+    (while files
+      (if (file-regular-p (car files))
+	  (progn
+	    (load-file (car files))
+	    (lunit-test-suite-add-test
+	     suite (lunit-make-test-suite-from-class
+		    (intern (file-name-sans-extension
+			     (file-name-nondirectory (car files))))))))
+      (setq files (cdr files)))
+    (lunit suite)))
+
+(defun check-wl ()
+  (config-wl-package)
+  (require 'lunit)
+  (let ((files (directory-files "tests" t "^check-.*\\.el$"))
 	(suite (lunit-make-test-suite)))
     (while files
       (if (file-regular-p (car files))

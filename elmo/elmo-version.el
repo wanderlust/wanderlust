@@ -1,7 +1,7 @@
 ;;; elmo-version.el -- Version information for ELMO.
 
-;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
-;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -26,14 +26,14 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 ;; Put the following lines to each file of ELMO package.
 ;;
 ;; (require 'product)
 ;; (product-provide (provide FEATURE) (require 'elmo-version))
 
 ;;; Code:
-;; 
+;;
 (require 'product)
 (provide 'elmo-version)			; before product-provide
 
@@ -51,10 +51,10 @@ If optional argument UPDATE is non-nil, then regenerate
   (setq product (product-find product))
   (or (product-version-string product)
       (and (product-version product)
-           (product-set-version-string product
-                                       (mapconcat (function int-to-string)
-                                                  (product-version product)
-                                                  ".")))))
+	   (product-set-version-string product
+				       (mapconcat (function int-to-string)
+						  (product-version product)
+						  ".")))))
 
 ;; set version-string
 (product-version-as-string 'elmo-version)
