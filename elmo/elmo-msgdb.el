@@ -768,12 +768,16 @@ header separator."
     seen-list))
 
 (defun elmo-msgdb-get-message-id-from-buffer ()
-  (or (elmo-field-body "message-id")
+  (let ((msgid (elmo-field-body "message-id")))
+    (if msgid
+	(if (string-match "<\\(.+\\)>$" msgid)
+	    msgid
+	  (concat "<" msgid ">")) ; Invaild message-id.
       ;; no message-id, so put dummy msgid.
       (concat "<" (timezone-make-date-sortable
 		   (elmo-field-body "date"))
 	      (nth 1 (eword-extract-address-components
-		      (or (elmo-field-body "from") "nobody"))) ">")))
+		      (or (elmo-field-body "from") "nobody"))) ">"))))
 
 (defsubst elmo-msgdb-create-overview-from-buffer (number &optional size time)
   "Create overview entity from current buffer.
