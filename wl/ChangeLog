@@ -1,5 +1,9 @@
 2002-05-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-e21.el (wl-modeline-biff-state-on): Put risky-local-variable
+	property for wl-modeline-biff-state-on,	wl-modeline-biff-state-off,
+	wl-modeline-plug-state-on and wl-modeline-plug-state-off.
+
 	* wl-folder.el (wl-folder-buffer-search-entity): Bind case-fold-search
 	as nil.
 

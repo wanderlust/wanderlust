@@ -640,6 +640,11 @@ Special commands:
   (let ((event (read-event)))
     (cons (and (numberp event) event) event)))
 
+(put 'wl-modeline-biff-state-on 'risky-local-variable t)
+(put 'wl-modeline-biff-state-off 'risky-local-variable t)
+(put 'wl-modeline-plug-state-on 'risky-local-variable t)
+(put 'wl-modeline-plug-state-off 'risky-local-variable t)
+
 (require 'product)
 (product-provide (provide 'wl-e21) (require 'wl-version))
 
