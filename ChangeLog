@@ -1,5 +1,8 @@
 2001-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* INSTALL, INSTALL.ja: Added System Requirements.
+	* README, README.ja: Removed System Requirements.
+
 	* NEWS, NEWS.ja: Added description about X-Face utility support.
 
 	* WL-MK (toplevel): Use = instead of `eq' for numeric value.

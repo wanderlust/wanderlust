@@ -15,9 +15,9 @@ Features:
  * 購読フォルダの一覧を表示するフォルダモード。
  * メッセージキャッシュ、 Disconnected Operation。
  * MH 的 Fcc。(Fcc: %Backup も可)。
- * MIME 対応 (by SEMI or tm [5])。
+ * MIME 対応 (by SEMI)。
  * ニュース/メールの送信を統合したドラフト編集。
- * フォルダ一覧のアイコン表示 (XEmacs)。
+ * フォルダ一覧のアイコン表示 (XEmacs and Emacs 21)。
  * 大きなパートを取り寄せずに表示(IMAP4)。
  * メッセージの検索をサーバ側で実行(IMAP4)。日本語検索も可。
  * 仮想フォルダ。
@@ -26,11 +26,9 @@ Features:
  * 自動リファイル。
  * 定型メッセージの送信に便利なテンプレート機能。
 
-必要条件:
+System Requirements:
 
- * Emacs19 〜
- * tm (8.7 以降) or SEMI (1.13.7 以降)
- * APEL (10.2 以降)
+ INSTALL.ja を御覧ください。 
 
 Install:
 
@@ -71,6 +69,21 @@ CVS:
 (1) checkout
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
+
+  安定版の枝から Wanderlust 取り出す場合は、以下のようにしてください。
+
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_6 wanderlust
+
+  CVS repository は以下からも参照できます。
+
+	http://cvs.m17n.org/cgi-bin/viewcvs/wanderlust/
+
+  CVS の commit log をメールで受け取りたいときは、以下のアドレスに空の
+  メールを送ってください。
+
+	cvs-info-help@cvs.m17n.org
+
+Development:
 
   CVS に基づいた開発に参加したいときは、
 

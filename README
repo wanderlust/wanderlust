@@ -15,9 +15,9 @@ Features:
  * Folder mode to select and edit subscribed folders.
  * Message cache, Disconnected Operation.
  * MH-like Fcc (Fcc: %Backup is possible).
- * Full support of MIME (by SEMI or tm[5]).
+ * Full support of MIME (by SEMI).
  * Draft editing of mail and news as a same interface.
- * Icon based interface for the list of Folder (XEmacs).
+ * Icon based interface for the list of Folder (XEmacs and Emacs 21).
  * Skip fetching of a large message part of MIME(IMAP4).
  * Server side searching (IMAP4), internationalized searching is available.
  * Virtual folder.
@@ -28,9 +28,7 @@ Features:
 
 System Requirements:
 
- * Emacs19 or later.
- * tm (version 8.7 or later) or SEMI (version 1.13.7 or later).
- * APEL (version 10.2 or later)
+See INSTALL.
 
 Install:
 
@@ -49,7 +47,8 @@ Mailing List:
 Wanderlust Mailing List <wl@lists.airs.net>
 
 Via the Wanderlust ML, we discuss about Wanderlust, announce the latest
-release in Japanese.
+release.  In this list, Japanese is mainly used for discussion, but we
+also welcome mails written in English.
 
 To subscribe, send mail to wl-ctl@lists.airs.net, with '# guide' as
 the message body.
@@ -69,6 +68,20 @@ CVS:
 
     % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
 
+  To get Wanderlust from stable branch, do following instead of above
+
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_6 wanderlust
+
+  You can also view CVS repository via
+
+	http://cvs.m17n.org/cgi-bin/viewcvs/wanderlust/
+
+  If you want to receive CVS commit log via e-mail, send empty mail to
+
+	cvs-info-help@cvs.m17n.org
+
+Development:
+
   If you would like to join CVS based development, please send mail to
 
 	cvs@cvs.m17n.org
@@ -77,7 +90,7 @@ CVS:
   :ext:cvs@cvs.m17n.org:/cvs/root.
 
   If you cannot use ssh, please send UNIX /etc/passwd style crypted
-  password.  you can commit with the cvsroot
+  password.  You can commit with the cvsroot
   :pserver:<accountname>@cvs.m17n.org:/cvs/root.
 
   We hope you will join the open development.
