@@ -1,3 +1,10 @@
+2004-05-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview-folder-list):
+	Change default value to symbol `all'.
+	(elmo-map-message-fetch): Change condition to update overview
+	follow the above.
+
 2004-05-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-shimbun.el (elmo-map-message-fetch): Change default
