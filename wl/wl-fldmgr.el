@@ -939,7 +939,7 @@ return value is diffs '(-new -unread -all)."
 			   (read-from-minibuffer
 			    (if access "Access Type Group: " "Group: ")))))
 	  ;; To check the folder name is correct.
-	  (elmo-make-folder group)
+	  (if access (elmo-make-folder group))
 	  (when (or access (string-match "[\t ]*/$" group))
 	    (setq group (if access group
 			  (substring group 0 (match-beginning 0))))

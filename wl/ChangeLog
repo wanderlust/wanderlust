@@ -1,3 +1,8 @@
+2001-10-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-fldmgr.el (wl-fldmgr-make-group): Check folder name only
+	for access group.
+
 2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-message.el (wl-message-display-internal): Bind
