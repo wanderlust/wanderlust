@@ -54,7 +54,7 @@
 ;;;;;; each entity is (number opened-or-not children parent) ;;;;;;;
 
 (defun wl-meaning-of-mark (mark)
-  (if (not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+  (if (not (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
       (cond
        ((string= mark wl-summary-unread-cached-mark)
 	'unread)
@@ -70,7 +70,7 @@
       'important))))
   
 (defun wl-thread-next-mark-p (mark next)
-  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
 	 (or (string= mark wl-summary-unread-cached-mark)
 	     (string= mark wl-summary-important-mark)))
 	((eq next 'new)
@@ -86,7 +86,7 @@
 	     (string= mark wl-summary-important-mark)))))
 
 (defun wl-thread-next-failure-mark-p (mark next)
-  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-folder-name))
+  (cond ((not (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
 	 (string= mark wl-summary-unread-cached-mark))
 	((or (eq next 'new)
 	     (eq next 'unread))
@@ -100,11 +100,11 @@
   (let (entities top-list)
     (setq entities (wl-summary-load-file-object
 		    (expand-file-name wl-thread-entity-file
-				      (elmo-msgdb-expand-path fld))))
+				      (elmo-folder-msgdb-path fld))))
     (setq top-list
 	  (wl-summary-load-file-object
 	   (expand-file-name wl-thread-entity-list-file
-			     (elmo-msgdb-expand-path fld))))
+			     (elmo-folder-msgdb-path fld))))
     (current-buffer)
     (message "Resuming thread structure...")
     ;; set obarray value.
@@ -268,7 +268,7 @@ ENTITY is returned."
     ret-val))
 
 (defun wl-thread-entity-get-mark (number)
-  (let ((mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+  (let ((mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	mark)
     (setq mark (cadr (assq number mark-alist)))
     (if (string= mark wl-summary-read-uncached-mark)
@@ -492,7 +492,7 @@ The closed parent will be opened."
 (defun wl-thread-get-next-unread (msg &optional hereto)
   (let ((cur-entity (wl-thread-get-entity msg))
 	(next-marks (cond ((not (elmo-folder-plugged-p
-				 wl-summary-buffer-folder-name))
+				 wl-summary-buffer-elmo-folder))
 			   (cons (list (cons 'unread nil))
 				 (list (cons 'important nil))))
 			  ((eq wl-summary-move-order 'new)
@@ -580,11 +580,12 @@ The closed parent will be opened."
 	  (cur 0)
 	  entity)
       (while (not (eobp))
-	(unless (wl-thread-entity-get-opened
-		 (setq entity (wl-thread-get-entity
-			       (wl-summary-message-number))))
-	  (wl-thread-entity-force-open entity))
-	(wl-thread-goto-bottom-of-sub-thread)
+	(if (wl-thread-entity-get-opened
+	     (setq entity (wl-thread-get-entity
+			   (wl-summary-message-number))))
+	    (forward-line 1)
+	  (wl-thread-force-open)
+	  (wl-thread-goto-bottom-of-sub-thread))
 	(when (> len elmo-display-progress-threshold)
 	  (setq cur (1+ cur))
 	  (elmo-display-progress
@@ -598,7 +599,7 @@ The closed parent will be opened."
 
 (defun wl-thread-open-all-unread ()
   (interactive)
-  (let ((mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+  (let ((mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	mark)
     (while mark-alist
       (if (setq mark (nth 1 (car mark-alist)))
@@ -662,8 +663,8 @@ The closed parent will be opened."
 (defsubst wl-thread-update-line-on-buffer-sub (entity msg &optional parent-msg)
   (let* ((entity (or entity (wl-thread-get-entity msg)))
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
-	 (overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
-	 (mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+	 (overview (elmo-msgdb-get-overview (wl-summary-buffer-msgdb)))
+	 (mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
 	 overview-entity temp-mark summary-line invisible-top dest-pair)
@@ -681,13 +682,13 @@ The closed parent will be opened."
 	   (t (setq temp-mark (wl-summary-get-score-mark msg))))
 	  (when (setq overview-entity
 		      (elmo-msgdb-overview-get-entity
-		       msg wl-summary-buffer-msgdb))
+		       msg (wl-summary-buffer-msgdb)))
 	    (setq summary-line
 		  (wl-summary-overview-create-summary-line
 		   msg
 		   overview-entity
 		   (elmo-msgdb-overview-get-entity
-		    parent-msg wl-summary-buffer-msgdb)
+		    parent-msg (wl-summary-buffer-msgdb))
 		   nil
 		   mark-alist
 		   (if wl-thread-insert-force-opened
@@ -703,13 +704,13 @@ The closed parent will be opened."
       (if (not (setq invisible-top
 		     (wl-thread-entity-parent-invisible-p entity)))
 	  (wl-summary-update-thread
-	   (elmo-msgdb-overview-get-entity msg wl-summary-buffer-msgdb)
+	   (elmo-msgdb-overview-get-entity msg (wl-summary-buffer-msgdb))
 	   overview
 	   mark-alist
 	   entity
 	   (and parent-msg
 		(elmo-msgdb-overview-get-entity
-		 parent-msg wl-summary-buffer-msgdb)))
+		 parent-msg (wl-summary-buffer-msgdb))))
 	;; currently invisible.. update closed line.
 	(wl-thread-update-children-number invisible-top)))))
 
@@ -792,7 +793,7 @@ The closed parent will be opened."
     (while msgs
       (setq children (wl-thread-entity-get-children
 		      (setq entity (wl-thread-get-entity (car msgs)))))
-      (when (elmo-msgdb-overview-get-entity (car msgs) wl-summary-buffer-msgdb)
+      (when (elmo-msgdb-overview-get-entity (car msgs) (wl-summary-buffer-msgdb))
 	(wl-append ret-val (list (car msgs)))
 	(setq children nil))
       (setq msgs (cdr msgs))
@@ -960,7 +961,7 @@ Message is inserted to the summary buffer."
 	       mark-alist
 	       child-entity
 	       (elmo-msgdb-overview-get-entity
-		parent-msg wl-summary-buffer-msgdb))
+		parent-msg (wl-summary-buffer-msgdb)))
 	      (when parent
 		;; use thread structure.
 		(wl-thread-entity-get-nearly-older-brother
@@ -1061,7 +1062,7 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-msg-mark-as-important (msg)
   "Set mark as important for invisible MSG. Modeline is not changed."
-  (let* ((msgdb wl-summary-buffer-msgdb)
+  (let* ((msgdb (wl-summary-buffer-msgdb))
 	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	 cur-mark)
     (setq cur-mark (cadr (assq msg mark-alist)))
@@ -1167,7 +1168,7 @@ Message is inserted to the summary buffer."
 	     (/ (* cur 100) len)))))))
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
-  (let ((mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+  (let ((mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	msg-num
 	overview-entity
 	temp-mark
@@ -1186,7 +1187,7 @@ Message is inserted to the summary buffer."
 	(setq temp-mark (wl-summary-get-score-mark msg-num)))
       (setq overview-entity
 	    (elmo-msgdb-overview-get-entity
-	     (nth 0 entity) wl-summary-buffer-msgdb))
+	     (nth 0 entity) (wl-summary-buffer-msgdb)))
 ;;;   (wl-delete-all-overlays)
       (when overview-entity
 	(setq summary-line
@@ -1194,7 +1195,7 @@ Message is inserted to the summary buffer."
 	       msg-num
 	       overview-entity
 	       (elmo-msgdb-overview-get-entity
-		(nth 0 parent-entity) wl-summary-buffer-msgdb)
+		(nth 0 parent-entity) (wl-summary-buffer-msgdb))
 	       (1+ indent)
 	       mark-alist
 	       (if wl-thread-insert-force-opened
@@ -1307,8 +1308,8 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-get-children-msgs-uncached (msg &optional uncached-marks)
   (let ((children-msgs (wl-thread-get-children-msgs msg))
-	(mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
-	(number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
+	(mark-alist (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
+	(number-alist (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))
 	mark
 	uncached-list)
     (while children-msgs
@@ -1318,9 +1319,11 @@ Message is inserted to the summary buffer."
 					       mark-alist)))
 			(member mark uncached-marks))
 		   (and (not uncached-marks)
-			(null (elmo-cache-exists-p
-			       (cdr (assq (car children-msgs)
-					  number-alist)))))))
+			(null (elmo-file-cache-exists-p
+			       (elmo-message-field
+				wl-summary-buffer-elmo-folder
+				(car children-msgs)
+				'message-id))))))
 	  (wl-append uncached-list (list (car children-msgs))))
       (setq children-msgs (cdr children-msgs)))
     uncached-list))

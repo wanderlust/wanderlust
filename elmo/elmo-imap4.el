@@ -998,21 +998,21 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		(setq response
 		      (elmo-imap4-read-untagged
 		       (elmo-network-session-process-internal session)))
-		(if (elmo-imap4-response-ok-p response)
-		    (if (sasl-next-step client step)
-			;; Bogus server?
-			(signal 'elmo-authenticate-error
-				(list (intern
-				       (concat "elmo-imap4-auth-"
-					       (downcase name)))))
-		      ;; The authentication process is finished.
-		      (throw 'done nil)))
-		(unless (elmo-imap4-response-continue-req-p response)
-		  ;; response is NO or BAD.
-		  (signal 'elmo-authenticate-error
-			  (list (intern
-				 (concat "elmo-imap4-auth-"
-					 (downcase name))))))
+		(if (elmo-imap4-response-continue-req-p response)
+		    (unless (sasl-next-step client step)
+		      ;; response is '+' but there's no next step.
+		      (signal 'elmo-authenticate-error
+			      (list (intern
+				     (concat "elmo-imap4-auth-"
+					     (downcase name))))))
+		  ;; response is OK.
+		  (if (elmo-imap4-response-ok-p response)
+		      (throw 'done nil) ; finished.
+		    ;; response is NO or BAD.
+		    (signal 'elmo-authenticate-error
+			    (list (intern
+				   (concat "elmo-imap4-auth-"
+					   (downcase name)))))))
 		(sasl-step-set-data
 		 step
 		 (elmo-base64-decode-string
