@@ -1,8 +1,3 @@
-2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-version-show): Removed.
-	(wl-version): Add `interactive'.
-
 2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply): Fixed problem when there's no subject
