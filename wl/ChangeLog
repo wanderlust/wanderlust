@@ -1,3 +1,8 @@
+2003-01-28  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Use
+	wl-summary-score-below-mark, wl-summary-score-over-mark.
+
 2003-01-27  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-insert-from-field): Encode wl-from and
