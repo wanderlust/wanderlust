@@ -642,7 +642,7 @@ Return number if put mark succeed"
   (save-excursion
     (save-restriction
       (let (numbers)
-	(narrow-to-region (or begin (point-min))(or end (point-max)))
+	(wl-summary-narrow-to-region (or begin (point-min))(or end (point-max)))
 	(goto-char (point-min))
 	;; for thread...
 	(if (eq wl-summary-buffer-view 'thread)
@@ -852,7 +852,7 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
   (interactive "r")
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (if (eq wl-summary-buffer-view 'thread)
 	  (progn
@@ -873,7 +873,7 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
 (defun wl-summary-mark-region-subr (function beg end data)
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (if (eq wl-summary-buffer-view 'thread)
 	  (progn

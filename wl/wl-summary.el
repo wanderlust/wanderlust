@@ -1377,6 +1377,17 @@ If ARG is non-nil, checking is omitted."
 		  t)
 	      nil))))))
 
+(defsubst wl-summary-narrow-to-region (beg end)
+  (narrow-to-region
+   (save-excursion
+     (goto-char beg)
+     (beginning-of-line)
+     (point))
+   (save-excursion
+     (goto-char end)
+     (if (eq (current-column) 0) (beginning-of-line) (end-of-line))
+     (point))))
+
 (defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
   (interactive "r")
   (let ((count 0)
@@ -1387,7 +1398,7 @@ If ARG is non-nil, checking is omitted."
     (save-excursion
       (setq start-pos (point))
       (save-restriction
-	(narrow-to-region beg end)
+	(wl-summary-narrow-to-region beg end)
 	;; collect prefetch targets.
 	(message "Collecting marks...")
 	(goto-char (point-min))
@@ -1443,7 +1454,7 @@ If ARG is non-nil, checking is omitted."
   (interactive "r")
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (if (eq wl-summary-buffer-view 'thread)
 	  (let (number-list)
@@ -1468,7 +1479,7 @@ If ARG is non-nil, checking is omitted."
   (interactive "r")
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (if (eq wl-summary-buffer-view 'thread)
 	  (let (number-list)
@@ -1493,8 +1504,7 @@ If ARG is non-nil, checking is omitted."
   (interactive "r")
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end);(save-excursion (goto-char end)
-					;    (end-of-line) (point)))
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (if (eq wl-summary-buffer-view 'thread)
 	  (progn
@@ -4296,7 +4306,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
   (interactive "r")
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
+      (wl-summary-narrow-to-region beg end)
       (goto-char (point-min))
       (let ((wl-save-dir
 	     (wl-read-directory-name "Save to directory: "

@@ -1,3 +1,12 @@
+2003-09-13  Mito  <mito@mxa.nes.nec.co.jp>
+
+	* wl-summary.el (wl-summary-narrow-to-region): New function.
+	(wl-summary-prefetch-region-no-mark, wl-summary-mark-as-read-region)
+	(wl-summary-mark-as-unread-region, wl-summary-mark-as-important-region)
+	(wl-summary-save-region): Use it.
+	* wl-action.el (wl-summary-collect-numbers-region)
+	(wl-summary-unmark-region, wl-summary-mark-region-subr): Ditto.
+
 2003-09-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-folder.el (wl-folder-count-incorporates): Don't use
