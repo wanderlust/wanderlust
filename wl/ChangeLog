@@ -1,3 +1,9 @@
+2003-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-deleted-face): Changed default
+	color for light backgrounds.
+	(wl-highlight-summary-answered-face): Ditto.
+
 2003-07-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-rescan): Use numbers in the msgdb.

@@ -275,7 +275,7 @@
      (:foreground "SteelBlue"))
     (((class color)
       (background light))
-     (:foreground "SteelBlue")))
+     (:foreground "RoyalBlue4")))
   "Face used for displaying messages mark as deleted."
   :group 'wl-summary-faces
   :group 'wl-faces)
@@ -350,7 +350,7 @@
      (:foreground "khaki"))
     (((class color)
       (background light))
-     (:foreground "khaki")))
+     (:foreground "khaki4")))
   "Face used for displaying answered messages."
   :group 'wl-summary-faces
   :group 'wl-faces)  
