@@ -2138,26 +2138,24 @@ This function is defined for `window-scroll-functions'"
 	(funcall wl-summary-buffer-mode-line-formatter)))
 
 (defun wl-summary-jump-to-msg (&optional number beg end)
-  (interactive "NJump to Number:")
-  (let ((num (or number
-		 (string-to-int
-		  (read-from-minibuffer "Jump to Message(No.): "))))
-	(pos (point))
-	regexp)
-    (setq regexp (concat "\r" (int-to-string num) "[^0-9]"))
-    (if (and beg end (or (< pos beg) (< end pos)))
-	(progn
-	  (goto-char beg)
-	  (if (re-search-forward regexp end t)
-	      (progn (backward-char 1) (beginning-of-line) t)
-	    (goto-char pos)
-	    nil))
-      (beginning-of-line)
-      (if (or (and (re-search-forward regexp end t)
-		   (progn (backward-char 1) t))
-	      (re-search-backward regexp beg t))
-	  (progn (beginning-of-line) t)
-	nil))))
+  (interactive "NJump to Message (No.): ")
+  (when number
+    (let ((pos (point))
+	  regexp)
+      (setq regexp (concat "\r" (int-to-string number) "[^0-9]"))
+      (if (and beg end (or (< pos beg) (< end pos)))
+	  (progn
+	    (goto-char beg)
+	    (if (re-search-forward regexp end t)
+		(progn (backward-char 1) (beginning-of-line) t)
+	      (goto-char pos)
+	      nil))
+	(beginning-of-line)
+	(if (or (and (re-search-forward regexp end t)
+		     (progn (backward-char 1) t))
+		(re-search-backward regexp beg t))
+	    (progn (beginning-of-line) t)
+	  nil)))))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion
@@ -2610,6 +2608,12 @@ If ARG, without confirm."
        (save-excursion (end-of-line)(point))
        'mouse-face nil))
   (insert line "\n")
+  (save-excursion
+    (forward-line -1)
+    (let* ((number (wl-summary-message-number))
+	   (mark-info (wl-summary-registered-temp-mark number)))
+      (when (and mark-info (nth 2 mark-info))
+	(wl-summary-print-argument number (nth 2 mark-info)))))
   (if wl-use-highlight-mouse-line
       ;; remove 'mouse-face of current line.
       (put-text-property
