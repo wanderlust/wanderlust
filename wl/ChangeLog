@@ -1,3 +1,9 @@
+2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-highlight-folder-current-line): Remove previous face.
+
+	* wl-mule.el (wl-highlight-folder-current-line): Ditto.
+
 2000-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-highlight.el (wl-highlight-folder-group-line): Remove previous

@@ -87,6 +87,8 @@ Special commands:
 		(progn
 		  (put-text-property start (match-beginning 0) 'face text-face)
 		  (put-text-property (match-beginning 0) (point) 'face face))
+	      ;; Remove previous face.
+	      (put-text-property start (point) 'face nil)
 	      (put-text-property start (point) 'face face))
 	    (goto-char start))
 	(put-text-property start end 'face text-face)))

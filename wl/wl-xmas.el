@@ -316,6 +316,8 @@
 			  (put-text-property (match-beginning 0)
 					     (match-end 0)
 					     'face face))
+		      ;; Remove previous face.
+		      (put-text-property start (match-end 0) 'face nil)
 		      (put-text-property start (match-end 0) 'face face)))
 		(put-text-property start end 'face text-face))))))))))
 
