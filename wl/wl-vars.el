@@ -2425,6 +2425,11 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 		(const :tag "bitmap (using BITMAP-MULE)" bitmap))
   :group 'wl-pref)
 
+(defcustom wl-invalid-character-message "(WL:Invalid characters.)"
+  "*A string displayed when invalid character exists."
+  :type 'string
+  :group 'wl-pref)
+
 ;;; Internal variables
 (defvar wl-init nil)
 

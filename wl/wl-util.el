@@ -186,12 +186,16 @@ to add the result instead of white space."
 	(setq string (truncate-string-to-width string (abs width))))
     (if (= (string-width string) (abs width))
 	string
-      (let ((paddings (make-string
-		       (max 0 (- (abs width) (string-width string)))
-		       (or padding ?\ ))))
-	(if (< width 0)
-	    (concat paddings string)
-	  (concat string paddings)))))
+      (if (< (abs width) (string-width string))
+	  (wl-set-string-width width
+			       wl-invalid-character-message
+			       padding)
+	(let ((paddings (make-string
+			 (max 0 (- (abs width) (string-width string)))
+			 (or padding ?\ ))))
+	  (if (< width 0)
+	      (concat paddings string)
+	    (concat string paddings))))))
    (t
     (elmo-set-work-buf
      (elmo-set-buffer-multibyte default-enable-multibyte-characters)
