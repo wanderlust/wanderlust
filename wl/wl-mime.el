@@ -183,7 +183,8 @@ By setting following-method as yank-content."
 	 (folder (wl-folder-get-elmo-folder wl-message-buffer-cur-folder))
 	 (number wl-message-buffer-cur-number)
 	 (msgid (elmo-message-field folder number 'message-id)))
-    (when (and node-id
+    (when (and (elmo-folder-writable-p folder)
+	       node-id
 	       (yes-or-no-p
 		(format "Do you really want to delete part %s? "
 			(wl-mime-node-id-to-string node-id))))
