@@ -25,9 +25,9 @@
   (require 'wl-message)
   (require 'wl-draft)
   (require 'wl-address)
-  (defvar bbdb-pop-up-elided-display nil))
-;;  (or (fboundp 'bbdb-wl-extract-field-value-internal)
-;;      (defun bbdb-wl-extract-field-value-internal (field))))
+  (defvar bbdb-pop-up-elided-display nil)
+  (or (fboundp 'bbdb-extract-field-value-internal)
+      (defun bbdb-extract-field-value-internal (field))))
 
 (defvar bbdb-wl-get-update-record-hook nil)
 
@@ -97,14 +97,6 @@
 	;; make it display *BBDB*...
 	(let ((pop-up-windows nil))
 	  (switch-to-buffer (get-buffer-create bbdb-buffer-name)))))))
-
-(defun bbdb-wl-get-petname (from)
-  "For `wl-summary-get-petname-func'."
-  (let* ((address (wl-address-header-extract-address from))
-	 (record (bbdb-search-simple nil address)))
-    (and record
-	 (or (bbdb-record-name record)
-	     (car (bbdb-record-name record))))))
 
 (defun bbdb-wl-from-func (string)
   "A candidate From field STRING.  For `wl-summary-from-func'."
@@ -257,21 +249,20 @@ displaying the record corresponding to the sender of the current message."
 
 ;;; @ bbdb-extract-field-value -- stolen from tm-bbdb.
 ;;;
-(and (not (fboundp 'bbdb-wl-extract-field-value-internal))
+(and (not (fboundp 'bbdb-extract-field-value-internal))
 ;;;  (not (fboundp 'PLEASE_REPLACE_WITH_SEMI-BASED_MIME-BBDB)) ;; mime-bbdb
     (progn
-      (if (and (string< bbdb-version "1.58")
-	       ;; (not (fboundp 'bbdb-extract-field-value) ; defined as autoload
-	       (not (fboundp 'bbdb-header-start)))
-	  (load "bbdb-hooks")
-	(require 'bbdb-hooks))
-      (fset 'bbdb-wl-extract-field-value-internal
+;;;   (require 'bbdb-hooks) ; not provided.
+;;;   (or (fboundp 'bbdb-extract-field-value) ; defined as autoload
+      (or (fboundp 'bbdb-header-start)
+          (load "bbdb-hooks"))
+      (fset 'bbdb-extract-field-value-internal
 	    (cond
 	     ((fboundp 'tm:bbdb-extract-field-value)
 	      (symbol-function 'tm:bbdb-extract-field-value))
 	     (t (symbol-function 'bbdb-extract-field-value))))
       (defun bbdb-extract-field-value (field)
-	(let ((value (bbdb-wl-extract-field-value-internal field)))
+	(let ((value (bbdb-extract-field-value-internal field)))
 	  (with-temp-buffer ; to keep raw buffer unibyte.
 	    (elmo-set-buffer-multibyte
 	     default-enable-multibyte-characters)

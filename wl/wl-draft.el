@@ -271,8 +271,17 @@ Return symbol, not list.  Use symbol-name"
   ""
 ;;;(save-excursion
   (let (r-list
+	(mime-header-lexical-analyzer '(eword-analyze-quoted-string
+					eword-analyze-domain-literal
+					eword-analyze-comment
+					eword-analyze-spaces
+					eword-analyze-special
+					eword-analyze-encoded-word
+					eword-analyze-atom))
+	eword-lexical-analyzer
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from to-alist cc-alist r-list-name decoder)
+	from to-alist cc-alist r-list-name)
+    (setq eword-lexical-analyzer mime-header-lexical-analyzer)
     (set-buffer buf)
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
     ;; symbol-name use in error message
@@ -319,27 +328,36 @@ Return symbol, not list.  Use symbol-name"
 	  cc (wl-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-      (setq decoder (mime-find-field-decoder 'Subject 'plain))
-      (setq subject (if (and subject decoder)
-			(funcall decoder subject) subject))
+      (setq subject (or (and subject
+			     (eword-decode-string
+			      (decode-mime-charset-string
+			       subject
+			       wl-mime-charset)))))
       (setq to-alist 
 	    (mapcar
-	     (lambda (addr)
-	       (setq decoder (mime-find-field-decoder 'To 'plain))
-	       (cons (nth 1 (std11-extract-address-components addr))
-		     (if decoder (funcall decoder addr) addr)))
+	     '(lambda (addr)
+		(setq addr (eword-extract-address-components addr))
+		(cons (nth 1 addr)
+		      (if (nth 0 addr)
+			  (concat
+			   (wl-address-quote-specials (nth 0 addr))
+			   " <" (nth 1 addr) ">")
+			(nth 1 addr))))
 	     to))
       (setq cc-alist 
 	    (mapcar
-	     (lambda (addr)
-	       (setq decoder (mime-find-field-decoder 'Cc 'plain))
-	       (cons (nth 1 (std11-extract-address-components addr))
-		     (if decoder (funcall decoder addr) addr)))
+	     '(lambda (addr)
+		(setq addr (eword-extract-address-components addr))
+		(cons (nth 1 addr)
+		      (if (nth 0 addr)
+			  (concat
+			   (wl-address-quote-specials (nth 0 addr))
+			   " <" (nth 1 addr) ">")
+			(nth 1 addr))))
 	     cc)))
-    (and wl-reply-subject-prefix
+    (and subject wl-reply-subject-prefix
 	 (setq subject (concat wl-reply-subject-prefix
-                               (wl-draft-strip-subject-re
-				(or subject "")))))
+                               (wl-draft-strip-subject-re subject))))
     (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))

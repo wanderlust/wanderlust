@@ -111,8 +111,6 @@
 (defvar wl-summary-search-buf-name " *wl-search-subject*")
 (defvar wl-summary-delayed-update nil)
 
-(defvar wl-summary-get-petname-func 'wl-address-get-petname-1)
-
 (defvar wl-summary-message-regexp "^ *\\([0-9]+\\)")
 
 (defvar wl-summary-shell-command-last "")
@@ -207,7 +205,7 @@
 				 (eword-decode-string
 				  (if wl-use-petname
 				      (or
-				       (funcall wl-summary-get-petname-func to)
+				       (wl-address-get-petname-1 to)
 				       (car
 					(std11-extract-address-components to))
 				       to)
@@ -218,7 +216,7 @@
 			 entity "newsgroups"))
 	       (setq retval (concat "Ng:" ng)))))
       (if wl-use-petname
-	  (setq retval (or (funcall wl-summary-get-petname-func from)
+	  (setq retval (or (wl-address-get-petname-1 from)
 			   (car (std11-extract-address-components from))
 			   from))
 	(setq retval from)))
@@ -226,7 +224,7 @@
 
 (defun wl-summary-simple-from (string)
   (if wl-use-petname
-      (or (funcall wl-summary-get-petname-func string)
+      (or (wl-address-get-petname-1 string)
 	  (car (std11-extract-address-components string))
 	  string)
     string))

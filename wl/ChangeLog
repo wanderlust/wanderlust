@@ -1,28 +1,3 @@
-2001-01-22  YAMASHITA Junji <ysjj@unixuser.org>
-
-	* wl-summary.el (wl-summary-get-petname-func): New variable.
-	(wl-summary-default-from): funcall `wl-summary-get-petname-func'
-	instead of `wl-address-get-petname-1'.
-	(wl-summary-simple-from): Ditto.
-
-	* wl-address.el (wl-address-get-petname-1): Define as function.
-
-2001-01-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-reply): Fixed problem when there's no subject
-	field in the original message.
-	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
-
-2001-01-19  Akihiro MOTOKI <mokkun@iname.com>
-
-	* wl-expire.el (wl-expire-hide):
-	Call `wl-expire-delete-reserve-marked-msgs-from-list'.
-
-2001-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-reply): Use `mime-find-field-decoder' to
-	find decoder for To, Cc, and Subject.
-
 2001-01-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.5.5.
