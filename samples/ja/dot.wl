@@ -176,6 +176,12 @@
 
 ;;; [[ 特殊な設定 ]]
 
+;; サマリでの "b" をメッセージ再送にする (mutt の "b"ounce)
+;(add-hook 'wl-summary-mode-hook
+;	  '(lambda ()
+; 	     (define-key wl-summary-mode-map "b" 'wl-summary-resend-message)
+;	     ))
+
 ;; グループをcheckした後に未読があるフォルダのグループを自動的に開く
 ;(add-hook 'wl-folder-check-entity-hook
 ;	  '(lambda ()
