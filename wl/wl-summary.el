@@ -2822,6 +2822,10 @@ If ARG, exit virtual folder."
 				 'update nil nil t)
     (run-hooks 'wl-summary-virtual-hook)))
 
+(defun wl-summary-delete-all-target-marks ()
+  (let (wl-summary-buffer-temp-mark-list)
+    (wl-summary-delete-all-temp-marks)))
+
 (defun wl-summary-delete-all-temp-marks (&optional no-msg force)
   "Erase all temp marks from buffer."
   (interactive)
@@ -2984,14 +2988,13 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
 (defun wl-summary-target-mark-set-flags ()
   (interactive)
   (save-excursion
-    (goto-char (point-min))
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg
 	  flags)
       (dolist (number wl-summary-buffer-target-mark-list)
-	(wl-summary-unset-mark number)
 	(setq flags (wl-summary-set-flags-internal number flags)))
+      (wl-summary-delete-all-target-marks)
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -3852,7 +3855,7 @@ Return t if message exists."
       (goto-char start-point)
       (save-excursion
 	(set-buffer summary-buf)
-	(wl-summary-delete-all-temp-marks)))
+	(wl-summary-delete-all-target-marks)))
     (run-hooks 'wl-mail-setup-hook)))
 
 (defun wl-summary-target-mark-reply-with-citation (&optional arg)
@@ -3880,7 +3883,7 @@ Return t if message exists."
 	(goto-char start-point)
 	(save-excursion
 	  (set-buffer summary-buf)
-	  (wl-summary-delete-all-temp-marks)))
+	  (wl-summary-delete-all-target-marks)))
       (wl-draft-reply-position wl-draft-reply-default-position)
       (run-hooks 'wl-mail-setup-hook))))
 
@@ -4833,7 +4836,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 				 filename nil 'no-msg))))
 	    (save-excursion
 	      (set-buffer summary-buf)
-	      (wl-summary-delete-all-temp-marks))
+	      (wl-summary-delete-all-target-marks))
 	    (if (file-exists-p filename)
 		(message "Saved as %s" filename)))
 	(kill-buffer tmp-buf)))))

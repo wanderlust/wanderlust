@@ -1,3 +1,13 @@
+2004-06-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-delete-all-target-marks): New function
+	to delete target marks only.
+	(wl-summary-target-mark-forward): Use it.
+	(wl-summary-target-mark-reply-with-citation): Ditto.
+	(wl-summary-target-mark-uudecode): Ditto.
+	(wl-summary-target-mark-set-flags): Ditto and remove needless
+	cursor move.
+
 2004-06-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-target-mark-forward): Protect
