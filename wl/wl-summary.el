@@ -4150,6 +4150,7 @@ If ARG, exit virtual folder."
 					nil
 					wl-summary-fix-timezone))
 			(make-vector 5 0)))
+	(entity wl-message-entity) ; backward compatibility.
 	line mark)
     (if (and wl-thr-indent-string
 	     wl-summary-indent-length-limit
