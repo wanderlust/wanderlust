@@ -1,6 +1,23 @@
 2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
-	* elmo.el (luna-define-class): Remove slot message-modified and
+	* modb.el (elmo-msgdb-search): New API .
+	(elmo-msgdb-match-condition): Ditto.
+
+	* modb-standard.el (elmo-msgdb-search): Define.
+
+	* modb-legacy.el (elmo-msgdb-search): Ditto.
+
+	* modb-entity.el (elmo-msgdb-message-match-condition): Renamed
+	from elmo-msgdb-match-condition-internal.
+
+	* elmo.el (elmo-folder-search-fast): Abolish.
+	(elmo-folder-search): Use elmo-msgdb-search and
+	elmo-with-progress-display.
+
+	* elmo-msgdb.el (elmo-msgdb-match-condition): Removed; redefined
+	as msgdb API.
+
+	* elmo.el (elmo-folder): Remove slot message-modified and
 	flag-modified.
 	(elmo-folder-set-message-modified): Abolish.
 	(elmo-generic-folder-commit): Follow the change above.

@@ -98,12 +98,23 @@ FLAG is a symbol which is one of the following:
 (luna-define-generic elmo-msgdb-list-flagged (msgdb flag)
   "Return a list of message numbers which is set FLAG in the MSGDB.")
 
-;;; (luna-define-generic elmo-msgdb-search (msgdb condition &optional numbers)
-;;;   "Search and return list of message numbers.
-;;; MSGDB is the ELMO msgdb structure.
-;;; CONDITION is a condition structure for searching.
-;;; If optional argument NUMBERS is specified and is a list of message numbers,
-;;; messages are searched from the list.")
+(luna-define-generic elmo-msgdb-search (msgdb condition &optional numbers)
+  "Search and return list of message numbers.
+MSGDB is the ELMO msgdb structure.
+CONDITION is a condition structure for searching.
+If optional argument NUMBERS is specified and is a list of message numbers,
+messages are searched from the list.
+Return t if the condition is unsupported.")
+
+(luna-define-generic elmo-msgdb-match-condition (msgdb condition number
+						       &optional numbers)
+  "Check whether the condition of the message is satisfied or not.
+MSGDB is the msgdb to search from.
+CONDITION is the search condition.
+NUMBER is the message number to check.
+If optional argument NUMBERS is specified and is a list of message numbers,
+messages are searched from the list.
+Return CONDITION itself if no entity exists in msgdb.")
 
 (luna-define-generic elmo-msgdb-append-entity (msgdb entity &optional flags)
   "Append a ENTITY with FLAGS into the MSGDB.
@@ -158,6 +169,23 @@ A string is for message-id of the message.")
 (luna-define-method elmo-msgdb-length ((msgdb modb-generic))
   0)
 
+(luna-define-method elmo-msgdb-search ((msgdb modb-generic)
+				       condition &optional numbers)
+  t)
+
+(luna-define-method elmo-msgdb-match-condition ((msgdb modb-generic)
+						condition
+						number
+						&optional numbers)
+  (let ((entity (elmo-msgdb-message-entity msgdb number)))
+    (if entity
+	(elmo-msgdb-message-match-condition
+	 (elmo-msgdb-message-entity-handler msgdb)
+	 condition
+	 entity
+	 (elmo-msgdb-flags msgdb number)
+	 (or numbers (elmo-msgdb-list-messages msgdb)))
+      condition)))
 
 (luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-generic))
   (or modb-entity-default-cache-internal

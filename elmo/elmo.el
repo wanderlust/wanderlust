@@ -715,83 +715,34 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
 
-(defsubst elmo-folder-search-fast (folder condition numbers)
-  "Search and return list of message numbers.
-Return t if CONDITION is not treated.
-FOLDER is the ELMO folder structure.
-CONDITION is a condition structure for searching.
-NUMBERS is a list of message numbers, messages are searched from the list."
-  (if (and numbers
-	   (vectorp condition))
-      (cond
-       ((string= (elmo-filter-key condition) "flag")
-	(let ((msgdb (elmo-folder-msgdb folder)))
-	  ;; msgdb should be synchronized at this point.
-	  (cond
-	   ((string= (elmo-filter-value condition) "unread")
-	    (elmo-folder-list-unreads folder))
-	   ((string= (elmo-filter-value condition) "important")
-	    (elmo-folder-list-importants folder))
-	   ((string= (elmo-filter-value condition) "answered")
-	    (elmo-folder-list-answereds folder))
-	   ((string= (elmo-filter-value condition) "digest")
-	    (nconc (elmo-folder-list-unreads folder)
-		   (elmo-folder-list-importants folder)))
-	   ((string= (elmo-filter-value condition) "any")
-	    (nconc (elmo-folder-list-unreads folder)
-		   (elmo-folder-list-importants folder)
-		   (elmo-folder-list-answereds folder))))))
-       ((member (elmo-filter-key condition) '("first" "last"))
-	(let ((len (length numbers))
-	      (lastp (string= (elmo-filter-key condition) "last"))
-	      (value (string-to-number (elmo-filter-value condition))))
-	  (when (eq (elmo-filter-type condition) 'unmatch)
-	    (setq lastp (not lastp)
-		  value  (- len value)))
-	  (if lastp
-	      (nthcdr (max (- len value) 0) numbers)
-	    (when (> value 0)
-	      (let* ((numbers (copy-sequence numbers))
-		     (last (nthcdr (1- value) numbers)))
-		(when last
-		  (setcdr last nil))
-		numbers)))))
-       (t
-	t))
-    t))
-
 (luna-define-method elmo-folder-search ((folder elmo-folder)
 					condition
 					&optional numbers)
   (let ((numbers (or numbers (elmo-folder-list-messages folder)))
+	(msgdb (elmo-folder-msgdb folder))
 	results)
-    (if (listp (setq results (elmo-folder-search-fast folder
-						      condition
-						      numbers)))
+    (setq results (elmo-msgdb-search msgdb condition numbers))
+    (if (listp results)
 	results
-      (let ((msgdb (elmo-folder-msgdb folder))
-	    (len (length numbers))
+      (let ((len (length numbers))
 	    matched)
-	(when (> len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-search len "Searching..."))
-	(unwind-protect
-	    (dolist (number numbers)
-	      (let (result)
-		(setq result (elmo-msgdb-match-condition
-			      msgdb
-			      condition
-			      number
-			      numbers))
-		(when (elmo-filter-condition-p result)
-		  (setq result (elmo-message-match-condition
-				folder
-				number
-				condition
-				numbers)))
-		(when result
-		  (setq matched (cons number matched))))
-	      (elmo-progress-notify 'elmo-folder-search))
-	  (elmo-progress-clear 'elmo-folder-search))
+	(elmo-with-progress-display (> len elmo-display-progress-threshold)
+	    (elmo-folder-search len "Searching...")
+	  (dolist (number numbers)
+	    (let (result)
+	      (setq result (elmo-msgdb-match-condition msgdb
+						       condition
+						       number
+						       numbers))
+	      (when (elmo-filter-condition-p result)
+		(setq result (elmo-message-match-condition folder
+							   number
+							   condition
+							   numbers)))
+	      (when result
+		(setq matched (cons number matched))))
+	    (elmo-progress-notify 'elmo-folder-search)))
+	(message "Searching...done")
 	(nreverse matched)))))
 
 (luna-define-method elmo-message-match-condition ((folder elmo-folder)

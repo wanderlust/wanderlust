@@ -519,6 +519,40 @@ Return a list of message numbers which have duplicated message-ids."
 	      (setq matched (cons (car elem) matched))))))
     matched))
 
+(luna-define-method elmo-msgdb-search ((msgdb modb-legacy)
+				       condition &optional numbers)
+  (if (vectorp condition)
+      (let ((key (elmo-filter-key condition))
+	    results)
+	(cond
+	 ((and (string= key "flag")
+	       (eq (elmo-filter-type condition) 'match))
+	  (setq results (elmo-msgdb-list-flagged
+			 msgdb
+			 (intern (elmo-filter-value condition))))
+	  (if numbers
+	      (elmo-list-filter numbers results)
+	    results))
+	 ((member key '("first" "last"))
+	  (let* ((numbers (or numbers (elmo-msgdb-list-messages msgdb)))
+		 (len (length numbers))
+		 (lastp (string= key "last"))
+		 (value (string-to-number (elmo-filter-value condition))))
+	    (when (eq (elmo-filter-type condition) 'unmatch)
+	      (setq lastp (not lastp)
+		    value (- len value)))
+	    (if lastp
+		(nthcdr (max (- len value) 0) numbers)
+	      (when (> value 0)
+		(let* ((numbers (copy-sequence numbers))
+		       (last (nthcdr (1- value) numbers)))
+		  (when last
+		    (setcdr last nil))
+		  numbers)))))
+	 (t
+	  t)))
+    t))
+
 (luna-define-method elmo-msgdb-append-entity ((msgdb modb-legacy)
 					      entity &optional flags)
   (when entity

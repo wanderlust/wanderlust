@@ -104,11 +104,11 @@ Rest of the ARGS is a plist of message entity field for initial value.
 Header region is supposed to be narrowed.")
 
 ;; Transitional interface.
-(luna-define-generic elmo-msgdb-match-condition-internal (handler
-							  condition
-							  entity
-							  flags
-							  numbers)
+(luna-define-generic elmo-msgdb-message-match-condition (handler
+							 condition
+							 entity
+							 flags
+							 numbers)
   "Return non-nil when the entity matches the condition.")
 
 ;; Generic implementation.
@@ -295,34 +295,34 @@ Header region is supposed to be narrowed.")
   (cons (car entity)
 	(copy-sequence (cdr entity))))
 
-(luna-define-method elmo-msgdb-match-condition-internal
+(luna-define-method elmo-msgdb-message-match-condition
   ((handler modb-legacy-entity-handler) condition entity flags numbers)
   (cond
    ((vectorp condition)
     (elmo-msgdb-match-condition-primitive condition entity flags numbers))
    ((eq (car condition) 'and)
-    (let ((lhs (elmo-msgdb-match-condition-internal handler
-						    (nth 1 condition)
-						    entity flags numbers)))
+    (let ((lhs (elmo-msgdb-message-match-condition handler
+						   (nth 1 condition)
+						   entity flags numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition-internal
+	(let ((rhs (elmo-msgdb-message-match-condition
 		    handler (nth 2 condition) entity flags numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'and lhs rhs))
 		(rhs
 		 lhs))))
        (lhs
-	(elmo-msgdb-match-condition-internal handler (nth 2 condition)
-					     entity flags numbers)))))
+	(elmo-msgdb-message-match-condition handler (nth 2 condition)
+					    entity flags numbers)))))
    ((eq (car condition) 'or)
-    (let ((lhs (elmo-msgdb-match-condition-internal handler (nth 1 condition)
-						    entity flags numbers)))
+    (let ((lhs (elmo-msgdb-message-match-condition handler (nth 1 condition)
+						   entity flags numbers)))
       (cond
        ((elmo-filter-condition-p lhs)
-	(let ((rhs (elmo-msgdb-match-condition-internal handler
-							(nth 2 condition)
-							entity flags numbers)))
+	(let ((rhs (elmo-msgdb-message-match-condition handler
+						       (nth 2 condition)
+						       entity flags numbers)))
 	  (cond ((elmo-filter-condition-p rhs)
 		 (list 'or lhs rhs))
 		(rhs
@@ -332,7 +332,7 @@ Header region is supposed to be narrowed.")
        (lhs
 	t)
        (t
-	(elmo-msgdb-match-condition-internal handler
+	(elmo-msgdb-message-match-condition handler
 					     (nth 2 condition)
 					     entity flags numbers)))))))
 

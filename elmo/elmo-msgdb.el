@@ -254,22 +254,6 @@ header separator."
   (dolist (number (elmo-msgdb-list-flagged msgdb 'new))
     (elmo-msgdb-unset-flag msgdb number 'new)))
 
-(defun elmo-msgdb-match-condition (msgdb condition number numbers)
-  "Check whether the condition of the message is satisfied or not.
-MSGDB is the msgdb to search from.
-CONDITION is the search condition.
-NUMBER is the message number to check.
-NUMBERS is the target message number list.
-Return CONDITION itself if no entity exists in msgdb."
-  (let ((entity (elmo-msgdb-message-entity msgdb number)))
-    (if entity
-	(elmo-msgdb-match-condition-internal msgdb
-					     condition
-					     entity
-					     (elmo-msgdb-flags msgdb number)
-					     numbers)
-      condition)))
-
 ;;
 ;; deleted message handling
 ;;
