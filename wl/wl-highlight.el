@@ -1078,17 +1078,25 @@ Returns start point of signature."
     (goto-char end)
     (or
      ;; look for legal signature separator (check at first for fasten)
-     (re-search-backward "\n-- \n" beg t)
+     (search-backward "\n-- \n" beg t)
 
      ;; look for dual separator
-     (save-excursion
-       (and
-	(re-search-backward "^[^A-Za-z0-9> \t\n]+ *$" beg t)
-	(> (- (match-end 0) (match-beginning 0)) 10);; "10" is a magic number.
-	(re-search-backward
-	 (concat "^"
-		 (regexp-quote (buffer-substring (match-beginning 0) (match-end 0)))
-		 "$") beg t)))
+     (let ((pt (point))
+	   separator)
+       (prog1
+	   (and (re-search-backward "^[^A-Za-z0-9> \t\n]+ *$" beg t)
+		;; `10' is a magic number.
+		(> (- (match-end 0) (match-beginning 0)) 10)
+		(setq separator (buffer-substring (match-beginning 0)
+						  (match-end 0)))
+		;; We should not use `re-search-backward' for a long word
+		;; since it is possible to crash XEmacs because of a bug.
+		(if (search-backward (concat "\n" separator "\n") beg t)
+		    (1+ (point))
+		  (and (search-backward (concat separator "\n") beg t)
+		       (bolp)
+		       (point))))
+	 (goto-char pt)))
 
      ;; look for user specified signature-separator
      (if (stringp wl-highlight-signature-separator)

@@ -1,3 +1,9 @@
+2004-02-19  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-highlight.el (wl-highlight-signature-search): Don't use
+	re-search-backward for a long word since it is possible to crash
+	XEmacs because of a bug.
+
 2004-02-15  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-message.el (wl-message-buffer-prefetch-p): Change `defsubst' to `defun'.
