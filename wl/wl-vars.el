@@ -1635,14 +1635,16 @@ which are replaced by the given information:
 
 (defcustom wl-message-ignored-field-list nil
   "All fields that match this list will be hidden in message buffer.
-Each elements are regexp of field-name."
+Each elements are regexp of field-name.
+You can specify exceptions by `wl-message-visible-field-list'."
   :type '(repeat (string :tag "Field Regexp"))
   :group 'wl-pref
   :group 'wl-setting)
 
 (defcustom wl-message-visible-field-list nil
   "All fields that match this list will be displayed in message buffer.
-Each elements are regexp of field-name."
+Each elements are regexp of field-name.
+This variable overwhelm `wl-message-ignored-field-list' settings."
   :type '(repeat (string :tag "Field Regexp"))
   :group 'wl-pref
   :group 'wl-setting)
