@@ -1,3 +1,7 @@
+2004-08-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-MK (install-wl-icons): Use install-files to set file mode.
+
 2004-08-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* INSTALL, INSTALL.ja: Updated recommended version of APEL,

@@ -246,23 +246,15 @@
   (if (not (file-directory-p PIXMAPDIR))
       (make-directory PIXMAPDIR t))
   (let* ((case-fold-search t)
-	 (icons (directory-files ICONDIR t
+	 (icons (directory-files ICONDIR nil
 				 (cond ((featurep 'xemacs)
 					"\\.x[bp]m$")
 				       ((and (boundp 'emacs-major-version)
 					     (>= emacs-major-version 21))
 					"\\.img$\\|\\.x[bp]m$")
 				       ((featurep 'mule)
-					"\\.img$\\|\\.xbm$"))))
-	 icon dest)
-    (while icons
-      (setq icon (car icons)
-	    icons (cdr icons)
-	    dest (expand-file-name (file-name-nondirectory icon) PIXMAPDIR))
-      (princ (format "%s -> %s\n"
-		     (file-name-nondirectory icon)
-		     (substring (file-name-directory dest) 0 -1)))
-      (copy-file icon dest t))))
+					"\\.img$\\|\\.xbm$")))))
+    (install-files icons ICONDIR PIXMAPDIR nil 'overwrite)))
 
 (defun install-wl-package ()
   (compile-wl-package)
