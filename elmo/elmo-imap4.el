@@ -1870,12 +1870,11 @@ Return nil if no complete line has arrived."
     (list 'acl acl mailbox)))
 
 (defun elmo-imap4-parse-flag-list ()
-  (let ((str (buffer-substring (point) (progn (search-forward ")" nil t)
-					      (point))))
-	pos)
-    (while (setq pos (string-match "\\\\" str (and pos (+ 2 pos))))
-      (setq str (replace-match "\\\\" nil t str)))
-    (mapcar 'symbol-name (elmo-imap4-read str))))
+  (let ((str (buffer-substring (+ (point) 1)
+			       (progn (search-forward ")" nil t)
+				      (- (point) 1)))))
+    (unless (eq (length str) 0)
+      (split-string str))))
 
 (defun elmo-imap4-parse-envelope ()
   (when (eq (char-after) ?\()
