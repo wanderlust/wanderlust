@@ -1,25 +1,3 @@
-2002-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-insert-headers): Put alike hash in reverse
-	order.
-	(wl-summary-search-by-subject): Search parent message from tail;
-	Check the existence of the parent message on the current thread tree.
-	(wl-summary-update-thread): Check whether the line is inserted.
-
-2002-10-10  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* wl-vars.el (wl-summary-line-format): Undo last change.
-	* wl-summary.el (wl-summary-print-destination): Do not put
-	invisible property when `wl-summary-width' is nil.
-	(wl-summary-line-subject-minimum-length): Abolished.
-	(wl-summary-line-subject): Ditto.
-
-2002-10-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* wl-vars.el (wl-summary-line-format): Change default value.
-	(wl-summary-subject-length-limit): Abolished.
-	* wl-summary.el (wl-summary-line-subject): Ditto.
-
 2002-10-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-template.el (wl-template-select): Added optional argument.
