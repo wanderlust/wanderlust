@@ -60,10 +60,9 @@ If WITH-CODENAME add codename."
   "Print Wanderlust version.
 If ARG insert string at point."
   (interactive "P")
-  (let ((product-info (product-string-1 'wl-version t)))
-    (if arg
-	(insert product-info)
-      (message "%s" product-info))))
+  (if arg
+      (insert (message "%s" (wl-version t)))
+    (message "%s" (wl-version t))))
 
 (defvar wl-version-status-alist
   '(((zerop (% (nth 1 (product-version (product-find 'wl-version))) 2))

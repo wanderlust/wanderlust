@@ -132,7 +132,7 @@
 	 (fullname (user-full-name)))
     (cond ((eq mail-from-style 'angles)
 	   (insert "From: " fullname)
-	   (let ((fullname-start (+ (point-min) (length "From: ")))
+	   (let ((fullname-start (+ (point-min) 6))
 		 (fullname-end (point-marker)))
 	     (goto-char fullname-start)
 	     ;; Look for a character that cannot appear unquoted
@@ -168,11 +168,11 @@
 		 (replace-match "\\1(\\3)" t)
 		 (goto-char fullname-start))))
 	   (insert ")\n"))
-	  ((not mail-from-style)
+	  ((null mail-from-style)
 	   (insert "From: " login "\n")))))
 
 (defun wl-draft-insert-x-face-field ()
-  "Insert X-Face header."
+  "Insert x-face header."
   (interactive)
   (if (not (file-exists-p wl-x-face-file))
       (error "File %s does not exist" wl-x-face-file)
@@ -180,21 +180,21 @@
     (search-forward mail-header-separator nil t)
     (beginning-of-line)
     (wl-draft-insert-x-face-field-here)
-    (run-hooks 'wl-draft-insert-x-face-field-hook))) ; highlight it if you want.
+    (run-hooks 'wl-draft-insert-x-face-field-hook) ; highlight it if you want.
+    ))
 
 (defun wl-draft-insert-x-face-field-here ()
-  "Insert X-Face field at point."
+  "Insert x-face field at point."
   (let ((x-face-string (elmo-get-file-string wl-x-face-file)))
-    (when (string-match "^[ \t]*" x-face-string)
-      (setq x-face-string (substring x-face-string (match-end 0))))
+    (if (string-match "^[ \t]*" x-face-string)
+	(setq x-face-string (substring x-face-string (match-end 0))))
     (insert "X-Face: " x-face-string))
-  (when (not (= (preceding-char) ?\n))	; for chomped (choped) x-face-string
-    (insert ?\n))
-  ;; Insert X-Face-Version: field
-  (when (and (fboundp 'x-face-insert-version-header)
-	     (boundp 'x-face-add-x-face-version-header)
-	     x-face-add-x-face-version-header)
-    (x-face-insert-version-header)))
+  (if (not (= (preceding-char) ?\n))
+      (insert ?\n))
+  (and (fboundp 'x-face-insert-version-header) ; x-face.el...
+       (boundp 'x-face-add-x-face-version-header)
+       x-face-add-x-face-version-header
+       (x-face-insert-version-header)))
 
 (defun wl-draft-setup ()
   (let ((field wl-draft-fields)
@@ -225,12 +225,16 @@
 (defun wl-draft-delete-myself-from-cc (to cc)
   (let ((myself (or wl-user-mail-address-list
 		    (list (wl-address-header-extract-address wl-from)))))
-    (cond (wl-draft-always-delete-myself ; always-delete option
-	   (elmo-list-delete myself cc))
-	  ((elmo-list-member (append to cc) ; subscribed mailing-list
-			     (mapcar 'downcase wl-subscribed-mailing-list))
-	   (elmo-list-delete myself cc))
-	  (t cc))))
+    (if wl-draft-always-delete-myself
+	(elmo-list-delete myself cc)
+      (if (elmo-list-member myself cc)
+	  (if (elmo-list-member (append to cc)
+				(mapcar 'downcase wl-subscribed-mailing-list))
+	      ;; member list is contained in recipients.
+	      (elmo-list-delete myself cc)
+	    cc
+	    )
+	cc))))
 
 (defun wl-draft-forward (original-subject summary-buf)
   (let (references)
@@ -242,8 +246,8 @@
 	    references (mapconcat 'identity references " ")
 	    references (wl-draft-parse-msg-id-list-string references)
 	    references (wl-delete-duplicates references)
-	    references (when references
-			 (mapconcat 'identity references "\n\t"))))
+	    references (if references
+			   (mapconcat 'identity references "\n\t"))))
     (wl-draft "" (concat "Forward: " original-subject)
 	      nil nil references nil nil nil nil nil nil summary-buf))
   (goto-char (point-max))
@@ -419,9 +423,9 @@
         (setq ref-list
               (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
                     ref-list)))
-      (when (and ref-list
-		 (member mes-id ref-list))
-	(setq mes-id nil)))
+      (if (and ref-list
+               (member mes-id ref-list))
+          (setq mes-id nil)))
     (when mes-id
       (save-excursion
         (when (mail-position-on-field "References")
@@ -440,9 +444,9 @@
     (insert
      (save-excursion
        (set-buffer mail-reply-buffer)
-       (when decode-it
-	 (decode-mime-charset-region (point-min) (point-max)
-				     wl-mime-charset))
+       (if decode-it
+	   (decode-mime-charset-region (point-min) (point-max)
+				       wl-mime-charset))
        (buffer-substring-no-properties
 	(point-min) (point-max))))
     (when ignored-fields
@@ -457,20 +461,19 @@
 	  (t (and wl-draft-cite-func
 		  (funcall wl-draft-cite-func)))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
-    (when (and wl-draft-add-references
-	       (wl-draft-add-references))
-      (wl-highlight-headers 'for-draft)) ; highlight when added References:
-    (when wl-highlight-body-too
-      (wl-highlight-body-region beg (point-max)))))
+    (and wl-draft-add-references
+	 (if (wl-draft-add-references)
+	     (wl-highlight-headers 'for-draft)))
+    (if wl-highlight-body-too
+	(wl-highlight-body-region beg (point-max)))))
 
 (defun wl-draft-confirm ()
   "Confirm send message."
   (interactive)
   (y-or-n-p (format "Send current draft as %s? "
-		    (cond ((and (wl-message-mail-p) (wl-message-news-p))
-			   "Mail and News")
-			  ((wl-message-mail-p) "Mail")
-			  ((wl-message-news-p) "News")))))
+		    (if (wl-message-mail-p)
+			(if (wl-message-news-p) "Mail and News" "Mail")
+		      "News"))))
 
 (defun wl-message-news-p ()
   "If exist valid Newsgroups field, return non-nil."

@@ -1,29 +1,4 @@
-2001-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-draft.el (wl-draft-insert-from-field): Use (length "From: ")
-	instead of magic-number 6.  Use `not' instead of `null' for symbol
-	`nil' check (not empty list).
-	(wl-draft-insert-x-face-field): Fixed paren style.
-
-	* wl-draft.el (wl-draft-insert-x-face-field-here): Use `when' for
-	one-branch conditional statement, instead of `and' and `if'.
-	(wl-draft-forward): Likewise.
-	(wl-draft-add-references): Likewise.
-	(wl-draft-yank-from-mail-reply-buffer): Likewise.
-
-	* wl-draft.el (wl-draft-delete-myself-from-cc): Refactoring nested
-	conditional steatment.  Use `cond' instead of `if'.
-	(wl-draft-confirm): Likewise.
-
-2001-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-version-show): Use `product-string-1'
-	instead of `wl-version'.
-	* wl-fldmgr.el (wl-fldmgr-folders-header): Likewise.
-
-	* wl-demo.el (wl-demo-copyright-notice): Add 2001.
-
-2000-12-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+2000-12-31  TAKAHASHI Kaoru  <moge@hoge.org>
 
 	* wl-highlight.el (wl-highlight-headers): Revert
 	`wl-highlight-x-face-func' argument (`beg' and `end').
