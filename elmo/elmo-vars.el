@@ -360,6 +360,9 @@ set as non-nil.")
 (defvar elmo-display-progress-threshold 20
   "*Displaying progress gauge if number of messages are more than this value.")
 
+(defvar elmo-inhibit-read-cache nil
+  "*Global switch to inhibit reading cache.")
+
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

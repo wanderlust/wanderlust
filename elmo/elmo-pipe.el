@@ -58,9 +58,7 @@
 
 (defun elmo-pipe-drain (src dst)
   "Move all messages of SRC to DST."
-  (let (elmo-nntp-use-cache
-	elmo-imap4-use-cache
-	elmo-pop3-use-cache ; Inhibit caching while moving messages.
+  (let ((elmo-inhibit-read-cache t); Inhibit caching while moving messages.
 	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
     (let ((srclist (elmo-list-folder src))
