@@ -414,6 +414,8 @@
     (require 'mmelmo)
     (wl-select-buffer view-message-buffer)
     (set-buffer view-message-buffer)
+    (make-local-variable 'truncate-partial-width-windows)
+    (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-message-truncate-lines)
     (unwind-protect
 	(progn
