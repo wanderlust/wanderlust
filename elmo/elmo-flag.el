@@ -454,7 +454,7 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
   (when (and (file-exists-p (expand-file-name elmo-global-mark-filename
 					      elmo-msgdb-directory))
 	     (elmo-global-flag-p 'important)
-	     (not (file-exists-p (elmo-folder-expand-msgdb-path
+	     (not (file-exists-p (elmo-folder-msgdb-path
 				  (elmo-flag-get-folder 'important)))))
     (elmo-global-mark-upgrade)))
 

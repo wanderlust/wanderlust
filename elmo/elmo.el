@@ -68,6 +68,12 @@ Otherwise, entire fetching of the message is aborted without confirmation."
   :type 'boolean
   :group 'elmo)
 
+(defcustom elmo-msgdb-path-encode-threshold nil
+  "*Encode msgdb path if its length is longer than this value."
+  :type '(choice (const :tag "No encode" nil)
+		 number)
+  :group 'elmo)
+
 (defvar elmo-message-displaying nil
   "A global switch to indicate message is displaying or not.")
 
@@ -83,6 +89,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 
 ;; autoloads
 (eval-and-compile
+  (autoload 'md5 "md5")
   (autoload 'elmo-dop-queue-flush "elmo-dop")
   (autoload 'elmo-nntp-post "elmo-nntp")
   (autoload 'elmo-global-flag-p "elmo-flag")
@@ -1127,7 +1134,19 @@ If optional argument IF-EXISTS is nil, load on demand.
   (or (elmo-folder-path-internal folder)
       (elmo-folder-set-path-internal
        folder
-       (elmo-folder-expand-msgdb-path folder))))
+       (if (null elmo-msgdb-path-encode-threshold)
+	   (elmo-folder-expand-msgdb-path folder)
+	 (let* ((path (directory-file-name
+		       (elmo-folder-expand-msgdb-path folder)))
+		(dirname (file-name-nondirectory path)))
+	   (if (<= (length dirname) elmo-msgdb-path-encode-threshold)
+	       path
+	     (require 'md5)
+	     (setq dirname (md5 dirname))
+	     (when (> (length dirname) elmo-msgdb-path-encode-threshold)
+	       (error "Cannot shrink msgdb path for `%s'"
+		      (elmo-folder-name-internal folder)))
+	     (expand-file-name dirname (file-name-directory path))))))))
 
 (luna-define-generic elmo-message-cached-p (folder number)
   "Return non-nil if the message is cached.")
