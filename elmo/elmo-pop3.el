@@ -273,58 +273,58 @@
 	 client name step response
 	 sasl-read-passphrase)
     (unless mechanism
-      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms))))
-      (setq client
-	    (sasl-make-client
-	     mechanism
-	     (elmo-network-session-user-internal session)
-	     "pop"
-	     (elmo-network-session-host-internal session)))
+      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
+    (setq client
+	  (sasl-make-client
+	   mechanism
+	   (elmo-network-session-user-internal session)
+	   "pop"
+	   (elmo-network-session-host-internal session)))
 ;;;	    (if elmo-pop3-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-pop3-auth-user-realm))
-	    (setq name (sasl-mechanism-name mechanism)
-		  step (sasl-next-step client nil))
-	    (elmo-network-session-set-auth-internal session
-						    (intern (downcase name)))
-	    (setq sasl-read-passphrase
-		  (function
-		   (lambda (prompt)
-		     (elmo-get-passwd
-		      (elmo-network-session-password-key session)))))
-	    (if (or (string= name "USER")
-		    (string= name "APOP"))
-		(elmo-pop3-send-command
-		 process
-		 (format "%s %s" name
-			 (sasl-step-data step)))
-	      (elmo-pop3-send-command
-	       process
-	       (concat "AUTH " name
-		       (and (sasl-step-data step)
-			    (concat 
-			     " "
-			     (elmo-base64-encode-string
-			      (sasl-step-data step) 'no-line-break))))))
-	    (catch 'done
-	      (while t
-		(setq response (elmo-pop3-read-response process t))
-		(if (string-match "^\+OK" response)
-		    (if (sasl-next-step client step)
-			(signal 'elmo-authenticate-error
-				(list (intern
-				       (concat "elmo-pop3-auth-"
-					       (downcase name)))))
-		      (throw 'done nil)))
-		(sasl-step-set-data
-		 step
-		 (elmo-base64-decode-string response))
-		(setq step (sasl-next-step client step))
-		(elmo-pop3-send-string
-		 process
-		 (if (sasl-step-data step)
-		     (elmo-base64-encode-string (sasl-step-data step)
-						'no-line-break)
-		   ""))))))
+    (setq name (sasl-mechanism-name mechanism)
+	  step (sasl-next-step client nil))
+    (elmo-network-session-set-auth-internal session
+					    (intern (downcase name)))
+    (setq sasl-read-passphrase
+	  (function
+	   (lambda (prompt)
+	     (elmo-get-passwd
+	      (elmo-network-session-password-key session)))))
+    (if (or (string= name "USER")
+	    (string= name "APOP"))
+	(elmo-pop3-send-command
+	 process
+	 (format "%s %s" name
+		 (sasl-step-data step)))
+      (elmo-pop3-send-command
+       process
+       (concat "AUTH " name
+	       (and (sasl-step-data step)
+		    (concat 
+		     " "
+		     (elmo-base64-encode-string
+		      (sasl-step-data step) 'no-line-break))))))
+    (catch 'done
+      (while t
+	(setq response (elmo-pop3-read-response process t))
+	(if (string-match "^\+OK" response)
+	    (if (sasl-next-step client step)
+		(signal 'elmo-authenticate-error
+			(list (intern
+			       (concat "elmo-pop3-auth-"
+				       (downcase name)))))
+	      (throw 'done nil)))
+	(sasl-step-set-data
+	 step
+	 (elmo-base64-decode-string response))
+	(setq step (sasl-next-step client step))
+	(elmo-pop3-send-string
+	 process
+	 (if (sasl-step-data step)
+	     (elmo-base64-encode-string (sasl-step-data step)
+					'no-line-break)
+	   ""))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
