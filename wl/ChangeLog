@@ -1,13 +1,3 @@
-2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl.el (toplevel): Move `product-provide' declare.
-	* wl-demo.el (toplevel): Ditto.
-	* wl-dnd.el (toplevel): Ditto.
-	* wl-highlight.el (toplevel): Ditto.
-	* wl-message.el (toplevel): Ditto.
-	* wl-refile.el (toplevel): Ditto.
-	* wl-util.el (toplevel): Ditto.
-
 2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-open-all): Rewrite to open all threads and

@@ -29,6 +29,9 @@
 ;;; Code:
 ;; 
 
+(require 'product)
+(product-provide (provide 'wl-dnd) (require 'wl-version))
+
 (static-cond
  ((featurep 'offix)
   (defun start-drag (event what &optional typ)
@@ -96,8 +99,5 @@
     (setq kmap (make-keymap))
     (define-key kmap [button1] 'wl-dnd-start-drag)
     (set-extent-property ext 'keymap kmap)))
-
-(require 'product)
-(product-provide (provide 'wl-dnd) (require 'wl-version))
 					     
 ;;; wl-dnd.el ends here

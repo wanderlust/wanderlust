@@ -31,6 +31,8 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'product)
+(product-provide (provide 'wl-refile) (require 'wl-version))
 
 (defvar wl-refile-alist nil)
 (defvar wl-refile-alist-file-name "refile-alist")
@@ -293,8 +295,5 @@ If RULE does not match ENTITY, returns nil."
   (cdr (assoc (wl-summary-subject-filter-func-internal
 	       (elmo-msgdb-overview-entity-get-subject entity))
 	      wl-refile-subject-alist)))
-
-(require 'product)
-(product-provide (provide 'wl-refile) (require 'wl-version))
 
 ;;; wl-refile.el ends here
