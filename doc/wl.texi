@@ -3341,13 +3341,6 @@ Put @samp{*} mark on the messages that satisfies the specified condition.
 Mark as read the message at the current cursor point.
 (@code{wl-summary-mark-as-read})
 
-@item i
-@kindex i (Summary)
-Prefetch the message at the current cursor point.
-With prefix argument, prefetch the message even if it is cached.
-@findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
-
 @item x
 @kindex x (Summary)
 Execute action for all temporary marks in the summary buffer.
@@ -3389,7 +3382,27 @@ previously specified.
 @kindex d (Summary)
 @findex wl-summary-dispose
 Put disposal mark on the message at the current cursor point.
+The result of disposal is controlled by @code{wl-dispose-folder-alist},
+refiled to @code{wl-trash-folder} by default.
 (@code{wl-summary-dispose})
+
+@item D
+@kindex D (Summary)
+@findex wl-summary-delete
+Put force deletion mark on the message at the current cursor point.
+(@code{wl-summary-delete})
+
+@item i
+@kindex i (Summary)
+Put prefetch reservation mark on the message at the current cursor point.
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item ~
+@kindex ~ (Summary)
+@findex wl-summary-resend
+Put resend reservation mark on the message at the current cursor point.
+(@code{wl-summary-resend})
 
 @item u
 @kindex u (Summary)

@@ -3330,14 +3330,6 @@ prefix argument つきで実行すると仮想フォルダから脱出します。
 カーソル行のメッセージを読んだことにします。
 (@code{wl-summary-mark-as-read})
 
-@item i
-@kindex i (Summary)
-カーソル行のメッセージをプリフェッチします。
-prefix argument つきならば既にキャッシュされているメッセージも
-再度プリフェッチします。
-@findex wl-summary-prefetch
-(@code{wl-summary-prefetch})
-
 @item x
 @kindex x (Summary)
 サマリバッファのすべてのメッセージに対して、一時的マークに対応するアクション
@@ -3380,7 +3372,27 @@ prefix argument つきならば既にキャッシュされているメッセージも
 @kindex d (Summary)
 @findex wl-summary-dispose
 カーソル行のメッセージに処分マークをつけます。
+処分の結果は @code{wl-dispose-folder-alist} で制御でき、デフォルトでは
+@code{wl-trash-folder} にリファイルされます。
 (@code{wl-summary-dispose})
+
+@item D
+@kindex D (Summary)
+@findex wl-summary-delete
+カーソル行のメッセージに強制削除マークをつけます。
+(@code{wl-summary-delete})
+
+@item i
+@kindex i (Summary)
+カーソル行のメッセージにプリフェッチ予約マークを付けます。
+@findex wl-summary-prefetch
+(@code{wl-summary-prefetch})
+
+@item ~
+@kindex ~ (Summary)
+@findex wl-summary-resend
+カーソル行のメッセージに再送予約マークを付けます。
+(@code{wl-summary-resend})
 
 @item u
 @kindex u (Summary)
