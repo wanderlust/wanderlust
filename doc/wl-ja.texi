@@ -4086,12 +4086,6 @@ Non-nil ならサマリの From 部分にあだ名を表示します。
 初期設定は @code{t}。
 Non-nil なら、@samp{^L} で改ページしてメッセージを表示します。
 
-@item wl-message-window-size
-@vindex  wl-message-window-size
-初期設定は '(1 . 4)。
-サマリを表示するウィンドウとメッセージ本体を表示するウィンドウの比を
-cons で指定します。car:cdr が サマリ:メッセージ です。
-
 @item wl-summary-from-function
 @vindex wl-summary-from-function
 サマリの差出人表示の整形に使う関数を指定します。

@@ -4100,12 +4100,6 @@ If non-nil, sender part displays nickname.
 The initial setting is @code{t}.
 If non-nil, message is split as pages by @samp{^L}.
 
-@item wl-message-window-size
-@vindex  wl-message-window-size
-The initial setting is '(1 . 4).
-A cons cell to specify the rate of summary and message window.
-car:cdr corresponds summary:message.
-
 @item wl-summary-from-function
 @vindex wl-summary-from-function
 Format function to display sender in summary.
@@ -4463,7 +4457,7 @@ message number will be changed.
 @table @code
 @item wl-message-window-size
 @vindex wl-message-window-size
-Initial setting is @code{'(1 . 4)}.  It is a cons cell and the ratio of
+Initial setting is @code{(1 . 4)}.  It is a cons cell and the ratio of
 its car and cdr value corresponds to the ratio of Summary and Message
 windows.
 
