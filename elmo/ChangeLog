@@ -1,5 +1,7 @@
 2001-12-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.9.1.
+
 	* elmo-util.el (elmo-file-field-primitive-condition-match): Fixed
 	unmatch condition checking.
 
