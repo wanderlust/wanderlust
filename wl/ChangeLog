@@ -1,4 +1,17 @@
-2002-05-11  Yuuichi Teranishi  <teranisi@ns.templewest.net>
+2002-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-check-line-format): New user option.
+	(wl-summary-line-format-file): Ditto.
+
+	* wl-summary.el (wl-summary-buffer-line-format): New buffer local
+	variable.
+	(wl-summary-buffer-set-folder): Set wl-summary-buffer-line-format.
+	(wl-summary-goto-folder-subr): Use `wl-summary-line-format-changed-p'
+	and `wl-summary-view-old-p' to check whether do a rescan or not.
+	(wl-summary-view-old-p): New function.
+	(wl-summary-line-format-changed-p): Ditto.
+	(wl-summary-line-format-save): Ditto.
+	(wl-summary-save-view-cache): Call `wl-summary-line-format-save'.
 
 	* wl-util.el (wl-set-string-width): Avoid using negative number
 	for make-string.

@@ -282,6 +282,18 @@ e.x.
 		       (string :tag "line format")))
   :group 'wl-summary)
 
+(defcustom wl-summary-check-line-format t
+  "*Check summary line format change if non-nil.
+When summary line format is changed, current summary cache is discarded.
+It is highly recommended to set this value to t."
+  :type 'boolean
+  :group 'wl-summary)
+
+(defcustom wl-summary-line-format-file ".wl-summary-line-format"
+  "*Cache file for summary line format."
+  :type 'file
+  :group 'wl-summary)
+
 (defcustom wl-summary-from-function 'wl-summary-default-from
   "*A function for displaying sender (From: field) information."
   :type 'function

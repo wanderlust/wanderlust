@@ -110,6 +110,7 @@
 (defvar wl-summary-buffer-msgdb nil)
 (defvar wl-summary-buffer-folder-name nil)
 (defvar wl-summary-buffer-line-formatter nil)
+(defvar wl-summary-buffer-line-format nil)
 (defvar wl-summary-buffer-mode-line-formatter nil)
 (defvar wl-summary-buffer-mode-line nil)
 
@@ -181,6 +182,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-msgdb)
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-line-formatter)
+(make-variable-buffer-local 'wl-summary-buffer-line-format)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line-formatter)
 (make-variable-buffer-local 'wl-summary-buffer-mode-line)
 
@@ -721,7 +723,7 @@ you."
 			 (current-column))))
     (setq wl-summary-buffer-temp-mark-column temp
 	  wl-summary-buffer-persistent-mark-column persistent)))
-  
+
 (defun wl-summary-buffer-set-folder (folder)
   (if (stringp folder)
       (setq folder (wl-folder-get-elmo-folder folder)))
@@ -746,10 +748,11 @@ you."
 	    wl-summary-default-number-column))
   (wl-line-formatter-setup
    wl-summary-buffer-line-formatter
-   (or (wl-get-assoc-list-value
-	wl-folder-summary-line-format-alist
-	(elmo-folder-name-internal folder))
-       wl-summary-line-format)
+   (setq wl-summary-buffer-line-format
+	 (or (wl-get-assoc-list-value
+	      wl-folder-summary-line-format-alist
+	      (elmo-folder-name-internal folder))
+	     wl-summary-line-format))
    wl-summary-line-format-spec-alist)
   (wl-line-formatter-setup
    wl-summary-buffer-mode-line-formatter
@@ -2429,12 +2432,10 @@ If ARG, without confirm."
 	    (wl-summary-update-modeline)))
       (unless (eq wl-summary-buffer-view 'thread)
 	(wl-summary-make-number-list))
-      ;; XXX old summary format; do rescan.
-      (save-excursion
-	(goto-char (point-min))
-	(if (and wl-summary-buffer-number-list
-		 (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))
-	    (wl-summary-rescan)))
+      (when (or (and wl-summary-check-line-format
+		     (wl-summary-line-format-changed-p))
+		(wl-summary-view-old-p))
+	(wl-summary-rescan))
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
 	;(setq hilit wl-summary-highlight)
@@ -4047,6 +4048,33 @@ If ARG, exit virtual folder."
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)
 
+(defun wl-summary-view-old-p ()
+  "Return non-nil when summary view cache has old format."
+  (save-excursion
+    (goto-char (point-min))
+    (and wl-summary-buffer-number-list
+	 (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
+
+(defun wl-summary-line-format-changed-p ()
+  "Return non-nil when summary line format is changed."
+  (not (string=
+	wl-summary-buffer-line-format
+	(or (elmo-object-load (expand-file-name 
+			       wl-summary-line-format-file
+			       (elmo-folder-msgdb-path
+				wl-summary-buffer-elmo-folder))
+			      wl-summary-buffer-mime-charset)
+	    wl-summary-buffer-line-format))))
+
+(defun wl-summary-line-format-save ()
+  "Save current summary line format."
+  (elmo-object-save
+   (expand-file-name wl-summary-line-format-file
+		     (elmo-folder-msgdb-path
+		      wl-summary-buffer-elmo-folder))
+   wl-summary-buffer-line-format
+   wl-summary-buffer-mime-charset))
+
 (defun wl-summary-line-number ()
   (wl-set-string-width
    (- wl-summary-buffer-number-column)
@@ -4337,6 +4365,8 @@ If ARG, exit virtual folder."
 	  (elmo-make-directory dir)))
       (if (eq save-view 'thread)
 	  (wl-thread-save-entity dir))
+      (when wl-summary-check-line-format
+	(wl-summary-line-format-save))
       (unwind-protect
 	  (progn
 	    (when (file-writable-p cache)
