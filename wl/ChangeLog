@@ -1,3 +1,18 @@
+2000-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-pick): Don't bind
+	`elmo-search-mime-charset'.
+
+	* wl-vars.el (wl-highlight-message-header-button-alist): Define
+	default using old backquote style.
+	(wl-search-mime-charset): Abolished.
+
+	* wl-highlight.el (wl-highlight-headers):
+	Call `point' after `re-search-forward'(for Nemacs).
+
+	* wl-summary.el (wl-summary-msgdb-load-async): Follow up the changes
+	for elmo-imap4.el.
+
 2000-08-29   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl-message.el (wl-mmelmo-message-redisplay): Bind

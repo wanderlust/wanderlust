@@ -1011,7 +1011,8 @@ interpreted as cited text.)"
 
 (defun wl-highlight-headers ()
   (let ((beg (point-min))
-	(end (or (save-excursion (re-search-forward "^$" nil t))
+	(end (or (save-excursion (re-search-forward "^$" nil t)
+				 (point))
 		 (point-max))))
     (wl-highlight-message beg end nil)
     (wl-highlight-message-add-buttons-to-header beg end)

@@ -1409,11 +1409,6 @@ Each elements are regexp of folder name."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-search-mime-charset 'iso-2022-jp
-  "*MIME Charset for searching message."
-  :type 'symbol
-  :group 'wl-pref)
-
 (defcustom wl-folder-mime-charset-alist
   '(("^-alt\\.chinese" . big5)
     ("^-relcom\\." . koi8-r)
@@ -1828,10 +1823,10 @@ list  : reserved specified permanent marks."
   :group 'wl-highlight)
 
 (defcustom wl-highlight-message-header-button-alist
-  `(("^\\(References\\|Message-Id\\|In-Reply-To\\):" "<[^>]+>"
-     0 wl-message-button-refer-article 0)
-    ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
-     1 wl-message-button-refer-article 3))
+  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):" "<[^>]+>"
+       0 wl-message-button-refer-article  0)
+      ("^[^:]+:" "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
+       1 wl-message-button-refer-article 3)))
   "Alist of headers and regexps to match buttons in message headers."
   :type '(repeat
 	  (list (regexp :tag "Header")

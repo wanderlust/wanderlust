@@ -682,18 +682,16 @@ Returns nil if selecting folder was in failure."
 	   (eq (elmo-folder-get-type folder) 'imap4))
       (let* ((spec (elmo-folder-get-spec folder))
 	     (session (elmo-imap4-get-session spec))
-	     (process (elmo-network-session-process-internal session))
 	     (mailbox (elmo-imap4-spec-mailbox spec))
-	     msgdb response)
+	     msgdb response tag)
 	(unwind-protect
 	    (progn
-	      (elmo-imap4-send-command process
-				       (list "select "
-					     (elmo-imap4-mailbox
-					      mailbox)))
+	      (setq tag (elmo-imap4-send-command session
+						 (list "select "
+						       (elmo-imap4-mailbox
+							mailbox))))
 	      (setq msgdb (elmo-msgdb-load (elmo-string folder)))
-	      (setq response (elmo-imap4-read-response 
-			      process)))
+	      (setq response (elmo-imap4-read-response session tag)))
 	  (if response
 	      (elmo-imap4-session-set-current-mailbox-internal
 	       session mailbox)
@@ -3886,7 +3884,6 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		    (read-from-minibuffer "Value: ")))
 	   (overview (elmo-msgdb-get-overview wl-summary-buffer-msgdb))
 	   (number-alist (elmo-msgdb-get-number-alist wl-summary-buffer-msgdb))
-	   (elmo-search-mime-charset wl-search-mime-charset)
 	   server-side-search
 	   result get-func sum)
       (if delete-marks
