@@ -912,8 +912,11 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (when wl-biff-check-folder-list
       (wl-biff-check-folders)
-      (put 'wl-biff 'timer (run-at-time t wl-biff-check-interval
-					'wl-biff-event-handler))))
+      (put 'wl-biff 'timer (run-at-time
+			    (timer-next-integral-multiple-of-time
+			     (current-time) wl-biff-check-interval)
+			    wl-biff-check-interval
+			    'wl-biff-event-handler))))
 
   (defun-maybe timer-next-integral-multiple-of-time (time secs)
     "Yield the next value after TIME that is an integral multiple of SECS.
@@ -976,24 +979,55 @@ This function is imported from Emacs 20.7."
   (fset 'wl-biff-stop 'ignore)
   (fset 'wl-biff-start 'ignore)))
 
+(defsubst wl-biff-notify (new-mails notify-minibuf)
+  (setq wl-modeline-biff-status (> new-mails 0))
+  (force-mode-line-update t)
+  (when notify-minibuf
+    (cond ((zerop new-mails) (message "No mail."))
+	  ((eq 1 new-mails) (message "You have a new mail."))
+	  (t (message "You have %d new mails." new-mails)))))
+  
 (defun wl-biff-check-folders ()
   (interactive)
   (when (interactive-p)
     (message "Checking new mails..."))
   (let ((new-mails 0)
-	(flist (or wl-biff-check-folder-list '("%inbox")))
+	(flist (or wl-biff-check-folder-list (list wl-default-folder)))
+	(elmo-network-session-name-prefix "BIFF-")
 	folder)
-    (while flist
-      (setq folder (car flist)
-	    flist (cdr flist))
-      (when (elmo-folder-plugged-p folder)
-	(setq new-mails (+ new-mails
-			   (nth 0 (wl-folder-check-one-entity folder))))))
-    (setq wl-modeline-biff-status (> new-mails 0))
-    (force-mode-line-update t)
-    (when (interactive-p)
-      (cond ((zerop new-mails) (message "No mail."))
-	    ((eq 1 new-mails) (message "You have a new mail."))
-	    (t (message "You have %d new mails." new-mails))))))
+    (if (eq (length flist) 1)
+	(wl-biff-check-folder-async (car flist) (interactive-p))
+      (while flist
+	(setq folder (car flist)
+	      flist (cdr flist))
+	(when (elmo-folder-plugged-p folder)
+	  (setq new-mails (+ new-mails
+			     (nth 0 (wl-folder-check-one-entity folder))))))
+      (wl-biff-notify new-mails (interactive-p)))))
+
+(defun wl-biff-check-folder-async-callback (diff data)
+  (if (nth 1 data)
+      (with-current-buffer (nth 1 data)
+	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb (nth 0 data)
+				     (list (car diff) 0 (cdr diff))
+				     (current-buffer))))
+  (setq wl-folder-info-alist-modified t)
+  (sit-for 0)
+  (wl-biff-notify (car diff) (nth 2 data)))
+
+(defun wl-biff-check-folder-async (folder notify-minibuf)
+  (when (elmo-folder-plugged-p folder)
+    (if (and (eq (elmo-folder-get-type folder) 'imap4)
+	     (wl-folder-use-server-diff-p folder))
+	;; Check asynchronously only when IMAP4 and use server diff.
+	(progn
+	  (setq elmo-folder-diff-async-callback
+		'wl-biff-check-folder-async-callback)
+	  (setq elmo-folder-diff-async-callback-data
+		(list folder (get-buffer wl-folder-buffer-name)
+		      notify-minibuf))
+	  (elmo-folder-diff-async folder))
+      (wl-biff-notify (car (wl-folder-check-one-entity folder))
+		      notify-minibuf))))
 
 ;;; wl-util.el ends here

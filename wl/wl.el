@@ -738,12 +738,14 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
 If prefix argument is specified, folder checkings are skipped."
   (interactive "P")
-  (unless wl-init
-    (wl-load-profile))
-  (wl-plugged-init (null (get-buffer wl-folder-buffer-name)))
+  (or wl-init (wl-load-profile))
   (unwind-protect
       (wl-init arg)
-    (wl-folder arg))
+    (wl-plugged-init (wl-folder arg))
+    (sit-for 0)
+    (run-hooks 'wl-auto-check-folder-pre-hook)
+    (wl-folder-auto-check)
+    (run-hooks 'wl-auto-check-folder-hook))
   (wl-biff-start)
   (run-hooks 'wl-hook))
 

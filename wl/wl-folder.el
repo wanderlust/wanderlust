@@ -1424,42 +1424,44 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (interactive "P")
   (let (initialize)
 ;  (delete-other-windows)
-  (if (get-buffer wl-folder-buffer-name)
-      (switch-to-buffer  wl-folder-buffer-name)
-    (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
-    (wl-folder-mode)
-    (wl-folder-init)
-    (set-buffer wl-folder-buffer-name)
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil))
-      (erase-buffer)
-      (setcdr (assoc (car wl-folder-entity) wl-folder-group-alist) t)
-      (save-excursion
-	(wl-folder-insert-entity " " wl-folder-entity)))
-    (set-buffer-modified-p nil)
-    (sit-for 0)
-    (setq initialize t))
-  (if (not arg)
-      (progn
-	(run-hooks 'wl-auto-check-folder-pre-hook)
-	(cond
-	 ((eq wl-auto-check-folder-name 'none))
-	 ((or (consp wl-auto-check-folder-name)
-	      (stringp wl-auto-check-folder-name))
-	  (let ((folder-list (if (consp wl-auto-check-folder-name)
-				 wl-auto-check-folder-name
-			       (list wl-auto-check-folder-name)))
-		entity)
-	    (while folder-list
-	      (if (setq entity (wl-folder-search-entity-by-name
-				(car folder-list)
-				wl-folder-entity))
-		  (wl-folder-check-entity entity 'auto))
-	      (setq folder-list (cdr folder-list)))))
-	 (t
-	  (wl-folder-check-entity wl-folder-entity 'auto)))
-	(run-hooks 'wl-auto-check-folder-hook)))
-  initialize))
+    (if (get-buffer wl-folder-buffer-name)
+	(switch-to-buffer  wl-folder-buffer-name)
+      (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
+      (wl-folder-mode)
+      (wl-folder-init)
+      (set-buffer wl-folder-buffer-name)
+      (let ((inhibit-read-only t)
+	    (buffer-read-only nil))
+	(erase-buffer)
+	(setcdr (assoc (car wl-folder-entity) wl-folder-group-alist) t)
+	(save-excursion
+	  (wl-folder-insert-entity " " wl-folder-entity)))
+      (set-buffer-modified-p nil)
+      ;(sit-for 0)
+      (setq initialize t))
+    initialize))
+
+(defun wl-folder-auto-check ()
+  "Check and update folders in `wl-auto-check-folder-name'."
+  (interactive)
+  (when (get-buffer wl-folder-buffer-name)
+    (switch-to-buffer  wl-folder-buffer-name)
+    (cond
+     ((eq wl-auto-check-folder-name 'none))
+     ((or (consp wl-auto-check-folder-name)
+	  (stringp wl-auto-check-folder-name))
+      (let ((folder-list (if (consp wl-auto-check-folder-name)
+			     wl-auto-check-folder-name
+			   (list wl-auto-check-folder-name)))
+	    entity)
+	(while folder-list
+	  (if (setq entity (wl-folder-search-entity-by-name
+			    (car folder-list)
+			    wl-folder-entity))
+	      (wl-folder-check-entity entity 'auto))
+	  (setq folder-list (cdr folder-list)))))
+     (t
+      (wl-folder-check-entity wl-folder-entity 'auto)))))
 
 (defun wl-folder-set-folder-updated (name value)
   (save-excursion

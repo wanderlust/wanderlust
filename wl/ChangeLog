@@ -1,3 +1,26 @@
+2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Call `wl-folder-auto-check' after `wl-plugged-init'.
+
+	* wl-util.el (wl-biff-notify): New inline function.
+	(wl-biff-check-folders): Bind `elmo-network-session-name-prefix'
+	locally.
+	Call `wl-biff-check-folder-async' if length of `wl-biff-check-
+	folder-list' is 1.
+	Use `wl-biff-notify'.
+	(wl-biff-check-folder-async-callback): New function.
+	(wl-biff-check-folder-async): Ditto.
+
+	* wl-folder.el (wl-folder): Don't check folders.
+	(wl-folder-auto-check): New function.
+
+2000-09-24  A. SAGATA  <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-util.el (wl-biff-start) [Emacs19+]:
+	Use `timer-next-integral-multiple-of-time'.
+	(wl-biff-check-folders): Use `wl-default-folder'
+	if `wl-biff-check-folder-list' is nil.
+
 2000-09-24  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-set-crosspost): Use `elmo-list-delete'
