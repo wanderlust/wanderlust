@@ -59,9 +59,9 @@
 	(require 'starttls)
 	(require 'sasl))
     (error))
-  (defun-maybe sasl-cram-md5 (username passphrase challenge))
-  (defun-maybe sasl-digest-md5-digest-response
-    (digest-challenge username passwd serv-type host &optional realm))
+;  (defun-maybe sasl-cram-md5 (username passphrase challenge))
+;  (defun-maybe sasl-digest-md5-digest-response
+;    (digest-challenge username passwd serv-type host &optional realm))
   (defun-maybe starttls-negotiate (a))
   (defun-maybe elmo-generic-list-folder-unread (spec number-alist mark-alist unread-marks))
   (defun-maybe elmo-generic-folder-diff (spec folder number-list))
@@ -1213,7 +1213,23 @@ If optional argument UNMARK is non-nil, unmark."
 	     (elmo-imap4-password
 	      (elmo-get-passwd (elmo-network-session-password-key session))))))
      (signal 'elmo-authenticate-error '(login)))))
-  
+
+;;; dirty hack
+(defconst sasl-imap4-login-steps
+  '(sasl-imap4-login-response))
+
+(defun sasl-imap4-login-response (client step)
+  (concat
+   (sasl-client-name client)
+   " "
+   (sasl-read-passphrase
+    (format "LOGIN passphrase for %s: " (sasl-client-name client)))))
+
+(put 'sasl-imap4-login 'sasl-mechanism
+     (sasl-make-mechanism "IMAP4-LOGIN" sasl-imap4-login-steps))
+
+(provide 'sasl-imap4-login)
+
 (luna-define-method
   elmo-network-initialize-session-buffer :after ((session
 						  elmo-imap4-session) buffer)
@@ -1259,34 +1275,108 @@ If optional argument UNMARK is non-nil, unmark."
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-imap4-session))
- (with-current-buffer (process-buffer
-		       (elmo-network-session-process-internal session))
-   (unless (eq elmo-imap4-status 'auth)
-     (unless (or (not (elmo-network-session-auth-internal session))
-		 (eq (elmo-network-session-auth-internal session) 'plain)
-		 (and (memq (intern
-			     (format "auth=%s"
-				     (elmo-network-session-auth-internal
-				      session)))
-			    (elmo-imap4-session-capability-internal session))
-		      (assq
-		       (elmo-network-session-auth-internal session)
-		       elmo-imap4-authenticator-alist)))
-       (if (or elmo-imap4-force-login
-	       (y-or-n-p
-		(format
-		 "There's no %s capability in server. continue?"
-		 (elmo-network-session-auth-internal session))))
-	   (elmo-network-session-set-auth-internal session nil)
-	 (signal 'elmo-open-error
-		 '(elmo-network-initialize-session))))
-     (let ((authenticator
-	    (if (elmo-network-session-auth-internal session)
-		(nth 1 (assq
-			(elmo-network-session-auth-internal session)
-			elmo-imap4-authenticator-alist))
-	      'elmo-imap4-login)))
-       (funcall authenticator session)))))
+  (with-current-buffer (process-buffer
+			(elmo-network-session-process-internal session))
+    (let* ((auth (elmo-network-session-auth-internal session))
+	   (auth (mapcar '(lambda (a)
+			    (if (eq a 'plain)
+				'imap4-login
+			      a))
+			 (if (listp auth) auth (list auth)))))
+      (unless (or (eq elmo-imap4-status 'auth)
+		  (null auth))
+	(let* ((elmo-imap4-debug-inhibit-logging t)
+	       (sasl-mechanism-alist
+		(append
+		 sasl-mechanism-alist
+		 (list '("IMAP4-LOGIN" sasl-imap4-login))))
+	       (sasl-mechanisms
+		(append
+		 (delq nil
+		       (mapcar '(lambda (cap)
+				  (if (string-match "^auth=\\(.*\\)$"
+						    (symbol-name cap))
+				      (match-string 1 (upcase (symbol-name cap)))))
+			       (elmo-imap4-session-capability-internal session)))
+		 (list "IMAP4-LOGIN")))
+	       (mechanism
+		(if (eq auth 'any)
+		    (sasl-find-mechanism sasl-mechanisms)
+		  (sasl-find-mechanism
+		   (delq nil
+			 (mapcar '(lambda (cap) (upcase (symbol-name cap)))
+				 (if (listp auth)
+				     auth
+				   (list auth)))))))
+	       client name step response tag
+	       sasl-read-passphrase)
+	   (unless mechanism
+	      (if (or elmo-imap4-force-login
+		      (y-or-n-p
+		       (format
+			"There's no %s capability in server. continue?"
+			(elmo-list-to-string
+			 (elmo-network-session-auth-internal session)))))
+		  (setq mechanism (sasl-find-mechanism
+				   sasl-mechanisms))
+		(signal 'elmo-authenticate-error '(elmo-imap4-auth-no-mechanisms))))
+	    (setq client
+		  (sasl-make-client
+		   mechanism
+		   (elmo-network-session-user-internal session)
+		   "imap"
+		   (elmo-network-session-host-internal session)))
+;;;	    (if elmo-imap4-auth-user-realm
+;;;		(sasl-client-set-property client 'realm elmo-imap4-auth-user-realm))
+	    (setq name (sasl-mechanism-name mechanism)
+		  step (sasl-next-step client nil))
+	    (elmo-network-session-set-auth-internal session
+						    (intern (downcase name)))
+	    (setq sasl-read-passphrase
+		  (function
+		   (lambda (prompt)
+		     (elmo-get-passwd
+		      (elmo-network-session-password-key session)))))
+	    (if (string= name "IMAP4-LOGIN")
+		(setq tag
+		      (elmo-imap4-send-command
+		       session
+		       (concat "LOGIN " (sasl-step-data step))))
+	      (setq tag
+		    (elmo-imap4-send-command
+		     session
+		     (concat "AUTHENTICATE " name
+			     (and (sasl-step-data step)
+				  (concat 
+				   " "
+				   (elmo-base64-encode-string
+				    (sasl-step-data step)
+				    'no-lin-break)))))))
+	    (catch 'done
+	      (while t
+		(setq response (elmo-imap4-read-untagged
+				(elmo-network-session-process-internal session)))
+		(if (and
+		     (null (elmo-imap4-response-continue-req-p response))
+		     (elmo-imap4-response-ok-p response)
+		     (or (sasl-next-step client step)
+			 (throw 'done nil)))
+		    (signal 'elmo-authenticate-error
+			    (list (intern
+				   (concat "elmo-imap4-auth-"
+					   (downcase name))))))
+		(sasl-step-set-data
+		 step
+		 (elmo-base64-decode-string
+		  (elmo-imap4-response-value response 'continue-req)))
+		(setq step (sasl-next-step client step))
+		(setq tag
+		      (elmo-imap4-send-string
+		       session
+		       (if (sasl-step-data step)
+			   (elmo-base64-encode-string (sasl-step-data step)
+						      'no-line-break)
+			 ""))))))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-imap4-session))
